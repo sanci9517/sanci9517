@@ -54,6 +54,9 @@ for(const width of [390,1366])test(`Creator Embed keeps IME drafts, activation f
  await editor.locator('.inspector-tabs button').nth(1).click();
  const inspector=editor.locator('.creator-embed-inspector');
  assert.equal(await inspector.locator('h3').textContent(),'Videó vagy élőadás beágyazása');
+ const embedRoutes=await inspector.locator('[data-inspector-command]').evaluateAll(rows=>rows.map(row=>({command:row.dataset.inspectorCommand,key:row.dataset.inspectorKey})));
+ assert.deepEqual(embedRoutes.map(route=>route.key),['props.embedContent.provider','props.embedContent.source','props.embedContent.title','props.embedContent.ratio','props.embedContent.clickToLoad']);
+ assert.ok(embedRoutes.every(route=>route.command==='element.update'),'each Embed field exposes its actual element.update route');
  const type=async(label,text)=>{
   const input=inspector.getByRole('textbox',{name:label});
   await input.fill(text);await input.press('Tab');

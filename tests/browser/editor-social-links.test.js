@@ -64,6 +64,9 @@ for(const width of [390,1366])test(`Social Links Inspector keeps keyboard focus,
  };
  await add();
  assert.equal(await panel.locator('.social-link-item').count(),1);
+ const socialRoutes=await panel.locator('[data-inspector-command]').evaluateAll(rows=>rows.map(row=>({command:row.dataset.inspectorCommand,key:row.dataset.inspectorKey})));
+ assert.deepEqual(socialRoutes.map(route=>route.key),['props.socialLinks.variant','props.socialLinks.layout','props.socialLinks.showIcons','props.socialLinks.items','props.socialLinks.items[].platform','props.socialLinks.items[].label','props.socialLinks.items[].href','props.socialLinks.items[].newWindow','props.socialLinks.items','props.socialLinks.items','props.socialLinks.items']);
+ assert.ok(socialRoutes.every(route=>route.command==='element.update'),'Social field and list actions expose their actual element.update route');
  await expectFocus(item(0).getByRole('textbox',{name:'Felirat'}));
  await change(0,'Felirat','Twitch <img src=x onerror=alert(1)>');
  await change(0,'Hivatkozás URL','https://www.twitch.tv/example');

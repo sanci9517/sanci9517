@@ -53,6 +53,9 @@ for(const width of [390,1366])test(`Code Inspector IME, inert copy and independe
  await editor.locator('.inspector-tabs button').nth(1).click();
  const inspector=editor.locator('.code-snippet-inspector');
  assert.equal(await inspector.locator('h3').textContent(),'Kód- és parancsblokk');
+ const codeRoutes=await inspector.locator('[data-inspector-command]').evaluateAll(rows=>rows.map(row=>({command:row.dataset.inspectorCommand,key:row.dataset.inspectorKey})));
+ assert.deepEqual(codeRoutes.map(route=>route.key),['props.codeSnippet.title','props.codeSnippet.language','props.codeSnippet.theme','props.codeSnippet.showLineNumbers','props.codeSnippet.wrapLines','props.codeSnippet.code']);
+ assert.ok(codeRoutes.every(route=>route.command==='element.update'),'each Code field exposes its actual element.update route');
  const change=async(name,value)=>{
   const input=inspector.getByRole('textbox',{name});
   await input.fill(value);await input.press('Tab');

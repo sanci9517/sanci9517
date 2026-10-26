@@ -115,6 +115,13 @@ test('legacy image video audio share guarded media URLs in Inspector Canvas and 
       if(await editor.locator('#rightDock').evaluate(el=>el.classList.contains('closed')))await editor.locator('#openInspector').click();
       await editor.getByRole('button',{name:'Tartalom és szöveg'}).click();
       await inspector.locator('.legacy-media-type-warning').waitFor();
+      const expectedRoutes=(type==='image'
+        ?['src','assetId','alt','caption','objectFit','ratio','focalX','focalY','loading','decorative']
+        :type==='video'
+          ?['src','assetId','controls','loop','muted','autoplay','poster','posterAssetId']
+          :['src','assetId','controls','loop']).map(key=>'props.'+key);
+      const renderedRoutes=await inspector.locator('[data-inspector-command="element.update"]').evaluateAll(controls=>controls.map(control=>control.dataset.inspectorKey));
+      assert.deepEqual(renderedRoutes,expectedRoutes,type+' Inspector fields expose their exact Page Model routes');
       const source=inspector.getByRole('textbox',{name:label,exact:true});
       assert.equal(await source.inputValue(),'','malformed source must not be coerced into an input');
       if(type==='image')assert.equal(await inspector.getByRole('textbox',{name:'Kép leírása (alt)'}).inputValue(),'');

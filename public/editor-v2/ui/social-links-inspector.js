@@ -7,6 +7,7 @@ export function renderSocialLinksInspector(node,update,{pending=()=>{}}={}){
  const saved=node.props?.socialLinks;
  const model={...defaultSocialLinks(),...(saved&&typeof saved==='object'?saved:{}),items:Array.isArray(saved?.items)?saved.items:[]};
  const section=document.createElement('section');section.className='social-links-inspector';section.dataset.nodeId=node.id;
+ const route=(control,key)=>{control.dataset.inspectorCommand='element.update';control.dataset.inspectorKey='props.socialLinks.'+key;return control;};
  const heading=document.createElement('h3');heading.textContent='Közösségi hivatkozások';section.append(heading);
  const intro=document.createElement('p');intro.className='structured-inspector-help';
  intro.textContent='Twitch, YouTube, TikTok, Discord és további elérhetőségek egyedi feliratokkal. A mentés nem publikál automatikusan.';section.append(intro);
@@ -29,39 +30,40 @@ export function renderSocialLinksInspector(node,update,{pending=()=>{}}={}){
    if(target?.getClientRects().length)target.focus({preventScroll:false});
   });
  };
- const action=(name,handler,disabled=false,kind='')=>{
+ const action=(name,handler,disabled=false,kind='',key=null)=>{
   const button=document.createElement('button');button.type='button';button.className='structured-action';button.textContent=name;
+  if(key)route(button,key);
   if(kind)button.dataset.socialAction=kind;
   button.disabled=Boolean(node.locked||disabled);button.onclick=()=>handler(document.activeElement===button);return button;
  };
- const select=(label,choices,value,handler)=>{
-  const wrap=document.createElement('label');wrap.className='field social-link-field';wrap.append(document.createTextNode(label));
+ const select=(key,label,choices,value,handler)=>{
+  const wrap=route(document.createElement('label'),key);wrap.className='field social-link-field';wrap.append(document.createTextNode(label));
   const input=document.createElement('select');input.setAttribute('aria-label',label);input.disabled=Boolean(node.locked);
   for(const [id,text] of choices){const option=document.createElement('option');option.value=id;option.textContent=text;input.append(option)}
   input.value=value;input.onchange=()=>{if(handler(input.value)===false)input.value=value;};wrap.append(input);return wrap;
  };
- const text=(label,value,handler,placeholder='')=>{
-  const wrap=document.createElement('label');wrap.className='field social-link-field';wrap.append(document.createTextNode(label));
+ const text=(key,label,value,handler,placeholder='')=>{
+  const wrap=route(document.createElement('label'),key);wrap.className='field social-link-field';wrap.append(document.createTextNode(label));
   const input=document.createElement('input');input.type='text';input.value=String(value??'');input.placeholder=placeholder;
   input.disabled=Boolean(node.locked);input.setAttribute('aria-label',label);
   wrap.append(input,composition.attach(input,handler));return wrap;
  };
- const toggle=(label,checked,handler)=>{
-  const wrap=document.createElement('label');wrap.className='inspector-toggle';
+ const toggle=(key,label,checked,handler)=>{
+  const wrap=route(document.createElement('label'),key);wrap.className='inspector-toggle';
   const input=document.createElement('input');input.type='checkbox';input.checked=Boolean(checked);input.disabled=Boolean(node.locked);
   input.onchange=()=>{if(handler(input.checked)===false)input.checked=Boolean(checked);};wrap.append(input,document.createTextNode(label));return wrap;
  };
  section.append(
-  select('Megjelenés',[['pills','Lekerekített gombok'],['cards','Kártyák'],['minimal','Minimalista linkek']],model.variant,value=>save({...model,variant:value})),
-  select('Elrendezés',[['wrap','Tördelődő sor'],['stack','Egymás alatt'],['grid','Automatikus rács']],model.layout,value=>save({...model,layout:value})),
-  toggle('Ikonok megjelenítése',model.showIcons,value=>save({...model,showIcons:value}))
+  select('variant','Megjelenés',[['pills','Lekerekített gombok'],['cards','Kártyák'],['minimal','Minimalista linkek']],model.variant,value=>save({...model,variant:value})),
+  select('layout','Elrendezés',[['wrap','Tördelődő sor'],['stack','Egymás alatt'],['grid','Automatikus rács']],model.layout,value=>save({...model,layout:value})),
+  toggle('showIcons','Ikonok megjelenítése',model.showIcons,value=>save({...model,showIcons:value}))
  );
  const items=model.items;
  const actions=document.createElement('div');actions.className='structured-actions';
  actions.append(action('＋ Új közösségi link',restoreFocus=>{
   const entry=defaultSocialEntry('twitch','s'+crypto.randomUUID().replace(/-/g,''));
   saveItems([...model.items,entry],restoreFocus,{entryId:entry.id});
- },items.length>=12,'add'));
+ },items.length>=12,'add','items'));
  section.append(actions);
  if(!items.length){
   const empty=document.createElement('p');empty.className='structured-inspector-help';
@@ -71,20 +73,20 @@ export function renderSocialLinksInspector(node,update,{pending=()=>{}}={}){
   const item=document.createElement('fieldset');item.className='social-link-item structured-item';item.dataset.socialEntryId=entry.id;
   const legend=document.createElement('legend');legend.textContent='Hivatkozás '+(index+1);item.append(legend);
   const change=(patch,options)=>save({...model,items:model.items.map(current=>current.id===entry.id?{...current,...patch}:current)},options);
-  item.append(select('Platform',SOCIAL_PLATFORMS.map(p=>[p.id,p.label]),entry.platform,next=>{
+  item.append(select('items[].platform','Platform',SOCIAL_PLATFORMS.map(p=>[p.id,p.label]),entry.platform,next=>{
    const current=model.items.find(item=>item.id===entry.id);
    const previous=SOCIAL_PLATFORMS.find(p=>p.id===current.platform);
    const selected=SOCIAL_PLATFORMS.find(p=>p.id===next);
    return change({platform:next,label:current.label===previous?.label?selected.label:current.label,newWindow:next==='email'?false:current.newWindow});
   }));
-  item.append(text('Felirat',entry.label,(value,options)=>change({label:value},options),'Pl. Nézz meg Twitch-en'));
-  item.append(text('Hivatkozás URL',entry.href,(value,options)=>change({href:value.trim()},options),entry.platform==='email'?'mailto:nev@example.com':'https://...'));
-  item.append(toggle('Megnyitás új lapon',entry.newWindow,value=>change({newWindow:value})));
+  item.append(text('items[].label','Felirat',entry.label,(value,options)=>change({label:value},options),'Pl. Nézz meg Twitch-en'));
+  item.append(text('items[].href','Hivatkozás URL',entry.href,(value,options)=>change({href:value.trim()},options),entry.platform==='email'?'mailto:nev@example.com':'https://...'));
+  item.append(toggle('items[].newWindow','Megnyitás új lapon',entry.newWindow,value=>change({newWindow:value})));
   const reorder=document.createElement('div');reorder.className='structured-actions social-link-actions';
   reorder.append(
-   action('↑ Fel',restoreFocus=>{const next=[...model.items];[next[index-1],next[index]]=[next[index],next[index-1]];saveItems(next,restoreFocus,{entryId:entry.id,preferredAction:'up'})},index===0,'up'),
-   action('↓ Le',restoreFocus=>{const next=[...model.items];[next[index+1],next[index]]=[next[index],next[index+1]];saveItems(next,restoreFocus,{entryId:entry.id,preferredAction:'down'})},index===items.length-1,'down'),
-   action('× Törlés',restoreFocus=>{const next=model.items.filter((_,i)=>i!==index);saveItems(next,restoreFocus,{entryId:next[Math.min(index,next.length-1)]?.id})},false,'remove')
+   action('↑ Fel',restoreFocus=>{const next=[...model.items];[next[index-1],next[index]]=[next[index],next[index-1]];saveItems(next,restoreFocus,{entryId:entry.id,preferredAction:'up'})},index===0,'up','items'),
+   action('↓ Le',restoreFocus=>{const next=[...model.items];[next[index+1],next[index]]=[next[index],next[index+1]];saveItems(next,restoreFocus,{entryId:entry.id,preferredAction:'down'})},index===items.length-1,'down','items'),
+   action('× Törlés',restoreFocus=>{const next=model.items.filter((_,i)=>i!==index);saveItems(next,restoreFocus,{entryId:next[Math.min(index,next.length-1)]?.id})},false,'remove','items')
   );
   item.append(reorder);section.append(item);
  });

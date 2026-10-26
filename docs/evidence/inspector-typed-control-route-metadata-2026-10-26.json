@@ -149,7 +149,7 @@
     "production_data_writes": false,
     "r2_changes": false
   },
-  "acceptance": "Rendered route metadata is verified for the asserted base-style, hover-state, five geometry controls, spacer height, conditional Flex/Grid layout controls, all 14 multi-selection controls, three nested Divider profile controls, all 12 Schedule profile controls and all four Countdown profile controls; corresponding real lifecycle checks pass. Full 79-type/68-property lifecycle acceptance remains OPEN.",
+  "acceptance": "Rendered route metadata is verified for the asserted base-style, hover-state, five geometry controls, spacer height, conditional Flex/Grid layout controls, all 14 multi-selection controls, three nested Divider profile controls, all 12 Schedule profile controls and all four Countdown profile controls; corresponding real lifecycle checks pass. Full 79-type/68-property lifecycle acceptance remains OPEN. Card, Creator Embed, Social Links, Code, Basic badge/quote/icon, six structured-content profiles and legacy image/video/audio route metadata now have dedicated real-browser Save/Publish lifecycle assertions; complete 77.44.7.A remains OPEN.",
   "schedule_profile_route_followup": {
     "implementation": "All 12 Schedule Inspector controls expose data-inspector-command=schedule.config.set and their actual config key. Select controls now dispatch through the same explicit key used by the route metadata.",
     "file": "tests/browser/editor-general-fields-ime.test.js",
@@ -240,5 +240,41 @@
     "d1_migrations_applied": false,
     "production_data_writes": false,
     "r2_changes": false
+  },
+  "content_profile_route_followup": {
+    "implementation": "The Card, Creator Embed, Social Links, Code, Basic and structured-content inspectors expose element.update plus their actual props Page Model keys. Repeater operations identify the items/rows collection route.",
+    "files": [
+      "public/editor-v2/ui/card-content-inspector.js",
+      "public/editor-v2/ui/creator-embed-inspector.js",
+      "public/editor-v2/ui/social-links-inspector.js",
+      "public/editor-v2/ui/code-snippet-inspector.js",
+      "public/editor-v2/ui/basic-content-inspector.js",
+      "public/editor-v2/ui/structured-inspector.js"
+    ],
+    "browser_tests": [
+      "tests/browser/editor-card-content.test.js",
+      "tests/browser/editor-creator-embed.test.js",
+      "tests/browser/editor-social-links.test.js",
+      "tests/browser/editor-code-snippet.test.js",
+      "tests/browser/editor-structured-content.test.js"
+    ],
+    "lifecycle": "Route metadata is asserted inside browser tests covering composition/validation, Canvas output, Undo/Redo where applicable, draft Save isolation, separate Publish and public output at desktop and mobile widths. Structured coverage includes list, table, tabs, accordion, gallery and carousel plus badge, quote and icon."
+  },
+  "legacy_media_route_followup": {
+    "implementation": "Legacy image/video/audio controls expose element.update and exact props keys for source, asset IDs, image presentation, playback options and poster. Existing app entry cache bust includes the route contract.",
+    "file": "public/editor-v2/ui/legacy-media-inspector.js",
+    "browser_test": "tests/browser/editor-legacy-media-parity.test.js",
+    "targeted_chromium": "PASS 1/1 after adding exact image/video/audio route assertions; existing mobile/desktop media repair, Undo/Redo, Save isolation and separate Publish remain covered.",
+    "lifecycle": "Asserts all rendered routes for each media type in the real Inspector; follows image source and content changes through Canvas, draft Save, public isolation and distinct Publish."
+  },
+  "local_validation_followup": {
+    "editor_unit": "PASS 132/132",
+    "typecheck": "PASS",
+    "targeted_lifecycle": "PASS 9/9 combined real-Chromium suites: Card 2 viewport runs, Creator Embed 2, Social Links 2, Code 2, Structured content 1 (covers six structures and Basic badge/quote/icon); plus legacy media 1/1.",
+    "remote_d1_preflight": "PASS; No migrations to apply (read-only)",
+    "wrangler_dry_run": "PASS; Wrangler 4.130.0, 159 assets, 287.10 KiB, no upload",
+    "release_state": "Local changes only at evidence capture; production release must be added after verified push/deployment/smoke.",
+    "targeted_lifecycle_result": "PASS: 10 browser test cases total across the new route/lifecycle coverage (combined batch 9/9 plus legacy media 1/1).",
+    "plan_and_traceability": "PASS canonical plan checker; PASS active point audit (77.44.7.A OPEN); PASS 396-source traceability check; PASS git diff --check."
   }
 }

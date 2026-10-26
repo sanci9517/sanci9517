@@ -9,6 +9,7 @@ export function renderStructuredInspector(node,update,{pending=()=>{}}={}){
  let model;try{model=normalizeElementContent(node.type,node.props?.contentModel??createElementContent(node.type))}
  catch{model=createElementContent(node.type)}
  const section=document.createElement('section');section.className='structured-inspector';section.dataset.nodeId=node.id;
+ const route=(control,key)=>{control.dataset.inspectorCommand='element.update';control.dataset.inspectorKey='props.contentModel.'+key;return control;};
  const title=document.createElement('h3');title.textContent=typeLabels[node.type];section.append(title);
  const help=document.createElement('p');help.className='structured-inspector-help';
  help.textContent='A változtatások piszkozatban maradnak. A publikus oldal csak külön publikálás után frissül.';section.append(help);
@@ -18,8 +19,8 @@ export function renderStructuredInspector(node,update,{pending=()=>{}}={}){
   return result;
  };
  const structural=(next,target)=>save(next)===false?null:target;
- const action=(label,fn,disabled=false,kind='')=>{
-  const button=document.createElement('button');button.type='button';button.className='structured-action';button.textContent=label;button.disabled=Boolean(node.locked||disabled);
+ const action=(key,label,fn,disabled=false,kind='')=>{
+  const button=route(document.createElement('button'),key);button.type='button';button.className='structured-action';button.textContent=label;button.disabled=Boolean(node.locked||disabled);
   if(kind)button.dataset.structuredAction=kind;
   button.onclick=()=>{
    if(button.disabled)return;
@@ -41,59 +42,59 @@ export function renderStructuredInspector(node,update,{pending=()=>{}}={}){
    });
   };return button;
  };
- const input=(name,value,onChange,multi=false,maxLength=500)=>{
-  const label=document.createElement('label');label.className='field structured-input';
+ const input=(key,name,value,onChange,multi=false,maxLength=500)=>{
+  const label=route(document.createElement('label'),key);label.className='field structured-input';
   const caption=document.createElement('span');caption.textContent=name;
   const editor=document.createElement(multi?'textarea':'input');editor.value=value??'';editor.disabled=Boolean(node.locked);editor.maxLength=maxLength;editor.setAttribute('aria-label',name);
   label.append(caption,editor,composition.attach(editor,onChange));return label;
  };
  const tools=document.createElement('div');tools.className='structured-actions';
  if(node.type==='list'){
-  const ordered=document.createElement('label');ordered.className='inspector-toggle';
+  const ordered=route(document.createElement('label'),'ordered');ordered.className='inspector-toggle';
   const checkbox=document.createElement('input');checkbox.type='checkbox';checkbox.checked=model.ordered;checkbox.disabled=Boolean(node.locked);
   checkbox.onchange=()=>{if(save({...model,ordered:checkbox.checked})===false)checkbox.checked=model.ordered;};
   ordered.append(checkbox,document.createTextNode('Számozott lista'));section.append(ordered);
  }
  if(node.type==='table'){
   const cols=model.rows[0].length;
-  tools.append(action('＋ Sor',()=>structural({...model,rows:[...model.rows,Array(cols).fill('')]},{row:model.rows.length}),model.rows.length>=40,'add-row'),
-   action('＋ Oszlop',()=>structural({...model,rows:model.rows.map(r=>[...r,''])},{row:0,col:cols}),cols>=12,'add-column'),
-   action('− Utolsó oszlop',()=>structural({...model,rows:model.rows.map(r=>r.slice(0,-1))},{row:0,col:cols-2}),cols<=1,'remove-column'));
+  tools.append(action('rows','＋ Sor',()=>structural({...model,rows:[...model.rows,Array(cols).fill('')]},{row:model.rows.length}),model.rows.length>=40,'add-row'),
+   action('rows','＋ Oszlop',()=>structural({...model,rows:model.rows.map(r=>[...r,''])},{row:0,col:cols}),cols>=12,'add-column'),
+   action('rows','− Utolsó oszlop',()=>structural({...model,rows:model.rows.map(r=>r.slice(0,-1))},{row:0,col:cols-2}),cols<=1,'remove-column'));
   section.append(tools);
   model.rows.forEach((row,ri)=>{
    const item=document.createElement('fieldset');item.className='structured-item';const legend=document.createElement('legend');legend.textContent=ri===0?'Fejléc':`Sor ${ri}`;item.append(legend);
-   row.forEach((v,ci)=>item.append(input(`Oszlop ${ci+1}`,v,(val,options)=>{const rows=model.rows.map(r=>[...r]);rows[ri][ci]=val;return save({...model,rows},options)})));
-   item.append(action('Sor törlése',()=>structural({...model,rows:model.rows.filter((_,i)=>i!==ri)},{row:Math.min(ri,model.rows.length-2)}),model.rows.length===1||ri===0,'remove-row'));
+   row.forEach((v,ci)=>item.append(input('rows[][]',`Oszlop ${ci+1}`,v,(val,options)=>{const rows=model.rows.map(r=>[...r]);rows[ri][ci]=val;return save({...model,rows},options)})));
+   item.append(action('rows','Sor törlése',()=>structural({...model,rows:model.rows.filter((_,i)=>i!==ri)},{row:Math.min(ri,model.rows.length-2)}),model.rows.length===1||ri===0,'remove-row'));
    section.append(item);
   });
  }else{
   const items=model.items;
   const defaults={list:()=>'',tabs:()=>({label:'Új fül',content:'Írd ide a tartalmat'}),accordion:()=>({label:'Új kérdés',content:'Írd ide a választ'}),gallery:()=>({src:'',alt:'',caption:''}),carousel:()=>({label:'Új dia',content:'Írd ide a tartalmat',src:'',alt:''})};
-  tools.append(action('＋ Új elem',()=>structural({...model,items:[...model.items,defaults[node.type]()]},{row:model.items.length}),items.length>=40,'add'));
+  tools.append(action('items','＋ Új elem',()=>structural({...model,items:[...model.items,defaults[node.type]()]},{row:model.items.length}),items.length>=40,'add'));
   section.append(tools);
   items.forEach((entry,i)=>{
    const item=document.createElement('fieldset');item.className='structured-item';
    const legend=document.createElement('legend');legend.textContent=`Elem ${i+1}`;item.append(legend);
    const change=(patch,options)=>save({...model,items:model.items.map((v,index)=>index===i?(node.type==='list'?patch:{...v,...patch}):v)},options);
-   if(node.type==='list')item.append(input('Szöveg',entry,(val,options)=>change(val,options),true,800));
+   if(node.type==='list')item.append(input('items[]','Szöveg',entry,(val,options)=>change(val,options),true,800));
    if(['tabs','accordion','carousel'].includes(node.type)){
-    item.append(input(node.type==='tabs'?'Fül neve':'Cím',entry.label,(val,options)=>change({label:val},options),false,120));
-    item.append(input('Tartalom',entry.content,(val,options)=>change({content:val},options),true,3000));
+    item.append(input('items[].label',node.type==='tabs'?'Fül neve':'Cím',entry.label,(val,options)=>change({label:val},options),false,120));
+    item.append(input('items[].content','Tartalom',entry.content,(val,options)=>change({content:val},options),true,3000));
    }
    if(node.type==='carousel'){
-    item.append(input('Kép URL (opcionális)',entry.src,(val,options)=>change({src:val.trim()},options),false,2048));
-    item.append(input('Kép leírása',entry.alt,(val,options)=>change({alt:val},options),false,250));
+    item.append(input('items[].src','Kép URL (opcionális)',entry.src,(val,options)=>change({src:val.trim()},options),false,2048));
+    item.append(input('items[].alt','Kép leírása',entry.alt,(val,options)=>change({alt:val},options),false,250));
    }
    if(node.type==='gallery'){
-    item.append(input('Kép URL',entry.src,(val,options)=>change({src:val.trim()},options),false,2048));
-    item.append(input('Kép leírása (alt)',entry.alt,(val,options)=>change({alt:val},options),false,250));
-    item.append(input('Képaláírás',entry.caption,(val,options)=>change({caption:val},options),false,500));
+    item.append(input('items[].src','Kép URL',entry.src,(val,options)=>change({src:val.trim()},options),false,2048));
+    item.append(input('items[].alt','Kép leírása (alt)',entry.alt,(val,options)=>change({alt:val},options),false,250));
+    item.append(input('items[].caption','Képaláírás',entry.caption,(val,options)=>change({caption:val},options),false,500));
    }
    const controls=document.createElement('div');controls.className='structured-actions';
    controls.append(
-    action('↑ Fel',()=>{const copy=[...model.items];[copy[i-1],copy[i]]=[copy[i],copy[i-1]];return structural({...model,items:copy},{row:i-1,action:'up'})},i===0,'up'),
-    action('↓ Le',()=>{const copy=[...model.items];[copy[i+1],copy[i]]=[copy[i],copy[i+1]];return structural({...model,items:copy},{row:i+1,action:'down'})},i===items.length-1,'down'),
-    action('× Törlés',()=>structural({...model,items:model.items.filter((_,index)=>index!==i)},{row:Math.min(i,model.items.length-2)}),items.length<=1,'remove')
+    action('items','↑ Fel',()=>{const copy=[...model.items];[copy[i-1],copy[i]]=[copy[i],copy[i-1]];return structural({...model,items:copy},{row:i-1,action:'up'})},i===0,'up'),
+    action('items','↓ Le',()=>{const copy=[...model.items];[copy[i+1],copy[i]]=[copy[i],copy[i+1]];return structural({...model,items:copy},{row:i+1,action:'down'})},i===items.length-1,'down'),
+    action('items','× Törlés',()=>structural({...model,items:model.items.filter((_,index)=>index!==i)},{row:Math.min(i,model.items.length-2)}),items.length<=1,'remove')
    );item.append(controls);section.append(item);
   });
  }

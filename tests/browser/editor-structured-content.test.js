@@ -100,11 +100,15 @@ test('structured Inspector editing survives Save, Publish and public interaction
   ]){
    await select(ids[type]);
    const basic=editor.locator('.basic-content-inspector'),input=basic.getByRole('textbox',{name:label,exact:true});
+   const basicRoute=await input.evaluate(el=>{const route=el.closest('[data-inspector-command]');return route&&{command:route.dataset.inspectorCommand,key:route.dataset.inspectorKey}});
+   const basicKey=type==='badge'?'props.text':type==='quote'?(label==='Idézet szövege'?'props.text':'props.attribution'):'props.label';
+   assert.deepEqual(basicRoute,{command:'element.update',key:basicKey},`${type}.${label} exposes its exact basic content route`);
    await exerciseComposition({page:editor,input,selector:`.node[data-node-id="${ids[type]}"] `+part,attribute,before,final,posts,restart:true,attemptBlocked:type==='icon'?async()=>{const picker=basic.getByRole('combobox',{name:'Ikon',exact:true});await picker.selectOption('star');assert.equal(await picker.inputValue(),'heart','a glyph change cannot discard a composing label');}:undefined,otherInput:type==='quote'?basic.getByRole('textbox',{name:label==='Idézet szövege'?'Forrás vagy szerző':'Idézet szövege',exact:true}):undefined}).catch(error=>{assert.equal(posts.length,0,'unfinished basic content composition cannot reach the Editor API');throw error;});
   }
  }
  await select(ids.icon);
  const iconPicker=editor.locator('.basic-content-inspector').getByRole('combobox',{name:'Ikon',exact:true});
+ assert.deepEqual(await iconPicker.evaluate(el=>{const route=el.closest('[data-inspector-command]');return {command:route?.dataset.inspectorCommand,key:route?.dataset.inspectorKey}}),{command:'element.update',key:'props.icon'});
  await iconPicker.selectOption('star');
  assert.equal(await editor.locator('.basic-content-inspector').getByRole('textbox',{name:'Ikon leírása'}).inputValue(),finalIcon,'glyph selection preserves the freshly edited accessible label');
  await editor.keyboard.press('Control+z');assert.equal(await iconPicker.inputValue(),'heart');
@@ -136,6 +140,12 @@ test('structured Inspector editing survives Save, Publish and public interaction
   await editor.setViewportSize({width,height:900});
   for(const [type,rowIndex,label,key,selector,attribute] of structuredFields){
    await select(ids[type]);const panel=editor.locator('.structured-inspector'),row=panel.locator('.structured-item').nth(rowIndex),input=row.getByRole('textbox',{name:label,exact:true});
+   const expectedKey=type==='table'?'props.contentModel.rows[][]':type==='list'?'props.contentModel.items[]':`props.contentModel.items[].${key}`;
+   const fieldRoute=await input.evaluate(el=>{const route=el.closest('[data-inspector-command]');return route&&{command:route.dataset.inspectorCommand,key:route.dataset.inspectorKey}});
+   assert.deepEqual(fieldRoute,{command:'element.update',key:expectedKey},`${type}.${label} exposes its full nested content-model route`);
+   const actionRoutes=await panel.locator('button[data-inspector-command]').evaluateAll(buttons=>buttons.map(button=>({command:button.dataset.inspectorCommand,key:button.dataset.inspectorKey})));
+   assert.ok(actionRoutes.length>0&&actionRoutes.every(route=>route.command==='element.update'&&route.key===`props.contentModel.${type==='table'?'rows':'items'}`),`${type} structural actions expose their content-model array route`);
+   if(type==='list')assert.deepEqual(await panel.getByRole('checkbox',{name:'Számozott lista'}).evaluate(el=>{const route=el.closest('[data-inspector-command]');return {command:route?.dataset.inspectorCommand,key:route?.dataset.inspectorKey}}),{command:'element.update',key:'props.contentModel.ordered'});
    const before=await input.inputValue(),final=key==='src'?`/media/${type}-${width}.svg`:`Végleges ${type} ${String(key)} ${width} <img>`;
    await exerciseComposition({page:editor,input,selector:`.node[data-node-id="${ids[type]}"] `+selector,attribute,before,final,posts,restart:true,attemptBlocked:async()=>{
     const count=await panel.locator('.structured-item').count();
