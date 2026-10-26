@@ -966,3 +966,9 @@ A felhasználó az összes funkció és a kód összerendezését kérte. A 396 
 
 
 **77.44.7.A tartalomprofil-szelet kiadási bizonyítéka:** `53650fb5` GitHub forrás, Cloudflare build `4c504eac-8683-4907-b185-2314b288b404` success, Worker `c684ddba-8587-4475-a50a-b08c7b4957ad` 100%. Build log: No migrations to apply. Éles Chromium: a capability modul és app.js SHA-256-ja egyezik a helyi forrással, a kevert authored/media profil mindkét aktív ellenőrzést jelzi, az authored kép mezői és legacy fallback helyesek; health/D1-health 200, anonim Admin 401. Öt GitHub/Workers check PASS, editor-core még futott az utolsó lekérdezéskor. Nem teljes típusonkénti/telefonos Editor acceptance; az A blokk továbbra OPEN. Részletek a content-profile-contract bizonyítékban.
+
+### 77.44.7.A — Adásrend Inspector útvonal-metaadat és mentési életciklus — 2026-10-26
+
+A Schedule Inspector 12 speciális mezője most a tényleges `schedule.config.set` commandot és konfigurációkulcsot teszi ki a DOM-ra. A Mód, Sorrend, Elemszám, Státuszok és Cím megjelenítése mezőt valós Chromium-folyamatban módosítjuk; az automata mind a piszkozatba mentett értékeket, mind a Save/Publish szétválasztását ellenőrzi. A meglévő Composition/IME, érvénytelen mezőre Save/Publish tiltás, Canvas, undo, lock és publikus pillanatkép tesztek is ugyanabban a böngészőfolyamatban futnak. 390 és 1366 px-en célzottan 2/2 PASS. Részletek: [Inspector útvonal-metaadat bizonyíték](evidence/inspector-typed-control-route-metadata-2026-10-26.json).
+
+**Határ:** ez a Schedule-specifikus útvonal- és lifecycle-szelet; a 77.44.7.A, a teljes 79 típus/68 property elfogadás és a fizikai eszközös felhasználói elfogadás OPEN marad. Kiadás/verzió- és éles egyezés csak a további ellenőrzés után rögzíthető. Nincs adatbázis-migráció, éles adatírás vagy R2-változás.

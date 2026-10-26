@@ -603,29 +603,30 @@ function renderScheduleInspector(node,composition){
   title.innerHTML='<strong>Adásrend</strong><small>Schedule konfiguráció</small>';
   section.append(title);
 
-  const selectField=(label,value,options,onChange)=>{
-    const wrap=document.createElement('label');wrap.className='field';
+  const route=(control,key)=>{
+    control.dataset.inspectorCommand='schedule.config.set';
+    control.dataset.inspectorKey=key;
+    return control;
+  };
+  const selectField=(label,key,value,options)=>{
+    const wrap=route(document.createElement('label'),key);wrap.className='field';
     const text=document.createElement('span');text.textContent=label;
     const select=document.createElement('select');
     for(const optionValue of options){const option=document.createElement('option');option.value=optionValue;option.textContent=optionValue;option.selected=optionValue===value;select.append(option)}
-    select.onchange=()=>command('schedule.config.set',{nodeId:node.id,patch:{[label==='Mód'?'mode':label==='Sorrend'?'order':'__invalid']:select.value}});
+    select.onchange=()=>command('schedule.config.set',{nodeId:node.id,patch:{[key]:select.value}});
     wrap.append(text,select);return wrap;
   };
 
-  const mode=selectField('Mód',config.mode,SCHEDULE_MODES,()=>{});
-  mode.querySelector('select').onchange=()=>command('schedule.config.set',{nodeId:node.id,patch:{mode:mode.querySelector('select').value}});
-  const order=selectField('Sorrend',config.order,SCHEDULE_ORDERS,()=>{});
-  order.querySelector('select').onchange=()=>command('schedule.config.set',{nodeId:node.id,patch:{order:order.querySelector('select').value}});
+  const mode=selectField('Mód','mode',config.mode,SCHEDULE_MODES);
+  const order=selectField('Sorrend','order',config.order,SCHEDULE_ORDERS);
   section.append(mode,order);
 
-  section.append(
-    field('Elemszám',String(config.limit),v=>{
-      const limit=Math.max(1,Math.min(50,Number.parseInt(v,10)||1));
-      command('schedule.config.set',{nodeId:node.id,patch:{limit}});
-    })
-  );
+  section.append(route(field('Elemszám',String(config.limit),v=>{
+    const limit=Math.max(1,Math.min(50,Number.parseInt(v,10)||1));
+    command('schedule.config.set',{nodeId:node.id,patch:{limit}});
+  }),'limit'));
 
-  const statusWrap=document.createElement('div');statusWrap.className='field';
+  const statusWrap=route(document.createElement('div'),'statuses');statusWrap.className='field';
   const statusLabel=document.createElement('span');statusLabel.textContent='Státuszok';
   const statusGrid=document.createElement('div');statusGrid.className='schedule-check-grid';
   for(const status of SCHEDULE_STATUSES){
@@ -650,12 +651,12 @@ function renderScheduleInspector(node,composition){
     ['showLink','Link megjelenítése']
   ];
   for(const [key,labelText] of toggles){
-    const row=document.createElement('label');row.className='inspector-toggle';
+    const row=route(document.createElement('label'),key);row.className='inspector-toggle';
     const input=document.createElement('input');input.type='checkbox';input.checked=Boolean(config[key]);
     input.onchange=()=>command('schedule.config.set',{nodeId:node.id,patch:{[key]:input.checked}});
     const span=document.createElement('span');span.textContent=labelText;row.append(input,span);section.append(row);
   }
-  section.append(field('Üres állapot szövege',config.emptyText,(value,options)=>{
+  section.append(route(field('Üres állapot szövege',config.emptyText,(value,options)=>{
     // Validate before command() so an incomplete draft stays in this field,
     // without diagnostics alerts or an update to the canonical Schedule model.
     if(!value.trim())throw new Error('Adj meg szöveget az üres adásrendhez.');
@@ -663,7 +664,7 @@ function renderScheduleInspector(node,composition){
     const current=page()?.nodes?.[node.id]?.props?.schedule||{};
     const normalized=normalizeScheduleConfig({...current,emptyText:value});
     return commitInspectorText('schedule.config.set',{nodeId:node.id,patch:{emptyText:normalized.emptyText}},options);
-  },Boolean(node.locked),true,composition));
+  },Boolean(node.locked),true,composition),'emptyText'));
   return section;
 }
 

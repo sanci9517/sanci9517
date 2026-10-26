@@ -49,6 +49,9 @@ for(const width of [390,1366])test(`general Inspector name and Schedule empty te
  const nameContract=editor.locator('.field[data-property-id="advanced.nodeName"]');
  assert.equal(await nameContract.getAttribute('data-property-command'),'element.update');
  assert.equal(await nameContract.getAttribute('data-property-key'),'name');
+ const scheduleRoutes=await editor.locator('.schedule-inspector [data-inspector-command]').evaluateAll(rows=>rows.map(row=>({command:row.dataset.inspectorCommand,key:row.dataset.inspectorKey})));
+ assert.deepEqual(scheduleRoutes.map(route=>route.key),['mode','order','limit','statuses','showTitle','showPlatform','showTime','showEndTime','showStatus','showNotes','showLink','emptyText']);
+ assert.ok(scheduleRoutes.every(route=>route.command==='schedule.config.set'),'each Schedule Inspector field exposes its actual config command');
  const headSelector=`.node[data-node-id="${id}"] > .node-head > span`,emptySelector=`.node[data-node-id="${id}"] .schedule-preview-empty`;
  await exerciseComposition({page:editor,input:name(),selector:headSelector,before:'Mentett elem',final:'Végleges belső név',posts,restart:true,otherInput:empty()});
  await exerciseComposition({page:editor,input:empty(),selector:emptySelector,before:'Mentett adásrend',final:'Végleges üres adásrend',posts,restart:true,otherInput:name()});
@@ -69,9 +72,17 @@ for(const width of [390,1366])test(`general Inspector name and Schedule empty te
   assert.equal(await editor.locator(emptySelector).textContent(),'Végleges üres adásrend');
   await empty().press('Escape');assert.equal(await empty().inputValue(),'Végleges üres adásrend');
  }
+ await editor.locator('.schedule-inspector [data-inspector-key="mode"] select').selectOption('all');
+ await editor.locator('.schedule-inspector [data-inspector-key="order"] select').selectOption('desc');
+ const scheduleLimit=editor.locator('.schedule-inspector [data-inspector-key="limit"] input');await scheduleLimit.fill('12');await scheduleLimit.press('Tab');
+ await editor.locator('.schedule-inspector [data-inspector-key="statuses"] input[data-status="scheduled"]').evaluate(el=>el.click());
+ await editor.locator('.schedule-inspector [data-inspector-key="showTitle"] input').evaluate(el=>el.click());
  const save=async publish=>{await editor.locator(publish?'#publish':'#save').click();await editor.waitForFunction(pub=>document.querySelector('#saveStatus').textContent.startsWith(pub?'Publikálva':'Mentve'),publish);};
  await save(false);
  assert.equal(draft.pages[pageId].nodes[id].name,'Végleges belső név');assert.equal(draft.pages[pageId].nodes[id].props.schedule.emptyText,'Végleges üres adásrend');
+ assert.equal(draft.pages[pageId].nodes[id].props.schedule.mode,'all');assert.equal(draft.pages[pageId].nodes[id].props.schedule.order,'desc');
+ assert.equal(draft.pages[pageId].nodes[id].props.schedule.limit,12);assert.deepEqual(draft.pages[pageId].nodes[id].props.schedule.statuses,['scheduled','completed']);
+ assert.equal(draft.pages[pageId].nodes[id].props.schedule.showTitle,false);
  await viewer.reload();assert.equal(await viewer.locator('.visual-schedule-empty').textContent(),'Mentett adásrend','Save preserves the public snapshot');
  await save(true);await viewer.reload();assert.equal(await viewer.locator('.visual-schedule-empty').textContent(),'Végleges üres adásrend','Publish updates the public empty text');
  assert.equal(await viewer.getByText('Végleges belső név',{exact:true}).count(),0,'internal node names are not public content');
