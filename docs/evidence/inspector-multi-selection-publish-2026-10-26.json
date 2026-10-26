@@ -3,10 +3,10 @@
   "plan_cursor": "77.44.7.A/C / multi-selection Inspector to public output",
   "test": {
     "file": "tests/browser/editor-multi-validation.test.js",
-    "result": "PASS 2/2, 10.5 seconds",
+    "result": "PASS 2/2, 32.7 seconds",
     "viewports": [390, 1366],
     "lifecycle": [
-      "Two selected elements expose the shared responsive width field and route metadata.",
+      "At 390px the shared width command writes only the mobile breakpoint; at 1366px it writes only desktop.",
       "Invalid width is rejected and blocks Save and Publish without changing the saved model.",
       "Valid width is saved to both Page Model nodes as a draft.",
       "Public CSS stays unchanged after draft Save.",

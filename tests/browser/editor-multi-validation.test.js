@@ -8,7 +8,8 @@ import {createDocument} from '../../public/editor-v2/core/schema.js';
 import {createEditorState,activePage} from '../../public/editor-v2/core/state.js';
 import {execute} from '../../public/editor-v2/core/commands.js';
 
-for(const width of [390,1366])test(`multi-selection rejects invalid values and saves repaired values at ${width}px`,async t=>{
+for(const width of [390,1366])test(`multi-selection validates, saves and publishes its ${width===390?'mobile':'desktop'} breakpoint`,async t=>{
+ const device=width===390?'mobile':'desktop';
  let document=createDocument();const id=document.activePageId,slug='new-'+ 'long-path-'.repeat(7)+'end',publishedSlug='old-'+ 'long-path-'.repeat(7)+'end';
  const model=createEditorState(document);const ids=[];for(let i=0;i<2;i++){execute(model,{type:'element.add',payload:{type:'text',parentId:activePage(model).rootId,props:{text:`Multi item ${i+1}`}}});ids.push(model.selection.primaryId);}document=model.document;let draft=structuredClone(document),published=structuredClone(document);const posts=[];
  const root=resolve(import.meta.dirname,'../../public'),errors=[];
@@ -18,7 +19,7 @@ for(const width of [390,1366])test(`multi-selection rejects invalid values and s
   if(url.pathname==='/api/admin/pages')return json(url.searchParams.has('archived')?[]:[{id,slug,publishedSlug,title:'URL test',content:draft,isPublished:true,hasUnpublishedChanges:true,revision:1}]);
   if(url.pathname==='/api/admin/editor'&&req.method==='POST'){
    let body='';for await(const chunk of req)body+=chunk;const request=JSON.parse(body);posts.push(request);draft=structuredClone(request.document);
-   for(const nodeId of ids)assert.equal(draft.pages[id].nodes[nodeId].responsive.desktop.width,'120px');
+   for(const nodeId of ids)assert.equal(draft.pages[id].nodes[nodeId].responsive[device].width,'120px');
    if(request.publish)published=structuredClone(draft);
    return json({pageId:id,version:posts.length+1,revisionId:'r'+(posts.length+1)});
   }
@@ -34,6 +35,7 @@ for(const width of [390,1366])test(`multi-selection rejects invalid values and s
  t.after(async()=>{await browser.close();await new Promise(done=>server.close(done));});
  const page=await browser.newPage({viewport:{width,height:900}}),viewer=await browser.newPage({viewport:{width,height:900}});page.setDefaultTimeout(7000);viewer.setDefaultTimeout(7000);page.on('pageerror',e=>errors.push(e.message));viewer.on('pageerror',e=>errors.push(e.message));
  await page.goto(`http://127.0.0.1:${server.address().port}/editor-v2/index.html`);
+ await page.locator(`.canvas-device-btn[data-device="${device}"]`).click();
  await viewer.goto(`http://127.0.0.1:${server.address().port}/p/${publishedSlug}`);
  const liveWidth=nodeId=>viewer.locator(`[data-node-id="${nodeId}"]`).evaluate(el=>getComputedStyle(el).width);
  const previousWidths=await Promise.all(ids.map(nodeId=>liveWidth(nodeId)));
@@ -44,9 +46,12 @@ for(const width of [390,1366])test(`multi-selection rejects invalid values and s
  const input=page.locator('.multi-inspector [data-property-id="width"] input');await input.fill('2001');
  assert.equal(await input.getAttribute('aria-invalid'),'true');
  await input.press('Control+s');assert.equal(posts.length,0);assert.match(await page.locator('#saveStatus').textContent(),/Javítsd/);
- await page.locator('#save').evaluate(el=>el.click());await page.locator('#publish').evaluate(el=>el.click());assert.equal(posts.length,0);assert.deepEqual(draft.pages[id].nodes[ids[0]].responsive.desktop,{},'invalid width blocks Save and Publish');
+ await page.locator('#save').evaluate(el=>el.click());await page.locator('#publish').evaluate(el=>el.click());assert.equal(posts.length,0);assert.deepEqual(draft.pages[id].nodes[ids[0]].responsive[device],{},'invalid width blocks Save and Publish');
  await input.fill('120');await input.press('Control+s');await page.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));assert.equal(posts.length,1);assert.equal(posts.at(-1).publish,false);
- for(const nodeId of ids)assert.equal(draft.pages[id].nodes[nodeId].responsive.desktop.width,'120px','multi-edit is saved for every selected Page Model node');
+ for(const nodeId of ids){
+  assert.equal(draft.pages[id].nodes[nodeId].responsive[device].width,'120px','multi-edit is saved for every selected Page Model node at its active breakpoint');
+  assert.equal(draft.pages[id].nodes[nodeId].responsive[device==='mobile'?'desktop':'mobile'].width,undefined,'multi-edit does not write another breakpoint');
+ }
  await viewer.reload();for(let i=0;i<ids.length;i++)assert.equal(await liveWidth(ids[i]),previousWidths[i],'draft Save leaves the published snapshot unchanged');
  await page.locator('#publish').click();await page.waitForFunction(()=>document.querySelector('#saveStatus').textContent==='Publikálva');assert.equal(posts.at(-1).publish,true);
  await viewer.reload();for(const nodeId of ids)assert.equal(await liveWidth(nodeId),'120px','explicit Publish updates both selected nodes in the public renderer');
