@@ -1,0 +1,53 @@
+{
+  "date": "2026-10-26",
+  "plan_cursor": "77.44.7.A / Inspector action-route contract",
+  "commit": "128fd49f4282dc877adbc067ba464dd1ec312eac",
+  "implementation": {
+    "layout_recipes": "layout.preset.apply exposes the exact style/responsive Page Model key set, metadata keys, and selected preset id.",
+    "automatic_child_layout": "layout.children.auto exposes each child responsive Flex/Grid placement key.",
+    "typography_roles": "Each responsive.set action exposes its preset's exact changed key list.",
+    "geometry_presets": "Width and height presets expose the registry command and corresponding Page Model key.",
+    "save_publish": "Actions continue to update only the local draft; explicit Save and Publish behavior is unchanged."
+  },
+  "tests": {
+    "tests/browser/editor-responsive-layout.test.js": "PASS 1/1, final retry 41.6 seconds; route attributes and real Canvas/public geometry at desktop, tablet, and mobile.",
+    "tests/browser/editor-inspector-breakpoint-lifecycle.test.js": "PASS 1/1, 15.9 seconds; geometry preset route plus breakpoint draft/save/publish lifecycle.",
+    "editor_unit": "PASS 132/132.",
+    "typecheck": "PASS.",
+    "canonical_plan_and_traceability": "PASS: 13 master files, 396 mappings; functional acceptance remains NOT_CERTIFIED.",
+    "wrangler_dry_run": "PASS; 159 assets, 287.10 KiB upload estimate; no deployment command run locally."
+  },
+  "production": {
+    "branch": "v2/foundation",
+    "deployment_id": "8a4600b5-cecd-4273-8a95-f57eeb4d1fe7",
+    "worker_version": "fe49dc98-19f9-4342-b80c-a10e0c53102c",
+    "traffic": "100%",
+    "health": "/api/health 200; /api/db-health 200, D1 connected; /editor-v2/ 200.",
+    "asset_sha256": {
+      "public/editor-v2/app.js": "91fbcbd92870b1c81894186c96012fdbb84fb920b27d72aae6f5e1a3df2a794c",
+      "public/editor-v2/ui/geometry-presets.js": "ba57d5be87e4a6fa7ca2e27273b5f64578f7ad10f2ff120ac80ceefebb4b72d3",
+      "public/editor-v2/index.html": "dc13374b21de390a43d2001a3c9d01b81b54ceac899bea14bcf15b72f3db59c2"
+    }
+  },
+  "database_safety": {
+    "preflight": "Read-only SELECT against d1_migrations; configured local migration names were present in the remote ledger.",
+    "changed_db": false,
+    "rows_written": 0,
+    "migration_applied": false,
+    "r2_or_data_mutation": false
+  },
+  "github_workflows": {
+    "completed_success": [
+      40329346446,
+      40329346437,
+      40329346460,
+      40329346495
+    ],
+    "editor_core_test": {
+      "run_id": 40329346426,
+      "status": "in_progress",
+      "current_step": "Run Editor browser layout regression"
+    }
+  },
+  "acceptance_boundary": "The tested Inspector routes and release are verified. The complete 77.44.7.A capability matrix and full user acceptance remain OPEN/NOT_CERTIFIED."
+}
