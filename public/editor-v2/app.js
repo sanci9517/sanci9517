@@ -31,7 +31,7 @@ import {ICON_CHOICES,iconById} from './core/icon-options.js';
 import {DIVIDER_LINE_STYLES,normalizeDividerStyle} from './core/decorative-elements.js';
 import {defaultCardContent,cardImageSrc} from './core/card-content.js';
 import {defaultCountdownContent,renderCountdownContent,activateCountdowns} from './core/countdown-content.js';
-import {renderCountdownInspector} from './ui/countdown-inspector.js';
+import {renderCountdownInspector} from './ui/countdown-inspector.js?v=20261026-route-contract';
 import {defaultSocialLinks,renderSocialLinksHtml} from './core/social-links.js';
 import {renderSocialLinksInspector} from './ui/social-links-inspector.js';
 import {defaultEmbedContent,renderEmbedHtml} from './core/creator-embed.js';

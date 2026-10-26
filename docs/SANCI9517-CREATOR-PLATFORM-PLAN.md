@@ -974,3 +974,9 @@ A Schedule Inspector 12 speciális mezője most a tényleges `schedule.config.se
 **Kiadás és éles egyezés:** `d2ae2d3e` a `v2/foundation` ágra került. A Cloudflare Worker `2de32fe1-4c28-4925-99ee-594a678a9bd2` verziója 100% forgalmat kapott; `/api/health`, D1 `/api/db-health` és `/editor-v2/` PASS. Az éles Editor `index.html` és `app.js` SHA-256 egyezik a commitolt fájlokkal. Nincs alkalmazott D1-migráció, production adatírás vagy R2-változás. A GitHub CI 5/5 workflow PASS, az Editor Core teljes Editor/mobile regresszióval 6m5s alatt zárult sikeresen. Részletek a [gépi bizonyítékban](evidence/inspector-typed-control-route-metadata-2026-10-26.json).
 
 **Határ:** ez a Schedule-specifikus útvonal- és lifecycle-szelet; a 77.44.7.A, a teljes 79 típus/68 property elfogadás és a fizikai eszközös felhasználói elfogadás OPEN marad.
+
+### 77.44.7.A — Visszaszámláló Inspector útvonal-metaadat és életciklus — 2026-10-26
+
+A Visszaszámláló négy vezérlője a tényleges `element.update` parancsot és teljes Page Model kulcsot teszi ki: `props.countdown.title`, `targetISO`, `finishText` és `showSeconds`. A meglévő, két időzónán és 390/1366 px-en futó Chromium-életciklusteszt mind a négy route-ot ellenőrzi, miközben lefedi a helyi idő/DST validációt, Canvas-előnézetet, kompozíciós mezőket, Undo/Redo-t, a piszkozat Save és külön Publish viselkedését, valamint a publikus nézetet. Célzott eredmény: 2/2 PASS. Részletek: [Inspector útvonal-metaadat bizonyíték](evidence/inspector-typed-control-route-metadata-2026-10-26.json).
+
+**Határ:** ez a Countdown útvonal-lifecycle szelet; a 77.44.7.A, a teljes 79 típus/68 property lefedés és a fizikai eszközös elfogadás OPEN. Nincs sémaváltozás vagy D1/R2 adatváltozás.

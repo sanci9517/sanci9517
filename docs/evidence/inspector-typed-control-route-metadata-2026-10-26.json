@@ -149,7 +149,7 @@
     "production_data_writes": false,
     "r2_changes": false
   },
-  "acceptance": "Rendered route metadata is verified for the asserted base-style, hover-state, five geometry controls, spacer height, conditional Flex/Grid layout controls, all 14 multi-selection controls, three nested Divider profile controls and all 12 Schedule profile controls; corresponding real lifecycle checks pass. Full 79-type/68-property lifecycle acceptance remains OPEN.",
+  "acceptance": "Rendered route metadata is verified for the asserted base-style, hover-state, five geometry controls, spacer height, conditional Flex/Grid layout controls, all 14 multi-selection controls, three nested Divider profile controls, all 12 Schedule profile controls and all four Countdown profile controls; corresponding real lifecycle checks pass. Full 79-type/68-property lifecycle acceptance remains OPEN.",
   "schedule_profile_route_followup": {
     "implementation": "All 12 Schedule Inspector controls expose data-inspector-command=schedule.config.set and their actual config key. Select controls now dispatch through the same explicit key used by the route metadata.",
     "file": "tests/browser/editor-general-fields-ime.test.js",
@@ -198,5 +198,17 @@
     "d1_migrations_applied": false,
     "production_data_writes": false,
     "r2_changes": false
+  },
+  "countdown_profile_route_followup": {
+    "implementation": "Each Countdown Inspector control exposes the actual element.update command and its full nested Page Model key under props.countdown.",
+    "file": "tests/browser/editor-countdown.test.js",
+    "targeted_chromium": "PASS 2/2 at 390px (Europe/Budapest) and 1366px (America/New_York)",
+    "routes_asserted": [
+      "Event title → element.update / props.countdown.title",
+      "Event time → element.update / props.countdown.targetISO",
+      "Finish message → element.update / props.countdown.finishText",
+      "Show seconds → element.update / props.countdown.showSeconds"
+    ],
+    "lifecycle": "Assertions run inside the existing real Countdown flow covering timezone/DST validation, composition and invalid-input guards, Canvas output, Undo/Redo, draft Save isolation, separate Publish and public desktop/mobile rendering."
   }
 }

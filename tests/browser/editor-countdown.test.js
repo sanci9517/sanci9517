@@ -54,6 +54,9 @@ for(const [width,timezoneId,gap,overlapISO,overlapLocal] of [[390,'Europe/Budape
  await editor.locator('.inspector-tabs button').nth(1).click();
  assert.equal(await editor.locator('.countdown-inspector h3').textContent(),'Visszaszámláló');
  const field=editor.locator('.countdown-inspector');
+ const countdownRoutes=await field.locator('[data-inspector-command]').evaluateAll(rows=>rows.map(row=>({command:row.dataset.inspectorCommand,key:row.dataset.inspectorKey})));
+ assert.deepEqual(countdownRoutes.map(route=>route.key),['props.countdown.title','props.countdown.targetISO','props.countdown.finishText','props.countdown.showSeconds']);
+ assert.ok(countdownRoutes.every(route=>route.command==='element.update'),'each Countdown field exposes its actual element.update route');
  const setText=async(name,value)=>{const input=field.getByRole('textbox',{name});await input.fill(value);await input.press('Tab')};
  await setText('Esemény neve','Élő premier <script>alert(1)</script>');
  await setText('Lejáratkor megjelenő üzenet','Már élőben!');
