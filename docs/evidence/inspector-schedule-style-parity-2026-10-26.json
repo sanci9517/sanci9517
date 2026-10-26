@@ -23,18 +23,18 @@
   },
   "github": {
     "runtime_commit": "6db98a43ebeb8126e1d9a0be0e73f9b823605dff",
-    "latest_verified_head": "b70463e8dea60e06fb5ebe2bb551dffe29ca9863",
+    "latest_verified_head": "63693edc725acb184835847b0d2421a33ff894f5",
     "branch": "v2/foundation",
-    "checks": "6/6 PASS: Workers Builds, source-audit, twitch-integration, verify, editor-core, canonical-plan.",
-    "editor_core": "PASS; editor unit 134/134, Editor browser layout 87/87, schedule 9/9, TypeScript and remaining job steps successful."
+    "checks": "6/6 PASS on the latest branch head: Workers Builds, source-audit, twitch-integration, verify, editor-core, canonical-plan.",
+    "editor_core": "PASS; Editor unit 134/134, Editor browser layout 87/87 (including the all-PARTIAL type route/lifecycle case), schedule 9/9, TypeScript and remaining workflow steps successful."
   },
   "production": {
-    "deployment_id": "baebff05-b160-4b91-804c-5acb3a3455fe",
-    "worker_version_id": "74e8907d-54e7-4f40-b8c8-c68e50f8aeb7",
+    "deployment_id": "04b92801-4e3a-4ad1-9b7d-b0285071cb81",
+    "worker_version_id": "25e327fa-046d-4aea-a3fe-f421d965ddaa",
     "traffic_percent": 100,
     "worker_script_etag": "0afd1da0c52bcc5e558e12adeb9888aea6d7df03d5e070c2184b4920dd825bc0",
-    "live_index_and_app": "HTTP 200; production editor index contains new cache key; app.js SHA-256 byte-matches local source (1658ae72f45851a7cae827b39e3b54bdd2dca65e7eabf8d68440831a5267044b).",
-    "health": "/api/health and /api/db-health both HTTP 200; D1 read-only health reports connected."
+    "live_index_and_app": "After the latest automatic rollout, both assets returned HTTP 200 and byte-matched the runtime source; index SHA-256 7b7abaa77976be11e6b606ff82e81a611df04600c28755ed6c4771aac51d7277, app.js SHA-256 1658ae72f45851a7cae827b39e3b54bdd2dca65e7eabf8d68440831a5267044b.",
+    "health": "After the latest automatic rollout, /api/health and /api/db-health both returned HTTP 200; D1 health reported connected (read-only)."
   },
-  "scope": "Runtime Inspector fix deployed. The later partial-type, lifecycle and navigation timeout updates are test-only. No D1 migration or production data write, no R2 deletion. Full 77.44.7.A and user acceptance remain open."
+  "scope": "Runtime Inspector fix from commit 6db98a43 is deployed. Follow-up commits 78d730d1, b70463e8, and 63693edc update browser tests and canonical evidence only. No D1 migration or production data write, no R2 deletion. Full 77.44.7.A and user acceptance remain open."
 }
