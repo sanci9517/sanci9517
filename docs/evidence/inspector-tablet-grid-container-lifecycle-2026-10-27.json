@@ -45,9 +45,9 @@
     "git_diff_check": "Pending post-implementation validation"
   },
   "production_observation": {
-    "deployment_id": "9ad9d416-393f-467d-a498-ac239aed0240",
-    "version_id": "b21f1527-b1fa-4d00-abff-dfa6672453bf",
-    "version_number": 3627,
+    "deployment_id": "1aa9b213-c3b4-4935-bc1c-cbc5d54ec563",
+    "version_id": "f625abff-09c1-432f-9167-4dd2a7c094f1",
+    "version_number": 3629,
     "traffic_percentage": 100,
     "worker_etag": "0afd1da0c52bcc5e558e12adeb9888aea6d7df03d5e070c2184b4920dd825bc0",
     "previous_worker_etag": "0afd1da0c52bcc5e558e12adeb9888aea6d7df03d5e070c2184b4920dd825bc0",
@@ -56,15 +56,15 @@
     "database_connected": true,
     "editor_index_sha256_live": "7b7abaa77976be11e6b606ff82e81a611df04600c28755ed6c4771aac51d7277",
     "editor_index_sha256_source": "7b7abaa77976be11e6b606ff82e81a611df04600c28755ed6c4771aac51d7277",
-    "verified_after_commit": "99c146d2ce344dbd8780b0aa197bdc466092a55f",
+    "verified_after_commit": "eddc4c980786eded03fad6c6176c9c8af8b634c6",
     "runtime_source_changed": false,
     "production_data_changed": false,
     "database_migration_run": false,
     "r2_changed": false
   },
   "release": {
-    "push": "Pending final implementation commit",
-    "github_commit_statuses": "Pending final implementation commit",
+    "push": "Verified fast-forward to origin/v2/foundation at eddc4c980786eded03fad6c6176c9c8af8b634c6",
+    "github_commit_statuses": "At verification, GitHub returned five checks: canonical-plan and source-audit completed success; verify, twitch-integration, and editor-core were in progress.",
     "direct_deployment": "No manual deploy; the repository's automatic pipeline created the deployment above. Worker ETag is unchanged from the prior deployed version."
   },
   "limitations": [
