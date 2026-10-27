@@ -144,5 +144,103 @@ test('all PARTIAL types preserve mobile all-corner radius through Save, Publish 
   await viewer.setViewportSize({width:1366,height:900});
   await viewer.reload();
   for(const {type,id} of editableNodes)assert.equal(await publicNode(id).evaluate(el=>getComputedStyle(el).borderTopLeftRadius),desktopBaseline[id],`${type}: mobile reset Publish preserves desktop radius`);
+
+  // Repeat the complete lifecycle for the four independent corner fields.
+  const individualCorners=[
+    {id:'radius.topLeft',key:'borderTopLeftRadius',css:'borderTopLeftRadius'},
+    {id:'radius.topRight',key:'borderTopRightRadius',css:'borderTopRightRadius'},
+    {id:'radius.bottomRight',key:'borderBottomRightRadius',css:'borderBottomRightRadius'},
+    {id:'radius.bottomLeft',key:'borderBottomLeftRadius',css:'borderBottomLeftRadius'}
+  ];
+  const readCorners=el=>{const css=getComputedStyle(el);return{borderTopLeftRadius:css.borderTopLeftRadius,borderTopRightRadius:css.borderTopRightRadius,borderBottomRightRadius:css.borderBottomRightRadius,borderBottomLeftRadius:css.borderBottomLeftRadius}};
+  const desktopPublicCorners=Object.fromEntries(await Promise.all(editableNodes.map(async({id})=>[id,await publicNode(id).evaluate(readCorners)])));
+  await viewer.setViewportSize({width:390,height:900});
+  await viewer.reload();
+  const mobileCornerBaseline=Object.fromEntries(await Promise.all(editableNodes.map(async({id})=>[id,await publicNode(id).evaluate(readCorners)])));
+  const cornerValues=Object.fromEntries(editableNodes.map(({id},index)=>[id,individualCorners.map((_,cornerIndex)=>String(4+((index+cornerIndex*2)%7)*2))]));
+  for(const {type,id} of editableNodes){
+    const canvasNode=editor.locator(`.node[data-node-id="${id}"]`);
+    await canvasNode.evaluate(el=>el.click());
+    await editor.locator('.inspector-tabs button').first().click();
+    const group=inspector.locator('.inspector-group').filter({hasText:'Lekerekítés'});
+    const title=group.locator(':scope > .inspector-group-title');
+    if(await title.getAttribute('aria-expanded')==='false')await title.click();
+    for(const [cornerIndex,property] of individualCorners.entries()){
+      const field=inspector.locator(`[data-property-id="${property.id}"]`);
+      assert.equal(await field.getAttribute('data-property-command'),'responsive.set',`${type}/${property.id}: responsive command`);
+      assert.equal(await field.getAttribute('data-property-key'),property.key,`${type}/${property.id}: Page Model key`);
+      const input=field.locator('.dimension-controls input[type="number"]');
+      await input.fill(cornerValues[id][cornerIndex]);await input.press('Tab');
+      assert.equal(await canvasNode.evaluate((el,key)=>getComputedStyle(el)[key],property.css),`${cornerValues[id][cornerIndex]}px`,`${type}/${property.id}: mobile corner reaches Canvas`);
+    }
+  }
+  await editor.locator('#save').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+  for(const {type,id} of editableNodes){
+    for(const [cornerIndex,property] of individualCorners.entries()){
+      assert.equal(draft.pages[pageId].nodes[id].responsive.mobile[property.key],`${cornerValues[id][cornerIndex]}px`,`${type}/${property.id}: Save stores mobile corner`);
+      assert.equal(published.pages[pageId].nodes[id].responsive.mobile?.[property.key],undefined,`${type}/${property.id}: Save remains draft-only`);
+    }
+  }
+  await viewer.reload();
+  for(const {type,id} of editableNodes)assert.deepEqual(await publicNode(id).evaluate(readCorners),mobileCornerBaseline[id],`${type}: draft Save preserves public mobile corners`);
+  await editor.reload({waitUntil:'domcontentloaded'});
+  await editor.locator('.canvas-device-btn[data-device="mobile"]').click();
+  for(const {type,id} of editableNodes){
+    await editor.locator(`.node[data-node-id="${id}"]`).evaluate(el=>el.click());
+    await editor.locator('.inspector-tabs button').first().click();
+    for(const [cornerIndex,property] of individualCorners.entries())assert.equal(await inspector.locator(`[data-property-id="${property.id}"] input[type="number"]`).inputValue(),cornerValues[id][cornerIndex],`${type}/${property.id}: Editor reload restores corner`);
+  }
+  await editor.locator('#publish').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
+  await viewer.reload();
+  for(const {type,id} of editableNodes){
+    const expected=Object.fromEntries(individualCorners.map(({css},index)=>[css,`${cornerValues[id][index]}px`]));
+    assert.deepEqual(await publicNode(id).evaluate(readCorners),expected,`${type}: explicit Publish applies all four mobile corners`);
+  }
+  await viewer.setViewportSize({width:1366,height:900});
+  await viewer.reload();
+  for(const {type,id} of editableNodes)assert.deepEqual(await publicNode(id).evaluate(readCorners),desktopPublicCorners[id],`${type}: mobile Publish preserves desktop corner CSS`);
+  await editor.locator('.canvas-device-btn[data-device="desktop"]').click();
+  const resetDesktopCanvas=Object.fromEntries(await Promise.all(editableNodes.map(async({id})=>[id,await editor.locator(`.node[data-node-id="${id}"]`).evaluate(readCorners)])));
+  await editor.locator('.canvas-device-btn[data-device="mobile"]').click();
+  await viewer.setViewportSize({width:390,height:900});
+  await viewer.reload();
+  for(const {type,id} of editableNodes){
+    const canvasNode=editor.locator(`.node[data-node-id="${id}"]`);
+    await canvasNode.evaluate(el=>el.click());
+    await editor.locator('.inspector-tabs button').first().click();
+    const group=inspector.locator('.inspector-group').filter({hasText:'Lekerekítés'});
+    const title=group.locator(':scope > .inspector-group-title');
+    if(await title.getAttribute('aria-expanded')==='false')await title.click();
+    for(const property of individualCorners){
+      const reset=group.locator(`.property-reset[data-property-key="${property.key}"]`);
+      assert.equal(await reset.count(),1,`${type}/${property.id}: mobile inheritance reset exists`);
+      assert.equal(await reset.getAttribute('data-property-command'),'responsive.set',`${type}/${property.id}: reset uses responsive command`);
+      await reset.click();
+    }
+    assert.deepEqual(await canvasNode.evaluate(readCorners),resetDesktopCanvas[id],`${type}: corner reset restores desktop Canvas values`);
+  }
+  await editor.locator('#save').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+  for(const {type,id} of editableNodes)for(const [cornerIndex,property] of individualCorners.entries()){
+    assert.equal(draft.pages[pageId].nodes[id].responsive.mobile[property.key],undefined,`${type}/${property.id}: reset Save removes draft override`);
+    assert.equal(published.pages[pageId].nodes[id].responsive.mobile[property.key],`${cornerValues[id][cornerIndex]}px`,`${type}/${property.id}: reset Save retains public override`);
+  }
+  await viewer.reload();
+  for(const {type,id} of editableNodes){
+    const expected=Object.fromEntries(individualCorners.map(({css},index)=>[css,`${cornerValues[id][index]}px`]));
+    assert.deepEqual(await publicNode(id).evaluate(readCorners),expected,`${type}: reset Save leaves mobile public corners in place`);
+  }
+  await editor.locator('#publish').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
+  await viewer.reload();
+  for(const {type,id} of editableNodes){
+    assert.deepEqual(await publicNode(id).evaluate(readCorners),desktopPublicCorners[id],`${type}: reset Publish restores inherited public corners`);
+    for(const property of individualCorners)assert.equal(published.pages[pageId].nodes[id].responsive.mobile[property.key],undefined,`${type}/${property.id}: reset Publish removes public override`);
+  }
+  await viewer.setViewportSize({width:1366,height:900});
+  await viewer.reload();
+  for(const {type,id} of editableNodes)assert.deepEqual(await publicNode(id).evaluate(readCorners),desktopPublicCorners[id],`${type}: mobile reset Publish preserves desktop public corners`);
   assert.deepEqual(errors,[],'radius lifecycle must not produce Editor page errors');
 });

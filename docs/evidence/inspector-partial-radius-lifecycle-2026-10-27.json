@@ -1,7 +1,7 @@
 {
   "date": "2026-10-27",
   "plan_cursor": "77.44.7.A",
-  "scope": "Verify mobile radius.all through the real Inspector, Canvas, draft Save, Editor reload, explicit Publish and inheritance reset for all 44 editable non-root PARTIAL types.",
+  "scope": "Verify all five responsive radius Inspector fields through mobile Canvas, draft Save, Editor reload, explicit Publish and inheritance reset for all 44 editable non-root PARTIAL types.",
   "test_file": "tests/browser/editor-inspector-partial-radius-lifecycle.test.js",
   "runtime_changed": false,
   "initial_regression": {
@@ -13,15 +13,16 @@
     "tests": 1,
     "passed": 1,
     "failed": 0,
-    "duration_ms": 72239
+    "duration_ms": 152605
   },
   "coverage": [
-    "All 44 editable non-root PARTIAL types expose radius.all -> responsive.set / borderRadius.",
-    "Distinct mobile all-corner radii render in Canvas and persist in the mobile Page Model after draft Save.",
-    "Draft Save leaves published mobile CSS unchanged; all saved values survive Editor reload.",
-    "Explicit Publish applies the expected computed mobile radius to all 44 public elements.",
-    "Mobile Publish leaves desktop public radius values unchanged.",
-    "Mobile reset restores the desktop Canvas breakpoint value; reset Save leaves public mobile CSS unchanged; separate Publish restores public desktop inheritance on mobile."
+    "All 44 editable non-root PARTIAL types expose radius.all plus radius.topLeft, radius.topRight, radius.bottomRight and radius.bottomLeft through their exact responsive.set commands and Page Model keys.",
+    "Distinct mobile values for all five radius fields render on Canvas and persist in the matching mobile Page Model fields after draft Save.",
+    "Draft Save leaves published mobile CSS unchanged; every field survives Editor reload.",
+    "Explicit Publish applies the expected computed mobile all-corner and individual-corner values for all 44 types.",
+    "Mobile Publish leaves all four desktop public corner-radius values unchanged.",
+    "Resetting all five mobile radius fields restores desktop Canvas inheritance; reset Save leaves published mobile CSS unchanged; separate Publish restores public desktop inheritance on mobile.",
+    "Canvas breakpoint baselines and public CSS baselines are measured independently for each type."
   ],
   "additional_checks": {
     "editor_unit_suite": "PASS 10/10 test files.",
@@ -43,7 +44,6 @@
     "github_ci_status": "GitHub combined status endpoint returned no statuses and commit workflow-run query returned no runs for 34c58b5c; CI unavailable/unverified."
   },
   "limitations": [
-    "This proves the all-corner radius field across PARTIAL types, not all four individual corner fields across every type.",
     "Full 77.44.7.A and physical-device acceptance remain open."
   ]
 }
