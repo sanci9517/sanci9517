@@ -1,7 +1,7 @@
 {
   "date": "2026-10-27",
   "plan_cursor": "77.44.7.A",
-  "scope": "Verify tablet-scoped Inspector hover and focus-visible states through Canvas preview, draft Save, Editor reload, explicit Publish, public CSS, inheritance reset, Undo/Redo, keyboard reachability, and desktop/mobile isolation",
+  "scope": "Verify all ten tablet hover state properties plus focus-visible through Inspector routes, Canvas preview, draft Save, Editor reload, explicit Publish, public CSS, inheritance reset, Undo/Redo, keyboard reachability, and desktop/mobile isolation",
   "runtime_changed": false,
   "test_file": "tests/browser/editor-inspector-tablet-state-lifecycle.test.js",
   "test_result": {
@@ -9,15 +9,15 @@
     "tests": 1,
     "passed": 1,
     "failed": 0,
-    "duration_ms": 11135,
-    "scenario_duration_ms": 11135
+    "duration_ms": 25183,
+    "scenario_duration_ms": 25183
   },
   "coverage": [
-    "tablet hover backgroundColor exposes states.set / backgroundColor and previews the saved override on Canvas",
-    "draft Save stores states.hover.tablet while published tablet state remains unchanged and desktop hover remains independent",
+    "all ten Inspector state fields expose states.set, the expected property ID/key, and tablet Canvas CSS updates",
+    "all ten tablet hover values persist in the draft Page Model; published tablet state remains unchanged until Publish",
     "Editor reload preserves the tablet hover control value",
     "tablet public hover inherits the published desktop value until explicit Publish",
-    "explicit Publish applies the tablet hover style; desktop retains its own style and mobile inherits the tablet value",
+    "explicit Publish applies all ten tablet hover styles to public CSS; desktop preserves its independent styles and mobile inherits tablet values",
     "tablet hover reset uses states.set / backgroundColor; Undo restores the override and Redo restores desktop inheritance",
     "draft reset Save does not alter published tablet state; explicit reset Publish restores desktop inheritance on tablet and mobile",
     "tablet focus-visible state uses states.set / backgroundColor and survives draft Save and Editor reload",
@@ -26,6 +26,7 @@
     "browser page errors remain empty"
   ],
   "additional_checks": {
+    "editor_unit_suite": "PASS 135/135 (all 10 test files); rerun with the environment's permitted network execution resolved a transient subprocess EPERM from the first sandboxed attempt.",
     "state_tokens_unit": "PASS",
     "inspector_richtext_unit": "PASS",
     "typecheck": "PASS",
@@ -41,11 +42,11 @@
     "production_data_changed": false,
     "database_migration_run": false,
     "r2_changed": false,
-    "push": "Fast-forward pushed and verified on origin/v2/foundation at ea9b33e0eb3992404add4bfd52d6c701c4757436.",
-    "github_ci_status": "At verification, Twitch Integration, F0, and active-point audit had started; Canonical Plan and Editor Core were queued for commit ea9b33e0eb3992404add4bfd52d6c701c4757436. No failure was reported. The immediately preceding tablet corner-radius commit completed all five workflows successfully."
+    "push": "This expanded test/evidence revision is ready for a normal fast-forward push. GitHub connector comparison verified v2/foundation is identical to base 8138157e50800b756c5db4a2e7e2ed7cffbf04e7.",
+    "github_ci_status": "Pending push of this revision."
   },
   "limitations": [
     "Local HTTP mock and Chromium viewport; not physical-device acceptance.",
-    "The complete Inspector matrix and 77.44.7.A remain OPEN / NOT CERTIFIED."
+    "The complete Inspector matrix and physical-device acceptance remain OPEN / NOT CERTIFIED."
   ]
 }
