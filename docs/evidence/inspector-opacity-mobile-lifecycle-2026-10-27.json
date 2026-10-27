@@ -38,7 +38,7 @@
   },
   "release": {
     "runtime_source_changed": false,
-    "production_deployment": "Cloudflare automatic Worker deployment observed after push: deployment 9fed3cd4-b86b-4994-883d-013ef497cc78, version fd8d2aa4-1590-409d-9bba-30fc4dd817fd (#3598), 100% traffic. Worker script ETag remains 0afd1da0c52bcc5e558e12adeb9888aea6d7df03d5e070c2184b4920dd825bc0.",
+    "production_deployment": "Latest verified after the border color test push: deployment 258851ee-779b-47a5-95a0-9ea3dfc7fde7, version 13e4cc4d-b080-44eb-a4c9-f52c5bd53b0c (#3599), 100% traffic. No newer Worker deployment appeared after this test-only commit. Worker script ETag remains 0afd1da0c52bcc5e558e12adeb9888aea6d7df03d5e070c2184b4920dd825bc0.",
     "production_smoke": {
       "api_health": "200; ok=true",
       "api_db_health": "200; D1 connected=true",
@@ -49,7 +49,7 @@
     "production_data_changed": false,
     "database_migration_run": false,
     "r2_changed": false,
-    "push": "fast-forward to v2/foundation; commit 1307d57430ae0301f96f914fcd74f93b3865d7e9",
+    "push": "fast-forward to v2/foundation; commit 49c0f67fa52447b31e59151c9f35838501d43589",
     "github_commit_statuses": "No combined status checks were returned for this SHA."
   },
   "limitations": [
