@@ -1,0 +1,57 @@
+{
+  "date": "2026-10-27",
+  "plan_cursor": "77.44.7.A",
+  "scope": "Verify seven mobile typography Inspector fields through Canvas, draft Save, reload, explicit Publish, public CSS and desktop isolation",
+  "runtime_changed": false,
+  "test_file": "tests/browser/editor-inspector-breakpoint-lifecycle.test.js",
+  "test_result": {
+    "command": "node --test tests/browser/editor-inspector-breakpoint-lifecycle.test.js",
+    "tests": 1,
+    "passed": 1,
+    "failed": 0,
+    "duration_ms": 24517,
+    "scenario_duration_ms": 23894
+  },
+  "properties": [
+    {"id":"typography.textWrap","command":"responsive.set","key":"textWrap","mobile_value":"nowrap"},
+    {"id":"typography.overflowWrap","command":"responsive.set","key":"overflowWrap","mobile_value":"anywhere"},
+    {"id":"typography.wordSpacing","command":"responsive.set","key":"wordSpacing","mobile_value":"2px"},
+    {"id":"typography.textIndent","command":"responsive.set","key":"textIndent","mobile_value":"12px"},
+    {"id":"typography.textShadow","command":"responsive.set","key":"textShadow","mobile_value":"0 2px 8px #0006"},
+    {"id":"typography.fontSize","command":"responsive.set","key":"fontSize","mobile_value":"24px"},
+    {"id":"typography.textAlign","command":"responsive.set","key":"textAlign","mobile_value":"center"}
+  ],
+  "coverage": [
+    "all seven typed Inspector controls expose their actual responsive command and Page Model key",
+    "mobile Canvas computed CSS matches the edited typography values",
+    "draft Save leaves published mobile CSS unchanged",
+    "all seven mobile values survive editor reload",
+    "separate Publish updates the public mobile CSS",
+    "desktop Canvas and public typography preserve their independent preexisting values",
+    "existing tablet/desktop/mobile background inheritance, reset and geometry assertions remain green",
+    "browser page errors remain empty"
+  ],
+  "additional_checks": {
+    "editor_unit": "135/135 PASS",
+    "typecheck": "PASS",
+    "canonical_plan": "PASS; cursor remains 77.44.7.A and acceptance NOT_CERTIFIED",
+    "active_point_audit": "PASS",
+    "traceability": "396 mappings PASS",
+    "git_diff_check": "PASS"
+  },
+  "release": {
+    "runtime_source_changed": false,
+    "d1_migration_preflight": "No migrations to apply! (read-only)",
+    "wrangler_deploy_dry_run": "PASS; 159 assets, 287.10 KiB; no upload",
+    "production_data_changed": false,
+    "database_migration_run": false,
+    "r2_changed": false,
+    "push": "pending verification",
+    "production_deployment": "pending verification",
+    "github_commit_statuses": "pending verification"
+  },
+  "limitations": [
+    "Local HTTP mock and Chromium viewport; not physical-device acceptance.",
+    "The full 77.44.7.A property matrix and Editor acceptance remain open."
+  ]
+}
