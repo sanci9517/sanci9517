@@ -184,6 +184,49 @@ test('every PARTIAL type renders Inspector routes and preserves Save versus Publ
   await viewer.reload();
   for(const [index,{type,id}] of editableNodes.entries())assert.equal(await publicNode(id).evaluate(el=>getComputedStyle(el).backgroundColor),asRgb(colors[index]),`${type}: mobile Publish preserves desktop public color`);
 
+  // Resetting each mobile override must inherit the already-published
+  // desktop value, while the old mobile publication remains live until the
+  // explicit Publish action.
+  await viewer.setViewportSize({width:390,height:900});
+  await viewer.reload();
+  for(const [index,{type,id}] of editableNodes.entries()){
+    const canvasNode=editor.locator(`.node[data-node-id="${id}"]`);
+    await canvasNode.evaluate(el=>el.click());
+    await editor.locator('.inspector-tabs button').first().click();
+    const field=inspector.locator('.typed-inspector-field[data-property-id="background.color"]');
+    const group=field.locator('xpath=ancestor::section[1]'),title=group.locator(':scope > .inspector-group-title');
+    if(await title.getAttribute('aria-expanded')==='false')await title.click();
+    const reset=group.locator('.property-reset[data-property-key="backgroundColor"]');
+    assert.equal(await reset.count(),1,`${type}: mobile background color exposes its inheritance reset`);
+    assert.equal(await reset.getAttribute('data-property-command'),'responsive.set',`${type}: mobile reset uses the responsive command`);
+    await reset.click();
+    assert.equal(await canvasNode.evaluate(el=>getComputedStyle(el).backgroundColor),asRgb(colors[index]),`${type}: mobile reset restores the desktop Canvas color`);
+  }
+  await editor.locator('#save').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+  for(const [index,{type,id}] of editableNodes.entries()){
+    assert.equal(draft.pages[pageId].nodes[id].responsive.mobile.backgroundColor,undefined,`${type}: mobile reset removes the draft override`);
+    assert.equal(published.pages[pageId].nodes[id].responsive.mobile.backgroundColor,mobileColors[index],`${type}: reset Save preserves published mobile color`);
+    assert.equal(draft.pages[pageId].nodes[id].responsive.desktop.backgroundColor,colors[index],`${type}: mobile reset keeps the desktop draft value`);
+  }
+  await viewer.reload();
+  for(const [index,{type,id}] of editableNodes.entries())assert.equal(await publicNode(id).evaluate(el=>getComputedStyle(el).backgroundColor),asRgb(mobileColors[index]),`${type}: mobile reset Save leaves published CSS in place`);
+  await editor.reload({waitUntil:'domcontentloaded'});
+  await editor.locator('.canvas-device-btn[data-device="mobile"]').click();
+  for(const [index,{type,id}] of editableNodes.entries()){
+    await editor.locator(`.node[data-node-id="${id}"]`).evaluate(el=>el.click());
+    await editor.locator('.inspector-tabs button').first().click();
+    const field=inspector.locator('.typed-inspector-field[data-property-id="background.color"]');
+    assert.equal(await field.locator('input[type="color"]').inputValue(),colors[index],`${type}: reset mobile color reloads as inherited desktop value`);
+  }
+  await editor.locator('#publish').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
+  await viewer.reload();
+  for(const [index,{type,id}] of editableNodes.entries()){
+    assert.equal(published.pages[pageId].nodes[id].responsive.mobile.backgroundColor,undefined,`${type}: reset Publish removes public mobile override`);
+    assert.equal(await publicNode(id).evaluate(el=>getComputedStyle(el).backgroundColor),asRgb(colors[index]),`${type}: reset Publish restores inherited desktop public color on mobile`);
+  }
+
   // The shared responsive visibility controls are also part of each type's
   // Inspector contract. Exercise the mobile route for every partial type and
   // keep Save isolated from the published page until the explicit Publish.

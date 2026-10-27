@@ -1,7 +1,7 @@
 {
   "date": "2026-10-27",
   "plan_cursor": "77.44.7.A",
-  "scope": "Add full responsive mobile background-color Inspector lifecycle and desktop isolation to every editable non-root PARTIAL type.",
+  "scope": "Add full mobile background-color edit, Save/reload, Publish and inherited reset lifecycle, with desktop isolation, for every editable non-root PARTIAL type.",
   "runtime_changed": false,
   "test_file": "tests/browser/editor-inspector-partial-types.test.js",
   "test_result": {
@@ -9,15 +9,19 @@
     "tests": 1,
     "passed": 1,
     "failed": 0,
-    "duration_ms": 130734,
-    "scenario_duration_ms": 130035
+    "duration_ms": 154697,
+    "scenario_duration_ms": 153950
   },
   "coverage": [
     "all 44 editable non-root PARTIAL types edit the real background.color Inspector control on mobile through responsive.set/backgroundColor",
     "each mobile override updates Canvas CSS and the draft Page Model without changing the published mobile value or the published desktop color",
     "all 44 mobile values survive Editor reload and are confirmed in Inspector controls before Publish",
     "explicit Publish applies each mobile color to public CSS while retaining its independent desktop override",
-    "switching the public viewport back to desktop confirms that mobile Publish did not replace any desktop color"
+    "switching the public viewport back to desktop confirms that mobile Publish did not replace any desktop color",
+    "each mobile background override exposes the responsive.set inheritance reset in its Inspector group and reset restores the desktop color in Canvas",
+    "draft reset Save removes the mobile draft override while retaining the published mobile color and desktop value",
+    "mobile reset value survives Editor reload as the inherited desktop Inspector color, and public mobile CSS stays unchanged until separate Publish",
+    "reset Publish removes all mobile color overrides and public mobile CSS inherits each type’s independent desktop color"
   ],
   "additional_checks": {
     "editor_unit_suite": "PASS 10/10 test files.",
@@ -34,8 +38,8 @@
     "production_data_changed": false,
     "database_migration_run": false,
     "r2_changed": false,
-    "push": "Commit ed6f265ff9c1a0072b68b2b99ac94e951c1ecfe3 was pushed by normal fast-forward to origin/v2/foundation; GitHub compare confirms one commit ahead of 7c2d1e1c and git ls-remote reports the same branch head.",
-    "github_ci_status": "The GitHub combined-status endpoint returned no checks for ed6f265f, and the commit workflow-run query returned no PR-triggered runs. CI result is unavailable/unverified."
+    "push": "Pending: mobile PARTIAL lifecycle/reset test and evidence are not yet committed or pushed.",
+    "github_ci_status": "The prior mobile PARTIAL lifecycle commit has no reported CI checks; the updated reset-lifecycle commit status is pending verification."
   },
   "limitations": [
     "This is responsive field-lifecycle evidence for the PARTIAL type matrix, not full type/property acceptance or physical-device acceptance."
