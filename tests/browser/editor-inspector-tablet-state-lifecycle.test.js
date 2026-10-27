@@ -171,9 +171,10 @@ test('tablet hover and focus-visible Inspector states save, publish, reset, and 
   await reloadViewer();
   for(const [key] of hoverFields)assert.equal(published.pages[pageId].nodes[nodeId].states['focus-visible'].tablet[key],focusStyles[key],`explicit Publish stores tablet focus-visible ${key}`);
   assert.equal(await publicNode().getAttribute('tabindex'),'0','published tablet focus-visible state makes the text node keyboard reachable');
+  await publicNode().hover();
   await viewer.keyboard.press('Tab');
-  const publishedFocus=await publicNode().evaluate(el=>{el.focus();const css=getComputedStyle(el);return{color:css.color,backgroundColor:css.backgroundColor,backgroundImage:css.backgroundImage,borderColor:css.borderColor,boxShadow:css.boxShadow,opacity:css.opacity,textDecorationLine:css.textDecorationLine,fontWeight:css.fontWeight,rotate:css.rotate,scale:css.scale,focusVisible:el.matches(':focus-visible'),tabIndex:el.tabIndex}});
-  assert.deepEqual(publishedFocus,{...focusExpected,focusVisible:true,tabIndex:0},'keyboard focus activates all published tablet focus-visible styles');
+  const publishedFocus=await publicNode().evaluate(el=>{el.focus();const css=getComputedStyle(el);return{color:css.color,backgroundColor:css.backgroundColor,backgroundImage:css.backgroundImage,borderColor:css.borderColor,boxShadow:css.boxShadow,opacity:css.opacity,textDecorationLine:css.textDecorationLine,fontWeight:css.fontWeight,rotate:css.rotate,scale:css.scale,hover:el.matches(':hover'),focusVisible:el.matches(':focus-visible'),tabIndex:el.tabIndex}});
+  assert.deepEqual(publishedFocus,{...focusExpected,hover:true,focusVisible:true,tabIndex:0},'when hover and keyboard focus coincide, all published focus-visible styles win');
   await setViewerWidth(1366);
   assert.equal(await publicNode().getAttribute('tabindex'),null,'tablet focus-visible Publish does not add a desktop keyboard stop');
   await setViewerWidth(390);

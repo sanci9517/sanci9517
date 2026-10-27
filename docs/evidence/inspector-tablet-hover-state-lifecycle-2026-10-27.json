@@ -1,7 +1,7 @@
 {
   "date": "2026-10-27",
   "plan_cursor": "77.44.7.A",
-  "scope": "Verify all ten tablet hover and all ten focus-visible state properties through Inspector routes, Canvas preview, draft Save, Editor reload, explicit Publish, public CSS, every per-property inheritance reset with Undo/Redo, keyboard reachability, and desktop/mobile isolation",
+  "scope": "Verify all ten tablet hover and all ten focus-visible state properties through Inspector routes, Canvas preview, draft Save, Editor reload, explicit Publish, public CSS, every per-property inheritance reset with Undo/Redo, combined hover/keyboard focus precedence, keyboard reachability, and desktop/mobile isolation",
   "runtime_changed": false,
   "test_file": "tests/browser/editor-inspector-tablet-state-lifecycle.test.js",
   "test_result": {
@@ -9,15 +9,16 @@
     "tests": 1,
     "passed": 1,
     "failed": 0,
-    "duration_ms": 88385,
-    "scenario_duration_ms": 88385
+    "duration_ms": 35862,
+    "scenario_duration_ms": 35862
   },
   "coverage": [
     "all ten hover and focus-visible Inspector fields expose states.set and the expected property ID/key and update tablet Canvas CSS",
     "all ten hover and focus-visible tablet values persist in the draft Page Model; published values remain unchanged until Publish",
     "Editor reload preserves the tablet hover control value",
     "tablet public hover inherits the published desktop value until explicit Publish",
-    "explicit Publish applies all ten hover and all ten keyboard-focus styles to public CSS; desktop preserves its independent styles and mobile inherits tablet values",
+    "explicit Publish applies all ten hover and all ten keyboard-focus styles to public CSS; keyboard focus-visible wins when hover is active at the same time",
+    "desktop preserves its independent styles and mobile inherits tablet values",
     "each of ten tablet hover and ten tablet focus-visible properties exposes its own states.set reset; reset, Undo, Redo, and restoration back to the original draft value all update Canvas CSS correctly",
     "draft reset Save does not alter published tablet state; explicit reset Publish restores desktop inheritance on tablet and mobile",
     "all ten tablet focus-visible properties survive draft Save and Editor reload",
@@ -43,8 +44,8 @@
     "production_data_changed": false,
     "database_migration_run": false,
     "r2_changed": false,
-    "push": "The all-hover, all-focus, and per-property reset revision e98003d7 was pushed by normal fast-forward from 453dfe28 to origin/v2/foundation. GitHub compare confirms the branch advanced by exactly one commit.",
-    "github_ci_status": "The GitHub combined-status endpoint returned no checks for e98003d7, and the commit workflow-run query returned no PR-triggered runs. CI result is unavailable/unverified at this check."
+    "push": "The full state/reset revision e98003d7 was pushed by normal fast-forward from 453dfe28 to origin/v2/foundation. The added concurrent hover+focus precedence check is locally validated and pending push.",
+    "github_ci_status": "The GitHub combined-status endpoint returned no checks for e98003d7, and the commit workflow-run query returned no PR-triggered runs. CI result is unavailable/unverified; combined-state coverage is not yet pushed."
   },
   "limitations": [
     "Local HTTP mock and Chromium viewport; not physical-device acceptance.",
