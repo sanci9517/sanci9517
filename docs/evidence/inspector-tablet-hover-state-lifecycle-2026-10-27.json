@@ -42,8 +42,8 @@
     "production_data_changed": false,
     "database_migration_run": false,
     "r2_changed": false,
-    "push": "This expanded test/evidence revision is ready for a normal fast-forward push. GitHub connector comparison verified v2/foundation is identical to base 8138157e50800b756c5db4a2e7e2ed7cffbf04e7.",
-    "github_ci_status": "Pending push of this revision."
+    "push": "Commit f27c0cb7 was pushed with a successful normal fast-forward from 8138157e to origin/v2/foundation. GitHub compare confirms the branch is one commit ahead of the verified base.",
+    "github_ci_status": "The GitHub combined-status endpoint returned no checks for f27c0cb7, and the commit workflow-run query returned no PR-triggered runs. CI result is therefore unavailable/unverified at this check."
   },
   "limitations": [
     "Local HTTP mock and Chromium viewport; not physical-device acceptance.",
