@@ -38,9 +38,9 @@
     "production_data_changed": false,
     "database_migration_run": false,
     "r2_changed": false,
-    "commit": null,
-    "push": "Pending release verification.",
-    "github_ci_status": "Pending release verification."
+    "commit": "34c58b5c29a65f633c3f757ba31c8663a418382b",
+    "push": "PASS; normal fast-forward 36eb7aab..34c58b5c to origin/v2/foundation; remote ref verified at 34c58b5c29a65f633c3f757ba31c8663a418382b.",
+    "github_ci_status": "GitHub combined status endpoint returned no statuses and commit workflow-run query returned no runs for 34c58b5c; CI unavailable/unverified."
   },
   "limitations": [
     "This proves the all-corner radius field across PARTIAL types, not all four individual corner fields across every type.",
