@@ -102,7 +102,7 @@ if(n.type==='card'&&n.metadata?.cardContentVersion===1){
   const u=safeUrl(legacyImageSource(p)),cfg=legacyImagePresentation(p),caption=legacyImageCaption(p);
   if(!u)return `<div class="visual-editor-node visual-card" style="${st}">Kép</div>`;
   const image=`<img class="visual-image" style="object-fit:${cfg.fit};object-position:${cfg.objectPosition};aspect-ratio:${cfg.ratio};" src="${esc(u)}" alt="${esc(cfg.alt)}"${cfg.decorative?' role="presentation"':''} loading="${cfg.loading}">`;
-  return caption?`<figure class="visual-editor-node visual-image-figure" style="${st}margin:0;max-width:100%;"><span style="display:block;max-width:100%;">${image}</span><figcaption style="display:block;padding-top:.5em;font-size:.85em;opacity:.8;white-space:pre-wrap;overflow-wrap:anywhere;">${esc(caption)}</figcaption></figure>`:`<img class="visual-editor-node visual-image" style="${st}object-fit:${cfg.fit};object-position:${cfg.objectPosition};aspect-ratio:${cfg.ratio};" src="${esc(u)}" alt="${esc(cfg.alt)}"${cfg.decorative?' role="presentation"':''} loading="${cfg.loading}">`;
+  return caption?`<figure class="visual-editor-node visual-image-figure" style="margin:0;max-width:100%;${st}"><span style="display:block;max-width:100%;">${image}</span><figcaption style="display:block;padding-top:.5em;font-size:.85em;opacity:.8;white-space:pre-wrap;overflow-wrap:anywhere;">${esc(caption)}</figcaption></figure>`:`<img class="visual-editor-node visual-image" style="object-fit:${cfg.fit};object-position:${cfg.objectPosition};aspect-ratio:${cfg.ratio};${st}" src="${esc(u)}" alt="${esc(cfg.alt)}"${cfg.decorative?' role="presentation"':''} loading="${cfg.loading}">`;
 }if(n.type==='video'){
   const u=safeUrl(legacyPlayableSource(p)),cfg=legacyPlaybackSettings(p,{video:true}),poster=safeUrl(cfg.poster);
   return u?`<video class="visual-editor-node visual-video" style="${st}" src="${esc(u)}"${cfg.controls?' controls':''}${cfg.loop?' loop':''}${cfg.muted?' muted':''}${cfg.autoplay?' autoplay':''}${poster?` poster="${esc(poster)}"`:''} playsinline preload="metadata"></video>`:`<div class="visual-editor-node visual-card" style="${st}">Videó még nincs beállítva</div>`;
@@ -121,9 +121,13 @@ if(n.type==='card'&&n.metadata?.cardContentVersion===1){
  // shared Inspector border properties override it, as on versioned dividers.
  return `<hr class="visual-editor-node" style="border:0;border-top:1px solid rgba(255,255,255,.16);${st}">`;
 }if(n.type==='spacer'){
+ const hasExplicitSpacerSize=/(?:^|;)(?:height|min-height|max-height|aspect-ratio):/.test(st);
+ // Keep the legacy empty-space placeholder only when the Page Model has no
+ // explicit responsive size; otherwise the fallback would cap Inspector edits.
+ const legacyMinimum=hasExplicitSpacerSize?'':'min-height:60px;';
  return n.metadata?.spacerVersion===1
   ?`<div class="visual-editor-node visual-layout-managed visual-spacer" aria-hidden="true" style="min-height:0;${st}"></div>`
-  :`<div class="visual-editor-node" style="${st}min-height:60px"></div>`;
+  :`<div class="visual-editor-node" style="${legacyMinimum}${st}"></div>`;
 }if(managed&&LAYOUT_TYPES.includes(n.type))return `<section class="visual-editor-node visual-layout" style="${st}">${children}</section>`;return `<section class="visual-editor-node visual-card" style="${st}">${children||`<strong>${t}</strong>`}</section>`}
  function nodeHtml(page,id,managed=false){
   const node=page.nodes?.[id];if(!node)return '';managed=managed||isManagedLayout(node)||isAuthoredContent(node);

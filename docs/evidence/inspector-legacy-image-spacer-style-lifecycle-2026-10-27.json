@@ -1,0 +1,77 @@
+{
+  "date": "2026-10-27",
+  "plan_cursor": "77.44.7.A",
+  "scope": "Verify shared responsive Inspector styles on legacy captioned images and versionless spacers through Canvas, draft Save and explicit Publish; correct renderer fallback precedence defects.",
+  "test_file": "tests/browser/editor-decorative-elements.test.js",
+  "runtime_changed": true,
+  "initial_regressions": [
+    {
+      "element": "versionless captioned image",
+      "property": "spacing.margin",
+      "before_fix": "Inspector and Canvas showed margin-top 16px; draft Save preserved the public 0px baseline; explicit Publish still produced public margin-top 0px because the renderer appended margin:0 after shared styles."
+    },
+    {
+      "element": "versionless spacer",
+      "property": "size.height",
+      "before_fix": "Inspector and Canvas showed height 40px; draft Save preserved the public baseline; explicit Publish remained 60px because the renderer appended min-height:60px after shared styles."
+    }
+  ],
+  "fixes": [
+    {
+      "file": "public/assets/page-renderer.js",
+      "change": "Captioned image margin/max-width defaults and uncaptioned image media defaults now precede shared responsive Inspector CSS so explicit node styles take precedence."
+    },
+    {
+      "file": "public/assets/page-renderer.js",
+      "change": "The versionless Spacer's 60px placeholder minimum is emitted only when resolved styles have no explicit height, min-height, max-height or aspect-ratio. Explicit Inspector sizing remains authoritative while untouched legacy spacers retain their fallback appearance."
+    }
+  ],
+  "final_browser_tests": [
+    {
+      "command": "node --test tests/browser/editor-decorative-elements.test.js",
+      "tests": 1,
+      "passed": 1,
+      "failed": 0,
+      "duration_ms": 31333
+    },
+    {
+      "command": "node --test tests/browser/editor-legacy-media-parity.test.js",
+      "tests": 1,
+      "passed": 1,
+      "failed": 0,
+      "duration_ms": 43046
+    },
+    {
+      "command": "node --test tests/browser/editor-inspector-tablet-layout-lifecycle.test.js",
+      "tests": 1,
+      "passed": 1,
+      "failed": 0,
+      "duration_ms": 36448
+    }
+  ],
+  "additional_checks": {
+    "editor_unit_suite": "PASS 10/10 test files.",
+    "typecheck": "PASS.",
+    "syntax": "PASS for public/assets/page-renderer.js and tests/browser/editor-decorative-elements.test.js.",
+    "production_d1_migration_preflight": "PASS; read-only remote list reported No migrations to apply; no migration applied.",
+    "wrangler_dry_run": "PASS; 159 public assets, estimated 287.10 KiB (65.78 KiB gzip); dry-run exited without deploying.",
+    "canonical_plan": "Pending release record; 77.44.7.A remains OPEN / NOT CERTIFIED.",
+    "active_point_audit": "Pending release record.",
+    "traceability": "Pending release record.",
+    "git_diff_check": "Pending release record."
+  },
+  "release": {
+    "source_commit": null,
+    "push": "Pending fast-forward verification.",
+    "production_deployment": "Pending exact-version verification.",
+    "production_smoke": "Pending.",
+    "github_ci_status": "Pending.",
+    "production_data_changed": false,
+    "database_migration_run": false,
+    "r2_changed": false
+  },
+  "limitations": [
+    "This closes the legacy image margin and versionless Spacer size fallback paths; it does not certify all Inspector fields or all element types.",
+    "Full 77.44.7.A and physical-device acceptance remain open."
+  ]
+}

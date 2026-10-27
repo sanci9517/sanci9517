@@ -17,6 +17,12 @@ test('partial palette types and Divider/Spacer Inspector edits become public onl
  const legacyDivider=createNode('divider',{id:legacyDividerId,parentId:root,name:'Régi elválasztóvonal'});
  activePage(model).nodes[legacyDividerId]=legacyDivider;
  activePage(model).nodes[root].children.push(legacyDividerId);
+ const legacySpacerId='legacy-spacer-fixture';
+ const legacySpacer=createNode('spacer',{id:legacySpacerId,parentId:root,name:'Régi üres térköz'});
+ activePage(model).nodes[legacySpacerId]=legacySpacer;
+ activePage(model).nodes[root].children.push(legacySpacerId);
+ execute(model,{type:'element.add',payload:{type:'image',parentId:root,props:{src:'/fixture.svg',alt:'Feliratos kép',caption:'Képaláírás'}}});
+ const captionedImageId=model.selection.primaryId;
  let draft=structuredClone(model.document),published=structuredClone(draft),version=1;
  const posts=[],assetRoot=resolve(import.meta.dirname,'../../public');
  const server=createServer(async(req,res)=>{
@@ -213,5 +219,52 @@ test('partial palette types and Divider/Spacer Inspector edits become public onl
  await viewer.reload();
  await viewer.waitForFunction(id=>document.querySelector(`.visual-editor-node[data-node-id="${id}"]`),legacyDividerId);
  assert.deepEqual(await publicNode(legacyDividerId).evaluate(el=>{const css=getComputedStyle(el);return{width:css.borderTopWidth,style:css.borderTopStyle,color:css.borderTopColor}}),{width:'4px',style:'solid',color:'rgb(225, 29, 72)'},'legacy Divider explicit Publish preserves its shared responsive border edits');
+
+ // Captioned legacy images render as a figure. Its fallback margin must not
+ // override the shared responsive Inspector margin after explicit Publish.
+ await selectStyle(captionedImageId);
+ const imageMargin=editor.locator('.typed-inspector-field[data-property-id="spacing.margin"]');
+ assert.equal(await imageMargin.getAttribute('data-property-command'),'responsive.set');
+ assert.equal(await imageMargin.getAttribute('data-property-key'),'margin');
+ const marginGroup=imageMargin.locator('xpath=ancestor::section[1]'),marginTitle=marginGroup.locator(':scope > .inspector-group-title');
+ if(await marginTitle.getAttribute('aria-expanded')==='false')await marginTitle.click();
+ const imageMarginTop=imageMargin.locator('.typed-box-side input[type="number"]').first();
+ await imageMarginTop.fill('16');await imageMarginTop.press('Tab');
+ assert.equal(await canvasNode(captionedImageId).evaluate(el=>getComputedStyle(el).marginTop),'16px','captioned image Inspector margin reaches the Canvas');
+ const publicImageMargin=publicNode(captionedImageId);
+ assert.equal(await publicImageMargin.evaluate(el=>el.tagName.toLowerCase()),'figure','legacy image caption renders a public figure');
+ const publicImageMarginBaseline=await publicImageMargin.evaluate(el=>getComputedStyle(el).marginTop);
+ await editor.locator('#save').click();
+ await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+ assert.equal(draft.pages[pageId].nodes[captionedImageId].responsive.desktop.margin,'16px 0 0 0','draft Save stores the Inspector margin');
+ await viewer.reload();
+ assert.equal(await publicNode(captionedImageId).evaluate(el=>getComputedStyle(el).marginTop),publicImageMarginBaseline,'draft Save leaves published figure margin unchanged');
+ await editor.locator('#publish').click();
+ await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
+ await viewer.reload();
+ assert.equal(await publicNode(captionedImageId).evaluate(el=>getComputedStyle(el).marginTop),'16px','captioned image explicit Publish preserves its shared responsive Inspector margin');
+
+ // Versionless Spacer fallback height must yield to a responsive Inspector
+ // height instead of its historical 60px placeholder minimum.
+ await selectStyle(legacySpacerId);
+ const legacySpacerHeight=editor.locator('.typed-inspector-field[data-property-id="size.height"]');
+ assert.equal(await legacySpacerHeight.getAttribute('data-property-command'),'responsive.set');
+ assert.equal(await legacySpacerHeight.getAttribute('data-property-key'),'height');
+ const legacySpacerGroup=legacySpacerHeight.locator('xpath=ancestor::section[1]'),legacySpacerTitle=legacySpacerGroup.locator(':scope > .inspector-group-title');
+ if(await legacySpacerTitle.getAttribute('aria-expanded')==='false')await legacySpacerTitle.click();
+ await legacySpacerHeight.locator('.dimension-controls select').selectOption('px');
+ const legacySpacerHeightInput=legacySpacerHeight.locator('.dimension-controls input[type="number"]');
+ await legacySpacerHeightInput.fill('40');await legacySpacerHeightInput.press('Tab');
+ assert.equal(await canvasNode(legacySpacerId).evaluate(el=>getComputedStyle(el).height),'40px','versionless Spacer Inspector height reaches Canvas');
+ const legacySpacerPublicBaseline=await publicNode(legacySpacerId).evaluate(el=>getComputedStyle(el).height);
+ await editor.locator('#save').click();
+ await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+ assert.equal(draft.pages[pageId].nodes[legacySpacerId].responsive.desktop.height,'40px','draft Save stores legacy Spacer Inspector height');
+ await viewer.reload();
+ assert.equal(await publicNode(legacySpacerId).evaluate(el=>getComputedStyle(el).height),legacySpacerPublicBaseline,'draft Save leaves legacy Spacer publication unchanged');
+ await editor.locator('#publish').click();
+ await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
+ await viewer.reload();
+ assert.equal(await publicNode(legacySpacerId).evaluate(el=>getComputedStyle(el).height),'40px','legacy Spacer explicit Publish honors the shared Inspector height');
  assert.deepEqual(errors,[]);
 });
