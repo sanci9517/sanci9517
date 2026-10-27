@@ -1,7 +1,7 @@
 {
   "date": "2026-10-27",
   "plan_cursor": "77.44.7.A",
-  "scope": "Verify all ten tablet hover and all ten focus-visible state properties through Inspector routes, Canvas preview, draft Save, Editor reload, explicit Publish, public CSS, per-property inheritance reset with Undo/Redo, keyboard reachability, and desktop/mobile isolation",
+  "scope": "Verify all ten tablet hover and all ten focus-visible state properties through Inspector routes, Canvas preview, draft Save, Editor reload, explicit Publish, public CSS, every per-property inheritance reset with Undo/Redo, keyboard reachability, and desktop/mobile isolation",
   "runtime_changed": false,
   "test_file": "tests/browser/editor-inspector-tablet-state-lifecycle.test.js",
   "test_result": {
@@ -9,8 +9,8 @@
     "tests": 1,
     "passed": 1,
     "failed": 0,
-    "duration_ms": 28557,
-    "scenario_duration_ms": 28557
+    "duration_ms": 88385,
+    "scenario_duration_ms": 88385
   },
   "coverage": [
     "all ten hover and focus-visible Inspector fields expose states.set and the expected property ID/key and update tablet Canvas CSS",
@@ -18,10 +18,11 @@
     "Editor reload preserves the tablet hover control value",
     "tablet public hover inherits the published desktop value until explicit Publish",
     "explicit Publish applies all ten hover and all ten keyboard-focus styles to public CSS; desktop preserves its independent styles and mobile inherits tablet values",
-    "each of the ten tablet hover properties exposes its own states.set reset; reset, Undo, Redo, and restoration back to the original draft value all update Canvas CSS correctly",
+    "each of ten tablet hover and ten tablet focus-visible properties exposes its own states.set reset; reset, Undo, Redo, and restoration back to the original draft value all update Canvas CSS correctly",
     "draft reset Save does not alter published tablet state; explicit reset Publish restores desktop inheritance on tablet and mobile",
     "all ten tablet focus-visible properties survive draft Save and Editor reload",
     "draft focus state adds no public keyboard stop and leaves all published properties untouched; Publish gives the tablet node tabindex=0 and all ten :focus-visible styles",
+    "resetting all ten focus-visible properties remains draft-only through reload; the separate reset Publish removes the ten tablet focus overrides and keyboard tab stop",
     "desktop has no redundant focus stop; mobile inherits all tablet focus-visible styles",
     "browser page errors remain empty"
   ],
@@ -42,8 +43,8 @@
     "production_data_changed": false,
     "database_migration_run": false,
     "r2_changed": false,
-    "push": "The all-hover, all-focus, and per-property reset revision 14a752fb was pushed by normal fast-forward from 8870d6f3 to origin/v2/foundation. GitHub compare confirms the branch advanced by exactly one commit.",
-    "github_ci_status": "The GitHub combined-status endpoint returned no checks for 14a752fb, and the commit workflow-run query returned no PR-triggered runs. CI result is unavailable/unverified at this check."
+    "push": "The all-hover, all-focus, and hover-reset revision 14a752fb was pushed by normal fast-forward from 8870d6f3 to origin/v2/foundation. The additional all-focus-reset lifecycle passed local Chromium and is pending push.",
+    "github_ci_status": "The GitHub combined-status endpoint returned no checks for 14a752fb, and the commit workflow-run query returned no PR-triggered runs. CI result is unavailable/unverified; the focus-reset extension is not yet pushed."
   },
   "limitations": [
     "Local HTTP mock and Chromium viewport; not physical-device acceptance.",

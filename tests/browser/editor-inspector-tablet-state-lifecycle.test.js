@@ -181,5 +181,46 @@ test('tablet hover and focus-visible Inspector states save, publish, reset, and 
   await viewer.keyboard.press('Tab');
   const mobileFocus=await publicNode().evaluate(el=>{el.focus();const css=getComputedStyle(el);return{color:css.color,backgroundColor:css.backgroundColor,backgroundImage:css.backgroundImage,borderColor:css.borderColor,boxShadow:css.boxShadow,opacity:css.opacity,textDecorationLine:css.textDecorationLine,fontWeight:css.fontWeight,rotate:css.rotate,scale:css.scale,focusVisible:el.matches(':focus-visible')}});
   assert.deepEqual(mobileFocus,{...focusExpected,focusVisible:true},'mobile inherits all published tablet keyboard focus styles');
+
+  for(const [key] of hoverFields){
+    const field=await openStateProperty('focus-visible',key),reset=editor.locator(`.property-reset[data-property-key="${key}"]`).filter({hasText:'Állapotérték öröklésének visszaállítása'}),cssKey=key==='textDecoration'?'textDecorationLine':key;
+    assert.equal(await field.getAttribute('data-property-command'),'states.set',`${key} focus reset uses the shared state command route`);
+    assert.equal(await reset.count(),1,`${key} focus-visible exposes its own inheritance reset`);
+    await reset.click();assert.notEqual(await canvas().evaluate((el,property)=>getComputedStyle(el)[property],cssKey),focusExpected[cssKey],`focus ${key} reset removes its Canvas override`);
+    await editor.locator('#undo').click();assert.equal(await canvas().evaluate((el,property)=>getComputedStyle(el)[property],cssKey),focusExpected[cssKey],`Undo restores tablet focus ${key}`);
+    await editor.locator('#redo').click();assert.notEqual(await canvas().evaluate((el,property)=>getComputedStyle(el)[property],cssKey),focusExpected[cssKey],`Redo restores inherited focus ${key}`);
+    await editor.locator('#undo').click();assert.equal(await canvas().evaluate((el,property)=>getComputedStyle(el)[property],cssKey),focusExpected[cssKey],`test cleanup restores tablet focus ${key}`);
+  }
+  for(const [key] of hoverFields){
+    const reset=editor.locator(`.property-reset[data-property-key="${key}"]`).filter({hasText:'Állapotérték öröklésének visszaállítása'});
+    await reset.click();
+  }
+  await editor.locator('#save').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+  assert.equal(posts.at(-1).publish,false,'resetting all tablet focus fields remains a draft-only Save');
+  for(const [key] of hoverFields){
+    assert.equal(draft.pages[pageId].nodes[nodeId].states['focus-visible'].tablet[key],undefined,`focus reset removes draft ${key}`);
+    assert.equal(published.pages[pageId].nodes[nodeId].states['focus-visible'].tablet[key],focusStyles[key],`focus reset Save preserves published ${key}`);
+  }
+  await editor.reload({waitUntil:'domcontentloaded'});await activateEditor('tablet');
+  const clearedFocusField=await openStateColor('focus-visible');
+  assert.equal(await clearedFocusField.locator('input[type="text"]').inputValue(),'','tablet focus reset persists through Editor reload');
+  const clearedFocusGroup=editor.locator('.inspector-group').filter({hasText:'Rámutatás és fókusz'});
+  for(const [key,type] of hoverFields){
+    const field=clearedFocusGroup.locator(`[data-state-property="${key}"]`),control=type==='select'?field.locator('select:not(.property-token-picker)'):type==='number'?field.locator('input[type="number"]'):field.locator('input[type="text"]');
+    assert.equal(await control.inputValue(),'',`reset tablet focus ${key} reloads as inherited`);
+  }
+  await setViewerWidth(768);
+  assert.equal(await publicNode().getAttribute('tabindex'),'0','focus draft reset does not change the published tablet keyboard stop');
+  const publishedBeforeReset=await publicNode().evaluate(el=>{el.focus();const css=getComputedStyle(el);return{color:css.color,backgroundColor:css.backgroundColor,backgroundImage:css.backgroundImage,borderColor:css.borderColor,boxShadow:css.boxShadow,opacity:css.opacity,textDecorationLine:css.textDecorationLine,fontWeight:css.fontWeight,rotate:css.rotate,scale:css.scale,focusVisible:el.matches(':focus-visible')}});
+  assert.deepEqual(publishedBeforeReset,{...focusExpected,focusVisible:true},'focus reset draft leaves every published tablet style in place');
+  await editor.locator('#publish').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
+  await reloadViewer();
+  for(const [key] of hoverFields)assert.equal(published.pages[pageId].nodes[nodeId].states['focus-visible'].tablet[key],undefined,`focus reset Publish clears public tablet ${key}`);
+  assert.equal(await publicNode().getAttribute('tabindex'),null,'published tablet focus reset removes the keyboard tab stop');
+  await viewer.mouse.move(0,0);
+  const resetTabletFocus=await publicNode().evaluate(el=>{el.focus();return{background:getComputedStyle(el).backgroundColor,focusVisible:el.matches(':focus-visible'),tabIndex:el.tabIndex}});
+  assert.deepEqual(resetTabletFocus,{background:'rgb(226, 232, 240)',focusVisible:false,tabIndex:-1},'published tablet focus reset removes the focus style and keyboard affordance');
+  await setViewerWidth(390);
+  assert.equal(await publicNode().getAttribute('tabindex'),null,'mobile inherits the tablet focus reset without a redundant tab stop');
   assert.deepEqual(errors,[],'tablet state lifecycle produces no browser errors');
 });
