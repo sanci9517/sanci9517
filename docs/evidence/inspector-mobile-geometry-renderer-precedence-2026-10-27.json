@@ -1,0 +1,38 @@
+{
+  "date": "2026-10-27",
+  "plan_cursor": "77.44.7.A",
+  "status": "IMPLEMENTED_LOCALLY_BROWSER_VALIDATION_BLOCKED",
+  "scope": "Keep the mobile public renderer's computed height and minimum height in parity with the resolved Inspector/Page Model values through edit, draft Save, reload, Publish, desktop preservation, and inheritance reset.",
+  "finding": {
+    "source": "public/assets/page-renderer.js style() resolves the active responsive value and emits it inline. The public mobile fallback used height:auto!important and min-height:80px!important on ordinary nodes, which overrode those resolved declarations in the cascade.",
+    "impact": "The mobile Inspector/Canvas could show a saved or inherited height/minHeight while the published page rendered auto/80px instead.",
+    "scope_limit": "The mobile minimum-height fallback applies to top-level non-layout-managed nodes; the height fallback also applies to their ordinary child nodes."
+  },
+  "implementation": [
+    "The renderer now emits --editor-mobile-height and --editor-mobile-min-height from the same validated, responsive-resolved values as its inline styles.",
+    "The static visual-page.html fallback and renderer-injected fallback both use those variables with their existing auto/80px defaults.",
+    "The visual-page renderer URL uses cache key 20261027-mobile-dimensions.",
+    "Added a Chromium lifecycle regression for inherited desktop mobile values, mobile edits, draft Save, Editor reload, explicit Publish, desktop isolation, and mobile inheritance reset."
+  ],
+  "validation": {
+    "npm_run_typecheck": "PASS",
+    "npm_run_test_editor": "PASS; 10/10 test files",
+    "canonical_plan": "PASS",
+    "active_plan_audit": "PASS; acceptance remains NOT_CERTIFIED",
+    "traceability": "PASS; 396 mappings regenerated and checked",
+    "javascript_syntax": "PASS for renderer and browser regression file",
+    "static_fallback_parity": "PASS; static and renderer-injected CSS use the same mobile height/minHeight variables and defaults",
+    "wrangler_deploy_dry_run": "PASS; 159 assets, 287.10 KiB (65.78 KiB gzip); dry-run only",
+    "chromium_lifecycle": "BLOCKED: targeted test invocation fails before test setup can bind its local HTTP fixture (listen EPERM 127.0.0.1). A separate Chromium launch also fails in the sandbox with Crashpad setsockopt EPERM. GitHub CI has not run for this unpushed change."
+  },
+  "release": {
+    "pushed": false,
+    "production_deployment": false,
+    "remote_d1_preflight": "NOT RUN; proxy port 8080 is unreachable from this execution environment",
+    "production_smoke": "NOT RUN; proxy port 8080 is unreachable from this execution environment",
+    "production_data_changed": false,
+    "database_migration_run": false,
+    "r2_changed": false
+  },
+  "next_step": "Run the targeted Chromium lifecycle and GitHub CI when a network-capable repository environment is available. Only then complete remote D1 preflight, fast-forward push, and verify deployment/smoke before marking this slice complete. The full 77.44.7.A remains OPEN / NOT CERTIFIED."
+}

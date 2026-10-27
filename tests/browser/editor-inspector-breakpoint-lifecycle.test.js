@@ -13,7 +13,7 @@ test('Inspector color keeps independent desktop/tablet/mobile values through dra
   const model=createEditorState(createDocument()),pageId=model.document.activePageId;
   execute(model,{type:'element.add',payload:{type:'text',parentId:activePage(model).rootId,props:{text:'Breakpoint sample'}}});
   const nodeId=model.selection.primaryId;
-  execute(model,{type:'responsive.set',payload:{nodeId,device:'desktop',patch:{backgroundColor:'#2563eb'}}});
+  execute(model,{type:'responsive.set',payload:{nodeId,device:'desktop',patch:{backgroundColor:'#2563eb',height:'180px',minHeight:'120px'}}});
   let draft=structuredClone(model.document),published=structuredClone(draft),revision=1;
   const posts=[],errors=[],root=resolve(import.meta.dirname,'../../public');
   const server=createServer(async(req,res)=>{
@@ -596,5 +596,62 @@ test('Inspector color keeps independent desktop/tablet/mobile values through dra
     await reloadPublic();
     assert.equal(await readStyle(live,property.css),desktopVisualStyles[property.id].public,`${property.id}: mobile Publish preserves desktop public value`);
   }
+  // Mobile geometry uses the same resolved Page Model values as the Canvas.
+  // The public mobile fallback previously forced height:auto/min-height:80px
+  // with !important, silently discarding both inherited and authored values.
+  await activate('mobile',390);await reloadPublic();
+  assert.equal(await readStyle(canvas,'height'),'180px','mobile Canvas inherits desktop height');
+  assert.equal(await readStyle(live,'height'),'180px','public mobile fallback preserves inherited desktop height');
+  assert.equal(await readStyle(canvas,'min-height'),'120px','mobile Canvas inherits desktop min-height');
+  assert.equal(await readStyle(live,'min-height'),'120px','public mobile fallback preserves inherited desktop min-height');
+  const mobileGeometryHeading=editor.locator('.inspector-group-title').filter({hasText:'Geometria'});if(await mobileGeometryHeading.getAttribute('aria-expanded')==='false')await mobileGeometryHeading.click();
+  const mobileHeightField=editor.locator('[data-property-id="size.height"]');
+  assert.equal(await mobileHeightField.getAttribute('data-property-command'),'responsive.set');
+  assert.equal(await mobileHeightField.getAttribute('data-property-key'),'height');
+  await mobileHeightField.locator('.dimension-controls select:not(.property-token-picker)').selectOption('px');
+  const heightInput=mobileHeightField.locator('.dimension-controls input[type="number"]');await heightInput.fill('132');await heightInput.press('Tab');
+  const sizeHeading=editor.locator('.inspector-group-title').filter({hasText:'Méret'});if(await sizeHeading.getAttribute('aria-expanded')==='false')await sizeHeading.click();
+  const mobileMinHeightField=editor.locator('[data-property-id="size.minHeight"]');
+  assert.equal(await mobileMinHeightField.getAttribute('data-property-command'),'responsive.set');
+  assert.equal(await mobileMinHeightField.getAttribute('data-property-key'),'minHeight');
+  await mobileMinHeightField.locator('.dimension-controls select:not(.property-token-picker)').selectOption('px');
+  const minHeightInput=mobileMinHeightField.locator('.dimension-controls input[type="number"]');await minHeightInput.fill('90');await minHeightInput.press('Tab');
+  assert.equal(await readStyle(canvas,'height'),'132px','mobile Inspector height reaches Canvas');
+  assert.equal(await readStyle(canvas,'min-height'),'90px','mobile Inspector min-height reaches Canvas');
+  assert.equal(await readStyle(live,'height'),'180px','mobile geometry edits remain unpublished');
+  assert.equal(await readStyle(live,'min-height'),'120px','mobile min-height edit remains unpublished');
+  await save(false);assert.equal(posts.at(-1).publish,false,'mobile geometry Save remains draft-only');
+  assert.equal(posts.at(-1).document.pages[pageId].nodes[nodeId].responsive.mobile.height,'132px');
+  assert.equal(posts.at(-1).document.pages[pageId].nodes[nodeId].responsive.mobile.minHeight,'90px');
+  await editor.reload({waitUntil:'domcontentloaded'});await select();await activate('mobile',390);
+  const reloadedGeometryHeading=editor.locator('.inspector-group-title').filter({hasText:'Geometria'});if(await reloadedGeometryHeading.getAttribute('aria-expanded')==='false')await reloadedGeometryHeading.click();
+  assert.equal(await editor.locator('[data-property-id="size.height"] .dimension-controls input[type="number"]').inputValue(),'132','mobile height survives Editor reload');
+  const reloadedSizeHeading=editor.locator('.inspector-group-title').filter({hasText:'Méret'});if(await reloadedSizeHeading.getAttribute('aria-expanded')==='false')await reloadedSizeHeading.click();
+  assert.equal(await editor.locator('[data-property-id="size.minHeight"] .dimension-controls input[type="number"]').inputValue(),'90','mobile min-height survives Editor reload');
+  await save(true);assert.equal(posts.at(-1).publish,true,'mobile geometry requires explicit Publish');await reloadPublic();
+  assert.equal(await readStyle(live,'height'),'132px','published mobile height reaches public CSS');
+  assert.equal(await readStyle(live,'min-height'),'90px','published mobile min-height reaches public CSS');
+  await activate('desktop',1366);await reloadPublic();
+  assert.equal(await readStyle(canvas,'height'),'180px','mobile height override preserves desktop Canvas');
+  assert.equal(await readStyle(live,'height'),'180px','mobile height Publish preserves desktop public CSS');
+  assert.equal(await readStyle(live,'min-height'),'120px','mobile min-height Publish preserves desktop public CSS');
+  await activate('mobile',390);await editor.locator('.inspector-tabs button').first().click();
+  const resetHeight=editor.locator('.property-reset[title^="mobile nézet"][data-property-key="height"]').filter({hasText:'Öröklés visszaállítása'});
+  const resetMinHeight=editor.locator('.property-reset[title^="mobile nézet"][data-property-key="minHeight"]').filter({hasText:'Öröklés visszaállítása'});
+  assert.equal(await resetHeight.count(),1,'mobile height exposes its inheritance reset');
+  assert.equal(await resetMinHeight.count(),1,'mobile min-height exposes its inheritance reset');
+  await resetHeight.click();await resetMinHeight.click();
+  assert.equal(await readStyle(canvas,'height'),'180px','mobile height reset restores inherited desktop value');
+  assert.equal(await readStyle(canvas,'min-height'),'120px','mobile min-height reset restores inherited desktop value');
+  assert.equal(await readStyle(live,'height'),'132px','mobile geometry reset remains unpublished');
+  await save(false);assert.equal(posts.at(-1).document.pages[pageId].nodes[nodeId].responsive.mobile.height,undefined);
+  assert.equal(posts.at(-1).document.pages[pageId].nodes[nodeId].responsive.mobile.minHeight,undefined);
+  assert.equal(await readStyle(live,'height'),'132px','draft geometry reset keeps published mobile height');
+  assert.equal(await readStyle(live,'min-height'),'90px','draft geometry reset keeps published mobile min-height');
+  await save(true);await reloadPublic();
+  assert.equal(await readStyle(live,'height'),'180px','published mobile height reset inherits desktop');
+  assert.equal(await readStyle(live,'min-height'),'120px','published mobile min-height reset inherits desktop');
+  await activate('desktop',1366);await reloadPublic();
+  assert.equal(await readStyle(live,'height'),'180px','mobile geometry reset leaves desktop public height intact');
   assert.deepEqual(errors,[]);
 });
