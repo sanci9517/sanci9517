@@ -22,6 +22,12 @@ test('tablet Inspector layout, sizing, spacing, and position fields save and pub
   execute(model,{type:'style.set',payload:{nodeId:flexId,patch:{display:'flex',flexDirection:'row'}}});
   execute(model,{type:'element.add',payload:{type:'text',parentId:flexId,props:{text:'Tablet Flex child'}}});
   const flexChildId=model.selection.primaryId;
+  const radiusNodeIds={};
+  for(const [id,label] of [['radius.all','all'],['radius.topLeft','top left'],['radius.topRight','top right'],['radius.bottomRight','bottom right'],['radius.bottomLeft','bottom left']]){
+    execute(model,{type:'element.add',payload:{type:'text',parentId:rootId,props:{text:`Tablet ${label} radius`}}});
+    const nodeId=model.selection.primaryId;radiusNodeIds[id]=nodeId;
+    execute(model,{type:'style.set',payload:{nodeId,patch:{backgroundColor:'#e2e8f0',borderStyle:'solid',borderWidth:'1px'}}});
+  }
   let draft=structuredClone(model.document),published=structuredClone(draft),revision=1;
   const posts=[],errors=[],root=resolve(import.meta.dirname,'../../public');
   const server=createServer(async(req,res)=>{
@@ -57,7 +63,7 @@ test('tablet Inspector layout, sizing, spacing, and position fields save and pub
     const button=editor.locator(`.canvas-device-btn[data-device="${device}"]`);
     if(!await button.evaluate(el=>el.classList.contains('active')))await button.click();
     const width={desktop:1366,tablet:768,mobile:390}[device];await publicPage.setViewportSize({width,height:900});
-    await publicPage.waitForFunction(({width,ids})=>window.innerWidth===width&&ids.every(id=>document.querySelector(`[data-node-id="${id}"]`)),{width,ids:[flexChildId,gridChildId]});
+    await publicPage.waitForFunction(({width,ids})=>window.innerWidth===width&&ids.every(id=>document.querySelector(`[data-node-id="${id}"]`)),{width,ids:[flexChildId,gridChildId,...Object.values(radiusNodeIds)]});
   };
   const openField=async(propertyId,group,nodeId)=>{
     await select(nodeId);await editor.locator('.inspector-tabs button').first().click();
@@ -72,6 +78,11 @@ test('tablet Inspector layout, sizing, spacing, and position fields save and pub
     {id:'flex.grow',key:'flexGrow',group:'Flex',node:flexChildId,css:'flexGrow',value:'2.5',edit:async field=>{const input=field.locator('input[type="number"]');await input.fill('2.5');await input.press('Tab')},verify:async field=>assert.equal(await field.locator('input[type="number"]').inputValue(),'2.5')},
     {id:'flex.shrink',key:'flexShrink',group:'Flex',node:flexChildId,css:'flexShrink',value:'0.5',edit:async field=>{const input=field.locator('input[type="number"]');await input.fill('0.5');await input.press('Tab')},verify:async field=>assert.equal(await field.locator('input[type="number"]').inputValue(),'0.5')},
     {id:'flex.alignSelf',key:'alignSelf',group:'Flex',node:flexChildId,css:'alignSelf',value:'center',edit:field=>field.locator('select:not(.property-token-picker)').selectOption('center'),verify:async field=>assert.equal(await field.locator('select:not(.property-token-picker)').inputValue(),'center')},
+    {id:'radius.all',key:'borderRadius',group:'Lekerekítés',node:radiusNodeIds['radius.all'],css:'borderRadius',value:'20px',edit:async field=>{const input=field.locator('.dimension-controls input[type="number"]');await input.fill('20');await input.press('Tab')},verify:async field=>assert.equal(await field.locator('.dimension-controls input[type="number"]').inputValue(),'20')},
+    {id:'radius.topLeft',key:'borderTopLeftRadius',group:'Lekerekítés',node:radiusNodeIds['radius.topLeft'],css:'borderTopLeftRadius',value:'12px',edit:async field=>{const input=field.locator('.dimension-controls input[type="number"]');await input.fill('12');await input.press('Tab')},verify:async field=>assert.equal(await field.locator('.dimension-controls input[type="number"]').inputValue(),'12')},
+    {id:'radius.topRight',key:'borderTopRightRadius',group:'Lekerekítés',node:radiusNodeIds['radius.topRight'],css:'borderTopRightRadius',value:'16px',edit:async field=>{const input=field.locator('.dimension-controls input[type="number"]');await input.fill('16');await input.press('Tab')},verify:async field=>assert.equal(await field.locator('.dimension-controls input[type="number"]').inputValue(),'16')},
+    {id:'radius.bottomRight',key:'borderBottomRightRadius',group:'Lekerekítés',node:radiusNodeIds['radius.bottomRight'],css:'borderBottomRightRadius',value:'18px',edit:async field=>{const input=field.locator('.dimension-controls input[type="number"]');await input.fill('18');await input.press('Tab')},verify:async field=>assert.equal(await field.locator('.dimension-controls input[type="number"]').inputValue(),'18')},
+    {id:'radius.bottomLeft',key:'borderBottomLeftRadius',group:'Lekerekítés',node:radiusNodeIds['radius.bottomLeft'],css:'borderBottomLeftRadius',value:'22px',edit:async field=>{const input=field.locator('.dimension-controls input[type="number"]');await input.fill('22');await input.press('Tab')},verify:async field=>assert.equal(await field.locator('.dimension-controls input[type="number"]').inputValue(),'22')},
     {id:'size.aspectRatio',key:'aspectRatio',group:'Méret',node:gridId,css:'aspectRatio',value:'4 / 3',edit:field=>field.locator('select:not(.property-token-picker)').selectOption('4 / 3'),verify:async field=>assert.equal(await field.locator('select:not(.property-token-picker)').inputValue(),'4 / 3')},
     {id:'size.width',key:'width',group:'Geometria',node:gridId,css:'width',value:'320px',edit:async field=>{await field.locator('.dimension-controls select:not(.property-token-picker)').selectOption('px');const input=field.locator('.dimension-controls input[type="number"]');await input.fill('320');await input.press('Tab')},verify:async field=>{assert.equal(await field.locator('.dimension-controls input[type="number"]').inputValue(),'320');assert.equal(await field.locator('.dimension-controls select:not(.property-token-picker)').inputValue(),'px')}},
     {id:'size.height',key:'height',group:'Geometria',node:gridId,css:'height',value:'180px',edit:async field=>{await field.locator('.dimension-controls select:not(.property-token-picker)').selectOption('px');const input=field.locator('.dimension-controls input[type="number"]');await input.fill('180');await input.press('Tab')},verify:async field=>assert.equal(await field.locator('.dimension-controls input[type="number"]').inputValue(),'180')},

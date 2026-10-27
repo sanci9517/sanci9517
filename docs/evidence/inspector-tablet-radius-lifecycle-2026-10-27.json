@@ -1,0 +1,48 @@
+{
+  "date": "2026-10-27",
+  "plan_cursor": "77.44.7.A",
+  "scope": "Verify all responsive tablet corner-radius Inspector fields through Canvas, draft Save, Editor reload, explicit Publish, public CSS, and desktop isolation",
+  "runtime_changed": false,
+  "test_file": "tests/browser/editor-inspector-tablet-layout-lifecycle.test.js",
+  "test_result": {
+    "command": "node --test tests/browser/editor-inspector-tablet-layout-lifecycle.test.js",
+    "tests": 1,
+    "passed": 1,
+    "failed": 0,
+    "duration_ms": 49961,
+    "scenario_duration_ms": 49961
+  },
+  "coverage": [
+    "radius.all uses responsive.set / borderRadius; tablet 20px reaches Canvas CSS and public CSS after explicit Publish",
+    "radius.topLeft uses responsive.set / borderTopLeftRadius; tablet 12px reaches Canvas CSS and public CSS after explicit Publish",
+    "radius.topRight uses responsive.set / borderTopRightRadius; tablet 16px reaches Canvas CSS and public CSS after explicit Publish",
+    "radius.bottomRight uses responsive.set / borderBottomRightRadius; tablet 18px reaches Canvas CSS and public CSS after explicit Publish",
+    "radius.bottomLeft uses responsive.set / borderBottomLeftRadius; tablet 22px reaches Canvas CSS and public CSS after explicit Publish",
+    "the five fields are edited on isolated fixture elements to keep each computed CSS assertion independent",
+    "draft Save stores the five responsive tablet Page Model values and remains publish=false",
+    "Editor reload preserves each tablet control value and CSS while the published tablet output remains unchanged",
+    "explicit Publish updates tablet public CSS; desktop Canvas and public CSS retain their prior radius values",
+    "browser page errors remain empty"
+  ],
+  "additional_checks": {
+    "typecheck": "PASS",
+    "canonical_plan": "PASS; cursor remains 77.44.7.A and acceptance NOT_CERTIFIED",
+    "active_point_audit": "PASS",
+    "traceability": "396 mappings PASS",
+    "node_syntax": "PASS",
+    "git_diff_check": "PASS"
+  },
+  "release": {
+    "runtime_source_changed": false,
+    "production_deployment": "Not performed; test/documentation-only change.",
+    "production_data_changed": false,
+    "database_migration_run": false,
+    "r2_changed": false,
+    "push": "Pending fast-forward verification to v2/foundation.",
+    "github_ci_status": "Pending for this commit."
+  },
+  "limitations": [
+    "Local HTTP mock and Chromium viewport; not physical-device acceptance.",
+    "The complete Inspector matrix and 77.44.7.A remain OPEN / NOT CERTIFIED."
+  ]
+}
