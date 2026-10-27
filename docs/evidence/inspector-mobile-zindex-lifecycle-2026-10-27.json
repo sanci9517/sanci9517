@@ -1,0 +1,36 @@
+{
+  "date": "2026-10-27",
+  "plan_cursor": "77.44.7.A",
+  "scope": "Verify responsive position.zIndex through mobile Inspector edit, Canvas, Save/reload, Publish, desktop preservation, reset to inherited value, Undo/Redo, draft Save and separate Publish.",
+  "test_file": "tests/browser/editor-inspector-breakpoint-lifecycle.test.js",
+  "runtime_changed": false,
+  "mobile_lifecycle": [
+    "Inspector exposes responsive.set / zIndex.",
+    "Mobile z-index 7 reaches Canvas but remains absent from the public snapshot until Publish.",
+    "Draft Save and Editor reload preserve the mobile Page Model value.",
+    "Explicit Publish updates the public mobile computed CSS while desktop remains independent.",
+    "Reset removes only responsive.mobile.zIndex and restores desktop inheritance.",
+    "Undo/Redo restore the mobile override and inherited state.",
+    "Draft reset Save keeps the published mobile value live; separate Publish applies inherited mobile CSS."
+  ],
+  "final_tests": [
+    {
+      "command": "node --test tests/browser/editor-inspector-breakpoint-lifecycle.test.js",
+      "tests": 1,
+      "passed": 1,
+      "failed": 0,
+      "duration_ms": 47242,
+      "result": "PASS"
+    },
+    {"command": "npm run typecheck", "result": "PASS"},
+    {"command": "npm run test:editor", "test_files": 10, "passed": 10, "failed": 0, "result": "PASS"},
+    {"command": "python scripts/check-canonical-plan.py", "result": "PASS"},
+    {"command": "python scripts/audit-active-plan-point.py", "result": "PASS; next 77.44.7.A; acceptance NOT_CERTIFIED"},
+    {"command": "python scripts/build-feature-traceability.py --check", "result": "PASS; 396 mappings"},
+    {"command": "node --check tests/browser/editor-inspector-breakpoint-lifecycle.test.js && git diff --check", "result": "PASS"}
+  ],
+  "limitations": [
+    "One responsive property path is covered; this does not certify all Inspector properties or all 79 element types.",
+    "Physical-device acceptance remains unverified; 77.44.7.A remains OPEN / NOT CERTIFIED."
+  ]
+}
