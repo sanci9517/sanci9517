@@ -42,8 +42,8 @@
     "production_data_changed": false,
     "database_migration_run": false,
     "r2_changed": false,
-    "push": "The all-hover-and-focus revision eaabf562 was pushed by normal fast-forward from b410fa80 to origin/v2/foundation. The additional per-property reset coverage is locally validated and pending push.",
-    "github_ci_status": "The GitHub combined-status endpoint returned no checks for eaabf562, and the commit workflow-run query returned no PR-triggered runs. CI result is unavailable/unverified; the reset-coverage revision is not yet pushed."
+    "push": "The all-hover, all-focus, and per-property reset revision 14a752fb was pushed by normal fast-forward from 8870d6f3 to origin/v2/foundation. GitHub compare confirms the branch advanced by exactly one commit.",
+    "github_ci_status": "The GitHub combined-status endpoint returned no checks for 14a752fb, and the commit workflow-run query returned no PR-triggered runs. CI result is unavailable/unverified at this check."
   },
   "limitations": [
     "Local HTTP mock and Chromium viewport; not physical-device acceptance.",
