@@ -39,14 +39,15 @@
     "database_connected": true,
     "editor_index_sha256_live": "7b7abaa77976be11e6b606ff82e81a611df04600c28755ed6c4771aac51d7277",
     "editor_index_sha256_source": "7b7abaa77976be11e6b606ff82e81a611df04600c28755ed6c4771aac51d7277",
+    "verified_after_commit": "9884df261f04b25c50ab10046523c4e0d61e8dbf",
     "runtime_source_changed": false,
     "production_data_changed": false,
     "database_migration_run": false,
     "r2_changed": false
   },
   "release": {
-    "push": "Pending final commit",
-    "github_commit_statuses": "Pending final commit",
+    "push": "Verified fast-forward to origin/v2/foundation at 9884df261f04b25c50ab10046523c4e0d61e8dbf",
+    "github_commit_statuses": "At verification: status API had zero commit statuses; check runs: verify, twitch-integration, source-audit, canonical-plan completed success; Workers Builds and editor-core in progress.",
     "direct_deployment": "Not required; test and documentation only. Existing production Worker deployment and health were read-only verified."
   },
   "limitations": [
