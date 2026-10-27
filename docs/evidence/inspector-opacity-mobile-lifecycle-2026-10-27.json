@@ -1,7 +1,7 @@
 {
   "date": "2026-10-27",
   "plan_cursor": "77.44.7.A",
-  "scope": "Verify mobile opacity.value and shadow.box Inspector routes, Canvas, draft Save, reload, explicit Publish and public CSS",
+  "scope": "Verify mobile opacity.value, shadow.box, border.style and border.width Inspector routes through Canvas, draft Save, reload, explicit Publish and public CSS",
   "runtime_changed": false,
   "test_file": "tests/browser/editor-inspector-breakpoint-lifecycle.test.js",
   "test_result": {
@@ -9,8 +9,8 @@
     "tests": 1,
     "passed": 1,
     "failed": 0,
-    "duration_ms": 16638,
-    "scenario_duration_ms": 15727
+    "duration_ms": 20705,
+    "scenario_duration_ms": 20164
   },
   "coverage": [
     "mobile opacity.value Inspector exposes responsive.set / opacity",
@@ -21,6 +21,8 @@
     "mobile shadow.box exposes responsive.set / boxShadow",
     "mobile box shadow appears on Canvas while public CSS remains unchanged after draft Save",
     "mobile box shadow survives editor reload and updates public CSS only after explicit Publish",
+    "mobile border.style and border.width expose responsive.set / borderStyle and borderWidth",
+    "mobile solid 3px border remains draft-only through Save/reload, publishes separately, and leaves desktop width unchanged",
     "existing desktop/tablet/mobile background inheritance, reset and geometry lifecycle remains green",
     "browser page errors remain empty"
   ],
