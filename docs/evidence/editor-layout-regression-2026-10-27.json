@@ -35,8 +35,8 @@
     "production_data_changed": false,
     "database_migration_run": false,
     "r2_changed": false,
-    "push": "Pending: fix and evidence have not yet been pushed.",
-    "github_ci_status": "Pending verification."
+    "push": "Commit 96bd5b761eb0cd0fdb8759355cd737189933b173 was pushed by normal fast-forward to origin/v2/foundation; GitHub compare confirms one commit ahead of f9098769 and git ls-remote reports the same branch head.",
+    "github_ci_status": "The GitHub combined-status endpoint returned no checks for 96bd5b76, and the commit workflow-run query returned no PR-triggered runs. CI result is unavailable/unverified."
   },
   "limitations": [
     "The broad suite was not rerun as a single command after the one-line test-wait fix; all 86 other cases passed in the broad run, and the sole corrected case passed in its targeted rerun."
