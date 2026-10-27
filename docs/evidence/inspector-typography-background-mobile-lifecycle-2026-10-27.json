@@ -106,9 +106,29 @@
     "production_data_changed": false,
     "database_migration_run": false,
     "r2_changed": false,
-    "push": "pending verification",
-    "production_deployment": "pending verification",
-    "github_commit_statuses": "pending verification"
+    "push": {
+      "branch": "v2/foundation",
+      "commit": "d158787eecf262478c5512771e17e475ba9e6cb9",
+      "verified_remote_ref": true,
+      "mode": "fast-forward"
+    },
+    "production_deployment": {
+      "worker": "sanci9517-streamer-brand",
+      "number": 3604,
+      "deployment_id": "7b9e0e7b-54af-4c7e-b68e-61182825caa9",
+      "version_id": "95412088-21e8-4102-b3b6-b0c1b03db30f",
+      "traffic_percent": 100,
+      "etag": "0afd1da0c52bcc5e558e12adeb9888aea6d7df03d5e070c2184b4920dd825bc0",
+      "runtime_unchanged_from_previous": true
+    },
+    "github_commit_statuses": "no checks reported by combined status endpoint",
+    "production_smoke": {
+      "health_http": 200,
+      "db_health_http": 200,
+      "db_connected": true,
+      "live_editor_asset_sha256": "8fe117473beb29e4f1bb3134187df67f7be260345dd90951ad4cf4ea4147f794",
+      "local_editor_asset_sha256": "8fe117473beb29e4f1bb3134187df67f7be260345dd90951ad4cf4ea4147f794"
+    }
   },
   "limitations": [
     "Local HTTP mock and Chromium viewport; not physical-device acceptance.",
