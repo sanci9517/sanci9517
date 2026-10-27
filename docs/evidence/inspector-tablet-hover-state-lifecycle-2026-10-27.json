@@ -33,10 +33,11 @@
     "explicit mobile Publish applies all ten mobile focus styles while retaining all ten independent tablet focus values",
     "publishing the tablet focus reset restores desktop inheritance at tablet width without clearing the ten independently published mobile focus overrides",
     "mobile focus resets are independently editable for all ten properties and resolve through a tablet reset to the desktop values in the Canvas",
-    "draft Save and Editor reload preserve the published mobile overrides; separate reset Publish removes all ten mobile overrides and restores desktop focus styles through tablet inheritance while keeping tabindex=0"
+    "draft Save and Editor reload preserve the published mobile overrides; separate reset Publish removes all ten mobile overrides and restores desktop focus styles through tablet inheritance while keeping tabindex=0",
+    "the shipped Editor module is parsed by V8 SourceTextModule inside the test process; no subprocess spawn is required"
   ],
   "additional_checks": {
-    "editor_unit_suite": "Current sandbox rerun: 9/10 test files passed; core.test.js had 69/70 subtests pass, with its parser subprocess blocked by spawnSync EPERM. Prior 136/136 result remains recorded at commit 8902cd64.",
+    "editor_unit_suite": "PASS 10/10 test files; core.test.js PASS 70/70 subtests. The app module parser assertion now uses V8 SourceTextModule in-process, avoiding the sandbox-blocked subprocess without reducing syntax-check coverage.",
     "state_tokens_unit": "PASS (test file passed), including ten persisted invalid-CSS cases and legacy compatibility/no-public-state-CSS assertions.",
     "inspector_richtext_unit": "PASS",
     "typecheck": "PASS",

@@ -1,9 +1,9 @@
 import {ICON_CHOICES,iconById,isSupportedIcon} from '../core/icon-options.js';
 import {createElementContent,normalizeElementContent,validateElementContent,renderElementContent,safeMediaUrl} from '../core/element-content.js';
 import assert from 'node:assert/strict';
-import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
+import { SourceTextModule } from 'node:vm';
 import test from 'node:test';
 
 import { createDocument, createNode, NODE_TYPES, normalizeRichText } from '../core/schema.js';
@@ -63,7 +63,7 @@ test('Rich Text schema normalizes Office-friendly tables, safe inline styles and
 
 test('Editor browser module parses before it is shipped', () => {
   const appPath = fileURLToPath(new URL('../app.js', import.meta.url));
-  execFileSync(process.execPath, ['--check', appPath], { stdio: 'pipe' });
+  new SourceTextModule(readFileSync(appPath, 'utf8'), { identifier: appPath });
 });
 
 test('Schedule config uses canonical defaults and normalizes valid input', () => {
