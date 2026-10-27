@@ -55,17 +55,23 @@
     "syntax": "PASS for public/assets/page-renderer.js and tests/browser/editor-decorative-elements.test.js.",
     "production_d1_migration_preflight": "PASS; read-only remote list reported No migrations to apply; no migration applied.",
     "wrangler_dry_run": "PASS; 159 public assets, estimated 287.10 KiB (65.78 KiB gzip); dry-run exited without deploying.",
-    "canonical_plan": "Pending release record; 77.44.7.A remains OPEN / NOT CERTIFIED.",
-    "active_point_audit": "Pending release record.",
-    "traceability": "Pending release record.",
-    "git_diff_check": "Pending release record."
+    "canonical_plan": "PASS; 77.44.7.A remains OPEN / NOT CERTIFIED.",
+    "active_point_audit": "PASS; current 77.44.7.A.",
+    "traceability": "PASS; 396 source mappings regenerated and checked.",
+    "git_diff_check": "PASS."
   },
   "release": {
-    "source_commit": null,
-    "push": "Pending fast-forward verification.",
-    "production_deployment": "Pending exact-version verification.",
-    "production_smoke": "Pending.",
-    "github_ci_status": "Pending.",
+    "source_commit": "aac062900f0cef45ac56f6841c23e03fcda8d4c4",
+    "push": "PASS; normal fast-forward 30a15c20..aac06290 to origin/v2/foundation; remote ref verified at aac062900f0cef45ac56f6841c23e03fcda8d4c4.",
+    "automatic_deployment": "No new Worker deployment was visible at the first post-push check; a direct Wrangler deployment was made from the exact pushed source.",
+    "production_deployment": "PASS; direct wrangler deploy version 5e8a3091-008a-489b-a4cd-239e7626cc70 is latest and listed at 100% traffic.",
+    "production_smoke": {
+      "/api/health": "200; service sanci9517-streamer-brand",
+      "/api/db-health": "200; D1 connected",
+      "/editor-v2/": "200",
+      "/assets/page-renderer.js": "200; live SHA-256 e4dbce07f25b9cee9a34fca0719839a339dd10a17c1587cbc5d1abdb435c3650 exactly matches the source"
+    },
+    "github_ci_status": "GitHub combined status endpoint returned no statuses and commit workflow-run query returned no runs for aac06290; CI unavailable/unverified.",
     "production_data_changed": false,
     "database_migration_run": false,
     "r2_changed": false
