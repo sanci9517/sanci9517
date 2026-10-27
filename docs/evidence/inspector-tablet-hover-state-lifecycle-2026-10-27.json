@@ -43,8 +43,8 @@
     "production_data_changed": false,
     "database_migration_run": false,
     "r2_changed": false,
-    "push": "The all-hover, all-focus, and hover-reset revision 14a752fb was pushed by normal fast-forward from 8870d6f3 to origin/v2/foundation. The additional all-focus-reset lifecycle passed local Chromium and is pending push.",
-    "github_ci_status": "The GitHub combined-status endpoint returned no checks for 14a752fb, and the commit workflow-run query returned no PR-triggered runs. CI result is unavailable/unverified; the focus-reset extension is not yet pushed."
+    "push": "The all-hover, all-focus, and per-property reset revision e98003d7 was pushed by normal fast-forward from 453dfe28 to origin/v2/foundation. GitHub compare confirms the branch advanced by exactly one commit.",
+    "github_ci_status": "The GitHub combined-status endpoint returned no checks for e98003d7, and the commit workflow-run query returned no PR-triggered runs. CI result is unavailable/unverified at this check."
   },
   "limitations": [
     "Local HTTP mock and Chromium viewport; not physical-device acceptance.",
