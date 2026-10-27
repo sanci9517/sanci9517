@@ -44,9 +44,30 @@
     "production_data_changed": false,
     "database_migration_run": false,
     "r2_changed": false,
-    "push": "pending verification",
-    "production_deployment": "pending verification",
-    "github_commit_statuses": "pending verification"
+    "push": {
+      "branch": "v2/foundation",
+      "commit": "58bc17a84ec2e9865a2c67c46a248188d0691550",
+      "verified_remote_ref": true,
+      "mode": "fast-forward"
+    },
+    "production_deployment": {
+      "worker": "sanci9517-streamer-brand",
+      "new_deployment_from_test_commit": false,
+      "latest_verified_number": 3605,
+      "latest_deployment_id": "b5bb7987-9d40-4d77-ab50-7caeecd8dd18",
+      "latest_version_id": "2e45fefd-1a67-4c18-be17-7a6c199bd422",
+      "traffic_percent": 100,
+      "etag": "0afd1da0c52bcc5e558e12adeb9888aea6d7df03d5e070c2184b4920dd825bc0",
+      "runtime_unchanged": true
+    },
+    "github_commit_statuses": "no checks reported by combined status endpoint",
+    "production_smoke": {
+      "health_http": 200,
+      "db_health_http": 200,
+      "db_connected": true,
+      "live_editor_asset_sha256": "8fe117473beb29e4f1bb3134187df67f7be260345dd90951ad4cf4ea4147f794",
+      "local_editor_asset_sha256": "8fe117473beb29e4f1bb3134187df67f7be260345dd90951ad4cf4ea4147f794"
+    }
   },
   "limitations": [
     "Uses a local HTTP mock and synthetic SVGs, not production R2 or a physical device.",
