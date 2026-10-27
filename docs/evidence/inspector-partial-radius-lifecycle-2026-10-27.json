@@ -39,9 +39,9 @@
     "production_data_changed": false,
     "database_migration_run": false,
     "r2_changed": false,
-    "commit": "34c58b5c29a65f633c3f757ba31c8663a418382b",
-    "push": "PASS; normal fast-forward 36eb7aab..34c58b5c to origin/v2/foundation; remote ref verified at 34c58b5c29a65f633c3f757ba31c8663a418382b.",
-    "github_ci_status": "GitHub combined status endpoint returned no statuses and commit workflow-run query returned no runs for 34c58b5c; CI unavailable/unverified."
+    "commit": "0688f7b80405112a3b86c09f638e45c6fc962688",
+    "push": "PASS; normal fast-forward 81ecc093..0688f7b8 to origin/v2/foundation; remote ref verified at 0688f7b80405112a3b86c09f638e45c6fc962688.",
+    "github_ci_status": "GitHub combined status endpoint returned no statuses and commit workflow-run query returned no runs for 0688f7b8; CI unavailable/unverified."
   },
   "limitations": [
     "Full 77.44.7.A and physical-device acceptance remain open."
