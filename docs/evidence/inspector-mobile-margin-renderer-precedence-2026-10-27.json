@@ -47,12 +47,33 @@
       "failed": 0,
       "result": "PASS"
     },
-    {"command": "npm run typecheck", "result": "PASS"},
-    {"command": "npm run test:editor", "test_files": 10, "passed": 10, "failed": 0, "result": "PASS"},
-    {"command": "python scripts/check-canonical-plan.py", "result": "PASS"},
-    {"command": "python scripts/audit-active-plan-point.py", "result": "PASS; next 77.44.7.A; acceptance NOT_CERTIFIED"},
-    {"command": "python scripts/build-feature-traceability.py --check", "result": "PASS; 396 mappings"},
-    {"command": "node --check public/assets/page-renderer.js && git diff --check", "result": "PASS"}
+    {
+      "command": "npm run typecheck",
+      "result": "PASS"
+    },
+    {
+      "command": "npm run test:editor",
+      "test_files": 10,
+      "passed": 10,
+      "failed": 0,
+      "result": "PASS"
+    },
+    {
+      "command": "python scripts/check-canonical-plan.py",
+      "result": "PASS"
+    },
+    {
+      "command": "python scripts/audit-active-plan-point.py",
+      "result": "PASS; next 77.44.7.A; acceptance NOT_CERTIFIED"
+    },
+    {
+      "command": "python scripts/build-feature-traceability.py --check",
+      "result": "PASS; 396 mappings"
+    },
+    {
+      "command": "node --check public/assets/page-renderer.js && git diff --check",
+      "result": "PASS"
+    }
   ],
   "predeployment": {
     "remote_d1_migration_list": "PASS; No migrations to apply. Read-only command; no migration applied.",
@@ -60,9 +81,20 @@
     "wrangler_logging": "Wrangler could not write diagnostic logs under the read-only /home/agent/.config/.wrangler/logs path (EROFS); both commands exited 0 and printed their successful result."
   },
   "release": {
-    "push": "pending",
-    "production_deployment": "pending",
-    "production_smoke": "pending",
+    "push": "PASS; commit 6e11e57f577c664ab24a3e13e72240e3e5045798 pushed to origin/v2/foundation (verified remote ref).",
+    "production_deployment": "PASS; Cloudflare API confirms deployment 66d6f0c2-1f07-45e9-833e-d8189c787e0e, version bafc77a3-4b08-4c9e-bf3c-e1f15ef93061, 100% traffic, created 2026-10-27T21:43:23Z. Version bindings match configured D1/R2 names; secret values were not read.",
+    "production_smoke": "BLOCKED from this runtime: HTTP smoke request to workers.dev failed because configured proxy port 8080 is unreachable. No HTTP/hash parity claim made.",
+    "github_ci": {
+      "passed": [
+        40589064559,
+        40589064647,
+        40589064566,
+        40589064479
+      ],
+      "in_progress": [
+        40589064637
+      ]
+    },
     "production_data_changed": false,
     "database_migration_run": false,
     "r2_changed": false
