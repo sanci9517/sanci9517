@@ -137,6 +137,53 @@ test('every PARTIAL type renders Inspector routes and preserves Save versus Publ
     assert.equal(await publicNode(id).evaluate(el=>getComputedStyle(el).backgroundColor),asRgb(colors[index]),`${type}: published style matches the Inspector edit`);
   }
 
+  // The same Inspector route must write a distinct mobile override for every
+  // PARTIAL type without replacing its already-published desktop style.
+  const mobileColors=editableNodes.map((_,index)=>'#'+((0xc04020+index*0x020509)&0xffffff).toString(16).padStart(6,'0'));
+  await editor.locator('.canvas-device-btn[data-device="mobile"]').click();
+  await viewer.setViewportSize({width:390,height:900});
+  await viewer.reload();
+  for(const [index,{type,id}] of editableNodes.entries()){
+    const canvasNode=editor.locator(`.node[data-node-id="${id}"]`);
+    await canvasNode.evaluate(el=>el.click());
+    await editor.locator('.inspector-tabs button').first().click();
+    const field=inspector.locator('.typed-inspector-field[data-property-id="background.color"]');
+    assert.equal(await field.getAttribute('data-property-command'),'responsive.set',`${type}: mobile style command`);
+    assert.equal(await field.getAttribute('data-property-key'),'backgroundColor',`${type}: mobile style Page Model key`);
+    const group=field.locator('xpath=ancestor::section[1]'),title=group.locator(':scope > .inspector-group-title');
+    if(await title.getAttribute('aria-expanded')==='false')await title.click();
+    await field.locator('input[type="color"]').evaluate((el,value)=>{el.value=value;el.dispatchEvent(new Event('change',{bubbles:true}))},mobileColors[index]);
+    assert.equal(await canvasNode.evaluate(el=>getComputedStyle(el).backgroundColor),asRgb(mobileColors[index]),`${type}: mobile Inspector override reaches the Canvas`);
+  }
+  await editor.locator('#save').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+  for(const [index,{type,id}] of editableNodes.entries()){
+    assert.equal(draft.pages[pageId].nodes[id].responsive.mobile.backgroundColor,mobileColors[index],`${type}: draft Save stores the mobile override`);
+    assert.equal(published.pages[pageId].nodes[id].responsive.mobile?.backgroundColor,undefined,`${type}: mobile Save leaves published mobile style unchanged`);
+    assert.equal(published.pages[pageId].nodes[id].responsive.desktop.backgroundColor,colors[index],`${type}: mobile Save preserves the published desktop style`);
+  }
+  await viewer.reload();
+  for(const [index,{type,id}] of editableNodes.entries())assert.equal(await publicNode(id).evaluate(el=>getComputedStyle(el).backgroundColor),asRgb(colors[index]),`${type}: mobile draft Save keeps inherited public desktop color`);
+  await editor.reload({waitUntil:'domcontentloaded'});
+  await editor.locator('.canvas-device-btn[data-device="mobile"]').click();
+  for(const [index,{type,id}] of editableNodes.entries()){
+    await editor.locator(`.node[data-node-id="${id}"]`).evaluate(el=>el.click());
+    await editor.locator('.inspector-tabs button').first().click();
+    const field=inspector.locator('.typed-inspector-field[data-property-id="background.color"]');
+    assert.equal(await field.locator('input[type="color"]').inputValue(),mobileColors[index],`${type}: mobile color survives Editor reload`);
+  }
+  await editor.locator('#publish').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
+  await viewer.reload();
+  for(const [index,{type,id}] of editableNodes.entries()){
+    assert.equal(published.pages[pageId].nodes[id].responsive.mobile.backgroundColor,mobileColors[index],`${type}: explicit Publish stores the mobile override`);
+    assert.equal(published.pages[pageId].nodes[id].responsive.desktop.backgroundColor,colors[index],`${type}: mobile Publish preserves the desktop override`);
+    assert.equal(await publicNode(id).evaluate(el=>getComputedStyle(el).backgroundColor),asRgb(mobileColors[index]),`${type}: published mobile color matches the Inspector`);
+  }
+  await viewer.setViewportSize({width:1366,height:900});
+  await viewer.reload();
+  for(const [index,{type,id}] of editableNodes.entries())assert.equal(await publicNode(id).evaluate(el=>getComputedStyle(el).backgroundColor),asRgb(colors[index]),`${type}: mobile Publish preserves desktop public color`);
+
   // The shared responsive visibility controls are also part of each type's
   // Inspector contract. Exercise the mobile route for every partial type and
   // keep Save isolated from the published page until the explicit Publish.

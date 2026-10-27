@@ -1,0 +1,43 @@
+{
+  "date": "2026-10-27",
+  "plan_cursor": "77.44.7.A",
+  "scope": "Add full responsive mobile background-color Inspector lifecycle and desktop isolation to every editable non-root PARTIAL type.",
+  "runtime_changed": false,
+  "test_file": "tests/browser/editor-inspector-partial-types.test.js",
+  "test_result": {
+    "command": "node --test tests/browser/editor-inspector-partial-types.test.js",
+    "tests": 1,
+    "passed": 1,
+    "failed": 0,
+    "duration_ms": 130734,
+    "scenario_duration_ms": 130035
+  },
+  "coverage": [
+    "all 44 editable non-root PARTIAL types edit the real background.color Inspector control on mobile through responsive.set/backgroundColor",
+    "each mobile override updates Canvas CSS and the draft Page Model without changing the published mobile value or the published desktop color",
+    "all 44 mobile values survive Editor reload and are confirmed in Inspector controls before Publish",
+    "explicit Publish applies each mobile color to public CSS while retaining its independent desktop override",
+    "switching the public viewport back to desktop confirms that mobile Publish did not replace any desktop color"
+  ],
+  "additional_checks": {
+    "editor_unit_suite": "PASS 10/10 test files.",
+    "typecheck": "PASS.",
+    "node_syntax": "PASS for the modified browser test.",
+    "canonical_plan": "PASS; 77.44.7.A remains OPEN / NOT CERTIFIED.",
+    "active_point_audit": "PASS.",
+    "traceability": "PASS; 396 mappings.",
+    "git_diff_check": "PASS."
+  },
+  "release": {
+    "runtime_source_changed": false,
+    "production_deployment": "Not performed; test/documentation-only change.",
+    "production_data_changed": false,
+    "database_migration_run": false,
+    "r2_changed": false,
+    "push": "Pending: test and evidence are not yet committed or pushed.",
+    "github_ci_status": "Pending verification."
+  },
+  "limitations": [
+    "This is responsive field-lifecycle evidence for the PARTIAL type matrix, not full type/property acceptance or physical-device acceptance."
+  ]
+}
