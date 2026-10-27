@@ -1,7 +1,7 @@
 {
   "date": "2026-10-27",
   "plan_cursor": "77.44.7.A",
-  "scope": "Verify all ten tablet hover and focus-visible properties through Inspector, Canvas, draft Save, reload, Publish, public CSS, per-property reset/Undo/Redo, concurrent hover/focus precedence, and desktop/mobile inheritance; also validate persisted state CSS contracts and legacy compatibility",
+  "scope": "Verify all ten tablet hover and focus-visible properties through Inspector, Canvas, draft Save, reload, Publish, public CSS, per-property reset/Undo/Redo, concurrent hover/focus precedence, and desktop/mobile inheritance isolation; validate mobile-specific focus overrides survive tablet reset; also validate persisted state CSS contracts and legacy compatibility",
   "runtime_changed": false,
   "test_file": "tests/browser/editor-inspector-tablet-state-lifecycle.test.js",
   "supporting_test_file": "public/editor-v2/tests/state-tokens.test.js",
@@ -10,8 +10,8 @@
     "tests": 1,
     "passed": 1,
     "failed": 0,
-    "duration_ms": 42118,
-    "scenario_duration_ms": 41301
+    "duration_ms": 47264,
+    "scenario_duration_ms": 44576
   },
   "coverage": [
     "all ten hover and focus-visible Inspector fields expose states.set and the expected property ID/key and update tablet Canvas CSS",
@@ -26,8 +26,12 @@
     "all ten tablet focus-visible properties survive draft Save and Editor reload",
     "draft focus state leaves the published tablet values untouched; Publish gives the tablet node tabindex=0 and all ten :focus-visible styles while preserving independent desktop focus values and keyboard access",
     "resetting all ten focus-visible properties remains draft-only through reload as desktop-inherited Inspector values; the separate reset Publish restores the desktop styles and keyboard affordance on tablet and mobile",
-    "mobile inherits all tablet focus-visible styles until reset, then inherits the desktop focus styles and tab stop",
-    "browser page errors remain empty"
+    "mobile initially inherits tablet focus styles before receiving its own overrides; tablet reset subsequently restores desktop inheritance only where mobile has no override",
+    "browser page errors remain empty",
+    "all ten mobile focus-visible properties use the real Inspector state command and map to mobile Page Model overrides and Canvas CSS",
+    "mobile focus draft Save leaves inherited published tablet styles unchanged; Editor reload preserves all ten mobile values",
+    "explicit mobile Publish applies all ten mobile focus styles while retaining all ten independent tablet focus values",
+    "publishing the tablet focus reset restores desktop inheritance at tablet width without clearing the ten independently published mobile focus overrides"
   ],
   "additional_checks": {
     "editor_unit_suite": "Current sandbox rerun: 9/10 test files passed; core.test.js had 69/70 subtests pass, with its parser subprocess blocked by spawnSync EPERM. Prior 136/136 result remains recorded at commit 8902cd64.",
@@ -46,8 +50,8 @@
     "production_data_changed": false,
     "database_migration_run": false,
     "r2_changed": false,
-    "push": "Commit a5551b1c39cf0600652590508b2f2ab2bcabbe48 was pushed by normal fast-forward to origin/v2/foundation; GitHub compare confirms one commit ahead of 1705eb8b, and git ls-remote reports the same branch head.",
-    "github_ci_status": "The GitHub combined-status endpoint returned no checks for a5551b1c, and the commit workflow-run query returned no PR-triggered runs. CI result is unavailable/unverified."
+    "push": "Pending: the mobile focus-isolation test extension has not yet been committed or pushed.",
+    "github_ci_status": "The prior persisted-state validation revision 8902cd64 had no reported combined-status checks or PR-triggered workflow runs; the mobile isolation extension commit status is pending verification."
   },
   "limitations": [
     "Local HTTP mock and Chromium viewport; not physical-device acceptance.",
