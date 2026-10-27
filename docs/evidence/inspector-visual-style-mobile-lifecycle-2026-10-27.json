@@ -1,0 +1,47 @@
+{
+  "date": "2026-10-27",
+  "plan_cursor": "77.44.7.A",
+  "scope": "Verify mobile filter.effect, transform.rotate, transform.scale, and animation.transition Inspector routes through Canvas, draft Save, Editor reload, explicit Publish, public CSS, and desktop isolation",
+  "runtime_changed": false,
+  "test_file": "tests/browser/editor-inspector-breakpoint-lifecycle.test.js",
+  "test_result": {
+    "command": "node --test tests/browser/editor-inspector-breakpoint-lifecycle.test.js",
+    "tests": 1,
+    "passed": 1,
+    "failed": 0,
+    "duration_ms": 35609,
+    "scenario_duration_ms": 34671
+  },
+  "coverage": [
+    "filter.effect exposes responsive.set / filter and grayscale(1) reaches the mobile Canvas CSS",
+    "transform.rotate exposes responsive.set / rotate and 18deg reaches the mobile Canvas CSS",
+    "transform.scale exposes responsive.set / scale and 1.2 reaches the mobile Canvas CSS",
+    "animation.transition exposes responsive.set / transition and 180ms reaches the mobile Canvas and public CSS",
+    "all four values are persisted in the mobile Page Model draft and survive Editor reload",
+    "draft Save leaves the published mobile CSS unchanged; explicit Publish updates the mobile public CSS",
+    "mobile overrides preserve their independent desktop Canvas and public CSS values",
+    "viewport helper waits for the target width and a rendered public node style before assertions",
+    "browser page errors remain empty"
+  ],
+  "additional_checks": {
+    "editor_unit": "135/135 PASS",
+    "typecheck": "PASS",
+    "canonical_plan": "PASS; cursor remains 77.44.7.A and acceptance NOT_CERTIFIED",
+    "active_point_audit": "PASS",
+    "traceability": "396 mappings PASS",
+    "git_diff_check": "PASS"
+  },
+  "release": {
+    "runtime_source_changed": false,
+    "production_deployment": "Not applicable to this test/documentation-only change; Worker runtime source is unchanged.",
+    "production_data_changed": false,
+    "database_migration_run": false,
+    "r2_changed": false,
+    "push": "Pending final commit and remote verification.",
+    "github_commit_statuses": "Not checked for the final commit yet."
+  },
+  "limitations": [
+    "Local HTTP mock and Chromium viewport; not physical-device acceptance.",
+    "The full 77.44.7.A property matrix and Editor acceptance remain open."
+  ]
+}

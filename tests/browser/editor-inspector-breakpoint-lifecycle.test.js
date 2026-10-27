@@ -45,7 +45,7 @@ test('Inspector color keeps independent desktop/tablet/mobile values through dra
   const canvas=()=>editor.locator(`.node[data-node-id="${nodeId}"]`),live=()=>publicPage.locator(`[data-node-id="${nodeId}"]`);
   const color=target=>target().evaluate(el=>getComputedStyle(el).backgroundColor);
   const select=async()=>{await canvas().evaluate(el=>el.click());if(await editor.locator('#rightDock').evaluate(el=>el.classList.contains('closed')))await editor.locator('#openInspector').click()};
-  const activate=async(device,width)=>{await editor.locator(`.canvas-device-btn[data-device="${device}"]`).click();await publicPage.setViewportSize({width,height:900})};
+  const activate=async(device,width)=>{await editor.locator(`.canvas-device-btn[data-device="${device}"]`).click();await publicPage.setViewportSize({width,height:900});await publicPage.waitForFunction(({id,expectedWidth})=>{const element=document.querySelector(`[data-node-id="${id}"]`);return window.innerWidth===expectedWidth&&element!==null&&getComputedStyle(element).backgroundColor!==''},{id:nodeId,expectedWidth:width})};
   const field=()=>editor.locator('.typed-inspector-field[data-property-id="background.color"]');
   const setColor=async value=>field().locator('input[type="color"]').evaluate((input,next)=>{input.value=next;input.dispatchEvent(new Event('change',{bubbles:true}))},value);
   const save=async publish=>{await editor.locator(publish?'#publish':'#save').click();await editor.waitForFunction(p=>document.querySelector('#saveStatus')?.textContent?.startsWith(p?'Publikálva':'Mentve'),publish)};
@@ -275,5 +275,49 @@ test('Inspector color keeps independent desktop/tablet/mobile values through dra
   assert.deepEqual(await backgroundStyles(canvas),desktopCanvasBackground,'mobile background does not replace desktop Canvas styles');
   await publicPage.reload({waitUntil:'domcontentloaded'});
   assert.deepEqual(await backgroundStyles(live),desktopPublicBackground,'published desktop background retains independent values');
+  const readStyle=(target,property)=>target().evaluate((el,key)=>getComputedStyle(el).getPropertyValue(key),property);
+  const visualProperties=[
+    {id:'filter.effect',key:'filter',group:'Szűrők',css:'filter',value:'grayscale(1)',expected:'grayscale(1)',edit:field=>field.locator('select:not(.property-token-picker)').selectOption('grayscale(1)'),read:field=>field.locator('select:not(.property-token-picker)').inputValue()},
+    {id:'transform.rotate',key:'rotate',group:'Transzformáció',css:'rotate',value:'18deg',expected:'18deg',edit:async field=>{const input=field.locator('.dimension-controls input[type="number"]');await input.fill('18');await input.press('Tab')},read:async field=>(await field.locator('.dimension-controls input[type="number"]').inputValue())+(await field.locator('.dimension-controls select:not(.property-token-picker)').inputValue())},
+    {id:'transform.scale',key:'scale',group:'Transzformáció',css:'scale',value:'1.2',expected:'1.2',edit:async field=>{const input=field.locator('input[type="number"]');await input.fill('1.2');await input.press('Tab')},read:field=>field.locator('input[type="number"]').inputValue()},
+    {id:'animation.transition',key:'transition',group:'Animáció',css:'transition',value:'all 180ms ease',expected:'all 0.18s ease 0s',edit:field=>field.locator('select:not(.property-token-picker)').selectOption('all 180ms ease'),read:field=>field.locator('select:not(.property-token-picker)').inputValue()}
+  ];
+  const desktopVisualStyles=Object.fromEntries(await Promise.all(visualProperties.map(async property=>[property.id,{canvas:await readStyle(canvas,property.css),public:await readStyle(live,property.css)}])));
+  await activate('mobile',390);
+  await publicPage.waitForFunction(id=>{const el=document.querySelector(`[data-node-id="${id}"]`);return el&&['filter','rotate','scale','transition'].every(property=>getComputedStyle(el).getPropertyValue(property)!=='')},nodeId);
+  const publishedMobileVisualStyles=Object.fromEntries(await Promise.all(visualProperties.map(async property=>[property.id,await readStyle(live,property.css)])));
+  for(const property of visualProperties){
+    const heading=editor.locator('.inspector-group-title').filter({hasText:property.group});if(await heading.getAttribute('aria-expanded')==='false')await heading.click();
+    const control=editor.locator(`[data-property-id="${property.id}"]`);
+    assert.equal(await control.getAttribute('data-property-command'),'responsive.set',`${property.id}: Inspector command`);
+    assert.equal(await control.getAttribute('data-property-key'),property.key,`${property.id}: Page Model key`);
+    await property.edit(control);
+    const value=await readStyle(canvas,property.css);
+    if(property.id==='animation.transition')assert.match(value,/0\.18s/,`${property.id}: mobile edit reaches Canvas CSS`);
+    else assert.equal(value,property.expected,`${property.id}: mobile edit reaches Canvas CSS`);
+    assert.equal(await readStyle(live,property.css),publishedMobileVisualStyles[property.id],`${property.id}: edit remains unpublished`);
+  }
+  await save(false);assert.equal(posts.at(-1).publish,false,'mobile filter/transform/animation Save remains draft-only');
+  for(const property of visualProperties)assert.equal(posts.at(-1).document.pages[pageId].nodes[nodeId].responsive.mobile[property.key],property.value,`${property.id}: mobile override is stored in the Page Model`);
+  await editor.reload({waitUntil:'domcontentloaded'});await select();await activate('mobile',390);
+  for(const property of visualProperties){
+    const heading=editor.locator('.inspector-group-title').filter({hasText:property.group});if(await heading.getAttribute('aria-expanded')==='false')await heading.click();
+    assert.equal(await property.read(editor.locator(`[data-property-id="${property.id}"]`)),property.value,`${property.id}: draft survives Editor reload`);
+  }
+  await publicPage.reload({waitUntil:'domcontentloaded'});
+  for(const property of visualProperties)assert.equal(await readStyle(live,property.css),publishedMobileVisualStyles[property.id],`${property.id}: draft Save leaves mobile public CSS unchanged`);
+  await save(true);assert.equal(posts.at(-1).publish,true,'mobile filter/transform/animation require explicit Publish');
+  await publicPage.reload({waitUntil:'domcontentloaded'});
+  for(const property of visualProperties){
+    const actual=await readStyle(live,property.css);
+    if(property.id==='animation.transition')assert.match(actual,/0\.18s/,`${property.id}: Publish reaches public CSS`);
+    else assert.equal(actual,property.expected,`${property.id}: Publish reaches public CSS`);
+  }
+  await activate('desktop',1366);
+  for(const property of visualProperties){
+    assert.equal(await readStyle(canvas,property.css),desktopVisualStyles[property.id].canvas,`${property.id}: mobile override preserves desktop Canvas value`);
+    await publicPage.reload({waitUntil:'domcontentloaded'});
+    assert.equal(await readStyle(live,property.css),desktopVisualStyles[property.id].public,`${property.id}: mobile Publish preserves desktop public value`);
+  }
   assert.deepEqual(errors,[]);
 });
