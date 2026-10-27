@@ -39,8 +39,8 @@
     "production_data_changed": false,
     "database_migration_run": false,
     "r2_changed": false,
-    "push": "Pending: the per-type mobile reset Undo/Redo extension has not yet been committed or pushed.",
-    "github_ci_status": "Commit 1f095a4f has no reported GitHub combined-status checks or PR-triggered workflow runs; the Undo/Redo extension commit status is pending verification."
+    "push": "The mobile PARTIAL lifecycle/reset commit 1f095a4f and per-type Undo/Redo extension 5c1459cd2d2f7fc8f11c0c40dac445edf1702cb0 were pushed to origin/v2/foundation. GitHub compare confirms one commit ahead of 1f095a4f; git ls-remote reports 5c1459cd as the branch head.",
+    "github_ci_status": "The GitHub combined-status endpoint returned no checks for 5c1459cd, and the commit workflow-run query returned no PR-triggered runs. CI result is unavailable/unverified."
   },
   "limitations": [
     "This is responsive field-lifecycle evidence for the PARTIAL type matrix, not full type/property acceptance or physical-device acceptance."
