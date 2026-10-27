@@ -49,19 +49,18 @@
     "r2_changed": false,
     "push": {
       "branch": "v2/foundation",
-      "commit": "58bc17a84ec2e9865a2c67c46a248188d0691550",
+      "commit": "3bb12d0d9bb50041cb0014bd2631125a67bdd404",
       "verified_remote_ref": true,
       "mode": "fast-forward"
     },
     "production_deployment": {
       "worker": "sanci9517-streamer-brand",
-      "new_deployment_from_test_commit": false,
-      "latest_verified_number": 3605,
-      "latest_deployment_id": "b5bb7987-9d40-4d77-ab50-7caeecd8dd18",
-      "latest_version_id": "2e45fefd-1a67-4c18-be17-7a6c199bd422",
+      "number": 3607,
+      "deployment_id": "80f69617-c674-4990-bd93-75696f6ca3c9",
+      "version_id": "c8bb5b3a-724d-48e7-b4a9-0c32b7dce6c3",
       "traffic_percent": 100,
       "etag": "0afd1da0c52bcc5e558e12adeb9888aea6d7df03d5e070c2184b4920dd825bc0",
-      "runtime_unchanged": true
+      "runtime_unchanged_from_previous": true
     },
     "github_commit_statuses": "no checks reported by combined status endpoint",
     "production_smoke": {
