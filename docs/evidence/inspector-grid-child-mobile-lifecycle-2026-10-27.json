@@ -1,0 +1,43 @@
+{
+  "date": "2026-10-27",
+  "plan_cursor": "77.44.7.A",
+  "scope": "Verify the mobile Grid child column field through Canvas, draft persistence, separate Publish, and public rendering",
+  "runtime_changed": false,
+  "test_file": "tests/browser/editor-responsive-layout.test.js",
+  "test_result": {
+    "command": "node --test tests/browser/editor-responsive-layout.test.js",
+    "tests": 1,
+    "passed": 1,
+    "failed": 0,
+    "duration_ms": 27935,
+    "scenario_duration_ms": 27091
+  },
+  "coverage": [
+    "mobile grid.column maps to responsive.set and the gridColumn style key",
+    "mobile Inspector editing updates the Canvas computed gridColumnStart",
+    "draft-only Save leaves the published mobile Grid placement unchanged",
+    "the mobile override survives Editor reload",
+    "separate Publish updates the public mobile Grid placement",
+    "desktop Canvas and public Grid placement retain their independent value",
+    "browser page errors remain empty"
+  ],
+  "additional_checks": {
+    "editor_unit": "135/135 PASS",
+    "typecheck": "PASS",
+    "canonical_plan": "PASS",
+    "active_plan_point": "77.44.7.A remains current; acceptance NOT_CERTIFIED",
+    "traceability": "396 mappings PASS",
+    "git_diff_check": "PASS"
+  },
+  "release": {
+    "runtime_source_changed": false,
+    "production_deployment": "not performed; test/documentation-only change",
+    "production_data_changed": false,
+    "database_migration_run": false,
+    "r2_changed": false
+  },
+  "limitations": [
+    "This verifies the mobile Grid child placement lifecycle, not the complete Inspector field matrix.",
+    "The full 77.44.7.A acceptance and physical-device acceptance remain open."
+  ]
+}
