@@ -1,0 +1,45 @@
+{
+  "date": "2026-10-27",
+  "plan_cursor": "77.44.7.A",
+  "scope": "Complete the published lifecycle evidence for the missing top-left responsive corner-radius Inspector field",
+  "runtime_changed": false,
+  "test_file": "tests/browser/editor-inspector-lifecycle.test.js",
+  "test_result": {
+    "command": "node --test tests/browser/editor-inspector-lifecycle.test.js",
+    "tests": 1,
+    "passed": 1,
+    "failed": 0,
+    "duration_ms": 252284,
+    "scenario_duration_ms": 251608
+  },
+  "coverage": [
+    "radius.topLeft is checked against registry command responsive.set and key borderTopLeftRadius",
+    "Inspector value changes Canvas computed borderTopLeftRadius",
+    "Undo and Redo restore and reapply the corner radius",
+    "draft Save keeps the previously published corner value unchanged",
+    "reload preserves the saved draft value",
+    "separate Publish applies the matching CSS value to the public page",
+    "existing top-right, bottom-right, bottom-left and all-corner lifecycles continue to run"
+  ],
+  "additional_checks": {
+    "editor_unit": "135/135 PASS",
+    "typecheck": "PASS",
+    "canonical_plan": "PASS",
+    "active_plan_point": "PASS; 77.44.7.A remains current and acceptance NOT_CERTIFIED",
+    "traceability": "PASS; 396 mappings",
+    "git_diff_check": "PASS"
+  },
+  "release": {
+    "runtime_source_changed": false,
+    "github_push_verified": false,
+    "production_deployment": "not performed; test/documentation-only change",
+    "production_data_changed": false,
+    "database_migration_run": false,
+    "r2_changed": false
+  },
+  "limitations": [
+    "The four-corner route is locally verified, not user-accepted on a physical device.",
+    "The full Inspector matrix and 77.44.7.A remain open.",
+    "The current checkout is behind the remote tracking ref; no push was attempted from this divergent state."
+  ]
+}

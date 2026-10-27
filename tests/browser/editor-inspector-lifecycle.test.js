@@ -691,6 +691,11 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
     })
   });
   await verifyInspectorFieldLifecycle({
+    propertyId:'radius.topLeft',cssProperty:'borderTopLeftRadius',label:'top left radius',groupName:'Lekerekítés',
+    expectedCommand:'responsive.set',expectedKey:'borderTopLeftRadius',
+    edit:async control=>{const input=control.locator('.dimension-controls input[type="number"]');await input.fill('22');await input.press('Tab')}
+  });
+  await verifyInspectorFieldLifecycle({
     propertyId:'radius.topRight',cssProperty:'borderTopRightRadius',label:'top right radius',groupName:'Lekerekítés',
     expectedCommand:'responsive.set',expectedKey:'borderTopRightRadius',
     edit:async control=>{const input=control.locator('.dimension-controls input[type="number"]');await input.fill('18');await input.press('Tab')}
@@ -1026,7 +1031,7 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   assert.equal(await bulkReset.isEnabled(),true);
   assert.match(await bulkReset.textContent(),/Saját értékek visszaállítása/);
   await bulkReset.click();
-  assert.equal((await css()).radius,'12px');
+  assert.equal((await css()).radius,'22px');
   assert.equal(await field('radius.topLeft').locator('.responsive-origin').textContent(),'Örökölt · Asztali','bulk reset restores desktop origin');
   await editor.locator('#mobileUndo').click();
   assert.equal((await css()).radius,'6px');
@@ -1036,8 +1041,8 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   const preResizeText=await publicPage.locator('.visual-card > .visual-text').first().elementHandle();
   await publicPage.setViewportSize({width:390,height:800});
   await publicPage.waitForFunction(previous=>{const current=document.querySelector('.visual-card > .visual-text');return current&&current!==previous},preResizeText);
-  await publicPage.waitForFunction(()=>getComputedStyle(document.querySelector('.visual-card > .visual-text')).borderTopLeftRadius==='12px');
-  assert.equal((await publicCss()).radius,'12px','mobile draft Save must preserve the previously published inherited radius');
+  await publicPage.waitForFunction(()=>getComputedStyle(document.querySelector('.visual-card > .visual-text')).borderTopLeftRadius==='22px');
+  assert.equal((await publicCss()).radius,'22px','mobile draft Save must preserve the previously published inherited radius');
   await editor.locator('#publish').click();
   await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent==='Publikálva');
   assert.equal(posts.at(-1).publish,true,'mobile radius override is published only through explicit Publish');
