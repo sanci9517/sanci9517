@@ -42,8 +42,8 @@
     "production_data_changed": false,
     "database_migration_run": false,
     "r2_changed": false,
-    "push": "The hover-only revision f27c0cb7 was pushed and its remote ancestry verified. The expanded all-hover-and-focus revision has passed local validation and is pending fast-forward push.",
-    "github_ci_status": "The GitHub combined-status endpoint returned no checks for f27c0cb7, and the commit workflow-run query returned no PR-triggered runs. CI result is unavailable/unverified for that revision; the expanded revision has not yet been pushed."
+    "push": "The all-hover-and-focus revision eaabf562 was pushed by normal fast-forward from b410fa80 to origin/v2/foundation. GitHub compare confirms the branch is one commit ahead of that base.",
+    "github_ci_status": "The GitHub combined-status endpoint returned no checks for eaabf562, and the commit workflow-run query returned no PR-triggered runs. CI result is unavailable/unverified at this check."
   },
   "limitations": [
     "Local HTTP mock and Chromium viewport; not physical-device acceptance.",
