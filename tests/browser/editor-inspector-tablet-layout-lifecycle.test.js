@@ -9,7 +9,7 @@ import {createDocument} from '../../public/editor-v2/core/schema.js';
 import {createEditorState} from '../../public/editor-v2/core/state.js';
 import {execute} from '../../public/editor-v2/core/commands.js';
 
-test('tablet Flex container/children and Grid container/children save, reload and publish independently',async t=>{
+test('tablet Inspector layout, sizing, spacing, and position fields save and publish independently',async t=>{
   const model=createEditorState(createDocument()),pageId=model.document.activePageId;
   const rootId=model.document.pages[pageId].rootId;
   execute(model,{type:'element.add',payload:{type:'grid',parentId:rootId}});
@@ -74,7 +74,15 @@ test('tablet Flex container/children and Grid container/children save, reload an
     {id:'flex.alignSelf',key:'alignSelf',group:'Flex',node:flexChildId,css:'alignSelf',value:'center',edit:field=>field.locator('select:not(.property-token-picker)').selectOption('center'),verify:async field=>assert.equal(await field.locator('select:not(.property-token-picker)').inputValue(),'center')},
     {id:'size.aspectRatio',key:'aspectRatio',group:'Méret',node:gridId,css:'aspectRatio',value:'4 / 3',edit:field=>field.locator('select:not(.property-token-picker)').selectOption('4 / 3'),verify:async field=>assert.equal(await field.locator('select:not(.property-token-picker)').inputValue(),'4 / 3')},
     {id:'size.minWidth',key:'minWidth',group:'Méret',node:gridId,css:'minWidth',value:'240px',edit:async field=>{await field.locator('.dimension-controls select:not(.property-token-picker)').selectOption('px');const input=field.locator('.dimension-controls input[type="number"]');await input.fill('240');await input.press('Tab')},verify:async field=>{assert.equal(await field.locator('.dimension-controls input[type="number"]').inputValue(),'240');assert.equal(await field.locator('.dimension-controls select:not(.property-token-picker)').inputValue(),'px')}},
+    {id:'size.minHeight',key:'minHeight',group:'Méret',node:gridId,css:'minHeight',value:'160px',edit:async field=>{await field.locator('.dimension-controls select:not(.property-token-picker)').selectOption('px');const input=field.locator('.dimension-controls input[type="number"]');await input.fill('160');await input.press('Tab')},verify:async field=>assert.equal(await field.locator('.dimension-controls input[type="number"]').inputValue(),'160')},
+    {id:'size.maxHeight',key:'maxHeight',group:'Méret',node:gridId,css:'maxHeight',value:'360px',edit:async field=>{await field.locator('.dimension-controls select:not(.property-token-picker)').selectOption('px');const input=field.locator('.dimension-controls input[type="number"]');await input.fill('360');await input.press('Tab')},verify:async field=>assert.equal(await field.locator('.dimension-controls input[type="number"]').inputValue(),'360')},
     {id:'spacing.padding',key:'padding',group:'Térközök',node:gridId,css:'paddingTop',value:'12px',storedValue:'12px 0 0 0',edit:async field=>{const input=field.locator('.typed-box-side input[type="number"]').first();await input.fill('12');await input.press('Tab')},verify:async field=>assert.equal(await field.locator('.typed-box-side input[type="number"]').first().inputValue(),'12')},
+    {id:'spacing.margin',key:'margin',group:'Térközök',node:gridId,css:'marginTop',value:'8px',storedValue:'8px 0 0 0',edit:async field=>{const input=field.locator('.typed-box-side input[type="number"]').first();await input.fill('8');await input.press('Tab')},verify:async field=>assert.equal(await field.locator('.typed-box-side input[type="number"]').first().inputValue(),'8')},
+    {id:'layout.overflow',key:'overflow',group:'Elrendezés',node:gridId,css:'overflow',value:'hidden',edit:field=>field.locator('select:not(.property-token-picker)').selectOption('hidden'),verify:async field=>assert.equal(await field.locator('select:not(.property-token-picker)').inputValue(),'hidden')},
+    {id:'position.position',key:'position',group:'Geometria',node:gridId,css:'position',value:'relative',edit:field=>field.locator('select:not(.property-token-picker)').selectOption('relative'),verify:async field=>assert.equal(await field.locator('select:not(.property-token-picker)').inputValue(),'relative')},
+    {id:'position.x',key:'x',group:'Geometria',node:gridId,css:'left',value:'22px',edit:async field=>{await field.locator('.dimension-controls select:not(.property-token-picker)').selectOption('px');const input=field.locator('.dimension-controls input[type="number"]');await input.fill('22');await input.press('Tab')},verify:async field=>assert.equal(await field.locator('.dimension-controls input[type="number"]').inputValue(),'22')},
+    {id:'position.y',key:'y',group:'Geometria',node:gridId,css:'top',value:'14px',edit:async field=>{await field.locator('.dimension-controls select:not(.property-token-picker)').selectOption('px');const input=field.locator('.dimension-controls input[type="number"]');await input.fill('14');await input.press('Tab')},verify:async field=>assert.equal(await field.locator('.dimension-controls input[type="number"]').inputValue(),'14')},
+    {id:'position.zIndex',key:'zIndex',group:'Pozíció',node:gridId,css:'zIndex',value:'7',edit:async field=>{const input=field.locator('input[type="number"]');await input.fill('7');await input.press('Tab')},verify:async field=>assert.equal(await field.locator('input[type="number"]').inputValue(),'7')},
     {id:'grid.row',key:'gridRow',group:'Grid-gyermek',node:gridChildId,css:'gridRowStart',value:'3',edit:field=>field.locator('select:not(.property-token-picker)').selectOption('3'),verify:async field=>assert.equal(await field.locator('select:not(.property-token-picker)').inputValue(),'3')},
     {id:'grid.column',key:'gridColumn',group:'Grid-gyermek',node:gridChildId,css:'gridColumnStart',value:'2',edit:field=>field.locator('select:not(.property-token-picker)').selectOption('2'),verify:async field=>assert.equal(await field.locator('select:not(.property-token-picker)').inputValue(),'2')},
     {id:'flex.direction',key:'flexDirection',group:'Flex',node:flexId,css:'flexDirection',value:'column',edit:field=>field.locator('select:not(.property-token-picker)').selectOption('column'),verify:async field=>assert.equal(await field.locator('select:not(.property-token-picker)').inputValue(),'column')},
@@ -110,13 +118,14 @@ test('tablet Flex container/children and Grid container/children save, reload an
     }
     assert.equal(await css(publicPage,property.node,property.css),tabletPublishedBaseline[property.id],`${property.id}: edit remains unpublished`);
   }
-  for(let i=0;i<properties.length;i++)await editor.locator('#undo').click();
+  let undoCount=0;
+  while(undoCount<properties.length*4&&!await editor.locator('#undo').isDisabled()){await editor.locator('#undo').click();undoCount++}
   for(const property of properties){
     const value=await css(editor,property.node,property.css);
     if(property.id==='grid.columns'||property.id==='grid.rows')assert.equal(value.trim().split(/\s+/).length,2,`${property.id}: Undo restores the original two-track template`);
     else assert.equal(value,tabletCanvasBaseline[property.id],`${property.id}: Undo restores the inherited tablet Canvas value`);
   }
-  for(let i=0;i<properties.length;i++)await editor.locator('#redo').click();
+  for(let i=0;i<undoCount&&!await editor.locator('#redo').isDisabled();i++)await editor.locator('#redo').click();
   for(const property of properties){const value=await css(editor,property.node,property.css);assert.ok(property.cssMatches?property.cssMatches(value):value===property.value,`${property.id}: Redo restores the tablet value (got ${value})`)}
   await editor.locator('#save').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent?.startsWith('Mentve'));
   assert.equal(posts.at(-1).publish,false,'tablet child layout Save remains draft-only');
