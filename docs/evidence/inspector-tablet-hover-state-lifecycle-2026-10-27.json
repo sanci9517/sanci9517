@@ -1,7 +1,7 @@
 {
   "date": "2026-10-27",
   "plan_cursor": "77.44.7.A",
-  "scope": "Verify tablet-scoped Inspector hover state through Canvas preview, draft Save, Editor reload, explicit Publish, public CSS, inheritance reset, Undo/Redo, and desktop/mobile isolation",
+  "scope": "Verify tablet-scoped Inspector hover and focus-visible states through Canvas preview, draft Save, Editor reload, explicit Publish, public CSS, inheritance reset, Undo/Redo, keyboard reachability, and desktop/mobile isolation",
   "runtime_changed": false,
   "test_file": "tests/browser/editor-inspector-tablet-state-lifecycle.test.js",
   "test_result": {
@@ -9,8 +9,8 @@
     "tests": 1,
     "passed": 1,
     "failed": 0,
-    "duration_ms": 8583,
-    "scenario_duration_ms": 8583
+    "duration_ms": 11135,
+    "scenario_duration_ms": 11135
   },
   "coverage": [
     "tablet hover backgroundColor exposes states.set / backgroundColor and previews the saved override on Canvas",
@@ -18,9 +18,11 @@
     "Editor reload preserves the tablet hover control value",
     "tablet public hover inherits the published desktop value until explicit Publish",
     "explicit Publish applies the tablet hover style; desktop retains its own style and mobile inherits the tablet value",
-    "tablet state reset uses states.set / backgroundColor and restores desktop hover inheritance on Canvas",
-    "Undo restores the tablet hover override and Redo restores inheritance",
-    "draft reset Save does not alter the published tablet state; explicit reset Publish restores desktop inheritance on tablet and mobile",
+    "tablet hover reset uses states.set / backgroundColor; Undo restores the override and Redo restores desktop inheritance",
+    "draft reset Save does not alter published tablet state; explicit reset Publish restores desktop inheritance on tablet and mobile",
+    "tablet focus-visible state uses states.set / backgroundColor and survives draft Save and Editor reload",
+    "draft focus state adds no public keyboard stop; explicit Publish makes the tablet node focusable with tabindex=0 and :focus-visible styling",
+    "desktop has no redundant focus stop; mobile inherits the tablet focus-visible style",
     "browser page errors remain empty"
   ],
   "additional_checks": {
