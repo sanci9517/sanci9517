@@ -30,7 +30,26 @@
     "database_migration_applied": false,
     "production_data_changed": false,
     "r2_changed": false,
-    "production_deployment": "not yet performed or claimed"
+    "production_deployment": {
+      "verified": true,
+      "deployment_id": "26b92c1d-d3de-4a5d-9923-a56e104c5d40",
+      "version_id": "89b77893-e961-4f6d-b004-762a0e567ae0",
+      "version_number": 3587,
+      "traffic": "100%",
+      "script_etag": "0afd1da0c52bcc5e558e12adeb9888aea6d7df03d5e070c2184b4920dd825bc0"
+    },
+    "github_push": {
+      "verified": true,
+      "branch": "v2/foundation",
+      "commit": "50bbdd4e45b333401bc03e755c7d33259f5259ea",
+      "remote_head_verified": true,
+      "ci_status": "The available GitHub combined-status API returned no statuses, and the workflow-runs connector returned no PR-triggered runs; CI PASS is not claimed."
+    },
+    "production_smoke": {
+      "api_health": "200; ok true",
+      "changed_asset": "200",
+      "local_and_production_asset_sha256": "5ac92d2f956c940050dc279d89d192492f9a257252a26e84dde0ab4f834829a6"
+    }
   },
   "limitations": [
     "The combined serial browser suite had one unrelated Admin media integrity page-load timeout; the 10-test file passed independently.",
