@@ -34,12 +34,17 @@
   },
   "release": {
     "runtime_source_changed": false,
-    "production_deployment": "Pending push verification; no direct deploy is required for this test/documentation-only change.",
+    "production_deployment": "Verified Cloudflare automatic deployment c3291fac-8503-4b82-abdd-8a3eec559751, version f36fa182-a10b-4904-8e36-c3606a2b61a8 at 100% traffic after the test commit. This test/documentation-only change contains no runtime source changes; no direct deploy was run.",
+    "production_smoke": {
+      "api_health": "200; ok=true",
+      "api_db_health": "200; D1 connected=true",
+      "editor_index_sha256": "7b7abaa77976be11e6b606ff82e81a611df04600c28755ed6c4771aac51d7277; live /editor-v2/ matches public/editor-v2/index.html"
+    },
     "production_data_changed": false,
     "database_migration_run": false,
     "r2_changed": false,
-    "push": "Pending final commit.",
-    "github_commit_statuses": "Not checked for the final commit yet."
+    "push": "Fast-forward to v2/foundation; test commit 920853cfd2ba939ef6c3476bc2294758dc449ee4; remote ref verified at the same SHA.",
+    "github_commit_statuses": "Combined status returned no statuses."
   },
   "limitations": [
     "Local HTTP mock and Chromium viewport; not physical-device acceptance.",
