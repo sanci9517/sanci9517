@@ -1,0 +1,74 @@
+{
+  "date": "2026-10-27",
+  "plan_cursor": "77.44.7.A",
+  "scope": "Reproduce and fix mobile responsive Inspector margin precedence across Canvas, draft Save, explicit Publish and public CSS; verify reset and desktop preservation.",
+  "test_file": "tests/browser/editor-inspector-breakpoint-lifecycle.test.js",
+  "runtime_changed": true,
+  "initial_regression": {
+    "property": "spacing.margin",
+    "breakpoint": "mobile / 390px",
+    "before_fix": "Inspector and Canvas showed 24px top margin and the saved Page Model contained responsive.mobile.margin = '24px 0 0 0'; the public node also had inline margin:24px, but computed mobile margin remained 0px due to an !important margin fallback in the public responsive stylesheet."
+  },
+  "fixes": [
+    {
+      "file": "public/visual-page.html",
+      "change": "Mobile fallback margins retain their default spacing when no explicit style exists but no longer use !important, allowing inline responsive Inspector values to take effect."
+    },
+    {
+      "file": "public/assets/page-renderer.js",
+      "change": "The renderer-injected mobile fallback mirrors the public template's margin precedence."
+    },
+    {
+      "file": "public/visual-page.html",
+      "change": "Bumped the public page-renderer asset query version to 20261027-responsive-margin so browsers request the updated renderer."
+    }
+  ],
+  "lifecycle": [
+    "Set mobile margin to 24px; Inspector route is responsive.set / margin and Canvas shows the edit.",
+    "Draft Save writes only the mobile Page Model override and leaves public CSS unchanged.",
+    "Editor reload preserves the mobile value; explicit Publish updates public mobile CSS to 24px.",
+    "Desktop computed margin is preserved independently.",
+    "Mobile reset restores inherited desktop margin; Undo/Redo restore the override/inherited state.",
+    "Draft reset Save leaves the published 24px mobile margin in place; separate Publish applies inheritance."
+  ],
+  "final_tests": [
+    {
+      "command": "node --test tests/browser/editor-inspector-breakpoint-lifecycle.test.js",
+      "tests": 1,
+      "passed": 1,
+      "failed": 0,
+      "duration_ms": 54314,
+      "result": "PASS"
+    },
+    {
+      "command": "node --test tests/browser/editor-decorative-elements.test.js tests/browser/editor-legacy-media-parity.test.js",
+      "tests": 2,
+      "passed": 2,
+      "failed": 0,
+      "result": "PASS"
+    },
+    {"command": "npm run typecheck", "result": "PASS"},
+    {"command": "npm run test:editor", "test_files": 10, "passed": 10, "failed": 0, "result": "PASS"},
+    {"command": "python scripts/check-canonical-plan.py", "result": "PASS"},
+    {"command": "python scripts/audit-active-plan-point.py", "result": "PASS; next 77.44.7.A; acceptance NOT_CERTIFIED"},
+    {"command": "python scripts/build-feature-traceability.py --check", "result": "PASS; 396 mappings"},
+    {"command": "node --check public/assets/page-renderer.js && git diff --check", "result": "PASS"}
+  ],
+  "predeployment": {
+    "remote_d1_migration_list": "PASS; No migrations to apply. Read-only command; no migration applied.",
+    "wrangler_deploy_dry_run": "PASS; 159 assets, 287.10 KiB (65.78 KiB gzip); dry-run exited without deploying.",
+    "wrangler_logging": "Wrangler could not write diagnostic logs under the read-only /home/agent/.config/.wrangler/logs path (EROFS); both commands exited 0 and printed their successful result."
+  },
+  "release": {
+    "push": "pending",
+    "production_deployment": "pending",
+    "production_smoke": "pending",
+    "production_data_changed": false,
+    "database_migration_run": false,
+    "r2_changed": false
+  },
+  "limitations": [
+    "This certifies one mobile spacing property and public responsive fallback path, not every Inspector property or all 79 node types.",
+    "Physical-device acceptance and full 77.44.7.A acceptance remain OPEN / NOT CERTIFIED."
+  ]
+}
