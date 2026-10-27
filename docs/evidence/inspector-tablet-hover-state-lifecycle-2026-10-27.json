@@ -46,8 +46,8 @@
     "production_data_changed": false,
     "database_migration_run": false,
     "r2_changed": false,
-    "push": "The full browser state/reset and concurrent hover+focus precedence revision c4b4c616 was pushed by normal fast-forward from 5fc26783 to origin/v2/foundation. The persisted-state validation test and its plan/evidence update are locally validated and pending push.",
-    "github_ci_status": "The GitHub combined-status endpoint returned no checks for c4b4c616, and the commit workflow-run query returned no PR-triggered runs. CI result is unavailable/unverified; the persisted-state validation extension is not yet pushed."
+    "push": "The browser state/reset revision c4b4c616 and persisted-state validation revision 8902cd64 were pushed by normal fast-forward to origin/v2/foundation; GitHub compare confirms the branch advanced one commit from 0336bd01.",
+    "github_ci_status": "The GitHub combined-status endpoint returned no checks for 8902cd64, and the commit workflow-run query returned no PR-triggered runs. CI result is unavailable/unverified at this check."
   },
   "limitations": [
     "Local HTTP mock and Chromium viewport; not physical-device acceptance.",
