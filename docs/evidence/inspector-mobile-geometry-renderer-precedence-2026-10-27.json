@@ -1,7 +1,7 @@
 {
   "date": "2026-10-27",
   "plan_cursor": "77.44.7.A",
-  "status": "IMPLEMENTED_LOCALLY_BROWSER_VALIDATION_BLOCKED",
+  "status": "LOCAL_VALIDATION_PASS_RELEASE_PENDING",
   "scope": "Keep the mobile public renderer's computed height and minimum height in parity with the resolved Inspector/Page Model values through edit, draft Save, reload, Publish, desktop preservation, and inheritance reset.",
   "finding": {
     "source": "public/assets/page-renderer.js style() resolves the active responsive value and emits it inline. The public mobile fallback used height:auto!important and min-height:80px!important on ordinary nodes, which overrode those resolved declarations in the cascade.",
@@ -22,17 +22,18 @@
     "traceability": "PASS; 396 mappings regenerated and checked",
     "javascript_syntax": "PASS for renderer and browser regression file",
     "static_fallback_parity": "PASS; static and renderer-injected CSS use the same mobile height/minHeight variables and defaults",
-    "wrangler_deploy_dry_run": "PASS; 159 assets, 287.10 KiB (65.78 KiB gzip); dry-run only",
-    "chromium_lifecycle": "BLOCKED: targeted test invocation fails before test setup can bind its local HTTP fixture (listen EPERM 127.0.0.1). A separate Chromium launch also fails in the sandbox with Crashpad setsockopt EPERM. GitHub CI has not run for this unpushed change."
+    "wrangler_deploy_dry_run": "PASS; 159 assets, 287.10 KiB (65.78 KiB gzip); dry-run only.",
+    "chromium_lifecycle": "PASS: node --test tests/browser/editor-inspector-breakpoint-lifecycle.test.js tests/browser/editor-decorative-elements.test.js tests/browser/editor-legacy-media-parity.test.js; 3/3 passed, including the mobile geometry lifecycle (1/1, 57.2s).",
+    "remote_d1_migration_list": "PASS; No migrations to apply. Read-only; no migration applied."
   },
   "release": {
     "pushed": false,
     "production_deployment": false,
-    "remote_d1_preflight": "NOT RUN; proxy port 8080 is unreachable from this execution environment",
-    "production_smoke": "NOT RUN; proxy port 8080 is unreachable from this execution environment",
+    "remote_d1_preflight": "PASS; Wrangler remote migration list returned No migrations to apply; read-only.",
+    "production_smoke": "PENDING after verified push/deployment.",
     "production_data_changed": false,
     "database_migration_run": false,
     "r2_changed": false
   },
-  "next_step": "Run the targeted Chromium lifecycle and GitHub CI when a network-capable repository environment is available. Only then complete remote D1 preflight, fast-forward push, and verify deployment/smoke before marking this slice complete. The full 77.44.7.A remains OPEN / NOT CERTIFIED."
+  "next_step": "Push the verified runtime commit normally to v2/foundation, wait for required CI and automatic Worker rollout, then verify 100% traffic and smoke /api/health plus the changed page-renderer asset hash. The full 77.44.7.A remains OPEN / NOT CERTIFIED."
 }

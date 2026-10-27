@@ -636,7 +636,7 @@ test('Inspector color keeps independent desktop/tablet/mobile values through dra
   assert.equal(await readStyle(live,'height'),'180px','mobile height Publish preserves desktop public CSS');
   assert.equal(await readStyle(live,'min-height'),'120px','mobile min-height Publish preserves desktop public CSS');
   await activate('mobile',390);await editor.locator('.inspector-tabs button').first().click();
-  const resetHeight=editor.locator('.property-reset[title^="mobile nézet"][data-property-key="height"]').filter({hasText:'Öröklés visszaállítása'});
+  const resetHeight=editor.locator('.property-reset[data-property-key="height"]').filter({hasText:'Visszaállítás az örökölt értékre'});
   const resetMinHeight=editor.locator('.property-reset[title^="mobile nézet"][data-property-key="minHeight"]').filter({hasText:'Öröklés visszaállítása'});
   assert.equal(await resetHeight.count(),1,'mobile height exposes its inheritance reset');
   assert.equal(await resetMinHeight.count(),1,'mobile min-height exposes its inheritance reset');
