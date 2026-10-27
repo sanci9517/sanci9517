@@ -34,8 +34,8 @@
     "production_data_changed": false,
     "database_migration_run": false,
     "r2_changed": false,
-    "push": "Pending: test and evidence are not yet committed or pushed.",
-    "github_ci_status": "Pending verification."
+    "push": "Commit ed6f265ff9c1a0072b68b2b99ac94e951c1ecfe3 was pushed by normal fast-forward to origin/v2/foundation; GitHub compare confirms one commit ahead of 7c2d1e1c and git ls-remote reports the same branch head.",
+    "github_ci_status": "The GitHub combined-status endpoint returned no checks for ed6f265f, and the commit workflow-run query returned no PR-triggered runs. CI result is unavailable/unverified."
   },
   "limitations": [
     "This is responsive field-lifecycle evidence for the PARTIAL type matrix, not full type/property acceptance or physical-device acceptance."
