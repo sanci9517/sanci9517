@@ -1,0 +1,49 @@
+{
+  "date": "2026-10-27",
+  "plan_cursor": "77.44.7.A",
+  "scope": "Verify tablet-scoped Inspector hover state through Canvas preview, draft Save, Editor reload, explicit Publish, public CSS, inheritance reset, Undo/Redo, and desktop/mobile isolation",
+  "runtime_changed": false,
+  "test_file": "tests/browser/editor-inspector-tablet-state-lifecycle.test.js",
+  "test_result": {
+    "command": "node --test tests/browser/editor-inspector-tablet-state-lifecycle.test.js",
+    "tests": 1,
+    "passed": 1,
+    "failed": 0,
+    "duration_ms": 8583,
+    "scenario_duration_ms": 8583
+  },
+  "coverage": [
+    "tablet hover backgroundColor exposes states.set / backgroundColor and previews the saved override on Canvas",
+    "draft Save stores states.hover.tablet while published tablet state remains unchanged and desktop hover remains independent",
+    "Editor reload preserves the tablet hover control value",
+    "tablet public hover inherits the published desktop value until explicit Publish",
+    "explicit Publish applies the tablet hover style; desktop retains its own style and mobile inherits the tablet value",
+    "tablet state reset uses states.set / backgroundColor and restores desktop hover inheritance on Canvas",
+    "Undo restores the tablet hover override and Redo restores inheritance",
+    "draft reset Save does not alter the published tablet state; explicit reset Publish restores desktop inheritance on tablet and mobile",
+    "browser page errors remain empty"
+  ],
+  "additional_checks": {
+    "state_tokens_unit": "PASS",
+    "inspector_richtext_unit": "PASS",
+    "typecheck": "PASS",
+    "canonical_plan": "PASS; cursor remains 77.44.7.A and acceptance NOT_CERTIFIED",
+    "active_point_audit": "PASS",
+    "traceability": "396 mappings PASS",
+    "node_syntax": "PASS",
+    "git_diff_check": "PASS"
+  },
+  "release": {
+    "runtime_source_changed": false,
+    "production_deployment": "Not performed; test/documentation-only change.",
+    "production_data_changed": false,
+    "database_migration_run": false,
+    "r2_changed": false,
+    "push": "Pending fast-forward verification to v2/foundation.",
+    "github_ci_status": "Pending for this commit."
+  },
+  "limitations": [
+    "Local HTTP mock and Chromium viewport; not physical-device acceptance.",
+    "The complete Inspector matrix and 77.44.7.A remain OPEN / NOT CERTIFIED."
+  ]
+}
