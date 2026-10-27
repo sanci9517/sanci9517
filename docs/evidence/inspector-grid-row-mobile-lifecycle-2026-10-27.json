@@ -42,11 +42,17 @@
   },
   "release": {
     "runtime_source_changed": false,
-    "production_deployment": "not performed; browser test and documentation only",
+    "production_deployment": "Cloudflare automatic Worker deployment observed after the push: deployment 3138a7f8-4fe0-40ec-b893-b1f144ea1359, version 883060d5-bd68-419f-88a2-5eb6bcb1b27f (#3592), 100% traffic. Worker script ETag remains 0afd1da0c52bcc5e558e12adeb9888aea6d7df03d5e070c2184b4920dd825bc0.",
+    "production_smoke": {
+      "api_health": "200; ok=true",
+      "api_db_health": "200; D1 connected=true",
+      "editor_asset_sha256": "8fe117473beb29e4f1bb3134187df67f7be260345dd90951ad4cf4ea4147f794; live matches local"
+    },
     "production_data_changed": false,
     "database_migration_run": false,
     "r2_changed": false,
-    "push": "pending verification"
+    "push": "fast-forward to v2/foundation; commit and remote head 142e0e77f709924751d26d531bdfd7cefeb8c994",
+    "github_commit_statuses": "No combined status checks were returned for this SHA."
   },
   "limitations": [
     "Local HTTP mock and Chromium viewport; not physical-device acceptance.",
