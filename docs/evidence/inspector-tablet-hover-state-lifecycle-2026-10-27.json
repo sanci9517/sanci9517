@@ -52,8 +52,8 @@
     "production_data_changed": false,
     "database_migration_run": false,
     "r2_changed": false,
-    "push": "Pending: the mobile focus-reset lifecycle extension has not yet been committed or pushed.",
-    "github_ci_status": "Commit e2cc7b3b (the prior mobile override isolation extension) has no GitHub combined-status checks or PR-triggered workflow runs; the mobile reset extension commit status is pending verification."
+    "push": "Commit 9b8f151869cc7460105e762f805373e918e09e0e was pushed by normal fast-forward to origin/v2/foundation; GitHub compare confirms one commit ahead of 1ec1c736 and git ls-remote reports the same branch head.",
+    "github_ci_status": "The GitHub combined-status endpoint returned no checks for 9b8f1518, and the commit workflow-run query returned no PR-triggered runs. CI result is unavailable/unverified."
   },
   "limitations": [
     "Local HTTP mock and Chromium viewport; not physical-device acceptance.",
