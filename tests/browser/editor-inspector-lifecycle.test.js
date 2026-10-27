@@ -13,6 +13,7 @@ import {listProperties} from '../../public/editor-v2/core/property-registry.js';
 const root=resolve(import.meta.dirname,'../../public');
 const inspectorBackgroundAssetId='a44f0ce3-6273-4a8f-991e-572c4a89cdd1';
 const inspectorMobileBackgroundAssetId='a44f0ce3-6273-4a8f-991e-572c4a89cdd2';
+const inspectorTabletBackgroundAssetId='a44f0ce3-6273-4a8f-991e-572c4a89cdd3';
 
 test('real Inspector layout survives selection, undo, save/reload and separate publish with canvas/public parity',async t=>{
   const model=createEditorState(createDocument());
@@ -46,10 +47,13 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
     },{
       id:inspectorMobileBackgroundAssetId,name:'Mobil Inspector háttér.svg',mimeType:'image/svg+xml',altText:'Mobil teszt-háttér',
       previewUrl:`/api/admin/media?id=${inspectorMobileBackgroundAssetId}`
+    },{
+      id:inspectorTabletBackgroundAssetId,name:'Tablet Inspector háttér.svg',mimeType:'image/svg+xml',altText:'Tablet teszt-háttér',
+      previewUrl:`/api/admin/media?id=${inspectorTabletBackgroundAssetId}`
     }],nextCursor:null}});
     const mediaId=url.pathname==='/api/admin/media'?url.searchParams.get('id'):url.pathname.startsWith('/media/')?url.pathname.slice('/media/'.length):null;
-    if([inspectorBackgroundAssetId,inspectorMobileBackgroundAssetId].includes(mediaId)){
-      const fill=mediaId===inspectorMobileBackgroundAssetId?'#db2777':'#16a34a';
+    if([inspectorBackgroundAssetId,inspectorMobileBackgroundAssetId,inspectorTabletBackgroundAssetId].includes(mediaId)){
+      const fill=mediaId===inspectorMobileBackgroundAssetId?'#db2777':mediaId===inspectorTabletBackgroundAssetId?'#2563eb':'#16a34a';
       res.setHeader('content-type','image/svg+xml');return res.end(`<svg xmlns="http://www.w3.org/2000/svg" width="8" height="8"><rect width="8" height="8" fill="${fill}"/></svg>`);
     }
     if(url.pathname==='/api/admin/pages')return json({ok:true,data:url.searchParams.get('archived')==='1'?[]:[{id:pageId,slug:'test',title:'Test',content:draft,revision:version,isPublished:Boolean(published)}]});
@@ -1115,5 +1119,53 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   await publicPage.setViewportSize({width:1366,height:900});
   await publicPage.reload();
   assert.equal(await publishedBackgroundImage(),priorPublishedDesktopBackground,'published mobile asset does not change the independent desktop background');
+  const tabletDeviceButton=editor.locator('.canvas-device-btn[data-device="tablet"]');
+  if(!await tabletDeviceButton.evaluate(el=>el.classList.contains('active')))await tabletDeviceButton.evaluate(el=>el.click());
+  await publicPage.setViewportSize({width:768,height:900});await publicPage.reload();
+  const priorPublishedTabletBackground=await publishedBackgroundImage();
+  assert.equal(priorPublishedTabletBackground,priorPublishedDesktopBackground,'tablet initially inherits the independent desktop background');
+  const tabletBackgroundPicker=field('background.image').locator('.editor-media-picker');
+  await tabletBackgroundPicker.getByRole('button',{name:'Médiatár megnyitása'}).click();
+  await tabletBackgroundPicker.locator('[role="region"][aria-label="Médiatár találatok"]').waitFor();
+  await tabletBackgroundPicker.getByRole('button',{name:'Tablet Inspector háttér.svg kiválasztása',exact:true}).click();
+  assert.ok((await backgroundImage()).includes(`/api/admin/media?id=${inspectorTabletBackgroundAssetId}`),'tablet media selection previews through the authenticated Canvas route');
+  await editor.locator('#mobileUndo').click();
+  assert.equal((await backgroundImage()).includes(`/api/admin/media?id=${inspectorTabletBackgroundAssetId}`),false,'tablet Undo removes only the pending asset override');
+  await editor.locator('#mobileRedo').click();
+  assert.ok((await backgroundImage()).includes(`/api/admin/media?id=${inspectorTabletBackgroundAssetId}`),'tablet Redo restores the same asset override');
+  assert.equal(await publishedBackgroundImage(),priorPublishedTabletBackground,'published tablet background remains unchanged while its new asset is a draft');
+  await editor.locator('#save').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent?.startsWith('Mentve'));
+  assert.equal(posts.at(-1).publish,false,'tablet background Save remains draft-only');
+  const savedTabletAssetNode=posts.at(-1).document.pages[pageId].nodes[itemId].responsive.tablet;
+  assert.equal(savedTabletAssetNode.backgroundAssetId,inspectorTabletBackgroundAssetId,'tablet asset ID is saved only in the tablet Page Model override');
+  assert.notEqual(posts.at(-1).document.pages[pageId].nodes[itemId].responsive.desktop.backgroundAssetId,inspectorTabletBackgroundAssetId,'tablet asset selection does not replace desktop asset');
+  assert.notEqual(posts.at(-1).document.pages[pageId].nodes[itemId].responsive.mobile.backgroundAssetId,inspectorTabletBackgroundAssetId,'tablet asset selection does not replace mobile asset');
+  await editor.reload({waitUntil:'domcontentloaded'});await select(itemId);
+  const tabletReloadButton=editor.locator('.canvas-device-btn[data-device="tablet"]');
+  if(!await tabletReloadButton.evaluate(el=>el.classList.contains('active')))await tabletReloadButton.evaluate(el=>el.click());
+  const reloadedTabletAssetHeading=editor.locator('.inspector-group-title').filter({hasText:'Háttér'});if(await reloadedTabletAssetHeading.getAttribute('aria-expanded')==='false')await reloadedTabletAssetHeading.click();
+  assert.ok((await backgroundImage()).includes(`/api/admin/media?id=${inspectorTabletBackgroundAssetId}`),'tablet background asset survives Editor reload');
+  await publicPage.reload();assert.equal(await publishedBackgroundImage(),priorPublishedTabletBackground,'draft tablet asset remains unpublished');
+  await editor.locator('#publish').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent==='Publikálva');
+  await publicPage.reload();
+  assert.ok((await publishedBackgroundImage()).includes(`/media/${inspectorTabletBackgroundAssetId}`),'separate Publish exposes the tablet asset through the public media route');
+  const publishedTabletAssetBackground=await publishedBackgroundImage();
+  await tabletBackgroundPicker.getByRole('button',{name:'Kép eltávolítása',exact:true}).click();
+  assert.equal((await backgroundImage()).includes(`/api/admin/media?id=${inspectorTabletBackgroundAssetId}`),false,'tablet removal clears the current Canvas asset override');
+  await editor.locator('#save').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent?.startsWith('Mentve'));
+  assert.equal(posts.at(-1).publish,false,'tablet asset removal remains draft-only');
+  assert.notEqual(posts.at(-1).document.pages[pageId].nodes[itemId].responsive.tablet.backgroundAssetId,inspectorTabletBackgroundAssetId,'draft removal clears only the tablet asset ID');
+  await editor.reload({waitUntil:'domcontentloaded'});await select(itemId);
+  const tabletAfterRemovalButton=editor.locator('.canvas-device-btn[data-device="tablet"]');
+  if(!await tabletAfterRemovalButton.evaluate(el=>el.classList.contains('active')))await tabletAfterRemovalButton.evaluate(el=>el.click());
+  const removedTabletBackgroundHeading=editor.locator('.inspector-group-title').filter({hasText:'Háttér'});if(await removedTabletBackgroundHeading.getAttribute('aria-expanded')==='false')await removedTabletBackgroundHeading.click();
+  assert.equal((await backgroundImage()).includes(`/api/admin/media?id=${inspectorTabletBackgroundAssetId}`),false,'tablet asset removal survives Editor reload');
+  await publicPage.reload();assert.equal(await publishedBackgroundImage(),publishedTabletAssetBackground,'draft tablet removal keeps the published tablet asset live');
+  await editor.locator('#publish').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent==='Publikálva');
+  await publicPage.reload();assert.equal(await publishedBackgroundImage(),priorPublishedDesktopBackground,'publishing tablet removal restores inherited desktop background');
+  await publicPage.setViewportSize({width:390,height:800});await publicPage.reload();
+  assert.equal(await publishedBackgroundImage(),priorPublishedDesktopBackground,'tablet asset selection and removal leave the independent mobile background unchanged');
+  await publicPage.setViewportSize({width:1366,height:900});await publicPage.reload();
+  assert.equal(await publishedBackgroundImage(),priorPublishedDesktopBackground,'tablet asset selection and removal leave the independent desktop background unchanged');
   assert.deepEqual(errors,[]);
 });

@@ -1,0 +1,48 @@
+{
+  "date": "2026-10-27",
+  "plan_cursor": "77.44.7.A",
+  "scope": "Verify tablet background asset selection, Undo/Redo, draft Save, Editor reload, explicit Publish, removal, inherited fallback, and desktop/mobile isolation",
+  "runtime_changed": false,
+  "test_file": "tests/browser/editor-inspector-lifecycle.test.js",
+  "test_result": {
+    "command": "node --test tests/browser/editor-inspector-lifecycle.test.js",
+    "tests": 1,
+    "passed": 1,
+    "failed": 0,
+    "duration_ms": 307278,
+    "scenario_duration_ms": 305802
+  },
+  "coverage": [
+    "the shared media library returns a dedicated third tablet fixture asset",
+    "tablet selection previews through the authenticated /api/admin/media route",
+    "tablet Undo removes only the pending tablet override and Redo restores the same asset",
+    "draft Save stores the asset ID only in responsive.tablet and leaves public tablet imagery unchanged",
+    "Editor reload retains the tablet asset selection",
+    "explicit Publish exposes the selected asset through /media/{id} on the public tablet renderer",
+    "draft removal survives reload while the published tablet asset remains live",
+    "explicit Publish of removal restores the inherited desktop asset on tablet",
+    "tablet selection/removal leaves desktop and mobile published imagery unchanged",
+    "browser page errors remain empty"
+  ],
+  "additional_checks": {
+    "editor_unit": "135/135 PASS",
+    "typecheck": "PASS",
+    "canonical_plan": "PASS; cursor remains 77.44.7.A and acceptance NOT_CERTIFIED",
+    "active_point_audit": "PASS",
+    "traceability": "396 mappings PASS",
+    "git_diff_check": "PASS"
+  },
+  "release": {
+    "runtime_source_changed": false,
+    "production_deployment": "Pending push verification; no direct deploy is required for this test/documentation-only change.",
+    "production_data_changed": false,
+    "database_migration_run": false,
+    "r2_changed": false,
+    "push": "Pending final commit.",
+    "github_commit_statuses": "Not checked for the final commit yet."
+  },
+  "limitations": [
+    "Local HTTP mock and Chromium viewport; not physical-device acceptance.",
+    "The full 77.44.7.A property matrix and Editor acceptance remain open."
+  ]
+}
