@@ -1,0 +1,49 @@
+{
+  "date": "2026-10-27",
+  "plan_cursor": "77.44.7.B",
+  "scope": "Verify cross-paragraph Rich Text selection, formatting, draft Save, and separate Publish on mobile and desktop viewport sizes",
+  "runtime_changed": false,
+  "test_file": "tests/browser/editor-richtext-multiblock.test.js",
+  "test_result": {
+    "command": "node --test tests/browser/editor-richtext-multiblock.test.js",
+    "tests": 1,
+    "passed": 1,
+    "failed": 0,
+    "duration_ms": 5997,
+    "scenario_duration_ms": 5447
+  },
+  "related_browser_regression": {
+    "command": "node --test --test-concurrency=1 tests/browser/editor-richtext-multiblock.test.js tests/browser/editor-richtext-block-transform.test.js tests/browser/editor-richtext-selection.test.js tests/browser/editor-richtext-save-publish.test.js",
+    "tests": 4,
+    "passed": 4,
+    "failed": 0,
+    "duration_ms": 29288
+  },
+  "additional_checks": {
+    "editor_unit": "135/135 PASS",
+    "typecheck": "PASS",
+    "canonical_plan": "PASS",
+    "active_plan_point": "77.44.7.A remains current; acceptance NOT_CERTIFIED",
+    "traceability": "396 mappings PASS",
+    "countdown_isolated_retry": "2/2 PASS at 390px Europe/Budapest and 1366px America/New_York",
+    "git_diff_check": "PASS"
+  },
+  "wide_browser_suite": {
+    "command": "npm run test:editor:layout -- --test-concurrency=4",
+    "result": "incomplete; stopped after 8 minutes with no new output and a stalled Node/Chromium worker",
+    "observed_failure": "one Countdown Europe/Budapest case failed during the loaded run; isolated rerun passed",
+    "ci_status": "not applicable; local run only"
+  },
+  "release": {
+    "runtime_source_changed": false,
+    "production_deployment": "not performed; browser-test and documentation-only change",
+    "production_data_changed": false,
+    "database_migration_run": false,
+    "r2_changed": false
+  },
+  "limitations": [
+    "This uses a local HTTP mock and Chromium viewport sizes, not a physical phone or tablet.",
+    "The test does not certify every native selection, IME, paste, or 77.44.7.B acceptance scenario.",
+    "The full editor browser suite did not complete in this environment."
+  ]
+}
