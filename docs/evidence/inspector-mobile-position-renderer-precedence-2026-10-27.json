@@ -1,7 +1,7 @@
 {
   "date": "2026-10-27",
   "plan_cursor": "77.44.7.A",
-  "status": "PRODUCTION_DEPLOYED_CI_PENDING",
+  "status": "PRODUCTION_DEPLOYED_CI_PASS",
   "scope": "Preserve responsive mobile position, x and y values from the Page Model through the public mobile fallback, with Save and Publish remaining separate.",
   "finding": {
     "source": "The mobile public fallback forced position:relative!important, left:0!important and top:auto!important on ordinary nodes, overriding Inspector values even though Canvas and Page Model retained them.",
@@ -33,16 +33,24 @@
     "production_smoke": "PASS; /api/health and /api/db-health HTTP 200 (connected=true). Live page-renderer.js and visual-page.html SHA-256 match the pushed source; visual-page.html canonical redirect followed.",
     "github_ci": {
       "passed": [
-        40596762857,
-        40596761489,
-        40596761416,
-        40596761490
+        40597621053,
+        40597621206,
+        40597621030,
+        40597621170,
+        40597621151
       ],
-      "in_progress": [
-        40596761502
-      ],
-      "failed": []
+      "in_progress": [],
+      "failed": [],
+      "validation_commit": "65ecf783d600682a3242016fc0ec084461ba0d7b"
+    },
+    "latest_production_deployment": {
+      "commit": "65ecf783d600682a3242016fc0ec084461ba0d7b",
+      "deployment": "104a3b26-891a-4a98-b974-86fd7dac0dd6",
+      "worker_version": "816d8333-efd6-4bae-8107-9bdf9560ee15",
+      "version_number": 3693,
+      "traffic_percent": 100,
+      "production_smoke": "PASS; health/D1-health 200, exact renderer/template hashes match."
     }
   },
-  "next_step": "Verify Editor Core workflow 40596761502 completes, record final CI status in canonical plan/evidence and push the documentation-only update. Full 77.44.7.A acceptance remains OPEN / NOT CERTIFIED."
+  "next_step": "Obtain explicit user approval for the rejected persistent Cloudflare Build safety change; then continue the full 77.44.7.A acceptance, which remains OPEN / NOT CERTIFIED."
 }

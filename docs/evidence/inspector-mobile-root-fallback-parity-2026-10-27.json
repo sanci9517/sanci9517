@@ -1,7 +1,7 @@
 {
   "date": "2026-10-27",
   "plan_cursor": "77.44.7.A",
-  "status": "LOCAL_VALIDATION_PASS_RELEASE_PENDING",
+  "status": "PRODUCTION_DEPLOYED_CI_PASS",
   "scope": "Keep explicitly authored root responsive display and min-height styles effective on mobile public pages, matching the static template and Editor Canvas.",
   "finding": {
     "source": "The static visual-page template excludes .visual-root-authored from its mobile canvas display/min-height fallback, but the dynamically injected renderer fallback targeted all visual-editor-canvas roots and overrode authored styles with display:block!important and min-height:0!important.",
@@ -22,8 +22,8 @@
   },
   "release": {
     "base_commit": "b7743ace1aee8b02b33e2f9aec67546ba7415cea",
-    "pushed": false,
-    "production_deployment": false,
+    "pushed": "PASS; 65ecf783d600682a3242016fc0ec084461ba0d7b verified at origin/v2/foundation.",
+    "production_deployment": "PASS; deployment 104a3b26-891a-4a98-b974-86fd7dac0dd6, Worker version 816d8333-efd6-4bae-8107-9bdf9560ee15 (3693), 100% traffic, created 2026-10-27T22:49:19Z.",
     "currently_deployed_worker": "99c3a05a-78a6-4ad5-b961-c993d1c2e536 (3692), 100% traffic; does not yet include this root fallback correction.",
     "production_data_changed": false,
     "database_migration_run": false,
@@ -31,7 +31,39 @@
     "candidate_sha256": {
       "public/assets/page-renderer.js": "3e5616ca4518b7722c3eee2b23fa7dadd0975aafc3e5433e527a52c38f71c012",
       "public/visual-page.html": "efb16b4fe43045f42e606348f8e4733e7ac7d1bd8f4de07aec32755c90afefe6"
+    },
+    "production_smoke": "PASS; /api/health and /api/db-health HTTP 200 (connected=true). Live page-renderer.js and visual-page.html SHA-256 match source; visual-page.html canonical redirect followed.",
+    "github_ci": {
+      "passed": [
+        40597621053,
+        40597621206,
+        40597621030,
+        40597621170,
+        40597621151
+      ],
+      "in_progress": [],
+      "failed": [],
+      "validation_commit": "65ecf783d600682a3242016fc0ec084461ba0d7b"
+    },
+    "cloudflare_build_configuration": {
+      "auto_build_enabled": true,
+      "branch": "v2/foundation",
+      "build_command": "npm run typecheck",
+      "deploy_command": "npm run deploy",
+      "path_includes": [
+        "*"
+      ],
+      "path_excludes": [],
+      "impact": "The repository npm run deploy script runs the migration safety gate, then db:migrations:apply, then wrangler deploy; documentation-only commits currently trigger a production Worker build.",
+      "latest_build": {
+        "build_uuid": "dc0554e3-c8a5-44e4-bc27-958a6e9010ea",
+        "commit": "65ecf783d600682a3242016fc0ec084461ba0d7b",
+        "outcome": "success",
+        "deployment": "104a3b26-891a-4a98-b974-86fd7dac0dd6"
+      },
+      "d1_migration_preflight_before_and_after_build": "PASS; both read-only listings reported No migrations to apply.",
+      "configuration_change": "None; the attempted production build-setting update was rejected by automatic review. No alternate path was used."
     }
   },
-  "next_step": "Commit and fast-forward push this validated runtime fix to v2/foundation; confirm GitHub CI, automatic Worker deployment at 100%, and production health and asset hashes. Full 77.44.7.A acceptance remains OPEN / NOT CERTIFIED."
+  "next_step": "Obtain explicit user approval for the rejected persistent Cloudflare Build safety change; then continue the full 77.44.7.A acceptance, which remains OPEN / NOT CERTIFIED."
 }
