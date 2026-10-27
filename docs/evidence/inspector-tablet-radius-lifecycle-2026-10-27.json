@@ -38,8 +38,8 @@
     "production_data_changed": false,
     "database_migration_run": false,
     "r2_changed": false,
-    "push": "Pending fast-forward verification to v2/foundation.",
-    "github_ci_status": "Pending for this commit."
+    "push": "Fast-forward pushed and verified on origin/v2/foundation at 627088499146821a976080ff1db2f7e82faf6750.",
+    "github_ci_status": "At verification, F0, Twitch Integration, Canonical Plan, active-point audit, and Editor Core runs for commit 627088499146821a976080ff1db2f7e82faf6750 were in progress; no failure had been reported yet. Earlier fa784e13 Editor Core run 40541705113 was still in progress at Playwright Chromium installation."
   },
   "limitations": [
     "Local HTTP mock and Chromium viewport; not physical-device acceptance.",
