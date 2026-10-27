@@ -39,9 +39,9 @@
     "production_data_changed": false,
     "database_migration_run": false,
     "r2_changed": false,
-    "commit": null,
-    "push": "Pending release verification.",
-    "github_ci_status": "Pending release verification."
+    "commit": "cd68e85dcd54b83cd4d05b1cafcf32d94c1c8895",
+    "push": "PASS; normal fast-forward b655572b..cd68e85d to origin/v2/foundation; remote ref verified at cd68e85dcd54b83cd4d05b1cafcf32d94c1c8895.",
+    "github_ci_status": "GitHub combined status endpoint returned no statuses and commit workflow-run query returned no runs for cd68e85d; CI unavailable/unverified."
   },
   "limitations": [
     "The full 77.44.7.A Inspector/property acceptance and physical-device acceptance remain open."
