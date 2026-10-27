@@ -1,7 +1,7 @@
 {
   "date": "2026-10-27",
   "plan_cursor": "77.44.7.A",
-  "scope": "Verify all ten tablet hover and focus-visible properties through Inspector, Canvas, draft Save, reload, Publish, public CSS, per-property reset/Undo/Redo, concurrent hover/focus precedence, and desktop/mobile isolation; also validate persisted state CSS contracts and legacy compatibility",
+  "scope": "Verify all ten tablet hover and focus-visible properties through Inspector, Canvas, draft Save, reload, Publish, public CSS, per-property reset/Undo/Redo, concurrent hover/focus precedence, and desktop/mobile inheritance; also validate persisted state CSS contracts and legacy compatibility",
   "runtime_changed": false,
   "test_file": "tests/browser/editor-inspector-tablet-state-lifecycle.test.js",
   "supporting_test_file": "public/editor-v2/tests/state-tokens.test.js",
@@ -10,8 +10,8 @@
     "tests": 1,
     "passed": 1,
     "failed": 0,
-    "duration_ms": 35862,
-    "scenario_duration_ms": 35862
+    "duration_ms": 42118,
+    "scenario_duration_ms": 41301
   },
   "coverage": [
     "all ten hover and focus-visible Inspector fields expose states.set and the expected property ID/key and update tablet Canvas CSS",
@@ -19,19 +19,19 @@
     "Editor reload preserves the tablet hover control value",
     "tablet public hover inherits the published desktop value until explicit Publish",
     "explicit Publish applies all ten hover and all ten keyboard-focus styles to public CSS; keyboard focus-visible wins when hover is active at the same time",
-    "desktop preserves its independent styles and mobile inherits tablet values",
+    "desktop hover and focus-visible styles are independent; mobile inherits the tablet overrides",
     "persisted versioned state data rejects invalid CSS values for all ten properties without mutating the rejected document; unversioned legacy state remains loadable and emits no versioned state CSS",
     "each of ten tablet hover and ten tablet focus-visible properties exposes its own states.set reset; reset, Undo, Redo, and restoration back to the original draft value all update Canvas CSS correctly",
     "draft reset Save does not alter published tablet state; explicit reset Publish restores desktop inheritance on tablet and mobile",
     "all ten tablet focus-visible properties survive draft Save and Editor reload",
-    "draft focus state adds no public keyboard stop and leaves all published properties untouched; Publish gives the tablet node tabindex=0 and all ten :focus-visible styles",
-    "resetting all ten focus-visible properties remains draft-only through reload; the separate reset Publish removes the ten tablet focus overrides and keyboard tab stop",
-    "desktop has no redundant focus stop; mobile inherits all tablet focus-visible styles",
+    "draft focus state leaves the published tablet values untouched; Publish gives the tablet node tabindex=0 and all ten :focus-visible styles while preserving independent desktop focus values and keyboard access",
+    "resetting all ten focus-visible properties remains draft-only through reload as desktop-inherited Inspector values; the separate reset Publish restores the desktop styles and keyboard affordance on tablet and mobile",
+    "mobile inherits all tablet focus-visible styles until reset, then inherits the desktop focus styles and tab stop",
     "browser page errors remain empty"
   ],
   "additional_checks": {
-    "editor_unit_suite": "PASS 136/136 (all 10 test files).",
-    "state_tokens_unit": "PASS 4/4, including ten persisted invalid-CSS cases and legacy compatibility/no-public-state-CSS assertions.",
+    "editor_unit_suite": "Current sandbox rerun: 9/10 test files passed; core.test.js had 69/70 subtests pass, with its parser subprocess blocked by spawnSync EPERM. Prior 136/136 result remains recorded at commit 8902cd64.",
+    "state_tokens_unit": "PASS (test file passed), including ten persisted invalid-CSS cases and legacy compatibility/no-public-state-CSS assertions.",
     "inspector_richtext_unit": "PASS",
     "typecheck": "PASS",
     "canonical_plan": "PASS; cursor remains 77.44.7.A and acceptance NOT_CERTIFIED",
@@ -46,8 +46,8 @@
     "production_data_changed": false,
     "database_migration_run": false,
     "r2_changed": false,
-    "push": "The browser state/reset revision c4b4c616 and persisted-state validation revision 8902cd64 were pushed by normal fast-forward to origin/v2/foundation; GitHub compare confirms the branch advanced one commit from 0336bd01.",
-    "github_ci_status": "The GitHub combined-status endpoint returned no checks for 8902cd64, and the commit workflow-run query returned no PR-triggered runs. CI result is unavailable/unverified at this check."
+    "push": "Pending: this desktop-focus-inheritance test extension has not yet been committed or pushed.",
+    "github_ci_status": "The prior persisted-state validation revision 8902cd64 had no reported combined-status checks or PR-triggered workflow runs; the extension commit status is pending verification."
   },
   "limitations": [
     "Local HTTP mock and Chromium viewport; not physical-device acceptance.",
