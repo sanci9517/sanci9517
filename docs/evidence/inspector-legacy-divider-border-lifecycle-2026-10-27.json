@@ -1,0 +1,54 @@
+{
+  "date": "2026-10-27",
+  "plan_cursor": "77.44.7.A",
+  "scope": "Verify that versionless legacy Divider nodes honor shared responsive Inspector border properties through Canvas, draft Save and explicit Publish.",
+  "test_file": "tests/browser/editor-decorative-elements.test.js",
+  "runtime_changed": true,
+  "initial_regression": {
+    "result": "FAIL; legacy public renderer emitted its fallback after shared responsive styles, so the published Divider retained 1px solid rgba(255,255,255,.16) instead of the Inspector-authored 4px #e11d48.",
+    "reproduced_before_fix": true
+  },
+  "fix": {
+    "file": "public/assets/page-renderer.js",
+    "change": "Emit the legacy Divider fallback first, then shared responsive styles, preserving the fallback while allowing explicit Inspector border overrides to win."
+  },
+  "final_test_result": {
+    "command": "node --test tests/browser/editor-decorative-elements.test.js",
+    "tests": 1,
+    "passed": 1,
+    "failed": 0,
+    "duration_ms": 13350
+  },
+  "coverage": [
+    "A versionless Divider fixture is selected through the real Inspector and its responsive.set command/key metadata is checked.",
+    "The Inspector border style, width and color render on Canvas.",
+    "Draft Save stores the border override while public CSS remains unchanged.",
+    "Explicit Publish updates public CSS to 4px solid rgb(225, 29, 72)."
+  ],
+  "additional_checks": {
+    "all_partial_border_lifecycle": "PASS 1/1; tests/browser/editor-inspector-partial-types.test.js; 283363 ms.",
+    "editor_unit_suite": "PASS 10/10 test files.",
+    "typecheck": "PASS.",
+    "syntax": "PASS for runtime and changed browser test files.",
+    "canonical_plan": "PASS; 77.44.7.A remains OPEN / NOT CERTIFIED.",
+    "active_point_audit": "PASS; current 77.44.7.A.",
+    "traceability": "PASS; 396 source mappings regenerated and checked.",
+    "git_diff_check": "PASS."
+  },
+  "release": {
+    "production_d1_migration_preflight": "PASS; read-only remote list reported No migrations to apply; no migration applied.",
+    "wrangler_dry_run": "PASS; 159 public assets, estimated 287.10 KiB (65.78 KiB gzip); no deployment performed by the dry-run.",
+    "source_commit": null,
+    "push": "Pending release verification.",
+    "production_deployment": "Pending release verification.",
+    "production_smoke": "Pending release verification.",
+    "github_ci_status": "Pending release verification.",
+    "production_data_changed": false,
+    "database_migration_run": false,
+    "r2_changed": false
+  },
+  "limitations": [
+    "This closes the legacy Divider shared-border regression and supplements the 44-type PARTIAL border lifecycle; it does not certify all Inspector properties or the complete 77.44.7.A acceptance.",
+    "No physical-device acceptance is included."
+  ]
+}

@@ -117,7 +117,9 @@ if(n.type==='card'&&n.metadata?.cardContentVersion===1){
   // into the published renderer just as they do on the Editor canvas.
   return `<hr class="visual-editor-node visual-divider" role="separator" style="border:0;border-top:${cfg.thickness}px ${cfg.lineStyle} ${cfg.color};${st}">`;
  }
- return `<hr class="visual-editor-node" style="${st}border:0;border-top:1px solid rgba(255,255,255,.16);">`;
+ // Preserve the versionless fallback appearance but let explicitly saved
+ // shared Inspector border properties override it, as on versioned dividers.
+ return `<hr class="visual-editor-node" style="border:0;border-top:1px solid rgba(255,255,255,.16);${st}">`;
 }if(n.type==='spacer'){
  return n.metadata?.spacerVersion===1
   ?`<div class="visual-editor-node visual-layout-managed visual-spacer" aria-hidden="true" style="min-height:0;${st}"></div>`

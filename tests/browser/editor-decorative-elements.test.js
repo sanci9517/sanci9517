@@ -5,7 +5,7 @@ import {readFile} from 'node:fs/promises';
 import {existsSync} from 'node:fs';
 import {resolve,extname} from 'node:path';
 import {chromium} from 'playwright';
-import {createDocument} from '../../public/editor-v2/core/schema.js';
+import {createDocument,createNode} from '../../public/editor-v2/core/schema.js';
 import {createEditorState,activePage} from '../../public/editor-v2/core/state.js';
 import {execute} from '../../public/editor-v2/core/commands.js';
 
@@ -13,6 +13,10 @@ test('partial palette types and Divider/Spacer Inspector edits become public onl
  const model=createEditorState(createDocument()),pageId=model.document.activePageId,root=activePage(model).rootId;
  execute(model,{type:'element.add',payload:{type:'divider',parentId:root}});const dividerId=model.selection.primaryId;
  execute(model,{type:'element.add',payload:{type:'spacer',parentId:root}});const spacerId=model.selection.primaryId;
+ const legacyDividerId='legacy-divider-fixture';
+ const legacyDivider=createNode('divider',{id:legacyDividerId,parentId:root,name:'Régi elválasztóvonal'});
+ activePage(model).nodes[legacyDividerId]=legacyDivider;
+ activePage(model).nodes[root].children.push(legacyDividerId);
  let draft=structuredClone(model.document),published=structuredClone(draft),version=1;
  const posts=[],assetRoot=resolve(import.meta.dirname,'../../public');
  const server=createServer(async(req,res)=>{
@@ -173,5 +177,41 @@ test('partial palette types and Divider/Spacer Inspector edits become public onl
  assert.equal(await publicNode(tooltipId).getByRole('tooltip').textContent(),'További információ erről az elemről.','tooltip content and its required description reach the public page');
  await viewer.setViewportSize({width:390,height:800});await viewer.reload();
  assert.equal(await publicNode(spacerId).evaluate(el=>getComputedStyle(el).height),'40px','mobile spacer keeps its own height');
+
+ // Versionless Divider nodes remain legacy-compatible, while shared
+ // responsive border edits must still win over the legacy public fallback.
+ await editor.locator('.canvas-device-btn[data-device="desktop"]').click();
+ await viewer.setViewportSize({width:1366,height:900});
+ await viewer.reload();
+ await viewer.waitForFunction(id=>document.querySelector(`.visual-editor-node[data-node-id="${id}"]`),legacyDividerId);
+ assert.equal(draft.pages[pageId].nodes[legacyDividerId].metadata.decorativeVersion,undefined,'fixture remains a versionless legacy Divider');
+ await selectStyle(legacyDividerId);
+ const legacyBorderGroup=editor.locator('.inspector-group').filter({hasText:'Szegély'});
+ const legacyBorderTitle=legacyBorderGroup.locator(':scope > .inspector-group-title');
+ if(await legacyBorderTitle.getAttribute('aria-expanded')==='false')await legacyBorderTitle.click();
+ const legacyBorderStyle=legacyBorderGroup.locator('[data-property-id="border.style"]');
+ const legacyBorderWidth=legacyBorderGroup.locator('[data-property-id="border.width"]');
+ const legacyBorderColor=legacyBorderGroup.locator('[data-property-id="border.color"]');
+ assert.equal(await legacyBorderStyle.getAttribute('data-property-command'),'responsive.set');
+ assert.equal(await legacyBorderWidth.getAttribute('data-property-key'),'borderWidth');
+ assert.equal(await legacyBorderColor.getAttribute('data-property-key'),'borderColor');
+ await legacyBorderStyle.locator('select:not(.property-token-picker)').selectOption('solid');
+ const legacyWidthInput=legacyBorderWidth.locator('.dimension-controls input[type="number"]');
+ await legacyWidthInput.fill('4');
+ await legacyWidthInput.press('Tab');
+ await legacyBorderColor.locator('input[type="color"]').evaluate(input=>{input.value='#e11d48';input.dispatchEvent(new Event('change',{bubbles:true}))});
+ assert.deepEqual(await canvasNode(legacyDividerId).evaluate(el=>{const css=getComputedStyle(el);return{width:css.borderTopWidth,style:css.borderTopStyle,color:css.borderTopColor}}),{width:'4px',style:'solid',color:'rgb(225, 29, 72)'},'legacy Divider Inspector border edit reaches Canvas');
+ const legacyPublicBaseline=await publicNode(legacyDividerId).evaluate(el=>{const css=getComputedStyle(el);return{width:css.borderTopWidth,style:css.borderTopStyle,color:css.borderTopColor}});
+ await editor.locator('#save').click();
+ await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+ assert.equal(draft.pages[pageId].nodes[legacyDividerId].responsive.desktop.borderColor,'#e11d48');
+ await viewer.reload();
+ await viewer.waitForFunction(id=>document.querySelector(`.visual-editor-node[data-node-id="${id}"]`),legacyDividerId);
+ assert.deepEqual(await publicNode(legacyDividerId).evaluate(el=>{const css=getComputedStyle(el);return{width:css.borderTopWidth,style:css.borderTopStyle,color:css.borderTopColor}}),legacyPublicBaseline,'legacy Divider draft Save leaves public CSS unchanged');
+ await editor.locator('#publish').click();
+ await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
+ await viewer.reload();
+ await viewer.waitForFunction(id=>document.querySelector(`.visual-editor-node[data-node-id="${id}"]`),legacyDividerId);
+ assert.deepEqual(await publicNode(legacyDividerId).evaluate(el=>{const css=getComputedStyle(el);return{width:css.borderTopWidth,style:css.borderTopStyle,color:css.borderTopColor}}),{width:'4px',style:'solid',color:'rgb(225, 29, 72)'},'legacy Divider explicit Publish preserves its shared responsive border edits');
  assert.deepEqual(errors,[]);
 });
