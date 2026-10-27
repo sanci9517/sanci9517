@@ -43,12 +43,17 @@
     "runtime_source_changed": false,
     "d1_migration_preflight": "No migrations to apply! (read-only)",
     "wrangler_deploy_dry_run": "PASS; 159 assets, 287.10 KiB; no upload",
+    "production_deployment": "Cloudflare automatic Worker deployment observed after push: deployment b3b88569-cdae-4ad5-b120-e5fb0286a29c, version d3d0b057-e7f2-4677-a0a1-73fd5f84a084 (#3602), 100% traffic. Worker script ETag remains 0afd1da0c52bcc5e558e12adeb9888aea6d7df03d5e070c2184b4920dd825bc0.",
+    "production_smoke": {
+      "api_health": "200; ok=true",
+      "api_db_health": "200; D1 connected=true",
+      "editor_asset_sha256": "8fe117473beb29e4f1bb3134187df67f7be260345dd90951ad4cf4ea4147f794; live matches local"
+    },
     "production_data_changed": false,
     "database_migration_run": false,
     "r2_changed": false,
-    "push": "pending verification",
-    "production_deployment": "pending verification",
-    "github_commit_statuses": "pending verification"
+    "push": "fast-forward to v2/foundation; commit 50dce827264f4d6cd67d505ca7587fea60895984",
+    "github_commit_statuses": "No combined status checks were returned for this SHA."
   },
   "limitations": [
     "Local HTTP mock and Chromium viewport; not physical-device acceptance.",
