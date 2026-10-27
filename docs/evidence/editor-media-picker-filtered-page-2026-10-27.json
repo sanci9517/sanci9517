@@ -10,11 +10,15 @@
     "an empty page with a next cursor explains that more files can be loaded",
     "the visible result count excludes server-returned assets filtered out by the allowed MIME list",
     "a supported video/webm on the next cursor page can be selected",
-    "existing 120-image pagination, search, keyboard focus, Escape and no-write behavior remain covered at 390px and 1366px"
+    "existing 120-image pagination, search, keyboard focus, Escape and no-write behavior remain covered at 390px and 1366px",
+    "unrestricted image search with zero matches reports an ordinary no-results message instead of a MIME support warning",
+    "a temporary search API failure clears stale choices, settles the busy state and succeeds on retry without reopening the picker",
+    "a temporary pagination failure preserves loaded choices and cursor, returns focus to the retry button, and appends the next page exactly once"
   ],
   "checks": {
     "picker_pagination_browser": "1/1 PASS, mobile and desktop",
-    "media_related_browser_regression": "6/6 PASS, serial",
+    "media_related_browser_regression": "6/6 PASS, serial after both picker fixes",
+    "browser_layout_full_suite": "86/87 PASS; one unrelated Admin media integrity 5s page.goto timeout; isolated file retry 10/10 PASS",
     "editor_unit": "135/135 PASS",
     "typecheck": "PASS",
     "wide_editor_browser_suite": "86/87 PASS in serial run; one Admin media integrity page.goto 5s timeout; isolated file retry 10/10 PASS",
@@ -38,6 +42,22 @@
       "traffic": "100%",
       "script_etag": "0afd1da0c52bcc5e558e12adeb9888aea6d7df03d5e070c2184b4920dd825bc0"
     },
+    "follow_up_runtime_commit": {
+      "commit": "d3841aa4d47ce77317cb7785215550d01687ed70",
+      "branch": "v2/foundation",
+      "remote_head_verified": true,
+      "deployment_id": "f1845861-39e3-4afe-ba34-7220acfba9a1",
+      "version_id": "dc47abb7-34c7-4758-8a12-ac72b4b76194",
+      "version_number": 3589,
+      "traffic": "100%",
+      "script_etag": "0afd1da0c52bcc5e558e12adeb9888aea6d7df03d5e070c2184b4920dd825bc0",
+      "production_smoke": {
+        "api_health": "200; ok true",
+        "changed_asset": "200",
+        "local_and_production_asset_sha256": "8fe117473beb29e4f1bb3134187df67f7be260345dd90951ad4cf4ea4147f794"
+      },
+      "github_ci_status": "The available GitHub combined-status API returned no statuses for this follow-up commit; CI PASS is not claimed."
+    },
     "github_push": {
       "verified": true,
       "branch": "v2/foundation",
@@ -53,6 +73,7 @@
   },
   "limitations": [
     "The combined serial browser suite had one unrelated Admin media integrity page-load timeout; the 10-test file passed independently.",
-    "The complete 77.44.7.A Inspector acceptance remains open."
+    "The complete 77.44.7.A Inspector acceptance remains open.",
+    "No commit status was returned for the follow-up source commit; local test results and Cloudflare runtime verification are separate evidence."
   ]
 }
