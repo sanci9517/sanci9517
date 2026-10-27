@@ -38,11 +38,17 @@
   "release": {
     "production_d1_migration_preflight": "PASS; read-only remote list reported No migrations to apply; no migration applied.",
     "wrangler_dry_run": "PASS; 159 public assets, estimated 287.10 KiB (65.78 KiB gzip); no deployment performed by the dry-run.",
-    "source_commit": null,
-    "push": "Pending release verification.",
-    "production_deployment": "Pending release verification.",
-    "production_smoke": "Pending release verification.",
-    "github_ci_status": "Pending release verification.",
+    "source_commit": "a1bb7803ad2308b8548b0b8db0792c7512e52cb0",
+    "push": "PASS; normal fast-forward 6ca1371f..a1bb7803 to origin/v2/foundation; remote ref verified at a1bb7803ad2308b8548b0b8db0792c7512e52cb0.",
+    "automatic_deployment": "No deployment attributable to the pushed commit was visible before direct release; deployed exact pushed source with Wrangler.",
+    "production_deployment": "PASS; direct wrangler deploy, no migration; latest Worker version fef53945-4472-45c1-8423-2127467ca1ce is listed at 100% traffic.",
+    "production_smoke": {
+      "/api/health": "200; service sanci9517-streamer-brand",
+      "/api/db-health": "200; D1 connected",
+      "/editor-v2/": "200",
+      "/assets/page-renderer.js": "200; live SHA-256 bf8a26e4124ea3a551f1b7d9fecdf7383967c581c49c8bb1d1265617a5826f48 exactly matches the local source"
+    },
+    "github_ci_status": "GitHub combined status endpoint returned no statuses and commit workflow-run query returned no runs for a1bb7803; CI unavailable/unverified.",
     "production_data_changed": false,
     "database_migration_run": false,
     "r2_changed": false
