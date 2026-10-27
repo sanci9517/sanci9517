@@ -89,11 +89,11 @@
         40589064559,
         40589064647,
         40589064566,
-        40589064479
-      ],
-      "in_progress": [
+        40589064479,
         40589064637
-      ]
+      ],
+      "all_required_workflows_passed": true,
+      "editor_core_completed_at": "2026-10-27T21:54:18Z"
     },
     "production_data_changed": false,
     "database_migration_run": false,
