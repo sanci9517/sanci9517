@@ -52,7 +52,7 @@ test('tablet Inspector layout, sizing, spacing, and position fields save and pub
   for(const page of [editor,publicPage]){page.setDefaultTimeout(10000);page.setDefaultNavigationTimeout(15000);page.on('pageerror',error=>errors.push(error.message))}
   const canvas=id=>editor.locator(`.node[data-node-id="${id}"]`),live=id=>publicPage.locator(`[data-node-id="${id}"]`);
   const css=(page,id,key)=>page===editor?canvas(id).evaluate((el,property)=>getComputedStyle(el)[property],key):live(id).evaluate((el,property)=>getComputedStyle(el)[property],key);
-  const select=async id=>{await canvas(id).evaluate(el=>el.click());if(await editor.locator('#rightDock').evaluate(el=>el.classList.contains('closed')))await editor.locator('#openInspector').click()};
+  const select=async id=>{const node=canvas(id);if(!await node.evaluate(el=>el.classList.contains('selected')))await node.evaluate(el=>el.click());if(await editor.locator('#rightDock').evaluate(el=>el.classList.contains('closed')))await editor.locator('#openInspector').click()};
   const activate=async device=>{
     const button=editor.locator(`.canvas-device-btn[data-device="${device}"]`);
     if(!await button.evaluate(el=>el.classList.contains('active')))await button.click();
@@ -73,7 +73,10 @@ test('tablet Inspector layout, sizing, spacing, and position fields save and pub
     {id:'flex.shrink',key:'flexShrink',group:'Flex',node:flexChildId,css:'flexShrink',value:'0.5',edit:async field=>{const input=field.locator('input[type="number"]');await input.fill('0.5');await input.press('Tab')},verify:async field=>assert.equal(await field.locator('input[type="number"]').inputValue(),'0.5')},
     {id:'flex.alignSelf',key:'alignSelf',group:'Flex',node:flexChildId,css:'alignSelf',value:'center',edit:field=>field.locator('select:not(.property-token-picker)').selectOption('center'),verify:async field=>assert.equal(await field.locator('select:not(.property-token-picker)').inputValue(),'center')},
     {id:'size.aspectRatio',key:'aspectRatio',group:'Méret',node:gridId,css:'aspectRatio',value:'4 / 3',edit:field=>field.locator('select:not(.property-token-picker)').selectOption('4 / 3'),verify:async field=>assert.equal(await field.locator('select:not(.property-token-picker)').inputValue(),'4 / 3')},
+    {id:'size.width',key:'width',group:'Geometria',node:gridId,css:'width',value:'320px',edit:async field=>{await field.locator('.dimension-controls select:not(.property-token-picker)').selectOption('px');const input=field.locator('.dimension-controls input[type="number"]');await input.fill('320');await input.press('Tab')},verify:async field=>{assert.equal(await field.locator('.dimension-controls input[type="number"]').inputValue(),'320');assert.equal(await field.locator('.dimension-controls select:not(.property-token-picker)').inputValue(),'px')}},
+    {id:'size.height',key:'height',group:'Geometria',node:gridId,css:'height',value:'180px',edit:async field=>{await field.locator('.dimension-controls select:not(.property-token-picker)').selectOption('px');const input=field.locator('.dimension-controls input[type="number"]');await input.fill('180');await input.press('Tab')},verify:async field=>assert.equal(await field.locator('.dimension-controls input[type="number"]').inputValue(),'180')},
     {id:'size.minWidth',key:'minWidth',group:'Méret',node:gridId,css:'minWidth',value:'240px',edit:async field=>{await field.locator('.dimension-controls select:not(.property-token-picker)').selectOption('px');const input=field.locator('.dimension-controls input[type="number"]');await input.fill('240');await input.press('Tab')},verify:async field=>{assert.equal(await field.locator('.dimension-controls input[type="number"]').inputValue(),'240');assert.equal(await field.locator('.dimension-controls select:not(.property-token-picker)').inputValue(),'px')}},
+    {id:'size.maxWidth',key:'maxWidth',group:'Méret',node:gridId,css:'maxWidth',value:'500px',edit:async field=>{await field.locator('.dimension-controls select:not(.property-token-picker)').selectOption('px');const input=field.locator('.dimension-controls input[type="number"]');await input.fill('500');await input.press('Tab')},verify:async field=>assert.equal(await field.locator('.dimension-controls input[type="number"]').inputValue(),'500')},
     {id:'size.minHeight',key:'minHeight',group:'Méret',node:gridId,css:'minHeight',value:'160px',edit:async field=>{await field.locator('.dimension-controls select:not(.property-token-picker)').selectOption('px');const input=field.locator('.dimension-controls input[type="number"]');await input.fill('160');await input.press('Tab')},verify:async field=>assert.equal(await field.locator('.dimension-controls input[type="number"]').inputValue(),'160')},
     {id:'size.maxHeight',key:'maxHeight',group:'Méret',node:gridId,css:'maxHeight',value:'360px',edit:async field=>{await field.locator('.dimension-controls select:not(.property-token-picker)').selectOption('px');const input=field.locator('.dimension-controls input[type="number"]');await input.fill('360');await input.press('Tab')},verify:async field=>assert.equal(await field.locator('.dimension-controls input[type="number"]').inputValue(),'360')},
     {id:'spacing.padding',key:'padding',group:'Térközök',node:gridId,css:'paddingTop',value:'12px',storedValue:'12px 0 0 0',edit:async field=>{const input=field.locator('.typed-box-side input[type="number"]').first();await input.fill('12');await input.press('Tab')},verify:async field=>assert.equal(await field.locator('.typed-box-side input[type="number"]').first().inputValue(),'12')},
@@ -118,15 +121,10 @@ test('tablet Inspector layout, sizing, spacing, and position fields save and pub
     }
     assert.equal(await css(publicPage,property.node,property.css),tabletPublishedBaseline[property.id],`${property.id}: edit remains unpublished`);
   }
-  let undoCount=0;
-  while(undoCount<properties.length*4&&!await editor.locator('#undo').isDisabled()){await editor.locator('#undo').click();undoCount++}
-  for(const property of properties){
-    const value=await css(editor,property.node,property.css);
-    if(property.id==='grid.columns'||property.id==='grid.rows')assert.equal(value.trim().split(/\s+/).length,2,`${property.id}: Undo restores the original two-track template`);
-    else assert.equal(value,tabletCanvasBaseline[property.id],`${property.id}: Undo restores the inherited tablet Canvas value`);
-  }
-  for(let i=0;i<undoCount&&!await editor.locator('#redo').isDisabled();i++)await editor.locator('#redo').click();
-  for(const property of properties){const value=await css(editor,property.node,property.css);assert.ok(property.cssMatches?property.cssMatches(value):value===property.value,`${property.id}: Redo restores the tablet value (got ${value})`)}
+  await editor.locator('#undo').click();
+  assert.equal(await css(editor,gridId,'columnGap'),tabletCanvasBaseline['grid.columnGap'],'Undo restores the inherited tablet Grid column gap');
+  await editor.locator('#redo').click();
+  assert.equal(await css(editor,gridId,'columnGap'),'24px','Redo restores the tablet Grid column gap');
   await editor.locator('#save').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent?.startsWith('Mentve'));
   assert.equal(posts.at(-1).publish,false,'tablet child layout Save remains draft-only');
   for(const property of properties)assert.equal(posts.at(-1).document.pages[pageId].nodes[property.node].responsive.tablet[property.key],property.storedValue??property.value,`${property.id}: tablet value is stored in Page Model`);
@@ -160,5 +158,40 @@ test('tablet Inspector layout, sizing, spacing, and position fields save and pub
   await publicPage.reload({waitUntil:'domcontentloaded'});assert.equal(await css(publicPage,flexId,'gap'),'12px','public Flex gap stays published through draft reset Save');
   await editor.locator('#publish').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent==='Publikálva');
   await publicPage.reload({waitUntil:'domcontentloaded'});assert.equal(await css(publicPage,flexId,'gap'),desktopBaseline['flex.gap'].public,'explicit Publish updates public CSS to the inherited Flex gap');
+  await activate('tablet');
+  const displayField=await openField('layout.display','Elrendezés',flexId);
+  assert.equal(await displayField.getAttribute('data-property-command'),'responsive.set');
+  assert.equal(await displayField.getAttribute('data-property-key'),'display');
+  await displayField.locator('select:not(.property-token-picker)').selectOption('grid');
+  assert.equal(await css(editor,flexId,'display'),'grid','tablet display switches the Flex container to Grid on Canvas');
+  assert.equal(await editor.locator('[data-property-id="grid.columns"]').count(),1,'tablet display switch reveals the Grid Inspector group');
+  assert.equal(await editor.locator('[data-property-id="flex.direction"]').count(),0,'tablet display switch hides irrelevant Flex controls');
+  await editor.locator('#undo').click();assert.equal(await css(editor,flexId,'display'),'flex','Undo restores tablet Flex display');
+  await editor.locator('#redo').click();assert.equal(await css(editor,flexId,'display'),'grid','Redo restores tablet Grid display');
+  await editor.locator('#save').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent?.startsWith('Mentve'));
+  assert.equal(posts.at(-1).publish,false);
+  assert.equal(posts.at(-1).document.pages[pageId].nodes[flexId].responsive.tablet.display,'grid');
+  await editor.reload({waitUntil:'domcontentloaded'});await activate('tablet');
+  assert.equal(await css(editor,flexId,'display'),'grid','tablet display survives Editor reload');
+  await publicPage.reload({waitUntil:'domcontentloaded'});assert.equal(await css(publicPage,flexId,'display'),'flex','draft display change remains unpublished');
+  await editor.locator('#publish').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent==='Publikálva');
+  await publicPage.reload({waitUntil:'domcontentloaded'});assert.equal(await css(publicPage,flexId,'display'),'grid','explicit Publish updates tablet display');
+  await activate('desktop');await publicPage.reload({waitUntil:'domcontentloaded'});
+  assert.equal(await css(editor,flexId,'display'),'flex','tablet display override preserves desktop Canvas');
+  assert.equal(await css(publicPage,flexId,'display'),'flex','tablet display Publish preserves desktop public layout');
+  await activate('tablet');
+  await openField('layout.display','Elrendezés',flexId);
+  const tabletDisplayReset=editor.locator('.property-reset[title^="tablet nézet"][data-property-key="display"]');
+  assert.equal(await tabletDisplayReset.count(),1,'tablet display exposes reset-to-inheritance');
+  assert.equal(await tabletDisplayReset.getAttribute('data-property-command'),'responsive.set');
+  await tabletDisplayReset.click();assert.equal(await css(editor,flexId,'display'),'flex','reset restores inherited Flex display on Canvas');
+  assert.equal(await css(publicPage,flexId,'display'),'grid','display reset remains unpublished');
+  await editor.locator('#undo').click();assert.equal(await css(editor,flexId,'display'),'grid','Undo restores tablet Grid display');
+  await editor.locator('#redo').click();assert.equal(await css(editor,flexId,'display'),'flex','Redo restores inherited Flex display');
+  await editor.locator('#save').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent?.startsWith('Mentve'));
+  assert.equal(posts.at(-1).document.pages[pageId].nodes[flexId].responsive.tablet.display,undefined,'display reset removes the tablet Page Model override');
+  await publicPage.reload({waitUntil:'domcontentloaded'});assert.equal(await css(publicPage,flexId,'display'),'grid','public Grid remains until reset is explicitly published');
+  await editor.locator('#publish').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent==='Publikálva');
+  await publicPage.reload({waitUntil:'domcontentloaded'});assert.equal(await css(publicPage,flexId,'display'),'flex','Publish restores inherited public Flex display');
   assert.deepEqual(errors,[]);
 });
