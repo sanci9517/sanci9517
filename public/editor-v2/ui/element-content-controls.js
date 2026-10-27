@@ -72,7 +72,9 @@ export function mediaAssetPicker(selectedId,onSelect,{disabled=false,mimes=[]}={
       shown+=visibleCount;nextCursor=cursor;more.hidden=!nextCursor;more.disabled=disabled;
       current.setAttribute('aria-busy','false');
       status.textContent=shown?`${shown} médiafájl betöltve${query?' a kereséshez':''}`:
-        nextCursor?'Ezen az oldalon nincs támogatott médiafájl. Tölts be további fájlokat.':'Nincs támogatott médiafájl. Tölts fel ilyen fájlt az Admin → Médiatár oldalon.';
+        mimes.length
+          ?nextCursor?'Ezen az oldalon nincs támogatott médiafájl. Tölts be további fájlokat.':'Nincs támogatott médiafájl. Tölts fel ilyen fájlt az Admin → Médiatár oldalon.'
+          :nextCursor?'Ezen az oldalon nincs találat. Tölts be további fájlokat.':'Nincs találat. Tölts fel médiafájlt az Admin → Médiatár oldalon.';
       // Newly appended tiles precede the "Load more" button in DOM order.
       // Move keyboard focus there even when this was the final page and
       // the previously focused pagination button becomes hidden.
