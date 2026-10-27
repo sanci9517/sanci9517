@@ -1,7 +1,7 @@
 {
   "date": "2026-10-27",
   "plan_cursor": "77.44.7.A",
-  "status": "LOCAL_VALIDATION_PASS_RELEASE_PENDING",
+  "status": "PRODUCTION_DEPLOYED_CI_PASS",
   "scope": "Extend public mobile Inspector/Canvas parity to responsive minWidth and maxWidth constraints, including inheritance and reset; preserve the existing mobile height/minHeight fix.",
   "finding": {
     "source": "The mobile public fallback enforced min-width:0!important and max-width:100%!important on ordinary nodes. The renderer already emitted the resolved responsive inline minWidth/maxWidth declarations, but the fallback declarations won the cascade.",
@@ -28,14 +28,25 @@
     "wrangler_dry_run": "PASS; 159 assets, 287.10 KiB (65.78 KiB gzip); dry-run only."
   },
   "release": {
-    "pushed": false,
-    "production_deployment": false,
+    "pushed": "PASS; c6c9e73b1c20295827005a27d320390d7ba5b585 verified at origin/v2/foundation.",
+    "production_deployment": "PASS; deployment 4b1ac522-6747-46a9-b470-9b81182ae329, Worker version 97ec385b-e34a-4613-bb4f-fa197b972291 (3691), 100% traffic, created 2026-10-27T22:24:34Z.",
     "d1_migration_preflight": "PASS; No migrations to apply. Read-only; no migration applied.",
     "wrangler_dry_run": "PASS; exact local candidate, 159 assets, 287.10 KiB (65.78 KiB gzip); dry-run only.",
-    "production_smoke": "PENDING; no release claim for this candidate.",
+    "production_smoke": "PASS; /api/health HTTP 200; /api/db-health HTTP 200 with connected=true. page-renderer.js SHA-256  a3b5ad11ef9d11fcfe7bc66c8386a7109fa2e9f246bfdb58306dfe55601fbfb0 matches local; visual-page.html SHA-256 e36565211279075c92e83151a6ece1708c39953658b152e5be7788c2ddea3fa5 matches local and serves cache key 20261027-mobile-box-dimensions.",
     "production_data_changed": false,
     "database_migration_run": false,
-    "r2_changed": false
+    "r2_changed": false,
+    "github_ci": {
+      "passed": [
+        40594540269,
+        40594540320,
+        40594540239,
+        40594540241,
+        40594540242
+      ],
+      "failed": [],
+      "in_progress": []
+    }
   },
-  "next_step": "Push the verified runtime commit normally to v2/foundation, confirm GitHub CI and automatic Worker rollout, then verify 100% traffic, health/D1-health, and the hashes of page-renderer.js and visual-page.html. The full 77.44.7.A remains OPEN / NOT CERTIFIED."
+  "next_step": "Continue 77.44.7.A by validating and releasing mobile position and x/y parity between Inspector, Canvas, saved Page Model and published public rendering. The full plan acceptance remains OPEN / NOT CERTIFIED."
 }

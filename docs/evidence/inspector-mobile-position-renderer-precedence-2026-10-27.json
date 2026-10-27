@@ -1,0 +1,35 @@
+{
+  "date": "2026-10-27",
+  "plan_cursor": "77.44.7.A",
+  "status": "LOCAL_VALIDATION_PASS_RELEASE_PENDING",
+  "scope": "Preserve responsive mobile position, x and y values from the Page Model through the public mobile fallback, with Save and Publish remaining separate.",
+  "finding": {
+    "source": "The mobile public fallback forced position:relative!important, left:0!important and top:auto!important on ordinary nodes, overriding Inspector values even though Canvas and Page Model retained them.",
+    "resolution": "The renderer emits mobile position/left/top CSS custom properties from the resolved responsive Page Model. Static and dynamically injected mobile fallback rules consume these variables with existing relative/zero/auto defaults."
+  },
+  "validation": {
+    "chromium_lifecycle": "PASS; mobile position/x/y edit, Canvas, draft Save, Editor reload, explicit Publish, desktop isolation, mobile inheritance reset, draft Save, and explicit reset Publish.",
+    "related_browser_regressions": "PASS; lifecycle, decorative elements, and legacy media 3/3.",
+    "typecheck": "PASS.",
+    "editor_unit": "PASS; 10/10 files.",
+    "canonical_plan_and_active_point": "PASS; 77.44.7.A remains open/not certified.",
+    "feature_traceability": "PASS; 396 current source mappings; acceptance not certified.",
+    "javascript_syntax_and_diff_check": "PASS.",
+    "responsive_layout_and_root_style": "PASS; 2/2 Chromium browser suites."
+  },
+  "release": {
+    "pushed": false,
+    "production_deployment": false,
+    "production_data_changed": false,
+    "database_migration_run": false,
+    "r2_changed": false,
+    "base_commit": "c6c9e73b1c20295827005a27d320390d7ba5b585",
+    "candidate_sha256": {
+      "public/assets/page-renderer.js": "d6aaecfc42161786970c66743f9029d1a66f8557e9df62dccc9daffeebf5abdc",
+      "public/visual-page.html": "dad186a6645386fce242d89145fc31124dc8b9f5b1c15c86ca919d7a92040145"
+    },
+    "d1_migration_preflight": "PASS; remote Wrangler read-only migration listing reports No migrations to apply. No migration was run.",
+    "wrangler_dry_run": "PASS; 159 assets, 287.10 KiB (65.78 KiB gzip); dry-run only."
+  },
+  "next_step": "Commit and fast-forward push the validated source to v2/foundation, then confirm GitHub CI, automatic Cloudflare deployment, 100% Worker traffic, production health, and exact public asset hashes. Full 77.44.7.A acceptance stays OPEN / NOT CERTIFIED."
+}

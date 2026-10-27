@@ -688,5 +688,42 @@ test('Inspector color keeps independent desktop/tablet/mobile values through dra
   assert.equal(await readStyle(live,'max-width'),'400px','published mobile max-width reset inherits desktop');
   await activate('desktop',1366);await reloadPublic();
   assert.equal(await readStyle(live,'height'),'180px','mobile geometry reset leaves desktop public height intact');
+  // Mobile position and offsets must survive the public responsive fallback.
+  await activate('mobile',390);
+  const positionGroup=editor.locator('.inspector-group-title').filter({hasText:'Pozíció'});if(await positionGroup.getAttribute('aria-expanded')==='false')await positionGroup.click();
+  const mobilePosition=editor.locator('[data-property-id="position.position"]');
+  assert.equal(await mobilePosition.getAttribute('data-property-command'),'responsive.set');
+  await mobilePosition.locator('select').selectOption('absolute');
+  const mobileX=editor.locator('[data-property-id="position.x"] input[type="number"]');
+  const mobileY=editor.locator('[data-property-id="position.y"] input[type="number"]');
+  await mobileX.fill('24');await mobileX.press('Tab');await mobileY.fill('36');await mobileY.press('Tab');
+  assert.deepEqual(await canvas().evaluate(el=>{const css=getComputedStyle(el);return {position:css.position,left:css.left,top:css.top}}),{position:'absolute',left:'24px',top:'36px'},'mobile position Inspector edits reach Canvas');
+  assert.notDeepEqual(await live().evaluate(el=>{const css=getComputedStyle(el);return {position:css.position,left:css.left,top:css.top}}),{position:'absolute',left:'24px',top:'36px'},'mobile position draft remains unpublished');
+  await save(false);assert.equal(posts.at(-1).publish,false,'mobile position Save remains draft-only');
+  assert.equal(posts.at(-1).document.pages[pageId].nodes[nodeId].responsive.mobile.position,'absolute');
+  assert.equal(posts.at(-1).document.pages[pageId].nodes[nodeId].responsive.mobile.x,'24px');
+  assert.equal(posts.at(-1).document.pages[pageId].nodes[nodeId].responsive.mobile.y,'36px');
+  await editor.reload({waitUntil:'domcontentloaded'});await select();await activate('mobile',390);
+  assert.deepEqual(await canvas().evaluate(el=>{const css=getComputedStyle(el);return {position:css.position,left:css.left,top:css.top}}),{position:'absolute',left:'24px',top:'36px'},'mobile position and offsets survive Editor reload');
+  await save(true);assert.equal(posts.at(-1).publish,true,'mobile position requires explicit Publish');await reloadPublic();
+  const publishedPosition=await live().evaluate(el=>{const css=getComputedStyle(el);return {position:css.position,left:css.left,top:css.top,width:innerWidth,style:el.getAttribute('style'),positionVariable:css.getPropertyValue('--editor-mobile-position')}});
+  assert.deepEqual({position:publishedPosition.position,left:publishedPosition.left,top:publishedPosition.top,width:publishedPosition.width},{position:'absolute',left:'24px',top:'36px',width:390},`published mobile position and offsets reach public CSS: ${JSON.stringify(publishedPosition)}`);
+  await activate('desktop',1366);await reloadPublic();
+  assert.notEqual(await readStyle(live,'position'),'absolute','mobile position override preserves desktop public position');
+  await activate('mobile',390);await editor.locator('.inspector-tabs button').first().click();
+  const positionResetHeading=editor.locator('.inspector-group-title').filter({hasText:'Geometria'});if(await positionResetHeading.getAttribute('aria-expanded')==='false')await positionResetHeading.click();
+  for(const key of ['position','x','y']){
+    const reset=editor.locator(`.property-reset[data-property-key="${key}"]`).filter({hasText:'Visszaállítás az örökölt értékre'});
+    assert.equal(await reset.count(),1,`mobile ${key} exposes its inheritance reset`);await reset.click();
+  }
+  assert.notEqual(await canvas().evaluate(el=>getComputedStyle(el).position),'absolute','mobile position reset restores inherited desktop style');
+  assert.equal(await readStyle(live,'position'),'absolute','mobile position reset remains unpublished');
+  await save(false);
+  for(const key of ['position','x','y'])assert.equal(posts.at(-1).document.pages[pageId].nodes[nodeId].responsive.mobile[key],undefined,`mobile ${key} reset is saved in draft`);
+  assert.equal(await readStyle(live,'position'),'absolute','draft position reset keeps published mobile position');
+  await save(true);await reloadPublic();
+  assert.notEqual(await readStyle(live,'position'),'absolute','published mobile position reset inherits desktop');
+  await activate('desktop',1366);await reloadPublic();
+  assert.notEqual(await readStyle(live,'position'),'absolute','mobile position reset leaves desktop public style intact');
   assert.deepEqual(errors,[]);
 });
