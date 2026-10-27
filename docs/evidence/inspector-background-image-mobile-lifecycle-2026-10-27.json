@@ -1,0 +1,55 @@
+{
+  "date": "2026-10-27",
+  "plan_cursor": "77.44.7.A",
+  "scope": "Verify the shared background.image media picker through the mobile responsive override, draft Save, reload, explicit Publish and desktop isolation",
+  "runtime_changed": false,
+  "test_file": "tests/browser/editor-inspector-lifecycle.test.js",
+  "test_result": {
+    "command": "node --test tests/browser/editor-inspector-lifecycle.test.js",
+    "tests": 1,
+    "passed": 1,
+    "failed": 0,
+    "duration_ms": 216732,
+    "scenario_duration_ms": 215794
+  },
+  "fixture": {
+    "storage": "two synthetic SVG assets served by the local HTTP mock",
+    "production_d1_touched": false,
+    "production_r2_touched": false
+  },
+  "property": {
+    "id": "background.image",
+    "command": "responsive.set",
+    "key": "backgroundAssetId",
+    "selected_mobile_asset_id": "a44f0ce3-6273-4a8f-991e-572c4a89cdd2"
+  },
+  "coverage": [
+    "mobile Inspector media selection renders through authenticated Canvas preview route",
+    "Save uses publish:false and stores the selected ID only in responsive.mobile.backgroundAssetId",
+    "existing published mobile background remains unchanged after draft Save and Editor reload",
+    "separate Publish exposes the asset through the public /media/{id} route on mobile",
+    "published desktop background remains equal to its pre-edit computed CSS",
+    "existing desktop background picker Undo/Redo, Save/reload, Publish and removal lifecycle remains green",
+    "browser page errors remain empty"
+  ],
+  "additional_checks": {
+    "editor_unit": "135/135 PASS",
+    "typecheck": "PASS",
+    "canonical_plan": "PASS; cursor remains 77.44.7.A and acceptance NOT_CERTIFIED",
+    "active_point_audit": "PASS",
+    "traceability": "396 mappings PASS",
+    "git_diff_check": "PASS"
+  },
+  "release": {
+    "production_data_changed": false,
+    "database_migration_run": false,
+    "r2_changed": false,
+    "push": "pending verification",
+    "production_deployment": "pending verification",
+    "github_commit_statuses": "pending verification"
+  },
+  "limitations": [
+    "Uses a local HTTP mock and synthetic SVGs, not production R2 or a physical device.",
+    "The full 77.44.7.A Inspector matrix and Editor acceptance remain open."
+  ]
+}

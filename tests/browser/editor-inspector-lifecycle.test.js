@@ -12,6 +12,7 @@ import {listProperties} from '../../public/editor-v2/core/property-registry.js';
 
 const root=resolve(import.meta.dirname,'../../public');
 const inspectorBackgroundAssetId='a44f0ce3-6273-4a8f-991e-572c4a89cdd1';
+const inspectorMobileBackgroundAssetId='a44f0ce3-6273-4a8f-991e-572c4a89cdd2';
 
 test('real Inspector layout survives selection, undo, save/reload and separate publish with canvas/public parity',async t=>{
   const model=createEditorState(createDocument());
@@ -42,9 +43,14 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
     if(url.pathname==='/api/admin/media'&&!url.searchParams.has('id'))return json({ok:true,data:{assets:[{
       id:inspectorBackgroundAssetId,name:'Inspector háttér.svg',mimeType:'image/svg+xml',altText:'Dekoratív teszt-háttér',
       previewUrl:`/api/admin/media?id=${inspectorBackgroundAssetId}`
+    },{
+      id:inspectorMobileBackgroundAssetId,name:'Mobil Inspector háttér.svg',mimeType:'image/svg+xml',altText:'Mobil teszt-háttér',
+      previewUrl:`/api/admin/media?id=${inspectorMobileBackgroundAssetId}`
     }],nextCursor:null}});
-    if((url.pathname==='/api/admin/media'&&url.searchParams.get('id')===inspectorBackgroundAssetId)||url.pathname===`/media/${inspectorBackgroundAssetId}`){
-      res.setHeader('content-type','image/svg+xml');return res.end('<svg xmlns="http://www.w3.org/2000/svg" width="8" height="8"><rect width="8" height="8" fill="#16a34a"/></svg>');
+    const mediaId=url.pathname==='/api/admin/media'?url.searchParams.get('id'):url.pathname.startsWith('/media/')?url.pathname.slice('/media/'.length):null;
+    if([inspectorBackgroundAssetId,inspectorMobileBackgroundAssetId].includes(mediaId)){
+      const fill=mediaId===inspectorMobileBackgroundAssetId?'#db2777':'#16a34a';
+      res.setHeader('content-type','image/svg+xml');return res.end(`<svg xmlns="http://www.w3.org/2000/svg" width="8" height="8"><rect width="8" height="8" fill="${fill}"/></svg>`);
     }
     if(url.pathname==='/api/admin/pages')return json({ok:true,data:url.searchParams.get('archived')==='1'?[]:[{id:pageId,slug:'test',title:'Test',content:draft,revision:version,isPublished:Boolean(published)}]});
     if(url.pathname==='/api/admin/editor'){
@@ -370,7 +376,7 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   assert.equal(await publishedBackgroundImage(), 'none', 'the initial public snapshot has no background asset');
   await backgroundImagePicker.getByRole('button',{name:'Médiatár megnyitása'}).click();
   await backgroundImagePicker.locator('[role="region"][aria-label="Médiatár találatok"]').waitFor();
-  await backgroundImagePicker.getByRole('button',{name:'Inspector háttér.svg kiválasztása'}).click();
+  await backgroundImagePicker.getByRole('button',{name:'Inspector háttér.svg kiválasztása',exact:true}).click();
   assert.ok((await backgroundImage()).includes(`/api/admin/media?id=${inspectorBackgroundAssetId}`),
     'the selected asset previews through the authenticated Canvas media route');
   await editor.locator('#undo').click();
@@ -1049,5 +1055,43 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   await publicPage.reload();
   await publicPage.waitForFunction(()=>getComputedStyle(document.querySelector('.visual-card > .visual-text')).borderTopLeftRadius==='6px');
   assert.equal((await publicCss()).radius,'6px','published mobile radius override reaches the public renderer');
+  // The shared Media picker must write background assets to the active mobile
+  // breakpoint and keep that asset independent from the desktop snapshot.
+  const mobileBackgroundImageField=field('background.image');
+  await assertRegisteredRoute('background.image');
+  const mobileBackgroundHeading=editor.locator('.inspector-group-title').filter({hasText:'Háttér'});
+  if(await mobileBackgroundHeading.getAttribute('aria-expanded')==='false')await mobileBackgroundHeading.click();
+  const mobileBackgroundPicker=mobileBackgroundImageField.locator('.editor-media-picker');
+  const priorPublishedMobileBackground=await publishedBackgroundImage();
+  await publicPage.setViewportSize({width:1366,height:900});await publicPage.reload();
+  const priorPublishedDesktopBackground=await publishedBackgroundImage();
+  await publicPage.setViewportSize({width:390,height:800});await publicPage.reload();
+  await mobileBackgroundPicker.getByRole('button',{name:'Médiatár megnyitása'}).click();
+  await mobileBackgroundPicker.locator('[role="region"][aria-label="Médiatár találatok"]').waitFor();
+  await mobileBackgroundPicker.getByRole('button',{name:'Mobil Inspector háttér.svg kiválasztása'}).click();
+  assert.ok((await backgroundImage()).includes(`/api/admin/media?id=${inspectorMobileBackgroundAssetId}`),'mobile media selection previews through the authenticated Canvas route');
+  assert.equal(await publishedBackgroundImage(),priorPublishedMobileBackground,'the previously published mobile background remains unchanged while the new asset is a draft');
+  await editor.locator('#save').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent?.startsWith('Mentve'));
+  assert.equal(posts.at(-1).publish,false,'mobile background Save remains draft-only');
+  assert.equal(posts.at(-1).document.pages[pageId].nodes[itemId].responsive.mobile.backgroundAssetId,inspectorMobileBackgroundAssetId,'mobile asset ID is saved only to the mobile Page Model override');
+  assert.notEqual(posts.at(-1).document.pages[pageId].nodes[itemId].responsive.desktop.backgroundAssetId,inspectorMobileBackgroundAssetId,'mobile asset selection does not replace the desktop asset');
+  await editor.reload({waitUntil:'domcontentloaded'});await select(itemId);
+  const mobileDeviceButton=editor.locator('.canvas-device-btn[data-device="mobile"]');
+  if(!await mobileDeviceButton.evaluate(el=>el.classList.contains('active')))await mobileDeviceButton.evaluate(el=>el.click());
+  const reloadedMobileBackgroundHeading=editor.locator('.inspector-group-title').filter({hasText:'Háttér'});
+  if(await reloadedMobileBackgroundHeading.getAttribute('aria-expanded')==='false')await reloadedMobileBackgroundHeading.click();
+  assert.ok((await backgroundImage()).includes(`/api/admin/media?id=${inspectorMobileBackgroundAssetId}`),'mobile background selection survives Editor reload');
+  await publicPage.reload();
+  assert.equal(await publishedBackgroundImage(),priorPublishedMobileBackground,'draft mobile image remains unpublished');
+  await editor.locator('#publish').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent==='Publikálva');
+  await publicPage.reload();
+  assert.ok((await publishedBackgroundImage()).includes(`/media/${inspectorMobileBackgroundAssetId}`),'separate Publish exposes the mobile asset through the public media route');
+  const desktopDeviceButton=editor.locator('.canvas-device-btn[data-device="desktop"]');
+  if(!await desktopDeviceButton.evaluate(el=>el.classList.contains('active')))await desktopDeviceButton.evaluate(el=>el.click());
+  await publicPage.setViewportSize({width:1366,height:900});
+  await publicPage.reload();
+  assert.equal(await publishedBackgroundImage(),priorPublishedDesktopBackground,'published mobile asset does not change the independent desktop background');
   assert.deepEqual(errors,[]);
 });
