@@ -33,9 +33,29 @@
     "production_data_changed": false,
     "database_migration_run": false,
     "r2_changed": false,
-    "push": "pending verification",
-    "production_deployment": "pending verification",
-    "github_commit_statuses": "pending verification"
+    "push": {
+      "branch": "v2/foundation",
+      "commit": "c1075ea8a2eeb5fc2e9db327110c7f2b2ae050e9",
+      "verified_remote_ref": true,
+      "mode": "fast-forward"
+    },
+    "production_deployment": {
+      "worker": "sanci9517-streamer-brand",
+      "number": 3609,
+      "deployment_id": "a17d9b8f-9f70-4b2b-9994-b1b73a2c666e",
+      "version_id": "d57c5e83-9912-4f37-8338-3a377e417fbf",
+      "traffic_percent": 100,
+      "etag": "0afd1da0c52bcc5e558e12adeb9888aea6d7df03d5e070c2184b4920dd825bc0",
+      "runtime_unchanged_from_previous": true
+    },
+    "github_commit_statuses": "no checks reported by combined status endpoint",
+    "production_smoke": {
+      "health_http": 200,
+      "db_health_http": 200,
+      "db_connected": true,
+      "live_editor_asset_sha256": "8fe117473beb29e4f1bb3134187df67f7be260345dd90951ad4cf4ea4147f794",
+      "local_editor_asset_sha256": "8fe117473beb29e4f1bb3134187df67f7be260345dd90951ad4cf4ea4147f794"
+    }
   },
   "limitations": [
     "This DOM assertion rejects empty accordion groups but does not replace hands-on Editor usability acceptance.",
