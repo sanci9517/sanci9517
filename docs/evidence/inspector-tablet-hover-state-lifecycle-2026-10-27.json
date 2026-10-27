@@ -50,8 +50,8 @@
     "production_data_changed": false,
     "database_migration_run": false,
     "r2_changed": false,
-    "push": "Pending: the mobile focus-isolation test extension has not yet been committed or pushed.",
-    "github_ci_status": "The prior persisted-state validation revision 8902cd64 had no reported combined-status checks or PR-triggered workflow runs; the mobile isolation extension commit status is pending verification."
+    "push": "Commit e2cc7b3be13f7877c279e6bf2409b3b6dc8bd931 was pushed by normal fast-forward to origin/v2/foundation; GitHub compare confirms one commit ahead of 0191b26f and git ls-remote reports the same branch head.",
+    "github_ci_status": "The GitHub combined-status endpoint returned no checks for e2cc7b3b, and the commit workflow-run query returned no PR-triggered runs. CI result is unavailable/unverified."
   },
   "limitations": [
     "Local HTTP mock and Chromium viewport; not physical-device acceptance.",
