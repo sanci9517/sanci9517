@@ -1018,3 +1018,9 @@ A Visszaszámláló négy vezérlője a tényleges `element.update` parancsot é
 **Kiadás és éles ellenőrzés:** `909c01e4` a `v2/foundation` ágra került. Worker `5e322dd1-349e-47a1-bd55-f62d72a94299` 100% forgalmat kapott; health, D1-health és Editor belépő 200. Az éles `index.html`, `app.js` és Countdown Inspector SHA-256 egyezik a commitolt forrással. GitHub CI 5/5 PASS. Nincs migráció, production adatírás vagy R2-változás. [Bizonyíték](evidence/inspector-typed-control-route-metadata-2026-10-26.json).
 
 **Határ:** ez a Countdown útvonal-lifecycle szelet; a 77.44.7.A, a teljes 79 típus/68 property lefedés és a fizikai eszközös elfogadás OPEN. Nincs sémaváltozás vagy D1/R2 adatváltozás.
+
+### 77.44.7.A — Mobil Flex-gyermek öröklés-visszaállítás és publikációs lifecycle — 2026-10-27
+
+A mobil `flex.basis` útvonal most a mobil érték beállításától és publikálásától annak öröklés-visszaállításán át is végigellenőrzött: Inspector → Canvas → Save/reload → külön Publish, majd mobil reset → Undo/Redo → draft Save/reload → külön Publish. A teszt ellenőrzi, hogy a reset csak a mobil Page Model override-ot törli, a már publikált mobil megjelenés draft mentéskor változatlan marad, és desktopon az önálló érték nem változik. A célzott Chromium regresszió `node --test tests/browser/editor-responsive-layout.test.js` eredménye **1/1 PASS**.
+
+A lassú sandbox böngészőnavigáció miatt a meglévő teszt 6/12 másodperces interakciós/navigációs határideje több alkalommal timeoutot adott az új ág elérése előtt; a határidőket 15/30 másodpercre emeltük, az elvárásokon és assert-eken nem lazítottunk. A végső teljes teszt PASS. Runtime kód nem változott; ez a mobil Flex életciklus egy mezőre és egy böngészőteszt-környezetre vonatkozó bizonyíték, nem teljes A blokk vagy fizikai mobil acceptance. Részletek: [gépi bizonyíték](evidence/inspector-mobile-flex-basis-reset-lifecycle-2026-10-27.json). A `77.44.7.A` OPEN / NOT CERTIFIED marad.

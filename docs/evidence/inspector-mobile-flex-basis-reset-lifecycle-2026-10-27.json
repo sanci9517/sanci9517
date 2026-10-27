@@ -1,0 +1,41 @@
+{
+  "date": "2026-10-27",
+  "plan_cursor": "77.44.7.A",
+  "scope": "Verify the responsive mobile flex.basis Inspector route, inheritance reset, Undo/Redo, draft Save/reload, explicit Publish and desktop-value preservation.",
+  "test_file": "tests/browser/editor-responsive-layout.test.js",
+  "runtime_changed": false,
+  "lifecycle": [
+    "Set mobile flex.basis to 42%; Canvas reflects the override.",
+    "Draft Save leaves public mobile output unchanged; Editor reload retains the draft value.",
+    "Explicit Publish updates public mobile output while desktop keeps its independent value.",
+    "Reset removes only responsive.mobile.flexBasis and restores the inherited desktop value on Canvas.",
+    "Undo restores the mobile override; Redo restores inheritance.",
+    "Draft Save/reload keeps the published mobile override live; explicit Publish applies the reset.",
+    "Published mobile inheritance matches the desktop basis without changing desktop Canvas or public output."
+  ],
+  "final_tests": [
+    {
+      "command": "node --test tests/browser/editor-responsive-layout.test.js",
+      "tests": 1,
+      "passed": 1,
+      "failed": 0,
+      "result": "PASS"
+    }
+  ],
+  "test_harness": {
+    "change": "Browser action timeout increased from 6s to 15s and navigation timeout from 12s to 30s for this existing full-layout test.",
+    "assertions_weakened": false,
+    "initial_attempts": "Two runs stopped before the new lifecycle assertions due pre-existing slow-navigation/click timeouts. The final run completed the full test successfully."
+  },
+  "release": {
+    "runtime_source_changed": false,
+    "deployment_required": false,
+    "database_migration_run": false,
+    "production_data_changed": false,
+    "r2_changed": false
+  },
+  "limitations": [
+    "One property and one browser lifecycle are covered; this does not certify all Inspector properties or all 79 element types.",
+    "Physical-device acceptance remains unverified; 77.44.7.A remains OPEN / NOT CERTIFIED."
+  ]
+}
