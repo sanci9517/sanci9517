@@ -31,15 +31,17 @@
   },
   "release": {
     "runtime_source_changed": false,
-    "github_push_verified": false,
+    "github_push_verified": true,
     "production_deployment": "not performed; test/documentation-only change",
     "production_data_changed": false,
     "database_migration_run": false,
-    "r2_changed": false
+    "r2_changed": false,
+    "github_branch": "v2/foundation",
+    "github_head": "8e7123132c6380c8eb519b1148d14e9e3b54726d",
+    "github_ci_status": "No commit statuses or PR workflow runs were returned by the available GitHub read APIs; CI is not claimed."
   },
   "limitations": [
     "The four-corner route is locally verified, not user-accepted on a physical device.",
-    "The full Inspector matrix and 77.44.7.A remain open.",
-    "The current checkout is behind the remote tracking ref; no push was attempted from this divergent state."
+    "The full Inspector matrix and 77.44.7.A remain open."
   ]
 }
