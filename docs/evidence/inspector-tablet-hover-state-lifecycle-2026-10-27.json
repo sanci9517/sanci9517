@@ -41,8 +41,8 @@
     "production_data_changed": false,
     "database_migration_run": false,
     "r2_changed": false,
-    "push": "Fast-forward pushed and verified on origin/v2/foundation at 47e41093a53f297a673486158b6c7efd0b0ea0ae.",
-    "github_ci_status": "At verification, all five workflows for commit 47e41093a53f297a673486158b6c7efd0b0ea0ae were queued. The immediately preceding tablet corner-radius commit 627088499146821a976080ff1db2f7e82faf6750 completed all five workflows successfully, including Editor Core."
+    "push": "Fast-forward pushed and verified on origin/v2/foundation at ea9b33e0eb3992404add4bfd52d6c701c4757436.",
+    "github_ci_status": "At verification, Twitch Integration, F0, and active-point audit had started; Canonical Plan and Editor Core were queued for commit ea9b33e0eb3992404add4bfd52d6c701c4757436. No failure was reported. The immediately preceding tablet corner-radius commit completed all five workflows successfully."
   },
   "limitations": [
     "Local HTTP mock and Chromium viewport; not physical-device acceptance.",
