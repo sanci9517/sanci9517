@@ -9,8 +9,8 @@
     "tests": 1,
     "passed": 1,
     "failed": 0,
-    "duration_ms": 216732,
-    "scenario_duration_ms": 215794
+    "duration_ms": 263688,
+    "scenario_duration_ms": 262584
   },
   "fixture": {
     "storage": "two synthetic SVG assets served by the local HTTP mock",
@@ -30,7 +30,10 @@
     "separate Publish exposes the asset through the public /media/{id} route on mobile",
     "published desktop background remains equal to its pre-edit computed CSS",
     "existing desktop background picker Undo/Redo, Save/reload, Publish and removal lifecycle remains green",
-    "browser page errors remain empty"
+    "browser page errors remain empty",
+    "mobile Undo clears only the pending mobile backgroundAssetId and Redo restores it",
+    "mobile asset removal survives draft Save and reload while the published asset remains available",
+    "only explicit Publish removes the public mobile reference and exposes the inherited desktop background"
   ],
   "additional_checks": {
     "editor_unit": "135/135 PASS",
@@ -72,5 +75,6 @@
   "limitations": [
     "Uses a local HTTP mock and synthetic SVGs, not production R2 or a physical device.",
     "The full 77.44.7.A Inspector matrix and Editor acceptance remain open."
-  ]
+  ],
+  "repository_working_principle": "AGENTS.md updated with responsible-autonomy guidance that does not override release, security, data-protection or repository instructions"
 }
