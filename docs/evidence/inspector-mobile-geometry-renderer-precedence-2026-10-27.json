@@ -1,7 +1,7 @@
 {
   "date": "2026-10-27",
   "plan_cursor": "77.44.7.A",
-  "status": "LOCAL_VALIDATION_PASS_RELEASE_PENDING",
+  "status": "PRODUCTION_DEPLOYED_CI_PENDING",
   "scope": "Keep the mobile public renderer's computed height and minimum height in parity with the resolved Inspector/Page Model values through edit, draft Save, reload, Publish, desktop preservation, and inheritance reset.",
   "finding": {
     "source": "public/assets/page-renderer.js style() resolves the active responsive value and emits it inline. The public mobile fallback used height:auto!important and min-height:80px!important on ordinary nodes, which overrode those resolved declarations in the cascade.",
@@ -27,13 +27,24 @@
     "remote_d1_migration_list": "PASS; No migrations to apply. Read-only; no migration applied."
   },
   "release": {
-    "pushed": false,
-    "production_deployment": false,
+    "pushed": "PASS; 8ec0488ca35cc842d09c66af7fb3b00fedd70268 is the verified origin/v2/foundation ref.",
+    "production_deployment": "PASS; deployment 372e6ae4-abef-4ad9-bbd6-ddf09746fd4d, Worker version 9af6acf2-e893-4bc6-abc2-af5aec33f6a1 (3690), 100% traffic, created 2026-10-27T22:15:11Z.",
     "remote_d1_preflight": "PASS; Wrangler remote migration list returned No migrations to apply; read-only.",
-    "production_smoke": "PENDING after verified push/deployment.",
+    "production_smoke": "PASS; /api/health HTTP 200; /api/db-health HTTP 200 with connected=true. public/assets/page-renderer.js?v=20261027-mobile-dimensions SHA-256 matches local: 98ef78dbc461fc0679cb0806c3e0ac1e724396121e386f261287552625604dab. /visual-page.html SHA-256 matches local: d6d86837353ae109334c24f28f9b94b1d6c46bac70b06f1615c3e462146b508d.",
     "production_data_changed": false,
     "database_migration_run": false,
-    "r2_changed": false
+    "r2_changed": false,
+    "github_ci": {
+      "passed": [
+        40593302941,
+        40593302930,
+        40593302994,
+        40593302964
+      ],
+      "in_progress": [
+        40593302988
+      ]
+    }
   },
-  "next_step": "Push the verified runtime commit normally to v2/foundation, wait for required CI and automatic Worker rollout, then verify 100% traffic and smoke /api/health plus the changed page-renderer asset hash. The full 77.44.7.A remains OPEN / NOT CERTIFIED."
+  "next_step": "Verify Editor Core workflow 40593302988 completes. Then record final CI status in the plan/evidence and push the documentation-only update. The full 77.44.7.A remains OPEN / NOT CERTIFIED."
 }
