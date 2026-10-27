@@ -201,6 +201,10 @@ test('every PARTIAL type renders Inspector routes and preserves Save versus Publ
     assert.equal(await reset.getAttribute('data-property-command'),'responsive.set',`${type}: mobile reset uses the responsive command`);
     await reset.click();
     assert.equal(await canvasNode.evaluate(el=>getComputedStyle(el).backgroundColor),asRgb(colors[index]),`${type}: mobile reset restores the desktop Canvas color`);
+    await editor.locator('#undo').click();
+    assert.equal(await canvasNode.evaluate(el=>getComputedStyle(el).backgroundColor),asRgb(mobileColors[index]),`${type}: Undo restores the mobile override`);
+    await editor.locator('#redo').click();
+    assert.equal(await canvasNode.evaluate(el=>getComputedStyle(el).backgroundColor),asRgb(colors[index]),`${type}: Redo restores inherited desktop color`);
   }
   await editor.locator('#save').click();
   await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
