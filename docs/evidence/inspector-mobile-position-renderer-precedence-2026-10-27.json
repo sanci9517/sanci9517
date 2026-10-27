@@ -1,7 +1,7 @@
 {
   "date": "2026-10-27",
   "plan_cursor": "77.44.7.A",
-  "status": "LOCAL_VALIDATION_PASS_RELEASE_PENDING",
+  "status": "PRODUCTION_DEPLOYED_CI_PENDING",
   "scope": "Preserve responsive mobile position, x and y values from the Page Model through the public mobile fallback, with Save and Publish remaining separate.",
   "finding": {
     "source": "The mobile public fallback forced position:relative!important, left:0!important and top:auto!important on ordinary nodes, overriding Inspector values even though Canvas and Page Model retained them.",
@@ -18,8 +18,8 @@
     "responsive_layout_and_root_style": "PASS; 2/2 Chromium browser suites."
   },
   "release": {
-    "pushed": false,
-    "production_deployment": false,
+    "pushed": "PASS; b7743ace1aee8b02b33e2f9aec67546ba7415cea verified at origin/v2/foundation.",
+    "production_deployment": "PASS; deployment 69b393a2-60b8-47a4-affa-06602edb0bc5, Worker version 99c3a05a-78a6-4ad5-b961-c993d1c2e536 (3692), 100% traffic, created 2026-10-27T22:42:08Z.",
     "production_data_changed": false,
     "database_migration_run": false,
     "r2_changed": false,
@@ -29,7 +29,20 @@
       "public/visual-page.html": "dad186a6645386fce242d89145fc31124dc8b9f5b1c15c86ca919d7a92040145"
     },
     "d1_migration_preflight": "PASS; remote Wrangler read-only migration listing reports No migrations to apply. No migration was run.",
-    "wrangler_dry_run": "PASS; 159 assets, 287.10 KiB (65.78 KiB gzip); dry-run only."
+    "wrangler_dry_run": "PASS; 159 assets, 287.10 KiB (65.78 KiB gzip); dry-run only.",
+    "production_smoke": "PASS; /api/health and /api/db-health HTTP 200 (connected=true). Live page-renderer.js and visual-page.html SHA-256 match the pushed source; visual-page.html canonical redirect followed.",
+    "github_ci": {
+      "passed": [
+        40596762857,
+        40596761489,
+        40596761416,
+        40596761490
+      ],
+      "in_progress": [
+        40596761502
+      ],
+      "failed": []
+    }
   },
-  "next_step": "Commit and fast-forward push the validated source to v2/foundation, then confirm GitHub CI, automatic Cloudflare deployment, 100% Worker traffic, production health, and exact public asset hashes. Full 77.44.7.A acceptance stays OPEN / NOT CERTIFIED."
+  "next_step": "Verify Editor Core workflow 40596761502 completes, record final CI status in canonical plan/evidence and push the documentation-only update. Full 77.44.7.A acceptance remains OPEN / NOT CERTIFIED."
 }

@@ -96,6 +96,14 @@ test('root Inspector appearance matches published canvas only after Publish at d
  assert.equal(await rootColor(),'rgb(18, 52, 86)');
  await editor.locator('#redo').click();
  assert.equal(await rootColor(),'rgb(170, 68, 0)');
+ const layoutTitle=editor.locator('.inspector-group-title').filter({hasText:'Elrendezés'});if(await layoutTitle.getAttribute('aria-expanded')==='false')await layoutTitle.click();
+ await editor.locator('[data-property-id="layout.display"] select').selectOption('grid');
+ const sizeTitle=editor.locator('.inspector-group-title').filter({hasText:'Méret'});if(await sizeTitle.getAttribute('aria-expanded')==='false')await sizeTitle.click();
+ const minHeight=editor.locator('[data-property-id="size.minHeight"]');
+ await minHeight.locator('.dimension-controls select:not(.property-token-picker)').selectOption('px');
+ const minHeightInput=minHeight.locator('.dimension-controls input[type="number"]');await minHeightInput.fill('420');await minHeightInput.press('Tab');
+ assert.equal(await rootNode.evaluate(el=>getComputedStyle(el).display),'grid','mobile authored-root display setting remains in Canvas');
+ assert.equal(await rootNode.evaluate(el=>getComputedStyle(el).minHeight),'420px','mobile authored-root min-height remains in Canvas');
  await editor.locator('#publish').click();
  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
  assert.equal(posts.at(-1).publish,true);
@@ -113,6 +121,8 @@ test('root Inspector appearance matches published canvas only after Publish at d
  await viewer.setViewportSize({width:390,height:800});await viewer.reload();
  assert.equal(await canvas.evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(170, 68, 0)','mobile root override is published');
  assert.equal(await canvas.evaluate(el=>getComputedStyle(el).paddingTop),'24px','mobile inherits root padding');
+ assert.equal(await canvas.evaluate(el=>getComputedStyle(el).display),'grid','mobile root display is not replaced by the responsive container fallback');
+ assert.equal(await canvas.evaluate(el=>getComputedStyle(el).minHeight),'420px','mobile root min-height is not replaced by the responsive container fallback');
  // A viewer may keep the tab open while a separately published revision
  // replaces the authored root with a legacy/template root. A breakpoint change
  // refetches that Page Model without navigating/reloading the tab.

@@ -1,0 +1,37 @@
+{
+  "date": "2026-10-27",
+  "plan_cursor": "77.44.7.A",
+  "status": "LOCAL_VALIDATION_PASS_RELEASE_PENDING",
+  "scope": "Keep explicitly authored root responsive display and min-height styles effective on mobile public pages, matching the static template and Editor Canvas.",
+  "finding": {
+    "source": "The static visual-page template excludes .visual-root-authored from its mobile canvas display/min-height fallback, but the dynamically injected renderer fallback targeted all visual-editor-canvas roots and overrode authored styles with display:block!important and min-height:0!important.",
+    "resolution": "Aligned the injected selector with the static template by excluding .visual-root-authored. This keeps legacy/template mobile stacking while allowing authored root display and min-height from resolved responsive Page Model values."
+  },
+  "validation": {
+    "chromium_root_lifecycle": "PASS; mobile authored root display:grid and min-height:420px survive Inspector, Canvas, explicit Publish, and public reload.",
+    "mobile_position_lifecycle": "PASS; position/x/y Inspector–Canvas–Save/reload–Publish–desktop isolation–reset lifecycle.",
+    "related_browser_regressions": "PASS; root style plus mobile Inspector lifecycle 2/2; prior position/decorative/media 3/3.",
+    "typecheck": "PASS.",
+    "editor_unit": "PASS; 10/10 files.",
+    "canonical_plan_and_active_point": "PASS; 77.44.7.A remains open/not certified.",
+    "feature_traceability": "PASS; 396 current source mappings; acceptance not certified.",
+    "static_dynamic_fallback_parity": "PASS; authored-root mobile fallback selector/declarations match exactly.",
+    "read_only_d1_migration_preflight": "PASS; No migrations to apply; no migration run.",
+    "wrangler_dry_run": "PASS; 159 assets, 287.10 KiB (65.78 KiB gzip); dry-run only.",
+    "javascript_syntax_and_diff_check": "PASS."
+  },
+  "release": {
+    "base_commit": "b7743ace1aee8b02b33e2f9aec67546ba7415cea",
+    "pushed": false,
+    "production_deployment": false,
+    "currently_deployed_worker": "99c3a05a-78a6-4ad5-b961-c993d1c2e536 (3692), 100% traffic; does not yet include this root fallback correction.",
+    "production_data_changed": false,
+    "database_migration_run": false,
+    "r2_changed": false,
+    "candidate_sha256": {
+      "public/assets/page-renderer.js": "3e5616ca4518b7722c3eee2b23fa7dadd0975aafc3e5433e527a52c38f71c012",
+      "public/visual-page.html": "efb16b4fe43045f42e606348f8e4733e7ac7d1bd8f4de07aec32755c90afefe6"
+    }
+  },
+  "next_step": "Commit and fast-forward push this validated runtime fix to v2/foundation; confirm GitHub CI, automatic Worker deployment at 100%, and production health and asset hashes. Full 77.44.7.A acceptance remains OPEN / NOT CERTIFIED."
+}
