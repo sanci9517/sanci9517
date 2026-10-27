@@ -1,9 +1,10 @@
 {
   "date": "2026-10-27",
   "plan_cursor": "77.44.7.A",
-  "scope": "Verify all ten tablet hover and all ten focus-visible state properties through Inspector routes, Canvas preview, draft Save, Editor reload, explicit Publish, public CSS, every per-property inheritance reset with Undo/Redo, combined hover/keyboard focus precedence, keyboard reachability, and desktop/mobile isolation",
+  "scope": "Verify all ten tablet hover and focus-visible properties through Inspector, Canvas, draft Save, reload, Publish, public CSS, per-property reset/Undo/Redo, concurrent hover/focus precedence, and desktop/mobile isolation; also validate persisted state CSS contracts and legacy compatibility",
   "runtime_changed": false,
   "test_file": "tests/browser/editor-inspector-tablet-state-lifecycle.test.js",
+  "supporting_test_file": "public/editor-v2/tests/state-tokens.test.js",
   "test_result": {
     "command": "node --test tests/browser/editor-inspector-tablet-state-lifecycle.test.js",
     "tests": 1,
@@ -19,6 +20,7 @@
     "tablet public hover inherits the published desktop value until explicit Publish",
     "explicit Publish applies all ten hover and all ten keyboard-focus styles to public CSS; keyboard focus-visible wins when hover is active at the same time",
     "desktop preserves its independent styles and mobile inherits tablet values",
+    "persisted versioned state data rejects invalid CSS values for all ten properties without mutating the rejected document; unversioned legacy state remains loadable and emits no versioned state CSS",
     "each of ten tablet hover and ten tablet focus-visible properties exposes its own states.set reset; reset, Undo, Redo, and restoration back to the original draft value all update Canvas CSS correctly",
     "draft reset Save does not alter published tablet state; explicit reset Publish restores desktop inheritance on tablet and mobile",
     "all ten tablet focus-visible properties survive draft Save and Editor reload",
@@ -28,8 +30,8 @@
     "browser page errors remain empty"
   ],
   "additional_checks": {
-    "editor_unit_suite": "PASS 135/135 (all 10 test files); rerun with the environment's permitted network execution resolved a transient subprocess EPERM from the first sandboxed attempt.",
-    "state_tokens_unit": "PASS",
+    "editor_unit_suite": "PASS 136/136 (all 10 test files).",
+    "state_tokens_unit": "PASS 4/4, including ten persisted invalid-CSS cases and legacy compatibility/no-public-state-CSS assertions.",
     "inspector_richtext_unit": "PASS",
     "typecheck": "PASS",
     "canonical_plan": "PASS; cursor remains 77.44.7.A and acceptance NOT_CERTIFIED",
@@ -44,8 +46,8 @@
     "production_data_changed": false,
     "database_migration_run": false,
     "r2_changed": false,
-    "push": "The full state/reset and concurrent hover+focus precedence revision c4b4c616 was pushed by normal fast-forward from 5fc26783 to origin/v2/foundation. GitHub compare confirms the branch advanced by exactly one commit.",
-    "github_ci_status": "The GitHub combined-status endpoint returned no checks for c4b4c616, and the commit workflow-run query returned no PR-triggered runs. CI result is unavailable/unverified at this check."
+    "push": "The full browser state/reset and concurrent hover+focus precedence revision c4b4c616 was pushed by normal fast-forward from 5fc26783 to origin/v2/foundation. The persisted-state validation test and its plan/evidence update are locally validated and pending push.",
+    "github_ci_status": "The GitHub combined-status endpoint returned no checks for c4b4c616, and the commit workflow-run query returned no PR-triggered runs. CI result is unavailable/unverified; the persisted-state validation extension is not yet pushed."
   },
   "limitations": [
     "Local HTTP mock and Chromium viewport; not physical-device acceptance.",

@@ -7,6 +7,7 @@ import {defaultTokens,normalizeTokens,tokenReference,parseTokenReference,compati
 import {normalizeInspectorValue} from '../core/property-values.js';
 import {getProperty} from '../core/property-registry.js?v=20261025-content-property-route-contract';
 import {buildStateStyles,hasStateStyles} from '../core/state-styles.js';
+import {assertValidEditorDocument} from '../core/validation.js';
 
 test('token bindings are canonical, compatible with the target field and cannot introduce cycles or scripts',()=>{
   assert.equal(parseTokenReference(tokenReference('colors.primary')),'colors.primary');
@@ -39,4 +40,28 @@ test('keyboard focusability is derived from valid focus-visible styles at the ac
   assert.equal(hasStateStyles({...node,states:{'focus-visible':{desktop:{backgroundColor:'not-a-color'}}}},'focus-visible','desktop'),false);
   assert.equal(hasStateStyles({states:{focus:{outlineColor:'#09f'}}},'focus-visible','desktop'),true,'legacy focus outlines remain keyboard reachable');
   assert.equal(hasStateStyles({states:{focus:{outlineColor:'not-a-color'}}},'focus-visible','desktop'),false);
+});
+
+test('versioned saved interaction states reject invalid persisted CSS while legacy pages remain compatible',()=>{
+  const invalid=[
+    ['color','url(javascript:alert(1))'],['backgroundColor','url(javascript:alert(1))'],
+    ['backgroundImage','url(javascript:alert(1))'],['borderColor','url(javascript:alert(1))'],
+    ['boxShadow','url(javascript:alert(1))'],['opacity','2'],['textDecoration','blink'],
+    ['fontWeight','1000'],['rotate','361deg'],['scale','0']
+  ];
+  for(const [key,value] of invalid){
+    const state=createEditorState(createDocument());
+    execute(state,{type:'element.add',payload:{type:'text',parentId:activePage(state).rootId,props:{text:'Validated interaction state'}}});
+    const node=activePage(state).nodes[state.selection.primaryId];node.metadata.stateVersion=1;
+    node.states={hover:{desktop:{[key]:value}}};
+    assert.throws(()=>assertValidEditorDocument(state.document),`${key} rejects an invalid persisted value`);
+    assert.equal(node.states.hover.desktop[key],value,`${key} validation does not mutate the rejected document`);
+  }
+
+  const legacy=createEditorState(createDocument());
+  execute(legacy,{type:'element.add',payload:{type:'text',parentId:activePage(legacy).rootId,props:{text:'Legacy interaction state'}}});
+  const legacyPage=activePage(legacy),legacyNode=legacyPage.nodes[legacy.selection.primaryId];
+  legacyNode.states={hover:{desktop:{backgroundImage:'url(javascript:alert(1))'}}};
+  assert.doesNotThrow(()=>assertValidEditorDocument(legacy.document),'unversioned legacy state data remains loadable');
+  assert.equal(buildStateStyles(legacyPage,'desktop'),'','legacy state values do not enter versioned public CSS');
 });
