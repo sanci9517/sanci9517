@@ -271,5 +271,38 @@ test('tablet hover and focus-visible Inspector states save, publish, reset, and 
   await viewer.keyboard.press('Tab');
   const resetMobileFocus=await publicNode().evaluate(el=>{el.focus();const css=getComputedStyle(el);return{color:css.color,backgroundColor:css.backgroundColor,backgroundImage:css.backgroundImage,borderColor:css.borderColor,boxShadow:css.boxShadow,opacity:css.opacity,textDecorationLine:css.textDecorationLine,fontWeight:css.fontWeight,rotate:css.rotate,scale:css.scale,focusVisible:el.matches(':focus-visible')}});
   assert.deepEqual(resetMobileFocus,{...mobileFocusExpected,focusVisible:true},'tablet reset preserves the independently published mobile focus styles');
+
+  await activateEditor('mobile');
+  for(const [key] of hoverFields){
+    const field=await openStateProperty('focus-visible',key),reset=editor.locator(`.property-reset[data-property-key="${key}"]`).filter({hasText:'Állapotérték öröklésének visszaállítása'}),cssKey=key==='textDecoration'?'textDecorationLine':key;
+    assert.equal(await field.getAttribute('data-property-command'),'states.set',`${key} mobile focus reset uses the shared state command`);
+    assert.equal(await reset.count(),1,`${key} mobile focus override exposes its inheritance reset`);
+    await reset.click();
+    assert.equal(await canvas().evaluate((el,property)=>getComputedStyle(el)[property],cssKey),desktopFocusExpected[cssKey],`mobile ${key} reset resolves through the tablet reset to desktop`);
+  }
+  await editor.locator('#save').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+  assert.equal(posts.at(-1).publish,false,'mobile focus reset remains a draft-only Save');
+  for(const [key] of hoverFields){
+    assert.equal(draft.pages[pageId].nodes[nodeId].states['focus-visible'].mobile[key],undefined,`mobile focus reset removes draft ${key}`);
+    assert.equal(published.pages[pageId].nodes[nodeId].states['focus-visible'].mobile[key],mobileFocusStyles[key],`mobile reset Save preserves published ${key}`);
+  }
+  const mobileBeforeResetPublish=await publicNode().evaluate(el=>{el.focus();const css=getComputedStyle(el);return{color:css.color,backgroundColor:css.backgroundColor,backgroundImage:css.backgroundImage,borderColor:css.borderColor,boxShadow:css.boxShadow,opacity:css.opacity,textDecorationLine:css.textDecorationLine,fontWeight:css.fontWeight,rotate:css.rotate,scale:css.scale,focusVisible:el.matches(':focus-visible')}});
+  assert.deepEqual(mobileBeforeResetPublish,{...mobileFocusExpected,focusVisible:true},'mobile reset Save leaves its published styles in place');
+  await editor.reload({waitUntil:'domcontentloaded'});await activateEditor('mobile');
+  await openStateProperty('focus-visible','color');
+  const resetMobileGroup=editor.locator('.inspector-group').filter({hasText:'Rámutatás és fókusz'});
+  for(const [key,type] of hoverFields){
+    const field=resetMobileGroup.locator(`[data-state-property="${key}"]`),control=type==='select'?field.locator('select:not(.property-token-picker)'):type==='number'?field.locator('input[type="number"]'):field.locator('input[type="text"]');
+    const expected=key==='rotate'?'2':desktopFocus[key];
+    assert.equal(await control.inputValue(),expected,`mobile reset ${key} reloads with the inherited desktop value`);
+  }
+  assert.deepEqual(await publicNode().evaluate(el=>{el.focus();const css=getComputedStyle(el);return{color:css.color,backgroundColor:css.backgroundColor,backgroundImage:css.backgroundImage,borderColor:css.borderColor,boxShadow:css.boxShadow,opacity:css.opacity,textDecorationLine:css.textDecorationLine,fontWeight:css.fontWeight,rotate:css.rotate,scale:css.scale,focusVisible:el.matches(':focus-visible')} }),{...mobileFocusExpected,focusVisible:true},'mobile reset remains unpublished after reload');
+  await editor.locator('#publish').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
+  await reloadViewer();
+  for(const [key] of hoverFields)assert.equal(published.pages[pageId].nodes[nodeId].states['focus-visible'].mobile[key],undefined,`mobile reset Publish clears public ${key}`);
+  assert.equal(await publicNode().getAttribute('tabindex'),'0','mobile reset preserves the desktop keyboard tab stop');
+  await viewer.keyboard.press('Tab');
+  const resetMobilePublic=await publicNode().evaluate(el=>{el.focus();const css=getComputedStyle(el);return{color:css.color,backgroundColor:css.backgroundColor,backgroundImage:css.backgroundImage,borderColor:css.borderColor,boxShadow:css.boxShadow,opacity:css.opacity,textDecorationLine:css.textDecorationLine,fontWeight:css.fontWeight,rotate:css.rotate,scale:css.scale,focusVisible:el.matches(':focus-visible')}});
+  assert.deepEqual(resetMobilePublic,{...desktopFocusExpected,focusVisible:true},'mobile reset Publish inherits desktop focus styles through tablet');
   assert.deepEqual(errors,[],'tablet state lifecycle produces no browser errors');
 });

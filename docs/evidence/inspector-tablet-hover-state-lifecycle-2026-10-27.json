@@ -10,8 +10,8 @@
     "tests": 1,
     "passed": 1,
     "failed": 0,
-    "duration_ms": 47264,
-    "scenario_duration_ms": 44576
+    "duration_ms": 41656,
+    "scenario_duration_ms": 40919
   },
   "coverage": [
     "all ten hover and focus-visible Inspector fields expose states.set and the expected property ID/key and update tablet Canvas CSS",
@@ -31,7 +31,9 @@
     "all ten mobile focus-visible properties use the real Inspector state command and map to mobile Page Model overrides and Canvas CSS",
     "mobile focus draft Save leaves inherited published tablet styles unchanged; Editor reload preserves all ten mobile values",
     "explicit mobile Publish applies all ten mobile focus styles while retaining all ten independent tablet focus values",
-    "publishing the tablet focus reset restores desktop inheritance at tablet width without clearing the ten independently published mobile focus overrides"
+    "publishing the tablet focus reset restores desktop inheritance at tablet width without clearing the ten independently published mobile focus overrides",
+    "mobile focus resets are independently editable for all ten properties and resolve through a tablet reset to the desktop values in the Canvas",
+    "draft Save and Editor reload preserve the published mobile overrides; separate reset Publish removes all ten mobile overrides and restores desktop focus styles through tablet inheritance while keeping tabindex=0"
   ],
   "additional_checks": {
     "editor_unit_suite": "Current sandbox rerun: 9/10 test files passed; core.test.js had 69/70 subtests pass, with its parser subprocess blocked by spawnSync EPERM. Prior 136/136 result remains recorded at commit 8902cd64.",
@@ -50,8 +52,8 @@
     "production_data_changed": false,
     "database_migration_run": false,
     "r2_changed": false,
-    "push": "Commit e2cc7b3be13f7877c279e6bf2409b3b6dc8bd931 was pushed by normal fast-forward to origin/v2/foundation; GitHub compare confirms one commit ahead of 0191b26f and git ls-remote reports the same branch head.",
-    "github_ci_status": "The GitHub combined-status endpoint returned no checks for e2cc7b3b, and the commit workflow-run query returned no PR-triggered runs. CI result is unavailable/unverified."
+    "push": "Pending: the mobile focus-reset lifecycle extension has not yet been committed or pushed.",
+    "github_ci_status": "Commit e2cc7b3b (the prior mobile override isolation extension) has no GitHub combined-status checks or PR-triggered workflow runs; the mobile reset extension commit status is pending verification."
   },
   "limitations": [
     "Local HTTP mock and Chromium viewport; not physical-device acceptance.",
