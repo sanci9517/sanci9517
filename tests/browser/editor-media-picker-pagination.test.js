@@ -18,7 +18,17 @@ test('Inspector Media picker reaches older images and keeps filtered pages disti
       res.setHeader('Content-Type','text/html');res.end('<!doctype html><html><body><div id="fixture"></div></body></html>');return;
     }
     if(url.pathname==='/api/admin/media'&&!url.searchParams.has('id')){
-      requests.push({method:req.method,before:url.searchParams.get('before'),q:url.searchParams.get('q')});
+      requests.push({method:req.method,before:url.searchParams.get('before'),q:url.searchParams.get('q'),mime:url.searchParams.get('mime')});
+      if(url.searchParams.get('mime')==='video'){
+        const videos=[
+          {id:'unsupported-video',name:'unsupported.mp4',altText:'',mimeType:'video/mp4',previewUrl:'/media/unsupported-video'},
+          {id:'supported-video',name:'supported.webm',altText:'',mimeType:'video/webm',previewUrl:'/media/supported-video'}
+        ];
+        const before=url.searchParams.get('before');
+        const page=before?videos.slice(1):videos.slice(0,1);
+        res.setHeader('Content-Type','application/json');
+        res.end(JSON.stringify({ok:true,data:{assets:page,nextCursor:before?null:'unsupported-video'}}));return;
+      }
       const q=(url.searchParams.get('q')||'').toLowerCase();
       const before=url.searchParams.get('before');
       const filtered=all.filter(x=>x.name.toLowerCase().includes(q));
@@ -99,9 +109,26 @@ test('Inspector Media picker reaches older images and keeps filtered pages disti
     assert.equal(await picker.getByRole('button',{name:'Médiatár megnyitása'}).evaluate(el=>document.activeElement===el),true,
       'selection returns keyboard focus to the opener');
     assert.equal(await picker.locator('.editor-media-selected').getAttribute('src'),'/api/admin/media?id='+id(119));
+    await page.evaluate(async()=>{
+      const {mediaAssetPicker}=await import('/editor-v2/ui/element-content-controls.js');
+      window.__videoChoices=[];
+      document.getElementById('fixture').append(mediaAssetPicker('',assetId=>{window.__videoChoices.push(assetId);return true},{mimes:['video/webm']}));
+    });
+    const videoPicker=page.locator('.editor-media-picker').nth(1);
+    await videoPicker.getByRole('button',{name:'Médiatár megnyitása'}).click();
+    await page.waitForFunction(()=>document.querySelectorAll('.editor-media-picker')[1]?.querySelector('[role="region"]')?.getAttribute('aria-busy')==='false');
+    assert.equal(await videoPicker.locator('.editor-media-choice').count(),0,'unsupported MIME files stay out of a type-restricted picker');
+    assert.match(await videoPicker.locator('[role="status"]').textContent(),/nincs támogatott médiafájl.*további fájlokat/i,
+      'an empty filtered page explains that more media can be loaded');
+    await videoPicker.getByRole('button',{name:'További médiafájl betöltése'}).click();
+    await videoPicker.getByRole('button',{name:'supported.webm kiválasztása'}).waitFor();
+    assert.equal(await videoPicker.locator('[role="status"]').textContent(),'1 médiafájl betöltve',
+      'the result count includes only visible files, not filtered-out MIME types');
+    await videoPicker.getByRole('button',{name:'supported.webm kiválasztása'}).click();
+    assert.deepEqual(await page.evaluate(()=>window.__videoChoices),['supported-video']);
     assert.deepEqual(errors,[],`no uncaught picker error at ${width}px`);
     await page.close();
   }
-  assert.equal(requests.filter(x=>x.before!==null).length,4,'every page 2 and 3 uses a cursor rather than repeating page 1');
+  assert.equal(requests.filter(x=>x.before!==null&&x.mime!=='video').length,4,'every image page 2 and 3 uses a cursor rather than repeating page 1');
   assert.ok(requests.every(x=>x.method==='GET'),'asset browsing never sends a Save, Publish or upload request');
 });

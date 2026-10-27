@@ -1,0 +1,39 @@
+{
+  "date": "2026-10-27",
+  "plan_cursor": "77.44.7.A",
+  "scope": "Correct MIME-filtered Media picker result counts and explain empty filtered pages with further results",
+  "runtime_changed": true,
+  "runtime_file": "public/editor-v2/ui/element-content-controls.js",
+  "test_file": "tests/browser/editor-media-picker-pagination.test.js",
+  "coverage": [
+    "unsupported video MIME assets are excluded from a video/webm-specific picker",
+    "an empty page with a next cursor explains that more files can be loaded",
+    "the visible result count excludes server-returned assets filtered out by the allowed MIME list",
+    "a supported video/webm on the next cursor page can be selected",
+    "existing 120-image pagination, search, keyboard focus, Escape and no-write behavior remain covered at 390px and 1366px"
+  ],
+  "checks": {
+    "picker_pagination_browser": "1/1 PASS, mobile and desktop",
+    "media_related_browser_regression": "6/6 PASS, serial",
+    "editor_unit": "135/135 PASS",
+    "typecheck": "PASS",
+    "wide_editor_browser_suite": "86/87 PASS in serial run; one Admin media integrity page.goto 5s timeout; isolated file retry 10/10 PASS",
+    "canonical_plan": "PASS; active cursor remains 77.44.7.A and acceptance NOT_CERTIFIED",
+    "source_traceability": "396 mappings regenerated and --check PASS",
+    "diff_check": "PASS"
+  },
+  "release_preflight": {
+    "wrangler_version": "4.130.0",
+    "cloudflare_authentication": "wrangler whoami succeeded for the configured account",
+    "remote_d1_migration_list": "No migrations to apply; read-only list only",
+    "wrangler_deploy_dry_run": "PASS; 159 assets, 287.10 KiB total",
+    "database_migration_applied": false,
+    "production_data_changed": false,
+    "r2_changed": false,
+    "production_deployment": "not yet performed or claimed"
+  },
+  "limitations": [
+    "The combined serial browser suite had one unrelated Admin media integrity page-load timeout; the 10-test file passed independently.",
+    "The complete 77.44.7.A Inspector acceptance remains open."
+  ]
+}

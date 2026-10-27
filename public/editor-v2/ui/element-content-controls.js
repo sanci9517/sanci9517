@@ -57,7 +57,7 @@ export function mediaAssetPicker(selectedId,onSelect,{disabled=false,mimes=[]}={
     try{
       const {assets,nextCursor:cursor}=await loadAssets(query,before,mimes);
       if(request!==latestRequest||current.hidden)return;
-      let firstNewChoice=null;
+      let firstNewChoice=null,visibleCount=0;
       for(const asset of assets){
         if(mimes.length&&!mimes.includes(asset.mimeType))continue;
         const button=document.createElement('button');button.type='button';button.className='editor-media-choice';button.disabled=disabled;
@@ -67,11 +67,12 @@ export function mediaAssetPicker(selectedId,onSelect,{disabled=false,mimes=[]}={
         const name=document.createElement('span');name.textContent=asset.name;button.append(preview,name);
         button.onclick=()=>{if(onSelect(asset.id,asset)===false)return;renderSelected(asset.id,asset);setOpen(false);status.textContent=`Kiválasztva: ${asset.name}`;open.focus()};
         if(!firstNewChoice)firstNewChoice=button;
-        current.append(button);
+        current.append(button);visibleCount++;
       }
-      shown+=assets.length;nextCursor=cursor;more.hidden=!nextCursor;more.disabled=disabled;
+      shown+=visibleCount;nextCursor=cursor;more.hidden=!nextCursor;more.disabled=disabled;
       current.setAttribute('aria-busy','false');
-      status.textContent=shown?`${shown} médiafájl betöltve${query?' a kereséshez':''}`:'Nincs találat. Tölts fel médiafájlt az Admin → Médiatár oldalon.';
+      status.textContent=shown?`${shown} médiafájl betöltve${query?' a kereséshez':''}`:
+        nextCursor?'Ezen az oldalon nincs támogatott médiafájl. Tölts be további fájlokat.':'Nincs támogatott médiafájl. Tölts fel ilyen fájlt az Admin → Médiatár oldalon.';
       // Newly appended tiles precede the "Load more" button in DOM order.
       // Move keyboard focus there even when this was the final page and
       // the previously focused pagination button becomes hidden.
