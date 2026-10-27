@@ -1,0 +1,49 @@
+{
+  "date": "2026-10-27",
+  "plan_cursor": "77.44.7.A",
+  "scope": "Verify mobile radius.all through the real Inspector, Canvas, draft Save, Editor reload, explicit Publish and inheritance reset for all 44 editable non-root PARTIAL types.",
+  "test_file": "tests/browser/editor-inspector-partial-radius-lifecycle.test.js",
+  "runtime_changed": false,
+  "initial_regression": {
+    "result": "The first test run completed mobile Save and Publish, then failed when the fixture compared the Editor Canvas reset value to the different public class-based desktop border radius on a section node.",
+    "classification": "Test assertion used the wrong baseline; no application defect. The fixture now records desktop Canvas and public CSS values separately."
+  },
+  "final_test_result": {
+    "command": "node --test tests/browser/editor-inspector-partial-radius-lifecycle.test.js",
+    "tests": 1,
+    "passed": 1,
+    "failed": 0,
+    "duration_ms": 72239
+  },
+  "coverage": [
+    "All 44 editable non-root PARTIAL types expose radius.all -> responsive.set / borderRadius.",
+    "Distinct mobile all-corner radii render in Canvas and persist in the mobile Page Model after draft Save.",
+    "Draft Save leaves published mobile CSS unchanged; all saved values survive Editor reload.",
+    "Explicit Publish applies the expected computed mobile radius to all 44 public elements.",
+    "Mobile Publish leaves desktop public radius values unchanged.",
+    "Mobile reset restores the desktop Canvas breakpoint value; reset Save leaves public mobile CSS unchanged; separate Publish restores public desktop inheritance on mobile."
+  ],
+  "additional_checks": {
+    "editor_unit_suite": "PASS 10/10 test files.",
+    "typecheck": "PASS.",
+    "syntax": "PASS for tests/browser/editor-inspector-partial-radius-lifecycle.test.js.",
+    "canonical_plan": "PASS; 77.44.7.A remains OPEN / NOT CERTIFIED.",
+    "active_point_audit": "PASS; current 77.44.7.A.",
+    "traceability": "PASS; 396 source mappings regenerated and checked.",
+    "git_diff_check": "PASS."
+  },
+  "release": {
+    "runtime_source_changed": false,
+    "production_deployment": "Not applicable; test/documentation and generated traceability only.",
+    "production_data_changed": false,
+    "database_migration_run": false,
+    "r2_changed": false,
+    "commit": null,
+    "push": "Pending release verification.",
+    "github_ci_status": "Pending release verification."
+  },
+  "limitations": [
+    "This proves the all-corner radius field across PARTIAL types, not all four individual corner fields across every type.",
+    "Full 77.44.7.A and physical-device acceptance remain open."
+  ]
+}
