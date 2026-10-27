@@ -1,0 +1,44 @@
+{
+  "date": "2026-10-27",
+  "plan_cursor": "77.44.7.A",
+  "scope": "Verify the mobile Flex child basis property from Inspector edit through draft Save, reload, separate Publish and public CSS",
+  "runtime_changed": false,
+  "test_file": "tests/browser/editor-responsive-layout.test.js",
+  "test_result": {
+    "command": "node --test tests/browser/editor-responsive-layout.test.js",
+    "tests": 1,
+    "passed": 1,
+    "failed": 0,
+    "duration_ms": 32268,
+    "scenario_duration_ms": 31623
+  },
+  "coverage": [
+    "mobile flex.basis exposes responsive.set and the flexBasis Page Model key",
+    "a 42% mobile Flex basis override updates Canvas computed CSS",
+    "draft Save does not change the previously published mobile basis",
+    "the mobile basis survives editor reload",
+    "separate Publish updates the public mobile Flex basis",
+    "desktop Canvas and public Flex basis retain their pre-existing value",
+    "Grid child mobile placement lifecycle continues to pass in the same real Chromium test",
+    "browser page errors remain empty"
+  ],
+  "additional_checks": {
+    "editor_unit": "135/135 PASS (current runtime unchanged)",
+    "typecheck": "PASS (current runtime unchanged)",
+    "canonical_plan": "PASS; cursor remains 77.44.7.A and acceptance NOT_CERTIFIED",
+    "traceability": "396 mappings PASS",
+    "git_diff_check": "PASS"
+  },
+  "release": {
+    "runtime_source_changed": false,
+    "production_deployment": "not performed; browser test and documentation only",
+    "production_data_changed": false,
+    "database_migration_run": false,
+    "r2_changed": false,
+    "push": "pending verification"
+  },
+  "limitations": [
+    "Local HTTP mock and Chromium viewport; not physical-device acceptance.",
+    "The full 77.44.7.A property matrix and Editor acceptance remain open."
+  ]
+}
