@@ -1,7 +1,7 @@
 {
   "date": "2026-10-27",
   "plan_cursor": "77.44.7.A",
-  "scope": "Verify tablet Inspector lifecycle for seven typography properties through Canvas, draft Save, Editor reload, explicit Publish, tablet public CSS, and mobile/desktop isolation",
+  "scope": "Verify tablet Inspector lifecycle for all 15 current typography fields through Canvas CSS, draft Save, Editor reload, explicit Publish, tablet public CSS, and mobile/desktop isolation",
   "runtime_changed": false,
   "test_file": "tests/browser/editor-inspector-breakpoint-lifecycle.test.js",
   "test_result": {
@@ -9,42 +9,42 @@
     "tests": 1,
     "passed": 1,
     "failed": 0,
-    "duration_ms": 54009,
-    "scenario_duration_ms": 53295
+    "duration_ms": 71598,
+    "scenario_duration_ms": 71598
   },
   "coverage": [
-    "typography.textWrap uses responsive.set / textWrap and tablet pretty reaches Canvas CSS",
-    "typography.overflowWrap uses responsive.set / overflowWrap and tablet break-word reaches Canvas CSS",
-    "typography.wordSpacing uses responsive.set / wordSpacing and tablet 1.5px reaches Canvas CSS",
-    "typography.textIndent uses responsive.set / textIndent and tablet 6px reaches Canvas CSS",
-    "typography.textShadow uses responsive.set / textShadow and tablet shadow reaches Canvas CSS",
-    "typography.fontSize uses responsive.set / fontSize and tablet 20px reaches Canvas CSS",
-    "typography.textAlign uses responsive.set / textAlign and tablet right alignment reaches Canvas CSS",
-    "all seven values survive draft Save and Editor reload while tablet public CSS remains unchanged",
-    "explicit Publish updates the tablet public CSS; mobile and desktop typography stay independent",
+    "typography.fontFamily uses responsive.set / fontFamily; Georgia reaches tablet Canvas and survives Save/reload/Publish",
+    "typography.fontWeight uses responsive.set / fontWeight; 700 reaches tablet Canvas and survives Save/reload/Publish",
+    "typography.fontStyle uses responsive.set / fontStyle; italic reaches tablet Canvas and survives Save/reload/Publish",
+    "typography.lineHeight uses responsive.set / lineHeight; 1.75 is stored and computes to 35px at the 20px tablet font size",
+    "typography.letterSpacing uses responsive.set / letterSpacing; 1.5px reaches tablet Canvas and survives Save/reload/Publish",
+    "typography.textTransform uses responsive.set / textTransform; uppercase reaches tablet Canvas and survives Save/reload/Publish",
+    "typography.textDecoration uses responsive.set / textDecoration; underline reaches tablet Canvas and survives Save/reload/Publish",
+    "typography.color uses responsive.set / color; #dc2626 reaches tablet Canvas and survives Save/reload/Publish",
+    "previously covered tablet textWrap, overflowWrap, wordSpacing, textIndent, textShadow, fontSize, and textAlign remain in the same lifecycle test",
+    "all 15 typography values persist in tablet Page Model overrides after draft Save and Editor reload while public tablet CSS remains unchanged",
+    "explicit Publish updates tablet public typography; mobile edits preserve tablet values and desktop/mobile/tablet remain independent",
+    "public viewport tests wait for the renderer presentation response after asynchronous resize and reload",
     "browser page errors remain empty"
   ],
   "additional_checks": {
-    "editor_unit": "135/135 PASS",
+    "editor_unit": "3/3 PASS (capability contract, Inspector-rich text, state tokens)",
     "typecheck": "PASS",
     "canonical_plan": "PASS; cursor remains 77.44.7.A and acceptance NOT_CERTIFIED",
     "active_point_audit": "PASS",
     "traceability": "396 mappings PASS",
+    "node_syntax": "PASS",
     "git_diff_check": "PASS"
   },
   "release": {
     "runtime_source_changed": false,
-    "production_deployment": "Verified Cloudflare automatic deployment 450d1d11-9e72-43af-9422-6baffaba44d9, version 5ee8bd78-6b55-4491-85c2-43199ec79323 at 100% traffic. This test/documentation-only change contains no runtime source changes; no direct deploy was run.",
-    "production_smoke": {
-      "api_health": "200; ok=true",
-      "api_db_health": "200; D1 connected=true",
-      "editor_index_sha256": "7b7abaa77976be11e6b606ff82e81a611df04600c28755ed6c4771aac51d7277; live /editor-v2/ matches public/editor-v2/index.html"
-    },
+    "production_deployment": "No Worker deployment initiated for this test/evidence-only change. Runtime source is unchanged.",
+    "production_smoke": "Not rerun in this block; runtime source is unchanged.",
     "production_data_changed": false,
     "database_migration_run": false,
     "r2_changed": false,
-    "push": "Fast-forward to v2/foundation; test commit 52e31e53c972112f2f668e6a6626c24f2fd6a5a1; remote ref verified at the same SHA.",
-    "github_commit_statuses": "Combined status returned no statuses."
+    "push": "Pending local validation and fast-forward verification to v2/foundation.",
+    "github_commit_statuses": "Pending after push."
   },
   "limitations": [
     "Local HTTP mock and Chromium viewport; not physical-device acceptance.",

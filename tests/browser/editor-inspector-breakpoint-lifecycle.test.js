@@ -45,7 +45,8 @@ test('Inspector color keeps independent desktop/tablet/mobile values through dra
   const canvas=()=>editor.locator(`.node[data-node-id="${nodeId}"]`),live=()=>publicPage.locator(`[data-node-id="${nodeId}"]`);
   const color=target=>target().evaluate(el=>getComputedStyle(el).backgroundColor);
   const select=async()=>{await canvas().evaluate(el=>el.click());if(await editor.locator('#rightDock').evaluate(el=>el.classList.contains('closed')))await editor.locator('#openInspector').click()};
-  const activate=async(device,width)=>{await editor.locator(`.canvas-device-btn[data-device="${device}"]`).click();await publicPage.setViewportSize({width,height:900});await publicPage.waitForFunction(({id,expectedWidth})=>{const element=document.querySelector(`[data-node-id="${id}"]`);return window.innerWidth===expectedWidth&&element!==null&&getComputedStyle(element).backgroundColor!==''},{id:nodeId,expectedWidth:width})};
+  const activate=async(device,width)=>{await editor.locator(`.canvas-device-btn[data-device="${device}"]`).click();const changed=await publicPage.evaluate(expected=>window.innerWidth!==expected,width);const rendered=changed?publicPage.waitForResponse(response=>response.url().includes('/api/public/presentation')):null;await publicPage.setViewportSize({width,height:900});await publicPage.waitForFunction(({id,expectedWidth})=>{const element=document.querySelector(`[data-node-id="${id}"]`);return window.innerWidth===expectedWidth&&element!==null&&getComputedStyle(element).backgroundColor!==''},{id:nodeId,expectedWidth:width});if(rendered)await rendered};
+  const reloadPublic=async()=>{const rendered=publicPage.waitForResponse(response=>response.url().includes('/api/public/presentation'));await publicPage.reload({waitUntil:'domcontentloaded'});await rendered};
   const field=()=>editor.locator('.typed-inspector-field[data-property-id="background.color"]');
   const setColor=async value=>field().locator('input[type="color"]').evaluate((input,next)=>{input.value=next;input.dispatchEvent(new Event('change',{bubbles:true}))},value);
   const save=async publish=>{await editor.locator(publish?'#publish':'#save').click();await editor.waitForFunction(p=>document.querySelector('#saveStatus')?.textContent?.startsWith(p?'Publikálva':'Mentve'),publish)};
@@ -62,13 +63,13 @@ test('Inspector color keeps independent desktop/tablet/mobile values through dra
   await save(false);assert.equal(posts.at(-1).publish,false);
   await editor.reload();await select();
   for(const [device,width,,rgb] of breakpoints){
-    await activate(device,width);await publicPage.reload();
+    await activate(device,width);await reloadPublic();
     assert.equal(await color(canvas),rgb,`${device} override survives Editor reload`);
     assert.equal(await color(live),'rgb(37, 99, 235)',`${device} public snapshot stays unchanged after Save`);
   }
   await save(true);assert.equal(posts.at(-1).publish,true);
   for(const [device,width,,rgb] of breakpoints){
-    await activate(device,width);await publicPage.reload();
+    await activate(device,width);await reloadPublic();
     assert.equal(await color(canvas),rgb,`${device} Canvas keeps its own published value`);
     assert.equal(await color(live),rgb,`${device} public renderer receives its own published value`);
   }
@@ -82,10 +83,10 @@ test('Inspector color keeps independent desktop/tablet/mobile values through dra
   await editor.locator('#undo').click();assert.equal(await color(canvas),'rgb(147, 51, 234)','Undo restores mobile override');
   await editor.locator('#redo').click();assert.equal(await color(canvas),'rgb(22, 163, 74)','Redo restores tablet inheritance');
   await save(false);assert.equal(await color(live),'rgb(147, 51, 234)','reset remains a draft until Publish');
-  await save(true);await publicPage.reload();
+  await save(true);await reloadPublic();
   assert.equal(await color(live),'rgb(22, 163, 74)','published mobile reset inherits tablet color');
-  await activate('tablet',768);await publicPage.reload();assert.equal(await color(live),'rgb(22, 163, 74)','tablet override remains intact after mobile reset');
-  await activate('desktop',1366);await publicPage.reload();assert.equal(await color(live),'rgb(220, 38, 38)','desktop override remains intact after mobile reset');
+  await activate('tablet',768);await reloadPublic();assert.equal(await color(live),'rgb(22, 163, 74)','tablet override remains intact after mobile reset');
+  await activate('desktop',1366);await reloadPublic();assert.equal(await color(live),'rgb(220, 38, 38)','desktop override remains intact after mobile reset');
   await activate('mobile',390);await editor.locator('.inspector-tabs button').first().click();
   const backgroundGroup=editor.locator('.inspector-group').filter({has:editor.locator('[data-property-id="background.color"]')});
   const backgroundHeading=backgroundGroup.locator('.inspector-group-title');if(await backgroundHeading.getAttribute('aria-expanded')==='false')await backgroundHeading.click();
@@ -158,12 +159,12 @@ test('Inspector color keeps independent desktop/tablet/mobile values through dra
   assert.equal(await editor.locator('[data-property-id="border.style"] select:not(.property-token-picker)').inputValue(),'dashed','tablet border style survives Editor reload');
   assert.equal(await editor.locator('[data-property-id="border.width"] input[type="number"]').inputValue(),'2','tablet border width survives Editor reload');
   assert.equal(await editor.locator('[data-property-id="border.color"] input[type="color"]').inputValue(),'#f59e0b','tablet border color survives Editor reload');
-  await publicPage.reload({waitUntil:'domcontentloaded'});
+  await reloadPublic();
   assert.equal(await live().evaluate(el=>getComputedStyle(el).opacity),publishedTabletOpacity,'tablet draft Save leaves public opacity unchanged');
   assert.equal(await live().evaluate(el=>getComputedStyle(el).boxShadow),publishedTabletShadow,'tablet draft Save leaves public shadow unchanged');
   assert.deepEqual(await live().evaluate(el=>{const css=getComputedStyle(el);return {width:css.borderTopWidth,style:css.borderTopStyle,color:css.borderTopColor}}),publishedTabletBorder,'tablet draft Save leaves public border unchanged');
   await save(true);assert.equal(posts.at(-1).publish,true,'tablet opacity/shadow/border require explicit Publish');
-  await publicPage.reload({waitUntil:'domcontentloaded'});
+  await reloadPublic();
   assert.equal(await live().evaluate(el=>getComputedStyle(el).opacity),'0.82','published tablet opacity reaches public CSS');
   assert.equal(await live().evaluate(el=>getComputedStyle(el).boxShadow),await canvas().evaluate(el=>getComputedStyle(el).boxShadow),'published tablet box shadow reaches public CSS');
   assert.deepEqual(await live().evaluate(el=>{const css=getComputedStyle(el);return {width:css.borderTopWidth,style:css.borderTopStyle,color:css.borderTopColor}}),{width:'2px',style:'dashed',color:'rgb(245, 158, 11)'},'published tablet border reaches public CSS');
@@ -177,14 +178,18 @@ test('Inspector color keeps independent desktop/tablet/mobile values through dra
   assert.equal(await canvas().evaluate(el=>getComputedStyle(el).opacity),'0.65','mobile opacity Inspector edit reaches Canvas CSS');
   assert.equal(await live().evaluate(el=>getComputedStyle(el).opacity),publishedMobileOpacity,'mobile opacity edit leaves public snapshot unchanged');
   await save(false);assert.equal(posts.at(-1).publish,false,'mobile opacity Save remains draft-only');
+  const opacityResponsiveModel=posts.at(-1).document.pages[pageId].nodes[nodeId].responsive;
+  assert.equal(opacityResponsiveModel.tablet.opacity,'0.82','mobile opacity Save preserves the tablet Page Model value');
+  assert.equal(opacityResponsiveModel.mobile.opacity,'0.65','mobile opacity Save writes only the mobile Page Model value');
   await editor.reload({waitUntil:'domcontentloaded'});await select();await activate('mobile',390);
   const reloadedOpacityHeading=editor.locator('.inspector-group-title').filter({hasText:'Átlátszóság'});if(await reloadedOpacityHeading.getAttribute('aria-expanded')==='false')await reloadedOpacityHeading.click();
   assert.equal(await editor.locator('[data-property-id="opacity.value"] input[type="number"]').inputValue(),'0.65','mobile opacity survives editor reload');
-  await publicPage.reload({waitUntil:'domcontentloaded'});assert.equal(await live().evaluate(el=>getComputedStyle(el).opacity),publishedMobileOpacity,'draft Save does not change published mobile opacity');
+  await reloadPublic();assert.equal(await live().evaluate(el=>getComputedStyle(el).opacity),publishedMobileOpacity,'draft Save does not change published mobile opacity');
   await save(true);assert.equal(posts.at(-1).publish,true,'mobile opacity requires explicit Publish');
-  await publicPage.reload({waitUntil:'domcontentloaded'});assert.equal(await live().evaluate(el=>getComputedStyle(el).opacity),'0.65','published mobile opacity reaches public CSS');
+  await reloadPublic();assert.equal(await live().evaluate(el=>getComputedStyle(el).opacity),'0.65','published mobile opacity reaches public CSS');
   await activate('tablet',768);
-  assert.equal(await live().evaluate(el=>getComputedStyle(el).opacity),'0.82','mobile opacity Publish preserves tablet opacity');
+  const tabletPublicProbe=await live().evaluate(el=>({tag:el.tagName,style:el.getAttribute('style'),opacity:getComputedStyle(el).getPropertyValue('opacity'),width:innerWidth,html:el.outerHTML.slice(0,400)}));
+  assert.equal(tabletPublicProbe.opacity,'0.82',`mobile opacity Publish preserves tablet opacity (${JSON.stringify(tabletPublicProbe)})`);
   assert.equal(await live().evaluate(el=>getComputedStyle(el).boxShadow),tabletCanvasShadow,'mobile opacity Publish preserves tablet box shadow');
   assert.deepEqual(await live().evaluate(el=>{const css=getComputedStyle(el);return {width:css.borderTopWidth,style:css.borderTopStyle,color:css.borderTopColor}}),{width:'2px',style:'dashed',color:'rgb(245, 158, 11)'},'mobile opacity Publish preserves tablet border');
   await activate('mobile',390);
@@ -201,12 +206,12 @@ test('Inspector color keeps independent desktop/tablet/mobile values through dra
   await editor.reload({waitUntil:'domcontentloaded'});await select();await activate('mobile',390);
   const reloadedShadowHeading=editor.locator('.inspector-group-title').filter({hasText:'Árnyék'});if(await reloadedShadowHeading.getAttribute('aria-expanded')==='false')await reloadedShadowHeading.click();
   assert.equal(await editor.locator('[data-property-id="shadow.box"] select:not(.property-token-picker)').inputValue(),'0 8px 24px #0005','mobile shadow survives editor reload');
-  await publicPage.reload({waitUntil:'domcontentloaded'});assert.equal(await live().evaluate(el=>getComputedStyle(el).boxShadow),publishedMobileShadow,'draft Save leaves public mobile shadow unchanged');
+  await reloadPublic();assert.equal(await live().evaluate(el=>getComputedStyle(el).boxShadow),publishedMobileShadow,'draft Save leaves public mobile shadow unchanged');
   await save(true);assert.equal(posts.at(-1).publish,true,'mobile shadow requires explicit Publish');
-  await publicPage.reload({waitUntil:'domcontentloaded'});
+  await reloadPublic();
   assert.equal(await live().evaluate(el=>getComputedStyle(el).boxShadow),canvasMobileShadow,'published mobile shadow reaches public CSS');
   await activate('desktop',1366);
-  await publicPage.reload({waitUntil:'domcontentloaded'});
+  await reloadPublic();
   const desktopBorderWidth=await live().evaluate(el=>getComputedStyle(el).borderTopWidth);
   const desktopCanvasBorderWidth=await canvas().evaluate(el=>getComputedStyle(el).borderTopWidth);
   await activate('mobile',390);
@@ -227,13 +232,13 @@ test('Inspector color keeps independent desktop/tablet/mobile values through dra
   const reloadedBorderHeading=editor.locator('.inspector-group-title').filter({hasText:'Szegély'});if(await reloadedBorderHeading.getAttribute('aria-expanded')==='false')await reloadedBorderHeading.click();
   assert.equal(await editor.locator('[data-property-id="border.width"] input[type="number"]').inputValue(),'3','mobile border width survives editor reload');
   assert.equal(await editor.locator('[data-property-id="border.style"] select:not(.property-token-picker)').inputValue(),'solid','mobile border style survives editor reload');
-  await publicPage.reload({waitUntil:'domcontentloaded'});assert.equal(await live().evaluate(el=>getComputedStyle(el).borderTopWidth),publishedMobileBorderWidth,'draft Save leaves published mobile border unchanged');
+  await reloadPublic();assert.equal(await live().evaluate(el=>getComputedStyle(el).borderTopWidth),publishedMobileBorderWidth,'draft Save leaves published mobile border unchanged');
   await save(true);assert.equal(posts.at(-1).publish,true,'mobile border requires explicit Publish');
-  await publicPage.reload({waitUntil:'domcontentloaded'});
+  await reloadPublic();
   assert.equal(await live().evaluate(el=>getComputedStyle(el).borderTopWidth),'3px','published mobile border width reaches public CSS');
   await activate('desktop',1366);
   assert.equal(await canvas().evaluate(el=>getComputedStyle(el).borderTopWidth),desktopCanvasBorderWidth,'mobile border width does not replace desktop Canvas value');
-  await publicPage.reload({waitUntil:'domcontentloaded'});
+  await reloadPublic();
   assert.equal(await live().evaluate(el=>getComputedStyle(el).borderTopWidth),desktopBorderWidth,'published desktop border retains its independent width');
   const desktopBorderColor=await live().evaluate(el=>getComputedStyle(el).borderTopColor);
   const desktopCanvasBorderColor=await canvas().evaluate(el=>getComputedStyle(el).borderTopColor);
@@ -249,9 +254,9 @@ test('Inspector color keeps independent desktop/tablet/mobile values through dra
   await editor.reload({waitUntil:'domcontentloaded'});await select();await activate('mobile',390);
   const reloadedColorHeading=editor.locator('.inspector-group-title').filter({hasText:'Szegély'});if(await reloadedColorHeading.getAttribute('aria-expanded')==='false')await reloadedColorHeading.click();
   assert.equal(await editor.locator('[data-property-id="border.color"] input[type="color"]').inputValue(),'#0d9488','mobile border color survives editor reload');
-  await publicPage.reload({waitUntil:'domcontentloaded'});assert.equal(await live().evaluate(el=>getComputedStyle(el).borderTopColor),publishedMobileBorderColor,'draft Save leaves published mobile border color unchanged');
+  await reloadPublic();assert.equal(await live().evaluate(el=>getComputedStyle(el).borderTopColor),publishedMobileBorderColor,'draft Save leaves published mobile border color unchanged');
   await save(true);assert.equal(posts.at(-1).publish,true,'mobile border color requires explicit Publish');
-  await publicPage.reload({waitUntil:'domcontentloaded'});
+  await reloadPublic();
   assert.equal(await live().evaluate(el=>getComputedStyle(el).borderTopColor),'rgb(13, 148, 136)','published mobile border color reaches public CSS');
   await activate('tablet',768);
   assert.equal(await live().evaluate(el=>getComputedStyle(el).opacity),'0.82','mobile border Publish preserves tablet opacity');
@@ -259,9 +264,9 @@ test('Inspector color keeps independent desktop/tablet/mobile values through dra
   assert.deepEqual(await live().evaluate(el=>{const css=getComputedStyle(el);return {width:css.borderTopWidth,style:css.borderTopStyle,color:css.borderTopColor}}),{width:'2px',style:'dashed',color:'rgb(245, 158, 11)'},'mobile border Publish preserves tablet styles');
   await activate('desktop',1366);
   assert.equal(await canvas().evaluate(el=>getComputedStyle(el).borderTopColor),desktopCanvasBorderColor,'mobile border color does not replace desktop Canvas value');
-  await publicPage.reload({waitUntil:'domcontentloaded'});
+  await reloadPublic();
   assert.equal(await live().evaluate(el=>getComputedStyle(el).borderTopColor),desktopBorderColor,'published desktop border color retains its independent value');
-  const textStyles=target=>target().evaluate(el=>{const css=getComputedStyle(el);return {textWrap:css.textWrap,overflowWrap:css.overflowWrap,wordSpacing:css.wordSpacing,textIndent:css.textIndent,textShadow:css.textShadow,fontSize:css.fontSize,textAlign:css.textAlign}});
+  const textStyles=target=>target().evaluate(el=>{const css=getComputedStyle(el);return {fontFamily:css.fontFamily,fontWeight:css.fontWeight,fontStyle:css.fontStyle,lineHeight:css.lineHeight,letterSpacing:css.letterSpacing,textTransform:css.textTransform,textDecoration:css.textDecorationLine,color:css.color,textWrap:css.textWrap,overflowWrap:css.overflowWrap,wordSpacing:css.wordSpacing,textIndent:css.textIndent,textShadow:css.textShadow,fontSize:css.fontSize,textAlign:css.textAlign}});
   const desktopCanvasTypography=await textStyles(canvas),desktopPublicTypography=await textStyles(live);
   await activate('tablet',768);
   const tabletTypographyHeading=editor.locator('.inspector-group-title').filter({hasText:'Tipográfia'});if(await tabletTypographyHeading.getAttribute('aria-expanded')==='false')await tabletTypographyHeading.click();
@@ -272,7 +277,15 @@ test('Inspector color keeps independent desktop/tablet/mobile values through dra
   const tabletShadowTextField=editor.locator('[data-property-id="typography.textShadow"]');
   const tabletFontSizeField=editor.locator('[data-property-id="typography.fontSize"]');
   const tabletTextAlignField=editor.locator('[data-property-id="typography.textAlign"]');
-  for(const [field,key] of [[tabletWrapField,'textWrap'],[tabletOverflowField,'overflowWrap'],[tabletWordSpacingField,'wordSpacing'],[tabletIndentField,'textIndent'],[tabletShadowTextField,'textShadow'],[tabletFontSizeField,'fontSize'],[tabletTextAlignField,'textAlign']]){
+  const tabletFontFamilyField=editor.locator('[data-property-id="typography.fontFamily"]');
+  const tabletFontWeightField=editor.locator('[data-property-id="typography.fontWeight"]');
+  const tabletFontStyleField=editor.locator('[data-property-id="typography.fontStyle"]');
+  const tabletLineHeightField=editor.locator('[data-property-id="typography.lineHeight"]');
+  const tabletLetterSpacingField=editor.locator('[data-property-id="typography.letterSpacing"]');
+  const tabletTextTransformField=editor.locator('[data-property-id="typography.textTransform"]');
+  const tabletTextDecorationField=editor.locator('[data-property-id="typography.textDecoration"]');
+  const tabletTextColorField=editor.locator('[data-property-id="typography.color"]');
+  for(const [field,key] of [[tabletWrapField,'textWrap'],[tabletOverflowField,'overflowWrap'],[tabletWordSpacingField,'wordSpacing'],[tabletIndentField,'textIndent'],[tabletShadowTextField,'textShadow'],[tabletFontSizeField,'fontSize'],[tabletTextAlignField,'textAlign'],[tabletFontFamilyField,'fontFamily'],[tabletFontWeightField,'fontWeight'],[tabletFontStyleField,'fontStyle'],[tabletLineHeightField,'lineHeight'],[tabletLetterSpacingField,'letterSpacing'],[tabletTextTransformField,'textTransform'],[tabletTextDecorationField,'textDecoration'],[tabletTextColorField,'color']]){
     assert.equal(await field.getAttribute('data-property-command'),'responsive.set',`tablet ${key}: Inspector command`);
     assert.equal(await field.getAttribute('data-property-key'),key,`tablet ${key}: Page Model key`);
   }
@@ -283,11 +296,22 @@ test('Inspector color keeps independent desktop/tablet/mobile values through dra
   await tabletShadowTextField.locator('select:not(.property-token-picker)').selectOption('0 4px 16px #000a');
   const tabletFontSizeInput=tabletFontSizeField.locator('.dimension-controls input[type="number"]');await tabletFontSizeInput.fill('20');await tabletFontSizeInput.press('Tab');
   await tabletTextAlignField.locator('select:not(.property-token-picker)').selectOption('right');
+  await tabletFontFamilyField.locator('select:not(.property-token-picker)').selectOption('Georgia');
+  await tabletFontWeightField.locator('select:not(.property-token-picker)').selectOption('700');
+  await tabletFontStyleField.locator('select:not(.property-token-picker)').selectOption('italic');
+  const tabletLineHeightInput=tabletLineHeightField.locator('input[type="number"]');await tabletLineHeightInput.fill('1.75');await tabletLineHeightInput.press('Tab');
+  const tabletLetterSpacingInput=tabletLetterSpacingField.locator('.dimension-controls input[type="number"]');await tabletLetterSpacingInput.fill('1.5');await tabletLetterSpacingInput.press('Tab');
+  await tabletTextTransformField.locator('select:not(.property-token-picker)').selectOption('uppercase');
+  await tabletTextDecorationField.locator('select:not(.property-token-picker)').selectOption('underline');
+  await tabletTextColorField.locator('input[type="color"]').evaluate(input=>{input.value='#dc2626';input.dispatchEvent(new Event('change',{bubbles:true}))});
   const tabletCanvasTypography=await textStyles(canvas),publishedTabletTypography=await textStyles(live);
+  assert.deepEqual({fontFamily:tabletCanvasTypography.fontFamily,fontWeight:tabletCanvasTypography.fontWeight,fontStyle:tabletCanvasTypography.fontStyle,lineHeight:tabletCanvasTypography.lineHeight,letterSpacing:tabletCanvasTypography.letterSpacing,textTransform:tabletCanvasTypography.textTransform,textDecoration:tabletCanvasTypography.textDecoration,color:tabletCanvasTypography.color},{fontFamily:'Georgia',fontWeight:'700',fontStyle:'italic',lineHeight:'35px',letterSpacing:'1.5px',textTransform:'uppercase',textDecoration:'underline',color:'rgb(220, 38, 38)'},'tablet font family, weight, style, line height, letter spacing, casing, decoration and color reach Canvas CSS');
   assert.deepEqual({textWrap:tabletCanvasTypography.textWrap,overflowWrap:tabletCanvasTypography.overflowWrap,wordSpacing:tabletCanvasTypography.wordSpacing,textIndent:tabletCanvasTypography.textIndent,fontSize:tabletCanvasTypography.fontSize,textAlign:tabletCanvasTypography.textAlign},{textWrap:'pretty',overflowWrap:'break-word',wordSpacing:'1.5px',textIndent:'6px',fontSize:'20px',textAlign:'right'},'tablet typography Inspector edits reach Canvas CSS');
   assert.notEqual(tabletCanvasTypography.textShadow,publishedTabletTypography.textShadow,'tablet text shadow reaches Canvas CSS');
   assert.deepEqual(await textStyles(live),publishedTabletTypography,'tablet typography draft leaves public CSS unchanged');
   await save(false);assert.equal(posts.at(-1).publish,false,'tablet typography Save remains draft-only');
+  const tabletTypographyModel=posts.at(-1).document.pages[pageId].nodes[nodeId].responsive.tablet;
+  for(const [key,value] of Object.entries({fontFamily:'Georgia',fontWeight:'700',fontStyle:'italic',lineHeight:'1.75',letterSpacing:'1.5px',textTransform:'uppercase',textDecoration:'underline',color:'#dc2626'}))assert.equal(tabletTypographyModel[key],value,`tablet ${key} is saved to its Page Model override`);
   await editor.reload({waitUntil:'domcontentloaded'});await select();await activate('tablet',768);
   const reloadedTabletTypographyHeading=editor.locator('.inspector-group-title').filter({hasText:'Tipográfia'});if(await reloadedTabletTypographyHeading.getAttribute('aria-expanded')==='false')await reloadedTabletTypographyHeading.click();
   assert.equal(await editor.locator('[data-property-id="typography.textWrap"] select:not(.property-token-picker)').inputValue(),'pretty','tablet text wrapping survives Editor reload');
@@ -297,7 +321,12 @@ test('Inspector color keeps independent desktop/tablet/mobile values through dra
   assert.equal(await editor.locator('[data-property-id="typography.textShadow"] select:not(.property-token-picker)').inputValue(),'0 4px 16px #000a','tablet text shadow survives Editor reload');
   assert.equal(await editor.locator('[data-property-id="typography.fontSize"] input[type="number"]').inputValue(),'20','tablet font size survives Editor reload');
   assert.equal(await editor.locator('[data-property-id="typography.textAlign"] select:not(.property-token-picker)').inputValue(),'right','tablet text alignment survives Editor reload');
-  await publicPage.reload({waitUntil:'domcontentloaded'});assert.deepEqual(await textStyles(live),publishedTabletTypography,'tablet typography draft stays unpublished after reload');
+  for(const [id,value] of [['fontFamily','Georgia'],['fontWeight','700'],['fontStyle','italic'],['lineHeight','1.75'],['letterSpacing','1.5'],['textTransform','uppercase'],['textDecoration','underline']]){
+    const control=editor.locator(`[data-property-id="typography.${id}"]`).locator(id==='lineHeight'?'input[type="number"]':id==='letterSpacing'?'.dimension-controls input[type="number"]':'select:not(.property-token-picker)');
+    assert.equal(await control.inputValue(),value,`tablet ${id} survives Editor reload`);
+  }
+  assert.equal(await editor.locator('[data-property-id="typography.color"] input[type="color"]').inputValue(),'#dc2626','tablet text color survives Editor reload');
+  await reloadPublic();assert.deepEqual(await textStyles(live),publishedTabletTypography,'tablet typography draft stays unpublished after reload');
   await activate('mobile',390);
   const typographyHeading=editor.locator('.inspector-group-title').filter({hasText:'Tipográfia'});if(await typographyHeading.getAttribute('aria-expanded')==='false')await typographyHeading.click();
   const wrapField=editor.locator('[data-property-id="typography.textWrap"]');
@@ -332,13 +361,13 @@ test('Inspector color keeps independent desktop/tablet/mobile values through dra
   assert.equal(await editor.locator('[data-property-id="typography.textShadow"] select:not(.property-token-picker)').inputValue(),'0 2px 8px #0006');
   assert.equal(await editor.locator('[data-property-id="typography.fontSize"] input[type="number"]').inputValue(),'24');
   assert.equal(await editor.locator('[data-property-id="typography.textAlign"] select:not(.property-token-picker)').inputValue(),'center');
-  await publicPage.reload({waitUntil:'domcontentloaded'});assert.deepEqual(await textStyles(live),publishedMobileTypography,'mobile typography draft stays unpublished after reload');
+  await reloadPublic();assert.deepEqual(await textStyles(live),publishedMobileTypography,'mobile typography draft stays unpublished after reload');
   await save(true);assert.equal(posts.at(-1).publish,true,'mobile typography requires explicit Publish');
-  await publicPage.reload({waitUntil:'domcontentloaded'});assert.deepEqual(await textStyles(live),mobileCanvasTypography,'published mobile typography reaches public CSS');
-  await activate('tablet',768);await publicPage.reload({waitUntil:'domcontentloaded'});assert.deepEqual(await textStyles(live),tabletCanvasTypography,'published tablet typography reaches tablet public CSS');
+  await reloadPublic();assert.deepEqual(await textStyles(live),mobileCanvasTypography,'published mobile typography reaches public CSS');
+  await activate('tablet',768);await reloadPublic();assert.deepEqual(await textStyles(live),tabletCanvasTypography,'published tablet typography reaches tablet public CSS');
   await activate('desktop',1366);
   assert.deepEqual(await textStyles(canvas),desktopCanvasTypography,'mobile typography overrides do not replace desktop Canvas styles');
-  await publicPage.reload({waitUntil:'domcontentloaded'});
+  await reloadPublic();
   assert.deepEqual(await textStyles(live),desktopPublicTypography,'published desktop typography retains independent values');
   const backgroundStyles=target=>target().evaluate(el=>{const css=getComputedStyle(el);return {backgroundImage:css.backgroundImage,backgroundSize:css.backgroundSize,backgroundPosition:css.backgroundPosition,backgroundRepeat:css.backgroundRepeat}});
   const desktopCanvasBackground=await backgroundStyles(canvas),desktopPublicBackground=await backgroundStyles(live);
@@ -378,10 +407,10 @@ test('Inspector color keeps independent desktop/tablet/mobile values through dra
   assert.equal(await editor.locator('[data-property-id="background.size"] select:not(.property-token-picker)').inputValue(),'auto','tablet background size survives Editor reload');
   assert.equal(await editor.locator('[data-property-id="background.position"] select:not(.property-token-picker)').inputValue(),'center bottom','tablet background position survives Editor reload');
   assert.equal(await editor.locator('[data-property-id="background.repeat"] select:not(.property-token-picker)').inputValue(),'repeat','tablet background repeat survives Editor reload');
-  await publicPage.reload({waitUntil:'domcontentloaded'});assert.deepEqual(await backgroundStyles(live),publishedTabletBackground,'tablet background draft stays unpublished after reload');
+  await reloadPublic();assert.deepEqual(await backgroundStyles(live),publishedTabletBackground,'tablet background draft stays unpublished after reload');
   assert.equal(await live().evaluate(el=>getComputedStyle(el).backgroundColor),publishedTabletBackgroundColor,'tablet background Save leaves public color unchanged');
   await save(true);assert.equal(posts.at(-1).publish,true,'tablet background changes require explicit Publish');
-  await publicPage.reload({waitUntil:'domcontentloaded'});assert.deepEqual(await backgroundStyles(live),tabletCanvasBackground,'published tablet background reaches public CSS');
+  await reloadPublic();assert.deepEqual(await backgroundStyles(live),tabletCanvasBackground,'published tablet background reaches public CSS');
   assert.equal(await live().evaluate(el=>getComputedStyle(el).backgroundColor),tabletCanvasBackgroundColor,'published tablet background color reaches public CSS');
   await activate('mobile',390);
   const mobileBackgroundHeading=editor.locator('.inspector-group-title').filter({hasText:'Háttér'});if(await mobileBackgroundHeading.getAttribute('aria-expanded')==='false')await mobileBackgroundHeading.click();
@@ -411,15 +440,15 @@ test('Inspector color keeps independent desktop/tablet/mobile values through dra
   assert.equal(await editor.locator('[data-property-id="background.size"] select:not(.property-token-picker)').inputValue(),'contain');
   assert.equal(await editor.locator('[data-property-id="background.position"] select:not(.property-token-picker)').inputValue(),'center top');
   assert.equal(await editor.locator('[data-property-id="background.repeat"] select:not(.property-token-picker)').inputValue(),'repeat-x');
-  await publicPage.reload({waitUntil:'domcontentloaded'});assert.deepEqual(await backgroundStyles(live),publishedMobileBackground,'mobile background draft stays unpublished after reload');
+  await reloadPublic();assert.deepEqual(await backgroundStyles(live),publishedMobileBackground,'mobile background draft stays unpublished after reload');
   await save(true);assert.equal(posts.at(-1).publish,true,'mobile background changes require explicit Publish');
-  await publicPage.reload({waitUntil:'domcontentloaded'});assert.deepEqual(await backgroundStyles(live),mobileCanvasBackground,'published mobile background reaches public CSS');
-  await activate('tablet',768);await publicPage.reload({waitUntil:'domcontentloaded'});
+  await reloadPublic();assert.deepEqual(await backgroundStyles(live),mobileCanvasBackground,'published mobile background reaches public CSS');
+  await activate('tablet',768);await reloadPublic();
   assert.deepEqual(await backgroundStyles(live),tabletCanvasBackground,'mobile background Publish preserves tablet image styles');
   assert.equal(await live().evaluate(el=>getComputedStyle(el).backgroundColor),tabletCanvasBackgroundColor,'mobile background Publish preserves tablet color');
   await activate('desktop',1366);
   assert.deepEqual(await backgroundStyles(canvas),desktopCanvasBackground,'mobile background does not replace desktop Canvas styles');
-  await publicPage.reload({waitUntil:'domcontentloaded'});
+  await reloadPublic();
   assert.deepEqual(await backgroundStyles(live),desktopPublicBackground,'published desktop background retains independent values');
   const readStyle=(target,property)=>target().evaluate((el,key)=>getComputedStyle(el).getPropertyValue(key),property);
   const visualProperties=[
@@ -473,19 +502,19 @@ test('Inspector color keeps independent desktop/tablet/mobile values through dra
     assert.equal(await property.read(editor.locator(`[data-property-id="${property.id}"]`)),property.tabletValue,`${property.id}: tablet draft survives Editor reload`);
   }
   await activate('mobile',390);
-  await publicPage.reload({waitUntil:'domcontentloaded'});
+  await reloadPublic();
   for(const property of visualProperties)assert.equal(await readStyle(live,property.css),publishedMobileVisualStyles[property.id],`${property.id}: draft Save leaves mobile public CSS unchanged`);
-  await activate('tablet',768);await publicPage.reload({waitUntil:'domcontentloaded'});
+  await activate('tablet',768);await reloadPublic();
   for(const property of visualProperties)assert.equal(await readStyle(live,property.css),publishedTabletVisualStyles[property.id],`${property.id}: draft Save leaves tablet public CSS unchanged`);
   await save(true);assert.equal(posts.at(-1).publish,true,'mobile filter/transform/animation require explicit Publish');
-  await activate('tablet',768);await publicPage.reload({waitUntil:'domcontentloaded'});
+  await activate('tablet',768);await reloadPublic();
   for(const property of visualProperties){
     const actual=await readStyle(live,property.css);
     if(property.id==='animation.transition')assert.match(actual,/0\.3s/,`${property.id}: Publish reaches tablet public CSS`);
     else assert.equal(actual,property.tabletExpected,`${property.id}: Publish reaches tablet public CSS`);
   }
   await activate('mobile',390);
-  await publicPage.reload({waitUntil:'domcontentloaded'});
+  await reloadPublic();
   for(const property of visualProperties){
     const actual=await readStyle(live,property.css);
     if(property.id==='animation.transition')assert.match(actual,/0\.18s/,`${property.id}: Publish reaches public CSS`);
@@ -494,7 +523,7 @@ test('Inspector color keeps independent desktop/tablet/mobile values through dra
   await activate('desktop',1366);
   for(const property of visualProperties){
     assert.equal(await readStyle(canvas,property.css),desktopVisualStyles[property.id].canvas,`${property.id}: mobile override preserves desktop Canvas value`);
-    await publicPage.reload({waitUntil:'domcontentloaded'});
+    await reloadPublic();
     assert.equal(await readStyle(live,property.css),desktopVisualStyles[property.id].public,`${property.id}: mobile Publish preserves desktop public value`);
   }
   assert.deepEqual(errors,[]);
