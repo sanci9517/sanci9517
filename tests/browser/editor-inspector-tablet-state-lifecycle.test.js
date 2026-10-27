@@ -119,19 +119,34 @@ test('tablet hover and focus-visible Inspector states save, publish, reset, and 
   await setViewerWidth(768);assert.equal((await computedHover()).backgroundColor,'rgb(22, 163, 74)','published tablet reset inherits desktop hover');
   await setViewerWidth(390);assert.equal((await computedHover()).backgroundColor,'rgb(22, 163, 74)','mobile inherits desktop after tablet reset is published');
 
+  const focusStyles={color:'#1d4ed8',backgroundColor:'#0ea5e9',backgroundImage:'linear-gradient(135deg, #7047eb 0%, #17b8a6 100%)',borderColor:'#a855f7',boxShadow:'0 2px 8px #0003',opacity:'0.65',textDecoration:'overline',fontWeight:'800',rotate:'-5deg',scale:'0.9'};
+  const focusExpected={color:'rgb(29, 78, 216)',backgroundColor:'rgb(14, 165, 233)',backgroundImage:'linear-gradient(135deg, rgb(112, 71, 235) 0%, rgb(23, 184, 166) 100%)',borderColor:'rgb(168, 85, 247)',boxShadow:'rgba(0, 0, 0, 0.2) 0px 2px 8px 0px',opacity:'0.65',textDecorationLine:'overline',fontWeight:'800',rotate:'-5deg',scale:'0.9'};
+  for(const [key,type,id] of hoverFields){
+    const control=await editStateValue('focus-visible',key,focusStyles[key],type);
+    assert.equal(await control.getAttribute('data-property-id'),id,`${key} keeps its registry route for focus-visible`);
+    assert.equal(await control.getAttribute('data-property-key'),key,`${key} exposes the focus-visible Page Model key`);
+    const cssKey=key==='textDecoration'?'textDecorationLine':key;
+    assert.equal(await canvas().evaluate((el,property)=>getComputedStyle(el)[property],cssKey),focusExpected[cssKey],`${key} reaches the tablet focus-visible Canvas preview`);
+  }
   const focusField=await openStateColor('focus-visible');
   assert.equal(await focusField.getAttribute('data-property-command'),'states.set','tablet focus-visible exposes the state command route');
   assert.equal(await focusField.getAttribute('data-property-key'),'backgroundColor','tablet focus-visible exposes the backgroundColor Page Model key');
-  const focusColor='#0ea5e9',focusInput=focusField.locator('input[type="text"]');await focusInput.fill(focusColor);await focusInput.press('Tab');
+  const focusColor=focusStyles.backgroundColor,focusInput=focusField.locator('input[type="text"]');await focusInput.fill(focusColor);await focusInput.press('Tab');
   assert.equal(await canvas().getAttribute('data-editor-state'),'focus-visible','tablet focus preview marks the Canvas node');
   assert.equal(await canvas().evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(14, 165, 233)','tablet focus-visible override reaches Canvas preview');
   await editor.locator('#save').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
   assert.equal(posts.at(-1).publish,false,'tablet focus-visible Save remains draft-only');
-  assert.equal(draft.pages[pageId].nodes[nodeId].states['focus-visible'].tablet.backgroundColor,focusColor,'tablet focus-visible value is saved in its responsive draft state');
-  assert.equal(published.pages[pageId].nodes[nodeId].states['focus-visible']?.tablet?.backgroundColor,undefined,'focus-visible Save leaves the published state unchanged');
+  for(const [key] of hoverFields)assert.equal(draft.pages[pageId].nodes[nodeId].states['focus-visible'].tablet[key],focusStyles[key],`${key} is saved in the tablet focus-visible draft state`);
+  for(const [key] of hoverFields)assert.equal(published.pages[pageId].nodes[nodeId].states['focus-visible']?.tablet?.[key],undefined,`focus-visible draft Save leaves published ${key} unchanged`);
   await editor.reload({waitUntil:'domcontentloaded'});await activateEditor('tablet');
   const reloadedFocusField=await openStateColor('focus-visible');
   assert.equal(await reloadedFocusField.locator('input[type="text"]').inputValue(),focusColor,'tablet focus-visible value survives Editor reload');
+  const focusGroup=editor.locator('.inspector-group').filter({hasText:'Rámutatás és fókusz'});
+  for(const [key,type] of hoverFields){
+    const field=focusGroup.locator(`[data-state-property="${key}"]`),control=type==='select'?field.locator('select:not(.property-token-picker)'):type==='number'?field.locator('input[type="number"]'):field.locator('input[type="text"]');
+    const expected=key==='rotate'?'-5':focusStyles[key];
+    assert.equal(await control.inputValue(),expected,`${key} focus-visible override survives Editor reload`);
+  }
   await setViewerWidth(768);
   assert.equal(await publicNode().getAttribute('tabindex'),null,'draft focus-visible state does not make public content focusable');
   await viewer.keyboard.press('Tab');
@@ -140,17 +155,17 @@ test('tablet hover and focus-visible Inspector states save, publish, reset, and 
   assert.equal(unpublishedFocus.focusVisible,false,'draft state does not create a public keyboard focus style');
   await editor.locator('#publish').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
   await reloadViewer();
-  assert.equal(published.pages[pageId].nodes[nodeId].states['focus-visible'].tablet.backgroundColor,focusColor,'explicit Publish stores the tablet focus-visible state');
+  for(const [key] of hoverFields)assert.equal(published.pages[pageId].nodes[nodeId].states['focus-visible'].tablet[key],focusStyles[key],`explicit Publish stores tablet focus-visible ${key}`);
   assert.equal(await publicNode().getAttribute('tabindex'),'0','published tablet focus-visible state makes the text node keyboard reachable');
   await viewer.keyboard.press('Tab');
-  const publishedFocus=await publicNode().evaluate(el=>{el.focus();return{background:getComputedStyle(el).backgroundColor,focusVisible:el.matches(':focus-visible'),tabIndex:el.tabIndex}});
-  assert.deepEqual(publishedFocus,{background:'rgb(14, 165, 233)',focusVisible:true,tabIndex:0},'keyboard focus activates the published tablet state');
+  const publishedFocus=await publicNode().evaluate(el=>{el.focus();const css=getComputedStyle(el);return{color:css.color,backgroundColor:css.backgroundColor,backgroundImage:css.backgroundImage,borderColor:css.borderColor,boxShadow:css.boxShadow,opacity:css.opacity,textDecorationLine:css.textDecorationLine,fontWeight:css.fontWeight,rotate:css.rotate,scale:css.scale,focusVisible:el.matches(':focus-visible'),tabIndex:el.tabIndex}});
+  assert.deepEqual(publishedFocus,{...focusExpected,focusVisible:true,tabIndex:0},'keyboard focus activates all published tablet focus-visible styles');
   await setViewerWidth(1366);
   assert.equal(await publicNode().getAttribute('tabindex'),null,'tablet focus-visible Publish does not add a desktop keyboard stop');
   await setViewerWidth(390);
   assert.equal(await publicNode().getAttribute('tabindex'),'0','mobile inherits the tablet focus-visible keyboard affordance');
   await viewer.keyboard.press('Tab');
-  const mobileFocus=await publicNode().evaluate(el=>{el.focus();return{background:getComputedStyle(el).backgroundColor,focusVisible:el.matches(':focus-visible')}});
-  assert.deepEqual(mobileFocus,{background:'rgb(14, 165, 233)',focusVisible:true},'mobile inherits the published tablet keyboard focus style');
+  const mobileFocus=await publicNode().evaluate(el=>{el.focus();const css=getComputedStyle(el);return{color:css.color,backgroundColor:css.backgroundColor,backgroundImage:css.backgroundImage,borderColor:css.borderColor,boxShadow:css.boxShadow,opacity:css.opacity,textDecorationLine:css.textDecorationLine,fontWeight:css.fontWeight,rotate:css.rotate,scale:css.scale,focusVisible:el.matches(':focus-visible')}});
+  assert.deepEqual(mobileFocus,{...focusExpected,focusVisible:true},'mobile inherits all published tablet keyboard focus styles');
   assert.deepEqual(errors,[],'tablet state lifecycle produces no browser errors');
 });
