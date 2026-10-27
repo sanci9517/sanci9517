@@ -72,6 +72,9 @@ test('tablet Flex container/children and Grid container/children save, reload an
     {id:'flex.grow',key:'flexGrow',group:'Flex',node:flexChildId,css:'flexGrow',value:'2.5',edit:async field=>{const input=field.locator('input[type="number"]');await input.fill('2.5');await input.press('Tab')},verify:async field=>assert.equal(await field.locator('input[type="number"]').inputValue(),'2.5')},
     {id:'flex.shrink',key:'flexShrink',group:'Flex',node:flexChildId,css:'flexShrink',value:'0.5',edit:async field=>{const input=field.locator('input[type="number"]');await input.fill('0.5');await input.press('Tab')},verify:async field=>assert.equal(await field.locator('input[type="number"]').inputValue(),'0.5')},
     {id:'flex.alignSelf',key:'alignSelf',group:'Flex',node:flexChildId,css:'alignSelf',value:'center',edit:field=>field.locator('select:not(.property-token-picker)').selectOption('center'),verify:async field=>assert.equal(await field.locator('select:not(.property-token-picker)').inputValue(),'center')},
+    {id:'size.aspectRatio',key:'aspectRatio',group:'Méret',node:gridId,css:'aspectRatio',value:'4 / 3',edit:field=>field.locator('select:not(.property-token-picker)').selectOption('4 / 3'),verify:async field=>assert.equal(await field.locator('select:not(.property-token-picker)').inputValue(),'4 / 3')},
+    {id:'size.minWidth',key:'minWidth',group:'Méret',node:gridId,css:'minWidth',value:'240px',edit:async field=>{await field.locator('.dimension-controls select:not(.property-token-picker)').selectOption('px');const input=field.locator('.dimension-controls input[type="number"]');await input.fill('240');await input.press('Tab')},verify:async field=>{assert.equal(await field.locator('.dimension-controls input[type="number"]').inputValue(),'240');assert.equal(await field.locator('.dimension-controls select:not(.property-token-picker)').inputValue(),'px')}},
+    {id:'spacing.padding',key:'padding',group:'Térközök',node:gridId,css:'paddingTop',value:'12px',storedValue:'12px 0 0 0',edit:async field=>{const input=field.locator('.typed-box-side input[type="number"]').first();await input.fill('12');await input.press('Tab')},verify:async field=>assert.equal(await field.locator('.typed-box-side input[type="number"]').first().inputValue(),'12')},
     {id:'grid.row',key:'gridRow',group:'Grid-gyermek',node:gridChildId,css:'gridRowStart',value:'3',edit:field=>field.locator('select:not(.property-token-picker)').selectOption('3'),verify:async field=>assert.equal(await field.locator('select:not(.property-token-picker)').inputValue(),'3')},
     {id:'grid.column',key:'gridColumn',group:'Grid-gyermek',node:gridChildId,css:'gridColumnStart',value:'2',edit:field=>field.locator('select:not(.property-token-picker)').selectOption('2'),verify:async field=>assert.equal(await field.locator('select:not(.property-token-picker)').inputValue(),'2')},
     {id:'flex.direction',key:'flexDirection',group:'Flex',node:flexId,css:'flexDirection',value:'column',edit:field=>field.locator('select:not(.property-token-picker)').selectOption('column'),verify:async field=>assert.equal(await field.locator('select:not(.property-token-picker)').inputValue(),'column')},
@@ -88,6 +91,7 @@ test('tablet Flex container/children and Grid container/children save, reload an
   await select(flexChildId);await publicPage.goto(base+'/p/test');
   const desktopBaseline=Object.fromEntries(await Promise.all(properties.map(async property=>[property.id,{canvas:await css(editor,property.node,property.css),public:await css(publicPage,property.node,property.css)}])));
   await activate('tablet');
+  const tabletCanvasBaseline=Object.fromEntries(await Promise.all(properties.map(async property=>[property.id,await css(editor,property.node,property.css)])));
   const tabletPublishedBaseline=Object.fromEntries(await Promise.all(properties.map(async property=>[property.id,await css(publicPage,property.node,property.css)])));
   for(const property of properties){
     const field=await openField(property.id,property.group,property.node);
@@ -110,13 +114,13 @@ test('tablet Flex container/children and Grid container/children save, reload an
   for(const property of properties){
     const value=await css(editor,property.node,property.css);
     if(property.id==='grid.columns'||property.id==='grid.rows')assert.equal(value.trim().split(/\s+/).length,2,`${property.id}: Undo restores the original two-track template`);
-    else assert.equal(value,tabletPublishedBaseline[property.id],`${property.id}: Undo restores the inherited tablet value`);
+    else assert.equal(value,tabletCanvasBaseline[property.id],`${property.id}: Undo restores the inherited tablet Canvas value`);
   }
   for(let i=0;i<properties.length;i++)await editor.locator('#redo').click();
   for(const property of properties){const value=await css(editor,property.node,property.css);assert.ok(property.cssMatches?property.cssMatches(value):value===property.value,`${property.id}: Redo restores the tablet value (got ${value})`)}
   await editor.locator('#save').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent?.startsWith('Mentve'));
   assert.equal(posts.at(-1).publish,false,'tablet child layout Save remains draft-only');
-  for(const property of properties)assert.equal(posts.at(-1).document.pages[pageId].nodes[property.node].responsive.tablet[property.key],property.value,`${property.id}: tablet value is stored in Page Model`);
+  for(const property of properties)assert.equal(posts.at(-1).document.pages[pageId].nodes[property.node].responsive.tablet[property.key],property.storedValue??property.value,`${property.id}: tablet value is stored in Page Model`);
   await editor.reload({waitUntil:'domcontentloaded'});await activate('tablet');
   for(const property of properties){const field=await openField(property.id,property.group,property.node);await property.verify(field);const value=await css(editor,property.node,property.css);assert.ok(property.cssMatches?property.cssMatches(value):value===property.value,`${property.id}: tablet value survives Editor reload (got ${value})`)}
   await publicPage.reload({waitUntil:'domcontentloaded'});
