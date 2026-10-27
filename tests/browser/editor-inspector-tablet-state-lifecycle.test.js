@@ -75,6 +75,8 @@ test('tablet hover and focus-visible Inspector states save, publish, reset, and 
   const tabletButton=editor.locator('.canvas-device-btn[data-device="tablet"]');await tabletButton.click();
   const tabletHover={color:'#dc2626',backgroundColor:'#c026d3',backgroundImage:'linear-gradient(135deg, #fb7185 0%, #fbbf24 100%)',borderColor:'#0ea5e9',boxShadow:'0 16px 48px #0007',opacity:'0.85',textDecoration:'line-through',fontWeight:'900',rotate:'7deg',scale:'1.1'};
   const hoverFields=[['color','color','typography.color'],['backgroundColor','color','background.color'],['backgroundImage','select','background.gradient'],['borderColor','color','border.color'],['boxShadow','select','shadow.box'],['opacity','number','opacity.value'],['textDecoration','select','typography.textDecoration'],['fontWeight','select','typography.fontWeight'],['rotate','number','transform.rotate'],['scale','number','transform.scale']];
+  const desktopHoverExpected={color:'rgb(37, 99, 235)',backgroundColor:'rgb(22, 163, 74)',backgroundImage:'linear-gradient(135deg, rgb(17, 24, 39) 0%, rgb(71, 85, 105) 100%)',borderColor:'rgb(245, 158, 11)',boxShadow:'rgba(0, 0, 0, 0.333) 0px 8px 24px 0px',opacity:'0.75',textDecorationLine:'underline',fontWeight:'700',rotate:'4deg',scale:'0.95'};
+  const tabletHoverExpected={color:'rgb(220, 38, 38)',backgroundColor:'rgb(192, 38, 211)',backgroundImage:'linear-gradient(135deg, rgb(251, 113, 133) 0%, rgb(251, 191, 36) 100%)',borderColor:'rgb(14, 165, 233)',boxShadow:'rgba(0, 0, 0, 0.467) 0px 16px 48px 0px',opacity:'0.85',textDecorationLine:'line-through',fontWeight:'900',rotate:'7deg',scale:'1.1'};
   for(const [key,type,id] of hoverFields){
     const control=await editStateValue('hover',key,tabletHover[key],type);
     assert.equal(await control.getAttribute('data-property-id'),id,`${key} maps to its declared registry property`);
@@ -97,13 +99,25 @@ test('tablet hover and focus-visible Inspector states save, publish, reset, and 
   const reloadedField=await openHoverColor();
   assert.equal(await reloadedField.locator('input[type="text"]').inputValue(),tabletColor,'tablet hover value survives Editor reload');
   await setViewerWidth(768);
-  assert.deepEqual(await computedHover(),{color:'rgb(37, 99, 235)',backgroundColor:'rgb(22, 163, 74)',backgroundImage:'linear-gradient(135deg, rgb(17, 24, 39) 0%, rgb(71, 85, 105) 100%)',borderColor:'rgb(245, 158, 11)',boxShadow:'rgba(0, 0, 0, 0.333) 0px 8px 24px 0px',opacity:'0.75',textDecorationLine:'underline',fontWeight:'700',rotate:'4deg',scale:'0.95'},'tablet draft remains unpublished and public desktop hover styles remain intact');
+  assert.deepEqual(await computedHover(),desktopHoverExpected,'tablet draft remains unpublished and public desktop hover styles remain intact');
   await editor.locator('#publish').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
   await reloadViewer();
   assert.equal(published.pages[pageId].nodes[nodeId].states.hover.tablet.backgroundColor,tabletColor,'explicit Publish stores the tablet hover state');
-  assert.deepEqual(await computedHover(),{color:'rgb(220, 38, 38)',backgroundColor:'rgb(192, 38, 211)',backgroundImage:'linear-gradient(135deg, rgb(251, 113, 133) 0%, rgb(251, 191, 36) 100%)',borderColor:'rgb(14, 165, 233)',boxShadow:'rgba(0, 0, 0, 0.467) 0px 16px 48px 0px',opacity:'0.85',textDecorationLine:'line-through',fontWeight:'900',rotate:'7deg',scale:'1.1'},'tablet Publish applies every state property to the public CSS');
-  await setViewerWidth(1366);assert.deepEqual(await computedHover(),{color:'rgb(37, 99, 235)',backgroundColor:'rgb(22, 163, 74)',backgroundImage:'linear-gradient(135deg, rgb(17, 24, 39) 0%, rgb(71, 85, 105) 100%)',borderColor:'rgb(245, 158, 11)',boxShadow:'rgba(0, 0, 0, 0.333) 0px 8px 24px 0px',opacity:'0.75',textDecorationLine:'underline',fontWeight:'700',rotate:'4deg',scale:'0.95'},'tablet Publish preserves every independent desktop hover style');
-  await setViewerWidth(390);assert.deepEqual(await computedHover(),{color:'rgb(220, 38, 38)',backgroundColor:'rgb(192, 38, 211)',backgroundImage:'linear-gradient(135deg, rgb(251, 113, 133) 0%, rgb(251, 191, 36) 100%)',borderColor:'rgb(14, 165, 233)',boxShadow:'rgba(0, 0, 0, 0.467) 0px 16px 48px 0px',opacity:'0.85',textDecorationLine:'line-through',fontWeight:'900',rotate:'7deg',scale:'1.1'},'mobile hover inherits all published tablet state styles');
+  assert.deepEqual(await computedHover(),tabletHoverExpected,'tablet Publish applies every state property to the public CSS');
+  await setViewerWidth(1366);assert.deepEqual(await computedHover(),desktopHoverExpected,'tablet Publish preserves every independent desktop hover style');
+  await setViewerWidth(390);assert.deepEqual(await computedHover(),tabletHoverExpected,'mobile hover inherits all published tablet state styles');
+
+  for(const [key] of hoverFields){
+    const field=await openStateProperty('hover',key),reset=editor.locator(`.property-reset[data-property-key="${key}"]`).filter({hasText:'Állapotérték öröklésének visszaállítása'}),cssKey=key==='textDecoration'?'textDecorationLine':key;
+    assert.equal(await field.getAttribute('data-property-command'),'states.set',`${key} reset remains on the shared state command route`);
+    assert.equal(await reset.count(),1,`${key} exposes its own responsive inheritance reset`);
+    assert.equal(await reset.getAttribute('data-property-command'),'states.set');
+    assert.equal(await reset.getAttribute('data-property-key'),key);
+    await reset.click();assert.equal(await canvas().evaluate((el,property)=>getComputedStyle(el)[property],cssKey),desktopHoverExpected[cssKey],`${key} reset restores desktop inheritance on Canvas`);
+    await editor.locator('#undo').click();assert.equal(await canvas().evaluate((el,property)=>getComputedStyle(el)[property],cssKey),tabletHoverExpected[cssKey],`Undo restores tablet ${key}`);
+    await editor.locator('#redo').click();assert.equal(await canvas().evaluate((el,property)=>getComputedStyle(el)[property],cssKey),desktopHoverExpected[cssKey],`Redo restores inherited ${key}`);
+    await editor.locator('#undo').click();assert.equal(await canvas().evaluate((el,property)=>getComputedStyle(el)[property],cssKey),tabletHoverExpected[cssKey],`test cleanup restores the tablet ${key} override`);
+  }
 
   const resetField=await openHoverColor(),reset=editor.locator('.property-reset[data-property-key="backgroundColor"]').filter({hasText:'Állapotérték öröklésének visszaállítása'});
   assert.equal(await reset.count(),1,'tablet hover override exposes a reset-to-inheritance action');

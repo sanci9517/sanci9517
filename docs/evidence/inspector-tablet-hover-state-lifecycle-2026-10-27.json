@@ -1,7 +1,7 @@
 {
   "date": "2026-10-27",
   "plan_cursor": "77.44.7.A",
-  "scope": "Verify all ten tablet hover and all ten focus-visible state properties through Inspector routes, Canvas preview, draft Save, Editor reload, explicit Publish, public CSS, inheritance reset, Undo/Redo, keyboard reachability, and desktop/mobile isolation",
+  "scope": "Verify all ten tablet hover and all ten focus-visible state properties through Inspector routes, Canvas preview, draft Save, Editor reload, explicit Publish, public CSS, per-property inheritance reset with Undo/Redo, keyboard reachability, and desktop/mobile isolation",
   "runtime_changed": false,
   "test_file": "tests/browser/editor-inspector-tablet-state-lifecycle.test.js",
   "test_result": {
@@ -9,8 +9,8 @@
     "tests": 1,
     "passed": 1,
     "failed": 0,
-    "duration_ms": 16313,
-    "scenario_duration_ms": 16313
+    "duration_ms": 28557,
+    "scenario_duration_ms": 28557
   },
   "coverage": [
     "all ten hover and focus-visible Inspector fields expose states.set and the expected property ID/key and update tablet Canvas CSS",
@@ -18,7 +18,7 @@
     "Editor reload preserves the tablet hover control value",
     "tablet public hover inherits the published desktop value until explicit Publish",
     "explicit Publish applies all ten hover and all ten keyboard-focus styles to public CSS; desktop preserves its independent styles and mobile inherits tablet values",
-    "tablet hover reset uses states.set / backgroundColor; Undo restores the override and Redo restores desktop inheritance",
+    "each of the ten tablet hover properties exposes its own states.set reset; reset, Undo, Redo, and restoration back to the original draft value all update Canvas CSS correctly",
     "draft reset Save does not alter published tablet state; explicit reset Publish restores desktop inheritance on tablet and mobile",
     "all ten tablet focus-visible properties survive draft Save and Editor reload",
     "draft focus state adds no public keyboard stop and leaves all published properties untouched; Publish gives the tablet node tabindex=0 and all ten :focus-visible styles",
@@ -42,8 +42,8 @@
     "production_data_changed": false,
     "database_migration_run": false,
     "r2_changed": false,
-    "push": "The all-hover-and-focus revision eaabf562 was pushed by normal fast-forward from b410fa80 to origin/v2/foundation. GitHub compare confirms the branch is one commit ahead of that base.",
-    "github_ci_status": "The GitHub combined-status endpoint returned no checks for eaabf562, and the commit workflow-run query returned no PR-triggered runs. CI result is unavailable/unverified at this check."
+    "push": "The all-hover-and-focus revision eaabf562 was pushed by normal fast-forward from b410fa80 to origin/v2/foundation. The additional per-property reset coverage is locally validated and pending push.",
+    "github_ci_status": "The GitHub combined-status endpoint returned no checks for eaabf562, and the commit workflow-run query returned no PR-triggered runs. CI result is unavailable/unverified; the reset-coverage revision is not yet pushed."
   },
   "limitations": [
     "Local HTTP mock and Chromium viewport; not physical-device acceptance.",
