@@ -1,0 +1,50 @@
+{
+  "date": "2026-10-27",
+  "plan_cursor": "77.44.7.A",
+  "scope": "Verify tablet Flex child basis/grow/shrink and Grid child row/column Inspector routes through Canvas, draft Save, reload, explicit Publish, public CSS, and desktop isolation",
+  "runtime_changed": false,
+  "test_file": "tests/browser/editor-inspector-tablet-layout-lifecycle.test.js",
+  "test_result": {
+    "command": "node --test tests/browser/editor-inspector-tablet-layout-lifecycle.test.js",
+    "tests": 1,
+    "passed": 1,
+    "failed": 0,
+    "duration_ms": 17725,
+    "scenario_duration_ms": 14668
+  },
+  "coverage": [
+    "fixture uses an actual display:flex parent for responsive Flex child controls",
+    "fixture uses an actual display:grid parent for responsive Grid child controls",
+    "flex.basis exposes responsive.set / flexBasis and tablet 42% reaches Canvas CSS",
+    "flex.grow exposes responsive.set / flexGrow and tablet 2.5 reaches Canvas CSS",
+    "flex.shrink exposes responsive.set / flexShrink and tablet 0.5 reaches Canvas CSS",
+    "grid.row exposes responsive.set / gridRow and tablet row 3 reaches Canvas CSS",
+    "grid.column exposes responsive.set / gridColumn and tablet column 2 reaches Canvas CSS",
+    "tablet Grid column Undo/Redo restores and reapplies its own override",
+    "all five tablet values persist in the Page Model and survive Editor reload",
+    "draft Save leaves public tablet layout unchanged; explicit Publish updates it",
+    "tablet publication preserves independent desktop Flex and Grid layouts",
+    "browser page errors remain empty"
+  ],
+  "additional_checks": {
+    "editor_unit": "135/135 PASS",
+    "typecheck": "PASS",
+    "canonical_plan": "PASS; cursor remains 77.44.7.A and acceptance NOT_CERTIFIED",
+    "active_point_audit": "PASS",
+    "traceability": "396 mappings PASS after source manifest regeneration",
+    "git_diff_check": "PASS"
+  },
+  "release": {
+    "runtime_source_changed": false,
+    "production_deployment": "Pending push verification; no direct deploy is required for this test/documentation-only change.",
+    "production_data_changed": false,
+    "database_migration_run": false,
+    "r2_changed": false,
+    "push": "Pending final commit.",
+    "github_commit_statuses": "Not checked for the final commit yet."
+  },
+  "limitations": [
+    "Local HTTP mock and Chromium viewport; not physical-device acceptance.",
+    "The full 77.44.7.A property matrix and Editor acceptance remain open."
+  ]
+}
