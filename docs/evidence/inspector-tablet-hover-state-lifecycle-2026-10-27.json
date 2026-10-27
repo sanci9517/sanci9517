@@ -53,8 +53,8 @@
     "production_data_changed": false,
     "database_migration_run": false,
     "r2_changed": false,
-    "push": "Commit 9b8f151869cc7460105e762f805373e918e09e0e was pushed by normal fast-forward to origin/v2/foundation; GitHub compare confirms one commit ahead of 1ec1c736 and git ls-remote reports the same branch head.",
-    "github_ci_status": "The GitHub combined-status endpoint returned no checks for 9b8f1518, and the commit workflow-run query returned no PR-triggered runs. CI result is unavailable/unverified."
+    "push": "The mobile focus lifecycle commit 9b8f1518 and parser subprocess fix 814626f16d4568035440f99146db2487f298d93d were pushed to origin/v2/foundation. GitHub compare confirms 814626f1 is two commits ahead of 9b8f1518, and git ls-remote confirms it is the current branch head.",
+    "github_ci_status": "The GitHub combined-status endpoint returned no checks for 814626f1, and the commit workflow-run query returned no PR-triggered runs. CI result is unavailable/unverified."
   },
   "limitations": [
     "Local HTTP mock and Chromium viewport; not physical-device acceptance.",
