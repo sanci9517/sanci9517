@@ -9,7 +9,7 @@ import {createDocument} from '../../public/editor-v2/core/schema.js';
 import {createEditorState} from '../../public/editor-v2/core/state.js';
 import {execute} from '../../public/editor-v2/core/commands.js';
 
-test('tablet Flex and Grid child Inspector values save, reload and publish independently',async t=>{
+test('tablet Flex children and Grid container/children save, reload and publish independently',async t=>{
   const model=createEditorState(createDocument()),pageId=model.document.activePageId;
   const rootId=model.document.pages[pageId].rootId;
   execute(model,{type:'element.add',payload:{type:'grid',parentId:rootId}});
@@ -72,7 +72,11 @@ test('tablet Flex and Grid child Inspector values save, reload and publish indep
     {id:'flex.grow',key:'flexGrow',group:'Flex',node:flexChildId,css:'flexGrow',value:'2.5',edit:async field=>{const input=field.locator('input[type="number"]');await input.fill('2.5');await input.press('Tab')},verify:async field=>assert.equal(await field.locator('input[type="number"]').inputValue(),'2.5')},
     {id:'flex.shrink',key:'flexShrink',group:'Flex',node:flexChildId,css:'flexShrink',value:'0.5',edit:async field=>{const input=field.locator('input[type="number"]');await input.fill('0.5');await input.press('Tab')},verify:async field=>assert.equal(await field.locator('input[type="number"]').inputValue(),'0.5')},
     {id:'grid.row',key:'gridRow',group:'Grid-gyermek',node:gridChildId,css:'gridRowStart',value:'3',edit:field=>field.locator('select:not(.property-token-picker)').selectOption('3'),verify:async field=>assert.equal(await field.locator('select:not(.property-token-picker)').inputValue(),'3')},
-    {id:'grid.column',key:'gridColumn',group:'Grid-gyermek',node:gridChildId,css:'gridColumnStart',value:'2',edit:field=>field.locator('select:not(.property-token-picker)').selectOption('2'),verify:async field=>assert.equal(await field.locator('select:not(.property-token-picker)').inputValue(),'2')}
+    {id:'grid.column',key:'gridColumn',group:'Grid-gyermek',node:gridChildId,css:'gridColumnStart',value:'2',edit:field=>field.locator('select:not(.property-token-picker)').selectOption('2'),verify:async field=>assert.equal(await field.locator('select:not(.property-token-picker)').inputValue(),'2')},
+    {id:'grid.columns',key:'gridTemplateColumns',group:'Grid',node:gridId,css:'gridTemplateColumns',value:'repeat(3, minmax(0, 1fr))',cssMatches:value=>value.trim().split(/\s+/).length===3,edit:field=>field.locator('select:not(.property-token-picker)').selectOption('repeat(3, minmax(0, 1fr))'),verify:async field=>assert.equal(await field.locator('select:not(.property-token-picker)').inputValue(),'repeat(3, minmax(0, 1fr))')},
+    {id:'grid.rows',key:'gridTemplateRows',group:'Grid',node:gridId,css:'gridTemplateRows',value:'repeat(3, minmax(0, 1fr))',cssMatches:value=>value.trim().split(/\s+/).length===3,edit:field=>field.locator('select:not(.property-token-picker)').selectOption('repeat(3, minmax(0, 1fr))'),verify:async field=>assert.equal(await field.locator('select:not(.property-token-picker)').inputValue(),'repeat(3, minmax(0, 1fr))')},
+    {id:'grid.rowGap',key:'rowGap',group:'Grid',node:gridId,css:'rowGap',value:'18px',edit:async field=>{const input=field.locator('.dimension-controls input[type="number"]');await input.fill('18');await input.press('Tab')},verify:async field=>{assert.equal(await field.locator('.dimension-controls input[type="number"]').inputValue(),'18');assert.equal(await field.locator('.dimension-controls select:not(.property-token-picker)').inputValue(),'px')}},
+    {id:'grid.columnGap',key:'columnGap',group:'Grid',node:gridId,css:'columnGap',value:'24px',edit:async field=>{const input=field.locator('.dimension-controls input[type="number"]');await input.fill('24');await input.press('Tab')},verify:async field=>{assert.equal(await field.locator('.dimension-controls input[type="number"]').inputValue(),'24');assert.equal(await field.locator('.dimension-controls select:not(.property-token-picker)').inputValue(),'px')}}
   ];
   await editor.goto(base+'/editor-v2/index.html');
   await select(flexChildId);await publicPage.goto(base+'/p/test');
@@ -84,22 +88,29 @@ test('tablet Flex and Grid child Inspector values save, reload and publish indep
     assert.equal(await field.getAttribute('data-property-command'),'responsive.set',`${property.id}: tablet command route`);
     assert.equal(await field.getAttribute('data-property-key'),property.key,`${property.id}: tablet Page Model key`);
     await property.edit(field);
-    assert.equal(await css(editor,property.node,property.css),property.value,`${property.id}: edit reaches tablet Canvas CSS`);
+    const canvasValue=await css(editor,property.node,property.css);
+    assert.ok(property.cssMatches?property.cssMatches(canvasValue):canvasValue===property.value,`${property.id}: edit reaches tablet Canvas CSS (got ${canvasValue})`);
     assert.equal(await css(publicPage,property.node,property.css),tabletPublishedBaseline[property.id],`${property.id}: edit remains unpublished`);
   }
-  await editor.locator('#undo').click();assert.equal(await css(editor,gridChildId,'gridColumnStart'),tabletPublishedBaseline['grid.column'],'Undo restores the inherited Grid column');
-  await editor.locator('#redo').click();assert.equal(await css(editor,gridChildId,'gridColumnStart'),'2','Redo restores the tablet Grid column');
+  for(let i=0;i<properties.length;i++)await editor.locator('#undo').click();
+  for(const property of properties){
+    const value=await css(editor,property.node,property.css);
+    if(property.id==='grid.columns'||property.id==='grid.rows')assert.equal(value.trim().split(/\s+/).length,2,`${property.id}: Undo restores the original two-track template`);
+    else assert.equal(value,tabletPublishedBaseline[property.id],`${property.id}: Undo restores the inherited tablet value`);
+  }
+  for(let i=0;i<properties.length;i++)await editor.locator('#redo').click();
+  for(const property of properties){const value=await css(editor,property.node,property.css);assert.ok(property.cssMatches?property.cssMatches(value):value===property.value,`${property.id}: Redo restores the tablet value (got ${value})`)}
   await editor.locator('#save').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent?.startsWith('Mentve'));
   assert.equal(posts.at(-1).publish,false,'tablet child layout Save remains draft-only');
   for(const property of properties)assert.equal(posts.at(-1).document.pages[pageId].nodes[property.node].responsive.tablet[property.key],property.value,`${property.id}: tablet value is stored in Page Model`);
   await editor.reload({waitUntil:'domcontentloaded'});await activate('tablet');
-  for(const property of properties){const field=await openField(property.id,property.group,property.node);await property.verify(field);assert.equal(await css(editor,property.node,property.css),property.value,`${property.id}: tablet value survives Editor reload`)}
+  for(const property of properties){const field=await openField(property.id,property.group,property.node);await property.verify(field);const value=await css(editor,property.node,property.css);assert.ok(property.cssMatches?property.cssMatches(value):value===property.value,`${property.id}: tablet value survives Editor reload (got ${value})`)}
   await publicPage.reload({waitUntil:'domcontentloaded'});
   for(const property of properties)assert.equal(await css(publicPage,property.node,property.css),tabletPublishedBaseline[property.id],`${property.id}: draft Save leaves public tablet layout unchanged`);
   await editor.locator('#publish').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent==='Publikálva');
   assert.equal(posts.at(-1).publish,true,'tablet child layout requires explicit Publish');
   await publicPage.reload({waitUntil:'domcontentloaded'});
-  for(const property of properties)assert.equal(await css(publicPage,property.node,property.css),property.value,`${property.id}: explicit Publish updates public tablet layout`);
+  for(const property of properties){const publicValue=await css(publicPage,property.node,property.css);assert.ok(property.cssMatches?property.cssMatches(publicValue):publicValue===property.value,`${property.id}: explicit Publish updates public tablet layout (got ${publicValue})`)}
   await activate('desktop');await publicPage.reload({waitUntil:'domcontentloaded'});
   for(const property of properties){
     assert.equal(await css(editor,property.node,property.css),desktopBaseline[property.id].canvas,`${property.id}: tablet override preserves desktop Canvas layout`);
