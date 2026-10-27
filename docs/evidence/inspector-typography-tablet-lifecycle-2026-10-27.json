@@ -43,8 +43,9 @@
     "production_data_changed": false,
     "database_migration_run": false,
     "r2_changed": false,
-    "push": "Pending local validation and fast-forward verification to v2/foundation.",
-    "github_commit_statuses": "Pending after push."
+    "push": "Fast-forward pushed and verified on origin/v2/foundation at 013c027e2e29a984e54e8d8ca18feb957e89ba78 (test commit).",
+    "github_commit_statuses": "Pending after push.",
+    "github_workflows": "At verification: F0 baseline, Twitch Integration, Canonical Plan, and active-point audit completed successfully; Editor Core run 40540769176 remained in progress at Install Chromium for layout regression. No failure was reported; browser CI not yet complete."
   },
   "limitations": [
     "Local HTTP mock and Chromium viewport; not physical-device acceptance.",
