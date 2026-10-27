@@ -342,6 +342,47 @@ test('Inspector color keeps independent desktop/tablet/mobile values through dra
   assert.deepEqual(await textStyles(live),desktopPublicTypography,'published desktop typography retains independent values');
   const backgroundStyles=target=>target().evaluate(el=>{const css=getComputedStyle(el);return {backgroundImage:css.backgroundImage,backgroundSize:css.backgroundSize,backgroundPosition:css.backgroundPosition,backgroundRepeat:css.backgroundRepeat}});
   const desktopCanvasBackground=await backgroundStyles(canvas),desktopPublicBackground=await backgroundStyles(live);
+  await activate('tablet',768);
+  const tabletBackgroundHeading=editor.locator('.inspector-group-title').filter({hasText:'Háttér'});if(await tabletBackgroundHeading.getAttribute('aria-expanded')==='false')await tabletBackgroundHeading.click();
+  const tabletBackgroundColorField=editor.locator('[data-property-id="background.color"]');
+  const tabletGradientField=editor.locator('[data-property-id="background.gradient"]');
+  const tabletSizeField=editor.locator('[data-property-id="background.size"]');
+  const tabletPositionField=editor.locator('[data-property-id="background.position"]');
+  const tabletRepeatField=editor.locator('[data-property-id="background.repeat"]');
+  for(const [field,key] of [[tabletBackgroundColorField,'backgroundColor'],[tabletGradientField,'backgroundImage'],[tabletSizeField,'backgroundSize'],[tabletPositionField,'backgroundPosition'],[tabletRepeatField,'backgroundRepeat']]){
+    assert.equal(await field.getAttribute('data-property-command'),'responsive.set',`tablet ${key}: Inspector command`);
+    assert.equal(await field.getAttribute('data-property-key'),key,`tablet ${key}: Page Model key`);
+  }
+  const publishedTabletBackground=await backgroundStyles(live);
+  const publishedTabletBackgroundColor=await live().evaluate(el=>getComputedStyle(el).backgroundColor);
+  await tabletBackgroundColorField.locator('input[type="color"]').evaluate(input=>{input.value='#22c55e';input.dispatchEvent(new Event('change',{bubbles:true}))});
+  await tabletGradientField.locator('select:not(.property-token-picker)').selectOption('linear-gradient(135deg, #111827 0%, #475569 100%)');
+  await tabletSizeField.locator('select:not(.property-token-picker)').selectOption('auto');
+  await tabletPositionField.locator('select:not(.property-token-picker)').selectOption('center bottom');
+  await tabletRepeatField.locator('select:not(.property-token-picker)').selectOption('repeat');
+  const tabletCanvasBackground=await backgroundStyles(canvas);
+  const tabletCanvasBackgroundColor=await canvas().evaluate(el=>getComputedStyle(el).backgroundColor);
+  assert.deepEqual(tabletCanvasBackground,{backgroundImage:'linear-gradient(135deg, rgb(17, 24, 39) 0%, rgb(71, 85, 105) 100%)',backgroundSize:'auto',backgroundPosition:'50% 100%',backgroundRepeat:'repeat'},'tablet background gradient, fit, focus and repeat reach Canvas CSS');
+  assert.equal(tabletCanvasBackgroundColor,'rgb(34, 197, 94)','tablet background color reaches Canvas CSS');
+  assert.deepEqual(await backgroundStyles(live),publishedTabletBackground,'tablet background draft leaves public image styles unchanged');
+  assert.equal(await live().evaluate(el=>getComputedStyle(el).backgroundColor),publishedTabletBackgroundColor,'tablet background color remains unpublished');
+  await save(false);assert.equal(posts.at(-1).publish,false,'tablet background Save remains draft-only');
+  const savedTabletBackground=posts.at(-1).document.pages[pageId].nodes[nodeId].responsive.tablet;
+  assert.equal(savedTabletBackground.backgroundColor,'#22c55e');
+  assert.equal(savedTabletBackground.backgroundImage,'linear-gradient(135deg, #111827 0%, #475569 100%)');
+  assert.equal(savedTabletBackground.backgroundSize,'auto');assert.equal(savedTabletBackground.backgroundPosition,'center bottom');assert.equal(savedTabletBackground.backgroundRepeat,'repeat');
+  await editor.reload({waitUntil:'domcontentloaded'});await select();await activate('tablet',768);
+  const reloadedTabletBackgroundHeading=editor.locator('.inspector-group-title').filter({hasText:'Háttér'});if(await reloadedTabletBackgroundHeading.getAttribute('aria-expanded')==='false')await reloadedTabletBackgroundHeading.click();
+  assert.equal(await editor.locator('[data-property-id="background.color"] input[type="color"]').inputValue(),'#22c55e','tablet background color survives Editor reload');
+  assert.equal(await editor.locator('[data-property-id="background.gradient"] select:not(.property-token-picker)').inputValue(),'linear-gradient(135deg, #111827 0%, #475569 100%)','tablet gradient survives Editor reload');
+  assert.equal(await editor.locator('[data-property-id="background.size"] select:not(.property-token-picker)').inputValue(),'auto','tablet background size survives Editor reload');
+  assert.equal(await editor.locator('[data-property-id="background.position"] select:not(.property-token-picker)').inputValue(),'center bottom','tablet background position survives Editor reload');
+  assert.equal(await editor.locator('[data-property-id="background.repeat"] select:not(.property-token-picker)').inputValue(),'repeat','tablet background repeat survives Editor reload');
+  await publicPage.reload({waitUntil:'domcontentloaded'});assert.deepEqual(await backgroundStyles(live),publishedTabletBackground,'tablet background draft stays unpublished after reload');
+  assert.equal(await live().evaluate(el=>getComputedStyle(el).backgroundColor),publishedTabletBackgroundColor,'tablet background Save leaves public color unchanged');
+  await save(true);assert.equal(posts.at(-1).publish,true,'tablet background changes require explicit Publish');
+  await publicPage.reload({waitUntil:'domcontentloaded'});assert.deepEqual(await backgroundStyles(live),tabletCanvasBackground,'published tablet background reaches public CSS');
+  assert.equal(await live().evaluate(el=>getComputedStyle(el).backgroundColor),tabletCanvasBackgroundColor,'published tablet background color reaches public CSS');
   await activate('mobile',390);
   const mobileBackgroundHeading=editor.locator('.inspector-group-title').filter({hasText:'Háttér'});if(await mobileBackgroundHeading.getAttribute('aria-expanded')==='false')await mobileBackgroundHeading.click();
   const gradientField=editor.locator('[data-property-id="background.gradient"]');
@@ -353,6 +394,7 @@ test('Inspector color keeps independent desktop/tablet/mobile values through dra
     assert.equal(await field.getAttribute('data-property-key'),key,`${key}: Page Model key`);
   }
   const publishedMobileBackground=await backgroundStyles(live);
+  const publishedMobileBackgroundColor=await live().evaluate(el=>getComputedStyle(el).backgroundColor);
   await gradientField.locator('select:not(.property-token-picker)').selectOption('linear-gradient(135deg, #7047eb 0%, #17b8a6 100%)');
   await sizeField.locator('select:not(.property-token-picker)').selectOption('contain');
   await positionField.locator('select:not(.property-token-picker)').selectOption('center top');
@@ -361,6 +403,7 @@ test('Inspector color keeps independent desktop/tablet/mobile values through dra
   assert.notEqual(mobileCanvasBackground.backgroundImage,publishedMobileBackground.backgroundImage,'mobile gradient Inspector edit reaches Canvas');
   assert.deepEqual({backgroundSize:mobileCanvasBackground.backgroundSize,backgroundPosition:mobileCanvasBackground.backgroundPosition,backgroundRepeat:mobileCanvasBackground.backgroundRepeat},{backgroundSize:'contain',backgroundPosition:'50% 0%',backgroundRepeat:'repeat-x'},'mobile image fit, focus and repeat reach Canvas CSS');
   assert.deepEqual(await backgroundStyles(live),publishedMobileBackground,'mobile background draft leaves public CSS unchanged');
+  assert.equal(await live().evaluate(el=>getComputedStyle(el).backgroundColor),publishedMobileBackgroundColor,'mobile background draft leaves public color unchanged');
   await save(false);assert.equal(posts.at(-1).publish,false,'mobile background Save remains draft-only');
   await editor.reload({waitUntil:'domcontentloaded'});await select();await activate('mobile',390);
   const reloadedBackgroundHeading=editor.locator('.inspector-group-title').filter({hasText:'Háttér'});if(await reloadedBackgroundHeading.getAttribute('aria-expanded')==='false')await reloadedBackgroundHeading.click();
@@ -371,6 +414,9 @@ test('Inspector color keeps independent desktop/tablet/mobile values through dra
   await publicPage.reload({waitUntil:'domcontentloaded'});assert.deepEqual(await backgroundStyles(live),publishedMobileBackground,'mobile background draft stays unpublished after reload');
   await save(true);assert.equal(posts.at(-1).publish,true,'mobile background changes require explicit Publish');
   await publicPage.reload({waitUntil:'domcontentloaded'});assert.deepEqual(await backgroundStyles(live),mobileCanvasBackground,'published mobile background reaches public CSS');
+  await activate('tablet',768);await publicPage.reload({waitUntil:'domcontentloaded'});
+  assert.deepEqual(await backgroundStyles(live),tabletCanvasBackground,'mobile background Publish preserves tablet image styles');
+  assert.equal(await live().evaluate(el=>getComputedStyle(el).backgroundColor),tabletCanvasBackgroundColor,'mobile background Publish preserves tablet color');
   await activate('desktop',1366);
   assert.deepEqual(await backgroundStyles(canvas),desktopCanvasBackground,'mobile background does not replace desktop Canvas styles');
   await publicPage.reload({waitUntil:'domcontentloaded'});

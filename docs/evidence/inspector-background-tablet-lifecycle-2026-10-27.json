@@ -1,0 +1,45 @@
+{
+  "date": "2026-10-27",
+  "plan_cursor": "77.44.7.A",
+  "scope": "Verify tablet background color, gradient, size, position, and repeat Inspector lifecycles and protect tablet values from subsequent mobile publication",
+  "runtime_changed": false,
+  "test_file": "tests/browser/editor-inspector-breakpoint-lifecycle.test.js",
+  "test_result": {
+    "command": "node --test tests/browser/editor-inspector-breakpoint-lifecycle.test.js",
+    "tests": 1,
+    "passed": 1,
+    "failed": 0,
+    "duration_ms": 48114,
+    "scenario_duration_ms": 47485
+  },
+  "coverage": [
+    "background.color exposes responsive.set / backgroundColor and tablet #22c55e reaches Canvas CSS",
+    "background.gradient exposes responsive.set / backgroundImage and tablet graphite gradient reaches Canvas CSS",
+    "background.size, background.position, and background.repeat expose responsive.set routes and tablet auto / center bottom / repeat reach Canvas CSS",
+    "all five tablet overrides persist in Page Model and survive Editor reload",
+    "draft Save leaves published tablet background CSS unchanged; explicit Publish updates it",
+    "later mobile background Publish preserves the published tablet color, gradient, fit, position, and repeat",
+    "desktop background values remain independent and browser page errors remain empty"
+  ],
+  "additional_checks": {
+    "editor_unit": "135/135 PASS",
+    "typecheck": "PASS",
+    "canonical_plan": "PASS; cursor remains 77.44.7.A and acceptance NOT_CERTIFIED",
+    "active_point_audit": "PASS",
+    "traceability": "396 mappings PASS",
+    "git_diff_check": "PASS"
+  },
+  "release": {
+    "runtime_source_changed": false,
+    "production_deployment": "Pending push verification; no direct deploy is required for this test/documentation-only change.",
+    "production_data_changed": false,
+    "database_migration_run": false,
+    "r2_changed": false,
+    "push": "Pending final commit.",
+    "github_commit_statuses": "Not checked for the final commit yet."
+  },
+  "limitations": [
+    "Local HTTP mock and Chromium viewport; not physical-device acceptance.",
+    "The full 77.44.7.A property matrix and Editor acceptance remain open."
+  ]
+}
