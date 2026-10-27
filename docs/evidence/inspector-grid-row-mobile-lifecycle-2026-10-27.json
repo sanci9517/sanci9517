@@ -48,6 +48,11 @@
       "api_db_health": "200; D1 connected=true",
       "editor_asset_sha256": "8fe117473beb29e4f1bb3134187df67f7be260345dd90951ad4cf4ea4147f794; live matches local"
     },
+    "post_deployment_preflight": {
+      "wrangler_d1_migrations_list_remote": "No migrations to apply! (read-only)",
+      "wrangler_deploy_dry_run": "PASS; 159 assets, 287.10 KiB; no upload",
+      "production_data_mutation": false
+    },
     "production_data_changed": false,
     "database_migration_run": false,
     "r2_changed": false,
