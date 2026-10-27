@@ -8,6 +8,10 @@
     "result": "FAIL; the new type matrix reached explicit public Publish and exposed the Divider renderer overriding the shared responsive borderColor with its decoration-profile default.",
     "failure": "divider published CSS retained rgb(148, 163, 184) instead of the Inspector-authored value"
   },
+  "test_hardening": [
+    "The first mobile extension attempted public CSS assertions while the same scenario had intentionally hidden all 44 elements on mobile. The fixture now restores mobile visibility through the real Inspector and explicit Publish before measuring mobile border CSS.",
+    "A later retry hit one 12-second Canvas locator timeout in the long shared scenario; the browser fixture now permits 30 seconds for actions, and the full final scenario completed without assertion or timeout failures."
+  ],
   "fix": {
     "file": "public/assets/page-renderer.js",
     "change": "Keep the versioned decoration border as Divider defaults, then emit shared responsive styles last so Inspector-authored border width, style and color take precedence, matching Canvas behavior."
@@ -17,8 +21,8 @@
     "tests": 1,
     "passed": 1,
     "failed": 0,
-    "duration_ms": 191095,
-    "scenario_duration_ms": 190009
+    "duration_ms": 307246,
+    "scenario_duration_ms": 306658
   },
   "coverage": [
     "all 44 editable non-root PARTIAL types expose border.style/border.width/border.color through responsive.set with borderStyle/borderWidth/borderColor Page Model keys",
@@ -26,7 +30,12 @@
     "draft Save stores all three responsive desktop fields while the public CSS remains byte-for-byte behaviorally unchanged",
     "all three border controls survive Editor reload and retain their values",
     "explicit Publish applies each border to the public renderer with the exact expected computed width, style and color",
-    "the Divider public renderer now preserves shared responsive border overrides over its specialized decoration defaults"
+    "the Divider public renderer now preserves shared responsive border overrides over its specialized decoration defaults",
+    "mobile visibility is re-enabled through Inspector, Save and explicit Publish before mobile appearance assertions",
+    "all 44 nodes receive independent dashed 3px mobile borders; mobile Save and Editor reload preserve them while desktop publication remains unchanged",
+    "mobile Publish updates public mobile borders without changing desktop CSS",
+    "resetting mobile border style, width and color restores desktop inheritance; Undo restores the mobile color and Redo restores desktop inheritance",
+    "draft reset Save preserves published mobile borders until explicit Publish removes the mobile overrides and restores inherited desktop CSS"
   ],
   "additional_checks": {
     "related_browser_regressions": "PASS 2/2: editor-decorative-elements.test.js (Divider/Spacer route and Publish) and editor-inspector-breakpoint-lifecycle.test.js (desktop/tablet/mobile border and color isolation).",
@@ -42,11 +51,20 @@
     "cloudflare_auth": "Wrangler 4.130.0 authenticated via the existing CLOUDFLARE_API_TOKEN connection to the configured account.",
     "production_d1_migration_preflight": "PASS; wrangler d1 migrations list sanci9517-db --remote reported No migrations to apply. Read-only list only; no migration applied.",
     "wrangler_dry_run": "PASS; wrangler deploy --dry-run read 159 public assets, estimated 287.10 KiB (65.78 KiB gzip), and exited without deployment.",
-    "production_deployment": "Not performed yet; next is normal fast-forward push, then verify the automatic deployment and production smoke/hash per AGENTS.md. Direct deployment only if automatic deployment does not start or succeed.",
+    "source_commit": "83128c22",
+    "push": "PASS; normal fast-forward 40808a21..83128c22 to origin/v2/foundation.",
+    "automatic_deployment": "No new deployment was visible when the pushed source was first checked; direct Wrangler deployment was used as required by AGENTS.md. A subsequent list also showed an intermediate automatic version, followed by the direct tested-source release.",
+    "production_deployment": "PASS; direct wrangler deploy, no migration; deployed Worker version eebab0a4-5dde-43d9-b949-8e82aea332b4 is latest and listed at 100% traffic.",
+    "production_smoke": {
+      "/api/health": "200; service sanci9517-streamer-brand",
+      "/api/db-health": "200; D1 connected",
+      "/editor-v2/": "200",
+      "/assets/page-renderer.js": "200; live SHA-256 5ffd706ea9b8055ff6e74a227a4db8d59a7e1d774b2a058213972aee27ecfae8 exactly matches the local source"
+    },
+    "github_ci_status": "GitHub combined status endpoint returned no statuses and commit workflow-run query returned no runs for 83128c22; CI unavailable/unverified.",
     "production_data_changed": false,
     "database_migration_run": false,
-    "r2_changed": false,
-    "github_ci_status": "Not checked for the new runtime commit."
+    "r2_changed": false
   },
   "limitations": [
     "This proves shared border style lifecycle on the 44 editable PARTIAL types, not every Inspector property or the full 79-type Editor acceptance.",

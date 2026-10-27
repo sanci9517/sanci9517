@@ -59,7 +59,7 @@ test('every PARTIAL type renders Inspector routes and preserves Save versus Publ
   t.after(async()=>{await browser.close();await new Promise(done=>server.close(done))});
   const editor=await browser.newPage({viewport:{width:1366,height:900}});
   const viewer=await browser.newPage({viewport:{width:1366,height:900}});
-  editor.setDefaultTimeout(12000);
+  editor.setDefaultTimeout(30000);
   editor.on('pageerror',error=>editorErrors.push(error.message));
   await editor.goto(`http://127.0.0.1:${server.address().port}/editor-v2/index.html`);
   await viewer.goto(`http://127.0.0.1:${server.address().port}/p/test`);
@@ -132,6 +132,7 @@ test('every PARTIAL type renders Inspector routes and preserves Save versus Publ
   await editor.locator('#publish').click();
   await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
   await viewer.reload();
+  await viewer.waitForFunction(expected=>document.querySelectorAll('.visual-editor-node[data-node-id]').length>=expected,editableNodes.length);
   for(const [index,{type,id}] of editableNodes.entries()){
     assert.equal(published.pages[pageId].nodes[id].responsive.desktop.backgroundColor,colors[index],`${type}: explicit Publish copies Inspector color to public snapshot`);
     assert.equal(await publicNode(id).evaluate(el=>getComputedStyle(el).backgroundColor),asRgb(colors[index]),`${type}: published style matches the Inspector edit`);
@@ -452,6 +453,118 @@ test('every PARTIAL type renders Inspector routes and preserves Save versus Publ
   for(const [index,{type,id}] of editableNodes.entries()){
     assert.deepEqual(await publicNode(id).evaluate(el=>{const css=getComputedStyle(el);return{width:css.borderTopWidth,style:css.borderTopStyle,color:css.borderTopColor}}),{width:'2px',style:'solid',color:asRgb(borderColors[index])},`${type}: explicit Publish applies the Inspector border`);
     assert.equal(published.pages[pageId].nodes[id].responsive.desktop.borderColor,borderColors[index],`${type}: published Page Model preserves border color`);
+  }
+
+  // Mobile border overrides are isolated from the published desktop route;
+  // resetting the three fields must restore desktop inheritance atomically
+  // in the public appearance after the separate Publish action.
+  const mobileBorderColors=editableNodes.map((_,index)=>'#'+((0x20a060+index*0x020509)&0xffffff).toString(16).padStart(6,'0'));
+  await editor.locator('.canvas-device-btn[data-device="mobile"]').click();
+  await viewer.setViewportSize({width:390,height:900});
+  await viewer.reload();
+  // The preceding visibility lifecycle deliberately hid all nodes on mobile.
+  // Restore visibility through the real Inspector so public CSS assertions
+  // below exercise rendered elements instead of a hidden fixture.
+  for(const {type,id} of editableNodes){
+    await editor.locator(`.node[data-node-id="${id}"]`).evaluate(el=>el.click());
+    await editor.locator('.inspector-tabs button').nth(2).click();
+    const group=inspector.locator('.inspector-group').filter({hasText:'Akadálymentesség és láthatóság'});
+    const title=group.locator(':scope > .inspector-group-title');
+    if(await title.getAttribute('aria-expanded')==='false')await title.click();
+    const checkbox=group.locator('[data-inspector-key="visibility.mobile"] input[type="checkbox"]');
+    if(!await checkbox.isChecked())await checkbox.check();
+  }
+  await editor.locator('#save').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+  await editor.locator('#publish').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
+  await viewer.reload();
+  await viewer.waitForFunction(expected=>document.querySelectorAll('.visual-editor-node[data-node-id]').length>=expected,editableNodes.length);
+  for(const [index,{type,id}] of editableNodes.entries()){
+    const canvasNode=editor.locator(`.node[data-node-id="${id}"]`);
+    await canvasNode.evaluate(el=>el.click());
+    await editor.locator('.inspector-tabs button').first().click();
+    const group=inspector.locator('.inspector-group').filter({hasText:'Szegély'});
+    const title=group.locator(':scope > .inspector-group-title');
+    if(await title.getAttribute('aria-expanded')==='false')await title.click();
+    await group.locator('[data-property-id="border.style"] select:not(.property-token-picker)').selectOption('dashed');
+    const widthInput=group.locator('[data-property-id="border.width"] .dimension-controls input[type="number"]');
+    await widthInput.fill('3');
+    await widthInput.press('Tab');
+    await group.locator('[data-property-id="border.color"] input[type="color"]').evaluate((input,value)=>{input.value=value;input.dispatchEvent(new Event('change',{bubbles:true}))},mobileBorderColors[index]);
+    assert.deepEqual(await canvasNode.evaluate(el=>{const css=getComputedStyle(el);return{width:css.borderTopWidth,style:css.borderTopStyle,color:css.borderTopColor}}),{width:'3px',style:'dashed',color:asRgb(mobileBorderColors[index])},`${type}: mobile border override reaches Canvas CSS`);
+  }
+  await editor.locator('#save').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+  for(const [index,{type,id}] of editableNodes.entries()){
+    const saved=draft.pages[pageId].nodes[id].responsive.mobile;
+    assert.equal(saved.borderStyle,'dashed',`${type}: Save stores mobile border style`);
+    assert.equal(saved.borderWidth,'3px',`${type}: Save stores mobile border width`);
+    assert.equal(saved.borderColor,mobileBorderColors[index],`${type}: Save stores mobile border color`);
+    assert.equal(published.pages[pageId].nodes[id].responsive.mobile?.borderColor,undefined,`${type}: mobile Save does not publish the override`);
+    assert.equal(published.pages[pageId].nodes[id].responsive.desktop.borderColor,borderColors[index],`${type}: mobile Save preserves desktop border`);
+  }
+  await editor.reload({waitUntil:'domcontentloaded'});
+  await editor.locator('.canvas-device-btn[data-device="mobile"]').click();
+  for(const [index,{type,id}] of editableNodes.entries()){
+    await editor.locator(`.node[data-node-id="${id}"]`).evaluate(el=>el.click());
+    await editor.locator('.inspector-tabs button').first().click();
+    const group=inspector.locator('.inspector-group').filter({hasText:'Szegély'});
+    const title=group.locator(':scope > .inspector-group-title');
+    if(await title.getAttribute('aria-expanded')==='false')await title.click();
+    assert.equal(await group.locator('[data-property-id="border.style"] select:not(.property-token-picker)').inputValue(),'dashed',`${type}: mobile border style reloads`);
+    assert.equal(await group.locator('[data-property-id="border.width"] input[type="number"]').inputValue(),'3',`${type}: mobile border width reloads`);
+    assert.equal(await group.locator('[data-property-id="border.color"] input[type="color"]').inputValue(),mobileBorderColors[index],`${type}: mobile border color reloads`);
+  }
+  await editor.locator('#publish').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
+  await viewer.reload();
+  for(const [index,{type,id}] of editableNodes.entries()){
+    assert.deepEqual(await publicNode(id).evaluate(el=>{const css=getComputedStyle(el);return{width:css.borderTopWidth,style:css.borderTopStyle,color:css.borderTopColor}}),{width:'3px',style:'dashed',color:asRgb(mobileBorderColors[index])},`${type}: mobile Publish applies the responsive border`);
+    assert.equal(published.pages[pageId].nodes[id].responsive.desktop.borderColor,borderColors[index],`${type}: mobile Publish preserves desktop border color`);
+  }
+  await viewer.setViewportSize({width:1366,height:900});
+  await viewer.reload();
+  await viewer.waitForFunction(expected=>document.querySelectorAll('.visual-editor-node[data-node-id]').length>=expected,editableNodes.length);
+  for(const [index,{type,id}] of editableNodes.entries())assert.deepEqual(await publicNode(id).evaluate(el=>{const css=getComputedStyle(el);return{width:css.borderTopWidth,style:css.borderTopStyle,color:css.borderTopColor}}),{width:'2px',style:'solid',color:asRgb(borderColors[index])},`${type}: mobile Publish keeps desktop public border`);
+
+  await viewer.setViewportSize({width:390,height:900});
+  await viewer.reload();
+  await viewer.waitForFunction(expected=>document.querySelectorAll('.visual-editor-node[data-node-id]').length>=expected,editableNodes.length);
+  for(const [index,{type,id}] of editableNodes.entries()){
+    const canvasNode=editor.locator(`.node[data-node-id="${id}"]`);
+    await canvasNode.evaluate(el=>el.click());
+    await editor.locator('.inspector-tabs button').first().click();
+    const group=inspector.locator('.inspector-group').filter({hasText:'Szegély'});
+    const title=group.locator(':scope > .inspector-group-title');
+    if(await title.getAttribute('aria-expanded')==='false')await title.click();
+    const resets=['borderStyle','borderWidth','borderColor'].map(key=>group.locator(`.property-reset[data-property-key="${key}"]`));
+    for(const [field,key] of [[group.locator('[data-property-id="border.style"]'),'borderStyle'],[group.locator('[data-property-id="border.width"]'),'borderWidth'],[group.locator('[data-property-id="border.color"]'),'borderColor']]){
+      assert.equal(await group.locator(`.property-reset[data-property-key="${key}"]`).count(),1,`${type}: mobile ${key} reset is available`);
+      assert.equal(await field.getAttribute('data-property-command'),'responsive.set',`${type}: mobile ${key} reset stays on the responsive route`);
+    }
+    for(const reset of resets)await reset.click();
+    assert.deepEqual(await canvasNode.evaluate(el=>{const css=getComputedStyle(el);return{width:css.borderTopWidth,style:css.borderTopStyle,color:css.borderTopColor}}),{width:'2px',style:'solid',color:asRgb(borderColors[index])},`${type}: mobile border reset restores desktop Canvas values`);
+    await editor.locator('#undo').click();
+    assert.equal(await canvasNode.evaluate(el=>getComputedStyle(el).borderTopColor),asRgb(mobileBorderColors[index]),`${type}: Undo restores mobile border color`);
+    await editor.locator('#redo').click();
+    assert.equal(await canvasNode.evaluate(el=>getComputedStyle(el).borderTopColor),asRgb(borderColors[index]),`${type}: Redo restores inherited desktop border color`);
+  }
+  await editor.locator('#save').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+  for(const [index,{type,id}] of editableNodes.entries()){
+    assert.equal(draft.pages[pageId].nodes[id].responsive.mobile.borderStyle,undefined,`${type}: reset Save removes mobile border style`);
+    assert.equal(draft.pages[pageId].nodes[id].responsive.mobile.borderWidth,undefined,`${type}: reset Save removes mobile border width`);
+    assert.equal(draft.pages[pageId].nodes[id].responsive.mobile.borderColor,undefined,`${type}: reset Save removes mobile border color`);
+    assert.equal(published.pages[pageId].nodes[id].responsive.mobile.borderColor,mobileBorderColors[index],`${type}: reset Save keeps the currently published mobile border`);
+  }
+  await editor.locator('#publish').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
+  await viewer.reload();
+  await viewer.waitForFunction(expected=>document.querySelectorAll('.visual-editor-node[data-node-id]').length>=expected,editableNodes.length);
+  for(const [index,{type,id}] of editableNodes.entries()){
+    assert.deepEqual(await publicNode(id).evaluate(el=>{const css=getComputedStyle(el);return{width:css.borderTopWidth,style:css.borderTopStyle,color:css.borderTopColor}}),{width:'2px',style:'solid',color:asRgb(borderColors[index])},`${type}: reset Publish restores inherited desktop border on mobile`);
+    assert.equal(published.pages[pageId].nodes[id].responsive.mobile.borderColor,undefined,`${type}: reset Publish removes mobile border override`);
   }
   assert.deepEqual(editorErrors,[],'opening every partial type must not throw');
 });
