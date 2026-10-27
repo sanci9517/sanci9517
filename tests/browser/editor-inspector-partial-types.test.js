@@ -88,6 +88,12 @@ test('every PARTIAL type renders Inspector routes and preserves Save versus Publ
       key:field.dataset.propertyKey
     })));
     assert.deepEqual(actual.map(field=>field.id).sort(),expected.map(property=>property.id).sort(),`${type}: rendered Inspector fields must match its applicable registry contract`);
+    const emptyGroups=await inspector.locator('.inspector-group').evaluateAll(groups=>groups.filter(group=>{
+      const title=group.querySelector(':scope > .inspector-group-title');
+      const content=group.querySelector(':scope > .inspector-group-content');
+      return title&&(content?content.childElementCount===0:group.childElementCount<=1);
+    }).map(group=>group.querySelector(':scope > .inspector-group-title')?.textContent?.trim()||'(névtelen csoport)'));
+    assert.deepEqual(emptyGroups,[],`${type}: no empty or misleading Inspector groups are rendered`);
     for(const field of actual){
       const property=expected.find(candidate=>candidate.id===field.id);
       assert.ok(property,`${type}/${field.id}: no undeclared field`);

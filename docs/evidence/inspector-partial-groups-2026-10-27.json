@@ -1,0 +1,44 @@
+{
+  "date": "2026-10-27",
+  "plan_cursor": "77.44.7.A",
+  "scope": "Verify that every rendered Inspector group has real content across the complete declared PARTIAL type browser matrix",
+  "runtime_changed": false,
+  "test_file": "tests/browser/editor-inspector-partial-types.test.js",
+  "test_result": {
+    "command": "node --test tests/browser/editor-inspector-partial-types.test.js",
+    "tests": 1,
+    "passed": 1,
+    "failed": 0,
+    "duration_ms": 108684,
+    "scenario_duration_ms": 107674
+  },
+  "coverage": {
+    "fixture_nodes": 45,
+    "included_root": true,
+    "all_partial_types_render_expected_registry_controls": true,
+    "all_rendered_fields_match_registry_command_and_key": true,
+    "empty_inspector_groups": 0,
+    "existing_save_publish_responsive_visibility_hover_and_focus_checks": "PASS"
+  },
+  "additional_checks": {
+    "editor_unit": "135/135 PASS",
+    "typecheck": "PASS",
+    "canonical_plan": "PASS",
+    "active_point_audit": "PASS",
+    "traceability": "396 mappings PASS",
+    "git_diff_check": "PASS"
+  },
+  "release": {
+    "runtime_source_changed": false,
+    "production_data_changed": false,
+    "database_migration_run": false,
+    "r2_changed": false,
+    "push": "pending verification",
+    "production_deployment": "pending verification",
+    "github_commit_statuses": "pending verification"
+  },
+  "limitations": [
+    "This DOM assertion rejects empty accordion groups but does not replace hands-on Editor usability acceptance.",
+    "The full 77.44.7.A Inspector matrix and Editor acceptance remain open."
+  ]
+}
