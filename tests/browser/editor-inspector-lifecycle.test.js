@@ -630,7 +630,10 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
     assert.equal(await canvasValue(),next,`${label}: draft value survives Editor reload`);
     await publicPage.reload({waitUntil:'domcontentloaded'});
     assert.equal(await publicValue(),previousPublic,`${label}: public value stays unchanged after draft Save`);
-    await editor.locator('#publish').click();
+    // Publishing is a fetch-based Save action, not a document navigation.
+    // Do not make the click wait for unrelated page-load signals; the status,
+    // request payload and public CSS assertions below verify completion.
+    await editor.locator('#publish').click({noWaitAfter:true});
     await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent==='Publikálva');
     assert.equal(posts.at(-1).publish,true,`${label}: only explicit Publish publishes`);
     await publicPage.reload({waitUntil:'domcontentloaded'});

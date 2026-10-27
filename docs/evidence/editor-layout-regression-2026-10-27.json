@@ -1,0 +1,44 @@
+{
+  "date": "2026-10-27",
+  "plan_cursor": "77.44.7.A",
+  "scope": "Full Editor layout/browser regression and targeted repair of the single publish-click timeout",
+  "runtime_changed": false,
+  "full_suite": {
+    "command": "npm run test:editor:layout",
+    "tests": 87,
+    "passed": 86,
+    "failed": 1,
+    "duration_ms": 1215574,
+    "failure": "tests/browser/editor-inspector-lifecycle.test.js: Playwright locator.click timed out after 15s while waiting for scheduled navigation after the fetch-based Publish button; click action completed but navigation is not part of Save/Publish."
+  },
+  "fix": {
+    "file": "tests/browser/editor-inspector-lifecycle.test.js",
+    "change": "Publish click opts out of Playwright navigation waiting; the following explicit status, request payload and public CSS assertions remain unchanged.",
+    "targeted_command": "node --test --test-name-pattern='real Inspector layout survives selection, undo, save/reload and separate publish with canvas/public parity' tests/browser/editor-inspector-lifecycle.test.js",
+    "tests": 1,
+    "passed": 1,
+    "failed": 0,
+    "duration_ms": 227759
+  },
+  "additional_checks": {
+    "editor_unit_suite": "PASS 10/10 files, including core 70/70 (verified separately in this work block).",
+    "typecheck": "PASS",
+    "node_syntax": "PASS for the modified browser test.",
+    "canonical_plan": "PASS; next cursor remains 77.44.7.A and acceptance NOT_CERTIFIED.",
+    "active_point_audit": "PASS.",
+    "traceability": "PASS; 396 mappings.",
+    "git_diff_check": "PASS."
+  },
+  "release": {
+    "runtime_source_changed": false,
+    "production_deployment": "Not performed; test/documentation-only change.",
+    "production_data_changed": false,
+    "database_migration_run": false,
+    "r2_changed": false,
+    "push": "Pending: fix and evidence have not yet been pushed.",
+    "github_ci_status": "Pending verification."
+  },
+  "limitations": [
+    "The broad suite was not rerun as a single command after the one-line test-wait fix; all 86 other cases passed in the broad run, and the sole corrected case passed in its targeted rerun."
+  ]
+}
