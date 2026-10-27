@@ -1,0 +1,40 @@
+{
+  "date": "2026-10-27",
+  "scope": "Correct D1 preflight semantics and protect future Worker deployments from implicit migration application.",
+  "wrangler": {
+    "version": "4.130.0",
+    "migrations_list_is_read_only": false,
+    "source_evidence": "node_modules/wrangler/wrangler-dist/cli.js: d1 migrations list handler calls initMigrationsTable; getCreateMigrationsTableQuery emits CREATE TABLE IF NOT EXISTS d1_migrations.",
+    "remote_migrations_list_not_run_in_this_audit": true
+  },
+  "production_d1_select_audit": {
+    "method": "Cloudflare D1 query API with SELECT only",
+    "migration_table_exists": true,
+    "ledger_rows": 34,
+    "manual_reconciliation_rows": [
+      {"name":"0025_site_domains_and_site_slug.sql","applied_at":"2026-10-23 10:32:50"},
+      {"name":"0026_site_memberships.sql","applied_at":"2026-10-23 10:32:50"},
+      {"name":"0027_site_scoped_settings.sql","applied_at":"2026-10-23 10:32:50"},
+      {"name":"0028_media_archive.sql","applied_at":"2026-10-23 10:32:50"}
+    ],
+    "query_metadata": {"changed_db": false, "rows_written": 0},
+    "migration_applied_in_this_audit": false,
+    "r2_changed": false
+  },
+  "safe_deploy_contract": {
+    "command": "npm run test:web013:migration-gate && wrangler deploy",
+    "d1_apply_included": false,
+    "migration_gate": "PASS",
+    "wrangler_dry_run": "PASS; 159 assets, 287.10 KiB (65.78 KiB gzip); no deployment performed"
+  },
+  "cloudflare_build_configuration": {
+    "current_deploy_command": "npm run deploy",
+    "current_path_excludes": [],
+    "proposed_safe_deploy_command": "npm run deploy:safe",
+    "proposed_docs_exclude": ["docs/**"],
+    "mutation_result": "REJECTED_BY_AUTOMATIC_REVIEW",
+    "configuration_changed": false,
+    "reason": "Persistent production Build behavior requires specific user authorization; the rejection explicitly forbids indirect workarounds."
+  },
+  "production_worker_deployed_in_this_audit": false
+}

@@ -26,7 +26,7 @@
     "public/editor-v2/ui/property-controls.js": "eaa2bd9b85ad4604ac65040d5f056e3aa6def7bb5b81a7c9f7e17ebe382eee15",
     "public/editor-v2/ui/responsive-group-reset.js": "fc3ed5460c17ef9c32e9067484b3e55edb00367c55d84b7570955d9f5f649c20",
     "scripts/d1/ledger-reconciliation.py": "44d19ed415b40473c73c248d49980e16eaaa0e96a8a4412b7016213e0ee7ffcb",
-    "scripts/web013-migration-safety-gate.mjs": "bbd1e7cf35e263c3e9cbe79dc1bdc062a2f0badfe83792ba71a2e75d56feb80f",
+    "scripts/web013-migration-safety-gate.mjs": "47c11202dfe94f389e458fbef133cc221dcfb88436649fca83d3849f38ccda68",
     "src/core/audit.ts": "9321698ebcdc7bc0227df3d12e8a7485703011235836df936ce7b837bb4b67ba",
     "src/core/auth/admin-tenant-gate.ts": "2baab92e4243a9197640891fe22adb9490a5abab9e7d386ee5f14c0507fec034",
     "src/core/auth/require-auth.ts": "7933ad739fe34dd47234a2ab66a3e54a06daee75c8b96de60f1007cec246788e",

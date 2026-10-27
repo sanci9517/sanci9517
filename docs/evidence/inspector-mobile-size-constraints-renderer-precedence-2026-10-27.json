@@ -24,13 +24,13 @@
     "traceability": "PASS; 396 mappings regenerated and checked.",
     "syntax_and_diff": "PASS; renderer and browser test syntax plus git diff --check.",
     "static_fallback_parity": "PASS; static and injected mobile rules use matching responsive custom properties and fallback values.",
-    "remote_d1_migration_list": "PASS; No migrations to apply. Read-only; no migration applied.",
+    "remote_d1_migration_list": "Historical output: No migrations to apply. Wrangler 4.130.0 initializes d1_migrations with CREATE TABLE IF NOT EXISTS, so the list command is not read-only; the later SELECT-only ledger audit found 34 rows and rows_written=0.",
     "wrangler_dry_run": "PASS; 159 assets, 287.10 KiB (65.78 KiB gzip); dry-run only."
   },
   "release": {
     "pushed": "PASS; c6c9e73b1c20295827005a27d320390d7ba5b585 verified at origin/v2/foundation.",
     "production_deployment": "PASS; deployment 4b1ac522-6747-46a9-b470-9b81182ae329, Worker version 97ec385b-e34a-4613-bb4f-fa197b972291 (3691), 100% traffic, created 2026-10-27T22:24:34Z.",
-    "d1_migration_preflight": "PASS; No migrations to apply. Read-only; no migration applied.",
+    "d1_migration_preflight": "Historical Wrangler list output returned No migrations to apply; it is not read-only. A later SELECT-only audit found 0025-0028 reconciled on 2026-10-23 and rows_written=0.",
     "wrangler_dry_run": "PASS; exact local candidate, 159 assets, 287.10 KiB (65.78 KiB gzip); dry-run only.",
     "production_smoke": "PASS; /api/health HTTP 200; /api/db-health HTTP 200 with connected=true. page-renderer.js SHA-256  a3b5ad11ef9d11fcfe7bc66c8386a7109fa2e9f246bfdb58306dfe55601fbfb0 matches local; visual-page.html SHA-256 e36565211279075c92e83151a6ece1708c39953658b152e5be7788c2ddea3fa5 matches local and serves cache key 20261027-mobile-box-dimensions.",
     "production_data_changed": false,

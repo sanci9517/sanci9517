@@ -1,0 +1,32 @@
+{
+  "date": "2026-10-27",
+  "plan_cursor": "77.44.7.A",
+  "status": "LOCAL_BROWSER_REGRESSION_PASS",
+  "scope": "Verify the separate public mobile fallback used by nested legacy elements through Inspector, Canvas, draft Save/reload and explicit Publish.",
+  "fixture": {
+    "parent_type": "section",
+    "child_type": "text",
+    "responsive_mobile": {
+      "position": "absolute",
+      "x": "18px",
+      "y": "27px"
+    }
+  },
+  "validation": {
+    "chromium_lifecycle": "PASS; nested mobile position is independent from the public page before Save, persists in the Page Model and Editor reload, reaches the public computed CSS only after explicit Publish, and does not alter desktop public positioning.",
+    "targeted_test": "PASS; tests/browser/editor-inspector-breakpoint-lifecycle.test.js (1/1).",
+    "editor_browser_suite": "PASS; npm run test:editor:layout (87/87, 1186766 ms).",
+    "typecheck": "PASS; npm run typecheck.",
+    "editor_unit": "PASS; npm run test:editor (10/10 files).",
+    "canonical_plan": "PASS; 13 master files and 396 source mappings; functional acceptance remains NOT_CERTIFIED.",
+    "runtime_changed": false,
+    "production_or_data_changed": false
+  },
+  "release": {
+    "pushed": false,
+    "deployed": false,
+    "reason": "Test and evidence only. The previously reviewed Cloudflare Build configuration change is still blocked pending explicit user approval; no alternate pipeline change was attempted.",
+    "base_commit": "0cf1b9da0106a5f65769f309975aadb518af3a6b"
+  },
+  "next_step": "Continue the 77.44.7.A Inspector-to-public acceptance matrix; full functional and physical-device acceptance remains open."
+}

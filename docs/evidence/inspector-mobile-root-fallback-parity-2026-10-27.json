@@ -16,7 +16,8 @@
     "canonical_plan_and_active_point": "PASS; 77.44.7.A remains open/not certified.",
     "feature_traceability": "PASS; 396 current source mappings; acceptance not certified.",
     "static_dynamic_fallback_parity": "PASS; authored-root mobile fallback selector/declarations match exactly.",
-    "read_only_d1_migration_preflight": "PASS; No migrations to apply; no migration run.",
+    "d1_migration_list_command": "Historical output said No migrations to apply. Wrangler 4.130.0 source confirms this command first executes CREATE TABLE IF NOT EXISTS d1_migrations, so it is not read-only.",
+    "d1_select_audit": "PASS; SELECT-only ledger/schema reads returned 34 ledger rows, applied records 0025-0028 dated 2026-10-23, changed_db=false and rows_written=0. No migration ran in this audit.",
     "wrangler_dry_run": "PASS; 159 assets, 287.10 KiB (65.78 KiB gzip); dry-run only.",
     "javascript_syntax_and_diff_check": "PASS."
   },
@@ -61,7 +62,7 @@
         "outcome": "success",
         "deployment": "104a3b26-891a-4a98-b974-86fd7dac0dd6"
       },
-      "d1_migration_preflight_before_and_after_build": "PASS; both read-only listings reported No migrations to apply.",
+      "d1_migration_list_before_and_after_build": "Historical command output reported No migrations to apply; command is not read-only because it initializes the ledger table. The production ledger already contains the reconciled 0025-0028 records dated 2026-10-23.",
       "configuration_change": "None; the attempted production build-setting update was rejected by automatic review. No alternate path was used."
     }
   },

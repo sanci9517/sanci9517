@@ -28,7 +28,7 @@
       "public/assets/page-renderer.js": "d6aaecfc42161786970c66743f9029d1a66f8557e9df62dccc9daffeebf5abdc",
       "public/visual-page.html": "dad186a6645386fce242d89145fc31124dc8b9f5b1c15c86ca919d7a92040145"
     },
-    "d1_migration_preflight": "PASS; remote Wrangler read-only migration listing reports No migrations to apply. No migration was run.",
+    "d1_migration_list_output": "Historical Wrangler output reported No migrations to apply; source inspection shows the command initializes d1_migrations with CREATE TABLE IF NOT EXISTS and is not read-only. A separate SELECT-only audit on 2026-10-27 found the existing reconciled ledger with 0025-0028 dated 2026-10-23 and rows_written=0.",
     "wrangler_dry_run": "PASS; 159 assets, 287.10 KiB (65.78 KiB gzip); dry-run only.",
     "production_smoke": "PASS; /api/health and /api/db-health HTTP 200 (connected=true). Live page-renderer.js and visual-page.html SHA-256 match the pushed source; visual-page.html canonical redirect followed.",
     "github_ci": {

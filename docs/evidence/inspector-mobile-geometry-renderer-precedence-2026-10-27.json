@@ -24,12 +24,12 @@
     "static_fallback_parity": "PASS; static and renderer-injected CSS use the same mobile height/minHeight variables and defaults",
     "wrangler_deploy_dry_run": "PASS; 159 assets, 287.10 KiB (65.78 KiB gzip); dry-run only.",
     "chromium_lifecycle": "PASS: node --test tests/browser/editor-inspector-breakpoint-lifecycle.test.js tests/browser/editor-decorative-elements.test.js tests/browser/editor-legacy-media-parity.test.js; 3/3 passed, including the mobile geometry lifecycle (1/1, 57.2s).",
-    "remote_d1_migration_list": "PASS; No migrations to apply. Read-only; no migration applied."
+    "remote_d1_migration_list": "Historical output: No migrations to apply. Wrangler 4.130.0 initializes d1_migrations with CREATE TABLE IF NOT EXISTS, so the list command is not read-only; the later SELECT-only ledger audit found 34 rows and rows_written=0."
   },
   "release": {
     "pushed": "PASS; 8ec0488ca35cc842d09c66af7fb3b00fedd70268 is the verified origin/v2/foundation ref.",
     "production_deployment": "PASS; deployment 372e6ae4-abef-4ad9-bbd6-ddf09746fd4d, Worker version 9af6acf2-e893-4bc6-abc2-af5aec33f6a1 (3690), 100% traffic, created 2026-10-27T22:15:11Z.",
-    "remote_d1_preflight": "PASS; Wrangler remote migration list returned No migrations to apply; read-only.",
+    "remote_d1_preflight": "Historical Wrangler list output returned No migrations to apply; CLI source shows it is not read-only. The later SELECT-only audit found 0025-0028 reconciled on 2026-10-23 and rows_written=0.",
     "production_smoke": "PASS; /api/health HTTP 200; /api/db-health HTTP 200 with connected=true. public/assets/page-renderer.js?v=20261027-mobile-dimensions SHA-256 matches local: 98ef78dbc461fc0679cb0806c3e0ac1e724396121e386f261287552625604dab. /visual-page.html SHA-256 matches local: d6d86837353ae109334c24f28f9b94b1d6c46bac70b06f1615c3e462146b508d.",
     "production_data_changed": false,
     "database_migration_run": false,

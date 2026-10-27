@@ -13,6 +13,12 @@ import { fileURLToPath } from "node:url";
 import { resolve, dirname } from "node:path";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+const packageJson = JSON.parse(readFileSync(resolve(root,"package.json"),"utf8"));
+const safeDeploy = packageJson.scripts?.["deploy:safe"]?.trim() ?? "";
+if (!/^npm run test:web013:migration-gate\s*&&\s*wrangler deploy(?:\s|$)/.test(safeDeploy) || /db:migrations:apply|migrations\s+apply/.test(safeDeploy)) {
+  console.error("BLOCK: deploy:safe must run the repository migration safety gate before Wrangler deploy and must never apply D1 migrations.");
+  process.exit(1);
+}
 const migrations = readdirSync(resolve(root, "migrations")).filter((name) => name.endsWith(".sql"));
 const pending = readFileSync(resolve(root, "scripts/pending/0025_site_domains_and_site_slug.sql"), "utf8");
 const memberships = readFileSync(resolve(root, "scripts/pending/0026_site_memberships.sql"), "utf8");
@@ -53,4 +59,4 @@ if (!pending.includes("CREATE UNIQUE INDEX idx_pages_site_slug ON pages(site_id,
   console.error("BLOCK: pending 0025/0026/0027 migrations no longer match the verified production schema contract.");
   process.exit(1);
 }
-console.log("PASS: immutable 0025-0028 registry reserved; manual SQL cannot auto-replay. Use the reviewed ledger reconciliation and fresh bootstrap runbook; production ledger state requires live verification. Retention stays manual-only.");
+console.log("PASS: deploy:safe runs the repository migration gate and never applies D1 migrations; immutable 0025-0028 registry reserved; manual SQL cannot auto-replay. Use the reviewed ledger reconciliation and fresh bootstrap runbook. Retention stays manual-only.");

@@ -76,7 +76,7 @@
     }
   ],
   "predeployment": {
-    "remote_d1_migration_list": "PASS; No migrations to apply. Read-only command; no migration applied.",
+    "remote_d1_migration_list": "Historical output: No migrations to apply. Wrangler 4.130.0 initializes d1_migrations with CREATE TABLE IF NOT EXISTS, so the list command is not read-only; the later SELECT-only ledger audit found 34 rows and rows_written=0.",
     "wrangler_deploy_dry_run": "PASS; 159 assets, 287.10 KiB (65.78 KiB gzip); dry-run exited without deploying.",
     "wrangler_logging": "Wrangler could not write diagnostic logs under the read-only /home/agent/.config/.wrangler/logs path (EROFS); both commands exited 0 and printed their successful result."
   },

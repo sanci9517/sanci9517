@@ -13,6 +13,10 @@ test('Inspector color keeps independent desktop/tablet/mobile values through dra
   const model=createEditorState(createDocument()),pageId=model.document.activePageId;
   execute(model,{type:'element.add',payload:{type:'text',parentId:activePage(model).rootId,props:{text:'Breakpoint sample'}}});
   const nodeId=model.selection.primaryId;
+  execute(model,{type:'element.add',payload:{type:'section',parentId:activePage(model).rootId,name:'Nested fallback'}});
+  const nestedParentId=model.selection.primaryId;
+  execute(model,{type:'element.add',payload:{type:'text',parentId:nestedParentId,props:{text:'Nested breakpoint sample'}}});
+  const nestedNodeId=model.selection.primaryId;
   execute(model,{type:'responsive.set',payload:{nodeId,device:'desktop',patch:{backgroundColor:'#2563eb',height:'180px',minHeight:'120px',minWidth:'80px',maxWidth:'400px'}}});
   let draft=structuredClone(model.document),published=structuredClone(draft),revision=1;
   const posts=[],errors=[],root=resolve(import.meta.dirname,'../../public');
@@ -725,5 +729,24 @@ test('Inspector color keeps independent desktop/tablet/mobile values through dra
   assert.notEqual(await readStyle(live,'position'),'absolute','published mobile position reset inherits desktop');
   await activate('desktop',1366);await reloadPublic();
   assert.notEqual(await readStyle(live,'position'),'absolute','mobile position reset leaves desktop public style intact');
+  // Exercise the separate nested-element mobile fallback selector, which is
+  // intentionally different from the direct-child rule covered above.
+  const nestedCanvas=()=>editor.locator(`.node[data-node-id="${nestedNodeId}"]`),nestedLive=()=>publicPage.locator(`[data-node-id="${nestedNodeId}"]`);
+  await nestedCanvas().evaluate(el=>el.click());
+  await activate('mobile',390);
+  const nestedPositionGroup=editor.locator('.inspector-group-title').filter({hasText:'Pozíció'});if(await nestedPositionGroup.getAttribute('aria-expanded')==='false')await nestedPositionGroup.click();
+  await editor.locator('[data-property-id="position.position"] select').selectOption('absolute');
+  await editor.locator('[data-property-id="position.x"] input[type="number"]').fill('18');await editor.locator('[data-property-id="position.x"] input[type="number"]').press('Tab');
+  await editor.locator('[data-property-id="position.y"] input[type="number"]').fill('27');await editor.locator('[data-property-id="position.y"] input[type="number"]').press('Tab');
+  assert.deepEqual(await nestedCanvas().evaluate(el=>{const css=getComputedStyle(el);return {position:css.position,left:css.left,top:css.top}}),{position:'absolute',left:'18px',top:'27px'},'nested mobile position Inspector edits reach Canvas');
+  assert.notDeepEqual(await nestedLive().evaluate(el=>{const css=getComputedStyle(el);return {position:css.position,left:css.left,top:css.top}}),{position:'absolute',left:'18px',top:'27px'},'nested mobile position remains unpublished before Save');
+  await save(false);assert.equal(posts.at(-1).publish,false,'nested mobile position Save is draft-only');
+  assert.equal(posts.at(-1).document.pages[pageId].nodes[nestedNodeId].responsive.mobile.position,'absolute');
+  await editor.reload({waitUntil:'domcontentloaded'});await nestedCanvas().evaluate(el=>el.click());await activate('mobile',390);
+  assert.deepEqual(await nestedCanvas().evaluate(el=>{const css=getComputedStyle(el);return {position:css.position,left:css.left,top:css.top}}),{position:'absolute',left:'18px',top:'27px'},'nested mobile position survives editor reload');
+  await save(true);await reloadPublic();
+  assert.deepEqual(await nestedLive().evaluate(el=>{const css=getComputedStyle(el);return {position:css.position,left:css.left,top:css.top}}),{position:'absolute',left:'18px',top:'27px'},'nested mobile position reaches published renderer');
+  await activate('desktop',1366);await reloadPublic();
+  assert.notEqual(await nestedLive().evaluate(el=>getComputedStyle(el).position),'absolute','nested mobile override leaves desktop public output unchanged');
   assert.deepEqual(errors,[]);
 });
