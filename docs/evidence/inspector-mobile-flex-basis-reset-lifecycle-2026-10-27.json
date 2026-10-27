@@ -28,6 +28,15 @@
     "initial_attempts": "Two runs stopped before the new lifecycle assertions due pre-existing slow-navigation/click timeouts. The final run completed the full test successfully."
   },
   "release": {
+    "source_commit": "fbefd7e8f44e907357dac69a315fb6ae27be1f44",
+    "push": "PASS; fast-forward from 95f3cd605a07adbb4b4802e5842bb97f5fb6eaca to origin/v2/foundation; remote ref verified at fbefd7e8f44e907357dac69a315fb6ae27be1f44.",
+    "github_ci": [
+      {"workflow": "Canonical Creator Platform Plan", "run_id": 40584803233, "result": "success"},
+      {"workflow": "Canonical Plan Active Point Audit", "run_id": 40584803223, "result": "success"},
+      {"workflow": "F0 baseline checks", "run_id": 40584803467, "result": "success"},
+      {"workflow": "Twitch Integration Check", "run_id": 40584802737, "result": "success"},
+      {"workflow": "Editor Core Test", "run_id": 40584803135, "result": "success"}
+    ],
     "runtime_source_changed": false,
     "deployment_required": false,
     "database_migration_run": false,
