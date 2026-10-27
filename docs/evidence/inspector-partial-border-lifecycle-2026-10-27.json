@@ -1,0 +1,55 @@
+{
+  "date": "2026-10-27",
+  "plan_cursor": "77.44.7.A",
+  "scope": "Exercise the real shared border style/width/color Inspector routes through Canvas, draft Save, Editor reload and explicit Publish for every editable non-root PARTIAL type; fix the Divider public-render precedence defect found by the lifecycle test.",
+  "test_file": "tests/browser/editor-inspector-partial-types.test.js",
+  "runtime_changed": true,
+  "initial_regression": {
+    "result": "FAIL; the new type matrix reached explicit public Publish and exposed the Divider renderer overriding the shared responsive borderColor with its decoration-profile default.",
+    "failure": "divider published CSS retained rgb(148, 163, 184) instead of the Inspector-authored value"
+  },
+  "fix": {
+    "file": "public/assets/page-renderer.js",
+    "change": "Keep the versioned decoration border as Divider defaults, then emit shared responsive styles last so Inspector-authored border width, style and color take precedence, matching Canvas behavior."
+  },
+  "final_test_result": {
+    "command": "node --test tests/browser/editor-inspector-partial-types.test.js",
+    "tests": 1,
+    "passed": 1,
+    "failed": 0,
+    "duration_ms": 191095,
+    "scenario_duration_ms": 190009
+  },
+  "coverage": [
+    "all 44 editable non-root PARTIAL types expose border.style/border.width/border.color through responsive.set with borderStyle/borderWidth/borderColor Page Model keys",
+    "Inspector-authored solid 2px node-specific borders reach Canvas computed CSS",
+    "draft Save stores all three responsive desktop fields while the public CSS remains byte-for-byte behaviorally unchanged",
+    "all three border controls survive Editor reload and retain their values",
+    "explicit Publish applies each border to the public renderer with the exact expected computed width, style and color",
+    "the Divider public renderer now preserves shared responsive border overrides over its specialized decoration defaults"
+  ],
+  "additional_checks": {
+    "related_browser_regressions": "PASS 2/2: editor-decorative-elements.test.js (Divider/Spacer route and Publish) and editor-inspector-breakpoint-lifecycle.test.js (desktop/tablet/mobile border and color isolation).",
+    "editor_unit_suite": "PASS 10/10 test files.",
+    "typecheck": "PASS.",
+    "syntax": "PASS for public/assets/page-renderer.js and tests/browser/editor-inspector-partial-types.test.js.",
+    "canonical_plan": "PASS; 77.44.7.A remains OPEN / NOT CERTIFIED.",
+    "active_point_audit": "PASS; current 77.44.7.A.",
+    "traceability": "PASS; 396 source mappings regenerated and checked.",
+    "git_diff_check": "PASS."
+  },
+  "release": {
+    "cloudflare_auth": "Wrangler 4.130.0 authenticated via the existing CLOUDFLARE_API_TOKEN connection to the configured account.",
+    "production_d1_migration_preflight": "PASS; wrangler d1 migrations list sanci9517-db --remote reported No migrations to apply. Read-only list only; no migration applied.",
+    "wrangler_dry_run": "PASS; wrangler deploy --dry-run read 159 public assets, estimated 287.10 KiB (65.78 KiB gzip), and exited without deployment.",
+    "production_deployment": "Not performed yet; next is normal fast-forward push, then verify the automatic deployment and production smoke/hash per AGENTS.md. Direct deployment only if automatic deployment does not start or succeed.",
+    "production_data_changed": false,
+    "database_migration_run": false,
+    "r2_changed": false,
+    "github_ci_status": "Not checked for the new runtime commit."
+  },
+  "limitations": [
+    "This proves shared border style lifecycle on the 44 editable PARTIAL types, not every Inspector property or the full 79-type Editor acceptance.",
+    "No physical-device acceptance is included."
+  ]
+}

@@ -112,7 +112,10 @@ if(n.type==='card'&&n.metadata?.cardContentVersion===1){
 }if(n.type==='divider'){
  if(n.metadata?.decorativeVersion===1){
   const cfg=normalizeDividerStyle(p.decoration);
-  return `<hr class="visual-editor-node visual-divider" role="separator" style="${st}border:0;border-top:${cfg.thickness}px ${cfg.lineStyle} ${cfg.color};">`;
+  // The decoration profile provides defaults; shared responsive Inspector
+  // styles must come last so explicit border width/style/color edits survive
+  // into the published renderer just as they do on the Editor canvas.
+  return `<hr class="visual-editor-node visual-divider" role="separator" style="border:0;border-top:${cfg.thickness}px ${cfg.lineStyle} ${cfg.color};${st}">`;
  }
  return `<hr class="visual-editor-node" style="${st}border:0;border-top:1px solid rgba(255,255,255,.16);">`;
 }if(n.type==='spacer'){
