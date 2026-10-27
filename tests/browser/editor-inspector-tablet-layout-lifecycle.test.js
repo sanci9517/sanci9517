@@ -71,6 +71,7 @@ test('tablet Flex container/children and Grid container/children save, reload an
     {id:'flex.basis',key:'flexBasis',group:'Flex',node:flexChildId,css:'flexBasis',value:'42%',edit:async field=>{await field.locator('.dimension-controls select:not(.property-token-picker)').selectOption('%');const input=field.locator('.dimension-controls input[type="number"]');await input.fill('42');await input.press('Tab')},verify:async field=>{assert.equal(await field.locator('.dimension-controls input[type="number"]').inputValue(),'42');assert.equal(await field.locator('.dimension-controls select:not(.property-token-picker)').inputValue(),'%')}},
     {id:'flex.grow',key:'flexGrow',group:'Flex',node:flexChildId,css:'flexGrow',value:'2.5',edit:async field=>{const input=field.locator('input[type="number"]');await input.fill('2.5');await input.press('Tab')},verify:async field=>assert.equal(await field.locator('input[type="number"]').inputValue(),'2.5')},
     {id:'flex.shrink',key:'flexShrink',group:'Flex',node:flexChildId,css:'flexShrink',value:'0.5',edit:async field=>{const input=field.locator('input[type="number"]');await input.fill('0.5');await input.press('Tab')},verify:async field=>assert.equal(await field.locator('input[type="number"]').inputValue(),'0.5')},
+    {id:'flex.alignSelf',key:'alignSelf',group:'Flex',node:flexChildId,css:'alignSelf',value:'center',edit:field=>field.locator('select:not(.property-token-picker)').selectOption('center'),verify:async field=>assert.equal(await field.locator('select:not(.property-token-picker)').inputValue(),'center')},
     {id:'grid.row',key:'gridRow',group:'Grid-gyermek',node:gridChildId,css:'gridRowStart',value:'3',edit:field=>field.locator('select:not(.property-token-picker)').selectOption('3'),verify:async field=>assert.equal(await field.locator('select:not(.property-token-picker)').inputValue(),'3')},
     {id:'grid.column',key:'gridColumn',group:'Grid-gyermek',node:gridChildId,css:'gridColumnStart',value:'2',edit:field=>field.locator('select:not(.property-token-picker)').selectOption('2'),verify:async field=>assert.equal(await field.locator('select:not(.property-token-picker)').inputValue(),'2')},
     {id:'flex.direction',key:'flexDirection',group:'Flex',node:flexId,css:'flexDirection',value:'column',edit:field=>field.locator('select:not(.property-token-picker)').selectOption('column'),verify:async field=>assert.equal(await field.locator('select:not(.property-token-picker)').inputValue(),'column')},
@@ -95,6 +96,14 @@ test('tablet Flex container/children and Grid container/children save, reload an
     await property.edit(field);
     const canvasValue=await css(editor,property.node,property.css);
     assert.ok(property.cssMatches?property.cssMatches(canvasValue):canvasValue===property.value,`${property.id}: edit reaches tablet Canvas CSS (got ${canvasValue})`);
+    if(property.id==='flex.grow'){
+      const input=field.locator('input[type="number"]');
+      await input.fill('-1');await input.press('Tab');
+      assert.equal(await field.locator('.property-validation').textContent(),'A szám a megengedett tartományon kívül van.','invalid Flex grow reports a field-level validation error');
+      assert.equal(await css(editor,property.node,property.css),'2.5','invalid Flex grow does not mutate Canvas CSS');
+      await input.fill('2.5');await input.press('Tab');
+      assert.equal(await field.locator('.property-validation').textContent(),'','corrected Flex grow clears validation feedback');
+    }
     assert.equal(await css(publicPage,property.node,property.css),tabletPublishedBaseline[property.id],`${property.id}: edit remains unpublished`);
   }
   for(let i=0;i<properties.length;i++)await editor.locator('#undo').click();
@@ -121,5 +130,22 @@ test('tablet Flex container/children and Grid container/children save, reload an
     assert.equal(await css(editor,property.node,property.css),desktopBaseline[property.id].canvas,`${property.id}: tablet override preserves desktop Canvas layout`);
     assert.equal(await css(publicPage,property.node,property.css),desktopBaseline[property.id].public,`${property.id}: tablet Publish preserves desktop public layout`);
   }
+  await activate('tablet');
+  await openField('flex.gap','Flex',flexId);
+  const flexGapReset=editor.locator('.property-reset[title^="tablet nézet"][data-property-key="gap"]').filter({hasText:'Öröklés visszaállítása'});
+  assert.equal(await flexGapReset.count(),1,'tablet Flex gap exposes its own reset-to-inheritance action');
+  assert.equal(await flexGapReset.getAttribute('data-property-command'),'responsive.set');
+  assert.equal(await flexGapReset.getAttribute('data-property-key'),'gap');
+  await flexGapReset.click();
+  assert.equal(await css(editor,flexId,'gap'),desktopBaseline['flex.gap'].canvas,'reset restores the inherited desktop Flex gap on Canvas');
+  assert.equal(await css(publicPage,flexId,'gap'),'12px','reset remains unpublished until explicit Publish');
+  await editor.locator('#undo').click();assert.equal(await css(editor,flexId,'gap'),'12px','Undo restores the tablet-only Flex gap');
+  await editor.locator('#redo').click();assert.equal(await css(editor,flexId,'gap'),desktopBaseline['flex.gap'].canvas,'Redo restores inherited Flex gap');
+  await editor.locator('#save').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent?.startsWith('Mentve'));
+  assert.equal(posts.at(-1).publish,false,'responsive reset draft Save does not Publish');
+  assert.equal(posts.at(-1).document.pages[pageId].nodes[flexId].responsive.tablet.gap,undefined,'reset removes the tablet override from the Page Model');
+  await publicPage.reload({waitUntil:'domcontentloaded'});assert.equal(await css(publicPage,flexId,'gap'),'12px','public Flex gap stays published through draft reset Save');
+  await editor.locator('#publish').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent==='Publikálva');
+  await publicPage.reload({waitUntil:'domcontentloaded'});assert.equal(await css(publicPage,flexId,'gap'),desktopBaseline['flex.gap'].public,'explicit Publish updates public CSS to the inherited Flex gap');
   assert.deepEqual(errors,[]);
 });
