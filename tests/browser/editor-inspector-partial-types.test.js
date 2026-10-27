@@ -566,5 +566,108 @@ test('every PARTIAL type renders Inspector routes and preserves Save versus Publ
     assert.deepEqual(await publicNode(id).evaluate(el=>{const css=getComputedStyle(el);return{width:css.borderTopWidth,style:css.borderTopStyle,color:css.borderTopColor}}),{width:'2px',style:'solid',color:asRgb(borderColors[index])},`${type}: reset Publish restores inherited desktop border on mobile`);
     assert.equal(published.pages[pageId].nodes[id].responsive.mobile.borderColor,undefined,`${type}: reset Publish removes mobile border override`);
   }
+
+  // Shared opacity and shadow styles must also survive every specialized
+  // PARTIAL renderer across the full mobile draft/reload/Publish lifecycle.
+  const desktopVisualBaseline={};
+  await viewer.setViewportSize({width:1366,height:900});
+  await viewer.reload();
+  await viewer.waitForFunction(expected=>document.querySelectorAll('.visual-editor-node[data-node-id]').length>=expected,editableNodes.length);
+  for(const {id} of editableNodes)desktopVisualBaseline[id]=await publicNode(id).evaluate(el=>({opacity:getComputedStyle(el).opacity,boxShadow:getComputedStyle(el).boxShadow}));
+  await viewer.setViewportSize({width:390,height:900});
+  await viewer.reload();
+  await viewer.waitForFunction(expected=>document.querySelectorAll('.visual-editor-node[data-node-id]').length>=expected,editableNodes.length);
+  const mobileVisualBaseline=Object.fromEntries(await Promise.all(editableNodes.map(async({id})=>[id,await publicNode(id).evaluate(el=>({opacity:getComputedStyle(el).opacity,boxShadow:getComputedStyle(el).boxShadow}))])));
+  const mobileVisualValues=editableNodes.map((_,index)=>({opacity:(0.45+(index%5)*0.08).toFixed(2),shadow:['0 2px 8px #0003','0 8px 24px #0005','0 16px 48px #0007'][index%3]}));
+  const mobileCanvasVisualValues={};
+  for(const [index,{type,id}] of editableNodes.entries()){
+    const canvasNode=editor.locator(`.node[data-node-id="${id}"]`);
+    await canvasNode.evaluate(el=>el.click());
+    await editor.locator('.inspector-tabs button').first().click();
+    const opacityField=inspector.locator('[data-property-id="opacity.value"]');
+    const shadowField=inspector.locator('[data-property-id="shadow.box"]');
+    assert.equal(await opacityField.getAttribute('data-property-command'),'responsive.set',`${type}: opacity command route`);
+    assert.equal(await opacityField.getAttribute('data-property-key'),'opacity',`${type}: opacity Page Model key`);
+    assert.equal(await shadowField.getAttribute('data-property-command'),'responsive.set',`${type}: shadow command route`);
+    assert.equal(await shadowField.getAttribute('data-property-key'),'boxShadow',`${type}: shadow Page Model key`);
+    const opacityGroup=opacityField.locator('xpath=ancestor::section[1]');
+    const opacityTitle=opacityGroup.locator(':scope > .inspector-group-title');
+    if(await opacityTitle.getAttribute('aria-expanded')==='false')await opacityTitle.click();
+    const shadowGroup=shadowField.locator('xpath=ancestor::section[1]');
+    const shadowTitle=shadowGroup.locator(':scope > .inspector-group-title');
+    if(await shadowTitle.getAttribute('aria-expanded')==='false')await shadowTitle.click();
+    const value=mobileVisualValues[index];
+    const opacityInput=opacityField.locator('input[type="number"]');
+    await opacityInput.fill(value.opacity);await opacityInput.press('Tab');
+    await shadowField.locator('select:not(.property-token-picker)').selectOption(value.shadow);
+    mobileCanvasVisualValues[id]=await canvasNode.evaluate(el=>({opacity:getComputedStyle(el).opacity,boxShadow:getComputedStyle(el).boxShadow}));
+    assert.equal(mobileCanvasVisualValues[id].opacity,value.opacity,`${type}: mobile opacity Inspector edit reaches Canvas`);
+    assert.notEqual(mobileCanvasVisualValues[id].boxShadow,mobileVisualBaseline[id].boxShadow,`${type}: mobile shadow Inspector edit reaches Canvas`);
+  }
+  await editor.locator('#save').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+  for(const [index,{type,id}] of editableNodes.entries()){
+    const responsive=draft.pages[pageId].nodes[id].responsive.mobile;
+    assert.equal(responsive.opacity,mobileVisualValues[index].opacity,`${type}: draft Save stores mobile opacity`);
+    assert.equal(responsive.boxShadow,mobileVisualValues[index].shadow,`${type}: draft Save stores mobile shadow`);
+    assert.equal(published.pages[pageId].nodes[id].responsive.mobile?.opacity,undefined,`${type}: mobile opacity Save stays unpublished`);
+    assert.equal(published.pages[pageId].nodes[id].responsive.mobile?.boxShadow,undefined,`${type}: mobile shadow Save stays unpublished`);
+  }
+  await viewer.reload();
+  for(const {type,id} of editableNodes)assert.deepEqual(await publicNode(id).evaluate(el=>({opacity:getComputedStyle(el).opacity,boxShadow:getComputedStyle(el).boxShadow})),mobileVisualBaseline[id],`${type}: draft Save preserves published mobile opacity and shadow`);
+  await editor.reload({waitUntil:'domcontentloaded'});
+  await editor.locator('.canvas-device-btn[data-device="mobile"]').click();
+  for(const [index,{type,id}] of editableNodes.entries()){
+    await editor.locator(`.node[data-node-id="${id}"]`).evaluate(el=>el.click());
+    await editor.locator('.inspector-tabs button').first().click();
+    assert.equal(await inspector.locator('[data-property-id="opacity.value"] input[type="number"]').inputValue(),mobileVisualValues[index].opacity,`${type}: mobile opacity survives Editor reload`);
+    assert.equal(await inspector.locator('[data-property-id="shadow.box"] select:not(.property-token-picker)').inputValue(),mobileVisualValues[index].shadow,`${type}: mobile shadow survives Editor reload`);
+  }
+  await editor.locator('#publish').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
+  await viewer.reload();
+  for(const {type,id} of editableNodes)assert.deepEqual(await publicNode(id).evaluate(el=>({opacity:getComputedStyle(el).opacity,boxShadow:getComputedStyle(el).boxShadow})),mobileCanvasVisualValues[id],`${type}: explicit Publish applies mobile opacity and shadow`);
+  await viewer.setViewportSize({width:1366,height:900});
+  await viewer.reload();
+  for(const {type,id} of editableNodes)assert.deepEqual(await publicNode(id).evaluate(el=>({opacity:getComputedStyle(el).opacity,boxShadow:getComputedStyle(el).boxShadow})),desktopVisualBaseline[id],`${type}: mobile Publish preserves desktop opacity and shadow`);
+
+  // Reset each mobile override to the desktop value; Save remains draft-only,
+  // and public mobile styles change only after a separate Publish.
+  await viewer.setViewportSize({width:390,height:900});
+  await viewer.reload();
+  for(const {type,id} of editableNodes){
+    await editor.locator(`.node[data-node-id="${id}"]`).evaluate(el=>el.click());
+    await editor.locator('.inspector-tabs button').first().click();
+    const opacityField=inspector.locator('[data-property-id="opacity.value"]');
+    const shadowField=inspector.locator('[data-property-id="shadow.box"]');
+    const opacityGroup=opacityField.locator('xpath=ancestor::section[1]');
+    const shadowGroup=shadowField.locator('xpath=ancestor::section[1]');
+    for(const [group,key] of [[opacityGroup,'opacity'],[shadowGroup,'boxShadow']]){
+      const title=group.locator(':scope > .inspector-group-title');
+      if(await title.getAttribute('aria-expanded')==='false')await title.click();
+      const reset=group.locator(`.property-reset[data-property-key="${key}"]`);
+      assert.equal(await reset.count(),1,`${type}: mobile ${key} exposes inheritance reset`);
+      assert.equal(await reset.getAttribute('data-property-command'),'responsive.set',`${type}: mobile ${key} reset uses responsive command`);
+      await reset.click();
+    }
+    assert.deepEqual(await editor.locator(`.node[data-node-id="${id}"]`).evaluate(el=>({opacity:getComputedStyle(el).opacity,boxShadow:getComputedStyle(el).boxShadow})),desktopVisualBaseline[id],`${type}: mobile reset restores desktop Canvas styles`);
+  }
+  await editor.locator('#save').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+  for(const {type,id} of editableNodes){
+    assert.equal(draft.pages[pageId].nodes[id].responsive.mobile.opacity,undefined,`${type}: reset Save removes mobile opacity override`);
+    assert.equal(draft.pages[pageId].nodes[id].responsive.mobile.boxShadow,undefined,`${type}: reset Save removes mobile shadow override`);
+    assert.equal(published.pages[pageId].nodes[id].responsive.mobile.opacity,mobileVisualValues[editableNodes.findIndex(node=>node.id===id)].opacity,`${type}: reset Save keeps currently published mobile opacity`);
+  }
+  await viewer.reload();
+  for(const {type,id} of editableNodes)assert.deepEqual(await publicNode(id).evaluate(el=>({opacity:getComputedStyle(el).opacity,boxShadow:getComputedStyle(el).boxShadow})),mobileCanvasVisualValues[id],`${type}: reset Save leaves public mobile styles unchanged`);
+  await editor.locator('#publish').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
+  await viewer.reload();
+  for(const {type,id} of editableNodes){
+    assert.deepEqual(await publicNode(id).evaluate(el=>({opacity:getComputedStyle(el).opacity,boxShadow:getComputedStyle(el).boxShadow})),desktopVisualBaseline[id],`${type}: reset Publish restores desktop opacity and shadow on mobile`);
+    assert.equal(published.pages[pageId].nodes[id].responsive.mobile.opacity,undefined,`${type}: reset Publish removes mobile opacity override`);
+    assert.equal(published.pages[pageId].nodes[id].responsive.mobile.boxShadow,undefined,`${type}: reset Publish removes mobile shadow override`);
+  }
   assert.deepEqual(editorErrors,[],'opening every partial type must not throw');
 });

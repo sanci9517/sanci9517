@@ -1,0 +1,49 @@
+{
+  "date": "2026-10-27",
+  "plan_cursor": "77.44.7.A",
+  "scope": "Exercise mobile opacity.value and shadow.box through the real Inspector, Canvas, draft Save, Editor reload, explicit Publish and inheritance reset for every editable non-root PARTIAL type.",
+  "test_file": "tests/browser/editor-inspector-partial-types.test.js",
+  "runtime_changed": false,
+  "initial_regression": {
+    "result": "The first expanded run completed the new opacity/shadow lifecycle and failed at reset because the test fixture attempted to click a reset button inside a collapsed Inspector accordion.",
+    "classification": "Test fixture visibility issue; no application assertion or renderer defect was observed before the timeout."
+  },
+  "fixture_fix": "Expand each opacity/shadow Inspector group before checking and activating its mobile inheritance reset.",
+  "final_test_result": {
+    "command": "node --test tests/browser/editor-inspector-partial-types.test.js",
+    "tests": 1,
+    "passed": 1,
+    "failed": 0,
+    "duration_ms": 467910
+  },
+  "coverage": [
+    "All 44 editable non-root PARTIAL types expose opacity.value -> responsive.set / opacity and shadow.box -> responsive.set / boxShadow.",
+    "Distinct mobile opacity and shadow values render in Canvas and are stored in the correct Page Model breakpoint overrides.",
+    "Draft Save leaves published mobile CSS unchanged; both values survive Editor reload.",
+    "Explicit Publish applies the expected mobile computed opacity and shadow for all 44 types.",
+    "Mobile Publish leaves all 44 desktop computed opacity and shadow values unchanged.",
+    "Resetting each mobile value restores the desktop Canvas appearance; Save does not change the published mobile appearance, while separate Publish removes both public mobile overrides and restores inheritance."
+  ],
+  "additional_checks": {
+    "editor_unit_suite": "PASS 10/10 test files.",
+    "typecheck": "PASS.",
+    "syntax": "PASS for tests/browser/editor-inspector-partial-types.test.js.",
+    "canonical_plan": "PASS; 77.44.7.A remains OPEN / NOT CERTIFIED.",
+    "active_point_audit": "PASS; current 77.44.7.A.",
+    "traceability": "PASS; 396 source mappings checked.",
+    "git_diff_check": "PASS."
+  },
+  "release": {
+    "runtime_source_changed": false,
+    "production_deployment": "Not applicable; test and documentation only.",
+    "production_data_changed": false,
+    "database_migration_run": false,
+    "r2_changed": false,
+    "commit": null,
+    "push": "Pending release verification.",
+    "github_ci_status": "Pending release verification."
+  },
+  "limitations": [
+    "The full 77.44.7.A Inspector/property acceptance and physical-device acceptance remain open."
+  ]
+}
