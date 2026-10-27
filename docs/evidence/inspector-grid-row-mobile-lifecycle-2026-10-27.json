@@ -1,0 +1,55 @@
+{
+  "date": "2026-10-27",
+  "plan_cursor": "77.44.7.A",
+  "scope": "Verify mobile parent Grid row sizing and Grid child row placement through Inspector edit, draft Save, reload, separate Publish and public CSS",
+  "runtime_changed": false,
+  "test_file": "tests/browser/editor-responsive-layout.test.js",
+  "test_result": {
+    "command": "node --test tests/browser/editor-responsive-layout.test.js",
+    "tests": 1,
+    "passed": 1,
+    "failed": 0,
+    "duration_ms": 36182,
+    "scenario_duration_ms": 34945
+  },
+  "related_regression_suite": {
+    "command": "node --test --test-concurrency=1 tests/browser/editor-responsive-layout.test.js tests/browser/editor-media-picker-pagination.test.js tests/browser/editor-legacy-media-parity.test.js tests/browser/editor-media-source-switch.test.js tests/browser/editor-content-system.test.js",
+    "tests": 7,
+    "passed": 7,
+    "failed": 0,
+    "duration_ms": 124727
+  },
+  "coverage": [
+    "mobile grid.rows exposes responsive.set and the gridTemplateRows Page Model key",
+    "three mobile Grid tracks appear in Canvas and public CSS only after separate Publish",
+    "draft Save leaves published mobile Grid rows unchanged and the rows survive editor reload",
+    "mobile Grid row sizing does not write the desktop Page Model override",
+    "mobile grid.row exposes responsive.set and the gridRow Page Model key",
+    "a 4th-row mobile override updates Canvas computed CSS",
+    "draft Save does not change the previously published mobile row",
+    "the mobile row survives editor reload",
+    "separate Publish updates the public mobile row",
+    "desktop Canvas and public Grid row retain their pre-existing value",
+    "Grid column and Flex basis mobile lifecycle cases continue to pass",
+    "browser page errors remain empty"
+  ],
+  "additional_checks": {
+    "editor_unit": "135/135 PASS",
+    "typecheck": "PASS",
+    "canonical_plan": "PASS; cursor remains 77.44.7.A and acceptance NOT_CERTIFIED",
+    "traceability": "396 mappings PASS",
+    "git_diff_check": "PASS"
+  },
+  "release": {
+    "runtime_source_changed": false,
+    "production_deployment": "not performed; browser test and documentation only",
+    "production_data_changed": false,
+    "database_migration_run": false,
+    "r2_changed": false,
+    "push": "pending verification"
+  },
+  "limitations": [
+    "Local HTTP mock and Chromium viewport; not physical-device acceptance.",
+    "The full 77.44.7.A property matrix and Editor acceptance remain open."
+  ]
+}
