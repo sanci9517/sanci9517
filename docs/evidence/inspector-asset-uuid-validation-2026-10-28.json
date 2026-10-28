@@ -51,10 +51,22 @@
       "canonical_plan": "PASS; python3 scripts/check-canonical-plan.py and scripts/audit-active-plan-point.py",
       "wrangler_dry_run": "PASS; 159 assets, 294.17 KiB",
       "d1_read_only_preflight": "PASS; 34 applied rows, rows_written=0, changed_db=false",
+      "cloudflare_build": "PASS; build 9badd05e-f9e6-493d-91e0-cb8de1509cb0 from 21853ae26568b5f3581e212437f6153247a21c23; deploy:safe gate passed and never applies D1 migrations",
+      "github_ci": "4/5 workflows PASS: F0 40735270003, Active Point 40735269951, Twitch 40735269968, Canonical Plan 40735269998. Editor Core 40735269971 was in progress at evidence update.",
+      "production_http_smoke": "BLOCKED; external HTTP egress unavailable in this sandbox; no production health response or live asset SHA-256 comparison claimed",
       "production_or_database_changed": false,
       "r2_changed": false
     },
-    "release": {"pushed": false, "deployed": false},
-    "next_step": "Commit and fast-forward the tested RFC UUID parity fix to v2/foundation; verify the migration-free Cloudflare build and 100% rollout, then continue 77.44.7.A."
+    "release": {
+      "pushed": true,
+      "branch": "v2/foundation",
+      "commit": "21853ae26568b5f3581e212437f6153247a21c23",
+      "deployed": true,
+      "cloudflare_build_id": "9badd05e-f9e6-493d-91e0-cb8de1509cb0",
+      "deployment_id": "4e1ed629-ef66-4dee-9769-5ed8278c291f",
+      "worker_version": "e9bae3cc-0427-4ca4-94bb-3402fd7e7dca",
+      "traffic_percentage": 100
+    },
+    "next_step": "Finish Editor Core CI and repeat public HTTP/hash smoke when outbound HTTP is available; continue 77.44.7.A property lifecycle coverage. Full functional and physical-device acceptance remains open."
   }
 }
