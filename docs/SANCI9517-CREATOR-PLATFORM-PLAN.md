@@ -1,6 +1,6 @@
 # SANCI9517 Creator Platform — EGYETLEN KANONIKUS MASTER-TERV
 
-## AKTUÁLIS VÉGREHAJTÁSI ÁLLAPOT — 2026-10-27, kód–terv összevetés után
+## AKTUÁLIS VÉGREHAJTÁSI ÁLLAPOT — 2026-10-28, kód–terv összevetés után
 
 Ez az irányadó folytatási állapot; az alatta és a 12 részben lévő korábbi checkpointok történeti bizonyítékok. Nem új roadmap. A 77.3 későbbi fázistáblája és a 77.44.7 blokksorrendje az irányadó; a régi F1.1/63.50.92 kurzorok és a 39. fejezet eltérő fázisnevei nem következő feladatok.
 
@@ -1073,3 +1073,9 @@ A korábbi, migrációs kapu nélküli `npx wrangler deploy` beállítási javas
 A normál, közvetlen vászon-gyermek mobil pozícióteszt mellett most a publikus renderer külön nested fallback selectorát is valós Chromium teszt fedi. Egy beágyazott szövegelem mobil `absolute` pozícióját és X/Y eltolását a tényleges Inspectorból állítja; ellenőrzi a Canvas számított CSS-ét, a piszkozat és publikus oldal különállását, a Page Model mentést, Editor reloadet, a külön Publisht és a desktop kimenet változatlanságát.
 
 **Ellenőrzés: lokálisan PASS.** A célzott lifecycle **1/1**, a teljes `npm run test:editor:layout` regresszió **87/87**, `npm run typecheck`, `npm run test:editor` **10/10**, a kanonikus terv és a 396-os traceability ellenőrzés PASS. Ez teszt/evidence frissítés; runtime forrás, production build, D1 és R2 nem változott. [Gépi bizonyíték](evidence/inspector-mobile-nested-position-lifecycle-2026-10-27.json). A teljes `77.44.7.A` elfogadás továbbra **OPEN / NOT CERTIFIED**.
+
+### 77.44.7.A — Beágyazott mobil pozíció öröklés-reset és Undo/Redo — 2026-10-28
+
+A nested fallback teszt most a beágyazott elem `position`, `x` és `y` mobil override-jának Inspectorból történő öröklés-resetjét is ellenőrzi. A Canvas a mobil renderer biztonságos 0px X/Y alapértékére tér vissza; három Undo visszaállítja az egyedi override-okat, három Redo ismét az öröklést állítja helyre. Draft Save nem módosítja a publikus oldalt, az explicit Publish után a nested mobil felülírás eltűnik, a desktop kimenet megmarad.
+
+**Ellenőrzés: célzott Chromium 1/1 PASS (63.1 s).** A teljes editor browser suite 87/87 eredménye a reset-kiterjesztés előtt született; a végleges módosított lifecycle fájl külön ismételt futása 1/1 PASS. Az `AGENTS.md` a Wrangler migration-list nem read-only tulajdonságát és a migration-free deploy eljárást kanonizálja. Runtime-kód és éles állapot nem változott. [Gépi bizonyíték](evidence/inspector-mobile-nested-position-reset-2026-10-28.json). A teljes `77.44.7.A` továbbra **OPEN / NOT CERTIFIED**.

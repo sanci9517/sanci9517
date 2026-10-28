@@ -748,5 +748,24 @@ test('Inspector color keeps independent desktop/tablet/mobile values through dra
   assert.deepEqual(await nestedLive().evaluate(el=>{const css=getComputedStyle(el);return {position:css.position,left:css.left,top:css.top}}),{position:'absolute',left:'18px',top:'27px'},'nested mobile position reaches published renderer');
   await activate('desktop',1366);await reloadPublic();
   assert.notEqual(await nestedLive().evaluate(el=>getComputedStyle(el).position),'absolute','nested mobile override leaves desktop public output unchanged');
+  await activate('mobile',390);await editor.locator('.inspector-tabs button').first().click();
+  const nestedResetGroup=editor.locator('.inspector-group-title').filter({hasText:'Geometria'});if(await nestedResetGroup.getAttribute('aria-expanded')==='false')await nestedResetGroup.click();
+  for(const key of ['position','x','y']){
+    const reset=editor.locator(`.property-reset[data-property-key="${key}"]`).filter({hasText:'Visszaállítás az örökölt értékre'});
+    assert.equal(await reset.count(),1,`nested mobile ${key} exposes its inheritance reset`);await reset.click();
+  }
+  assert.notEqual(await nestedCanvas().evaluate(el=>getComputedStyle(el).position),'absolute','nested mobile position reset restores inheritance');
+  assert.deepEqual(await nestedCanvas().evaluate(el=>{const css=getComputedStyle(el);return {left:css.left,top:css.top}}),{left:'0px',top:'0px'},'nested mobile offset reset restores safe zero-offset fallback');
+  await editor.locator('#undo').click();assert.equal(await nestedCanvas().evaluate(el=>getComputedStyle(el).top),'27px','nested Undo restores the last mobile offset');
+  await editor.locator('#undo').click();assert.equal(await nestedCanvas().evaluate(el=>getComputedStyle(el).left),'18px','nested Undo restores the prior mobile offset');
+  await editor.locator('#undo').click();assert.equal(await nestedCanvas().evaluate(el=>getComputedStyle(el).position),'absolute','nested Undo restores mobile positioning');
+  await editor.locator('#redo').click();await editor.locator('#redo').click();await editor.locator('#redo').click();
+  assert.notEqual(await nestedCanvas().evaluate(el=>getComputedStyle(el).position),'absolute','nested Redo restores inherited positioning');
+  assert.equal(await nestedLive().evaluate(el=>getComputedStyle(el).position),'absolute','nested resets stay unpublished before Save/Publish');
+  await save(false);assert.equal(posts.at(-1).publish,false,'nested mobile reset Save remains draft-only');
+  await save(true);await reloadPublic();
+  assert.notEqual(await nestedLive().evaluate(el=>getComputedStyle(el).position),'absolute','nested inheritance reset reaches public output after explicit Publish');
+  await activate('desktop',1366);await reloadPublic();
+  assert.notEqual(await nestedLive().evaluate(el=>getComputedStyle(el).position),'absolute','nested mobile reset preserves desktop public layout');
   assert.deepEqual(errors,[]);
 });

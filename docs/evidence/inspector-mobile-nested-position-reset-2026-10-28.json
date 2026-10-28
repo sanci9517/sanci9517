@@ -1,0 +1,26 @@
+{
+  "date": "2026-10-28",
+  "plan_cursor": "77.44.7.A",
+  "status": "LOCAL_BROWSER_REGRESSION_PASS",
+  "scope": "Extend the nested-element mobile position lifecycle with responsive inheritance reset and history coverage.",
+  "scenario": {
+    "initial_mobile_override": {"position":"absolute","x":"18px","y":"27px"},
+    "reset_fallback": {"position":"relative","left":"0px","top":"0px"},
+    "checks": [
+      "Inspector inheritance reset for position, X, and Y",
+      "Canvas returns to the renderer's safe zero-offset mobile fallback",
+      "Undo and Redo restore the three responsive overrides atomically in reverse/forward history order",
+      "draft Save leaves the published page unchanged",
+      "explicit Publish clears the nested mobile override while preserving desktop output"
+    ]
+  },
+  "validation": {
+    "chromium_targeted": "PASS; node --test tests/browser/editor-inspector-breakpoint-lifecycle.test.js (1/1, 63.1s).",
+    "editor_browser_suite": "PASS; npm run test:editor:layout (87/87) was run before this reset-only test extension; the final changed browser file was rerun and passed 1/1.",
+    "product_runtime_changed": false,
+    "production_or_database_changed": false
+  },
+  "base_commit": "440508f0",
+  "release": {"pushed":false,"deployed":false},
+  "next_step": "Continue the 77.44.7.A Inspector-to-public acceptance matrix; full functional and physical-device acceptance remains open."
+}
