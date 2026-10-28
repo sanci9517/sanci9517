@@ -24,8 +24,28 @@
     "migrationSafetyGate": "PASS",
     "gitDiffCheck": "PASS",
     "wranglerDryRun": {"status": "PASS", "wrangler": "4.130.0", "assets": 159, "uploadKiB": 294.23, "gzipKiB": 67.33},
-    "githubCI": "PENDING"
+    "githubCI": {
+      "resultAtRecording": "5/6 PASS; Editor Core browser suite running",
+      "workersBuild": "123030817117",
+      "verify": "123030515056",
+      "sourceAudit": "123030515041",
+      "canonicalPlan": "123030514292",
+      "editorCore": "123030513040",
+      "twitchIntegration": "123030512657"
+    }
   },
   "productionD1Preflight": {"method": "Cloudflare D1 query API; SELECT only", "ledgerRows": 34, "rowsWritten": 0, "changedDb": false, "migrationApplied": false},
-  "release": "PENDING"
+  "release": {
+    "branch": "v2/foundation",
+    "commit": "e9e7d11800e112d686b5e1cc03e5a73a74bf7b2e",
+    "cloudflareBuild": "52f205c5-051a-47b5-8944-a7c46b8b51fb",
+    "cloudflareBuildOutcome": "success; exact source commit confirmed",
+    "migrationSafetyGate": "PASS; deploy:safe used; D1 migration apply not run",
+    "deployment": "f5dfec3b-19a6-45bb-bef3-0daa37f1f0fb",
+    "workerVersion": "4ddf80b0-9ad7-4ae4-8461-03263aafd8a0",
+    "workerVersionNumber": 3709,
+    "trafficPercent": 100,
+    "productionSmoke": "UNVERIFIED: direct HTTP and web-fetch paths both returned/recorded 403 from the environment proxy; do not infer health or asset hash",
+    "productionDataChanges": {"d1MigrationsApplied": 0, "d1RowsWritten": 0, "r2Changes": 0}
+  }
 }
