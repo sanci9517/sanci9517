@@ -58,19 +58,31 @@
       "trafficPercent": 100
     },
     "githubChecks": {
-      "passed": [
-        "source-audit",
-        "canonical-plan",
-        "twitch-integration",
-        "verify",
-        "Workers Builds: sanci9517-streamer-brand"
-      ],
-      "inProgress": [
-        "editor-core"
-      ],
-      "editorCoreRunId": "40756222445"
+      "runtimeCommit": "f110b8db2058d74461d3db5de8c3c3055dddfad9",
+      "runtimeChecks": {
+        "editor-core": {
+          "status": "success",
+          "runId": 40756222445
+        },
+        "source-audit": "success",
+        "canonical-plan": "success",
+        "twitch-integration": "success",
+        "verify": "success",
+        "workers-build": "success"
+      },
+      "documentationCommit": "89d0c2ba0818706370e65f4e35bee9f1cc9070ae",
+      "documentationChecks": {
+        "editor-core": {
+          "status": "success",
+          "runId": 40756743024
+        },
+        "source-audit": "success",
+        "canonical-plan": "success",
+        "twitch-integration": "success",
+        "verify": "success"
+      }
     },
-    "productionHealth": "UNVERIFIED; sandbox proxy could not connect to proxy port 8080 (curl exit 7); no health or asset-hash PASS claimed"
+    "productionHealth": "UNVERIFIED; HTTPS request is rejected by the managed Envoy proxy with HTTP 403 CONNECT, and direct DNS/network access is unavailable. Cloudflare Worker issue list has no active detected issues."
   },
   "productionDataChanges": {
     "d1MigrationsApplied": 0,
