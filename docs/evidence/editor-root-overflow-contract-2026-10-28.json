@@ -1,7 +1,7 @@
 {
   "date": "2026-10-28",
   "plan_cursor": "77.44.7.A",
-  "status": "LOCAL_VALIDATED_RELEASE_PENDING",
+  "status": "PRODUCTION_VERIFIED",
   "finding": {
     "surface": "root Inspector -> responsive Page Model -> authored public root",
     "problem": "The root Inspector exposed layout.overflow, but both static and dynamically injected public CSS enforce overflow:visible!important on authored roots to preserve document-level scrolling.",
@@ -17,9 +17,22 @@
     "partial_type_browser": "PASS; tests/browser/editor-inspector-partial-types.test.js (1/1, 336.3s), all 44 PARTIAL types, with Editor route contract assertions.",
     "typecheck": "PASS; npm run typecheck.",
     "canonical_plan_and_traceability": "PASS; 13-file canonical plan, active point audit, and regenerated 396-entry traceability.",
-    "production_deployed": false,
+    "production_deployed": true,
     "production_d1_or_r2_changed": false
   },
-  "release": {"push_pending": true, "worker_build_pending": true},
-  "next_step": "After the normal fast-forward release, verify the Cloudflare safe build, 100% Worker version, health, and deployed property-registry asset hash."
+  "release": {
+    "local_commit": "8cc2f3e1d18c77bb8e185d98be4e0b2b2c1d5b49",
+    "fast_forward_push": "verified; v2/foundation",
+    "cloudflare_build_id": "9beef948-baa2-41fb-a331-d89b8e20c86a",
+    "cloudflare_build_outcome": "success; deploy:safe; source commit matches local commit",
+    "deployment_id": "9951d82e-35e3-4d9d-8a87-edf88774e9df",
+    "worker_version_id": "4a71fc0f-1109-47c2-b250-9ef7a112b3c9",
+    "traffic_percent": 100,
+    "health_http_200": true,
+    "db_health_http_200_connected": true,
+    "live_property_registry_sha256": "523711b5f753cd1190ecfaf5eda339548c5abacf6fdac55d41c2ce7b54553920",
+    "local_property_registry_sha256": "523711b5f753cd1190ecfaf5eda339548c5abacf6fdac55d41c2ce7b54553920",
+    "production_d1_or_r2_changed": false
+  },
+  "next_step": "Continue 77.44.7.A with remaining Inspector property types and end-to-end Save/reload/Publish/public lifecycle; full acceptance remains open."
 }

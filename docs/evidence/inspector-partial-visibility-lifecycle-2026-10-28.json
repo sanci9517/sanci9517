@@ -1,7 +1,7 @@
 {
   "date": "2026-10-28",
   "plan_cursor": "77.44.7.A",
-  "status": "LOCAL_BROWSER_REGRESSION_PASS",
+  "status": "PRODUCTION_DEPLOYED_LOCAL_BROWSER_REGRESSION_PASS",
   "coverage": "All 44 editable PARTIAL node types in the actual mobile Inspector.",
   "lifecycle": [
     "Hide each type through element.visibility.set / visibility.mobile and confirm Canvas state.",
@@ -19,6 +19,17 @@
     "physical_device_acceptance": "NOT PERFORMED"
   },
   "base_commit": "6d701793",
-  "release": {"included_in_runtime_commit": true, "push_pending": true, "deployment_pending": true},
+  "release": {
+    "runtime_commit": "8cc2f3e1d18c77bb8e185d98be4e0b2b2c1d5b49",
+    "fast_forward_push": "verified; v2/foundation",
+    "cloudflare_build_id": "9beef948-baa2-41fb-a331-d89b8e20c86a",
+    "cloudflare_build_outcome": "success",
+    "deployment_id": "9951d82e-35e3-4d9d-8a87-edf88774e9df",
+    "worker_version_id": "4a71fc0f-1109-47c2-b250-9ef7a112b3c9",
+    "traffic_percent": 100,
+    "health_http_200": true,
+    "db_health_http_200_connected": true,
+    "production_d1_or_r2_changed": false
+  },
   "next_step": "Continue 77.44.7.A with remaining field-specific and user-device acceptance; do not treat this PARTIAL type matrix as full Editor certification."
 }
