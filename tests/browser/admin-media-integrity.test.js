@@ -36,7 +36,8 @@ async function fixture(t,handler,width=390){
  const panels={missing:region.getByRole('region',{name:'Hiányzó tárolt fájlok'}),orphan:region.getByRole('region',{name:'Nem nyilvántartott fájljelöltek'})};
  const state=(mode,value)=>page.waitForFunction(({mode,value})=>document.querySelector(`[data-audit-mode="${mode}"]`).dataset.state===value,{mode,value});
  const audits=()=>calls.filter(c=>/missingAudit|orphanAudit/.test(c.query));
- return {page,region,panels,state,audits,calls,errors};
+ const waitForAuditCount=async expected=>{const deadline=Date.now()+2000;while(audits().length<expected&&Date.now()<deadline)await new Promise(done=>setTimeout(done,10));};
+ return {page,region,panels,state,audits,waitForAuditCount,calls,errors};
 }
 
 for(const width of [390,1366])test(`integrity diagnostics start manually and show safe findings without overflow at ${width}px`,async t=>{
@@ -53,7 +54,7 @@ for(const width of [390,1366])test(`integrity diagnostics start manually and sho
  assert.match(await f.panels.orphan.textContent(),/folyamatban lévő feltöltés/);
  const start=f.panels.missing.locator('[data-audit-start]');
  await start.focus();await start.press('Enter');
- await f.state('missing','loading');assert.equal(await start.isDisabled(),true);assert.equal(await f.panels.missing.getAttribute('aria-busy'),'true');
+ await f.state('missing','loading');await f.waitForAuditCount(1);assert.equal(await start.isDisabled(),true);assert.equal(await f.panels.missing.getAttribute('aria-busy'),'true');
  assert.equal(f.audits().length,1,'no automatic pagination or double start');
  finish();await f.state('missing','findings');assert.equal(await f.panels.missing.locator('li').count(),2);
  assert.match(await f.panels.missing.getByRole('status').textContent(),/1. részlet: 2 fájl/);

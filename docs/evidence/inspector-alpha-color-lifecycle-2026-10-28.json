@@ -1,0 +1,78 @@
+{
+  "date": "2026-10-28",
+  "workItem": "77.44.7.A — Inspector alpha HEX end-to-end lifecycle",
+  "scope": "Browser test and release-trigger safety documentation only; no runtime source changed.",
+  "acceptance": {
+    "value": "#abcd",
+    "inspectorHexPreserved": true,
+    "nativePickerRgbPreview": "#aabbcc",
+    "accessibleAlphaStatus": "PASS",
+    "canvasComputedChannels": [
+      170,
+      187,
+      204,
+      0.866667
+    ],
+    "pageModelDraftValue": "#abcd",
+    "editorReloadPreservesValue": true,
+    "saveLeavesPublicPageUnchanged": true,
+    "explicitPublishUpdatesPublicRenderer": true,
+    "canvasAndPublicComputedColorsMatch": true
+  },
+  "tests": {
+    "targetedChromium": {
+      "command": "node --test tests/browser/editor-inspector-breakpoint-lifecycle.test.js",
+      "pass": 1,
+      "fail": 0,
+      "durationSeconds": 113.8
+    },
+    "editorUnit": {
+      "command": "npm run test:editor",
+      "pass": 10,
+      "fail": 0
+    },
+    "typecheck": "PASS",
+    "canonicalPlan": "PASS; 396 source mappings",
+    "activePointAudit": "PASS; acceptance remains NOT_CERTIFIED",
+    "traceability": "PASS; 396 source mappings",
+    "gitDiffCheck": "PASS"
+  },
+  "cloudflareWorkersBuildTrigger": {
+    "triggerId": "a9ff3c51-4161-4aa8-bf22-77cf5da625ea",
+    "configuration": {
+      "branchIncludes": [
+        "v2/foundation"
+      ],
+      "pathIncludes": [
+        "*"
+      ],
+      "pathExcludes": [
+        "docs/**",
+        "tests/**",
+        "AGENTS.md"
+      ],
+      "buildCommand": "npm run typecheck",
+      "deployCommand": "npm run deploy:safe"
+    },
+    "configurationUpdate": "PATCH accepted; subsequent Cloudflare API GET confirmed the exact production configuration; non-production trigger unchanged",
+    "nonProductionTriggerChanged": false,
+    "purpose": "Permit test-only commits to be pushed without triggering a redundant Worker deployment"
+  },
+  "productionDataChanges": {
+    "d1MigrationsApplied": 0,
+    "d1RowsWritten": 0,
+    "r2Changes": 0
+  },
+  "acceptanceBoundary": "77.44.7.A remains OPEN / NOT CERTIFIED; physical-device acceptance was not performed.",
+  "ciFindingAndRepair": {
+    "affectedWorkflow": "Editor Core Test run 40750631310",
+    "result": "4/5 workflows passed; Editor Core failed 1/87 browser tests at mobile Admin media integrity diagnostics",
+    "cause": "The assertion checked the server request count immediately after the UI entered loading; on the mobile runner the DOM state update won the race against the local HTTP request arrival.",
+    "repair": "Wait up to 2 seconds for the explicitly initiated audit request to reach the test server before asserting the single-request/no-double-start contract.",
+    "verification": {
+      "command": "node --test tests/browser/admin-media-integrity.test.js",
+      "pass": 10,
+      "fail": 0
+    }
+  }
+}

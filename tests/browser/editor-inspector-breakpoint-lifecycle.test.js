@@ -47,12 +47,13 @@ test('Inspector color keeps independent desktop/tablet/mobile values through dra
   const editor=await browser.newPage({viewport:{width:1366,height:900}}),publicPage=await browser.newPage({viewport:{width:1366,height:900}});
   for(const page of [editor,publicPage]){page.setDefaultTimeout(7000);page.setDefaultNavigationTimeout(12000);page.on('pageerror',error=>errors.push(error.message))}
   const canvas=()=>editor.locator(`.node[data-node-id="${nodeId}"]`),live=()=>publicPage.locator(`[data-node-id="${nodeId}"]`);
-  const color=target=>target().evaluate(el=>getComputedStyle(el).backgroundColor);
+  const color=target=>(typeof target==='function'?target():target).evaluate(el=>getComputedStyle(el).backgroundColor);
   const select=async()=>{await canvas().evaluate(el=>el.click());if(await editor.locator('#rightDock').evaluate(el=>el.classList.contains('closed')))await editor.locator('#openInspector').click()};
   const activate=async(device,width)=>{await editor.locator(`.canvas-device-btn[data-device="${device}"]`).click();const changed=await publicPage.evaluate(expected=>window.innerWidth!==expected,width);const rendered=changed?publicPage.waitForResponse(response=>response.url().includes('/api/public/presentation')):null;await publicPage.setViewportSize({width,height:900});await publicPage.waitForFunction(({id,expectedWidth})=>{const element=document.querySelector(`[data-node-id="${id}"]`);return window.innerWidth===expectedWidth&&element!==null&&getComputedStyle(element).backgroundColor!==''},{id:nodeId,expectedWidth:width});if(rendered)await rendered};
   const reloadPublic=async()=>{const rendered=publicPage.waitForResponse(response=>response.url().includes('/api/public/presentation'));await publicPage.reload({waitUntil:'domcontentloaded'});await rendered};
   const field=()=>editor.locator('.typed-inspector-field[data-property-id="background.color"]');
   const setColor=async value=>field().locator('input[type="color"]').evaluate((input,next)=>{input.value=next;input.dispatchEvent(new Event('change',{bubbles:true}))},value);
+  const setHex=async value=>field().locator('input[type="text"]').evaluate((input,next)=>{input.value=next;input.dispatchEvent(new Event('change',{bubbles:true}))},value);
   const save=async publish=>{await editor.locator(publish?'#publish':'#save').click();await editor.waitForFunction(p=>document.querySelector('#saveStatus')?.textContent?.startsWith(p?'Publikálva':'Mentve'),publish)};
   await editor.goto(base+'/editor-v2/index.html');await select();await publicPage.goto(base+'/p/test');
   await editor.locator('.inspector-tabs button').first().click();
@@ -880,5 +881,29 @@ test('Inspector color keeps independent desktop/tablet/mobile values through dra
   assert.notDeepEqual(await nestedDimensions(nestedLive),editedNestedDimensions,'nested mobile reset reaches public output after explicit Publish');
   await activate('desktop',1366);await reloadPublic();
   assert.notDeepEqual(await nestedDimensions(nestedLive),editedNestedDimensions,'nested mobile reset preserves desktop dimensions');
+
+  // The short-alpha color contract must hold across the full product lifecycle,
+  // not only inside the isolated shared-control rendering test.
+  await select();await editor.locator('.inspector-tabs button').first().click();
+  const alphaHeading=editor.locator('.inspector-group-title').filter({hasText:'Háttér'});if(await alphaHeading.getAttribute('aria-expanded')==='false')await alphaHeading.click();
+  const alphaHex=field().locator('input[type="text"]');
+  await setHex('#abcd');
+  assert.equal(await alphaHex.inputValue(),'#abcd','Inspector retains the complete short-alpha value');
+  assert.equal(await field().locator('input[type="color"]').inputValue(),'#aabbcc','native picker previews the expanded RGB channels');
+  assert.match(await field().locator('.typed-color-status').textContent(),/RGB/,'alpha limitation is announced');
+  const alphaChannels=target=>(typeof target==='function'?target():target).evaluate(el=>getComputedStyle(el).backgroundColor.match(/[\d.]+/g).map(Number));
+  const canvasAlpha=await alphaChannels(canvas());
+  assert.deepEqual(canvasAlpha.slice(0,3),[170,187,204]);assert.ok(Math.abs(canvasAlpha[3]-13/15)<0.001,'Canvas CSS keeps the four-bit alpha channel');
+  const publicColorBeforeAlpha=await color(live());assert.equal(publicColorBeforeAlpha,'rgb(220, 38, 38)','alpha draft does not change published color');
+  await save(false);assert.equal(posts.at(-1).publish,false,'alpha color draft Save remains distinct from Publish');
+  assert.equal(posts.at(-1).document.pages[pageId].nodes[nodeId].responsive.desktop.backgroundColor,'#abcd','draft model stores exact alpha HEX');
+  await editor.reload({waitUntil:'domcontentloaded'});await select();await activate('desktop',1366);
+  const reloadedAlphaHeading=editor.locator('.inspector-group-title').filter({hasText:'Háttér'});if(await reloadedAlphaHeading.getAttribute('aria-expanded')==='false')await reloadedAlphaHeading.click();
+  assert.equal(await field().locator('input[type="text"]').inputValue(),'#abcd','alpha HEX survives Editor reload');
+  const reloadChannels=await alphaChannels(canvas());assert.deepEqual(reloadChannels.slice(0,3),[170,187,204]);assert.ok(Math.abs(reloadChannels[3]-13/15)<0.001);
+  await reloadPublic();assert.equal(await color(live()),publicColorBeforeAlpha,'draft Save preserves the previously published CSS');
+  await save(true);assert.equal(posts.at(-1).publish,true,'alpha color requires explicit Publish');await reloadPublic();
+  const publishedAlpha=await alphaChannels(live());assert.deepEqual(publishedAlpha.slice(0,3),[170,187,204]);assert.ok(Math.abs(publishedAlpha[3]-13/15)<0.001,'public renderer receives the alpha channel');
+  assert.equal(await color(canvas),await color(live),'Canvas and published renderer remain visually consistent');
   assert.deepEqual(errors,[]);
 });
