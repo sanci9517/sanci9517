@@ -205,7 +205,36 @@ test('property registry freezes nested metadata and validates newly registered c
   assert.ok(Object.isFrozen(property.optionLabels));
   assert.throws(()=>registerProperty({id:'test.registry.invalid-command',group:'typography',label:'Teszt',type:'text',command:'arbitrary.execute'}),/command/);
   assert.throws(()=>registerProperty({id:'test.registry.invalid-responsive',group:'typography',label:'Teszt',type:'number',command:'responsive.set',responsive:true}),/key/);
-  assert.throws(()=>registerProperty({id:'test.registry.invalid-select',group:'typography',label:'Teszt',type:'select',command:'element.update',options:[]}),/options/);
+  assert.throws(()=>registerProperty({id:'test.registry.invalid-select',group:'typography',label:'Teszt',type:'select',command:'element.update',key:'value',responsive:false,options:[]}),/options/);
+  assert.throws(()=>registerProperty({id:'test.registry.command-scope',group:'typography',label:'Teszt',type:'number',command:'responsive.set',key:'wrong',responsive:false}),/flagnek és commandnak/);
+  assert.throws(()=>registerProperty({id:'test.registry.duplicate-options',group:'typography',label:'Teszt',type:'select',command:'element.update',key:'value',responsive:false,options:['one','one']}),/egyedi/);
+  assert.throws(()=>registerProperty({id:'test.registry.foreign-label',group:'typography',label:'Teszt',type:'select',command:'element.update',key:'value',responsive:false,options:['one'],optionLabels:{other:'Más'}}),/optionLabels/);
+  assert.throws(()=>registerProperty({id:'test.registry.invalid-dimension',group:'typography',label:'Teszt',type:'dimension',command:'element.update',key:'value',responsive:false,units:['px','px']}),/egyedi/);
+  assert.throws(()=>registerProperty({id:'test.registry.invalid-applies-to',group:'typography',label:'Teszt',type:'text',command:'element.update',key:'name',responsive:false,appliesTo:['text','text']}),/appliesTo/);
+});
+
+test('all static Inspector descriptors satisfy the same key, scope and value-metadata contract',()=>{
+  const commands=new Set(['content.properties.set','element.content.set','element.update','responsive.set']);
+  for(const property of listProperties()){
+    assert.equal(typeof property.key,'string',`${property.id} key`);
+    assert.ok(property.key.trim(),`${property.id} non-empty key`);
+    assert.equal(typeof property.responsive,'boolean',`${property.id} explicit responsive scope`);
+    assert.ok(commands.has(property.command),`${property.id} known command`);
+    assert.equal(property.responsive,property.command==='responsive.set',`${property.id} command matches scope`);
+    if(property.type==='select'){
+      assert.ok(property.options?.length,`${property.id} options`);
+      assert.equal(new Set(property.options).size,property.options.length,`${property.id} unique options`);
+      for(const [option,label] of Object.entries(property.optionLabels||{})){
+        assert.ok(property.options.includes(option),`${property.id} label references a known option`);
+        assert.equal(typeof label,'string',`${property.id} option label type`);
+      }
+    }
+    if(property.type==='dimension'){
+      assert.ok(property.units?.length,`${property.id} units`);
+      assert.equal(new Set(property.units).size,property.units.length,`${property.id} unique units`);
+    }
+    if(property.appliesTo)assert.equal(new Set(property.appliesTo).size,property.appliesTo.length,`${property.id} unique type filters`);
+  }
 });
 
 test('visibility switches normalize legacy Page Models, preserve independent devices and allow ancestor discovery', () => {

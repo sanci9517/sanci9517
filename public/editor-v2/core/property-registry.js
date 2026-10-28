@@ -32,8 +32,8 @@ const groups = Object.freeze([
 ]);
 
 const properties = [
-  { id: 'content.text', key: 'text', group: 'content', label: 'Szöveg', type: 'text', command: 'element.content.set', appliesTo: ['heading', 'text', 'button', 'link'] },
-  { id: 'content.href', key: 'href', group: 'content', label: 'Link / URL', type: 'url', command: 'content.properties.set', appliesTo: ['link', 'button'] },
+  { id: 'content.text', key: 'text', group: 'content', label: 'Szöveg', type: 'text', command: 'element.content.set', responsive: false, appliesTo: ['heading', 'text', 'button', 'link'] },
+  { id: 'content.href', key: 'href', group: 'content', label: 'Link / URL', type: 'url', command: 'content.properties.set', responsive: false, appliesTo: ['link', 'button'] },
   { id: 'size.width', key: 'width', group: 'size', label: 'Szélesség', type: 'dimension', units: ['auto', 'px', '%', 'vw', 'rem'], responsive: true, command: 'responsive.set' },
   { id: 'size.height', key: 'height', group: 'size', label: 'Magasság', type: 'dimension', units: ['auto', 'px', '%', 'vh', 'rem'], responsive: true, command: 'responsive.set' },
   { id: 'size.minWidth', key: 'minWidth', group: 'size', label: 'Min. szélesség', type: 'dimension', units: ['px', '%', 'vw', 'rem'], responsive: true, command: 'responsive.set' },
@@ -99,7 +99,7 @@ const properties = [
   {id:'filter.effect',key:'filter',group:'filter',label:'Képhatás',type:'select',options:['none','grayscale(1)','sepia(.7)','blur(2px)','contrast(1.2)','brightness(1.15)'],optionLabels:{none:'Nincs','grayscale(1)':'Fekete-fehér','sepia(.7)':'Meleg tónus','blur(2px)':'Finom elmosás','contrast(1.2)':'Erősebb kontraszt','brightness(1.15)':'Világosítás'},responsive:true,command:'responsive.set',help:'Vizuális hatás az egész elemre és gyermekeire. Szövegen az elmosás ronthatja az olvashatóságot. Nem módosítja az eredeti médiafájlt.'},
   {id:'animation.transition',key:'transition',group:'animation',label:'Állapotváltás',type:'select',options:['none','all 180ms ease','all 300ms ease'],optionLabels:{none:'Azonnali','all 180ms ease':'Finom · 180 ms','all 300ms ease':'Lassabb · 300 ms'},responsive:true,command:'responsive.set',help:'A szín, méret és más vizuális állapotváltás átmenete. Csökkentett mozgást kérő eszközön a rendszer kikapcsolja az animációt.'},
   {id:'background.gradient',key:'backgroundImage',group:'background',label:'Háttérátmenet',type:'select',options:['none','linear-gradient(135deg, #7047eb 0%, #17b8a6 100%)','linear-gradient(135deg, #111827 0%, #475569 100%)','linear-gradient(135deg, #fb7185 0%, #fbbf24 100%)','linear-gradient(180deg, #ffffff 0%, #e0e7ff 100%)'],optionLabels:{none:'Nincs','linear-gradient(135deg, #7047eb 0%, #17b8a6 100%)':'Alkotói lila–menta','linear-gradient(135deg, #111827 0%, #475569 100%)':'Éjféli grafit','linear-gradient(135deg, #fb7185 0%, #fbbf24 100%)':'Naplemente','linear-gradient(180deg, #ffffff 0%, #e0e7ff 100%)':'Világos levendula'},responsive:true,command:'responsive.set',help:'A háttérszín fölé, a kiválasztott háttérkép alá kerülő színátmenet. A Nincs csak az átmenetet kapcsolja ki, a Médiatár-kép külön mezőben törölhető.'},
-  { id: 'advanced.nodeName', key: 'name', group: 'advanced', label: 'Elem neve', type: 'text', command: 'element.update' }
+  { id: 'advanced.nodeName', key: 'name', group: 'advanced', label: 'Elem neve', type: 'text', command: 'element.update', responsive: false }
 ];
 
 // Named, validated starting points are owned by the same registry as each
@@ -209,14 +209,23 @@ export function getPropertyGroup(id) {
 
 export function registerProperty(property) {
   if (!property?.id || !property?.group) throw new Error('A property id és group kötelező.');
-  if (typeof property.id!=='string'||typeof property.label!=='string'||!property.label.trim()) throw new Error('A property id és label nem üres szöveg kell legyen.');
+  if (typeof property.id!=='string'||!property.id.trim()||typeof property.label!=='string'||!property.label.trim()) throw new Error('A property id és label nem üres szöveg kell legyen.');
   if (propertyMap.has(property.id)) throw new Error(`Property már létezik: ${property.id}`);
   if (!groupMap.has(property.group)) throw new Error(`Ismeretlen property group: ${property.group}`);
   if(!propertyControlTypes.has(property.type))throw new Error(`Ismeretlen Inspector control: ${property.type}`);
   if(!propertyCommands.has(property.command))throw new Error(`Ismeretlen Inspector command: ${property.command}`);
-  if(property.responsive===true&&(!property.key||property.command!=='responsive.set'))throw new Error('A responsive property key és responsive.set command kötelező.');
-  if(property.type==='select'&&(!Array.isArray(property.options)||property.options.length===0||property.options.some(option=>typeof option!=='string')))throw new Error('A select property nem üres, szöveges options listát igényel.');
-  if(property.type==='dimension'&&(!Array.isArray(property.units)||property.units.length===0||property.units.some(unit=>typeof unit!=='string')))throw new Error('A dimension property nem üres, szöveges units listát igényel.');
+  if(typeof property.key!=='string'||!property.key.trim())throw new Error('Minden property key mezőkulcsot igényel.');
+  if(typeof property.responsive!=='boolean'||property.responsive!==(property.command==='responsive.set'))throw new Error('A responsive flagnek és commandnak egyeznie kell.');
+  if(property.type==='select'){
+    if(!Array.isArray(property.options)||property.options.length===0||property.options.some(option=>typeof option!=='string'||!option.trim())||new Set(property.options).size!==property.options.length)throw new Error('A select property egyedi, nem üres szöveges options listát igényel.');
+    if(property.optionLabels!==undefined&&(!property.optionLabels||typeof property.optionLabels!=='object'||Array.isArray(property.optionLabels)||Object.entries(property.optionLabels).some(([value,label])=>!property.options.includes(value)||typeof label!=='string'||!label.trim())))throw new Error('A select optionLabels csak létező opciókhoz tartozó szöveges címkéket tartalmazhat.');
+  }else if(property.options!==undefined||property.optionLabels!==undefined)throw new Error('Az options és optionLabels csak select propertyhez használható.');
+  if(property.type==='dimension'){
+    if(!Array.isArray(property.units)||property.units.length===0||property.units.some(unit=>typeof unit!=='string'||!unit.trim())||new Set(property.units).size!==property.units.length)throw new Error('A dimension property egyedi, nem üres szöveges units listát igényel.');
+  }else if(property.units!==undefined)throw new Error('A units csak dimension propertyhez használható.');
+  if(property.appliesTo!==undefined&&(!Array.isArray(property.appliesTo)||property.appliesTo.length===0||property.appliesTo.some(type=>typeof type!=='string'||!type.trim())||new Set(property.appliesTo).size!==property.appliesTo.length))throw new Error('Az appliesTo egyedi, nem üres típusnevek listája kell legyen.');
+  if(property.help!==undefined&&typeof property.help!=='string')throw new Error('A property help csak szöveg lehet.');
+  if(property.presets!==undefined&&(!Array.isArray(property.presets)||property.presets.some(preset=>!preset||typeof preset.label!=='string'||!preset.label.trim()||typeof preset.value!=='string')))throw new Error('A presets címke és érték párok listája kell legyen.');
   const normalized = freezeProperty(property);
   properties.push(normalized);
   propertyMap.set(normalized.id, normalized);
