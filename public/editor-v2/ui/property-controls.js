@@ -224,8 +224,9 @@ export function renderPropertyInput(property, label, current, onChange, {
     input.id = controlId;
     input.type = type === 'number' ? 'number' : 'text';
     input.value = current ?? '';
+    const contract=getInspectorValueContract(property);
+    if(Number.isInteger(contract.maxLength))input.maxLength=contract.maxLength;
     if (type === 'number') {
-      const contract=getInspectorValueContract(property);
       if(Number.isFinite(contract.min))input.min=String(contract.min);
       if(Number.isFinite(contract.max))input.max=String(contract.max);
       input.step=String(contract.step??'any');

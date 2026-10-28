@@ -73,7 +73,7 @@ test('typed Inspector controls and link selection work with real browser DOM at 
         }else{
           const input=control.querySelector('input');input.value=type==='url'?'/p/teszt':'Teszt tartalom';input.dispatchEvent(new Event('change',{bubbles:true}));
         }
-        fieldMatrix.push({id:property.id,type,callbackCount:editsForProperty.length,value:editsForProperty[0],error:control.querySelector('.property-validation')?.textContent||''});
+        fieldMatrix.push({id:property.id,type,callbackCount:editsForProperty.length,value:editsForProperty[0],maxLength:type==='url'?control.querySelector('input')?.maxLength:null,error:control.querySelector('.property-validation')?.textContent||''});
       }
       matrixHost.remove();
       const invalidMatrix=[];
@@ -238,6 +238,7 @@ test('typed Inspector controls and link selection work with real browser DOM at 
     assert.ok(data.helpLengths.every(([,length])=>length>=100),`every property needs detailed guidance: ${data.helpLengths.filter(([,length])=>length<100).map(([id])=>id).join(', ')}`);
     assert.ok(data.fieldMatrix.length>=45,`every registered Inspector property should have a real browser control contract; saw ${data.fieldMatrix.length}`);
     assert.ok(data.fieldMatrix.filter(item=>item.type!=='asset').every(item=>item.callbackCount===1&&!item.error),`supported Inspector fields must reach their validated callback: ${JSON.stringify(data.fieldMatrix.filter(item=>item.type!=='asset'&&(item.callbackCount!==1||item.error)))}`);
+    assert.ok(data.fieldMatrix.filter(item=>item.type==='url').every(item=>item.maxLength===2048),`URL controls must expose the validator's 2048-character limit: ${JSON.stringify(data.fieldMatrix.filter(item=>item.type==='url'))}`);
     assert.ok(data.fieldMatrix.filter(item=>item.type==='asset').every(item=>item.callbackCount===1&&item.value==='6b1c2e65-e46e-4764-b234-123456789abc'),`background picker must deliver the selected site asset ID: ${JSON.stringify(data.fieldMatrix.filter(item=>item.type==='asset'))}`);
     assert.ok(data.invalidMatrix.every(item=>item.callbackCount===0&&item.error),`invalid values must be rejected before reaching the command callback: ${JSON.stringify(data.invalidMatrix.filter(item=>item.callbackCount!==0||!item.error))}`);
     for(const [id,options] of Object.entries(data.unitOptions)){

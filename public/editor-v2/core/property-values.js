@@ -41,7 +41,7 @@ export function getInspectorValueContract(property) {
   else if(type==='box') contract={kind:'box',maxParts:4,units:Object.freeze(['px','%','vh','vw','rem','em']),allowsAuto:property.key==='margin',negativeMargin:property.key==='margin',negativePadding:false};
   else if(type==='asset') contract={kind:'asset-id',format:'uuid',allowsNone:true};
   else if(type==='color') contract={kind:'color',formats:Object.freeze(['hex','transparent']),hexDigitCounts:Object.freeze([3,4,6,8])};
-  else if(type==='url') contract={kind:'url',policy:'validatedLinkHref'};
+  else if(type==='url') contract={kind:'url',policy:'validatedLinkHref',maxLength:2048};
   else if(type==='text') contract={kind:'text',trimmed:true};
   else contract={kind:'unsupported'};
   return Object.freeze({

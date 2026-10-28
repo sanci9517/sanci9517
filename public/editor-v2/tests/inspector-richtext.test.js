@@ -86,6 +86,9 @@ test('typed Inspector controls validate display values before the command path',
   assert.equal(normalizeInspectorValue(getProperty('background.image'),'6b1c2e65-e46e-4764-b234-123456789abc'),'6b1c2e65-e46e-4764-b234-123456789abc');
   assert.equal(normalizeInspectorValue(getProperty('content.href'),'/p/home'),'/p/home');
   assert.equal(normalizeInspectorValue(getProperty('content.href'),'mailto:team@example.org'),'mailto:team@example.org');
+  assert.equal(getInspectorValueContract(getProperty('content.href')).maxLength,2048);
+  assert.equal(normalizeInspectorValue(getProperty('content.href'),'/'+ 'a'.repeat(2047)).length,2048);
+  assert.throws(()=>normalizeInspectorValue(getProperty('content.href'),'/'+ 'a'.repeat(2048)),/hivatkozás/);
   assert.throws(()=>normalizeInspectorValue(getProperty('content.href'),'javascript:alert(1)'));
   assert.equal(normalizeInspectorValue(getProperty('size.maxWidth'),'80vw'),'80vw');
   assert.throws(()=>normalizeInspectorValue(getProperty('size.minHeight'),'-1px'));
