@@ -1,0 +1,53 @@
+{
+  "date": "2026-10-28",
+  "plan_cursor": "77.44.7.A / EDT-021 Inspector Property Registry",
+  "commit": "8b19ad57568c49b48160987a177ba8cb7f437926",
+  "change": {
+    "problem": "Registry descriptors were shallow-frozen while nested option/unit arrays, appliesTo arrays, option-label maps and presets remained mutable by callers.",
+    "fix": "Static and registered property descriptors now copy and recursively freeze supported metadata. Registration rejects unknown Inspector controls/commands, responsive definitions without their key and responsive.set command, empty select option lists, and empty dimension unit lists. Circular or non-data metadata is rejected.",
+    "save_publish_behavior": "unchanged"
+  },
+  "local_validation": {
+    "typecheck": "PASS",
+    "editor_unit": "PASS; 10/10 files",
+    "targeted_core": "PASS",
+    "migration_safety_gate": "PASS",
+    "wrangler_dry_run": "PASS; 159 assets, 289.86 KiB (66.42 KiB gzip); deployment not performed by dry-run",
+    "local_chromium": "BLOCKED by runtime: Chromium exits SIGTRAP after Crashpad setsockopt returns Operation not permitted; not counted as PASS"
+  },
+  "remote_validation": {
+    "github_f0": "PASS",
+    "github_twitch": "PASS",
+    "github_editor_core": "IN_PROGRESS when recorded",
+    "cloudflare_build_id": "86cab874-ab9e-47d4-957c-2a24057c84fd",
+    "cloudflare_build_outcome": "success",
+    "cloudflare_deployment_id": "1bf9f928-8096-401a-ac38-87efaca995fd",
+    "worker_version_id": "f4dd9513-35fd-4843-b0b9-e04b6b5a1c80",
+    "traffic_percent": 100,
+    "production_health_http": 200,
+    "production_db_health_http": 200,
+    "live_registry_asset_sha256": "5ebf37c0e0b50bcc8cffe5238089f2c788f9f8b49974d54c313235c171b25248",
+    "local_registry_asset_sha256": "5ebf37c0e0b50bcc8cffe5238089f2c788f9f8b49974d54c313235c171b25248",
+    "worker_build_configuration": {
+      "deploy_command": "npm run deploy:safe",
+      "path_excludes": [
+        "docs/**"
+      ]
+    }
+  },
+  "production_d1_select_preflight": {
+    "method": "Cloudflare D1 query API; SELECT only",
+    "rows_read": 34,
+    "metadata": {
+      "changed_db": false,
+      "rows_written": 0
+    },
+    "migration_applied": false,
+    "r2_changed": false
+  },
+  "acceptance_limitations": {
+    "full_77_44_7_A": "OPEN / NOT CERTIFIED",
+    "local_real_browser_verification": "blocked by sandbox runtime",
+    "physical_device_acceptance": "not performed"
+  }
+}
