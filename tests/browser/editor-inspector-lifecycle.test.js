@@ -568,6 +568,9 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   if(await typographyGroup.getAttribute('aria-expanded')==='false')await typographyGroup.click();
   const lineHeightCss=()=>item.evaluate(el=>getComputedStyle(el).lineHeight);
   await assertRegisteredRoute('typography.lineHeight');
+  const lineHeightInput=field('typography.lineHeight').locator('input[type="number"]');
+  assert.deepEqual(await lineHeightInput.evaluate(input=>({min:input.min,max:input.max,step:input.step,inputMode:input.inputMode})),
+    {min:'0.5',max:'5',step:'0.1',inputMode:'decimal'},'line-height input mirrors its declared numeric value contract');
   const publishedLineHeight=await lineHeightCss();
   await field('typography.lineHeight').locator('.property-preset').filter({hasText:'Laza · 1.75'}).click();
   const draftLineHeight=await lineHeightCss();
@@ -780,7 +783,7 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   await verifyInspectorFieldLifecycle({
     propertyId:'flex.grow',cssProperty:'flexGrow',label:'flex grow',groupName:'Flex',nodeId:flexItemId,
     expectedCommand:'responsive.set',expectedKey:'flexGrow',
-    edit:async control=>{const input=control.locator('input[type="number"]');await input.fill('2');await input.press('Tab')}
+    edit:async control=>{const input=control.locator('input[type="number"]');assert.deepEqual(await input.evaluate(el=>({min:el.min,max:el.max,step:el.step,inputMode:el.inputMode})),{min:'0',max:'100',step:'any',inputMode:'decimal'},'flex growth accepts its declared non-integer range');await input.fill('1.5');await input.press('Tab')}
   });
   await verifyInspectorFieldLifecycle({
     propertyId:'flex.shrink',cssProperty:'flexShrink',label:'flex shrink',groupName:'Flex',nodeId:flexItemId,
@@ -805,7 +808,7 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   });
   await verifyInspectorFieldLifecycle({
     propertyId:'transform.scale',cssProperty:'scale',label:'visual scale',groupName:'Transzformáció',
-    edit:async control=>{const input=control.locator('input[type="number"]');await input.fill('1.2');await input.press('Tab')}
+    edit:async control=>{const input=control.locator('input[type="number"]');assert.deepEqual(await input.evaluate(el=>({min:el.min,max:el.max,step:el.step,inputMode:el.inputMode})),{min:'0.1',max:'4',step:'0.1',inputMode:'decimal'},'scale input mirrors its validator range and decimal step');await input.fill('1.2');await input.press('Tab')}
   });
   await verifyInspectorFieldLifecycle({
     propertyId:'grid.row',cssProperty:'gridRowStart',label:'grid row placement',groupName:'Grid-gyermek',nodeId:itemId,
@@ -905,7 +908,7 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   });
   await verifyInspectorFieldLifecycle({
     propertyId:'position.zIndex',cssProperty:'zIndex',label:'stacking order',groupName:'Pozíció',
-    edit:async control=>{const input=control.locator('input[type="number"]');await input.fill('12');await input.press('Tab')}
+    edit:async control=>{const input=control.locator('input[type="number"]');assert.deepEqual(await input.evaluate(el=>({min:el.min,max:el.max,step:el.step,inputMode:el.inputMode})),{min:'-9999',max:'9999',step:'1',inputMode:'decimal'},'z-index input mirrors its integer contract and keeps signed values keyboard-accessible');await input.fill('12');await input.press('Tab')}
   });
   // A dragged/offset static node is rendered with the same relative CSS on
   // canvas and public page. The Inspector also makes leaving the artboard

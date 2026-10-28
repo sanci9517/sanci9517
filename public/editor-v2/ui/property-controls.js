@@ -1,5 +1,5 @@
 import {
-  normalizeInspectorValue, INSPECTOR_FONTS, INSPECTOR_SHADOWS
+  normalizeInspectorValue, getInspectorValueContract, INSPECTOR_FONTS, INSPECTOR_SHADOWS
 } from '../core/property-values.js';
 import {TOKEN_SPECS,compatibleTokens,parseTokenReference,tokenReference,tokenValue,defaultTokens} from '../core/design-tokens.js';
 import {mediaAssetPicker} from './element-content-controls.js';
@@ -220,9 +220,13 @@ export function renderPropertyInput(property, label, current, onChange, {
     input.type = type === 'number' ? 'number' : 'text';
     input.value = current ?? '';
     if (type === 'number') {
-      input.step = property.key === 'opacity' || property.key === 'lineHeight' ? '0.1' : '1';
-      if (property.key === 'opacity') { input.min = '0'; input.max = '1'; }
-      if (property.key === 'lineHeight') { input.min = '0.5'; input.max = '5'; }
+      const contract=getInspectorValueContract(property);
+      if(Number.isFinite(contract.min))input.min=String(contract.min);
+      if(Number.isFinite(contract.max))input.max=String(contract.max);
+      input.step=String(contract.step??'any');
+      // Decimal keyboards generally retain a minus key, which matters for the
+      // signed z-index range even though its valid values are whole numbers.
+      input.inputMode='decimal';
     }
     input.onchange = () => save(input.value);
     input.onkeydown = event => {if(event.key === 'Enter') {event.preventDefault();input.blur();}};
