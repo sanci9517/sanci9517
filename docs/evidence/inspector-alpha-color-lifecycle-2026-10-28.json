@@ -74,5 +74,25 @@
       "pass": 10,
       "fail": 0
     }
+  },
+  "sourceControl": {
+    "branch": "v2/foundation",
+    "testOnlyCommit": "ebdfc54cf28d0dd40f764cde26184c3334150ab8",
+    "pushed": true
+  },
+  "cloudflareProductionState": {
+    "noRedundantBuildTriggered": true,
+    "latestBuildCommit": "7b4226de31beedcd6ba37ef36945358d536508eb",
+    "latestBuild": "35feb24c-96ed-4b4a-a822-4e383f3ed451",
+    "deployment": "d8586998-f2fd-465c-90de-7e47a4e0d4a7",
+    "workerVersion": "7fae1802-18cc-4303-8d70-83e59c426328",
+    "trafficPercent": 100
+  },
+  "githubCI": {
+    "canonicalPlan": "PASS; 40754940653",
+    "activePointAudit": "PASS; 40754940456",
+    "f0Baseline": "PASS; 40754940458",
+    "twitchIntegration": "PASS; 40754940491",
+    "editorCore": "IN_PROGRESS; 40754940472"
   }
 }
