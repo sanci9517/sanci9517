@@ -38,7 +38,11 @@ export function getInspectorValueContract(property) {
   else if(type==='url') contract={kind:'url',policy:'validatedLinkHref'};
   else if(type==='text') contract={kind:'text',trimmed:true};
   else contract={kind:'unsupported'};
-  return Object.freeze({...contract,tokens});
+  return Object.freeze({
+    ...contract,
+    tokens,
+    ...(contract.kind==='unsupported'?{}:{required:true,trimmed:true}),
+  });
 }
 
 export function normalizeInspectorValue(property, input) {

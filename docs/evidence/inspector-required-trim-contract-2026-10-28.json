@@ -1,0 +1,21 @@
+{
+  "date": "2026-10-28",
+  "workItem": "77.44.7.A — Inspector required and trim value contract",
+  "finding": "Every registered Inspector value normalizer trims leading/trailing whitespace and rejects an empty value, but the machine-readable value contract did not declare either policy.",
+  "change": "All supported Inspector value contracts now declare required=true and trimmed=true. Unsupported contracts do not claim either behavior. The existing project-owned normalizer remains the single validation source; no third-party dependency was added.",
+  "tests": {
+    "typecheck": "PASS",
+    "editor": {"pass": 10, "fail": 0},
+    "canonicalPlan": "PASS",
+    "activePointAudit": "PASS",
+    "traceability": {"pass": 396, "acceptance": "NOT_CERTIFIED"},
+    "migrationSafetyGate": "PASS",
+    "gitDiffCheck": "PASS"
+  },
+  "deploymentPreflight": {
+    "wrangler": "4.130.0",
+    "dryRun": {"status": "PASS", "assets": 159, "uploadKiB": 294.22, "migrationApply": false},
+    "d1": {"queryMode": "SELECT only", "appliedMigrations": 34, "rowsWritten": 0, "changedDb": false}
+  },
+  "release": "PENDING"
+}

@@ -3,7 +3,7 @@ import test from 'node:test';
 import {NODE_TYPES} from '../core/schema.js';
 import {getElementCapability,getElementInspectorContract} from '../core/capability-matrix.js';
 import {getProperty,listProperties,registerProperty} from '../core/property-registry.js?v=20261025-content-property-route-contract';
-import {getInspectorValueContract} from '../core/property-values.js';
+import {getInspectorValueContract,normalizeInspectorValue} from '../core/property-values.js';
 import {STYLE_MAP} from '../core/canvas-engine.js';
 
 test('every declared type exposes its actual registry fields without certifying readiness',()=>{
@@ -50,17 +50,28 @@ test('root Inspector hides flex/grid item fields because its published wrapper i
 });
 test('Inspector value contracts expose the validator bounds and enumerations without inventing defaults',()=>{
  const byId=id=>getElementInspectorContract('text').fields.find(field=>field.id===id);
- assert.deepEqual(byId('typography.textAlign').valueContract,{kind:'enum',values:['left','center','right','justify'],tokens:[]});
- assert.deepEqual(byId('typography.fontSize').valueContract,{kind:'dimension',units:['px','rem','em','vw'],allowsZero:true,allowsAuto:false,negative:false,tokens:['typography.bodySize','typography.headingSize']});
- assert.deepEqual(byId('typography.lineHeight').valueContract,{kind:'number',min:0.5,max:5,tokens:['typography.lineHeight']});
- assert.deepEqual(byId('position.zIndex').valueContract,{kind:'number',min:-9999,max:9999,integer:true,tokens:[]});
+ assert.deepEqual(byId('typography.textAlign').valueContract,{kind:'enum',values:['left','center','right','justify'],tokens:[],required:true,trimmed:true});
+ assert.deepEqual(byId('typography.fontSize').valueContract,{kind:'dimension',units:['px','rem','em','vw'],allowsZero:true,allowsAuto:false,negative:false,tokens:['typography.bodySize','typography.headingSize'],required:true,trimmed:true});
+ assert.deepEqual(byId('typography.lineHeight').valueContract,{kind:'number',min:0.5,max:5,tokens:['typography.lineHeight'],required:true,trimmed:true});
+ assert.deepEqual(byId('position.zIndex').valueContract,{kind:'number',min:-9999,max:9999,integer:true,tokens:[],required:true,trimmed:true});
  const spacingTokens=['spacing.small','spacing.medium','spacing.large'];
- assert.deepEqual(byId('spacing.margin').valueContract,{kind:'box',maxParts:4,units:['px','%','vh','vw','rem','em'],allowsAuto:true,negativeMargin:true,negativePadding:false,tokens:spacingTokens});
- assert.deepEqual(byId('spacing.padding').valueContract,{kind:'box',maxParts:4,units:['px','%','vh','vw','rem','em'],allowsAuto:false,negativeMargin:false,negativePadding:false,tokens:spacingTokens});
+ assert.deepEqual(byId('spacing.margin').valueContract,{kind:'box',maxParts:4,units:['px','%','vh','vw','rem','em'],allowsAuto:true,negativeMargin:true,negativePadding:false,tokens:spacingTokens,required:true,trimmed:true});
+ assert.deepEqual(byId('spacing.padding').valueContract,{kind:'box',maxParts:4,units:['px','%','vh','vw','rem','em'],allowsAuto:false,negativeMargin:false,negativePadding:false,tokens:spacingTokens,required:true,trimmed:true});
  assert.deepEqual(byId('content.text').initialValue,{status:'NOT_DECLARED',source:{strategy:'node-props',keys:['text','content'],fallback:'node.name'}});
  assert.equal(Object.isFrozen(byId('typography.textAlign').valueContract.values),true);
  const nodeName=getElementInspectorContract('text').fields.find(field=>field.id==='advanced.nodeName');
  assert.equal(nodeName.command,'element.update');assert.equal(nodeName.key,'name');
+});
+test('every registered Inspector contract declares the shared required and trim rules enforced by normalization',()=>{
+ for(const property of listProperties()){
+  const contract=getInspectorValueContract(property);
+  assert.equal(contract.required,true,property.id);
+  assert.equal(contract.trimmed,true,property.id);
+  assert.throws(()=>normalizeInspectorValue(property,'   '),undefined,property.id);
+ }
+ assert.equal(normalizeInspectorValue(getProperty('typography.textAlign'),' center '),'center');
+ assert.equal(normalizeInspectorValue(getProperty('typography.fontSize'),' 24px '),'24px');
+ assert.equal(normalizeInspectorValue(getProperty('content.text'),' hello '),'hello');
 });
 test('unknown, inherited object keys and planned form types never advertise working controls',()=>{
  for(const type of [null,undefined,{},'constructor','toString','__proto__','unknown','form','input']){
