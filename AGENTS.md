@@ -18,6 +18,10 @@ Keep Save and Publish behavior separate. Do not claim a push, deployment, test p
 
 The developer agent's default is maximum responsible autonomy. Starting from the canonical plan and actual code state, work in large, logically connected blocks at senior engineering quality: plan, implement, test, repair, and document. Do not request unnecessary intermediate approval or stop after a partial task. Ask for intervention only when a genuine user decision, permission, or security approval is required. Every feature reported as complete must have verifiable evidence.
 
+At the start of every work session and each materially new work block, reread this complete `AGENTS.md`, the repository's canonical plan, and any directly applicable local instructions. Establish the actual repository, branch, worktree, and runtime/deployment state before acting. Keep these principles active throughout the work; do not rely on the user to restate them. Recheck the relevant principles when scope or risk changes, and use them when choosing, implementing, testing, releasing, and reporting work.
+
+For each task, actively look for relevant, proven open-source solutions and inspect their actual code and project fit before building equivalent functionality from scratch. Evaluate license compatibility, maintenance and security posture, API/architecture fit, accessibility, performance, and ongoing dependency cost. Reuse or adapt an existing solution when it meets the product and repository requirements; do not add it merely because it exists. Prefer already-approved, free, well-maintained options, avoid unnecessary dependencies, and discuss a material unavoidable cost before adopting it. Treat third-party code as input to review: verify its behavior and license, keep the integration narrow, and retain project-owned tests and security controls.
+
 This principle never overrides higher-priority safety, security, repository, release, or data-protection instructions. Preserve all existing work and follow the release workflow above.
 
 # Efficient and reliable execution
