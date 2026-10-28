@@ -60,5 +60,41 @@
     "cloudflare_build_triggered": false,
     "latest_cloudflare_build_commit_remains": "8b19ad57568c49b48160987a177ba8cb7f437926",
     "reason": "The verified Cloudflare trigger excludes docs/**."
+  },
+  "schema_contract_followup": {
+    "commit": "6b2eb281deb33f565200d942fe4dabf45f527c64",
+    "changes": [
+      "Require explicit key and boolean responsive scope for new descriptors.",
+      "Require responsive flag and responsive.set command to agree.",
+      "Validate unique non-empty select options, dimension units, appliesTo type filters, and option-label references.",
+      "Declare responsive:false for the three non-responsive static registry properties."
+    ],
+    "local_tests": {
+      "editor_unit": "PASS; 10/10 files",
+      "typecheck": "PASS",
+      "static_contract": "PASS; all 68 descriptors"
+    },
+    "production_preflight": {
+      "method": "SELECT-only D1 API",
+      "rows_read": 34,
+      "changed_db": false,
+      "rows_written": 0,
+      "migration_applied": false,
+      "r2_changed": false
+    },
+    "wrangler_dry_run": "PASS; 159 assets, 291.71 KiB (66.79 KiB gzip)",
+    "cloudflare_build_id": "4789246b-ed48-47f6-b8ff-600597bf83e0",
+    "cloudflare_build_outcome": "success",
+    "deployment_id": "f11e402c-4622-4e94-bc25-dfd7f78dffd7",
+    "worker_version_id": "64676f6e-bfc6-4c50-94aa-75ef093362a1",
+    "traffic_percent": 100,
+    "health_http": 200,
+    "db_health_http": 200,
+    "live_registry_asset_sha256": "dcd66aec9793a58ef97ae410a14768bd9bc3ace6ded79a841ee193defe32eeb8",
+    "local_registry_asset_sha256": "dcd66aec9793a58ef97ae410a14768bd9bc3ace6ded79a841ee193defe32eeb8",
+    "github_f0": "IN_PROGRESS when recorded",
+    "github_twitch": "IN_PROGRESS when recorded",
+    "github_editor_core": "IN_PROGRESS when recorded",
+    "local_chromium": "BLOCKED by Crashpad setsockopt sandbox restriction; remote workflow will provide browser regression result"
   }
 }

@@ -13,7 +13,7 @@
     "public/editor-v2/core/creator-embed.js": "56d01f520e94a34ca2ab9ba875f95410f9e0bd5ff9211014eb0711e7946c3506",
     "public/editor-v2/core/design-tokens.js": "ddeb5e60dec65453d4bbf19dda5aac43bc621a8a709f659b9d58c619a25e8c4c",
     "public/editor-v2/core/icon-options.js": "457e7721748b81e0c1b224375b4118c637113e941f3e53bd646b75be7699cd8e",
-    "public/editor-v2/core/property-registry.js": "5ebf37c0e0b50bcc8cffe5238089f2c788f9f8b49974d54c313235c171b25248",
+    "public/editor-v2/core/property-registry.js": "dcd66aec9793a58ef97ae410a14768bd9bc3ace6ded79a841ee193defe32eeb8",
     "public/editor-v2/core/property-values.js": "7258adc1ad21d85ae6f0299d80daaddc0316fc2f3184adadce2deacca4996314",
     "public/editor-v2/core/responsive.js": "2853b7b881485123cb56aa28ebe31f15a45deffff0025a67dce4ca2a28101f3c",
     "public/editor-v2/core/richtext-engine.js": "1306bb5b4277598242cb3518f3b9c227213f17ed184176388fd3dfc769c81113",
