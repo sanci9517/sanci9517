@@ -1,0 +1,48 @@
+{
+  "date": "2026-10-28",
+  "plan_cursor": "77.44.7.A — Canvas element insertion and order",
+  "status": "implemented locally; production release not yet verified",
+  "behavior": {
+    "selectedContainer": "Append the new element to that container.",
+    "selectedLeaf": "Insert the new element immediately after the selected sibling.",
+    "noSelection": "Append the new element to the page root.",
+    "command": "The exact insertion index is recorded and preserved by undo/redo.",
+    "canvas": "The Page Model child order is rendered in normal flow; the add verification checks the inserted node at the requested index.",
+    "savePublish": "Draft Save persists the same order and remains separate from Publish."
+  },
+  "acceptance": {
+    "unit": {
+      "command": "npm run test:editor",
+      "pass": 11,
+      "fail": 0
+    },
+    "chromium": {
+      "command": "node --test tests/browser/editor-element-insertion.test.js",
+      "pass": 1,
+      "fail": 0,
+      "covers": "Actual palette clicks, selected-sibling insertion, non-overlapping desktop and mobile Canvas flow, Save order, and unpublished state."
+    },
+    "typecheck": "PASS",
+    "migrationSafetyGate": "PASS",
+    "canonicalPlan": "PASS; all 13 master files present; full 77.44.7.A acceptance remains NOT_CERTIFIED.",
+    "activePointAudit": "PASS; cursor 77.44.7.A.",
+    "sourceTraceability": "PASS; 396 mappings.",
+    "syntaxAndDiffCheck": "PASS"
+  },
+  "openSourceReview": {
+    "project": "GrapesJS",
+    "file": "packages/core/src/dom_components/model/Components.ts",
+    "source": "https://github.com/GrapesJS/grapesjs/blob/dev/packages/core/src/dom_components/model/Components.ts",
+    "license": "BSD-3-Clause, checked in https://github.com/GrapesJS/grapesjs/blob/dev/LICENSE",
+    "decision": "Reviewed its collection-based component insertion architecture. No code was copied and no dependency was added: the existing Page Model has a native child index and is the smaller compatible implementation."
+  },
+  "production": {
+    "commit": null,
+    "githubChecks": "not yet verified",
+    "workerDeployment": "not yet verified",
+    "d1Migration": false,
+    "productionDataMutation": false,
+    "r2Mutation": false
+  },
+  "acceptanceBoundary": "The palette-to-Canvas and draft Save behavior is covered locally. Full plan acceptance, physical-device acceptance, GitHub release checks, and production deployment are not claimed by this evidence."
+}
