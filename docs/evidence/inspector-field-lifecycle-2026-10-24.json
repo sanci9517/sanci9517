@@ -180,6 +180,7 @@
         "file": "tests/browser/editor-inspector-lifecycle.test.js",
         "properties": [
           "animation.transition",
+          "background.color",
           "background.gradient",
           "background.position",
           "background.repeat",
@@ -213,6 +214,7 @@
           "radius.all",
           "radius.bottomLeft",
           "radius.bottomRight",
+          "radius.topLeft",
           "radius.topRight",
           "shadow.box",
           "size.aspectRatio",
@@ -220,16 +222,21 @@
           "size.maxHeight",
           "size.maxWidth",
           "size.minHeight",
+          "size.minWidth",
           "size.width",
           "spacing.margin",
+          "spacing.padding",
           "transform.rotate",
           "transform.scale",
           "typography.color",
           "typography.fontFamily",
+          "typography.fontSize",
           "typography.fontStyle",
           "typography.fontWeight",
           "typography.letterSpacing",
+          "typography.lineHeight",
           "typography.overflowWrap",
+          "typography.textAlign",
           "typography.textDecoration",
           "typography.textIndent",
           "typography.textShadow",
@@ -255,6 +262,28 @@
         ],
         "route": "Inspector name editing/composition at 390px and 1366px, Undo, draft Save/reload, Publish, and assertion that internal names are not public content."
       }
-    ]
+    ],
+    "coverage_audit_correction": {
+      "checked_on": "2026-10-28",
+      "finding": "The per-test mapping omitted seven fields even though the browser test file contains their full Inspector lifecycle assertions.",
+      "omitted_fields_corrected": [
+        "background.color",
+        "radius.topLeft",
+        "size.minWidth",
+        "spacing.padding",
+        "typography.fontSize",
+        "typography.lineHeight",
+        "typography.textAlign"
+      ],
+      "test_file": "tests/browser/editor-inspector-lifecycle.test.js",
+      "corrected_union_count": 68,
+      "stale_fields": [],
+      "runtime_behavior_changed": false,
+      "verification": {
+        "test": "tests/browser/editor-inspector-lifecycle.test.js",
+        "result": "PASS 1/1 on current runtime; 274819.9 ms",
+        "scope": "Inspector route, Canvas CSS, Undo/Redo, draft Save/reload, previous public snapshot, explicit Publish and public CSS for the corrected fields within the full lifecycle test."
+      }
+    }
   }
 }
