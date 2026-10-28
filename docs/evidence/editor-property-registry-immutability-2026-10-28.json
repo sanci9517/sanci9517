@@ -105,5 +105,47 @@
         "docs/**"
       ]
     }
+  },
+  "node_type_filter_followup": {
+    "commit": "5e98e897cdef7b0c4c35826890ad7d1b7d4e52fc",
+    "change": "Newly registered appliesTo filters are limited to canonical NODE_TYPES; static appliesTo fields are covered by regression assertions.",
+    "local_tests": {
+      "editor_unit": "PASS; 10/10 files",
+      "typecheck": "PASS",
+      "git_diff_check": "PASS"
+    },
+    "production_preflight": {
+      "method": "SELECT-only D1 API",
+      "rows_read": 34,
+      "changed_db": false,
+      "rows_written": 0,
+      "migration_applied": false,
+      "r2_changed": false
+    },
+    "wrangler_dry_run": "PASS; 159 assets, 291.81 KiB (66.84 KiB gzip)",
+    "cloudflare_build_id": "0fb358b5-68a9-463b-9d3a-0aaafcd06e3f",
+    "cloudflare_build_outcome": "success",
+    "deployment_id": "560f6984-02ac-45be-b672-839f1c6cc40b",
+    "worker_version_id": "68996276-2440-4bc7-84aa-b3852993cf0e",
+    "traffic_percent": 100,
+    "health_http": 200,
+    "db_health_http": 200,
+    "live_registry_asset_sha256": "b44c2380afea0f2a1c00b9d0ab408255f06d7396b07600b39ea2a236249fdde9",
+    "local_registry_asset_sha256": "b44c2380afea0f2a1c00b9d0ab408255f06d7396b07600b39ea2a236249fdde9",
+    "github_f0": {
+      "run_id": 40669156140,
+      "conclusion": "success"
+    },
+    "github_twitch": {
+      "run_id": 40669156159,
+      "conclusion": "success"
+    },
+    "github_editor_core": {
+      "run_id": 40669156048,
+      "conclusion": "success",
+      "successful_job_steps": 20,
+      "includes": "Editor browser layout, WEB-013 mobile browser, D1/R2 isolated tests"
+    },
+    "local_chromium": "BLOCKED by Crashpad setsockopt sandbox restriction; remote browser workflow passed"
   }
 }
