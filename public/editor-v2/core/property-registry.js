@@ -1,3 +1,5 @@
+import { NODE_TYPES } from './schema.js';
+
 /*
  * Sanci9517 Visual Editor v2 — Property Registry
  *
@@ -162,6 +164,7 @@ const groupMap = new Map(groups.map((group) => [group.id, Object.freeze({ ...gro
 
 const propertyControlTypes = new Set(['asset','box','color','dimension','font','number','select','shadow','text','url']);
 const propertyCommands = new Set(['content.properties.set','element.content.set','element.update','responsive.set']);
+const registeredNodeTypes = new Set(Object.values(NODE_TYPES));
 function freezeMetadata(value, path, ancestors = new WeakSet()) {
   if (value === null || ['string','number','boolean'].includes(typeof value)) return value;
   if (typeof value !== 'object') throw new TypeError(`${path} csak adatot tartalmazhat.`);
@@ -223,7 +226,7 @@ export function registerProperty(property) {
   if(property.type==='dimension'){
     if(!Array.isArray(property.units)||property.units.length===0||property.units.some(unit=>typeof unit!=='string'||!unit.trim())||new Set(property.units).size!==property.units.length)throw new Error('A dimension property egyedi, nem üres szöveges units listát igényel.');
   }else if(property.units!==undefined)throw new Error('A units csak dimension propertyhez használható.');
-  if(property.appliesTo!==undefined&&(!Array.isArray(property.appliesTo)||property.appliesTo.length===0||property.appliesTo.some(type=>typeof type!=='string'||!type.trim())||new Set(property.appliesTo).size!==property.appliesTo.length))throw new Error('Az appliesTo egyedi, nem üres típusnevek listája kell legyen.');
+  if(property.appliesTo!==undefined&&(!Array.isArray(property.appliesTo)||property.appliesTo.length===0||property.appliesTo.some(type=>typeof type!=='string'||!type.trim()||!registeredNodeTypes.has(type))||new Set(property.appliesTo).size!==property.appliesTo.length))throw new Error('Az appliesTo ismert, egyedi node típusok nem üres listája kell legyen.');
   if(property.help!==undefined&&typeof property.help!=='string')throw new Error('A property help csak szöveg lehet.');
   if(property.presets!==undefined&&(!Array.isArray(property.presets)||property.presets.some(preset=>!preset||typeof preset.label!=='string'||!preset.label.trim()||typeof preset.value!=='string')))throw new Error('A presets címke és érték párok listája kell legyen.');
   const normalized = freezeProperty(property);

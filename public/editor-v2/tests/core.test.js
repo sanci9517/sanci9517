@@ -211,6 +211,7 @@ test('property registry freezes nested metadata and validates newly registered c
   assert.throws(()=>registerProperty({id:'test.registry.foreign-label',group:'typography',label:'Teszt',type:'select',command:'element.update',key:'value',responsive:false,options:['one'],optionLabels:{other:'Más'}}),/optionLabels/);
   assert.throws(()=>registerProperty({id:'test.registry.invalid-dimension',group:'typography',label:'Teszt',type:'dimension',command:'element.update',key:'value',responsive:false,units:['px','px']}),/egyedi/);
   assert.throws(()=>registerProperty({id:'test.registry.invalid-applies-to',group:'typography',label:'Teszt',type:'text',command:'element.update',key:'name',responsive:false,appliesTo:['text','text']}),/appliesTo/);
+  assert.throws(()=>registerProperty({id:'test.registry.unknown-node-type',group:'typography',label:'Teszt',type:'text',command:'element.update',key:'name',responsive:false,appliesTo:['imaginary']}),/ismert/);
 });
 
 test('all static Inspector descriptors satisfy the same key, scope and value-metadata contract',()=>{
@@ -233,7 +234,10 @@ test('all static Inspector descriptors satisfy the same key, scope and value-met
       assert.ok(property.units?.length,`${property.id} units`);
       assert.equal(new Set(property.units).size,property.units.length,`${property.id} unique units`);
     }
-    if(property.appliesTo)assert.equal(new Set(property.appliesTo).size,property.appliesTo.length,`${property.id} unique type filters`);
+    if(property.appliesTo){
+      assert.equal(new Set(property.appliesTo).size,property.appliesTo.length,`${property.id} unique type filters`);
+      for(const nodeType of property.appliesTo)assert.ok(Object.values(NODE_TYPES).includes(nodeType),`${property.id} appliesTo registered node type`);
+    }
   }
 });
 
