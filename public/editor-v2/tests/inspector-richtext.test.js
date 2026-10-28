@@ -94,6 +94,16 @@ test('typed Inspector controls validate display values before the command path',
   assert.throws(()=>normalizeInspectorValue(getProperty('grid.column'),'999 / -1'));
 });
 
+test('asset Inspector values require the canonical UUID group shape',()=>{
+  const asset=getProperty('background.image');
+  const valid='6b1c2e65-e46e-4764-b234-123456789abc';
+  assert.equal(normalizeInspectorValue(asset,valid),valid);
+  assert.equal(normalizeInspectorValue(asset,'none'),'none');
+  assert.throws(()=>normalizeInspectorValue(asset,'-'.repeat(36)),/Érvénytelen Médiatár-azonosító/);
+  assert.throws(()=>normalizeInspectorValue(asset,'1'.repeat(36)),/Érvénytelen Médiatár-azonosító/);
+  assert.throws(()=>normalizeInspectorValue(asset,'6b1c2e65-e46e4764-b234-123456789abc'),/Érvénytelen Médiatár-azonosító/);
+});
+
 test('box spacing accepts CSS lengths and margin auto but rejects invalid padding and units',()=>{
   const margin=getProperty('spacing.margin'),padding=getProperty('spacing.padding');
   assert.equal(normalizeInspectorValue(margin,'0 auto'),'0 auto');

@@ -1,0 +1,32 @@
+{
+  "date": "2026-10-28",
+  "plan_cursor": "77.44.7.A",
+  "status": "LOCAL_VALIDATION_PASS_RELEASE_PENDING",
+  "scope": "Require canonical UUID group formatting for asset-valued Inspector properties.",
+  "contract": {
+    "accepted": ["8-4-4-4-12 hexadecimal UUID", "none"],
+    "rejected": ["36 hyphens", "36 digits without hyphens", "incorrect group lengths"]
+  },
+  "validation": {
+    "typecheck": "PASS; npm run typecheck",
+    "editor_unit": "PASS; npm run test:editor (10/10)",
+    "media_unit": "PASS; npm run test:media (5/5)",
+    "inspector_media_browser_lifecycle": "PASS; node tests/browser/editor-inspector-lifecycle.test.js (1/1, 207.3s; selection, responsive mobile/tablet asset route, undo/redo, draft Save/reload, separate Publish and public media URL)",
+    "migration_gate": "PASS; npm run test:web013:migration-gate",
+    "traceability": "PASS; python3 scripts/build-feature-traceability.py --check (396 mappings)",
+    "canonical_plan": "PASS; python3 scripts/check-canonical-plan.py",
+    "active_point": "PASS; python3 scripts/audit-active-plan-point.py",
+    "diff_check": "PASS; git diff --check",
+    "wrangler_dry_run": "PASS; Wrangler 4.130.0 read 159 assets, total upload 294.09 KiB",
+    "d1_read_only_preflight": "PASS; SELECT from d1_migrations returned 34 applied rows, rows_written=0, changed_db=false",
+    "production_or_database_changed": false,
+    "r2_changed": false
+  },
+  "base_commit": "6e3412b2c1c8624ccd7203c6f7d188237c7bc34b",
+  "release": {
+    "pushed": false,
+    "deployed": false,
+    "note": "Local changes are validated; remote release and exact production verification are pending."
+  },
+  "next_step": "Publish the verified fast-forward change through the configured release path, verify the exact Worker rollout and public source hash, then continue 77.44.7.A property lifecycle coverage. Full functional and physical-device acceptance remains open."
+}
