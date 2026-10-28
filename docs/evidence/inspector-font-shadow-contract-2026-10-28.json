@@ -34,7 +34,11 @@
     "active_point_audit": "https://github.com/sanci9517/sanci9517/actions/runs/40772638159",
     "editor_core": {
       "url": "https://github.com/sanci9517/sanci9517/actions/runs/40772638171",
-      "status_at_recording": "in_progress"
+      "conclusion": "success",
+      "editor_unit_tests": "147/147",
+      "editor_browser_tests": "88/88",
+      "web013_mobile_browser_tests": "2/2",
+      "media_api_tests": "43/43"
     }
   },
   "production": {
@@ -51,5 +55,5 @@
     "production_data_write": false,
     "r2_mutation_or_deletion": false
   },
-  "acceptance": "The specific validator/contract mismatch is fixed and released; the full 77.44.7.A remains OPEN / NOT CERTIFIED, and the GitHub Editor Core workflow was still running when this record was first written."
+  "acceptance": "The specific validator/contract mismatch is fixed and released; the full 77.44.7.A remains OPEN / NOT CERTIFIED."
 }
