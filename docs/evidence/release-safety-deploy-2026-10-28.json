@@ -1,0 +1,117 @@
+{
+  "date": "2026-10-28",
+  "scope": "Authorized Cloudflare Worker Build safety configuration, verified push, deployment, production smoke, and release evidence.",
+  "repository": {
+    "branch": "v2/foundation",
+    "previous_remote_head": "65ecf783",
+    "pushed_commit": "fdc5b955cd1d452b1edc1cb3d913f3dfb550d1c9",
+    "push": "fast-forward; verified",
+    "github_combined_statuses": [],
+    "github_actions": [
+      {
+        "workflow": "F0 baseline checks",
+        "run_id": 40657191897,
+        "conclusion": "success"
+      },
+      {
+        "workflow": "Twitch Integration Check",
+        "run_id": 40657191789,
+        "conclusion": "success"
+      },
+      {
+        "workflow": "Canonical Creator Platform Plan",
+        "run_id": 40657191883,
+        "conclusion": "success"
+      },
+      {
+        "workflow": "Canonical Plan Active Point Audit",
+        "run_id": 40657191915,
+        "conclusion": "success"
+      },
+      {
+        "workflow": "Editor Core Test",
+        "run_id": 40657191892,
+        "conclusion": "in_progress_at_check"
+      }
+    ],
+    "remote_branch_head_after_runtime_release": "fdc5b955cd1d452b1edc1cb3d913f3dfb550d1c9 (verified by GitHub Branches API)"
+  },
+  "cloudflare_build_configuration": {
+    "worker": "sanci9517-streamer-brand",
+    "build_id": "bd8d62ed-3b80-49d5-adc6-fb5d36e6b571",
+    "before": {
+      "deploy_command": "npm run deploy",
+      "path_excludes": []
+    },
+    "after": {
+      "deploy_command": "npm run deploy:safe",
+      "path_excludes": [
+        "docs/**"
+      ],
+      "build_command": "npm run typecheck",
+      "production_branch": "v2/foundation",
+      "auto_build": true
+    },
+    "mutation": "explicitly authorized and applied",
+    "post_change_get_verification": "PASS"
+  },
+  "local_checks": {
+    "typecheck": "PASS",
+    "migration_safety_gate": "PASS",
+    "wrangler_dry_run": "PASS; 159 assets, 287.10 KiB (65.78 KiB gzip); no deployment from dry-run",
+    "editor_unit": "PASS; 10/10 files",
+    "editor_layout_full_suite": "PASS; 87/87 before the final nested-reset test extension",
+    "editor_layout_nested_reset_target": "PASS; 1/1 after final extension",
+    "canonical_plan_traceability": "PASS; 396 mappings before this documentation-only evidence update",
+    "canonical_plan_and_active_point_audits": "PASS before this documentation-only evidence update"
+  },
+  "production_d1_select_audit": {
+    "method": "SELECT-only Cloudflare D1 query API",
+    "ledger_rows": 34,
+    "query_metadata": {
+      "changed_db": false,
+      "rows_written": 0
+    },
+    "migration_applied": false,
+    "r2_changed": false
+  },
+  "deployment": {
+    "cloudflare_build_outcome": "success",
+    "deployment_id": "34eb2582-0acb-4dc3-9149-f771c74ad5b6",
+    "worker_version_id": "a7001852-1505-4c89-959c-a9c3850e83a4",
+    "traffic_percent": 100,
+    "created_at": "2026-10-28T08:30:15Z",
+    "source_commit": "fdc5b955cd1d452b1edc1cb3d913f3dfb550d1c9"
+  },
+  "production_smoke": {
+    "health": {
+      "http_status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "db_health": {
+      "http_status": 200,
+      "body": {
+        "ok": true,
+        "service": "d1",
+        "database": "sanci9517-db",
+        "connected": true
+      }
+    },
+    "live_asset_sha256_matches_local": {
+      "public/assets/page-renderer.js": "3e5616ca4518b7722c3eee2b23fa7dadd0975aafc3e5433e527a52c38f71c012",
+      "public/visual-page.html": "efb16b4fe43045f42e606348f8e4733e7ac7d1bd8f4de07aec32755c90afefe6"
+    }
+  },
+  "runtime_source_changed_by_release_commit": false,
+  "plan_limitations": {
+    "active_cursor": "77.44.7.A",
+    "status": "OPEN / NOT CERTIFIED",
+    "full_editor_acceptance": "incomplete",
+    "physical_device_acceptance": "not performed"
+  }
+}
