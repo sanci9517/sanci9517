@@ -75,6 +75,15 @@
       "traffic_percent": 100,
       "runtime_asset_hash": "not independently fetched; direct public HTTP requests from this environment returned 403"
     },
+    "production_d1_ledger_check": {
+      "method": "Cloudflare D1 query API, SELECT-only, performed immediately after the automatic deployment",
+      "rows": 34,
+      "max_id": 34,
+      "latest_applied_at": "2026-10-23 10:32:50",
+      "changed_db": false,
+      "rows_written": 0,
+      "release_process_deviation": "The automatic deployment began immediately after push, before this D1 check. This is post-deployment verification, not a preflight."
+    },
     "data_changes": "No D1 migration, D1 write, or R2 operation."
   }
 }
