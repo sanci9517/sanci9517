@@ -1,7 +1,7 @@
 {
   "date": "2026-10-28",
   "plan_cursor": "77.44.7.A — Canvas element insertion and order",
-  "status": "implemented locally; production release not yet verified",
+  "status": "runtime deployed to 100% production traffic; GitHub Editor Core and follow-up checks passed",
   "behavior": {
     "selectedContainer": "Append the new element to that container.",
     "selectedLeaf": "Insert the new element immediately after the selected sibling.",
@@ -27,7 +27,17 @@
     "canonicalPlan": "PASS; all 13 master files present; full 77.44.7.A acceptance remains NOT_CERTIFIED.",
     "activePointAudit": "PASS; cursor 77.44.7.A.",
     "sourceTraceability": "PASS; 396 mappings.",
-    "syntaxAndDiffCheck": "PASS"
+    "syntaxAndDiffCheck": "PASS",
+    "accessibilityTestFollowup": {
+      "cause": "The full first Editor Core run had 87/88 browser tests pass; editor-accessibility-ime.test.js read aria-invalid synchronously after input at 390px and observed the transient pre-validation state. The new element insertion test passed in that same run.",
+      "fix": "Wait for the live aria-invalid state before asserting it; product validation behavior is unchanged.",
+      "local": "node --test tests/browser/editor-accessibility-ime.test.js — PASS 2/2 desktop/mobile.",
+      "commit": "6c3d1c60d00a7269ce272c9982cfff4d861e0c18",
+      "githubRun": "https://github.com/sanci9517/sanci9517/actions/runs/40764040318",
+      "status": "PASS; Editor Core workflow completed successfully after the retry, with 88/88 Editor browser tests and WEB-013 mobile browser regression.",
+      "editorCoreRun": 40764040318,
+      "editorCoreUrl": "https://github.com/sanci9517/sanci9517/actions/runs/40764040318"
+    }
   },
   "openSourceReview": {
     "project": "GrapesJS",
@@ -37,12 +47,49 @@
     "decision": "Reviewed its collection-based component insertion architecture. No code was copied and no dependency was added: the existing Page Model has a native child index and is the smaller compatible implementation."
   },
   "production": {
-    "commit": null,
-    "githubChecks": "not yet verified",
-    "workerDeployment": "not yet verified",
+    "branch": "v2/foundation",
+    "commit": "182d003de2d314e79cd5f6a3c4ae84482ebb65b8",
+    "githubPush": "fast-forward from a4d71602; follow-up test-only commit 6c3d1c60 is also pushed",
+    "workerBuild": {
+      "id": "3badded3-1cf3-4526-a402-d68e133d1676",
+      "status": "success",
+      "checkRun": "https://github.com/sanci9517/sanci9517/runs/123075965761"
+    },
+    "deployment": {
+      "id": "3d40a4b8-ee9a-488c-8d0d-d97957c9cf31",
+      "version": "5b9ff453-6abd-4dfe-a125-e0e74cb7af8c",
+      "traffic": "100%",
+      "status": "verified by wrangler deployments status"
+    },
+    "wranglerDryRun": "PASS; 161 assets, 294.24 KiB total / 67.33 KiB gzip.",
+    "d1Preflight": {
+      "sql": "SELECT name FROM d1_migrations ORDER BY name",
+      "rowsRead": 34,
+      "rowsWritten": 0,
+      "changedDb": false
+    },
+    "productionSmoke": "Health and public asset requests returned HTTP 403 from the environment proxy; production health and asset hash equality remain unverified.",
     "d1Migration": false,
     "productionDataMutation": false,
     "r2Mutation": false
   },
-  "acceptanceBoundary": "The palette-to-Canvas and draft Save behavior is covered locally. Full plan acceptance, physical-device acceptance, GitHub release checks, and production deployment are not claimed by this evidence."
+  "acceptanceBoundary": "The palette-to-Canvas, non-overlap, draft Save, Undo/Redo and desktop/mobile Canvas behavior is locally and in GitHub CI verified. Runtime deployment is confirmed at 100%. Direct public HTTP health/asset hash smoke remains unverified because the environment proxy returned 403. Full 77.44.7.A acceptance and physical-device acceptance remain NOT_CERTIFIED.",
+  "githubChecks": {
+    "firstRuntimeCommit": {
+      "editorCoreRun": 40761875344,
+      "result": "failure: 87/88 browser tests passed; the unrelated accessibility IME 390px assertion failed. New insertion browser test passed."
+    },
+    "followupTestOnlyCommit": {
+      "commit": "6c3d1c60d00a7269ce272c9982cfff4d861e0c18",
+      "verify": "success",
+      "twitch": "success",
+      "editorCoreRun": {
+        "id": 40764040318,
+        "status": "success",
+        "editorBrowserTests": "88/88 pass",
+        "web013MobileBrowser": "success"
+      },
+      "cloudflareBuild": "not triggered; test-only paths are excluded from the production Worker build"
+    }
+  }
 }
