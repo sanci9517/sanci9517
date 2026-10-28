@@ -1,0 +1,75 @@
+{
+  "scope": "77.44.7.A Inspector numeric value contract to native input parity",
+  "website": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/",
+  "commit": "9f18c358",
+  "runtime_changes": [
+    "Numeric input min, max, and step are derived from getInspectorValueContract.",
+    "The shared number contract now declares step for opacity, line-height, scale, and integer z-index; flex grow/shrink accept fractional values.",
+    "The editor module import cache-buster was updated for the changed property-controls module.",
+    "Signed numeric controls use the decimal mobile keyboard so negative z-index values remain enterable."
+  ],
+  "acceptance_cases": {
+    "typography.lineHeight": {"min": 0.5, "max": 5, "step": 0.1},
+    "transform.scale": {"min": 0.1, "max": 4, "step": 0.1},
+    "flex.grow": {"min": 0, "max": 100, "step": "any", "fractional_value": 1.5},
+    "position.zIndex": {"min": -9999, "max": 9999, "step": 1, "integer": true}
+  },
+  "local_checks": {
+    "editor_unit_files": "11/11 PASS",
+    "inspector_lifecycle_chromium": "1/1 PASS",
+    "typecheck": "PASS",
+    "js_syntax": "PASS",
+    "canonical_plan": "PASS",
+    "active_point_audit": "PASS; functional acceptance remains NOT_CERTIFIED",
+    "traceability": "PASS; 396 source mappings",
+    "migration_safety_gate": "PASS",
+    "diff_check": "PASS"
+  },
+  "release_preflight": {
+    "d1_query": "SELECT name FROM d1_migrations ORDER BY name",
+    "d1_rows_read": 34,
+    "d1_changed_db": false,
+    "d1_rows_written": 0,
+    "wrangler_dry_run": "PASS; 161 public assets"
+  },
+  "github": {
+    "cloudflare_build": {
+      "id": "511c099e-f2d5-47c8-8778-1445e1c34be4",
+      "conclusion": "success"
+    },
+    "canonical_plan": "https://github.com/sanci9517/sanci9517/actions/runs/40776423195",
+    "verify": "https://github.com/sanci9517/sanci9517/actions/runs/40776423493",
+    "source_audit": "https://github.com/sanci9517/sanci9517/actions/runs/40776423367",
+    "twitch_integration": "https://github.com/sanci9517/sanci9517/actions/runs/40776423285",
+    "editor_core": {
+      "url": "https://github.com/sanci9517/sanci9517/actions/runs/40776423211",
+      "status_at_recording": "in_progress"
+    }
+  },
+  "production": {
+    "deployment_id": "67e02fab-bc81-4912-a7f7-b0d477f0bc7d",
+    "worker_version_id": "df78d580-d681-4fad-a448-2e6337ec0842",
+    "traffic_percentage": 100,
+    "api_health_http": 200,
+    "assets": {
+      "/editor-v2/app.js": {
+        "local_sha256": "bc7926ac2255950b0dfa3f671abad3db9792348b24bf9d772825dbb83b2d6049",
+        "live_sha256": "bc7926ac2255950b0dfa3f671abad3db9792348b24bf9d772825dbb83b2d6049"
+      },
+      "/editor-v2/core/property-values.js": {
+        "local_sha256": "7d99917734af9996f068dfb126963a279aa566b074ad9930db23d804030d8571",
+        "live_sha256": "7d99917734af9996f068dfb126963a279aa566b074ad9930db23d804030d8571"
+      },
+      "/editor-v2/ui/property-controls.js": {
+        "local_sha256": "52cfe72c909e65b561ee1a00c5b1f104b7c1e22fb7da1d494797e4e434ed919c",
+        "live_sha256": "52cfe72c909e65b561ee1a00c5b1f104b7c1e22fb7da1d494797e4e434ed919c"
+      }
+    }
+  },
+  "data_safety": {
+    "d1_migration": false,
+    "production_data_write": false,
+    "r2_mutation_or_deletion": false
+  },
+  "acceptance": "Numeric Inspector controls match the declared field contracts and are released. The full 77.44.7.A remains OPEN / NOT CERTIFIED; Editor Core workflow was still in progress when recorded."
+}
