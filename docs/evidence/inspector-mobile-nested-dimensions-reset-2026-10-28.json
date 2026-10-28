@@ -1,0 +1,29 @@
+{
+  "date": "2026-10-28",
+  "plan_cursor": "77.44.7.A",
+  "status": "LOCAL_BROWSER_REGRESSION_PASS",
+  "scope": "Nested mobile Inspector dimensions: Canvas, draft save/reload, publish, inheritance reset, Undo/Redo, and desktop isolation.",
+  "node_type": "text nested inside section",
+  "responsive_keys": ["width", "height", "minWidth", "maxWidth", "minHeight"],
+  "checks": [
+    "Inspector exposes responsive.set and the exact Page Model key for each dimension.",
+    "All five mobile overrides render in Canvas and are stored under the selected node's responsive.mobile model.",
+    "Editor reload restores the five dimension controls from the saved draft.",
+    "Draft Save leaves the published page unchanged; explicit Publish applies the mobile dimensions to the public renderer.",
+    "Each field's inheritance reset removes only its mobile override; Undo and Redo restore and reapply all five values.",
+    "Saving the reset draft leaves published mobile output unchanged until Publish, and published reset preserves desktop output."
+  ],
+  "validation": {
+    "chromium_targeted": "PASS; node --test tests/browser/editor-inspector-breakpoint-lifecycle.test.js (1/1, 68.4s).",
+    "editor_browser_suite": "PASS; npm run test:editor:layout (87/87, 1349.6s).",
+    "editor_unit": "PASS; npm run test:editor (10/10 test files).",
+    "typecheck": "PASS; npm run typecheck.",
+    "plan_and_traceability": "PASS; canonical plan, active point audit, and 396-entry feature traceability checks.",
+    "product_runtime_changed": false,
+    "production_database_or_r2_changed": false,
+    "physical_device_acceptance": "NOT PERFORMED"
+  },
+  "base_commit": "e40bfbdb8dff8b2624db445f4b680d33b778c062",
+  "release": {"pushed": false, "deployed": false},
+  "next_step": "Continue remaining 77.44.7.A Inspector field and responsive renderer acceptance; full Editor and physical-device acceptance remain open."
+}

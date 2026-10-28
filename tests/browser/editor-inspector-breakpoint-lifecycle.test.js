@@ -767,5 +767,61 @@ test('Inspector color keeps independent desktop/tablet/mobile values through dra
   assert.notEqual(await nestedLive().evaluate(el=>getComputedStyle(el).position),'absolute','nested inheritance reset reaches public output after explicit Publish');
   await activate('desktop',1366);await reloadPublic();
   assert.notEqual(await nestedLive().evaluate(el=>getComputedStyle(el).position),'absolute','nested mobile reset preserves desktop public layout');
+  // The nested fallback has a distinct selector from direct canvas children.
+  // Verify its responsive size variables and dimensional constraints survive
+  // the full draft/reload/publish boundary as well.
+  await activate('mobile',390);await editor.locator('.inspector-tabs button').first().click();
+  const nestedGeometry=editor.locator('.inspector-group-title').filter({hasText:'Geometria'});if(await nestedGeometry.getAttribute('aria-expanded')==='false')await nestedGeometry.click();
+  const nestedSize=editor.locator('.inspector-group-title').filter({hasText:'Méret'});if(await nestedSize.getAttribute('aria-expanded')==='false')await nestedSize.click();
+  const setNestedDimension=async(key,value)=>{
+    const field=editor.locator(`[data-property-id="size.${key}"]`);
+    assert.equal(await field.getAttribute('data-property-command'),'responsive.set',`nested ${key} command route`);
+    assert.equal(await field.getAttribute('data-property-key'),key,`nested ${key} Page Model route`);
+    const unit=field.locator('.dimension-controls select:not(.property-token-picker)');
+    await unit.selectOption('px');
+    const input=field.locator('.dimension-controls input[type="number"]');
+    await input.fill(String(value));await input.press('Tab');
+  };
+  await setNestedDimension('width',220);
+  await setNestedDimension('height',96);
+  await setNestedDimension('minWidth',140);
+  await setNestedDimension('maxWidth',260);
+  await setNestedDimension('minHeight',72);
+  const nestedDimensions=target=>target().evaluate(el=>{const css=getComputedStyle(el);return {width:css.width,height:css.height,minWidth:css.minWidth,maxWidth:css.maxWidth,minHeight:css.minHeight}});
+  const editedNestedDimensions={width:'220px',height:'96px',minWidth:'140px',maxWidth:'260px',minHeight:'72px'};
+  assert.deepEqual(await nestedDimensions(nestedCanvas),editedNestedDimensions,'nested mobile dimensional Inspector edits reach Canvas');
+  assert.notDeepEqual(await nestedDimensions(nestedLive),editedNestedDimensions,'nested mobile dimensions remain unpublished before Save');
+  await save(false);assert.equal(posts.at(-1).publish,false,'nested mobile dimensions Save remains draft-only');
+  const nestedMobileModel=posts.at(-1).document.pages[pageId].nodes[nestedNodeId].responsive.mobile;
+  for(const [key,value] of Object.entries({width:'220px',height:'96px',minWidth:'140px',maxWidth:'260px',minHeight:'72px'}))assert.equal(nestedMobileModel[key],value,`nested ${key} is stored in the mobile Page Model`);
+  await editor.reload({waitUntil:'domcontentloaded'});await nestedCanvas().evaluate(el=>el.click());await activate('mobile',390);
+  const reloadedNestedGeometry=editor.locator('.inspector-group-title').filter({hasText:'Geometria'});if(await reloadedNestedGeometry.getAttribute('aria-expanded')==='false')await reloadedNestedGeometry.click();
+  const reloadedNestedSize=editor.locator('.inspector-group-title').filter({hasText:'Méret'});if(await reloadedNestedSize.getAttribute('aria-expanded')==='false')await reloadedNestedSize.click();
+  for(const [key,value] of Object.entries({width:'220',height:'96',minWidth:'140',maxWidth:'260',minHeight:'72'}))assert.equal(await editor.locator(`[data-property-id="size.${key}"] .dimension-controls input[type="number"]`).inputValue(),value,`nested ${key} survives Editor reload`);
+  await save(true);assert.equal(posts.at(-1).publish,true,'nested mobile dimensions require explicit Publish');await reloadPublic();
+  assert.deepEqual(await nestedDimensions(nestedLive),editedNestedDimensions,'nested mobile dimensions reach the published renderer');
+  await activate('desktop',1366);await reloadPublic();
+  assert.notDeepEqual(await nestedDimensions(nestedLive),editedNestedDimensions,'nested mobile dimensions do not replace desktop public output');
+  await activate('mobile',390);await editor.locator('.inspector-tabs button').first().click();
+  const resetNestedGeometry=editor.locator('.inspector-group-title').filter({hasText:'Geometria'});if(await resetNestedGeometry.getAttribute('aria-expanded')==='false')await resetNestedGeometry.click();
+  const resetNestedSize=editor.locator('.inspector-group-title').filter({hasText:'Méret'});if(await resetNestedSize.getAttribute('aria-expanded')==='false')await resetNestedSize.click();
+  const nestedResetters=[];
+  for(const key of ['width','height','minWidth','maxWidth','minHeight']){
+    const reset=editor.locator(`.property-reset[data-property-key="${key}"]`);
+    assert.equal(await reset.count(),1,`nested mobile ${key} exposes its inheritance reset`);nestedResetters.push(reset);
+  }
+  for(const reset of nestedResetters)await reset.click();
+  assert.notDeepEqual(await nestedDimensions(nestedCanvas),editedNestedDimensions,'nested mobile dimension reset restores inherited values');
+  assert.deepEqual(await nestedDimensions(nestedLive),editedNestedDimensions,'nested mobile reset remains unpublished');
+  for(let index=0;index<nestedResetters.length;index++)await editor.locator('#undo').click();
+  assert.deepEqual(await nestedDimensions(nestedCanvas),editedNestedDimensions,'nested Undo restores all five mobile dimensions');
+  for(let index=0;index<nestedResetters.length;index++)await editor.locator('#redo').click();
+  assert.notDeepEqual(await nestedDimensions(nestedCanvas),editedNestedDimensions,'nested Redo restores inherited dimensions');
+  await save(false);await reloadPublic();
+  assert.deepEqual(await nestedDimensions(nestedLive),editedNestedDimensions,'nested draft reset leaves published mobile dimensions unchanged');
+  await save(true);await reloadPublic();
+  assert.notDeepEqual(await nestedDimensions(nestedLive),editedNestedDimensions,'nested mobile reset reaches public output after explicit Publish');
+  await activate('desktop',1366);await reloadPublic();
+  assert.notDeepEqual(await nestedDimensions(nestedLive),editedNestedDimensions,'nested mobile reset preserves desktop dimensions');
   assert.deepEqual(errors,[]);
 });
