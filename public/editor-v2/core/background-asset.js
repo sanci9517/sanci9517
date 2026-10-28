@@ -1,6 +1,6 @@
 import {GRADIENTS} from './state-styles.js';
 
-export const MEDIA_ASSET_ID = /^[0-9a-f-]{36}$/i;
+export const MEDIA_ASSET_ID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 export function backgroundImageValue(values, {editor=false}={}) {
   const layers=[];

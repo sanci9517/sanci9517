@@ -37,5 +37,24 @@
     "traffic_percentage": 100,
     "note": "Cloudflare build and exact commit rollout verified; public HTTP smoke and live asset hash remain unverified because egress is blocked."
   },
-  "next_step": "Finish GitHub Editor Core CI; repeat public HTTP and live asset hash verification when outbound HTTP is available; continue 77.44.7.A property lifecycle coverage. Full functional and physical-device acceptance remains open."
+  "next_step": "Finish GitHub Editor Core CI; repeat public HTTP and live asset hash verification when outbound HTTP is available; continue 77.44.7.A property lifecycle coverage. Full functional and physical-device acceptance remains open.",
+  "follow_up": {
+    "scope": "Make Inspector validation, Canvas rendering, and style snapshots share the RFC UUID version/variant contract for background media IDs.",
+    "accepted_shape": "8-4-[version 1-8]-[variant 8/9/a/b]-12 hexadecimal groups; generated media IDs use UUIDv4.",
+    "validation": {
+      "typecheck": "PASS; npm run typecheck",
+      "editor_unit": "PASS; npm run test:editor (10/10)",
+      "inspector_media_browser_lifecycle": "PASS; node tests/browser/editor-inspector-lifecycle.test.js (1/1, 219.1s)",
+      "media_unit": "PASS; npm run test:media (5/5)",
+      "migration_gate": "PASS; npm run test:web013:migration-gate",
+      "traceability": "PASS; 396 source mappings current",
+      "canonical_plan": "PASS; python3 scripts/check-canonical-plan.py and scripts/audit-active-plan-point.py",
+      "wrangler_dry_run": "PASS; 159 assets, 294.17 KiB",
+      "d1_read_only_preflight": "PASS; 34 applied rows, rows_written=0, changed_db=false",
+      "production_or_database_changed": false,
+      "r2_changed": false
+    },
+    "release": {"pushed": false, "deployed": false},
+    "next_step": "Commit and fast-forward the tested RFC UUID parity fix to v2/foundation; verify the migration-free Cloudflare build and 100% rollout, then continue 77.44.7.A."
+  }
 }

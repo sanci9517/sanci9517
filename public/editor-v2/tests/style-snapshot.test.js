@@ -5,6 +5,7 @@ import { createDocument } from '../core/schema.js';
 import { activePage, createEditorState } from '../core/state.js';
 import { execute } from '../core/commands.js';
 import { applyStyleSnapshot, captureStyleSnapshot } from '../core/style-snapshot.js';
+import {backgroundImageValue} from '../core/background-asset.js';
 
 test('appearance snapshots copy responsive visual styles without copying content or geometry', () => {
   const source = {
@@ -74,4 +75,13 @@ test('style snapshot command is one undoable edit and preserves the destination 
     type: 'style.snapshot.apply', payload: { nodeId: targetId, snapshot: { version: 999 } }
   }), /stílusmásolat/i);
   assert.deepEqual(state.document, stableDocument, 'invalid clipboard data cannot partially change the document');
+});
+
+test('background rendering and style snapshots reject non-RFC media UUIDs',()=>{
+  for(const backgroundAssetId of ['-'.repeat(36),'1'.repeat(36),'6b1c2e65-e46e-0764-b234-123456789abc','6b1c2e65-e46e-4764-0234-123456789abc']){
+    assert.equal(backgroundImageValue({backgroundAssetId}), 'none');
+    const snapshot=captureStyleSnapshot({id:'source',style:{backgroundAssetId},responsive:{desktop:{backgroundAssetId}}});
+    assert.deepEqual(snapshot.style,{});
+    assert.deepEqual(snapshot.responsive.desktop,{});
+  }
 });

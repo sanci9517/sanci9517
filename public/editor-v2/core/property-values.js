@@ -1,5 +1,6 @@
 import { validatedLinkHref } from './richtext-links.js';
 import {parseTokenReference,compatibleTokens} from './design-tokens.js';
+import {MEDIA_ASSET_ID} from './background-asset.js';
 /*
  * Typed Inspector value validation. This module deliberately covers only the
  * controls the current Canvas/Renderer property map can actually consume.
@@ -7,7 +8,6 @@ import {parseTokenReference,compatibleTokens} from './design-tokens.js';
  */
 const lengthToken = /^(?:-?(?:\d+(?:\.\d+)?|\.\d+)(?:px|%|vh|vw|rem|em)|0|auto)$/i;
 const boxLengthToken = /^-?(?:\d+(?:\.\d+)?|\.\d+)(?:px|%|vh|vw|rem|em)$/i;
-const uuidToken = /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i;
 const hexColor = /^#[\da-f]{3}(?:[\da-f]{3})?(?:[\da-f]{2})?$/i;
 const unitToken = /^(?:auto|0|px|%|vw|vh|rem|em)$/i;
 export const INSPECTOR_FONTS = Object.freeze(['inherit','system-ui','Arial','Georgia','Verdana','monospace','sans-serif','serif']);
@@ -48,7 +48,7 @@ export function normalizeInspectorValue(property, input) {
   if(token){if(!compatibleTokens(property).includes(token))throw new Error('Ez a közös stílus nem használható ebben a mezőben.');return value}
   if(type==='asset'){
     if(value==='none')return value;
-    if(!uuidToken.test(value))throw new Error('Érvénytelen Médiatár-azonosító.');
+    if(!MEDIA_ASSET_ID.test(value))throw new Error('Érvénytelen Médiatár-azonosító.');
     return value;
   }
   if (!value) throw new Error('Az üres érték helyett használd az Öröklés visszaállítása gombot.');
