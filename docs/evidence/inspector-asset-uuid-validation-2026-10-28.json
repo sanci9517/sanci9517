@@ -18,15 +18,24 @@
     "active_point": "PASS; python3 scripts/audit-active-plan-point.py",
     "diff_check": "PASS; git diff --check",
     "wrangler_dry_run": "PASS; Wrangler 4.130.0 read 159 assets, total upload 294.09 KiB",
+    "cloudflare_build": "PASS; build 174694b4-31f8-4d02-a1e6-649b20f22cbd from exact commit b33bbca4d07979c4118b4341ef37d62c3241c1d5; deploy:safe migration gate passed; uploaded property-values.js and inspector-richtext.test.js; no migration apply command ran",
     "d1_read_only_preflight": "PASS; SELECT from d1_migrations returned 34 applied rows, rows_written=0, changed_db=false",
+    "github_ci": "4/5 workflows PASS: F0 40729516914, Active Point 40729516922, Twitch 40729516926, Canonical Plan 40729517201. Editor Core 40729517089 browser regression was still running at evidence update.",
+    "production_http_smoke": "BLOCKED; shell HTTP connections are refused by the managed network and web fetch cannot access workers.dev; no health response or live asset hash claimed",
+    "local_asset_sha256": "public/editor-v2/core/property-values.js: 99a5fc3ac6db3151e2287e1a445a440b4a22b7898529d8dce2b9dbd06d480734",
     "production_or_database_changed": false,
     "r2_changed": false
   },
   "base_commit": "6e3412b2c1c8624ccd7203c6f7d188237c7bc34b",
   "release": {
-    "pushed": false,
-    "deployed": false,
-    "note": "Local changes are validated; remote release and exact production verification are pending."
+    "pushed": true,
+    "branch": "v2/foundation",
+    "commit": "b33bbca4d07979c4118b4341ef37d62c3241c1d5",
+    "deployed": true,
+    "deployment_id": "1d58d261-7714-402b-a60a-aae4e6a6d056",
+    "worker_version": "1da998fe-bf48-4973-ac83-092a35d0b075",
+    "traffic_percentage": 100,
+    "note": "Cloudflare build and exact commit rollout verified; public HTTP smoke and live asset hash remain unverified because egress is blocked."
   },
-  "next_step": "Publish the verified fast-forward change through the configured release path, verify the exact Worker rollout and public source hash, then continue 77.44.7.A property lifecycle coverage. Full functional and physical-device acceptance remains open."
+  "next_step": "Finish GitHub Editor Core CI; repeat public HTTP and live asset hash verification when outbound HTTP is available; continue 77.44.7.A property lifecycle coverage. Full functional and physical-device acceptance remains open."
 }
