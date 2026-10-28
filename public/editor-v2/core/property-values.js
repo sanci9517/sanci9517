@@ -32,7 +32,7 @@ export function getInspectorValueContract(property) {
   else if(type==='dimension') contract=property.key==='rotate'
     ? {kind:'dimension',units:Object.freeze(['deg']),min:-360,max:360}
     : {kind:'dimension',units:Object.freeze([...(property.units||[])]),allowsZero:true,allowsAuto:Boolean(property.units?.includes('auto')),negative:['x','y','letterSpacing','wordSpacing','textIndent'].includes(property.key)};
-  else if(type==='box') contract={kind:'box',maxParts:4,units:Object.freeze(['px','%','vh','vw','rem','em']),negativeMargin:property.key==='margin',negativePadding:false};
+  else if(type==='box') contract={kind:'box',maxParts:4,units:Object.freeze(['px','%','vh','vw','rem','em']),allowsAuto:property.key==='margin',negativeMargin:property.key==='margin',negativePadding:false};
   else if(type==='asset') contract={kind:'asset-id',format:'uuid',allowsNone:true};
   else if(type==='color') contract={kind:'color',formats:Object.freeze(['hex','transparent'])};
   else if(type==='url') contract={kind:'url',policy:'validatedLinkHref'};

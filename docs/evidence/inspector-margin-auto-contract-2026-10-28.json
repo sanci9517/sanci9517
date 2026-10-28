@@ -1,0 +1,21 @@
+{
+  "date": "2026-10-28",
+  "workItem": "77.44.7.A — Margin auto value contract",
+  "finding": "The four-sided margin control and its normalizer accept auto, but the advertised Inspector box contract did not expose that capability. Padding correctly rejects auto.",
+  "change": "Box value contracts now declare allowsAuto=true for margin and false for padding, alongside the existing normalizer behavior.",
+  "tests": {
+    "typecheck": "PASS",
+    "editor": {"pass": 10, "fail": 0},
+    "canonicalPlan": "PASS",
+    "activePointAudit": "PASS",
+    "traceability": {"pass": 396, "acceptance": "NOT_CERTIFIED"},
+    "migrationSafetyGate": "PASS",
+    "gitDiffCheck": "PASS"
+  },
+  "deploymentPreflight": {
+    "wrangler": "4.130.0",
+    "dryRun": {"status": "PASS", "assets": 159, "uploadKiB": 294.22, "migrationApply": false},
+    "d1": {"queryMode": "SELECT only", "appliedMigrations": 34, "rowsWritten": 0, "changedDb": false}
+  },
+  "release": "PENDING"
+}
