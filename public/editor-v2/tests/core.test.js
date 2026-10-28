@@ -10,7 +10,7 @@ import { createDocument, createNode, NODE_TYPES, normalizeRichText } from '../co
 import { assertValidEditorDocument } from '../core/validation.js';
 import { createEditorState, activePage } from '../core/state.js';
 import { beginTransaction, commitTransaction, execute, executeBatch, rollbackTransaction } from '../core/commands.js';
-import { getProperty, listProperties, listPropertyGroups } from '../core/property-registry.js?v=20261025-content-property-route-contract';
+import { getProperty, listProperties, listPropertyGroups, registerProperty } from '../core/property-registry.js?v=20261025-content-property-route-contract';
 import { hasResponsiveOverride, resolveResponsiveValue, setResponsiveValue } from '../core/responsive.js';
 import {collectVisibleDescendants} from '../core/visibility.js';
 import {normalizeVisibility,isVisibleOnDevice,getNodeVisibilityState} from '../core/visibility.js';
@@ -184,6 +184,28 @@ test('property registry exposes extensible inspector groups and properties', () 
   assert.equal(getProperty('content.href').command, 'content.properties.set');
   assert.equal(getProperty('content.href').key, 'href');
   assert.ok(listProperties({ group: 'size' }).some((property) => property.id === 'size.width'));
+});
+
+test('property registry freezes nested metadata and validates newly registered controls',()=>{
+  const display=getProperty('layout.display');
+  assert.ok(Object.isFrozen(display));
+  assert.ok(Object.isFrozen(display.options));
+  assert.throws(()=>display.options.push('script'),TypeError);
+  const shadow=getProperty('shadow.box');
+  assert.ok(Object.isFrozen(shadow.optionLabels));
+  assert.throws(()=>{shadow.optionLabels.none='Modified';},TypeError);
+
+  const options=['one','two'];
+  const optionLabels={one:'Első',two:'Második'};
+  const property=registerProperty({id:'test.registry.immutable',group:'typography',label:'Teszt',type:'select',options,optionLabels,command:'responsive.set',responsive:true,key:'registryImmutable'});
+  options.push('three');optionLabels.one='Külső módosítás';
+  assert.deepEqual(property.options,['one','two'],'registration copies caller-owned option arrays');
+  assert.deepEqual(property.optionLabels,{one:'Első',two:'Második'},'registration copies caller-owned label maps');
+  assert.ok(Object.isFrozen(property.options));
+  assert.ok(Object.isFrozen(property.optionLabels));
+  assert.throws(()=>registerProperty({id:'test.registry.invalid-command',group:'typography',label:'Teszt',type:'text',command:'arbitrary.execute'}),/command/);
+  assert.throws(()=>registerProperty({id:'test.registry.invalid-responsive',group:'typography',label:'Teszt',type:'number',command:'responsive.set',responsive:true}),/key/);
+  assert.throws(()=>registerProperty({id:'test.registry.invalid-select',group:'typography',label:'Teszt',type:'select',command:'element.update',options:[]}),/options/);
 });
 
 test('visibility switches normalize legacy Page Models, preserve independent devices and allow ancestor discovery', () => {

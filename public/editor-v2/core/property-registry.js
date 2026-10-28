@@ -154,10 +154,38 @@ const presets = Object.freeze({
   'grid.columnGap': [['Nincs','0'],['Szoros · 8','8px'],['Normál · 16','16px'],['Laza · 24','24px'],['Tág · 32','32px']]
 });
 
-const propertyMap = new Map(properties.map((property) => [property.id, Object.freeze({ ...property,
+const frozenMetadataKeys = ['appliesTo','optionLabels','options','presets','units'];
+const propertyMap = new Map(properties.map((property) => [property.id, freezeProperty({ ...property,
   presets: presets[property.id] ? Object.freeze(presets[property.id].map(([label,value])=>Object.freeze({label,value}))) : undefined
 })]));
 const groupMap = new Map(groups.map((group) => [group.id, Object.freeze({ ...group })]));
+
+const propertyControlTypes = new Set(['asset','box','color','dimension','font','number','select','shadow','text','url']);
+const propertyCommands = new Set(['content.properties.set','element.content.set','element.update','responsive.set']);
+function freezeMetadata(value, path, ancestors = new WeakSet()) {
+  if (value === null || ['string','number','boolean'].includes(typeof value)) return value;
+  if (typeof value !== 'object') throw new TypeError(`${path} csak adatot tartalmazhat.`);
+  if (ancestors.has(value)) throw new TypeError(`${path} nem tartalmazhat körkörös hivatkozást.`);
+  ancestors.add(value);
+  let result;
+  if (Array.isArray(value)) {
+    result = Object.freeze(value.map((entry,index)=>freezeMetadata(entry,`${path}[${index}]`,ancestors)));
+  } else {
+    const prototype=Object.getPrototypeOf(value);
+    if (prototype!==Object.prototype && prototype!==null) throw new TypeError(`${path} csak egyszerű objektumot tartalmazhat.`);
+    result=Object.freeze(Object.fromEntries(Object.entries(value).map(([key,entry])=>[key,freezeMetadata(entry,`${path}.${key}`,ancestors)])));
+  }
+  ancestors.delete(value);
+  return result;
+}
+
+function freezeProperty(property, extra = {}) {
+  const result={...property,...extra};
+  for(const key of frozenMetadataKeys){
+    if(Object.hasOwn(result,key)&&result[key]!==undefined)result[key]=freezeMetadata(result[key],`property.${key}`);
+  }
+  return Object.freeze(result);
+}
 
 export function listPropertyGroups() {
   return [...groups].sort((a, b) => a.order - b.order);
@@ -181,9 +209,15 @@ export function getPropertyGroup(id) {
 
 export function registerProperty(property) {
   if (!property?.id || !property?.group) throw new Error('A property id és group kötelező.');
+  if (typeof property.id!=='string'||typeof property.label!=='string'||!property.label.trim()) throw new Error('A property id és label nem üres szöveg kell legyen.');
   if (propertyMap.has(property.id)) throw new Error(`Property már létezik: ${property.id}`);
   if (!groupMap.has(property.group)) throw new Error(`Ismeretlen property group: ${property.group}`);
-  const normalized = Object.freeze({ ...property });
+  if(!propertyControlTypes.has(property.type))throw new Error(`Ismeretlen Inspector control: ${property.type}`);
+  if(!propertyCommands.has(property.command))throw new Error(`Ismeretlen Inspector command: ${property.command}`);
+  if(property.responsive===true&&(!property.key||property.command!=='responsive.set'))throw new Error('A responsive property key és responsive.set command kötelező.');
+  if(property.type==='select'&&(!Array.isArray(property.options)||property.options.length===0||property.options.some(option=>typeof option!=='string')))throw new Error('A select property nem üres, szöveges options listát igényel.');
+  if(property.type==='dimension'&&(!Array.isArray(property.units)||property.units.length===0||property.units.some(unit=>typeof unit!=='string')))throw new Error('A dimension property nem üres, szöveges units listát igényel.');
+  const normalized = freezeProperty(property);
   properties.push(normalized);
   propertyMap.set(normalized.id, normalized);
   return normalized;
