@@ -36,5 +36,14 @@
     "configuration_changed": false,
     "reason": "Persistent production Build behavior requires specific user authorization; the rejection explicitly forbids indirect workarounds."
   },
-  "production_worker_deployed_in_this_audit": false
+  "production_worker_deployed_in_this_audit": false,
+  "recheck_2026_10_28": {
+    "build_configuration_still_unchanged": true,
+    "production_deploy_command": "npm run deploy",
+    "path_excludes": [],
+    "latest_deployment": "104a3b26-891a-4a98-b974-86fd7dac0dd6",
+    "latest_worker_version": "816d8333-efd6-4bae-8107-9bdf9560ee15",
+    "latest_worker_traffic_percent": 100,
+    "worker_deployed_by_this_session": false
+  }
 }
