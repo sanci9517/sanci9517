@@ -1,0 +1,24 @@
+{
+  "date": "2026-10-28",
+  "plan_cursor": "77.44.7.A",
+  "status": "LOCAL_BROWSER_REGRESSION_PASS",
+  "coverage": "All 44 editable PARTIAL node types in the actual mobile Inspector.",
+  "lifecycle": [
+    "Hide each type through element.visibility.set / visibility.mobile and confirm Canvas state.",
+    "Undo and Redo the last per-type hide action before Save.",
+    "Draft Save stores mobile hidden state while public nodes remain visible; explicit Publish hides all 44 on mobile.",
+    "Editor reload restores hidden checkbox values; use the Inspector to show every type again.",
+    "Draft Save of the inverse state leaves published mobile nodes hidden; Editor reload restores checked controls; separate Publish restores all nodes.",
+    "Desktop public nodes remain visible and normalized desktop visibility stays true throughout mobile actions."
+  ],
+  "validation": {
+    "chromium": "PASS; CHROMIUM_PATH=/usr/bin/chromium node --test tests/browser/editor-inspector-partial-types.test.js (1/1, 336.3s).",
+    "core_visibility_history": "PASS; existing core tests cover ancestry and command-level Undo/Redo; this browser test adds Inspector-to-public lifecycle coverage.",
+    "runtime_code_changed_by_this_slice": false,
+    "production_d1_or_r2_changed": false,
+    "physical_device_acceptance": "NOT PERFORMED"
+  },
+  "base_commit": "6d701793",
+  "release": {"included_in_runtime_commit": true, "push_pending": true, "deployment_pending": true},
+  "next_step": "Continue 77.44.7.A with remaining field-specific and user-device acceptance; do not treat this PARTIAL type matrix as full Editor certification."
+}

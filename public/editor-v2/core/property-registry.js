@@ -45,7 +45,10 @@ const properties = [
   { id: 'spacing.margin', key: 'margin', group: 'spacing', label: 'Külső térköz', type: 'box', responsive: true, command: 'responsive.set' },
   { id: 'spacing.padding', key: 'padding', group: 'spacing', label: 'Belső térköz', type: 'box', responsive: true, command: 'responsive.set' },
   { id: 'layout.display', key: 'display', group: 'layout', label: 'Megjelenítés', type: 'select', options: ['block', 'flex', 'grid', 'inline', 'none'], responsive: true, command: 'responsive.set' },
-  { id: 'layout.overflow', key: 'overflow', group: 'layout', label: 'Túlcsordulás', type: 'select', options: ['visible', 'hidden', 'auto', 'scroll'], responsive: true, command: 'responsive.set' },
+  // The authored page root must keep document-level scrolling; both the
+  // static template and runtime renderer enforce visible overflow there.
+  // Do not advertise an Inspector control whose published value cannot apply.
+  { id: 'layout.overflow', key: 'overflow', group: 'layout', label: 'Túlcsordulás', type: 'select', options: ['visible', 'hidden', 'auto', 'scroll'], responsive: true, command: 'responsive.set', appliesTo: Object.values(NODE_TYPES).filter(type=>type!==NODE_TYPES.ROOT) },
   { id: 'position.position', key: 'position', group: 'position', label: 'Pozícionálás', type: 'select', options: ['static', 'relative', 'absolute', 'fixed', 'sticky'], responsive: true, command: 'responsive.set' },
   { id: 'position.x', key: 'x', group: 'position', label: 'X pozíció', type: 'dimension', units: ['px', '%', 'vw', 'rem'], responsive: true, command: 'responsive.set' },
   { id: 'position.y', key: 'y', group: 'position', label: 'Y pozíció', type: 'dimension', units: ['px', '%', 'vh', 'rem'], responsive: true, command: 'responsive.set' },

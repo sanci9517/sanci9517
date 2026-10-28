@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import {NODE_TYPES} from '../core/schema.js';
 import {getElementCapability,getElementInspectorContract} from '../core/capability-matrix.js';
-import {listProperties,registerProperty} from '../core/property-registry.js?v=20261025-content-property-route-contract';
+import {getProperty,listProperties,registerProperty} from '../core/property-registry.js?v=20261025-content-property-route-contract';
 import {getInspectorValueContract} from '../core/property-values.js';
 import {STYLE_MAP} from '../core/canvas-engine.js';
 
@@ -30,6 +30,12 @@ test('every declared type exposes its actual registry fields without certifying 
   assert.ok(Object.isFrozen(contract));assert.ok(Object.isFrozen(contract.fields));assert.ok(Object.isFrozen(contract.groups));
  }
  assert.deepEqual([...covered].sort(),listProperties().map(p=>p.id).sort());
+});
+test('root Inspector does not advertise overflow that the public page must keep visible',()=>{
+ const overflow=getProperty('layout.overflow');
+ assert.equal(overflow.appliesTo.includes(NODE_TYPES.ROOT),false);
+ assert.equal(getElementInspectorContract(NODE_TYPES.ROOT).fields.some(field=>field.id==='layout.overflow'),false);
+ assert.equal(getElementInspectorContract(NODE_TYPES.CONTAINER).fields.some(field=>field.id==='layout.overflow'),true,'ordinary layout nodes retain the responsive overflow control');
 });
 test('Inspector value contracts expose the validator bounds and enumerations without inventing defaults',()=>{
  const byId=id=>getElementInspectorContract('text').fields.find(field=>field.id===id);

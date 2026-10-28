@@ -12,6 +12,7 @@ import {execute} from '../../public/editor-v2/core/commands.js';
 test('root Inspector appearance matches published canvas only after Publish at desktop and mobile breakpoints',async t=>{
  const model=createEditorState(createDocument()),pageId=model.document.activePageId,rootId=activePage(model).rootId;
  execute(model,{type:'element.add',payload:{type:'text',parentId:rootId,props:{text:'Alapoldal'}}});
+ const contentNodeId=model.selection.primaryId;
  let draft=structuredClone(model.document),published=structuredClone(draft),version=1;
  const posts=[],publicDir=resolve(import.meta.dirname,'../../public');
  const server=createServer(async(req,res)=>{
@@ -48,6 +49,10 @@ test('root Inspector appearance matches published canvas only after Publish at d
  const rootNode=editor.locator('.node[data-node-id="'+rootId+'"]');
  await rootNode.evaluate(el=>el.click());
  if(await editor.locator('#rightDock').evaluate(el=>el.classList.contains('closed')))await editor.locator('#openInspector').click();
+ assert.equal(await editor.locator('[data-property-id="layout.overflow"]').count(),0,'root Inspector hides overflow because public authored roots preserve document scrolling');
+ await editor.locator('.node[data-node-id="'+contentNodeId+'"]').evaluate(el=>el.click());
+ assert.equal(await editor.locator('[data-property-id="layout.overflow"]').count(),1,'ordinary text nodes retain the working overflow Inspector control');
+ await rootNode.evaluate(el=>el.click());
  const enableRoot=editor.locator('[data-inspector-command="root.appearance.enable"]');
  assert.equal(await enableRoot.getAttribute('data-inspector-key'),'metadata.editorRootVersion');
  const group=async name=>{

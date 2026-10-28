@@ -1,0 +1,25 @@
+{
+  "date": "2026-10-28",
+  "plan_cursor": "77.44.7.A",
+  "status": "LOCAL_VALIDATED_RELEASE_PENDING",
+  "finding": {
+    "surface": "root Inspector -> responsive Page Model -> authored public root",
+    "problem": "The root Inspector exposed layout.overflow, but both static and dynamically injected public CSS enforce overflow:visible!important on authored roots to preserve document-level scrolling.",
+    "effect": "Root overflow values hidden, auto, or scroll could be saved and published while the public root continued to compute as visible."
+  },
+  "change": {
+    "file": "public/editor-v2/core/property-registry.js",
+    "behavior": "layout.overflow applies to every canonical node type except root; ordinary containers and content nodes retain the responsive control."
+  },
+  "validation": {
+    "editor_unit": "PASS; npm run test:editor (10/10 test files), including root contract and preserved non-root control.",
+    "root_browser": "PASS; tests/browser/editor-root-style.test.js (1/1): root field absent, non-root text control present, authored-root renderer behavior unchanged.",
+    "partial_type_browser": "PASS; tests/browser/editor-inspector-partial-types.test.js (1/1, 336.3s), all 44 PARTIAL types, with Editor route contract assertions.",
+    "typecheck": "PASS; npm run typecheck.",
+    "canonical_plan_and_traceability": "PASS; 13-file canonical plan, active point audit, and regenerated 396-entry traceability.",
+    "production_deployed": false,
+    "production_d1_or_r2_changed": false
+  },
+  "release": {"push_pending": true, "worker_build_pending": true},
+  "next_step": "After the normal fast-forward release, verify the Cloudflare safe build, 100% Worker version, health, and deployed property-registry asset hash."
+}
