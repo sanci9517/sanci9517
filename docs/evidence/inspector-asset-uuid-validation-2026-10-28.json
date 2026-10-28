@@ -1,7 +1,7 @@
 {
   "date": "2026-10-28",
   "plan_cursor": "77.44.7.A",
-  "status": "LOCAL_VALIDATION_PASS_RELEASE_PENDING",
+  "status": "PRODUCTION_DEPLOYED_HTTP_SMOKE_BLOCKED",
   "scope": "Require canonical UUID group formatting for asset-valued Inspector properties.",
   "contract": {
     "accepted": ["8-4-4-4-12 hexadecimal UUID", "none"],
