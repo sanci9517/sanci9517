@@ -18,7 +18,7 @@
   "remote_validation": {
     "github_f0": "PASS",
     "github_twitch": "PASS",
-    "github_editor_core": "IN_PROGRESS when recorded",
+    "github_editor_core": "PASS; run 40662614292 on the exact runtime commit; all 20 job steps succeeded, including the full Editor browser layout regression and WEB-013 mobile browser regression",
     "cloudflare_build_id": "86cab874-ab9e-47d4-957c-2a24057c84fd",
     "cloudflare_build_outcome": "success",
     "cloudflare_deployment_id": "1bf9f928-8096-401a-ac38-87efaca995fd",
@@ -33,7 +33,10 @@
       "path_excludes": [
         "docs/**"
       ]
-    }
+    },
+    "github_editor_core_run_id": 40662614292,
+    "github_f0_run_id": 40662614163,
+    "github_twitch_run_id": 40662614286
   },
   "production_d1_select_preflight": {
     "method": "Cloudflare D1 query API; SELECT only",
@@ -49,5 +52,13 @@
     "full_77_44_7_A": "OPEN / NOT CERTIFIED",
     "local_real_browser_verification": "blocked by sandbox runtime",
     "physical_device_acceptance": "not performed"
+  },
+  "documentation_only_followup": {
+    "commit": "824c7ede3c8f6e4bc4d332a82a2e2438ee438ef7",
+    "github_canonical_plan": "PASS",
+    "github_active_point_audit": "PASS",
+    "cloudflare_build_triggered": false,
+    "latest_cloudflare_build_commit_remains": "8b19ad57568c49b48160987a177ba8cb7f437926",
+    "reason": "The verified Cloudflare trigger excludes docs/**."
   }
 }
