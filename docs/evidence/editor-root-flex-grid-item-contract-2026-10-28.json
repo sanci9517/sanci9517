@@ -59,7 +59,7 @@
     "scope": "Declarative Flex/Grid Inspector visibility context in the property registry and capability contract; current visible behavior is unchanged.",
     "validation": {
       "editor_unit": "PASS; npm run test:editor (10/10 files).",
-      "browser": "PASS; editor-root-style and editor-inspector-partial-types (2/2; all PARTIAL types covered).",
+      "browser": "PASS; editor-root-style, editor-inspector-partial-types, editor-responsive-layout and editor-inspector-breakpoint-lifecycle (4/4; all PARTIAL types covered, Flex/Grid geometry and responsive Save/Publish lifecycle verified).",
       "typecheck": "PASS; npm run typecheck.",
       "canonical_plan_and_traceability": "PASS; canonical plan, active point audit and 396 source mappings.",
       "migration_gate": "PASS; deploy:safe only, no migration application.",
