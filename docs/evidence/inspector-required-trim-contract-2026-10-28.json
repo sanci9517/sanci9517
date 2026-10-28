@@ -10,12 +10,37 @@
     "activePointAudit": "PASS",
     "traceability": {"pass": 396, "acceptance": "NOT_CERTIFIED"},
     "migrationSafetyGate": "PASS",
-    "gitDiffCheck": "PASS"
+    "gitDiffCheck": "PASS",
+    "githubCI": {
+      "resultAtRecording": "5/6 PASS; Editor Core still in progress",
+      "editorCoreJob": "123017878497",
+      "sourceAuditJob": "123017878383",
+      "verifyJob": "123017878424",
+      "canonicalPlanJob": "123017927578",
+      "twitchIntegrationJob": "123017880122",
+      "cloudflareBuildCheck": "123018142357"
+    }
   },
   "deploymentPreflight": {
     "wrangler": "4.130.0",
     "dryRun": {"status": "PASS", "assets": 159, "uploadKiB": 294.22, "migrationApply": false},
     "d1": {"queryMode": "SELECT only", "appliedMigrations": 34, "rowsWritten": 0, "changedDb": false}
   },
-  "release": "PENDING"
+  "release": {
+    "branch": "v2/foundation",
+    "runtimeCommit": "f9bc16e6d0b942a90862613b85ac8aeb25ee8d8a",
+    "cloudflareBuild": "5089c461-d835-40d2-ae31-0b58200fbd6e",
+    "cloudflareBuildOutcome": "success",
+    "deployment": "59f76920-a7c4-4b90-bade-595e0a2ef5b5",
+    "workerVersion": "754ca586-a3f3-49a6-bc78-4ba9324c725d",
+    "workerVersionNumber": 3708,
+    "trafficPercent": 100,
+    "migrationGate": "PASS; D1 migration apply was not run",
+    "productionSmoke": {
+      "health": 200,
+      "propertyValuesSha256": "2079d49ef01c090bb06b7e16cb7b76de03a625dbeeb07b178e7bd74d410facc0",
+      "propertyValuesMatchesSource": true
+    },
+    "productionDataChanges": {"d1MigrationsApplied": 0, "d1RowsWritten": 0, "r2Changes": 0}
+  }
 }
