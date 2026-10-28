@@ -92,9 +92,18 @@
     "db_health_http": 200,
     "live_registry_asset_sha256": "dcd66aec9793a58ef97ae410a14768bd9bc3ace6ded79a841ee193defe32eeb8",
     "local_registry_asset_sha256": "dcd66aec9793a58ef97ae410a14768bd9bc3ace6ded79a841ee193defe32eeb8",
-    "github_f0": "IN_PROGRESS when recorded",
-    "github_twitch": "IN_PROGRESS when recorded",
-    "github_editor_core": "IN_PROGRESS when recorded",
-    "local_chromium": "BLOCKED by Crashpad setsockopt sandbox restriction; remote workflow will provide browser regression result"
+    "github_f0": "PASS; run 40667225685",
+    "github_twitch": "PASS; run 40667225407",
+    "github_editor_core": "PASS; run 40667225484; all 20 job steps succeeded, including Editor browser layout, WEB-013 mobile browser, media/D1 tests, schedule/domain/design/admin suites",
+    "local_chromium": "BLOCKED by Crashpad setsockopt sandbox restriction; remote Editor Core Chromium/browser regression passed",
+    "github_editor_core_run_id": 40667225484,
+    "documentation_only_followup": {
+      "commit": "19c055d4a0672c7cbc5324967ad7e8f86f219247",
+      "cloudflare_build_triggered": false,
+      "latest_build_remains": "4789246b-ed48-47f6-b8ff-600597bf83e0 for runtime commit 6b2eb281deb33f565200d942fe4dabf45f527c64",
+      "confirmed_path_excludes": [
+        "docs/**"
+      ]
+    }
   }
 }
