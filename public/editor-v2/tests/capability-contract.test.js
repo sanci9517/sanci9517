@@ -37,6 +37,16 @@ test('root Inspector does not advertise overflow that the public page must keep 
  assert.equal(getElementInspectorContract(NODE_TYPES.ROOT).fields.some(field=>field.id==='layout.overflow'),false);
  assert.equal(getElementInspectorContract(NODE_TYPES.CONTAINER).fields.some(field=>field.id==='layout.overflow'),true,'ordinary layout nodes retain the responsive overflow control');
 });
+test('root Inspector hides flex/grid item fields because its published wrapper is normal flow',()=>{
+ const itemFields=['flex.grow','flex.shrink','flex.basis','flex.alignSelf','grid.column','grid.row'];
+ const rootFields=getElementInspectorContract(NODE_TYPES.ROOT).fields.map(field=>field.id);
+ const containerFields=getElementInspectorContract(NODE_TYPES.CONTAINER).fields.map(field=>field.id);
+ for(const id of itemFields){
+  assert.equal(getProperty(id).appliesTo.includes(NODE_TYPES.ROOT),false,`${id}: root is not an applicable flex/grid item`);
+  assert.equal(rootFields.includes(id),false,`${id}: root Inspector hides the ineffective control`);
+  assert.equal(containerFields.includes(id),true,`${id}: non-root elements retain the context-sensitive item control`);
+ }
+});
 test('Inspector value contracts expose the validator bounds and enumerations without inventing defaults',()=>{
  const byId=id=>getElementInspectorContract('text').fields.find(field=>field.id===id);
  assert.deepEqual(byId('typography.textAlign').valueContract,{kind:'enum',values:['left','center','right','justify'],tokens:[]});

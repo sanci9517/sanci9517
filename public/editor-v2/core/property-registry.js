@@ -1,5 +1,9 @@
 import { NODE_TYPES } from './schema.js';
 
+// The authored root is rendered inside a normal-flow `.content-page` wrapper,
+// so it can never be a flex/grid item in the published page structure.
+const nonRootNodeTypes = Object.freeze(Object.values(NODE_TYPES).filter(type=>type!==NODE_TYPES.ROOT));
+
 /*
  * Sanci9517 Visual Editor v2 — Property Registry
  *
@@ -48,7 +52,7 @@ const properties = [
   // The authored page root must keep document-level scrolling; both the
   // static template and runtime renderer enforce visible overflow there.
   // Do not advertise an Inspector control whose published value cannot apply.
-  { id: 'layout.overflow', key: 'overflow', group: 'layout', label: 'Túlcsordulás', type: 'select', options: ['visible', 'hidden', 'auto', 'scroll'], responsive: true, command: 'responsive.set', appliesTo: Object.values(NODE_TYPES).filter(type=>type!==NODE_TYPES.ROOT) },
+  { id: 'layout.overflow', key: 'overflow', group: 'layout', label: 'Túlcsordulás', type: 'select', options: ['visible', 'hidden', 'auto', 'scroll'], responsive: true, command: 'responsive.set', appliesTo: nonRootNodeTypes },
   { id: 'position.position', key: 'position', group: 'position', label: 'Pozícionálás', type: 'select', options: ['static', 'relative', 'absolute', 'fixed', 'sticky'], responsive: true, command: 'responsive.set' },
   { id: 'position.x', key: 'x', group: 'position', label: 'X pozíció', type: 'dimension', units: ['px', '%', 'vw', 'rem'], responsive: true, command: 'responsive.set' },
   { id: 'position.y', key: 'y', group: 'position', label: 'Y pozíció', type: 'dimension', units: ['px', '%', 'vh', 'rem'], responsive: true, command: 'responsive.set' },
@@ -88,14 +92,14 @@ const properties = [
   { id: 'flex.align', key: 'alignItems', group: 'flex', label: 'Elemek igazítása', type: 'select', options: ['stretch', 'flex-start', 'center', 'flex-end', 'baseline'], appliesTo: ['flex','row','columns','stack'], responsive: true, command: 'responsive.set' },
   { id: 'flex.wrap', key: 'flexWrap', group: 'flex', label: 'Tördelés', type: 'select', options: ['nowrap', 'wrap', 'wrap-reverse'], appliesTo: ['flex','row','columns','stack'], responsive: true, command: 'responsive.set' },
   { id: 'flex.gap', key: 'gap', group: 'flex', label: 'Elemköz', type: 'dimension', units: ['px', 'rem', 'em', '%'], appliesTo: ['flex','row','columns','stack','grid'], responsive: true, command: 'responsive.set' },
-  { id: 'flex.grow', key: 'flexGrow', group: 'flex', label: 'Növekedés', type: 'number', responsive: true, command: 'responsive.set' },
-  { id: 'flex.shrink', key: 'flexShrink', group: 'flex', label: 'Zsugorodás', type: 'number', responsive: true, command: 'responsive.set' },
-  { id: 'flex.basis', key: 'flexBasis', group: 'flex', label: 'Alapméret', type: 'dimension', units: ['auto', 'px', '%', 'rem'], responsive: true, command: 'responsive.set' },
-  { id: 'flex.alignSelf', key: 'alignSelf', group: 'flex', label: 'Saját igazítás', type: 'select', options: ['auto', 'stretch', 'flex-start', 'center', 'flex-end', 'baseline'], responsive: true, command: 'responsive.set' },
+  { id: 'flex.grow', key: 'flexGrow', group: 'flex', label: 'Növekedés', type: 'number', responsive: true, command: 'responsive.set', appliesTo: nonRootNodeTypes },
+  { id: 'flex.shrink', key: 'flexShrink', group: 'flex', label: 'Zsugorodás', type: 'number', responsive: true, command: 'responsive.set', appliesTo: nonRootNodeTypes },
+  { id: 'flex.basis', key: 'flexBasis', group: 'flex', label: 'Alapméret', type: 'dimension', units: ['auto', 'px', '%', 'rem'], responsive: true, command: 'responsive.set', appliesTo: nonRootNodeTypes },
+  { id: 'flex.alignSelf', key: 'alignSelf', group: 'flex', label: 'Saját igazítás', type: 'select', options: ['auto', 'stretch', 'flex-start', 'center', 'flex-end', 'baseline'], responsive: true, command: 'responsive.set', appliesTo: nonRootNodeTypes },
   { id: 'grid.columns', key: 'gridTemplateColumns', group: 'grid', label: 'Oszlopok', type: 'select', options: ['1fr', 'minmax(0, 2fr) minmax(0, 1fr)', 'repeat(2, minmax(0, 1fr))', 'repeat(3, minmax(0, 1fr))', 'repeat(4, minmax(0, 1fr))'], appliesTo: ['grid'], responsive: true, command: 'responsive.set' },
   { id: 'grid.rows', key: 'gridTemplateRows', group: 'grid', label: 'Sorok', type: 'select', options: ['auto', '1fr', 'repeat(2, minmax(0, 1fr))', 'repeat(3, minmax(0, 1fr))'], appliesTo: ['grid'], responsive: true, command: 'responsive.set' },
-  { id: 'grid.column', key: 'gridColumn', group: 'grid', label: 'Oszlophely', type: 'select', options: ['auto', '1', '2', '3', '4', '1 / -1'], responsive: true, command: 'responsive.set' },
-  { id: 'grid.row', key: 'gridRow', group: 'grid', label: 'Sorhely', type: 'select', options: ['auto', '1', '2', '3', '4', '1 / -1'], responsive: true, command: 'responsive.set' },
+  { id: 'grid.column', key: 'gridColumn', group: 'grid', label: 'Oszlophely', type: 'select', options: ['auto', '1', '2', '3', '4', '1 / -1'], responsive: true, command: 'responsive.set', appliesTo: nonRootNodeTypes },
+  { id: 'grid.row', key: 'gridRow', group: 'grid', label: 'Sorhely', type: 'select', options: ['auto', '1', '2', '3', '4', '1 / -1'], responsive: true, command: 'responsive.set', appliesTo: nonRootNodeTypes },
   { id: 'grid.rowGap', key: 'rowGap', group: 'grid', label: 'Sorköz', type: 'dimension', units: ['px', 'rem', 'em', '%'], appliesTo: ['grid'], responsive: true, command: 'responsive.set' },
   { id: 'grid.columnGap', key: 'columnGap', group: 'grid', label: 'Oszlopköz', type: 'dimension', units: ['px', 'rem', 'em', '%'], appliesTo: ['grid'], responsive: true, command: 'responsive.set' },
   {id:'size.aspectRatio',key:'aspectRatio',group:'size',label:'Oldalarány',type:'select',options:['auto','1 / 1','16 / 9','4 / 3','3 / 4'],responsive:true,command:'responsive.set',help:'A szélesség és magasság arányát szabályozza. Rögzített szélesség és magasság mellett azok az értékek az irányadók. Telefonon külön felülírható.'},

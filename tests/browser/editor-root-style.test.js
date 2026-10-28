@@ -50,9 +50,21 @@ test('root Inspector appearance matches published canvas only after Publish at d
  await rootNode.evaluate(el=>el.click());
  if(await editor.locator('#rightDock').evaluate(el=>el.classList.contains('closed')))await editor.locator('#openInspector').click();
  assert.equal(await editor.locator('[data-property-id="layout.overflow"]').count(),0,'root Inspector hides overflow because public authored roots preserve document scrolling');
+ for(const id of ['flex.grow','flex.shrink','flex.basis','flex.alignSelf','grid.column','grid.row'])assert.equal(await editor.locator(`[data-property-id="${id}"]`).count(),0,`root Inspector hides ${id} because the published root wrapper is normal flow`);
+ const displayGroup=editor.locator('.inspector-group-title').filter({hasText:'Elrendezés'});if(await displayGroup.getAttribute('aria-expanded')==='false')await displayGroup.click();
+ const rootDisplay=editor.locator('[data-property-id="layout.display"] select');
+ await rootDisplay.selectOption('flex');
  await editor.locator('.node[data-node-id="'+contentNodeId+'"]').evaluate(el=>el.click());
  assert.equal(await editor.locator('[data-property-id="layout.overflow"]').count(),1,'ordinary text nodes retain the working overflow Inspector control');
+ for(const id of ['flex.grow','flex.shrink','flex.basis','flex.alignSelf'])assert.equal(await editor.locator(`[data-property-id="${id}"]`).count(),1,`children of a flex root expose context-sensitive ${id}`);
+ assert.equal(await editor.locator('[data-property-id="grid.column"]').count(),0,'flex children do not expose grid placement controls');
  await rootNode.evaluate(el=>el.click());
+ await rootDisplay.selectOption('grid');
+ await editor.locator('.node[data-node-id="'+contentNodeId+'"]').evaluate(el=>el.click());
+ for(const id of ['grid.column','grid.row'])assert.equal(await editor.locator(`[data-property-id="${id}"]`).count(),1,`children of a grid root expose context-sensitive ${id}`);
+ assert.equal(await editor.locator('[data-property-id="flex.grow"]').count(),0,'grid children do not expose flex sizing controls');
+ await rootNode.evaluate(el=>el.click());
+ await rootDisplay.selectOption('block');
  const enableRoot=editor.locator('[data-inspector-command="root.appearance.enable"]');
  assert.equal(await enableRoot.getAttribute('data-inspector-key'),'metadata.editorRootVersion');
  const group=async name=>{

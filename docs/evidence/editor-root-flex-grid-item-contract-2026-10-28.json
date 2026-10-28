@@ -1,0 +1,40 @@
+{
+  "date": "2026-10-28",
+  "plan_cursor": "77.44.7.A",
+  "status": "LOCAL_VALIDATED_RELEASE_PENDING",
+  "finding": {
+    "surface": "root Inspector -> responsive flex/grid item styles -> public authored page root",
+    "problem": "The authored root is a child of the normal-flow .content-page wrapper, but the Inspector exposed flex item (flexGrow, flexShrink, flexBasis, alignSelf) and grid item (gridColumn, gridRow) controls on that root.",
+    "effect": "Those six root values are syntactically stored and can be emitted as CSS, but cannot affect root placement in its block parent. Child nodes remain eligible because their root parent can be switched to Flex or Grid."
+  },
+  "change": {
+    "file": "public/editor-v2/core/property-registry.js",
+    "behavior": "Exclude only ROOT from flex.grow, flex.shrink, flex.basis, flex.alignSelf, grid.column, and grid.row. Ordinary nodes retain these controls; parent layout mode determines which child group the live Inspector shows.",
+    "root_filter_helper": "nonRootNodeTypes is shared by the existing root overflow restriction and these item-only properties."
+  },
+  "validation": {
+    "editor_unit": "PASS; npm run test:editor (10/10 files), including root absent and container retained contract assertions.",
+    "root_browser": "PASS; tests/browser/editor-root-style.test.js (1/1): root fields are hidden; child flex-item fields appear with a Flex parent and grid placement fields with a Grid parent; authored-root behavior remains verified.",
+    "typecheck": "PASS; npm run typecheck.",
+    "syntax_and_diff": "PASS; modified JavaScript syntax checks and git diff --check.",
+    "canonical_plan_and_traceability": "PASS; master and active point audit pass; regenerated 396 source mappings.",
+    "migration_gate": "PASS; deploy:safe only, does not apply D1 migrations.",
+    "wrangler_dry_run": "PASS; 159 public assets and production bindings enumerated; dry-run only.",
+    "production_d1_preflight": {
+      "method": "Cloudflare D1 query API, SELECT-only",
+      "ledger_rows": 34,
+      "changed_db": false,
+      "rows_written": 0
+    }
+  },
+  "release": {
+    "push_pending": true,
+    "worker_build_pending": true,
+    "production_deployed": false,
+    "production_d1_or_r2_changed": false
+  },
+  "limitations": [
+    "Local Chromium fixture verifies dynamic Inspector groups and the public authored root; physical-device acceptance was not performed.",
+    "Full 77.44.7.A acceptance remains OPEN / NOT CERTIFIED."
+  ]
+}
