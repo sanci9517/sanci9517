@@ -33,12 +33,15 @@
     }
   },
   "release": {
-    "status": "PENDING: runtime source is not yet pushed or deployed",
-    "productionDataChanges": {
-      "d1MigrationsApplied": 0,
-      "d1RowsWritten": 0,
-      "r2Changes": 0
-    }
+    "branch": "v2/foundation",
+    "commit": "7b4226de31beedcd6ba37ef36945358d536508eb",
+    "cloudflareBuild": "35feb24c-96ed-4b4a-a822-4e383f3ed451",
+    "cloudflareBuildOutcome": "success; exact source commit confirmed; deploy:safe migration safety gate ran; no D1 migration apply",
+    "deployment": "d8586998-f2fd-465c-90de-7e47a4e0d4a7",
+    "workerVersion": "7fae1802-18cc-4303-8d70-83e59c426328",
+    "workerVersionNumber": 3710,
+    "trafficPercent": 100,
+    "productionSmoke": "UNVERIFIED: direct curl to https://sanci9517.com/api/health was blocked by environment proxy with HTTP 403 CONNECT tunnel failure; health and production asset hash were not verified"
   },
   "acceptance": "77.44.7.A remains OPEN / NOT CERTIFIED; physical device acceptance not performed.",
   "productionD1Preflight": {
@@ -52,5 +55,10 @@
     "rowsWritten": 0,
     "changedDb": false,
     "migrationApplied": false
+  },
+  "productionDataChanges": {
+    "d1MigrationsApplied": 0,
+    "d1RowsWritten": 0,
+    "r2Changes": 0
   }
 }
