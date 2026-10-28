@@ -87,21 +87,21 @@ const properties = [
   { id: 'radius.bottomLeft', key: 'borderBottomLeftRadius', group: 'radius', label: 'Bal alsó sarok', type: 'dimension', units: ['0', 'px', 'rem', '%'], responsive: true, command: 'responsive.set' },
   { id: 'shadow.box', key: 'boxShadow', group: 'shadow', label: 'Árnyék', type: 'shadow', responsive: true, command: 'responsive.set' },
   { id: 'opacity.value', key: 'opacity', group: 'opacity', label: 'Átlátszóság', type: 'number', responsive: true, command: 'responsive.set' },
-  { id: 'flex.direction', key: 'flexDirection', group: 'flex', label: 'Irány', type: 'select', options: ['row', 'column', 'row-reverse', 'column-reverse'], appliesTo: ['flex','row','columns','stack'], responsive: true, command: 'responsive.set' },
-  { id: 'flex.justify', key: 'justifyContent', group: 'flex', label: 'Elosztás a főirány mentén', type: 'select', options: ['flex-start', 'center', 'flex-end', 'space-between', 'space-around', 'space-evenly'], appliesTo: ['flex','row','columns','stack'], responsive: true, command: 'responsive.set' },
-  { id: 'flex.align', key: 'alignItems', group: 'flex', label: 'Elemek igazítása', type: 'select', options: ['stretch', 'flex-start', 'center', 'flex-end', 'baseline'], appliesTo: ['flex','row','columns','stack'], responsive: true, command: 'responsive.set' },
-  { id: 'flex.wrap', key: 'flexWrap', group: 'flex', label: 'Tördelés', type: 'select', options: ['nowrap', 'wrap', 'wrap-reverse'], appliesTo: ['flex','row','columns','stack'], responsive: true, command: 'responsive.set' },
-  { id: 'flex.gap', key: 'gap', group: 'flex', label: 'Elemköz', type: 'dimension', units: ['px', 'rem', 'em', '%'], appliesTo: ['flex','row','columns','stack','grid'], responsive: true, command: 'responsive.set' },
-  { id: 'flex.grow', key: 'flexGrow', group: 'flex', label: 'Növekedés', type: 'number', responsive: true, command: 'responsive.set', appliesTo: nonRootNodeTypes },
-  { id: 'flex.shrink', key: 'flexShrink', group: 'flex', label: 'Zsugorodás', type: 'number', responsive: true, command: 'responsive.set', appliesTo: nonRootNodeTypes },
-  { id: 'flex.basis', key: 'flexBasis', group: 'flex', label: 'Alapméret', type: 'dimension', units: ['auto', 'px', '%', 'rem'], responsive: true, command: 'responsive.set', appliesTo: nonRootNodeTypes },
-  { id: 'flex.alignSelf', key: 'alignSelf', group: 'flex', label: 'Saját igazítás', type: 'select', options: ['auto', 'stretch', 'flex-start', 'center', 'flex-end', 'baseline'], responsive: true, command: 'responsive.set', appliesTo: nonRootNodeTypes },
-  { id: 'grid.columns', key: 'gridTemplateColumns', group: 'grid', label: 'Oszlopok', type: 'select', options: ['1fr', 'minmax(0, 2fr) minmax(0, 1fr)', 'repeat(2, minmax(0, 1fr))', 'repeat(3, minmax(0, 1fr))', 'repeat(4, minmax(0, 1fr))'], appliesTo: ['grid'], responsive: true, command: 'responsive.set' },
-  { id: 'grid.rows', key: 'gridTemplateRows', group: 'grid', label: 'Sorok', type: 'select', options: ['auto', '1fr', 'repeat(2, minmax(0, 1fr))', 'repeat(3, minmax(0, 1fr))'], appliesTo: ['grid'], responsive: true, command: 'responsive.set' },
-  { id: 'grid.column', key: 'gridColumn', group: 'grid', label: 'Oszlophely', type: 'select', options: ['auto', '1', '2', '3', '4', '1 / -1'], responsive: true, command: 'responsive.set', appliesTo: nonRootNodeTypes },
-  { id: 'grid.row', key: 'gridRow', group: 'grid', label: 'Sorhely', type: 'select', options: ['auto', '1', '2', '3', '4', '1 / -1'], responsive: true, command: 'responsive.set', appliesTo: nonRootNodeTypes },
-  { id: 'grid.rowGap', key: 'rowGap', group: 'grid', label: 'Sorköz', type: 'dimension', units: ['px', 'rem', 'em', '%'], appliesTo: ['grid'], responsive: true, command: 'responsive.set' },
-  { id: 'grid.columnGap', key: 'columnGap', group: 'grid', label: 'Oszlopköz', type: 'dimension', units: ['px', 'rem', 'em', '%'], appliesTo: ['grid'], responsive: true, command: 'responsive.set' },
+  { id: 'flex.direction', key: 'flexDirection', group: 'flex', label: 'Irány', type: 'select', options: ['row', 'column', 'row-reverse', 'column-reverse'], appliesTo: ['flex','row','columns','stack'], layoutContext:{kind:'container',modes:['flex']}, responsive: true, command: 'responsive.set' },
+  { id: 'flex.justify', key: 'justifyContent', group: 'flex', label: 'Elosztás a főirány mentén', type: 'select', options: ['flex-start', 'center', 'flex-end', 'space-between', 'space-around', 'space-evenly'], appliesTo: ['flex','row','columns','stack'], layoutContext:{kind:'container',modes:['flex']}, responsive: true, command: 'responsive.set' },
+  { id: 'flex.align', key: 'alignItems', group: 'flex', label: 'Elemek igazítása', type: 'select', options: ['stretch', 'flex-start', 'center', 'flex-end', 'baseline'], appliesTo: ['flex','row','columns','stack'], layoutContext:{kind:'container',modes:['flex']}, responsive: true, command: 'responsive.set' },
+  { id: 'flex.wrap', key: 'flexWrap', group: 'flex', label: 'Tördelés', type: 'select', options: ['nowrap', 'wrap', 'wrap-reverse'], appliesTo: ['flex','row','columns','stack'], layoutContext:{kind:'container',modes:['flex']}, responsive: true, command: 'responsive.set' },
+  { id: 'flex.gap', key: 'gap', group: 'flex', label: 'Elemköz', type: 'dimension', units: ['px', 'rem', 'em', '%'], appliesTo: ['flex','row','columns','stack','grid'], layoutContext:{kind:'container',modes:['flex','grid']}, responsive: true, command: 'responsive.set' },
+  { id: 'flex.grow', key: 'flexGrow', group: 'flex', label: 'Növekedés', type: 'number', responsive: true, command: 'responsive.set', appliesTo: nonRootNodeTypes, layoutContext:{kind:'item',parentModes:['flex']} },
+  { id: 'flex.shrink', key: 'flexShrink', group: 'flex', label: 'Zsugorodás', type: 'number', responsive: true, command: 'responsive.set', appliesTo: nonRootNodeTypes, layoutContext:{kind:'item',parentModes:['flex']} },
+  { id: 'flex.basis', key: 'flexBasis', group: 'flex', label: 'Alapméret', type: 'dimension', units: ['auto', 'px', '%', 'rem'], responsive: true, command: 'responsive.set', appliesTo: nonRootNodeTypes, layoutContext:{kind:'item',parentModes:['flex']} },
+  { id: 'flex.alignSelf', key: 'alignSelf', group: 'flex', label: 'Saját igazítás', type: 'select', options: ['auto', 'stretch', 'flex-start', 'center', 'flex-end', 'baseline'], responsive: true, command: 'responsive.set', appliesTo: nonRootNodeTypes, layoutContext:{kind:'item',parentModes:['flex','grid']} },
+  { id: 'grid.columns', key: 'gridTemplateColumns', group: 'grid', label: 'Oszlopok', type: 'select', options: ['1fr', 'minmax(0, 2fr) minmax(0, 1fr)', 'repeat(2, minmax(0, 1fr))', 'repeat(3, minmax(0, 1fr))', 'repeat(4, minmax(0, 1fr))'], appliesTo: ['grid'], layoutContext:{kind:'container',modes:['grid']}, responsive: true, command: 'responsive.set' },
+  { id: 'grid.rows', key: 'gridTemplateRows', group: 'grid', label: 'Sorok', type: 'select', options: ['auto', '1fr', 'repeat(2, minmax(0, 1fr))', 'repeat(3, minmax(0, 1fr))'], appliesTo: ['grid'], layoutContext:{kind:'container',modes:['grid']}, responsive: true, command: 'responsive.set' },
+  { id: 'grid.column', key: 'gridColumn', group: 'grid', label: 'Oszlophely', type: 'select', options: ['auto', '1', '2', '3', '4', '1 / -1'], responsive: true, command: 'responsive.set', appliesTo: nonRootNodeTypes, layoutContext:{kind:'item',parentModes:['grid']} },
+  { id: 'grid.row', key: 'gridRow', group: 'grid', label: 'Sorhely', type: 'select', options: ['auto', '1', '2', '3', '4', '1 / -1'], responsive: true, command: 'responsive.set', appliesTo: nonRootNodeTypes, layoutContext:{kind:'item',parentModes:['grid']} },
+  { id: 'grid.rowGap', key: 'rowGap', group: 'grid', label: 'Sorköz', type: 'dimension', units: ['px', 'rem', 'em', '%'], appliesTo: ['grid'], layoutContext:{kind:'container',modes:['grid']}, responsive: true, command: 'responsive.set' },
+  { id: 'grid.columnGap', key: 'columnGap', group: 'grid', label: 'Oszlopköz', type: 'dimension', units: ['px', 'rem', 'em', '%'], appliesTo: ['grid'], layoutContext:{kind:'container',modes:['grid']}, responsive: true, command: 'responsive.set' },
   {id:'size.aspectRatio',key:'aspectRatio',group:'size',label:'Oldalarány',type:'select',options:['auto','1 / 1','16 / 9','4 / 3','3 / 4'],responsive:true,command:'responsive.set',help:'A szélesség és magasság arányát szabályozza. Rögzített szélesség és magasság mellett azok az értékek az irányadók. Telefonon külön felülírható.'},
   {id:'transform.rotate',key:'rotate',group:'transform',label:'Forgatás',type:'dimension',units:['deg'],responsive:true,command:'responsive.set',help:'Az elemet a középpontja körül forgatja, fokban megadva (-360–360). A normál elrendezésben elfoglalt helyét nem változtatja meg; figyeld az átfedéseket és a vászon szélét.'},
   {id:'transform.scale',key:'scale',group:'transform',label:'Vizuális nagyítás',type:'number',responsive:true,command:'responsive.set',help:'1 az eredeti méret, 1.1 tíz százalékkal nagyobb, 0.9 kisebb. Csak a vizuális méret változik, a szomszédos elemek helye megmarad. .1–4 tartományban állítható.'},
@@ -163,7 +163,7 @@ const presets = Object.freeze({
   'grid.columnGap': [['Nincs','0'],['Szoros · 8','8px'],['Normál · 16','16px'],['Laza · 24','24px'],['Tág · 32','32px']]
 });
 
-const frozenMetadataKeys = ['appliesTo','optionLabels','options','presets','units'];
+const frozenMetadataKeys = ['appliesTo','layoutContext','optionLabels','options','presets','units'];
 const propertyMap = new Map(properties.map((property) => [property.id, freezeProperty({ ...property,
   presets: presets[property.id] ? Object.freeze(presets[property.id].map(([label,value])=>Object.freeze({label,value}))) : undefined
 })]));
@@ -233,6 +233,12 @@ export function registerProperty(property) {
   if(property.type==='dimension'){
     if(!Array.isArray(property.units)||property.units.length===0||property.units.some(unit=>typeof unit!=='string'||!unit.trim())||new Set(property.units).size!==property.units.length)throw new Error('A dimension property egyedi, nem üres szöveges units listát igényel.');
   }else if(property.units!==undefined)throw new Error('A units csak dimension propertyhez használható.');
+  if(property.layoutContext!==undefined){
+    const context=property.layoutContext;
+    const modes=context?.kind==='container'?context.modes:context?.kind==='item'?context.parentModes:null;
+    if(!['flex','grid'].includes(property.group)||!Array.isArray(modes)||modes.length===0||modes.some(mode=>!['flex','grid'].includes(mode))||new Set(modes).size!==modes.length)throw new Error('A layoutContext érvényes Flex/Grid container vagy item feltételt igényel.');
+    if(context.kind==='container'&&Object.hasOwn(context,'parentModes')||context.kind==='item'&&Object.hasOwn(context,'modes'))throw new Error('A layoutContext mezői a kind értékéhez igazodjanak.');
+  }else if(['flex','grid'].includes(property.group))throw new Error('A Flex/Grid property layoutContext feltételt igényel.');
   if(property.appliesTo!==undefined&&(!Array.isArray(property.appliesTo)||property.appliesTo.length===0||property.appliesTo.some(type=>typeof type!=='string'||!type.trim()||!registeredNodeTypes.has(type))||new Set(property.appliesTo).size!==property.appliesTo.length))throw new Error('Az appliesTo ismert, egyedi node típusok nem üres listája kell legyen.');
   if(property.help!==undefined&&typeof property.help!=='string')throw new Error('A property help csak szöveg lehet.');
   if(property.presets!==undefined&&(!Array.isArray(property.presets)||property.presets.some(preset=>!preset||typeof preset.label!=='string'||!preset.label.trim()||typeof preset.value!=='string')))throw new Error('A presets címke és érték párok listája kell legyen.');

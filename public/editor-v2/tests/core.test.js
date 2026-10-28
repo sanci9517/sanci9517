@@ -194,6 +194,8 @@ test('property registry freezes nested metadata and validates newly registered c
   const shadow=getProperty('shadow.box');
   assert.ok(Object.isFrozen(shadow.optionLabels));
   assert.throws(()=>{shadow.optionLabels.none='Modified';},TypeError);
+  const flexChild=getProperty('flex.grow');
+  assert.ok(Object.isFrozen(flexChild.layoutContext));assert.ok(Object.isFrozen(flexChild.layoutContext.parentModes));
 
   const options=['one','two'];
   const optionLabels={one:'Első',two:'Második'};
@@ -212,6 +214,8 @@ test('property registry freezes nested metadata and validates newly registered c
   assert.throws(()=>registerProperty({id:'test.registry.invalid-dimension',group:'typography',label:'Teszt',type:'dimension',command:'element.update',key:'value',responsive:false,units:['px','px']}),/egyedi/);
   assert.throws(()=>registerProperty({id:'test.registry.invalid-applies-to',group:'typography',label:'Teszt',type:'text',command:'element.update',key:'name',responsive:false,appliesTo:['text','text']}),/appliesTo/);
   assert.throws(()=>registerProperty({id:'test.registry.unknown-node-type',group:'typography',label:'Teszt',type:'text',command:'element.update',key:'name',responsive:false,appliesTo:['imaginary']}),/ismert/);
+  assert.throws(()=>registerProperty({id:'test.registry.missing-layout-context',group:'flex',label:'Teszt',type:'number',command:'responsive.set',responsive:true,key:'flexGrow'}),/layoutContext/);
+  assert.throws(()=>registerProperty({id:'test.registry.invalid-layout-context',group:'grid',label:'Teszt',type:'number',command:'responsive.set',responsive:true,key:'gridColumn',layoutContext:{kind:'item',parentModes:['block']}}),/layoutContext/);
 });
 
 test('all static Inspector descriptors satisfy the same key, scope and value-metadata contract',()=>{

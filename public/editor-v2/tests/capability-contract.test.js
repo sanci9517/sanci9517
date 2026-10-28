@@ -18,6 +18,7 @@ test('every declared type exposes its actual registry fields without certifying 
    covered.add(field.id);assert.ok(field.command);assert.ok(field.control);const property=expected[index];assert.equal(field.command,property.command);assert.equal(field.control,property.type);
    assert.equal(field.scope,property.responsive?'viewport':'node');assert.equal(field.reset,property.responsive?'inherit':'type-specific');
    assert.equal(field.key,property.key??null);assert.deepEqual(field.valueContract,getInspectorValueContract(property));
+   assert.deepEqual(field.layoutContext,property.layoutContext??null);
    assert.equal(field.initialValue.status,Object.hasOwn(property,'defaultValue')?'DECLARED':'NOT_DECLARED');
    if(property.responsive){assert.equal(field.initialValue.source.strategy,'resolved-style');assert.equal(field.initialValue.source.key,property.key);assert.deepEqual(field.initialValue.source.precedence,['responsive-cascade','node.style','authored-content-default']);}
    else if(property.id==='content.text')assert.deepEqual(field.initialValue.source,{strategy:'node-props',keys:['text','content'],fallback:'node.name'});

@@ -71,6 +71,11 @@ test('Inspector layout fields follow actual parent display and breakpoint instea
   assert.equal(isLayoutPropertyRelevant(getProperty('flex.grow'),node,parent,'mobile'),true);
   assert.equal(isLayoutPropertyRelevant(getProperty('grid.columns'),parent,null,'desktop'),true);
   assert.equal(isLayoutPropertyRelevant(getProperty('flex.direction'),parent,null,'mobile'),true);
+  for(const property of listProperties().filter(item=>['flex','grid'].includes(item.group)))assert.ok(property.layoutContext,`${property.id} declares its visibility context`);
+  assert.deepEqual(getProperty('flex.grow').layoutContext,{kind:'item',parentModes:['flex']});
+  assert.deepEqual(getProperty('flex.alignSelf').layoutContext,{kind:'item',parentModes:['flex','grid']});
+  assert.deepEqual(getProperty('grid.columns').layoutContext,{kind:'container',modes:['grid']});
+  assert.deepEqual(getProperty('flex.gap').layoutContext,{kind:'container',modes:['flex','grid']});
   assert.equal(isManagedLayout(parent),false,'legacy documents are not silently opted in');
   assert.equal(explicitGridColumnCount('repeat(3, minmax(0, 1fr))'),3);
   assert.equal(explicitGridColumnCount('minmax(0, 2fr) minmax(0, 1fr)'),2);

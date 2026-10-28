@@ -4,17 +4,19 @@
   "status": "PRODUCTION_VERIFIED",
   "finding": {
     "surface": "root Inspector -> responsive flex/grid item styles -> public authored page root",
-    "problem": "The authored root is a child of the normal-flow .content-page wrapper, but the Inspector exposed flex item (flexGrow, flexShrink, flexBasis, alignSelf) and grid item (gridColumn, gridRow) controls on that root.",
-    "effect": "Those six root values are syntactically stored and can be emitted as CSS, but cannot affect root placement in its block parent. Child nodes remain eligible because their root parent can be switched to Flex or Grid."
+    "problem": "The authored root is a child of the normal-flow .content-page wrapper. The live Inspector already suppressed flex item (flexGrow, flexShrink, flexBasis, alignSelf) and grid item (gridColumn, gridRow) controls because the root has no Flex/Grid parent; however, the static per-node capability contract advertised these six fields for root types.",
+    "effect": "The static capability contract overstated root editability even though the visible Inspector behavior was already context-filtered. Child nodes remain eligible because their parent can be switched to Flex or Grid."
   },
   "change": {
     "file": "public/editor-v2/core/property-registry.js",
-    "behavior": "Exclude only ROOT from flex.grow, flex.shrink, flex.basis, flex.alignSelf, grid.column, and grid.row. Ordinary nodes retain these controls; parent layout mode determines which child group the live Inspector shows.",
-    "root_filter_helper": "nonRootNodeTypes is shared by the existing root overflow restriction and these item-only properties."
+    "behavior": "Exclude only ROOT from flex.grow, flex.shrink, flex.basis, flex.alignSelf, grid.column, and grid.row in the static capability contract. Add declarative layoutContext metadata for Flex/Grid container and item fields; the live Inspector derives breakpoint-specific visibility from that metadata.",
+    "root_filter_helper": "nonRootNodeTypes is shared by the existing root overflow restriction and these item-only properties.",
+    "ui_behavior_before_fix": "Already context-filtered; no visible Inspector control needed to be removed."
   },
   "validation": {
     "editor_unit": "PASS; npm run test:editor (10/10 files), including root absent and container retained contract assertions.",
-    "root_browser": "PASS; tests/browser/editor-root-style.test.js (1/1): root fields are hidden; child flex-item fields appear with a Flex parent and grid placement fields with a Grid parent; authored-root behavior remains verified.",
+    "root_browser": "PASS; tests/browser/editor-root-style.test.js (1/1): root fields remain hidden; child flex-item fields appear with a Flex parent and grid placement fields with a Grid parent; authored-root behavior remains verified.",
+    "layout_context_metadata": "PASS; Editor registry and capability tests assert declarative container/item context and preserve breakpoint-specific Inspector behavior.",
     "typecheck": "PASS; npm run typecheck.",
     "syntax_and_diff": "PASS; modified JavaScript syntax checks and git diff --check.",
     "canonical_plan_and_traceability": "PASS; master and active point audit pass; regenerated 396 source mappings.",
@@ -29,7 +31,7 @@
   },
   "release": {
     "commit": "101cc7093b214237b4c53538f840c33e173f1b3e",
-    "push": "verified fast-forward to v2/foundation",
+    "push": "verified fast-forward to v2/foundation; this evidence wording correction and metadata follow-up are local pending validation",
     "cloudflare_build_id": "d150ce18-6eff-4b36-928b-5910f185ffba",
     "cloudflare_build_outcome": "success; deploy:safe; build source commit matches pushed commit",
     "deployment_id": "6e9ef295-2e07-40d9-8b5a-c247013eee90",
@@ -51,5 +53,19 @@
   "limitations": [
     "Local Chromium fixture verifies dynamic Inspector groups and the public authored root; physical-device acceptance was not performed.",
     "Full 77.44.7.A acceptance remains OPEN / NOT CERTIFIED; physical-device acceptance was not performed."
-  ]
+  ],
+  "follow_up": {
+    "status": "LOCAL_VERIFIED_PENDING_RELEASE",
+    "scope": "Declarative Flex/Grid Inspector visibility context in the property registry and capability contract; current visible behavior is unchanged.",
+    "validation": {
+      "editor_unit": "PASS; npm run test:editor (10/10 files).",
+      "browser": "PASS; editor-root-style and editor-inspector-partial-types (2/2; all PARTIAL types covered).",
+      "typecheck": "PASS; npm run typecheck.",
+      "canonical_plan_and_traceability": "PASS; canonical plan, active point audit and 396 source mappings.",
+      "migration_gate": "PASS; deploy:safe only, no migration application.",
+      "wrangler_dry_run": "PASS; 159 public assets and production bindings enumerated; --dry-run only. Wrangler emitted a sandbox EROFS log warning but exited 0."
+    },
+    "production_deployment": "NOT PERFORMED for this local follow-up. Prior deployment evidence applies only to commit 101cc7093b214237b4c53538f840c33e173f1b3e.",
+    "data_changes": "No D1 migration, D1 write, or R2 operation."
+  }
 }

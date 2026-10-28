@@ -56,14 +56,13 @@ export function layoutPresetPatch(node, id) {
   return {style:withoutLayout(node.style),responsive,metadata:{...node.metadata,layoutVersion:LAYOUT_VERSION,layoutPresetId:preset.id}};
 }
 
-const flexChild=new Set(['flexGrow','flexShrink','flexBasis','alignSelf']);
-const gridChild=new Set(['gridColumn','gridRow']);
 export function isLayoutPropertyRelevant(property,node,parent,device='desktop') {
   if (!['flex','grid'].includes(property.group)) return true;
-  const mode=layoutMode(node,device),parentMode=layoutMode(parent,device);
-  if (flexChild.has(property.key)) return property.key==='alignSelf'?['flex','grid'].includes(parentMode):parentMode==='flex';
-  if (gridChild.has(property.key)) return parentMode==='grid';
-  return property.group===mode;
+  const context=property.layoutContext;
+  if(!context)return false;
+  return context.kind==='container'
+    ?context.modes.includes(layoutMode(node,device))
+    :context.parentModes.includes(layoutMode(parent,device));
 }
 
 export const CHILD_LAYOUT_DEFAULTS=Object.freeze({gridColumn:'auto',gridRow:'auto',flexGrow:'0',flexShrink:'1',flexBasis:'auto',alignSelf:'auto'});

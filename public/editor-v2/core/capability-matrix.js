@@ -48,6 +48,7 @@ export function getElementInspectorContract(type) {
     control:property.type,
     command:property.command,
     key:property.key??null,
+    layoutContext:property.layoutContext??null,
     scope:property.responsive?'viewport':'node',
     reset:property.responsive?'inherit':'type-specific',
     resetContract:Object.freeze(property.responsive
