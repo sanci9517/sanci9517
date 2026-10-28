@@ -42,7 +42,11 @@
     "source_audit": "https://github.com/sanci9517/sanci9517/actions/runs/40779561825",
     "editor_core": {
       "url": "https://github.com/sanci9517/sanci9517/actions/runs/40779561808",
-      "status_at_recording": "in_progress"
+      "conclusion": "success",
+      "editor_unit_tests": "147/147",
+      "editor_browser_tests": "88/88",
+      "web013_mobile_browser_tests": "2/2",
+      "media_api_tests": "43/43"
     }
   },
   "production": {
