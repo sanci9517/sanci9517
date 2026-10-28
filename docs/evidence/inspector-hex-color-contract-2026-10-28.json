@@ -1,0 +1,31 @@
+{
+  "date": "2026-10-28",
+  "workItem": "77.44.7.A — Inspector CSS hex color contract",
+  "finding": "The Inspector hex-color regex accepted invalid five-digit CSS hex colors and rejected valid four-digit alpha colors, unlike the repository's Rich Text color validator.",
+  "change": "The Inspector normalizer accepts exactly 3, 4, 6, or 8 hexadecimal digits and transparent. The machine-readable contract now declares those valid digit counts.",
+  "openSourceReview": {
+    "project": "GrapesJS",
+    "license": "BSD-3-Clause; reviewed and compatible, but no code copied or dependency added",
+    "source": "https://github.com/GrapesJS/grapesjs/blob/dev/packages/core/src/style_manager/model/Property.ts",
+    "sourceSha": "a8ef3515053a36f7e46a2dd94b3b930a20ff1ed8",
+    "relatedSource": "https://github.com/GrapesJS/grapesjs/blob/dev/packages/core/src/style_manager/model/PropertyComposite.ts",
+    "relatedSourceSha": "53699e7e93ab0b8adec5cdf94bedf2f5ea2105a6",
+    "licenseSource": "https://github.com/GrapesJS/grapesjs/blob/dev/LICENSE",
+    "licenseSourceSha": "258851511e57bd526d91dc3e20136493740fed95",
+    "fit": "Its declarative property metadata and composite box controls are relevant reference patterns; this repository already implements a typed property registry, four-sided spacing controls, reset/inheritance, and lifecycle routes. No missing capability or plan expansion was found."
+  },
+  "tests": {
+    "targetedInspectorTests": {"pass": 30, "fail": 0},
+    "typecheck": "PASS",
+    "editorUnit": {"pass": 10, "fail": 0},
+    "canonicalPlan": "PASS",
+    "activePointAudit": "PASS; acceptance remains NOT_CERTIFIED",
+    "traceability": {"pass": 396, "check": "PASS"},
+    "migrationSafetyGate": "PASS",
+    "gitDiffCheck": "PASS",
+    "wranglerDryRun": {"status": "PASS", "wrangler": "4.130.0", "assets": 159, "uploadKiB": 294.23, "gzipKiB": 67.33},
+    "githubCI": "PENDING"
+  },
+  "productionD1Preflight": {"method": "Cloudflare D1 query API; SELECT only", "ledgerRows": 34, "rowsWritten": 0, "changedDb": false, "migrationApplied": false},
+  "release": "PENDING"
+}

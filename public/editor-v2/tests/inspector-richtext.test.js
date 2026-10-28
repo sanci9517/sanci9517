@@ -108,6 +108,16 @@ test('asset Inspector values require canonical UUID groups, version, and variant
   assert.throws(()=>normalizeInspectorValue(asset,'6b1c2e65-e46e-4764-0234-123456789abc'),/Érvénytelen Médiatár-azonosító/);
 });
 
+test('color Inspector accepts only standard CSS hexadecimal lengths and transparent',()=>{
+  const color=getProperty('background.color');
+  for(const value of ['#abc','#abcd','#aabbcc','#aabbccdd','transparent','#ABCD']){
+    assert.equal(normalizeInspectorValue(color,value),value,`${value} is a supported color`);
+  }
+  for(const value of ['#12345','#1234567','#123456789','#12','#ggg','red',' #12345 ']){
+    assert.throws(()=>normalizeInspectorValue(color,value),/HEX színt/,`${value} is not a supported color`);
+  }
+});
+
 test('box spacing accepts CSS lengths and margin auto but rejects invalid padding and units',()=>{
   const margin=getProperty('spacing.margin'),padding=getProperty('spacing.padding');
   assert.equal(normalizeInspectorValue(margin,'0 auto'),'0 auto');

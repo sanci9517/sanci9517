@@ -53,6 +53,7 @@ test('Inspector value contracts expose the validator bounds and enumerations wit
  assert.deepEqual(byId('typography.textAlign').valueContract,{kind:'enum',values:['left','center','right','justify'],tokens:[],required:true,trimmed:true});
  assert.deepEqual(byId('typography.fontSize').valueContract,{kind:'dimension',units:['px','rem','em','vw'],allowsZero:true,allowsAuto:false,negative:false,tokens:['typography.bodySize','typography.headingSize'],required:true,trimmed:true});
  assert.deepEqual(byId('typography.lineHeight').valueContract,{kind:'number',min:0.5,max:5,tokens:['typography.lineHeight'],required:true,trimmed:true});
+ assert.deepEqual(byId('background.color').valueContract,{kind:'color',formats:['hex','transparent'],hexDigitCounts:[3,4,6,8],tokens:['colors.primary','colors.text','colors.surface','colors.border'],required:true,trimmed:true});
  assert.deepEqual(byId('position.zIndex').valueContract,{kind:'number',min:-9999,max:9999,integer:true,tokens:[],required:true,trimmed:true});
  const spacingTokens=['spacing.small','spacing.medium','spacing.large'];
  assert.deepEqual(byId('spacing.margin').valueContract,{kind:'box',maxParts:4,units:['px','%','vh','vw','rem','em'],allowsAuto:true,negativeMargin:true,negativePadding:false,tokens:spacingTokens,required:true,trimmed:true});

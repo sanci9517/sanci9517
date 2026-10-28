@@ -8,7 +8,8 @@ import {MEDIA_ASSET_ID} from './background-asset.js';
  */
 const lengthToken = /^(?:-?(?:\d+(?:\.\d+)?|\.\d+)(?:px|%|vh|vw|rem|em)|0|auto)$/i;
 const boxLengthToken = /^-?(?:\d+(?:\.\d+)?|\.\d+)(?:px|%|vh|vw|rem|em)$/i;
-const hexColor = /^#[\da-f]{3}(?:[\da-f]{3})?(?:[\da-f]{2})?$/i;
+// CSS hex colors allow exactly 3/4/6/8 digits (with 4/8 including alpha).
+const hexColor = /^#(?:[\da-f]{3}|[\da-f]{4}|[\da-f]{6}|[\da-f]{8})$/i;
 const unitToken = /^(?:auto|0|px|%|vw|vh|rem|em)$/i;
 export const INSPECTOR_FONTS = Object.freeze(['inherit','system-ui','Arial','Georgia','Verdana','monospace','sans-serif','serif']);
 export const INSPECTOR_SHADOWS = Object.freeze(['none','0 2px 8px #0003','0 8px 24px #0005','0 16px 48px #0007']);
@@ -34,7 +35,7 @@ export function getInspectorValueContract(property) {
     : {kind:'dimension',units:Object.freeze([...(property.units||[])]),allowsZero:true,allowsAuto:Boolean(property.units?.includes('auto')),negative:['x','y','letterSpacing','wordSpacing','textIndent'].includes(property.key)};
   else if(type==='box') contract={kind:'box',maxParts:4,units:Object.freeze(['px','%','vh','vw','rem','em']),allowsAuto:property.key==='margin',negativeMargin:property.key==='margin',negativePadding:false};
   else if(type==='asset') contract={kind:'asset-id',format:'uuid',allowsNone:true};
-  else if(type==='color') contract={kind:'color',formats:Object.freeze(['hex','transparent'])};
+  else if(type==='color') contract={kind:'color',formats:Object.freeze(['hex','transparent']),hexDigitCounts:Object.freeze([3,4,6,8])};
   else if(type==='url') contract={kind:'url',policy:'validatedLinkHref'};
   else if(type==='text') contract={kind:'text',trimmed:true};
   else contract={kind:'unsupported'};
