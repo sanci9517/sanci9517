@@ -198,10 +198,15 @@ export function renderPropertyInput(property, label, current, onChange, {
     wrap.append(grid);
   } else if (type === 'dimension') {
     const controls=document.createElement('div');controls.className='dimension-controls';
+    const contract=getInspectorValueContract(property);
     const match=String(current??'').trim().match(/^(-?(?:\d+(?:\.\d*)?|\.\d+))([a-z%]*)$/i);
     const special=String(current??'').trim()==='auto'&&property.units?.includes('auto');
     const number=document.createElement('input');number.type='number';number.inputMode='decimal';
-    number.step='any';number.value=special?'':match?.[1]??'';number.setAttribute('aria-label',label+' értéke');
+    number.step=String(contract.step??'any');
+    if(Number.isFinite(contract.min))number.min=String(contract.min);
+    else if(contract.negative===false)number.min='0';
+    if(Number.isFinite(contract.max))number.max=String(contract.max);
+    number.value=special?'':match?.[1]??'';number.setAttribute('aria-label',label+' értéke');
     const unit=document.createElement('select');unit.setAttribute('aria-label',label+' mértékegysége');
     const blank=document.createElement('option');blank.value='';blank.textContent='Egység';unit.append(blank);
     for(const choice of property.units||[]){if(choice==='0')continue;const option=document.createElement('option');option.value=choice;option.textContent=choice==='auto'?'Auto':choice;unit.append(option)}

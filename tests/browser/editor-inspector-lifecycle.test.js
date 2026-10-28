@@ -804,7 +804,7 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   });
   await verifyInspectorFieldLifecycle({
     propertyId:'transform.rotate',cssProperty:'rotate',label:'rotation',groupName:'Transzformáció',
-    edit:async control=>{const input=control.locator('.dimension-controls input[type="number"]');await input.fill('18');await input.press('Tab')}
+    edit:async control=>{const input=control.locator('.dimension-controls input[type="number"]');assert.deepEqual(await input.evaluate(el=>({min:el.min,max:el.max,step:el.step})),{min:'-360',max:'360',step:'any'},'rotation input mirrors its signed range');await input.fill('18');await input.press('Tab')}
   });
   await verifyInspectorFieldLifecycle({
     propertyId:'transform.scale',cssProperty:'scale',label:'visual scale',groupName:'Transzformáció',
@@ -873,8 +873,10 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
     propertyId:'size.width',cssProperty:'width',label:'geometry width',groupName:'Geometria',
     expectedCommand:'responsive.set',expectedKey:'width',
     edit:async control=>{
+      const input=control.locator('input[type="number"]');
+      assert.deepEqual(await input.evaluate(el=>({min:el.min,max:el.max,step:el.step})),{min:'0',max:'',step:'any'},'width input advertises its non-negative range');
       await control.locator('select:not(.property-token-picker)').selectOption('px');
-      const input=control.locator('input[type="number"]');await input.fill('333');await input.press('Tab');
+      await input.fill('333');await input.press('Tab');
     }
   });
   await verifyInspectorFieldLifecycle({
@@ -889,8 +891,10 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
     propertyId:'position.x',cssProperty:'left',label:'geometry X position',groupName:'Geometria',
     expectedCommand:'responsive.set',expectedKey:'x',
     edit:async control=>{
+      const input=control.locator('input[type="number"]');
+      assert.equal(await input.getAttribute('min'),null,'signed canvas offsets must not receive a positive minimum');
       await control.locator('select:not(.property-token-picker)').selectOption('px');
-      const input=control.locator('input[type="number"]');await input.fill('42');await input.press('Tab');
+      await input.fill('42');await input.press('Tab');
     }
   });
   await verifyInspectorFieldLifecycle({
@@ -908,7 +912,7 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   });
   await verifyInspectorFieldLifecycle({
     propertyId:'position.zIndex',cssProperty:'zIndex',label:'stacking order',groupName:'Pozíció',
-    edit:async control=>{const input=control.locator('input[type="number"]');assert.deepEqual(await input.evaluate(el=>({min:el.min,max:el.max,step:el.step,inputMode:el.inputMode})),{min:'-9999',max:'9999',step:'1',inputMode:'decimal'},'z-index input mirrors its integer contract and keeps signed values keyboard-accessible');await input.fill('12');await input.press('Tab')}
+    edit:async control=>{const input=control.locator('input[type="number"]');assert.deepEqual(await input.evaluate(el=>({min:el.min,max:el.max,step:el.step,inputMode:el.inputMode})),{min:'-9999',max:'9999',step:'1',inputMode:'decimal'},'z-index input mirrors its integer contract and keeps signed values keyboard-accessible');await input.fill('-12');await input.press('Tab')}
   });
   // A dragged/offset static node is rendered with the same relative CSS on
   // canvas and public page. The Inspector also makes leaving the artboard

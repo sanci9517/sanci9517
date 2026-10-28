@@ -57,6 +57,10 @@ test('Inspector value contracts expose the validator bounds and enumerations wit
  assert.deepEqual(byId('position.zIndex').valueContract,{kind:'number',min:-9999,max:9999,step:1,integer:true,tokens:[],required:true,trimmed:true});
  assert.deepEqual(byId('transform.scale').valueContract,{kind:'number',min:0.1,max:4,step:0.1,tokens:[],required:true,trimmed:true});
  assert.deepEqual(byId('flex.grow').valueContract,{kind:'number',min:0,max:100,step:'any',tokens:[],required:true,trimmed:true});
+ assert.equal(byId('size.width').valueContract.negative,false,'ordinary dimensions are non-negative');
+ assert.equal(byId('size.width').valueContract.allowsZero,true);
+ assert.deepEqual({min:byId('transform.rotate').valueContract.min,max:byId('transform.rotate').valueContract.max},{min:-360,max:360});
+ assert.equal(byId('position.x').valueContract.negative,true,'canvas offsets retain signed values');
  const spacingTokens=['spacing.small','spacing.medium','spacing.large'];
  assert.deepEqual(byId('spacing.margin').valueContract,{kind:'box',maxParts:4,units:['px','%','vh','vw','rem','em'],allowsAuto:true,negativeMargin:true,negativePadding:false,tokens:spacingTokens,required:true,trimmed:true});
  assert.deepEqual(byId('spacing.padding').valueContract,{kind:'box',maxParts:4,units:['px','%','vh','vw','rem','em'],allowsAuto:false,negativeMargin:false,negativePadding:false,tokens:spacingTokens,required:true,trimmed:true});
