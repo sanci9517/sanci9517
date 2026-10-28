@@ -95,13 +95,11 @@ export function normalizeInspectorValue(property, input) {
     return value;
   }
   if (type === 'font') {
-    const fonts = ['inherit', 'system-ui', 'Arial', 'Georgia', 'Verdana', 'monospace', 'sans-serif', 'serif'];
-    if (!fonts.includes(value)) throw new Error('Csak a támogatott betűcsaládok választhatók.');
+    if (!INSPECTOR_FONTS.includes(value)) throw new Error('Csak a támogatott betűcsaládok választhatók.');
     return value;
   }
   if (type === 'shadow') {
-    const values = ['none', '0 2px 8px #0003', '0 8px 24px #0005', '0 16px 48px #0007'];
-    if (!values.includes(value)) throw new Error('Ismeretlen árnyék preset.');
+    if (!INSPECTOR_SHADOWS.includes(value)) throw new Error('Ismeretlen árnyék preset.');
     return value;
   }
   if (type === 'url') return validatedLinkHref(value);

@@ -8,7 +8,7 @@ import { execute, executeCoalesced, executeBatch } from '../core/commands.js';
 import { resolveNodeStyle } from '../core/canvas-engine.js';
 import { getProperty, listProperties } from '../core/property-registry.js?v=20261025-content-property-route-contract';
 import { STYLE_MAP } from '../core/canvas-engine.js';
-import { normalizeInspectorValue } from '../core/property-values.js';
+import { normalizeInspectorValue, getInspectorValueContract, INSPECTOR_FONTS, INSPECTOR_SHADOWS } from '../core/property-values.js';
 import { updateRichTextInlineLink, updateRichTextInlineMark, validatedLinkHref } from '../core/richtext-links.js';
 import { normalizeRichText } from '../core/schema.js';
 import { setBlockType,transformRichTextBlockTypes } from '../core/richtext-engine.js';
@@ -94,6 +94,17 @@ test('typed Inspector controls validate display values before the command path',
   assert.equal(normalizeInspectorValue(getProperty('flex.basis'),'auto'),'auto');
   assert.equal(normalizeInspectorValue(getProperty('grid.column'),'1 / -1'),'1 / -1');
   assert.throws(()=>normalizeInspectorValue(getProperty('grid.column'),'999 / -1'));
+});
+
+test('font and shadow controls, contracts, and value validation share one allowed-value source',()=>{
+  const font=getProperty('typography.fontFamily');
+  const shadow=getProperty('shadow.box');
+  assert.deepEqual(getInspectorValueContract(font).values,INSPECTOR_FONTS);
+  assert.deepEqual(getInspectorValueContract(shadow).values,INSPECTOR_SHADOWS);
+  for(const value of INSPECTOR_FONTS)assert.equal(normalizeInspectorValue(font,value),value);
+  for(const value of INSPECTOR_SHADOWS)assert.equal(normalizeInspectorValue(shadow,value),value);
+  assert.throws(()=>normalizeInspectorValue(font,'UnapprovedFont'));
+  assert.throws(()=>normalizeInspectorValue(shadow,'0 0 0 999px red'));
 });
 
 test('asset Inspector values require canonical UUID groups, version, and variant',()=>{
