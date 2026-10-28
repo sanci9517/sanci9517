@@ -41,7 +41,36 @@
     }
   },
   "release": {
-    "status": "PENDING; runtime change requires SELECT-only D1 preflight, Wrangler dry-run, push and verified Cloudflare rollout"
+    "status": "DEPLOYED; exact runtime commit built successfully and is receiving 100% production traffic",
+    "commit": "f110b8db2058d74461d3db5de8c3c3055dddfad9",
+    "githubBranch": "v2/foundation",
+    "githubBranchHeadVerified": true,
+    "cloudflareBuild": {
+      "id": "29eb01d6-93d4-45d8-8615-a1228d395ac5",
+      "outcome": "success",
+      "commit": "f110b8db2058d74461d3db5de8c3c3055dddfad9",
+      "command": "npm run deploy:safe"
+    },
+    "deployment": {
+      "id": "6195736f-690c-4d34-8227-575b92b68e02",
+      "versionId": "a91a4f25-45d3-431f-970a-3af5edacb418",
+      "versionNumber": 3711,
+      "trafficPercent": 100
+    },
+    "githubChecks": {
+      "passed": [
+        "source-audit",
+        "canonical-plan",
+        "twitch-integration",
+        "verify",
+        "Workers Builds: sanci9517-streamer-brand"
+      ],
+      "inProgress": [
+        "editor-core"
+      ],
+      "editorCoreRunId": "40756222445"
+    },
+    "productionHealth": "UNVERIFIED; sandbox proxy could not connect to proxy port 8080 (curl exit 7); no health or asset-hash PASS claimed"
   },
   "productionDataChanges": {
     "d1MigrationsApplied": 0,
