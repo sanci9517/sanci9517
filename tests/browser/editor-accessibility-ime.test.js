@@ -70,7 +70,7 @@ for(const width of [390,1366])test(`accessibility Inspector IME validation and p
   for(const action of ['#save','#publish']){await editor.locator(action).click();assert.equal(posts.length,0);}
   await field(anchor).press('Escape');assert.equal(await field(anchor).inputValue(),keepId);
  }
- await field(lang).fill('h');assert.equal(await field(lang).getAttribute('aria-invalid'),'true');
+ await field(lang).fill('h');await editor.waitForFunction(()=>document.querySelector('input[aria-label="Tartalom nyelve (pl. hu)"]')?.getAttribute('aria-invalid')==='true');assert.equal(await field(lang).getAttribute('aria-invalid'),'true');
  await field(label).focus();await editor.locator('#save').click();assert.equal(posts.length,0);
  await field(lang).fill('ja');assert.equal(await field(lang).getAttribute('aria-invalid'),null);assert.equal(await canvas(ids.legacy).getAttribute('lang'),'ja');
  await select(ids.aliases);assert.equal(await field(label).inputValue(),'Örökölt felirat');assert.equal(await field(anchor).inputValue(),'legacy-anchor');
