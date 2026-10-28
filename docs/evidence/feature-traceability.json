@@ -14,7 +14,7 @@
     "public/editor-v2/core/design-tokens.js": "ddeb5e60dec65453d4bbf19dda5aac43bc621a8a709f659b9d58c619a25e8c4c",
     "public/editor-v2/core/icon-options.js": "457e7721748b81e0c1b224375b4118c637113e941f3e53bd646b75be7699cd8e",
     "public/editor-v2/core/property-registry.js": "d4b38464e6d99b2d90f95cbe66ae80ebf109d91de5c09ada8c6d3b94cc6e854f",
-    "public/editor-v2/core/property-values.js": "72ea09f41b0f28c2c2909c42871c6eab169aa0b0dd031299f85b52153fdc7f56",
+    "public/editor-v2/core/property-values.js": "3ac8aa29ba6ed3add2a4444e805d4b9c82892d9712c4afc16dfdadff5f0c3c26",
     "public/editor-v2/core/responsive.js": "2853b7b881485123cb56aa28ebe31f15a45deffff0025a67dce4ca2a28101f3c",
     "public/editor-v2/core/richtext-engine.js": "1306bb5b4277598242cb3518f3b9c227213f17ed184176388fd3dfc769c81113",
     "public/editor-v2/core/richtext-import.js": "c3b0eccb9930d1a05a7c9352bd8ba697424b529bef42c6c4dbff56e70b637bed",

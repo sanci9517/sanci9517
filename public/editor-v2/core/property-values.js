@@ -28,7 +28,7 @@ export function getInspectorValueContract(property) {
   if(type==='select') contract={kind:'enum',values:Object.freeze([...(property.options||[])])};
   else if(type==='font') contract={kind:'enum',values:INSPECTOR_FONTS};
   else if(type==='shadow') contract={kind:'enum',values:INSPECTOR_SHADOWS};
-  else if(type==='number') { const [min,max]=numberBounds(property);contract={kind:'number',min,max}; }
+  else if(type==='number') { const [min,max]=numberBounds(property);contract={kind:'number',min,max,...(property.key==='zIndex'?{integer:true}:{})}; }
   else if(type==='dimension') contract=property.key==='rotate'
     ? {kind:'dimension',units:Object.freeze(['deg']),min:-360,max:360}
     : {kind:'dimension',units:Object.freeze([...(property.units||[])]),allowsZero:true,allowsAuto:Boolean(property.units?.includes('auto')),negative:['x','y','letterSpacing','wordSpacing','textIndent'].includes(property.key)};
@@ -59,7 +59,7 @@ export function normalizeInspectorValue(property, input) {
   if (type === 'number') {
     const number = Number(value);
     const bounds = numberBounds(property);
-    if (!Number.isFinite(number) || number < bounds[0] || number > bounds[1]) {
+    if (!Number.isFinite(number) || number < bounds[0] || number > bounds[1] || (property.key==='zIndex'&&!Number.isInteger(number))) {
       throw new Error('A szám a megengedett tartományon kívül van.');
     }
     return String(number);

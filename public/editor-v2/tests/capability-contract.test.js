@@ -53,6 +53,7 @@ test('Inspector value contracts expose the validator bounds and enumerations wit
  assert.deepEqual(byId('typography.textAlign').valueContract,{kind:'enum',values:['left','center','right','justify'],tokens:[]});
  assert.deepEqual(byId('typography.fontSize').valueContract,{kind:'dimension',units:['px','rem','em','vw'],allowsZero:true,allowsAuto:false,negative:false,tokens:['typography.bodySize','typography.headingSize']});
  assert.deepEqual(byId('typography.lineHeight').valueContract,{kind:'number',min:0.5,max:5,tokens:['typography.lineHeight']});
+ assert.deepEqual(byId('position.zIndex').valueContract,{kind:'number',min:-9999,max:9999,integer:true,tokens:[]});
  assert.deepEqual(byId('content.text').initialValue,{status:'NOT_DECLARED',source:{strategy:'node-props',keys:['text','content'],fallback:'node.name'}});
  assert.equal(Object.isFrozen(byId('typography.textAlign').valueContract.values),true);
  const nodeName=getElementInspectorContract('text').fields.find(field=>field.id==='advanced.nodeName');

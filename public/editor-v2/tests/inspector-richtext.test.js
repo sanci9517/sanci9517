@@ -75,6 +75,8 @@ test('typed Inspector controls validate display values before the command path',
   assert.equal(normalizeInspectorValue(getProperty('opacity.value'),'0.5'),'0.5');
   assert.throws(()=>normalizeInspectorValue(getProperty('opacity.value'),'7'));
   assert.throws(()=>normalizeInspectorValue(getProperty('opacity.value'),'not-a-number'));
+  assert.equal(normalizeInspectorValue(getProperty('position.zIndex'),'-12'),'-12');
+  assert.throws(()=>normalizeInspectorValue(getProperty('position.zIndex'),'1.5'));
   assert.equal(normalizeInspectorValue(getProperty('background.color'),'#abc123'),'#abc123');
   assert.throws(()=>normalizeInspectorValue(getProperty('background.color'),'red;url(http://bad)'));
   assert.equal(normalizeInspectorValue(getProperty('typography.fontFamily'),'Georgia'),'Georgia');

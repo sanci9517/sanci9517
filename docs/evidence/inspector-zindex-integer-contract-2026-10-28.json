@@ -1,0 +1,21 @@
+{
+  "date": "2026-10-28",
+  "workItem": "77.44.7.A — Z-index Inspector value contract",
+  "finding": "The Inspector accepted fractional values for z-index, while the CSS property requires an integer; such values cannot be applied consistently by Canvas and the public renderer.",
+  "change": "Z-index values are now validated as integers and the Inspector value contract explicitly declares integer=true. Other numeric Inspector properties retain fractional values where supported.",
+  "tests": {
+    "typecheck": "PASS",
+    "editor": {"pass": 10, "fail": 0},
+    "canonicalPlan": "PASS",
+    "activePointAudit": "PASS",
+    "traceability": {"pass": 396, "acceptance": "NOT_CERTIFIED"},
+    "migrationSafetyGate": "PASS",
+    "gitDiffCheck": "PASS"
+  },
+  "deploymentPreflight": {
+    "wrangler": "4.130.0",
+    "dryRun": {"status": "PASS", "assets": 159, "uploadBytes": 301281, "migrationApply": false},
+    "d1": {"queryMode": "SELECT only", "appliedMigrations": 34, "rowsWritten": 0, "changedDb": false}
+  },
+  "release": "PENDING"
+}
