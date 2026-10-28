@@ -1,0 +1,79 @@
+{
+  "scope": "77.44.7.A Inspector URL value contract and native input parity",
+  "website": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/",
+  "commit": "eb7aa616a3b41ad6c59a0333ba393abf12a74fcb",
+  "runtime_changes": [
+    "The URL Inspector value contract now declares the same 2048-character limit enforced by validatedLinkHref.",
+    "Generic Inspector text inputs apply maxLength from their value contract; the authored-content URL control already uses the matching 2048 limit."
+  ],
+  "acceptance_cases": {
+    "content.href": {
+      "maxLength": 2048,
+      "2048_character_url": "accepted",
+      "2049_character_url": "rejected",
+      "native_input_maxLength": 2048,
+      "browser_viewports": [390, 1366]
+    }
+  },
+  "local_checks": {
+    "editor_unit_files": "11/11 PASS",
+    "inspector_controls_chromium": "1/1 PASS at 390px and 1366px",
+    "typecheck": "PASS",
+    "js_syntax": "PASS",
+    "canonical_plan": "PASS",
+    "active_point_audit": "PASS; functional acceptance remains NOT_CERTIFIED",
+    "traceability": "PASS; 396 source mappings",
+    "migration_safety_gate": "PASS",
+    "diff_check": "PASS"
+  },
+  "release_preflight": {
+    "d1_query": "SELECT name FROM d1_migrations ORDER BY name",
+    "d1_rows_read": 34,
+    "d1_changed_db": false,
+    "d1_rows_written": 0,
+    "wrangler_dry_run": "PASS; 161 public assets"
+  },
+  "github": {
+    "cloudflare_build": {
+      "id": "3e3ea210-8a3a-4cca-8718-8a8eff464754",
+      "conclusion": "success",
+      "commit": "eb7aa616a3b41ad6c59a0333ba393abf12a74fcb"
+    },
+    "canonical_plan": "https://github.com/sanci9517/sanci9517/actions/runs/40783890499",
+    "active_point_audit": "https://github.com/sanci9517/sanci9517/actions/runs/40783890627",
+    "twitch_integration": "https://github.com/sanci9517/sanci9517/actions/runs/40783890569",
+    "f0_baseline": "https://github.com/sanci9517/sanci9517/actions/runs/40783890440",
+    "editor_core": {
+      "url": "https://github.com/sanci9517/sanci9517/actions/runs/40783890473",
+      "conclusion": "success",
+      "editor_unit_tests": "147/147",
+      "editor_browser_tests": "88/88",
+      "web013_mobile_browser_tests": "2/2",
+      "media_api_tests": "43/43"
+    }
+  },
+  "production": {
+    "deployment_id": "5bde4ca9-413d-4544-96dd-8cfcf9d737fb",
+    "worker_version_id": "47b0c0d1-f9b6-4a1b-a11f-ec1a79dd9ffc",
+    "traffic_percentage": 100,
+    "api_health_http": 200,
+    "db_health_http": 200,
+    "editor_http": 200,
+    "assets": {
+      "/editor-v2/ui/property-controls.js": {
+        "local_sha256": "6ef8914202303343cb0f44f794c23f7b2f72c74f22383f1d1f8d860f0c8be35a",
+        "live_sha256": "6ef8914202303343cb0f44f794c23f7b2f72c74f22383f1d1f8d860f0c8be35a"
+      },
+      "/editor-v2/core/property-values.js": {
+        "local_sha256": "b3ab15a286553287470d29821634c66061bc3eff9bcb6f922b79977bfc32062b",
+        "live_sha256": "b3ab15a286553287470d29821634c66061bc3eff9bcb6f922b79977bfc32062b"
+      }
+    }
+  },
+  "data_safety": {
+    "d1_migration": false,
+    "production_data_write": false,
+    "r2_mutation_or_deletion": false
+  },
+  "acceptance": "The Inspector URL length declaration and native input boundary now match the existing validator and are released. The full 77.44.7.A remains OPEN / NOT CERTIFIED."
+}
