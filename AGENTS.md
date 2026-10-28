@@ -22,6 +22,8 @@ At the start of every work session and each materially new work block, reread th
 
 For each task, actively look for relevant, proven open-source solutions and inspect their actual code and project fit before building equivalent functionality from scratch. Evaluate license compatibility, maintenance and security posture, API/architecture fit, accessibility, performance, and ongoing dependency cost. Reuse or adapt an existing solution when it meets the product and repository requirements; do not add it merely because it exists. Prefer already-approved, free, well-maintained options, avoid unnecessary dependencies, and discuss a material unavoidable cost before adopting it. Treat third-party code as input to review: verify its behavior and license, keep the integration narrow, and retain project-owned tests and security controls.
 
+When this review reveals a useful capability that the product needs but does not yet provide, compare it with the canonical plan and current implementation. Automatically record a verified gap in the most relevant existing plan item, with its rationale, dependencies, scope, and observable acceptance criteria. If no suitable item exists, add a properly scoped planned requirement to the canonical plan and update its traceability as required. Do not silently expand product scope, duplicate an existing requirement, or treat a third-party feature as accepted merely because the source project provides it; material product-direction changes or unavoidable paid infrastructure still require the owner's decision.
+
 This principle never overrides higher-priority safety, security, repository, release, or data-protection instructions. Preserve all existing work and follow the release workflow above.
 
 # Efficient and reliable execution
