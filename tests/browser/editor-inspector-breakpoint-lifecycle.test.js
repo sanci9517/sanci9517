@@ -600,6 +600,49 @@ test('Inspector color keeps independent desktop/tablet/mobile values through dra
     await reloadPublic();
     assert.equal(await readStyle(live,property.css),desktopVisualStyles[property.id].public,`${property.id}: mobile Publish preserves desktop public value`);
   }
+  // Reset the mobile overrides through the Inspector and verify that the
+  // viewport cascade, command history, draft Save, and explicit Publish all
+  // agree for the same four fields.
+  await activate('mobile',390);
+  const assertVisualStyle=async(property,value,description)=>{
+    const actual=await readStyle(canvas,property.css);
+    if(property.id==='animation.transition')assert.match(actual,value===property.expected?/0\.18s/:/0\.3s/,description);
+    else assert.equal(actual,value,description);
+  };
+  const assertPublishedVisualStyle=async(property,value,description)=>{
+    const actual=await readStyle(live,property.css);
+    if(property.id==='animation.transition')assert.match(actual,value===property.expected?/0\.18s/:/0\.3s/,description);
+    else assert.equal(actual,value,description);
+  };
+  for(const property of visualProperties){
+    const reset=editor.locator(`.property-reset[data-property-key="${property.key}"]`).filter({hasText:'Öröklés visszaállítása'});
+    assert.equal(await reset.count(),1,`${property.id}: mobile override exposes a single inheritance reset`);
+    assert.equal(await reset.getAttribute('data-property-command'),'responsive.set',`${property.id}: inheritance reset uses the responsive command`);
+    await reset.click();
+    await assertVisualStyle(property,property.tabletExpected,`${property.id}: reset resolves to tablet cascade on Canvas`);
+    await assertPublishedVisualStyle(property,property.expected,`${property.id}: unpublished reset leaves the published mobile value intact`);
+  }
+  for(let index=0;index<visualProperties.length;index++)await editor.locator('#undo').click();
+  for(const property of visualProperties)await assertVisualStyle(property,property.expected,`${property.id}: Undo restores the mobile override`);
+  for(let index=0;index<visualProperties.length;index++)await editor.locator('#redo').click();
+  for(const property of visualProperties)await assertVisualStyle(property,property.tabletExpected,`${property.id}: Redo restores the inherited tablet cascade`);
+  await save(false);
+  for(const property of visualProperties)assert.equal(posts.at(-1).document.pages[pageId].nodes[nodeId].responsive.mobile[property.key],undefined,`${property.id}: draft Save removes the mobile override`);
+  await editor.reload({waitUntil:'domcontentloaded'});await select();await activate('mobile',390);
+  for(const property of visualProperties){
+    const heading=editor.locator('.inspector-group-title').filter({hasText:property.group});if(await heading.getAttribute('aria-expanded')==='false')await heading.click();
+    assert.equal(await property.read(editor.locator(`[data-property-id="${property.id}"]`)),property.tabletValue,`${property.id}: inherited tablet value survives draft reload`);
+  }
+  await reloadPublic();
+  for(const property of visualProperties)await assertPublishedVisualStyle(property,property.expected,`${property.id}: draft reset still leaves published mobile CSS intact`);
+  await save(true);await reloadPublic();
+  for(const property of visualProperties){
+    const actual=await readStyle(live,property.css);
+    if(property.id==='animation.transition')assert.match(actual,/0\.3s/,`${property.id}: Publish applies the inherited tablet cascade to mobile`);
+    else assert.equal(actual,property.tabletExpected,`${property.id}: Publish applies the inherited tablet cascade to mobile`);
+  }
+  await activate('desktop',1366);await reloadPublic();
+  for(const property of visualProperties)assert.equal(await readStyle(live,property.css),desktopVisualStyles[property.id].public,`${property.id}: mobile reset and Publish leave desktop public CSS unchanged`);
   // Mobile geometry uses the same resolved Page Model values as the Canvas.
   // The public mobile fallback previously forced height:auto/min-height:80px
   // with !important, silently discarding both inherited and authored values.

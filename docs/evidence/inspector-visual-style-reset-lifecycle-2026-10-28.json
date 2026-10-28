@@ -1,0 +1,40 @@
+{
+  "date": "2026-10-28",
+  "plan_cursor": "77.44.7.A",
+  "scope": "Complete inheritance reset and history lifecycle for mobile filter.effect, transform.rotate, transform.scale, and animation.transition after their existing Canvas/Save/reload/Publish coverage.",
+  "runtime_changed": false,
+  "test_file": "tests/browser/editor-inspector-breakpoint-lifecycle.test.js",
+  "test_result": {
+    "command": "CHROMIUM_PATH=/usr/bin/chromium node --test tests/browser/editor-inspector-breakpoint-lifecycle.test.js",
+    "tests": 1,
+    "passed": 1,
+    "failed": 0,
+    "duration_ms": 83785
+  },
+  "coverage": [
+    "Each mobile Inspector inheritance reset dispatches responsive.set and resolves to the tablet cascade.",
+    "Published mobile CSS remains unchanged during local reset edits.",
+    "Undo restores all four mobile overrides; Redo restores the inherited tablet cascade.",
+    "Draft Save removes the mobile overrides; Editor reload reads inherited values while published CSS stays unchanged.",
+    "Explicit Publish applies the tablet cascade to mobile; desktop public CSS remains independent.",
+    "Computed transition shorthand is asserted using browser-normalized duration values."
+  ],
+  "other_checks": {
+    "editor_unit": "PASS; 10/10 files",
+    "typecheck": "PASS",
+    "javascript_syntax": "PASS",
+    "diff_check": "PASS"
+  },
+  "release": {
+    "runtime_source_changed": false,
+    "production_deployment_needed": false,
+    "production_data_changed": false,
+    "database_migration_run": false,
+    "r2_changed": false,
+    "push": "pending"
+  },
+  "limitations": [
+    "Local Chromium test fixture; physical-device acceptance was not performed.",
+    "The full 77.44.7.A acceptance remains OPEN / NOT CERTIFIED."
+  ]
+}
