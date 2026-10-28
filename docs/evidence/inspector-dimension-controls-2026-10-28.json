@@ -1,0 +1,70 @@
+{
+  "scope": "77.44.7.A Inspector dimension contract to native input parity",
+  "website": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/",
+  "commit": "1d745f34",
+  "runtime_changes": [
+    "Dimension number inputs now apply min/max from getInspectorValueContract.",
+    "Non-negative dimensions receive min=0; rotate receives -360..360; signed offsets preserve a blank min.",
+    "Editor property-controls import cache-buster was updated."
+  ],
+  "acceptance_cases": {
+    "size.width": {"min": 0, "max": null},
+    "transform.rotate": {"min": -360, "max": 360},
+    "position.x": {"min": null, "negative_values_allowed": true},
+    "position.zIndex": {"min": -9999, "max": 9999, "step": 1, "negative_value_tested": -12}
+  },
+  "local_checks": {
+    "editor_unit_files": "11/11 PASS",
+    "inspector_lifecycle_chromium": "1/1 PASS; 220.3 seconds",
+    "typecheck": "PASS",
+    "js_syntax": "PASS",
+    "canonical_plan": "PASS",
+    "active_point_audit": "PASS; functional acceptance remains NOT_CERTIFIED",
+    "traceability": "PASS; 396 source mappings",
+    "migration_safety_gate": "PASS",
+    "diff_check": "PASS"
+  },
+  "release_preflight": {
+    "d1_query": "SELECT name FROM d1_migrations ORDER BY name",
+    "d1_rows_read": 34,
+    "d1_changed_db": false,
+    "d1_rows_written": 0,
+    "wrangler_dry_run": "PASS; 161 public assets"
+  },
+  "github": {
+    "cloudflare_build": {
+      "id": "d222d305-a9d7-449b-a090-00beb6c567b2",
+      "conclusion": "success"
+    },
+    "canonical_plan": "https://github.com/sanci9517/sanci9517/actions/runs/40779561978",
+    "twitch_integration": "https://github.com/sanci9517/sanci9517/actions/runs/40779562049",
+    "verify": "https://github.com/sanci9517/sanci9517/actions/runs/40779561880",
+    "source_audit": "https://github.com/sanci9517/sanci9517/actions/runs/40779561825",
+    "editor_core": {
+      "url": "https://github.com/sanci9517/sanci9517/actions/runs/40779561808",
+      "status_at_recording": "in_progress"
+    }
+  },
+  "production": {
+    "deployment_id": "008bed80-5771-462c-a820-cab0fb9def1f",
+    "worker_version_id": "b041e4a2-ff14-45f0-a30a-615ed86ef894",
+    "traffic_percentage": 100,
+    "api_health_http": 200,
+    "assets": {
+      "/editor-v2/app.js": {
+        "local_sha256": "abbd5c11037a60a333e8fafa3aff2cc36efb8cbba8548631bb3b657a462ad324",
+        "live_sha256": "abbd5c11037a60a333e8fafa3aff2cc36efb8cbba8548631bb3b657a462ad324"
+      },
+      "/editor-v2/ui/property-controls.js": {
+        "local_sha256": "2506dc70658e80d3b734f26e8c5440873572cb4990ea0ce5778efe1d849287ee",
+        "live_sha256": "2506dc70658e80d3b734f26e8c5440873572cb4990ea0ce5778efe1d849287ee"
+      }
+    }
+  },
+  "data_safety": {
+    "d1_migration": false,
+    "production_data_write": false,
+    "r2_mutation_or_deletion": false
+  },
+  "acceptance": "Dimension Inspector inputs now mirror the allowed contract and are released. The full 77.44.7.A remains OPEN / NOT CERTIFIED."
+}
