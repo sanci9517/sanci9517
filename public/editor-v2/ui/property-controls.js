@@ -106,6 +106,8 @@ export function renderPropertyInput(property, label, current, onChange, {
       const text=String(value??'');
       if(/^#[0-9a-f]{3}$/i.test(text))
         return '#'+[...text.slice(1)].map(char=>char+char).join('');
+      if(/^#[0-9a-f]{4}$/i.test(text))
+        return '#'+[...text.slice(1,4)].map(char=>char+char).join('');
       if(/^#[0-9a-f]{6}$/i.test(text))return text;
       if(/^#[0-9a-f]{8}$/i.test(text))return text.slice(0,7);
       return null;
@@ -116,7 +118,7 @@ export function renderPropertyInput(property, label, current, onChange, {
       else picker.value='#808080';
       hex.value=value;
       const transparent=String(value).toLowerCase()==='transparent';
-      const alpha=/^#[0-9a-f]{8}$/i.test(String(value));
+      const alpha=/^#[0-9a-f]{4}(?:[0-9a-f]{4})?$/i.test(String(value));
       picker.classList.toggle('color-preview-limited',transparent||alpha);
       indicator.textContent=transparent?'Átlátszó szín – a színválasztó RGB-előnézete nem mérvadó.':
         alpha?'Az átlátszóságot a HEX-mező őrzi; a színválasztó csak RGB-t mutat.':'';

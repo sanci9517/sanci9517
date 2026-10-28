@@ -1,0 +1,56 @@
+{
+  "date": "2026-10-28",
+  "workItem": "77.44.7.A — Inspector short HEX alpha picker parity",
+  "finding": "After CSS #RGBA became valid, the native RGB picker still rendered the color as gray and failed to announce that alpha is omitted from its preview.",
+  "change": "Expand the RGB nibbles from #RGBA for the native picker while preserving the original four-digit value; mark the picker preview limited and announce the alpha behavior.",
+  "tests": {
+    "browser": {
+      "command": "node --test tests/browser/editor-inspector-richtext-controls.test.js",
+      "pass": 2,
+      "fail": 0,
+      "viewports": [
+        390,
+        1366
+      ]
+    },
+    "editorUnit": {
+      "command": "npm run test:editor",
+      "pass": 10,
+      "fail": 0
+    },
+    "typecheck": "PASS",
+    "migrationSafetyGate": "PASS",
+    "canonicalPlan": "PASS; 396 source mappings",
+    "activePointAudit": "PASS; functional acceptance remains NOT_CERTIFIED",
+    "traceability": "PASS; 396 source mappings",
+    "gitDiffCheck": "PASS",
+    "wranglerDryRun": {
+      "status": "PASS",
+      "wrangler": "4.130.0",
+      "assets": 159,
+      "uploadKiB": 294.23,
+      "gzipKiB": 67.33
+    }
+  },
+  "release": {
+    "status": "PENDING: runtime source is not yet pushed or deployed",
+    "productionDataChanges": {
+      "d1MigrationsApplied": 0,
+      "d1RowsWritten": 0,
+      "r2Changes": 0
+    }
+  },
+  "acceptance": "77.44.7.A remains OPEN / NOT CERTIFIED; physical device acceptance not performed.",
+  "productionD1Preflight": {
+    "method": "Cloudflare D1 query API; SELECT only on d1_migrations",
+    "latestMigrations": [
+      "0025_site_domains_and_site_slug.sql",
+      "0026_site_memberships.sql",
+      "0027_site_scoped_settings.sql",
+      "0028_media_archive.sql"
+    ],
+    "rowsWritten": 0,
+    "changedDb": false,
+    "migrationApplied": false
+  }
+}

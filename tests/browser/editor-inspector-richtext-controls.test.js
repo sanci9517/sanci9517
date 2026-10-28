@@ -314,12 +314,14 @@ test('shared Inspector color controls synchronize RGB, short HEX, alpha, transpa
       const invalid=[picker.value,hex.value,root.querySelector('.property-validation').textContent,committed.length];
       hex.value='#11223344';hex.dispatchEvent(new Event('change',{bubbles:true}));
       const alpha=[picker.value,hex.value,root.querySelector('.typed-color-status').textContent,picker.classList.contains('color-preview-limited')];
+      hex.value='#abcd';hex.dispatchEvent(new Event('change',{bubbles:true}));
+      const shortAlpha=[picker.value,hex.value,root.querySelector('.typed-color-status').textContent,picker.classList.contains('color-preview-limited')];
       hex.value='transparent';hex.dispatchEvent(new Event('change',{bubbles:true}));
       const transparent=[hex.value,root.querySelector('.typed-color-status').textContent,picker.classList.contains('color-preview-limited')];
       const preset=root.querySelector('.property-presets .property-preset-color');
       if(preset)preset.click();
       const fromPreset=preset?[picker.value,hex.value,root.querySelector('.property-validation').textContent]:null;
-      return {start,fromPicker,fromShortHex,invalid,alpha,transparent,fromPreset,presetValue:preset?.dataset.value,committed};
+      return {start,fromPicker,fromShortHex,invalid,alpha,shortAlpha,transparent,fromPreset,presetValue:preset?.dataset.value,committed};
     });
     assert.deepEqual(values.start,['#aabbcc','#abc']);
     assert.deepEqual(values.fromPicker,['#123456','#123456']);
@@ -330,6 +332,8 @@ test('shared Inspector color controls synchronize RGB, short HEX, alpha, transpa
     assert.equal(values.invalid[3],2,'invalid color must not reach Page Model command');
     assert.deepEqual(values.alpha.slice(0,2),['#112233','#11223344']);
     assert.ok(values.alpha[2].includes('RGB')&&values.alpha[3]);
+    assert.deepEqual(values.shortAlpha.slice(0,2),['#aabbcc','#abcd']);
+    assert.ok(values.shortAlpha[2].includes('RGB')&&values.shortAlpha[3]);
     assert.ok(values.transparent[1].includes('Átlátszó')&&values.transparent[2]);
     assert.equal(values.fromPreset?.[1],values.presetValue,'a preset must update the same HEX and swatch state');
     assert.equal(values.fromPreset?.[2],'','valid preset must clear prior errors');
