@@ -25,7 +25,7 @@ export function normalizeTokens(input){
     for(const [key,value] of Object.entries(values)){
       const spec=TOKEN_SPECS[group+'.'+key];if(!spec||typeof value!=='string')throw new Error('Ismeretlen stílusérték.');
       const raw=value.trim();
-      if(spec.kind==='color'&&!/^#(?:[\da-f]{3}|[\da-f]{6}|[\da-f]{8})$/i.test(raw))throw new Error('HEX szín szükséges.');
+      if(spec.kind==='color'&&!/^#(?:[\da-f]{3}|[\da-f]{4}|[\da-f]{6}|[\da-f]{8})$/i.test(raw))throw new Error('HEX szín szükséges.');
       if(spec.kind==='font'&&!['system-ui','Arial','Georgia','Verdana','monospace','sans-serif','serif'].includes(raw))throw new Error('Nem támogatott betűcsalád.');
       if(spec.kind==='length'&&(!/^(?:0|\d+(?:\.\d+)?(?:px|rem|em))$/.test(raw)||parseFloat(raw)>200||(group==='typography'&&parseFloat(raw)<8&&raw.endsWith('px'))))throw new Error('Érvénytelen méret. Használj px, rem vagy em értéket.');
       if(spec.kind==='number'&&(!/^(?:\d+(?:\.\d+)?)$/.test(raw)||Number(raw)<.5||Number(raw)>3))throw new Error('A sormagasság .5 és 3 között lehet.');

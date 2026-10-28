@@ -14,6 +14,8 @@ test('token bindings are canonical, compatible with the target field and cannot 
   assert.equal(normalizeInspectorValue(getProperty('typography.color'),tokenReference('colors.primary')),tokenReference('colors.primary'));
   assert.throws(()=>normalizeInspectorValue(getProperty('size.width'),tokenReference('colors.primary')));
   assert.equal(compatibleTokens(getProperty('typography.fontFamily')).includes('typography.font'),true);
+  for(const value of ['#abc','#abcd','#aabbcc','#aabbccdd']){const tokens=defaultTokens();tokens.colors.primary=value;assert.equal(normalizeTokens(tokens).colors.primary,value,`${value} is a supported CSS HEX color`)}
+  for(const value of ['#abcde','#aabbccd','#gggg']){const tokens=defaultTokens();tokens.colors.primary=value;assert.throws(()=>normalizeTokens(tokens),`${value} is not a supported CSS HEX color`)}
   for(const value of ['url(https://external.test)','var(--creator-colors-text)','</style><script>bad</script>']){const tokens=defaultTokens();tokens.colors.primary=value;assert.throws(()=>normalizeTokens(tokens))}
   const tokens=defaultTokens();tokens.typography.font='bad;font-size:0';assert.throws(()=>normalizeTokens(tokens));
 });

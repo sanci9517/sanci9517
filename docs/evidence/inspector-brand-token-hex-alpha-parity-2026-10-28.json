@@ -1,0 +1,66 @@
+{
+  "date": "2026-10-28",
+  "workItem": "77.44.7.A — CSS #RGBA parity in Brand Kit color tokens",
+  "finding": "The Inspector accepted standard four-digit alpha HEX after the prior fix, but the site-wide Brand Kit token normalizer still rejected it.",
+  "change": "Align the Brand Kit color token contract with the Inspector and CSS by accepting exactly 3, 4, 6 or 8 HEX digits; keep all existing malformed-value rejection.",
+  "openSourceReview": {
+    "project": "Style Dictionary",
+    "license": "Apache-2.0; reviewed, no source copied and no dependency added",
+    "commit": "3815256076a915e2b864aedb69c87429801b1c31",
+    "source": "https://github.com/style-dictionary/style-dictionary/blob/3815256076a915e2b864aedb69c87429801b1c31/lib/common/transform-utils/colors.js",
+    "sourceBlob": "cee852a866e30102d31778d47d71e48807d90e60",
+    "relatedChange": "https://github.com/style-dictionary/style-dictionary/blob/3815256076a915e2b864aedb69c87429801b1c31/.changeset/round-hex-alpha-css.md",
+    "relatedBlob": "b7a0f8aab46952a0730e9f10a562fb291362d226",
+    "fit": "Its color transform handles CSS alpha HEX and browser-compatible alpha serialization. Creator Platform stores CSS strings directly rather than converting token color spaces, so its existing strict validator is the appropriate integration point; the full transformer and parser dependencies are unnecessary."
+  },
+  "tests": {
+    "tokenContractUnit": {
+      "command": "npm run test:editor",
+      "pass": 10,
+      "fail": 0
+    },
+    "brandKitBrowser": {
+      "command": "node --test tests/browser/editor-design-tokens.test.js",
+      "pass": 1,
+      "fail": 0
+    },
+    "brandKitBrowserCoverage": [
+      "#abcd saved as a draft",
+      "public linked page unchanged before Publish",
+      "alpha survives explicit Publish",
+      "detached page color preserved"
+    ],
+    "typecheck": "PASS",
+    "migrationSafetyGate": "PASS; deploy:safe blocks automatic D1 migrations",
+    "wranglerDryRun": {
+      "status": "PASS",
+      "wrangler": "4.130.0",
+      "assets": 159,
+      "uploadKiB": 294.24,
+      "gzipKiB": 67.33
+    }
+  },
+  "release": {
+    "status": "PENDING; runtime change requires SELECT-only D1 preflight, Wrangler dry-run, push and verified Cloudflare rollout"
+  },
+  "productionDataChanges": {
+    "d1MigrationsApplied": 0,
+    "d1RowsWritten": 0,
+    "r2Changes": 0
+  },
+  "acceptanceBoundary": "This proves the shared color-token alpha route, not full 77.44.7.A or physical-device acceptance.",
+  "productionD1Preflight": {
+    "method": "Cloudflare D1 query API; SELECT only on d1_migrations",
+    "latestApplied": "0028_media_archive.sql",
+    "locallyTrackedManualMigrations": [
+      "0025_site_domains_and_site_slug.sql",
+      "0026_site_memberships.sql",
+      "0027_site_scoped_settings.sql",
+      "0028_media_archive.sql"
+    ],
+    "rowsRead": 68,
+    "rowsWritten": 0,
+    "changedDb": false,
+    "migrationApplied": false
+  }
+}

@@ -68,6 +68,14 @@ test('site styles propagate through linked page fields only after separate publi
   assert.equal(await color(liveNode(one,'one')),'rgb(255, 102, 0)','detached page field stays unchanged');assert.equal(await color(liveNode(two,'two')),'rgb(0, 136, 170)');
   await brand.locator('#history').selectOption('2');await brand.locator('#restore').click();await brand.getByText('Korábbi változat visszaállítva piszkozatként.',{exact:true}).waitFor();assert.equal(await brand.getByLabel('Márkaszín',{exact:true}).inputValue(),'#ff6600');await two.reload();assert.equal(await color(liveNode(two,'two')),'rgb(0, 136, 170)');
   design.revision++;await brand.getByLabel('Márkaszín',{exact:true}).fill('#aabbcc');await brand.locator('#save').click();await brand.locator('#reload').waitFor();assert.equal(await brand.getByLabel('Márkaszín',{exact:true}).inputValue(),'#aabbcc');
+  brand.once('dialog',dialog=>dialog.accept());await brand.locator('#reload').click();await brand.waitForFunction(()=>document.getElementById('colors.primary')?.value==='#ff6600','server reload resolves the stale local token draft');
+  await brand.getByLabel('Márkaszín',{exact:true}).fill('#abcd');await brand.locator('#save').click();await brand.getByText('Piszkozat mentve. Az élő oldalak változatlanok.',{exact:true}).waitFor();
+  assert.equal(await brand.getByLabel('Márkaszín',{exact:true}).inputValue(),'#abcd','the Brand Kit accepts standard short-alpha CSS HEX');
+  await two.reload();assert.equal(await color(liveNode(two,'two')),'rgb(0, 136, 170)','the alpha token remains draft-only until Publish');
+  await brand.locator('#publish').click();await brand.getByText('A közös webhelystílusok publikálva.',{exact:true}).waitFor();await two.reload();
+  const alphaChannels=(await color(liveNode(two,'two'))).match(/[\d.]+/g).map(Number);
+  assert.deepEqual(alphaChannels.slice(0,3),[170,187,204]);assert.ok(Math.abs(alphaChannels[3]-13/15)<0.001,'the published shared token preserves alpha');
+  assert.equal(await color(liveNode(one,'one')),'rgb(255, 102, 0)','publishing the alpha token does not overwrite a detached page field');
   await brand.setViewportSize({width:390,height:800});assert.ok((await brand.locator('#publish').boundingBox()).height>=44);await brand.screenshot({path:'/tmp/creator-ux-p0-brand-kit-mobile.png'});
   assert.deepEqual(errors,[]);
 });
