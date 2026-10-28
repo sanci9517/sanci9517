@@ -31,7 +31,9 @@
     "production_data_changed": false,
     "database_migration_run": false,
     "r2_changed": false,
-    "push": "pending"
+    "push": "verified fast-forward to v2/foundation at 9069572fc5d431a549e1d2684126d58a59170c07",
+    "github_editor_core_run": "40688238753; in progress at last check",
+    "cloudflare_worker_deployment": "unchanged; latest remains 9951d82e-35e3-4d9d-8a87-edf88774e9df at 100% because this commit only changes tests and documentation"
   },
   "limitations": [
     "Local Chromium test fixture; physical-device acceptance was not performed.",
