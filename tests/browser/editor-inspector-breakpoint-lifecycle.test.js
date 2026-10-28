@@ -787,17 +787,18 @@ test('Inspector color keeps independent desktop/tablet/mobile values through dra
   await setNestedDimension('minWidth',140);
   await setNestedDimension('maxWidth',260);
   await setNestedDimension('minHeight',72);
-  const nestedDimensions=target=>target().evaluate(el=>{const css=getComputedStyle(el);return {width:css.width,height:css.height,minWidth:css.minWidth,maxWidth:css.maxWidth,minHeight:css.minHeight}});
-  const editedNestedDimensions={width:'220px',height:'96px',minWidth:'140px',maxWidth:'260px',minHeight:'72px'};
+  await setNestedDimension('maxHeight',180);
+  const nestedDimensions=target=>target().evaluate(el=>{const css=getComputedStyle(el);return {width:css.width,height:css.height,minWidth:css.minWidth,maxWidth:css.maxWidth,minHeight:css.minHeight,maxHeight:css.maxHeight}});
+  const editedNestedDimensions={width:'220px',height:'96px',minWidth:'140px',maxWidth:'260px',minHeight:'72px',maxHeight:'180px'};
   assert.deepEqual(await nestedDimensions(nestedCanvas),editedNestedDimensions,'nested mobile dimensional Inspector edits reach Canvas');
   assert.notDeepEqual(await nestedDimensions(nestedLive),editedNestedDimensions,'nested mobile dimensions remain unpublished before Save');
   await save(false);assert.equal(posts.at(-1).publish,false,'nested mobile dimensions Save remains draft-only');
   const nestedMobileModel=posts.at(-1).document.pages[pageId].nodes[nestedNodeId].responsive.mobile;
-  for(const [key,value] of Object.entries({width:'220px',height:'96px',minWidth:'140px',maxWidth:'260px',minHeight:'72px'}))assert.equal(nestedMobileModel[key],value,`nested ${key} is stored in the mobile Page Model`);
+  for(const [key,value] of Object.entries({width:'220px',height:'96px',minWidth:'140px',maxWidth:'260px',minHeight:'72px',maxHeight:'180px'}))assert.equal(nestedMobileModel[key],value,`nested ${key} is stored in the mobile Page Model`);
   await editor.reload({waitUntil:'domcontentloaded'});await nestedCanvas().evaluate(el=>el.click());await activate('mobile',390);
   const reloadedNestedGeometry=editor.locator('.inspector-group-title').filter({hasText:'Geometria'});if(await reloadedNestedGeometry.getAttribute('aria-expanded')==='false')await reloadedNestedGeometry.click();
   const reloadedNestedSize=editor.locator('.inspector-group-title').filter({hasText:'Méret'});if(await reloadedNestedSize.getAttribute('aria-expanded')==='false')await reloadedNestedSize.click();
-  for(const [key,value] of Object.entries({width:'220',height:'96',minWidth:'140',maxWidth:'260',minHeight:'72'}))assert.equal(await editor.locator(`[data-property-id="size.${key}"] .dimension-controls input[type="number"]`).inputValue(),value,`nested ${key} survives Editor reload`);
+  for(const [key,value] of Object.entries({width:'220',height:'96',minWidth:'140',maxWidth:'260',minHeight:'72',maxHeight:'180'}))assert.equal(await editor.locator(`[data-property-id="size.${key}"] .dimension-controls input[type="number"]`).inputValue(),value,`nested ${key} survives Editor reload`);
   await save(true);assert.equal(posts.at(-1).publish,true,'nested mobile dimensions require explicit Publish');await reloadPublic();
   assert.deepEqual(await nestedDimensions(nestedLive),editedNestedDimensions,'nested mobile dimensions reach the published renderer');
   await activate('desktop',1366);await reloadPublic();
@@ -806,7 +807,7 @@ test('Inspector color keeps independent desktop/tablet/mobile values through dra
   const resetNestedGeometry=editor.locator('.inspector-group-title').filter({hasText:'Geometria'});if(await resetNestedGeometry.getAttribute('aria-expanded')==='false')await resetNestedGeometry.click();
   const resetNestedSize=editor.locator('.inspector-group-title').filter({hasText:'Méret'});if(await resetNestedSize.getAttribute('aria-expanded')==='false')await resetNestedSize.click();
   const nestedResetters=[];
-  for(const key of ['width','height','minWidth','maxWidth','minHeight']){
+  for(const key of ['width','height','minWidth','maxWidth','minHeight','maxHeight']){
     const reset=editor.locator(`.property-reset[data-property-key="${key}"]`);
     assert.equal(await reset.count(),1,`nested mobile ${key} exposes its inheritance reset`);nestedResetters.push(reset);
   }

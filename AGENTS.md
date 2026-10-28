@@ -19,3 +19,11 @@ Keep Save and Publish behavior separate. Do not claim a push, deployment, test p
 The developer agent's default is maximum responsible autonomy. Starting from the canonical plan and actual code state, work in large, logically connected blocks at senior engineering quality: plan, implement, test, repair, and document. Do not request unnecessary intermediate approval or stop after a partial task. Ask for intervention only when a genuine user decision, permission, or security approval is required. Every feature reported as complete must have verifiable evidence.
 
 This principle never overrides higher-priority safety, security, repository, release, or data-protection instructions. Preserve all existing work and follow the release workflow above.
+
+# Efficient and reliable execution
+
+- Prefer free, already-approved, reliable tools and open-source components when they meet the product requirements. Do not add paid infrastructure or incur avoidable cost; if a necessary solution would have a material cost, explain the tradeoff and ask the owner before adopting it.
+- Parallelize only independent work whose results can be checked separately. Keep dependent edits, migrations, deployments, merges, and stateful external operations sequential.
+- Optimize for correctness and repeatability, not elapsed time. Do not weaken checks, reduce meaningful coverage, or introduce flaky concurrency to make a task appear faster.
+- Reuse existing project dependencies and platform capabilities before adding a new dependency. Evaluate maintenance, security, license, accessibility, and compatibility before adopting third-party code.
+- Fix verified defects within the authorized scope, then run checks proportional to the change and record what was and was not verified.
