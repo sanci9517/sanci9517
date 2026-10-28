@@ -1,0 +1,55 @@
+{
+  "scope": "77.44.7.A Inspector font and shadow allowed-value contract parity",
+  "website": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/",
+  "commit": "e072d147fb9115197d4b66c219ccbae5f2b2b654",
+  "changes": [
+    "Font and shadow validators now consume the same frozen allowlists as their Inspector controls and value contracts.",
+    "Regression coverage accepts every declared font and shadow value and rejects unknown values."
+  ],
+  "local_checks": {
+    "editor_unit_files": "11/11 PASS",
+    "typecheck": "PASS",
+    "migration_safety_gate": "PASS",
+    "canonical_plan": "PASS",
+    "active_point_audit": "PASS; functional acceptance remains NOT_CERTIFIED",
+    "traceability": "PASS; 396 source mappings",
+    "targeted_palette_insertion_chromium": "1/1 PASS after sandbox-permitted Chromium launch",
+    "diff_check": "PASS"
+  },
+  "release_preflight": {
+    "d1_query": "SELECT name FROM d1_migrations ORDER BY name",
+    "d1_rows_read": 34,
+    "d1_changed_db": false,
+    "d1_rows_written": 0,
+    "wrangler_dry_run": "PASS; 161 public assets"
+  },
+  "github": {
+    "cloudflare_build": {
+      "id": "52927e26-f95e-4840-9420-482214f5a192",
+      "conclusion": "success"
+    },
+    "f0_baseline": "https://github.com/sanci9517/sanci9517/actions/runs/40772638127",
+    "twitch_integration": "https://github.com/sanci9517/sanci9517/actions/runs/40772638152",
+    "canonical_plan": "https://github.com/sanci9517/sanci9517/actions/runs/40772638080",
+    "active_point_audit": "https://github.com/sanci9517/sanci9517/actions/runs/40772638159",
+    "editor_core": {
+      "url": "https://github.com/sanci9517/sanci9517/actions/runs/40772638171",
+      "status_at_recording": "in_progress"
+    }
+  },
+  "production": {
+    "deployment_id": "daac3138-2008-4ec3-9820-474e15d49b8c",
+    "worker_version_id": "193a95a6-72d4-4909-8285-81d6273abce3",
+    "traffic_percentage": 100,
+    "api_health_http": 200,
+    "changed_asset": "/editor-v2/core/property-values.js",
+    "local_asset_sha256": "4d4bdcecb860a387c1e2434737a9bc87c5aeda48945de078bab9b1d2b23a86e0",
+    "live_asset_sha256": "4d4bdcecb860a387c1e2434737a9bc87c5aeda48945de078bab9b1d2b23a86e0"
+  },
+  "data_safety": {
+    "d1_migration": false,
+    "production_data_write": false,
+    "r2_mutation_or_deletion": false
+  },
+  "acceptance": "The specific validator/contract mismatch is fixed and released; the full 77.44.7.A remains OPEN / NOT CERTIFIED, and the GitHub Editor Core workflow was still running when this record was first written."
+}
