@@ -60,7 +60,7 @@
     "src/routes/integrations/twitch.ts": "ae6e4b4e9db5a6f495089f3d3e55c7010a36bdf38a86ff4219a9ced2ce436841",
     "src/routes/public/pages.ts": "4eae3fc245dd45b4befaf891b7950898e52010064cf0a1bb79a4e431c79253e5",
     "src/routes/public/seo.ts": "fa73a6c252df558862136e85e9a6594d84a19d2fffb130ac5dd38656074be60f",
-    "tests/f0-3-route-integration.test.js": "58d9e7bb5df2073ca5c57ed6abf0ad61d7091eb7c4dd3e82fd15bc5068c6b96f"
+    "tests/f0-3-route-integration.test.js": "319f973928da8d58e1ba0f20f6bad3ce69694cfc2e9a4bb62300acc4e8c7e280"
   },
   "schema_version": 1,
   "kind": "source-traceability-not-acceptance",

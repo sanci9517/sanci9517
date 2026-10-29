@@ -183,11 +183,16 @@ test('page metadata PATCH requires expectedVersion and atomically rejects a conc
  assert.equal(malformed.status,400);assert.equal((await malformed.json()).error.code,'INVALID_EXPECTED_VERSION');assert.deepEqual(f.state(),before);
  assert.equal((await patch({sortOrder:0})).status,200,'sort-only request remains compatible without a revision token');assert.deepEqual(f.state(),before);
 
+ const qDocument=JSON.stringify(f.document('second-page','q'));
+ f.db.prepare('INSERT INTO pages(id,site_id,slug,title,description,content_json,sort_order) VALUES(?,?,?,?,?,?,?)').run('q','site-default','q','Second page','',qDocument,1);
  f.env.DB.beforeBatch=async()=>assert.equal((await patch({title:'Winner',expectedVersion:1})).status,200);
- const loser=await patch({slug:'loser',expectedVersion:1});
+ const loser=await patch({slug:'loser',sortOrder:0,expectedVersion:1});
  assert.equal(loser.status,409);assert.equal((await loser.json()).error.code,'REVISION_CONFLICT');
  const saved={...f.db.prepare("SELECT title,slug FROM pages WHERE id='p'").get()};
  assert.deepEqual(saved,{title:'Winner',slug:'p'});
+ assert.deepEqual(f.db.prepare("SELECT id,sort_order FROM pages WHERE site_id='site-default' ORDER BY id").all().map(row=>({...row})),[
+  {id:'p',sort_order:0},{id:'q',sort_order:1}
+ ],'losing CAS must not partially reorder pages');
  assert.deepEqual(f.db.prepare("SELECT version,note FROM editor_revisions WHERE page_id='p' ORDER BY version").all().map(row=>({...row})),[
   {version:1,note:null},{version:2,note:'Oldal metaadat módosítás'}
  ]);

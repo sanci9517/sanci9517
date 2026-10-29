@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "kind": "local-route-integration-evidence-not-production-acceptance",
+  "kind": "route-integration-and-production-release-evidence",
   "date": "2026-10-29",
   "plan_item": "EDT-033",
   "scope": "Admin Pages PATCH draft metadata compare-and-swap",
@@ -22,7 +22,7 @@
       "Missing expectedVersion returns 428 without page, revision or audit writes.",
       "Malformed expectedVersion returns 400 and stale expectedVersion returns 409, both without writes.",
       "Sort-only PATCH without expectedVersion remains supported; an unchanged sort position performs no write.",
-      "Two competing metadata PATCH requests from version 1 produce exactly one version-2 revision and one audit; the loser gets 409 and does not overwrite the winner."
+      "Two competing metadata PATCH requests from version 1 produce exactly one version-2 revision and one audit; the losing request also asks to reorder pages, gets 409 and leaves page content and every sort position unchanged."
     ]
   },
   "additional_checks": {
@@ -40,12 +40,39 @@
     }
   },
   "release": {
-    "committed": false,
-    "pushed": false,
-    "production_deployed": false,
-    "production_smoke_tested": false,
+    "commit": "a9a7590ee8853f7adbbed307cb97693e63663892",
+    "branch": "v2/foundation",
+    "push": "normal fast-forward, verified via Git ref",
+    "github_actions": {
+      "total_runs": 5,
+      "completed_success": 4,
+      "editor_core_test": {
+        "run_id": 40942549921,
+        "status": "in_progress at time of evidence capture",
+        "url": "https://github.com/sanci9517/sanci9517/actions/runs/40942549921"
+      }
+    },
+    "cloudflare_build": {
+      "id": "3a8c5b8b-83ae-41c5-9ba7-03107a94c141",
+      "outcome": "success",
+      "commit": "a9a7590ee8853f7adbbed307cb97693e63663892",
+      "build_command": "npm run typecheck",
+      "deploy_command": "npm run deploy:safe"
+    },
+    "deployment": {
+      "id": "9151e684-a09a-45ed-94c1-5077cc85d87d",
+      "worker_version": "efc38ecd-b3c1-44a7-becc-d266af7b3478",
+      "worker_number": 3725,
+      "traffic_percentage": 100
+    },
+    "production_smoke_tested": true,
+    "production_smoke": {
+      "/api/health": 200,
+      "/api/db-health": 200,
+      "/editor-v2/": 200
+    },
     "worker_runtime_changed": true,
-    "next": "Push verified runtime commit to v2/foundation by normal fast-forward, then verify automatic Worker build/rollout and production smoke tests. Shell GitHub proxy is currently unavailable; use the authenticated GitHub connection if it remains unavailable."
+    "next": "Complete the in-progress GitHub Editor Core run and record its terminal result. The deployed metadata-CAS route was not tested by writing to production data; production change and R2 delete were not performed."
   },
   "remaining_edt033": [
     "Audit and implement expectedVersion/CAS for remaining write routes.",
