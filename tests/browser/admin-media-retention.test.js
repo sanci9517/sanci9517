@@ -49,7 +49,10 @@ async function fixture(t,onStatus,width=390,{onMedia,archived=false}={}){
 for(const width of [390,1366])test(`retention loading, empty, all states and local dates at ${width}px`,async t=>{
  let finish;
  const f=await fixture(t,(_req,res,n)=>{if(n===1){finish=()=>json(res,{ok:true,data:data()});return;}json(res,{ok:true,data:data(['requested','quarantined','revalidated','cancelled','deleted','blocked'].map((s,i)=>request(s,i+1)))});},width);
- await f.page.locator('.tile').waitFor();
+ // The full serial browser suite starts many Chromium processes. Give only
+ // this initial library paint extra headroom; interaction assertions below
+ // continue to use the normal 5s deadline.
+ await f.page.locator('.tile').waitFor({timeout:15000});
  assert.equal(await f.refresh.isDisabled(),true);
  assert.match(await f.panel.getByRole('status').textContent(),/betöltése/);
  assert.equal(await f.panel.getAttribute('aria-busy'),'true');
@@ -113,7 +116,7 @@ test('network failure is visible, does not break the library, and permits manual
  let offline=true;
  const f=await fixture(t,(_req,res)=>offline?res.destroy():json(res,{ok:true,data:data()}));
  await f.state('error');assert.match(await f.panel.getByRole('status').textContent(),/Ellenőrizd a kapcsolatot/);
- await f.page.locator('.tile').waitFor();offline=false;await f.refresh.click();await f.state('empty');
+ await f.page.locator('.tile').waitFor({timeout:15000});offline=false;await f.refresh.click();await f.state('empty');
  assert.ok(f.calls.every(c=>c.method==='GET'));assert.deepEqual(f.pageErrors,[]);
 });
 

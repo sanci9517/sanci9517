@@ -1,0 +1,55 @@
+{
+  "plan_item": "77.44.7.A",
+  "status": "LOCAL_TEST_HARDENING",
+  "scope": "Stabilize the long serial Chromium Editor regression without changing product behavior or behavioral assertions.",
+  "full_suite": {
+    "command": "npm run test:editor:layout",
+    "first_result": "84/88 passed; four cases reported navigation/locator timeout failures under full-suite load",
+    "final_result": "PASS 88/88, 0 failed, 0 skipped",
+    "final_duration": "27m 17s",
+    "captured_output": "/tmp/sanci-editor-layout-2026-10-29.log"
+  },
+  "isolated_reproduction_before_timeout_adjustment": {
+    "command": "node --test --test-concurrency=1 tests/browser/editor-inspector-richtext-controls.test.js tests/browser/editor-legacy-media-parity.test.js tests/browser/editor-structural-parity.test.js tests/browser/editor-structured-content.test.js",
+    "result": "5/5 passed"
+  },
+  "adjustment": {
+    "files": [
+      "tests/browser/admin-media-retention.test.js",
+      "tests/browser/editor-inspector-richtext-controls.test.js",
+      "tests/browser/editor-legacy-media-parity.test.js",
+      "tests/browser/editor-structural-parity.test.js",
+      "tests/browser/editor-structured-content.test.js",
+      "tests/browser/editor-card-content.test.js",
+      "tests/browser/editor-inspector-breakpoint-lifecycle.test.js"
+    ],
+    "change": "Increase only browser navigation/locator scheduling deadlines in long serial cases. Existing user-visible behavior, expected values, and functional assertions are unchanged.",
+    "rationale": "All four full-suite failures passed when isolated; failure traces were Playwright load/action timeouts while the same routes and assertions succeeded in isolation."
+  },
+  "verification_after_adjustment": {
+    "command": "node --test --test-concurrency=1 tests/browser/editor-inspector-richtext-controls.test.js tests/browser/editor-legacy-media-parity.test.js tests/browser/editor-structural-parity.test.js tests/browser/editor-structured-content.test.js tests/browser/editor-card-content.test.js tests/browser/editor-inspector-breakpoint-lifecycle.test.js",
+    "result": "PASS 8/8 across all six affected test files, 0 failed",
+    "duration": "7m 02s",
+    "additional_breakpoint_checks": "Card Inspector 2/2 and responsive color Save/Publish 1/1 passed again in the full suite."
+  },
+  "other_local_checks": {
+    "typecheck": "PASS",
+    "editor_unit": "PASS 11/11 test files",
+    "schedule": "PASS 1/1",
+    "canonical_plan": "PASS; cursor 77.44.7.A, acceptance NOT CERTIFIED",
+    "feature_traceability": "PASS 396/396 source mappings",
+    "git_diff_check": "PASS"
+  },
+  "reuse_and_licensing": {
+    "review": "No new implementation dependency or copied third-party code was appropriate for test-only timeout tuning. Existing Playwright APIs and existing repository helpers remain in use.",
+    "playwright_license": "Apache-2.0"
+  },
+  "release": {
+    "runtime_source_changed": false,
+    "worker_deployed": false,
+    "github_pushed": "pending final repository validation",
+    "production_data_changed": false,
+    "new_paid_service_or_plan_activated": false
+  },
+  "acceptance_boundary": "The original failure traces were browser navigation/locator scheduling deadlines; all affected cases passed in isolation and in the final complete 88/88 serial Chromium run. This verifies the current browser regression suite, not authenticated manual acceptance or full Visual Editor feature acceptance; canonical acceptance remains open."
+}

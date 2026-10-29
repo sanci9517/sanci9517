@@ -30,6 +30,9 @@ test('typed Inspector controls and link selection work with real browser DOM at 
   t.after(async()=>{await browser.close();await new Promise(r=>server.close(r));});
   for(const width of [390,1366]){
     const page=await browser.newPage({viewport:{width,height:850}});
+    // The full serial browser suite runs for a long time; allow Chromium extra
+    // time to complete initial navigation under accumulated process load.
+    page.setDefaultNavigationTimeout(60000);
     await page.goto('http://127.0.0.1:'+server.address().port+'/editor-v2/index.html');
     const data=await page.evaluate(async()=>{
       const {renderPropertyInput}=await import('/editor-v2/ui/property-controls.js?v=20261029-media-picker-a11y');

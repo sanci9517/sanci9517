@@ -45,7 +45,10 @@ test('Inspector color keeps independent desktop/tablet/mobile values through dra
   t.after(async()=>{await browser.close();await new Promise(done=>server.close(done))});
   const base=`http://127.0.0.1:${server.address().port}`;
   const editor=await browser.newPage({viewport:{width:1366,height:900}}),publicPage=await browser.newPage({viewport:{width:1366,height:900}});
-  for(const page of [editor,publicPage]){page.setDefaultTimeout(7000);page.setDefaultNavigationTimeout(12000);page.on('pageerror',error=>errors.push(error.message))}
+  // The mobile/tablet/desktop path crosses repeated Save and Publish reloads.
+  // Give the long serial browser suite scheduling headroom without changing
+  // any expected state or interaction assertion.
+  for(const page of [editor,publicPage]){page.setDefaultTimeout(15000);page.setDefaultNavigationTimeout(30000);page.on('pageerror',error=>errors.push(error.message))}
   const canvas=()=>editor.locator(`.node[data-node-id="${nodeId}"]`),live=()=>publicPage.locator(`[data-node-id="${nodeId}"]`);
   const color=target=>(typeof target==='function'?target():target).evaluate(el=>getComputedStyle(el).backgroundColor);
   const select=async()=>{await canvas().evaluate(el=>el.click());if(await editor.locator('#rightDock').evaluate(el=>el.classList.contains('closed')))await editor.locator('#openInspector').click()};

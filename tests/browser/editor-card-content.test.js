@@ -45,7 +45,9 @@ for(const width of [390,1366])test(`Card Inspector IME, sources and Save/Publish
  t.after(async()=>{await browser.close();await new Promise(done=>server.close(done))});
  const base='http://127.0.0.1:'+server.address().port;
  const editor=await browser.newPage({viewport:{width,height:900}}),viewer=await browser.newPage({viewport:{width,height:900}});
- editor.setDefaultTimeout(7000);viewer.setDefaultTimeout(7000);
+ // Keep assertions strict while giving the serial full-suite browser room
+ // to schedule IME, media-picker, and Save/Publish interactions.
+ editor.setDefaultTimeout(15000);viewer.setDefaultTimeout(15000);
  const errors=[];editor.on('pageerror',e=>errors.push('editor:'+e.message));viewer.on('pageerror',e=>errors.push('public:'+e.message));
  await editor.goto(base+'/editor-v2/index.html');await viewer.goto(base+'/p/test');
  const card=editor.locator('.node[data-node-id="'+cardId+'"]'),publicCard=viewer.locator('.visual-editor-node[data-node-id="'+cardId+'"]');

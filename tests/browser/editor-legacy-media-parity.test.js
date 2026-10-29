@@ -79,8 +79,10 @@ test('legacy image video audio share guarded media URLs in Inspector Canvas and 
   const editor=await browser.newPage({viewport:{width:1366,height:900}});
   const viewer=await browser.newPage({viewport:{width:1440,height:900}});
   for(const [name,page] of [['editor',editor],['public',viewer]]){
-    page.setDefaultTimeout(9000);
-    page.setDefaultNavigationTimeout(15000);
+    // Keep the browser assertions strict while allowing the serial full-suite
+    // run enough time to schedule locator work after long preceding cases.
+    page.setDefaultTimeout(15000);
+    page.setDefaultNavigationTimeout(30000);
     page.on('pageerror',error=>errors.push(name+': '+error.message));
     page.on('request',request=>{if(request.url().includes('untrusted.invalid'))externalRequests.push(request.url())});
   }
