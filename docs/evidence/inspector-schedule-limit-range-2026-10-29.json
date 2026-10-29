@@ -1,0 +1,84 @@
+{
+  "plan_item": "77.44.7.A",
+  "scope": "Expose the existing Schedule item-count bounds as a native accessible numeric Inspector control.",
+  "verified_gap": {
+    "source": "public/editor-v2/app.js",
+    "issue": "The Schedule item-count control used a text input even though the existing schedule schema and command constrain the value to integer 1 through 50.",
+    "impact": "Keyboard, touch and assistive-technology users received no native numeric input affordance or min/max/step semantics; invalid boundary values were silently clamped without the UI declaring that range."
+  },
+  "implementation": {
+    "change": "The existing Schedule count field now uses native input[type=number], numeric input mode, min=1, max=SCHEDULE_LIMIT_MAX, step=1 and required semantics. It retains the existing command, clamp behavior, Undo history and Save/Publish boundaries.",
+    "reuse_review": "Reuses the project's existing native numeric-control pattern in the shared Inspector renderer; no third-party code or dependency added.",
+    "dependencies": "No new dependency."
+  },
+  "acceptance": {
+    "test": "tests/browser/editor-general-fields-ime.test.js",
+    "result": "PASS 2/2 real Chromium scenarios at 390px and 1366px",
+    "checks": [
+      "type, min, max, step and required semantics match the schedule schema",
+      "values below and above the range clamp to 1 and 50",
+      "the valid count persists with other Schedule settings to draft Save and explicit Publish",
+      "Save leaves the published snapshot unchanged and Publish updates it"
+    ],
+    "other_local_checks": {
+      "typecheck": "PASS",
+      "editor_unit": "PASS 11/11 test files",
+      "schedule_schema_unit": "PASS 1/1",
+      "canonical_plan_and_active_point": "PASS",
+      "source_traceability": "PASS 396/396 mappings",
+      "migration_safety_gate": "PASS",
+      "wrangler_dry_run": "PASS 161 assets"
+    }
+  },
+  "release": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "commit": "2f3c2196f5d5ade2e74b08942145388ab4d22487",
+    "push": "fast-forward from c3486455",
+    "github_ci": {
+      "editor_core_run_id": 40877997539,
+      "editor_core": "PASS",
+      "workflows": "5/5 PASS",
+      "editor_core_results": {
+        "unit": "147/147",
+        "editor_chromium": "88/88",
+        "web013_mobile_browser": "2/2",
+        "media_api": "43/43",
+        "isolated_worker_upload": "PASS",
+        "remaining_workflow_steps": "PASS"
+      }
+    },
+    "cloudflare": {
+      "build_id": "ec5aa77a-c71c-4942-91c8-297a27278817",
+      "build": "SUCCESS for exact commit 2f3c2196f5d5ade2e74b08942145388ab4d22487",
+      "deploy_command": "npm run deploy:safe",
+      "migration_safety_gate": "PASS; no D1 migration apply",
+      "uploaded_assets": ["/editor-v2/app.js"],
+      "deployment_id": "c76157b5-a2bd-4e21-9257-51a07d90b91f",
+      "worker_version_id": "efa6e0b9-7c99-4eaf-8736-38f34b57b824",
+      "worker_version_number": 3721,
+      "traffic_percent": 100,
+      "script_etag": "f21e54a9bcded6beaf6c591bcc891a6ee5db90b60ead9178ccc6a92203d3cd34",
+      "local_asset_sha256": {
+        "/editor-v2/app.js": "0e301f3a16df9898f57a6a5cf275aa6bd480e8331473b3cc7f91cdc7c764bf11"
+      }
+    },
+    "production_smoke": {
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/",
+      "status": "UNVERIFIED",
+      "reason": "The execution network proxy returned HTTP 403 for direct requests to this workers.dev host. This is a proxy block, not an origin result; health and remote asset SHA-256 are not claimed as verified."
+    },
+    "d1_preflight": {
+      "query": "SELECT name FROM d1_migrations ORDER BY name",
+      "rows_read": 34,
+      "rows_written": 0,
+      "changed_db": false
+    },
+    "data_safety": {
+      "production_d1_migration": false,
+      "production_data_write": false,
+      "r2_mutation_or_deletion": false
+    }
+  },
+  "acceptance_boundary": "The Schedule limit control is verified at two viewport widths. Full 77.44.7.A and physical-device acceptance remain OPEN / NOT CERTIFIED."
+}
