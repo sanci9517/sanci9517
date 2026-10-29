@@ -50,7 +50,17 @@
     "source_traceability": "PASS 396/396",
     "git_diff_check": "PASS"
   },
-  "full_layout_suite": "Not rerun after this final Media-picker change. Previous local run was PASS 88/88 before the latest accessibility edits; all affected production call sites have targeted browser checks listed above.",
+  "full_layout_suite": {
+    "command": "npm run test:editor:layout",
+    "result": "87/88 PASS; one unrelated Admin media-retention browser case timed out at 1366px while waiting for its first-render state",
+    "duration_seconds": 1934.2,
+    "isolated_follow_up": {
+      "command": "node --test tests/browser/admin-media-retention.test.js",
+      "result": "PASS 15/15, including the previously timed-out 1366px case",
+      "duration_seconds": 34.1
+    },
+    "assessment": "Transient full-suite timing issue, not reproduced in isolation; no assertion was weakened."
+  },
   "release": {
     "pushed": false,
     "github_actions_started": false,
