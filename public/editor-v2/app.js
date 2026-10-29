@@ -1538,6 +1538,7 @@ function beginLayerRename(id){
   status.setAttribute('role','status');
   status.setAttribute('aria-live','polite');
   input.setAttribute('aria-describedby',status.id);
+  let composing=false,compositionRevision=0;
   const save=document.createElement('button');
   save.type='submit';
   save.textContent='Mentés';
@@ -1550,6 +1551,7 @@ function beginLayerRename(id){
   form.addEventListener('submit',event=>{
     event.preventDefault();
     event.stopPropagation();
+    if(composing){input.focus();return}
     const name=input.value.trim();
     if(!name){input.setAttribute('aria-invalid','true');status.textContent='A réteg neve nem lehet üres.';input.focus();return}
     if(name===(node.name||'')){close();return}
@@ -1560,7 +1562,22 @@ function beginLayerRename(id){
     }
   });
   input.addEventListener('input',()=>{input.setAttribute('aria-invalid','false');status.textContent=''});
-  input.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();event.stopPropagation();close()}});
+  input.addEventListener('compositionstart',()=>{compositionRevision++;composing=true});
+  input.addEventListener('compositionend',()=>{
+    composing=true;
+    const revision=++compositionRevision;
+    // Some mobile IMEs deliver the confirmed replacement after compositionend.
+    // Keep Enter/Escape inert until that final input can update this field.
+    requestAnimationFrame(()=>{if(revision===compositionRevision&&form.isConnected)composing=false});
+  });
+  input.addEventListener('keydown',event=>{
+    if(composing||event.isComposing||event.keyCode===229){
+      if(event.key==='Enter'||event.key==='Escape')event.preventDefault();
+      event.stopPropagation();
+      return;
+    }
+    if(event.key==='Escape'){event.preventDefault();event.stopPropagation();close()}
+  });
   cancel.addEventListener('click',close);
   entry.append(form);
   input.focus();

@@ -132,6 +132,23 @@ for(const width of [390,1366])test(`general Inspector name and Schedule empty te
  const renameStatusId=await layerName.getAttribute('aria-describedby');
  assert.ok(renameStatusId,'layer name references its validation feedback');
  assert.equal(await editor.locator(`#${renameStatusId}`).getAttribute('role'),'status','validation feedback is a live status region');
+ const compositionSubmit=await layerName.evaluate(input=>{
+  input.value='Félkész IME jelölt';
+  input.dispatchEvent(new CompositionEvent('compositionstart',{bubbles:true}));
+  input.dispatchEvent(new InputEvent('input',{bubbles:true,isComposing:true,data:'Félkész IME jelölt'}));
+  const enter=new KeyboardEvent('keydown',{key:'Enter',keyCode:229,which:229,bubbles:true,cancelable:true,isComposing:true});input.dispatchEvent(enter);
+  input.form.requestSubmit();
+  const escape=new KeyboardEvent('keydown',{key:'Escape',keyCode:229,which:229,bubbles:true,cancelable:true,isComposing:true});input.dispatchEvent(escape);
+  return {enterPrevented:enter.defaultPrevented,escapePrevented:escape.defaultPrevented,stillEditing:input.isConnected};
+ });
+ assert.deepEqual(compositionSubmit,{enterPrevented:true,escapePrevented:true,stillEditing:true},'IME confirmation must not submit or cancel the rename form');
+ assert.equal(await editor.locator(`.node[data-node-id="${id}"] > .node-head > span`).textContent(),'Végleges belső név','an unfinished IME candidate cannot update the Page Model or Canvas');
+ assert.equal(posts.length,0,'composition does not trigger Save or Publish');
+ await layerName.evaluate(input=>{
+  input.dispatchEvent(new CompositionEvent('compositionend',{bubbles:true,data:'Végleges belső név'}));
+  input.value='Végleges belső név';input.dispatchEvent(new InputEvent('input',{bubbles:true,isComposing:false,data:'Végleges belső név'}));
+ });
+ await editor.evaluate(()=>new Promise(resolve=>requestAnimationFrame(resolve)));
  await layerName.fill('   ');await layerName.press('Enter');
  assert.equal(await layerName.getAttribute('aria-invalid'),'true','an empty inline layer name is rejected');
  assert.equal(await editor.locator(`#${renameStatusId}`).textContent(),'A réteg neve nem lehet üres.','the associated status explains the rejected name');
