@@ -1,6 +1,6 @@
 {
   "plan_item": "77.44.7.A",
-  "status": "LOCAL_ONLY_NOT_RELEASED",
+  "status": "BROWSER_TESTED_ASSET_RELEASED",
   "change": "Connect the common Inspector help disclosure button to its unique help text using aria-controls and a stable per-field id.",
   "runtime_files": [
     "public/editor-v2/ui/property-controls.js",
@@ -33,11 +33,28 @@
     "git_diff_check": "PASS"
   },
   "release": {
-    "pushed": false,
+    "pushed": true,
+    "target_branch": "v2/foundation",
+    "remote_head": "51dc6ead7f6406f66c11a719dae15e6bfc197535",
     "github_actions_started": false,
-    "cloudflare_build_or_deployment": false,
-    "production_changes": false,
-    "reason": "Zero-cost constraint; GitHub Actions overage and Cloudflare usage are not currently verified as free."
+    "github_workflow_runs_for_head": 0,
+    "cloudflare_automatic_build": "SKIPPED by verified docs/** path exclusion",
+    "manual_command": "npm run deploy:safe",
+    "cloudflare_deployment_id": "004d1959-13cb-46f9-b469-603844a9e1bc",
+    "worker_version_id": "8b45b76c-cea4-4ee7-ad7c-d38bb93d2957",
+    "worker_version_number": 3723,
+    "traffic_percent": 100,
+    "production_smoke": {
+      "api_health": 200,
+      "db_health": 200,
+      "editor_route": 200
+    },
+    "live_asset_hashes_match_local": true,
+    "d1_migration_applied": false,
+    "d1_rows_written": 0,
+    "r2_changed": false,
+    "new_paid_service_or_plan_activated": false,
+    "billing_limit": "Cloudflare Build remained within the previously observed Free quota. Current OAuth lacks Billing Read; no claim is made about total account charges."
   },
-  "acceptance_boundary": "This proves the shared help disclosure relationship and its regression path only. Full 77.44.7.A, all-type/property acceptance, production acceptance, and physical device acceptance remain open."
+  "acceptance_boundary": "The test evidence is local Chromium evidence; its runtime assets were included in verified Worker 3723. This does not certify all 68 properties/79 types, authenticated Admin acceptance, or physical-device behavior."
 }

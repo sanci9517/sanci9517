@@ -1,0 +1,60 @@
+{
+  "plan_item": "EDT-033",
+  "status": "PUSHED_AND_DEPLOYED",
+  "date_utc": "2026-10-29",
+  "issue": "The Admin Pages create endpoint accepted isPublished=true after only checking canonical Page Model shape, bypassing the complete server publication contract and site-owned media checks used by Editor Publish.",
+  "implementation": {
+    "change": "Initial page creation validates the versioned Page Model before any write when isPublished=true. A shared publication media helper now enforces active media ownership by site and publishable MIME for both create-as-published and Editor Publish.",
+    "save_publish": "Draft creation remains draft-only and can preserve incomplete content for repair. Existing Editor publish flow remains explicit.",
+    "files": [
+      "src/core/editor-publication.ts",
+      "src/routes/admin/pages.ts",
+      "src/routes/admin/editor.ts"
+    ]
+  },
+  "tests": {
+    "command": "node --experimental-loader ./tests/ts-extension-loader.mjs tests/web013-tenant-pages-editor.test.js",
+    "result": "PASS 11/11",
+    "new_cases": [
+      "Invalid create-as-published returns 409 with no page/revision/audit writes.",
+      "Incomplete draft creation still succeeds as a draft.",
+      "Valid initial publish succeeds and its draft/published snapshots and revision match.",
+      "Cross-site media reference is rejected before any write."
+    ],
+    "web013_suite": "npm run test:web013 — PASS 11/11 files",
+    "editor_unit": "npm run test:editor — PASS 11/11 files",
+    "editor_content_and_domain": "node --test tests/domain-contracts.test.js tests/editor-content-initial-publication-contract.test.js tests/editor-content-profiles.test.js — PASS 3/3 files",
+    "typecheck": "npm run typecheck — PASS",
+    "migration_safety": "npm run test:web013:migration-gate — PASS",
+    "wrangler_dry_run": "Wrangler 4.130.0 — PASS, 161 assets, 294.98 KiB / 67.54 KiB gzip",
+    "git_diff_check": "PASS"
+  },
+  "release": {
+    "commit": "d36951d5",
+    "target_branch": "v2/foundation",
+    "push": "PASS normal fast-forward from 51dc6ead",
+    "github_actions": "SKIPPED; [skip ci], GitHub connector reports zero workflow runs and no CI statuses",
+    "deploy_command": "npm run deploy:safe",
+    "cloudflare_deployment_id": "8f006236-e1a6-476c-8eab-caf89d9b4630",
+    "worker_version_id": "30f15135-a9c0-4f08-8504-a158774e8599",
+    "worker_version_number": 3724,
+    "traffic_percent": 100,
+    "production_smoke": {
+      "/api/health": 200,
+      "/api/db-health": 200,
+      "/editor-v2/": 200
+    },
+    "production_d1_preflight": {
+      "method": "Cloudflare D1 API SELECT name FROM d1_migrations ORDER BY name",
+      "rows_read": 34,
+      "latest": "0028_media_archive.sql",
+      "rows_written": 0
+    },
+    "d1_migration_applied": false,
+    "production_data_write": false,
+    "r2_mutation": false,
+    "build_quota_reached": false,
+    "account_billing": "Not checked; current Cloudflare OAuth lacks Billing Read. No paid service/plan or billing limit was changed."
+  },
+  "acceptance_boundary": "The route behavior and no-write rejection are proven in local isolated SQLite integration tests. The exact commit is deployed at 100% and production health routes pass. No production page was created or modified for testing. EDT-033 remains BLOCKED / NOT PASS because the full page mutation expectedVersion/CAS contract, public endpoint matrix, concurrency races and public snapshot E2E are still open."
+}

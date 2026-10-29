@@ -308,15 +308,15 @@
 - **Kanonikus owner / adatforrás:** PAGE/PUBLISH/REVISION; content_json draft, published_content_json snapshot, published_revision_id és editor_revisions.
 - **Séma / invariánsok:** save ≠ publish; publish validálja a Page Modelt; unpublish leállítja a public readet; rollback új revisionként történik.
 - **Jogosultság:** szerveroldali page/site scope + publish role policy; minden entrypoint ugyanazt a validationt használja.
-- **API/command:** editor POST publish validál; pages create isPublished=true útvonal nem hívja validatePublishDocumentet; expectedVersion editor/rollback útvonalon opcionális.
+- **API/command:** editor POST publish és az `isPublished=true` pages create is `validatePublishDocument`-et futtat, a közzétett média assetjeit pedig közös site/MIME ellenőrzés védi (`src/core/editor-publication.ts`). Az invalid create 409-cel, page/revision/audit írás nélkül utasítódik el; draft create továbbra is engedi a javítható, még nem publikálható tartalmat. A pages PATCH és editor/rollback `expectedVersion`-szerződése külön concurrency nyitott pont.
 - **Függőségek:** EDT-027–032, WEB-004/006–008/012/031, SEC/OPS.
 - **UI-állapotok:** draft/published/dirty/draft-ahead, validation failure, conflict, unpublish confirm, rollback confirmation.
 - **Biztonság/adatvédelem:** invalid Page Model nem kerülhet publikus snapshotba; create/publish bypass és race condition szerveroldalon blokkolandó.
-- **Tesztcsomag:** editor-validation és core.test.js publish validator tests; API entrypoint matrix, invalid create publish és concurrency negatív tesztek nyitottak.
+- **Tesztcsomag:** editor-validation és core.test.js publish validator tests; API entrypoint matrixban invalid create/foreign-media, valid initial publish, draft-only create és no-write elutasítás **11/11 WEB-013 tesztben PASS**; a metadata PATCH és minden mutation kötelező version/CAS negatív tesztje még nyitott.
 - **Elfogadás:** invalid draft minden publish entrypointon elutasítva → valid draft publish → public snapshot ellenőrzés → unpublish → rollback új revision → public state egyezés.
 - **Bizonyíték:** admin/editor.ts, admin/pages.ts, editor-validation.ts, core.test.js; teljes endpoint E2E evidence nincs.
 - **Visszaállítás:** published revision snapshot, unpublish és rollback-as-new-revision; minden művelet audit eventtel.
-- **Státusz / ismert probléma / következő lépés:** BLOCKED / NOT PASS; publish validation minden entrypointra, required expectedVersion és API race tests.
+- **Státusz / ismert probléma / következő lépés:** BLOCKED / NOT PASS. Az initial create publish megkerülés lezárva tesztelt kódban; az EDT-033 teljes elfogadása nyitott a Pages PATCH és valamennyi mutation kötelező expectedVersion/CAS egységesítése, publikus endpoint matrix, race tesztek, jogosultsági és publikus snapshot E2E miatt.
 
 **Szeletzárás:** EDT-027–033 kártyák dokumentálják a meglévő save/revision alapot és a konkrét szerveroldali blokkolókat. Ezeket a dokumentációs audit nem javította ki. Következő lépés: 63.45 mező-/dependency-ellenőrzés, majd EDT-034–044 renderer, mobil, accessibility és recovery.
 

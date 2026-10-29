@@ -12,8 +12,8 @@ ROOT = Path(__file__).resolve().parents[1]
 # e.g. a template-library requirement from inheriting token-editor evidence.
 SOURCES = {
  'ADM': ['public/admin-home.html','src/index.ts'],
- 'WEB': ['src/routes/admin/pages.ts','src/routes/admin/editor.ts','src/routes/admin/navigation.ts','src/routes/public/pages.ts','src/core/page-redirects.ts','src/index.ts'],
- 'EDT': ['public/editor-v2/app.js','public/editor-v2/core/schema.js','public/editor-v2/core/commands.js','public/editor-v2/core/property-registry.js','public/editor-v2/ui/property-controls.js','public/assets/page-renderer.js','src/core/editor-validation.ts'],
+ 'WEB': ['src/routes/admin/pages.ts','src/routes/admin/editor.ts','src/core/editor-publication.ts','src/routes/admin/navigation.ts','src/routes/public/pages.ts','src/core/page-redirects.ts','src/index.ts'],
+ 'EDT': ['public/editor-v2/app.js','public/editor-v2/core/schema.js','public/editor-v2/core/commands.js','public/editor-v2/core/property-registry.js','public/editor-v2/ui/property-controls.js','public/assets/page-renderer.js','src/core/editor-validation.ts','src/core/editor-publication.ts'],
  'DSN': ['src/core/site-presentation.ts','src/routes/admin/presentation.ts','public/assets/admin-design.js','public/editor-v2/core/design-tokens.js'],
  'RES': ['src/routes/admin/media.ts','public/assets/admin-media.js','public/editor-v2/ui/element-content-controls.js','src/core/media-retention-policy.js'],
  'INT': ['src/routes/integrations/twitch.ts','src/core/twitch-oauth.ts','src/core/twitch-site-ownership.ts','src/core/schedule/twitch-adapter.ts'],

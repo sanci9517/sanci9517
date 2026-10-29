@@ -32,6 +32,7 @@
     "src/core/auth/require-auth.ts": "7933ad739fe34dd47234a2ab66a3e54a06daee75c8b96de60f1007cec246788e",
     "src/core/auth/session.ts": "39289ef8bffad7b09a6ec6476b7d280e8bf664635d0bc5327ce216edfde7866b",
     "src/core/auth/site-access.ts": "1651ea7a2437ebd9b86700ee87fb6ec7fc5944e84c13869dc957e889e78b47ff",
+    "src/core/editor-publication.ts": "38c24c2db959b5c0af712414e30173a44ed22d6ca92bf949d2a0a696ecd2e46d",
     "src/core/editor-validation.ts": "4690a64f97a83fffde07d9ad598980559f8e38408d46be1c89223c51037ba231",
     "src/core/media-retention-policy.js": "0bb1a1bb04acc1105372c04aeab1ff55c364945aad1e97e500ab5fd2563ecfe7",
     "src/core/page-redirects.ts": "5e4cab4b3ab9d01f3072058c93ec8b91b35aa41e139f459c66aa85b887e5f06f",
@@ -44,11 +45,11 @@
     "src/core/twitch-oauth.ts": "da36e187e6ec0e8ffa6a9e43aa3e0a91709323ea0fe717009d82c304c17605fc",
     "src/core/twitch-site-ownership.ts": "096f63a1cf168c4dc9ad0be019987ddd077cb64ee86f3a364a68cf31f6b433d2",
     "src/index.ts": "847ae28040b6c5b930425bfcbcd7e3ce05ffba0c6c846a9c1980d39d21e02584",
-    "src/routes/admin/editor.ts": "be0b8273f566a370ddf4bbac7429b617759204fb388808111e2a088d6d559e9c",
+    "src/routes/admin/editor.ts": "0b60b327ccdcb5d280ea0c57424df4185f7d364f911894cc82445772a0964524",
     "src/routes/admin/link-report.ts": "236def7241afe4ba32db2b86c2849ea6f73345a4acf4e28bbd5f9c991d974752",
     "src/routes/admin/media.ts": "5be9b52735b93a22b058a8611f9b0603b3788415026961320681673bc700b56e",
     "src/routes/admin/navigation.ts": "6ff3caa6307d24c1ae135ab98a3f948865e6b8561ccfcf4acfc940db3bc894d9",
-    "src/routes/admin/pages.ts": "b2fd0e8a195d8e633e4a63e2be0bcadfdb384c767fd8bf27fcc98f94f92a3fd8",
+    "src/routes/admin/pages.ts": "2c3a9e64d0e3013988d7fd737d001de11788bed5a426edc231be6766aa5bb13e",
     "src/routes/admin/presentation.ts": "7a496ae2dce84584e3ca7221a4e976b685344cc50be149df0bd0c02b21e0b002",
     "src/routes/admin/schedule.ts": "886592f40212876b027f9091da3eaf2e5b7db366092e633bc5187d76c8827747",
     "src/routes/admin/settings.ts": "c8f69c3b8f9d3dfb52e2de15aea507724f224f8c5a6d58790bec60b0a750796e",
@@ -421,6 +422,7 @@
       "implementation": [
         "src/routes/admin/pages.ts",
         "src/routes/admin/editor.ts",
+        "src/core/editor-publication.ts",
         "src/routes/admin/navigation.ts",
         "src/routes/public/pages.ts",
         "src/core/page-redirects.ts",
@@ -463,6 +465,7 @@
       "implementation": [
         "src/routes/admin/pages.ts",
         "src/routes/admin/editor.ts",
+        "src/core/editor-publication.ts",
         "src/routes/admin/navigation.ts",
         "src/routes/public/pages.ts",
         "src/core/page-redirects.ts",
@@ -505,6 +508,7 @@
       "implementation": [
         "src/routes/admin/pages.ts",
         "src/routes/admin/editor.ts",
+        "src/core/editor-publication.ts",
         "src/routes/admin/navigation.ts",
         "src/routes/public/pages.ts",
         "src/core/page-redirects.ts",
@@ -547,6 +551,7 @@
       "implementation": [
         "src/routes/admin/pages.ts",
         "src/routes/admin/editor.ts",
+        "src/core/editor-publication.ts",
         "src/routes/admin/navigation.ts",
         "src/routes/public/pages.ts",
         "src/core/page-redirects.ts",
@@ -589,6 +594,7 @@
       "implementation": [
         "src/routes/admin/pages.ts",
         "src/routes/admin/editor.ts",
+        "src/core/editor-publication.ts",
         "src/routes/admin/navigation.ts",
         "src/routes/public/pages.ts",
         "src/core/page-redirects.ts",
@@ -631,6 +637,7 @@
       "implementation": [
         "src/routes/admin/pages.ts",
         "src/routes/admin/editor.ts",
+        "src/core/editor-publication.ts",
         "src/routes/admin/navigation.ts",
         "src/routes/public/pages.ts",
         "src/core/page-redirects.ts",
@@ -673,6 +680,7 @@
       "implementation": [
         "src/routes/admin/pages.ts",
         "src/routes/admin/editor.ts",
+        "src/core/editor-publication.ts",
         "src/routes/admin/navigation.ts",
         "src/routes/public/pages.ts",
         "src/core/page-redirects.ts",
@@ -715,6 +723,7 @@
       "implementation": [
         "src/routes/admin/pages.ts",
         "src/routes/admin/editor.ts",
+        "src/core/editor-publication.ts",
         "src/routes/admin/navigation.ts",
         "src/routes/public/pages.ts",
         "src/core/page-redirects.ts",
@@ -757,6 +766,7 @@
       "implementation": [
         "src/routes/admin/pages.ts",
         "src/routes/admin/editor.ts",
+        "src/core/editor-publication.ts",
         "src/routes/admin/navigation.ts",
         "src/routes/public/pages.ts",
         "src/core/page-redirects.ts",
@@ -799,6 +809,7 @@
       "implementation": [
         "src/routes/admin/pages.ts",
         "src/routes/admin/editor.ts",
+        "src/core/editor-publication.ts",
         "src/routes/admin/navigation.ts",
         "src/routes/public/pages.ts",
         "src/core/page-redirects.ts",
@@ -841,6 +852,7 @@
       "implementation": [
         "src/routes/admin/pages.ts",
         "src/routes/admin/editor.ts",
+        "src/core/editor-publication.ts",
         "src/routes/admin/navigation.ts",
         "src/routes/public/pages.ts",
         "src/core/page-redirects.ts",
@@ -883,6 +895,7 @@
       "implementation": [
         "src/routes/admin/pages.ts",
         "src/routes/admin/editor.ts",
+        "src/core/editor-publication.ts",
         "src/routes/admin/navigation.ts",
         "src/routes/public/pages.ts",
         "src/core/page-redirects.ts",
@@ -925,6 +938,7 @@
       "implementation": [
         "src/routes/admin/pages.ts",
         "src/routes/admin/editor.ts",
+        "src/core/editor-publication.ts",
         "src/routes/admin/navigation.ts",
         "src/routes/public/pages.ts",
         "src/core/page-redirects.ts",
@@ -967,6 +981,7 @@
       "implementation": [
         "src/routes/admin/pages.ts",
         "src/routes/admin/editor.ts",
+        "src/core/editor-publication.ts",
         "src/routes/admin/navigation.ts",
         "src/routes/public/pages.ts",
         "src/core/page-redirects.ts",
@@ -1032,6 +1047,7 @@
       "implementation": [
         "src/routes/admin/pages.ts",
         "src/routes/admin/editor.ts",
+        "src/core/editor-publication.ts",
         "src/routes/admin/navigation.ts",
         "src/routes/public/pages.ts",
         "src/core/page-redirects.ts",
@@ -1327,6 +1343,7 @@
       "implementation": [
         "src/routes/admin/pages.ts",
         "src/routes/admin/editor.ts",
+        "src/core/editor-publication.ts",
         "src/routes/admin/navigation.ts",
         "src/routes/public/pages.ts",
         "src/core/page-redirects.ts",
@@ -1392,6 +1409,7 @@
       "implementation": [
         "src/routes/admin/pages.ts",
         "src/routes/admin/editor.ts",
+        "src/core/editor-publication.ts",
         "src/routes/admin/navigation.ts",
         "src/routes/public/pages.ts",
         "src/core/page-redirects.ts",
@@ -1434,6 +1452,7 @@
       "implementation": [
         "src/routes/admin/pages.ts",
         "src/routes/admin/editor.ts",
+        "src/core/editor-publication.ts",
         "src/routes/admin/navigation.ts",
         "src/routes/public/pages.ts",
         "src/core/page-redirects.ts",
@@ -1476,6 +1495,7 @@
       "implementation": [
         "src/routes/admin/pages.ts",
         "src/routes/admin/editor.ts",
+        "src/core/editor-publication.ts",
         "src/routes/admin/navigation.ts",
         "src/routes/public/pages.ts",
         "src/core/page-redirects.ts",
@@ -1522,7 +1542,8 @@
         "public/editor-v2/core/property-registry.js",
         "public/editor-v2/ui/property-controls.js",
         "public/assets/page-renderer.js",
-        "src/core/editor-validation.ts"
+        "src/core/editor-validation.ts",
+        "src/core/editor-publication.ts"
       ],
       "test_candidates": [
         "public/editor-v2/tests/capability-contract.test.js",
@@ -1617,7 +1638,8 @@
         "public/editor-v2/core/property-registry.js",
         "public/editor-v2/ui/property-controls.js",
         "public/assets/page-renderer.js",
-        "src/core/editor-validation.ts"
+        "src/core/editor-validation.ts",
+        "src/core/editor-publication.ts"
       ],
       "test_candidates": [
         "public/editor-v2/tests/capability-contract.test.js",
@@ -1712,7 +1734,8 @@
         "public/editor-v2/core/property-registry.js",
         "public/editor-v2/ui/property-controls.js",
         "public/assets/page-renderer.js",
-        "src/core/editor-validation.ts"
+        "src/core/editor-validation.ts",
+        "src/core/editor-publication.ts"
       ],
       "test_candidates": [
         "public/editor-v2/tests/capability-contract.test.js",
@@ -1807,7 +1830,8 @@
         "public/editor-v2/core/property-registry.js",
         "public/editor-v2/ui/property-controls.js",
         "public/assets/page-renderer.js",
-        "src/core/editor-validation.ts"
+        "src/core/editor-validation.ts",
+        "src/core/editor-publication.ts"
       ],
       "test_candidates": [
         "public/editor-v2/tests/capability-contract.test.js",
@@ -1902,7 +1926,8 @@
         "public/editor-v2/core/property-registry.js",
         "public/editor-v2/ui/property-controls.js",
         "public/assets/page-renderer.js",
-        "src/core/editor-validation.ts"
+        "src/core/editor-validation.ts",
+        "src/core/editor-publication.ts"
       ],
       "test_candidates": [
         "public/editor-v2/tests/capability-contract.test.js",
@@ -1997,7 +2022,8 @@
         "public/editor-v2/core/property-registry.js",
         "public/editor-v2/ui/property-controls.js",
         "public/assets/page-renderer.js",
-        "src/core/editor-validation.ts"
+        "src/core/editor-validation.ts",
+        "src/core/editor-publication.ts"
       ],
       "test_candidates": [
         "public/editor-v2/tests/capability-contract.test.js",
@@ -2092,7 +2118,8 @@
         "public/editor-v2/core/property-registry.js",
         "public/editor-v2/ui/property-controls.js",
         "public/assets/page-renderer.js",
-        "src/core/editor-validation.ts"
+        "src/core/editor-validation.ts",
+        "src/core/editor-publication.ts"
       ],
       "test_candidates": [
         "public/editor-v2/tests/capability-contract.test.js",
@@ -2187,7 +2214,8 @@
         "public/editor-v2/core/property-registry.js",
         "public/editor-v2/ui/property-controls.js",
         "public/assets/page-renderer.js",
-        "src/core/editor-validation.ts"
+        "src/core/editor-validation.ts",
+        "src/core/editor-publication.ts"
       ],
       "test_candidates": [
         "public/editor-v2/tests/capability-contract.test.js",
@@ -2282,7 +2310,8 @@
         "public/editor-v2/core/property-registry.js",
         "public/editor-v2/ui/property-controls.js",
         "public/assets/page-renderer.js",
-        "src/core/editor-validation.ts"
+        "src/core/editor-validation.ts",
+        "src/core/editor-publication.ts"
       ],
       "test_candidates": [
         "public/editor-v2/tests/capability-contract.test.js",
@@ -2377,7 +2406,8 @@
         "public/editor-v2/core/property-registry.js",
         "public/editor-v2/ui/property-controls.js",
         "public/assets/page-renderer.js",
-        "src/core/editor-validation.ts"
+        "src/core/editor-validation.ts",
+        "src/core/editor-publication.ts"
       ],
       "test_candidates": [
         "public/editor-v2/tests/capability-contract.test.js",
@@ -2472,7 +2502,8 @@
         "public/editor-v2/core/property-registry.js",
         "public/editor-v2/ui/property-controls.js",
         "public/assets/page-renderer.js",
-        "src/core/editor-validation.ts"
+        "src/core/editor-validation.ts",
+        "src/core/editor-publication.ts"
       ],
       "test_candidates": [
         "public/editor-v2/tests/capability-contract.test.js",
@@ -2567,7 +2598,8 @@
         "public/editor-v2/core/property-registry.js",
         "public/editor-v2/ui/property-controls.js",
         "public/assets/page-renderer.js",
-        "src/core/editor-validation.ts"
+        "src/core/editor-validation.ts",
+        "src/core/editor-publication.ts"
       ],
       "test_candidates": [
         "public/editor-v2/tests/capability-contract.test.js",
@@ -2662,7 +2694,8 @@
         "public/editor-v2/core/property-registry.js",
         "public/editor-v2/ui/property-controls.js",
         "public/assets/page-renderer.js",
-        "src/core/editor-validation.ts"
+        "src/core/editor-validation.ts",
+        "src/core/editor-publication.ts"
       ],
       "test_candidates": [
         "public/editor-v2/tests/capability-contract.test.js",
@@ -2757,7 +2790,8 @@
         "public/editor-v2/core/property-registry.js",
         "public/editor-v2/ui/property-controls.js",
         "public/assets/page-renderer.js",
-        "src/core/editor-validation.ts"
+        "src/core/editor-validation.ts",
+        "src/core/editor-publication.ts"
       ],
       "test_candidates": [
         "public/editor-v2/tests/capability-contract.test.js",
@@ -2943,7 +2977,8 @@
         "public/editor-v2/core/property-registry.js",
         "public/editor-v2/ui/property-controls.js",
         "public/assets/page-renderer.js",
-        "src/core/editor-validation.ts"
+        "src/core/editor-validation.ts",
+        "src/core/editor-publication.ts"
       ],
       "test_candidates": [
         "public/editor-v2/tests/capability-contract.test.js",
@@ -3038,7 +3073,8 @@
         "public/editor-v2/core/property-registry.js",
         "public/editor-v2/ui/property-controls.js",
         "public/assets/page-renderer.js",
-        "src/core/editor-validation.ts"
+        "src/core/editor-validation.ts",
+        "src/core/editor-publication.ts"
       ],
       "test_candidates": [
         "public/editor-v2/tests/capability-contract.test.js",
@@ -3133,7 +3169,8 @@
         "public/editor-v2/core/property-registry.js",
         "public/editor-v2/ui/property-controls.js",
         "public/assets/page-renderer.js",
-        "src/core/editor-validation.ts"
+        "src/core/editor-validation.ts",
+        "src/core/editor-publication.ts"
       ],
       "test_candidates": [
         "public/editor-v2/tests/capability-contract.test.js",
@@ -3228,7 +3265,8 @@
         "public/editor-v2/core/property-registry.js",
         "public/editor-v2/ui/property-controls.js",
         "public/assets/page-renderer.js",
-        "src/core/editor-validation.ts"
+        "src/core/editor-validation.ts",
+        "src/core/editor-publication.ts"
       ],
       "test_candidates": [
         "public/editor-v2/tests/capability-contract.test.js",
@@ -3323,7 +3361,8 @@
         "public/editor-v2/core/property-registry.js",
         "public/editor-v2/ui/property-controls.js",
         "public/assets/page-renderer.js",
-        "src/core/editor-validation.ts"
+        "src/core/editor-validation.ts",
+        "src/core/editor-publication.ts"
       ],
       "test_candidates": [
         "public/editor-v2/tests/capability-contract.test.js",
@@ -3600,7 +3639,8 @@
         "public/editor-v2/core/property-registry.js",
         "public/editor-v2/ui/property-controls.js",
         "public/assets/page-renderer.js",
-        "src/core/editor-validation.ts"
+        "src/core/editor-validation.ts",
+        "src/core/editor-publication.ts"
       ],
       "test_candidates": [
         "public/editor-v2/tests/capability-contract.test.js",
@@ -3785,7 +3825,8 @@
         "public/editor-v2/core/property-registry.js",
         "public/editor-v2/ui/property-controls.js",
         "public/assets/page-renderer.js",
-        "src/core/editor-validation.ts"
+        "src/core/editor-validation.ts",
+        "src/core/editor-publication.ts"
       ],
       "test_candidates": [
         "public/editor-v2/tests/capability-contract.test.js",
@@ -3880,7 +3921,8 @@
         "public/editor-v2/core/property-registry.js",
         "public/editor-v2/ui/property-controls.js",
         "public/assets/page-renderer.js",
-        "src/core/editor-validation.ts"
+        "src/core/editor-validation.ts",
+        "src/core/editor-publication.ts"
       ],
       "test_candidates": [
         "public/editor-v2/tests/capability-contract.test.js",
@@ -3975,7 +4017,8 @@
         "public/editor-v2/core/property-registry.js",
         "public/editor-v2/ui/property-controls.js",
         "public/assets/page-renderer.js",
-        "src/core/editor-validation.ts"
+        "src/core/editor-validation.ts",
+        "src/core/editor-publication.ts"
       ],
       "test_candidates": [
         "public/editor-v2/tests/capability-contract.test.js",
@@ -4070,7 +4113,8 @@
         "public/editor-v2/core/property-registry.js",
         "public/editor-v2/ui/property-controls.js",
         "public/assets/page-renderer.js",
-        "src/core/editor-validation.ts"
+        "src/core/editor-validation.ts",
+        "src/core/editor-publication.ts"
       ],
       "test_candidates": [
         "public/editor-v2/tests/capability-contract.test.js",
@@ -4165,7 +4209,8 @@
         "public/editor-v2/core/property-registry.js",
         "public/editor-v2/ui/property-controls.js",
         "public/assets/page-renderer.js",
-        "src/core/editor-validation.ts"
+        "src/core/editor-validation.ts",
+        "src/core/editor-publication.ts"
       ],
       "test_candidates": [
         "public/editor-v2/tests/capability-contract.test.js",
@@ -4260,7 +4305,8 @@
         "public/editor-v2/core/property-registry.js",
         "public/editor-v2/ui/property-controls.js",
         "public/assets/page-renderer.js",
-        "src/core/editor-validation.ts"
+        "src/core/editor-validation.ts",
+        "src/core/editor-publication.ts"
       ],
       "test_candidates": [
         "public/editor-v2/tests/capability-contract.test.js",
@@ -4355,7 +4401,8 @@
         "public/editor-v2/core/property-registry.js",
         "public/editor-v2/ui/property-controls.js",
         "public/assets/page-renderer.js",
-        "src/core/editor-validation.ts"
+        "src/core/editor-validation.ts",
+        "src/core/editor-publication.ts"
       ],
       "test_candidates": [
         "public/editor-v2/tests/capability-contract.test.js",
@@ -4450,7 +4497,8 @@
         "public/editor-v2/core/property-registry.js",
         "public/editor-v2/ui/property-controls.js",
         "public/assets/page-renderer.js",
-        "src/core/editor-validation.ts"
+        "src/core/editor-validation.ts",
+        "src/core/editor-publication.ts"
       ],
       "test_candidates": [
         "public/editor-v2/tests/capability-contract.test.js",
@@ -4545,7 +4593,8 @@
         "public/editor-v2/core/property-registry.js",
         "public/editor-v2/ui/property-controls.js",
         "public/assets/page-renderer.js",
-        "src/core/editor-validation.ts"
+        "src/core/editor-validation.ts",
+        "src/core/editor-publication.ts"
       ],
       "test_candidates": [
         "public/editor-v2/tests/capability-contract.test.js",
@@ -4640,7 +4689,8 @@
         "public/editor-v2/core/property-registry.js",
         "public/editor-v2/ui/property-controls.js",
         "public/assets/page-renderer.js",
-        "src/core/editor-validation.ts"
+        "src/core/editor-validation.ts",
+        "src/core/editor-publication.ts"
       ],
       "test_candidates": [
         "public/editor-v2/tests/capability-contract.test.js",
@@ -4735,7 +4785,8 @@
         "public/editor-v2/core/property-registry.js",
         "public/editor-v2/ui/property-controls.js",
         "public/assets/page-renderer.js",
-        "src/core/editor-validation.ts"
+        "src/core/editor-validation.ts",
+        "src/core/editor-publication.ts"
       ],
       "test_candidates": [
         "public/editor-v2/tests/capability-contract.test.js",
@@ -4830,7 +4881,8 @@
         "public/editor-v2/core/property-registry.js",
         "public/editor-v2/ui/property-controls.js",
         "public/assets/page-renderer.js",
-        "src/core/editor-validation.ts"
+        "src/core/editor-validation.ts",
+        "src/core/editor-publication.ts"
       ],
       "test_candidates": [
         "public/editor-v2/tests/capability-contract.test.js",
@@ -4925,7 +4977,8 @@
         "public/editor-v2/core/property-registry.js",
         "public/editor-v2/ui/property-controls.js",
         "public/assets/page-renderer.js",
-        "src/core/editor-validation.ts"
+        "src/core/editor-validation.ts",
+        "src/core/editor-publication.ts"
       ],
       "test_candidates": [
         "public/editor-v2/tests/capability-contract.test.js",
@@ -5020,7 +5073,8 @@
         "public/editor-v2/core/property-registry.js",
         "public/editor-v2/ui/property-controls.js",
         "public/assets/page-renderer.js",
-        "src/core/editor-validation.ts"
+        "src/core/editor-validation.ts",
+        "src/core/editor-publication.ts"
       ],
       "test_candidates": [
         "public/editor-v2/tests/capability-contract.test.js",
@@ -5138,7 +5192,8 @@
         "public/editor-v2/core/property-registry.js",
         "public/editor-v2/ui/property-controls.js",
         "public/assets/page-renderer.js",
-        "src/core/editor-validation.ts"
+        "src/core/editor-validation.ts",
+        "src/core/editor-publication.ts"
       ],
       "test_candidates": [
         "public/editor-v2/tests/capability-contract.test.js",
@@ -5233,7 +5288,8 @@
         "public/editor-v2/core/property-registry.js",
         "public/editor-v2/ui/property-controls.js",
         "public/assets/page-renderer.js",
-        "src/core/editor-validation.ts"
+        "src/core/editor-validation.ts",
+        "src/core/editor-publication.ts"
       ],
       "test_candidates": [
         "public/editor-v2/tests/capability-contract.test.js",
@@ -5328,7 +5384,8 @@
         "public/editor-v2/core/property-registry.js",
         "public/editor-v2/ui/property-controls.js",
         "public/assets/page-renderer.js",
-        "src/core/editor-validation.ts"
+        "src/core/editor-validation.ts",
+        "src/core/editor-publication.ts"
       ],
       "test_candidates": [
         "public/editor-v2/tests/capability-contract.test.js",
@@ -5515,7 +5572,8 @@
         "public/editor-v2/core/property-registry.js",
         "public/editor-v2/ui/property-controls.js",
         "public/assets/page-renderer.js",
-        "src/core/editor-validation.ts"
+        "src/core/editor-validation.ts",
+        "src/core/editor-publication.ts"
       ],
       "test_candidates": [
         "public/editor-v2/tests/capability-contract.test.js",
