@@ -2,7 +2,10 @@
   "schema_version": 1,
   "kind": "local-editor-lock-and-insertion-evidence-not-production-acceptance",
   "date": "2026-10-29",
-  "plan_items": ["77.44.7.A", "EDT-014"],
+  "plan_items": [
+    "77.44.7.A",
+    "EDT-014"
+  ],
   "observed_gap": {
     "trigger": "Add a Palette element while a locked container is selected, or select a leaf whose direct parent is locked.",
     "before": "The insertion resolver accepted the locked container as a destination and element.add allowed direct child insertion.",
@@ -42,7 +45,10 @@
     "chromium": {
       "command": "node -e \"import('./tests/browser/editor-element-insertion.test.js')\"",
       "result": "PASS, 2/2",
-      "viewport_px": [1366, 390],
+      "viewport_px": [
+        1366,
+        390
+      ],
       "assertions": [
         "Canvas insertion follows normal flow without overlap.",
         "Locked container and descendants remain unchanged after Palette insertion.",
@@ -85,9 +91,9 @@
     "next": "Continue EDT-014 lock/unlock, drag/reparent, hide/show and published-renderer acceptance. Production HTTP smoke and remote public-asset hash comparison remain unverified because the environment proxy returned HTTP 403. Full 77.44.7.A acceptance remains open."
   },
   "remaining_edt014": [
-    "Complete lock/unlock interaction and child versus ancestor semantics.",
-    "Complete drag/reparent and hierarchy behavior under locks.",
-    "Resolve and verify hide/show preview and published renderer policy."
+    "Complete lock/unlock interaction and child-versus-ancestor semantics.",
+    "Complete desktop and touch drag/reparent acceptance under locks.",
+    "Complete physical-device acceptance; visibility lifecycle is recorded in editor-layer-visibility-2026-10-29.json."
   ],
   "acceptance": "THIS LOCKED-PALETTE-INSERTION SLICE TESTED; EDT-014 AND 77.44.7.A NOT CERTIFIED",
   "follow_up_hierarchy_lock_guards": {
@@ -139,12 +145,17 @@
     "github_actions": "Skipped by [skip ci] to avoid unnecessary GitHub Actions usage; Cloudflare's exact-commit build was explicitly triggered through its API and verified successful.",
     "post_deploy_http_smoke": {
       "status": "UNVERIFIED",
-      "paths": ["/api/health", "/api/db-health", "/editor-v2/", "/editor-v2/core/commands.js"],
+      "paths": [
+        "/api/health",
+        "/api/db-health",
+        "/editor-v2/",
+        "/editor-v2/core/commands.js"
+      ],
       "observed": "HTTP 403 on all paths from the execution environment proxy; no origin response was observed."
     },
     "changed_asset_local_sha256": "7ab4541b221d4efd5a77e62f89b6a1df245d261e4da2f2879d78d0f1bd2882eb",
     "remote_asset_hash_match": "UNVERIFIED because production HTTP requests are blocked by the proxy",
-    "next": "Continue the remaining EDT-014 lock/unlock UI, drag/reparent interaction and visibility/public-renderer acceptance. Full 77.44.7.A remains open."
+    "next": "Continue EDT-014 full lock/unlock lifecycle, desktop/touch reparent behavior, and physical-device acceptance. Inspector and Layers visibility is now covered by docs/evidence/editor-layer-visibility-2026-10-29.json; the Layers quick-toggle ships on Worker 3729."
   },
   "ui_lock_affordance_follow_up": {
     "status": "TESTED_AND_DEPLOYED",
@@ -188,11 +199,17 @@
     "cloudflare_build_minutes_limit_reached": false,
     "post_deploy_http_smoke": {
       "status": "UNVERIFIED",
-      "paths": ["/api/health", "/api/db-health", "/editor-v2/", "/editor-v2/app.js"],
+      "paths": [
+        "/api/health",
+        "/api/db-health",
+        "/editor-v2/",
+        "/editor-v2/app.js"
+      ],
       "observed": "HTTP 403 from the execution environment proxy for every path; no origin response was observed."
     },
     "changed_asset_local_sha256": "696f520209bbbf2b84a099a08d18e73af6df1127b4340039281c4bf04c33e359",
     "remote_asset_hash_match": "UNVERIFIED because the production asset request was blocked by the network proxy",
-    "next": "Continue the remaining EDT-014 lock/unlock UI and drag/reparent interaction, then validate hide/show against preview and public rendering. Full 77.44.7.A remains open."
-  }
+    "next": "Continue EDT-014 full lock/unlock lifecycle, desktop/touch reparent behavior, and physical-device acceptance. Inspector and Layers visibility is now covered by docs/evidence/editor-layer-visibility-2026-10-29.json; the Layers quick-toggle ships on Worker 3729."
+  },
+  "next": "Continue EDT-014 full lock/unlock lifecycle, desktop/touch reparent behavior, and physical-device acceptance. Inspector and Layers visibility is now covered by docs/evidence/editor-layer-visibility-2026-10-29.json; the Layers quick-toggle ships on Worker 3729."
 }
