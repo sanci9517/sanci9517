@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "kind": "local-route-integration-evidence-not-production-acceptance",
+  "date": "2026-10-29",
+  "plan_item": "EDT-033",
+  "scope": "Admin Pages PATCH draft metadata compare-and-swap",
+  "implementation": {
+    "route": "src/routes/admin/pages.ts",
+    "requires_expected_version_for": ["title", "slug", "description"],
+    "missing_version_status": 428,
+    "invalid_version_status": 400,
+    "stale_version_status": 409,
+    "atomic_guard": "Conditional editor_revisions INSERT ... SELECT is first statement in D1 batch; subsequent draft, order and audit statements are gated on inserted revision.",
+    "sort_order_only_requires_version": false,
+    "save_publish_separation_preserved": true,
+    "schema_or_production_data_changed": false
+  },
+  "tests": {
+    "command": "node --experimental-loader ./tests/ts-extension-loader.mjs -e \"import('./tests/f0-3-route-integration.test.js')\"",
+    "result": "PASS, 16/16",
+    "assertions": [
+      "Missing expectedVersion returns 428 without page, revision or audit writes.",
+      "Malformed expectedVersion returns 400 and stale expectedVersion returns 409, both without writes.",
+      "Sort-only PATCH without expectedVersion remains supported; an unchanged sort position performs no write.",
+      "Two competing metadata PATCH requests from version 1 produce exactly one version-2 revision and one audit; the loser gets 409 and does not overwrite the winner."
+    ]
+  },
+  "additional_checks": {
+    "typecheck": "PASS",
+    "web013_suite": "PASS, 11/11",
+    "migration_safety_gate": "PASS",
+    "canonical_plan_and_traceability": "PASS, 396 mappings; functional acceptance remains NOT_CERTIFIED",
+    "wrangler_dry_run": "PASS, 161 assets, 296.73 KiB / 67.77 KiB gzip",
+    "remote_d1_preflight": {
+      "method": "Cloudflare D1 query API, SELECT-only",
+      "migration_count": 34,
+      "latest_migration": "0028_media_archive.sql",
+      "changed_db": false,
+      "rows_written": 0
+    }
+  },
+  "release": {
+    "committed": false,
+    "pushed": false,
+    "production_deployed": false,
+    "production_smoke_tested": false,
+    "worker_runtime_changed": true,
+    "next": "Push verified runtime commit to v2/foundation by normal fast-forward, then verify automatic Worker build/rollout and production smoke tests. Shell GitHub proxy is currently unavailable; use the authenticated GitHub connection if it remains unavailable."
+  },
+  "remaining_edt033": [
+    "Audit and implement expectedVersion/CAS for remaining write routes.",
+    "Complete initial creation and publish entry-point validation matrix.",
+    "Complete public snapshot end-to-end acceptance."
+  ]
+}

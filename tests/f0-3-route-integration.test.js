@@ -171,6 +171,29 @@ test('missing/stale revision and invalid publish hierarchy leave all persisted s
   assert.deepEqual(f.state(), before);
 });
 
+test('page metadata PATCH requires expectedVersion and atomically rejects a concurrent stale writer',async t=>{
+ const f=await fixture(t);
+ const patch=body=>adminPagesRoute(new Request('https://example.test/api/admin/pages',{method:'PATCH',headers:{Cookie:'sanci9517_session=editor','Content-Type':'application/json'},body:JSON.stringify({id:'p',...body})}),f.env);
+ const before=f.state();
+ const missing=await patch({title:'Missing version'});
+ assert.equal(missing.status,428);assert.equal((await missing.json()).error.code,'EXPECTED_VERSION_REQUIRED');assert.deepEqual(f.state(),before);
+ const stale=await patch({title:'Stale version',expectedVersion:0});
+ assert.equal(stale.status,409);assert.equal((await stale.json()).error.code,'REVISION_CONFLICT');assert.deepEqual(f.state(),before);
+ const malformed=await patch({title:'Malformed version',expectedVersion:'1'});
+ assert.equal(malformed.status,400);assert.equal((await malformed.json()).error.code,'INVALID_EXPECTED_VERSION');assert.deepEqual(f.state(),before);
+ assert.equal((await patch({sortOrder:0})).status,200,'sort-only request remains compatible without a revision token');assert.deepEqual(f.state(),before);
+
+ f.env.DB.beforeBatch=async()=>assert.equal((await patch({title:'Winner',expectedVersion:1})).status,200);
+ const loser=await patch({slug:'loser',expectedVersion:1});
+ assert.equal(loser.status,409);assert.equal((await loser.json()).error.code,'REVISION_CONFLICT');
+ const saved={...f.db.prepare("SELECT title,slug FROM pages WHERE id='p'").get()};
+ assert.deepEqual(saved,{title:'Winner',slug:'p'});
+ assert.deepEqual(f.db.prepare("SELECT version,note FROM editor_revisions WHERE page_id='p' ORDER BY version").all().map(row=>({...row})),[
+  {version:1,note:null},{version:2,note:'Oldal metaadat módosítás'}
+ ]);
+ assert.deepEqual(f.state().audit.map(row=>row.metadata_json),[JSON.stringify({oldTitle:'Original',title:'Winner',oldSlug:'p',slug:'p',oldDescription:'Description',description:'Description',oldSortOrder:0,sortOrder:0,version:2,revisionId:f.state().revisions.find(row=>row.version===2).id})]);
+});
+
 
 test('page list distinguishes saved drafts from LIVE snapshots through save, metadata change, publish, rollback and unpublish',async t=>{
  const f=await fixture(t);

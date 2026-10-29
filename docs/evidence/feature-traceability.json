@@ -49,7 +49,7 @@
     "src/routes/admin/link-report.ts": "236def7241afe4ba32db2b86c2849ea6f73345a4acf4e28bbd5f9c991d974752",
     "src/routes/admin/media.ts": "5be9b52735b93a22b058a8611f9b0603b3788415026961320681673bc700b56e",
     "src/routes/admin/navigation.ts": "6ff3caa6307d24c1ae135ab98a3f948865e6b8561ccfcf4acfc940db3bc894d9",
-    "src/routes/admin/pages.ts": "2c3a9e64d0e3013988d7fd737d001de11788bed5a426edc231be6766aa5bb13e",
+    "src/routes/admin/pages.ts": "fd1378da6123fc478f935a75d51444b5994323feb955aa9ef71c552cf142005c",
     "src/routes/admin/presentation.ts": "7a496ae2dce84584e3ca7221a4e976b685344cc50be149df0bd0c02b21e0b002",
     "src/routes/admin/schedule.ts": "886592f40212876b027f9091da3eaf2e5b7db366092e633bc5187d76c8827747",
     "src/routes/admin/settings.ts": "c8f69c3b8f9d3dfb52e2de15aea507724f224f8c5a6d58790bec60b0a750796e",
@@ -60,7 +60,7 @@
     "src/routes/integrations/twitch.ts": "ae6e4b4e9db5a6f495089f3d3e55c7010a36bdf38a86ff4219a9ced2ce436841",
     "src/routes/public/pages.ts": "4eae3fc245dd45b4befaf891b7950898e52010064cf0a1bb79a4e431c79253e5",
     "src/routes/public/seo.ts": "fa73a6c252df558862136e85e9a6594d84a19d2fffb130ac5dd38656074be60f",
-    "tests/f0-3-route-integration.test.js": "bfa17fc68c9ce6759049c2a59557f1be435af6fae8b10d28c6ad71fd7c5d4f9e"
+    "tests/f0-3-route-integration.test.js": "58d9e7bb5df2073ca5c57ed6abf0ad61d7091eb7c4dd3e82fd15bc5068c6b96f"
   },
   "schema_version": 1,
   "kind": "source-traceability-not-acceptance",
