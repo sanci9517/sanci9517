@@ -15,6 +15,7 @@ test('partial palette types and Divider/Spacer Inspector edits become public onl
  execute(model,{type:'element.add',payload:{type:'spacer',parentId:root}});const spacerId=model.selection.primaryId;
  const legacyDividerId='legacy-divider-fixture';
  const legacyDivider=createNode('divider',{id:legacyDividerId,parentId:root,name:'Régi elválasztóvonal'});
+ legacyDivider.style.border='7px solid red';
  activePage(model).nodes[legacyDividerId]=legacyDivider;
  activePage(model).nodes[root].children.push(legacyDividerId);
  const legacySpacerId='legacy-spacer-fixture';
@@ -191,6 +192,10 @@ test('partial palette types and Divider/Spacer Inspector edits become public onl
  await viewer.reload();
  await viewer.waitForFunction(id=>document.querySelector(`.visual-editor-node[data-node-id="${id}"]`),legacyDividerId);
  assert.equal(draft.pages[pageId].nodes[legacyDividerId].metadata.decorativeVersion,undefined,'fixture remains a versionless legacy Divider');
+ const borderOf=element=>element.evaluate(el=>{const css=getComputedStyle(el);return{width:css.borderTopWidth,style:css.borderTopStyle,color:css.borderTopColor}});
+ const originalBorder={width:'7px',style:'solid',color:'rgb(255, 0, 0)'};
+ assert.deepEqual(await borderOf(canvasNode(legacyDividerId)),originalBorder,'legacy border shorthand remains visible in the Canvas');
+ assert.deepEqual(await borderOf(publicNode(legacyDividerId)),originalBorder,'legacy published border remains unchanged before Inspector edits');
  await selectStyle(legacyDividerId);
  const legacyBorderGroup=editor.locator('.inspector-group').filter({hasText:'Szegély'});
  const legacyBorderTitle=legacyBorderGroup.locator(':scope > .inspector-group-title');

@@ -105,6 +105,12 @@ export function applyNodeStyle(element, node, device = 'desktop') {
   const style = resolveNodeStyle(node, device);
   element.style.cssText = '';
 
+  // Older documents may contain the CSS border shorthand. Apply it as a
+  // fallback before Inspector longhands so responsive edits take precedence.
+  if (style.border !== undefined && style.border !== null && style.border !== '') {
+    element.style.border = String(style.border);
+  }
+
   // Canonical order matters for shorthand/longhand pairs such as border radius.
   // The public renderer also emits declarations in STYLE_MAP order.
   for (const [property, cssProperty] of Object.entries(STYLE_MAP)) {

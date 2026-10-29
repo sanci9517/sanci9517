@@ -24,6 +24,8 @@ import {backgroundImageValue,MEDIA_ASSET_ID} from "../editor-v2/core/background-
  function sanciBlock(n){const d=sanci[n.type]||['✦',n.name||n.type,'Sanci9517 tartalom'];const text=n.props?.text&&n.props.text!==n.name?n.props.text:'';return `<div class="visual-sanci-icon">${d[0]}</div><div class="visual-sanci-copy"><strong>${esc(text||d[1])}</strong><span>${esc(d[2])}</span></div>`}
  function style(n){
   const values=resolveNodeStyle(n,currentDevice);let out='';
+  // Preserve legacy shorthand defaults while allowing Inspector longhands to override them.
+  if(values.border&&CSS.supports('border',String(values.border)))out+=`border:${esc(values.border)};`;
   for(const [key,property] of Object.entries(STYLE_MAP)){
     if(['backgroundImage','backgroundSize','backgroundPosition','backgroundRepeat'].includes(key))continue;
    const cssProperty=property.replace(/[A-Z]/g,letter=>'-'+letter.toLowerCase());
@@ -36,7 +38,7 @@ import {backgroundImageValue,MEDIA_ASSET_ID} from "../editor-v2/core/background-
   // not move a static element in CSS, while the canvas engine promotes it to
   // relative positioning for the same Page Model value.
   if(needsRelativeOffsetPosition(values))out+='position:relative;';
-   for(const [legacy,property] of [['background','background'],['border','border']]){
+   for(const [legacy,property] of [['background','background']]){
    if(values[legacy]&&CSS.supports(property,String(values[legacy])))out+=`${property}:${esc(values[legacy])};`;
   }
    const background=backgroundImageValue(values);if(background!=='none')out+=`background-image:${esc(background)};`;

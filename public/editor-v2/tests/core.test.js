@@ -1009,7 +1009,8 @@ test('Editor preserves edits made while a save request is in flight', () => {
   const save = app.slice(app.indexOf('async function save('), app.indexOf('async function unpublishPage('));
   assert.match(save, /const submittedDocument=structuredClone\(stateAtStart\.document\)/);
   assert.match(save, /const submittedJson=JSON\.stringify\(submittedDocument\)/);
-  assert.match(save, /const unchanged=state===stateAtStart&&JSON\.stringify\(stateAtStart\.document\)===submittedJson/);
+  assert.match(save, /const renameReady=state!==stateAtStart\|\|flushLayerRename\(\)/);
+  assert.match(save, /const unchanged=state===stateAtStart&&renameReady&&JSON\.stringify\(stateAtStart\.document\)===submittedJson/);
   assert.match(save, /if\(unchanged\)\{markSaved\(stateAtStart,version\)\}else\{stateAtStart\.persistence\.saving=false;stateAtStart\.persistence\.dirty=true/);
   assert.match(save, /meta\.revision=version/);
   assert.match(save, /további helyi módosítások még nincsenek mentve/);

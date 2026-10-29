@@ -312,3 +312,20 @@ test('WEB-013 archived alias stays reserved but returns 404 until explicit repub
  assert.equal((await u.publish(3,'republished')).status,200);
  assert.equal((await u.visit('p')).headers.get('Location'),'/p/renamed');
 });
+
+test('legacy border shorthand and Inspector overrides survive separate Save and Publish',async t=>{
+ const f=await fixture(t),document=f.document('original');
+ const page=document.pages.p;page.nodes.root.children=['legacy'];
+ page.nodes.legacy={id:'legacy',type:'divider',name:'Legacy',parentId:'root',children:[],props:{},style:{border:'7px solid red'},responsive:{desktop:{borderStyle:'dashed',borderWidth:'3px',borderColor:'#0000ff'}},metadata:{inspectorStyleContract:{version:1,fields:['desktop:borderColor','desktop:borderStyle','desktop:borderWidth']}}};
+ const saved=await f.edit({pageId:'p',expectedVersion:1,document,publish:false});
+ assert.equal(saved.status,200,'the editor accepts the legacy style as a draft');
+ let stored=f.db.prepare("SELECT content_json,published_content_json FROM pages WHERE id='p'").get();
+ assert.deepEqual(JSON.parse(stored.content_json).pages.p.nodes.legacy.style,{border:'7px solid red'});
+ assert.equal(JSON.parse(stored.published_content_json).pages.p.nodes.legacy,undefined,'Save keeps the previously published snapshot');
+ const published=await f.edit({pageId:'p',expectedVersion:2,document,publish:true});
+ assert.equal(published.status,200,'the Inspector-tracked overrides pass production publication validation');
+ stored=f.db.prepare("SELECT published_content_json FROM pages WHERE id='p'").get();
+ const node=JSON.parse(stored.published_content_json).pages.p.nodes.legacy;
+ assert.deepEqual(node.style,{border:'7px solid red'});
+ assert.deepEqual(node.responsive.desktop,{borderStyle:'dashed',borderWidth:'3px',borderColor:'#0000ff'});
+});
