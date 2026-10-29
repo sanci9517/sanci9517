@@ -10,7 +10,7 @@ import {getNodeVisibilityState,isVisibleOnDevice} from './core/visibility.js';
 import {diagnostics} from './diagnostics.js?v=20260918-2';
 import {plainTextToRichText,renderRichTextEditor,richTextEditorToDocument,restoreSelectionOffsets,getSelectionOffsets,transformRichTextBlockTypes} from './core/richtext-engine.js';
 import {renderSchedulePreview} from './core/schedule-preview.js';
-import {normalizeScheduleConfig,SCHEDULE_MODES,SCHEDULE_ORDERS,SCHEDULE_STATUSES,SCHEDULE_EMPTY_TEXT_MAX} from './core/schedule-schema.js';
+import {normalizeScheduleConfig,SCHEDULE_MODES,SCHEDULE_ORDERS,SCHEDULE_STATUSES,SCHEDULE_EMPTY_TEXT_MAX,SCHEDULE_LIMIT_MAX} from './core/schedule-schema.js';
 import {listPropertyGroups,listProperties,getProperty} from './core/property-registry.js?v=20261025-content-property-route-contract';
 import {renderPropertyInput} from './ui/property-controls.js?v=20261028-inspector-dimension-contract';
 import {getInspectorValueContract,normalizeInspectorValue} from './core/property-values.js';
@@ -636,10 +636,13 @@ function renderScheduleInspector(node,composition){
   const order=selectField('Sorrend','order',config.order,SCHEDULE_ORDERS);
   section.append(mode,order);
 
-  section.append(route(field('Elemszám',String(config.limit),v=>{
+  const limitField=route(field('Elemszám',String(config.limit),v=>{
     const limit=Math.max(1,Math.min(50,Number.parseInt(v,10)||1));
     command('schedule.config.set',{nodeId:node.id,patch:{limit}});
-  }),'limit'));
+  }),'limit');
+  const limitInput=limitField.querySelector('input');
+  limitInput.type='number';limitInput.inputMode='numeric';limitInput.min='1';limitInput.max=String(SCHEDULE_LIMIT_MAX);limitInput.step='1';limitInput.required=true;
+  section.append(limitField);
 
   const statusWrap=route(document.createElement('div'),'statuses');statusWrap.className='field';
   const statusLabel=document.createElement('span');statusLabel.textContent='Státuszok';

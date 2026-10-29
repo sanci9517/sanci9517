@@ -9,7 +9,7 @@ import {chromium} from 'playwright';
 import {createDocument} from '../../public/editor-v2/core/schema.js';
 import {createEditorState,activePage} from '../../public/editor-v2/core/state.js';
 import {execute} from '../../public/editor-v2/core/commands.js';
-import {SCHEDULE_EMPTY_TEXT_MAX} from '../../public/editor-v2/core/schedule-schema.js';
+import {SCHEDULE_EMPTY_TEXT_MAX,SCHEDULE_LIMIT_MAX} from '../../public/editor-v2/core/schedule-schema.js';
 
 for(const width of [390,1366])test(`general Inspector name and Schedule empty text composition at ${width}px`,async t=>{
  const model=createEditorState(createDocument()),pageId=model.document.activePageId;
@@ -96,7 +96,12 @@ for(const width of [390,1366])test(`general Inspector name and Schedule empty te
  }
  await editor.locator('.schedule-inspector [data-inspector-key="mode"] select').selectOption('all');
  await editor.locator('.schedule-inspector [data-inspector-key="order"] select').selectOption('desc');
- const scheduleLimit=editor.locator('.schedule-inspector [data-inspector-key="limit"] input');await scheduleLimit.fill('12');await scheduleLimit.press('Tab');
+ const scheduleLimit=editor.locator('.schedule-inspector [data-inspector-key="limit"] input');
+ assert.equal(await scheduleLimit.getAttribute('type'),'number','Schedule count uses a native numeric control');
+ assert.equal(await scheduleLimit.getAttribute('min'),'1');assert.equal(await scheduleLimit.getAttribute('max'),String(SCHEDULE_LIMIT_MAX));assert.equal(await scheduleLimit.getAttribute('step'),'1');assert.equal(await scheduleLimit.getAttribute('required'),'','Schedule count is required');
+ await scheduleLimit.fill('51');await scheduleLimit.press('Tab');assert.equal(await scheduleLimit.inputValue(),String(SCHEDULE_LIMIT_MAX),'values above the supported range are clamped to the declared maximum');
+ await scheduleLimit.fill('0');await scheduleLimit.press('Tab');assert.equal(await scheduleLimit.inputValue(),'1','values below the supported range are clamped to the declared minimum');
+ await scheduleLimit.fill('12');await scheduleLimit.press('Tab');
  await editor.locator('.schedule-inspector [data-inspector-key="statuses"] input[data-status="scheduled"]').evaluate(el=>el.click());
  await editor.locator('.schedule-inspector [data-inspector-key="showTitle"] input').evaluate(el=>el.click());
  await editor.locator('.inspector-tabs button').nth(0).click();
