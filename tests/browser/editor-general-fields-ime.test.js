@@ -146,8 +146,11 @@ for(const width of [390,1366])test(`general Inspector name and Schedule empty te
  assert.equal(posts.length,0,'composition does not trigger Save or Publish');
  await layerName.evaluate(input=>{
   input.dispatchEvent(new CompositionEvent('compositionend',{bubbles:true,data:'Végleges belső név'}));
+  input.form.requestSubmit();
   input.value='Végleges belső név';input.dispatchEvent(new InputEvent('input',{bubbles:true,isComposing:false,data:'Végleges belső név'}));
  });
+ assert.equal(await layerName.count(),1,'submission immediately after compositionend waits for the final input');
+ assert.equal(await editor.locator(`.node[data-node-id="${id}"] > .node-head > span`).textContent(),'Végleges belső név','the intermediate IME candidate remains outside the Page Model');
  await editor.evaluate(()=>new Promise(resolve=>requestAnimationFrame(resolve)));
  await layerName.fill('   ');await layerName.press('Enter');
  assert.equal(await layerName.getAttribute('aria-invalid'),'true','an empty inline layer name is rejected');
