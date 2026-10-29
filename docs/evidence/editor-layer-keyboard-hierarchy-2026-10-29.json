@@ -1,7 +1,7 @@
 {
   "plan_item": "77.44.7.A",
   "feature": "EDT-014 keyboard-accessible layer hierarchy movement",
-  "status": "LOCAL_VERIFICATION_PASS_RELEASE_PENDING",
+  "status": "PRODUCTION_RELEASE_VERIFIED",
   "date": "2026-10-29",
   "implementation": {
     "files": [
@@ -51,13 +51,33 @@
     "build_minutes_limit_reached": false
   },
   "release": {
-    "commit": null,
-    "cloudflare_build": null,
-    "deployment": null,
-    "worker_version": null,
-    "traffic_percent": null,
-    "health_smoke": null,
-    "live_asset_hashes": null
+    "branch": "v2/foundation",
+    "commit": "ace4626ec1e3cffd36a523c85531741681538e4a",
+    "cloudflare_build": {
+      "id": "32835258-bbdb-41fa-a825-04317ab42a7e",
+      "outcome": "success",
+      "commit_match": true,
+      "commands": [
+        "npm run typecheck",
+        "npm run deploy:safe"
+      ]
+    },
+    "deployment": "caa4001b-d807-4797-b451-1d1ca50b822c",
+    "worker_number": 3730,
+    "worker_version": "1db8fb6a-f060-4afc-b7b3-3ede48de8901",
+    "traffic_percent": 100,
+    "health_smoke": {
+      "api_health": 200,
+      "editor_route": 200,
+      "service": "sanci9517-streamer-brand"
+    },
+    "live_asset_hashes": {
+      "public/editor-v2/app.js": "82a938a693d3e01cb8720d5b93f769481104451c4bfd25db05aa121e7c775967",
+      "public/editor-v2/editor.css": "21270de8a38dfe44fcd605315d30981d568e95a75ccdbdccd115eb210e871b62",
+      "public/editor-v2/index.html": "827809a83055f3c97692263c83db198f307c2c85170e902f3be951d2e22004cd",
+      "public/editor-v2/tests/element-insertion.test.js": "5cd50ed9c078da639cd71664b1f327d9848dc44b308aa969c9a88178f2372487",
+      "matches_commit": true
+    }
   },
   "acceptance": {
     "edt_014": "IN_PROGRESS",
