@@ -1,0 +1,45 @@
+{
+  "plan_item": "77.44.7.A",
+  "status": "LOCAL_ONLY_NOT_RELEASED",
+  "scope": "Run the full Visual Editor and integrated media browser regression against the locally stored Schedule accessibility change.",
+  "local_changes_included": [
+    "30c651f9 — Schedule minimum-selection help and aria-describedby",
+    "current local test changes — bounded browser-navigation timeout resilience"
+  ],
+  "first_full_run": {
+    "command": "npm run test:editor:layout",
+    "result": "86/88 PASS; two failures were local navigation load timeouts (5s and 8s) under full-suite load",
+    "isolated_reproduction": "admin-media-integrity 10/10 PASS; editor-media-source-switch 3/3 PASS"
+  },
+  "test_adjustment": {
+    "files": [
+      "tests/browser/admin-media-integrity.test.js",
+      "tests/browser/editor-media-source-switch.test.js"
+    ],
+    "change": "Set navigation-only deadlines to 15s and 20s. Existing default action timeouts and all behavioral assertions remain unchanged.",
+    "affected_file_tests": "13/13 PASS"
+  },
+  "final_full_run": {
+    "command": "npm run test:editor:layout",
+    "result": "PASS 88/88, 0 failed, 0 skipped",
+    "duration": "34m 08s",
+    "coverage": "Full repository browser layout command, including all 44 PARTIAL element Inspector routes and Save/Publish flows, Rich Text and IME, responsive states, media flows, Schedule, Admin media, Countdown, Code, Card, and Creator Embed."
+  },
+  "other_local_checks": {
+    "typecheck": "PASS",
+    "editor_unit": "PASS 11/11 test files",
+    "schedule_source": "PASS 1/1",
+    "canonical_plan": "PASS",
+    "active_plan_point": "PASS; cursor remains 77.44.7.A and acceptance NOT CERTIFIED",
+    "source_traceability": "PASS 396/396",
+    "git_diff_check": "PASS"
+  },
+  "release": {
+    "pushed": false,
+    "github_actions_started_for_this_block": false,
+    "cloudflare_build_or_deployment": false,
+    "production_database_or_r2_changes": false,
+    "reason": "Confirmed 0 Ft budget; no verifiable billing clearance for GitHub Actions overage or Cloudflare usage."
+  },
+  "acceptance_boundary": "Strong full-suite Chromium evidence for current local changes; not a full 79-type/68-property, authenticated Admin, real-device, or production acceptance. Production still does not contain the local-only commit."
+}

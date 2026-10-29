@@ -51,7 +51,7 @@ async function fixture(t,width){
  t.after(async()=>{await browser.close();await new Promise(done=>server.close(done));});
  const base='http://127.0.0.1:'+server.address().port;
  const editor=await browser.newPage({viewport:{width,height:900}}),live=await browser.newPage({viewport:{width,height:900}});
- for(const page of [editor,live]){page.setDefaultTimeout(8000);page.on('pageerror',e=>errors.push(e.message));}
+ for(const page of [editor,live]){page.setDefaultTimeout(8000);page.setDefaultNavigationTimeout(20000);page.on('pageerror',e=>errors.push(e.message));}
  await editor.goto(base+'/editor-v2/index.html');await live.goto(base+'/p/test');
  const node=(page,type)=>page.locator(`.creator-node[data-node-id="${ids[type]}"]`);
  const media=(page,type)=>['gallery','carousel'].includes(type)?node(page,type).locator(`.creator-${type}>figure`).first().locator('img'):node(page,type).locator(type==='video'?'video':'img');

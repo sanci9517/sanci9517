@@ -30,7 +30,7 @@ async function fixture(t,handler,width=390){
  await new Promise(done=>server.listen(0,'127.0.0.1',done));
  const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||(existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined),args:['--no-sandbox']});
  t.after(async()=>{await browser.close();await new Promise(done=>server.close(done));});
- const page=await browser.newPage({viewport:{width,height:900}});page.setDefaultTimeout(5000);page.on('pageerror',e=>errors.push(e.message));
+ const page=await browser.newPage({viewport:{width,height:900}});page.setDefaultTimeout(5000);page.setDefaultNavigationTimeout(15000);page.on('pageerror',e=>errors.push(e.message));
  await page.goto(`http://127.0.0.1:${server.address().port}/admin-media.html`);await page.locator('.tile').waitFor();
  const region=page.getByRole('region',{name:'Fájlok és nyilvántartás ellenőrzése'});
  const panels={missing:region.getByRole('region',{name:'Hiányzó tárolt fájlok'}),orphan:region.getByRole('region',{name:'Nem nyilvántartott fájljelöltek'})};
