@@ -105,10 +105,27 @@
       }
     ],
     "http_smoke": {
-      "site_root": "HTTP 403 from environment proxy",
-      "api_health": "HTTP 403 from environment proxy",
-      "api_db_health": "HTTP 403 from environment proxy",
-      "editor_asset_hash": "UNVERIFIED; direct HTTP access blocked by environment proxy"
+      "site_root": "HTTP 200",
+      "api_health": "HTTP 200; service sanci9517-streamer-brand, version 2.0.0",
+      "api_db_health": "HTTP 200; D1 connected",
+      "editor_index": "HTTP 200",
+      "assets": {
+        "/editor-v2/core/property-values.js": {
+          "local_sha256": "4ac99792a251d779bf3451018d658dcdf3a1d2fb2b235a452ee36ecabfb907aa",
+          "live_sha256": "4ac99792a251d779bf3451018d658dcdf3a1d2fb2b235a452ee36ecabfb907aa",
+          "match": true
+        },
+        "/editor-v2/ui/property-controls.js": {
+          "local_sha256": "e31fc5bfb05605db61612b7ffce9aeaca2c0d1253da3bc329c606c05814a0e5e",
+          "live_sha256": "e31fc5bfb05605db61612b7ffce9aeaca2c0d1253da3bc329c606c05814a0e5e",
+          "match": true
+        },
+        "/editor-v2/editor-refresh.css": {
+          "local_sha256": "6edc6e546df57e685e1e0cd6665be9982bb1d9f008582589ce99471b4e98b191",
+          "live_sha256": "6edc6e546df57e685e1e0cd6665be9982bb1d9f008582589ce99471b4e98b191",
+          "match": true
+        }
+      }
     },
     "data_safety": {
       "production_d1_migration": false,
