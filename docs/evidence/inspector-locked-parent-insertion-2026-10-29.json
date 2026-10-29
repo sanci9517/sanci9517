@@ -147,7 +147,7 @@
     "next": "Continue the remaining EDT-014 lock/unlock UI, drag/reparent interaction and visibility/public-renderer acceptance. Full 77.44.7.A remains open."
   },
   "ui_lock_affordance_follow_up": {
-    "status": "LOCALLY_TESTED_RELEASE_PENDING",
+    "status": "TESTED_AND_DEPLOYED",
     "files": [
       "public/editor-v2/app.js",
       "tests/browser/editor-element-insertion.test.js"
@@ -170,7 +170,29 @@
       "production_data_mutated": false,
       "r2_mutated": false
     },
-    "production_deployed": false,
-    "next": "Commit/push the tested UI follow-up, then trigger the exact-commit Cloudflare build and verify the Worker rollout."
+    "commit": "367a0a433e8eb6b2d420610bd673f957ebd27c56",
+    "cloudflare_build": {
+      "id": "66179a72-d69c-4e09-9254-9cffa5882985",
+      "outcome": "success",
+      "commit_match": true,
+      "build_command": "npm run typecheck",
+      "deploy_command": "npm run deploy:safe",
+      "migration_safety_gate": "PASS; no migration apply"
+    },
+    "production_deployed": true,
+    "deployment_id": "e704803d-a793-47b2-a1ba-4f9ed5a4f9e4",
+    "worker_version": "d745fd1e-b611-454a-8ed5-bbd34bab4697",
+    "worker_version_number": 3728,
+    "traffic_percent": 100,
+    "github_actions": "Skipped by [skip ci]; exact-commit Cloudflare build was manually triggered and verified successful.",
+    "cloudflare_build_minutes_limit_reached": false,
+    "post_deploy_http_smoke": {
+      "status": "UNVERIFIED",
+      "paths": ["/api/health", "/api/db-health", "/editor-v2/", "/editor-v2/app.js"],
+      "observed": "HTTP 403 from the execution environment proxy for every path; no origin response was observed."
+    },
+    "changed_asset_local_sha256": "696f520209bbbf2b84a099a08d18e73af6df1127b4340039281c4bf04c33e359",
+    "remote_asset_hash_match": "UNVERIFIED because the production asset request was blocked by the network proxy",
+    "next": "Continue the remaining EDT-014 lock/unlock UI and drag/reparent interaction, then validate hide/show against preview and public rendering. Full 77.44.7.A remains open."
   }
 }
