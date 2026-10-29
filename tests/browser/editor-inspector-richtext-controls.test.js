@@ -35,6 +35,7 @@ test('typed Inspector controls and link selection work with real browser DOM at 
       const {renderPropertyInput}=await import('/editor-v2/ui/property-controls.js');
       const {mediaAssetPicker}=await import('/editor-v2/ui/element-content-controls.js');
       const {getProperty,listProperties}=await import('/editor-v2/core/property-registry.js');
+      const {getInspectorValueContract}=await import('/editor-v2/core/property-values.js');
       const {getRichTextBlockSelection,getRichTextFormattingSelection,updateRichTextInlineLink,updateRichTextInlineMark,updateRichTextInlineStyle,updateRichTextBlockAlignment}=await import('/editor-v2/core/richtext-links.js');
       const {renderRichTextEditor,richTextEditorToDocument,setBlockType,getSelectionOffsets,restoreSelectionOffsets}=await import('/editor-v2/core/richtext-engine.js');
       const {importRichTextClipboard}=await import('/editor-v2/core/richtext-import.js');
@@ -70,6 +71,11 @@ test('typed Inspector controls and link selection work with real browser DOM at 
           const input=control.querySelector('input[type="number"]');input.value=property.key==='opacity'?'0.75':property.key==='lineHeight'?'1.5':'2';input.dispatchEvent(new Event('change',{bubbles:true}));
         }else if(type==='font'||type==='shadow'||type==='select'){
           const select=control.querySelector('select');select.value=type==='font'?'system-ui':type==='shadow'?'none':property.options[0];select.dispatchEvent(new Event('change',{bubbles:true}));
+        }else if(type==='text'&&getInspectorValueContract(property).multiline){
+          const textarea=control.querySelector('textarea');
+          textarea.value='  első sor\n második sor  ';textarea.dispatchEvent(new Event('change',{bubbles:true}));
+          fieldMatrix.push({id:property.id,type,tagName:textarea.tagName,rows:textarea.rows,callbackCount:editsForProperty.length,value:editsForProperty[0],error:control.querySelector('.property-validation')?.textContent||''});
+          continue;
         }else{
           const input=control.querySelector('input');input.value=type==='url'?'/p/teszt':'Teszt tartalom';input.dispatchEvent(new Event('change',{bubbles:true}));
         }
@@ -238,6 +244,10 @@ test('typed Inspector controls and link selection work with real browser DOM at 
     assert.ok(data.helpLengths.every(([,length])=>length>=100),`every property needs detailed guidance: ${data.helpLengths.filter(([,length])=>length<100).map(([id])=>id).join(', ')}`);
     assert.ok(data.fieldMatrix.length>=45,`every registered Inspector property should have a real browser control contract; saw ${data.fieldMatrix.length}`);
     assert.ok(data.fieldMatrix.filter(item=>item.type!=='asset').every(item=>item.callbackCount===1&&!item.error),`supported Inspector fields must reach their validated callback: ${JSON.stringify(data.fieldMatrix.filter(item=>item.type!=='asset'&&(item.callbackCount!==1||item.error)))}`);
+    const contentTextControl=data.fieldMatrix.find(item=>item.id==='content.text');
+    assert.deepEqual({tagName:contentTextControl.tagName,rows:contentTextControl.rows,value:contentTextControl.value,error:contentTextControl.error},
+      {tagName:'TEXTAREA',rows:4,value:'  első sor\n második sor  ',error:''},
+      'the multiline value contract renders a native textarea and preserves literal text');
     assert.ok(data.fieldMatrix.filter(item=>item.type==='url').every(item=>item.maxLength===2048),`URL controls must expose the validator's 2048-character limit: ${JSON.stringify(data.fieldMatrix.filter(item=>item.type==='url'))}`);
     assert.ok(data.fieldMatrix.filter(item=>item.type==='asset').every(item=>item.callbackCount===1&&item.value==='6b1c2e65-e46e-4764-b234-123456789abc'),`background picker must deliver the selected site asset ID: ${JSON.stringify(data.fieldMatrix.filter(item=>item.type==='asset'))}`);
     assert.ok(data.invalidMatrix.every(item=>item.callbackCount===0&&item.error),`invalid values must be rejected before reaching the command callback: ${JSON.stringify(data.invalidMatrix.filter(item=>item.callbackCount!==0||!item.error))}`);

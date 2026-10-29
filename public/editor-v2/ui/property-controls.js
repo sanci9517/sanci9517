@@ -220,23 +220,31 @@ export function renderPropertyInput(property, label, current, onChange, {
     const note=document.createElement('small');note.className='property-unit-hint';
     note.textContent='Az egység módosítása megváltoztathatja a tényleges méretet.';wrap.append(note);
   } else {
-    const input = document.createElement('input');
-    input.id = controlId;
-    input.type = type === 'number' ? 'number' : 'text';
-    input.value = current ?? '';
     const contract=getInspectorValueContract(property);
-    if(Number.isInteger(contract.maxLength))input.maxLength=contract.maxLength;
-    if (type === 'number') {
-      if(Number.isFinite(contract.min))input.min=String(contract.min);
-      if(Number.isFinite(contract.max))input.max=String(contract.max);
-      input.step=String(contract.step??'any');
-      // Decimal keyboards generally retain a minus key, which matters for the
-      // signed z-index range even though its valid values are whole numbers.
-      input.inputMode='decimal';
+    if(contract.multiline){
+      const textarea=document.createElement('textarea');
+      textarea.id=controlId;textarea.rows=4;textarea.value=current??'';
+      textarea.className='typed-inspector-textarea';
+      textarea.onchange=()=>save(textarea.value);
+      wrap.append(textarea);
+    }else{
+      const input = document.createElement('input');
+      input.id = controlId;
+      input.type = type === 'number' ? 'number' : 'text';
+      input.value = current ?? '';
+      if(Number.isInteger(contract.maxLength))input.maxLength=contract.maxLength;
+      if (type === 'number') {
+        if(Number.isFinite(contract.min))input.min=String(contract.min);
+        if(Number.isFinite(contract.max))input.max=String(contract.max);
+        input.step=String(contract.step??'any');
+        // Decimal keyboards generally retain a minus key, which matters for the
+        // signed z-index range even though its valid values are whole numbers.
+        input.inputMode='decimal';
+      }
+      input.onchange = () => save(input.value);
+      input.onkeydown = event => {if(event.key === 'Enter') {event.preventDefault();input.blur();}};
+      wrap.append(input);
     }
-    input.onchange = () => save(input.value);
-    input.onkeydown = event => {if(event.key === 'Enter') {event.preventDefault();input.blur();}};
-    wrap.append(input);
   }
   // Choice controls already expose every available option. Repeating the same
   // values as chips makes the Inspector longer without adding a faster choice.
