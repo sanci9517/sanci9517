@@ -1,0 +1,62 @@
+{
+  "plan_item": "77.44.7.A",
+  "status": "LOCAL_ONLY_NOT_RELEASED",
+  "issue": "The shared background asset Inspector label targeted a nonexistent form control, and media-picker controls lacked a programmatically named field group and associated validation guidance.",
+  "change": "Add optional accessible group label and description support to the shared mediaAssetPicker and apply it to every Visual Editor production call site. The background asset picker's primary control also exposes required and validation state through the existing value contract.",
+  "covered_call_sites": [
+    "responsive background image",
+    "authored image, gallery, carousel and video poster assets",
+    "Card image",
+    "legacy image, video, audio and video poster assets"
+  ],
+  "browser_checks": [
+    {
+      "command": "node --test tests/browser/editor-inspector-richtext-controls.test.js",
+      "result": "PASS 2/2",
+      "coverage": "Typed control matrix at 390px and 1366px; verifies background picker group label, validation relationship and selection callback."
+    },
+    {
+      "command": "node --test tests/browser/editor-inspector-lifecycle.test.js",
+      "result": "PASS 1/1",
+      "duration_seconds": 347.0,
+      "coverage": "Real Inspector background picker, authenticated Canvas preview, undo/redo, draft Save/reload, separate Publish and public media rendering."
+    },
+    {
+      "command": "node --test tests/browser/editor-content-system.test.js",
+      "result": "PASS 1/1",
+      "duration_seconds": 60.7,
+      "coverage": "Background, authored Media image, carousel and video poster picker groups."
+    },
+    {
+      "command": "node --test tests/browser/editor-card-content.test.js",
+      "result": "PASS 2/2",
+      "duration_seconds": 56.4,
+      "coverage": "Card media picker group label at 390px and 1366px with existing Card Save/Publish lifecycle."
+    },
+    {
+      "command": "node --test tests/browser/editor-legacy-media-parity.test.js",
+      "result": "PASS 1/1",
+      "duration_seconds": 61.2,
+      "coverage": "Legacy image, video, audio and poster picker groups expose visible labels."
+    }
+  ],
+  "other_checks": {
+    "typecheck": "PASS",
+    "editor_unit": "PASS 11/11 files",
+    "schedule": "PASS 1/1",
+    "javascript_parse": "PASS for changed runtime modules",
+    "canonical_plan": "PASS",
+    "active_plan_point": "PASS; 77.44.7.A remains NOT CERTIFIED",
+    "source_traceability": "PASS 396/396",
+    "git_diff_check": "PASS"
+  },
+  "full_layout_suite": "Not rerun after this final Media-picker change. Previous local run was PASS 88/88 before the latest accessibility edits; all affected production call sites have targeted browser checks listed above.",
+  "release": {
+    "pushed": false,
+    "github_actions_started": false,
+    "cloudflare_build_or_deployment": false,
+    "production_changes": false,
+    "reason": "Zero-cost constraint; GitHub Actions overage and Cloudflare usage are not verified as free."
+  },
+  "acceptance_boundary": "This closes the programmatic naming and validation-description gap for the implemented Media picker call sites only. Full 68-property/79-type Visual Editor, production, and physical-device acceptance remain open."
+}

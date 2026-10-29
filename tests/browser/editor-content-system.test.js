@@ -57,6 +57,12 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   editor.setDefaultTimeout(6000);live.setDefaultTimeout(6000);live.setDefaultNavigationTimeout(12000);editor.on('pageerror',e=>errors.push(e.message));live.on('pageerror',e=>errors.push(e.message));
   const node=(tab,type)=>tab.locator(`.creator-node[data-node-id="${ids[type]}"]`);
   const select=async type=>{await node(editor,type).evaluate(el=>el.click());if(await editor.locator('#rightDock').evaluate(el=>el.classList.contains('closed')))await editor.locator('#openInspector').click();await editor.locator('.inspector-tabs button').nth(1).click()};
+  const assertNamedMediaPicker=async picker=>{
+    const metadata=await picker.evaluate(el=>({role:el.getAttribute('role'),labelId:el.getAttribute('aria-labelledby'),labelText:document.getElementById(el.getAttribute('aria-labelledby'))?.textContent.trim(),descriptionId:el.getAttribute('aria-describedby'),openDescriptionId:el.querySelector('button[aria-controls]')?.getAttribute('aria-describedby')}));
+    assert.equal(metadata.role,'group','Media picker exposes a semantic group');assert.ok(metadata.labelId&&metadata.labelText,'Media picker has a visible field label');
+    if(metadata.descriptionId)assert.equal(metadata.openDescriptionId,metadata.descriptionId,'the primary picker control references its validation feedback');
+    return metadata;
+  };
   await editor.goto(base+'/editor-v2/index.html');
   // Tie every visible authored field to the command and Page Model path that
   // actually receives its edit, including repeater child and table cell paths.
@@ -108,6 +114,7 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   await openGroup('Transzformáció');const rotation=editor.locator('[data-property-id="transform.rotate"]');assert.equal(await rotation.getAttribute('data-property-command'),'responsive.set');assert.equal(await rotation.getAttribute('data-property-key'),'rotate');await rotation.locator('input').fill('3');await rotation.locator('input').press('Tab');
   await openGroup('Háttér');const gradient=editor.locator('[data-property-id="background.gradient"]');assert.equal(await gradient.getAttribute('data-property-command'),'responsive.set');assert.equal(await gradient.getAttribute('data-property-key'),'backgroundImage');await gradient.locator('select').selectOption('linear-gradient(135deg, #7047eb 0%, #17b8a6 100%)');
   const backgroundAsset=editor.locator('[data-property-id="background.image"]');assert.equal(await backgroundAsset.getAttribute('data-property-command'),'responsive.set');assert.equal(await backgroundAsset.getAttribute('data-property-key'),'backgroundAssetId');
+  const backgroundMetadata=await assertNamedMediaPicker(backgroundAsset.locator('.editor-media-picker'));assert.equal(backgroundMetadata.labelText,'Háttérkép');
   await backgroundAsset.getByRole('button',{name:'Médiatár megnyitása'}).click();
   await backgroundAsset.locator('.editor-media-choice').click();
   await editor.locator('[data-property-id="background.size"] select').selectOption('cover');
@@ -143,6 +150,7 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   const setCrop=async(label,value,index=0)=>editor.getByLabel(label,{exact:true}).nth(index).evaluate((input,next)=>{input.value=String(next);input.dispatchEvent(new Event('input',{bubbles:true}))},value);
   await setCrop('Kivágás vízszintesen',18);await setCrop('Kivágás függőlegesen',82);
   assert.equal(await node(editor,'image').locator('img').evaluate(el=>getComputedStyle(el).objectPosition),'18% 82%');
+  const imageAssetField=editor.locator('[data-content-key="assetId"]'),imageAssetMetadata=await assertNamedMediaPicker(imageAssetField.locator('.editor-media-picker'));assert.equal(imageAssetMetadata.labelText,'Médiatár');
   await editor.locator('.editor-media-picker').getByRole('button',{name:'Médiatár megnyitása'}).click();
   await editor.locator('.editor-media-choice').click();
   await editor.waitForFunction(id=>document.querySelector(`[data-node-id="${id}"] img`)?.getAttribute('src')==='/api/admin/media?id=6b1c2e65-e46e-4764-b234-123456789abc',ids.image);
@@ -255,12 +263,14 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   assert.equal(await carouselRegion.getAttribute('aria-label'),'Képes történeteim & fotók',
     'Inspector name must be exposed on the actual keyboard-focusable canvas carousel');
   const carouselItem=editor.locator('.content-repeater fieldset').first();
+  const carouselMetadata=await assertNamedMediaPicker(carouselItem.locator('.editor-media-picker'));assert.equal(carouselMetadata.labelText,'Médiatár');
   await carouselItem.getByRole('button',{name:'Médiatár megnyitása'}).click();await carouselItem.locator('.editor-media-choice').click();
   assert.equal(await node(editor,'carousel').locator('.creator-image-zoom').first().getAttribute('data-lightbox-src'),'/api/admin/media?id='+assetId);
   assert.equal(await node(editor,'carousel').locator('img').first().getAttribute('alt'),'Első dia','a manually written carousel alt is preserved');
   await select('video');
   assert.equal(await node(editor,'video').locator('video').getAttribute('poster'),'/fixture.svg','existing cover URL remains unchanged until selection');
   const posterPicker=editor.locator('[data-content-key="posterAssetId"]');
+  const posterMetadata=await assertNamedMediaPicker(posterPicker.locator('.editor-media-picker'));assert.equal(posterMetadata.labelText,'Borítókép a Médiatárból');
   await posterPicker.getByRole('button',{name:'Médiatár megnyitása'}).click();
   await posterPicker.locator('.editor-media-choice').click();
   assert.equal(await node(editor,'video').locator('video').getAttribute('poster'),'/api/admin/media?id='+assetId,'Editor video poster uses authenticated preview');

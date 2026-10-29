@@ -2,7 +2,7 @@ import {
   normalizeInspectorValue, getInspectorValueContract, INSPECTOR_FONTS, INSPECTOR_SHADOWS
 } from '../core/property-values.js';
 import {TOKEN_SPECS,compatibleTokens,parseTokenReference,tokenReference,tokenValue,defaultTokens} from '../core/design-tokens.js';
-import {mediaAssetPicker} from './element-content-controls.js';
+import {mediaAssetPicker} from './element-content-controls.js?v=20261029-media-picker-a11y';
 
 /** One property input. All changes go through the central command callback. */
 export function renderPropertyInput(property, label, current, onChange, {
@@ -20,6 +20,7 @@ export function renderPropertyInput(property, label, current, onChange, {
   const title = document.createElement('label');
   title.textContent = label;
   const controlId = 'prop-' + property.id.replaceAll('.', '-') + '-' + Math.random().toString(36).slice(2, 7);
+  title.id=controlId+'-label';
   title.htmlFor = controlId;
   const contract=getInspectorValueContract(property);
   const error = document.createElement('small');
@@ -76,7 +77,12 @@ export function renderPropertyInput(property, label, current, onChange, {
   }
   const type = property.type;
   if (type === 'asset') {
-    const picker=mediaAssetPicker(current==='none'?'':current||'',id=>save(id||'none'),{disabled:Boolean(property.disabled)});
+    title.removeAttribute('for');
+    const picker=mediaAssetPicker(current==='none'?'':current||'',id=>save(id||'none'),{
+      disabled:Boolean(property.disabled),ariaLabelledBy:title.id,ariaDescribedBy:error.id
+    });
+    const open=picker.querySelector('button[aria-controls]');
+    if(open)associateValidation(open);
     wrap.append(picker);
     wrap.append(error);
     return wrap;

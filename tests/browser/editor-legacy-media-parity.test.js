@@ -116,6 +116,10 @@ test('legacy image video audio share guarded media URLs in Inspector Canvas and 
       if(await editor.locator('#rightDock').evaluate(el=>el.classList.contains('closed')))await editor.locator('#openInspector').click();
       await editor.getByRole('button',{name:'Tartalom és szöveg'}).click();
       await inspector.locator('.legacy-media-type-warning').waitFor();
+      const mediaPickerAccessibility=await inspector.locator('.editor-media-picker').evaluateAll(pickers=>pickers.map(picker=>({role:picker.getAttribute('role'),labelledBy:picker.getAttribute('aria-labelledby'),labelText:document.getElementById(picker.getAttribute('aria-labelledby'))?.textContent.trim()})));
+      const expectedPickerLabels=type==='image'?['Kép a Médiatárból']:type==='video'?['Videó a Médiatárból','Videó borítóképe a Médiatárból']:['Hang a Médiatárból'];
+      assert.deepEqual(mediaPickerAccessibility.map(item=>item.labelText),expectedPickerLabels,`${type}: each media picker is named by a visible field label`);
+      assert.ok(mediaPickerAccessibility.every(item=>item.role==='group'&&item.labelledBy),`${type}: each media picker exposes its named group semantics`);
       const expectedRoutes=(type==='image'
         ?['src','assetId','alt','caption','objectFit','ratio','focalX','focalY','loading','decorative']
         :type==='video'

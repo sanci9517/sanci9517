@@ -420,6 +420,14 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   if(await backgroundGroup.getAttribute('aria-expanded')==='false')await backgroundGroup.click();
   const backgroundImageField=field('background.image');
   const backgroundImagePicker=backgroundImageField.locator('.editor-media-picker');
+  const backgroundImageLabel=backgroundImageField.locator('.property-heading > label');
+  const backgroundImageOpen=backgroundImagePicker.locator('button[aria-controls]');
+  const backgroundImageValidation=backgroundImageField.locator('.property-validation');
+  assert.equal(await backgroundImagePicker.getAttribute('role'),'group','background media exposes a named control group');
+  assert.equal(await backgroundImagePicker.getAttribute('aria-labelledby'),await backgroundImageLabel.getAttribute('id'),'the media group uses its Inspector field label');
+  assert.equal(await backgroundImageLabel.getAttribute('for'),null,'the media group label does not target a nonexistent form control');
+  assert.equal(await backgroundImageOpen.getAttribute('aria-describedby'),await backgroundImageValidation.getAttribute('id'),'the primary media control is associated with validation feedback');
+  assert.equal(await backgroundImageOpen.getAttribute('aria-required'),'true','the media selection contract is announced');
   assert.equal(await backgroundImage(), 'none', 'no image asset is applied before selection');
   assert.equal(await publishedBackgroundImage(), 'none', 'the initial public snapshot has no background asset');
   await backgroundImagePicker.getByRole('button',{name:'Médiatár megnyitása'}).click();

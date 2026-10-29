@@ -1,6 +1,6 @@
 import {defaultCardContent,CARD_VARIANTS} from '../core/card-content.js';
 import {createCompositionInputs} from './composition-inputs.js';
-import {mediaAssetPicker,setMediaAssetPickerSelection} from './element-content-controls.js';
+import {mediaAssetPicker,setMediaAssetPickerSelection} from './element-content-controls.js?v=20261029-media-picker-a11y';
 
 export function renderCardInspector(node,update,{pending=()=>{}}={}){
  const model={...defaultCardContent(),...(node.props?.cardContent||{})};
@@ -32,11 +32,13 @@ export function renderCardInspector(node,update,{pending=()=>{}}={}){
  const labels={solid:'Telített',outline:'Körvonal',glass:'Üveghatás'};
  for(const value of CARD_VARIANTS)variant.append(Object.assign(document.createElement('option'),{value,textContent:labels[value]}));
  route(variant,'variant');variant.value=model.variant;variant.onchange=()=>{if(save({variant:variant.value})===false)variant.value=model.variant;};
+ const imageField=document.createElement('div');imageField.className='field';
+ const imageLabel=Object.assign(document.createElement('span'),{id:'card-media-label-'+crypto.randomUUID(),textContent:'Kártyakép a Médiatárból'});imageField.append(imageLabel);
  picker=mediaAssetPicker(model.imageAssetId||'',(id,asset)=>{
   const alt=typeof asset?.altText==='string'?asset.altText.trim().slice(0,250):'';
   return save({imageAssetId:id,imageSrc:'',...(alt&&!model.imageAlt.trim()?{imageAlt:alt}:{})})!==false;
- },{disabled:Boolean(node.locked)});route(picker,'imageAssetId');
- section.append(variant,picker);
+ },{disabled:Boolean(node.locked),ariaLabelledBy:imageLabel.id});route(picker,'imageAssetId');
+ section.append(variant,imageField,picker);
  text('Kép URL (opcionális)','imageSrc',{source:true,trim:true});text('Kép leírása','imageAlt');
  text('Gomb felirata (opcionális)','actionLabel');text('Gomb hivatkozása','actionHref',{trim:true});
  const check=document.createElement('input');check.type='checkbox';check.checked=Boolean(model.newWindow);check.disabled=Boolean(node.locked);

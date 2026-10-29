@@ -56,6 +56,8 @@ for(const width of [390,1366])test(`Card Inspector IME, sources and Save/Publish
  const cardRoutes=await editor.locator('.card-content-inspector [data-inspector-command]').evaluateAll(rows=>rows.map(row=>({command:row.dataset.inspectorCommand,key:row.dataset.inspectorKey})));
  assert.deepEqual(cardRoutes.map(route=>route.key),['props.cardContent.title','props.cardContent.description','props.cardContent.variant','props.cardContent.imageAssetId','props.cardContent.imageSrc','props.cardContent.imageAlt','props.cardContent.actionLabel','props.cardContent.actionHref','props.cardContent.newWindow']);
  assert.ok(cardRoutes.every(route=>route.command==='element.update'),'each Card field exposes its actual element.update route');
+ const cardPicker=editor.locator('.card-content-inspector .editor-media-picker'),cardPickerLabel=editor.locator('.card-content-inspector span[id^="card-media-label-"]');
+ assert.equal(await cardPicker.getAttribute('role'),'group');assert.equal(await cardPicker.getAttribute('aria-labelledby'),await cardPickerLabel.getAttribute('id'),'Card image picker uses its visible label');
  const field=label=>editor.locator('.card-content-inspector').getByRole('textbox',{name:label});
  const setField=async(label,value)=>{const input=field(label);await input.fill(value);await input.press('Tab');};
  await setField('Kártya címe','Kreatív <img src=x onerror=alert(1)>');

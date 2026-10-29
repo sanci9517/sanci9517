@@ -24,8 +24,11 @@ async function loadAssets(query='',before=null,mimes=[]){
 const selectionViews=new WeakMap();
 // Synchronize a mounted picker view without invoking its PageModel callback.
 export function setMediaAssetPickerSelection(picker,id){selectionViews.get(picker)?.(id);}
-export function mediaAssetPicker(selectedId,onSelect,{disabled=false,mimes=[]}={}){
+export function mediaAssetPicker(selectedId,onSelect,{disabled=false,mimes=[],ariaLabelledBy=null,ariaDescribedBy=null}={}){
   const root=document.createElement('div');root.className='editor-media-picker';
+  if(ariaLabelledBy){root.setAttribute('role','group');root.setAttribute('aria-labelledby',ariaLabelledBy);}
+  if(ariaDescribedBy)root.setAttribute('aria-describedby',ariaDescribedBy);
+  const associateDescription=control=>{if(ariaDescribedBy)control.setAttribute('aria-describedby',ariaDescribedBy);return control;};
   const status=document.createElement('p');status.className='content-field-help';status.setAttribute('role','status');
   const current=document.createElement('div');current.className='editor-media-current';current.id='media-choices-'+crypto.randomUUID();current.setAttribute('role','region');current.setAttribute('aria-label','Médiatár találatok');
   const selection=document.createElement('div');selection.className='editor-media-selection';
@@ -35,13 +38,13 @@ export function mediaAssetPicker(selectedId,onSelect,{disabled=false,mimes=[]}={
     const preview=document.createElement(isImage?'img':'span');preview.className='editor-media-selected';
     if(isImage){preview.src='/api/admin/media?id='+encodeURIComponent(id);preview.alt='Kiválasztott kép'}
     else{preview.textContent=asset.mimeType?.startsWith('video/')?'🎬 Kiválasztott videó':'🔊 Kiválasztott hang';preview.setAttribute('aria-label','Kiválasztott médiafájl')}
-    const clear=document.createElement('button');clear.type='button';clear.textContent=isImage?'Kép eltávolítása':'Médiafájl eltávolítása';clear.disabled=disabled;
+    const clear=associateDescription(document.createElement('button'));clear.type='button';clear.textContent=isImage?'Kép eltávolítása':'Médiafájl eltávolítása';clear.disabled=disabled;
     clear.onclick=()=>{if(onSelect('')===false)return;renderSelected('');status.textContent='A kiválasztott médiafájl eltávolítva.';if(root.isConnected)open.focus({preventScroll:true})};
     selection.append(preview,clear);
   };
-  const search=document.createElement('input');search.type='search';search.placeholder='Keresés név vagy leírás alapján';search.setAttribute('aria-label','Keresés a Médiatárban');search.disabled=disabled;
-  const open=document.createElement('button');open.type='button';open.disabled=disabled;open.setAttribute('aria-controls',current.id);
-  const more=document.createElement('button');more.type='button';more.className='editor-media-more';more.textContent='További médiafájl betöltése';more.disabled=disabled;
+  const search=associateDescription(document.createElement('input'));search.type='search';search.placeholder='Keresés név vagy leírás alapján';search.setAttribute('aria-label','Keresés a Médiatárban');search.disabled=disabled;
+  const open=associateDescription(document.createElement('button'));open.type='button';open.disabled=disabled;open.setAttribute('aria-controls',current.id);
+  const more=associateDescription(document.createElement('button'));more.type='button';more.className='editor-media-more';more.textContent='További médiafájl betöltése';more.disabled=disabled;
   let latestRequest=0,nextCursor=null,shown=0,timer;
   const setOpen=value=>{
     current.hidden=!value;search.hidden=!value;more.hidden=!value||!nextCursor;
@@ -60,7 +63,7 @@ export function mediaAssetPicker(selectedId,onSelect,{disabled=false,mimes=[]}={
       let firstNewChoice=null,visibleCount=0;
       for(const asset of assets){
         if(mimes.length&&!mimes.includes(asset.mimeType))continue;
-        const button=document.createElement('button');button.type='button';button.className='editor-media-choice';button.disabled=disabled;
+        const button=associateDescription(document.createElement('button'));button.type='button';button.className='editor-media-choice';button.disabled=disabled;
         button.setAttribute('aria-label',`${asset.name} kiválasztása`);
         const preview=!asset.mimeType||asset.mimeType.startsWith('image/')?document.createElement('img'):document.createElement('span');
         if(preview.tagName==='IMG'){preview.src=asset.previewUrl;preview.alt='';preview.loading='lazy'}else{preview.textContent=asset.mimeType?.startsWith('video/')?'🎬':'🔊';preview.setAttribute('aria-hidden','true')}
@@ -199,7 +202,8 @@ export function renderElementContentControls(node,{apply,pending,exclude=[],page
     else if(definition.type==='asset'){input=null}
     else {input=document.createElement(definition.type==='textarea'?'textarea':'input');if(input.tagName==='INPUT'){input.type=definition.type==='range'?'range':'text';if(definition.type==='range'){input.min=String(definition.min??0);input.max=String(definition.max??100);input.step=String(definition.step??1)}}input.value=value??'';if(definition.type!=='range')input.maxLength=definition.max||2048}
     if(definition.type==='asset'){
-      const picker=mediaAssetPicker(String(value||''),(id,asset)=>{try{save(id,undefined,asset);fail.textContent='';return true}catch(error){fail.textContent=error.message;return false}},{disabled:Boolean(node.locked)});
+      label.id='content-media-label-'+crypto.randomUUID();
+      const picker=mediaAssetPicker(String(value||''),(id,asset)=>{try{save(id,undefined,asset);fail.textContent='';return true}catch(error){fail.textContent=error.message;return false}},{disabled:Boolean(node.locked),ariaLabelledBy:label.id,ariaDescribedBy:fail.id});
       register(next=>setMediaAssetPickerSelection(picker,next));wrap.append(picker);
       if(definition.help){const help=document.createElement('small');help.className='content-field-help';help.textContent=definition.help;wrap.append(help)}return wrap;
     }

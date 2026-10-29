@@ -32,7 +32,7 @@ test('typed Inspector controls and link selection work with real browser DOM at 
     const page=await browser.newPage({viewport:{width,height:850}});
     await page.goto('http://127.0.0.1:'+server.address().port+'/editor-v2/index.html');
     const data=await page.evaluate(async()=>{
-      const {renderPropertyInput}=await import('/editor-v2/ui/property-controls.js');
+      const {renderPropertyInput}=await import('/editor-v2/ui/property-controls.js?v=20261029-media-picker-a11y');
       const {mediaAssetPicker}=await import('/editor-v2/ui/element-content-controls.js');
       const {getProperty,listProperties}=await import('/editor-v2/core/property-registry.js');
       const {getInspectorValueContract}=await import('/editor-v2/core/property-values.js');
@@ -53,10 +53,14 @@ test('typed Inspector controls and link selection work with real browser DOM at 
         const control=renderPropertyInput(property,property.label,'16px',value=>editsForProperty.push(value));matrixHost.append(control);
         const type=property.type;
         if(type==='asset'){
+          const label=control.querySelector('.property-heading > label'),picker=control.querySelector('.editor-media-picker');
+          const open=picker.querySelector('button[aria-controls]'),error=control.querySelector('.property-validation');
+          const accessibility={role:picker.getAttribute('role'),labelId:label.id,labelledBy:picker.getAttribute('aria-labelledby'),labelFor:label.htmlFor,
+            groupDescriptionId:picker.getAttribute('aria-describedby'),controlDescriptionId:open.getAttribute('aria-describedby'),errorId:error.id,required:open.getAttribute('aria-required')};
           [...control.querySelectorAll('.editor-media-picker > button')].find(button=>button.textContent==='Médiatár megnyitása').click();
           for(let retry=0;retry<40&&!control.querySelector('.editor-media-choice');retry++)await new Promise(resolve=>setTimeout(resolve,20));
           control.querySelector('.editor-media-choice')?.click();
-          fieldMatrix.push({id:property.id,type,callbackCount:editsForProperty.length,value:editsForProperty[0]});
+          fieldMatrix.push({id:property.id,type,callbackCount:editsForProperty.length,value:editsForProperty[0],accessibility});
           continue;
         }
         if(type==='dimension'){
@@ -250,6 +254,7 @@ test('typed Inspector controls and link selection work with real browser DOM at 
       'the multiline value contract renders a native textarea and preserves literal text');
     assert.ok(data.fieldMatrix.filter(item=>item.type==='url').every(item=>item.maxLength===2048),`URL controls must expose the validator's 2048-character limit: ${JSON.stringify(data.fieldMatrix.filter(item=>item.type==='url'))}`);
     assert.ok(data.fieldMatrix.filter(item=>item.type==='asset').every(item=>item.callbackCount===1&&item.value==='6b1c2e65-e46e-4764-b234-123456789abc'),`background picker must deliver the selected site asset ID: ${JSON.stringify(data.fieldMatrix.filter(item=>item.type==='asset'))}`);
+    assert.ok(data.fieldMatrix.filter(item=>item.type==='asset').every(({accessibility})=>accessibility.role==='group'&&accessibility.labelId&&accessibility.labelledBy===accessibility.labelId&&accessibility.labelFor===''&&accessibility.groupDescriptionId===accessibility.errorId&&accessibility.controlDescriptionId===accessibility.errorId&&accessibility.required==='true'),`background picker must expose its field label and validation guidance accessibly: ${JSON.stringify(data.fieldMatrix.filter(item=>item.type==='asset'))}`);
     assert.ok(data.invalidMatrix.every(item=>item.callbackCount===0&&item.error),`invalid values must be rejected before reaching the command callback: ${JSON.stringify(data.invalidMatrix.filter(item=>item.callbackCount!==0||!item.error))}`);
     for(const [id,options] of Object.entries(data.unitOptions)){
       assert.deepEqual(options.slice(1),getSupportedUnitsForProperty(id));

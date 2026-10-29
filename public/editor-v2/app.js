@@ -12,7 +12,7 @@ import {plainTextToRichText,renderRichTextEditor,richTextEditorToDocument,restor
 import {renderSchedulePreview} from './core/schedule-preview.js';
 import {normalizeScheduleConfig,SCHEDULE_MODES,SCHEDULE_ORDERS,SCHEDULE_STATUSES,SCHEDULE_EMPTY_TEXT_MAX,SCHEDULE_LIMIT_MAX} from './core/schedule-schema.js';
 import {listPropertyGroups,listProperties,getProperty} from './core/property-registry.js?v=20261025-content-property-route-contract';
-import {renderPropertyInput} from './ui/property-controls.js?v=20261029-inspector-help-disclosure';
+import {renderPropertyInput} from './ui/property-controls.js?v=20261029-media-picker-a11y';
 import {getInspectorValueContract,normalizeInspectorValue} from './core/property-values.js';
 import {describeResponsiveOrigin} from './ui/responsive-origin.js';
 import {responsiveGroupResetActions} from './ui/responsive-group-reset.js';
@@ -51,7 +51,7 @@ import {STATE_PROPERTY_IDS,applyStateStyles} from './core/state-styles.js';
 import {defaultTokens,applyTokenVariables} from './core/design-tokens.js';
 import {CONTENT_TYPES,STRUCTURAL_TYPES,validatePageForPublication,isAuthoredContent,authoredNodeHtml,contentAttributes,initContentInteractions,contentTag} from './core/authored-content.js';
 import {captureCanvasInteractionState,restoreCanvasInteractionState} from './core/canvas-interaction-state.js';
-import {renderElementContentControls,pageLinkPicker} from './ui/element-content-controls.js?v=20261026-authored-content-route-contract';
+import {renderElementContentControls,pageLinkPicker} from './ui/element-content-controls.js?v=20261029-media-picker-a11y';
 
 let editorTokens=defaultTokens();
 function propertyInput(property,label,current,onChange,options={}){
