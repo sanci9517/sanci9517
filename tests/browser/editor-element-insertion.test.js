@@ -5,7 +5,9 @@ import {readFile} from 'node:fs/promises';
 import {existsSync} from 'node:fs';
 import {resolve,extname} from 'node:path';
 import {chromium} from 'playwright';
-import {createDocument} from '../../public/editor-v2/core/schema.js';
+import {createDocument,NODE_TYPES} from '../../public/editor-v2/core/schema.js';
+import {createEditorState} from '../../public/editor-v2/core/state.js';
+import {execute} from '../../public/editor-v2/core/commands.js';
 
 test('palette items are inserted beside the selected item in canvas flow and saved in that order',async t=>{
   const document=createDocument(),pageId=document.activePageId,rootId=document.pages[pageId].rootId;
@@ -62,5 +64,63 @@ test('palette items are inserted beside the selected item in canvas flow and sav
   assert.equal(posts.at(-1)?.publish,false,'Save keeps publishing separate');
   assert.deepEqual(draft.pages[pageId].nodes[rootId].children,[firstId,linkId,headingId]);
   assert.equal(published,null);
+  assert.deepEqual(errors,[]);
+});
+
+test('palette insertion beside a locked container preserves its locked subtree',async t=>{
+  const seed=createEditorState(createDocument()),pageId=seed.document.activePageId,rootId=seed.document.pages[pageId].rootId;
+  execute(seed,{type:'element.add',payload:{type:NODE_TYPES.SECTION,parentId:rootId}});
+  const lockedId=seed.selection.primaryId;
+  execute(seed,{type:'element.add',payload:{type:NODE_TYPES.HEADING,parentId:lockedId}});
+  const headingId=seed.selection.primaryId;
+  execute(seed,{type:'element.lock.set',payload:{nodeId:lockedId,locked:true}});
+  let draft=structuredClone(seed.document),version=1;
+  const posts=[],root=resolve(import.meta.dirname,'../../public');
+  const server=createServer(async(req,res)=>{
+    const url=new URL(req.url,'http://localhost');
+    const json=data=>{res.setHeader('content-type','application/json');res.end(JSON.stringify(data))};
+    if(url.pathname==='/api/admin/pages')return json({ok:true,data:url.searchParams.get('archived')==='1'?[]:[{id:pageId,slug:'test',title:'Test',content:draft,revision:version,isPublished:false}]});
+    if(url.pathname==='/api/admin/editor'){
+      if(req.method==='GET')return json({ok:true,data:{page:{id:pageId,document:draft},revisions:[{id:'revision-'+version,version}]}});
+      let body='';for await(const chunk of req)body+=chunk;
+      const request=JSON.parse(body);posts.push(request);draft=structuredClone(request.document);version++;
+      return json({ok:true,data:{pageId,version,revisionId:'revision-'+version,published:false}});
+    }
+    if(url.pathname==='/api/public/pages')return json({ok:false});
+    if(url.pathname==='/api/public/navigation')return json({ok:true,data:{items:[]}});
+    if(url.pathname==='/api/integrations/twitch/connection')return json({ok:true,data:{connected:false}});
+    if(url.pathname.startsWith('/api/'))return json({ok:true,data:{siteName:'Test'}});
+    const file=resolve(root,'.'+url.pathname);
+    if(!file.startsWith(root+'/')){res.writeHead(403).end();return}
+    try{res.setHeader('content-type',{'.html':'text/html','.js':'text/javascript','.css':'text/css'}[extname(file)]||'application/octet-stream');res.end(await readFile(file))}
+    catch{res.writeHead(404).end()}
+  });
+  await new Promise(done=>server.listen(0,'127.0.0.1',done));
+  const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||(existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined),args:['--no-sandbox']});
+  t.after(async()=>{await browser.close();await new Promise(done=>server.close(done))});
+  const tab=await browser.newPage({viewport:{width:1366,height:900}});tab.setDefaultTimeout(7000);
+  const errors=[];tab.on('pageerror',error=>errors.push(error.message));
+  await tab.goto(`http://127.0.0.1:${server.address().port}/editor-v2/index.html`);
+  await tab.locator(`.node[data-node-id="${lockedId}"]`).waitFor();
+  await tab.locator('.rail-btn[data-tab="layers"]').click();
+  await tab.locator(`.layer-row[data-node-id="${lockedId}"]`).click();
+  await tab.locator('.rail-btn[data-tab="elements"]').click();
+  await tab.locator('.element-group-title').filter({hasText:'Szöveg'}).click();
+  await tab.locator('#elementList .element').filter({hasText:'Szöveg'}).click();
+  await tab.waitForFunction(({rootId,lockedId})=>{
+    const root=document.querySelector(`.page-canvas .node[data-node-id="${rootId}"]`);
+    const locked=document.querySelector(`.node[data-node-id="${lockedId}"]`);
+    return [...(root?.children||[])].filter(child=>child.matches('.node')).length===2&&[...(locked?.children||[])].filter(child=>child.matches('.node')).length===1;
+  },{rootId,lockedId});
+  const rootChildren=await tab.locator(`.page-canvas .node[data-node-id="${rootId}"]`).evaluate(el=>[...el.children].filter(child=>child.matches('.node')).map(child=>({id:child.dataset.nodeId,top:child.getBoundingClientRect().top,bottom:child.getBoundingClientRect().bottom})));
+  const insertedId=rootChildren[1].id;
+  assert.deepEqual(rootChildren.map(item=>item.id),[lockedId,insertedId]);
+  assert.ok(rootChildren[0].bottom<=rootChildren[1].top+1,'new element must follow the locked section without overlapping it');
+  assert.deepEqual(draft.pages[pageId].nodes[lockedId].children,[headingId]);
+  await tab.locator('#save').click();
+  await tab.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent?.startsWith('Mentve'));
+  assert.equal(posts.at(-1)?.publish,false,'adding beside a locked node remains a draft until explicit Publish');
+  assert.deepEqual(draft.pages[pageId].nodes[rootId].children,[lockedId,insertedId]);
+  assert.deepEqual(draft.pages[pageId].nodes[lockedId].children,[headingId]);
   assert.deepEqual(errors,[]);
 });

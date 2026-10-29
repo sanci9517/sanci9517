@@ -1119,11 +1119,12 @@ Az alábbi rövidített kártyák mindegyike név szerint lefedi a 26.1 kötelez
 - **Függőségek:** EDT-001–003/008/011–013/021–026/034.
 - **UI-állapotok:** locked/unlocked, hidden/visible, disabled action, group/root edge case.
 - **Biztonság/adatvédelem:** locked állapot nem helyettesítheti a backend permissiont; rejtett tartalom public output policy-ja külön rögzítendő.
-- **Tesztcsomag:** core.test.js locked-node acceptance teljes mátrixa nem bizonyított; public renderer visibility test hiányzó/ellenőrizendő.
-- **Elfogadás:** lock → tiltott mozgatás/módosítás → unlock → működés; hide/show esetén preview és public output egyezése, mentés/reload után is.
+- **Rögzített részhiba (2026-10-29):** a palette insertion resolver nem vette figyelembe a kijelölt szülő `locked` állapotát, és az `element.add` command közvetlen hívása is tudott gyereket hozzáadni zárolt konténerhez. Ez UI-lock megkerülés volt, nem jogosultsági határ.
+- **Tesztcsomag:** `public/editor-v2/tests/element-insertion.test.js`; `tests/browser/editor-element-insertion.test.js`.
+- **Elfogadás:** palette-beszúrás nem mutálhat zárolt konténert; a kijelölt zárolt node után a legközelebbi feloldott szülőben, közvetlenül a zárolt subtree után kerüljön az új elem; közvetlen `element.add` utasítás zárolt cél-szülővel hibázzon, a Page Model változatlan maradjon. E szelet elfogadása: 3/3 unit és 2/2 valódi Chromium teszt; Save piszkozat, Publish külön művelet. A teljes lock/unlock, rétegfa, drag/reparent, hide/show és publikált renderer-mátrix továbbra nyitott.
 - **Bizonyíték:** commands.js element.lock.set és app.js Inspector; visibility implementációs bizonyíték nincs rögzítve.
 - **Visszaállítás:** lock/visibility command undo/redo; hidden state publish/rollback policy nyitott.
-- **Státusz / ismert probléma / következő lépés:** IN PROGRESS / UNVERIFIED; locked interaction matrix és visibility feature döntés/megvalósítás.
+- **Státusz / ismert probléma / következő lépés:** a locked-container palette beszúrási rés implementálva és helyben tesztelve; EDT-014 egésze továbbra IN PROGRESS / UNVERIFIED, mert a többi locked interaction acceptance és visibility feature döntés/megvalósítás nyitott.
 
 **Szeletzárás:** EDT-007–014 mindegyikéhez kitöltöttem a kártyamezőket, de a forráskód-olvasás nem helyettesíti a böngészős acceptance-t. Következő lépés: a 63.42 kártyák mező- és függőségkonzisztenciájának gépi ellenőrzése; csak ezután jöhet EDT-015–020.
 

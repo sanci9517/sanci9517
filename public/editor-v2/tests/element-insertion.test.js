@@ -39,3 +39,29 @@ test('no selection or an incompatible parent falls back to the root append posit
   const selectedId=state.selection.primaryId;
   assert.deepEqual(resolveElementInsertion(activePage(state),selectedId,NODE_TYPES.SECTION),{parentId:rootId,index:1});
 });
+
+test('palette insertion cannot mutate a locked container and bubbles after its locked subtree',()=>{
+  const state=createEditorState(createDocument());
+  let page=activePage(state);
+  const rootId=page.rootId;
+  execute(state,{type:'element.add',payload:{type:NODE_TYPES.SECTION,parentId:rootId}});
+  const lockedSectionId=state.selection.primaryId;
+  execute(state,{type:'element.add',payload:{type:NODE_TYPES.HEADING,parentId:lockedSectionId}});
+  const headingId=state.selection.primaryId;
+  execute(state,{type:'element.lock.set',payload:{nodeId:lockedSectionId,locked:true}});
+
+  const before=structuredClone(state.document);
+  assert.deepEqual(resolveElementInsertion(activePage(state),lockedSectionId,NODE_TYPES.TEXT),{parentId:rootId,index:1});
+  assert.deepEqual(resolveElementInsertion(activePage(state),headingId,NODE_TYPES.TEXT),{parentId:rootId,index:1});
+  assert.throws(()=>execute(state,{type:'element.add',payload:{type:NODE_TYPES.TEXT,parentId:lockedSectionId}}),/locked node/);
+  assert.deepEqual(state.document,before,'a direct command cannot bypass the locked destination');
+
+  const insertion=resolveElementInsertion(activePage(state),lockedSectionId,NODE_TYPES.TEXT);
+  execute(state,{type:'element.add',payload:{type:NODE_TYPES.TEXT,...insertion}});
+  page=activePage(state);
+  const insertedId=state.selection.primaryId;
+  assert.deepEqual(page.nodes[rootId].children,[lockedSectionId,insertedId]);
+  assert.deepEqual(page.nodes[lockedSectionId].children,[headingId]);
+  execute(state,{type:'history.undo'});
+  assert.deepEqual(state.document,before,'undo removes only the unlocked sibling insertion');
+});

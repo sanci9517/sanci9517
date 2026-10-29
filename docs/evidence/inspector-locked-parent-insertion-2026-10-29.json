@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "kind": "local-editor-lock-and-insertion-evidence-not-production-acceptance",
+  "date": "2026-10-29",
+  "plan_items": ["77.44.7.A", "EDT-014"],
+  "observed_gap": {
+    "trigger": "Add a Palette element while a locked container is selected, or select a leaf whose direct parent is locked.",
+    "before": "The insertion resolver accepted the locked container as a destination and element.add allowed direct child insertion.",
+    "impact": "The editor's lock affordance could be bypassed through Palette insertion, changing a locked node's child list."
+  },
+  "implementation": {
+    "files": [
+      "public/editor-v2/core/element-insertion.js",
+      "public/editor-v2/core/commands.js"
+    ],
+    "behavior": "A locked selected container is not an insertion parent. The resolver bubbles the insertion anchor until it can insert immediately after the locked subtree under an unlocked container. element.add independently rejects a locked destination parent.",
+    "page_model": "Locked node and its children remain unchanged; unlocked sibling order is explicit and undoable.",
+    "save_publish": "Save remains draft-only; Publish stays explicit and separate.",
+    "dependencies_added": false
+  },
+  "open_source_review": {
+    "project": "GrapesJS",
+    "license": "BSD-3-Clause",
+    "review": "Collection-based insertion architecture and license were reviewed in the earlier 77.44.7.A insertion-flow slice. Its Page Model-incompatible implementation is not copied; this change uses the existing native child index and command API.",
+    "code_copied": false,
+    "dependency_added": false
+  },
+  "tests": {
+    "core": {
+      "command": "node -e \"import('./public/editor-v2/tests/element-insertion.test.js')\"",
+      "result": "PASS, 3/3",
+      "assertions": [
+        "Container append and selected-leaf sibling position remain correct.",
+        "Direct element.add to a locked parent throws without mutating the document.",
+        "Palette insertion after a locked container preserves its child list and supports Undo."
+      ]
+    },
+    "editor_unit": {
+      "command": "npm run test:editor",
+      "result": "PASS, 11/11 files"
+    },
+    "chromium": {
+      "command": "node -e \"import('./tests/browser/editor-element-insertion.test.js')\"",
+      "result": "PASS, 2/2",
+      "viewport_px": [1366, 390],
+      "assertions": [
+        "Canvas insertion follows normal flow without overlap.",
+        "Locked container and descendants remain unchanged after Palette insertion.",
+        "Save persists a draft and does not publish it."
+      ]
+    },
+    "typecheck": "PASS",
+    "plan_and_traceability": "Pending after evidence update"
+  },
+  "release": {
+    "committed": false,
+    "pushed": false,
+    "production_deployed": false,
+    "next": "Run plan, source-traceability, deploy dry-run and SELECT-only D1 preflight; then follow normal fast-forward release to v2/foundation and verify the exact Cloudflare build, 100% Worker traffic and health endpoints."
+  },
+  "remaining_edt014": [
+    "Complete lock/unlock interaction and child versus ancestor semantics.",
+    "Complete drag/reparent and hierarchy behavior under locks.",
+    "Resolve and verify hide/show preview and published renderer policy."
+  ],
+  "acceptance": "THIS LOCKED-PALETTE-INSERTION SLICE TESTED; EDT-014 AND 77.44.7.A NOT CERTIFIED"
+}
