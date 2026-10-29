@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "kind": "editor-layer-rename-ime-production-release-not-full-acceptance",
+  "date": "2026-10-29",
+  "plan_items": ["EDT-014", "77.44.7.A"],
+  "status": "PRODUCTION_RELEASE_VERIFIED",
+  "observed_gap": {
+    "trigger": "Enter/Escape or form submission during IME composition in the layer rename field.",
+    "before": "The composing candidate could be submitted or the inline edit canceled before the IME committed its final replacement; this was reproduced at 390px and 1366px.",
+    "impact": "A partial name could enter the Page Model, or the rename editor could close while mobile text composition was still active."
+  },
+  "implementation": {
+    "file": "public/editor-v2/app.js",
+    "behavior": [
+      "Prevent Enter and Escape from submitting or canceling while composition is active, including legacy keyCode 229 events.",
+      "Reject form submission during composition even if requestSubmit is called directly.",
+      "Keep the composition guard active through the next animation frame after compositionend to cover mobile IMEs that deliver the final replacement afterward.",
+      "After composition settles, preserve existing trim validation and element.update save behavior."
+    ],
+    "reuse_review": "Reviewed project-owned IME handling in composition-inputs.js and code-snippet-inspector.js. Those paths do not submit this layer form; the focused guard belongs in the existing form. No external code or dependency added.",
+    "save_publish": "The composition guard does not call Save or Publish and preserves their separation."
+  },
+  "checks": {
+    "red_reproduction": "PASS as a regression proof: before implementation the new browser assertion failed at 390px and 1366px (enterPrevented=false; stillEditing=false).",
+    "browser_command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-element-insertion.test.js tests/browser/editor-general-fields-ime.test.js",
+    "browser_result": "PASS 7/7 at 390px and 1366px, including the reproduced composing Enter/Escape/requestSubmit flow.",
+    "editor_unit": "PASS 11/11 files",
+    "typecheck": "PASS npm run typecheck",
+    "syntax": "PASS node --check public/editor-v2/app.js",
+    "active_point": "PASS; next 77.44.7.A",
+    "traceability": "PASS; 396 mappings rebuilt and validated",
+    "migration_safety_gate": "PASS; deploy:safe does not apply D1 migrations",
+    "wrangler_dry_run": "PASS Wrangler 4.130.0; 161 assets; 296.90 KiB / 67.79 KiB gzip",
+    "git_diff_check": "PASS"
+  },
+  "production_preflight": {
+    "d1_query": "SELECT name FROM d1_migrations ORDER BY name",
+    "d1_rows_read": 34,
+    "latest_migration": "0028_media_archive.sql",
+    "changed_db": false,
+    "rows_written": 0,
+    "migration_apply": false,
+    "r2_mutation": false,
+    "build_minutes_limit_reached": false,
+    "build_minutes_refresh": "2026-10-31T23:59:59.999Z"
+  },
+  "release": {
+    "runtime_commit": "93ba9abee6ec547e4676227b4fae5349dceb474d",
+    "github_branch": "v2/foundation",
+    "github_ref_verified": true,
+    "cloudflare_build": "6313f0e0-2c4c-4c50-bac1-93355d04ef97",
+    "cloudflare_build_outcome": "success",
+    "build_commit_verified": "93ba9abee6ec547e4676227b4fae5349dceb474d",
+    "build_command": "npm run typecheck",
+    "deploy_command": "npm run deploy:safe",
+    "deployment": "ffbb1f9e-8028-4a23-889b-35c384cb9daa",
+    "worker_version": "6b0d8423-2b07-4f6f-9b66-c215adbc530d",
+    "production_traffic_percent": 100,
+    "health": "PASS /api/health HTTP 200",
+    "db_health": "PASS /api/db-health HTTP 200; connected=true",
+    "asset_sha256": {
+      "local public/editor-v2/app.js": "675b834f7bbb9bc717c12b292716e1b3a2d9c10701c21e08faf886b5470bbcf2",
+      "live /editor-v2/app.js": "675b834f7bbb9bc717c12b292716e1b3a2d9c10701c21e08faf886b5470bbcf2",
+      "match": true
+    }
+  },
+  "acceptance_boundary": "This verifies the IME layer-rename regression and production asset delivery. Full EDT-014/77.44.7.A and physical-device Visual Editor acceptance remain open."
+}
