@@ -105,3 +105,17 @@ test('all hierarchy commands preserve a locked parent child list',()=>{
     assert.equal(f.state.history.past.length,historyBefore,`${label} must not create an undo entry`);
   }
 });
+
+test('hierarchy reparent and reorder reject a locked source node atomically',()=>{
+  for(const type of ['hierarchy.reparent','hierarchy.reorder']){
+    const state=createEditorState(createDocument()),rootId=activePage(state).rootId;
+    execute(state,{type:'element.add',payload:{type:NODE_TYPES.SECTION,parentId:rootId}});const targetParentId=state.selection.primaryId;
+    execute(state,{type:'element.add',payload:{type:NODE_TYPES.TEXT,parentId:rootId}});const lockedNodeId=state.selection.primaryId;
+    execute(state,{type:'element.lock.set',payload:{nodeId:lockedNodeId,locked:true}});
+    const before=structuredClone(state.document),historyBefore=state.history.past.length;
+    const payload=type==='hierarchy.reparent'?{nodeId:lockedNodeId,parentId:targetParentId}:{nodeId:lockedNodeId,index:0};
+    assert.throws(()=>execute(state,{type,payload}),/locked/i,`${type} cannot move a locked source`);
+    assert.deepEqual(state.document,before,`${type} rejection must preserve the Page Model`);
+    assert.equal(state.history.past.length,historyBefore,`${type} rejection must not add history`);
+  }
+});

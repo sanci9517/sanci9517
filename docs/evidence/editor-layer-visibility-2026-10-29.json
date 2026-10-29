@@ -47,12 +47,13 @@
     ]
   },
   "checks": {
-    "editor_unit": "PASS, 11/11 test files",
+    "editor_unit": "PASS, 11/11 test files after adding locked-source movement regression.",
     "typecheck": "PASS",
     "canonical_plan": "PASS, 396 source mappings; functional acceptance remains NOT_CERTIFIED",
     "feature_traceability": "Regenerated from current source; 396 mappings retained",
     "git_diff_check": "PASS",
-    "editor_layer_browser": "PASS, 4/4 Chromium tests; inspector lock/unlock, visibility Save/Publish, desktop drag, mobile touch long-press, undo/redo"
+    "editor_layer_browser": "PASS, 4/4 Chromium tests; inspector lock/unlock, visibility Save/Publish, desktop drag, mobile touch long-press, undo/redo",
+    "locked_source_commands": "PASS: direct hierarchy.reparent and hierarchy.reorder of locked source nodes are rejected by the shared requireNode guard; Page Model and undo history remain unchanged."
   },
   "release": {
     "runtime_change": true,
@@ -102,5 +103,5 @@
     "github_actions": "Skipped by [skip ci] to preserve the exhausted GitHub Actions allowance; local verification and Cloudflare exact-commit production build were run."
   },
   "acceptance": "VISIBILITY RUNTIME SLICE TESTED, PUSHED AND DEPLOYED TO 100% PRODUCTION; health/editor HTTP and app.js/editor.css hashes verified. EDT-014 AND 77.44.7.A REMAIN OPEN / NOT CERTIFIED.",
-  "next": "Complete keyboard reparent and physical-device QA, then continue the 77.44.7.A Inspector acceptance cursor."
+  "next": "Continue keyboard reparent and physical-device QA, then continue the 77.44.7.A Inspector acceptance cursor."
 }
