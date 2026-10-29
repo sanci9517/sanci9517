@@ -538,6 +538,13 @@ A platform elsődleges piaca: **streamerek és digitális tartalomkészítők**,
 A 49. fejezet 22 felhasználói főmodulja az Admin kanonikus navigációja. A 24. fejezet 396 stabil funkcióazonosítója a megőrzendő elsődleges index. Az 54., 56–57., 64–76. fejezetek *ugyanazon képességek* részletei és kibővített szerződései, nem párhuzamos új termék- vagy domainmodellek. Egy funkció tulajdonosa egy domain; több felületen megjelenő gyorsműveletek és komponensek ugyanarra az API-ra mutatnak. A Page, Overlay és Video Editor külön feladatszerkesztők; közös Brand Kit, Media Library, Design Tokens és jogosultsági szerződés használható.
 
 ### 77.3. Kiadási sorrend és kötelező PASS-kapuk
+
+**2026-10-29 — felhasználói döntés: AI-LAST / CORE-FIRST / PUBLIC-FIRST (kötelező sorrendi alapelv).** A SANCI9517 Creator Platform első teljes, nyilvános kiadása **SANCI AI nélkül** történik, de a teljes elfogadott AI-tól független termékfunkciók, a többfelhasználós creator/SaaS működés, a szükséges biztonsági, üzemeltetési, adatvédelmi, támogatási és kiadási PASS-kapuk lezárása után. A szabályalapú automatizáció, kézi oldal-/tartalomkészítés és AI nélküli import nem halasztható az AI-fázisra. Az első éles kiadás és a meglévő felhasználók működése nem függhet AI-modelltől, AI-API-tól vagy AI-előfizetéstől.
+
+A **SANCI AI tényleges implementációja és bekapcsolása az első teljes alapplatform-kiadás UTÁNI, utolsó fő fejlesztési fázis (F12-AI)**. Ekkortól a hibrid, szolgáltatófüggetlen AI Core, modell/provider adapterek, Control Center és a meglévő 40. fejezet szerinti AI-specialisták **egymástól függetlenül tesztelt, fokozatos, opt-in modulkiadásokban** érkeznek. Nem kell az összes AI-modult egyszerre kiadni. Több felhasználó és akár fizető ügyfél is lehet a platformon az AI indulása előtt. Az AI-kompatibilis domain API, Page Model, permission/entitlement, usage mérés és action-jóváhagyás AI nélkül szükséges általános szerződései korábban, a saját alapmoduljukban épülhetnek meg; ez nem jogosít fel korai AI-futtatásra, háttér-AI-fejlesztési fázisra vagy fizetős modell aktiválására.
+
+**Még NYITOTT, nem véglegesített üzleti döntések:** AI ingyenes próbakeret, csomagárak, pontos csomagjogok, kreditérték, kredit-lejárat és fizetős AI-bevezetés időpontja. A hibrid előfizetés + opcionális AI-modul + fogyasztásmérő/kredit keretrendszer választott tervezési irány, de pénzügyi kötelezettség vagy publikus árígéret nem következik belőle. A 0 Ft költségkorlát, külön jóváhagyás, Save ≠ Publish, tenantizoláció és valódi acceptance bizonyíték változatlanul kötelező. A 39. fejezet régi F10/F11 sorrendje történeti, nem írja felül e 77.3 aktuális kiadási sorrendet.
+
 | Lépés | Felhasználói eredmény | Előfeltétel és elfogadás |
 |---|---|---|
 | F0.1 | Aktuális GitHub/Worker/D1/Admin/Auth/Page/Editor baseline ismert | HEAD, route-ok, D1 migrációk, permission és `npm run typecheck`, érintett unit/contract tesztek tényleges futtatási jegyzéke; ismeretlen státusz `UNVERIFIED` |
@@ -551,9 +558,11 @@ A 49. fejezet 22 felhasználói főmodulja az Admin kanonikus navigációja. A 2
 | F6 | Content Studio, VOD, klip, Short, social publikálás | Médiafeldolgozó queue, platformvariáns, review, retry, jogok és kimeneti ellenőrzés |
 | F7 | Rajongók, moderáció, tagság, támogatás, shop, merch, digitális termék | Verified provider webhook, entitlement, order/fulfillment, refund és cross-tenant isolation |
 | F8 | Analitika, kampány, szponzoráció és creator business | Provenance, freshness, consent, KPI/revenue definíció, export, nem kitalált metrikák |
-| F9 | Automatizáció és SANCI AI munkafolyamatok | Human approval, schema-validált action, redaction, idempotencia, usage/money quota, audit |
-| F10 | Önkiszolgáló Creator SaaS, csapat, multi-site, billing és kvóták | Tenantizoláció, support/export, upgrade/downgrade, metering és költségvédelmi leállítás |
-| F11 | Marketplace, bővítmények, skálázás és nemzetközi terjeszkedés | Security/licence review, kompatibilitás, moderation, szolgáltatási SLO és visszaállíthatóság |
+| F9 | AI-tól független automatizációk és munkafolyamatok | Szabályalapú trigger/condition/action, human approval, schema-validált action, idempotencia, usage/money quota, audit; AI-inferencia és AI-ügynök nem előfeltétel |
+| F10 | Önkiszolgáló Creator SaaS, csapat, multi-site, billing és kvóták | Tenantizoláció, support/export, upgrade/downgrade, metering és költségvédelmi leállítás; az AI-előfizetés és AI-kredit értékesítése nem kötelező |
+| F11 | Marketplace, bővítmények, skálázás és nemzetközi terjeszkedés AI nélkül | Security/licence review, kompatibilitás, moderation, szolgáltatási SLO és visszaállíthatóság; AI-workflow/AI-agent marketplace csak az AI-fázisban aktiválható |
+| CORE-GA | Teljes AI nélküli Creator Platform kiadása és felhasználói használat | Az elfogadott AI-tól független scope bizonyított PASS-kapui; működő SaaS onboarding, tenantizoláció, support, publikálás, monitoring, backup/restore és költségvédelmi üzemeltetés |
+| F12-AI | SANCI AI opcionális, fokozatos kiadása a CORE-GA után | Hibrid modell/provider réteg, jogosultság, mérhető fogyasztás és jóváhagyás; modulonként valós minőség-, biztonsági, költség-, adatvédelmi és E2E acceptance, AI-kieséskor CORE-GA paritás |
 
 A fázisokon belüli meglévő részfeladat-ID-k és a 71/73/75/76. fejezet acceptance szerződései érvényesek. Egy fázis csak az előző ténylegesen releváns, igazolt függőségeire épülhet. A tervezett funkciók az elfogadott teljes scope-ban maradnak akkor is, ha még nem aktívak.
 
