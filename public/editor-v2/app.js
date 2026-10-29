@@ -646,7 +646,8 @@ function renderScheduleInspector(node,composition){
 
   const statusWrap=route(document.createElement('div'),'statuses');statusWrap.className='field';
   const statusLabel=document.createElement('span');statusLabel.id=`schedule-statuses-${node.id}`;statusLabel.textContent='Státuszok';
-  const statusGrid=document.createElement('div');statusGrid.className='schedule-check-grid';statusGrid.setAttribute('role','group');statusGrid.setAttribute('aria-labelledby',statusLabel.id);
+  const statusHint=document.createElement('p');statusHint.id=`schedule-statuses-hint-${node.id}`;statusHint.className='property-help';statusHint.textContent='Válassz ki legalább egy státuszt.';
+  const statusGrid=document.createElement('div');statusGrid.className='schedule-check-grid';statusGrid.setAttribute('role','group');statusGrid.setAttribute('aria-labelledby',statusLabel.id);statusGrid.setAttribute('aria-describedby',statusHint.id);
   for(const status of SCHEDULE_STATUSES){
     const label=document.createElement('label');label.className='inspector-toggle';
     const input=document.createElement('input');input.type='checkbox';input.checked=config.statuses.includes(status);
@@ -660,7 +661,7 @@ function renderScheduleInspector(node,composition){
     const span=document.createElement('span');span.textContent=status;
     label.append(input,span);statusGrid.append(label);
   }
-  statusWrap.append(statusLabel,statusGrid);section.append(statusWrap);
+  statusWrap.append(statusLabel,statusHint,statusGrid);section.append(statusWrap);
 
   const toggles=[
     ['showTitle','Cím megjelenítése'],['showPlatform','Platform megjelenítése'],

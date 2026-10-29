@@ -1,0 +1,37 @@
+{
+  "plan_item": "77.44.7.A",
+  "status": "LOCAL_ONLY_NOT_RELEASED",
+  "scope": "Explain the existing minimum-one-status rule for the Schedule Inspector checkbox group.",
+  "verified_gap": {
+    "source": "public/editor-v2/core/schedule-schema.js and public/editor-v2/app.js",
+    "issue": "The schema rejects empty status arrays, and the UI silently re-checks the last option without explaining the constraint.",
+    "impact": "Users could mistake a silent revert for a broken checkbox."
+  },
+  "implementation": {
+    "change": "The status group displays “Válassz ki legalább egy státuszt.” using the existing property-help style and connects the hint with aria-describedby. The existing selected-value guard and schedule.config.set command remain unchanged.",
+    "reuse_review": "Reuses existing project-owned helper styling and native ARIA semantics; no external code or dependency added.",
+    "dependencies": "None."
+  },
+  "acceptance": {
+    "test": "tests/browser/editor-general-fields-ime.test.js",
+    "result": "PASS 2/2 real Chromium scenarios at 390px and 1366px",
+    "checks": [
+      "The group is exposed with its visible name and associated minimum-selection description.",
+      "Attempting to clear the last selected status leaves it selected, in line with the schema.",
+      "A second status can still be selected and persists through the existing Save/Publish lifecycle."
+    ],
+    "other_local_checks": {
+      "typecheck": "PASS",
+      "editor_unit": "PASS 11/11 files",
+      "schedule_source": "PASS 1/1"
+    }
+  },
+  "release": {
+    "pushed": false,
+    "github_actions_started_for_this_change": false,
+    "cloudflare_build_or_deployment": false,
+    "production_health_or_asset_check": false,
+    "reason": "Local-only development mode under the confirmed 0 Ft spending limit; current GitHub Actions free compute allowance has been reported exhausted and current billing is not verifiable."
+  },
+  "acceptance_boundary": "The UI change is locally tested only. Production remains at the preceding deployed Worker and does not include this hint."
+}
