@@ -1,0 +1,92 @@
+{
+  "plan_item": "77.44.7.A",
+  "scope": "Give the Schedule status checkbox set an accessible group name without changing its visual rendering or command path.",
+  "verified_gap": {
+    "source": "public/editor-v2/app.js",
+    "issue": "The Schedule status options each had an individual native label, but their shared visible label was not programmatically associated with the checkbox set.",
+    "impact": "Assistive technology exposed the checkboxes individually without the context that they form the Schedule status filter."
+  },
+  "implementation": {
+    "change": "The status grid has role=group and aria-labelledby pointing to an item-specific label id. Existing schedule.config.set routing, labels, CSS, Save and Publish behavior are unchanged.",
+    "reuse_review": "Uses native ARIA semantics; no third-party component or dependency is needed for this small group-label relationship.",
+    "dependencies": "None."
+  },
+  "acceptance": {
+    "test": "tests/browser/editor-general-fields-ime.test.js",
+    "result": "PASS 2/2 real Chromium scenarios at 390px and 1366px",
+    "checks": [
+      "The Schedule checkbox grid is exposed as one group named Státuszok.",
+      "Each option remains an individually labelled native checkbox.",
+      "Existing Schedule field commands, draft Save, separate Publish, Undo/Redo and IME lifecycle remain correct."
+    ],
+    "other_local_checks": {
+      "typecheck": "PASS",
+      "editor_unit": "PASS 11/11 test files",
+      "schedule_source": "PASS 1/1",
+      "canonical_plan": "PASS",
+      "active_plan_point": "PASS; 77.44.7.A remains OPEN / NOT CERTIFIED",
+      "source_traceability": "PASS 396/396 mappings",
+      "migration_safety_gate": "PASS",
+      "wrangler_dry_run": "PASS; 161 assets"
+    }
+  },
+  "release": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "commit": "dc58c862a6025b61599838d3787b210abe70a31e",
+    "push": "fast-forward from 06d1352469b59ae7a116f6c22bd5dd866be715bb",
+    "github_ci": {
+      "editor_core_run_id": 40880950189,
+      "editor_core": "PASS",
+      "workflows": "5/5 PASS",
+      "editor_core_results": {
+        "unit": "147/147",
+        "editor_chromium": "88/88",
+        "web013_mobile_browser": "2/2",
+        "schedule": "9/9",
+        "domain": "5/5",
+        "brand_kit": "5/5",
+        "admin_home": "16/16",
+        "media_api": "43/43",
+        "isolated_worker_upload": "1/1 PASS",
+        "remaining_workflow_steps": "PASS"
+      }
+    },
+    "cloudflare": {
+      "build_id": "2375c27c-ef78-4f21-925b-57728dfa6caa",
+      "build": "SUCCESS for exact commit dc58c862a6025b61599838d3787b210abe70a31e",
+      "deploy_command": "npm run deploy:safe",
+      "migration_safety_gate": "PASS; no D1 migrations applied",
+      "uploaded_assets": [
+        "/editor-v2/app.js"
+      ],
+      "deployment_id": "891af9d9-6d0b-47a3-a223-7da5861e9f39",
+      "worker_version_id": "c011a3c4-f76d-4932-b46d-eed01048754e",
+      "worker_version_number": 3722,
+      "traffic_percent": 100
+    },
+    "production_smoke": {
+      "site": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/",
+      "health_url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+      "health_status": 200,
+      "asset_url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/editor-v2/app.js",
+      "asset_status": 200,
+      "asset_bytes": 184624,
+      "local_asset_sha256": "59048c81e8907727c10bc812bd4f1e7fbe1da4aa6815ce7a808a6d7a81b5f4a7",
+      "production_asset_sha256": "59048c81e8907727c10bc812bd4f1e7fbe1da4aa6815ce7a808a6d7a81b5f4a7",
+      "asset_matches_local_source": true
+    },
+    "d1_preflight": {
+      "query": "SELECT name FROM d1_migrations ORDER BY name",
+      "rows_read": 34,
+      "rows_written": 0,
+      "changed_db": false
+    },
+    "data_safety": {
+      "production_d1_migration": false,
+      "production_data_write": false,
+      "r2_mutation_or_deletion": false
+    }
+  },
+  "acceptance_boundary": "This Schedule status group is verified. The complete 77.44.7.A Inspector acceptance and physical-device acceptance remain OPEN / NOT CERTIFIED."
+}
