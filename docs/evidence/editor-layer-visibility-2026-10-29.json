@@ -1,0 +1,63 @@
+{
+  "date": "2026-10-29",
+  "plan_items": ["EDT-014", "77.44.7.A"],
+  "scope": "Local runtime implementation and regression proof for per-device visibility through the Editor Inspector, Layers panel, Canvas, draft Save, and explicit Publish.",
+  "implementation": {
+    "files": [
+      "public/editor-v2/app.js",
+      "public/editor-v2/editor.css",
+      "tests/browser/editor-element-insertion.test.js",
+      "docs/creator-master/part-03-of-12.md",
+      "docs/creator-master/part-04-of-12.md",
+      "docs/evidence/feature-traceability.json"
+    ],
+    "behavior": "Each non-root layer has a keyboard-accessible visibility button that shows its pressed state and targets the Canvas active device (desktop/tablet/mobile). It invokes the existing element.visibility.set command and Page Model property; Inspector and Layers do not maintain duplicate state. Locked nodes disable the control. Save remains draft-only and Publish is explicit.",
+    "source_sha256": {
+      "public/editor-v2/app.js": "c411b11221f738b9c768cb3804ef0b455e24ef8d5993cfb01f41c3c3519e5b29",
+      "public/editor-v2/editor.css": "bc1b4ced160a18995fa34e5482c3171f6d046d9e8f86df0772a6484882d22ac8"
+    },
+    "dependencies_added": false,
+    "data_or_migration_changes": false
+  },
+  "prior_visibility_lifecycle": {
+    "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-inspector-partial-types.test.js tests/browser/editor-structural-parity.test.js tests/browser/editor-schedule-visibility.test.js",
+    "result": "PASS, 3/3 tests",
+    "duration_ms": 412611,
+    "assertions": [
+      "All 44 PARTIAL types expose per-device Inspector visibility commands and Page Model keys.",
+      "Canvas own/ancestor hidden state and Undo/Redo are synchronized.",
+      "Save persists hidden draft state without changing public output; explicit Publish changes mobile public output.",
+      "Showing nodes again remains draft-only until Save and Publish; desktop output remains independent.",
+      "Structural authored content retains renderer semantics through undo/redo and publication.",
+      "Hidden or hidden-parent schedules do not fetch on mobile while visible wider breakpoints still fetch."
+    ]
+  },
+  "layer_control_regression": {
+    "command": "CHROMIUM_PATH=/usr/bin/chromium node --test tests/browser/editor-element-insertion.test.js",
+    "result": "PASS, 3/3 tests",
+    "assertions": [
+      "Existing palette insertion order and normal-flow layout are unchanged.",
+      "Locked parent drag, delete, group, ungroup, and palette insertion protections remain in force.",
+      "Layer visibility control follows mobile Canvas device state, updates Canvas, remains draft-only after Save, and reaches the published Page Model only after explicit Publish."
+    ]
+  },
+  "checks": {
+    "editor_unit": "PASS, 11/11 test files",
+    "typecheck": "PASS",
+    "canonical_plan": "PASS, 396 source mappings; functional acceptance remains NOT_CERTIFIED",
+    "feature_traceability": "Regenerated from current source; 396 mappings retained",
+    "git_diff_check": "PASS"
+  },
+  "release": {
+    "runtime_change": true,
+    "local_commit": null,
+    "pushed_to_github": false,
+    "cloudflare_build": null,
+    "production_deployed": false,
+    "last_verified_production_worker": 3728,
+    "last_verified_production_commit": "367a0a433e8eb6b2d420610bd673f957ebd27c56",
+    "reason_not_released": "The Git remote request failed before authentication or repository response: unable to connect to the configured network proxy on port 8080. The new local runtime files therefore are not yet on the production Worker."
+  },
+  "acceptance": "VISIBILITY RUNTIME SLICE TESTED LOCALLY; NOT YET RELEASED. EDT-014 AND 77.44.7.A REMAIN OPEN / NOT CERTIFIED.",
+  "next": "After GitHub connectivity returns, preserve the local branch history, publish the exact verified runtime commit via fast-forward to v2/foundation, run the release D1 SELECT-only preflight and Wrangler dry-run, trigger/verify the exact-commit Cloudflare Build and 100% deployment, then perform direct production health and changed-asset hash checks. Continue lock/unlock and drag/reparent acceptance."
+}

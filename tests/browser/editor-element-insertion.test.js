@@ -151,3 +151,46 @@ test('palette insertion beside a locked container preserves its locked subtree',
   assert.deepEqual(draft.pages[pageId].nodes[groupId].children,[headingId,textId]);
   assert.deepEqual(errors,[]);
 });
+
+test('layer visibility control follows the responsive command and keeps Save separate from Publish',async t=>{
+  const seed=createEditorState(createDocument()),pageId=seed.document.activePageId,rootId=seed.document.pages[pageId].rootId;
+  execute(seed,{type:'element.add',payload:{type:NODE_TYPES.SECTION,parentId:rootId}});const sectionId=seed.selection.primaryId;
+  execute(seed,{type:'element.add',payload:{type:NODE_TYPES.TEXT,parentId:sectionId}});const textId=seed.selection.primaryId;
+  let draft=structuredClone(seed.document),published=structuredClone(seed.document),version=1;
+  const root=resolve(import.meta.dirname,'../../public');
+  const server=createServer(async(req,res)=>{
+    const url=new URL(req.url,'http://localhost'),json=data=>{res.setHeader('content-type','application/json');res.end(JSON.stringify(data))};
+    if(url.pathname==='/api/admin/pages')return json({ok:true,data:[{id:pageId,slug:'visibility',title:'Visibility',content:draft,revision:version,isPublished:true}]});
+    if(url.pathname==='/api/admin/editor'){
+      if(req.method==='GET')return json({ok:true,data:{page:{id:pageId,document:draft,publishedRevisionId:'published'},revisions:[{id:'rev-'+version,version}]}});
+      let body='';for await(const chunk of req)body+=chunk;const request=JSON.parse(body);draft=structuredClone(request.document);version++;if(request.publish)published=structuredClone(draft);
+      return json({ok:true,data:{pageId,version,revisionId:'rev-'+version,published:Boolean(request.publish)}});
+    }
+    if(url.pathname==='/api/public/pages')return json({ok:true,data:{id:pageId,slug:'visibility',title:'Visibility',content:published.pages[pageId]}});
+    if(url.pathname==='/api/public/navigation')return json({ok:true,data:{items:[]}});
+    if(url.pathname==='/api/integrations/twitch/connection')return json({ok:true,data:{connected:false}});
+    if(url.pathname.startsWith('/api/'))return json({ok:true,data:{siteName:'Test'}});
+    const file=resolve(root,'.'+(url.pathname==='/p/visibility'?'/visual-page.html':url.pathname));if(!file.startsWith(root+'/'))return res.writeHead(403).end();
+    try{res.setHeader('content-type',{'.html':'text/html','.js':'text/javascript','.css':'text/css'}[extname(file)]||'application/octet-stream');res.end(await readFile(file))}catch{return res.writeHead(404).end()}
+  });
+  await new Promise(done=>server.listen(0,'127.0.0.1',done));
+  const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||(existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined),args:['--no-sandbox']});
+  t.after(async()=>{await browser.close();await new Promise(done=>server.close(done))});
+  const tab=await browser.newPage({viewport:{width:1366,height:900}});tab.setDefaultTimeout(7000);const errors=[];tab.on('pageerror',error=>errors.push(error.message));
+  await tab.goto(`http://127.0.0.1:${server.address().port}/editor-v2/index.html?pageId=${pageId}`);await tab.locator(`.node[data-node-id="${sectionId}"]`).waitFor();
+  await tab.locator('.rail-btn[data-tab="layers"]').click();
+  const toggle=tab.locator(`.layer-visibility-toggle[data-node-id="${sectionId}"]`);
+  assert.equal(await toggle.getAttribute('data-device'),'desktop');assert.equal(await toggle.getAttribute('aria-pressed'),'true');
+  await tab.locator('.canvas-device-btn[data-device="mobile"]').click();
+  const mobileToggle=tab.locator(`.layer-visibility-toggle[data-node-id="${sectionId}"]`);
+  assert.equal(await mobileToggle.getAttribute('data-device'),'mobile');await mobileToggle.click();
+  assert.equal(await tab.locator(`.node[data-node-id="${sectionId}"]`).getAttribute('data-visibility'),'hidden');
+  assert.equal(draft.pages[pageId].nodes[sectionId].visibility.mobile,true,'visibility remains unsaved before Save');
+  await tab.locator('#save').click();await tab.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent?.startsWith('Mentve'));
+  assert.equal(draft.pages[pageId].nodes[sectionId].visibility.mobile,false);assert.equal(published.pages[pageId].nodes[sectionId].visibility.mobile,true,'Save keeps public output unchanged');
+  await tab.locator(`.layer-visibility-toggle[data-node-id="${sectionId}"]`).click();
+  assert.equal(draft.pages[pageId].nodes[sectionId].visibility.mobile,false,'the inverse change remains a draft');
+  await tab.locator('#publish').click();await tab.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent?.startsWith('Publikálva'));
+  assert.equal(published.pages[pageId].nodes[sectionId].visibility.mobile,true,'explicit Publish publishes the shown state');
+  assert.deepEqual(errors,[]);
+});
