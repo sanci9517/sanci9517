@@ -7,7 +7,7 @@ export function createCompositionInputs(pending=()=>{}){
   if(input.disabled)return error;
   let committed=input.value,composing=false,dirty=false,revision=0,typingGroup=crypto.randomUUID();
   const clear=()=>{input.removeAttribute('aria-invalid');error.textContent='';};
-  drafts.add(()=>!composing&&!dirty&&!input.hasAttribute('aria-invalid'));
+  drafts.add(()=>!composing&&!dirty&&input.getAttribute('aria-invalid')!=='true');
   const flush=()=>{
    if(composing)return false;
    if(input.value===committed){dirty=false;clear();return true;}

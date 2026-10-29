@@ -13,6 +13,7 @@ import {renderSchedulePreview} from './core/schedule-preview.js';
 import {normalizeScheduleConfig,SCHEDULE_MODES,SCHEDULE_ORDERS,SCHEDULE_STATUSES,SCHEDULE_EMPTY_TEXT_MAX} from './core/schedule-schema.js';
 import {listPropertyGroups,listProperties,getProperty} from './core/property-registry.js?v=20261025-content-property-route-contract';
 import {renderPropertyInput} from './ui/property-controls.js?v=20261028-inspector-dimension-contract';
+import {getInspectorValueContract,normalizeInspectorValue} from './core/property-values.js';
 import {describeResponsiveOrigin} from './ui/responsive-origin.js';
 import {responsiveGroupResetActions} from './ui/responsive-group-reset.js';
 import {getRichTextBlockSelection,getRichTextFormattingSelection,getRichTextBlockTransformSelection,getRichTextActiveBlockIndex,restoreRichTextBlockSelection,restoreRichTextFormattingSelection,updateRichTextInlineLink,updateRichTextInlineMark,updateRichTextInlineStyle,updateRichTextBlockAlignment} from './core/richtext-links.js';
@@ -518,10 +519,15 @@ function renderCanvas(){const current=page();const previous=canvas.querySelector
 function fitCanvasToViewport(){const device=state?.viewport?.device||'desktop';zoom=Math.max(.35,Math.min(1.2,(canvas.clientWidth-48)/sizes[device]));render();canvas.scrollTo({left:0,top:0,behavior:'instant'})}
 function changeCanvasZoom(next){const frame=canvas.querySelector('.page-canvas-frame');const centerX=canvas.scrollLeft+canvas.clientWidth/2,centerY=canvas.scrollTop+canvas.clientHeight/2;const pointX=frame?(centerX-frame.offsetLeft)/zoom:0,pointY=frame?(centerY-frame.offsetTop)/zoom:0;zoom=next;render();requestAnimationFrame(()=>{const updated=canvas.querySelector('.page-canvas-frame');if(!updated)return;canvas.scrollTo({left:Math.max(0,updated.offsetLeft+pointX*zoom-canvas.clientWidth/2),top:Math.max(0,updated.offsetTop+pointY*zoom-canvas.clientHeight/2),behavior:'instant'})})}
 function syncDeviceButtons(device){document.querySelectorAll('[data-device]').forEach(b=>b.classList.toggle('active',b.dataset.device===device));document.querySelectorAll('.canvas-device-btn').forEach(b=>b.classList.toggle('active',b.dataset.device===device))}
-function field(label,value,onChange,readOnly=false,multiline=false,composition=null){
+function field(label,value,onChange,readOnly=false,multiline=false,composition=null,property=null){
  const wrap=document.createElement('label');wrap.className='field';
  const title=document.createElement('span');title.textContent=label;
  const input=document.createElement(multiline?'textarea':'input');input.value=value??'';input.readOnly=readOnly;if(composition)input.setAttribute('aria-label',label);wrap.append(title,input);
+ if(property){
+  const contract=getInspectorValueContract(property);
+  input.setAttribute('aria-required',String(contract.required===true));
+  input.setAttribute('aria-invalid','false');
+ }
  if(!readOnly){
   if(composition)wrap.append(composition.attach(input,onChange));
   else{input.onchange=()=>onChange(input.value);if(!multiline)input.onkeydown=event=>{if(event.key==='Enter'){event.preventDefault();input.blur()}};}
@@ -1116,10 +1122,11 @@ function renderInspector(){
     inspector.append(renderLayoutInspector(node));
     const nameProperty=getProperty('advanced.nodeName');
     const nameField=field(nameProperty.label,node.name,(value,options)=>{
-      const saved=commitInspectorText(nameProperty.command,{nodeId:node.id,patch:{[nameProperty.key]:value}},options);
-      if(saved)headerName.textContent=value||node.type;
+      const normalized=normalizeInspectorValue(nameProperty,value);
+      const saved=commitInspectorText(nameProperty.command,{nodeId:node.id,patch:{[nameProperty.key]:normalized}},options);
+      if(saved)headerName.textContent=normalized;
       return saved;
-    },Boolean(node.locked),false,composition);
+    },Boolean(node.locked),false,composition,nameProperty);
     nameField.dataset.propertyId=nameProperty.id;
     nameField.dataset.propertyCommand=nameProperty.command;
     nameField.dataset.propertyKey=nameProperty.key;

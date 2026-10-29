@@ -49,6 +49,14 @@ for(const width of [390,1366])test(`general Inspector name and Schedule empty te
  const nameContract=editor.locator('.field[data-property-id="advanced.nodeName"]');
  assert.equal(await nameContract.getAttribute('data-property-command'),'element.update');
  assert.equal(await nameContract.getAttribute('data-property-key'),'name');
+ assert.equal(await name().getAttribute('aria-required'),'true','the registry required contract is exposed on the custom name input');
+ const nameDescriptionIds=(await name().getAttribute('aria-describedby'))?.split(/\s+/)||[];
+ assert.ok(nameDescriptionIds.length>0&&await Promise.all(nameDescriptionIds.map(id=>editor.locator(`#${id}`).count())).then(counts=>counts.some(Boolean)),'the composition validation guidance is associated with the custom name input');
+ await name().fill('   ');
+ assert.equal(await name().getAttribute('aria-invalid'),'true','a blank technical name is rejected through the registry contract');
+ assert.equal(await editor.locator(`.node[data-node-id="${id}"] > .node-head > span`).textContent(),'Mentett elem','an invalid name cannot alter the Canvas');
+ await name().fill('Mentett elem');
+ assert.notEqual(await name().getAttribute('aria-invalid'),'true','a valid correction clears the invalid state');
  await editor.locator('.inspector-tabs button').nth(0).click();
  const alignField=editor.locator('.typed-inspector-field[data-property-id="typography.textAlign"]');
  const alignGroup=editor.locator('.inspector-group').filter({has:alignField}),alignTitle=alignGroup.locator(':scope > .inspector-group-title');
