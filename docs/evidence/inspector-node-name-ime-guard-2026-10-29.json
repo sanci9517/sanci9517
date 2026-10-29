@@ -1,0 +1,93 @@
+{
+  "plan_item": "77.44.7.A",
+  "scope": "Registry-backed node-name validation and IME draft guard behavior across Inspector tabs.",
+  "verified_gap": {
+    "source": [
+      "public/editor-v2/app.js",
+      "public/editor-v2/ui/composition-inputs.js"
+    ],
+    "issue": "The custom advanced.nodeName field bypassed the shared text normalizer and did not expose the registry's required semantics. Its aria-invalid=false initial state was treated as invalid by the composition draft guard, blocking unrelated Schedule edits after switching Inspector tabs.",
+    "impact": "Blank or whitespace-only names could reach element.update, while a valid name could leave the IME draft guard blocking subsequent Inspector commands."
+  },
+  "implementation": {
+    "change": "The custom node-name field now derives aria-required from its registry value contract, associates the existing composition validation status, normalizes and validates through normalizeInspectorValue before element.update, and updates the Inspector heading with the normalized value. Composition draft readiness now treats only aria-invalid=true as invalid, consistent with the ARIA state value.",
+    "dependencies": "No new dependency; reuses the existing property registry, normalizer, and native ARIA attributes."
+  },
+  "acceptance": {
+    "test": "tests/browser/editor-general-fields-ime.test.js",
+    "result": "PASS 2/2 Chromium scenarios at 390px and 1366px",
+    "checks": [
+      "node name required semantics and validation help association",
+      "whitespace-only name rejected without changing the Canvas; valid correction clears the error",
+      "IME composition, tab switching, Undo/Redo and invalid Schedule Save/Publish guard",
+      "Schedule fields and design property persist in draft; Save leaves the published snapshot unchanged; Publish updates it",
+      "locked-field and browser-error checks"
+    ],
+    "local_checks": {
+      "typecheck": "PASS",
+      "editor_unit": "PASS 11/11 test files",
+      "canonical_plan_and_active_point": "PASS",
+      "source_traceability": "PASS 396/396 mappings",
+      "migration_safety_gate": "PASS",
+      "wrangler_dry_run": "PASS 161 assets"
+    }
+  },
+  "release": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "commit": "7046ceb43a686a688c15e1f1c214e6b2be5da3d0",
+    "push": "fast-forward from 9e1b8f5d",
+    "github_ci": {
+      "f0_baseline": "PASS",
+      "canonical_plan_active_point": "PASS",
+      "canonical_creator_platform_plan": "PASS",
+      "twitch_integration": "PASS",
+      "editor_core_run_id": 40874945711,
+      "editor_core": "PASS; Editor Core run completed successfully",
+      "editor_core_results": {
+        "unit": "147/147",
+        "editor_chromium": "88/88",
+        "web013_mobile_browser": "2/2",
+        "media_api": "43/43",
+        "isolated_worker_upload": "PASS",
+        "remaining_workflow_steps": "PASS"
+      }
+    },
+    "cloudflare": {
+      "build_id": "d54fb2c8-8df7-4c13-aacd-9457037a4eda",
+      "build": "SUCCESS for exact commit 7046ceb43a686a688c15e1f1c214e6b2be5da3d0",
+      "deploy_command": "npm run deploy:safe",
+      "migration_safety_gate": "PASS; no D1 migration apply",
+      "uploaded_assets": [
+        "/editor-v2/app.js",
+        "/editor-v2/ui/composition-inputs.js"
+      ],
+      "deployment_id": "ea61e14e-9260-4ef4-a09c-d1844d615aa5",
+      "worker_version_id": "c23921c6-fa30-4fcd-9165-84dec09b7ddb",
+      "worker_version_number": 3720,
+      "traffic_percent": 100,
+      "script_etag": "f21e54a9bcded6beaf6c591bcc891a6ee5db90b60ead9178ccc6a92203d3cd34",
+      "local_asset_sha256": {
+        "/editor-v2/app.js": "0d6eaa392480ad27c6ee0a20542dccedd3324d9f8ce191d882fb4615f2770c98",
+        "/editor-v2/ui/composition-inputs.js": "a8ed98a0fffb8ad43a3173ef974d3c06481bac572733658e83fcde07be221474"
+      }
+    },
+    "production_smoke": {
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/",
+      "status": "UNVERIFIED",
+      "reason": "The execution network proxy returned HTTP 403 for requests to this workers.dev host; the response explicitly blocked the destination. Do not treat this as an origin response or a successful health/asset-hash smoke test."
+    },
+    "d1_preflight": {
+      "query": "SELECT name FROM d1_migrations ORDER BY name",
+      "rows_read": 34,
+      "rows_written": 0,
+      "changed_db": false
+    },
+    "data_safety": {
+      "production_d1_migration": false,
+      "production_data_write": false,
+      "r2_mutation_or_deletion": false
+    }
+  },
+  "acceptance_boundary": "The targeted node-name and Schedule Inspector regression is covered at two viewport widths. Full 77.44.7.A and physical-device acceptance remain OPEN / NOT CERTIFIED."
+}
