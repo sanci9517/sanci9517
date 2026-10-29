@@ -145,5 +145,32 @@
     "changed_asset_local_sha256": "7ab4541b221d4efd5a77e62f89b6a1df245d261e4da2f2879d78d0f1bd2882eb",
     "remote_asset_hash_match": "UNVERIFIED because production HTTP requests are blocked by the proxy",
     "next": "Continue the remaining EDT-014 lock/unlock UI, drag/reparent interaction and visibility/public-renderer acceptance. Full 77.44.7.A remains open."
+  },
+  "ui_lock_affordance_follow_up": {
+    "status": "LOCALLY_TESTED_RELEASE_PENDING",
+    "files": [
+      "public/editor-v2/app.js",
+      "tests/browser/editor-element-insertion.test.js"
+    ],
+    "behavior": [
+      "Layer rows directly under locked parents are not draggable on desktop or touch.",
+      "Delete is disabled for a child whose locked parent owns the child list.",
+      "Group and ungroup controls are disabled when the affected parent is locked.",
+      "Drop preview rejects moves from a locked parent's child list."
+    ],
+    "tests": {
+      "editor_unit": "PASS, 11/11 files",
+      "typecheck": "PASS",
+      "chromium": "PASS, 2/2; verifies locked-child draggable=false, delete/group/ungroup disabled controls, rejected drop preview, palette insertion and draft-only Save"
+    },
+    "release_preflight": {
+      "wrangler_dry_run": "PASS: 161 assets, 296.90 KiB / 67.79 KiB gzip",
+      "d1": "SELECT-only: 34 migrations, latest 0028_media_archive.sql, changed_db=false, rows_written=0",
+      "migration_safety_gate": "PASS",
+      "production_data_mutated": false,
+      "r2_mutated": false
+    },
+    "production_deployed": false,
+    "next": "Commit/push the tested UI follow-up, then trigger the exact-commit Cloudflare build and verify the Worker rollout."
   }
 }
