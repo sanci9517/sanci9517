@@ -120,7 +120,26 @@
       "production_data_mutated": false,
       "r2_mutated": false
     },
-    "cloudflare_deployed": false,
-    "next": "Run canonical plan and traceability checks, Wrangler dry-run and read-only D1 preflight; then fast-forward release and verify exact Cloudflare build and 100% rollout."
+    "commit": "b912c998f5a4da70756409c1cd7a2a2d225f4190",
+    "fast_forward_pushed": true,
+    "cloudflare_build": {
+      "id": "6ea48255-173d-4c62-8605-6e37e2fe74a8",
+      "trigger": "manual exact-commit build after push automation skipped [skip ci]",
+      "outcome": "success",
+      "commit_match": true,
+      "build_command": "npm run typecheck",
+      "deploy_command": "npm run deploy:safe",
+      "migration_safety_gate": "PASS; no migration apply"
+    },
+    "cloudflare_deployed": true,
+    "deployment_id": "fafadf23-5379-4183-9b2f-7fe0bb7764a5",
+    "worker_version": "7273f67c-1a2f-4b34-96b2-82026c61daff",
+    "worker_version_number": 3727,
+    "traffic_percent": 100,
+    "github_actions": "Skipped by [skip ci] to avoid unnecessary GitHub Actions usage; Cloudflare's exact-commit build was explicitly triggered through its API and verified successful.",
+    "post_deploy_http_smoke": "UNVERIFIED: production workers.dev health/page/asset requests return HTTP 403 from the environment proxy.",
+    "changed_asset_local_sha256": "7ab4541b221d4efd5a77e62f89b6a1df245d261e4da2f2879d78d0f1bd2882eb",
+    "remote_asset_hash_match": "UNVERIFIED because production HTTP requests are blocked by the proxy",
+    "next": "Continue EDT-014 lock/unlock UI and hierarchy acceptance, then resolve visibility preview/public-renderer policy. Full 77.44.7.A remains open."
   }
 }
