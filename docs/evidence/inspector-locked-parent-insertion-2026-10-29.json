@@ -50,13 +50,39 @@
       ]
     },
     "typecheck": "PASS",
-    "plan_and_traceability": "Pending after evidence update"
+    "plan_and_traceability": "PASS: canonical plan gate, active plan point audit, 396-entry traceability check, JSON parse and git diff check"
   },
   "release": {
-    "committed": false,
-    "pushed": false,
-    "production_deployed": false,
-    "next": "Run plan, source-traceability, deploy dry-run and SELECT-only D1 preflight; then follow normal fast-forward release to v2/foundation and verify the exact Cloudflare build, 100% Worker traffic and health endpoints."
+    "commit": "8c6e9ce226f27ee260d143ad33c5418c26369e0c",
+    "branch": "v2/foundation",
+    "fast_forward_pushed": true,
+    "cloudflare_build": {
+      "id": "2afbaae6-28dd-4efc-9516-d12b508d43a7",
+      "outcome": "success",
+      "commit_match": true,
+      "build_command": "npm run typecheck",
+      "deploy_command": "npm run deploy:safe"
+    },
+    "production_deployed": true,
+    "deployment_id": "41eb5ca2-3b5a-4058-9e8e-d301f6ed4228",
+    "worker_version": "db8f10bd-5d16-40af-afd5-7635a3d32566",
+    "worker_version_number": 3726,
+    "traffic_percent": 100,
+    "preflight": {
+      "wrangler_dry_run": "PASS: 161 assets, 296.90 KiB / 67.79 KiB gzip",
+      "d1": "SELECT-only; 34 migrations, latest 0028_media_archive.sql, changed_db=false, rows_written=0",
+      "migrations_applied": false,
+      "production_data_written": false,
+      "r2_changed": false
+    },
+    "smoke_and_asset_hash": {
+      "status": "UNVERIFIED",
+      "reason": "Direct HTTP requests to the production workers.dev host received HTTP 403 from the execution environment's network proxy. Health, editor page and remote asset hash are not reported as PASS.",
+      "local_asset_sha256": "dde3009632c53a298c417497e386ed24082ceafceda753d2e54d94cbc6e02456"
+    },
+    "github_actions": "No commit status checks were returned for this SHA; local tests and Cloudflare Build result are recorded separately.",
+    "cloudflare_build_minutes_limit_reached": false,
+    "next": "Continue EDT-014 lock/unlock, drag/reparent, hide/show and published-renderer acceptance. Production HTTP smoke and remote public-asset hash comparison remain unverified because the environment proxy returned HTTP 403. Full 77.44.7.A acceptance remains open."
   },
   "remaining_edt014": [
     "Complete lock/unlock interaction and child versus ancestor semantics.",
