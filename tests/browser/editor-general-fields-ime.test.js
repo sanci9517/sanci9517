@@ -74,6 +74,7 @@ for(const width of [390,1366])test(`general Inspector name and Schedule empty te
  const scheduleRoutes=await editor.locator('.schedule-inspector [data-inspector-command]').evaluateAll(rows=>rows.map(row=>({command:row.dataset.inspectorCommand,key:row.dataset.inspectorKey})));
  assert.deepEqual(scheduleRoutes.map(route=>route.key),['mode','order','limit','statuses','showTitle','showPlatform','showTime','showEndTime','showStatus','showNotes','showLink','emptyText']);
  assert.ok(scheduleRoutes.every(route=>route.command==='schedule.config.set'),'each Schedule Inspector field exposes its actual config command');
+ assert.equal(await editor.getByRole('group',{name:'Státuszok',exact:true}).count(),1,'Schedule status checkboxes are exposed as a named accessible group');
  const headSelector=`.node[data-node-id="${id}"] > .node-head > span`,emptySelector=`.node[data-node-id="${id}"] .schedule-preview-empty`;
  await exerciseComposition({page:editor,input:name(),selector:headSelector,before:'Mentett elem',final:'Végleges belső név',posts,restart:true,otherInput:empty()});
  await exerciseComposition({page:editor,input:empty(),selector:emptySelector,before:'Mentett adásrend',final:'Végleges üres adásrend',posts,restart:true,otherInput:name()});

@@ -645,8 +645,8 @@ function renderScheduleInspector(node,composition){
   section.append(limitField);
 
   const statusWrap=route(document.createElement('div'),'statuses');statusWrap.className='field';
-  const statusLabel=document.createElement('span');statusLabel.textContent='Státuszok';
-  const statusGrid=document.createElement('div');statusGrid.className='schedule-check-grid';
+  const statusLabel=document.createElement('span');statusLabel.id=`schedule-statuses-${node.id}`;statusLabel.textContent='Státuszok';
+  const statusGrid=document.createElement('div');statusGrid.className='schedule-check-grid';statusGrid.setAttribute('role','group');statusGrid.setAttribute('aria-labelledby',statusLabel.id);
   for(const status of SCHEDULE_STATUSES){
     const label=document.createElement('label');label.className='inspector-toggle';
     const input=document.createElement('input');input.type='checkbox';input.checked=config.statuses.includes(status);
