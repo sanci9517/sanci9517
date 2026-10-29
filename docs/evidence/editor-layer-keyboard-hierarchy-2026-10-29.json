@@ -1,0 +1,67 @@
+{
+  "plan_item": "77.44.7.A",
+  "feature": "EDT-014 keyboard-accessible layer hierarchy movement",
+  "status": "LOCAL_VERIFICATION_PASS_RELEASE_PENDING",
+  "date": "2026-10-29",
+  "implementation": {
+    "files": [
+      "public/editor-v2/app.js",
+      "public/editor-v2/editor.css",
+      "public/editor-v2/index.html"
+    ],
+    "operations": [
+      "Move selected sibling up/down using hierarchy.reorder",
+      "Indent selected node into compatible previous sibling using hierarchy.reparent",
+      "Outdent selected node into grandparent using hierarchy.reparent",
+      "Disable actions for invalid, locked, root, or unavailable destinations",
+      "All operations preserve canonical selection and Undo/Redo history"
+    ],
+    "dependencies_added": false
+  },
+  "checks": {
+    "editor_unit": "PASS 11/11 files",
+    "typecheck": "PASS npm run typecheck",
+    "browser": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-element-insertion.test.js",
+      "result": "PASS 4/4",
+      "coverage": [
+        "accessible layer move buttons and valid/invalid disabled states",
+        "indent/outdent, reorder, Undo/Redo",
+        "desktop drag reparent",
+        "390px touch long-press reparent",
+        "layer visibility Save versus Publish separation",
+        "locked-container insertion and Inspector lock/unlock"
+      ]
+    },
+    "canonical_plan": "PASS, 13-file master; functional acceptance remains NOT_CERTIFIED",
+    "active_plan_point": "PASS, next 77.44.7.A",
+    "source_traceability": "PASS, 396 mappings",
+    "migration_safety_gate": "PASS",
+    "wrangler_dry_run": "PASS, 161 assets; 296.90 KiB / 67.79 KiB gzip",
+    "git_diff_check": "PASS"
+  },
+  "production_preflight": {
+    "d1_query": "SELECT name FROM d1_migrations ORDER BY name",
+    "migration_rows": 34,
+    "latest_migration": "0028_media_archive.sql",
+    "changed_db": false,
+    "rows_written": 0,
+    "migration_applied": false,
+    "r2_changed": false,
+    "build_minutes_limit_reached": false
+  },
+  "release": {
+    "commit": null,
+    "cloudflare_build": null,
+    "deployment": null,
+    "worker_version": null,
+    "traffic_percent": null,
+    "health_smoke": null,
+    "live_asset_hashes": null
+  },
+  "acceptance": {
+    "edt_014": "IN_PROGRESS",
+    "plan_point_77_44_7_a": "OPEN",
+    "physical_device_acceptance": "OPEN"
+  }
+}

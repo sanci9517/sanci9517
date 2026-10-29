@@ -233,6 +233,20 @@ test('Layers hierarchy reparent works with desktop drag and touch long-press, wi
   await tab.goto(`http://127.0.0.1:${server.address().port}/editor-v2/index.html?pageId=${pageId}`);await tab.locator(`.node[data-node-id="${textId}"]`).waitFor();
   await tab.locator('.rail-btn[data-tab="layers"]').click();await tab.locator(`.layer-row[data-node-id="${textId}"]`).waitFor();
   const source=tab.locator(`.layer-row[data-node-id="${textId}"]`),target=tab.locator(`.layer-row[data-node-id="${sectionId}"]`);
+  await source.click();
+  assert.equal(await tab.locator('#moveLayerUp').isDisabled(),false,'selected sibling can move up');
+  assert.equal(await tab.locator('#moveLayerDown').isDisabled(),true,'last sibling cannot move down');
+  assert.equal(await tab.locator('#indentLayer').isDisabled(),false,'compatible previous sibling can contain the selected layer');
+  assert.equal(await tab.locator('#outdentLayer').isDisabled(),true,'root-level layer cannot be outdented');
+  const originalIndent=await source.evaluate(row=>row.style.paddingLeft);
+  await tab.locator('#indentLayer').click();assert.notEqual(await source.evaluate(row=>row.style.paddingLeft),originalIndent,'keyboard-accessible layer action nests into previous container');
+  assert.equal(await tab.locator('#outdentLayer').isDisabled(),false,'nested layer can be outdented');
+  await tab.locator('#outdentLayer').click();assert.equal(await source.evaluate(row=>row.style.paddingLeft),originalIndent,'outdent restores the root-level hierarchy');
+  await tab.locator('#moveLayerUp').click();
+  const rowOrder=()=>tab.locator('#layersTree .layer-row').evaluateAll(rows=>rows.map(row=>row.dataset.nodeId));
+  assert.deepEqual((await rowOrder()).filter(id=>id!==rootId),[textId,sectionId],'move up reorders siblings through the canonical command');
+  await tab.locator('#moveLayerDown').click();assert.deepEqual((await rowOrder()).filter(id=>id!==rootId),[sectionId,textId],'move down restores sibling order');
+  await tab.locator('#undo').click();await tab.locator('#redo').click();
   const desktopDrop=await source.evaluate((row,{targetId})=>{
     const target=document.querySelector(`.layer-row[data-node-id="${targetId}"]`),dataTransfer=new DataTransfer();
     row.dispatchEvent(new DragEvent('dragstart',{bubbles:true,cancelable:true,dataTransfer}));
