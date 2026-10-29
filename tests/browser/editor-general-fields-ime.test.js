@@ -38,7 +38,7 @@ for(const width of [390,1366])test(`general Inspector name and Schedule empty te
  await new Promise(done=>server.listen(0,'127.0.0.1',done));
  const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||(existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined),args:['--no-sandbox']});
  t.after(async()=>{await browser.close();await new Promise(done=>server.close(done));});
- const base='http://127.0.0.1:'+server.address().port,editor=await browser.newPage({viewport:{width,height:900}}),viewer=await browser.newPage({viewport:{width,height:900}});
+ const base='http://127.0.0.1:'+server.address().port,mobile=width<=850,contextOptions={viewport:{width,height:900},isMobile:mobile,hasTouch:mobile},editor=await browser.newPage(contextOptions),viewer=await browser.newPage(contextOptions);
  for(const page of [editor,viewer]){page.setDefaultTimeout(7000);page.setDefaultNavigationTimeout(12000);page.on('pageerror',error=>errors.push(error.message));}
  editor.on('dialog',async dialog=>{dialogs.push(dialog.message());await dialog.dismiss();});
  await editor.goto(base+'/editor-v2/index.html');await viewer.goto(base+'/p/test');
@@ -124,9 +124,10 @@ for(const width of [390,1366])test(`general Inspector name and Schedule empty te
  await editor.waitForFunction(selector=>getComputedStyle(document.querySelector(selector)).backgroundColor==='rgb(255, 215, 0)',canvasSchedule);
  if(await editor.locator('.rail-btn[data-tab="layers"]').isVisible())await editor.locator('.rail-btn[data-tab="layers"]').click();else await editor.evaluate(()=>{window.sanciEditor.showLeftTab('layers');window.sanciEditor.openPanel('left')});
  const layerRow=editor.locator(`.layer-row[data-node-id="${id}"]`);
- await layerRow.focus();await layerRow.press('F2');
+ assert.equal(await editor.evaluate(()=>navigator.maxTouchPoints>0),mobile,'390px uses touch-capable mobile emulation');
+ if(mobile)await editor.locator(`.layer-rename[data-node-id="${id}"]`).tap();else{await layerRow.focus();await layerRow.press('F2');}
  const layerName=editor.getByRole('textbox',{name:'Réteg neve',exact:true});
- assert.equal(await layerName.inputValue(),'Végleges belső név','F2 opens inline rename with the current internal node name');
+ assert.equal(await layerName.inputValue(),'Végleges belső név','touch rename and F2 both open the current internal node name');
  await layerName.fill('   ');await layerName.press('Enter');
  assert.equal(await layerName.getAttribute('aria-invalid'),'true','an empty inline layer name is rejected');
  assert.equal(await editor.locator('.layer-rename-status').textContent(),'A réteg neve nem lehet üres.');

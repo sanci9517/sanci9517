@@ -39,7 +39,7 @@
     "syntax": "PASS node --check public/editor-v2/app.js",
     "browser": {
       "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-element-insertion.test.js tests/browser/editor-general-fields-ime.test.js",
-      "result": "PASS 7/7",
+      "result": "PASS 7/7 after mobile-touch emulation verification",
       "viewports_px": [
         390,
         1366
@@ -52,14 +52,27 @@
         "Save updates the draft and Publish remains explicit",
         "internal layer name is not public page content",
         "rename is disabled below a locked ancestor and restored after unlocking"
-      ]
+      ],
+      "mobile_touch_emulation": {
+        "viewport_px": 390,
+        "context": {
+          "isMobile": true,
+          "hasTouch": true
+        },
+        "interaction": "Playwright locator.tap() on the visible layer rename button"
+      },
+      "desktop_keyboard": {
+        "viewport_px": 1366,
+        "interaction": "F2 opens inline rename; Enter commits"
+      }
     },
     "migration_safety_gate": "PASS; deploy:safe does not apply D1 migrations",
     "wrangler_dry_run": "PASS; Wrangler 4.130.0, 161 assets, 296.90 KiB / 67.79 KiB gzip",
     "canonical_plan": "PASS; 13-file master; feature acceptance not certified",
     "active_plan_point": "PASS; next 77.44.7.A",
     "source_traceability": "PASS; 396 mappings rebuilt and validated",
-    "git_diff_check": "PASS"
+    "git_diff_check": "PASS",
+    "runtime_source_after_release": "UNCHANGED; this follow-up modifies tests/documentation only and does not require another Worker deployment"
   },
   "production_preflight": {
     "d1": "Earlier same-session SELECT-only preflight: 34 ledger rows, latest 0028_media_archive.sql, changed_db=false, rows_written=0.",
