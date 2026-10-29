@@ -1,5 +1,5 @@
 {
-  "status": "PRE_PUSH_PREFLIGHT_PASSED",
+  "status": "PUSHED_AND_DEPLOYED_VERIFIED",
   "repository": "sanci9517/sanci9517",
   "target_branch": "v2/foundation",
   "verified_github_remote_head": "80988d0533ce14e0b5741fda404fdba9c86b2e54",
@@ -13,7 +13,8 @@
   ],
   "github_ci": {
     "will_run": false,
-    "method": "The upload-preparation commit will use GitHub's documented [skip ci] commit-message marker; repository workflow files remain unchanged."
+    "method": "The upload-preparation commit used GitHub's documented [skip ci] marker; repository workflow files remain unchanged.",
+    "verified_runs_for_head": 0
   },
   "local_checks": {
     "typecheck": "PASS",
@@ -44,10 +45,36 @@
     "migration_applied": false
   },
   "production_release": {
-    "pushed": false,
-    "cloudflare_build_started": false,
-    "deployment": false,
-    "reason": "Preflight evidence only; push and rollout are pending this CI-skipped documentation commit."
+    "pushed": true,
+    "target_branch": "v2/foundation",
+    "remote_head": "0d73804819a16e72851f5af5564addbe89ce5bfb",
+    "fast_forward": true,
+    "cloudflare_automatic_build": "SKIPPED because the final commit was documentation-only and the verified trigger excludes docs/**",
+    "github_actions": "SKIPPED; GitHub reports zero workflow runs for the pushed head",
+    "manual_command": "npm run deploy:safe",
+    "migration_safety_gate": "PASS",
+    "cloudflare_deployment_id": "004d1959-13cb-46f9-b469-603844a9e1bc",
+    "worker_version_id": "8b45b76c-cea4-4ee7-ad7c-d38bb93d2957",
+    "worker_version_number": 3723,
+    "traffic_percent": 100,
+    "production_smoke": {
+      "api_health": 200,
+      "db_health": 200,
+      "editor_route": 200
+    },
+    "live_asset_sha256_matches_local": {
+      "public/editor-v2/app.js": "d61004112e028e076f46b14bcdad36ec2cc4ca53d25ebbb34eb8725574a58d72",
+      "public/editor-v2/ui/property-controls.js": "eb553d1bf2b02a132417c443d4b8164e9b5a93a8faca9b82383cbaec032c54ac",
+      "public/editor-v2/ui/element-content-controls.js": "bcfd819093312af8099402b0fa8bc7c4a5c732a41bb3bb1af1fd24e1c6459dcf",
+      "public/editor-v2/ui/card-content-inspector.js": "98ad8ee2789619a5cfb093a095320d659c654ca1cb9353fcc1a94ff4e13e6573",
+      "public/editor-v2/ui/legacy-media-inspector.js": "3b589db87a1156bc07da8fcdd3ba880166115620938a2c7e16e47619aa1e92a5"
+    },
+    "production_data_changes": {
+      "d1_migration": false,
+      "d1_rows_written": 0,
+      "r2_changed": false
+    },
+    "cost_boundary": "No GitHub Actions or Cloudflare Build minutes were consumed for this upload. No paid service, plan, binding, or spending limit was activated or changed. Cloudflare billing-plan details are not exposed by the current OAuth scope, so existing account charges are not asserted as zero."
   },
-  "acceptance_boundary": "This upload contains local Editor accessibility/runtime changes with targeted browser coverage. Full Visual Editor and physical-device acceptance remain open. No D1 migration, production data write, or R2 operation is authorized or planned."
+  "acceptance_boundary": "This release contains the Inspector media picker accessibility changes with targeted browser coverage. Full Visual Editor and physical-device acceptance remain open. No D1 migration, production data write, or R2 operation occurred."
 }

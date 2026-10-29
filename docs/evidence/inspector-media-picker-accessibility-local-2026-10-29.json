@@ -1,6 +1,6 @@
 {
   "plan_item": "77.44.7.A",
-  "status": "LOCAL_ONLY_NOT_RELEASED",
+  "status": "PUSHED_AND_DEPLOYED",
   "issue": "The shared background asset Inspector label targeted a nonexistent form control, and media-picker controls lacked a programmatically named field group and associated validation guidance.",
   "change": "Add optional accessible group label and description support to the shared mediaAssetPicker and apply it to every Visual Editor production call site. The background asset picker's primary control also exposes required and validation state through the existing value contract.",
   "covered_call_sites": [
@@ -62,11 +62,28 @@
     "assessment": "Transient full-suite timing issue, not reproduced in isolation; no assertion was weakened."
   },
   "release": {
-    "pushed": false,
+    "pushed": true,
+    "target_branch": "v2/foundation",
+    "remote_head": "0d73804819a16e72851f5af5564addbe89ce5bfb",
     "github_actions_started": false,
-    "cloudflare_build_or_deployment": false,
-    "production_changes": false,
-    "reason": "Zero-cost constraint; GitHub Actions overage and Cloudflare usage are not verified as free."
+    "github_workflow_runs_for_head": 0,
+    "cloudflare_automatic_build": "SKIPPED by the verified docs/** path exclusion",
+    "manual_command": "npm run deploy:safe",
+    "cloudflare_deployment_id": "004d1959-13cb-46f9-b469-603844a9e1bc",
+    "worker_version_id": "8b45b76c-cea4-4ee7-ad7c-d38bb93d2957",
+    "worker_version_number": 3723,
+    "traffic_percent": 100,
+    "production_smoke": {
+      "api_health": 200,
+      "db_health": 200,
+      "editor_route": 200
+    },
+    "live_asset_hashes_match_local": true,
+    "d1_migration_applied": false,
+    "d1_rows_written": 0,
+    "r2_changed": false,
+    "new_paid_service_or_plan_activated": false,
+    "billing_limit": "Cloudflare Build quota remained under its 3000-minute Free-plan ceiling; current OAuth lacks Billing Read, so existing account charges are not asserted as zero."
   },
-  "acceptance_boundary": "This closes the programmatic naming and validation-description gap for the implemented Media picker call sites only. Full 68-property/79-type Visual Editor, production, and physical-device acceptance remain open."
+  "acceptance_boundary": "This closes the programmatic naming and validation-description gap for the implemented Media picker call sites. Full 68-property/79-type Visual Editor and physical-device acceptance remain open."
 }
