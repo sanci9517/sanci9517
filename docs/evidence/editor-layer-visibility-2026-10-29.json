@@ -37,9 +37,10 @@
   },
   "layer_control_regression": {
     "command": "CHROMIUM_PATH=/usr/bin/chromium node --test tests/browser/editor-element-insertion.test.js",
-    "result": "PASS, 3/3 tests",
+    "result": "PASS, 3/3 tests, including lock/unlock UI roundtrip",
     "assertions": [
       "Existing palette insertion order and normal-flow layout are unchanged.",
+      "Inspector lock/unlock is exercised against Page Model state: unlocking restores row drag capability and relocking removes it immediately.",
       "Locked parent drag, delete, group, ungroup, and palette insertion protections remain in force.",
       "Layer visibility control follows mobile Canvas device state, updates Canvas, remains draft-only after Save, and reaches the published Page Model only after explicit Publish."
     ]
@@ -49,7 +50,8 @@
     "typecheck": "PASS",
     "canonical_plan": "PASS, 396 source mappings; functional acceptance remains NOT_CERTIFIED",
     "feature_traceability": "Regenerated from current source; 396 mappings retained",
-    "git_diff_check": "PASS"
+    "git_diff_check": "PASS",
+    "editor_layer_browser": "PASS, 3/3 Chromium tests, including Inspector lock/unlock roundtrip and visibility Save/Publish"
   },
   "release": {
     "runtime_change": true,
@@ -99,5 +101,5 @@
     "github_actions": "Skipped by [skip ci] to preserve the exhausted GitHub Actions allowance; local verification and Cloudflare exact-commit production build were run."
   },
   "acceptance": "VISIBILITY RUNTIME SLICE TESTED, PUSHED AND DEPLOYED TO 100% PRODUCTION; health/editor HTTP and app.js/editor.css hashes verified. EDT-014 AND 77.44.7.A REMAIN OPEN / NOT CERTIFIED.",
-  "next": "Continue EDT-014 lock/unlock and desktop/touch drag/reparent acceptance, plus physical-device QA; then continue the current 77.44.7.A Inspector acceptance cursor."
+  "next": "Continue EDT-014 desktop/touch and keyboard reparent acceptance plus physical-device QA; complete remaining lock state/ancestor interaction checks, then continue the 77.44.7.A Inspector cursor."
 }

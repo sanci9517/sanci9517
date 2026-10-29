@@ -112,6 +112,16 @@ test('palette insertion beside a locked container preserves its locked subtree',
   await tab.locator(`.node[data-node-id="${lockedId}"]`).waitFor();
   await tab.locator('.rail-btn[data-tab="layers"]').click();
   const groupRow=tab.locator(`.layer-row[data-node-id="${groupId}"]`),buttonRow=tab.locator(`.layer-row[data-node-id="${buttonId}"]`),imageRow=tab.locator(`.layer-row[data-node-id="${imageId}"]`);
+  const lockedRow=tab.locator(`.layer-row[data-node-id="${lockedId}"]`);await lockedRow.click();
+  await tab.locator('#openInspector').click();
+  const lockToggle=tab.locator('.inspector-lock-toggle');
+  assert.equal(await lockToggle.isChecked(),true,'Inspector reflects the locked Page Model state');
+  await lockToggle.uncheck();
+  assert.equal(await lockedRow.evaluate(row=>row.classList.contains('locked')),false,'unlock updates the layer row immediately');
+  assert.equal(await lockedRow.evaluate(row=>row.draggable),true,'unlock restores the drag affordance');
+  await tab.locator('.inspector-lock-toggle').check();
+  assert.equal(await lockedRow.evaluate(row=>row.classList.contains('locked')),true,'relocking persists in the current Editor model');
+  assert.equal(await lockedRow.evaluate(row=>row.draggable),false,'relocking removes the drag affordance');
   assert.equal(await groupRow.evaluate(row=>row.draggable),false,'group rows under a locked parent cannot be dragged');
   await groupRow.click();
   assert.equal(await tab.locator('#ungroupSelection').isDisabled(),true,'a group inside a locked parent cannot be ungrouped');
