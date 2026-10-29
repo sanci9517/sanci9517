@@ -21,29 +21,64 @@
       "button",
       "link"
     ],
-    "assertions": "Exact visible innerText and computed pre-wrap at Canvas and public output; command route; Undo/Redo; draft Save/reload isolation; explicit Publish parity."
+    "assertions": "Exact visible innerText and computed pre-wrap at Canvas and public output; command route; Undo/Redo; draft Save/reload isolation; explicit Publish parity.",
+    "full_editor_browser_regression": "PASS 88/88 local and GitHub Editor Core"
   },
   "release": {
-    "status": "PENDING_PUSH_AND_CI",
-    "current_production_worker_version": 3718,
-    "completed_preflight": {
-      "editor_unit_tests": "PASS 11/11 files",
-      "typecheck": "PASS",
-      "canonical_plan_and_source_traceability": "PASS (396 source mappings)",
-      "migration_safety_gate": "PASS",
-      "wrangler_dry_run": "PASS (161 assets; 294.18 KiB total; no deployment)",
-      "production_d1_read_only_query": "SELECT name FROM d1_migrations ORDER BY name; 34 rows, rows_written=0, changed_db=false"
+    "status": "RELEASED",
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "push": "fast-forward ca993633b063be4c656b52b5cc6573860f31e075..67251a03cba627a45377043ffab048bc504cb495",
+    "included_runtime_commits": {
+      "multiline_renderer": "f2d60cf09356dc8dc9041c1d728164790ee880b4",
+      "accessible_inspector_validation": "7b24f121"
     },
-    "pending": [
-      "GitHub Actions CI for local runtime commit f2d60cf09356dc8dc9041c1d728164790ee880b4; it cannot start until that commit reaches v2/foundation",
-      "Fast-forward push to v2/foundation; git push was retried and still cannot connect to configured proxy port 8080",
-      "Cloudflare build/deployment and production smoke/hash verification after push"
-    ],
-    "parent_commit_ci": {
-      "commit": "ca993633b063be4c656b52b5cc6573860f31e075",
-      "editor_core": "PASS; all workflow job steps completed successfully, including Editor Chromium layout and WEB-013 mobile browser regression"
+    "github_ci": {
+      "checks": "6/6 PASS: Workers Builds, editor-core, verify, canonical-plan, twitch-integration, source-audit",
+      "editor_core_run_id": 40863827457,
+      "editor_core": "PASS; 88/88 Editor browser layout tests, WEB-013 mobile and remaining workflow steps successful"
     },
-    "local_runtime_commit": "f2d60cf09356dc8dc9041c1d728164790ee880b4"
+    "cloudflare": {
+      "build_id": "ac989d72-54d2-4371-884a-4cbf047c271b",
+      "build": "SUCCESS",
+      "deployment_id": "93ab6ad1-fcf6-461b-ba75-3eee0ad7e000",
+      "worker_version_id": "6d12a171-e1de-4cfb-a816-5d90a3b8b6e4",
+      "worker_version_number": 3719,
+      "traffic_percent": 100,
+      "script_etag": "f21e54a9bcded6beaf6c591bcc891a6ee5db90b60ead9178ccc6a92203d3cd34"
+    },
+    "production_smoke": {
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/",
+      "api_health": {
+        "http": 200,
+        "ok": true,
+        "service": "sanci9517-streamer-brand"
+      },
+      "api_db_health": {
+        "http": 200,
+        "ok": true,
+        "service": "d1",
+        "database": "sanci9517-db",
+        "connected": true
+      },
+      "editor_v2_http": 200,
+      "asset_sha256": {
+        "/assets/page-renderer.js": "bec181c3eb2bb38022d6af07d21e1a3b24718970a5747fb8998a3bc0abd9015d",
+        "/editor-v2/ui/property-controls.js": "51641c1321e28418a183d66c990d85d87684307aefdb006d44688674ed14123c"
+      },
+      "asset_hashes_match_local_source": true
+    },
+    "d1_preflight": {
+      "query": "SELECT name FROM d1_migrations ORDER BY name;",
+      "rows_read": 34,
+      "rows_written": 0,
+      "changed_db": false
+    },
+    "data_safety": {
+      "production_d1_migration": false,
+      "production_data_write": false,
+      "r2_mutation_or_deletion": false
+    }
   },
   "data_safety": {
     "production_d1_migration": false,
