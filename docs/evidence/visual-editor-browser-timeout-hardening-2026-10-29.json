@@ -46,8 +46,26 @@
   },
   "release": {
     "runtime_source_changed": false,
-    "worker_deployed": false,
-    "github_pushed": "pending final repository validation",
+    "github_pushed": true,
+    "target_branch": "v2/foundation",
+    "commit": "75893a85f206095f2738329aa7f4eeffd70a9814",
+    "push_method": "normal fast-forward after merging four newer remote documentation commits; no reset or force push",
+    "github_actions_for_head": 0,
+    "github_status_checks_for_head": 0,
+    "worker_deployed_after_push": false,
+    "latest_worker_deployment": {
+      "deployment_id": "8f006236-e1a6-476c-8eab-caf89d9b4630",
+      "version_id": "30f15135-a9c0-4f08-8504-a158774e8599",
+      "worker_number": 3724,
+      "traffic_percent": 100,
+      "created_on": "2026-10-29T17:03:52Z"
+    },
+    "post_push_health": {
+      "api_health": 200,
+      "db_health": 200,
+      "editor_route": 200
+    },
+    "latest_cloudflare_build_observed_after_push": "none; the latest API build record remained the earlier skipped build at 2026-10-29T17:06:44Z",
     "production_data_changed": false,
     "new_paid_service_or_plan_activated": false
   },
