@@ -6,7 +6,7 @@
     "EDT-014",
     "77.44.7.A"
   ],
-  "status": "LOCAL_VALIDATION_PASS_RELEASE_PENDING",
+  "status": "PRODUCTION_RELEASE_VERIFIED",
   "observed_gap": {
     "trigger": "A nested node was edited or moved while an unlocked intermediate container sat below a locked ancestor.",
     "before": "Lock checks stopped at the selected node and its immediate parent, allowing deeper descendants to bypass the ancestor lock.",
@@ -72,16 +72,46 @@
     "current_worker_deployment": "caa4001b-d807-4797-b451-1d1ca50b822c",
     "current_worker_version": "1db8fb6a-f060-4afc-b7b3-3ede48de8901",
     "current_worker_number": 3730,
-    "current_traffic_percent": 100
+    "current_traffic_percent": 100,
+    "d1_changed": false,
+    "build_minutes_limit_reached": false
   },
   "release": {
     "target_branch": "v2/foundation",
     "verified_remote_base": "69b312f46f5d11941990c8c082ca34bd02a936ad",
-    "runtime_commit": null,
-    "cloudflare_build": null,
-    "deployment": null,
-    "production_smoke": "PENDING",
-    "live_asset_hashes": "PENDING"
+    "runtime_commit": "b4a06a0010bba1602ad16ae50edc3c93e34b6026",
+    "cloudflare_build": {
+      "id": "83016098-7a80-49cb-b27a-35ecdd1e905b",
+      "outcome": "success",
+      "exact_commit_match": true,
+      "commands": [
+        "npm run typecheck",
+        "npm run deploy:safe"
+      ],
+      "migration_safety_gate": "PASS"
+    },
+    "deployment": {
+      "id": "104a93dd-ce0e-4fc6-980f-dbbe00c432dd",
+      "worker_number": 3731,
+      "worker_version": "83407732-6805-4ebc-b77d-4cd9c9766482",
+      "traffic_percent": 100
+    },
+    "production_smoke": {
+      "api_health": 200,
+      "db_health": 200,
+      "editor_route": 200
+    },
+    "live_asset_hashes": {
+      "public/editor-v2/app.js": "67ec7ad65f581a1b417b0c31c4aecb608bc846a95cd521f53dca444b666d4678",
+      "public/editor-v2/core/commands.js": "f9d9450448b2b5a05adb37dd90ec9c5ff97bfee16917b869634b362c0ff0df11",
+      "public/editor-v2/core/element-insertion.js": "db1d6b9cefba1aa017ed621a191def9330f0b04ba9438ea06e72f0b2cffa3d84",
+      "public/editor-v2/tests/element-insertion.test.js": "cf3b927cb60db9440e860a79b66c7a19d6cb35e45a5625f962f06a97d3098d28",
+      "matches_local_commit": true
+    },
+    "github_branch_ref": "v2/foundation",
+    "github_remote_head": "b4a06a0010bba1602ad16ae50edc3c93e34b6026",
+    "github_actions": "Skipped by [skip ci] under the exhausted GitHub Actions quota; the exact-commit Cloudflare production build passed.",
+    "automatic_push_build": "Skipped due to [skip ci]; production exact-commit build was manually started using the existing authorized Cloudflare trigger."
   },
   "acceptance": {
     "edt_014": "IN_PROGRESS",
