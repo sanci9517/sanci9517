@@ -1,0 +1,120 @@
+{
+  "scope": "77.44.7.A Inspector literal and multiline content.text contract, Renderer parity, and Save/Publish lifecycle",
+  "website": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/",
+  "commits": [
+    {
+      "sha": "e9eee258335a466ccaff70fb0ec3242a8603a7ea",
+      "change": "Declare content.text as optional, literal, and multiline; preserve exact values through the property normalizer and test Canvas, draft Save/reload, and separate Publish."
+    },
+    {
+      "sha": "5b920385c21b839774471f3797f4d0c7a5a67313",
+      "change": "Render the multiline Inspector contract as a labeled native textarea; verify the real control matrix at mobile and desktop viewports."
+    }
+  ],
+  "acceptance_cases": {
+    "content.text": {
+      "required": false,
+      "trimmed": false,
+      "multiline": true,
+      "empty_value": "accepted and saved",
+      "boundary_whitespace_and_newlines": "preserved by control, normalizer, Canvas, draft Save/reload, and separate Publish",
+      "generic_inspector_control": "native textarea, rows=4, associated label",
+      "browser_viewports": [390, 1366]
+    },
+    "advanced.nodeName": {
+      "required": true,
+      "trimmed": true,
+      "control": "single-line text input"
+    },
+    "save_publish": "draft Save/reload does not alter public content; explicit Publish applies the latest content"
+  },
+  "local_checks": {
+    "editor_unit_files": "11/11 PASS",
+    "inspector_lifecycle_chromium": "1/1 PASS (232.2 s)",
+    "typed_inspector_chromium": "2/2 PASS at 390px and 1366px",
+    "countdown_regression_chromium": "2/2 PASS at 390px and 1366px",
+    "typecheck": "PASS",
+    "javascript_syntax": "PASS",
+    "canonical_plan": "PASS",
+    "active_point_audit": "PASS; functional acceptance remains NOT_CERTIFIED",
+    "traceability": "PASS; 396 source mappings",
+    "migration_safety_gate": "PASS",
+    "wrangler_dry_run": "PASS; 161 public assets, 294.18 KiB / 67.34 KiB gzip",
+    "diff_check": "PASS"
+  },
+  "open_source_review": {
+    "repository": "GrapesJS/grapesjs",
+    "source_reviewed": "packages/core/src/style_manager/view/PropertiesView.ts",
+    "license": "BSD-3-Clause",
+    "decision": "The inspected collection-driven typeView architecture provides no better fit for this plain content field than the project's existing registry and native HTML controls. No third-party dependency or copied code was added."
+  },
+  "release_preflight": {
+    "d1_query": "SELECT name FROM d1_migrations ORDER BY name",
+    "d1_rows_read": 34,
+    "d1_changed_db": false,
+    "d1_rows_written": 0,
+    "wrangler_deploy_safe_dry_run": "PASS; automatic Cloudflare Build uses npm run deploy:safe and runs the migration safety gate without applying D1 migrations"
+  },
+  "github": {
+    "final_commit": "5b920385c21b839774471f3797f4d0c7a5a67313",
+    "checks": {
+      "canonical_plan": "https://github.com/sanci9517/sanci9517/actions/runs/40839001389",
+      "verify": "https://github.com/sanci9517/sanci9517/actions/runs/40839001391",
+      "source_audit": "https://github.com/sanci9517/sanci9517/actions/runs/40839001428",
+      "twitch_integration": "https://github.com/sanci9517/sanci9517/actions/runs/40839001407",
+      "editor_core": {
+        "url": "https://github.com/sanci9517/sanci9517/actions/runs/40839001390",
+        "successful_attempt": 2,
+        "editor_unit_tests": "147/147",
+        "editor_browser_tests": "88/88",
+        "web013_mobile_browser_tests": "2/2",
+        "media_api_tests": "43/43",
+        "isolated_worker_media_upload": "PASS"
+      },
+      "cloudflare_build": {
+        "id": "c166c9e5-3cd9-4c33-8c10-a0ab3c400d7d",
+        "conclusion": "success",
+        "commit": "5b920385c21b839774471f3797f4d0c7a5a67313"
+      }
+    },
+    "transient_retry": "Editor Core attempt 1 had one unrelated 390px Europe/Budapest Countdown waitForFunction timeout (87/88 browser pass). The focused Countdown test passed 2/2 locally; attempt 2 passed all 88 browser tests and the complete Editor Core job."
+  },
+  "production": {
+    "release_branch": "v2/foundation",
+    "final_commit": "5b920385c21b839774471f3797f4d0c7a5a67313",
+    "deployments": [
+      {
+        "commit": "e9eee258335a466ccaff70fb0ec3242a8603a7ea",
+        "build_id": "aca2c68e-64aa-4209-adca-3cfd34763649",
+        "build_conclusion": "success",
+        "deployment_id": "96e1498f-282e-4007-a6e4-616ffc3a2b76",
+        "worker_version_id": "7a969493-7166-4838-9d64-b449145e51fc",
+        "worker_version_number": 3717,
+        "traffic_percentage": 100,
+        "superseded_by_final_commit": true
+      },
+      {
+        "commit": "5b920385c21b839774471f3797f4d0c7a5a67313",
+        "build_id": "c166c9e5-3cd9-4c33-8c10-a0ab3c400d7d",
+        "build_conclusion": "success",
+        "deployment_id": "2c2829d2-ae9c-41fc-9ea0-08de458cb115",
+        "worker_version_id": "55ebfbc7-ff0e-40d9-a0b0-94907d3a749d",
+        "worker_version_number": 3718,
+        "traffic_percentage": 100,
+        "worker_script_etag": "f21e54a9bcded6beaf6c591bcc891a6ee5db90b60ead9178ccc6a92203d3cd34"
+      }
+    ],
+    "http_smoke": {
+      "site_root": "HTTP 403 from environment proxy",
+      "api_health": "HTTP 403 from environment proxy",
+      "api_db_health": "HTTP 403 from environment proxy",
+      "editor_asset_hash": "UNVERIFIED; direct HTTP access blocked by environment proxy"
+    },
+    "data_safety": {
+      "production_d1_migration": false,
+      "production_data_write": false,
+      "production_r2_mutation_or_deletion": false
+    }
+  },
+  "acceptance": "The Inspector value contract now matches the actual plain-text command semantics and its generic renderer; Save remains separate from Publish. The complete 77.44.7.A acceptance remains OPEN / NOT CERTIFIED pending its remaining Inspector scope and physical-device acceptance."
+}
