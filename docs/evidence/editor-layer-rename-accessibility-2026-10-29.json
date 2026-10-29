@@ -1,7 +1,7 @@
 {
   "date": "2026-10-29",
   "feature": "EDT-014 accessible layer rename validation",
-  "status": "LOCAL_VERIFICATION_PASS_PRODUCTION_RELEASE_PENDING",
+  "status": "PRODUCTION_RELEASE_VERIFIED",
   "gap": "The layer rename input displayed an empty-name error in a status region but did not expose that feedback through aria-describedby or declare its required state accessibly.",
   "implementation": {
     "file": "public/editor-v2/app.js",
@@ -39,10 +39,23 @@
     "current_traffic_percent": 100
   },
   "release": {
-    "runtime_commit": null,
-    "cloudflare_build": null,
-    "deployment": null,
-    "production_health_and_asset_hashes": "PENDING"
+    "runtime_commit": "37debafae043082b5816297430e18e47e68557dd",
+    "github_branch": "v2/foundation",
+    "github_ref_verified": "37debafae043082b5816297430e18e47e68557dd",
+    "cloudflare_build": "5ea84afb-9257-47ad-9402-a0d45c07742c",
+    "cloudflare_build_outcome": "success",
+    "build_commit_verified": "37debafae043082b5816297430e18e47e68557dd",
+    "deploy_command": "npm run deploy:safe",
+    "deployment": "8e870eb6-3d13-4719-a110-86b470910a51",
+    "worker_version": "ee0f954e-16c5-4768-ba96-e13496771917",
+    "production_traffic_percent": 100,
+    "health": "PASS /api/health HTTP 200",
+    "db_health": "PASS /api/db-health HTTP 200; connected=true",
+    "asset_sha256": {
+      "public/editor-v2/app.js": "9962c74db716fb398a671806b8f11e338314a5b611866a576ae029bb28270ef8",
+      "live /editor-v2/app.js": "9962c74db716fb398a671806b8f11e338314a5b611866a576ae029bb28270ef8",
+      "match": true
+    }
   },
   "acceptance_boundary": "This verifies the layer-name validation accessibility lifecycle in emulated Chromium; physical-device and full Visual Editor acceptance remain open."
 }
