@@ -7,6 +7,7 @@ import type { Env } from "../../types/env";
 import { auditStatement } from "../../core/audit";
 import { DEFAULT_SITE_ID } from "../../core/site-context";
 import { validatePublishDocument } from "../../core/editor-validation";
+import { validatePublicationAssets } from "../../core/editor-publication";
 
 type PageRow={archived_at?:string|null;parent_page_id?:string|null;published_parent_page_id?:string|null;published_slug?:string|null;id:string;slug:string;title:string;description:string;content_json:string;published_content_json:string|null;is_published:number;published_revision_id:string|null;sort_order:number;created_at:string;updated_at:string;revision?:number};
 type PageBody={action?:unknown;id?:unknown;parentPageId?:unknown;expectedParentPageId?:unknown;sourcePageId?:unknown;slug?:unknown;title?:unknown;description?:unknown;document?:unknown;isPublished?:unknown;sortOrder?:unknown;expectedVersion?:unknown};
@@ -134,6 +135,7 @@ async function adminPagesRouteImpl(request:Request,env:Env,siteId:string):Promis
  const initialJson=JSON.stringify(initialDocument);
  if(initialJson.length>180000)return error('PAGE_TOO_LARGE',400);
  const isPublished=body.isPublished===true;
+ if(isPublished){const validationError=validatePublishDocument(initialDocument,id);if(validationError)return error(validationError,409,'Az új oldal dokumentuma publikálás előtt nem felel meg az Editor v2 Page Model ellenőrzésnek.');if(await validatePublicationAssets(env.DB,siteId,initialDocument))return error('MEDIA_NOT_FOUND',409,'A publikált oldal valamelyik kiválasztott médiafájlja nem érhető el ehhez a webhelyhez.')}
  const revisionId=crypto.randomUUID();
  const nextOrderRow=await env.DB.prepare('SELECT COALESCE(MAX(sort_order),-1)+1 AS next FROM pages WHERE site_id=? AND archived_at IS NULL').bind(siteId).first<{next:number}>();
  const nextOrder=Number(nextOrderRow?.next??0);

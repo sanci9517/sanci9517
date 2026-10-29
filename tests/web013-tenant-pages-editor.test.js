@@ -141,6 +141,45 @@ test('page lifecycle keeps create, ordering, archive and restore inside one site
   assert.equal((await f.pages('editor','other','DELETE',{id:'a'})).status,404);
 });
 
+test('page creation validates initial publication while keeping draft creation separate',async t=>{
+  const f=await fixture(t),invalid=f.document('invalid-publish');
+  invalid.pages['invalid-publish'].nodes.root.children=['heading'];
+  invalid.pages['invalid-publish'].nodes.heading={id:'heading',type:'heading',parentId:'root',children:[],metadata:{contentVersion:1},props:{text:''}};
+  const snapshots=()=>({pages:f.db.prepare('SELECT id,content_json,published_content_json,is_published,published_revision_id FROM pages ORDER BY id').all(),revisions:f.db.prepare('SELECT id,page_id,version,document_json FROM editor_revisions ORDER BY id').all(),audit:f.db.prepare('SELECT id,action,entity_id FROM audit_log ORDER BY id').all()});
+  const before=snapshots();
+  const rejected=await f.pages('editor','other','POST',{id:'invalid-publish',slug:'invalid-publish',title:'Invalid',description:'',document:invalid,isPublished:true});
+  assert.equal(rejected.status,409);
+  assert.equal((await rejected.json()).error.code,'INCOMPLETE_EDITOR_CONTENT');
+  assert.deepEqual(snapshots(),before,'a rejected initial publication must not write a page, revision, or audit record');
+
+  const draftDocument=structuredClone(invalid);draftDocument.activePageId='draft-with-incomplete-content';draftDocument.pages['draft-with-incomplete-content']=draftDocument.pages['invalid-publish'];delete draftDocument.pages['invalid-publish'];draftDocument.pages['draft-with-incomplete-content'].id='draft-with-incomplete-content';
+  const savedDraft=await f.pages('editor','other','POST',{id:'draft-with-incomplete-content',slug:'draft-incomplete',title:'Draft',description:'',document:draftDocument,isPublished:false});
+  assert.equal(savedDraft.status,200,'incomplete content remains saveable as a draft');
+  assert.equal(f.db.prepare('SELECT is_published FROM pages WHERE id=?').get('draft-with-incomplete-content').is_published,0);
+
+  const valid=f.document('valid-publish');
+  const created=await f.pages('editor','other','POST',{id:'valid-publish',slug:'valid-publish',title:'Valid',description:'',document:valid,isPublished:true});
+  assert.equal(created.status,200,'a valid initial publication remains supported');
+  const page=f.db.prepare('SELECT content_json,published_content_json,is_published,published_revision_id,published_slug FROM pages WHERE id=?').get('valid-publish');
+  assert.equal(page.is_published,1);
+  assert.equal(page.published_slug,'valid-publish');
+  assert.equal(page.published_content_json,page.content_json);
+  assert.ok(page.published_revision_id);
+});
+
+test('initial page publication rejects unavailable or cross-site media before writes',async t=>{
+  const f=await fixture(t),foreign='cdb85522-f682-4561-bd61-bfb83c4381b2';
+  f.db.prepare('INSERT INTO media(id,site_id,object_key,mime_type,original_name,size_bytes) VALUES(?,?,?,?,?,?)').run(foreign,'site-default','sites/site-default/media/'+foreign,'image/png','foreign.png',100);
+  const document=f.document('foreign-media');
+  document.pages['foreign-media'].nodes.root.children=['image'];
+  document.pages['foreign-media'].nodes.image={id:'image',type:'image',parentId:'root',children:[],metadata:{contentVersion:1,editorContentVersion:1},props:{assetId:foreign,alt:'Leírt kép'}};
+  const before={pages:f.db.prepare('SELECT COUNT(*) AS n FROM pages').get().n,revisions:f.db.prepare('SELECT COUNT(*) AS n FROM editor_revisions').get().n,audit:f.db.prepare('SELECT COUNT(*) AS n FROM audit_log').get().n};
+  const response=await f.pages('editor','other','POST',{id:'foreign-media',slug:'foreign-media',title:'Foreign media',description:'',document,isPublished:true});
+  assert.equal(response.status,409);
+  assert.equal((await response.json()).error.code,'MEDIA_NOT_FOUND');
+  assert.deepEqual({pages:f.db.prepare('SELECT COUNT(*) AS n FROM pages').get().n,revisions:f.db.prepare('SELECT COUNT(*) AS n FROM editor_revisions').get().n,audit:f.db.prepare('SELECT COUNT(*) AS n FROM audit_log').get().n},before);
+});
+
 test('inactive site and inactive user are denied even with a matching grant',async t=>{
   const f=await fixture(t);
   f.db.prepare("UPDATE sites SET status='inactive' WHERE id='other'").run();
