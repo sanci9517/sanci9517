@@ -23,7 +23,12 @@
   "checks": {
     "red_reproduction": "PASS as a regression proof: before implementation the new browser assertion failed at 390px and 1366px (enterPrevented=false; stillEditing=false).",
     "browser_command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-element-insertion.test.js tests/browser/editor-general-fields-ime.test.js",
-    "browser_result": "PASS 7/7 at 390px and 1366px, including the reproduced composing Enter/Escape/requestSubmit flow.",
+    "browser_result": "PASS 7/7 focused cases at 390px and 1366px, including the reproduced composing Enter/Escape/requestSubmit flow.",
+    "full_editor_browser_suite": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium npm run test:editor:layout",
+      "result": "PASS 92/92 tests, 0 failures, serial Chromium run; 23m 27s.",
+      "coverage": "Inspector lifecycle, 44 PARTIAL types, responsive layouts, Canvas/public parity, Rich Text, media, Save/Publish isolation, and Admin media regression. The initial sandbox-only run without loopback permission was not counted; the successful run used local network permission for the test server."
+    },
     "editor_unit": "PASS 11/11 files",
     "typecheck": "PASS npm run typecheck",
     "syntax": "PASS node --check public/editor-v2/app.js",
