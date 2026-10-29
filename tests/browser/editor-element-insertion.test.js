@@ -204,3 +204,69 @@ test('layer visibility control follows the responsive command and keeps Save sep
   assert.equal(published.pages[pageId].nodes[sectionId].visibility.mobile,true,'explicit Publish publishes the shown state');
   assert.deepEqual(errors,[]);
 });
+
+test('Layers hierarchy reparent works with desktop drag and touch long-press, with history parity',async t=>{
+  const seed=createEditorState(createDocument()),pageId=seed.document.activePageId,rootId=seed.document.pages[pageId].rootId;
+  execute(seed,{type:'element.add',payload:{type:NODE_TYPES.SECTION,parentId:rootId}});const sectionId=seed.selection.primaryId;
+  execute(seed,{type:'element.add',payload:{type:NODE_TYPES.TEXT,parentId:rootId}});const textId=seed.selection.primaryId;
+  let draft=structuredClone(seed.document),version=1;
+  const root=resolve(import.meta.dirname,'../../public');
+  const server=createServer(async(req,res)=>{
+    const url=new URL(req.url,'http://localhost'),json=data=>{res.setHeader('content-type','application/json');res.end(JSON.stringify(data))};
+    if(url.pathname==='/api/admin/pages')return json({ok:true,data:[{id:pageId,slug:'hierarchy',title:'Hierarchy',content:draft,revision:version,isPublished:false}]});
+    if(url.pathname==='/api/admin/editor'){
+      if(req.method==='GET')return json({ok:true,data:{page:{id:pageId,document:draft},revisions:[{id:'rev-'+version,version}]}});
+      let body='';for await(const chunk of req)body+=chunk;const request=JSON.parse(body);draft=structuredClone(request.document);version++;
+      return json({ok:true,data:{pageId,version,revisionId:'rev-'+version,published:false}});
+    }
+    if(url.pathname==='/api/public/pages')return json({ok:false});
+    if(url.pathname==='/api/public/navigation')return json({ok:true,data:{items:[]}});
+    if(url.pathname==='/api/integrations/twitch/connection')return json({ok:true,data:{connected:false}});
+    if(url.pathname.startsWith('/api/'))return json({ok:true,data:{siteName:'Test'}});
+    const file=resolve(root,'.'+url.pathname);if(!file.startsWith(root+'/'))return res.writeHead(403).end();
+    try{res.setHeader('content-type',{'.html':'text/html','.js':'text/javascript','.css':'text/css'}[extname(file)]||'application/octet-stream');res.end(await readFile(file))}catch{return res.writeHead(404).end()}
+  });
+  await new Promise(done=>server.listen(0,'127.0.0.1',done));
+  const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||(existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined),args:['--no-sandbox']});
+  t.after(async()=>{await browser.close();await new Promise(done=>server.close(done))});
+  const tab=await browser.newPage({viewport:{width:1366,height:900}});tab.setDefaultTimeout(7000);const errors=[];tab.on('pageerror',error=>errors.push(error.message));
+  await tab.goto(`http://127.0.0.1:${server.address().port}/editor-v2/index.html?pageId=${pageId}`);await tab.locator(`.node[data-node-id="${textId}"]`).waitFor();
+  await tab.locator('.rail-btn[data-tab="layers"]').click();await tab.locator(`.layer-row[data-node-id="${textId}"]`).waitFor();
+  const source=tab.locator(`.layer-row[data-node-id="${textId}"]`),target=tab.locator(`.layer-row[data-node-id="${sectionId}"]`);
+  const desktopDrop=await source.evaluate((row,{targetId})=>{
+    const target=document.querySelector(`.layer-row[data-node-id="${targetId}"]`),dataTransfer=new DataTransfer();
+    row.dispatchEvent(new DragEvent('dragstart',{bubbles:true,cancelable:true,dataTransfer}));
+    const over=new DragEvent('dragover',{bubbles:true,cancelable:true,dataTransfer});target.dispatchEvent(over);
+    target.dispatchEvent(new DragEvent('drop',{bubbles:true,cancelable:true,dataTransfer}));return over.defaultPrevented;
+  },{targetId:sectionId});
+  assert.equal(desktopDrop,true,'desktop drag accepts a valid reparent destination');
+  const nestedText=()=>tab.locator(`.page-canvas .node[data-node-id="${sectionId}"] > .node[data-node-id="${textId}"]`);
+  await tab.waitForFunction(({sectionId,textId})=>document.querySelector(`.page-canvas .node[data-node-id="${sectionId}"] > .node[data-node-id="${textId}"]`)!==null,{sectionId,textId});
+  assert.equal(await nestedText().count(),1,'desktop drag reparents in the Canvas');
+  await tab.locator('#undo').click();assert.equal(await nestedText().count(),0,'Undo restores the original sibling relationship');
+  assert.equal(await tab.locator(`.page-canvas .node[data-node-id="${rootId}"] > .node[data-node-id="${textId}"]`).count(),1);
+  await tab.locator('#redo').click();assert.equal(await nestedText().count(),1,'Redo reapplies the reparent');
+  await tab.locator('#undo').click();
+  await tab.setViewportSize({width:390,height:844});
+  if(await tab.locator('#leftDock').evaluate(panel=>panel.classList.contains('closed')))await tab.locator('#editorMenu').click();
+  await tab.locator('.rail-btn[data-tab="layers"]').click();
+  assert.equal(await source.isVisible(),true,JSON.stringify(await tab.evaluate(()=>({left:document.querySelector('#leftDock')?.className,layerTab:[...document.querySelectorAll('.rail-btn')].find(b=>b.dataset.tab==='layers')?.className,content:document.querySelector('[data-content="layers"]')?.className,workspace:document.querySelector('.workspace')?.className,hidden:document.querySelector('.layer-row')?.getAttribute('hidden')}))));
+  assert.equal(await target.isVisible(),true,JSON.stringify(await target.evaluate(row=>({cls:row.className,style:row.getAttribute('style'),rect:row.getBoundingClientRect().toJSON(),parent:row.parentElement?.outerHTML.slice(0,1000)}))));
+  const mobileDrop=await source.evaluate(async(row,{targetId})=>{
+    const handle=row.querySelector('.layer-drag-handle'),target=document.querySelector(`.layer-row[data-node-id="${targetId}"]`),box=target.getBoundingClientRect();
+    const down=new PointerEvent('pointerdown',{pointerType:'touch',pointerId:41,clientX:row.getBoundingClientRect().x+10,clientY:row.getBoundingClientRect().y+10,bubbles:true,cancelable:true});handle.dispatchEvent(down);
+    await new Promise(resolve=>setTimeout(resolve,500));
+    const x=box.x+box.width/2,y=box.y+box.height/2;
+    handle.dispatchEvent(new PointerEvent('pointermove',{pointerType:'touch',pointerId:41,clientX:x,clientY:y,bubbles:true,cancelable:true}));
+    const preview=target.classList.contains('mobile-drag-over');
+    handle.dispatchEvent(new PointerEvent('pointerup',{pointerType:'touch',pointerId:41,clientX:x,clientY:y,bubbles:true,cancelable:true}));
+    return preview;
+  },{targetId:sectionId});
+  assert.equal(mobileDrop,true,'touch long-press previews a valid destination and commits on release');
+  assert.equal(await nestedText().count(),1,'touch reparent updates the Canvas');
+  await tab.locator('#save').click();await tab.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent?.startsWith('Mentve'));
+  assert.deepEqual(draft.pages[pageId].nodes[sectionId].children,[textId],'touch reparent persists through Save');
+  assert.equal(draft.pages[pageId].nodes[textId].parentId,sectionId);
+  await tab.keyboard.press('Control+z');assert.equal(await nestedText().count(),0,'touch reparent remains undoable after Save');
+  assert.deepEqual(errors,[]);
+});
