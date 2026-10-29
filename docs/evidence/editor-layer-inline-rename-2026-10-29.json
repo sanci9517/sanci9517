@@ -6,7 +6,7 @@
     "EDT-014",
     "77.44.7.A"
   ],
-  "status": "LOCAL_VALIDATION_PASS_RELEASE_PENDING",
+  "status": "PRODUCTION_RELEASE_VERIFIED",
   "implementation": {
     "files": [
       "public/editor-v2/app.js",
@@ -68,20 +68,49 @@
     "current_worker_number": 3731,
     "current_worker_version": "83407732-6805-4ebc-b77d-4cd9c9766482",
     "current_traffic_percent": 100,
-    "build_minutes_limit_reached": false
+    "build_minutes_limit_reached": false,
+    "d1_rows": 34,
+    "latest_migration": "0028_media_archive.sql",
+    "changed_db": false,
+    "rows_written": 0
   },
   "release": {
     "target_branch": "v2/foundation",
-    "runtime_commit": null,
-    "cloudflare_build": null,
-    "deployment": null,
-    "production_smoke": "PENDING",
-    "live_asset_hashes": "PENDING"
+    "runtime_commit": "596837e81a06cdf3f8a7535fb187b5788b7c2dbb",
+    "cloudflare_build": {
+      "id": "c1e2e044-6ed1-498b-a91b-d66c4f998db8",
+      "outcome": "success",
+      "exact_commit_match": true,
+      "commands": [
+        "npm run typecheck",
+        "npm run deploy:safe"
+      ],
+      "migration_safety_gate": "PASS"
+    },
+    "deployment": {
+      "id": "fa828f9d-c779-4f2a-8592-f7dcdcaa622f",
+      "worker_number": 3732,
+      "worker_version": "411f2a06-b29c-488a-86b6-6000281f022e",
+      "traffic_percent": 100
+    },
+    "production_smoke": {
+      "api_health": 200,
+      "db_health": 200,
+      "editor_route": 200
+    },
+    "live_asset_hashes": {
+      "public/editor-v2/app.js": "98941784760bcadc1a6f47c6e022c041627247df21da2f59d212cc327cace7d3",
+      "public/editor-v2/editor.css": "e2a7895a9bea8cd945c5e5e87c36e4132713accaa5884f16dcc96eae059bd559",
+      "matches_local_commit": true
+    },
+    "github_remote_head": "596837e81a06cdf3f8a7535fb187b5788b7c2dbb",
+    "github_actions": "Skipped by [skip ci] under the exhausted GitHub Actions quota; exact-commit Cloudflare build passed.",
+    "automatic_push_build": "Push event skipped due to [skip ci]; exact commit was manually built using the existing authorized Cloudflare trigger."
   },
   "acceptance": {
     "edt_014": "IN_PROGRESS",
     "plan_point_77_44_7_a": "OPEN",
-    "layer_tree_inline_rename": "IMPLEMENTED_LOCALLY; release pending",
+    "layer_tree_inline_rename": "PRODUCTION_RELEASE_VERIFIED; full editor acceptance remains open",
     "physical_device_acceptance": "OPEN"
   }
 }
