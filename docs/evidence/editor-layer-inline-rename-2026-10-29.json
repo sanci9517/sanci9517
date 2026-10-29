@@ -1,0 +1,87 @@
+{
+  "schema_version": 1,
+  "kind": "editor-layer-inline-rename-local-validation-not-production-acceptance",
+  "date": "2026-10-29",
+  "plan_items": [
+    "EDT-014",
+    "77.44.7.A"
+  ],
+  "status": "LOCAL_VALIDATION_PASS_RELEASE_PENDING",
+  "implementation": {
+    "files": [
+      "public/editor-v2/app.js",
+      "public/editor-v2/editor.css",
+      "tests/browser/editor-element-insertion.test.js",
+      "tests/browser/editor-general-fields-ime.test.js"
+    ],
+    "behavior": "A visible, keyboard-accessible Rename action and F2 key on a layer row open an inline, labelled name form. Enter or Save commits a trimmed nonempty name through element.update; Escape/Cancel discard the input. Name text is rendered as escaped text. Locked nodes and descendants with locked ancestors cannot be renamed.",
+    "model_and_history": "Rename changes only the internal node name in the canonical Page Model and uses the existing command/Undo history; it remains draft-only until Save, while Publish stays explicit.",
+    "public_output": "The internal layer name does not appear as public page content after draft Save or Publish.",
+    "dependencies_added": false
+  },
+  "open_source_review": {
+    "project": "GrapesJS",
+    "license": "BSD-3-Clause (repository LICENSE checked)",
+    "source": "packages/core/src/navigator/view/ItemView.ts at dev: template data-name, double-click edit, Enter/Escape close, model.setName and updateName reconciliation.",
+    "decision": "The tested interaction informed keyboard activation and model-to-label synchronization. The project uses its own explicit form, Page Model command, Undo/Redo, draft Save/Publish and inherited-lock checks; upstream code is not architecture-compatible as a direct dependency or copy.",
+    "code_copied": false,
+    "dependency_added": false
+  },
+  "checks": {
+    "editor_unit": {
+      "command": "npm run test:editor",
+      "result": "PASS 11/11 files"
+    },
+    "typecheck": {
+      "command": "npm run typecheck",
+      "result": "PASS"
+    },
+    "syntax": "PASS node --check public/editor-v2/app.js",
+    "browser": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-element-insertion.test.js tests/browser/editor-general-fields-ime.test.js",
+      "result": "PASS 7/7",
+      "viewports_px": [
+        390,
+        1366
+      ],
+      "coverage": [
+        "F2 opens labelled inline editor and Enter commits through Page Model/Canvas",
+        "empty names are rejected and announced",
+        "HTML-like names render as text, not markup",
+        "Escape and Cancel discard edits",
+        "Save updates the draft and Publish remains explicit",
+        "internal layer name is not public page content",
+        "rename is disabled below a locked ancestor and restored after unlocking"
+      ]
+    },
+    "migration_safety_gate": "PASS; deploy:safe does not apply D1 migrations",
+    "wrangler_dry_run": "PASS; Wrangler 4.130.0, 161 assets, 296.90 KiB / 67.79 KiB gzip",
+    "canonical_plan": "PASS; 13-file master; feature acceptance not certified",
+    "active_plan_point": "PASS; next 77.44.7.A",
+    "source_traceability": "PASS; 396 mappings rebuilt and validated",
+    "git_diff_check": "PASS"
+  },
+  "production_preflight": {
+    "d1": "Earlier same-session SELECT-only preflight: 34 ledger rows, latest 0028_media_archive.sql, changed_db=false, rows_written=0.",
+    "migration_applied": false,
+    "r2_changed": false,
+    "current_worker_number": 3731,
+    "current_worker_version": "83407732-6805-4ebc-b77d-4cd9c9766482",
+    "current_traffic_percent": 100,
+    "build_minutes_limit_reached": false
+  },
+  "release": {
+    "target_branch": "v2/foundation",
+    "runtime_commit": null,
+    "cloudflare_build": null,
+    "deployment": null,
+    "production_smoke": "PENDING",
+    "live_asset_hashes": "PENDING"
+  },
+  "acceptance": {
+    "edt_014": "IN_PROGRESS",
+    "plan_point_77_44_7_a": "OPEN",
+    "layer_tree_inline_rename": "IMPLEMENTED_LOCALLY; release pending",
+    "physical_device_acceptance": "OPEN"
+  }
+}

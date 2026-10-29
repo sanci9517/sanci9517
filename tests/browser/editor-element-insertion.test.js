@@ -196,6 +196,7 @@ test('a nested locked ancestor disables descendant editing until the ancestor is
   assert.equal(await leaf.evaluate(row=>row.draggable),false,'nested descendants inherit the locked state');
   assert.equal(await leaf.evaluate(row=>row.classList.contains('locked-ancestor')),true,'the layer tree identifies inherited lock state');
   assert.equal(await tab.locator(`.layer-visibility-toggle[data-node-id="${textId}"]`).isDisabled(),true,'visibility cannot be changed below a locked ancestor');
+  assert.equal(await tab.locator(`.layer-rename[data-node-id="${textId}"]`).isDisabled(),true,'a descendant cannot be renamed below a locked ancestor');
   await leaf.click();await tab.locator('#openInspector').click();
   assert.match(await tab.locator('.inspector-locked-note').textContent(),/zárolt tároló része/i);
   assert.equal(await tab.getByRole('textbox',{name:'Elem neve',exact:true}).isDisabled(),true,'Inspector mutation controls are read-only');
@@ -213,6 +214,7 @@ test('a nested locked ancestor disables descendant editing until the ancestor is
   assert.equal(await leaf.evaluate(row=>row.draggable),true,'unlocking the ancestor restores descendant hierarchy actions');
   assert.equal(await leaf.evaluate(row=>row.classList.contains('locked-ancestor')),false);
   assert.equal(await tab.locator(`.layer-visibility-toggle[data-node-id="${textId}"]`).isDisabled(),false,'unlocking the ancestor restores descendant visibility actions');
+  assert.equal(await tab.locator(`.layer-rename[data-node-id="${textId}"]`).isDisabled(),false,'unlocking the ancestor restores descendant rename actions');
   assert.deepEqual(errors,[]);
 });
 

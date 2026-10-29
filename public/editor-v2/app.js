@@ -1515,7 +1515,124 @@ function handleLayerDrop(id,event,row){event.preventDefault();const current=page
 function handleMobileLayerDragStart(id,event,handle){if(event.pointerType!=='touch')return;event.preventDefault();event.stopPropagation();const current=page();const node=current?getNode(current,id):null;if(!node||node.id===current?.rootId||isNodeEffectivelyLocked(current,node))return;clearMobileHierarchyDrag();mobileHierarchyDrag.nodeId=id;mobileHierarchyDrag.startX=event.clientX;mobileHierarchyDrag.startY=event.clientY;mobileHierarchyDrag.suppressClick=true;handle.classList.add('armed');mobileHierarchyDrag.timer=setTimeout(()=>{mobileHierarchyDrag.timer=null;mobileHierarchyDrag.active=true;const row=handle.closest('.layer-row');row?.classList.add('mobile-dragging')},450)}
 function handleMobileLayerDragMove(event){if(event.pointerType!=='touch'||!mobileHierarchyDrag.nodeId)return;event.preventDefault();event.stopPropagation();const dx=Math.abs(event.clientX-mobileHierarchyDrag.startX);const dy=Math.abs(event.clientY-mobileHierarchyDrag.startY);if(!mobileHierarchyDrag.active){if(dx>10||dy>10){clearMobileHierarchyDrag();return}return}const row=document.elementFromPoint(event.clientX,event.clientY)?.closest('.layer-row');const targetId=row?.dataset.nodeId;const current=page();const action=current&&targetId?resolveLayerDrop(current,mobileHierarchyDrag.nodeId,targetId):null;document.querySelectorAll('.layer-row.mobile-drag-over').forEach(el=>el.classList.remove('mobile-drag-over'));if(action){mobileHierarchyDrag.overId=targetId;row.classList.add('mobile-drag-over')}else mobileHierarchyDrag.overId=null}
 function handleMobileLayerDragEnd(event){if(event.pointerType!=='touch')return;event.preventDefault();event.stopPropagation();const current=page();const sourceId=mobileHierarchyDrag.nodeId;const targetId=mobileHierarchyDrag.overId;const action=current&&sourceId&&targetId?resolveLayerDrop(current,sourceId,targetId):null;const wasActive=mobileHierarchyDrag.active;clearMobileHierarchyDrag();if(wasActive&&action){event.preventDefault();command(action.type,action.payload)}}
-function renderLayers(){const root=$('#layersTree');const current=page();if(!root||!current)return;root.replaceChildren();const walk=(id,depth=0)=>{const node=getNode(current,id);if(!node)return;const entry=document.createElement('div');entry.className='layer-entry';const row=document.createElement('button');row.type='button';row.dataset.nodeId=id;row.draggable=node.id!==current.rootId&&!isNodeEffectivelyLocked(current,node);row.className=`layer-row ${state.selection.primaryId===id?'active':''} ${isNodeEffectivelyLocked(current,node)?'locked':''} ${isLockedParent(current,node)?'locked-ancestor':''}`;row.style.paddingLeft=`${8+depth*14}px`;row.innerHTML=`<span class="layer-caret">${node.children?.length?'▸':'·'}</span><strong>${escapeHtml(node.name||node.type)}</strong><small>${escapeHtml(node.type)}</small><span class="layer-drag-handle" role="button" tabindex="-1" aria-label="Elem mozgatása">⠿</span>${isNodeEffectivelyLocked(current,node)?`<span class="layer-lock" title="${node.locked?'Zárolt elem':'Zárolt tároló része'}" aria-label="${node.locked?'Zárolt elem':'Zárolt tároló része'}">🔐</span>`:''}`;const handle=row.querySelector('.layer-drag-handle');row.ondragstart=e=>handleLayerDragStart(id,e,row);row.ondragover=e=>handleLayerDragOver(id,e,row);row.ondrop=e=>handleLayerDrop(id,e,row);row.ondragend=()=>clearHierarchyDrag();handle?.addEventListener('pointerdown',e=>handleMobileLayerDragStart(id,e,handle));handle?.addEventListener('pointermove',e=>handleMobileLayerDragMove(e));handle?.addEventListener('pointerup',e=>handleMobileLayerDragEnd(e));handle?.addEventListener('pointercancel',e=>clearMobileHierarchyDrag());row.onpointerdown=e=>{if(e.pointerType==='touch'){e.stopPropagation();handleMobilePointerDown(id,e)}};row.onpointermove=e=>{if(e.pointerType==='touch')handleMobilePointerMove(e)};row.onpointerup=e=>{if(e.pointerType==='touch'){e.stopPropagation();handleMobilePointerUp(id,e)}};row.onpointercancel=e=>{if(e.pointerType==='touch')handleMobilePointerCancel(e)};row.onclick=e=>{e.stopPropagation();if(mobileTouch.active&&mobileTouch.suppressClick){mobileTouch.suppressClick=false;return}selectNodeInteraction(id,e)};entry.append(row);if(node.type!=='root'){const visible=isVisibleOnDevice(node,state.viewport.device),toggle=document.createElement('button');toggle.type='button';toggle.className='layer-visibility-toggle';toggle.dataset.nodeId=id;toggle.dataset.device=state.viewport.device;toggle.setAttribute('aria-pressed',String(visible));toggle.setAttribute('aria-label',`${visible?'Elrejtés':'Megjelenítés'}: ${node.name||node.type} (${state.viewport.device})`);toggle.title=`${visible?'Elrejtés':'Megjelenítés'} ezen az eszközön: ${state.viewport.device}`;toggle.textContent=visible?'◉':'○';toggle.disabled=isNodeEffectivelyLocked(page(),node);toggle.onclick=event=>{event.preventDefault();event.stopPropagation();if(command('element.visibility.set',{nodeId:id,device:state.viewport.device,visible:!visible})!==false){renderCanvas();renderLayers();setStatus('Nem mentett módosítás');syncPublishControls()}};entry.append(toggle)}root.append(entry);for(const child of node.children||[])walk(child,depth+1)};walk(current.rootId)}
+function beginLayerRename(id){
+  const current=page();
+  const node=current?getNode(current,id):null;
+  if(!node||node.id===current.rootId||isNodeEffectivelyLocked(current,node))return false;
+  const entry=document.querySelector(`#layersTree .layer-entry[data-node-id="${CSS.escape(id)}"]`);
+  if(!entry)return false;
+  entry.querySelector('.layer-rename-editor')?.remove();
+  const form=document.createElement('form');
+  form.className='layer-rename-editor';
+  form.setAttribute('aria-label',`Réteg átnevezése: ${node.name||node.type}`);
+  const input=document.createElement('input');
+  input.type='text';
+  input.value=node.name||'';
+  input.required=true;
+  input.setAttribute('aria-label','Réteg neve');
+  const status=document.createElement('small');
+  status.className='layer-rename-status';
+  status.setAttribute('role','status');
+  const save=document.createElement('button');
+  save.type='submit';
+  save.textContent='Mentés';
+  const cancel=document.createElement('button');
+  cancel.type='button';
+  cancel.textContent='Mégse';
+  cancel.setAttribute('aria-label','Réteg átnevezésének megszakítása');
+  const close=()=>{form.remove();entry.querySelector('.layer-row')?.focus()};
+  form.append(input,save,cancel,status);
+  form.addEventListener('submit',event=>{
+    event.preventDefault();
+    event.stopPropagation();
+    const name=input.value.trim();
+    if(!name){input.setAttribute('aria-invalid','true');status.textContent='A réteg neve nem lehet üres.';input.focus();return}
+    if(name===(node.name||'')){close();return}
+    if(command('element.update',{nodeId:id,patch:{name}})){
+      setStatus('Nem mentett módosítás');
+      syncPublishControls();
+      document.querySelector(`#layersTree .layer-row[data-node-id="${CSS.escape(id)}"]`)?.focus();
+    }
+  });
+  input.addEventListener('input',()=>{input.removeAttribute('aria-invalid');status.textContent=''});
+  input.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();event.stopPropagation();close()}});
+  cancel.addEventListener('click',close);
+  entry.append(form);
+  input.focus();
+  input.select();
+  return true;
+}
+function renderLayers(){
+  const root=$('#layersTree');
+  const current=page();
+  if(!root||!current)return;
+  root.replaceChildren();
+  const walk=(id,depth=0)=>{
+    const node=getNode(current,id);
+    if(!node)return;
+    const locked=isNodeEffectivelyLocked(current,node);
+    const inheritedLock=isLockedParent(current,node);
+    const entry=document.createElement('div');
+    entry.className='layer-entry';
+    entry.dataset.nodeId=id;
+    const row=document.createElement('button');
+    row.type='button';
+    row.dataset.nodeId=id;
+    row.draggable=node.id!==current.rootId&&!locked;
+    row.className=`layer-row ${state.selection.primaryId===id?'active':''} ${locked?'locked':''} ${inheritedLock?'locked-ancestor':''}`;
+    row.style.paddingLeft=`${8+depth*14}px`;
+    row.innerHTML=`<span class="layer-caret">${node.children?.length?'▸':'·'}</span><strong>${escapeHtml(node.name||node.type)}</strong><small>${escapeHtml(node.type)}</small><span class="layer-drag-handle" role="button" tabindex="-1" aria-label="Elem mozgatása">⠿</span>${locked?`<span class="layer-lock" title="${node.locked?'Zárolt elem':'Zárolt tároló része'}" aria-label="${node.locked?'Zárolt elem':'Zárolt tároló része'}">🔐</span>`:''}`;
+    row.addEventListener('keydown',event=>{
+      if(event.key==='F2'&&node.id!==current.rootId&&!locked){event.preventDefault();event.stopPropagation();beginLayerRename(id)}
+    });
+    const handle=row.querySelector('.layer-drag-handle');
+    row.ondragstart=event=>handleLayerDragStart(id,event,row);
+    row.ondragover=event=>handleLayerDragOver(id,event,row);
+    row.ondrop=event=>handleLayerDrop(id,event,row);
+    row.ondragend=()=>clearHierarchyDrag();
+    handle?.addEventListener('pointerdown',event=>handleMobileLayerDragStart(id,event,handle));
+    handle?.addEventListener('pointermove',event=>handleMobileLayerDragMove(event));
+    handle?.addEventListener('pointerup',event=>handleMobileLayerDragEnd(event));
+    handle?.addEventListener('pointercancel',()=>clearMobileHierarchyDrag());
+    row.onpointerdown=event=>{if(event.pointerType==='touch'){event.stopPropagation();handleMobilePointerDown(id,event)}};
+    row.onpointermove=event=>{if(event.pointerType==='touch')handleMobilePointerMove(event)};
+    row.onpointerup=event=>{if(event.pointerType==='touch'){event.stopPropagation();handleMobilePointerUp(id,event)}};
+    row.onpointercancel=event=>{if(event.pointerType==='touch')handleMobilePointerCancel(event)};
+    row.onclick=event=>{event.stopPropagation();if(mobileTouch.active&&mobileTouch.suppressClick){mobileTouch.suppressClick=false;return}selectNodeInteraction(id,event)};
+    entry.append(row);
+    if(node.id!==current.rootId){
+      const rename=document.createElement('button');
+      rename.type='button';
+      rename.className='layer-rename';
+      rename.dataset.nodeId=id;
+      rename.textContent='✎';
+      rename.setAttribute('aria-label',`Réteg átnevezése: ${node.name||node.type}`);
+      rename.title=locked?(inheritedLock?'A zárolt tároló része; a szülő feloldása után nevezhető át':'A zárolt elem nem nevezhető át'):'Réteg átnevezése';
+      rename.disabled=locked;
+      rename.onclick=event=>{event.preventDefault();event.stopPropagation();beginLayerRename(id)};
+      entry.append(rename);
+      const visible=isVisibleOnDevice(node,state.viewport.device);
+      const toggle=document.createElement('button');
+      toggle.type='button';
+      toggle.className='layer-visibility-toggle';
+      toggle.dataset.nodeId=id;
+      toggle.dataset.device=state.viewport.device;
+      toggle.setAttribute('aria-pressed',String(visible));
+      toggle.setAttribute('aria-label',`${visible?'Elrejtés':'Megjelenítés'}: ${node.name||node.type} (${state.viewport.device})`);
+      toggle.title=`${visible?'Elrejtés':'Megjelenítés'} ezen az eszközön: ${state.viewport.device}`;
+      toggle.textContent=visible?'◉':'○';
+      toggle.disabled=locked;
+      toggle.onclick=event=>{
+        event.preventDefault();event.stopPropagation();
+        if(command('element.visibility.set',{nodeId:id,device:state.viewport.device,visible:!visible})){renderCanvas();renderLayers();setStatus('Nem mentett módosítás');syncPublishControls()}
+      };
+      entry.append(toggle);
+    }
+    root.append(entry);
+    for(const child of node.children||[])walk(child,depth+1);
+  };
+  walk(current.rootId);
+}
 function syncPublishControls(){const current=page();const meta=current&&pages.find(x=>x.id===current.id);const published=Boolean(meta?.isPublished);const dirty=Boolean(state?.persistence?.dirty);const draftAhead=published&&(Boolean(meta?.hasUnpublishedChanges)||Number(meta?.publishedRevisionVersion??0)<Number(meta?.revision??0));const publishLabel=published?(dirty||draftAhead?'Újrapublikálás':'Publikálva'):'Publikálás';const publishDisabled=!current||(!dirty&&!draftAhead&&published);const publish=$('#publish'),unpublish=$('#unpublish'),mobilePublish=$('#mobilePublish'),mobileUnpublish=$('#mobileUnpublish');if(publish){publish.textContent=publishLabel;publish.disabled=publishDisabled}if(unpublish)unpublish.hidden=!published;if(mobilePublish){mobilePublish.textContent=publishLabel;mobilePublish.disabled=publishDisabled}if(mobileUnpublish)mobileUnpublish.hidden=!published}
 function renderRevisionPanel(){const root=$('#revisionList');if(!root)return;root.replaceChildren();if(!revisionHistory.length){const empty=document.createElement('div');empty.className='revision-empty';empty.textContent='Nincs korábbi revision.';root.append(empty);return}for(const rev of revisionHistory){const row=document.createElement('div');row.className='revision-row';const info=document.createElement('div');info.className='revision-info';const title=document.createElement('strong');title.textContent=`v${rev.version}`;const note=document.createElement('span');note.textContent=rev.note||'Editor mentés';const date=document.createElement('small');date.textContent=rev.created_at?new Date(rev.created_at).toLocaleString('hu-HU'):'—';info.append(title,note,date);const button=document.createElement('button');button.type='button';button.className='revision-restore';button.textContent='Visszaállítás';button.disabled=Number(rev.version)===Number(page()?.revision||0);button.title=button.disabled?'Ez az aktuális revision':'Ezt a revisiont állítja vissza új revisionként';button.onclick=()=>rollbackToRevision(Number(rev.version));row.append(info,button);root.append(row)}}
 function renderPageList(){const select=$('#pageSelect'),list=$('#pageList');select.replaceChildren();list.replaceChildren();const ordered=[...pages].sort((a,b)=>(a.sortOrder??0)-(b.sortOrder??0));pages=ordered;for(const item of pages){const option=document.createElement('option');option.value=item.id;option.textContent=(item.parentPageId?'↳ ':'')+(item.title||item.slug);option.selected=item.id===page()?.id;select.append(option);const row=document.createElement('div');row.className='page-row '+(item.id===page()?.id?'active':'');const selectButton=document.createElement('button');selectButton.type='button';selectButton.className='page-row-select';selectButton.innerHTML='<span class="page-icon">▧</span><strong>'+escapeHtml(item.title||item.slug)+'</strong><small class="page-meta">'+(item.isPublished?(item.hasUnpublishedChanges?'ÉLŐ · MÓDOSÍTOTT PISZKOZAT':'ÉLŐ'):'PISZKOZAT')+(item.parentPageId?' · Szülő: '+escapeHtml(pages.find(p=>p.id===item.parentPageId)?.title||'ismeretlen'):'')+'</small>';const paths=document.createElement('small');paths.className='page-meta page-paths';paths.textContent='Piszkozat: /p/'+item.slug+(item.isPublished&&item.publishedSlug?' · Élő: /p/'+item.publishedSlug:' · Nincs élő URL');selectButton.append(paths);selectButton.onclick=()=>loadPage(item.id).catch(showError);const upButton=document.createElement('button');upButton.type='button';upButton.className='page-order';upButton.textContent='↑';upButton.title='Oldal feljebb';upButton.setAttribute('aria-label','Oldal feljebb');upButton.disabled=(item.sortOrder??0)<=0;upButton.onclick=e=>{e.stopPropagation();movePage(item.id,-1).catch(showError)};const downButton=document.createElement('button');downButton.type='button';downButton.className='page-order';downButton.textContent='↓';downButton.title='Oldal lejjebb';downButton.setAttribute('aria-label','Oldal lejjebb');downButton.disabled=item===pages[pages.length-1];downButton.onclick=e=>{e.stopPropagation();movePage(item.id,1).catch(showError)};const editButton=document.createElement('button');editButton.type='button';editButton.className='page-edit';editButton.textContent='✎';editButton.title='Oldal beállításai: '+(item.title||item.slug);editButton.setAttribute('aria-label','Oldal beállításai: '+(item.title||item.slug));editButton.onclick=e=>{e.stopPropagation();editPageMeta(item.id).catch(showError)};const duplicateButton=document.createElement('button');duplicateButton.type='button';duplicateButton.className='page-duplicate';duplicateButton.textContent='⧉';duplicateButton.title='Oldal másolása: '+(item.title||item.slug);duplicateButton.setAttribute('aria-label','Oldal másolása: '+(item.title||item.slug));duplicateButton.onclick=e=>{e.stopPropagation();duplicatePage(item.id)};const deleteButton=document.createElement('button');deleteButton.type='button';deleteButton.className='page-delete';deleteButton.textContent='×';deleteButton.title='Oldal törlése: '+(item.title||item.slug);deleteButton.setAttribute('aria-label','Oldal törlése: '+(item.title||item.slug));deleteButton.onclick=e=>{e.stopPropagation();deletePage(item.id)};const actions=document.createElement('div');actions.className='page-row-actions';actions.setAttribute('aria-label','Oldal műveletei');const archiveButton=document.createElement('button');archiveButton.type='button';archiveButton.textContent='Archiválás';archiveButton.setAttribute('aria-label','Oldal archiválása: '+(item.title||item.slug));archiveButton.onclick=e=>{e.stopPropagation();changePageArchive(item.id,true).catch(showError)};const parentButton=document.createElement('button');parentButton.type='button';parentButton.textContent='Szülő';parentButton.title='Szülőoldal beállítása: '+(item.title||item.slug);parentButton.setAttribute('aria-label',parentButton.title);parentButton.onclick=e=>{e.stopPropagation();editPageParent(item.id).catch(showError)};actions.append(upButton,downButton,editButton,parentButton,duplicateButton,archiveButton,deleteButton);row.append(selectButton,actions);list.append(row)}if(archivedPages.length){const heading=document.createElement('h3');heading.textContent='Archivált oldalak';list.append(heading);for(const item of archivedPages){const row=document.createElement('div');row.className='page-row';const title=document.createElement('strong');title.textContent=item.title||item.slug;const restore=document.createElement('button');restore.type='button';restore.textContent='Visszaállítás piszkozatként';restore.setAttribute('aria-label','Oldal visszaállítása piszkozatként: '+(item.title||item.slug));restore.onclick=()=>changePageArchive(item.id,false).catch(showError);row.append(title,restore);list.append(row)}}}
