@@ -326,6 +326,31 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   await exerciseContentTextType(buttonId,'Gomb registry-szöveg');
   await exerciseContentTextType(linkId,'Link registry-szöveg');
 
+  // Plain content is literal user-authored text: intentional boundary
+  // whitespace and an empty value survive command, draft Save/reload, and
+  // the separate Publish action. The Inspector contract mirrors this route.
+  await select(itemId);await editor.locator('.inspector-tabs button').nth(1).click();
+  const literalText='  első sor\n második sor  ';
+  const literalInput=editor.locator('.plain-text-content[data-property-id="content.text"] textarea');
+  await literalInput.fill(literalText);
+  assert.equal(await literalInput.inputValue(),literalText);
+  assert.equal(await editor.locator(`.node[data-node-id="${itemId}"] > .node-content`).textContent(),literalText);
+  await saveContentProperty(false);
+  assert.equal(posts.at(-1).document.pages[pageId].nodes[itemId].props.text,literalText);
+  await editor.reload();await select(itemId);await editor.locator('.inspector-tabs button').nth(1).click();
+  assert.equal(await editor.locator('.plain-text-content[data-property-id="content.text"] textarea').inputValue(),literalText);
+  await saveContentProperty(true);await publicPage.reload();
+  assert.equal(await publicPage.locator(`[data-node-id="${itemId}"]`).textContent(),literalText);
+
+  await select(itemId);await editor.locator('.inspector-tabs button').nth(1).click();
+  await editor.locator('.plain-text-content[data-property-id="content.text"] textarea').fill('');
+  await saveContentProperty(false);
+  assert.equal(posts.at(-1).document.pages[pageId].nodes[itemId].props.text,'');
+  await editor.reload();await select(itemId);await editor.locator('.inspector-tabs button').nth(1).click();
+  assert.equal(await editor.locator('.plain-text-content[data-property-id="content.text"] textarea').inputValue(),'');
+  await saveContentProperty(true);await publicPage.reload();
+  assert.equal(await publicPage.locator(`[data-node-id="${itemId}"]`).textContent(),'');
+
   await select(buttonId);await editor.locator('.inspector-tabs button').nth(1).click();
   const hrefContract=editor.locator('.content-schema-field[data-property-id="content.href"]');
   assert.equal(await hrefContract.getAttribute('data-property-command'),'content.properties.set');

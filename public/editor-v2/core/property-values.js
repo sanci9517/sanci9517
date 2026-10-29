@@ -42,18 +42,19 @@ export function getInspectorValueContract(property) {
   else if(type==='asset') contract={kind:'asset-id',format:'uuid',allowsNone:true};
   else if(type==='color') contract={kind:'color',formats:Object.freeze(['hex','transparent']),hexDigitCounts:Object.freeze([3,4,6,8])};
   else if(type==='url') contract={kind:'url',policy:'validatedLinkHref',maxLength:2048};
-  else if(type==='text') contract={kind:'text',trimmed:true};
+  else if(type==='text') contract={kind:'text',...(property.id==='content.text'?{multiline:true}:{trimmed:true})};
   else contract={kind:'unsupported'};
+  const contentText=property.id==='content.text';
   return Object.freeze({
     ...contract,
     tokens,
-    ...(contract.kind==='unsupported'?{}:{required:true,trimmed:true}),
+    ...(contract.kind==='unsupported'?{}:{required:!contentText,trimmed:!contentText}),
   });
 }
 
 export function normalizeInspectorValue(property, input) {
   const type = property?.type;
-  const value = String(input ?? '').trim();
+  const value = property?.id==='content.text' ? String(input ?? '') : String(input ?? '').trim();
   const token=parseTokenReference(value);
   if(token){if(!compatibleTokens(property).includes(token))throw new Error('Ez a közös stílus nem használható ebben a mezőben.');return value}
   if(type==='asset'){
@@ -61,6 +62,7 @@ export function normalizeInspectorValue(property, input) {
     if(!MEDIA_ASSET_ID.test(value))throw new Error('Érvénytelen Médiatár-azonosító.');
     return value;
   }
+  if(property?.id==='content.text'&&!value)return value;
   if (!value) throw new Error('Az üres érték helyett használd az Öröklés visszaállítása gombot.');
   if (type === 'select') {
     if (!property.options?.includes(value)) throw new Error('Érvénytelen választási lehetőség.');

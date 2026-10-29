@@ -64,21 +64,28 @@ test('Inspector value contracts expose the validator bounds and enumerations wit
  const spacingTokens=['spacing.small','spacing.medium','spacing.large'];
  assert.deepEqual(byId('spacing.margin').valueContract,{kind:'box',maxParts:4,units:['px','%','vh','vw','rem','em'],allowsAuto:true,negativeMargin:true,negativePadding:false,tokens:spacingTokens,required:true,trimmed:true});
  assert.deepEqual(byId('spacing.padding').valueContract,{kind:'box',maxParts:4,units:['px','%','vh','vw','rem','em'],allowsAuto:false,negativeMargin:false,negativePadding:false,tokens:spacingTokens,required:true,trimmed:true});
+ assert.deepEqual(byId('content.text').valueContract,{kind:'text',multiline:true,tokens:[],required:false,trimmed:false});
  assert.deepEqual(byId('content.text').initialValue,{status:'NOT_DECLARED',source:{strategy:'node-props',keys:['text','content'],fallback:'node.name'}});
  assert.equal(Object.isFrozen(byId('typography.textAlign').valueContract.values),true);
  const nodeName=getElementInspectorContract('text').fields.find(field=>field.id==='advanced.nodeName');
  assert.equal(nodeName.command,'element.update');assert.equal(nodeName.key,'name');
 });
-test('every registered Inspector contract declares the shared required and trim rules enforced by normalization',()=>{
+test('Inspector value contracts match required, trimming, and literal content-text semantics',()=>{
  for(const property of listProperties()){
   const contract=getInspectorValueContract(property);
-  assert.equal(contract.required,true,property.id);
-  assert.equal(contract.trimmed,true,property.id);
-  assert.throws(()=>normalizeInspectorValue(property,'   '),undefined,property.id);
+  const literalContent=property.id==='content.text';
+  assert.equal(contract.required,!literalContent,property.id);
+  assert.equal(contract.trimmed,!literalContent,property.id);
+  if(literalContent){
+   assert.equal(contract.multiline,true);
+   assert.equal(normalizeInspectorValue(property,''),'');
+   assert.equal(normalizeInspectorValue(property,'   '),'   ');
+   assert.equal(normalizeInspectorValue(property,'  hello  '),'  hello  ');
+  }else assert.throws(()=>normalizeInspectorValue(property,'   '),undefined,property.id);
  }
  assert.equal(normalizeInspectorValue(getProperty('typography.textAlign'),' center '),'center');
  assert.equal(normalizeInspectorValue(getProperty('typography.fontSize'),' 24px '),'24px');
- assert.equal(normalizeInspectorValue(getProperty('content.text'),' hello '),'hello');
+ assert.equal(normalizeInspectorValue(getProperty('advanced.nodeName'),' hello '),'hello');
 });
 test('unknown, inherited object keys and planned form types never advertise working controls',()=>{
  for(const type of [null,undefined,{},'constructor','toString','__proto__','unknown','form','input']){
