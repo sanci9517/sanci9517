@@ -20,7 +20,13 @@
       "validation message id is referenced by aria-describedby",
       "invalid value exposes aria-invalid=true and visible guidance",
       "valid correction clears aria-invalid and stale guidance"
-    ]
+    ],
+    "full_editor_browser_regression": {
+      "command": "npm run test:editor:layout",
+      "result": "PASS 88/88; 0 failures",
+      "duration_ms": 1347691.88861,
+      "includes": "Inspector lifecycle and responsive type matrix, rich text, IME, media, structured content, editor shell accessibility and Save/Publish regression"
+    }
   },
   "data_safety": {
     "production_d1_migration": false,
@@ -32,7 +38,20 @@
     "prior_commit": "f2d60cf09356dc8dc9041c1d728164790ee880b4",
     "prior_commit_ci": "Not started; commit is still local",
     "git_transport": "git push to origin v2/foundation was blocked because the configured proxy at port 8080 refused connection",
-    "production_deployment": "Not performed; existing production deployment remains unchanged"
+    "production_deployment": "Not performed; existing production deployment remains unchanged",
+    "local_runtime_commit": "7b24f121",
+    "source_history": [
+      "f2d60cf09356dc8dc9041c1d728164790ee880b4",
+      "7b24f121"
+    ],
+    "local_checks": {
+      "editor_unit": "PASS 11/11 files",
+      "typecheck": "PASS",
+      "migration_safety_gate": "PASS",
+      "wrangler_dry_run": "PASS 161 assets; deployment not performed",
+      "canonical_plan_and_traceability": "PASS, 396 mappings",
+      "local_browser": "PASS 88/88 full Editor layout suite plus targeted 2/2 accessibility cases"
+    }
   },
   "acceptance_boundary": "This change improves the shared typed Inspector controls only; it does not certify full 77.44.7.A acceptance or physical-device acceptance."
 }
