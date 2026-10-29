@@ -162,6 +162,60 @@ test('palette insertion beside a locked container preserves its locked subtree',
   assert.deepEqual(errors,[]);
 });
 
+test('a nested locked ancestor disables descendant editing until the ancestor is unlocked',async t=>{
+  const seed=createEditorState(createDocument()),pageId=seed.document.activePageId,rootId=seed.document.pages[pageId].rootId;
+  execute(seed,{type:'element.add',payload:{type:NODE_TYPES.SECTION,parentId:rootId}});const lockedId=seed.selection.primaryId;
+  execute(seed,{type:'element.add',payload:{type:NODE_TYPES.SECTION,parentId:lockedId}});const innerId=seed.selection.primaryId;
+  execute(seed,{type:'element.add',payload:{type:NODE_TYPES.TEXT,parentId:innerId}});const textId=seed.selection.primaryId;
+  execute(seed,{type:'element.lock.set',payload:{nodeId:lockedId,locked:true}});
+  let draft=structuredClone(seed.document),version=1;
+  const root=resolve(import.meta.dirname,'../../public');
+  const server=createServer(async(req,res)=>{
+    const url=new URL(req.url,'http://localhost'),json=data=>{res.setHeader('content-type','application/json');res.end(JSON.stringify(data))};
+    if(url.pathname==='/api/admin/pages')return json({ok:true,data:[{id:pageId,slug:'locked-ancestor',title:'Locked ancestor',content:draft,revision:version,isPublished:false}]});
+    if(url.pathname==='/api/admin/editor'){
+      if(req.method==='GET')return json({ok:true,data:{page:{id:pageId,document:draft},revisions:[{id:'rev-'+version,version}]}});
+      let body='';for await(const chunk of req)body+=chunk;const request=JSON.parse(body);draft=structuredClone(request.document);version++;
+      return json({ok:true,data:{pageId,version,revisionId:'rev-'+version,published:false}});
+    }
+    if(url.pathname==='/api/public/pages')return json({ok:false});
+    if(url.pathname==='/api/public/navigation')return json({ok:true,data:{items:[]}});
+    if(url.pathname==='/api/integrations/twitch/connection')return json({ok:true,data:{connected:false}});
+    if(url.pathname.startsWith('/api/'))return json({ok:true,data:{siteName:'Test'}});
+    const file=resolve(root,'.'+url.pathname);if(!file.startsWith(root+'/'))return res.writeHead(403).end();
+    try{res.setHeader('content-type',{'.html':'text/html','.js':'text/javascript','.css':'text/css'}[extname(file)]||'application/octet-stream');res.end(await readFile(file))}catch{return res.writeHead(404).end()}
+  });
+  await new Promise(done=>server.listen(0,'127.0.0.1',done));
+  const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||(existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined),args:['--no-sandbox']});
+  t.after(async()=>{await browser.close();await new Promise(done=>server.close(done))});
+  const tab=await browser.newPage({viewport:{width:1366,height:900}});tab.setDefaultTimeout(7000);const errors=[];tab.on('pageerror',error=>errors.push(error.message));
+  await tab.goto(`http://127.0.0.1:${server.address().port}/editor-v2/index.html?pageId=${pageId}`);await tab.locator(`.node[data-node-id="${textId}"]`).waitFor();
+  await tab.locator('.rail-btn[data-tab="layers"]').click();
+  const outer=tab.locator(`.layer-row[data-node-id="${lockedId}"]`),inner=tab.locator(`.layer-row[data-node-id="${innerId}"]`),leaf=tab.locator(`.layer-row[data-node-id="${textId}"]`);
+  assert.equal(await inner.evaluate(row=>row.draggable),false,'all descendants of a locked node are immovable');
+  assert.equal(await leaf.evaluate(row=>row.draggable),false,'nested descendants inherit the locked state');
+  assert.equal(await leaf.evaluate(row=>row.classList.contains('locked-ancestor')),true,'the layer tree identifies inherited lock state');
+  assert.equal(await tab.locator(`.layer-visibility-toggle[data-node-id="${textId}"]`).isDisabled(),true,'visibility cannot be changed below a locked ancestor');
+  await leaf.click();await tab.locator('#openInspector').click();
+  assert.match(await tab.locator('.inspector-locked-note').textContent(),/zárolt tároló része/i);
+  assert.equal(await tab.getByRole('textbox',{name:'Elem neve',exact:true}).isDisabled(),true,'Inspector mutation controls are read-only');
+  assert.equal(await tab.locator('.inspector-lock-toggle').isDisabled(),true,'a child cannot bypass its locked ancestor by changing its own lock');
+  assert.equal(await tab.locator('.danger-action').isDisabled(),true,'a nested descendant cannot be deleted');
+  assert.equal(await tab.locator(`.node[data-node-id="${textId}"] .canvas-edit-text`).count(),0,'Canvas editing affordances are hidden');
+  await tab.locator('.rail-btn[data-tab="elements"]').click();await tab.locator('.element-group-title').filter({hasText:'Szöveg'}).click();await tab.locator('#elementList .element').filter({hasText:'Szöveg'}).click();
+  const rootChildren=await tab.locator(`.page-canvas .node[data-node-id="${rootId}"]`).evaluate(root=>[...root.children].filter(child=>child.matches('.node')).map(child=>child.dataset.nodeId));
+  assert.equal(rootChildren.length,2,'the palette inserts beside the complete locked ancestor subtree');assert.equal(rootChildren[0],lockedId);
+  assert.deepEqual(draft.pages[pageId].nodes[lockedId].children,[innerId],'palette insertion preserves all descendants of the locked ancestor');
+  await tab.locator('.rail-btn[data-tab="layers"]').click();
+  await outer.click();
+  assert.equal(await tab.locator('.inspector-lock-toggle').isDisabled(),false,'the ancestor can be unlocked directly');
+  await tab.locator('.inspector-lock-toggle').uncheck();
+  assert.equal(await leaf.evaluate(row=>row.draggable),true,'unlocking the ancestor restores descendant hierarchy actions');
+  assert.equal(await leaf.evaluate(row=>row.classList.contains('locked-ancestor')),false);
+  assert.equal(await tab.locator(`.layer-visibility-toggle[data-node-id="${textId}"]`).isDisabled(),false,'unlocking the ancestor restores descendant visibility actions');
+  assert.deepEqual(errors,[]);
+});
+
 test('layer visibility control follows the responsive command and keeps Save separate from Publish',async t=>{
   const seed=createEditorState(createDocument()),pageId=seed.document.activePageId,rootId=seed.document.pages[pageId].rootId;
   execute(seed,{type:'element.add',payload:{type:NODE_TYPES.SECTION,parentId:rootId}});const sectionId=seed.selection.primaryId;

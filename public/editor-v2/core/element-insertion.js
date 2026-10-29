@@ -1,5 +1,16 @@
 import {canContain,getNode} from './schema.js';
 
+function hasLockedAncestor(page,node){
+  let ancestorId=node?.parentId;
+  while(ancestorId){
+    const ancestor=getNode(page,ancestorId);
+    if(!ancestor)return false;
+    if(ancestor.locked)return true;
+    ancestorId=ancestor.parentId;
+  }
+  return false;
+}
+
 /**
  * Resolve a palette insertion point from the current selection.
  * Containers receive new children at their end; adding beside a selected leaf
@@ -10,7 +21,7 @@ export function resolveElementInsertion(page,selectedNodeId,childType){
   if(!root)return null;
 
   const selected=selectedNodeId?getNode(page,selectedNodeId):null;
-  if(selected&&!selected.locked&&canContain(selected,childType)){
+  if(selected&&!selected.locked&&!hasLockedAncestor(page,selected)&&canContain(selected,childType)){
     return {parentId:selected.id,index:selected.children.length};
   }
 
@@ -22,7 +33,7 @@ export function resolveElementInsertion(page,selectedNodeId,childType){
   while(anchor?.parentId){
     const parent=getNode(page,anchor.parentId);
     if(!parent)break;
-    if(!parent.locked&&canContain(parent,childType)){
+    if(!parent.locked&&!hasLockedAncestor(page,parent)&&canContain(parent,childType)){
       const index=parent.children.indexOf(anchor.id);
       return {parentId:parent.id,index:index<0?parent.children.length:index+1};
     }

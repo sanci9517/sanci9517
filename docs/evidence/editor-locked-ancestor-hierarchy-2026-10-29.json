@@ -1,0 +1,92 @@
+{
+  "schema_version": 1,
+  "kind": "editor-locked-ancestor-hierarchy-local-validation-not-production-acceptance",
+  "date": "2026-10-29",
+  "plan_items": [
+    "EDT-014",
+    "77.44.7.A"
+  ],
+  "status": "LOCAL_VALIDATION_PASS_RELEASE_PENDING",
+  "observed_gap": {
+    "trigger": "A nested node was edited or moved while an unlocked intermediate container sat below a locked ancestor.",
+    "before": "Lock checks stopped at the selected node and its immediate parent, allowing deeper descendants to bypass the ancestor lock.",
+    "impact": "Canvas and hierarchy commands could mutate content inside a locked subtree or move it across the lock boundary."
+  },
+  "implementation": {
+    "files": [
+      "public/editor-v2/app.js",
+      "public/editor-v2/core/commands.js",
+      "public/editor-v2/core/element-insertion.js"
+    ],
+    "behavior": "The command layer rejects mutations below any locked ancestor. Palette insertion resolves outside the whole locked subtree. Canvas drag/resize, text surfaces, Inspector controls, layer drag and visibility actions follow inherited lock state.",
+    "atomicity": "Rejected command cases preserve the Page Model and Undo history.",
+    "name_sync": "Inspector node rename is reflected by the Layers tree after Save and Publish.",
+    "dependencies_added": false
+  },
+  "open_source_review": {
+    "reference": "GrapesJS collection-based component hierarchy and locking patterns reviewed in the earlier 77.44.7.A insertion slice.",
+    "license": "BSD-3-Clause",
+    "decision": "No third-party code or dependency is needed; ancestor authorization must be enforced by this project’s canonical Page Model commands and UI.",
+    "code_copied": false,
+    "dependency_added": false
+  },
+  "checks": {
+    "editor_unit": {
+      "command": "npm run test:editor",
+      "result": "PASS 11/11 files"
+    },
+    "typecheck": {
+      "command": "npm run typecheck",
+      "result": "PASS"
+    },
+    "browser": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-element-insertion.test.js tests/browser/editor-general-fields-ime.test.js",
+      "result": "PASS 7/7",
+      "viewport_px": [
+        390,
+        1366
+      ],
+      "coverage": [
+        "nested locked ancestor inherited UI lock and safe Palette insertion",
+        "ancestor unlock restores layer dragging and visibility",
+        "desktop and mobile Inspector name/Save/Publish path reflected in Layers",
+        "existing touch hierarchy/visibility browser regression"
+      ]
+    },
+    "migration_safety_gate": "PASS; deploy:safe does not apply D1 migrations",
+    "wrangler_dry_run": "PASS; Wrangler 4.130.0, 161 assets, 296.90 KiB / 67.79 KiB gzip",
+    "canonical_plan": "PASS; 13-file master, acceptance not certified",
+    "active_plan_point": "PASS; next 77.44.7.A",
+    "source_traceability": "PASS; 396 mappings rebuilt and validated",
+    "git_diff_check": "PASS"
+  },
+  "production_preflight": {
+    "d1_query": "SELECT name FROM d1_migrations ORDER BY name",
+    "migration_rows": 34,
+    "latest_migration": "0028_media_archive.sql",
+    "changed_db": false,
+    "rows_written": 0,
+    "migration_applied": false,
+    "r2_changed": false,
+    "cloudflare_build_minutes_limit_reached": false,
+    "current_worker_deployment": "caa4001b-d807-4797-b451-1d1ca50b822c",
+    "current_worker_version": "1db8fb6a-f060-4afc-b7b3-3ede48de8901",
+    "current_worker_number": 3730,
+    "current_traffic_percent": 100
+  },
+  "release": {
+    "target_branch": "v2/foundation",
+    "verified_remote_base": "69b312f46f5d11941990c8c082ca34bd02a936ad",
+    "runtime_commit": null,
+    "cloudflare_build": null,
+    "deployment": null,
+    "production_smoke": "PENDING",
+    "live_asset_hashes": "PENDING"
+  },
+  "acceptance": {
+    "edt_014": "IN_PROGRESS",
+    "plan_point_77_44_7_a": "OPEN",
+    "layer_tree_inline_rename": "OPEN; Inspector rename-to-layer-tree sync is verified",
+    "physical_device_acceptance": "OPEN"
+  }
+}

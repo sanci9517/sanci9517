@@ -134,6 +134,9 @@ for(const width of [390,1366])test(`general Inspector name and Schedule empty te
  await save(true);await viewer.reload();assert.equal(await viewer.locator('.visual-schedule-empty').textContent(),'Végleges üres adásrend','Publish updates the public empty text');
  assert.equal(await viewer.locator('.visual-schedule').evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(255, 215, 0)','Publish exposes the saved Schedule design value publicly');
  assert.equal(await viewer.getByText('Végleges belső név',{exact:true}).count(),0,'internal node names are not public content');
+ if(await editor.locator('.rail-btn[data-tab="layers"]').isVisible())await editor.locator('.rail-btn[data-tab="layers"]').click();else await editor.evaluate(()=>{window.sanciEditor.showLeftTab('layers');window.sanciEditor.openPanel('left')});
+ assert.equal(await editor.locator(`.layer-row[data-node-id="${id}"] strong`).textContent(),'Végleges belső név','Inspector rename is reflected in the Layers tree after Save and Publish');
+ if(width<=850)await editor.evaluate(()=>window.sanciEditor.openPanel('right'));
  await editor.locator('.inspector-lock-toggle').check();assert.equal(await name().isEditable(),false);assert.equal(await empty().isEditable(),false);
  await editor.locator('.inspector-tabs button').nth(1).click();assert.equal(await empty().isEditable(),false);
  assert.deepEqual(errors,[]);assert.deepEqual(dialogs,[]);

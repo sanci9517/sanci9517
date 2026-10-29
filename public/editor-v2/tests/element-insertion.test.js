@@ -119,3 +119,42 @@ test('hierarchy reparent and reorder reject a locked source node atomically',()=
     assert.equal(state.history.past.length,historyBefore,`${type} rejection must not add history`);
   }
 });
+
+test('a locked ancestor protects nested descendants from mutation and hierarchy escape',()=>{
+  const state=createEditorState(createDocument()),rootId=activePage(state).rootId;
+  execute(state,{type:'element.add',payload:{type:NODE_TYPES.SECTION,parentId:rootId}});const lockedAncestorId=state.selection.primaryId;
+  execute(state,{type:'element.add',payload:{type:NODE_TYPES.SECTION,parentId:lockedAncestorId}});const innerId=state.selection.primaryId;
+  execute(state,{type:'element.add',payload:{type:NODE_TYPES.TEXT,parentId:innerId}});const firstId=state.selection.primaryId;
+  execute(state,{type:'element.add',payload:{type:NODE_TYPES.TEXT,parentId:innerId}});const secondId=state.selection.primaryId;
+  execute(state,{type:'hierarchy.group',payload:{nodeIds:[firstId,secondId]}});const groupId=state.selection.primaryId;
+  execute(state,{type:'element.add',payload:{type:NODE_TYPES.BUTTON,parentId:rootId}});const externalId=state.selection.primaryId;
+  execute(state,{type:'element.lock.set',payload:{nodeId:lockedAncestorId,locked:true}});
+
+  const cases=[
+    ['edit a nested descendant',()=>({type:'element.update',payload:{nodeId:firstId,patch:{name:'Bypass'}}})],
+    ['change a nested descendant lock',()=>({type:'element.lock.set',payload:{nodeId:firstId,locked:true}})],
+    ['change nested visibility',()=>({type:'element.visibility.set',payload:{nodeId:firstId,device:'desktop',visible:false}})],
+    ['delete a nested descendant',()=>({type:'element.delete',payload:{nodeId:firstId}})],
+    ['reparent a nested descendant out',()=>({type:'hierarchy.reparent',payload:{nodeId:firstId,parentId:rootId}})],
+    ['reorder a nested descendant',()=>({type:'hierarchy.reorder',payload:{nodeId:firstId,index:1}})],
+    ['add beneath an unlocked nested container',()=>({type:'element.add',payload:{type:NODE_TYPES.TEXT,parentId:innerId}})],
+    ['reparent into an unlocked nested container',()=>({type:'hierarchy.reparent',payload:{nodeId:externalId,parentId:innerId}})],
+    ['duplicate into an unlocked nested container',()=>({type:'element.duplicate',payload:{nodeId:externalId,parentId:innerId}})],
+    ['group nested descendants',()=>({type:'hierarchy.group',payload:{nodeIds:[firstId,secondId]}})],
+    ['ungroup a nested group',()=>({type:'hierarchy.ungroup',payload:{nodeId:groupId}})]
+  ];
+
+  for(const [label,actionFactory] of cases){
+    const before=structuredClone(state.document),historyBefore=state.history.past.length;
+    assert.throws(()=>execute(state,actionFactory()),/locked/i,label);
+    assert.deepEqual(state.document,before,`${label} must preserve the Page Model`);
+    assert.equal(state.history.past.length,historyBefore,`${label} must not add an undo entry`);
+  }
+
+  const insertion=resolveElementInsertion(activePage(state),firstId,NODE_TYPES.TEXT);
+  assert.deepEqual(insertion,{parentId:rootId,index:1},'palette insertion beside a descendant must bubble after the entire locked subtree');
+  execute(state,{type:'element.add',payload:{type:NODE_TYPES.TEXT,...insertion}});
+  const insertedId=state.selection.primaryId;
+  assert.deepEqual(activePage(state).nodes[lockedAncestorId].children,[innerId],'safe palette insertion leaves the locked ancestor subtree unchanged');
+  assert.deepEqual(activePage(state).nodes[rootId].children,[lockedAncestorId,insertedId,externalId],'safe palette insertion stays adjacent to the locked subtree');
+});
