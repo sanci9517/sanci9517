@@ -12,7 +12,7 @@ import {plainTextToRichText,renderRichTextEditor,richTextEditorToDocument,restor
 import {renderSchedulePreview} from './core/schedule-preview.js';
 import {normalizeScheduleConfig,SCHEDULE_MODES,SCHEDULE_ORDERS,SCHEDULE_STATUSES,SCHEDULE_EMPTY_TEXT_MAX,SCHEDULE_LIMIT_MAX} from './core/schedule-schema.js';
 import {listPropertyGroups,listProperties,getProperty} from './core/property-registry.js?v=20261025-content-property-route-contract';
-import {renderPropertyInput} from './ui/property-controls.js?v=20261028-inspector-dimension-contract';
+import {renderPropertyInput} from './ui/property-controls.js?v=20261029-inspector-help-disclosure';
 import {getInspectorValueContract,normalizeInspectorValue} from './core/property-values.js';
 import {describeResponsiveOrigin} from './ui/responsive-origin.js';
 import {responsiveGroupResetActions} from './ui/responsive-group-reset.js';

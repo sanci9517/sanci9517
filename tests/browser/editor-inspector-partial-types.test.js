@@ -100,6 +100,11 @@ test('every PARTIAL type renders Inspector routes and preserves Save versus Publ
       assert.equal(field.command,property.command,`${type}/${field.id}: actual command route`);
       assert.equal(field.key,property.key,`${type}/${field.id}: actual Page Model route`);
     }
+    const helpDisclosures=await inspector.locator('.typed-inspector-field').evaluateAll(fields=>fields.map(field=>{
+      const toggle=field.querySelector('.property-info-toggle'),help=field.querySelector('.property-help');
+      return {property:field.dataset.propertyId,controls:toggle?.getAttribute('aria-controls'),helpId:help?.id,expanded:toggle?.getAttribute('aria-expanded'),hidden:help?.hidden};
+    }));
+    assert.deepEqual(helpDisclosures.map(({controls,helpId,expanded,hidden})=>({controls,helpId,expanded,hidden})),helpDisclosures.map(({helpId})=>({controls:helpId,helpId,expanded:'false',hidden:true})),`${type}: every Inspector explanation starts collapsed and points to its help text`);
     const nameField=inspector.locator('.field[data-property-id="advanced.nodeName"]');
     assert.equal(await nameField.getAttribute('data-property-command'),contract.fields.find(field=>field.id==='advanced.nodeName').command,`${type}: node name command`);
     assert.equal(await nameField.getAttribute('data-property-key'),contract.fields.find(field=>field.id==='advanced.nodeName').key,`${type}: node name key`);

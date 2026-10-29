@@ -1,0 +1,43 @@
+{
+  "plan_item": "77.44.7.A",
+  "status": "LOCAL_ONLY_NOT_RELEASED",
+  "change": "Connect the common Inspector help disclosure button to its unique help text using aria-controls and a stable per-field id.",
+  "runtime_files": [
+    "public/editor-v2/ui/property-controls.js",
+    "public/editor-v2/app.js"
+  ],
+  "browser_test": {
+    "command": "node --test tests/browser/editor-inspector-lifecycle.test.js",
+    "result": "PASS 1/1",
+    "duration_seconds": 252.5,
+    "assertions": [
+      "The explanation starts collapsed.",
+      "aria-controls identifies the corresponding help element.",
+      "Opening the disclosure exposes the help text and sets aria-expanded=true.",
+      "The tested selection, undo, save/reload, separate publish, and public parity lifecycle remains passing."
+    ]
+  },
+  "all_partial_types_test": {
+    "command": "node --test tests/browser/editor-inspector-partial-types.test.js",
+    "result": "PASS 1/1",
+    "duration_seconds": 463.0,
+    "coverage": "All 44 PARTIAL element types; every visible typed Inspector field's help id, aria-controls relationship, and initial collapsed state, alongside existing responsive, state, draft Save, reload, separate Publish, and public rendering checks."
+  },
+  "other_checks": {
+    "typecheck": "PASS",
+    "editor_unit": "PASS 11/11 files",
+    "schedule": "PASS 1/1",
+    "canonical_plan": "PASS",
+    "active_plan_point": "PASS; 77.44.7.A remains NOT CERTIFIED",
+    "source_traceability": "PASS 396/396",
+    "git_diff_check": "PASS"
+  },
+  "release": {
+    "pushed": false,
+    "github_actions_started": false,
+    "cloudflare_build_or_deployment": false,
+    "production_changes": false,
+    "reason": "Zero-cost constraint; GitHub Actions overage and Cloudflare usage are not currently verified as free."
+  },
+  "acceptance_boundary": "This proves the shared help disclosure relationship and its regression path only. Full 77.44.7.A, all-type/property acceptance, production acceptance, and physical device acceptance remain open."
+}

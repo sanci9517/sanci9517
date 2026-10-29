@@ -54,8 +54,10 @@ export function renderPropertyInput(property, label, current, onChange, {
   info.textContent = 'i';
   info.setAttribute('aria-label', label + ' magyarázata');
   info.setAttribute('aria-expanded', 'false');
+  info.setAttribute('aria-controls',controlId+'-help');
   const help = document.createElement('small');
   help.className = 'property-help';
+  help.id=controlId+'-help';
   help.hidden = true;
   help.textContent = property.help || describeProperty(property);
   info.onclick = () => {

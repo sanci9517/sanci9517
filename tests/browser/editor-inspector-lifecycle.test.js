@@ -230,8 +230,13 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   assert.equal(await editor.locator('.geometry-presets button').first().isDisabled(),true);
   assert.equal(await editor.locator('.inspector-actions .danger-action').isDisabled(),true);
   assert.equal(await editor.getByLabel('Beállítás keresése').isEnabled(),true);
-  await field('background.color').locator('.property-info-toggle').click();
-  assert.equal(await field('background.color').locator('.property-info-toggle').getAttribute('aria-expanded'),'true');
+  const colorHelpToggle=field('background.color').locator('.property-info-toggle');
+  const colorHelp=field('background.color').locator('.property-help');
+  assert.equal(await colorHelpToggle.getAttribute('aria-controls'),await colorHelp.getAttribute('id'),'the explanation disclosure points to its help text');
+  assert.equal(await colorHelp.isVisible(),false,'explanation starts collapsed');
+  await colorHelpToggle.click();
+  assert.equal(await colorHelpToggle.getAttribute('aria-expanded'),'true');
+  assert.equal(await colorHelp.isVisible(),true,'expanded explanation is available to keyboard and assistive technology');
   assert.deepEqual(await presetStyle(),{paddingTop:'16px',paddingRight:'24px',backgroundColor:'rgb(37, 99, 235)',fontSize:'32px'});
   await editor.locator('.inspector-tabs button').nth(1).click();
   assert.match(await editor.locator('.inspector-locked-note').textContent(),/Zárolt elem/);
