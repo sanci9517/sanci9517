@@ -91,7 +91,7 @@
   ],
   "acceptance": "THIS LOCKED-PALETTE-INSERTION SLICE TESTED; EDT-014 AND 77.44.7.A NOT CERTIFIED",
   "follow_up_hierarchy_lock_guards": {
-    "status": "LOCALLY_TESTED_RELEASE_PENDING",
+    "status": "TESTED_AND_DEPLOYED",
     "files": [
       "public/editor-v2/core/commands.js",
       "public/editor-v2/tests/element-insertion.test.js",
@@ -137,9 +137,13 @@
     "worker_version_number": 3727,
     "traffic_percent": 100,
     "github_actions": "Skipped by [skip ci] to avoid unnecessary GitHub Actions usage; Cloudflare's exact-commit build was explicitly triggered through its API and verified successful.",
-    "post_deploy_http_smoke": "UNVERIFIED: production workers.dev health/page/asset requests return HTTP 403 from the environment proxy.",
+    "post_deploy_http_smoke": {
+      "status": "UNVERIFIED",
+      "paths": ["/api/health", "/api/db-health", "/editor-v2/", "/editor-v2/core/commands.js"],
+      "observed": "HTTP 403 on all paths from the execution environment proxy; no origin response was observed."
+    },
     "changed_asset_local_sha256": "7ab4541b221d4efd5a77e62f89b6a1df245d261e4da2f2879d78d0f1bd2882eb",
     "remote_asset_hash_match": "UNVERIFIED because production HTTP requests are blocked by the proxy",
-    "next": "Continue EDT-014 lock/unlock UI and hierarchy acceptance, then resolve visibility preview/public-renderer policy. Full 77.44.7.A remains open."
+    "next": "Continue the remaining EDT-014 lock/unlock UI, drag/reparent interaction and visibility/public-renderer acceptance. Full 77.44.7.A remains open."
   }
 }

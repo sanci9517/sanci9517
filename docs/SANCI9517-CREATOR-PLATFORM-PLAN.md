@@ -12,7 +12,7 @@
 
 **Elsőbbség:** minden más roadmap-időzítés, automatizációs vagy AI-terv, build/deploy rutin és korábbi „költségcél” megfogalmazás ezzel a szabállyal összhangban értelmezendő. Bármely esetleges díj jóváhagyása csak a felhasználó külön, későbbi döntésével történhet.
 
-## AKTUÁLIS VÉGREHAJTÁSI ÁLLAPOT — 2026-10-29, éles Worker 3726 / `8c6e9ce2`; lokális EDT-014 folytatás
+## AKTUÁLIS VÉGREHAJTÁSI ÁLLAPOT — 2026-10-29, éles Worker 3727 / `b912c998`; EDT-014 folytatás
 
 Ez az irányadó folytatási állapot; az alatta és a 12 részben lévő korábbi checkpointok történeti bizonyítékok. Nem új roadmap. A 77.3 későbbi fázistáblája és a 77.44.7 blokksorrendje az irányadó; a régi F1.1/63.50.92 kurzorok és a 39. fejezet eltérő fázisnevei nem következő feladatok.
 
