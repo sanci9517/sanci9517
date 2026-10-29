@@ -21,18 +21,30 @@ export function renderPropertyInput(property, label, current, onChange, {
   title.textContent = label;
   const controlId = 'prop-' + property.id.replaceAll('.', '-') + '-' + Math.random().toString(36).slice(2, 7);
   title.htmlFor = controlId;
+  const contract=getInspectorValueContract(property);
   const error = document.createElement('small');
   error.className = 'property-validation';
+  error.id=controlId+'-validation';
   error.setAttribute('role', 'status');
   error.setAttribute('aria-live', 'polite');
+  const validationControls=[];
+  const associateValidation=control=>{
+    control.setAttribute('aria-describedby',error.id);
+    control.setAttribute('aria-required',String(contract.required===true));
+    control.setAttribute('aria-invalid','false');
+    validationControls.push(control);
+    return control;
+  };
   const save = raw => {
     try {
       const value = normalizeInspectorValue(property, raw);
       if(onChange(value)===false)throw new Error('A módosítás nem alkalmazható.');
       error.textContent = '';
+      for(const control of validationControls)control.setAttribute('aria-invalid','false');
       return true;
     } catch (e) {
       error.textContent = e instanceof Error ? e.message : 'Érvénytelen érték';
+      for(const control of validationControls)control.setAttribute('aria-invalid','true');
       return false;
     }
   };
@@ -55,19 +67,20 @@ export function renderPropertyInput(property, label, current, onChange, {
   let tokenPicker=null;
   let commitColorPreset=null;
   if(availableTokens.length){
-    const picker=document.createElement('select');picker.className='property-token-picker';picker.setAttribute('aria-label',label+' közös stílusa');
+    const picker=associateValidation(document.createElement('select'));picker.className='property-token-picker';picker.setAttribute('aria-label',label+' közös stílusa');
     for(const [value,text] of [['','Egyedi érték'],...availableTokens.map(id=>[id,TOKEN_SPECS[id].label])]){const option=document.createElement('option');option.value=value;option.textContent=text;picker.append(option)}
     picker.value=binding||'';picker.onchange=()=>save(picker.value?tokenReference(picker.value):current);tokenPicker=picker;
     if(binding){const note=document.createElement('small');note.className='content-field-help';note.textContent='A Brand Kit közös értékét követi. Egyedi értékre váltva leválaszthatod.';wrap.append(note)}
   }
   const type = property.type;
   if (type === 'asset') {
-    wrap.append(mediaAssetPicker(current==='none'?'':current||'',id=>save(id||'none'),{disabled:Boolean(property.disabled)}));
+    const picker=mediaAssetPicker(current==='none'?'':current||'',id=>save(id||'none'),{disabled:Boolean(property.disabled)});
+    wrap.append(picker);
     wrap.append(error);
     return wrap;
   }
   if (type === 'select' || type === 'font' || type === 'shadow') {
-    const select = document.createElement('select');
+    const select = associateValidation(document.createElement('select'));
     select.id = controlId;
     const choices = type === 'font' ? INSPECTOR_FONTS : type === 'shadow' ? INSPECTOR_SHADOWS : property.options;
     for (const value of ['', ...choices]) {
@@ -88,11 +101,11 @@ export function renderPropertyInput(property, label, current, onChange, {
   } else if (type === 'color') {
     const controls = document.createElement('div');
     controls.className = 'typed-color-controls';
-    const picker = document.createElement('input');
+    const picker = associateValidation(document.createElement('input'));
     picker.type = 'color';
     picker.id = controlId;
     picker.setAttribute('aria-label', label + ' színválasztó');
-    const hex = document.createElement('input');
+    const hex = associateValidation(document.createElement('input'));
     hex.type = 'text';
     hex.value = current || '';
     hex.placeholder = '#RRGGBB vagy transparent';
@@ -157,11 +170,11 @@ export function renderPropertyInput(property, label, current, onChange, {
       sideLabel.textContent=side;
       const controls=document.createElement('div');
       controls.className='typed-box-entry';
-      const number=document.createElement('input');
+      const number=associateValidation(document.createElement('input'));
       number.type='number';number.inputMode='decimal';number.step='any';
       if(!isMargin)number.min='0';
       number.setAttribute('aria-label',label+' – '+side+' értéke');
-      const unit=document.createElement('select');
+      const unit=associateValidation(document.createElement('select'));
       unit.setAttribute('aria-label',label+' – '+side+' mértékegysége');
       for(const choice of [...boxUnits,...(isMargin?['auto']:[])]) {
         const option=document.createElement('option');
@@ -201,13 +214,13 @@ export function renderPropertyInput(property, label, current, onChange, {
     const contract=getInspectorValueContract(property);
     const match=String(current??'').trim().match(/^(-?(?:\d+(?:\.\d*)?|\.\d+))([a-z%]*)$/i);
     const special=String(current??'').trim()==='auto'&&property.units?.includes('auto');
-    const number=document.createElement('input');number.type='number';number.inputMode='decimal';
+    const number=associateValidation(document.createElement('input'));number.type='number';number.inputMode='decimal';
     number.step=String(contract.step??'any');
     if(Number.isFinite(contract.min))number.min=String(contract.min);
     else if(contract.negative===false)number.min='0';
     if(Number.isFinite(contract.max))number.max=String(contract.max);
     number.value=special?'':match?.[1]??'';number.setAttribute('aria-label',label+' értéke');
-    const unit=document.createElement('select');unit.setAttribute('aria-label',label+' mértékegysége');
+    const unit=associateValidation(document.createElement('select'));unit.setAttribute('aria-label',label+' mértékegysége');
     const blank=document.createElement('option');blank.value='';blank.textContent='Egység';unit.append(blank);
     for(const choice of property.units||[]){if(choice==='0')continue;const option=document.createElement('option');option.value=choice;option.textContent=choice==='auto'?'Auto':choice;unit.append(option)}
     if(special)unit.value='auto';
@@ -222,13 +235,13 @@ export function renderPropertyInput(property, label, current, onChange, {
   } else {
     const contract=getInspectorValueContract(property);
     if(contract.multiline){
-      const textarea=document.createElement('textarea');
+      const textarea=associateValidation(document.createElement('textarea'));
       textarea.id=controlId;textarea.rows=4;textarea.value=current??'';
       textarea.className='typed-inspector-textarea';
       textarea.onchange=()=>save(textarea.value);
       wrap.append(textarea);
     }else{
-      const input = document.createElement('input');
+      const input = associateValidation(document.createElement('input'));
       input.id = controlId;
       input.type = type === 'number' ? 'number' : 'text';
       input.value = current ?? '';

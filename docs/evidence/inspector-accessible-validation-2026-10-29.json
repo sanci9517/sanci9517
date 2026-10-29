@@ -1,0 +1,38 @@
+{
+  "plan_item": "77.44.7.A",
+  "scope": "Expose typed Inspector value requirements and validation feedback to assistive technology.",
+  "verified_gap": {
+    "source": "public/editor-v2/ui/property-controls.js",
+    "issue": "Typed Inspector controls displayed a live validation message but did not associate the message with the control or expose the registry value contract required state.",
+    "impact": "Keyboard and screen-reader users could receive an error without a programmatic relationship to the affected value; required semantics were absent from the control."
+  },
+  "implementation": {
+    "file": "public/editor-v2/ui/property-controls.js",
+    "change": "Every typed value control now references its validation message with aria-describedby, exposes aria-required from the shared value contract, and toggles aria-invalid as validation fails and clears.",
+    "constraints": "No native form submission behavior changed; optional asset-picker search/action controls are excluded.",
+    "dependencies": "No dependency added; native WAI-ARIA attributes."
+  },
+  "acceptance": {
+    "test": "tests/browser/editor-general-fields-ime.test.js",
+    "result": "PASS 2/2 Chromium scenarios at 390px and 1366px",
+    "checks": [
+      "required state follows the registry contract",
+      "validation message id is referenced by aria-describedby",
+      "invalid value exposes aria-invalid=true and visible guidance",
+      "valid correction clears aria-invalid and stale guidance"
+    ]
+  },
+  "data_safety": {
+    "production_d1_migration": false,
+    "production_data_write": false,
+    "r2_mutation_or_deletion": false
+  },
+  "release": {
+    "status": "PENDING_PUSH_AND_CI",
+    "prior_commit": "f2d60cf09356dc8dc9041c1d728164790ee880b4",
+    "prior_commit_ci": "Not started; commit is still local",
+    "git_transport": "git push to origin v2/foundation was blocked because the configured proxy at port 8080 refused connection",
+    "production_deployment": "Not performed; existing production deployment remains unchanged"
+  },
+  "acceptance_boundary": "This change improves the shared typed Inspector controls only; it does not certify full 77.44.7.A acceptance or physical-device acceptance."
+}
