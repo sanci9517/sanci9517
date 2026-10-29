@@ -89,5 +89,38 @@
     "Complete drag/reparent and hierarchy behavior under locks.",
     "Resolve and verify hide/show preview and published renderer policy."
   ],
-  "acceptance": "THIS LOCKED-PALETTE-INSERTION SLICE TESTED; EDT-014 AND 77.44.7.A NOT CERTIFIED"
+  "acceptance": "THIS LOCKED-PALETTE-INSERTION SLICE TESTED; EDT-014 AND 77.44.7.A NOT CERTIFIED",
+  "follow_up_hierarchy_lock_guards": {
+    "status": "LOCALLY_TESTED_RELEASE_PENDING",
+    "files": [
+      "public/editor-v2/core/commands.js",
+      "public/editor-v2/tests/element-insertion.test.js",
+      "tests/browser/editor-element-insertion.test.js"
+    ],
+    "guarded_child_list_mutations": [
+      "element.add",
+      "element.delete",
+      "hierarchy.reparent from and into a locked parent",
+      "hierarchy.reorder",
+      "element.duplicate into a locked parent",
+      "hierarchy.group",
+      "hierarchy.ungroup"
+    ],
+    "atomicity": "Every rejected operation leaves the Page Model and undo history unchanged.",
+    "tests": {
+      "focused_core": "PASS, 4/4",
+      "editor_unit": "PASS, 11/11 files",
+      "typecheck": "PASS",
+      "chromium": "PASS, 2/2; normal flow, locked palette insertion, draft-only Save"
+    },
+    "release_preflight": {
+      "wrangler_dry_run": "PASS: 161 assets, 296.90 KiB / 67.79 KiB gzip",
+      "d1": "SELECT-only: 34 migrations, latest 0028_media_archive.sql, changed_db=false, rows_written=0",
+      "migration_safety_gate": "PASS",
+      "production_data_mutated": false,
+      "r2_mutated": false
+    },
+    "cloudflare_deployed": false,
+    "next": "Run canonical plan and traceability checks, Wrangler dry-run and read-only D1 preflight; then fast-forward release and verify exact Cloudflare build and 100% rollout."
+  }
 }

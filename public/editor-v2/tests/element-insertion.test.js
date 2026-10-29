@@ -65,3 +65,43 @@ test('palette insertion cannot mutate a locked container and bubbles after its l
   execute(state,{type:'history.undo'});
   assert.deepEqual(state.document,before,'undo removes only the unlocked sibling insertion');
 });
+
+function lockedParentFixture({groupChildren=false}={}){
+  const state=createEditorState(createDocument());
+  const rootId=activePage(state).rootId;
+  execute(state,{type:'element.add',payload:{type:NODE_TYPES.SECTION,parentId:rootId}});
+  const lockedParentId=state.selection.primaryId;
+  execute(state,{type:'element.add',payload:{type:NODE_TYPES.HEADING,parentId:lockedParentId}});
+  const firstChildId=state.selection.primaryId;
+  execute(state,{type:'element.add',payload:{type:NODE_TYPES.TEXT,parentId:lockedParentId}});
+  const secondChildId=state.selection.primaryId;
+  let groupId=null;
+  if(groupChildren){
+    execute(state,{type:'hierarchy.group',payload:{nodeIds:[firstChildId,secondChildId]}});
+    groupId=state.selection.primaryId;
+  }
+  execute(state,{type:'element.lock.set',payload:{nodeId:lockedParentId,locked:true}});
+  execute(state,{type:'element.add',payload:{type:NODE_TYPES.BUTTON,parentId:rootId}});
+  return {state,rootId,lockedParentId,firstChildId,secondChildId,groupId,externalId:state.selection.primaryId};
+}
+
+test('all hierarchy commands preserve a locked parent child list',()=>{
+  const cases=[
+    ['delete a child',(f)=>({type:'element.delete',payload:{nodeId:f.firstChildId}})],
+    ['reparent a child out',(f)=>({type:'hierarchy.reparent',payload:{nodeId:f.firstChildId,parentId:f.rootId}})],
+    ['reorder a child',(f)=>({type:'hierarchy.reorder',payload:{nodeId:f.firstChildId,index:1}})],
+    ['reparent a new child in',(f)=>({type:'hierarchy.reparent',payload:{nodeId:f.externalId,parentId:f.lockedParentId}})],
+    ['duplicate a child in',(f)=>({type:'element.duplicate',payload:{nodeId:f.externalId,parentId:f.lockedParentId}})],
+    ['group children',(f)=>({type:'hierarchy.group',payload:{nodeIds:[f.firstChildId,f.secondChildId]}})],
+    ['ungroup inside',(f)=>({type:'hierarchy.ungroup',payload:{nodeId:f.groupId}}),'groupChildren']
+  ];
+
+  for(const [label,actionFactory,option] of cases){
+    const f=lockedParentFixture({groupChildren:option==='groupChildren'});
+    const before=structuredClone(f.state.document);
+    const historyBefore=f.state.history.past.length;
+    assert.throws(()=>execute(f.state,actionFactory(f)),/locked/i,label);
+    assert.deepEqual(f.state.document,before,`${label} must leave the Page Model untouched`);
+    assert.equal(f.state.history.past.length,historyBefore,`${label} must not create an undo entry`);
+  }
+});
