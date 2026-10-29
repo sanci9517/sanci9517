@@ -1,0 +1,48 @@
+{
+  "date": "2026-10-29",
+  "feature": "EDT-014 accessible layer rename validation",
+  "status": "LOCAL_VERIFICATION_PASS_PRODUCTION_RELEASE_PENDING",
+  "gap": "The layer rename input displayed an empty-name error in a status region but did not expose that feedback through aria-describedby or declare its required state accessibly.",
+  "implementation": {
+    "file": "public/editor-v2/app.js",
+    "behavior": [
+      "Expose aria-required and a stable aria-describedby relationship to the live validation status.",
+      "Expose aria-invalid=false initially and after editing; set true for whitespace-only names.",
+      "Preserve the existing element.update command, trimming rule, Save/Publish separation and lock checks."
+    ],
+    "reuse_review": "Adapted the existing project-owned pattern in public/editor-v2/ui/property-controls.js; no third-party code or dependency added."
+  },
+  "checks": {
+    "browser_command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-element-insertion.test.js tests/browser/editor-general-fields-ime.test.js",
+    "browser_result": "PASS 7/7, including touch emulation at 390px, desktop F2 at 1366px, required/invalid/described-by state and recovery after editing.",
+    "editor_unit": "PASS 11/11 test files",
+    "typecheck": "PASS npm run typecheck",
+    "syntax": "PASS node --check public/editor-v2/app.js",
+    "plan_contract": "PASS; single current cursor, 13-file master, 396 feature contracts; acceptance remains NOT_CERTIFIED",
+    "active_point": "PASS; 77.44 / WEB-011 -> 77.44.7.A",
+    "traceability": "PASS after rebuilding source fingerprints; 396 mappings",
+    "migration_safety_gate": "PASS; deploy:safe does not apply D1 migrations",
+    "wrangler_dry_run": "PASS Wrangler 4.130.0, 161 assets, 296.90 KiB / 67.79 KiB gzip",
+    "git_diff_check": "PASS"
+  },
+  "production_preflight": {
+    "d1_query": "SELECT name FROM d1_migrations ORDER BY name",
+    "d1_rows_read": 34,
+    "latest_migration": "0028_media_archive.sql",
+    "changed_db": false,
+    "rows_written": 0,
+    "migration_apply": false,
+    "r2_mutation": false,
+    "build_minutes_limit_reached": false,
+    "current_worker": 3732,
+    "current_worker_version": "411f2a06-b29c-488a-86b6-6000281f022e",
+    "current_traffic_percent": 100
+  },
+  "release": {
+    "runtime_commit": null,
+    "cloudflare_build": null,
+    "deployment": null,
+    "production_health_and_asset_hashes": "PENDING"
+  },
+  "acceptance_boundary": "This verifies the layer-name validation accessibility lifecycle in emulated Chromium; physical-device and full Visual Editor acceptance remain open."
+}

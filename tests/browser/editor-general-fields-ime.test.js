@@ -128,10 +128,17 @@ for(const width of [390,1366])test(`general Inspector name and Schedule empty te
  if(mobile)await editor.locator(`.layer-rename[data-node-id="${id}"]`).tap();else{await layerRow.focus();await layerRow.press('F2');}
  const layerName=editor.getByRole('textbox',{name:'Réteg neve',exact:true});
  assert.equal(await layerName.inputValue(),'Végleges belső név','touch rename and F2 both open the current internal node name');
+ assert.equal(await layerName.getAttribute('aria-required'),'true','layer name is announced as required');
+ const renameStatusId=await layerName.getAttribute('aria-describedby');
+ assert.ok(renameStatusId,'layer name references its validation feedback');
+ assert.equal(await editor.locator(`#${renameStatusId}`).getAttribute('role'),'status','validation feedback is a live status region');
  await layerName.fill('   ');await layerName.press('Enter');
  assert.equal(await layerName.getAttribute('aria-invalid'),'true','an empty inline layer name is rejected');
- assert.equal(await editor.locator('.layer-rename-status').textContent(),'A réteg neve nem lehet üres.');
- await layerName.fill('Réteg <mentve>');await layerName.press('Enter');
+ assert.equal(await editor.locator(`#${renameStatusId}`).textContent(),'A réteg neve nem lehet üres.','the associated status explains the rejected name');
+ await layerName.fill('Réteg <mentve>');
+ assert.equal(await layerName.getAttribute('aria-invalid'),'false','editing a rejected name restores a valid state');
+ assert.equal(await editor.locator(`#${renameStatusId}`).textContent(),'','editing clears the stale error announcement');
+ await layerName.press('Enter');
  assert.equal(await editor.locator(`.layer-row[data-node-id="${id}"] strong`).textContent(),'Réteg <mentve>','inline rename updates the escaped Layers label');
  assert.equal(await editor.locator(`.node[data-node-id="${id}"] > .node-head > span`).textContent(),'Réteg <mentve>','inline rename updates the local Page Model and Canvas before Save');
  assert.equal(posts.length,0,'inline rename remains an unsaved draft until Save');

@@ -1529,10 +1529,15 @@ function beginLayerRename(id){
   input.type='text';
   input.value=node.name||'';
   input.required=true;
+  input.setAttribute('aria-required','true');
+  input.setAttribute('aria-invalid','false');
   input.setAttribute('aria-label','Réteg neve');
   const status=document.createElement('small');
   status.className='layer-rename-status';
+  status.id=`layer-rename-status-${crypto.randomUUID()}`;
   status.setAttribute('role','status');
+  status.setAttribute('aria-live','polite');
+  input.setAttribute('aria-describedby',status.id);
   const save=document.createElement('button');
   save.type='submit';
   save.textContent='Mentés';
@@ -1554,7 +1559,7 @@ function beginLayerRename(id){
       document.querySelector(`#layersTree .layer-row[data-node-id="${CSS.escape(id)}"]`)?.focus();
     }
   });
-  input.addEventListener('input',()=>{input.removeAttribute('aria-invalid');status.textContent=''});
+  input.addEventListener('input',()=>{input.setAttribute('aria-invalid','false');status.textContent=''});
   input.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();event.stopPropagation();close()}});
   cancel.addEventListener('click',close);
   entry.append(form);
