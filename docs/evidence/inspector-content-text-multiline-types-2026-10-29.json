@@ -1,0 +1,49 @@
+{
+  "plan_item": "77.44.7.A",
+  "scope": "Preserve literal multiline content.text visually for heading, text, button, and link node types.",
+  "website": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/",
+  "verified_defect": {
+    "reproduction": "Published heading with two authored lines returned collapsed innerText (\"Címsor első sora Címsor második sora\") while Page Model retained the newline.",
+    "cause": "The shared public renderer CSS applied white-space:pre-wrap to .visual-text but omitted .visual-heading and .visual-button. Inspector and Canvas already used a pre-wrapped plain-text surface.",
+    "impact": "content.text declares multiline:true for heading, text, button, and link; the public page did not visually honor the contract for heading and URL-backed button/link types."
+  },
+  "implementation": {
+    "file": "public/assets/page-renderer.js",
+    "change": "Shared public renderer style now applies white-space:pre-wrap to .visual-heading and .visual-button.",
+    "dependencies": "No dependency added; native CSS white-space behavior."
+  },
+  "acceptance": {
+    "test": "tests/browser/editor-inspector-lifecycle.test.js",
+    "local_result": "PASS 1/1 (210.6 seconds)",
+    "node_types": [
+      "heading",
+      "text",
+      "button",
+      "link"
+    ],
+    "assertions": "Exact visible innerText and computed pre-wrap at Canvas and public output; command route; Undo/Redo; draft Save/reload isolation; explicit Publish parity."
+  },
+  "release": {
+    "status": "PENDING_PUSH_AND_CI",
+    "current_production_worker_version": 3718,
+    "completed_preflight": {
+      "editor_unit_tests": "PASS 11/11 files",
+      "typecheck": "PASS",
+      "canonical_plan_and_source_traceability": "PASS (396 source mappings)",
+      "migration_safety_gate": "PASS",
+      "wrangler_dry_run": "PASS (161 assets; 294.18 KiB total; no deployment)",
+      "production_d1_read_only_query": "SELECT name FROM d1_migrations ORDER BY name; 34 rows, rows_written=0, changed_db=false"
+    },
+    "pending": [
+      "GitHub Editor Core workflow for ca993633 final result",
+      "Fast-forward push of the verified runtime change to v2/foundation; current git transport cannot reach GitHub because the configured proxy is unreachable",
+      "Cloudflare build/deployment and production smoke/hash verification after push"
+    ]
+  },
+  "data_safety": {
+    "production_d1_migration": false,
+    "production_data_write": false,
+    "r2_mutation_or_deletion": false
+  },
+  "acceptance_boundary": "This verified correction closes the multiline display gap for these four content.text node types only. Full 77.44.7.A acceptance and physical-device acceptance remain OPEN / NOT CERTIFIED."
+}

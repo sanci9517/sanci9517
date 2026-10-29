@@ -36,6 +36,8 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   const linkId=model.selection.primaryId;
   execute(model,{type:'element.add',payload:{type:NODE_TYPES.TEXT,parentId:rootId,name:'Inspector fallback'}});
   const fallbackTextId=model.selection.primaryId;
+  execute(model,{type:'element.add',payload:{type:NODE_TYPES.HEADING,parentId:rootId,props:{text:'Inspector heading'}}});
+  const headingId=model.selection.primaryId;
   let draft=structuredClone(model.document), published=null, version=1;
   const posts=[];
   const server=createServer(async(req,res)=>{
@@ -307,10 +309,12 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
     const textControl=editor.locator(`.plain-text-content[data-property-id="content.text"] textarea[data-text-node-id="${nodeId}"]`);
     assert.equal(await textControl.locator('xpath=..').getAttribute('data-property-command'),'element.content.set');
     assert.equal(await textControl.locator('xpath=..').getAttribute('data-property-key'),'text');
+    const canvasText=()=>editor.locator(`.node[data-node-id="${nodeId}"] > .node-content`);
     const publicNode=()=>publicPage.locator(`[data-node-id="${nodeId}"]`);
     const originalText=await publicNode().innerText();
     await textControl.fill(updatedText);
-    assert.equal(await editor.locator(`.node[data-node-id="${nodeId}"] > .node-content`).innerText(),updatedText);
+    assert.equal(await canvasText().innerText(),updatedText);
+    assert.equal(await canvasText().evaluate(el=>getComputedStyle(el).whiteSpace),'pre-wrap',`${nodeId}: Canvas preserves multiline plain text visibly`);
     await editor.locator('#undo').click();
     await editor.waitForFunction(id=>document.querySelector(`.plain-text-content[data-property-id="content.text"] textarea[data-text-node-id="${id}"]`)?.value!==undefined,nodeId);
     assert.notEqual(await textControl.inputValue(),updatedText,'Undo restores the previous text for each applicable node type');
@@ -322,9 +326,11 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
     await publicPage.reload();assert.equal(await publicNode().innerText(),originalText,'draft content.text remains unpublished');
     await saveContentProperty(true);await publicPage.reload();
     assert.equal(await publicNode().innerText(),updatedText,'Publish exposes content.text for every registered node type');
+    assert.equal(await publicNode().evaluate(el=>getComputedStyle(el).whiteSpace),'pre-wrap',`${nodeId}: published plain text preserves multiline visual layout`);
   };
-  await exerciseContentTextType(buttonId,'Gomb registry-szöveg');
-  await exerciseContentTextType(linkId,'Link registry-szöveg');
+  await exerciseContentTextType(headingId,'Címsor első sora\nCímsor második sora');
+  await exerciseContentTextType(buttonId,'Gomb első sora\nGomb második sora');
+  await exerciseContentTextType(linkId,'Link első sora\nLink második sora');
 
   // Plain content is literal user-authored text: intentional boundary
   // whitespace and an empty value survive command, draft Save/reload, and
