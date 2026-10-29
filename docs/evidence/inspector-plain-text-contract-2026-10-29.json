@@ -19,7 +19,10 @@
       "empty_value": "accepted and saved",
       "boundary_whitespace_and_newlines": "preserved by control, normalizer, Canvas, draft Save/reload, and separate Publish",
       "generic_inspector_control": "native textarea, rows=4, associated label",
-      "browser_viewports": [390, 1366]
+      "browser_viewports": [
+        390,
+        1366
+      ]
     },
     "advanced.nodeName": {
       "required": true,
@@ -133,5 +136,12 @@
       "production_r2_mutation_or_deletion": false
     }
   },
-  "acceptance": "The Inspector value contract now matches the actual plain-text command semantics and its generic renderer; Save remains separate from Publish. The complete 77.44.7.A acceptance remains OPEN / NOT CERTIFIED pending its remaining Inspector scope and physical-device acceptance."
+  "acceptance": "The Inspector value contract now matches the actual plain-text command semantics and generic textarea renderer; Canvas and published output preserve visible hard line breaks and boundary spaces. Save remains separate from Publish. The complete 77.44.7.A acceptance remains OPEN / NOT CERTIFIED pending remaining Inspector scope and physical-device acceptance.",
+  "visual_newline_acceptance": {
+    "test": "tests/browser/editor-inspector-lifecycle.test.js",
+    "result": "PASS 1/1 (222.4 s)",
+    "canvas": "Computed white-space is pre-wrap; innerText equals the exact Inspector value including leading/trailing spaces and hard line break.",
+    "public": "After explicit Publish, computed white-space is pre-wrap; innerText equals the exact Inspector and Canvas value including leading/trailing spaces and hard line break.",
+    "scope": "Test-only verification; no runtime behavior or deployed Worker changed."
+  }
 }

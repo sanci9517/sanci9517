@@ -335,12 +335,20 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   await literalInput.fill(literalText);
   assert.equal(await literalInput.inputValue(),literalText);
   assert.equal(await editor.locator(`.node[data-node-id="${itemId}"] > .node-content`).textContent(),literalText);
+  assert.equal(await editor.locator(`.node[data-node-id="${itemId}"] > .node-content`).evaluate(el=>getComputedStyle(el).whiteSpace),'pre-wrap',
+    'Canvas preserves authored line breaks and boundary spaces visually');
+  assert.equal(await editor.locator(`.node[data-node-id="${itemId}"] > .node-content`).innerText(),literalText,
+    'Canvas-visible text matches the Inspector value including its hard line break');
   await saveContentProperty(false);
   assert.equal(posts.at(-1).document.pages[pageId].nodes[itemId].props.text,literalText);
   await editor.reload();await select(itemId);await editor.locator('.inspector-tabs button').nth(1).click();
   assert.equal(await editor.locator('.plain-text-content[data-property-id="content.text"] textarea').inputValue(),literalText);
   await saveContentProperty(true);await publicPage.reload();
   assert.equal(await publicPage.locator(`[data-node-id="${itemId}"]`).textContent(),literalText);
+  assert.equal(await publicPage.locator(`[data-node-id="${itemId}"]`).evaluate(el=>getComputedStyle(el).whiteSpace),'pre-wrap',
+    'published plain text preserves authored line breaks and boundary spaces visually');
+  assert.equal(await publicPage.locator(`[data-node-id="${itemId}"]`).innerText(),literalText,
+    'publicly rendered text matches the Canvas and Inspector including its hard line break');
 
   await select(itemId);await editor.locator('.inspector-tabs button').nth(1).click();
   await editor.locator('.plain-text-content[data-property-id="content.text"] textarea').fill('');
