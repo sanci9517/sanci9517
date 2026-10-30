@@ -30,6 +30,18 @@ test('save and publish reject a previously blurred invalid property without any 
  assert.equal(requests,1,'repaired property allows draft save again');
  assert.equal(f.context.pages[0].isPublished,false,'draft save never publishes');
 });
+test('draft Save and Publish stop when the active layer rename cannot be committed',async()=>{
+ for(const publish of [false,true]){
+  const f=editor();let flushCalls=0,requests=0;
+  f.context.flushLayerRename=()=>{flushCalls++;return false};
+  f.context.api=async()=>{requests++;return {data:{pageId:'p',version:2,revisionId:'r2'}}};
+  await action('async function save(publish=false)','async function unpublishPage()',f.context)(publish);
+  assert.equal(flushCalls,1,'Save and Publish must flush the pending rename first');
+  assert.equal(requests,0,'a rejected rename cannot be silently lost from the submitted document');
+  assert.equal(f.context.state.persistence.dirty,true);
+  assert.equal(f.context.pages[0].isPublished,false,'draft Save must never publish');
+ }
+});
 test('failed publication preserves list publication state and local dirty document',async()=>{
  const f=editor();f.context.api=async()=>{throw Error('offline')};const original=JSON.stringify(f.context.state.document);
  await action('async function save(publish=false)','async function unpublishPage()',f.context)(true);

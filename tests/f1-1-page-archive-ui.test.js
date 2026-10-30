@@ -19,6 +19,17 @@ test('archive UI blocks dirty documents, pending saves and cancelled confirmatio
  const f=fixture();f.context.confirm=()=>false;await f.context.act('p',true);assert.equal(f.requests.length,0);
  const pending=fixture();pending.context.flushRichTextDraft=()=>{pending.context.state.persistence.dirty=true;return true};await pending.context.act('p',true);assert.equal(pending.requests.length,0);assert.match(pending.alerts[0],/mentsd/);
 });
+test('archive and restore stop when an active layer rename cannot be committed',async()=>{
+ for(const archive of [true,false]){
+  const f=fixture(),original=f.context.state;
+  let flushCalls=0;
+  f.context.flushLayerRename=()=>{flushCalls++;return false};
+  await f.context.act(archive?'p':'a',archive);
+  assert.equal(flushCalls,1,'the pending layer name is committed before a page lifecycle action');
+  assert.deepEqual(f.requests,[],'a failed rename commit must not reach the archive endpoint');
+  assert.equal(f.context.state,original,'the current Editor state is retained');
+ }
+});
 test('archive UI clears the archived active editor only after success; restore never publishes',async()=>{
  const f=fixture();await f.context.act('p',true);assert.deepEqual(f.requests,[{url:'/api/admin/pages',id:'p',action:'archive'}]);assert.equal(f.context.state,null);assert.equal(f.context.revisionHistory.length,0);
  const restored=fixture();await restored.context.act('a',false);assert.deepEqual(restored.requests,[{url:'/api/admin/pages',id:'a',action:'restore'}]);assert.match(restored.statuses.at(-1),/piszkozat/);

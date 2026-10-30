@@ -14,6 +14,8 @@
     "public/editor-v2/index.html",
     "tests/browser/editor-inspector-richtext-controls.test.js",
     "tests/editor-multi-validation.test.js",
+    "tests/f1-1-page-archive-ui.test.js",
+    "tests/f1-1-page-publication-ui.test.js",
     "docs/evidence/inspector-mobile-property-reset-touch-targets-2026-10-30.json",
     "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md"
   ],
@@ -92,11 +94,30 @@
   },
   "ci_fixture_followup": {
     "remote_failure": "The verify run on be71618dcfcecaa5dfe9ac7195fc2f5d3cda0bdc passed multi-Inspector validation and then failed in the existing page archive/publication UI fixture: flushLayerRename and pendingLayerRename were missing from the extracted app.js context.",
-    "fix": "The archive and publication test fixtures now seed flushLayerRename() as successful and pendingLayerRename as null, representing an editor with no pending layer rename; production code is unchanged.",
-    "local_verification": "node --experimental-loader ./tests/ts-extension-loader.mjs --test --test-reporter=spec tests/f1-1-page-archive.test.js tests/f1-1-page-archive-ui.test.js tests/f1-1-page-publication-ui.test.js PASS, 3/3; npm run test:schedule PASS, 1/1; git diff --check PASS.",
+    "fix": "The archive and publication fixtures seed a valid no-pending-rename state, and new regressions verify that Archive/Restore plus draft Save/Publish stop without API calls when flushLayerRename() rejects the active rename; production code is unchanged.",
+    "local_verification": "node --experimental-loader ./tests/ts-extension-loader.mjs --test --test-reporter=spec tests/f1-1-page-archive.test.js tests/f1-1-page-archive-ui.test.js tests/f1-1-page-publication-ui.test.js tests/editor-multi-validation.test.js PASS, 4/4 file subtests; node --test --test-reporter=spec tests/f1-1-page-archive-ui.test.js tests/f1-1-page-publication-ui.test.js PASS, 2/2 file subtests; npm run test:editor PASS, 11/11; npm run test:schedule PASS, 1/1; npm run typecheck PASS; npm run test:web013:migration-gate PASS; python3 scripts/build-feature-traceability.py --check PASS (396); python3 scripts/check-canonical-plan.py PASS; python3 scripts/audit-active-plan-point.py PASS (77.44.7.A); git diff --check PASS.",
     "test_only_commit": "4cb471261c9ad640e2960afe6e613a35386c3af4",
-    "latest_commit_checks": "GitHub check-runs for 4cb471261c9ad640e2960afe6e613a35386c3af4 were queued at last observation; no CI PASS is claimed.",
+    "latest_commit_checks": "For commit 4cb471261c9ad640e2960afe6e613a35386c3af4, the current GitHub combined-status endpoint returned an empty statuses array; the available workflow-runs lookup is PR-triggered only and returned none. Exact push check-runs are UNVERIFIED; the earlier queued observation is historical, and no CI PASS is claimed.",
     "worker_redeployment": false
   },
-  "acceptance": "The individual mobile Inspector reset touch-target slice is independently implemented and verified. Full 77.44.7.A and Visual Editor acceptance remain OPEN / NOT CERTIFIED; manual/physical acceptance stays DEFERRED."
+  "acceptance": "The individual mobile Inspector reset touch-target slice is independently implemented and verified. Full 77.44.7.A and Visual Editor acceptance remain OPEN / NOT CERTIFIED; manual/physical acceptance stays DEFERRED.",
+  "latest_local_work_block": {
+    "plan_item": "77.44.7.A — Inspector foundation / lifecycle contract",
+    "status": "OPEN; locally validated, not yet pushed to v2/foundation.",
+    "tests": "Regression coverage added for failed layer-rename commit blocking Archive/Restore and draft Save/Publish, preserving local editor state and the Save/Publish distinction.",
+    "runtime_changed": false,
+    "worker_redeployment": false,
+    "d1_or_r2_operation": false,
+    "new_paid_cost_or_dependency": false,
+    "github_remote_head": "v2/foundation remains ebc20ea9f37b45bf6eda5a4d46d8de99473fb716, verified via GitHub compare API.",
+    "latest_worker_deployment_api": {
+      "deployment_id": "54f8a12c-79a1-4c82-9de9-37f9b6d3da01",
+      "version_id": "50fce0d0-879d-4242-82bd-319081216cde",
+      "traffic": "100%",
+      "verified_via": "Cloudflare API read-only deployment listing"
+    },
+    "health_recheck": "UNVERIFIED: direct GET could not reach the configured proxy at 127.0.0.1:8080; the request did not reach the Worker.",
+    "push": "NOT DONE: direct Git transport is blocked by the unavailable configured proxy; no remote API write was substituted.",
+    "current_ci": "UNVERIFIED: current GitHub combined status returned no statuses and the available Actions query covers PR-triggered runs only."
+  }
 }
