@@ -36,6 +36,11 @@ test('legacy image video audio share guarded media URLs in Inspector Canvas and 
   execute(model,{type:'element.add',payload:{type:'image',parentId:rootId,props:{src:'',alt:''}}});
   ids.libraryImage=model.selection.primaryId;
   const mediaId='00000000-0000-4000-8000-000000000123',videoMediaId='00000000-0000-4000-8000-000000000124';
+  const audioMediaId='00000000-0000-4000-8000-000000000125';
+  execute(model,{type:'element.add',payload:{type:'video',parentId:rootId,props:{src:'',assetId:videoMediaId}}});
+  ids.libraryVideo=model.selection.primaryId;
+  execute(model,{type:'element.add',payload:{type:'audio',parentId:rootId,props:{src:'',assetId:audioMediaId}}});
+  ids.libraryAudio=model.selection.primaryId;
   assert.equal(safeMediaUrl('//untrusted.invalid/track.png'),'');
   assert.equal(safeMediaUrl('https://user:pass@untrusted.invalid/private.mp4'),'');
   assert.equal(safeMediaUrl('relative/sound.mp3'),'');
@@ -95,6 +100,16 @@ test('legacy image video audio share guarded media URLs in Inspector Canvas and 
   await viewer.goto(base+'/p/test');
   await canvasNode(ids.goodImage).waitFor();
   await publishedNode(ids.goodImage).waitFor();
+  if(await editor.locator('#rightDock').evaluate(el=>el.classList.contains('closed')))await editor.locator('#openInspector').click();
+  for(const [key,label] of [['libraryVideo','Videó'],['libraryAudio','Hang']]){
+    await canvasNode(ids[key]).evaluate(el=>el.click());
+    await editor.getByRole('tab',{name:'Tartalom és szöveg'}).click();
+    const picker=editor.locator('.legacy-media-inspector .editor-media-picker').first();
+    const selected=picker.locator('.editor-media-selected');
+    assert.equal(await selected.evaluate(el=>el.tagName),'SPAN',`${label}: an existing media ID must not be previewed as a broken image`);
+    assert.equal(await selected.getAttribute('aria-label'),`Kiválasztott ${label.toLowerCase()}`,`${label}: existing selection must retain its media kind`);
+    assert.equal(await picker.locator('.editor-media-selection button').textContent(),`${label} eltávolítása`,`${label}: removal action must name its actual media kind`);
+  }
   for(const [key,mediaType] of [['badImage','img'],['badVideo','video'],['badAudio','audio']]){
     assert.equal(await canvasNode(ids[key]).locator('.media-preview '+mediaType).count(),0,key+' rejected on Editor Canvas');
     assert.equal(await publishedNode(ids[key]).locator(mediaType).count(),0,key+' rejected in public DOM');

@@ -24,7 +24,7 @@ async function loadAssets(query='',before=null,mimes=[]){
 const selectionViews=new WeakMap();
 // Synchronize a mounted picker view without invoking its PageModel callback.
 export function setMediaAssetPickerSelection(picker,id){selectionViews.get(picker)?.(id);}
-export function mediaAssetPicker(selectedId,onSelect,{disabled=false,mimes=[],ariaLabelledBy=null,ariaDescribedBy=null}={}){
+export function mediaAssetPicker(selectedId,onSelect,{disabled=false,mimes=[],selectedKind='image',ariaLabelledBy=null,ariaDescribedBy=null}={}){
   const root=document.createElement('div');root.className='editor-media-picker';
   if(ariaLabelledBy){root.setAttribute('role','group');root.setAttribute('aria-labelledby',ariaLabelledBy);}
   if(ariaDescribedBy)root.setAttribute('aria-describedby',ariaDescribedBy);
@@ -34,11 +34,13 @@ export function mediaAssetPicker(selectedId,onSelect,{disabled=false,mimes=[],ar
   const selection=document.createElement('div');selection.className='editor-media-selection';
   const renderSelected=(id,asset=null)=>{
     selection.replaceChildren();if(!id)return;
-    const isImage=!asset||!asset.mimeType||asset.mimeType.startsWith('image/');
+    const mediaKind=asset?.mimeType?.split('/')[0]||selectedKind;
+    const isImage=mediaKind==='image';
+    const kindLabel=mediaKind==='video'?'videó':mediaKind==='audio'?'hang':mediaKind==='image'?'kép':'médiafájl';
     const preview=document.createElement(isImage?'img':'span');preview.className='editor-media-selected';
     if(isImage){preview.src='/api/admin/media?id='+encodeURIComponent(id);preview.alt='Kiválasztott kép'}
-    else{preview.textContent=asset.mimeType?.startsWith('video/')?'🎬 Kiválasztott videó':'🔊 Kiválasztott hang';preview.setAttribute('aria-label','Kiválasztott médiafájl')}
-    const clear=associateDescription(document.createElement('button'));clear.type='button';clear.textContent=isImage?'Kép eltávolítása':'Médiafájl eltávolítása';clear.disabled=disabled;
+    else{preview.textContent=(mediaKind==='video'?'🎬 ':mediaKind==='audio'?'🔊 ':'📎 ')+`Kiválasztott ${kindLabel}`;preview.setAttribute('aria-label',`Kiválasztott ${kindLabel}`)}
+    const clear=associateDescription(document.createElement('button'));clear.type='button';clear.textContent=kindLabel==='médiafájl'?'Médiafájl eltávolítása':kindLabel[0].toLocaleUpperCase('hu-HU')+kindLabel.slice(1)+' eltávolítása';clear.disabled=disabled;
     clear.onclick=()=>{if(onSelect('')===false)return;renderSelected('');status.textContent='A kiválasztott médiafájl eltávolítva.';if(root.isConnected)open.focus({preventScroll:true})};
     selection.append(preview,clear);
   };

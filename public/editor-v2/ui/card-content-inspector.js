@@ -1,6 +1,6 @@
 import {defaultCardContent,CARD_VARIANTS} from '../core/card-content.js';
 import {createCompositionInputs} from './composition-inputs.js';
-import {mediaAssetPicker,setMediaAssetPickerSelection} from './element-content-controls.js?v=20261029-media-picker-a11y';
+import {mediaAssetPicker,setMediaAssetPickerSelection} from './element-content-controls.js?v=20261030-selected-media-kind';
 
 export function renderCardInspector(node,update,{pending=()=>{}}={}){
  const model={...defaultCardContent(),...(node.props?.cardContent||{})};

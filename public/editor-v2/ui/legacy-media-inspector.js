@@ -1,7 +1,7 @@
 import {legacyMediaInspectorValues,legacyImagePresentation,legacyImageCaption} from '../core/legacy-media-source.js';
 import {safeMediaUrl} from '../core/element-content.js';
 import {createCompositionInputs} from './composition-inputs.js';
-import {mediaAssetPicker,setMediaAssetPickerSelection} from './element-content-controls.js?v=20261029-media-picker-a11y';
+import {mediaAssetPicker,setMediaAssetPickerSelection} from './element-content-controls.js?v=20261030-selected-media-kind';
 
 export function renderLegacyMediaInspector(node,apply,{pending=()=>{}}={}){
  const model={...(node.props||{})},composition=createCompositionInputs(pending);
@@ -83,7 +83,7 @@ export function renderLegacyMediaInspector(node,apply,{pending=()=>{}}={}){
    const isVideo=node.type==='video';
    const playableMimes=isVideo?['video/webm']:['audio/mpeg','audio/ogg','audio/wav'];
    const sourceLabelId=mediaPickerLabel((isVideo?'Videó':'Hang')+' a Médiatárból');
-   section.append(sourcePicker=mediaAssetPicker(values.assetId,id=>save({assetId:id,...(id?{src:''}:{})}),{disabled:Boolean(node.locked),mimes:playableMimes,ariaLabelledBy:sourceLabelId}));route(sourcePicker,'assetId');
+   section.append(sourcePicker=mediaAssetPicker(values.assetId,id=>save({assetId:id,...(id?{src:''}:{})}),{disabled:Boolean(node.locked),mimes:playableMimes,selectedKind:isVideo?'video':'audio',ariaLabelledBy:sourceLabelId}));route(sourcePicker,'assetId');
    const toggles=[
      ['controls','Lejátszóvezérlők megjelenítése',model?.controls!==false],
      ['loop','Folyamatos ismétlés',model?.loop===true],
