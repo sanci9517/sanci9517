@@ -410,6 +410,15 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   assert.equal(await hrefContract.getAttribute('data-property-command'),'content.properties.set');
   assert.equal(await hrefContract.getAttribute('data-property-key'),'href');
   const hrefInput=hrefContract.locator('input[aria-label="Hivatkozás"]');
+  const hrefErrorId=await hrefInput.getAttribute('aria-describedby');
+  assert.ok(hrefErrorId,'content property input points to its validation feedback');
+  assert.equal(await editor.locator(`#${hrefErrorId}`).count(),1,'described validation target exists uniquely in the Inspector');
+  await hrefInput.fill('javascript:alert(1)');
+  assert.equal(await hrefInput.getAttribute('aria-invalid'),'true','unsafe link values remain marked invalid');
+  const hrefValidation=editor.locator(`#${hrefErrorId}`);
+  assert.match(await hrefValidation.textContent(),/hivatkozás|URL|biztonság/i,'unsafe link feedback is associated with its control');
+  await hrefInput.fill('#default-cta');
+  assert.equal(await hrefInput.getAttribute('aria-invalid'),null,'correcting the link clears its invalid state');
   const readButtonHref=el=>(el.matches('a')?el:el.querySelector('a'))?.getAttribute('href')??el.getAttribute('href');
   const publicButtonHref=()=>publicPage.locator(`[data-node-id="${buttonId}"]`).evaluate(readButtonHref);
   const originalHref=await publicButtonHref();

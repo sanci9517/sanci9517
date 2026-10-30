@@ -1,0 +1,29 @@
+{
+  "date": "2026-10-30",
+  "planItem": "77.44.7.A — Inspector content property validation and Save/Publish lifecycle",
+  "finding": "Authored content controls shared one live validation message, but the message had no DOM id. Controls and the media picker used its empty id in aria-describedby, leaving screen-reader descriptions without a valid target.",
+  "change": "Give the shared validation message a unique stable-per-render id and associate authored content inputs with it through aria-describedby. The existing invalid-state handling and command validation remain unchanged.",
+  "tests": {
+    "browserCommand": "CHROMIUM_PATH=/usr/bin/chromium node --test tests/browser/editor-inspector-lifecycle.test.js",
+    "browser": { "passed": 1, "failed": 0, "durationSeconds": 339.5 },
+    "newAssertions": [
+      "content.href aria-describedby resolves to exactly one Inspector validation element",
+      "unsafe javascript URL sets aria-invalid and displays associated validation feedback",
+      "correcting the URL clears aria-invalid",
+      "existing link edit, undo/redo, Save, reload and separate Publish lifecycle still passes"
+    ],
+    "editorUnit": { "passed": 11, "failed": 0 },
+    "typecheck": "PASS",
+    "gitDiffCheck": "PASS"
+  },
+  "openSourceReview": "Used the repository's existing shared content-field validation and accessibility patterns; no external package or copied code was needed.",
+  "release": {
+    "runtimeChanged": true,
+    "commit": null,
+    "push": "PENDING",
+    "deployment": "PENDING",
+    "productionD1Writes": 0,
+    "productionR2Changes": 0
+  },
+  "acceptanceBoundary": "This closes the described validation association defect for authored content controls only. Full 77.44.7.A remains OPEN / NOT CERTIFIED; manual and physical acceptance remains deferred until the complete Visual Editor is implemented."
+}

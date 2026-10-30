@@ -109,7 +109,7 @@ export function mediaAssetPicker(selectedId,onSelect,{disabled=false,mimes=[],ar
 const selectedAlt=asset=>typeof asset?.altText==='string'?asset.altText.trim().slice(0,500):'';
 export function renderElementContentControls(node,{apply,pending,exclude=[],pages=[],resolveExternalField=null}){
   const root=document.createElement('section');root.className='element-content-controls';
-  const fail=document.createElement('p');fail.className='property-validation';fail.setAttribute('role','status');
+  const fail=document.createElement('p');fail.className='property-validation';fail.setAttribute('role','status');fail.id='content-validation-'+crypto.randomUUID();
   // A successful command mutates the Editor model, but validation failure may
   // replace it on rollback. Keep this mounted view's working values current
   // without writing into node.props or reconstructing focused text controls.
@@ -207,7 +207,7 @@ export function renderElementContentControls(node,{apply,pending,exclude=[],page
       register(next=>setMediaAssetPickerSelection(picker,next));wrap.append(picker);
       if(definition.help){const help=document.createElement('small');help.className='content-field-help';help.textContent=definition.help;wrap.append(help)}return wrap;
     }
-    input.setAttribute('aria-label',definition.label);input.disabled=Boolean(node.locked);input.dataset.typingGroup=crypto.randomUUID();
+    input.setAttribute('aria-label',definition.label);input.setAttribute('aria-describedby',fail.id);input.disabled=Boolean(node.locked);input.dataset.typingGroup=crypto.randomUUID();
     const rangeOutput=definition.type==='range'?document.createElement('output'):null;if(rangeOutput){rangeOutput.className='content-range-value';rangeOutput.value=String(input.value);rangeOutput.textContent=`${input.value}%`;rangeOutput.setAttribute('aria-live','polite')}
     let committed=value,composing=false,dirty=false,compositionRevision=0;
     register(next=>{
