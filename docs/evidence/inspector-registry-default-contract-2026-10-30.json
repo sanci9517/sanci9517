@@ -1,7 +1,7 @@
 {
   "plan_item": "77.44.7.A — Inspector foundation / property metadata contract",
   "date": "2026-10-30",
-  "status": "IMPLEMENTED_AND_LOCALLY_VERIFIED_RELEASE_PENDING",
+  "status": "IMPLEMENTED_DEPLOYED_AND_VERIFIED",
   "finding": {
     "defect": "registerProperty() accepted an explicitly declared defaultValue without checking it against the same typed value rules used by the Inspector, then exposed it as DECLARED contract metadata.",
     "impact": "A future or extension property could advertise an unusable or non-canonical starting value, making registry metadata disagree with actual Inspector inputs.",
@@ -46,17 +46,52 @@
     "rows_written": 0,
     "changed_db": false,
     "migration_or_data_write": false,
-    "r2_change": false
+    "r2_change": false,
+    "post_deploy": {
+      "migration_count": 34,
+      "latest_migration": "0028_media_archive.sql",
+      "rows_written": 0,
+      "changed_db": false,
+      "migration_or_data_write": false,
+      "r2_change": false
+    }
   },
   "runtime_scope": {
     "new_dependency": false,
     "save_and_publish_separate": true,
     "worker_deployment_before_this_change": "54f8a12c-79a1-4c82-9de9-37f9b6d3da01 / 50fce0d0-879d-4242-82bd-319081216cde at 100% traffic.",
-    "release": "Pending fast-forward push and npm run deploy:safe."
+    "release": {
+      "runtime_commit": "6b79e03fa5a6ab6000b55e60ce56b51076c1ce61",
+      "github_branch": "v2/foundation",
+      "github_ref": "Verified with GitHub compare API; branch head equals the runtime commit.",
+      "push": "Normal fast-forward from 46c96d658043ac5013cf4decbcdb7366a46723b0.",
+      "deployment_id": "5cd2c400-8265-41b6-a435-66415e5cc8cb",
+      "worker_version": "5cce81bf-c889-4e5a-96fe-94e014f0c9ab",
+      "traffic": "100%",
+      "deploy_command": "WRANGLER_WRITE_LOGS=false WRANGLER_LOG_PATH=/tmp/sanci-wrangler-deploy.log npm run deploy:safe",
+      "migration_safety_gate": "PASS; no D1 migrations applied.",
+      "health": "Direct GET /api/health returned HTTP 200 with ok=true, service=sanci9517-streamer-brand, version=2.0.0.",
+      "changed_public_asset_sha256": {
+        "/editor-v2/app.js": "61d02c9cd43130a0af80f6357d50a2b272323ba4a1e07f7b69fdeb94516855c1",
+        "/editor-v2/core/capability-matrix.js": "cd1d68832964c1d0411f1af8afd9b4db94b855d1e78783f1c36d9e6699573753",
+        "/editor-v2/core/inspector-style-contract.js": "29922a147ff111cc88f0d26935465ef2240b52c78e560c867d1ff0d6f501a97e",
+        "/editor-v2/core/property-registry.js": "977cf2f3228195247cbe71c65b2dd4591b76ab65707f93cf80ac30f3e88d1edd",
+        "/editor-v2/core/state-styles.js": "4006a97f3ca469c70f995a80f20f0efd3428cd11bc1da6bdb262e2987a444acd",
+        "/editor-v2/index.html": "9439593254946a63ef3e26b2fd796eb6cc5bd2da29506e2f27cf6f8e02a727b8",
+        "/editor-v2/tests/capability-contract.test.js": "1eda2c45d6e6ab0bd1692f4af350d23e5da918fd4e2311d4a55b8008081ef67d",
+        "/editor-v2/tests/core.test.js": "15b2c6fc2518a156ab620b3e9fa71179cc92c07c23eab0827d808593ab4fb1f9",
+        "/editor-v2/tests/inspector-richtext.test.js": "1c8009ad68afa40731d4281fe3caf43375bc2a0b9c7b81818c6b4010210d23b3",
+        "/editor-v2/tests/layout-presets.test.js": "bd8aea50d8dc946b2efbbe43c2d91f7fdc9f8afa52112f7500d0e8f811e0ea26",
+        "/editor-v2/tests/state-tokens.test.js": "fb4059d0db970c7d5ded316f47a85d1dd274d36afd89bf6429ffb30bdcee10c6",
+        "/editor-v2/ui/element-content-controls.js": "2e36aad268867b2e1b0d6c20961563b7e56f9819bea636d641f0f4153953408b",
+        "/editor-v2/ui/geometry-presets.js": "11e73bdde60a12bc67cd691a96824a191d5f08305f111f30d4c5040f38a72351"
+      },
+      "asset_verification": "All 13 uploaded assets were fetched from production and each live SHA-256 matched its local file."
+    }
   },
   "ci_and_cost": {
-    "github_ci": "Not run: commit will use [skip ci] because the repository's free GitHub Actions allowance is exhausted. Local checks above passed; this is not a CI PASS.",
+    "github_ci": "Not run: [skip ci] avoided consuming exhausted GitHub Actions free allowance. GitHub combined status is empty; CI is not PASS. Local unit/browser/typecheck/migration/plan gates passed.",
     "new_paid_cost_or_dependency": false
   },
-  "acceptance": "This closes only validation of registered Inspector defaults. The full 77.44.7.A and Visual Editor acceptance remain OPEN / NOT CERTIFIED; manual/physical acceptance remains DEFERRED."
+  "acceptance": "Registered Inspector default validation is implemented, deployed, and production asset hashes match. The full 77.44.7.A and Visual Editor acceptance remain OPEN / NOT CERTIFIED; manual/physical acceptance remains DEFERRED."
 }
