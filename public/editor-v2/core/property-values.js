@@ -55,7 +55,7 @@ export function getInspectorValueContract(property) {
 export function normalizeInspectorValue(property, input) {
   const type = property?.type;
   const value = property?.id==='content.text' ? String(input ?? '') : String(input ?? '').trim();
-  const token=parseTokenReference(value);
+  const token=type==='text'?null:parseTokenReference(value);
   if(token){if(!compatibleTokens(property).includes(token))throw new Error('Ez a közös stílus nem használható ebben a mezőben.');return value}
   if(type==='asset'){
     if(value==='none')return value;

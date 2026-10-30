@@ -164,3 +164,14 @@ test('Grid-group metadata cannot expose a Grid control in a Flex-only context',(
  assert.deepEqual(getProperty('flex.gap').layoutContext,{kind:'container',modes:['flex','grid']},'shared spacing remains available in both layout systems');
  assert.deepEqual(getProperty('flex.alignSelf').layoutContext,{kind:'item',parentModes:['flex','grid']},'shared item alignment remains available in both layout systems');
 });
+
+test('literal Inspector text keeps Brand Kit-looking references as content',()=>{
+ const reference='var(--creator-colors-primary, #7047eb)';
+ const textProperty=getProperty('content.text');
+ const nameProperty=getProperty('advanced.nodeName');
+ assert.equal(normalizeInspectorValue(textProperty,reference),reference,'literal text must not be parsed as a design token');
+ assert.equal(normalizeInspectorValue(textProperty,`  ${reference}\n`),`  ${reference}\n`,'content text preserves user whitespace');
+ assert.equal(normalizeInspectorValue(nameProperty,`  ${reference}  `),reference,'node name remains ordinary trimmed text');
+ assert.equal(normalizeInspectorValue(getProperty('background.color'),reference),reference,'actual style properties still accept compatible tokens');
+ assert.throws(()=>normalizeInspectorValue(getProperty('size.width'),reference),/Ez a közös stílus nem használható/,'incompatible style tokens still fail');
+});
