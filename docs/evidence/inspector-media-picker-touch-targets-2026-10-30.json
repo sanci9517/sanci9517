@@ -2,7 +2,7 @@
   "plan_item": "77.44.7.A",
   "feature": "Mobile Inspector media picker meets the 44px touch-target contract",
   "date": "2026-10-30",
-  "status": "IMPLEMENTED_AND_LOCALLY_VERIFIED_RELEASE_PENDING",
+  "status": "IMPLEMENTED_DEPLOYED_AND_VERIFIED",
   "finding": {
     "reproduction": "Real Chromium at a 390px viewport measured the shared Inspector media picker open button at 38px and its revealed search input at 38.89px, below the canonical plan 44px mobile touch target.",
     "impact": "Selecting or searching for an Inspector media asset required a smaller touch target than the plan promises, making the responsive Inspector harder to operate on touch screens.",
@@ -31,7 +31,8 @@
   "production_preflight": {
     "d1_before_deploy": "Read-only Cloudflare Query API queries only: 34 d1_migrations rows, latest 0028_media_archive.sql; PRAGMA foreign_key_check empty; PRAGMA quick_check=ok; every query rows_written=0 and changed_db=false.",
     "migration_or_data_write": false,
-    "r2_change": false
+    "r2_change": false,
+    "d1_after_deploy": "Read-only Cloudflare Query API after deploy: 34 ledger rows, latest 0028_media_archive.sql; PRAGMA foreign_key_check empty; PRAGMA quick_check=ok; every query rows_written=0 and changed_db=false."
   },
   "runtime_scope": {
     "public_runtime_files": [
@@ -47,12 +48,24 @@
   },
   "release": {
     "remote_branch": "v2/foundation",
-    "runtime_commit": "PENDING",
-    "github_status": "PENDING; no CI PASS claimed until directly checked.",
-    "cloudflare_build": "PENDING",
-    "deployment": "PENDING",
-    "health": "PENDING",
-    "changed_asset_hashes": "PENDING; index.html and editor-refresh.css are changed public assets."
+    "runtime_commit": "df6c35d41c9ddb393e28630b7b6674bd770fbc5c",
+    "github_status": "Direct git ls-remote confirms v2/foundation points to runtime_commit. Direct commit status GET: state=pending, total_count=0, statuses=[]; no CI PASS claimed.",
+    "cloudflare_build": "No automatic Worker rollout appeared after the verified push; Cloudflare deployment API still showed the prior 100% version. Published from the exact pushed source with npm run deploy:safe after the safety gate and dry-run. No Cloudflare build ID/CI PASS claimed.",
+    "deployment": "Cloudflare API GET verifies deployment fe2fd936-95f9-45e6-840c-ed8e4d7897b8 created 2026-10-30T19:50:47.249505Z; Worker version d9fab3ea-121e-4f6a-9607-4da0794c52ae at 100%.",
+    "health": "Direct GET https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health returned HTTP 200: {\"ok\":true,\"service\":\"sanci9517-streamer-brand\",\"version\":\"2.0.0\",\"server\":\"cloudflare-worker\"}.",
+    "changed_asset_hashes": {
+      "/editor-v2/index.html": {
+        "local_sha256": "bd6a15f6fd3aa9e1edbab31fe6682696533dccac8f2c15b57ae2b3d72e6db02a",
+        "live_sha256": "bd6a15f6fd3aa9e1edbab31fe6682696533dccac8f2c15b57ae2b3d72e6db02a",
+        "match": true
+      },
+      "/editor-v2/editor-refresh.css": {
+        "local_sha256": "d50950bada94afeaf73fcdf0c553518e25fdfa332ffc7dc2ff283026ab5501ea",
+        "live_sha256": "d50950bada94afeaf73fcdf0c553518e25fdfa332ffc7dc2ff283026ab5501ea",
+        "match": true
+      }
+    },
+    "documentation_followup": "Plan and evidence release metadata will be pushed separately; no Worker redeployment is needed for documentation-only changes."
   },
   "acceptance": "Mobile media-picker touch target slice is independently covered. Overall 77.44.7.A and full Visual Editor acceptance remain OPEN / NOT CERTIFIED; manual/physical acceptance stays DEFERRED."
 }
