@@ -1,5 +1,5 @@
 /* Sanci9517 canonical public Page Model renderer — Editor v2 compatible. */
-import { resolveNodeStyle, STYLE_MAP, needsRelativeOffsetPosition, legacyBackgroundColor } from "../editor-v2/core/canvas-engine.js?v=20261030-legacy-gradient";
+import { resolveNodeStyle, STYLE_MAP, needsRelativeOffsetPosition, legacyBackgroundColor } from "../editor-v2/core/canvas-engine.js?v=20261030-legacy-background-token";
 import { RICH_TEXT_FONT_FAMILIES } from "../editor-v2/core/schema.js";
 import { LAYOUT_TYPES, isManagedLayout } from "../editor-v2/core/layout-presets.js";
 import {isStructuredType,renderElementContent,activateStructuredContent,safeMediaUrl} from "../editor-v2/core/element-content.js";

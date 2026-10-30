@@ -21,6 +21,7 @@ import { computeCanvasMinHeight } from '../core/canvas-extent.js';
 import { measureCanvasWorkspace } from '../core/canvas-workspace.js';
 import { needsRelativeOffsetPosition,legacyBackgroundColor,applyNodeStyle } from '../core/canvas-engine.js';
 import {legacyBackgroundGradient} from '../core/background-asset.js';
+import {tokenReference} from '../core/design-tokens.js';
 import { validatePublishDocument } from '../../../src/core/editor-validation.ts';
 
 test('canvas minimum height follows content below the default page extent', () => {
@@ -61,6 +62,14 @@ test('legacy background gradients promote only fixed tokens and respect Inspecto
  const canvas={style:{}};applyNodeStyle(canvas,legacy);assert.equal(canvas.style.backgroundImage,gradient);
  const overridden={...legacy,style:{...legacy.style,backgroundImage:'none'}},overriddenCanvas={style:{}};applyNodeStyle(overriddenCanvas,overridden);assert.equal(overriddenCanvas.style.backgroundImage,'none');
  const disabledRoot={...legacy,type:'root'},disabledRootCanvas={style:{}};applyNodeStyle(disabledRootCanvas,disabledRoot);assert.equal(disabledRootCanvas.style.backgroundImage,'none','versionless root still requires opt-in for legacy styles');
+});
+
+test('legacy background accepts only exact color references from the Brand Kit token registry',()=>{
+ for(const id of ['colors.primary','colors.text','colors.surface','colors.border'])assert.equal(legacyBackgroundColor(tokenReference(id)),tokenReference(id));
+ for(const id of ['typography.font','spacing.medium','radii.card','shadows.card'])assert.equal(legacyBackgroundColor(tokenReference(id)),'',id);
+ for(const value of ['var(--custom-color)','var(--creator-colors-primary)','var(--creator-colors-primary, url(https://example.invalid/x))','var(--creator-colors-primary, #7047eb);background:url(x)'])assert.equal(legacyBackgroundColor(value),'',value);
+ const token=tokenReference('colors.primary'),node={id:'token-background',type:'divider',style:{background:token},responsive:{}};
+ const element={style:{}};applyNodeStyle(element,node);assert.equal(element.style.background,token);
 });
 
 test('Rich Text schema normalizes Office-friendly tables, safe inline styles and extended semantic marks',()=>{

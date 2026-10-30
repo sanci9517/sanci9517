@@ -8,6 +8,7 @@ import {chromium} from 'playwright';
 import {createDocument,createNode} from '../../public/editor-v2/core/schema.js';
 import {createEditorState,activePage} from '../../public/editor-v2/core/state.js';
 import {execute} from '../../public/editor-v2/core/commands.js';
+import {tokenReference} from '../../public/editor-v2/core/design-tokens.js';
 
 test('partial palette types and Divider/Spacer Inspector edits become public only after Publish',async t=>{
  const model=createEditorState(createDocument()),pageId=model.document.activePageId,root=activePage(model).rootId;
@@ -30,6 +31,11 @@ test('partial palette types and Divider/Spacer Inspector edits become public onl
  legacyGradientNode.style.background=legacyGradient;
  activePage(model).nodes[legacyGradientId]=legacyGradientNode;
  activePage(model).nodes[root].children.push(legacyGradientId);
+ const legacyTokenId='legacy-background-token';
+ const legacyTokenNode=createNode('divider',{id:legacyTokenId,parentId:root,name:'Régi márka-token háttér'});
+ legacyTokenNode.style.background=tokenReference('colors.primary');
+ activePage(model).nodes[legacyTokenId]=legacyTokenNode;
+ activePage(model).nodes[root].children.push(legacyTokenId);
  const legacySpacerId='legacy-spacer-fixture';
  const legacySpacer=createNode('spacer',{id:legacySpacerId,parentId:root,name:'Régi üres térköz'});
  activePage(model).nodes[legacySpacerId]=legacySpacer;
@@ -51,6 +57,7 @@ test('partial palette types and Divider/Spacer Inspector edits become public onl
   }
   if(url.pathname==='/api/public/pages')return json({ok:true,data:{id:pageId,slug:'test',title:'Test',description:'',content:published.pages[pageId]}});
   if(url.pathname==='/api/public/navigation')return json({ok:true,data:{items:[]}});
+  if(url.pathname==='/api/public/presentation')return json({ok:true,data:{tokens:{colors:{primary:'#1266cc'}}}});
   if(url.pathname==='/api/integrations/twitch/connection')return json({ok:true,data:{connected:false}});
   if(url.pathname.startsWith('/api/'))return json({ok:true,data:{siteName:'Test'}});
   const path=url.pathname==='/p/test'?'/visual-page.html':url.pathname,file=resolve(assetRoot,'.'+path);
@@ -214,11 +221,15 @@ test('partial palette types and Divider/Spacer Inspector edits become public onl
  assert.equal(await publicNode(legacyDividerId).evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(255, 0, 0)','legacy literal background color remains visible publicly');
  assert.equal(await canvasNode(legacyGradientId).evaluate(el=>getComputedStyle(el).backgroundImage),computedGradient(legacyGradient),'allowlisted legacy gradient is visible on Canvas');
  assert.equal(await publicNode(legacyGradientId).evaluate(el=>getComputedStyle(el).backgroundImage),computedGradient(legacyGradient),'allowlisted legacy gradient is visible publicly');
+ assert.equal(await canvasNode(legacyTokenId).evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(18, 102, 204)','exact Brand Kit color token resolves on Canvas');
+ assert.equal(await publicNode(legacyTokenId).evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(18, 102, 204)','exact Brand Kit color token resolves publicly');
  for(const [device,width] of [['tablet',768],['mobile',390],['desktop',1366]]){
   await editor.locator(`.canvas-device-btn[data-device="${device}"]`).click();
   await viewer.setViewportSize({width,height:900});await viewer.reload();
   assert.equal(await canvasNode(legacyGradientId).evaluate(el=>getComputedStyle(el).backgroundImage),computedGradient(legacyGradient),`${device} Canvas preserves the legacy gradient`);
   assert.equal(await publicNode(legacyGradientId).evaluate(el=>getComputedStyle(el).backgroundImage),computedGradient(legacyGradient),`${device} public page preserves the legacy gradient`);
+  assert.equal(await canvasNode(legacyTokenId).evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(18, 102, 204)',`${device} Canvas resolves the Brand Kit background token`);
+  assert.equal(await publicNode(legacyTokenId).evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(18, 102, 204)',`${device} public page resolves the Brand Kit background token`);
  }
  assert.deepEqual(editorExternal,[],'escaped legacy URL must not cause a new Canvas resource request');
  await selectStyle(legacyDividerId);

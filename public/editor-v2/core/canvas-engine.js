@@ -9,6 +9,9 @@
 import { resolveResponsiveValue } from './responsive.js';
 import { contentDefaults } from './authored-content.js';
 import { backgroundImageValue, MEDIA_ASSET_ID } from './background-asset.js?v=20261030-legacy-gradient';
+import { parseTokenReference } from './design-tokens.js';
+
+const LEGACY_BACKGROUND_COLOR_TOKENS=new Set(['colors.primary','colors.text','colors.surface','colors.border']);
 
 export const STYLE_MAP = Object.freeze({
   width: 'width',
@@ -107,6 +110,7 @@ export function legacyBackgroundColor(value) {
   if (typeof value !== 'string') return '';
   const text=value.trim();
   if (!text || /^(?:inherit|initial|unset|revert|revert-layer)$/i.test(text)) return '';
+  if(LEGACY_BACKGROUND_COLOR_TOKENS.has(parseTokenReference(text)))return text;
   if (!/^(?:#[0-9a-f]{3}(?:[0-9a-f]|[0-9a-f]{3}|[0-9a-f]{5})?|[a-z]+|(?:rgba?|hsla?)\([\d\s.,%+\/-]+\))$/i.test(text)) return '';
   if (typeof globalThis.CSS?.supports === 'function' && !globalThis.CSS.supports('background-color',text)) return '';
   return text;
