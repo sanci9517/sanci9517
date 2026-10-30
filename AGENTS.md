@@ -26,6 +26,10 @@ When this review reveals a useful capability that the product needs but does not
 
 This principle never overrides higher-priority safety, security, repository, release, or data-protection instructions. Preserve all existing work and follow the release workflow above.
 
+## Visual Editor manual acceptance timing
+
+For the SANCI9517 Creator Platform, defer user-facing manual acceptance and physical-device acceptance of the Visual Editor until the complete Visual Editor scope in the canonical plan is implemented. Do not ask the owner to manually test partial feature slices. Continue automated unit, integration, real-browser, regression, and authorized read-only release checks during development. Once the full editor reaches its planned acceptance gate, conduct one consolidated manual acceptance pass and record the result; a deferred manual check is neither a pass nor a failure.
+
 # Efficient and reliable execution
 
 - Prefer free, already-approved, reliable tools and open-source components when they meet the product requirements. Do not add paid infrastructure or incur avoidable cost; if a necessary solution would have a material cost, explain the tradeoff and ask the owner before adopting it.

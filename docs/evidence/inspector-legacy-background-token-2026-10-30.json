@@ -36,9 +36,9 @@
     "worker_version_number": 3738,
     "traffic_percent": 100,
     "wrangler_asset_upload": "6 modified public assets uploaded from the exact pushed source tree",
-    "health": "UNVERIFIED; production HTTP requests returned sandbox proxy 403 Forbidden",
-    "db_health": "UNVERIFIED; production HTTP requests returned sandbox proxy 403 Forbidden",
-    "live_asset_hashes": "UNVERIFIED; production HTTP requests returned sandbox proxy 403 Forbidden"
+    "health": "UNVERIFIED; production HTTP requests returned sandbox proxy 403 Forbidden; direct no-proxy retry failed with Network is unreachable",
+    "db_health": "UNVERIFIED; production HTTP requests returned sandbox proxy 403 Forbidden; direct no-proxy retry failed with Network is unreachable",
+    "live_asset_hashes": "UNVERIFIED; production HTTP requests returned sandbox proxy 403 Forbidden; direct no-proxy retry failed with Network is unreachable"
   },
-  "open": "The full 77.44.7.A acceptance, physical desktop/mobile acceptance, and production HTTP health/live-asset hash checks remain open. No production D1 migration, data write or R2 change occurred."
+  "open": "The full 77.44.7.A acceptance, consolidated manual/physical Visual Editor acceptance (deferred until the full editor is complete), and production HTTP health/live-asset hash checks remain open. No production D1 migration, data write or R2 change occurred."
 }
