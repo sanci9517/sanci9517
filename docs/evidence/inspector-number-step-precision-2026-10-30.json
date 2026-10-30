@@ -28,7 +28,8 @@
     "python3 scripts/check-canonical-plan.py": "PASS, 13 master files and 396 mappings; acceptance NOT CERTIFIED",
     "python3 scripts/audit-active-plan-point.py": "PASS; cursor remains WEB-011 / 77.44.7.A",
     "git diff --check": "PASS",
-    "wrangler_dry_run": "PASS, Wrangler 4.130.0; 161 assets, 298.43 KiB / 68.24 KiB gzip; EROFS affects only debug-log writing under read-only /home/agent/.config."
+    "wrangler_dry_run": "PASS, Wrangler 4.130.0; 161 assets, 298.43 KiB / 68.24 KiB gzip; EROFS affects only debug-log writing under read-only /home/agent/.config.",
+    "CHROMIUM_PATH=/usr/bin/chromium node --test --test-reporter=spec tests/browser/editor-inspector-richtext-controls.test.js (coverage follow-up)": "PASS, 2/2 tests at 390px and 1366px; scale 0.85 is natively valid, ArrowUp/ArrowDown produce 0.95/0.85, and min/max clamp at 0.1/4. The first sandboxed browser launch ended with SIGTRAP before tests started; identical local test passed in the browser-capable execution mode."
   },
   "production_preflight": {
     "d1_before_deploy": "SELECT-only Cloudflare D1 API: 34 ledger rows, latest 0028_media_archive.sql; foreign_key_check empty; quick_check=ok; rows_written=0; changed_db=false.",
@@ -62,7 +63,8 @@
         "live_sha256": "9450f941c9b55c867610714744b53697adff6659ea66b7fd14d601309fce5acf",
         "match": true
       }
-    }
+    },
+    "test_coverage_followup": "Test-only change; no runtime source changed and no deployment was triggered. The scale numeric contract and bounds are now covered by the existing real-Chromium Inspector test."
   },
   "acceptance": "This numeric Inspector contract slice is independently covered. Overall 77.44.7.A and complete Visual Editor acceptance remain OPEN / NOT CERTIFIED; manual/physical acceptance stays DEFERRED."
 }

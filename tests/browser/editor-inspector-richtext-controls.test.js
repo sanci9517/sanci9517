@@ -144,6 +144,19 @@ test('typed Inspector controls and link selection work with real browser DOM at 
       const numberAfterArrowUp=numberStepInput.value;
       numberStepInput.dispatchEvent(new KeyboardEvent('keydown',{key:'ArrowDown',bubbles:true,cancelable:true}));
       const numericStep={nativeDecimalValid,step:numberStepInput.step,numberAfterArrowUp,numberAfterArrowDown:numberStepInput.value,edits:numberStepEdits};
+      const scaleStepEdits=[],scaleStepField=renderPropertyInput(getProperty('transform.scale'),'Nagyítás','0.85',value=>scaleStepEdits.push(value));host.append(scaleStepField);
+      const scaleStepInput=scaleStepField.querySelector('input[type="number"]');
+      const scaleNativeDecimalValid=scaleStepInput.validity.valid;
+      scaleStepInput.dispatchEvent(new KeyboardEvent('keydown',{key:'ArrowUp',bubbles:true,cancelable:true}));
+      const scaleAfterArrowUp=scaleStepInput.value;
+      scaleStepInput.dispatchEvent(new KeyboardEvent('keydown',{key:'ArrowDown',bubbles:true,cancelable:true}));
+      const scaleAfterArrowDown=scaleStepInput.value;
+      scaleStepInput.value='4';scaleStepInput.dispatchEvent(new KeyboardEvent('keydown',{key:'ArrowUp',bubbles:true,cancelable:true}));
+      const scaleAtMaximum=scaleStepInput.value;
+      scaleStepInput.value='0.1';scaleStepInput.dispatchEvent(new KeyboardEvent('keydown',{key:'ArrowDown',bubbles:true,cancelable:true}));
+      const scaleAtMinimum=scaleStepInput.value;
+      const scaleNumericStep={nativeDecimalValid:scaleNativeDecimalValid,step:scaleStepInput.step,min:scaleStepInput.min,max:scaleStepInput.max,
+        afterArrowUp:scaleAfterArrowUp,afterArrowDown:scaleAfterArrowDown,atMaximum:scaleAtMaximum,atMinimum:scaleAtMinimum,edits:scaleStepEdits};
       const box=renderPropertyInput(getProperty('spacing.padding'),'Belső térköz','8px',v=>edits.push(v));
       host.append(box);
       const sides=box.querySelectorAll('input');
@@ -240,7 +253,7 @@ test('typed Inspector controls and link selection work with real browser DOM at 
         markedRun:aligned.blocks[0].children.find(x=>x.text==='world'),alignment:aligned.blocks[0].align,
         multiSelection,multiBlocks:multiAligned.blocks,
         listType:parsedList.blocks[0].type,listText:parsedList.blocks[0].items[0].children.map(x=>x.text).join(''),
-        hasHorizontalOverflow:document.documentElement.scrollWidth>document.documentElement.clientWidth+1,inspectorBookmarkKeepsDirection,fieldMatrix,invalidMatrix,numericStep};
+        hasHorizontalOverflow:document.documentElement.scrollWidth>document.documentElement.clientWidth+1,inspectorBookmarkKeepsDirection,fieldMatrix,invalidMatrix,numericStep,scaleNumericStep};
     });
     assert.deepEqual(data.edits,['#abcdef','8px 12px 8px 8px']);
     assert.equal(data.inspectorBookmarkKeepsDirection,true);
@@ -260,6 +273,7 @@ test('typed Inspector controls and link selection work with real browser DOM at 
     assert.ok(data.fieldMatrix.filter(item=>item.type!=='asset').every(item=>item.callbackCount===1&&!item.error),`supported Inspector fields must reach their validated callback: ${JSON.stringify(data.fieldMatrix.filter(item=>item.type!=='asset'&&(item.callbackCount!==1||item.error)))}`);
     assert.ok(data.fieldMatrix.filter(item=>item.type==='number').every(item=>item.nativeValid),`valid numeric Inspector decimals must also satisfy native browser validity: ${JSON.stringify(data.fieldMatrix.filter(item=>item.type==='number'&&!item.nativeValid))}`);
     assert.deepEqual(data.numericStep,{nativeDecimalValid:true,step:'any',numberAfterArrowUp:'0.85',numberAfterArrowDown:'0.75',edits:['0.85','0.75']},'numeric controls keep valid fractional values while arrow keys use the declared increment');
+    assert.deepEqual(data.scaleNumericStep,{nativeDecimalValid:true,step:'any',min:'0.1',max:'4',afterArrowUp:'0.95',afterArrowDown:'0.85',atMaximum:'4',atMinimum:'0.1',edits:['0.95','0.85','4','0.1']},'scale accepts fractional values, preserves its declared arrow increment, and clamps at both contract bounds');
     const contentTextControl=data.fieldMatrix.find(item=>item.id==='content.text');
     assert.deepEqual({tagName:contentTextControl.tagName,rows:contentTextControl.rows,value:contentTextControl.value,error:contentTextControl.error},
       {tagName:'TEXTAREA',rows:4,value:'  első sor\n második sor  ',error:''},
