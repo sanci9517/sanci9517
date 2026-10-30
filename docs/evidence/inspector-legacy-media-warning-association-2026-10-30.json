@@ -1,0 +1,36 @@
+{
+  "date": "2026-10-30",
+  "planItem": "77.44.7.A — Legacy media Inspector warning and field lifecycle",
+  "finding": "Malformed legacy media fields and unsafe source/poster URLs displayed role=status warnings without programmatically associating those messages with the field or media-library control that repairs them.",
+  "change": "Each status warning has a stable unique id and is appended to aria-describedby on its affected text input and media-library open control. Existing description tokens are preserved, and resolved warning IDs are removed from the fields. Stable message IDs avoid replacing unchanged live regions on every edit.",
+  "openSourceReview": "Reused project-owned native aria-describedby and status patterns from composition-inputs.js, authored-content controls, and the Inspector. No third-party code or dependency was needed.",
+  "tests": {
+    "browserCommand": "CHROMIUM_PATH=/usr/bin/chromium node --test tests/browser/editor-legacy-media-parity.test.js",
+    "browser": { "passed": 1, "failed": 0, "viewports": [390, 1366] },
+    "assertions": ["corrupt image source, alt and library asset feedback targets resolve exactly once", "corrupt video source, poster and library controls resolve to status", "corrupt audio source and library controls resolve to status", "unsafe image URL warning resolves and is removed from aria-describedby after repair", "no unsafe external request", "draft Save leaves public output unchanged", "separate Publish updates public legacy media"],
+    "initialAttempt": "The first browser attempt exposed a stale test locator querying the Inspector tab as a button; updated it to the current role=tab contract and reran the full test successfully.",
+    "typecheck": "PASS",
+    "editorUnit": { "passed": 156, "failed": 0 },
+    "migrationSafetyGate": "PASS",
+    "canonicalPlan": "PASS",
+    "activePointAudit": "PASS; 77.44.7.A remains OPEN / NOT CERTIFIED",
+    "traceability": { "passed": 396, "acceptance": "NOT_CERTIFIED" },
+    "wranglerDryRun": { "pass": true, "version": "4.130.0", "assets": 161, "uploadKiB": 296.93, "gzipKiB": 67.81 },
+    "productionD1Preflight": { "method": "SELECT-only Cloudflare D1 query API", "migrationRows": 34, "rowsWritten": 0, "changedDb": false, "foreignKeyCheck": "PASS", "quickCheck": "ok" },
+    "diffCheck": "PASS"
+  },
+  "release": {
+    "commit": "27a47eb98f15e0242533e7ce285d22ed4f72af8b",
+    "branch": "v2/foundation",
+    "push": "FAST_FORWARD_VERIFIED",
+    "githubCi": "SKIPPED_BY_[skip ci]",
+    "deployment": "5138ab51-1927-4714-b176-b32d93003ad4",
+    "workerVersion": "ad599738-a80d-4ed6-8639-c605f2bdbe69",
+    "trafficPercent": 100,
+    "healthStatus": 200,
+    "liveAsset": { "path": "/editor-v2/ui/legacy-media-inspector.js", "status": 200, "sha256": "e24bf6ff58b940697d74e71c38f0cff9002399c464e6e3c734f24184e9c06b7f", "matchesSource": true },
+    "productionD1Writes": 0,
+    "productionR2Changes": 0
+  },
+  "acceptanceBoundary": "This verifies the listed legacy media warning associations and browser lifecycle only. Full 77.44.7.A and 79 element × 68 property acceptance remain OPEN / NOT CERTIFIED; manual/physical acceptance remains deferred until the complete Visual Editor is implemented."
+}
