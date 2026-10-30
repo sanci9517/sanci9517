@@ -1,0 +1,37 @@
+{
+  "date": "2026-10-30",
+  "workItem": "77.44.7.A — Inspector tablist semantics and keyboard navigation",
+  "finding": "The three main Inspector buttons only exposed a visual active class. They lacked tablist/tab/tabpanel semantics, selected state, panel labeling, roving tab stop, and arrow/Home/End navigation.",
+  "change": "Added stable tab and panel IDs; synchronized role, aria-selected, aria-controls, aria-labelledby and roving tabindex. Left/Right arrows (direction-aware), Home and End activate and focus the matching tab. Programmatic Inspector tab changes synchronize on render. The app.js cache-busting key was advanced.",
+  "reuseReview": "Adapted the project's existing Rich Text toolbar tablist interaction and native button keyboard handling to the top-level Inspector. No third-party code or dependency was appropriate or added.",
+  "tests": {
+    "typecheck": "PASS",
+    "editor": {"pass": 11, "fail": 0},
+    "chromiumInspectorLifecycle": {"pass": 1, "fail": 0, "durationMs": 234572.969, "checks": ["tablist/tab/tabpanel semantics", "aria-controls and aria-labelledby relationships", "selected tab and roving tabindex", "ArrowLeft/ArrowRight", "Home/End", "Inspector edit/Canvas/Save/reload/separate Publish"]},
+    "gitDiffCheck": "PASS",
+    "canonicalPlan": "PENDING",
+    "activePointAudit": "PENDING",
+    "traceability": "PENDING",
+    "migrationSafetyGate": "PENDING",
+    "wranglerDryRun": "PENDING"
+  },
+  "productionD1Preflight": {
+    "method": "SELECT-only Cloudflare D1 query API; to be run before deployment",
+    "appliedMigrations": null,
+    "rowsWritten": null,
+    "changedDb": null,
+    "migrationApplied": false
+  },
+  "release": {
+    "runtimeCommit": null,
+    "targetBranch": "v2/foundation",
+    "push": "PENDING",
+    "githubCi": "PENDING",
+    "deployment": "PENDING",
+    "workerVersion": "PENDING",
+    "productionHealth": "UNVERIFIED",
+    "productionAssetHashes": "UNVERIFIED",
+    "productionDataChanges": {"d1MigrationsApplied": 0, "d1RowsWritten": 0, "r2Changes": 0}
+  },
+  "acceptance": {"visualEditor": "NOT_CERTIFIED", "manualAndPhysicalDevice": "DEFERRED_UNTIL_COMPLETE_VISUAL_EDITOR"}
+}

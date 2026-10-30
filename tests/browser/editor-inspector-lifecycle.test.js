@@ -100,6 +100,26 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   // Authored defaults are visible in the style Inspector even before users
   // persist an explicit style override. Merely selecting a node stays pure.
   await select(buttonId);
+  const inspectorTablist=editor.locator('.inspector-tabs');
+  const inspectorTabs=inspectorTablist.locator('[role="tab"]');
+  const inspectorTabPanel=editor.locator('#inspectorBody');
+  assert.equal(await inspectorTablist.getAttribute('role'),'tablist');
+  assert.equal(await inspectorTabs.count(),3);
+  assert.equal(await inspectorTabPanel.getAttribute('role'),'tabpanel');
+  for(let index=0;index<3;index++)assert.equal(await inspectorTabs.nth(index).getAttribute('aria-controls'),'inspectorBody');
+  assert.equal(await inspectorTabs.nth(0).getAttribute('aria-selected'),'true');
+  assert.equal(await inspectorTabs.nth(0).getAttribute('tabindex'),'0');
+  assert.equal(await inspectorTabPanel.getAttribute('aria-labelledby'),await inspectorTabs.nth(0).getAttribute('id'));
+  await inspectorTabs.nth(0).focus();
+  await inspectorTabs.nth(0).press('ArrowRight');
+  assert.equal(await inspectorTabs.nth(1).getAttribute('aria-selected'),'true','Right Arrow activates the next Inspector tab');
+  assert.equal(await inspectorTabPanel.getAttribute('aria-labelledby'),await inspectorTabs.nth(1).getAttribute('id'));
+  await inspectorTabs.nth(1).press('End');
+  assert.equal(await inspectorTabs.nth(2).getAttribute('aria-selected'),'true','End activates the final Inspector tab');
+  await inspectorTabs.nth(2).press('ArrowLeft');
+  assert.equal(await inspectorTabs.nth(1).getAttribute('aria-selected'),'true','Left Arrow returns to the preceding Inspector tab');
+  await inspectorTabs.nth(1).press('Home');
+  assert.equal(await inspectorTabs.nth(0).getAttribute('aria-selected'),'true','Home restores the first Inspector tab');
   const inspectorDisclosure=editor.locator('#inspectorBody .inspector-group-title[role="button"]').first();
   const inspectorPanelId=await inspectorDisclosure.getAttribute('aria-controls');
   assert.ok(inspectorPanelId,'Inspector accordion identifies the content it controls');
