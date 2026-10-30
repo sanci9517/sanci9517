@@ -1,0 +1,54 @@
+{
+  "plan_item": "77.44.7.A — Inspector Flex/Grid property visibility and Canvas context contract",
+  "date": "2026-10-30",
+  "status": "IMPLEMENTED_AND_LOCALLY_VERIFIED_RELEASE_PENDING",
+  "finding": {
+    "defect": "registerProperty() allowed properties in the Grid group to declare a Flex-only container or parent context. isLayoutPropertyRelevant() would then present Grid controls in a Flex context even though the Grid property is not meaningful there.",
+    "fix": "Reject Grid-group registrations when their layout modes include flex. Flex-group shared properties retain explicit flex+grid support where appropriate (for example flex.gap and flex.alignSelf). Rejection is atomic.",
+    "reuse_review": "Reused the current Property Registry layoutContext contract and layout-presets relevance semantics. No external library implements this product-specific cross-check more narrowly; no third-party code or dependency was introduced."
+  },
+  "changed_files": [
+    "public/editor-v2/core/property-registry.js",
+    "public/editor-v2/tests/capability-contract.test.js",
+    "public/editor-v2/app.js",
+    "public/editor-v2/core/capability-matrix.js",
+    "public/editor-v2/core/inspector-style-contract.js",
+    "public/editor-v2/core/state-styles.js",
+    "public/editor-v2/index.html",
+    "public/editor-v2/ui/element-content-controls.js",
+    "public/editor-v2/ui/geometry-presets.js",
+    "public/editor-v2/tests/core.test.js",
+    "public/editor-v2/tests/inspector-richtext.test.js",
+    "public/editor-v2/tests/layout-presets.test.js",
+    "public/editor-v2/tests/state-tokens.test.js",
+    "docs/evidence/feature-traceability.json",
+    "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+    "docs/evidence/inspector-grid-context-contract-2026-10-30.json"
+  ],
+  "checks": {
+    "node --experimental-vm-modules public/editor-v2/tests/capability-contract.test.js": "PASS, 11/11 tests; rejects Grid container/item Flex contexts atomically and preserves shared Flex-group Grid support.",
+    "npm run test:editor": "PASS, 11/11 test files.",
+    "CHROMIUM_PATH=/usr/bin/chromium node tests/browser/editor-inspector-richtext-controls.test.js": "PASS, 2/2 desktop/mobile browser tests.",
+    "npm run typecheck": "PASS.",
+    "npm run test:web013:migration-gate": "PASS.",
+    "node --check public/editor-v2/core/property-registry.js": "PASS.",
+    "python3 scripts/build-feature-traceability.py --check": "PASS, 396 mappings.",
+    "python3 scripts/check-canonical-plan.py": "PASS, 13 master files; full Editor acceptance remains NOT CERTIFIED.",
+    "python3 scripts/audit-active-plan-point.py": "PASS, cursor WEB-011 / 77.44.7.A.",
+    "git diff --check": "PASS.",
+    "npx wrangler deploy --dry-run": "PASS, Wrangler 4.130.0 read 161 assets; 299.94 KiB / 68.57 KiB gzip. No upload/deploy during dry-run.",
+    "Production D1 preflight": "PASS, SELECT name FROM d1_migrations ORDER BY name; 34 rows, latest 0028_media_archive.sql, rows_written=0, changed_db=false.",
+    "Production health baseline": "PASS, direct /api/health returned HTTP 200 and ok=true."
+  },
+  "release": {
+    "status": "PENDING",
+    "worker_before_release": "a621de26-18ed-4bcb-85ea-6c6ccf0ffe6d at 100% traffic",
+    "github_target_branch": "v2/foundation",
+    "github_target_head_before_push": "e75c502b95d3e34bdaf451faee73a7b5607168fc"
+  },
+  "ci_and_cost": {
+    "github_ci": "Not run; free GitHub Actions allowance is exhausted. Commit will use [skip ci], no CI PASS will be claimed.",
+    "new_paid_cost_or_dependency": false
+  },
+  "acceptance": "This slice validates Grid property visibility metadata only. Full 77.44.7.A and Visual Editor acceptance remain OPEN / NOT CERTIFIED; manual/physical acceptance remains DEFERRED."
+}

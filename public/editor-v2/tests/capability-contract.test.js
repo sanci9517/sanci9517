@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import {NODE_TYPES} from '../core/schema.js';
 import {getElementCapability,getElementInspectorContract} from '../core/capability-matrix.js';
-import {getProperty,listProperties,registerProperty} from '../core/property-registry.js?v=20261030-inspector-registry-identity-contract';
+import {getProperty,listProperties,registerProperty} from '../core/property-registry.js?v=20261030-inspector-layout-context-contract';
 import {getInspectorValueContract,normalizeInspectorValue} from '../core/property-values.js';
 import {STYLE_MAP} from '../core/canvas-engine.js';
 
@@ -151,4 +151,16 @@ test('registered property identity and keys are canonicalized before uniqueness 
  const before=listProperties().length;
  assert.throws(()=>registerProperty({id:` ${id} `,group:'typography',label:'Duplicate alias',type:'text',command:'element.update',responsive:false,key:'otherName',appliesTo:['text']}),/Property már létezik/);
  assert.equal(listProperties().length,before,'a duplicate canonical ID does not partially mutate the registry');
+});
+test('Grid-group metadata cannot expose a Grid control in a Flex-only context',()=>{
+ const invalidItemId='test.contract.grid.flex-item-context';
+ const invalidContainerId='test.contract.grid.flex-container-context';
+ const before=listProperties().length;
+ assert.throws(()=>registerProperty({id:invalidItemId,group:'grid',label:'Grid child',type:'select',command:'responsive.set',responsive:true,key:'gridColumn',options:['auto','1'],layoutContext:{kind:'item',parentModes:['flex']},appliesTo:['text']}),/Grid property csak Grid layout-contextben/);
+ assert.throws(()=>registerProperty({id:invalidContainerId,group:'grid',label:'Grid container',type:'select',command:'responsive.set',responsive:true,key:'gridTemplateColumns',options:['1fr'],layoutContext:{kind:'container',modes:['flex']},appliesTo:['text']}),/Grid property csak Grid layout-contextben/);
+ assert.equal(getProperty(invalidItemId),null);
+ assert.equal(getProperty(invalidContainerId),null);
+ assert.equal(listProperties().length,before,'invalid layout metadata is rejected before registry insertion');
+ assert.deepEqual(getProperty('flex.gap').layoutContext,{kind:'container',modes:['flex','grid']},'shared spacing remains available in both layout systems');
+ assert.deepEqual(getProperty('flex.alignSelf').layoutContext,{kind:'item',parentModes:['flex','grid']},'shared item alignment remains available in both layout systems');
 });

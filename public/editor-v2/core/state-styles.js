@@ -1,4 +1,4 @@
-import {getProperty,listProperties} from './property-registry.js?v=20261030-inspector-registry-identity-contract';
+import {getProperty,listProperties} from './property-registry.js?v=20261030-inspector-layout-context-contract';
 import {normalizeInspectorValue} from './property-values.js';
 import {resolveResponsiveValue,normalizeResponsive} from './responsive.js';
 

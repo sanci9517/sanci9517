@@ -244,6 +244,7 @@ export function registerProperty(property) {
     const context=property.layoutContext;
     const modes=context?.kind==='container'?context.modes:context?.kind==='item'?context.parentModes:null;
     if(!['flex','grid'].includes(property.group)||!Array.isArray(modes)||modes.length===0||modes.some(mode=>!['flex','grid'].includes(mode))||new Set(modes).size!==modes.length)throw new Error('A layoutContext érvényes Flex/Grid container vagy item feltételt igényel.');
+    if(property.group==='grid'&&modes.includes('flex'))throw new Error('A Grid property csak Grid layout-contextben jelenhet meg.');
     if(context.kind==='container'&&Object.hasOwn(context,'parentModes')||context.kind==='item'&&Object.hasOwn(context,'modes'))throw new Error('A layoutContext mezői a kind értékéhez igazodjanak.');
   }else if(['flex','grid'].includes(property.group))throw new Error('A Flex/Grid property layoutContext feltételt igényel.');
   if(property.appliesTo!==undefined&&(!Array.isArray(property.appliesTo)||property.appliesTo.length===0||property.appliesTo.some(type=>typeof type!=='string'||!type.trim()||!registeredNodeTypes.has(type))||new Set(property.appliesTo).size!==property.appliesTo.length))throw new Error('Az appliesTo ismert, egyedi node típusok nem üres listája kell legyen.');

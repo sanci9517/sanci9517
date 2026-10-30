@@ -5,7 +5,7 @@ import {createEditorState,activePage} from '../core/state.js';
 import {execute} from '../core/commands.js';
 import {LAYOUT_PRESETS,isManagedLayout,isLayoutPropertyRelevant,explicitGridColumnCount} from '../core/layout-presets.js';
 import {resolveNodeStyle} from '../core/canvas-engine.js';
-import {getProperty,listProperties} from '../core/property-registry.js?v=20261030-inspector-registry-identity-contract';
+import {getProperty,listProperties} from '../core/property-registry.js?v=20261030-inspector-layout-context-contract';
 import {normalizeInspectorValue} from '../core/property-values.js';
 
 function fixture(){
