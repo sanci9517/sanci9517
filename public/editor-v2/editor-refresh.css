@@ -230,7 +230,7 @@ button:focus-visible, summary:focus-visible, .rail-btn:focus-visible { outline: 
 .property-unit-hint { display: block; margin-top: 6px; color: #8997ab; font-size: 11px; line-height: 1.4; }
 .richtext-editor-surface ::selection { background: #3166aa; color: #fff; }
 .richtext-editor-surface { -webkit-user-select: text; user-select: text; }
-@media (max-width: 850px) { .property-presets button, .geometry-presets button { min-height: 44px; } .property-info-toggle { width: 44px; min-width: 44px; height: 44px; } .inspector-search input { min-height: 44px; font-size: 16px; } }
+@media (max-width: 850px) { .property-presets button, .geometry-presets button, .editor-media-picker > button, .editor-media-picker input[type="search"] { min-height: 44px; } .property-info-toggle { width: 44px; min-width: 44px; height: 44px; } .inspector-search input { min-height: 44px; font-size: 16px; } }
 
 
 /* #47: Selected Inspector content must never change dock track sizing.
@@ -330,6 +330,7 @@ button:focus-visible, summary:focus-visible, .rail-btn:focus-visible { outline: 
 .property-unavailable { padding:9px 11px; border:1px dashed #506078; border-radius:8px; color:#b2bfd0; font-size:12px; line-height:1.4; }
 .editor-media-picker{display:grid;gap:8px;min-width:0}.editor-media-picker>button{min-height:38px;padding:8px 12px;border:1px solid #687a99;border-radius:8px;background:#202b40;color:inherit}.editor-media-picker input[type=search]{width:100%;min-height:38px}.editor-media-current{display:grid;grid-template-columns:repeat(auto-fill,minmax(86px,1fr));gap:7px;max-height:230px;overflow:auto;padding:3px}.editor-media-choice{min-width:0;padding:4px;border:1px solid #465773;border-radius:7px;background:#141d2d;color:inherit;text-align:left}.editor-media-choice img,.editor-media-selected{display:block;width:100%;height:72px;object-fit:contain;background:#0b1220;border-radius:4px}.editor-media-choice span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px;padding:4px 1px 1px}.editor-media-selected{max-width:120px;margin-bottom:4px}
 .editor-media-current[hidden],.editor-media-picker>button[hidden]{display:none}
+@media(max-width:850px){.editor-media-picker>button,.editor-media-picker input[type=search]{min-height:44px}}
 .editor-media-more{width:100%;font-weight:600}
 .editor-media-more:disabled{opacity:.65;cursor:wait}
 .property-unit-hint { color:#a9b8c9; font-size:11px; }

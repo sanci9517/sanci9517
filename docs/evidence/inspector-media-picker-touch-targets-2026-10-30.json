@@ -1,0 +1,58 @@
+{
+  "plan_item": "77.44.7.A",
+  "feature": "Mobile Inspector media picker meets the 44px touch-target contract",
+  "date": "2026-10-30",
+  "status": "IMPLEMENTED_AND_LOCALLY_VERIFIED_RELEASE_PENDING",
+  "finding": {
+    "reproduction": "Real Chromium at a 390px viewport measured the shared Inspector media picker open button at 38px and its revealed search input at 38.89px, below the canonical plan 44px mobile touch target.",
+    "impact": "Selecting or searching for an Inspector media asset required a smaller touch target than the plan promises, making the responsive Inspector harder to operate on touch screens.",
+    "fix": "A max-width:850px rule now follows the shared media-picker base rules and raises the open button and search input min-height to 44px. The editor-refresh stylesheet URL version was bumped so clients fetch the updated asset.",
+    "reuse_review": "The existing shared mediaAssetPicker and project-owned responsive stylesheet remain in use. No external code, dependency, or new infrastructure was needed."
+  },
+  "changed_files": [
+    "public/editor-v2/editor-refresh.css",
+    "public/editor-v2/index.html",
+    "tests/browser/editor-inspector-richtext-controls.test.js",
+    "docs/evidence/inspector-media-picker-touch-targets-2026-10-30.json",
+    "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md"
+  ],
+  "checks": {
+    "red_reproduction": "PASS as a defect reproduction: before the CSS fix, the mobile Chromium assertion failed with openButton=38px and search=38.890625px.",
+    "CHROMIUM_PATH=/usr/bin/chromium node --test --test-reporter=spec tests/browser/editor-inspector-richtext-controls.test.js": "PASS, 2/2 browser tests at 390px and 1366px; at 390px the media picker open button and search input are each 44px. The desktop viewport is not subjected to the mobile-only 44px assertion.",
+    "npm run test:editor": "PASS, 11/11 test files.",
+    "npm run typecheck": "PASS.",
+    "npm run test:web013:migration-gate": "PASS; safe deployment gate does not apply D1 migrations.",
+    "python3 scripts/build-feature-traceability.py --check": "PASS, 396 mappings.",
+    "python3 scripts/check-canonical-plan.py": "PASS, 13 master files and 396 mappings; acceptance NOT CERTIFIED.",
+    "python3 scripts/audit-active-plan-point.py": "PASS; cursor remains WEB-011 / 77.44.7.A.",
+    "git diff --check": "PASS.",
+    "npx wrangler deploy --dry-run": "PASS, Wrangler 4.130.0; 161 assets, 298.43 KiB / 68.24 KiB gzip. Read-only /home/agent/.config produced only a debug-log EROFS warning; dry-run exited 0."
+  },
+  "production_preflight": {
+    "d1_before_deploy": "Read-only Cloudflare Query API queries only: 34 d1_migrations rows, latest 0028_media_archive.sql; PRAGMA foreign_key_check empty; PRAGMA quick_check=ok; every query rows_written=0 and changed_db=false.",
+    "migration_or_data_write": false,
+    "r2_change": false
+  },
+  "runtime_scope": {
+    "public_runtime_files": [
+      "public/editor-v2/index.html",
+      "public/editor-v2/editor-refresh.css"
+    ],
+    "local_sha256": {
+      "/editor-v2/index.html": "bd6a15f6fd3aa9e1edbab31fe6682696533dccac8f2c15b57ae2b3d72e6db02a",
+      "/editor-v2/editor-refresh.css": "d50950bada94afeaf73fcdf0c553518e25fdfa332ffc7dc2ff283026ab5501ea"
+    },
+    "save_and_publish_separate": true,
+    "new_dependency": false
+  },
+  "release": {
+    "remote_branch": "v2/foundation",
+    "runtime_commit": "PENDING",
+    "github_status": "PENDING; no CI PASS claimed until directly checked.",
+    "cloudflare_build": "PENDING",
+    "deployment": "PENDING",
+    "health": "PENDING",
+    "changed_asset_hashes": "PENDING; index.html and editor-refresh.css are changed public assets."
+  },
+  "acceptance": "Mobile media-picker touch target slice is independently covered. Overall 77.44.7.A and full Visual Editor acceptance remain OPEN / NOT CERTIFIED; manual/physical acceptance stays DEFERRED."
+}

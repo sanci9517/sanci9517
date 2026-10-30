@@ -120,7 +120,9 @@ test('typed Inspector controls and link selection work with real browser DOM at 
       const assetOpen=assetControl.querySelector('.editor-media-picker > button');
       const assetSearch=assetControl.querySelector('input[type="search"]');
       const assetInitiallyClosed=assetOpen.getAttribute('aria-expanded')==='false'&&assetSearch.hidden;
+      const assetOpenButtonHeight=assetOpen.getBoundingClientRect().height;
       assetOpen.click();
+      const assetSearchHeight=assetSearch.getBoundingClientRect().height;
       for(let retry=0;retry<40&&!assetControl.querySelector('.editor-media-choice');retry++)await new Promise(resolve=>setTimeout(resolve,20));
       const assetExpanded=assetOpen.getAttribute('aria-expanded')==='true'&&!assetSearch.hidden;
       assetControl.querySelector('.editor-media-choice').click();
@@ -262,7 +264,8 @@ test('typed Inspector controls and link selection work with real browser DOM at 
         markedRun:aligned.blocks[0].children.find(x=>x.text==='world'),alignment:aligned.blocks[0].align,
         multiSelection,multiBlocks:multiAligned.blocks,
         listType:parsedList.blocks[0].type,listText:parsedList.blocks[0].items[0].children.map(x=>x.text).join(''),
-        hasHorizontalOverflow:document.documentElement.scrollWidth>document.documentElement.clientWidth+1,inspectorBookmarkKeepsDirection,fieldMatrix,invalidMatrix,numericStep,scaleNumericStep,scaleInvalidState,scaleRecoveryState};
+        hasHorizontalOverflow:document.documentElement.scrollWidth>document.documentElement.clientWidth+1,inspectorBookmarkKeepsDirection,fieldMatrix,invalidMatrix,numericStep,scaleNumericStep,scaleInvalidState,scaleRecoveryState,
+        assetTouchTargets:{openButton:assetOpenButtonHeight,search:assetSearchHeight}};
     });
     assert.deepEqual(data.edits,['#abcdef','8px 12px 8px 8px']);
     assert.equal(data.inspectorBookmarkKeepsDirection,true);
@@ -274,6 +277,7 @@ test('typed Inspector controls and link selection work with real browser DOM at 
     assert.ok(!data.boxControls.paddingUnitOptions.includes('auto'),'padding cannot use Auto');
 
     assert.ok(data.assetInitiallyClosed&&data.assetExpanded&&data.assetRejected&&data.assetClosedAfterSelection&&data.assetReopened,'asset picker must expose its state, preserve rejected edits, and reopen after selection');
+    if(width<=850)assert.ok(data.assetTouchTargets.openButton>=44&&data.assetTouchTargets.search>=44,`mobile asset picker controls must meet the 44px touch target contract: ${JSON.stringify(data.assetTouchTargets)}`);
     assert.equal(data.latestSearchWins,true,'late search responses must not replace the newest Media results');
     assert.ok(Object.keys(data.presetResults).length>=20);
     assert.ok(data.helpLengths.length>=45);
