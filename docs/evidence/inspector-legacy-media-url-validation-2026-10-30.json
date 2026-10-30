@@ -35,6 +35,12 @@
         "Save does not update public output and separate Publish does"
       ]
     },
+    "adjacentMediaRegression": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-media-source-switch.test.js tests/browser/editor-content-system.test.js",
+      "passed": 4,
+      "failed": 0,
+      "coverage": "Authored image/gallery/carousel/video poster switching, invalid source repair, inspector edits, reload, and separate Save/Publish at 390px and 1366px."
+    },
     "editorUnit": {
       "command": "npm run test:editor",
       "passedFiles": 11,
