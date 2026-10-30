@@ -85,6 +85,17 @@ test('palette items are inserted beside the selected item in canvas flow and sav
   assert.equal(await tab.locator('.top-center').getAttribute('aria-label'),'Előnézeti eszközméret');
   assert.equal(await tab.locator('.canvas-devices').getAttribute('role'),'group');
   assert.equal(await tab.locator('.canvas-devices').getAttribute('aria-label'),'Vászon előnézeti eszközmérete');
+  const selectTool=tab.locator('#selectTool'),panTool=tab.locator('#panTool');
+  assert.equal(await selectTool.getAttribute('aria-pressed'),'true');
+  assert.equal(await panTool.getAttribute('aria-pressed'),'false');
+  assert.equal(await selectTool.locator('xpath=..').getAttribute('role'),'group');
+  assert.equal(await selectTool.locator('xpath=..').getAttribute('aria-label'),'Vászon eszközei');
+  await panTool.click();
+  assert.equal(await selectTool.getAttribute('aria-pressed'),'false');
+  assert.equal(await panTool.getAttribute('aria-pressed'),'true');
+  await selectTool.click();
+  assert.equal(await selectTool.getAttribute('aria-pressed'),'true');
+  assert.equal(await panTool.getAttribute('aria-pressed'),'false');
   await assertDeviceSelection('desktop');
   await tab.locator('.canvas-device-btn[data-device="mobile"]').click();
   await assertDeviceSelection('mobile');
