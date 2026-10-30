@@ -37,3 +37,17 @@ For the SANCI9517 Creator Platform, defer user-facing manual acceptance and phys
 - Optimize for correctness and repeatability, not elapsed time. Do not weaken checks, reduce meaningful coverage, or introduce flaky concurrency to make a task appear faster.
 - Reuse existing project dependencies and platform capabilities before adding a new dependency. Evaluate maintenance, security, license, accessibility, and compatibility before adopting third-party code.
 - Fix verified defects within the authorized scope, then run checks proportional to the change and record what was and was not verified.
+
+## Uniform development status report
+
+At the end of every autonomous development block (including scheduled runs), report in Hungarian using the same concise, evidence-based fields:
+
+- **Aktív tervpont:** the exact current item in the one canonical master plan, and its OPEN / PASS / BLOCKED status.
+- **Elvégzett munka:** verified implemented changes; distinguish code, tests, documentation, and planning from each other.
+- **GitHub / éles kiadás:** branch, commit/PR link, deployed Worker version and production checks, or explicitly `NOT DONE` / `UNVERIFIED`.
+- **Ellenőrzések:** precise test commands and PASS/FAIL/NOT RUN outcomes; missing CI is not PASS.
+- **Költség:** confirm no newly authorized spending and note exhausted/unknown free quotas.
+- **Blokkolók:** permissions, quotas, failed checks, risks, and required owner approval.
+- **Következő lépés:** next authorized plan item and whether owner action is needed.
+
+For scheduled work, do not claim execution beyond tools and access actually available in that run. If coding or production verification cannot be performed, describe the concrete blocker and leave the status OPEN/BLOCKED rather than presenting a proposal as finished implementation. Never change the canonical plan's order just to make an automated report look complete.
