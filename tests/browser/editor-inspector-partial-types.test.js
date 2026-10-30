@@ -78,7 +78,7 @@ test('every PARTIAL type renders Inspector routes and preserves Save versus Publ
       !duplicatePrimaryIds.has(property.id)&&
       isLayoutPropertyRelevant(property,pageNode,parent,'desktop')
     );
-    const contextualLayoutProperties=['flex','grid'].flatMap(group=>listProperties({group})).filter(property=>
+    const contextualLayoutProperties=['flex','grid'].flatMap(group=>listProperties({group,nodeType:type})).filter(property=>
       isLayoutPropertyRelevant(property,pageNode,parent,'desktop')
     );
     const expected=[...typeProperties,...contextualLayoutProperties];

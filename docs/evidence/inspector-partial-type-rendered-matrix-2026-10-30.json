@@ -1,0 +1,50 @@
+{
+  "date": "2026-10-30",
+  "planItem": "77.44.7.A — every PARTIAL element type exposes only its applicable Inspector fields",
+  "scope": "Real-Chromium verification against the currently deployed Inspector source for all 44 PARTIAL node types, including root.",
+  "browserTest": {
+    "file": "tests/browser/editor-inspector-partial-types.test.js",
+    "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-inspector-partial-types.test.js",
+    "result": {
+      "passed": 1,
+      "failed": 0,
+      "durationSeconds": 336.1
+    },
+    "coverage": "All 44 PARTIAL types are selected in the Editor. The actual Inspector field IDs, command routes and Page Model keys are compared with the capability/property registry, layoutContext, and nodeType/appliesTo filters; empty/misleading groups and help disclosure associations are checked. The same browser scenario exercises responsive state, visibility, hover/focus state, keyboard focus, and Save versus Publish."
+  },
+  "finding": {
+    "initialRegressionRun": "The test expectation failed for button because its contextual Flex property list ignored appliesTo/nodeType; the actual Inspector correctly hid those fields.",
+    "testRepair": "Expected contextual Flex/Grid properties are now queried with listProperties({group,nodeType:type}), so the test and runtime use the same declared type filter. No runtime defect was found and no runtime source changed.",
+    "acceptanceBoundary": "The test includes all 44 PARTIAL types but does not certify the 34 PLANNED types or full 77.44.7.A acceptance."
+  },
+  "checks": {
+    "npm run test:editor": "PASS, 11/11 test files and 159 individual tests.",
+    "npm run test:schedule": "PASS, 1/1.",
+    "matrix browser test": "PASS, 1/1 across all 44 PARTIAL types.",
+    "npm run typecheck": "PASS.",
+    "npm run test:web013:migration-gate": "PASS.",
+    "node --check tests/browser/editor-inspector-partial-types.test.js": "PASS.",
+    "python3 scripts/build-feature-traceability.py --check": "PASS, 396 mappings.",
+    "python3 scripts/check-canonical-plan.py": "PASS; acceptance remains NOT CERTIFIED.",
+    "python3 scripts/audit-active-plan-point.py": "PASS; cursor WEB-011 / 77.44.7.A.",
+    "git diff --check": "PASS."
+  },
+  "release": {
+    "runtimeChangedThisRun": false,
+    "branchAtStart": "v2/foundation remote head 4abc3b15795905ba06803d9f6f9ffe0d72aa292a; local checkout branch work was preserved.",
+    "activeWorkerAtStart": {
+      "deploymentId": "ace02e13-16d0-4a3b-a74b-26cd55d3a244",
+      "version": "f2365772-ed0d-4db2-adab-9de2e48d44fc",
+      "trafficPercent": 100
+    },
+    "githubPush": "Pending test/documentation-only fast-forward; runtime must not be redeployed.",
+    "ci": "Not run; no CI PASS claimed.",
+    "productionDeployment": "NOT REQUIRED; no runtime source changed.",
+    "productionD1Writes": 0,
+    "productionR2Changes": 0
+  },
+  "cost": {
+    "newPaidCostOrDependency": false
+  },
+  "acceptance": "77.44.7.A remains OPEN / NOT CERTIFIED; consolidated manual and physical-device acceptance stays deferred until the complete Visual Editor is implemented."
+}
