@@ -90,5 +90,13 @@
     "test_only_commit": "be71618dcfcecaa5dfe9ac7195fc2f5d3cda0bdc",
     "worker_redeployment": false
   },
+  "ci_fixture_followup": {
+    "remote_failure": "The verify run on be71618dcfcecaa5dfe9ac7195fc2f5d3cda0bdc passed multi-Inspector validation and then failed in the existing page archive/publication UI fixture: flushLayerRename and pendingLayerRename were missing from the extracted app.js context.",
+    "fix": "The archive and publication test fixtures now seed flushLayerRename() as successful and pendingLayerRename as null, representing an editor with no pending layer rename; production code is unchanged.",
+    "local_verification": "node --experimental-loader ./tests/ts-extension-loader.mjs --test --test-reporter=spec tests/f1-1-page-archive.test.js tests/f1-1-page-archive-ui.test.js tests/f1-1-page-publication-ui.test.js PASS, 3/3; npm run test:schedule PASS, 1/1; git diff --check PASS.",
+    "test_only_commit": "4cb471261c9ad640e2960afe6e613a35386c3af4",
+    "latest_commit_checks": "GitHub check-runs for 4cb471261c9ad640e2960afe6e613a35386c3af4 were queued at last observation; no CI PASS is claimed.",
+    "worker_redeployment": false
+  },
   "acceptance": "The individual mobile Inspector reset touch-target slice is independently implemented and verified. Full 77.44.7.A and Visual Editor acceptance remain OPEN / NOT CERTIFIED; manual/physical acceptance stays DEFERRED."
 }
