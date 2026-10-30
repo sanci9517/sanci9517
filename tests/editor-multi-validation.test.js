@@ -6,7 +6,7 @@ const app=readFileSync(new URL('../public/editor-v2/app.js',import.meta.url),'ut
 function fixture(locked=false){
  const batches=[];let renders=0;
  const element=()=>({children:[],dataset:{},attributes:{},append(...xs){this.children.push(...xs)},setAttribute(k,v){this.attributes[k]=v}});
- const context={document:{createElement:element},state:{viewport:{device:'desktop'}},resolveResponsiveValue:()=>({value:16}),validHexColor:()=>false,executeBatch:(_s,commands)=>batches.push(commands),render:()=>renders++,setStatus:()=>{}};
+ const context={document:{createElement:element},state:{viewport:{device:'desktop'}},page:()=>({id:'page'}),resolveResponsiveValue:()=>({value:16}),validHexColor:()=>false,isNodeEffectivelyLocked:(_page,node)=>Boolean(node?.locked),executeBatch:(_s,commands)=>batches.push(commands),render:()=>renders++,setStatus:()=>{}};
  runInNewContext(app.slice(app.indexOf('function renderMultiInspector('),app.indexOf('function renderExistingContentInspector('))+';this.make=renderMultiInspector',context);
  const panel=context.make([{id:'a',locked},{id:'b',locked:false}]);
  const field=key=>{const row=panel.children.find(el=>el.dataset?.propertyId===key);return {row,input:row.children.find(el=>el.type==='number'),error:row.children.find(el=>el.className==='property-validation')}};
