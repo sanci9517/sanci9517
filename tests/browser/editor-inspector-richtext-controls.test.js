@@ -95,6 +95,8 @@ test('typed Inspector controls and link selection work with real browser DOM at 
         ['spacing.padding','-10','input[type="number"]'],
         ['background.color','not-a-color','input[type="text"]'],
         ['opacity.value','2','input[type="number"]'],
+        ['typography.lineHeight','0.4','input[type="number"]'],
+        ['transform.scale','4.1','input[type="number"]'],
         ['layout.display','not-a-display','select'],
         ['content.href','javascript:alert(1)','input']
       ]){
@@ -105,8 +107,15 @@ test('typed Inspector controls and link selection work with real browser DOM at 
         if(id==='size.width')control.querySelector('select').value='px';
         if(id==='layout.display'){const option=document.createElement('option');option.value=value;input.append(option)}
         input.value=value;input.dispatchEvent(new Event('change',{bubbles:true}));
-        invalidMatrix.push({id,callbackCount:editsForProperty.length,error:control.querySelector('.property-validation')?.textContent||''});
+        const error=control.querySelector('.property-validation');
+        invalidMatrix.push({id,callbackCount:editsForProperty.length,error:error?.textContent||'',ariaInvalid:input.getAttribute('aria-invalid'),
+          describedBy:input.getAttribute('aria-describedby'),errorId:error?.id,nativeValid:input.type==='number'?input.validity.valid:null});
       }
+      const scaleRecoveryEdits=[],scaleRecovery=renderPropertyInput(getProperty('transform.scale'),'Nagyítás','1',value=>scaleRecoveryEdits.push(value));
+      const scaleRecoveryInput=scaleRecovery.querySelector('input[type="number"]');scaleRecoveryInput.value='4.1';scaleRecoveryInput.dispatchEvent(new Event('change',{bubbles:true}));
+      const scaleInvalidState={ariaInvalid:scaleRecoveryInput.getAttribute('aria-invalid'),describedBy:scaleRecoveryInput.getAttribute('aria-describedby'),errorId:scaleRecovery.querySelector('.property-validation').id,nativeValid:scaleRecoveryInput.validity.valid};
+      scaleRecoveryInput.value='4';scaleRecoveryInput.dispatchEvent(new Event('change',{bubbles:true}));
+      const scaleRecoveryState={ariaInvalid:scaleRecoveryInput.getAttribute('aria-invalid'),error:scaleRecovery.querySelector('.property-validation').textContent,nativeValid:scaleRecoveryInput.validity.valid,edits:scaleRecoveryEdits};
       const assetControl=renderPropertyInput(getProperty('background.image'),'Háttérkép','',()=>{throw new Error('A parancs elutasítva.');});host.append(assetControl);
       const assetOpen=assetControl.querySelector('.editor-media-picker > button');
       const assetSearch=assetControl.querySelector('input[type="search"]');
@@ -253,7 +262,7 @@ test('typed Inspector controls and link selection work with real browser DOM at 
         markedRun:aligned.blocks[0].children.find(x=>x.text==='world'),alignment:aligned.blocks[0].align,
         multiSelection,multiBlocks:multiAligned.blocks,
         listType:parsedList.blocks[0].type,listText:parsedList.blocks[0].items[0].children.map(x=>x.text).join(''),
-        hasHorizontalOverflow:document.documentElement.scrollWidth>document.documentElement.clientWidth+1,inspectorBookmarkKeepsDirection,fieldMatrix,invalidMatrix,numericStep,scaleNumericStep};
+        hasHorizontalOverflow:document.documentElement.scrollWidth>document.documentElement.clientWidth+1,inspectorBookmarkKeepsDirection,fieldMatrix,invalidMatrix,numericStep,scaleNumericStep,scaleInvalidState,scaleRecoveryState};
     });
     assert.deepEqual(data.edits,['#abcdef','8px 12px 8px 8px']);
     assert.equal(data.inspectorBookmarkKeepsDirection,true);
@@ -274,6 +283,12 @@ test('typed Inspector controls and link selection work with real browser DOM at 
     assert.ok(data.fieldMatrix.filter(item=>item.type==='number').every(item=>item.nativeValid),`valid numeric Inspector decimals must also satisfy native browser validity: ${JSON.stringify(data.fieldMatrix.filter(item=>item.type==='number'&&!item.nativeValid))}`);
     assert.deepEqual(data.numericStep,{nativeDecimalValid:true,step:'any',numberAfterArrowUp:'0.85',numberAfterArrowDown:'0.75',edits:['0.85','0.75']},'numeric controls keep valid fractional values while arrow keys use the declared increment');
     assert.deepEqual(data.scaleNumericStep,{nativeDecimalValid:true,step:'any',min:'0.1',max:'4',afterArrowUp:'0.95',afterArrowDown:'0.85',atMaximum:'4',atMinimum:'0.1',edits:['0.95','0.85','4','0.1']},'scale accepts fractional values, preserves its declared arrow increment, and clamps at both contract bounds');
+    assert.ok(data.invalidMatrix.every(item=>item.ariaInvalid==='true'&&item.describedBy?.split(/\s+/).includes(item.errorId)),`rejected Inspector values must expose their linked error to assistive technology: ${JSON.stringify(data.invalidMatrix.filter(item=>item.ariaInvalid!=='true'||!item.describedBy?.split(/\s+/).includes(item.errorId)))}`);
+    assert.ok(data.invalidMatrix.filter(item=>item.nativeValid!==null).every(item=>item.nativeValid===false),`rejected numeric values must agree with native browser bounds: ${JSON.stringify(data.invalidMatrix.filter(item=>item.nativeValid!==null&&item.nativeValid!==false))}`);
+    assert.equal(data.scaleInvalidState.ariaInvalid,'true');
+    assert.equal(data.scaleInvalidState.nativeValid,false);
+    assert.ok(data.scaleInvalidState.errorId&&data.scaleInvalidState.describedBy?.split(/\s+/).includes(data.scaleInvalidState.errorId),'out-of-range scale must reference its visible validation status');
+    assert.deepEqual(data.scaleRecoveryState,{ariaInvalid:'false',error:'',nativeValid:true,edits:['4']},'correcting scale must clear the accessible error and commit only the valid bounded value');
     const contentTextControl=data.fieldMatrix.find(item=>item.id==='content.text');
     assert.deepEqual({tagName:contentTextControl.tagName,rows:contentTextControl.rows,value:contentTextControl.value,error:contentTextControl.error},
       {tagName:'TEXTAREA',rows:4,value:'  első sor\n második sor  ',error:''},
