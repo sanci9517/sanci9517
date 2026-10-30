@@ -13,6 +13,7 @@
     "public/editor-v2/editor-refresh.css",
     "public/editor-v2/index.html",
     "tests/browser/editor-inspector-richtext-controls.test.js",
+    "tests/editor-multi-validation.test.js",
     "docs/evidence/inspector-mobile-property-reset-touch-targets-2026-10-30.json",
     "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md"
   ],
@@ -51,7 +52,7 @@
     "remote_branch": "v2/foundation",
     "runtime_commit": "18e089ddf804ffffea6ec817a8207b149e6a37d3",
     "github_ref": "Direct GitHub ref GET verifies v2/foundation points to runtime_commit.",
-    "github_status": "Direct commit status GET returned total_count=0; no CI PASS is claimed.",
+    "github_status": "Runtime commit check-runs: Cloudflare Workers Build 956b9df9-f33e-4e9d-aca3-2bef94d99791 SUCCESS (version 225178af-8ade-43e8-9fa1-db523edb683d), twitch-integration SUCCESS, verify FAILED because the multi-Inspector test fixture omitted the production helper dependencies page() and isNodeEffectivelyLocked(), editor-core was still in progress at last observation. The failure was reproduced locally and fixed in test-only commit be71618dcfcecaa5dfe9ac7195fc2f5d3cda0bdc; its verify/editor-core/twitch checks were queued at the last observation. Local test results pass; no overall CI PASS is claimed.",
     "cloudflare_deployments": [
       {
         "deployment": "43ca52d4-1111-480f-abbd-1d63709cba63",
@@ -81,6 +82,13 @@
         "match": true
       }
     }
+  },
+  "test_harness_followup": {
+    "reproduction": "node tests/editor-multi-validation.test.js failed because the extracted renderMultiInspector fixture did not define isNodeEffectivelyLocked() or page().",
+    "fix": "The fixture now provides a minimal page() and the production-equivalent direct-node lock predicate; production code was not changed.",
+    "local_verification": "node tests/editor-multi-validation.test.js PASS, 2/2; npm run test:editor PASS, 156/156; npm run typecheck PASS; responsive-target browser regression PASS, 2/2.",
+    "test_only_commit": "be71618dcfcecaa5dfe9ac7195fc2f5d3cda0bdc",
+    "worker_redeployment": false
   },
   "acceptance": "The individual mobile Inspector reset touch-target slice is independently implemented and verified. Full 77.44.7.A and Visual Editor acceptance remain OPEN / NOT CERTIFIED; manual/physical acceptance stays DEFERRED."
 }
