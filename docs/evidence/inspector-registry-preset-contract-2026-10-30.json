@@ -1,7 +1,7 @@
 {
   "plan_item": "77.44.7.A — Inspector foundation / property metadata contract",
   "date": "2026-10-30",
-  "status": "IMPLEMENTED_AND_LOCALLY_VERIFIED_RELEASE_GATES_PENDING",
+  "status": "DEPLOYED_AND_PRODUCTION_VERIFIED",
   "finding": {
     "defect": "registerProperty() checked that preset labels and values were strings, but did not validate preset values against the same typed rules applied when an Inspector submits the value. Duplicate/blank labels could also render ambiguous controls.",
     "impact": "A registered Inspector could advertise a preset that its own command rejects, or present indistinguishable preset buttons.",
@@ -45,11 +45,56 @@
     "new_dependency": false,
     "save_and_publish_separate": true,
     "worker_before_release": "Deployment 5cd2c400-8265-41b6-a435-66415e5cc8cb / version 5cce81bf-c889-4e5a-96fe-94e014f0c9ab, 100% traffic; rechecked directly before this release.",
-    "release": "Local tests, real Chromium, D1 SELECT-only preflight, and Wrangler dry-run passed. Normal fast-forward push to v2/foundation and deploy:safe are pending."
+    "release": "Deployed and verified: commit 3047cc54f4efc4e840b2bff83646c077e85f1b31; Cloudflare deployment 83b254cd-1c65-469b-a2e0-c6279517c5c4 / Worker version 79c1184d-bfe4-4536-a0e0-fe8034320c27 at 100% traffic; health 200; all 13 changed public asset hashes match local source."
   },
   "ci_and_cost": {
-    "github_ci": "Not run due exhausted free GitHub Actions allowance; commits use [skip ci]. Local checks are not a CI PASS.",
+    "github_ci": "Not run due exhausted free GitHub Actions allowance; GitHub status endpoint returned total_count=0. Commit includes [skip ci]. Local verification is not a CI PASS.",
     "new_paid_cost_or_dependency": false
   },
-  "acceptance": "This validates only newly registered Inspector preset metadata. Full 77.44.7.A and Visual Editor acceptance remain OPEN / NOT CERTIFIED; manual/physical acceptance remains DEFERRED."
+  "acceptance": "This validates only newly registered Inspector preset metadata. Full 77.44.7.A and Visual Editor acceptance remain OPEN / NOT CERTIFIED; manual/physical acceptance remains DEFERRED.",
+  "release": {
+    "runtime_commit": "3047cc54f4efc4e840b2bff83646c077e85f1b31",
+    "github_branch": "v2/foundation",
+    "github_ref_verified": "3047cc54f4efc4e840b2bff83646c077e85f1b31",
+    "push": "Normal fast-forward from 01eae6d0ab16febeb6f6cdb54191c871e43b7f39; direct GitHub branch GET verified the new head.",
+    "deployment_id": "83b254cd-1c65-469b-a2e0-c6279517c5c4",
+    "worker_version": "79c1184d-bfe4-4536-a0e0-fe8034320c27",
+    "traffic_percent": 100,
+    "deploy_command": "WRANGLER_WRITE_LOGS=false WRANGLER_LOG_PATH=/tmp/sanci-wrangler-deploy-presets.log npm run deploy:safe",
+    "automatic_deployment": "No automatic deployment appeared after push; deploy:safe ran the migration safety gate and uploaded 13 assets.",
+    "health": {
+      "url": "/api/health",
+      "http_status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "changed_public_asset_sha256": {
+      "/editor-v2/app.js": "bb3a90007a5b07bbbec50bb96223ee3274911ce33dc9c202bc459bee1a0aa01e",
+      "/editor-v2/core/capability-matrix.js": "1b67a2637fe0da6096eb8d9ab83abf3924926d4e5449566410d1e872d9f946b0",
+      "/editor-v2/core/inspector-style-contract.js": "77156cfe8fb39d6c120c510d978edc438112013f2204e0f6c856dfe3cbda79ce",
+      "/editor-v2/core/property-registry.js": "88b0da8684dc3de855133f42e7ef0568ae8072584e82211c49cc399132bafa35",
+      "/editor-v2/core/state-styles.js": "df7bebc02afd07483c895ac195a4b9c018bfc9c5cf5b0f1e3b515e362c586176",
+      "/editor-v2/": "5147a01b70b9b8366478f0afd02adf962eb238944920b5088efa618971e467c4",
+      "/editor-v2/tests/capability-contract.test.js": "82a262c7e72456149ddeab5401af9ccc5e3e285110c90a9d871152f01a279bad",
+      "/editor-v2/tests/core.test.js": "95da6617be8a55771716b3b4b75741a4be2766d451ab93222c346a1d950e50f8",
+      "/editor-v2/tests/inspector-richtext.test.js": "b09e61293bcf19ddad947e10d7ffde15943263d73b3ab081403029eec5481399",
+      "/editor-v2/tests/layout-presets.test.js": "82995ae81d402b47c6f03ecab285df65574e52ddd071b2bdfd72a2608e88e803",
+      "/editor-v2/tests/state-tokens.test.js": "29503aae1fbb055b3f2aa67cf474b9542f800fed72e76563ae3d3201fecfe3e7",
+      "/editor-v2/ui/element-content-controls.js": "91087652b58e3f27d745932f7892a52251b355cc0c62558f4d51e797f4929fec",
+      "/editor-v2/ui/geometry-presets.js": "3387a1b47a056f67ea112d4f3b0c2e13094305d1f1a06f9ef3288dec212cabfa"
+    },
+    "asset_hashes": "All 13 SHA-256 values were fetched from the production Worker (HTTP 200; index path followed its canonical redirect) and match the corresponding local files byte-for-byte.",
+    "d1_postflight": {
+      "query": "SELECT name FROM d1_migrations ORDER BY name;",
+      "rows_read": 34,
+      "latest": "0028_media_archive.sql",
+      "rows_written": 0,
+      "changed_db": false
+    },
+    "ci": "GitHub status endpoint returned total_count=0 for 3047cc54; commit includes [skip ci]. No CI PASS claimed."
+  }
 }
