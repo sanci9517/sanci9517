@@ -1,0 +1,62 @@
+{
+  "plan_item": "77.44.7.A — Inspector foundation / property metadata contract",
+  "date": "2026-10-30",
+  "status": "IMPLEMENTED_AND_LOCALLY_VERIFIED_RELEASE_PENDING",
+  "finding": {
+    "defect": "registerProperty() accepted an explicitly declared defaultValue without checking it against the same typed value rules used by the Inspector, then exposed it as DECLARED contract metadata.",
+    "impact": "A future or extension property could advertise an unusable or non-canonical starting value, making registry metadata disagree with actual Inspector inputs.",
+    "fix": "The existing normalizeInspectorValue() validates and canonicalizes registered defaults before the property is frozen or inserted. Defaults must be text, or a finite number for number controls. Rejected values never enter the shared registry.",
+    "reuse_review": "Reused the project-owned Inspector normalizer and registry. No external code, dependency, infrastructure, or parallel validation schema was introduced."
+  },
+  "changed_files": [
+    "public/editor-v2/app.js",
+    "public/editor-v2/core/capability-matrix.js",
+    "public/editor-v2/core/inspector-style-contract.js",
+    "public/editor-v2/core/property-registry.js",
+    "public/editor-v2/core/state-styles.js",
+    "public/editor-v2/index.html",
+    "public/editor-v2/tests/capability-contract.test.js",
+    "public/editor-v2/tests/core.test.js",
+    "public/editor-v2/tests/inspector-richtext.test.js",
+    "public/editor-v2/tests/layout-presets.test.js",
+    "public/editor-v2/tests/state-tokens.test.js",
+    "public/editor-v2/ui/element-content-controls.js",
+    "public/editor-v2/ui/geometry-presets.js",
+    "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+    "docs/evidence/feature-traceability.json",
+    "docs/evidence/inspector-registry-default-contract-2026-10-30.json"
+  ],
+  "checks": {
+    "npm run test:editor": "PASS, 11/11 test files.",
+    "npm run typecheck": "PASS.",
+    "npm run test:web013:migration-gate": "PASS; no migration is applied by deploy:safe.",
+    "CHROMIUM_PATH=/usr/bin/chromium node tests/browser/editor-inspector-richtext-controls.test.js": "PASS, 2/2 real-Chromium regressions at mobile and desktop widths. The restricted-sandbox attempt could not open its loopback server (EPERM); the same test passed in the permitted local-network execution.",
+    "node --check public/editor-v2/core/property-registry.js": "PASS.",
+    "npx wrangler deploy --dry-run": "PASS, Wrangler 4.130.0; read 161 public assets, 298.87 KiB / 68.33 KiB gzip; no deployment performed.",
+    "python3 scripts/build-feature-traceability.py --check": "PASS after regenerating docs/evidence/feature-traceability.json for the changed registry source hash; 396 mappings.",
+    "python3 scripts/check-canonical-plan.py": "PASS, 13 master files; functional acceptance remains NOT CERTIFIED.",
+    "python3 scripts/audit-active-plan-point.py": "PASS, 77.44.7.A.",
+    "git diff --check": "PASS."
+  },
+  "production_preflight": {
+    "method": "Cloudflare D1 Query API, SELECT-only.",
+    "sql": "SELECT name FROM d1_migrations ORDER BY name;",
+    "migration_count": 34,
+    "latest_migration": "0028_media_archive.sql",
+    "rows_written": 0,
+    "changed_db": false,
+    "migration_or_data_write": false,
+    "r2_change": false
+  },
+  "runtime_scope": {
+    "new_dependency": false,
+    "save_and_publish_separate": true,
+    "worker_deployment_before_this_change": "54f8a12c-79a1-4c82-9de9-37f9b6d3da01 / 50fce0d0-879d-4242-82bd-319081216cde at 100% traffic.",
+    "release": "Pending fast-forward push and npm run deploy:safe."
+  },
+  "ci_and_cost": {
+    "github_ci": "Not run: commit will use [skip ci] because the repository's free GitHub Actions allowance is exhausted. Local checks above passed; this is not a CI PASS.",
+    "new_paid_cost_or_dependency": false
+  },
+  "acceptance": "This closes only validation of registered Inspector defaults. The full 77.44.7.A and Visual Editor acceptance remain OPEN / NOT CERTIFIED; manual/physical acceptance remains DEFERRED."
+}

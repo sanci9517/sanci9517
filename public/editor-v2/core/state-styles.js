@@ -1,4 +1,4 @@
-import {getProperty,listProperties} from './property-registry.js?v=20261025-content-property-route-contract';
+import {getProperty,listProperties} from './property-registry.js?v=20261030-inspector-default-contract';
 import {normalizeInspectorValue} from './property-values.js';
 import {resolveResponsiveValue,normalizeResponsive} from './responsive.js';
 

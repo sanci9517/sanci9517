@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import {NODE_TYPES} from '../core/schema.js';
 import {getElementCapability,getElementInspectorContract} from '../core/capability-matrix.js';
-import {getProperty,listProperties,registerProperty} from '../core/property-registry.js?v=20261025-content-property-route-contract';
+import {getProperty,listProperties,registerProperty} from '../core/property-registry.js?v=20261030-inspector-default-contract';
 import {getInspectorValueContract,normalizeInspectorValue} from '../core/property-values.js';
 import {STYLE_MAP} from '../core/canvas-engine.js';
 
@@ -121,4 +121,15 @@ test('type restrictions and new property registration flow through the single re
  assert.equal(getElementInspectorContract('text').fields.find(p=>p.id===id).key,'testContract');
  assert.equal(getElementInspectorContract('image').fields.some(p=>p.id===id),false);
  assert.equal(getElementInspectorContract('form').fields.length,0);
+});
+test('registered defaults use the shared Inspector validator before becoming contract metadata',()=>{
+ const numberDefault=registerProperty({id:'test.contract.default.number',group:'typography',label:'Default number',type:'number',command:'responsive.set',responsive:true,key:'testDefaultNumber',defaultValue:0.85,appliesTo:['text']});
+ assert.equal(numberDefault.defaultValue,'0.85','numeric defaults are stored in the same canonical string format as Inspector values');
+ const field=getElementInspectorContract('text').fields.find(item=>item.id===numberDefault.id);
+ assert.deepEqual(field.initialValue,{status:'DECLARED',value:'0.85',source:{strategy:'resolved-style',key:'testDefaultNumber',precedence:['responsive-cascade','node.style','authored-content-default'],fallback:'css-initial-or-inherited'}});
+ const invalidId='test.contract.default.invalid';
+ assert.throws(()=>registerProperty({id:invalidId,group:'layout',label:'Invalid default',type:'select',command:'responsive.set',responsive:true,key:'testInvalidDefault',options:['visible','hidden'],defaultValue:'sideways',appliesTo:['text']}),/Érvénytelen választási lehetőség/);
+ assert.equal(getProperty(invalidId),null,'invalid defaults never enter the shared registry');
+ assert.equal(getElementInspectorContract('text').fields.some(item=>item.id===invalidId),false);
+ assert.throws(()=>registerProperty({id:'test.contract.default.object',group:'content',label:'Object default',type:'text',command:'element.content.set',responsive:false,key:'text',defaultValue:{unsafe:true},appliesTo:['text']}),/alapértéke szöveg/);
 });

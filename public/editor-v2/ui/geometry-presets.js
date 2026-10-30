@@ -1,4 +1,4 @@
-import { getProperty } from '../core/property-registry.js?v=20261025-content-property-route-contract';
+import { getProperty } from '../core/property-registry.js?v=20261030-inspector-default-contract';
 import { normalizeInspectorValue } from '../core/property-values.js';
 
 // Geometry options come from the same registry as each Inspector field.

@@ -1,4 +1,5 @@
 import { NODE_TYPES } from './schema.js';
+import { normalizeInspectorValue } from './property-values.js';
 
 // The authored root is rendered inside a normal-flow `.content-page` wrapper,
 // so it can never be a flex/grid item in the published page structure.
@@ -242,7 +243,13 @@ export function registerProperty(property) {
   if(property.appliesTo!==undefined&&(!Array.isArray(property.appliesTo)||property.appliesTo.length===0||property.appliesTo.some(type=>typeof type!=='string'||!type.trim()||!registeredNodeTypes.has(type))||new Set(property.appliesTo).size!==property.appliesTo.length))throw new Error('Az appliesTo ismert, egyedi node típusok nem üres listája kell legyen.');
   if(property.help!==undefined&&typeof property.help!=='string')throw new Error('A property help csak szöveg lehet.');
   if(property.presets!==undefined&&(!Array.isArray(property.presets)||property.presets.some(preset=>!preset||typeof preset.label!=='string'||!preset.label.trim()||typeof preset.value!=='string')))throw new Error('A presets címke és érték párok listája kell legyen.');
-  const normalized = freezeProperty(property);
+  let candidate=property;
+  if(Object.hasOwn(property,'defaultValue')){
+    const value=property.defaultValue;
+    if(typeof value!=='string'&&!(property.type==='number'&&typeof value==='number'&&Number.isFinite(value)))throw new Error('A property alapértéke szöveg, vagy számmezőnél véges szám kell legyen.');
+    candidate={...property,defaultValue:normalizeInspectorValue(property,value)};
+  }
+  const normalized = freezeProperty(candidate);
   properties.push(normalized);
   propertyMap.set(normalized.id, normalized);
   return normalized;
