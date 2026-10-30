@@ -1,7 +1,7 @@
 {
   "date": "2026-10-30",
   "plan": "77.44.7.A",
-  "status": "LOCAL_CHECKS_PASS_RELEASE_PENDING",
+  "status": "PUSHED_AND_WORKER_ROLLOUT_CONFIRMED_ASSET_AND_HTTP_SMOKE_UNVERIFIED",
   "implementation": "Promotes a legacy background shorthand only when every image layer matches the existing fixed Inspector gradient allowlist and any optional final layer is an exact supported HEX color or Brand Kit color token. Canvas and public renderer share the resolver. Responsive Inspector values still take precedence, explicit backgroundImage=none removes legacy image layers, and versionless root styles remain opt-in on both render paths. Unsafe compound values are not promoted to Canvas.",
   "reuse": "Existing project GRADIENTS allowlist, Brand Kit token parser/registry, Canvas style resolver, public renderer, and browser fixtures; no external code, dependency, paid service, D1 migration, data write, or R2 change.",
   "checks": {
@@ -18,13 +18,14 @@
   },
   "release": {
     "local_branch": "work",
-    "local_head_before_release": "326c09d1e5b7cb6c08b126b0d9cd56abb24398ad",
+    "local_feature_commit": "ca08449752c82b1d54af4b491e7e63aaac2d5270",
+    "local_merge_commit": "3f3890fa29dbc5c3af7d109f7f2a7e69a97c284d",
     "remote_branch_before_release": "v2/foundation",
     "remote_head_before_release": "ee33b9566d17dec851600d6f8c432462af6e7073",
-    "github_push": "PENDING",
-    "github_actions": "Not run; no CI result claimed",
-    "worker_deployment": "PENDING",
-    "production_http_and_asset_hashes": "PENDING"
+    "github_push": "Verified normal fast-forward to v2/foundation at 3f3890fa29dbc5c3af7d109f7f2a7e69a97c284d; merge parents ca08449752c82b1d54af4b491e7e63aaac2d5270 and ee33b9566d17dec851600d6f8c432462af6e7073 preserve both local and remote histories",
+    "github_actions": "[skip ci]; combined status returned no checks; CI is not claimed as PASS",
+    "worker_deployment": "deploy:safe succeeded after migration safety gate; deployment d0353542-c3c4-40a8-b134-f160cd2da02d routes 100% to version faf5c5fe-5bdd-478b-a1d6-d8eed15c64ba (Worker version 3740); Wrangler reported no updated asset files; script ETag is unchanged from version 3738",
+    "production_http_and_asset_hashes": "UNVERIFIED: proxy GETs to /api/health, /api/db-health, /editor-v2/, /assets/page-renderer.js and the background module returned HTTP 403; direct no-proxy /api/health failed Network is unreachable; local asset hashes do not establish live equality"
   },
   "open": "Full 77.44.7.A acceptance and consolidated manual/physical Visual Editor acceptance remain OPEN / NOT CERTIFIED; manual testing is deferred until the complete Visual Editor is implemented. No production migration, production data write, or R2 change was performed."
 }
