@@ -40,6 +40,29 @@ test('palette items are inserted beside the selected item in canvas flow and sav
   const errors=[];tab.on('pageerror',error=>errors.push(error.message));
   await tab.goto(`http://127.0.0.1:${server.address().port}/editor-v2/index.html`);
   await tab.locator('.node[data-node-id="'+rootId+'"] > .node-head').waitFor();
+  const rail=tab.locator('.tool-rail');
+  assert.equal(await rail.getAttribute('role'),'tablist');
+  for(const [key,panel] of [['pages','leftPanelPages'],['elements','leftPanelElements'],['layers','leftPanelLayers'],['schedule','leftPanelSchedule'],['navigation','leftPanelNavigation']]){
+    const tabButton=rail.locator('[data-tab="'+key+'"]');
+    assert.equal(await tabButton.getAttribute('role'),'tab');
+    assert.equal(await tabButton.getAttribute('aria-controls'),panel);
+    assert.equal(await tab.locator('#'+panel).getAttribute('aria-labelledby'),await tabButton.getAttribute('id'));
+  }
+  const pagesTab=rail.locator('[data-tab="pages"]'),elementsTab=rail.locator('[data-tab="elements"]'),navigationTab=rail.locator('[data-tab="navigation"]');
+  assert.equal(await pagesTab.getAttribute('aria-selected'),'true');
+  assert.equal(await pagesTab.getAttribute('tabindex'),'0');
+  await pagesTab.focus();await pagesTab.press('ArrowRight');
+  assert.equal(await elementsTab.getAttribute('aria-selected'),'true');
+  assert.equal(await elementsTab.getAttribute('tabindex'),'0');
+  await tab.waitForFunction(()=>document.activeElement?.id==='leftTabElements');
+  assert.equal(await tab.locator('#leftPanelElements').isVisible(),true);
+  await elementsTab.press('End');
+  assert.equal(await navigationTab.getAttribute('aria-selected'),'true');
+  await tab.waitForFunction(()=>document.activeElement?.id==='leftTabNavigation');
+  assert.equal(await tab.locator('#leftPanelNavigation').isVisible(),true);
+  await navigationTab.press('Home');
+  assert.equal(await pagesTab.getAttribute('aria-selected'),'true');
+  await tab.waitForFunction(()=>document.activeElement?.id==='leftTabPages');
   await tab.locator('.rail-btn[data-tab="elements"]').click();
   const textGroup=tab.locator('.element-group-title').filter({hasText:'Szöveg'});
   const groupBodyId=await textGroup.getAttribute('aria-controls');

@@ -21,6 +21,8 @@ function readPersisted(){
 }
 
 let persisted=readPersisted();
+const LEFT_TABS=['pages','elements','layers','schedule','navigation'];
+if(!LEFT_TABS.includes(persisted.leftTab))persisted.leftTab='pages';
 function persist(){
   try{localStorage.setItem(STORAGE_KEY,JSON.stringify(persisted))}catch{}
 }
@@ -77,8 +79,9 @@ function setPanel(side,open,{save=true,restoreFocus=true}={}){
   emit('panel:change',{side,open});
 }
 function showLeftTab(tab,{save=true,open=true}={}){
+  if(!LEFT_TABS.includes(tab))return;
   if(open)setPanel('left',true,{save:false});
-  document.querySelectorAll('.rail-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
+  document.querySelectorAll('.rail-btn').forEach(b=>{const selected=b.dataset.tab===tab;b.classList.toggle('active',selected);b.setAttribute('aria-selected',String(selected));b.tabIndex=selected?0:-1});
   document.querySelectorAll('[data-content]').forEach(x=>x.classList.toggle('hidden',x.dataset.content!==tab));
   if(save){persisted.leftTab=tab;persist()}
   emit('panel:tab',{tab});
@@ -148,7 +151,20 @@ function wireMobileActions(){
   // #mobilePublish to #publish caused two asynchronous publish requests.
 }
 wireMobileActions();
-document.querySelectorAll('.rail-btn').forEach(b=>b.addEventListener('click',()=>showLeftTab(b.dataset.tab)));
+document.querySelectorAll('.rail-btn').forEach(b=>{
+  b.addEventListener('click',()=>showLeftTab(b.dataset.tab));
+  b.addEventListener('keydown',event=>{
+    const index=LEFT_TABS.indexOf(b.dataset.tab);if(index<0)return;
+    const rtl=getComputedStyle(b.parentElement).direction==='rtl';
+    let next=-1;
+    if(event.key==='ArrowRight')next=(index+(rtl?-1:1)+LEFT_TABS.length)%LEFT_TABS.length;
+    else if(event.key==='ArrowLeft')next=(index+(rtl?1:-1)+LEFT_TABS.length)%LEFT_TABS.length;
+    else if(event.key==='Home')next=0;
+    else if(event.key==='End')next=LEFT_TABS.length-1;
+    if(next<0)return;
+    event.preventDefault();const target=document.querySelector(`.rail-btn[data-tab="${LEFT_TABS[next]}"]`);showLeftTab(LEFT_TABS[next]);requestAnimationFrame(()=>target?.focus());
+  });
+});
 setupResizers();
 window.sanciEditor={version:9,bus,panels:panelRegistry,features:featureRegistry,on:bus.on,emit,openPanel:s=>setPanel(s,true),closePanel:s=>setPanel(s,false),showLeftTab,resizeDock};
 featureRegistry.register('shell-runtime',{version:9,persistence:'localStorage',mobileShell:'bottom-sheet'});
