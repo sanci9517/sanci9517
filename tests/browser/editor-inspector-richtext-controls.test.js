@@ -35,7 +35,7 @@ test('typed Inspector controls and link selection work with real browser DOM at 
     page.setDefaultNavigationTimeout(60000);
     await page.goto('http://127.0.0.1:'+server.address().port+'/editor-v2/index.html');
     const data=await page.evaluate(async()=>{
-      const {renderPropertyInput}=await import('/editor-v2/ui/property-controls.js?v=20261029-media-picker-a11y');
+      const {renderPropertyInput}=await import('/editor-v2/ui/property-controls.js?v=20261030-number-step-increment');
       const {mediaAssetPicker}=await import('/editor-v2/ui/element-content-controls.js');
       const {getProperty,listProperties}=await import('/editor-v2/core/property-registry.js');
       const {getInspectorValueContract}=await import('/editor-v2/core/property-values.js');
@@ -86,7 +86,7 @@ test('typed Inspector controls and link selection work with real browser DOM at 
         }else{
           const input=control.querySelector('input');input.value=type==='url'?'/p/teszt':'Teszt tartalom';input.dispatchEvent(new Event('change',{bubbles:true}));
         }
-        fieldMatrix.push({id:property.id,type,callbackCount:editsForProperty.length,value:editsForProperty[0],maxLength:type==='url'?control.querySelector('input')?.maxLength:null,error:control.querySelector('.property-validation')?.textContent||''});
+        fieldMatrix.push({id:property.id,type,callbackCount:editsForProperty.length,value:editsForProperty[0],maxLength:type==='url'?control.querySelector('input')?.maxLength:null,nativeValid:type==='number'?control.querySelector('input[type="number"]')?.validity.valid:null,error:control.querySelector('.property-validation')?.textContent||''});
       }
       matrixHost.remove();
       const invalidMatrix=[];
@@ -137,6 +137,13 @@ test('typed Inspector controls and link selection work with real browser DOM at 
       host.append(color);
       const picker=color.querySelector('input[type=color]');
       picker.value='#abcdef';picker.dispatchEvent(new Event('change',{bubbles:true}));
+      const numberStepEdits=[],numberStepField=renderPropertyInput(getProperty('opacity.value'),'Átlátszóság','0.75',value=>numberStepEdits.push(value));host.append(numberStepField);
+      const numberStepInput=numberStepField.querySelector('input[type="number"]');
+      const nativeDecimalValid=numberStepInput.validity.valid;
+      numberStepInput.dispatchEvent(new KeyboardEvent('keydown',{key:'ArrowUp',bubbles:true,cancelable:true}));
+      const numberAfterArrowUp=numberStepInput.value;
+      numberStepInput.dispatchEvent(new KeyboardEvent('keydown',{key:'ArrowDown',bubbles:true,cancelable:true}));
+      const numericStep={nativeDecimalValid,step:numberStepInput.step,numberAfterArrowUp,numberAfterArrowDown:numberStepInput.value,edits:numberStepEdits};
       const box=renderPropertyInput(getProperty('spacing.padding'),'Belső térköz','8px',v=>edits.push(v));
       host.append(box);
       const sides=box.querySelectorAll('input');
@@ -233,7 +240,7 @@ test('typed Inspector controls and link selection work with real browser DOM at 
         markedRun:aligned.blocks[0].children.find(x=>x.text==='world'),alignment:aligned.blocks[0].align,
         multiSelection,multiBlocks:multiAligned.blocks,
         listType:parsedList.blocks[0].type,listText:parsedList.blocks[0].items[0].children.map(x=>x.text).join(''),
-        hasHorizontalOverflow:document.documentElement.scrollWidth>document.documentElement.clientWidth+1,inspectorBookmarkKeepsDirection,fieldMatrix,invalidMatrix};
+        hasHorizontalOverflow:document.documentElement.scrollWidth>document.documentElement.clientWidth+1,inspectorBookmarkKeepsDirection,fieldMatrix,invalidMatrix,numericStep};
     });
     assert.deepEqual(data.edits,['#abcdef','8px 12px 8px 8px']);
     assert.equal(data.inspectorBookmarkKeepsDirection,true);
@@ -251,6 +258,8 @@ test('typed Inspector controls and link selection work with real browser DOM at 
     assert.ok(data.helpLengths.every(([,length])=>length>=100),`every property needs detailed guidance: ${data.helpLengths.filter(([,length])=>length<100).map(([id])=>id).join(', ')}`);
     assert.ok(data.fieldMatrix.length>=45,`every registered Inspector property should have a real browser control contract; saw ${data.fieldMatrix.length}`);
     assert.ok(data.fieldMatrix.filter(item=>item.type!=='asset').every(item=>item.callbackCount===1&&!item.error),`supported Inspector fields must reach their validated callback: ${JSON.stringify(data.fieldMatrix.filter(item=>item.type!=='asset'&&(item.callbackCount!==1||item.error)))}`);
+    assert.ok(data.fieldMatrix.filter(item=>item.type==='number').every(item=>item.nativeValid),`valid numeric Inspector decimals must also satisfy native browser validity: ${JSON.stringify(data.fieldMatrix.filter(item=>item.type==='number'&&!item.nativeValid))}`);
+    assert.deepEqual(data.numericStep,{nativeDecimalValid:true,step:'any',numberAfterArrowUp:'0.85',numberAfterArrowDown:'0.75',edits:['0.85','0.75']},'numeric controls keep valid fractional values while arrow keys use the declared increment');
     const contentTextControl=data.fieldMatrix.find(item=>item.id==='content.text');
     assert.deepEqual({tagName:contentTextControl.tagName,rows:contentTextControl.rows,value:contentTextControl.value,error:contentTextControl.error},
       {tagName:'TEXTAREA',rows:4,value:'  első sor\n második sor  ',error:''},

@@ -257,13 +257,27 @@ export function renderPropertyInput(property, label, current, onChange, {
       if (type === 'number') {
         if(Number.isFinite(contract.min))input.min=String(contract.min);
         if(Number.isFinite(contract.max))input.max=String(contract.max);
-        input.step=String(contract.step??'any');
+        // The declared step is an arrow-key increment, not a precision limit.
+        // CSS decimal presets such as opacity .75 and line-height 1.25 remain valid.
+        input.step='any';
         // Decimal keyboards generally retain a minus key, which matters for the
         // signed z-index range even though its valid values are whole numbers.
         input.inputMode='decimal';
       }
       input.onchange = () => save(input.value);
-      input.onkeydown = event => {if(event.key === 'Enter') {event.preventDefault();input.blur();}};
+      input.onkeydown = event => {
+        if(event.key === 'Enter') {event.preventDefault();input.blur();return}
+        if(type!=='number'||!['ArrowUp','ArrowDown'].includes(event.key))return;
+        event.preventDefault();
+        const increment=typeof contract.step==='number'&&contract.step>0?contract.step:1;
+        const current=Number(input.value);
+        const direction=event.key==='ArrowUp'?1:-1;
+        let next=(Number.isFinite(current)?current:0)+direction*increment;
+        if(Number.isFinite(contract.min))next=Math.max(contract.min,next);
+        if(Number.isFinite(contract.max))next=Math.min(contract.max,next);
+        input.value=String(Number(next.toPrecision(12)));
+        save(input.value);
+      };
       wrap.append(input);
     }
   }

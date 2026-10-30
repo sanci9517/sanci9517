@@ -1,0 +1,57 @@
+{
+  "plan_item": "77.44.7.A",
+  "feature": "Inspector numeric precision agrees with native input validity",
+  "date": "2026-10-30",
+  "status": "IMPLEMENTED_AND_LOCALLY_VERIFIED_RELEASE_PENDING",
+  "finding": {
+    "reproduction": "Real Chromium marked the Inspector opacity value 0.75 invalid (`input.validity.valid === false`) because the number control declared step=0.1, while the same Inspector validator and shipped presets accept 0.75. The Browser value contract also accepts opacity 0.82, line-height 1.75 and scale 0.85, all valid decimals that do not land on a tenth.",
+    "impact": "A value that the Page Model accepts and the Canvas/public renderer uses was exposed to the browser and assistive technology as a step-invalid numeric control. This made the Inspector's native and application validation states disagree.",
+    "fix": "Numeric controls now use native step=any so every value accepted by the shared validator is valid in the browser. The declared registry step remains the ArrowUp/ArrowDown increment; custom keyboard handling applies that increment, clamps to the field contract bounds, and retains fractional preset values.",
+    "reuse_review": "The existing Property Registry contract and native number inputs remain in use. HTML number input validity and keyboard semantics were retained with native validity for arbitrary decimals and a small project-owned keyboard increment handler. No third-party code or new dependency was useful."
+  },
+  "changed_files": [
+    "public/editor-v2/ui/property-controls.js",
+    "public/editor-v2/app.js",
+    "tests/browser/editor-inspector-richtext-controls.test.js",
+    "docs/evidence/feature-traceability.json",
+    "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+    "docs/evidence/inspector-number-step-precision-2026-10-30.json"
+  ],
+  "checks": {
+    "red_reproduction": "PASS as a defect reproduction: browser test failed because valid opacity 0.75 had nativeValid=false; no production tests were weakened.",
+    "CHROMIUM_PATH=/usr/bin/chromium node --test tests/browser/editor-inspector-richtext-controls.test.js": "PASS, 2/2 tests at 390px and 1366px; confirms decimal validity, ArrowUp .75→.85, ArrowDown .85→.75, Inspector callback and typed controls.",
+    "CHROMIUM_PATH=/usr/bin/chromium node --test tests/browser/editor-inspector-breakpoint-lifecycle.test.js": "PASS, 1/1; desktop/tablet/mobile Inspector→Canvas→draft Save→reload→separate Publish responsive property lifecycle, 88 seconds.",
+    "npm run test:editor": "PASS, 11/11 files",
+    "npm run typecheck": "PASS",
+    "npm run test:web013:migration-gate": "PASS",
+    "python3 scripts/build-feature-traceability.py --check": "PASS, 396 mappings",
+    "python3 scripts/check-canonical-plan.py": "PASS, 13 master files and 396 mappings; acceptance NOT CERTIFIED",
+    "python3 scripts/audit-active-plan-point.py": "PASS; cursor remains WEB-011 / 77.44.7.A",
+    "git diff --check": "PASS",
+    "wrangler_dry_run": "PASS, Wrangler 4.130.0; 161 assets, 298.43 KiB / 68.24 KiB gzip; EROFS affects only debug-log writing under read-only /home/agent/.config."
+  },
+  "production_preflight": {
+    "d1_before_deploy": "SELECT-only Cloudflare D1 API: 34 ledger rows, latest 0028_media_archive.sql; foreign_key_check empty; quick_check=ok; rows_written=0; changed_db=false.",
+    "d1_after_deploy": "PENDING",
+    "migration_or_data_write": false,
+    "r2_change": false
+  },
+  "runtime_scope": {
+    "public_runtime_files": [
+      "public/editor-v2/ui/property-controls.js",
+      "public/editor-v2/app.js"
+    ],
+    "save_and_publish_separate": true,
+    "new_dependency": false
+  },
+  "release": {
+    "remote_branch": "v2/foundation",
+    "runtime_commit": "PENDING",
+    "github_status": "PENDING; no CI PASS claimed until directly checked",
+    "cloudflare_build": "PENDING",
+    "deployment": "PENDING",
+    "health": "PENDING",
+    "changed_asset_hashes": "PENDING; app.js and ui/property-controls.js are changed public assets."
+  },
+  "acceptance": "This numeric Inspector contract slice is independently covered. Overall 77.44.7.A and complete Visual Editor acceptance remain OPEN / NOT CERTIFIED; manual/physical acceptance stays DEFERRED."
+}
