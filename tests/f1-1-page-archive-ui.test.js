@@ -8,7 +8,7 @@ const app=readFileSync(new URL('../public/editor-v2/app.js',import.meta.url),'ut
 const action=app.slice(app.indexOf('async function changePageArchive('),app.indexOf('async function deletePage('));
 function fixture(){
  const requests=[],alerts=[],statuses=[];
- const context={state:{persistence:{dirty:false,saving:false}},flushRichTextDraft:null,pages:[{id:'p',title:'Test'}],archivedPages:[{id:'a',title:'Archived'}],revisionHistory:[{id:'rev'}],
+ const context={state:{persistence:{dirty:false,saving:false}},flushLayerRename:()=>true,pendingLayerRename:null,flushRichTextDraft:null,pages:[{id:'p',title:'Test'}],archivedPages:[{id:'a',title:'Archived'}],revisionHistory:[{id:'rev'}],
   page:()=>({id:'p'}),alert:message=>alerts.push(message),confirm:()=>true,
   api:async(url,options)=>requests.push({url,...JSON.parse(options.body)}),loadPages:async()=>{},rememberPageId:()=>{},setStatus:message=>statuses.push(message)};
  runInNewContext(action+';this.act=changePageArchive',context);
