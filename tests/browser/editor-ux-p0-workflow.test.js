@@ -97,17 +97,23 @@ test('empty Rich Text has direct desktop and mobile editing, typed presets, Save
   assert.equal(await tab.locator('.typed-inspector-field[data-property-id="size.width"]').isVisible(),false,'search should hide unrelated controls');
   assert.match(await tab.locator('.inspector-search-status').textContent(),/találat/);
   await inspectorSearch.fill('');
+  const fontSizeControl=tab.locator('.typed-inspector-field[data-property-id="typography.fontSize"]');
+  const typographyGroup=tab.locator('.inspector-group').filter({has:fontSizeControl});
+  const groupTitle=typographyGroup.locator(':scope > .inspector-group-title');
+  assert.equal(await groupTitle.getAttribute('aria-expanded'),'false','clearing Inspector search restores the group state from before the search');
+  await groupTitle.click();
+  assert.equal(await groupTitle.getAttribute('aria-expanded'),'true','the group can still be opened manually after search');
+  await inspectorSearch.fill('betűméret');
+  await inspectorSearch.fill('');
+  assert.equal(await groupTitle.getAttribute('aria-expanded'),'true','clearing a later search preserves a group the user had opened');
+  await groupTitle.click();
+  assert.equal(await groupTitle.getAttribute('aria-expanded'),'false','the user can close the restored group state');
   const displayControl=tab.locator('.typed-inspector-field[data-property-id="layout.display"]');
   assert.equal(await displayControl.locator('.property-presets').count(),0,'select values should not also appear as duplicate preset chips');
-  const fontSizeControl=tab.locator('.typed-inspector-field[data-property-id="typography.fontSize"]');
+  await groupTitle.click();
   await fontSizeControl.getByRole('button',{name:'Betűméret magyarázata'}).click();
   assert.equal(await fontSizeControl.locator('.property-help').isVisible(),true);
   assert.match(await fontSizeControl.locator('.property-help').textContent(),/px|rem/);
-  const typographyGroup=tab.locator('.inspector-group').filter({has:fontSizeControl});
-  const groupTitle=typographyGroup.locator(':scope > .inspector-group-title');
-  await groupTitle.click();
-  assert.equal(await groupTitle.getAttribute('aria-expanded'),'false','Inspector groups should remain collapsible');
-  await groupTitle.click();
   for(const [id,value,cssName,expected] of [
     ['typography.fontStyle','italic','fontStyle','italic'],
     ['typography.textTransform','uppercase','textTransform','uppercase'],

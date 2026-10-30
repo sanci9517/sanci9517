@@ -1,0 +1,59 @@
+{
+  "plan_item": "77.44.7.A",
+  "feature": "Inspector search restores each accordion group's prior user state",
+  "date": "2026-10-30",
+  "status": "IMPLEMENTED_AND_LOCALLY_VERIFIED_RELEASE_PENDING",
+  "finding": {
+    "reproduction": "In Chromium, all Inspector groups started collapsed. Searching for the typography font-size field correctly opened its group, but clearing the search left aria-expanded=true and the group visually open instead of restoring its prior collapsed state.",
+    "impact": "A transient search changed persistent Inspector disclosure state. Repeated searches accumulated open groups and made the Inspector less predictable, while visual and screen-reader expansion state stayed synchronized to the unwanted open state.",
+    "fix": "Inspector search expansion is now transient. A search-state event opens only visible matching groups without overwriting the user's saved disclosure state; clearing the query restores the state recorded by the existing accordion controller. Manual open/close actions remain persistent across subsequent searches.",
+    "reuse_review": "The repository's existing inspector-groups controller and openGroups map remain the source of truth. Native DOM CustomEvent coordinates the independently loaded Inspector search and accordion modules. No external library or dependency was needed."
+  },
+  "changed_files": [
+    "public/editor-v2/ui/inspector-groups.js",
+    "public/editor-v2/app.js",
+    "public/editor-v2/index.html",
+    "tests/browser/editor-ux-p0-workflow.test.js",
+    "docs/evidence/feature-traceability.json",
+    "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+    "docs/evidence/inspector-search-group-state-2026-10-30.json"
+  ],
+  "checks": {
+    "red_reproduction": "PASS as a defect reproduction: the new Chromium assertion failed before the fix because the group remained expanded after clearing search.",
+    "CHROMIUM_PATH=/usr/bin/chromium node --test tests/browser/editor-ux-p0-workflow.test.js": "PASS, 1/1; verifies collapsed state restoration, preserved manually opened state, keyboard/click collapse, and Save/Publish workflow.",
+    "CHROMIUM_PATH=/usr/bin/chromium node --test tests/browser/editor-inspector-lifecycle.test.js": "PASS, 1/1; full desktop Inspector lifecycle, Canvas/public parity, Save/reload/Publish, 206 seconds.",
+    "npm run test:editor": "PASS, 11/11 files",
+    "npm run typecheck": "PASS",
+    "npm run test:web013:migration-gate": "PASS",
+    "python3 scripts/build-feature-traceability.py --check": "PASS, 396 mappings",
+    "python3 scripts/check-canonical-plan.py": "PASS, 13 master files, 396 source mappings; acceptance remains NOT CERTIFIED",
+    "python3 scripts/audit-active-plan-point.py": "PASS; cursor remains WEB-011 / 77.44.7.A",
+    "git diff --check": "PASS",
+    "wrangler_dry_run": "PASS, Wrangler 4.130.0; 161 assets, 298.43 KiB / 68.24 KiB gzip; EROFS affected only debug-log writing under read-only /home/agent/.config."
+  },
+  "production_preflight": {
+    "d1_before_deploy": "SELECT-only Cloudflare D1 API: 34 ledger rows, latest 0028_media_archive.sql; foreign_key_check empty; quick_check=ok; rows_written=0; changed_db=false.",
+    "d1_after_deploy": "PENDING",
+    "migration_or_data_write": false,
+    "r2_change": false
+  },
+  "runtime_scope": {
+    "public_runtime_files": [
+      "public/editor-v2/ui/inspector-groups.js",
+      "public/editor-v2/app.js",
+      "public/editor-v2/index.html"
+    ],
+    "save_and_publish_separate": true,
+    "new_dependency": false
+  },
+  "release": {
+    "remote_branch": "v2/foundation",
+    "runtime_commit": "PENDING",
+    "github_status": "PENDING; do not report CI PASS without a returned check",
+    "cloudflare_build": "PENDING",
+    "deployment": "PENDING",
+    "health": "PENDING",
+    "changed_asset_hashes": "PENDING; app.js, index.html, and ui/inspector-groups.js are changed public assets."
+  },
+  "acceptance": "This Inspector disclosure-state slice is independently covered. Overall 77.44.7.A and complete Visual Editor acceptance remain OPEN / NOT CERTIFIED; manual/physical acceptance stays DEFERRED."
+}

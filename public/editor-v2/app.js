@@ -900,8 +900,8 @@ function filterInspector(){
     }
     const visible=query?revealGroup||groupFields.some(item=>!item.hidden):inspectorCategory==='all'||!group.dataset.inspectorCategory||group.dataset.inspectorCategory===inspectorCategory;
     group.hidden=!visible;
-    if(query&&visible){group.classList.add('is-open');group.querySelector(':scope > .inspector-group-title')?.setAttribute('aria-expanded','true')}
   }
+  document.dispatchEvent(new CustomEvent('editor-inspector-search-change',{detail:{active:Boolean(query)}}));
   const status=inspector.querySelector('.inspector-search-status');
   if(status)status.textContent=query?`${matches} találat`:'';
 }
