@@ -118,6 +118,7 @@
     },
     "health_recheck": "UNVERIFIED: direct GET could not reach the configured proxy at 127.0.0.1:8080; the request did not reach the Worker.",
     "push": "NOT DONE: direct Git transport is blocked by the unavailable configured proxy; no remote API write was substituted.",
-    "current_ci": "UNVERIFIED: current GitHub combined status returned no statuses and the available Actions query covers PR-triggered runs only."
+    "current_ci": "UNVERIFIED: current GitHub combined status returned no statuses and the available Actions query covers PR-triggered runs only.",
+    "local_commit": "f7b7eb0d46f83b75db74c91036dd4014f877f1f1"
   }
 }
