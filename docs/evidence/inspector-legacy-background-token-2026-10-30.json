@@ -1,0 +1,43 @@
+{
+  "date": "2026-10-30",
+  "plan": "77.44.7.A",
+  "status": "PRODUCTION_DEPLOYMENT_VERIFIED_HEALTH_UNVERIFIED",
+  "implementation": "Legacy style.background accepts exact references for colors.primary, colors.text, colors.surface and colors.border only. Other token categories, arbitrary CSS variables and non-exact token/fallback expressions are rejected. Canvas and public rendering resolve the selected token from the site presentation.",
+  "reuse": "Existing project token registry and parseTokenReference, shared Canvas styling, public renderer and presentation token loading; no third-party code or dependency added.",
+  "checks": {
+    "targeted_browser": "PASS 1/1 real Chromium lifecycle across desktop/tablet/mobile; exact token value resolves identically in Canvas and public page; Save remains separate from Publish; existing gradient and URL safety assertions remain covered",
+    "editor_unit": "PASS 11/11 test files",
+    "typecheck": "PASS",
+    "route_integration": "PASS local SQLite editor route integration",
+    "migration_gate": "PASS; deploy:safe does not apply migrations",
+    "canonical_plan": "PASS; cursor 77.44 / WEB-011 -> 77.44.7.A; acceptance remains NOT CERTIFIED",
+    "traceability": "PASS 396 source mappings; EDT-034 maps to reviewed Canvas, background resolver and public renderer",
+    "dry_run": "PASS Wrangler 4.130.0; 161 assets, 296.93 KiB / 67.81 KiB gzip",
+    "diff_check": "PASS"
+  },
+  "preflight": {
+    "d1_sql": "SELECT name FROM d1_migrations ORDER BY name",
+    "rows": 34,
+    "last": "0028_media_archive.sql",
+    "changed_db": false,
+    "rows_written": 0
+  },
+  "release": {
+    "commit": "5812674f1eaa42d1014a45102c7349a4414542e0",
+    "tree": "80fe73e79b172f6eb6f14f76c57cba375f6af2a0",
+    "branch": "v2/foundation",
+    "push": "GitHub authenticated connection fast-forwarded from ff01c97285098820b75e1e64bb470cc6f99e85b2; branch GET confirmed the commit and tree",
+    "github_actions": "No status checks were created for the [skip ci] commit; CI is not claimed as PASS",
+    "cloudflare_build": "Automatic build did not start; direct deploy:safe fallback used",
+    "deploy_command": "WRANGLER_WRITE_LOGS=false npm run deploy:safe; migration safety gate passed; no D1 migration apply",
+    "deployment": "5a4c430a-d9e6-4649-8719-e6641d8fbf15",
+    "worker_version": "7dd887e9-e909-4426-bbc3-98f514275b5a",
+    "worker_version_number": 3738,
+    "traffic_percent": 100,
+    "wrangler_asset_upload": "6 modified public assets uploaded from the exact pushed source tree",
+    "health": "UNVERIFIED; production HTTP requests returned sandbox proxy 403 Forbidden",
+    "db_health": "UNVERIFIED; production HTTP requests returned sandbox proxy 403 Forbidden",
+    "live_asset_hashes": "UNVERIFIED; production HTTP requests returned sandbox proxy 403 Forbidden"
+  },
+  "open": "The full 77.44.7.A acceptance, physical desktop/mobile acceptance, and production HTTP health/live-asset hash checks remain open. No production D1 migration, data write or R2 change occurred."
+}
