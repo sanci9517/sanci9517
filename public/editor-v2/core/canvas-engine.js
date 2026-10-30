@@ -8,7 +8,8 @@
 
 import { resolveResponsiveValue } from './responsive.js';
 import { contentDefaults } from './authored-content.js';
-import { backgroundImageValue, MEDIA_ASSET_ID } from './background-asset.js';
+import { backgroundImageValue, legacyBackgroundColor, legacyBackgroundCompound, MEDIA_ASSET_ID } from './background-asset.js?v=20261030-legacy-background-compound';
+export {legacyBackgroundColor} from './background-asset.js?v=20261030-legacy-background-compound';
 
 export const STYLE_MAP = Object.freeze({
   width: 'width',
@@ -101,24 +102,15 @@ export function resolveNodeStyle(node, device = 'desktop') {
   return base;
 }
 
-// Only literal, resource-free colors are promoted from a legacy background
-// shorthand to the Canvas. Complex CSS retains its existing public behavior.
-export function legacyBackgroundColor(value) {
-  if (typeof value !== 'string') return '';
-  const text=value.trim();
-  if (!text || /^(?:inherit|initial|unset|revert|revert-layer)$/i.test(text)) return '';
-  if (!/^(?:#[0-9a-f]{3}(?:[0-9a-f]|[0-9a-f]{3}|[0-9a-f]{5})?|[a-z]+|(?:rgba?|hsla?)\([\d\s.,%+\/-]+\))$/i.test(text)) return '';
-  if (typeof globalThis.CSS?.supports === 'function' && !globalThis.CSS.supports('background-color',text)) return '';
-  return text;
-}
-
 export function applyNodeStyle(element, node, device = 'desktop') {
   const style = resolveNodeStyle(node, device);
   element.style.cssText = '';
 
   const rootStyleEnabled=node?.type!=='root'||node.metadata?.rootStyleVersion===1||node.metadata?.editorRootVersion===1;
   const legacyBackground=rootStyleEnabled?legacyBackgroundColor(style.background):'';
+  const legacyCompound=rootStyleEnabled?legacyBackgroundCompound(style.background):null;
   if (legacyBackground) element.style.background=legacyBackground;
+  else if(legacyCompound?.color)element.style.backgroundColor=legacyCompound.color;
 
   // Older documents may contain the CSS border shorthand. Apply it as a
   // fallback before Inspector longhands so responsive edits take precedence.
@@ -134,7 +126,7 @@ export function applyNodeStyle(element, node, device = 'desktop') {
     if (!cssProperty || value === undefined || value === null || value === '') continue;
     element.style[cssProperty] = String(value);
   }
-  element.style.backgroundImage=backgroundImageValue(style,{editor:true});
+  element.style.backgroundImage=backgroundImageValue(style,{editor:true,legacyBackground:rootStyleEnabled});
   if(MEDIA_ASSET_ID.test(String(style.backgroundAssetId||''))){
     if(!style.backgroundSize)element.style.backgroundSize='cover';
     if(!style.backgroundPosition)element.style.backgroundPosition='center center';

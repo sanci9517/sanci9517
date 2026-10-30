@@ -1,5 +1,5 @@
 /* Sanci9517 canonical public Page Model renderer — Editor v2 compatible. */
-import { resolveNodeStyle, STYLE_MAP, needsRelativeOffsetPosition, legacyBackgroundColor } from "../editor-v2/core/canvas-engine.js?v=20261030-legacy-background";
+import { resolveNodeStyle, STYLE_MAP, needsRelativeOffsetPosition, legacyBackgroundColor } from "../editor-v2/core/canvas-engine.js?v=20261030-legacy-background-compound";
 import { RICH_TEXT_FONT_FAMILIES } from "../editor-v2/core/schema.js";
 import { LAYOUT_TYPES, isManagedLayout } from "../editor-v2/core/layout-presets.js";
 import {isStructuredType,renderElementContent,activateStructuredContent,safeMediaUrl} from "../editor-v2/core/element-content.js";
@@ -15,7 +15,7 @@ import {isAuthoredContent,contentTag,contentAttributes,authoredNodeHtml,initCont
 import {defaultTokens,applyTokenVariables} from "../editor-v2/core/design-tokens.js";
 import {isVisibleOnDevice,collectVisibleDescendants} from "../editor-v2/core/visibility.js";
 import {applyStateStyles,hasStateStyles} from "../editor-v2/core/state-styles.js";
-import {backgroundImageValue,MEDIA_ASSET_ID} from "../editor-v2/core/background-asset.js";
+import {backgroundImageValue,legacyBackgroundCompound,MEDIA_ASSET_ID} from "../editor-v2/core/background-asset.js?v=20261030-legacy-background-compound";
 (()=>{
  const esc=v=>String(v??'').replace(/[&<>\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
  const safeUrl=v=>{const raw=safeMediaUrl(v);if(!raw)return '';try{return new URL(raw,location.origin).href}catch{return''}};
@@ -24,8 +24,11 @@ import {backgroundImageValue,MEDIA_ASSET_ID} from "../editor-v2/core/background-
  function sanciBlock(n){const d=sanci[n.type]||['✦',n.name||n.type,'Sanci9517 tartalom'];const text=n.props?.text&&n.props.text!==n.name?n.props.text:'';return `<div class="visual-sanci-icon">${d[0]}</div><div class="visual-sanci-copy"><strong>${esc(text||d[1])}</strong><span>${esc(d[2])}</span></div>`}
  function style(n){
   const values=resolveNodeStyle(n,currentDevice);let out='';
-  const legacyBackground=legacyBackgroundColor(values.background);
+  const legacyRoot=n.type!=='root'||n.metadata?.rootStyleVersion===1||n.metadata?.editorRootVersion===1;
+  const legacyCompound=legacyRoot?legacyBackgroundCompound(values.background):null;
+  const legacyBackground=legacyRoot&&!legacyCompound?legacyBackgroundColor(values.background):'';
   if(legacyBackground)out+=`background:${esc(legacyBackground)};`;
+  else if(legacyCompound?.color)out+=`background-color:${esc(legacyCompound.color)};`;
   // Preserve legacy shorthand defaults while allowing Inspector longhands to override them.
   if(values.border&&CSS.supports('border',String(values.border)))out+=`border:${esc(values.border)};`;
   for(const [key,property] of Object.entries(STYLE_MAP)){
@@ -41,9 +44,11 @@ import {backgroundImageValue,MEDIA_ASSET_ID} from "../editor-v2/core/background-
   // relative positioning for the same Page Model value.
   if(needsRelativeOffsetPosition(values))out+='position:relative;';
    for(const [legacy,property] of [['background','background']]){
-   if(!legacyBackground&&values[legacy]&&CSS.supports(property,String(values[legacy])))out+=`${property}:${esc(values[legacy])};`;
+   if(legacyRoot&&!legacyBackground&&!legacyCompound&&values[legacy]&&CSS.supports(property,String(values[legacy])))out+=`${property}:${esc(values[legacy])};`;
   }
-   const background=backgroundImageValue(values);if(background!=='none')out+=`background-image:${esc(background)};`;
+   const background=backgroundImageValue(values,{legacyBackground:legacyRoot});
+   const hasCanonicalImage=values.backgroundImage!==undefined&&values.backgroundImage!==null&&values.backgroundImage!=='';
+   if(background!=='none'||hasCanonicalImage)out+=`background-image:${esc(background)};`;
    const hasAsset=MEDIA_ASSET_ID.test(String(values.backgroundAssetId||''));
    for(const [key,property,fallback] of [['backgroundSize','background-size','cover'],['backgroundPosition','background-position','center center'],['backgroundRepeat','background-repeat','no-repeat']]){
     const value=values[key]||(hasAsset?fallback:'');

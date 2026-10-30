@@ -85,3 +85,13 @@ test('background rendering and style snapshots reject non-RFC media UUIDs',()=>{
     assert.deepEqual(snapshot.responsive.desktop,{});
   }
 });
+
+test('legacy backgrounds reuse only fixed gradients and explicit Inspector values take precedence',()=>{
+  const legacy='linear-gradient(135deg, #7047eb 0%, #17b8a6 100%)';
+  const explicit='linear-gradient(135deg, #111827 0%, #475569 100%)';
+  assert.equal(backgroundImageValue({background:legacy}),legacy);
+  assert.equal(backgroundImageValue({background:legacy,backgroundImage:explicit}),explicit);
+  assert.equal(backgroundImageValue({background:legacy,backgroundImage:'none'}),'none');
+  assert.equal(backgroundImageValue({background:'linear-gradient(red,blue)'}),'none');
+  assert.equal(backgroundImageValue({background:'url(https://example.invalid/x)'}),'none');
+});

@@ -20,6 +20,8 @@ import { getSchedulePreviewItems } from '../core/schedule-preview.js';
 import { computeCanvasMinHeight } from '../core/canvas-extent.js';
 import { measureCanvasWorkspace } from '../core/canvas-workspace.js';
 import { needsRelativeOffsetPosition,legacyBackgroundColor,applyNodeStyle } from '../core/canvas-engine.js';
+import {legacyBackgroundGradient,legacyBackgroundCompound} from '../core/background-asset.js';
+import {tokenReference} from '../core/design-tokens.js';
 import { validatePublishDocument } from '../../../src/core/editor-validation.ts';
 
 test('canvas minimum height follows content below the default page extent', () => {
@@ -50,6 +52,51 @@ test('legacy background fallback accepts only resource-free literal colors',()=>
  const legacyRoot={type:'root',style:{background:'red'},responsive:{},metadata:{}};
  const rootElement={style:{}};applyNodeStyle(rootElement,legacyRoot);assert.equal(rootElement.style.background,undefined,'legacy root appearance is not enabled implicitly');
  const enabledRoot={...legacyRoot,metadata:{rootStyleVersion:1}},enabledElement={style:{}};applyNodeStyle(enabledElement,enabledRoot);assert.equal(enabledElement.style.background,'red');
+});
+
+test('legacy background gradients promote only fixed tokens and respect Inspector none',()=>{
+ const gradient='linear-gradient(135deg, #7047eb 0%, #17b8a6 100%)';
+ assert.equal(legacyBackgroundGradient(gradient),gradient);
+ for(const value of ['none','linear-gradient(red,blue)','linear-gradient(90deg,red,blue)','url(https://example.invalid/x)','var(--gradient)'])assert.equal(legacyBackgroundGradient(value),'',value);
+ const legacy={id:'gradient',type:'divider',style:{background:gradient},responsive:{}};
+ const canvas={style:{}};applyNodeStyle(canvas,legacy);assert.equal(canvas.style.backgroundImage,gradient);
+ const overridden={...legacy,style:{...legacy.style,backgroundImage:'none'}},overriddenCanvas={style:{}};applyNodeStyle(overriddenCanvas,overridden);assert.equal(overriddenCanvas.style.backgroundImage,'none');
+ const disabledRoot={...legacy,type:'root'},disabledRootCanvas={style:{}};applyNodeStyle(disabledRootCanvas,disabledRoot);assert.equal(disabledRootCanvas.style.backgroundImage,'none','versionless root still requires opt-in for legacy styles');
+});
+
+test('legacy compound backgrounds promote only fixed gradients with a safe final color layer',()=>{
+ const gradient='linear-gradient(135deg, #7047eb 0%, #17b8a6 100%)';
+ const compound=`${gradient}, #123456`;
+ assert.deepEqual(legacyBackgroundCompound(compound),{image:gradient,color:'#123456'});
+ assert.deepEqual(legacyBackgroundCompound(`${gradient}, ${gradient}, ${tokenReference('colors.surface')}`),{image:`${gradient}, ${gradient}`,color:tokenReference('colors.surface')});
+ for(const value of [
+  `${gradient}, url(https://example.invalid/x)`,
+  `${gradient}, u\\72l(https://example.invalid/x)`,
+  `${gradient}, var(--custom-color)`,
+  `${gradient}, #123456; background:url(x)`,
+  `#123456, ${gradient}`,
+  `${gradient}, linear-gradient(red,blue)`,
+  `${gradient}, ${tokenReference('colors.primary')}, #fff`,
+  `${gradient}, #fff,`,
+  `${gradient}, "#fff"`
+ ])assert.equal(legacyBackgroundCompound(value),null,value);
+
+ const node={id:'compound-background',type:'divider',style:{background:compound},responsive:{}};
+ const canvas={style:{}};applyNodeStyle(canvas,node);
+ assert.equal(canvas.style.backgroundImage,gradient);
+ assert.equal(canvas.style.backgroundColor,'#123456');
+ const override={...node,responsive:{desktop:{backgroundColor:'#abcdef',backgroundImage:'none'}}},overrideCanvas={style:{}};
+ applyNodeStyle(overrideCanvas,override);
+ assert.equal(overrideCanvas.style.backgroundImage,'none','explicit Inspector none suppresses gradient layers');
+ assert.equal(overrideCanvas.style.backgroundColor,'#abcdef','responsive Inspector color overrides the legacy final color');
+});
+
+test('legacy background accepts only exact color references from the Brand Kit token registry',()=>{
+ for(const id of ['colors.primary','colors.text','colors.surface','colors.border'])assert.equal(legacyBackgroundColor(tokenReference(id)),tokenReference(id));
+ for(const id of ['typography.font','spacing.medium','radii.card','shadows.card'])assert.equal(legacyBackgroundColor(tokenReference(id)),'',id);
+ for(const value of ['var(--custom-color)','var(--creator-colors-primary)','var(--creator-colors-primary, url(https://example.invalid/x))','var(--creator-colors-primary, #7047eb);background:url(x)'])assert.equal(legacyBackgroundColor(value),'',value);
+ const token=tokenReference('colors.primary'),node={id:'token-background',type:'divider',style:{background:token},responsive:{}};
+ const element={style:{}};applyNodeStyle(element,node);assert.equal(element.style.background,token);
 });
 
 test('Rich Text schema normalizes Office-friendly tables, safe inline styles and extended semantic marks',()=>{

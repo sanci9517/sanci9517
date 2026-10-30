@@ -11,6 +11,7 @@ import {execute} from '../../public/editor-v2/core/commands.js';
 
 test('root Inspector appearance matches published canvas only after Publish at desktop and mobile breakpoints',async t=>{
  const model=createEditorState(createDocument()),pageId=model.document.activePageId,rootId=activePage(model).rootId;
+ activePage(model).nodes[rootId].style.background='#ff00aa';
  execute(model,{type:'element.add',payload:{type:'text',parentId:rootId,props:{text:'Alapoldal'}}});
  const contentNodeId=model.selection.primaryId;
  let draft=structuredClone(model.document),published=structuredClone(draft),version=1;
@@ -47,6 +48,8 @@ test('root Inspector appearance matches published canvas only after Publish at d
  const canvas=viewer.locator('#content-canvas');
  const legacyColor=await canvas.evaluate(el=>getComputedStyle(el).backgroundColor);
  const rootNode=editor.locator('.node[data-node-id="'+rootId+'"]');
+ assert.notEqual(legacyColor,'rgb(255, 0, 170)','public renderer suppresses the versionless legacy root shorthand');
+ assert.notEqual(await rootNode.evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(255, 0, 170)','versionless legacy root shorthand stays disabled on Canvas');
  await rootNode.evaluate(el=>el.click());
  if(await editor.locator('#rightDock').evaluate(el=>el.classList.contains('closed')))await editor.locator('#openInspector').click();
  assert.equal(await editor.locator('[data-property-id="layout.overflow"]').count(),0,'root Inspector hides overflow because public authored roots preserve document scrolling');
