@@ -48,8 +48,8 @@
   },
   "release": {
     "runtimeChanged": false,
-    "githubPush": "Pending test/evidence-only commit; remote v2/foundation was verified by GitHub file fetch at runtime commit 416e5a0a.",
-    "ci": "NOT_RUN; no CI PASS claimed.",
+    "githubPush": "Test/evidence-only commit bfd89b67 was pushed by normal fast-forward to v2/foundation; direct GitHub branch fetch confirms updated lifecycle assertions.",
+    "ci": "Not run; GitHub combined-status API returned zero checks for bfd89b67 ([skip ci]); no CI PASS claimed.",
     "productionDeployment": "NOT_REQUIRED; no runtime files changed.",
     "productionWorker": {
       "deploymentId": "ace02e13-16d0-4a3b-a74b-26cd55d3a244",
