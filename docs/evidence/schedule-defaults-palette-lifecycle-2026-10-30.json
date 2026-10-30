@@ -52,7 +52,7 @@
   },
   "release": {
     "runtimeChangedThisRun": false,
-    "testAndDocumentationCommit": "Pending fast-forward push; tests and documentation only, no Worker source changes.",
+    "testAndDocumentationCommit": "Commit 3b2e6097 was pushed by normal fast-forward to v2/foundation; current remote ref will be verified after the evidence-only follow-up.",
     "productionDeployment": "NOT REQUIRED for this test/documentation-only change; no D1 or R2 operations.",
     "healthAndAssetHashes": "Not re-fetched in this test-only run; previously verified for the unchanged runtime release."
   },
