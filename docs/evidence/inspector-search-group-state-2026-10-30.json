@@ -2,7 +2,7 @@
   "plan_item": "77.44.7.A",
   "feature": "Inspector search restores each accordion group's prior user state",
   "date": "2026-10-30",
-  "status": "IMPLEMENTED_AND_LOCALLY_VERIFIED_RELEASE_PENDING",
+  "status": "IMPLEMENTED_DEPLOYED_AND_PRODUCTION_VERIFIED",
   "finding": {
     "reproduction": "In Chromium, all Inspector groups started collapsed. Searching for the typography font-size field correctly opened its group, but clearing the search left aria-expanded=true and the group visually open instead of restoring its prior collapsed state.",
     "impact": "A transient search changed persistent Inspector disclosure state. Repeated searches accumulated open groups and made the Inspector less predictable, while visual and screen-reader expansion state stayed synchronized to the unwanted open state.",
@@ -33,7 +33,7 @@
   },
   "production_preflight": {
     "d1_before_deploy": "SELECT-only Cloudflare D1 API: 34 ledger rows, latest 0028_media_archive.sql; foreign_key_check empty; quick_check=ok; rows_written=0; changed_db=false.",
-    "d1_after_deploy": "PENDING",
+    "d1_after_deploy": "SELECT-only Cloudflare D1 API: 34 ledger rows, latest 0028_media_archive.sql; foreign_key_check empty; quick_check=ok; rows_written=0; changed_db=false.",
     "migration_or_data_write": false,
     "r2_change": false
   },
@@ -48,12 +48,16 @@
   },
   "release": {
     "remote_branch": "v2/foundation",
-    "runtime_commit": "PENDING",
-    "github_status": "PENDING; do not report CI PASS without a returned check",
-    "cloudflare_build": "PENDING",
-    "deployment": "PENDING",
-    "health": "PENDING",
-    "changed_asset_hashes": "PENDING; app.js, index.html, and ui/inspector-groups.js are changed public assets."
+    "runtime_commit": "34ce9d9f6079b72daebba8e1f3f28e29601a3a83",
+    "github_status": "GitHub v2/foundation ref GET confirmed exact commit. Combined status returned no checks; commit includes [skip ci], no CI PASS claimed.",
+    "cloudflare_build": "Build 63e8e4c2-4f3c-472b-b05a-5b866c74b6c3 for exact runtime commit stopped/skipped; deploy:safe was run directly.",
+    "deployment": "npm run deploy:safe passed the migration safety gate; deployment 6be4f9ed-a9e4-413d-9a4d-36ec6d825377 routes 100% to Worker version 6d5fe13d-493c-4a72-9c43-2125eb33f070.",
+    "health": "Direct GET /api/health returned HTTP 200 with {ok:true, service:sanci9517-streamer-brand, version:2.0.0, server:cloudflare-worker}.",
+    "changed_asset_hashes": {
+      "/editor-v2/index.html": "SHA-256 3717a27378dda61378f1cbefb852c57887eab6566d7fff26b077e5fa1818aa4d; matches local source.",
+      "/editor-v2/app.js": "SHA-256 eda1644f10164a280a7fa62ddaa4fdc24beab43cd51dc20239047c42f0cf1f34; matches local source.",
+      "/editor-v2/ui/inspector-groups.js": "SHA-256 15a06ffe780c8c681ba33fdea112e917dfccf62d42b3951f225f46ed596255db; matches local source."
+    }
   },
   "acceptance": "This Inspector disclosure-state slice is independently covered. Overall 77.44.7.A and complete Visual Editor acceptance remain OPEN / NOT CERTIFIED; manual/physical acceptance stays DEFERRED."
 }
