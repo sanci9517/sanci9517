@@ -9,28 +9,37 @@
     "editor": {"pass": 11, "fail": 0},
     "chromiumInspectorLifecycle": {"pass": 1, "fail": 0, "durationMs": 234572.969, "checks": ["tablist/tab/tabpanel semantics", "aria-controls and aria-labelledby relationships", "selected tab and roving tabindex", "ArrowLeft/ArrowRight", "Home/End", "Inspector edit/Canvas/Save/reload/separate Publish"]},
     "gitDiffCheck": "PASS",
-    "canonicalPlan": "PENDING",
-    "activePointAudit": "PENDING",
-    "traceability": "PENDING",
-    "migrationSafetyGate": "PENDING",
-    "wranglerDryRun": "PENDING"
+    "canonicalPlan": "PASS; 13 master files, one current cursor",
+    "activePointAudit": "PASS; 77.44.7.A remains NOT_CERTIFIED",
+    "traceability": {"pass": 396, "acceptance": "NOT_CERTIFIED"},
+    "migrationSafetyGate": "PASS; deploy:safe does not apply D1 migrations",
+    "wranglerDryRun": {"status": "PASS", "wrangler": "4.130.0", "assets": 161, "uploadKiB": 296.93, "migrationApply": false}
   },
   "productionD1Preflight": {
-    "method": "SELECT-only Cloudflare D1 query API; to be run before deployment",
-    "appliedMigrations": null,
-    "rowsWritten": null,
-    "changedDb": null,
+    "method": "SELECT-only Cloudflare D1 query API: SELECT id,name,applied_at FROM d1_migrations ORDER BY id",
+    "appliedMigrations": 34,
+    "latestAppliedMigration": "0028_media_archive.sql",
+    "rowsRead": 34,
+    "rowsWritten": 0,
+    "changedDb": false,
     "migrationApplied": false
   },
   "release": {
-    "runtimeCommit": null,
+    "runtimeCommit": "6ff6e7367c186e9ab7a3a6e3d074e6f5429cc8c1",
     "targetBranch": "v2/foundation",
-    "push": "PENDING",
-    "githubCi": "PENDING",
-    "deployment": "PENDING",
-    "workerVersion": "PENDING",
-    "productionHealth": "UNVERIFIED",
-    "productionAssetHashes": "UNVERIFIED",
+    "push": "FAST_FORWARD_VERIFIED",
+    "remoteHead": "6ff6e7367c186e9ab7a3a6e3d074e6f5429cc8c1",
+    "githubCi": "SKIPPED_BY_[skip ci]; no CI status was reported",
+    "deployment": "15c3a5cb-41cf-4097-aec2-ec920907e11e",
+    "workerVersion": "3979c5ae-9741-4c01-b697-98dbb7086eaf",
+    "workerVersionNumber": 3743,
+    "trafficPercent": 100,
+    "productionHealth": {"status": 200, "response": {"ok": true, "service": "sanci9517-streamer-brand", "version": "2.0.0", "server": "cloudflare-worker"}},
+    "productionAssetHashes": {
+      "appJs": {"sourceSha256": "c3cda652f682d70f82577de7685ded9760c5e5ae978d8057607c48b95aa1b917", "productionSha256": "c3cda652f682d70f82577de7685ded9760c5e5ae978d8057607c48b95aa1b917", "matches": true},
+      "editorIndex": {"sourceSha256": "4aa26bf4e939025ac8a306f649824abb12930ad2987bdf2bc88413093854e1be", "productionSha256": "4aa26bf4e939025ac8a306f649824abb12930ad2987bdf2bc88413093854e1be", "matches": true}
+    },
+    "productionD1PostReadback": {"method": "SELECT-only query API", "appliedMigrations": 34, "rowsWritten": 0, "changedDb": false},
     "productionDataChanges": {"d1MigrationsApplied": 0, "d1RowsWritten": 0, "r2Changes": 0}
   },
   "acceptance": {"visualEditor": "NOT_CERTIFIED", "manualAndPhysicalDevice": "DEFERRED_UNTIL_COMPLETE_VISUAL_EDITOR"}
