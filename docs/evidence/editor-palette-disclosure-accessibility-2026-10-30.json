@@ -1,0 +1,37 @@
+{
+  "date": "2026-10-30",
+  "workItem": "77.44.7.A — Palette disclosure accessibility state",
+  "finding": "Palette element groups and per-element help panels opened visually, but their buttons did not expose expanded/collapsed state or identify controlled content to assistive technology.",
+  "change": "Added aria-controls references and synchronized aria-expanded state for element group disclosures and per-element help disclosures. Native buttons and existing keyboard behavior are retained; ids are unique per render.",
+  "thirdPartyReview": "The existing implementation uses native HTML buttons and the established WAI-ARIA disclosure state pattern. No external code, dependency, or product capability expansion was needed; this closes the existing 77.44.5 accessibility requirement.",
+  "tests": {
+    "typecheck": "PASS",
+    "editor": {"pass": 11, "fail": 0},
+    "chromiumPaletteInsertion": {"pass": 5, "fail": 0, "ariaStateAndVisibility": "PASS"},
+    "gitDiffCheck": "PASS",
+    "canonicalPlan": "PASS; 13 master files, one current cursor",
+    "activePointAudit": "PASS; 77.44.7.A remains NOT_CERTIFIED",
+    "traceability": {"pass": 396, "acceptance": "NOT_CERTIFIED"},
+    "migrationSafetyGate": "PASS; deploy:safe does not apply D1 migrations",
+    "wranglerDryRun": {"status": "PASS", "wrangler": "4.130.0", "assets": 161, "uploadKiB": 296.93, "migrationApply": false}
+  },
+  "productionD1Preflight": {
+    "method": "Cloudflare D1 query API; SELECT id,name,applied_at FROM d1_migrations ORDER BY id",
+    "appliedMigrations": 34,
+    "latestAppliedMigration": "0028_media_archive.sql",
+    "rowsRead": 34,
+    "rowsWritten": 0,
+    "changedDb": false,
+    "migrationApplied": false
+  },
+  "release": {
+    "runtimeCommit": "PENDING",
+    "targetBranch": "v2/foundation",
+    "push": "PENDING",
+    "deployment": "PENDING",
+    "productionHealth": "UNVERIFIED",
+    "productionAssetHash": "UNVERIFIED",
+    "productionDataChanges": {"d1MigrationsApplied": 0, "d1RowsWritten": 0, "r2Changes": 0}
+  },
+  "acceptance": {"visualEditor": "NOT_CERTIFIED", "manualAndPhysicalDevice": "DEFERRED_UNTIL_COMPLETE_VISUAL_EDITOR"}
+}
