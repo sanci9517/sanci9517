@@ -19,9 +19,20 @@
   "openSourceReview": "Used the repository's existing shared content-field validation and accessibility patterns; no external package or copied code was needed.",
   "release": {
     "runtimeChanged": true,
-    "commit": null,
-    "push": "PENDING",
-    "deployment": "PENDING",
+    "commit": "874f9e596693ec735a4379026769ff3b740cd871",
+    "branch": "v2/foundation",
+    "push": "FAST_FORWARD_VERIFIED",
+    "githubCi": "SKIPPED_BY_[skip ci]",
+    "deployment": "SUCCESS",
+    "workerVersion": "ac9ef522-81ac-4d49-9809-0c0958ccc769",
+    "trafficPercent": 100,
+    "health": { "status": 200 },
+    "liveAsset": {
+      "path": "/editor-v2/ui/element-content-controls.js",
+      "status": 200,
+      "sha256": "94408ef8a763eeed4be243309122372cccd547c64eb2ae8687a78a1866076ede",
+      "matchesSource": true
+    },
     "productionD1Writes": 0,
     "productionR2Changes": 0
   },
