@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { DatabaseSync } from "node:sqlite";
 import { adminMediaRoute, publishedMediaRoute } from "../src/routes/admin/media.ts";
+import { validatePublicationAssets } from "../src/core/editor-publication.ts";
 import { hashSessionToken } from "../src/core/auth/session.ts";
 
 const png = Uint8Array.from([137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,1,0,0,0,1]);
@@ -133,6 +134,55 @@ test("authenticated playable media remains site-scoped and becomes public only t
   assert.equal((await publishedMediaRoute(new Request("https://example.test/media/"+audio.id),f.env,"site-default",audio.id)).status,404,"unreferenced audio stays private");
   f.db.prepare("UPDATE pages SET published_content_json=? WHERE id='playable-page'").run(JSON.stringify({pages:{"playable-page":{rootId:"root",nodes:{root:{type:"root",children:["wrong"]},wrong:{type:"audio",metadata:{editorContentVersion:1},props:{assetId:video.id}}}}}}));
   assert.equal((await publishedMediaRoute(new Request("https://example.test/media/"+video.id),f.env,"site-default",video.id)).status,404,"a video asset cannot be exposed through an audio node");
+});
+
+test("publication and public media delivery reject assets used in a different media role",async t=>{
+ const f=await fixture(t);
+ const assets=[
+  {id:"10000000-0000-4000-8000-000000000001",mime:"image/png",key:"image.png",bytes:png},
+  {id:"10000000-0000-4000-8000-000000000002",mime:"video/webm",key:"video.webm",bytes:webm},
+  {id:"10000000-0000-4000-8000-000000000003",mime:"audio/wav",key:"audio.wav",bytes:wav}
+ ];
+ for(const asset of assets){
+  f.db.prepare("INSERT INTO media(id,object_key,original_name,mime_type,size_bytes,alt_text,site_id) VALUES(?,?,?,?,?,?,?)").run(asset.id,asset.key,asset.key,asset.mime,asset.bytes.length,"","site-default");
+  f.files.set(asset.key,asset.bytes);
+ }
+ const [image,video,audio]=assets;
+ const page=document=>f.db.prepare("INSERT OR REPLACE INTO pages(id,site_id,archived_at,is_published,published_content_json,content_json,title,slug) VALUES(?,?,?,?,?,?,?,?)").run(
+  "typed-media-page","site-default",null,1,JSON.stringify(document),"{}","Typed media","typed-media"
+ );
+ const documentFor=node=>({type:"sanci-page-document",schemaVersion:1,activePageId:"typed-media-page",pages:{"typed-media-page":{id:"typed-media-page",rootId:"root",nodes:{root:{id:"root",type:"root",metadata:{rootStyleVersion:1},children:[node.id]},[node.id]:node}}}});
+ const valid=[
+  {id:"image-node",type:"image",metadata:{contentVersion:1},props:{assetId:image.id}},
+  {id:"video-node",type:"video",metadata:{editorContentVersion:1},props:{assetId:video.id}},
+  {id:"audio-node",type:"audio",metadata:{editorContentVersion:1},props:{assetId:audio.id}},
+  {id:"root",type:"root",metadata:{rootStyleVersion:1},style:{backgroundAssetId:image.id},children:[]},
+  {id:"card",type:"card",metadata:{cardContentVersion:1},props:{cardContent:{version:1,title:"Card",description:"",variant:"solid",imageSrc:"",imageAssetId:image.id,imageAlt:"Cover",actionLabel:"",actionHref:"",newWindow:false}}},
+  {id:"video-poster",type:"video",metadata:{contentVersion:1},props:{src:"https://example.test/clip.webm",posterAssetId:image.id}},
+  {id:"gallery",type:"gallery",metadata:{contentVersion:1},props:{items:[{assetId:image.id,alt:"Cover",caption:""}]}}
+ ];
+ for(const node of valid)assert.equal(await validatePublicationAssets(f.env.DB,"site-default",documentFor(node)),null,`${node.type} accepts its matching media type`);
+ const card={id:"card",type:"card",metadata:{cardContentVersion:1},props:{cardContent:{version:1,title:"Card",description:"",variant:"solid",imageSrc:"",imageAssetId:audio.id,imageAlt:"Cover",actionLabel:"",actionHref:"",newWindow:false}}};
+ const wrongImage={id:"image-node",type:"image",metadata:{contentVersion:1},props:{assetId:video.id}};
+ const wrongVideo={id:"video-node",type:"video",metadata:{editorContentVersion:1},props:{assetId:image.id}};
+ const wrongAudio={id:"audio-node",type:"audio",metadata:{editorContentVersion:1},props:{assetId:video.id}};
+ const background={id:"root",type:"root",metadata:{rootStyleVersion:1},style:{backgroundAssetId:video.id},children:[]};
+ const poster={id:"video-node",type:"video",metadata:{contentVersion:1},props:{src:"https://example.test/clip.webm",posterAssetId:audio.id}};
+ const gallery={id:"gallery",type:"gallery",metadata:{contentVersion:1},props:{items:[{assetId:video.id,alt:"Clip",caption:""}]}};
+ for(const [label,node] of [["image element",wrongImage],["video element",wrongVideo],["audio element",wrongAudio],["card image",card],["page background",background],["video poster",poster],["gallery item",gallery]]){
+  assert.equal(await validatePublicationAssets(f.env.DB,"site-default",documentFor(node)),"MEDIA_NOT_FOUND",`${label} rejects MIME incompatible with its role`);
+ }
+
+ for(const [label,document,asset] of [
+  ["image element",documentFor(wrongImage),video],
+  ["page background",documentFor(background),video],
+  ["Card image",documentFor(card),audio],
+  ["video poster",documentFor(poster),audio],
+  ["gallery image",documentFor(gallery),video]
+ ]){
+  page(document);
+  assert.equal((await publishedMediaRoute(new Request("https://example.test/media/"+asset.id),f.env,"site-default",asset.id)).status,404,`${label} cannot publish another media kind`);
+ }
 });
 
 

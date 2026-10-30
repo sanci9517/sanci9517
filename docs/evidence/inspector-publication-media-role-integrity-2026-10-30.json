@@ -1,0 +1,60 @@
+{
+  "plan_item": "77.44.7.A",
+  "title": "Publish and public media delivery enforce element-compatible MIME roles",
+  "date": "2026-10-30",
+  "status": "IMPLEMENTED_AND_LOCALLY_VERIFIED_RELEASE_PENDING",
+  "security_finding": {
+    "reproduction": "The initial regression test uploaded valid image/video/audio records and demonstrated that validatePublicationAssets returned null for a video asset assigned to a Card image field. Published media access also lacked image MIME checks for Card, gallery/carousel, poster and background references, so a valid media ID in the wrong field could bypass the UI picker filter.",
+    "impact": "A mismatched asset could be accepted by Publish, render as a broken image, and in some image-only fields grant public delivery to otherwise private audio/video bytes.",
+    "fix": "Publication validation derives media roles from typed node fields and requires image, audio or video MIME support accordingly. Public delivery repeats the role check for image elements, Card images, gallery/carousel items, video posters and root/node backgrounds; mismatched references fail closed. Save continues to preserve private drafts and only Publish rejects the mismatch.",
+    "third_party_review": "No external implementation was needed. The accepted MIME types and media roles are repository-owned contracts; a new dependency would add no useful capability."
+  },
+  "changed_files": [
+    "src/core/editor-publication.ts",
+    "src/routes/admin/media.ts",
+    "tests/media-api.test.js",
+    "tests/web013-tenant-pages-editor.test.js",
+    "docs/evidence/feature-traceability.json",
+    "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+    "docs/evidence/inspector-publication-media-role-integrity-2026-10-30.json"
+  ],
+  "checks": {
+    "red_reproduction": "PASS as a defect reproduction: before the server fix, the new test observed null instead of MEDIA_NOT_FOUND for a video used as a Card image; no tests were weakened.",
+    "npm run test:media": "PASS, 5/5 files; cross-role public delivery returns 404 for image element, Card image, gallery item, poster and background references.",
+    "npm run test:web013": "PASS, 11/11 files; verifies Save can retain the private draft, Publish rejects mismatched media without a revision/audit/public snapshot write, and a corrected image asset can be explicitly published.",
+    "npm run test:editor": "PASS, 11/11 files",
+    "npm run typecheck": "PASS",
+    "npm run test:web013:migration-gate": "PASS",
+    "python3 scripts/build-feature-traceability.py --check": "PASS, 396 mappings after rebuilding the source fingerprint for src/core/editor-publication.ts",
+    "python3 scripts/check-canonical-plan.py": "PASS, 13 master files and 396 source mappings",
+    "python3 scripts/audit-active-plan-point.py": "PASS; 77.44.7.A remains OPEN / NOT CERTIFIED",
+    "git diff --check": "PASS",
+    "wrangler_dry_run": "PASS, Wrangler 4.130.0; 161 public assets, 298.43 KiB / 68.24 KiB gzip; --dry-run exited 0 and uploaded/deployed nothing. Wrangler could not write its debug log under read-only /home/agent/.config (EROFS)."
+  },
+  "runtime_scope": {
+    "runtime_files": ["src/core/editor-publication.ts", "src/routes/admin/media.ts"],
+    "public_assets_changed": false,
+    "d1_schema_changed": false,
+    "r2_data_changed": false,
+    "save_and_publish_separate": true
+  },
+  "production_preflight": {
+    "d1_before_deploy": "PENDING",
+    "d1_after_deploy": "PENDING",
+    "migration_or_data_write": false,
+    "r2_change": false
+  },
+  "repository": {
+    "local_branch": "work (preserve; no branch switch)",
+    "remote_target": "v2/foundation",
+    "remote_head_before_change": "0c430ac9da4c0f2f709eb07b46d9c822ff21c5da",
+    "runtime_commit": "PENDING",
+    "push": "PENDING",
+    "github_ci": "PENDING; no CI PASS claimed",
+    "cloudflare_build": "PENDING",
+    "deployment": "PENDING; current verified Worker is 898baf10-e08e-4923-a72a-adf75b01fd55 (100%) on deployment 7d3c57d5-b26a-4f95-b60d-8ac20534c445",
+    "production_health": "PENDING",
+    "public_asset_hashes": "No public asset was changed; Worker deployment verification pending."
+  },
+  "acceptance_boundary": "Only typed-media publication and public-delivery integrity are covered here. Full 77.44.7.A and Visual Editor acceptance remain OPEN / NOT CERTIFIED; manual and physical-device acceptance remain DEFERRED until the complete Editor is implemented."
+}

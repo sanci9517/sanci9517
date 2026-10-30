@@ -113,6 +113,28 @@ test('asset references save as private drafts and Publish accepts only media own
   assert.equal(f.db.prepare('SELECT json_extract(published_content_json,\'$.pages.b.nodes.root.responsive.desktop.backgroundAssetId\') AS asset FROM pages WHERE id=?').get('b').asset,own);
 });
 
+test('Save keeps cross-kind media references private and Publish rejects the mismatched media role',async t=>{
+  const f=await fixture(t),image='6b1c2e65-e46e-4764-b234-123456789abc',video='cdb85522-f682-4561-bd61-bfb83c4381b2';
+  f.db.prepare('INSERT INTO media(id,site_id,object_key,mime_type,original_name,size_bytes) VALUES(?,?,?,?,?,?)').run(image,'other','sites/other/media/'+image,'image/png','cover.png',100);
+  f.db.prepare('INSERT INTO media(id,site_id,object_key,mime_type,original_name,size_bytes) VALUES(?,?,?,?,?,?)').run(video,'other','sites/other/media/'+video,'video/webm','cover.webm',100);
+  const documentFor=assetId=>({type:'sanci-page-document',schemaVersion:1,activePageId:'b',revision:1,pages:{b:{id:'b',rootId:'root',nodes:{root:{id:'root',type:'root',parentId:null,children:['image']},image:{id:'image',type:'image',parentId:'root',children:[],metadata:{contentVersion:1},props:{assetId,alt:'Borítókép'}}}}}});
+  const invalid=documentFor(video);
+  const saved=await f.editor('editor','other','POST',{pageId:'b',expectedVersion:1,document:invalid,publish:false});
+  assert.equal(saved.status,200,'draft Save remains separate and preserves a mismatched but private reference for repair');
+  const publishedBefore=f.db.prepare('SELECT published_content_json FROM pages WHERE id=?').get('b').published_content_json;
+  const revisionsBefore=f.db.prepare('SELECT COUNT(*) AS n FROM editor_revisions WHERE page_id=?').get('b').n;
+  const auditBefore=f.db.prepare('SELECT COUNT(*) AS n FROM audit_log').get().n;
+  const publish=await f.editor('editor','other','POST',{pageId:'b',expectedVersion:2,document:invalid,publish:true});
+  assert.equal(publish.status,409);
+  assert.equal((await publish.json()).error.code,'MEDIA_NOT_FOUND');
+  assert.equal(f.db.prepare('SELECT published_content_json FROM pages WHERE id=?').get('b').published_content_json,publishedBefore,'rejected Publish preserves the previous public snapshot');
+  assert.equal(f.db.prepare('SELECT COUNT(*) AS n FROM editor_revisions WHERE page_id=?').get('b').n,revisionsBefore,'rejected Publish does not create a revision');
+  assert.equal(f.db.prepare('SELECT COUNT(*) AS n FROM audit_log').get().n,auditBefore,'rejected Publish does not emit a success audit event');
+  const repaired=await f.editor('editor','other','POST',{pageId:'b',expectedVersion:2,document:documentFor(image),publish:true});
+  assert.equal(repaired.status,200,'correcting the reference allows an explicit Publish');
+  assert.equal(f.db.prepare("SELECT json_extract(published_content_json,'$.pages.b.nodes.image.props.assetId') AS id FROM pages WHERE id=?").get('b').id,image);
+});
+
 test('missing membership schema returns 503 and legacy role is default-site only',async t=>{
   const f=await fixture(t);f.db.exec('DROP TABLE site_memberships');
   assert.equal((await f.pages('admin','site-default')).status,503);

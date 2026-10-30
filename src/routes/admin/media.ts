@@ -157,6 +157,10 @@ function documentAssetReferences(json: string, pageId: string, assetId: string, 
     if (publicOnly && (visibility === false || visibility && typeof visibility === "object" && ["desktop", "tablet", "mobile"].every(device => (visibility as Record<string, unknown>)[device] === false))) return [];
     const nodeName = typeof node.name === "string" && node.name.trim() ? node.name : node.type || nodeId;
     const props = node.props as Record<string, unknown> | undefined;
+    const compatible = (kind: "image" | "video" | "audio") => !mime || (
+      kind === "image" ? (IMAGE_MIMES as readonly string[]).includes(mime) :
+      kind === "video" ? mime === "video/webm" : (PLAYABLE_MIMES as readonly string[]).includes(mime) && mime !== "video/webm"
+    );
     const validCardImage = () => {
       try { return normalizeCardContent(props?.cardContent).imageAssetId === assetId; }
       catch { return false; }
@@ -182,17 +186,14 @@ function documentAssetReferences(json: string, pageId: string, assetId: string, 
     };
     const renderedReference = (path: string): boolean => {
       if (!publicOnly) return true;
-      if (nodeId === page.rootId) return renderedBackground(path);
-      const compatible = (kind: "image" | "video" | "audio") => !mime ||
-        kind === "image" ? (IMAGE_MIMES as readonly string[]).includes(mime) :
-        kind === "video" ? mime === "video/webm" : (PLAYABLE_MIMES as readonly string[]).includes(mime) && mime !== "video/webm";
+      if (nodeId === page.rootId) return renderedBackground(path) && compatible("image");
       return path === "props.assetId" && node.type === "image" && node.metadata?.contentVersion === 1 && compatible("image") ||
         path === "props.assetId" && node.type === "video" && node.metadata?.editorContentVersion === 1 && compatible("video") ||
         path === "props.assetId" && node.type === "audio" && node.metadata?.editorContentVersion === 1 && compatible("audio") ||
-        path === "props.cardContent.imageAssetId" && node.type === "card" && node.metadata?.cardContentVersion === 1 && validCardImage() ||
-        path === "props.posterAssetId" && node.type === "video" && node.metadata?.contentVersion === 1 && validVideoSource() ||
-        /^props\.items\[\d+\]\.assetId$/.test(path) && Number(path.match(/\[(\d+)\]/)?.[1]) < 40 && ["gallery", "carousel"].includes(node.type || "") && node.metadata?.contentVersion === 1 ||
-        renderedBackground(path);
+        path === "props.cardContent.imageAssetId" && node.type === "card" && node.metadata?.cardContentVersion === 1 && validCardImage() && compatible("image") ||
+        path === "props.posterAssetId" && node.type === "video" && node.metadata?.contentVersion === 1 && validVideoSource() && compatible("image") ||
+        /^props\.items\[\d+\]\.assetId$/.test(path) && Number(path.match(/\[(\d+)\]/)?.[1]) < 40 && ["gallery", "carousel"].includes(node.type || "") && node.metadata?.contentVersion === 1 && compatible("image") ||
+        renderedBackground(path) && compatible("image");
     };
     return ["props", "style", "responsive"].flatMap(field =>
       assetPaths(node[field as keyof typeof node], assetId, field)
