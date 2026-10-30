@@ -2,7 +2,7 @@
   "plan_item": "77.44.7.A",
   "feature": "Inspector numeric precision agrees with native input validity",
   "date": "2026-10-30",
-  "status": "IMPLEMENTED_AND_LOCALLY_VERIFIED_RELEASE_PENDING",
+  "status": "IMPLEMENTED_DEPLOYED_AND_VERIFIED",
   "finding": {
     "reproduction": "Real Chromium marked the Inspector opacity value 0.75 invalid (`input.validity.valid === false`) because the number control declared step=0.1, while the same Inspector validator and shipped presets accept 0.75. The Browser value contract also accepts opacity 0.82, line-height 1.75 and scale 0.85, all valid decimals that do not land on a tenth.",
     "impact": "A value that the Page Model accepts and the Canvas/public renderer uses was exposed to the browser and assistive technology as a step-invalid numeric control. This made the Inspector's native and application validation states disagree.",
@@ -32,7 +32,7 @@
   },
   "production_preflight": {
     "d1_before_deploy": "SELECT-only Cloudflare D1 API: 34 ledger rows, latest 0028_media_archive.sql; foreign_key_check empty; quick_check=ok; rows_written=0; changed_db=false.",
-    "d1_after_deploy": "PENDING",
+    "d1_after_deploy": "SELECT-only Cloudflare D1 API after deployment: 34 ledger rows, latest 0028_media_archive.sql; PRAGMA foreign_key_check empty; PRAGMA quick_check=ok; every query rows_written=0 and changed_db=false.",
     "migration_or_data_write": false,
     "r2_change": false
   },
@@ -46,12 +46,23 @@
   },
   "release": {
     "remote_branch": "v2/foundation",
-    "runtime_commit": "PENDING",
-    "github_status": "PENDING; no CI PASS claimed until directly checked",
-    "cloudflare_build": "PENDING",
-    "deployment": "PENDING",
-    "health": "PENDING",
-    "changed_asset_hashes": "PENDING; app.js and ui/property-controls.js are changed public assets."
+    "runtime_commit": "5d735ea50d883f43bb358dd5996a73fb16105df7",
+    "github_status": "Direct GitHub ref check confirms v2/foundation points to runtime_commit. Direct commit status GET: state=pending, total_count=0, statuses=[]; no CI PASS claimed.",
+    "cloudflare_build": "No Cloudflare exact-commit build was used; [skip ci] status list is empty. Published with npm run deploy:safe after migration safety gate and successful Wrangler dry-run.",
+    "deployment": "Cloudflare API GET verifies deployment 58b172d9-734c-4b4c-a8a6-ac961f15bfbb created 2026-10-30T19:32:45.070674Z; Worker version 637dae8b-aab6-434e-91d8-70f092174f72 at 100%.",
+    "health": "Direct GET https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health returned HTTP 200: {\"ok\":true,\"service\":\"sanci9517-streamer-brand\",\"version\":\"2.0.0\",\"server\":\"cloudflare-worker\"}.",
+    "changed_asset_hashes": {
+      "/editor-v2/app.js": {
+        "local_sha256": "3350f213ca576024f9402b7f733db49063cc55b60127fa2978fc22239f4d2beb",
+        "live_sha256": "3350f213ca576024f9402b7f733db49063cc55b60127fa2978fc22239f4d2beb",
+        "match": true
+      },
+      "/editor-v2/ui/property-controls.js": {
+        "local_sha256": "9450f941c9b55c867610714744b53697adff6659ea66b7fd14d601309fce5acf",
+        "live_sha256": "9450f941c9b55c867610714744b53697adff6659ea66b7fd14d601309fce5acf",
+        "match": true
+      }
+    }
   },
   "acceptance": "This numeric Inspector contract slice is independently covered. Overall 77.44.7.A and complete Visual Editor acceptance remain OPEN / NOT CERTIFIED; manual/physical acceptance stays DEFERRED."
 }
