@@ -7,7 +7,7 @@
   "tests": {
     "browserCommand": "CHROMIUM_PATH=/usr/bin/chromium node --test tests/browser/editor-legacy-media-parity.test.js",
     "browser": { "passed": 1, "failed": 0, "viewports": [390, 1366] },
-    "assertions": ["corrupt image source, alt and library asset feedback targets resolve exactly once", "corrupt video source, poster and library controls resolve to status", "corrupt audio source and library controls resolve to status", "unsafe image URL warning resolves and is removed from aria-describedby after repair", "no unsafe external request", "draft Save leaves public output unchanged", "separate Publish updates public legacy media"],
+    "assertions": ["corrupt image source, alt and library asset feedback targets resolve exactly once", "corrupt video source, poster and library controls resolve to status", "corrupt audio source and library controls resolve to status", "unsafe image URL warning resolves and is removed from aria-describedby after repair", "unsafe video poster URL warning resolves to the poster field and picker, then clears on repair", "no unsafe external request", "draft Save leaves public output unchanged", "separate Publish updates public legacy media and the repaired poster"],
     "initialAttempt": "The first browser attempt exposed a stale test locator querying the Inspector tab as a button; updated it to the current role=tab contract and reran the full test successfully.",
     "typecheck": "PASS",
     "editorUnit": { "passed": 156, "failed": 0 },
@@ -18,6 +18,13 @@
     "wranglerDryRun": { "pass": true, "version": "4.130.0", "assets": 161, "uploadKiB": 296.93, "gzipKiB": 67.81 },
     "productionD1Preflight": { "method": "SELECT-only Cloudflare D1 query API", "migrationRows": 34, "rowsWritten": 0, "changedDb": false, "foreignKeyCheck": "PASS", "quickCheck": "ok" },
     "diffCheck": "PASS"
+  },
+  "testOnlyFollowup": {
+    "commit": "ca09690d7a05f81100b68fc6215445f4c92b691c",
+    "browser": { "passed": 1, "failed": 0, "viewports": [390, 1366] },
+    "assertionsAdded": ["unsafe javascript poster URL accessibility association", "stale warning relationship cleanup after repair", "Save/Publish poster isolation and public output"],
+    "workerRedeployed": false,
+    "githubCi": "SKIPPED_BY_[skip ci]"
   },
   "release": {
     "commit": "27a47eb98f15e0242533e7ce285d22ed4f72af8b",
