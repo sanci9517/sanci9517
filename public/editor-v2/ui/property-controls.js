@@ -2,7 +2,7 @@ import {
   normalizeInspectorValue, getInspectorValueContract, INSPECTOR_FONTS, INSPECTOR_SHADOWS
 } from '../core/property-values.js';
 import {TOKEN_SPECS,compatibleTokens,parseTokenReference,tokenReference,tokenValue,defaultTokens} from '../core/design-tokens.js';
-import {mediaAssetPicker} from './element-content-controls.js?v=20261030-selected-media-kind';
+import {IMAGE_MIMES,mediaAssetPicker} from './element-content-controls.js?v=20261030-image-picker-mime-filter';
 
 /** One property input. All changes go through the central command callback. */
 export function renderPropertyInput(property, label, current, onChange, {
@@ -79,7 +79,7 @@ export function renderPropertyInput(property, label, current, onChange, {
   if (type === 'asset') {
     title.removeAttribute('for');
     const picker=mediaAssetPicker(current==='none'?'':current||'',id=>save(id||'none'),{
-      disabled:Boolean(property.disabled),ariaLabelledBy:title.id,ariaDescribedBy:error.id
+      disabled:Boolean(property.disabled),mimes:IMAGE_MIMES,ariaLabelledBy:title.id,ariaDescribedBy:error.id
     });
     const open=picker.querySelector('button[aria-controls]');
     if(open)associateValidation(open);

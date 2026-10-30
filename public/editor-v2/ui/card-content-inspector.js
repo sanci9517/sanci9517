@@ -1,6 +1,6 @@
 import {defaultCardContent,CARD_VARIANTS} from '../core/card-content.js';
 import {createCompositionInputs} from './composition-inputs.js';
-import {mediaAssetPicker,setMediaAssetPickerSelection} from './element-content-controls.js?v=20261030-selected-media-kind';
+import {IMAGE_MIMES,mediaAssetPicker,setMediaAssetPickerSelection} from './element-content-controls.js?v=20261030-image-picker-mime-filter';
 
 export function renderCardInspector(node,update,{pending=()=>{}}={}){
  const model={...defaultCardContent(),...(node.props?.cardContent||{})};
@@ -37,7 +37,7 @@ export function renderCardInspector(node,update,{pending=()=>{}}={}){
  picker=mediaAssetPicker(model.imageAssetId||'',(id,asset)=>{
   const alt=typeof asset?.altText==='string'?asset.altText.trim().slice(0,250):'';
   return save({imageAssetId:id,imageSrc:'',...(alt&&!model.imageAlt.trim()?{imageAlt:alt}:{})})!==false;
- },{disabled:Boolean(node.locked),ariaLabelledBy:imageLabel.id});route(picker,'imageAssetId');
+ },{disabled:Boolean(node.locked),mimes:IMAGE_MIMES,ariaLabelledBy:imageLabel.id});route(picker,'imageAssetId');
  section.append(variant,imageField,picker);
  text('Kép URL (opcionális)','imageSrc',{source:true,trim:true});text('Kép leírása','imageAlt');
  text('Gomb felirata (opcionális)','actionLabel');text('Gomb hivatkozása','actionHref',{trim:true});

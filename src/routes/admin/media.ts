@@ -4,7 +4,7 @@ import { requireSiteGrant } from "../../core/auth/site-access";
 import { DEFAULT_SITE_ID } from "../../core/site-context";
 import type { Env } from "../../types/env";
 import { normalizeCardContent } from "../../../public/editor-v2/core/card-content.js";
-import { CONTENT_TYPES, safeMediaUrl } from "../../../public/editor-v2/core/authored-content.js";
+import { CONTENT_TYPES, IMAGE_MIMES, safeMediaUrl } from "../../../public/editor-v2/core/authored-content.js";
 import { isLeafType } from "../../../public/editor-v2/core/schema.js";
 import { isStructuredType } from "../../../public/editor-v2/core/element-content.js";
 import { prepareRetentionRequest, prepareRetentionCancellation } from "../../core/media-retention-request.js";
@@ -22,7 +22,6 @@ type MediaRow = {
   mime_type: string; size_bytes: number; alt_text: string; created_at: string; archived_at: string | null;
 };
 
-const IMAGE_MIMES = ["image/png", "image/jpeg", "image/gif", "image/webp"] as const;
 const PLAYABLE_MIMES = ["audio/mpeg", "audio/ogg", "audio/wav", "video/webm"] as const;
 const MEDIA_MIMES = [...IMAGE_MIMES, ...PLAYABLE_MIMES] as const;
 function mediaMime(bytes: Uint8Array): string | null {
@@ -427,7 +426,7 @@ export async function adminMediaRoute(request: Request, env: Env, siteId: string
     if (!id) {
       const query = (url.searchParams.get("q") || "").trim().slice(0, 100);
       const mime = url.searchParams.get("mime") || "";
-      const allowedMime = ["", ...MEDIA_MIMES, "audio", "video"];
+      const allowedMime = ["", ...MEDIA_MIMES, "image", "audio", "video"];
       if (!allowedMime.includes(mime)) return error("INVALID_MEDIA_FILTER", 400);
       const limitRaw = url.searchParams.get("limit") || "50";
       const limit = Number(limitRaw);
@@ -439,7 +438,8 @@ export async function adminMediaRoute(request: Request, env: Env, siteId: string
       const clauses = ['site_id=?', state === 'archived' ? 'archived_at IS NOT NULL' : 'archived_at IS NULL'];
       const binds: (string | number)[] = [siteId];
       if (query) { clauses.push("(original_name LIKE ? ESCAPE '^' OR alt_text LIKE ? ESCAPE '^')"); const pattern = `%${escapeLike(query)}%`; binds.push(pattern, pattern); }
-      if (mime === "audio") clauses.push("mime_type LIKE 'audio/%'");
+      if (mime === "image") { clauses.push(`mime_type IN (${IMAGE_MIMES.map(() => "?").join(",")})`); binds.push(...IMAGE_MIMES); }
+      else if (mime === "audio") clauses.push("mime_type LIKE 'audio/%'");
       else if (mime === "video") clauses.push("mime_type LIKE 'video/%'");
       else if (mime) { clauses.push("mime_type=?"); binds.push(mime); }
       if (before !== null) {

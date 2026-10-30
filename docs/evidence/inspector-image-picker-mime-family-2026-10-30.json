@@ -1,0 +1,74 @@
+{
+  "plan_item": "77.44.7.A",
+  "title": "Image-only Inspector media pickers enforce the supported raster MIME family",
+  "date": "2026-10-30",
+  "status": "IMPLEMENTED_AND_LOCALLY_VERIFIED_RELEASE_PENDING",
+  "defect": {
+    "before": "Image-only Inspector pickers did not request an image MIME filter, and the media listing endpoint did not support the image family. Audio and video files could appear in image/background/card/poster pickers and be stored in image-only fields.",
+    "fix": "Share the existing supported image MIME contract (PNG, JPEG, GIF, WebP) between the Worker media route and Editor pickers. The listing endpoint applies a parameterized allowlist filter, and every image-only Inspector picker requests that family. Audio and video pickers retain their existing family filters.",
+    "third_party_review": "No external implementation was needed: this behavior is defined by the repository's upload validation and existing IMAGE_MIMES contract; reusing the project contract avoids a new dependency."
+  },
+  "changed_files": [
+    "src/routes/admin/media.ts",
+    "public/editor-v2/core/authored-content.js",
+    "public/editor-v2/core/authored-content.d.ts",
+    "public/editor-v2/ui/element-content-controls.js",
+    "public/editor-v2/ui/property-controls.js",
+    "public/editor-v2/ui/card-content-inspector.js",
+    "public/editor-v2/ui/legacy-media-inspector.js",
+    "public/editor-v2/app.js",
+    "public/editor-v2/index.html",
+    "tests/media-api.test.js",
+    "tests/browser/editor-card-content.test.js",
+    "tests/browser/editor-content-system.test.js",
+    "tests/browser/editor-inspector-lifecycle.test.js",
+    "tests/browser/editor-inspector-richtext-controls.test.js",
+    "tests/browser/editor-legacy-media-parity.test.js",
+    "tests/browser/editor-media-source-switch.test.js",
+    "docs/evidence/feature-traceability.json"
+  ],
+  "checks": {
+    "npm run test:media": "PASS, 5/5 files",
+    "npm run test:editor": "PASS, 11/11 files",
+    "npm run typecheck": "PASS",
+    "npm run test:web013:migration-gate": "PASS",
+    "python3 scripts/check-canonical-plan.py": "PASS, 13 master files and 396 source mappings",
+    "python3 scripts/audit-active-plan-point.py": "PASS, cursor remains 77.44.7.A; functional acceptance NOT_CERTIFIED",
+    "python3 scripts/build-feature-traceability.py --check": "PASS, 396 mappings",
+    "git diff --check": "PASS",
+    "targeted_real_chromium_card_390_1366": "PASS, 2/2 in isolated rerun",
+    "targeted_real_chromium_inspector_lifecycle": "PASS, 1/1, desktop/tablet/mobile Save/Publish lifecycle",
+    "targeted_real_chromium_media_picker_regressions": "PASS, authored content, legacy media, source switch, pagination and rich text cases passed",
+    "combined_real_chromium_media_picker_suite": "INCOMPLETE: 9/10 passed; the Card desktop click timed out while waiting for the resolved picker button to become stable at 15 seconds. The complete Card file then passed separately at both 390px and 1366px; the failed aggregate run is retained as a transient failure, not reported as PASS.",
+    "wrangler_dry_run": "PASS, Wrangler 4.130.0 read 161 public assets (297.10 KiB, 67.86 KiB gzip), then exited in dry-run mode. Wrangler could not write its debug log under the read-only /home/agent/.config path (EROFS); no upload or deployment occurred."
+  },
+  "production_preflight": {
+    "d1_queries": "SELECT COUNT/MAX on d1_migrations; PRAGMA foreign_key_check; PRAGMA quick_check",
+    "migration_count": 34,
+    "latest_migration": "0028_media_archive.sql",
+    "foreign_key_check": "empty",
+    "quick_check": "ok",
+    "rows_written": 0,
+    "changed_db": false,
+    "d1_migrations_or_data_mutations": false,
+    "r2_changes": false
+  },
+  "repository": {
+    "local_branch": "work (preserved; no branch switch)",
+    "remote_target": "v2/foundation",
+    "remote_head_before_change": "5c8aeb4516f8cb60f1d13b054b73e9d1a04424c9",
+    "commit": "PENDING",
+    "push": "PENDING",
+    "ci": "PENDING; no CI PASS claimed",
+    "deployment": "PENDING; current previously verified 100% Worker is b1aedb20-3a8e-4a9e-947a-be9b9cb4ba74 on deployment 65147336-2668-46c2-a88a-75632c64fbaa",
+    "production_health_and_asset_hashes": "PENDING"
+  },
+  "scope_and_safety": {
+    "save_and_publish_remain_separate": true,
+    "full_visual_editor_acceptance": "OPEN / NOT CERTIFIED; manual and physical acceptance DEFERRED until the complete Editor is implemented",
+    "new_paid_services_or_dependencies": false,
+    "production_d1_migration": false,
+    "production_data_write": false,
+    "r2_deletion": false
+  }
+}

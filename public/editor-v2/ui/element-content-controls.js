@@ -1,5 +1,6 @@
-import {CONTENT_FIELDS,normalizeContentField,contentProperties,imageFocalPosition,getPublicationContentGuidance} from '../core/authored-content.js';
+import {CONTENT_FIELDS,IMAGE_MIMES,normalizeContentField,contentProperties,imageFocalPosition,getPublicationContentGuidance} from '../core/authored-content.js';
 import {getProperty} from '../core/property-registry.js?v=20261025-content-property-route-contract';
+export {IMAGE_MIMES};
 
 export function pageLinkPicker(pages,input){
   const select=document.createElement('select');select.className='content-page-picker';select.setAttribute('aria-label','Belső oldal kiválasztása');
@@ -14,7 +15,7 @@ async function loadAssets(query='',before=null,mimes=[]){
   if(query)url.searchParams.set('q',query);
   if(before)url.searchParams.set('before',before);
   const families=[...new Set(mimes.map(mime=>mime.split('/')[0]))];
-  if(families.length===1&&['audio','video'].includes(families[0]))url.searchParams.set('mime',families[0]);
+  if(families.length===1&&['image','audio','video'].includes(families[0]))url.searchParams.set('mime',families[0]);
   else if(mimes.length===1)url.searchParams.set('mime',mimes[0]);
   const response=await fetch(url,{credentials:'same-origin',headers:{Accept:'application/json'}});
   const payload=await response.json().catch(()=>null);
@@ -205,7 +206,7 @@ export function renderElementContentControls(node,{apply,pending,exclude=[],page
     else {input=document.createElement(definition.type==='textarea'?'textarea':'input');if(input.tagName==='INPUT'){input.type=definition.type==='range'?'range':'text';if(definition.type==='range'){input.min=String(definition.min??0);input.max=String(definition.max??100);input.step=String(definition.step??1)}}input.value=value??'';if(definition.type!=='range')input.maxLength=definition.max||2048}
     if(definition.type==='asset'){
       label.id='content-media-label-'+crypto.randomUUID();
-      const picker=mediaAssetPicker(String(value||''),(id,asset)=>{try{save(id,undefined,asset);fail.textContent='';return true}catch(error){fail.textContent=error.message;return false}},{disabled:Boolean(node.locked),ariaLabelledBy:label.id,ariaDescribedBy:fail.id});
+      const picker=mediaAssetPicker(String(value||''),(id,asset)=>{try{save(id,undefined,asset);fail.textContent='';return true}catch(error){fail.textContent=error.message;return false}},{disabled:Boolean(node.locked),mimes:IMAGE_MIMES,ariaLabelledBy:label.id,ariaDescribedBy:fail.id});
       register(next=>setMediaAssetPickerSelection(picker,next));wrap.append(picker);
       if(definition.help){const help=document.createElement('small');help.className='content-field-help';help.textContent=definition.help;wrap.append(help)}return wrap;
     }

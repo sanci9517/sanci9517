@@ -44,13 +44,13 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
     const url=new URL(req.url,'http://localhost');
     const json=data=>{res.setHeader('content-type','application/json');res.end(JSON.stringify(data))};
     if(url.pathname==='/api/admin/media'&&!url.searchParams.has('id'))return json({ok:true,data:{assets:[{
-      id:inspectorBackgroundAssetId,name:'Inspector háttér.svg',mimeType:'image/svg+xml',altText:'Dekoratív teszt-háttér',
+      id:inspectorBackgroundAssetId,name:'Inspector háttér.png',mimeType:'image/png',altText:'Dekoratív teszt-háttér',
       previewUrl:`/api/admin/media?id=${inspectorBackgroundAssetId}`
     },{
-      id:inspectorMobileBackgroundAssetId,name:'Mobil Inspector háttér.svg',mimeType:'image/svg+xml',altText:'Mobil teszt-háttér',
+      id:inspectorMobileBackgroundAssetId,name:'Mobil Inspector háttér.png',mimeType:'image/png',altText:'Mobil teszt-háttér',
       previewUrl:`/api/admin/media?id=${inspectorMobileBackgroundAssetId}`
     },{
-      id:inspectorTabletBackgroundAssetId,name:'Tablet Inspector háttér.svg',mimeType:'image/svg+xml',altText:'Tablet teszt-háttér',
+      id:inspectorTabletBackgroundAssetId,name:'Tablet Inspector háttér.png',mimeType:'image/png',altText:'Tablet teszt-háttér',
       previewUrl:`/api/admin/media?id=${inspectorTabletBackgroundAssetId}`
     }],nextCursor:null}});
     const mediaId=url.pathname==='/api/admin/media'?url.searchParams.get('id'):url.pathname.startsWith('/media/')?url.pathname.slice('/media/'.length):null;
@@ -476,7 +476,7 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   assert.equal(await publishedBackgroundImage(), 'none', 'the initial public snapshot has no background asset');
   await backgroundImagePicker.getByRole('button',{name:'Médiatár megnyitása'}).click();
   await backgroundImagePicker.locator('[role="region"][aria-label="Médiatár találatok"]').waitFor();
-  await backgroundImagePicker.getByRole('button',{name:'Inspector háttér.svg kiválasztása',exact:true}).click();
+  await backgroundImagePicker.getByRole('button',{name:'Inspector háttér.png kiválasztása',exact:true}).click();
   assert.ok((await backgroundImage()).includes(`/api/admin/media?id=${inspectorBackgroundAssetId}`),
     'the selected asset previews through the authenticated Canvas media route');
   await editor.locator('#undo').click();
@@ -1178,7 +1178,7 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   await publicPage.setViewportSize({width:390,height:800});await publicPage.reload();
   await mobileBackgroundPicker.getByRole('button',{name:'Médiatár megnyitása'}).click();
   await mobileBackgroundPicker.locator('[role="region"][aria-label="Médiatár találatok"]').waitFor();
-  await mobileBackgroundPicker.getByRole('button',{name:'Mobil Inspector háttér.svg kiválasztása'}).click();
+  await mobileBackgroundPicker.getByRole('button',{name:'Mobil Inspector háttér.png kiválasztása'}).click();
   assert.ok((await backgroundImage()).includes(`/api/admin/media?id=${inspectorMobileBackgroundAssetId}`),'mobile media selection previews through the authenticated Canvas route');
   await editor.locator('#mobileUndo').click();
   assert.equal((await backgroundImage()).includes(`/api/admin/media?id=${inspectorMobileBackgroundAssetId}`),false,'mobile Undo removes only the pending asset override');
@@ -1233,7 +1233,7 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   const tabletBackgroundPicker=field('background.image').locator('.editor-media-picker');
   await tabletBackgroundPicker.getByRole('button',{name:'Médiatár megnyitása'}).click();
   await tabletBackgroundPicker.locator('[role="region"][aria-label="Médiatár találatok"]').waitFor();
-  await tabletBackgroundPicker.getByRole('button',{name:'Tablet Inspector háttér.svg kiválasztása',exact:true}).click();
+  await tabletBackgroundPicker.getByRole('button',{name:'Tablet Inspector háttér.png kiválasztása',exact:true}).click();
   assert.ok((await backgroundImage()).includes(`/api/admin/media?id=${inspectorTabletBackgroundAssetId}`),'tablet media selection previews through the authenticated Canvas route');
   await editor.locator('#mobileUndo').click();
   assert.equal((await backgroundImage()).includes(`/api/admin/media?id=${inspectorTabletBackgroundAssetId}`),false,'tablet Undo removes only the pending asset override');

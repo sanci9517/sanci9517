@@ -1,6 +1,8 @@
 import { validatedLinkHref } from './richtext-links.js';
 
 export const CONTENT_VERSION=1;
+// Shared by the editor picker and the server-side media upload/list contract.
+export const IMAGE_MIMES=Object.freeze(['image/png','image/jpeg','image/gif','image/webp']);
 const field=(key,label,type='text',extra={})=>({key,label,type,...extra});
 const text=field('text','Szöveg','textarea',{max:20000});
 const href=field('href','Hivatkozás','url',{help:'Belső /p/oldal vagy #azonosító, illetve teljes https:// vagy mailto: cím. Üresen az elem nem navigál.'});

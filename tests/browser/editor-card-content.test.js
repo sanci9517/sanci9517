@@ -16,7 +16,7 @@ for(const width of [390,1366])test(`Card Inspector IME, sources and Save/Publish
  execute(model,{type:'element.add',payload:{type:'text',parentId:cardId,props:{text:'Egyedi belső szöveg'}}});
  const childId=model.selection.primaryId;
  let draft=structuredClone(model.document),published=structuredClone(draft),version=1;
- const posts=[],requests=[],assetRoot=resolve(import.meta.dirname,'../../public');
+ const posts=[],requests=[],mediaFilters=[],assetRoot=resolve(import.meta.dirname,'../../public');
  const assetId='11111111-2222-4333-8444-555555555555';
  const server=createServer(async(req,res)=>{
   const url=new URL(req.url,'http://localhost');requests.push({method:req.method,path:url.pathname});
@@ -32,7 +32,11 @@ for(const width of [390,1366])test(`Card Inspector IME, sources and Save/Publish
   if(url.pathname==='/api/public/pages')return json({ok:true,data:{id:pageId,slug:'test',title:'Test',description:'',content:published.pages[pageId]}});
   if(url.pathname==='/api/public/navigation')return json({ok:true,data:{items:[]}});
   if(url.pathname==='/api/integrations/twitch/connection')return json({ok:true,data:{connected:false}});
-  if(url.pathname==='/api/admin/media'&&!url.searchParams.has('id'))return json({ok:true,data:{assets:[{id:assetId,name:'Saját Médiatár-kép',altText:'Új leírás',previewUrl:'/api/admin/media?id='+assetId}]}});
+  if(url.pathname==='/api/admin/media'&&!url.searchParams.has('id')){
+   const mime=url.searchParams.get('mime');mediaFilters.push(mime);
+   const assets=[{id:assetId,name:'Saját Médiatár-kép',mimeType:'image/png',altText:'Új leírás',previewUrl:'/api/admin/media?id='+assetId},{id:'audio-choice',name:'hang.wav',mimeType:'audio/wav',previewUrl:'/media/audio'},{id:'video-choice',name:'video.webm',mimeType:'video/webm',previewUrl:'/media/video'}];
+   return json({ok:true,data:{assets:mime==='image'?assets.filter(asset=>asset.mimeType.startsWith('image/')):assets}});
+  }
   if((url.pathname==='/api/admin/media'&&url.searchParams.get('id')===assetId)||url.pathname.startsWith('/media/')){res.setHeader('content-type','image/png');return res.end(Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/l5sAAAAASUVORK5CYII=','base64'))}
   if(url.pathname.startsWith('/api/'))return json({ok:true,data:{siteName:'Test'}});
   const path=url.pathname==='/p/test'?'/visual-page.html':url.pathname,file=resolve(assetRoot,'.'+path);
@@ -128,6 +132,9 @@ for(const width of [390,1366])test(`Card Inspector IME, sources and Save/Publish
  assert.ok((await action.boundingBox()).height>=44,'touch-friendly CTA');
  // Reuse the same Media picker as image/gallery, without dropping the existing image description.
  await editor.getByRole('button',{name:'Médiatár megnyitása'}).click();
+ await editor.waitForFunction(()=>document.querySelectorAll('.card-content-inspector .editor-media-choice').length===1);
+ assert.equal(mediaFilters.at(-1),'image','Card image picker requests the image MIME family');
+ assert.deepEqual(await editor.locator('.card-content-inspector .editor-media-choice').allTextContents(),['Saját Médiatár-kép'],'Card image picker excludes audio and video assets');
  await editor.getByRole('button',{name:'Saját Médiatár-kép kiválasztása'}).click();
  assert.equal(await card.locator('.card-preview img').getAttribute('src'),'/api/admin/media?id='+assetId);
  assert.equal(await field('Kép leírása').inputValue(),'Fénykép a csatornáról');

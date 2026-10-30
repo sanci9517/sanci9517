@@ -12,7 +12,7 @@ import {plainTextToRichText,renderRichTextEditor,richTextEditorToDocument,restor
 import {renderSchedulePreview} from './core/schedule-preview.js';
 import {normalizeScheduleConfig,SCHEDULE_MODES,SCHEDULE_ORDERS,SCHEDULE_STATUSES,SCHEDULE_EMPTY_TEXT_MAX,SCHEDULE_LIMIT_MAX} from './core/schedule-schema.js';
 import {listPropertyGroups,listProperties,getProperty} from './core/property-registry.js?v=20261025-content-property-route-contract';
-import {renderPropertyInput} from './ui/property-controls.js?v=20261030-selected-media-kind';
+import {renderPropertyInput} from './ui/property-controls.js?v=20261030-image-picker-mime-filter';
 import {getInspectorValueContract,normalizeInspectorValue} from './core/property-values.js';
 import {describeResponsiveOrigin} from './ui/responsive-origin.js';
 import {responsiveGroupResetActions} from './ui/responsive-group-reset.js';
@@ -38,7 +38,7 @@ import {defaultSocialLinks,renderSocialLinksHtml} from './core/social-links.js';
 import {renderSocialLinksInspector} from './ui/social-links-inspector.js?v=20261026-profile-route-contract';
 import {defaultEmbedContent,renderEmbedHtml} from './core/creator-embed.js';
 import {renderBasicContentInspector} from './ui/basic-content-inspector.js?v=20261026-profile-route-contract';
-import {renderLegacyMediaInspector} from './ui/legacy-media-inspector.js?v=20261030-selected-media-kind';
+import {renderLegacyMediaInspector} from './ui/legacy-media-inspector.js?v=20261030-image-picker-mime-filter';
 import {renderCardInspector} from './ui/card-content-inspector.js?v=20261026-profile-route-contract';
 import {renderEmbedInspector} from './ui/creator-embed-inspector.js?v=20261026-profile-route-contract';
 import {defaultCodeSnippet,renderCodeSnippet,activateCodeBlocks} from './core/code-snippet.js';
@@ -51,7 +51,7 @@ import {STATE_PROPERTY_IDS,applyStateStyles} from './core/state-styles.js';
 import {defaultTokens,applyTokenVariables} from './core/design-tokens.js';
 import {CONTENT_TYPES,STRUCTURAL_TYPES,validatePageForPublication,isAuthoredContent,authoredNodeHtml,contentAttributes,initContentInteractions,contentTag} from './core/authored-content.js';
 import {captureCanvasInteractionState,restoreCanvasInteractionState} from './core/canvas-interaction-state.js';
-import {renderElementContentControls,pageLinkPicker} from './ui/element-content-controls.js?v=20261030-selected-media-kind';
+import {renderElementContentControls,pageLinkPicker} from './ui/element-content-controls.js?v=20261030-image-picker-mime-filter';
 
 let editorTokens=defaultTokens();
 function propertyInput(property,label,current,onChange,options={}){

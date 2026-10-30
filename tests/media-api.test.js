@@ -105,6 +105,12 @@ test("authenticated image upload produces private asset and site-scoped listing"
 
 test("authenticated playable media remains site-scoped and becomes public only through its matching rendered node",async t=>{
   const f=await fixture(t);
+  const pngUpload=await f.call("POST","editor",png,{name:"cover.png"});
+  assert.equal(pngUpload.status,201);
+  const pngAsset=(await pngUpload.json()).data;
+  const gifUpload=await f.call("POST","editor",gif,{name:"cover.gif",contentType:"image/gif"});
+  assert.equal(gifUpload.status,201);
+  const gifAsset=(await gifUpload.json()).data;
   const uploaded=await f.call("POST","editor",webm,{name:"intro.webm",contentType:"video/webm"});
   assert.equal(uploaded.status,201);
   const video=(await uploaded.json()).data;
@@ -114,8 +120,10 @@ test("authenticated playable media remains site-scoped and becomes public only t
   assert.equal((await f.call("POST","editor",webm,{name:"wrong.mp3",contentType:"audio/mpeg"})).status,415,"declared type cannot override the binary signature");
   const videos=(await (await f.call("GET","editor",null,{mime:"video"})).json()).data.assets;
   const sounds=(await (await f.call("GET","editor",null,{mime:"audio"})).json()).data.assets;
+  const images=(await (await f.call("GET","editor",null,{mime:"image"})).json()).data.assets;
   assert.deepEqual(videos.map(asset=>asset.id),[video.id]);
   assert.deepEqual(sounds.map(asset=>asset.id),[audio.id]);
+  assert.deepEqual(new Set(images.map(asset=>asset.id)),new Set([pngAsset.id,gifAsset.id]),"image family filter includes supported raster images and excludes playable media");
   const publish=nodes=>f.db.prepare("INSERT INTO pages (id,site_id,archived_at,is_published,published_content_json,content_json,title,slug) VALUES(?,?,?,?,?,?,?,?)").run("playable-page","site-default",null,1,JSON.stringify({pages:{"playable-page":{rootId:"root",nodes:{root:{type:"root",children:Object.keys(nodes)},...nodes}}}}),"{}","Playable","playable");
   publish({movie:{type:"video",metadata:{editorContentVersion:1},props:{assetId:video.id}}});
   const videoDelivery=await publishedMediaRoute(new Request("https://example.test/media/"+video.id),f.env,"site-default",video.id);

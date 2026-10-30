@@ -10,7 +10,7 @@ const root=resolve(import.meta.dirname,'../..','public');
 function serve(){
   return createServer(async(req,res)=>{
     const path=new URL(req.url,'http://localhost').pathname;
-    if(path==='/api/admin/media') {res.setHeader('Content-Type','application/json');res.end(JSON.stringify({ok:true,data:{assets:[{id:'6b1c2e65-e46e-4764-b234-123456789abc',name:'background.png',previewUrl:'/media/6b1c2e65-e46e-4764-b234-123456789abc'}]}}));return;}
+    if(path==='/api/admin/media') {res.setHeader('Content-Type','application/json');res.end(JSON.stringify({ok:true,data:{assets:[{id:'6b1c2e65-e46e-4764-b234-123456789abc',name:'background.png',mimeType:'image/png',previewUrl:'/media/6b1c2e65-e46e-4764-b234-123456789abc'}]}}));return;}
     const file=resolve(root,'.'+path);
     if(!file.startsWith(root+'/')){res.writeHead(403).end();return;}
     try {
@@ -128,7 +128,7 @@ test('typed Inspector controls and link selection work with real browser DOM at 
       const racingSearch=racingPicker.querySelector('input[type="search"]');
       racingSearch.value='régi';racingSearch.dispatchEvent(new Event('input',{bubbles:true}));await new Promise(resolve=>setTimeout(resolve,240));
       racingSearch.value='új';racingSearch.dispatchEvent(new Event('input',{bubbles:true}));await new Promise(resolve=>setTimeout(resolve,240));
-      const reply=name=>({ok:true,json:async()=>({ok:true,data:{assets:[{id:'6b1c2e65-e46e-4764-b234-123456789abc',name,previewUrl:'/media/test'}]}})});
+      const reply=name=>({ok:true,json:async()=>({ok:true,data:{assets:[{id:'6b1c2e65-e46e-4764-b234-123456789abc',name,mimeType:'image/png',previewUrl:'/media/test'}]}})});
       pendingAssets.get('új')(reply('Új találat'));await new Promise(resolve=>setTimeout(resolve,0));
       pendingAssets.get('régi')(reply('Régi találat'));pendingAssets.get('')(reply('Kezdeti találat'));await new Promise(resolve=>setTimeout(resolve,0));
       const latestSearchWins=racingPicker.querySelector('.editor-media-choice')?.textContent==='Új találat';window.fetch=originalFetch;

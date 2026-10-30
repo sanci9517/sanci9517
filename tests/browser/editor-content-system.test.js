@@ -31,10 +31,20 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   const root=resolve(import.meta.dirname,'../../public');
   const video=await readFile(new URL('../fixtures/editor-sample.webm',import.meta.url));
   const audio=Buffer.alloc(44+4000);audio.write('RIFF',0);audio.writeUInt32LE(audio.length-8,4);audio.write('WAVEfmt ',8);audio.writeUInt32LE(16,16);audio.writeUInt16LE(1,20);audio.writeUInt16LE(1,22);audio.writeUInt32LE(8000,24);audio.writeUInt32LE(16000,28);audio.writeUInt16LE(2,32);audio.writeUInt16LE(16,34);audio.write('data',36);audio.writeUInt32LE(4000,40);
+  const mediaAssets=[
+    {id:assetId,name:'brand-mark.png',mimeType:'image/png',sizeBytes:128,altText:'Márkajel',previewUrl:'/api/admin/media?id='+assetId},
+    {id:'00000000-0000-4000-8000-000000000126',name:'bed.mp3',mimeType:'audio/mpeg',sizeBytes:42,altText:'',previewUrl:'/media/audio'},
+    {id:'00000000-0000-4000-8000-000000000127',name:'clip.webm',mimeType:'video/webm',sizeBytes:84,altText:'',previewUrl:'/media/video'}
+  ];
+  const mediaListRequests=[];
 
   const server=createServer(async(req,res)=>{
     const url=new URL(req.url,'http://localhost'),json=data=>{res.setHeader('content-type','application/json');res.end(JSON.stringify(data))};
-    if(url.pathname==='/api/admin/media'&&!url.searchParams.has('id'))return json({ok:true,data:{assets:[{id:assetId,name:'brand-mark.png',mimeType:'image/png',sizeBytes:128,altText:'Márkajel',previewUrl:'/api/admin/media?id='+assetId}]}});
+    if(url.pathname==='/api/admin/media'&&!url.searchParams.has('id')){
+      const mime=url.searchParams.get('mime');mediaListRequests.push(mime);
+      const assets=mime==='image'?mediaAssets.filter(asset=>asset.mimeType.startsWith('image/')):mime==='audio'||mime==='video'?mediaAssets.filter(asset=>asset.mimeType.startsWith(mime+'/')):mediaAssets;
+      return json({ok:true,data:{assets}});
+    }
     if(url.pathname==='/api/admin/media'&&url.searchParams.get('id')===assetId||url.pathname==='/media/'+assetId){res.setHeader('content-type','image/svg+xml');return res.end('<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><rect width="100" height="100" fill="#7047eb"/></svg>')}
     if(url.pathname==='/fixture.svg'){res.setHeader('content-type','image/svg+xml');return res.end('<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><rect width="100" height="100" fill="#7047eb"/></svg>')}
     if(url.pathname==='/fixture.webm'){res.setHeader('content-type','video/webm');return res.end(video)}if(url.pathname==='/fixture.mp3'){res.setHeader('content-type','audio/wav');return res.end(audio)}
@@ -119,6 +129,9 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   const backgroundAsset=editor.locator('[data-property-id="background.image"]');assert.equal(await backgroundAsset.getAttribute('data-property-command'),'responsive.set');assert.equal(await backgroundAsset.getAttribute('data-property-key'),'backgroundAssetId');
   const backgroundMetadata=await assertNamedMediaPicker(backgroundAsset.locator('.editor-media-picker'));assert.equal(backgroundMetadata.labelText,'Háttérkép');
   await backgroundAsset.getByRole('button',{name:'Médiatár megnyitása'}).click();
+  await editor.waitForFunction(()=>document.querySelectorAll('[data-property-id="background.image"] .editor-media-choice').length===1);
+  assert.deepEqual(await backgroundAsset.locator('.editor-media-choice').allTextContents(),['brand-mark.png'],'background image picker excludes audio and video files');
+  assert.equal(mediaListRequests.at(-1),'image','background image picker requests the image MIME family');
   await backgroundAsset.locator('.editor-media-choice').click();
   await editor.locator('[data-property-id="background.size"] select').selectOption('cover');
   await editor.locator('[data-property-id="background.position"] select').selectOption('center top');
@@ -155,6 +168,9 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   assert.equal(await node(editor,'image').locator('img').evaluate(el=>getComputedStyle(el).objectPosition),'18% 82%');
   const imageAssetField=editor.locator('[data-content-key="assetId"]'),imageAssetMetadata=await assertNamedMediaPicker(imageAssetField.locator('.editor-media-picker'));assert.equal(imageAssetMetadata.labelText,'Médiatár');
   await editor.locator('.editor-media-picker').getByRole('button',{name:'Médiatár megnyitása'}).click();
+  await editor.waitForFunction(()=>document.querySelectorAll('[data-content-key="assetId"] .editor-media-choice').length===1);
+  assert.deepEqual(await imageAssetField.locator('.editor-media-choice').allTextContents(),['brand-mark.png'],'authored image picker excludes audio and video files');
+  assert.equal(mediaListRequests.at(-1),'image','authored image picker requests the image MIME family');
   await editor.locator('.editor-media-choice').click();
   await editor.waitForFunction(id=>document.querySelector(`[data-node-id="${id}"] img`)?.getAttribute('src')==='/api/admin/media?id=6b1c2e65-e46e-4764-b234-123456789abc',ids.image);
   assert.equal(await node(editor,'image').locator('img').getAttribute('alt'),'Új képleírás','choosing an asset preserves a manually written alt');

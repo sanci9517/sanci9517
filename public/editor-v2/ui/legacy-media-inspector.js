@@ -1,7 +1,7 @@
 import {legacyMediaInspectorValues,legacyImagePresentation,legacyImageCaption} from '../core/legacy-media-source.js';
 import {safeMediaUrl} from '../core/element-content.js';
 import {createCompositionInputs} from './composition-inputs.js';
-import {mediaAssetPicker,setMediaAssetPickerSelection} from './element-content-controls.js?v=20261030-selected-media-kind';
+import {IMAGE_MIMES,mediaAssetPicker,setMediaAssetPickerSelection} from './element-content-controls.js?v=20261030-image-picker-mime-filter';
 
 export function renderLegacyMediaInspector(node,apply,{pending=()=>{}}={}){
  const model={...(node.props||{})},composition=createCompositionInputs(pending);
@@ -44,7 +44,7 @@ export function renderLegacyMediaInspector(node,apply,{pending=()=>{}}={}){
      const alt=typeof asset?.altText==='string'?asset.altText.trim().slice(0,250):'';
      const next={...(model||{}),assetId:id,...(!id?{src:''}:alt&&!legacyMediaInspectorValues(model).alt.trim()?{alt}:{})};
      return save(next);
-   },{disabled:Boolean(node.locked),ariaLabelledBy:sourceLabelId}));route(sourcePicker,'assetId');
+   },{disabled:Boolean(node.locked),mimes:IMAGE_MIMES,ariaLabelledBy:sourceLabelId}));route(sourcePicker,'assetId');
    section.append(text('Kép leírása (alt)','alt',values.alt,(value,options)=>save({alt:value},options)));
    section.append(text('Képaláírás (opcionális)','caption',legacyImageCaption(model),(value,options)=>save({caption:value},options)));
    const objectFit=route(document.createElement('select'),'objectFit');objectFit.setAttribute('aria-label','Kép illesztése');
@@ -103,7 +103,7 @@ export function renderLegacyMediaInspector(node,apply,{pending=()=>{}}={}){
    if(isVideo){
      section.append(text('Videó borítókép URL','poster',values.poster,(value,options)=>updateMediaUrl('poster','posterAssetId',value,options)));
      const posterLabelId=mediaPickerLabel('Videó borítóképe a Médiatárból');
-     section.append(posterPicker=mediaAssetPicker(values.posterAssetId,id=>save({posterAssetId:id,...(!id?{poster:''}:{})}),{disabled:Boolean(node.locked),ariaLabelledBy:posterLabelId}));route(posterPicker,'posterAssetId');
+     section.append(posterPicker=mediaAssetPicker(values.posterAssetId,id=>save({posterAssetId:id,...(!id?{poster:''}:{})}),{disabled:Boolean(node.locked),mimes:IMAGE_MIMES,ariaLabelledBy:posterLabelId}));route(posterPicker,'posterAssetId');
      const notice=document.createElement('small');notice.className='content-field-help';
      notice.textContent='A videó a szerkesztőben nem indul automatikusan. Publikálva az automatikus indítás csak némított videónál aktív.';
      section.append(notice);

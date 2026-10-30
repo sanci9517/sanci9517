@@ -37,7 +37,7 @@ async function fixture(t,width){
   if(url.pathname==='/api/public/pages')return json({ok:true,data:{id:pageId,slug:'test',title:'Test',content:published.pages[pageId]}});
   if(url.pathname==='/api/public/navigation')return json({ok:true,data:{items:[]}});
   if(url.pathname==='/api/integrations/twitch/connection')return json({ok:true,data:{connected:false}});
-  if(url.pathname==='/api/admin/media'&&!url.searchParams.has('id'))return json({ok:true,data:{assets:[{id:assetId,name:'Közös kép.svg',mimeType:'image/svg+xml',altText:'Médiatár leírás',previewUrl:'/api/admin/media?id='+assetId}],nextCursor:null}});
+  if(url.pathname==='/api/admin/media'&&!url.searchParams.has('id'))return json({ok:true,data:{assets:[{id:assetId,name:'Közös kép.png',mimeType:'image/png',altText:'Médiatár leírás',previewUrl:'/api/admin/media?id='+assetId}],nextCursor:null}});
   if(url.pathname.endsWith('.svg')||url.pathname.startsWith('/media/')||url.pathname==='/api/admin/media'){
    res.writeHead(200,{'content-type':'image/svg+xml'});return res.end('<svg xmlns="http://www.w3.org/2000/svg" width="4" height="4"><rect width="4" height="4" fill="purple"/></svg>');
   }
@@ -60,7 +60,7 @@ async function fixture(t,width){
  const scope=type=>['gallery','carousel'].includes(type)?editor.locator('.content-repeater fieldset').first():editor.locator('.element-content-controls');
  const field=type=>scope(type).getByRole('textbox',{name:type==='video'?'Külső borítókép címe':'Külső média címe',exact:true});
  const picker=type=>scope(type).locator(`[data-content-key="${keys(type)[1]}"]`);
- const choose=async type=>{await picker(type).getByRole('button',{name:'Médiatár megnyitása'}).click();await picker(type).getByRole('button',{name:'Közös kép.svg kiválasztása'}).click();};
+ const choose=async type=>{await picker(type).getByRole('button',{name:'Médiatár megnyitása'}).click();await picker(type).getByRole('button',{name:'Közös kép.png kiválasztása'}).click();};
  const save=async publish=>{await editor.locator(publish?'#publish':'#save').click();try{await editor.waitForFunction(pub=>document.querySelector('#saveStatus').textContent.startsWith(pub?'Publikálva':'Mentve'),publish);}catch(error){throw new Error(await editor.locator('#saveStatus').textContent(),{cause:error});}};
  return {editor,live,source,select,field,picker,choose,save,node,media,scope,errors,posts,requests,original,ids,pageId,draft:()=>draft};
 }
