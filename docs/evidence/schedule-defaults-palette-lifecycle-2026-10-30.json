@@ -1,0 +1,64 @@
+{
+  "date": "2026-10-30",
+  "planItem": "77.44.7.A — Adásrend inicializálás és publikálás",
+  "scope": "Real-Chromium verification of the actual Visual Editor palette insertion, canonical defaults, draft isolation, and explicit Publish on mobile and desktop viewport sizes.",
+  "finding": {
+    "originalDefect": "Schedule element.add could replace the createNode schedule defaults with an empty props object, causing INVALID_SCHEDULE_CONFIG on Publish.",
+    "runtimeFixCommit": "62e5db5cf3ab4a4572b9d7b49bb0f4ff8ebcff0a",
+    "releaseLineage": "The runtime fix commit is an ancestor of runtime commit 416e5a0ad6b8a8bf5ffb304faf22ee7b2f801631, whose deploy:safe release is the current active Worker version.",
+    "currentRuntime": "f2365772-ed0d-4db2-adab-9de2e48d44fc at 100% traffic, confirmed by Cloudflare deployment GET at the start of this run."
+  },
+  "browserTest": {
+    "file": "tests/browser/editor-element-insertion.test.js",
+    "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-element-insertion.test.js",
+    "result": {
+      "passed": 7,
+      "failed": 0,
+      "durationSeconds": 42.8
+    },
+    "viewports": [
+      390,
+      1366
+    ],
+    "assertions": [
+      "actual Sanci9517 palette inserts a Schedule node",
+      "Canvas shows its default schedule preview",
+      "schedule.config matches DEFAULT_SCHEDULE_CONFIG",
+      "Save posts publish=false and persists draft defaults",
+      "public page remains unchanged after Save",
+      "explicit Publish posts publish=true",
+      "public renderer shows the default empty schedule text",
+      "no page errors"
+    ],
+    "integrationNote": "The regression lives in the existing editor-element-insertion suite already included by npm run test:editor:layout; package.json was left untouched to avoid triggering a redundant Worker build.",
+    "scheduleSpecificCases": {
+      "passed": 2,
+      "failed": 0,
+      "viewports": [
+        390,
+        1366
+      ]
+    }
+  },
+  "checks": {
+    "npm run test:schedule": "PASS, 1/1 test file.",
+    "npm run typecheck": "PASS.",
+    "npm run test:web013:migration-gate": "PASS.",
+    "python3 scripts/check-canonical-plan.py": "PASS; full acceptance remains NOT CERTIFIED.",
+    "python3 scripts/audit-active-plan-point.py": "PASS; cursor WEB-011 / 77.44.7.A.",
+    "python3 scripts/build-feature-traceability.py --check": "PASS after regenerating the stale crosswalk; 396 mappings.",
+    "git diff --check": "PASS.",
+    "node --check tests/browser/editor-element-insertion.test.js": "PASS."
+  },
+  "release": {
+    "runtimeChangedThisRun": false,
+    "testAndDocumentationCommit": "Pending fast-forward push; tests and documentation only, no Worker source changes.",
+    "productionDeployment": "NOT REQUIRED for this test/documentation-only change; no D1 or R2 operations.",
+    "healthAndAssetHashes": "Not re-fetched in this test-only run; previously verified for the unchanged runtime release."
+  },
+  "ciAndCost": {
+    "githubCI": "Not run; no CI PASS claimed.",
+    "newPaidCostOrDependency": false
+  },
+  "acceptance": "This verifies the Schedule insertion and lifecycle in two automated Chromium viewport cases; complete 77.44.7.A and Visual Editor acceptance remain OPEN / NOT CERTIFIED. Manual/physical acceptance remains deferred."
+}

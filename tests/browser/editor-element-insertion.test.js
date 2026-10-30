@@ -6,6 +6,7 @@ import {existsSync} from 'node:fs';
 import {resolve,extname} from 'node:path';
 import {chromium} from 'playwright';
 import {createDocument,NODE_TYPES} from '../../public/editor-v2/core/schema.js';
+import {DEFAULT_SCHEDULE_CONFIG} from '../../public/editor-v2/core/schedule-schema.js';
 import {createEditorState} from '../../public/editor-v2/core/state.js';
 import {execute} from '../../public/editor-v2/core/commands.js';
 
@@ -405,4 +406,76 @@ test('Layers hierarchy reparent works with desktop drag and touch long-press, wi
   assert.equal(draft.pages[pageId].nodes[textId].parentId,sectionId);
   await tab.keyboard.press('Control+z');assert.equal(await nestedText().count(),0,'touch reparent remains undoable after Save');
   assert.deepEqual(errors,[]);
+});
+
+for(const width of [390,1366])test(`new Schedule palette item keeps canonical defaults and separate Save/Publish at ${width}px`,async t=>{
+  const document=createDocument(),pageId=document.activePageId,rootId=document.pages[pageId].rootId;
+  let draft=structuredClone(document),published=structuredClone(document),revision=1;
+  const posts=[],pageErrors=[],publicRoot=resolve(import.meta.dirname,'../../public');
+  const server=createServer(async(req,res)=>{
+    const url=new URL(req.url,'http://localhost');
+    const json=data=>{res.setHeader('content-type','application/json');res.end(JSON.stringify(data))};
+    if(url.pathname==='/api/admin/pages')return json({ok:true,data:url.searchParams.get('archived')==='1'?[]:[{
+      id:pageId,slug:'schedule-test',title:'Schedule test',content:draft,revision,isPublished:true
+    }]});
+    if(url.pathname==='/api/admin/editor'){
+      if(req.method==='GET')return json({ok:true,data:{page:{id:pageId,document:draft,publishedRevisionId:'published'},revisions:[{id:`revision-${revision}`,version:revision}]}});
+      let body='';for await(const chunk of req)body+=chunk;
+      const request=JSON.parse(body);posts.push(request);draft=structuredClone(request.document);revision++;
+      if(request.publish)published=structuredClone(draft);
+      return json({ok:true,data:{pageId,version:revision,revisionId:`revision-${revision}`,published:Boolean(request.publish)}});
+    }
+    if(url.pathname==='/api/public/pages')return json({ok:true,data:{id:pageId,slug:'schedule-test',title:'Schedule test',content:published.pages[pageId]}});
+    if(url.pathname==='/api/public/schedule')return json({ok:true,data:[]});
+    if(url.pathname==='/api/public/navigation')return json({ok:true,data:{items:[]}});
+    if(url.pathname==='/api/integrations/twitch/connection')return json({ok:true,data:{connected:false}});
+    if(url.pathname.startsWith('/api/'))return json({ok:true,data:{siteName:'Schedule test'}});
+    const asset=url.pathname==='/p/schedule-test'?'/visual-page.html':url.pathname;
+    const file=resolve(publicRoot,'.'+asset);
+    if(!file.startsWith(publicRoot+'/'))return res.writeHead(403).end();
+    try{res.setHeader('content-type',{'.html':'text/html','.js':'text/javascript','.css':'text/css'}[extname(file)]||'application/octet-stream');res.end(await readFile(file))}
+    catch{res.writeHead(404).end()}
+  });
+  await new Promise(done=>server.listen(0,'127.0.0.1',done));
+  const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||(existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined),args:['--no-sandbox']});
+  t.after(async()=>{await browser.close();await new Promise(done=>server.close(done))});
+  const base=`http://127.0.0.1:${server.address().port}`;
+  const context=await browser.newContext({viewport:{width,height:850},isMobile:width<=850,hasTouch:width<=850});
+  const editor=await context.newPage(),viewer=await context.newPage();
+  for(const page of [editor,viewer]){page.setDefaultTimeout(8000);page.setDefaultNavigationTimeout(15000);page.on('pageerror',error=>pageErrors.push(error.message))}
+  await editor.goto(base+'/editor-v2/index.html');
+  await editor.locator(`.node[data-node-id="${rootId}"] > .node-head`).waitFor();
+  await viewer.goto(base+'/p/schedule-test');
+  await viewer.locator('#page-title').waitFor();
+
+  if(await editor.locator('.rail-btn[data-tab="elements"]').isVisible())await editor.locator('.rail-btn[data-tab="elements"]').click();
+  else await editor.evaluate(()=>{window.sanciEditor.showLeftTab('elements');window.sanciEditor.openPanel('left')});
+  const brandGroup=editor.locator('.element-group-title').filter({hasText:'Sanci9517'});
+  if(await brandGroup.getAttribute('aria-expanded')==='false')await brandGroup.click();
+  const palette=editor.locator('#elementList .element');
+  await palette.filter({has:editor.locator('span').getByText('Adásrend',{exact:true})}).click();
+  const scheduleHandle=await editor.waitForFunction(({rootId})=>{
+    const root=document.querySelector(`.page-canvas .node[data-node-id="${rootId}"]`);
+    return [...(root?.children||[])].find(node=>node.matches('.node')&&node.querySelector(':scope > .node-head small')?.textContent==='schedule')?.dataset.nodeId||false;
+  },{rootId});
+  const scheduleId=await scheduleHandle.jsonValue();await scheduleHandle.dispose();
+  assert.ok(scheduleId,'the palette inserts a Schedule into the Canvas');
+  const scheduleNode=editor.locator(`.page-canvas .node[data-node-id="${scheduleId}"]`);
+  assert.equal(await scheduleNode.first().locator('.schedule-preview-card').count(),2,'default Schedule configuration renders its preview cards');
+  assert.equal(await editor.locator('.schedule-inspector').count(),1,'the inserted Schedule opens its own Inspector');
+
+  await editor.locator('#save').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent?.startsWith('Mentve'));
+  assert.equal(posts.at(-1)?.publish,false,'draft Save does not publish the new Schedule');
+  assert.deepEqual(draft.pages[pageId].nodes[scheduleId].props.schedule,DEFAULT_SCHEDULE_CONFIG,'palette insertion persists the full canonical Schedule defaults');
+  assert.equal(await viewer.locator(`[data-node-id="${scheduleId}"]`).count(),0,'Save alone leaves the public Schedule unchanged');
+
+  await editor.locator('#publish').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent==='Publikálva');
+  assert.equal(posts.at(-1)?.publish,true,'only explicit Publish updates the public document');
+  await viewer.reload({waitUntil:'domcontentloaded'});
+  await viewer.locator(`[data-node-id="${scheduleId}"]`).waitFor();
+  assert.equal(await viewer.locator(`[data-node-id="${scheduleId}"] .visual-schedule-empty`).textContent(),'Nincs tervezett stream.','published default Schedule reaches the public renderer');
+  assert.deepEqual(pageErrors,[],'Editor and public Schedule render without page errors');
+  await context.close();
 });
