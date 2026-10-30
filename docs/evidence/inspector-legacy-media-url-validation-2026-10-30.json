@@ -1,0 +1,90 @@
+{
+  "date": "2026-10-30",
+  "planItem": "77.44.7.A — Inspector edit, Canvas, Save, and published renderer lifecycle",
+  "finding": "A new unsafe URL could be entered into an otherwise valid legacy media Inspector field and accepted by element.update. Canvas and public rendering filtered it, but the unsafe draft value was retained without field feedback.",
+  "regressionBeforeFix": {
+    "command": "CHROMIUM_PATH=/usr/bin/chromium node --test tests/browser/editor-legacy-media-parity.test.js",
+    "result": "FAIL as expected before the fix",
+    "assertion": "aria-invalid was null after entering javascript:alert(1) into a valid legacy video poster field."
+  },
+  "change": {
+    "runtimeFiles": [
+      "public/editor-v2/ui/legacy-media-inspector.js",
+      "public/editor-v2/app.js"
+    ],
+    "testFiles": [
+      "tests/browser/editor-legacy-media-parity.test.js"
+    ],
+    "behavior": "Non-empty legacy source and video poster edits now use the existing safeMediaUrl policy before Page Model update. Rejection stays in the current composition input: it exposes aria-invalid and inline feedback, preserves the prior stored/canvas value, and allows valid repair. Existing malformed persisted values remain readable so they can be repaired.",
+    "cacheVersion": "legacy-media-inspector.js?v=20261030-legacy-media-url-validation",
+    "openSourceReview": "Reused the project-owned safeMediaUrl and composition-inputs validation patterns; no third-party code or dependency was needed."
+  },
+  "tests": {
+    "browserCommand": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-legacy-media-parity.test.js",
+    "browser": {
+      "passed": 1,
+      "failed": 0,
+      "durationSeconds": 74.79,
+      "assertions": [
+        "unsafe video poster and audio source edits are rejected in the Inspector",
+        "rejected values do not reach the Canvas or Save API",
+        "safe repair clears invalid state and updates the Canvas",
+        "existing malformed legacy media remains repairable",
+        "no unsafe external media request occurs",
+        "Save does not update public output and separate Publish does"
+      ]
+    },
+    "editorUnit": {
+      "command": "npm run test:editor",
+      "passedFiles": 11,
+      "failedFiles": 0
+    },
+    "typecheck": {
+      "command": "npm run typecheck",
+      "result": "PASS"
+    },
+    "migrationSafetyGate": {
+      "command": "npm run test:web013:migration-gate",
+      "result": "PASS"
+    },
+    "canonicalPlan": "PASS; 13 master files and 396 traceability records; acceptance remains NOT_CERTIFIED",
+    "activePointAudit": "PASS; 77.44.7.A remains the next OPEN item",
+    "traceability": "PASS; generated 396-row source crosswalk matches current source hashes",
+    "diffCheck": "PASS"
+  },
+  "wranglerDryRun": {
+    "command": "WRANGLER_WRITE_LOGS=false WRANGLER_LOG_PATH=/tmp/sanci9517-wrangler-dry-run.log npx wrangler deploy --dry-run",
+    "result": "PASS",
+    "version": "4.130.0",
+    "assetCount": 161,
+    "uploadKiB": 296.93,
+    "gzipKiB": 67.81
+  },
+  "productionReadOnlyPreflight": {
+    "d1": {
+      "method": "Cloudflare D1 query API with SELECT-only SQL: SELECT name FROM d1_migrations ORDER BY name",
+      "rowsRead": 34,
+      "rowsWritten": 0,
+      "changedDb": false,
+      "lastMigration": "0028_media_archive.sql"
+    },
+    "currentWorker": {
+      "deployment": "5138ab51-1927-4714-b176-b32d93003ad4",
+      "version": "ad599738-a80d-4ed6-8639-c605f2bdbe69",
+      "trafficPercent": 100
+    }
+  },
+  "release": {
+    "githubBaseRef": "f57c2d8626031825f49c57d6c3e39d60942acc76",
+    "githubFastForward": "PENDING",
+    "githubCi": "SKIPPED_BY_[skip ci] after local checks; no CI pass is claimed",
+    "runtimeChangeReleased": false,
+    "deployment": "PENDING",
+    "healthAndChangedAssetHash": "NOT YET CHECKED; runtime change is not deployed"
+  },
+  "cost": {
+    "newPaidServiceOrDependency": false,
+    "productionDataOrR2Mutation": false
+  },
+  "acceptanceBoundary": "This closes only the newly verified unsafe URL entry path. Full 77.44.7.A and full Visual Editor acceptance remain OPEN / NOT CERTIFIED; consolidated manual and physical-device acceptance remains DEFERRED until the complete Editor is implemented."
+}

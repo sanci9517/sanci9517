@@ -182,6 +182,28 @@ test('legacy image video audio share guarded media URLs in Inspector Canvas and 
   await canvasNode(ids.badPoster).locator('.media-preview video').waitFor();
   assert.equal(await inspector.locator('.property-validation[role="status"]:not(:empty)').count(),0,'poster warning clears after a valid repair');
   assert.ok(!(await posterField.getAttribute('aria-describedby')||'').split(/\s+/).includes(posterWarningId),'repaired poster field no longer references stale warning');
+  await canvasNode(ids.goodVideo).evaluate(el=>el.click());
+  await editor.getByRole('tab',{name:'Tartalom és szöveg'}).click();
+  const editablePoster=inspector.getByRole('textbox',{name:'Videó borítókép URL'});
+  await editablePoster.fill('javascript:alert(1)');await editablePoster.press('Tab');
+  assert.equal(await editablePoster.getAttribute('aria-invalid'),'true','new unsafe poster URL is rejected by the Inspector');
+  assert.equal(posts.length,0,'rejected unsafe poster remains a local invalid draft and cannot reach the Save API');
+  assert.equal(await canvasNode(ids.goodVideo).locator('.media-preview video').getAttribute('poster'),null,'rejected unsafe URL never reaches the Canvas');
+  await editablePoster.fill('/fixture.svg');await editablePoster.press('Tab');
+  assert.equal(await editablePoster.getAttribute('aria-invalid'),null,'safe poster repair clears the invalid draft state');
+  assert.equal(await canvasNode(ids.goodVideo).locator('.media-preview video').getAttribute('poster'),'/fixture.svg','safe poster repair reaches the Canvas');
+  await editablePoster.fill('');await editablePoster.press('Tab');
+  await canvasNode(ids.goodAudio).evaluate(el=>el.click());
+  await editor.getByRole('tab',{name:'Tartalom és szöveg'}).click();
+  const editableSource=inspector.getByRole('textbox',{name:'Hang URL'});
+  await editableSource.fill('javascript:alert(1)');await editableSource.press('Tab');
+  assert.equal(await editableSource.getAttribute('aria-invalid'),'true','new unsafe media source URL is rejected by the Inspector');
+  assert.equal(await canvasNode(ids.goodAudio).locator('.media-preview audio').getAttribute('src'),'/fixture.webm','rejected source URL never reaches the Canvas');
+  assert.equal(posts.length,0,'rejected unsafe media URLs cannot reach the Save API');
+  await editableSource.fill('/fixture.webm?repaired=1');await editableSource.press('Tab');
+  assert.equal(await editableSource.getAttribute('aria-invalid'),null,'safe source repair clears the invalid draft state');
+  assert.equal(await canvasNode(ids.goodAudio).locator('.media-preview audio').getAttribute('src'),'/fixture.webm?repaired=1','safe source repair reaches the Canvas');
+  await editableSource.fill('/fixture.webm');await editableSource.press('Tab');
   await canvasNode(ids.badImage).evaluate(el=>el.click());
   await editor.getByRole('tab',{name:'Tartalom és szöveg'}).click();
   await inspector.getByRole('textbox',{name:'Kép leírása (alt)'}).fill('Javított képleírás');
@@ -224,7 +246,7 @@ test('legacy image video audio share guarded media URLs in Inspector Canvas and 
           assert.equal(await inspector.locator('.editor-media-selected').count(),0,'a pending composition blocks media-library selection');
           await inspector.getByRole('button',{name:'Médiatár bezárása'}).first().click();
         }
-      },otherInput:key==='badImage'?inspector.getByRole('textbox',{name:label==='Kép URL'?'Kép leírása (alt)':'Kép URL',exact:true}):key==='goodVideo'?inspector.getByRole('textbox',{name:label==='Videó URL'?'Videó borítókép URL':'Videó URL',exact:true}):undefined}).catch(error=>{assert.equal(posts.length,0,'unfinished legacy media composition cannot reach the Editor API');throw error;});
+      },otherInput:key==='badImage'?inspector.getByRole('textbox',{name:label==='Kép URL'?'Kép leírása (alt)':'Kép URL',exact:true}):key==='goodVideo'?inspector.getByRole('textbox',{name:label==='Videó URL'?'Videó borítókép URL':'Videó URL',exact:true}):undefined}).catch(error=>{assert.equal(posts.length,0,'unfinished legacy media composition cannot reach the Editor API');error.message=`${width}px ${key}.${label}: ${error.message}`;throw error;});
       await input.fill(attribute==='poster'?'':before);await input.press('Tab');
     }
   }

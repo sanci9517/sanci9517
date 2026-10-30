@@ -39,5 +39,17 @@
     "productionD1Writes": 0,
     "productionR2Changes": 0
   },
+  "followUpUnsafeUrlEntry": {
+    "finding": "An unsafe legacy media URL could be entered into an otherwise valid Inspector field and accepted by element.update. The renderers filtered it at output time, but the editor gave no field error and retained the unsafe draft value.",
+    "regressionBeforeFix": "The new real-Chromium assertion failed: aria-invalid was null after entering javascript:alert(1) into a valid legacy video poster field.",
+    "fix": "Legacy media source and video poster edits now trim and validate non-empty values with the existing safeMediaUrl contract before invoking element.update. The existing composition input control exposes rejection inline, keeps the prior Page Model value, and allows safe repair. Persisted malformed legacy values still load unchanged so authors can repair them.",
+    "additionalAssertions": [
+      "new unsafe video poster and audio source URLs are marked invalid and do not reach Canvas or the Editor Save API",
+      "safe repair clears invalid state and updates Canvas",
+      "existing malformed legacy URL warning, media picker association, no external request, Save/Publish separation, and public renderer checks remain covered"
+    ],
+    "cacheVersion": "legacy-media-inspector.js?v=20261030-legacy-media-url-validation",
+    "openSourceReview": "Reused the existing project-owned safeMediaUrl validator and composition-inputs inline validation; no external code or dependency was needed."
+  },
   "acceptanceBoundary": "This verifies the listed legacy media warning associations and browser lifecycle only. Full 77.44.7.A and 79 element × 68 property acceptance remain OPEN / NOT CERTIFIED; manual/physical acceptance remains deferred until the complete Visual Editor is implemented."
 }

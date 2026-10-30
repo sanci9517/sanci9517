@@ -20,6 +20,11 @@ export function renderLegacyMediaInspector(node,apply,{pending=()=>{}}={}){
   return result;
  };
  const update=(key,value)=>save({[key]:value});
+ const updateMediaUrl=(key,assetKey,value,options)=>{
+  const normalized=value.trim();
+  if(normalized&&!safeMediaUrl(normalized))throw new Error('Adj meg HTTP(S)-címet vagy / jellel kezdődő webhelyútvonalat.');
+  return save({[key]:normalized,[assetKey]:''},options);
+ };
  const text=(label,key,value,onChange)=>{
   const wrap=route(document.createElement('label'),key);wrap.className='field';wrap.append(document.createTextNode(label));
   const input=document.createElement('input');input.value=value??'';input.disabled=Boolean(node.locked);input.setAttribute('aria-label',label);
@@ -32,7 +37,7 @@ export function renderLegacyMediaInspector(node,apply,{pending=()=>{}}={}){
    const title=document.createElement('span');title.id='legacy-media-label-'+crypto.randomUUID();title.textContent=label;field.append(title);section.append(field);return title.id;
  };
  const values=legacyMediaInspectorValues(model);
- section.append(text(mediaLabel+' URL','src',values.src,(value,options)=>save({src:value.trim(),assetId:''},options)));
+ section.append(text(mediaLabel+' URL','src',values.src,(value,options)=>updateMediaUrl('src','assetId',value,options)));
  if(node.type==='image'){
    const sourceLabelId=mediaPickerLabel('Kép a Médiatárból');
    section.append(sourcePicker=mediaAssetPicker(values.assetId,(id,asset)=>{
@@ -96,7 +101,7 @@ export function renderLegacyMediaInspector(node,apply,{pending=()=>{}}={}){
      row.append(input,document.createTextNode(labelText));section.append(row);
    }
    if(isVideo){
-     section.append(text('Videó borítókép URL','poster',values.poster,(value,options)=>save({poster:value.trim(),posterAssetId:''},options)));
+     section.append(text('Videó borítókép URL','poster',values.poster,(value,options)=>updateMediaUrl('poster','posterAssetId',value,options)));
      const posterLabelId=mediaPickerLabel('Videó borítóképe a Médiatárból');
      section.append(posterPicker=mediaAssetPicker(values.posterAssetId,id=>save({posterAssetId:id,...(!id?{poster:''}:{})}),{disabled:Boolean(node.locked),ariaLabelledBy:posterLabelId}));route(posterPicker,'posterAssetId');
      const notice=document.createElement('small');notice.className='content-field-help';
