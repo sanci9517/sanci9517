@@ -25,12 +25,25 @@
     "migrationApplied": false
   },
   "release": {
-    "runtimeCommit": "PENDING",
+    "runtimeCommit": "95bbc4ae0c140861ae0a0ee04d1760f4291db45d",
     "targetBranch": "v2/foundation",
-    "push": "PENDING",
-    "deployment": "PENDING",
-    "productionHealth": "UNVERIFIED",
-    "productionAssetHash": "UNVERIFIED",
+    "push": "FAST_FORWARD_VERIFIED",
+    "remoteHead": "95bbc4ae0c140861ae0a0ee04d1760f4291db45d",
+    "githubCi": "SKIPPED_BY_[skip ci]; no CI status was reported",
+    "deployment": "00c7bcab-fde9-4387-a9ff-f3ad4b63876a",
+    "workerVersion": "5e88afe8-d1a0-4550-bc03-ce8eba3eb7e1",
+    "workerVersionNumber": 3741,
+    "trafficPercent": 100,
+    "productionHealth": {"status": 200, "response": {"ok": true, "service": "sanci9517-streamer-brand", "version": "2.0.0", "server": "cloudflare-worker"}},
+    "productionAssetHash": {
+      "path": "/editor-v2/app.js",
+      "sourceSha256": "4384898899bb63957b6504dc44e3109c222659ad3715133b227affff789499ef",
+      "productionSha256": "4384898899bb63957b6504dc44e3109c222659ad3715133b227affff789499ef",
+      "matches": true
+    },
+    "dryRun": {"wrangler": "4.130.0", "assets": 161, "uploadKiB": 296.93, "status": "PASS"},
+    "migrationSafetyGate": "PASS; D1 migration apply was not run",
+    "productionD1PostReadback": {"method": "SELECT-only query API", "appliedMigrations": 34, "rowsWritten": 0, "changedDb": false},
     "productionDataChanges": {"d1MigrationsApplied": 0, "d1RowsWritten": 0, "r2Changes": 0}
   },
   "acceptance": {"visualEditor": "NOT_CERTIFIED", "manualAndPhysicalDevice": "DEFERRED_UNTIL_COMPLETE_VISUAL_EDITOR"}
