@@ -6,7 +6,7 @@
   "reuse": "Existing project GRADIENTS allowlist, Brand Kit token parser/registry, Canvas style resolver, public renderer, and browser fixtures; no external code, dependency, paid service, D1 migration, data write, or R2 change.",
   "checks": {
     "editor_unit": "PASS: npm run test:editor, 11/11 test files",
-    "targeted_browser": "PASS: real Chromium 2/2; safe compound gradient plus HEX has matching Canvas/public image and color at desktop, tablet, and mobile; unsafe URL compound stays off Canvas; legacy Inspector, Save/Publish, and root styling lifecycle remains covered",
+    "targeted_browser": "PASS: real Chromium 2/2; single gradient plus HEX and multiple gradient layers plus a Brand Kit final color have matching Canvas/public image and color at desktop, tablet, and mobile; unsafe URL compound stays off Canvas; legacy Inspector, Save/Publish, and root styling lifecycle remains covered",
     "typecheck": "PASS: npm run typecheck",
     "canonical_plan": "PASS: one complete 13-file master; cursor 77.44 / WEB-011 -> 77.44.7.A; acceptance NOT CERTIFIED",
     "active_plan_point": "PASS: EDT-034 maps the shared Canvas/background resolver/public renderer; source mappings 396; acceptance NOT CERTIFIED",
@@ -25,7 +25,8 @@
     "github_push": "Verified normal fast-forward to v2/foundation at 3f3890fa29dbc5c3af7d109f7f2a7e69a97c284d; merge parents ca08449752c82b1d54af4b491e7e63aaac2d5270 and ee33b9566d17dec851600d6f8c432462af6e7073 preserve both local and remote histories",
     "github_actions": "[skip ci]; combined status returned no checks; CI is not claimed as PASS",
     "worker_deployment": "deploy:safe succeeded after migration safety gate; deployment d0353542-c3c4-40a8-b134-f160cd2da02d routes 100% to version faf5c5fe-5bdd-478b-a1d6-d8eed15c64ba (Worker version 3740); Wrangler reported no updated asset files; script ETag is unchanged from version 3738",
-    "production_http_and_asset_hashes": "UNVERIFIED: proxy GETs to /api/health, /api/db-health, /editor-v2/, /assets/page-renderer.js and the background module returned HTTP 403; direct no-proxy /api/health failed Network is unreachable; local asset hashes do not establish live equality"
+    "production_http_and_asset_hashes": "UNVERIFIED: proxy GETs to /api/health, /api/db-health, /editor-v2/, /assets/page-renderer.js and the background module returned HTTP 403; direct no-proxy /api/health failed Network is unreachable; local asset hashes do not establish live equality",
+    "post_release_browser_extension": "PASS: real Chromium rechecked single/multiple gradient compounds, HEX and Brand Kit final colors across desktop/tablet/mobile; this test-only extension does not change Worker runtime source or require a new deployment"
   },
   "open": "Full 77.44.7.A acceptance and consolidated manual/physical Visual Editor acceptance remain OPEN / NOT CERTIFIED; manual testing is deferred until the complete Visual Editor is implemented. No production migration, production data write, or R2 change was performed."
 }

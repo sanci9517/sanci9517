@@ -36,6 +36,12 @@ test('partial palette types and Divider/Spacer Inspector edits become public onl
  legacyCompoundNode.style.background=`${legacyGradient}, #ffcc00`;
  activePage(model).nodes[legacyCompoundId]=legacyCompoundNode;
  activePage(model).nodes[root].children.push(legacyCompoundId);
+ const legacyCompoundTokenId='legacy-background-compound-token';
+ const legacyCompoundTokenNode=createNode('divider',{id:legacyCompoundTokenId,parentId:root,name:'Többrétegű márka-háttér'});
+ const secondLegacyGradient='linear-gradient(135deg, #111827 0%, #475569 100%)';
+ legacyCompoundTokenNode.style.background=`${legacyGradient}, ${secondLegacyGradient}, ${tokenReference('colors.surface')}`;
+ activePage(model).nodes[legacyCompoundTokenId]=legacyCompoundTokenNode;
+ activePage(model).nodes[root].children.push(legacyCompoundTokenId);
  const unsafeCompound=createNode('divider',{id:'legacy-background-unsafe-compound',parentId:root,name:'Nem biztonságos összetett háttér'});
  unsafeCompound.style.background=`${legacyGradient}, url("https://legacy-background.invalid/compound.png")`;
  activePage(model).nodes[unsafeCompound.id]=unsafeCompound;
@@ -242,6 +248,9 @@ test('partial palette types and Divider/Spacer Inspector edits become public onl
  assert.equal(await publicNode(legacyGradientId).evaluate(el=>getComputedStyle(el).backgroundImage),computedGradient(legacyGradient),'allowlisted legacy gradient is visible publicly');
  assert.deepEqual(await canvasNode(legacyCompoundId).evaluate(el=>{const css=getComputedStyle(el);return{image:css.backgroundImage,color:css.backgroundColor}}),{image:computedGradient(legacyGradient),color:'rgb(255, 204, 0)'},'safe layered legacy gradient and final HEX color reach Canvas');
  assert.deepEqual(await publicNode(legacyCompoundId).evaluate(el=>{const css=getComputedStyle(el);return{image:css.backgroundImage,color:css.backgroundColor}}),{image:computedGradient(legacyGradient),color:'rgb(255, 204, 0)'},'safe layered legacy gradient and final HEX color match publicly');
+ const compoundTokenStyle={image:`${computedGradient(legacyGradient)}, ${computedGradient(secondLegacyGradient)}`,color:'rgb(245, 241, 234)'};
+ assert.deepEqual(await canvasNode(legacyCompoundTokenId).evaluate(el=>{const css=getComputedStyle(el);return{image:css.backgroundImage,color:css.backgroundColor}}),compoundTokenStyle,'multiple safe gradient layers and a Brand Kit final color reach Canvas');
+ assert.deepEqual(await publicNode(legacyCompoundTokenId).evaluate(el=>{const css=getComputedStyle(el);return{image:css.backgroundImage,color:css.backgroundColor}}),compoundTokenStyle,'multiple safe gradient layers and a Brand Kit final color match publicly');
  assert.equal(await canvasNode(unsafeCompound.id).evaluate(el=>getComputedStyle(el).backgroundImage),'none','unsafe compound legacy shorthand is not promoted to Canvas');
  assert.equal(await canvasNode(legacyTokenId).evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(18, 102, 204)','exact Brand Kit color token resolves on Canvas');
  assert.equal(await publicNode(legacyTokenId).evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(18, 102, 204)','exact Brand Kit color token resolves publicly');
@@ -252,6 +261,8 @@ test('partial palette types and Divider/Spacer Inspector edits become public onl
   assert.equal(await publicNode(legacyGradientId).evaluate(el=>getComputedStyle(el).backgroundImage),computedGradient(legacyGradient),`${device} public page preserves the legacy gradient`);
   assert.deepEqual(await canvasNode(legacyCompoundId).evaluate(el=>{const css=getComputedStyle(el);return{image:css.backgroundImage,color:css.backgroundColor}}),{image:computedGradient(legacyGradient),color:'rgb(255, 204, 0)'},`${device} Canvas preserves the safe compound background`);
   assert.deepEqual(await publicNode(legacyCompoundId).evaluate(el=>{const css=getComputedStyle(el);return{image:css.backgroundImage,color:css.backgroundColor}}),{image:computedGradient(legacyGradient),color:'rgb(255, 204, 0)'},`${device} public page preserves the safe compound background`);
+  assert.deepEqual(await canvasNode(legacyCompoundTokenId).evaluate(el=>{const css=getComputedStyle(el);return{image:css.backgroundImage,color:css.backgroundColor}}),compoundTokenStyle,`${device} Canvas preserves multiple safe gradients and the Brand Kit color`);
+  assert.deepEqual(await publicNode(legacyCompoundTokenId).evaluate(el=>{const css=getComputedStyle(el);return{image:css.backgroundImage,color:css.backgroundColor}}),compoundTokenStyle,`${device} public page preserves multiple safe gradients and the Brand Kit color`);
   assert.equal(await canvasNode(legacyTokenId).evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(18, 102, 204)',`${device} Canvas resolves the Brand Kit background token`);
   assert.equal(await publicNode(legacyTokenId).evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(18, 102, 204)',`${device} public page resolves the Brand Kit background token`);
   for(const token of legacyColorTokens){
