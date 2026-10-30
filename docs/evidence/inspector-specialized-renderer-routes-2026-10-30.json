@@ -1,42 +1,31 @@
 {
   "date": "2026-10-30",
   "planItem": "77.44.7.A — Inspector edit, Canvas, Save, reload, and published renderer lifecycle",
-  "scope": "Local real-Chromium route regression sweep for specialized Inspector-backed content types; static property-reference audit is supplementary and does not certify the complete matrix.",
+  "scope": "Current-runtime real-Chromium route regression sweep for specialized Inspector-backed content types; static property-reference audit is supplementary and does not certify the complete matrix.",
   "browserTests": [
     {
       "file": "tests/browser/editor-inspector-lifecycle.test.js",
       "command": "CHROMIUM_PATH=/usr/bin/chromium node --test tests/browser/editor-inspector-lifecycle.test.js",
-      "result": { "passed": 1, "failed": 0, "durationSeconds": 283.2 },
-      "coverage": "Inspector value to Canvas, draft Save/reload, separate Publish, and property lifecycle regression."
+      "result": {
+        "passed": 1,
+        "failed": 0,
+        "durationSeconds": 230.1
+      },
+      "coverage": "Inspector value to Canvas, Undo/Redo, draft Save/reload, separate Publish, all registered property routes, and native numeric validity/keyboard increment parity."
     },
     {
       "file": "tests/browser/editor-social-links.test.js",
-      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test tests/browser/editor-social-links.test.js",
-      "result": { "passed": 2, "failed": 0 },
-      "viewports": [390, 1366]
-    },
-    {
-      "file": "tests/browser/editor-creator-embed.test.js",
-      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test tests/browser/editor-creator-embed.test.js",
-      "result": { "passed": 2, "failed": 0 },
-      "viewports": [390, 1366]
-    },
-    {
-      "file": "tests/browser/editor-code-snippet.test.js",
-      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test tests/browser/editor-code-snippet.test.js",
-      "result": { "passed": 2, "failed": 0 },
-      "viewports": [390, 1366]
-    },
-    {
-      "file": "tests/browser/editor-countdown.test.js",
-      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test tests/browser/editor-countdown.test.js",
-      "result": { "passed": 2, "failed": 0 },
-      "timeZones": ["Europe/Budapest", "America/New_York"]
-    },
-    {
-      "file": "tests/browser/editor-structured-content.test.js",
-      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test tests/browser/editor-structured-content.test.js",
-      "result": { "passed": 1, "failed": 0, "durationSeconds": 97.2 }
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-social-links.test.js tests/browser/editor-creator-embed.test.js tests/browser/editor-code-snippet.test.js tests/browser/editor-countdown.test.js tests/browser/editor-structured-content.test.js",
+      "result": {
+        "passed": 9,
+        "failed": 0,
+        "durationSeconds": 126.6
+      },
+      "viewports": [
+        390,
+        1366
+      ],
+      "coverage": "Social Links, Creator Embed, Code Snippet, Countdown (Europe/Budapest and America/New_York), and Structured Content specialized Inspector/public routes."
     }
   ],
   "supplementarySourceAudit": {
@@ -59,12 +48,34 @@
   },
   "release": {
     "runtimeChanged": false,
-    "githubPush": "NOT_DONE; this run could not reach origin because the configured network proxy refused the connection",
-    "ci": "NOT_RUN",
-    "productionDeployment": "NOT_DONE",
-    "productionWorker": "Not re-queried in this local-only evidence sweep; prior canonical evidence records Worker 3746 at 100% and the node-name fix not live.",
+    "githubPush": "Pending test/evidence-only commit; remote v2/foundation was verified by GitHub file fetch at runtime commit 416e5a0a.",
+    "ci": "NOT_RUN; no CI PASS claimed.",
+    "productionDeployment": "NOT_REQUIRED; no runtime files changed.",
+    "productionWorker": {
+      "deploymentId": "ace02e13-16d0-4a3b-a74b-26cd55d3a244",
+      "version": "f2365772-ed0d-4db2-adab-9de2e48d44fc",
+      "trafficPercent": 100,
+      "verified": "Cloudflare deployment GET during this run; no redeployment occurred. Health and public asset hashes remain those verified in the prior runtime release evidence."
+    },
     "productionD1Writes": 0,
     "productionR2Changes": 0
   },
-  "acceptanceBoundary": "These local browser tests cover the listed routes, not all 79 element types and all 68 properties. Full 77.44.7.A remains OPEN / NOT CERTIFIED; consolidated manual and physical-device acceptance remains deferred until the complete Visual Editor is implemented."
+  "acceptanceBoundary": "These current-runtime browser regressions cover listed routes and value contracts, not all 79 element types and all 68 properties. Full 77.44.7.A remains OPEN / NOT CERTIFIED; consolidated manual and physical-device acceptance remains deferred until the complete Visual Editor is implemented.",
+  "numericPrecisionFollowup": {
+    "finding": "The lifecycle browser fixture still expected native step=0.1 for line-height and scale and step=1 for z-index, conflicting with the shipped contract that uses native step=any for validator-valid decimals/integers and applies registry step only to ArrowUp/ArrowDown.",
+    "productRuntimeDefect": "None found; the production property control behavior already matched the shared validation contract.",
+    "testFix": "Updated only stale assertions; added checks for line-height 1.25→1.35→1.25, scale 1.2→1.3, and z-index -12→-11 using the declared keyboard increments. Line-height check undoes its setup and restores the inherited baseline before the Save/Publish lifecycle.",
+    "failedRuns": "The first two post-change lifecycle runs surfaced stale line-height, then scale assertions. They were corrected without weakening application validation; the complete test then passed."
+  },
+  "checks": {
+    "npm run test:editor": "PASS, 11/11 test files and 159/159 individual tests.",
+    "CHROMIUM_PATH=/usr/bin/chromium node --test tests/browser/editor-inspector-lifecycle.test.js": "PASS, 1/1, 230.1 seconds; complete Canvas/Undo/Redo/Save/reload/separate Publish path.",
+    "Specialized Inspector real-Chromium sweep": "PASS, 9/9 across Social Links, Creator Embed, Code Snippet, Countdown, and Structured Content at 390/1366px where applicable.",
+    "npm run typecheck": "PASS.",
+    "npm run test:web013:migration-gate": "PASS.",
+    "python3 scripts/check-canonical-plan.py": "PASS; acceptance remains NOT CERTIFIED.",
+    "python3 scripts/audit-active-plan-point.py": "PASS; current cursor WEB-011 / 77.44.7.A.",
+    "python3 scripts/build-feature-traceability.py --check": "PASS, 396 mappings.",
+    "git diff --check": "PASS."
+  }
 }
