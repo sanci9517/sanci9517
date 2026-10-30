@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import {NODE_TYPES} from '../core/schema.js';
 import {getElementCapability,getElementInspectorContract} from '../core/capability-matrix.js';
-import {getProperty,listProperties,registerProperty} from '../core/property-registry.js?v=20261030-inspector-value-metadata-contract';
+import {getProperty,listProperties,registerProperty} from '../core/property-registry.js?v=20261030-inspector-registry-identity-contract';
 import {getInspectorValueContract,normalizeInspectorValue} from '../core/property-values.js';
 import {STYLE_MAP} from '../core/canvas-engine.js';
 
@@ -138,4 +138,17 @@ test('registered defaults and presets use the shared Inspector validator before 
  assert.throws(()=>registerProperty({id:'test.contract.preset.out-of-range',group:'opacity',label:'Out of range preset',type:'number',command:'responsive.set',responsive:true,key:'opacity',presets:[{label:'Too much',value:'1.5'}],appliesTo:['text']}),/megengedett tartományon kívül/);
  assert.throws(()=>registerProperty({id:'test.contract.preset.duplicate-label',group:'typography',label:'Duplicate preset',type:'number',command:'responsive.set',responsive:true,key:'testDuplicatePreset',presets:[{label:'Same',value:'0.5'},{label:' Same ',value:'0.6'}],appliesTo:['text']}),/preset címkéi egyediek/);
  assert.throws(()=>registerProperty({id:'test.contract.default.object',group:'content',label:'Object default',type:'text',command:'element.content.set',responsive:false,key:'text',defaultValue:{unsafe:true},appliesTo:['text']}),/alapértéke szöveg/);
+});
+test('registered property identity and keys are canonicalized before uniqueness and registry insertion',()=>{
+ const id='test.contract.identity.canonical';
+ const property=registerProperty({id:`  ${id}  `,group:' typography ',label:'  Canonical label  ',type:'text',command:'element.update',responsive:false,key:'  canonicalName  ',appliesTo:['text']});
+ assert.equal(property.id,id);
+ assert.equal(property.group,'typography');
+ assert.equal(property.label,'Canonical label');
+ assert.equal(property.key,'canonicalName');
+ assert.equal(getProperty(id),property,'lookup uses the stable, canonical ID');
+ assert.equal(getProperty(` ${id} `),null,'the registry never stores a second whitespace alias');
+ const before=listProperties().length;
+ assert.throws(()=>registerProperty({id:` ${id} `,group:'typography',label:'Duplicate alias',type:'text',command:'element.update',responsive:false,key:'otherName',appliesTo:['text']}),/Property már létezik/);
+ assert.equal(listProperties().length,before,'a duplicate canonical ID does not partially mutate the registry');
 });

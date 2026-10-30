@@ -219,8 +219,14 @@ export function getPropertyGroup(id) {
 }
 
 export function registerProperty(property) {
-  if (!property?.id || !property?.group) throw new Error('A property id és group kötelező.');
-  if (typeof property.id!=='string'||!property.id.trim()||typeof property.label!=='string'||!property.label.trim()) throw new Error('A property id és label nem üres szöveg kell legyen.');
+  if (!property || typeof property!=='object') throw new Error('A property szerződése objektum kell legyen.');
+  const id=typeof property.id==='string'?property.id.trim():'';
+  const group=typeof property.group==='string'?property.group.trim():'';
+  const label=typeof property.label==='string'?property.label.trim():'';
+  const key=typeof property.key==='string'?property.key.trim():property.key;
+  if (!id || !group) throw new Error('A property id és group kötelező.');
+  if (!label) throw new Error('A property id és label nem üres szöveg kell legyen.');
+  property={...property,id,group,label,key};
   if (propertyMap.has(property.id)) throw new Error(`Property már létezik: ${property.id}`);
   if (!groupMap.has(property.group)) throw new Error(`Ismeretlen property group: ${property.group}`);
   if(!propertyControlTypes.has(property.type))throw new Error(`Ismeretlen Inspector control: ${property.type}`);

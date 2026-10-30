@@ -1,0 +1,55 @@
+{
+  "plan_item": "77.44.7.A — Inspector foundation / canonical property identity",
+  "date": "2026-10-30",
+  "status": "IMPLEMENTED_AND_LOCALLY_VERIFIED_RELEASE_PENDING",
+  "finding": {
+    "defect": "registerProperty() checked that id/group/label/key were non-empty after trim, but stored the untrimmed inputs. This allowed whitespace aliases of stable property IDs and could preserve whitespace in the CSS/command key.",
+    "fix": "Canonicalize id, group, label, and string key by trimming before uniqueness checks, validation, and insertion. Duplicate detection now runs on the canonical ID; registration remains atomic.",
+    "scope": "The shared Inspector Property Registry only. Save/Publish behavior and existing declared properties are unchanged.",
+    "reuse_review": "Inspected the existing project-owned Property Registry and normalizeInspectorValue contract. This requirement is canonical string identity, for which a new external schema package would duplicate the current registry and add no useful behavior; no third-party code or dependency was added."
+  },
+  "changed_files": [
+    "public/editor-v2/core/property-registry.js",
+    "public/editor-v2/tests/capability-contract.test.js",
+    "public/editor-v2/app.js",
+    "public/editor-v2/core/capability-matrix.js",
+    "public/editor-v2/core/inspector-style-contract.js",
+    "public/editor-v2/core/state-styles.js",
+    "public/editor-v2/index.html",
+    "public/editor-v2/ui/element-content-controls.js",
+    "public/editor-v2/ui/geometry-presets.js",
+    "public/editor-v2/tests/core.test.js",
+    "public/editor-v2/tests/inspector-richtext.test.js",
+    "public/editor-v2/tests/layout-presets.test.js",
+    "public/editor-v2/tests/state-tokens.test.js",
+    "docs/evidence/feature-traceability.json",
+    "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+    "docs/evidence/inspector-registry-identity-contract-2026-10-30.json"
+  ],
+  "checks": {
+    "node --experimental-vm-modules public/editor-v2/tests/capability-contract.test.js": "PASS, 10/10 tests; canonicalized ID/group/label/key, canonical lookup, whitespace alias duplicate rejection and atomic registry size.",
+    "npm run test:editor": "PASS, 11/11 test files.",
+    "CHROMIUM_PATH=/usr/bin/chromium node tests/browser/editor-inspector-richtext-controls.test.js": "PASS, 2/2 mobile/desktop real Chromium regressions.",
+    "npm run typecheck": "PASS.",
+    "npm run test:web013:migration-gate": "PASS.",
+    "node --check public/editor-v2/core/property-registry.js": "PASS.",
+    "python3 scripts/build-feature-traceability.py --check": "PASS, 396 mappings.",
+    "python3 scripts/check-canonical-plan.py": "PASS, 13 master files; full editor acceptance remains NOT CERTIFIED.",
+    "python3 scripts/audit-active-plan-point.py": "PASS, current cursor WEB-011 / 77.44.7.A.",
+    "git diff --check": "PASS.",
+    "npx wrangler deploy --dry-run": "PASS, Wrangler 4.130.0 read 161 assets; 299.80 KiB / 68.54 KiB gzip. No upload/deploy during dry-run.",
+    "Production D1 preflight": "PASS, SELECT name FROM d1_migrations ORDER BY name; 34 rows, latest 0028_media_archive.sql, rows_written=0, changed_db=false.",
+    "Production health baseline": "PASS, direct /api/health returned HTTP 200 and ok=true."
+  },
+  "release": {
+    "status": "PENDING",
+    "worker_before_release": "79c1184d-bfe4-4536-a0e0-fe8034320c27 at 100% traffic",
+    "github_target_branch": "v2/foundation",
+    "github_target_head_before_push": "9dbdc547f8e69f6fada78b933b31ab429534a1d3"
+  },
+  "ci_and_cost": {
+    "github_ci": "Not run; free GitHub Actions allowance is exhausted. Use [skip ci], do not claim a CI PASS.",
+    "new_paid_cost_or_dependency": false
+  },
+  "acceptance": "This slice validates property identity metadata only. Full 77.44.7.A and Visual Editor acceptance remain OPEN / NOT CERTIFIED; manual/physical acceptance remains DEFERRED."
+}

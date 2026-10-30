@@ -1,4 +1,4 @@
-import { listProperties } from './property-registry.js?v=20261030-inspector-value-metadata-contract';
+import { listProperties } from './property-registry.js?v=20261030-inspector-registry-identity-contract';
 import { normalizeInspectorValue } from './property-values.js';
 
 const SCOPES = new Set(['style', 'desktop', 'tablet', 'mobile']);
