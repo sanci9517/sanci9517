@@ -1,0 +1,70 @@
+{
+  "date": "2026-10-30",
+  "planItem": "77.44.7.A — Inspector edit, Canvas, Save, reload, and published renderer lifecycle",
+  "scope": "Local real-Chromium route regression sweep for specialized Inspector-backed content types; static property-reference audit is supplementary and does not certify the complete matrix.",
+  "browserTests": [
+    {
+      "file": "tests/browser/editor-inspector-lifecycle.test.js",
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test tests/browser/editor-inspector-lifecycle.test.js",
+      "result": { "passed": 1, "failed": 0, "durationSeconds": 283.2 },
+      "coverage": "Inspector value to Canvas, draft Save/reload, separate Publish, and property lifecycle regression."
+    },
+    {
+      "file": "tests/browser/editor-social-links.test.js",
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test tests/browser/editor-social-links.test.js",
+      "result": { "passed": 2, "failed": 0 },
+      "viewports": [390, 1366]
+    },
+    {
+      "file": "tests/browser/editor-creator-embed.test.js",
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test tests/browser/editor-creator-embed.test.js",
+      "result": { "passed": 2, "failed": 0 },
+      "viewports": [390, 1366]
+    },
+    {
+      "file": "tests/browser/editor-code-snippet.test.js",
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test tests/browser/editor-code-snippet.test.js",
+      "result": { "passed": 2, "failed": 0 },
+      "viewports": [390, 1366]
+    },
+    {
+      "file": "tests/browser/editor-countdown.test.js",
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test tests/browser/editor-countdown.test.js",
+      "result": { "passed": 2, "failed": 0 },
+      "timeZones": ["Europe/Budapest", "America/New_York"]
+    },
+    {
+      "file": "tests/browser/editor-structured-content.test.js",
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test tests/browser/editor-structured-content.test.js",
+      "result": { "passed": 1, "failed": 0, "durationSeconds": 97.2 }
+    }
+  ],
+  "supplementarySourceAudit": {
+    "registeredPropertyIds": 68,
+    "propertyIdsReferencedByBrowserTestSources": 68,
+    "genericLifecycleHelperReferences": 58,
+    "otherIdsWithTargetedTests": [
+      "content.text",
+      "content.href",
+      "size.minWidth",
+      "spacing.padding",
+      "typography.fontSize",
+      "typography.lineHeight",
+      "typography.textAlign",
+      "background.color",
+      "background.image",
+      "advanced.nodeName"
+    ],
+    "interpretation": "Source references show test mapping only; they are not evidence that every property independently passed its full browser lifecycle."
+  },
+  "release": {
+    "runtimeChanged": false,
+    "githubPush": "NOT_DONE; this run could not reach origin because the configured network proxy refused the connection",
+    "ci": "NOT_RUN",
+    "productionDeployment": "NOT_DONE",
+    "productionWorker": "Not re-queried in this local-only evidence sweep; prior canonical evidence records Worker 3746 at 100% and the node-name fix not live.",
+    "productionD1Writes": 0,
+    "productionR2Changes": 0
+  },
+  "acceptanceBoundary": "These local browser tests cover the listed routes, not all 79 element types and all 68 properties. Full 77.44.7.A remains OPEN / NOT CERTIFIED; consolidated manual and physical-device acceptance remains deferred until the complete Visual Editor is implemented."
+}
