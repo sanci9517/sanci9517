@@ -1,0 +1,95 @@
+{
+  "date": "2026-10-30",
+  "planItem": "77.44.7.A — preserve Brand Kit-looking literal strings in text Inspector fields",
+  "status": "RUNTIME_DEPLOYED_100_PERCENT_AND_VERIFIED; FULL_PLAN_ITEM_OPEN",
+  "runtimeFixCommit": "75eee302647997558b413fa82e07b3871fce5552",
+  "remoteBranchHeadAtRelease": "26a7b80c39ffe67d88f948dbaf33d14019750b3b",
+  "defect": "normalizeInspectorValue applied design-token parsing to generic text properties; a literal such as var(--creator-colors-primary, #7047eb) was rejected in content.text and advanced.nodeName.",
+  "runtimeFix": "Text typed controls bypass style-token parsing; visual/style properties still resolve compatible tokens and reject incompatible tokens. content.text preserves whitespace and newlines; node names continue to be trimmed.",
+  "changedTestFiles": [
+    "tests/browser/editor-inspector-lifecycle.test.js",
+    "tests/browser/editor-general-fields-ime.test.js"
+  ],
+  "browserTests": [
+    {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-inspector-lifecycle.test.js",
+      "result": {
+        "passed": 1,
+        "failed": 0,
+        "durationSeconds": 213.4
+      },
+      "assertion": "content.text preserves var(--creator-colors-primary, #7047eb) verbatim with surrounding whitespace and newline across Canvas, draft Save/reload, and separate Publish/public render."
+    },
+    {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-general-fields-ime.test.js",
+      "result": {
+        "passed": 2,
+        "failed": 0
+      },
+      "viewports": [
+        390,
+        1366
+      ],
+      "assertion": "advanced.nodeName preserves the literal through Composition, Canvas rename, Undo/Redo, F2/touch rename, and subsequent IME composition."
+    }
+  ],
+  "checks": {
+    "npm run test:editor": "PASS, 11/11 test files.",
+    "npm run test:schedule": "PASS, 1/1 test.",
+    "npm run typecheck": "PASS.",
+    "npm run test:web013:migration-gate": "PASS.",
+    "node --check tests/browser/editor-inspector-lifecycle.test.js": "PASS.",
+    "node --check tests/browser/editor-general-fields-ime.test.js": "PASS.",
+    "python3 scripts/check-canonical-plan.py": "PASS.",
+    "python3 scripts/audit-active-plan-point.py": "PASS, cursor 77.44 / WEB-011, next 77.44.7.A, 396 mappings, functional acceptance NOT_CERTIFIED.",
+    "python3 scripts/build-feature-traceability.py --check": "PASS, 396 source mappings.",
+    "git diff --check": "PASS.",
+    "npx wrangler deploy --dry-run": "PASS; Wrangler 4.130.0 read 162 assets, 300.14 KiB / 68.68 KiB gzip.",
+    "npm run deploy:safe": "PASS on retry with Wrangler logs redirected to /tmp and network access; migration gate passed and 2 assets uploaded. Initial attempt blocked before deploy by EROFS writing /home/agent/.config/.wrangler/logs."
+  },
+  "release": {
+    "d1SelectPreflightBeforeAndAfter": {
+      "queryCount": 5,
+      "migrationRows": 34,
+      "latestMigration": "0028_media_archive.sql",
+      "contractChecks": {
+        "domain": 1,
+        "active_default_users_without_membership": 0,
+        "default_settings_missing_or_different": 0,
+        "snapshot_tables": 0
+      },
+      "foreignKeyErrors": 0,
+      "quickCheck": "ok",
+      "rowsWritten": 0,
+      "changedDb": false
+    },
+    "productionD1Migrations": 0,
+    "productionD1DataWrites": 0,
+    "productionR2Changes": 0,
+    "deploymentId": "11dc8722-8748-4e34-830d-3e68e6536461",
+    "workerVersion": "0d66c912-a60c-44e9-90a5-341614c3b8a2",
+    "workerVersionNumber": 3767,
+    "trafficPercent": 100,
+    "health": {
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+      "httpStatus": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "assetHash": {
+      "path": "public/editor-v2/core/property-values.js",
+      "localSha256": "915a85303d5c265be359e21f8852c0ee855893e45aca8d8dc8e5911839573515",
+      "productionSha256": "915a85303d5c265be359e21f8852c0ee855893e45aca8d8dc8e5911839573515",
+      "matches": true
+    },
+    "ci": "Commit status list empty (total_count=0); no CI PASS claimed."
+  },
+  "cost": {
+    "newPaidCostOrDependency": false
+  },
+  "acceptance": "This verifies literal-text routing only; full 77.44.7.A remains OPEN / NOT CERTIFIED, and full Editor manual/physical acceptance remains DEFERRED."
+}

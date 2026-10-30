@@ -83,7 +83,8 @@ for(const width of [390,1366])test(`general Inspector name and Schedule empty te
  await completedStatus.evaluate(el=>el.click());
  assert.equal(await completedStatus.isChecked(),true,'the only selected status cannot be removed');
  const headSelector=`.node[data-node-id="${id}"] > .node-head > span`,emptySelector=`.node[data-node-id="${id}"] .schedule-preview-empty`;
- await exerciseComposition({page:editor,input:name(),selector:headSelector,before:'Mentett elem',final:'Végleges belső név',posts,restart:true,otherInput:empty()});
+ const literalNodeName='var(--creator-colors-primary, #7047eb)';
+ await exerciseComposition({page:editor,input:name(),selector:headSelector,before:'Mentett elem',final:literalNodeName,posts,restart:true,otherInput:empty()});
  await exerciseComposition({page:editor,input:empty(),selector:emptySelector,before:'Mentett adásrend',final:'Végleges üres adásrend',posts,restart:true,otherInput:name()});
  await editor.locator('.inspector-tabs button').nth(1).click();
  if(await group.getAttribute('aria-expanded')==='false')await group.click();
@@ -94,7 +95,7 @@ for(const width of [390,1366])test(`general Inspector name and Schedule empty te
  assert.equal(posts.length,0);
  await name().evaluate(el=>{el.focus();el.dispatchEvent(new CompositionEvent('compositionstart',{bubbles:true}));el.value='Csak compositionend';el.dispatchEvent(new CompositionEvent('compositionend',{bubbles:true}));});
  await editor.waitForFunction(selector=>document.querySelector(selector).textContent==='Csak compositionend',headSelector);
- await editor.keyboard.press('Control+z');assert.equal(await name().inputValue(),'Végleges belső név');
+ await editor.keyboard.press('Control+z');assert.equal(await name().inputValue(),literalNodeName);
  for(const invalid of ['   ','x'.repeat(SCHEDULE_EMPTY_TEXT_MAX+1)]){
   await empty().fill(invalid);assert.equal(await empty().getAttribute('aria-invalid'),'true');
   await name().focus();
@@ -127,7 +128,7 @@ for(const width of [390,1366])test(`general Inspector name and Schedule empty te
  assert.equal(await editor.evaluate(()=>navigator.maxTouchPoints>0),mobile,'390px uses touch-capable mobile emulation');
  if(mobile)await editor.locator(`.layer-rename[data-node-id="${id}"]`).tap();else{await layerRow.focus();await layerRow.press('F2');}
  const layerName=editor.getByRole('textbox',{name:'Réteg neve',exact:true});
- assert.equal(await layerName.inputValue(),'Végleges belső név','touch rename and F2 both open the current internal node name');
+ assert.equal(await layerName.inputValue(),literalNodeName,'touch rename and F2 both open the current internal node name');
  assert.equal(await layerName.getAttribute('aria-required'),'true','layer name is announced as required');
  const renameStatusId=await layerName.getAttribute('aria-describedby');
  assert.ok(renameStatusId,'layer name references its validation feedback');
@@ -142,15 +143,15 @@ for(const width of [390,1366])test(`general Inspector name and Schedule empty te
   return {enterPrevented:enter.defaultPrevented,escapePrevented:escape.defaultPrevented,stillEditing:input.isConnected};
  });
  assert.deepEqual(compositionSubmit,{enterPrevented:true,escapePrevented:true,stillEditing:true},'IME confirmation must not submit or cancel the rename form');
- assert.equal(await editor.locator(`.node[data-node-id="${id}"] > .node-head > span`).textContent(),'Végleges belső név','an unfinished IME candidate cannot update the Page Model or Canvas');
+ assert.equal(await editor.locator(`.node[data-node-id="${id}"] > .node-head > span`).textContent(),literalNodeName,'an unfinished IME candidate cannot update the Page Model or Canvas');
  assert.equal(posts.length,0,'composition does not trigger Save or Publish');
- await layerName.evaluate(input=>{
-  input.dispatchEvent(new CompositionEvent('compositionend',{bubbles:true,data:'Végleges belső név'}));
+ await layerName.evaluate((input,literal)=>{
+  input.dispatchEvent(new CompositionEvent('compositionend',{bubbles:true,data:literal}));
   input.form.requestSubmit();
-  input.value='Végleges belső név';input.dispatchEvent(new InputEvent('input',{bubbles:true,isComposing:false,data:'Végleges belső név'}));
- });
+  input.value=literal;input.dispatchEvent(new InputEvent('input',{bubbles:true,isComposing:false,data:literal}));
+ },literalNodeName);
  assert.equal(await layerName.count(),1,'submission immediately after compositionend waits for the final input');
- assert.equal(await editor.locator(`.node[data-node-id="${id}"] > .node-head > span`).textContent(),'Végleges belső név','the intermediate IME candidate remains outside the Page Model');
+ assert.equal(await editor.locator(`.node[data-node-id="${id}"] > .node-head > span`).textContent(),literalNodeName,'the intermediate IME candidate remains outside the Page Model');
  await editor.evaluate(()=>new Promise(resolve=>requestAnimationFrame(resolve)));
  await layerName.fill('   ');await layerName.press('Enter');
  assert.equal(await layerName.getAttribute('aria-invalid'),'true','an empty inline layer name is rejected');

@@ -376,7 +376,7 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   // whitespace and an empty value survive command, draft Save/reload, and
   // the separate Publish action. The Inspector contract mirrors this route.
   await select(itemId);await editor.locator('.inspector-tabs button').nth(1).click();
-  const literalText='  első sor\n második sor  ';
+  const literalText='  var(--creator-colors-primary, #7047eb)\n második sor  ';
   const literalInput=editor.locator('.plain-text-content[data-property-id="content.text"] textarea');
   await literalInput.fill(literalText);
   assert.equal(await literalInput.inputValue(),literalText);
