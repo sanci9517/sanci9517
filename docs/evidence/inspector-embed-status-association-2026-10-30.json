@@ -22,6 +22,18 @@
     "productionD1Preflight": { "method": "SELECT-only Cloudflare D1 API", "rowsWritten": 0, "changedDb": false, "foreignKeyCheck": "PASS", "quickCheck": "ok" },
     "diffCheck": "PASS"
   },
-  "release": { "commit": null, "push": "PENDING", "deployment": "PENDING", "productionD1Writes": 0, "productionR2Changes": 0 },
+  "release": {
+    "commit": "bdb7e5f7",
+    "branch": "v2/foundation",
+    "push": "FAST_FORWARD_VERIFIED",
+    "githubCi": "SKIPPED_BY_[skip ci]",
+    "deployment": "SUCCESS",
+    "workerVersion": "3525650c-f801-4840-ad8d-d5a92dcc95a4",
+    "trafficPercent": 100,
+    "healthStatus": 200,
+    "liveAsset": { "path": "/editor-v2/ui/creator-embed-inspector.js", "status": 200, "sha256": "51122792e0fd869b2085b1835be1dfca61d722e13ca4e5cb95a86a6fd56239e3", "matchesSource": true },
+    "productionD1Writes": 0,
+    "productionR2Changes": 0
+  },
   "acceptanceBoundary": "This proves only the Creator Embed source status association and the existing tested flows. Full 77.44.7.A remains OPEN / NOT CERTIFIED; manual acceptance stays deferred until the complete Visual Editor is implemented."
 }
