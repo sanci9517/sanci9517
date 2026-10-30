@@ -54,7 +54,10 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||(existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined),args:['--no-sandbox']});
   t.after(async()=>{await browser.close();await new Promise(done=>server.close(done))});
   const base=`http://127.0.0.1:${server.address().port}`,editor=await browser.newPage({viewport:{width:1366,height:900}}),live=await browser.newPage({viewport:{width:1366,height:900}}),errors=[];
-  editor.setDefaultTimeout(6000);live.setDefaultTimeout(6000);live.setDefaultNavigationTimeout(12000);editor.on('pageerror',e=>errors.push(e.message));live.on('pageerror',e=>errors.push(e.message));
+  // This fixture mounts every authored content type and exercises multiple
+  // Inspector/Canvas/save/reload routes; keep the assertion strict while
+  // allowing the same interaction budget as the other full Inspector tests.
+  editor.setDefaultTimeout(15000);live.setDefaultTimeout(15000);editor.setDefaultNavigationTimeout(30000);live.setDefaultNavigationTimeout(30000);editor.on('pageerror',e=>errors.push(e.message));live.on('pageerror',e=>errors.push(e.message));
   const node=(tab,type)=>tab.locator(`.creator-node[data-node-id="${ids[type]}"]`);
   const select=async type=>{await node(editor,type).evaluate(el=>el.click());if(await editor.locator('#rightDock').evaluate(el=>el.classList.contains('closed')))await editor.locator('#openInspector').click();await editor.locator('.inspector-tabs button').nth(1).click()};
   const assertNamedMediaPicker=async picker=>{

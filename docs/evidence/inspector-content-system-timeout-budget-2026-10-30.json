@@ -1,0 +1,41 @@
+{
+  "date": "2026-10-30",
+  "planItem": "77.44.7.A — Inspector edit, Canvas, Save, and published renderer lifecycle",
+  "finding": "The broad authored-content browser lifecycle used a 6-second action timeout and only a 12-second live-page navigation timeout despite mounting every content type and exercising Inspector, Canvas, Save, reload, and Publish. Repeated runs timed out at different steps without a stable failed assertion.",
+  "testHarnessChange": {
+    "file": "tests/browser/editor-content-system.test.js",
+    "before": {"actionTimeoutMs":6000,"liveNavigationTimeoutMs":12000},
+    "after": {"editorAndLiveActionTimeoutMs":15000,"editorAndLiveNavigationTimeoutMs":30000},
+    "rationale": "Align the resource-heavy full lifecycle fixture with the 15-second action and 30-second navigation budgets used by the related Inspector lifecycle suite.",
+    "assertionsChanged": false,
+    "coverageSkipped": false
+  },
+  "tests": {
+    "previousObservedFailures": "Three serial runs timed out at varying points: Canvas locator, initial navigation, and a keyboard press. The assertions were unchanged.",
+    "browserCommand": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-inspector-lifecycle.test.js tests/browser/editor-media-source-switch.test.js tests/browser/editor-legacy-media-parity.test.js",
+    "browser": {
+      "result": "PASS 5/5",
+      "cases": {
+        "editorInspectorLifecycle": "PASS 1/1; 250.4 seconds; selection, Inspector edits, undo, Save/reload, separate Publish, Canvas/public renderer parity",
+        "editorMediaSourceSwitch": "PASS 3/3; 390px and 1366px source switching and failed-commit recovery",
+        "editorLegacyMediaParity": "PASS 1/1; legacy image/video/audio Inspector, Canvas, and Save/Publish"
+      }
+    },
+    "editorContentSystem": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-content-system.test.js",
+      "result": "PASS 1/1; 44.3 seconds",
+      "coverage": "Authored-content Inspector field routes, Canvas changes, accessible validation, Save, reload, and separate Publish"
+    },
+    "editorUnit": {"command":"npm run test:editor","result":"PASS 11/11 files"},
+    "typecheck": {"command":"npm run typecheck","result":"PASS"}
+  },
+  "release": {
+    "runtimeChanged": false,
+    "githubBranch": "v2/foundation",
+    "requiredAction": "Push the test and documentation update as a normal fast-forward; no Worker deployment is needed.",
+    "activeWorkerBeforeDocumentationPush": "b1aedb20-3a8e-4a9e-947a-be9b9cb4ba74",
+    "latestDeploymentBeforeDocumentationPush": "65147336-2668-46c2-a88a-75632c64fbaa",
+    "health": "Runtime release health and asset hashes were verified in inspector-persisted-media-kind-2026-10-30.json. This test-only update does not alter those assets."
+  },
+  "acceptanceBoundary": "This stabilizes the automated full authored-content lifecycle test. It does not certify all of 77.44.7.A or the complete Visual Editor; consolidated manual and physical-device acceptance remains deferred until the complete Editor is implemented."
+}
