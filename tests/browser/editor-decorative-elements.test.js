@@ -36,6 +36,16 @@ test('partial palette types and Divider/Spacer Inspector edits become public onl
  legacyTokenNode.style.background=tokenReference('colors.primary');
  activePage(model).nodes[legacyTokenId]=legacyTokenNode;
  activePage(model).nodes[root].children.push(legacyTokenId);
+ const legacyColorTokens=[
+  {id:'text',value:'#102030'},
+  {id:'surface',value:'#f5f1ea'},
+  {id:'border',value:'#657483'}
+ ].map(({id,value})=>{
+  const nodeId=`legacy-background-token-${id}`,node=createNode('divider',{id:nodeId,parentId:root,name:`Régi ${id} token háttér`});
+  node.style.background=tokenReference(`colors.${id}`);
+  activePage(model).nodes[nodeId]=node;activePage(model).nodes[root].children.push(nodeId);
+  return {id:nodeId,value};
+ });
  const legacySpacerId='legacy-spacer-fixture';
  const legacySpacer=createNode('spacer',{id:legacySpacerId,parentId:root,name:'Régi üres térköz'});
  activePage(model).nodes[legacySpacerId]=legacySpacer;
@@ -57,7 +67,7 @@ test('partial palette types and Divider/Spacer Inspector edits become public onl
   }
   if(url.pathname==='/api/public/pages')return json({ok:true,data:{id:pageId,slug:'test',title:'Test',description:'',content:published.pages[pageId]}});
   if(url.pathname==='/api/public/navigation')return json({ok:true,data:{items:[]}});
-  if(url.pathname==='/api/public/presentation')return json({ok:true,data:{tokens:{colors:{primary:'#1266cc'}}}});
+  if(url.pathname==='/api/public/presentation')return json({ok:true,data:{tokens:{colors:{primary:'#1266cc',text:'#102030',surface:'#f5f1ea',border:'#657483'}}}});
   if(url.pathname==='/api/integrations/twitch/connection')return json({ok:true,data:{connected:false}});
   if(url.pathname.startsWith('/api/'))return json({ok:true,data:{siteName:'Test'}});
   const path=url.pathname==='/p/test'?'/visual-page.html':url.pathname,file=resolve(assetRoot,'.'+path);
@@ -230,6 +240,11 @@ test('partial palette types and Divider/Spacer Inspector edits become public onl
   assert.equal(await publicNode(legacyGradientId).evaluate(el=>getComputedStyle(el).backgroundImage),computedGradient(legacyGradient),`${device} public page preserves the legacy gradient`);
   assert.equal(await canvasNode(legacyTokenId).evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(18, 102, 204)',`${device} Canvas resolves the Brand Kit background token`);
   assert.equal(await publicNode(legacyTokenId).evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(18, 102, 204)',`${device} public page resolves the Brand Kit background token`);
+  for(const token of legacyColorTokens){
+   const expected=asRgb(token.value);
+   assert.equal(await canvasNode(token.id).evaluate(el=>getComputedStyle(el).backgroundColor),expected,`${device} Canvas resolves ${token.id} Brand Kit background token`);
+   assert.equal(await publicNode(token.id).evaluate(el=>getComputedStyle(el).backgroundColor),expected,`${device} public page resolves ${token.id} Brand Kit background token`);
+  }
  }
  assert.deepEqual(editorExternal,[],'escaped legacy URL must not cause a new Canvas resource request');
  await selectStyle(legacyDividerId);
