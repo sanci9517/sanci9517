@@ -61,7 +61,9 @@
     "remote_head_before_change": "5c8aeb4516f8cb60f1d13b054b73e9d1a04424c9",
     "commit": "fd8ea258ff0f79467c7b768a35f17826268f03ed",
     "push": "PASS, normal fast-forward 5c8aeb45..fd8ea258; GitHub ref API confirms v2/foundation at the new commit",
-    "github_ci": "No status checks were returned for the commit; [skip ci] was used. No CI PASS claimed.",
+    "documentation_commit": "fc46117792ff39223efa1fc7165adb7a60c81cce",
+    "documentation_push": "PASS, fast-forward fd8ea258..fc461177; GitHub ref API confirms v2/foundation at fc461177",
+    "github_ci": "No status checks were returned for either commit; [skip ci] was used. No CI PASS claimed.",
     "cloudflare_build": "Build 7836e267-fbcb-4aea-9b8c-9cea697a341e for the exact commit was skipped. Existing production trigger GET verified branch v2/foundation, deploy command npm run deploy:safe, and exclusions docs/**, tests/**, AGENTS.md.",
     "deployment": {
       "method": "npm run deploy:safe; migration safety gate passed and no migration was applied",
@@ -82,6 +84,7 @@
       "/editor-v2/ui/property-controls.js": "049ee129a3649be66a3a860b2173872cbf08d04499f26da212026de83e14beca"
     },
     "asset_hash_verification": "All 8 changed public assets returned HTTP 200 and each live SHA-256 equals its local source.",
+    "docs_only_rollout": "The docs commit was excluded by the verified Cloudflare path_excludes configuration; Cloudflare's newest deployment remained 7d3c57d5-b26a-4f95-b60d-8ac20534c445 at Worker 898baf10-e08e-4923-a72a-adf75b01fd55 (100%). No redundant deployment occurred.",
     "post_deployment_d1_select_only": "PASS; same 34 migrations/latest 0028_media_archive.sql, empty foreign_key_check, quick_check=ok, rows_written=0, changed_db=false."
   },
   "scope_and_safety": {
