@@ -110,6 +110,39 @@ test('every PARTIAL type renders Inspector routes and preserves Save versus Publ
     assert.equal(await nameField.getAttribute('data-property-key'),contract.fields.find(field=>field.id==='advanced.nodeName').key,`${type}: node name key`);
   }
 
+  // The canonical name route is rendered for every type above. Exercise one
+  // real edit end-to-end: the name is metadata shown by the Inspector and
+  // Layers tree, and persists through Save independently of Publish.
+  const nameTarget=nodes.find(({type})=>type==='text');
+  await editor.locator(`.node[data-node-id="${nameTarget.id}"]`).evaluate(el=>el.click());
+  await editor.locator('.inspector-tabs button').first().click();
+  const nodeNameField=inspector.locator('.field[data-property-id="advanced.nodeName"]');
+  const nodeNameInput=nodeNameField.locator('input');
+  const previousName=await nodeNameInput.inputValue();
+  const updatedName='Inspector név útvonal próba';
+  assert.equal(await nodeNameField.getAttribute('data-property-command'),'element.update','node name uses the registered element update command');
+  assert.equal(await nodeNameField.getAttribute('data-property-key'),'name','node name targets the Page Model name key');
+  await nodeNameInput.fill(updatedName);
+  await nodeNameInput.press('Tab');
+  await editor.waitForFunction(({id,name})=>document.querySelector(`#layersTree .layer-entry[data-node-id="${id}"] .layer-row strong`)?.textContent===name,{id:nameTarget.id,name:updatedName});
+  const layerName=()=>editor.locator(`#layersTree .layer-entry[data-node-id="${nameTarget.id}"] .layer-row strong`).textContent();
+  assert.equal(await layerName(),updatedName,'Inspector edit updates the selected name and Layers tree');
+  await editor.locator('#undo').click();
+  assert.equal(await layerName(),previousName,'Undo restores the previous node name');
+  await editor.locator('#redo').click();
+  assert.equal(await layerName(),updatedName,'Redo restores the Inspector node name');
+  await editor.locator('#save').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+  assert.equal(draft.pages[pageId].nodes[nameTarget.id].name,updatedName,'Save persists the Inspector node name to the draft');
+  assert.equal(published.pages[pageId].nodes[nameTarget.id].name,previousName,'draft Save leaves the published node name unchanged');
+  await editor.reload({waitUntil:'domcontentloaded'});
+  const reloadedInspector=editor.locator('#inspectorBody');
+  await editor.locator(`.node[data-node-id="${nameTarget.id}"]`).evaluate(el=>el.click());
+  assert.equal(await reloadedInspector.locator('.field[data-property-id="advanced.nodeName"] input').inputValue(),updatedName,'saved node name survives Editor reload');
+  await editor.locator('#publish').click({noWaitAfter:true});
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
+  assert.equal(published.pages[pageId].nodes[nameTarget.id].name,updatedName,'explicit Publish publishes the Inspector node name');
+
   const asRgb=hex=>{const value=hex.slice(1);return `rgb(${parseInt(value.slice(0,2),16)}, ${parseInt(value.slice(2,4),16)}, ${parseInt(value.slice(4,6),16)})`};
   const editableNodes=nodes.filter(({type})=>type!=='root');
   const colors=editableNodes.map((_,index)=>'#'+((0x102030+index*0x030507)&0xffffff).toString(16).padStart(6,'0'));
