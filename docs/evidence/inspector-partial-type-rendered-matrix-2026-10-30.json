@@ -37,8 +37,8 @@
       "version": "f2365772-ed0d-4db2-adab-9de2e48d44fc",
       "trafficPercent": 100
     },
-    "githubPush": "Pending test/documentation-only fast-forward; runtime must not be redeployed.",
-    "ci": "Not run; no CI PASS claimed.",
+    "githubPush": "Test/evidence commit 7890e59b was pushed by normal fast-forward to v2/foundation; direct remote ref and GitHub file fetch are verified after push.",
+    "ci": "Not run; commit includes [skip ci] and CI PASS is not claimed.",
     "productionDeployment": "NOT REQUIRED; no runtime source changed.",
     "productionD1Writes": 0,
     "productionR2Changes": 0
