@@ -31,6 +31,8 @@ test('legacy image video audio share guarded media URLs in Inspector Canvas and 
     ids[key]=model.selection.primaryId;
     if(key.startsWith('corrupt'))originalCorrupt[key]=structuredClone(activePage(model).nodes[ids[key]].props);
   }
+  execute(model,{type:'element.add',payload:{type:'video',parentId:rootId,props:{src:'/fixture.webm',poster:'javascript:alert(1)'}}});
+  ids.badPoster=model.selection.primaryId;
   execute(model,{type:'element.add',payload:{type:'image',parentId:rootId,props:{src:'',alt:''}}});
   ids.libraryImage=model.selection.primaryId;
   const mediaId='00000000-0000-4000-8000-000000000123',videoMediaId='00000000-0000-4000-8000-000000000124';
@@ -167,6 +169,21 @@ test('legacy image video audio share guarded media URLs in Inspector Canvas and 
   await canvasNode(ids.badImage).locator('.media-preview img').waitFor();
   assert.equal(await inspector.locator('.property-validation[role="status"]:not(:empty)').count(),0,'warning disappears once URL is repaired');
   assert.ok(!(await invalidSource.getAttribute('aria-describedby')||'').split(/\s+/).includes(invalidSourceWarningId),'resolved warnings are removed from the field description relationship');
+  await canvasNode(ids.badPoster).evaluate(el=>el.click());
+  await editor.getByRole('tab',{name:'Tartalom és szöveg'}).click();
+  const posterField=inspector.getByRole('textbox',{name:'Videó borítókép URL'});
+  const posterWarning=inspector.locator('.property-validation[role="status"]:not(:empty)');
+  assert.equal(await posterWarning.count(),1,'unsafe video poster URL receives a warning');
+  const posterWarningId=await posterWarning.getAttribute('id');
+  await assertDescribes(posterField,posterWarning,'unsafe video poster URL');
+  const posterPicker=inspector.locator('.editor-media-picker').nth(1).getByRole('button',{name:'Médiatár megnyitása'});
+  await assertDescribes(posterPicker,posterWarning,'unsafe video poster media picker');
+  await posterField.fill('/fixture.svg');await posterField.press('Tab');
+  await canvasNode(ids.badPoster).locator('.media-preview video').waitFor();
+  assert.equal(await inspector.locator('.property-validation[role="status"]:not(:empty)').count(),0,'poster warning clears after a valid repair');
+  assert.ok(!(await posterField.getAttribute('aria-describedby')||'').split(/\s+/).includes(posterWarningId),'repaired poster field no longer references stale warning');
+  await canvasNode(ids.badImage).evaluate(el=>el.click());
+  await editor.getByRole('tab',{name:'Tartalom és szöveg'}).click();
   await inspector.getByRole('textbox',{name:'Kép leírása (alt)'}).fill('Javított képleírás');
   await inspector.getByRole('textbox',{name:'Kép leírása (alt)'}).press('Tab');
   await inspector.getByRole('textbox',{name:'Képaláírás (opcionális)'}).fill('A javított kép képaláírása');
@@ -230,6 +247,9 @@ test('legacy image video audio share guarded media URLs in Inspector Canvas and 
   assert.equal(await repaired.locator('img').getAttribute('alt'),'Javított képleírás');
   assert.equal(await repaired.locator('figcaption').textContent(),'A javított kép képaláírása');
   assert.equal(await repaired.locator('img').evaluate(el=>getComputedStyle(el).objectFit),'contain');
+  const publishedPoster=publishedNode(ids.badPoster);
+  assert.equal(await publishedPoster.evaluate(el=>el.tagName.toLowerCase()),'video');
+  assert.equal(await publishedPoster.evaluate(el=>new URL(el.getAttribute('poster'),location.href).pathname),'/fixture.svg','the repaired legacy poster is published only with the explicit Publish action');
 
   // The existing R2 image picker must also work for legacy image nodes.
   // Library selection updates only the draft and uses the private Admin route
