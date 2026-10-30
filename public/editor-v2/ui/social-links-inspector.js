@@ -1,6 +1,6 @@
 import {createCompositionInputs} from './composition-inputs.js';
 /* Contextual Social Links Inspector. All edits use the Page Model command callback. */
-import {SOCIAL_PLATFORMS,SOCIAL_VARIANTS,SOCIAL_LAYOUTS,defaultSocialLinks,defaultSocialEntry} from '../core/social-links.js';
+import {SOCIAL_PLATFORMS,SOCIAL_VARIANTS,SOCIAL_LAYOUTS,socialLinkUrl,defaultSocialLinks,defaultSocialEntry} from '../core/social-links.js';
 
 export function renderSocialLinksInspector(node,update,{pending=()=>{}}={}){
  const composition=createCompositionInputs(pending);
@@ -42,11 +42,16 @@ export function renderSocialLinksInspector(node,update,{pending=()=>{}}={}){
   for(const [id,text] of choices){const option=document.createElement('option');option.value=id;option.textContent=text;input.append(option)}
   input.value=value;input.onchange=()=>{if(handler(input.value)===false)input.value=value;};wrap.append(input);return wrap;
  };
- const text=(key,label,value,handler,placeholder='')=>{
+ const text=(key,label,value,handler,placeholder='',validate=null)=>{
   const wrap=route(document.createElement('label'),key);wrap.className='field social-link-field';wrap.append(document.createTextNode(label));
   const input=document.createElement('input');input.type='text';input.value=String(value??'');input.placeholder=placeholder;
   input.disabled=Boolean(node.locked);input.setAttribute('aria-label',label);
-  wrap.append(input,composition.attach(input,handler));return wrap;
+  const validation=validate?document.createElement('small'):null;
+  if(validation){validation.id='social-link-validation-'+crypto.randomUUID();validation.className='property-validation';validation.setAttribute('role','status');
+   const sync=()=>{const empty=!input.value.trim(),valid=empty||validate(input.value);validation.textContent=valid?'': 'Adj meg ehhez a platformhoz biztonságos, érvényes hivatkozást.';validation.classList.toggle('invalid',!valid);};
+   input.setAttribute('aria-describedby',[input.getAttribute('aria-describedby'),validation.id].filter(Boolean).join(' '));input.addEventListener('input',sync);sync();wrap.append(input,composition.attach(input,handler),validation);
+  }else wrap.append(input,composition.attach(input,handler));
+  return wrap;
  };
  const toggle=(key,label,checked,handler)=>{
   const wrap=route(document.createElement('label'),key);wrap.className='inspector-toggle';
@@ -80,7 +85,7 @@ export function renderSocialLinksInspector(node,update,{pending=()=>{}}={}){
    return change({platform:next,label:current.label===previous?.label?selected.label:current.label,newWindow:next==='email'?false:current.newWindow});
   }));
   item.append(text('items[].label','Felirat',entry.label,(value,options)=>change({label:value},options),'Pl. Nézz meg Twitch-en'));
-  item.append(text('items[].href','Hivatkozás URL',entry.href,(value,options)=>change({href:value.trim()},options),entry.platform==='email'?'mailto:nev@example.com':'https://...'));
+  item.append(text('items[].href','Hivatkozás URL',entry.href,(value,options)=>change({href:value.trim()},options),entry.platform==='email'?'mailto:nev@example.com':'https://...',value=>Boolean(socialLinkUrl(value,entry.platform))));
   item.append(toggle('items[].newWindow','Megnyitás új lapon',entry.newWindow,value=>change({newWindow:value})));
   const reorder=document.createElement('div');reorder.className='structured-actions social-link-actions';
   reorder.append(

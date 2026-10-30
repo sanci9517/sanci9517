@@ -1,0 +1,24 @@
+{
+  "date": "2026-10-30",
+  "planItem": "77.44.7.A — Social Links Inspector property and publish lifecycle",
+  "finding": "The Social Links URL editor documented that bad destinations would be stopped at publication, but the URL input was not associated with platform-specific validation feedback.",
+  "change": "Reuse the canonical socialLinkUrl validator for per-row inline feedback. Each URL control points to a unique live status. Empty hrefs remain draft-allowed and do not block other Inspector actions; non-empty invalid destinations show guidance. Valid correction clears the message.",
+  "openSourceReview": "Reused the project-owned socialLinkUrl allowlist and the existing Composition/IME accessible-feedback pattern. No external code or dependency added.",
+  "tests": {
+    "browserCommand": "CHROMIUM_PATH=/usr/bin/chromium node --test tests/browser/editor-social-links.test.js",
+    "browser": { "passed": 2, "failed": 0, "viewports": [390, 1366] },
+    "assertions": ["unique aria-describedby target", "invalid javascript URL feedback", "valid correction clears feedback", "empty draft URL does not block creating/editing rows", "existing IME and Save/Publish lifecycle"],
+    "typecheck": "PASS",
+    "editorUnit": { "passed": 11, "failed": 0 },
+    "migrationSafetyGate": "PASS",
+    "planContract": { "passed": 13, "failed": 0 },
+    "canonicalPlan": "PASS",
+    "activePointAudit": "PASS; 77.44.7.A remains NOT_CERTIFIED",
+    "traceability": { "passed": 396, "acceptance": "NOT_CERTIFIED" },
+    "wranglerDryRun": { "pass": true, "version": "4.130.0", "assets": 161, "uploadKiB": 296.93 },
+    "productionD1Preflight": { "method": "SELECT-only Cloudflare D1 query API", "rowsWritten": 0, "changedDb": false, "foreignKeyCheck": "PASS", "quickCheck": "ok" },
+    "diffCheck": "PASS"
+  },
+  "release": { "commit": null, "push": "PENDING", "deployment": "PENDING", "productionD1Writes": 0, "productionR2Changes": 0 },
+  "acceptanceBoundary": "This proves the Social Links URL field feedback and the listed browser flows. Full 77.44.7.A remains OPEN / NOT CERTIFIED; manual acceptance stays deferred until the complete Visual Editor is implemented."
+}

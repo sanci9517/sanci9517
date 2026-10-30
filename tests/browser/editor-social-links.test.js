@@ -97,6 +97,16 @@ for(const width of [390,1366])test(`Social Links Inspector keeps keyboard focus,
   await add();assert.equal(await panel.locator('.social-link-item').count(),2,'adding a row cannot discard a pending composition');
  }});
  await exerciseComposition({page:editor,input:item(1).getByRole('textbox',{name:'Hivatkozás URL'}),selector:twitchSelector+' .visual-social-link',attribute:'href',before:'https://www.twitch.tv/example',final:finalTwitchUrl,posts,restart:true});
+ const hrefField=item(1).getByRole('textbox',{name:'Hivatkozás URL'});
+ const describedBy=(await hrefField.getAttribute('aria-describedby')).split(/\s+/);
+ const validation=item(1).locator('small.property-validation');
+ const validationId=await validation.getAttribute('id');
+ assert.ok(validationId&&describedBy.includes(validationId),'social URL control points to its platform validation message');
+ assert.equal(await editor.locator(`#${validationId}`).count(),1,'social validation target exists exactly once');
+ await hrefField.fill('javascript:alert(1)');
+ assert.match(await validation.textContent(),/biztonságos|érvényes/i);
+ await hrefField.fill(finalTwitchUrl);
+ assert.equal(await validation.textContent(),'','valid social URL correction clears the validation message');
  // Full-render controls must use the freshly edited row rather than the
  // originally captured items array or its original platform default label.
  await item(1).getByRole('combobox',{name:'Platform'}).selectOption('website');
