@@ -122,6 +122,17 @@ test('every PARTIAL type renders Inspector routes and preserves Save versus Publ
   const updatedName='Inspector név útvonal próba';
   assert.equal(await nodeNameField.getAttribute('data-property-command'),'element.update','node name uses the registered element update command');
   assert.equal(await nodeNameField.getAttribute('data-property-key'),'name','node name targets the Page Model name key');
+  const initialVersion=version;
+  await nodeNameInput.fill('');
+  await nodeNameInput.press('Tab');
+  assert.equal(await nodeNameInput.getAttribute('aria-invalid'),'true','empty element name is marked invalid');
+  const nameValidation=nodeNameField.locator('.property-validation');
+  assert.equal(await nameValidation.textContent(),'Az elem neve nem lehet üres.','empty element name provides an actionable validation message');
+  assert.equal(await nodeNameInput.getAttribute('aria-describedby'),await nameValidation.getAttribute('id'),'assistive technology is linked to the validation message');
+  assert.deepEqual(editorErrors,[],'invalid name does not raise an uncaught browser error');
+  await editor.locator('#save').click();
+  assert.equal(version,initialVersion,'invalid node name blocks draft Save');
+  assert.equal(await nodeNameInput.getAttribute('aria-invalid'),'true','blocked Save keeps the invalid field visible');
   await nodeNameInput.fill(updatedName);
   await nodeNameInput.press('Tab');
   await editor.waitForFunction(({id,name})=>document.querySelector(`#layersTree .layer-entry[data-node-id="${id}"] .layer-row strong`)?.textContent===name,{id:nameTarget.id,name:updatedName});

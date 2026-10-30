@@ -1154,9 +1154,11 @@ function renderInspector(){
     inspector.append(renderLayoutInspector(node));
     const nameProperty=getProperty('advanced.nodeName');
     const nameField=field(nameProperty.label,node.name,(value,options)=>{
+      if(!String(value??'').trim())throw new Error('Az elem neve nem lehet üres.');
       const normalized=normalizeInspectorValue(nameProperty,value);
       const saved=commitInspectorText(nameProperty.command,{nodeId:node.id,patch:{[nameProperty.key]:normalized}},options);
-      if(saved)headerName.textContent=normalized;
+      if(!saved)throw new Error('Az elem neve nem módosítható.');
+      headerName.textContent=normalized;
       return saved;
     },isNodeEffectivelyLocked(page(),node),false,composition,nameProperty);
     nameField.dataset.propertyId=nameProperty.id;

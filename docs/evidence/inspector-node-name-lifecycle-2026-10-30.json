@@ -1,24 +1,34 @@
 {
   "date": "2026-10-30",
   "workItem": "77.44.7.A — Inspector node name lifecycle",
-  "finding": "The advanced.nodeName field was verified as visible and routed to element.update/name across all PARTIAL element types, but its full Inspector edit-to-Save/Publish lifecycle lacked browser evidence.",
-  "change": "Extended the PARTIAL Inspector browser test to edit a text element name, verify the Layers tree, Undo/Redo, draft Save, editor reload, and explicit Publish while asserting draft Save leaves the published document unchanged.",
+  "finding": "The advanced.nodeName field was visible and routed to element.update/name across PARTIAL types, but an empty value threw from its event handler instead of presenting field validation. Its full edit-to-Save/Publish lifecycle also lacked browser evidence.",
+  "change": "Connected the Inspector node-name field to the existing Composition/IME validation surface: empty names show an actionable, screen-reader-associated error and remain invalid so Save/Publish is blocked. Extended the browser test to confirm no uncaught browser error, rejected Save, corrected name, Layers tree update, Undo/Redo, draft Save, editor reload, and explicit Publish while Save keeps the published document unchanged.",
   "tests": {
     "command": "CHROMIUM_PATH=/usr/bin/chromium node --test tests/browser/editor-inspector-partial-types.test.js",
-    "chromium": { "pass": 1, "fail": 0, "durationSeconds": 389.2 },
+    "chromium": { "pass": 1, "fail": 0, "durationSeconds": 467.8 },
     "scope": [
       "Inspector registry routes and help disclosures for all 44 PARTIAL types",
       "advanced.nodeName command/key route metadata",
       "name edit updates Layers tree",
       "Undo and Redo restore the corresponding node names",
+      "empty name displays validation and blocks Save without an uncaught browser error",
       "draft Save leaves published document unchanged",
       "saved name survives editor reload",
       "explicit Publish updates the published document",
       "existing background, responsive visibility, hover/focus, and Save/Publish lifecycle coverage"
-    ]
+    ],
+    "typecheck": "PASS",
+    "editorUnit": { "pass": 11, "fail": 0 },
+    "planContract": { "pass": 13, "fail": 0 },
+    "canonicalPlan": "PASS",
+    "activePointAudit": "PASS; 77.44.7.A remains NOT_CERTIFIED",
+    "traceability": { "pass": 396, "acceptance": "NOT_CERTIFIED" },
+    "migrationSafetyGate": "PASS",
+    "wranglerDryRun": { "status": "PASS", "wrangler": "4.130.0", "assets": 161, "uploadKiB": 296.93, "migrationApply": false },
+    "productionD1Preflight": { "method": "SELECT-only Cloudflare D1 query API", "appliedMigrations": 34, "rowsRead": 34, "rowsWritten": 0, "changedDb": false }
   },
-  "runtimeChange": false,
-  "release": "NOT_APPLICABLE_TEST_AND_DOCUMENTATION_ONLY",
+  "runtimeChange": true,
+  "release": "PENDING_VALIDATED_FAST_FORWARD_PUSH_AND_SAFE_DEPLOY",
   "production": { "deploymentPerformed": false, "d1Migrations": 0, "d1Writes": 0, "r2Changes": 0 },
   "acceptance": { "77.44.7.A": "OPEN_NOT_CERTIFIED", "manualAndPhysicalDevice": "DEFERRED_UNTIL_COMPLETE_VISUAL_EDITOR" }
 }
