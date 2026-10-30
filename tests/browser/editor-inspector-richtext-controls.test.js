@@ -44,6 +44,8 @@ test('typed Inspector controls and link selection work with real browser DOM at 
       const {importRichTextClipboard}=await import('/editor-v2/core/richtext-import.js');
       const {normalizeRichText}=await import('/editor-v2/core/schema.js');
       const host=document.createElement('div');document.body.append(host);
+      const responsiveReset=document.createElement('button');responsiveReset.type='button';responsiveReset.className='property-reset';responsiveReset.textContent='Öröklés visszaállítása';host.append(responsiveReset);
+      const responsiveResetHeight=responsiveReset.getBoundingClientRect().height;
       const helpLengths=listProperties().map(property=>{
         const field=renderPropertyInput(property,property.label,'16px',()=>{});
         const description=field.querySelector('.property-help')?.textContent||'';
@@ -265,7 +267,7 @@ test('typed Inspector controls and link selection work with real browser DOM at 
         multiSelection,multiBlocks:multiAligned.blocks,
         listType:parsedList.blocks[0].type,listText:parsedList.blocks[0].items[0].children.map(x=>x.text).join(''),
         hasHorizontalOverflow:document.documentElement.scrollWidth>document.documentElement.clientWidth+1,inspectorBookmarkKeepsDirection,fieldMatrix,invalidMatrix,numericStep,scaleNumericStep,scaleInvalidState,scaleRecoveryState,
-        assetTouchTargets:{openButton:assetOpenButtonHeight,search:assetSearchHeight}};
+        assetTouchTargets:{openButton:assetOpenButtonHeight,search:assetSearchHeight},responsiveResetHeight};
     });
     assert.deepEqual(data.edits,['#abcdef','8px 12px 8px 8px']);
     assert.equal(data.inspectorBookmarkKeepsDirection,true);
@@ -278,6 +280,7 @@ test('typed Inspector controls and link selection work with real browser DOM at 
 
     assert.ok(data.assetInitiallyClosed&&data.assetExpanded&&data.assetRejected&&data.assetClosedAfterSelection&&data.assetReopened,'asset picker must expose its state, preserve rejected edits, and reopen after selection');
     if(width<=850)assert.ok(data.assetTouchTargets.openButton>=44&&data.assetTouchTargets.search>=44,`mobile asset picker controls must meet the 44px touch target contract: ${JSON.stringify(data.assetTouchTargets)}`);
+    if(width<=850)assert.ok(data.responsiveResetHeight>=44,`mobile per-property reset must meet the 44px touch target contract: ${data.responsiveResetHeight}px`);
     assert.equal(data.latestSearchWins,true,'late search responses must not replace the newest Media results');
     assert.ok(Object.keys(data.presetResults).length>=20);
     assert.ok(data.helpLengths.length>=45);
