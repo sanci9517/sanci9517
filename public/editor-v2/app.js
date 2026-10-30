@@ -2,7 +2,7 @@ import {hasContentProfile} from './core/content-profiles.js?v=20261025-inspector
 import {createDocument,createPage,getNode,NODE_TYPES,canContain,normalizeRichText} from './core/schema.js';
 import {createEditorState,activePage,selectedNodes,setSelection,markSaved} from './core/state.js';
 import {execute,executeCoalesced,executeBatch} from './core/commands.js?v=20261025-inspector-lifecycle-contract';
-import {applyNodeStyle,getNodeGeometry,resolveNodeStyle} from './core/canvas-engine.js?v=20261030-legacy-background';
+import {applyNodeStyle,getNodeGeometry,resolveNodeStyle} from './core/canvas-engine.js?v=20261030-legacy-gradient';
 import {computeCanvasMinHeight} from './core/canvas-extent.js';
 import {measureCanvasWorkspace} from './core/canvas-workspace.js';
 import {hasResponsiveOverride,resolveResponsiveValue} from './core/responsive.js';

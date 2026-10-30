@@ -8,7 +8,7 @@
 
 import { resolveResponsiveValue } from './responsive.js';
 import { contentDefaults } from './authored-content.js';
-import { backgroundImageValue, MEDIA_ASSET_ID } from './background-asset.js';
+import { backgroundImageValue, MEDIA_ASSET_ID } from './background-asset.js?v=20261030-legacy-gradient';
 
 export const STYLE_MAP = Object.freeze({
   width: 'width',
@@ -134,7 +134,7 @@ export function applyNodeStyle(element, node, device = 'desktop') {
     if (!cssProperty || value === undefined || value === null || value === '') continue;
     element.style[cssProperty] = String(value);
   }
-  element.style.backgroundImage=backgroundImageValue(style,{editor:true});
+  element.style.backgroundImage=backgroundImageValue(style,{editor:true,legacyBackground:rootStyleEnabled});
   if(MEDIA_ASSET_ID.test(String(style.backgroundAssetId||''))){
     if(!style.backgroundSize)element.style.backgroundSize='cover';
     if(!style.backgroundPosition)element.style.backgroundPosition='center center';

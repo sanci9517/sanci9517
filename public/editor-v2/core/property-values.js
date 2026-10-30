@@ -1,6 +1,6 @@
 import { validatedLinkHref } from './richtext-links.js';
 import {parseTokenReference,compatibleTokens} from './design-tokens.js';
-import {MEDIA_ASSET_ID} from './background-asset.js';
+import {MEDIA_ASSET_ID} from './background-asset.js?v=20261030-legacy-gradient';
 /*
  * Typed Inspector value validation. This module deliberately covers only the
  * controls the current Canvas/Renderer property map can actually consume.

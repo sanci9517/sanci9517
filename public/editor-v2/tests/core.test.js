@@ -20,6 +20,7 @@ import { getSchedulePreviewItems } from '../core/schedule-preview.js';
 import { computeCanvasMinHeight } from '../core/canvas-extent.js';
 import { measureCanvasWorkspace } from '../core/canvas-workspace.js';
 import { needsRelativeOffsetPosition,legacyBackgroundColor,applyNodeStyle } from '../core/canvas-engine.js';
+import {legacyBackgroundGradient} from '../core/background-asset.js';
 import { validatePublishDocument } from '../../../src/core/editor-validation.ts';
 
 test('canvas minimum height follows content below the default page extent', () => {
@@ -50,6 +51,16 @@ test('legacy background fallback accepts only resource-free literal colors',()=>
  const legacyRoot={type:'root',style:{background:'red'},responsive:{},metadata:{}};
  const rootElement={style:{}};applyNodeStyle(rootElement,legacyRoot);assert.equal(rootElement.style.background,undefined,'legacy root appearance is not enabled implicitly');
  const enabledRoot={...legacyRoot,metadata:{rootStyleVersion:1}},enabledElement={style:{}};applyNodeStyle(enabledElement,enabledRoot);assert.equal(enabledElement.style.background,'red');
+});
+
+test('legacy background gradients promote only fixed tokens and respect Inspector none',()=>{
+ const gradient='linear-gradient(135deg, #7047eb 0%, #17b8a6 100%)';
+ assert.equal(legacyBackgroundGradient(gradient),gradient);
+ for(const value of ['none','linear-gradient(red,blue)','linear-gradient(90deg,red,blue)','url(https://example.invalid/x)','var(--gradient)'])assert.equal(legacyBackgroundGradient(value),'',value);
+ const legacy={id:'gradient',type:'divider',style:{background:gradient},responsive:{}};
+ const canvas={style:{}};applyNodeStyle(canvas,legacy);assert.equal(canvas.style.backgroundImage,gradient);
+ const overridden={...legacy,style:{...legacy.style,backgroundImage:'none'}},overriddenCanvas={style:{}};applyNodeStyle(overriddenCanvas,overridden);assert.equal(overriddenCanvas.style.backgroundImage,'none');
+ const disabledRoot={...legacy,type:'root'},disabledRootCanvas={style:{}};applyNodeStyle(disabledRootCanvas,disabledRoot);assert.equal(disabledRootCanvas.style.backgroundImage,'none','versionless root still requires opt-in for legacy styles');
 });
 
 test('Rich Text schema normalizes Office-friendly tables, safe inline styles and extended semantic marks',()=>{

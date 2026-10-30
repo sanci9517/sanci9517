@@ -1,5 +1,5 @@
 import {GRADIENTS} from './state-styles.js';
-import {MEDIA_ASSET_ID} from './background-asset.js';
+import {MEDIA_ASSET_ID} from './background-asset.js?v=20261030-legacy-gradient';
 /*
  * A deliberately narrow, versioned appearance snapshot. Content, element
  * size, position and container layout are not part of this clipboard: applying

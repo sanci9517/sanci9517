@@ -37,6 +37,7 @@ PARTIAL = {
 }
 # Narrow references for requirements whose evidence is outside their module shell.
 EXACT_SOURCES = {
+ 'EDT-034':['public/editor-v2/core/canvas-engine.js','public/editor-v2/core/background-asset.js','public/assets/page-renderer.js'],
  'EDT-015':['public/editor-v2/core/capability-matrix.js','public/editor-v2/core/schema.js','public/editor-v2/app.js'],
  'EDT-021':['public/editor-v2/core/property-registry.js','public/editor-v2/core/capability-matrix.js'],
  'EDT-022':['public/editor-v2/core/property-values.js','public/editor-v2/ui/property-controls.js','public/editor-v2/core/content-profiles.js','src/core/editor-validation.ts'],
