@@ -19,7 +19,8 @@ export function renderCodeSnippetInspector(node,update,{pending=()=>{}}={}){
   const input=document.createElement(multi?'textarea':'input');
   if(!multi)input.type='text';else{input.rows=12;input.spellcheck=false;input.wrap='off';input.className='code-snippet-source'}
   input.setAttribute('aria-label',name);input.value=value??'';input.disabled=Boolean(node.locked);
-  const error=document.createElement('span');error.className='property-validation';error.setAttribute('role','status');
+  const error=document.createElement('span');error.id='code-snippet-validation-'+crypto.randomUUID();error.className='property-validation';error.setAttribute('role','status');
+  input.setAttribute('aria-describedby',[input.getAttribute('aria-describedby'),error.id].filter(Boolean).join(' '));
   let committed=input.value,composing=false,dirty=false,revision=0,typingGroup=crypto.randomUUID();
   const clear=()=>{input.removeAttribute('aria-invalid');error.textContent='';};
   drafts.add(()=>!composing&&!dirty&&!input.hasAttribute('aria-invalid'));

@@ -53,6 +53,13 @@ for(const width of [390,1366])test(`Code Inspector IME, inert copy and independe
  await editor.locator('.inspector-tabs button').nth(1).click();
  const inspector=editor.locator('.code-snippet-inspector');
  assert.equal(await inspector.locator('h3').textContent(),'Kód- és parancsblokk');
+ for(const name of ['Blokk címe','Kód vagy parancs szövege']){
+  const input=inspector.getByRole('textbox',{name});
+  const describedBy=(await input.getAttribute('aria-describedby')).split(/\s+/);
+  const validation=inspector.locator('#'+describedBy.at(-1));
+  assert.equal(await validation.count(),1,`${name} validation feedback has one associated target`);
+  assert.equal(await validation.getAttribute('role'),'status');
+ }
  const codeRoutes=await inspector.locator('[data-inspector-command]').evaluateAll(rows=>rows.map(row=>({command:row.dataset.inspectorCommand,key:row.dataset.inspectorKey})));
  assert.deepEqual(codeRoutes.map(route=>route.key),['props.codeSnippet.title','props.codeSnippet.language','props.codeSnippet.theme','props.codeSnippet.showLineNumbers','props.codeSnippet.wrapLines','props.codeSnippet.code']);
  assert.ok(codeRoutes.every(route=>route.command==='element.update'),'each Code field exposes its actual element.update route');
@@ -171,7 +178,8 @@ for(const width of [390,1366])test(`Code Inspector IME, inert copy and independe
   document.querySelector('#inspectorBody').append(root);
   const code=root.querySelector('textarea'),title=root.querySelector('input[type="text"]');
   code.focus();code.value='Elutasított forrás';code.dispatchEvent(new InputEvent('input',{bubbles:true}));
-  const rejected=code.getAttribute('aria-invalid')==='true'&&!guard()&&!accepted;
+  const error=document.getElementById(code.getAttribute('aria-describedby').split(/\s+/).at(-1));
+  const rejected=code.getAttribute('aria-invalid')==='true'&&error?.getAttribute('role')==='status'&&error.textContent==='A módosítás nem alkalmazható.'&&!guard()&&!accepted;
   code.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true}));
   const escaped=code.value==='Mentett forrás'&&guard();
   allow=true;code.value='Jóváhagyott forrás';code.dispatchEvent(new InputEvent('input',{bubbles:true}));
