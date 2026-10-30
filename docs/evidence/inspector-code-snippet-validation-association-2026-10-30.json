@@ -1,0 +1,35 @@
+{
+  "date": "2026-10-30",
+  "planItem": "77.44.7.A — Code Snippet Inspector property feedback and publication lifecycle",
+  "finding": "Code Snippet title/source fields exposed aria-invalid and a visible role=status message when the Page Model update was rejected, but aria-describedby did not connect the invalid field to that message.",
+  "change": "Assign each field validation message a unique DOM id and append it to the input's aria-describedby tokens. Existing command rejection, composition, draft guards and Save/Publish behavior are unchanged.",
+  "openSourceReview": "Reused the repository-owned accessible validation association patterns in authored content, Social Links and nodeName Inspectors plus native aria-describedby semantics. This targeted defect required no external code or dependency.",
+  "tests": {
+    "browserCommand": "CHROMIUM_PATH=/usr/bin/chromium node --test tests/browser/editor-code-snippet.test.js",
+    "browser": { "passed": 2, "failed": 0, "viewports": [390, 1366] },
+    "assertions": ["title and source each resolve to a unique role=status target", "rejected Page Model update reports the linked validation message", "IME final input, Escape, Undo/Redo", "draft Save leaves published source unchanged", "separate Publish, inert escaped code rendering and copy", "mobile layout stays within viewport"],
+    "typecheck": "PASS",
+    "editorUnit": { "passed": 156, "failed": 0 },
+    "migrationSafetyGate": "PASS",
+    "canonicalPlan": "PASS",
+    "activePointAudit": "PASS; 77.44.7.A remains OPEN / NOT CERTIFIED",
+    "traceability": { "passed": 396, "acceptance": "NOT_CERTIFIED" },
+    "wranglerDryRun": { "pass": true, "version": "4.130.0", "assets": 161, "uploadKiB": 296.93, "gzipKiB": 67.81 },
+    "productionD1Preflight": { "method": "SELECT-only Cloudflare D1 query API", "migrationRows": 34, "rowsWritten": 0, "changedDb": false, "foreignKeyCheck": "PASS", "quickCheck": "ok" },
+    "diffCheck": "PASS"
+  },
+  "release": {
+    "commit": "6c481eed3cea76b4bda2fb08d760116a24fbe9df",
+    "branch": "v2/foundation",
+    "push": "FAST_FORWARD_VERIFIED",
+    "githubCi": "SKIPPED_BY_[skip ci]",
+    "deployment": "86e6c7c2-6d17-4d38-afee-a4ae09a507cc",
+    "workerVersion": "5b352cfa-d333-46e8-946a-f96940093520",
+    "trafficPercent": 100,
+    "healthStatus": 200,
+    "liveAsset": { "path": "/editor-v2/ui/code-snippet-inspector.js", "status": 200, "sha256": "3cb57b29abc1d3098c761172ed752726e5ede1af54705a4aa330206d8bd5589a", "matchesSource": true },
+    "productionD1Writes": 0,
+    "productionR2Changes": 0
+  },
+  "acceptanceBoundary": "This proves the listed Code Snippet field validation and browser lifecycle only. Full 77.44.7.A / 79 element × 68 property acceptance remains OPEN / NOT CERTIFIED; manual/physical acceptance remains deferred until the complete Visual Editor is implemented."
+}
