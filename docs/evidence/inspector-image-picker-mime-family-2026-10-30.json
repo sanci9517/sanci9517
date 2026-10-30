@@ -2,13 +2,15 @@
   "plan_item": "77.44.7.A",
   "title": "Image-only Inspector media pickers enforce the supported raster MIME family",
   "date": "2026-10-30",
-  "status": "IMPLEMENTED_AND_LOCALLY_VERIFIED_RELEASE_PENDING",
+  "status": "IMPLEMENTED_TESTED_AND_DEPLOYED",
   "defect": {
     "before": "Image-only Inspector pickers did not request an image MIME filter, and the media listing endpoint did not support the image family. Audio and video files could appear in image/background/card/poster pickers and be stored in image-only fields.",
     "fix": "Share the existing supported image MIME contract (PNG, JPEG, GIF, WebP) between the Worker media route and Editor pickers. The listing endpoint applies a parameterized allowlist filter, and every image-only Inspector picker requests that family. Audio and video pickers retain their existing family filters.",
     "third_party_review": "No external implementation was needed: this behavior is defined by the repository's upload validation and existing IMAGE_MIMES contract; reusing the project contract avoids a new dependency."
   },
   "changed_files": [
+    "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+    "docs/evidence/inspector-image-picker-mime-family-2026-10-30.json",
     "src/routes/admin/media.ts",
     "public/editor-v2/core/authored-content.js",
     "public/editor-v2/core/authored-content.d.ts",
@@ -57,11 +59,30 @@
     "local_branch": "work (preserved; no branch switch)",
     "remote_target": "v2/foundation",
     "remote_head_before_change": "5c8aeb4516f8cb60f1d13b054b73e9d1a04424c9",
-    "commit": "PENDING",
-    "push": "PENDING",
-    "ci": "PENDING; no CI PASS claimed",
-    "deployment": "PENDING; current previously verified 100% Worker is b1aedb20-3a8e-4a9e-947a-be9b9cb4ba74 on deployment 65147336-2668-46c2-a88a-75632c64fbaa",
-    "production_health_and_asset_hashes": "PENDING"
+    "commit": "fd8ea258ff0f79467c7b768a35f17826268f03ed",
+    "push": "PASS, normal fast-forward 5c8aeb45..fd8ea258; GitHub ref API confirms v2/foundation at the new commit",
+    "github_ci": "No status checks were returned for the commit; [skip ci] was used. No CI PASS claimed.",
+    "cloudflare_build": "Build 7836e267-fbcb-4aea-9b8c-9cea697a341e for the exact commit was skipped. Existing production trigger GET verified branch v2/foundation, deploy command npm run deploy:safe, and exclusions docs/**, tests/**, AGENTS.md.",
+    "deployment": {
+      "method": "npm run deploy:safe; migration safety gate passed and no migration was applied",
+      "deployment_id": "7d3c57d5-b26a-4f95-b60d-8ac20534c445",
+      "worker_version": "898baf10-e08e-4923-a72a-adf75b01fd55",
+      "traffic": "100%",
+      "wrangler_output": "Uploaded 8 modified static assets; success. Wrangler emitted an EROFS debug-log warning for read-only /home/agent/.config but command exit code was 0."
+    },
+    "production_health": "PASS, GET /api/health returned HTTP 200 with {ok:true, service:sanci9517-streamer-brand, version:2.0.0, server:cloudflare-worker}",
+    "production_asset_sha256": {
+      "/editor-v2/core/authored-content.d.ts": "5acc581f918d19445571363ed444a29e72d409bd0426c5bd195393db913bba0b",
+      "/editor-v2/index.html": "21f5513d311d5cc5e775daaf6681996db4f96b8479a1d1ed8c8554d814446fa7",
+      "/editor-v2/core/authored-content.js": "8f04689312bf3f25af2a256ab3719c52986c740ac4025bc16d1e7aa7147f944d",
+      "/editor-v2/ui/card-content-inspector.js": "ed5ad464c1744f76d2fde63ee60331f27d72ff1ac855002e2a09b81178c1c8d0",
+      "/editor-v2/ui/element-content-controls.js": "7b722457aa8d4d021f11f73f105168c70e6dc449dbd19c3fd6c077a94ef58e49",
+      "/editor-v2/app.js": "07883e1a5e9b9d36061a0119fa9bbdc220f623e9c97b624401c588e3a30aafe0",
+      "/editor-v2/ui/legacy-media-inspector.js": "3815fc6a09c7871b844385b5933c16bdfbdd756e096ca46f995f985dea0a0bb4",
+      "/editor-v2/ui/property-controls.js": "049ee129a3649be66a3a860b2173872cbf08d04499f26da212026de83e14beca"
+    },
+    "asset_hash_verification": "All 8 changed public assets returned HTTP 200 and each live SHA-256 equals its local source.",
+    "post_deployment_d1_select_only": "PASS; same 34 migrations/latest 0028_media_archive.sql, empty foreign_key_check, quick_check=ok, rows_written=0, changed_db=false."
   },
   "scope_and_safety": {
     "save_and_publish_remain_separate": true,
