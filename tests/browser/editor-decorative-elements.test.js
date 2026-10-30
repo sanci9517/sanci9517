@@ -16,8 +16,13 @@ test('partial palette types and Divider/Spacer Inspector edits become public onl
  const legacyDividerId='legacy-divider-fixture';
  const legacyDivider=createNode('divider',{id:legacyDividerId,parentId:root,name:'Régi elválasztóvonal'});
  legacyDivider.style.border='7px solid red';
+ legacyDivider.style.background='#f00';
  activePage(model).nodes[legacyDividerId]=legacyDivider;
  activePage(model).nodes[root].children.push(legacyDividerId);
+ const unsafeBackground=createNode('divider',{id:'legacy-background-url',parentId:root,name:'Régi háttér'});
+ unsafeBackground.style.background='u\\72l("https://legacy-background.invalid/pixel.png")';
+ activePage(model).nodes[unsafeBackground.id]=unsafeBackground;
+ activePage(model).nodes[root].children.push(unsafeBackground.id);
  const legacySpacerId='legacy-spacer-fixture';
  const legacySpacer=createNode('spacer',{id:legacySpacerId,parentId:root,name:'Régi üres térköz'});
  activePage(model).nodes[legacySpacerId]=legacySpacer;
@@ -51,8 +56,10 @@ test('partial palette types and Divider/Spacer Inspector edits become public onl
  t.after(async()=>{await browser.close();await new Promise(done=>server.close(done))});
  const base='http://127.0.0.1:'+server.address().port;
  const editor=await browser.newPage({viewport:{width:1366,height:900}}),viewer=await browser.newPage({viewport:{width:1366,height:900}});
+ await Promise.all([editor.route('https://legacy-background.invalid/**',route=>route.abort()),viewer.route('https://legacy-background.invalid/**',route=>route.abort())]);
  editor.setDefaultTimeout(7000);viewer.setDefaultTimeout(7000);
  const errors=[];editor.on('pageerror',e=>errors.push('editor: '+e.message));viewer.on('pageerror',e=>errors.push('public: '+e.message));
+ const editorExternal=[];editor.on('request',request=>{if(request.url().includes('legacy-background.invalid'))editorExternal.push(request.url())});
  await editor.goto(base+'/editor-v2/index.html');await viewer.goto(base+'/p/test');
  await editor.locator('.rail-btn[data-tab="elements"]').click();
  const paletteLayout=editor.locator('.element-group').filter({has:editor.locator('.element-group-title').filter({hasText:'Layout'})});
@@ -196,7 +203,15 @@ test('partial palette types and Divider/Spacer Inspector edits become public onl
  const originalBorder={width:'7px',style:'solid',color:'rgb(255, 0, 0)'};
  assert.deepEqual(await borderOf(canvasNode(legacyDividerId)),originalBorder,'legacy border shorthand remains visible in the Canvas');
  assert.deepEqual(await borderOf(publicNode(legacyDividerId)),originalBorder,'legacy published border remains unchanged before Inspector edits');
+ assert.equal(await canvasNode(legacyDividerId).evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(255, 0, 0)','legacy literal background color is visible on Canvas');
+ assert.equal(await publicNode(legacyDividerId).evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(255, 0, 0)','legacy literal background color remains visible publicly');
+ assert.deepEqual(editorExternal,[],'escaped legacy URL must not cause a new Canvas resource request');
  await selectStyle(legacyDividerId);
+ const backgroundField=editor.locator('[data-property-id="background.color"]');
+ const backgroundGroup=backgroundField.locator('xpath=ancestor::section[1]'),backgroundTitle=backgroundGroup.locator(':scope > .inspector-group-title');
+ if(await backgroundTitle.getAttribute('aria-expanded')==='false')await backgroundTitle.click();
+ await backgroundField.locator('input[type="color"]').evaluate(input=>{input.value='#0000ff';input.dispatchEvent(new Event('change',{bubbles:true}))});
+ assert.equal(await canvasNode(legacyDividerId).evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(0, 0, 255)','Inspector color overrides legacy background on Canvas');
  const legacyBorderGroup=editor.locator('.inspector-group').filter({hasText:'Szegély'});
  const legacyBorderTitle=legacyBorderGroup.locator(':scope > .inspector-group-title');
  if(await legacyBorderTitle.getAttribute('aria-expanded')==='false')await legacyBorderTitle.click();
@@ -219,11 +234,37 @@ test('partial palette types and Divider/Spacer Inspector edits become public onl
  await viewer.reload();
  await viewer.waitForFunction(id=>document.querySelector(`.visual-editor-node[data-node-id="${id}"]`),legacyDividerId);
  assert.deepEqual(await publicNode(legacyDividerId).evaluate(el=>{const css=getComputedStyle(el);return{width:css.borderTopWidth,style:css.borderTopStyle,color:css.borderTopColor}}),legacyPublicBaseline,'legacy Divider draft Save leaves public CSS unchanged');
+ assert.equal(await publicNode(legacyDividerId).evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(255, 0, 0)','draft Save does not publish the Inspector color');
  await editor.locator('#publish').click();
  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
  await viewer.reload();
  await viewer.waitForFunction(id=>document.querySelector(`.visual-editor-node[data-node-id="${id}"]`),legacyDividerId);
  assert.deepEqual(await publicNode(legacyDividerId).evaluate(el=>{const css=getComputedStyle(el);return{width:css.borderTopWidth,style:css.borderTopStyle,color:css.borderTopColor}}),{width:'4px',style:'solid',color:'rgb(225, 29, 72)'},'legacy Divider explicit Publish preserves its shared responsive border edits');
+ assert.equal(await publicNode(legacyDividerId).evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(0, 0, 255)','explicit Publish applies the Inspector background color');
+
+ await editor.locator('.canvas-device-btn[data-device="tablet"]').click();
+ await viewer.setViewportSize({width:768,height:900});await viewer.reload();
+ assert.equal(await canvasNode(legacyDividerId).evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(0, 0, 255)','tablet Canvas inherits the desktop override');
+ assert.equal(await publicNode(legacyDividerId).evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(0, 0, 255)','tablet public page inherits the desktop override');
+ await editor.locator('.canvas-device-btn[data-device="mobile"]').click();
+ await viewer.setViewportSize({width:390,height:800});await viewer.reload();
+ await selectStyle(legacyDividerId);
+ const mobileBackground=editor.locator('[data-property-id="background.color"]');
+ const mobileBackgroundTitle=mobileBackground.locator('xpath=ancestor::section[1]').locator(':scope > .inspector-group-title');
+ if(await mobileBackgroundTitle.getAttribute('aria-expanded')==='false')await mobileBackgroundTitle.click();
+ await mobileBackground.locator('input[type="color"]').evaluate(input=>{input.value='#00ff00';input.dispatchEvent(new Event('change',{bubbles:true}))});
+ assert.equal(await canvasNode(legacyDividerId).evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(0, 255, 0)','mobile override reaches Canvas');
+ await editor.locator('#save').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));await viewer.reload();
+ assert.equal(await publicNode(legacyDividerId).evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(0, 0, 255)','mobile draft does not alter published color');
+ await editor.locator('#publish').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));await viewer.reload();
+ assert.equal(await publicNode(legacyDividerId).evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(0, 255, 0)','mobile color reaches published page after Publish');
+ await editor.locator('.property-reset[title^="mobile nézet"][data-property-key="backgroundColor"]').click();
+ assert.equal(await canvasNode(legacyDividerId).evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(0, 0, 255)','mobile reset restores inherited desktop color');
+ await editor.locator('#save').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));await viewer.reload();
+ assert.equal(await publicNode(legacyDividerId).evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(0, 255, 0)','mobile reset remains draft until Publish');
+ await editor.locator('#publish').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));await viewer.reload();
+ assert.equal(await publicNode(legacyDividerId).evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(0, 0, 255)','published reset restores inherited desktop color');
+ await editor.locator('.canvas-device-btn[data-device="desktop"]').click();await viewer.setViewportSize({width:1366,height:900});await viewer.reload();
 
  // Captioned legacy images render as a figure. Its fallback margin must not
  // override the shared responsive Inspector margin after explicit Publish.

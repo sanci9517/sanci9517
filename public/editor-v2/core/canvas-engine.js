@@ -101,9 +101,24 @@ export function resolveNodeStyle(node, device = 'desktop') {
   return base;
 }
 
+// Only literal, resource-free colors are promoted from a legacy background
+// shorthand to the Canvas. Complex CSS retains its existing public behavior.
+export function legacyBackgroundColor(value) {
+  if (typeof value !== 'string') return '';
+  const text=value.trim();
+  if (!text || /^(?:inherit|initial|unset|revert|revert-layer)$/i.test(text)) return '';
+  if (!/^(?:#[0-9a-f]{3}(?:[0-9a-f]|[0-9a-f]{3}|[0-9a-f]{5})?|[a-z]+|(?:rgba?|hsla?)\([\d\s.,%+\/-]+\))$/i.test(text)) return '';
+  if (typeof globalThis.CSS?.supports === 'function' && !globalThis.CSS.supports('background-color',text)) return '';
+  return text;
+}
+
 export function applyNodeStyle(element, node, device = 'desktop') {
   const style = resolveNodeStyle(node, device);
   element.style.cssText = '';
+
+  const rootStyleEnabled=node?.type!=='root'||node.metadata?.rootStyleVersion===1||node.metadata?.editorRootVersion===1;
+  const legacyBackground=rootStyleEnabled?legacyBackgroundColor(style.background):'';
+  if (legacyBackground) element.style.background=legacyBackground;
 
   // Older documents may contain the CSS border shorthand. Apply it as a
   // fallback before Inspector longhands so responsive edits take precedence.

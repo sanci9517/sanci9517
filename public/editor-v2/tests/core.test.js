@@ -19,7 +19,7 @@ import { createDefaultScheduleConfig, normalizeScheduleConfig, validateScheduleC
 import { getSchedulePreviewItems } from '../core/schedule-preview.js';
 import { computeCanvasMinHeight } from '../core/canvas-extent.js';
 import { measureCanvasWorkspace } from '../core/canvas-workspace.js';
-import { needsRelativeOffsetPosition } from '../core/canvas-engine.js';
+import { needsRelativeOffsetPosition,legacyBackgroundColor,applyNodeStyle } from '../core/canvas-engine.js';
 import { validatePublishDocument } from '../../../src/core/editor-validation.ts';
 
 test('canvas minimum height follows content below the default page extent', () => {
@@ -42,6 +42,14 @@ test('responsive drag offsets promote only static nodes to relative positioning'
   assert.equal(needsRelativeOffsetPosition({ y: '-12px', position: 'static' }), true);
   assert.equal(needsRelativeOffsetPosition({ x: '24px', position: 'absolute' }), false);
   assert.equal(needsRelativeOffsetPosition({ x: '24px', position: 'sticky' }), false);
+});
+
+test('legacy background fallback accepts only resource-free literal colors',()=>{
+ for(const value of ['#f00','#abcd','#123456','#12345678','red','transparent','rgb(1 2 3 / 50%)','hsl(120, 50%, 30%)'])assert.equal(legacyBackgroundColor(value),value);
+ for(const value of ['url(https://example.invalid/x)','u\\72l(https://example.invalid/x)','image-set(url(https://example.invalid/x) 1x)','var(--background)','env(safe-area-inset-top)','attr(data-color)','inherit','initial','unset','revert','revert-layer','linear-gradient(red,blue)','red; background:url(x)','red\\00','rgb(var(--x), 0, 0)'])assert.equal(legacyBackgroundColor(value),'',value);
+ const legacyRoot={type:'root',style:{background:'red'},responsive:{},metadata:{}};
+ const rootElement={style:{}};applyNodeStyle(rootElement,legacyRoot);assert.equal(rootElement.style.background,undefined,'legacy root appearance is not enabled implicitly');
+ const enabledRoot={...legacyRoot,metadata:{rootStyleVersion:1}},enabledElement={style:{}};applyNodeStyle(enabledElement,enabledRoot);assert.equal(enabledElement.style.background,'red');
 });
 
 test('Rich Text schema normalizes Office-friendly tables, safe inline styles and extended semantic marks',()=>{
