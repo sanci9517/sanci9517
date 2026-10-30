@@ -1,0 +1,53 @@
+{
+  "date": "2026-10-30",
+  "plan": "77.44.7.A",
+  "status": "PRODUCTION_RELEASE_VERIFIED_PARTIAL",
+  "implementation": "Legacy style.background falls back to a fixed Inspector GRADIENTS allowlist in both Canvas and public renderer. A responsive Inspector backgroundImage takes precedence; explicit none suppresses the shorthand fallback. Versionless root remains opt-in. Arbitrary CSS gradients, URL, vars and compound shorthand are not promoted.",
+  "reuse": "Existing project GRADIENTS allowlist, shared background-image resolver, Canvas style application and public renderer; no third-party code or dependency.",
+  "checks": {
+    "targeted_browser": "PASS 1/1 Chromium lifecycle; desktop/tablet/mobile, Canvas/public parity, draft Save, separate Publish, explicit none and no new Canvas request",
+    "editor_layout_browser": "PASS 94/94 Chromium tests, 1439.4 s",
+    "editor_unit": "PASS 11/11 files",
+    "route_integration": "PASS local SQLite editor Save/Publish route integration",
+    "typecheck": "PASS",
+    "migration_gate": "PASS",
+    "canonical_plan": "PASS; cursor 77.44 / WEB-011 -> 77.44.7.A; acceptance remains NOT CERTIFIED",
+    "traceability": "PASS 396 mappings; EDT-034 now points to the reviewed Canvas, shared background resolver and public renderer modules",
+    "dry_run": "PASS 161 assets, 296.93 KiB total / 67.81 KiB gzip",
+    "diff_check": "PASS"
+  },
+  "preflight": {
+    "d1_sql": "SELECT name FROM d1_migrations ORDER BY name",
+    "rows": 34,
+    "last": "0028_media_archive.sql",
+    "changed_db": false,
+    "rows_written": 0,
+    "build_minutes_limit_reached": false
+  },
+  "release": {
+    "commit": "2d08500640852de52aa61eaf0956bd3740b83d57",
+    "branch": "v2/foundation",
+    "push": "GitHub authenticated connection fast-forwarded the verified ref from 326c09d1e5b7cb6c08b126b0d9cd56abb24398ad; branch GET confirmed the new head",
+    "github_actions": "No status checks were created for the [skip ci] commit; CI is not claimed as PASS",
+    "cloudflare_build": "5dbebd16-f523-493f-95c1-1a348d7c45e6 skipped after [skip ci]",
+    "deploy_command": "WRANGLER_WRITE_LOGS=false npm run deploy:safe; migration safety gate passed; no D1 migration apply",
+    "deployment": "fee5bf56-7f66-404a-8487-e433dbc7b5c8",
+    "worker_version": "8f8ff2b7-89b8-4d85-870a-8453d6d8fbcf",
+    "worker_version_number": 3737,
+    "traffic_percent": 100,
+    "health": "HTTP 200",
+    "db_health": "HTTP 200 connected=true",
+    "assets_sha256": {
+      "assets/page-renderer.js": "a25512b81fbfde3f731cd9611809d0084d08116857171bccb82578927d720284",
+      "editor-v2/app.js": "4850b372f8942803a37c7e405d1d1b6294de50cc584d81745b62d53d4bd4657b",
+      "editor-v2/core/background-asset.js": "38e4cc47f31199fb79c211f2cc4406fe8942d60dba796f51366f8349ef3dd4d8",
+      "editor-v2/core/canvas-engine.js": "f7daff83346ba78a087351f66b67a3c7e7b388c09ddb30d2030e0537f7d45905",
+      "editor-v2/core/property-values.js": "36d8b3f84865a9f6be2e7115a4373e041d3eac548ca47f3bc5f62a6dc11935a4",
+      "editor-v2/core/style-snapshot.js": "ab3d86e4600a94136ade01e511204cef82d44ed6b71a11bc19d539c01c27de24",
+      "editor-v2/index.html": "978964220582d13991fb7fefb698b2c18ea7c05fa9091b3f4a1aed1015377a0f",
+      "visual-page.html": "a7061c0093cbcc2a34934a8bfb01a566cae6ed48872b8faec016b99483f4c034"
+    },
+    "all_match_local": true
+  },
+  "open": "Unrecognized legacy gradients, URLs, CSS variables and compound shorthand remain open. Full 77.44.7.A acceptance and physical desktop/mobile acceptance are not certified. No production data writes, D1 migration or R2 change occurred."
+}
