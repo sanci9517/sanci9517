@@ -108,20 +108,31 @@ test('legacy image video audio share guarded media URLs in Inspector Canvas and 
   // generic "missing detailed editor" message.
   await canvasNode(ids.badImage).evaluate(el=>el.click());
   if(await editor.locator('#rightDock').evaluate(el=>el.classList.contains('closed')))await editor.locator('#openInspector').click();
-  await editor.getByRole('button',{name:'Tartalom és szöveg'}).click();
+  await editor.getByRole('tab',{name:'Tartalom és szöveg'}).click();
   const inspector=editor.locator('.legacy-media-inspector');
   await inspector.waitFor();
+  const assertDescribes=async(control,message,name)=>{
+    const ids=(await control.getAttribute('aria-describedby')||'').split(/\s+/).filter(Boolean);
+    const id=await message.getAttribute('id');
+    assert.ok(id&&ids.includes(id),`${name} points to its validation message`);
+    assert.equal(ids.filter(value=>value===id).length,1,`${name} references the validation message exactly once`);
+    assert.equal(await control.evaluate((element,id)=>document.getElementById(id)?.getAttribute('role')==='status',id),true,`${name} resolves to a live status message`);
+  };
   for(const width of [390,1366]){
     await editor.setViewportSize({width,height:900});
     for(const [key,type,label] of [['corruptImage','image','Kép URL'],['corruptVideo','video','Videó URL'],['corruptAudio','audio','Hang URL']]){
       await canvasNode(ids[key]).evaluate(el=>el.click());
       if(await editor.locator('#rightDock').evaluate(el=>el.classList.contains('closed')))await editor.locator('#openInspector').click();
-      await editor.getByRole('button',{name:'Tartalom és szöveg'}).click();
-      await inspector.locator('.legacy-media-type-warning').waitFor();
+      await editor.getByRole('tab',{name:'Tartalom és szöveg'}).click();
+      const storedWarning=inspector.locator('.legacy-media-type-warning');await storedWarning.waitFor();
       const mediaPickerAccessibility=await inspector.locator('.editor-media-picker').evaluateAll(pickers=>pickers.map(picker=>({role:picker.getAttribute('role'),labelledBy:picker.getAttribute('aria-labelledby'),labelText:document.getElementById(picker.getAttribute('aria-labelledby'))?.textContent.trim()})));
       const expectedPickerLabels=type==='image'?['Kép a Médiatárból']:type==='video'?['Videó a Médiatárból','Videó borítóképe a Médiatárból']:['Hang a Médiatárból'];
       assert.deepEqual(mediaPickerAccessibility.map(item=>item.labelText),expectedPickerLabels,`${type}: each media picker is named by a visible field label`);
       assert.ok(mediaPickerAccessibility.every(item=>item.role==='group'&&item.labelledBy),`${type}: each media picker exposes its named group semantics`);
+      await assertDescribes(inspector.getByRole('textbox',{name:label,exact:true}),storedWarning,`${type} source`);
+      await assertDescribes(inspector.locator('.editor-media-picker').first().getByRole('button',{name:'Médiatár megnyitása'}),storedWarning,`${type} media picker`);
+      if(type==='image')await assertDescribes(inspector.getByRole('textbox',{name:'Kép leírása (alt)'}),storedWarning,'image alt');
+      if(type==='video')await assertDescribes(inspector.getByRole('textbox',{name:'Videó borítókép URL'}),storedWarning,'video poster');
       const expectedRoutes=(type==='image'
         ?['src','assetId','alt','caption','objectFit','ratio','focalX','focalY','loading','decorative']
         :type==='video'
@@ -145,12 +156,17 @@ test('legacy image video audio share guarded media URLs in Inspector Canvas and 
   }
   await canvasNode(ids.badImage).evaluate(el=>el.click());
   assert.deepEqual(errors,[],'all malformed legacy media Inspectors must remain usable');
-  assert.equal(await inspector.locator('.property-validation[role="status"]:not(:empty)').count(),1,'invalid URL is explained to the editor user');
+  const invalidSource=inspector.getByRole('textbox',{name:'Kép URL'});
+  const invalidSourceWarning=inspector.locator('.property-validation[role="status"]:not(:empty)');
+  assert.equal(await invalidSourceWarning.count(),1,'invalid URL is explained to the editor user');
+  const invalidSourceWarningId=await invalidSourceWarning.getAttribute('id');
+  await assertDescribes(invalidSource,invalidSourceWarning,'invalid image URL');
   assert.equal(posts.length,0,'selecting and inspecting the node cannot persist or publish');
   await inspector.getByRole('textbox',{name:'Kép URL'}).fill('/fixture.svg');
   await inspector.getByRole('textbox',{name:'Kép URL'}).press('Tab');
   await canvasNode(ids.badImage).locator('.media-preview img').waitFor();
   assert.equal(await inspector.locator('.property-validation[role="status"]:not(:empty)').count(),0,'warning disappears once URL is repaired');
+  assert.ok(!(await invalidSource.getAttribute('aria-describedby')||'').split(/\s+/).includes(invalidSourceWarningId),'resolved warnings are removed from the field description relationship');
   await inspector.getByRole('textbox',{name:'Kép leírása (alt)'}).fill('Javított képleírás');
   await inspector.getByRole('textbox',{name:'Kép leírása (alt)'}).press('Tab');
   await inspector.getByRole('textbox',{name:'Képaláírás (opcionális)'}).fill('A javított kép képaláírása');

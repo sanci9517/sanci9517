@@ -108,28 +108,44 @@ export function renderLegacyMediaInspector(node,apply,{pending=()=>{}}={}){
  help.textContent='HTTPS/HTTP hivatkozás vagy / jellel kezdődő webhelyútvonal használható. A szerkesztő és a publikus oldal ugyanúgy ellenőrzi.';
  section.append(help);
  const warnings=document.createElement('div');section.append(warnings);
+ const warningIds=new Map();
+ const warning=(text,keys)=>{
+  const message=document.createElement('p');
+  if(!warningIds.has(text))warningIds.set(text,'legacy-media-validation-'+crypto.randomUUID());
+  message.id=warningIds.get(text);message.className='property-validation';message.setAttribute('role','status');message.textContent=text;
+  for(const key of keys){
+   const routeControl=section.querySelector(`[data-inspector-key="props.${key}"]`);
+   if(!routeControl)continue;
+   const controls=routeControl.matches('input,select,textarea,button')?[routeControl]:routeControl.querySelectorAll('input:not([type="hidden"]),select,textarea,button[aria-controls]');
+   for(const control of controls){
+    const ids=(control.getAttribute('aria-describedby')||'').split(/\s+/).filter(Boolean);
+    if(!ids.includes(message.id))control.setAttribute('aria-describedby',[...ids,message.id].join(' '));
+   }
+  }
+  return message;
+ };
  function refreshWarnings(){
+  for(const old of warnings.querySelectorAll('[id]'))for(const control of section.querySelectorAll('[aria-describedby]')){
+   const ids=(control.getAttribute('aria-describedby')||'').split(/\s+/).filter(id=>id&&id!==old.id);
+   if(ids.length)control.setAttribute('aria-describedby',ids.join(' '));else control.removeAttribute('aria-describedby');
+  }
   const nextWarnings=document.createElement('div');
   const values=legacyMediaInspectorValues(model);
     const usedFields=['src','assetId',...(node.type==='image'?['alt']:node.type==='video'?['poster','posterAssetId']:[])];
     if(values.invalidFields.some(key=>usedFields.includes(key))){
-      const warning=document.createElement('p');warning.className='property-validation legacy-media-type-warning';warning.setAttribute('role','status');
-      warning.textContent='Sérült médiaadat található az elemben. A hibás mező üresen jelenik meg; válassz fájlt vagy adj meg új értéket a javításhoz. A megnyitás nem módosítja a mentett adatot.';
-      nextWarnings.append(warning);
+      const invalid=values.invalidFields.filter(key=>usedFields.includes(key));
+      const message=warning('Sérült médiaadat található az elemben. A hibás mező üresen jelenik meg; válassz fájlt vagy adj meg új értéket a javításhoz. A megnyitás nem módosítja a mentett adatot.',invalid);
+      message.classList.add('legacy-media-type-warning');nextWarnings.append(message);
     }
     if(node.type==='video'){
         const poster=values.poster.trim();
         if(poster&&!safeMediaUrl(poster)&&!model?.posterAssetId){
-          const warning=document.createElement('p');warning.className='property-validation';warning.setAttribute('role','status');
-          warning.textContent='Érvénytelen borítókép URL. Használj biztonságos HTTPS vagy belső képútvonalat.';
-          nextWarnings.append(warning);
+          nextWarnings.append(warning('Érvénytelen borítókép URL. Használj biztonságos HTTPS vagy belső képútvonalat.',['poster','posterAssetId']));
         }
     }
     const source=values.src.trim();
     if(source&&!safeMediaUrl(source)){
-      const warning=document.createElement('p');warning.className='property-validation';warning.setAttribute('role','status');
-      warning.textContent='Ez a média-URL nem biztonságos vagy nem támogatott; a publikus oldalon sem töltődik be.';
-      nextWarnings.append(warning);
+      nextWarnings.append(warning('Ez a média-URL nem biztonságos vagy nem támogatott; a publikus oldalon sem töltődik be.',['src','assetId']));
     }
 
   if(warnings.textContent!==nextWarnings.textContent)warnings.replaceChildren(...nextWarnings.childNodes);
