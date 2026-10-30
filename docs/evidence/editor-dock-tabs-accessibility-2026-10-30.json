@@ -1,0 +1,57 @@
+{
+  "date": "2026-10-30",
+  "workItem": "77.44.7.A — Accessible left Editor dock tablist",
+  "finding": "The five left Editor navigation buttons selected hidden/visible dock panels but did not expose tab semantics, selection state, panel relationships, or keyboard navigation.",
+  "change": "Added a tablist with five tabs and labeled tabpanels, aria-selected/aria-controls/aria-labelledby, roving tabindex, ArrowLeft/ArrowRight and Home/End navigation, focus handling, and a fallback for invalid persisted tab values. Updated the shell module cache key.",
+  "reuseReview": "Adapted the Editor's existing Inspector tab state/keyboard pattern and shell panel behavior. No third-party code or dependency was needed.",
+  "tests": {
+    "typecheck": "PASS",
+    "editor": { "pass": 11, "fail": 0 },
+    "canonicalPlanTests": { "pass": 13, "fail": 0 },
+    "chromiumEditorLifecycle": {
+      "pass": 5,
+      "fail": 0,
+      "checks": [
+        "All five tab/panel aria-controls and aria-labelledby relationships resolve",
+        "Exactly one dock tab is selected and in the tab order",
+        "ArrowRight, End and Home update selection and move focus",
+        "Selected tab panel is visible",
+        "Responsive element insertion and Save≠Publish regression remains correct"
+      ]
+    },
+    "gitDiffCheck": "PASS",
+    "canonicalPlan": "PASS; 13 master files, one current cursor",
+    "activePointAudit": "PASS; 77.44.7.A remains NOT_CERTIFIED",
+    "traceability": { "pass": 396, "acceptance": "NOT_CERTIFIED" },
+    "migrationSafetyGate": "PASS; deploy:safe does not apply D1 migrations",
+    "wranglerDryRun": { "status": "PASS", "wrangler": "4.130.0", "assets": 161, "uploadKiB": 296.93, "migrationApply": false }
+  },
+  "productionD1Preflight": {
+    "method": "SELECT-only Cloudflare D1 query API: SELECT name FROM d1_migrations ORDER BY name",
+    "appliedMigrations": 34,
+    "rowsRead": 34,
+    "rowsWritten": 0,
+    "changedDb": false,
+    "migrationApplied": false
+  },
+  "release": {
+    "runtimeCommit": "0ab2cb55965de54a9597f4ec34b01b9efceb322a",
+    "targetBranch": "v2/foundation",
+    "push": "FAST_FORWARD_VERIFIED",
+    "remoteHead": "0ab2cb55965de54a9597f4ec34b01b9efceb322a",
+    "githubCi": "SKIPPED_BY_[skip ci]; no CI status was reported",
+    "automaticWorkerBuild": "NOT_STARTED",
+    "deployment": "6ff4b7db-3923-4baa-a21c-e6c2700b1747",
+    "workerVersion": "ec29002a-24b2-4503-b0a6-b191ab7412a4",
+    "workerVersionNumber": 3746,
+    "trafficPercent": 100,
+    "productionHealth": { "status": 200, "response": { "ok": true, "service": "sanci9517-streamer-brand", "version": "2.0.0", "server": "cloudflare-worker" } },
+    "productionAssetHashes": {
+      "shellJs": { "sourceSha256": "f047326c1be2bab60105beae2a16f5e62c2558fb1ce5831b1b8e27342729c589", "productionSha256": "f047326c1be2bab60105beae2a16f5e62c2558fb1ce5831b1b8e27342729c589", "matches": true },
+      "editorIndex": { "sourceSha256": "04afeecaa864edd4019e6dca603db618bea356302225b16d943f5fcc6b5eba79", "productionSha256": "04afeecaa864edd4019e6dca603db618bea356302225b16d943f5fcc6b5eba79", "matches": true }
+    },
+    "productionD1PostReadback": { "method": "SELECT-only query API", "appliedMigrations": 34, "rowsWritten": 0, "changedDb": false },
+    "productionDataChanges": { "d1MigrationsApplied": 0, "d1RowsWritten": 0, "r2Changes": 0 }
+  },
+  "acceptance": { "visualEditor": "NOT_CERTIFIED", "manualAndPhysicalDevice": "DEFERRED_UNTIL_COMPLETE_VISUAL_EDITOR" }
+}
