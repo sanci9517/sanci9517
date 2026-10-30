@@ -84,6 +84,11 @@ for(const width of [390,1366])test(`Creator Embed keeps IME drafts, activation f
  await exerciseComposition({page:editor,input:inspector.getByRole('textbox',{name:'Videó URL vagy azonosító'}),selector:playerSelector,attribute:'data-embed-source',before:'https://www.youtube.com/watch?v=M7lc1UVf-VE',final:finalSource,posts,restart:true});
  assert.match(await inspector.locator('.embed-inspector-status').textContent(),/Támogatott/);
  assert.equal(await inspector.locator('.embed-inspector-status.invalid').count(),0);
+ const sourceField=inspector.getByRole('textbox',{name:'Videó URL vagy azonosító'});
+ const sourceDescriptions=(await sourceField.getAttribute('aria-describedby')).split(/\s+/);
+ const statusId=await inspector.locator('.embed-inspector-status').getAttribute('id');
+ assert.ok(statusId&&sourceDescriptions.includes(statusId),'Embed URL input references its live status message');
+ assert.equal(await inspector.locator(`#${statusId}`).count(),1,'the referenced status target exists exactly once');
  await editor.locator('#save').click();
  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
  assert.equal(posts.at(-1).publish,false);

@@ -10,7 +10,7 @@ export function renderEmbedInspector(node,update,{pending=()=>{}}={}){
  const heading=document.createElement('h3');heading.textContent='Videó vagy élőadás beágyazása';section.append(heading);
  const notice=document.createElement('p');notice.className='structured-inspector-help';
  notice.textContent='YouTube, Twitch élő/VOD és Vimeo. Ide videólink vagy azonosító kell, nem másolt HTML/iframe kód.';section.append(notice);
- const status=document.createElement('small');status.className='embed-inspector-status';status.setAttribute('role','status');
+ const status=document.createElement('small');status.className='embed-inspector-status';status.id='embed-validation-'+crypto.randomUUID();status.setAttribute('role','status');
  const route=(control,key)=>{control.dataset.inspectorCommand='element.update';control.dataset.inspectorKey='props.embedContent.'+key;return control;};
  const refreshStatus=()=>{
   let text,invalid=false;
@@ -35,7 +35,9 @@ export function renderEmbedInspector(node,update,{pending=()=>{}}={}){
   const wrap=route(document.createElement('label'),key);wrap.className='field';wrap.append(document.createTextNode(label));
   const field=document.createElement('input');field.type='text';field.value=value??'';field.placeholder=placeholder||'';
   field.setAttribute('aria-label',label);field.disabled=Boolean(node.locked);
-  wrap.append(field,composition.attach(field,onChange));section.append(wrap);
+  const compositionError=composition.attach(field,onChange);
+  if(key==='source')field.setAttribute('aria-describedby',[field.getAttribute('aria-describedby'),status.id].filter(Boolean).join(' '));
+  wrap.append(field,compositionError);section.append(wrap);
  };
  select('provider','Videóplatform',EMBED_PROVIDERS.map(p=>[p.id,p.label]),model.provider,provider=>save({provider,source:''}));
  input('source','Videó URL vagy azonosító',model.source,(value,options)=>save({source:value.trim()},options),'https://...');

@@ -1,0 +1,27 @@
+{
+  "date": "2026-10-30",
+  "planItem": "77.44.7.A — Creator Embed Inspector validation and public renderer lifecycle",
+  "finding": "The Creator Embed source input exposed a live provider-validation status, but aria-describedby only referenced the composition helper's message. Screen-reader users could not directly find the provider-specific URL status.",
+  "change": "Assign a unique id to the existing live status and append it to the source input's aria-describedby tokens after the composition helper associates its own error message. Preserve the existing URL parser, IME validation, Save, and separate Publish behavior.",
+  "openSourceReview": "Reused the existing project-owned composition-input accessibility association and provider allowlist parser; no external code or dependency was needed.",
+  "tests": {
+    "browserCommand": "CHROMIUM_PATH=/usr/bin/chromium node --test tests/browser/editor-creator-embed.test.js",
+    "browser": { "passed": 2, "failed": 0, "viewports": [390, 1366] },
+    "assertions": [
+      "source field describedby includes exactly one existing live status ID",
+      "existing IME composition, provider parsing, click-to-load, draft Save, and separate Publish paths remain covered"
+    ],
+    "typecheck": "PASS",
+    "editorUnit": { "passed": 11, "failed": 0 },
+    "planContract": { "passed": 13, "failed": 0 },
+    "canonicalPlan": "PASS",
+    "activePointAudit": "PASS; 77.44.7.A remains NOT_CERTIFIED",
+    "traceability": { "passed": 396, "acceptance": "NOT_CERTIFIED" },
+    "migrationSafetyGate": "PASS",
+    "wranglerDryRun": { "pass": true, "version": "4.130.0", "assets": 161, "uploadKiB": 296.93 },
+    "productionD1Preflight": { "method": "SELECT-only Cloudflare D1 API", "rowsWritten": 0, "changedDb": false, "foreignKeyCheck": "PASS", "quickCheck": "ok" },
+    "diffCheck": "PASS"
+  },
+  "release": { "commit": null, "push": "PENDING", "deployment": "PENDING", "productionD1Writes": 0, "productionR2Changes": 0 },
+  "acceptanceBoundary": "This proves only the Creator Embed source status association and the existing tested flows. Full 77.44.7.A remains OPEN / NOT CERTIFIED; manual acceptance stays deferred until the complete Visual Editor is implemented."
+}
