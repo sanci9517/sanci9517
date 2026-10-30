@@ -1,7 +1,7 @@
 {
   "plan_item": "77.44.7.A — Inspector foundation / canonical property identity",
   "date": "2026-10-30",
-  "status": "IMPLEMENTED_AND_LOCALLY_VERIFIED_RELEASE_PENDING",
+  "status": "DEPLOYED_AND_PRODUCTION_VERIFIED",
   "finding": {
     "defect": "registerProperty() checked that id/group/label/key were non-empty after trim, but stored the untrimmed inputs. This allowed whitespace aliases of stable property IDs and could preserve whitespace in the CSS/command key.",
     "fix": "Canonicalize id, group, label, and string key by trimming before uniqueness checks, validation, and insertion. Duplicate detection now runs on the canonical ID; registration remains atomic.",
@@ -42,10 +42,49 @@
     "Production health baseline": "PASS, direct /api/health returned HTTP 200 and ok=true."
   },
   "release": {
-    "status": "PENDING",
-    "worker_before_release": "79c1184d-bfe4-4536-a0e0-fe8034320c27 at 100% traffic",
-    "github_target_branch": "v2/foundation",
-    "github_target_head_before_push": "9dbdc547f8e69f6fada78b933b31ab429534a1d3"
+    "runtime_commit": "9139bf7e7db680e12bfd9e9af79736a46eca59dd",
+    "github_branch": "v2/foundation",
+    "github_ref_verified": "9139bf7e7db680e12bfd9e9af79736a46eca59dd",
+    "push": "Normal fast-forward from 9dbdc547f8e69f6fada78b933b31ab429534a1d3; direct GitHub branch GET verified the new head.",
+    "deployment_id": "783d52da-9b51-485c-9f74-8a871fc96bfb",
+    "worker_version": "a621de26-18ed-4bcb-85ea-6c6ccf0ffe6d",
+    "traffic_percent": 100,
+    "deploy_command": "WRANGLER_WRITE_LOGS=false WRANGLER_LOG_PATH=/tmp/sanci-wrangler-deploy-identity.log npm run deploy:safe",
+    "automatic_deployment": "No automatic deployment appeared after push; deploy:safe ran the migration safety gate and uploaded 13 assets.",
+    "health": {
+      "url": "/api/health",
+      "http_status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "changed_public_asset_sha256": {
+      "/editor-v2/app.js": "7faf5e17cca43f922ac3ec1e60b938ff625e2f040bbdf6fefde4df3d0a62b545",
+      "/editor-v2/core/capability-matrix.js": "f321243d261a7aedcc382941868f8bf02a05f76cc263e59fa2862b37cad05134",
+      "/editor-v2/core/inspector-style-contract.js": "f8b632f4fdcc605f4066c7450d6bb6cb8eecacc0161e78b68b72ac1be2a78353",
+      "/editor-v2/core/property-registry.js": "e7804d9ffd56804673e75e7de302921214c7d9b4a14963d10bfadb77872e4510",
+      "/editor-v2/core/state-styles.js": "c66a976acec0a05c9cace80039ce85acc7f2d44fc67b3bd923db1555a73ae05d",
+      "/editor-v2/": "7547f5c844b0fdb0a0b9635298f535207bd90a3362dafd0767d11763f525efc2",
+      "/editor-v2/tests/capability-contract.test.js": "61bcafb4e5b4e3d3d4e05cc93c7659417b6381a256a32fb176d17090e225af9c",
+      "/editor-v2/tests/core.test.js": "576248587f79af58f4553b1918b91c2f47a816fc2b3d0d0952ec0d3254a73d95",
+      "/editor-v2/tests/inspector-richtext.test.js": "9eb72b549ae3dd807091d98db8ff585166b44d74505efe8ba398f91d181f512f",
+      "/editor-v2/tests/layout-presets.test.js": "d3dd66f84a664029d31505348c8a9f911ecfd85c762f03c1e837ca7b9401c0c4",
+      "/editor-v2/tests/state-tokens.test.js": "8deefd7421ec1e95a42b7bd9736f0d645b72f5ba6c886834714a969ac926a0a5",
+      "/editor-v2/ui/element-content-controls.js": "8c356d2224797799f3cdd9c9b2f9b0d808f0c020fb4b42d1bf82a77d956b36db",
+      "/editor-v2/ui/geometry-presets.js": "cb5161dd0b770bd689f753b0b0b2e3a27303b3bce2ece7d704a99b177e29a438"
+    },
+    "asset_hashes": "All 13 SHA-256 values were fetched from the production Worker (HTTP 200; the index path followed its canonical redirect) and match local files byte-for-byte.",
+    "d1_pre_and_postflight": {
+      "query": "SELECT name FROM d1_migrations ORDER BY name;",
+      "rows_read": 34,
+      "latest": "0028_media_archive.sql",
+      "rows_written": 0,
+      "changed_db": false
+    },
+    "ci": "GitHub status endpoint returned total_count=0 for 9139bf7e; commit includes [skip ci]. No CI PASS claimed."
   },
   "ci_and_cost": {
     "github_ci": "Not run; free GitHub Actions allowance is exhausted. Use [skip ci], do not claim a CI PASS.",
