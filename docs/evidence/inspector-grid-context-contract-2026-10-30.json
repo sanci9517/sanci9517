@@ -1,7 +1,7 @@
 {
   "plan_item": "77.44.7.A — Inspector Flex/Grid property visibility and Canvas context contract",
   "date": "2026-10-30",
-  "status": "IMPLEMENTED_AND_LOCALLY_VERIFIED_RELEASE_PENDING",
+  "status": "DEPLOYED_AND_PRODUCTION_VERIFIED",
   "finding": {
     "defect": "registerProperty() allowed properties in the Grid group to declare a Flex-only container or parent context. isLayoutPropertyRelevant() would then present Grid controls in a Flex context even though the Grid property is not meaningful there.",
     "fix": "Reject Grid-group registrations when their layout modes include flex. Flex-group shared properties retain explicit flex+grid support where appropriate (for example flex.gap and flex.alignSelf). Rejection is atomic.",
@@ -41,10 +41,49 @@
     "Production health baseline": "PASS, direct /api/health returned HTTP 200 and ok=true."
   },
   "release": {
-    "status": "PENDING",
-    "worker_before_release": "a621de26-18ed-4bcb-85ea-6c6ccf0ffe6d at 100% traffic",
-    "github_target_branch": "v2/foundation",
-    "github_target_head_before_push": "e75c502b95d3e34bdaf451faee73a7b5607168fc"
+    "runtime_commit": "dd06e546227a14bfd30e214a4c256b1b67cde730",
+    "github_branch": "v2/foundation",
+    "github_ref_verified": "dd06e546227a14bfd30e214a4c256b1b67cde730",
+    "push": "Normal fast-forward from e75c502b95d3e34bdaf451faee73a7b5607168fc; direct branch GET verified the new head.",
+    "deployment_id": "050dd70c-a389-4f10-9e43-55713a319e70",
+    "worker_version": "9ca3228d-56a3-4066-b1e8-932b573ba0a9",
+    "traffic_percent": 100,
+    "deploy_command": "WRANGLER_WRITE_LOGS=false WRANGLER_LOG_PATH=/tmp/sanci-wrangler-deploy-layout-context.log npm run deploy:safe",
+    "automatic_deployment": "No automatic deployment appeared after push; deploy:safe ran the migration safety gate and uploaded 13 assets.",
+    "health": {
+      "url": "/api/health",
+      "http_status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "changed_public_asset_sha256": {
+      "/editor-v2/app.js": "c02f4ca279b3b6154ec305f0541460fd172ea6a1a19b95a4d32e980a9d9accbd",
+      "/editor-v2/core/capability-matrix.js": "7a8880874f63561559b4371a981f1348de7d97bfaa4f330415eb31091a186290",
+      "/editor-v2/core/inspector-style-contract.js": "f7c46692a6965b0abfc39336bdfa6aa60296d814639d73812daf588e81d04d9b",
+      "/editor-v2/core/property-registry.js": "e85d8f87304f447eeaddfbd95d87122e62b38b3c4d47814a6108dba0177bd4ff",
+      "/editor-v2/core/state-styles.js": "5618c7b4a7058b3291efa85ebe1377d05f4159e0c6f0a06a9a7e65415c4abd48",
+      "/editor-v2/": "8af9724f1180bea8c87623d923bb322ca15cd41586a5eec52b81775dc5509978",
+      "/editor-v2/tests/capability-contract.test.js": "4ebfe59e2f8e1c34e1f5dce7e26ce820e5cfb815d2630f03a90b0509af18574a",
+      "/editor-v2/tests/core.test.js": "14cb355e82449035c9401d4e31956ecf36f344d96eb67a0ec8c2ff4d455c1779",
+      "/editor-v2/tests/inspector-richtext.test.js": "4c78af056f3d69354e96f4471664ff5ade75f2fd92528344819cd8361ba32060",
+      "/editor-v2/tests/layout-presets.test.js": "2ec508d31144140ac4f975ab78fb44915022864f69c83bdb72bc77ee1a3ddf4d",
+      "/editor-v2/tests/state-tokens.test.js": "cc6a042d77f27f8dcc5ac6148ab72617aec15ca2e4f20f9a676720addefc48d7",
+      "/editor-v2/ui/element-content-controls.js": "974b4647ca36ef7ab47dd5d6d45e83f4e3162e74af91b83daa6c86b49a3ca18b",
+      "/editor-v2/ui/geometry-presets.js": "a47d56a606f73f550258c201ee23eb9df712a6adc952a8f51c1f983981cf305e"
+    },
+    "asset_hashes": "All 13 SHA-256 values were fetched from the production Worker (HTTP 200; the index path followed its canonical redirect) and match local files byte-for-byte.",
+    "d1_pre_and_postflight": {
+      "query": "SELECT name FROM d1_migrations ORDER BY name;",
+      "rows_read": 34,
+      "latest": "0028_media_archive.sql",
+      "rows_written": 0,
+      "changed_db": false
+    },
+    "ci": "GitHub status endpoint returned total_count=0 for dd06e546; commit includes [skip ci]. No CI PASS claimed."
   },
   "ci_and_cost": {
     "github_ci": "Not run; free GitHub Actions allowance is exhausted. Commit will use [skip ci], no CI PASS will be claimed.",

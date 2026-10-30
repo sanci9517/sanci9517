@@ -25,7 +25,7 @@
 
 **Értelmezési elsőbbség:** minden későbbi tervfeladat, Codex-/fejlesztői utasítás és modulmegvalósítás ezt az „előbb keresés → licenc/biztonság/illeszkedés → tényleges újrahasznosítás/adaptálás, ha megfelelő → teljes tesztelés” elvet követi; nem igényel új roadmapet, és a korábbi feladatok státuszát nem minősíti át.
 
-## AKTUÁLIS VÉGREHAJTÁSI ÁLLAPOT — 2026-10-30, éles Worker forgalmi verzió `a621de26`; runtime forráscommit `9139bf7e`; EDT-014 / 77.44.7.A folytatás
+## AKTUÁLIS VÉGREHAJTÁSI ÁLLAPOT — 2026-10-30, éles Worker forgalmi verzió `9ca3228d`; runtime forráscommit `dd06e546`; EDT-014 / 77.44.7.A folytatás
 
 Ez az irányadó folytatási állapot; az alatta és a 12 részben lévő korábbi checkpointok történeti bizonyítékok. Nem új roadmap. A 77.3 későbbi fázistáblája és a 77.44.7 blokksorrendje az irányadó; a régi F1.1/63.50.92 kurzorok és a 39. fejezet eltérő fázisnevei nem következő feladatok.
 
