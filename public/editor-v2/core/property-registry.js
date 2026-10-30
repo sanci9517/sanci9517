@@ -249,6 +249,16 @@ export function registerProperty(property) {
     if(typeof value!=='string'&&!(property.type==='number'&&typeof value==='number'&&Number.isFinite(value)))throw new Error('A property alapértéke szöveg, vagy számmezőnél véges szám kell legyen.');
     candidate={...property,defaultValue:normalizeInspectorValue(property,value)};
   }
+  if(property.presets!==undefined){
+    const labels=new Set();
+    const normalizedPresets=property.presets.map(preset=>{
+      const label=preset?.label;
+      if(typeof label!=='string'||!label.trim()||labels.has(label.trim()))throw new Error('A property preset címkéi egyediek és nem üres szövegek legyenek.');
+      labels.add(label.trim());
+      return {...preset,label:label.trim(),value:normalizeInspectorValue(property,preset.value)};
+    });
+    candidate={...candidate,presets:normalizedPresets};
+  }
   const normalized = freezeProperty(candidate);
   properties.push(normalized);
   propertyMap.set(normalized.id, normalized);

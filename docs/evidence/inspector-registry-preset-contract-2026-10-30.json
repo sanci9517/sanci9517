@@ -1,0 +1,55 @@
+{
+  "plan_item": "77.44.7.A — Inspector foundation / property metadata contract",
+  "date": "2026-10-30",
+  "status": "IMPLEMENTED_AND_LOCALLY_VERIFIED_RELEASE_GATES_PENDING",
+  "finding": {
+    "defect": "registerProperty() checked that preset labels and values were strings, but did not validate preset values against the same typed rules applied when an Inspector submits the value. Duplicate/blank labels could also render ambiguous controls.",
+    "impact": "A registered Inspector could advertise a preset that its own command rejects, or present indistinguishable preset buttons.",
+    "fix": "The shared normalizeInspectorValue() now validates and canonicalizes each registered preset. Labels are trimmed, non-empty, and unique. Validation happens before registry insertion, so any invalid preset rejects the registration atomically.",
+    "reuse_review": "Reused the project-owned property registry and Inspector normalizer, added no external code, parallel schema, dependency, or infrastructure. Registered defaults continue to use the same validator."
+  },
+  "changed_files": [
+    "public/editor-v2/app.js",
+    "public/editor-v2/core/capability-matrix.js",
+    "public/editor-v2/core/inspector-style-contract.js",
+    "public/editor-v2/core/property-registry.js",
+    "public/editor-v2/core/state-styles.js",
+    "public/editor-v2/index.html",
+    "public/editor-v2/tests/capability-contract.test.js",
+    "public/editor-v2/tests/core.test.js",
+    "public/editor-v2/tests/inspector-richtext.test.js",
+    "public/editor-v2/tests/layout-presets.test.js",
+    "public/editor-v2/tests/state-tokens.test.js",
+    "public/editor-v2/ui/element-content-controls.js",
+    "public/editor-v2/ui/geometry-presets.js",
+    "docs/evidence/feature-traceability.json",
+    "docs/evidence/inspector-registry-preset-contract-2026-10-30.json",
+    "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md"
+  ],
+  "checks": {
+    "node --experimental-vm-modules public/editor-v2/tests/capability-contract.test.js": "PASS, 9/9 tests, including valid numeric normalization, rejected enum and out-of-range numeric preset values, unique labels, and atomic registry behavior.",
+    "npm run test:editor": "PASS, 11/11 test files after the final preset range/duplicate-label assertions.",
+    "npm run typecheck": "PASS on the same runtime implementation.",
+    "npm run test:web013:migration-gate": "PASS on the same runtime implementation.",
+    "CHROMIUM_PATH=/usr/bin/chromium node tests/browser/editor-inspector-richtext-controls.test.js": "PASS, 2/2 real Chromium desktop/mobile checks. The first sandbox-only run could not bind 127.0.0.1 (EPERM); rerunning with required local networking passed.",
+    "python3 scripts/build-feature-traceability.py --check": "PASS after regenerating docs/evidence/feature-traceability.json; 396 mappings.",
+    "python3 scripts/check-canonical-plan.py": "PASS, 13 master files; functional acceptance remains NOT CERTIFIED.",
+    "python3 scripts/audit-active-plan-point.py": "PASS, 77.44.7.A.",
+    "node --check public/editor-v2/core/property-registry.js": "PASS.",
+    "git diff --check": "PASS.",
+    "npx wrangler deploy --dry-run": "PASS, Wrangler 4.130.0 read 161 assets; 299.44 KiB / 68.45 KiB gzip. Dry-run did not upload or deploy.",
+    "Production pre-deploy D1 query": "PASS, SELECT name FROM d1_migrations ORDER BY name; 34 rows, latest 0028_media_archive.sql, rows_written=0, changed_db=false.",
+    "Production baseline health": "PASS, direct GET /api/health returned HTTP 200 and ok=true for sanci9517-streamer-brand."
+  },
+  "runtime_scope": {
+    "new_dependency": false,
+    "save_and_publish_separate": true,
+    "worker_before_release": "Deployment 5cd2c400-8265-41b6-a435-66415e5cc8cb / version 5cce81bf-c889-4e5a-96fe-94e014f0c9ab, 100% traffic; rechecked directly before this release.",
+    "release": "Local tests, real Chromium, D1 SELECT-only preflight, and Wrangler dry-run passed. Normal fast-forward push to v2/foundation and deploy:safe are pending."
+  },
+  "ci_and_cost": {
+    "github_ci": "Not run due exhausted free GitHub Actions allowance; commits use [skip ci]. Local checks are not a CI PASS.",
+    "new_paid_cost_or_dependency": false
+  },
+  "acceptance": "This validates only newly registered Inspector preset metadata. Full 77.44.7.A and Visual Editor acceptance remain OPEN / NOT CERTIFIED; manual/physical acceptance remains DEFERRED."
+}

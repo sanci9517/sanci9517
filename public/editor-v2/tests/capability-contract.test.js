@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import {NODE_TYPES} from '../core/schema.js';
 import {getElementCapability,getElementInspectorContract} from '../core/capability-matrix.js';
-import {getProperty,listProperties,registerProperty} from '../core/property-registry.js?v=20261030-inspector-default-contract';
+import {getProperty,listProperties,registerProperty} from '../core/property-registry.js?v=20261030-inspector-value-metadata-contract';
 import {getInspectorValueContract,normalizeInspectorValue} from '../core/property-values.js';
 import {STYLE_MAP} from '../core/canvas-engine.js';
 
@@ -122,14 +122,20 @@ test('type restrictions and new property registration flow through the single re
  assert.equal(getElementInspectorContract('image').fields.some(p=>p.id===id),false);
  assert.equal(getElementInspectorContract('form').fields.length,0);
 });
-test('registered defaults use the shared Inspector validator before becoming contract metadata',()=>{
- const numberDefault=registerProperty({id:'test.contract.default.number',group:'typography',label:'Default number',type:'number',command:'responsive.set',responsive:true,key:'testDefaultNumber',defaultValue:0.85,appliesTo:['text']});
+test('registered defaults and presets use the shared Inspector validator before becoming contract metadata',()=>{
+ const numberDefault=registerProperty({id:'test.contract.default.number',group:'typography',label:'Default number',type:'number',command:'responsive.set',responsive:true,key:'testDefaultNumber',defaultValue:0.85,presets:[{label:'  Subtle  ',value:' 0.90 '}],appliesTo:['text']});
  assert.equal(numberDefault.defaultValue,'0.85','numeric defaults are stored in the same canonical string format as Inspector values');
+ assert.deepEqual(numberDefault.presets,[{label:'Subtle',value:'0.9'}],'preset values and labels are normalized before registry insertion');
  const field=getElementInspectorContract('text').fields.find(item=>item.id===numberDefault.id);
  assert.deepEqual(field.initialValue,{status:'DECLARED',value:'0.85',source:{strategy:'resolved-style',key:'testDefaultNumber',precedence:['responsive-cascade','node.style','authored-content-default'],fallback:'css-initial-or-inherited'}});
  const invalidId='test.contract.default.invalid';
  assert.throws(()=>registerProperty({id:invalidId,group:'layout',label:'Invalid default',type:'select',command:'responsive.set',responsive:true,key:'testInvalidDefault',options:['visible','hidden'],defaultValue:'sideways',appliesTo:['text']}),/Érvénytelen választási lehetőség/);
  assert.equal(getProperty(invalidId),null,'invalid defaults never enter the shared registry');
  assert.equal(getElementInspectorContract('text').fields.some(item=>item.id===invalidId),false);
+ const invalidPresetId='test.contract.preset.invalid';
+ assert.throws(()=>registerProperty({id:invalidPresetId,group:'layout',label:'Invalid preset',type:'select',command:'responsive.set',responsive:true,key:'testInvalidPreset',options:['visible','hidden'],presets:[{label:'Unsupported',value:'sideways'}],appliesTo:['text']}),/Érvénytelen választási lehetőség/);
+ assert.equal(getProperty(invalidPresetId),null,'invalid presets never enter the shared registry');
+ assert.throws(()=>registerProperty({id:'test.contract.preset.out-of-range',group:'opacity',label:'Out of range preset',type:'number',command:'responsive.set',responsive:true,key:'opacity',presets:[{label:'Too much',value:'1.5'}],appliesTo:['text']}),/megengedett tartományon kívül/);
+ assert.throws(()=>registerProperty({id:'test.contract.preset.duplicate-label',group:'typography',label:'Duplicate preset',type:'number',command:'responsive.set',responsive:true,key:'testDuplicatePreset',presets:[{label:'Same',value:'0.5'},{label:' Same ',value:'0.6'}],appliesTo:['text']}),/preset címkéi egyediek/);
  assert.throws(()=>registerProperty({id:'test.contract.default.object',group:'content',label:'Object default',type:'text',command:'element.content.set',responsive:false,key:'text',defaultValue:{unsafe:true},appliesTo:['text']}),/alapértéke szöveg/);
 });

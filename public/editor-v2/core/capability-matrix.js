@@ -1,6 +1,6 @@
 import {CONTENT_TYPES,STRUCTURAL_TYPES} from './authored-content.js';
 import { NODE_TYPES } from './schema.js';
-import { listProperties } from './property-registry.js?v=20261030-inspector-default-contract';
+import { listProperties } from './property-registry.js?v=20261030-inspector-value-metadata-contract';
 import {getInspectorValueContract} from './property-values.js';
 
 // A palette entry is only complete when Inspector, canvas and public behavior

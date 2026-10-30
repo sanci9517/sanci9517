@@ -1,4 +1,4 @@
-import {getProperty,listProperties} from './property-registry.js?v=20261030-inspector-default-contract';
+import {getProperty,listProperties} from './property-registry.js?v=20261030-inspector-value-metadata-contract';
 import {normalizeInspectorValue} from './property-values.js';
 import {resolveResponsiveValue,normalizeResponsive} from './responsive.js';
 
