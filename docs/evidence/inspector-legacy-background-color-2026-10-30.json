@@ -1,0 +1,47 @@
+{
+  "date": "2026-10-30",
+  "plan": "77.44.7.A",
+  "status": "PRODUCTION_RELEASE_VERIFIED_PARTIAL",
+  "implementation": "Resource-free literal legacy background colors become fallback before Inspector responsive colors in Canvas and public renderer; no new Canvas request for complex legacy backgrounds. Versionless root without opt-in remains unchanged. Cache-busting updated for changed modules.",
+  "reuse": "Existing shared Canvas/style resolver, renderer and Inspector controls; no external code or dependency.",
+  "checks": {
+    "browser": "PASS 4/4 Chromium; color desktop/tablet/mobile, draft Save, separate Publish, reset, root and escaped URL interception",
+    "route": "PASS SQLite editor Save/Publish route integration",
+    "editor_unit": "PASS 11/11 files",
+    "typecheck": "PASS",
+    "migration_gate": "PASS",
+    "plan_and_traceability": "PASS 396 mappings; acceptance not certified",
+    "dry_run": "PASS 161 assets",
+    "diff_check": "PASS"
+  },
+  "preflight": {
+    "d1_sql": "SELECT name FROM d1_migrations ORDER BY name",
+    "rows": 34,
+    "last": "0028_media_archive.sql",
+    "changed_db": false,
+    "rows_written": 0,
+    "build_minutes_limit_reached": false
+  },
+  "release": {
+    "commit": "b95891bd4709e4f98eadfa9e52612e19039d705f",
+    "branch": "v2/foundation",
+    "build": "9190e598-8cf7-4577-8957-2f89b6802323",
+    "outcome": "success",
+    "deployment": "2da17a10-7925-421d-8005-853d30141713",
+    "worker_version": "46a28e28-75a1-4c04-adb6-cba2c5ee671f",
+    "traffic_percent": 100,
+    "health": "HTTP 200",
+    "db_health": "HTTP 200 connected=true",
+    "assets_sha256": {
+      "visual-page.html": "a5d9983514693b12ba585ea2bd60549bda0b4b0189ab1a9d9384afb3d409dd2b",
+      "assets/page-renderer.js": "5499d05f6bcf8caf07280c970b65e5c79bfdbd12299dae7a2d6153721bd94fea",
+      "editor-v2/core/canvas-engine.js": "7aa55a36f8cbcf50600fe022300ded1d040eab127e90896af12a08fa045c7309",
+      "editor-v2/tests/core.test.js": "ff8fb141cef6a04f50fe32d583f83b2a885ae1fe16ce1678c4e1f03492fa69a5",
+      "editor-v2/index.html": "94cdf1d3ad8f8aa735b6aa0b30e3b28db5067129035f8e0ed9fbf09856108791",
+      "editor-v2/app.js": "30ead7c2b8ea241c790399ee5001fed9e4393e21cd67e2f7f5231e811a84c992"
+    },
+    "all_match_local": true,
+    "html_follow_redirect": true
+  },
+  "open": "Legacy gradients, URLs, CSS variables and compound shorthands retain existing behavior; safe policy and parity remain open. Full Editor and physical-device acceptance not certified."
+}
