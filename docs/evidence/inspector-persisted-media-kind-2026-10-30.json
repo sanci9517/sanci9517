@@ -1,0 +1,73 @@
+{
+  "date": "2026-10-30",
+  "planItem": "77.44.7.A — Inspector edit, Canvas, Save, and published renderer lifecycle",
+  "finding": "When an existing video or audio media-library ID was loaded into the legacy Inspector, asset metadata was unavailable. The shared picker defaulted the preview to an image, displayed a broken image, and used the wrong removal label.",
+  "regressionBeforeFix": {
+    "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-legacy-media-parity.test.js",
+    "result": "FAIL as expected before the fix",
+    "assertion": "A persisted video selection rendered IMG instead of SPAN."
+  },
+  "change": {
+    "runtimeFiles": [
+      "public/editor-v2/app.js",
+      "public/editor-v2/index.html",
+      "public/editor-v2/ui/card-content-inspector.js",
+      "public/editor-v2/ui/element-content-controls.js",
+      "public/editor-v2/ui/legacy-media-inspector.js",
+      "public/editor-v2/ui/property-controls.js"
+    ],
+    "testFiles": ["tests/browser/editor-legacy-media-parity.test.js"],
+    "behavior": "The shared media picker accepts a media kind for persisted selections whose metadata is not loaded. Legacy video and audio Inspector routes provide the correct kind; existing metadata still takes precedence. The selection uses a type-appropriate accessible preview label and removal action. Image/card callers retain the image default.",
+    "openSourceReview": "Reused and extended the project-owned media picker and Inspector patterns. No third-party code or dependency was needed."
+  },
+  "tests": {
+    "targetedBrowser": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-legacy-media-parity.test.js",
+      "result": "PASS 1/1",
+      "coverage": "Persisted video/audio IDs render as non-image selections with correct accessible kind and removal labels; existing legacy image/video/audio Inspector, Canvas, Save and separate Publish behavior remains covered."
+    },
+    "adjacentBrowser": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-media-source-switch.test.js tests/browser/editor-content-system.test.js",
+      "result": "PARTIAL: 3 passed, 1 failed",
+      "failure": "The broader editor-content-system lifecycle timed out in Chromium; source-switch tests passed. Two isolated retries of editor-content-system also timed out at different unrelated steps (initial navigation, Canvas locator, and keyboard press). Assertions were not changed or weakened."
+    },
+    "editorUnit": {"command":"npm run test:editor","result":"PASS 11/11 files"},
+    "typecheck": {"command":"npm run typecheck","result":"PASS"},
+    "migrationSafetyGate": {"command":"npm run test:web013:migration-gate","result":"PASS"},
+    "canonicalPlan": {"command":"python3 scripts/check-canonical-plan.py","result":"PASS; 13 master files; functional acceptance remains NOT_CERTIFIED"},
+    "activePointAudit": {"command":"python3 scripts/audit-active-plan-point.py","result":"PASS; 77.44.7.A remains OPEN"},
+    "sourceTraceability": {"command":"python3 scripts/build-feature-traceability.py --check","result":"PASS; all 396 mappings match current source"},
+    "diffCheck": {"command":"git diff --check","result":"PASS"},
+    "wranglerDryRun": {"command":"npx wrangler deploy --dry-run","result":"PASS; exit 0; Wrangler 4.130.0; 161 assets; 296.93 KiB (67.81 KiB gzip)","note":"Wrangler could not write its log under the read-only /home/agent configuration directory (EROFS); the dry-run completed successfully."}
+  },
+  "release": {
+    "runtimeCommit": "11f242d2867eb89dfb5530471a0ddf172583113b",
+    "githubBranch": "v2/foundation",
+    "githubFastForward": "71d6cd06a04ef83253ae2d030d7b5c843ee31551..11f242d2867eb89dfb5530471a0ddf172583113b",
+    "githubVerification": "Remote refs/heads/v2/foundation matched the runtime commit. Combined status returned no checks; [skip ci] was used and CI PASS is not claimed.",
+    "automaticBuild": "No new Cloudflare deployment appeared after push.",
+    "deploySafe": "PASS; repository migration safety gate passed; Wrangler uploaded six changed assets. No D1 migration was applied.",
+    "deploymentId": "65147336-2668-46c2-a88a-75632c64fbaa",
+    "workerVersion": "b1aedb20-3a8e-4a9e-947a-be9b9cb4ba74",
+    "trafficPercent": 100,
+    "health": {
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+      "status": 200,
+      "response": {"ok":true,"service":"sanci9517-streamer-brand","version":"2.0.0","server":"cloudflare-worker"}
+    },
+    "changedAssetHashes": [
+      {"path":"/editor-v2/app.js","sha256":"a15ca3b2b668b181364db9bdef93e97f577ff0de522c59863d4aff7790f1bf92","matchesLocal":true},
+      {"path":"/editor-v2/index.html","sha256":"02483afa751ea18b76e2b6fd63e5f90d2e7cdfb89e3381daa4cb2a8ce9c16f54","matchesLocal":true},
+      {"path":"/editor-v2/ui/card-content-inspector.js","sha256":"bead2962a31bff23495fa4dbc6e3ea8f26edc80a101a4146efc7a88fcb1da46d","matchesLocal":true},
+      {"path":"/editor-v2/ui/element-content-controls.js","sha256":"068beb848f8515f33039ca59f0f43f2f6b323ba3ee2dce25667f19fd0b77bbe1","matchesLocal":true},
+      {"path":"/editor-v2/ui/legacy-media-inspector.js","sha256":"20b88f47a306b4489b3903ef699cbe620cffe86398c28394fc0187e86e1d496e","matchesLocal":true},
+      {"path":"/editor-v2/ui/property-controls.js","sha256":"1458904524be5c13d7c4e2e73c72cb21b7c8d8906985b5594e5bcef928869fc6","matchesLocal":true}
+    ],
+    "productionD1Preflight": {"method":"Cloudflare D1 Query API; SELECT-only","ledgerRows":34,"rowsWritten":0,"changedDb":false,"lastMigration":"0028_media_archive.sql"},
+    "productionD1Postflight": {"method":"Cloudflare D1 Query API; SELECT-only","ledgerRows":34,"rowsWritten":0,"changedDb":false,"lastMigration":"0028_media_archive.sql"},
+    "productionDataMutation": false,
+    "r2Mutation": false
+  },
+  "cost": {"newPaidServiceOrDependency":false,"newCloudflareBuildMinutes":0,"productionDataOrR2Mutation":false},
+  "acceptanceBoundary": "This closes only the persisted media-kind Inspector rendering defect. Full 77.44.7.A and Visual Editor acceptance remain OPEN / NOT CERTIFIED; manual and physical-device acceptance remain DEFERRED until the complete Editor is implemented."
+}
