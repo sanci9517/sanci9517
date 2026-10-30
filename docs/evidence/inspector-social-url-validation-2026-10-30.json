@@ -19,6 +19,18 @@
     "productionD1Preflight": { "method": "SELECT-only Cloudflare D1 query API", "rowsWritten": 0, "changedDb": false, "foreignKeyCheck": "PASS", "quickCheck": "ok" },
     "diffCheck": "PASS"
   },
-  "release": { "commit": null, "push": "PENDING", "deployment": "PENDING", "productionD1Writes": 0, "productionR2Changes": 0 },
+  "release": {
+    "commit": "266372ab",
+    "branch": "v2/foundation",
+    "push": "FAST_FORWARD_VERIFIED",
+    "githubCi": "SKIPPED_BY_[skip ci]",
+    "deployment": "SUCCESS",
+    "workerVersion": "d3107144-43a6-412b-879c-05a09228b579",
+    "trafficPercent": 100,
+    "healthStatus": 200,
+    "liveAsset": { "path": "/editor-v2/ui/social-links-inspector.js", "status": 200, "sha256": "db9309ac6a713bca09e06ca2cb4d2304eaab43b8fc7fc78c0b34e7312514afa2", "matchesSource": true },
+    "productionD1Writes": 0,
+    "productionR2Changes": 0
+  },
   "acceptanceBoundary": "This proves the Social Links URL field feedback and the listed browser flows. Full 77.44.7.A remains OPEN / NOT CERTIFIED; manual acceptance stays deferred until the complete Visual Editor is implemented."
 }
