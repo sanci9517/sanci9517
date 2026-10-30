@@ -315,6 +315,24 @@ test('partial palette types and Divider/Spacer Inspector edits become public onl
  assert.equal(await publicNode(legacyDividerId).evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(0, 0, 255)','published reset restores inherited desktop color');
  await editor.locator('.canvas-device-btn[data-device="desktop"]').click();await viewer.setViewportSize({width:1366,height:900});await viewer.reload();
 
+ // Exact Brand Kit references stay as the legacy fallback while responsive
+ // Inspector edits override them, remain drafts on Save, and restore on reset.
+ await selectStyle(legacyTokenId);
+ const tokenBackground=editor.locator('[data-property-id="background.color"]');
+ const tokenBackgroundGroup=tokenBackground.locator('xpath=ancestor::section[1]'),tokenBackgroundTitle=tokenBackgroundGroup.locator(':scope > .inspector-group-title');
+ if(await tokenBackgroundTitle.getAttribute('aria-expanded')==='false')await tokenBackgroundTitle.click();
+ await tokenBackground.locator('input[type="color"]').evaluate(input=>{input.value='#2563eb';input.dispatchEvent(new Event('change',{bubbles:true}))});
+ assert.equal(await canvasNode(legacyTokenId).evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(37, 99, 235)','Inspector color overrides the exact Brand Kit fallback on Canvas');
+ await editor.locator('#save').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));await viewer.reload();
+ assert.equal(draft.pages[pageId].nodes[legacyTokenId].responsive.desktop.backgroundColor,'#2563eb');
+ assert.equal(await publicNode(legacyTokenId).evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(18, 102, 204)','draft Save leaves the published Brand Kit fallback unchanged');
+ await editor.locator('#publish').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));await viewer.reload();
+ assert.equal(await publicNode(legacyTokenId).evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(37, 99, 235)','explicit Publish applies the token Inspector override');
+ await editor.locator('.property-reset[title^="desktop nézet"][data-property-key="backgroundColor"]').click();
+ assert.equal(await canvasNode(legacyTokenId).evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(18, 102, 204)','reset restores the exact Brand Kit fallback on Canvas');
+ await editor.locator('#publish').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));await viewer.reload();
+ assert.equal(await publicNode(legacyTokenId).evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(18, 102, 204)','published reset restores the Brand Kit token fallback publicly');
+
  // Captioned legacy images render as a figure. Its fallback margin must not
  // override the shared responsive Inspector margin after explicit Publish.
  await selectStyle(captionedImageId);

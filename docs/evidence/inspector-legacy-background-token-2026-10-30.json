@@ -5,7 +5,8 @@
   "implementation": "Legacy style.background accepts exact references for colors.primary, colors.text, colors.surface and colors.border only. Other token categories, arbitrary CSS variables and non-exact token/fallback expressions are rejected. Canvas and public rendering resolve the selected token from the site presentation.",
   "reuse": "Existing project token registry and parseTokenReference, shared Canvas styling, public renderer and presentation token loading; no third-party code or dependency added.",
   "checks": {
-    "targeted_browser": "PASS 1/1 real Chromium lifecycle across desktop/tablet/mobile; exact token value resolves identically in Canvas and public page; Save remains separate from Publish; existing gradient and URL safety assertions remain covered",
+    "targeted_browser": "PASS 1/1 real Chromium lifecycle across desktop/tablet/mobile; exact token value resolves identically in Canvas and public page; Inspector override, draft Save, separate Publish and reset back to the token fallback; existing gradient and URL safety assertions remain covered",
+    "post_release_browser_extension": "PASS 1/1 after deployment; tests only, Worker source and rollout unchanged",
     "editor_unit": "PASS 11/11 test files",
     "typecheck": "PASS",
     "route_integration": "PASS local SQLite editor route integration",
