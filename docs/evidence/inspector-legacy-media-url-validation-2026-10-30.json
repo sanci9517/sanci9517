@@ -25,6 +25,7 @@
       "passed": 1,
       "failed": 0,
       "durationSeconds": 74.79,
+      "reruns": "One un-serialized rerun hit a Playwright click timeout during the later existing composition lifecycle; the complete serial rerun passed without changing or weakening assertions.",
       "assertions": [
         "unsafe video poster and audio source edits are rejected in the Inspector",
         "rejected values do not reach the Canvas or Save API",
@@ -72,18 +73,32 @@
       "deployment": "5138ab51-1927-4714-b176-b32d93003ad4",
       "version": "ad599738-a80d-4ed6-8639-c605f2bdbe69",
       "trafficPercent": 100
-    }
+    },
+    "d1ReadbackAfterDeploy": {"status":200,"rowsRead":34,"rowsWritten":0,"changedDb":false,"lastMigration":"0028_media_archive.sql"},
+    "productionDataOrR2Changes": false
   },
   "release": {
     "githubBaseRef": "f57c2d8626031825f49c57d6c3e39d60942acc76",
-    "githubFastForward": "PENDING",
+    "commit": "b20aa31d1d956fa39f571f2b008319280a78672f",
+    "branch": "v2/foundation",
+    "githubFastForward": "VERIFIED",
     "githubCi": "SKIPPED_BY_[skip ci] after local checks; no CI pass is claimed",
-    "runtimeChangeReleased": false,
-    "deployment": "PENDING",
-    "healthAndChangedAssetHash": "NOT YET CHECKED; runtime change is not deployed"
+    "cloudflareAutoBuild": {"build":"5b0d1613-57c2-41fc-bec5-ef86547c4813","outcome":"SKIPPED"},
+    "deploySafe": "PASS; migration safety gate passed and Wrangler uploaded two modified assets without applying D1 migrations",
+    "deployment": "ee409ac1-c894-4345-b399-844447970504",
+    "workerVersion": "cad28b9e-8d0c-4eea-96a1-514c04572e90",
+    "trafficPercent": 100,
+    "runtimeChangeReleased": true,
+    "health": {"url":"https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health","status":200,"response":{"ok":true,"service":"sanci9517-streamer-brand","version":"2.0.0","server":"cloudflare-worker"}},
+    "changedAssets": [
+      {"path":"/editor-v2/app.js","localSha256":"1ddf5310bd74cc42da181f19f0f64a8140ce749f17f31ad103a7f3746dae52dc","liveSha256":"1ddf5310bd74cc42da181f19f0f64a8140ce749f17f31ad103a7f3746dae52dc","matches":true},
+      {"path":"/editor-v2/ui/legacy-media-inspector.js","localSha256":"81242eec865638eada4587dad8d41bfd5e9eacd5a51560a1f85c942523290a8a","liveSha256":"81242eec865638eada4587dad8d41bfd5e9eacd5a51560a1f85c942523290a8a","matches":true}
+    ],
+    "healthAndChangedAssetHash": "VERIFIED; HTTP 200 and both changed public asset hashes match local source"
   },
   "cost": {
     "newPaidServiceOrDependency": false,
+    "cloudflareBuildMinutesLimitReached": false,
     "productionDataOrR2Mutation": false
   },
   "acceptanceBoundary": "This closes only the newly verified unsafe URL entry path. Full 77.44.7.A and full Visual Editor acceptance remain OPEN / NOT CERTIFIED; consolidated manual and physical-device acceptance remains DEFERRED until the complete Editor is implemented."
