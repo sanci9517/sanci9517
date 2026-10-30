@@ -1,0 +1,86 @@
+{
+  "plan_item": "77.44.7.A",
+  "feature": "Mobile Inspector per-property reset meets the 44px touch-target contract",
+  "date": "2026-10-30",
+  "status": "IMPLEMENTED_DEPLOYED_AND_VERIFIED",
+  "finding": {
+    "reproduction": "A real Chromium test at a 390px viewport measured the .property-reset button at 24.796875px high, below the 44px mobile touch target already required by the Inspector plan.",
+    "impact": "Resetting an individual responsive property was harder to activate reliably on a touch device than the other mobile Inspector controls.",
+    "fix": "The existing max-width:850px Inspector touch-target rule now gives .property-reset a 44px minimum height, 11px text, and more usable padding. The editor-refresh stylesheet URL version was bumped to bypass cached CSS.",
+    "reuse_review": "The project-owned responsive stylesheet, reset button, and real-browser test suite were reused. No external code, dependency, or infrastructure was needed."
+  },
+  "changed_files": [
+    "public/editor-v2/editor-refresh.css",
+    "public/editor-v2/index.html",
+    "tests/browser/editor-inspector-richtext-controls.test.js",
+    "docs/evidence/inspector-mobile-property-reset-touch-targets-2026-10-30.json",
+    "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md"
+  ],
+  "checks": {
+    "red_reproduction": "PASS as a defect reproduction: before the CSS fix, the 390px Chromium assertion failed with responsiveResetHeight=24.796875px.",
+    "CHROMIUM_PATH=/usr/bin/chromium node --test --test-reporter=spec tests/browser/editor-inspector-richtext-controls.test.js": "PASS, 2/2 browser tests; the per-property reset is checked at 390px and the existing asset-picker targets remain checked at 390px; the desktop viewport is not subjected to the mobile-only 44px assertion.",
+    "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-inspector-breakpoint-lifecycle.test.js": "PASS, 1/1 browser test (114.5s): independent desktop/tablet/mobile Inspector values, reset, Canvas, draft Save/reload, and separate Publish remain correct.",
+    "npm run test:editor": "PASS, 11/11 test files.",
+    "npm run typecheck": "PASS.",
+    "npm run test:web013:migration-gate": "PASS; deploy:safe does not apply D1 migrations.",
+    "python3 scripts/build-feature-traceability.py --check": "PASS, 396 mappings.",
+    "python3 scripts/check-canonical-plan.py": "PASS, one 13-file master and 396 mappings; acceptance NOT CERTIFIED.",
+    "python3 scripts/audit-active-plan-point.py": "PASS; cursor remains WEB-011 / 77.44.7.A.",
+    "git diff --check": "PASS.",
+    "npx wrangler deploy --dry-run": "PASS, Wrangler 4.130.0; 161 assets, 298.43 KiB / 68.24 KiB gzip. Dry-run did not deploy."
+  },
+  "production_preflight": {
+    "d1_before_deploy": "Cloudflare D1 Query API executed SELECT-only ledger queries: 34 migration records and latest 0028_media_archive.sql; each query rows_written=0 and changed_db=false.",
+    "d1_after_deploy": "Same SELECT-only result: 34 migration records, latest 0028_media_archive.sql; rows_written=0 and changed_db=false.",
+    "migration_or_data_write": false,
+    "r2_change": false
+  },
+  "runtime_scope": {
+    "public_runtime_files": [
+      "public/editor-v2/index.html",
+      "public/editor-v2/editor-refresh.css"
+    ],
+    "local_and_live_sha256": {
+      "/editor-v2/": "cf49d8678be357a44e56cdfc4ca07e1d815eb3c26949bcb8810fb3e5b4c1011b",
+      "/editor-v2/editor-refresh.css": "0bccee8797d834770a4b222955a7b0599bd5f05fe7892a5ccd4918a74f8cb375"
+    },
+    "save_and_publish_separate": true,
+    "new_dependency": false
+  },
+  "release": {
+    "remote_branch": "v2/foundation",
+    "runtime_commit": "18e089ddf804ffffea6ec817a8207b149e6a37d3",
+    "github_ref": "Direct GitHub ref GET verifies v2/foundation points to runtime_commit.",
+    "github_status": "Direct commit status GET returned total_count=0; no CI PASS is claimed.",
+    "cloudflare_deployments": [
+      {
+        "deployment": "43ca52d4-1111-480f-abbd-1d63709cba63",
+        "version": "225178af-8ade-43e8-9fa1-db523edb683d",
+        "traffic": "100%",
+        "created_on": "2026-10-30T20:03:20.083777Z"
+      },
+      {
+        "deployment": "54f8a12c-79a1-4c82-9de9-37f9b6d3da01",
+        "version": "50fce0d0-879d-4242-82bd-319081216cde",
+        "traffic": "100% (latest API result)",
+        "created_on": "2026-10-30T20:03:32.153898Z"
+      }
+    ],
+    "health": "Direct GET to /api/health returned HTTP 200 with ok=true, service=sanci9517-streamer-brand, version=2.0.0.",
+    "changed_asset_hashes": {
+      "/editor-v2/": {
+        "local_sha256": "cf49d8678be357a44e56cdfc4ca07e1d815eb3c26949bcb8810fb3e5b4c1011b",
+        "live_sha256": "cf49d8678be357a44e56cdfc4ca07e1d815eb3c26949bcb8810fb3e5b4c1011b",
+        "redirect": "The /editor-v2/index.html URL returned 307; the request was followed to /editor-v2/ and received HTTP 200.",
+        "match": true
+      },
+      "/editor-v2/editor-refresh.css": {
+        "local_sha256": "0bccee8797d834770a4b222955a7b0599bd5f05fe7892a5ccd4918a74f8cb375",
+        "live_sha256": "0bccee8797d834770a4b222955a7b0599bd5f05fe7892a5ccd4918a74f8cb375",
+        "http": 200,
+        "match": true
+      }
+    }
+  },
+  "acceptance": "The individual mobile Inspector reset touch-target slice is independently implemented and verified. Full 77.44.7.A and Visual Editor acceptance remain OPEN / NOT CERTIFIED; manual/physical acceptance stays DEFERRED."
+}
