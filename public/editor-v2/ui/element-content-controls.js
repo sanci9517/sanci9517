@@ -1,5 +1,5 @@
 import {CONTENT_FIELDS,IMAGE_MIMES,normalizeContentField,contentProperties,imageFocalPosition,getPublicationContentGuidance} from '../core/authored-content.js';
-import {getProperty} from '../core/property-registry.js?v=20261030-inspector-layout-context-contract';
+import {getProperty} from '../core/property-registry.js?v=20261030-inspector-layout-container-contract';
 export {IMAGE_MIMES};
 
 export function pageLinkPicker(pages,input){

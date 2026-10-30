@@ -68,6 +68,15 @@ test('root Inspector appearance matches published canvas only after Publish at d
  assert.equal(await editor.locator('[data-property-id="flex.grow"]').count(),0,'grid children do not expose flex sizing controls');
  await rootNode.evaluate(el=>el.click());
  await rootDisplay.selectOption('block');
+ await editor.locator('.node[data-node-id="'+contentNodeId+'"]').evaluate(el=>el.click());
+ const contentDisplay=editor.locator('[data-property-id="layout.display"] select');
+ await contentDisplay.selectOption('flex');
+ assert.equal(await editor.locator('[data-property-id="flex.direction"]').count(),0,'Flex container controls respect appliesTo and stay hidden on a text node even when it uses display:flex');
+ assert.equal(await editor.locator('[data-property-id="flex.gap"]').count(),0,'shared layout spacing also respects its declared node types');
+ await contentDisplay.selectOption('grid');
+ assert.equal(await editor.locator('[data-property-id="grid.columns"]').count(),0,'Grid container controls respect appliesTo and stay hidden on a text node even when it uses display:grid');
+ assert.equal(await editor.locator('[data-property-id="flex.gap"]').count(),0,'the Flex-group shared gap is not exposed on an unsupported Grid node');
+ await rootNode.evaluate(el=>el.click());
  const enableRoot=editor.locator('[data-inspector-command="root.appearance.enable"]');
  assert.equal(await enableRoot.getAttribute('data-inspector-key'),'metadata.editorRootVersion');
  const group=async name=>{

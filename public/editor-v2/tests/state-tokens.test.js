@@ -5,7 +5,7 @@ import {createEditorState,activePage} from '../core/state.js';
 import {execute} from '../core/commands.js';
 import {defaultTokens,normalizeTokens,tokenReference,parseTokenReference,compatibleTokens} from '../core/design-tokens.js';
 import {normalizeInspectorValue} from '../core/property-values.js';
-import {getProperty} from '../core/property-registry.js?v=20261030-inspector-layout-context-contract';
+import {getProperty} from '../core/property-registry.js?v=20261030-inspector-layout-container-contract';
 import {buildStateStyles,hasStateStyles} from '../core/state-styles.js';
 import {assertValidEditorDocument} from '../core/validation.js';
 

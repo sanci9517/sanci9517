@@ -3,9 +3,9 @@ import assert from 'node:assert/strict';
 import {createDocument} from '../core/schema.js';
 import {createEditorState,activePage} from '../core/state.js';
 import {execute} from '../core/commands.js';
-import {LAYOUT_PRESETS,isManagedLayout,isLayoutPropertyRelevant,explicitGridColumnCount} from '../core/layout-presets.js';
+import {LAYOUT_TYPES,LAYOUT_PRESETS,isManagedLayout,isLayoutPropertyRelevant,explicitGridColumnCount} from '../core/layout-presets.js';
 import {resolveNodeStyle} from '../core/canvas-engine.js';
-import {getProperty,listProperties} from '../core/property-registry.js?v=20261030-inspector-layout-context-contract';
+import {getProperty,listProperties} from '../core/property-registry.js?v=20261030-inspector-layout-container-contract';
 import {normalizeInspectorValue} from '../core/property-values.js';
 
 function fixture(){
@@ -62,7 +62,7 @@ test('automatic child placement is scoped to one device, atomic with locks and u
   assert.deepEqual(state.document,document);
 });
 
-test('Inspector layout fields follow actual parent display and breakpoint instead of node type',()=>{
+test('Inspector layout fields follow declared container types, actual parent display, and breakpoint',()=>{
   const node={type:'text',style:{},responsive:{}};
   const parent={type:'container',responsive:{desktop:{display:'grid'},mobile:{display:'flex'}}};
   assert.equal(isLayoutPropertyRelevant(getProperty('grid.column'),node,parent,'desktop'),true);
@@ -76,6 +76,10 @@ test('Inspector layout fields follow actual parent display and breakpoint instea
   assert.deepEqual(getProperty('flex.alignSelf').layoutContext,{kind:'item',parentModes:['flex','grid']});
   assert.deepEqual(getProperty('grid.columns').layoutContext,{kind:'container',modes:['grid']});
   assert.deepEqual(getProperty('flex.gap').layoutContext,{kind:'container',modes:['flex','grid']});
+  for(const id of ['flex.direction','flex.justify','flex.align','flex.wrap','flex.gap','grid.columns','grid.rows','grid.rowGap','grid.columnGap'])
+    assert.deepEqual(getProperty(id).appliesTo,LAYOUT_TYPES,`${id} shares the canonical layout-container type list`);
+  assert.ok(listProperties({group:'grid',nodeType:'container'}).some(property=>property.id==='grid.columns'),'generic layout containers expose Grid fields when their current mode is Grid');
+  assert.equal(listProperties({group:'flex',nodeType:'text'}).some(property=>property.id==='flex.direction'),false,'text is not a layout-container type, even when an extension changes display to flex');
   assert.equal(isManagedLayout(parent),false,'legacy documents are not silently opted in');
   assert.equal(explicitGridColumnCount('repeat(3, minmax(0, 1fr))'),3);
   assert.equal(explicitGridColumnCount('minmax(0, 2fr) minmax(0, 1fr)'),2);

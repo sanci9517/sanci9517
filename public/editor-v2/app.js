@@ -11,14 +11,14 @@ import {diagnostics} from './diagnostics.js?v=20260918-2';
 import {plainTextToRichText,renderRichTextEditor,richTextEditorToDocument,restoreSelectionOffsets,getSelectionOffsets,transformRichTextBlockTypes} from './core/richtext-engine.js';
 import {renderSchedulePreview} from './core/schedule-preview.js';
 import {normalizeScheduleConfig,SCHEDULE_MODES,SCHEDULE_ORDERS,SCHEDULE_STATUSES,SCHEDULE_EMPTY_TEXT_MAX,SCHEDULE_LIMIT_MAX} from './core/schedule-schema.js';
-import {listPropertyGroups,listProperties,getProperty} from './core/property-registry.js?v=20261030-inspector-layout-context-contract';
+import {listPropertyGroups,listProperties,getProperty} from './core/property-registry.js?v=20261030-inspector-layout-container-contract';
 import {renderPropertyInput} from './ui/property-controls.js?v=20261030-number-step-increment';
 import {getInspectorValueContract,normalizeInspectorValue} from './core/property-values.js';
 import {describeResponsiveOrigin} from './ui/responsive-origin.js';
 import {responsiveGroupResetActions} from './ui/responsive-group-reset.js';
 import {getRichTextBlockSelection,getRichTextFormattingSelection,getRichTextBlockTransformSelection,getRichTextActiveBlockIndex,restoreRichTextBlockSelection,restoreRichTextFormattingSelection,updateRichTextInlineLink,updateRichTextInlineMark,updateRichTextInlineStyle,updateRichTextBlockAlignment} from './core/richtext-links.js';
 import {initialPageId,rememberPageId,requestedPageId} from './core/page-url.js';
-import {getElementCapability} from './core/capability-matrix.js?v=20261030-inspector-layout-context-contract';
+import {getElementCapability} from './core/capability-matrix.js?v=20261030-inspector-layout-container-contract';
 import {renderGeometryPresets} from './ui/geometry-presets.js';
 import {importRichTextClipboard} from './core/richtext-import.js';
 import {pasteRichTextDocument} from './core/richtext-paste.js';
@@ -711,7 +711,7 @@ function renderRegistryInspector(node,mode='primary'){
   for(const group of listPropertyGroups()){
     if((mode==='primary')!==primaryGroups.has(group.id))continue;
     const parent=page()?.nodes?.[node.parentId];
-    const properties=listProperties({group:group.id,...(!['flex','grid'].includes(group.id)?{nodeType:node.type}:{})})
+    const properties=listProperties({group:group.id,nodeType:node.type})
       .filter(property=>!duplicates.has(property.id)&&isLayoutPropertyRelevant(property,node,parent,device));
     if(!properties.length)continue;
     const section=document.createElement('section');section.className='inspector-group';

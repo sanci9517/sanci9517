@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import {NODE_TYPES} from '../core/schema.js';
 import {getElementCapability,getElementInspectorContract} from '../core/capability-matrix.js';
-import {getProperty,listProperties,registerProperty} from '../core/property-registry.js?v=20261030-inspector-layout-context-contract';
+import {getProperty,listProperties,registerProperty} from '../core/property-registry.js?v=20261030-inspector-layout-container-contract';
 import {getInspectorValueContract,normalizeInspectorValue} from '../core/property-values.js';
 import {STYLE_MAP} from '../core/canvas-engine.js';
 
