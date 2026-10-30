@@ -1,0 +1,80 @@
+{
+  "date": "2026-10-30",
+  "verifiedAtUtc": "2026-10-30T17:17:13Z",
+  "workItem": "77.44.7.A — Inspector foundation active-point regression and production-state correction",
+  "finding": "The canonical plan header named runtime source 27a47eb9 even though the latest production release is b20aa31d. The remote v2/foundation documentation head is d32ce074.",
+  "change": {
+    "runtimeChanged": false,
+    "canonicalPlan": "Updated the current-state header to identify b20aa31d as the active Worker source and recorded verified deployment and regression state.",
+    "evidence": "This file records the current branch, deployment, live health/assets, and automated checks."
+  },
+  "git": {
+    "localBranch": "work",
+    "localHead": "d32ce07454574c74cd75ffd0f9a114a13a791ab0",
+    "remoteTargetBranch": "v2/foundation",
+    "remoteTargetHead": "d32ce07454574c74cd75ffd0f9a114a13a791ab0",
+    "worktreePreexistingUntrackedPreserved": [
+      "scripts/__pycache__/",
+      "work/"
+    ]
+  },
+  "production": {
+    "workerSourceCommit": "b20aa31d1d956fa39f571f2b008319280a78672f",
+    "deployment": "ee409ac1-c894-4345-b399-844447970504",
+    "workerVersion": "cad28b9e-8d0c-4eea-96a1-514c04572e90",
+    "trafficPercent": 100,
+    "health": {
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+      "status": 200,
+      "response": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "assets": [
+      {
+        "path": "/editor-v2/app.js",
+        "sourceSha256": "1ddf5310bd74cc42da181f19f0f64a8140ce749f17f31ad103a7f3746dae52dc",
+        "liveSha256": "1ddf5310bd74cc42da181f19f0f64a8140ce749f17f31ad103a7f3746dae52dc",
+        "matches": true
+      },
+      {
+        "path": "/editor-v2/ui/legacy-media-inspector.js",
+        "sourceSha256": "81242eec865638eada4587dad8d41bfd5e9eacd5a51560a1f85c942523290a8a",
+        "liveSha256": "81242eec865638eada4587dad8d41bfd5e9eacd5a51560a1f85c942523290a8a",
+        "matches": true
+      }
+    ],
+    "deployedDuringThisWorkBlock": false
+  },
+  "tests": {
+    "browserCommand": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-inspector-partial-types.test.js",
+    "browser": {
+      "passed": 1,
+      "failed": 0,
+      "durationSeconds": 452.24,
+      "coverage": "44 PARTIAL element types: actual Inspector fields match applicable registry contracts and command/key routes; no empty groups; responsive style reaches Canvas; draft Save preserves public state; explicit Publish updates it."
+    },
+    "editorUnitCommand": "npm run test:editor",
+    "editorUnitFilesPassed": 11,
+    "typecheck": "PASS",
+    "migrationSafetyGate": "PASS",
+    "canonicalPlanAudit": "PASS; 13 master files, one cursor, 396 traceability records; acceptance NOT_CERTIFIED",
+    "activePointAudit": "PASS; 77.44.7.A remains OPEN / NOT CERTIFIED",
+    "diffCheck": "PASS"
+  },
+  "release": {
+    "runtimeCodeCommit": "NOT CREATED",
+    "documentationCommit": "NOT CREATED YET",
+    "githubCi": "NOT RUN",
+    "workerDeployment": "NOT RUN; runtime source unchanged"
+  },
+  "costAndDataSafety": {
+    "newPaidServiceOrDependency": false,
+    "d1MigrationOrWrite": false,
+    "r2Mutation": false
+  },
+  "acceptanceBoundary": "This evidence corrects the stale runtime source pointer and records a local automated regression pass. The full 77.44.7.A and Visual Editor remain OPEN / NOT CERTIFIED; manual/physical acceptance remains DEFERRED until the full Editor is implemented."
+}

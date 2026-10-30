@@ -25,9 +25,11 @@
 
 **Értelmezési elsőbbség:** minden későbbi tervfeladat, Codex-/fejlesztői utasítás és modulmegvalósítás ezt az „előbb keresés → licenc/biztonság/illeszkedés → tényleges újrahasznosítás/adaptálás, ha megfelelő → teljes tesztelés” elvet követi; nem igényel új roadmapet, és a korábbi feladatok státuszát nem minősíti át.
 
-## AKTUÁLIS VÉGREHAJTÁSI ÁLLAPOT — 2026-10-30, éles Worker source `27a47eb9`; EDT-014 / 77.44.7.A folytatás
+## AKTUÁLIS VÉGREHAJTÁSI ÁLLAPOT — 2026-10-30, éles Worker source `b20aa31d`; EDT-014 / 77.44.7.A folytatás
 
 Ez az irányadó folytatási állapot; az alatta és a 12 részben lévő korábbi checkpointok történeti bizonyítékok. Nem új roadmap. A 77.3 későbbi fázistáblája és a 77.44.7 blokksorrendje az irányadó; a régi F1.1/63.50.92 kurzorok és a 39. fejezet eltérő fázisnevei nem következő feladatok.
+
+**2026-10-30 — Aktív Inspector-állapot újraellenőrzése:** a korábbi fejlécben szereplő `27a47eb9` már nem az éles runtime forrása volt. A GitHub `v2/foundation` head `d32ce074`, a telepített runtime forrás commitja `b20aa31d`; a Cloudflare deployment API az `ee409ac1-c894-4345-b399-844447970504` deployment `cad28b9e-8d0c-4eea-96a1-514c04572e90` verzióját mutatja 100% forgalommal. Az éles `/api/health` HTTP 200, a `/editor-v2/app.js` és `/editor-v2/ui/legacy-media-inspector.js` SHA-256 értéke egyezik a helyi forrással. A 44 PARTIAL elemtípus Inspector-regressziója Chromiumban 1/1 PASS (452.2 s); Editor unit 11/11, typecheck, migration-safety gate, canonical-plan/active-point audit, 396 traceability és `git diff --check` PASS. Nem történt runtime-kód-változás, új deployment, D1/R2-művelet vagy CI-futás. [Állapotbizonyíték](evidence/inspector-active-point-regression-snapshot-2026-10-30.json).
 
 ### Kézi Visual Editor elfogadás — csak a teljes Editor elkészültekor
 
