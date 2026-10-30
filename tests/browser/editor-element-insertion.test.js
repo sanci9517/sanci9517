@@ -74,7 +74,20 @@ test('palette items are inserted beside the selected item in canvas flow and sav
   const canvasState=await tab.locator('.page-canvas .node[data-node-id="'+rootId+'"]').evaluate(el=>[...el.children].filter(child=>child.matches('.node')).map(child=>({id:child.dataset.nodeId,top:child.getBoundingClientRect().top,bottom:child.getBoundingClientRect().bottom})));
   assert.deepEqual(canvasState.map(item=>item.id),[firstId,linkId,headingId],'new node should be inserted immediately after the selected canvas item');
   assert.ok(canvasState[0].bottom<=canvasState[1].top+1&&canvasState[1].bottom<=canvasState[2].top+1,'normal-flow elements should not overlap on the canvas');
+  const assertDeviceSelection=async selected=>{
+    for(const device of ['desktop','tablet','mobile']){
+      const expected=String(device===selected);
+      assert.equal(await tab.locator('.top-center [data-device="'+device+'"]').getAttribute('aria-pressed'),expected,'top preview control should expose '+device+' selection');
+      assert.equal(await tab.locator('.canvas-device-btn[data-device="'+device+'"]').getAttribute('aria-pressed'),expected,'canvas preview control should expose '+device+' selection');
+    }
+  };
+  assert.equal(await tab.locator('.top-center').getAttribute('role'),'group');
+  assert.equal(await tab.locator('.top-center').getAttribute('aria-label'),'Előnézeti eszközméret');
+  assert.equal(await tab.locator('.canvas-devices').getAttribute('role'),'group');
+  assert.equal(await tab.locator('.canvas-devices').getAttribute('aria-label'),'Vászon előnézeti eszközmérete');
+  await assertDeviceSelection('desktop');
   await tab.locator('.canvas-device-btn[data-device="mobile"]').click();
+  await assertDeviceSelection('mobile');
   const mobileState=await rootNode.evaluate(el=>[...el.children].filter(child=>child.matches('.node')).map(child=>({id:child.dataset.nodeId,top:child.getBoundingClientRect().top,bottom:child.getBoundingClientRect().bottom})));
   assert.deepEqual(mobileState.map(item=>item.id),[firstId,linkId,headingId]);
   assert.ok(mobileState[0].bottom<=mobileState[1].top+1&&mobileState[1].bottom<=mobileState[2].top+1,'normal-flow elements should not overlap in the mobile canvas');
