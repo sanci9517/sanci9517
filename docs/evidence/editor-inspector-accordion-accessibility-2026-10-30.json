@@ -1,0 +1,39 @@
+{
+  "date": "2026-10-30",
+  "workItem": "77.44.7.A — Inspector accordion accessible panel relationship",
+  "finding": "Inspector accordion titles already supported mouse and Enter/Space interaction and exposed aria-expanded, but did not identify the controlled content panel.",
+  "change": "The existing inspector group enhancer now assigns a unique ID to each generated content wrapper and links the keyboard-operable title with aria-controls. The editor HTML cache-busting key was advanced for the changed module. Existing open state, Page Model behavior, and Save/Publish boundaries remain unchanged.",
+  "reuseReview": "Reused the existing native title/button-role accordion, open-state enhancer, and project's prior palette disclosure relationship pattern. No third-party source or dependency was appropriate or added.",
+  "tests": {
+    "typecheck": "PASS",
+    "editor": {"pass": 11, "fail": 0},
+    "chromiumInspectorLifecycle": {"pass": 1, "fail": 0, "durationMs": 234588.091, "checks": ["aria-controls target exists", "closed panel hidden", "click toggles visibility/state", "Enter toggles state", "Space toggles state", "Inspector edit/Save/reload/separate Publish regression"]},
+    "gitDiffCheck": "PASS",
+    "canonicalPlan": "PASS; 13 master files, one current cursor",
+    "activePointAudit": "PASS; 77.44.7.A remains NOT_CERTIFIED",
+    "traceability": {"pass": 396, "acceptance": "NOT_CERTIFIED"},
+    "migrationSafetyGate": "PASS; deploy:safe does not apply D1 migrations",
+    "wranglerDryRun": {"status": "PASS", "wrangler": "4.130.0", "assets": 161, "uploadKiB": 296.93, "migrationApply": false}
+  },
+  "productionD1Preflight": {
+    "method": "SELECT-only Cloudflare D1 query API: SELECT id,name,applied_at FROM d1_migrations ORDER BY id",
+    "appliedMigrations": 34,
+    "latestAppliedMigration": "0028_media_archive.sql",
+    "rowsRead": 34,
+    "rowsWritten": 0,
+    "changedDb": false,
+    "migrationApplied": false
+  },
+  "release": {
+    "runtimeCommit": "PENDING",
+    "targetBranch": "v2/foundation",
+    "push": "PENDING",
+    "githubCi": "PENDING",
+    "deployment": "PENDING",
+    "workerVersion": "PENDING",
+    "productionHealth": "UNVERIFIED",
+    "productionAssetHash": "UNVERIFIED",
+    "productionDataChanges": {"d1MigrationsApplied": 0, "d1RowsWritten": 0, "r2Changes": 0}
+  },
+  "acceptance": {"visualEditor": "NOT_CERTIFIED", "manualAndPhysicalDevice": "DEFERRED_UNTIL_COMPLETE_VISUAL_EDITOR"}
+}

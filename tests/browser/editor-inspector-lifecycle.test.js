@@ -100,6 +100,21 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   // Authored defaults are visible in the style Inspector even before users
   // persist an explicit style override. Merely selecting a node stays pure.
   await select(buttonId);
+  const inspectorDisclosure=editor.locator('#inspectorBody .inspector-group-title[role="button"]').first();
+  const inspectorPanelId=await inspectorDisclosure.getAttribute('aria-controls');
+  assert.ok(inspectorPanelId,'Inspector accordion identifies the content it controls');
+  assert.match(inspectorPanelId,/^inspector-group-content-\d+$/);
+  const inspectorPanel=editor.locator('#'+inspectorPanelId);
+  assert.equal(await inspectorDisclosure.getAttribute('aria-expanded'),'false');
+  assert.equal(await inspectorPanel.isVisible(),false,'closed Inspector content stays hidden');
+  await inspectorDisclosure.click();
+  assert.equal(await inspectorDisclosure.getAttribute('aria-expanded'),'true');
+  assert.equal(await inspectorPanel.isVisible(),true,'the controlled Inspector content becomes visible');
+  await inspectorDisclosure.focus();
+  await inspectorDisclosure.press('Enter');
+  assert.equal(await inspectorDisclosure.getAttribute('aria-expanded'),'false','Enter closes the Inspector accordion');
+  await inspectorDisclosure.press(' ');
+  assert.equal(await inspectorDisclosure.getAttribute('aria-expanded'),'true','Space opens the Inspector accordion');
   const button=editor.locator(`.node[data-node-id="${buttonId}"]`);
   assert.equal(await button.evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(112, 71, 235)');
   assert.equal(await field('background.color').locator('input[aria-label$="HEX"]').inputValue(),'#7047eb');

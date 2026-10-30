@@ -1,6 +1,7 @@
 /* UI-only accordion state; edits still flow through the Page Model commands. */
 const processed = new WeakSet();
 const openGroups = new Map();
+let contentIdSequence = 0;
 
 function groupKey(group, title) {
   return title.querySelector('strong')?.textContent?.trim() || '';
@@ -15,6 +16,7 @@ function enhanceGroup(group) {
   const key = groupKey(group, title);
   const content = document.createElement('div');
   content.className = 'inspector-group-content';
+  content.id = `inspector-group-content-${contentIdSequence++}`;
   [...group.children].filter((child) => child !== title).forEach((child) => content.append(child));
   group.append(content);
 
@@ -23,6 +25,7 @@ function enhanceGroup(group) {
   title.setAttribute('role', 'button');
   title.setAttribute('tabindex', '0');
   title.setAttribute('aria-expanded', String(initiallyOpen));
+  title.setAttribute('aria-controls', content.id);
 
   const toggle = () => {
     const open = group.classList.toggle('is-open');
