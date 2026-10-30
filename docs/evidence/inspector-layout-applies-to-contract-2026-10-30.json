@@ -1,7 +1,7 @@
 {
   "plan_item": "77.44.7.A — Inspector declared appliesTo and layout container parity",
   "date": "2026-10-30",
-  "status": "IMPLEMENTED_AND_LOCALLY_VERIFIED_RELEASE_PENDING",
+  "status": "DEPLOYED_AND_PRODUCTION_VERIFIED",
   "finding": {
     "defect": "renderRegistryInspector() omitted nodeType when querying flex/grid groups. The visible Inspector therefore bypassed each property’s appliesTo declaration and could show Flex/Grid container controls on types absent from the capability contract.",
     "fix": "All Inspector group queries now include the selected node type. A shared LAYOUT_TYPES module is the single source for layout preset eligibility and container-level Flex/Grid appliesTo declarations. Grid/Flex modes still decide which contextual field appears, while item fields continue to depend on the parent layout.",
@@ -46,13 +46,56 @@
     "Production health baseline": "PASS, direct /api/health HTTP 200 and ok=true."
   },
   "release": {
-    "status": "PENDING",
-    "worker_before_release": "9ca3228d-56a3-4066-b1e8-932b573ba0a9 at 100% traffic",
+    "status": "DEPLOYED_AND_PRODUCTION_VERIFIED",
+    "runtime_commit": "416e5a0ad6b8a8bf5ffb304faf22ee7b2f801631",
     "github_target_branch": "v2/foundation",
-    "github_target_head_before_push": "cdef2807ad117168bcdbc27e8a3da2a654b891ae"
+    "github_target_head_after_push": "416e5a0ad6b8a8bf5ffb304faf22ee7b2f801631",
+    "push": "normal fast-forward from cdef2807ad117168bcdbc27e8a3da2a654b891ae; remote ref verified with git ls-remote",
+    "deploy_command": "WRANGLER_WRITE_LOGS=false WRANGLER_LOG_PATH=/tmp/sanci-wrangler-deploy-applies-to.log npm run deploy:safe",
+    "migration_safety_gate": "PASS; no production D1 migrations applied",
+    "deployment_id": "ace02e13-16d0-4a3b-a74b-26cd55d3a244",
+    "worker_version": "f2365772-ed0d-4db2-adab-9de2e48d44fc",
+    "worker_traffic_percent": 100,
+    "health": {
+      "url": "/api/health",
+      "http_status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "asset_hashes": {
+      "editor-v2/app.js": "871fb2584e42cd4cfcdb6baf76d9ad7da8bac324e8bf8e91941e8b55d9389b4d",
+      "editor-v2/core/capability-matrix.js": "eed0389fa3e154854a6814a34159a888685d0a2d9a3e4dede29995c40d4c98ab",
+      "editor-v2/core/inspector-style-contract.js": "4ac8d261be4acc6e5edc9071605d9aaca97472073a2a905b5519c7027fcb728b",
+      "editor-v2/core/layout-presets.js": "77b5b166666c440c7d99dd479542ca4d2d564c875115b34e874b346fc3db6a27",
+      "editor-v2/core/layout-types.js": "52b1ff66f1b812d0759f50bc921e6200b56587bf3e0e62d705c6ad44d3639b0e",
+      "editor-v2/core/property-registry.js": "7ed9ee02a19297b44b660e7409dbd43f8bacec771cd1b01b2c91947e1c8f105e",
+      "editor-v2/core/state-styles.js": "395086eaaeb62b780ceb2a40487bd8daa08a69e9eb56c925870dd9f3d6760dca",
+      "editor-v2/index.html": "48c3191df11e81f16be55d7b300fbc5c605433411ec5b5899ff8415654dec393",
+      "editor-v2/tests/capability-contract.test.js": "0deeaaf53d603a1ec1e633b953465fa6e4501a7c04f0308168ffc7fd6b3d43b5",
+      "editor-v2/tests/core.test.js": "44ed4ceff23a3fa594239a43c0e8330f56a4b36fef382cf6ab091fcb4c69ace1",
+      "editor-v2/tests/inspector-richtext.test.js": "14e59a3549e97e1dba691af20a90b5a572c53cc378571d1add842489c2a15c50",
+      "editor-v2/tests/layout-presets.test.js": "25740a3eb5e7199f11a4e9efe9f9dfe321d6528a70ec62fe5048981a6489f60e",
+      "editor-v2/tests/state-tokens.test.js": "7d3f8672e6dae4b42571fcc8ada55ed260acada6455d73c6beb1521f8a45a332",
+      "editor-v2/ui/element-content-controls.js": "e11d3116318aad15b456300f9736d0bff66b4050f50b744b946957d03e7885f4",
+      "editor-v2/ui/geometry-presets.js": "4047b9055e92edfb121baaaec4c049768e422ce9982d884afa2b5fc58ba78961"
+    },
+    "asset_hash_verification": "All 15 listed deployed public assets fetched from the canonical Worker routes and SHA-256 matched the local deployed source byte-for-byte; index.html is served at /editor-v2/ (not /editor-v2/index.html).",
+    "post_release_d1_select_only": {
+      "migration_rows": 34,
+      "latest": "0028_media_archive.sql",
+      "rows_written": 0,
+      "changed_db": false,
+      "foreign_key_check": [],
+      "quick_check": "ok"
+    },
+    "github_commit_status": "No status checks returned (0 entries); [skip ci], no CI PASS claimed."
   },
   "ci_and_cost": {
-    "github_ci": "Not run; free GitHub Actions allowance is exhausted. Commit uses [skip ci]; no CI PASS claimed.",
+    "github_ci": "Not run; free GitHub Actions allowance is exhausted. GitHub commit status endpoint returned zero status checks for the runtime commit ([skip ci]); no CI PASS claimed.",
     "new_paid_cost_or_dependency": false
   },
   "acceptance": "This validates Inspector visibility metadata for layout controls only. Full 77.44.7.A and Visual Editor acceptance remain OPEN / NOT CERTIFIED; manual/physical acceptance remains DEFERRED."
