@@ -1,0 +1,68 @@
+{
+  "date": "2026-10-31",
+  "planItem": "77.44.7.A — Inspector transform/filter/transition fields across all editable PARTIAL types",
+  "status": "LOCAL_TEST_AND_EVIDENCE_PASS; PUSH_PENDING",
+  "finding": "The common capability/property registry exposed rotate, scale, filter, and transition routes, but the existing 44-type browser lifecycle did not exercise this four-property set through mobile overrides, individual inheritance reset, and separate publication.",
+  "change": "Extended tests/browser/editor-inspector-partial-types.test.js with the four registered fields across all 44 editable PARTIAL types. Verifies registry command/key routes, desktop Inspector-to-Canvas CSS, draft save without public mutation, editor reload, separate Publish, mobile overrides and desktop preservation, mobile reload/Publish, each field reset, Undo/Redo, reset Save without public mutation, and final Publish restoring inherited desktop values.",
+  "properties": {
+    "transform.rotate": {
+      "key": "rotate",
+      "desktop": "15deg",
+      "mobile": "30deg"
+    },
+    "transform.scale": {
+      "key": "scale",
+      "desktop": "1.2",
+      "mobile": "0.8"
+    },
+    "filter.effect": {
+      "key": "filter",
+      "desktop": "grayscale(1)",
+      "mobile": "sepia(.7)",
+      "computedMobile": "sepia(0.7)"
+    },
+    "animation.transition": {
+      "key": "transition",
+      "desktop": "all 180ms ease",
+      "mobile": "all 300ms ease"
+    }
+  },
+  "browser": {
+    "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-inspector-partial-types.test.js",
+    "result": "PASS, 1/1 test; 888.9 seconds.",
+    "editablePartialTypes": 44,
+    "resultDetails": "All four fields round-trip through the same Registry, Inspector, Canvas, draft Page Model, Editor reload, public renderer, and separate Publish path at desktop and mobile. All four mobile inheritance resets use responsive.set; Undo/Redo, draft-only reset Save, and Publish restoration of desktop values are asserted. Chromium computes sepia(.7) to sepia(0.7); the assertion checks the normalized computed value while the Inspector/registry value remains sepia(.7).",
+    "initialExpectationCorrection": "The first full run exposed only a CSS computed-value expectation mismatch for sepia(.7), which Chromium serializes as sepia(0.7). Updated the expected computed CSS without changing the registry option, application behavior, or coverage; final full browser run passed."
+  },
+  "checks": {
+    "node --check tests/browser/editor-inspector-partial-types.test.js": "PASS.",
+    "npm run test:editor": "PASS, 11/11 test files.",
+    "npm run typecheck": "PASS.",
+    "npm run test:web013:migration-gate": "PASS; safety gate only, no production migration.",
+    "canonicalPlan": "PASS; 13-file master, one cursor.",
+    "activePlanPoint": "PASS; 77.44 / WEB-011 -> 77.44.7.A; NOT_CERTIFIED.",
+    "featureTraceability": "PASS; 396 mappings.",
+    "git diff --check": "PASS."
+  },
+  "release": {
+    "runtimeChanged": false,
+    "githubTarget": "v2/foundation",
+    "localCheckoutBranch": "work; preserved.",
+    "remoteHeadObserved": "82f6b59054a001fa5c043095855cd6e4b3dc5b2b",
+    "priorLocalDocumentationCommit": "80f1f6e10a62114c4ea7502cdd68e6a897a96931; descendant of 82f6b590, not yet pushed.",
+    "push": "Pending; shell git ls-remote and git push cannot connect to proxy port 8080. No claim that local commits are on GitHub.",
+    "ci": "No new GitHub CI run; the test/docs change is locally verified. No CI PASS claimed.",
+    "workerDeployment": {
+      "id": "11dc8722-8748-4e34-830d-3e68e6536461",
+      "version": "0d66c912-a60c-44e9-90a5-341614c3b8a2",
+      "trafficPercent": 100,
+      "verification": "Read-only Cloudflare deployments API GET during this run reports this version at 100%.",
+      "health": "Direct curl was blocked by the same proxy connection error; last recorded direct /api/health check after the prior test push returned HTTP 200.",
+      "redeployment": "Not required; no runtime source or public asset changed."
+    },
+    "productionD1Writes": 0,
+    "productionR2Changes": 0,
+    "newCostOrDependency": "None."
+  },
+  "acceptanceBoundary": "This adds the four transform/filter/transition property routes across 44 editable PARTIAL types. It does not certify all 79 element types or all 68 properties. Complete 77.44.7.A remains OPEN / NOT CERTIFIED; manual/physical acceptance remains deferred until the complete Editor is implemented."
+}
