@@ -13,20 +13,20 @@ import {plainTextToRichText} from '../../public/editor-v2/core/richtext-engine.j
 
 const publicDir=resolve(import.meta.dirname,'../../public');
 const properties=[
-  {id:'typography.fontFamily',key:'fontFamily',type:'select',value:'Georgia',css:'fontFamily',expected:'Georgia'},
-  {id:'typography.fontSize',key:'fontSize',type:'dimension',value:'24px',css:'fontSize',expected:'24px'},
-  {id:'typography.fontWeight',key:'fontWeight',type:'select',value:'800',css:'fontWeight',expected:'800'},
-  {id:'typography.fontStyle',key:'fontStyle',type:'select',value:'italic',css:'fontStyle',expected:'italic'},
-  {id:'typography.lineHeight',key:'lineHeight',type:'number',value:'1.7',css:'lineHeight',expected:'40.8px'},
-  {id:'typography.letterSpacing',key:'letterSpacing',type:'dimension',value:'2px',css:'letterSpacing',expected:'2px'},
-  {id:'typography.textAlign',key:'textAlign',type:'select',value:'center',css:'textAlign',expected:'center'},
-  {id:'typography.textTransform',key:'textTransform',type:'select',value:'uppercase',css:'textTransform',expected:'uppercase'},
-  {id:'typography.textDecoration',key:'textDecoration',type:'select',value:'underline',css:'textDecorationLine',expected:'underline'},
-  {id:'typography.textWrap',key:'textWrap',type:'select',value:'nowrap',css:'textWrap',expected:'nowrap'},
-  {id:'typography.overflowWrap',key:'overflowWrap',type:'select',value:'anywhere',css:'overflowWrap',expected:'anywhere'},
-  {id:'typography.wordSpacing',key:'wordSpacing',type:'dimension',value:'3px',css:'wordSpacing',expected:'3px'},
-  {id:'typography.textIndent',key:'textIndent',type:'dimension',value:'8px',css:'textIndent',expected:'8px'},
-  {id:'typography.textShadow',key:'textShadow',type:'select',value:'0 2px 8px #0006',css:'textShadow',expected:'rgba(0, 0, 0, 0.4) 0px 2px 8px'}
+  {id:'typography.fontFamily',key:'fontFamily',type:'select',css:'fontFamily',desktop:{value:'Georgia',expected:'Georgia'},tablet:{value:'Arial',expected:'Arial'},mobile:{value:'Verdana',expected:'Verdana'}},
+  {id:'typography.fontSize',key:'fontSize',type:'dimension',css:'fontSize',desktop:{value:'24px',expected:'24px'},tablet:{value:'26px',expected:'26px'},mobile:{value:'20px',expected:'20px'}},
+  {id:'typography.fontWeight',key:'fontWeight',type:'select',css:'fontWeight',desktop:{value:'800',expected:'800'},tablet:{value:'600',expected:'600'},mobile:{value:'900',expected:'900'}},
+  {id:'typography.fontStyle',key:'fontStyle',type:'select',css:'fontStyle',desktop:{value:'italic',expected:'italic'},tablet:{value:'normal',expected:'normal'},mobile:{value:'italic',expected:'italic'}},
+  {id:'typography.lineHeight',key:'lineHeight',type:'number',css:'lineHeight',desktop:{value:'1.7',expected:'40.8px'},tablet:{value:'1.4',expected:'36.4px'},mobile:{value:'2',expected:'40px'}},
+  {id:'typography.letterSpacing',key:'letterSpacing',type:'dimension',css:'letterSpacing',desktop:{value:'2px',expected:'2px'},tablet:{value:'1px',expected:'1px'},mobile:{value:'3px',expected:'3px'}},
+  {id:'typography.textAlign',key:'textAlign',type:'select',css:'textAlign',desktop:{value:'center',expected:'center'},tablet:{value:'left',expected:'left'},mobile:{value:'right',expected:'right'}},
+  {id:'typography.textTransform',key:'textTransform',type:'select',css:'textTransform',desktop:{value:'uppercase',expected:'uppercase'},tablet:{value:'lowercase',expected:'lowercase'},mobile:{value:'capitalize',expected:'capitalize'}},
+  {id:'typography.textDecoration',key:'textDecoration',type:'select',css:'textDecorationLine',desktop:{value:'underline',expected:'underline'},tablet:{value:'line-through',expected:'line-through'},mobile:{value:'overline',expected:'overline'}},
+  {id:'typography.textWrap',key:'textWrap',type:'select',css:'textWrap',desktop:{value:'nowrap',expected:'nowrap'},tablet:{value:'wrap',expected:'wrap'},mobile:{value:'nowrap',expected:'nowrap'}},
+  {id:'typography.overflowWrap',key:'overflowWrap',type:'select',css:'overflowWrap',desktop:{value:'anywhere',expected:'anywhere'},tablet:{value:'break-word',expected:'break-word'},mobile:{value:'normal',expected:'normal'}},
+  {id:'typography.wordSpacing',key:'wordSpacing',type:'dimension',css:'wordSpacing',desktop:{value:'3px',expected:'3px'},tablet:{value:'1px',expected:'1px'},mobile:{value:'4px',expected:'4px'}},
+  {id:'typography.textIndent',key:'textIndent',type:'dimension',css:'textIndent',desktop:{value:'8px',expected:'8px'},tablet:{value:'4px',expected:'4px'},mobile:{value:'12px',expected:'12px'}},
+  {id:'typography.textShadow',key:'textShadow',type:'select',css:'textShadow',desktop:{value:'0 2px 8px #0006',expected:'rgba(0, 0, 0, 0.4) 0px 2px 8px'},tablet:{value:'0 4px 16px #000a',expected:'rgba(0, 0, 0, 0.667) 0px 4px 16px'},mobile:{value:'0 0 16px #7c3aed80',expected:'rgba(124, 58, 237, 0.5) 0px 0px 16px'}}
 ];
 
 test('all editable PARTIAL types preserve typed typography fields through Inspector, Canvas, draft Save, reload and Publish',async t=>{
@@ -81,29 +81,42 @@ test('all editable PARTIAL types preserve typed typography fields through Inspec
     const group=control.locator('xpath=ancestor::section[1]'),title=group.locator(':scope > .inspector-group-title');
     if(await title.getAttribute('aria-expanded')==='false')await title.click();
   };
-  const setField=async({type,id},property)=>{
+  const activateEditorDevice=async device=>{
+    const button=editor.locator(`.canvas-device-btn[data-device="${device}"]`);
+    if(!await button.evaluate(el=>el.classList.contains('active')))await button.click();
+  };
+  const activateViewerDevice=async device=>{
+    const width={desktop:1366,tablet:768,mobile:390}[device],changed=await viewer.evaluate(next=>window.innerWidth!==next,width);
+    const rendered=changed?viewer.waitForResponse(response=>response.url().includes('/api/public/presentation')):null;
+    await viewer.setViewportSize({width,height:900});
+    if(rendered)await rendered;
+    await viewer.waitForFunction(expected=>window.innerWidth===expected&&document.querySelector('.visual-editor-node[data-node-id]')!==null,width);
+  };
+  const setField=async({type,id},property,device)=>{
     await canvas(id).evaluate(el=>el.click());
     await editor.locator('.inspector-tabs button').first().click();
     const control=field(property.id);await ensureGroupOpen(control);
+    const {value,expected}=property[device];
     assert.equal(await control.count(),1,`${type}: ${property.id} renders as one typed Inspector field`);
     assert.equal(await control.getAttribute('data-property-command'),'responsive.set',`${type}: ${property.id} uses the responsive command`);
     assert.equal(await control.getAttribute('data-property-key'),property.key,`${type}: ${property.id} maps to the Page Model key`);
-    if(property.type==='select')await control.locator('select:not(.property-token-picker)').selectOption(property.value);
+    if(property.type==='select')await control.locator('select:not(.property-token-picker)').selectOption(value);
     else if(property.type==='dimension'){
       await control.locator('.dimension-controls select:not(.property-token-picker)').selectOption('px');
-      const input=control.locator('.dimension-controls input[type="number"]');await input.fill(property.value.replace(/px$/,''));await input.press('Tab');
-    }else{const input=control.locator('input[type="number"]');await input.fill(property.value);await input.press('Tab')}
-    assert.equal(await canvas(id).evaluate((el,key)=>getComputedStyle(el)[key],property.css),property.expected,`${type}: ${property.key} reaches Canvas CSS`);
+      const input=control.locator('.dimension-controls input[type="number"]');await input.fill(value.replace(/px$/,''));await input.press('Tab');
+    }else{const input=control.locator('input[type="number"]');await input.fill(value);await input.press('Tab')}
+    assert.equal(await canvas(id).evaluate((el,key)=>getComputedStyle(el)[key],property.css),expected,`${type}: ${device} ${property.key} reaches Canvas CSS`);
   };
   const readCss=node=>node.evaluate((el,keys)=>Object.fromEntries(keys.map(key=>[key,getComputedStyle(el)[key]])),properties.map(property=>property.css));
-  const expected=Object.fromEntries(properties.map(property=>[property.css,property.expected]));
+  const expectedFor=device=>Object.fromEntries(properties.map(property=>[property.css,property[device].expected]));
   const baseline=Object.fromEntries(await Promise.all(editableNodes.map(async({id})=>[id,await readCss(publicNode(id))])));
 
-  for(const node of editableNodes)for(const property of properties)await setField(node,property);
+  await activateEditorDevice('desktop');
+  for(const node of editableNodes)for(const property of properties)await setField(node,property,'desktop');
   await editor.locator('#save').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
   assert.equal(requests.at(-1).publish,false,'Save remains draft-only');
   for(const {type,id} of editableNodes)for(const property of properties){
-    assert.equal(draft.pages[pageId].nodes[id].responsive?.desktop?.[property.key],property.value,`${type}: Save stores ${property.key} in the desktop draft`);
+    assert.equal(draft.pages[pageId].nodes[id].responsive?.desktop?.[property.key],property.desktop.value,`${type}: Save stores ${property.key} in the desktop draft`);
     assert.equal(published.pages[pageId].nodes[id].responsive?.desktop?.[property.key],undefined,`${type}: Save does not publish ${property.key}`);
   }
   await viewer.reload();
@@ -114,15 +127,120 @@ test('all editable PARTIAL types preserve typed typography fields through Inspec
     for(const property of properties){
       const control=field(property.id);await ensureGroupOpen(control);
       const input=property.type==='select'?control.locator('select:not(.property-token-picker)'):property.type==='dimension'?control.locator('.dimension-controls input[type="number"]'):control.locator('input[type="number"]');
-      assert.equal(await input.inputValue(),property.type==='dimension'?property.value.replace(/px$/,''):property.value,`${type}: ${property.key} restores in Inspector after reload`);
+      assert.equal(await input.inputValue(),property.type==='dimension'?property.desktop.value.replace(/px$/,''):property.desktop.value,`${type}: ${property.key} restores in Inspector after reload`);
     }
   }
   await editor.locator('#publish').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
   assert.equal(requests.at(-1).publish,true,'Publish is an explicit second operation');
   await viewer.reload();
   for(const {type,id} of editableNodes){
-    assert.deepEqual(await readCss(publicNode(id)),expected,`${type}: published typography CSS matches the Inspector and Canvas`);
-    for(const property of properties)assert.equal(published.pages[pageId].nodes[id].responsive.desktop[property.key],property.value,`${type}: Publish stores ${property.key}`);
+    assert.deepEqual(await readCss(publicNode(id)),expectedFor('desktop'),`${type}: published typography CSS matches the Inspector and Canvas`);
+    for(const property of properties)assert.equal(published.pages[pageId].nodes[id].responsive.desktop[property.key],property.desktop.value,`${type}: Publish stores ${property.key}`);
   }
+
+  const restoreDeviceInInspector=async device=>{
+    await editor.reload({waitUntil:'domcontentloaded'});await activateEditorDevice(device);
+    for(const {type,id} of editableNodes){
+      await canvas(id).evaluate(el=>el.click());await editor.locator('.inspector-tabs button').first().click();
+      for(const property of properties){
+        const control=field(property.id);await ensureGroupOpen(control);
+        const input=property.type==='select'?control.locator('select:not(.property-token-picker)'):property.type==='dimension'?control.locator('.dimension-controls input[type="number"]'):control.locator('input[type="number"]');
+        const expectedValue=property[device].value;
+        assert.equal(await input.inputValue(),property.type==='dimension'?expectedValue.replace(/px$/,''):expectedValue,`${type}: ${device} ${property.key} restores after Editor reload`);
+      }
+    }
+  };
+  const assertDraftDevice=({type,id},device)=>{
+    for(const property of properties)assert.equal(draft.pages[pageId].nodes[id].responsive?.[device]?.[property.key],property[device].value,`${type}: draft stores ${device} ${property.key}`);
+  };
+  const assertPublishedDevice=({type,id},device)=>{
+    for(const property of properties)assert.equal(published.pages[pageId].nodes[id].responsive?.[device]?.[property.key],property[device].value,`${type}: Publish stores ${device} ${property.key}`);
+  };
+
+  await activateEditorDevice('tablet');await activateViewerDevice('tablet');
+  for(const node of editableNodes)for(const property of properties)await setField(node,property,'tablet');
+  await editor.locator('#save').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+  assert.equal(requests.at(-1).publish,false,'tablet Save remains draft-only');
+  for(const node of editableNodes){
+    assertDraftDevice(node,'tablet');
+    for(const property of properties){
+      assert.equal(published.pages[pageId].nodes[node.id].responsive?.tablet?.[property.key],undefined,`${node.type}: tablet Save leaves published ${property.key} unchanged`);
+      assert.equal(draft.pages[pageId].nodes[node.id].responsive.desktop[property.key],property.desktop.value,`${node.type}: tablet Save preserves desktop ${property.key}`);
+    }
+  }
+  await viewer.reload();
+  for(const {type,id} of editableNodes)assert.deepEqual(await readCss(publicNode(id)),expectedFor('desktop'),`${type}: tablet draft Save leaves the published desktop typography visible`);
+  await restoreDeviceInInspector('tablet');
+  await editor.locator('#publish').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
+  assert.equal(requests.at(-1).publish,true,'tablet Publish is a separate explicit operation');
+  await viewer.reload();
+  for(const node of editableNodes){
+    assert.deepEqual(await readCss(publicNode(node.id)),expectedFor('tablet'),`${node.type}: tablet Publish applies all typography overrides`);
+    assertPublishedDevice(node,'tablet');
+  }
+  await activateViewerDevice('desktop');
+  for(const {type,id} of editableNodes)assert.deepEqual(await readCss(publicNode(id)),expectedFor('desktop'),`${type}: tablet overrides do not change desktop typography`);
+  await activateViewerDevice('mobile');
+  for(const {type,id} of editableNodes)assert.deepEqual(await readCss(publicNode(id)),expectedFor('tablet'),`${type}: mobile inherits tablet typography before its own override`);
+
+  await activateEditorDevice('mobile');await activateViewerDevice('mobile');
+  for(const node of editableNodes)for(const property of properties)await setField(node,property,'mobile');
+  await editor.locator('#save').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+  assert.equal(requests.at(-1).publish,false,'mobile Save remains draft-only');
+  for(const node of editableNodes){
+    assertDraftDevice(node,'mobile');
+    for(const property of properties){
+      assert.equal(published.pages[pageId].nodes[node.id].responsive?.mobile?.[property.key],undefined,`${node.type}: mobile Save leaves published ${property.key} unchanged`);
+      assert.equal(draft.pages[pageId].nodes[node.id].responsive.tablet[property.key],property.tablet.value,`${node.type}: mobile Save preserves independent tablet ${property.key}`);
+      assert.equal(draft.pages[pageId].nodes[node.id].responsive.desktop[property.key],property.desktop.value,`${node.type}: mobile Save preserves desktop ${property.key}`);
+    }
+  }
+  await viewer.reload();
+  for(const {type,id} of editableNodes)assert.deepEqual(await readCss(publicNode(id)),expectedFor('tablet'),`${type}: mobile draft Save leaves the published tablet fallback visible`);
+  await restoreDeviceInInspector('mobile');
+  await editor.locator('#publish').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
+  assert.equal(requests.at(-1).publish,true,'mobile Publish is a separate explicit operation');
+  await viewer.reload();
+  for(const node of editableNodes){
+    assert.deepEqual(await readCss(publicNode(node.id)),expectedFor('mobile'),`${node.type}: mobile Publish applies all typography overrides`);
+    assertPublishedDevice(node,'mobile');
+  }
+  await activateViewerDevice('tablet');
+  for(const {type,id} of editableNodes)assert.deepEqual(await readCss(publicNode(id)),expectedFor('tablet'),`${type}: mobile overrides do not change tablet typography`);
+  await activateViewerDevice('desktop');
+  for(const {type,id} of editableNodes)assert.deepEqual(await readCss(publicNode(id)),expectedFor('desktop'),`${type}: mobile overrides do not change desktop typography`);
+
+  await activateEditorDevice('mobile');
+  for(const {type,id} of editableNodes){
+    await canvas(id).evaluate(el=>el.click());await editor.locator('.inspector-tabs button').first().click();
+    const control=field('typography.fontSize');await ensureGroupOpen(control);
+    const reset=inspector.locator('.property-reset[data-property-key="fontSize"]');
+    assert.equal(await reset.count(),1,`${type}: mobile font size exposes responsive inheritance reset`);
+    assert.equal(await reset.getAttribute('data-property-command'),'responsive.set',`${type}: mobile font size reset uses the shared responsive command`);
+    await reset.click();
+    assert.equal(await canvas(id).evaluate(el=>getComputedStyle(el).fontSize),propertyValue('typography.fontSize','tablet'),`${type}: mobile font-size reset inherits tablet on Canvas`);
+  }
+  function propertyValue(id,device){return properties.find(property=>property.id===id)[device].expected}
+  await editor.locator('#save').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+  for(const node of editableNodes){
+    assert.equal(draft.pages[pageId].nodes[node.id].responsive.mobile.fontSize,undefined,`${node.type}: mobile reset removes only the mobile font-size draft override`);
+    assert.equal(published.pages[pageId].nodes[node.id].responsive.mobile.fontSize,properties.find(property=>property.key==='fontSize').mobile.value,`${node.type}: reset Save leaves published mobile font size intact`);
+  }
+  await activateViewerDevice('mobile');await viewer.reload();
+  for(const {type,id} of editableNodes)assert.deepEqual(await readCss(publicNode(id)),expectedFor('mobile'),`${type}: mobile reset Save does not change published typography`);
+  await editor.locator('#publish').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
+  await viewer.reload();
+  for(const {type,id} of editableNodes){
+    const css=await readCss(publicNode(id));
+    assert.equal(css.fontSize,propertyValue('typography.fontSize','tablet'),`${type}: mobile reset Publish inherits tablet font size`);
+    for(const property of properties.filter(property=>property.key!=='fontSize')){
+      const expected=property.key==='lineHeight'?`${Number(propertyValue('typography.fontSize','tablet').replace('px',''))*Number(property.mobile.value)}px`:property.mobile.expected;
+      assert.equal(css[property.css],expected,`${type}: mobile reset preserves its other ${property.key} override`);
+    }
+  }
+  await activateViewerDevice('tablet');
+  for(const {type,id} of editableNodes)assert.deepEqual(await readCss(publicNode(id)),expectedFor('tablet'),`${type}: mobile reset leaves tablet typography unchanged`);
+  await activateViewerDevice('desktop');
+  for(const {type,id} of editableNodes)assert.deepEqual(await readCss(publicNode(id)),expectedFor('desktop'),`${type}: mobile reset leaves desktop typography unchanged`);
   assert.deepEqual(editorErrors,[],'opening all PARTIAL typography fields produces no browser errors');
 });
