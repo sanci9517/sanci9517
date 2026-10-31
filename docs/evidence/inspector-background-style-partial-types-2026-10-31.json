@@ -1,14 +1,34 @@
 {
   "date": "2026-10-31",
   "planItem": "77.44.7.A — responsive background gradient/position/size/repeat lifecycle across all editable PARTIAL types",
-  "status": "LOCAL_TEST_AND_EVIDENCE_PASS; PUSH_PENDING; NO_RUNTIME_DEPLOYMENT",
+  "status": "TEST_AND_EVIDENCE_PASS; FAST_FORWARD_PUSH_VERIFIED; NO_RUNTIME_DEPLOYMENT",
   "finding": "Background gradient, image fit, focal position, and repeat already had representative responsive browser coverage, but their complete Inspector-to-public lifecycle had not been exercised across all 44 editable PARTIAL node types.",
   "change": "Added tests/browser/editor-inspector-background-style-partial-types.test.js, using the project's existing Property Registry, native typed select controls, responsive.set command, page-model fixture, Canvas/public renderers, and Save/Publish behavior. No runtime source or dependencies changed.",
   "properties": [
-    {"id":"background.gradient","key":"backgroundImage","desktop":"linear-gradient(135deg, #fb7185 0%, #fbbf24 100%)","mobile":"linear-gradient(135deg, #111827 0%, #475569 100%)"},
-    {"id":"background.size","key":"backgroundSize","desktop":"cover","mobile":"contain"},
-    {"id":"background.position","key":"backgroundPosition","desktop":"center bottom","mobile":"right center"},
-    {"id":"background.repeat","key":"backgroundRepeat","desktop":"repeat-x","mobile":"repeat-y"}
+    {
+      "id": "background.gradient",
+      "key": "backgroundImage",
+      "desktop": "linear-gradient(135deg, #fb7185 0%, #fbbf24 100%)",
+      "mobile": "linear-gradient(135deg, #111827 0%, #475569 100%)"
+    },
+    {
+      "id": "background.size",
+      "key": "backgroundSize",
+      "desktop": "cover",
+      "mobile": "contain"
+    },
+    {
+      "id": "background.position",
+      "key": "backgroundPosition",
+      "desktop": "center bottom",
+      "mobile": "right center"
+    },
+    {
+      "id": "background.repeat",
+      "key": "backgroundRepeat",
+      "desktop": "repeat-x",
+      "mobile": "repeat-y"
+    }
   ],
   "coverage": "All 44 editable PARTIAL element types; Inspector responsive.set command/key contract; Canvas computed CSS; desktop and mobile draft Page Model Save; Save leaves public output unchanged; Editor reload; distinct desktop/mobile Publish; mobile Publish preserves desktop values; mobile inheritance reset for each property; Undo/Redo; reset Save leaves published mobile values intact; reset Publish restores desktop-inherited mobile output.",
   "browser": {
@@ -35,14 +55,24 @@
     "githubTarget": "v2/foundation",
     "localCheckoutBranch": "work; unchanged",
     "remoteHeadAtStart": "1d606f2cbdbbaaae4bdb927e1f296113db079c8a",
-    "push": "Pending normal fast-forward of test/docs/evidence/traceability-only changes after validation.",
-    "ci": "Commit will use [skip ci]; no CI PASS is claimed.",
+    "push": {
+      "status": "VERIFIED",
+      "target": "v2/foundation",
+      "commit": "d11cc4ded219b84d9c3f52a6e934a1ff050574dd",
+      "parent": "1d606f2cbdbbaaae4bdb927e1f296113db079c8a",
+      "verification": "Direct GitHub branch GET returned the exact commit SHA."
+    },
+    "ci": {
+      "status": "NO_CHECKS_REPORTED",
+      "verification": "GitHub combined commit status returned statuses=[]; [skip ci] commit; no CI PASS claimed."
+    },
     "workerDeployment": {
       "deploymentId": "11dc8722-8748-4e34-830d-3e68e6536461",
       "version": "0d66c912-a60c-44e9-90a5-341614c3b8a2",
       "trafficPercent": 100,
-      "health": "Direct GET /api/health returned HTTP 200 before this test-only work.",
-      "redeployment": "Not required because no runtime source or public asset changed."
+      "health": "Verified after push: direct GET /api/health returned HTTP 200 with expected service identity.",
+      "redeployment": "Not required because no runtime source or public asset changed.",
+      "postPushVerification": "Read-only Cloudflare deployments GET confirmed deployment 11dc8722-8748-4e34-830d-3e68e6536461 and version 0d66c912-a60c-44e9-90a5-341614c3b8a2 still at 100% traffic; no runtime changes, no redeployment."
     },
     "productionD1Writes": 0,
     "productionR2Changes": 0,
