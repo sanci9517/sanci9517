@@ -1,0 +1,86 @@
+{
+  "date": "2026-10-31",
+  "planItem": "77.44.7.A — responsive Flex/Grid container and item Inspector contexts across all shared layout types",
+  "status": "REAL_CHROMIUM_PASS; SUPPORTING_CHECKS_PASS; PUSH_PENDING",
+  "finding": "The shared 18-type layout contract exposed contextual Flex/Grid fields, but no one browser lifecycle matrix exercised each container and child context through responsive Save and separate Publish.",
+  "change": "Added tests/browser/editor-inspector-layout-context-lifecycle.test.js. The test creates every shared layout type, alternates desktop Flex/Grid and uses the opposite mobile mode, then exercises typed container and child Inspector controls through Canvas, draft persistence, publication and inheritance reset.",
+  "layoutTypes": [
+    "section",
+    "container",
+    "row",
+    "columns",
+    "flex",
+    "grid",
+    "stack",
+    "group",
+    "slot",
+    "card",
+    "panel",
+    "navbar",
+    "menu",
+    "footer",
+    "sidebar",
+    "absolute",
+    "sticky",
+    "overlay"
+  ],
+  "properties": {
+    "container": [
+      "layout.display",
+      "flex.direction",
+      "flex.justify",
+      "flex.align",
+      "flex.wrap",
+      "flex.gap",
+      "grid.columns",
+      "grid.rows",
+      "grid.rowGap",
+      "grid.columnGap"
+    ],
+    "item": [
+      "flex.grow",
+      "flex.shrink",
+      "flex.basis",
+      "flex.alignSelf",
+      "grid.column",
+      "grid.row"
+    ]
+  },
+  "coverage": "All 18 shared layout container types; real Inspector responsive.set command and Page Model key contract; context-specific Flex/Grid fields; Canvas computed styles; draft Save and Editor reload; Save leaves public output unchanged; separate desktop and mobile Publish; mobile Save/Publish preserves desktop values; all mobile container and item overrides are reset to inherited values; Undo/Redo; reset Save leaves published mobile state unchanged; separate reset Publish restores inherited desktop layout.",
+  "browser": {
+    "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-inspector-layout-context-lifecycle.test.js",
+    "result": "PASS, 1/1 test; 112.6 seconds."
+  },
+  "checks": {
+    "node --check tests/browser/editor-inspector-layout-context-lifecycle.test.js": "PASS",
+    "npm run test:editor": "PASS, 11/11 tests",
+    "npm run typecheck": "PASS",
+    "npm run test:web013:migration-gate": "PASS; safety gate only, no production migration",
+    "python3 scripts/check-canonical-plan.py": "PASS; complete 13-file master; acceptance remains NOT_CERTIFIED",
+    "python3 scripts/audit-active-plan-point.py": "PASS; cursor remains 77.44 / WEB-011 -> 77.44.7.A",
+    "python3 scripts/build-feature-traceability.py --check": "PASS; regenerated, 396 mappings",
+    "git diff --check": "PASS"
+  },
+  "harnessNotes": [
+    "Grid fr track computed pixel widths depend on the Canvas and public viewport widths, so parity compares computed track counts and separately asserts the exact saved Page Model template values.",
+    "Reset buttons are selected by their declared Page Model key because the shared Inspector group contains multiple reset actions.",
+    "Responsive display reset is performed after resetting child fields because changing a parent layout context changes which child controls are visible."
+  ],
+  "reuseReview": {
+    "solution": "Reused the project's shared LAYOUT_TYPES list, Inspector registry and context filtering, typed controls, responsive.set command engine, Canvas/public CSS renderer, and local Chromium server fixture.",
+    "externalCodeOrDependency": "None."
+  },
+  "release": {
+    "runtimeChanged": false,
+    "localCheckoutBranch": "work; unchanged",
+    "remoteTarget": "v2/foundation",
+    "startingCommit": "b93668d4fd807563014a98e06b849e5a902dad68",
+    "push": "Pending normal fast-forward push and direct GitHub branch-head verification.",
+    "ci": "No checks queried yet; CI PASS not claimed.",
+    "workerDeployment": "No new deployment planned; test and documentation only.",
+    "productionD1Writes": 0,
+    "productionR2Changes": 0,
+    "newCostOrDependency": "None."
+  },
+  "acceptanceBoundary": "This verifies the shared Flex/Grid Inspector lifecycle for the 18 layout container types. Plan item 77.44.7.A remains OPEN / NOT CERTIFIED and full-editor manual/physical acceptance remains DEFERRED."
+}
