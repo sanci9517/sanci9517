@@ -1,0 +1,74 @@
+{
+  "date": "2026-10-31",
+  "planItem": "77.44.7.A — responsive size width/height constraints Inspector lifecycle across all editable PARTIAL types",
+  "status": "LOCAL_TEST_AND_EVIDENCE_PASS; PUSH_PENDING",
+  "finding": "The registry defines six responsive dimension fields, but the cross-type lifecycle previously covered aspectRatio across all 44 editable PARTIAL types while the width/height/min/max fields had primarily representative lifecycle evidence. The shared Inspector re-renders after responsive.set, so the size accordion must be reopened before each field interaction.",
+  "change": "Added tests/browser/editor-inspector-size-partial-types.test.js as a dedicated real-Chromium matrix. It sets six size fields through the Inspector across all 44 editable PARTIAL node types; checks responsive command/key routes, Canvas computed CSS, draft Page Model values, Save/public separation, Editor reload and explicit Publish for desktop/mobile; resets every mobile field, verifies Undo/Redo, reset Save/public immutability and separate Publish restoring inherited desktop CSS.",
+  "properties": {
+    "size.width": {
+      "desktop": "300px",
+      "mobile": "320px"
+    },
+    "size.height": {
+      "desktop": "180px",
+      "mobile": "200px"
+    },
+    "size.minWidth": {
+      "desktop": "100px",
+      "mobile": "120px"
+    },
+    "size.maxWidth": {
+      "desktop": "700px",
+      "mobile": "360px"
+    },
+    "size.minHeight": {
+      "desktop": "50px",
+      "mobile": "90px"
+    },
+    "size.maxHeight": {
+      "desktop": "500px",
+      "mobile": "400px"
+    }
+  },
+  "testStructure": "Kept the already passing 14-typography/effect/aspect-ratio browser matrix unchanged and moved the new dimension coverage into its own focused test file to keep failures and execution time isolated.",
+  "reuseReview": {
+    "solution": "Reused the existing Inspector Property Registry, responsive.set command, typed dimension controls, reset/undo system, local Chromium fixture pattern, and native CSS sizing.",
+    "thirdPartyCodeOrDependency": "None; no external package is needed or appropriate for native CSS dimensions."
+  },
+  "browser": {
+    "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-inspector-size-partial-types.test.js",
+    "result": "PASS, 1/1 test; 217.2 seconds.",
+    "editablePartialTypes": 44,
+    "coverage": "Each field reaches Canvas CSS and persisted Page Model for desktop and mobile. Draft Save does not change the published snapshot; Editor reload retains values; separate Publish applies each viewport; desktop values survive mobile Publish; each mobile field resets to desktop inheritance; Undo/Redo, reset Save and the final reset Publish are checked."
+  },
+  "checks": {
+    "node --check tests/browser/editor-inspector-size-partial-types.test.js": "PASS.",
+    "npm run test:editor": "PASS, 11/11 test files.",
+    "npm run typecheck": "PASS.",
+    "npm run test:web013:migration-gate": "PASS; safety gate only, no production migration.",
+    "python3 scripts/check-canonical-plan.py": "PASS; full 13-file master, acceptance NOT_CERTIFIED.",
+    "python3 scripts/audit-active-plan-point.py": "PASS; 77.44 / WEB-011 -> 77.44.7.A.",
+    "python3 scripts/build-feature-traceability.py": "PASS after regenerating the test-candidate crosswalk for the new browser test.",
+    "python3 scripts/build-feature-traceability.py --check": "PASS; 396 mappings.",
+    "git diff --check": "PASS."
+  },
+  "release": {
+    "runtimeChanged": false,
+    "githubTarget": "v2/foundation",
+    "localCheckoutBranch": "work; unchanged.",
+    "remoteHeadAtStart": "17b0178c4cacb52ecce7ca98dc66e3d35c5bd285",
+    "push": "Pending normal fast-forward of test/docs/crosswalk-only changes after validation.",
+    "ci": "Test/docs commit will use [skip ci]; no CI PASS is claimed.",
+    "workerDeployment": {
+      "id": "11dc8722-8748-4e34-830d-3e68e6536461",
+      "version": "0d66c912-a60c-44e9-90a5-341614c3b8a2",
+      "trafficPercent": 100,
+      "health": "Direct GET /api/health returned HTTP 200 and expected service identity at session start.",
+      "redeployment": "Not required; no runtime source or public assets changed."
+    },
+    "productionD1Writes": 0,
+    "productionR2Changes": 0,
+    "newCostOrDependency": "None."
+  },
+  "acceptanceBoundary": "This closes the six size-property lifecycle matrix for the 44 editable PARTIAL types only. It does not certify all 79 element types or all 68 properties. Complete 77.44.7.A remains OPEN / NOT CERTIFIED; manual and physical acceptance remain deferred until the complete Editor is implemented."
+}
