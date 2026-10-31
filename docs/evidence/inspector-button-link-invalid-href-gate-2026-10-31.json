@@ -1,7 +1,7 @@
 {
   "date": "2026-10-31",
   "planItem": "77.44.7.A — content.href invalid Save/Publish gate on every registered element type",
-  "status": "LOCAL_BROWSER_AND_UNIT_CHECKS_PASS; TEST_DOC_PUSH_PENDING",
+  "status": "LOCAL_BROWSER_AND_UNIT_CHECKS_PASS; PUSHED_TO_GITHUB",
   "finding": "content.href is registered for both button and link. A previous real-browser check exercised invalid URL feedback and request blocking only on button, leaving the second applicable authored element type without the same negative lifecycle assertion.",
   "testChange": "tests/browser/editor-inspector-lifecycle.test.js creates an independent valid unsaved text change for each applicable type so Publish is enabled, then enters javascript:alert(1) in its registered content.href control. For both button and link, it asserts Save and Publish issue no API request and preserve the server draft and public snapshot. It also verifies the invalid button value remains editable, then retains the existing corrected-href Undo/Redo, Save/reload, separate Publish and public renderer assertions for both types.",
   "browser": {
@@ -20,11 +20,11 @@
     "npm run test:editor": "PASS, 11/11 test files.",
     "npm run typecheck": "PASS.",
     "npm run test:web013:migration-gate": "PASS.",
-    "python3 scripts/check-canonical-plan.py": "Run after updating the canonical plan.",
-    "python3 scripts/audit-active-plan-point.py": "Run after updating the canonical plan.",
-    "python3 scripts/build-feature-traceability.py --check": "Run after updating the canonical plan.",
+    "python3 scripts/check-canonical-plan.py": "PASS after plan update; one complete 13-file master and one current cursor.",
+    "python3 scripts/audit-active-plan-point.py": "PASS after plan update; cursor 77.44 / WEB-011, next 77.44.7.A; acceptance NOT_CERTIFIED.",
+    "python3 scripts/build-feature-traceability.py --check": "PASS after plan update; 396 source mappings.",
     "node --check tests/browser/editor-inspector-lifecycle.test.js": "PASS.",
-    "git diff --check": "Run after updating the canonical plan and evidence."
+    "git diff --check": "PASS after plan update and evidence."
   },
   "reuseReview": {
     "solution": "Extended the existing project-owned real-Chromium lifecycle test and the shared Inspector content.href validation path.",
@@ -45,8 +45,10 @@
   "release": {
     "githubTarget": "v2/foundation",
     "remoteHeadAtStart": "1f8851bc0318c4f4e6a8fc8a18077ce6a4ad18a8",
-    "ci": "No CI PASS claimed; the verified test/docs-only [skip ci] convention applies.",
-    "push": "Pending."
+    "ci": "GitHub combined status returned no statuses; no CI PASS is claimed. Test/docs commit uses the repository's [skip ci] convention.",
+    "testAndEvidenceCommit": "0df83d675eda5ed87adba0bff4c44e8d84c954de",
+    "remoteHeadVerified": "0df83d675eda5ed87adba0bff4c44e8d84c954de",
+    "push": "Normal fast-forward to v2/foundation verified by direct GitHub branch fetch."
   },
   "acceptanceBoundary": "This verifies a negative invalid-href Save/Publish guard on both types that register content.href. It does not certify the complete 79-type/68-property Visual Editor. Full 77.44.7.A remains OPEN / NOT CERTIFIED; manual and physical acceptance remains deferred until the complete Editor is implemented."
 }
