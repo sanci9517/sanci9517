@@ -1,0 +1,47 @@
+{
+  "date": "2026-10-31",
+  "plan_item": "77.44.7.A — all ten tablet hover/focus-visible state fields across PARTIAL types",
+  "status": "LOCAL_TEST_PASS; PUSH_AND_POST_PUSH_VERIFICATION_PENDING; NO_RUNTIME_DEPLOYMENT",
+  "finding": "The previous cross-type matrix covered seven state properties. Opacity and the rotate/scale transform controls had only representative-element lifecycle evidence, not full PARTIAL-type parity.",
+  "change": "Extended tests/browser/editor-inspector-tablet-state-partial-types.test.js to exercise all ten STATE_PROPERTY_IDS through Inspector, Canvas, draft Save, reload, separate Publish, reset, and public rendering for every editable PARTIAL type in tablet hover and focus-visible. No runtime code changed.",
+  "coverage": "44 editable PARTIAL types; all ten fields color, backgroundColor, backgroundImage, borderColor, boxShadow, opacity, textDecoration, fontWeight, rotate, and scale in hover and focus-visible; states.set command and property key; text/select/number controls including rotate degree handling; Canvas/public computed CSS; saved Page Model values; Save does not publish; reload restores controls; Publish changes the viewer; desktop state remains independent; mobile inherits tablet; all field resets restore desktop inheritance; reset Save preserves published state and reset Publish removes overrides; aria-hidden elements stay out of focus order; final scale reset supports Undo/Redo.",
+  "browser": {
+    "command": "node --test --test-concurrency=1 tests/browser/editor-inspector-tablet-state-partial-types.test.js",
+    "result": "PASS, 1/1 real Chromium browser test; 799.456 seconds. Local loopback permission was used for the temporary Playwright fixture server."
+  },
+  "checks": {
+    "npm run test:editor": "PASS, 11/11 files.",
+    "npm run typecheck": "PASS.",
+    "npm run test:web013:migration-gate": "PASS; safety gate only, no production migration.",
+    "python3 scripts/check-canonical-plan.py": "PASS; complete 13-file canonical master.",
+    "python3 scripts/audit-active-plan-point.py": "PASS; cursor 77.44 / WEB-011 -> 77.44.7.A.",
+    "python3 scripts/build-feature-traceability.py --check": "PASS; 396 mappings.",
+    "node --check tests/browser/editor-inspector-tablet-state-partial-types.test.js": "PASS.",
+    "git diff --check": "PASS before documentation commit."
+  },
+  "reuse_review": {
+    "solution": "Reused the repository's ten-property state registry, state command, type-aware Inspector controls, CSS projection, Playwright dependency, and existing browser fixture; no external code, package, or service was needed.",
+    "external_code_or_dependency": "None."
+  },
+  "production": {
+    "runtime_source_changed": false,
+    "public_asset_changed": false,
+    "worker_deployed": false,
+    "deployment_id": "5d81f0f0-176c-4437-b5c5-652765f70bff",
+    "version_id": "72f6626e-ba9a-4147-874a-3d8cfcf00919",
+    "traffic_percent": 100,
+    "post_push_deployment_health_asset_verification": "Pending.",
+    "production_d1_migration_or_data_write": false,
+    "production_r2_change": false
+  },
+  "release": {
+    "local_checkout_branch": "work; unchanged",
+    "github_target_branch": "v2/foundation",
+    "github_head_at_start": "9da9933dd0be38aca2441f9cbd504f3ee5ed69f7",
+    "test_commit": "4bd0de2677bdbe8c2e28be3515db06d48f156ae1",
+    "push": "PENDING normal non-force fast-forward; target was read and matched the expected parent before documentation commit.",
+    "ci": "Not yet checked; no CI PASS claimed.",
+    "new_cost_or_dependency": "None."
+  },
+  "acceptance_boundary": "Additional automation evidence only. Overall 77.44.7.A and full Visual Editor acceptance remain OPEN / NOT CERTIFIED; manual and physical acceptance remain DEFERRED until the full Editor is implemented."
+}
