@@ -1,7 +1,7 @@
 {
   "date": "2026-10-31",
   "planItem": "77.44.7.A — responsive typography inheritance, reset, and separate Publish",
-  "status": "LOCAL_BROWSER_PASS; TEST_DOC_PUSH_PENDING",
+  "status": "TEST_AND_EVIDENCE_PUSHED; PRODUCTION_RUNTIME_UNCHANGED",
   "finding": "The desktop typography lifecycle was verified across 44 editable PARTIAL types, while responsive line-height override, inheritance reset, and their Save/Publish separation had not been combined across that renderer matrix.",
   "change": "Extended tests/browser/editor-inspector-partial-types.test.js to set mobile typography.lineHeight=1.4 on all 44 editable PARTIAL types, save and reload the draft, separately publish the mobile override, reset each mobile value to the inherited desktop 1.75, exercise Undo/Redo, save the reset without publishing it, and publish the reset separately.",
   "reuseReview": {
@@ -26,19 +26,22 @@
     "runtimeChanged": false,
     "githubTarget": "v2/foundation",
     "githubHeadAtStart": "5bc0748831dc9a783ab84ef68d5dabc8fb6be26e",
-    "push": "Pending normal fast-forward; local checkout remains on the existing work branch.",
-    "ci": "Not run; no CI PASS claimed.",
+    "push": "Normal fast-forward from v2/foundation head 5bc0748831dc9a783ab84ef68d5dabc8fb6be26e; direct GitHub ref fetch confirms 104833d334aa20ac3866368addeb4ab0753f3a25.",
+    "ci": "GitHub combined status returned no checks; no CI PASS claimed. Test/docs-only commit used [skip ci].",
     "workerDeployment": {
       "id": "11dc8722-8748-4e34-830d-3e68e6536461",
       "version": "0d66c912-a60c-44e9-90a5-341614c3b8a2",
       "number": 3767,
       "trafficPercent": 100,
       "health": "GET /api/health before local testing returned HTTP 200 and expected Worker identity.",
-      "redeployment": "Not required; no runtime source or public asset changed."
+      "redeployment": "Not required; no runtime source or public asset changed.",
+      "verifiedAfterPush": "Cloudflare deployments GET still reports 11dc8722-8748-4e34-830d-3e68e6536461 / 0d66c912-a60c-44e9-90a5-341614c3b8a2 at 100%; production GET /api/health after push returned HTTP 200."
     },
     "productionD1Writes": 0,
     "productionR2Changes": 0,
-    "newCostOrDependency": "None."
+    "newCostOrDependency": "None.",
+    "commit": "104833d334aa20ac3866368addeb4ab0753f3a25",
+    "remoteHeadVerified": "104833d334aa20ac3866368addeb4ab0753f3a25"
   },
   "acceptanceBoundary": "This verifies responsive line-height override/reset across the 44 editable PARTIAL renderer types. It does not certify all 79 declared types or all 68 properties; full 77.44.7.A and complete Visual Editor acceptance remain OPEN / NOT CERTIFIED. Manual and physical acceptance stays deferred until the complete Editor is implemented."
 }
