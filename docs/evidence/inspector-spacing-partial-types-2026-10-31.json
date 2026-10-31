@@ -1,19 +1,44 @@
 {
   "date": "2026-10-31",
   "planItem": "77.44.7.A — responsive spacing margin/padding lifecycle across all editable PARTIAL types",
-  "status": "LOCAL_TEST_AND_EVIDENCE_PASS; PUSH_PENDING; NO_RUNTIME_DEPLOYMENT",
+  "status": "TEST_AND_EVIDENCE_PASS; FAST_FORWARD_PUSH_VERIFIED; NO_RUNTIME_DEPLOYMENT",
   "finding": "The shared four-side spacing controls were covered by representative element lifecycle tests, but not by a cross-type desktop/mobile Save, reload, Publish, reset, and undo matrix for every editable PARTIAL type.",
   "change": "Added tests/browser/editor-inspector-spacing-partial-types.test.js. It uses the existing Property Registry box controls and responsive.set command, without changing runtime behavior or adding dependencies.",
   "properties": {
     "spacing.margin": {
-      "desktop": ["2px", "4px", "6px", "8px"],
-      "mobile": ["18px", "20px", "22px", "24px"]
+      "desktop": [
+        "2px",
+        "4px",
+        "6px",
+        "8px"
+      ],
+      "mobile": [
+        "18px",
+        "20px",
+        "22px",
+        "24px"
+      ]
     },
     "spacing.padding": {
-      "desktop": ["10px", "12px", "14px", "16px"],
-      "mobile": ["26px", "28px", "30px", "32px"]
+      "desktop": [
+        "10px",
+        "12px",
+        "14px",
+        "16px"
+      ],
+      "mobile": [
+        "26px",
+        "28px",
+        "30px",
+        "32px"
+      ]
     },
-    "sideOrder": ["top", "right", "bottom", "left"]
+    "sideOrder": [
+      "top",
+      "right",
+      "bottom",
+      "left"
+    ]
   },
   "coverage": "All 44 editable PARTIAL element types; Inspector command/key contract; all four Canvas/public computed CSS sides; desktop and mobile draft Save; Save leaves public output unchanged; Editor reload; separate desktop and mobile Publish; desktop preservation during mobile Publish; both mobile inheritance resets; Undo/Redo; reset Save leaves the published mobile values intact; separate reset Publish restores inherited desktop values.",
   "browser": {
@@ -39,14 +64,24 @@
     "githubTarget": "v2/foundation",
     "localCheckoutBranch": "work; unchanged",
     "remoteHeadAtStart": "5d7f469ca0f82b732d09ffb83637b28be61489d5",
-    "push": "Pending normal fast-forward of test/docs/evidence/traceability-only changes after validation.",
-    "ci": "[skip ci]; no CI PASS claimed.",
+    "push": {
+      "status": "VERIFIED",
+      "target": "v2/foundation",
+      "commit": "1157039d7dc3c5ee949439f3260e70d9ef7cac84",
+      "parent": "5d7f469ca0f82b732d09ffb83637b28be61489d5",
+      "verification": "Direct GitHub branch GET returned the exact commit SHA."
+    },
+    "ci": {
+      "status": "NO_CHECKS_REPORTED",
+      "verification": "GitHub combined commit status returned statuses=[]; [skip ci] commit; no CI PASS claimed."
+    },
     "workerDeployment": {
       "deploymentId": "11dc8722-8748-4e34-830d-3e68e6536461",
       "version": "0d66c912-a60c-44e9-90a5-341614c3b8a2",
       "trafficPercent": 100,
-      "health": "Direct GET /api/health returned HTTP 200 after the preceding documentation push.",
-      "redeployment": "Not required: no runtime source or public asset changed."
+      "health": "Verified after the test-only push: direct GET /api/health returned HTTP 200 with expected service identity.",
+      "redeployment": "Not required: no runtime source or public asset changed.",
+      "postPushVerification": "Read-only Cloudflare deployments GET confirmed deployment 11dc8722-8748-4e34-830d-3e68e6536461 and version 0d66c912-a60c-44e9-90a5-341614c3b8a2 still at 100% traffic; no runtime changes, no redeployment."
     },
     "productionD1Writes": 0,
     "productionR2Changes": 0,
