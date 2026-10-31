@@ -1,0 +1,51 @@
+{
+  "date": "2026-10-31",
+  "plan_item": "77.44.7.A — responsive typography Inspector lifecycle and inheritance across PARTIAL types",
+  "status": "FULL_CHROMIUM_AND_LOCAL_CHECKS_PASS; TEST_FAST_FORWARD_PUSH_VERIFIED; OVERALL_ACCEPTANCE_OPEN",
+  "finding": "The prior cross-type test verified the 14 typography fields on desktop only; tablet/mobile inheritance, independent overrides, Save/Publish separation, and reset behavior were not covered as one end-to-end matrix.",
+  "change": "Extended tests/browser/editor-inspector-typography-partial-types.test.js to run all 14 Registry fields on desktop, tablet, and mobile for each of the 44 editable PARTIAL element types. No runtime source or public asset changed.",
+  "coverage": "44 PARTIAL types × 14 typography fields on three breakpoints; typed Inspector controls and responsive.set key routing; Canvas CSS; draft Save without publication; reload restores all device values; separate Publish updates the chosen device only; mobile inherits tablet before a mobile override; tablet and desktop remain isolated; resetting mobile fontSize removes only that override, inherits tablet fontSize, preserves other mobile values, and recomputes mobile lineHeight from the inherited size.",
+  "browser": {
+    "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-inspector-typography-partial-types.test.js",
+    "result": "PASS, 1/1 full real Chromium lifecycle; 766.686 seconds.",
+    "corrected_fixture_attempts": [
+      "The first expanded run observed Chromium's text-shadow alpha serialization as 0.5, not 0.502; corrected the expected computed CSS to the browser's actual value.",
+      "The next run observed that resetting mobile fontSize to inherit tablet fontSize leaves the mobile lineHeight override active, so Chromium correctly computes 52px (26px × 2). The reset assertion now derives that computed value from the inherited font size and mobile lineHeight. The final full run passed."
+    ]
+  },
+  "checks": {
+    "npm run test:editor": "PASS, 11/11 files.",
+    "npm run typecheck": "PASS.",
+    "npm run test:web013:migration-gate": "PASS; repository safety gate only, no production migration.",
+    "python3 scripts/check-canonical-plan.py": "PASS; complete 13-file canonical master.",
+    "python3 scripts/audit-active-plan-point.py": "PASS; cursor 77.44 / WEB-011 -> 77.44.7.A.",
+    "python3 scripts/build-feature-traceability.py --check": "PASS; 396 mappings.",
+    "node --check tests/browser/editor-inspector-typography-partial-types.test.js": "PASS.",
+    "git diff --check": "PASS."
+  },
+  "reuse_review": {
+    "solution": "Reused the existing typed Property Registry, responsive.set command, Inspector controls, responsive Canvas/public CSS projection, and Playwright fixture. No external code or dependency was needed.",
+    "external_code_or_dependency": "None."
+  },
+  "production": {
+    "runtime_source_changed": false,
+    "public_asset_changed": false,
+    "worker_deployed": false,
+    "deployment_id": "5d81f0f0-176c-4437-b5c5-652765f70bff",
+    "version_id": "72f6626e-ba9a-4147-874a-3d8cfcf00919",
+    "traffic_percent": 100,
+    "post_push_verification": "After the test commit push, the read-only Cloudflare Deployments API still showed deployment 5d81f0f0-176c-4437-b5c5-652765f70bff / version 72f6626e-ba9a-4147-874a-3d8cfcf00919 at 100%. Direct GET /api/health returned HTTP 200 and the expected service/version JSON. Live and local /assets/page-renderer.js SHA-256 both equal 005792f314f891aededf6363573c2ccd66527e53397d673e6a7b0434f6245370. No Worker deployment was created by the test-only commit.",
+    "production_d1_migration_or_data_write": false,
+    "production_r2_change": false
+  },
+  "release": {
+    "local_checkout_branch": "work; unchanged",
+    "github_target_branch": "v2/foundation",
+    "github_head_at_start": "6fa70f3d806543317f6b593d8832c1db3eec02be",
+    "test_commit": "cc0c71483b08cfe5b93cc7eac39f323c6c57edb1",
+    "push": "PASS: normal fast-forward from 6fa70f3d806543317f6b593d8832c1db3eec02be. git ls-remote returned exact v2/foundation SHA cc0c71483b08cfe5b93cc7eac39f323c6c57edb1; GitHub compare verified ahead_by=1, behind_by=0, total_commits=1.",
+    "ci": "The test commit uses [skip ci]. GitHub combined status returned statuses=[]; no CI PASS is claimed.",
+    "new_cost_or_dependency": "None."
+  },
+  "acceptance_boundary": "Responsive typography lifecycle is automated for this tested slice. Overall 77.44.7.A and complete Visual Editor acceptance remain OPEN / NOT CERTIFIED. Manual and physical acceptance remain DEFERRED until the full Editor is implemented."
+}
