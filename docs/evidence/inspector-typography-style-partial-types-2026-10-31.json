@@ -1,7 +1,7 @@
 {
   "date": "2026-10-31",
   "planItem": "77.44.7.A — remaining desktop typography Inspector-to-public renderer lifecycle",
-  "status": "LOCAL_TEST_AND_EVIDENCE_PASS; PUSH_PENDING",
+  "status": "TEST_AND_EVIDENCE_PUSHED; PRODUCTION_RUNTIME_UNCHANGED",
   "finding": "Five desktop typography properties (fontFamily, fontStyle, letterSpacing, textTransform, textDecoration) were registered for every editable PARTIAL type, but their full cross-type Canvas → draft Save/reload → separate Publish lifecycle was not covered together with the existing metrics matrix.",
   "change": "Extended tests/browser/editor-inspector-partial-types.test.js so all nine desktop typography controls are edited and checked across all 44 editable PARTIAL types, including responsive.set/key contracts, Canvas computed CSS, Page Model persistence, public immutability during draft Save, Editor reload, and published computed CSS.",
   "reuseReview": {
@@ -25,19 +25,22 @@
     "runtimeChanged": false,
     "githubTarget": "v2/foundation",
     "githubHeadAtStart": "028b8bbb90a4a91b7659ca1bd7e13bb91d6d14a3",
-    "push": "Pending normal fast-forward of test/evidence-only change.",
-    "ci": "Not run; test-only path is excluded from Worker Build and will use [skip ci].",
+    "push": "Normal fast-forward from v2/foundation 028b8bbb90a4a91b7659ca1bd7e13bb91d6d14a3; direct GitHub branch fetch confirms 96e08da8143a0671bd7c24d4f8a4bd4dfe5b7ffd.",
+    "ci": "GitHub combined status returned no checks; no CI PASS claimed. Test-only commit used [skip ci].",
     "workerDeployment": {
       "id": "11dc8722-8748-4e34-830d-3e68e6536461",
       "version": "0d66c912-a60c-44e9-90a5-341614c3b8a2",
       "number": 3767,
       "trafficPercent": 100,
-      "health": "GET /api/health before local test returned HTTP 200 and expected Worker identity.",
-      "redeployment": "Not required; no runtime source or public asset changed."
+      "health": "GET /api/health before and after push returned HTTP 200 and expected Worker identity.",
+      "redeployment": "Not required; no runtime source or public asset changed.",
+      "verifiedAfterPush": "Cloudflare deployments GET still reports 11dc8722-8748-4e34-830d-3e68e6536461 / 0d66c912-a60c-44e9-90a5-341614c3b8a2 at 100%; production GET /api/health after push returned HTTP 200."
     },
     "productionD1Writes": 0,
     "productionR2Changes": 0,
-    "newCostOrDependency": "None."
+    "newCostOrDependency": "None.",
+    "commit": "96e08da8143a0671bd7c24d4f8a4bd4dfe5b7ffd",
+    "remoteHeadVerified": "96e08da8143a0671bd7c24d4f8a4bd4dfe5b7ffd"
   },
   "acceptanceBoundary": "This verifies nine desktop typography properties across the 44 editable PARTIAL renderer types. It does not certify all 79 declared element types or all 68 properties; full 77.44.7.A and Visual Editor acceptance remain OPEN / NOT CERTIFIED. Manual and physical acceptance remains deferred until the complete Editor is implemented."
 }
