@@ -1,0 +1,44 @@
+{
+  "date": "2026-10-31",
+  "planItem": "77.44.7.A — responsive typography inheritance, reset, and separate Publish",
+  "status": "LOCAL_BROWSER_PASS; TEST_DOC_PUSH_PENDING",
+  "finding": "The desktop typography lifecycle was verified across 44 editable PARTIAL types, while responsive line-height override, inheritance reset, and their Save/Publish separation had not been combined across that renderer matrix.",
+  "change": "Extended tests/browser/editor-inspector-partial-types.test.js to set mobile typography.lineHeight=1.4 on all 44 editable PARTIAL types, save and reload the draft, separately publish the mobile override, reset each mobile value to the inherited desktop 1.75, exercise Undo/Redo, save the reset without publishing it, and publish the reset separately.",
+  "reuseReview": {
+    "solution": "Reused the existing responsive Property Registry field, mobile device preview, per-property inheritance reset, and real-Chromium Page Model lifecycle fixture.",
+    "externalCodeOrDependency": "None; existing project controls and tests were sufficient."
+  },
+  "browser": {
+    "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-inspector-partial-types.test.js",
+    "result": "PASS, 1/1 test; 393.9 seconds.",
+    "coverage": "All 44 editable PARTIAL types: mobile lineHeight 1.4 previews and saves; Save leaves public mobile values unchanged; reload restores the draft values; separate Publish applies 28px computed line-height; inheritance reset restores desktop 1.75/35px; Undo/Redo and reset Save work; public mobile override remains until the second explicit Publish removes it; desktop value remains 35px throughout."
+  },
+  "checks": {
+    "npm run test:editor": "PASS, 11/11 test files.",
+    "npm run typecheck": "PASS.",
+    "node --check tests/browser/editor-inspector-partial-types.test.js": "PASS.",
+    "migrationSafetyGate": "PASS; safety gate only, no migration applied.",
+    "canonicalPlanAndTraceability": "PASS; one complete 13-file master, one current cursor, 396 source mappings; acceptance remains NOT_CERTIFIED.",
+    "git diff --check": "PASS after plan/evidence update.",
+    "activePlanPoint": "PASS; cursor 77.44 / WEB-011, next 77.44.7.A; full acceptance remains NOT_CERTIFIED."
+  },
+  "release": {
+    "runtimeChanged": false,
+    "githubTarget": "v2/foundation",
+    "githubHeadAtStart": "5bc0748831dc9a783ab84ef68d5dabc8fb6be26e",
+    "push": "Pending normal fast-forward; local checkout remains on the existing work branch.",
+    "ci": "Not run; no CI PASS claimed.",
+    "workerDeployment": {
+      "id": "11dc8722-8748-4e34-830d-3e68e6536461",
+      "version": "0d66c912-a60c-44e9-90a5-341614c3b8a2",
+      "number": 3767,
+      "trafficPercent": 100,
+      "health": "GET /api/health before local testing returned HTTP 200 and expected Worker identity.",
+      "redeployment": "Not required; no runtime source or public asset changed."
+    },
+    "productionD1Writes": 0,
+    "productionR2Changes": 0,
+    "newCostOrDependency": "None."
+  },
+  "acceptanceBoundary": "This verifies responsive line-height override/reset across the 44 editable PARTIAL renderer types. It does not certify all 79 declared types or all 68 properties; full 77.44.7.A and complete Visual Editor acceptance remain OPEN / NOT CERTIFIED. Manual and physical acceptance stays deferred until the complete Editor is implemented."
+}
