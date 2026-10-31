@@ -1,7 +1,7 @@
 {
   "date": "2026-10-31",
   "planItem": "77.44.7.A — Inspector literal node-name lifecycle across every editable PARTIAL type",
-  "status": "LOCAL_BROWSER_AND_UNIT_CHECKS_PASS; TEST_DOC_PUSH_PENDING",
+  "status": "LOCAL_BROWSER_AND_UNIT_CHECKS_PASS; PUSHED_TO_GITHUB",
   "runtimeChanged": false,
   "finding": "The previous literal-token fix had a full browser lifecycle on one text node; advanced.nodeName is shared by all 44 editable PARTIAL node types, so the same value needed a cross-type regression without 44 separate Save/Publish cycles.",
   "testChange": "tests/browser/editor-inspector-partial-types.test.js sets the exact literal var(--creator-colors-primary, #7047eb) through each of the 44 editable PARTIAL node types, then uses one Undo/Redo check, one draft Save, one Editor reload, and one separate Publish. It retains the empty-name validation and Save-blocking assertion, verifies the Inspector header and Layers label, and asserts that draft Save leaves every published name unchanged.",
@@ -43,7 +43,9 @@
   "release": {
     "githubTarget": "v2/foundation",
     "remoteHeadAtStart": "9f9de8a59b2b06a8b3b4d08ef65986a655fd7162",
-    "ci": "No CI run is claimed for this local test result.",
+    "pushedCommit": "a5bd7ccbfae441d1e503ed5ce695bd6c36eabbc8",
+    "remoteHeadVerified": "a5bd7ccbfae441d1e503ed5ce695bd6c36eabbc8",
+    "ci": "GitHub combined status returned no statuses; no CI PASS is claimed.",
     "workerRedeployed": false
   },
   "cost": {
