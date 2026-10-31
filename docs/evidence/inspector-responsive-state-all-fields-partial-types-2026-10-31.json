@@ -1,7 +1,7 @@
 {
   "date": "2026-10-31",
   "plan_item": "77.44.7.A — responsive hover/focus-visible lifecycle for all ten state fields across PARTIAL types",
-  "status": "LOCAL_TEST_PASS; PUSH_AND_POST_PUSH_VERIFICATION_PENDING; NO_RUNTIME_DEPLOYMENT",
+  "status": "TEST_AND_EVIDENCE_PASS; FAST_FORWARD_PUSH_VERIFIED; NO_RUNTIME_DEPLOYMENT",
   "finding": "All ten STATE_PROPERTY_IDS had tablet cross-type automation, but mobile-specific overrides were only represented in a narrow fixture. The public hover assertion also needed to clear a retained focus-visible target before measuring hover CSS.",
   "change": "Extended tests/browser/editor-inspector-tablet-state-partial-types.test.js so all ten state properties are edited on every editable PARTIAL type in both tablet and mobile hover/focus-visible modes. The mobile path verifies Canvas, draft Page Model, Save/reload, separate Publish, public rendering, and desktop/tablet isolation. Hover assertions blur a previously focused element; mobile shadow values use only the Registry's allowed presets. No runtime code changed.",
   "coverage": "44 editable PARTIAL types; all ten state fields color, backgroundColor, backgroundImage, borderColor, boxShadow, opacity, textDecoration, fontWeight, rotate, and scale; tablet and mobile hover/focus-visible; exact states.set command/key routing; typed Inspector controls and rotate unit behavior; Canvas/public computed CSS; draft Save does not publish; reload restores values; separate Publish applies mobile; desktop remains independent; reset tablet values remain unset when mobile overrides publish; mobile-only focusable public output remains keyboard-safe. The pre-existing tablet path also verifies per-field reset, reset Save versus Publish, and Undo/Redo.",
@@ -35,7 +35,7 @@
     "deployment_id": "5d81f0f0-176c-4437-b5c5-652765f70bff",
     "version_id": "72f6626e-ba9a-4147-874a-3d8cfcf00919",
     "traffic_percent": 100,
-    "post_push_verification": "Pending.",
+    "post_push_verification": "Read-only Cloudflare Deployment API GET after push confirms deployment 5d81f0f0-176c-4437-b5c5-652765f70bff / version 72f6626e-ba9a-4147-874a-3d8cfcf00919 at 100%. Direct GET /api/health returned HTTP 200 with the expected service/version JSON. Live/local /assets/page-renderer.js SHA-256 matches at 005792f314f891aededf6363573c2ccd66527e53397d673e6a7b0434f6245370. The test/docs-only commits did not create a Worker deployment.",
     "production_d1_migration_or_data_write": false,
     "production_r2_change": false
   },
@@ -44,8 +44,8 @@
     "github_target_branch": "v2/foundation",
     "github_head_at_start": "c2fb68a41673f5782b1ee106841c55eb08319860",
     "test_commit": "42b8e5015a1c869f51789cc759bc5ce34e95d2be",
-    "push": "PENDING normal non-force fast-forward; remote ref was read and matched the expected parent before documentation commit.",
-    "ci": "Not yet checked; no CI PASS claimed.",
+    "push": "PASS: normal non-force fast-forward; test commit 42b8e5015a1c869f51789cc759bc5ce34e95d2be and plan/evidence commit 18389fccc5c5d907fc9390fdf6e0b6e49db7eaa4 were pushed from remote base c2fb68a41673f5782b1ee106841c55eb08319860. git ls-remote returned exact v2/foundation SHA 18389fccc5c5d907fc9390fdf6e0b6e49db7eaa4; GitHub compare verified ahead_by=2, behind_by=0, total_commits=2.",
+    "ci": "Both commits use [skip ci]. GitHub combined status GET returned state=pending, total_count=0, statuses=[] for 18389fccc5c5d907fc9390fdf6e0b6e49db7eaa4. No CI PASS is claimed.",
     "new_cost_or_dependency": "None."
   },
   "acceptance_boundary": "The all-type responsive state-field automation is complete for this tested slice; overall 77.44.7.A and full Visual Editor acceptance remain OPEN / NOT CERTIFIED. Manual and physical acceptance remain DEFERRED until the full Editor is implemented."
