@@ -313,60 +313,91 @@ test('every PARTIAL type renders Inspector routes and preserves Save versus Publ
   await viewer.reload();
   for(const {type,id} of editableNodes)assert.deepEqual(await computedTypography(publicNode(id)),expectedTypography,`${type}: explicit Publish renders the saved typography`);
 
-  // Mobile line-height is an override of the already-published desktop
-  // typography. Exercise inheritance, draft/public separation, reset and
-  // Undo/Redo across the same renderer matrix.
+  // Responsive typography overrides must also remain distinct from the
+  // published desktop values across every PARTIAL renderer. Exercise all
+  // registered typography routes together with inheritance, reset, Save,
+  // separate Publish, and Undo/Redo on mobile.
   await editor.locator('.canvas-device-btn[data-device="mobile"]').click();
   await viewer.setViewportSize({width:390,height:900});
   await viewer.reload();
-  const mobileLineHeightBaseline=Object.fromEntries(await Promise.all(editableNodes.map(async({id})=>[id,await computedTypography(publicNode(id))])));
-  const mobileLineHeightValues=editableNodes.map(()=> '1.4');
+  const mobileTypographyBaseline=Object.fromEntries(await Promise.all(editableNodes.map(async({id})=>[id,await computedTypography(publicNode(id))])));
+  const mobileTypographyValues={fontSize:'20px',fontWeight:'600',lineHeight:'1.4',textAlign:'right',fontFamily:'Arial',fontStyle:'normal',letterSpacing:'2px',textTransform:'lowercase',textDecoration:'none'};
+  const mobileTypographyKeys=['lineHeight','fontFamily','fontStyle','letterSpacing','textTransform','textDecoration'];
+  const expectedMobileTypography={...expectedTypography,fontFamily:'Arial',fontStyle:'normal',lineHeight:'28px',letterSpacing:'2px',textTransform:'lowercase',textDecoration:'none'};
   for(const [index,{type,id}] of editableNodes.entries()){
     const canvasNode=editor.locator(`.node[data-node-id="${id}"]`);
     await canvasNode.evaluate(el=>el.click());
     await editor.locator('.inspector-tabs button').first().click();
-    const field=inspector.locator('[data-property-id="typography.lineHeight"]');
-    assert.equal(await field.getAttribute('data-property-command'),'responsive.set',`${type}: mobile line-height command route`);
-    assert.equal(await field.getAttribute('data-property-key'),'lineHeight',`${type}: mobile line-height Page Model key`);
-    const group=field.locator('xpath=ancestor::section[1]'),title=group.locator(':scope > .inspector-group-title');
+    const fields=Object.fromEntries(mobileTypographyKeys.map(key=>[key,inspector.locator(`[data-property-id="typography.${key}"]`)]));
+    for(const [key,field] of Object.entries(fields)){
+      assert.equal(await field.getAttribute('data-property-command'),'responsive.set',`${type}: mobile typography.${key} command route`);
+      assert.equal(await field.getAttribute('data-property-key'),key,`${type}: mobile typography.${key} Page Model key`);
+    }
+    const group=fields.lineHeight.locator('xpath=ancestor::section[1]'),title=group.locator(':scope > .inspector-group-title');
     if(await title.getAttribute('aria-expanded')==='false')await title.click();
-    await field.locator('.property-preset').filter({hasText:'Kompakt · 1.4'}).click();
-    assert.equal((await computedTypography(canvasNode)).lineHeight,'28px',`${type}: mobile line-height preset reaches Canvas`);
+    await fields.lineHeight.locator('.property-preset').filter({hasText:'Kompakt · 1.4'}).click();
+    await fields.fontFamily.locator('select:not(.property-token-picker)').selectOption(mobileTypographyValues.fontFamily);
+    await fields.fontStyle.locator('select:not(.property-token-picker)').selectOption(mobileTypographyValues.fontStyle);
+    const letterSpacing=fields.letterSpacing.locator('.dimension-controls input[type="number"]');
+    await letterSpacing.fill('2');await letterSpacing.press('Tab');
+    await fields.textTransform.locator('select:not(.property-token-picker)').selectOption(mobileTypographyValues.textTransform);
+    await fields.textDecoration.locator('select:not(.property-token-picker)').selectOption(mobileTypographyValues.textDecoration);
+    assert.deepEqual(await computedTypography(canvasNode),expectedMobileTypography,`${type}: mobile typography overrides reach Canvas`);
   }
   await editor.locator('#save').click();
   await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
   for(const [index,{type,id}] of editableNodes.entries()){
-    assert.equal(draft.pages[pageId].nodes[id].responsive.mobile.lineHeight,mobileLineHeightValues[index],`${type}: mobile draft Save stores line-height`);
+    const savedMobile=draft.pages[pageId].nodes[id].responsive.mobile;
+    for(const key of mobileTypographyKeys){
+      const expected=key==='lineHeight'?mobileTypographyValues.lineHeight:key==='letterSpacing'?'2px':mobileTypographyValues[key];
+      assert.equal(savedMobile[key],expected,`${type}: mobile draft Save stores typography.${key}`);
+      assert.equal(published.pages[pageId].nodes[id].responsive.mobile?.[key],undefined,`${type}: mobile Save keeps published typography.${key} unchanged`);
+    }
     assert.equal(draft.pages[pageId].nodes[id].responsive.desktop.lineHeight,'1.75',`${type}: mobile Save preserves desktop line-height`);
-    assert.equal(published.pages[pageId].nodes[id].responsive.mobile?.lineHeight,undefined,`${type}: mobile Save stays unpublished`);
+    assert.equal(draft.pages[pageId].nodes[id].responsive.desktop.fontFamily,'Georgia',`${type}: mobile Save preserves desktop font family`);
+    assert.equal(draft.pages[pageId].nodes[id].responsive.desktop.fontStyle,'italic',`${type}: mobile Save preserves desktop font style`);
+    assert.equal(draft.pages[pageId].nodes[id].responsive.desktop.letterSpacing,'1.5px',`${type}: mobile Save preserves desktop letter spacing`);
+    assert.equal(draft.pages[pageId].nodes[id].responsive.desktop.textTransform,'uppercase',`${type}: mobile Save preserves desktop text transform`);
+    assert.equal(draft.pages[pageId].nodes[id].responsive.desktop.textDecoration,'underline',`${type}: mobile Save preserves desktop text decoration`);
   }
   await viewer.reload();
-  for(const {type,id} of editableNodes)assert.deepEqual(await computedTypography(publicNode(id)),mobileLineHeightBaseline[id],`${type}: draft Save preserves public mobile typography`);
+  for(const {type,id} of editableNodes)assert.deepEqual(await computedTypography(publicNode(id)),mobileTypographyBaseline[id],`${type}: draft Save preserves public mobile typography`);
   await editor.reload({waitUntil:'domcontentloaded'});
   await editor.locator('.canvas-device-btn[data-device="mobile"]').click();
   for(const [index,{type,id}] of editableNodes.entries()){
     await editor.locator(`.node[data-node-id="${id}"]`).evaluate(el=>el.click());
     await editor.locator('.inspector-tabs button').first().click();
-    assert.equal(await inspector.locator('[data-property-id="typography.lineHeight"] input[type="number"]').inputValue(),mobileLineHeightValues[index],`${type}: mobile line-height survives Editor reload`);
+    const lineHeightInput=inspector.locator('[data-property-id="typography.lineHeight"] input[type="number"]');
+    assert.equal(await lineHeightInput.inputValue(),mobileTypographyValues.lineHeight,`${type}: mobile line-height survives Editor reload`);
+    assert.equal(await inspector.locator('[data-property-id="typography.fontFamily"] select:not(.property-token-picker)').inputValue(),mobileTypographyValues.fontFamily,`${type}: mobile font family survives Editor reload`);
+    assert.equal(await inspector.locator('[data-property-id="typography.fontStyle"] select:not(.property-token-picker)').inputValue(),mobileTypographyValues.fontStyle,`${type}: mobile font style survives Editor reload`);
+    assert.equal(await inspector.locator('[data-property-id="typography.letterSpacing"] .dimension-controls input[type="number"]').inputValue(),'2',`${type}: mobile letter spacing survives Editor reload`);
+    assert.equal(await inspector.locator('[data-property-id="typography.textTransform"] select:not(.property-token-picker)').inputValue(),mobileTypographyValues.textTransform,`${type}: mobile text transform survives Editor reload`);
+    assert.equal(await inspector.locator('[data-property-id="typography.textDecoration"] select:not(.property-token-picker)').inputValue(),mobileTypographyValues.textDecoration,`${type}: mobile text decoration survives Editor reload`);
   }
   await editor.locator('#publish').click();
   await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
   await viewer.reload();
   for(const {type,id} of editableNodes){
-    assert.equal((await computedTypography(publicNode(id))).lineHeight,'28px',`${type}: separate Publish applies mobile line-height`);
+    assert.deepEqual(await computedTypography(publicNode(id)),expectedMobileTypography,`${type}: separate Publish applies all mobile typography overrides`);
     assert.equal((await computedTypography(publicNode(id))).fontSize,'20px',`${type}: mobile Publish inherits desktop font size`);
   }
   for(const {type,id} of editableNodes){
     await editor.locator(`.node[data-node-id="${id}"]`).evaluate(el=>el.click());
     await editor.locator('.inspector-tabs button').first().click();
-    const field=inspector.locator('[data-property-id="typography.lineHeight"]');
-    const group=field.locator('xpath=ancestor::section[1]'),title=group.locator(':scope > .inspector-group-title');
+    const group=inspector.locator('[data-property-id="typography.lineHeight"]').locator('xpath=ancestor::section[1]'),title=group.locator(':scope > .inspector-group-title');
     if(await title.getAttribute('aria-expanded')==='false')await title.click();
-    const reset=group.locator('.property-reset[data-property-key="lineHeight"]');
-    assert.equal(await reset.count(),1,`${type}: mobile line-height exposes inheritance reset`);
-    assert.equal(await reset.getAttribute('data-property-command'),'responsive.set',`${type}: mobile line-height reset uses responsive command`);
-    await reset.click();
-    assert.equal((await computedTypography(editor.locator(`.node[data-node-id="${id}"]`))).lineHeight,'35px',`${type}: reset restores desktop line-height in Canvas`);
+    for(const key of mobileTypographyKeys.filter(key=>key!=='lineHeight')){
+      const reset=group.locator(`.property-reset[data-property-key="${key}"]`);
+      assert.equal(await reset.count(),1,`${type}: mobile ${key} exposes inheritance reset`);
+      assert.equal(await reset.getAttribute('data-property-command'),'responsive.set',`${type}: mobile ${key} reset uses responsive command`);
+      await reset.click();
+    }
+    const lineHeightReset=group.locator('.property-reset[data-property-key="lineHeight"]');
+    assert.equal(await lineHeightReset.count(),1,`${type}: mobile line-height exposes inheritance reset`);
+    assert.equal(await lineHeightReset.getAttribute('data-property-command'),'responsive.set',`${type}: mobile line-height reset uses responsive command`);
+    await lineHeightReset.click();
+    assert.deepEqual(await computedTypography(editor.locator(`.node[data-node-id="${id}"]`)),expectedTypography,`${type}: resets restore the complete desktop typography on mobile Canvas`);
   }
   const lastTypographyNode=editableNodes.at(-1);
   const lastCanvasTypography=()=>computedTypography(editor.locator(`.node[data-node-id="${lastTypographyNode.id}"]`));
@@ -377,21 +408,24 @@ test('every PARTIAL type renders Inspector routes and preserves Save versus Publ
   await editor.locator('#save').click();
   await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
   for(const {type,id} of editableNodes){
-    assert.equal(draft.pages[pageId].nodes[id].responsive.mobile.lineHeight,undefined,`${type}: reset Save removes mobile line-height override`);
-    assert.equal(published.pages[pageId].nodes[id].responsive.mobile.lineHeight,'1.4',`${type}: reset Save leaves published mobile line-height intact`);
+    for(const key of mobileTypographyKeys){
+      assert.equal(draft.pages[pageId].nodes[id].responsive.mobile[key],undefined,`${type}: reset Save removes mobile typography.${key} override`);
+      const publishedValue=key==='lineHeight'?'1.4':key==='letterSpacing'?'2px':mobileTypographyValues[key];
+      assert.equal(published.pages[pageId].nodes[id].responsive.mobile[key],publishedValue,`${type}: reset Save leaves published typography.${key} intact`);
+    }
   }
   await viewer.reload();
-  for(const {type,id} of editableNodes)assert.equal((await computedTypography(publicNode(id))).lineHeight,'28px',`${type}: reset Save preserves published mobile line-height`);
+  for(const {type,id} of editableNodes)assert.deepEqual(await computedTypography(publicNode(id)),expectedMobileTypography,`${type}: reset Save preserves all published mobile typography`);
   await editor.locator('#publish').click();
   await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
   await viewer.reload();
   for(const {type,id} of editableNodes){
-    assert.equal((await computedTypography(publicNode(id))).lineHeight,'35px',`${type}: reset Publish restores inherited desktop line-height`);
-    assert.equal(published.pages[pageId].nodes[id].responsive.mobile.lineHeight,undefined,`${type}: reset Publish removes public mobile override`);
+    assert.deepEqual(await computedTypography(publicNode(id)),expectedTypography,`${type}: reset Publish restores inherited desktop typography`);
+    for(const key of mobileTypographyKeys)assert.equal(published.pages[pageId].nodes[id].responsive.mobile[key],undefined,`${type}: reset Publish removes mobile typography.${key} override`);
   }
   await viewer.setViewportSize({width:1366,height:900});
   await viewer.reload();
-  for(const {type,id} of editableNodes)assert.equal((await computedTypography(publicNode(id))).lineHeight,'35px',`${type}: mobile reset preserves desktop public line-height`);
+  for(const {type,id} of editableNodes)assert.deepEqual(await computedTypography(publicNode(id)),expectedTypography,`${type}: mobile resets preserve desktop public typography`);
 
   // The same Inspector route must write a distinct mobile override for every
   // PARTIAL type without replacing its already-published desktop style.
