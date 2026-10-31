@@ -1,0 +1,53 @@
+{
+  "date": "2026-10-31",
+  "planItem": "77.44.7.A — Inspector background image lifecycle across all compatible PARTIAL types",
+  "status": "LOCAL_TEST_AND_EVIDENCE_PASS; PUBLICATION_VERIFICATION_PENDING",
+  "finding": "The media-backed background image field was registered on every PARTIAL Inspector type, but the end-to-end picker → Canvas → saved Page Model → separate Publish → public media renderer route was covered only by representative node types.",
+  "change": "Added tests/browser/editor-inspector-background-image-partial-types.test.js and registered it in the editor browser suite. The real browser test creates all 45 current Inspector-compatible PARTIAL nodes (root plus 44 editable types), selects the asset through the actual shared media picker on each, then verifies authenticated Canvas preview, responsive command/key routing, draft-only Save, reload persistence, and separate public Publish.",
+  "typeCoverage": {
+    "totalPartialTypes": 45,
+    "backgroundImageCompatible": 45,
+    "editableTypes": 44,
+    "property": "background.image",
+    "command": "responsive.set",
+    "pageModelKey": "backgroundAssetId"
+  },
+  "lifecycle": "All applicable nodes use the real Inspector media picker. Canvas resolves the selected asset through /api/admin/media?id=...; Save persists only the desktop Page Model override and leaves the public renderer unchanged; the draft selection survives Editor reload; explicit Publish copies the asset reference to the public snapshot and the public renderer resolves it through /media/<id>. Undo/Redo is verified on the final matrix node.",
+  "browser": {
+    "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-inspector-background-image-partial-types.test.js",
+    "result": "PASS, 1/1 test; 23.1 seconds."
+  },
+  "harnessNotes": [
+    "The existing partial-type fixture provides required authored content; the new fixture follows the same content setup so Publish validates the actual Editor contract.",
+    "The modern root style capability must be enabled for the public root canvas to carry the root node's background asset; legacy root documents omit that public style projection by design."
+  ],
+  "reuseReview": {
+    "solution": "Reused the project's Property Registry, shared media picker, responsive command, Chromium fixture pattern, public renderer and existing Save/Publish model. No external implementation or dependency was introduced.",
+    "externalCodeOrDependency": "None."
+  },
+  "checks": {
+    "node --check tests/browser/editor-inspector-background-image-partial-types.test.js": "PASS",
+    "package.json JSON parse": "PASS",
+    "targeted Chromium browser test": "PASS; 1/1 test, 23.1 seconds",
+    "npm run test:editor": "PASS; 11/11 tests",
+    "npm run typecheck": "PASS",
+    "npm run test:web013:migration-gate": "PASS; safety gate only, no production migration",
+    "python3 scripts/check-canonical-plan.py": "PASS; complete 13-file master; acceptance remains NOT_CERTIFIED",
+    "python3 scripts/audit-active-plan-point.py": "PASS; cursor remains 77.44 / WEB-011 -> 77.44.7.A",
+    "python3 scripts/build-feature-traceability.py --check": "PASS; 396 current mappings",
+    "git diff --check": "PASS"
+  },
+  "release": {
+    "runtimeChanged": false,
+    "localCheckoutBranch": "work; unchanged",
+    "remoteTarget": "v2/foundation",
+    "productionD1Writes": 0,
+    "productionR2Changes": 0,
+    "workerRedeployment": "Not applicable; only browser test, evidence, plan and traceability files change.",
+    "newCostOrDependency": "None.",
+    "push": "PENDING",
+    "ci": "PENDING; no status result is claimed.",
+    "status": "LOCAL_TEST_EVIDENCE_AND_PLAN_CHECKS_PASS; PUSH_PENDING"
+  },
+  "acceptanceBoundary": "This adds verified background image picker lifecycle evidence for all current PARTIAL types. It does not certify the complete 77.44.7.A Inspector foundation; overall visual editor manual/physical acceptance remains deferred until the full editor is complete."
+}
