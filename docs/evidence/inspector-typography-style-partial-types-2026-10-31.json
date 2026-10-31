@@ -1,0 +1,43 @@
+{
+  "date": "2026-10-31",
+  "planItem": "77.44.7.A — remaining desktop typography Inspector-to-public renderer lifecycle",
+  "status": "LOCAL_TEST_AND_EVIDENCE_PASS; PUSH_PENDING",
+  "finding": "Five desktop typography properties (fontFamily, fontStyle, letterSpacing, textTransform, textDecoration) were registered for every editable PARTIAL type, but their full cross-type Canvas → draft Save/reload → separate Publish lifecycle was not covered together with the existing metrics matrix.",
+  "change": "Extended tests/browser/editor-inspector-partial-types.test.js so all nine desktop typography controls are edited and checked across all 44 editable PARTIAL types, including responsive.set/key contracts, Canvas computed CSS, Page Model persistence, public immutability during draft Save, Editor reload, and published computed CSS.",
+  "reuseReview": {
+    "solution": "Reused the project Property Registry, existing select/dimension controls, existing browser fixture, and current Canvas/public rendering contract.",
+    "externalCodeOrDependency": "None; project-owned controls and browser fixture were sufficient."
+  },
+  "browser": {
+    "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-inspector-partial-types.test.js",
+    "result": "PASS, 1/1 test; 465.5 seconds.",
+    "coverage": "All 44 editable PARTIAL types: fontSize=20px, fontWeight=600, lineHeight=1.75, textAlign=right, fontFamily=Georgia, fontStyle=italic, letterSpacing=1.5px, textTransform=uppercase, textDecoration=underline. All nine command/key routes match; Canvas CSS and saved Page Model match expected values; draft Save leaves the public renderer unchanged; Editor reload retains the values; explicit Publish applies all nine CSS values to every public node."
+  },
+  "checks": {
+    "npm run test:editor": "PASS, 11/11 test files.",
+    "npm run typecheck": "PASS.",
+    "node --check tests/browser/editor-inspector-partial-types.test.js": "PASS.",
+    "migrationSafetyGate": "PASS; safety gate only, no migration applied.",
+    "canonicalPlanAndTraceability": "PASS; one complete 13-file master, one current cursor, 396 source mappings; full acceptance remains NOT_CERTIFIED.",
+    "git diff --check": "PASS."
+  },
+  "release": {
+    "runtimeChanged": false,
+    "githubTarget": "v2/foundation",
+    "githubHeadAtStart": "028b8bbb90a4a91b7659ca1bd7e13bb91d6d14a3",
+    "push": "Pending normal fast-forward of test/evidence-only change.",
+    "ci": "Not run; test-only path is excluded from Worker Build and will use [skip ci].",
+    "workerDeployment": {
+      "id": "11dc8722-8748-4e34-830d-3e68e6536461",
+      "version": "0d66c912-a60c-44e9-90a5-341614c3b8a2",
+      "number": 3767,
+      "trafficPercent": 100,
+      "health": "GET /api/health before local test returned HTTP 200 and expected Worker identity.",
+      "redeployment": "Not required; no runtime source or public asset changed."
+    },
+    "productionD1Writes": 0,
+    "productionR2Changes": 0,
+    "newCostOrDependency": "None."
+  },
+  "acceptanceBoundary": "This verifies nine desktop typography properties across the 44 editable PARTIAL renderer types. It does not certify all 79 declared element types or all 68 properties; full 77.44.7.A and Visual Editor acceptance remain OPEN / NOT CERTIFIED. Manual and physical acceptance remains deferred until the complete Editor is implemented."
+}
