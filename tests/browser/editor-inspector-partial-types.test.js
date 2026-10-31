@@ -245,6 +245,62 @@ test('every PARTIAL type renders Inspector routes and preserves Save versus Publ
     assert.equal(await publicNode(id).evaluate(el=>getComputedStyle(el).color),asRgb(textColors[index]),`${type}: published renderer applies text color`);
   }
 
+  // These four typography controls are registered for every PARTIAL type.
+  // Verify their independent Page Model keys and public CSS route as one
+  // coherent typography lifecycle, rather than assuming text-color coverage
+  // proves font metrics and alignment work in the renderer.
+  const typographyValues=editableNodes.map(()=>({fontSize:'20px',fontWeight:'600',lineHeight:'1.75',textAlign:'right'}));
+  const publishedTypographyBaseline=Object.fromEntries(editableNodes.map(({id})=>{
+    const responsive=published.pages[pageId].nodes[id].responsive?.desktop||{};
+    return [id,Object.fromEntries(['fontSize','fontWeight','lineHeight','textAlign'].map(key=>[key,responsive[key]]))];
+  }));
+  const computedTypography=node=>node.evaluate(el=>{const css=getComputedStyle(el);return{fontSize:css.fontSize,fontWeight:css.fontWeight,lineHeight:css.lineHeight,textAlign:css.textAlign}});
+  const publicTypographyBaseline=Object.fromEntries(await Promise.all(editableNodes.map(async({id})=>[id,await computedTypography(publicNode(id))])));
+  const expectedTypography={fontSize:'20px',fontWeight:'600',lineHeight:'35px',textAlign:'right'};
+  for(const [index,{type,id}] of editableNodes.entries()){
+    const canvasNode=editor.locator(`.node[data-node-id="${id}"]`);
+    await canvasNode.evaluate(el=>el.click());
+    const fields=Object.fromEntries(['fontSize','fontWeight','lineHeight','textAlign'].map(key=>[key,inspector.locator(`[data-property-id="typography.${key}"]`)]));
+    for(const [key,field] of Object.entries(fields)){
+      assert.equal(await field.getAttribute('data-property-command'),'responsive.set',`${type}: typography.${key} command route`);
+      assert.equal(await field.getAttribute('data-property-key'),key,`${type}: typography.${key} Page Model key`);
+    }
+    const section=fields.fontSize.locator('xpath=ancestor::section[1]'),title=section.locator(':scope > .inspector-group-title');
+    if(await title.getAttribute('aria-expanded')==='false')await title.click();
+    await fields.fontSize.locator('.property-preset').filter({hasText:'Kiemelt · 20'}).click();
+    await fields.fontWeight.locator('select:not(.property-token-picker)').selectOption(typographyValues[index].fontWeight);
+    await fields.lineHeight.locator('.property-preset').filter({hasText:'Laza · 1.75'}).click();
+    await fields.textAlign.locator('select:not(.property-token-picker)').selectOption(typographyValues[index].textAlign);
+    assert.deepEqual(await computedTypography(canvasNode),expectedTypography,`${type}: Inspector typography reaches Canvas`);
+  }
+  await editor.locator('#save').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+  for(const [index,{type,id}] of editableNodes.entries()){
+    const saved=draft.pages[pageId].nodes[id].responsive.desktop;
+    for(const [key,value] of Object.entries(typographyValues[index]))assert.equal(saved[key],value,`${type}: draft Save stores typography.${key}`);
+    for(const key of Object.keys(typographyValues[index]))assert.equal(published.pages[pageId].nodes[id].responsive?.desktop?.[key],publishedTypographyBaseline[id][key],`${type}: draft Save keeps published typography.${key} unchanged`);
+  }
+  await viewer.reload();
+  for(const {type,id} of editableNodes){
+    assert.deepEqual(await computedTypography(publicNode(id)),publicTypographyBaseline[id],`${type}: draft Save leaves public typography unchanged`);
+  }
+  await editor.reload({waitUntil:'domcontentloaded'});
+  for(const [index,{type,id}] of editableNodes.entries()){
+    await editor.locator(`.node[data-node-id="${id}"]`).evaluate(el=>el.click());
+    await editor.locator('.inspector-tabs button').first().click();
+    const fields=Object.fromEntries(['fontSize','fontWeight','lineHeight','textAlign'].map(key=>[key,inspector.locator(`[data-property-id="typography.${key}"]`)]));
+    const section=fields.fontSize.locator('xpath=ancestor::section[1]'),title=section.locator(':scope > .inspector-group-title');
+    if(await title.getAttribute('aria-expanded')==='false')await title.click();
+    assert.equal(await fields.fontSize.locator('input[type="number"]').inputValue(),'20',`${type}: saved font size survives Editor reload`);
+    assert.equal(await fields.fontWeight.locator('select:not(.property-token-picker)').inputValue(),typographyValues[index].fontWeight,`${type}: saved font weight survives Editor reload`);
+    assert.equal(await fields.lineHeight.locator('input[type="number"]').inputValue(),typographyValues[index].lineHeight,`${type}: saved line height survives Editor reload`);
+    assert.equal(await fields.textAlign.locator('select:not(.property-token-picker)').inputValue(),typographyValues[index].textAlign,`${type}: saved alignment survives Editor reload`);
+  }
+  await editor.locator('#publish').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
+  await viewer.reload();
+  for(const {type,id} of editableNodes)assert.deepEqual(await computedTypography(publicNode(id)),expectedTypography,`${type}: explicit Publish renders the saved typography`);
+
   // The same Inspector route must write a distinct mobile override for every
   // PARTIAL type without replacing its already-published desktop style.
   const mobileColors=editableNodes.map((_,index)=>'#'+((0xc04020+index*0x020509)&0xffffff).toString(16).padStart(6,'0'));
