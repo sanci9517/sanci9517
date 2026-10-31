@@ -207,6 +207,44 @@ test('every PARTIAL type renders Inspector routes and preserves Save versus Publ
     assert.equal(await publicNode(id).evaluate(el=>getComputedStyle(el).backgroundColor),asRgb(colors[index]),`${type}: published style matches the Inspector edit`);
   }
 
+  // Text color has its own registry field and Page Model key. Exercise the
+  // same persisted route on every PARTIAL renderer rather than inferring it
+  // from the visually adjacent background-color field.
+  const textColors=editableNodes.map((_,index)=>'#'+((0x202020+index*0x050307)&0xffffff).toString(16).padStart(6,'0'));
+  const publicTextBaseline=Object.fromEntries(await Promise.all(editableNodes.map(async({id})=>[id,await publicNode(id).evaluate(el=>getComputedStyle(el).color)])));
+  for(const [index,{type,id}] of editableNodes.entries()){
+    const canvasNode=editor.locator(`.node[data-node-id="${id}"]`);
+    await canvasNode.evaluate(el=>el.click());
+    const field=inspector.locator('.typed-inspector-field[data-property-id="typography.color"]');
+    assert.equal(await field.getAttribute('data-property-command'),'responsive.set',`${type}: text color command route`);
+    assert.equal(await field.getAttribute('data-property-key'),'color',`${type}: text color Page Model key`);
+    const group=field.locator('xpath=ancestor::section[1]'),title=group.locator(':scope > .inspector-group-title');
+    if(await title.getAttribute('aria-expanded')==='false')await title.click();
+    await field.locator('input[type="color"]').evaluate((el,value)=>{el.value=value;el.dispatchEvent(new Event('change',{bubbles:true}))},textColors[index]);
+    assert.equal(await canvasNode.evaluate(el=>getComputedStyle(el).color),asRgb(textColors[index]),`${type}: text color Inspector edit reaches Canvas`);
+  }
+  await editor.locator('#save').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+  for(const [index,{type,id}] of editableNodes.entries()){
+    assert.equal(draft.pages[pageId].nodes[id].responsive.desktop.color,textColors[index],`${type}: draft Save stores text color`);
+    assert.equal(published.pages[pageId].nodes[id].responsive?.desktop?.color,undefined,`${type}: text color Save stays unpublished`);
+  }
+  await viewer.reload();
+  for(const {type,id} of editableNodes)assert.equal(await publicNode(id).evaluate(el=>getComputedStyle(el).color),publicTextBaseline[id],`${type}: text color draft Save preserves public rendering`);
+  await editor.reload({waitUntil:'domcontentloaded'});
+  for(const [index,{type,id}] of editableNodes.entries()){
+    await editor.locator(`.node[data-node-id="${id}"]`).evaluate(el=>el.click());
+    await editor.locator('.inspector-tabs button').first().click();
+    assert.equal(await inspector.locator('[data-property-id="typography.color"] input[type="color"]').inputValue(),textColors[index],`${type}: saved text color survives Editor reload`);
+  }
+  await editor.locator('#publish').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
+  await viewer.reload();
+  for(const [index,{type,id}] of editableNodes.entries()){
+    assert.equal(published.pages[pageId].nodes[id].responsive.desktop.color,textColors[index],`${type}: explicit Publish stores text color`);
+    assert.equal(await publicNode(id).evaluate(el=>getComputedStyle(el).color),asRgb(textColors[index]),`${type}: published renderer applies text color`);
+  }
+
   // The same Inspector route must write a distinct mobile override for every
   // PARTIAL type without replacing its already-published desktop style.
   const mobileColors=editableNodes.map((_,index)=>'#'+((0xc04020+index*0x020509)&0xffffff).toString(16).padStart(6,'0'));
