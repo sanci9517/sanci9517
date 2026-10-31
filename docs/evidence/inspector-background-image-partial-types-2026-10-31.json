@@ -1,7 +1,7 @@
 {
   "date": "2026-10-31",
   "planItem": "77.44.7.A — Inspector background image lifecycle across all compatible PARTIAL types",
-  "status": "LOCAL_TEST_AND_EVIDENCE_PASS; PUBLICATION_VERIFICATION_PENDING",
+  "status": "LOCAL_AND_GITHUB_TEST_EVIDENCE_PASS; FAST_FORWARD_PUSH_VERIFIED; NO_RUNTIME_DEPLOYMENT",
   "finding": "The media-backed background image field was registered on every PARTIAL Inspector type, but the end-to-end picker → Canvas → saved Page Model → separate Publish → public media renderer route was covered only by representative node types.",
   "change": "Added tests/browser/editor-inspector-background-image-partial-types.test.js and registered it in the editor browser suite. The real browser test creates all 45 current Inspector-compatible PARTIAL nodes (root plus 44 editable types), selects the asset through the actual shared media picker on each, then verifies authenticated Canvas preview, responsive command/key routing, draft-only Save, reload persistence, and separate public Publish.",
   "typeCoverage": {
@@ -41,13 +41,28 @@
     "runtimeChanged": false,
     "localCheckoutBranch": "work; unchanged",
     "remoteTarget": "v2/foundation",
+    "startingCommit": "cbb0537cf54d98bb5189639a488609217f4bdc31",
+    "push": {
+      "status": "VERIFIED",
+      "target": "v2/foundation",
+      "commit": "1ab759df086b6c3d0a06ed4968639e105f2af69e",
+      "parent": "cbb0537cf54d98bb5189639a488609217f4bdc31",
+      "verification": "git push reported the fast-forward cbb0537c..1ab759df; direct GitHub git/ref/heads/v2/foundation GET returned the exact commit SHA."
+    },
+    "ci": {
+      "status": "NO_CHECKS_REPORTED",
+      "verification": "GitHub commit status returned statuses=[] and total_count=0; CI PASS is not claimed."
+    },
+    "workerDeployment": {
+      "deploymentId": "11dc8722-8748-4e34-830d-3e68e6536461",
+      "version": "0d66c912-a60c-44e9-90a5-341614c3b8a2",
+      "trafficPercent": 100,
+      "health": "Direct GET /api/health returned HTTP 200 with expected service identity, version 2.0.0 and cloudflare-worker server.",
+      "redeployment": "Not required; runtime source and public assets are unchanged. Post-push read-only Wrangler status reported the same deployment/version at 100%. Wrangler printed a local EROFS log warning but returned the deployment status."
+    },
     "productionD1Writes": 0,
     "productionR2Changes": 0,
-    "workerRedeployment": "Not applicable; only browser test, evidence, plan and traceability files change.",
-    "newCostOrDependency": "None.",
-    "push": "PENDING",
-    "ci": "PENDING; no status result is claimed.",
-    "status": "LOCAL_TEST_EVIDENCE_AND_PLAN_CHECKS_PASS; PUSH_PENDING"
+    "newCostOrDependency": "None."
   },
-  "acceptanceBoundary": "This adds verified background image picker lifecycle evidence for all current PARTIAL types. It does not certify the complete 77.44.7.A Inspector foundation; overall visual editor manual/physical acceptance remains deferred until the full editor is complete."
+  "acceptanceBoundary": "This verifies the background image picker lifecycle for all current compatible PARTIAL types. It does not certify the complete 77.44.7.A Inspector foundation; full editor manual/physical acceptance remains deferred until the full editor is complete."
 }
