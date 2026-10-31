@@ -1,7 +1,7 @@
 {
   "date": "2026-10-31",
   "plan_item": "77.44.7.A — tablet hover and focus-visible lifecycle across editable PARTIAL element types",
-  "status": "TEST_AND_EVIDENCE_PASS; FAST_FORWARD_PUSH_PENDING; NO_RUNTIME_DEPLOYMENT",
+  "status": "TEST_AND_EVIDENCE_PASS; FAST_FORWARD_PUSH_VERIFIED; NO_RUNTIME_DEPLOYMENT",
   "finding": "The existing representative tablet state lifecycle did not establish interaction-state coverage across every Inspector-editable PARTIAL element type. The expanded matrix also exposed that decorative aria-hidden output must not become keyboard reachable just because focus styles are configured.",
   "change": "Expanded tests/browser/editor-inspector-tablet-state-partial-types.test.js so all 44 editable PARTIAL types exercise both tablet hover and focus-visible backgroundColor plus the closed-choice backgroundImage gradient property, through actual Inspector controls and the Canvas, draft, reload, public publish, breakpoint inheritance, reset, and undo/redo lifecycle. Public keyboard-focus assertions remain restricted to semantically focusable nodes, and aria-hidden nodes remain outside keyboard navigation. No runtime code changed.",
   "coverage": "44 editable PARTIAL types; both hover and focus-visible tablet backgroundColor and backgroundImage (closed gradient choices); Inspector states.set property key; Canvas computed color and gradient; draft Save remains unpublished; reload restores both fields; separate Publish applies tablet states; desktop values remain isolated; mobile inherits tablet; tablet reset returns to desktop; Undo/Redo; reset Save preserves published values and reset Publish removes overrides; aria-hidden content remains outside keyboard navigation.",
@@ -18,7 +18,7 @@
     "python3 scripts/audit-active-plan-point.py": "PASS; cursor 77.44 / WEB-011 -> 77.44.7.A.",
     "python3 scripts/build-feature-traceability.py --check": "PASS; 396 mappings, including the new browser test candidate.",
     "node --check tests/browser/editor-inspector-tablet-state-partial-types.test.js": "PASS.",
-    "git diff --check": "PASS before final documentation commit."
+    "git diff --check": "PASS before final documentation correction."
   },
   "reuse_review": {
     "solution": "Reused the existing Creator Platform schema, Property Registry, states.set command, state-style projection, Playwright dependency, and local mock-server browser fixture. No third-party implementation or new package was needed.",
@@ -44,8 +44,8 @@
     "github_target_branch": "v2/foundation",
     "github_head_at_start": "48810ab6dc500443b6468d2cea378b1d91f0ff06",
     "test_commit": "a401aee490f3289e46dd0a6b238b5846ffc535a3",
-    "push": "PENDING at evidence preparation; normal fast-forward will be verified before reporting.",
-    "ci": "Not run by design; the test commit uses [skip ci]. No CI PASS is claimed.",
+    "push": "PASS: normal non-force fast-forward from 48810ab6dc500443b6468d2cea378b1d91f0ff06 through test commit a401aee490f3289e46dd0a6b238b5846ffc535a3 and test/evidence/plan commit 7e9e4848d39b708fd69371bde9b915ae094dc583. git ls-remote returned exact v2/foundation SHA 7e9e4848d39b708fd69371bde9b915ae094dc583; GitHub commit fetch and compare confirmed the uploaded two-commit fast-forward.",
+    "ci": "Not run by design; both commits use [skip ci]. GitHub combined status API returned statuses=[] for 7e9e4848d39b708fd69371bde9b915ae094dc583. No CI PASS is claimed.",
     "post_push_worker_deployment": "Read-only Cloudflare Deployments API confirmed the unchanged deployment/version at run review; test/docs-only changes do not warrant Worker redeployment.",
     "new_cost_or_dependency": "None."
   },
