@@ -1,7 +1,7 @@
 {
   "date": "2026-10-31",
   "planItem": "77.44.7.A — full responsive typography Inspector-to-Canvas/draft/public lifecycle across editable PARTIAL types",
-  "status": "LOCAL_TEST_AND_EVIDENCE_PASS; PUSH_PENDING",
+  "status": "TEST_AND_EVIDENCE_PUSHED; PRODUCTION_RUNTIME_UNCHANGED",
   "finding": "The existing cross-type matrix covered nine desktop typography properties and six mobile responsive overrides. The remaining wrapping, overflow, word-spacing, indent, and text-shadow fields had representative breakpoint coverage but lacked the complete 44-type renderer lifecycle.",
   "change": "Extended tests/browser/editor-inspector-partial-types.test.js to run all 14 registered non-color typography properties across every one of the 44 editable PARTIAL types. Desktop values are checked through responsive.set/key, Canvas CSS, draft Page Model Save, public immutability, Editor reload, and separate Publish. Mobile overrides cover all 14 properties, draft Save/reload, separate Publish, per-property inheritance reset, Undo/Redo, reset Save, a second Publish, and preservation of desktop values.",
   "reuseReview": {
@@ -27,19 +27,31 @@
     "runtimeChanged": false,
     "githubTarget": "v2/foundation",
     "githubHeadAtStart": "aa2f8003cd2ae48bcfafd2d09e8bc05cc191a49e",
-    "push": "Pending normal fast-forward of test/evidence-only changes.",
-    "ci": "Not run; test-only commit will use [skip ci].",
+    "push": "Normal fast-forward from v2/foundation aa2f8003cd2ae48bcfafd2d09e8bc05cc191a49e; direct GitHub branch GET confirms 82f6b59054a001fa5c043095855cd6e4b3dc5b2b.",
+    "ci": "GitHub combined status returned no checks; no CI PASS claimed. Test-only commit used [skip ci].",
     "workerDeployment": {
       "id": "11dc8722-8748-4e34-830d-3e68e6536461",
       "version": "0d66c912-a60c-44e9-90a5-341614c3b8a2",
       "number": 3767,
       "trafficPercent": 100,
-      "health": "GET /api/health at session start returned HTTP 200 and expected Worker identity.",
-      "redeployment": "Not required; no runtime source or public asset changed."
+      "health": "GET /api/health at session start and after test push returned HTTP 200 and expected Worker identity.",
+      "redeployment": "Not required; no runtime source or public asset changed.",
+      "verifiedAfterPush": "Cloudflare deployments GET still reports deployment 11dc8722-8748-4e34-830d-3e68e6536461 / version 0d66c912-a60c-44e9-90a5-341614c3b8a2 at 100%; production GET /api/health after push returned HTTP 200."
     },
     "productionD1Writes": 0,
     "productionR2Changes": 0,
-    "newCostOrDependency": "None."
+    "newCostOrDependency": "None.",
+    "commit": "82f6b59054a001fa5c043095855cd6e4b3dc5b2b",
+    "remoteHeadVerified": "82f6b59054a001fa5c043095855cd6e4b3dc5b2b"
   },
-  "acceptanceBoundary": "This verifies 14 responsive typography fields across 44 editable PARTIAL types. Typography color is separately covered across the same type matrix. This does not certify all 79 element types or all 68 registry properties; complete 77.44.7.A and full Visual Editor acceptance remain OPEN / NOT CERTIFIED. Manual/fysical acceptance remains deferred until the complete Editor is implemented."
+  "acceptanceBoundary": "This verifies 14 responsive typography fields across 44 editable PARTIAL types. Typography color is separately covered across the same type matrix. This does not certify all 79 element types or all 68 registry properties; complete 77.44.7.A and full Visual Editor acceptance remain OPEN / NOT CERTIFIED. Manual/fysical acceptance remains deferred until the complete Editor is implemented.",
+  "documentationSync": {
+    "status": "LOCAL_ONLY_PUSH_BLOCKED_BY_NETWORK",
+    "remoteHeadObserved": "82f6b59054a001fa5c043095855cd6e4b3dc5b2b",
+    "attempt": "git ls-remote origin refs/heads/v2/foundation",
+    "error": "Failed to connect to proxy port 8080 after 0 ms: Could not connect to server",
+    "ci": "GitHub combined status for the already-pushed test commit returned no checks. No CI PASS claimed for this documentation follow-up.",
+    "worker": "Cloudflare read-only deployments GET verified deployment 11dc8722-8748-4e34-830d-3e68e6536461 / version 0d66c912-a60c-44e9-90a5-341614c3b8a2 at 100%. No runtime change; no redeployment.",
+    "cost": "None."
+  }
 }
