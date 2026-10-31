@@ -1,7 +1,7 @@
 {
   "date": "2026-10-31",
   "plan_item": "77.44.7.A — responsive position mode, x/y offsets, and z-index lifecycle across all editable PARTIAL types",
-  "status": "LOCAL_TESTED_DOCUMENTED_NOT_DEPLOYED",
+  "status": "TEST_AND_EVIDENCE_PASS; FAST_FORWARD_PUSH_VERIFIED; NO_RUNTIME_DEPLOYMENT",
   "finding": "The all-44-type position matrix covered desktop and mobile but did not prove the tablet breakpoint's Inspector, draft Save/reload, separate Publish, viewport isolation, and inheritance-reset lifecycle.",
   "change": "Extended tests/browser/editor-inspector-position-partial-types.test.js to exercise all four registered position properties at desktop, tablet, and mobile. Corrected a test-only viewer readiness check to target an actual rendered editable node because the public fixture does not render the document root as a node.",
   "properties": [
@@ -49,9 +49,9 @@
     "local_checkout_branch": "work; unchanged",
     "github_target_branch": "v2/foundation",
     "github_head_at_start": "6bc093cd57cb25601b1850f352cdc987891d41fd",
-    "push": "Pending verified commit and normal fast-forward push.",
-    "ci": "No CI run requested for this test/documentation-only slice; previous HEAD status GET returned statuses=[]. No CI PASS claimed.",
-    "post_push_worker_deployment": "To be rechecked after push; no runtime source changed, so no Worker redeployment is expected.",
+    "push": "PASS: b3bd9bb9a3f3ea6d7c422476c1ae62b8c90935e6 was pushed with a normal non-force fast-forward from 6bc093cd57cb25601b1850f352cdc987891d41fd; the direct GitHub v2/foundation branch GET returned the exact commit SHA.",
+    "ci": "The commit uses [skip ci]. GitHub combined commit status GET returned statuses=[], total_count=0; no CI PASS is claimed.",
+    "post_push_worker_deployment": "Read-only Cloudflare deployments GET still reports 5d81f0f0-176c-4437-b5c5-652765f70bff / 72f6626e-ba9a-4147-874a-3d8cfcf00919 at 100%; only tests and documentation changed, so no Worker redeployment occurred.",
     "new_cost_or_dependency": "None."
   },
   "acceptance_boundary": "This proves the responsive position lifecycle only for the 44 editable PARTIAL types. The overall 77.44.7.A foundation and full Visual Editor acceptance remain OPEN / NOT CERTIFIED; manual and physical acceptance remain DEFERRED until the full Editor is implemented."
