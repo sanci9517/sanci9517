@@ -1,7 +1,7 @@
 {
   "date": "2026-10-31",
   "planItem": "77.44.7.A — Invalid Inspector content.href must block draft Save and separate Publish",
-  "status": "LOCAL_BROWSER_AND_UNIT_CHECKS_PASS; TEST_DOC_PUSH_PENDING",
+  "status": "LOCAL_BROWSER_AND_UNIT_CHECKS_PASS; PUSHED_TO_GITHUB",
   "finding": "The Inspector lifecycle browser test showed javascript: URL feedback and then corrected it, but did not attempt Save or Publish while the shared validation error was active. The high-risk guard therefore lacked a direct browser assertion.",
   "testChange": "tests/browser/editor-inspector-lifecycle.test.js now makes a valid unsaved button-label edit first so Publish is enabled, enters javascript:alert(1) in content.href, and attempts both Save and Publish. It asserts that neither API request is posted, the server draft and public snapshot remain unchanged, the unsafe text remains available for correction, and the normal corrected href lifecycle still passes.",
   "browser": {
@@ -48,8 +48,10 @@
   "release": {
     "githubTarget": "v2/foundation",
     "remoteHeadAtStart": "adb8c8a9efa40415f358d70bb63cb1817b53ef44",
-    "ci": "No CI PASS claimed; test/docs commits use the repository's test-only [skip ci] convention.",
-    "push": "Pending."
+    "ci": "GitHub combined status returned no statuses; no CI PASS is claimed. Test/docs commit uses the repository's [skip ci] convention.",
+    "testAndEvidenceCommit": "46c720b70f04ebe22f62f38cf035f69fa1de7079",
+    "remoteHeadVerified": "46c720b70f04ebe22f62f38cf035f69fa1de7079",
+    "push": "Normal fast-forward to v2/foundation verified by direct GitHub branch fetch."
   },
   "acceptanceBoundary": "This proves a negative validation gate for content.href in the existing Editor harness. It does not certify the complete 79-type/68-property Visual Editor. Full 77.44.7.A remains OPEN / NOT CERTIFIED; manual/physical acceptance remains deferred until the complete Editor is implemented."
 }
