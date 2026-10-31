@@ -1,0 +1,58 @@
+{
+  "date": "2026-10-31",
+  "plan_item": "77.44.7.A — responsive position mode, x/y offsets, and z-index lifecycle across all editable PARTIAL types",
+  "status": "LOCAL_TESTED_DOCUMENTED_NOT_DEPLOYED",
+  "finding": "The all-44-type position matrix covered desktop and mobile but did not prove the tablet breakpoint's Inspector, draft Save/reload, separate Publish, viewport isolation, and inheritance-reset lifecycle.",
+  "change": "Extended tests/browser/editor-inspector-position-partial-types.test.js to exercise all four registered position properties at desktop, tablet, and mobile. Corrected a test-only viewer readiness check to target an actual rendered editable node because the public fixture does not render the document root as a node.",
+  "properties": [
+    { "id": "position.position", "key": "position", "desktop": "relative", "tablet": "absolute", "mobile": "relative" },
+    { "id": "position.x", "key": "x", "desktop": "4px", "tablet": "12px", "mobile": "20px" },
+    { "id": "position.y", "key": "y", "desktop": "2px", "tablet": "14px", "mobile": "18px" },
+    { "id": "position.zIndex", "key": "zIndex", "desktop": "3", "tablet": "5", "mobile": "9" }
+  ],
+  "coverage": "All 44 editable PARTIAL types; Inspector responsive.set command/key contract; desktop/tablet/mobile Canvas computed CSS; draft Save, Editor reload, and public-state preservation; separate Publish and cross-breakpoint isolation; mobile inherits tablet; mobile reset restores tablet; tablet reset restores desktop; Undo/Redo; reset Save preserves published overrides and separate reset Publish removes them.",
+  "initial_harness_failure": "The first Chromium attempt timed out after the desktop lifecycle because the viewport readiness helper waited for a data-node-id matching the document root. The fixture intentionally renders the root as #content-canvas without a node data attribute. The helper now waits for the first actual editable node; product code and behavior were unchanged.",
+  "browser": {
+    "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-inspector-position-partial-types.test.js",
+    "result": "PASS, 1/1 real Chromium browser test; 326.557 seconds."
+  },
+  "checks": {
+    "npm run test:editor": "PASS, 11/11 files.",
+    "npm run typecheck": "PASS.",
+    "npm run test:web013:migration-gate": "PASS; gate-only, no production migration.",
+    "python3 scripts/check-canonical-plan.py": "PASS; complete 13-file canonical master and 396 source mappings; acceptance remains NOT_CERTIFIED.",
+    "python3 scripts/audit-active-plan-point.py": "PASS; cursor 77.44 / WEB-011 -> 77.44.7.A.",
+    "python3 scripts/build-feature-traceability.py --check": "PASS; 396 mappings.",
+    "node --check tests/browser/editor-inspector-position-partial-types.test.js": "PASS.",
+    "git diff --check": "PASS."
+  },
+  "reuse_review": {
+    "solution": "Used the project's own Property Registry, typed Inspector controls, responsive.set command engine, CSS projection, undo history, and existing real-Chromium fixture. No external code or package was needed.",
+    "external_code_or_dependency": "None."
+  },
+  "production": {
+    "runtime_source_changed": false,
+    "public_asset_changed": false,
+    "worker_deployed": false,
+    "deployment_api": {
+      "deployment_id": "5d81f0f0-176c-4437-b5c5-652765f70bff",
+      "version_id": "72f6626e-ba9a-4147-874a-3d8cfcf00919",
+      "traffic_percent": 100,
+      "created_on": "2026-10-31T14:15:26.084499Z"
+    },
+    "direct_health_check": "UNVERIFIED: curl to /api/health failed before HTTP with 'Failed to connect to proxy port 8080'. No health PASS is claimed.",
+    "asset_hashes": "Not rechecked; runtime assets did not change and no deployment was attempted.",
+    "production_d1_migration_or_data_write": false,
+    "production_r2_change": false
+  },
+  "release": {
+    "local_checkout_branch": "work; unchanged",
+    "github_target_branch": "v2/foundation",
+    "github_head_at_start": "6bc093cd57cb25601b1850f352cdc987891d41fd",
+    "push": "Pending verified commit and normal fast-forward push.",
+    "ci": "No CI run requested for this test/documentation-only slice; previous HEAD status GET returned statuses=[]. No CI PASS claimed.",
+    "post_push_worker_deployment": "To be rechecked after push; no runtime source changed, so no Worker redeployment is expected.",
+    "new_cost_or_dependency": "None."
+  },
+  "acceptance_boundary": "This proves the responsive position lifecycle only for the 44 editable PARTIAL types. The overall 77.44.7.A foundation and full Visual Editor acceptance remain OPEN / NOT CERTIFIED; manual and physical acceptance remain DEFERRED until the full Editor is implemented."
+}
