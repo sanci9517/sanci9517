@@ -1,0 +1,52 @@
+{
+  "date": "2026-10-31",
+  "planItem": "77.44.7.A — responsive background gradient/position/size/repeat lifecycle across all editable PARTIAL types",
+  "status": "LOCAL_TEST_AND_EVIDENCE_PASS; PUSH_PENDING; NO_RUNTIME_DEPLOYMENT",
+  "finding": "Background gradient, image fit, focal position, and repeat already had representative responsive browser coverage, but their complete Inspector-to-public lifecycle had not been exercised across all 44 editable PARTIAL node types.",
+  "change": "Added tests/browser/editor-inspector-background-style-partial-types.test.js, using the project's existing Property Registry, native typed select controls, responsive.set command, page-model fixture, Canvas/public renderers, and Save/Publish behavior. No runtime source or dependencies changed.",
+  "properties": [
+    {"id":"background.gradient","key":"backgroundImage","desktop":"linear-gradient(135deg, #fb7185 0%, #fbbf24 100%)","mobile":"linear-gradient(135deg, #111827 0%, #475569 100%)"},
+    {"id":"background.size","key":"backgroundSize","desktop":"cover","mobile":"contain"},
+    {"id":"background.position","key":"backgroundPosition","desktop":"center bottom","mobile":"right center"},
+    {"id":"background.repeat","key":"backgroundRepeat","desktop":"repeat-x","mobile":"repeat-y"}
+  ],
+  "coverage": "All 44 editable PARTIAL element types; Inspector responsive.set command/key contract; Canvas computed CSS; desktop and mobile draft Page Model Save; Save leaves public output unchanged; Editor reload; distinct desktop/mobile Publish; mobile Publish preserves desktop values; mobile inheritance reset for each property; Undo/Redo; reset Save leaves published mobile values intact; reset Publish restores desktop-inherited mobile output.",
+  "browser": {
+    "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-inspector-background-style-partial-types.test.js",
+    "result": "PASS, 1/1 test; 136.5 seconds."
+  },
+  "checks": {
+    "node --check tests/browser/editor-inspector-background-style-partial-types.test.js": "PASS",
+    "npm run test:editor": "PASS, 11/11 files",
+    "npm run typecheck": "PASS",
+    "npm run test:web013:migration-gate": "PASS; safety gate only; no production migration",
+    "python3 scripts/check-canonical-plan.py": "PASS; complete 13-file master; acceptance remains NOT_CERTIFIED",
+    "python3 scripts/audit-active-plan-point.py": "PASS; cursor remains 77.44 / WEB-011 -> 77.44.7.A",
+    "python3 scripts/build-feature-traceability.py --check": "PASS after regenerating for the new test; 396 mappings",
+    "git diff --check": "PASS"
+  },
+  "firstRun": "The initial real-Chromium run reached the final Undo assertion and exposed an inaccurate test expectation: each reset is a distinct responsive.set property command, so undoing the final backgroundRepeat reset restores that property while the other reset fields remain inherited. The assertion now checks this precise property-level undo behavior; no product code or coverage was weakened.",
+  "reuseReview": {
+    "solution": "Reused the existing project-owned background controls, property registry, responsive.set commands, local Chromium fixture, Canvas/public renderer pair, and existing responsive reset/history model.",
+    "externalCodeOrDependency": "None; CSS gradients and background sizing are native, and the project controls already provide the required behavior."
+  },
+  "release": {
+    "runtimeChanged": false,
+    "githubTarget": "v2/foundation",
+    "localCheckoutBranch": "work; unchanged",
+    "remoteHeadAtStart": "1d606f2cbdbbaaae4bdb927e1f296113db079c8a",
+    "push": "Pending normal fast-forward of test/docs/evidence/traceability-only changes after validation.",
+    "ci": "Commit will use [skip ci]; no CI PASS is claimed.",
+    "workerDeployment": {
+      "deploymentId": "11dc8722-8748-4e34-830d-3e68e6536461",
+      "version": "0d66c912-a60c-44e9-90a5-341614c3b8a2",
+      "trafficPercent": 100,
+      "health": "Direct GET /api/health returned HTTP 200 before this test-only work.",
+      "redeployment": "Not required because no runtime source or public asset changed."
+    },
+    "productionD1Writes": 0,
+    "productionR2Changes": 0,
+    "newCostOrDependency": "None."
+  },
+  "acceptanceBoundary": "This certifies only the four responsive background style properties for 44 editable PARTIAL types. The full 77.44.7.A inspector foundation and full 77.44.7.A-C Editor work remain OPEN / NOT CERTIFIED; manual and physical acceptance remain deferred until the complete Editor is implemented."
+}
