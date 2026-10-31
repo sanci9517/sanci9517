@@ -1,21 +1,26 @@
 {
   "date": "2026-10-31",
   "planItem": "77.44.7.A — Inspector background image lifecycle across all compatible PARTIAL types",
-  "status": "LOCAL_AND_GITHUB_TEST_EVIDENCE_PASS; FAST_FORWARD_PUSH_VERIFIED; NO_RUNTIME_DEPLOYMENT",
+  "status": "RESPONSIVE_CHROMIUM_MATRIX_PASS; AUTOMATIC_BUILD_AND_ROLLOUT_VERIFIED; NO_RUNTIME_SOURCE_CHANGE",
   "finding": "The media-backed background image field was registered on every PARTIAL Inspector type, but the end-to-end picker → Canvas → saved Page Model → separate Publish → public media renderer route was covered only by representative node types.",
-  "change": "Added tests/browser/editor-inspector-background-image-partial-types.test.js and registered it in the editor browser suite. The real browser test creates all 45 current Inspector-compatible PARTIAL nodes (root plus 44 editable types), selects the asset through the actual shared media picker on each, then verifies authenticated Canvas preview, responsive command/key routing, draft-only Save, reload persistence, and separate public Publish.",
+  "change": "Added tests/browser/editor-inspector-background-image-partial-types.test.js and registered it in the editor browser suite. The real Chromium test creates all 45 current Inspector-compatible PARTIAL nodes (root plus 44 editable types), then uses the actual shared media picker on each node at desktop, tablet and mobile with a distinct media asset per breakpoint.",
   "typeCoverage": {
     "totalPartialTypes": 45,
     "backgroundImageCompatible": 45,
     "editableTypes": 44,
     "property": "background.image",
     "command": "responsive.set",
-    "pageModelKey": "backgroundAssetId"
+    "pageModelKey": "backgroundAssetId",
+    "breakpoints": [
+      "desktop",
+      "tablet",
+      "mobile"
+    ]
   },
-  "lifecycle": "All applicable nodes use the real Inspector media picker. Canvas resolves the selected asset through /api/admin/media?id=...; Save persists only the desktop Page Model override and leaves the public renderer unchanged; the draft selection survives Editor reload; explicit Publish copies the asset reference to the public snapshot and the public renderer resolves it through /media/<id>. Undo/Redo is verified on the final matrix node.",
+  "lifecycle": "All applicable nodes use the real Inspector media picker at desktop/tablet/mobile. Canvas resolves the three IDs through /api/admin/media?id=...; responsive command/key routing and independent Page Model values are verified. Undo of the last mobile selection reveals the tablet asset, Redo restores mobile. Draft Save and Editor reload preserve all three assets while the public snapshot remains unchanged in all three viewports. Only explicit Publish exposes each asset through /media/<id> on the corresponding public viewport.",
   "browser": {
     "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-inspector-background-image-partial-types.test.js",
-    "result": "PASS, 1/1 test; 23.1 seconds."
+    "result": "PASS, 1/1 test; 63.1 seconds."
   },
   "harnessNotes": [
     "The existing partial-type fixture provides required authored content; the new fixture follows the same content setup so Publish validates the actual Editor contract.",
@@ -27,42 +32,59 @@
   },
   "checks": {
     "node --check tests/browser/editor-inspector-background-image-partial-types.test.js": "PASS",
-    "package.json JSON parse": "PASS",
-    "targeted Chromium browser test": "PASS; 1/1 test, 23.1 seconds",
+    "targeted Chromium responsive matrix": "PASS; 1/1 test, 63.1 seconds",
     "npm run test:editor": "PASS; 11/11 tests",
     "npm run typecheck": "PASS",
     "npm run test:web013:migration-gate": "PASS; safety gate only, no production migration",
     "python3 scripts/check-canonical-plan.py": "PASS; complete 13-file master; acceptance remains NOT_CERTIFIED",
     "python3 scripts/audit-active-plan-point.py": "PASS; cursor remains 77.44 / WEB-011 -> 77.44.7.A",
     "python3 scripts/build-feature-traceability.py --check": "PASS; 396 current mappings",
+    "npx wrangler deploy --dry-run": "PASS; 162 assets, 300.14 KiB / 68.68 KiB gzip; no deploy; Wrangler local log EROFS warning only",
     "git diff --check": "PASS"
   },
   "release": {
     "runtimeChanged": false,
     "localCheckoutBranch": "work; unchanged",
     "remoteTarget": "v2/foundation",
-    "startingCommit": "cbb0537cf54d98bb5189639a488609217f4bdc31",
+    "preChangeRemoteHead": "6d4da47683085ad87c769693f610ffe03aa380f2",
     "push": {
-      "status": "VERIFIED",
-      "target": "v2/foundation",
-      "commit": "1ab759df086b6c3d0a06ed4968639e105f2af69e",
-      "parent": "cbb0537cf54d98bb5189639a488609217f4bdc31",
-      "verification": "git push reported the fast-forward cbb0537c..1ab759df; direct GitHub git/ref/heads/v2/foundation GET returned the exact commit SHA."
+      "testEvidenceCommit": "1ab759df086b6c3d0a06ed4968639e105f2af69e",
+      "documentationCommit": "6d4da47683085ad87c769693f610ffe03aa380f2",
+      "verification": "Both commits were previously pushed with normal fast-forward and direct GitHub ref GET verified the v2/foundation head at 6d4da476. The current responsive update is still local at this point."
     },
     "ci": {
       "status": "NO_CHECKS_REPORTED",
-      "verification": "GitHub commit status returned statuses=[] and total_count=0; CI PASS is not claimed."
+      "verification": "GitHub status endpoint returned statuses=[]; CI PASS is not claimed."
+    },
+    "automaticBuild": {
+      "buildId": "65bb0930-37b2-48ae-af8d-0ed3b643a97e",
+      "commit": "1ab759df086b6c3d0a06ed4968639e105f2af69e",
+      "outcome": "success",
+      "buildCommand": "npm run typecheck",
+      "deployCommand": "npm run deploy:safe",
+      "triggerBranch": "v2/foundation",
+      "pathExcludes": [
+        "docs/**",
+        "tests/**",
+        "AGENTS.md"
+      ],
+      "finding": "package.json was changed in the same test commit and is not excluded; this unexpectedly triggered the production build/deploy. Trigger configuration was not modified."
     },
     "workerDeployment": {
-      "deploymentId": "11dc8722-8748-4e34-830d-3e68e6536461",
-      "version": "0d66c912-a60c-44e9-90a5-341614c3b8a2",
+      "deploymentId": "5d81f0f0-176c-4437-b5c5-652765f70bff",
+      "version": "72f6626e-ba9a-4147-874a-3d8cfcf00919",
+      "versionNumber": 3768,
       "trafficPercent": 100,
-      "health": "Direct GET /api/health returned HTTP 200 with expected service identity, version 2.0.0 and cloudflare-worker server.",
-      "redeployment": "Not required; runtime source and public assets are unchanged. Post-push read-only Wrangler status reported the same deployment/version at 100%. Wrangler printed a local EROFS log warning but returned the deployment status."
+      "createdOn": "2026-10-31T14:15:26.084499Z",
+      "health": "Direct GET /api/health returned HTTP 200 with expected service identity and version 2.0.0.",
+      "assetHash": "element-content-controls.js local and live SHA-256 both e11d3116318aad15b456300f9736d0bff66b4050f50b744b946957d03e7885f4.",
+      "dryRun": "Wrangler 4.130.0 dry-run passed after rollout and read 162 files (300.14 KiB / 68.68 KiB gzip); local log write warning EROFS only.",
+      "runtimeDifference": "No public runtime source file changed in the trigger commit; this was a redundant build/deployment caused by package.json change.",
+      "database": "Post-deployment D1 query was SELECT-only; 34 ledger rows, rows_written=0, changed_db=false. No migration ran."
     },
     "productionD1Writes": 0,
     "productionR2Changes": 0,
     "newCostOrDependency": "None."
   },
-  "acceptanceBoundary": "This verifies the background image picker lifecycle for all current compatible PARTIAL types. It does not certify the complete 77.44.7.A Inspector foundation; full editor manual/physical acceptance remains deferred until the full editor is complete."
+  "acceptanceBoundary": "This verifies the background image picker responsive lifecycle for all current compatible PARTIAL types. It does not certify the complete 77.44.7.A Inspector foundation; full editor manual/physical acceptance remains deferred until the full editor is complete."
 }
