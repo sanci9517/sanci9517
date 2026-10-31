@@ -195,6 +195,20 @@ test('background image media picker reaches Canvas, draft and public renderer fo
       const picker=field.locator('.editor-media-picker');
       await picker.getByRole('button',{name:'Kép eltávolítása',exact:true}).click();
       for(const asset of Object.values(backgroundAssets))assert.equal((await canvasImage(id)).includes(`/api/admin/media?id=${asset.id}`),false,`${type}/${device}: removing the image hides inherited and explicitly selected assets at this breakpoint`);
+    }
+    await editor.locator('#save').click();
+    await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent?.startsWith('Mentve'));
+    await activateViewerDevice(device);
+    for(const {type,id} of applicable){
+      assert.equal(draft.pages[pageId].nodes[id].responsive[device].backgroundAssetId,'none',`${type}/${device}: draft Save persists explicit image removal as none`);
+      assert.equal(published.pages[pageId].nodes[id].responsive[device].backgroundAssetId,backgroundAssets[device].id,`${type}/${device}: draft image removal does not alter the published asset ID`);
+      assert.ok((await publicImage(id)).includes(`/media/${backgroundAssets[device].id}`),`${type}/${device}: removed draft image remains public until Publish`);
+    }
+    for(const {type,id} of applicable){
+      await canvasNode(id).evaluate(el=>el.click());
+      const field=inspector.locator('.typed-inspector-field[data-property-id="background.image"]');
+      const group=field.locator('xpath=ancestor::section[1]'),title=group.locator(':scope > .inspector-group-title');
+      if(await title.getAttribute('aria-expanded')==='false')await title.click();
       const reset=inspector.locator(`.property-reset[data-property-key="backgroundAssetId"]`).filter({hasText:'Öröklés visszaállítása'});
       assert.equal(await reset.count(),1,`${type}/${device}: explicit none remains a resettable responsive override`);
       await reset.click();

@@ -7,7 +7,7 @@
     "initial_test_mismatch": "The first added assertion expected Kép eltávolítása to reveal the wider breakpoint. Chromium showed that this assertion did not match the product contract: the picker writes the explicit none value, which hides inherited content at the selected breakpoint.",
     "verified_contract": "Kép eltávolítása writes backgroundAssetId=none to the current responsive override. Öröklés visszaállítása separately deletes that override and reveals the next wider responsive value. Undo and Redo preserve that distinction.",
     "impact": "The prior end-to-end coverage tested selection, Save, reload and Publish for all 45 Inspector-compatible PARTIAL element types, but did not cover clearing the selected background or restoring responsive inheritance across every breakpoint.",
-    "implementation": "Expanded the existing real-Chromium browser test to remove each breakpoint image, verify the explicit hidden state, restore inheritance, check Undo/Redo, Save and reload the cleared draft, and separately Publish while confirming the earlier public snapshot remains unchanged until Publish. No product runtime code changed.",
+    "implementation": "Expanded the existing real-Chromium browser test to remove each breakpoint image, Save and verify the explicit none sentinel in the draft, confirm the previous public asset remains unchanged, restore inheritance, check Undo/Redo, reload the cleared draft, and separately Publish. No product runtime code changed.",
     "reuse_review": "The test exercises the existing shared mediaAssetPicker, responsive.set command, Page Model and project-owned renderer. No dependency, external code or infrastructure was added."
   },
   "changed_files": [
@@ -16,7 +16,7 @@
     "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md"
   ],
   "checks": {
-    "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-inspector-background-image-partial-types.test.js": "PASS, 1/1 real-Chromium browser test, 128.144 seconds; covers all 45 compatible types and desktop/tablet/mobile selection, removal, explicit inheritance reset, undo/redo, draft Save/reload and separate Publish.",
+    "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-inspector-background-image-partial-types.test.js": "PASS, 1/1 final real-Chromium browser test, 162.279 seconds; covers all 45 compatible types and desktop/tablet/mobile selection, removal, explicit inheritance reset, undo/redo, draft Save/reload and separate Publish. A draft Save explicitly verifies backgroundAssetId=none while the previously published asset remains unchanged until Publish.",
     "npm run test:editor": "PASS, 11/11 files.",
     "npm run typecheck": "PASS.",
     "npm run test:web013:migration-gate": "PASS; the safe deployment gate does not apply D1 migrations.",
