@@ -48,6 +48,8 @@
     "github_push": "PASS: after the GitHub API ref update rejected an unuploaded local object, an approved normal non-force git push transferred the three local commits from 60c40bb58b0fb7459a32503ce469c0ec30e8789f to af2ecfda3f5263bbc38451252b1562a9264375a1. A direct GitHub ref GET confirmed the exact new head.",
     "github_commit_status": "The combined status GET for af2ecfda returned statuses=[]. All commits in this docs/test slice use [skip ci]; no CI PASS is claimed.",
     "verified_remote_head_after_push": "af2ecfda3f5263bbc38451252b1562a9264375a1",
+    "final_saved_none_test_commit": "9fd9f2b57087d5cfd03aad43ef0793e44e78b43e; normal non-force push verified by direct v2/foundation ref GET. Combined commit status remains statuses=[].",
+    "runtime_after_final_test_push": "Cloudflare deployments GET still reports 5d81f0f0-176c-4437-b5c5-652765f70bff / 72f6626e-ba9a-4147-874a-3d8cfcf00919 at 100%; no new deployment. A fresh production health GET returned proxy HTTP 403, so runtime health was not directly verified.",
     "worker_build_expected": "No Worker runtime deployment: only tests and documentation changed; Cloudflare build exclusions cover tests/** and docs/**."
   },
   "acceptance": "This is a focused remove/reset lifecycle slice only. Overall 77.44.7.A and full Visual Editor acceptance remain OPEN / NOT CERTIFIED; manual and physical acceptance stay DEFERRED until the complete Editor is ready."
