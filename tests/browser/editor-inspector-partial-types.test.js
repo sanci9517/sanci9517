@@ -110,16 +110,18 @@ test('every PARTIAL type renders Inspector routes and preserves Save versus Publ
     assert.equal(await nameField.getAttribute('data-property-key'),contract.fields.find(field=>field.id==='advanced.nodeName').key,`${type}: node name key`);
   }
 
-  // The canonical name route is rendered for every type above. Exercise one
-  // real edit end-to-end: the name is metadata shown by the Inspector and
-  // Layers tree, and persists through Save independently of Publish.
+  // The canonical name route is rendered for every type above. Exercise the
+  // same CSS-token-looking literal through all 44 editable PARTIAL types in
+  // one draft Save/reload and one separate Publish. The name is metadata
+  // shown by the Inspector and Layers tree, not CSS, even for text controls.
   const nameTarget=nodes.find(({type})=>type==='text');
   await editor.locator(`.node[data-node-id="${nameTarget.id}"]`).evaluate(el=>el.click());
   await editor.locator('.inspector-tabs button').first().click();
   const nodeNameField=inspector.locator('.field[data-property-id="advanced.nodeName"]');
   const nodeNameInput=nodeNameField.locator('input');
-  const previousName=await nodeNameInput.inputValue();
-  const updatedName='Inspector név útvonal próba';
+  const updatedName='var(--creator-colors-primary, #7047eb)';
+  const nameEditableNodes=nodes.filter(({type})=>type!=='root');
+  const initialNodeNames=Object.fromEntries(nameEditableNodes.map(({id})=>[id,draft.pages[pageId].nodes[id].name]));
   assert.equal(await nodeNameField.getAttribute('data-property-command'),'element.update','node name uses the registered element update command');
   assert.equal(await nodeNameField.getAttribute('data-property-key'),'name','node name targets the Page Model name key');
   const initialVersion=version;
@@ -135,24 +137,42 @@ test('every PARTIAL type renders Inspector routes and preserves Save versus Publ
   assert.equal(await nodeNameInput.getAttribute('aria-invalid'),'true','blocked Save keeps the invalid field visible');
   await nodeNameInput.fill(updatedName);
   await nodeNameInput.press('Tab');
-  await editor.waitForFunction(({id,name})=>document.querySelector(`#layersTree .layer-entry[data-node-id="${id}"] .layer-row strong`)?.textContent===name,{id:nameTarget.id,name:updatedName});
-  const layerName=()=>editor.locator(`#layersTree .layer-entry[data-node-id="${nameTarget.id}"] .layer-row strong`).textContent();
-  assert.equal(await layerName(),updatedName,'Inspector edit updates the selected name and Layers tree');
+  const textLayerName=editor.locator(`#layersTree .layer-entry[data-node-id="${nameTarget.id}"] .layer-row strong`);
+  assert.equal(await textLayerName.textContent(),updatedName,'text node can recover the invalid name before changing selection');
+  for(const {type,id} of nameEditableNodes.filter(node=>node.id!==nameTarget.id)){
+    const canvasNode=editor.locator(`.node[data-node-id="${id}"]`);
+    await canvasNode.evaluate(el=>el.click());
+    await editor.locator('.inspector-tabs button').first().click();
+    const field=inspector.locator('.field[data-property-id="advanced.nodeName"]');
+    const input=field.locator('input');
+    await input.fill(updatedName);
+    await input.press('Tab');
+    const layerName=editor.locator(`#layersTree .layer-entry[data-node-id="${id}"] .layer-row strong`);
+    assert.equal(await layerName.textContent(),updatedName,`${type}: Inspector edit updates the Layers tree`);
+    assert.equal(await inspector.locator('.inspector-selection > b').textContent(),updatedName,`${type}: Inspector header displays the literal node name`);
+  }
+  const lastNameNode=nameEditableNodes.at(-1);
+  const lastLayerName=()=>editor.locator(`#layersTree .layer-entry[data-node-id="${lastNameNode.id}"] .layer-row strong`).textContent();
   await editor.locator('#undo').click();
-  assert.equal(await layerName(),previousName,'Undo restores the previous node name');
+  assert.equal(await lastLayerName(),initialNodeNames[lastNameNode.id],`${lastNameNode.type}: Undo restores the previous node name`);
   await editor.locator('#redo').click();
-  assert.equal(await layerName(),updatedName,'Redo restores the Inspector node name');
+  assert.equal(await lastLayerName(),updatedName,`${lastNameNode.type}: Redo restores the literal Inspector node name`);
   await editor.locator('#save').click();
   await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
-  assert.equal(draft.pages[pageId].nodes[nameTarget.id].name,updatedName,'Save persists the Inspector node name to the draft');
-  assert.equal(published.pages[pageId].nodes[nameTarget.id].name,previousName,'draft Save leaves the published node name unchanged');
+  for(const {type,id} of nameEditableNodes){
+    assert.equal(draft.pages[pageId].nodes[id].name,updatedName,`${type}: Save persists the literal name to the draft`);
+    assert.equal(published.pages[pageId].nodes[id].name,initialNodeNames[id],`${type}: draft Save leaves its published node name unchanged`);
+  }
   await editor.reload({waitUntil:'domcontentloaded'});
   const reloadedInspector=editor.locator('#inspectorBody');
-  await editor.locator(`.node[data-node-id="${nameTarget.id}"]`).evaluate(el=>el.click());
-  assert.equal(await reloadedInspector.locator('.field[data-property-id="advanced.nodeName"] input').inputValue(),updatedName,'saved node name survives Editor reload');
+  for(const {type,id} of nameEditableNodes){
+    await editor.locator(`.node[data-node-id="${id}"]`).evaluate(el=>el.click());
+    await editor.locator('.inspector-tabs button').first().click();
+    assert.equal(await reloadedInspector.locator('.field[data-property-id="advanced.nodeName"] input').inputValue(),updatedName,`${type}: saved literal name survives Editor reload`);
+  }
   await editor.locator('#publish').click({noWaitAfter:true});
   await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
-  assert.equal(published.pages[pageId].nodes[nameTarget.id].name,updatedName,'explicit Publish publishes the Inspector node name');
+  for(const {type,id} of nameEditableNodes)assert.equal(published.pages[pageId].nodes[id].name,updatedName,`${type}: explicit Publish publishes the Inspector node name`);
 
   const asRgb=hex=>{const value=hex.slice(1);return `rgb(${parseInt(value.slice(0,2),16)}, ${parseInt(value.slice(2,4),16)}, ${parseInt(value.slice(4,6),16)})`};
   const editableNodes=nodes.filter(({type})=>type!=='root');
