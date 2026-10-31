@@ -245,19 +245,19 @@ test('every PARTIAL type renders Inspector routes and preserves Save versus Publ
     assert.equal(await publicNode(id).evaluate(el=>getComputedStyle(el).color),asRgb(textColors[index]),`${type}: published renderer applies text color`);
   }
 
-  // All editable desktop typography controls share the same registry-backed
-  // renderer path. Cover the remaining family/style/spacing/case/decoration
-  // properties alongside size, weight, line-height, and alignment so each
-  // route reaches the Canvas, saved Page Model, and separately published DOM.
-  const typographyValues=editableNodes.map(()=>({fontSize:'20px',fontWeight:'600',lineHeight:'1.75',textAlign:'right',fontFamily:'Georgia',fontStyle:'italic',letterSpacing:'1.5px',textTransform:'uppercase',textDecoration:'underline'}));
+  // Every registered desktop typography control must share the same
+  // registry-backed renderer lifecycle, including the wrapping and spacing
+  // fields which were previously only exercised on representative nodes.
+  const typographyValues=editableNodes.map(()=>({fontSize:'20px',fontWeight:'600',lineHeight:'1.75',textAlign:'right',fontFamily:'Georgia',fontStyle:'italic',letterSpacing:'1.5px',textTransform:'uppercase',textDecoration:'underline',textWrap:'pretty',overflowWrap:'break-word',wordSpacing:'1.5px',textIndent:'6px',textShadow:'0 4px 16px #000a'}));
   const typographyKeys=Object.keys(typographyValues[0]);
   const publishedTypographyBaseline=Object.fromEntries(editableNodes.map(({id})=>{
     const responsive=published.pages[pageId].nodes[id].responsive?.desktop||{};
     return [id,Object.fromEntries(typographyKeys.map(key=>[key,responsive[key]]))];
   }));
-  const computedTypography=node=>node.evaluate(el=>{const css=getComputedStyle(el);return{fontSize:css.fontSize,fontWeight:css.fontWeight,lineHeight:css.lineHeight,textAlign:css.textAlign,fontFamily:css.fontFamily,fontStyle:css.fontStyle,letterSpacing:css.letterSpacing,textTransform:css.textTransform,textDecoration:css.textDecorationLine}});
+  const computedTypography=node=>node.evaluate(el=>{const css=getComputedStyle(el);return{fontSize:css.fontSize,fontWeight:css.fontWeight,lineHeight:css.lineHeight,textAlign:css.textAlign,fontFamily:css.fontFamily,fontStyle:css.fontStyle,letterSpacing:css.letterSpacing,textTransform:css.textTransform,textDecoration:css.textDecorationLine,textWrap:css.textWrap,overflowWrap:css.overflowWrap,wordSpacing:css.wordSpacing,textIndent:css.textIndent,textShadow:css.textShadow}});
   const publicTypographyBaseline=Object.fromEntries(await Promise.all(editableNodes.map(async({id})=>[id,await computedTypography(publicNode(id))])));
-  const expectedTypography={fontSize:'20px',fontWeight:'600',lineHeight:'35px',textAlign:'right',fontFamily:'Georgia',fontStyle:'italic',letterSpacing:'1.5px',textTransform:'uppercase',textDecoration:'underline'};
+  const expectedShadow=await editor.evaluate(()=>{const el=document.createElement('span');el.style.textShadow='0 4px 16px #000a';document.body.append(el);const value=getComputedStyle(el).textShadow;el.remove();return value});
+  const expectedTypography={fontSize:'20px',fontWeight:'600',lineHeight:'35px',textAlign:'right',fontFamily:'Georgia',fontStyle:'italic',letterSpacing:'1.5px',textTransform:'uppercase',textDecoration:'underline',textWrap:'pretty',overflowWrap:'break-word',wordSpacing:'1.5px',textIndent:'6px',textShadow:expectedShadow};
   for(const [index,{type,id}] of editableNodes.entries()){
     const canvasNode=editor.locator(`.node[data-node-id="${id}"]`);
     await canvasNode.evaluate(el=>el.click());
@@ -278,6 +278,13 @@ test('every PARTIAL type renders Inspector routes and preserves Save versus Publ
     await letterSpacing.fill('1.5');await letterSpacing.press('Tab');
     await fields.textTransform.locator('select:not(.property-token-picker)').selectOption(typographyValues[index].textTransform);
     await fields.textDecoration.locator('select:not(.property-token-picker)').selectOption(typographyValues[index].textDecoration);
+    await fields.textWrap.locator('select:not(.property-token-picker)').selectOption(typographyValues[index].textWrap);
+    await fields.overflowWrap.locator('select:not(.property-token-picker)').selectOption(typographyValues[index].overflowWrap);
+    const wordSpacing=fields.wordSpacing.locator('.dimension-controls input[type="number"]');
+    await wordSpacing.fill('1.5');await wordSpacing.press('Tab');
+    const textIndent=fields.textIndent.locator('.dimension-controls input[type="number"]');
+    await textIndent.fill('6');await textIndent.press('Tab');
+    await fields.textShadow.locator('select:not(.property-token-picker)').selectOption(typographyValues[index].textShadow);
     assert.deepEqual(await computedTypography(canvasNode),expectedTypography,`${type}: Inspector typography reaches Canvas`);
   }
   await editor.locator('#save').click();
@@ -307,6 +314,11 @@ test('every PARTIAL type renders Inspector routes and preserves Save versus Publ
     assert.equal(await fields.letterSpacing.locator('.dimension-controls input[type="number"]').inputValue(),'1.5',`${type}: saved letter spacing survives Editor reload`);
     assert.equal(await fields.textTransform.locator('select:not(.property-token-picker)').inputValue(),typographyValues[index].textTransform,`${type}: saved text transform survives Editor reload`);
     assert.equal(await fields.textDecoration.locator('select:not(.property-token-picker)').inputValue(),typographyValues[index].textDecoration,`${type}: saved text decoration survives Editor reload`);
+    assert.equal(await fields.textWrap.locator('select:not(.property-token-picker)').inputValue(),typographyValues[index].textWrap,`${type}: saved text wrap survives Editor reload`);
+    assert.equal(await fields.overflowWrap.locator('select:not(.property-token-picker)').inputValue(),typographyValues[index].overflowWrap,`${type}: saved overflow wrap survives Editor reload`);
+    assert.equal(await fields.wordSpacing.locator('.dimension-controls input[type="number"]').inputValue(),'1.5',`${type}: saved word spacing survives Editor reload`);
+    assert.equal(await fields.textIndent.locator('.dimension-controls input[type="number"]').inputValue(),'6',`${type}: saved text indent survives Editor reload`);
+    assert.equal(await fields.textShadow.locator('select:not(.property-token-picker)').inputValue(),typographyValues[index].textShadow,`${type}: saved text shadow survives Editor reload`);
   }
   await editor.locator('#publish').click();
   await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
@@ -321,9 +333,10 @@ test('every PARTIAL type renders Inspector routes and preserves Save versus Publ
   await viewer.setViewportSize({width:390,height:900});
   await viewer.reload();
   const mobileTypographyBaseline=Object.fromEntries(await Promise.all(editableNodes.map(async({id})=>[id,await computedTypography(publicNode(id))])));
-  const mobileTypographyValues={fontSize:'20px',fontWeight:'600',lineHeight:'1.4',textAlign:'right',fontFamily:'Arial',fontStyle:'normal',letterSpacing:'2px',textTransform:'lowercase',textDecoration:'none'};
-  const mobileTypographyKeys=['lineHeight','fontFamily','fontStyle','letterSpacing','textTransform','textDecoration'];
-  const expectedMobileTypography={...expectedTypography,fontFamily:'Arial',fontStyle:'normal',lineHeight:'28px',letterSpacing:'2px',textTransform:'lowercase',textDecoration:'none'};
+  const mobileTypographyValues={fontSize:'24px',fontWeight:'700',lineHeight:'1.4',textAlign:'center',fontFamily:'Arial',fontStyle:'normal',letterSpacing:'2px',textTransform:'lowercase',textDecoration:'none',textWrap:'nowrap',overflowWrap:'anywhere',wordSpacing:'2px',textIndent:'12px',textShadow:'0 2px 8px #0006'};
+  const mobileTypographyKeys=typographyKeys;
+  const mobileShadow=await editor.evaluate(()=>{const el=document.createElement('span');el.style.textShadow='0 2px 8px #0006';document.body.append(el);const value=getComputedStyle(el).textShadow;el.remove();return value});
+  const expectedMobileTypography={...expectedTypography,...mobileTypographyValues,fontSize:'24px',lineHeight:'33.6px',letterSpacing:'2px',wordSpacing:'2px',textIndent:'12px',textShadow:mobileShadow};
   for(const [index,{type,id}] of editableNodes.entries()){
     const canvasNode=editor.locator(`.node[data-node-id="${id}"]`);
     await canvasNode.evaluate(el=>el.click());
@@ -335,13 +348,23 @@ test('every PARTIAL type renders Inspector routes and preserves Save versus Publ
     }
     const group=fields.lineHeight.locator('xpath=ancestor::section[1]'),title=group.locator(':scope > .inspector-group-title');
     if(await title.getAttribute('aria-expanded')==='false')await title.click();
+    await fields.fontSize.locator('.property-preset').filter({hasText:'Alcím · 24'}).click();
+    await fields.fontWeight.locator('select:not(.property-token-picker)').selectOption(mobileTypographyValues.fontWeight);
     await fields.lineHeight.locator('.property-preset').filter({hasText:'Kompakt · 1.4'}).click();
+    await fields.textAlign.locator('select:not(.property-token-picker)').selectOption(mobileTypographyValues.textAlign);
     await fields.fontFamily.locator('select:not(.property-token-picker)').selectOption(mobileTypographyValues.fontFamily);
     await fields.fontStyle.locator('select:not(.property-token-picker)').selectOption(mobileTypographyValues.fontStyle);
     const letterSpacing=fields.letterSpacing.locator('.dimension-controls input[type="number"]');
     await letterSpacing.fill('2');await letterSpacing.press('Tab');
     await fields.textTransform.locator('select:not(.property-token-picker)').selectOption(mobileTypographyValues.textTransform);
     await fields.textDecoration.locator('select:not(.property-token-picker)').selectOption(mobileTypographyValues.textDecoration);
+    await fields.textWrap.locator('select:not(.property-token-picker)').selectOption(mobileTypographyValues.textWrap);
+    await fields.overflowWrap.locator('select:not(.property-token-picker)').selectOption(mobileTypographyValues.overflowWrap);
+    const wordSpacing=fields.wordSpacing.locator('.dimension-controls input[type="number"]');
+    await wordSpacing.fill('2');await wordSpacing.press('Tab');
+    const textIndent=fields.textIndent.locator('.dimension-controls input[type="number"]');
+    await textIndent.fill('12');await textIndent.press('Tab');
+    await fields.textShadow.locator('select:not(.property-token-picker)').selectOption(mobileTypographyValues.textShadow);
     assert.deepEqual(await computedTypography(canvasNode),expectedMobileTypography,`${type}: mobile typography overrides reach Canvas`);
   }
   await editor.locator('#save').click();
@@ -349,16 +372,11 @@ test('every PARTIAL type renders Inspector routes and preserves Save versus Publ
   for(const [index,{type,id}] of editableNodes.entries()){
     const savedMobile=draft.pages[pageId].nodes[id].responsive.mobile;
     for(const key of mobileTypographyKeys){
-      const expected=key==='lineHeight'?mobileTypographyValues.lineHeight:key==='letterSpacing'?'2px':mobileTypographyValues[key];
+      const expected=key==='lineHeight'?mobileTypographyValues.lineHeight:['letterSpacing','wordSpacing','textIndent'].includes(key)?mobileTypographyValues[key].replace('px','')+(key==='lineHeight'?'':'px'):mobileTypographyValues[key];
       assert.equal(savedMobile[key],expected,`${type}: mobile draft Save stores typography.${key}`);
       assert.equal(published.pages[pageId].nodes[id].responsive.mobile?.[key],undefined,`${type}: mobile Save keeps published typography.${key} unchanged`);
     }
-    assert.equal(draft.pages[pageId].nodes[id].responsive.desktop.lineHeight,'1.75',`${type}: mobile Save preserves desktop line-height`);
-    assert.equal(draft.pages[pageId].nodes[id].responsive.desktop.fontFamily,'Georgia',`${type}: mobile Save preserves desktop font family`);
-    assert.equal(draft.pages[pageId].nodes[id].responsive.desktop.fontStyle,'italic',`${type}: mobile Save preserves desktop font style`);
-    assert.equal(draft.pages[pageId].nodes[id].responsive.desktop.letterSpacing,'1.5px',`${type}: mobile Save preserves desktop letter spacing`);
-    assert.equal(draft.pages[pageId].nodes[id].responsive.desktop.textTransform,'uppercase',`${type}: mobile Save preserves desktop text transform`);
-    assert.equal(draft.pages[pageId].nodes[id].responsive.desktop.textDecoration,'underline',`${type}: mobile Save preserves desktop text decoration`);
+    for(const key of typographyKeys)assert.equal(draft.pages[pageId].nodes[id].responsive.desktop[key],typographyValues[index][key],`${type}: mobile Save preserves desktop typography.${key}`);
   }
   await viewer.reload();
   for(const {type,id} of editableNodes)assert.deepEqual(await computedTypography(publicNode(id)),mobileTypographyBaseline[id],`${type}: draft Save preserves public mobile typography`);
@@ -369,18 +387,26 @@ test('every PARTIAL type renders Inspector routes and preserves Save versus Publ
     await editor.locator('.inspector-tabs button').first().click();
     const lineHeightInput=inspector.locator('[data-property-id="typography.lineHeight"] input[type="number"]');
     assert.equal(await lineHeightInput.inputValue(),mobileTypographyValues.lineHeight,`${type}: mobile line-height survives Editor reload`);
+    assert.equal(await inspector.locator('[data-property-id="typography.fontSize"] input[type="number"]').inputValue(),'24',`${type}: mobile font size survives Editor reload`);
+    assert.equal(await inspector.locator('[data-property-id="typography.fontWeight"] select:not(.property-token-picker)').inputValue(),mobileTypographyValues.fontWeight,`${type}: mobile font weight survives Editor reload`);
+    assert.equal(await inspector.locator('[data-property-id="typography.textAlign"] select:not(.property-token-picker)').inputValue(),mobileTypographyValues.textAlign,`${type}: mobile text alignment survives Editor reload`);
     assert.equal(await inspector.locator('[data-property-id="typography.fontFamily"] select:not(.property-token-picker)').inputValue(),mobileTypographyValues.fontFamily,`${type}: mobile font family survives Editor reload`);
     assert.equal(await inspector.locator('[data-property-id="typography.fontStyle"] select:not(.property-token-picker)').inputValue(),mobileTypographyValues.fontStyle,`${type}: mobile font style survives Editor reload`);
     assert.equal(await inspector.locator('[data-property-id="typography.letterSpacing"] .dimension-controls input[type="number"]').inputValue(),'2',`${type}: mobile letter spacing survives Editor reload`);
     assert.equal(await inspector.locator('[data-property-id="typography.textTransform"] select:not(.property-token-picker)').inputValue(),mobileTypographyValues.textTransform,`${type}: mobile text transform survives Editor reload`);
     assert.equal(await inspector.locator('[data-property-id="typography.textDecoration"] select:not(.property-token-picker)').inputValue(),mobileTypographyValues.textDecoration,`${type}: mobile text decoration survives Editor reload`);
+    assert.equal(await inspector.locator('[data-property-id="typography.textWrap"] select:not(.property-token-picker)').inputValue(),mobileTypographyValues.textWrap,`${type}: mobile text wrap survives Editor reload`);
+    assert.equal(await inspector.locator('[data-property-id="typography.overflowWrap"] select:not(.property-token-picker)').inputValue(),mobileTypographyValues.overflowWrap,`${type}: mobile overflow wrap survives Editor reload`);
+    assert.equal(await inspector.locator('[data-property-id="typography.wordSpacing"] .dimension-controls input[type="number"]').inputValue(),'2',`${type}: mobile word spacing survives Editor reload`);
+    assert.equal(await inspector.locator('[data-property-id="typography.textIndent"] .dimension-controls input[type="number"]').inputValue(),'12',`${type}: mobile text indent survives Editor reload`);
+    assert.equal(await inspector.locator('[data-property-id="typography.textShadow"] select:not(.property-token-picker)').inputValue(),mobileTypographyValues.textShadow,`${type}: mobile text shadow survives Editor reload`);
   }
   await editor.locator('#publish').click();
   await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
   await viewer.reload();
   for(const {type,id} of editableNodes){
     assert.deepEqual(await computedTypography(publicNode(id)),expectedMobileTypography,`${type}: separate Publish applies all mobile typography overrides`);
-    assert.equal((await computedTypography(publicNode(id))).fontSize,'20px',`${type}: mobile Publish inherits desktop font size`);
+    assert.equal((await computedTypography(publicNode(id))).fontSize,'24px',`${type}: mobile Publish applies the mobile font-size override`);
   }
   for(const {type,id} of editableNodes){
     await editor.locator(`.node[data-node-id="${id}"]`).evaluate(el=>el.click());
@@ -402,7 +428,7 @@ test('every PARTIAL type renders Inspector routes and preserves Save versus Publ
   const lastTypographyNode=editableNodes.at(-1);
   const lastCanvasTypography=()=>computedTypography(editor.locator(`.node[data-node-id="${lastTypographyNode.id}"]`));
   await editor.locator('#undo').click();
-  assert.equal((await lastCanvasTypography()).lineHeight,'28px',`${lastTypographyNode.type}: Undo restores the mobile line-height override`);
+  assert.equal((await lastCanvasTypography()).lineHeight,'28px',`${lastTypographyNode.type}: Undo restores mobile line-height after font size reset inherits desktop`);
   await editor.locator('#redo').click();
   assert.equal((await lastCanvasTypography()).lineHeight,'35px',`${lastTypographyNode.type}: Redo restores inherited desktop line-height`);
   await editor.locator('#save').click();
@@ -410,7 +436,7 @@ test('every PARTIAL type renders Inspector routes and preserves Save versus Publ
   for(const {type,id} of editableNodes){
     for(const key of mobileTypographyKeys){
       assert.equal(draft.pages[pageId].nodes[id].responsive.mobile[key],undefined,`${type}: reset Save removes mobile typography.${key} override`);
-      const publishedValue=key==='lineHeight'?'1.4':key==='letterSpacing'?'2px':mobileTypographyValues[key];
+      const publishedValue=key==='lineHeight'?'1.4':['letterSpacing','wordSpacing','textIndent'].includes(key)?mobileTypographyValues[key].replace('px','')+'px':mobileTypographyValues[key];
       assert.equal(published.pages[pageId].nodes[id].responsive.mobile[key],publishedValue,`${type}: reset Save leaves published typography.${key} intact`);
     }
   }
