@@ -1,7 +1,7 @@
 {
   "date": "2026-10-31",
   "planItem": "77.44.7.A — Inspector edit, Canvas, Save, reload, and published renderer lifecycle",
-  "status": "LOCAL_BROWSER_PASS; TEST_DOC_PUSH_PENDING",
+  "status": "TEST_AND_EVIDENCE_PUSHED; PRODUCTION_RUNTIME_UNCHANGED",
   "finding": "The shared typography.color property was present in the registry and covered by a representative lifecycle, while the existing all-PARTIAL renderer matrix covered background color, responsive opacity/shadow, border, visibility, and authored metadata but not the separate text-color Page Model route across all specialized renderers.",
   "change": "Extended tests/browser/editor-inspector-partial-types.test.js to edit typography.color on all 44 editable PARTIAL node types and verify the responsive.set/color DOM contract, Canvas computed color, saved desktop Page Model value, draft/public separation, Editor reload value, and explicit Publish/public renderer output.",
   "reuseReview": {
@@ -26,19 +26,22 @@
     "runtimeChanged": false,
     "githubTarget": "v2/foundation",
     "githubHeadAtStart": "901e53137bb38ff1d46fd31a96aa9c7b53b968a9",
-    "push": "Pending normal fast-forward to v2/foundation; GitHub branch head matched local HEAD at session start.",
-    "ci": "Not run; no CI PASS claimed.",
+    "push": "Normal fast-forward push from v2/foundation head 901e53137bb38ff1d46fd31a96aa9c7b53b968a9; direct GitHub commit/ref fetch confirms c9e337f891bd3525fd3c78628ae97f67bddcb6f1.",
+    "ci": "GitHub combined status returned no checks; no CI PASS is claimed. [skip ci] was used for this test/docs-only commit.",
     "workerDeployment": {
       "id": "11dc8722-8748-4e34-830d-3e68e6536461",
       "version": "0d66c912-a60c-44e9-90a5-341614c3b8a2",
       "number": 3767,
       "trafficPercent": 100,
       "health": "GET /api/health returned HTTP 200 and the expected Worker service identity.",
-      "redeployment": "Not required; no runtime source or public asset changed."
+      "redeployment": "Not required; no runtime source or public asset changed.",
+      "verifiedAfterPush": "Cloudflare deployments GET still reports 11dc8722-8748-4e34-830d-3e68e6536461 / 0d66c912-a60c-44e9-90a5-341614c3b8a2 at 100%; production health GET after push returned HTTP 200."
     },
     "productionD1Writes": 0,
     "productionR2Changes": 0,
-    "newCostOrDependency": "None."
+    "newCostOrDependency": "None.",
+    "commit": "c9e337f891bd3525fd3c78628ae97f67bddcb6f1",
+    "remoteHeadVerified": "c9e337f891bd3525fd3c78628ae97f67bddcb6f1"
   },
   "acceptanceBoundary": "This adds one representative style property across the 44 editable PARTIAL renderers. It does not certify all 79 element types or all 68 Inspector properties; full 77.44.7.A remains OPEN / NOT CERTIFIED, with manual and physical acceptance deferred until the complete Visual Editor is implemented."
 }
