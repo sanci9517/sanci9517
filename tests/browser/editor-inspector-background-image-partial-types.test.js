@@ -179,5 +179,65 @@ test('background image media picker reaches Canvas, draft and public renderer fo
     await activateViewerDevice(device);
     for(const {type,id} of applicable)assert.ok((await publicImage(id)).includes(`/media/${backgroundAssets[device].id}`),`${type}/${device}: public renderer resolves the image through its public media route`);
   }
+
+  // Removal hides the inherited image at the current breakpoint by writing
+  // the explicit `none` value. The separate inheritance reset then removes
+  // that override and reveals the next responsive ancestor.
+  for(const device of ['mobile','tablet','desktop']){
+    await activateEditorDevice(device);
+    for(const {type,id} of applicable){
+      await canvasNode(id).evaluate(el=>el.click());
+      const field=inspector.locator('.typed-inspector-field[data-property-id="background.image"]');
+      assert.equal(await field.getAttribute('data-property-command'),'responsive.set',`${type}/${device}: reset command`);
+      assert.equal(await field.getAttribute('data-property-key'),'backgroundAssetId',`${type}/${device}: reset Page Model key`);
+      const group=field.locator('xpath=ancestor::section[1]'),title=group.locator(':scope > .inspector-group-title');
+      if(await title.getAttribute('aria-expanded')==='false')await title.click();
+      const picker=field.locator('.editor-media-picker');
+      await picker.getByRole('button',{name:'Kép eltávolítása',exact:true}).click();
+      for(const asset of Object.values(backgroundAssets))assert.equal((await canvasImage(id)).includes(`/api/admin/media?id=${asset.id}`),false,`${type}/${device}: removing the image hides inherited and explicitly selected assets at this breakpoint`);
+      const reset=inspector.locator(`.property-reset[data-property-key="backgroundAssetId"]`).filter({hasText:'Öröklés visszaállítása'});
+      assert.equal(await reset.count(),1,`${type}/${device}: explicit none remains a resettable responsive override`);
+      await reset.click();
+      const ancestor=device==='mobile'?'tablet':device==='tablet'?'desktop':null;
+      const image=await canvasImage(id);
+      if(ancestor)assert.ok(image.includes(`/api/admin/media?id=${backgroundAssets[ancestor].id}`),`${type}/${device}: inheritance reset reveals the ${ancestor} asset`);
+      else for(const asset of Object.values(backgroundAssets))assert.equal(image.includes(`/api/admin/media?id=${asset.id}`),false,`${type}/desktop: inheritance reset restores the original base style`);
+    }
+  }
+  const resetHistoryTarget=applicable.at(-1);
+  await editor.locator('#undo').click();
+  assert.equal(await inspector.locator('.property-reset[data-property-key="backgroundAssetId"]').filter({hasText:'Öröklés visszaállítása'}).count(),1,`${resetHistoryTarget.type}: Undo restores the explicit desktop none override`);
+  await editor.locator('#redo').click();
+  assert.equal(await inspector.locator('.property-reset[data-property-key="backgroundAssetId"]').filter({hasText:'Öröklés visszaállítása'}).count(),0,`${resetHistoryTarget.type}: Redo removes the desktop override again`);
+  const clearedImage=await canvasImage(resetHistoryTarget.id);
+  for(const asset of Object.values(backgroundAssets))assert.equal(clearedImage.includes(`/api/admin/media?id=${asset.id}`),false,`${resetHistoryTarget.type}: Redo clears the desktop asset again`);
+  await editor.locator('#save').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent?.startsWith('Mentve'));
+  for(const {type,id} of applicable){
+    for(const device of Object.keys(widths)){
+      assert.equal(draft.pages[pageId].nodes[id].responsive[device].backgroundAssetId,undefined,`${type}/${device}: reset Save removes the draft asset reference`);
+      assert.equal(published.pages[pageId].nodes[id].responsive[device].backgroundAssetId,backgroundAssets[device].id,`${type}/${device}: reset Save preserves the published asset`);
+    }
+  }
+  for(const device of Object.keys(widths)){
+    await activateViewerDevice(device);
+    for(const {type,id} of applicable)assert.ok((await publicImage(id)).includes(`/media/${backgroundAssets[device].id}`),`${type}/${device}: draft reset leaves the published media URL unchanged`);
+  }
+  await editor.reload({waitUntil:'domcontentloaded'});
+  for(const device of Object.keys(widths)){
+    await activateEditorDevice(device);
+    for(const {type,id} of applicable){
+      await canvasNode(id).evaluate(el=>el.click());
+      const image=await canvasImage(id);
+      for(const asset of Object.values(backgroundAssets))assert.equal(image.includes(`/api/admin/media?id=${asset.id}`),false,`${type}/${device}: cleared draft survives Editor reload`);
+    }
+  }
+  await editor.locator('#publish').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent?.startsWith('Publikálva'));
+  await viewer.reload();
+  for(const device of Object.keys(widths)){
+    await activateViewerDevice(device);
+    for(const {type,id} of applicable)assert.equal(await publicImage(id),publicBaseline[device][id],`${type}/${device}: explicit reset Publish restores the public baseline`);
+  }
   assert.deepEqual(errors,[],'media picker and both renderers produce no uncaught browser errors');
 });
