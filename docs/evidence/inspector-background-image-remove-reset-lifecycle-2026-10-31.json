@@ -44,6 +44,7 @@
     "remote_branch_before_commit": "v2/foundation",
     "remote_head_before_commit": "60c40bb58b0fb7459a32503ce469c0ec30e8789f",
     "local_commit": "bf4a1e404032995a0af703a054ffa048e571b418",
+    "local_documentation_followup": "4e68c095 (updates the evidence and plan with the failed push and direct-health proxy limitation).",
     "github_push": "BLOCKED. Native git ls-remote could not connect to proxy port 8080. The connected GitHub branch/ref GET verified the remote parent, but update_ref rejected the local commit SHA with UNPROCESSABLE / not_found because that Git object has not been uploaded. No remote ref change was made.",
     "github_commit_status": "No GitHub commit status applies yet: the local commit uses [skip ci] and has not been pushed.",
     "worker_build_expected": "No Worker runtime deployment: only tests and documentation changed; Cloudflare build exclusions cover tests/** and docs/**."
