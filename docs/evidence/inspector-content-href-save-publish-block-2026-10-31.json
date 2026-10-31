@@ -1,0 +1,55 @@
+{
+  "date": "2026-10-31",
+  "planItem": "77.44.7.A — Invalid Inspector content.href must block draft Save and separate Publish",
+  "status": "LOCAL_BROWSER_AND_UNIT_CHECKS_PASS; TEST_DOC_PUSH_PENDING",
+  "finding": "The Inspector lifecycle browser test showed javascript: URL feedback and then corrected it, but did not attempt Save or Publish while the shared validation error was active. The high-risk guard therefore lacked a direct browser assertion.",
+  "testChange": "tests/browser/editor-inspector-lifecycle.test.js now makes a valid unsaved button-label edit first so Publish is enabled, enters javascript:alert(1) in content.href, and attempts both Save and Publish. It asserts that neither API request is posted, the server draft and public snapshot remain unchanged, the unsafe text remains available for correction, and the normal corrected href lifecycle still passes.",
+  "browser": {
+    "command": "CHROMIUM_PATH=/usr/bin/chromium node --test tests/browser/editor-inspector-lifecycle.test.js",
+    "passed": 1,
+    "failed": 0,
+    "durationSeconds": 177.6,
+    "result": "PASS",
+    "environment": "Local Chromium with the test's loopback HTTP fixture; the default sandbox denied loopback with EPERM, so the unchanged test was run with local network permission."
+  },
+  "iterations": [
+    "The first default-sandbox attempt was blocked because loopback listen returned EPERM.",
+    "The first permitted browser run found that Publish was disabled because the fixture had no valid unsaved change; the fixture was updated to create a valid pending label edit before attempting invalid-href Publish.",
+    "A subsequent locator attempt targeted the shared authored-content component, but button text is intentionally rendered by the specialized plain-text editor; the test now uses that existing node-scoped control."
+  ],
+  "checks": {
+    "npm run test:editor": "PASS, 11/11 test files.",
+    "npm run typecheck": "PASS.",
+    "npm run test:web013:migration-gate": "PASS.",
+    "python3 scripts/check-canonical-plan.py": "PASS after plan update; one complete 13-file master and one current cursor.",
+    "python3 scripts/audit-active-plan-point.py": "PASS after plan update; cursor 77.44 / WEB-011, next 77.44.7.A; acceptance NOT_CERTIFIED.",
+    "python3 scripts/build-feature-traceability.py --check": "PASS after plan update; 396 source mappings.",
+    "node --check tests/browser/editor-inspector-lifecycle.test.js": "PASS.",
+    "git diff --check": "PASS after plan/evidence update."
+  },
+  "reuseReview": {
+    "solution": "Extended the existing project-owned real-Chromium Inspector lifecycle harness and shared invalid-field Save/Publish behavior.",
+    "thirdPartyCodeOrDependencyAdded": false,
+    "cost": "No paid service, package, API, or CI was used."
+  },
+  "production": {
+    "runtimeChanged": false,
+    "deploymentRequired": false,
+    "deploymentAtStart": {
+      "deploymentId": "11dc8722-8748-4e34-830d-3e68e6536461",
+      "version": "0d66c912-a60c-44e9-90a5-341614c3b8a2",
+      "trafficPercent": 100
+    },
+    "healthAtStart": "HTTP 200, service sanci9517-streamer-brand.",
+    "localPropertyValuesSha256": "915a85303d5c265be359e21f8852c0ee855893e45aca8d8dc8e5911839573515",
+    "d1OrR2Changes": false,
+    "workerRedeployed": false
+  },
+  "release": {
+    "githubTarget": "v2/foundation",
+    "remoteHeadAtStart": "adb8c8a9efa40415f358d70bb63cb1817b53ef44",
+    "ci": "No CI PASS claimed; test/docs commits use the repository's test-only [skip ci] convention.",
+    "push": "Pending."
+  },
+  "acceptanceBoundary": "This proves a negative validation gate for content.href in the existing Editor harness. It does not certify the complete 79-type/68-property Visual Editor. Full 77.44.7.A remains OPEN / NOT CERTIFIED; manual/physical acceptance remains deferred until the complete Editor is implemented."
+}
