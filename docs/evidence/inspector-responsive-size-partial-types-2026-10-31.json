@@ -1,7 +1,7 @@
 {
   "date": "2026-10-31",
   "planItem": "77.44.7.A — responsive size width/height constraints Inspector lifecycle across all editable PARTIAL types",
-  "status": "LOCAL_TEST_AND_EVIDENCE_PASS; PUSH_PENDING",
+  "status": "TEST_AND_EVIDENCE_PASS; FAST_FORWARD_PUSH_VERIFIED; NO_RUNTIME_DEPLOYMENT",
   "finding": "The registry defines six responsive dimension fields, but the cross-type lifecycle previously covered aspectRatio across all 44 editable PARTIAL types while the width/height/min/max fields had primarily representative lifecycle evidence. The shared Inspector re-renders after responsive.set, so the size accordion must be reopened before each field interaction.",
   "change": "Added tests/browser/editor-inspector-size-partial-types.test.js as a dedicated real-Chromium matrix. It sets six size fields through the Inspector across all 44 editable PARTIAL node types; checks responsive command/key routes, Canvas computed CSS, draft Page Model values, Save/public separation, Editor reload and explicit Publish for desktop/mobile; resets every mobile field, verifies Undo/Redo, reset Save/public immutability and separate Publish restoring inherited desktop CSS.",
   "properties": {
@@ -57,14 +57,24 @@
     "githubTarget": "v2/foundation",
     "localCheckoutBranch": "work; unchanged.",
     "remoteHeadAtStart": "17b0178c4cacb52ecce7ca98dc66e3d35c5bd285",
-    "push": "Pending normal fast-forward of test/docs/crosswalk-only changes after validation.",
-    "ci": "Test/docs commit will use [skip ci]; no CI PASS is claimed.",
+    "push": {
+      "status": "VERIFIED",
+      "target": "v2/foundation",
+      "commit": "79c9cf784cb3d1c3d48ac6ab974bbdeec05ea326",
+      "parent": "17b0178c4cacb52ecce7ca98dc66e3d35c5bd285",
+      "verification": "Direct GitHub branch GET returned the exact commit SHA."
+    },
+    "ci": {
+      "status": "NO_CHECKS_REPORTED",
+      "verification": "GitHub combined commit status returned statuses=[]; [skip ci] commit; no CI PASS claimed."
+    },
     "workerDeployment": {
       "id": "11dc8722-8748-4e34-830d-3e68e6536461",
       "version": "0d66c912-a60c-44e9-90a5-341614c3b8a2",
       "trafficPercent": 100,
-      "health": "Direct GET /api/health returned HTTP 200 and expected service identity at session start.",
-      "redeployment": "Not required; no runtime source or public assets changed."
+      "health": "Verified after push: direct GET /api/health returned HTTP 200 with expected service identity.",
+      "redeployment": "Not required; no runtime source or public assets changed.",
+      "postPushVerification": "Read-only Cloudflare deployments GET confirmed deployment 11dc8722-8748-4e34-830d-3e68e6536461 and version 0d66c912-a60c-44e9-90a5-341614c3b8a2 still at 100% traffic; no runtime changes, no redeployment."
     },
     "productionD1Writes": 0,
     "productionR2Changes": 0,
