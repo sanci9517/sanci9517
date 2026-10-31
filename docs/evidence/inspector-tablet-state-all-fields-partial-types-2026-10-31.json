@@ -1,7 +1,7 @@
 {
   "date": "2026-10-31",
   "plan_item": "77.44.7.A — all ten tablet hover/focus-visible state fields across PARTIAL types",
-  "status": "LOCAL_TEST_PASS; PUSH_AND_POST_PUSH_VERIFICATION_PENDING; NO_RUNTIME_DEPLOYMENT",
+  "status": "TEST_AND_EVIDENCE_PASS; FAST_FORWARD_PUSH_VERIFIED; NO_RUNTIME_DEPLOYMENT",
   "finding": "The previous cross-type matrix covered seven state properties. Opacity and the rotate/scale transform controls had only representative-element lifecycle evidence, not full PARTIAL-type parity.",
   "change": "Extended tests/browser/editor-inspector-tablet-state-partial-types.test.js to exercise all ten STATE_PROPERTY_IDS through Inspector, Canvas, draft Save, reload, separate Publish, reset, and public rendering for every editable PARTIAL type in tablet hover and focus-visible. No runtime code changed.",
   "coverage": "44 editable PARTIAL types; all ten fields color, backgroundColor, backgroundImage, borderColor, boxShadow, opacity, textDecoration, fontWeight, rotate, and scale in hover and focus-visible; states.set command and property key; text/select/number controls including rotate degree handling; Canvas/public computed CSS; saved Page Model values; Save does not publish; reload restores controls; Publish changes the viewer; desktop state remains independent; mobile inherits tablet; all field resets restore desktop inheritance; reset Save preserves published state and reset Publish removes overrides; aria-hidden elements stay out of focus order; final scale reset supports Undo/Redo.",
@@ -30,7 +30,7 @@
     "deployment_id": "5d81f0f0-176c-4437-b5c5-652765f70bff",
     "version_id": "72f6626e-ba9a-4147-874a-3d8cfcf00919",
     "traffic_percent": 100,
-    "post_push_deployment_health_asset_verification": "Pending.",
+    "post_push_deployment_health_asset_verification": "Read-only Cloudflare Deployment API GET after push confirms deployment 5d81f0f0-176c-4437-b5c5-652765f70bff with version 72f6626e-ba9a-4147-874a-3d8cfcf00919 at 100%. Direct GET /api/health returned HTTP 200 and the expected service/version JSON. Live/local /assets/page-renderer.js SHA-256 matches at 005792f314f891aededf6363573c2ccd66527e53397d673e6a7b0434f6245370. Test/docs-only commits did not create a Worker deployment.",
     "production_d1_migration_or_data_write": false,
     "production_r2_change": false
   },
@@ -39,8 +39,8 @@
     "github_target_branch": "v2/foundation",
     "github_head_at_start": "9da9933dd0be38aca2441f9cbd504f3ee5ed69f7",
     "test_commit": "4bd0de2677bdbe8c2e28be3515db06d48f156ae1",
-    "push": "PENDING normal non-force fast-forward; target was read and matched the expected parent before documentation commit.",
-    "ci": "Not yet checked; no CI PASS claimed.",
+    "push": "PASS: normal non-force fast-forward; local test commit 4bd0de2677bdbe8c2e28be3515db06d48f156ae1 and plan/evidence commit b81f0bffb698751d1d86c9feafcb9e1f0e487a79 were pushed from remote base 9da9933dd0be38aca2441f9cbd504f3ee5ed69f7. git ls-remote returned exact v2/foundation SHA b81f0bffb698751d1d86c9feafcb9e1f0e487a79; GitHub compare verified ahead_by=2, behind_by=0, total_commits=2.",
+    "ci": "Both commits use [skip ci]. GitHub combined status GET returned state=pending, total_count=0, statuses=[] for b81f0bffb698751d1d86c9feafcb9e1f0e487a79. No CI PASS is claimed.",
     "new_cost_or_dependency": "None."
   },
   "acceptance_boundary": "Additional automation evidence only. Overall 77.44.7.A and full Visual Editor acceptance remain OPEN / NOT CERTIFIED; manual and physical acceptance remain DEFERRED until the full Editor is implemented."
