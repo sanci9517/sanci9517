@@ -1,7 +1,7 @@
 {
   "date": "2026-10-31",
   "planItem": "77.44.7.A — Registry to Inspector command, Canvas, Page Model and published renderer lifecycle",
-  "status": "LOCAL_BROWSER_PASS; TEST_DOC_PUSH_PENDING",
+  "status": "TEST_AND_EVIDENCE_PUSHED; PRODUCTION_RUNTIME_UNCHANGED",
   "finding": "The 44 editable PARTIAL element types all register typography.fontSize, typography.fontWeight, typography.lineHeight, and typography.textAlign, but their combined Inspector-to-public-renderer lifecycle was previously only exercised on representative elements.",
   "change": "Extended tests/browser/editor-inspector-partial-types.test.js to edit all four typography properties on each of the 44 editable PARTIAL types, assert the responsive.set command and Page Model key, read the Canvas computed typography, save and reload the draft, and publish separately.",
   "reuseReview": {
@@ -26,19 +26,22 @@
     "runtimeChanged": false,
     "githubTarget": "v2/foundation",
     "githubHeadAtStart": "e1e6ab76d87738063df008d32deb0eeafc6bd7ae",
-    "push": "Pending normal fast-forward; the existing checkout remains on its pre-existing work branch.",
-    "ci": "Not run; no CI PASS claimed.",
+    "push": "Normal fast-forward from v2/foundation head e1e6ab76d87738063df008d32deb0eeafc6bd7ae; direct GitHub branch fetch confirms 277c1dfc2f8461784d044ddcaaf31340477155bc.",
+    "ci": "GitHub combined status returned no checks; no CI PASS claimed. Test/docs-only commit used [skip ci].",
     "workerDeployment": {
       "id": "11dc8722-8748-4e34-830d-3e68e6536461",
       "version": "0d66c912-a60c-44e9-90a5-341614c3b8a2",
       "number": 3767,
       "trafficPercent": 100,
       "health": "GET /api/health at start of run returned HTTP 200 and the expected Worker identity.",
-      "redeployment": "Not required; no runtime source or public asset changed."
+      "redeployment": "Not required; no runtime source or public asset changed.",
+      "verifiedAfterPush": "Cloudflare deployment GET still reports 11dc8722-8748-4e34-830d-3e68e6536461 / 0d66c912-a60c-44e9-90a5-341614c3b8a2 at 100%; production GET /api/health after push returned HTTP 200."
     },
     "productionD1Writes": 0,
     "productionR2Changes": 0,
-    "newCostOrDependency": "None."
+    "newCostOrDependency": "None.",
+    "commit": "277c1dfc2f8461784d044ddcaaf31340477155bc",
+    "remoteHeadVerified": "277c1dfc2f8461784d044ddcaaf31340477155bc"
   },
   "acceptanceBoundary": "This verifies four registered typography properties across all 44 editable PARTIAL renderers, not every Inspector property across every declared type. Full 77.44.7.A and Visual Editor acceptance remain OPEN / NOT CERTIFIED; manual and physical acceptance stays deferred until the complete Editor is implemented."
 }
