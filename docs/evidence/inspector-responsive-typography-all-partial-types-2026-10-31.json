@@ -1,7 +1,7 @@
 {
   "date": "2026-10-31",
   "planItem": "77.44.7.A — responsive typography overrides and inheritance reset across editable PARTIAL types",
-  "status": "LOCAL_TEST_AND_EVIDENCE_PASS; PUSH_PENDING",
+  "status": "TEST_AND_EVIDENCE_PUSHED; PRODUCTION_RUNTIME_UNCHANGED",
   "finding": "Responsive mobile lifecycle was previously checked for lineHeight across all 44 editable PARTIAL types, while font family/style, letter spacing, casing, and decoration responsive overrides and resets were only covered on representative routes.",
   "change": "Extended tests/browser/editor-inspector-partial-types.test.js to exercise all six responsive mobile typography overrides (lineHeight, fontFamily, fontStyle, letterSpacing, textTransform, textDecoration) across all 44 editable PARTIAL types, including draft Save/reload, separate Publish, inheritance reset, Undo/Redo, reset Save, and a second separate Publish.",
   "reuseReview": {
@@ -25,19 +25,22 @@
     "runtimeChanged": false,
     "githubTarget": "v2/foundation",
     "githubHeadAtStart": "171fea0318c5a67f99865c5bbe9b046d5750bcdd",
-    "push": "Pending normal fast-forward of test/evidence-only change.",
-    "ci": "Not run; test-only changes use [skip ci].",
+    "push": "Normal fast-forward from v2/foundation 171fea0318c5a67f99865c5bbe9b046d5750bcdd; direct GitHub branch fetch confirms 6af7e36e6c310e6f7a7be858e197d17bcd95cf37.",
+    "ci": "GitHub combined status returned no checks; no CI PASS claimed. Test-only commit used [skip ci].",
     "workerDeployment": {
       "id": "11dc8722-8748-4e34-830d-3e68e6536461",
       "version": "0d66c912-a60c-44e9-90a5-341614c3b8a2",
       "number": 3767,
       "trafficPercent": 100,
-      "health": "GET /api/health returned HTTP 200 before this test-only change.",
-      "redeployment": "Not required; runtime source and public assets did not change."
+      "health": "GET /api/health returned HTTP 200 before and after this test-only change.",
+      "redeployment": "Not required; runtime source and public assets did not change.",
+      "verifiedAfterPush": "Cloudflare deployments GET still reports 11dc8722-8748-4e34-830d-3e68e6536461 / 0d66c912-a60c-44e9-90a5-341614c3b8a2 at 100%; production GET /api/health after push returned HTTP 200."
     },
     "productionD1Writes": 0,
     "productionR2Changes": 0,
-    "newCostOrDependency": "None."
+    "newCostOrDependency": "None.",
+    "commit": "6af7e36e6c310e6f7a7be858e197d17bcd95cf37",
+    "remoteHeadVerified": "6af7e36e6c310e6f7a7be858e197d17bcd95cf37"
   },
   "acceptanceBoundary": "This verifies six responsive mobile typography overrides and resets across the 44 editable PARTIAL renderer types. It does not certify all 79 declared element types or all 68 properties; complete 77.44.7.A and Visual Editor acceptance remain OPEN / NOT CERTIFIED. Manual and physical acceptance remains deferred until the complete Editor is implemented."
 }
