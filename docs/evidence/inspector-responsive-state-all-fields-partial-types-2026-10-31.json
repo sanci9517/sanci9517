@@ -1,0 +1,52 @@
+{
+  "date": "2026-10-31",
+  "plan_item": "77.44.7.A — responsive hover/focus-visible lifecycle for all ten state fields across PARTIAL types",
+  "status": "LOCAL_TEST_PASS; PUSH_AND_POST_PUSH_VERIFICATION_PENDING; NO_RUNTIME_DEPLOYMENT",
+  "finding": "All ten STATE_PROPERTY_IDS had tablet cross-type automation, but mobile-specific overrides were only represented in a narrow fixture. The public hover assertion also needed to clear a retained focus-visible target before measuring hover CSS.",
+  "change": "Extended tests/browser/editor-inspector-tablet-state-partial-types.test.js so all ten state properties are edited on every editable PARTIAL type in both tablet and mobile hover/focus-visible modes. The mobile path verifies Canvas, draft Page Model, Save/reload, separate Publish, public rendering, and desktop/tablet isolation. Hover assertions blur a previously focused element; mobile shadow values use only the Registry's allowed presets. No runtime code changed.",
+  "coverage": "44 editable PARTIAL types; all ten state fields color, backgroundColor, backgroundImage, borderColor, boxShadow, opacity, textDecoration, fontWeight, rotate, and scale; tablet and mobile hover/focus-visible; exact states.set command/key routing; typed Inspector controls and rotate unit behavior; Canvas/public computed CSS; draft Save does not publish; reload restores values; separate Publish applies mobile; desktop remains independent; reset tablet values remain unset when mobile overrides publish; mobile-only focusable public output remains keyboard-safe. The pre-existing tablet path also verifies per-field reset, reset Save versus Publish, and Undo/Redo.",
+  "browser": {
+    "command": "node --test --test-concurrency=1 tests/browser/editor-inspector-tablet-state-partial-types.test.js",
+    "result": "PASS, 1/1 complete real Chromium test covering the connected tablet and mobile lifecycle; 1164.612 seconds.",
+    "focused_mobile_run": "INSPECTOR_STATE_MOBILE_ONLY=1 node --test --test-concurrency=1 tests/browser/editor-inspector-tablet-state-partial-types.test.js — PASS, 1/1; 416.840 seconds.",
+    "corrected_fixture_attempts": [
+      "An initial mobile attempt selected a boxShadow value absent from the Registry's closed preset list; corrected to valid presets.",
+      "The next integrated run exposed that the prior focus-visible target stayed focused during a hover assertion; the test now blurs it before hover measurement. The final full run passed."
+    ]
+  },
+  "checks": {
+    "npm run test:editor": "PASS, 11/11 files.",
+    "npm run typecheck": "PASS.",
+    "npm run test:web013:migration-gate": "PASS; safety gate only, no production migration.",
+    "python3 scripts/check-canonical-plan.py": "PASS; complete 13-file canonical master.",
+    "python3 scripts/audit-active-plan-point.py": "PASS; cursor 77.44 / WEB-011 -> 77.44.7.A.",
+    "python3 scripts/build-feature-traceability.py --check": "PASS; 396 mappings.",
+    "node --check tests/browser/editor-inspector-tablet-state-partial-types.test.js": "PASS.",
+    "git diff --check": "PASS before documentation commit."
+  },
+  "reuse_review": {
+    "solution": "Reused the existing STATE_PROPERTY_IDS registry, state command, Property Registry presets, typed Inspector controls, responsive CSS projection, Playwright, and existing fixture. No third-party code or dependency was needed.",
+    "external_code_or_dependency": "None."
+  },
+  "production": {
+    "runtime_source_changed": false,
+    "public_asset_changed": false,
+    "worker_deployed": false,
+    "deployment_id": "5d81f0f0-176c-4437-b5c5-652765f70bff",
+    "version_id": "72f6626e-ba9a-4147-874a-3d8cfcf00919",
+    "traffic_percent": 100,
+    "post_push_verification": "Pending.",
+    "production_d1_migration_or_data_write": false,
+    "production_r2_change": false
+  },
+  "release": {
+    "local_checkout_branch": "work; unchanged",
+    "github_target_branch": "v2/foundation",
+    "github_head_at_start": "c2fb68a41673f5782b1ee106841c55eb08319860",
+    "test_commit": "42b8e5015a1c869f51789cc759bc5ce34e95d2be",
+    "push": "PENDING normal non-force fast-forward; remote ref was read and matched the expected parent before documentation commit.",
+    "ci": "Not yet checked; no CI PASS claimed.",
+    "new_cost_or_dependency": "None."
+  },
+  "acceptance_boundary": "The all-type responsive state-field automation is complete for this tested slice; overall 77.44.7.A and full Visual Editor acceptance remain OPEN / NOT CERTIFIED. Manual and physical acceptance remain DEFERRED until the full Editor is implemented."
+}
