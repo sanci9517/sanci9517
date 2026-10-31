@@ -59,7 +59,7 @@ const tabletHoverScale='1.1';
 const desktopFocusScale='1.05';
 const tabletFocusScale='0.9';
 
-test('editable PARTIAL types preserve tablet hover/focus visual and typography states through Inspector, Canvas, Save and Publish',async t=>{
+test('editable PARTIAL types preserve responsive hover/focus visual and typography states through Inspector, Canvas, Save and Publish',async t=>{
   const model=createEditorState(createDocument()),pageId=model.document.activePageId;
   const rootId=model.document.pages[pageId].rootId;
   const nodes=[{type:NODE_TYPES.ROOT,id:rootId}];
@@ -150,11 +150,15 @@ test('editable PARTIAL types preserve tablet hover/focus visual and typography s
   const stateValues={hover:{backgroundColor:tabletColor,backgroundImage:tabletHoverGradient,borderColor:tabletHoverBorder,boxShadow:tabletHoverBoxShadow,color:tabletHoverTextColor,fontWeight:tabletHoverFontWeight,textDecoration:tabletHoverDecoration,opacity:tabletHoverOpacity,rotate:tabletHoverRotate,scale:tabletHoverScale},'focus-visible':{backgroundColor:tabletFocusColor,backgroundImage:tabletFocusGradient,borderColor:tabletFocusBorder,boxShadow:tabletFocusBoxShadow,color:tabletFocusTextColor,fontWeight:tabletFocusFontWeight,textDecoration:tabletFocusDecoration,opacity:tabletFocusOpacity,rotate:tabletFocusRotate,scale:tabletFocusScale}};
   const stateCss={hover:{backgroundColor:'rgb(192, 38, 211)',backgroundImage:tabletHoverGradientCss,borderColor:'rgb(14, 165, 233)',boxShadow:tabletHoverBoxShadowCss,color:'rgb(220, 38, 38)',fontWeight:'900',textDecoration:'line-through',opacity:'0.85',rotate:'7deg',scale:'1.1'},'focus-visible':{backgroundColor:'rgb(14, 165, 233)',backgroundImage:tabletFocusGradientCss,borderColor:'rgb(168, 85, 247)',boxShadow:tabletFocusBoxShadowCss,color:'rgb(29, 78, 216)',fontWeight:'800',textDecoration:'overline',opacity:'0.65',rotate:'-5deg',scale:'0.9'}};
   const desktopStateCss={hover:{backgroundColor:'rgb(22, 163, 74)',backgroundImage:desktopHoverGradientCss,borderColor:'rgb(245, 158, 11)',boxShadow:desktopBoxShadowCss,color:'rgb(37, 99, 235)',fontWeight:'700',textDecoration:'underline',opacity:'0.75',rotate:'4deg',scale:'0.95'},'focus-visible':{backgroundColor:'rgb(29, 78, 216)',backgroundImage:desktopFocusGradientCss,borderColor:'rgb(100, 116, 139)',boxShadow:desktopBoxShadowCss,color:'rgb(51, 65, 85)',fontWeight:'600',textDecoration:'none',opacity:'0.8',rotate:'2deg',scale:'1.05'}};
+  const desktopStateValues={hover:{backgroundColor:desktopColor,backgroundImage:desktopHoverGradient,borderColor:desktopHoverBorder,boxShadow:desktopBoxShadow,color:desktopHoverTextColor,fontWeight:desktopHoverFontWeight,textDecoration:desktopHoverDecoration,opacity:desktopHoverOpacity,rotate:desktopHoverRotate,scale:desktopHoverScale},'focus-visible':{backgroundColor:desktopFocusColor,backgroundImage:desktopFocusGradient,borderColor:desktopFocusBorder,boxShadow:desktopBoxShadow,color:desktopFocusTextColor,fontWeight:desktopFocusFontWeight,textDecoration:desktopFocusDecoration,opacity:desktopFocusOpacity,rotate:desktopFocusRotate,scale:desktopFocusScale}};
+  const mobileStateValues={hover:{backgroundColor:'#facc15',backgroundImage:'linear-gradient(135deg, #111827 0%, #475569 100%)',borderColor:'#f97316',boxShadow:'0 16px 48px #0007',color:'#9333ea',fontWeight:'800',textDecoration:'line-through',opacity:'0.9',rotate:'3deg',scale:'1.2'},'focus-visible':{backgroundColor:'#fde68a',backgroundImage:'linear-gradient(180deg, #ffffff 0%, #e0e7ff 100%)',borderColor:'#c2410c',boxShadow:'0 2px 8px #0003',color:'#be123c',fontWeight:'900',textDecoration:'underline',opacity:'0.55',rotate:'-3deg',scale:'0.85'}};
+  const mobileStateCss={hover:{backgroundColor:'rgb(250, 204, 21)',backgroundImage:'linear-gradient(135deg, rgb(17, 24, 39) 0%, rgb(71, 85, 105) 100%)',borderColor:'rgb(249, 115, 22)',boxShadow:tabletHoverBoxShadowCss,color:'rgb(147, 51, 234)',fontWeight:'800',textDecoration:'line-through',opacity:'0.9',rotate:'3deg',scale:'1.2'},'focus-visible':{backgroundColor:'rgb(253, 230, 138)',backgroundImage:'linear-gradient(rgb(255, 255, 255) 0%, rgb(224, 231, 255) 100%)',borderColor:'rgb(194, 65, 12)',boxShadow:tabletFocusBoxShadowCss,color:'rgb(190, 18, 60)',fontWeight:'900',textDecoration:'underline',opacity:'0.55',rotate:'-3deg',scale:'0.85'}};
   const cssKey=key=>key==='textDecoration'?'textDecorationLine':key;
   const selectKeys=['backgroundImage','boxShadow','fontWeight','textDecoration'];
   const numberKeys=['opacity','rotate','scale'];
   const getStateControl=(field,key)=>selectKeys.includes(key)?field.locator('select:not(.property-token-picker)'):numberKeys.includes(key)?field.locator('input[type="number"]'):field.locator('input[type="text"]');
   const stateInputValue=(state,key)=>key==='rotate'?state[key].replace(/deg$/,''):state[key];
+  const mobileOnly=process.env.INSPECTOR_STATE_MOBILE_ONLY==='1';
   const editTabletStateField=async({type,id},state,key)=>{
     const field=await openTabletStateField(id,state,key);
     assert.equal(await field.getAttribute('data-property-command'),'states.set',`${type}: ${state} ${key} uses the shared state command`);
@@ -165,7 +169,10 @@ test('editable PARTIAL types preserve tablet hover/focus visual and typography s
     assert.equal(await canvas(id).evaluate((el,property)=>getComputedStyle(el)[property],cssKey(key)),stateCss[state][key],`${type}: tablet ${state} ${key} reaches Canvas CSS`);
   };
   const readStateProperty=async(id,state,key)=>{
-    if(state==='hover')await publicNode(id).hover();else await publicNode(id).focus();
+    if(state==='hover'){
+      await viewer.evaluate(()=>{if(document.activeElement instanceof HTMLElement)document.activeElement.blur()});
+      await publicNode(id).hover();
+    }else await publicNode(id).focus();
     return publicNode(id).evaluate((el,property)=>getComputedStyle(el)[property],cssKey(key));
   };
   const assertPublicProperty=async(state,key,expected,label)=>{
@@ -176,6 +183,7 @@ test('editable PARTIAL types preserve tablet hover/focus visual and typography s
   };
   const assertPublicState=async(state,expected,label)=>{for(const key of stateKeys)await assertPublicProperty(state,key,expected[key],`${label} (${key})`)};
 
+  if(!mobileOnly){
   await activateEditorDevice('tablet');await activateViewerDevice('tablet');
   for(const node of editableNodes)for(const state of ['hover','focus-visible'])for(const key of stateKeys)await editTabletStateField(node,state,key);
   await editor.locator('#save').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
@@ -237,5 +245,46 @@ test('editable PARTIAL types preserve tablet hover/focus visual and typography s
   await activateViewerDevice('mobile');
   await assertPublicState('hover',desktopStateCss.hover,'mobile inherits desktop after tablet hover reset Publish');
   await assertPublicState('focus-visible',desktopStateCss['focus-visible'],'mobile inherits desktop after tablet focus-visible reset Publish');
+  }
+
+  await activateEditorDevice('mobile');await activateViewerDevice('mobile');
+  for(const {type,id} of editableNodes)for(const state of ['hover','focus-visible'])for(const key of stateKeys){
+    const field=await openTabletStateField(id,state,key);
+    assert.equal(await field.getAttribute('data-property-command'),'states.set',`${type}: mobile ${state} ${key} uses the shared state command`);
+    assert.equal(await field.getAttribute('data-property-key'),key,`${type}: mobile ${state} ${key} maps to the Page Model key`);
+    const input=getStateControl(field,key),value=mobileStateValues[state][key];
+    if(selectKeys.includes(key))await input.selectOption(value);else{await input.fill(key==='rotate'?value.replace(/deg$/,''):value);await input.press('Tab')}
+    assert.equal(await canvas(id).getAttribute('data-editor-state'),state,`${type}: mobile ${state} preview is marked on Canvas`);
+    assert.equal(await canvas(id).evaluate((el,property)=>getComputedStyle(el)[property],cssKey(key)),mobileStateCss[state][key],`${type}: mobile ${state} ${key} reaches Canvas CSS`);
+  }
+  await editor.locator('#save').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+  assert.equal(posts.at(-1).publish,false,'mobile state Save remains draft-only');
+  for(const {type,id} of editableNodes)for(const state of ['hover','focus-visible'])for(const key of stateKeys){
+    assert.equal(draft.pages[pageId].nodes[id].states[state].mobile[key],mobileStateValues[state][key],`${type}: mobile ${state} ${key} is in the saved draft`);
+    assert.equal(published.pages[pageId].nodes[id].states[state].mobile?.[key],undefined,`${type}: mobile ${state} ${key} Save does not publish`);
+    assert.equal(published.pages[pageId].nodes[id].states[state].tablet?.[key],undefined,`${type}: mobile Save preserves the independently reset tablet ${state} ${key}`);
+    assert.equal(published.pages[pageId].nodes[id].states[state].desktop[key],desktopStateValues[state][key],`${type}: mobile Save preserves desktop ${state} ${key}`);
+  }
+  await editor.reload({waitUntil:'domcontentloaded'});await activateEditorDevice('mobile');
+  for(const state of ['hover','focus-visible'])for(const key of stateKeys){
+    const field=await openTabletStateField(editableNodes[0].id,state,key),input=getStateControl(field,key);
+    assert.equal(await input.inputValue(),stateInputValue(mobileStateValues[state],key),`mobile ${state} ${key} Inspector restores its value after Editor reload`);
+  }
+  await activateViewerDevice('mobile');
+  await assertPublicState('hover',desktopStateCss.hover,'mobile draft Save leaves public hover unchanged');
+  await assertPublicState('focus-visible',desktopStateCss['focus-visible'],'mobile draft Save leaves public focus-visible unchanged');
+  await editor.locator('#publish').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
+  await viewer.reload();
+  await assertPublicState('hover',mobileStateCss.hover,'mobile Publish renders all ten hover state fields on every PARTIAL type');
+  await assertPublicState('focus-visible',mobileStateCss['focus-visible'],'mobile Publish renders all ten focus-visible fields on every focusable PARTIAL type');
+  await activateViewerDevice('tablet');
+  await assertPublicState('hover',desktopStateCss.hover,'mobile Publish preserves the independently reset tablet hover fallback');
+  await assertPublicState('focus-visible',desktopStateCss['focus-visible'],'mobile Publish preserves the independently reset tablet focus fallback');
+  await activateViewerDevice('desktop');
+  await assertPublicState('hover',desktopStateCss.hover,'mobile Publish preserves desktop hover values');
+  await assertPublicState('focus-visible',desktopStateCss['focus-visible'],'mobile Publish preserves desktop focus values');
+  await activateViewerDevice('mobile');
+  await assertPublicState('hover',mobileStateCss.hover,'mobile responsive overrides remain active after desktop and tablet checks');
+  await assertPublicState('focus-visible',mobileStateCss['focus-visible'],'mobile focus overrides remain active after desktop and tablet checks');
   assert.deepEqual(editorErrors,[],'all PARTIAL state Inspector controls open without browser errors');
 });
