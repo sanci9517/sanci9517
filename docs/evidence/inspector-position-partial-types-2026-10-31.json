@@ -1,0 +1,51 @@
+{
+  "date": "2026-10-31",
+  "planItem": "77.44.7.A — responsive position mode, x/y offsets, and z-index across all editable PARTIAL types",
+  "status": "LOCAL_TEST_AND_EVIDENCE_PASS; PUSH_PENDING; NO_RUNTIME_DEPLOYMENT",
+  "finding": "The Inspector's position mode, offsets, and stacking order had representative lifecycle coverage but lacked one all-44-PARTIAL-type desktop/mobile Save, reload, Publish, and inheritance-reset matrix.",
+  "change": "Added tests/browser/editor-inspector-position-partial-types.test.js using the project's current Inspector registry, dimension/number/select widgets, responsive.set command, local Chromium fixture, and separate Save/Publish model. Runtime source and dependencies did not change.",
+  "properties": [
+    {"id":"position.position","key":"position","desktop":"relative","mobile":"relative"},
+    {"id":"position.x","key":"x","desktop":"4px","mobile":"20px"},
+    {"id":"position.y","key":"y","desktop":"2px","mobile":"18px"},
+    {"id":"position.zIndex","key":"zIndex","desktop":"3","mobile":"9"}
+  ],
+  "coverage": "All 44 editable PARTIAL types; Inspector command/key contract; Canvas and published computed CSS; desktop/mobile draft Save; Save does not alter public CSS; Editor reload; separate desktop and mobile Publish; mobile Publish preserves desktop position; all four mobile inheritance resets; Undo/Redo; reset Save preserves published mobile values; reset Publish restores inherited desktop values.",
+  "browser": {
+    "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-inspector-position-partial-types.test.js",
+    "result": "PASS, 1/1 test; 152.9 seconds."
+  },
+  "checks": {
+    "node --check tests/browser/editor-inspector-position-partial-types.test.js": "PASS",
+    "npm run test:editor": "PASS, 11/11 files",
+    "npm run typecheck": "PASS",
+    "npm run test:web013:migration-gate": "PASS; gate only; no production migration",
+    "python3 scripts/check-canonical-plan.py": "PASS; complete 13-file master; acceptance remains NOT_CERTIFIED",
+    "python3 scripts/audit-active-plan-point.py": "PASS; cursor remains 77.44 / WEB-011 -> 77.44.7.A",
+    "python3 scripts/build-feature-traceability.py --check": "PASS after regeneration for the added test; 396 mappings",
+    "git diff --check": "PASS"
+  },
+  "reuseReview": {
+    "solution": "Reused the project's own responsive Inspector fields, typed controls, command engine, existing CSS projection, reset/undo history, and Chromium fixture; no external implementation was needed.",
+    "externalCodeOrDependency": "None."
+  },
+  "release": {
+    "runtimeChanged": false,
+    "githubTarget": "v2/foundation",
+    "localCheckoutBranch": "work; unchanged",
+    "remoteHeadAtStart": "68d9ebde2af38aebc594082c4cb6595a9207df30",
+    "push": "Pending normal fast-forward of test/docs/evidence/traceability-only changes after validation.",
+    "ci": "[skip ci]; no CI PASS claimed.",
+    "workerDeployment": {
+      "deploymentId": "11dc8722-8748-4e34-830d-3e68e6536461",
+      "version": "0d66c912-a60c-44e9-90a5-341614c3b8a2",
+      "trafficPercent": 100,
+      "health": "Direct GET /api/health returned HTTP 200 after the previous test-only release.",
+      "redeployment": "Not required because no runtime source or public asset changed."
+    },
+    "productionD1Writes": 0,
+    "productionR2Changes": 0,
+    "newCostOrDependency": "None."
+  },
+  "acceptanceBoundary": "This proves the position lifecycle only for the 44 editable PARTIAL types. The overall 77.44.7.A foundation, 77.44.7.C design/responsive work, all node types, and complete Visual Editor remain OPEN / NOT CERTIFIED; manual and physical acceptance remain deferred until the complete Editor is implemented."
+}
