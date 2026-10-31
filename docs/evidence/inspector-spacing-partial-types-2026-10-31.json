@@ -1,0 +1,56 @@
+{
+  "date": "2026-10-31",
+  "planItem": "77.44.7.A — responsive spacing margin/padding lifecycle across all editable PARTIAL types",
+  "status": "LOCAL_TEST_AND_EVIDENCE_PASS; PUSH_PENDING; NO_RUNTIME_DEPLOYMENT",
+  "finding": "The shared four-side spacing controls were covered by representative element lifecycle tests, but not by a cross-type desktop/mobile Save, reload, Publish, reset, and undo matrix for every editable PARTIAL type.",
+  "change": "Added tests/browser/editor-inspector-spacing-partial-types.test.js. It uses the existing Property Registry box controls and responsive.set command, without changing runtime behavior or adding dependencies.",
+  "properties": {
+    "spacing.margin": {
+      "desktop": ["2px", "4px", "6px", "8px"],
+      "mobile": ["18px", "20px", "22px", "24px"]
+    },
+    "spacing.padding": {
+      "desktop": ["10px", "12px", "14px", "16px"],
+      "mobile": ["26px", "28px", "30px", "32px"]
+    },
+    "sideOrder": ["top", "right", "bottom", "left"]
+  },
+  "coverage": "All 44 editable PARTIAL element types; Inspector command/key contract; all four Canvas/public computed CSS sides; desktop and mobile draft Save; Save leaves public output unchanged; Editor reload; separate desktop and mobile Publish; desktop preservation during mobile Publish; both mobile inheritance resets; Undo/Redo; reset Save leaves the published mobile values intact; separate reset Publish restores inherited desktop values.",
+  "browser": {
+    "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-inspector-spacing-partial-types.test.js",
+    "result": "PASS, 1/1 test; 154.1 seconds."
+  },
+  "checks": {
+    "node --check tests/browser/editor-inspector-spacing-partial-types.test.js": "PASS",
+    "npm run test:editor": "PASS, 11/11 files",
+    "npm run typecheck": "PASS",
+    "npm run test:web013:migration-gate": "PASS; gate only; no production migration",
+    "python3 scripts/check-canonical-plan.py": "PASS; complete 13-file master; acceptance remains NOT_CERTIFIED",
+    "python3 scripts/audit-active-plan-point.py": "PASS; cursor remains 77.44 / WEB-011 -> 77.44.7.A",
+    "python3 scripts/build-feature-traceability.py --check": "PASS; 396 mappings",
+    "git diff --check": "PASS"
+  },
+  "reuseReview": {
+    "solution": "Reused the project's typed four-side controls, Property Registry, responsive.set command, local Chromium fixture pattern, public renderer, and existing Undo/Redo and publication model.",
+    "externalCodeOrDependency": "None; native CSS box spacing and existing project components satisfy the requirement."
+  },
+  "release": {
+    "runtimeChanged": false,
+    "githubTarget": "v2/foundation",
+    "localCheckoutBranch": "work; unchanged",
+    "remoteHeadAtStart": "5d7f469ca0f82b732d09ffb83637b28be61489d5",
+    "push": "Pending normal fast-forward of test/docs/evidence/traceability-only changes after validation.",
+    "ci": "[skip ci]; no CI PASS claimed.",
+    "workerDeployment": {
+      "deploymentId": "11dc8722-8748-4e34-830d-3e68e6536461",
+      "version": "0d66c912-a60c-44e9-90a5-341614c3b8a2",
+      "trafficPercent": 100,
+      "health": "Direct GET /api/health returned HTTP 200 after the preceding documentation push.",
+      "redeployment": "Not required: no runtime source or public asset changed."
+    },
+    "productionD1Writes": 0,
+    "productionR2Changes": 0,
+    "newCostOrDependency": "None."
+  },
+  "acceptanceBoundary": "This verifies margin/padding lifecycle for the 44 editable PARTIAL types. It does not certify the full 77.44.7.A inspector foundation, all 79 element types, or the Visual Editor. Overall status remains OPEN / NOT CERTIFIED; manual and physical acceptance remain deferred until the complete Editor is implemented."
+}
