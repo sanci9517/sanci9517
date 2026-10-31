@@ -1,7 +1,7 @@
 {
   "date": "2026-10-31",
   "plan_item": "77.44.7.A — Inspector foundation: responsive typography lifecycle across PARTIAL types",
-  "status": "BROWSER_AND_LOCAL_CHECKS_PASS; TEST_COMMIT_FAST_FORWARD_PUSH_VERIFIED; OVERALL_ACCEPTANCE_OPEN",
+  "status": "BROWSER_AND_LOCAL_CHECKS_PASS; TEST_AND_DOCUMENTATION_COMMITS_FAST_FORWARD_VERIFIED; OVERALL_ACCEPTANCE_OPEN",
   "finding": "The all-type responsive Inspector lifecycle already covered dimensions, spacing, position, backgrounds, and all ten interaction-state fields, but the standard typography property family did not have a single cross-type browser path through typed controls, Canvas, draft persistence, and public rendering.",
   "change": "Added tests/browser/editor-inspector-typography-partial-types.test.js. It exercises all 14 registered responsive typography fields against each of the 44 editable PARTIAL element types, without changing runtime source.",
   "coverage": "44 PARTIAL types × 14 fields: fontFamily, fontSize, fontWeight, fontStyle, lineHeight, letterSpacing, textAlign, textTransform, textDecoration, textWrap, overflowWrap, wordSpacing, textIndent, and textShadow. The test asserts Registry command/key routing, typed select/dimension/number controls, Canvas computed CSS, exact desktop Page Model draft values, Save remains unpublished, Editor reload restores every value, explicit Publish copies the draft, and public computed CSS matches the Canvas for every type.",
@@ -34,7 +34,7 @@
     "deployment_id": "5d81f0f0-176c-4437-b5c5-652765f70bff",
     "version_id": "72f6626e-ba9a-4147-874a-3d8cfcf00919",
     "traffic_percent": 100,
-    "post_push_verification": "Read-only Cloudflare Deployments API GET after the test push confirms deployment 5d81f0f0-176c-4437-b5c5-652765f70bff and version 72f6626e-ba9a-4147-874a-3d8cfcf00919 at 100%. Direct GET /api/health returned HTTP 200 with {ok:true, service:sanci9517-streamer-brand, version:2.0.0, server:cloudflare-worker}. Live and local /assets/page-renderer.js SHA-256 match: 005792f314f891aededf6363573c2ccd66527e53397d673e6a7b0434f6245370. Test-only push created no Worker deployment.",
+    "post_push_verification": "Read-only Cloudflare Deployments API GET after both pushes confirms deployment 5d81f0f0-176c-4437-b5c5-652765f70bff and version 72f6626e-ba9a-4147-874a-3d8cfcf00919 at 100%. Direct GET /api/health returned HTTP 200 with {ok:true, service:sanci9517-streamer-brand, version:2.0.0, server:cloudflare-worker}. Live and local /assets/page-renderer.js SHA-256 match: 005792f314f891aededf6363573c2ccd66527e53397d673e6a7b0434f6245370. Neither the test nor documentation push created a Worker deployment.",
     "production_d1_migration_or_data_write": false,
     "production_r2_change": false
   },
@@ -43,8 +43,9 @@
     "github_target_branch": "v2/foundation",
     "github_head_at_start": "4811d0bda4b5c63ef0329b9d82893e63fe193783",
     "test_commit": "712cf4c1a840dd8b3209d75f36b22294dfe5d2fc",
-    "push": "PASS: normal fast-forward from 4811d0bda4b5c63ef0329b9d82893e63fe193783; git ls-remote returned exact v2/foundation SHA 712cf4c1a840dd8b3209d75f36b22294dfe5d2fc; GitHub compare verified ahead_by=1, behind_by=0, total_commits=1.",
-    "ci": "The test commit uses [skip ci]. GitHub combined status returned statuses=[]; no CI PASS is claimed.",
+    "documentation_commit": "dab67aa70b84673dd333a1d4f8ffae29161bceaa",
+    "push": "PASS: both commits pushed with normal fast-forward from 4811d0bda4b5c63ef0329b9d82893e63fe193783. git ls-remote returned exact v2/foundation SHA dab67aa70b84673dd333a1d4f8ffae29161bceaa; GitHub compare verified ahead_by=2, behind_by=0, total_commits=2. The docs/evidence/traceability commit also contains the verified plan and evidence.",
+    "ci": "Both commits use [skip ci]. GitHub combined status GET on dab67aa70b84673dd333a1d4f8ffae29161bceaa returned statuses=[]; no CI PASS is claimed.",
     "new_cost_or_dependency": "None."
   },
   "acceptance_boundary": "The cross-type responsive typography lifecycle is automated for this slice. Overall 77.44.7.A and full Visual Editor acceptance remain OPEN / NOT CERTIFIED. Manual and physical acceptance remain DEFERRED until the complete Editor is implemented."
