@@ -16,8 +16,16 @@ const desktopColor='#16a34a';
 const tabletColor='#c026d3';
 const desktopFocusColor='#1d4ed8';
 const tabletFocusColor='#0ea5e9';
+const desktopHoverGradient='linear-gradient(135deg, #111827 0%, #475569 100%)';
+const tabletHoverGradient='linear-gradient(135deg, #fb7185 0%, #fbbf24 100%)';
+const desktopFocusGradient='linear-gradient(180deg, #ffffff 0%, #e0e7ff 100%)';
+const tabletFocusGradient='linear-gradient(135deg, #7047eb 0%, #17b8a6 100%)';
+const desktopHoverGradientCss='linear-gradient(135deg, rgb(17, 24, 39) 0%, rgb(71, 85, 105) 100%)';
+const tabletHoverGradientCss='linear-gradient(135deg, rgb(251, 113, 133) 0%, rgb(251, 191, 36) 100%)';
+const desktopFocusGradientCss='linear-gradient(rgb(255, 255, 255) 0%, rgb(224, 231, 255) 100%)';
+const tabletFocusGradientCss='linear-gradient(135deg, rgb(112, 71, 235) 0%, rgb(23, 184, 166) 100%)';
 
-test('editable PARTIAL types preserve tablet hover and accessible focus-visible state through Inspector, Canvas, Save and Publish',async t=>{
+test('editable PARTIAL types preserve tablet hover/focus color and gradient states through Inspector, Canvas, Save and Publish',async t=>{
   const model=createEditorState(createDocument()),pageId=model.document.activePageId;
   const rootId=model.document.pages[pageId].rootId;
   const nodes=[{type:NODE_TYPES.ROOT,id:rootId}];
@@ -27,8 +35,8 @@ test('editable PARTIAL types preserve tablet hover and accessible focus-visible 
     execute(model,{type:'element.add',payload:{type,parentId:rootId,authored:authoredTypes.has(type)}});
     const id=model.selection.primaryId;
     execute(model,{type:'style.set',payload:{nodeId:id,patch:{minHeight:'30px',padding:'4px'}}});
-    execute(model,{type:'states.set',payload:{nodeId:id,state:'hover',device:'desktop',patch:{backgroundColor:desktopColor}}});
-    execute(model,{type:'states.set',payload:{nodeId:id,state:'focus-visible',device:'desktop',patch:{backgroundColor:desktopFocusColor}}});
+    execute(model,{type:'states.set',payload:{nodeId:id,state:'hover',device:'desktop',patch:{backgroundColor:desktopColor,backgroundImage:desktopHoverGradient}}});
+    execute(model,{type:'states.set',payload:{nodeId:id,state:'focus-visible',device:'desktop',patch:{backgroundColor:desktopFocusColor,backgroundImage:desktopFocusGradient}}});
     if(type==='richtext')execute(model,{type:'richtext.content.set',payload:{nodeId:id,document:plainTextToRichText('Tablet state próba')}});
     else if(authoredTypes.has(type))execute(model,{type:'element.content.set',payload:{nodeId:id,content:'Tablet state próba'}});
     if(type==='button'||type==='link')execute(model,{type:'content.properties.set',payload:{nodeId:id,patch:{href:'https://example.com'}}});
@@ -91,7 +99,7 @@ test('editable PARTIAL types preserve tablet hover and accessible focus-visible 
     if(rendered)await rendered;
     await viewer.waitForFunction(({expected,id})=>window.innerWidth===expected&&document.querySelector(`[data-node-id="${id}"]`)!==null,{expected:width,id:editableNodes[0].id});
   };
-  const openTabletStateColor=async(id,state)=>{
+  const openTabletStateField=async(id,state,key)=>{
     await canvas(id).evaluate(el=>el.click());
     await editor.locator('.inspector-tabs button').nth(2).click();
     let group=editor.locator('.inspector-group').filter({hasText:'Rámutatás és fókusz'});
@@ -102,94 +110,92 @@ test('editable PARTIAL types preserve tablet hover and accessible focus-visible 
     group=editor.locator('.inspector-group').filter({hasText:'Rámutatás és fókusz'});
     title=group.locator(':scope > .inspector-group-title');
     if(await title.getAttribute('aria-expanded')==='false')await title.click();
-    return group.locator('[data-state-property="backgroundColor"]');
+    return group.locator(`[data-state-property="${key}"]`);
   };
-  const editTabletStateColor=async({type,id},state,color)=>{
-    const field=await openTabletStateColor(id,state);
-    assert.equal(await field.getAttribute('data-property-command'),'states.set',`${type}: ${state} background uses the shared state command`);
-    assert.equal(await field.getAttribute('data-property-key'),'backgroundColor',`${type}: ${state} background maps to its Page Model key`);
-    const input=field.locator('input[type="text"]');
-    await input.fill(color);await input.press('Tab');
+  const stateValues={hover:{backgroundColor:tabletColor,backgroundImage:tabletHoverGradient},'focus-visible':{backgroundColor:tabletFocusColor,backgroundImage:tabletFocusGradient}};
+  const stateCss={hover:{backgroundColor:'rgb(192, 38, 211)',backgroundImage:tabletHoverGradientCss},'focus-visible':{backgroundColor:'rgb(14, 165, 233)',backgroundImage:tabletFocusGradientCss}};
+  const desktopStateCss={hover:{backgroundColor:'rgb(22, 163, 74)',backgroundImage:desktopHoverGradientCss},'focus-visible':{backgroundColor:'rgb(29, 78, 216)',backgroundImage:desktopFocusGradientCss}};
+  const editTabletStateField=async({type,id},state,key)=>{
+    const field=await openTabletStateField(id,state,key);
+    assert.equal(await field.getAttribute('data-property-command'),'states.set',`${type}: ${state} ${key} uses the shared state command`);
+    assert.equal(await field.getAttribute('data-property-key'),key,`${type}: ${state} ${key} maps to the Page Model key`);
+    const input=key==='backgroundImage'?field.locator('select:not(.property-token-picker)'):field.locator('input[type="text"]');
+    if(key==='backgroundImage')await input.selectOption(stateValues[state][key]);else{await input.fill(stateValues[state][key]);await input.press('Tab')}
     assert.equal(await canvas(id).getAttribute('data-editor-state'),state,`${type}: tablet ${state} preview is marked on Canvas`);
-    const expected=state==='hover'?'rgb(192, 38, 211)':'rgb(14, 165, 233)';
-    assert.equal(await canvas(id).evaluate(el=>getComputedStyle(el).backgroundColor),expected,`${type}: tablet ${state} preview reaches Canvas CSS`);
+    assert.equal(await canvas(id).evaluate((el,property)=>getComputedStyle(el)[property],key),stateCss[state][key],`${type}: tablet ${state} ${key} reaches Canvas CSS`);
   };
-  const readStateColor=async(id,state)=>{
+  const readStateProperty=async(id,state,key)=>{
     if(state==='hover')await publicNode(id).hover();else await publicNode(id).focus();
-    return publicNode(id).evaluate(el=>getComputedStyle(el).backgroundColor);
+    return publicNode(id).evaluate((el,property)=>getComputedStyle(el)[property],key);
   };
-  const assertPublicColors=async(state,expected,label)=>{
+  const assertPublicProperty=async(state,key,expected,label)=>{
     const nodes=state==='focus-visible'?focusableNodes:editableNodes;
-    for(const {type,id} of nodes)assert.equal(await readStateColor(id,state),expected,`${type}: ${label}`);
+    for(const {type,id} of nodes)assert.equal(await readStateProperty(id,state,key),expected,`${type}: ${label}`);
     if(state==='focus-visible')for(const {type,id} of editableNodes.filter(node=>!focusableNodes.includes(node)))
       assert.equal(await publicNode(id).getAttribute('tabindex'),null,`${type}: aria-hidden content remains outside keyboard navigation after ${label}`);
   };
+  const assertPublicState=async(state,expected,label)=>{for(const key of ['backgroundColor','backgroundImage'])await assertPublicProperty(state,key,expected[key],`${label} (${key})`)};
 
   await activateEditorDevice('tablet');await activateViewerDevice('tablet');
-  for(const node of editableNodes){
-    await editTabletStateColor(node,'hover',tabletColor);
-    await editTabletStateColor(node,'focus-visible',tabletFocusColor);
-  }
+  for(const node of editableNodes)for(const state of ['hover','focus-visible'])for(const key of ['backgroundColor','backgroundImage'])await editTabletStateField(node,state,key);
   await editor.locator('#save').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
   assert.equal(posts.at(-1).publish,false,'tablet state Save remains draft-only');
   for(const {type,id} of editableNodes){
-    assert.equal(draft.pages[pageId].nodes[id].states.hover.tablet.backgroundColor,tabletColor,`${type}: tablet hover value is in the saved draft`);
-    assert.equal(draft.pages[pageId].nodes[id].states['focus-visible'].tablet.backgroundColor,tabletFocusColor,`${type}: tablet focus-visible value is in the saved draft`);
-    assert.equal(published.pages[pageId].nodes[id].states.hover.tablet?.backgroundColor,undefined,`${type}: tablet hover Save does not publish`);
-    assert.equal(published.pages[pageId].nodes[id].states['focus-visible'].tablet?.backgroundColor,undefined,`${type}: tablet focus-visible Save does not publish`);
-    assert.equal(published.pages[pageId].nodes[id].states.hover.desktop.backgroundColor,desktopColor,`${type}: tablet Save keeps the desktop publication`);
-    assert.equal(published.pages[pageId].nodes[id].states['focus-visible'].desktop.backgroundColor,desktopFocusColor,`${type}: tablet Save keeps desktop focus-visible publication`);
+    for(const [state,key,desktopValue] of [['hover','backgroundColor',desktopColor],['hover','backgroundImage',desktopHoverGradient],['focus-visible','backgroundColor',desktopFocusColor],['focus-visible','backgroundImage',desktopFocusGradient]]){
+      assert.equal(draft.pages[pageId].nodes[id].states[state].tablet[key],stateValues[state][key],`${type}: tablet ${state} ${key} is in the saved draft`);
+      assert.equal(published.pages[pageId].nodes[id].states[state].tablet?.[key],undefined,`${type}: tablet ${state} ${key} Save does not publish`);
+      assert.equal(published.pages[pageId].nodes[id].states[state].desktop[key],desktopValue,`${type}: tablet Save preserves desktop ${state} ${key}`);
+    }
   }
   await editor.reload({waitUntil:'domcontentloaded'});await activateEditorDevice('tablet');
-  const reloadedHover=await openTabletStateColor(editableNodes[0].id,'hover');
-  assert.equal(await reloadedHover.locator('input[type="text"]').inputValue(),tabletColor,'tablet hover Inspector restores its saved value after Editor reload');
-  const reloadedFocus=await openTabletStateColor(editableNodes[0].id,'focus-visible');
-  assert.equal(await reloadedFocus.locator('input[type="text"]').inputValue(),tabletFocusColor,'tablet focus Inspector restores its saved value after Editor reload');
+  for(const state of ['hover','focus-visible'])for(const key of ['backgroundColor','backgroundImage']){
+    const field=await openTabletStateField(editableNodes[0].id,state,key),input=key==='backgroundImage'?field.locator('select:not(.property-token-picker)'):field.locator('input[type="text"]');
+    assert.equal(await input.inputValue(),stateValues[state][key],`tablet ${state} ${key} Inspector restores its value after Editor reload`);
+  }
   await activateViewerDevice('tablet');
-  await assertPublicColors('hover','rgb(22, 163, 74)','tablet draft Save leaves the public hover state unchanged');
-  await assertPublicColors('focus-visible','rgb(29, 78, 216)','tablet draft Save leaves the public focus-visible state unchanged');
+  await assertPublicState('hover',desktopStateCss.hover,'tablet draft Save leaves public hover unchanged');
+  await assertPublicState('focus-visible',desktopStateCss['focus-visible'],'tablet draft Save leaves public focus-visible unchanged');
 
   await editor.locator('#publish').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
   await viewer.reload();
-  await assertPublicColors('hover','rgb(192, 38, 211)','tablet Publish renders hover background on every PARTIAL type');
-  await assertPublicColors('focus-visible','rgb(14, 165, 233)','tablet Publish renders focus-visible background on every PARTIAL type');
+  await assertPublicState('hover',stateCss.hover,'tablet Publish renders hover colors and gradients on every PARTIAL type');
+  await assertPublicState('focus-visible',stateCss['focus-visible'],'tablet Publish renders focus-visible colors and gradients on every eligible PARTIAL type');
   await activateViewerDevice('desktop');
-  await assertPublicColors('hover','rgb(22, 163, 74)','tablet Publish preserves desktop hover background');
-  await assertPublicColors('focus-visible','rgb(29, 78, 216)','tablet Publish preserves desktop focus-visible background');
+  await assertPublicState('hover',desktopStateCss.hover,'tablet Publish preserves desktop hover colors and gradients');
+  await assertPublicState('focus-visible',desktopStateCss['focus-visible'],'tablet Publish preserves desktop focus-visible colors and gradients');
   await activateViewerDevice('mobile');
-  await assertPublicColors('hover','rgb(192, 38, 211)','mobile inherits the published tablet hover background');
-  await assertPublicColors('focus-visible','rgb(14, 165, 233)','mobile inherits the published tablet focus-visible background');
+  await assertPublicState('hover',stateCss.hover,'mobile inherits the published tablet hover colors and gradients');
+  await assertPublicState('focus-visible',stateCss['focus-visible'],'mobile inherits the published tablet focus-visible colors and gradients');
 
   await activateEditorDevice('tablet');
-  for(const state of ['hover','focus-visible'])for(const {type,id} of editableNodes){
-    const field=await openTabletStateColor(id,state),reset=editor.locator('.property-reset[data-property-key="backgroundColor"]').filter({hasText:'Állapotérték öröklésének visszaállítása'});
-    assert.equal(await field.getAttribute('data-property-command'),'states.set',`${type}: tablet ${state} reset stays on the shared state command`);
-    assert.equal(await reset.count(),1,`${type}: tablet ${state} override exposes an inheritance reset`);
+  for(const state of ['hover','focus-visible'])for(const {type,id} of editableNodes)for(const key of ['backgroundColor','backgroundImage']){
+    const field=await openTabletStateField(id,state,key),reset=editor.locator(`.property-reset[data-property-key="${key}"]`).filter({hasText:'Állapotérték öröklésének visszaállítása'});
+    assert.equal(await field.getAttribute('data-property-command'),'states.set',`${type}: tablet ${state} ${key} reset uses the shared command`);
+    assert.equal(await reset.count(),1,`${type}: tablet ${state} ${key} override exposes an inheritance reset`);
     await reset.click();
-    const expected=state==='hover'?'rgb(22, 163, 74)':'rgb(29, 78, 216)';
-    assert.equal(await canvas(id).evaluate(el=>getComputedStyle(el).backgroundColor),expected,`${type}: reset Canvas preview inherits desktop ${state} color`);
+    assert.equal(await canvas(id).evaluate((el,property)=>getComputedStyle(el)[property],key),desktopStateCss[state][key],`${type}: reset Canvas preview inherits desktop ${state} ${key}`);
   }
   const lastNode=editableNodes.at(-1);
   await editor.locator('#undo').click();
-  assert.equal(await canvas(lastNode.id).evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(14, 165, 233)','Undo restores the final tablet focus-visible override');
+  assert.equal(await canvas(lastNode.id).evaluate(el=>getComputedStyle(el).backgroundImage),tabletFocusGradientCss,'Undo restores the final tablet focus-visible gradient override');
   await editor.locator('#redo').click();
-  assert.equal(await canvas(lastNode.id).evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(29, 78, 216)','Redo restores desktop focus-visible inheritance');
+  assert.equal(await canvas(lastNode.id).evaluate(el=>getComputedStyle(el).backgroundImage),desktopFocusGradientCss,'Redo restores desktop focus-visible gradient inheritance');
   await editor.locator('#save').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
   for(const {type,id} of editableNodes){
-    assert.equal(draft.pages[pageId].nodes[id].states.hover.tablet.backgroundColor,undefined,`${type}: reset Save removes the tablet hover override`);
-    assert.equal(draft.pages[pageId].nodes[id].states['focus-visible'].tablet.backgroundColor,undefined,`${type}: reset Save removes the tablet focus-visible override`);
-    assert.equal(published.pages[pageId].nodes[id].states.hover.tablet.backgroundColor,tabletColor,`${type}: reset Save preserves the published tablet hover state`);
-    assert.equal(published.pages[pageId].nodes[id].states['focus-visible'].tablet.backgroundColor,tabletFocusColor,`${type}: reset Save preserves published tablet focus-visible state`);
+    for(const [state,key] of [['hover','backgroundColor'],['hover','backgroundImage'],['focus-visible','backgroundColor'],['focus-visible','backgroundImage']]){
+      assert.equal(draft.pages[pageId].nodes[id].states[state].tablet[key],undefined,`${type}: reset Save removes tablet ${state} ${key}`);
+      assert.equal(published.pages[pageId].nodes[id].states[state].tablet[key],stateValues[state][key],`${type}: reset Save preserves published tablet ${state} ${key}`);
+    }
   }
   await activateViewerDevice('tablet');await viewer.reload();
-  await assertPublicColors('hover','rgb(192, 38, 211)','tablet reset Save leaves the published hover style unchanged');
-  await assertPublicColors('focus-visible','rgb(14, 165, 233)','tablet reset Save leaves the published focus-visible style unchanged');
+  await assertPublicState('hover',stateCss.hover,'tablet reset Save leaves published hover colors and gradients unchanged');
+  await assertPublicState('focus-visible',stateCss['focus-visible'],'tablet reset Save leaves published focus-visible colors and gradients unchanged');
   await editor.locator('#publish').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
   await viewer.reload();
-  await assertPublicColors('hover','rgb(22, 163, 74)','tablet reset Publish returns every type to desktop hover inheritance');
-  await assertPublicColors('focus-visible','rgb(29, 78, 216)','tablet reset Publish returns every type to desktop focus-visible inheritance');
+  await assertPublicState('hover',desktopStateCss.hover,'tablet reset Publish returns every type to desktop hover inheritance');
+  await assertPublicState('focus-visible',desktopStateCss['focus-visible'],'tablet reset Publish returns eligible types to desktop focus-visible inheritance');
   await activateViewerDevice('mobile');
-  await assertPublicColors('hover','rgb(22, 163, 74)','mobile inherits desktop after the tablet hover override is published as reset');
-  await assertPublicColors('focus-visible','rgb(29, 78, 216)','mobile inherits desktop after the tablet focus-visible override is published as reset');
+  await assertPublicState('hover',desktopStateCss.hover,'mobile inherits desktop after tablet hover reset Publish');
+  await assertPublicState('focus-visible',desktopStateCss['focus-visible'],'mobile inherits desktop after tablet focus-visible reset Publish');
   assert.deepEqual(editorErrors,[],'all PARTIAL state Inspector controls open without browser errors');
 });
