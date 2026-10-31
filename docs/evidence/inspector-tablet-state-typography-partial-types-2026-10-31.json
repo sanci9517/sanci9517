@@ -1,7 +1,7 @@
 {
   "date": "2026-10-31",
   "plan_item": "77.44.7.A — tablet hover/focus-visible state field lifecycle across PARTIAL element types",
-  "status": "LOCAL_TEST_AND_EVIDENCE_PASS; PUSH_AND_POST_PUSH_VERIFICATION_PENDING; NO_RUNTIME_DEPLOYMENT",
+  "status": "TEST_AND_EVIDENCE_PASS; FAST_FORWARD_PUSH_VERIFIED; NO_RUNTIME_DEPLOYMENT",
   "finding": "The 44-type tablet interaction matrix verified background, border, and shadow controls, but cross-type typography state controls were only represented by a narrower lifecycle fixture.",
   "change": "Extended tests/browser/editor-inspector-tablet-state-partial-types.test.js to exercise typography color, fontWeight, and textDecoration alongside backgroundColor, backgroundImage, borderColor, and boxShadow on all 44 editable PARTIAL types in tablet hover and focus-visible states. No runtime code changed.",
   "coverage": "44 editable PARTIAL types; seven tablet state fields for hover and focus-visible; exact states.set command/property-key routing; Inspector text and select inputs; Canvas computed CSS including textDecorationLine; draft Page Model values; Save does not publish; Editor reload restores values; separate Publish applies tablet states; desktop values stay independent; mobile inherits tablet; all field overrides reset to desktop; reset Save preserves published state and reset Publish removes overrides; aria-hidden content remains outside keyboard navigation; final focus text-decoration reset supports Undo/Redo.",
@@ -44,9 +44,10 @@
     "github_target_branch": "v2/foundation",
     "github_head_at_start": "d2a3355b4a711dca45b81eef05edd0fa9215a20d; previously verified before this execution.",
     "test_commit": "25ae4ef8f3c5a297dd4eb774bc6db4227b4d4000",
-    "push": "PENDING: exact remote target ref was verified as d2a3355b4a711dca45b81eef05edd0fa9215a20d; the local test commit and documentation commit will be pushed using a normal non-force fast-forward.",
-    "ci": "Pending post-push GitHub status verification; no CI PASS claimed.",
-    "new_cost_or_dependency": "None."
+    "push": "PASS: normal non-force fast-forward; local test commit 25ae4ef8f3c5a297dd4eb774bc6db4227b4d4000 and plan/evidence commit 088c5a6b59f3af1e99657a49714142ebf8dd6373 were pushed from remote base d2a3355b4a711dca45b81eef05edd0fa9215a20d. git ls-remote returned exact v2/foundation SHA 088c5a6b59f3af1e99657a49714142ebf8dd6373; GitHub compare verified ahead_by=2, behind_by=0, total_commits=2.",
+    "ci": "Both commits use [skip ci]. GitHub combined status GET returned state=pending, total_count=0, statuses=[] for 088c5a6b59f3af1e99657a49714142ebf8dd6373. No CI PASS is claimed.",
+    "new_cost_or_dependency": "None.",
+    "post_push_worker_deployment": "Read-only Cloudflare Deployment API GET after push reports deployment 5d81f0f0-176c-4437-b5c5-652765f70bff / version 72f6626e-ba9a-4147-874a-3d8cfcf00919 at 100%. Production health GET returned HTTP 200; live/local renderer asset hashes match. Test/docs-only commits did not trigger or require a Worker deployment."
   },
   "acceptance_boundary": "This is additional Inspector lifecycle evidence only. Overall 77.44.7.A and full Visual Editor acceptance remain OPEN / NOT CERTIFIED; manual and physical acceptance remain DEFERRED until the full Editor is implemented."
 }
