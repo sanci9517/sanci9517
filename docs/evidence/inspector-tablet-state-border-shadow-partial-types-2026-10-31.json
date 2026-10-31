@@ -1,0 +1,52 @@
+{
+  "date": "2026-10-31",
+  "plan_item": "77.44.7.A — tablet hover/focus-visible border and shadow lifecycle across PARTIAL element types",
+  "status": "TEST_AND_EVIDENCE_PASS; FAST_FORWARD_PUSH_PENDING; NO_RUNTIME_DEPLOYMENT",
+  "finding": "The all-PARTIAL tablet state matrix covered background color and gradient but not the remaining color and select-based shadow routes. Existing representative-element lifecycle coverage did not prove cross-type parity for those fields.",
+  "change": "Extended tests/browser/editor-inspector-tablet-state-partial-types.test.js to exercise backgroundColor, backgroundImage, borderColor, and boxShadow in both tablet hover and focus-visible states for all 44 editable PARTIAL types. It uses actual Inspector controls and checks Canvas and public output, draft Save/reload, separate Publish, responsive inheritance, reset, and Undo/Redo. No runtime code changed.",
+  "coverage": "44 editable PARTIAL types; four tablet state properties for hover and focus-visible; exact states.set command/property-key routing; color input and registry-controlled gradient/shadow select controls; Canvas computed values; draft Page Model values; Save does not publish; Editor reload restores values; Publish applies tablet state; desktop values stay independent; mobile inherits tablet; every property override resets to desktop; reset Save preserves published state and reset Publish removes overrides; aria-hidden content stays outside keyboard navigation; final focus-shadow reset supports Undo/Redo.",
+  "browser": {
+    "command": "node --test --test-concurrency=1 tests/browser/editor-inspector-tablet-state-partial-types.test.js",
+    "result": "PASS, 1/1 real Chromium browser test; 291.676 seconds. Local loopback permission was required for the Playwright fixture server."
+  },
+  "checks": {
+    "npm run test:editor": "PASS, 11/11 files.",
+    "npm run typecheck": "PASS.",
+    "npm run test:web013:migration-gate": "PASS; safety gate only, no production migration.",
+    "python3 scripts/check-canonical-plan.py": "PASS; complete 13-file canonical master.",
+    "python3 scripts/audit-active-plan-point.py": "PASS; cursor 77.44 / WEB-011 -> 77.44.7.A.",
+    "python3 scripts/build-feature-traceability.py --check": "PASS; 396 mappings.",
+    "node --check tests/browser/editor-inspector-tablet-state-partial-types.test.js": "PASS.",
+    "git diff --check": "PASS before test commit."
+  },
+  "reuse_review": {
+    "solution": "Reused the existing Property Registry, state property list, states.set command, typed Inspector controls, CSS state projection, existing Playwright dependency, and project browser fixture. No third-party code, package, or infrastructure was needed.",
+    "external_code_or_dependency": "None."
+  },
+  "production": {
+    "runtime_source_changed": false,
+    "public_asset_changed": false,
+    "worker_deployed": false,
+    "deployment_api": {
+      "deployment_id": "5d81f0f0-176c-4437-b5c5-652765f70bff",
+      "version_id": "72f6626e-ba9a-4147-874a-3d8cfcf00919",
+      "traffic_percent": 100,
+      "created_on": "2026-10-31T14:15:26.084499Z"
+    },
+    "direct_health_check": "PASS: direct GET /api/health returned HTTP 200 during the run.",
+    "asset_hashes": "Pending final post-push read-only check; runtime assets did not change.",
+    "production_d1_migration_or_data_write": false,
+    "production_r2_change": false
+  },
+  "release": {
+    "local_checkout_branch": "work; unchanged",
+    "github_target_branch": "v2/foundation",
+    "github_head_at_start": "bef9639299bffd2e486e38d621d7e4994250c368",
+    "test_commit": "90c884b32d9927c2faf94b79b6afb187456fc798",
+    "push": "PENDING at evidence preparation; normal fast-forward will be verified before reporting.",
+    "ci": "Not run by design; commit uses [skip ci]. No CI PASS is claimed.",
+    "post_push_worker_deployment": "Test/documentation-only changes do not warrant Worker redeployment; verify deployment API after push.",
+    "new_cost_or_dependency": "None."
+  },
+  "acceptance_boundary": "Additional Inspector lifecycle evidence only. Overall 77.44.7.A and full Visual Editor acceptance remain OPEN / NOT CERTIFIED; manual and physical acceptance remain DEFERRED until the full Editor is implemented."
+}
