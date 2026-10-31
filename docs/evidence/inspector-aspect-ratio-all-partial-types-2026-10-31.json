@@ -1,0 +1,55 @@
+{
+  "date": "2026-10-31",
+  "planItem": "77.44.7.A — responsive size.aspectRatio Inspector-to-renderer lifecycle across all editable PARTIAL types",
+  "status": "LOCAL_TEST_AND_EVIDENCE_PASS; PUSH_PENDING",
+  "finding": "size.aspectRatio existed in the common property registry and representative responsive lifecycle coverage, but its cross-type 44-PARTIAL matrix for draft/public separation, responsive override and inheritance reset was absent.",
+  "change": "Extended the existing real-Chromium cross-type Inspector fixture to exercise size.aspectRatio across all 44 editable PARTIAL node types at desktop and mobile. Tests command/key metadata, Inspector selection, Canvas and public computed CSS, Page Model persistence, draft Save immutability, Editor reload, separate Publish, desktop/mobile preservation, per-node mobile reset, Undo/Redo, reset Save immutability, and final Publish of inherited desktop state.",
+  "values": {
+    "desktop": "16 / 9",
+    "mobile": "1 / 1"
+  },
+  "reuseReview": {
+    "solution": "Reused the project Property Registry, responsive.set command, existing typed select/reset controls, Chromium lifecycle fixture, and native CSS aspect-ratio support.",
+    "thirdPartyCodeOrDependency": "None; a third-party package would duplicate native CSS and existing project infrastructure."
+  },
+  "browser": {
+    "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-inspector-partial-types.test.js",
+    "result": "PASS, 1/1 test; 941.7 seconds.",
+    "coverage": "All 44 editable PARTIAL types; desktop 16 / 9, mobile 1 / 1, reset to inherited desktop value. Draft saves remain unpublished and separate Publish applies each viewport value. The existing matrix also executes the 14 typography fields and rotate/scale/filter/transition visual-effect lifecycle.",
+    "initialFailureAndCorrection": "The first run found the responsive Size accordion remained collapsed after switching to mobile, so the select could not become visible. The fixture now opens the declared Inspector section before selecting; no product code or assertion was weakened. The final entire browser test passed."
+  },
+  "checks": {
+    "node --check tests/browser/editor-inspector-partial-types.test.js": "PASS.",
+    "npm run test:editor": "PASS, 11/11 test files.",
+    "npm run typecheck": "PASS.",
+    "npm run test:web013:migration-gate": "PASS; safety check only, no production migration.",
+    "python3 scripts/check-canonical-plan.py": "PASS; complete 13-file master; functional acceptance NOT_CERTIFIED.",
+    "python3 scripts/audit-active-plan-point.py": "PASS; 77.44 / WEB-011 -> 77.44.7.A.",
+    "python3 scripts/build-feature-traceability.py --check": "PASS; 396 mappings.",
+    "git diff --check": "PASS."
+  },
+  "release": {
+    "runtimeChanged": false,
+    "localCheckoutBranch": "work; unchanged.",
+    "githubTarget": "v2/foundation",
+    "remoteHeadObserved": "82f6b59054a001fa5c043095855cd6e4b3dc5b2b",
+    "unpublishedLocalCommits": [
+      "80f1f6e10a62114c4ea7502cdd68e6a897a96931",
+      "8184a598525909bb2a53d6c8debbb87e3125204a"
+    ],
+    "push": "Not completed. Direct GitHub branch GET still reports 82f6b59054a001fa5c043095855cd6e4b3dc5b2b. git ls-remote/git push fail immediately: Could not connect to proxy port 8080.",
+    "ci": "No CI was triggered for local changes. GitHub combined status for remote 82f6b59054a001fa5c043095855cd6e4b3dc5b2b is empty; no CI PASS claimed.",
+    "workerDeployment": {
+      "id": "11dc8722-8748-4e34-830d-3e68e6536461",
+      "version": "0d66c912-a60c-44e9-90a5-341614c3b8a2",
+      "trafficPercent": 100,
+      "verifiedBy": "Read-only Cloudflare deployments API GET during this run.",
+      "health": "Direct health curl blocked by proxy port 8080 connection failure. Prior verified health was HTTP 200, but no fresh result claimed.",
+      "redeployment": "Not required; only test/evidence/plan files changed."
+    },
+    "productionD1Writes": 0,
+    "productionR2Changes": 0,
+    "newCostOrDependency": "None."
+  },
+  "acceptanceBoundary": "This verifies size.aspectRatio across the 44 editable PARTIAL types only. It does not certify all 79 element types or all 68 Inspector properties. Full 77.44.7.A remains OPEN / NOT CERTIFIED; manual/physical acceptance remains deferred until the complete Editor is implemented."
+}
