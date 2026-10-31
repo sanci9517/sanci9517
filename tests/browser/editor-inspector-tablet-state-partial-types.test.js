@@ -24,6 +24,16 @@ const desktopHoverGradientCss='linear-gradient(135deg, rgb(17, 24, 39) 0%, rgb(7
 const tabletHoverGradientCss='linear-gradient(135deg, rgb(251, 113, 133) 0%, rgb(251, 191, 36) 100%)';
 const desktopFocusGradientCss='linear-gradient(rgb(255, 255, 255) 0%, rgb(224, 231, 255) 100%)';
 const tabletFocusGradientCss='linear-gradient(135deg, rgb(112, 71, 235) 0%, rgb(23, 184, 166) 100%)';
+const desktopBoxShadow='0 8px 24px #0005';
+const tabletHoverBoxShadow='0 16px 48px #0007';
+const tabletFocusBoxShadow='0 2px 8px #0003';
+const desktopBoxShadowCss='rgba(0, 0, 0, 0.333) 0px 8px 24px 0px';
+const tabletHoverBoxShadowCss='rgba(0, 0, 0, 0.467) 0px 16px 48px 0px';
+const tabletFocusBoxShadowCss='rgba(0, 0, 0, 0.2) 0px 2px 8px 0px';
+const desktopHoverBorder='#f59e0b';
+const tabletHoverBorder='#0ea5e9';
+const desktopFocusBorder='#64748b';
+const tabletFocusBorder='#a855f7';
 
 test('editable PARTIAL types preserve tablet hover/focus color and gradient states through Inspector, Canvas, Save and Publish',async t=>{
   const model=createEditorState(createDocument()),pageId=model.document.activePageId;
@@ -35,8 +45,8 @@ test('editable PARTIAL types preserve tablet hover/focus color and gradient stat
     execute(model,{type:'element.add',payload:{type,parentId:rootId,authored:authoredTypes.has(type)}});
     const id=model.selection.primaryId;
     execute(model,{type:'style.set',payload:{nodeId:id,patch:{minHeight:'30px',padding:'4px'}}});
-    execute(model,{type:'states.set',payload:{nodeId:id,state:'hover',device:'desktop',patch:{backgroundColor:desktopColor,backgroundImage:desktopHoverGradient}}});
-    execute(model,{type:'states.set',payload:{nodeId:id,state:'focus-visible',device:'desktop',patch:{backgroundColor:desktopFocusColor,backgroundImage:desktopFocusGradient}}});
+    execute(model,{type:'states.set',payload:{nodeId:id,state:'hover',device:'desktop',patch:{backgroundColor:desktopColor,backgroundImage:desktopHoverGradient,borderColor:desktopHoverBorder,boxShadow:desktopBoxShadow}}});
+    execute(model,{type:'states.set',payload:{nodeId:id,state:'focus-visible',device:'desktop',patch:{backgroundColor:desktopFocusColor,backgroundImage:desktopFocusGradient,borderColor:desktopFocusBorder,boxShadow:desktopBoxShadow}}});
     if(type==='richtext')execute(model,{type:'richtext.content.set',payload:{nodeId:id,document:plainTextToRichText('Tablet state próba')}});
     else if(authoredTypes.has(type))execute(model,{type:'element.content.set',payload:{nodeId:id,content:'Tablet state próba'}});
     if(type==='button'||type==='link')execute(model,{type:'content.properties.set',payload:{nodeId:id,patch:{href:'https://example.com'}}});
@@ -112,15 +122,16 @@ test('editable PARTIAL types preserve tablet hover/focus color and gradient stat
     if(await title.getAttribute('aria-expanded')==='false')await title.click();
     return group.locator(`[data-state-property="${key}"]`);
   };
-  const stateValues={hover:{backgroundColor:tabletColor,backgroundImage:tabletHoverGradient},'focus-visible':{backgroundColor:tabletFocusColor,backgroundImage:tabletFocusGradient}};
-  const stateCss={hover:{backgroundColor:'rgb(192, 38, 211)',backgroundImage:tabletHoverGradientCss},'focus-visible':{backgroundColor:'rgb(14, 165, 233)',backgroundImage:tabletFocusGradientCss}};
-  const desktopStateCss={hover:{backgroundColor:'rgb(22, 163, 74)',backgroundImage:desktopHoverGradientCss},'focus-visible':{backgroundColor:'rgb(29, 78, 216)',backgroundImage:desktopFocusGradientCss}};
+  const stateKeys=['backgroundColor','backgroundImage','borderColor','boxShadow'];
+  const stateValues={hover:{backgroundColor:tabletColor,backgroundImage:tabletHoverGradient,borderColor:tabletHoverBorder,boxShadow:tabletHoverBoxShadow},'focus-visible':{backgroundColor:tabletFocusColor,backgroundImage:tabletFocusGradient,borderColor:tabletFocusBorder,boxShadow:tabletFocusBoxShadow}};
+  const stateCss={hover:{backgroundColor:'rgb(192, 38, 211)',backgroundImage:tabletHoverGradientCss,borderColor:'rgb(14, 165, 233)',boxShadow:tabletHoverBoxShadowCss},'focus-visible':{backgroundColor:'rgb(14, 165, 233)',backgroundImage:tabletFocusGradientCss,borderColor:'rgb(168, 85, 247)',boxShadow:tabletFocusBoxShadowCss}};
+  const desktopStateCss={hover:{backgroundColor:'rgb(22, 163, 74)',backgroundImage:desktopHoverGradientCss,borderColor:'rgb(245, 158, 11)',boxShadow:desktopBoxShadowCss},'focus-visible':{backgroundColor:'rgb(29, 78, 216)',backgroundImage:desktopFocusGradientCss,borderColor:'rgb(100, 116, 139)',boxShadow:desktopBoxShadowCss}};
   const editTabletStateField=async({type,id},state,key)=>{
     const field=await openTabletStateField(id,state,key);
     assert.equal(await field.getAttribute('data-property-command'),'states.set',`${type}: ${state} ${key} uses the shared state command`);
     assert.equal(await field.getAttribute('data-property-key'),key,`${type}: ${state} ${key} maps to the Page Model key`);
-    const input=key==='backgroundImage'?field.locator('select:not(.property-token-picker)'):field.locator('input[type="text"]');
-    if(key==='backgroundImage')await input.selectOption(stateValues[state][key]);else{await input.fill(stateValues[state][key]);await input.press('Tab')}
+    const input=['backgroundImage','boxShadow'].includes(key)?field.locator('select:not(.property-token-picker)'):field.locator('input[type="text"]');
+    if(['backgroundImage','boxShadow'].includes(key))await input.selectOption(stateValues[state][key]);else{await input.fill(stateValues[state][key]);await input.press('Tab')}
     assert.equal(await canvas(id).getAttribute('data-editor-state'),state,`${type}: tablet ${state} preview is marked on Canvas`);
     assert.equal(await canvas(id).evaluate((el,property)=>getComputedStyle(el)[property],key),stateCss[state][key],`${type}: tablet ${state} ${key} reaches Canvas CSS`);
   };
@@ -134,22 +145,22 @@ test('editable PARTIAL types preserve tablet hover/focus color and gradient stat
     if(state==='focus-visible')for(const {type,id} of editableNodes.filter(node=>!focusableNodes.includes(node)))
       assert.equal(await publicNode(id).getAttribute('tabindex'),null,`${type}: aria-hidden content remains outside keyboard navigation after ${label}`);
   };
-  const assertPublicState=async(state,expected,label)=>{for(const key of ['backgroundColor','backgroundImage'])await assertPublicProperty(state,key,expected[key],`${label} (${key})`)};
+  const assertPublicState=async(state,expected,label)=>{for(const key of stateKeys)await assertPublicProperty(state,key,expected[key],`${label} (${key})`)};
 
   await activateEditorDevice('tablet');await activateViewerDevice('tablet');
-  for(const node of editableNodes)for(const state of ['hover','focus-visible'])for(const key of ['backgroundColor','backgroundImage'])await editTabletStateField(node,state,key);
+  for(const node of editableNodes)for(const state of ['hover','focus-visible'])for(const key of stateKeys)await editTabletStateField(node,state,key);
   await editor.locator('#save').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
   assert.equal(posts.at(-1).publish,false,'tablet state Save remains draft-only');
   for(const {type,id} of editableNodes){
-    for(const [state,key,desktopValue] of [['hover','backgroundColor',desktopColor],['hover','backgroundImage',desktopHoverGradient],['focus-visible','backgroundColor',desktopFocusColor],['focus-visible','backgroundImage',desktopFocusGradient]]){
+    for(const [state,key,desktopValue] of [['hover','backgroundColor',desktopColor],['hover','backgroundImage',desktopHoverGradient],['hover','borderColor',desktopHoverBorder],['hover','boxShadow',desktopBoxShadow],['focus-visible','backgroundColor',desktopFocusColor],['focus-visible','backgroundImage',desktopFocusGradient],['focus-visible','borderColor',desktopFocusBorder],['focus-visible','boxShadow',desktopBoxShadow]]){
       assert.equal(draft.pages[pageId].nodes[id].states[state].tablet[key],stateValues[state][key],`${type}: tablet ${state} ${key} is in the saved draft`);
       assert.equal(published.pages[pageId].nodes[id].states[state].tablet?.[key],undefined,`${type}: tablet ${state} ${key} Save does not publish`);
       assert.equal(published.pages[pageId].nodes[id].states[state].desktop[key],desktopValue,`${type}: tablet Save preserves desktop ${state} ${key}`);
     }
   }
   await editor.reload({waitUntil:'domcontentloaded'});await activateEditorDevice('tablet');
-  for(const state of ['hover','focus-visible'])for(const key of ['backgroundColor','backgroundImage']){
-    const field=await openTabletStateField(editableNodes[0].id,state,key),input=key==='backgroundImage'?field.locator('select:not(.property-token-picker)'):field.locator('input[type="text"]');
+  for(const state of ['hover','focus-visible'])for(const key of stateKeys){
+    const field=await openTabletStateField(editableNodes[0].id,state,key),input=['backgroundImage','boxShadow'].includes(key)?field.locator('select:not(.property-token-picker)'):field.locator('input[type="text"]');
     assert.equal(await input.inputValue(),stateValues[state][key],`tablet ${state} ${key} Inspector restores its value after Editor reload`);
   }
   await activateViewerDevice('tablet');
@@ -168,7 +179,7 @@ test('editable PARTIAL types preserve tablet hover/focus color and gradient stat
   await assertPublicState('focus-visible',stateCss['focus-visible'],'mobile inherits the published tablet focus-visible colors and gradients');
 
   await activateEditorDevice('tablet');
-  for(const state of ['hover','focus-visible'])for(const {type,id} of editableNodes)for(const key of ['backgroundColor','backgroundImage']){
+  for(const state of ['hover','focus-visible'])for(const {type,id} of editableNodes)for(const key of stateKeys){
     const field=await openTabletStateField(id,state,key),reset=editor.locator(`.property-reset[data-property-key="${key}"]`).filter({hasText:'Állapotérték öröklésének visszaállítása'});
     assert.equal(await field.getAttribute('data-property-command'),'states.set',`${type}: tablet ${state} ${key} reset uses the shared command`);
     assert.equal(await reset.count(),1,`${type}: tablet ${state} ${key} override exposes an inheritance reset`);
@@ -177,12 +188,12 @@ test('editable PARTIAL types preserve tablet hover/focus color and gradient stat
   }
   const lastNode=editableNodes.at(-1);
   await editor.locator('#undo').click();
-  assert.equal(await canvas(lastNode.id).evaluate(el=>getComputedStyle(el).backgroundImage),tabletFocusGradientCss,'Undo restores the final tablet focus-visible gradient override');
+  assert.equal(await canvas(lastNode.id).evaluate(el=>getComputedStyle(el).boxShadow),tabletFocusBoxShadowCss,'Undo restores the final tablet focus-visible shadow override');
   await editor.locator('#redo').click();
-  assert.equal(await canvas(lastNode.id).evaluate(el=>getComputedStyle(el).backgroundImage),desktopFocusGradientCss,'Redo restores desktop focus-visible gradient inheritance');
+  assert.equal(await canvas(lastNode.id).evaluate(el=>getComputedStyle(el).boxShadow),desktopBoxShadowCss,'Redo restores desktop focus-visible shadow inheritance');
   await editor.locator('#save').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
   for(const {type,id} of editableNodes){
-    for(const [state,key] of [['hover','backgroundColor'],['hover','backgroundImage'],['focus-visible','backgroundColor'],['focus-visible','backgroundImage']]){
+    for(const [state,key] of [['hover','backgroundColor'],['hover','backgroundImage'],['hover','borderColor'],['hover','boxShadow'],['focus-visible','backgroundColor'],['focus-visible','backgroundImage'],['focus-visible','borderColor'],['focus-visible','boxShadow']]){
       assert.equal(draft.pages[pageId].nodes[id].states[state].tablet[key],undefined,`${type}: reset Save removes tablet ${state} ${key}`);
       assert.equal(published.pages[pageId].nodes[id].states[state].tablet[key],stateValues[state][key],`${type}: reset Save preserves published tablet ${state} ${key}`);
     }
