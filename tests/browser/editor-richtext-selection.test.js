@@ -20,22 +20,26 @@ test('Rich Text selection survives consecutive formatting, link edits and draft 
     schemaVersion:1,type:'richtext-document',
     blocks:[{type:'paragraph',children:[{type:'text',text:'Alpha Beta Gamma',marks:[]}]}]
   }}});
-  let draft=structuredClone(model.document),version=1;
+  let draft=structuredClone(model.document),published=null,version=1;
   const writes=[];
   const server=createServer(async(req,res)=>{
     const url=new URL(req.url,'http://localhost');
     const json=value=>{res.setHeader('content-type','application/json');res.end(JSON.stringify(value))};
-    if(url.pathname==='/api/admin/pages')return json({ok:true,data:url.searchParams.get('archived')==='1'?[]:[{id:pageId,title:'Rich Text test',slug:'selection-test',content:draft,revision:version,isPublished:false}]});
+    if(url.pathname==='/api/admin/pages')return json({ok:true,data:url.searchParams.get('archived')==='1'?[]:[{id:pageId,title:'Rich Text test',slug:'selection-test',content:draft,revision:version,isPublished:Boolean(published)}]});
+    if(url.pathname==='/api/public/pages')return json(published?{ok:true,data:{id:pageId,slug:'selection-test',title:'Rich Text test',content:published.pages[pageId]}}:{ok:false});
+    if(url.pathname==='/api/public/navigation')return json({ok:true,data:{items:[]}});
     if(url.pathname==='/api/admin/editor'){
       if(req.method==='GET')return json({ok:true,data:{page:{id:pageId,document:draft},revisions:[]}});
       let body='';for await(const chunk of req)body+=chunk;
       const payload=JSON.parse(body);writes.push(payload);
       draft=structuredClone(payload.document);version++;
+      if(payload.publish)published=structuredClone(payload.document);
       return json({ok:true,data:{pageId,version,revisionId:'test-revision-'+version}});
     }
     if(url.pathname==='/api/integrations/twitch/connection')return json({ok:true,data:{connected:false}});
     if(url.pathname.startsWith('/api/'))return json({ok:true,data:{}});
-    const file=resolve(root,'.'+url.pathname);
+    const asset=url.pathname==='/p/selection-test'?'/visual-page.html':url.pathname;
+    const file=resolve(root,'.'+asset);
     if(!file.startsWith(root+'/')){res.writeHead(403).end();return}
     try{res.setHeader('content-type',{'.html':'text/html','.js':'text/javascript','.css':'text/css'}[extname(file)]||'application/octet-stream');res.end(await readFile(file))}
     catch{res.writeHead(404).end()}
@@ -94,4 +98,40 @@ test('Rich Text selection survives consecutive formatting, link edits and draft 
     assert.deepEqual(errors,[],`unexpected browser errors at ${width}px`);
     await page.close();
   }
+
+  // Mobile emulation uses the browser's actual text selection action rather
+  // than a Range constructed in page JavaScript. The resulting selection must
+  // remain attached to the Rich Text command and the draft/public lifecycle.
+  draft=structuredClone(model.document);published=null;version=1;writes.length=0;
+  const mobileContext=await browser.newContext({viewport:{width:390,height:844},isMobile:true,hasTouch:true});
+  const mobile=await mobileContext.newPage();mobile.setDefaultTimeout(7000);
+  const mobileErrors=[];mobile.on('pageerror',error=>mobileErrors.push(error.message));
+  await mobile.goto('http://127.0.0.1:'+server.address().port+'/editor-v2/index.html');
+  await mobile.locator(`.node[data-node-id="${nodeId}"]`).waitFor();
+  await mobile.locator(`.node[data-node-id="${nodeId}"]`).evaluate(element=>element.click());
+  await mobile.evaluate(()=>window.sanciEditor?.openPanel?.('right'));
+  await mobile.locator('.inspector-tabs button').nth(1).evaluate(button=>button.click());
+  const mobileSurface=mobile.locator('.richtext-editor-surface');await mobileSurface.waitFor();
+  await mobileSurface.locator('p').first().locator('span').first().selectText();
+  assert.equal(await mobile.evaluate(()=>window.getSelection()?.toString()),'Alpha Beta Gamma','mobile browser text selection must expose the selected inline run');
+  await mobile.getByRole('button',{name:'Félkövér',exact:true}).click();
+  assert.equal(await mobileSurface.locator('strong').textContent(),'Alpha Beta Gamma','mobile native selection must reach the canonical mark command');
+  assert.equal(await mobile.evaluate(()=>window.getSelection()?.toString()),'Alpha Beta Gamma','the selection must survive the Inspector rerender');
+  await mobile.locator(`.node[data-node-id="${nodeId}"] .richtext-content strong`).waitFor();
+  await mobile.locator('#save').click();await mobile.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent?.startsWith('Mentve'));
+  assert.equal(writes.at(-1)?.publish,false,'mobile selection Save remains draft-only');
+  assert.equal(published,null,'mobile selection Save leaves the published page unchanged');
+  await mobile.goto('http://127.0.0.1:'+server.address().port+'/editor-v2/index.html');
+  await mobile.locator(`.node[data-node-id="${nodeId}"]`).waitFor();
+  await mobile.locator(`.node[data-node-id="${nodeId}"]`).evaluate(element=>element.click());
+  await mobile.evaluate(()=>window.sanciEditor?.openPanel?.('right'));
+  await mobile.locator('.inspector-tabs button').nth(1).evaluate(button=>button.click());
+  await mobile.locator('.richtext-editor-surface strong').waitFor();
+  await mobile.locator('#publish').click();await mobile.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent==='Publikálva');
+  const mobilePublic=await mobileContext.newPage();
+  await mobilePublic.goto('http://127.0.0.1:'+server.address().port+'/p/selection-test');
+  await mobilePublic.locator('.visual-richtext strong').waitFor();
+  assert.equal(await mobilePublic.locator('.visual-richtext strong').textContent(),'Alpha Beta Gamma','explicit Publish exposes mobile formatting publicly');
+  assert.deepEqual(mobileErrors,[],'mobile Editor selection has no browser errors');
+  await mobileContext.close();
 });
