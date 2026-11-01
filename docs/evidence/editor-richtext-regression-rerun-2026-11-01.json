@@ -70,5 +70,24 @@
     "production_r2_changes": 0,
     "new_dependencies": 0,
     "new_cost": "0 Ft"
-  }
+  },
+  "repeatChecks": [
+    {
+      "command": "npm run test:editor",
+      "result": "PASS",
+      "passed": 11,
+      "failed": 0
+    },
+    {
+      "command": "npm run test:web013",
+      "result": "PASS",
+      "passed": 11,
+      "failed": 0,
+      "migrationSafetyGate": "PASS"
+    },
+    {
+      "command": "npm run typecheck",
+      "result": "PASS"
+    }
+  ]
 }
