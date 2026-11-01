@@ -1,0 +1,49 @@
+{
+  "date": "2026-11-01",
+  "plan_item": "77.44.7.A — typography.color tablet lifecycle across editable PARTIAL types",
+  "status": "FULL_CHROMIUM_AND_LOCAL_CHECKS_PASS; PRODUCTION_UNCHANGED; OVERALL_ACCEPTANCE_OPEN",
+  "finding": "The dedicated typography.color field had all-type desktop coverage and representative tablet coverage, but not an all-type tablet Inspector/Canvas/Save/Publish/inheritance lifecycle.",
+  "change": "Added tests/browser/editor-inspector-text-color-tablet-partial-types.test.js and regenerated docs/evidence/feature-traceability.json with the canonical generator. Runtime source and public assets did not change.",
+  "coverage": "All 44 editable PARTIAL types receive distinct desktop, tablet, and mobile text colors through the real Inspector. The test checks responsive.set and the color Page Model key, Canvas computed CSS, draft Save and Editor reload, Save not mutating the public snapshot, separate Publish to the public renderer, breakpoint isolation, mobile inheritance from tablet, mobile override and reset, tablet reset to desktop, and output after each separate Publish.",
+  "browser": {
+    "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-inspector-text-color-tablet-partial-types.test.js",
+    "result": "PASS, 1/1 test; 81895.951011 ms test time / 82531.900398 ms total."
+  },
+  "checks": {
+    "node --check tests/browser/editor-inspector-text-color-tablet-partial-types.test.js": "PASS",
+    "npm run test:editor": "PASS, 11/11 files",
+    "npm run typecheck": "PASS",
+    "npm run test:web013:migration-gate": "PASS; safety gate only, no production migration",
+    "python3 scripts/check-canonical-plan.py": "PASS; complete 13-file master; acceptance NOT_CERTIFIED",
+    "python3 scripts/audit-active-plan-point.py": "PASS; cursor 77.44 / WEB-011 -> 77.44.7.A",
+    "python3 scripts/build-feature-traceability.py --check": "PASS; 396 source mappings",
+    "git diff --check": "PASS"
+  },
+  "traceability": "The generated source crosswalk adds the new browser test candidate to the existing EDT rows that enumerate tests/*. It does not change implementation source hashes, acceptance status, or the 396-feature plan count.",
+  "reuse_review": {
+    "solution": "Reused the existing typed color control, Property Registry, responsive.set command, Canvas/public renderers, and Playwright/Chromium fixture pattern.",
+    "external_code_or_dependency": "None; no third-party control, code, or dependency was needed for this test-focused lifecycle gap."
+  },
+  "production": {
+    "runtime_source_changed": false,
+    "public_asset_changed": false,
+    "worker_deployed": false,
+    "deployment_id": "5d81f0f0-176c-4437-b5c5-652765f70bff",
+    "version_id": "72f6626e-ba9a-4147-874a-3d8cfcf00919",
+    "traffic_percent": 100,
+    "health": "Direct GET /api/health returned HTTP 200; service identity was sanci9517-streamer-brand.",
+    "page_renderer_sha256_local_and_live": "005792f314f891aededf6363573c2ccd66527e53397d673e6a7b0434f6245370",
+    "d1_production_writes": 0,
+    "r2_changes": 0
+  },
+  "release": {
+    "local_checkout_branch": "work; unchanged",
+    "github_target_branch": "v2/foundation",
+    "github_head_at_start": "407e027cd3fb8bdc21ddeedc0b7c65554fd25a65",
+    "test_commit": "53d0b5159beafb6303f9e09936164556aa401c94",
+    "push": "Verified normal fast-forward from 407e027cd3fb8bdc21ddeedc0b7c65554fd25a65 to 53d0b5159beafb6303f9e09936164556aa401c94; git ls-remote returned the exact refs/heads/v2/foundation SHA and GitHub compare reported 1 ahead / 0 behind.",
+    "ci": "The test commit uses [skip ci]; GitHub combined status returned statuses=[]. No CI PASS is claimed.",
+    "new_cost_or_dependency": "None."
+  },
+  "acceptance_boundary": "The typography.color tablet lifecycle is automated across all 44 editable PARTIAL types. Overall 77.44.7.A remains OPEN / NOT CERTIFIED; complete Visual Editor manual and physical acceptance remains DEFERRED."
+}
