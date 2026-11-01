@@ -16,6 +16,7 @@ const properties=['margin','padding'];
 const sides=['Top','Right','Bottom','Left'];
 const values={
   desktop:{margin:['2px','4px','6px','8px'],padding:['10px','12px','14px','16px']},
+  tablet:{margin:['12px','14px','16px','18px'],padding:['20px','22px','24px','26px']},
   mobile:{margin:['18px','20px','22px','24px'],padding:['26px','28px','30px','32px']}
 };
 const cssValues=(device)=>Object.fromEntries(properties.flatMap(key=>sides.map((side,index)=>[`${key}${side}`,values[device][key][index]])));
@@ -122,6 +123,36 @@ test('all editable PARTIAL types preserve responsive margin and padding through 
     for(const key of properties)assert.equal(published.pages[pageId].nodes[id].responsive.desktop[key],values.desktop[key].join(' '),`${type}: desktop Publish stores ${key}`);
   }
 
+  await editor.locator('.canvas-device-btn[data-device="tablet"]').click();
+  await viewer.setViewportSize({width:768,height:900});await viewer.reload();
+  const publicTabletBaseline=Object.fromEntries(await Promise.all(editableNodes.map(async({id})=>[id,await readCss(publicNode(id))])));
+  for(const {type,id} of editableNodes)await setSpacing(type,id,'tablet');
+  await editor.locator('#save').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+  for(const {type,id} of editableNodes)for(const key of properties){
+    assert.equal(readModel(id,'tablet',key),values.tablet[key].join(' '),`${type}: tablet draft Save stores all ${key} sides`);
+    assert.equal(draft.pages[pageId].nodes[id].responsive.desktop[key],values.desktop[key].join(' '),`${type}: tablet Save preserves desktop ${key}`);
+    assert.equal(published.pages[pageId].nodes[id].responsive.tablet?.[key],undefined,`${type}: tablet Save does not publish ${key}`);
+  }
+  await viewer.reload();
+  for(const {type,id} of editableNodes)assert.deepEqual(await readCss(publicNode(id)),publicTabletBaseline[id],`${type}: tablet draft Save preserves public spacing`);
+  await editor.reload({waitUntil:'domcontentloaded'});await editor.locator('.canvas-device-btn[data-device="tablet"]').click();
+  for(const {type,id} of editableNodes){
+    await canvas(id).evaluate(el=>el.click());await editor.locator('.inspector-tabs button').first().click();
+    for(const key of properties){
+      const group=field(key).locator('xpath=ancestor::section[1]'),title=group.locator(':scope > .inspector-group-title');
+      if(await title.getAttribute('aria-expanded')==='false')await title.click();
+      assert.deepEqual(await field(key).locator('.typed-box-side input[type="number"]').evaluateAll(inputs=>inputs.map(input=>input.value)),values.tablet[key].map(value=>value.slice(0,-2)),`${type}: tablet ${key} sides survive Editor reload`);
+    }
+  }
+  await editor.locator('#publish').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
+  await viewer.reload();
+  for(const {type,id} of editableNodes){
+    assert.deepEqual(await readCss(publicNode(id)),cssValues('tablet'),`${type}: tablet Publish renders all spacing sides`);
+    for(const key of properties)assert.equal(published.pages[pageId].nodes[id].responsive.tablet[key],values.tablet[key].join(' '),`${type}: tablet Publish stores ${key}`);
+  }
+  await viewer.setViewportSize({width:1366,height:900});await viewer.reload();
+  for(const {type,id} of editableNodes)assert.deepEqual(await readCss(publicNode(id)),cssValues('desktop'),`${type}: tablet Publish preserves desktop spacing`);
+
   await editor.locator('.canvas-device-btn[data-device="mobile"]').click();
   await viewer.setViewportSize({width:390,height:900});await viewer.reload();
   const publicMobileBaseline=Object.fromEntries(await Promise.all(editableNodes.map(async({id})=>[id,await readCss(publicNode(id))])));
@@ -148,6 +179,8 @@ test('all editable PARTIAL types preserve responsive margin and padding through 
   for(const {type,id} of editableNodes)assert.deepEqual(await readCss(publicNode(id)),cssValues('mobile'),`${type}: mobile Publish renders all spacing sides`);
   await viewer.setViewportSize({width:1366,height:900});await viewer.reload();
   for(const {type,id} of editableNodes)assert.deepEqual(await readCss(publicNode(id)),cssValues('desktop'),`${type}: mobile Publish preserves desktop spacing`);
+  await viewer.setViewportSize({width:768,height:900});await viewer.reload();
+  for(const {type,id} of editableNodes)assert.deepEqual(await readCss(publicNode(id)),cssValues('tablet'),`${type}: mobile Publish preserves tablet spacing`);
 
   await viewer.setViewportSize({width:390,height:900});await viewer.reload();
   for(const {type,id} of editableNodes){
@@ -160,13 +193,13 @@ test('all editable PARTIAL types preserve responsive margin and padding through 
       assert.equal(await reset.getAttribute('data-property-command'),'responsive.set',`${type}: ${key} reset uses responsive.set`);
       await reset.click();
     }
-    assert.deepEqual(await readCss(canvas(id)),cssValues('desktop'),`${type}: mobile resets restore desktop spacing`);
+    assert.deepEqual(await readCss(canvas(id)),cssValues('tablet'),`${type}: mobile resets inherit tablet spacing`);
   }
   const lastNode=editableNodes.at(-1);
   await editor.locator('#undo').click();
-  assert.deepEqual(await readCss(canvas(lastNode.id)),{...cssValues('desktop'),paddingTop:'26px',paddingRight:'28px',paddingBottom:'30px',paddingLeft:'32px'},`${lastNode.type}: Undo restores the final mobile padding override as a four-side box value`);
+  assert.deepEqual(await readCss(canvas(lastNode.id)),{...cssValues('tablet'),paddingTop:'26px',paddingRight:'28px',paddingBottom:'30px',paddingLeft:'32px'},`${lastNode.type}: Undo restores the final mobile padding override as a four-side box value`);
   await editor.locator('#redo').click();
-  assert.deepEqual(await readCss(canvas(lastNode.id)),cssValues('desktop'),`${lastNode.type}: Redo restores inherited desktop spacing`);
+  assert.deepEqual(await readCss(canvas(lastNode.id)),cssValues('tablet'),`${lastNode.type}: Redo restores inherited tablet spacing`);
   await editor.locator('#save').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
   for(const {type,id} of editableNodes)for(const key of properties){
     assert.equal(draft.pages[pageId].nodes[id].responsive.mobile[key],undefined,`${type}: reset Save removes mobile ${key}`);
@@ -177,8 +210,33 @@ test('all editable PARTIAL types preserve responsive margin and padding through 
   await editor.locator('#publish').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
   await viewer.reload();
   for(const {type,id} of editableNodes){
-    assert.deepEqual(await readCss(publicNode(id)),cssValues('desktop'),`${type}: reset Publish restores inherited spacing on mobile`);
+    assert.deepEqual(await readCss(publicNode(id)),cssValues('tablet'),`${type}: reset Publish restores inherited tablet spacing on mobile`);
     for(const key of properties)assert.equal(published.pages[pageId].nodes[id].responsive.mobile[key],undefined,`${type}: reset Publish removes mobile ${key}`);
   }
+  await viewer.setViewportSize({width:1366,height:900});await viewer.reload();
+  for(const {type,id} of editableNodes)assert.deepEqual(await readCss(publicNode(id)),cssValues('desktop'),`${type}: mobile reset Publish preserves desktop spacing`);
+
+  await editor.locator('.canvas-device-btn[data-device="tablet"]').click();
+  for(const {type,id} of editableNodes){
+    await canvas(id).evaluate(el=>el.click());await editor.locator('.inspector-tabs button').first().click();
+    for(const key of properties){
+      const group=field(key).locator('xpath=ancestor::section[1]'),title=group.locator(':scope > .inspector-group-title');
+      if(await title.getAttribute('aria-expanded')==='false')await title.click();
+      const reset=group.locator(`.property-reset[data-property-key="${key}"]`);
+      assert.equal(await reset.count(),1,`${type}: tablet ${key} exposes inheritance reset`);
+      await reset.click();
+    }
+    assert.deepEqual(await readCss(canvas(id)),cssValues('desktop'),`${type}: tablet resets restore desktop spacing`);
+  }
+  await editor.locator('#save').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+  for(const {type,id} of editableNodes)for(const key of properties){
+    assert.equal(draft.pages[pageId].nodes[id].responsive.tablet[key],undefined,`${type}: tablet reset Save removes ${key}`);
+    assert.equal(published.pages[pageId].nodes[id].responsive.tablet[key],values.tablet[key].join(' '),`${type}: tablet reset Save leaves published ${key}`);
+  }
+  await viewer.reload();
+  for(const {type,id} of editableNodes)assert.deepEqual(await readCss(publicNode(id)),cssValues('desktop'),`${type}: tablet reset Save leaves public spacing unchanged`);
+  await editor.locator('#publish').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
+  await viewer.reload();
+  for(const {type,id} of editableNodes)assert.deepEqual(await readCss(publicNode(id)),cssValues('desktop'),`${type}: tablet reset Publish restores inherited spacing`);
   assert.deepEqual(editorErrors,[],'opening every PARTIAL spacing Inspector must not throw');
 });
