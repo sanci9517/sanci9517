@@ -1,0 +1,51 @@
+{
+  "date": "2026-11-01",
+  "plan_item": "77.44.7.A — responsive border width/style/color lifecycle across PARTIAL types",
+  "status": "FULL_CHROMIUM_AND_LOCAL_CHECKS_PASS; TEST_FAST_FORWARD_PUSH_VERIFIED; OVERALL_ACCEPTANCE_OPEN",
+  "finding": "Border radius and interaction-state border color already had dedicated coverage, but the standard responsive border.width, border.style, and border.color Inspector fields did not share one all-PARTIAL desktop/tablet/mobile Save/Publish/reset lifecycle.",
+  "change": "Added tests/browser/editor-inspector-border-partial-types.test.js. It tests all 44 editable PARTIAL types at all three responsive breakpoints; runtime source and public assets are unchanged.",
+  "coverage": "44 PARTIAL types × responsive borderStyle, borderWidth, and borderColor; typed Inspector command/key contracts; actual Canvas/public computed CSS; desktop/tablet/mobile draft Save, reload, and explicit Publish; independent breakpoint values; mobile inheritance from tablet; all three mobile overrides reset to tablet inheritance; reset Save leaves the live mobile snapshot unchanged and only the separate Publish applies the reset.",
+  "browser": {
+    "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-inspector-border-partial-types.test.js",
+    "result": "PASS, 1/1 full real Chromium lifecycle; 252.567 seconds.",
+    "corrected_fixture_attempts": [
+      "The first attempt measured borderWidth before turning the default borderStyle from none to visible; Chromium correctly computed 0px. The test now sets style before width, matching a visible border editing flow.",
+      "The next attempt checked mobile CSS after the fixture had intentionally switched the viewer viewport to desktop; the result was correctly desktop CSS. The test now returns the public viewer to the mobile viewport before asserting that mobile draft Save leaves the published mobile snapshot unchanged, and asserts publish=false. The final full run passed."
+    ]
+  },
+  "checks": {
+    "npm run test:editor": "PASS, 11/11 files.",
+    "npm run typecheck": "PASS.",
+    "npm run test:web013:migration-gate": "PASS; local repository safety gate, no production migration.",
+    "python3 scripts/check-canonical-plan.py": "PASS; complete 13-file canonical master.",
+    "python3 scripts/audit-active-plan-point.py": "PASS; cursor 77.44 / WEB-011 -> 77.44.7.A.",
+    "python3 scripts/build-feature-traceability.py --check": "PASS; 396 mappings, including the new test source.",
+    "node --check tests/browser/editor-inspector-border-partial-types.test.js": "PASS.",
+    "git diff --check": "PASS."
+  },
+  "reuse_review": {
+    "solution": "Reused the existing Property Registry, responsive.set command, dimension/color/select Inspector controls, renderer, and established Playwright fixture pattern. No third-party code or dependency was needed.",
+    "external_code_or_dependency": "None."
+  },
+  "production": {
+    "runtime_source_changed": false,
+    "public_asset_changed": false,
+    "worker_deployed": false,
+    "deployment_id": "5d81f0f0-176c-4437-b5c5-652765f70bff",
+    "version_id": "72f6626e-ba9a-4147-874a-3d8cfcf00919",
+    "traffic_percent": 100,
+    "post_push_verification": "After the test push, read-only Cloudflare Deployments API GET confirms deployment 5d81f0f0-176c-4437-b5c5-652765f70bff / version 72f6626e-ba9a-4147-874a-3d8cfcf00919 at 100%. Direct GET /api/health returned HTTP 200 with the expected service/version JSON. Live and local /assets/page-renderer.js SHA-256 match: 005792f314f891aededf6363573c2ccd66527e53397d673e6a7b0434f6245370. The test-only push did not create a Worker deployment.",
+    "production_d1_migration_or_data_write": false,
+    "production_r2_change": false
+  },
+  "release": {
+    "local_checkout_branch": "work; unchanged",
+    "github_target_branch": "v2/foundation",
+    "github_head_at_start": "70009420f5bef98eeca44dad33d362ac5d5b1e5b",
+    "test_commit": "db134f7149f0a1f13eba793953368750056b6f82",
+    "push": "PASS: normal fast-forward from 70009420f5bef98eeca44dad33d362ac5d5b1e5b; git ls-remote returned exact v2/foundation SHA db134f7149f0a1f13eba793953368750056b6f82; GitHub compare verified ahead_by=1, behind_by=0, total_commits=1.",
+    "ci": "The test commit uses [skip ci]. GitHub combined status returned statuses=[]; no CI PASS is claimed.",
+    "new_cost_or_dependency": "None."
+  },
+  "acceptance_boundary": "Responsive border Inspector lifecycle is automated for this tested slice. Overall 77.44.7.A and complete Visual Editor acceptance remain OPEN / NOT CERTIFIED. Manual and physical acceptance remain DEFERRED until the complete Editor is implemented."
+}
