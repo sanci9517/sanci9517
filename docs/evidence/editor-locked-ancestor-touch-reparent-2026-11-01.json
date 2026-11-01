@@ -5,16 +5,17 @@
     "EDT-014"
   ],
   "status": "REAL_CHROMIUM_AND_LOCAL_CHECKS_PASS; TEST_FAST_FORWARD_PUSH_VERIFIED; PRODUCTION_UNCHANGED; OVERALL_ACCEPTANCE_OPEN",
-  "finding": "The existing tests covered locked-ancestor edit restrictions and unlocked touch reparenting separately, but did not prove the locked-descendant touch drag remains denied and becomes available after unlocking the ancestor.",
+  "finding": "Locked-ancestor touch rejection and unlocked touch reparenting had been tested separately; the desktop source/destination lock boundaries and the full nested lock-to-unlock touch lifecycle were not connected in one browser test.",
   "change": {
     "files": [
       "tests/browser/editor-element-insertion.test.js"
     ],
     "behavior": [
-      "A mobile long-press drag from a leaf beneath a locked ancestor produces no drop preview and leaves the Canvas/Page Model parent unchanged.",
-      "After unlocking the ancestor, the same touch gesture previews and reparents the leaf to a valid sibling container.",
-      "Save persists the authorized draft reparent; Undo afterward changes only the editor draft and does not retroactively change the saved Page Model.",
-      "The test opens/closes responsive docks and scrolls the target into the mobile layer viewport before dispatching touch pointers."
+      "Desktop drag start from a leaf under a locked ancestor is canceled; no target drop preview or Page Model change occurs.",
+      "Desktop drag from an unlocked sibling toward a locked descendant is rejected with no drop preview and no Page Model change.",
+      "A mobile long-press drag from a leaf under a locked ancestor produces no preview and leaves the Canvas/Page Model parent unchanged.",
+      "After directly unlocking the ancestor, the same touch gesture previews and reparents the leaf to an unlocked sibling container.",
+      "Save persists the authorized draft reparent; Undo afterward changes only the editor draft and leaves the saved Page Model unchanged."
     ],
     "runtime_or_public_asset_changed": false
   },
@@ -25,11 +26,11 @@
   "tests": {
     "focused_chromium": {
       "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec --test-name-pattern='nested locked ancestor' tests/browser/editor-element-insertion.test.js",
-      "result": "PASS, 1/1 real Chromium test; final rerun 5.9 s"
+      "result": "PASS, 1/1 real Chromium test; final rerun 5.3 s after desktop source/target assertions"
     },
     "browser_file": {
       "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-element-insertion.test.js",
-      "result": "PASS, 7/7 real Chromium tests; 49.8 s total"
+      "result": "PASS, 7/7 real Chromium tests; final full-file run 48.0 s total"
     },
     "editor_unit": "PASS, 11/11 files",
     "typecheck": "PASS",
@@ -42,9 +43,13 @@
   "release": {
     "test_commit": "57852242f5b7fbe59a98c5d2bd5d97c55572e895",
     "branch": "v2/foundation",
-    "fast_forward_push": "VERIFIED; remote refs/heads/v2/foundation equals the test commit",
+    "fast_forward_push": "Both test-only commits pushed normally to v2/foundation; verify final remote ref with GitHub compare after documentation push.",
     "github_combined_status": "statuses=[]; no CI PASS claim",
-    "worker_redeployed": false
+    "worker_redeployed": false,
+    "test_commits": [
+      "57852242f5b7fbe59a98c5d2bd5d97c55572e895",
+      "075f296db393d799054b17e9db4945aaf640d391"
+    ]
   },
   "production_read_only_verification": {
     "deployment_id": "5d81f0f0-176c-4437-b5c5-652765f70bff",
