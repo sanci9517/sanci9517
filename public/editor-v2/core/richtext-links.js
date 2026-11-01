@@ -37,6 +37,14 @@ export function readRichTextLinkTarget(documentModel, range) {
   return targets.size===1?[...targets][0]:'mixed';
 }
 
+export function readRichTextLinkHref(documentModel, range) {
+  const segments=Array.isArray(range?.segments)?range.segments:range?[range]:[];
+  const runs=segments.flatMap(segment=>selectedInlineRuns(documentModel,segment));
+  if(!runs.length)return '';
+  const hrefs=new Set(runs.map(run=>typeof run.link?.href==='string'?run.link.href:''));
+  return hrefs.size===1?[...hrefs][0]:'mixed';
+}
+
 export function updateRichTextInlineLink(documentModel, {blockIndex, from, to}, href, target = 'auto') {
   const safeHref = href === null ? null : validatedLinkHref(href);
   if(safeHref!==null&&!['auto','_self','_blank','preserve'].includes(target))throw new Error('Válassz érvényes hivatkozás-megnyitási módot.');

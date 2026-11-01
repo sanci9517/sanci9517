@@ -7,6 +7,7 @@ export function pageLinkPicker(pages,input){
   const empty=document.createElement('option');empty.value='';empty.textContent='Válassz belső oldalt…';select.append(empty);
   for(const page of pages||[]){if(!page.slug)continue;const option=document.createElement('option');option.value='/p/'+encodeURIComponent(page.isPublished?(page.publishedSlug||page.slug):page.slug);option.textContent=(page.title||page.slug)+(page.isPublished?'':' · még nincs publikálva');select.append(option)}
   select.value=[...select.options].some(option=>option.value===input.value)?input.value:'';
+  input.addEventListener('input',()=>{select.value=[...select.options].some(option=>option.value===input.value)?input.value:''});
   select.onchange=()=>{if(select.value){input.value=select.value;input.dispatchEvent(new Event('input',{bubbles:true}))}};return select;
 }
 async function loadAssets(query='',before=null,mimes=[]){

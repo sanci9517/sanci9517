@@ -22,12 +22,12 @@ test('actual Inspector keeps unsaved Rich Text through Ctrl+S, reload and separa
   execute(state,{type:'responsive.set',payload:{nodeId,device:'desktop',patch:{fontFamily:'Georgia',fontSize:'20px',lineHeight:'1.6',color:'#123456'}}});
   execute(state,{type:'element.add',payload:{type:NODE_TYPES.TEXT,parentId:state.document.pages[pageId].rootId}});
   const otherNodeId=state.selection.primaryId;
-  let draft=structuredClone(state.document),published=null,version=1;
+  let draft=structuredClone(state.document),published=null,version=1,exposeTargetPage=false;
   const posts=[];
   const server=createServer(async(req,res)=>{
     const url=new URL(req.url,'http://localhost');
     const json=data=>{res.setHeader('content-type','application/json');res.end(JSON.stringify(data))};
-    if(url.pathname==='/api/admin/pages')return json({ok:true,data:url.searchParams.get('archived')==='1'?[]:[{id:pageId,slug:'test',title:'Test',description:'',content:draft,revision:version,isPublished:Boolean(published)}]});
+    if(url.pathname==='/api/admin/pages')return json({ok:true,data:url.searchParams.get('archived')==='1'?[]:[{id:pageId,slug:'test',title:'Test',description:'',content:draft,revision:version,isPublished:Boolean(published)},...(exposeTargetPage?[{id:'target-page',slug:'draft-slug',publishedSlug:'published-slug',title:'Published target',isPublished:true}]:[])]});
     if(url.pathname==='/api/admin/editor'){
       if(req.method==='GET')return json({ok:true,data:{page:{id:pageId,document:draft,publishedRevisionId:published?'published':null},revisions:[{id:'revision-'+version,version}]}});
       let body='';for await(const chunk of req)body+=chunk;
@@ -397,4 +397,46 @@ test('actual Inspector keeps unsaved Rich Text through Ctrl+S, reload and separa
     ['_self',null,'/p/combined'],['_self',null,'/p/combined'],['_self',null,'/p/combined'],['_blank','noopener noreferrer','/p/combined']
   ],'Publish renders preserved mixed targets to the public page');
   await refreshReport();await reportStatus.getByText('Tartalmi linkhibák: 0').waitFor();
+
+  // The internal-page picker uses the published slug and keeps draft Save
+  // separate from the public snapshot until explicit Publish.
+  exposeTargetPage=true;
+  await openEditor();
+  const firstAnchor=tab.locator('.richtext-editor-surface a').first();
+  await firstAnchor.locator('span').evaluate(el=>{
+    const range=document.createRange();range.selectNodeContents(el);
+    const selection=window.getSelection();selection.removeAllRanges();selection.addRange(range);
+    document.dispatchEvent(new Event('selectionchange'));
+  });
+  await tab.evaluate(()=>new Promise(requestAnimationFrame));
+  const pagePicker=tab.getByRole('combobox',{name:'Belső oldal kiválasztása'});
+  const linkUrlField=tab.getByRole('textbox',{name:'Hivatkozás címe'});
+  assert.equal(await linkUrlField.inputValue(),'/p/combined','selecting an existing link hydrates its URL in the Inspector');
+  assert.equal(await pagePicker.locator('option[value="/p/published-slug"]').count(),1,'published internal page resolves to its public slug');
+  await linkUrlField.fill('https://manual.example/');
+  assert.equal(await pagePicker.inputValue(),'','manually changing the URL clears the stale internal-page choice');
+  await pagePicker.focus();
+  await pagePicker.selectOption('/p/published-slug');
+  assert.equal(await pagePicker.inputValue(),'/p/published-slug','the published destination is selected');
+  assert.equal(await linkUrlField.inputValue(),'/p/published-slug');
+  await tab.getByRole('button',{name:'Link beállítása'}).click();
+  assert.equal(await tab.locator('.richtext-editor-surface a').first().getAttribute('href'),'/p/published-slug');
+  await tab.locator('#save').click();await tab.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent?.startsWith('Mentve'));
+  const hrefs=documentModel=>documentModel.pages[pageId].nodes[nodeId].props.richText.blocks[0].children.filter(run=>run.link).map(run=>run.link.href);
+  assert.ok(hrefs(draft).includes('/p/published-slug'),'Save stores the selected internal page in the draft');
+  assert.ok(!hrefs(published).includes('/p/published-slug'),'Save does not publish the internal page link');
+  await openEditor();
+  assert.equal(await tab.locator('.richtext-editor-surface a').first().getAttribute('href'),'/p/published-slug','the selected internal route survives Editor reload');
+  const reloadedAnchor=tab.locator('.richtext-editor-surface a').first();
+  await reloadedAnchor.locator('span').evaluate(el=>{
+    const range=document.createRange();range.selectNodeContents(el);
+    const selection=window.getSelection();selection.removeAllRanges();selection.addRange(range);
+    document.dispatchEvent(new Event('selectionchange'));
+  });
+  await tab.evaluate(()=>new Promise(requestAnimationFrame));
+  assert.equal(await tab.getByRole('textbox',{name:'Hivatkozás címe'}).inputValue(),'/p/published-slug','reselecting the saved link hydrates its URL after reload');
+  assert.equal(await tab.getByRole('combobox',{name:'Belső oldal kiválasztása'}).inputValue(),'/p/published-slug','the picker reflects the saved public slug');
+  await tab.locator('#publish').click();await tab.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent==='Publikálva');
+  await publicTab.reload();
+  assert.equal(await publicTab.locator('.visual-richtext a').first().getAttribute('href'),'/p/published-slug','explicit Publish exposes the internal route in the public snapshot');
 });

@@ -1,5 +1,5 @@
 import {hasContentProfile} from './core/content-profiles.js?v=20261025-inspector-lifecycle-contract';
-import {createDocument,createPage,getNode,NODE_TYPES,canContain,normalizeRichText} from './core/schema.js?v=20261101-richtext-mixed-target';
+import {createDocument,createPage,getNode,NODE_TYPES,canContain,normalizeRichText} from './core/schema.js?v=20261101-richtext-link-picker';
 import {createEditorState,activePage,selectedNodes,setSelection,markSaved} from './core/state.js';
 import {execute,executeCoalesced,executeBatch} from './core/commands.js?v=20261025-inspector-lifecycle-contract';
 import {applyNodeStyle,getNodeGeometry,resolveNodeStyle} from './core/canvas-engine.js?v=20261030-legacy-background-compound';
@@ -8,19 +8,19 @@ import {measureCanvasWorkspace} from './core/canvas-workspace.js';
 import {hasResponsiveOverride,resolveResponsiveValue} from './core/responsive.js';
 import {getNodeVisibilityState,isVisibleOnDevice} from './core/visibility.js';
 import {diagnostics} from './diagnostics.js?v=20260918-2';
-import {plainTextToRichText,renderRichTextEditor,richTextEditorToDocument,restoreSelectionOffsets,getSelectionOffsets,transformRichTextBlockTypes} from './core/richtext-engine.js?v=20261101-richtext-mixed-target';
+import {plainTextToRichText,renderRichTextEditor,richTextEditorToDocument,restoreSelectionOffsets,getSelectionOffsets,transformRichTextBlockTypes} from './core/richtext-engine.js?v=20261101-richtext-link-picker';
 import {renderSchedulePreview} from './core/schedule-preview.js';
 import {normalizeScheduleConfig,SCHEDULE_MODES,SCHEDULE_ORDERS,SCHEDULE_STATUSES,SCHEDULE_EMPTY_TEXT_MAX,SCHEDULE_LIMIT_MAX} from './core/schedule-schema.js';
 import {listPropertyGroups,listProperties,getProperty} from './core/property-registry.js?v=20261030-inspector-layout-container-contract';
-import {renderPropertyInput} from './ui/property-controls.js?v=20261030-number-step-increment';
+import {renderPropertyInput} from './ui/property-controls.js?v=20261101-richtext-link-picker';
 import {getInspectorValueContract,normalizeInspectorValue} from './core/property-values.js';
 import {describeResponsiveOrigin} from './ui/responsive-origin.js';
 import {responsiveGroupResetActions} from './ui/responsive-group-reset.js';
-import {getRichTextBlockSelection,getRichTextFormattingSelection,getRichTextBlockTransformSelection,getRichTextActiveBlockIndex,restoreRichTextBlockSelection,restoreRichTextFormattingSelection,updateRichTextInlineLink,updateRichTextInlineMark,updateRichTextInlineStyle,updateRichTextBlockAlignment} from './core/richtext-links.js?v=20261101-richtext-mixed-target';
+import {getRichTextBlockSelection,getRichTextFormattingSelection,getRichTextBlockTransformSelection,getRichTextActiveBlockIndex,restoreRichTextBlockSelection,restoreRichTextFormattingSelection,updateRichTextInlineLink,updateRichTextInlineMark,updateRichTextInlineStyle,updateRichTextBlockAlignment} from './core/richtext-links.js?v=20261101-richtext-link-picker';
 import {initialPageId,rememberPageId,requestedPageId} from './core/page-url.js';
 import {getElementCapability} from './core/capability-matrix.js?v=20261030-inspector-layout-container-contract';
 import {renderGeometryPresets} from './ui/geometry-presets.js';
-import {importRichTextClipboard} from './core/richtext-import.js?v=20261101-richtext-mixed-target';
+import {importRichTextClipboard} from './core/richtext-import.js?v=20261101-richtext-link-picker';
 import {pasteRichTextDocument} from './core/richtext-paste.js';
 import {captureStyleSnapshot,STYLE_SNAPSHOT_PROPERTIES} from './core/style-snapshot.js';
 import {LAYOUT_PRESETS,LAYOUT_TYPES,layoutMode,isManagedLayout,isLayoutPropertyRelevant,explicitGridColumnCount} from './core/layout-presets.js';
@@ -38,12 +38,12 @@ import {defaultSocialLinks,renderSocialLinksHtml} from './core/social-links.js';
 import {renderSocialLinksInspector} from './ui/social-links-inspector.js?v=20261026-profile-route-contract';
 import {defaultEmbedContent,renderEmbedHtml} from './core/creator-embed.js';
 import {renderBasicContentInspector} from './ui/basic-content-inspector.js?v=20261026-profile-route-contract';
-import {renderLegacyMediaInspector} from './ui/legacy-media-inspector.js?v=20261030-image-picker-mime-filter';
-import {renderCardInspector} from './ui/card-content-inspector.js?v=20261026-profile-route-contract';
+import {renderLegacyMediaInspector} from './ui/legacy-media-inspector.js?v=20261101-richtext-link-picker';
+import {renderCardInspector} from './ui/card-content-inspector.js?v=20261101-richtext-link-picker';
 import {renderEmbedInspector} from './ui/creator-embed-inspector.js?v=20261026-profile-route-contract';
 import {defaultCodeSnippet,renderCodeSnippet,activateCodeBlocks} from './core/code-snippet.js';
 import {renderCodeSnippetInspector} from './ui/code-snippet-inspector.js?v=20261026-profile-route-contract';
-import {readRichTextSelectionFormatting,readRichTextLinkTarget,clearRichTextInlineFormatting} from './core/richtext-links.js?v=20261101-richtext-mixed-target';
+import {readRichTextSelectionFormatting,readRichTextLinkTarget,readRichTextLinkHref,clearRichTextInlineFormatting} from './core/richtext-links.js?v=20261101-richtext-link-picker';
 import {renderAccessibilityFields} from './ui/accessibility-fields.js?v=20261026-accessibility-route-contract';
 import {createCompositionInputs} from './ui/composition-inputs.js';
 import {opaqueContrast} from './core/accessibility.js';
@@ -51,7 +51,7 @@ import {STATE_PROPERTY_IDS,applyStateStyles} from './core/state-styles.js';
 import {defaultTokens,applyTokenVariables} from './core/design-tokens.js';
 import {CONTENT_TYPES,STRUCTURAL_TYPES,validatePageForPublication,isAuthoredContent,authoredNodeHtml,contentAttributes,initContentInteractions,contentTag} from './core/authored-content.js';
 import {captureCanvasInteractionState,restoreCanvasInteractionState} from './core/canvas-interaction-state.js';
-import {renderElementContentControls,pageLinkPicker} from './ui/element-content-controls.js?v=20261030-image-picker-mime-filter';
+import {renderElementContentControls,pageLinkPicker} from './ui/element-content-controls.js?v=20261101-richtext-link-picker';
 
 let editorTokens=defaultTokens();
 function propertyInput(property,label,current,onChange,options={}){
@@ -1249,7 +1249,7 @@ function renderInspector(){
           }
           scope.textContent=range?'Kijelölt szövegrész · a vásznon és az Inspectorban ugyanaz':'Élő szöveg · jelölj ki szavakat a helyi formázáshoz';
         }
-        const rememberSelection=()=>{
+        const rememberSelection=(syncLinkFields=true)=>{
           const canvasEditor=canvas.querySelector(`.node[data-node-id="${CSS.escape(node.id)}"] .richtext-inline-surface`);
           const native=window.getSelection();
           const surface=canvasEditor&&native?.anchorNode&&canvasEditor.contains(native.anchorNode)?canvasEditor:editor;
@@ -1262,7 +1262,14 @@ function renderInspector(){
           const format=getRichTextFormattingSelection(surface);savedFormatSelection=format;
           savedBlockTransformSelection=getRichTextBlockTransformSelection(surface);
           const next=getRichTextBlockSelection(surface);savedLinkSelection=next;
-          if(linkTargetSelect)linkTargetSelect.value=readRichTextLinkTarget(richTextEditorToDocument(surface),next);
+          const currentRichText=richTextEditorToDocument(surface);
+          if(linkTargetSelect)linkTargetSelect.value=readRichTextLinkTarget(currentRichText,next);
+          if(syncLinkFields&&url){
+            const href=readRichTextLinkHref(currentRichText,next);
+            url.value=href==='mixed'?'':href;
+            url.placeholder=href==='mixed'?'Vegyes hivatkozások':'/p/home vagy https://...';
+            url.dispatchEvent(new Event('input',{bubbles:true}));
+          }
           const index=getRichTextActiveBlockIndex(surface);
           if(index!==null){
             savedBlockIndex=index;const active=richTextEditorToDocument(surface).blocks[index];
@@ -1296,8 +1303,8 @@ function renderInspector(){
           return saved;
         };
         flushRichTextDraft=saveRich;
-        toolbar.onpointerdown=rememberSelection;
-        blockSelect.onpointerdown=rememberSelection;
+        toolbar.onpointerdown=()=>rememberSelection(false);
+        blockSelect.onpointerdown=()=>rememberSelection(false);
         blockSelect.setAttribute('aria-label','Szövegblokkok típusa');
         blockSelect.onchange=()=>{
           if(composing){formatStatus.textContent='Fejezd be a szövegbevitelt a blokk átalakítása előtt.';return}
@@ -1329,7 +1336,7 @@ function renderInspector(){
             if(block)blockSelect.value=block.type==='heading'?'heading-'+(block.level||1):block.type;
           }
         };
-        alignmentSelect.onpointerdown=rememberSelection;
+        alignmentSelect.onpointerdown=()=>rememberSelection(false);
         alignmentSelect.onchange=()=>{
           const doc=richTextEditorToDocument(editor),index=savedBlockIndex??getRichTextActiveBlockIndex(editor);if(index===null){formatStatus.textContent='Előbb kattints abba a bekezdésbe, amelyet igazítani szeretnél.';return}
           try{const selection=savedFormatSelection||getRichTextFormattingSelection(editor),indices=selection?.segments?.map(segment=>segment.blockIndex)??[index],next=updateRichTextBlockAlignment(doc,indices,alignmentSelect.value);if(command('richtext.content.set',{nodeId:node.id,document:next},{render:false})){richTextDirty=false;renderRichTextEditor(editor,next);refreshCanvasRichText(next);restoreFormattingSelection();setStatus('Nem mentett módosítás');syncPublishControls()}}catch(error){formatStatus.textContent=error instanceof Error?error.message:String(error)}
@@ -1337,7 +1344,7 @@ function renderInspector(){
         const applyMarkActions=new Map();
         for(const [mark,label,glyph] of [['bold','Félkövér','B'],['italic','Dőlt','I'],['underline','Aláhúzott','U'],['strikethrough','Áthúzott','S'],['subscript','Alsó index','x₂'],['superscript','Felső index','x²'],['code','Kódformázás','</>']]){
           const button=document.createElement('button');button.type='button';button.textContent=glyph;button.dataset.mark=mark;button.title=label;
-          button.setAttribute('aria-label',label);button.onpointerdown=event=>{rememberSelection();event.preventDefault()};
+          button.setAttribute('aria-label',label);button.onpointerdown=event=>{rememberSelection(false);event.preventDefault()};
           const applyMark=()=>{
             const nativeSelection=window.getSelection();
             const hasNativeSelection=Boolean(nativeSelection?.rangeCount&&!nativeSelection.isCollapsed&&formattingSurface.contains(nativeSelection.anchorNode)&&formattingSurface.contains(nativeSelection.focusNode));
@@ -1371,14 +1378,14 @@ function renderInspector(){
           const range=savedFormatSelection||getRichTextFormattingSelection(editor);if(!range){formatStatus.textContent='Előbb jelölj ki egy szövegrészt.';return false}
           try{const doc=richTextEditorToDocument(editor),next=updateRichTextInlineStyle(doc,range,key,value);if(command('richtext.content.set',{nodeId:node.id,document:next},{render:false})){richTextDirty=false;renderRichTextEditor(editor,next);refreshCanvasRichText(next);if(!restoreFormattingSelection()&&range.blockIndex!==undefined){restoreRichTextBlockSelection(editor,range);rememberSelection()}setStatus('Nem mentett módosítás');syncPublishControls();return true}}catch(error){formatStatus.textContent=error instanceof Error?error.message:String(error)}return false
         };
-        fontFamilySelect.onpointerdown=rememberSelection;fontFamilySelect.onchange=()=>applyInlineStyle('fontFamily',fontFamilySelect.value);
-        fontSizeInput.onpointerdown=rememberSelection;fontSizeInput.oninput=()=>{fontSizeInput.dataset.pending='true'};fontSizeInput.onchange=()=>{const size=Number(fontSizeInput.value);delete fontSizeInput.dataset.pending;if(!Number.isInteger(size)||size<8||size>96){formatStatus.textContent='A betűméret 8 és 96 képpont között lehet.';return}applyInlineStyle('fontSize',`${size}px`)};
+        fontFamilySelect.onpointerdown=()=>rememberSelection(false);fontFamilySelect.onchange=()=>applyInlineStyle('fontFamily',fontFamilySelect.value);
+        fontSizeInput.onpointerdown=()=>rememberSelection(false);fontSizeInput.oninput=()=>{fontSizeInput.dataset.pending='true'};fontSizeInput.onchange=()=>{const size=Number(fontSizeInput.value);delete fontSizeInput.dataset.pending;if(!Number.isInteger(size)||size<8||size>96){formatStatus.textContent='A betűméret 8 és 96 képpont között lehet.';return}applyInlineStyle('fontSize',`${size}px`)};
         fontSizeInput.onblur=()=>{if(fontSizeInput.dataset.pending==='true')fontSizeInput.onchange()};fontSizeInput.onkeydown=event=>{if(['Tab','Enter'].includes(event.key)&&fontSizeInput.dataset.pending==='true'){fontSizeInput.onchange();if(event.key==='Enter'){event.preventDefault();fontSizeInput.blur()}}};
         for(const [key,label] of [['color','Betűszín'],['backgroundColor','Kiemelés színe']]){
           const wrapper=document.createElement('label');wrapper.className='richtext-color-control';wrapper.title=label;
           const text=document.createElement('span');text.textContent=label;
           const input=document.createElement('input');input.type='color';input.value=key==='color'?'#243247':'#fff29a';input.setAttribute('aria-label',label);
-          input.dataset.styleKey=key;input.onpointerdown=rememberSelection;input.onchange=()=>applyInlineStyle(key,input.value);
+          input.dataset.styleKey=key;input.onpointerdown=()=>rememberSelection(false);input.onchange=()=>applyInlineStyle(key,input.value);
           wrapper.append(text,input);colorTools.append(wrapper);
         }
         formatStatus.textContent='Jelölj ki szavakat a vásznon vagy itt, majd formázd őket. Az alapstílus a Stílus fülön állítható.';
@@ -1393,7 +1400,7 @@ function renderInspector(){
         linkTargetSelect=document.createElement('select');linkTargetSelect.setAttribute('aria-label','Link megnyitása');
         [['auto','Automatikus · külső link új lapon'],['_self','Ugyanebben a lapon'],['_blank','Új lapon'],['mixed','Vegyes · célok megőrzése']]
           .forEach(([value,label])=>{const option=document.createElement('option');option.value=value;option.textContent=label;if(value==='mixed')option.disabled=true;linkTargetSelect.append(option)});
-        linkTargetSelect.onpointerdown=rememberSelection;
+        linkTargetSelect.onpointerdown=()=>rememberSelection(false);
         const addLink=document.createElement('button');addLink.type='button';addLink.textContent='Link beállítása';
         const removeLink=document.createElement('button');removeLink.type='button';removeLink.textContent='Link eltávolítása';
         const linkFeedback=document.createElement('small');linkFeedback.setAttribute('role','status');
@@ -1485,9 +1492,9 @@ function renderInspector(){
             changeLink(url.value);
           }
         };
-        const pagePicker=pageLinkPicker(pages,url);pagePicker.onpointerdown=rememberSelection;pagePicker.style.gridColumn='1 / -1';linkControls.append(url,pagePicker,linkTargetSelect,addLink,removeLink,linkFeedback);
+        const pagePicker=pageLinkPicker(pages,url);pagePicker.onpointerdown=()=>rememberSelection(false);pagePicker.style.gridColumn='1 / -1';linkControls.append(url,pagePicker,linkTargetSelect,addLink,removeLink,linkFeedback);
         const clearFormat=document.createElement('button');clearFormat.type='button';clearFormat.textContent='Alapformázás';clearFormat.setAttribute('aria-label','Kijelölt szöveg formázásának törlése');clearFormat.title='Az elem alapstílusának visszaállítása a kijelölt szavakon. A szöveg és a linkek megmaradnak.';
-        clearFormat.onpointerdown=event=>{rememberSelection();event.preventDefault()};
+        clearFormat.onpointerdown=event=>{rememberSelection(false);event.preventDefault()};
         clearFormat.onclick=()=>{const range=savedFormatSelection;if(!range){formatStatus.textContent='Előbb jelölj ki egy szövegrészt.';return}const doc=clearRichTextInlineFormatting(richTextEditorToDocument(editor),range);if(commitWithoutRender(doc)){renderRichTextEditor(editor,doc);restoreFormattingSelection()}};
         characterTools.append(clearFormat);
         const scope=document.createElement('div');scope.className='richtext-scope-banner';scope.setAttribute('role','status');scope.textContent='Élő szöveg · kijelölt rész formázása';

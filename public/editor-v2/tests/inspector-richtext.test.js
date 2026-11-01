@@ -9,7 +9,7 @@ import { resolveNodeStyle } from '../core/canvas-engine.js';
 import { getProperty, listProperties } from '../core/property-registry.js?v=20261030-inspector-layout-container-contract';
 import { STYLE_MAP } from '../core/canvas-engine.js';
 import { normalizeInspectorValue, getInspectorValueContract, INSPECTOR_FONTS, INSPECTOR_SHADOWS } from '../core/property-values.js';
-import { updateRichTextInlineLink, updateRichTextInlineMark, readRichTextLinkTarget, validatedLinkHref } from '../core/richtext-links.js';
+import { updateRichTextInlineLink, updateRichTextInlineMark, readRichTextLinkTarget, readRichTextLinkHref, validatedLinkHref } from '../core/richtext-links.js';
 import { normalizeRichText } from '../core/schema.js';
 import { setBlockType,transformRichTextBlockTypes } from '../core/richtext-engine.js';
 import { ELEMENT_CAPABILITIES, getElementCapability } from '../core/capability-matrix.js';
@@ -276,6 +276,18 @@ test('mixed Rich Text link targets stay explicit and are preserved when the sele
   assert.equal(readRichTextLinkTarget(changed,range),'mixed');
   assert.equal(mixed.blocks[0].children[0].link.href,'/p/old','editing returns a new model without mutating the existing draft');
   assert.throws(()=>updateRichTextInlineLink(mixed,range,'/p/new','unknown'));
+});
+
+test('Rich Text Inspector reads a shared, mixed or absent selected link URL',()=>{
+  const model=normalizeRichText({schemaVersion:1,type:'richtext-document',blocks:[{type:'paragraph',children:[
+    {type:'text',text:'plain ',marks:[]},
+    {type:'text',text:'first',marks:[],link:{href:'/p/first'}},
+    {type:'text',text:' and ',marks:[]},
+    {type:'text',text:'second',marks:[],link:{href:'/p/second'}}
+  ]}]});
+  assert.equal(readRichTextLinkHref(model,{blockIndex:0,from:6,to:11}),'/p/first');
+  assert.equal(readRichTextLinkHref(model,{blockIndex:0,from:6,to:21}),'mixed','a selected link plus plain text or a different destination must not claim one URL');
+  assert.equal(readRichTextLinkHref(model,{blockIndex:0,from:0,to:5}),'','plain text has no selected href');
 });
 
 test('Rich Text link edits save through the real command, keep Undo/Redo, never publish', () => {

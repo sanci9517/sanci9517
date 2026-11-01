@@ -1,6 +1,6 @@
 import {defaultCardContent,CARD_VARIANTS} from '../core/card-content.js';
 import {createCompositionInputs} from './composition-inputs.js';
-import {IMAGE_MIMES,mediaAssetPicker,setMediaAssetPickerSelection} from './element-content-controls.js?v=20261030-image-picker-mime-filter';
+import {IMAGE_MIMES,mediaAssetPicker,setMediaAssetPickerSelection} from './element-content-controls.js?v=20261101-richtext-link-picker';
 
 export function renderCardInspector(node,update,{pending=()=>{}}={}){
  const model={...defaultCardContent(),...(node.props?.cardContent||{})};
