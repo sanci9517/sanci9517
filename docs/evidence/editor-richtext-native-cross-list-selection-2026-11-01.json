@@ -24,6 +24,9 @@
   "release": {
     "checkoutBranch": "work; unchanged",
     "targetBranch": "v2/foundation",
+    "githubHeadBefore": "983e1d5421e8b55f02d98ddeb71edb82a0b13f96",
+    "commit": "1268d9a7347f2e5cffd40e9258022bc72a0fa9ad",
+    "push": "PASS: normal fast-forward 983e1d54..1268d9a7 to v2/foundation; git ls-remote confirms the exact target SHA.",
     "runtimeSourceChanged": false,
     "deployment": "NOT REQUIRED: only tests and documentation changed; Cloudflare Build excludes tests/** and docs/**.",
     "workerAtVerification": {
@@ -32,7 +35,7 @@
       "trafficPercent": 100,
       "health": "Direct GET /api/health returned HTTP 200 and {ok:true, version:2.0.0}."
     },
-    "ci": "Pending verification for the documentation/test commit; no CI PASS is claimed."
+    "ci": "GitHub commit status API returned state=pending and total_count=0 (statuses=[]); no CI PASS is claimed."
   },
   "cost": "No paid service, credits, production D1 writes/migrations, R2 operations, or external dependency used."
 }
