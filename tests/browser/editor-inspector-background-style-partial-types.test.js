@@ -13,10 +13,10 @@ import {plainTextToRichText} from '../../public/editor-v2/core/richtext-engine.j
 
 const publicDir=resolve(import.meta.dirname,'../../public');
 const properties=[
-  {id:'background.gradient',key:'backgroundImage',value:{desktop:'linear-gradient(135deg, #fb7185 0%, #fbbf24 100%)',mobile:'linear-gradient(135deg, #111827 0%, #475569 100%)'}},
-  {id:'background.size',key:'backgroundSize',value:{desktop:'cover',mobile:'contain'}},
-  {id:'background.position',key:'backgroundPosition',value:{desktop:'center bottom',mobile:'right center'}},
-  {id:'background.repeat',key:'backgroundRepeat',value:{desktop:'repeat-x',mobile:'repeat-y'}}
+  {id:'background.gradient',key:'backgroundImage',value:{desktop:'linear-gradient(135deg, #fb7185 0%, #fbbf24 100%)',tablet:'linear-gradient(180deg, #ffffff 0%, #e0e7ff 100%)',mobile:'linear-gradient(135deg, #111827 0%, #475569 100%)'}},
+  {id:'background.size',key:'backgroundSize',value:{desktop:'cover',tablet:'auto',mobile:'contain'}},
+  {id:'background.position',key:'backgroundPosition',value:{desktop:'center bottom',tablet:'left center',mobile:'right center'}},
+  {id:'background.repeat',key:'backgroundRepeat',value:{desktop:'repeat-x',tablet:'no-repeat',mobile:'repeat-y'}}
 ];
 const styleKeys=properties.map(property=>property.key);
 
@@ -109,14 +109,45 @@ test('all editable PARTIAL types preserve responsive background style through In
     for(const property of properties)assert.equal(published.pages[pageId].nodes[id].responsive.desktop[property.key],property.value.desktop,`${type}: desktop Publish stores ${property.key}`);
   }
 
+  await editor.locator('.canvas-device-btn[data-device="tablet"]').click();await viewer.setViewportSize({width:768,height:900});await viewer.reload();
+  const publicTabletBaseline=Object.fromEntries(await Promise.all(editableNodes.map(async({id})=>[id,await readCss(publicNode(id))])));
+  const canvasTabletExpected={};
+  for(const {type,id} of editableNodes){await setBackground(type,id,'tablet');canvasTabletExpected[id]=await readCss(canvas(id));}
+  await editor.locator('#save').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+  for(const {type,id} of editableNodes)for(const property of properties){
+    assert.equal(readStored(id,'tablet',property.key),property.value.tablet,`${type}: tablet draft Save stores ${property.key}`);
+    assert.equal(readStored(id,'desktop',property.key),property.value.desktop,`${type}: tablet Save preserves desktop ${property.key}`);
+    assert.equal(published.pages[pageId].nodes[id].responsive?.tablet?.[property.key],undefined,`${type}: tablet Save does not publish ${property.key}`);
+  }
+  await viewer.reload();for(const {type,id} of editableNodes)assert.deepEqual(await readCss(publicNode(id)),publicTabletBaseline[id],`${type}: tablet draft Save leaves public background unchanged`);
+  await editor.reload({waitUntil:'domcontentloaded'});await editor.locator('.canvas-device-btn[data-device="tablet"]').click();
+  for(const {type,id} of editableNodes){
+    await canvas(id).evaluate(el=>el.click());await editor.locator('.inspector-tabs button').first().click();
+    for(const property of properties){
+      const control=field(property.id),group=control.locator('xpath=ancestor::section[1]'),title=group.locator(':scope > .inspector-group-title');
+      if(await title.getAttribute('aria-expanded')==='false')await title.click();
+      assert.equal(await control.locator('select:not(.property-token-picker)').inputValue(),property.value.tablet,`${type}: tablet ${property.key} survives Editor reload`);
+    }
+  }
+  await editor.locator('#publish').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));await viewer.reload();
+  for(const {type,id} of editableNodes){
+    assert.deepEqual(await readCss(publicNode(id)),canvasTabletExpected[id],`${type}: tablet Publish makes all background CSS match Canvas`);
+    for(const property of properties)assert.equal(published.pages[pageId].nodes[id].responsive.tablet[property.key],property.value.tablet,`${type}: tablet Publish stores ${property.key}`);
+  }
+  await viewer.setViewportSize({width:1366,height:900});await viewer.reload();
+  for(const {type,id} of editableNodes)assert.deepEqual(await readCss(publicNode(id)),canvasDesktopExpected[id],`${type}: tablet Publish preserves desktop public background`);
+
   await editor.locator('.canvas-device-btn[data-device="mobile"]').click();await viewer.setViewportSize({width:390,height:900});await viewer.reload();
   const publicMobileBaseline=Object.fromEntries(await Promise.all(editableNodes.map(async({id})=>[id,await readCss(publicNode(id))])));
+  for(const {type,id} of editableNodes)assert.deepEqual(publicMobileBaseline[id],canvasTabletExpected[id],`${type}: mobile inherits tablet background before its own override`);
   const canvasMobileExpected={};
   for(const {type,id} of editableNodes){await setBackground(type,id,'mobile');canvasMobileExpected[id]=await readCss(canvas(id));}
   await editor.locator('#save').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
   for(const {type,id} of editableNodes)for(const property of properties){
     assert.equal(readStored(id,'mobile',property.key),property.value.mobile,`${type}: mobile draft Save stores ${property.key}`);
     assert.equal(draft.pages[pageId].nodes[id].responsive.desktop[property.key],property.value.desktop,`${type}: mobile Save preserves desktop ${property.key}`);
+    assert.equal(draft.pages[pageId].nodes[id].responsive.tablet[property.key],property.value.tablet,`${type}: mobile Save preserves tablet ${property.key}`);
+    assert.equal(published.pages[pageId].nodes[id].responsive.tablet[property.key],property.value.tablet,`${type}: mobile Save preserves published tablet ${property.key}`);
     assert.equal(published.pages[pageId].nodes[id].responsive.mobile?.[property.key],undefined,`${type}: mobile Save does not publish ${property.key}`);
   }
   await viewer.reload();for(const {type,id} of editableNodes)assert.deepEqual(await readCss(publicNode(id)),publicMobileBaseline[id],`${type}: mobile draft Save leaves public background unchanged`);
@@ -148,13 +179,13 @@ test('all editable PARTIAL types preserve responsive background style through In
       assert.equal(await reset.getAttribute('data-property-command'),'responsive.set',`${type}: ${property.key} reset uses responsive.set`);
       await reset.click();
     }
-    assert.deepEqual(await readCss(canvas(id)),canvasDesktopExpected[id],`${type}: mobile background reset restores desktop CSS`);
+    assert.deepEqual(await readCss(canvas(id)),canvasTabletExpected[id],`${type}: mobile background reset restores tablet CSS`);
   }
   const lastNode=editableNodes.at(-1);
   await editor.locator('#undo').click();
-  assert.deepEqual(await readCss(canvas(lastNode.id)),{...canvasDesktopExpected[lastNode.id],backgroundRepeat:canvasMobileExpected[lastNode.id].backgroundRepeat},`${lastNode.type}: Undo restores the final mobile background-repeat value`);
+  assert.deepEqual(await readCss(canvas(lastNode.id)),{...canvasTabletExpected[lastNode.id],backgroundRepeat:canvasMobileExpected[lastNode.id].backgroundRepeat},`${lastNode.type}: Undo restores the final mobile background-repeat value`);
   await editor.locator('#redo').click();
-  assert.deepEqual(await readCss(canvas(lastNode.id)),canvasDesktopExpected[lastNode.id],`${lastNode.type}: Redo restores inherited desktop background`);
+  assert.deepEqual(await readCss(canvas(lastNode.id)),canvasTabletExpected[lastNode.id],`${lastNode.type}: Redo restores inherited tablet background`);
   await editor.locator('#save').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
   for(const {type,id} of editableNodes)for(const property of properties){
     assert.equal(draft.pages[pageId].nodes[id].responsive.mobile[property.key],undefined,`${type}: reset Save removes mobile ${property.key}`);
@@ -163,8 +194,35 @@ test('all editable PARTIAL types preserve responsive background style through In
   await viewer.reload();for(const {type,id} of editableNodes)assert.deepEqual(await readCss(publicNode(id)),canvasMobileExpected[id],`${type}: reset Save leaves public mobile background unchanged`);
   await editor.locator('#publish').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));await viewer.reload();
   for(const {type,id} of editableNodes){
-    assert.deepEqual(await readCss(publicNode(id)),canvasDesktopExpected[id],`${type}: reset Publish restores desktop-inherited background`);
+    assert.deepEqual(await readCss(publicNode(id)),canvasTabletExpected[id],`${type}: reset Publish restores tablet-inherited background`);
     for(const property of properties)assert.equal(published.pages[pageId].nodes[id].responsive.mobile[property.key],undefined,`${type}: reset Publish removes mobile ${property.key}`);
   }
+
+  await editor.locator('.canvas-device-btn[data-device="tablet"]').click();await viewer.setViewportSize({width:768,height:900});await viewer.reload();
+  for(const {type,id} of editableNodes){
+    await canvas(id).evaluate(el=>el.click());await editor.locator('.inspector-tabs button').first().click();
+    for(const property of properties){
+      const control=field(property.id),group=control.locator('xpath=ancestor::section[1]'),title=group.locator(':scope > .inspector-group-title');
+      if(await title.getAttribute('aria-expanded')==='false')await title.click();
+      const reset=group.locator(`.property-reset[data-property-key="${property.key}"]`);
+      assert.equal(await reset.count(),1,`${type}: tablet ${property.key} exposes inheritance reset`);
+      assert.equal(await reset.getAttribute('data-property-command'),'responsive.set',`${type}: tablet ${property.key} reset uses responsive.set`);
+      await reset.click();
+    }
+    assert.deepEqual(await readCss(canvas(id)),canvasDesktopExpected[id],`${type}: tablet background reset restores desktop Canvas CSS`);
+  }
+  await editor.locator('#save').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+  for(const {type,id} of editableNodes)for(const property of properties){
+    assert.equal(draft.pages[pageId].nodes[id].responsive.tablet[property.key],undefined,`${type}: tablet reset Save removes ${property.key}`);
+    assert.equal(published.pages[pageId].nodes[id].responsive.tablet[property.key],property.value.tablet,`${type}: tablet reset Save preserves published ${property.key}`);
+  }
+  await viewer.reload();for(const {type,id} of editableNodes)assert.deepEqual(await readCss(publicNode(id)),canvasTabletExpected[id],`${type}: tablet reset Save leaves public CSS unchanged`);
+  await editor.locator('#publish').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));await viewer.reload();
+  for(const {type,id} of editableNodes){
+    assert.deepEqual(await readCss(publicNode(id)),canvasDesktopExpected[id],`${type}: tablet reset Publish restores desktop background`);
+    for(const property of properties)assert.equal(published.pages[pageId].nodes[id].responsive.tablet[property.key],undefined,`${type}: tablet reset Publish removes ${property.key}`);
+  }
+  await viewer.setViewportSize({width:390,height:900});await viewer.reload();
+  for(const {type,id} of editableNodes)assert.deepEqual(await readCss(publicNode(id)),canvasDesktopExpected[id],`${type}: tablet reset Publish restores mobile inheritance`);
   assert.deepEqual(editorErrors,[],'opening every PARTIAL background Inspector must not throw');
 });
