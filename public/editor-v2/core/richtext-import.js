@@ -1,4 +1,4 @@
-import { resolveRichTextLinkTarget, validatedLinkHref } from './richtext-links.js?v=20261101-richtext-multiblock-links';
+import { resolveRichTextLinkTarget, validatedLinkHref } from './richtext-links.js?v=20261101-richtext-backward-selection';
 import { RICH_TEXT_FONT_FAMILIES } from './schema.js?v=20261101-richtext-multiblock-links';
 
 const MAX_CLIPBOARD_CHARS = 250_000;

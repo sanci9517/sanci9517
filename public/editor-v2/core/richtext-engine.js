@@ -1,5 +1,5 @@
 /* Sanci9517 Visual Editor v2 — structured Rich Text DOM bridge. */
-import { resolveRichTextLinkTarget, validatedLinkHref } from './richtext-links.js?v=20261101-richtext-multiblock-links';
+import { resolveRichTextLinkTarget, validatedLinkHref } from './richtext-links.js?v=20261101-richtext-backward-selection';
 import { textOffsetWithin, isRichTextHardBreak } from './richtext-selection-offset.js';
 import { RICH_TEXT_FONT_FAMILIES } from './schema.js?v=20261101-richtext-multiblock-links';
 

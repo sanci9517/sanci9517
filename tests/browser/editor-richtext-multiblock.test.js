@@ -147,6 +147,48 @@ test('Rich Text native cross-paragraph and list selection survives marks, Save a
       'list selection must survive the Inspector re-render');
     assert.deepEqual(await canvas.locator('ul > li u').allTextContents(),['ist One','List Tw'],
       'Canvas must mirror inline marks across both list items');
+    const reverseEndpoints=await listItems.evaluateAll(items=>{
+      const point=(item,offset)=>{
+        const walker=document.createTreeWalker(item,NodeFilter.SHOW_TEXT),texts=[];let text,total=0;
+        while(text=walker.nextNode()){texts.push({node:text,start:total});total+=text.nodeValue.length}
+        const match=texts.find(part=>offset<part.start+part.node.nodeValue.length);
+        if(!match)throw new Error('Cannot locate native reverse-selection character');
+        const local=offset-match.start,range=document.createRange();range.setStart(match.node,local);range.setEnd(match.node,local+1);
+        const rect=range.getBoundingClientRect();return {left:rect.left,right:rect.right,y:rect.top+rect.height/2};
+      };
+      return {start:point(items[1],6),end:point(items[0],1)};
+    });
+    // Collapse the previous selection with an ordinary click first; dragging
+    // from inside an existing contenteditable selection otherwise extends its
+    // old anchor instead of beginning a new reverse selection in Chromium.
+    await page.mouse.click(reverseEndpoints.start.right-1,reverseEndpoints.start.y);
+    await page.mouse.move(reverseEndpoints.start.right-1,reverseEndpoints.start.y);
+    await page.mouse.down();
+    await page.mouse.move(reverseEndpoints.end.left+1,reverseEndpoints.end.y,{steps:8});
+    await page.mouse.up();
+    const backwardSelection=await surface.evaluate(async editor=>{
+      const {getRichTextFormattingSelection}=await import('/editor-v2/core/richtext-links.js');
+      const {getSelectionOffsets}=await import('/editor-v2/core/richtext-engine.js');
+      const native=window.getSelection();
+      return {format:getRichTextFormattingSelection(editor),offsets:getSelectionOffsets(editor),text:native?.toString(),
+        anchor:[native?.anchorNode?.nodeValue,native?.anchorOffset],focus:[native?.focusNode?.nodeValue,native?.focusOffset]};
+    });
+    assert.match(backwardSelection.text,/ist One[\s\S]*List Tw/,'reverse native drag must select the same list text');
+    assert.deepEqual(backwardSelection.format,{segments:[{blockIndex:2,from:1,to:15}],backward:true},
+      `the Page Model range must retain native backward direction: ${JSON.stringify(backwardSelection)}`);
+    assert.equal(backwardSelection.offsets.backward,true,'the DOM bookmark must report backward selection');
+    await page.getByRole('button',{name:'Áthúzott',exact:true}).click();
+    assert.deepEqual(await listItems.locator('s').allTextContents(),['ist One','List Tw'],
+      'reverse selection formatting must update both list items');
+    const restoredBackward=await surface.evaluate(async editor=>{
+      const {getRichTextFormattingSelection}=await import('/editor-v2/core/richtext-links.js');
+      const native=window.getSelection();
+      const item=node=>(node?.nodeType===Node.ELEMENT_NODE?node:node?.parentElement)?.closest('li')?.textContent;
+      return {range:getRichTextFormattingSelection(editor),anchorItem:item(native?.anchorNode),focusItem:item(native?.focusNode)};
+    });
+    assert.equal(restoredBackward.range.backward,true,'Inspector rerender must preserve backward direction');
+    assert.equal(restoredBackward.anchorItem,'List Two','backward anchor must remain in the second list item');
+    assert.equal(restoredBackward.focusItem,'List One','backward focus must remain in the first list item');
     if(width===1366){
       await page.locator('#save').click();
       await page.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent?.startsWith('Mentve'));
@@ -161,6 +203,8 @@ test('Rich Text native cross-paragraph and list selection survives marks, Save a
       assert.equal(persisted.blocks[1].children.find(run=>run.text==='Gamma')?.link?.href,'/p/multi-block');
       assert.deepEqual(persisted.blocks[2].items.map(item=>item.filter(run=>run.marks?.includes('underline')).map(run=>run.text).join('')),
         ['ist One','List Tw'],'Save must retain native list selection formatting');
+      assert.deepEqual(persisted.blocks[2].items.map(item=>item.filter(run=>run.marks?.includes('strikethrough')).map(run=>run.text).join('')),
+        ['ist One','List Tw'],'Save must retain backward native selection formatting');
       assert.equal(persisted.blocks[0].children.map(run=>run.text).join(''),'Alpha Beta');
       assert.equal(persisted.blocks[1].children.map(run=>run.text).join(''),'Gamma Delta');
       assert.equal(published,null,'desktop Save must leave the public page unchanged');
@@ -181,6 +225,8 @@ test('Rich Text native cross-paragraph and list selection survives marks, Save a
       assert.equal(persisted.blocks[1].children.find(run=>run.text==='Gamma')?.link?.href,'/p/multi-block');
       assert.deepEqual(persisted.blocks[2].items.map(item=>item.filter(run=>run.marks?.includes('underline')).map(run=>run.text).join('')),
         ['ist One','List Tw'],'mobile Save must retain native list selection formatting');
+      assert.deepEqual(persisted.blocks[2].items.map(item=>item.filter(run=>run.marks?.includes('strikethrough')).map(run=>run.text).join('')),
+        ['ist One','List Tw'],'mobile Save must retain backward native selection formatting');
       await page.locator('#publish').click();
       await page.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent==='Publikálva');
       assert.equal(writes.at(-1).publish,true,'mobile multi-block changes require a separate Publish');
@@ -196,6 +242,8 @@ test('Rich Text native cross-paragraph and list selection survives marks, Save a
     assert.deepEqual(await publicSurface.locator('a').evaluateAll(anchors=>anchors.map(anchor=>anchor.getAttribute('href'))),['/p/multi-block','/p/multi-block']);
     assert.deepEqual(await publicSurface.locator('ul > li u').allTextContents(),['ist One','List Tw'],
       'published rendering must retain marks applied across list items');
+    assert.deepEqual(await publicSurface.locator('ul > li s').allTextContents(),['ist One','List Tw'],
+      'published rendering must retain formatting from the backward selection');
     await publicPage.close();
     assert.deepEqual(errors,[],`no browser errors at ${width}px`);
     await page.close();

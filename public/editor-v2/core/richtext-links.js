@@ -273,7 +273,12 @@ export function getRichTextFormattingSelection(editor) {
     if(from===null||to===null)return null;
     if(to>from)segments.push({blockIndex,from,to});
   }
-  return segments.length?{segments}:null;
+  if(!segments.length)return null;
+  // Range endpoints are normalized to document order. Preserve the user's
+  // anchor/focus direction separately so formatting and Inspector rerenders
+  // do not silently turn a backward drag into a forward selection.
+  const backward=selection.anchorNode===range.endContainer&&selection.anchorOffset===range.endOffset;
+  return {segments,...(backward?{backward:true}:{})};
 }
 
 /** Rebuild a native Range from canonical per-block character positions after markup is replaced.
@@ -302,6 +307,14 @@ export function restoreRichTextFormattingSelection(editor,selectionRange) {
     if(!selection)return false;
     selection.removeAllRanges();
     selection.addRange(nativeRange);
+    if(selectionRange.backward){
+      if(typeof selection.setBaseAndExtent==='function'){
+        selection.setBaseAndExtent(end.node,end.offset,start.node,start.offset);
+      }else if(typeof selection.extend==='function'){
+        selection.collapse(end.node,end.offset);
+        selection.extend(start.node,start.offset);
+      }
+    }
     return true;
   }catch{return false}
 }
