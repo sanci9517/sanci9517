@@ -1,0 +1,45 @@
+{
+  "date": "2026-11-01",
+  "plan_item": "77.44.7.A — responsive size Inspector lifecycle across PARTIAL types",
+  "status": "FULL_CHROMIUM_AND_LOCAL_CHECKS_PASS; RELEASE_PENDING; OVERALL_ACCEPTANCE_OPEN",
+  "finding": "The existing all-PARTIAL six-field size lifecycle covered desktop and mobile, but omitted tablet Inspector overrides and the tablet-to-mobile inheritance path.",
+  "change": "Extended tests/browser/editor-inspector-size-partial-types.test.js. No runtime source or public asset changed.",
+  "coverage": "All 44 editable PARTIAL types × width, height, minWidth, maxWidth, minHeight, maxHeight on desktop/tablet/mobile. Verifies responsive.set command and Page Model keys, Canvas computed CSS, draft Save without Publish, reload persistence, explicit public Publish, breakpoint isolation, mobile inheritance from tablet, mobile reset restoring tablet values, tablet reset restoring desktop values, reset Save preserving public CSS until explicit Publish, and final mobile inheritance after tablet reset.",
+  "browser": {
+    "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-inspector-size-partial-types.test.js",
+    "result": "PASS, 1/1 full real Chromium lifecycle; 283228.187629 ms test time / 283678.705692 ms total."
+  },
+  "checks": {
+    "npm run test:editor": "PASS, 11/11 files.",
+    "npm run typecheck": "PASS.",
+    "npm run test:web013:migration-gate": "PASS; local migration safety gate only; no production migration.",
+    "python3 scripts/check-canonical-plan.py": "PASS; one complete 13-file master and one active cursor.",
+    "python3 scripts/audit-active-plan-point.py": "PASS; 77.44 / WEB-011 -> 77.44.7.A; acceptance remains NOT_CERTIFIED.",
+    "python3 scripts/build-feature-traceability.py --check": "PASS; 396 source mappings.",
+    "node --check tests/browser/editor-inspector-size-partial-types.test.js": "PASS.",
+    "git diff --check": "PASS."
+  },
+  "reuse_review": {
+    "solution": "Reused the existing Property Registry, responsive.set command, dimension controls, public/Canvas renderers, and Playwright fixture. No external source or dependency was needed.",
+    "external_code_or_dependency": "None."
+  },
+  "production": {
+    "runtime_source_changed": false,
+    "public_asset_changed": false,
+    "worker_deployed": false,
+    "deployment_id": "5d81f0f0-176c-4437-b5c5-652765f70bff",
+    "version_id": "72f6626e-ba9a-4147-874a-3d8cfcf00919",
+    "traffic_percent": 100,
+    "production_state": "Read-only Cloudflare deployment API GET confirms the above 100% deployment. Production health and page-renderer hash were checked at task start; post-push production state is to be reconfirmed. No D1 migration/write or R2 operation occurred."
+  },
+  "release": {
+    "local_checkout_branch": "work; unchanged.",
+    "github_target_branch": "v2/foundation",
+    "github_head_at_start": "8fa2d9cc439ccf5649235ff2db0e5ac51f1730bd",
+    "test_commit": "fc98c474 — test(editor): cover responsive size tablet lifecycle [skip ci]",
+    "push": "PENDING: normal fast-forward and GitHub branch ref still require final verification.",
+    "ci": "The test commit uses [skip ci]. No CI PASS is claimed.",
+    "new_cost_or_dependency": "None."
+  },
+  "acceptance_boundary": "The six-field responsive size Inspector lifecycle is automated for the tested PARTIAL types. Overall 77.44.7.A and complete Visual Editor acceptance remain OPEN / NOT CERTIFIED; manual and physical acceptance remain DEFERRED until the complete Editor is implemented."
+}
