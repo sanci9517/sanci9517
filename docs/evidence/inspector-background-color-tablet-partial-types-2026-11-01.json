@@ -1,0 +1,50 @@
+{
+  "date": "2026-11-01",
+  "plan_item": "77.44.7.A — background.color tablet lifecycle across editable PARTIAL types",
+  "status": "FULL_CHROMIUM_AND_LOCAL_CHECKS_PASS; PRODUCTION_UNCHANGED; OVERALL_ACCEPTANCE_OPEN",
+  "finding": "The all-PARTIAL background.color matrix covered desktop and mobile, while tablet Save/Publish was only exercised on representative fixtures. The responsive background-color tablet path needed cross-type proof including mobile inheritance and tablet reset.",
+  "change": "Added tests/browser/editor-inspector-background-color-tablet-partial-types.test.js and refreshed docs/evidence/feature-traceability.json from its canonical generator. Runtime source and public assets did not change.",
+  "coverage": "All 44 editable PARTIAL types receive independent desktop/tablet/mobile background colors through the real Inspector. Checks responsive.set and backgroundColor Page Model routing, Canvas computed CSS, draft Save without Publish, Editor reload, explicit Publish to public CSS, desktop/tablet/mobile isolation, mobile inheritance from tablet, mobile reset restoring tablet, Undo/Redo, reset Save preserving public mobile state, separate reset Publish, tablet reset restoring desktop, and public rendering after each Publish.",
+  "browser": {
+    "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-inspector-background-color-tablet-partial-types.test.js",
+    "result": "PASS, 1/1 test; 100622.112865 ms test time / 101211.80388 ms total."
+  },
+  "checks": {
+    "node --check tests/browser/editor-inspector-background-color-tablet-partial-types.test.js": "PASS",
+    "npm run test:editor": "PASS, 11/11 files",
+    "npm run typecheck": "PASS",
+    "npm run test:web013:migration-gate": "PASS; gate only, no production migration",
+    "python3 scripts/check-canonical-plan.py": "PASS; complete 13-file master; acceptance NOT_CERTIFIED",
+    "python3 scripts/audit-active-plan-point.py": "PASS; cursor 77.44 / WEB-011 -> 77.44.7.A",
+    "python3 scripts/build-feature-traceability.py --check": "PASS; 396 mappings",
+    "python3 -m json.tool docs/evidence/inspector-background-color-tablet-partial-types-2026-11-01.json": "PASS",
+    "git diff --check": "PASS"
+  },
+  "traceability": "The required generated docs/evidence/feature-traceability.json changed only by adding the new browser test candidate to the existing 12 EDT rows that enumerate tests/*. It does not change any source hash, acceptance status, or plan feature count.",
+  "reuse_review": {
+    "solution": "Reused the existing typed color input, Property Registry, responsive.set command, public/Canvas renderers, and local Chromium fixture pattern.",
+    "external_code_or_dependency": "None; no third-party control or dependency was needed for this test-focused lifecycle gap."
+  },
+  "production": {
+    "runtime_source_changed": false,
+    "public_asset_changed": false,
+    "worker_deployed": false,
+    "deployment_id": "5d81f0f0-176c-4437-b5c5-652765f70bff",
+    "version_id": "72f6626e-ba9a-4147-874a-3d8cfcf00919",
+    "traffic_percent": 100,
+    "health": "Direct GET /api/health returned HTTP 200 with the expected service identity.",
+    "page_renderer_sha256": "005792f314f891aededf6363573c2ccd66527e53397d673e6a7b0434f6245370",
+    "d1_production_writes": 0,
+    "r2_changes": 0
+  },
+  "release": {
+    "local_checkout_branch": "work; unchanged",
+    "github_target_branch": "v2/foundation",
+    "github_head_at_start": "4980b073eeeb88d50950174115335cafc490a07a",
+    "test_commit": "92ca8f386fab063c5d080bb9cd3ec2f6165b4b48",
+    "push": "Verified normal fast-forward from 4980b073eeeb88d50950174115335cafc490a07a to 92ca8f386fab063c5d080bb9cd3ec2f6165b4b48; git ls-remote returned the exact refs/heads/v2/foundation SHA and GitHub compare reports 1 ahead / 0 behind.",
+    "ci": "The test commit uses [skip ci]; GitHub combined status returned statuses=[]. No CI PASS is claimed.",
+    "new_cost_or_dependency": "None."
+  },
+  "acceptance_boundary": "The responsive background.color lifecycle is automated for all 44 editable PARTIAL types. Overall 77.44.7.A remains OPEN / NOT CERTIFIED; complete Visual Editor manual and physical acceptance remains DEFERRED."
+}
