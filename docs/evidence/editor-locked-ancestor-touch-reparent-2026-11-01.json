@@ -1,0 +1,70 @@
+{
+  "date": "2026-11-01",
+  "plan_items": [
+    "77.44.7.A",
+    "EDT-014"
+  ],
+  "status": "REAL_CHROMIUM_AND_LOCAL_CHECKS_PASS; TEST_FAST_FORWARD_PUSH_VERIFIED; PRODUCTION_UNCHANGED; OVERALL_ACCEPTANCE_OPEN",
+  "finding": "The existing tests covered locked-ancestor edit restrictions and unlocked touch reparenting separately, but did not prove the locked-descendant touch drag remains denied and becomes available after unlocking the ancestor.",
+  "change": {
+    "files": [
+      "tests/browser/editor-element-insertion.test.js"
+    ],
+    "behavior": [
+      "A mobile long-press drag from a leaf beneath a locked ancestor produces no drop preview and leaves the Canvas/Page Model parent unchanged.",
+      "After unlocking the ancestor, the same touch gesture previews and reparents the leaf to a valid sibling container.",
+      "Save persists the authorized draft reparent; Undo afterward changes only the editor draft and does not retroactively change the saved Page Model.",
+      "The test opens/closes responsive docks and scrolls the target into the mobile layer viewport before dispatching touch pointers."
+    ],
+    "runtime_or_public_asset_changed": false
+  },
+  "reuse_review": {
+    "solution": "Reused the project's existing locked-ancestor fixture and the adjacent desktop/touch hierarchy reparent Chromium test, including its long-press pointer-event protocol.",
+    "external_code_or_dependency": "None; this is additional coverage of existing project-owned behavior."
+  },
+  "tests": {
+    "focused_chromium": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec --test-name-pattern='nested locked ancestor' tests/browser/editor-element-insertion.test.js",
+      "result": "PASS, 1/1 real Chromium test; final rerun 5.9 s"
+    },
+    "browser_file": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-element-insertion.test.js",
+      "result": "PASS, 7/7 real Chromium tests; 49.8 s total"
+    },
+    "editor_unit": "PASS, 11/11 files",
+    "typecheck": "PASS",
+    "migration_gate": "PASS; repository gate only, no production migration",
+    "canonical_plan": "PASS; complete 13-file master, acceptance remains NOT CERTIFIED",
+    "active_plan_point": "PASS; 77.44 / WEB-011 -> 77.44.7.A",
+    "traceability": "PASS; 396 source mappings, acceptance remains NOT CERTIFIED",
+    "syntax_and_diff": "PASS; node --check tests/browser/editor-element-insertion.test.js and git diff --check"
+  },
+  "release": {
+    "test_commit": "57852242f5b7fbe59a98c5d2bd5d97c55572e895",
+    "branch": "v2/foundation",
+    "fast_forward_push": "VERIFIED; remote refs/heads/v2/foundation equals the test commit",
+    "github_combined_status": "statuses=[]; no CI PASS claim",
+    "worker_redeployed": false
+  },
+  "production_read_only_verification": {
+    "deployment_id": "5d81f0f0-176c-4437-b5c5-652765f70bff",
+    "worker_version_id": "72f6626e-ba9a-4147-874a-3d8cfcf00919",
+    "traffic_percent": 100,
+    "health": "HTTP 200; service sanci9517-streamer-brand version 2.0.0",
+    "public_asset": "assets/page-renderer.js",
+    "local_asset_sha256": "005792f314f891aededf6363573c2ccd66527e53397d673e6a7b0434f6245370",
+    "live_asset_sha256": "005792f314f891aededf6363573c2ccd66527e53397d673e6a7b0434f6245370",
+    "runtime_source_unchanged": true
+  },
+  "cost_and_data_safety": {
+    "new_cost": false,
+    "production_d1_migration_or_write": false,
+    "r2_mutation": false,
+    "new_dependency": false
+  },
+  "remaining": [
+    "Complete remaining EDT-014 lock/reparent acceptance and published-renderer checks.",
+    "Complete full Editor manual and physical-device acceptance only at the planned final acceptance gate."
+  ],
+  "acceptance": "THIS LOCKED-ANCESTOR TOUCH-DRAG SLICE TESTED; EDT-014 AND 77.44.7.A NOT CERTIFIED"
+}
