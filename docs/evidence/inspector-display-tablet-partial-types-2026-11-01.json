@@ -1,0 +1,50 @@
+{
+  "date": "2026-11-01",
+  "plan_item": "77.44.7.A — layout.display tablet lifecycle across editable PARTIAL types",
+  "status": "FULL_CHROMIUM_AND_LOCAL_CHECKS_PASS; PRODUCTION_UNCHANGED; OVERALL_ACCEPTANCE_OPEN",
+  "finding": "The responsive layout.display field had representative and 18-layout-type tablet coverage, but no full lifecycle across all 44 editable PARTIAL types.",
+  "change": "Added tests/browser/editor-inspector-display-tablet-partial-types.test.js and regenerated docs/evidence/feature-traceability.json from its canonical generator. Runtime source and public assets did not change.",
+  "coverage": "All 44 editable PARTIAL types receive distinct desktop/tablet/mobile display values from the real Inspector, cycling through block, flex, grid, inline, and none. The test checks responsive.set/display routing, Canvas CSS, exact raw display values in the Page Model, draft Save and Editor reload, public snapshot isolation before Publish, separate Publish, desktop/tablet/mobile inheritance, mobile reset to tablet and tablet reset to desktop, and Save versus Publish for each reset.",
+  "css_context": "The published page root is a flex container. CSS blockifies inline-level display values for flex items, so the test compares the stored raw inline value to the Page Model and expects the public computed value to be block when the parent formatting context is flex/grid. This is CSS layout behavior, not a source/runtime defect.",
+  "browser": {
+    "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-inspector-display-tablet-partial-types.test.js",
+    "result": "PASS, 1/1 test; 87686.576121 ms test time / 88233.031811 ms total."
+  },
+  "checks": {
+    "node --check tests/browser/editor-inspector-display-tablet-partial-types.test.js": "PASS",
+    "npm run test:editor": "PASS, 11/11 files",
+    "npm run typecheck": "PASS",
+    "npm run test:web013:migration-gate": "PASS; safety gate only, no production migration",
+    "python3 scripts/check-canonical-plan.py": "PASS; complete 13-file master; acceptance NOT_CERTIFIED",
+    "python3 scripts/audit-active-plan-point.py": "PASS; cursor 77.44 / WEB-011 -> 77.44.7.A",
+    "python3 scripts/build-feature-traceability.py --check": "PASS; 396 source mappings",
+    "git diff --check": "PASS"
+  },
+  "traceability": "The generated crosswalk adds the new browser test candidate to the existing EDT source/test candidate rows. It does not alter implementation source hashes, acceptance status, or the 396-feature plan count.",
+  "reuse_review": {
+    "solution": "Reused the existing typed display selector, Property Registry, responsive.set command, Canvas/public rendering paths, and local Playwright/Chromium fixture.",
+    "external_code_or_dependency": "None; no third-party code or dependency was needed."
+  },
+  "production": {
+    "runtime_source_changed": false,
+    "public_asset_changed": false,
+    "worker_deployed": false,
+    "deployment_id": "5d81f0f0-176c-4437-b5c5-652765f70bff",
+    "version_id": "72f6626e-ba9a-4147-874a-3d8cfcf00919",
+    "traffic_percent": 100,
+    "health": "Direct GET /api/health returned HTTP 200; service identity was sanci9517-streamer-brand.",
+    "page_renderer_sha256_local_and_live": "005792f314f891aededf6363573c2ccd66527e53397d673e6a7b0434f6245370",
+    "d1_production_writes": 0,
+    "r2_changes": 0
+  },
+  "release": {
+    "local_checkout_branch": "work; unchanged",
+    "github_target_branch": "v2/foundation",
+    "github_head_at_start": "7579194323db26e8a7ce5559050e65b308329d5f",
+    "test_commit": "b4e5f8f3c87915e3f63a4348ea663e0fabffa3d2",
+    "push": "Verified normal fast-forward from 7579194323db26e8a7ce5559050e65b308329d5f to b4e5f8f3c87915e3f63a4348ea663e0fabffa3d2; git ls-remote returned the exact refs/heads/v2/foundation SHA and GitHub compare reported 1 ahead / 0 behind.",
+    "ci": "The test commit uses [skip ci]; GitHub combined status returned statuses=[]. No CI PASS is claimed.",
+    "new_cost_or_dependency": "None."
+  },
+  "acceptance_boundary": "The layout.display tablet lifecycle is automated across all 44 editable PARTIAL types. Overall 77.44.7.A remains OPEN / NOT CERTIFIED; complete Visual Editor manual and physical acceptance remains DEFERRED."
+}
