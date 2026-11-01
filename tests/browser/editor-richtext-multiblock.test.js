@@ -11,7 +11,7 @@ import {execute} from '../../public/editor-v2/core/commands.js';
 
 const root=resolve(import.meta.dirname,'../../public');
 
-test('Rich Text cross-paragraph selection survives repeated marks and draft Save on mobile and desktop',async t=>{
+test('Rich Text native cross-paragraph and list selection survives marks, Save and Publish on mobile and desktop',async t=>{
   const model=createEditorState(createDocument());
   const pageId=model.document.activePageId;
   execute(model,{type:'element.add',payload:{type:NODE_TYPES.RICHTEXT,parentId:model.document.pages[pageId].rootId}});
@@ -19,7 +19,11 @@ test('Rich Text cross-paragraph selection survives repeated marks and draft Save
   execute(model,{type:'richtext.content.set',payload:{nodeId,document:{
     schemaVersion:1,type:'richtext-document',
     blocks:[{type:'paragraph',children:[{type:'text',text:'Alpha Beta',marks:[]}]},
-      {type:'paragraph',children:[{type:'text',text:'Gamma Delta',marks:[]}]}]
+      {type:'paragraph',children:[{type:'text',text:'Gamma Delta',marks:[]}]},
+      {type:'bulleted-list',items:[
+        [{type:'text',text:'List One',marks:[]}],
+        [{type:'text',text:'List Two',marks:[]}]
+      ]}]
   }}});
   let draft=structuredClone(model.document),published=null,version=1;
   const writes=[];
@@ -111,6 +115,38 @@ test('Rich Text cross-paragraph selection survives repeated marks and draft Save
     assert.deepEqual(await canvas.locator('strong').allTextContents(),['Beta','Gamma'],'canvas must mirror the Inspector model');
     assert.deepEqual(await canvas.locator('em').allTextContents(),['Beta','Gamma']);
     assert.deepEqual(await canvas.locator('code').allTextContents(),['Beta','Gamma']);
+    const listItems=surface.locator('ul > li');
+    await listItems.nth(1).scrollIntoViewIfNeeded();
+    const listEndpoints=await listItems.evaluateAll(items=>{
+      const point=(item,offset)=>{
+        const text=document.createTreeWalker(item,NodeFilter.SHOW_TEXT).nextNode();
+        if(!text)throw new Error('Rich Text list item has no text');
+        const range=document.createRange();range.setStart(text,offset);range.setEnd(text,offset+1);
+        const rect=range.getBoundingClientRect();
+        if(!rect.width||!rect.height)throw new Error('Cannot measure native list selection endpoint');
+        return {left:rect.left,right:rect.right,y:rect.top+rect.height/2};
+      };
+      return {start:point(items[0],1),end:point(items[1],6)};
+    });
+    await page.mouse.move(listEndpoints.start.left+1,listEndpoints.start.y);
+    await page.mouse.down();
+    await page.mouse.move(listEndpoints.end.right-1,listEndpoints.end.y,{steps:8});
+    await page.mouse.up();
+    assert.match(await page.evaluate(()=>window.getSelection()?.toString()??''),/ist One[\s\S]*List Tw/,
+      'native drag must select through both list items');
+    const listSegments=await surface.evaluate(async editor=>{
+      const {getRichTextFormattingSelection}=await import('/editor-v2/core/richtext-links.js');
+      return getRichTextFormattingSelection(editor)?.segments;
+    });
+    assert.deepEqual(listSegments,[{blockIndex:2,from:1,to:15}],
+      'model offsets must omit the visual separator between nested list items');
+    await page.getByRole('button',{name:'Aláhúzott',exact:true}).click();
+    assert.deepEqual(await listItems.locator('u').allTextContents(),['ist One','List Tw'],
+      'one native selection formats both list-item segments');
+    assert.match(await page.evaluate(()=>window.getSelection()?.toString()??''),/ist One[\s\S]*List Tw/,
+      'list selection must survive the Inspector re-render');
+    assert.deepEqual(await canvas.locator('ul > li u').allTextContents(),['ist One','List Tw'],
+      'Canvas must mirror inline marks across both list items');
     if(width===1366){
       await page.locator('#save').click();
       await page.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent?.startsWith('Mentve'));
@@ -123,6 +159,8 @@ test('Rich Text cross-paragraph selection survives repeated marks and draft Save
       assert.equal(persisted.blocks[1].children.find(run=>run.text==='Gamma')?.marks?.includes('code'),true);
       assert.equal(persisted.blocks[0].children.find(run=>run.text==='Beta')?.link?.href,'/p/multi-block');
       assert.equal(persisted.blocks[1].children.find(run=>run.text==='Gamma')?.link?.href,'/p/multi-block');
+      assert.deepEqual(persisted.blocks[2].items.map(item=>item.filter(run=>run.marks?.includes('underline')).map(run=>run.text).join('')),
+        ['ist One','List Tw'],'Save must retain native list selection formatting');
       assert.equal(persisted.blocks[0].children.map(run=>run.text).join(''),'Alpha Beta');
       assert.equal(persisted.blocks[1].children.map(run=>run.text).join(''),'Gamma Delta');
       assert.equal(published,null,'desktop Save must leave the public page unchanged');
@@ -141,6 +179,8 @@ test('Rich Text cross-paragraph selection survives repeated marks and draft Save
       assert.equal(persisted.blocks[1].children.find(run=>run.text==='Gamma')?.marks?.includes('italic'),true);
       assert.equal(persisted.blocks[0].children.find(run=>run.text==='Beta')?.link?.href,'/p/multi-block');
       assert.equal(persisted.blocks[1].children.find(run=>run.text==='Gamma')?.link?.href,'/p/multi-block');
+      assert.deepEqual(persisted.blocks[2].items.map(item=>item.filter(run=>run.marks?.includes('underline')).map(run=>run.text).join('')),
+        ['ist One','List Tw'],'mobile Save must retain native list selection formatting');
       await page.locator('#publish').click();
       await page.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent==='Publikálva');
       assert.equal(writes.at(-1).publish,true,'mobile multi-block changes require a separate Publish');
@@ -154,6 +194,8 @@ test('Rich Text cross-paragraph selection survives repeated marks and draft Save
     assert.deepEqual(await publicSurface.locator('em').allTextContents(),['Beta','Gamma']);
     assert.deepEqual(await publicSurface.locator('a').allTextContents(),['Beta','Gamma'],'the published renderer must retain each linked block segment');
     assert.deepEqual(await publicSurface.locator('a').evaluateAll(anchors=>anchors.map(anchor=>anchor.getAttribute('href'))),['/p/multi-block','/p/multi-block']);
+    assert.deepEqual(await publicSurface.locator('ul > li u').allTextContents(),['ist One','List Tw'],
+      'published rendering must retain marks applied across list items');
     await publicPage.close();
     assert.deepEqual(errors,[],`no browser errors at ${width}px`);
     await page.close();

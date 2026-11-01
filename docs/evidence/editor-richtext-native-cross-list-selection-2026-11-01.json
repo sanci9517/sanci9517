@@ -1,0 +1,38 @@
+{
+  "date": "2026-11-01",
+  "plan_item": "77.44.7.B — native pointer selection across Rich Text list items",
+  "status": "AUTOMATED_PASS; TEST_AND_DOCUMENTATION_ONLY; OVERALL_77_44_7_B_OPEN",
+  "finding": "Native Chromium mouse selection had been verified across paragraphs, while list-item offset coverage used a programmatically constructed Range. That left the browser selection path through nested LI elements unverified.",
+  "change": [
+    "The existing mobile/desktop multi-block Rich Text browser lifecycle now includes two adjacent list items and performs a real mouse drag from inside the first item into the second.",
+    "The test verifies the browser's native Selection text, its canonical single-list-block Page Model offsets (without the visual LI separator), underline formatting and selection restoration, Canvas parity, draft Save, separate Publish, and published renderer output.",
+    "No runtime source, schema, dependency, production configuration, or production data changed."
+  ],
+  "tests": {
+    "focusedNativeListSelection": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-reporter=spec tests/browser/editor-richtext-multiblock.test.js — PASS 1/1, covering 390px and 1366px viewports.",
+    "richTextBrowserRegression": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-richtext-*.test.js — PASS 12/12 real Chromium tests.",
+    "editorUnit": "npm run test:editor — PASS, 11/11 test files.",
+    "web013": "npm run test:web013 — PASS, 11/11 tests; migration safety gate PASS.",
+    "typecheck": "npm run typecheck — PASS.",
+    "planAndTraceability": "Canonical plan and active-point gates PASS; 396 source mappings PASS, 13 master files, active cursor 77.44.7.B. Functional acceptance remains NOT_CERTIFIED.",
+    "syntaxAndDiff": "node --check tests/browser/editor-richtext-multiblock.test.js and git diff --check — PASS."
+  },
+  "reuse": {
+    "solution": "Used the existing project-owned Rich Text DOM, canonical UTF-16 offset bridge, Page Model selection and mark commands, and repository Playwright/Chromium fixture. DOM Range was used only to measure endpoint glyph coordinates; mouse input created the selection.",
+    "externalCode": "None; no new dependency, paid service, or infrastructure."
+  },
+  "release": {
+    "checkoutBranch": "work; unchanged",
+    "targetBranch": "v2/foundation",
+    "runtimeSourceChanged": false,
+    "deployment": "NOT REQUIRED: only tests and documentation changed; Cloudflare Build excludes tests/** and docs/**.",
+    "workerAtVerification": {
+      "deploymentId": "e34ef8f7-5309-4f67-882e-011b05cd8538",
+      "versionId": "fd3b228e-55d9-4a44-b2f4-ee543a645e2b",
+      "trafficPercent": 100,
+      "health": "Direct GET /api/health returned HTTP 200 and {ok:true, version:2.0.0}."
+    },
+    "ci": "Pending verification for the documentation/test commit; no CI PASS is claimed."
+  },
+  "cost": "No paid service, credits, production D1 writes/migrations, R2 operations, or external dependency used."
+}
