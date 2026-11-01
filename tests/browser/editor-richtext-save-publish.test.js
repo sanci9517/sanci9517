@@ -439,4 +439,27 @@ test('actual Inspector keeps unsaved Rich Text through Ctrl+S, reload and separa
   await tab.locator('#publish').click();await tab.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent==='Publikálva');
   await publicTab.reload();
   assert.equal(await publicTab.locator('.visual-richtext a').first().getAttribute('href'),'/p/published-slug','explicit Publish exposes the internal route in the public snapshot');
+
+  // Link removal is also a draft-only edit until the separate Publish action.
+  await openEditor();
+  const linkToRemove=tab.locator('.richtext-editor-surface a').first();
+  await linkToRemove.locator('span').evaluate(el=>{
+    const range=document.createRange();range.selectNodeContents(el);
+    const selection=window.getSelection();selection.removeAllRanges();selection.addRange(range);
+    document.dispatchEvent(new Event('selectionchange'));
+  });
+  await tab.evaluate(()=>new Promise(requestAnimationFrame));
+  await tab.getByRole('button',{name:'Link eltávolítása'}).click();
+  assert.equal(await tab.locator('.richtext-editor-surface a').count(),3,'removing the selected link leaves neighboring links intact');
+  await tab.locator('#save').click();await tab.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent?.startsWith('Mentve'));
+  assert.ok(!hrefs(draft).includes('/p/published-slug'),'draft Save removes the selected href');
+  assert.ok(hrefs(published).includes('/p/published-slug'),'draft Save leaves the published link unchanged');
+  await openEditor();
+  assert.equal(await tab.locator('.richtext-editor-surface a').count(),3,'link removal survives Editor reload');
+  await tab.locator('#publish').click();await tab.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent==='Publikálva');
+  await publicTab.reload();
+  assert.equal(await publicTab.locator('.visual-richtext a').count(),3,'explicit Publish exposes link removal on the public page');
+  const publishedHrefs=await publicTab.locator('.visual-richtext a').evaluateAll(links=>links.map(link=>link.getAttribute('href')));
+  assert.ok(!publishedHrefs.includes('/p/published-slug'),'published page no longer links to the removed destination');
+  await refreshReport();await reportStatus.getByText('Tartalmi linkhibák: 0').waitFor();
 });
