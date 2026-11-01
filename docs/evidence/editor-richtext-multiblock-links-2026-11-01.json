@@ -1,0 +1,64 @@
+{
+  "date": "2026-11-01",
+  "plan_item": "77.44.7.B — cross-block Rich Text link insertion/removal lifecycle",
+  "status": "AUTOMATED_PASS; PRODUCTION_RELEASE_VERIFIED; OVERALL_77_44_7_B_OPEN",
+  "finding": "Rich Text formatting already captured canonical per-block segments across a selection, but Inspector link controls and the link model mutation accepted only a single-block range. A selected phrase spanning paragraphs could be formatted but could not be linked through the Inspector.",
+  "change": [
+    "The Inspector preserves the existing same-block/caret-in-link selection behavior and falls back to the canonical segmented selection when the selection crosses blocks.",
+    "Link insertion, URL update, mixed-target preservation and unlink apply independently to each selected block segment; block/list/table structure, inline marks, styles and out-of-selection links are preserved.",
+    "The link URL input explicitly snapshots the selection before focus moves to the control. The cache-bust token was advanced for the Editor entry point and its transitive modules.",
+    "The browser regression selects text across two paragraphs, applies marks and a link, removes and reapplies the link, verifies draft Save does not publish, then separately publishes and checks both public anchors at mobile and desktop Editor widths."
+  ],
+  "tests": {
+    "editorUnit": "npm run test:editor — PASS, 11/11 test files.",
+    "richTextBrowser": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-richtext-save-publish.test.js tests/browser/editor-inspector-richtext-controls.test.js tests/browser/editor-richtext-selection.test.js tests/browser/editor-richtext-multiblock.test.js tests/browser/editor-richtext-nested-links.test.js tests/browser/editor-richtext-structural-offsets.test.js tests/browser/editor-richtext-block-transform.test.js tests/browser/editor-richtext-partial-list.test.js tests/browser/editor-richtext-nested-paste.test.js tests/browser/editor-richtext-ime-final-input.test.js tests/browser/editor-plain-text-ime.test.js tests/browser/editor-richtext-hardbreak-clipboard.test.js tests/browser/editor-richtext-empty-selection.test.js tests/browser/editor-richtext-nested-styles.test.js tests/browser/web013-admin-link-report.test.js tests/browser/web013-public-richtext.test.js — PASS, 17/17 real Chromium tests.",
+    "web013": "npm run test:web013 — PASS, 11/11 tests; migration safety gate PASS.",
+    "targetedAfterCacheBust": "Rich Text multi-block browser lifecycle — PASS, 1/1 at mobile and desktop widths.",
+    "typecheck": "npm run typecheck — PASS.",
+    "planAndTraceability": "Canonical plan and active-point gates PASS; 396 source mappings PASS, 13 master files, cursor 77.44.7.B; functional acceptance remains NOT_CERTIFIED.",
+    "syntaxAndDiff": "node --check on changed JavaScript files and git diff --check — PASS.",
+    "migrationGate": "npm run test:web013:migration-gate — PASS; no production migration was run.",
+    "dryRun": "npx wrangler deploy --dry-run — PASS, Wrangler 4.130.0, 162 assets. Wrangler emitted a non-blocking EROFS warning while attempting to write its debug log under the session's read-only /home/agent; dry-run exited successfully."
+  },
+  "reuse": {
+    "solution": "Reused the project-owned Rich Text schema, canonical per-block selection segments, range mutation, URL validation, shared Inspector commands, renderer and existing Chromium fixture.",
+    "externalCode": "None; no dependency, paid service or infrastructure was added."
+  },
+  "release": {
+    "checkoutBranch": "work; unchanged",
+    "targetBranch": "v2/foundation",
+    "githubHeadBefore": "502cd8d5187599e5eed122ddbe2529693f1241dc",
+    "runtimeCommit": "2f985caa5437cb11f3c7bac01e0fc3b99066b87a",
+    "push": "PASS: normal fast-forward 502cd8d5..2f985caa to v2/foundation; git ls-remote confirms the exact target SHA.",
+    "ci": "GitHub commit status API returned state=pending and total_count=0 (statuses=[]); no CI PASS is claimed.",
+    "deployment": {
+      "id": "e34ef8f7-5309-4f67-882e-011b05cd8538",
+      "versionId": "fd3b228e-55d9-4a44-b2f4-ee543a645e2b",
+      "createdOn": "2026-11-01T15:07:51.583023Z",
+      "trafficPercent": 100,
+      "trigger": "Cloudflare automatic Worker deployment after the verified runtime push."
+    },
+    "d1Preflight": "Cloudflare D1 Query API SELECT name FROM d1_migrations ORDER BY name; 34 rows read, rows_written=0, changed_db=false.",
+    "d1Postflight": "The same SELECT-only query read 34 rows after deployment; rows_written=0, changed_db=false. No migration or production data write occurred.",
+    "d1ProductionWrites": 0,
+    "r2Changes": 0
+  },
+  "production": {
+    "runtimeSourceChanged": true,
+    "health": "GET /api/health returned HTTP 200 and {ok:true, service:sanci9517-streamer-brand, version:2.0.0, server:cloudflare-worker}.",
+    "assets": [
+      {"path":"/editor-v2/app.js","status":200,"sha256":"5bf28f9396b53f9e6294917a3f5b5a784d414e678688e40c26b196043c46a930","matchesLocal":true},
+      {"path":"/editor-v2/","status":200,"sha256":"7dd8fac2b81655c63745674b46b2eab45849abdfc7947a0ab62a8a6a28a28684","matchesLocal":true},
+      {"path":"/editor-v2/core/richtext-engine.js","status":200,"sha256":"e02831fdf007624f2a42355d5b00d657d2a7fe012c610ae8123cbb81558037cb","matchesLocal":true},
+      {"path":"/editor-v2/core/richtext-import.js","status":200,"sha256":"6a1d5a0c817d48417efbfb22f3a5f13d838fc6dfa034c0a07bc6a3f95660a9df","matchesLocal":true},
+      {"path":"/editor-v2/core/richtext-links.js","status":200,"sha256":"06ec7f4706450874bb6f98a545f89fc8fc85b68ec03a0c027d98208321e1a591","matchesLocal":true},
+      {"path":"/editor-v2/ui/card-content-inspector.js","status":200,"sha256":"98417b59b6ac0393a0e10a928fcd5189d9876b97f4d9e1a0621b4b9074669ef9","matchesLocal":true},
+      {"path":"/editor-v2/ui/legacy-media-inspector.js","status":200,"sha256":"5a670360c5b80b5a63a209a170480ca600faf4dc379b2b250eb0e4a743d191ee","matchesLocal":true},
+      {"path":"/editor-v2/ui/property-controls.js","status":200,"sha256":"464b94685092b373a37f25690e19c33894cf2094f20cf1564ea66ad731987208","matchesLocal":true}
+    ],
+    "directIndexHtml": "GET /editor-v2/index.html redirects (307) to the canonical slash URL; GET /editor-v2/ returned 200 and its SHA-256 matches public/editor-v2/index.html.",
+    "productionD1Writes": 0,
+    "productionR2Changes": 0
+  },
+  "cost": "No paid service, credit or external dependency used."
+}
