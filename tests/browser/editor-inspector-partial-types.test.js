@@ -1051,12 +1051,13 @@ test('every PARTIAL type renders Inspector routes and preserves Save versus Publ
   }
 
   // The remaining shared visual-effect fields have distinct CSS keys and
-  // typed Inspector controls. Exercise their complete desktop/mobile draft
+  // typed Inspector controls. Exercise their complete three-breakpoint draft
   // and Publish lifecycle against every editable PARTIAL renderer.
   const effectKeys=['rotate','scale','filter','transition'];
   const effectPropertyIds={rotate:'transform.rotate',scale:'transform.scale',filter:'filter.effect',transition:'animation.transition'};
   const desktopEffects={rotate:'15deg',scale:'1.2',filter:'grayscale(1)',transition:'all 180ms ease'};
-  const mobileEffects={rotate:'30deg',scale:'0.8',filter:'sepia(.7)',transition:'all 300ms ease'};
+  const tabletEffects={rotate:'7deg',scale:'0.85',filter:'contrast(1.2)',transition:'all 300ms ease'};
+  const mobileEffects={rotate:'30deg',scale:'0.8',filter:'sepia(.7)',transition:'all 180ms ease'};
   const computedEffects=node=>node.evaluate(el=>{const css=getComputedStyle(el);return{rotate:css.rotate,scale:css.scale,filter:css.filter,transitionProperty:css.transitionProperty,transitionDuration:css.transitionDuration,transitionTimingFunction:css.transitionTimingFunction}});
   const expectedEffects=values=>({rotate:values.rotate,scale:values.scale,filter:values.filter==='sepia(.7)'?'sepia(0.7)':values.filter,transitionProperty:'all',transitionDuration:values.transition==='all 180ms ease'?'0.18s':'0.3s',transitionTimingFunction:'ease'});
   const setEffectValues=async(type,id,values,label)=>{
@@ -1109,9 +1110,47 @@ test('every PARTIAL type renders Inspector routes and preserves Save versus Publ
     for(const key of effectKeys)assert.equal(published.pages[pageId].nodes[id].responsive.desktop[key],desktopEffects[key],`${type}: Publish stores desktop ${key}`);
   }
 
+  await editor.locator('.canvas-device-btn[data-device="tablet"]').click();
+  await viewer.setViewportSize({width:768,height:900});await viewer.reload();
+  const tabletEffectBaseline=Object.fromEntries(await Promise.all(editableNodes.map(async({id})=>[id,await computedEffects(publicNode(id))])));
+  for(const {type,id} of editableNodes)await setEffectValues(type,id,tabletEffects,'tablet');
+  await editor.locator('#save').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+  for(const {type,id} of editableNodes){
+    const saved=draft.pages[pageId].nodes[id].responsive.tablet;
+    for(const key of effectKeys){
+      assert.equal(saved[key],tabletEffects[key],`${type}: tablet draft Save stores ${key}`);
+      assert.equal(draft.pages[pageId].nodes[id].responsive.desktop[key],desktopEffects[key],`${type}: tablet Save preserves desktop ${key}`);
+      assert.equal(published.pages[pageId].nodes[id].responsive.tablet?.[key],undefined,`${type}: tablet Save keeps ${key} unpublished`);
+    }
+  }
+  await viewer.reload();
+  for(const {type,id} of editableNodes)assert.deepEqual(await computedEffects(publicNode(id)),tabletEffectBaseline[id],`${type}: tablet draft Save leaves public effects unchanged`);
+  await editor.reload({waitUntil:'domcontentloaded'});
+  await editor.locator('.canvas-device-btn[data-device="tablet"]').click();
+  for(const {type,id} of editableNodes){
+    await editor.locator(`.node[data-node-id="${id}"]`).evaluate(el=>el.click());
+    await editor.locator('.inspector-tabs button').first().click();
+    assert.equal(await inspector.locator('[data-property-id="transform.rotate"] input[type="number"]').inputValue(),'7',`${type}: tablet rotation survives Editor reload`);
+    assert.equal(await inspector.locator('[data-property-id="transform.scale"] input[type="number"]').inputValue(),'0.85',`${type}: tablet scale survives Editor reload`);
+    assert.equal(await inspector.locator('[data-property-id="filter.effect"] select:not(.property-token-picker)').inputValue(),tabletEffects.filter,`${type}: tablet filter survives Editor reload`);
+    assert.equal(await inspector.locator('[data-property-id="animation.transition"] select:not(.property-token-picker)').inputValue(),tabletEffects.transition,`${type}: tablet transition survives Editor reload`);
+  }
+  await editor.locator('#publish').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
+  await viewer.reload();
+  const tabletComputedExpected=expectedEffects(tabletEffects);
+  for(const {type,id} of editableNodes){
+    assert.deepEqual(await computedEffects(publicNode(id)),tabletComputedExpected,`${type}: tablet Publish renders visual effects`);
+    for(const key of effectKeys)assert.equal(published.pages[pageId].nodes[id].responsive.tablet[key],tabletEffects[key],`${type}: tablet Publish stores ${key}`);
+  }
+  await viewer.setViewportSize({width:1366,height:900});await viewer.reload();
+  for(const {type,id} of editableNodes)assert.deepEqual(await computedEffects(publicNode(id)),desktopComputedExpected,`${type}: tablet Publish preserves desktop visual effects`);
+
   await editor.locator('.canvas-device-btn[data-device="mobile"]').click();
   await viewer.setViewportSize({width:390,height:900});await viewer.reload();
   const mobileEffectBaseline=Object.fromEntries(await Promise.all(editableNodes.map(async({id})=>[id,await computedEffects(publicNode(id))])));
+  for(const {type,id} of editableNodes)assert.deepEqual(mobileEffectBaseline[id],tabletComputedExpected,`${type}: mobile inherits tablet effects before its own override`);
   for(const {type,id} of editableNodes)await setEffectValues(type,id,mobileEffects,'mobile');
   await editor.locator('#save').click();
   await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
@@ -1121,6 +1160,8 @@ test('every PARTIAL type renders Inspector routes and preserves Save versus Publ
       assert.equal(saved[key],mobileEffects[key],`${type}: mobile draft Save stores ${key}`);
       assert.equal(published.pages[pageId].nodes[id].responsive.mobile?.[key],undefined,`${type}: mobile Save keeps ${key} unpublished`);
       assert.equal(draft.pages[pageId].nodes[id].responsive.desktop[key],desktopEffects[key],`${type}: mobile Save preserves desktop ${key}`);
+      assert.equal(draft.pages[pageId].nodes[id].responsive.tablet[key],tabletEffects[key],`${type}: mobile Save preserves tablet ${key}`);
+      assert.equal(published.pages[pageId].nodes[id].responsive.tablet[key],tabletEffects[key],`${type}: mobile Save preserves published tablet ${key}`);
     }
   }
   await viewer.reload();
@@ -1145,7 +1186,7 @@ test('every PARTIAL type renders Inspector routes and preserves Save versus Publ
   await viewer.setViewportSize({width:1366,height:900});await viewer.reload();
   for(const {type,id} of editableNodes)assert.deepEqual(await computedEffects(publicNode(id)),desktopComputedExpected,`${type}: mobile Publish preserves desktop visual effects`);
 
-  // Each mobile effect can be returned to desktop inheritance through its
+  // Each mobile effect can be returned to tablet inheritance through its
   // own reset route; undo/redo and the Save/Publish boundary are checked too.
   await viewer.setViewportSize({width:390,height:900});await viewer.reload();
   for(const {type,id} of editableNodes){
@@ -1160,13 +1201,13 @@ test('every PARTIAL type renders Inspector routes and preserves Save versus Publ
       assert.equal(await reset.getAttribute('data-property-command'),'responsive.set',`${type}: mobile ${key} reset uses responsive command`);
       await reset.click();
     }
-    assert.deepEqual(await computedEffects(editor.locator(`.node[data-node-id="${id}"]`)),desktopComputedExpected,`${type}: mobile effect resets restore desktop Canvas values`);
+    assert.deepEqual(await computedEffects(editor.locator(`.node[data-node-id="${id}"]`)),tabletComputedExpected,`${type}: mobile effect resets restore tablet Canvas values`);
   }
   const lastEffectNode=editableNodes.at(-1);
   await editor.locator('#undo').click();
-  assert.deepEqual(await computedEffects(editor.locator(`.node[data-node-id="${lastEffectNode.id}"]`)),expectedEffects({...desktopEffects,transition:mobileEffects.transition}),`${lastEffectNode.type}: Undo restores the last mobile transition override`);
+  assert.deepEqual(await computedEffects(editor.locator(`.node[data-node-id="${lastEffectNode.id}"]`)),expectedEffects({...tabletEffects,transition:mobileEffects.transition}),`${lastEffectNode.type}: Undo restores the last mobile transition override`);
   await editor.locator('#redo').click();
-  assert.deepEqual(await computedEffects(editor.locator(`.node[data-node-id="${lastEffectNode.id}"]`)),desktopComputedExpected,`${lastEffectNode.type}: Redo restores inherited desktop transition`);
+  assert.deepEqual(await computedEffects(editor.locator(`.node[data-node-id="${lastEffectNode.id}"]`)),tabletComputedExpected,`${lastEffectNode.type}: Redo restores inherited tablet transition`);
   await editor.locator('#save').click();
   await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
   for(const {type,id} of editableNodes){
@@ -1181,9 +1222,45 @@ test('every PARTIAL type renders Inspector routes and preserves Save versus Publ
   await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
   await viewer.reload();
   for(const {type,id} of editableNodes){
-    assert.deepEqual(await computedEffects(publicNode(id)),desktopComputedExpected,`${type}: reset Publish restores desktop visual effects on mobile`);
+    assert.deepEqual(await computedEffects(publicNode(id)),tabletComputedExpected,`${type}: reset Publish restores tablet visual effects on mobile`);
     for(const key of effectKeys)assert.equal(published.pages[pageId].nodes[id].responsive.mobile[key],undefined,`${type}: reset Publish removes mobile ${key}`);
   }
+
+  await editor.locator('.canvas-device-btn[data-device="tablet"]').click();
+  await viewer.setViewportSize({width:768,height:900});await viewer.reload();
+  for(const {type,id} of editableNodes){
+    await editor.locator(`.node[data-node-id="${id}"]`).evaluate(el=>el.click());
+    await editor.locator('.inspector-tabs button').first().click();
+    for(const key of effectKeys){
+      const field=inspector.locator(`[data-property-id="${effectPropertyIds[key]}"]`);
+      const section=field.locator('xpath=ancestor::section[1]'),title=section.locator(':scope > .inspector-group-title');
+      if(await title.getAttribute('aria-expanded')==='false')await title.click();
+      const reset=section.locator(`.property-reset[data-property-key="${key}"]`);
+      assert.equal(await reset.count(),1,`${type}: tablet ${key} exposes inheritance reset`);
+      assert.equal(await reset.getAttribute('data-property-command'),'responsive.set',`${type}: tablet ${key} reset uses responsive command`);
+      await reset.click();
+    }
+    assert.deepEqual(await computedEffects(editor.locator(`.node[data-node-id="${id}"]`)),desktopComputedExpected,`${type}: tablet effect resets restore desktop Canvas values`);
+  }
+  await editor.locator('#save').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+  for(const {type,id} of editableNodes){
+    for(const key of effectKeys){
+      assert.equal(draft.pages[pageId].nodes[id].responsive.tablet[key],undefined,`${type}: tablet reset Save removes ${key}`);
+      assert.equal(published.pages[pageId].nodes[id].responsive.tablet[key],tabletEffects[key],`${type}: tablet reset Save preserves published ${key}`);
+    }
+  }
+  await viewer.reload();
+  for(const {type,id} of editableNodes)assert.deepEqual(await computedEffects(publicNode(id)),tabletComputedExpected,`${type}: tablet reset Save leaves public CSS unchanged`);
+  await editor.locator('#publish').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
+  await viewer.reload();
+  for(const {type,id} of editableNodes){
+    assert.deepEqual(await computedEffects(publicNode(id)),desktopComputedExpected,`${type}: tablet reset Publish restores desktop effects`);
+    for(const key of effectKeys)assert.equal(published.pages[pageId].nodes[id].responsive.tablet[key],undefined,`${type}: tablet reset Publish removes ${key}`);
+  }
+  await viewer.setViewportSize({width:390,height:900});await viewer.reload();
+  for(const {type,id} of editableNodes)assert.deepEqual(await computedEffects(publicNode(id)),desktopComputedExpected,`${type}: tablet reset Publish restores mobile inheritance`);
 
   // Aspect ratio is another registered responsive size route. Its explicit
   // value must survive authored/media-specific renderers and must remain
