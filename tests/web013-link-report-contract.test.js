@@ -67,7 +67,8 @@ test("WEB-013 reports published pages skipped during content scanning", () => {
 
 test("WEB-013 decodes HTML URL references before checking rich-text links", () => {
   assert.match(route, /function decodeHtmlHref\(value: string\): string/);
-  assert.ok(route.includes("const htmlHrefReference = /&(?:amp;|sol;|#(?:x[0-9a-f]+|[0-9]+);?)/gi;"));
+  assert.ok(route.includes("const htmlHrefReference = /&(?:amp;|sol;|#(?:[xX][0-9A-Fa-f]+|[0-9]+);?)/g;"));
+  assert.match(route, /reference === "&sol;"/);
   assert.ok(route.includes("Number.isSafeInteger(codePoint)"));
   assert.ok(route.includes("candidates.push(decodeHtmlHref(match[1] ?? match[2]))"));
 });
