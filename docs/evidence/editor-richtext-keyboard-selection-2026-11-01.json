@@ -1,0 +1,49 @@
+{
+  "date": "2026-11-01",
+  "plan_item": "77.44.7.B — native keyboard selection across Rich Text blocks",
+  "status": "AUTOMATED_BROWSER_LIFECYCLE_VERIFIED; OVERALL_77_44_7_B_OPEN",
+  "finding": "The latest Rich Text evidence covered native mouse selection across paragraphs and list items, mobile browser selection, IME composition, paste, and backward anchor/focus restoration. It did not separately exercise a native keyboard-extended Shift+Arrow selection crossing paragraph boundaries.",
+  "change": [
+    "Added a focused real-Chromium test that places a caret, creates forward and backward multi-paragraph ranges with native Shift+ArrowRight/Shift+ArrowLeft keyboard input, and checks the canonical Page Model segments and direction.",
+    "The test applies inline marks through the existing Inspector command and verifies that its DOM rerender retains selection text and direction.",
+    "The desktop mock-API lifecycle verifies draft Save does not publish, a later explicit Publish does, and the public renderer outputs the same selected inline marks.",
+    "Regenerated the existing 396-feature source-candidate crosswalk so this new browser test appears under the existing Editor acceptance candidates. No runtime source changed."
+  ],
+  "tests": {
+    "focusedChromiumRegression": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-richtext-keyboard-selection.test.js tests/browser/editor-richtext-multiblock.test.js tests/browser/editor-richtext-selection.test.js tests/browser/editor-richtext-ime-final-input.test.js tests/browser/editor-richtext-structural-offsets.test.js — PASS 5/5 real Chromium tests.",
+    "editorUnit": "npm run test:editor — PASS 11/11 test files.",
+    "typecheck": "npm run typecheck — PASS.",
+    "migrationSafety": "npm run test:web013:migration-gate — PASS; no migration was run.",
+    "web013": "npm run test:web013 — PASS 11/11 tests.",
+    "web013Browser": "Initial execution without CHROMIUM_PATH could not launch Chromium; rerun as CHROMIUM_PATH=/usr/bin/chromium npm run test:web013:browser — PASS 2/2 real Chromium tests.",
+    "canonicalPlan": "python3 scripts/check-canonical-plan.py — PASS; one complete 13-file master and functional acceptance remains NOT_CERTIFIED.",
+    "activePoint": "python3 scripts/audit-active-plan-point.py — PASS; cursor remains 77.44 / WEB-011 → 77.44.7.B.",
+    "traceability": "python3 scripts/build-feature-traceability.py --check — PASS, 396 source mappings / 13 canonical files; this command initially identified the new test as absent, then passed after regenerating the source-candidate crosswalk.",
+    "syntaxAndDiff": "node --check tests/browser/editor-richtext-keyboard-selection.test.js and git diff --check — PASS.",
+    "fullEditorBrowserSuite": "NOT RUN with Chromium configured. An exploratory invocation without CHROMIUM_PATH could not launch Chromium in browser fixtures; the focused affected Rich Text and WEB-013 Chromium suites above were rerun with the installed binary and passed."
+  },
+  "reuse": {
+    "solution": "Reused the project's Page Model, Inspector, existing Selection bridge, standard browser keyboard selection behavior, current Playwright/Chromium harness, and the existing local mock API pattern.",
+    "externalCode": "No third-party code adopted; no dependency or runtime file added."
+  },
+  "release": {
+    "checkoutBranch": "work; unchanged",
+    "targetBranch": "v2/foundation",
+    "runtimeSourceChanged": false,
+    "runtimeDeployment": "NOT NEEDED; test/evidence/crosswalk-only change.",
+    "testCommit": "49803340c0c3a2ddc5fa017d04f8a87ae10719da",
+    "push": "PASS: normal fast-forward ef08915b8a3afc3cc89b94cc43ef04911d21415a..49803340c0c3a2ddc5fa017d04f8a87ae10719da; git ls-remote confirmed the exact v2/foundation ref.",
+    "ci": "GitHub combined status returned statuses=[] for the [skip ci] test commit; no CI PASS is claimed.",
+    "productionCheck": {
+      "activeDeployment": "ade91828-4b0a-4d86-aaa1-27c6e28c7a95",
+      "workerVersion": "70f718a9-2fb9-4679-bcec-39740b4b178d",
+      "trafficPercent": 100,
+      "health": "Direct GET /api/health returned HTTP 200 and {ok:true, version:2.0.0}; a read-only Cloudflare deployment GET after the test push confirmed the same deployment and 100% traffic version, so no Worker redeploy occurred."
+    },
+    "docsEvidenceCommit": "This evidence and canonical-plan update are pushed separately after the test commit; final documentation commit SHA is recorded in the plan's next entry."
+  },
+  "productionD1Writes": 0,
+  "productionD1Migrations": 0,
+  "productionR2Changes": 0,
+  "cost": "No paid service, credit, infrastructure, or dependency used."
+}
