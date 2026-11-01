@@ -1,0 +1,57 @@
+{
+  "date": "2026-11-01",
+  "plan_item": "77.44.7.B — Rich Text, inline marks, links, Save/Publish and link-report acceptance",
+  "status": "LOCAL_AUTOMATED_ACCEPTANCE_PASS; CURRENT_PUBLIC_HEALTH_BLOCKED_BY_NETWORK; AUTHENTICATED_PRODUCTION_AND_WRITE_ACCEPTANCE_OPEN",
+  "repository": {
+    "local_branch": "work",
+    "local_head": "47adbb0a2f036c7b499cfa9b1a7a53db28d1d07c",
+    "github_branch": "v2/foundation",
+    "github_head": "47adbb0a2f036c7b499cfa9b1a7a53db28d1d07c",
+    "github_head_verified": true,
+    "github_combined_statuses": [],
+    "ci_pass_claimed": false,
+    "preexisting_untracked_work_preserved": true
+  },
+  "tests": {
+    "richTextChromium": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-richtext-*.test.js tests/browser/editor-inspector-richtext-controls.test.js tests/browser/web013-public-richtext.test.js",
+      "result": "PASS",
+      "passed": 16,
+      "failed": 0,
+      "duration_ms": 106826
+    },
+    "adminLinkReportChromium": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/web013-admin-link-report.test.js",
+      "result": "PASS",
+      "passed": 1,
+      "failed": 0,
+      "coverage": "360/390/430/1280 CSS-pixel viewport widths"
+    },
+    "editorUnit": "npm run test:editor — PASS 11/11 test files",
+    "typecheck": "npm run typecheck — PASS",
+    "web013UnitAndMigrationGate": "npm run test:web013 — PASS 11/11; included deploy:safe migration safety gate",
+    "planAndTraceability": "canonical master PASS (13 files); active cursor audit PASS (77.44 / WEB-011 → 77.44.7.B); traceability PASS (396 mappings); git diff --check PASS"
+  },
+  "runtime": {
+    "source_changed": false,
+    "deployment_id": "ade91828-4b0a-4d86-aaa1-27c6e28c7a95",
+    "worker_version": "70f718a9-2fb9-4679-bcec-39740b4b178d",
+    "traffic_percent": 100,
+    "deployment_verified_by": "read-only Cloudflare deployments API",
+    "health_this_run": "UNVERIFIED: direct read-only GET could not connect from this environment (proxy connection refused; direct network connection failed)",
+    "asset_hashes_this_run": "NOT RECHECKED; see editor-richtext-full-block-2026-11-01.json for previously verified local/live matching hashes"
+  },
+  "acceptance": {
+    "authenticated_production_link_report": "OPEN: previous direct unauthenticated request returned 401; no Creator Platform admin session was available",
+    "production_save_publish": "OPEN: would write production D1 page data; no designated test page or separate approval for production data writes",
+    "physical_ios_android_acceptance": "DEFERRED to complete Visual Editor gate 77.44.7.F/77.44.8",
+    "overall_plan_item_77_44_7_B": "OPEN / BLOCKED; local automated acceptance does not certify the production/manual gate"
+  },
+  "data_and_cost": {
+    "production_d1_migrations": 0,
+    "production_d1_writes": 0,
+    "production_r2_changes": 0,
+    "new_dependencies": 0,
+    "new_cost": "0 Ft"
+  }
+}
