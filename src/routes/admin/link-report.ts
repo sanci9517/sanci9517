@@ -6,12 +6,12 @@ import type { Env } from "../../types/env";
 type NavigationItem = { id?: string; type?: string; pageId?: string; label?: string; url?: string; children?: NavigationItem[] };
 type PageRow = { id: string; published_slug: string | null; is_published: number; archived_at: string | null; published_content_json: string | null };
 const validSlug = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
-const htmlHrefReference = /&(?:amp;|sol;|#(?:x[0-9a-f]+|[0-9]+);?)/gi;
+const htmlHrefReference = /&(?:amp;|sol;|#(?:[xX][0-9A-Fa-f]+|[0-9]+);?)/g;
 
 function decodeHtmlHref(value: string): string {
   return value.replace(htmlHrefReference, (reference) => {
     if (/^&amp;$/i.test(reference)) return "&";
-    if (/^&sol;$/i.test(reference)) return "/";
+    if (reference === "&sol;") return "/";
     const digits = reference.slice(2).replace(/;$/, "");
     const codePoint = /^x/i.test(digits)
       ? Number.parseInt(digits.slice(1), 16)
