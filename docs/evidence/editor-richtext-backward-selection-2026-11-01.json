@@ -1,0 +1,58 @@
+{
+  "date": "2026-11-01",
+  "plan_item": "77.44.7.B — preserve backward native Rich Text selection across Inspector rerender",
+  "status": "IMPLEMENTED; AUTOMATED_AND_PRODUCTION_VERIFIED; OVERALL_77_44_7_B_OPEN",
+  "finding": "Real Chromium mouse input selected list-item text backwards, but getRichTextFormattingSelection stored only document-ordered ranges. After an inline-format command rerendered the contenteditable surface, restoreRichTextFormattingSelection recreated a forward selection, silently changing the user's anchor/focus direction.",
+  "change": [
+    "Canonical structured selections now retain backward:true when the native anchor is the normalized Range end; forward selection objects remain unchanged.",
+    "Restoration now uses Selection.setBaseAndExtent or the Selection.extend fallback to preserve direction after DOM replacement and Inspector formatting.",
+    "The Chromium lifecycle now creates native forward and reverse mouse drags across two LI nodes, checks canonical offsets and anchor/focus direction, applies underline/strikethrough, then checks Canvas, Save, separate Publish and public renderer parity at 390px and 1366px.",
+    "The Editor module cache-bust token was advanced in index.html and the affected app/richtext module imports. The source-traceability crosswalk was regenerated after app.js changed."
+  ],
+  "tests": {
+    "regressionReproduction": "Before the source fix, the real backward-drag test failed because the model returned {segments:[{blockIndex:2,from:1,to:15}]} without backward:true while the native Range was backward.",
+    "focusedChromium": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-reporter=spec tests/browser/editor-richtext-multiblock.test.js — PASS 1/1; desktop and mobile viewport flows.",
+    "richTextBrowserRegression": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-richtext-*.test.js — PASS 12/12 real Chromium tests.",
+    "editorUnit": "npm run test:editor — PASS 11/11 test files.",
+    "web013": "npm run test:web013 — PASS 11/11 tests; migration safety gate PASS.",
+    "web013Browser": "npm run test:web013:browser — PASS 2/2 Chromium tests (Admin link report and published public Rich Text links).",
+    "typecheck": "npm run typecheck — PASS.",
+    "canonicalPlan": "python scripts/check-canonical-plan.py and python scripts/audit-active-plan-point.py — PASS; cursor remains 77.44.7.B OPEN.",
+    "traceability": "python scripts/build-feature-traceability.py --check — PASS, 396 source mappings / 13 canonical files; acceptance remains NOT_CERTIFIED.",
+    "syntaxAndDiff": "node --check for changed runtime JS and git diff --check — PASS.",
+    "dryRun": "npx wrangler deploy --dry-run — PASS, Wrangler 4.130.0, 162 assets, 300.14 KiB total / 68.68 KiB gzip. Wrangler emitted a non-blocking EROFS debug-log warning for the session's read-only /home/agent/.config; command exited successfully.",
+    "deploySafety": "npm run deploy:safe — PASS. Repository migration safety gate ran; this script did not apply D1 migrations.",
+    "d1Preflight": "Cloudflare D1 Query API, SELECT name FROM d1_migrations ORDER BY name plus PRAGMA foreign_key_check and PRAGMA quick_check: 34 rows, latest 0028_media_archive.sql, empty foreign_key_check, quick_check=ok, rows_written=0, changed_db=false for each query.",
+    "d1Postflight": "The same SELECT/PRAGMA-only queries after deployment returned 34 rows, empty foreign_key_check, quick_check=ok, rows_written=0, changed_db=false."
+  },
+  "reuse": {
+    "solution": "Reused the project-owned Page Model selection bridge and standard browser Selection APIs (setBaseAndExtent/extend), plus the existing Playwright/Chromium harness. No third-party code was adopted.",
+    "externalCode": "None; no dependency added."
+  },
+  "release": {
+    "checkoutBranch": "work; unchanged",
+    "targetBranch": "v2/foundation",
+    "githubHeadBefore": "ee50b9a57030fa08d7c1ce68e4875b934f422571",
+    "runtimeCommit": "723d2ae1b56e0829a777b709355fa92c7ce0ed4c",
+    "push": "PASS: normal fast-forward ee50b9a5..723d2ae1 to v2/foundation; git ls-remote confirmed the exact target SHA.",
+    "ci": "GitHub commit status API returned state=pending and total_count=0 (statuses=[]); no CI PASS is claimed. Git commit used [skip ci] to avoid consuming paid/exhausted GitHub Actions quota.",
+    "deployment": {
+      "trigger": "Push did not start an automatic Cloudflare deployment; npm run deploy:safe was used after the required checks.",
+      "id": "ade91828-4b0a-4d86-aaa1-27c6e28c7a95",
+      "versionId": "70f718a9-2fb9-4679-bcec-39740b4b178d",
+      "createdOn": "2026-11-01T16:47:06.432147Z",
+      "trafficPercent": 100
+    },
+    "health": "Direct production GET /api/health returned HTTP 200 and {ok:true, version:2.0.0}.",
+    "assets": [
+      {"path":"/editor-v2/","status":200,"sha256":"7f7a1b7d5daebc91a3c5bc8105c490034908b3745eff406de9e3a80b7aef613b","matchesLocal":true},
+      {"path":"/editor-v2/app.js?v=20261101-richtext-backward-selection","status":200,"sha256":"4d222e2f61030e933c6c865dc5b69bb5ba63e4c3346aeed8580b5733468e85fe","matchesLocal":true},
+      {"path":"/editor-v2/core/richtext-links.js?v=20261101-richtext-backward-selection","status":200,"sha256":"2410ba3b70d69504289d8bcd4537b48c10f90901b3a2879ec75d8b32a2678bfa","matchesLocal":true},
+      {"path":"/editor-v2/core/richtext-engine.js?v=20261101-richtext-backward-selection","status":200,"sha256":"bd6000c97ef24ad904c6b623b203c7342d170ef13976a86d6ec949723d91bdda","matchesLocal":true},
+      {"path":"/editor-v2/core/richtext-import.js?v=20261101-richtext-backward-selection","status":200,"sha256":"51fe7a958fe9d07fa3b1dd52e8f9e4b094d2339925a57eecebcc5d40ed97e22c","matchesLocal":true}
+    ],
+    "productionD1Writes": 0,
+    "productionR2Changes": 0
+  },
+  "cost": "No new paid service, credit, infrastructure, or dependency. Production D1 was only queried with SELECT/PRAGMA; no R2 operation occurred."
+}
