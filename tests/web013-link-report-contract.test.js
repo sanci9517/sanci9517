@@ -65,11 +65,12 @@ test("WEB-013 reports published pages skipped during content scanning", () => {
   assert.match(ui, /kimaradt a vizsgálatból/);
 });
 
-test("WEB-013 decodes HTML-escaped ampersands in rich-text hrefs", () => {
-  assert.match(route, /replace\(\/&amp;\/gi, "&"\)/);
-  assert.equal("/p/target?x=1&amp;y=2".replace(/&amp;/gi, "&"), "/p/target?x=1&y=2");
+test("WEB-013 decodes HTML URL references before checking rich-text links", () => {
+  assert.match(route, /function decodeHtmlHref\(value: string\): string/);
+  assert.ok(route.includes("const htmlHrefReference = /&(?:amp;|sol;|#(?:x[0-9a-f]+|[0-9]+);?)/gi;"));
+  assert.ok(route.includes("Number.isSafeInteger(codePoint)"));
+  assert.ok(route.includes("candidates.push(decodeHtmlHref(match[1] ?? match[2]))"));
 });
-
 test("WEB-013 warns about published pages with missing content", () => {
   assert.match(route, /let missingPublishedContentPages = 0/);
   assert.match(route, /if \(!page\.published_content_json\) \{ missingPublishedContentPages\+\+; continue; \}/);
