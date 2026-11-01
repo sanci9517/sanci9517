@@ -2,7 +2,8 @@ import { RICH_TEXT_FONT_FAMILIES } from './schema.js';
 import { textOffsetWithin, locateRichTextOffset } from './richtext-selection-offset.js';
 
 /*
- * Rich Text links operate inside one block; formatting can span several blocks.
+ * Link changes use the same per-block selection model as inline formatting.
+ * A selection may cross blocks, but each block boundary remains structural.
  * All mutations preserve the structured model and use the canonical command.
  */
 export function validatedLinkHref(value) {
@@ -45,10 +46,12 @@ export function readRichTextLinkHref(documentModel, range) {
   return hrefs.size===1?[...hrefs][0]:'mixed';
 }
 
-export function updateRichTextInlineLink(documentModel, {blockIndex, from, to}, href, target = 'auto') {
+export function updateRichTextInlineLink(documentModel, range, href, target = 'auto') {
   const safeHref = href === null ? null : validatedLinkHref(href);
   if(safeHref!==null&&!['auto','_self','_blank','preserve'].includes(target))throw new Error('Válassz érvényes hivatkozás-megnyitási módot.');
-  return updateRichTextRange(documentModel, {blockIndex, from, to}, piece => {
+  const segments=Array.isArray(range?.segments)?range.segments:[range];
+  if(!segments.length)throw new Error('Először jelölj ki egy szövegrészt.');
+  return segments.reduce((next,segment)=>updateRichTextRange(next,segment,piece => {
     if (safeHref === null) delete piece.link;
     else {
       const requestedTarget=target==='preserve'
@@ -57,7 +60,7 @@ export function updateRichTextInlineLink(documentModel, {blockIndex, from, to}, 
       const effectiveTarget=resolveRichTextLinkTarget(safeHref,requestedTarget);
       piece.link={href:safeHref,...(effectiveTarget==='_blank'?{target:'_blank',rel:'noopener noreferrer'}:requestedTarget==='_self'?{target:'_self'}:{})};
     }
-  });
+  }),documentModel);
 }
 
 export function updateRichTextInlineMark(documentModel, range, mark) {

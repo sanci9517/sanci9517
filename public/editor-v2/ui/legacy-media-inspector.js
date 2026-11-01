@@ -1,7 +1,7 @@
 import {legacyMediaInspectorValues,legacyImagePresentation,legacyImageCaption} from '../core/legacy-media-source.js';
 import {safeMediaUrl} from '../core/element-content.js';
 import {createCompositionInputs} from './composition-inputs.js';
-import {IMAGE_MIMES,mediaAssetPicker,setMediaAssetPickerSelection} from './element-content-controls.js?v=20261101-richtext-link-picker';
+import {IMAGE_MIMES,mediaAssetPicker,setMediaAssetPickerSelection} from './element-content-controls.js?v=20261101-richtext-multiblock-links';
 
 export function renderLegacyMediaInspector(node,apply,{pending=()=>{}}={}){
  const model={...(node.props||{})},composition=createCompositionInputs(pending);

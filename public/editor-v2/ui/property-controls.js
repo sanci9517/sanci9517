@@ -2,7 +2,7 @@ import {
   normalizeInspectorValue, getInspectorValueContract, INSPECTOR_FONTS, INSPECTOR_SHADOWS
 } from '../core/property-values.js';
 import {TOKEN_SPECS,compatibleTokens,parseTokenReference,tokenReference,tokenValue,defaultTokens} from '../core/design-tokens.js';
-import {IMAGE_MIMES,mediaAssetPicker} from './element-content-controls.js?v=20261101-richtext-link-picker';
+import {IMAGE_MIMES,mediaAssetPicker} from './element-content-controls.js?v=20261101-richtext-multiblock-links';
 
 /** One property input. All changes go through the central command callback. */
 export function renderPropertyInput(property, label, current, onChange, {

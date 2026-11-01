@@ -85,6 +85,16 @@ test('Rich Text cross-paragraph selection survives repeated marks and draft Save
     await page.getByRole('button',{name:'Kódformázás',exact:true}).click();
     assert.deepEqual(await surface.locator('code').allTextContents(),['Beta','Gamma'],'code formatting must use the same multi-block Page Model range');
     assert.match(await page.evaluate(()=>window.getSelection()?.toString()??''),/Beta[\s\S]*Gamma/,'cross-block selection must survive code formatting');
+    await page.getByLabel('Hivatkozás címe').fill('/p/multi-block');
+    await page.getByRole('button',{name:'Link beállítása',exact:true}).click();
+    assert.deepEqual(await surface.locator('a').allTextContents(),['Beta','Gamma'],'one selected phrase spanning paragraphs must link each selected block segment');
+    assert.ok((await surface.locator('a').evaluateAll(anchors=>anchors.every(anchor=>anchor.getAttribute('href')==='/p/multi-block'))),'every block segment must receive the same safe destination');
+    assert.match(await page.evaluate(()=>window.getSelection()?.toString()??''),/Beta[\s\S]*Gamma/,'cross-block link insertion must preserve the native selection');
+    await page.getByRole('button',{name:'Link eltávolítása',exact:true}).click();
+    assert.equal(await surface.locator('a').count(),0,'unlink removes only the selected links across all selected blocks');
+    await page.getByLabel('Hivatkozás címe').fill('/p/multi-block');
+    await page.getByRole('button',{name:'Link beállítása',exact:true}).click();
+    assert.deepEqual(await surface.locator('a').allTextContents(),['Beta','Gamma'],'link insertion remains repeatable after unlink');
     const canvas=page.locator(`.node[data-node-id="${nodeId}"] .richtext-content`).first();
     assert.deepEqual(await canvas.locator('strong').allTextContents(),['Beta','Gamma'],'canvas must mirror the Inspector model');
     assert.deepEqual(await canvas.locator('em').allTextContents(),['Beta','Gamma']);
@@ -99,8 +109,14 @@ test('Rich Text cross-paragraph selection survives repeated marks and draft Save
       assert.equal(persisted.blocks[1].children.find(run=>run.text==='Gamma')?.marks?.includes('italic'),true);
       assert.equal(persisted.blocks[0].children.find(run=>run.text==='Beta')?.marks?.includes('code'),true);
       assert.equal(persisted.blocks[1].children.find(run=>run.text==='Gamma')?.marks?.includes('code'),true);
+      assert.equal(persisted.blocks[0].children.find(run=>run.text==='Beta')?.link?.href,'/p/multi-block');
+      assert.equal(persisted.blocks[1].children.find(run=>run.text==='Gamma')?.link?.href,'/p/multi-block');
       assert.equal(persisted.blocks[0].children.map(run=>run.text).join(''),'Alpha Beta');
       assert.equal(persisted.blocks[1].children.map(run=>run.text).join(''),'Gamma Delta');
+      assert.equal(published,null,'desktop Save must leave the public page unchanged');
+      await page.locator('#publish').click();
+      await page.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent==='Publikálva');
+      assert.equal(writes.at(-1).publish,true,'multi-block link changes require a separate Publish');
     }else{
       assert.equal(writes.length,0,'mobile format remains an uncommitted draft until explicit Save');
       await page.locator('#save').click();
@@ -111,16 +127,22 @@ test('Rich Text cross-paragraph selection survives repeated marks and draft Save
       const persisted=writes[0].document.pages[pageId].nodes[nodeId].props.richText;
       assert.equal(persisted.blocks[0].children.find(run=>run.text==='Beta')?.marks?.includes('bold'),true);
       assert.equal(persisted.blocks[1].children.find(run=>run.text==='Gamma')?.marks?.includes('italic'),true);
+      assert.equal(persisted.blocks[0].children.find(run=>run.text==='Beta')?.link?.href,'/p/multi-block');
+      assert.equal(persisted.blocks[1].children.find(run=>run.text==='Gamma')?.link?.href,'/p/multi-block');
       await page.locator('#publish').click();
       await page.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent==='Publikálva');
       assert.equal(writes.at(-1).publish,true,'mobile multi-block changes require a separate Publish');
-      const publicPage=await browser.newPage({viewport:{width:390,height:850}});
-      await publicPage.goto('http://127.0.0.1:'+server.address().port+'/p/selection-test');
-      const publicSurface=publicPage.locator('.visual-richtext');await publicSurface.waitFor();
-      assert.deepEqual(await publicSurface.locator('strong').allTextContents(),['Beta','Gamma']);
-      assert.deepEqual(await publicSurface.locator('em').allTextContents(),['Beta','Gamma']);
-      await publicPage.close();
     }
+    assert.equal(published.pages[pageId].nodes[nodeId].props.richText.blocks[0].children.find(run=>run.text==='Beta')?.link?.href,'/p/multi-block');
+    assert.equal(published.pages[pageId].nodes[nodeId].props.richText.blocks[1].children.find(run=>run.text==='Gamma')?.link?.href,'/p/multi-block');
+    const publicPage=await browser.newPage({viewport:{width:390,height:850}});
+    await publicPage.goto('http://127.0.0.1:'+server.address().port+'/p/selection-test');
+    const publicSurface=publicPage.locator('.visual-richtext');await publicSurface.waitFor();
+    assert.deepEqual(await publicSurface.locator('strong').allTextContents(),['Beta','Gamma']);
+    assert.deepEqual(await publicSurface.locator('em').allTextContents(),['Beta','Gamma']);
+    assert.deepEqual(await publicSurface.locator('a').allTextContents(),['Beta','Gamma'],'the published renderer must retain each linked block segment');
+    assert.deepEqual(await publicSurface.locator('a').evaluateAll(anchors=>anchors.map(anchor=>anchor.getAttribute('href'))),['/p/multi-block','/p/multi-block']);
+    await publicPage.close();
     assert.deepEqual(errors,[],`no browser errors at ${width}px`);
     await page.close();
   }

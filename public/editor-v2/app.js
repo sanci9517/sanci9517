@@ -1,5 +1,5 @@
 import {hasContentProfile} from './core/content-profiles.js?v=20261025-inspector-lifecycle-contract';
-import {createDocument,createPage,getNode,NODE_TYPES,canContain,normalizeRichText} from './core/schema.js?v=20261101-richtext-link-picker';
+import {createDocument,createPage,getNode,NODE_TYPES,canContain,normalizeRichText} from './core/schema.js?v=20261101-richtext-multiblock-links';
 import {createEditorState,activePage,selectedNodes,setSelection,markSaved} from './core/state.js';
 import {execute,executeCoalesced,executeBatch} from './core/commands.js?v=20261025-inspector-lifecycle-contract';
 import {applyNodeStyle,getNodeGeometry,resolveNodeStyle} from './core/canvas-engine.js?v=20261030-legacy-background-compound';
@@ -8,19 +8,19 @@ import {measureCanvasWorkspace} from './core/canvas-workspace.js';
 import {hasResponsiveOverride,resolveResponsiveValue} from './core/responsive.js';
 import {getNodeVisibilityState,isVisibleOnDevice} from './core/visibility.js';
 import {diagnostics} from './diagnostics.js?v=20260918-2';
-import {plainTextToRichText,renderRichTextEditor,richTextEditorToDocument,restoreSelectionOffsets,getSelectionOffsets,transformRichTextBlockTypes} from './core/richtext-engine.js?v=20261101-richtext-link-picker';
+import {plainTextToRichText,renderRichTextEditor,richTextEditorToDocument,restoreSelectionOffsets,getSelectionOffsets,transformRichTextBlockTypes} from './core/richtext-engine.js?v=20261101-richtext-multiblock-links';
 import {renderSchedulePreview} from './core/schedule-preview.js';
 import {normalizeScheduleConfig,SCHEDULE_MODES,SCHEDULE_ORDERS,SCHEDULE_STATUSES,SCHEDULE_EMPTY_TEXT_MAX,SCHEDULE_LIMIT_MAX} from './core/schedule-schema.js';
 import {listPropertyGroups,listProperties,getProperty} from './core/property-registry.js?v=20261030-inspector-layout-container-contract';
-import {renderPropertyInput} from './ui/property-controls.js?v=20261101-richtext-link-picker';
+import {renderPropertyInput} from './ui/property-controls.js?v=20261101-richtext-multiblock-links';
 import {getInspectorValueContract,normalizeInspectorValue} from './core/property-values.js';
 import {describeResponsiveOrigin} from './ui/responsive-origin.js';
 import {responsiveGroupResetActions} from './ui/responsive-group-reset.js';
-import {getRichTextBlockSelection,getRichTextFormattingSelection,getRichTextBlockTransformSelection,getRichTextActiveBlockIndex,restoreRichTextBlockSelection,restoreRichTextFormattingSelection,updateRichTextInlineLink,updateRichTextInlineMark,updateRichTextInlineStyle,updateRichTextBlockAlignment} from './core/richtext-links.js?v=20261101-richtext-link-picker';
+import {getRichTextBlockSelection,getRichTextFormattingSelection,getRichTextBlockTransformSelection,getRichTextActiveBlockIndex,restoreRichTextBlockSelection,restoreRichTextFormattingSelection,updateRichTextInlineLink,updateRichTextInlineMark,updateRichTextInlineStyle,updateRichTextBlockAlignment} from './core/richtext-links.js?v=20261101-richtext-multiblock-links';
 import {initialPageId,rememberPageId,requestedPageId} from './core/page-url.js';
 import {getElementCapability} from './core/capability-matrix.js?v=20261030-inspector-layout-container-contract';
 import {renderGeometryPresets} from './ui/geometry-presets.js';
-import {importRichTextClipboard} from './core/richtext-import.js?v=20261101-richtext-link-picker';
+import {importRichTextClipboard} from './core/richtext-import.js?v=20261101-richtext-multiblock-links';
 import {pasteRichTextDocument} from './core/richtext-paste.js';
 import {captureStyleSnapshot,STYLE_SNAPSHOT_PROPERTIES} from './core/style-snapshot.js';
 import {LAYOUT_PRESETS,LAYOUT_TYPES,layoutMode,isManagedLayout,isLayoutPropertyRelevant,explicitGridColumnCount} from './core/layout-presets.js';
@@ -38,12 +38,12 @@ import {defaultSocialLinks,renderSocialLinksHtml} from './core/social-links.js';
 import {renderSocialLinksInspector} from './ui/social-links-inspector.js?v=20261026-profile-route-contract';
 import {defaultEmbedContent,renderEmbedHtml} from './core/creator-embed.js';
 import {renderBasicContentInspector} from './ui/basic-content-inspector.js?v=20261026-profile-route-contract';
-import {renderLegacyMediaInspector} from './ui/legacy-media-inspector.js?v=20261101-richtext-link-picker';
-import {renderCardInspector} from './ui/card-content-inspector.js?v=20261101-richtext-link-picker';
+import {renderLegacyMediaInspector} from './ui/legacy-media-inspector.js?v=20261101-richtext-multiblock-links';
+import {renderCardInspector} from './ui/card-content-inspector.js?v=20261101-richtext-multiblock-links';
 import {renderEmbedInspector} from './ui/creator-embed-inspector.js?v=20261026-profile-route-contract';
 import {defaultCodeSnippet,renderCodeSnippet,activateCodeBlocks} from './core/code-snippet.js';
 import {renderCodeSnippetInspector} from './ui/code-snippet-inspector.js?v=20261026-profile-route-contract';
-import {readRichTextSelectionFormatting,readRichTextLinkTarget,readRichTextLinkHref,clearRichTextInlineFormatting} from './core/richtext-links.js?v=20261101-richtext-link-picker';
+import {readRichTextSelectionFormatting,readRichTextLinkTarget,readRichTextLinkHref,clearRichTextInlineFormatting} from './core/richtext-links.js?v=20261101-richtext-multiblock-links';
 import {renderAccessibilityFields} from './ui/accessibility-fields.js?v=20261026-accessibility-route-contract';
 import {createCompositionInputs} from './ui/composition-inputs.js';
 import {opaqueContrast} from './core/accessibility.js';
@@ -51,7 +51,7 @@ import {STATE_PROPERTY_IDS,applyStateStyles} from './core/state-styles.js';
 import {defaultTokens,applyTokenVariables} from './core/design-tokens.js';
 import {CONTENT_TYPES,STRUCTURAL_TYPES,validatePageForPublication,isAuthoredContent,authoredNodeHtml,contentAttributes,initContentInteractions,contentTag} from './core/authored-content.js';
 import {captureCanvasInteractionState,restoreCanvasInteractionState} from './core/canvas-interaction-state.js';
-import {renderElementContentControls,pageLinkPicker} from './ui/element-content-controls.js?v=20261101-richtext-link-picker';
+import {renderElementContentControls,pageLinkPicker} from './ui/element-content-controls.js?v=20261101-richtext-multiblock-links';
 
 let editorTokens=defaultTokens();
 function propertyInput(property,label,current,onChange,options={}){
@@ -1261,7 +1261,10 @@ function renderInspector(){
           formattingSurface=surface;savedSelectionOffsets={...offsets};
           const format=getRichTextFormattingSelection(surface);savedFormatSelection=format;
           savedBlockTransformSelection=getRichTextBlockTransformSelection(surface);
-          const next=getRichTextBlockSelection(surface);savedLinkSelection=next;
+          // Same-block selections retain caret-in-link expansion; when a
+          // native selection spans paragraphs/lists/cells, use canonical
+          // per-block segments instead of dropping the link selection.
+          const next=getRichTextBlockSelection(surface)||getRichTextFormattingSelection(surface);savedLinkSelection=next;
           const currentRichText=richTextEditorToDocument(surface);
           if(linkTargetSelect)linkTargetSelect.value=readRichTextLinkTarget(currentRichText,next);
           if(syncLinkFields&&url){
@@ -1397,6 +1400,7 @@ function renderInspector(){
         const linkControls=document.createElement('div');linkControls.className='richtext-link-controls';
         const url=document.createElement('input');url.type='url';url.placeholder='/p/home vagy https://...';
         url.setAttribute('aria-label','Hivatkozás címe');
+        url.onpointerdown=()=>rememberSelection(false);
         linkTargetSelect=document.createElement('select');linkTargetSelect.setAttribute('aria-label','Link megnyitása');
         [['auto','Automatikus · külső link új lapon'],['_self','Ugyanebben a lapon'],['_blank','Új lapon'],['mixed','Vegyes · célok megőrzése']]
           .forEach(([value,label])=>{const option=document.createElement('option');option.value=value;option.textContent=label;if(value==='mixed')option.disabled=true;linkTargetSelect.append(option)});
@@ -1405,7 +1409,7 @@ function renderInspector(){
         const removeLink=document.createElement('button');removeLink.type='button';removeLink.textContent='Link eltávolítása';
         const linkFeedback=document.createElement('small');linkFeedback.setAttribute('role','status');
         const changeLink=href=>{
-          const range=savedLinkSelection||getRichTextBlockSelection(editor);
+          const range=savedLinkSelection||getRichTextBlockSelection(editor)||getRichTextFormattingSelection(editor);
           if(!range){linkFeedback.textContent='Jelölj ki egy szövegrészt előbb.';return;}
           try{
             const target=linkTargetSelect.value==='mixed'?'preserve':linkTargetSelect.value;

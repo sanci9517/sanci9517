@@ -278,6 +278,36 @@ test('mixed Rich Text link targets stay explicit and are preserved when the sele
   assert.throws(()=>updateRichTextInlineLink(mixed,range,'/p/new','unknown'));
 });
 
+test('multi-block link edits preserve block structure, targets, and links outside the selection',()=>{
+  const model=normalizeRichText({schemaVersion:1,type:'richtext-document',blocks:[
+    {type:'paragraph',children:[
+      {type:'text',text:'Keep ',marks:[],link:{href:'/p/keep'}},
+      {type:'text',text:'Alpha',marks:['bold'],link:{href:'/p/old',target:'_self'}},
+      {type:'text',text:'!',marks:[]}
+    ]},
+    {type:'heading',level:2,children:[
+      {type:'text',text:'Beta',marks:['italic'],link:{href:'https://old.example/',target:'_blank',rel:'noopener noreferrer'}},
+      {type:'text',text:' end',marks:[]}
+    ]}
+  ]});
+  const range={segments:[{blockIndex:0,from:5,to:10},{blockIndex:1,from:0,to:4}]};
+  assert.equal(readRichTextLinkHref(model,range),'mixed');
+  assert.equal(readRichTextLinkTarget(model,range),'mixed');
+  const changed=updateRichTextInlineLink(model,range,'https://next.example/','preserve');
+  assert.equal(changed.blocks[0].children[0].link.href,'/p/keep');
+  assert.deepEqual(changed.blocks[0].children[1].link,{href:'https://next.example/',target:'_self'});
+  assert.deepEqual(changed.blocks[1].children[0].link,{href:'https://next.example/',target:'_blank',rel:'noopener noreferrer'});
+  assert.deepEqual(changed.blocks.map(block=>block.type),['paragraph','heading']);
+  assert.deepEqual(changed.blocks[0].children[1].marks,['bold']);
+  assert.deepEqual(changed.blocks[1].children[0].marks,['italic']);
+  assert.equal(model.blocks[0].children[1].link.href,'/p/old','the original document remains immutable');
+  const removed=updateRichTextInlineLink(changed,range,null);
+  assert.equal(removed.blocks[0].children[1].link,undefined);
+  assert.equal(removed.blocks[1].children[0].link,undefined);
+  assert.equal(removed.blocks[0].children[0].link.href,'/p/keep','unselected links remain intact');
+  assert.deepEqual(normalizeRichText(removed),removed);
+});
+
 test('Rich Text Inspector reads a shared, mixed or absent selected link URL',()=>{
   const model=normalizeRichText({schemaVersion:1,type:'richtext-document',blocks:[{type:'paragraph',children:[
     {type:'text',text:'plain ',marks:[]},
