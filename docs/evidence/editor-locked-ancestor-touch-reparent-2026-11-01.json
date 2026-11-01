@@ -43,13 +43,14 @@
   "release": {
     "test_commit": "57852242f5b7fbe59a98c5d2bd5d97c55572e895",
     "branch": "v2/foundation",
-    "fast_forward_push": "Both test-only commits pushed normally to v2/foundation; verify final remote ref with GitHub compare after documentation push.",
-    "github_combined_status": "statuses=[]; no CI PASS claim",
+    "fast_forward_push": "Both test-only commits were pushed normally. The subsequent plan/evidence commit was pushed normally as well; GitHub compare from final test commit 075f296db393d799054b17e9db4945aaf640d391 to v2/foundation confirmed ahead_by=1, behind_by=0, with the documentation/evidence commit 1d6e415a1939f1d0424b3cdcceb90a452b9b3fbe as branch head.",
+    "github_combined_status": "statuses=[] for 1d6e415a1939f1d0424b3cdcceb90a452b9b3fbe; CI PASS is not claimed.",
     "worker_redeployed": false,
     "test_commits": [
       "57852242f5b7fbe59a98c5d2bd5d97c55572e895",
       "075f296db393d799054b17e9db4945aaf640d391"
-    ]
+    ],
+    "documentation_commit_before_this_verification_record": "1d6e415a1939f1d0424b3cdcceb90a452b9b3fbe"
   },
   "production_read_only_verification": {
     "deployment_id": "5d81f0f0-176c-4437-b5c5-652765f70bff",
