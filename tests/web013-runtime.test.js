@@ -40,7 +40,9 @@ async function fixture(t) {
     '<a href="/p/old">Old alias</a><a class="cta" href="/p/missing">Broken</a>' +
     '<a href="&#47;p&#47;missing-numeric">Numeric-reference broken</a>' +
     '<a href="&#x2F;p&#x2F;missing-hex">Hex-reference broken</a>' +
+    '<a href="&#X2F;p&#X2F;missing-uppercase-hex">Uppercase hex-reference broken</a>' +
     '<a href="&sol;p&sol;missing-named">Named-reference broken</a>' +
+    '<a href="&SOL;p&SOL;missing-wrong-case">Unrecognized named reference</a>' +
     '<a href="&#0;://example.test/p/invalid-null">Invalid-null reference</a>' +
     '<a href="&#xD800;/p/invalid-surrogate">Invalid-surrogate reference</a>' +
     '<a data-href="/p/ghost">No real link</a>';
@@ -230,8 +232,8 @@ test('authenticated link report checks published rich text, redirects and site-s
   const body = await response.json();
   assert.equal(response.status, 200);
   assert.match(response.headers.get('Cache-Control'), /no-store/);
-  assert.equal(body.data.checkedContentLinks, 12, 'only same-origin internal page links count as checked, including HTML entity-encoded paths');
-  assert.deepEqual(body.data.contentFindings.map(item => item.href), ['https://example.test/p/foreign', '/p/missing', '/p/missing-numeric', '/p/missing-hex', '/p/missing-named', '/p/missing-rich', 'https://example.test/p/missing-absolute', '/p/missing-table']);
+  assert.equal(body.data.checkedContentLinks, 13, 'only same-origin internal page links count as checked, including HTML entity-encoded paths');
+  assert.deepEqual(body.data.contentFindings.map(item => item.href), ['https://example.test/p/foreign', '/p/missing', '/p/missing-numeric', '/p/missing-hex', '/p/missing-uppercase-hex', '/p/missing-named', '/p/missing-rich', 'https://example.test/p/missing-absolute', '/p/missing-table']);
   assert.equal(body.data.contentFindings.some(item => /protocol-relative|credential-trap|downgrade|javascript:/i.test(item.href)), false,
     'the report must not misclassify cross-origin, credentialed, scheme-downgrade or script URLs as this site’s page links');
   assert.deepEqual(body.data.redirectedContentLinks.map(item => [item.href, item.targetPageId]), [['/p/old', 'target'], ['/p/old', 'target']]);
