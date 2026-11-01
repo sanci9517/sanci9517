@@ -1,7 +1,7 @@
 {
   "date": "2026-11-01",
   "plan_item": "77.44.7.B — Rich Text link target lifecycle",
-  "status": "LOCAL_AUTOMATED_PASS; PRODUCTION_RELEASE_PENDING; OVERALL_EDITOR_ACCEPTANCE_OPEN",
+  "status": "LOCAL_AUTOMATED_PASS; PRODUCTION_RELEASE_VERIFIED; OVERALL_EDITOR_ACCEPTANCE_OPEN",
   "finding": "The Inspector had no link-target choice; the structured Rich Text DOM bridge did not preserve every explicit _self target; and the published page renderer discarded explicit _self values.",
   "change": [
     "Added an accessible Inspector link target selector for automatic, same-tab, and new-tab behavior, with a 44px mobile touch target.",
@@ -38,10 +38,16 @@
     "github_target_branch": "v2/foundation",
     "github_head_at_start": "8c205a67116f91d4be848eb55bae0fead934f176",
     "local_head_before_this_change": "ba3800cdf4f9d555f89e2882ec83dc6352f3e382",
-    "commit": "PENDING_LOCAL_COMMIT",
-    "push": "PENDING_NORMAL_FAST_FORWARD",
-    "ci": "The planned release commit uses [skip ci] to avoid paid or exhausted GitHub Actions usage; no CI PASS is claimed.",
-    "worker_deployment": "PENDING",
+    "commit": "6ba832335f3b894017456e06565181efe091ff52",
+    "push": "PASS: normal fast-forward push 8c205a67116f91d4be848eb55bae0fead934f176..6ba832335f3b894017456e06565181efe091ff52 to v2/foundation; remote branch ref verified exact.",
+    "ci": "GitHub commit status endpoint returned state=pending, total_count=0, statuses=[]; CI PASS is not claimed. [skip ci] was used.",
+    "worker_deployment": {
+      "id": "d8f673fe-196b-40a1-8664-517c18679b0a",
+      "version_id": "a333bfe3-1875-4145-81d0-1dc181fbe6a0",
+      "source": "wrangler deploy:safe",
+      "created_on": "2026-11-01T10:43:46.441714Z",
+      "traffic_percent": 100
+    },
     "new_cost_or_dependency": "None. Existing free Cloudflare/GitHub capabilities only; no paid service, API, or quota increase."
   },
   "production": {
@@ -61,13 +67,26 @@
     "version_id_before_release": "72f6626e-ba9a-4147-874a-3d8cfcf00919",
     "traffic_percent_before_release": 100,
     "pre_release_health": "Direct GET /api/health returned HTTP 200.",
-    "deployment_id_after_release": "PENDING",
-    "version_id_after_release": "PENDING",
-    "traffic_percent_after_release": "PENDING",
-    "post_release_health": "PENDING",
-    "post_release_live_asset_hashes": "PENDING",
+    "deployment_id_after_release": "d8f673fe-196b-40a1-8664-517c18679b0a",
+    "version_id_after_release": "a333bfe3-1875-4145-81d0-1dc181fbe6a0",
+    "traffic_percent_after_release": 100,
+    "post_release_health": "PASS: direct GET https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health returned HTTP 200.",
+    "post_release_live_asset_hashes": {
+      "public/assets/page-renderer.js": "05d6150cdc03d68a7c4c17a581778113ef85fa253057ca315a0dd72dc208502a",
+      "public/editor-v2/app.js": "6c040216e12fd23fe93aa2b9f92bac8312dd20f375cbff73b708fd984de0d312",
+      "public/editor-v2/core/richtext-engine.js": "43d2632b2afbce303687fcc98d9aedeca49d4c92b39613aa76031a0b921b3abd",
+      "public/editor-v2/core/richtext-import.js": "26759681e6b10491636e878e95db73a3d343bbe996b32c4846114f3c14c20815",
+      "public/editor-v2/core/richtext-links.js": "2ce022aebdb4d6cd958640802bd7a3e6190ec3c0ac9f68fbbd97d4299891330d",
+      "public/editor-v2/core/schema.js": "740951188cac2e53309f81ec073c620e28189d5104fae4f4cc66ebc92723be4a",
+      "public/editor-v2/editor-refresh.css": "1f463139b3aa7fce7b3d42eeaf4cb348baca1cf1eb2abcafa8ad09465989bb62",
+      "public/editor-v2/index.html": "babda1934a00d3e0902be0f976f2e909b57a3e7cdf7940997b57ccd6fabeab20",
+      "public/visual-page.html": "1d0bc456b1547e2a48008b1ef2fad928704b4dc5d36da4b73126046d99e69c84"
+    },
     "d1_production_writes": 0,
-    "r2_changes": 0
+    "r2_changes": 0,
+    "post_release_asset_check": "PASS: all 9 changed public assets returned HTTP 200 and each live SHA-256 matched its local file; cache-busted URLs used for versioned JS/CSS.",
+    "d1_post_release": "SELECT-only Cloudflare D1 Query API; 34 migration ledger rows read, rows_written=0, changed_db=false. No migration or data mutation.",
+    "deploy_safe": "PASS: npm run deploy:safe; repository migration safety gate passed, Wrangler uploaded 10 new/changed assets and deployed the Worker. Non-fatal EROFS warning only affected Wrangler debug-log location."
   },
   "acceptance_boundary": "This automated Rich Text link-target lifecycle slice is verified. The complete 77.44.7.B and overall Visual Editor functional acceptance remain OPEN; consolidated manual and physical-device acceptance stays deferred to the complete Editor gate 77.44.7.F/77.44.8."
 }
