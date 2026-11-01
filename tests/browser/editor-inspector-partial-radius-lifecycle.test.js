@@ -242,5 +242,108 @@ test('all PARTIAL types preserve mobile all-corner radius through Save, Publish 
   await viewer.setViewportSize({width:1366,height:900});
   await viewer.reload();
   for(const {type,id} of editableNodes)assert.deepEqual(await publicNode(id).evaluate(readCorners),desktopPublicCorners[id],`${type}: mobile reset Publish preserves desktop public corners`);
+
+  // The complete radius group has five independent responsive routes. Cover
+  // tablet across every PARTIAL type, including the composed all+corner CSS,
+  // draft/reload/Publish separation, mobile inheritance, and tablet reset.
+  const tabletAllValues=editableNodes.map((_,index)=>`${14+(index%5)*2}px`);
+  const tabletCornerValues=Object.fromEntries(editableNodes.map(({id},index)=>[
+    id,individualCorners.map((_,cornerIndex)=>`${6+((index+cornerIndex*3)%6)*2}px`)
+  ]));
+  await editor.locator('.canvas-device-btn[data-device="desktop"]').click();
+  const tabletDesktopCanvas=Object.fromEntries(await Promise.all(editableNodes.map(async({id})=>[
+    id,await editor.locator(`.node[data-node-id="${id}"]`).evaluate(readCorners)
+  ])));
+  await editor.locator('.canvas-device-btn[data-device="tablet"]').click();
+  await viewer.setViewportSize({width:768,height:900});await viewer.reload();
+  const tabletCornerBaseline=Object.fromEntries(await Promise.all(editableNodes.map(async({id})=>[id,await publicNode(id).evaluate(readCorners)])));
+  for(const [index,{type,id}] of editableNodes.entries()){
+    const canvasNode=editor.locator(`.node[data-node-id="${id}"]`);
+    await canvasNode.evaluate(el=>el.click());await editor.locator('.inspector-tabs button').first().click();
+    const group=inspector.locator('.inspector-group').filter({hasText:'Lekerekítés'}),title=group.locator(':scope > .inspector-group-title');
+    if(await title.getAttribute('aria-expanded')==='false')await title.click();
+    const all=inspector.locator('[data-property-id="radius.all"]');
+    assert.equal(await all.getAttribute('data-property-command'),'responsive.set',`${type}: tablet all-corner radius uses responsive command`);
+    assert.equal(await all.getAttribute('data-property-key'),'borderRadius',`${type}: tablet all-corner radius uses the Page Model key`);
+    const allInput=all.locator('.dimension-controls input[type="number"]');
+    await allInput.fill(tabletAllValues[index].slice(0,-2));await allInput.press('Tab');
+    for(const [cornerIndex,property] of individualCorners.entries()){
+      const field=inspector.locator(`[data-property-id="${property.id}"]`);
+      assert.equal(await field.getAttribute('data-property-command'),'responsive.set',`${type}/${property.id}: tablet corner uses responsive command`);
+      assert.equal(await field.getAttribute('data-property-key'),property.key,`${type}/${property.id}: tablet corner uses Page Model key`);
+      const input=field.locator('.dimension-controls input[type="number"]');
+      await input.fill(tabletCornerValues[id][cornerIndex].slice(0,-2));await input.press('Tab');
+    }
+    assert.deepEqual(await canvasNode.evaluate(readCorners),Object.fromEntries(individualCorners.map(({css},cornerIndex)=>[css,tabletCornerValues[id][cornerIndex]])),`${type}: tablet all+corner overrides compose in the Canvas`);
+  }
+  await editor.locator('#save').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+  for(const [index,{type,id}] of editableNodes.entries()){
+    assert.equal(draft.pages[pageId].nodes[id].responsive.tablet.borderRadius,tabletAllValues[index],`${type}: tablet Save stores all-corner radius`);
+    assert.equal(published.pages[pageId].nodes[id].responsive.tablet?.borderRadius,undefined,`${type}: tablet all-corner Save remains unpublished`);
+    for(const [cornerIndex,property] of individualCorners.entries()){
+      assert.equal(draft.pages[pageId].nodes[id].responsive.tablet[property.key],tabletCornerValues[id][cornerIndex],`${type}/${property.id}: tablet Save stores independent corner`);
+      assert.equal(published.pages[pageId].nodes[id].responsive.tablet?.[property.key],undefined,`${type}/${property.id}: tablet corner Save remains unpublished`);
+    }
+  }
+  await viewer.reload();
+  for(const {type,id} of editableNodes)assert.deepEqual(await publicNode(id).evaluate(readCorners),tabletCornerBaseline[id],`${type}: draft tablet Save preserves public radius`);
+  await editor.reload({waitUntil:'domcontentloaded'});await editor.locator('.canvas-device-btn[data-device="tablet"]').click();
+  for(const [index,{type,id}] of editableNodes.entries()){
+    await editor.locator(`.node[data-node-id="${id}"]`).evaluate(el=>el.click());await editor.locator('.inspector-tabs button').first().click();
+    const radiusGroup=inspector.locator('.inspector-group').filter({hasText:'Lekerekítés'}),radiusTitle=radiusGroup.locator(':scope > .inspector-group-title');
+    if(await radiusTitle.getAttribute('aria-expanded')==='false')await radiusTitle.click();
+    assert.equal(await inspector.locator('[data-property-id="radius.all"] input[type="number"]').inputValue(),tabletAllValues[index].slice(0,-2),`${type}: tablet all-corner radius survives Editor reload`);
+    for(const [cornerIndex,property] of individualCorners.entries())assert.equal(await inspector.locator(`[data-property-id="${property.id}"] input[type="number"]`).inputValue(),tabletCornerValues[id][cornerIndex].slice(0,-2),`${type}/${property.id}: tablet corner survives Editor reload`);
+  }
+  await editor.locator('#publish').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
+  await viewer.reload();
+  for(const {type,id} of editableNodes){
+    const expected=Object.fromEntries(individualCorners.map(({css},index)=>[css,tabletCornerValues[id][index]]));
+    assert.deepEqual(await publicNode(id).evaluate(readCorners),expected,`${type}: tablet Publish renders all independent corners`);
+    assert.equal(published.pages[pageId].nodes[id].responsive.tablet.borderRadius,tabletAllValues[editableNodes.findIndex(node=>node.id===id)],`${type}: tablet Publish stores all-corner radius`);
+  }
+  await viewer.setViewportSize({width:390,height:900});await viewer.reload();
+  for(const {type,id} of editableNodes)assert.deepEqual(await publicNode(id).evaluate(readCorners),Object.fromEntries(individualCorners.map(({css},index)=>[css,tabletCornerValues[id][index]])),`${type}: mobile inherits published tablet corners`);
+  await viewer.setViewportSize({width:1366,height:900});await viewer.reload();
+  for(const {type,id} of editableNodes)assert.deepEqual(await publicNode(id).evaluate(readCorners),desktopPublicCorners[id],`${type}: tablet Publish preserves desktop corners`);
+
+  await editor.locator('.canvas-device-btn[data-device="tablet"]').click();
+  for(const {type,id} of editableNodes){
+    const canvasNode=editor.locator(`.node[data-node-id="${id}"]`);
+    await canvasNode.evaluate(el=>el.click());await editor.locator('.inspector-tabs button').first().click();
+    const group=inspector.locator('.inspector-group').filter({hasText:'Lekerekítés'}),title=group.locator(':scope > .inspector-group-title');
+    if(await title.getAttribute('aria-expanded')==='false')await title.click();
+    for(const property of individualCorners){
+      const reset=group.locator(`.property-reset[data-property-key="${property.key}"]`);
+      assert.equal(await reset.count(),1,`${type}/${property.id}: tablet reset is available`);
+      assert.equal(await reset.getAttribute('data-property-command'),'responsive.set',`${type}/${property.id}: tablet reset uses responsive command`);
+      await reset.click();
+    }
+    const allReset=group.locator('.property-reset[data-property-key="borderRadius"]');
+    assert.equal(await allReset.count(),1,`${type}: tablet all-corner reset is available`);
+    await allReset.click();
+    assert.deepEqual(await canvasNode.evaluate(readCorners),tabletDesktopCanvas[id],`${type}: resetting tablet all/corner fields restores desktop Canvas values`);
+  }
+  const finalTabletNode=editableNodes.at(-1);
+  await editor.locator('#undo').click();
+  assert.equal(await editor.locator(`.node[data-node-id="${finalTabletNode.id}"]`).evaluate(el=>getComputedStyle(el).borderBottomLeftRadius),tabletAllValues.at(-1),`${finalTabletNode.type}: Undo restores the final tablet all-corner radius reset`);
+  await editor.locator('#redo').click();
+  assert.deepEqual(await editor.locator(`.node[data-node-id="${finalTabletNode.id}"]`).evaluate(readCorners),tabletDesktopCanvas[finalTabletNode.id],`${finalTabletNode.type}: Redo restores desktop radius inheritance`);
+  await editor.locator('#save').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+  for(const {type,id} of editableNodes){
+    assert.equal(draft.pages[pageId].nodes[id].responsive.tablet.borderRadius,undefined,`${type}: tablet reset Save removes all-corner override`);
+    assert.equal(published.pages[pageId].nodes[id].responsive.tablet.borderRadius,tabletAllValues[editableNodes.findIndex(node=>node.id===id)],`${type}: tablet reset Save preserves published all-corner value`);
+    for(const property of individualCorners){
+      assert.equal(draft.pages[pageId].nodes[id].responsive.tablet[property.key],undefined,`${type}/${property.id}: tablet reset Save removes override`);
+      assert.equal(published.pages[pageId].nodes[id].responsive.tablet[property.key],tabletCornerValues[id][individualCorners.indexOf(property)],`${type}/${property.id}: tablet reset Save preserves published value`);
+    }
+  }
+  await viewer.setViewportSize({width:768,height:900});await viewer.reload();
+  for(const {type,id} of editableNodes)assert.deepEqual(await publicNode(id).evaluate(readCorners),Object.fromEntries(individualCorners.map(({css},index)=>[css,tabletCornerValues[id][index]])),`${type}: tablet reset Save leaves public corners unchanged`);
+  await editor.locator('#publish').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
+  await viewer.reload();
+  for(const {type,id} of editableNodes)assert.deepEqual(await publicNode(id).evaluate(readCorners),desktopPublicCorners[id],`${type}: tablet reset Publish restores desktop radius`);
+  await viewer.setViewportSize({width:390,height:900});await viewer.reload();
+  for(const {type,id} of editableNodes)assert.deepEqual(await publicNode(id).evaluate(readCorners),desktopPublicCorners[id],`${type}: tablet reset Publish restores mobile desktop inheritance`);
   assert.deepEqual(errors,[],'radius lifecycle must not produce Editor page errors');
 });
