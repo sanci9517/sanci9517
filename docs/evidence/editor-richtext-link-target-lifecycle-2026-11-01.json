@@ -61,7 +61,8 @@
       "public/editor-v2/core/schema.js",
       "public/editor-v2/editor-refresh.css",
       "public/editor-v2/index.html",
-      "public/visual-page.html"
+      "public/visual-page.html",
+      "public/editor-v2/tests/inspector-richtext.test.js"
     ],
     "deployment_id_before_release": "5d81f0f0-176c-4437-b5c5-652765f70bff",
     "version_id_before_release": "72f6626e-ba9a-4147-874a-3d8cfcf00919",
@@ -80,11 +81,12 @@
       "public/editor-v2/core/schema.js": "740951188cac2e53309f81ec073c620e28189d5104fae4f4cc66ebc92723be4a",
       "public/editor-v2/editor-refresh.css": "1f463139b3aa7fce7b3d42eeaf4cb348baca1cf1eb2abcafa8ad09465989bb62",
       "public/editor-v2/index.html": "babda1934a00d3e0902be0f976f2e909b57a3e7cdf7940997b57ccd6fabeab20",
-      "public/visual-page.html": "1d0bc456b1547e2a48008b1ef2fad928704b4dc5d36da4b73126046d99e69c84"
+      "public/visual-page.html": "1d0bc456b1547e2a48008b1ef2fad928704b4dc5d36da4b73126046d99e69c84",
+      "public/editor-v2/tests/inspector-richtext.test.js": "fa2b3c22479739f55b0ab9b3b345789b92a7117312e79c7b3664a4abf0836d8f"
     },
     "d1_production_writes": 0,
     "r2_changes": 0,
-    "post_release_asset_check": "PASS: all 9 changed public assets returned HTTP 200 and each live SHA-256 matched its local file; cache-busted URLs used for versioned JS/CSS.",
+    "post_release_asset_check": "PASS: all 10 changed/uploaded public assets returned HTTP 200 and each live SHA-256 matched its local file; cache-busted URLs used for versioned JS/CSS.",
     "d1_post_release": "SELECT-only Cloudflare D1 Query API; 34 migration ledger rows read, rows_written=0, changed_db=false. No migration or data mutation.",
     "deploy_safe": "PASS: npm run deploy:safe; repository migration safety gate passed, Wrangler uploaded 10 new/changed assets and deployed the Worker. Non-fatal EROFS warning only affected Wrangler debug-log location."
   },
