@@ -27,6 +27,16 @@
       "failed": 0,
       "coverage": "360/390/430/1280 CSS-pixel viewport widths"
     },
+    "linkReportURLSafetyRuntime": {
+      "command": "node --experimental-loader ./tests/ts-extension-loader.mjs --test --test-reporter=spec tests/web013-runtime.test.js",
+      "result": "PASS",
+      "assertions": [
+        "same-origin absolute missing page URLs are reported",
+        "cross-origin and protocol-relative foreign links are excluded",
+        "credentialed same-origin URLs are excluded",
+        "HTTP scheme downgrade and javascript URLs are excluded"
+      ]
+    },
     "editorUnit": "npm run test:editor — PASS 11/11 test files",
     "typecheck": "npm run typecheck — PASS",
     "web013UnitAndMigrationGate": "npm run test:web013 — PASS 11/11; included deploy:safe migration safety gate",

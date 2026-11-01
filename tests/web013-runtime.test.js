@@ -43,7 +43,12 @@ async function fixture(t) {
     { type: 'paragraph', children: [
       { type: 'text', text: 'Current', marks: [], link: { href: 'https://example.test/p/new?from=richtext' } },
       { type: 'text', text: 'Missing', marks: [], link: { href: '/p/missing-rich' } },
-      { type: 'text', text: 'Foreign', marks: [], link: { href: 'https://other.example.test/p/foreign' } }
+      { type: 'text', text: 'Missing absolute', marks: [], link: { href: 'https://example.test/p/missing-absolute' } },
+      { type: 'text', text: 'Foreign', marks: [], link: { href: 'https://other.example.test/p/foreign' } },
+      { type: 'text', text: 'Protocol relative foreign', marks: [], link: { href: '//other.example.test/p/protocol-relative' } },
+      { type: 'text', text: 'Credentials', marks: [], link: { href: 'https://user:pass@example.test/p/credential-trap' } },
+      { type: 'text', text: 'Scheme downgrade', marks: [], link: { href: 'http://example.test/p/downgrade' } },
+      { type: 'text', text: 'Script scheme', marks: [], link: { href: 'javascript:alert(1)' } }
     ] },
     { type: 'bulleted-list', items: [[
       { type: 'text', text: 'Old', marks: [], link: { href: '/p/old' } }
@@ -220,8 +225,10 @@ test('authenticated link report checks published rich text, redirects and site-s
   const body = await response.json();
   assert.equal(response.status, 200);
   assert.match(response.headers.get('Cache-Control'), /no-store/);
-  assert.equal(body.data.checkedContentLinks, 8);
-  assert.deepEqual(body.data.contentFindings.map(item => item.href), ['https://example.test/p/foreign', '/p/missing', '/p/missing-rich', '/p/missing-table']);
+  assert.equal(body.data.checkedContentLinks, 9, 'only same-origin internal page links count as checked');
+  assert.deepEqual(body.data.contentFindings.map(item => item.href), ['https://example.test/p/foreign', '/p/missing', '/p/missing-rich', 'https://example.test/p/missing-absolute', '/p/missing-table']);
+  assert.equal(body.data.contentFindings.some(item => /protocol-relative|credential-trap|downgrade|javascript:/i.test(item.href)), false,
+    'the report must not misclassify cross-origin, credentialed, scheme-downgrade or script URLs as this site’s page links');
   assert.deepEqual(body.data.redirectedContentLinks.map(item => [item.href, item.targetPageId]), [['/p/old', 'target'], ['/p/old', 'target']]);
   assert.deepEqual(body.data.navigationUrlFindings.map(item => [item.itemId, item.href]), [['foreign-url', 'https://example.test/p/foreign-old']]);
   assert.deepEqual(body.data.redirectedNavigationLinks.map(item => [item.itemId, item.targetPageId]), [['old-url', 'target']]);
