@@ -40,7 +40,14 @@
     "editorUnit": "npm run test:editor — PASS 11/11 test files",
     "typecheck": "npm run typecheck — PASS",
     "web013UnitAndMigrationGate": "npm run test:web013 — PASS 11/11; included deploy:safe migration safety gate",
-    "planAndTraceability": "canonical master PASS (13 files); active cursor audit PASS (77.44 / WEB-011 → 77.44.7.B); traceability PASS (396 mappings); git diff --check PASS"
+    "planAndTraceability": "canonical master PASS (13 files); active cursor audit PASS (77.44 / WEB-011 → 77.44.7.B); traceability PASS (396 mappings); git diff --check PASS",
+    "editorLayoutChromium": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium npm run test:editor:layout",
+      "result": "PASS",
+      "passed": 97,
+      "failed": 0,
+      "duration_ms": 2653938
+    }
   },
   "runtime": {
     "source_changed": false,
