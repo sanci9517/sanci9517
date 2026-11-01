@@ -99,6 +99,7 @@ test('actual Inspector keeps unsaved Rich Text through Ctrl+S, reload and separa
     assert.equal(await tab.locator('.richtext-editor-surface').evaluate(el=>el===window.__richTextSurface&&el.isConnected&&document.activeElement===el),true);
     assert.equal(await tab.getByRole('button',{name:mark}).getAttribute('aria-pressed'),'true');
   }
+  await selectWorld();
   await tab.locator('.richtext-editor-surface :is(strong,b)').waitFor();
   await tab.locator('.richtext-editor-surface :is(em,i)').waitFor();
   await tab.locator('.richtext-editor-surface u').waitFor();
@@ -467,4 +468,38 @@ test('actual Inspector keeps unsaved Rich Text through Ctrl+S, reload and separa
   const publishedHrefs=await publicTab.locator('.visual-richtext a').evaluateAll(links=>links.map(link=>link.getAttribute('href')));
   assert.ok(!publishedHrefs.includes('/p/published-slug'),'published page no longer links to the removed destination');
   await refreshReport();await reportStatus.getByText('Tartalmi linkhibák: 0').waitFor();
+
+  // The remaining native inline marks use the same Inspector → Page Model →
+  // draft Save/reload → separate Publish route as bold, italic and underline.
+  await openEditor();
+  const selectMarkText=text=>tab.locator('.richtext-editor-surface').evaluate((el,text)=>{
+    const walker=document.createTreeWalker(el,NodeFilter.SHOW_TEXT);let node;
+    while(node=walker.nextNode())if(node.nodeValue.includes(text))break;
+    if(!node)throw new Error(`Rich Text mark fixture missing: ${text}; rendered text: ${el.textContent}`);
+    const start=node.nodeValue.indexOf(text),range=document.createRange();range.setStart(node,start);range.setEnd(node,start+text.length);
+    const selection=window.getSelection();selection.removeAllRanges();selection.addRange(range);
+    document.dispatchEvent(new Event('selectionchange'));
+  },text);
+  for(const [label,tag,text] of [['Áthúzott','s','Hello'],['Alsó index','sub','fresh'],['Felső index','sup','Inspector']]){
+    await selectMarkText(text);
+    await tab.evaluate(()=>new Promise(requestAnimationFrame));
+    await tab.getByRole('button',{name:label,exact:true}).click();
+    assert.equal(await tab.locator(`.richtext-editor-surface ${tag}`).textContent(),text,`${label} formats the selected text`);
+    assert.equal(await tab.evaluate(()=>document.getSelection()?.toString()),text,`${label} preserves the selection`);
+  }
+  assert.equal(await tab.locator(`.node[data-node-id="${nodeId}"] .richtext-content s`).textContent(),'Hello','Canvas mirrors Inspector strikethrough');
+  assert.equal(await tab.locator(`.node[data-node-id="${nodeId}"] .richtext-content sub`).textContent(),'fresh','Canvas mirrors Inspector subscript');
+  assert.equal(await tab.locator(`.node[data-node-id="${nodeId}"] .richtext-content sup`).textContent(),'Inspector','Canvas mirrors Inspector superscript');
+  await tab.locator('#save').click();await tab.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent?.startsWith('Mentve'));
+  assert.equal(posts.at(-1).publish,false,'inline marks Save as a draft only');
+  assert.equal(await publicTab.locator('.visual-richtext s').count(),0,'draft Save keeps public strikethrough unchanged');
+  assert.equal(await publicTab.locator('.visual-richtext sub').count(),0,'draft Save keeps public subscript unchanged');
+  assert.equal(await publicTab.locator('.visual-richtext sup').count(),0,'draft Save keeps public superscript unchanged');
+  await openEditor();
+  for(const [tag,text] of [['s','Hello'],['sub','fresh'],['sup','Inspector']])
+    assert.equal(await tab.locator(`.richtext-editor-surface ${tag}`).textContent(),text,`${tag} survives draft reload`);
+  await tab.locator('#publish').click();await tab.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent==='Publikálva');
+  await publicTab.reload();
+  for(const [tag,text] of [['s','Hello'],['sub','fresh'],['sup','Inspector']])
+    assert.equal(await publicTab.locator(`.visual-richtext ${tag}`).textContent(),text,`explicit Publish renders ${tag}`);
 });
