@@ -1,0 +1,81 @@
+{
+  "date": "2026-11-01",
+  "plan_item": "77.44.7.B — Rich Text selected-link URL and internal-page picker lifecycle",
+  "status": "AUTOMATED_PASS; PRODUCTION_RELEASE_VERIFIED; OVERALL_77_44_7_B_OPEN",
+  "finding": "Selecting an existing Rich Text link updated its target control but left the URL field and internal-page picker stale. Manual URL edits could also leave an unrelated internal-page option selected.",
+  "change": [
+    "The Rich Text selection bridge now reads the selected runs' shared href. It hydrates one URL, clears plain-text selections, and shows a mixed placeholder when selected runs do not share a destination.",
+    "Moving focus from a selected link to Inspector controls preserves a URL being edited. The shared page picker now follows URL input and clears an obsolete page choice; choosing a published page uses its published slug.",
+    "Updated cache-bust versions across the affected Editor entry point and transitive modules so browsers load the released Inspector and shared control code."
+  ],
+  "tests": {
+    "browser": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-richtext-save-publish.test.js tests/browser/editor-inspector-richtext-controls.test.js tests/browser/editor-richtext-selection.test.js tests/browser/editor-richtext-multiblock.test.js tests/browser/editor-richtext-nested-links.test.js tests/browser/editor-richtext-structural-offsets.test.js tests/browser/editor-richtext-block-transform.test.js tests/browser/editor-richtext-partial-list.test.js tests/browser/editor-richtext-nested-paste.test.js tests/browser/editor-richtext-ime-final-input.test.js tests/browser/editor-plain-text-ime.test.js tests/browser/editor-richtext-hardbreak-clipboard.test.js tests/browser/editor-richtext-empty-selection.test.js tests/browser/editor-richtext-nested-styles.test.js tests/browser/web013-admin-link-report.test.js tests/browser/web013-public-richtext.test.js — PASS, 17/17 real Chromium tests, including URL hydration, stale picker clearing, published slug selection, draft Save, reload, separate Publish, public rendering, and link-report regressions.",
+    "editorUnit": "npm run test:editor — PASS, 11/11 tests.",
+    "web013": "npm run test:web013 — PASS, 11/11 tests; migration safety gate PASS.",
+    "typecheck": "npm run typecheck — PASS.",
+    "planAndTraceability": "scripts/check-canonical-plan.py, scripts/audit-active-plan-point.py, and scripts/build-feature-traceability.py --check — PASS; 13 canonical master files, cursor 77.44.7.B, 396 mappings; functional acceptance remains NOT_CERTIFIED.",
+    "syntaxAndDiff": "node --check on all changed JavaScript files and git diff --check — PASS.",
+    "dryRun": "npx wrangler deploy --dry-run — PASS, Wrangler 4.130.0; read 162 assets, 300.14 KiB / 68.68 KiB gzip. Wrangler's EROFS warning affects only its debug-log file under the read-only home directory.",
+    "deploySafe": "npm run deploy:safe — PASS; the repository migration safety gate ran and Wrangler uploaded 10 changed assets. No D1 migration was invoked. Worker startup time reported as 7 ms."
+  },
+  "reuse": {
+    "solution": "Reused the project-owned structured Rich Text schema, selected-run model, Inspector selection bridge, validated Page Model command, shared pageLinkPicker, publishedSlug rules, and existing Chromium fixtures.",
+    "externalCode": "None; no new dependency, paid service, or infrastructure."
+  },
+  "release": {
+    "checkoutBranch": "work; unchanged",
+    "targetBranch": "v2/foundation",
+    "githubHeadBefore": "438c2748e7751b9e9cc2669c8e77a0f0a8859d20",
+    "runtimeCommit": "3cf368e4f832a4ae5cae4c15579dc670032333e8",
+    "push": "PASS: normal fast-forward 438c2748e7751b9e9cc2669c8e77a0f0a8859d20..3cf368e4f832a4ae5cae4c15579dc670032333e8 to v2/foundation; GitHub ref GET confirms the exact target SHA.",
+    "ci": "Commit uses [skip ci]. GitHub combined-status API returned statuses=[]; CI PASS is not claimed.",
+    "deployment": {
+      "id": "85c0d722-fbb0-4d65-be15-5c0fca8b9ea9",
+      "versionId": "a6a1ca50-d30d-4dfb-bd1b-8c8544c93704",
+      "createdOn": "2026-11-01T11:24:07.520269Z",
+      "trafficPercent": 100,
+      "trigger": "npm run deploy:safe; no automatic Cloudflare build started after push."
+    },
+    "d1Preflight": "Cloudflare D1 Query API SELECT name FROM d1_migrations ORDER BY name; 34 rows read, rows_written=0, changed_db=false.",
+    "d1Postflight": "The same SELECT-only query read 34 migration rows after deploy; rows_written=0, changed_db=false. No production migration or data mutation.",
+    "d1ProductionWrites": 0,
+    "r2Changes": 0
+  },
+  "production": {
+    "runtimeSourceChanged": true,
+    "health": "PASS: GET /api/health returned HTTP 200 and {ok:true, service:sanci9517-streamer-brand, version:2.0.0}.",
+    "changedAssets": [
+      "public/editor-v2/app.js",
+      "public/editor-v2/core/richtext-engine.js",
+      "public/editor-v2/core/richtext-import.js",
+      "public/editor-v2/core/richtext-links.js",
+      "public/editor-v2/index.html",
+      "public/editor-v2/tests/inspector-richtext.test.js",
+      "public/editor-v2/ui/card-content-inspector.js",
+      "public/editor-v2/ui/element-content-controls.js",
+      "public/editor-v2/ui/legacy-media-inspector.js",
+      "public/editor-v2/ui/property-controls.js"
+    ],
+    "deploymentBefore": "81916038-60c7-4a42-a338-bb5131cb75c7",
+    "versionBefore": "84e45415-4a0f-4489-a66b-fb12418ea999",
+    "trafficBefore": 100,
+    "deploymentAfter": "85c0d722-fbb0-4d65-be15-5c0fca8b9ea9",
+    "versionAfter": "a6a1ca50-d30d-4dfb-bd1b-8c8544c93704",
+    "trafficAfter": 100,
+    "assetHashes": {
+      "public/editor-v2/app.js": "0ab022c53a309037fffd15be68a004e682ee35b2c3d59e99ea299a37cd61a44c",
+      "public/editor-v2/core/richtext-links.js": "a19e7bfccc3a590939a1db83650f6da07e2fc6f041adaa89c35c82216151b7c5",
+      "public/editor-v2/core/richtext-engine.js": "f5933d08273e2ad2d23c33b9d411f621f068d7085fc7a05d22f17421e1a7ffe2",
+      "public/editor-v2/core/richtext-import.js": "5facd24bac36530ffb1881d496154e2d98e1db2538d8deec1e8b087b4aac5567",
+      "public/editor-v2/index.html": "6665291a9a4e269881a198bae389f07e1a7b0cfd58e9a93b212067ecf7fb4229",
+      "public/editor-v2/tests/inspector-richtext.test.js": "95fc3d2a583f96d0fdeba3ed51c2394a1c88b229ed4d2cf6154dd987e56db0de",
+      "public/editor-v2/ui/card-content-inspector.js": "f653e3ca4a4afa34a243820d3cfadccf007c09fd9d139d0a3ff5700ebab7ff2c",
+      "public/editor-v2/ui/element-content-controls.js": "b132abb043cb07e0b8d664b8dc3368583e42388f5d7fabb35561586f1abbb570",
+      "public/editor-v2/ui/legacy-media-inspector.js": "b7c087c7ef1832b58b88570543a582c872d3702c772e3de560ef3f88071bfba5",
+      "public/editor-v2/ui/property-controls.js": "a0b851a776c5d3d5eb5080c7125615fd95c2d36dc2e54eccfdb31a2b0d24912f"
+    },
+    "dependencyCheck": "The versioned schema URL /editor-v2/core/schema.js?v=20261101-richtext-link-picker returned HTTP 200 and matched the local SHA-256 740951188cac2e53309f81ec073c620e28189d5104fae4f4cc66ebc92723be4a. The Editor directory URL /editor-v2/ served the changed index.html with an exact local/live SHA-256 match.",
+    "assetCheck": "PASS: all 10 changed static asset paths returned HTTP 200 and each live body matched the local SHA-256. The versioned schema dependency URL also matched."
+  },
+  "acceptance": "The selected-link URL and internal-page-picker lifecycle slice is automated and production-verified. Overall 77.44.7.B remains OPEN; complete Visual Editor manual/physical acceptance remains deferred to 77.44.7.F/77.44.8."
+}
