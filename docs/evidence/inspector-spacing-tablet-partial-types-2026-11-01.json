@@ -1,0 +1,48 @@
+{
+  "date": "2026-11-01",
+  "plan_item": "77.44.7.A — responsive margin/padding tablet lifecycle across editable PARTIAL types",
+  "status": "FULL_CHROMIUM_AND_LOCAL_CHECKS_PASS; TEST_FAST_FORWARD_VERIFIED; PRODUCTION_UNCHANGED; OVERALL_ACCEPTANCE_OPEN",
+  "finding": "The existing four-side margin/padding matrix covered desktop and mobile, but omitted tablet overrides, tablet-to-mobile inheritance, and tablet reset to desktop across all editable PARTIAL types.",
+  "change": "Extended tests/browser/editor-inspector-spacing-partial-types.test.js with the tablet lifecycle. No runtime source or public asset changed.",
+  "coverage": "All 44 editable PARTIAL types × margin/padding four-side controls on desktop, tablet, and mobile. Verifies Inspector responsive.set command and Page Model keys, Canvas and public computed CSS, draft Save without Publish, reload persistence, explicit Publish, breakpoint isolation, mobile inheritance from tablet, mobile reset restoring tablet values, tablet reset restoring desktop values, Undo/Redo, and that reset Save leaves public state unchanged until separate Publish.",
+  "browser": {
+    "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-inspector-spacing-partial-types.test.js",
+    "result": "PASS, 1/1 test; 264518.372198 ms test time / 265049.072136 ms total."
+  },
+  "checks": {
+    "node --check tests/browser/editor-inspector-spacing-partial-types.test.js": "PASS",
+    "npm run test:editor": "PASS, 11/11 files",
+    "npm run typecheck": "PASS",
+    "npm run test:web013:migration-gate": "PASS; safety gate only, no production migration",
+    "python3 scripts/check-canonical-plan.py": "PASS; complete 13-file master; acceptance NOT_CERTIFIED",
+    "python3 scripts/audit-active-plan-point.py": "PASS; cursor 77.44 / WEB-011 -> 77.44.7.A",
+    "python3 scripts/build-feature-traceability.py --check": "PASS; 396 mappings",
+    "git diff --check": "PASS"
+  },
+  "reuse_review": {
+    "solution": "Reused the existing typed four-side spacing controls, Property Registry, responsive.set command, local Chromium fixture, public renderer, and Save/Publish and Undo/Redo models.",
+    "external_code_or_dependency": "None."
+  },
+  "production": {
+    "runtime_source_changed": false,
+    "public_asset_changed": false,
+    "worker_deployed": false,
+    "deployment_id": "5d81f0f0-176c-4437-b5c5-652765f70bff",
+    "version_id": "72f6626e-ba9a-4147-874a-3d8cfcf00919",
+    "traffic_percent": 100,
+    "health": "Direct GET /api/health returned HTTP 200 with the expected service identity.",
+    "page_renderer_sha256": "005792f314f891aededf6363573c2ccd66527e53397d673e6a7b0434f6245370",
+    "d1_production_writes": 0,
+    "r2_changes": 0
+  },
+  "release": {
+    "local_checkout_branch": "work; unchanged",
+    "github_target_branch": "v2/foundation",
+    "github_head_at_start": "e1a8a0f8433e478b2a92c2c7a50049cbed64a526",
+    "test_commit": "db8b940a4242d28e1374be1fcbe45ebd4b29cab2",
+    "push": "Verified normal fast-forward from e1a8a0f8433e478b2a92c2c7a50049cbed64a526; GitHub compare reports 1 ahead / 0 behind and git ls-remote returned db8b940a4242d28e1374be1fcbe45ebd4b29cab2 for refs/heads/v2/foundation.",
+    "ci": "The commit uses [skip ci]; GitHub combined status returned statuses=[]. No CI PASS is claimed.",
+    "new_cost_or_dependency": "None."
+  },
+  "acceptance_boundary": "Automated coverage now verifies the spacing tablet lifecycle for all 44 editable PARTIAL types. Overall 77.44.7.A remains OPEN / NOT CERTIFIED; manual and physical acceptance of the complete Visual Editor remains DEFERRED."
+}
