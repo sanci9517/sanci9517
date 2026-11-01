@@ -37,7 +37,7 @@
     "github_target_branch": "v2/foundation",
     "github_head_at_start": "8fa2d9cc439ccf5649235ff2db0e5ac51f1730bd",
     "test_commit": "fc98c4749bd4f0c8dc512e81575a2db832da8673",
-    "push": "PASS: normal fast-forward from 8fa2d9cc439ccf5649235ff2db0e5ac51f1730bd to caba6c7b181110c2d008bf00e9929edf7e773274 (test and plan/evidence commits); git ls-remote returned exact v2/foundation SHA caba6c7b181110c2d008bf00e9929edf7e773274; GitHub compare verified ahead_by=2, behind_by=0, total_commits=2. A separate documentation/evidence follow-up is being finalized.",
+    "push": "PASS: normal fast-forward from 8fa2d9cc439ccf5649235ff2db0e5ac51f1730bd to caba6c7b181110c2d008bf00e9929edf7e773274 added the test and plan/evidence; GitHub compare verified ahead_by=2, behind_by=0, total_commits=2. A documentation-only evidence follow-up was then fast-forwarded from caba6c7b to c8bf3aca. Final branch ref verification is recorded after that follow-up.",
     "ci": "Both pushed commits use [skip ci]. GitHub combined status returned statuses=[]; no CI PASS is claimed.",
     "new_cost_or_dependency": "None."
   },
