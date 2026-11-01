@@ -1,0 +1,52 @@
+{
+  "date": "2026-11-01",
+  "plan_item": "77.44.7.A — all-corner and independent radius tablet lifecycle across editable PARTIAL types",
+  "status": "FULL_CHROMIUM_AND_LOCAL_CHECKS_PASS; PRODUCTION_UNCHANGED; OVERALL_ACCEPTANCE_OPEN",
+  "finding": "The five responsive radius fields had a full mobile lifecycle across 44 editable PARTIAL types and tablet coverage on representative nodes, but no cross-type tablet Save/reload/Publish/reset path.",
+  "change": "Extended tests/browser/editor-inspector-partial-radius-lifecycle.test.js to exercise tablet values for radius.all and all four independent corners across the 44 editable PARTIAL types. No runtime source or public asset changed.",
+  "coverage": "Verifies tablet responsive.set commands and Page Model keys; all+independent-corner composition on Canvas; draft Save and exact model values; no premature public change; Editor reload persistence; separate Publish and public computed CSS; desktop preservation; mobile inheritance from tablet; reset of all four corners plus radius.all; Undo/Redo; reset Save preserving the published tablet values; and separate Publish restoring desktop/mobile inheritance.",
+  "browser": {
+    "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-inspector-partial-radius-lifecycle.test.js",
+    "result": "PASS, 1/1 test; 197819.527676 ms test time / 198379.644 ms total.",
+    "repaired_fixture_assertions": [
+      "The first extended run compared a section's tablet Canvas inheritance with its distinct public desktop snapshot (0px versus 18px); the assertions now capture the actual desktop Canvas baseline separately.",
+      "Undo follows the last command (radius.all reset), so it restores the all-corner tablet value rather than the last independent-corner value; the assertion now verifies that command's actual effect."
+    ]
+  },
+  "checks": {
+    "node --check tests/browser/editor-inspector-partial-radius-lifecycle.test.js": "PASS",
+    "npm run test:editor": "PASS, 11/11 files",
+    "npm run typecheck": "PASS",
+    "npm run test:web013:migration-gate": "PASS; safety gate only, no production migration",
+    "python3 scripts/check-canonical-plan.py": "PASS; complete 13-file master; acceptance NOT_CERTIFIED",
+    "python3 scripts/audit-active-plan-point.py": "PASS; cursor 77.44 / WEB-011 -> 77.44.7.A",
+    "python3 scripts/build-feature-traceability.py --check": "PASS; 396 mappings",
+    "git diff --check": "PASS"
+  },
+  "reuse_review": {
+    "solution": "Reused the existing responsive Property Registry, typed dimension controls, responsive.set command, local real-Chromium fixture, Canvas/public CSS resolution, and Save/Publish and Undo/Redo behavior.",
+    "external_code_or_dependency": "None."
+  },
+  "production": {
+    "runtime_source_changed": false,
+    "public_asset_changed": false,
+    "worker_deployed": false,
+    "deployment_id": "5d81f0f0-176c-4437-b5c5-652765f70bff",
+    "version_id": "72f6626e-ba9a-4147-874a-3d8cfcf00919",
+    "traffic_percent": 100,
+    "health": "Direct GET /api/health returned HTTP 200 with the expected service identity.",
+    "page_renderer_sha256": "005792f314f891aededf6363573c2ccd66527e53397d673e6a7b0434f6245370",
+    "d1_production_writes": 0,
+    "r2_changes": 0
+  },
+  "release": {
+    "local_checkout_branch": "work; unchanged",
+    "github_target_branch": "v2/foundation",
+    "github_head_at_start": "23b2dc0dc8df596742dd987492fc76828e41136f",
+    "test_commit": "2e64da33f33df29710b9c6bdf1ec9ef796410f60",
+    "push": "Verified normal fast-forward from 23b2dc0dc8df596742dd987492fc76828e41136f to 2e64da33f33df29710b9c6bdf1ec9ef796410f60; git ls-remote returned the exact SHA for refs/heads/v2/foundation.",
+    "ci": "The test commit uses [skip ci]; GitHub compare confirmed one fast-forward commit and the combined status returned statuses=[]. No CI PASS is claimed.",
+    "new_cost_or_dependency": "None."
+  },
+  "acceptance_boundary": "The tablet radius lifecycle is automated for all 44 editable PARTIAL types. Overall 77.44.7.A remains OPEN / NOT CERTIFIED; manual and physical acceptance of the complete Visual Editor remains DEFERRED."
+}
