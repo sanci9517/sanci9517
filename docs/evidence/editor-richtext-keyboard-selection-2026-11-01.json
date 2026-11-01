@@ -40,7 +40,7 @@
       "trafficPercent": 100,
       "health": "Direct GET /api/health returned HTTP 200 and {ok:true, version:2.0.0}; a read-only Cloudflare deployment GET after the test push confirmed the same deployment and 100% traffic version, so no Worker redeploy occurred."
     },
-    "docsEvidenceCommit": "This evidence and canonical-plan update are pushed separately after the test commit; final documentation commit SHA is recorded in the plan's next entry."
+    "docsEvidenceCommit": "Documentation/evidence commit 6c0e95cf689bbb4b6699753495680bb77ada1ec0 was pushed after the test commit; remote branch and unchanged production deployment were read back."
   },
   "productionD1Writes": 0,
   "productionD1Migrations": 0,
