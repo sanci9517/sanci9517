@@ -336,6 +336,7 @@ button:focus-visible, summary:focus-visible, .rail-btn:focus-visible { outline: 
 .property-unit-hint { color:#a9b8c9; font-size:11px; }
 .richtext-link-controls { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:9px; padding:12px; border-top:1px solid var(--editor-line); }
 .richtext-link-controls input { grid-column:1/-1; width:100%; min-width:0; min-height:44px; border:1px solid var(--editor-line); border-radius:8px; background:#101925; color:#fff; padding:8px 10px; font-size:14px; }
+.richtext-link-controls select { grid-column:1/-1; width:100%; min-width:0; min-height:44px; border:1px solid var(--editor-line); border-radius:8px; background:#101925; color:#fff; padding:8px 10px; font-size:14px; }
 .richtext-link-controls button { min-width:0; min-height:44px; padding:7px 10px; font-size:13px; white-space:normal; }
 .richtext-link-controls small { grid-column:1/-1; font-size:12px; line-height:1.4; color:#ffb7b7; }
 .element-capability { display:block; margin-left:auto; color:#b9c9db; font-size:10px; font-weight:600; white-space:nowrap; }

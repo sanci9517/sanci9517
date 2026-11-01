@@ -1,0 +1,73 @@
+{
+  "date": "2026-11-01",
+  "plan_item": "77.44.7.B — Rich Text link target lifecycle",
+  "status": "LOCAL_AUTOMATED_PASS; PRODUCTION_RELEASE_PENDING; OVERALL_EDITOR_ACCEPTANCE_OPEN",
+  "finding": "The Inspector had no link-target choice; the structured Rich Text DOM bridge did not preserve every explicit _self target; and the published page renderer discarded explicit _self values.",
+  "change": [
+    "Added an accessible Inspector link target selector for automatic, same-tab, and new-tab behavior, with a 44px mobile touch target.",
+    "Kept safe target policy and canonical rel behavior in the existing structured Rich Text schema, link helper, Editor DOM bridge, and clipboard importer.",
+    "Reused the canonical link-target resolver in the public renderer so explicit _self survives and automatic external HTTP(S) links use _blank with noopener noreferrer.",
+    "Added URL target tests for normal, explicit, mixed, and untrusted target tokens, plus real Editor Save/Publish/link-report and public-shell assertions."
+  ],
+  "browser": {
+    "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-richtext-save-publish.test.js tests/browser/editor-inspector-richtext-controls.test.js tests/browser/editor-richtext-selection.test.js tests/browser/editor-richtext-multiblock.test.js tests/browser/editor-richtext-nested-links.test.js tests/browser/editor-richtext-structural-offsets.test.js tests/browser/editor-richtext-block-transform.test.js tests/browser/editor-richtext-partial-list.test.js tests/browser/editor-richtext-nested-paste.test.js tests/browser/editor-richtext-ime-final-input.test.js tests/browser/editor-plain-text-ime.test.js tests/browser/editor-richtext-hardbreak-clipboard.test.js tests/browser/editor-richtext-empty-selection.test.js tests/browser/editor-richtext-nested-styles.test.js tests/browser/web013-admin-link-report.test.js tests/browser/web013-public-richtext.test.js",
+    "result": "PASS, 17/17 real Chromium tests, 89.596 seconds total.",
+    "reproduced_failure": "The first full run found that the published renderer omitted target=_self. The shared target resolver was added to the public renderer; the full rerun then passed, including explicit same/new-tab Save and Publish assertions, unsafe target fallback, and link-report visibility only after Publish.",
+    "environment_note": "The initial browser attempt without loopback permission failed before assertions with listen EPERM; the authorized network-enabled local Chromium run completed successfully."
+  },
+  "checks": {
+    "npm run typecheck": "PASS",
+    "npm run test:editor": "PASS, 11/11 files",
+    "npm run test:web013": "PASS, 11/11 files, including the migration safety gate",
+    "npm run test:web013:migration-gate": "PASS; repository safety check only, no production migration",
+    "python3 scripts/check-canonical-plan.py": "PASS; one complete 13-file canonical master",
+    "python3 scripts/plan_contract.py": "PASS",
+    "python3 scripts/audit-active-plan-point.py": "PASS; 77.44 / WEB-011 -> 77.44.7.B",
+    "python3 scripts/build-feature-traceability.py --check": "PASS; 396 source mappings",
+    "JavaScript syntax checks": "PASS for changed JavaScript and browser test files",
+    "git diff --check": "PASS",
+    "npx wrangler deploy --dry-run": "PASS, Wrangler 4.130.0 exit 0; 162 assets, 300.14 KiB / 68.68 KiB gzip. Wrangler emitted a non-fatal EROFS warning because its configured debug-log directory is read-only.",
+    "production D1 preflight": "PASS, Cloudflare D1 Query API SELECT name FROM d1_migrations ORDER BY name returned 34 rows; rows_read=34, rows_written=0, changed_db=false. No migration or data mutation."
+  },
+  "reuse_review": {
+    "solution": "Reused the existing project-owned Rich Text schema, Inspector, URL validator, Editor DOM conversion, public renderer, and local Playwright/Chromium fixtures. Existing open-source editor implementations were previously reviewed in this plan; introducing another editor or dependency would duplicate the supported model and command pipeline.",
+    "external_code_or_dependency": "None."
+  },
+  "release": {
+    "local_checkout_branch": "work; unchanged",
+    "github_target_branch": "v2/foundation",
+    "github_head_at_start": "8c205a67116f91d4be848eb55bae0fead934f176",
+    "local_head_before_this_change": "ba3800cdf4f9d555f89e2882ec83dc6352f3e382",
+    "commit": "PENDING_LOCAL_COMMIT",
+    "push": "PENDING_NORMAL_FAST_FORWARD",
+    "ci": "The planned release commit uses [skip ci] to avoid paid or exhausted GitHub Actions usage; no CI PASS is claimed.",
+    "worker_deployment": "PENDING",
+    "new_cost_or_dependency": "None. Existing free Cloudflare/GitHub capabilities only; no paid service, API, or quota increase."
+  },
+  "production": {
+    "runtime_source_changed": true,
+    "public_assets_changed": [
+      "public/assets/page-renderer.js",
+      "public/editor-v2/app.js",
+      "public/editor-v2/core/richtext-engine.js",
+      "public/editor-v2/core/richtext-import.js",
+      "public/editor-v2/core/richtext-links.js",
+      "public/editor-v2/core/schema.js",
+      "public/editor-v2/editor-refresh.css",
+      "public/editor-v2/index.html",
+      "public/visual-page.html"
+    ],
+    "deployment_id_before_release": "5d81f0f0-176c-4437-b5c5-652765f70bff",
+    "version_id_before_release": "72f6626e-ba9a-4147-874a-3d8cfcf00919",
+    "traffic_percent_before_release": 100,
+    "pre_release_health": "Direct GET /api/health returned HTTP 200.",
+    "deployment_id_after_release": "PENDING",
+    "version_id_after_release": "PENDING",
+    "traffic_percent_after_release": "PENDING",
+    "post_release_health": "PENDING",
+    "post_release_live_asset_hashes": "PENDING",
+    "d1_production_writes": 0,
+    "r2_changes": 0
+  },
+  "acceptance_boundary": "This automated Rich Text link-target lifecycle slice is verified. The complete 77.44.7.B and overall Visual Editor functional acceptance remain OPEN; consolidated manual and physical-device acceptance stays deferred to the complete Editor gate 77.44.7.F/77.44.8."
+}

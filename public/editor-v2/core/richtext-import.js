@@ -1,5 +1,5 @@
-import { validatedLinkHref } from './richtext-links.js';
-import { RICH_TEXT_FONT_FAMILIES } from './schema.js';
+import { resolveRichTextLinkTarget, validatedLinkHref } from './richtext-links.js?v=20261101-richtext-link-target';
+import { RICH_TEXT_FONT_FAMILIES } from './schema.js?v=20261101-richtext-link-target';
 
 const MAX_CLIPBOARD_CHARS = 250_000;
 const MAX_TABLE_ROWS = 100;
@@ -68,9 +68,11 @@ function safeLink(anchor) {
   if (!raw) return null;
   try {
     const href = validatedLinkHref(raw);
+    const target=anchor.getAttribute('target');
+    const effectiveTarget=target==='_self'?'_self':resolveRichTextLinkTarget(href,target==='_blank'?'_blank':'auto');
     return {
       href,
-      ...(href.startsWith('http://') || href.startsWith('https://') ? {target: '_blank', rel: 'noopener noreferrer'} : {}),
+      ...(effectiveTarget==='_self'&&target==='_self'?{target:'_self'}:effectiveTarget==='_blank'?{target:'_blank',rel:'noopener noreferrer'}:{}),
       ...(anchor.getAttribute('title') ? {title: anchor.getAttribute('title').slice(0, 256)} : {})
     };
   } catch { return null; }

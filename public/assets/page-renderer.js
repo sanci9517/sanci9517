@@ -1,6 +1,7 @@
 /* Sanci9517 canonical public Page Model renderer — Editor v2 compatible. */
 import { resolveNodeStyle, STYLE_MAP, needsRelativeOffsetPosition, legacyBackgroundColor } from "../editor-v2/core/canvas-engine.js?v=20261030-legacy-background-compound";
-import { RICH_TEXT_FONT_FAMILIES } from "../editor-v2/core/schema.js";
+import { RICH_TEXT_FONT_FAMILIES } from "../editor-v2/core/schema.js?v=20261101-richtext-link-target";
+import { resolveRichTextLinkTarget } from "../editor-v2/core/richtext-links.js?v=20261101-richtext-link-target";
 import { LAYOUT_TYPES, isManagedLayout } from "../editor-v2/core/layout-presets.js";
 import {isStructuredType,renderElementContent,activateStructuredContent,safeMediaUrl} from "../editor-v2/core/element-content.js";
 import {legacyImageSource,legacyPlayableSource,legacyPlaybackSettings,legacyImagePresentation,legacyImageCaption} from "../editor-v2/core/legacy-media-source.js";
@@ -74,8 +75,11 @@ import {backgroundImageValue,legacyBackgroundCompound,MEDIA_ASSET_ID} from "../e
    const styles=[];const color=safeColor(item?.styles?.color),highlight=safeColor(item?.styles?.backgroundColor);if(color)styles.push(`color:${color}`);if(highlight)styles.push(`background-color:${highlight}`);const fontSize=typeof item?.styles?.fontSize==='string'&&/^(?:[8-9]|[1-8]\d|9[0-6])px$/.test(item.styles.fontSize)?item.styles.fontSize:'';if(fontSize)styles.push(`font-size:${fontSize}`);const fontFamily=RICH_TEXT_FONT_FAMILIES.includes(item?.styles?.fontFamily)?item.styles.fontFamily:'';if(fontFamily)styles.push(`font-family:${esc(fontFamily)}`);if(styles.length)label=`<span style="${styles.join(';')}">${label}</span>`;
    const href=typeof item?.link?.href==='string'?safeRichUrl(item.link.href):'';
    if(!href)return label;
-   const blank=item.link.target==='_blank';const title=typeof item.link.title==='string'?` title="${esc(item.link.title)}"`:'';
-   return `<a href="${esc(href)}"${blank?' target="_blank" rel="noopener noreferrer"':''}${title}>${label}</a>`;
+   const requestedTarget=['_self','_blank'].includes(item.link.target)?item.link.target:'auto';
+   const target=resolveRichTextLinkTarget(href,requestedTarget);
+   const targetAttributes=target==='_blank'?' target="_blank" rel="noopener noreferrer"':' target="_self"';
+   const title=typeof item.link.title==='string'?` title="${esc(item.link.title)}"`:'';
+   return `<a href="${esc(href)}"${targetAttributes}${title}>${label}</a>`;
   }).join('');
   return value.blocks.map(block=>{
    if(block?.type==='table'&&Array.isArray(block.rows))return `<div class="visual-richtext-table-wrap"><table class="visual-richtext-table"><tbody>${block.rows.map(row=>`<tr>${(row.cells||[]).map(cell=>{const tag=cell.header?'th':'td',align=['left','center','right','justify'].includes(cell.align)?` style="text-align:${cell.align}"`:'';return `<${tag}${align}>${inlines(cell.children)}</${tag}>`}).join('')}</tr>`).join('')}</tbody></table></div>`;

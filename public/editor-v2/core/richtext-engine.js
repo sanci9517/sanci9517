@@ -1,7 +1,7 @@
 /* Sanci9517 Visual Editor v2 — structured Rich Text DOM bridge. */
-import { validatedLinkHref } from './richtext-links.js';
+import { resolveRichTextLinkTarget, validatedLinkHref } from './richtext-links.js?v=20261101-richtext-link-target';
 import { textOffsetWithin, isRichTextHardBreak } from './richtext-selection-offset.js';
-import { RICH_TEXT_FONT_FAMILIES } from './schema.js';
+import { RICH_TEXT_FONT_FAMILIES } from './schema.js?v=20261101-richtext-link-target';
 
 export function plainTextToRichText(text=''){
   const value=String(text??'');
@@ -99,7 +99,7 @@ function inlineElement(inline){
   for(const [mark,tag] of [['bold','strong'],['italic','em'],['underline','u'],['strikethrough','s'],['subscript','sub'],['superscript','sup'],['code','code']]){
     if(inline.marks?.includes(mark)){const wrapper=document.createElement(tag);wrapper.append(node);node=wrapper;}
   }
-  if(inline.link){try{const href=validatedLinkHref(inline.link.href);const link=document.createElement('a');link.href=href;if(href.startsWith('http://')||href.startsWith('https://')){link.target='_blank';link.rel='noopener noreferrer'}if(inline.link.title)link.title=String(inline.link.title).slice(0,256);link.append(node);node=link}catch{}}
+  if(inline.link){try{const href=validatedLinkHref(inline.link.href),target=resolveRichTextLinkTarget(href,inline.link.target||'auto');const link=document.createElement('a');link.href=href;if(target==='_blank'){link.target='_blank';link.rel='noopener noreferrer'}else if(inline.link.target==='_self')link.target='_self';if(inline.link.title)link.title=String(inline.link.title).slice(0,256);link.append(node);node=link}catch{}}
   return node;
 }
 
@@ -130,7 +130,7 @@ export function renderRichTextEditor(editor,documentModel){
 function linkFromNode(node){
   const link=node.parentElement?.closest('a');
   if(!link)return null;
-  try{const href=validatedLinkHref(link.getAttribute('href')||'');return {href,...(href.startsWith('http://')||href.startsWith('https://')?{target:'_blank',rel:'noopener noreferrer'}:{}),...(link.title?{title:link.title.slice(0,256)}:{})}}catch{return null}
+  try{const href=validatedLinkHref(link.getAttribute('href')||''),target=link.getAttribute('target');return {href,...(target==='_self'?{target:'_self'}:resolveRichTextLinkTarget(href,target==='_blank'?'_blank':'auto')==='_blank'?{target:'_blank',rel:'noopener noreferrer'}:{}),...(link.title?{title:link.title.slice(0,256)}:{})}}catch{return null}
 }
 function marksFromNode(node,block){
   const marks=[];let parent=node.parentElement;

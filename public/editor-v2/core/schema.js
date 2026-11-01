@@ -242,11 +242,12 @@ function normalizeRichTextInlineChildren(children) {
       if (!inline.link || typeof inline.link !== 'object' || typeof inline.link.href !== 'string' || !inline.link.href.trim()) {
         throw new Error('Invalid Rich Text link');
       }
-      result.link = {
-        href: inline.link.href,
-        ...(inline.link.target ? { target: String(inline.link.target) } : {}),
-        ...(inline.link.rel ? { rel: String(inline.link.rel) } : {}),
-        ...(inline.link.title ? { title: String(inline.link.title) } : {})
+      const target=inline.link.target==null||inline.link.target===''?null:String(inline.link.target);
+      if(target!==null&&!['_self','_blank'].includes(target))throw new Error('Rich Text link target must be _self or _blank');
+      result.link={href:inline.link.href,
+        ...(target==='_self'?{target:'_self'}:{}),
+        ...(target==='_blank'?{target:'_blank',rel:'noopener noreferrer'}:{}),
+        ...(inline.link.title?{title:String(inline.link.title).slice(0,256)}:{})
       };
     }
     return result;

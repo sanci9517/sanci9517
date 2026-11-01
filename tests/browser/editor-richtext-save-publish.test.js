@@ -39,6 +39,13 @@ test('actual Inspector keeps unsaved Rich Text through Ctrl+S, reload and separa
     if(url.pathname==='/api/public/pages')return json(published?{ok:true,data:{id:pageId,slug:'test',title:'Test',description:'',content:published.pages[pageId]}}:{ok:false});
     if(url.pathname==='/api/public/navigation')return json({ok:true,data:{items:[]}});
     if(url.pathname==='/api/integrations/twitch/connection')return json({ok:true,data:{connected:false}});
+    if(url.pathname==='/api/auth/session')return json({ok:true,data:{authenticated:true,user:{displayName:'Editor',role:'editor'}}});
+    if(url.pathname==='/api/admin/link-report'){
+      const page=published?.pages?.[pageId],node=page?.nodes?.[nodeId],blocks=node?.props?.richText?.blocks||[];
+      const links=blocks.flatMap(block=>block.children||[]).filter(run=>run.link?.href).map(run=>run.link.href);
+      const contentFindings=links.filter(href=>href==='/p/missing').map(href=>({sourcePageId:pageId,nodeId,href,reason:'TARGET_NOT_PUBLISHED'}));
+      return json({ok:true,data:{checked:0,findings:[],checkedContentLinks:links.length,contentTruncated:false,navigationUrlFindings:[],redirectedNavigationLinks:[],contentFindings,redirectedContentLinks:[]}});
+    }
     if(url.pathname.startsWith('/api/'))return json({ok:true,data:{siteName:'Test'}});
     const asset=url.pathname==='/p/test'?'/visual-page.html':url.pathname;
     const file=resolve(root,'.'+asset);
@@ -115,14 +122,19 @@ test('actual Inspector keeps unsaved Rich Text through Ctrl+S, reload and separa
   await tab.waitForFunction(()=>{const editor=document.querySelector('.richtext-editor-surface');return document.activeElement===editor&&document.getSelection().toString()==='world'});
   await tab.locator('.richtext-editor-surface').press('Control+k');
   await shortcutUrl.fill('/p/home');
+  await tab.getByRole('combobox',{name:'Link megnyitása'}).selectOption('_blank');
   await shortcutUrl.press('Enter');
   await tab.locator('.richtext-editor-surface a strong').waitFor();
+  assert.equal(await tab.locator('.richtext-editor-surface a').getAttribute('target'),'_blank');
+  assert.equal(await tab.locator('.richtext-editor-surface a').getAttribute('rel'),'noopener noreferrer');
   await tab.keyboard.press('Control+s');
   await tab.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent?.startsWith('Mentve'));
   assert.equal(published,null);
   assert.equal(posts.at(-1).publish,false);
   await openEditor();
   assert.equal(await tab.locator('.richtext-editor-surface a strong').textContent(),'world');
+  assert.equal(await tab.locator('.richtext-editor-surface a').getAttribute('target'),'_blank');
+  assert.equal(await tab.locator('.richtext-editor-surface a').getAttribute('rel'),'noopener noreferrer');
   await tab.locator('#publish').click();
   await tab.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent==='Publikálva');
   assert.equal(posts.at(-1).publish,true);
@@ -130,6 +142,8 @@ test('actual Inspector keeps unsaved Rich Text through Ctrl+S, reload and separa
   await publicTab.goto(base+'/p/test');
   assert.equal(await publicTab.locator('.visual-text a strong').textContent(),'world');
   assert.match(await publicTab.locator('.visual-text a').getAttribute('href'),/\/p\/home$/);
+  assert.equal(await publicTab.locator('.visual-text a').getAttribute('target'),'_blank');
+  assert.equal(await publicTab.locator('.visual-text a').getAttribute('rel'),'noopener noreferrer');
   // Ctrl/Cmd+K is also available while the creator is typing directly on the
   // canvas. Opening the Inspector must not turn that selection into a second,
   // unrelated editing context; Escape returns to the same canvas surface.
@@ -201,14 +215,18 @@ test('actual Inspector keeps unsaved Rich Text through Ctrl+S, reload and separa
   await openEditor();
   const urlField=tab.locator('.richtext-link-controls input');
   assert.ok((await urlField.boundingBox()).height>=44);
+  const targetField=tab.getByRole('combobox',{name:'Link megnyitása'});
+  assert.ok((await targetField.boundingBox()).height>=44,'link-target choice must remain a touch-sized control');
   await tab.locator('.richtext-editor-surface a strong').evaluate(el=>{
     const text=el.querySelector('span').firstChild;
     const range=document.createRange();range.setStart(text,0);range.setEnd(text,text.nodeValue.length);
     const selection=window.getSelection();selection.removeAllRanges();selection.addRange(range);
   });
   await urlField.fill('/p/mobile');
+  await tab.getByRole('combobox',{name:'Link megnyitása'}).selectOption('_self');
   await tab.getByRole('button',{name:'Link beállítása'}).click();
   assert.equal(await tab.locator('.richtext-editor-surface a').getAttribute('href'),'/p/mobile');
+  assert.equal(await tab.locator('.richtext-editor-surface a').getAttribute('target'),'_self');
   assert.equal(published.pages[pageId].nodes[nodeId].props.richText.blocks[0].children.find(run=>run.link).link.href,'/p/home');
   const [warning]=await Promise.all([
     tab.waitForEvent('dialog').then(async dialog=>{const message=dialog.message();await dialog.dismiss();return message}),
@@ -299,7 +317,36 @@ test('actual Inspector keeps unsaved Rich Text through Ctrl+S, reload and separa
   await tab.locator('#publish').evaluate(el=>el.click());await tab.waitForFunction(()=>document.querySelector('#saveStatus').textContent==='Publikálva');
   await publicTab.reload();
   const publicPlain=publicTab.locator('.visual-text').filter({hasText:'Új tartalom vászon'});await publicPlain.waitFor();
+  assert.equal(await publicTab.locator('.visual-richtext a').first().getAttribute('target'),'_self');
+  assert.equal(await publicTab.locator('.visual-richtext a').first().getAttribute('rel'),null);
   assert.equal(await publicPlain.evaluate(el=>getComputedStyle(el).fontSize),'40px');
   assert.equal(await publicPlain.evaluate(el=>getComputedStyle(el).textWrap),'balance');
   assert.deepEqual(await publicTab.locator('.visual-richtext p').first().evaluate(textMetrics),canvasTextMetrics,'published Rich Text uses the same typography and block spacing');
+
+  // The authenticated admin report consumes the published snapshot, not a
+  // newer draft. A missing internal link must remain absent from the report
+  // until explicit Publish, then appear beside the actual public link.
+  const reportTab=await browser.newPage({viewport:{width:390,height:800}});
+  await reportTab.goto(base+'/admin-home.html');
+  const refreshReport=()=>reportTab.locator('#refreshLinkReport').click();
+  const reportStatus=reportTab.locator('#linkReportStatus');
+  await refreshReport();
+  await reportStatus.getByText('Tartalmi linkhibák: 0').waitFor();
+  await openEditor();
+  await tab.locator('.richtext-editor-surface a span').first().evaluate(el=>{
+    const range=document.createRange();range.selectNodeContents(el);const selection=window.getSelection();selection.removeAllRanges();selection.addRange(range);
+  });
+  await tab.locator('.richtext-link-controls input').fill('/p/missing');
+  await tab.getByRole('button',{name:'Link beállítása'}).click();
+  await tab.locator('#save').click();await tab.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent?.startsWith('Mentve'));
+  assert.equal(published.pages[pageId].nodes[nodeId].props.richText.blocks[0].children.find(run=>run.link).link.href,'/p/mobile','draft Save must not rewrite the published link');
+  await refreshReport();
+  await reportStatus.getByText('Tartalmi linkhibák: 0').waitFor();
+  await tab.locator('#publish').click();await tab.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent==='Publikálva');
+  await publicTab.reload();
+  assert.equal(await publicTab.locator('.visual-richtext a').first().getAttribute('href'),'/p/missing');
+  await refreshReport();
+  await reportStatus.getByText('Tartalmi linkhibák: 1').waitFor();
+  assert.match(await reportTab.locator('#linkReportFindings').textContent(),new RegExp(pageId));
+  assert.match(await reportTab.locator('#linkReportFindings').textContent(),/\/p\/missing/);
 });

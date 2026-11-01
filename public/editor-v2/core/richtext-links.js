@@ -23,15 +23,29 @@ export function validatedLinkHref(value) {
   }
 }
 
-export function updateRichTextInlineLink(documentModel, {blockIndex, from, to}, href) {
+export function resolveRichTextLinkTarget(href, target = 'auto') {
+  if (!['auto', '_self', '_blank'].includes(target)) throw new Error('Válassz érvényes hivatkozás-megnyitási módot.');
+  if (target !== 'auto') return target;
+  return /^https?:\/\//i.test(href) ? '_blank' : '_self';
+}
+
+export function readRichTextLinkTarget(documentModel, range) {
+  const segments=Array.isArray(range?.segments)?range.segments:range?[range]:[];
+  const runs=segments.flatMap(segment=>selectedInlineRuns(documentModel,segment));
+  if(!runs.length)return 'auto';
+  const targets=new Set(runs.map(run=>run.link?.target==='_self'?'_self':run.link?.target==='_blank'?'_blank':'auto'));
+  return targets.size===1?[...targets][0]:'auto';
+}
+
+export function updateRichTextInlineLink(documentModel, {blockIndex, from, to}, href, target = 'auto') {
   const safeHref = href === null ? null : validatedLinkHref(href);
+  if(safeHref!==null&&!['auto','_self','_blank'].includes(target))throw new Error('Válassz érvényes hivatkozás-megnyitási módot.');
   return updateRichTextRange(documentModel, {blockIndex, from, to}, piece => {
     if (safeHref === null) delete piece.link;
-    else piece.link = {
-      href: safeHref,
-      ...(safeHref.startsWith('https://') || safeHref.startsWith('http://')
-        ? {target: '_blank', rel: 'noopener noreferrer'} : {})
-    };
+    else {
+      const effectiveTarget=resolveRichTextLinkTarget(safeHref,target);
+      piece.link={href:safeHref,...(effectiveTarget==='_blank'?{target:'_blank',rel:'noopener noreferrer'}:target==='_self'?{target:'_self'}:{})};
+    }
   });
 }
 

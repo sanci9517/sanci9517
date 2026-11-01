@@ -10,9 +10,10 @@ const root = resolve(import.meta.dirname, '../..', 'public');
 const richText = { schemaVersion: 1, type: 'richtext-document', blocks: [
   { type: 'heading', level: 2, children: [{ type: 'text', text: 'Published <heading>', marks: [] }] },
   { type: 'paragraph', children: [
-    { type: 'text', text: 'Current page', marks: ['bold','underline'], link: { href: '/p/target' } },
+    { type: 'text', text: 'Current page', marks: ['bold','underline'], link: { href: '/p/target', target: '_self' } },
     { type: 'text', text: 'Unsafe <script>window.__xss=1</script>', marks: [], link: { href: 'javascript:alert(1)' } },
-    { type: 'text', text: 'External', marks: [], link: { href: 'https://example.org/', target: '_blank', title: 'External link' } }
+    { type: 'text', text: 'External', marks: [], link: { href: 'https://example.org/', target: '_blank', title: 'External link' } },
+    { type: 'text', text: 'Untrusted target', marks: [], link: { href: 'https://example.org/safe', target: '_top' } }
   ] },
   { type: 'bulleted-list', items: [[
     { type: 'text', text: 'Historical URL', marks: [], link: { href: '/p/old' } }
@@ -62,9 +63,10 @@ test('published structured Rich Text renders safe clickable links in the real pu
   await pageTab.getByRole('link', { name: 'Current page' }).waitFor();
   assert.equal(await pageTab.locator('.visual-text h2').textContent(), 'Published <heading>');
   assert.match(await pageTab.getByRole('link', { name: 'Current page' }).getAttribute('href'), /\/p\/target$/);
+  assert.equal(await pageTab.getByRole('link', { name: 'Current page' }).getAttribute('target'), '_self');
   assert.equal(await pageTab.locator('.visual-text a u strong').textContent(), 'Current page');
   assert.match(await pageTab.getByRole('link', { name: 'Historical URL' }).getAttribute('href'), /\/p\/old$/);
-  assert.equal(await pageTab.locator('.visual-text a').count(), 3);
+  assert.equal(await pageTab.locator('.visual-text a').count(), 4);
   assert.equal(await pageTab.locator('.visual-text s').textContent(), 'Emphasis');
   assert.equal(await pageTab.locator('.visual-text sup').textContent(), 'Emphasis');
   assert.equal(await pageTab.locator('.visual-text span[style*="background-color"]').evaluate(el=>getComputedStyle(el).color), 'rgb(255, 51, 102)');
@@ -73,6 +75,9 @@ test('published structured Rich Text renders safe clickable links in the real pu
   assert.equal(await pageTab.locator('.visual-richtext-table th').count(), 2);
   assert.equal(await pageTab.locator('.visual-richtext-table td').nth(1).textContent(), '100');
   assert.equal(await pageTab.getByRole('link', { name: 'External' }).getAttribute('rel'), 'noopener noreferrer');
+  assert.equal(await pageTab.getByRole('link', { name: 'Untrusted target' }).getAttribute('target'), '_blank',
+    'unknown target tokens are ignored and external URLs keep the protected automatic target');
+  assert.equal(await pageTab.getByRole('link', { name: 'Untrusted target' }).getAttribute('rel'), 'noopener noreferrer');
   assert.equal(await pageTab.locator('.visual-text script').count(), 0);
   assert.equal(await pageTab.evaluate(() => window.__xss), undefined);
   assert.match(await pageTab.locator('.visual-text').textContent(), /Unsafe <script>window\.__xss=1<\/script>/);

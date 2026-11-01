@@ -1,5 +1,5 @@
 import {hasContentProfile} from './core/content-profiles.js?v=20261025-inspector-lifecycle-contract';
-import {createDocument,createPage,getNode,NODE_TYPES,canContain,normalizeRichText} from './core/schema.js';
+import {createDocument,createPage,getNode,NODE_TYPES,canContain,normalizeRichText} from './core/schema.js?v=20261101-richtext-link-target';
 import {createEditorState,activePage,selectedNodes,setSelection,markSaved} from './core/state.js';
 import {execute,executeCoalesced,executeBatch} from './core/commands.js?v=20261025-inspector-lifecycle-contract';
 import {applyNodeStyle,getNodeGeometry,resolveNodeStyle} from './core/canvas-engine.js?v=20261030-legacy-background-compound';
@@ -8,7 +8,7 @@ import {measureCanvasWorkspace} from './core/canvas-workspace.js';
 import {hasResponsiveOverride,resolveResponsiveValue} from './core/responsive.js';
 import {getNodeVisibilityState,isVisibleOnDevice} from './core/visibility.js';
 import {diagnostics} from './diagnostics.js?v=20260918-2';
-import {plainTextToRichText,renderRichTextEditor,richTextEditorToDocument,restoreSelectionOffsets,getSelectionOffsets,transformRichTextBlockTypes} from './core/richtext-engine.js';
+import {plainTextToRichText,renderRichTextEditor,richTextEditorToDocument,restoreSelectionOffsets,getSelectionOffsets,transformRichTextBlockTypes} from './core/richtext-engine.js?v=20261101-richtext-link-target';
 import {renderSchedulePreview} from './core/schedule-preview.js';
 import {normalizeScheduleConfig,SCHEDULE_MODES,SCHEDULE_ORDERS,SCHEDULE_STATUSES,SCHEDULE_EMPTY_TEXT_MAX,SCHEDULE_LIMIT_MAX} from './core/schedule-schema.js';
 import {listPropertyGroups,listProperties,getProperty} from './core/property-registry.js?v=20261030-inspector-layout-container-contract';
@@ -16,11 +16,11 @@ import {renderPropertyInput} from './ui/property-controls.js?v=20261030-number-s
 import {getInspectorValueContract,normalizeInspectorValue} from './core/property-values.js';
 import {describeResponsiveOrigin} from './ui/responsive-origin.js';
 import {responsiveGroupResetActions} from './ui/responsive-group-reset.js';
-import {getRichTextBlockSelection,getRichTextFormattingSelection,getRichTextBlockTransformSelection,getRichTextActiveBlockIndex,restoreRichTextBlockSelection,restoreRichTextFormattingSelection,updateRichTextInlineLink,updateRichTextInlineMark,updateRichTextInlineStyle,updateRichTextBlockAlignment} from './core/richtext-links.js';
+import {getRichTextBlockSelection,getRichTextFormattingSelection,getRichTextBlockTransformSelection,getRichTextActiveBlockIndex,restoreRichTextBlockSelection,restoreRichTextFormattingSelection,updateRichTextInlineLink,updateRichTextInlineMark,updateRichTextInlineStyle,updateRichTextBlockAlignment} from './core/richtext-links.js?v=20261101-richtext-link-target';
 import {initialPageId,rememberPageId,requestedPageId} from './core/page-url.js';
 import {getElementCapability} from './core/capability-matrix.js?v=20261030-inspector-layout-container-contract';
 import {renderGeometryPresets} from './ui/geometry-presets.js';
-import {importRichTextClipboard} from './core/richtext-import.js';
+import {importRichTextClipboard} from './core/richtext-import.js?v=20261101-richtext-link-target';
 import {pasteRichTextDocument} from './core/richtext-paste.js';
 import {captureStyleSnapshot,STYLE_SNAPSHOT_PROPERTIES} from './core/style-snapshot.js';
 import {LAYOUT_PRESETS,LAYOUT_TYPES,layoutMode,isManagedLayout,isLayoutPropertyRelevant,explicitGridColumnCount} from './core/layout-presets.js';
@@ -43,7 +43,7 @@ import {renderCardInspector} from './ui/card-content-inspector.js?v=20261026-pro
 import {renderEmbedInspector} from './ui/creator-embed-inspector.js?v=20261026-profile-route-contract';
 import {defaultCodeSnippet,renderCodeSnippet,activateCodeBlocks} from './core/code-snippet.js';
 import {renderCodeSnippetInspector} from './ui/code-snippet-inspector.js?v=20261026-profile-route-contract';
-import {readRichTextSelectionFormatting,clearRichTextInlineFormatting} from './core/richtext-links.js';
+import {readRichTextSelectionFormatting,readRichTextLinkTarget,clearRichTextInlineFormatting} from './core/richtext-links.js?v=20261101-richtext-link-target';
 import {renderAccessibilityFields} from './ui/accessibility-fields.js?v=20261026-accessibility-route-contract';
 import {createCompositionInputs} from './ui/composition-inputs.js';
 import {opaqueContrast} from './core/accessibility.js';
@@ -1216,6 +1216,7 @@ function renderInspector(){
         editor.dataset.textNodeId=node.id;editor.contentEditable=isNodeEffectivelyLocked(page(),node)?'false':'true';applyTextSurfaceStyle(editor,node);editor.spellcheck=true;editor.setAttribute('role','textbox');
         editor.setAttribute('aria-label','Rich Text szerkesztő');
         renderRichTextEditor(editor,currentRichText);
+        let linkTargetSelect;
         let richTextDirty=false, savedLinkSelection=richTextBookmark?.nodeId===node.id?richTextBookmark.range:null,
           savedFormatSelection=richTextBookmark?.nodeId===node.id?richTextBookmark.formatRange:null,
           savedBlockIndex=richTextBookmark?.nodeId===node.id?richTextBookmark.blockIndex:null,
@@ -1261,6 +1262,7 @@ function renderInspector(){
           const format=getRichTextFormattingSelection(surface);savedFormatSelection=format;
           savedBlockTransformSelection=getRichTextBlockTransformSelection(surface);
           const next=getRichTextBlockSelection(surface);savedLinkSelection=next;
+          if(linkTargetSelect)linkTargetSelect.value=readRichTextLinkTarget(richTextEditorToDocument(surface),next);
           const index=getRichTextActiveBlockIndex(surface);
           if(index!==null){
             savedBlockIndex=index;const active=richTextEditorToDocument(surface).blocks[index];
@@ -1388,6 +1390,10 @@ function renderInspector(){
         const linkControls=document.createElement('div');linkControls.className='richtext-link-controls';
         const url=document.createElement('input');url.type='url';url.placeholder='/p/home vagy https://...';
         url.setAttribute('aria-label','Hivatkozás címe');
+        linkTargetSelect=document.createElement('select');linkTargetSelect.setAttribute('aria-label','Link megnyitása');
+        [['auto','Automatikus · külső link új lapon'],['_self','Ugyanebben a lapon'],['_blank','Új lapon']]
+          .forEach(([value,label])=>{const option=document.createElement('option');option.value=value;option.textContent=label;linkTargetSelect.append(option)});
+        linkTargetSelect.onpointerdown=rememberSelection;
         const addLink=document.createElement('button');addLink.type='button';addLink.textContent='Link beállítása';
         const removeLink=document.createElement('button');removeLink.type='button';removeLink.textContent='Link eltávolítása';
         const linkFeedback=document.createElement('small');linkFeedback.setAttribute('role','status');
@@ -1395,7 +1401,7 @@ function renderInspector(){
           const range=savedLinkSelection||getRichTextBlockSelection(editor);
           if(!range){linkFeedback.textContent='Jelölj ki egy szövegrészt előbb.';return;}
           try{
-            const doc=updateRichTextInlineLink(richTextEditorToDocument(editor),range,href);
+            const doc=updateRichTextInlineLink(richTextEditorToDocument(editor),range,href,linkTargetSelect.value);
             linkFeedback.textContent='';
             const offsets=getSelectionOffsets(formattingSurface)||savedSelectionOffsets;
             if(command('richtext.content.set',{nodeId:node.id,document:doc},{render:false})){
@@ -1478,7 +1484,7 @@ function renderInspector(){
             changeLink(url.value);
           }
         };
-        const pagePicker=pageLinkPicker(pages,url);pagePicker.onpointerdown=rememberSelection;pagePicker.style.gridColumn='1 / -1';linkControls.append(url,pagePicker,addLink,removeLink,linkFeedback);
+        const pagePicker=pageLinkPicker(pages,url);pagePicker.onpointerdown=rememberSelection;pagePicker.style.gridColumn='1 / -1';linkControls.append(url,pagePicker,linkTargetSelect,addLink,removeLink,linkFeedback);
         const clearFormat=document.createElement('button');clearFormat.type='button';clearFormat.textContent='Alapformázás';clearFormat.setAttribute('aria-label','Kijelölt szöveg formázásának törlése');clearFormat.title='Az elem alapstílusának visszaállítása a kijelölt szavakon. A szöveg és a linkek megmaradnak.';
         clearFormat.onpointerdown=event=>{rememberSelection();event.preventDefault()};
         clearFormat.onclick=()=>{const range=savedFormatSelection;if(!range){formatStatus.textContent='Előbb jelölj ki egy szövegrészt.';return}const doc=clearRichTextInlineFormatting(richTextEditorToDocument(editor),range);if(commitWithoutRender(doc)){renderRichTextEditor(editor,doc);restoreFormattingSelection()}};

@@ -9,7 +9,7 @@ import { resolveNodeStyle } from '../core/canvas-engine.js';
 import { getProperty, listProperties } from '../core/property-registry.js?v=20261030-inspector-layout-container-contract';
 import { STYLE_MAP } from '../core/canvas-engine.js';
 import { normalizeInspectorValue, getInspectorValueContract, INSPECTOR_FONTS, INSPECTOR_SHADOWS } from '../core/property-values.js';
-import { updateRichTextInlineLink, updateRichTextInlineMark, validatedLinkHref } from '../core/richtext-links.js';
+import { updateRichTextInlineLink, updateRichTextInlineMark, readRichTextLinkTarget, validatedLinkHref } from '../core/richtext-links.js';
 import { normalizeRichText } from '../core/schema.js';
 import { setBlockType,transformRichTextBlockTypes } from '../core/richtext-engine.js';
 import { ELEMENT_CAPABILITIES, getElementCapability } from '../core/capability-matrix.js';
@@ -243,6 +243,21 @@ test('Rich Text creates, updates and removes safe structured links without rewri
   const unlinked=updateRichTextInlineLink(replacement,{blockIndex:0,from:6,to:11},null);
   assert.equal(unlinked.blocks[0].children[0].text,'Hello world again');
   assert.equal(unlinked.blocks[0].children[0].link,undefined);
+});
+
+test('Rich Text link targets use safe automatic defaults, preserve explicit choice, and reject unsafe target tokens',()=>{
+  const internal=updateRichTextInlineLink(documentModel,{blockIndex:0,from:6,to:11},'/p/home');
+  assert.equal(internal.blocks[0].children[1].link.target,undefined,'internal links default to the current tab');
+  assert.equal(readRichTextLinkTarget(internal,{blockIndex:0,from:6,to:11}),'auto');
+  const external=updateRichTextInlineLink(documentModel,{blockIndex:0,from:6,to:11},'HTTP://example.org/');
+  assert.deepEqual(external.blocks[0].children[1].link,{href:'HTTP://example.org/',target:'_blank',rel:'noopener noreferrer'},'external links default to a protected new tab regardless of URL scheme case');
+  const sameTab=updateRichTextInlineLink(documentModel,{blockIndex:0,from:6,to:11},'https://example.org/','_self');
+  assert.deepEqual(sameTab.blocks[0].children[1].link,{href:'https://example.org/',target:'_self'});
+  assert.equal(readRichTextLinkTarget(sameTab,{blockIndex:0,from:6,to:11}),'_self');
+  const newTab=normalizeRichText({schemaVersion:1,type:'richtext-document',blocks:[{type:'paragraph',children:[{type:'text',text:'world',marks:[],link:{href:'/p/home',target:'_blank',rel:'opener'}}]}]});
+  assert.deepEqual(newTab.blocks[0].children[0].link,{href:'/p/home',target:'_blank',rel:'noopener noreferrer'},'normalization forces the safe rel token even for a same-origin link');
+  assert.throws(()=>updateRichTextInlineLink(documentModel,{blockIndex:0,from:6,to:11},'/p/home','_parent'));
+  assert.throws(()=>normalizeRichText({schemaVersion:1,type:'richtext-document',blocks:[{type:'paragraph',children:[{type:'text',text:'world',marks:[],link:{href:'/p/home',target:'_top'}}]}]}));
 });
 
 test('Rich Text link edits save through the real command, keep Undo/Redo, never publish', () => {
