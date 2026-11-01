@@ -101,6 +101,31 @@ test('Rich Text keyboard selection across paragraphs retains direction through I
   assert.equal(restored.selection.backward,true);
   assert.equal(restored.anchor,'Gamma Delta');assert.equal(restored.focus,'Alpha Beta');
 
+  await page.locator('#undo').click();
+  const undoSurface=page.locator('.richtext-editor-surface');
+  await undoSurface.locator('strong').first().waitFor();
+  assert.deepEqual(await undoSurface.locator('strong').allTextContents(),['Beta','Gamma'],'Undo removes only the latest inline mark');
+  assert.equal(await undoSurface.locator('em').count(),0,'Undo must restore the prior Page Model formatting');
+  const afterUndo=await undoSurface.evaluate(async editor=>{
+    const {getRichTextFormattingSelection}=await import('/editor-v2/core/richtext-links.js');
+    const selection=window.getSelection();
+    return {text:selection?.toString(),range:getRichTextFormattingSelection(editor)};
+  });
+  assert.equal(afterUndo.text,'Beta\n\nGamma','Undo restores the native multi-block selection, not only its model value');
+  assert.equal(afterUndo.range.backward,true,'Undo retains keyboard selection direction');
+
+  await page.locator('#redo').click();
+  const redoSurface=page.locator('.richtext-editor-surface');
+  await redoSurface.locator('em').first().waitFor();
+  assert.deepEqual(await redoSurface.locator('em').allTextContents(),['Beta','Gamma'],'Redo reapplies the inline mark');
+  const afterRedo=await redoSurface.evaluate(async editor=>{
+    const {getRichTextFormattingSelection}=await import('/editor-v2/core/richtext-links.js');
+    const selection=window.getSelection();
+    return {text:selection?.toString(),range:getRichTextFormattingSelection(editor)};
+  });
+  assert.equal(afterRedo.text,'Beta\n\nGamma','Redo restores the native multi-block selection');
+  assert.equal(afterRedo.range.backward,true,'Redo retains keyboard selection direction');
+
   await page.locator('#save').click();await page.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent?.startsWith('Mentve'));
   assert.equal(writes.length,1);assert.equal(writes[0].publish,false);assert.equal(published,null);
   const saved=writes[0].document.pages[pageId].nodes[nodeId].props.richText.blocks;
