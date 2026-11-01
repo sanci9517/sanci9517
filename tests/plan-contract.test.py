@@ -8,7 +8,7 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'scripts'))
-from plan_contract import validate, MASTER, TRACE
+from plan_contract import cursor, validate, MASTER, TRACE
 
 
 class PlanContractTest(unittest.TestCase):
@@ -34,6 +34,9 @@ class PlanContractTest(unittest.TestCase):
     def write_data(self, data):
         (self.root / TRACE).write_text(json.dumps(data))
 
+    def current_next_block(self):
+        return cursor(self.root)['next']
+
     def test_valid_contract_does_not_certify_functionality(self):
         report = validate(self.root)
         self.assertEqual(report['feature_count'], 396)
@@ -52,11 +55,23 @@ class PlanContractTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,'Multiple'):validate(self.root)
 
     def test_stale_historical_cursor_cannot_be_current(self):
-        p=self.root/MASTER;p.write_text(p.read_text().replace('**Egyetlen következő blokk:** `77.44.7.A`','**Egyetlen következő blokk:** `63.50.92`',1))
+        p=self.root/MASTER
+        current=self.current_next_block()
+        p.write_text(p.read_text().replace(
+            f'**Egyetlen következő blokk:** `{current}`',
+            '**Egyetlen következő blokk:** `63.50.92`',
+            1,
+        ))
         with self.assertRaisesRegex(ValueError,'outside'):validate(self.root)
 
     def test_nonexistent_next_block_fails(self):
-        p=self.root/MASTER;p.write_text(p.read_text().replace('**Egyetlen következő blokk:** `77.44.7.A`','**Egyetlen következő blokk:** `77.44.7.Z`',1))
+        p=self.root/MASTER
+        current=self.current_next_block()
+        p.write_text(p.read_text().replace(
+            f'**Egyetlen következő blokk:** `{current}`',
+            '**Egyetlen következő blokk:** `77.44.7.Z`',
+            1,
+        ))
         with self.assertRaisesRegex(ValueError,'declared OPEN'):validate(self.root)
 
     def test_duplicate_catalog_id_fails(self):

@@ -152,7 +152,9 @@ test('each authored structural type preserves its semantics and responsive layou
   const parent=editor.locator(`.node[data-node-id="${hiddenId}"]`),child=editor.locator(`.node[data-node-id="${childId}"]`);
   await parent.evaluate(el=>el.click());
   if(await editor.locator('#rightDock').evaluate(el=>el.classList.contains('closed')))await editor.locator('#openInspector').click();
-  await editor.getByRole('button',{name:'Haladó beállítások'}).click();
+  const advancedTab=editor.getByRole('tab',{name:'Haladó beállítások'});
+  await advancedTab.click();
+  assert.equal(await advancedTab.getAttribute('aria-selected'),'true','the advanced Inspector category is exposed and selected as a tab');
   const visibilityGroup=editor.locator('.inspector-group-title').filter({hasText:'Akadálymentesség és láthatóság'});
   if(await visibilityGroup.getAttribute('aria-expanded')==='false')await visibilityGroup.click();
   const mobileToggle=editor.getByRole('checkbox',{name:'Látható: mobile'});

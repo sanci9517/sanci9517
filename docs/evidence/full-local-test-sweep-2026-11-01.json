@@ -1,0 +1,45 @@
+{
+  "date": "2026-11-01",
+  "scope": "Full local automated test inventory; no runtime source changes",
+  "sourceCommit": "c1354ccb8083987d55bd400d25760c1b462b4cf9",
+  "localBranch": "work",
+  "remoteBranch": "v2/foundation",
+  "node": {
+    "command": "CHROMIUM_PATH=/usr/bin/chromium node --experimental-vm-modules --experimental-loader ./tests/ts-extension-loader.mjs --test --test-concurrency=1 <sorted repository *.test.js/*.test.mjs inventory>",
+    "files": 125,
+    "cases": 553,
+    "initialAggregate": { "passed": 552, "failed": 1 },
+    "failure": "tests/browser/editor-structural-parity.test.js queried the accessible Advanced Inspector tab as a button. The production markup correctly exposes role=tab.",
+    "targetedRerun": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-structural-parity.test.js",
+      "result": "PASS",
+      "cases": 1,
+      "repair": "Use Playwright getByRole('tab') and assert aria-selected=true; no production code or test coverage was weakened."
+    },
+    "aggregateAfterRepair": "All 553 Node cases passed across the full initial aggregate and the isolated rerun of its sole corrected test; the 125-file aggregate was not repeated."
+  },
+  "python": {
+    "planContract": { "command": "python3 tests/plan-contract.test.py", "result": "PASS", "cases": 13 },
+    "d1LedgerReconciliation": { "command": "python3 tests/d1-ledger-reconciliation.test.py", "result": "PASS", "cases": 11 },
+    "d1RestoreOrder": { "command": "python3 tests/d1-restore-order.test.py", "result": "PASS", "cases": 5 },
+    "planContractRepair": "The stale-cursor fixtures now derive the canonical current next block instead of hard-coding the already-completed 77.44.7.A identifier."
+  },
+  "otherChecks": {
+    "typecheck": "PASS: npm run typecheck",
+    "migrationSafetyGate": "PASS: npm run test:web013:migration-gate",
+    "githubActions": "NOT RUN; this is a local test/documentation-only change and CI availability/quota was not assumed.",
+    "allTestInventory": "125 JavaScript/ESM test files plus the 3 Python test files above."
+  },
+  "production": {
+    "runtimeChanged": false,
+    "workerDeployment": "NOT DONE; no runtime files changed.",
+    "latestDeployment": "85c0d722-fbb0-4d65-be15-5c0fca8b9ea9",
+    "trafficVersion": "a6a1ca50-d30d-4dfb-bd1b-8c8544c93704",
+    "trafficPercentage": 100,
+    "health": { "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health", "status": 200, "body": { "ok": true, "service": "sanci9517-streamer-brand", "version": "2.0.0", "server": "cloudflare-worker" } },
+    "productionD1Mutation": false,
+    "productionR2Mutation": false,
+    "localFixtures": "The media Worker test used Miniflare with synthetic local D1/R2 only."
+  },
+  "cost": "No paid service, quota, production data operation, or runtime deployment was used."
+}
