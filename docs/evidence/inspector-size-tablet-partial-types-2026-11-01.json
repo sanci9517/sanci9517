@@ -1,7 +1,7 @@
 {
   "date": "2026-11-01",
   "plan_item": "77.44.7.A — responsive size Inspector lifecycle across PARTIAL types",
-  "status": "FULL_CHROMIUM_AND_LOCAL_CHECKS_PASS; RELEASE_PENDING; OVERALL_ACCEPTANCE_OPEN",
+  "status": "FULL_CHROMIUM_AND_LOCAL_CHECKS_PASS; FAST_FORWARD_PUSH_VERIFIED; PRODUCTION_UNCHANGED; OVERALL_ACCEPTANCE_OPEN",
   "finding": "The existing all-PARTIAL six-field size lifecycle covered desktop and mobile, but omitted tablet Inspector overrides and the tablet-to-mobile inheritance path.",
   "change": "Extended tests/browser/editor-inspector-size-partial-types.test.js. No runtime source or public asset changed.",
   "coverage": "All 44 editable PARTIAL types × width, height, minWidth, maxWidth, minHeight, maxHeight on desktop/tablet/mobile. Verifies responsive.set command and Page Model keys, Canvas computed CSS, draft Save without Publish, reload persistence, explicit public Publish, breakpoint isolation, mobile inheritance from tablet, mobile reset restoring tablet values, tablet reset restoring desktop values, reset Save preserving public CSS until explicit Publish, and final mobile inheritance after tablet reset.",
@@ -30,15 +30,15 @@
     "deployment_id": "5d81f0f0-176c-4437-b5c5-652765f70bff",
     "version_id": "72f6626e-ba9a-4147-874a-3d8cfcf00919",
     "traffic_percent": 100,
-    "production_state": "Read-only Cloudflare deployment API GET confirms the above 100% deployment. Production health and page-renderer hash were checked at task start; post-push production state is to be reconfirmed. No D1 migration/write or R2 operation occurred."
+    "production_state": "After the test/evidence push, read-only Cloudflare Deployments API GET confirms deployment 5d81f0f0-176c-4437-b5c5-652765f70bff / version 72f6626e-ba9a-4147-874a-3d8cfcf00919 at 100%. Direct GET /api/health returned HTTP 200 with {\"ok\":true,\"service\":\"sanci9517-streamer-brand\",\"version\":\"2.0.0\",\"server\":\"cloudflare-worker\"}. Live and local /assets/page-renderer.js SHA-256 match: 005792f314f891aededf6363573c2ccd66527e53397d673e6a7b0434f6245370. No Worker deployment was created; no D1 migration/write or R2 operation occurred."
   },
   "release": {
     "local_checkout_branch": "work; unchanged.",
     "github_target_branch": "v2/foundation",
     "github_head_at_start": "8fa2d9cc439ccf5649235ff2db0e5ac51f1730bd",
-    "test_commit": "fc98c474 — test(editor): cover responsive size tablet lifecycle [skip ci]",
-    "push": "PENDING: normal fast-forward and GitHub branch ref still require final verification.",
-    "ci": "The test commit uses [skip ci]. No CI PASS is claimed.",
+    "test_commit": "fc98c4749bd4f0c8dc512e81575a2db832da8673",
+    "push": "PASS: normal fast-forward from 8fa2d9cc439ccf5649235ff2db0e5ac51f1730bd to caba6c7b181110c2d008bf00e9929edf7e773274 (test and plan/evidence commits); git ls-remote returned exact v2/foundation SHA caba6c7b181110c2d008bf00e9929edf7e773274; GitHub compare verified ahead_by=2, behind_by=0, total_commits=2. A separate documentation/evidence follow-up is being finalized.",
+    "ci": "Both pushed commits use [skip ci]. GitHub combined status returned statuses=[]; no CI PASS is claimed.",
     "new_cost_or_dependency": "None."
   },
   "acceptance_boundary": "The six-field responsive size Inspector lifecycle is automated for the tested PARTIAL types. Overall 77.44.7.A and complete Visual Editor acceptance remain OPEN / NOT CERTIFIED; manual and physical acceptance remain DEFERRED until the complete Editor is implemented."
