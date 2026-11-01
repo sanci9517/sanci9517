@@ -1,0 +1,50 @@
+{
+  "date": "2026-11-01",
+  "plan_item": "77.44.7.A — layout.overflow tablet lifecycle across editable PARTIAL types",
+  "status": "REAL_CHROMIUM_AND_LOCAL_CHECKS_PASS; TEST_FAST_FORWARD_PUSH_VERIFIED; PRODUCTION_UNCHANGED; OVERALL_ACCEPTANCE_OPEN",
+  "finding": "layout.overflow had representative Inspector and breakpoint tests, but no complete tablet lifecycle across all 44 editable PARTIAL types.",
+  "change": "Added tests/browser/editor-inspector-overflow-tablet-partial-types.test.js. Regenerated the canonical feature traceability crosswalk. Product runtime and public assets remain unchanged.",
+  "coverage": "All 44 editable PARTIAL types receive distinct desktop, tablet, and mobile overflow values cycling visible/hidden/auto/scroll through the real Inspector. Verifies responsive.set command and overflow key, Canvas computed CSS, raw Page Model values, draft Save, Editor reload, no public change before Publish, explicit Publish, breakpoint isolation, mobile inheriting tablet, mobile reset to tablet and tablet reset to desktop, Undo/Redo and Save versus Publish on both resets.",
+  "browser": {
+    "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-inspector-overflow-tablet-partial-types.test.js",
+    "result": "PASS, 1/1 real Chromium test; 71686.12872 ms test time / 72243.259288 ms total.",
+    "environment_note": "The first default sandbox invocation could not start its test child process because local loopback access was not enabled; the permitted network-enabled rerun launched the real browser and passed. No assertion or product-code failure occurred."
+  },
+  "checks": {
+    "node --check tests/browser/editor-inspector-overflow-tablet-partial-types.test.js": "PASS",
+    "npm run test:editor": "PASS, 11/11",
+    "npm run typecheck": "PASS",
+    "npm run test:web013:migration-gate": "PASS; gate only, no production migration",
+    "python3 scripts/check-canonical-plan.py": "PASS; one complete 13-file master, acceptance NOT certified",
+    "python3 scripts/audit-active-plan-point.py": "PASS; 77.44 / WEB-011 -> 77.44.7.A",
+    "python3 scripts/build-feature-traceability.py --check": "PASS; 396 source mappings",
+    "git diff --check": "PASS"
+  },
+  "traceability": "The generated crosswalk adds this browser test to the existing Inspector traceability rows without changing source hashes, feature counts, or acceptance state.",
+  "reuse_review": {
+    "solution": "Reused the existing layout.overflow selector, Property Registry, responsive.set command, Undo/Redo engine, Canvas and public renderer, plus the existing local Playwright/Chromium fixture.",
+    "external_code_or_dependency": "None."
+  },
+  "production": {
+    "runtime_source_changed": false,
+    "public_asset_changed": false,
+    "worker_deployed": false,
+    "deployment_id": "5d81f0f0-176c-4437-b5c5-652765f70bff",
+    "version_id": "72f6626e-ba9a-4147-874a-3d8cfcf00919",
+    "traffic_percent": 100,
+    "health": "Direct GET /api/health returned HTTP 200 with service sanci9517-streamer-brand version 2.0.0.",
+    "page_renderer_sha256_local_and_live": "005792f314f891aededf6363573c2ccd66527e53397d673e6a7b0434f6245370",
+    "d1_production_writes": 0,
+    "r2_changes": 0
+  },
+  "release": {
+    "local_checkout_branch": "work; unchanged",
+    "github_target_branch": "v2/foundation",
+    "github_head_at_start": "218c40a52d95be66be2e0bc51c721866a90e92a5",
+    "test_commit": "343cc2c5dcb2166ec7297213e44a3faafe1b1f43",
+    "push": "Normal fast-forward verified: direct git ls-remote returned the exact refs/heads/v2/foundation SHA; GitHub compare reported 1 ahead / 0 behind from the starting head.",
+    "ci": "Commit uses [skip ci]; GitHub combined status returned statuses=[]. No CI PASS is claimed.",
+    "new_cost_or_dependency": "None."
+  },
+  "acceptance_boundary": "The overflow field lifecycle is covered across all 44 editable PARTIAL types. Overall 77.44.7.A remains OPEN / NOT CERTIFIED; complete Visual Editor manual and physical acceptance remains DEFERRED."
+}
