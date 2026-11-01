@@ -60,18 +60,30 @@ test('Rich Text cross-paragraph selection survives repeated marks and draft Save
     await page.locator('.inspector-tabs button').nth(1).evaluate(button=>button.click());
     const surface=page.locator('.richtext-editor-surface');
     await surface.waitFor();
-    const segments=await surface.evaluate(async editor=>{
-      const {getRichTextFormattingSelection}=await import('/editor-v2/core/richtext-links.js');
+    await surface.scrollIntoViewIfNeeded();
+    const endpoints=await surface.evaluate(editor=>{
       const blocks=[...editor.querySelectorAll('[data-rich-block]')];
       const first=document.createTreeWalker(blocks[0],NodeFilter.SHOW_TEXT).nextNode();
       const second=document.createTreeWalker(blocks[1],NodeFilter.SHOW_TEXT).nextNode();
       if(first?.nodeValue!=='Alpha Beta'||second?.nodeValue!=='Gamma Delta')throw new Error('Rich Text fixture missing');
-      editor.focus();
-      const range=document.createRange();
-      range.setStart(first,6);range.setEnd(second,5);
-      const selected=window.getSelection();
-      selected.removeAllRanges();selected.addRange(range);
-      document.dispatchEvent(new Event('selectionchange'));
+      const characterRect=(node,offset)=>{
+        const range=document.createRange();range.setStart(node,offset);range.setEnd(node,offset+1);
+        const rect=range.getBoundingClientRect();
+        if(!rect.width||!rect.height)throw new Error('Cannot measure native selection endpoints');
+        return {left:rect.left,right:rect.right,y:rect.top+rect.height/2};
+      };
+      return {start:characterRect(first,6),end:characterRect(second,4)};
+    });
+    // Exercise the browser's native user-selection path, not addRange(): this
+    // is the same cross-paragraph drag gesture used to select text in the UI.
+    await page.mouse.move(endpoints.start.left+1,endpoints.start.y);
+    await page.mouse.down();
+    await page.mouse.move(endpoints.end.right-1,endpoints.end.y,{steps:12});
+    await page.mouse.up();
+    const selectionText=await page.evaluate(()=>window.getSelection()?.toString()??'');
+    assert.match(selectionText,/Beta[\s\S]*Gamma/,'native drag must select the intended text across paragraphs');
+    const segments=await surface.evaluate(async editor=>{
+      const {getRichTextFormattingSelection}=await import('/editor-v2/core/richtext-links.js');
       return getRichTextFormattingSelection(editor)?.segments;
     });
     assert.deepEqual(segments,[{blockIndex:0,from:6,to:10},{blockIndex:1,from:0,to:5}]);

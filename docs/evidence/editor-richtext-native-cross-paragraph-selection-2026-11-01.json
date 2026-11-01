@@ -1,0 +1,37 @@
+{
+  "date": "2026-11-01",
+  "plan_item": "77.44.7.B — native cross-paragraph Rich Text text selection",
+  "status": "AUTOMATED_PASS; TEST_AND_DOCUMENTATION_ONLY; OVERALL_77_44_7_B_OPEN",
+  "finding": "The recently released multi-block link browser test used programmatic Range.addRange() to create its selection. That verified model and link lifecycle behavior but did not verify that a real browser pointer drag selects the same text across paragraphs.",
+  "change": [
+    "The existing Chromium test now scrolls the Inspector Rich Text surface into view, performs a real mouse drag across the end of the first paragraph and the beginning of the second, then reads the native Selection and canonical per-block segments.",
+    "The browser-generated selection continues through inline formatting, multi-block link insertion/removal, draft Save, reload, separate Publish and public-render assertions at 390px and 1366px viewport widths.",
+    "No runtime source, schema, dependency or production configuration changed."
+  ],
+  "tests": {
+    "richTextBrowser": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-richtext-save-publish.test.js tests/browser/editor-inspector-richtext-controls.test.js tests/browser/editor-richtext-selection.test.js tests/browser/editor-richtext-multiblock.test.js tests/browser/editor-richtext-nested-links.test.js tests/browser/editor-richtext-structural-offsets.test.js tests/browser/editor-richtext-block-transform.test.js tests/browser/editor-richtext-partial-list.test.js tests/browser/editor-richtext-nested-paste.test.js tests/browser/editor-richtext-ime-final-input.test.js tests/browser/editor-plain-text-ime.test.js tests/browser/editor-richtext-hardbreak-clipboard.test.js tests/browser/editor-richtext-empty-selection.test.js tests/browser/editor-richtext-nested-styles.test.js tests/browser/web013-admin-link-report.test.js tests/browser/web013-public-richtext.test.js — PASS, 17/17 real Chromium tests.",
+    "editorUnit": "npm run test:editor — PASS, 11/11 test files.",
+    "web013": "npm run test:web013 — PASS, 11/11 tests; migration safety gate PASS.",
+    "typecheck": "npm run typecheck — PASS.",
+    "planAndTraceability": "Canonical plan and active point checks PASS; 396 source mappings PASS, 13 master files, active cursor 77.44.7.B. Functional acceptance remains NOT_CERTIFIED.",
+    "diff": "git diff --check — PASS."
+  },
+  "reuse": {
+    "solution": "Used the existing project-owned Rich Text DOM and segmented Page Model selection bridge, plus Chromium/Playwright already in the repository. The test uses native browser mouse selection; Range is used only to measure precise glyph coordinates, never to create the selection.",
+    "externalCode": "None; no dependency, paid service or infrastructure was added."
+  },
+  "release": {
+    "checkoutBranch": "work; unchanged",
+    "targetBranch": "v2/foundation",
+    "runtimeSourceChanged": false,
+    "deployment": "NOT REQUIRED: test and documentation only; repository Cloudflare Build excludes tests/** and docs/**.",
+    "workerAtVerification": {
+      "deploymentId": "e34ef8f7-5309-4f67-882e-011b05cd8538",
+      "versionId": "fd3b228e-55d9-4a44-b2f4-ee543a645e2b",
+      "trafficPercent": 100,
+      "health": "GET /api/health returned HTTP 200 with ok=true."
+    },
+    "ci": "Not yet verified for the documentation commit; no CI PASS is claimed."
+  },
+  "cost": "No paid service, credit or external dependency used."
+}
