@@ -1190,7 +1190,7 @@ test('every PARTIAL type renders Inspector routes and preserves Save versus Publ
   // independent between desktop and mobile inheritance.
   const ratioField=()=>inspector.locator('[data-property-id="size.aspectRatio"]');
   const ratioCss=node=>node.evaluate(el=>getComputedStyle(el).aspectRatio);
-  const desktopRatio='16 / 9',mobileRatio='1 / 1';
+  const desktopRatio='16 / 9',tabletRatio='4 / 3',mobileRatio='1 / 1';
   const ratioPublicBaseline=Object.fromEntries(await Promise.all(editableNodes.map(async({id})=>[id,await ratioCss(publicNode(id))])));
   await editor.locator('.canvas-device-btn[data-device="desktop"]').click();
   await viewer.setViewportSize({width:1366,height:900});await viewer.reload();
@@ -1224,9 +1224,49 @@ test('every PARTIAL type renders Inspector routes and preserves Save versus Publ
   await viewer.reload();
   for(const {type,id} of editableNodes)assert.equal(await ratioCss(publicNode(id)),desktopRatio,`${type}: separate Publish applies desktop aspect ratio`);
 
+  await editor.locator('.canvas-device-btn[data-device="tablet"]').click();
+  await viewer.setViewportSize({width:768,height:900});await viewer.reload();
+  const tabletRatioBaseline=Object.fromEntries(await Promise.all(editableNodes.map(async({id})=>[id,await ratioCss(publicNode(id))])));
+  for(const {type,id} of editableNodes){
+    await editor.locator(`.node[data-node-id="${id}"]`).evaluate(el=>el.click());
+    await editor.locator('.inspector-tabs button').first().click();
+    const field=ratioField(),section=field.locator('xpath=ancestor::section[1]'),title=section.locator(':scope > .inspector-group-title');
+    if(await title.getAttribute('aria-expanded')==='false')await title.click();
+    assert.equal(await field.getAttribute('data-property-command'),'responsive.set',`${type}: tablet aspect ratio uses responsive command`);
+    assert.equal(await field.getAttribute('data-property-key'),'aspectRatio',`${type}: tablet aspect ratio Page Model key`);
+    await field.locator('select:not(.property-token-picker)').selectOption(tabletRatio);
+    assert.equal(await ratioCss(editor.locator(`.node[data-node-id="${id}"]`)),tabletRatio,`${type}: tablet aspect ratio reaches Canvas`);
+  }
+  await editor.locator('#save').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+  for(const {type,id} of editableNodes){
+    assert.equal(draft.pages[pageId].nodes[id].responsive.tablet.aspectRatio,tabletRatio,`${type}: tablet Save stores aspect ratio`);
+    assert.equal(draft.pages[pageId].nodes[id].responsive.desktop.aspectRatio,desktopRatio,`${type}: tablet Save preserves desktop aspect ratio`);
+    assert.equal(published.pages[pageId].nodes[id].responsive.tablet?.aspectRatio,undefined,`${type}: tablet Save leaves aspect ratio unpublished`);
+  }
+  await viewer.reload();
+  for(const {type,id} of editableNodes)assert.equal(await ratioCss(publicNode(id)),tabletRatioBaseline[id],`${type}: tablet draft Save does not change public aspect ratio`);
+  await editor.reload({waitUntil:'domcontentloaded'});
+  await editor.locator('.canvas-device-btn[data-device="tablet"]').click();
+  for(const {type,id} of editableNodes){
+    await editor.locator(`.node[data-node-id="${id}"]`).evaluate(el=>el.click());
+    await editor.locator('.inspector-tabs button').first().click();
+    assert.equal(await ratioField().locator('select:not(.property-token-picker)').inputValue(),tabletRatio,`${type}: tablet aspect ratio survives Editor reload`);
+  }
+  await editor.locator('#publish').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
+  await viewer.reload();
+  for(const {type,id} of editableNodes){
+    assert.equal(await ratioCss(publicNode(id)),tabletRatio,`${type}: tablet Publish applies aspect ratio`);
+    assert.equal(published.pages[pageId].nodes[id].responsive.tablet.aspectRatio,tabletRatio,`${type}: tablet Publish stores aspect ratio`);
+  }
+  await viewer.setViewportSize({width:1366,height:900});await viewer.reload();
+  for(const {type,id} of editableNodes)assert.equal(await ratioCss(publicNode(id)),desktopRatio,`${type}: tablet Publish preserves desktop aspect ratio`);
+
   await editor.locator('.canvas-device-btn[data-device="mobile"]').click();
   await viewer.setViewportSize({width:390,height:900});await viewer.reload();
   const mobileRatioBaseline=Object.fromEntries(await Promise.all(editableNodes.map(async({id})=>[id,await ratioCss(publicNode(id))])));
+  for(const {type,id} of editableNodes)assert.equal(mobileRatioBaseline[id],tabletRatio,`${type}: mobile inherits tablet aspect ratio before its own override`);
   for(const {type,id} of editableNodes){
     await editor.locator(`.node[data-node-id="${id}"]`).evaluate(el=>el.click());
     await editor.locator('.inspector-tabs button').first().click();
@@ -1240,6 +1280,8 @@ test('every PARTIAL type renders Inspector routes and preserves Save versus Publ
   for(const {type,id} of editableNodes){
     assert.equal(draft.pages[pageId].nodes[id].responsive.mobile.aspectRatio,mobileRatio,`${type}: mobile Save stores aspect ratio`);
     assert.equal(draft.pages[pageId].nodes[id].responsive.desktop.aspectRatio,desktopRatio,`${type}: mobile Save preserves desktop aspect ratio`);
+    assert.equal(draft.pages[pageId].nodes[id].responsive.tablet.aspectRatio,tabletRatio,`${type}: mobile Save preserves tablet aspect ratio`);
+    assert.equal(published.pages[pageId].nodes[id].responsive.tablet.aspectRatio,tabletRatio,`${type}: mobile Save preserves published tablet aspect ratio`);
     assert.equal(published.pages[pageId].nodes[id].responsive.mobile?.aspectRatio,undefined,`${type}: mobile Save keeps aspect ratio unpublished`);
   }
   await viewer.reload();
@@ -1270,13 +1312,13 @@ test('every PARTIAL type renders Inspector routes and preserves Save versus Publ
     assert.equal(await reset.count(),1,`${type}: mobile aspect ratio exposes inheritance reset`);
     assert.equal(await reset.getAttribute('data-property-command'),'responsive.set',`${type}: aspect ratio reset uses responsive command`);
     await reset.click();
-    assert.equal(await ratioCss(editor.locator(`.node[data-node-id="${id}"]`)),desktopRatio,`${type}: mobile aspect ratio reset restores desktop Canvas value`);
+    assert.equal(await ratioCss(editor.locator(`.node[data-node-id="${id}"]`)),tabletRatio,`${type}: mobile aspect ratio reset restores tablet Canvas value`);
   }
   const lastRatioNode=editableNodes.at(-1);
   await editor.locator('#undo').click();
   assert.equal(await ratioCss(editor.locator(`.node[data-node-id="${lastRatioNode.id}"]`)),mobileRatio,`${lastRatioNode.type}: Undo restores mobile aspect-ratio override`);
   await editor.locator('#redo').click();
-  assert.equal(await ratioCss(editor.locator(`.node[data-node-id="${lastRatioNode.id}"]`)),desktopRatio,`${lastRatioNode.type}: Redo restores inherited desktop aspect ratio`);
+  assert.equal(await ratioCss(editor.locator(`.node[data-node-id="${lastRatioNode.id}"]`)),tabletRatio,`${lastRatioNode.type}: Redo restores inherited tablet aspect ratio`);
   await editor.locator('#save').click();
   await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
   for(const {type,id} of editableNodes){
@@ -1289,8 +1331,37 @@ test('every PARTIAL type renders Inspector routes and preserves Save versus Publ
   await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
   await viewer.reload();
   for(const {type,id} of editableNodes){
-    assert.equal(await ratioCss(publicNode(id)),desktopRatio,`${type}: reset Publish restores desktop aspect ratio on mobile`);
+    assert.equal(await ratioCss(publicNode(id)),tabletRatio,`${type}: reset Publish restores tablet aspect ratio on mobile`);
     assert.equal(published.pages[pageId].nodes[id].responsive.mobile.aspectRatio,undefined,`${type}: reset Publish removes mobile aspect ratio`);
   }
+  await editor.locator('.canvas-device-btn[data-device="tablet"]').click();
+  await viewer.setViewportSize({width:768,height:900});await viewer.reload();
+  for(const {type,id} of editableNodes){
+    await editor.locator(`.node[data-node-id="${id}"]`).evaluate(el=>el.click());
+    await editor.locator('.inspector-tabs button').first().click();
+    const field=ratioField(),section=field.locator('xpath=ancestor::section[1]'),title=section.locator(':scope > .inspector-group-title');
+    if(await title.getAttribute('aria-expanded')==='false')await title.click();
+    const reset=section.locator('.property-reset[data-property-key="aspectRatio"]');
+    assert.equal(await reset.count(),1,`${type}: tablet aspect ratio exposes inheritance reset`);
+    await reset.click();
+    assert.equal(await ratioCss(editor.locator(`.node[data-node-id="${id}"]`)),desktopRatio,`${type}: tablet reset restores desktop Canvas aspect ratio`);
+  }
+  await editor.locator('#save').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+  for(const {type,id} of editableNodes){
+    assert.equal(draft.pages[pageId].nodes[id].responsive.tablet.aspectRatio,undefined,`${type}: tablet reset Save removes aspect ratio`);
+    assert.equal(published.pages[pageId].nodes[id].responsive.tablet.aspectRatio,tabletRatio,`${type}: tablet reset Save preserves published aspect ratio`);
+  }
+  await viewer.reload();
+  for(const {type,id} of editableNodes)assert.equal(await ratioCss(publicNode(id)),tabletRatio,`${type}: tablet reset Save leaves public CSS unchanged`);
+  await editor.locator('#publish').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
+  await viewer.reload();
+  for(const {type,id} of editableNodes){
+    assert.equal(await ratioCss(publicNode(id)),desktopRatio,`${type}: tablet reset Publish restores desktop aspect ratio`);
+    assert.equal(published.pages[pageId].nodes[id].responsive.tablet.aspectRatio,undefined,`${type}: tablet reset Publish removes aspect ratio`);
+  }
+  await viewer.setViewportSize({width:390,height:900});await viewer.reload();
+  for(const {type,id} of editableNodes)assert.equal(await ratioCss(publicNode(id)),desktopRatio,`${type}: tablet reset Publish restores mobile inheritance`);
   assert.deepEqual(editorErrors,[],'opening every partial type must not throw');
 });
