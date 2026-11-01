@@ -1,7 +1,7 @@
 {
   "date": "2026-11-01",
   "plan_item": "77.44.7.B — Rich Text, inline marks, links, Save/Publish and link-report acceptance",
-  "status": "LOCAL_AUTOMATED_ACCEPTANCE_PASS; CURRENT_PUBLIC_HEALTH_BLOCKED_BY_NETWORK; AUTHENTICATED_PRODUCTION_AND_WRITE_ACCEPTANCE_OPEN",
+  "status": "RUNTIME_FIX_DEPLOYED_AND_VERIFIED_BY_CLOUDFLARE_BUILD_AND_VERSION_API; LOCAL_TESTS_PASS; PUBLIC_HEALTH_UNVERIFIED_NETWORK; AUTHENTICATED_PRODUCTION_ACCEPTANCE_OPEN",
   "repository": {
     "local_branch": "work",
     "local_head": "47adbb0a2f036c7b499cfa9b1a7a53db28d1d07c",
@@ -10,59 +10,100 @@
     "github_head_verified": true,
     "github_combined_statuses": [],
     "ci_pass_claimed": false,
-    "preexisting_untracked_work_preserved": true
+    "preexisting_untracked_work_preserved": true,
+    "github_head_before_final_docs_evidence": "115998d8ccbb0f15cfab66e92b2bb3320075fe35",
+    "runtime_commit": "84d32064710906eb2120808104baa56b68876c00",
+    "test_commits": [
+      "e0bab2789c79a87f1ba6357ee02c25f0558beedf",
+      "686b2b1612eae0a8f4f92c4e48e2063a69e00deb"
+    ],
+    "traceability_commit": "115998d8ccbb0f15cfab66e92b2bb3320075fe35",
+    "canonical_plan_commit": "6e35e699f60284f01b96ee5cb39bcd96acb56704",
+    "github_head_before_evidence_commit": "6e35e699f60284f01b96ee5cb39bcd96acb56704"
   },
   "tests": {
-    "richTextChromium": {
-      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-richtext-*.test.js tests/browser/editor-inspector-richtext-controls.test.js tests/browser/web013-public-richtext.test.js",
+    "web013": {
+      "command": "npm run test:web013",
       "result": "PASS",
-      "passed": 16,
+      "passed": 11,
       "failed": 0,
-      "duration_ms": 106826
+      "includes": "runtime URL/entity regressions and deploy:safe migration-safety gate"
     },
-    "adminLinkReportChromium": {
-      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/web013-admin-link-report.test.js",
+    "editorUnit": {
+      "command": "npm run test:editor",
       "result": "PASS",
-      "passed": 1,
-      "failed": 0,
-      "coverage": "360/390/430/1280 CSS-pixel viewport widths"
+      "passed": 11,
+      "failed": 0
     },
-    "linkReportURLSafetyRuntime": {
-      "command": "node --experimental-loader ./tests/ts-extension-loader.mjs --test --test-reporter=spec tests/web013-runtime.test.js",
-      "result": "PASS",
-      "assertions": [
-        "same-origin absolute missing page URLs are reported",
-        "cross-origin and protocol-relative foreign links are excluded",
-        "credentialed same-origin URLs are excluded",
-        "HTTP scheme downgrade and javascript URLs are excluded"
-      ]
+    "typecheck": {
+      "command": "npm run typecheck",
+      "result": "PASS"
     },
-    "editorUnit": "npm run test:editor — PASS 11/11 test files",
-    "typecheck": "npm run typecheck — PASS",
-    "web013UnitAndMigrationGate": "npm run test:web013 — PASS 11/11; included deploy:safe migration safety gate",
-    "planAndTraceability": "canonical master PASS (13 files); active cursor audit PASS (77.44 / WEB-011 → 77.44.7.B); traceability PASS (396 mappings); git diff --check PASS",
-    "editorLayoutChromium": {
-      "command": "CHROMIUM_PATH=/usr/bin/chromium npm run test:editor:layout",
+    "canonicalPlan": {
+      "command": "python3 scripts/check-canonical-plan.py",
       "result": "PASS",
-      "passed": 97,
-      "failed": 0,
-      "duration_ms": 2653938
+      "masterFiles": 13,
+      "activeCursor": "77.44.7.B"
+    },
+    "activePoint": {
+      "command": "python3 scripts/audit-active-plan-point.py",
+      "result": "PASS",
+      "featureMappings": 396,
+      "functionalAcceptance": "NOT_CERTIFIED"
+    },
+    "traceability": {
+      "command": "python3 scripts/build-feature-traceability.py --check",
+      "result": "PASS",
+      "mappings": 396
+    },
+    "planContract": {
+      "command": "python3 tests/plan-contract.test.py",
+      "result": "PASS",
+      "passed": 13,
+      "failed": 0
+    },
+    "diffCheck": {
+      "command": "git diff --check",
+      "result": "PASS"
+    },
+    "wranglerDryRun": {
+      "command": "WRANGLER_LOG_PATH=/tmp/sanci9517-link-report-dry-run.log ./node_modules/.bin/wrangler deploy --dry-run",
+      "result": "PASS",
+      "wrangler": "4.130.0",
+      "assets": 162,
+      "totalUpload": "300.78 KiB"
+    },
+    "d1Preflight": {
+      "method": "Cloudflare D1 API; SELECT only",
+      "query": "SELECT COUNT(*) AS row_count, MAX(name) AS latest_name FROM d1_migrations",
+      "rowCount": 34,
+      "latestMigration": "0028_media_archive.sql",
+      "changedDb": false,
+      "rowsWritten": 0
     }
   },
   "runtime": {
-    "source_changed": false,
-    "deployment_id": "ade91828-4b0a-4d86-aaa1-27c6e28c7a95",
-    "worker_version": "70f718a9-2fb9-4679-bcec-39740b4b178d",
+    "source_changed": true,
+    "runtime_file": "src/routes/admin/link-report.ts",
+    "github_runtime_commit": "84d32064710906eb2120808104baa56b68876c00",
+    "cloudflare_build_id": "17e89a5d-5f86-4e60-b1c3-33b119e7c467",
+    "cloudflare_build_outcome": "success",
+    "cloudflare_build_commit": "84d32064710906eb2120808104baa56b68876c00",
+    "cloudflare_build_command": "npm run typecheck",
+    "cloudflare_deploy_command": "npm run deploy:safe",
+    "deployment_id": "1f3e64f4-70d9-4d38-95eb-b0598c63868c",
+    "worker_version": "c1530437-d531-441e-85b0-78318ddd438f",
     "traffic_percent": 100,
-    "deployment_verified_by": "read-only Cloudflare deployments API",
-    "health_this_run": "UNVERIFIED: direct read-only GET could not connect from this environment (proxy connection refused; direct network connection failed)",
-    "asset_hashes_this_run": "NOT RECHECKED; see editor-richtext-full-block-2026-11-01.json for previously verified local/live matching hashes"
+    "deployment_verified_by": "Cloudflare read-only deployments API; version API bundle contains decodeHtmlHref implementation",
+    "health_this_run": "UNVERIFIED: direct GET curl exit 7; local proxy port 8080 connection refused",
+    "public_asset_changes": [],
+    "asset_hashes_this_run": "NOT APPLICABLE: no public asset file changed; no live asset hash GET completed due proxy block"
   },
   "acceptance": {
-    "authenticated_production_link_report": "OPEN: previous direct unauthenticated request returned 401; no Creator Platform admin session was available",
-    "production_save_publish": "OPEN: would write production D1 page data; no designated test page or separate approval for production data writes",
+    "authenticated_production_link_report": "OPEN: no Creator Platform admin session was available; unauthenticated production access is not treated as an acceptance pass",
+    "production_save_publish": "OPEN: would write production D1 page data; no designated test page or specific data-write authorization, so none attempted",
     "physical_ios_android_acceptance": "DEFERRED to complete Visual Editor gate 77.44.7.F/77.44.8",
-    "overall_plan_item_77_44_7_B": "OPEN / BLOCKED; local automated acceptance does not certify the production/manual gate"
+    "overall_plan_item_77_44_7_B": "OPEN / NOT CERTIFIED; the focused runtime defect is deployed and automated locally, remaining authenticated/live/manual gates are open"
   },
   "data_and_cost": {
     "production_d1_migrations": 0,
@@ -89,5 +130,20 @@
       "command": "npm run typecheck",
       "result": "PASS"
     }
-  ]
+  ],
+  "fix": {
+    "defect": "WEB-013 scanned published legacy Rich Text HTML hrefs but only decoded &amp;, so encoded slash references were omitted before same-origin internal path checking.",
+    "supportedReferences": [
+      "&amp;",
+      "&sol;",
+      "decimal numeric references (with or without semicolon)",
+      "hex numeric references (with or without semicolon)"
+    ],
+    "invalidNumericHandling": "NUL, surrogate, out-of-range or non-finite numeric code point is replaced with U+FFFD before URL classification.",
+    "verifiedRuntimeAssertions": [
+      "&#47;/&#x2F; and &sol; path separators report the same-origin missing targets",
+      "invalid NUL and surrogate references do not add bogus internal link findings",
+      "cross-origin, protocol-relative, credentialed, downgrade and javascript URL exclusions remain"
+    ]
+  }
 }
