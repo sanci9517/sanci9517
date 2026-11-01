@@ -1,7 +1,7 @@
 {
   "date": "2026-11-01",
   "plan_item": "77.44.7.B — mixed Rich Text link target lifecycle",
-  "status": "LOCAL_AUTOMATED_PASS; PRODUCTION_RELEASE_PENDING; OVERALL_77_44_7_B_OPEN",
+  "status": "AUTOMATED_PASS; PRODUCTION_RELEASE_VERIFIED; OVERALL_77_44_7_B_OPEN",
   "finding": "When a selection covered links with different targets, readRichTextLinkTarget silently returned Auto. The Inspector then hid the mixed state, and changing only the URL overwrote the per-run _self/_blank choices.",
   "change": [
     "The Inspector now displays a disabled mixed-target state instead of claiming Auto when selected runs differ.",
@@ -25,10 +25,17 @@
     "checkoutBranch": "work; unchanged",
     "targetBranch": "v2/foundation",
     "githubHeadBefore": "4947e9022ecca12b93c1e2b24241e42af2ddafe4",
-    "localCommit": "PENDING",
-    "push": "PENDING_NORMAL_FAST_FORWARD",
-    "ci": "[skip ci] planned; no CI PASS will be claimed without a reported check.",
-    "deployment": "PENDING deploy:safe after push"
+    "localCommit": "c0a5942057d959c1228cee5deb37c2c4d4aa9dac",
+    "push": "PASS: normal fast-forward 4947e9022ecca12b93c1e2b24241e42af2ddafe4..c0a5942057d959c1228cee5deb37c2c4d4aa9dac to v2/foundation; remote ref directly verified.",
+    "ci": "GitHub Actions was intentionally skipped. Commit status API contains no reported checks; CI PASS is not claimed.",
+    "deployment": {
+      "id": "81916038-60c7-4a42-a338-bb5131cb75c7",
+      "versionId": "84e45415-4a0f-4489-a66b-fb12418ea999",
+      "createdOn": "2026-11-01T10:58:56.735979Z",
+      "trafficPercent": 100,
+      "trigger": "npm run deploy:safe; automatic Cloudflare build did not start."
+    },
+    "deploySafe": "PASS: npm run deploy:safe migration gate passed; Wrangler uploaded 6 changed assets and deployed without running D1 migrations. Non-fatal EROFS warning only affected Wrangler debug logs."
   },
   "production": {
     "runtimeSourceChanged": true,
@@ -44,13 +51,23 @@
     "versionBefore": "a333bfe3-1875-4145-81d0-1dc181fbe6a0",
     "trafficBefore": 100,
     "d1Preflight": "Cloudflare D1 Query API SELECT name FROM d1_migrations ORDER BY name; 34 rows read, rows_written=0, changed_db=false. No migration or production mutation.",
-    "deploymentAfter": "PENDING",
-    "versionAfter": "PENDING",
-    "trafficAfter": "PENDING",
-    "healthAfter": "PENDING",
-    "assetHashes": "PENDING",
+    "deploymentAfter": "81916038-60c7-4a42-a338-bb5131cb75c7",
+    "versionAfter": "84e45415-4a0f-4489-a66b-fb12418ea999",
+    "trafficAfter": 100,
+    "healthAfter": "PASS: GET /api/health returned HTTP 200 with ok=true and service sanci9517-streamer-brand.",
+    "assetHashes": {
+      "public/editor-v2/app.js": "86af741755b7bf04addd414d05e5b6680de3d0029222530a5c9d9b0f26aa3d8f",
+      "public/editor-v2/core/richtext-engine.js": "07d24bb7f31a43a191fac2df1f0799e5c55f3ee99909f86a31e106481d81a5ae",
+      "public/editor-v2/core/richtext-import.js": "9ad68d76c2d62807195a6b1818acc85dabee97a4a0d2f5cfe44013d8250a6053",
+      "public/editor-v2/core/richtext-links.js": "e85f71ec345d32d70d3535cc4ac1e6d16f1b9006396e3fc58a772b6915e88b9b",
+      "public/editor-v2/core/schema.js": "740951188cac2e53309f81ec073c620e28189d5104fae4f4cc66ebc92723be4a",
+      "public/editor-v2/index.html": "c1aeb48f05498513b75605af887fe9be7a394e9831a4d43ec7246f506b338662",
+      "public/editor-v2/tests/inspector-richtext.test.js": "a75913af9f55ab5d5cf3bddc3acf5b00a463193a81b04f449f884cbd0eddb39c"
+    },
     "d1ProductionWrites": 0,
-    "r2Changes": 0
+    "r2Changes": 0,
+    "assetCheck": "PASS: six changed/uploaded assets returned HTTP 200 and matched local SHA-256; the versioned schema dependency URL also returned HTTP 200 and matched local SHA-256.",
+    "d1Postflight": "SELECT-only Cloudflare D1 Query API; 34 migration rows read, rows_written=0, changed_db=false. No data mutation or migration."
   },
   "acceptance": "The mixed-target URL-edit slice is automated and release-ready after deployment verification. Overall 77.44.7.B remains OPEN; complete Visual Editor manual/physical acceptance is deferred to 77.44.7.F/77.44.8."
 }
