@@ -34,17 +34,20 @@ export function readRichTextLinkTarget(documentModel, range) {
   const runs=segments.flatMap(segment=>selectedInlineRuns(documentModel,segment));
   if(!runs.length)return 'auto';
   const targets=new Set(runs.map(run=>run.link?.target==='_self'?'_self':run.link?.target==='_blank'?'_blank':'auto'));
-  return targets.size===1?[...targets][0]:'auto';
+  return targets.size===1?[...targets][0]:'mixed';
 }
 
 export function updateRichTextInlineLink(documentModel, {blockIndex, from, to}, href, target = 'auto') {
   const safeHref = href === null ? null : validatedLinkHref(href);
-  if(safeHref!==null&&!['auto','_self','_blank'].includes(target))throw new Error('Válassz érvényes hivatkozás-megnyitási módot.');
+  if(safeHref!==null&&!['auto','_self','_blank','preserve'].includes(target))throw new Error('Válassz érvényes hivatkozás-megnyitási módot.');
   return updateRichTextRange(documentModel, {blockIndex, from, to}, piece => {
     if (safeHref === null) delete piece.link;
     else {
-      const effectiveTarget=resolveRichTextLinkTarget(safeHref,target);
-      piece.link={href:safeHref,...(effectiveTarget==='_blank'?{target:'_blank',rel:'noopener noreferrer'}:target==='_self'?{target:'_self'}:{})};
+      const requestedTarget=target==='preserve'
+        ?piece.link?.target==='_self'?'_self':piece.link?.target==='_blank'?'_blank':'auto'
+        :target;
+      const effectiveTarget=resolveRichTextLinkTarget(safeHref,requestedTarget);
+      piece.link={href:safeHref,...(effectiveTarget==='_blank'?{target:'_blank',rel:'noopener noreferrer'}:requestedTarget==='_self'?{target:'_self'}:{})};
     }
   });
 }

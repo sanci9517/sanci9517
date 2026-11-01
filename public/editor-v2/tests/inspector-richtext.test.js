@@ -260,6 +260,24 @@ test('Rich Text link targets use safe automatic defaults, preserve explicit choi
   assert.throws(()=>normalizeRichText({schemaVersion:1,type:'richtext-document',blocks:[{type:'paragraph',children:[{type:'text',text:'world',marks:[],link:{href:'/p/home',target:'_top'}}]}]}));
 });
 
+test('mixed Rich Text link targets stay explicit and are preserved when the selected URL changes',()=>{
+  const mixed={schemaVersion:1,type:'richtext-document',blocks:[{type:'paragraph',children:[
+    {type:'text',text:'same ',marks:[],link:{href:'/p/old',target:'_self'}},
+    {type:'text',text:'new',marks:[],link:{href:'https://old.example/',target:'_blank',rel:'noopener noreferrer'}}
+  ]}]};
+  const range={blockIndex:0,from:0,to:8};
+  assert.equal(readRichTextLinkTarget(mixed,range),'mixed');
+  const changed=updateRichTextInlineLink(mixed,range,'https://next.example/','preserve');
+  const links=changed.blocks[0].children.map(run=>run.link);
+  assert.deepEqual(links,[
+    {href:'https://next.example/',target:'_self'},
+    {href:'https://next.example/',target:'_blank',rel:'noopener noreferrer'}
+  ]);
+  assert.equal(readRichTextLinkTarget(changed,range),'mixed');
+  assert.equal(mixed.blocks[0].children[0].link.href,'/p/old','editing returns a new model without mutating the existing draft');
+  assert.throws(()=>updateRichTextInlineLink(mixed,range,'/p/new','unknown'));
+});
+
 test('Rich Text link edits save through the real command, keep Undo/Redo, never publish', () => {
   const state=createEditorState(createDocument());
   execute(state,{type:'element.add',payload:{type:NODE_TYPES.RICHTEXT}});

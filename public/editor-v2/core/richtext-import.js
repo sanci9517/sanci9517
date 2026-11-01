@@ -1,5 +1,5 @@
-import { resolveRichTextLinkTarget, validatedLinkHref } from './richtext-links.js?v=20261101-richtext-link-target';
-import { RICH_TEXT_FONT_FAMILIES } from './schema.js?v=20261101-richtext-link-target';
+import { resolveRichTextLinkTarget, validatedLinkHref } from './richtext-links.js?v=20261101-richtext-mixed-target';
+import { RICH_TEXT_FONT_FAMILIES } from './schema.js?v=20261101-richtext-mixed-target';
 
 const MAX_CLIPBOARD_CHARS = 250_000;
 const MAX_TABLE_ROWS = 100;

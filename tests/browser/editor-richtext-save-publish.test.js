@@ -349,4 +349,52 @@ test('actual Inspector keeps unsaved Rich Text through Ctrl+S, reload and separa
   await reportStatus.getByText('Tartalmi linkhibák: 1').waitFor();
   assert.match(await reportTab.locator('#linkReportFindings').textContent(),new RegExp(pageId));
   assert.match(await reportTab.locator('#linkReportFindings').textContent(),/\/p\/missing/);
+
+  // A mixed target must be visible instead of silently falling back to Auto.
+  // Updating only the URL keeps each selected link's existing tab behavior.
+  await openEditor();
+  const surface=tab.locator('.richtext-editor-surface'),target=tab.getByRole('combobox',{name:'Link megnyitása'});
+  const selectText=async(start,end)=>{
+    await surface.evaluate((root,{start,end})=>{
+      const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT),nodes=[];let node;
+      while((node=walker.nextNode()))nodes.push(node);
+      const first=nodes.find(item=>item.nodeValue.includes(start)),last=[...nodes].reverse().find(item=>item.nodeValue.includes(end));
+      if(!first||!last)throw new Error(`Could not select ${start}…${end}`);
+      const range=document.createRange();range.setStart(first,first.nodeValue.indexOf(start));range.setEnd(last,last.nodeValue.indexOf(end)+end.length);
+      const selection=window.getSelection();selection.removeAllRanges();selection.addRange(range);
+      document.dispatchEvent(new Event('selectionchange'));
+    },{start,end});
+    await tab.evaluate(()=>new Promise(requestAnimationFrame));
+  };
+  await selectText('fresh','fresh');
+  await tab.locator('.richtext-link-controls input').fill('https://mixed.example/old');
+  await target.selectOption('_blank');
+  await tab.getByRole('button',{name:'Link beállítása'}).click();
+  assert.equal(await surface.locator('a').count(),2,'the fixture contains two independently linked runs');
+  const mixedLinks=surface.locator('p').first().locator('a');
+  assert.equal(await mixedLinks.nth(0).getAttribute('target'),'_self');
+  assert.equal(await mixedLinks.nth(1).getAttribute('target'),'_blank');
+  await selectText('Hello','fresh');
+  assert.equal(await target.inputValue(),'mixed','the Inspector exposes the different selected targets');
+  await tab.locator('.richtext-link-controls input').fill('/p/combined');
+  await tab.getByRole('button',{name:'Link beállítása'}).click();
+  assert.deepEqual(await mixedLinks.evaluateAll(links=>links.map(link=>({href:link.getAttribute('href'),target:link.getAttribute('target'),rel:link.getAttribute('rel')}))),[
+    {href:'/p/combined',target:null,rel:null},
+    {href:'/p/combined',target:'_self',rel:null},
+    {href:'/p/combined',target:null,rel:null},
+    {href:'/p/combined',target:'_blank',rel:'noopener noreferrer'}
+  ],'URL-only updates preserve both existing explicit targets and protect the new-tab link');
+  await tab.locator('#save').click();await tab.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent?.startsWith('Mentve'));
+  assert.equal(posts.at(-1).publish,false,'Save remains draft-only for mixed-target edits');
+  assert.equal(published.pages[pageId].nodes[nodeId].props.richText.blocks[0].children.find(run=>run.link?.target==='_self').link.href,'/p/missing','draft Save does not rewrite the public link');
+  await openEditor();
+  assert.deepEqual(await tab.locator('.richtext-editor-surface p').first().locator('a').evaluateAll(links=>links.map(link=>[link.getAttribute('target'),link.getAttribute('href')])),[
+    [null,'/p/combined'],['_self','/p/combined'],[null,'/p/combined'],['_blank','/p/combined']
+  ],'mixed targets survive editor reload');
+  await tab.locator('#publish').click();await tab.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent==='Publikálva');
+  await publicTab.reload();
+  assert.deepEqual(await publicTab.locator('.visual-richtext p').first().locator('a').evaluateAll(links=>links.map(link=>[link.getAttribute('target'),link.getAttribute('rel'),link.getAttribute('href')])),[
+    ['_self',null,'/p/combined'],['_self',null,'/p/combined'],['_self',null,'/p/combined'],['_blank','noopener noreferrer','/p/combined']
+  ],'Publish renders preserved mixed targets to the public page');
+  await refreshReport();await reportStatus.getByText('Tartalmi linkhibák: 0').waitFor();
 });

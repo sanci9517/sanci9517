@@ -1,0 +1,56 @@
+{
+  "date": "2026-11-01",
+  "plan_item": "77.44.7.B — mixed Rich Text link target lifecycle",
+  "status": "LOCAL_AUTOMATED_PASS; PRODUCTION_RELEASE_PENDING; OVERALL_77_44_7_B_OPEN",
+  "finding": "When a selection covered links with different targets, readRichTextLinkTarget silently returned Auto. The Inspector then hid the mixed state, and changing only the URL overwrote the per-run _self/_blank choices.",
+  "change": [
+    "The Inspector now displays a disabled mixed-target state instead of claiming Auto when selected runs differ.",
+    "URL edits made with the mixed state preserve every existing run target; unlinked selected text follows safe URL defaults, and every _blank link receives noopener noreferrer.",
+    "The shared link updater still validates URL schemes and rejects arbitrary target values."
+  ],
+  "tests": {
+    "unit": "npm run test:editor — PASS, 11/11 files; includes mixed target selection, per-run preservation, safe rel, immutability, and invalid token rejection.",
+    "browser": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-richtext-save-publish.test.js tests/browser/editor-inspector-richtext-controls.test.js tests/browser/editor-richtext-selection.test.js tests/browser/editor-richtext-multiblock.test.js tests/browser/editor-richtext-nested-links.test.js tests/browser/editor-richtext-structural-offsets.test.js tests/browser/editor-richtext-block-transform.test.js tests/browser/editor-richtext-partial-list.test.js tests/browser/editor-richtext-nested-paste.test.js tests/browser/editor-richtext-ime-final-input.test.js tests/browser/editor-plain-text-ime.test.js tests/browser/editor-richtext-hardbreak-clipboard.test.js tests/browser/editor-richtext-empty-selection.test.js tests/browser/editor-richtext-nested-styles.test.js tests/browser/web013-admin-link-report.test.js tests/browser/web013-public-richtext.test.js — PASS, 17/17 real Chromium tests.",
+    "typecheck": "npm run typecheck — PASS.",
+    "web013": "npm run test:web013 — PASS, 11/11; included migration safety gate.",
+    "plan": "scripts/check-canonical-plan.py, scripts/plan_contract.py, scripts/audit-active-plan-point.py, and scripts/build-feature-traceability.py --check — PASS; 13 canonical files, cursor 77.44.7.B, 396 mappings. Acceptance remains NOT_CERTIFIED.",
+    "syntaxAndDiff": "node --check on changed JS files and git diff --check — PASS.",
+    "dryRun": "npx wrangler deploy --dry-run — PASS, Wrangler 4.130.0; 162 assets, 300.14 KiB / 68.68 KiB gzip. Non-fatal EROFS affects only Wrangler debug log writing."
+  },
+  "reuse": {
+    "solution": "Reused the project-owned structured Rich Text schema, selected-run model, URL validator, Inspector, Page Model command, and existing Chromium fixture.",
+    "externalCode": "None; no new dependency or paid service."
+  },
+  "release": {
+    "checkoutBranch": "work; unchanged",
+    "targetBranch": "v2/foundation",
+    "githubHeadBefore": "4947e9022ecca12b93c1e2b24241e42af2ddafe4",
+    "localCommit": "PENDING",
+    "push": "PENDING_NORMAL_FAST_FORWARD",
+    "ci": "[skip ci] planned; no CI PASS will be claimed without a reported check.",
+    "deployment": "PENDING deploy:safe after push"
+  },
+  "production": {
+    "runtimeSourceChanged": true,
+    "assetsChanged": [
+      "public/editor-v2/app.js",
+      "public/editor-v2/core/richtext-engine.js",
+      "public/editor-v2/core/richtext-import.js",
+      "public/editor-v2/core/richtext-links.js",
+      "public/editor-v2/index.html",
+      "public/editor-v2/tests/inspector-richtext.test.js"
+    ],
+    "deploymentBefore": "d8f673fe-196b-40a1-8664-517c18679b0a",
+    "versionBefore": "a333bfe3-1875-4145-81d0-1dc181fbe6a0",
+    "trafficBefore": 100,
+    "d1Preflight": "Cloudflare D1 Query API SELECT name FROM d1_migrations ORDER BY name; 34 rows read, rows_written=0, changed_db=false. No migration or production mutation.",
+    "deploymentAfter": "PENDING",
+    "versionAfter": "PENDING",
+    "trafficAfter": "PENDING",
+    "healthAfter": "PENDING",
+    "assetHashes": "PENDING",
+    "d1ProductionWrites": 0,
+    "r2Changes": 0
+  },
+  "acceptance": "The mixed-target URL-edit slice is automated and release-ready after deployment verification. Overall 77.44.7.B remains OPEN; complete Visual Editor manual/physical acceptance is deferred to 77.44.7.F/77.44.8."
+}
