@@ -1,25 +1,27 @@
 {
   "date": "2026-11-01",
   "plan_item": "77.44.7.B — Rich Text, inline marks, links, Save/Publish and link-report acceptance",
-  "status": "RUNTIME_FIX_DEPLOYED_AND_VERIFIED_BY_CLOUDFLARE_BUILD_AND_VERSION_API; LOCAL_TESTS_PASS; PUBLIC_HEALTH_UNVERIFIED_NETWORK; AUTHENTICATED_PRODUCTION_ACCEPTANCE_OPEN",
+  "status": "RUNTIME_FIX_DEPLOYED_AND_TRAFFIC_HEALTH_VERIFIED; LOCAL_TESTS_PASS; AUTHENTICATED_PRODUCTION_ACCEPTANCE_OPEN",
   "repository": {
     "local_branch": "work",
     "local_head": "47adbb0a2f036c7b499cfa9b1a7a53db28d1d07c",
     "github_branch": "v2/foundation",
-    "github_head": "21df76a3d1b99ebf156a6f5a54ea0aa74d025ea5",
+    "github_head": "f8d3196d0a956bcbc274f262d0b932524e2ce78c",
     "github_head_verified": true,
     "github_combined_statuses": [],
     "ci_pass_claimed": false,
     "preexisting_untracked_work_preserved": true,
-    "github_head_before_final_docs_evidence": "115998d8ccbb0f15cfab66e92b2bb3320075fe35",
-    "runtime_commit": "84d32064710906eb2120808104baa56b68876c00",
+    "github_head_before_final_docs_evidence": "f8d3196d0a956bcbc274f262d0b932524e2ce78c",
+    "runtime_commit": "d5cea53e1dc4791387a4b3daaccd0cd3d71ef8ae",
     "test_commits": [
       "e0bab2789c79a87f1ba6357ee02c25f0558beedf",
-      "686b2b1612eae0a8f4f92c4e48e2063a69e00deb"
+      "686b2b1612eae0a8f4f92c4e48e2063a69e00deb",
+      "ff443d47d36c5f6475e22b5076a945fc803fd01d",
+      "3606ccff06ebf0502e9c8eb55283844f3f15441e"
     ],
-    "traceability_commit": "115998d8ccbb0f15cfab66e92b2bb3320075fe35",
-    "canonical_plan_commit": "6e35e699f60284f01b96ee5cb39bcd96acb56704",
-    "github_head_before_evidence_commit": "6e35e699f60284f01b96ee5cb39bcd96acb56704"
+    "traceability_commit": "f8d3196d0a956bcbc274f262d0b932524e2ce78c",
+    "canonical_plan_commit": "f8d3196d0a956bcbc274f262d0b932524e2ce78c",
+    "github_head_before_evidence_commit": "f8d3196d0a956bcbc274f262d0b932524e2ce78c"
   },
   "tests": {
     "web013": {
@@ -85,25 +87,25 @@
   "runtime": {
     "source_changed": true,
     "runtime_file": "src/routes/admin/link-report.ts",
-    "github_runtime_commit": "84d32064710906eb2120808104baa56b68876c00",
-    "cloudflare_build_id": "17e89a5d-5f86-4e60-b1c3-33b119e7c467",
+    "github_runtime_commit": "d5cea53e1dc4791387a4b3daaccd0cd3d71ef8ae",
+    "cloudflare_build_id": "1c646050-f18d-4bfe-b98e-f1c30c45a941",
     "cloudflare_build_outcome": "success",
-    "cloudflare_build_commit": "84d32064710906eb2120808104baa56b68876c00",
+    "cloudflare_build_commit": "d5cea53e1dc4791387a4b3daaccd0cd3d71ef8ae",
     "cloudflare_build_command": "npm run typecheck",
     "cloudflare_deploy_command": "npm run deploy:safe",
-    "deployment_id": "1f3e64f4-70d9-4d38-95eb-b0598c63868c",
-    "worker_version": "c1530437-d531-441e-85b0-78318ddd438f",
+    "deployment_id": "212fa31b-b468-4352-a1c1-e7bde222d363",
+    "worker_version": "77827529-a812-4b3b-9495-580c83348767",
     "traffic_percent": 100,
-    "deployment_verified_by": "Cloudflare read-only deployments API; version API bundle contains decodeHtmlHref implementation",
-    "health_this_run": "UNVERIFIED: direct GET curl exit 7; local proxy port 8080 connection refused",
+    "deployment_verified_by": "Cloudflare read-only Worker Build and Deployments APIs; exact runtime source commit build success and active deployment version at 100% traffic",
+    "health_this_run": "PASS: HTTP 200 via network-enabled read-only smoke; JSON reports service sanci9517-streamer-brand, version 2.0.0, cloudflare-worker",
     "public_asset_changes": [],
-    "asset_hashes_this_run": "NOT APPLICABLE: no public asset file changed; no live asset hash GET completed due proxy block"
+    "asset_hashes_this_run": "NOT APPLICABLE: no public asset file changed; change is Worker route-only"
   },
   "acceptance": {
     "authenticated_production_link_report": "OPEN: no Creator Platform admin session was available; unauthenticated production access is not treated as an acceptance pass",
     "production_save_publish": "OPEN: would write production D1 page data; no designated test page or specific data-write authorization, so none attempted",
     "physical_ios_android_acceptance": "DEFERRED to complete Visual Editor gate 77.44.7.F/77.44.8",
-    "overall_plan_item_77_44_7_B": "OPEN / NOT CERTIFIED; the focused runtime defect is deployed and automated locally, remaining authenticated/live/manual gates are open"
+    "overall_plan_item_77_44_7_B": "OPEN / NOT CERTIFIED; focused runtime defect is deployed and automated locally, authenticated production link-report and production Save/Publish acceptance remain open"
   },
   "data_and_cost": {
     "production_d1_migrations": 0,
@@ -132,16 +134,17 @@
     }
   ],
   "fix": {
-    "defect": "WEB-013 scanned published legacy Rich Text HTML hrefs but only decoded &amp;, so encoded slash references were omitted before same-origin internal path checking.",
+    "defect": "Published legacy Rich Text HTML link-report hrefs were incompletely decoded before same-origin classification; the follow-up case-sensitivity regression showed that named references must remain case-sensitive while hex numeric references accept uppercase X and A-F.",
     "supportedReferences": [
-      "&amp;",
-      "&sol;",
-      "decimal numeric references (with or without semicolon)",
-      "hex numeric references (with or without semicolon)"
+      "&amp; (case-insensitive per HTML rules)",
+      "&sol; (case-sensitive named reference)",
+      "decimal numeric references (optional semicolon)",
+      "hex numeric references (uppercase/lowercase X and A-F, optional semicolon)"
     ],
     "invalidNumericHandling": "NUL, surrogate, out-of-range or non-finite numeric code point is replaced with U+FFFD before URL classification.",
     "verifiedRuntimeAssertions": [
-      "&#47;/&#x2F; and &sol; path separators report the same-origin missing targets",
+      "&#47;, &#x2F; and &#X2F; plus &sol; path separators report same-origin missing targets",
+      "&SOL; remains unrecognized and is not misclassified as an internal href",
       "invalid NUL and surrogate references do not add bogus internal link findings",
       "cross-origin, protocol-relative, credentialed, downgrade and javascript URL exclusions remain"
     ]
