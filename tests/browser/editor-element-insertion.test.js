@@ -260,6 +260,23 @@ test('a nested locked ancestor disables descendant editing until the ancestor is
   await tab.goto(`http://127.0.0.1:${server.address().port}/editor-v2/index.html?pageId=${pageId}`);await tab.locator(`.node[data-node-id="${textId}"]`).waitFor();
   await tab.locator('.rail-btn[data-tab="layers"]').click();
   const outer=tab.locator(`.layer-row[data-node-id="${lockedId}"]`),inner=tab.locator(`.layer-row[data-node-id="${innerId}"]`),leaf=tab.locator(`.layer-row[data-node-id="${textId}"]`);
+  const deniedLockedSource=await leaf.evaluate((row,targetId)=>{
+    const target=document.querySelector(`.layer-row[data-node-id="${targetId}"]`),dataTransfer=new DataTransfer();
+    const start=new DragEvent('dragstart',{bubbles:true,cancelable:true,dataTransfer});row.dispatchEvent(start);
+    const over=new DragEvent('dragover',{bubbles:true,cancelable:true,dataTransfer});target.dispatchEvent(over);
+    const preview=target.classList.contains('drag-over');target.dispatchEvent(new DragEvent('drop',{bubbles:true,cancelable:true,dataTransfer}));
+    return {startPrevented:start.defaultPrevented,overPrevented:over.defaultPrevented,preview};
+  },siblingId);
+  assert.deepEqual(deniedLockedSource,{startPrevented:true,overPrevented:false,preview:false},'desktop drag cannot start from a leaf beneath a locked ancestor');
+  const deniedLockedTarget=await tab.locator(`.layer-row[data-node-id="${siblingId}"]`).evaluate((row,targetId)=>{
+    const target=document.querySelector(`.layer-row[data-node-id="${targetId}"]`),dataTransfer=new DataTransfer();
+    row.dispatchEvent(new DragEvent('dragstart',{bubbles:true,cancelable:true,dataTransfer}));
+    const over=new DragEvent('dragover',{bubbles:true,cancelable:true,dataTransfer});target.dispatchEvent(over);
+    const preview=target.classList.contains('drag-over');target.dispatchEvent(new DragEvent('drop',{bubbles:true,cancelable:true,dataTransfer}));
+    return {overPrevented:over.defaultPrevented,preview};
+  },innerId);
+  assert.deepEqual(deniedLockedTarget,{overPrevented:false,preview:false},'desktop drag rejects a locked descendant as a drop destination');
+  assert.equal(draft.pages[pageId].nodes[textId].parentId,innerId,'desktop lock denials preserve the Page Model');
   assert.equal(await inner.evaluate(row=>row.draggable),false,'all descendants of a locked node are immovable');
   assert.equal(await leaf.evaluate(row=>row.draggable),false,'nested descendants inherit the locked state');
   assert.equal(await leaf.evaluate(row=>row.classList.contains('locked-ancestor')),true,'the layer tree identifies inherited lock state');
