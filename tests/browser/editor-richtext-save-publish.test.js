@@ -336,7 +336,12 @@ test('actual Inspector keeps unsaved Rich Text through Ctrl+S, reload and separa
   await tab.locator('.richtext-editor-surface a span').first().evaluate(el=>{
     const range=document.createRange();range.selectNodeContents(el);const selection=window.getSelection();selection.removeAllRanges();selection.addRange(range);
   });
-  await tab.locator('.richtext-link-controls input').fill('/p/missing');
+  const linkInput=tab.locator('.richtext-link-controls input'),linkFeedback=tab.locator('.richtext-link-controls [role="status"]');
+  await linkInput.fill('javascript:alert(1)');
+  await tab.getByRole('button',{name:'Link beállítása'}).click();
+  await linkFeedback.getByText('Csak biztonságos https://, http://, mailto:, /útvonal vagy #azonosító link megengedett.').waitFor();
+  assert.equal(await tab.locator('.richtext-editor-surface a').first().getAttribute('href'),'/p/mobile','rejecting an unsafe URL preserves the selected link');
+  await linkInput.fill('/p/missing');
   await tab.getByRole('button',{name:'Link beállítása'}).click();
   await tab.locator('#save').click();await tab.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent?.startsWith('Mentve'));
   assert.equal(published.pages[pageId].nodes[nodeId].props.richText.blocks[0].children.find(run=>run.link).link.href,'/p/mobile','draft Save must not rewrite the published link');
