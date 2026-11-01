@@ -15,6 +15,7 @@ const publicDir=resolve(import.meta.dirname,'../../public');
 const dimensionKeys=['width','height','minWidth','maxWidth','minHeight','maxHeight'];
 const values={
   desktop:{width:'300px',height:'180px',minWidth:'100px',maxWidth:'700px',minHeight:'50px',maxHeight:'500px'},
+  tablet:{width:'340px',height:'220px',minWidth:'140px',maxWidth:'600px',minHeight:'110px',maxHeight:'420px'},
   mobile:{width:'320px',height:'200px',minWidth:'120px',maxWidth:'360px',minHeight:'90px',maxHeight:'400px'}
 };
 
@@ -116,9 +117,45 @@ test('all editable PARTIAL types preserve responsive size fields across Inspecto
     for(const key of dimensionKeys)assert.equal(published.pages[pageId].nodes[id].responsive.desktop[key],values.desktop[key],`${type}: desktop Publish stores size.${key}`);
   }
 
+  await editor.locator('.canvas-device-btn[data-device="tablet"]').click();
+  await viewer.setViewportSize({width:768,height:900});await viewer.reload();
+  const publicTabletBaseline=Object.fromEntries(await Promise.all(editableNodes.map(async({id})=>[id,await readCss(publicNode(id))])));
+  for(const {type,id} of editableNodes)await setSize(type,id,'tablet');
+  await editor.locator('#save').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+  for(const {type,id} of editableNodes){
+    for(const key of dimensionKeys){
+      assert.equal(draft.pages[pageId].nodes[id].responsive.tablet[key],values.tablet[key],`${type}: tablet draft Save stores size.${key}`);
+      assert.equal(draft.pages[pageId].nodes[id].responsive.desktop[key],values.desktop[key],`${type}: tablet Save preserves desktop size.${key}`);
+      assert.equal(published.pages[pageId].nodes[id].responsive.tablet?.[key],undefined,`${type}: tablet Save does not publish size.${key}`);
+    }
+  }
+  await viewer.reload();
+  for(const {type,id} of editableNodes)assert.deepEqual(await readCss(publicNode(id)),publicTabletBaseline[id],`${type}: tablet draft Save leaves public CSS unchanged`);
+  await editor.reload({waitUntil:'domcontentloaded'});
+  await editor.locator('.canvas-device-btn[data-device="tablet"]').click();
+  for(const {type,id} of editableNodes){
+    await canvas(id).evaluate(el=>el.click());
+    await editor.locator('.inspector-tabs button').first().click();
+    for(const key of dimensionKeys){
+      assert.equal(await field(key).locator('.dimension-controls input[type="number"]').inputValue(),values.tablet[key].slice(0,-2),`${type}: tablet size.${key} survives Editor reload`);
+      assert.equal(await field(key).locator('.dimension-controls select:not(.property-token-picker)').inputValue(),'px',`${type}: tablet size.${key} unit survives Editor reload`);
+    }
+  }
+  await editor.locator('#publish').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
+  await viewer.reload();
+  for(const {type,id} of editableNodes){
+    assert.deepEqual(await readCss(publicNode(id)),values.tablet,`${type}: explicit Publish renders tablet size CSS`);
+    for(const key of dimensionKeys)assert.equal(published.pages[pageId].nodes[id].responsive.tablet[key],values.tablet[key],`${type}: tablet Publish stores size.${key}`);
+  }
+  await viewer.setViewportSize({width:1366,height:900});await viewer.reload();
+  for(const {type,id} of editableNodes)assert.deepEqual(await readCss(publicNode(id)),values.desktop,`${type}: tablet Publish preserves desktop public CSS`);
+
   await editor.locator('.canvas-device-btn[data-device="mobile"]').click();
   await viewer.setViewportSize({width:390,height:900});await viewer.reload();
   const publicMobileBaseline=Object.fromEntries(await Promise.all(editableNodes.map(async({id})=>[id,await readCss(publicNode(id))])));
+  for(const {type,id} of editableNodes)assert.deepEqual(publicMobileBaseline[id],values.tablet,`${type}: mobile inherits tablet before its own override`);
   for(const {type,id} of editableNodes)await setSize(type,id,'mobile');
   await editor.locator('#save').click();
   await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
@@ -163,13 +200,13 @@ test('all editable PARTIAL types preserve responsive size fields across Inspecto
       assert.equal(await reset.getAttribute('data-property-command'),'responsive.set',`${type}: mobile size.${key} reset uses responsive.set`);
       await reset.click();
     }
-    assert.deepEqual(await readCss(canvas(id)),values.desktop,`${type}: mobile size resets restore inherited desktop Canvas CSS`);
+    assert.deepEqual(await readCss(canvas(id)),values.tablet,`${type}: mobile size resets restore inherited tablet Canvas CSS`);
   }
   const lastNode=editableNodes.at(-1);
   await editor.locator('#undo').click();
-  assert.deepEqual(await readCss(canvas(lastNode.id)),{...values.desktop,maxHeight:values.mobile.maxHeight},`${lastNode.type}: Undo restores the final mobile max-height override`);
+  assert.deepEqual(await readCss(canvas(lastNode.id)),{...values.tablet,maxHeight:values.mobile.maxHeight},`${lastNode.type}: Undo restores the final mobile max-height override`);
   await editor.locator('#redo').click();
-  assert.deepEqual(await readCss(canvas(lastNode.id)),values.desktop,`${lastNode.type}: Redo restores inherited desktop dimensions`);
+  assert.deepEqual(await readCss(canvas(lastNode.id)),values.tablet,`${lastNode.type}: Redo restores inherited tablet dimensions`);
   await editor.locator('#save').click();
   await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
   for(const {type,id} of editableNodes){
@@ -184,8 +221,36 @@ test('all editable PARTIAL types preserve responsive size fields across Inspecto
   await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
   await viewer.reload();
   for(const {type,id} of editableNodes){
-    assert.deepEqual(await readCss(publicNode(id)),values.desktop,`${type}: reset Publish restores inherited desktop sizes on mobile`);
+    assert.deepEqual(await readCss(publicNode(id)),values.tablet,`${type}: reset Publish restores inherited tablet sizes on mobile`);
     for(const key of dimensionKeys)assert.equal(published.pages[pageId].nodes[id].responsive.mobile[key],undefined,`${type}: reset Publish removes mobile size.${key}`);
   }
+  await editor.locator('.canvas-device-btn[data-device="tablet"]').click();
+  await viewer.setViewportSize({width:768,height:900});await viewer.reload();
+  for(const {type,id} of editableNodes){
+    await canvas(id).evaluate(el=>el.click());
+    await editor.locator('.inspector-tabs button').first().click();
+    for(const key of dimensionKeys){
+      const control=field(key),group=control.locator('xpath=ancestor::section[1]'),title=group.locator(':scope > .inspector-group-title');
+      if(await title.getAttribute('aria-expanded')==='false')await title.click();
+      const reset=group.locator(`.property-reset[data-property-key="${key}"]`);
+      assert.equal(await reset.count(),1,`${type}: tablet size.${key} exposes inheritance reset`);
+      await reset.click();
+    }
+    assert.deepEqual(await readCss(canvas(id)),values.desktop,`${type}: tablet size resets restore inherited desktop Canvas CSS`);
+  }
+  await editor.locator('#save').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+  for(const {type,id} of editableNodes)for(const key of dimensionKeys){
+    assert.equal(draft.pages[pageId].nodes[id].responsive.tablet[key],undefined,`${type}: tablet reset Save removes size.${key}`);
+    assert.equal(published.pages[pageId].nodes[id].responsive.tablet[key],values.tablet[key],`${type}: tablet reset Save preserves published size.${key}`);
+  }
+  await viewer.reload();
+  for(const {type,id} of editableNodes)assert.deepEqual(await readCss(publicNode(id)),values.tablet,`${type}: tablet reset Save leaves public CSS unchanged`);
+  await editor.locator('#publish').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
+  await viewer.reload();
+  for(const {type,id} of editableNodes)assert.deepEqual(await readCss(publicNode(id)),values.desktop,`${type}: tablet reset Publish restores desktop values`);
+  await viewer.setViewportSize({width:390,height:900});await viewer.reload();
+  for(const {type,id} of editableNodes)assert.deepEqual(await readCss(publicNode(id)),values.desktop,`${type}: tablet reset Publish restores mobile inheritance`);
   assert.deepEqual(editorErrors,[],'opening every PARTIAL size Inspector must not throw');
 });
