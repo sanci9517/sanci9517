@@ -1,0 +1,58 @@
+{
+  "date": "2026-11-01",
+  "plan_item": "77.44.7.A — responsive visibility Inspector / Canvas / Save / Publish lifecycle",
+  "status": "PUBLIC_RESPONSIVE_LIFECYCLE_PASS; OVERALL_77_44_7_A_OPEN",
+  "finding": "The earlier layer-visibility browser regression asserted draft state and Save-versus-Publish state, but did not load the published route and assert the actual public renderer at both mobile and desktop viewports.",
+  "change": "Extended tests/browser/editor-element-insertion.test.js with public renderer assertions. No runtime source or public asset changed.",
+  "coverage": [
+    "A published section initially renders on mobile (390px) and desktop (1366px).",
+    "Changing mobile visibility updates the Canvas and draft; Save persists the draft without changing the public snapshot or visible public pages.",
+    "Explicit Publish removes the hidden section from the mobile public DOM while preserving desktop visibility.",
+    "Showing the mobile section and saving leaves the public mobile page hidden; a separate Publish restores the section in the public renderer."
+  ],
+  "browser": {
+    "targeted_command": "node --test --test-concurrency=1 tests/browser/editor-element-insertion.test.js --test-name-pattern='layer visibility control'",
+    "targeted_result": "PASS, 1/1 real Chromium test.",
+    "file_command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-element-insertion.test.js",
+    "file_result": "PASS, 7/7 real Chromium tests; 57.537 seconds total."
+  },
+  "related_matrix_evidence": {
+    "partial_type_inspector_matrix": "PASS, the current real-browser matrix includes all 45 PARTIAL types including root, checks rendered Inspector fields against the shared registry, command/key routes, and no empty Inspector groups.",
+    "full_matrix_command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-inspector-partial-types.test.js",
+    "full_matrix_result": "PASS, 1/1 complete Chromium test; 44 editable PARTIAL types plus the root fixture. This test currently takes about 19 minutes.",
+    "scope_limit": "The broad matrix and focused field suites are separate evidence; this visibility slice does not independently prove every registered property's full Canvas/public/server-validation lifecycle."
+  },
+  "checks": {
+    "npm run test:editor": "PASS, 11/11 files.",
+    "npm run typecheck": "PASS.",
+    "npm run test:web013:migration-gate": "PASS; local safety gate only, no production migration.",
+    "python3 scripts/check-canonical-plan.py": "PASS; complete canonical master.",
+    "python3 scripts/plan_contract.py": "PASS.",
+    "python3 scripts/audit-active-plan-point.py": "PASS; cursor remains 77.44 / WEB-011 -> 77.44.7.A and functional acceptance NOT_CERTIFIED.",
+    "python3 scripts/build-feature-traceability.py --check": "PASS; 396 mappings.",
+    "node --check tests/browser/editor-element-insertion.test.js": "PASS.",
+    "git diff --check": "PASS."
+  },
+  "production": {
+    "runtime_source_changed": false,
+    "public_asset_changed": false,
+    "worker_deployed": false,
+    "deployment_id": "5d81f0f0-176c-4437-b5c5-652765f70bff",
+    "version_id": "72f6626e-ba9a-4147-874a-3d8cfcf00919",
+    "traffic_percent": 100,
+    "deployment_verification": "Cloudflare API GET of the current Worker deployment returned the deployment and version IDs above with 100% traffic.",
+    "health_and_asset_verification": "The current session's direct production smoke returned /api/health HTTP 200. Local and live /assets/page-renderer.js SHA-256 match: 005792f314f891aededf6363573c2ccd66527e53397d673e6a7b0434f6245370.",
+    "d1_writes": 0,
+    "r2_changes": 0
+  },
+  "release": {
+    "local_checkout_branch": "work; unchanged.",
+    "github_target_branch": "v2/foundation",
+    "github_head_at_start": "8c205a67116f91d4be848eb55bae0fead934f176",
+    "github_api_head_at_verification": "8c205a67116f91d4be848eb55bae0fead934f176",
+    "push": "NOT DONE: shell git ls-remote/push could not connect to the configured proxy (proxy port 8080 refused). GitHub API read confirmed the existing branch head; no remote write was attempted.",
+    "ci": "NOT RUN for this uncommitted change.",
+    "new_cost_or_dependency": "None."
+  },
+  "acceptance_boundary": "This evidence alone closes only the published responsive visibility regression. The later consolidated evidence docs/evidence/inspector-foundation-77-44-7-a-2026-11-01.json uses this slice alongside the current property/capability and lifecycle matrices to close the automated Inspector foundation execution point. Planned/unimplemented type capabilities and full Visual Editor manual and physical-device acceptance remain deferred to the ordered 77.44.7.F/77.44.8 gate."
+}

@@ -364,6 +364,11 @@ test('layer visibility control follows the responsive command and keeps Save sep
   const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||(existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined),args:['--no-sandbox']});
   t.after(async()=>{await browser.close();await new Promise(done=>server.close(done))});
   const tab=await browser.newPage({viewport:{width:1366,height:900}});tab.setDefaultTimeout(7000);const errors=[];tab.on('pageerror',error=>errors.push(error.message));
+  const publicMobile=await browser.newPage({viewport:{width:390,height:844}}),publicDesktop=await browser.newPage({viewport:{width:1366,height:900}});
+  for(const page of [publicMobile,publicDesktop]){page.setDefaultTimeout(7000);page.on('pageerror',error=>errors.push(error.message));await page.goto(`http://127.0.0.1:${server.address().port}/p/visibility`);await page.locator(`.visual-editor-node[data-node-id="${sectionId}"]`).waitFor()}
+  const publicNode=page=>page.locator(`.visual-editor-node[data-node-id="${sectionId}"]`),publicDisplay=page=>publicNode(page).evaluate(node=>getComputedStyle(node).display);
+  assert.notEqual(await publicDisplay(publicMobile),'none','published layer is visible on mobile before the draft change');
+  assert.notEqual(await publicDisplay(publicDesktop),'none','published layer is visible on desktop before the draft change');
   await tab.goto(`http://127.0.0.1:${server.address().port}/editor-v2/index.html?pageId=${pageId}`);await tab.locator(`.node[data-node-id="${sectionId}"]`).waitFor();
   await tab.locator('.rail-btn[data-tab="layers"]').click();
   const toggle=tab.locator(`.layer-visibility-toggle[data-node-id="${sectionId}"]`);
@@ -375,10 +380,24 @@ test('layer visibility control follows the responsive command and keeps Save sep
   assert.equal(draft.pages[pageId].nodes[sectionId].visibility.mobile,true,'visibility remains unsaved before Save');
   await tab.locator('#save').click();await tab.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent?.startsWith('Mentve'));
   assert.equal(draft.pages[pageId].nodes[sectionId].visibility.mobile,false);assert.equal(published.pages[pageId].nodes[sectionId].visibility.mobile,true,'Save keeps public output unchanged');
+  assert.notEqual(await publicDisplay(publicMobile),'none','Save does not hide the published mobile layer');
+  await tab.locator('#publish').click();await tab.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent?.startsWith('Publikálva'));
+  assert.equal(published.pages[pageId].nodes[sectionId].visibility.mobile,false,'explicit Publish publishes the mobile hide');
+  await publicMobile.reload();await publicMobile.locator('#page-title').waitFor();
+  await publicDesktop.reload();await publicDesktop.locator(`.visual-editor-node[data-node-id="${sectionId}"]`).waitFor();
+  assert.equal(await publicNode(publicMobile).count(),0,'published mobile visibility removes the hidden layer from the public renderer');
+  assert.notEqual(await publicDisplay(publicDesktop),'none','publishing a mobile override preserves desktop visibility');
   await tab.locator(`.layer-visibility-toggle[data-node-id="${sectionId}"]`).click();
-  assert.equal(draft.pages[pageId].nodes[sectionId].visibility.mobile,false,'the inverse change remains a draft');
+  assert.equal(draft.pages[pageId].nodes[sectionId].visibility.mobile,false,'showing the layer remains a draft until Save');
+  await tab.locator('#save').click();await tab.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent?.startsWith('Mentve'));
+  assert.equal(draft.pages[pageId].nodes[sectionId].visibility.mobile,true,'Save stores the shown draft');
+  assert.equal(published.pages[pageId].nodes[sectionId].visibility.mobile,false,'Save keeps the published mobile hide');
+  await publicMobile.reload();await publicMobile.locator('#page-title').waitFor();
+  assert.equal(await publicNode(publicMobile).count(),0,'the public renderer remains hidden until the separate Publish');
   await tab.locator('#publish').click();await tab.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent?.startsWith('Publikálva'));
   assert.equal(published.pages[pageId].nodes[sectionId].visibility.mobile,true,'explicit Publish publishes the shown state');
+  await publicMobile.reload();await publicMobile.locator(`.visual-editor-node[data-node-id="${sectionId}"]`).waitFor();
+  assert.notEqual(await publicDisplay(publicMobile),'none','the public renderer restores the layer after explicit Publish');
   assert.deepEqual(errors,[]);
 });
 

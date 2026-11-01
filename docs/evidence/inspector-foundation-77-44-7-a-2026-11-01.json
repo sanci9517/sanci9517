@@ -1,0 +1,79 @@
+{
+  "date": "2026-11-01",
+  "plan_item": "77.44.7.A — Inspector foundation",
+  "status": "PASS_AUTOMATED_FOUNDATION; FULL_VISUAL_EDITOR_ACCEPTANCE_OPEN",
+  "decision": "Close the Inspector foundation execution point and advance the canonical cursor to 77.44.7.B. This certifies the current registry/capability/Inspector foundation only; it does not certify the complete Visual Editor, the planned node capabilities, production manual acceptance, or WEB-011.",
+  "acceptance": {
+    "property_registry": "The canonical property registry exposes 68 typed fields with explicit IDs, groups, labels, model keys, commands, viewport behavior, and the declared constraints used by the shared Inspector controls. The registry-default contract and preset/value tests keep defaults tied to the actual resolver/validator rather than invented field defaults.",
+    "node_capabilities": "The capability contract covers all 79 declared node types: 45 are PARTIAL and 34 remain PLANNED. PLANNED types are explicitly not certified as editable and are not presented as complete Inspector features.",
+    "inspector_route_matrix": "The real Chromium PARTIAL-type matrix renders every applicable current Inspector property for all 45 PARTIAL types including root and checks its actual registry ID, command, and Page Model key. It verifies that no empty or misleading group is rendered and that field help disclosures are correctly labelled.",
+    "layout_context": "Flex/grid container and item properties are tested against actual parent layout context; inapplicable controls do not appear as empty groups.",
+    "value_and_history": "The current property control families have value normalization/allowed-value, default/preset, reset/inheritance, and Undo/Redo regressions. Responsive design families have dedicated Chromium lifecycle suites for size, spacing, layout, position, typography, background, border, radius, visual effects, and state fields.",
+    "save_public_and_server": "Current implemented property families retain draft Save versus explicit Publish, persisted model values, rendered Canvas/public parity, and the existing server publish-validation contract. The new visibility regression confirms the actual mobile and desktop public renderer across hide/show Save and Publish transitions.",
+    "scope_boundary": "This is the foundation execution point only. Future PLANNED type capabilities remain ordered under 77.44.7.F/77.44.8, and the complete user-facing desktop/mobile/physical acceptance remains deferred to that full Editor gate. Overall feature acceptance remains NOT_CERTIFIED."
+  },
+  "primary_evidence": [
+    {
+      "file": "tests/browser/editor-inspector-partial-types.test.js",
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-inspector-partial-types.test.js",
+      "result": "PASS, 1/1 real Chromium suite; all 45 PARTIAL/root Inspector matrices."
+    },
+    {
+      "file": "tests/browser/editor-element-insertion.test.js",
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-element-insertion.test.js",
+      "result": "PASS, 7/7 real Chromium tests; includes actual public mobile/desktop visibility and Save/Publish assertions."
+    },
+    {
+      "file": "public/editor-v2/tests/capability-contract.test.js",
+      "command": "npm run test:editor",
+      "result": "PASS, 11/11 test files, including capability/property registry, allowed values, resolver defaults, typed controls, and core command/reset/history contracts."
+    }
+  ],
+  "supporting_evidence": [
+    "docs/evidence/inspector-registry-default-contract-2026-10-30.json",
+    "docs/evidence/inspector-registry-preset-contract-2026-10-30.json",
+    "docs/evidence/inspector-specialized-renderer-routes-2026-10-30.json",
+    "docs/evidence/inspector-content-profile-lifecycle-2026-10-26.json",
+    "docs/evidence/inspector-responsive-size-partial-types-2026-10-31.json",
+    "docs/evidence/inspector-spacing-partial-types-2026-10-31.json",
+    "docs/evidence/inspector-typography-fourteen-properties-partial-types-2026-10-31.json",
+    "docs/evidence/inspector-responsive-typography-all-partial-types-2026-10-31.json",
+    "docs/evidence/inspector-background-style-partial-types-2026-10-31.json",
+    "docs/evidence/inspector-border-responsive-partial-types-2026-11-01.json",
+    "docs/evidence/inspector-visual-style-tablet-partial-types-2026-11-01.json",
+    "docs/evidence/inspector-visual-effects-tablet-partial-types-2026-11-01.json",
+    "docs/evidence/inspector-visibility-public-lifecycle-2026-11-01.json",
+    "docs/evidence/inspector-tablet-state-all-fields-partial-types-2026-10-31.json"
+  ],
+  "checks": {
+    "npm run test:editor": "PASS, 11/11.",
+    "npm run typecheck": "PASS.",
+    "npm run test:web013:migration-gate": "PASS; local safety gate only; no production migration was run.",
+    "python3 scripts/check-canonical-plan.py": "PASS; one complete 13-file master.",
+    "python3 scripts/plan_contract.py": "PASS.",
+    "python3 scripts/audit-active-plan-point.py": "PASS after cursor advance; expected 77.44 / WEB-011 -> 77.44.7.B.",
+    "python3 scripts/build-feature-traceability.py --check": "PASS; 396 mappings; feature acceptance remains NOT_CERTIFIED.",
+    "git diff --check": "PASS.",
+    "node --check tests/browser/editor-element-insertion.test.js": "PASS.",
+    "evidence JSON parse": "PASS."
+  },
+  "production": {
+    "runtime_source_changed": false,
+    "public_assets_changed": false,
+    "worker_deployed": false,
+    "deployment_id": "5d81f0f0-176c-4437-b5c5-652765f70bff",
+    "version_id": "72f6626e-ba9a-4147-874a-3d8cfcf00919",
+    "traffic_percent": 100,
+    "verification": "Read-only Cloudflare deployment GET returned 100% traffic for the current version. Direct /api/health returned HTTP 200 in the current work session. The live and local /assets/page-renderer.js SHA-256 is 005792f314f891aededf6363573c2ccd66527e53397d673e6a7b0434f6245370.",
+    "production_d1_writes": 0,
+    "r2_changes": 0
+  },
+  "release": {
+    "local_checkout_branch": "work; unchanged.",
+    "github_target_branch": "v2/foundation",
+    "head_at_start": "8c205a67116f91d4be848eb55bae0fead934f176",
+    "push": "NOT DONE. GitHub API read confirmed the target head at the start, but shell git ls-remote/push was blocked because the configured proxy on port 8080 refused the connection. No remote ref was changed.",
+    "ci": "NOT RUN for this local change; test-only/docs-only release is pending safe fast-forward push.",
+    "cost": "No new cost, paid service, or dependency."
+  }
+}
