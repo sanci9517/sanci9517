@@ -6,6 +6,20 @@ import type { Env } from "../../types/env";
 type NavigationItem = { id?: string; type?: string; pageId?: string; label?: string; url?: string; children?: NavigationItem[] };
 type PageRow = { id: string; published_slug: string | null; is_published: number; archived_at: string | null; published_content_json: string | null };
 const validSlug = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+const htmlHrefReference = /&(?:amp;|sol;|#(?:x[0-9a-f]+|[0-9]+);?)/gi;
+
+function decodeHtmlHref(value: string): string {
+  return value.replace(htmlHrefReference, (reference) => {
+    if (/^&amp;$/i.test(reference)) return "&";
+    if (/^&sol;$/i.test(reference)) return "/";
+    const digits = reference.slice(2).replace(/;$/, "");
+    const codePoint = /^x/i.test(digits)
+      ? Number.parseInt(digits.slice(1), 16)
+      : Number.parseInt(digits, 10);
+    if (!Number.isSafeInteger(codePoint) || codePoint === 0 || codePoint > 0x10ffff || (codePoint >= 0xd800 && codePoint <= 0xdfff)) return "\uFFFD";
+    return String.fromCodePoint(codePoint);
+  });
+}
 
 // Only links resolved on this site's current origin belong to this report.
 function internalPageSlug(href: string, origin: string): string | null {
@@ -120,7 +134,7 @@ export async function adminLinkReportRoute(request: Request, env: Env): Promise<
         let match: RegExpExecArray | null;
         while ((match = anchors.exec(html)) !== null) {
           if (candidates.length >= 2000) { contentTruncated = true; break; }
-          candidates.push((match[1] ?? match[2]).replace(/&amp;/gi, "&"));
+          candidates.push(decodeHtmlHref(match[1] ?? match[2]));
         }
       }
       for (const href of candidates) {
