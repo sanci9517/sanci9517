@@ -129,36 +129,87 @@ function showLeftTab(tab,{save=true,open=true,customize=false}={}){
   emit('panel:tab',{tab});
 }
 function clamp(value,limits){return Math.max(limits.min,Math.min(limits.max,value))}
-function resizeDock(side,startX,startWidth){
+function updateResizeHandle(side,width){
+  const handle=document.querySelector(`.dock-resizer[data-resize="${side}"]`);
+  if(!handle)return;
+  const limits=resizeLimits[side];
+  handle.setAttribute('aria-valuemin',String(limits.min));
+  handle.setAttribute('aria-valuemax',String(limits.max));
+  handle.setAttribute('aria-valuenow',String(Math.round(width)));
+  handle.setAttribute('aria-valuetext',`${Math.round(width)} képpont széles`);
+}
+function resizeDock(side,startX,startWidth,{pointerId=null,handle=null}={}){
   workspaceAppearance?.remember();
   const limits=resizeLimits[side];
   const onMove=event=>{
+    if(pointerId!==null&&event.pointerId!==pointerId)return;
     const delta=side==='left'?event.clientX-startX:startX-event.clientX;
     const width=clamp(startWidth+delta,limits);
     root.style.setProperty(side==='left'?'--left-dock-width':'--right-dock-width',`${width}px`);
     persisted[side==='left'?'leftWidth':'rightWidth']=width;
+    updateResizeHandle(side,width);
     emit('panel:resize',{side,width});
   };
-  const onUp=()=>{
+  const finish=event=>{
+    if(event&&pointerId!==null&&event.pointerId!==pointerId)return;
     persist();
     workspaceAppearance?.setLayout('custom',{rememberChange:false});
     document.body.classList.remove('resizing-dock');
     window.removeEventListener('pointermove',onMove);
-    window.removeEventListener('pointerup',onUp);
+    window.removeEventListener('pointerup',finish);
+    window.removeEventListener('pointercancel',finish);
+    handle?.removeEventListener('lostpointercapture',finish);
+    if(pointerId!==null&&handle?.hasPointerCapture?.(pointerId)){
+      try{handle.releasePointerCapture(pointerId)}catch{}
+    }
   };
   document.body.classList.add('resizing-dock');
   window.addEventListener('pointermove',onMove);
-  window.addEventListener('pointerup',onUp,{once:true});
+  window.addEventListener('pointerup',finish);
+  window.addEventListener('pointercancel',finish);
+  handle?.addEventListener('lostpointercapture',finish,{once:true});
 }
 function setupResizers(){
-  document.querySelectorAll('.dock-resizer').forEach(handle=>handle.addEventListener('pointerdown',event=>{
-    if(window.matchMedia('(max-width: 1024px)').matches)return;
+  document.querySelectorAll('.dock-resizer').forEach(handle=>{
     const side=handle.dataset.resize;
-    const current=parseFloat(getComputedStyle(root).getPropertyValue(side==='left'?'--left-dock-width':'--right-dock-width'))||(side==='left'?310:300);
-    handle.setPointerCapture?.(event.pointerId);
-    resizeDock(side,event.clientX,current);
-    event.preventDefault();
-  }));
+    const limits=resizeLimits[side];
+    if(!limits)return;
+    handle.setAttribute('role','separator');
+    handle.setAttribute('aria-orientation','vertical');
+    handle.setAttribute('aria-controls',side==='left'?'leftDock':'rightDock');
+    handle.tabIndex=0;
+    const currentWidth=()=>clamp(parseFloat(getComputedStyle(root).getPropertyValue(side==='left'?'--left-dock-width':'--right-dock-width'))||limits.min,limits);
+    updateResizeHandle(side,currentWidth());
+    handle.addEventListener('pointerdown',event=>{
+      if(window.matchMedia('(max-width: 1024px)').matches)return;
+      const current=currentWidth();
+      try{handle.setPointerCapture?.(event.pointerId)}catch{}
+      resizeDock(side,event.clientX,current,{pointerId:event.pointerId,handle});
+      event.preventDefault();
+    });
+    handle.addEventListener('keydown',event=>{
+      const rtl=getComputedStyle(workspace||root).direction==='rtl';
+      const increaseKey=side==='left'?(rtl?'ArrowLeft':'ArrowRight'):(rtl?'ArrowRight':'ArrowLeft');
+      const decreaseKey=side==='left'?(rtl?'ArrowRight':'ArrowLeft'):(rtl?'ArrowLeft':'ArrowRight');
+      const step=event.shiftKey?48:16;
+      const current=currentWidth();
+      let next=current;
+      if(event.key===increaseKey)next=clamp(current+step,limits);
+      else if(event.key===decreaseKey)next=clamp(current-step,limits);
+      else if(event.key==='Home')next=limits.min;
+      else if(event.key==='End')next=limits.max;
+      else return;
+      event.preventDefault();
+      if(next===current)return;
+      workspaceAppearance?.remember();
+      root.style.setProperty(side==='left'?'--left-dock-width':'--right-dock-width',`${next}px`);
+      persisted[side==='left'?'leftWidth':'rightWidth']=next;
+      updateResizeHandle(side,next);
+      persist();
+      workspaceAppearance?.setLayout('custom',{rememberChange:false});
+      emit('panel:resize',{side,width:next,source:'keyboard'});
+    });
+  });
 }
 function setupDockReordering(){
   if(!workspace)return;
@@ -215,6 +266,8 @@ workspaceAppearance=mountWorkspaceAppearance({documentRef:document,root:editorRo
   persisted={...persisted,...state};
   root.style.setProperty('--left-dock-width',`${state.leftWidth}px`);
   root.style.setProperty('--right-dock-width',`${state.rightWidth}px`);
+  updateResizeHandle('left',state.leftWidth);
+  updateResizeHandle('right',state.rightWidth);
   setPanel('left',state.leftOpen,{save:true,customize:false});
   setPanel('right',state.rightOpen,{save:true,customize:false});
   showLeftTab(state.leftTab,{save:true,open:false});
@@ -223,6 +276,8 @@ workspaceAppearance=mountWorkspaceAppearance({documentRef:document,root:editorRo
   persisted={...defaults};
   root.style.setProperty('--left-dock-width',`${defaults.leftWidth}px`);
   root.style.setProperty('--right-dock-width',`${defaults.rightWidth}px`);
+  updateResizeHandle('left',defaults.leftWidth);
+  updateResizeHandle('right',defaults.rightWidth);
   persist();
 }});
 setupDockReordering();

@@ -273,6 +273,54 @@ test('desktop panel and canvas drag reordering is an accessible-selector peer an
   assert.deepEqual(errors,[]);
 });
 
+test('desktop dock separators resize by keyboard, announce width and finish interrupted pointer drags safely',async t=>{
+  const {page,writes,errors}=await openEditor(t,{width:1440,height:900});
+  await openPreferences(page);
+  await page.locator('#workspaceLayout').selectOption('balanced');
+  await page.locator('#closeWorkspaceAppearance').click();
+  await page.locator('#workspaceAppearanceDialog[open]').waitFor({state:'hidden'});
+  await page.locator('.more-actions').evaluate(element=>element.removeAttribute('open'));
+
+  const left=page.locator('.left-resizer');
+  assert.equal(await left.getAttribute('role'),'separator');
+  assert.equal(await left.getAttribute('aria-orientation'),'vertical');
+  assert.equal(await left.getAttribute('aria-controls'),'leftDock');
+  assert.equal(await left.getAttribute('aria-valuenow'),'310');
+  await left.focus();
+  assert.equal(await left.evaluate(element=>document.activeElement===element),true,'the separator receives keyboard focus after leaving workspace preferences');
+  await page.keyboard.press('ArrowRight');
+  assert.equal(await left.getAttribute('aria-valuenow'),'326','the left separator follows the physical arrow direction');
+  assert.match(await left.getAttribute('aria-valuetext'),/326 képpont/u);
+  assert.equal(await page.evaluate(()=>getComputedStyle(document.documentElement).getPropertyValue('--left-dock-width').trim()),'326px');
+  await left.focus();
+  await page.keyboard.press('Shift+ArrowLeft');
+  assert.equal(await left.getAttribute('aria-valuenow'),'278','Shift applies a larger precision-friendly step');
+  await page.keyboard.press('Home');
+  assert.equal(await left.getAttribute('aria-valuenow'),'250','Home clamps at the documented minimum');
+  await page.keyboard.press('End');
+  assert.equal(await left.getAttribute('aria-valuenow'),'460','End clamps at the documented maximum');
+
+  const right=page.locator('.right-resizer');
+  assert.equal(await right.getAttribute('aria-valuenow'),'352');
+  await right.focus();
+  await page.keyboard.press('ArrowLeft');
+  assert.equal(await right.getAttribute('aria-valuenow'),'368','the right separator grows toward the canvas');
+  await page.keyboard.press('Shift+ArrowRight');
+  assert.equal(await right.getAttribute('aria-valuenow'),'320');
+
+  const interrupted=await page.evaluate(()=>{
+    window.sanciEditor.resizeDock('left',100,310,{pointerId:17});
+    window.dispatchEvent(new PointerEvent('pointermove',{pointerId:17,clientX:140}));
+    window.dispatchEvent(new PointerEvent('pointercancel',{pointerId:17}));
+    return {width:document.querySelector('.left-resizer').getAttribute('aria-valuenow'),resizing:document.body.classList.contains('resizing-dock'),saved:JSON.parse(localStorage.getItem('sanci-editor-shell-v2'))?.leftWidth};
+  });
+  assert.deepEqual(interrupted,{width:'350',resizing:false,saved:350},'pointercancel finalizes the partial width and always removes interaction state');
+  await page.reload({waitUntil:'load'});
+  assert.equal(await page.locator('.left-resizer').getAttribute('aria-valuenow'),'350','keyboard and interrupted pointer widths survive reload');
+  assert.deepEqual(writes,[],'resizing changes only presentation state and never saves or publishes the page');
+  assert.deepEqual(errors,[]);
+});
+
 test('workspace profile export/import uses bounded allowlisted JSON, supports undo and never writes page data',async t=>{
   const {page,writes,errors}=await openEditor(t,{width:1366,height:900});
   await openPreferences(page);
