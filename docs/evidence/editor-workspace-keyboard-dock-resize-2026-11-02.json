@@ -1,0 +1,108 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-11-02",
+  "plan": "77.44.6.1.C — keyboard-accessible workspace dock resizing",
+  "status": "FOUNDATION_PASS_FULL_C_OPEN",
+  "scope": "Desktop panel resizing now supports the W3C ARIA Window Splitter interaction pattern and reliably finishes pointer cancellation. The overall C acceptance remains OPEN.",
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "previous_head": "9d0492a6a971152dd51fe990b8963bb5f6a25df0",
+    "runtime_commit": "fd07bd6a8427ff3a8975ff30436409ba67c89250",
+    "runtime_message": "fix(editor): make dock resizing keyboard accessible",
+    "push": "Normal fast-forward push verified by git ls-remote and GitHub branch API. Runtime source, browser regression and cache-busted shell URL are in this commit.",
+    "github_combined_statuses": [],
+    "aggregate_github_ci_pass": false
+  },
+  "implementation": {
+    "behavior": "Both desktop dock resize controls are focusable vertical role=separator widgets with aria-valuemin, aria-valuemax, aria-valuenow and Hungarian aria-valuetext. Arrow keys resize 16 CSS px in the physical direction; Shift+Arrow resizes 48 px; Home/End choose the clamped minimum/maximum. RTL direction is respected.",
+    "persistence": "Keyboard and pointer widths use the existing local shell state and opt into the existing custom layout; browser reload retains the width. Workspace profile application and reset synchronize the ARIA value with the rendered width.",
+    "pointer_lifecycle": "Pointerup, pointercancel and lostpointercapture clean up listeners and interaction state. Pointer cancellation keeps the current partial width, updates ARIA and persists the local shell state.",
+    "mobile": "Dock resizers remain hidden in the existing one-drawer mobile layout; no mobile drawer or touch target behavior changed.",
+    "page_model_mutations": 0,
+    "save_publish_mutations": 0,
+    "runtime_dependencies_added": false,
+    "paid_services_added": false,
+    "source_license_review": "The W3C WAI-ARIA APG Window Splitter pattern was fetched successfully (HTTP 200) and used as an accessibility behavior reference. The repository already uses a vanilla JavaScript shell; no third-party runtime code or dependency was necessary or imported.",
+    "local_source_sha256": {
+      "public/editor-v2/index.html": "d93398a5bdd2e5f4f584c51405141c9c1d35296662f71ea166663c29c7e6d361",
+      "public/editor-v2/ui/shell.js": "bf3216a0760b9904bddee913084719cbb9c60d74ce92bc813b2ef226086abdeb"
+    }
+  },
+  "validation": {
+    "target_browser": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-workspace-appearance.test.js — PASS, 9/9; includes real focus, Arrow/Shift+Arrow, Home/End limits, pointercancel cleanup, reload persistence and zero Page Model writes.",
+    "editor_unit": "npm run test:editor — PASS, 179/179 tests.",
+    "typecheck": "npm run typecheck — PASS.",
+    "migration_guard": "npm run test:web013:migration-gate — PASS; no migrations applied.",
+    "canonical_plan": "python3 scripts/check-canonical-plan.py — PASS; complete 13-file canonical master remains singular.",
+    "active_point": "python3 scripts/audit-active-plan-point.py — PASS; next point remains 77.44.6.1.C.",
+    "plan_contract": "python3 scripts/plan_contract.py — PASS; functional acceptance remains NOT_CERTIFIED.",
+    "traceability": "python3 scripts/build-feature-traceability.py --check — PASS, 396 mappings match current source.",
+    "syntax": "node --check public/editor-v2/ui/shell.js — PASS.",
+    "diff": "git diff --check — PASS.",
+    "wrangler_dry_run": "WRANGLER_WRITE_LOGS=false npx wrangler deploy --dry-run — PASS with Wrangler 4.130.0; 168 assets, 335.81 KiB, 87.60 KiB gzip. No deployment was initiated by the dry run.",
+    "test_development_note": "An early browser attempt exposed the settings-dialog focus restoration timing; the test now waits for the dialog/menu transition before asserting keyboard behavior. The final complete targeted Chromium file passes 9/9.",
+    "full_editor_browser_suite": "NOT RUN; this block ran its complete focused workspace appearance file only.",
+    "manual_device_acceptance": "DEFERRED until complete Visual Editor acceptance at 77.44.7.F/77.44.8."
+  },
+  "release_preflight": {
+    "production_d1_query_before_and_after": "SELECT name FROM d1_migrations ORDER BY name",
+    "query_mode": "SELECT-only via the authenticated Cloudflare D1 Query API, directly before and after Worker release.",
+    "ledger_row_count": 34,
+    "latest_ledger_row": "0028_media_archive.sql",
+    "rows_written": 0,
+    "changed_db": false,
+    "migration_applied": false,
+    "r2_mutation_or_deletion": false
+  },
+  "production": {
+    "worker": "sanci9517-streamer-brand",
+    "build_id": "d0e64dd6-1046-4c84-8c41-986891714bfe",
+    "build_commit": "fd07bd6a8427ff3a8975ff30436409ba67c89250",
+    "build_branch": "v2/foundation",
+    "build_outcome": "success",
+    "build_command": "npm run typecheck",
+    "deploy_command": "npm run deploy:safe",
+    "deployment_id": "076ad2e8-50bf-4e5d-a442-8c89e4d58ef5",
+    "traffic_version": "b75c65a1-cbe6-488e-8e46-cf4a856ef095",
+    "worker_version_number": 3792,
+    "traffic_percentage": 100,
+    "control_plane_verified": true,
+    "public_http_smoke": {
+      "status": "PASS",
+      "health": {
+        "path": "/api/health",
+        "http_status": 200,
+        "body": {
+          "ok": true,
+          "service": "sanci9517-streamer-brand",
+          "version": "2.0.0",
+          "server": "cloudflare-worker"
+        }
+      },
+      "assets": {
+        "/editor-v2/": {
+          "http_status": 200,
+          "local_sha256": "d93398a5bdd2e5f4f584c51405141c9c1d35296662f71ea166663c29c7e6d361",
+          "live_sha256": "d93398a5bdd2e5f4f584c51405141c9c1d35296662f71ea166663c29c7e6d361"
+        },
+        "/editor-v2/ui/shell.js?v=20261102-keyboard-dock-resize": {
+          "http_status": 200,
+          "local_sha256": "bf3216a0760b9904bddee913084719cbb9c60d74ce92bc813b2ef226086abdeb",
+          "live_sha256": "bf3216a0760b9904bddee913084719cbb9c60d74ce92bc813b2ef226086abdeb"
+        }
+      },
+      "reason": "Direct HTTPS curl requests returned 200; the local asset bytes and production response SHA-256 values match. A Python urllib attempt through the managed proxy returned 403; the direct curl retries succeeded and are the recorded smoke result."
+    },
+    "public_asset_hashes_match": true
+  },
+  "cost": {
+    "additional_cost_huf": 0,
+    "paid_services_or_dependencies_added": false,
+    "quota_note": "Remaining service quota was not queried. No paid plan, quota increase, infrastructure, or dependency was introduced."
+  },
+  "acceptance": {
+    "77_44_6_1_C": "OPEN; other nested/tabbed dock groups, floating panels, dynamic docking zones and full cross-session acceptance remain open.",
+    "full_visual_editor_manual_and_physical_acceptance": "DEFERRED until 77.44.7.F/77.44.8."
+  }
+}
