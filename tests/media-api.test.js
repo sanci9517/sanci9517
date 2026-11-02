@@ -490,7 +490,7 @@ test("site-scoped search, safe alt metadata and published-only delivery",async t
   publish(tree({}, {type:"image",metadata:{contentVersion:1},props:{assetId:asset.id}}));
   assert.equal((await media()).status,404,"root content properties are not rendered as an image");
   publish(tree({image:{type:"image",props:{assetId:asset.id}}}));
-  assert.equal((await media()).status,404,"legacy image props are not rendered by the authored image path");
+  assert.equal((await media()).status,200,"the published legacy image renderer resolves its selected media asset ID");
   publish(tree({gallery:{type:"gallery",props:gallery.props}}));
   assert.equal((await media()).status,404,"legacy gallery props are not rendered by the authored gallery path");
   publish(tree({gallery}));
@@ -518,7 +518,7 @@ test("site-scoped search, safe alt metadata and published-only delivery",async t
   publish(tree({video:{...posterNode,props:{src:"javascript:alert(1)",posterAssetId:asset.id}}}));
   assert.equal((await media()).status,404,"an unsafe video source renders no poster");
   publish(tree({video:{...posterNode,metadata:{}}}));
-  assert.equal((await media()).status,404,"legacy video cannot expose unvalidated private poster");
+  assert.equal((await media()).status,200,"the legacy video renderer exposes its poster only while the safe video source is rendered");
   publish(tree({video:{...posterNode,type:"text"}}));
   assert.equal((await media()).status,404,"unrelated nodes cannot expose private poster");
   publish(tree({video:{...posterNode,visibility:{desktop:false,tablet:false,mobile:false}}}));
@@ -527,6 +527,39 @@ test("site-scoped search, safe alt metadata and published-only delivery",async t
   assert.equal((await media()).status,404,"unreachable video poster stays private");
   f.db.prepare("UPDATE pages SET is_published=0").run();
   assert.equal((await media()).status,404);
+});
+
+test("published legacy image, video, audio and video-poster asset IDs resolve through the shared media route",async t=>{
+  const f=await fixture(t);
+  const upload=async(bytes,name,contentType)=>{
+    const response=await f.call("POST","editor",bytes,{name,contentType});
+    assert.equal(response.status,201,`${name} fixture upload`);
+    return (await response.json()).data;
+  };
+  const image=await upload(png,"legacy-image.png");
+  const video=await upload(webm,"legacy-video.webm","video/webm");
+  const audio=await upload(wav,"legacy-audio.wav","audio/wav");
+  const poster=await upload(gif,"legacy-video-poster.gif","image/gif");
+  const published={pages:{"page-1":{
+    rootId:"root",
+    nodes:{
+      root:{type:"root",children:["image","video","audio","poster-video"]},
+      image:{type:"image",props:{assetId:image.id,src:"/old-image.png"}},
+      video:{type:"video",props:{assetId:video.id,src:"/old-video.webm"}},
+      audio:{type:"audio",props:{assetId:audio.id,src:"/old-audio.wav"}},
+      "poster-video":{type:"video",props:{src:"/old-video.webm",posterAssetId:poster.id}}
+    }
+  }}};
+  f.db.prepare("INSERT INTO pages (id,site_id,archived_at,is_published,published_content_json,content_json,title,slug) VALUES(?,?,?,?,?,?,?,?)")
+    .run("page-1","site-default",null,1,JSON.stringify(published),"{}","Legacy media","legacy-media");
+
+  for(const asset of [image,video,audio,poster]){
+    const response=await publishedMediaRoute(new Request(`https://example.test/media/${asset.id}`),f.env,"site-default",asset.id);
+    assert.equal(response.status,200,`${asset.name} is referenced by the legacy public renderer despite lacking authored-content metadata`);
+    assert.equal(response.headers.get("Content-Type"),asset.mimeType);
+    assert.deepEqual(new Uint8Array(await response.arrayBuffer()),f.files.get(f.db.prepare("SELECT object_key FROM media WHERE id=?").get(asset.id).object_key));
+  }
+  assert.equal(f.files.size,4,"read-only media delivery does not mutate the object store");
 });
 
 test("usage report includes exact site-scoped draft, published, archived and revision references",async t=>{

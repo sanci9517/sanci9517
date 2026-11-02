@@ -1,0 +1,115 @@
+{
+  "date": "2026-11-02",
+  "plan_item": "77.44.7.D — element-specific content and media; related to 49.4 published asset delivery",
+  "status": "IMPLEMENTED_AND_LOCALLY_VERIFIED; RELEASE_PENDING",
+  "repository": {
+    "branch": "v2/foundation",
+    "baseCommit": "a1378fb18428863a49721f0c0c372cc89e92c0b7",
+    "runtimeFiles": ["src/routes/admin/media.ts"],
+    "testFiles": ["tests/media-api.test.js"],
+    "publicAssetsChanged": false
+  },
+  "defect": {
+    "observed": "The published legacy page renderer resolves image/video/audio props.assetId and a safe video's props.posterAssetId to /media/{id}; media.ts previously authorized those references only when authored-content version metadata was present, so the published renderer could emit a URL that returned 404.",
+    "fix": "Published-reference discovery now matches the legacy renderer for image, video, audio and video posters. Existing type/MIME compatibility, safe video-source validation, page/site scope, published visibility/tree reachability, and archive checks remain in place.",
+    "savePublish": "Unchanged: draft-only references remain private; the public route continues to inspect published content only. Save and Publish remain separate."
+  },
+  "reuseReview": {
+    "used": "Existing project-owned legacy page renderer, Media Registry route, fixture uploader and D1/R2 fixture; behavior was aligned across the existing components.",
+    "externalCode": "None. No new dependency or paid service."
+  },
+  "tests": [
+    {
+      "command": "node --experimental-loader ./tests/ts-extension-loader.mjs tests/media-api.test.js",
+      "result": "PASS",
+      "passed": 36,
+      "failed": 0,
+      "coverage": "Published legacy image, video, audio and video-poster IDs return the exact stored bytes and MIME; legacy unsafe video sources, unrelated nodes, hidden/unpublished references and scope controls remain covered."
+    },
+    {
+      "command": "npm run test:media",
+      "result": "PASS",
+      "passedFiles": 5,
+      "failedFiles": 0
+    },
+    {
+      "command": "npm run test:editor",
+      "result": "PASS",
+      "passedFiles": 11,
+      "failedFiles": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "result": "PASS"
+    },
+    {
+      "command": "python3 tests/plan-contract.test.py",
+      "result": "PASS",
+      "passed": 13,
+      "failed": 0
+    },
+    {
+      "command": "python3 scripts/audit-active-plan-point.py",
+      "result": "PASS",
+      "activeCursor": "77.44.7.D",
+      "featureCount": 396
+    },
+    {
+      "command": "python3 scripts/check-canonical-plan.py",
+      "result": "PASS"
+    },
+    {
+      "command": "python3 scripts/build-feature-traceability.py --check",
+      "result": "PASS",
+      "mappedFeatures": 396
+    },
+    {
+      "command": "git diff --check",
+      "result": "PASS"
+    },
+    {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-legacy-media-parity.test.js",
+      "result": "PASS",
+      "passed": 1,
+      "failed": 0,
+      "coverage": "Existing 390px/desktop authored-media, Canvas and public renderer parity regression; the current route fix is separately exercised by the local route fixture above."
+    },
+    {
+      "command": "npm run test:media:storage",
+      "result": "BLOCKED_NOT_PASS",
+      "note": "The first attempt could not resolve the local test dependency graph; after using the already-present complete local dependency tree, the Worker+D1/R2+Chromium fixture produced no output and remained running beyond its 180-second test timeout, so the run was stopped. No production resource was used."
+    },
+    {
+      "command": "./node_modules/.bin/wrangler deploy --dry-run",
+      "result": "PASS",
+      "wranglerVersion": "4.130.0",
+      "assetFilesRead": 162,
+      "totalUploadKiB": 335.01,
+      "gzipKiB": 87.44,
+      "notes": "Dry-run only; no deployment. Wrangler log path was redirected to writable /tmp after the container's default /home/agent/.config path returned EROFS."
+    }
+  ],
+  "productionPreflight": {
+    "source": "Cloudflare D1 Query API, read-only SQL",
+    "sql": "SELECT COUNT(*) AS row_count, MAX(name) AS latest_name FROM d1_migrations",
+    "rowCount": 34,
+    "latestMigration": "0028_media_archive.sql",
+    "changedDb": false,
+    "rowsWritten": 0,
+    "migrationsApplied": 0
+  },
+  "production": {
+    "release": "PENDING",
+    "deploymentId": null,
+    "workerVersion": null,
+    "trafficPercent": null,
+    "health": "NOT YET CHECKED FOR THIS CHANGE",
+    "publicAssetHashComparison": "No public assets changed in source; verify deployment output before finalizing."
+  },
+  "scopeLimitations": {
+    "fullPlanItem": "77.44.7.D remains OPEN. This fixes the legacy published media delivery mismatch only; it does not certify all image/video/audio editing, CTA, icon, table/list, UI-component or repeated-data capabilities.",
+    "manualEditorAcceptance": "Deferred until full Visual Editor completion at 77.44.7.F/77.44.8 per AGENTS.md.",
+    "productionData": "No production D1 writes or migrations, no production R2 operation."
+  },
+  "cost": "0 Ft; no paid service, quota purchase, or new dependency. GitHub Actions free quota state remains as documented in the canonical plan."
+}

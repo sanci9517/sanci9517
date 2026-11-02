@@ -187,11 +187,14 @@ function documentAssetReferences(json: string, pageId: string, assetId: string, 
     const renderedReference = (path: string): boolean => {
       if (!publicOnly) return true;
       if (nodeId === page.rootId) return renderedBackground(path) && compatible("image");
-      return path === "props.assetId" && node.type === "image" && node.metadata?.contentVersion === 1 && compatible("image") ||
-        path === "props.assetId" && node.type === "video" && node.metadata?.editorContentVersion === 1 && compatible("video") ||
-        path === "props.assetId" && node.type === "audio" && node.metadata?.editorContentVersion === 1 && compatible("audio") ||
+      // Legacy media renderers resolve the same shared asset IDs without a
+      // contentVersion marker. Public delivery must match that rendered path,
+      // while the node type and stored MIME still constrain the media role.
+      return path === "props.assetId" && node.type === "image" && compatible("image") ||
+        path === "props.assetId" && node.type === "video" && compatible("video") ||
+        path === "props.assetId" && node.type === "audio" && compatible("audio") ||
         path === "props.cardContent.imageAssetId" && node.type === "card" && node.metadata?.cardContentVersion === 1 && validCardImage() && compatible("image") ||
-        path === "props.posterAssetId" && node.type === "video" && node.metadata?.contentVersion === 1 && validVideoSource() && compatible("image") ||
+        path === "props.posterAssetId" && node.type === "video" && validVideoSource() && compatible("image") ||
         /^props\.items\[\d+\]\.assetId$/.test(path) && Number(path.match(/\[(\d+)\]/)?.[1]) < 40 && ["gallery", "carousel"].includes(node.type || "") && node.metadata?.contentVersion === 1 && compatible("image") ||
         renderedBackground(path) && compatible("image");
     };
