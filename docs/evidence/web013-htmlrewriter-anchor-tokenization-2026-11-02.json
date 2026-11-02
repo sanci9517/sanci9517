@@ -6,7 +6,6 @@
     "branch": "v2/foundation",
     "runtime_commit": "5e2c9570f441989a4af395fc2e82d1f39fea6db1",
     "traceability_correction_commit": "2c9b4bc0e7941f1806c649857187d1740bf7e2c2",
-    "final_docs_commit": "pending",
     "combined_statuses": [],
     "ci_pass_claimed": false
   },
