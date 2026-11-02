@@ -438,6 +438,11 @@
       "r2Changes": 0
     },
     "cost": "0 Ft",
-    "acceptance": "This automated cross-structure Rich Text link slice is verified; overall 77.44.7.B remains OPEN / NOT CERTIFIED because authenticated production link-report and production Save/Publish acceptance remain open."
+    "acceptance": "This automated cross-structure Rich Text link slice is verified; overall 77.44.7.B remains OPEN / NOT CERTIFIED because authenticated production link-report and production Save/Publish acceptance remain open.",
+    "evidenceCommit": "f6b1973fa34b6173c6d2045aca2d4c8541bf419d",
+    "canonicalPlanCommit": "aa66be4d630df8cf4efb9c6a4c711633be64116f",
+    "githubBranch": "v2/foundation",
+    "githubBaseBeforeFollowup": "24d9aa4655b72dbbaad5ae23975d344f31be8cf9",
+    "combinedStatus": "statuses=[]; no CI PASS claimed"
   }
 }
