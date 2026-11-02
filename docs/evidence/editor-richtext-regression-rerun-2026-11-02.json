@@ -6,7 +6,7 @@
     "local_branch": "work",
     "local_head": "47adbb0a2f036c7b499cfa9b1a7a53db28d1d07c",
     "github_branch": "v2/foundation",
-    "github_head": "467ad540c422b1b1f409a5ee1f97dac85d0727e8",
+    "github_head": "9c24c1de268eeda088f582a8688ceb64d3b1827f",
     "github_head_verified": true,
     "github_combined_statuses": [],
     "ci_pass_claimed": false,
@@ -21,11 +21,12 @@
       "7aae2805db2929f3d01e2adff4ddfbed93be05e1",
       "0b9bf0f755b290f17ddb47f8701f136f800b4665",
       "3381bb391b4b6866711f2fc3804c1a1cc18dccf2",
-      "3ae237d1f6f9d57370396d41e2f2568c99c8ff58"
+      "3ae237d1f6f9d57370396d41e2f2568c99c8ff58",
+      "f4cc6917f2d1d7e667c67bba670f98a489a3e5eb"
     ],
     "traceability_commit": "f8d3196d0a956bcbc274f262d0b932524e2ce78c",
     "canonical_plan_commit": "094af9a243674ef07e83291f15a6ba2a7f96dd38",
-    "github_head_before_evidence_commit": "467ad540c422b1b1f409a5ee1f97dac85d0727e8",
+    "github_head_before_evidence_commit": "9c24c1de268eeda088f582a8688ceb64d3b1827f",
     "runtime_unchanged_after_test_only_commit": true
   },
   "tests": {
@@ -272,5 +273,88 @@
     "newCost": "0 Ft",
     "planStatus": "OPEN / NOT CERTIFIED; authenticated production link-report and production Save/Publish acceptance remain open",
     "canonicalPlanCommit": "467ad540c422b1b1f409a5ee1f97dac85d0727e8"
+  },
+  "followupRun": {
+    "date": "2026-11-02",
+    "planItem": "77.44.7.B",
+    "scope": "Native Rich Text selection and inline mark from a paragraph into a list block",
+    "testCommit": "f4cc6917f2d1d7e667c67bba670f98a489a3e5eb",
+    "canonicalPlanCommit": "9c24c1de268eeda088f582a8688ceb64d3b1827f",
+    "checks": [
+      {
+        "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-richtext-*.test.js",
+        "result": "PASS",
+        "passed": 13,
+        "failed": 0
+      },
+      {
+        "command": "node --check tests/browser/editor-richtext-multiblock.test.js",
+        "result": "PASS"
+      },
+      {
+        "command": "npm run test:editor",
+        "result": "PASS",
+        "passed": 11,
+        "failed": 0
+      },
+      {
+        "command": "npm run typecheck",
+        "result": "PASS"
+      },
+      {
+        "command": "python3 scripts/check-canonical-plan.py",
+        "result": "PASS",
+        "masterFiles": 13
+      },
+      {
+        "command": "python3 scripts/audit-active-plan-point.py",
+        "result": "PASS",
+        "cursor": "77.44.7.B",
+        "mappings": 396,
+        "acceptance": "NOT_CERTIFIED"
+      },
+      {
+        "command": "python3 tests/plan-contract.test.py",
+        "result": "PASS",
+        "passed": 13,
+        "failed": 0
+      },
+      {
+        "command": "python3 scripts/build-feature-traceability.py --check",
+        "result": "PASS",
+        "mappings": 396
+      },
+      {
+        "command": "git diff --check",
+        "result": "PASS"
+      }
+    ],
+    "scenarioAssertions": [
+      "Native browser drag selection crosses from the end of a paragraph into two list items at 390px and 1366px.",
+      "A single subscript mark command maps to distinct blockIndex/from/to ranges for the paragraph and list.",
+      "The selection survives the Inspector rerender; the existing bold/italic/code/link formatting and list item structure remain intact.",
+      "Canvas and published output reflect the same Page Model formatting.",
+      "Save writes publish:false and leaves the public snapshot unchanged; the separate Publish updates the public renderer.",
+      "The test scrolls the narrow Inspector body using elementFromPoint hit checks so the sticky heading cannot receive the text-selection gesture."
+    ],
+    "runtime": {
+      "sourceChanged": false,
+      "deploymentUnchanged": true,
+      "deploymentId": "212fa31b-b468-4352-a1c1-e7bde222d363",
+      "workerVersion": "77827529-a812-4b3b-9495-580c83348767",
+      "trafficPercent": 100
+    },
+    "github": {
+      "branch": "v2/foundation",
+      "base": "151f813daaf1d876de2a18bfe79772065c2038b1",
+      "testCommit": "f4cc6917f2d1d7e667c67bba670f98a489a3e5eb",
+      "planCommit": "9c24c1de268eeda088f582a8688ceb64d3b1827f"
+    },
+    "productionD1Writes": 0,
+    "productionMigrations": 0,
+    "r2Changes": 0,
+    "newDependencies": 0,
+    "newCost": "0 Ft",
+    "acceptance": "77.44.7.B remains OPEN / NOT CERTIFIED; authenticated production link report and production Save/Publish acceptance remain open."
   }
 }
