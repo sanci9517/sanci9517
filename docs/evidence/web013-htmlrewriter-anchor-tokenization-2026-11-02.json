@@ -124,6 +124,40 @@
     "rowsRead": 1,
     "rowsWritten": 0,
     "changedDb": false,
-    "restoreAcceptance": "After a separate Editor Save and Publish test, restore both original draft and published content hashes plus published revision metadata."
+    "restoreAcceptance": "After a separate Editor Save and Publish test, restore both original draft and published content hashes plus published revision metadata.",
+    "safeTestCandidates": [
+      {
+        "id": "page-about",
+        "siteId": "site-default",
+        "slug": "abou",
+        "title": "Rólam",
+        "publishedRevisionId": "e3956650-19f8-4cee-8543-b299394151c8",
+        "draftBytes": 2515,
+        "publishedBytes": 2515,
+        "draftSha256": "0fc946ed7caa5953f3cfb42b3501a5c0eb1794cd9bd1ff5d20b78edda5b71c52",
+        "publishedSha256": "0fc946ed7caa5953f3cfb42b3501a5c0eb1794cd9bd1ff5d20b78edda5b71c52",
+        "draftMatchesPublished": true,
+        "draftAndPublishedLiteralHrefCount": 0
+      },
+      {
+        "id": "page-home",
+        "siteId": "site-default",
+        "slug": "home",
+        "title": "Főoldal",
+        "publishedRevisionId": "90101be4-6c15-4f80-a912-3255b5bb7e15",
+        "draftBytes": 1515,
+        "publishedBytes": 1515,
+        "draftSha256": "6aa48a1c27c77262e3737aed5c1b6deaed1231e12a2bd65d20aa1e24afda4e5c",
+        "publishedSha256": "6aa48a1c27c77262e3737aed5c1b6deaed1231e12a2bd65d20aa1e24afda4e5c",
+        "draftMatchesPublished": true,
+        "draftAndPublishedLiteralHrefCount": 0
+      }
+    ],
+    "safeCandidateQuery": "SELECT id,site_id,slug,title,is_published,archived_at,published_slug,published_revision_id,published_content_json,content_json FROM pages WHERE id IN ('page-home','page-about') ORDER BY id",
+    "safeCandidateRowsRead": 4,
+    "safeCandidateRowsWritten": 0,
+    "safeCandidateChangedDb": false,
+    "chosenForUserAssistedTest": "page-about; link target page-home",
+    "doNotPublish": "legacy-community has a 879-byte draft and distinct 3742-byte published snapshot (different hashes); do not Publish this page as the temporary link test source."
   }
 }
