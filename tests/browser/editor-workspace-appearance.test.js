@@ -332,10 +332,15 @@ test('profile import explains when browser storage is unavailable instead of cla
     const original=Storage.prototype.setItem;
     Storage.prototype.setItem=function(name,value){if(name===key)throw new DOMException('Storage is full','QuotaExceededError');return original.call(this,name,value)};
   },WORKSPACE_PREFERENCES_KEY);
+  await page.locator('#workspaceProfileName').fill('Csak munkamenetes mentés');
+  await page.locator('#saveWorkspaceProfile').tap();
+  await page.waitForFunction(()=>document.querySelector('#workspaceAppearanceStatus')?.textContent.includes('csak ebben a munkamenetben'));
+  assert.equal(await page.locator('#workspaceProfile option').count(),2,'manual profile creation also remains honest when storage is blocked');
+  assert.equal(await page.evaluate(key=>localStorage.getItem(key),WORKSPACE_PREFERENCES_KEY),null);
   const transfer={kind:'sanci-editor-workspace-profile',version:1,profile:{id:'profile-transfer-source',name:'Átmeneti telefonos nézet',createdAt:1,appearance:{layout:'balanced',theme:'aurora',density:'comfortable',accent:'#00a7c8',dockOrder:'right-canvas-left'},dock:{leftOpen:true,rightOpen:false,leftTab:'layers',leftWidth:310,rightWidth:352}}};
   await page.locator('#workspaceProfileFile').setInputFiles({name:'temporary-profile.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(transfer))});
   await page.waitForFunction(()=>document.querySelector('#workspaceAppearanceStatus')?.textContent.includes('csak ebben a munkamenetben'));
-  assert.equal(await page.locator('#workspaceProfile option').count(),2,'the safe in-memory profile remains available for the current Editor session');
+  assert.equal(await page.locator('#workspaceProfile option').count(),3,'the safe in-memory profile remains available for the current Editor session');
   assert.equal(await page.evaluate(key=>localStorage.getItem(key),WORKSPACE_PREFERENCES_KEY),null,'failed browser persistence does not claim durable storage');
   assert.deepEqual(writes,[],'a failed profile persistence attempt never writes Page Model data');
   assert.deepEqual(errors,[]);
