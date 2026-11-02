@@ -1,0 +1,183 @@
+{
+  "date": "2026-11-02",
+  "planItem": "77.44.7.D — element-specific content and media",
+  "status": "IMAGE_LABEL_NORMALIZATION_PASS; DEPLOYED_AND_VERIFIED; FULL_77_44_7_D_OPEN",
+  "repository": {
+    "branch": "v2/foundation",
+    "baseCommit": "45502c70a551ead57da7f960248bc9eae8c565e4",
+    "runtimeCommit": "9fb94dfb2a95e981e5e1adffcba45ed8381d8f26",
+    "runtimeSourceChanged": true,
+    "changedPublicRuntimeAssets": [
+      "public/editor-v2/core/authored-content.js"
+    ],
+    "publicTestAssetsChanged": false,
+    "testFiles": [
+      "tests/editor-accessible-icon-label.test.js",
+      "tests/browser/editor-content-system.test.js"
+    ]
+  },
+  "defect": {
+    "location": "public/editor-v2/core/authored-content.js: authoredNodeHtml image/gallery rendering",
+    "cause": "Image alt and caption strings were emitted with surrounding whitespace; gallery zoom button naming preferred raw values. Malformed persisted non-string alt/caption values could throw during String coercion and interrupt rendering.",
+    "reproductionAgainstBase": {
+      "paddedAlt": "alt=\"  Márkajel  \"",
+      "malformedValue": "TypeError: Cannot convert object to primitive value"
+    },
+    "fix": "Central string-only trimmedText/imageAlt/imageCaption helpers normalize only rendered output. Image alt, visible figcaption, lightbox alt/caption and zoom-button accessible name use normalized strings; caption supplies a meaningful fallback when alt is intentionally blank. Model values remain unchanged.",
+    "savePublish": "Chromium verifies draft Save preserves padded source values and previous published state; separate Publish exposes normalized image/galley output."
+  },
+  "reuseReview": {
+    "used": "The existing shared authoredNodeHtml renderer, contentAttributes string sanitizer and project-owned Editor Chromium fixture; no second media path.",
+    "externalCode": "None; this is a focused correction to existing project-owned content rendering.",
+    "dependency": "No new dependency or infrastructure."
+  },
+  "tests": [
+    {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-content-system.test.js",
+      "result": "PASS",
+      "passed": 1,
+      "failed": 0,
+      "durationMs": 32179,
+      "coverage": "Real Chromium Canvas, persisted draft, Save vs Publish, gallery img alt, visible caption, zoom accessible name, lightbox preview."
+    },
+    {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-gallery-crop-parity.test.js",
+      "result": "PASS",
+      "passed": 4,
+      "failed": 0,
+      "durationMs": 42428,
+      "viewports": [
+        390,
+        1366
+      ]
+    },
+    {
+      "command": "npm run test:editor",
+      "result": "PASS",
+      "passedSuites": 12,
+      "failedSuites": 0,
+      "coverage": "Includes both subtests in tests/editor-accessible-icon-label.test.js."
+    },
+    {
+      "command": "npm run typecheck",
+      "result": "PASS"
+    },
+    {
+      "command": "npm run test:web013:migration-gate",
+      "result": "PASS"
+    },
+    {
+      "command": "python3 tests/plan-contract.test.py",
+      "result": "PASS",
+      "passed": 13,
+      "failed": 0
+    },
+    {
+      "command": "python3 scripts/audit-active-plan-point.py",
+      "result": "PASS",
+      "next": "77.44.7.D",
+      "features": 396
+    },
+    {
+      "command": "python3 scripts/check-canonical-plan.py",
+      "result": "PASS",
+      "masterFiles": 13
+    },
+    {
+      "command": "python3 scripts/build-feature-traceability.py --check",
+      "result": "PASS",
+      "mappedFeatures": 396
+    },
+    {
+      "command": "node --check authored source and both modified tests; git diff --check",
+      "result": "PASS"
+    }
+  ],
+  "releasePreflight": {
+    "productionD1Query": {
+      "api": "Cloudflare D1 Query API",
+      "sql": "SELECT COUNT(*) AS applied_count, MAX(name) AS latest_name FROM d1_migrations",
+      "appliedCount": 34,
+      "latestMigration": "0028_media_archive.sql",
+      "rowsRead": 34,
+      "rowsWritten": 0,
+      "changes": 0,
+      "changedDb": false
+    },
+    "wrangler": {
+      "version": "4.130.0",
+      "command": "XDG_CONFIG_HOME=/tmp/sanci9517-wrangler-config ./node_modules/.bin/wrangler deploy --dry-run",
+      "result": "PASS",
+      "assetsRead": 162,
+      "totalUpload": "335.00 KiB / gzip 87.45 KiB"
+    },
+    "noProductionWrite": "No D1 migration, database write or R2 mutation."
+  },
+  "release": {
+    "githubBranch": "v2/foundation",
+    "githubBranchHead": "9fb94dfb2a95e981e5e1adffcba45ed8381d8f26",
+    "push": "Normal fast-forward from 45502c70; no force push or branch change.",
+    "githubActions": [
+      {
+        "name": "F0 baseline checks",
+        "runId": 41469987851,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Twitch Integration Check",
+        "runId": 41469987926,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Editor Core Test",
+        "runId": 41469987838,
+        "status": "in_progress",
+        "conclusion": null
+      }
+    ],
+    "githubCombinedStatus": {
+      "statuses": [],
+      "aggregatePassClaimed": false
+    },
+    "cloudflareWorkersBuild": {
+      "buildId": "f4a4d37f-6b44-41ce-858f-5d92470b8481",
+      "sourceCommit": "9fb94dfb2a95e981e5e1adffcba45ed8381d8f26",
+      "status": "success",
+      "buildCommand": "npm run typecheck",
+      "deployCommand": "npm run deploy:safe",
+      "migrationGate": "PASS; no migration was applied"
+    },
+    "deploymentId": "db94682d-920e-48a9-baa6-d0a749b5b14e",
+    "workerVersion": "05d0b485-1612-448d-922a-98d2c2e988a9",
+    "trafficPercent": 100,
+    "health": {
+      "status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "changedAssetSha256": {
+      "path": "/editor-v2/core/authored-content.js",
+      "before": "90088cf4c0a6b8564061ca0c7ccdfbed4d73868d0a529c69c6943a04a21c3ee7",
+      "after": "f09ba6fe7664368920a09f7543821c70ed66b913fd123d4a332a95b74bb0ef27",
+      "local": "f09ba6fe7664368920a09f7543821c70ed66b913fd123d4a332a95b74bb0ef27",
+      "afterMatchesLocal": true
+    },
+    "ciLimitation": "The Editor Core GitHub run remained in progress at verification; no aggregate GitHub CI PASS is claimed. The Cloudflare build/deployment and local checks passed."
+  },
+  "dataChanges": {
+    "productionD1Writes": 0,
+    "productionD1Migrations": 0,
+    "productionR2Changes": 0
+  },
+  "scope": {
+    "fullPlanItem": "77.44.7.D remains OPEN; this verified slice normalizes authored image alt/captions and accessible gallery preview labels; it does not close the complete element/media capability matrix.",
+    "manualAcceptance": "Deferred until full Visual Editor acceptance gate at 77.44.7.F/77.44.8.",
+    "cost": "0 Ft; existing free quota only; no paid service, credits, quota purchase or new dependency."
+  }
+}
