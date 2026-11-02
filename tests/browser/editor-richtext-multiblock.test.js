@@ -293,7 +293,7 @@ test('Rich Text native cross-paragraph and list selection survives marks, Save a
       const native=window.getSelection();
       return {selection:getRichTextFormattingSelection(editor),text:native?.toString()};
     });
-    assert.match(backwardMixed.text,/mma Delta[\\s\\S]*List One[\\s\\S]*List/,
+    assert.match(backwardMixed.text,/mma Delta[\s\S]*List One[\s\S]*List/,
       'native backward drag from list to paragraph selects the same text');
     assert.deepEqual(backwardMixed.selection,
       {segments:[{blockIndex:1,from:2,to:11},{blockIndex:2,from:0,to:12}],backward:true},
@@ -309,7 +309,7 @@ test('Rich Text native cross-paragraph and list selection survives marks, Save a
     assert.equal((await canvasMixed.locator('a[href="/p/paragraph-list"]').allTextContents()).join(''),'mma DeltaList OneList',
       'Canvas mirrors mixed-structure links without losing nested marks');
     assert.match(await page.evaluate(()=>window.getSelection()?.toString()??''),
-      /mma Delta[\\s\\S]*List One[\\s\\S]*List/,'mixed-structure link insertion preserves the native selection');
+      /mma Delta[\s\S]*List One[\s\S]*List/,'mixed-structure link insertion preserves the native selection');
     assert.equal(await surface.evaluate(async editor=>{
       const {getRichTextFormattingSelection}=await import('/editor-v2/core/richtext-links.js');
       return getRichTextFormattingSelection(editor)?.backward;
@@ -322,7 +322,7 @@ test('Rich Text native cross-paragraph and list selection survives marks, Save a
       assert.equal(await surface.locator('a[href="/p/paragraph-list"]').count(),0,
         'Undo removes the cross-structure link from all selected blocks');
       assert.match(await page.evaluate(()=>window.getSelection()?.toString()??''),
-        /mma Delta[\\s\\S]*List One[\\s\\S]*List/,'Undo restores the native cross-structure selection');
+        /mma Delta[\s\S]*List One[\s\S]*List/,'Undo restores the native cross-structure selection');
       await page.locator('#redo').click();
       await page.waitForFunction(()=>document.querySelectorAll('.richtext-editor-surface a[href="/p/paragraph-list"]').length>=3);
       assert.equal((await surface.locator('p').nth(1).locator('a[href="/p/paragraph-list"]').allTextContents()).join(''),'mma Delta',
@@ -330,7 +330,7 @@ test('Rich Text native cross-paragraph and list selection survives marks, Save a
       assert.deepEqual(await listItems.locator('a[href="/p/paragraph-list"]').allTextContents(),['L','ist One','List'],
         'Redo restores the links across both list-item segments');
       assert.match(await page.evaluate(()=>window.getSelection()?.toString()??''),
-        /mma Delta[\\s\\S]*List One[\\s\\S]*List/,'Redo restores the native cross-structure selection');
+        /mma Delta[\s\S]*List One[\s\S]*List/,'Redo restores the native cross-structure selection');
       assert.equal(await surface.evaluate(async editor=>{
         const {getRichTextFormattingSelection}=await import('/editor-v2/core/richtext-links.js');
         return getRichTextFormattingSelection(editor)?.backward;
@@ -393,7 +393,7 @@ test('Rich Text native cross-paragraph and list selection survives marks, Save a
       assert.equal(persisted.blocks[0].children.find(run=>run.text==='Beta')?.marks?.includes('bold'),true);
       assert.equal(persisted.blocks[1].children.filter(run=>run.marks?.includes('italic')).map(run=>run.text).join(''),'Gamma');
       assert.equal(persisted.blocks[0].children.find(run=>run.text==='Beta')?.link?.href,'/p/multi-block');
-      assert.equal(persisted.blocks[1].children.filter(run=>run.link?.href==='/p/multi-block').map(run=>run.text).join(''),'Gamma');
+      assert.equal(persisted.blocks[1].children.filter(run=>run.link?.href==='/p/multi-block').map(run=>run.text).join(''),'Ga');
       assert.equal(persisted.blocks[1].children.filter(run=>run.marks?.includes('subscript')).map(run=>run.text).join(''),'mma Delta');
       assert.deepEqual(persisted.blocks[2].items.map(item=>item.filter(run=>run.marks?.includes('underline')).map(run=>run.text).join('')),
         ['ist One','List Tw'],'mobile Save must retain native list selection formatting');
@@ -425,15 +425,16 @@ test('Rich Text native cross-paragraph and list selection survives marks, Save a
     assert.ok((await publicSurface.locator('a[href="/p/multi-block"]').evaluateAll(anchors=>anchors.every(anchor=>anchor.getAttribute('href')==='/p/multi-block'))));
     const publishedListItems=publicSurface.locator('ul > li');
     const publishedMarkText=async tag=>publishedListItems.evaluateAll((items,tag)=>items.map(item=>[...item.querySelectorAll(tag)].map(node=>node.textContent).join('')),tag);
-    assert.equal((await publicSurface.locator('a[href="/p/paragraph-list"]').allTextContents()).join(''),'mma DeltaList OneList',
-      'the published renderer retains linked text across paragraph and list structures');
-    assert.equal((await publicSurface.locator('a[href="/p/paragraph-list"]').evaluateAll(anchors=>new Set(anchors.map(anchor=>anchor.closest('li')).filter(Boolean)).size)),2,
-      'published links remain scoped to the two selected list-item containers');
     assert.deepEqual(await publishedMarkText('u'),['ist One','List Tw'],
       'published rendering must retain marks applied across list items');
     assert.deepEqual(await publishedMarkText('s'),['ist One','List Tw'],
       'published rendering must retain formatting from the backward selection');
     assert.deepEqual(await publicSurface.locator('p').nth(1).locator('sub').allTextContents(),['mma',' Delta']);
+    const mixedStructureLinks=publicSurface.locator('a[href="/p/paragraph-list"]');
+    assert.equal((await mixedStructureLinks.allTextContents()).join(''),'mma DeltaList OneList',
+      'the published renderer retains linked text across paragraph and list structures');
+    assert.equal((await mixedStructureLinks.evaluateAll(anchors=>new Set(anchors.map(anchor=>anchor.closest('li')).filter(Boolean)).size)),2,
+      'published links remain scoped to the two selected list-item containers');
     assert.deepEqual(await publishedMarkText('sub'),['List One','List'],
       'published rendering retains subscript formatting across paragraph/list boundary');
     await publicPage.close();

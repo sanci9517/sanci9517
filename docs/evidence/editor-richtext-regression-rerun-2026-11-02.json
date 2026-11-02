@@ -1,7 +1,7 @@
 {
   "date": "2026-11-02",
   "plan_item": "77.44.7.B — Rich Text, inline marks, links, Save/Publish and link-report acceptance",
-  "status": "TEST_ONLY_REGRESSION_COVERAGE_PASS; RUNTIME_UNCHANGED_AFTER_TEST_COMMIT; PRODUCTION_HEALTH_PASS; AUTHENTICATED_ACCEPTANCE_OPEN",
+  "status": "WEB013_NAMED_HREF_FIX_DEPLOYED; PRODUCTION_HEALTH_PASS; AUTHENTICATED_ACCEPTANCE_OPEN",
   "repository": {
     "local_branch": "work",
     "local_head": "47adbb0a2f036c7b499cfa9b1a7a53db28d1d07c",
@@ -130,7 +130,15 @@
     "source_changed_this_run": false,
     "runtime_unchanged_after_test_only_commit": true,
     "link_report_unauthenticated_smoke": "PASS: HTTP 401 UNAUTHORIZED; authenticated session required as expected",
-    "deployment_unchanged_after_test_only_commit": true
+    "deployment_unchanged_after_test_only_commit": true,
+    "latestVerifiedDeployment": {
+      "commit": "997e487cae103cd6c6613f67ac7beef6b98fb5c9",
+      "deploymentId": "a2e98058-71cb-446d-ba5f-7f2db91fe5e5",
+      "workerVersion": "2b7273b6-43ff-4190-974d-b553911c0ada",
+      "trafficPercent": 100,
+      "healthHttp": 200,
+      "publicAssetsChanged": []
+    }
   },
   "acceptance": {
     "authenticated_production_link_report": "OPEN: no Creator Platform admin session was available; unauthenticated production access is not treated as an acceptance pass",
@@ -185,20 +193,29 @@
   },
   "currentRun": {
     "date": "2026-11-02",
-    "activePlanItem": "77.44.7.B",
-    "scope": "Rich Text IME final input inside list item; test-only regression coverage",
-    "testCommit": "3ae237d1f6f9d57370396d41e2f2568c99c8ff58",
+    "activePlanItem": "77.44.7.B WEB-013 named HTML URL delimiters",
+    "scope": "Decode HTML named &quest; and &num; references before same-origin slug classification; preserve amp case rules and safety.",
+    "commit": "997e487cae103cd6c6613f67ac7beef6b98fb5c9",
+    "parentCommit": "83161a3b7852512f0877955cff4a44c6afd592b4",
+    "commitMode": "normal fast-forward via expected-old-SHA ref update; force=false",
     "checks": [
       {
-        "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-richtext-*.test.js",
+        "command": "npm run test:web013",
         "result": "PASS",
-        "passed": 13,
+        "passed": 62,
+        "failed": 0,
+        "migrationSafetyGate": "PASS"
+      },
+      {
+        "command": "CHROMIUM_PATH=/usr/bin/chromium npm run test:web013:browser",
+        "result": "PASS",
+        "passed": 2,
         "failed": 0
       },
       {
         "command": "npm run test:editor",
         "result": "PASS",
-        "passed": 11,
+        "passed": 164,
         "failed": 0
       },
       {
@@ -213,9 +230,9 @@
       {
         "command": "python3 scripts/audit-active-plan-point.py",
         "result": "PASS",
-        "activeCursor": "77.44.7.B",
-        "mappings": 396,
-        "acceptance": "NOT_CERTIFIED"
+        "next": "77.44.7.B",
+        "featureMappings": 396,
+        "functionalAcceptance": "NOT_CERTIFIED"
       },
       {
         "command": "python3 tests/plan-contract.test.py",
@@ -229,50 +246,76 @@
         "mappings": 396
       },
       {
-        "command": "node --check tests/browser/editor-richtext-ime-final-input.test.js",
+        "command": "node --check tests/web013-runtime.test.js && node --check tests/web013-link-report-contract.test.js && git diff --check",
         "result": "PASS"
       },
       {
-        "command": "git diff --check",
-        "result": "PASS"
+        "command": "WRANGLER_LOG_PATH=/tmp/sanci9517-wrangler-logs ./node_modules/.bin/wrangler deploy --dry-run",
+        "result": "PASS",
+        "wrangler": "4.130.0",
+        "assets": 162,
+        "totalUpload": "300.88 KiB"
+      },
+      {
+        "command": "SELECT COUNT(*) AS row_count, MAX(name) AS latest_name FROM d1_migrations",
+        "result": "PASS",
+        "method": "Cloudflare D1 API SELECT-only",
+        "rowCount": 34,
+        "latestMigration": "0028_media_archive.sql",
+        "changedDb": false,
+        "rowsWritten": 0
+      },
+      {
+        "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-richtext-multiblock.test.js",
+        "result": "PASS",
+        "passed": 1,
+        "failed": 0,
+        "runtimeChanged": false
       }
     ],
-    "browserAssertions": [
-      "compositionend followed by delayed final non-composition input replaces text within an existing list item at 390px and 1366px",
-      "list structure, sibling item, existing link, and bold mark survive the IME update and canonical Page Model serialization",
-      "desktop Undo and Redo restore and reapply the complete list-item edit",
-      "Save is draft-only (publish:false) and leaves public snapshot unchanged; separate Publish exposes the list update",
-      "public Rich Text renderer retains list membership, linked text, and mark after publish"
-    ],
-    "runtimeChanged": false,
-    "workerDeployment": {
-      "id": "212fa31b-b468-4352-a1c1-e7bde222d363",
-      "version": "77827529-a812-4b3b-9495-580c83348767",
+    "deployment": {
+      "command": "npm run deploy:safe",
+      "result": "PASS",
+      "worktreeCommit": "997e487cae103cd6c6613f67ac7beef6b98fb5c9",
+      "automaticRollout": "not started; safe deployment used after ref check",
+      "deploymentId": "a2e98058-71cb-446d-ba5f-7f2db91fe5e5",
+      "workerVersion": "2b7273b6-43ff-4190-974d-b553911c0ada",
       "trafficPercent": 100,
-      "changedDuringRun": false,
-      "health": "HTTP 200",
-      "unauthenticatedLinkReport": "HTTP 401 UNAUTHORIZED"
+      "health": "PASS HTTP 200; sanci9517-streamer-brand 2.0.0 cloudflare-worker",
+      "unauthenticatedLinkReport": "PASS expected HTTP 401 UNAUTHORIZED",
+      "publicAssetsChanged": [],
+      "assetHashCheck": "not applicable; Wrangler reported no updated asset files",
+      "runtimeSourceFile": "src/routes/admin/link-report.ts"
     },
-    "github": {
-      "branch": "v2/foundation",
-      "head": "3ae237d1f6f9d57370396d41e2f2568c99c8ff58",
-      "compareFrom": "449d88e3de6fa0ff9ccbc7a49a9853577983a8ff",
-      "ahead": 1,
-      "behind": 0,
-      "changedPaths": [
-        "tests/browser/editor-richtext-ime-final-input.test.js"
+    "fix": {
+      "defect": "Named HTML URL query/fragment delimiters were not decoded, so links to published /p/new pages with &quest; or &num; suffixes were falsely reported broken.",
+      "newReferenceSemantics": {
+        "&quest;": "?",
+        "&num;": "#"
+      },
+      "preservedSemantics": [
+        "&amp; case-insensitive",
+        "&sol; case-sensitive",
+        "numeric HTML codepoint safety",
+        "same-origin, credential, role and cache protections"
       ],
-      "ciStatuses": [],
+      "newDependencies": 0
+    },
+    "costAndData": {
+      "newCost": "0 Ft",
+      "d1Migrations": 0,
+      "d1Writes": 0,
+      "r2Changes": 0,
+      "newDependencies": 0,
+      "githubStatuses": [],
       "ciPassClaimed": false
     },
-    "productionDataWrites": 0,
-    "productionMigrations": 0,
-    "r2Changes": 0,
-    "publicAssetChanges": [],
-    "newDependencies": 0,
-    "newCost": "0 Ft",
-    "planStatus": "OPEN / NOT CERTIFIED; authenticated production link-report and production Save/Publish acceptance remain open",
-    "canonicalPlanCommit": "467ad540c422b1b1f409a5ee1f97dac85d0727e8"
+    "acceptance": {
+      "authenticatedProductionLinkReport": "OPEN; no Creator Platform editor session available",
+      "productionSavePublish": "OPEN; separate D1 data-writing acceptance not authorized",
+      "physicalEditorAcceptance": "DEFERRED until complete Visual Editor gate",
+      "overallPlanItem": "OPEN / NOT CERTIFIED"
+    }
   },
   "followupRun": {
     "date": "2026-11-02",
@@ -362,7 +405,6 @@
     "planItem": "77.44.7.B",
     "scope": "Native cross-structure paragraph-to-list link insertion with existing inline marks and prior link preservation",
     "testFile": "tests/browser/editor-richtext-multiblock.test.js",
-    "testCommit": "33a22d66a44955418dd0d88e82b4c1d9d48e1141",
     "testCommand": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-richtext-*.test.js",
     "checks": [
       {
@@ -418,12 +460,12 @@
         "result": "PASS"
       }
     ],
-    "assertions": [
-      "Native browser drag selection crosses paragraph to list at 390px and 1366px.",
-      "The pre-existing /p/multi-block link is retained only on the unselected paragraph prefix; the selected suffix and list ranges receive /p/paragraph-list.",
-      "Link spans split around existing inline marks while preserving text and list-item structure.",
-      "Canvas and published DOM retain linked text across paragraph and list structures.",
-      "Save remains publish:false and does not mutate the published snapshot; explicit Publish updates it."
+    "scenarioAssertions": [
+      "On mobile and desktop Chromium native pointer selection links a paragraph suffix and selected text in two list items.",
+      "A previously linked paragraph prefix remains on its existing destination while the selected suffix receives the new destination.",
+      "The list link spans remain correctly partitioned around existing inline marks and list-item boundaries.",
+      "Canvas, saved Page Model and published renderer retain the same selected link text and inline marks.",
+      "Save uses publish:false and leaves the public snapshot unchanged; explicit Publish updates the public page."
     ],
     "runtime": {
       "sourceChanged": false,
@@ -438,7 +480,8 @@
       "r2Changes": 0
     },
     "cost": "0 Ft",
-    "acceptance": "This automated cross-structure Rich Text link slice is verified; overall 77.44.7.B remains OPEN / NOT CERTIFIED because authenticated production link-report and production Save/Publish acceptance remain open.",
+    "acceptance": "This cross-structure Rich Text link slice is automated and verified; overall 77.44.7.B remains OPEN / NOT CERTIFIED because authenticated production link-report and production Save/Publish acceptance remain open.",
+    "testCommit": "33a22d66a44955418dd0d88e82b4c1d9d48e1141",
     "evidenceCommit": "f6b1973fa34b6173c6d2045aca2d4c8541bf419d",
     "canonicalPlanCommit": "aa66be4d630df8cf4efb9c6a4c711633be64116f",
     "githubBranch": "v2/foundation",
@@ -506,7 +549,7 @@
       }
     ],
     "assertions": [
-      "Desktop Undo removes the cross-structure link, restores the previous paragraph link target and selection; Redo restores the new link spans and selection.",
+      "On desktop, Undo removes only the cross-structure link, restores the previous paragraph link target and selection; Redo restores the new link spans and selection.",
       "Native mixed paragraph/list selection, link insertion and selection retention work at 390px and 1366px.",
       "Mobile Undo controls are hidden; mobile continues to verify real selection, draft-only Save and explicit Publish.",
       "The full 13-test Rich Text Chromium suite, Editor unit suite, typecheck, plan contract and traceability passed."
@@ -524,7 +567,7 @@
       "r2Changes": 0
     },
     "cost": "0 Ft",
-    "acceptance": "This mixed-block link Undo/Redo slice is verified; overall 77.44.7.B remains OPEN / NOT CERTIFIED because authenticated production link-report and production Save/Publish acceptance remain open."
+    "acceptance": "The cross-structure link Undo/Redo browser slice is verified; overall 77.44.7.B remains OPEN / NOT CERTIFIED because authenticated production link-report and production Save/Publish acceptance remain open."
   },
   "followupRun4": {
     "date": "2026-11-02",
@@ -692,5 +735,96 @@
     },
     "cost": "0 Ft",
     "acceptance": "The backward-selection formatting slice is verified; overall 77.44.7.B remains OPEN / NOT CERTIFIED because authenticated production link-report and production Save/Publish acceptance remain open."
+  },
+  "previousCurrentRunBeforeNamedHrefFollowup": {
+    "date": "2026-11-02",
+    "activePlanItem": "77.44.7.B",
+    "scope": "Rich Text IME final input inside list item; test-only regression coverage",
+    "testCommit": "3ae237d1f6f9d57370396d41e2f2568c99c8ff58",
+    "checks": [
+      {
+        "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-richtext-*.test.js",
+        "result": "PASS",
+        "passed": 13,
+        "failed": 0
+      },
+      {
+        "command": "npm run test:editor",
+        "result": "PASS",
+        "passed": 11,
+        "failed": 0
+      },
+      {
+        "command": "npm run typecheck",
+        "result": "PASS"
+      },
+      {
+        "command": "python3 scripts/check-canonical-plan.py",
+        "result": "PASS",
+        "masterFiles": 13
+      },
+      {
+        "command": "python3 scripts/audit-active-plan-point.py",
+        "result": "PASS",
+        "activeCursor": "77.44.7.B",
+        "mappings": 396,
+        "acceptance": "NOT_CERTIFIED"
+      },
+      {
+        "command": "python3 tests/plan-contract.test.py",
+        "result": "PASS",
+        "passed": 13,
+        "failed": 0
+      },
+      {
+        "command": "python3 scripts/build-feature-traceability.py --check",
+        "result": "PASS",
+        "mappings": 396
+      },
+      {
+        "command": "node --check tests/browser/editor-richtext-ime-final-input.test.js",
+        "result": "PASS"
+      },
+      {
+        "command": "git diff --check",
+        "result": "PASS"
+      }
+    ],
+    "browserAssertions": [
+      "compositionend followed by delayed final non-composition input replaces text within an existing list item at 390px and 1366px",
+      "list structure, sibling item, existing link, and bold mark survive the IME update and canonical Page Model serialization",
+      "desktop Undo and Redo restore and reapply the complete list-item edit",
+      "Save is draft-only (publish:false) and leaves public snapshot unchanged; separate Publish exposes the list update",
+      "public Rich Text renderer retains list membership, linked text, and mark after publish"
+    ],
+    "runtimeChanged": false,
+    "workerDeployment": {
+      "id": "212fa31b-b468-4352-a1c1-e7bde222d363",
+      "version": "77827529-a812-4b3b-9495-580c83348767",
+      "trafficPercent": 100,
+      "changedDuringRun": false,
+      "health": "HTTP 200",
+      "unauthenticatedLinkReport": "HTTP 401 UNAUTHORIZED"
+    },
+    "github": {
+      "branch": "v2/foundation",
+      "head": "3ae237d1f6f9d57370396d41e2f2568c99c8ff58",
+      "compareFrom": "449d88e3de6fa0ff9ccbc7a49a9853577983a8ff",
+      "ahead": 1,
+      "behind": 0,
+      "changedPaths": [
+        "tests/browser/editor-richtext-ime-final-input.test.js"
+      ],
+      "ciStatuses": [],
+      "ciPassClaimed": false
+    },
+    "productionDataWrites": 0,
+    "productionMigrations": 0,
+    "r2Changes": 0,
+    "publicAssetChanges": [],
+    "newDependencies": 0,
+    "newCost": "0 Ft",
+    "planStatus": "OPEN / NOT CERTIFIED; authenticated production link-report and production Save/Publish acceptance remain open",
+    "canonicalPlanCommit": "467ad540c422b1b1f409a5ee1f97dac85d0727e8"
   }
 }
