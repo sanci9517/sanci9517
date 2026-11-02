@@ -1,7 +1,7 @@
 {
   "date": "2026-11-02",
   "plan_item": "77.44.7.B — WEB-013 published Rich Text anchor extraction, authorization, Save/Publish acceptance",
-  "status": "RUNTIME_FIX_DEPLOYED; OWNER_CONFIRMED_CONTENT_LINK_WORKS; LIVE_PUBLIC_API_VERIFIED; TEST_LINK_RESTORE_PENDING",
+  "status": "OWNER_LINK_ROUNDTRIP_AND_RESTORE_VERIFIED; TARGETED_ACCEPTANCE_PASS; FULL_77_44_7_B_OPEN",
   "repository": {
     "branch": "v2/foundation",
     "runtime_commit": "04ff5ac00e9e6064e68ad009297074af0ae4e6a1",
@@ -95,7 +95,7 @@
   },
   "limitations": {
     "ci": "GitHub combined statuses empty; CI pass not claimed. GitHub Actions was not run because quota is unavailable; [skip ci] was used.",
-    "acceptance": "Owner confirmed the test link works and public APIs verify it, but the temporary link remains published. Remove it with Editor Save then separate Publish and verify baseline restoration before calling the targeted acceptance fully closed; full 77.44.7.B and Visual Editor acceptance remain open/deferred.",
+    "acceptance": "The owner-confirmed Rich Text internal-link create/publish/read/remove/save/publish round trip is verified and the temporary link is removed. The full 77.44.7.B remains OPEN for remaining cases and a directly authenticated link-report live check; complete Visual Editor physical/manual acceptance remains deferred.",
     "manualFullEditor": "DEFERRED until complete Visual Editor per AGENTS.md."
   },
   "cost": "0 Ft; existing platform APIs and dependencies only, no D1 writes/migration, R2 change, or new paid service.",
@@ -190,8 +190,44 @@
       "rowsWritten": 0,
       "changedDb": false
     },
-    "restorePending": true,
-    "requiredRestore": "In the already authenticated Editor, remove only the temporary /p/home link from page-about; Save, then Publish separately. Verify the page draft/published hashes return to the preflight baseline."
+    "restorePending": false,
+    "requiredRestore": "COMPLETE: owner removed the /p/home test link in the Editor, saved, then published separately. Draft and published snapshots now match the pre-test revision semantically; only embedded revision counters advanced.",
+    "ownerReportedRestore": "Kész működik.",
+    "postRestoreVerification": {
+      "method": "Cloudflare D1 API SELECT-only; read current page row and historical editor revisions; public GET after owner confirmation.",
+      "pageId": "page-about",
+      "pageSlug": "abou",
+      "published": true,
+      "saveRevision": {
+        "id": "b799d50b-9b02-4afe-bc67-693674697ace",
+        "version": 59,
+        "note": "Editor v2 mentés",
+        "createdAt": "2026-11-02 09:35:24"
+      },
+      "publishRevision": {
+        "id": "a133ce89-153d-426c-9f0f-92df2e2a156d",
+        "version": 60,
+        "note": "Editor v2 publikálás",
+        "createdAt": "2026-11-02 09:35:25"
+      },
+      "draftAndPublishedSha256": "7bf86914739f1ef9449f943c0420b50333f2b3b730c6121059d2718f152d59a7",
+      "draftAndPublishedEqual": true,
+      "containsTemporaryHref": false,
+      "comparedToPreTestRevision": {
+        "id": "e3956650-19f8-4cee-8543-b299394151c8",
+        "version": 54,
+        "sha256": "0fc946ed7caa5953f3cfb42b3501a5c0eb1794cd9bd1ff5d20b78edda5b71c52",
+        "structuralDiff": [
+          "pages.page-about.revision: 54 -> 60",
+          "revision: 54 -> 60"
+        ]
+      },
+      "publicPageApi": "GET /api/public/pages?slug=abou -> HTTP 200; no /p/home href in published response.",
+      "rowsRead": 7,
+      "rowsWritten": 0,
+      "changedDb": false,
+      "targetedAcceptance": "PASS: owner confirmed the link worked; separate Save and Publish revisions exist; temporary link removed and public content restored."
+    }
   },
   "additionalRuntimeRegression": {
     "issue": "HTMLRewriter reports anchors inside inert <template> contents, although those links are not rendered in the live document.",
