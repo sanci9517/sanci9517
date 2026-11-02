@@ -4,7 +4,7 @@
   "status": "TARGETED_MEDIA_AND_CARD_SLICE_PASS; FULL_77_44_7_D_OPEN",
   "repository": {
     "branch": "v2/foundation",
-    "head_before_this_evidence": "d46f4edc36b87033a9a50fe58bbd36d3a4e7a122",
+    "head_before_this_evidence": "d88affec6c63e66bce2816ecf83e69fd5c0cc7be",
     "runtime_source_changed": false,
     "public_assets_changed": false
   },
@@ -44,11 +44,20 @@
       "failed": 0,
       "durationMs": 46025,
       "coverage": "Legacy image/video/audio URL safety and Inspector/Canvas/public Save/Publish parity; shared Media Library pagination and filtered page separation on mobile and desktop."
+    },
+    {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-media-source-switch.test.js tests/browser/editor-gallery-crop-parity.test.js tests/browser/editor-card-content.test.js tests/browser/editor-structured-content.test.js tests/browser/editor-legacy-media-parity.test.js tests/browser/editor-media-picker-pagination.test.js tests/browser/editor-decorative-elements.test.js tests/browser/editor-content-system.test.js",
+      "result": "PASS",
+      "passed": 14,
+      "failed": 0,
+      "durationMs": 280371,
+      "viewportWidths": [390, 1366],
+      "coverage": "Consolidated serial D-focused browser regression over the existing eight test files covering asset source switching, gallery crops, Card, structured list/table/tabs/accordion and repeated data, icon/badge/quote/decorative elements, legacy media, pagination, authored content, and Save/Publish separation."
     }
   ],
   "totalFocusedChromium": {
     "result": "PASS",
-    "passed": 12,
+    "passed": 14,
     "failed": 0,
     "viewportWidths": [390, 1366]
   },
