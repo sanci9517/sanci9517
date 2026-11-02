@@ -1,0 +1,212 @@
+{
+  "date": "2026-11-02",
+  "planItem": "77.44.7.D — element-specific content and media",
+  "status": "ICON_ACCESSIBLE_NAME_SLICE_PASS; FULL_77_44_7_D_OPEN",
+  "repository": {
+    "branch": "v2/foundation",
+    "baseCommit": "5064ff385b97c5b0a3a95840a97e7cf6f10cbc9a",
+    "runtimeCommit": "eac2a9080a7917258bf7ff813b87b9f52166c6ef",
+    "runtimeSourceChanged": true,
+    "changedPublicRuntimeAssets": [
+      "public/editor-v2/core/authored-content.js"
+    ],
+    "publicTestAssetsChanged": false
+  },
+  "defect": {
+    "location": "public/editor-v2/core/authored-content.js:contentAttributes",
+    "cause": "A whitespace-only props.ariaLabel was tested before trimming. It was emitted as aria-label and made an otherwise decorative icon role=img with an empty accessible name. Malformed non-string persisted labels could also be string-coerced into misleading names.",
+    "regressionBeforeFix": {
+      "result": "EXPECTED_FAILURE",
+      "actual": {
+        "aria-label": "   ",
+        "role": "img"
+      },
+      "expected": {
+        "aria-hidden": "true"
+      }
+    },
+    "fix": "Trim string-only label sources while preserving legacy > authored prop > canonical accessibility fallback precedence. Blank or malformed labels are ignored; icon semantics remain decorative without a non-empty name."
+  },
+  "reuseReview": {
+    "used": "The existing shared contentAttributes renderer drives Editor Canvas and authored public rendering, plus the existing Playwright/Chromium fixtures.",
+    "externalCode": "None; no additional package or infrastructure was needed.",
+    "testPlacement": "The new unit regression lives under tests/, outside public/. The shared CI unit command includes it, avoiding a new publicly served test asset."
+  },
+  "tests": [
+    {
+      "command": "node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-content-system.test.js",
+      "result": "PASS",
+      "passed": 1,
+      "failed": 0,
+      "durationMs": 46757,
+      "coverage": "Chromium verifies whitespace/padded icon accessible names on the Canvas, then confirms Save keeps the old published name live while Publish emits the decorative aria-hidden icon. This run used the final helper implementation."
+    },
+    {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-media-source-switch.test.js tests/browser/editor-gallery-crop-parity.test.js tests/browser/editor-card-content.test.js tests/browser/editor-structured-content.test.js tests/browser/editor-legacy-media-parity.test.js tests/browser/editor-media-picker-pagination.test.js tests/browser/editor-decorative-elements.test.js tests/browser/editor-content-system.test.js",
+      "result": "PASS",
+      "passed": 14,
+      "failed": 0,
+      "durationMs": 346831,
+      "viewports": [
+        390,
+        1366
+      ],
+      "coverage": "Serial eight-file D-focused Chromium suite covering image/gallery/carousel/poster source, crop, Card, icon, list/table/tabs/accordion, legacy media, pagination, Canvas/public rendering, and Save/Publish. The subsequent focused editor-content-system test was rerun after the final equivalent label helper refactor."
+    },
+    {
+      "command": "npm run test:editor",
+      "result": "PASS",
+      "passedSuites": 12,
+      "failedSuites": 0,
+      "coverage": "Includes tests/editor-accessible-icon-label.test.js."
+    },
+    {
+      "command": "npm run typecheck",
+      "result": "PASS"
+    },
+    {
+      "command": "npm run test:web013:migration-gate",
+      "result": "PASS"
+    },
+    {
+      "command": "python3 tests/plan-contract.test.py",
+      "result": "PASS",
+      "passed": 13,
+      "failed": 0
+    },
+    {
+      "command": "python3 scripts/audit-active-plan-point.py",
+      "result": "PASS",
+      "cursor": "77.44.7.D",
+      "features": 396
+    },
+    {
+      "command": "python3 scripts/check-canonical-plan.py",
+      "result": "PASS",
+      "masterFiles": 13
+    },
+    {
+      "command": "python3 scripts/build-feature-traceability.py --check",
+      "result": "PASS",
+      "mappedFeatures": 396
+    },
+    {
+      "command": "node --check public/editor-v2/core/authored-content.js && node --check tests/browser/editor-content-system.test.js && node --check tests/editor-accessible-icon-label.test.js",
+      "result": "PASS"
+    },
+    {
+      "command": "git diff --check",
+      "result": "PASS"
+    }
+  ],
+  "releasePreflight": {
+    "productionD1Query": {
+      "api": "Cloudflare D1 Query API",
+      "sql": "SELECT COUNT(*) AS applied_count, MAX(name) AS latest_name FROM d1_migrations",
+      "appliedCount": 34,
+      "latestMigration": "0028_media_archive.sql",
+      "rowsRead": 34,
+      "rowsWritten": 0,
+      "changes": 0,
+      "changedDb": false
+    },
+    "wrangler": {
+      "version": "4.130.0",
+      "command": "XDG_CONFIG_HOME=/tmp/sanci9517-wrangler-config ./node_modules/.bin/wrangler deploy --dry-run",
+      "result": "PASS",
+      "assetsRead": 162,
+      "totalUpload": "335.01 KiB / gzip 87.44 KiB"
+    },
+    "freeQuota": {
+      "cloudflareWorkersBuilds": {
+        "hasReachedBuildMinutesLimit": false,
+        "refreshOn": "2026-11-30T23:59:59.999Z"
+      },
+      "githubRepositoryVisibility": "public",
+      "githubActionsRunsForRuntimeCommit": 0,
+      "paidQuotaPurchased": false
+    }
+  },
+  "release": {
+    "githubBranchHead": "eac2a9080a7917258bf7ff813b87b9f52166c6ef",
+    "push": "Normal fast-forward from 5064ff38; no force push or branch change.",
+    "githubCommitStatuses": [],
+    "githubActions": "Four of five workflow runs returned success at the check time; Editor Core Test run 41466815450 remained in_progress. Combined status API returned statuses=[]. No aggregate GitHub CI PASS is claimed.",
+    "cloudflareWorkersBuild": {
+      "buildId": "d05ee916-f87a-4684-9498-4f0df0ff87ac",
+      "sourceCommit": "eac2a9080a7917258bf7ff813b87b9f52166c6ef",
+      "status": "success",
+      "buildCommand": "npm run typecheck",
+      "deployCommand": "npm run deploy:safe",
+      "uploadedAsset": "/editor-v2/core/authored-content.js",
+      "productionD1MigrationGate": "PASS; no D1 migration command was run"
+    },
+    "deploymentId": "74a4258e-dfbb-4c75-8aa5-d198bf927264",
+    "workerVersion": "c98b34ee-0bb4-4bb7-b3d0-bdcad93bd389",
+    "trafficPercent": 100,
+    "health": {
+      "status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "changedAssetSha256": {
+      "path": "/editor-v2/core/authored-content.js",
+      "before": "8f04689312bf3f25af2a256ab3719c52986c740ac4025bc16d1e7aa7147f944d",
+      "after": "90088cf4c0a6b8564061ca0c7ccdfbed4d73868d0a529c69c6943a04a21c3ee7",
+      "local": "90088cf4c0a6b8564061ca0c7ccdfbed4d73868d0a529c69c6943a04a21c3ee7",
+      "afterMatchesLocal": true
+    },
+    "githubActionsRunsForRuntimeCommit": 5,
+    "githubActionsRuns": [
+      {
+        "name": "Canonical Plan Active Point Audit",
+        "runId": 41466815472,
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/sanci9517/sanci9517/actions/runs/41466815472"
+      },
+      {
+        "name": "F0 baseline checks",
+        "runId": 41466815440,
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/sanci9517/sanci9517/actions/runs/41466815440"
+      },
+      {
+        "name": "Editor Core Test",
+        "runId": 41466815450,
+        "status": "in_progress",
+        "conclusion": null,
+        "url": "https://github.com/sanci9517/sanci9517/actions/runs/41466815450"
+      },
+      {
+        "name": "Canonical Creator Platform Plan",
+        "runId": 41466815423,
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/sanci9517/sanci9517/actions/runs/41466815423"
+      },
+      {
+        "name": "Twitch Integration Check",
+        "runId": 41466815465,
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/sanci9517/sanci9517/actions/runs/41466815465"
+      }
+    ]
+  },
+  "dataChanges": {
+    "productionD1Writes": 0,
+    "productionD1Migrations": 0,
+    "productionR2Changes": 0
+  },
+  "scope": {
+    "fullPlanItem": "77.44.7.D remains OPEN; this is an icon-accessible-name slice, not the complete element/media capability matrix.",
+    "manualAcceptance": "Deferred until the complete Visual Editor acceptance gate at 77.44.7.F/77.44.8.",
+    "cost": "0 Ft; existing free quota only; no paid service, credits, quota purchase, or new dependency."
+  }
+}
