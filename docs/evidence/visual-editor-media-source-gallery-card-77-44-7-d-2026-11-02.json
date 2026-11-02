@@ -36,13 +36,37 @@
       "failed": 0,
       "durationMs": 75799,
       "coverage": "List, table, tabs, accordion, gallery, carousel, badge, quote and icon editing; structured row/column keyboard operations and focus restoration; safe public rendering; draft Save/reload versus separate Publish."
+    },
+    {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-legacy-media-parity.test.js tests/browser/editor-media-picker-pagination.test.js",
+      "result": "PASS",
+      "passed": 2,
+      "failed": 0,
+      "durationMs": 46025,
+      "coverage": "Legacy image/video/audio URL safety and Inspector/Canvas/public Save/Publish parity; shared Media Library pagination and filtered page separation on mobile and desktop."
     }
   ],
   "totalFocusedChromium": {
     "result": "PASS",
-    "passed": 10,
+    "passed": 12,
     "failed": 0,
     "viewportWidths": [390, 1366]
+  },
+  "supplementaryChecks": {
+    "editorUnit": {
+      "command": "npm run test:editor",
+      "result": "PASS",
+      "passedSuites": 11
+    },
+    "mediaApi": {
+      "command": "npm run test:media",
+      "result": "PASS",
+      "passedFiles": 5
+    },
+    "typecheck": {
+      "command": "npm run typecheck",
+      "result": "PASS"
+    }
   },
   "scopeLimitations": {
     "fullPlanItem": "OPEN. This verifies only selected shared-media, gallery crop, and Card-content routes; it does not certify the full 77.44.7.D matrix (all image/video/audio, CTA, icon, table/list, UI-component and repeated-data capabilities).",
