@@ -1,0 +1,69 @@
+{
+  "date": "2026-11-02",
+  "plan_item": "77.44.7.B — Rich Text, inline marks, links, Save/Publish and link-report acceptance",
+  "status": "HTML_ATTRIBUTE_ENTITY_RUNTIME_FIX_DEPLOYED_AND_TRAFFIC_HEALTH_VERIFIED; LOCAL_TESTS_PASS; AUTHENTICATED_PRODUCTION_ACCEPTANCE_OPEN",
+  "repository": {
+    "branch": "v2/foundation",
+    "parent_commit": "0bd4936254c1b9c64e092892b03c4cb347c96972",
+    "runtime_commit": "9f78a0c1032d16f2773a945f3b1b4ff031e548c8",
+    "runtime_commit_url": "https://github.com/sanci9517/sanci9517/commit/9f78a0c1032d16f2773a945f3b1b4ff031e548c8",
+    "github_update": "normal fast-forward with expected previous SHA and force=false",
+    "combined_statuses": [],
+    "ci_pass_claimed": false,
+    "reason_ci_not_run": "GitHub Actions free quota exhausted; commit marked [skip ci]",
+    "preexisting_local_work_preserved": true
+  },
+  "finding": {
+    "trigger": "Legacy published Rich Text href uses named HTML references that change URL path normalization, for example /p/source&sol;&period;&period;&sol;new",
+    "before": "The partial hand-written decoder left &period; and related references encoded, so URL() saw a different path from the browser and the report could produce false broken-link findings or miss same-origin hrefs encoded with &colon;.",
+    "after": "The report decodes HTML attribute references using entities/decode decodeHTMLAttribute before same-origin and pathname resolution. The exact same-origin, editor-role, redirect, draft exclusion and no-store contracts remain covered.",
+    "regression_examples": [
+      "/p/source&sol;&period;&period;&sol;new",
+      "/p/source&sol;&percnt;2e&percnt;2e&sol;new",
+      "/p/source&bsol;..&bsol;new",
+      "https&colon;//example.test/p/new"
+    ]
+  },
+  "reuse_review": {
+    "package": "entities@8.1.0",
+    "source": "https://github.com/fb55/entities/tree/v8.1.0",
+    "license": "BSD-2-Clause; redistribution notice retained by npm package and lockfile metadata",
+    "runtime_dependencies": 0,
+    "fit": "Established, widely used HTML/XML entity decoder with an HTML attribute decoding API; avoids a hand-maintained partial WHATWG entity table.",
+    "tradeoff": "Worker dry-run total upload grew from the prior 300.88 KiB to 334.14 KiB (gzip 87.20 KiB); no additional paid service or external runtime request."
+  },
+  "tests": {
+    "targeted": "node --experimental-loader ./tests/ts-extension-loader.mjs --test tests/web013-link-report-contract.test.js tests/web013-runtime.test.js",
+    "targeted_result": "PASS",
+    "web013": "npm run test:web013 — PASS (all 11 test files and migration safety gate)",
+    "typecheck": "npm run typecheck — PASS",
+    "editor_unit": "npm run test:editor — PASS (all 11 test files)",
+    "browser": "CHROMIUM_PATH=/usr/bin/chromium npm run test:web013:browser — PASS 2/2",
+    "plan_and_traceability": "canonical plan 13/13; active cursor 77.44.7.B; plan contract 13/13; source traceability 396/396; JavaScript syntax and git diff --check PASS",
+    "wrangler_dry_run": "Wrangler 4.130.0 PASS; 162 assets; 334.14 KiB / 87.20 KiB gzip"
+  },
+  "production_preflight": {
+    "method": "Cloudflare D1 query API, SELECT only",
+    "sql": "SELECT COUNT(*) AS row_count, MAX(name) AS latest_name FROM d1_migrations",
+    "row_count": 34,
+    "latest_name": "0028_media_archive.sql",
+    "changed_db": false,
+    "rows_written": 0
+  },
+  "deployment": {
+    "method": "npm run deploy:safe; migration safety gate passed; no migration applied",
+    "deployment_id": "cc1442c9-98ed-4607-aaf2-145366c8674d",
+    "worker_version": "00f36be7-4998-4946-8d9b-163aebc98eea",
+    "traffic_percent": 100,
+    "health": "HTTP 200; service sanci9517-streamer-brand, version 2.0.0",
+    "anonymous_link_report": "HTTP 401 as required; this does not verify authenticated report behavior",
+    "public_asset_upload": "Wrangler reported no updated asset files; no public asset changed, so no new public-asset hash comparison was applicable.",
+    "r2": "unchanged"
+  },
+  "remaining": {
+    "authenticated_production_link_report": "OPEN: the owner's mobile browser session is not exposed to this execution environment; do not request credentials or bypass authentication.",
+    "full_visual_editor_acceptance": "OPEN and deferred until the complete Editor scope is implemented, per AGENTS.md.",
+    "production_data_changes": "None beyond Worker deployment; D1 preflight was read-only."
+  },
+  "cost": "0 Ft; no paid service, CI quota purchase, D1 mutation, or R2 change."
+}
