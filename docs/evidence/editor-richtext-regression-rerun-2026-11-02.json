@@ -6,23 +6,25 @@
     "local_branch": "work",
     "local_head": "47adbb0a2f036c7b499cfa9b1a7a53db28d1d07c",
     "github_branch": "v2/foundation",
-    "github_head": "761a55d8f4a1a4c2dd073485c19eea0eb2731662",
+    "github_head": "9d2e00c800e62209b9a4b6e5debf6e33e9de4666",
     "github_head_verified": true,
     "github_combined_statuses": [],
     "ci_pass_claimed": false,
     "preexisting_untracked_work_preserved": true,
-    "github_head_before_final_docs_evidence": "38f1987670df2e06db3811f493c4d6ccf50b28fc",
+    "github_head_before_final_docs_evidence": "3381bb391b4b6866711f2fc3804c1a1cc18dccf2",
     "runtime_commit": "d5cea53e1dc4791387a4b3daaccd0cd3d71ef8ae",
     "test_commits": [
       "e0bab2789c79a87f1ba6357ee02c25f0558beedf",
       "686b2b1612eae0a8f4f92c4e48e2063a69e00deb",
       "ff443d47d36c5f6475e22b5076a945fc803fd01d",
       "3606ccff06ebf0502e9c8eb55283844f3f15441e",
-      "7aae2805db2929f3d01e2adff4ddfbed93be05e1"
+      "7aae2805db2929f3d01e2adff4ddfbed93be05e1",
+      "0b9bf0f755b290f17ddb47f8701f136f800b4665",
+      "3381bb391b4b6866711f2fc3804c1a1cc18dccf2"
     ],
     "traceability_commit": "f8d3196d0a956bcbc274f262d0b932524e2ce78c",
-    "canonical_plan_commit": "dc15707ca4b1e00d09a99d795219861bf06b18c3",
-    "github_head_before_evidence_commit": "dc15707ca4b1e00d09a99d795219861bf06b18c3",
+    "canonical_plan_commit": "094af9a243674ef07e83291f15a6ba2a7f96dd38",
+    "github_head_before_evidence_commit": "094af9a243674ef07e83291f15a6ba2a7f96dd38",
     "runtime_unchanged_after_test_only_commit": true
   },
   "tests": {
@@ -94,6 +96,17 @@
         "Admin link-report at 360/390/430/1280px",
         "published Rich Text renderer and link target safety"
       ]
+    },
+    "invalidNumericBoundary": {
+      "command": "npm run test:web013",
+      "result": "PASS",
+      "passed": 11,
+      "failed": 0,
+      "assertions": [
+        "out-of-range hexadecimal code point U+110000 is replaced before URL classification",
+        "unsafe integer decimal reference is replaced before URL classification",
+        "invalid NUL, surrogate, out-of-range and unsafe-integer values do not create same-origin page findings"
+      ]
     }
   },
   "runtime": {
@@ -164,7 +177,8 @@
       "invalid NUL and surrogate references do not add bogus internal link findings",
       "cross-origin, protocol-relative, credentialed, downgrade and javascript URL exclusions remain",
       "numeric decimal and hex references without the optional semicolon decode to the same-origin /p/ path when the HTML numeric-reference syntax permits it",
-      "decimal and hex numeric HTML references without semicolon are recognized when HTML permits the optional semicolon"
+      "decimal and hex numeric HTML references without semicolon are recognized when HTML permits the optional semicolon",
+      "out-of-range and unsafe-integer decimal/hex references do not create false internal link findings"
     ]
   }
 }
