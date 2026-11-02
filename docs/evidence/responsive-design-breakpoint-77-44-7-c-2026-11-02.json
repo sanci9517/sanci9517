@@ -1,0 +1,102 @@
+{
+  "date": "2026-11-02",
+  "plan_item": "77.44.7.C — design and responsive properties",
+  "status": "PASS_AUTOMATED_RESPONSIVE_DESIGN_ACCEPTANCE; FULL_EDITOR_MANUAL_ACCEPTANCE_DEFERRED",
+  "repository": {
+    "branch": "v2/foundation",
+    "head_before_documentation": "f8287b73ceb16ccd8595597aab3cbae1458c4153",
+    "runtime_source_changed": false,
+    "public_assets_changed": false
+  },
+  "tests": {
+    "chromium": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-inspector-breakpoint-lifecycle.test.js tests/browser/editor-responsive-layout.test.js",
+      "result": "PASS",
+      "passed": 2,
+      "failed": 0,
+      "duration_ms": 352964
+    },
+    "editorUnit": {
+      "command": "npm run test:editor",
+      "result": "PASS",
+      "passedSuites": 11,
+      "failedSuites": 0
+    },
+    "typecheck": {
+      "command": "npm run typecheck",
+      "result": "PASS"
+    },
+    "planContract": {
+      "command": "python3 tests/plan-contract.test.py && python3 scripts/audit-active-plan-point.py && python3 scripts/check-canonical-plan.py && python3 scripts/build-feature-traceability.py --check",
+      "result": "PASS",
+      "planContractTests": 13,
+      "masterFiles": 13,
+      "traceabilityMappings": 396,
+      "cursor": "77.44.7.D"
+    },
+    "allPartialTypes": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-inspector-partial-types.test.js",
+      "result": "PASS",
+      "passed": 1,
+      "failed": 0,
+      "duration_ms": 1545720,
+      "coverage": "All 44 editable PARTIAL types plus root; Inspector routes, desktop/mobile typography/color/background/border/shadow/opacity/transform/filter/transition/aspect ratio, hover/focus-visible, draft Save/reload and Publish/public CSS."
+    },
+    "layoutSizingSpacingPosition": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-inspector-spacing-partial-types.test.js tests/browser/editor-inspector-size-partial-types.test.js tests/browser/editor-inspector-position-partial-types.test.js",
+      "result": "PASS",
+      "passed": 3,
+      "failed": 0,
+      "duration_ms": 996410,
+      "coverage": "All editable PARTIAL types through desktop/tablet/mobile Inspector, Canvas, draft Save, separate Publish, public renderer and responsive inheritance/reset."
+    },
+    "contextAndState": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-inspector-layout-context-lifecycle.test.js tests/browser/editor-inspector-layout-tablet-context-lifecycle.test.js tests/browser/editor-inspector-tablet-layout-lifecycle.test.js tests/browser/editor-inspector-tablet-state-partial-types.test.js tests/browser/editor-root-style.test.js",
+      "result": "PASS",
+      "passed": 5,
+      "failed": 0,
+      "duration_ms": 1669670,
+      "individualTests": [
+        "Flex/Grid Inspector desktop contexts across Save and Publish",
+        "Flex/Grid Inspector tablet contexts and reset",
+        "tablet layout, sizing, spacing and position lifecycle",
+        "tablet hover/focus states across editable PARTIAL types",
+        "root Inspector desktop/mobile public renderer parity"
+      ]
+    },
+    "totalFocusedChromium": {
+      "result": "PASS",
+      "passed": 11,
+      "failed": 0
+    }
+  },
+  "verifiedBehavior": [
+    "Desktop, tablet, and mobile style values remain independent through draft Save and reload; Publish alone updates the public renderer.",
+    "Responsive Flex/Grid container and item geometry is verified in desktop/mobile and tablet lifecycle tests.",
+    "All editable PARTIAL types preserve spacing, sizing, and position fields through responsive Inspector, Canvas, Save/Publish and inheritance/reset.",
+    "All 44 editable PARTIAL types preserve typography/color/background/border/shadow/opacity/transform/filter/transition/aspect-ratio fields, hover/focus-visible state and public CSS parity.",
+    "Root Inspector appearance matches the published Canvas on desktop and mobile only after explicit Publish."
+  ],
+  "limitations": {
+    "scope": "Automated responsive/design matrix passes for editable PARTIAL and root capabilities across the listed groups. The 34 PLANNED capabilities, full Visual Editor manual/physical acceptance, tenant-wide E2E and complete Editor acceptance remain open to their later plan gates.",
+    "manualAcceptance": "Full Editor desktop/mobile physical acceptance is deferred to 77.44.7.F/77.44.8 per AGENTS.md.",
+    "broadEditorLayoutRun": "The first broad sequential editor:layout attempt was interrupted after 56 reported passing cases because the all-45-type test exceeded ten minutes. That run is not claimed as PASS; the relevant responsive/layout/state matrices were rerun separately and all 11 focused Chromium tests passed."
+  },
+  "productionData": {
+    "reads": 0,
+    "writes": 0,
+    "migrations": 0,
+    "r2Deletes": 0
+  },
+  "cost": "0 Ft; existing dependencies and platform APIs only. No data writes/migrations/R2 changes or paid services.",
+  "productionRuntimeCheck": {
+    "worker": "sanci9517-streamer-brand",
+    "deploymentsApi": "GET latest deployment read-only",
+    "deploymentId": "5802b102-e5e1-4f18-a816-13bfdc2b2a02",
+    "workerVersion": "8a9b745b-d287-4b3a-ae88-42daaf7f06a0",
+    "trafficPercent": 100,
+    "health": "Direct GET /api/health -> HTTP 200 at 2026-11-02T11:33:20Z",
+    "runtimeSourceChanged": false,
+    "docsOnlyPushRequiresRedeploy": false
+  }
+}

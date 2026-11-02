@@ -1,7 +1,7 @@
 {
   "date": "2026-11-02",
   "plan_item": "77.44.7.B — WEB-013 published Rich Text anchor extraction, authorization, Save/Publish acceptance",
-  "status": "OWNER_LINK_ROUNDTRIP_AND_RESTORE_VERIFIED; TARGETED_ACCEPTANCE_PASS; FULL_77_44_7_B_OPEN",
+  "status": "77_44_7_B_PASS_AUTOMATED_AND_TARGETED_OWNER_LIVE_ACCEPTANCE; FULL_EDITOR_PHYSICAL_ACCEPTANCE_DEFERRED",
   "repository": {
     "branch": "v2/foundation",
     "runtime_commit": "04ff5ac00e9e6064e68ad009297074af0ae4e6a1",
@@ -64,6 +64,30 @@
       "version": "4.130.0",
       "assets": 162,
       "upload": "335.17 KiB / 87.46 KiB gzip"
+    },
+    "richTextBrowser": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-richtext-*.test.js tests/browser/editor-inspector-richtext-controls.test.js",
+      "result": "PASS",
+      "passed": 15,
+      "failed": 0,
+      "note": "Verified in the current development block before the broader Editor layout suite was attempted."
+    },
+    "editorUnit": {
+      "command": "npm run test:editor",
+      "result": "PASS",
+      "passedSuites": 11,
+      "failedSuites": 0
+    },
+    "editorLayoutSuite": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium npm run test:editor:layout",
+      "result": "INTERRUPTED_NOT_PASS",
+      "completedIndividualTests": "56 reported individual Chromium test cases passed before interruption; the overall summary was not emitted.",
+      "reason": "The broad sequential suite reached tests/browser/editor-inspector-partial-types.test.js, a non-B test covering 45 Inspector types, and it was still actively consuming CPU after more than 10 minutes in that one test. Stopped to keep the B-specific verification proportionate; no PASS is claimed for this suite."
+    },
+    "web013Repeat": {
+      "command": "npm run test:web013",
+      "result": "INCOMPLETE_NOT_PASS",
+      "reason": "The repeat run was terminated after remaining without a test summary for more than five minutes in this environment. The earlier documented 63/63 pass was not invalidated; no runtime source changed during this block."
     }
   },
   "d1Preflight": {
@@ -85,17 +109,20 @@
     "publicAssetChanges": [],
     "publicAssetHashes": "Wrangler reported no updated asset files to upload; no public asset source changed in this runtime-only fix.",
     "ownerObservedNavigationReport": {
-      "checked": 7,
-      "broken": 0,
-      "contentBroken": 0,
-      "internalContentLinksChecked": 0
+      "source": "Owner-provided authenticated Editor link-report output after restoring the temporary Rich Text test link.",
+      "checkedNavigationItems": 7,
+      "brokenNavigationLinks": 0,
+      "contentBrokenLinks": 0,
+      "checkedInternalContentLinks": 0,
+      "interpretation": "The restored page contains no internal content links, so the report confirms the clean baseline but does not claim that it rechecked a live content-link target."
     },
     "previousDeploymentId": "67d66f65-18fe-4807-9e67-40acd17b07b0",
-    "previousWorkerVersion": "d18b572d-bb69-4816-a892-13ebd361adf1"
+    "previousWorkerVersion": "d18b572d-bb69-4816-a892-13ebd361adf1",
+    "targetPlanItem": "77.44.7.B PASS for automated and targeted owner-assisted acceptance; full Visual Editor manual/physical acceptance remains deferred to 77.44.7.F/77.44.8."
   },
   "limitations": {
     "ci": "GitHub combined statuses empty; CI pass not claimed. GitHub Actions was not run because quota is unavailable; [skip ci] was used.",
-    "acceptance": "The owner-confirmed Rich Text internal-link create/publish/read/remove/save/publish round trip is verified and the temporary link is removed. The full 77.44.7.B remains OPEN for remaining cases and a directly authenticated link-report live check; complete Visual Editor physical/manual acceptance remains deferred.",
+    "acceptance": "77.44.7.B passes its automated, live Save/Publish link round-trip and post-restore link-report criteria. The owner confirmed the end-to-end link worked, distinct Save and Publish revisions exist, the temporary link was removed, and the authenticated report showed 7 navigation links checked with zero findings and no content links remaining. The broad unrelated editor:layout suite was interrupted and is not claimed as PASS. Complete Editor physical/manual acceptance remains deferred until the plan gate.",
     "manualFullEditor": "DEFERRED until complete Visual Editor per AGENTS.md."
   },
   "cost": "0 Ft; existing platform APIs and dependencies only, no D1 writes/migration, R2 change, or new paid service.",
@@ -241,5 +268,18 @@
     "wranglerDryRun": "PASS, Wrangler 4.130.0; 162 assets; no updated public asset files.",
     "productionHealth": "HTTP 200 after deploy.",
     "targetPlanItem": "77.44.7.B remains OPEN / NOT CERTIFIED until the owner removes the temporary test link with Save and separate Publish, then read-only verification confirms restoration."
+  },
+  "acceptanceStatus": {
+    "planItem": "77.44.7.B",
+    "status": "PASS_AUTOMATED_AND_TARGETED_OWNER_LIVE_ACCEPTANCE",
+    "basis": [
+      "15/15 B-focused Chromium tests",
+      "11/11 Editor unit test files/suites",
+      "63/63 WEB-013 tests",
+      "owner-confirmed live Rich Text link insert/publish/remove/save/publish round-trip",
+      "read-only verification of distinct Save/Publish revisions and restored published content",
+      "owner-provided authenticated link-report baseline: 7 navigation checked, 0 broken, 0 content links remaining"
+    ],
+    "deferred": "Full Visual Editor manual/physical acceptance remains deferred to 77.44.7.F/77.44.8."
   }
 }
