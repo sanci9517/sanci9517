@@ -61,9 +61,32 @@
     "r2": "unchanged"
   },
   "remaining": {
-    "authenticated_production_link_report": "OPEN: the owner's mobile browser session is not exposed to this execution environment; do not request credentials or bypass authentication.",
+    "authenticated_production_link_report": "Owner-observed authenticated production navigation report: 7 navigation items checked, 0 broken targets/menu URLs. Content-link parser acceptance remains OPEN: report checked 0 internal content links and the SELECT-only snapshot scan found no link-like content candidates.",
     "full_visual_editor_acceptance": "OPEN and deferred until the complete Editor scope is implemented, per AGENTS.md.",
     "production_data_changes": "None beyond Worker deployment; D1 preflight was read-only."
   },
-  "cost": "0 Ft; no paid service, CI quota purchase, D1 mutation, or R2 change."
+  "cost": "0 Ft; no paid service, CI quota purchase, D1 mutation, or R2 change.",
+  "owner_observed_authenticated_report": {
+    "source": "Exact result text supplied by the owner from the authenticated production Visual Editor; Codex did not access or replay the owner browser session.",
+    "result": "Nem található hibás oldalhivatkozás a publikált navigációban (7 ellenőrzött elem). Hibás belső URL a menüben: 0. Tartalmi linkhibák: 0 (0 ellenőrzött belső link).",
+    "published_navigation_items_checked": 7,
+    "broken_navigation_targets": 0,
+    "broken_internal_menu_urls": 0,
+    "broken_content_links": 0,
+    "internal_content_links_checked": 0,
+    "interpretation": "Authenticated production navigation check is owner-observed PASS for the 7 menu items. Content-link behavior remains unverified because the run checked 0 internal content links."
+  },
+  "read_only_published_content_scan": {
+    "method": "Cloudflare D1 query API; two aggregate SELECT-only queries against site-default published, non-archived pages; no content values returned.",
+    "published_pages": 8,
+    "pages_with_published_snapshot": 8,
+    "pages_without_published_snapshot": 0,
+    "pages_with_href_text": 0,
+    "pages_with_internal_path_text": 0,
+    "pages_with_legacy_anchor_markup": 0,
+    "pages_with_https_text": 0,
+    "changed_db": false,
+    "rows_written": 0,
+    "interpretation": "The 0-content-link result is consistent with the current published snapshots containing no detectable href, legacy anchor, /p/ path, or HTTPS text. This aggregate scan does not exercise link-report parsing of a real content link."
+  }
 }
