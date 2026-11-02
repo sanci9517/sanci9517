@@ -251,6 +251,18 @@ test('Rich Text native cross-paragraph and list selection survives marks, Save a
     assert.deepEqual(await canvasMixed.locator('p').nth(1).locator('sub').allTextContents(),['mma',' Delta']);
     assert.deepEqual(await canvasMixed.locator('ul > li sub').allTextContents(),['L','ist One','List'],
       'Canvas mirrors the mixed-block selection from the Page Model');
+    await page.getByLabel('Hivatkozás címe').fill('/p/paragraph-list');
+    await page.getByRole('button',{name:'Link beállítása',exact:true}).click();
+    assert.equal((await surface.locator('p').nth(1).locator('a[href="/p/paragraph-list"]').allTextContents()).join(''),'mma Delta',
+      'a native cross-structure selection links only its selected paragraph range');
+    assert.deepEqual(await listItems.locator('a[href="/p/paragraph-list"]').allTextContents(),['L','ist One','List'],
+      'the same link operation applies only selected text in each list item');
+    assert.ok(await surface.locator('a[href="/p/paragraph-list"]').count()>=3,
+      'the link destination is applied across the paragraph and both selected list items');
+    assert.equal((await canvasMixed.locator('a[href="/p/paragraph-list"]').allTextContents()).join(''),'mma DeltaList OneList',
+      'Canvas mirrors mixed-structure links without losing nested marks');
+    assert.match(await page.evaluate(()=>window.getSelection()?.toString()??''),
+      /mma Delta[\\s\\S]*List One[\\s\\S]*List/,'mixed-structure link insertion preserves the native selection');
     if(width===1366){
       await page.locator('#save').click();
       await page.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent?.startsWith('Mentve'));
@@ -262,7 +274,7 @@ test('Rich Text native cross-paragraph and list selection survives marks, Save a
       assert.equal(persisted.blocks[0].children.find(run=>run.text==='Beta')?.marks?.includes('code'),true);
       assert.equal(persisted.blocks[1].children.filter(run=>run.marks?.includes('code')).map(run=>run.text).join(''),'Gamma');
       assert.equal(persisted.blocks[0].children.find(run=>run.text==='Beta')?.link?.href,'/p/multi-block');
-      assert.equal(persisted.blocks[1].children.filter(run=>run.link?.href==='/p/multi-block').map(run=>run.text).join(''),'Gamma');
+      assert.equal(persisted.blocks[1].children.filter(run=>run.link?.href==='/p/multi-block').map(run=>run.text).join(''),'Ga');
       assert.equal(persisted.blocks[1].children.filter(run=>run.marks?.includes('subscript')).map(run=>run.text).join(''),'mma Delta');
       assert.deepEqual(persisted.blocks[2].items.map(item=>item.filter(run=>run.marks?.includes('underline')).map(run=>run.text).join('')),
         ['ist One','List Tw'],'Save must retain native list selection formatting');
@@ -270,6 +282,10 @@ test('Rich Text native cross-paragraph and list selection survives marks, Save a
         ['ist One','List Tw'],'Save must retain backward native selection formatting');
       assert.deepEqual(persisted.blocks[2].items.map(item=>item.filter(run=>run.marks?.includes('subscript')).map(run=>run.text).join('')),
         ['List One','List'],'Save retains subscript formatting across paragraph/list boundary');
+      assert.equal(persisted.blocks[1].children.filter(run=>run.link?.href==='/p/paragraph-list').map(run=>run.text).join(''),'mma Delta',
+        'Save retains the selected paragraph segment link');
+      assert.deepEqual(persisted.blocks[2].items.map(item=>item.filter(run=>run.link?.href==='/p/paragraph-list').map(run=>run.text).join('')),
+        ['List One','List'],'Save retains links only on the selected list-item segments');
       assert.equal(persisted.blocks[0].children.map(run=>run.text).join(''),'Alpha Beta');
       assert.equal(persisted.blocks[1].children.map(run=>run.text).join(''),'Gamma Delta');
       assert.equal(published,null,'desktop Save must leave the public page unchanged');
@@ -295,21 +311,30 @@ test('Rich Text native cross-paragraph and list selection survives marks, Save a
         ['ist One','List Tw'],'mobile Save must retain backward native selection formatting');
       assert.deepEqual(persisted.blocks[2].items.map(item=>item.filter(run=>run.marks?.includes('subscript')).map(run=>run.text).join('')),
         ['List One','List'],'mobile Save retains cross-structure subscript formatting');
+      assert.equal(persisted.blocks[1].children.filter(run=>run.link?.href==='/p/paragraph-list').map(run=>run.text).join(''),'mma Delta',
+        'mobile Save retains the selected paragraph segment link');
+      assert.deepEqual(persisted.blocks[2].items.map(item=>item.filter(run=>run.link?.href==='/p/paragraph-list').map(run=>run.text).join('')),
+        ['List One','List'],'mobile Save retains links only on selected list-item segments');
       await page.locator('#publish').click();
       await page.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent==='Publikálva');
       assert.equal(writes.at(-1).publish,true,'mobile multi-block changes require a separate Publish');
     }
     assert.equal(published.pages[pageId].nodes[nodeId].props.richText.blocks[0].children.find(run=>run.text==='Beta')?.link?.href,'/p/multi-block');
-    assert.equal(published.pages[pageId].nodes[nodeId].props.richText.blocks[1].children.filter(run=>run.link?.href==='/p/multi-block').map(run=>run.text).join(''),'Gamma');
+    assert.equal(published.pages[pageId].nodes[nodeId].props.richText.blocks[1].children.filter(run=>run.link?.href==='/p/multi-block').map(run=>run.text).join(''),'Ga');
     const publicPage=await browser.newPage({viewport:{width:390,height:850}});
     await publicPage.goto('http://127.0.0.1:'+server.address().port+'/p/selection-test');
     const publicSurface=publicPage.locator('.visual-richtext');await publicSurface.waitFor();
     assert.equal((await publicSurface.locator('strong').allTextContents()).join(''),'BetaGamma');
     assert.equal((await publicSurface.locator('em').allTextContents()).join(''),'BetaGamma');
-    assert.equal((await publicSurface.locator('a').allTextContents()).join(''),'BetaGamma','the published renderer must retain each linked block segment');
-    assert.ok((await publicSurface.locator('a').evaluateAll(anchors=>anchors.map(anchor=>anchor.getAttribute('href')))).every(href=>href==='/p/multi-block'));
+    assert.equal((await publicSurface.locator('a[href="/p/multi-block"]').allTextContents()).join(''),'BetaGa',
+      'the published renderer preserves the untouched part of a previously linked phrase');
+    assert.ok((await publicSurface.locator('a[href="/p/multi-block"]').evaluateAll(anchors=>anchors.every(anchor=>anchor.getAttribute('href')==='/p/multi-block'))));
     const publishedListItems=publicSurface.locator('ul > li');
     const publishedMarkText=async tag=>publishedListItems.evaluateAll((items,tag)=>items.map(item=>[...item.querySelectorAll(tag)].map(node=>node.textContent).join('')),tag);
+    assert.equal((await publicSurface.locator('a[href="/p/paragraph-list"]').allTextContents()).join(''),'mma DeltaList OneList',
+      'the published renderer retains linked text across paragraph and list structures');
+    assert.equal((await publicSurface.locator('a[href="/p/paragraph-list"]').evaluateAll(anchors=>new Set(anchors.map(anchor=>anchor.closest('li')).filter(Boolean)).size)),2,
+      'published links remain scoped to the two selected list-item containers');
     assert.deepEqual(await publishedMarkText('u'),['ist One','List Tw'],
       'published rendering must retain marks applied across list items');
     assert.deepEqual(await publishedMarkText('s'),['ist One','List Tw'],
