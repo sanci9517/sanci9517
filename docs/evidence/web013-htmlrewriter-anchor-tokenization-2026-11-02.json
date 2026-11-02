@@ -1,7 +1,7 @@
 {
   "date": "2026-11-02",
   "plan_item": "77.44.7.B — WEB-013 published Rich Text anchor extraction, authorization, Save/Publish acceptance",
-  "status": "RUNTIME_FIX_DEPLOYED; PRODUCTION_HEALTH_PASS; CONTENT_LINK_ACCEPTANCE_OPEN",
+  "status": "RUNTIME_FIX_DEPLOYED; OWNER_CONFIRMED_CONTENT_LINK_WORKS; LIVE_PUBLIC_API_VERIFIED; TEST_LINK_RESTORE_PENDING",
   "repository": {
     "branch": "v2/foundation",
     "runtime_commit": "5e2c9570f441989a4af395fc2e82d1f39fea6db1",
@@ -92,7 +92,7 @@
   },
   "limitations": {
     "ci": "GitHub combined statuses empty because [skip ci]/Actions quota; CI pass not claimed.",
-    "acceptance": "77.44.7.B remains OPEN / NOT CERTIFIED until authenticated content-link report and separate production Save/Publish acceptance with real internal Rich Text link.",
+    "acceptance": "Owner confirmed the test link works and public APIs verify it, but the temporary link remains published. Remove it with Editor Save then separate Publish and verify baseline restoration before calling the targeted acceptance fully closed; full 77.44.7.B and Visual Editor acceptance remain open/deferred.",
     "manualFullEditor": "DEFERRED until complete Visual Editor per AGENTS.md."
   },
   "cost": "0 Ft; no paid service, new runtime dependency, D1 write/migration, or R2 change.",
@@ -159,5 +159,35 @@
     "safeCandidateChangedDb": false,
     "chosenForUserAssistedTest": "page-about; link target page-home",
     "doNotPublish": "legacy-community has a 879-byte draft and distinct 3742-byte published snapshot (different hashes); do not Publish this page as the temporary link test source."
+  },
+  "ownerAssistedAcceptance": {
+    "ownerReported": "Működik.",
+    "interpretation": "Owner confirmed the internal Rich Text link test works; this is not the complete Editor manual acceptance.",
+    "readOnlyProductionVerification": {
+      "pageId": "page-about",
+      "pageSlug": "abou",
+      "publishedRevisionId": "919f4ed7-6236-4517-8efd-a7c542e468b5",
+      "revisionVersion": 58,
+      "draftBytes": 2541,
+      "publishedBytes": 2541,
+      "draftSha256": "e195a2751c91f1d1e902e9a8c6cced6c5f2597f86c68d852a933d526294435f9",
+      "publishedSha256": "e195a2751c91f1d1e902e9a8c6cced6c5f2597f86c68d852a933d526294435f9",
+      "hrefs": [
+        {
+          "field": "href",
+          "value": "/p/home"
+        }
+      ],
+      "publicPageApi": "GET /api/public/pages?slug=abou -> HTTP 200; contains href=/p/home",
+      "targetPageApi": "GET /api/public/pages?slug=home -> HTTP 200"
+    },
+    "d1PostTestCheck": {
+      "method": "SELECT only",
+      "rowsRead": 5,
+      "rowsWritten": 0,
+      "changedDb": false
+    },
+    "restorePending": true,
+    "requiredRestore": "In the already authenticated Editor, remove only the temporary /p/home link from page-about; Save, then Publish separately. Verify the page draft/published hashes return to the preflight baseline."
   }
 }
