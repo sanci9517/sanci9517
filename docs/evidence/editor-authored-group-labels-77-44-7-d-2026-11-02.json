@@ -1,0 +1,159 @@
+{
+  "date": "2026-11-02",
+  "planItem": "77.44.7.D — element-specific content and media",
+  "status": "AUTHORED_GROUP_LABEL_SANITIZATION_PASS; DEPLOYED_AND_VERIFIED; FULL_77_44_7_D_OPEN",
+  "repository": {
+    "branch": "v2/foundation",
+    "baseCommit": "bd2064bd14f44146b5601abb943853b815bb9507",
+    "runtimeCommit": "8ff792520313dc4689c184698357ba3a044817a6",
+    "runtimeSourceChanged": true,
+    "changedPublicRuntimeAssets": [
+      "public/editor-v2/core/authored-content.js"
+    ],
+    "testFiles": [
+      "tests/editor-accessible-icon-label.test.js"
+    ]
+  },
+  "defect": {
+    "location": "public/editor-v2/core/authored-content.js: authoredNodeHtml group and table renderers",
+    "cause": "gallery, carousel, tabs, accordion and dropdown Accessible Name paths called String() on persisted ariaLabel values; table caption was interpolated as a string. A malformed object with a non-callable toString throws during rendering.",
+    "reproduction": {
+      "malformedValue": { "toString": null },
+      "types": ["gallery", "carousel", "tabs", "accordion", "dropdown", "table"],
+      "result": "Each type threw TypeError: Cannot convert object to primitive value before the fix."
+    },
+    "fix": "Reuse the renderer's string-only trimmedText helper for authored group labels and table captions. Valid labels are trimmed and capped at 160 characters; blank or malformed group labels receive localized safe defaults. Table caption is normalized for both region name and visible caption, with Táblázat as the fallback.",
+    "savePublish": "Only rendered output is normalized. The Page Model is not rewritten; the existing Save and separate Publish actions remain distinct."
+  },
+  "reuseReview": {
+    "used": "The project-owned trimmedText helper, shared authoredNodeHtml renderer, existing typed content model and existing Editor Chromium lifecycle fixture.",
+    "externalCode": "None; the local renderer and tests were a better architectural fit than a new dependency.",
+    "dependency": "No new dependency, paid service or infrastructure."
+  },
+  "tests": [
+    {
+      "command": "node --test tests/editor-accessible-icon-label.test.js",
+      "result": "PASS",
+      "passed": 2,
+      "failed": 0,
+      "coverage": "Image descriptions/captions and malformed/default/padded group and table labels."
+    },
+    {
+      "command": "npm run test:editor",
+      "result": "PASS",
+      "passedSuites": 12,
+      "failedSuites": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "result": "PASS"
+    },
+    {
+      "command": "npm run test:web013:migration-gate",
+      "result": "PASS"
+    },
+    {
+      "command": "python3 tests/plan-contract.test.py",
+      "result": "PASS",
+      "passed": 13,
+      "failed": 0
+    },
+    {
+      "command": "python3 scripts/audit-active-plan-point.py",
+      "result": "PASS",
+      "next": "77.44.7.D",
+      "features": 396
+    },
+    {
+      "command": "python3 scripts/check-canonical-plan.py",
+      "result": "PASS",
+      "masterFiles": 13
+    },
+    {
+      "command": "python3 scripts/build-feature-traceability.py --check",
+      "result": "PASS",
+      "mappedFeatures": 396
+    },
+    {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test tests/browser/editor-content-system.test.js",
+      "result": "PASS",
+      "passed": 1,
+      "failed": 0,
+      "durationMs": 58611,
+      "coverage": "Real browser Canvas render, Inspector edits, draft Save, reload, unchanged published snapshot, separate Publish."
+    },
+    {
+      "command": "node --check public/editor-v2/core/authored-content.js && node --check tests/editor-accessible-icon-label.test.js && git diff --check",
+      "result": "PASS"
+    }
+  ],
+  "releasePreflight": {
+    "productionD1Query": {
+      "api": "Cloudflare D1 Query API",
+      "sql": "SELECT COUNT(*) AS applied_count, MAX(name) AS latest_name FROM d1_migrations",
+      "appliedCount": 34,
+      "latestMigration": "0028_media_archive.sql",
+      "rowsRead": 34,
+      "rowsWritten": 0,
+      "changes": 0,
+      "changedDb": false
+    },
+    "wrangler": {
+      "version": "4.130.0",
+      "command": "XDG_CONFIG_HOME=/tmp/sanci9517-wrangler-config ./node_modules/.bin/wrangler deploy --dry-run",
+      "result": "PASS",
+      "assetsRead": 162,
+      "totalUpload": "335.00 KiB / gzip 87.45 KiB"
+    },
+    "noProductionWrite": "No D1 migration, database write or R2 mutation."
+  },
+  "release": {
+    "githubBranch": "v2/foundation",
+    "githubBranchHead": "8ff792520313dc4689c184698357ba3a044817a6",
+    "push": "Normal fast-forward from bd2064bd; no force push or branch change.",
+    "githubActions": [
+      { "name": "verify", "runId": 41472062943, "status": "completed", "conclusion": "success" },
+      { "name": "twitch-integration", "runId": 41472062975, "status": "completed", "conclusion": "success" },
+      { "name": "editor-core", "runId": 41472062976, "status": "in_progress", "conclusion": null },
+      { "name": "Workers Builds: sanci9517-streamer-brand", "checkRunId": 125369578460, "status": "completed", "conclusion": "success" }
+    ],
+    "aggregateGitHubCiPassClaimed": false,
+    "cloudflareWorkersBuild": {
+      "buildId": "944f332f-2de4-4e1f-9c76-b60391f4e2ad",
+      "sourceCommit": "8ff792520313dc4689c184698357ba3a044817a6",
+      "status": "stopped",
+      "outcome": "success",
+      "buildCommand": "npm run typecheck",
+      "deployCommand": "npm run deploy:safe",
+      "migrationGate": "PASS; no migration was applied"
+    },
+    "deploymentId": "015d1e55-abaf-4aa2-ae6c-84d84623468f",
+    "workerVersion": "bf34ddad-fefc-4ad2-bf8d-bb994f0768cf",
+    "trafficPercent": 100,
+    "health": {
+      "status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "changedAssetSha256": {
+      "path": "/editor-v2/core/authored-content.js",
+      "local": "1bf38d2e11f21924da738127b4e2804bc9c575fe92831d17b4047215b7f13de7",
+      "production": "1bf38d2e11f21924da738127b4e2804bc9c575fe92831d17b4047215b7f13de7",
+      "matches": true
+    }
+  },
+  "dataChanges": {
+    "productionD1Writes": 0,
+    "productionD1Migrations": 0,
+    "productionR2Changes": 0
+  },
+  "scope": {
+    "fullPlanItem": "77.44.7.D remains OPEN; this slice makes malformed authored group labels and table captions safe and normalizes rendered values, but does not complete the content/media capability matrix or production media lifecycle.",
+    "manualAcceptance": "Deferred until full Visual Editor acceptance gate at 77.44.7.F/77.44.8.",
+    "cost": "0 Ft; existing service quota only; no paid service, credits, quota purchase or new dependency."
+  }
+}
