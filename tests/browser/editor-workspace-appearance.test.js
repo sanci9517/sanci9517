@@ -324,3 +324,19 @@ test('workspace profile export/import uses bounded allowlisted JSON, supports un
   assert.deepEqual(writes,[],'profile file transfer and workspace history never Save or Publish page content');
   assert.deepEqual(errors,[]);
 });
+
+test('profile import explains when browser storage is unavailable instead of claiming the profile was saved',async t=>{
+  const {page,writes,errors}=await openEditor(t,{width:390,height:844,isMobile:true,hasTouch:true});
+  await openPreferences(page);
+  await page.evaluate(key=>{
+    const original=Storage.prototype.setItem;
+    Storage.prototype.setItem=function(name,value){if(name===key)throw new DOMException('Storage is full','QuotaExceededError');return original.call(this,name,value)};
+  },WORKSPACE_PREFERENCES_KEY);
+  const transfer={kind:'sanci-editor-workspace-profile',version:1,profile:{id:'profile-transfer-source',name:'Átmeneti telefonos nézet',createdAt:1,appearance:{layout:'balanced',theme:'aurora',density:'comfortable',accent:'#00a7c8',dockOrder:'right-canvas-left'},dock:{leftOpen:true,rightOpen:false,leftTab:'layers',leftWidth:310,rightWidth:352}}};
+  await page.locator('#workspaceProfileFile').setInputFiles({name:'temporary-profile.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(transfer))});
+  await page.waitForFunction(()=>document.querySelector('#workspaceAppearanceStatus')?.textContent.includes('csak ebben a munkamenetben'));
+  assert.equal(await page.locator('#workspaceProfile option').count(),2,'the safe in-memory profile remains available for the current Editor session');
+  assert.equal(await page.evaluate(key=>localStorage.getItem(key),WORKSPACE_PREFERENCES_KEY),null,'failed browser persistence does not claim durable storage');
+  assert.deepEqual(writes,[],'a failed profile persistence attempt never writes Page Model data');
+  assert.deepEqual(errors,[]);
+});

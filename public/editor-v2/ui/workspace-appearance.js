@@ -131,7 +131,7 @@ export function mountWorkspaceAppearance({documentRef=globalThis.document,root=d
   try{storage=documentRef.defaultView?.localStorage}catch{}
   let value=readWorkspacePreferences(storage);
   let undoStack=[],redoStack=[],idSequence=0;
-  const persist=()=>{try{storage?.setItem(WORKSPACE_PREFERENCES_KEY,JSON.stringify(value))}catch{}};
+  const persist=()=>{try{if(!storage)return false;storage.setItem(WORKSPACE_PREFERENCES_KEY,JSON.stringify(value));return true}catch{return false}};
   const currentDock=()=>{try{return normalizeDockState(readDockState())}catch{return normalizeDockState({})}};
   const snapshot=()=>({preferences:normalizeWorkspacePreferences(value),dock:currentDock()});
   const syncHistory=()=>{
@@ -208,8 +208,8 @@ export function mountWorkspaceAppearance({documentRef=globalThis.document,root=d
     remember();idSequence+=1;
     const id=`profile-${Date.now().toString(36)}-${idSequence.toString(36)}`;
     value={...value,profiles:[...value.profiles,{id,name,createdAt:Date.now(),appearance:normalizeVisualPreferences(value),dock:currentDock()}]};
-    paint();persist();if(fields.profile)fields.profile.value=id;renderProfiles();
-    if(status)status.textContent=`„${name}” munkaterület-profil elmentve ezen az eszközön.`;
+    paint();const saved=persist();if(fields.profile)fields.profile.value=id;renderProfiles();
+    if(status)status.textContent=saved?`„${name}” munkaterület-profil elmentve ezen az eszközön.`:`„${name}” profil csak ebben a munkamenetben érhető el, mert a böngésző tárhelye nem használható.`;
     return true;
   };
   const loadProfile=()=>{
@@ -248,8 +248,8 @@ export function mountWorkspaceAppearance({documentRef=globalThis.document,root=d
     if(value.profiles.some(item=>item.name.localeCompare(profile.name,undefined,{sensitivity:'base'})===0)){if(status)status.textContent='Már van ilyen nevű profil. Nevezd át az importált profilt vagy töröld a meglévőt.';return false}
     remember();idSequence+=1;
     const imported={...profile,id:`profile-${Date.now().toString(36)}-${idSequence.toString(36)}`,createdAt:Date.now()};
-    value={...value,profiles:[...value.profiles,imported]};paint();persist();if(fields.profile)fields.profile.value=imported.id;renderProfiles();
-    if(status)status.textContent=`„${imported.name}” profil ezen az eszközön elmentve. A küldött fájlban lévő futtatható kódot nem használjuk.`;
+    value={...value,profiles:[...value.profiles,imported]};paint();const saved=persist();if(fields.profile)fields.profile.value=imported.id;renderProfiles();
+    if(status)status.textContent=saved?`„${imported.name}” profil ezen az eszközön elmentve. A küldött fájlban lévő futtatható kódot nem használjuk.`:`„${imported.name}” profil csak ebben a munkamenetben érhető el, mert a böngésző tárhelye nem használható. A fájlból származó futtatható kódot nem használjuk.`;
     return true;
   };
   openButton?.addEventListener('click',()=>{documentRef.querySelector('.more-actions')?.removeAttribute('open');open()});
