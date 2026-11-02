@@ -1,0 +1,162 @@
+{
+  "date": "2026-11-02",
+  "planItem": "77.44.7.D — element-specific content and media",
+  "status": "MALFORMED_AUTHORED_REPEATER_RENDERING_PASS; DEPLOYED_AND_VERIFIED; FULL_77_44_7_D_OPEN",
+  "repository": {
+    "branch": "v2/foundation",
+    "baseCommit": "a08488321d092c6996e436ac69af545a5cac37f6",
+    "runtimeCommit": "f809daedeba92099b55fef82f6cdba5a1a3dbeb6",
+    "runtimeSourceChanged": true,
+    "changedPublicRuntimeAssets": ["public/editor-v2/core/authored-content.js"],
+    "testFiles": ["tests/editor-accessible-icon-label.test.js"]
+  },
+  "defect": {
+    "location": "public/editor-v2/core/authored-content.js — authoredNodeHtml repeater fields",
+    "cause": "A malformed persisted repeater array containing null rows caused TypeError in list, tabs, accordion, dropdown, gallery, and carousel rendering. The renderer accessed nested properties before verifying each row was an object.",
+    "reproduction": {
+      "authoredValue": { "items": [null] },
+      "types": ["list", "tabs", "accordion", "gallery", "carousel"],
+      "result": "Before the fix: TypeError reading href, text, or assetId from null during Canvas/public rendering."
+    },
+    "fix": "Normalize the in-memory display list to plain object rows, replacing malformed/null/array entries with empty objects before rendering. Existing localized safe defaults and media-empty UI then render without mutating the Page Model.",
+    "savePublish": "No persisted Page Model data is rewritten; Save remains a private draft action and Publish remains separate."
+  },
+  "reuseReview": {
+    "used": "The existing shared authoredNodeHtml renderer, existing content schema, safe display defaults, and existing Chromium lifecycle fixtures.",
+    "externalCode": "None; no compatible external solution was needed for this local renderer guard.",
+    "dependency": "No new dependency, paid service, or infrastructure."
+  },
+  "tests": [
+    {
+      "command": "node --check public/editor-v2/core/authored-content.js && node --check tests/editor-accessible-icon-label.test.js && node --test tests/editor-accessible-icon-label.test.js",
+      "result": "PASS",
+      "passedFiles": 1,
+      "failedFiles": 0,
+      "coverage": "Null repeater rows for list, tabs, accordion, dropdown, gallery and carousel; safe fallback output; malformed nested content assertions from the preceding renderer fix."
+    },
+    {
+      "command": "npm run test:editor",
+      "result": "PASS",
+      "passedSuites": 12,
+      "failedSuites": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "result": "PASS",
+      "environment": "Used the existing prepared dependency directory through a temporary local symlink; no dependency was installed or changed."
+    },
+    {
+      "command": "npm run test:web013:migration-gate",
+      "result": "PASS"
+    },
+    {
+      "command": "python3 tests/plan-contract.test.py",
+      "result": "PASS",
+      "passed": 13,
+      "failed": 0
+    },
+    {
+      "command": "python3 scripts/audit-active-plan-point.py",
+      "result": "PASS",
+      "next": "77.44.7.D",
+      "features": 396,
+      "functionalAcceptance": "NOT_CERTIFIED"
+    },
+    {
+      "command": "python3 scripts/build-feature-traceability.py --check",
+      "result": "PASS",
+      "mappedFeatures": 396
+    },
+    {
+      "command": "python3 scripts/check-canonical-plan.py",
+      "result": "PASS",
+      "masterFiles": 13
+    },
+    {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-content-system.test.js tests/browser/editor-gallery-crop-parity.test.js",
+      "result": "PASS",
+      "passed": 5,
+      "failed": 0,
+      "coverage": "Real Chromium Canvas/Inspector draft Save, reload, separate Publish, plus gallery/crop/source-switch parity at 390px and 1366px."
+    },
+    {
+      "command": "git diff --check",
+      "result": "PASS"
+    }
+  ],
+  "testEnvironmentNote": "The initial Chromium invocation was blocked before test assertions because the sandbox disallows the local loopback test server. The same command was rerun with approved loopback access; all five real-browser tests passed. An initial typecheck attempt without dependencies failed with `tsc: not found`; rerunning against the pre-existing temporary dependency symlink passed.",
+  "releasePreflight": {
+    "productionD1QueryBefore": {
+      "api": "Cloudflare D1 Query API",
+      "sql": "SELECT COUNT(*) AS applied_count, MAX(name) AS latest_name FROM d1_migrations",
+      "appliedCount": 34,
+      "latestMigration": "0028_media_archive.sql",
+      "rowsRead": 34,
+      "rowsWritten": 0,
+      "changes": 0,
+      "changedDb": false
+    },
+    "wrangler": {
+      "version": "4.130.0",
+      "command": "XDG_CONFIG_HOME=/tmp/sanci9517-wrangler-config ./node_modules/.bin/wrangler deploy --dry-run",
+      "result": "PASS",
+      "assetsRead": 162,
+      "totalUpload": "335.09 KiB / gzip 87.47 KiB"
+    },
+    "productionD1QueryAfter": {
+      "appliedCount": 34,
+      "latestMigration": "0028_media_archive.sql",
+      "rowsRead": 34,
+      "rowsWritten": 0,
+      "changes": 0,
+      "changedDb": false
+    },
+    "noProductionWrite": "No production D1 migration, database write, or R2 mutation."
+  },
+  "release": {
+    "githubBranch": "v2/foundation",
+    "githubBranchHead": "f809daedeba92099b55fef82f6cdba5a1a3dbeb6",
+    "push": "Normal fast-forward from a08488321d092c6996e436ac69af545a5cac37f6; push result and post-push ls-remote verified the exact head.",
+    "githubCombinedStatus": {
+      "statuses": [],
+      "aggregateCiPassClaimed": false
+    },
+    "cloudflareWorkersBuild": {
+      "buildId": "50b1c65f-6ae6-4dd4-a295-5f17c819b8ca",
+      "sourceCommit": "f809daedeba92099b55fef82f6cdba5a1a3dbeb6",
+      "status": "stopped",
+      "outcome": "success",
+      "buildCommand": "npm run typecheck",
+      "deployCommand": "npm run deploy:safe",
+      "migrationGate": "PASS; no migration was applied"
+    },
+    "deploymentId": "76e5bb7c-1390-49fe-8902-b5f097e6fc7c",
+    "workerVersion": "3ea54f8f-02bc-409e-8ad6-11cde6521737",
+    "trafficPercent": 100,
+    "health": {
+      "status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "changedAssetSha256": {
+      "path": "/editor-v2/core/authored-content.js",
+      "local": "00da5f3535e74e9162100a2c686cbcc0780f98d709ab386b1ae9c88cd82d72b9",
+      "production": "00da5f3535e74e9162100a2c686cbcc0780f98d709ab386b1ae9c88cd82d72b9",
+      "matches": true
+    }
+  },
+  "dataChanges": {
+    "productionD1Writes": 0,
+    "productionD1Migrations": 0,
+    "productionR2Changes": 0
+  },
+  "scope": {
+    "fullPlanItem": "77.44.7.D remains OPEN; malformed repeater rows no longer abort the renderer, but the full element-specific content and media capability matrix remains incomplete.",
+    "manualAcceptance": "Deferred until the full Visual Editor acceptance gate at 77.44.7.F/77.44.8.",
+    "cost": "0 Ft; existing free tooling only; no paid service, credit, quota purchase, or new dependency."
+  }
+}
