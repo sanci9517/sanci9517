@@ -175,9 +175,10 @@ export function authoredNodeHtml(node,{childrenHtml='',device='desktop',editor=f
   const imageSource=item=>typeof item.assetId==='string'&&/^[0-9a-f-]{36}$/i.test(item.assetId)?`/${editor?'api/admin/media?id=':'media/'}${encodeURIComponent(item.assetId)}`:safeSrc(item.src);
   const image=item=>{const src=imageSource(item),{focalX:x,focalY:y}=imageFocalPosition(item);return src?`<img src="${esc(src)}" alt="${esc(imageAlt(item))}" loading="${item.loading==='eager'?'eager':'lazy'}" decoding="async" style="object-fit:${['cover','contain','fill','none','scale-down'].includes(item.fit)?item.fit:'cover'};object-position:${x}% ${y}%">`:`<span class="creator-media-empty">${editor?'Válassz képet a Médiatárból vagy adj meg képcímet.':'A kép nem érhető el.'}</span>`};
   const items=Array.isArray(p.items)?p.items.slice(0,40):[];
-  const carouselName=String(p.ariaLabel??'').trim().slice(0,160)||'Képgaléria';
-  const galleryName=String(p.ariaLabel??'').trim().slice(0,160)||'Képek';
-  const tablistName=String(p.ariaLabel??'').trim().slice(0,160)||'Fülek';
+  const authoredLabel=trimmedText(p.ariaLabel).slice(0,160);
+  const carouselName=authoredLabel||'Képgaléria';
+  const galleryName=authoredLabel||'Képek';
+  const tablistName=authoredLabel||'Fülek';
   if(['heading','text','button','link','badge'].includes(node.type))return text;
   if(node.type==='quote')return `<div>${text}</div>${p.citation?`<cite>${esc(p.citation)}</cite>`:''}`;
   if(node.type==='icon')return `<span aria-hidden="true">${({star:'★',heart:'♥',play:'▶',check:'✓',arrow:'➜',bolt:'ϟ',camera:'📷',music:'♫',globe:'◎',mail:'✉'})[p.icon]||'★'}</span>`;
@@ -187,10 +188,10 @@ export function authoredNodeHtml(node,{childrenHtml='',device='desktop',editor=f
     const tag=node.type,poster=tag==='video'?imageSource({assetId:p.posterAssetId,src:p.poster}):'';return `<${tag} src="${esc(src)}" preload="metadata"${p.controls!==false?' controls':''}${p.loop?' loop':''}${p.muted?' muted':''}${p.autoplay&&p.muted&&!editor?' autoplay':''}${tag==='video'?' playsinline':''}${poster?` poster="${esc(poster)}"`:''}></${tag}>`;
   }
   if(node.type==='list')return `<${p.ordered?'ol':'ul'}>${items.map(item=>`<li>${safeHref(item.href)?`<a href="${esc(safeHref(item.href))}">${esc(item.text)}</a>`:esc(item.text)}</li>`).join('')}</${p.ordered?'ol':'ul'}>`;
-  if(node.type==='table')return `<div class="creator-table-scroll" role="region" aria-label="${esc(p.caption||'Táblázat')}" tabindex="0"><table>${p.caption?`<caption>${esc(p.caption)}</caption>`:''}<tbody>${(Array.isArray(p.rows)?p.rows:[]).slice(0,100).map((row,index)=>`<tr>${(Array.isArray(row)?row:[]).slice(0,16).map(cell=>`<${p.header&&index===0?'th scope="col"':'td'}>${esc(cell)}</${p.header&&index===0?'th':'td'}>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+  if(node.type==='table'){const caption=trimmedText(p.caption);return `<div class="creator-table-scroll" role="region" aria-label="${esc(caption||'Táblázat')}" tabindex="0"><table>${caption?`<caption>${esc(caption)}</caption>`:''}<tbody>${(Array.isArray(p.rows)?p.rows:[]).slice(0,100).map((row,index)=>`<tr>${(Array.isArray(row)?row:[]).slice(0,16).map(cell=>`<${p.header&&index===0?'th scope="col"':'td'}>${esc(cell)}</${p.header&&index===0?'th':'td'}>`).join('')}</tr>`).join('')}</tbody></table></div>`}
   if(node.type==='tabs')return `<div class="creator-tabs"><div role="tablist" aria-label="${esc(tablistName)}">${items.map((item,index)=>`<button type="button" role="tab" id="${id}-tab-${index}" aria-controls="${id}-panel-${index}" aria-selected="${index===0}" tabindex="${index===0?'0':'-1'}">${esc(item.title||'Fül '+(index+1))}</button>`).join('')}</div>${items.map((item,index)=>`<div role="tabpanel" id="${id}-panel-${index}" aria-labelledby="${id}-tab-${index}" tabindex="0"${index?' hidden':''}>${esc(item.text)}</div>`).join('')}</div>`;
   if(['accordion','dropdown'].includes(node.type)){
-    const groupName=String(p.ariaLabel??'').trim().slice(0,160)||(node.type==='accordion'?'Harmonika':'Lenyitható részek');
+    const groupName=authoredLabel||(node.type==='accordion'?'Harmonika':'Lenyitható részek');
     // Native details name enforces single-open without event races and keeps
     // keyboard/Summary semantics intact on both canvas and published pages.
     const name=p.singleOpen===true?' name="creator-details-'+id+'"':'';

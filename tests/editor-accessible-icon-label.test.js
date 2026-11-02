@@ -32,3 +32,27 @@ test('image descriptions and captions are trimmed, string-only and shared with g
   assert.match(gallery,/data-lightbox-alt="" data-lightbox-caption="" aria-haspopup="dialog" aria-label="Kép nagyítása: kép"/,
     'malformed saved labels do not throw or become misleading object strings');
 });
+
+test('malformed authored group labels use safe names and valid labels are normalized',()=>{
+  const malformed={toString:null};
+  const cases=[
+    ['gallery','aria-label="Képek"'],
+    ['carousel','aria-label="Képgaléria"'],
+    ['tabs','aria-label="Fülek"'],
+    ['accordion','aria-label="Harmonika"'],
+    ['dropdown','aria-label="Lenyitható részek"']
+  ];
+  for(const [type,expected] of cases){
+    const html=authoredNodeHtml({id:'bad-label',type,props:{ariaLabel:malformed,items:[]}});
+    assert.ok(html.includes(expected),`${type} should render its safe accessible name`);
+    assert.doesNotMatch(html,/(?:\[object Object\]|toString)/);
+  }
+
+  const padded=authoredNodeHtml({id:'good-label',type:'tabs',props:{ariaLabel:'  Projektek  ',items:[]}});
+  assert.match(padded,/role="tablist" aria-label="Projektek"/);
+  assert.equal(authoredNodeHtml({id:'bad-caption',type:'table',props:{caption:malformed,rows:[]}}),
+    '<div class="creator-table-scroll" role="region" aria-label="Táblázat" tabindex="0"><table><tbody></tbody></table></div>');
+  const caption=authoredNodeHtml({id:'good-caption',type:'table',props:{caption:'  Bevétel  ',rows:[]}});
+  assert.match(caption,/role="region" aria-label="Bevétel"/);
+  assert.match(caption,/<caption>Bevétel<\/caption>/);
+});
