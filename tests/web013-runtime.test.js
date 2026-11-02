@@ -46,6 +46,10 @@ async function fixture(t) {
     '<a href="&sol;p&sol;missing-named">Named-reference broken</a>' +
     '<a href="/p/new&quest;source=entity">Named query-reference internal</a>' +
     '<a href="/p/new&num;entity-fragment">Named fragment-reference internal</a>' +
+    '<a href="/p/source&sol;&period;&period;&sol;new">Named dot-segment path resolves to a published page</a>' +
+    '<a href="/p/source&sol;&percnt;2e&percnt;2e&sol;new">Named percent-encoded dot-segment resolves to a published page</a>' +
+    '<a href="/p/source&bsol;..&bsol;new">Named backslash path resolves to a published page</a>' +
+    '<a href="https&colon;//example.test/p/new">Named same-origin scheme delimiter resolves to a published page</a>' +
     '<a href="/p/new&AMP;quest;literal-path">Case-insensitive ampersand reference</a>' +
     '<a href="&SOL;p&SOL;missing-wrong-case">Unrecognized named reference</a>' +
     '<a href="&#0;://example.test/p/invalid-null">Invalid-null reference</a>' +
@@ -239,7 +243,7 @@ test('authenticated link report checks published rich text, redirects and site-s
   const body = await response.json();
   assert.equal(response.status, 200);
   assert.match(response.headers.get('Cache-Control'), /no-store/);
-  assert.equal(body.data.checkedContentLinks, 18, 'only same-origin internal page links count as checked, including HTML entity-encoded paths and query/fragment delimiters');
+  assert.equal(body.data.checkedContentLinks, 22, 'only same-origin internal page links count as checked, including HTML entity-encoded paths, query/fragment delimiters, and URL-normalized named references');
   assert.deepEqual(body.data.contentFindings.map(item => item.href), ['https://example.test/p/foreign', '/p/missing', '/p/missing-numeric', '/p/missing-decimal-no-semicolon', '/p/missing-hex', '/p/missing-hex-no-semicolon', '/p/missing-uppercase-hex', '/p/missing-named', '/p/new&quest;literal-path', '/p/missing-rich', 'https://example.test/p/missing-absolute', '/p/missing-table']);
   assert.equal(body.data.contentFindings.some(item => /invalid-(?:null|surrogate|out-of-range|unsafe-integer)/.test(item.href)), false,
     'invalid numeric code points must not turn non-URL text into same-origin page findings');
