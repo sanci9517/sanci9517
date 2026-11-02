@@ -1,0 +1,172 @@
+{
+  "date": "2026-11-02",
+  "planItem": "77.44.7.D — element-specific content and media",
+  "status": "MALFORMED_AUTHORED_CONTENT_RENDERING_PASS; DEPLOYED_AND_VERIFIED; FULL_77_44_7_D_OPEN",
+  "repository": {
+    "branch": "v2/foundation",
+    "baseCommit": "63813755879eb3a921b2420c1fedf2e9a48a7c45",
+    "runtimeCommit": "26951c8fbea0eec24a78744782852d830eaaed40",
+    "runtimeSourceChanged": true,
+    "changedPublicRuntimeAssets": [
+      "public/editor-v2/core/authored-content.js"
+    ],
+    "testFiles": [
+      "tests/editor-accessible-icon-label.test.js"
+    ]
+  },
+  "defect": {
+    "location": "public/editor-v2/core/authored-content.js — shared authoredNodeHtml rendering paths",
+    "cause": "Malformed nested values from persisted authored Page Model fields were implicitly converted to strings or numbers while rendering content, image focal positions, gallery columns, icon keys, and accessible labels. JSON objects with a non-callable toString caused TypeError and could abort Canvas and public rendering.",
+    "reproduction": {
+      "malformedValue": { "toString": null },
+      "paths": ["text", "icon", "image focal coordinates", "gallery columns", "quote citation", "list item text", "table cell", "tab title/text", "accordion title/text", "tooltip description"],
+      "result": "The shared renderer threw TypeError: Cannot convert object to primitive value for malformed persisted content."
+    },
+    "fix": "Render only strings and finite numbers as authored text; normalize group labels with safe defaults; escape malformed values as empty text; validate heading level and node ID types before coercion; handle malformed icons with the existing star default; safely fall back to centered image focal values and the existing three-column gallery default; give linked list items a safe localized accessible label; and omit empty/malformed tooltip descriptions and their dangling aria-describedby reference.",
+    "savePublish": "Only rendered output is normalized. The persisted Page Model is not rewritten. Save and Publish remain separate actions."
+  },
+  "reuseReview": {
+    "used": "The project-owned shared authoredNodeHtml renderer, safe media/link helpers, existing authored content schema, and existing Chromium lifecycle fixture.",
+    "externalCode": "None; the project-owned renderer and browser tests are the appropriate integration point.",
+    "dependency": "No new dependency, paid service, or infrastructure."
+  },
+  "tests": [
+    {
+      "command": "node --check public/editor-v2/core/authored-content.js && node --check tests/editor-accessible-icon-label.test.js && node --test tests/editor-accessible-icon-label.test.js",
+      "result": "PASS",
+      "passedFiles": 1,
+      "failedFiles": 0,
+      "coverage": "Malformed nested values across text, icon, crop, gallery, quote, list, table, tabs, accordion, and tooltip; valid numeric text and escaping remain supported."
+    },
+    {
+      "command": "npm run test:editor",
+      "result": "PASS",
+      "passedSuites": 12,
+      "failedSuites": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "result": "PASS"
+    },
+    {
+      "command": "npm run test:web013:migration-gate",
+      "result": "PASS"
+    },
+    {
+      "command": "python3 tests/plan-contract.test.py",
+      "result": "PASS",
+      "passed": 13,
+      "failed": 0
+    },
+    {
+      "command": "python3 scripts/audit-active-plan-point.py",
+      "result": "PASS",
+      "next": "77.44.7.D",
+      "features": 396,
+      "functionalAcceptance": "NOT_CERTIFIED"
+    },
+    {
+      "command": "python3 scripts/build-feature-traceability.py --check",
+      "result": "PASS",
+      "mappedFeatures": 396
+    },
+    {
+      "command": "python3 scripts/check-canonical-plan.py",
+      "result": "PASS",
+      "masterFiles": 13
+    },
+    {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-content-system.test.js",
+      "result": "PASS",
+      "passed": 1,
+      "failed": 0,
+      "coverage": "Real browser Canvas render, Inspector edits, draft Save, reload, unchanged published state, and separate Publish."
+    },
+    {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-gallery-crop-parity.test.js",
+      "result": "PASS",
+      "passed": 4,
+      "failed": 0,
+      "coverage": "Real Chromium 390px and 1366px crop and source-switch parity."
+    },
+    {
+      "command": "git diff --check",
+      "result": "PASS"
+    }
+  ],
+  "testEnvironmentNote": "An initial parallel browser invocation hit ERR_MODULE_NOT_FOUND for Playwright because a temporary shared node_modules symlink was concurrently cleaned up by another verification process. The affected targeted browser tests were rerun separately after the symlink race and passed; no product assertion failed.",
+  "releasePreflight": {
+    "productionD1QueryBefore": {
+      "api": "Cloudflare D1 Query API",
+      "sql": "SELECT COUNT(*) AS applied_count, MAX(name) AS latest_name FROM d1_migrations",
+      "appliedCount": 34,
+      "latestMigration": "0028_media_archive.sql",
+      "rowsRead": 34,
+      "rowsWritten": 0,
+      "changes": 0,
+      "changedDb": false
+    },
+    "wrangler": {
+      "version": "4.130.0",
+      "command": "XDG_CONFIG_HOME=/tmp/sanci9517-wrangler-config ./node_modules/.bin/wrangler deploy --dry-run",
+      "result": "PASS",
+      "assetsRead": 162,
+      "totalUpload": "335.09 KiB / gzip 87.47 KiB"
+    },
+    "productionD1QueryAfter": {
+      "appliedCount": 34,
+      "latestMigration": "0028_media_archive.sql",
+      "rowsRead": 34,
+      "rowsWritten": 0,
+      "changes": 0,
+      "changedDb": false
+    },
+    "noProductionWrite": "No D1 migration, database write, or R2 mutation."
+  },
+  "release": {
+    "githubBranch": "v2/foundation",
+    "githubBranchHead": "26951c8fbea0eec24a78744782852d830eaaed40",
+    "push": "Normal fast-forward from 63813755879eb3a921b2420c1fedf2e9a48a7c45; push result and post-push ls-remote verified the exact branch head.",
+    "githubCombinedStatus": {
+      "statuses": [],
+      "aggregateCiPassClaimed": false
+    },
+    "cloudflareWorkersBuild": {
+      "buildId": "444629ab-5d7d-4e5a-8bc8-cea9a4d1ae0b",
+      "sourceCommit": "26951c8fbea0eec24a78744782852d830eaaed40",
+      "status": "stopped",
+      "outcome": "success",
+      "buildCommand": "npm run typecheck",
+      "deployCommand": "npm run deploy:safe",
+      "migrationGate": "PASS; no migration was applied"
+    },
+    "deploymentId": "c2756dff-6711-4526-83d2-77dc4394adca",
+    "workerVersion": "8e99a6f7-a5ad-40d6-b0f7-c9140a0c5654",
+    "trafficPercent": 100,
+    "health": {
+      "status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "changedAssetSha256": {
+      "path": "/editor-v2/core/authored-content.js",
+      "local": "66b8913035ee9b3305b7bf7e804b03f75430f61081fdd1c26c1054d183f89d96",
+      "production": "66b8913035ee9b3305b7bf7e804b03f75430f61081fdd1c26c1054d183f89d96",
+      "matches": true
+    }
+  },
+  "dataChanges": {
+    "productionD1Writes": 0,
+    "productionD1Migrations": 0,
+    "productionR2Changes": 0
+  },
+  "scope": {
+    "fullPlanItem": "77.44.7.D remains OPEN; this fix covers malformed nested authored values that could abort rendering, but does not complete the full content/media capability matrix.",
+    "manualAcceptance": "Deferred until the complete Visual Editor acceptance gate at 77.44.7.F/77.44.8.",
+    "cost": "0 Ft; existing deployment and test tooling only; no paid service, credits, quota purchase, or new dependency."
+  }
+}
