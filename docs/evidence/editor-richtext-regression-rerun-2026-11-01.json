@@ -1,29 +1,27 @@
 {
   "date": "2026-11-01",
   "plan_item": "77.44.7.B — Rich Text, inline marks, links, Save/Publish and link-report acceptance",
-  "status": "RUNTIME_FIX_DEPLOYED_AND_TRAFFIC_HEALTH_VERIFIED; LOCAL_UNIT_AND_BROWSER_TESTS_PASS; AUTHENTICATED_PRODUCTION_ACCEPTANCE_OPEN",
+  "status": "RUNTIME_FIX_DEPLOYED_AND_TRAFFIC_HEALTH_VERIFIED; LOCAL_TESTS_PASS; AUTHENTICATED_PRODUCTION_ACCEPTANCE_OPEN",
   "repository": {
     "local_branch": "work",
     "local_head": "47adbb0a2f036c7b499cfa9b1a7a53db28d1d07c",
     "github_branch": "v2/foundation",
-    "github_head": "394d4bc5b3264deffd2eba81c128406f9a1ac933",
+    "github_head": "f8d3196d0a956bcbc274f262d0b932524e2ce78c",
     "github_head_verified": true,
     "github_combined_statuses": [],
     "ci_pass_claimed": false,
     "preexisting_untracked_work_preserved": true,
-    "github_head_before_final_docs_evidence": "394d4bc5b3264deffd2eba81c128406f9a1ac933",
+    "github_head_before_final_docs_evidence": "f8d3196d0a956bcbc274f262d0b932524e2ce78c",
     "runtime_commit": "d5cea53e1dc4791387a4b3daaccd0cd3d71ef8ae",
     "test_commits": [
       "e0bab2789c79a87f1ba6357ee02c25f0558beedf",
       "686b2b1612eae0a8f4f92c4e48e2063a69e00deb",
       "ff443d47d36c5f6475e22b5076a945fc803fd01d",
-      "3606ccff06ebf0502e9c8eb55283844f3f15441e",
-      "7aae2805db2929f3d01e2adff4ddfbed93be05e1"
+      "3606ccff06ebf0502e9c8eb55283844f3f15441e"
     ],
     "traceability_commit": "f8d3196d0a956bcbc274f262d0b932524e2ce78c",
-    "canonical_plan_commit": "394d4bc5b3264deffd2eba81c128406f9a1ac933",
-    "github_head_before_evidence_commit": "394d4bc5b3264deffd2eba81c128406f9a1ac933",
-    "runtime_unchanged_after_test_only_commit": true
+    "canonical_plan_commit": "f8d3196d0a956bcbc274f262d0b932524e2ce78c",
+    "github_head_before_evidence_commit": "f8d3196d0a956bcbc274f262d0b932524e2ce78c"
   },
   "tests": {
     "web013": {
@@ -84,16 +82,6 @@
       "latestMigration": "0028_media_archive.sql",
       "changedDb": false,
       "rowsWritten": 0
-    },
-    "browserSmoke": {
-      "command": "CHROMIUM_PATH=/usr/bin/chromium npm run test:web013:browser",
-      "result": "PASS",
-      "passed": 2,
-      "failed": 0,
-      "covers": [
-        "Admin link-report at 360/390/430/1280px",
-        "published Rich Text renderer and link target safety"
-      ]
     }
   },
   "runtime": {
@@ -109,7 +97,7 @@
     "worker_version": "77827529-a812-4b3b-9495-580c83348767",
     "traffic_percent": 100,
     "deployment_verified_by": "Cloudflare read-only Worker Build and Deployments APIs; exact runtime source commit build success and active deployment version at 100% traffic",
-    "health_this_run": "PASS: HTTP 200 via read-only smoke; service sanci9517-streamer-brand, version 2.0.0, cloudflare-worker",
+    "health_this_run": "PASS: HTTP 200 via network-enabled read-only smoke; JSON reports service sanci9517-streamer-brand, version 2.0.0, cloudflare-worker",
     "public_asset_changes": [],
     "asset_hashes_this_run": "NOT APPLICABLE: no public asset file changed; change is Worker route-only"
   },
@@ -117,7 +105,7 @@
     "authenticated_production_link_report": "OPEN: no Creator Platform admin session was available; unauthenticated production access is not treated as an acceptance pass",
     "production_save_publish": "OPEN: would write production D1 page data; no designated test page or specific data-write authorization, so none attempted",
     "physical_ios_android_acceptance": "DEFERRED to complete Visual Editor gate 77.44.7.F/77.44.8",
-    "overall_plan_item_77_44_7_B": "OPEN / NOT CERTIFIED; automated runtime and browser checks pass, authenticated production link-report and production Save/Publish acceptance remain open"
+    "overall_plan_item_77_44_7_B": "OPEN / NOT CERTIFIED; focused runtime defect is deployed and automated locally, authenticated production link-report and production Save/Publish acceptance remain open"
   },
   "data_and_cost": {
     "production_d1_migrations": 0,
@@ -158,8 +146,7 @@
       "&#47;, &#x2F; and &#X2F; plus &sol; path separators report same-origin missing targets",
       "&SOL; remains unrecognized and is not misclassified as an internal href",
       "invalid NUL and surrogate references do not add bogus internal link findings",
-      "cross-origin, protocol-relative, credentialed, downgrade and javascript URL exclusions remain",
-      "numeric decimal and hex references without the optional semicolon decode to the same-origin /p/ path when the HTML numeric-reference syntax permits it"
+      "cross-origin, protocol-relative, credentialed, downgrade and javascript URL exclusions remain"
     ]
   }
 }
