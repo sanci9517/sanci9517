@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-11-02",
+  "plan": "77.44.6.1.C — dockable workspace positions and saved editor profiles",
+  "scope": "First production-verified foundation slice only. The complete C acceptance remains OPEN: nested/tabbed groups, floating panels, dynamic dock zones, profile import/export, and complete cross-session lifecycle acceptance are not implemented.",
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "previous_head": "4975f37caf0634bb183abbda29e6b4ed417ecf66",
+    "commit": "a450066d91b03b3cf2b2970d585ccfa83957712b",
+    "message": "feat(editor): add workspace docking profiles",
+    "push": "Normal fast-forward push succeeded; GitHub compare confirms the branch is one commit ahead of the previous head.",
+    "github_combined_statuses": [],
+    "aggregate_github_ci_pass": false
+  },
+  "implementation": {
+    "workspace_preferences_key": "sanci-editor-workspace-preferences-v2",
+    "legacy_preferences_key": "sanci-editor-workspace-preferences-v1",
+    "desktop_dock_orders": [
+      "left-canvas-right",
+      "canvas-left-right",
+      "left-right-canvas",
+      "right-left-canvas",
+      "right-canvas-left",
+      "canvas-right-left"
+    ],
+    "accessible_docking": "Native keyboard/touch select plus desktop drag-and-drop from panel headings and canvas toolbar; mobile remains a single panel drawer.",
+    "profiles": {
+      "maximum": 8,
+      "stored_on": "local device localStorage",
+      "fields": [
+        "theme",
+        "density",
+        "accent",
+        "layout",
+        "dock order",
+        "panel open state",
+        "panel widths",
+        "active left tab"
+      ],
+      "validation": "Allowlisted, bounded values; unique normalized names; text-only option labels; arbitrary HTML/CSS/JS discarded."
+    },
+    "workspace_undo_redo": "Separate local workspace history; page-level undo stack and Page Model are untouched.",
+    "page_model_mutations": 0,
+    "save_publish_mutations": 0,
+    "runtime_dependencies_added": false,
+    "paid_services_added": false,
+    "benchmark_basis": "Verified Dockview v8.8.3 source README and MIT package license as a professional dock-layout benchmark; no code/dependency reused because the current three-region vanilla JS shell does not need a full panel engine. Official design-editor benchmark and fit rationale are recorded in the canonical plan."
+  },
+  "validation": {
+    "editor_unit_suite": "npm run test:editor — 14/14 files PASS",
+    "typecheck": "npm run typecheck — PASS",
+    "workspace_unit": "tests/editor-workspace-appearance.test.js — PASS",
+    "workspace_and_responsive_browser": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-workspace-appearance.test.js tests/browser/editor-layout.test.js — 8/8 tests PASS",
+    "responsive_shell_matrix": "tests/browser/editor-layout.test.js — 2/2 cases PASS across 16 viewport widths, 200–1920 CSS px, and 1x/1.25x/1.5x effective zoom",
+    "workspace_browser": "tests/browser/editor-workspace-appearance.test.js — 6/6 cases PASS including all six dock orders at 1025/1280/1920 CSS px, drag/drop at desktop width, profiles, mobile adaptation, reset, reload, and no page writes",
+    "migration_guard": "npm run test:web013:migration-gate — PASS; no migration applied",
+    "canonical_plan": "13/13 master files PASS; active point 77.44.6.1.C",
+    "plan_contract": "13/13 checks PASS",
+    "feature_traceability": "396/396 source mappings PASS; acceptance remains NOT_CERTIFIED",
+    "syntax_and_diff": "node --check public/editor-v2/ui/shell.js; node --check public/editor-v2/ui/workspace-appearance.js; git diff --check — PASS",
+    "wrangler_dry_run": "Wrangler 4.130.0 PASS; 168 assets, 335.81 KiB total, 87.60 KiB gzip",
+    "full_editor_browser_suite": "NOT COMPLETE. This was a targeted C slice, not the full Visual Editor acceptance suite.",
+    "manual_device_acceptance": "DEFERRED until the complete Visual Editor acceptance gate"
+  },
+  "release_preflight": {
+    "production_d1_query": "SELECT name FROM d1_migrations ORDER BY name",
+    "query_mode": "SELECT only via Cloudflare D1 Query API",
+    "ledger_row_count": 34,
+    "latest_ledger_row": "0028_media_archive.sql",
+    "rows_written": 0,
+    "changed_db": false,
+    "migration_applied": false,
+    "r2_mutation_or_deletion": false,
+    "additional_cost_huf": 0
+  },
+  "production": {
+    "worker": "sanci9517-streamer-brand",
+    "build_id": "6a4fa334-f473-432b-a388-7d83eb68dd3b",
+    "build_commit": "a450066d91b03b3cf2b2970d585ccfa83957712b",
+    "build_branch": "v2/foundation",
+    "build_outcome": "success",
+    "build_command": "npm run typecheck",
+    "deploy_command": "npm run deploy:safe",
+    "deployment_id": "319c1185-ae55-4d58-aa5a-0b85e392c274",
+    "traffic_version": "9953dffd-f3e6-49ba-816b-abeefd278b57",
+    "traffic_percentage": 100,
+    "health": {
+      "path": "/api/health",
+      "http_status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "public_assets": [
+      {
+        "path": "/editor-v2/index.html (307 redirect to /editor-v2/, then 200)",
+        "http_status": 200,
+        "sha256": "41901bbf8f87063e45257a746f75db82dc89aff6f9482d90a7e3d3654d95ff92",
+        "matches_local_source": true
+      },
+      {
+        "path": "/editor-v2/editor-refresh.css",
+        "http_status": 200,
+        "sha256": "feb5ccef97a3c130a1c21a5516bd9b0b38da9a091a8bb2380c801243c874c030",
+        "matches_local_source": true
+      },
+      {
+        "path": "/editor-v2/ui/shell.js",
+        "http_status": 200,
+        "sha256": "2a79525a869bfe56e7fb061b59ecb18def5145ad04f526eac0ebb1b01110a2c6",
+        "matches_local_source": true
+      },
+      {
+        "path": "/editor-v2/ui/workspace-appearance.js",
+        "http_status": 200,
+        "sha256": "39e6674d8634bb687db53c71733fecce3d9a836ac656868de27852f68425e907",
+        "matches_local_source": true
+      },
+      {
+        "path": "/editor-v2/workspace-appearance.css",
+        "http_status": 200,
+        "sha256": "cab7cda53f2d9ea61856d7891b19bbc96ebf6e9517e417cba8ef81b83c57ac73",
+        "matches_local_source": true
+      }
+    ]
+  }
+}
