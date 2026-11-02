@@ -114,6 +114,30 @@ test('Inspector publication warning navigates to required field and updates with
   assert.equal(await page.locator('.plain-text-content').evaluate(el=>el.classList.contains('editor-publication-required')),false);
   assert.equal(await page.locator('[aria-invalid="true"]').count(),0);
 
+  // Old or hand-crafted Page Models can contain values that normal Inspector
+  // commands would reject. Opening them must keep Canvas/Inspector usable and
+  // surface the existing publication warning rather than crash the panel.
+  for(const [type,props,message] of [
+   ['heading',{text:{toString:null},level:{toString:null}},'A címsor nem lehet üres'],
+   ['image',{src:{toString:null},alt:{toString:null}},'Válassz Médiatár-fájlt'],
+   ['gallery',{items:[null]},'A képekhez Médiatár-fájl'],
+   ['list',{items:[null]},'Adj meg legalább egy nem üres listaelemet'],
+   ['tabs',{items:[null]},'Legalább egy elnevezett rész'],
+   ['table',{rows:[null]},'A táblázatnak legyen tartalma']
+  ]){
+   await page.evaluate(async({type,props})=>{
+    const {renderElementContentControls}=await import('/editor-v2/ui/element-content-controls.js');
+    const node={id:'malformed-'+type,type,props,metadata:{contentVersion:1},locked:false};
+    const panel=renderElementContentControls(node,{apply:patch=>{Object.assign(node.props,patch);return true},pending:()=>{}});
+    document.querySelector('#host').replaceChildren(panel);
+    window.__draftNode=node;
+   },{type,props});
+   assert.match(await warning.textContent(),new RegExp(message));
+   assert.equal(await jump.isVisible(),true,`${type} exposes a required-field target`);
+   assert.equal(await page.locator('[aria-invalid="true"]').count(),0,`${type} can be inspected without a fake invalid-input state`);
+   assert.deepEqual(await page.evaluate(()=>window.__draftNode.props),props,`${type} stays unchanged until the creator explicitly edits or saves it`);
+  }
+
   assert.deepEqual(errors,[]);
   await page.close();
  }

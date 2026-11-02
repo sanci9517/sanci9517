@@ -26,6 +26,7 @@ export const CONTENT_TYPES=Object.freeze(Object.keys(CONTENT_FIELDS));
 const FOCAL_PRESETS=Object.freeze({center:[50,50],top:[50,0],bottom:[50,100],left:[0,50],right:[100,50]});
 // Resolve a view without adding numeric axes to a persisted legacy image.
 export function imageFocalPosition(item={}){
+  if(!item||typeof item!=='object'||Array.isArray(item))item={};
   const preset=typeof item.focalPoint==='string'&&Object.hasOwn(FOCAL_PRESETS,item.focalPoint)?FOCAL_PRESETS[item.focalPoint]:FOCAL_PRESETS.center;
   const axis=(value,fallback)=>{try{const number=Number(value);return Number.isFinite(number)?Math.max(0,Math.min(100,number)):fallback}catch{return fallback}};
   return {focalX:axis(item.focalX,preset[0]),focalY:axis(item.focalY,preset[1])};
@@ -95,17 +96,22 @@ export function validateElementContent(node){
 export function getPublicationContentGuidance(node){
   if(!isAuthoredContent(node)||!CONTENT_FIELDS[node?.type])return null;
   const p=contentProperties(node);
+  const hasText=value=>typeof value==='string'?Boolean(value.trim()):typeof value==='number'&&Number.isFinite(value);
+  const hasMediaSource=value=>typeof value==='string'&&Boolean(value.trim());
+  const hasAssetId=value=>typeof value==='string'&&Boolean(value.trim());
+  const items=Array.isArray(p.items)?p.items:[];
+  const rows=Array.isArray(p.rows)?p.rows:[];
   let missing=null;
   const requireField=(fieldKey,message)=>{missing={fieldKey,message}};
-  if(['image','video','audio'].includes(node.type)&&!p.src?.trim()&&!p.assetId)requireField('src','Válassz Médiatár-fájlt vagy adj meg médiaforrást.');
-  if(node.type==='image'&&(p.src||p.assetId)&&!p.decorative&&!p.alt?.trim())requireField('alt','Adj meg képleírást, vagy jelöld a képet díszítőnek.');
-  if(['link','button'].includes(node.type)&&!p.href?.trim())requireField('href','Adj meg hivatkozási célt. Művelet nélküli gomb nem publikálható.');
-  if(node.type==='heading'&&!p.text?.trim())requireField('text','A címsor nem lehet üres.');
-  if(['gallery','carousel'].includes(node.type)&&(!p.items?.length||p.items.some(item=>(!item.src?.trim()&&!item.assetId)||!(item.alt?.trim()||item.caption?.trim()))))requireField('items','A képekhez Médiatár-fájl vagy forrás, és leírás vagy képaláírás szükséges.');
-  if(['tabs','accordion','dropdown'].includes(node.type)&&(!p.items?.length||p.items.some(item=>!item.title?.trim())))requireField('items','Legalább egy elnevezett rész szükséges.');
-  if(node.type==='table'&&(!p.rows?.length||!p.rows.some(row=>row.some(cell=>String(cell).trim()))))requireField('rows','A táblázatnak legyen tartalma.');
-  if(node.type==='list'&&(!p.items?.length||p.items.some(item=>!item.text?.trim())))requireField('items','Adj meg legalább egy nem üres listaelemet.');
-  if(node.type==='tooltip'&&(!p.text?.trim()||!p.description?.trim()))requireField(!p.text?.trim()?'text':'description','Felirat és magyarázat is szükséges.');
+  if(['image','video','audio'].includes(node.type)&&!hasMediaSource(p.src)&&!hasAssetId(p.assetId))requireField('src','Válassz Médiatár-fájlt vagy adj meg médiaforrást.');
+  if(node.type==='image'&&(hasMediaSource(p.src)||hasAssetId(p.assetId))&&!p.decorative&&!hasText(p.alt))requireField('alt','Adj meg képleírást, vagy jelöld a képet díszítőnek.');
+  if(['link','button'].includes(node.type)&&!hasMediaSource(p.href))requireField('href','Adj meg hivatkozási célt. Művelet nélküli gomb nem publikálható.');
+  if(node.type==='heading'&&!hasText(p.text))requireField('text','A címsor nem lehet üres.');
+  if(['gallery','carousel'].includes(node.type)&&(!items.length||items.some(item=>!item||typeof item!=='object'||Array.isArray(item)||(!hasMediaSource(item.src)&&!hasAssetId(item.assetId))||!(hasText(item.alt)||hasText(item.caption)))))requireField('items','A képekhez Médiatár-fájl vagy forrás, és leírás vagy képaláírás szükséges.');
+  if(['tabs','accordion','dropdown'].includes(node.type)&&(!items.length||items.some(item=>!item||typeof item!=='object'||Array.isArray(item)||!hasText(item.title))))requireField('items','Legalább egy elnevezett rész szükséges.');
+  if(node.type==='table'&&(!rows.length||!rows.some(row=>Array.isArray(row)&&row.some(hasText))))requireField('rows','A táblázatnak legyen tartalma.');
+  if(node.type==='list'&&(!items.length||items.some(item=>!item||typeof item!=='object'||Array.isArray(item)||!hasText(item.text))))requireField('items','Adj meg legalább egy nem üres listaelemet.');
+  if(node.type==='tooltip'&&(!hasText(p.text)||!hasText(p.description)))requireField(!hasText(p.text)?'text':'description','Felirat és magyarázat is szükséges.');
   if(node.type==='audio'&&p.controls===false)requireField('controls','A hanglejátszó vezérlőit nem rejtheted el.');
   if(node.type==='video'&&p.controls===false&&!(p.autoplay&&p.muted))requireField('controls','Vezérlők nélküli háttérvideó csak némítva, automatikusan indulhat.');
   return missing?Object.freeze(missing):null;
@@ -138,7 +144,11 @@ export function contentDefaults(node,device='desktop'){
   if(node.type==='overlay')return {...common,position:'absolute',left:'0px',top:'0px',width:'100%',height:'100%',backgroundColor:'#00000080',zIndex:'10'};
   if(['section','container','group','slot','footer','sidebar'].includes(node.type))return {...common,minHeight:'48px'};
   if(node.type==='icon')return {...common,fontSize:'32px',lineHeight:'1'};
-  if(node.type==='heading')return {...common,fontSize:({1:'48px',2:'36px',3:'28px',4:'24px',5:'20px',6:'18px'})[node.props?.level||2]||'36px',fontWeight:'700',lineHeight:'1.2',margin:'0'};
+  if(node.type==='heading'){
+    const rawLevel=node.props?.level;
+    const level=typeof rawLevel==='string'||typeof rawLevel==='number'?String(rawLevel):'2';
+    return {...common,fontSize:({1:'48px',2:'36px',3:'28px',4:'24px',5:'20px',6:'18px'})[level]||'36px',fontWeight:'700',lineHeight:'1.2',margin:'0'};
+  }
   if(node.type==='button')return {...common,display:'inline-flex',alignItems:'center',justifyContent:'center',padding:'12px 18px',backgroundColor:'#7047eb',color:'#ffffff',borderRadius:'10px',fontWeight:'600',textDecoration:'none'};
   if(node.type==='link')return {...common,textDecoration:'underline'};
   if(['card','panel'].includes(node.type))return {padding:'24px',borderWidth:'1px',borderStyle:'solid',borderColor:'#dce2eb',borderRadius:'16px',backgroundColor:'#ffffff',color:'#182335'};

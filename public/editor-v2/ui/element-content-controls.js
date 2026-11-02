@@ -24,6 +24,11 @@ async function loadAssets(query='',before=null,mimes=[]){
   return {assets:payload.data?.assets||[],nextCursor:payload.data?.nextCursor||null};
 }
 const selectionViews=new WeakMap();
+// Persisted Page Models can predate the current field contracts or be repaired
+// manually. Render only values that native controls can represent; never coerce
+// arbitrary objects to strings while merely opening the Inspector.
+const inspectorText=value=>typeof value==='string'?value:typeof value==='number'&&Number.isFinite(value)?String(value):'';
+const inspectorRecord=value=>value&&typeof value==='object'&&!Array.isArray(value)?value:{};
 // Synchronize a mounted picker view without invoking its PageModel callback.
 export function setMediaAssetPickerSelection(picker,id){selectionViews.get(picker)?.(id);}
 export function mediaAssetPicker(selectedId,onSelect,{disabled=false,mimes=[],selectedKind='image',ariaLabelledBy=null,ariaDescribedBy=null}={}){
@@ -201,13 +206,13 @@ export function renderElementContentControls(node,{apply,pending,exclude=[],page
     if(property){wrap.dataset.propertyId=property.id;wrap.dataset.propertyCommand=property.command;wrap.dataset.propertyKey=property.key;}
     const label=document.createElement('span');label.textContent=definition.label;wrap.append(label);
     let input;
-    if(definition.type==='select'){input=document.createElement('select');for(const [value,text] of Object.entries(definition.options)){const option=document.createElement('option');option.value=value;option.textContent=text;input.append(option)}input.value=String(value??Object.keys(definition.options)[0])}
-    else if(definition.type==='boolean'){input=document.createElement('input');input.type='checkbox';input.checked=Boolean(value)}
+    if(definition.type==='select'){input=document.createElement('select');for(const [value,text] of Object.entries(definition.options)){const option=document.createElement('option');option.value=value;option.textContent=text;input.append(option)}input.value=inspectorText(value)||Object.keys(definition.options)[0]}
+    else if(definition.type==='boolean'){input=document.createElement('input');input.type='checkbox';input.checked=value===true}
     else if(definition.type==='asset'){input=null}
-    else {input=document.createElement(definition.type==='textarea'?'textarea':'input');if(input.tagName==='INPUT'){input.type=definition.type==='range'?'range':'text';if(definition.type==='range'){input.min=String(definition.min??0);input.max=String(definition.max??100);input.step=String(definition.step??1)}}input.value=value??'';if(definition.type!=='range')input.maxLength=definition.max||2048}
+    else {input=document.createElement(definition.type==='textarea'?'textarea':'input');if(input.tagName==='INPUT'){input.type=definition.type==='range'?'range':'text';if(definition.type==='range'){input.min=String(definition.min??0);input.max=String(definition.max??100);input.step=String(definition.step??1)}}input.value=inspectorText(value);if(definition.type!=='range')input.maxLength=definition.max||2048}
     if(definition.type==='asset'){
       label.id='content-media-label-'+crypto.randomUUID();
-      const picker=mediaAssetPicker(String(value||''),(id,asset)=>{try{save(id,undefined,asset);fail.textContent='';return true}catch(error){fail.textContent=error.message;return false}},{disabled:Boolean(node.locked),mimes:IMAGE_MIMES,ariaLabelledBy:label.id,ariaDescribedBy:fail.id});
+      const picker=mediaAssetPicker(typeof value==='string'?value:'',(id,asset)=>{try{save(id,undefined,asset);fail.textContent='';return true}catch(error){fail.textContent=error.message;return false}},{disabled:Boolean(node.locked),mimes:IMAGE_MIMES,ariaLabelledBy:label.id,ariaDescribedBy:fail.id});
       register(next=>setMediaAssetPickerSelection(picker,next));wrap.append(picker);
       if(definition.help){const help=document.createElement('small');help.className='content-field-help';help.textContent=definition.help;wrap.append(help)}return wrap;
     }
@@ -216,7 +221,7 @@ export function renderElementContentControls(node,{apply,pending,exclude=[],page
     let committed=value,composing=false,dirty=false,compositionRevision=0;
     register(next=>{
       committed=next;dirty=false;compositionRevision++;composing=false;
-      if(definition.type==='boolean')input.checked=Boolean(next);else input.value=next??'';
+      if(definition.type==='boolean')input.checked=next===true;else input.value=inspectorText(next);
       input.removeAttribute('aria-invalid');
     });
     const canCompose=input.tagName==='TEXTAREA'||(input.tagName==='INPUT'&&input.type==='text');
@@ -258,8 +263,8 @@ export function renderElementContentControls(node,{apply,pending,exclude=[],page
       if(event.key!=='Escape')return;
       event.stopPropagation();
       compositionRevision++;composing=false;dirty=false;
-      input.value=committed??'';
-      if(definition.type==='boolean')input.checked=Boolean(committed);
+      input.value=inspectorText(committed);
+      if(definition.type==='boolean')input.checked=committed===true;
       input.removeAttribute('aria-invalid');fail.textContent='';
     });
     wrap.append(input);if(rangeOutput)wrap.append(rangeOutput);if(definition.type==='url'){const picker=pageLinkPicker(pages,input);picker.disabled=Boolean(node.locked);wrap.append(picker)}if(definition.help){const help=document.createElement('small');help.className='content-field-help';help.textContent=definition.help;wrap.append(help)}return wrap;
@@ -290,19 +295,20 @@ export function renderElementContentControls(node,{apply,pending,exclude=[],page
       const summary=document.createElement('summary');summary.textContent=definition.label;section.append(summary);
       const items=Array.isArray(working[definition.key])?working[definition.key]:[];
       items.forEach((item,index)=>{
-        const crop=['gallery','carousel'].includes(node.type)?imageFocalPosition(item):{};
+        const rowValue=inspectorRecord(item);
+        const crop=['gallery','carousel'].includes(node.type)?imageFocalPosition(rowValue):{};
         const card=document.createElement('fieldset');const legend=document.createElement('legend');legend.textContent=`${index+1}. elem`;card.append(legend);
-        const row=group(definition.itemFields,()=>working[definition.key]?.[index]||{},(patch,options)=>{
-          const next=structuredClone(working[definition.key]||items);Object.assign(next[index],patch);return save(next,options.typingGroup);
+        const row=group(definition.itemFields,()=>inspectorRecord(working[definition.key]?.[index]),(patch,options)=>{
+          const next=structuredClone(Array.isArray(working[definition.key])?working[definition.key]:items);next[index]={...inspectorRecord(next[index]),...patch};return save(next,options.typingGroup);
         });
-        for(const child of definition.itemFields)card.append(control(child,Object.hasOwn(crop,child.key)?crop[child.key]:item[child.key],(value,typingGroup,asset)=>row.save(child.key,value,typingGroup,asset),update=>row.register(child.key,update),`${definition.key}[].${child.key}`));
+        for(const child of definition.itemFields)card.append(control(child,Object.hasOwn(crop,child.key)?crop[child.key]:rowValue[child.key],(value,typingGroup,asset)=>row.save(child.key,value,typingGroup,asset),update=>row.register(child.key,update),`${definition.key}[].${child.key}`));
         const actions=document.createElement('div');actions.className='content-repeater-actions';
         for(const [label,offset] of [['Fel',-1],['Le',1],['Eltávolítás',0]]){
           const button=document.createElement('button');button.type='button';button.textContent=label;button.setAttribute('aria-label',`${index+1}. elem: ${label}`);button.disabled=Boolean(node.locked)||(offset<0&&index===0)||(offset>0&&index===items.length-1);
           route(button,definition.key);
           button.onclick=()=>{
             const keepFocus=document.activeElement===button;
-            const next=structuredClone(working[definition.key]||items);
+            const next=structuredClone(Array.isArray(working[definition.key])?working[definition.key]:items);
             if(!offset)next.splice(index,1);else [next[index],next[index+offset]]=[next[index+offset],next[index]];
             save(next,null,true);
             if(keepFocus)restoreRowFocus({
@@ -318,14 +324,16 @@ export function renderElementContentControls(node,{apply,pending,exclude=[],page
       route(add,definition.key);
       add.onclick=()=>{
         const keepFocus=document.activeElement===add;
-        const next=[...(working[definition.key]||[]),{}];
+        const next=[...(Array.isArray(working[definition.key])?working[definition.key]:items),{}];
         save(next,null,true);
         if(keepFocus)restoreRowFocus({rowIndex:next.length-1,editField:true});
       };
       section.append(add);root.append(section);
     }else if(definition.type==='table'){
       const note=document.createElement('p');note.className='content-field-help';note.textContent='Soronként egy sor, tabulátorral elválasztott cellák. Excelből másolt egyszerű táblázat is beilleszthető. A cellák szöveget tárolnak, képletek nem futnak.';root.append(note);
-      root.append(control({...definition,type:'textarea',max:40000},(node.props?.rows||[]).map(row=>row.join('\t')).join('\n'),(value,group)=>save(value.split('\n').map(row=>row.split('\t')),group),update=>top.register(definition.key,update),'rows[][]'));
+      const rows=Array.isArray(node.props?.rows)?node.props.rows:[];
+      const tableText=rows.map(row=>Array.isArray(row)?row.map(inspectorText).join('\t'):'').join('\n');
+      root.append(control({...definition,type:'textarea',max:40000},tableText,(value,group)=>save(value.split('\n').map(row=>row.split('\t')),group),update=>top.register(definition.key,update),'rows[][]'));
     }else root.append(control(definition,working[definition.key],(value,typingGroup,asset)=>top.save(definition.key,value,typingGroup,asset),update=>top.register(definition.key,update)));
   }
   root.addEventListener('editor:external-content-updated',event=>{

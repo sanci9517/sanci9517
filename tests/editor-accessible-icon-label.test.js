@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {authoredNodeHtml,contentAttributes} from '../public/editor-v2/core/authored-content.js';
+import {authoredNodeHtml,contentAttributes,contentDefaults,getPublicationContentGuidance} from '../public/editor-v2/core/authored-content.js';
 
 test('blank accessibility labels do not create empty accessible names',()=>{
   const blankIcon={type:'icon',props:{ariaLabel:'   '},accessibility:{}};
@@ -90,4 +90,29 @@ test('malformed nested authored text does not interrupt Canvas or published rend
   assert.match(malformedItems('dropdown'),/<summary>Részletek<\/summary><div><\/div>/);
   assert.match(malformedItems('gallery'),/A kép nem érhető el\./);
   assert.match(malformedItems('carousel'),/A kép nem érhető el\./);
+});
+
+test('malformed saved values produce publication guidance instead of crashing Inspector or Canvas defaults',()=>{
+  const malformed={toString:null};
+  const guidance=(type,props)=>getPublicationContentGuidance({type,props,metadata:{contentVersion:1}});
+
+  assert.equal(contentDefaults({type:'heading',props:{level:malformed},metadata:{contentVersion:1}}).fontSize,'36px',
+    'an uncoercible heading level falls back to the standard H2 Canvas size');
+  assert.deepEqual(guidance('heading',{text:malformed}),{fieldKey:'text',message:'A címsor nem lehet üres.'});
+  assert.deepEqual(guidance('image',{src:malformed,assetId:''}),{fieldKey:'src',message:'Válassz Médiatár-fájlt vagy adj meg médiaforrást.'});
+  assert.deepEqual(guidance('image',{src:'/image.svg',alt:malformed,decorative:false}),
+    {fieldKey:'alt',message:'Adj meg képleírást, vagy jelöld a képet díszítőnek.'});
+  assert.deepEqual(guidance('gallery',{items:[null]}),
+    {fieldKey:'items',message:'A képekhez Médiatár-fájl vagy forrás, és leírás vagy képaláírás szükséges.'});
+  assert.deepEqual(guidance('tabs',{items:[null]}),{fieldKey:'items',message:'Legalább egy elnevezett rész szükséges.'});
+  assert.deepEqual(guidance('table',{rows:[null]}),{fieldKey:'rows',message:'A táblázatnak legyen tartalma.'});
+  assert.deepEqual(guidance('table',{rows:[[malformed]]}),{fieldKey:'rows',message:'A táblázatnak legyen tartalma.'});
+  assert.deepEqual(guidance('list',{items:[null]}),{fieldKey:'items',message:'Adj meg legalább egy nem üres listaelemet.'});
+
+  assert.equal(guidance('heading',{text:'  Valós címsor  '}),null);
+  assert.equal(guidance('image',{assetId:'known-asset',decorative:true}),null);
+  assert.equal(guidance('gallery',{items:[{assetId:'known-asset',alt:'Tájkép'}]}),null);
+  assert.equal(guidance('tabs',{items:[{title:'Munkáim'}]}),null);
+  assert.equal(guidance('table',{rows:[['Hónap'],['Június']]}),null);
+  assert.equal(guidance('list',{items:[{text:'Első pont'}]}),null);
 });
