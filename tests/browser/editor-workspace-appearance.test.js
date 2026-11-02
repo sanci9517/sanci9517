@@ -65,7 +65,7 @@ test('personal workspace theme, density and panel layout persist locally without
   assert.equal(await page.locator('#rightDock').getAttribute('aria-hidden'),'false');
   assert.deepEqual(writes,[],'presentation settings do not Save or Publish the page');
   const saved=await page.evaluate(key=>JSON.parse(localStorage.getItem(key)),WORKSPACE_PREFERENCES_KEY);
-  assert.deepEqual(saved,{version:1,layout:'inspector',theme:'aurora',density:'compact',accent:'#00a7c8'});
+  assert.deepEqual(saved,{version:2,layout:'inspector',theme:'aurora',density:'compact',accent:'#00a7c8',dockOrder:'left-canvas-right',profiles:[]});
   await page.locator('#closeWorkspaceAppearance').click();
   assert.equal(await dialog.isVisible(),false);
   await page.waitForFunction(()=>document.activeElement?.id==='openWorkspaceAppearance');
@@ -152,4 +152,119 @@ test('the overflow menu stays in the responsive shell flow instead of covering I
   assert.equal(await mobile.page.locator('#workspaceAppearanceDialog').isVisible(),true);
   assert.deepEqual(mobile.writes,[]);
   assert.deepEqual([...desktop.errors,...mobile.errors],[]);
+});
+
+test('desktop docks can be reordered and local workspace profiles save, reload, undo and redo without page writes',async t=>{
+  const {page,writes,errors}=await openEditor(t,{width:1440,height:900});
+  await openPreferences(page);
+  await page.locator('#workspaceLayout').selectOption('balanced');
+  const orderings={
+    'left-canvas-right':['leftDock','canvas','rightDock'],
+    'canvas-left-right':['canvas','leftDock','rightDock'],
+    'left-right-canvas':['leftDock','rightDock','canvas'],
+    'right-left-canvas':['rightDock','leftDock','canvas'],
+    'right-canvas-left':['rightDock','canvas','leftDock'],
+    'canvas-right-left':['canvas','rightDock','leftDock'],
+  };
+  for(const width of [1025,1280,1920]){
+    await page.setViewportSize({width,height:900});
+    for(const [order,expected] of Object.entries(orderings)){
+      await page.locator('#workspaceDockOrder').selectOption(order);
+      const actual=await page.evaluate(()=>{const workspace=document.querySelector('.workspace');return {positions:['leftDock','canvas','rightDock'].map(id=>{const element=document.getElementById(id),rect=element?.getBoundingClientRect();return {id,left:rect?.left||0,width:rect?.width||0,display:element?getComputedStyle(element).display:''}}),order:workspace?.dataset.workspaceDockOrder,areas:getComputedStyle(workspace).gridTemplateAreas,columns:getComputedStyle(workspace).gridTemplateColumns,classes:workspace.className,scrollWidth:document.documentElement.scrollWidth}});
+      assert.deepEqual(actual.positions.sort((a,b)=>a.left-b.left).map(item=>item.id),expected,`${order} visually matches its selected dock order at ${width}px: ${JSON.stringify(actual)}`);
+      assert.ok(actual.scrollWidth<=width,`${order} stays within the ${width}px viewport`);
+    }
+  }
+  await page.locator('#workspaceDockOrder').selectOption('right-left-canvas');
+  await page.locator('#workspaceTheme').selectOption('aurora');
+  await page.locator('#workspaceProfileName').fill('Tartalom szerkesztés');
+  await page.locator('#saveWorkspaceProfile').click();
+  assert.equal(await page.locator('#workspaceProfile option').count(),2);
+  assert.equal(await page.locator('#workspaceProfile option').last().textContent(),'Tartalom szerkesztés');
+  await page.locator('#workspaceProfileName').fill('tartalom szerkesztés');
+  await page.locator('#saveWorkspaceProfile').click();
+  assert.match(await page.locator('#workspaceAppearanceStatus').textContent(),/már van ilyen nevű profil/iu,'duplicate profile names are rejected without overwriting the existing layout');
+  await page.locator('#workspaceProfileName').fill('<img src=x onerror=alert(1)>');
+  await page.locator('#saveWorkspaceProfile').click();
+  assert.equal(await page.locator('#workspaceProfile option').count(),3);
+  assert.equal(await page.locator('#workspaceProfile option').last().textContent(),'<img src=x onerror=alert(1)>','profile labels are rendered only as text');
+  assert.equal(await page.locator('#workspaceProfile option img').count(),0,'saved labels cannot create executable DOM');
+  for(let index=0;index<6;index++){
+    await page.locator('#workspaceProfileName').fill(`Munkaterület ${index}`);
+    await page.locator('#saveWorkspaceProfile').click();
+  }
+  assert.equal(await page.locator('#workspaceProfile option').count(),9,'the selector contains one placeholder plus at most eight saved profiles');
+  await page.locator('#workspaceProfileName').fill('Kilencedik profil');
+  await page.locator('#saveWorkspaceProfile').click();
+  assert.match(await page.locator('#workspaceAppearanceStatus').textContent(),/legfeljebb nyolc/iu,'profile storage reports its explicit size bound');
+  assert.equal(await page.locator('#workspaceProfile option').count(),9);
+
+  await page.locator('#workspaceDockOrder').selectOption('left-right-canvas');
+  assert.equal(await page.locator('.editor-app').getAttribute('data-workspace-dock-order'),'left-right-canvas');
+  await page.locator('#undoWorkspaceLayout').click();
+  assert.equal(await page.locator('.editor-app').getAttribute('data-workspace-dock-order'),'right-left-canvas','workspace Undo restores dock order without using page Undo');
+  await page.locator('#redoWorkspaceLayout').click();
+  assert.equal(await page.locator('.editor-app').getAttribute('data-workspace-dock-order'),'left-right-canvas','workspace Redo reapplies the dock order');
+  await page.locator('#undoWorkspaceLayout').click();
+  assert.equal(await page.locator('.editor-app').getAttribute('data-workspace-dock-order'),'right-left-canvas');
+  await page.locator('#workspaceTheme').selectOption('graphite');
+  await page.locator('#loadWorkspaceProfile').click();
+  assert.equal(await page.locator('.editor-app').getAttribute('data-workspace-theme'),'aurora');
+  assert.equal(await page.locator('.editor-app').getAttribute('data-workspace-dock-order'),'right-left-canvas');
+  await page.reload({waitUntil:'load'});
+  assert.equal(await page.locator('.editor-app').getAttribute('data-workspace-theme'),'aurora');
+  assert.equal(await page.locator('.workspace').getAttribute('data-workspace-dock-order'),'right-left-canvas');
+  assert.deepEqual(writes,[],'profiles and their history never invoke Save or Publish');
+  assert.deepEqual(errors,[]);
+});
+
+test('mobile profile application keeps the single-drawer model and workspace reset restores saved preferences safely',async t=>{
+  const {page,writes,errors}=await openEditor(t,{width:390,height:850,isMobile:true,hasTouch:true});
+  await openPreferences(page);
+  await page.locator('#workspaceLayout').selectOption('balanced');
+  await page.locator('#workspaceDockOrder').selectOption('canvas-right-left');
+  await page.locator('#workspaceProfileName').fill('Mobil teszt');
+  await page.locator('#saveWorkspaceProfile').tap();
+  assert.equal(await page.locator('#workspaceProfile option').count(),2);
+  const savedProfileId=await page.locator('#workspaceProfile option').nth(1).getAttribute('value');
+  await page.evaluate(({key,id})=>{const value=JSON.parse(localStorage.getItem(key));value.profiles.find(profile=>profile.id===id).dock={leftOpen:true,rightOpen:true,leftTab:'layers',leftWidth:400,rightWidth:380};localStorage.setItem(key,JSON.stringify(value))},{key:WORKSPACE_PREFERENCES_KEY,id:savedProfileId});
+  await page.reload({waitUntil:'load'});
+  await openPreferences(page);
+  await page.locator('#workspaceProfile').selectOption(savedProfileId);
+  await page.locator('#loadWorkspaceProfile').tap();
+  assert.ok(!(await page.locator('#leftDock').isVisible()&&await page.locator('#rightDock').isVisible()),'mobile workspace displays at most one panel drawer');
+  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'desktop dock preferences never create mobile horizontal overflow');
+  await page.locator('#resetWorkspaceAppearance').tap();
+  assert.equal(await page.locator('.editor-app').getAttribute('data-workspace-theme'),'graphite');
+  assert.equal(await page.locator('#workspaceDockOrder').inputValue(),'left-canvas-right');
+  assert.equal(await page.locator('#workspaceProfile option').count(),1,'reset also clears local named profiles');
+  assert.deepEqual(writes,[],'mobile profile controls alter only presentation and shell state');
+  assert.deepEqual(errors,[]);
+});
+
+test('desktop panel and canvas drag reordering is an accessible-selector peer and never dispatches page writes',async t=>{
+  const {page,writes,errors}=await openEditor(t,{width:1440,height:900});
+  await openPreferences(page);
+  await page.locator('#workspaceLayout').selectOption('balanced');
+  await page.locator('#closeWorkspaceAppearance').click();
+  const result=await page.evaluate(key=>{
+    const handle=document.querySelector('#leftDock .dock-heading');
+    const target=document.querySelector('.canvas-area');
+    const point=target.getBoundingClientRect();
+    const clientX=point.left+point.width-4;
+    const dataTransfer=new DataTransfer();
+    handle.dispatchEvent(new DragEvent('dragstart',{bubbles:true,cancelable:true,dataTransfer}));
+    target.dispatchEvent(new DragEvent('dragover',{bubbles:true,cancelable:true,dataTransfer,clientX}));
+    target.dispatchEvent(new DragEvent('drop',{bubbles:true,cancelable:true,dataTransfer,clientX}));
+    handle.dispatchEvent(new DragEvent('dragend',{bubbles:true,cancelable:true,dataTransfer}));
+    const workspace=document.querySelector('.workspace');
+    return {order:workspace.dataset.workspaceDockOrder,areas:getComputedStyle(workspace).gridTemplateAreas,left:document.querySelector('#leftDock').getBoundingClientRect().left,canvas:target.getBoundingClientRect().left,dragHint:handle.getAttribute('draggable'),saved:JSON.parse(localStorage.getItem(key))?.dockOrder};
+  },WORKSPACE_PREFERENCES_KEY);
+  assert.equal(result.order,'canvas-left-right');
+  assert.ok(result.left>result.canvas,'dropping the panel after the canvas moves its dock slot after the canvas');
+  assert.match(result.areas,/"canvas left right"/u);
+  assert.equal(result.dragHint,'true','desktop dock title is draggable');
+  assert.equal(result.saved,'canvas-left-right','the drag operation persists only the local workspace preference');
+  assert.deepEqual(writes,[],'desktop workspace drag never invokes Page Model Save or Publish');
+  assert.deepEqual(errors,[]);
 });

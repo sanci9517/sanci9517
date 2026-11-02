@@ -1,8 +1,8 @@
 import {createEventBus} from './events.js';
 import {panelRegistry,featureRegistry} from './registry.js';
-import {EDITOR_ACTIONS} from './action-catalog.js?v=20261102-workspace-preferences-v2';
-import {enhanceEditorActionControls} from './action-help.js?v=20261102-workspace-preferences-v2';
-import {applyWorkspacePreferences,mountWorkspaceAppearance,readWorkspacePreferences} from './workspace-appearance.js?v=20261102-workspace-preferences-v2';
+import {EDITOR_ACTIONS} from './action-catalog.js?v=20261102-workspace-profiles-v1';
+import {enhanceEditorActionControls} from './action-help.js?v=20261102-workspace-profiles-v1';
+import {applyWorkspacePreferences,mountWorkspaceAppearance,readWorkspacePreferences} from './workspace-appearance.js?v=20261102-workspace-profiles-v1';
 
 const bus=createEventBus();
 const workspace=document.querySelector('.workspace');
@@ -87,9 +87,10 @@ function syncMobileBackdrop(){
 function setPanel(side,open,{save=true,restoreFocus=true,customize=false}={}){
   const panel=panels[side];if(!panel)return;
   const wasOpen=!panel.classList.contains('closed');
+  if(customize&&wasOpen!==open)workspaceAppearance?.remember();
   if(open && mobileQuery.matches){
     const other=side==='left'?'right':'left';
-    if(!panels[other]?.classList.contains('closed'))setPanel(other,false,{save:false,restoreFocus:false});
+    if(!panels[other]?.classList.contains('closed'))setPanel(other,false,{save,restoreFocus:false});
     if(!wasOpen && document.activeElement instanceof HTMLElement &&
         !panel.contains(document.activeElement))focusBeforeMobilePanel=document.activeElement;
   }
@@ -99,7 +100,7 @@ function setPanel(side,open,{save=true,restoreFocus=true,customize=false}={}){
   workspace?.classList.toggle(`${side}-open`,open);
   if(side==='right')panel.style.display=open?'flex':'none';
   if(save){persisted[side==='left'?'leftOpen':'rightOpen']=open;persist()}
-  if(customize)workspaceAppearance?.setLayout('custom');
+  if(customize)workspaceAppearance?.setLayout('custom',{rememberChange:false});
   syncMobileBackdrop();
   if(mobileQuery.matches && open && !wasOpen){
     requestAnimationFrame(()=>{
@@ -116,15 +117,20 @@ function setPanel(side,open,{save=true,restoreFocus=true,customize=false}={}){
 }
 function showLeftTab(tab,{save=true,open=true,customize=false}={}){
   if(!LEFT_TABS.includes(tab))return;
-  if(open)setPanel('left',true,{save:customize,customize});
+  const opensLeft=open&&panels.left?.classList.contains('closed');
+  const changesTab=persisted.leftTab!==tab;
+  if(customize&&(opensLeft||changesTab))workspaceAppearance?.remember();
+  if(open)setPanel('left',true,{save:false,customize:false});
   document.querySelectorAll('.rail-btn').forEach(b=>{const selected=b.dataset.tab===tab;b.classList.toggle('active',selected);b.setAttribute('aria-selected',String(selected));b.tabIndex=selected?0:-1});
   document.querySelectorAll('[data-content]').forEach(x=>x.classList.toggle('hidden',x.dataset.content!==tab));
   syncMobileBackdrop();
   if(save){persisted.leftTab=tab;persist()}
+  if(customize&&(opensLeft||changesTab))workspaceAppearance?.setLayout('custom',{rememberChange:false});
   emit('panel:tab',{tab});
 }
 function clamp(value,limits){return Math.max(limits.min,Math.min(limits.max,value))}
 function resizeDock(side,startX,startWidth){
+  workspaceAppearance?.remember();
   const limits=resizeLimits[side];
   const onMove=event=>{
     const delta=side==='left'?event.clientX-startX:startX-event.clientX;
@@ -135,7 +141,7 @@ function resizeDock(side,startX,startWidth){
   };
   const onUp=()=>{
     persist();
-    workspaceAppearance?.setLayout('custom');
+    workspaceAppearance?.setLayout('custom',{rememberChange:false});
     document.body.classList.remove('resizing-dock');
     window.removeEventListener('pointermove',onMove);
     window.removeEventListener('pointerup',onUp);
@@ -154,6 +160,50 @@ function setupResizers(){
     event.preventDefault();
   }));
 }
+function setupDockReordering(){
+  if(!workspace)return;
+  const canvasArea=document.querySelector('.canvas-area');
+  const regions={left:panels.left,canvas:canvasArea,right:panels.right};
+  for(const [id,region] of Object.entries(regions))if(region)region.dataset.workspaceDockId=id;
+  const refreshHandles=()=>workspace.querySelectorAll('.dock-heading,.canvas-toolbar').forEach(handle=>handle.setAttribute('draggable',String(!mobileQuery.matches)));
+  refreshHandles();
+  mobileQuery.addEventListener('change',refreshHandles);
+  workspace.addEventListener('dragstart',event=>{
+    if(mobileQuery.matches)return;
+    const handle=event.target.closest?.('.dock-heading,.canvas-toolbar');
+    if(!handle||event.target.closest?.('button,input,select,a')){event.preventDefault();return}
+    const source=handle.closest('.left-dock,.right-dock,.canvas-area');
+    if(!source||!event.dataTransfer)return;
+    event.dataTransfer.setData('text/plain',`sanci-workspace:${source.dataset.workspaceDockId}`);
+    event.dataTransfer.effectAllowed='move';
+    document.body.classList.add('workspace-reordering');
+  });
+  workspace.addEventListener('dragover',event=>{
+    const transfer=event.dataTransfer;
+    if(mobileQuery.matches||!transfer||!Array.from(transfer.types).includes('text/plain'))return;
+    event.preventDefault();if(event.dataTransfer)event.dataTransfer.dropEffect='move';
+  });
+  workspace.addEventListener('drop',event=>{
+    document.body.classList.remove('workspace-reordering');
+    if(mobileQuery.matches||!event.dataTransfer)return;
+    const sourceId=event.dataTransfer.getData('text/plain').replace(/^sanci-workspace:/u,'');
+    const source=regions[sourceId];
+    const target=event.target.closest?.('.left-dock,.right-dock,.canvas-area');
+    const targetId=target?.dataset.workspaceDockId;
+    if(!source||!target||!targetId||source===target||!workspace.contains(target))return;
+    const order=Object.values(regions).filter(Boolean).sort((a,b)=>a.getBoundingClientRect().left-b.getBoundingClientRect().left);
+    const sourceIndex=order.indexOf(source),targetIndex=order.indexOf(target);
+    if(sourceIndex<0||targetIndex<0)return;
+    order.splice(sourceIndex,1);
+    const rect=target.getBoundingClientRect();
+    const before=event.clientX<rect.left+rect.width/2;
+    const adjustedTarget=order.indexOf(target);
+    order.splice(adjustedTarget+(before?0:1),0,source);
+    const value=order.map(item=>item.dataset.workspaceDockId).join('-');
+    workspaceAppearance?.setDockOrder(value);
+  });
+  workspace.addEventListener('dragend',()=>document.body.classList.remove('workspace-reordering'));
+}
 
 root.style.setProperty('--left-dock-width',`${clamp(Number(persisted.leftWidth),resizeLimits.left)}px`);
 root.style.setProperty('--right-dock-width',`${clamp(Number(persisted.rightWidth),resizeLimits.right)}px`);
@@ -161,12 +211,21 @@ root.style.setProperty('--right-dock-width',`${clamp(Number(persisted.rightWidth
 setPanel('left',!mobileQuery.matches && Boolean(persisted.leftOpen),{save:false});
 setPanel('right',!mobileQuery.matches && Boolean(persisted.rightOpen),{save:false});
 showLeftTab(persisted.leftTab,{save:false,open:false});
-workspaceAppearance=mountWorkspaceAppearance({documentRef:document,root:editorRoot,onLayoutChange:applyWorkspaceLayout,onReset:()=>{
+workspaceAppearance=mountWorkspaceAppearance({documentRef:document,root:editorRoot,onLayoutChange:applyWorkspaceLayout,readDockState:()=>persisted,applyDockState:state=>{
+  persisted={...persisted,...state};
+  root.style.setProperty('--left-dock-width',`${state.leftWidth}px`);
+  root.style.setProperty('--right-dock-width',`${state.rightWidth}px`);
+  setPanel('left',state.leftOpen,{save:true,customize:false});
+  setPanel('right',state.rightOpen,{save:true,customize:false});
+  showLeftTab(state.leftTab,{save:true,open:false});
+  persist();
+},onReset:()=>{
   persisted={...defaults};
   root.style.setProperty('--left-dock-width',`${defaults.leftWidth}px`);
   root.style.setProperty('--right-dock-width',`${defaults.rightWidth}px`);
   persist();
 }});
+setupDockReordering();
 
 document.querySelector('#editorMenu')?.addEventListener('click',()=>{
   if(panels.left?.classList.contains('closed'))showLeftTab(persisted.leftTab||'pages',{customize:true});

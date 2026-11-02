@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import {WORKSPACE_PREFERENCES_KEY,WORKSPACE_PREFERENCE_DEFAULTS,isAccessibleWorkspaceAccent,mountWorkspaceAppearance,normalizeWorkspacePreferences,readWorkspacePreferences} from '../public/editor-v2/ui/workspace-appearance.js';
+import {LEGACY_WORKSPACE_PREFERENCES_KEY,WORKSPACE_PREFERENCES_KEY,WORKSPACE_PREFERENCE_DEFAULTS,isAccessibleWorkspaceAccent,mountWorkspaceAppearance,normalizeWorkspacePreferences,readWorkspacePreferences} from '../public/editor-v2/ui/workspace-appearance.js';
 
 function storage(initial={}){
   const values=new Map(Object.entries(initial));
@@ -8,11 +8,28 @@ function storage(initial={}){
 }
 
 test('workspace preferences are versioned, separate from page content and tolerate malformed local storage',()=>{
-  const current=storage({[WORKSPACE_PREFERENCES_KEY]:JSON.stringify({version:1,layout:'inspector',theme:'aurora',density:'compact',accent:'#00a7c8'})});
-  assert.deepEqual(readWorkspacePreferences(current),{version:1,layout:'inspector',theme:'aurora',density:'compact',accent:'#00a7c8'});
+  const current=storage({[LEGACY_WORKSPACE_PREFERENCES_KEY]:JSON.stringify({version:1,layout:'inspector',theme:'aurora',density:'compact',accent:'#00a7c8'})});
+  assert.deepEqual(readWorkspacePreferences(current),{version:2,layout:'inspector',theme:'aurora',density:'compact',accent:'#00a7c8',dockOrder:'left-canvas-right',profiles:[]});
   assert.deepEqual(readWorkspacePreferences(storage({[WORKSPACE_PREFERENCES_KEY]:'{broken'})),WORKSPACE_PREFERENCE_DEFAULTS);
   assert.deepEqual(normalizeWorkspacePreferences({layout:'unexpected',theme:'url(javascript:alert(1))',density:'tiny',accent:'red'}),WORKSPACE_PREFERENCE_DEFAULTS);
-  assert.deepEqual([...current.values.keys()],[WORKSPACE_PREFERENCES_KEY],'presentation settings use a dedicated key, not the Page Model draft key');
+  assert.deepEqual([...current.values.keys()],[LEGACY_WORKSPACE_PREFERENCES_KEY],'legacy presentation data remains intact while the next edit can migrate it');
+});
+
+test('dock position and saved profiles are bounded, inert data and safe to restore',()=>{
+  const normalized=normalizeWorkspacePreferences({dockOrder:'right-canvas-left',profiles:[
+    {id:'profile-one',name:' Creator ',appearance:{layout:'balanced',theme:'aurora',accent:'#00a7c8'},dock:{leftOpen:true,rightOpen:true,leftTab:'layers',leftWidth:999,rightWidth:290},customCss:'body{display:none}',script:'alert(1)'},
+    {id:'profile-one',name:'Duplicate id'},
+    {id:'profile-two',name:'creator'},
+    {id:'bad id',name:'Invalid id'},
+  ]});
+  assert.equal(normalized.version,2);
+  assert.equal(normalized.dockOrder,'right-canvas-left');
+  assert.deepEqual(normalized.profiles,[{id:'profile-one',name:'Creator',createdAt:0,appearance:{layout:'balanced',theme:'aurora',density:'comfortable',accent:'#00a7c8',dockOrder:'left-canvas-right'},dock:{leftOpen:true,rightOpen:true,leftTab:'layers',leftWidth:460,rightWidth:290}}]);
+  assert.equal('customCss' in normalized.profiles[0],false);
+  assert.equal('script' in normalized.profiles[0],false);
+  assert.equal(normalizeWorkspacePreferences({dockOrder:'left-center-right'}).dockOrder,'left-canvas-right','unknown docking expressions cannot reach CSS');
+  const limited=normalizeWorkspacePreferences({profiles:Array.from({length:12},(_,index)=>({id:`profile-${index}`,name:`Profil ${index}`}))});
+  assert.equal(limited.profiles.length,8,'profile storage has a fixed eight-item bound');
 });
 
 test('custom accent accepts visible hex colors and rejects malformed or low-contrast colors',()=>{

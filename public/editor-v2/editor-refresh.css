@@ -635,3 +635,65 @@ button:focus-visible, summary:focus-visible, .rail-btn:focus-visible { outline: 
 
 /* Inline plain-text controls are siblings of the authored Content Inspector. */
 .plain-text-content.editor-publication-required { border-inline-start: 3px solid #c58c37; padding-inline-start: 8px; }
+
+/* 77.44.6.1.C: customizable desktop dock positions without changing mobile drawers. */
+@media (min-width:1025px) {
+  .workspace [draggable="true"] { cursor:grab; }
+  .workspace [draggable="true"]:active { cursor:grabbing; }
+  body.workspace-reordering .workspace .left-dock,
+  body.workspace-reordering .workspace .canvas-area,
+  body.workspace-reordering .workspace .right-dock { outline:2px dashed var(--accent); outline-offset:-3px; }
+  .workspace,
+  .workspace.left-open,
+  .workspace.right-open,
+  .workspace.left-open.right-open {
+    --left-track:76px;
+    --right-track:0px;
+    grid-template-columns:var(--left-track) minmax(0,1fr) var(--right-track);
+    grid-template-areas:"left canvas right";
+  }
+  .workspace.left-open:not(.right-open) { --left-track:minmax(250px,var(--left-dock-width)); }
+  .workspace.right-open:not(.left-open) { --right-track:minmax(260px,var(--right-dock-width)); }
+  .workspace.left-open.right-open {
+    --left-track:minmax(250px,var(--left-dock-width));
+    --right-track:minmax(260px,var(--right-dock-width));
+  }
+  .left-dock { grid-area:left; }
+  .canvas-area { grid-area:canvas; }
+  .right-dock { grid-area:right; }
+  .workspace[data-workspace-dock-order="canvas-left-right"],
+  .workspace.left-open[data-workspace-dock-order="canvas-left-right"],
+  .workspace.right-open[data-workspace-dock-order="canvas-left-right"],
+  .workspace.left-open.right-open[data-workspace-dock-order="canvas-left-right"] {
+    grid-template-columns:minmax(0,1fr) var(--left-track) var(--right-track);
+    grid-template-areas:"canvas left right";
+  }
+  .workspace[data-workspace-dock-order="left-right-canvas"],
+  .workspace.left-open[data-workspace-dock-order="left-right-canvas"],
+  .workspace.right-open[data-workspace-dock-order="left-right-canvas"],
+  .workspace.left-open.right-open[data-workspace-dock-order="left-right-canvas"] {
+    grid-template-columns:var(--left-track) var(--right-track) minmax(0,1fr);
+    grid-template-areas:"left right canvas";
+  }
+  .workspace[data-workspace-dock-order="right-left-canvas"],
+  .workspace.left-open[data-workspace-dock-order="right-left-canvas"],
+  .workspace.right-open[data-workspace-dock-order="right-left-canvas"],
+  .workspace.left-open.right-open[data-workspace-dock-order="right-left-canvas"] {
+    grid-template-columns:var(--right-track) var(--left-track) minmax(0,1fr);
+    grid-template-areas:"right left canvas";
+  }
+  .workspace[data-workspace-dock-order="right-canvas-left"],
+  .workspace.left-open[data-workspace-dock-order="right-canvas-left"],
+  .workspace.right-open[data-workspace-dock-order="right-canvas-left"],
+  .workspace.left-open.right-open[data-workspace-dock-order="right-canvas-left"] {
+    grid-template-columns:var(--right-track) minmax(0,1fr) var(--left-track);
+    grid-template-areas:"right canvas left";
+  }
+  .workspace[data-workspace-dock-order="canvas-right-left"],
+  .workspace.left-open[data-workspace-dock-order="canvas-right-left"],
+  .workspace.right-open[data-workspace-dock-order="canvas-right-left"],
+  .workspace.left-open.right-open[data-workspace-dock-order="canvas-right-left"] {
+    grid-template-columns:minmax(0,1fr) var(--right-track) var(--left-track);
+    grid-template-areas:"canvas right left";
+  }
+}
