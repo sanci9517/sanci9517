@@ -18,6 +18,10 @@ test('mobile IME final input commits once after compositionend in Inspector and 
   execute(state,{type:'richtext.content.set',payload:{nodeId,document:{
     schemaVersion:1,type:'richtext-document',blocks:[
       {type:'paragraph',children:[{type:'text',text:'Base',marks:[]}]},
+      {type:'bulleted-list',items:[
+        [{type:'text',text:'List Base',marks:['bold'],link:{href:'/p/list-item'}}],
+        [{type:'text',text:'Keep Item',marks:[]}]
+      ]},
       {type:'paragraph',children:[{type:'text',text:'Unchanged',marks:[]}]}
     ]
   }}});
@@ -122,5 +126,78 @@ test('mobile IME final input commits once after compositionend in Inspector and 
     }
     assert.deepEqual(errors,[],`no uncaught browser errors in ${mode} at ${width}px`);
     await page.close();
+  }
+
+  // List editing is a distinct structural path from paragraph composition:
+  // replacing the text inside an LI must keep its list membership, marks,
+  // safe link and the other item while a mobile IME sends its delayed final
+  // non-composition input.
+  for(const width of [390,1366]){
+    draft=structuredClone(fixture);published=null;version=1;posts.length=0;
+    const page=await browser.newPage({viewport:{width,height:850}});
+    page.setDefaultTimeout(9000);
+    const errors=[];page.on('pageerror',error=>errors.push(error.message));
+    await page.goto(base+'/editor-v2/index.html');
+    const node=page.locator(`.node[data-node-id="${nodeId}"]`);await node.waitFor();
+    await node.evaluate(el=>el.click());
+    await page.evaluate(()=>window.sanciEditor?.openPanel?.('right'));
+    await page.locator('.inspector-tabs button').nth(1).evaluate(el=>el.click());
+    const editor=page.locator('.richtext-editor-surface');await editor.waitFor();
+    const result=await editor.locator('ul > li').first().evaluate(async li=>{
+      const editor=li.closest('.richtext-editor-surface');
+      const text=document.createTreeWalker(li,NodeFilter.SHOW_TEXT).nextNode();
+      editor.focus();
+      const range=document.createRange();range.selectNodeContents(text);
+      const selection=window.getSelection();selection.removeAllRanges();selection.addRange(range);
+      editor.dispatchEvent(new CompositionEvent('compositionstart',{bubbles:true,data:''}));
+      text.nodeValue='List';
+      editor.dispatchEvent(new InputEvent('input',{bubbles:true,isComposing:true,inputType:'insertCompositionText',data:'List'}));
+      const intermediate=li.textContent;
+      editor.dispatchEvent(new CompositionEvent('compositionend',{bubbles:true,data:'List Final'}));
+      // Match Android keyboards which replace the composing text after end.
+      text.nodeValue='List Final';
+      editor.dispatchEvent(new InputEvent('input',{bubbles:true,isComposing:false,inputType:'insertText',data:'List Final'}));
+      const native=window.getSelection();
+      return {intermediate,final:li.textContent,stillFocused:document.activeElement===editor,
+        selectionInside:editor.contains(native?.anchorNode)};
+    });
+    assert.deepEqual(result,{intermediate:'List',final:'List Final',stillFocused:true,selectionInside:true},
+      `list IME must accept the final input without detaching the editor at ${width}px`);
+    await page.waitForFunction(nodeId=>document.querySelector(`.node[data-node-id="${nodeId}"] ul li`)?.textContent==='List Final',nodeId);
+    const canvasItems=node.locator('.richtext-content ul > li');
+    assert.deepEqual(await canvasItems.allTextContents(),['List Final','Keep Item'],
+      'Canvas should mirror the confirmed list item and retain sibling item');
+    assert.equal(await canvasItems.first().locator('a strong').textContent(),'List Final',
+      'IME replacement must retain the existing linked bold run');
+    assert.equal(posts.length,0,'list IME stays in the local draft until explicit Save');
+    if(width===1366){
+      await page.locator('#undo').click();
+      assert.deepEqual(await canvasItems.allTextContents(),['List Base','Keep Item'],
+        'Undo restores the original list item without changing list structure');
+      assert.equal(await canvasItems.first().locator('a strong').textContent(),'List Base');
+      await page.locator('#redo').click();
+      assert.deepEqual(await canvasItems.allTextContents(),['List Final','Keep Item']);
+    }
+    await page.locator('#save').click();
+    await page.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent?.startsWith('Mentve'));
+    assert.equal(posts.length,1);assert.equal(posts[0].publish,false);
+    assert.equal(published,null,'list Save cannot update the public snapshot');
+    const saved=draft.pages[pageId].nodes[nodeId].props.richText;
+    assert.deepEqual(saved.blocks[1].items.map(item=>item.map(run=>run.text).join('')),
+      ['List Final','Keep Item']);
+    assert.deepEqual(saved.blocks[1].items[0][0],{
+      type:'text',text:'List Final',marks:['bold'],link:{href:'/p/list-item'}
+    },'list Save retains link and marks around confirmed IME text');
+    await page.locator('#publish').click();
+    await page.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent==='Publikálva');
+    assert.equal(posts.at(-1).publish,true,'publishing list text requires the separate Publish action');
+    const publicPage=await browser.newPage({viewport:{width:390,height:850}});
+    await publicPage.goto(base+'/p/ime-test');
+    const publicItems=publicPage.locator('.visual-richtext ul > li');
+    await publicItems.first().waitFor();
+    assert.deepEqual(await publicItems.allTextContents(),['List Final','Keep Item']);
+    assert.equal(await publicItems.first().locator('a strong').textContent(),'List Final');
+    assert.deepEqual(errors,[],`no uncaught browser errors during list IME at ${width}px`);
+    await publicPage.close();await page.close();
   }
 });
