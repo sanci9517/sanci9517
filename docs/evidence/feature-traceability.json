@@ -24,7 +24,7 @@
     "public/editor-v2/core/schedule-schema.js": "d13bf4a56fb761273e0c62f5b6f0d15d4fe0528cd65860cea0aaf8690d34352a",
     "public/editor-v2/core/schema.js": "740951188cac2e53309f81ec073c620e28189d5104fae4f4cc66ebc92723be4a",
     "public/editor-v2/ui/basic-content-inspector.js": "f2af0abe27e5803c68b337488b8bd7ce1796b3547312d16c9538ccafb3404e26",
-    "public/editor-v2/ui/element-content-controls.js": "b132abb043cb07e0b8d664b8dc3368583e42388f5d7fabb35561586f1abbb570",
+    "public/editor-v2/ui/element-content-controls.js": "a38a19e9f2e2d166534412ec2967d9771bf923dbd89ff6b7cfcf13f091af981d",
     "public/editor-v2/ui/property-controls.js": "464b94685092b373a37f25690e19c33894cf2094f20cf1564ea66ad731987208",
     "public/editor-v2/ui/responsive-group-reset.js": "fc3ed5460c17ef9c32e9067484b3e55edb00367c55d84b7570955d9f5f649c20",
     "scripts/d1/ledger-reconciliation.py": "44d19ed415b40473c73c248d49980e16eaaa0e96a8a4412b7016213e0ee7ffcb",

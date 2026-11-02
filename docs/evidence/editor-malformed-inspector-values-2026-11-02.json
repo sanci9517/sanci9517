@@ -1,0 +1,93 @@
+{
+  "date": "2026-11-02",
+  "plan_item": "77.44.7.D",
+  "status": "RUNTIME_RELEASE_VERIFIED",
+  "repository": "sanci9517/sanci9517",
+  "branch": "v2/foundation",
+  "runtime_commit": "efc1a8aa537e47dcc07da4ced65aa24022a77883",
+  "runtime_commit_message": "fix(editor): tolerate malformed inspector content",
+  "reproduction": {
+    "malformed_json_value": { "toString": null },
+    "previous_failures": [
+      "contentDefaults heading lookup threw while coercing a malformed level",
+      "publication guidance called trim on non-string fields and dereferenced null repeater rows",
+      "real Inspector tried assigning malformed objects to native input.value"
+    ]
+  },
+  "implementation": {
+    "files": [
+      "public/editor-v2/core/authored-content.js",
+      "public/editor-v2/ui/element-content-controls.js",
+      "tests/editor-accessible-icon-label.test.js",
+      "tests/browser/editor-publication-guidance.test.js"
+    ],
+    "behavior": [
+      "Inspector controls display only strings and finite numbers, and malformed repeater rows render as empty in-memory rows.",
+      "Publication guidance checks only values supported by the content contract; malformed/null rows return the existing localized required-field message.",
+      "Heading Canvas styles fall back safely for malformed heading levels.",
+      "Opening Inspector controls does not rewrite the persisted Page Model; explicit Save and Publish remain separate."
+    ],
+    "reuse_review": "Reused the project's existing authored-content contract, Inspector component, Page Model, and Chromium fixtures. No external source or new dependency was needed."
+  },
+  "checks": {
+    "unit": {
+      "command": "node -e \"import('./tests/editor-accessible-icon-label.test.js')\"",
+      "result": "PASS",
+      "tests": 5
+    },
+    "chromium": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-publication-guidance.test.js tests/browser/editor-content-system.test.js tests/browser/editor-gallery-crop-parity.test.js",
+      "result": "PASS",
+      "tests": 6,
+      "coverage": "Malformed authored Inspector models on desktop/mobile; Canvas content; draft Save, reload and separate Publish; gallery source and crop parity."
+    },
+    "editor_suite": { "command": "npm run test:editor", "result": "PASS", "tests": 169, "files": 12 },
+    "typecheck": { "command": "npm run typecheck", "result": "PASS" },
+    "migration_gate": { "command": "npm run test:web013:migration-gate", "result": "PASS", "production_migrations_applied": 0 },
+    "plan_contract": { "command": "python3 tests/plan-contract.test.py", "result": "PASS", "tests": 13 },
+    "plan_cursor": { "command": "python3 scripts/audit-active-plan-point.py", "result": "PASS", "current_next": "77.44.7.D", "traceability_entries": 396 },
+    "canonical_plan": { "command": "python3 scripts/check-canonical-plan.py", "result": "PASS", "master_files": 13 },
+    "traceability": { "command": "python3 scripts/build-feature-traceability.py --check", "result": "PASS", "entries": 396 },
+    "syntax_and_diff": { "result": "PASS", "checks": ["node --check changed JavaScript", "git diff --check"] },
+    "wrangler_dry_run": {
+      "command": "XDG_CONFIG_HOME=/tmp/sanci9517-wrangler-config npx wrangler deploy --dry-run",
+      "result": "PASS",
+      "wrangler": "4.130.0",
+      "public_assets": 162,
+      "upload_size": "335.92 KiB / 87.61 KiB gzip"
+    },
+    "production_d1_preflight": {
+      "method": "Cloudflare D1 Query API; one SELECT-only query against d1_migrations",
+      "result": "PASS",
+      "applied_migrations": 34,
+      "latest_migration": "0028_media_archive.sql",
+      "changes": 0,
+      "rows_written": 0,
+      "changed_db": false
+    }
+  },
+  "release": {
+    "github_push": "VERIFIED_NORMAL_FAST_FORWARD",
+    "cloudflare_build_id": "09f29b43-06c1-49b6-a210-6911e2de6fd3",
+    "cloudflare_build_status": "success",
+    "expected_build_command": "npm run typecheck",
+    "expected_deploy_command": "npm run deploy:safe",
+    "production_deployment_id": "faa5e99f-b457-4743-b2f4-c808f37f5d18",
+    "production_worker_version": "b9224860-a49b-4d86-a051-1e7cbe620a6d",
+    "traffic_percentage": 100,
+    "health_status": 200,
+    "asset_sha256": {
+      "public/editor-v2/core/authored-content.js": "3bf1f67a689b7554efd50abb34ffe248e75668bfa9cb72c717c8a668301e6d7d",
+      "public/editor-v2/ui/element-content-controls.js": "a38a19e9f2e2d166534412ec2967d9771bf923dbd89ff6b7cfcf13f091af981d"
+    },
+    "github_combined_status": "statuses=[]; aggregate CI PASS not claimed"
+  },
+  "constraints": {
+    "production_d1_write_or_migration": false,
+    "r2_change_or_deletion": false,
+    "new_dependency": false,
+    "new_cost": "0 Ft",
+    "manual_device_acceptance": "DEFERRED_UNTIL_FULL_VISUAL_EDITOR_GATE",
+    "plan_item_77_44_7_d": "OPEN; this fix closes only the malformed authored Inspector/guidance failure"
+  }
+}
