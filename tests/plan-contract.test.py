@@ -69,7 +69,7 @@ class PlanContractTest(unittest.TestCase):
         current=self.current_next_block()
         p.write_text(p.read_text().replace(
             f'**Egyetlen következő blokk:** `{current}`',
-            '**Egyetlen következő blokk:** `77.44.7.Z`',
+            '**Egyetlen következő blokk:** `' + self.current_next_block().rsplit('.',1)[0] + '.Z`',
             1,
         ))
         with self.assertRaisesRegex(ValueError,'declared OPEN'):validate(self.root)

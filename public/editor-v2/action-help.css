@@ -1,0 +1,130 @@
+/* Shared shell action symbols and accessible desktop/touch explanations. */
+.editor-action-icon {
+  display: block;
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+  pointer-events: none;
+}
+
+[data-icon-only="true"] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+[data-editor-action]:not([data-icon-only="true"]):not(.rail-btn) {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.rail-btn [data-action-icon] {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+}
+
+.canvas-device-btn .editor-action-icon,
+.device-btn .editor-action-icon {
+  width: 16px;
+  height: 16px;
+  flex-basis: 16px;
+}
+
+.device-btn[data-icon-only="true"] {
+  width: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0;
+}
+
+.sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+.editor-action-tooltip {
+  position: fixed;
+  z-index: 1800;
+  width: max-content;
+  max-width: min(320px, calc(100vw - 16px));
+  padding: 9px 11px;
+  border: 1px solid #7895bf;
+  border-radius: 10px;
+  background: #101c2c;
+  color: #f5f8ff;
+  box-shadow: 0 10px 28px #0207139c;
+  font: 500 13px/1.55 Inter, system-ui, sans-serif;
+  overflow-wrap: anywhere;
+  /* The tooltip stays hoverable via the pointer-position guard in
+     action-help.js without intercepting controls below it. */
+  pointer-events: none;
+}
+
+.editor-action-tooltip[hidden],
+.mobile-action-help[hidden] {
+  display: none !important;
+}
+
+.mobile-action-help {
+  display: none;
+  align-items: flex-start;
+  gap: 5px;
+  min-width: 0;
+  padding: 7px 10px;
+  border: 1px solid #405878;
+  border-radius: 9px;
+  background: #14243a;
+  color: #dce8fb;
+  font-size: 12px;
+  line-height: 1.45;
+  text-align: left;
+}
+
+.mobile-action-help strong {
+  flex: 0 0 auto;
+  color: #fff;
+}
+
+.mobile-action-help span {
+  min-width: 0;
+}
+
+@media (max-width: 700px) {
+  .canvas-device-btn .editor-action-label {
+    display: none;
+  }
+
+  .canvas-device-btn {
+    min-width: 44px;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 850px), (pointer: coarse) {
+  .editor-action-tooltip {
+    display: none !important;
+  }
+
+  .mobile-action-help:not([hidden]) {
+    display: flex;
+    width: 100%;
+    grid-column: 1 / -1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .editor-action-tooltip,
+  .mobile-action-help {
+    scroll-behavior: auto;
+  }
+}

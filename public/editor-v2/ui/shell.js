@@ -1,10 +1,13 @@
 import {createEventBus} from './events.js';
 import {panelRegistry,featureRegistry} from './registry.js';
+import {EDITOR_ACTIONS} from './action-catalog.js?v=20261102-action-help-stateful';
+import {enhanceEditorActionControls} from './action-help.js?v=20261102-action-help-stateful';
 
 const bus=createEventBus();
 const workspace=document.querySelector('.workspace');
 const root=document.documentElement;
 const panels={left:document.querySelector('#leftDock'),right:document.querySelector('#rightDock')};
+const actionControls=enhanceEditorActionControls(document);
 const resizeLimits={left:{min:250,max:460},right:{min:260,max:440}};
 const STORAGE_KEY='sanci-editor-shell-v2';
 const defaults={leftOpen:false,rightOpen:false,leftTab:'pages',leftWidth:310,rightWidth:352};
@@ -46,8 +49,19 @@ function syncMobileBackdrop(){
   }
   const canvasArea=document.querySelector('.canvas-area');
   if(canvasArea)canvasArea.inert=open;
-  document.querySelector('#editorMenu')?.setAttribute('aria-expanded',String(leftOpen));
-  document.querySelector('#openInspector')?.setAttribute('aria-expanded',String(rightOpen));
+  const leftToggle=document.querySelector('#editorMenu');
+  leftToggle?.setAttribute('aria-expanded',String(leftOpen));
+  if(leftToggle)actionControls.setAction(leftToggle,leftOpen?'closeLeftPanel':'openLeftPanel');
+  const rightToggle=document.querySelector('#openInspector');
+  rightToggle?.setAttribute('aria-expanded',String(rightOpen));
+  if(rightToggle)actionControls.setAction(rightToggle,rightOpen?'closeRightPanel':'openRightPanel');
+  const selectedTab=document.querySelector('.rail-btn[aria-selected="true"]')?.dataset.tab;
+  const selectedPanel=selectedTab&&document.querySelector(`.dock-content[data-content="${selectedTab}"]`);
+  const subtitle=selectedPanel?.querySelector('.panel-subtitle');
+  if(subtitle){
+    if(!subtitle.dataset.defaultDescription)subtitle.dataset.defaultDescription=subtitle.textContent.trim();
+    subtitle.textContent=mobile?(EDITOR_ACTIONS[selectedTab]?.description||subtitle.dataset.defaultDescription):subtitle.dataset.defaultDescription;
+  }
 }
 function setPanel(side,open,{save=true,restoreFocus=true}={}){
   const panel=panels[side];if(!panel)return;
@@ -83,6 +97,7 @@ function showLeftTab(tab,{save=true,open=true}={}){
   if(open)setPanel('left',true,{save:false});
   document.querySelectorAll('.rail-btn').forEach(b=>{const selected=b.dataset.tab===tab;b.classList.toggle('active',selected);b.setAttribute('aria-selected',String(selected));b.tabIndex=selected?0:-1});
   document.querySelectorAll('[data-content]').forEach(x=>x.classList.toggle('hidden',x.dataset.content!==tab));
+  syncMobileBackdrop();
   if(save){persisted.leftTab=tab;persist()}
   emit('panel:tab',{tab});
 }

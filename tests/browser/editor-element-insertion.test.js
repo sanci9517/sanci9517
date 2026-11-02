@@ -106,9 +106,9 @@ test('palette items are inserted beside the selected item in canvas flow and sav
     }
   };
   assert.equal(await tab.locator('.top-center').getAttribute('role'),'group');
-  assert.equal(await tab.locator('.top-center').getAttribute('aria-label'),'Előnézeti eszközméret');
+  assert.equal(await tab.locator('.top-center').getAttribute('aria-label'),'Előnézet képernyőméret szerint');
   assert.equal(await tab.locator('.canvas-devices').getAttribute('role'),'group');
-  assert.equal(await tab.locator('.canvas-devices').getAttribute('aria-label'),'Vászon előnézeti eszközmérete');
+  assert.equal(await tab.locator('.canvas-devices').getAttribute('aria-label'),'Előnézet képernyőméret szerint');
   const selectTool=tab.locator('#selectTool'),panTool=tab.locator('#panTool');
   assert.equal(await selectTool.getAttribute('aria-pressed'),'true');
   assert.equal(await panTool.getAttribute('aria-pressed'),'false');
