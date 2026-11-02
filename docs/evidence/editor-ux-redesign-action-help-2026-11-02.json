@@ -1,0 +1,145 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-11-02",
+  "plan": "77.44.6.1.A — unique action icons and accessible desktop/touch help foundation",
+  "scope": "This is a foundation slice of the full Visual Editor redesign. It does not certify the complete redesign, all editor controls, or manual/physical acceptance.",
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "previous_head": "0df07a9ef853b1bde3d647077bcbb2e721f2116e",
+    "commit": "920e2a8a062314429342246e61bdb0141857f0fb",
+    "message": "Redesign editor action icon and help foundation",
+    "push": "Fast-forward push succeeded; the branch advanced from the recorded previous head.",
+    "github_combined_statuses": [],
+    "aggregate_github_ci_pass": false
+  },
+  "implementation": {
+    "action_count": 31,
+    "icon_source": {
+      "name": "Lucide Icons",
+      "version": "1.66.0",
+      "upstream_commit": "a630cec77eac6568b989e87e4947a8bfe45caacd",
+      "license_file": "docs/licenses/lucide-icons-1.66.0.txt",
+      "runtime_dependency_added": false,
+      "third_party_runtime_service_added": false
+    },
+    "behaviors": [
+      "The action registry enforces a distinct reviewed icon and plain-language Hungarian label/description for each action.",
+      "The left navigation and right Inspector toggles update icon, accessible label and explanation to match the actual open/closed state.",
+      "Desktop hover and keyboard focus expose a persistent, dismissible explanation; Escape closes it and pointer movement onto the explanation preserves it without intercepting other controls.",
+      "Coarse-pointer touch reveals a visible contextual explanation; the selected mobile panel supplies a task-specific description.",
+      "Save remains a draft-only operation, separate from the visibly labelled Publish action. Help/panel interactions do not write the page model."
+    ]
+  },
+  "validation": {
+    "editor_catalog_unit": "5/5 pass",
+    "focused_desktop_and_touch_action_help_chromium": "2/2 pass",
+    "related_chromium_regressions": {
+      "files": [
+        "tests/browser/editor-action-help.test.js",
+        "tests/browser/editor-decorative-elements.test.js",
+        "tests/browser/editor-element-insertion.test.js",
+        "tests/browser/editor-style-copy.test.js",
+        "tests/browser/editor-ux-p0-workflow.test.js"
+      ],
+      "result": "12/12 pass"
+    },
+    "editor_unit_suite": "13/13 files pass",
+    "typescript": "npm run typecheck passed",
+    "deployment_migration_guard": "npm run test:web013:migration-gate passed; no migration was applied",
+    "plan_contract": "13/13 pass",
+    "canonical_master": "13/13 files; acceptance remains NOT_CERTIFIED",
+    "active_plan_cursor": "77.44.6.1.B",
+    "feature_traceability": "396/396 source mappings pass",
+    "git_diff_check": "passed",
+    "full_editor_browser_suite": "Not rerun as a whole in this release. A previously observed open-menu/Inspector overlap remains OPEN and is assigned to 77.44.6.1.B; no full-suite PASS is claimed."
+  },
+  "release_preflight": {
+    "wrangler_version": "4.130.0",
+    "wrangler_deploy_dry_run": "passed; 166 assets, 335.92 KiB total, 87.61 KiB gzip",
+    "production_d1": {
+      "queries": "Read-only SELECT inventory, schema and ledger queries only",
+      "ledger_row_count": 34,
+      "latest_ledger_row": "0028_media_archive.sql",
+      "rows_written": 0,
+      "changed_db": false,
+      "migration_applied": false
+    },
+    "r2_mutation_or_deletion": false,
+    "paid_service_or_resource": false,
+    "cost_huf": 0
+  },
+  "production": {
+    "worker": "sanci9517-streamer-brand",
+    "build_id": "e069a00a-2d2c-4f86-ab16-ef4856fc479e",
+    "build_commit": "920e2a8a062314429342246e61bdb0141857f0fb",
+    "build_branch": "v2/foundation",
+    "build_outcome": "success",
+    "build_deploy_command": "npm run deploy:safe",
+    "deployment_id": "d83b05f6-5943-4bd6-8d52-80810ba7962e",
+    "traffic_version": "6207854a-e7d6-463b-9673-4475732f20a4",
+    "traffic_percentage": 100,
+    "health": {
+      "path": "/api/health",
+      "http_status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "public_assets": [
+      {
+        "path": "/editor-v2/index.html",
+        "http_status": 200,
+        "sha256": "bda5030c2cf11606895c47aec5c2de444b4a01128179cfdc4bd945b3b80431d8",
+        "matches_local_source": true
+      },
+      {
+        "path": "/editor-v2/action-help.css",
+        "http_status": 200,
+        "sha256": "591c1a09dd8602196329d7a2f21d692091174a4b2c2ade2b734e65a7631f8602",
+        "matches_local_source": true
+      },
+      {
+        "path": "/editor-v2/app.js",
+        "http_status": 200,
+        "sha256": "337b9f26c393e1e691303bfb9914268c0d2f5fa4bc90693646b88721d25dee75",
+        "matches_local_source": true
+      },
+      {
+        "path": "/editor-v2/ui/shell.js",
+        "http_status": 200,
+        "sha256": "8234ff7a0c30f8d459738898d86a2e658b7fe1288172cc1ead274033cee26a0f",
+        "matches_local_source": true
+      },
+      {
+        "path": "/editor-v2/ui/action-catalog.js",
+        "http_status": 200,
+        "sha256": "197b9a7ccb444eeda66e057c3fcb4b895f914e1a6f614174a2a69d1d75c16b54",
+        "matches_local_source": true
+      },
+      {
+        "path": "/editor-v2/ui/action-help.js",
+        "http_status": 200,
+        "sha256": "28f2a1286eb6115a89568ea287218802555cead08cf214ca91df1c329a0df8d3",
+        "matches_local_source": true
+      },
+      {
+        "path": "/editor-v2/ui/action-icons.js",
+        "http_status": 200,
+        "sha256": "3534a108b5eaddffe4fd193069903a583a2917ff6790930aeac9f5574198cc5b",
+        "matches_local_source": true
+      }
+    ]
+  },
+  "next": {
+    "plan_cursor": "77.44.6.1.B",
+    "open_items": [
+      "Redesign desktop and mobile shell hierarchy and action grouping.",
+      "Resolve the observed overflow menu overlap with the open Inspector tabs.",
+      "Continue full-editor visual redesign; full manual and physical acceptance is deferred until the complete Editor gate."
+    ]
+  }
+}
