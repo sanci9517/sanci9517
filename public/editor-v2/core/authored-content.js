@@ -27,7 +27,7 @@ const FOCAL_PRESETS=Object.freeze({center:[50,50],top:[50,0],bottom:[50,100],lef
 // Resolve a view without adding numeric axes to a persisted legacy image.
 export function imageFocalPosition(item={}){
   const preset=typeof item.focalPoint==='string'&&Object.hasOwn(FOCAL_PRESETS,item.focalPoint)?FOCAL_PRESETS[item.focalPoint]:FOCAL_PRESETS.center;
-  const axis=(value,fallback)=>Number.isFinite(Number(value))?Math.max(0,Math.min(100,Number(value))):fallback;
+  const axis=(value,fallback)=>{try{const number=Number(value);return Number.isFinite(number)?Math.max(0,Math.min(100,number)):fallback}catch{return fallback}};
   return {focalX:axis(item.focalX,preset[0]),focalY:axis(item.focalY,preset[1])};
 }
 export function contentProperties(node){
@@ -145,13 +145,15 @@ export function contentDefaults(node,device='desktop'){
   if(node.type==='spacer')return {height:'48px'};
   return common;
 }
-const esc=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+const renderableText=value=>typeof value==='string'?value:typeof value==='number'&&Number.isFinite(value)?String(value):'';
+const displayText=value=>renderableText(value).trim();
+const esc=value=>renderableText(value).replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
 const safeHref=value=>{try{return value?validatedLinkHref(value):''}catch{return ''}};
 const safeSrc=value=>{try{return safeMediaUrl(value)}catch{return ''}};
 const trimmedText=value=>typeof value==='string'?value.trim():'';
 const imageAlt=item=>item?.decorative?'':trimmedText(item?.alt);
 const imageCaption=item=>trimmedText(item?.caption);
-export function contentTag(node){return node.type==='heading'?'h'+([1,2,3,4,5,6].includes(Number(node.props?.level))?Number(node.props.level):2):['button','link'].includes(node.type)&&safeHref(node.props?.href)?'a':node.type==='button'?'button':node.type==='image'?'figure':node.type==='quote'?'blockquote':['footer','navbar','menu','sidebar'].includes(node.type)?{footer:'footer',navbar:'nav',menu:'nav',sidebar:'aside'}[node.type]:'div'}
+export function contentTag(node){const level=node.props?.level,number=typeof level==='string'||typeof level==='number'?Number(level):NaN;return node.type==='heading'?'h'+([1,2,3,4,5,6].includes(number)?number:2):['button','link'].includes(node.type)&&safeHref(node.props?.href)?'a':node.type==='button'?'button':node.type==='image'?'figure':node.type==='quote'?'blockquote':['footer','navbar','menu','sidebar'].includes(node.type)?{footer:'footer',navbar:'nav',menu:'nav',sidebar:'aside'}[node.type]:'div'}
 export function contentAttributes(node){
   const p=node.props||{},a=node.accessibility||{},attributes={};
   const target=['_self','_blank'].includes(p.target)?p.target:'_self';
@@ -165,13 +167,13 @@ export function contentAttributes(node){
   if(node.type==='icon'){if(attributes['aria-label'])attributes.role='img';else attributes['aria-hidden']='true'}
   const legacyAnchor=typeof a.anchorId==='string'&&/^[A-Za-z][A-Za-z0-9_-]{0,63}$/.test(a.anchorId)?a.anchorId:'';
   if(legacyAnchor)attributes.id=legacyAnchor;
-  else if(a.id&&/^[A-Za-z][\w-]{0,79}$/.test(a.id))attributes.id=a.id;
+  else if(typeof a.id==='string'&&/^[A-Za-z][\w-]{0,79}$/.test(a.id))attributes.id=a.id;
   if(['en','hu','de','fr','es','it','pt','pl','ja','ko','zh'].includes(a.lang))attributes.lang=a.lang;
   if(a.decorative===true)attributes['aria-hidden']='true';
   return attributes;
 }
 export function authoredNodeHtml(node,{childrenHtml='',device='desktop',editor=false}={}){
-  const p=contentProperties(node),text=esc(p.text??p.content??node.name??''),id='creator-'+String(node.id).replace(/[^\w-]/g,'-');
+  const p=contentProperties(node),text=esc(p.text??p.content??node.name??''),id='creator-'+(typeof node.id==='string'?node.id:'').replace(/[^\w-]/g,'-');
   const imageSource=item=>typeof item.assetId==='string'&&/^[0-9a-f-]{36}$/i.test(item.assetId)?`/${editor?'api/admin/media?id=':'media/'}${encodeURIComponent(item.assetId)}`:safeSrc(item.src);
   const image=item=>{const src=imageSource(item),{focalX:x,focalY:y}=imageFocalPosition(item);return src?`<img src="${esc(src)}" alt="${esc(imageAlt(item))}" loading="${item.loading==='eager'?'eager':'lazy'}" decoding="async" style="object-fit:${['cover','contain','fill','none','scale-down'].includes(item.fit)?item.fit:'cover'};object-position:${x}% ${y}%">`:`<span class="creator-media-empty">${editor?'Válassz képet a Médiatárból vagy adj meg képcímet.':'A kép nem érhető el.'}</span>`};
   const items=Array.isArray(p.items)?p.items.slice(0,40):[];
@@ -180,26 +182,34 @@ export function authoredNodeHtml(node,{childrenHtml='',device='desktop',editor=f
   const galleryName=authoredLabel||'Képek';
   const tablistName=authoredLabel||'Fülek';
   if(['heading','text','button','link','badge'].includes(node.type))return text;
-  if(node.type==='quote')return `<div>${text}</div>${p.citation?`<cite>${esc(p.citation)}</cite>`:''}`;
-  if(node.type==='icon')return `<span aria-hidden="true">${({star:'★',heart:'♥',play:'▶',check:'✓',arrow:'➜',bolt:'ϟ',camera:'📷',music:'♫',globe:'◎',mail:'✉'})[p.icon]||'★'}</span>`;
+  if(node.type==='quote'){const citation=displayText(p.citation);return `<div>${text}</div>${citation?`<cite>${esc(citation)}</cite>`:''}`}
+  if(node.type==='icon'){const icon=typeof p.icon==='string'?p.icon:'';return `<span aria-hidden="true">${({star:'★',heart:'♥',play:'▶',check:'✓',arrow:'➜',bolt:'ϟ',camera:'📷',music:'♫',globe:'◎',mail:'✉'})[icon]||'★'}</span>`}
   if(node.type==='image')return `<div class="creator-image-frame"${['16 / 9','4 / 3','1 / 1','3 / 4'].includes(p.ratio)?` style="aspect-ratio:${p.ratio}"`:''}>${image(p)}</div>${imageCaption(p)?`<figcaption>${esc(imageCaption(p))}</figcaption>`:''}`;
   if(['video','audio'].includes(node.type)){
     const asset=typeof p.assetId==='string'&&/^[0-9a-f-]{36}$/i.test(p.assetId)?`/${editor?'api/admin/media?id=':'media/'}${encodeURIComponent(p.assetId)}`:'';const src=asset||safeSrc(p.src);if(!src)return `<span class="creator-media-empty">${editor?'Válassz fájlt a Médiatárból vagy adj meg médiaforrást.':'A média nem érhető el.'}</span>`;
     const tag=node.type,poster=tag==='video'?imageSource({assetId:p.posterAssetId,src:p.poster}):'';return `<${tag} src="${esc(src)}" preload="metadata"${p.controls!==false?' controls':''}${p.loop?' loop':''}${p.muted?' muted':''}${p.autoplay&&p.muted&&!editor?' autoplay':''}${tag==='video'?' playsinline':''}${poster?` poster="${esc(poster)}"`:''}></${tag}>`;
   }
-  if(node.type==='list')return `<${p.ordered?'ol':'ul'}>${items.map(item=>`<li>${safeHref(item.href)?`<a href="${esc(safeHref(item.href))}">${esc(item.text)}</a>`:esc(item.text)}</li>`).join('')}</${p.ordered?'ol':'ul'}>`;
+  if(node.type==='list')return `<${p.ordered?'ol':'ul'}>${items.map(item=>{const href=safeHref(item.href),label=displayText(item.text);return `<li>${href?`<a href="${esc(href)}">${esc(label||'Hivatkozás')}</a>`:esc(item.text)}</li>`}).join('')}</${p.ordered?'ol':'ul'}>`;
   if(node.type==='table'){const caption=trimmedText(p.caption);return `<div class="creator-table-scroll" role="region" aria-label="${esc(caption||'Táblázat')}" tabindex="0"><table>${caption?`<caption>${esc(caption)}</caption>`:''}<tbody>${(Array.isArray(p.rows)?p.rows:[]).slice(0,100).map((row,index)=>`<tr>${(Array.isArray(row)?row:[]).slice(0,16).map(cell=>`<${p.header&&index===0?'th scope="col"':'td'}>${esc(cell)}</${p.header&&index===0?'th':'td'}>`).join('')}</tr>`).join('')}</tbody></table></div>`}
-  if(node.type==='tabs')return `<div class="creator-tabs"><div role="tablist" aria-label="${esc(tablistName)}">${items.map((item,index)=>`<button type="button" role="tab" id="${id}-tab-${index}" aria-controls="${id}-panel-${index}" aria-selected="${index===0}" tabindex="${index===0?'0':'-1'}">${esc(item.title||'Fül '+(index+1))}</button>`).join('')}</div>${items.map((item,index)=>`<div role="tabpanel" id="${id}-panel-${index}" aria-labelledby="${id}-tab-${index}" tabindex="0"${index?' hidden':''}>${esc(item.text)}</div>`).join('')}</div>`;
+  if(node.type==='tabs')return `<div class="creator-tabs"><div role="tablist" aria-label="${esc(tablistName)}">${items.map((item,index)=>{const title=displayText(item?.title)||'Fül '+(index+1);return `<button type="button" role="tab" id="${id}-tab-${index}" aria-controls="${id}-panel-${index}" aria-selected="${index===0}" tabindex="${index===0?'0':'-1'}">${esc(title)}</button>`}).join('')}</div>${items.map((item,index)=>`<div role="tabpanel" id="${id}-panel-${index}" aria-labelledby="${id}-tab-${index}" tabindex="0"${index?' hidden':''}>${esc(item.text)}</div>`).join('')}</div>`;
   if(['accordion','dropdown'].includes(node.type)){
     const groupName=authoredLabel||(node.type==='accordion'?'Harmonika':'Lenyitható részek');
     // Native details name enforces single-open without event races and keeps
     // keyboard/Summary semantics intact on both canvas and published pages.
     const name=p.singleOpen===true?' name="creator-details-'+id+'"':'';
-    return `<div class="creator-accordion" role="group" aria-label="${esc(groupName)}">${items.map((item,index)=>`<details${name}${p.openFirst===true&&index===0?' open':''}><summary>${esc(item.title||'Részletek')}</summary><div>${esc(item.text)}</div></details>`).join('')}</div>`;
+    return `<div class="creator-accordion" role="group" aria-label="${esc(groupName)}">${items.map((item,index)=>{const title=displayText(item?.title)||'Részletek';return `<details${name}${p.openFirst===true&&index===0?' open':''}><summary>${esc(title)}</summary><div>${esc(item.text)}</div></details>`}).join('')}</div>`;
   }
-  if(['gallery','carousel'].includes(node.type))return `<div class="creator-${node.type}"${node.type==='gallery'?` role="region" aria-label="${esc(galleryName)}" style="grid-template-columns:repeat(${device==='mobile'?1:device==='tablet'?2:[2,3,4].includes(Number(p.columns))?Number(p.columns):3},minmax(0,1fr))"`:` tabindex="0" role="region" aria-roledescription="képgaléria" aria-label="${esc(carouselName)}"`}>${items.map(item=>{const alt=imageAlt(item),caption=imageCaption(item),accessibleName=caption||alt||'kép';return `<figure><button type="button" class="creator-image-zoom" data-lightbox-src="${esc(imageSource(item))}" data-lightbox-alt="${esc(alt||caption)}" data-lightbox-caption="${esc(caption)}" aria-haspopup="dialog" aria-label="${esc('Kép nagyítása: '+accessibleName)}">${image(item)}</button>${caption?`<figcaption>${esc(caption)}</figcaption>`:''}</figure>`}).join('')}</div>${node.type==='carousel'?'<div class="creator-carousel-controls"><button type="button" data-carousel-step="-1" aria-label="Előző kép">←</button><button type="button" data-carousel-step="1" aria-label="Következő kép">→</button></div>':''}`;
+  if(['gallery','carousel'].includes(node.type)){
+    const columns=typeof p.columns==='string'||typeof p.columns==='number'?Number(p.columns):NaN;
+    const layout=node.type==='gallery'
+      ?` role="region" aria-label="${esc(galleryName)}" style="grid-template-columns:repeat(${device==='mobile'?1:device==='tablet'?2:[2,3,4].includes(columns)?columns:3},minmax(0,1fr))"`
+      :` tabindex="0" role="region" aria-roledescription="képgaléria" aria-label="${esc(carouselName)}"`;
+    const figures=items.map(item=>{const alt=imageAlt(item),caption=imageCaption(item),accessibleName=caption||alt||'kép';return `<figure><button type="button" class="creator-image-zoom" data-lightbox-src="${esc(imageSource(item))}" data-lightbox-alt="${esc(alt||caption)}" data-lightbox-caption="${esc(caption)}" aria-haspopup="dialog" aria-label="${esc('Kép nagyítása: '+accessibleName)}">${image(item)}</button>${caption?`<figcaption>${esc(caption)}</figcaption>`:''}</figure>`}).join('');
+    const controls=node.type==='carousel'?'<div class="creator-carousel-controls"><button type="button" data-carousel-step="-1" aria-label="Előző kép">←</button><button type="button" data-carousel-step="1" aria-label="Következő kép">→</button></div>':'';
+    return `<div class="creator-${node.type}"${layout}>${figures}</div>${controls}`;
+  }
   if(node.type==='code')return `<pre${p.wrap?' class="creator-code-wrap"':''}><code>${esc(p.code)}</code></pre>`;
-  if(node.type==='tooltip')return `<span class="creator-tooltip"><button type="button" aria-describedby="${id}-tip">${text}</button><span role="tooltip" id="${id}-tip">${esc(p.description)}</span></span>`;
+  if(node.type==='tooltip'){const description=displayText(p.description);return `<span class="creator-tooltip"><button type="button"${description?` aria-describedby="${id}-tip"`:''}>${text}</button>${description?`<span role="tooltip" id="${id}-tip">${esc(description)}</span>`:''}</span>`}
   if(node.type==='divider')return '<hr>';
   return childrenHtml;
 }

@@ -56,3 +56,29 @@ test('malformed authored group labels use safe names and valid labels are normal
   assert.match(caption,/role="region" aria-label="Bevétel"/);
   assert.match(caption,/<caption>Bevétel<\/caption>/);
 });
+
+test('malformed nested authored text does not interrupt Canvas or published rendering',()=>{
+  const malformed={toString:null};
+  const render=(type,props)=>authoredNodeHtml({id:'safe-text',type,metadata:{contentVersion:1},props});
+
+  assert.equal(render('text',{text:malformed}),'');
+  assert.equal(render('text',{text:42}),'42','numeric text accepted by the existing schema remains renderable');
+  assert.equal(render('icon',{icon:malformed}),'<span aria-hidden="true">★</span>','an invalid icon key uses the established default');
+  const image=render('image',{src:'/safe.svg',focalX:malformed,focalY:malformed});
+  assert.match(image,/object-position:50% 50%/,'invalid crop axes fall back to centered framing');
+  const gallery=render('gallery',{columns:malformed,items:[{src:'/safe.svg',alt:'Kép',focalX:malformed}]});
+  assert.match(gallery,/grid-template-columns:repeat\(3,minmax\(0,1fr\)\)/,'invalid column counts use the existing three-column default');
+  assert.match(gallery,/object-position:50% 50%/);
+  assert.equal(render('quote',{text:'  <quote>  ',citation:malformed}),'<div>  &lt;quote&gt;  </div>');
+  assert.equal(render('list',{items:[{text:malformed},{text:malformed,href:'/p/home'}]}),
+    '<ul><li></li><li><a href="/p/home">Hivatkozás</a></li></ul>');
+  assert.match(render('table',{rows:[[malformed,'<cell>']]}),/<td><\/td><td>&lt;cell&gt;<\/td>/);
+
+  const tabs=render('tabs',{items:[{title:malformed,text:malformed}]});
+  assert.match(tabs,/<button[^>]*role="tab"[^>]*>Fül 1<\/button>/,'an invalid tab title cannot create an unnamed tab');
+  assert.match(tabs,/<div role="tabpanel"[^>]*><\/div>/);
+  const accordion=render('accordion',{items:[{title:malformed,text:malformed}]});
+  assert.match(accordion,/<summary>Részletek<\/summary><div><\/div>/,'an invalid disclosure title receives a safe name');
+  assert.equal(render('tooltip',{text:'Info',description:malformed}),
+    '<span class="creator-tooltip"><button type="button">Info</button></span>','an invalid description leaves no dangling tooltip reference');
+});
