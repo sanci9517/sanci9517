@@ -336,6 +336,19 @@ test('Rich Text native cross-paragraph and list selection survives marks, Save a
         return getRichTextFormattingSelection(editor)?.backward;
       }),true,'Redo restores the backward mixed-structure selection direction');
     }
+    await page.getByRole('button',{name:'Félkövér',exact:true}).click();
+    assert.equal((await surface.locator('p').nth(1).locator('strong').allTextContents()).join(''),'Gamma Delta',
+      'backward cross-structure formatting applies the mark without losing surrounding paragraph text');
+    assert.equal((await listItems.locator('strong').allTextContents()).join(''),'List OneList',
+      'backward formatting spans the selected ranges in both list items');
+    assert.equal(await surface.evaluate(async editor=>{
+      const {getRichTextFormattingSelection}=await import('/editor-v2/core/richtext-links.js');
+      return getRichTextFormattingSelection(editor)?.backward;
+    }),true,'backward formatting preserves cross-structure selection direction');
+    assert.equal((await canvasMixed.locator('p').nth(1).locator('strong').allTextContents()).join(''),'Gamma Delta',
+      'Canvas mirrors backward formatting across the paragraph');
+    assert.equal((await canvasMixed.locator('ul > li strong').allTextContents()).join(''),'List OneList',
+      'Canvas mirrors backward formatting across both list items');
     if(width===1366){
       await page.locator('#save').click();
       await page.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent?.startsWith('Mentve'));
@@ -359,6 +372,10 @@ test('Rich Text native cross-paragraph and list selection survives marks, Save a
         'Save retains the selected paragraph segment link');
       assert.deepEqual(persisted.blocks[2].items.map(item=>item.filter(run=>run.link?.href==='/p/paragraph-list').map(run=>run.text).join('')),
         ['List One','List'],'Save retains links only on the selected list-item segments');
+      assert.equal(persisted.blocks[1].children.filter(run=>run.marks?.includes('bold')).map(run=>run.text).join(''),'Gamma Delta',
+        'Save retains backward bold formatting on the paragraph range');
+      assert.deepEqual(persisted.blocks[2].items.map(item=>item.filter(run=>run.marks?.includes('bold')).map(run=>run.text).join('')),
+        ['List One','List'],'Save retains backward bold formatting across both list items');
       assert.equal(persisted.blocks[0].children.map(run=>run.text).join(''),'Alpha Beta');
       assert.equal(persisted.blocks[1].children.map(run=>run.text).join(''),'Gamma Delta');
       assert.equal(published,null,'desktop Save must leave the public page unchanged');
@@ -388,6 +405,10 @@ test('Rich Text native cross-paragraph and list selection survives marks, Save a
         'mobile Save retains the selected paragraph segment link');
       assert.deepEqual(persisted.blocks[2].items.map(item=>item.filter(run=>run.link?.href==='/p/paragraph-list').map(run=>run.text).join('')),
         ['List One','List'],'mobile Save retains links only on selected list-item segments');
+      assert.equal(persisted.blocks[1].children.filter(run=>run.marks?.includes('bold')).map(run=>run.text).join(''),'Gamma Delta',
+        'mobile Save retains backward bold formatting on the paragraph range');
+      assert.deepEqual(persisted.blocks[2].items.map(item=>item.filter(run=>run.marks?.includes('bold')).map(run=>run.text).join('')),
+        ['List One','List'],'mobile Save retains backward bold formatting across both list items');
       await page.locator('#publish').click();
       await page.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent==='Publikálva');
       assert.equal(writes.at(-1).publish,true,'mobile multi-block changes require a separate Publish');
@@ -397,7 +418,7 @@ test('Rich Text native cross-paragraph and list selection survives marks, Save a
     const publicPage=await browser.newPage({viewport:{width:390,height:850}});
     await publicPage.goto('http://127.0.0.1:'+server.address().port+'/p/selection-test');
     const publicSurface=publicPage.locator('.visual-richtext');await publicSurface.waitFor();
-    assert.equal((await publicSurface.locator('strong').allTextContents()).join(''),'BetaGamma');
+    assert.equal((await publicSurface.locator('strong').allTextContents()).join(''),'BetaGamma DeltaList OneList');
     assert.equal((await publicSurface.locator('em').allTextContents()).join(''),'BetaGamma');
     assert.equal((await publicSurface.locator('a[href="/p/multi-block"]').allTextContents()).join(''),'BetaGa',
       'the published renderer preserves the untouched part of a previously linked phrase');
