@@ -95,5 +95,35 @@
     "acceptance": "77.44.7.B remains OPEN / NOT CERTIFIED until authenticated content-link report and separate production Save/Publish acceptance with real internal Rich Text link.",
     "manualFullEditor": "DEFERRED until complete Visual Editor per AGENTS.md."
   },
-  "cost": "0 Ft; no paid service, new runtime dependency, D1 write/migration, or R2 change."
+  "cost": "0 Ft; no paid service, new runtime dependency, D1 write/migration, or R2 change.",
+  "contentLinkAcceptancePreflight": {
+    "method": "Cloudflare D1 API, SELECT-only; fetched exactly the page row before any proposed editor test",
+    "query": "SELECT id,site_id,slug,title,is_published,archived_at,published_slug,published_title,published_revision_id,published_parent_page_id,parent_page_id,sort_order,published_content_json,content_json FROM pages WHERE id='legacy-community' LIMIT 1",
+    "page": {
+      "id": "legacy-community",
+      "siteId": "site-default",
+      "slug": "community",
+      "title": "Közösség",
+      "isPublished": 1,
+      "archivedAt": null,
+      "publishedRevisionId": "1d0abe08-8360-421f-887e-40b64551558d",
+      "parentPageId": null,
+      "publishedParentPageId": null,
+      "sortOrder": 7
+    },
+    "draft": {
+      "bytes": 879,
+      "sha256": "6923d66d3a5fdf4bb797bc1a65f10d3cfaffbb0708afc7249347d14e71a66f0b",
+      "literalHrefStrings": 0
+    },
+    "published": {
+      "bytes": 3742,
+      "sha256": "d62ed8ade9b2ff5e026edb6dc6a8f2329bd2ae19e6641bd4e6206531478870d2",
+      "literalHrefStrings": 0
+    },
+    "rowsRead": 1,
+    "rowsWritten": 0,
+    "changedDb": false,
+    "restoreAcceptance": "After a separate Editor Save and Publish test, restore both original draft and published content hashes plus published revision metadata."
+  }
 }
