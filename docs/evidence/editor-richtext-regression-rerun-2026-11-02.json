@@ -1,0 +1,170 @@
+{
+  "date": "2026-11-02",
+  "plan_item": "77.44.7.B — Rich Text, inline marks, links, Save/Publish and link-report acceptance",
+  "status": "TEST_ONLY_REGRESSION_COVERAGE_PASS; RUNTIME_UNCHANGED_AFTER_TEST_COMMIT; PRODUCTION_HEALTH_PASS; AUTHENTICATED_ACCEPTANCE_OPEN",
+  "repository": {
+    "local_branch": "work",
+    "local_head": "47adbb0a2f036c7b499cfa9b1a7a53db28d1d07c",
+    "github_branch": "v2/foundation",
+    "github_head": "394d4bc5b3264deffd2eba81c128406f9a1ac933",
+    "github_head_verified": true,
+    "github_combined_statuses": [],
+    "ci_pass_claimed": false,
+    "preexisting_untracked_work_preserved": true,
+    "github_head_before_final_docs_evidence": "dc15707ca4b1e00d09a99d795219861bf06b18c3",
+    "runtime_commit": "d5cea53e1dc4791387a4b3daaccd0cd3d71ef8ae",
+    "test_commits": [
+      "e0bab2789c79a87f1ba6357ee02c25f0558beedf",
+      "686b2b1612eae0a8f4f92c4e48e2063a69e00deb",
+      "ff443d47d36c5f6475e22b5076a945fc803fd01d",
+      "3606ccff06ebf0502e9c8eb55283844f3f15441e",
+      "7aae2805db2929f3d01e2adff4ddfbed93be05e1"
+    ],
+    "traceability_commit": "f8d3196d0a956bcbc274f262d0b932524e2ce78c",
+    "canonical_plan_commit": "dc15707ca4b1e00d09a99d795219861bf06b18c3",
+    "github_head_before_evidence_commit": "dc15707ca4b1e00d09a99d795219861bf06b18c3",
+    "runtime_unchanged_after_test_only_commit": true
+  },
+  "tests": {
+    "web013": {
+      "command": "npm run test:web013",
+      "result": "PASS",
+      "passed": 11,
+      "failed": 0,
+      "includes": "runtime URL/entity regressions and deploy:safe migration-safety gate"
+    },
+    "editorUnit": {
+      "command": "npm run test:editor",
+      "result": "PASS",
+      "passed": 11,
+      "failed": 0
+    },
+    "typecheck": {
+      "command": "npm run typecheck",
+      "result": "PASS"
+    },
+    "canonicalPlan": {
+      "command": "python3 scripts/check-canonical-plan.py",
+      "result": "PASS",
+      "masterFiles": 13,
+      "activeCursor": "77.44.7.B"
+    },
+    "activePoint": {
+      "command": "python3 scripts/audit-active-plan-point.py",
+      "result": "PASS",
+      "featureMappings": 396,
+      "functionalAcceptance": "NOT_CERTIFIED"
+    },
+    "traceability": {
+      "command": "python3 scripts/build-feature-traceability.py --check",
+      "result": "PASS",
+      "mappings": 396
+    },
+    "planContract": {
+      "command": "python3 tests/plan-contract.test.py",
+      "result": "PASS",
+      "passed": 13,
+      "failed": 0
+    },
+    "diffCheck": {
+      "command": "git diff --check",
+      "result": "PASS"
+    },
+    "wranglerDryRun": {
+      "command": "WRANGLER_LOG_PATH=/tmp/sanci9517-link-report-dry-run.log ./node_modules/.bin/wrangler deploy --dry-run",
+      "result": "PASS",
+      "wrangler": "4.130.0",
+      "assets": 162,
+      "totalUpload": "300.78 KiB"
+    },
+    "d1Preflight": {
+      "method": "Cloudflare D1 API; SELECT only",
+      "query": "SELECT COUNT(*) AS row_count, MAX(name) AS latest_name FROM d1_migrations",
+      "rowCount": 34,
+      "latestMigration": "0028_media_archive.sql",
+      "changedDb": false,
+      "rowsWritten": 0
+    },
+    "browserSmoke": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium npm run test:web013:browser",
+      "result": "PASS",
+      "passed": 2,
+      "failed": 0,
+      "covers": [
+        "Admin link-report at 360/390/430/1280px",
+        "published Rich Text renderer and link target safety"
+      ]
+    }
+  },
+  "runtime": {
+    "source_changed": true,
+    "runtime_file": "src/routes/admin/link-report.ts",
+    "github_runtime_commit": "d5cea53e1dc4791387a4b3daaccd0cd3d71ef8ae",
+    "cloudflare_build_id": "1c646050-f18d-4bfe-b98e-f1c30c45a941",
+    "cloudflare_build_outcome": "success",
+    "cloudflare_build_commit": "d5cea53e1dc4791387a4b3daaccd0cd3d71ef8ae",
+    "cloudflare_build_command": "npm run typecheck",
+    "cloudflare_deploy_command": "npm run deploy:safe",
+    "deployment_id": "212fa31b-b468-4352-a1c1-e7bde222d363",
+    "worker_version": "77827529-a812-4b3b-9495-580c83348767",
+    "traffic_percent": 100,
+    "deployment_verified_by": "Cloudflare read-only Worker Build and Deployments APIs; exact runtime source commit build success and active deployment version at 100% traffic",
+    "health_this_run": "PASS: HTTP 200; Worker JSON identifies sanci9517-streamer-brand 2.0.0 on cloudflare-worker",
+    "public_asset_changes": [],
+    "asset_hashes_this_run": "NOT APPLICABLE: no public asset file changed; change is Worker route-only",
+    "source_changed_this_run": false,
+    "runtime_unchanged_after_test_only_commit": true,
+    "link_report_unauthenticated_smoke": "PASS: HTTP 401 UNAUTHORIZED; authenticated session required as expected",
+    "deployment_unchanged_after_test_only_commit": true
+  },
+  "acceptance": {
+    "authenticated_production_link_report": "OPEN: no Creator Platform admin session was available; unauthenticated production access is not treated as an acceptance pass",
+    "production_save_publish": "OPEN: would write production D1 page data; no designated test page or specific data-write authorization, so none attempted",
+    "physical_ios_android_acceptance": "DEFERRED to complete Visual Editor gate 77.44.7.F/77.44.8",
+    "overall_plan_item_77_44_7_B": "OPEN / NOT CERTIFIED; local unit/browser checks pass, authenticated production link report and production Save/Publish acceptance remain open"
+  },
+  "data_and_cost": {
+    "production_d1_migrations": 0,
+    "production_d1_writes": 0,
+    "production_r2_changes": 0,
+    "new_dependencies": 0,
+    "new_cost": "0 Ft"
+  },
+  "repeatChecks": [
+    {
+      "command": "npm run test:editor",
+      "result": "PASS",
+      "passed": 11,
+      "failed": 0
+    },
+    {
+      "command": "npm run test:web013",
+      "result": "PASS",
+      "passed": 11,
+      "failed": 0,
+      "migrationSafetyGate": "PASS"
+    },
+    {
+      "command": "npm run typecheck",
+      "result": "PASS"
+    }
+  ],
+  "fix": {
+    "defect": "Published legacy Rich Text HTML link-report hrefs were incompletely decoded before same-origin classification; the follow-up case-sensitivity regression showed that named references must remain case-sensitive while hex numeric references accept uppercase X and A-F.",
+    "supportedReferences": [
+      "&amp; (case-insensitive per HTML rules)",
+      "&sol; (case-sensitive named reference)",
+      "decimal numeric references (optional semicolon)",
+      "hex numeric references (uppercase/lowercase X and A-F, optional semicolon)"
+    ],
+    "invalidNumericHandling": "NUL, surrogate, out-of-range or non-finite numeric code point is replaced with U+FFFD before URL classification.",
+    "verifiedRuntimeAssertions": [
+      "&#47;, &#x2F; and &#X2F; plus &sol; path separators report same-origin missing targets",
+      "&SOL; remains unrecognized and is not misclassified as an internal href",
+      "invalid NUL and surrogate references do not add bogus internal link findings",
+      "cross-origin, protocol-relative, credentialed, downgrade and javascript URL exclusions remain",
+      "numeric decimal and hex references without the optional semicolon decode to the same-origin /p/ path when the HTML numeric-reference syntax permits it",
+      "decimal and hex numeric HTML references without semicolon are recognized when HTML permits the optional semicolon"
+    ]
+  }
+}
