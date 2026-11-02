@@ -47,6 +47,8 @@ async function fixture(t) {
     '<a href="&SOL;p&SOL;missing-wrong-case">Unrecognized named reference</a>' +
     '<a href="&#0;://example.test/p/invalid-null">Invalid-null reference</a>' +
     '<a href="&#xD800;/p/invalid-surrogate">Invalid-surrogate reference</a>' +
+    '<a href="&#x110000;://example.test/p/invalid-out-of-range">Invalid-out-of-range reference</a>' +
+    '<a href="&#999999999999999999999;://example.test/p/invalid-unsafe-integer">Invalid-unsafe-integer reference</a>' +
     '<a data-href="/p/ghost">No real link</a>';
   const structuredRichText = { type: 'richtext-document', schemaVersion: 1, blocks: [
     { type: 'paragraph', children: [
@@ -236,6 +238,8 @@ test('authenticated link report checks published rich text, redirects and site-s
   assert.match(response.headers.get('Cache-Control'), /no-store/);
   assert.equal(body.data.checkedContentLinks, 15, 'only same-origin internal page links count as checked, including HTML entity-encoded paths');
   assert.deepEqual(body.data.contentFindings.map(item => item.href), ['https://example.test/p/foreign', '/p/missing', '/p/missing-numeric', '/p/missing-decimal-no-semicolon', '/p/missing-hex', '/p/missing-hex-no-semicolon', '/p/missing-uppercase-hex', '/p/missing-named', '/p/missing-rich', 'https://example.test/p/missing-absolute', '/p/missing-table']);
+  assert.equal(body.data.contentFindings.some(item => /invalid-(?:null|surrogate|out-of-range|unsafe-integer)/.test(item.href)), false,
+    'invalid numeric code points must not turn non-URL text into same-origin page findings');
   assert.equal(body.data.contentFindings.some(item => /protocol-relative|credential-trap|downgrade|javascript:/i.test(item.href)), false,
     'the report must not misclassify cross-origin, credentialed, scheme-downgrade or script URLs as this site’s page links');
   assert.deepEqual(body.data.redirectedContentLinks.map(item => [item.href, item.targetPageId]), [['/p/old', 'target'], ['/p/old', 'target']]);
