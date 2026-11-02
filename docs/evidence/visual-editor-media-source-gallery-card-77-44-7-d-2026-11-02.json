@@ -28,11 +28,19 @@
       "failed": 0,
       "viewportWidths": [390, 1366],
       "coverage": "Gallery/carousel crop preset parity between Inspector, Canvas and published renderer; one-axis crop changes and Undo/Redo; legacy property preservation; gallery/carousel URL source changes; Card Inspector IME and Save/Publish isolation."
+    },
+    {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-structured-content.test.js",
+      "result": "PASS",
+      "passed": 1,
+      "failed": 0,
+      "durationMs": 75799,
+      "coverage": "List, table, tabs, accordion, gallery, carousel, badge, quote and icon editing; structured row/column keyboard operations and focus restoration; safe public rendering; draft Save/reload versus separate Publish."
     }
   ],
   "totalFocusedChromium": {
     "result": "PASS",
-    "passed": 9,
+    "passed": 10,
     "failed": 0,
     "viewportWidths": [390, 1366]
   },
