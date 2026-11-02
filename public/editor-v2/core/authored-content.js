@@ -176,7 +176,7 @@ export function authoredNodeHtml(node,{childrenHtml='',device='desktop',editor=f
   const p=contentProperties(node),text=esc(p.text??p.content??node.name??''),id='creator-'+(typeof node.id==='string'?node.id:'').replace(/[^\w-]/g,'-');
   const imageSource=item=>typeof item.assetId==='string'&&/^[0-9a-f-]{36}$/i.test(item.assetId)?`/${editor?'api/admin/media?id=':'media/'}${encodeURIComponent(item.assetId)}`:safeSrc(item.src);
   const image=item=>{const src=imageSource(item),{focalX:x,focalY:y}=imageFocalPosition(item);return src?`<img src="${esc(src)}" alt="${esc(imageAlt(item))}" loading="${item.loading==='eager'?'eager':'lazy'}" decoding="async" style="object-fit:${['cover','contain','fill','none','scale-down'].includes(item.fit)?item.fit:'cover'};object-position:${x}% ${y}%">`:`<span class="creator-media-empty">${editor?'Válassz képet a Médiatárból vagy adj meg képcímet.':'A kép nem érhető el.'}</span>`};
-  const items=Array.isArray(p.items)?p.items.slice(0,40):[];
+  const items=Array.isArray(p.items)?p.items.slice(0,40).map(item=>item&&typeof item==='object'&&!Array.isArray(item)?item:{}):[];
   const authoredLabel=trimmedText(p.ariaLabel).slice(0,160);
   const carouselName=authoredLabel||'Képgaléria';
   const galleryName=authoredLabel||'Képek';

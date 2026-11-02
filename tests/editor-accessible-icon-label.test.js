@@ -81,4 +81,13 @@ test('malformed nested authored text does not interrupt Canvas or published rend
   assert.match(accordion,/<summary>Részletek<\/summary><div><\/div>/,'an invalid disclosure title receives a safe name');
   assert.equal(render('tooltip',{text:'Info',description:malformed}),
     '<span class="creator-tooltip"><button type="button">Info</button></span>','an invalid description leaves no dangling tooltip reference');
+
+  const malformedItems=type=>render(type,{items:[null]});
+  assert.equal(malformedItems('list'),'<ul><li></li></ul>','a null repeater row degrades to an empty item');
+  assert.match(malformedItems('tabs'),/<button[^>]*role="tab"[^>]*>Fül 1<\/button>/);
+  assert.match(malformedItems('tabs'),/<div role="tabpanel"[^>]*><\/div>/);
+  assert.match(malformedItems('accordion'),/<summary>Részletek<\/summary><div><\/div>/);
+  assert.match(malformedItems('dropdown'),/<summary>Részletek<\/summary><div><\/div>/);
+  assert.match(malformedItems('gallery'),/A kép nem érhető el\./);
+  assert.match(malformedItems('carousel'),/A kép nem érhető el\./);
 });
