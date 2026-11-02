@@ -189,6 +189,68 @@ test('Rich Text native cross-paragraph and list selection survives marks, Save a
     assert.equal(restoredBackward.range.backward,true,'Inspector rerender must preserve backward direction');
     assert.equal(restoredBackward.anchorItem,'List Two','backward anchor must remain in the second list item');
     assert.equal(restoredBackward.focusItem,'List One','backward focus must remain in the first list item');
+
+    // A native range can cross a paragraph/list boundary even though the
+    // canonical document stores these as different block shapes.
+    await surface.evaluate(editor=>{
+      const body=editor.closest('.inspector-body');
+      const startRoot=editor.querySelectorAll('[data-rich-block]')[1],endRoot=editor.querySelector('ul > li:nth-child(2)');
+      const point=(root,offset)=>{
+        const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT),nodes=[];let node,total=0;
+        while(node=walker.nextNode()){nodes.push({node,start:total});total+=node.nodeValue.length}
+        const part=nodes.find(item=>offset<item.start+item.node.nodeValue.length);
+        const range=document.createRange(),local=offset-part.start;range.setStart(part.node,local);range.setEnd(part.node,local+1);
+        const rect=range.getBoundingClientRect();return {x:(rect.left+rect.right)/2,y:rect.top+rect.height/2};
+      };
+      // On narrow screens the sticky Inspector title can cover the first
+      // paragraph; scroll its own body until both native endpoints are hit-testable.
+      for(let attempt=0;attempt<12;attempt++){
+        const start=point(startRoot,2),end=point(endRoot,3);
+        if(editor.contains(document.elementFromPoint(start.x,start.y))&&editor.contains(document.elementFromPoint(end.x,end.y)))return;
+        if(!body||body.scrollTop<=0)break;
+        body.scrollTop=Math.max(0,body.scrollTop-24);
+      }
+      throw new Error('Paragraph/list selection endpoints are covered by the Inspector overlay');
+    });
+    const mixedEndpoints=await surface.evaluate(editor=>{
+      const point=(root,offset)=>{
+        const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT),nodes=[];let node,total=0;
+        while(node=walker.nextNode()){nodes.push({node,start:total});total+=node.nodeValue.length}
+        const part=nodes.find(item=>offset<item.start+item.node.nodeValue.length);
+        if(!part)throw new Error('Cannot locate mixed paragraph/list selection endpoint');
+        const range=document.createRange(),local=offset-part.start;
+        range.setStart(part.node,local);range.setEnd(part.node,local+1);
+        const rect=range.getBoundingClientRect();
+        if(!rect.width||!rect.height)throw new Error('Cannot measure mixed selection endpoint');
+        return {left:rect.left,right:rect.right,y:rect.top+rect.height/2};
+      };
+      return {start:point(editor.querySelectorAll('[data-rich-block]')[1],2),
+        end:point(editor.querySelector('ul > li:nth-child(2)'),3)};
+    });
+    await page.mouse.click(mixedEndpoints.start.right-1,mixedEndpoints.start.y);
+    await page.mouse.move(mixedEndpoints.start.left+1,mixedEndpoints.start.y);
+    await page.mouse.down();
+    await page.mouse.move(mixedEndpoints.end.right-1,mixedEndpoints.end.y,{steps:10});
+    await page.mouse.up();
+    assert.match(await page.evaluate(()=>window.getSelection()?.toString()??''),
+      /mma Delta[\s\S]*List One[\s\S]*List/,
+      `native selection must cross paragraph into list content: ${JSON.stringify(mixedEndpoints)}`);
+    const mixedSegments=await surface.evaluate(async editor=>{
+      const {getRichTextFormattingSelection}=await import('/editor-v2/core/richtext-links.js');
+      return getRichTextFormattingSelection(editor)?.segments;
+    });
+    assert.deepEqual(mixedSegments,[{blockIndex:1,from:2,to:11},{blockIndex:2,from:0,to:12}],
+      'paragraph and list-item text must use separate canonical block offsets');
+    await page.getByRole('button',{name:'Alsó index',exact:true}).click();
+    assert.deepEqual(await surface.locator('p').nth(1).locator('sub').allTextContents(),['mma',' Delta']);
+    assert.deepEqual(await listItems.locator('sub').allTextContents(),['L','ist One','List'],
+      'one cross-structure mark operation updates both block types');
+    assert.match(await page.evaluate(()=>window.getSelection()?.toString()??''),
+      /mma Delta[\s\S]*List One[\s\S]*List/,'paragraph-to-list selection must survive Inspector rerender');
+    const canvasMixed=page.locator(`.node[data-node-id="${nodeId}"] .richtext-content`).first();
+    assert.deepEqual(await canvasMixed.locator('p').nth(1).locator('sub').allTextContents(),['mma',' Delta']);
+    assert.deepEqual(await canvasMixed.locator('ul > li sub').allTextContents(),['L','ist One','List'],
+      'Canvas mirrors the mixed-block selection from the Page Model');
     if(width===1366){
       await page.locator('#save').click();
       await page.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent?.startsWith('Mentve'));
@@ -196,15 +258,18 @@ test('Rich Text native cross-paragraph and list selection survives marks, Save a
       assert.equal(writes[0].publish,false,'draft Save must not publish');
       const persisted=writes[0].document.pages[pageId].nodes[nodeId].props.richText;
       assert.equal(persisted.blocks[0].children.find(run=>run.text==='Beta')?.marks?.includes('bold'),true);
-      assert.equal(persisted.blocks[1].children.find(run=>run.text==='Gamma')?.marks?.includes('italic'),true);
+      assert.equal(persisted.blocks[1].children.filter(run=>run.marks?.includes('italic')).map(run=>run.text).join(''),'Gamma');
       assert.equal(persisted.blocks[0].children.find(run=>run.text==='Beta')?.marks?.includes('code'),true);
-      assert.equal(persisted.blocks[1].children.find(run=>run.text==='Gamma')?.marks?.includes('code'),true);
+      assert.equal(persisted.blocks[1].children.filter(run=>run.marks?.includes('code')).map(run=>run.text).join(''),'Gamma');
       assert.equal(persisted.blocks[0].children.find(run=>run.text==='Beta')?.link?.href,'/p/multi-block');
-      assert.equal(persisted.blocks[1].children.find(run=>run.text==='Gamma')?.link?.href,'/p/multi-block');
+      assert.equal(persisted.blocks[1].children.filter(run=>run.link?.href==='/p/multi-block').map(run=>run.text).join(''),'Gamma');
+      assert.equal(persisted.blocks[1].children.filter(run=>run.marks?.includes('subscript')).map(run=>run.text).join(''),'mma Delta');
       assert.deepEqual(persisted.blocks[2].items.map(item=>item.filter(run=>run.marks?.includes('underline')).map(run=>run.text).join('')),
         ['ist One','List Tw'],'Save must retain native list selection formatting');
       assert.deepEqual(persisted.blocks[2].items.map(item=>item.filter(run=>run.marks?.includes('strikethrough')).map(run=>run.text).join('')),
         ['ist One','List Tw'],'Save must retain backward native selection formatting');
+      assert.deepEqual(persisted.blocks[2].items.map(item=>item.filter(run=>run.marks?.includes('subscript')).map(run=>run.text).join('')),
+        ['List One','List'],'Save retains subscript formatting across paragraph/list boundary');
       assert.equal(persisted.blocks[0].children.map(run=>run.text).join(''),'Alpha Beta');
       assert.equal(persisted.blocks[1].children.map(run=>run.text).join(''),'Gamma Delta');
       assert.equal(published,null,'desktop Save must leave the public page unchanged');
@@ -220,30 +285,38 @@ test('Rich Text native cross-paragraph and list selection survives marks, Save a
       assert.equal(published,null,'mobile Save must leave the public page unchanged');
       const persisted=writes[0].document.pages[pageId].nodes[nodeId].props.richText;
       assert.equal(persisted.blocks[0].children.find(run=>run.text==='Beta')?.marks?.includes('bold'),true);
-      assert.equal(persisted.blocks[1].children.find(run=>run.text==='Gamma')?.marks?.includes('italic'),true);
+      assert.equal(persisted.blocks[1].children.filter(run=>run.marks?.includes('italic')).map(run=>run.text).join(''),'Gamma');
       assert.equal(persisted.blocks[0].children.find(run=>run.text==='Beta')?.link?.href,'/p/multi-block');
-      assert.equal(persisted.blocks[1].children.find(run=>run.text==='Gamma')?.link?.href,'/p/multi-block');
+      assert.equal(persisted.blocks[1].children.filter(run=>run.link?.href==='/p/multi-block').map(run=>run.text).join(''),'Gamma');
+      assert.equal(persisted.blocks[1].children.filter(run=>run.marks?.includes('subscript')).map(run=>run.text).join(''),'mma Delta');
       assert.deepEqual(persisted.blocks[2].items.map(item=>item.filter(run=>run.marks?.includes('underline')).map(run=>run.text).join('')),
         ['ist One','List Tw'],'mobile Save must retain native list selection formatting');
       assert.deepEqual(persisted.blocks[2].items.map(item=>item.filter(run=>run.marks?.includes('strikethrough')).map(run=>run.text).join('')),
         ['ist One','List Tw'],'mobile Save must retain backward native selection formatting');
+      assert.deepEqual(persisted.blocks[2].items.map(item=>item.filter(run=>run.marks?.includes('subscript')).map(run=>run.text).join('')),
+        ['List One','List'],'mobile Save retains cross-structure subscript formatting');
       await page.locator('#publish').click();
       await page.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent==='Publikálva');
       assert.equal(writes.at(-1).publish,true,'mobile multi-block changes require a separate Publish');
     }
     assert.equal(published.pages[pageId].nodes[nodeId].props.richText.blocks[0].children.find(run=>run.text==='Beta')?.link?.href,'/p/multi-block');
-    assert.equal(published.pages[pageId].nodes[nodeId].props.richText.blocks[1].children.find(run=>run.text==='Gamma')?.link?.href,'/p/multi-block');
+    assert.equal(published.pages[pageId].nodes[nodeId].props.richText.blocks[1].children.filter(run=>run.link?.href==='/p/multi-block').map(run=>run.text).join(''),'Gamma');
     const publicPage=await browser.newPage({viewport:{width:390,height:850}});
     await publicPage.goto('http://127.0.0.1:'+server.address().port+'/p/selection-test');
     const publicSurface=publicPage.locator('.visual-richtext');await publicSurface.waitFor();
-    assert.deepEqual(await publicSurface.locator('strong').allTextContents(),['Beta','Gamma']);
-    assert.deepEqual(await publicSurface.locator('em').allTextContents(),['Beta','Gamma']);
-    assert.deepEqual(await publicSurface.locator('a').allTextContents(),['Beta','Gamma'],'the published renderer must retain each linked block segment');
-    assert.deepEqual(await publicSurface.locator('a').evaluateAll(anchors=>anchors.map(anchor=>anchor.getAttribute('href'))),['/p/multi-block','/p/multi-block']);
-    assert.deepEqual(await publicSurface.locator('ul > li u').allTextContents(),['ist One','List Tw'],
+    assert.equal((await publicSurface.locator('strong').allTextContents()).join(''),'BetaGamma');
+    assert.equal((await publicSurface.locator('em').allTextContents()).join(''),'BetaGamma');
+    assert.equal((await publicSurface.locator('a').allTextContents()).join(''),'BetaGamma','the published renderer must retain each linked block segment');
+    assert.ok((await publicSurface.locator('a').evaluateAll(anchors=>anchors.map(anchor=>anchor.getAttribute('href')))).every(href=>href==='/p/multi-block'));
+    const publishedListItems=publicSurface.locator('ul > li');
+    const publishedMarkText=async tag=>publishedListItems.evaluateAll((items,tag)=>items.map(item=>[...item.querySelectorAll(tag)].map(node=>node.textContent).join('')),tag);
+    assert.deepEqual(await publishedMarkText('u'),['ist One','List Tw'],
       'published rendering must retain marks applied across list items');
-    assert.deepEqual(await publicSurface.locator('ul > li s').allTextContents(),['ist One','List Tw'],
+    assert.deepEqual(await publishedMarkText('s'),['ist One','List Tw'],
       'published rendering must retain formatting from the backward selection');
+    assert.deepEqual(await publicSurface.locator('p').nth(1).locator('sub').allTextContents(),['mma',' Delta']);
+    assert.deepEqual(await publishedMarkText('sub'),['List One','List'],
+      'published rendering retains subscript formatting across paragraph/list boundary');
     await publicPage.close();
     assert.deepEqual(errors,[],`no browser errors at ${width}px`);
     await page.close();
