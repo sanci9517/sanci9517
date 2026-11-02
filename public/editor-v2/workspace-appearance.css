@@ -1,0 +1,93 @@
+/* Presentation-only workspace preferences. These styles never touch the Page Model. */
+.editor-app[data-workspace-theme="aurora"] {
+  --editor-surface: #17162a;
+  --editor-raised: #211e39;
+  --editor-line: #403a60;
+  --bg: #0d0e18;
+  --panel: #17162a;
+  --panel2: #111321;
+  --line: #403a60;
+  --text: #f4f1ff;
+  --muted: #b7b0d1;
+}
+.editor-app[data-workspace-theme="aurora"] .topbar,
+.editor-app[data-workspace-theme="aurora"] .mobile-bottom-bar {
+  background: #111321;
+}
+.editor-app[data-workspace-theme="aurora"] .tool-rail {
+  background: #121323;
+}
+.editor-app[data-workspace-theme="aurora"] .dock-heading,
+.editor-app[data-workspace-theme="aurora"] .dock-content,
+.editor-app[data-workspace-theme="aurora"] .right-dock .dock-content {
+  background: var(--editor-surface);
+}
+.editor-app[data-workspace-theme="aurora"] .more-actions-menu {
+  background: var(--editor-raised);
+}
+.editor-app[data-workspace-density="compact"] .dock-heading {
+  min-height: 58px;
+  padding-inline: 10px;
+}
+.editor-app[data-workspace-density="compact"] .panel-actions,
+.editor-app[data-workspace-density="compact"] .layers-tools,
+.editor-app[data-workspace-density="compact"] .page-list {
+  padding: 7px;
+}
+.editor-app[data-workspace-density="compact"] .inspector-tabs button {
+  min-height: 44px;
+}
+.editor-app[data-workspace-density="comfortable"] .dock-heading {
+  min-height: 72px;
+}
+@media (max-width: 1024px) {
+  .editor-app[data-workspace-density="compact"] .dock-heading { min-height: 64px; }
+  .editor-app[data-workspace-density="compact"] .rail-btn,
+  .editor-app[data-workspace-density="compact"] .top-actions button,
+  .editor-app[data-workspace-density="compact"] .more-actions summary {
+    min-height: 44px;
+  }
+}
+
+.workspace-appearance-dialog {
+  width: min(560px, calc(100vw - 24px));
+  max-width: 560px;
+  max-height: min(88dvh, 760px);
+  overflow: auto;
+  padding: clamp(18px, 4vw, 28px);
+  border: 1px solid #425a79;
+  border-radius: 18px;
+  background: #111a26;
+  color: #f2f6fd;
+  box-shadow: 0 28px 90px #000b;
+}
+.workspace-appearance-dialog::backdrop { background: #050a13bd; backdrop-filter: blur(4px); }
+.workspace-appearance-dialog[open] { animation: workspace-dialog-in .16s ease-out; }
+@keyframes workspace-dialog-in { from { opacity: 0; transform: translateY(8px) scale(.99); } to { opacity: 1; transform: none; } }
+.workspace-appearance-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; }
+.workspace-appearance-heading h2 { margin: 2px 0 0; font-size: clamp(20px, 5vw, 26px); line-height: 1.2; }
+.workspace-appearance-eyebrow { margin: 0; color: #8ba8d2; font-size: 11px; font-weight: 750; letter-spacing: .11em; }
+.workspace-appearance-close,
+.workspace-appearance-actions button { min-width: 44px; min-height: 44px; padding: 9px 13px; border: 1px solid #425a79; border-radius: 10px; background: #1b2b40; color: #f6f8ff; }
+.workspace-appearance-help { margin: 12px 0 18px; color: #c6d3e5; font-size: 14px; line-height: 1.55; }
+.workspace-appearance-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.workspace-appearance-fields label { display: grid; align-content: start; gap: 7px; min-width: 0; font-size: 13px; font-weight: 650; }
+.workspace-appearance-fields select,
+.workspace-appearance-fields input { width: 100%; min-width: 0; min-height: 44px; padding: 8px 10px; border: 1px solid #465c77; border-radius: 9px; background: #0b121d; color: #f1f5fb; font: inherit; }
+.workspace-appearance-fields select:focus-visible,
+.workspace-appearance-fields input:focus-visible,
+.workspace-appearance-dialog button:focus-visible { outline: 3px solid var(--accent, #8ba8ff); outline-offset: 2px; }
+.workspace-appearance-fields input[type="color"] { height: 48px; padding: 4px; cursor: pointer; }
+.workspace-appearance-fields small { color: #aebdd1; font-size: 12px; font-weight: 400; line-height: 1.4; }
+#workspaceAppearanceStatus { min-height: 24px; margin: 14px 0 8px; color: #dce8fa; font-size: 13px; line-height: 1.45; }
+.workspace-appearance-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; padding-top: 12px; border-top: 1px solid #34465d; }
+.workspace-appearance-actions span { flex: 1 1 180px; color: #aebdd1; font-size: 12px; line-height: 1.4; }
+.workspace-appearance-actions button { border-color: #69535b; background: #33242c; }
+@media (max-width: 560px) {
+  .workspace-appearance-dialog { width: calc(100vw - 16px); max-width: none; max-height: 90dvh; padding: 18px 14px; border-radius: 16px; }
+  .workspace-appearance-fields { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  .workspace-appearance-heading { align-items: center; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .workspace-appearance-dialog[open] { animation: none; }
+}

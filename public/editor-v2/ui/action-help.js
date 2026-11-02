@@ -1,5 +1,5 @@
-import {EDITOR_ACTIONS} from './action-catalog.js?v=20261102-action-help-stateful';
-import {createEditorIcon} from './action-icons.js?v=20261102-action-help-stateful';
+import {EDITOR_ACTIONS} from './action-catalog.js?v=20261102-workspace-preferences-v2';
+import {createEditorIcon} from './action-icons.js?v=20261102-workspace-preferences-v2';
 
 const ACTION_SELECTOR='[data-editor-action]';
 const DESCRIPTION_ROOT_ID='editorActionDescriptions';

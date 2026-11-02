@@ -8,7 +8,7 @@ import {chromium} from 'playwright';
 
 const root=resolve(import.meta.dirname,'../..','public');
 const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.svg':'image/svg+xml'};
-const widths=[1920,1600,1440,1366,1280,1100,1024,900,768,430,390,360];
+const widths=process.env.EDITOR_LAYOUT_WIDTHS?.split(',').map(Number).filter(Number.isFinite)||[1920,1600,1440,1366,1280,1100,1024,900,768,430,390,360,320,280,240,200];
 const scales=[1,1.25,1.5];
 const actionable='.topbar button,.topbar summary,.topbar select,.canvas-toolbar button,.mobile-bottom-bar button,.dock:not(.closed) button,.dock:not(.closed) input,.dock:not(.closed) select,.dock:not(.closed) textarea';
 
@@ -35,12 +35,12 @@ async function audit(page,label){
     if(document.documentElement.scrollWidth>width+1)errors.push(`document horizontal overflow ${document.documentElement.scrollWidth}>${width}`);
     for(const {id,el,r} of boxes){
       if(r.left<-1||r.right>width+1||r.top<-1||r.bottom>innerHeight+1)errors.push(`${id} outside viewport`);
-      if(innerWidth<=1024 && el.closest('.topbar,.mobile-bottom-bar') && (r.width<43||r.height<43))errors.push(`${id} touch target <44px`);
+      if(innerWidth<=1024 && el.closest('.topbar,.mobile-bottom-bar') && (r.width<43||r.height<43))errors.push(`${id||el.tagName} touch target <44px (${r.width.toFixed(1)}×${r.height.toFixed(1)} at ${r.x.toFixed(1)},${r.y.toFixed(1)})`);
       const parent=el.closest('.topbar,.canvas-toolbar,.mobile-bottom-bar');
       const p=parent?.getBoundingClientRect();
       if(p&&!el.closest('.more-actions-menu')&&(r.left<p.left-1||r.right>p.right+1||r.top<p.top-1||r.bottom>p.bottom+1))errors.push(`${id} clipped by ${parent.className}`);
       const center=document.elementFromPoint(r.left+r.width/2,r.top+r.height/2);
-      if(!el.contains(center)&&!center?.contains(el))errors.push(`${id} blocked at center by ${center?.id||center?.className||center?.tagName}`);
+      if(!el.contains(center)&&!center?.contains(el)){const blocker=center?.getBoundingClientRect();errors.push(`${id} blocked at center by ${center?.id||center?.className||center?.tagName} (target ${JSON.stringify({x:r.x,y:r.y,width:r.width,height:r.height})}; blocker ${blocker&&JSON.stringify({x:blocker.x,y:blocker.y,width:blocker.width,height:blocker.height})})`)}
     }
     for(let i=0;i<boxes.length;i++)for(let j=i+1;j<boxes.length;j++){
       const a=boxes[i],b=boxes[j];
@@ -51,7 +51,12 @@ async function audit(page,label){
     }
     return errors;
   },actionable);
-  assert.deepEqual(issues,[],label+': '+issues.join('; '));
+  const diagnostics=issues.length?await page.evaluate(()=>{
+    const target=document.querySelector('#navigationPublish');
+    const nodes=[target,document.querySelector('#leftDock'),document.querySelector('#leftPanelNavigation'),document.querySelector('.mobile-bottom-bar')].filter(Boolean);
+    return nodes.map(el=>{const r=el.getBoundingClientRect(),s=getComputedStyle(el);return {id:el.id||el.className,rect:{top:r.top,bottom:r.bottom,height:r.height},overflowY:s.overflowY,position:s.position,bottom:s.bottom,display:s.display}});
+  }):[];
+  assert.deepEqual(issues,[],label+': '+issues.join('; ')+(diagnostics.length?` | geometry ${JSON.stringify(diagnostics)}`:''));
 }
 
 test('Editor shell has no inaccessible or overlapping controls across widths and effective zoom',async t=>{

@@ -1,18 +1,23 @@
 import {createEventBus} from './events.js';
 import {panelRegistry,featureRegistry} from './registry.js';
-import {EDITOR_ACTIONS} from './action-catalog.js?v=20261102-action-help-stateful';
-import {enhanceEditorActionControls} from './action-help.js?v=20261102-action-help-stateful';
+import {EDITOR_ACTIONS} from './action-catalog.js?v=20261102-workspace-preferences-v2';
+import {enhanceEditorActionControls} from './action-help.js?v=20261102-workspace-preferences-v2';
+import {applyWorkspacePreferences,mountWorkspaceAppearance,readWorkspacePreferences} from './workspace-appearance.js?v=20261102-workspace-preferences-v2';
 
 const bus=createEventBus();
 const workspace=document.querySelector('.workspace');
 const root=document.documentElement;
+const editorRoot=document.querySelector('.editor-app');
 const panels={left:document.querySelector('#leftDock'),right:document.querySelector('#rightDock')};
 const actionControls=enhanceEditorActionControls(document);
 const resizeLimits={left:{min:250,max:460},right:{min:260,max:440}};
 const STORAGE_KEY='sanci-editor-shell-v2';
 const defaults={leftOpen:false,rightOpen:false,leftTab:'pages',leftWidth:310,rightWidth:352};
 const mobileQuery=window.matchMedia('(max-width: 1024px)');
+const initialAppearance=readWorkspacePreferences();
+applyWorkspacePreferences(editorRoot,initialAppearance);
 let focusBeforeMobilePanel=null;
+let workspaceAppearance=null;
 
 function readPersisted(){
   try{
@@ -24,10 +29,26 @@ function readPersisted(){
 }
 
 let persisted=readPersisted();
+if(initialAppearance.layout!=='custom'){
+  const initialLayout=resolveWorkspaceLayout(initialAppearance.layout,mobileQuery.matches);
+  persisted.leftOpen=initialLayout.left;
+  persisted.rightOpen=initialLayout.right;
+}
 const LEFT_TABS=['pages','elements','layers','schedule','navigation'];
 if(!LEFT_TABS.includes(persisted.leftTab))persisted.leftTab='pages';
 function persist(){
   try{localStorage.setItem(STORAGE_KEY,JSON.stringify(persisted))}catch{}
+}
+function resolveWorkspaceLayout(layout,mobile){
+  if(layout==='canvas')return {left:false,right:false};
+  if(layout==='inspector')return {left:false,right:true};
+  return mobile?{left:false,right:false}:{left:true,right:true};
+}
+function applyWorkspaceLayout(layout){
+  if(layout==='custom')return;
+  const next=resolveWorkspaceLayout(layout,mobileQuery.matches);
+  setPanel('left',next.left,{save:true});
+  setPanel('right',next.right,{save:true});
 }
 function emit(type,payload={}){bus.emit(type,payload)}
 function syncMobileBackdrop(){
@@ -63,7 +84,7 @@ function syncMobileBackdrop(){
     subtitle.textContent=mobile?(EDITOR_ACTIONS[selectedTab]?.description||subtitle.dataset.defaultDescription):subtitle.dataset.defaultDescription;
   }
 }
-function setPanel(side,open,{save=true,restoreFocus=true}={}){
+function setPanel(side,open,{save=true,restoreFocus=true,customize=false}={}){
   const panel=panels[side];if(!panel)return;
   const wasOpen=!panel.classList.contains('closed');
   if(open && mobileQuery.matches){
@@ -78,6 +99,7 @@ function setPanel(side,open,{save=true,restoreFocus=true}={}){
   workspace?.classList.toggle(`${side}-open`,open);
   if(side==='right')panel.style.display=open?'flex':'none';
   if(save){persisted[side==='left'?'leftOpen':'rightOpen']=open;persist()}
+  if(customize)workspaceAppearance?.setLayout('custom');
   syncMobileBackdrop();
   if(mobileQuery.matches && open && !wasOpen){
     requestAnimationFrame(()=>{
@@ -92,9 +114,9 @@ function setPanel(side,open,{save=true,restoreFocus=true}={}){
   }
   emit('panel:change',{side,open});
 }
-function showLeftTab(tab,{save=true,open=true}={}){
+function showLeftTab(tab,{save=true,open=true,customize=false}={}){
   if(!LEFT_TABS.includes(tab))return;
-  if(open)setPanel('left',true,{save:false});
+  if(open)setPanel('left',true,{save:customize,customize});
   document.querySelectorAll('.rail-btn').forEach(b=>{const selected=b.dataset.tab===tab;b.classList.toggle('active',selected);b.setAttribute('aria-selected',String(selected));b.tabIndex=selected?0:-1});
   document.querySelectorAll('[data-content]').forEach(x=>x.classList.toggle('hidden',x.dataset.content!==tab));
   syncMobileBackdrop();
@@ -113,6 +135,7 @@ function resizeDock(side,startX,startWidth){
   };
   const onUp=()=>{
     persist();
+    workspaceAppearance?.setLayout('custom');
     document.body.classList.remove('resizing-dock');
     window.removeEventListener('pointermove',onMove);
     window.removeEventListener('pointerup',onUp);
@@ -138,24 +161,36 @@ root.style.setProperty('--right-dock-width',`${clamp(Number(persisted.rightWidth
 setPanel('left',!mobileQuery.matches && Boolean(persisted.leftOpen),{save:false});
 setPanel('right',!mobileQuery.matches && Boolean(persisted.rightOpen),{save:false});
 showLeftTab(persisted.leftTab,{save:false,open:false});
+workspaceAppearance=mountWorkspaceAppearance({documentRef:document,root:editorRoot,onLayoutChange:applyWorkspaceLayout,onReset:()=>{
+  persisted={...defaults};
+  root.style.setProperty('--left-dock-width',`${defaults.leftWidth}px`);
+  root.style.setProperty('--right-dock-width',`${defaults.rightWidth}px`);
+  persist();
+}});
 
 document.querySelector('#editorMenu')?.addEventListener('click',()=>{
-  if(panels.left?.classList.contains('closed'))showLeftTab(persisted.leftTab||'pages');
-  else setPanel('left',false);
+  if(panels.left?.classList.contains('closed'))showLeftTab(persisted.leftTab||'pages',{customize:true});
+  else setPanel('left',false,{customize:true});
 });
 document.querySelectorAll('[data-collapse]').forEach(b=>b.addEventListener('click',()=>{
   const side=b.dataset.collapse;
-  setPanel(side,panels[side]?.classList.contains('closed')??true);
+  setPanel(side,panels[side]?.classList.contains('closed')??true,{customize:true});
 }));
-document.querySelector('#openInspector')?.addEventListener('click',()=>setPanel('right',panels.right?.classList.contains('closed')??true));
+document.querySelector('#openInspector')?.addEventListener('click',()=>setPanel('right',panels.right?.classList.contains('closed')??true,{customize:true}));
 document.querySelector('.more-actions')?.addEventListener('toggle',event=>{
   if(event.target.open && window.matchMedia('(max-width: 1024px)').matches){
     setPanel('left',false);setPanel('right',false);
   }
 });
-document.querySelector('#mobileBackdrop')?.addEventListener('click',()=>{setPanel('left',false);setPanel('right',false)});
+document.querySelector('#mobileBackdrop')?.addEventListener('click',()=>{setPanel('left',false,{customize:true});setPanel('right',false,{customize:true})});
 window.addEventListener('resize',syncMobileBackdrop);
-window.addEventListener('keydown',event=>{if(event.key==='Escape'){setPanel('left',false);setPanel('right',false)}});
+window.addEventListener('keydown',event=>{
+  if(event.key!=='Escape')return;
+  if(document.querySelector('#workspaceAppearanceDialog')?.open)return;
+  const menu=document.querySelector('.more-actions');
+  if(menu?.open){menu.removeAttribute('open');menu.querySelector('summary')?.focus({preventScroll:true});return}
+  setPanel('left',false,{customize:true});setPanel('right',false,{customize:true});
+});
 
 function wireMobileActions(){
   const click=(id,target)=>document.querySelector(id)?.addEventListener('click',()=>document.querySelector(target)?.click());
@@ -167,7 +202,7 @@ function wireMobileActions(){
 }
 wireMobileActions();
 document.querySelectorAll('.rail-btn').forEach(b=>{
-  b.addEventListener('click',()=>showLeftTab(b.dataset.tab));
+  b.addEventListener('click',()=>showLeftTab(b.dataset.tab,{customize:true}));
   b.addEventListener('keydown',event=>{
     const index=LEFT_TABS.indexOf(b.dataset.tab);if(index<0)return;
     const rtl=getComputedStyle(b.parentElement).direction==='rtl';
@@ -177,7 +212,7 @@ document.querySelectorAll('.rail-btn').forEach(b=>{
     else if(event.key==='Home')next=0;
     else if(event.key==='End')next=LEFT_TABS.length-1;
     if(next<0)return;
-    event.preventDefault();const target=document.querySelector(`.rail-btn[data-tab="${LEFT_TABS[next]}"]`);showLeftTab(LEFT_TABS[next]);requestAnimationFrame(()=>target?.focus());
+    event.preventDefault();const target=document.querySelector(`.rail-btn[data-tab="${LEFT_TABS[next]}"]`);showLeftTab(LEFT_TABS[next],{customize:true});requestAnimationFrame(()=>target?.focus());
   });
 });
 setupResizers();

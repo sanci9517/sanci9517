@@ -1,4 +1,4 @@
-import {EDITOR_ICON_NAMES} from './action-icons.js?v=20261102-action-help-stateful';
+import {EDITOR_ICON_NAMES} from './action-icons.js?v=20261102-workspace-preferences-v2';
 
 export const EDITOR_ACTIONS=Object.freeze({
   openLeftPanel:{icon:'panel-left-open',label:'Oldal- és eszközpanel megnyitása',description:'Nyisd meg az oldalak, építőelemek, rétegek, adásrend és navigáció paneljét.'},
@@ -10,6 +10,8 @@ export const EDITOR_ACTIONS=Object.freeze({
   publishDraft:{icon:'cloud-upload',label:'Publikálás',description:'Tedd a mentett piszkozatot közzé, vagyis tedd láthatóvá a webhely látogatói számára. Ez külön lépés a Mentéstől.'},
   unpublishPage:{icon:'globe',label:'Publikálás visszavonása',description:'Vedd le ezt az oldalt a látogatók elől; a mentett piszkozat megmarad.'},
   moreActions:{icon:'ellipsis',label:'További szerkesztőműveletek',description:'Nyisd meg a ritkábban használt szerkesztőműveleteket és kapcsolatállapotot.'},
+  workspaceAppearance:{icon:'sliders-horizontal',label:'Megjelenés és munkaterület',description:'Állítsd be a szerkesztő színeit, sűrűségét és panel-elrendezését ezen az eszközön; a weboldal tartalma nem változik.'},
+  twitchConnection:{icon:'radio',label:'Twitch-kapcsolat',description:'Ellenőrizd vagy kezeld a Twitch kapcsolatot. A kapcsolat állapota önmagában nem menti vagy publikálja az oldalt.'},
   openRightPanel:{icon:'panel-right-open',label:'Beállítások megnyitása',description:'Nyisd meg a kijelölt elem szövegének, kinézetének és egyéb beállításainak paneljét.'},
   pages:{icon:'files',label:'Oldalak',description:'Válassz oldalt, rendezd a webhely oldalait, vagy nyisd meg egy korábbi mentés előzményeit.'},
   elements:{icon:'shapes',label:'Elemek',description:'Keress és adj hozzá építőelemeket, például címsort, képet, szöveget vagy gombot.'},

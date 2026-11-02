@@ -38,6 +38,10 @@ button:focus-visible, summary:focus-visible, .rail-btn:focus-visible { outline: 
 .more-actions summary { display: flex; align-items: center; padding: 0 14px; border: 1px solid var(--editor-line); background: var(--editor-raised); cursor: pointer; white-space: nowrap; }
 .more-actions:not([open]) .more-actions-menu { display: none; }
 .more-actions-menu { position: absolute; top: calc(100% + 8px); right: 0; z-index: 200; display: grid; gap: 6px; width: max-content; min-width: 220px; max-width: min(320px, calc(100vw - 16px)); padding: 8px; border: 1px solid var(--editor-line); border-radius: 12px; background: #172334; box-shadow: 0 20px 50px #0009; }
+.more-actions[open] { align-self: flex-start; }
+.more-actions[open] .more-actions-menu { position: static; inset: auto; width: min(280px, calc(100vw - 24px)); min-width: min(220px, 100%); max-width: 100%; margin-top: 8px; }
+.top-actions:has(.more-actions[open]) { align-items: flex-start; }
+.top-actions:has(.more-actions[open]) > * { align-self: flex-start; }
 .more-actions-menu button { width: 100%; text-align: left; white-space: normal; height: auto; }
 .mobile-backdrop, .mobile-bottom-bar { display: none; }
 .mobile-multiselect-bar[hidden] { display: none !important; }
@@ -52,6 +56,8 @@ button:focus-visible, summary:focus-visible, .rail-btn:focus-visible { outline: 
 .rail-btn span { font-size: 20px; }
 .rail-btn small { font-size: 11px; line-height: 1.15; }
 .dock { background: var(--editor-surface); }
+.left-dock:not(.closed) .side-panel { height: 100%; min-height: 0; }
+.left-dock:not(.closed) .dock-content { flex: 1 1 0; height: auto; min-height: 0; }
 .dock-content { min-width: 0; min-height: 0; overflow: auto; overscroll-behavior: contain; }
 .dock-heading { position: sticky; top: 0; z-index: 2; background: var(--editor-surface); min-height: 72px; gap: 8px; padding-inline: 14px; }
 .dock-heading > div { min-width: 0; }
@@ -97,13 +103,15 @@ button:focus-visible, summary:focus-visible, .rail-btn:focus-visible { outline: 
   .canvas-toolbar .toolbar-group:last-child { display: none; }
   .canvas-toolbar .center-tools { margin-left: 0; }
 }
-@media (max-width: 1500px) {
+@media (max-width: 1680px) {
   .topbar { grid-template-columns: auto minmax(0,1fr); gap: 8px 14px; }
   .top-page-control { justify-self: end; }
   .top-actions { grid-column: 1 / -1; justify-content: flex-end; }
 }
 @media (max-width: 1024px) {
   .top-actions #save, .top-actions #publish { font-size: 14px; }
+  .top-actions .more-actions { min-width: 44px; }
+  .top-actions .more-actions summary { min-width: 44px; padding-inline: 0; }
   .editor-app { grid-template-rows: auto minmax(0,1fr) 0; }
   .workspace, .workspace.left-open, .workspace.right-open, .workspace.left-open.right-open { display: block; position: relative; height: 100%; overflow: hidden; }
   .canvas-area { width: 100%; height: 100%; }
@@ -131,6 +139,10 @@ button:focus-visible, summary:focus-visible, .rail-btn:focus-visible { outline: 
   .top-page-control #newPage { min-height: 44px; height: auto; padding: 8px 12px; font-size: 14px; }
 .top-page-control select { width: 100%; min-width: 0; }
   .top-actions { grid-column: 1 / -1; grid-row: 2; display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1.5fr) auto 44px; justify-content: stretch; gap: 6px; }
+  .top-actions:has(.more-actions[open]) { align-items: start; }
+  .top-actions:has(.more-actions[open]) #openInspector { grid-column: 4; grid-row: 1; justify-self: end; }
+  .top-actions:has(.more-actions[open]) .more-actions { grid-column: 1 / -1; grid-row: 2; width: 100%; }
+  .top-actions:has(.more-actions[open]) .more-actions-menu { width: 100%; }
   .top-actions #undo, .top-actions #redo, .top-actions #preview, .top-actions .save-state { display: none; }
   .top-actions #save, .top-actions #publish { font-size: 14px; }
   .top-actions #save { display: inline-flex; align-items: center; justify-content: center; width: 100%; }
@@ -153,8 +165,9 @@ button:focus-visible, summary:focus-visible, .rail-btn:focus-visible { outline: 
 @media (max-width: 400px) {
   .top-actions button, .more-actions summary { font-size: 13px; }
   .top-actions .primary-btn, .top-actions .publish-btn { padding-inline: 8px; }
-  .more-actions summary { font-size: 0; width: 44px; justify-content: center; }
-  .more-actions summary::after { content: '⋯'; font-size: 22px; line-height: 1; }
+  .more-actions { min-width: 44px; }
+  .more-actions summary { font-size: 0; width: 44px; min-width: 44px; padding-inline: 0; justify-content: center; }
+  .more-actions summary::after { content: none; }
   .top-actions #openInspector { width: 44px; }
 }
 @media (prefers-reduced-motion: reduce) { .mobile-backdrop, .dock { animation: none !important; transition: none !important; } }
@@ -164,6 +177,11 @@ button:focus-visible, summary:focus-visible, .rail-btn:focus-visible { outline: 
   .top-actions #publish { grid-column: 2; grid-row: 1; }
   .top-actions .more-actions { grid-column: 1; grid-row: 2; }
   .top-actions #openInspector { grid-column: 2; grid-row: 2; justify-self: end; }
+}
+@media (max-width: 360px) {
+  /* Keep all four mobile quick actions comfortably tappable at browser zoom. */
+  .mobile-bottom-bar { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 4px; padding: 4px; }
+  .canvas { padding-bottom: calc(158px + env(safe-area-inset-bottom,0px)); }
 }
 
 /* UX-P0: editor controls are overlays and never occupy Flex/Grid cells. */
@@ -564,6 +582,16 @@ button:focus-visible, summary:focus-visible, .rail-btn:focus-visible { outline: 
   }
   .workspace .left-dock .dock-content,
   .workspace .right-dock .dock-content { min-height: 0; overscroll-behavior: contain; }
+}
+
+@media (max-width: 360px) {
+  /* The later, higher-specificity sheet rule must also clear the two-row bar. */
+  .workspace .left-dock:not(.closed),
+  .workspace .right-dock:not(.closed) {
+    bottom: 140px;
+    max-height: calc(100% - 140px);
+  }
+  .workspace .mobile-backdrop { bottom: 140px; }
 }
 
 /* 77.44 spacing Inspector: number and unit side by side, including 390px. */
