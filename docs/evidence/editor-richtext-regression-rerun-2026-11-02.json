@@ -330,11 +330,11 @@
       }
     ],
     "scenarioAssertions": [
-      "Native browser drag selection crosses from the end of a paragraph into two list items at 390px and 1366px.",
+      "Native browser drag selection crosses from a paragraph into two list items at 390px and 1366px.",
       "A single subscript mark command maps to distinct blockIndex/from/to ranges for the paragraph and list.",
-      "The selection survives the Inspector rerender; the existing bold/italic/code/link formatting and list item structure remain intact.",
+      "Selection survives Inspector rerender; existing inline marks and link are retained.",
       "Canvas and published output reflect the same Page Model formatting.",
-      "Save writes publish:false and leaves the public snapshot unchanged; the separate Publish updates the public renderer.",
+      "Save writes publish:false and leaves the public snapshot unchanged; separate Publish updates the public renderer.",
       "The test scrolls the narrow Inspector body using elementFromPoint hit checks so the sticky heading cannot receive the text-selection gesture."
     ],
     "runtime": {
