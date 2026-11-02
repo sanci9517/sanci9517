@@ -33,7 +33,7 @@
     "public/editor-v2/ui/property-controls.js": "464b94685092b373a37f25690e19c33894cf2094f20cf1564ea66ad731987208",
     "public/editor-v2/ui/responsive-group-reset.js": "fc3ed5460c17ef9c32e9067484b3e55edb00367c55d84b7570955d9f5f649c20",
     "public/editor-v2/ui/shell.js": "0290db9348c50c651624a8768eb50a517b15531750175e0c1ac216c6cd9a861d",
-    "public/editor-v2/ui/workspace-appearance.js": "9721baff21110c9ddfa1dfd1e60588506ac28c20e0b741cdccaa362482b83195",
+    "public/editor-v2/ui/workspace-appearance.js": "dd715e564ca8cb5a750b4e0ff2644ba5ac46c9f3fb06927b863d37bda05f84f8",
     "public/editor-v2/workspace-appearance.css": "936407f44cb834bdc4fadcddbca945860dcf5977454f168816faf58740ca7efe",
     "scripts/d1/ledger-reconciliation.py": "44d19ed415b40473c73c248d49980e16eaaa0e96a8a4412b7016213e0ee7ffcb",
     "scripts/web013-migration-safety-gate.mjs": "47c11202dfe94f389e458fbef133cc221dcfb88436649fca83d3849f38ccda68",

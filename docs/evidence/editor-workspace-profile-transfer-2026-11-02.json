@@ -6,10 +6,11 @@
   "source_control": {
     "repository": "sanci9517/sanci9517",
     "branch": "v2/foundation",
-    "previous_head": "bd8e9e5a2cf01d7a9649e7bf1f30a38731009c59",
-    "runtime_commit": "2178954a459ae0b02006cade824da3a5eeca3b21",
-    "runtime_message": "feat(editor): import and export workspace profiles",
-    "push": "Normal fast-forward push verified with git ls-remote and GitHub compare; branch ahead 1 / behind 0 from previous_head.",
+    "previous_head": "5c440b2cb58ae72a8101a7aecd225d9c48d4fdce",
+    "runtime_commit": "08fda57e15ae63fd6a38ef4b9724fee70c45f87b",
+    "runtime_message": "fix(editor): report blocked workspace profile storage",
+    "test_only_commit": "5638c99eb55f28d647100757ed4b021423eb2299",
+    "push": "Normal fast-forward git push verified by direct git ls-remote and GitHub v2/foundation branch API; runtime commit is the test commit parent.",
     "github_combined_statuses": [],
     "aggregate_github_ci_pass": false
   },
@@ -29,82 +30,102 @@
     "local_source_sha256": {
       "public/editor-v2/index.html": "c02a1009413b23720a7bc4f9f99dbc1d45b5931aec59d6d64adffb38282ab8bf",
       "public/editor-v2/ui/shell.js": "0290db9348c50c651624a8768eb50a517b15531750175e0c1ac216c6cd9a861d",
-      "public/editor-v2/ui/workspace-appearance.js": "9721baff21110c9ddfa1dfd1e60588506ac28c20e0b741cdccaa362482b83195",
+      "public/editor-v2/ui/workspace-appearance.js": "dd715e564ca8cb5a750b4e0ff2644ba5ac46c9f3fb06927b863d37bda05f84f8",
       "public/editor-v2/workspace-appearance.css": "936407f44cb834bdc4fadcddbca945860dcf5977454f168816faf58740ca7efe"
     },
-    "external_benchmark": "No additional package/code introduced; the plan-recorded Dockview source/license review continues to justify native, bounded serialization for the existing three-region vanilla-JS shell."
+    "external_benchmark": "No additional package/code introduced; the plan-recorded Dockview source/license review continues to justify native, bounded serialization for the existing three-region vanilla-JS shell.",
+    "storage_failure_feedback": {
+      "behavior": "When localStorage is absent or setItem throws (for example quota/security denial), profile creation/import remains available only for the current Editor session and says so; it no longer claims that the profile was saved on this device.",
+      "scope": "Workspace profile data only; no Page Model changes and no Save/Publish calls."
+    }
   },
   "validation": {
     "canonical_plan": "python3 scripts/check-canonical-plan.py — PASS; one 13-file master; acceptance not certified",
     "active_point": "python3 scripts/audit-active-plan-point.py — PASS; current next point 77.44.6.1.C",
     "plan_contract": "python3 scripts/plan_contract.py — PASS (exit 0)",
     "traceability": "python3 scripts/build-feature-traceability.py --check — PASS; 396 source mappings; acceptance NOT_CERTIFIED",
-    "editor_unit": "npm run test:editor — 14/14 test files PASS",
+    "editor_unit": "npm run test:editor — PASS (14/14 test files, rerun after runtime fix)",
     "workspace_transfer_unit": "tests/editor-workspace-appearance.test.js included in full editor unit suite — PASS",
-    "browser": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-workspace-appearance.test.js tests/browser/editor-layout.test.js — 9/9 PASS",
+    "browser": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-workspace-appearance.test.js — PASS (8/8), including storage-denied save/import feedback; the prior responsive layout file also passed 2/2 after the transfer UI change.",
     "typecheck": "npm run typecheck — PASS",
     "migration_guard": "npm run test:web013:migration-gate — PASS; no migration applied",
-    "syntax": "node --check public/editor-v2/ui/shell.js; node --check public/editor-v2/ui/workspace-appearance.js — PASS",
+    "syntax": "node --check public/editor-v2/ui/workspace-appearance.js; node --check public/editor-v2/ui/shell.js — PASS",
     "diff": "git diff --check — PASS",
     "wrangler_dry_run": "Wrangler 4.130.0 PASS; 168 assets, 335.81 KiB, 87.60 KiB gzip",
     "full_editor_browser_suite": "NOT COMPLETE; only target workspace and responsive layout browser files were run.",
-    "manual_device_acceptance": "DEFERRED until the complete Visual Editor acceptance gate"
+    "manual_device_acceptance": "DEFERRED until the complete Visual Editor acceptance gate",
+    "plan_gates": "python3 scripts/check-canonical-plan.py; python3 scripts/audit-active-plan-point.py; python3 scripts/plan_contract.py; python3 scripts/build-feature-traceability.py --check — PASS (13-file master, current cursor 77.44.6.1.C, 396 source mappings; functional acceptance NOT certified)"
   },
   "release_preflight": {
     "production_d1_query": "SELECT name FROM d1_migrations ORDER BY name",
-    "query_mode": "SELECT only via Cloudflare D1 Query API",
+    "query_mode": "SELECT only via Cloudflare D1 Query API immediately before deployment",
     "ledger_row_count": 34,
     "latest_ledger_row": "0028_media_archive.sql",
     "rows_written": 0,
     "changed_db": false,
     "migration_applied": false,
     "r2_mutation_or_deletion": false,
-    "additional_cost_huf": 0
+    "additional_cost_huf": 0,
+    "cost_note": "No paid service, API subscription, infrastructure, or package was introduced; account billing/remaining free quota was not queried."
   },
   "production": {
     "worker": "sanci9517-streamer-brand",
-    "build_id": "195cbee5-7fa8-40c5-8b00-a8c87cc85ab8",
-    "build_commit": "2178954a459ae0b02006cade824da3a5eeca3b21",
+    "build_id": "964e0d03-db9d-44d1-a42d-4d43cfbf9fbc",
+    "build_commit": "08fda57e15ae63fd6a38ef4b9724fee70c45f87b",
     "build_branch": "v2/foundation",
     "build_outcome": "success",
     "build_command": "npm run typecheck",
     "deploy_command": "npm run deploy:safe",
-    "deployment_id": "730005a5-cb97-417c-95e7-7300037ae33d",
-    "traffic_version": "7cf66d1f-6abf-4594-952b-63a190e16675",
+    "deployment_id": "deae170f-47f9-426b-91ad-fded214391de",
+    "traffic_version": "6efc9401-2726-4340-83df-bc23dbffc549",
     "traffic_percentage": 100,
-    "worker_version_number": 3790,
+    "worker_version_number": 3791,
     "control_plane_verified": true,
     "public_http_smoke": {
-      "status": "UNVERIFIED",
-      "attempts": [
-        {
-          "client": "Python urllib via managed outbound network",
-          "path": "/api/health",
-          "result": "HTTP 403 Forbidden"
-        },
-        {
-          "client": "curl via managed outbound proxy",
-          "path": "/api/health",
-          "result": "HTTP 502 Bad Gateway from envoy; response body empty"
+      "status": "PASS",
+      "health": {
+        "path": "/api/health",
+        "http_status": 200,
+        "body": {
+          "ok": true,
+          "service": "sanci9517-streamer-brand",
+          "version": "2.0.0",
+          "server": "cloudflare-worker"
         }
-      ],
-      "reason": "Managed network/proxy did not return the live Worker response."
+      },
+      "assets": {
+        "/editor-v2/": {
+          "http_status": 200,
+          "local_sha256": "c02a1009413b23720a7bc4f9f99dbc1d45b5931aec59d6d64adffb38282ab8bf",
+          "live_sha256": "c02a1009413b23720a7bc4f9f99dbc1d45b5931aec59d6d64adffb38282ab8bf"
+        },
+        "/editor-v2/ui/shell.js": {
+          "http_status": 200,
+          "local_sha256": "0290db9348c50c651624a8768eb50a517b15531750175e0c1ac216c6cd9a861d",
+          "live_sha256": "0290db9348c50c651624a8768eb50a517b15531750175e0c1ac216c6cd9a861d"
+        },
+        "/editor-v2/ui/workspace-appearance.js": {
+          "http_status": 200,
+          "local_sha256": "dd715e564ca8cb5a750b4e0ff2644ba5ac46c9f3fb06927b863d37bda05f84f8",
+          "live_sha256": "dd715e564ca8cb5a750b4e0ff2644ba5ac46c9f3fb06927b863d37bda05f84f8"
+        },
+        "/editor-v2/workspace-appearance.css": {
+          "http_status": 200,
+          "local_sha256": "936407f44cb834bdc4fadcddbca945860dcf5977454f168816faf58740ca7efe",
+          "live_sha256": "936407f44cb834bdc4fadcddbca945860dcf5977454f168816faf58740ca7efe"
+        }
+      },
+      "reason": "Direct public HTTP requests succeeded with network permission; local and live SHA-256 values match."
     },
     "public_asset_hashes": {
-      "status": "UNVERIFIED",
+      "status": "PASS",
       "assets": [
         "public/editor-v2/index.html",
         "public/editor-v2/ui/shell.js",
         "public/editor-v2/ui/workspace-appearance.js",
         "public/editor-v2/workspace-appearance.css"
       ],
-      "local_sha256": {
-        "public/editor-v2/index.html": "c02a1009413b23720a7bc4f9f99dbc1d45b5931aec59d6d64adffb38282ab8bf",
-        "public/editor-v2/ui/shell.js": "0290db9348c50c651624a8768eb50a517b15531750175e0c1ac216c6cd9a861d",
-        "public/editor-v2/ui/workspace-appearance.js": "9721baff21110c9ddfa1dfd1e60588506ac28c20e0b741cdccaa362482b83195",
-        "public/editor-v2/workspace-appearance.css": "936407f44cb834bdc4fadcddbca945860dcf5977454f168816faf58740ca7efe"
-      },
-      "reason": "Asset fetches were not attempted after the health endpoint was blocked by the managed outbound proxy; do not infer byte equality from the successful Worker build/version API."
+      "all_live_hashes_match_local": true
     }
   }
 }
