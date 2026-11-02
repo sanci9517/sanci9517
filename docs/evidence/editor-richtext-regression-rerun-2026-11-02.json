@@ -525,5 +525,89 @@
     },
     "cost": "0 Ft",
     "acceptance": "This mixed-block link Undo/Redo slice is verified; overall 77.44.7.B remains OPEN / NOT CERTIFIED because authenticated production link-report and production Save/Publish acceptance remain open."
+  },
+  "followupRun4": {
+    "date": "2026-11-02",
+    "planItem": "77.44.7.B",
+    "scope": "Native backward drag selection from a list item into a paragraph, with direction preserved by cross-structure link insert and Undo/Redo",
+    "testFile": "tests/browser/editor-richtext-multiblock.test.js",
+    "testCommit": "43f36e266ff4c69c6a78a78ba58f4c4e6e3b7d13",
+    "githubBranch": "v2/foundation",
+    "githubBaseBeforeFollowup": "e65325f35259273807e613a2821eb2d5c37a8ad9",
+    "checks": [
+      {
+        "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-richtext-multiblock.test.js",
+        "result": "PASS",
+        "passed": 1,
+        "failed": 0
+      },
+      {
+        "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-richtext-*.test.js",
+        "result": "PASS",
+        "passed": 13,
+        "failed": 0
+      },
+      {
+        "command": "npm run test:editor",
+        "result": "PASS",
+        "passed": 11,
+        "failed": 0
+      },
+      {
+        "command": "npm run typecheck",
+        "result": "PASS"
+      },
+      {
+        "command": "python3 scripts/check-canonical-plan.py",
+        "result": "PASS",
+        "masterFiles": 13
+      },
+      {
+        "command": "python3 scripts/audit-active-plan-point.py",
+        "result": "PASS",
+        "cursor": "77.44.7.B",
+        "acceptance": "NOT_CERTIFIED"
+      },
+      {
+        "command": "python3 tests/plan-contract.test.py",
+        "result": "PASS",
+        "passed": 13,
+        "failed": 0
+      },
+      {
+        "command": "python3 scripts/build-feature-traceability.py --check",
+        "result": "PASS",
+        "mappings": 396
+      },
+      {
+        "command": "node --check tests/browser/editor-richtext-multiblock.test.js",
+        "result": "PASS"
+      },
+      {
+        "command": "git diff --check",
+        "result": "PASS"
+      }
+    ],
+    "assertions": [
+      "Native backward drag starts within the second list item and ends within the paragraph at mobile and desktop viewports.",
+      "The canonical segments remain paragraph [2,11) and list [0,12), with backward:true.",
+      "Cross-structure link insertion retains selection direction; desktop Undo/Redo restore both link targets and backward selection.",
+      "Real hit tests ensure the sticky Inspector heading never receives the selection gesture.",
+      "Save remains draft-only and explicit Publish is separate; production state is not written."
+    ],
+    "runtime": {
+      "sourceChanged": false,
+      "deploymentUnchanged": true,
+      "deploymentId": "212fa31b-b468-4352-a1c1-e7bde222d363",
+      "workerVersion": "77827529-a812-4b3b-9495-580c83348767",
+      "trafficPercent": 100
+    },
+    "productionData": {
+      "d1Writes": 0,
+      "migrations": 0,
+      "r2Changes": 0
+    },
+    "cost": "0 Ft",
+    "acceptance": "The backward cross-structure Rich Text selection slice is verified; overall 77.44.7.B remains OPEN / NOT CERTIFIED because authenticated production link-report and production Save/Publish acceptance remain open."
   }
 }
