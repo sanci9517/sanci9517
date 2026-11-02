@@ -1,0 +1,59 @@
+{
+  "date": "2026-11-02",
+  "plan_item": "77.44.7.D — element-specific content and media",
+  "status": "TARGETED_MEDIA_AND_CARD_SLICE_PASS; FULL_77_44_7_D_OPEN",
+  "repository": {
+    "branch": "v2/foundation",
+    "head_before_this_evidence": "d46f4edc36b87033a9a50fe58bbd36d3a4e7a122",
+    "runtime_source_changed": false,
+    "public_assets_changed": false
+  },
+  "reuseReview": {
+    "used": "The project's existing shared Media Library asset picker, Inspector controls, authored-content commands, and existing Playwright/Chromium fixture tests.",
+    "externalCode": "None. Existing project-owned implementation met the scope; no new dependency or paid service was needed."
+  },
+  "tests": [
+    {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-media-source-switch.test.js",
+      "result": "PASS",
+      "passed": 3,
+      "failed": 0,
+      "viewportWidths": [390, 1366],
+      "coverage": "Shared image, gallery, carousel, and video poster source switching; clear, invalid-URL and IME handling; Undo/Redo; preservation of untouched repeater rows; Save versus Publish; browser uses local fixture API only."
+    },
+    {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-gallery-crop-parity.test.js tests/browser/editor-card-content.test.js",
+      "result": "PASS",
+      "passed": 6,
+      "failed": 0,
+      "viewportWidths": [390, 1366],
+      "coverage": "Gallery/carousel crop preset parity between Inspector, Canvas and published renderer; one-axis crop changes and Undo/Redo; legacy property preservation; gallery/carousel URL source changes; Card Inspector IME and Save/Publish isolation."
+    }
+  ],
+  "totalFocusedChromium": {
+    "result": "PASS",
+    "passed": 9,
+    "failed": 0,
+    "viewportWidths": [390, 1366]
+  },
+  "scopeLimitations": {
+    "fullPlanItem": "OPEN. This verifies only selected shared-media, gallery crop, and Card-content routes; it does not certify the full 77.44.7.D matrix (all image/video/audio, CTA, icon, table/list, UI-component and repeated-data capabilities).",
+    "productionR2": "Not tested. The suite uses local fixture endpoints; no production R2 upload/read/delete or production asset ownership operation was performed.",
+    "manualEditorAcceptance": "Deferred until full Visual Editor completion at 77.44.7.F/77.44.8 per AGENTS.md."
+  },
+  "production": {
+    "deploymentId": "5802b102-e5e1-4f18-a816-13bfdc2b2a02",
+    "workerVersion": "8a9b745b-d287-4b3a-ae88-42daaf7f06a0",
+    "trafficPercent": 100,
+    "deploymentApi": "Read-only GET returned the same latest deployment/version after this test-only block.",
+    "health": "GET /api/health -> HTTP 200; service sanci9517-streamer-brand; version 2.0.0.",
+    "redeployed": false
+  },
+  "dataChanges": {
+    "productionD1Reads": 0,
+    "productionD1Writes": 0,
+    "productionD1Migrations": 0,
+    "productionR2Changes": 0
+  },
+  "cost": "0 Ft; existing local dependencies and platform APIs only."
+}
