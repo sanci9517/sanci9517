@@ -444,5 +444,86 @@
     "githubBranch": "v2/foundation",
     "githubBaseBeforeFollowup": "24d9aa4655b72dbbaad5ae23975d344f31be8cf9",
     "combinedStatus": "statuses=[]; no CI PASS claimed"
+  },
+  "followupRun3": {
+    "date": "2026-11-02",
+    "planItem": "77.44.7.B",
+    "scope": "Desktop Undo/Redo for mixed paragraph-to-list link edits; mobile selection and Save/Publish remain covered at both viewports",
+    "testFile": "tests/browser/editor-richtext-multiblock.test.js",
+    "testCommit": "30eee28dff241049b6d705e7b199109d41f3eada",
+    "checks": [
+      {
+        "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-richtext-multiblock.test.js",
+        "result": "PASS",
+        "passed": 1,
+        "failed": 0
+      },
+      {
+        "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-richtext-*.test.js",
+        "result": "PASS",
+        "passed": 13,
+        "failed": 0
+      },
+      {
+        "command": "npm run test:editor",
+        "result": "PASS",
+        "passed": 11,
+        "failed": 0
+      },
+      {
+        "command": "npm run typecheck",
+        "result": "PASS"
+      },
+      {
+        "command": "python3 scripts/check-canonical-plan.py",
+        "result": "PASS",
+        "masterFiles": 13
+      },
+      {
+        "command": "python3 scripts/audit-active-plan-point.py",
+        "result": "PASS",
+        "cursor": "77.44.7.B",
+        "acceptance": "NOT_CERTIFIED"
+      },
+      {
+        "command": "python3 tests/plan-contract.test.py",
+        "result": "PASS",
+        "passed": 13,
+        "failed": 0
+      },
+      {
+        "command": "python3 scripts/build-feature-traceability.py --check",
+        "result": "PASS",
+        "mappings": 396
+      },
+      {
+        "command": "node --check tests/browser/editor-richtext-multiblock.test.js",
+        "result": "PASS"
+      },
+      {
+        "command": "git diff --check",
+        "result": "PASS"
+      }
+    ],
+    "assertions": [
+      "Desktop Undo removes the cross-structure link, restores the previous paragraph link target and selection; Redo restores the new link spans and selection.",
+      "Native mixed paragraph/list selection, link insertion and selection retention work at 390px and 1366px.",
+      "Mobile Undo controls are hidden; mobile continues to verify real selection, draft-only Save and explicit Publish.",
+      "The full 13-test Rich Text Chromium suite, Editor unit suite, typecheck, plan contract and traceability passed."
+    ],
+    "runtime": {
+      "sourceChanged": false,
+      "deploymentUnchanged": true,
+      "deploymentId": "212fa31b-b468-4352-a1c1-e7bde222d363",
+      "workerVersion": "77827529-a812-4b3b-9495-580c83348767",
+      "trafficPercent": 100
+    },
+    "productionData": {
+      "d1Writes": 0,
+      "migrations": 0,
+      "r2Changes": 0
+    },
+    "cost": "0 Ft",
+    "acceptance": "This mixed-block link Undo/Redo slice is verified; overall 77.44.7.B remains OPEN / NOT CERTIFIED because authenticated production link-report and production Save/Publish acceptance remain open."
   }
 }
