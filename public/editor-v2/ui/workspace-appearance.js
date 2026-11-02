@@ -9,6 +9,9 @@ const leftTabs=new Set(['pages','elements','layers','schedule','navigation']);
 const hexColor=/^#[0-9a-f]{6}$/iu;
 const PROFILE_LIMIT=8;
 const PROFILE_NAME_LIMIT=32;
+export const WORKSPACE_PROFILE_TRANSFER_KIND='sanci-editor-workspace-profile';
+export const WORKSPACE_PROFILE_TRANSFER_VERSION=1;
+export const WORKSPACE_PROFILE_MAX_BYTES=16_384;
 
 function linearChannel(channel){const value=channel/255;return value<=0.04045?value/12.92:((value+0.055)/1.055)**2.4}
 function luminance(hex){return [1,3,5].map(index=>linearChannel(parseInt(hex.slice(index,index+2),16))).reduce((sum,value,index)=>sum+value*[0.2126,0.7152,0.0722][index],0)}
@@ -54,6 +57,22 @@ function normalizeProfiles(value){
   }
   return result;
 }
+export function serializeWorkspaceProfile(profile){
+  const safe=normalizeProfiles([profile])[0];
+  if(!safe)throw new TypeError('A valid workspace profile is required');
+  return JSON.stringify({kind:WORKSPACE_PROFILE_TRANSFER_KIND,version:WORKSPACE_PROFILE_TRANSFER_VERSION,profile:safe},null,2);
+}
+export function parseWorkspaceProfileTransfer(source){
+  if(typeof source!=='string'||source.length===0||new TextEncoder().encode(source).byteLength>WORKSPACE_PROFILE_MAX_BYTES)return null;
+  let input;
+  try{input=JSON.parse(source)}catch{return null}
+  if(!isRecord(input)||input.kind!==WORKSPACE_PROFILE_TRANSFER_KIND||input.version!==WORKSPACE_PROFILE_TRANSFER_VERSION)return null;
+  return normalizeProfiles([input.profile])[0]||null;
+}
+function profileFileName(name){
+  const slug=String(name||'workspace').normalize('NFKD').replace(/[\u0300-\u036f]/gu,'').toLowerCase().replace(/[^a-z0-9]+/gu,'-').replace(/^-+|-+$/gu,'').slice(0,32);
+  return `sanci-workspace-${slug||'profile'}.json`;
+}
 export function isAccessibleWorkspaceAccent(value){
   if(typeof value!=='string'||!hexColor.test(value))return false;
   const accent=value.toLowerCase();
@@ -95,6 +114,9 @@ export function mountWorkspaceAppearance({documentRef=globalThis.document,root=d
   const deleteProfileButton=documentRef.querySelector('#deleteWorkspaceProfile');
   const undoButton=documentRef.querySelector('#undoWorkspaceLayout');
   const redoButton=documentRef.querySelector('#redoWorkspaceLayout');
+  const importProfileButton=documentRef.querySelector('#importWorkspaceProfile');
+  const exportProfileButton=documentRef.querySelector('#exportWorkspaceProfile');
+  const profileFile=documentRef.querySelector('#workspaceProfileFile');
   const fields={
     layout:documentRef.querySelector('#workspaceLayout'),
     dockOrder:documentRef.querySelector('#workspaceDockOrder'),
@@ -132,6 +154,7 @@ export function mountWorkspaceAppearance({documentRef=globalThis.document,root=d
     field.value=value.profiles.some(profile=>profile.id===selected)?selected:'';
     if(deleteProfileButton)deleteProfileButton.disabled=!field.value;
     if(loadProfileButton)loadProfileButton.disabled=!field.value;
+    if(exportProfileButton)exportProfileButton.disabled=!field.value;
   };
   const paint=()=>{
     applyWorkspacePreferences(root,value);
@@ -205,6 +228,30 @@ export function mountWorkspaceAppearance({documentRef=globalThis.document,root=d
     if(status)status.textContent=`„${name}” munkaterület-profil törölve. Visszavonás elérhető.`;
     return true;
   };
+  const exportProfile=()=>{
+    const profile=value.profiles.find(item=>item.id===fields.profile?.value);
+    if(!profile)return false;
+    const blob=new Blob([serializeWorkspaceProfile(profile)],{type:'application/json'});
+    const href=documentRef.defaultView.URL.createObjectURL(blob);
+    const link=documentRef.createElement('a');link.href=href;link.download=profileFileName(profile.name);link.hidden=true;
+    documentRef.body.append(link);link.click();link.remove();documentRef.defaultView.setTimeout(()=>documentRef.defaultView.URL.revokeObjectURL(href),0);
+    if(status)status.textContent=`„${profile.name}” profilfájl letöltése elindult.`;
+    return true;
+  };
+  const importProfile=async file=>{
+    if(!file)return false;
+    if(file.size>WORKSPACE_PROFILE_MAX_BYTES){if(status)status.textContent='A profilfájl túl nagy. Legfeljebb 16 KB-os JSON-fájlt válassz.';return false}
+    let profile;
+    try{profile=parseWorkspaceProfileTransfer(await file.text())}catch{profile=null}
+    if(!profile){if(status)status.textContent='A profilfájl nem érvényes vagy nem támogatott formátumú. A mentett munkaterület nem változott.';return false}
+    if(value.profiles.length>=PROFILE_LIMIT){if(status)status.textContent='Már nyolc profil van elmentve. Törölj egyet az importálás előtt.';return false}
+    if(value.profiles.some(item=>item.name.localeCompare(profile.name,undefined,{sensitivity:'base'})===0)){if(status)status.textContent='Már van ilyen nevű profil. Nevezd át az importált profilt vagy töröld a meglévőt.';return false}
+    remember();idSequence+=1;
+    const imported={...profile,id:`profile-${Date.now().toString(36)}-${idSequence.toString(36)}`,createdAt:Date.now()};
+    value={...value,profiles:[...value.profiles,imported]};paint();persist();if(fields.profile)fields.profile.value=imported.id;renderProfiles();
+    if(status)status.textContent=`„${imported.name}” profil ezen az eszközön elmentve. A küldött fájlban lévő futtatható kódot nem használjuk.`;
+    return true;
+  };
   openButton?.addEventListener('click',()=>{documentRef.querySelector('.more-actions')?.removeAttribute('open');open()});
   closeButton?.addEventListener('click',close);
   dialog?.addEventListener('close',()=>{
@@ -220,8 +267,15 @@ export function mountWorkspaceAppearance({documentRef=globalThis.document,root=d
   saveProfileButton?.addEventListener('click',saveProfile);
   loadProfileButton?.addEventListener('click',loadProfile);
   deleteProfileButton?.addEventListener('click',deleteProfile);
+  importProfileButton?.addEventListener('click',()=>profileFile?.click());
+  exportProfileButton?.addEventListener('click',exportProfile);
+  profileFile?.addEventListener('change',async()=>{
+    const file=profileFile.files?.[0];
+    await importProfile(file);
+    profileFile.value='';
+  });
   undoButton?.addEventListener('click',undo);redoButton?.addEventListener('click',redo);
   resetButton?.addEventListener('click',reset);
   paint();
-  return {get value(){return normalizeWorkspacePreferences(value)},setLayout,setDockOrder,open,close,remember,undo,redo,saveProfile,loadProfile,deleteProfile,reset};
+  return {get value(){return normalizeWorkspacePreferences(value)},setLayout,setDockOrder,open,close,remember,undo,redo,saveProfile,loadProfile,deleteProfile,importProfile,exportProfile,reset};
 }

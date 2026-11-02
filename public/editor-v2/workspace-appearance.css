@@ -102,6 +102,8 @@
 .workspace-profile-load select,
 .workspace-profile-section button { min-width:0; min-height:44px; padding:8px 10px; border:1px solid #465c77; border-radius:9px; background:#0b121d; color:#f1f5fb; font:inherit; }
 .workspace-profile-load { grid-template-columns:minmax(0,1fr) auto auto; }
+.workspace-profile-transfer { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
+.workspace-profile-transfer input[hidden] { display:none; }
 .workspace-profile-section button { background:#1b2b40; cursor:pointer; }
 .workspace-profile-section button:disabled { opacity:.52; cursor:not-allowed; }
 .workspace-profile-section button:focus-visible { outline:3px solid var(--accent,#8ba8ff); outline-offset:2px; }
@@ -109,7 +111,8 @@
 .workspace-profile-history small { flex:1 1 100%; color:#aebdd1; font-size:12px; line-height:1.4; }
 @media (max-width:560px) {
   .workspace-profile-create,
-  .workspace-profile-load { grid-template-columns:minmax(0,1fr); }
+  .workspace-profile-load,
+  .workspace-profile-transfer { grid-template-columns:minmax(0,1fr); }
   .workspace-profile-section button { width:100%; }
   .workspace-profile-history { display:grid; grid-template-columns:minmax(0,1fr); }
 }

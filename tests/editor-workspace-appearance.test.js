@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import {LEGACY_WORKSPACE_PREFERENCES_KEY,WORKSPACE_PREFERENCES_KEY,WORKSPACE_PREFERENCE_DEFAULTS,isAccessibleWorkspaceAccent,mountWorkspaceAppearance,normalizeWorkspacePreferences,readWorkspacePreferences} from '../public/editor-v2/ui/workspace-appearance.js';
+import {LEGACY_WORKSPACE_PREFERENCES_KEY,WORKSPACE_PROFILE_MAX_BYTES,WORKSPACE_PREFERENCES_KEY,WORKSPACE_PREFERENCE_DEFAULTS,isAccessibleWorkspaceAccent,mountWorkspaceAppearance,normalizeWorkspacePreferences,parseWorkspaceProfileTransfer,readWorkspacePreferences,serializeWorkspaceProfile} from '../public/editor-v2/ui/workspace-appearance.js';
 
 function storage(initial={}){
   const values=new Map(Object.entries(initial));
@@ -30,6 +30,18 @@ test('dock position and saved profiles are bounded, inert data and safe to resto
   assert.equal(normalizeWorkspacePreferences({dockOrder:'left-center-right'}).dockOrder,'left-canvas-right','unknown docking expressions cannot reach CSS');
   const limited=normalizeWorkspacePreferences({profiles:Array.from({length:12},(_,index)=>({id:`profile-${index}`,name:`Profil ${index}`}))});
   assert.equal(limited.profiles.length,8,'profile storage has a fixed eight-item bound');
+});
+
+test('workspace profile transfer serializes only allowlisted data and rejects malformed, oversized or unsupported payloads',()=>{
+  const raw=serializeWorkspaceProfile({id:'profile-original',name:'  Tervezői nézet  ',createdAt:123,appearance:{layout:'balanced',theme:'aurora',density:'compact',accent:'#00a7c8',dockOrder:'right-left-canvas'},dock:{leftOpen:true,rightOpen:true,leftTab:'layers',leftWidth:350,rightWidth:400},customCss:'body{display:none}',script:'alert(1)'});
+  const transfer=JSON.parse(raw);
+  assert.deepEqual(Object.keys(transfer).sort(),['kind','profile','version']);
+  assert.deepEqual(transfer.profile,{id:'profile-original',name:'Tervezői nézet',createdAt:123,appearance:{layout:'balanced',theme:'aurora',density:'compact',accent:'#00a7c8',dockOrder:'right-left-canvas'},dock:{leftOpen:true,rightOpen:true,leftTab:'layers',leftWidth:350,rightWidth:400}});
+  assert.equal(parseWorkspaceProfileTransfer(raw).name,'Tervezői nézet');
+  assert.equal(parseWorkspaceProfileTransfer('{broken'),null);
+  assert.equal(parseWorkspaceProfileTransfer(JSON.stringify({...transfer,version:999})),null);
+  assert.equal(parseWorkspaceProfileTransfer(' '.repeat(WORKSPACE_PROFILE_MAX_BYTES+1)),null);
+  assert.throws(()=>serializeWorkspaceProfile({name:'Invalid profile'}),/valid workspace profile/u);
 });
 
 test('custom accent accepts visible hex colors and rejects malformed or low-contrast colors',()=>{

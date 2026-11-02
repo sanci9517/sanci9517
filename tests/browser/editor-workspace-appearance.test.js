@@ -219,8 +219,12 @@ test('desktop docks can be reordered and local workspace profiles save, reload, 
 });
 
 test('mobile profile application keeps the single-drawer model and workspace reset restores saved preferences safely',async t=>{
-  const {page,writes,errors}=await openEditor(t,{width:390,height:850,isMobile:true,hasTouch:true});
+  const {page,writes,errors}=await openEditor(t,{width:320,height:850,isMobile:true,hasTouch:true});
   await openPreferences(page);
+  await page.locator('#workspaceAppearanceDialog').evaluate(async dialog=>Promise.all(dialog.getAnimations().map(animation=>animation.finished)));
+  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'profile controls stay inside a narrow phone viewport');
+  const touchTargets=await page.locator('.workspace-profile-section button:visible').evaluateAll(buttons=>buttons.map(button=>({id:button.id,height:button.getBoundingClientRect().height,cssMin:getComputedStyle(button).minHeight,width:button.getBoundingClientRect().width})));
+  assert.ok(touchTargets.every(target=>target.height>=44),`all profile and history controls preserve the 44px touch target: ${JSON.stringify(touchTargets)}`);
   await page.locator('#workspaceLayout').selectOption('balanced');
   await page.locator('#workspaceDockOrder').selectOption('canvas-right-left');
   await page.locator('#workspaceProfileName').fill('Mobil teszt');
@@ -266,5 +270,57 @@ test('desktop panel and canvas drag reordering is an accessible-selector peer an
   assert.equal(result.dragHint,'true','desktop dock title is draggable');
   assert.equal(result.saved,'canvas-left-right','the drag operation persists only the local workspace preference');
   assert.deepEqual(writes,[],'desktop workspace drag never invokes Page Model Save or Publish');
+  assert.deepEqual(errors,[]);
+});
+
+test('workspace profile export/import uses bounded allowlisted JSON, supports undo and never writes page data',async t=>{
+  const {page,writes,errors}=await openEditor(t,{width:1366,height:900});
+  await openPreferences(page);
+  await page.locator('#workspaceProfileName').fill('Kiinduló nézet');
+  await page.locator('#saveWorkspaceProfile').click();
+  const originalId=await page.locator('#workspaceProfile').inputValue();
+  assert.ok(originalId);
+  assert.equal(await page.locator('#exportWorkspaceProfile').isEnabled(),true);
+  const downloadPromise=page.waitForEvent('download');
+  await page.locator('#exportWorkspaceProfile').click();
+  const download=await downloadPromise;
+  assert.equal(download.suggestedFilename(),'sanci-workspace-kiindulo-nezet.json');
+  const exportPath=await download.path();
+  const exported=JSON.parse(await readFile(exportPath,'utf8'));
+  assert.equal(exported.kind,'sanci-editor-workspace-profile');
+  assert.equal(exported.version,1);
+  assert.deepEqual(Object.keys(exported.profile).sort(),['appearance','createdAt','dock','id','name']);
+
+  const imported={...exported,profile:{...exported.profile,id:originalId,name:'Importált elrendezés',customCss:'body{display:none}',script:'alert(1)',appearance:{...exported.profile.appearance,theme:'aurora',customCss:'body{display:none}'}}};
+  const chooserPromise=page.waitForEvent('filechooser');
+  await page.locator('#importWorkspaceProfile').click();
+  const chooser=await chooserPromise;
+  await chooser.setFiles({name:'workspace-profile.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(imported))});
+  await page.waitForFunction(()=>document.querySelector('#workspaceProfile')?.options.length===3);
+  const importedId=await page.locator('#workspaceProfile').inputValue();
+  assert.notEqual(importedId,originalId,'imported profiles receive a fresh local identifier');
+  assert.equal(await page.locator('#workspaceProfile option').last().textContent(),'Importált elrendezés');
+  assert.equal(await page.locator('.editor-app').getAttribute('data-workspace-theme'),'graphite','import stores a profile without unexpectedly applying it');
+  const stored=await page.evaluate(key=>JSON.parse(localStorage.getItem(key)),WORKSPACE_PREFERENCES_KEY);
+  const savedImported=stored.profiles.find(profile=>profile.id===importedId);
+  assert.equal(savedImported.appearance.theme,'aurora');
+  assert.equal('customCss' in savedImported,false);
+  assert.equal('script' in savedImported,false);
+  await page.locator('#undoWorkspaceLayout').click();
+  assert.equal(await page.locator('#workspaceProfile option').count(),2,'profile import is part of local workspace Undo history');
+  await page.locator('#redoWorkspaceLayout').click();
+  assert.equal(await page.locator('#workspaceProfile option').count(),3,'workspace Redo restores the imported profile');
+
+  const duplicate={...exported,profile:{...exported.profile,name:'KIINDULÓ NÉZET'}};
+  await page.locator('#workspaceProfileFile').setInputFiles({name:'duplicate.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(duplicate))});
+  await page.waitForFunction(()=>document.querySelector('#workspaceAppearanceStatus')?.textContent.includes('Már van ilyen nevű profil'));
+  assert.equal(await page.locator('#workspaceProfile option').count(),3,'duplicate names never overwrite a local profile');
+  await page.locator('#workspaceProfileFile').setInputFiles({name:'oversized.json',mimeType:'application/json',buffer:Buffer.alloc(16_385,0x20)});
+  await page.waitForFunction(()=>document.querySelector('#workspaceAppearanceStatus')?.textContent.includes('túl nagy'));
+  assert.equal(await page.locator('#workspaceProfile option').count(),3,'oversized files are rejected before JSON parsing');
+  await page.locator('#workspaceProfileFile').setInputFiles({name:'unsupported.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify({...exported,version:999}))});
+  await page.waitForFunction(()=>document.querySelector('#workspaceAppearanceStatus')?.textContent.includes('nem érvényes'));
+  assert.equal(await page.locator('#workspaceProfile option').count(),3,'unsupported file versions cannot mutate local profiles');
+  assert.deepEqual(writes,[],'profile file transfer and workspace history never Save or Publish page content');
   assert.deepEqual(errors,[]);
 });
