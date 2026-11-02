@@ -609,5 +609,88 @@
     },
     "cost": "0 Ft",
     "acceptance": "The backward cross-structure Rich Text selection slice is verified; overall 77.44.7.B remains OPEN / NOT CERTIFIED because authenticated production link-report and production Save/Publish acceptance remain open."
+  },
+  "followupRun5": {
+    "date": "2026-11-02",
+    "planItem": "77.44.7.B",
+    "scope": "Backward mixed paragraph-to-list selection applies bold across heterogeneous blocks and persists through Save and Publish",
+    "testFile": "tests/browser/editor-richtext-multiblock.test.js",
+    "testCommit": "4ea1db64277fa348f7e4d8fb1d67ad20784c2d37",
+    "githubBranch": "v2/foundation",
+    "githubBaseBeforeFollowup": "e3ff9377e0ed172c922d82e4400712d70984b283",
+    "checks": [
+      {
+        "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-richtext-multiblock.test.js",
+        "result": "PASS",
+        "passed": 1,
+        "failed": 0
+      },
+      {
+        "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-richtext-*.test.js",
+        "result": "PASS",
+        "passed": 13,
+        "failed": 0
+      },
+      {
+        "command": "npm run test:editor",
+        "result": "PASS",
+        "passed": 11,
+        "failed": 0
+      },
+      {
+        "command": "npm run typecheck",
+        "result": "PASS"
+      },
+      {
+        "command": "python3 scripts/check-canonical-plan.py",
+        "result": "PASS",
+        "masterFiles": 13
+      },
+      {
+        "command": "python3 scripts/audit-active-plan-point.py",
+        "result": "PASS",
+        "cursor": "77.44.7.B",
+        "acceptance": "NOT_CERTIFIED"
+      },
+      {
+        "command": "python3 tests/plan-contract.test.py",
+        "result": "PASS",
+        "passed": 13,
+        "failed": 0
+      },
+      {
+        "command": "python3 scripts/build-feature-traceability.py --check",
+        "result": "PASS",
+        "mappings": 396
+      },
+      {
+        "command": "node --check tests/browser/editor-richtext-multiblock.test.js",
+        "result": "PASS"
+      },
+      {
+        "command": "git diff --check",
+        "result": "PASS"
+      }
+    ],
+    "assertions": [
+      "A backward native range from list item to paragraph applies bold to the same two canonical block slices.",
+      "Inspector rerender preserves backward selection and Canvas mirrors the formatted text.",
+      "Desktop and mobile draft Save preserve the mark; explicit Publish preserves the published output.",
+      "The full Rich Text Chromium regression cluster passes 13/13; Editor unit passes 11/11."
+    ],
+    "runtime": {
+      "sourceChanged": false,
+      "deploymentUnchanged": true,
+      "deploymentId": "212fa31b-b468-4352-a1c1-e7bde222d363",
+      "workerVersion": "77827529-a812-4b3b-9495-580c83348767",
+      "trafficPercent": 100
+    },
+    "productionData": {
+      "d1Writes": 0,
+      "migrations": 0,
+      "r2Changes": 0
+    },
+    "cost": "0 Ft",
+    "acceptance": "The backward-selection formatting slice is verified; overall 77.44.7.B remains OPEN / NOT CERTIFIED because authenticated production link-report and production Save/Publish acceptance remain open."
   }
 }
