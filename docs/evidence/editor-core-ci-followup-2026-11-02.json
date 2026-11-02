@@ -1,0 +1,114 @@
+{
+  "date": "2026-11-02",
+  "planItem": "77.44.7.D — Visual Editor browser regression follow-up",
+  "sourceRun": {
+    "url": "https://github.com/sanci9517/sanci9517/actions/runs/41453004229",
+    "runNumber": 3000,
+    "headCommit": "ba20689ce527cf8daa21b0a6e867852d366b3235",
+    "status": "completed",
+    "conclusion": "failure",
+    "browserTests": {
+      "passed": 95,
+      "failed": 2,
+      "total": 97
+    },
+    "failures": [
+      {
+        "test": "tests/browser/editor-inspector-background-image-partial-types.test.js",
+        "cause": "The wait resolved on the intermediate Publikálás… saveStatus change, then immediately asserted the final Publikálva state.",
+        "fix": "Wait for the final Publikálva state explicitly."
+      },
+      {
+        "test": "tests/browser/editor-layer-rename-draft.test.js",
+        "cause": "A locator-level Control+s press retried against the layer rename input after the save intentionally flushed and rerendered the pending rename, detaching that input.",
+        "fix": "Keep the field focused through fill and send Control+s from the Playwright page keyboard, avoiding a stale locator retry."
+      }
+    ]
+  },
+  "localFollowup": {
+    "runtimeSourceChanged": false,
+    "publicAssetsChanged": false,
+    "tests": [
+      {
+        "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-inspector-background-image-partial-types.test.js",
+        "result": "PASS",
+        "passed": 1,
+        "failed": 0,
+        "durationMs": 181885
+      },
+      {
+        "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-layer-rename-draft.test.js",
+        "result": "PASS",
+        "passed": 2,
+        "failed": 0,
+        "durationMs": 16068,
+        "viewportWidths": [390, 1366]
+      },
+      {
+        "command": "npm run test:editor",
+        "result": "PASS",
+        "passedFiles": 11,
+        "failedFiles": 0
+      },
+      {
+        "command": "npm run typecheck",
+        "result": "PASS"
+      },
+      {
+        "command": "python3 tests/plan-contract.test.py",
+        "result": "PASS",
+        "passed": 13,
+        "failed": 0
+      },
+      {
+        "command": "python3 scripts/audit-active-plan-point.py",
+        "result": "PASS",
+        "activeCursor": "77.44.7.D",
+        "featureCount": 396
+      },
+      {
+        "command": "python3 scripts/check-canonical-plan.py",
+        "result": "PASS"
+      },
+      {
+        "command": "python3 scripts/build-feature-traceability.py --check",
+        "result": "PASS",
+        "mappedFeatures": 396
+      },
+      {
+        "command": "git diff --check",
+        "result": "PASS"
+      }
+    ],
+    "notRun": [
+      "The full 97-test Editor Core browser workflow was not rerun locally or on GitHub; the two affected tests were rerun directly."
+    ]
+  },
+  "release": {
+    "githubBranch": "v2/foundation",
+    "headAtCheck": "9586b775c5bae83f414e1dd5b473828dee22094f",
+    "workerVersion": "0974c2c3-1c96-4d41-b6d6-a040b9f33ad1",
+    "deploymentId": "54f41935-b9ad-481b-bbd5-e5d8d687edb4",
+    "trafficPercent": 100,
+    "health": {
+      "checkedAt": "2026-11-02T14:17:27Z",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "workerRedeployedForFollowup": false,
+    "reason": "Only tests and plan/evidence documentation changed; runtime source and public assets are unchanged.",
+    "productionD1WritesOrMigrations": false,
+    "productionR2Operations": false,
+    "cost": "0 Ft; no paid services, quota purchase, or new dependency."
+  },
+  "scope": {
+    "aggregateCi": "FAILURE for run 41453004229; local targeted corrections pass but do not change the historical run result.",
+    "fullPlanItem": "77.44.7.D remains OPEN; this follow-up only repairs and revalidates two browser test waits.",
+    "manualAcceptance": "Deferred until the complete Visual Editor acceptance gate."
+  }
+}

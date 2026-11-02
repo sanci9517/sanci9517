@@ -167,9 +167,8 @@ test('background image media picker reaches Canvas, draft and public renderer fo
       assert.ok((await canvasImage(id)).includes(`/api/admin/media?id=${backgroundAssets[device].id}`),`${type}/${device}: draft selection survives Editor reload`);
     }
   }
-  const previousStatus=await editor.locator('#saveStatus').textContent();
   await editor.locator('#publish').click();
-  await editor.waitForFunction(previous=>document.querySelector('#saveStatus')?.textContent!==previous,previousStatus);
+  await editor.waitForFunction(()=>/^Publikálva/.test(document.querySelector('#saveStatus')?.textContent||''));
   assert.match(await editor.locator('#saveStatus').textContent(),/^Publikálva/,`explicit Publish should succeed: ${await editor.locator('#saveStatus').textContent()}`);
   await viewer.reload();
   for(const {type,id} of applicable){

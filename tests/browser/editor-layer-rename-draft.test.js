@@ -54,7 +54,7 @@ for(const width of [390,1366])test(`layer rename pending draft survives save, pu
  if(await editor.locator('.rail-btn[data-tab="layers"]').isVisible())await editor.locator('.rail-btn[data-tab="layers"]').click();else await editor.evaluate(()=>{window.sanciEditor.showLeftTab('layers');window.sanciEditor.openPanel('left')});
  const row=editor.locator(`.layer-row[data-node-id="${id}"]`), field=editor.getByRole('textbox',{name:'Réteg neve',exact:true});
  const open=async()=>{if(mobile)await editor.locator(`.layer-rename[data-node-id="${id}"]`).tap();else {await row.focus();await row.press('F2');}};
- await open();await field.fill('Mentés billentyűvel');await field.press('Control+s');
+ await open();await field.fill('Mentés billentyűvel');await editor.keyboard.press('Control+s');
  await editor.waitForFunction(()=>document.querySelector('#revision')?.textContent?.includes('3'));
  assert.equal(posts.length,1);assert.equal(posts[0].document.pages[pageId].nodes[id].name,'Mentés billentyűvel');assert.equal(posts[0].publish,false);assert.equal(published.pages[pageId].nodes[id].name,'Mentett elem');
  await open();await field.fill('Kijelölés után is megmarad');
@@ -82,7 +82,11 @@ for(const width of [390,1366])test(`layer rename pending draft survives save, pu
  await editor.locator('#publish').click();await editor.waitForFunction(()=>document.querySelector('#revision')?.textContent?.includes('4'));
  assert.equal(posts.length,2);assert.equal(posts[1].publish,true);assert.equal(posts[1].document.pages[pageId].nodes[id].name,'Publikált név');assert.equal(published.pages[pageId].nodes[id].name,'Publikált név');
  hold=true;const requestStarted=new Promise(resolve=>{onRequest=resolve});
- await open();await field.fill('Első mentési változat');await field.press('Control+s');await requestStarted;
+ await open();await field.fill('Első mentési változat');
+ // Saving flushes and rerenders the pending layer rename, which intentionally
+ // detaches this input. Send Ctrl+S through the page keyboard after fill rather
+ // than asking Playwright to retry a locator-level press on the stale node.
+ await editor.keyboard.press('Control+s');await requestStarted;
  await open();await field.fill('Mentés közben szerkesztve');releaseResponse();
  await editor.waitForFunction(()=>document.querySelector('#revision')?.textContent?.includes('5'));
  assert.equal(posts[2].document.pages[pageId].nodes[id].name,'Első mentési változat');
