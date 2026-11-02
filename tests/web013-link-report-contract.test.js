@@ -3,6 +3,7 @@ import { readFileSync } from "node:fs";
 import test from "node:test";
 
 const route = readFileSync(new URL("../src/routes/admin/link-report.ts", import.meta.url), "utf8");
+const htmlHrefs = readFileSync(new URL("../src/core/html-hrefs.ts", import.meta.url), "utf8");
 const ui = readFileSync(new URL("../public/assets/admin-link-report.js", import.meta.url), "utf8");
 const dashboard = readFileSync(new URL("../public/admin-home.html", import.meta.url), "utf8");
 
@@ -29,7 +30,7 @@ test("WEB-013 distinguishes missing links from published historical redirects", 
 test("WEB-013 checks rich text anchors and explicit link properties", () => {
   assert.match(route, /node\?\.props\?\.link\?\.href/);
   assert.match(route, /node\?\.props\?\.html/);
-  assert.match(route, /anchors\.exec\(html\)/);
+  assert.match(route, /scanHtmlAnchorHrefs\(html,/);
   assert.match(route, /internalPageSlug\(href, origin\)/);
   assert.match(route, /inline\?\.link\?\.href/);
 });
@@ -44,15 +45,13 @@ test("WEB-013 admin report surfaces broken and redirected links separately", () 
   assert.match(ui, /fetch\("\/api\/admin\/link-report"/);
 });
 
-test("WEB-013 rich-text anchor matcher recognizes actual quoted and unquoted href values", () => {
-  const source = route.match(/const anchors = (\/<a[^;]+\/gi);/);
-  assert.ok(source, "anchor matcher must be present");
-  const expression = source[1];
-  const lastSlash = expression.lastIndexOf("/");
-  const matcher = new RegExp(expression.slice(1, lastSlash), expression.slice(lastSlash + 1));
-  const html = '<p><a href="/p/first-page">First</a><a class="cta" href=\'/p/second-page?x=1\'>Second</a><a href=/p/third-page>Third</a></p>';
-  const found = [...html.matchAll(matcher)].map(match => match[1] ?? match[2]);
-  assert.deepEqual(found, ["/p/first-page", "/p/second-page?x=1", "/p/third-page"]);
+test("WEB-013 extracts legacy anchors with the Workers HTML parser and reports its cap", () => {
+  assert.match(htmlHrefs, /new HTMLRewriter\(\)/);
+  assert.match(htmlHrefs, /\.on\("a\[href\]"/);
+  assert.match(htmlHrefs, /element\.getAttribute\("href"\)/);
+  assert.match(htmlHrefs, /await parsed\.arrayBuffer\(\)/);
+  assert.match(htmlHrefs, /truncated = true/);
+  assert.doesNotMatch(route, /const anchors = \/<a/);
 });
 
 test("WEB-013 reports published pages skipped during content scanning", () => {
@@ -67,7 +66,7 @@ test("WEB-013 reports published pages skipped during content scanning", () => {
 
 test("WEB-013 decodes HTML URL references before checking rich-text links", () => {
   assert.match(route, /import \{ decodeHTMLAttribute \} from "entities\/decode"/);
-  assert.ok(route.includes("candidates.push(decodeHTMLAttribute(match[1] ?? match[2]))"));
+  assert.match(route, /anchors\.hrefs\.map\(decodeHTMLAttribute\)/);
   assert.doesNotMatch(route, /function decodeHtmlHref\(/, "the browser-compatible attribute decoder owns named and numeric HTML entity handling");
 });
 test("WEB-013 warns about published pages with missing content", () => {
@@ -79,8 +78,8 @@ test("WEB-013 warns about published pages with missing content", () => {
 });
 
 test("WEB-013 marks truncated rich-text candidate extraction", () => {
-  assert.match(route, /while \(\(match = anchors\.exec\(html\)\) !== null\)/);
-  assert.match(route, /if \(candidates\.length >= 2000\) \{ contentTruncated = true; break; \}/);
+  assert.match(htmlHrefs, /hrefs\.length >= maxHrefs/);
+  assert.match(route, /if \(anchors\.truncated\) \{ contentTruncated = true; break; \}/);
   assert.match(ui, /if \(data\.contentTruncated\)/);
 });
 

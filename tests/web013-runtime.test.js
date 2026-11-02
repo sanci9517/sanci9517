@@ -9,6 +9,35 @@ import { publicPagesRoute } from '../src/routes/public/pages.ts';
 import { publicNavigationRoute } from '../src/routes/public/navigation.ts';
 import { sitemapRoute } from '../src/routes/public/seo.ts';
 
+// The route is exercised under Node here; the extractor's platform HTML parser
+// is separately covered in workerd by web013-html-anchor-extractor.test.js.
+if (typeof globalThis.HTMLRewriter === 'undefined') {
+  globalThis.HTMLRewriter = class TestHTMLRewriter {
+    handler;
+    on(selector, handler) { assert.equal(selector, 'a[href]'); this.handler = handler; return this; }
+    transform(response) {
+      const handler = this.handler;
+      const body = new ReadableStream({
+        async start(controller) {
+          const html = await response.text();
+          const markup = html
+            .replace(/<!--[\s\S]*?-->/g, '')
+            .replace(/<(script|style|textarea|title)\b[^>]*>[\s\S]*?<\/\1\s*>/gi, '');
+          const anchors = /<a\b[^>]*?\s+href\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))/gi;
+          let match;
+          while ((match = anchors.exec(markup)) !== null) {
+            const href = match[1] ?? match[2] ?? match[3];
+            handler.element({ getAttribute(name) { return name === 'href' ? href : null; } });
+          }
+          controller.enqueue(new TextEncoder().encode(html));
+          controller.close();
+        },
+      });
+      return new Response(body);
+    }
+  };
+}
+
 const origin = 'https://example.test';
 const shell = readFileSync(new URL('../public/visual-page.html', import.meta.url), 'utf8');
 const document = (id, nodes = {}) => JSON.stringify({
@@ -56,7 +85,9 @@ async function fixture(t) {
     '<a href="&#xD800;/p/invalid-surrogate">Invalid-surrogate reference</a>' +
     '<a href="&#x110000;://example.test/p/invalid-out-of-range">Invalid-out-of-range reference</a>' +
     '<a href="&#999999999999999999999;://example.test/p/invalid-unsafe-integer">Invalid-unsafe-integer reference</a>' +
-    '<a data-href="/p/ghost">No real link</a>';
+    '<a data-href="/p/ghost">No real link</a>' +
+    '<!-- <a href="/p/comment-only">not a rendered link</a> -->' +
+    '<script>const fakeAnchor = "<a href=/p/script-only>";</script>';
   const structuredRichText = { type: 'richtext-document', schemaVersion: 1, blocks: [
     { type: 'paragraph', children: [
       { type: 'text', text: 'Current', marks: [], link: { href: 'https://example.test/p/new?from=richtext' } },

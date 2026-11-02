@@ -2,6 +2,7 @@ import { error, ok } from "../../core/response";
 import { getAuthenticatedUser, hasRole } from "../../core/auth/require-auth";
 import { getCanonicalSiteContext } from "../../core/site-context";
 import { decodeHTMLAttribute } from "entities/decode";
+import { scanHtmlAnchorHrefs } from "../../core/html-hrefs";
 import type { Env } from "../../types/env";
 
 type NavigationItem = { id?: string; type?: string; pageId?: string; label?: string; url?: string; children?: NavigationItem[] };
@@ -117,12 +118,9 @@ export async function adminLinkReportRoute(request: Request, env: Env): Promise<
       for (const html of [node?.props?.html, node?.props?.richText, node?.props?.content?.html]) {
         if (typeof html !== "string") continue;
         if (html.length > 100000) { oversizedRichTextFields++; continue; }
-        const anchors = /<a\b[^>]*?\s+href\s*=\s*(?:["']([^"']*)["']|([^\s>]+))/gi;
-        let match: RegExpExecArray | null;
-        while ((match = anchors.exec(html)) !== null) {
-          if (candidates.length >= 2000) { contentTruncated = true; break; }
-          candidates.push(decodeHTMLAttribute(match[1] ?? match[2]));
-        }
+        const anchors = await scanHtmlAnchorHrefs(html, 2000 - candidates.length);
+        candidates.push(...anchors.hrefs.map(decodeHTMLAttribute));
+        if (anchors.truncated) { contentTruncated = true; break; }
       }
       for (const href of candidates) {
         if (typeof href !== "string") continue;
