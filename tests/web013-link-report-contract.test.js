@@ -71,6 +71,8 @@ test("WEB-013 decodes HTML URL references before checking rich-text links", () =
   assert.ok(route.includes("#(?:[xX][0-9A-Fa-f]+|[0-9]+);?"), "numeric references may omit the semicolon");
   assert.match(route, /reference === "&sol;"/);
   assert.ok(route.includes("Number.isSafeInteger(codePoint)"));
+  assert.ok(route.includes("codePoint > 0x10ffff"), "out-of-range numeric code points are rejected");
+  assert.ok(route.includes("codePoint >= 0xd800 && codePoint <= 0xdfff"), "surrogate code points are rejected");
   assert.ok(route.includes("candidates.push(decodeHtmlHref(match[1] ?? match[2]))"));
 });
 test("WEB-013 warns about published pages with missing content", () => {
