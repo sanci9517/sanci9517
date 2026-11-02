@@ -251,6 +251,53 @@ test('Rich Text native cross-paragraph and list selection survives marks, Save a
     assert.deepEqual(await canvasMixed.locator('p').nth(1).locator('sub').allTextContents(),['mma',' Delta']);
     assert.deepEqual(await canvasMixed.locator('ul > li sub').allTextContents(),['L','ist One','List'],
       'Canvas mirrors the mixed-block selection from the Page Model');
+    const backwardEndpoints=await surface.evaluate(editor=>{
+      const body=editor.closest('.inspector-body');
+      const hitPoint=(root,offset)=>{
+        const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT),nodes=[];let node,total=0;
+        while(node=walker.nextNode()){nodes.push({node,start:total});total+=node.nodeValue.length}
+        const part=nodes.find(item=>offset<item.start+item.node.nodeValue.length);
+        const range=document.createRange(),local=offset-part.start;
+        range.setStart(part.node,local);range.setEnd(part.node,local+1);
+        const rect=range.getBoundingClientRect();return {x:(rect.left+rect.right)/2,y:rect.top+rect.height/2};
+      };
+      for(let attempt=0;attempt<12;attempt++){
+        const start=hitPoint(editor.querySelector('ul > li:nth-child(2)'),3);
+        const end=hitPoint(editor.querySelectorAll('[data-rich-block]')[1],2);
+        if(editor.contains(document.elementFromPoint(start.x,start.y))&&editor.contains(document.elementFromPoint(end.x,end.y)))break;
+        if(!body||body.scrollTop<=0)throw new Error('Backward paragraph/list endpoint is covered by the Inspector overlay');
+        body.scrollTop=Math.max(0,body.scrollTop-24);
+        if(attempt===11)throw new Error('Cannot expose backward paragraph/list selection endpoints');
+      }
+      const point=(root,offset)=>{
+        const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT),nodes=[];let node,total=0;
+        while(node=walker.nextNode()){nodes.push({node,start:total});total+=node.nodeValue.length}
+        const part=nodes.find(item=>offset<item.start+item.node.nodeValue.length);
+        if(!part)throw new Error('Cannot locate backward mixed selection endpoint');
+        const range=document.createRange(),local=offset-part.start;
+        range.setStart(part.node,local);range.setEnd(part.node,local+1);
+        const rect=range.getBoundingClientRect();
+        if(!rect.width||!rect.height)throw new Error('Cannot measure backward mixed selection endpoint');
+        return {left:rect.left,right:rect.right,y:rect.top+rect.height/2};
+      };
+      return {start:point(editor.querySelector('ul > li:nth-child(2)'),3),
+        end:point(editor.querySelectorAll('[data-rich-block]')[1],2)};
+    });
+    await page.mouse.click(backwardEndpoints.start.right-1,backwardEndpoints.start.y);
+    await page.mouse.move(backwardEndpoints.start.right-1,backwardEndpoints.start.y);
+    await page.mouse.down();
+    await page.mouse.move(backwardEndpoints.end.left+1,backwardEndpoints.end.y,{steps:12});
+    await page.mouse.up();
+    const backwardMixed=await surface.evaluate(async editor=>{
+      const {getRichTextFormattingSelection}=await import('/editor-v2/core/richtext-links.js');
+      const native=window.getSelection();
+      return {selection:getRichTextFormattingSelection(editor),text:native?.toString()};
+    });
+    assert.match(backwardMixed.text,/mma Delta[\\s\\S]*List One[\\s\\S]*List/,
+      'native backward drag from list to paragraph selects the same text');
+    assert.deepEqual(backwardMixed.selection,
+      {segments:[{blockIndex:1,from:2,to:11},{blockIndex:2,from:0,to:12}],backward:true},
+      'the mixed Page Model range retains backward direction across distinct block structures');
     await page.getByLabel('Hivatkozás címe').fill('/p/paragraph-list');
     await page.getByRole('button',{name:'Link beállítása',exact:true}).click();
     assert.equal((await surface.locator('p').nth(1).locator('a[href="/p/paragraph-list"]').allTextContents()).join(''),'mma Delta',
@@ -263,6 +310,10 @@ test('Rich Text native cross-paragraph and list selection survives marks, Save a
       'Canvas mirrors mixed-structure links without losing nested marks');
     assert.match(await page.evaluate(()=>window.getSelection()?.toString()??''),
       /mma Delta[\\s\\S]*List One[\\s\\S]*List/,'mixed-structure link insertion preserves the native selection');
+    assert.equal(await surface.evaluate(async editor=>{
+      const {getRichTextFormattingSelection}=await import('/editor-v2/core/richtext-links.js');
+      return getRichTextFormattingSelection(editor)?.backward;
+    }),true,'link insertion preserves the backward cross-structure selection direction');
     if(width===1366){
       await page.locator('#undo').click();
       await page.waitForFunction(()=>!document.querySelector('.richtext-editor-surface a[href="/p/paragraph-list"]'));
@@ -280,6 +331,10 @@ test('Rich Text native cross-paragraph and list selection survives marks, Save a
         'Redo restores the links across both list-item segments');
       assert.match(await page.evaluate(()=>window.getSelection()?.toString()??''),
         /mma Delta[\\s\\S]*List One[\\s\\S]*List/,'Redo restores the native cross-structure selection');
+      assert.equal(await surface.evaluate(async editor=>{
+        const {getRichTextFormattingSelection}=await import('/editor-v2/core/richtext-links.js');
+        return getRichTextFormattingSelection(editor)?.backward;
+      }),true,'Redo restores the backward mixed-structure selection direction');
     }
     if(width===1366){
       await page.locator('#save').click();
