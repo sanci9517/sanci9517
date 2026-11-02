@@ -4,15 +4,16 @@
   "status": "RUNTIME_FIX_DEPLOYED; OWNER_CONFIRMED_CONTENT_LINK_WORKS; LIVE_PUBLIC_API_VERIFIED; TEST_LINK_RESTORE_PENDING",
   "repository": {
     "branch": "v2/foundation",
-    "runtime_commit": "5e2c9570f441989a4af395fc2e82d1f39fea6db1",
+    "runtime_commit": "04ff5ac00e9e6064e68ad009297074af0ae4e6a1",
     "traceability_correction_commit": "2c9b4bc0e7941f1806c649857187d1740bf7e2c2",
     "combined_statuses": [],
-    "ci_pass_claimed": false
+    "ci_pass_claimed": false,
+    "previous_runtime_commit": "5e2c9570f441989a4af395fc2e82d1f39fea6db1"
   },
   "finding": {
-    "cause": "The link-report route used a regex that matched anchor-like text inside comments and script raw-text, yielding false candidates and incorrect checked-link counts.",
-    "fix": "Use Cloudflare Workers native HTMLRewriter to extract actual a[href] elements; preserve the HTML attribute entity decoder, same-origin/auth checks and field/candidate caps.",
-    "platform_test": "Miniflare/Workerd test confirms comments, script/style/textarea, data-href, quoted > parsing and candidate truncation.",
+    "cause": "The link-report route used a regex that matched anchor-like text inside comments and script raw-text, yielding false candidates and incorrect checked-link counts. The platform parser also exposed anchor-like hrefs from inert <template> contents, which are not rendered and must not count as live page links.",
+    "fix": "Use Cloudflare Workers native HTMLRewriter to extract actual a[href] elements; preserve the HTML attribute entity decoder, same-origin/auth checks and field/candidate caps. The extractor now ignores inert template subtrees while retaining anchors in declarative open/closed shadow-root templates, where browsers render their content.",
+    "platform_test": "Miniflare/Workerd test confirms comments, script/style/textarea, inert templates, declarative shadow-root templates, data-href, quoted > parsing and candidate truncation.",
     "reuse": "Existing Cloudflare HTMLRewriter platform API and entities@8.1.0 BSD-2-Clause already in project; no new dependency."
   },
   "tests": {
@@ -23,7 +24,7 @@
       "failed": 0
     },
     "web013Browser": {
-      "command": "CHROMIUM_PATH=/usr/bin/chromium npm run test:web013:browser",
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-reporter=spec tests/browser/web013-admin-link-report.test.js tests/browser/web013-public-richtext.test.js (loopback network enabled)",
       "result": "PASS",
       "passed": 2,
       "failed": 0
@@ -62,7 +63,7 @@
       "result": "PASS",
       "version": "4.130.0",
       "assets": 162,
-      "upload": "334.66 KiB / 87.33 KiB gzip"
+      "upload": "335.17 KiB / 87.46 KiB gzip"
     }
   },
   "d1Preflight": {
@@ -74,28 +75,30 @@
     "rowsWritten": 0
   },
   "production": {
-    "deploySafe": "PASS; safety gate ran; no D1 migrations applied",
+    "deploySafe": "PASS; migration safety gate ran; no D1 migrations applied; automatic deployment was not present, so deploy:safe performed the runtime rollout.",
     "wranglerLogNote": "Wrangler could not append its debug log under the read-only /home/agent/.config path, but deployment completed and was confirmed by Cloudflare Deployments API.",
-    "deploymentId": "67d66f65-18fe-4807-9e67-40acd17b07b0",
-    "workerVersion": "d18b572d-bb69-4816-a892-13ebd361adf1",
+    "deploymentId": "5802b102-e5e1-4f18-a816-13bfdc2b2a02",
+    "workerVersion": "8a9b745b-d287-4b3a-ae88-42daaf7f06a0",
     "trafficPercent": 100,
-    "health": "HTTP 200; service=sanci9517-streamer-brand; version=2.0.0",
+    "health": "HTTP 200; service=sanci9517-streamer-brand; version=2.0.0; fetched directly after deployment at 2026-11-02T09:28:15Z.",
     "anonymousLinkReport": "HTTP 401, expected authorization boundary",
     "publicAssetChanges": [],
-    "publicAssetHashes": "Not applicable: no public asset changed; Wrangler reported no asset files to upload.",
+    "publicAssetHashes": "Wrangler reported no updated asset files to upload; no public asset source changed in this runtime-only fix.",
     "ownerObservedNavigationReport": {
       "checked": 7,
       "broken": 0,
       "contentBroken": 0,
       "internalContentLinksChecked": 0
-    }
+    },
+    "previousDeploymentId": "67d66f65-18fe-4807-9e67-40acd17b07b0",
+    "previousWorkerVersion": "d18b572d-bb69-4816-a892-13ebd361adf1"
   },
   "limitations": {
-    "ci": "GitHub combined statuses empty because [skip ci]/Actions quota; CI pass not claimed.",
+    "ci": "GitHub combined statuses empty; CI pass not claimed. GitHub Actions was not run because quota is unavailable; [skip ci] was used.",
     "acceptance": "Owner confirmed the test link works and public APIs verify it, but the temporary link remains published. Remove it with Editor Save then separate Publish and verify baseline restoration before calling the targeted acceptance fully closed; full 77.44.7.B and Visual Editor acceptance remain open/deferred.",
     "manualFullEditor": "DEFERRED until complete Visual Editor per AGENTS.md."
   },
-  "cost": "0 Ft; no paid service, new runtime dependency, D1 write/migration, or R2 change.",
+  "cost": "0 Ft; existing platform APIs and dependencies only, no D1 writes/migration, R2 change, or new paid service.",
   "contentLinkAcceptancePreflight": {
     "method": "Cloudflare D1 API, SELECT-only; fetched exactly the page row before any proposed editor test",
     "query": "SELECT id,site_id,slug,title,is_published,archived_at,published_slug,published_title,published_revision_id,published_parent_page_id,parent_page_id,sort_order,published_content_json,content_json FROM pages WHERE id='legacy-community' LIMIT 1",
@@ -189,5 +192,18 @@
     },
     "restorePending": true,
     "requiredRestore": "In the already authenticated Editor, remove only the temporary /p/home link from page-about; Save, then Publish separately. Verify the page draft/published hashes return to the preflight baseline."
+  },
+  "additionalRuntimeRegression": {
+    "issue": "HTMLRewriter reports anchors inside inert <template> contents, although those links are not rendered in the live document.",
+    "fix": "Track inert template depth with Element.onEndTag(); skip href candidates while inside an inert template. Preserve open/closed declarative shadow-root template anchors.",
+    "mockRepair": "Node route-test HTMLRewriter mock now accepts multiple registered selectors; it previously asserted only a[href] and failed when production code also registered template.",
+    "commit": "04ff5ac00e9e6064e68ad009297074af0ae4e6a1",
+    "deploymentId": "5802b102-e5e1-4f18-a816-13bfdc2b2a02",
+    "workerVersion": "8a9b745b-d287-4b3a-ae88-42daaf7f06a0",
+    "trafficPercent": 100,
+    "d1Preflight": "SELECT-only, 34 rows read, latest 0028_media_archive.sql, changed_db=false, rows_written=0.",
+    "wranglerDryRun": "PASS, Wrangler 4.130.0; 162 assets; no updated public asset files.",
+    "productionHealth": "HTTP 200 after deploy.",
+    "targetPlanItem": "77.44.7.B remains OPEN / NOT CERTIFIED until the owner removes the temporary test link with Save and separate Publish, then read-only verification confirms restoration."
   }
 }
