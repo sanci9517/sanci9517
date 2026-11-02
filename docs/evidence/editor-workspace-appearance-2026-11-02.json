@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-11-02",
+  "plan": "77.44.6.1.B — responsive shell hierarchy and personal workspace foundation",
+  "scope": "The B foundation is implemented and production-verified. The complete Visual Editor redesign and manual/physical acceptance remain OPEN/DEFERRED.",
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "previous_head": "344182bc228f5c1f87ecfc495c356e3858672932",
+    "commit": "6e4853552fb5357d79e702167910e0f0491b0be1",
+    "message": "Add customizable editor workspace shell foundation",
+    "push": "Normal fast-forward push succeeded; the exact remote branch ref was read back as this commit.",
+    "github_combined_statuses": [],
+    "aggregate_github_ci_pass": false
+  },
+  "implementation": {
+    "workspace_preferences_key": "sanci-editor-workspace-preferences-v1",
+    "preference_fields": ["responsive panel layout", "theme", "density", "high-contrast accent"],
+    "custom_layout_behavior": "Manual panel open/close and dock resizing persist as a local custom workspace profile. Reset restores both panel positions and widths.",
+    "page_model_mutations": 0,
+    "save_publish_mutations": 0,
+    "runtime_dependencies_added": false,
+    "paid_services_added": false,
+    "verified_gap_scheduled_as": "77.44.6.1.C — undoable keyboard/touch custom docking and saved profiles",
+    "benchmark_basis": "Official Figma, Framer, Webflow, Wix Studio, Shopify, Elementor, Bricks, Gutenberg, Canva, Squarespace, Builder.io, Storyblok and Penpot UI documentation; source/license inspection of Puck AutoField (MIT), GrapesJS PropertyView (BSD-3-Clause), and Penpot (MPL-2.0). No external editor code was integrated because framework/model/runtime semantics do not match the existing Page Model and command architecture. See the canonical plan for links and rationale."
+  },
+  "validation": {
+    "editor_unit_suite": "npm run test:editor — 14/14 files PASS",
+    "typecheck": "npm run typecheck — PASS",
+    "migration_guard": "npm run test:web013:migration-gate — PASS; no migration applied",
+    "workspace_and_action_help_browser": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-workspace-appearance.test.js tests/browser/editor-action-help.test.js — 5/5 PASS",
+    "layer_and_breakpoint_browser_regressions": "tests/browser/editor-element-insertion.test.js plus tests/browser/editor-inspector-breakpoint-lifecycle.test.js — 8/8 PASS on targeted rerun",
+    "responsive_shell_layout_matrix": "tests/browser/editor-layout.test.js — 2/2 test cases PASS, covering 16 viewport widths from 200–1920 CSS px at effective zoom scales 1x, 1.25x and 1.5x",
+    "canonical_plan": "13/13 master files PASS",
+    "plan_contract": "13/13 checks PASS",
+    "feature_traceability": "396/396 source mappings PASS; acceptance remains NOT_CERTIFIED",
+    "wrangler_dry_run": "Wrangler 4.130.0 PASS; 168 assets, 335.92 KiB total, 87.61 KiB gzip",
+    "git_diff_check": "PASS",
+    "full_editor_browser_suite": "NOT COMPLETE. A 51-file serial browser run was interrupted when the managed execution environment restarted; two cases reported in the partial run passed in the 8/8 targeted rerun. No full-suite PASS is claimed.",
+    "manual_device_acceptance": "DEFERRED until the complete Visual Editor acceptance gate"
+  },
+  "release_preflight": {
+    "production_d1_query": "SELECT name FROM d1_migrations ORDER BY name",
+    "query_mode": "SELECT only",
+    "ledger_row_count": 34,
+    "latest_ledger_row": "0028_media_archive.sql",
+    "rows_written": 0,
+    "changed_db": false,
+    "migration_applied": false,
+    "r2_mutation_or_deletion": false,
+    "additional_cost_huf": 0
+  },
+  "production": {
+    "worker": "sanci9517-streamer-brand",
+    "build_id": "7ca6877d-d9e9-4146-8bc5-0b21ca131182",
+    "build_commit": "6e4853552fb5357d79e702167910e0f0491b0be1",
+    "build_branch": "v2/foundation",
+    "build_outcome": "success",
+    "build_command": "npm run typecheck",
+    "deploy_command": "npm run deploy:safe",
+    "deployment_id": "37d1f9c6-7da3-44a0-810e-0d127731e7c1",
+    "traffic_version": "3a073ac4-fcd3-4103-95e1-3517a0e4122f",
+    "traffic_percentage": 100,
+    "health": {
+      "path": "/api/health",
+      "http_status": 200,
+      "body": {"ok": true, "service": "sanci9517-streamer-brand", "version": "2.0.0", "server": "cloudflare-worker"}
+    },
+    "public_assets": [
+      {"path": "/editor-v2/index.html (redirects to /editor-v2/)", "http_status": 200, "sha256": "c0ab434ad8f408500eafd5b900bb771353b7c66dd0ab8f3b2f6c0ed4f1147179", "matches_local_source": true},
+      {"path": "/editor-v2/editor-refresh.css", "http_status": 200, "sha256": "288425c93b671f3139f2a0ad727f578704dd4652ef673c2362ee312d9ac2dab3", "matches_local_source": true},
+      {"path": "/editor-v2/workspace-appearance.css", "http_status": 200, "sha256": "047c0e3fb4ddefe1bfedd11ae93414724049a09b6dcda11acdbaa9be4ad22d92", "matches_local_source": true},
+      {"path": "/editor-v2/ui/action-catalog.js", "http_status": 200, "sha256": "197c2485520b4733664f1f2eb7fc2c18984020107e66b7dc8832bf490ca20a0b", "matches_local_source": true},
+      {"path": "/editor-v2/ui/action-help.js", "http_status": 200, "sha256": "396c57336863c1fb01b6d908b4ed42957a5a31e06f73c709c1e410f387167829", "matches_local_source": true},
+      {"path": "/editor-v2/ui/action-icons.js", "http_status": 200, "sha256": "117280e36fab2b85d777df53d8ee603dcac7f67ad3310d9e0eb90bc80f6706c2", "matches_local_source": true},
+      {"path": "/editor-v2/ui/shell.js", "http_status": 200, "sha256": "0761d26af85ca9578ed38fe52be8eaebc9a8477194207908c69df8ab1a43122f", "matches_local_source": true},
+      {"path": "/editor-v2/ui/workspace-appearance.js", "http_status": 200, "sha256": "69d368b1ed7717af1deb706952bd35cb4caa4d75dc8697a4d795b874ff3acad0", "matches_local_source": true}
+    ]
+  }
+}
