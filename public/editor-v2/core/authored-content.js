@@ -156,8 +156,9 @@ export function contentAttributes(node){
   if(node.type==='button'&&!attributes.href)attributes.type='button';
   // Legacy snapshots can still carry ariaLabel/anchorId. Resolve them here,
   // once, so Editor canvas and published HTML share the same attributes.
-  const legacyLabel=!['image','video','audio'].includes(node.type)&&typeof a.ariaLabel==='string'?a.ariaLabel.trim():'';
-  const label=legacyLabel||p.ariaLabel||a.label;
+  const labelOf=value=>typeof value==='string'?value.trim():'';
+  const legacyLabel=!['image','video','audio'].includes(node.type)?labelOf(a.ariaLabel):'';
+  const label=legacyLabel||labelOf(p.ariaLabel)||labelOf(a.label);
   if(label)attributes['aria-label']=String(label).slice(0,legacyLabel?250:160);
   if(node.type==='icon'){if(attributes['aria-label'])attributes.role='img';else attributes['aria-hidden']='true'}
   const legacyAnchor=typeof a.anchorId==='string'&&/^[A-Za-z][A-Za-z0-9_-]{0,63}$/.test(a.anchorId)?a.anchorId:'';

@@ -107,6 +107,15 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
       }
     }
   }
+  await select('icon');const iconName=editor.getByLabel('Ikon leírása',{exact:true});
+  await iconName.fill('   ');
+  assert.equal(await node(editor,'icon').getAttribute('aria-label'),null,'whitespace-only icon name is omitted from the Canvas');
+  assert.equal(await node(editor,'icon').getAttribute('role'),null,'an empty name never turns a decorative icon into an image');
+  assert.equal(await node(editor,'icon').getAttribute('aria-hidden'),'true','an unnamed icon is hidden from assistive technology');
+  await iconName.fill('  Kedvenc  ');
+  assert.equal(await node(editor,'icon').getAttribute('aria-label'),'Kedvenc','Canvas accessible names are trimmed');
+  assert.equal(await node(editor,'icon').getAttribute('role'),'img');
+  await iconName.fill('   ');
   await select('heading');
   await editor.getByLabel('Címsor szemantikai szintje',{exact:true}).selectOption('3');
   assert.equal(await node(editor,'heading').evaluate(el=>getComputedStyle(el).fontSize),'28px');
@@ -340,6 +349,8 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.gallery].props.items[0].assetId,assetId);
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.button].responsive.desktop.backgroundAssetId,assetId,'Save stores the background asset ID');
   await live.goto(base+'/p/test');assert.equal(await live.locator('h1[data-node-id]').textContent(),'Alkotói főcím');
+  assert.equal(await node(live,'icon').getAttribute('aria-label'),'Kedvenc','Save keeps the previous published icon name live');
+  assert.equal(await node(live,'icon').getAttribute('role'),'img');
   assert.equal(await node(live,'video').locator('video').getAttribute('poster'),'/fixture.svg','Save never publishes the newly chosen poster');
   assert.equal(await node(live,'gallery').locator('.creator-image-zoom').first().getAttribute('data-lightbox-src'),'/fixture.svg','Save does not publish the new gallery image');
   assert.equal(await node(live,'gallery').getByRole('region',{name:'Eredeti képrács'}).count(),1,
@@ -357,6 +368,9 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   assert.equal(await node(live,'image').locator('img').evaluate(el=>getComputedStyle(el).objectPosition),'50% 50%','Save does not publish image crop');
   await editor.reload();await select('heading');assert.equal(await editor.getByLabel('Címsor szemantikai szintje',{exact:true}).inputValue(),'3');
   await editor.locator('#publish').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent==='Publikálva');await live.reload();
+  assert.equal(await node(live,'icon').getAttribute('aria-label'),null,'Publish removes a whitespace-only icon name');
+  assert.equal(await node(live,'icon').getAttribute('role'),null);
+  assert.equal(await node(live,'icon').getAttribute('aria-hidden'),'true','published unnamed icon is decorative');
   assert.equal(await node(live,'video').locator('video').getAttribute('poster'),'/media/'+assetId,'Publish uses guarded site image route for poster');
   assert.equal(await node(live,'video').locator('video').getAttribute('src'),'/fixture.webm','original video playback URL survives Publish');
   assert.equal(await node(live,'image').locator('img').getAttribute('src'),'/media/'+assetId,'published content resolves the public media route');
