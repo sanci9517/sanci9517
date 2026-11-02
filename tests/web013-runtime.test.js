@@ -13,10 +13,10 @@ import { sitemapRoute } from '../src/routes/public/seo.ts';
 // is separately covered in workerd by web013-html-anchor-extractor.test.js.
 if (typeof globalThis.HTMLRewriter === 'undefined') {
   globalThis.HTMLRewriter = class TestHTMLRewriter {
-    handler;
-    on(selector, handler) { assert.equal(selector, 'a[href]'); this.handler = handler; return this; }
+    handlers = new Map();
+    on(selector, handler) { this.handlers.set(selector, handler); return this; }
     transform(response) {
-      const handler = this.handler;
+      const handler = this.handlers.get('a[href]');
       const body = new ReadableStream({
         async start(controller) {
           const html = await response.text();
@@ -25,7 +25,7 @@ if (typeof globalThis.HTMLRewriter === 'undefined') {
             .replace(/<(script|style|textarea|title)\b[^>]*>[\s\S]*?<\/\1\s*>/gi, '');
           const anchors = /<a\b[^>]*?\s+href\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))/gi;
           let match;
-          while ((match = anchors.exec(markup)) !== null) {
+          while (handler && (match = anchors.exec(markup)) !== null) {
             const href = match[1] ?? match[2] ?? match[3];
             handler.element({ getAttribute(name) { return name === 'href' ? href : null; } });
           }

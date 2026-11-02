@@ -21,6 +21,8 @@ test('WEB-013 legacy href extraction uses the actual Workers HTML parser', { tim
     '<script>const fake = "<a href=/p/script-only>";</script>',
     '<style>.fake::after { content: "<a href=/p/style-only>" }</style>',
     '<textarea><a href=/p/textarea-only></textarea>',
+    '<template><a href="/p/inert-template-only">not rendered</a></template>',
+    '<template shadowrootmode="open"><a href="/p/live-shadow-root">rendered</a></template>',
     '<a data-href="/p/not-a-target">not a link</a>',
     '<a href="/p/first&amp;second" title="contains > safely">first</a>',
     "<a class='cta' href='/p/second'>second</a>",
@@ -33,7 +35,7 @@ test('WEB-013 legacy href extraction uses the actual Workers HTML parser', { tim
   });
   assert.equal(response.status, 200);
   assert.deepEqual(await response.json(), {
-    hrefs: ['/p/first&amp;second', '/p/second'],
+    hrefs: ['/p/live-shadow-root', '/p/first&amp;second'],
     truncated: true,
   });
 });

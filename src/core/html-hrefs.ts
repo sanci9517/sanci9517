@@ -9,9 +9,22 @@ export async function scanHtmlAnchorHrefs(html: string, limit = 2000): Promise<H
   const maxHrefs = Number.isSafeInteger(limit) && limit >= 0 ? limit : 0;
   const hrefs: string[] = [];
   let truncated = false;
+  let inertTemplateDepth = 0;
   const parsed = new HTMLRewriter()
+    .on("template", {
+      element(element) {
+        // Template contents are inert and are not exposed as live anchors.
+        // Declarative Shadow DOM templates are the exception: browsers attach
+        // their children to a visible shadow root, so links there remain live.
+        const shadowRootMode = element.getAttribute("shadowrootmode");
+        if (shadowRootMode === "open" || shadowRootMode === "closed") return;
+        inertTemplateDepth++;
+        element.onEndTag(() => { inertTemplateDepth = Math.max(0, inertTemplateDepth - 1); });
+      },
+    })
     .on("a[href]", {
       element(element) {
+        if (inertTemplateDepth > 0) return;
         const href = element.getAttribute("href");
         if (href === null) return;
         if (hrefs.length >= maxHrefs) {
