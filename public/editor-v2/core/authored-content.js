@@ -148,6 +148,9 @@ export function contentDefaults(node,device='desktop'){
 const esc=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
 const safeHref=value=>{try{return value?validatedLinkHref(value):''}catch{return ''}};
 const safeSrc=value=>{try{return safeMediaUrl(value)}catch{return ''}};
+const trimmedText=value=>typeof value==='string'?value.trim():'';
+const imageAlt=item=>item?.decorative?'':trimmedText(item?.alt);
+const imageCaption=item=>trimmedText(item?.caption);
 export function contentTag(node){return node.type==='heading'?'h'+([1,2,3,4,5,6].includes(Number(node.props?.level))?Number(node.props.level):2):['button','link'].includes(node.type)&&safeHref(node.props?.href)?'a':node.type==='button'?'button':node.type==='image'?'figure':node.type==='quote'?'blockquote':['footer','navbar','menu','sidebar'].includes(node.type)?{footer:'footer',navbar:'nav',menu:'nav',sidebar:'aside'}[node.type]:'div'}
 export function contentAttributes(node){
   const p=node.props||{},a=node.accessibility||{},attributes={};
@@ -156,9 +159,8 @@ export function contentAttributes(node){
   if(node.type==='button'&&!attributes.href)attributes.type='button';
   // Legacy snapshots can still carry ariaLabel/anchorId. Resolve them here,
   // once, so Editor canvas and published HTML share the same attributes.
-  const labelOf=value=>typeof value==='string'?value.trim():'';
-  const legacyLabel=!['image','video','audio'].includes(node.type)?labelOf(a.ariaLabel):'';
-  const label=legacyLabel||labelOf(p.ariaLabel)||labelOf(a.label);
+  const legacyLabel=!['image','video','audio'].includes(node.type)?trimmedText(a.ariaLabel):'';
+  const label=legacyLabel||trimmedText(p.ariaLabel)||trimmedText(a.label);
   if(label)attributes['aria-label']=String(label).slice(0,legacyLabel?250:160);
   if(node.type==='icon'){if(attributes['aria-label'])attributes.role='img';else attributes['aria-hidden']='true'}
   const legacyAnchor=typeof a.anchorId==='string'&&/^[A-Za-z][A-Za-z0-9_-]{0,63}$/.test(a.anchorId)?a.anchorId:'';
@@ -171,7 +173,7 @@ export function contentAttributes(node){
 export function authoredNodeHtml(node,{childrenHtml='',device='desktop',editor=false}={}){
   const p=contentProperties(node),text=esc(p.text??p.content??node.name??''),id='creator-'+String(node.id).replace(/[^\w-]/g,'-');
   const imageSource=item=>typeof item.assetId==='string'&&/^[0-9a-f-]{36}$/i.test(item.assetId)?`/${editor?'api/admin/media?id=':'media/'}${encodeURIComponent(item.assetId)}`:safeSrc(item.src);
-  const image=item=>{const src=imageSource(item),{focalX:x,focalY:y}=imageFocalPosition(item);return src?`<img src="${esc(src)}" alt="${esc(item.decorative?'':item.alt||'')}" loading="${item.loading==='eager'?'eager':'lazy'}" decoding="async" style="object-fit:${['cover','contain','fill','none','scale-down'].includes(item.fit)?item.fit:'cover'};object-position:${x}% ${y}%">`:`<span class="creator-media-empty">${editor?'Válassz képet a Médiatárból vagy adj meg képcímet.':'A kép nem érhető el.'}</span>`};
+  const image=item=>{const src=imageSource(item),{focalX:x,focalY:y}=imageFocalPosition(item);return src?`<img src="${esc(src)}" alt="${esc(imageAlt(item))}" loading="${item.loading==='eager'?'eager':'lazy'}" decoding="async" style="object-fit:${['cover','contain','fill','none','scale-down'].includes(item.fit)?item.fit:'cover'};object-position:${x}% ${y}%">`:`<span class="creator-media-empty">${editor?'Válassz képet a Médiatárból vagy adj meg képcímet.':'A kép nem érhető el.'}</span>`};
   const items=Array.isArray(p.items)?p.items.slice(0,40):[];
   const carouselName=String(p.ariaLabel??'').trim().slice(0,160)||'Képgaléria';
   const galleryName=String(p.ariaLabel??'').trim().slice(0,160)||'Képek';
@@ -179,7 +181,7 @@ export function authoredNodeHtml(node,{childrenHtml='',device='desktop',editor=f
   if(['heading','text','button','link','badge'].includes(node.type))return text;
   if(node.type==='quote')return `<div>${text}</div>${p.citation?`<cite>${esc(p.citation)}</cite>`:''}`;
   if(node.type==='icon')return `<span aria-hidden="true">${({star:'★',heart:'♥',play:'▶',check:'✓',arrow:'➜',bolt:'ϟ',camera:'📷',music:'♫',globe:'◎',mail:'✉'})[p.icon]||'★'}</span>`;
-  if(node.type==='image')return `<div class="creator-image-frame"${['16 / 9','4 / 3','1 / 1','3 / 4'].includes(p.ratio)?` style="aspect-ratio:${p.ratio}"`:''}>${image(p)}</div>${p.caption?`<figcaption>${esc(p.caption)}</figcaption>`:''}`;
+  if(node.type==='image')return `<div class="creator-image-frame"${['16 / 9','4 / 3','1 / 1','3 / 4'].includes(p.ratio)?` style="aspect-ratio:${p.ratio}"`:''}>${image(p)}</div>${imageCaption(p)?`<figcaption>${esc(imageCaption(p))}</figcaption>`:''}`;
   if(['video','audio'].includes(node.type)){
     const asset=typeof p.assetId==='string'&&/^[0-9a-f-]{36}$/i.test(p.assetId)?`/${editor?'api/admin/media?id=':'media/'}${encodeURIComponent(p.assetId)}`:'';const src=asset||safeSrc(p.src);if(!src)return `<span class="creator-media-empty">${editor?'Válassz fájlt a Médiatárból vagy adj meg médiaforrást.':'A média nem érhető el.'}</span>`;
     const tag=node.type,poster=tag==='video'?imageSource({assetId:p.posterAssetId,src:p.poster}):'';return `<${tag} src="${esc(src)}" preload="metadata"${p.controls!==false?' controls':''}${p.loop?' loop':''}${p.muted?' muted':''}${p.autoplay&&p.muted&&!editor?' autoplay':''}${tag==='video'?' playsinline':''}${poster?` poster="${esc(poster)}"`:''}></${tag}>`;
@@ -194,7 +196,7 @@ export function authoredNodeHtml(node,{childrenHtml='',device='desktop',editor=f
     const name=p.singleOpen===true?' name="creator-details-'+id+'"':'';
     return `<div class="creator-accordion" role="group" aria-label="${esc(groupName)}">${items.map((item,index)=>`<details${name}${p.openFirst===true&&index===0?' open':''}><summary>${esc(item.title||'Részletek')}</summary><div>${esc(item.text)}</div></details>`).join('')}</div>`;
   }
-  if(['gallery','carousel'].includes(node.type))return `<div class="creator-${node.type}"${node.type==='gallery'?` role="region" aria-label="${esc(galleryName)}" style="grid-template-columns:repeat(${device==='mobile'?1:device==='tablet'?2:[2,3,4].includes(Number(p.columns))?Number(p.columns):3},minmax(0,1fr))"`:` tabindex="0" role="region" aria-roledescription="képgaléria" aria-label="${esc(carouselName)}"`}>${items.map(item=>`<figure><button type="button" class="creator-image-zoom" data-lightbox-src="${esc(imageSource(item))}" data-lightbox-alt="${esc(item.alt||item.caption||'')}" data-lightbox-caption="${esc(item.caption||'')}" aria-haspopup="dialog" aria-label="${esc('Kép nagyítása: '+(item.caption||item.alt||'kép'))}">${image(item)}</button>${item.caption?`<figcaption>${esc(item.caption)}</figcaption>`:''}</figure>`).join('')}</div>${node.type==='carousel'?'<div class="creator-carousel-controls"><button type="button" data-carousel-step="-1" aria-label="Előző kép">←</button><button type="button" data-carousel-step="1" aria-label="Következő kép">→</button></div>':''}`;
+  if(['gallery','carousel'].includes(node.type))return `<div class="creator-${node.type}"${node.type==='gallery'?` role="region" aria-label="${esc(galleryName)}" style="grid-template-columns:repeat(${device==='mobile'?1:device==='tablet'?2:[2,3,4].includes(Number(p.columns))?Number(p.columns):3},minmax(0,1fr))"`:` tabindex="0" role="region" aria-roledescription="képgaléria" aria-label="${esc(carouselName)}"`}>${items.map(item=>{const alt=imageAlt(item),caption=imageCaption(item),accessibleName=caption||alt||'kép';return `<figure><button type="button" class="creator-image-zoom" data-lightbox-src="${esc(imageSource(item))}" data-lightbox-alt="${esc(alt||caption)}" data-lightbox-caption="${esc(caption)}" aria-haspopup="dialog" aria-label="${esc('Kép nagyítása: '+accessibleName)}">${image(item)}</button>${caption?`<figcaption>${esc(caption)}</figcaption>`:''}</figure>`}).join('')}</div>${node.type==='carousel'?'<div class="creator-carousel-controls"><button type="button" data-carousel-step="-1" aria-label="Előző kép">←</button><button type="button" data-carousel-step="1" aria-label="Következő kép">→</button></div>':''}`;
   if(node.type==='code')return `<pre${p.wrap?' class="creator-code-wrap"':''}><code>${esc(p.code)}</code></pre>`;
   if(node.type==='tooltip')return `<span class="creator-tooltip"><button type="button" aria-describedby="${id}-tip">${text}</button><span role="tooltip" id="${id}-tip">${esc(p.description)}</span></span>`;
   if(node.type==='divider')return '<hr>';
