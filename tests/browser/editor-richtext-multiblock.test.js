@@ -264,6 +264,24 @@ test('Rich Text native cross-paragraph and list selection survives marks, Save a
     assert.match(await page.evaluate(()=>window.getSelection()?.toString()??''),
       /mma Delta[\\s\\S]*List One[\\s\\S]*List/,'mixed-structure link insertion preserves the native selection');
     if(width===1366){
+      await page.locator('#undo').click();
+      await page.waitForFunction(()=>!document.querySelector('.richtext-editor-surface a[href="/p/paragraph-list"]'));
+      assert.equal((await surface.locator('p').nth(1).locator('a[href="/p/multi-block"]').allTextContents()).join(''),'Gamma',
+        'Undo restores the entire prior paragraph link rather than removing its untouched prefix');
+      assert.equal(await surface.locator('a[href="/p/paragraph-list"]').count(),0,
+        'Undo removes the cross-structure link from all selected blocks');
+      assert.match(await page.evaluate(()=>window.getSelection()?.toString()??''),
+        /mma Delta[\\s\\S]*List One[\\s\\S]*List/,'Undo restores the native cross-structure selection');
+      await page.locator('#redo').click();
+      await page.waitForFunction(()=>document.querySelectorAll('.richtext-editor-surface a[href="/p/paragraph-list"]').length>=3);
+      assert.equal((await surface.locator('p').nth(1).locator('a[href="/p/paragraph-list"]').allTextContents()).join(''),'mma Delta',
+        'Redo restores the selected paragraph link segment');
+      assert.deepEqual(await listItems.locator('a[href="/p/paragraph-list"]').allTextContents(),['L','ist One','List'],
+        'Redo restores the links across both list-item segments');
+      assert.match(await page.evaluate(()=>window.getSelection()?.toString()??''),
+        /mma Delta[\\s\\S]*List One[\\s\\S]*List/,'Redo restores the native cross-structure selection');
+    }
+    if(width===1366){
       await page.locator('#save').click();
       await page.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent?.startsWith('Mentve'));
       assert.equal(writes.length,1);
