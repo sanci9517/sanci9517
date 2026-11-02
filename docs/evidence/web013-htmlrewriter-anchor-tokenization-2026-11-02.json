@@ -1,0 +1,100 @@
+{
+  "date": "2026-11-02",
+  "plan_item": "77.44.7.B — WEB-013 published Rich Text anchor extraction, authorization, Save/Publish acceptance",
+  "status": "RUNTIME_FIX_DEPLOYED; PRODUCTION_HEALTH_PASS; CONTENT_LINK_ACCEPTANCE_OPEN",
+  "repository": {
+    "branch": "v2/foundation",
+    "runtime_commit": "5e2c9570f441989a4af395fc2e82d1f39fea6db1",
+    "traceability_correction_commit": "2c9b4bc0e7941f1806c649857187d1740bf7e2c2",
+    "final_docs_commit": "pending",
+    "combined_statuses": [],
+    "ci_pass_claimed": false
+  },
+  "finding": {
+    "cause": "The link-report route used a regex that matched anchor-like text inside comments and script raw-text, yielding false candidates and incorrect checked-link counts.",
+    "fix": "Use Cloudflare Workers native HTMLRewriter to extract actual a[href] elements; preserve the HTML attribute entity decoder, same-origin/auth checks and field/candidate caps.",
+    "platform_test": "Miniflare/Workerd test confirms comments, script/style/textarea, data-href, quoted > parsing and candidate truncation.",
+    "reuse": "Existing Cloudflare HTMLRewriter platform API and entities@8.1.0 BSD-2-Clause already in project; no new dependency."
+  },
+  "tests": {
+    "web013": {
+      "command": "npm run test:web013",
+      "result": "PASS",
+      "passed": 63,
+      "failed": 0
+    },
+    "web013Browser": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium npm run test:web013:browser",
+      "result": "PASS",
+      "passed": 2,
+      "failed": 0
+    },
+    "typecheck": {
+      "command": "npm run typecheck",
+      "result": "PASS"
+    },
+    "canonicalPlan": {
+      "command": "python3 scripts/check-canonical-plan.py",
+      "result": "PASS",
+      "masterFiles": 13
+    },
+    "activePlanPoint": {
+      "command": "python3 scripts/audit-active-plan-point.py",
+      "result": "PASS",
+      "cursor": "77.44.7.B"
+    },
+    "planContract": {
+      "command": "python3 tests/plan-contract.test.py",
+      "result": "PASS",
+      "passed": 13,
+      "failed": 0
+    },
+    "traceability": {
+      "command": "python3 scripts/build-feature-traceability.py --check",
+      "result": "PASS",
+      "mappings": 396
+    },
+    "diffCheck": {
+      "command": "git diff --check",
+      "result": "PASS"
+    },
+    "wranglerDryRun": {
+      "command": "XDG_CONFIG_HOME=/tmp/sanci-xdg npx wrangler deploy --dry-run",
+      "result": "PASS",
+      "version": "4.130.0",
+      "assets": 162,
+      "upload": "334.66 KiB / 87.33 KiB gzip"
+    }
+  },
+  "d1Preflight": {
+    "method": "Cloudflare D1 API; SELECT only",
+    "query": "SELECT COUNT(*) AS row_count, MAX(name) AS latest_name FROM d1_migrations",
+    "rows": 34,
+    "latestMigration": "0028_media_archive.sql",
+    "changedDb": false,
+    "rowsWritten": 0
+  },
+  "production": {
+    "deploySafe": "PASS; safety gate ran; no D1 migrations applied",
+    "wranglerLogNote": "Wrangler could not append its debug log under the read-only /home/agent/.config path, but deployment completed and was confirmed by Cloudflare Deployments API.",
+    "deploymentId": "67d66f65-18fe-4807-9e67-40acd17b07b0",
+    "workerVersion": "d18b572d-bb69-4816-a892-13ebd361adf1",
+    "trafficPercent": 100,
+    "health": "HTTP 200; service=sanci9517-streamer-brand; version=2.0.0",
+    "anonymousLinkReport": "HTTP 401, expected authorization boundary",
+    "publicAssetChanges": [],
+    "publicAssetHashes": "Not applicable: no public asset changed; Wrangler reported no asset files to upload.",
+    "ownerObservedNavigationReport": {
+      "checked": 7,
+      "broken": 0,
+      "contentBroken": 0,
+      "internalContentLinksChecked": 0
+    }
+  },
+  "limitations": {
+    "ci": "GitHub combined statuses empty because [skip ci]/Actions quota; CI pass not claimed.",
+    "acceptance": "77.44.7.B remains OPEN / NOT CERTIFIED until authenticated content-link report and separate production Save/Publish acceptance with real internal Rich Text link.",
+    "manualFullEditor": "DEFERRED until complete Visual Editor per AGENTS.md."
+  },
+  "cost": "0 Ft; no paid service, new runtime dependency, D1 write/migration, or R2 change."
+}
