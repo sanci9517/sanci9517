@@ -25,7 +25,7 @@
     ],
     "traceability_commit": "f8d3196d0a956bcbc274f262d0b932524e2ce78c",
     "canonical_plan_commit": "094af9a243674ef07e83291f15a6ba2a7f96dd38",
-    "github_head_before_evidence_commit": "094af9a243674ef07e83291f15a6ba2a7f96dd38",
+    "github_head_before_evidence_commit": "467ad540c422b1b1f409a5ee1f97dac85d0727e8",
     "runtime_unchanged_after_test_only_commit": true
   },
   "tests": {
@@ -183,6 +183,94 @@
     ]
   },
   "currentRun": {
+    "date": "2026-11-02",
+    "activePlanItem": "77.44.7.B",
+    "scope": "Rich Text IME final input inside list item; test-only regression coverage",
+    "testCommit": "3ae237d1f6f9d57370396d41e2f2568c99c8ff58",
+    "checks": [
+      {
+        "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-richtext-*.test.js",
+        "result": "PASS",
+        "passed": 13,
+        "failed": 0
+      },
+      {
+        "command": "npm run test:editor",
+        "result": "PASS",
+        "passed": 11,
+        "failed": 0
+      },
+      {
+        "command": "npm run typecheck",
+        "result": "PASS"
+      },
+      {
+        "command": "python3 scripts/check-canonical-plan.py",
+        "result": "PASS",
+        "masterFiles": 13
+      },
+      {
+        "command": "python3 scripts/audit-active-plan-point.py",
+        "result": "PASS",
+        "activeCursor": "77.44.7.B",
+        "mappings": 396,
+        "acceptance": "NOT_CERTIFIED"
+      },
+      {
+        "command": "python3 tests/plan-contract.test.py",
+        "result": "PASS",
+        "passed": 13,
+        "failed": 0
+      },
+      {
+        "command": "python3 scripts/build-feature-traceability.py --check",
+        "result": "PASS",
+        "mappings": 396
+      },
+      {
+        "command": "node --check tests/browser/editor-richtext-ime-final-input.test.js",
+        "result": "PASS"
+      },
+      {
+        "command": "git diff --check",
+        "result": "PASS"
+      }
+    ],
+    "browserAssertions": [
+      "compositionend followed by delayed final non-composition input replaces text within an existing list item at 390px and 1366px",
+      "list structure, sibling item, existing link, and bold mark survive the IME update and canonical Page Model serialization",
+      "desktop Undo and Redo restore and reapply the complete list-item edit",
+      "Save is draft-only (publish:false) and leaves public snapshot unchanged; separate Publish exposes the list update",
+      "public Rich Text renderer retains list membership, linked text, and mark after publish"
+    ],
+    "runtimeChanged": false,
+    "workerDeployment": {
+      "id": "212fa31b-b468-4352-a1c1-e7bde222d363",
+      "version": "77827529-a812-4b3b-9495-580c83348767",
+      "trafficPercent": 100,
+      "changedDuringRun": false,
+      "health": "HTTP 200",
+      "unauthenticatedLinkReport": "HTTP 401 UNAUTHORIZED"
+    },
+    "github": {
+      "branch": "v2/foundation",
+      "head": "3ae237d1f6f9d57370396d41e2f2568c99c8ff58",
+      "compareFrom": "449d88e3de6fa0ff9ccbc7a49a9853577983a8ff",
+      "ahead": 1,
+      "behind": 0,
+      "changedPaths": [
+        "tests/browser/editor-richtext-ime-final-input.test.js"
+      ],
+      "ciStatuses": [],
+      "ciPassClaimed": false
+    },
+    "productionDataWrites": 0,
+    "productionMigrations": 0,
+    "r2Changes": 0,
+    "publicAssetChanges": [],
+    "newDependencies": 0,
+    "newCost": "0 Ft",
+    "planStatus": "OPEN / NOT CERTIFIED; authenticated production link-report and production Save/Publish acceptance remain open",
     "canonicalPlanCommit": "467ad540c422b1b1f409a5ee1f97dac85d0727e8"
   }
 }
