@@ -2,23 +2,47 @@
   "schema_version": 1,
   "recorded_at": "2026-11-03",
   "plan": "77.44.6.1.C — five selectable editor workspace designs",
-  "status": "PASS_RUNTIME_SLICE_FULL_C_OPEN_RELEASE_PENDING",
+  "status": "PASS_RUNTIME_SLICE_RELEASED_FULL_C_OPEN",
   "scope": "Add selectable visual designs to the editor workspace only. This does not change page content, Page Model state, Save, or Publish. The complete 77.44.6.1.C work and full Visual Editor acceptance remain OPEN.",
   "source_control": {
     "repository": "sanci9517/sanci9517",
     "branch": "v2/foundation",
     "previous_head": "e01a88b9482810cb7564557dcf6fdd675f8cd163",
     "github_head_before_change": "e01a88b9482810cb7564557dcf6fdd675f8cd163",
-    "runtime_commit": "PENDING",
-    "push": "NOT DONE",
-    "aggregate_github_ci_pass": false
+    "runtime_commit": "8e9865d365d067e95f0d549b9f2ec8faa4d0d7a6",
+    "push": "Normal fast-forward push; GitHub v2/foundation branch API reports this exact commit as HEAD.",
+    "aggregate_github_ci_pass": false,
+    "cloudflare_build_id": "44f5b2d6-f71e-48b4-85e4-4533effcaba0",
+    "cloudflare_build_outcome": "success",
+    "cloudflare_build_commit": "8e9865d365d067e95f0d549b9f2ec8faa4d0d7a6",
+    "github_combined_statuses": []
   },
   "designs": [
-    { "id": "graphite", "name": "Grafit", "description": "visszafogott grafitszürke" },
-    { "id": "aurora", "name": "Aurora", "description": "lila" },
-    { "id": "ocean", "name": "Óceán", "description": "kékeszöld" },
-    { "id": "sage", "name": "Zsálya", "description": "zöld" },
-    { "id": "cinder", "name": "Parázs", "description": "meleg bronz" }
+    {
+      "id": "graphite",
+      "name": "Grafit",
+      "description": "visszafogott grafitszürke"
+    },
+    {
+      "id": "aurora",
+      "name": "Aurora",
+      "description": "lila"
+    },
+    {
+      "id": "ocean",
+      "name": "Óceán",
+      "description": "kékeszöld"
+    },
+    {
+      "id": "sage",
+      "name": "Zsálya",
+      "description": "zöld"
+    },
+    {
+      "id": "cinder",
+      "name": "Parázs",
+      "description": "meleg bronz"
+    }
   ],
   "implementation": {
     "files": [
@@ -66,14 +90,35 @@
       "changed_db": false,
       "rows_written": 0
     },
-    "production_health_and_asset_hashes": "PENDING DEPLOYMENT; no production result claimed.",
+    "production_health_and_asset_hashes": "PASS: current Worker health HTTP 200; deployment 100% on version 3796; remote SHA-256 for all four changed public assets exactly matches the deployed local source.",
     "github_combined_statuses": [],
-    "aggregate_github_ci_pass": false
+    "aggregate_github_ci_pass": false,
+    "remote_d1_preflight_after_rollout": {
+      "method": "Cloudflare D1 query API, SELECT-only SQL",
+      "sql": "SELECT name FROM d1_migrations ORDER BY name",
+      "rows_read": 34,
+      "latest_migration": "0028_media_archive.sql",
+      "changed_db": false,
+      "rows_written": 0
+    }
   },
   "deferred": [
     "77.44.6.1.C remains OPEN: remaining profile transfer/storage feedback, floating/nested docks and the complete workspace lifecycle are not covered by this theme slice.",
     "Full Visual Editor manual and physical-device acceptance remains deferred until the canonical 77.44.7.F/77.44.8 gate.",
-    "Production Worker deployment, health, and changed-asset hash comparison remain pending until the verified runtime commit is pushed and rollout is observed."
+    "Full Visual Editor manual and physical-device acceptance remains deferred until the canonical 77.44.7.F/77.44.8 gate; this design-skin slice alone does not close the editor."
   ],
-  "cost": "0 HUF; no paid software, API, infrastructure, or dependency added."
+  "cost": "0 HUF; no paid software, API, infrastructure, or dependency added.",
+  "deployment": {
+    "cloudflare_deployment_id": "c3e14b63-f280-48cf-bb05-274bb9ab1592",
+    "worker_version_id": "42bb2511-466f-4799-b07d-150d123d23e8",
+    "worker_version_number": 3796,
+    "traffic_percent": 100,
+    "health": "GET /api/health — HTTP 200, {\"ok\":true,\"service\":\"sanci9517-streamer-brand\",\"version\":\"2.0.0\",\"server\":\"cloudflare-worker\"}",
+    "changed_public_asset_sha256_match": {
+      "public/editor-v2/index.html": "29b402e48bdb8011df529863a394993e3eff1ae9af2b58b65481e31edc251402",
+      "public/editor-v2/ui/shell.js": "1f65b25765906c6dcfb5fabbd1324c80015a21ddb297ed582c4e880b7f8e722b",
+      "public/editor-v2/ui/workspace-appearance.js": "def1dd61d5ad4a1bd54219bd5c49f2326b0703de9ec44ab9ea2e0b7c6e70125a",
+      "public/editor-v2/workspace-appearance.css": "b44cd2bd6cec1c43569127542fd152fb2e9f194497ce7c1c26cb6f4df20fdfc3"
+    }
+  }
 }
