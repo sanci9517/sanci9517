@@ -2,7 +2,7 @@
   "schema_version": 1,
   "recorded_at": "2026-11-03",
   "plan": "77.44.6.1.C — vászonhelyet megőrző dokk és személyre szabható eszközsorrend",
-  "status": "LOCAL_VERIFIED_PENDING_FAST_FORWARD_AND_AUTOMATIC_DEPLOY",
+  "status": "PASS_RUNTIME_SLICE_DEPLOYED_FULL_C_OPEN",
   "scope": "A személyre szabható bal eszközsorrend és az asztali vásznat nem elfedő dokkmodell regressziói. A mobil alsó műveletsáv fölé csúszó réteglistát kijavítja. GitHub kiadás és Worker deployment egyelőre nincs állítva.",
   "implementation": {
     "runtime_files": [
@@ -36,10 +36,21 @@
     "branch": "v2/foundation",
     "head_before_change": "93a1909a45c2e1c20cbc2597178f5b23deeaa154",
     "github_head_before_change": "93a1909a45c2e1c20cbc2597178f5b23deeaa154",
-    "commit": "NOT_CREATED",
-    "push": "NOT_DONE",
+    "commit": "a7d6117ac059348b91fd233ed7deb8b35f3a5358",
+    "push": "PASS — normal fast-forward; GitHub v2/foundation exact ref verified.",
     "ci": "NOT_RUN",
-    "deployment": "NOT_DONE"
+    "deployment": "NOT_DONE",
+    "github_ref_head": "a7d6117ac059348b91fd233ed7deb8b35f3a5358",
+    "cloudflare_build_uuid": "35fd4aed-c0f5-4ae4-a829-aea183f8d36b",
+    "cloudflare_build_outcome": "success",
+    "cloudflare_build_source_commit": "a7d6117ac059348b91fd233ed7deb8b35f3a5358",
+    "cloudflare_build_command": "npm run typecheck",
+    "cloudflare_deploy_command": "npm run deploy:safe",
+    "cloudflare_deployment_id": "5e80cdbc-608b-42ad-a8d8-705e2313f48f",
+    "worker_version_id": "69395d5c-0c02-413e-a6f6-90112f16c520",
+    "worker_version_number": 3801,
+    "traffic_percentage": 100,
+    "aggregate_github_ci_pass": false
   },
   "validation": {
     "browser_chromium": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-workspace-appearance.test.js tests/browser/editor-element-insertion.test.js — PASS 27/27; genuine Chromium; local mock APIs.",
@@ -84,5 +95,29 @@
     "tests/browser/editor-workspace-appearance.test.js": "422a342b05173c907c6c1877197ac41efb9b2b99cd97e20234b4abf0377671e4",
     "tests/browser/editor-element-insertion.test.js": "5c09437d1aac9a9b1298603f0a715aa9c03719235c0310cbea68859542528cad"
   },
-  "production_post_release": "PENDING"
+  "production_post_release": {
+    "cloudflare_deployment_id": "5e80cdbc-608b-42ad-a8d8-705e2313f48f",
+    "worker_version_id": "69395d5c-0c02-413e-a6f6-90112f16c520",
+    "worker_version_number": 3801,
+    "traffic_percentage": 100,
+    "health": {
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+      "http_status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "asset_sha256": {
+      "public/editor-v2/index.html": "18d992e89e0a6781f8a84f82129901aa880fa43c24c95a1ef9227331fc36fd9a",
+      "public/editor-v2/editor-refresh.css": "61876c252f14de57770dd329fbab0a84b7777a509cd48d9efc9433f40dafb82e",
+      "public/editor-v2/workspace-appearance.css": "6b0e9e55a4e0a799a5f2f5add1013ddb49ed67f01e0e3754d2938d6895a96606",
+      "public/editor-v2/ui/shell.js": "89a357d47ca4f0b7ba5c96cd795a5ee553872db3601f19327b025611a045cb75",
+      "public/editor-v2/ui/workspace-appearance.js": "6f8dddca02b71343b6f095f286e3540bf2d782e63e1d696b500cbbbf6978ba01"
+    },
+    "all_asset_hashes_match_local_commit_source": true,
+    "redundant_worker_redeployment_after_docs_follow_up": false
+  }
 }
