@@ -18,7 +18,9 @@
     "worker_version_id": "cf77234b-152b-40c8-bca4-2fcb0b459e30",
     "worker_version_number": 3798,
     "traffic_percentage": 100,
-    "github_head_after_push": "2e64ed95346c041db323c65f1b2cd14d1860f3d6"
+    "runtime_fast_forward_head": "2e64ed95346c041db323c65f1b2cd14d1860f3d6",
+    "documentation_commit_after_runtime_release": "01a0d33c68ca464811a745ee60030093d17c47f1",
+    "github_head_verified_after_documentation_push": "01a0d33c68ca464811a745ee60030093d17c47f1"
   },
   "implementation": {
     "files": [
@@ -102,10 +104,12 @@
         "public/editor-v2/workspace-appearance.css": "c9d0d76db1a820a2fdb08a16cd621dc44ae98fe5b28c665cdc3affda68201135"
       },
       "method": "Direct production HTTPS GET with cache-busting query and SHA-256; all six served assets byte-for-byte match local source; /editor-v2/index.html first redirects to /editor-v2/ and the followed document matches.",
-      "result": "PASS"
+      "result": "PASS",
+      "verification_time_utc": "2026-11-03T04:36:49Z"
     },
     "github_combined_statuses": [],
-    "aggregate_github_ci_pass": false
+    "aggregate_github_ci_pass": false,
+    "documentation_only_commit": "01a0d33c68ca464811a745ee60030093d17c47f1; [skip ci]; no Worker redeployment"
   },
   "limitations": [
     "The complete 77.44.6.1.C acceptance remains OPEN; nested/tabbed groups and dynamic dock zones remain unfinished.",
