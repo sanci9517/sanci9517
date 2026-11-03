@@ -393,6 +393,23 @@ test('desktop panel and canvas drag reordering is an accessible-selector peer an
   await openPreferences(page);
   await page.locator('#workspaceLayout').selectOption('balanced');
   await page.locator('#closeWorkspaceAppearance').click();
+  const preview=await page.evaluate(()=>{
+    const handle=document.querySelector('#leftDock .dock-heading');
+    const target=document.querySelector('.canvas-area');
+    const point=target.getBoundingClientRect();
+    const canvasWidthBefore=point.width;
+    const clientX=point.left+point.width-4;
+    const dataTransfer=new DataTransfer();
+    handle.dispatchEvent(new DragEvent('dragstart',{bubbles:true,cancelable:true,dataTransfer}));
+    target.dispatchEvent(new DragEvent('dragover',{bubbles:true,cancelable:true,dataTransfer,clientX}));
+    const style=getComputedStyle(target);
+    const state={position:target.dataset.dockDropPosition,outline:style.outlineStyle,shadow:style.boxShadow,active:document.body.classList.contains('workspace-reordering'),canvasWidthBefore,canvasWidthDuring:target.getBoundingClientRect().width};
+    handle.dispatchEvent(new DragEvent('dragend',{bubbles:true,cancelable:true,dataTransfer}));
+    return {...state,cleared:!target.hasAttribute('data-dock-drop-position')&&!document.body.classList.contains('workspace-reordering')};
+  });
+  const {canvasWidthBefore,canvasWidthDuring,...previewState}=preview;
+  assert.deepEqual(previewState,{position:'after',outline:'solid',shadow:'rgb(91, 140, 255) -4px 0px 0px 0px inset',active:true,cleared:true},'the current zone and insertion edge are previewed then cleared on dragend');
+  assert.equal(canvasWidthDuring,canvasWidthBefore,'the zone cue does not shrink or cover the separate canvas track');
   const result=await page.evaluate(key=>{
     const handle=document.querySelector('#leftDock .dock-heading');
     const target=document.querySelector('.canvas-area');
@@ -404,13 +421,16 @@ test('desktop panel and canvas drag reordering is an accessible-selector peer an
     target.dispatchEvent(new DragEvent('drop',{bubbles:true,cancelable:true,dataTransfer,clientX}));
     handle.dispatchEvent(new DragEvent('dragend',{bubbles:true,cancelable:true,dataTransfer}));
     const workspace=document.querySelector('.workspace');
-    return {order:workspace.dataset.workspaceDockOrder,areas:getComputedStyle(workspace).gridTemplateAreas,left:document.querySelector('#leftDock').getBoundingClientRect().left,canvas:target.getBoundingClientRect().left,dragHint:handle.getAttribute('draggable'),saved:JSON.parse(localStorage.getItem(key))?.dockOrder};
+    return {order:workspace.dataset.workspaceDockOrder,areas:getComputedStyle(workspace).gridTemplateAreas,left:document.querySelector('#leftDock').getBoundingClientRect().left,canvas:target.getBoundingClientRect().left,dragHint:handle.getAttribute('draggable'),saved:JSON.parse(localStorage.getItem(key))?.dockOrder,preview:target.hasAttribute('data-dock-drop-position'),dragging:document.body.classList.contains('workspace-reordering'),announcement:document.querySelector('#workspaceDockStatus')?.textContent};
   },WORKSPACE_PREFERENCES_KEY);
   assert.equal(result.order,'canvas-left-right');
   assert.ok(result.left>result.canvas,'dropping the panel after the canvas moves its dock slot after the canvas');
   assert.match(result.areas,/"canvas left right"/u);
   assert.equal(result.dragHint,'true','desktop dock title is draggable');
   assert.equal(result.saved,'canvas-left-right','the drag operation persists only the local workspace preference');
+  assert.equal(result.preview,false,'dropping clears the temporary target marker');
+  assert.equal(result.dragging,false,'dropping and dragend leave no drag interaction state');
+  assert.match(result.announcement,/Oldalak és eszközök panel.*Vászon.*után.*Sorrend:/iu,'the result is announced for assistive technology');
   assert.deepEqual(writes,[],'desktop workspace drag never invokes Page Model Save or Publish');
   assert.deepEqual(errors,[]);
 });

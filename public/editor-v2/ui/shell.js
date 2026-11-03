@@ -261,7 +261,14 @@ function setupDockReordering(){
   if(!workspace)return;
   const canvasArea=document.querySelector('.canvas-area');
   const regions={left:panels.left,canvas:canvasArea,right:panels.right};
+  const names={left:'Oldalak és eszközök',canvas:'Vászon',right:'Beállítások'};
+  const liveStatus=document.querySelector('#workspaceDockStatus');
+  let dragSourceId=null;
   for(const [id,region] of Object.entries(regions))if(region)region.dataset.workspaceDockId=id;
+  const clearDropPreview=()=>workspace.querySelectorAll('[data-dock-drop-position]').forEach(region=>region.removeAttribute('data-dock-drop-position'));
+  const finishDrag=()=>{
+    clearDropPreview();document.body.classList.remove('workspace-reordering');dragSourceId=null;
+  };
   const refreshHandles=()=>workspace.querySelectorAll('.dock-heading,.canvas-toolbar').forEach(handle=>handle.setAttribute('draggable',String(!mobileQuery.matches)));
   const restoreResponsiveDockLayout=()=>{
     if(mobileQuery.matches){
@@ -281,40 +288,53 @@ function setupDockReordering(){
   refreshHandles();
   mobileQuery.addEventListener('change',restoreResponsiveDockLayout);
   workspace.addEventListener('dragstart',event=>{
-    if(mobileQuery.matches)return;
+    if(mobileQuery.matches){finishDrag();return}
     const handle=event.target.closest?.('.dock-heading,.canvas-toolbar');
-    if(!handle||event.target.closest?.('button,input,select,a')){event.preventDefault();return}
+    if(!handle||event.target.closest?.('button,input,select,a')){event.preventDefault();finishDrag();return}
     const source=handle.closest('.left-dock,.right-dock,.canvas-area');
-    if(!source||!event.dataTransfer)return;
+    if(!source||!event.dataTransfer){finishDrag();return}
+    dragSourceId=source.dataset.workspaceDockId;
     event.dataTransfer.setData('text/plain',`sanci-workspace:${source.dataset.workspaceDockId}`);
     event.dataTransfer.effectAllowed='move';
+    clearDropPreview();
     document.body.classList.add('workspace-reordering');
   });
   workspace.addEventListener('dragover',event=>{
     const transfer=event.dataTransfer;
-    if(mobileQuery.matches||!transfer||!Array.from(transfer.types).includes('text/plain'))return;
-    event.preventDefault();if(event.dataTransfer)event.dataTransfer.dropEffect='move';
+    if(mobileQuery.matches||!transfer||!Array.from(transfer.types).includes('text/plain')||!dragSourceId){clearDropPreview();return}
+    const target=event.target.closest?.('.left-dock,.right-dock,.canvas-area');
+    const targetId=target?.dataset.workspaceDockId;
+    if(!target||!targetId||targetId===dragSourceId||!workspace.contains(target)){clearDropPreview();return}
+    event.preventDefault();transfer.dropEffect='move';
+    const rect=target.getBoundingClientRect(),position=event.clientX<rect.left+rect.width/2?'before':'after';
+    if(target.dataset.dockDropPosition===position)return;
+    clearDropPreview();target.dataset.dockDropPosition=position;
   });
   workspace.addEventListener('drop',event=>{
-    document.body.classList.remove('workspace-reordering');
-    if(mobileQuery.matches||!event.dataTransfer)return;
+    if(mobileQuery.matches||!event.dataTransfer){finishDrag();return}
     const sourceId=event.dataTransfer.getData('text/plain').replace(/^sanci-workspace:/u,'');
     const source=regions[sourceId];
     const target=event.target.closest?.('.left-dock,.right-dock,.canvas-area');
     const targetId=target?.dataset.workspaceDockId;
-    if(!source||!target||!targetId||source===target||!workspace.contains(target))return;
+    if(!source||!target||!targetId||source===target||!workspace.contains(target)){finishDrag();return}
     const order=Object.values(regions).filter(Boolean).sort((a,b)=>a.getBoundingClientRect().left-b.getBoundingClientRect().left);
     const sourceIndex=order.indexOf(source),targetIndex=order.indexOf(target);
-    if(sourceIndex<0||targetIndex<0)return;
+    if(sourceIndex<0||targetIndex<0){finishDrag();return}
     order.splice(sourceIndex,1);
     const rect=target.getBoundingClientRect();
     const before=event.clientX<rect.left+rect.width/2;
     const adjustedTarget=order.indexOf(target);
     order.splice(adjustedTarget+(before?0:1),0,source);
     const value=order.map(item=>item.dataset.workspaceDockId).join('-');
-    workspaceAppearance?.setDockOrder(value);
+    const changed=workspaceAppearance?.setDockOrder(value);
+    if(changed&&liveStatus){
+      const namesInOrder=order.map(item=>names[item.dataset.workspaceDockId]||'Panel').join(', ');
+      liveStatus.textContent=`A(z) ${names[sourceId]} panel ${before?'a(z) '+names[targetId]+' elé':'a(z) '+names[targetId]+' után'} került. Sorrend: ${namesInOrder}.`;
+    }
+    finishDrag();
   });
-  workspace.addEventListener('dragend',()=>document.body.classList.remove('workspace-reordering'));
+  workspace.addEventListener('dragend',finishDrag);
+  workspace.addEventListener('keydown',event=>{if(event.key==='Escape'&&dragSourceId)finishDrag()});
 }
 
 root.style.setProperty('--left-dock-width',`${clamp(Number(persisted.leftWidth),resizeLimits.left)}px`);

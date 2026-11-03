@@ -646,6 +646,8 @@ button:focus-visible, summary:focus-visible, .rail-btn:focus-visible { outline: 
   body.workspace-reordering .workspace .left-dock,
   body.workspace-reordering .workspace .canvas-area,
   body.workspace-reordering .workspace .right-dock { outline:2px dashed var(--accent); outline-offset:-3px; }
+  body.workspace-reordering .workspace [data-dock-drop-position="before"] { outline:2px solid var(--accent); outline-offset:-3px; box-shadow:inset 4px 0 0 var(--accent); }
+  body.workspace-reordering .workspace [data-dock-drop-position="after"] { outline:2px solid var(--accent); outline-offset:-3px; box-shadow:inset -4px 0 0 var(--accent); }
   .workspace,
   .workspace.left-open,
   .workspace.right-open,
