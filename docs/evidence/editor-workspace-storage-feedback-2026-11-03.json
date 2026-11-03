@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-11-03",
+  "plan": "77.44.6.1.C — workspace storage-failure feedback",
+  "status": "RUNTIME_RELEASE_VERIFIED_FULL_C_OPEN",
+  "scope": "Keep workspace controls usable when browser storage is denied or full, and accurately distinguish session-only state from durable local persistence.",
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "previous_head": "31dd534419194df06ecca614b2846dd54cf71d7c",
+    "runtime_commit": "7195f05884a4c0d450f8a532be220cf7ed966a82",
+    "runtime_message": "fix(editor): explain session-only workspace settings",
+    "push": "Normal fast-forward push; remote branch ref verified at the exact runtime commit.",
+    "github_combined_statuses": [],
+    "aggregate_github_ci_pass": false
+  },
+  "finding": {
+    "reproduction": "When setItem throws SecurityError or QuotaExceededError, layout, dock order, theme and density changes are still applied to the current editor page, but their UI status incorrectly said the change had been saved on the device. Undo and Redo had no persistence-failure context either.",
+    "fix": "All workspace appearance, layout, dock-order, profile load/delete/reset and Undo/Redo operations now use the boolean result of the guarded storage write. They retain session-local usability and clearly explain when browser storage prevents durable persistence.",
+    "regression_test": "A real Chromium test blocks writes to the workspace-preferences key, changes theme/layout/dock order, then runs Undo/Redo. It verifies current-session rendering, explicit non-durable wording, no stored preference, and zero page Save/Publish API writes.",
+    "preserved_contracts": ["workspace settings remain separate from Page Model", "Save and Publish remain distinct", "blocked storage does not crash the editor", "localStorage remains the only workspace preference store"]
+  },
+  "implementation": {
+    "files": [
+      "public/editor-v2/index.html",
+      "public/editor-v2/ui/shell.js",
+      "public/editor-v2/ui/workspace-appearance.js",
+      "tests/browser/editor-workspace-appearance.test.js"
+    ],
+    "changed_assets_sha256": {
+      "public/editor-v2/index.html": "983d04a6f4e3347804643617dd4881078d1698bbd673d25bcd7296d01507b416",
+      "public/editor-v2/ui/shell.js": "42c2f3736e6920878be388519687eb834450503d8ca041071147806a1855770b",
+      "public/editor-v2/ui/workspace-appearance.js": "184b5d0e80d9358018b5bc919a5e739dc408d9885aea589a2b6c876f08ad7811"
+    },
+    "page_model_mutations": 0,
+    "save_publish_mutations": 0,
+    "runtime_dependencies_added": false,
+    "paid_services_added": false,
+    "reuse_review": "Reused the existing guarded localStorage adapter, workspace settings status region, workspace Undo/Redo, project-owned shell and Chromium fixture. No external source or dependency was needed for this focused persistence-state improvement."
+  },
+  "validation": {
+    "target_browser": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec --test-name-pattern='workspace appearance and dock settings report session-only' tests/browser/editor-workspace-appearance.test.js — PASS, 1/1.",
+    "workspace_browser_suite": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-workspace-appearance.test.js — PASS, 21/21; includes the 400px non-overlap canvas matrix, phone drawer, keyboard resize, profile lifecycle, cross-tab state and the new storage-denial regression.",
+    "editor_unit": "npm run test:editor — PASS, 14/14 test files.",
+    "typecheck": "npm run typecheck — PASS.",
+    "migration_guard": "npm run test:web013:migration-gate — PASS; no migration applied.",
+    "canonical_plan": "python3 scripts/check-canonical-plan.py — PASS; one complete 13-file canonical master.",
+    "active_point": "python3 scripts/audit-active-plan-point.py — PASS; current next block remains 77.44.6.1.C.",
+    "plan_contract": "python3 scripts/plan_contract.py — PASS; functional acceptance remains NOT_CERTIFIED.",
+    "traceability": "python3 scripts/build-feature-traceability.py --check — PASS, 396 source mappings.",
+    "syntax_and_diff": "node --check public/editor-v2/ui/workspace-appearance.js, node --check tests/browser/editor-workspace-appearance.test.js, and git diff --check — PASS.",
+    "wrangler_dry_run": "WRANGLER_WRITE_LOGS=false npx wrangler deploy --dry-run — PASS, Wrangler 4.130.0; 168 assets, 335.81 KiB / 87.60 KiB gzip; no deployment initiated by dry-run.",
+    "manual_device_acceptance": "DEFERRED until full Visual Editor acceptance at 77.44.7.F/77.44.8."
+  },
+  "release_preflight": {
+    "production_d1_query_before_and_after": "SELECT name FROM d1_migrations ORDER BY name",
+    "query_mode": "SELECT-only through authenticated Cloudflare D1 Query API, before runtime release and after deployment.",
+    "ledger_row_count": 34,
+    "latest_ledger_row": "0028_media_archive.sql",
+    "rows_written": 0,
+    "changed_db": false,
+    "migration_applied": false,
+    "r2_mutation_or_deletion": false
+  },
+  "production": {
+    "worker": "sanci9517-streamer-brand",
+    "build_id": "3ee4abcf-4c21-4e87-a3e3-3c413a3af97b",
+    "build_commit": "7195f05884a4c0d450f8a532be220cf7ed966a82",
+    "build_branch": "v2/foundation",
+    "build_outcome": "success",
+    "build_command": "npm run typecheck",
+    "deploy_command": "npm run deploy:safe",
+    "deployment_id": "9cd25a59-b0f3-4431-a80e-83eaf1322bc2",
+    "traffic_version": "9fd10cf5-2b1d-4aae-ba9a-6d6f489fd497",
+    "worker_version_number": 3802,
+    "traffic_percentage": 100,
+    "control_plane_verified": true,
+    "public_http_smoke": {
+      "status": "PASS",
+      "health": {
+        "path": "/api/health",
+        "http_status": 200,
+        "body": {"ok": true, "service": "sanci9517-streamer-brand", "version": "2.0.0", "server": "cloudflare-worker"}
+      },
+      "assets": {
+        "/editor-v2/": {"http_status": 200, "local_sha256": "983d04a6f4e3347804643617dd4881078d1698bbd673d25bcd7296d01507b416", "live_sha256": "983d04a6f4e3347804643617dd4881078d1698bbd673d25bcd7296d01507b416"},
+        "/editor-v2/ui/shell.js?v=20261103-session-storage-feedback": {"http_status": 200, "local_sha256": "42c2f3736e6920878be388519687eb834450503d8ca041071147806a1855770b", "live_sha256": "42c2f3736e6920878be388519687eb834450503d8ca041071147806a1855770b"},
+        "/editor-v2/ui/workspace-appearance.js?v=20261103-session-storage-feedback": {"http_status": 200, "local_sha256": "184b5d0e80d9358018b5bc919a5e739dc408d9885aea589a2b6c876f08ad7811", "live_sha256": "184b5d0e80d9358018b5bc919a5e739dc408d9885aea589a2b6c876f08ad7811"}
+      }
+    },
+    "public_asset_hashes_match": true
+  },
+  "cost": {
+    "additional_cost_huf": 0,
+    "paid_services_or_dependencies_added": false,
+    "quota_note": "Remaining free quota was not queried. No paid plan, quota increase, infrastructure, or dependency was introduced."
+  },
+  "acceptance": {
+    "77_44_6_1_C": "OPEN; nested/tabbed panel groups, floating panels, dynamic docking zones and full workspace lifecycle acceptance remain open.",
+    "full_visual_editor_manual_and_physical_acceptance": "DEFERRED until 77.44.7.F/77.44.8."
+  }
+}
