@@ -308,15 +308,66 @@ test('desktop dock separators resize by keyboard, announce width and finish inte
   await page.keyboard.press('Shift+ArrowRight');
   assert.equal(await right.getAttribute('aria-valuenow'),'320');
 
-  const interrupted=await page.evaluate(()=>{
-    window.sanciEditor.resizeDock('left',100,310,{pointerId:17});
-    window.dispatchEvent(new PointerEvent('pointermove',{pointerId:17,clientX:140}));
-    window.dispatchEvent(new PointerEvent('pointercancel',{pointerId:17}));
-    return {width:document.querySelector('.left-resizer').getAttribute('aria-valuenow'),resizing:document.body.classList.contains('resizing-dock'),saved:JSON.parse(localStorage.getItem('sanci-editor-shell-v2'))?.leftWidth};
-  });
-  assert.deepEqual(interrupted,{width:'350',resizing:false,saved:350},'pointercancel finalizes the partial width and always removes interaction state');
+  for(const width of [1025,1280,1920]){
+    await page.setViewportSize({width,height:900});
+    const hitAreas=await page.evaluate(()=>['left','right'].map(side=>{
+      const panel=document.querySelector(side==='left'?'#leftDock':'#rightDock');
+      const handle=panel.querySelector('.dock-resizer');
+      const panelRect=panel.getBoundingClientRect(),handleRect=handle.getBoundingClientRect();
+      return {side,inside:handleRect.left>=panelRect.left&&handleRect.right<=panelRect.right&&handleRect.top>=panelRect.top&&handleRect.bottom<=panelRect.bottom,target:document.elementFromPoint(handleRect.left+handleRect.width/2,handleRect.top+handleRect.height/2)?.classList.contains('dock-resizer')};
+    }));
+    assert.ok(hitAreas.every(area=>area.inside&&area.target),`both complete resize targets remain reachable at ${width}px: ${JSON.stringify(hitAreas)}`);
+  }
+  await page.setViewportSize({width:1440,height:900});
+
+  const leftPoint=await left.boundingBox();
+  assert.ok(leftPoint,'the left resize handle is present in the desktop shell');
+  const leftStart=leftPoint.x+leftPoint.width/2;
+  const leftY=leftPoint.y+leftPoint.height/2;
+  const leftHit=await page.evaluate(({x,y})=>{const parent=document.querySelector('#leftDock').getBoundingClientRect(),handle=document.querySelector('.left-resizer').getBoundingClientRect();return {target:document.elementFromPoint(x,y)?.className,parent:parent.toJSON(),handle:handle.toJSON(),clipped:handle.left<parent.left||handle.right>parent.right,width:getComputedStyle(document.querySelector('.left-resizer')).width,display:getComputedStyle(document.querySelector('.left-resizer')).display,media:matchMedia('(max-width: 1024px)').matches}},{x:leftStart,y:leftY});
+  assert.equal(leftHit.clipped,false,`the complete resize target stays inside its overflow-clipped dock: ${JSON.stringify(leftHit)}`);
+  assert.match(String(leftHit.target),/left-resizer/u,`the visible resize handle receives pointer input: ${JSON.stringify(leftHit)}`);
+  await page.mouse.move(leftStart,leftY);
+  await page.mouse.down();
+  await page.waitForFunction(()=>document.body.classList.contains('resizing-dock'));
+  await page.mouse.move(leftStart-110,leftY);
+  await page.waitForFunction(()=>document.querySelector('.left-resizer')?.getAttribute('aria-valuenow')==='350');
+  await page.mouse.up();
+  await page.waitForFunction(()=>!document.body.classList.contains('resizing-dock'));
+  assert.equal(await page.locator('.left-resizer').getAttribute('aria-valuenow'),'350','a real pointer drag updates and announces the dock width');
+  assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('sanci-editor-shell-v2'))?.leftWidth),350,'pointerup persists the final width');
+
+  const rightPoint=await right.boundingBox();
+  assert.ok(rightPoint,'the right resize handle is present in the desktop shell');
+  const rightStart=rightPoint.x+rightPoint.width/2;
+  const rightY=rightPoint.y+rightPoint.height/2;
+  await page.mouse.move(rightStart,rightY);
+  await page.mouse.down();
+  await page.waitForFunction(()=>document.body.classList.contains('resizing-dock'));
+  await page.mouse.move(rightStart-20,rightY);
+  await page.waitForFunction(()=>document.querySelector('.right-resizer')?.getAttribute('aria-valuenow')==='340');
+  await right.dispatchEvent('pointercancel',{pointerId:1,bubbles:true,cancelable:true});
+  await page.waitForFunction(()=>!document.body.classList.contains('resizing-dock'));
+  assert.equal(await right.getAttribute('aria-valuenow'),'340','a real pointercancel keeps the partial drag width');
+  assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('sanci-editor-shell-v2'))?.rightWidth),340,'pointercancel persists the partial width');
+  await page.mouse.up();
+
+  const lostPoint=await left.boundingBox();
+  const lostStart=lostPoint.x+lostPoint.width/2;
+  const lostY=lostPoint.y+lostPoint.height/2;
+  await page.mouse.move(lostStart,lostY);
+  await page.mouse.down();
+  await page.waitForFunction(()=>document.body.classList.contains('resizing-dock'));
+  await page.mouse.move(lostStart+12,lostY);
+  await page.waitForFunction(()=>document.querySelector('.left-resizer')?.getAttribute('aria-valuenow')==='362');
+  await left.evaluate(handle=>handle.dispatchEvent(new PointerEvent('lostpointercapture',{bubbles:true,pointerId:1})));
+  await page.waitForFunction(()=>!document.body.classList.contains('resizing-dock'));
+  assert.equal(await left.getAttribute('aria-valuenow'),'362','lost pointer capture keeps and announces the last usable width');
+  assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('sanci-editor-shell-v2'))?.leftWidth),362,'lostpointercapture persists partial progress');
+  await page.mouse.up();
   await page.reload({waitUntil:'load'});
-  assert.equal(await page.locator('.left-resizer').getAttribute('aria-valuenow'),'350','keyboard and interrupted pointer widths survive reload');
+  assert.equal(await page.locator('.left-resizer').getAttribute('aria-valuenow'),'362','keyboard and pointer widths survive reload');
+  assert.equal(await page.locator('.right-resizer').getAttribute('aria-valuenow'),'340','the interrupted right-panel width survives reload');
   assert.deepEqual(writes,[],'resizing changes only presentation state and never saves or publishes the page');
   assert.deepEqual(errors,[]);
 });
