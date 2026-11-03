@@ -313,6 +313,7 @@ function setupDockReordering(){
   workspace.addEventListener('drop',event=>{
     if(mobileQuery.matches||!event.dataTransfer){finishDrag();return}
     const sourceId=event.dataTransfer.getData('text/plain').replace(/^sanci-workspace:/u,'');
+    if(!dragSourceId||sourceId!==dragSourceId){finishDrag();return}
     const source=regions[sourceId];
     const target=event.target.closest?.('.left-dock,.right-dock,.canvas-area');
     const targetId=target?.dataset.workspaceDockId;

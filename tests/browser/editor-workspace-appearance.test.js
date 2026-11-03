@@ -410,6 +410,26 @@ test('desktop panel and canvas drag reordering is an accessible-selector peer an
   const {canvasWidthBefore,canvasWidthDuring,...previewState}=preview;
   assert.deepEqual(previewState,{position:'after',outline:'solid',shadow:'rgb(91, 140, 255) -4px 0px 0px 0px inset',active:true,cleared:true},'the current zone and insertion edge are previewed then cleared on dragend');
   assert.equal(canvasWidthDuring,canvasWidthBefore,'the zone cue does not shrink or cover the separate canvas track');
+  const canceled=await page.evaluate(key=>{
+    const workspace=document.querySelector('.workspace');
+    const handle=document.querySelector('#leftDock .dock-heading');
+    const target=document.querySelector('.canvas-area');
+    const point=target.getBoundingClientRect();
+    const clientX=point.left+point.width-4;
+    const dataTransfer=new DataTransfer();
+    handle.dispatchEvent(new DragEvent('dragstart',{bubbles:true,cancelable:true,dataTransfer}));
+    target.dispatchEvent(new DragEvent('dragover',{bubbles:true,cancelable:true,dataTransfer,clientX}));
+    workspace.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true,cancelable:true}));
+    const afterEscape={order:workspace.dataset.workspaceDockOrder,saved:localStorage.getItem(key),preview:target.hasAttribute('data-dock-drop-position'),dragging:document.body.classList.contains('workspace-reordering')};
+    target.dispatchEvent(new DragEvent('drop',{bubbles:true,cancelable:true,dataTransfer,clientX}));
+    return {...afterEscape,afterLateDrop:workspace.dataset.workspaceDockOrder,savedAfterLateDrop:localStorage.getItem(key),announcement:document.querySelector('#workspaceDockStatus')?.textContent};
+  },WORKSPACE_PREFERENCES_KEY);
+  assert.equal(canceled.order,'left-canvas-right');
+  assert.equal(canceled.afterLateDrop,canceled.order,'a late drop cannot apply a drag canceled with Escape');
+  assert.equal(canceled.savedAfterLateDrop,canceled.saved,'an ignored drop does not persist workspace changes');
+  assert.equal(canceled.preview,false,'Escape clears the temporary target marker');
+  assert.equal(canceled.dragging,false,'Escape exits reordering mode');
+  assert.equal(canceled.announcement,'','a canceled move is not announced as completed');
   const result=await page.evaluate(key=>{
     const handle=document.querySelector('#leftDock .dock-heading');
     const target=document.querySelector('.canvas-area');
