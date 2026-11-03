@@ -1,0 +1,111 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-11-03",
+  "plan": "77.44.6.1.C — pointer-reachable desktop dock separators",
+  "status": "PASS_RUNTIME_SLICE_FULL_C_OPEN",
+  "scope": "Fix the overflow-clipped desktop splitter hit area and exercise actual pointerup, pointercancel and lostpointercapture lifecycles. The overall C acceptance remains OPEN.",
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "previous_head": "fd7c707350720f3cb00fc82017340b65797d1d5e",
+    "runtime_commit": "df99eb7b37abaeb79509957198a1d6012e4d2f6a",
+    "runtime_message": "fix(editor): keep dock resize hit targets reachable",
+    "push": "Normal fast-forward push; GitHub branch API reports the exact runtime commit as HEAD.",
+    "github_combined_statuses": [],
+    "aggregate_github_ci_pass": false
+  },
+  "finding": {
+    "reproduction": "The 8px separator was positioned 4px outside its parent dock (left right:-4px, right left:-4px). Because .dock clips overflow, the separator center hit-tested the dock instead of the button; half of each target was inaccessible to pointer input.",
+    "fix": "Keep the complete 8px hit target inside each dock (left right:0, right left:0) and cache-bust editor.css in the editor index.",
+    "regression_test": "The real Chromium test proves both separators are fully inside their clipped parent and receive input at 1025, 1280 and 1920 CSS px; it then performs a genuine mouse drag/pointerup and verifies pointercancel and lostpointercapture retain/persist the last width and clear interaction state.",
+    "preserved_contracts": ["Page Model unchanged", "Save remains separate from Publish", "mobile single-drawer behavior unchanged", "workspace widths persist in local shell state"]
+  },
+  "implementation": {
+    "files": [
+      "public/editor-v2/editor.css",
+      "public/editor-v2/index.html",
+      "tests/browser/editor-workspace-appearance.test.js"
+    ],
+    "local_source_sha256": {
+      "public/editor-v2/index.html": "2d8fafbd70e8d05e4eb8a97601f786bc78af4c9c240e2f389f277ad9a0147f9e",
+      "public/editor-v2/editor.css": "cee2b7a848b9a397246214d71af0515177a12a08280ff4accecf143a6110e7fb"
+    },
+    "page_model_mutations": 0,
+    "save_publish_mutations": 0,
+    "runtime_dependencies_added": false,
+    "paid_services_added": false,
+    "reuse_review": "The existing project-owned vanilla CSS shell, WAI-ARIA separator controls and Playwright Chromium fixture were reused. No external runtime code, new dependency, or infrastructure was needed."
+  },
+  "validation": {
+    "target_browser": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-workspace-appearance.test.js — PASS, 9/9.",
+    "editor_unit": "npm run test:editor — PASS, 14/14 test files.",
+    "typecheck": "npm run typecheck — PASS.",
+    "migration_guard": "npm run test:web013:migration-gate — PASS; no migration applied.",
+    "canonical_plan": "python3 scripts/check-canonical-plan.py — PASS; one complete 13-file canonical master.",
+    "active_point": "python3 scripts/audit-active-plan-point.py — PASS; next remains 77.44.6.1.C.",
+    "plan_contract": "python3 scripts/plan_contract.py — PASS; functional acceptance remains NOT_CERTIFIED.",
+    "traceability": "python3 scripts/build-feature-traceability.py --check — PASS, 396 mappings.",
+    "syntax_and_diff": "node --check public/editor-v2/ui/shell.js and git diff --check — PASS.",
+    "wrangler_dry_run": "WRANGLER_WRITE_LOGS=false npx wrangler deploy --dry-run — PASS, Wrangler 4.130.0; 168 public assets, 335.81 KiB / 87.60 KiB gzip; no deploy initiated by dry-run.",
+    "manual_device_acceptance": "DEFERRED until complete Visual Editor acceptance at 77.44.7.F/77.44.8."
+  },
+  "release_preflight": {
+    "production_d1_query_before_and_after": "SELECT name FROM d1_migrations ORDER BY name",
+    "query_mode": "SELECT-only through authenticated Cloudflare D1 Query API, before release and after deployment.",
+    "ledger_row_count": 34,
+    "latest_ledger_row": "0028_media_archive.sql",
+    "rows_written": 0,
+    "changed_db": false,
+    "migration_applied": false,
+    "r2_mutation_or_deletion": false
+  },
+  "production": {
+    "worker": "sanci9517-streamer-brand",
+    "build_id": "16c1598e-d6da-4f0e-88a5-fcfdd54cefa4",
+    "build_commit": "df99eb7b37abaeb79509957198a1d6012e4d2f6a",
+    "build_branch": "v2/foundation",
+    "build_outcome": "success",
+    "build_command": "npm run typecheck",
+    "deploy_command": "npm run deploy:safe",
+    "deployment_id": "b461334b-c1dd-46c9-8041-d3529a54507d",
+    "traffic_version": "d4599948-201c-4218-af62-444367323d45",
+    "worker_version_number": 3793,
+    "traffic_percentage": 100,
+    "control_plane_verified": true,
+    "public_http_smoke": {
+      "status": "PASS",
+      "health": {
+        "path": "/api/health",
+        "http_status": 200,
+        "body": {
+          "ok": true,
+          "service": "sanci9517-streamer-brand",
+          "version": "2.0.0",
+          "server": "cloudflare-worker"
+        }
+      },
+      "assets": {
+        "/editor-v2/": {
+          "http_status": 200,
+          "local_sha256": "2d8fafbd70e8d05e4eb8a97601f786bc78af4c9c240e2f389f277ad9a0147f9e",
+          "live_sha256": "2d8fafbd70e8d05e4eb8a97601f786bc78af4c9c240e2f389f277ad9a0147f9e"
+        },
+        "/editor-v2/editor.css?v=20261103-dock-resizer-hitarea": {
+          "http_status": 200,
+          "local_sha256": "cee2b7a848b9a397246214d71af0515177a12a08280ff4accecf143a6110e7fb",
+          "live_sha256": "cee2b7a848b9a397246214d71af0515177a12a08280ff4accecf143a6110e7fb"
+        }
+      }
+    },
+    "public_asset_hashes_match": true
+  },
+  "cost": {
+    "additional_cost_huf": 0,
+    "paid_services_or_dependencies_added": false,
+    "quota_note": "Remaining free quota was not queried. No paid plan, quota increase, infrastructure, or dependency was introduced."
+  },
+  "acceptance": {
+    "77_44_6_1_C": "OPEN; nested/tabbed panel groups, floating panels, dynamic docking zones and full workspace lifecycle acceptance remain open.",
+    "full_visual_editor_manual_and_physical_acceptance": "DEFERRED until 77.44.7.F/77.44.8."
+  }
+}
