@@ -1,7 +1,7 @@
 import {createEventBus} from './events.js';
 import {panelRegistry,featureRegistry} from './registry.js';
-import {EDITOR_ACTIONS} from './action-catalog.js?v=20261102-workspace-cross-tab-sync';
-import {enhanceEditorActionControls} from './action-help.js?v=20261102-workspace-cross-tab-sync';
+import {EDITOR_ACTIONS} from './action-catalog.js?v=20261103-canvas-focus-mode';
+import {enhanceEditorActionControls} from './action-help.js?v=20261103-canvas-focus-mode';
 import {applyWorkspacePreferences,mountWorkspaceAppearance,readWorkspacePreferences} from './workspace-appearance.js?v=20261103-workspace-design-choices';
 
 const bus=createEventBus();
@@ -18,6 +18,7 @@ const initialAppearance=readWorkspacePreferences();
 applyWorkspacePreferences(editorRoot,initialAppearance);
 let focusBeforeMobilePanel=null;
 let workspaceAppearance=null;
+let canvasFocus=false;
 
 function readPersisted(){
   try{
@@ -55,27 +56,27 @@ function syncMobileBackdrop(){
   const mobile=mobileQuery.matches;
   const leftOpen=!panels.left?.classList.contains('closed');
   const rightOpen=!panels.right?.classList.contains('closed');
-  const open=mobile && (leftOpen||rightOpen);
+  const open=mobile && !canvasFocus && (leftOpen||rightOpen);
   const backdrop=document.querySelector('#mobileBackdrop');
   backdrop?.setAttribute('aria-hidden',String(!open));
   // Keep the hidden mobile drawer and background canvas out of keyboard
   // navigation. On desktop, the collapsed left rail remains interactive.
   if(panels.left) {
-    panels.left.inert=mobile&&!leftOpen;
-    panels.left.setAttribute('aria-hidden',String(mobile&&!leftOpen));
+    panels.left.inert=canvasFocus||(mobile&&!leftOpen);
+    panels.left.setAttribute('aria-hidden',String(canvasFocus||(mobile&&!leftOpen)));
   }
   if(panels.right) {
-    panels.right.inert=!rightOpen;
-    panels.right.setAttribute('aria-hidden',String(!rightOpen));
+    panels.right.inert=canvasFocus||!rightOpen;
+    panels.right.setAttribute('aria-hidden',String(canvasFocus||!rightOpen));
   }
   const canvasArea=document.querySelector('.canvas-area');
   if(canvasArea)canvasArea.inert=open;
   const leftToggle=document.querySelector('#editorMenu');
-  leftToggle?.setAttribute('aria-expanded',String(leftOpen));
-  if(leftToggle)actionControls.setAction(leftToggle,leftOpen?'closeLeftPanel':'openLeftPanel');
+  leftToggle?.setAttribute('aria-expanded',String(leftOpen&&!canvasFocus));
+  if(leftToggle)actionControls.setAction(leftToggle,leftOpen&&!canvasFocus?'closeLeftPanel':'openLeftPanel');
   const rightToggle=document.querySelector('#openInspector');
-  rightToggle?.setAttribute('aria-expanded',String(rightOpen));
-  if(rightToggle)actionControls.setAction(rightToggle,rightOpen?'closeRightPanel':'openRightPanel');
+  rightToggle?.setAttribute('aria-expanded',String(rightOpen&&!canvasFocus));
+  if(rightToggle)actionControls.setAction(rightToggle,rightOpen&&!canvasFocus?'closeRightPanel':'openRightPanel');
   const selectedTab=document.querySelector('.rail-btn[aria-selected="true"]')?.dataset.tab;
   const selectedPanel=selectedTab&&document.querySelector(`.dock-content[data-content="${selectedTab}"]`);
   const subtitle=selectedPanel?.querySelector('.panel-subtitle');
@@ -83,6 +84,18 @@ function syncMobileBackdrop(){
     if(!subtitle.dataset.defaultDescription)subtitle.dataset.defaultDescription=subtitle.textContent.trim();
     subtitle.textContent=mobile?(EDITOR_ACTIONS[selectedTab]?.description||subtitle.dataset.defaultDescription):subtitle.dataset.defaultDescription;
   }
+}
+function setCanvasFocus(open){
+  const next=Boolean(open);
+  if(!workspace||next===canvasFocus)return false;
+  canvasFocus=next;
+  workspace.classList.toggle('canvas-focus',canvasFocus);
+  syncMobileBackdrop();
+  document.querySelectorAll('[data-editor-action="focusCanvas"],[data-editor-action="restoreCanvasFocus"]').forEach(button=>{
+    button.setAttribute('aria-pressed',String(canvasFocus));
+    actionControls.setAction(button,canvasFocus?'restoreCanvasFocus':'focusCanvas');
+  });
+  return true;
 }
 function setPanel(side,open,{save=true,restoreFocus=true,customize=false}={}){
   const panel=panels[side];if(!panel)return;
@@ -302,6 +315,7 @@ window.addEventListener('storage',event=>{
 setupDockReordering();
 
 document.querySelector('#editorMenu')?.addEventListener('click',()=>{
+  if(canvasFocus){setCanvasFocus(false);showLeftTab(persisted.leftTab||'pages',{customize:true});return}
   if(panels.left?.classList.contains('closed'))showLeftTab(persisted.leftTab||'pages',{customize:true});
   else setPanel('left',false,{customize:true});
 });
@@ -309,9 +323,14 @@ document.querySelectorAll('[data-collapse]').forEach(b=>b.addEventListener('clic
   const side=b.dataset.collapse;
   setPanel(side,panels[side]?.classList.contains('closed')??true,{customize:true});
 }));
-document.querySelector('#openInspector')?.addEventListener('click',()=>setPanel('right',panels.right?.classList.contains('closed')??true,{customize:true}));
+document.querySelector('#openInspector')?.addEventListener('click',()=>{
+  if(canvasFocus){setCanvasFocus(false);setPanel('right',true,{customize:true});return}
+  setPanel('right',panels.right?.classList.contains('closed')??true,{customize:true});
+});
+document.querySelectorAll('[data-editor-action="focusCanvas"],[data-editor-action="restoreCanvasFocus"]').forEach(button=>button.addEventListener('click',()=>setCanvasFocus(!canvasFocus)));
+document.querySelector('#openWorkspaceAppearance')?.addEventListener('click',()=>{if(canvasFocus)setCanvasFocus(false)});
 document.querySelector('.more-actions')?.addEventListener('toggle',event=>{
-  if(event.target.open && window.matchMedia('(max-width: 1024px)').matches){
+  if(event.target.open && !canvasFocus && window.matchMedia('(max-width: 1024px)').matches){
     setPanel('left',false);setPanel('right',false);
   }
 });
@@ -322,6 +341,7 @@ window.addEventListener('keydown',event=>{
   if(document.querySelector('#workspaceAppearanceDialog')?.open)return;
   const menu=document.querySelector('.more-actions');
   if(menu?.open){menu.removeAttribute('open');menu.querySelector('summary')?.focus({preventScroll:true});return}
+  if(canvasFocus){setCanvasFocus(false);return}
   setPanel('left',false,{customize:true});setPanel('right',false,{customize:true});
 });
 

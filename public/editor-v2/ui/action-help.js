@@ -1,5 +1,5 @@
-import {EDITOR_ACTIONS} from './action-catalog.js?v=20261102-workspace-preferences-v2';
-import {createEditorIcon} from './action-icons.js?v=20261102-workspace-preferences-v2';
+import {EDITOR_ACTIONS} from './action-catalog.js?v=20261103-canvas-focus-mode';
+import {createEditorIcon} from './action-icons.js?v=20261103-canvas-focus-mode';
 
 const ACTION_SELECTOR='[data-editor-action]';
 const DESCRIPTION_ROOT_ID='editorActionDescriptions';

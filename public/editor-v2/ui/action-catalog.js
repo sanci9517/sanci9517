@@ -1,4 +1,4 @@
-import {EDITOR_ICON_NAMES} from './action-icons.js?v=20261102-workspace-preferences-v2';
+import {EDITOR_ICON_NAMES} from './action-icons.js?v=20261103-canvas-focus-mode';
 
 export const EDITOR_ACTIONS=Object.freeze({
   openLeftPanel:{icon:'panel-left-open',label:'Oldal- és eszközpanel megnyitása',description:'Nyisd meg az oldalak, építőelemek, rétegek, adásrend és navigáció paneljét.'},
@@ -26,6 +26,8 @@ export const EDITOR_ACTIONS=Object.freeze({
   deviceTablet:{icon:'tablet',label:'Tablet előnézet',description:'Mutasd meg, hogyan igazodik az oldal egy tablet méretű képernyőhöz.'},
   deviceMobile:{icon:'smartphone',label:'Telefonos előnézet',description:'Mutasd meg az oldal keskeny, telefonos képernyőre tervezett változatát.'},
   fitCanvas:{icon:'maximize',label:'Vászon igazítása',description:'Nagyíts vagy kicsinyíts úgy, hogy a teljes oldal kényelmesen elférjen a munkaterületen.'},
+  focusCanvas:{icon:'focus',label:'Vászon fókusz',description:'Csukd el ideiglenesen az összes szerkesztőpanelt, hogy nagyobb helyet kapjon az oldal. A panelek állapota megmarad; a tartalom nem módosul, nem ment és nem publikál.'},
+  restoreCanvasFocus:{icon:'panels-top-left',label:'Panelek visszaállítása',description:'Hozd vissza a fókusznézet előtt nyitva hagyott oldal- és beállításpaneleket. Az oldal tartalma nem módosul, nem ment és nem publikál.'},
   zoomOut:{icon:'zoom-out',label:'Kicsinyítés',description:'Kicsinyítsd a vászon nézetét. Ez csak a szerkesztő nagyítását változtatja meg.'},
   zoomIn:{icon:'zoom-in',label:'Nagyítás',description:'Nagyítsd a vászon nézetét. Ez csak a szerkesztő nagyítását változtatja meg.'},
   groupSelection:{icon:'combine',label:'Kijelölt elemek csoportosítása',description:'Fogd össze a kijelölt elemeket, hogy együtt mozgathasd és rendezhessed őket.'},

@@ -1,4 +1,15 @@
 /* Presentation-only workspace preferences. These styles never touch the Page Model. */
+.workspace.canvas-focus,
+.workspace.canvas-focus.left-open,
+.workspace.canvas-focus.right-open,
+.workspace.canvas-focus.left-open.right-open {
+  grid-template-columns: minmax(0, 1fr) !important;
+}
+.workspace.canvas-focus > .left-dock,
+.workspace.canvas-focus > .right-dock { display: none !important; }
+.workspace.canvas-focus > .canvas-area { grid-column: 1; grid-row: 1; }
+.workspace.canvas-focus .mobile-backdrop { opacity: 0 !important; pointer-events: none !important; }
+
 .editor-app[data-workspace-theme="graphite"] {
   --workspace-dialog-surface: #111a26;
   --workspace-dialog-raised: #1b2b40;

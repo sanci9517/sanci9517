@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-11-03",
+  "plan": "77.44.6.1.C — átmeneti vászonfókusz mód",
+  "status": "PASS_RUNTIME_SLICE_PENDING_FAST_FORWARD_RELEASE_FULL_C_OPEN",
+  "scope": "A desktop és mobil editorpanelen ideiglenesen elrejthetők úgy, hogy a vászon több helyet kap. A nyitott panelek, Page Model, mentett munkaterület és Save/Publish állapot nem változik. A teljes 77.44.6.1.C és Visual Editor acceptance nyitva marad.",
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "previous_head": "da5ba584a2ded6bc0c3ee3590e0ebe15b15f108e",
+    "github_head_before_change": "da5ba584a2ded6bc0c3ee3590e0ebe15b15f108e",
+    "runtime_commit": "PENDING",
+    "push": "PENDING — runtime checks pass, normal fast-forward not yet performed",
+    "aggregate_github_ci_pass": false,
+    "cloudflare_build_id": null,
+    "cloudflare_build_outcome": "PENDING",
+    "deployment_id": null,
+    "worker_version_id": null,
+    "worker_version_number": null,
+    "traffic_percentage": null
+  },
+  "implementation": {
+    "files": [
+      "public/editor-v2/index.html",
+      "public/editor-v2/ui/shell.js",
+      "public/editor-v2/ui/action-help.js",
+      "public/editor-v2/ui/action-catalog.js",
+      "public/editor-v2/ui/action-icons.js",
+      "public/editor-v2/workspace-appearance.css",
+      "tests/browser/editor-workspace-appearance.test.js",
+      "tests/editor-action-catalog.test.js",
+      "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md"
+    ],
+    "behavior": "A single ephemeral focus-mode boolean controls CSS Grid dock visibility, ARIA aria-hidden/inert state, toolbar expanded state and the action explanation/icon. Exiting by button, either panel launcher or Escape restores the prior panel classes. The mode intentionally does not invoke persist(), update the Page Model, Save, or Publish.",
+    "desktop": "The workspace uses its full center track; both dock columns are hidden with a scoped focus-state selector.",
+    "mobile": "A 44px minimum touch target is present in the fixed action bar. The mobile backdrop is made transparent and non-interactive while focus mode is active; the canvas is no longer inert.",
+    "reuse_review": "Reuses the existing workspace CSS Grid, dock classes, action registry/help, ARIA/inert synchronization and local panel persistence. No floating pane overlays the canvas. Two adapted Lucide 1.66.0 SVG shapes (focus, panels-top-left) use the existing ISC/MIT notices in docs/licenses/lucide-icons-1.66.0.txt. No external runtime package or service.",
+    "page_model_mutations": 0,
+    "save_publish_requests_in_focus_tests": 0,
+    "workspace_storage_mutations_in_focus_tests": 0,
+    "runtime_dependencies_added": false,
+    "paid_services_added": false,
+    "manual_acceptance": "DEFERRED until the complete 77.44.7.F / 77.44.8 gate"
+  },
+  "local_source_sha256": {
+    "public/editor-v2/index.html": "ebcd6be2d5cde296ee17cb0604622a2bb584af32379c85ca7643b56226a01b4c",
+    "public/editor-v2/ui/shell.js": "6b0e01331ede3964d38c2c5ba47d80f3b8dcc39323da6f1dbb7e31068f0359ac",
+    "public/editor-v2/ui/action-help.js": "72bb4e78420798f4aa99e000a77a8ad19dad217c0896c97dc523d6e5feab5294",
+    "public/editor-v2/ui/action-catalog.js": "0129625060fdca606e7cce0fa60434e00bb83967eede4eec5922ca3e6f2beea0",
+    "public/editor-v2/ui/action-icons.js": "7d533b2669e4966f828795f1146ee6b77b0bdb4947eae3482b8662e4c81d6c7d",
+    "public/editor-v2/workspace-appearance.css": "c9d0d76db1a820a2fdb08a16cd621dc44ae98fe5b28c665cdc3affda68201135",
+    "tests/browser/editor-workspace-appearance.test.js": "31b4f47f48d9fed03e0251fb47652cc838e3a894ed2b15ee83610b758adfe3e0",
+    "tests/editor-action-catalog.test.js": "05e5f1b1d4c237c1e2880e738319e3687d470fac69bfab41ac8621781fffc2c2",
+    "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md": "2de083971e20d580010e7f93f35b0dccb52640033d324fd889bbec6e16b45b9e"
+  },
+  "validation": {
+    "chromium": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-action-help.test.js tests/browser/editor-workspace-appearance.test.js — combined PASS 17/17 (2 action-help + 15 workspace). Re-ran action-help after final Hungarian copy update: 2/2 PASS.",
+    "editor_unit": "npm run test:editor — final PASS 14/14 test files.",
+    "typecheck": "npm run typecheck — final PASS.",
+    "migration_gate": "npm run test:web013:migration-gate — final PASS; no migration executed.",
+    "plan_checks": "python3 scripts/plan_contract.py, python3 scripts/audit-active-plan-point.py — PASS; current next item 77.44.6.1.C; functional acceptance NOT_CERTIFIED.",
+    "canonical_plan": "python3 scripts/check-canonical-plan.py — PASS; 13 canonical files.",
+    "traceability": "python3 scripts/build-feature-traceability.py --check — PASS; 396 source mappings.",
+    "syntax_diff": "node --check on changed shell, catalog, action-help, browser test; git diff --check — PASS.",
+    "wrangler_dry_run": "WRANGLER_LOG_PATH=/tmp/sanci-wrangler-logs WRANGLER_SEND_METRICS=false npx wrangler deploy --dry-run — PASS on final source; Wrangler 4.130.0; 168 assets; 335.81 KiB / 87.60 KiB gzip.",
+    "remote_d1_preflight": {
+      "method": "Cloudflare D1 Query API, SELECT-only SQL",
+      "sql": "SELECT name FROM d1_migrations ORDER BY name",
+      "rows_read": 34,
+      "latest_migration": "0028_media_archive.sql",
+      "changed_db": false,
+      "rows_written": 0,
+      "changes": 0,
+      "success": true
+    },
+    "pre_release_worker": "Read-only Cloudflare deployments GET before push showed deployment aeb725b8-7f0c-4b4a-8958-c9e98b061c4b, version b5f59efc-0c14-4243-b8ff-1938c15a7b77, 100% traffic.",
+    "production_health_and_asset_hashes": "PENDING post-deployment direct verification",
+    "github_combined_statuses": null,
+    "aggregate_github_ci_pass": false
+  },
+  "limitations": [
+    "The complete 77.44.6.1.C acceptance remains OPEN; nested/tabbed groups and dynamic dock zones remain unfinished.",
+    "No manual/device user acceptance was attempted before the full Editor gate.",
+    "Cloudflare automatic build, deployment, live health, and production asset hash checks remain pending after the authorized normal fast-forward push."
+  ]
+}

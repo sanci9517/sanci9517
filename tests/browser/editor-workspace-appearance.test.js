@@ -576,3 +576,74 @@ test('profile import explains when browser storage is unavailable instead of cla
   assert.deepEqual(writes,[],'a failed profile persistence attempt never writes Page Model data');
   assert.deepEqual(errors,[]);
 });
+
+test('desktop canvas focus temporarily hides both docks, preserves the exact saved workspace and restores both panels',async t=>{
+  const {page,writes,errors}=await openEditor(t,{width:1440,height:900});
+  await page.locator('#editorMenu').click();
+  await page.locator('#openInspector').click();
+  assert.equal(await page.locator('#leftDock').isVisible(),true);
+  assert.equal(await page.locator('#rightDock').isVisible(),true);
+  const saved=await page.evaluate(()=>({shell:localStorage.getItem('sanci-editor-shell-v2'),appearance:localStorage.getItem('sanci-editor-workspace-preferences-v2')}));
+  const before=await page.locator('.canvas-area').evaluate(element=>element.getBoundingClientRect().width);
+
+  await page.locator('#focusCanvas').click();
+  assert.equal(await page.locator('.workspace').evaluate(element=>element.classList.contains('canvas-focus')),true);
+  assert.equal(await page.locator('#leftDock').evaluate(element=>getComputedStyle(element).display),'none');
+  assert.equal(await page.locator('#rightDock').evaluate(element=>getComputedStyle(element).display),'none');
+  assert.equal(await page.locator('#leftDock').getAttribute('aria-hidden'),'true');
+  assert.equal(await page.locator('#rightDock').getAttribute('aria-hidden'),'true');
+  assert.equal(await page.locator('#leftDock').evaluate(element=>element.inert),true);
+  assert.equal(await page.locator('#rightDock').evaluate(element=>element.inert),true);
+  assert.equal(await page.locator('#focusCanvas').getAttribute('aria-pressed'),'true');
+  assert.equal(await page.locator('#focusCanvas').getAttribute('data-editor-action'),'restoreCanvasFocus');
+  assert.ok(await page.locator('.canvas-area').evaluate(element=>element.getBoundingClientRect().width)>before,'hiding dock columns gives the canvas the reclaimed desktop space');
+  assert.deepEqual(await page.evaluate(()=>({shell:localStorage.getItem('sanci-editor-shell-v2'),appearance:localStorage.getItem('sanci-editor-workspace-preferences-v2')})),saved,'focus mode is temporary and does not rewrite workspace preferences');
+  assert.deepEqual(writes,[],'canvas focus never saves or publishes page content');
+
+  await page.locator('#focusCanvas').click();
+  assert.equal(await page.locator('.workspace').evaluate(element=>element.classList.contains('canvas-focus')),false);
+  assert.equal(await page.locator('#leftDock').isVisible(),true,'the open Pages dock is restored');
+  assert.equal(await page.locator('#rightDock').isVisible(),true,'the open Inspector is restored');
+  assert.equal(await page.locator('#focusCanvas').getAttribute('aria-pressed'),'false');
+  assert.equal(await page.locator('#focusCanvas').getAttribute('data-editor-action'),'focusCanvas');
+  assert.deepEqual(await page.evaluate(()=>({shell:localStorage.getItem('sanci-editor-shell-v2'),appearance:localStorage.getItem('sanci-editor-workspace-preferences-v2')})),saved);
+  assert.equal(await page.locator('#save').textContent(),'Mentés');
+  assert.equal(await page.locator('#publish').textContent(),'Publikálás');
+  assert.deepEqual(writes,[]);
+  assert.deepEqual(errors,[]);
+});
+
+test('mobile canvas focus is touch-sized, releases the canvas from the panel backdrop and restores the prior drawer',async t=>{
+  const {page,writes,errors}=await openEditor(t,{width:390,height:844,isMobile:true,hasTouch:true});
+  await page.locator('#editorMenu').tap();
+  assert.equal(await page.locator('#leftDock').isVisible(),true);
+  const saved=await page.evaluate(()=>({shell:localStorage.getItem('sanci-editor-shell-v2'),appearance:localStorage.getItem('sanci-editor-workspace-preferences-v2')}));
+  const button=page.locator('#mobileCanvasFocus');
+  const geometry=await button.evaluate(element=>{const rect=element.getBoundingClientRect();return {width:rect.width,height:rect.height}});
+  assert.ok(geometry.width>=44&&geometry.height>=44,`the mobile focus action remains a minimum 44px touch target: ${JSON.stringify(geometry)}`);
+  await button.tap();
+  assert.equal(await page.locator('.workspace').evaluate(element=>element.classList.contains('canvas-focus')),true);
+  assert.equal(await page.locator('#leftDock').evaluate(element=>getComputedStyle(element).display),'none');
+  assert.equal(await page.locator('#rightDock').evaluate(element=>getComputedStyle(element).display),'none');
+  assert.equal(await page.locator('.canvas-area').evaluate(element=>element.inert),false,'the previous mobile backdrop no longer blocks the canvas');
+  assert.equal(await button.getAttribute('aria-pressed'),'true');
+  assert.equal(await button.getAttribute('data-editor-action'),'restoreCanvasFocus');
+  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'focus mode keeps the 390px phone viewport free of horizontal overflow');
+  assert.deepEqual(await page.evaluate(()=>({shell:localStorage.getItem('sanci-editor-shell-v2'),appearance:localStorage.getItem('sanci-editor-workspace-preferences-v2')})),saved);
+  assert.deepEqual(writes,[]);
+
+  await button.tap();
+  assert.equal(await page.locator('.workspace').evaluate(element=>element.classList.contains('canvas-focus')),false);
+  assert.equal(await page.locator('#leftDock').isVisible(),true,'the prior mobile drawer returns without changing its saved layout');
+  assert.equal(await page.locator('#leftDock').getAttribute('aria-hidden'),'false');
+  assert.equal(await page.locator('.canvas-area').evaluate(element=>element.inert),true,'the modal drawer resumes blocking the canvas until dismissed');
+  assert.deepEqual(await page.evaluate(()=>({shell:localStorage.getItem('sanci-editor-shell-v2'),appearance:localStorage.getItem('sanci-editor-workspace-preferences-v2')})),saved);
+  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+  await button.tap();
+  await page.keyboard.press('Escape');
+  assert.equal(await page.locator('.workspace').evaluate(element=>element.classList.contains('canvas-focus')),false,'Escape also exits the temporary focus mode');
+  assert.equal(await page.locator('#leftDock').isVisible(),true,'Escape restores the prior drawer instead of closing and saving it');
+  assert.deepEqual(await page.evaluate(()=>({shell:localStorage.getItem('sanci-editor-shell-v2'),appearance:localStorage.getItem('sanci-editor-workspace-preferences-v2')})),saved);
+  assert.deepEqual(writes,[],'the mobile action never invokes Save or Publish');
+  assert.deepEqual(errors,[]);
+});

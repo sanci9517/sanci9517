@@ -5,6 +5,7 @@ import {EDITOR_ACTIONS,validateEditorActionCatalog} from '../public/editor-v2/ui
 import {EDITOR_ICON_NAMES,createEditorIcon} from '../public/editor-v2/ui/action-icons.js';
 
 const html=await readFile(new URL('../public/editor-v2/index.html',import.meta.url),'utf8');
+const shell=await readFile(new URL('../public/editor-v2/ui/shell.js',import.meta.url),'utf8');
 
 test('every declared Editor action has one distinct reviewed icon and a plain Hungarian explanation',()=>{
   assert.deepEqual(validateEditorActionCatalog(),[]);
@@ -24,9 +25,10 @@ test('all shell action hooks resolve and mirrored controls share only the same a
   const counts=ids.reduce((map,id)=>map.set(id,(map.get(id)||0)+1),new Map());
   assert.ok(ids.length>0);
   for(const id of new Set(ids))assert.ok(EDITOR_ACTIONS[id],`unregistered HTML shell action: ${id}`);
+  const dynamicallySelectedActions={restoreCanvasFocus:/setAction\(button,canvasFocus\?'restoreCanvasFocus':'focusCanvas'\)/u};
   for(const [id,action] of Object.entries(EDITOR_ACTIONS)){
-    assert.ok(ids.includes(id),`catalog action ${id} has no rendered control`);
-    assert.equal(html.includes(`data-editor-action="${id}" data-icon-only="true"`)||html.includes(`data-editor-action="${id}"`),true);
+    assert.ok(ids.includes(id)||dynamicallySelectedActions[id]?.test(shell),`catalog action ${id} has no rendered or state-selected control`);
+    assert.equal(html.includes(`data-editor-action="${id}" data-icon-only="true"`)||html.includes(`data-editor-action="${id}"`)||Boolean(dynamicallySelectedActions[id]?.test(shell)),true);
     assert.equal(EDITOR_ACTIONS[id].icon,action.icon);
   }
   assert.equal(counts.get('undo'),2,'the same Undo action is mirrored in the desktop header and phone toolbar');
