@@ -1,0 +1,129 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-11-03",
+  "plan": "77.44.6.1.C — canceled desktop dock drag guard",
+  "status": "RUNTIME_RELEASE_VERIFIED_FULL_C_OPEN",
+  "scope": "Prevent a stale drop event from reordering dock regions after Escape canceled the active desktop drag.",
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "previous_head": "032d969fa2f4e2c4e7701fae01a66d6560998c13",
+    "runtime_commit": "d8cbb1905088519fc168b46b6e717b79adcad2ee",
+    "runtime_message": "fix(editor): reject canceled dock drops",
+    "push": "Normal fast-forward push; remote ref verified at the exact runtime commit.",
+    "github_combined_statuses": [],
+    "aggregate_github_ci_pass": false
+  },
+  "finding": {
+    "reproduction": "After Escape cleared the active drag state, the drop handler still trusted a stale text/plain payload and could apply the canceled dock reorder if a late drop event arrived.",
+    "fix": "The drop handler now requires a current drag source and verifies that it matches the source id in the event payload. A stale, canceled, or mismatched drop is ignored and clears any transient preview without persisting an order or announcing success.",
+    "regression_test": "Real Chromium starts a drag, previews the target, dispatches Escape, then dispatches a late drop with the old DataTransfer. It verifies the original order and stored value are unchanged, the preview/dragging state is cleared, no completion announcement is emitted, and the normal subsequent drag still works.",
+    "initial_test_attempt": "The first targeted test attempt failed because the test asserted a nested result property while the browser callback returned a flat object. The assertion was corrected; the focused test and full suite then passed.",
+    "preserved_contracts": [
+      "valid desktop drag-and-drop continues to reorder the three existing workspace regions",
+      "canceled or stale drag cannot alter local dock order",
+      "dock configuration remains outside the Page Model",
+      "Save and Publish remain separate and are not invoked by docking",
+      "canvas size and non-overlap rules remain unchanged",
+      "mobile drawer behavior remains unchanged"
+    ]
+  },
+  "implementation": {
+    "files": [
+      "public/editor-v2/index.html",
+      "public/editor-v2/ui/shell.js",
+      "tests/browser/editor-workspace-appearance.test.js"
+    ],
+    "changed_assets_sha256": {
+      "public/editor-v2/index.html": "ee2bb001023e4bee68099d8c1375f3162f4797d1ddcf440aab35d1dfa85e235e",
+      "public/editor-v2/ui/shell.js": "fdc58e8c0ad0ee774976c1e4e03f2384ffd42c13c85978edb45b994c9e4b5c97"
+    },
+    "unchanged_relevant_asset_sha256": {
+      "public/editor-v2/editor-refresh.css": "8a586bda45539c6f02a23db56746c69dd281a1dfe3b580b2c47a17e6588c33d1"
+    },
+    "page_model_mutations": 0,
+    "save_publish_mutations": 0,
+    "runtime_dependencies_added": false,
+    "paid_services_added": false,
+    "reuse_review": "Reused the existing native desktop dock drag/drop state and its Escape cleanup; no outside runtime code or new dependency was needed for this defensive lifecycle check."
+  },
+  "validation": {
+    "target_browser": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec --test-name-pattern='desktop panel and canvas drag reordering' tests/browser/editor-workspace-appearance.test.js — PASS, 1/1.",
+    "workspace_browser_suite": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-workspace-appearance.test.js — PASS, 21/21.",
+    "editor_unit": "npm run test:editor — PASS, 14/14 test files.",
+    "typecheck": "npm run typecheck — PASS.",
+    "migration_guard": "npm run test:web013:migration-gate — PASS; no migration applied.",
+    "canonical_plan": "python3 scripts/check-canonical-plan.py — PASS; one complete canonical master.",
+    "active_point": "python3 scripts/audit-active-plan-point.py — PASS; active point remains 77.44.6.1.C.",
+    "plan_contract": "python3 scripts/plan_contract.py — PASS; functional acceptance remains open/not certified.",
+    "traceability": "python3 scripts/build-feature-traceability.py --check — PASS, 396 source mappings.",
+    "syntax_and_diff": "node --check public/editor-v2/ui/shell.js; node --check tests/browser/editor-workspace-appearance.test.js; git diff --check — PASS.",
+    "wrangler_dry_run": "WRANGLER_WRITE_LOGS=false npx wrangler deploy --dry-run — PASS, Wrangler 4.130.0; 168 assets, 335.81 KiB / 87.60 KiB gzip; no deploy from dry-run.",
+    "manual_device_acceptance": "DEFERRED until full Visual Editor acceptance at 77.44.7.F/77.44.8."
+  },
+  "release_preflight": {
+    "production_d1_query_before_and_after": "SELECT name FROM d1_migrations ORDER BY name",
+    "query_mode": "Read-only SELECT through authenticated Cloudflare D1 Query API before and after runtime deployment.",
+    "ledger_row_count": 34,
+    "latest_ledger_row": "0028_media_archive.sql",
+    "rows_written": 0,
+    "changed_db": false,
+    "migration_applied": false,
+    "r2_mutation_or_deletion": false
+  },
+  "production": {
+    "worker": "sanci9517-streamer-brand",
+    "build_id": "ffeaf289-cb26-4051-aa7d-ef955401956b",
+    "build_commit": "d8cbb1905088519fc168b46b6e717b79adcad2ee",
+    "build_branch": "v2/foundation",
+    "build_outcome": "success",
+    "build_command": "npm run typecheck",
+    "deploy_command": "npm run deploy:safe",
+    "deploy_gate_log": "PASS: deploy:safe runs the repository migration gate and never applies D1 migrations.",
+    "deployment_id": "731246a9-189c-4d0c-9ed5-59eb393f5cea",
+    "traffic_version": "8c41ec13-7022-42c5-b4ad-1823b69daf5f",
+    "worker_version_number": 3804,
+    "traffic_percentage": 100,
+    "control_plane_verified": true,
+    "public_http_smoke": {
+      "status": "PASS",
+      "health": {
+        "path": "/api/health",
+        "http_status": 200,
+        "body": {
+          "ok": true,
+          "service": "sanci9517-streamer-brand",
+          "version": "2.0.0",
+          "server": "cloudflare-worker"
+        }
+      },
+      "assets": {
+        "/editor-v2/": {
+          "http_status": 200,
+          "local_sha256": "ee2bb001023e4bee68099d8c1375f3162f4797d1ddcf440aab35d1dfa85e235e",
+          "live_sha256": "ee2bb001023e4bee68099d8c1375f3162f4797d1ddcf440aab35d1dfa85e235e"
+        },
+        "/editor-v2/ui/shell.js?v=20261103-dock-cancel-guard": {
+          "http_status": 200,
+          "local_sha256": "fdc58e8c0ad0ee774976c1e4e03f2384ffd42c13c85978edb45b994c9e4b5c97",
+          "live_sha256": "fdc58e8c0ad0ee774976c1e4e03f2384ffd42c13c85978edb45b994c9e4b5c97"
+        },
+        "/editor-v2/editor-refresh.css?v=20261103-dock-zone-preview": {
+          "http_status": 200,
+          "local_sha256": "8a586bda45539c6f02a23db56746c69dd281a1dfe3b580b2c47a17e6588c33d1",
+          "live_sha256": "8a586bda45539c6f02a23db56746c69dd281a1dfe3b580b2c47a17e6588c33d1"
+        }
+      },
+      "public_asset_hashes_match": true
+    }
+  },
+  "cost": {
+    "additional_cost_huf": 0,
+    "paid_services_or_dependencies_added": false,
+    "quota_note": "No paid service, quota increase, infrastructure change or dependency was introduced. Remaining free quota was not queried."
+  },
+  "acceptance": {
+    "77_44_6_1_C": "OPEN; nested/tabbed panel groups, dynamic non-canvas dock zones and full workspace lifecycle acceptance remain open.",
+    "full_visual_editor_manual_and_physical_acceptance": "DEFERRED until 77.44.7.F/77.44.8."
+  }
+}
