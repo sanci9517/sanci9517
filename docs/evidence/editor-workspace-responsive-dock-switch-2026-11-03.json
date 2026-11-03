@@ -2,21 +2,27 @@
   "schema_version": 1,
   "recorded_at": "2026-11-03",
   "plan": "77.44.6.1.C — reszponzív dock-átmenet desktop és mobil között",
-  "status": "PASS_LOCAL_SLICE_PENDING_RELEASE_FULL_C_OPEN",
+  "status": "PASS_RUNTIME_SLICE_DEPLOYED_FULL_C_OPEN",
   "scope": "Desktopon a panelek nem fedik a vásznat; ha a nyitott desktop munkaterület mobil szélességre vált, egyszerre csak egy drawer marad aktív. A fókuszált panel marad nyitva, fókusz hiányában a jobb oldali Inspector az alapértelmezett. Desktopra visszatéréskor a pontos, előzetes panelállapot áll vissza, kivéve ha a felhasználó mobilon kifejezetten módosítja azt.",
   "source_control": {
     "repository": "sanci9517/sanci9517",
     "branch": "v2/foundation",
     "previous_head": "dfe1dea9826800a6551212b27db2cebece14f70e",
-    "runtime_commit": "PENDING",
-    "push": "PENDING",
+    "runtime_commit": "291091e8044b1142b8785184aaafdf055fa9959b",
+    "push": "PASS normal fast-forward; v2/foundation exact HEAD confirmed by git ls-remote",
     "aggregate_github_ci_pass": false,
-    "cloudflare_build_id": null,
-    "cloudflare_build_outcome": "PENDING",
-    "deployment_id": null,
-    "worker_version_id": null,
-    "worker_version_number": null,
-    "traffic_percentage": null
+    "cloudflare_build_id": "5f15cb98-5a41-420d-bb06-1f46d610d707",
+    "cloudflare_build_outcome": "success",
+    "deployment_id": "9e626156-6314-4d7f-8227-e92ccc5f3a66",
+    "worker_version_id": "51e4e7fe-eea0-44a8-971f-e5e02eedccb3",
+    "worker_version_number": 3799,
+    "traffic_percentage": 100,
+    "cloudflare_build_commit": "291091e8044b1142b8785184aaafdf055fa9959b",
+    "cloudflare_build_commands": [
+      "npm run typecheck",
+      "npm run deploy:safe"
+    ],
+    "github_ref_head": "291091e8044b1142b8785184aaafdf055fa9959b"
   },
   "implementation": {
     "files": [
@@ -58,8 +64,31 @@
       "changes": 0,
       "success": true
     },
-    "production_health_and_asset_hashes": "PENDING after runtime deployment; no claim made yet.",
-    "github_combined_statuses": null,
+    "production_health_and_asset_hashes": {
+      "health_url": "/api/health",
+      "health_http_status": 200,
+      "health_json": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      },
+      "assets": {
+        "public/editor-v2/index.html": {
+          "url": "/editor-v2/index.html (redirect followed)",
+          "local_sha256": "814a535f3d49f8868c554c0a7d379a20c65f1d96fb950ae5c771ba46a28ad335",
+          "production_sha256": "814a535f3d49f8868c554c0a7d379a20c65f1d96fb950ae5c771ba46a28ad335",
+          "matches": true
+        },
+        "public/editor-v2/ui/shell.js": {
+          "url": "/editor-v2/ui/shell.js",
+          "local_sha256": "74867b320ad83ce69b3d02a2d9c84989e024644f8b64d92778d2b7fb78cde185",
+          "production_sha256": "74867b320ad83ce69b3d02a2d9c84989e024644f8b64d92778d2b7fb78cde185",
+          "matches": true
+        }
+      }
+    },
+    "github_combined_statuses": [],
     "aggregate_github_ci_pass": false
   },
   "local_source_sha256": {
@@ -67,11 +96,18 @@
     "public/editor-v2/ui/shell.js": "74867b320ad83ce69b3d02a2d9c84989e024644f8b64d92778d2b7fb78cde185",
     "tests/browser/editor-workspace-appearance.test.js": "8a5c17ee4de2e6144a37d80f00770dd879878b3c9e9b0c2b5d9a2d045654f72b",
     "docs/evidence/feature-traceability.json": "a522c2dcd2a497b5e53387550bc7a80e6e2350ef2d9e8d7988045a84eda73b0c",
-    "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md": "c028e167617ad30c6ab932fec9c354ecf8c32849fd4ea8128fdec8b42dcf02dd"
+    "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md": "855ed012b051863f62737dd5ee2111197fa18e368934e1d028cabc49af252adf"
   },
   "limitations": [
-    "Runtime commit is not yet pushed; Cloudflare build/deployment and production health/hash verification are pending.",
-    "The overall 77.44.6.1.C acceptance remains OPEN (nested/tabbed panel groups, dynamic dock zones, and workspace lifecycle acceptance still unfinished).",
-    "No manual/device user acceptance was attempted before the full Editor gate."
-  ]
+    "A teljes 77.44.6.1.C elfogadás továbbra OPEN: nested/tabbed panelcsoportok, dinamikus dock-zónák és workspace-lifecycle tesztelése hátra van.",
+    "A GitHub combined status lista üres; aggregate GitHub CI PASS nincs állítva.",
+    "A teljes Editor manual/device acceptance nem történt meg; a terv teljes Editor kapujáig DEFERRED."
+  ],
+  "release_cost_and_data_safety": {
+    "cost_ft": 0,
+    "new_dependency": false,
+    "production_d1_migration": false,
+    "production_d1_writes": false,
+    "r2_mutation": false
+  }
 }
