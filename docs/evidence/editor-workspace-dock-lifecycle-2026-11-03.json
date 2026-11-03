@@ -1,0 +1,129 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-11-03",
+  "plan": "77.44.6.1.C — desktop dock drag lifecycle and stale-layout cancellation",
+  "status": "RUNTIME_RELEASED_C_OPEN",
+  "scope": "Cancel active desktop dock dragging whenever responsive mode or another editor tab changes the layout, ignore late drops, and keep Escape from collapsing the workspace while it cancels a drag.",
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "verified_base_head": "112252d20cd5d873992216e6118dde6ba83b788c",
+    "runtime_commits": [
+      "30c695f44a026360895808811dd7d3557ef525b9",
+      "50117a0522453c28d250d18eb129b314c0cc406e"
+    ],
+    "github_branch_head": "50117a0522453c28d250d18eb129b314c0cc406e",
+    "github_combined_statuses": [],
+    "github_check_runs_at_release": {
+      "Workers Builds: sanci9517-streamer-brand": "SUCCESS",
+      "verify": "SUCCESS",
+      "twitch-integration": "SUCCESS",
+      "editor-core": "IN_PROGRESS"
+    },
+    "aggregate_github_ci_pass": false
+  },
+  "implementation": {
+    "behavior": [
+      "The dock reorder lifecycle now exposes its cancellation callback to the shell and clears target styling and drag state when the viewport crosses into the mobile drawer breakpoint.",
+      "A storage event for shell dock state or appearance/profile state cancels any geometry-dependent drag before the received state is painted.",
+      "Escape cancels a live dock drag without allowing the global Escape handler to collapse the page tools dock and Inspector; a late drop cannot reorder or persist anything after cancellation.",
+      "The updated workspace-appearance module has an explicit cache version in the shell import, and the shell entry URL is also versioned."
+    ],
+    "page_model_mutations": 0,
+    "save_publish_mutations": 0,
+    "runtime_dependencies_added": false,
+    "external_runtime_code_reused": false,
+    "reuse_decision": "Existing shell DragEvent lifecycle, responsive matchMedia listener, same-origin Storage API, and workspace preference adapter were sufficient; no new dock engine or dependency was justified for cancellation semantics."
+  },
+  "validation": {
+    "target_browser": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec --test-name-pattern='desktop panel and canvas drag reordering|open editor tabs synchronize|desktop dock drag cancels' tests/browser/editor-workspace-appearance.test.js — PASS, 3/3.",
+    "workspace_browser_suite": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-workspace-appearance.test.js — PASS, 22/22.",
+    "editor_unit": "npm run test:editor — PASS, 14/14 test files.",
+    "typecheck": "npm run typecheck — PASS.",
+    "migration_guard": "npm run test:web013:migration-gate — PASS; no production migrations were applied.",
+    "canonical_plan": "python3 scripts/check-canonical-plan.py — PASS; complete 13-file master and current cursor.",
+    "plan_contract": "python3 scripts/plan_contract.py and python3 tests/plan-contract.test.py — PASS, 13/13.",
+    "active_point": "python3 scripts/audit-active-plan-point.py — PASS; next remains 77.44.6.1.C.",
+    "traceability": "python3 scripts/build-feature-traceability.py — PASS, 396 source mappings refreshed.",
+    "syntax_and_diff": "node --check on shell, appearance module and browser test; git diff --check — PASS.",
+    "wrangler_dry_run": "Wrangler 4.130.0 — PASS; 168 assets, 335.81 KiB upload / 87.60 KiB gzip.",
+    "manual_device_acceptance": "DEFERRED until full Visual Editor acceptance at 77.44.7.F/77.44.8."
+  },
+  "production": {
+    "worker": "sanci9517-streamer-brand",
+    "intermediate_deployment": {
+      "runtime_commit": "30c695f44a026360895808811dd7d3557ef525b9",
+      "build_id": "6df11240-f46e-49fd-964e-d5315866fa7b",
+      "build_outcome": "success",
+      "deployment_id": "90db6cd8-10c7-48cb-95c5-ac3d732a8afc",
+      "traffic_version": "f7c51a70-7479-44ff-8960-094a66175984",
+      "worker_version_number": 3805,
+      "traffic_percentage": 100,
+      "superseded_by": "the cache-version follow-up below"
+    },
+    "final_runtime_commit": "50117a0522453c28d250d18eb129b314c0cc406e",
+    "latest_runtime_build_id": "cee68c63-77c6-4e44-9d9d-5af2b300d558",
+    "latest_runtime_build_outcome": "success",
+    "latest_runtime_build_commands": [
+      "npm run typecheck",
+      "npm run deploy:safe"
+    ],
+    "deployment_id": "c12d76c5-b59f-46d9-a176-1d9cdf2bbde5",
+    "traffic_version": "7fa21e36-7256-4a30-a04e-09808feb5cc9",
+    "worker_version_number": 3806,
+    "traffic_percentage": 100,
+    "health": {
+      "path": "/api/health",
+      "http_status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "asset_hashes": {
+      "/editor-v2/": {
+        "http_status": 200,
+        "local_sha256": "a81f7e9304c586ee9a69fb761d0ecf35bce12ab5f9dd004b3015a58ebd40ad85",
+        "live_sha256": "a81f7e9304c586ee9a69fb761d0ecf35bce12ab5f9dd004b3015a58ebd40ad85",
+        "matches": true
+      },
+      "/editor-v2/ui/shell.js?v=20261103-dock-lifecycle-guard": {
+        "http_status": 200,
+        "local_sha256": "708c862e2de0103f128c22bd51050ab1bed124284f20ec85d3f121cc55dd4dbc",
+        "live_sha256": "708c862e2de0103f128c22bd51050ab1bed124284f20ec85d3f121cc55dd4dbc",
+        "matches": true
+      },
+      "/editor-v2/ui/workspace-appearance.js?v=20261103-dock-lifecycle-guard": {
+        "http_status": 200,
+        "local_sha256": "5a0cc45aff7cc3bd61252fe9b7b38f62ce5ef177464d3c3795f36dac59d08980",
+        "live_sha256": "5a0cc45aff7cc3bd61252fe9b7b38f62ce5ef177464d3c3795f36dac59d08980",
+        "matches": true
+      }
+    },
+    "d1_read_only_preflight": {
+      "sql": "SELECT name FROM d1_migrations ORDER BY name",
+      "runs": [
+        "before the first runtime deployment",
+        "before the cache-version follow-up deployment",
+        "after the final runtime deployment"
+      ],
+      "migration_rows": 34,
+      "latest_migration": "0028_media_archive.sql",
+      "rows_written": 0,
+      "changed_db": false
+    },
+    "production_d1_migration_or_write": false,
+    "production_r2_operation": false
+  },
+  "cost": {
+    "additional_cost_huf": 0,
+    "paid_services_or_dependencies_added": false,
+    "free_quota_remaining": "not queried"
+  },
+  "acceptance": {
+    "77_44_6_1_C": "OPEN; nested/tabbed panel groups, safe dynamic non-overlapping dock zones, and full workspace lifecycle acceptance remain open.",
+    "full_visual_editor_manual_and_physical_acceptance": "DEFERRED until 77.44.7.F/77.44.8."
+  }
+}
