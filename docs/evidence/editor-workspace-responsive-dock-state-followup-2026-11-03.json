@@ -41,14 +41,24 @@
     "runtime_commit": "291091e8044b1142b8785184aaafdf055fa9959b",
     "runtime_unchanged": true,
     "ci_pass": false,
-    "worker_deployment_required": false
+    "worker_deployment_required": false,
+    "test_and_documentation_commit": "f77e3e559e4556bc1a1839528318f7371a531949",
+    "push": "PASS normal fast-forward to v2/foundation; exact branch head confirmed by git ls-remote",
+    "github_ref_head": "f77e3e559e4556bc1a1839528318f7371a531949",
+    "github_combined_statuses": [],
+    "aggregate_github_ci_pass": false
   },
   "production_baseline": {
     "deployment_id": "9e626156-6314-4d7f-8227-e92ccc5f3a66",
     "worker_version_id": "51e4e7fe-eea0-44a8-971f-e5e02eedccb3",
     "worker_version_number": 3799,
     "traffic_percentage": 100,
-    "health_http_status": 200
+    "health_http_status": 200,
+    "post_test_push_deployment_id": "9e626156-6314-4d7f-8227-e92ccc5f3a66",
+    "post_test_push_worker_version_id": "51e4e7fe-eea0-44a8-971f-e5e02eedccb3",
+    "post_test_push_worker_version_number": 3799,
+    "post_test_push_traffic_percentage": 100,
+    "redundant_deployment_created": false
   },
   "manual_acceptance": "DEFERRED until complete 77.44.7.F / 77.44.8 Editor gate",
   "limitations": [
