@@ -90,16 +90,20 @@ test('five selectable editor designs visibly differ, persist and never alter pag
   const {page,writes,errors}=await openEditor(t);
   await openPreferences(page);
   const themes=['graphite','aurora','ocean','sage','cinder'];
-  const colors={};
+  const colors={},dialogColors={},controlColors={};
   await page.locator('#workspaceTheme').selectOption('aurora');
   for(const theme of themes){
     await page.locator('#workspaceTheme').selectOption(theme);
     assert.equal(await page.locator('.editor-app').getAttribute('data-workspace-theme'),theme);
     colors[theme]=await page.locator('.topbar').evaluate(element=>getComputedStyle(element).backgroundColor);
+    dialogColors[theme]=await page.locator('#workspaceAppearanceDialog').evaluate(element=>getComputedStyle(element).backgroundColor);
+    controlColors[theme]=await page.locator('#workspaceTheme').evaluate(element=>getComputedStyle(element).backgroundColor);
     assert.ok(colors[theme],theme+' has a visible shell color');
     assert.equal(await page.evaluate(key=>JSON.parse(localStorage.getItem(key)).theme,WORKSPACE_PREFERENCES_KEY),theme,theme+' is saved as a local workspace preference');
   }
   assert.equal(new Set(Object.values(colors)).size,themes.length,'each curated design has a distinct toolbar palette');
+  assert.equal(new Set(Object.values(dialogColors)).size,themes.length,'the appearance dialog follows each selected design instead of staying in the default graphite skin');
+  assert.equal(new Set(Object.values(controlColors)).size,themes.length,'appearance controls remain visually integrated into each design');
   assert.equal(await page.locator('#save').textContent(),'Mentés');
   assert.equal(await page.locator('#publish').textContent(),'Publikálás');
   assert.deepEqual(writes,[],'switching editor design never sends page Save or Publish requests');

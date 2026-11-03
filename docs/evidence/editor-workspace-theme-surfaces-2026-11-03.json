@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-11-03",
+  "plan": "77.44.6.1.C — theme-aware editor appearance settings",
+  "status": "PASS_RUNTIME_SLICE_RELEASE_PENDING_FULL_C_OPEN",
+  "scope": "Keep the appearance dialog and controls consistent with all five selectable Editor workspace themes. Page content, Page Model, Save and Publish remain unaffected; the full C acceptance is still OPEN.",
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "previous_head": "d30a2f00bd0dd8ae80149166303a4dfe4c73123d",
+    "runtime_commit": "PENDING",
+    "push": "NOT DONE"
+  },
+  "finding": {
+    "before": "The five editor themes updated the shell, tool rail, and docks, but the appearance dialog, its fields, muted labels, and footer controls were hard-coded to Graphite. This made the theme chooser itself visibly inconsistent after selection.",
+    "fix": "The dialog surfaces, form controls, text, and actions now consume workspace-theme custom properties with matching Graphite fallbacks. No preference schema or Page Model change was required.",
+    "compatibility": "All five allowlisted theme IDs and the existing workspace preference/profile/history/cross-tab mechanisms are unchanged."
+  },
+  "implementation": {
+    "files": [
+      "public/editor-v2/workspace-appearance.css",
+      "public/editor-v2/index.html",
+      "tests/browser/editor-workspace-appearance.test.js"
+    ],
+    "local_source_sha256": {
+      "public/editor-v2/index.html": "fedb64c5151aa326229ae8767a17813c4da5c06b4f41c81c249d80a970ddaa03",
+      "public/editor-v2/workspace-appearance.css": "1fcf63f401f0e644478bd597c1b6a7b345abef4af31f6c3d9919493dc6ccbf90"
+    },
+    "page_model_mutations": 0,
+    "save_publish_requests": 0,
+    "runtime_dependencies_added": false,
+    "paid_services_added": false,
+    "reuse_review": "Project-owned workspace design tokens and existing vanilla CSS were reused. Existing open-source design-builder findings remain in the canonical plan; no third-party code was copied and no new runtime library was needed."
+  },
+  "validation": {
+    "target_browser": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-workspace-appearance.test.js — PASS 13/13; five distinct shell, dialog, and control palettes; profile and Page Model/Save/Publish non-mutation coverage.",
+    "editor_unit": "npm run test:editor — PASS, 14/14 test files.",
+    "typecheck": "npm run typecheck — PASS.",
+    "migration_guard": "npm run test:web013:migration-gate — PASS; no migration applied.",
+    "canonical_plan": "python3 scripts/check-canonical-plan.py — PASS; one 13-file canonical master.",
+    "plan_contract": "python3 scripts/plan_contract.py — PASS; functional acceptance remains NOT_CERTIFIED.",
+    "active_point": "python3 scripts/audit-active-plan-point.py — PASS; next remains 77.44.6.1.C.",
+    "traceability": "python3 scripts/build-feature-traceability.py --check — PASS; 396 source mappings.",
+    "wrangler_dry_run": "WRANGLER_LOG_PATH=/tmp/sanci-wrangler-logs WRANGLER_SEND_METRICS=false npx wrangler deploy --dry-run — PASS; 168 assets, 335.81 KiB / 87.60 KiB gzip.",
+    "remote_d1_preflight": {
+      "method": "Cloudflare D1 query API; SELECT-only SQL",
+      "sql": "SELECT name FROM d1_migrations ORDER BY name",
+      "rows_read": 34,
+      "latest_migration": "0028_media_archive.sql",
+      "changed_db": false,
+      "rows_written": 0
+    },
+    "production_health_hashes": "PENDING: runtime change has not yet been pushed/deployed."
+  },
+  "deferred": [
+    "Full 77.44.6.1.C remains OPEN: nested/tabbed panel groups, floating windows, dynamic dock zones, and complete workspace lifecycle acceptance.",
+    "Full Visual Editor manual/physical acceptance remains deferred until 77.44.7.F/77.44.8."
+  ],
+  "cost": "0 HUF; no paid API, infrastructure, or dependency added."
+}

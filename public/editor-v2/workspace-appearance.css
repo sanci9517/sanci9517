@@ -1,4 +1,12 @@
 /* Presentation-only workspace preferences. These styles never touch the Page Model. */
+.editor-app[data-workspace-theme="graphite"] {
+  --workspace-dialog-surface: #111a26;
+  --workspace-dialog-raised: #1b2b40;
+  --workspace-dialog-control: #0b121d;
+  --workspace-dialog-line: #425a79;
+  --workspace-dialog-text: #f2f6fd;
+  --workspace-dialog-muted: #aebdd1;
+}
 .editor-app[data-workspace-theme="aurora"] {
   --editor-surface: #17162a;
   --editor-raised: #211e39;
@@ -9,6 +17,12 @@
   --line: #403a60;
   --text: #f4f1ff;
   --muted: #b7b0d1;
+  --workspace-dialog-surface: var(--editor-surface);
+  --workspace-dialog-raised: var(--editor-raised);
+  --workspace-dialog-control: var(--panel2);
+  --workspace-dialog-line: var(--editor-line);
+  --workspace-dialog-text: var(--text);
+  --workspace-dialog-muted: var(--muted);
 }
 .editor-app[data-workspace-theme="aurora"] .topbar,
 .editor-app[data-workspace-theme="aurora"] .mobile-bottom-bar {
@@ -35,6 +49,12 @@
   --line: #315365;
   --text: #edf8ff;
   --muted: #abc3d0;
+  --workspace-dialog-surface: var(--editor-surface);
+  --workspace-dialog-raised: var(--editor-raised);
+  --workspace-dialog-control: var(--panel2);
+  --workspace-dialog-line: var(--editor-line);
+  --workspace-dialog-text: var(--text);
+  --workspace-dialog-muted: var(--muted);
 }
 .editor-app[data-workspace-theme="sage"] {
   --editor-surface: #18251b;
@@ -46,6 +66,12 @@
   --line: #465c49;
   --text: #eff8f0;
   --muted: #b7c9b9;
+  --workspace-dialog-surface: var(--editor-surface);
+  --workspace-dialog-raised: var(--editor-raised);
+  --workspace-dialog-control: var(--panel2);
+  --workspace-dialog-line: var(--editor-line);
+  --workspace-dialog-text: var(--text);
+  --workspace-dialog-muted: var(--muted);
 }
 .editor-app[data-workspace-theme="cinder"] {
   --editor-surface: #261b17;
@@ -57,6 +83,12 @@
   --line: #63483a;
   --text: #fff4ec;
   --muted: #dec1ae;
+  --workspace-dialog-surface: var(--editor-surface);
+  --workspace-dialog-raised: var(--editor-raised);
+  --workspace-dialog-control: var(--panel2);
+  --workspace-dialog-line: var(--editor-line);
+  --workspace-dialog-text: var(--text);
+  --workspace-dialog-muted: var(--muted);
 }
 .editor-app[data-workspace-theme="ocean"] .topbar,
 .editor-app[data-workspace-theme="ocean"] .mobile-bottom-bar { background: #0d1c26; }
@@ -109,10 +141,10 @@
   max-height: min(88dvh, 760px);
   overflow: auto;
   padding: clamp(18px, 4vw, 28px);
-  border: 1px solid #425a79;
+  border: 1px solid var(--workspace-dialog-line, #425a79);
   border-radius: 18px;
-  background: #111a26;
-  color: #f2f6fd;
+  background: var(--workspace-dialog-surface, #111a26);
+  color: var(--workspace-dialog-text, #f2f6fd);
   box-shadow: 0 28px 90px #000b;
 }
 .workspace-appearance-dialog::backdrop { background: #050a13bd; backdrop-filter: blur(4px); }
@@ -120,23 +152,23 @@
 @keyframes workspace-dialog-in { from { opacity: 0; transform: translateY(8px) scale(.99); } to { opacity: 1; transform: none; } }
 .workspace-appearance-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; }
 .workspace-appearance-heading h2 { margin: 2px 0 0; font-size: clamp(20px, 5vw, 26px); line-height: 1.2; }
-.workspace-appearance-eyebrow { margin: 0; color: #8ba8d2; font-size: 11px; font-weight: 750; letter-spacing: .11em; }
+.workspace-appearance-eyebrow { margin: 0; color: var(--workspace-dialog-muted, #8ba8d2); font-size: 11px; font-weight: 750; letter-spacing: .11em; }
 .workspace-appearance-close,
-.workspace-appearance-actions button { min-width: 44px; min-height: 44px; padding: 9px 13px; border: 1px solid #425a79; border-radius: 10px; background: #1b2b40; color: #f6f8ff; }
-.workspace-appearance-help { margin: 12px 0 18px; color: #c6d3e5; font-size: 14px; line-height: 1.55; }
+.workspace-appearance-actions button { min-width: 44px; min-height: 44px; padding: 9px 13px; border: 1px solid var(--workspace-dialog-line, #425a79); border-radius: 10px; background: var(--workspace-dialog-raised, #1b2b40); color: var(--workspace-dialog-text, #f6f8ff); }
+.workspace-appearance-help { margin: 12px 0 18px; color: var(--workspace-dialog-muted, #c6d3e5); font-size: 14px; line-height: 1.55; }
 .workspace-appearance-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
 .workspace-appearance-fields label { display: grid; align-content: start; gap: 7px; min-width: 0; font-size: 13px; font-weight: 650; }
 .workspace-appearance-fields select,
-.workspace-appearance-fields input { width: 100%; min-width: 0; min-height: 44px; padding: 8px 10px; border: 1px solid #465c77; border-radius: 9px; background: #0b121d; color: #f1f5fb; font: inherit; }
+.workspace-appearance-fields input { width: 100%; min-width: 0; min-height: 44px; padding: 8px 10px; border: 1px solid var(--workspace-dialog-line, #465c77); border-radius: 9px; background: var(--workspace-dialog-control, #0b121d); color: var(--workspace-dialog-text, #f1f5fb); font: inherit; }
 .workspace-appearance-fields select:focus-visible,
 .workspace-appearance-fields input:focus-visible,
 .workspace-appearance-dialog button:focus-visible { outline: 3px solid var(--accent, #8ba8ff); outline-offset: 2px; }
 .workspace-appearance-fields input[type="color"] { height: 48px; padding: 4px; cursor: pointer; }
-.workspace-appearance-fields small { color: #aebdd1; font-size: 12px; font-weight: 400; line-height: 1.4; }
-#workspaceAppearanceStatus { min-height: 24px; margin: 14px 0 8px; color: #dce8fa; font-size: 13px; line-height: 1.45; }
-.workspace-appearance-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; padding-top: 12px; border-top: 1px solid #34465d; }
-.workspace-appearance-actions span { flex: 1 1 180px; color: #aebdd1; font-size: 12px; line-height: 1.4; }
-.workspace-appearance-actions button { border-color: #69535b; background: #33242c; }
+.workspace-appearance-fields small { color: var(--workspace-dialog-muted, #aebdd1); font-size: 12px; font-weight: 400; line-height: 1.4; }
+#workspaceAppearanceStatus { min-height: 24px; margin: 14px 0 8px; color: var(--workspace-dialog-text, #dce8fa); font-size: 13px; line-height: 1.45; }
+.workspace-appearance-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; padding-top: 12px; border-top: 1px solid var(--workspace-dialog-line, #34465d); }
+.workspace-appearance-actions span { flex: 1 1 180px; color: var(--workspace-dialog-muted, #aebdd1); font-size: 12px; line-height: 1.4; }
+.workspace-appearance-actions button { border-color: var(--workspace-dialog-line, #69535b); background: var(--workspace-dialog-raised, #33242c); }
 @media (max-width: 560px) {
   .workspace-appearance-dialog { width: calc(100vw - 16px); max-width: none; max-height: 90dvh; padding: 18px 14px; border-radius: 16px; }
   .workspace-appearance-fields { grid-template-columns: minmax(0, 1fr); gap: 12px; }
