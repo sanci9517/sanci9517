@@ -19,6 +19,7 @@ applyWorkspacePreferences(editorRoot,initialAppearance);
 let focusBeforeMobilePanel=null;
 let workspaceAppearance=null;
 let canvasFocus=false;
+let desktopDockSnapshot=null;
 
 function readPersisted(){
   try{
@@ -99,6 +100,7 @@ function setCanvasFocus(open){
 }
 function setPanel(side,open,{save=true,restoreFocus=true,customize=false}={}){
   const panel=panels[side];if(!panel)return;
+  if(save&&mobileQuery.matches)desktopDockSnapshot=null;
   const wasOpen=!panel.classList.contains('closed');
   if(customize&&wasOpen!==open)workspaceAppearance?.remember();
   if(open && mobileQuery.matches){
@@ -230,8 +232,23 @@ function setupDockReordering(){
   const regions={left:panels.left,canvas:canvasArea,right:panels.right};
   for(const [id,region] of Object.entries(regions))if(region)region.dataset.workspaceDockId=id;
   const refreshHandles=()=>workspace.querySelectorAll('.dock-heading,.canvas-toolbar').forEach(handle=>handle.setAttribute('draggable',String(!mobileQuery.matches)));
+  const restoreResponsiveDockLayout=()=>{
+    if(mobileQuery.matches){
+      if(!desktopDockSnapshot)desktopDockSnapshot={left:!panels.left?.classList.contains('closed'),right:!panels.right?.classList.contains('closed')};
+      const focusedSide=Object.entries(panels).find(([,panel])=>panel?.contains(document.activeElement)&&!panel.classList.contains('closed'))?.[0];
+      const keep=focusedSide||(desktopDockSnapshot.right?'right':desktopDockSnapshot.left?'left':null);
+      setPanel('left',keep==='left',{save:false,restoreFocus:false});
+      setPanel('right',keep==='right',{save:false,restoreFocus:false});
+    }else{
+      const restore=desktopDockSnapshot||{left:Boolean(persisted.leftOpen),right:Boolean(persisted.rightOpen)};
+      desktopDockSnapshot=null;
+      setPanel('left',restore.left,{save:false,restoreFocus:false});
+      setPanel('right',restore.right,{save:false,restoreFocus:false});
+    }
+    refreshHandles();
+  };
   refreshHandles();
-  mobileQuery.addEventListener('change',refreshHandles);
+  mobileQuery.addEventListener('change',restoreResponsiveDockLayout);
   workspace.addEventListener('dragstart',event=>{
     if(mobileQuery.matches)return;
     const handle=event.target.closest?.('.dock-heading,.canvas-toolbar');

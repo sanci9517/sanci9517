@@ -647,3 +647,31 @@ test('mobile canvas focus is touch-sized, releases the canvas from the panel bac
   assert.deepEqual(writes,[],'the mobile action never invokes Save or Publish');
   assert.deepEqual(errors,[]);
 });
+
+test('desktop dock layout normalizes to one mobile drawer during resize and restores the desktop layout',async t=>{
+  const {page,writes,errors}=await openEditor(t,{width:1366,height:900});
+  await page.locator('#editorMenu').click();
+  await page.locator('#openInspector').click();
+  assert.equal(await page.locator('#leftDock').isVisible(),true);
+  assert.equal(await page.locator('#rightDock').isVisible(),true);
+  const saved=await page.evaluate(()=>({shell:localStorage.getItem('sanci-editor-shell-v2'),appearance:localStorage.getItem('sanci-editor-workspace-preferences-v2')}));
+
+  await page.setViewportSize({width:390,height:844});
+  await page.waitForFunction(()=>document.querySelector('.workspace')?.matches('.left-open,.right-open'));
+  const mobile=await page.evaluate(()=>({left:!document.querySelector('#leftDock')?.classList.contains('closed'),right:!document.querySelector('#rightDock')?.classList.contains('closed'),leftHidden:document.querySelector('#leftDock')?.getAttribute('aria-hidden'),rightHidden:document.querySelector('#rightDock')?.getAttribute('aria-hidden'),canvasInert:document.querySelector('.canvas-area')?.inert,scrollWidth:document.documentElement.scrollWidth,innerWidth}));
+  assert.ok(Number(mobile.left)+Number(mobile.right)<=1,`a viewport resize never leaves overlapping mobile drawers open: ${JSON.stringify(mobile)}`);
+  assert.equal(mobile.right,true,'the right-side Inspector is the deterministic choice when both desktop panels are open and focus remains on the top toolbar');
+  assert.equal(mobile.leftHidden,'true');
+  assert.equal(mobile.rightHidden,'false');
+  assert.equal(mobile.canvasInert,true,'the active drawer still protects its controls from the background canvas');
+  assert.ok(mobile.scrollWidth<=mobile.innerWidth,'switching to a single mobile sheet never creates horizontal overflow');
+  assert.deepEqual(await page.evaluate(()=>({shell:localStorage.getItem('sanci-editor-shell-v2'),appearance:localStorage.getItem('sanci-editor-workspace-preferences-v2')})),saved,'responsive normalization is temporary and does not overwrite the desktop profile');
+
+  await page.setViewportSize({width:1366,height:900});
+  await page.waitForFunction(()=>document.querySelector('#leftDock')?.classList.contains('closed')===false&&document.querySelector('#rightDock')?.classList.contains('closed')===false);
+  assert.equal(await page.locator('#leftDock').getAttribute('aria-hidden'),'false');
+  assert.equal(await page.locator('#rightDock').getAttribute('aria-hidden'),'false');
+  assert.deepEqual(await page.evaluate(()=>({shell:localStorage.getItem('sanci-editor-shell-v2'),appearance:localStorage.getItem('sanci-editor-workspace-preferences-v2')})),saved,'returning to desktop restores both saved panels without a storage write');
+  assert.deepEqual(writes,[],'responsive dock changes never Save or Publish the page');
+  assert.deepEqual(errors,[]);
+});
