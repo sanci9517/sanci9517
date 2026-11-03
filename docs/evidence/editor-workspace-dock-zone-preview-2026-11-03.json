@@ -1,0 +1,126 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-11-03",
+  "plan": "77.44.6.1.C — desktop dock insertion-zone preview",
+  "status": "RUNTIME_RELEASE_VERIFIED_FULL_C_OPEN",
+  "scope": "Show the exact before/after dock insertion edge during desktop panel drag, announce successful workspace reordering accessibly, and keep the canvas column unchanged.",
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "previous_head": "203b64ed7a879b2a35a5a1d5b4d3d60e315f6e5a",
+    "runtime_commit": "7212cafd8b9d183322be7199ffcde5d8823f1ce3",
+    "runtime_message": "feat(editor): preview dock drop zones",
+    "push": "Normal fast-forward push; remote branch ref independently verified at the runtime commit before the documentation-only follow-up.",
+    "github_combined_statuses": [],
+    "aggregate_github_ci_pass": false
+  },
+  "finding": {
+    "reproduction": "Desktop dock drag identified multiple eligible panels but gave no before/after insertion cue, leaving the drop position ambiguous.",
+    "fix": "The active target now exposes an exact before/after edge inside its own panel outline. Successful reordered panels announce a short Hungarian status message; drop, cancel and Escape clear the transient cue. Mobile drawer behavior is unchanged and the canvas column does not shrink or become covered.",
+    "regression_test": "Real Chromium drags an eligible panel, asserts the after marker, solid target outline and exact inset edge cue before dropping, verifies unchanged canvas width and cleanup on dragend, then drops and checks resulting order, local workspace state, Hungarian live announcement, cleared transient markers and zero Page Model/Save/Publish writes.",
+    "preserved_contracts": [
+      "dock layout remains workspace-only and outside the Page Model",
+      "Save and Publish remain separate and are not invoked by docking",
+      "canvas width remains unchanged while a dock target is previewed",
+      "mobile drawer interaction remains unchanged",
+      "live region provides an accessible status for completed reordering"
+    ]
+  },
+  "implementation": {
+    "files": [
+      "public/editor-v2/index.html",
+      "public/editor-v2/ui/shell.js",
+      "public/editor-v2/editor-refresh.css",
+      "tests/browser/editor-workspace-appearance.test.js"
+    ],
+    "changed_assets_sha256": {
+      "public/editor-v2/index.html": "39c1e8091f9e98d3c82b6f6d7737ecdf28e5677cab917d208412b92f5c637d6c",
+      "public/editor-v2/ui/shell.js": "a21d4ad19b9d4367ffb02a89e3d1f10f1496589aecaca052563260be0a192db2",
+      "public/editor-v2/editor-refresh.css": "8a586bda45539c6f02a23db56746c69dd281a1dfe3b580b2c47a17e6588c33d1"
+    },
+    "page_model_mutations": 0,
+    "save_publish_mutations": 0,
+    "runtime_dependencies_added": false,
+    "paid_services_added": false,
+    "reuse_review": "Reused the existing project-owned native dock drag/drop handling, workspace status/live-region pattern, CSS target affordances and Chromium test harness. No external source or dependency was needed for this focused interaction improvement."
+  },
+  "validation": {
+    "target_browser": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec --test-name-pattern='desktop panel and canvas drag reordering' tests/browser/editor-workspace-appearance.test.js — PASS, 1/1.",
+    "workspace_browser_suite": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-workspace-appearance.test.js — PASS, 21/21; includes the desktop canvas minimum-width matrix, mobile drawer, cross-tab state, profiles, keyboard resize and storage-failure coverage.",
+    "editor_unit": "npm run test:editor — PASS, 14/14 test files.",
+    "typecheck": "npm run typecheck — PASS.",
+    "migration_guard": "npm run test:web013:migration-gate — PASS; no migration applied.",
+    "canonical_plan": "python3 scripts/check-canonical-plan.py — PASS; one complete canonical master.",
+    "active_point": "python3 scripts/audit-active-plan-point.py — PASS; active point remains 77.44.6.1.C.",
+    "plan_contract": "python3 scripts/plan_contract.py — PASS; feature lifecycle acceptance remains open/not certified.",
+    "traceability": "python3 scripts/build-feature-traceability.py --check — PASS, 396 source mappings.",
+    "syntax_and_diff": "node --check public/editor-v2/ui/shell.js; node --check tests/browser/editor-workspace-appearance.test.js; git diff --check — PASS.",
+    "wrangler_dry_run": "WRANGLER_WRITE_LOGS=false npx wrangler deploy --dry-run — PASS, Wrangler 4.130.0; 168 assets, 335.81 KiB / 87.60 KiB gzip; dry-run did not deploy.",
+    "manual_device_acceptance": "DEFERRED until full Visual Editor acceptance at 77.44.7.F/77.44.8."
+  },
+  "release_preflight": {
+    "production_d1_query_before_and_after": "SELECT name FROM d1_migrations ORDER BY name",
+    "query_mode": "Read-only SELECT through authenticated Cloudflare D1 Query API before and after the runtime deployment.",
+    "ledger_row_count": 34,
+    "latest_ledger_row": "0028_media_archive.sql",
+    "rows_written": 0,
+    "changed_db": false,
+    "migration_applied": false,
+    "r2_mutation_or_deletion": false
+  },
+  "production": {
+    "worker": "sanci9517-streamer-brand",
+    "build_id": "6c23ab90-f7d4-4881-9e17-eff3740eadcf",
+    "build_commit": "7212cafd8b9d183322be7199ffcde5d8823f1ce3",
+    "build_branch": "v2/foundation",
+    "build_outcome": "success",
+    "build_command": "npm run typecheck",
+    "deploy_command": "npm run deploy:safe",
+    "deploy_gate_log": "PASS: deploy:safe runs the repository migration gate and never applies D1 migrations.",
+    "deployment_id": "c20cd0c3-557c-4733-8192-7527e70f372f",
+    "traffic_version": "ca21a218-6e84-41fd-976f-10bb4c223b65",
+    "worker_version_number": 3803,
+    "traffic_percentage": 100,
+    "control_plane_verified": true,
+    "public_http_smoke": {
+      "status": "PASS",
+      "health": {
+        "path": "/api/health",
+        "http_status": 200,
+        "body": {
+          "ok": true,
+          "service": "sanci9517-streamer-brand",
+          "version": "2.0.0",
+          "server": "cloudflare-worker"
+        }
+      },
+      "assets": {
+        "/editor-v2/": {
+          "http_status": 200,
+          "local_sha256": "39c1e8091f9e98d3c82b6f6d7737ecdf28e5677cab917d208412b92f5c637d6c",
+          "live_sha256": "39c1e8091f9e98d3c82b6f6d7737ecdf28e5677cab917d208412b92f5c637d6c"
+        },
+        "/editor-v2/ui/shell.js?v=20261103-dock-zone-preview": {
+          "http_status": 200,
+          "local_sha256": "a21d4ad19b9d4367ffb02a89e3d1f10f1496589aecaca052563260be0a192db2",
+          "live_sha256": "a21d4ad19b9d4367ffb02a89e3d1f10f1496589aecaca052563260be0a192db2"
+        },
+        "/editor-v2/editor-refresh.css?v=20261103-dock-zone-preview": {
+          "http_status": 200,
+          "local_sha256": "8a586bda45539c6f02a23db56746c69dd281a1dfe3b580b2c47a17e6588c33d1",
+          "live_sha256": "8a586bda45539c6f02a23db56746c69dd281a1dfe3b580b2c47a17e6588c33d1"
+        }
+      },
+      "public_asset_hashes_match": true
+    }
+  },
+  "cost": {
+    "additional_cost_huf": 0,
+    "paid_services_or_dependencies_added": false,
+    "quota_note": "No paid plan, quota increase, infrastructure or dependency was introduced. Remaining free quota was not queried."
+  },
+  "acceptance": {
+    "77_44_6_1_C": "OPEN; nested/tabbed panel groups, dynamic non-canvas dock zones and full workspace lifecycle acceptance remain open.",
+    "full_visual_editor_manual_and_physical_acceptance": "DEFERRED until 77.44.7.F/77.44.8."
+  }
+}
