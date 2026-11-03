@@ -2,22 +2,23 @@
   "schema_version": 1,
   "recorded_at": "2026-11-03",
   "plan": "77.44.6.1.C — átmeneti vászonfókusz mód",
-  "status": "PASS_RUNTIME_SLICE_PENDING_FAST_FORWARD_RELEASE_FULL_C_OPEN",
+  "status": "PASS_RUNTIME_SLICE_DEPLOYED_FULL_C_OPEN",
   "scope": "A desktop és mobil editorpanelen ideiglenesen elrejthetők úgy, hogy a vászon több helyet kap. A nyitott panelek, Page Model, mentett munkaterület és Save/Publish állapot nem változik. A teljes 77.44.6.1.C és Visual Editor acceptance nyitva marad.",
   "source_control": {
     "repository": "sanci9517/sanci9517",
     "branch": "v2/foundation",
     "previous_head": "da5ba584a2ded6bc0c3ee3590e0ebe15b15f108e",
     "github_head_before_change": "da5ba584a2ded6bc0c3ee3590e0ebe15b15f108e",
-    "runtime_commit": "PENDING",
-    "push": "PENDING — runtime checks pass, normal fast-forward not yet performed",
+    "runtime_commit": "2e64ed95346c041db323c65f1b2cd14d1860f3d6",
+    "push": "PASS — normal fast-forward; GitHub v2/foundation exact HEAD verified",
     "aggregate_github_ci_pass": false,
-    "cloudflare_build_id": null,
-    "cloudflare_build_outcome": "PENDING",
-    "deployment_id": null,
-    "worker_version_id": null,
-    "worker_version_number": null,
-    "traffic_percentage": null
+    "cloudflare_build_id": "318f572d-68e2-4d13-8cdc-05a5a8bbf53f",
+    "cloudflare_build_outcome": "success",
+    "deployment_id": "b050c0f4-cbec-4b71-89c2-1e8a6ceed2b4",
+    "worker_version_id": "cf77234b-152b-40c8-bca4-2fcb0b459e30",
+    "worker_version_number": 3798,
+    "traffic_percentage": 100,
+    "github_head_after_push": "2e64ed95346c041db323c65f1b2cd14d1860f3d6"
   },
   "implementation": {
     "files": [
@@ -51,7 +52,7 @@
     "public/editor-v2/workspace-appearance.css": "c9d0d76db1a820a2fdb08a16cd621dc44ae98fe5b28c665cdc3affda68201135",
     "tests/browser/editor-workspace-appearance.test.js": "31b4f47f48d9fed03e0251fb47652cc838e3a894ed2b15ee83610b758adfe3e0",
     "tests/editor-action-catalog.test.js": "05e5f1b1d4c237c1e2880e738319e3687d470fac69bfab41ac8621781fffc2c2",
-    "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md": "2de083971e20d580010e7f93f35b0dccb52640033d324fd889bbec6e16b45b9e"
+    "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md": "cd66d5bfc2031fd61312c102a9b550a511f3a6be9d6f7734b34a983fdddefca0"
   },
   "validation": {
     "chromium": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-action-help.test.js tests/browser/editor-workspace-appearance.test.js — combined PASS 17/17 (2 action-help + 15 workspace). Re-ran action-help after final Hungarian copy update: 2/2 PASS.",
@@ -74,13 +75,41 @@
       "success": true
     },
     "pre_release_worker": "Read-only Cloudflare deployments GET before push showed deployment aeb725b8-7f0c-4b4a-8958-c9e98b061c4b, version b5f59efc-0c14-4243-b8ff-1938c15a7b77, 100% traffic.",
-    "production_health_and_asset_hashes": "PENDING post-deployment direct verification",
-    "github_combined_statuses": null,
+    "production_health_and_asset_hashes": {
+      "health": {
+        "url": "/api/health",
+        "http_status": 200,
+        "body": {
+          "ok": true,
+          "service": "sanci9517-streamer-brand",
+          "version": "2.0.0",
+          "server": "cloudflare-worker"
+        }
+      },
+      "worker": {
+        "deployment_id": "b050c0f4-cbec-4b71-89c2-1e8a6ceed2b4",
+        "version_id": "cf77234b-152b-40c8-bca4-2fcb0b459e30",
+        "version_number": 3798,
+        "traffic_percentage": 100,
+        "version_api_etag": "16a9fe1d440acbcd5639bb540264389c2f3238189836c2f31b268c35ba46f23e"
+      },
+      "asset_sha256": {
+        "public/editor-v2/index.html": "ebcd6be2d5cde296ee17cb0604622a2bb584af32379c85ca7643b56226a01b4c",
+        "public/editor-v2/ui/shell.js": "6b0e01331ede3964d38c2c5ba47d80f3b8dcc39323da6f1dbb7e31068f0359ac",
+        "public/editor-v2/ui/action-catalog.js": "0129625060fdca606e7cce0fa60434e00bb83967eede4eec5922ca3e6f2beea0",
+        "public/editor-v2/ui/action-help.js": "72bb4e78420798f4aa99e000a77a8ad19dad217c0896c97dc523d6e5feab5294",
+        "public/editor-v2/ui/action-icons.js": "7d533b2669e4966f828795f1146ee6b77b0bdb4947eae3482b8662e4c81d6c7d",
+        "public/editor-v2/workspace-appearance.css": "c9d0d76db1a820a2fdb08a16cd621dc44ae98fe5b28c665cdc3affda68201135"
+      },
+      "method": "Direct production HTTPS GET with cache-busting query and SHA-256; all six served assets byte-for-byte match local source; /editor-v2/index.html first redirects to /editor-v2/ and the followed document matches.",
+      "result": "PASS"
+    },
+    "github_combined_statuses": [],
     "aggregate_github_ci_pass": false
   },
   "limitations": [
     "The complete 77.44.6.1.C acceptance remains OPEN; nested/tabbed groups and dynamic dock zones remain unfinished.",
     "No manual/device user acceptance was attempted before the full Editor gate.",
-    "Cloudflare automatic build, deployment, live health, and production asset hash checks remain pending after the authorized normal fast-forward push."
+    "GitHub combined status list was empty; no aggregate GitHub CI PASS is claimed."
   ]
 }
