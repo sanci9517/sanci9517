@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-11-03",
+  "plan": "77.44.6.1.C — reszponzív dokk és panelválasztási állapot életciklusa",
+  "status": "PASS_TEST_ONLY_FULL_C_OPEN",
+  "scope": "A már élesített desktop↔mobile panelnormalizálás fókuszmegőrzésének és explicit mobil panelválasztásának Chromium-regressziója; runtime kód nem változott.",
+  "implementation": {
+    "files": [
+      "tests/browser/editor-workspace-appearance.test.js"
+    ],
+    "behavior_assertions": [
+      "desktopon mindkét panel nyitott",
+      "a bal panelen lévő fókuszt a 390px mobilnézet egyetlen nyitott fiókként megtartja",
+      "desktopra visszatéréskor az ideiglenes breakpoint-váltás visszaállítja mindkét desktop panelt",
+      "mobilon az Inspector kifejezett megnyitása bezárja az Oldalak panelt",
+      "a következő desktop nézet a felhasználó mobil választását tartja meg, nem alkalmazza a régi kétpaneles snapshotot",
+      "a tárolt dock állapot pontosan bal zárt / Inspector nyitott",
+      "Page Model, Save és Publish kérések száma nulla"
+    ],
+    "runtime_files_changed": false,
+    "production_asset_changed": false,
+    "save_publish_requests": 0,
+    "new_dependency": false,
+    "cost_ft": 0
+  },
+  "validation": {
+    "focused_chromium": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec --test-name-pattern=\"responsive dock resize keeps\" tests/browser/editor-workspace-appearance.test.js — PASS 1/1",
+    "full_workspace_chromium": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-workspace-appearance.test.js — PASS 17/17",
+    "editor_unit": "npm run test:editor — PASS 14/14",
+    "typecheck": "npm run typecheck — PASS",
+    "migration_safety_gate": "npm run test:web013:migration-gate — PASS; no production migration executed",
+    "canonical_plan": "scripts/check-canonical-plan.py and scripts/plan_contract.py — PASS; one 13-file master plan",
+    "active_plan_audit": "scripts/audit-active-plan-point.py — PASS; current cursor 77.44.6.1.C, functional acceptance NOT_CERTIFIED",
+    "traceability": "scripts/build-feature-traceability.py --check — PASS 396 mappings",
+    "syntax_and_diff": "node --check tests/browser/editor-workspace-appearance.test.js; git diff --check — PASS",
+    "first_attempt_note": "A teljes suite előtti első célzott futás egy hibás tesztelvárást jelzett: a desktop bal oldali navigációs sín összecsukott állapotban is látható; az assertion class state-re váltott és a teszt a valós panel állapotát vizsgálja."
+  },
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "runtime_commit": "291091e8044b1142b8785184aaafdf055fa9959b",
+    "runtime_unchanged": true,
+    "ci_pass": false,
+    "worker_deployment_required": false
+  },
+  "production_baseline": {
+    "deployment_id": "9e626156-6314-4d7f-8227-e92ccc5f3a66",
+    "worker_version_id": "51e4e7fe-eea0-44a8-971f-e5e02eedccb3",
+    "worker_version_number": 3799,
+    "traffic_percentage": 100,
+    "health_http_status": 200
+  },
+  "manual_acceptance": "DEFERRED until complete 77.44.7.F / 77.44.8 Editor gate",
+  "limitations": [
+    "A teljes 77.44.6.1.C továbbra OPEN; nested/tabbed panelek, dinamikus dokkolási zónák és a teljes workspace-életciklus acceptance hátra van.",
+    "A teszt-fixture valódi Chromiumot, de lokális mockolt API-t használ; nem helyettesít tulajdonosi kézi vagy fizikai elfogadást."
+  ],
+  "source_sha256": {
+    "tests/browser/editor-workspace-appearance.test.js": "cb375f27760f05251be2c3b655af82834b36d31e76772e10c74df9b940dc6d60",
+    "public/editor-v2/ui/shell.js": "74867b320ad83ce69b3d02a2d9c84989e024644f8b64d92778d2b7fb78cde185",
+    "public/editor-v2/index.html": "814a535f3d49f8868c554c0a7d379a20c65f1d96fb950ae5c771ba46a28ad335"
+  }
+}

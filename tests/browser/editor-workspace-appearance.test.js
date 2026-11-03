@@ -675,3 +675,35 @@ test('desktop dock layout normalizes to one mobile drawer during resize and rest
   assert.deepEqual(writes,[],'responsive dock changes never Save or Publish the page');
   assert.deepEqual(errors,[]);
 });
+
+test('responsive dock resize keeps the focused panel and honors an explicit mobile panel change',async t=>{
+  const {page,writes,errors}=await openEditor(t,{width:1366,height:900});
+  await page.locator('#editorMenu').click();
+  await page.locator('#openInspector').click();
+  await page.locator('#leftTabLayers').click();
+  assert.equal(await page.locator('#leftTabLayers').evaluate(element=>document.activeElement===element),true);
+
+  await page.setViewportSize({width:390,height:844});
+  await page.waitForFunction(()=>document.querySelector('#leftDock')?.classList.contains('closed')===false);
+  let mobile=await page.evaluate(()=>({left:!document.querySelector('#leftDock')?.classList.contains('closed'),right:!document.querySelector('#rightDock')?.classList.contains('closed'),scrollWidth:document.documentElement.scrollWidth,innerWidth}));
+  assert.deepEqual({left:mobile.left,right:mobile.right},{left:true,right:false},'the panel that contained keyboard focus remains available after crossing the breakpoint');
+  assert.ok(mobile.scrollWidth<=mobile.innerWidth);
+
+  await page.setViewportSize({width:1366,height:900});
+  await page.waitForFunction(()=>document.querySelector('#rightDock')?.classList.contains('closed')===false);
+  assert.equal(await page.locator('#leftDock').isVisible(),true,'the original desktop layout is restored after a temporary responsive switch');
+
+  await page.setViewportSize({width:390,height:844});
+  await page.waitForFunction(()=>document.querySelector('#leftDock')?.classList.contains('closed')===false);
+  await page.locator('#openInspector').click();
+  await page.waitForFunction(()=>document.querySelector('#rightDock')?.classList.contains('closed')===false);
+  assert.equal(await page.locator('#leftDock').isVisible(),false,'a deliberate mobile panel choice closes the previous drawer');
+
+  await page.setViewportSize({width:1366,height:900});
+  await page.waitForFunction(()=>document.querySelector('#rightDock')?.classList.contains('closed')===false);
+  assert.equal(await page.locator('#leftDock').evaluate(element=>element.classList.contains('closed')),true,'a deliberate mobile choice replaces the temporary desktop snapshot (the desktop navigation rail itself remains visible)');
+  assert.equal(await page.locator('#rightDock').isVisible(),true);
+  assert.deepEqual(await page.evaluate(()=>JSON.parse(localStorage.getItem('sanci-editor-shell-v2'))),{leftOpen:false,rightOpen:true,leftTab:'layers',leftWidth:310,rightWidth:352});
+  assert.deepEqual(writes,[],'responsive panel changes never issue page Save or Publish requests');
+  assert.deepEqual(errors,[]);
+});
