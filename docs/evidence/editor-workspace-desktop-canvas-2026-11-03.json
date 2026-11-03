@@ -2,14 +2,14 @@
   "schema_version": 1,
   "recorded_at": "2026-11-03",
   "plan": "77.44.6.1.C — desktop panels retain a usable canvas",
-  "status": "AUTOMATED_RUNTIME_CHECKS_PASS_RELEASE_PENDING",
+  "status": "RUNTIME_RELEASE_VERIFIED",
   "scope": "Prevent opened desktop docks from shrinking or covering the page canvas while retaining all supported dock orders and persisted dock widths where the viewport permits.",
   "source_control": {
     "repository": "sanci9517/sanci9517",
     "branch": "v2/foundation",
     "verified_parent_head": "6aaa8c0ea65738cb18463b8501b2f92b27d490f4",
-    "runtime_commit": null,
-    "github_branch_head_verified": false,
+    "runtime_commit": "2647c6be7bae4adce9f12498e8f030d987ff2b9b",
+    "github_branch_head_verified": true,
     "github_combined_statuses": [],
     "aggregate_github_ci_pass": false
   },
@@ -43,7 +43,13 @@
         "right-canvas-left",
         "canvas-right-left"
       ],
-      "viewport_widths_px": [1025, 1100, 1280, 1440, 1920],
+      "viewport_widths_px": [
+        1025,
+        1100,
+        1280,
+        1440,
+        1920
+      ],
       "combinations": 30,
       "minimum_canvas_width_px": 400,
       "minimum_canvas_by_viewport_px": {
@@ -78,23 +84,59 @@
       "rows_written": 0
     },
     "javascript_syntax": "node --check tests/browser/editor-workspace-appearance.test.js — PASS.",
-    "diff_check": "git diff --check — PASS."
+    "diff_check": "git diff --check — PASS.",
+    "production_d1_preflight_after_release": {
+      "method": "Cloudflare D1 query API; SELECT-only; no migrations-list command.",
+      "query": "SELECT name FROM d1_migrations ORDER BY name;",
+      "ledger_rows": 34,
+      "latest": "0028_media_archive.sql",
+      "changed_db": false,
+      "rows_written": 0
+    }
   },
   "production": {
     "worker": "sanci9517-streamer-brand",
     "previous_traffic_version": "ec371760-4ea8-45d7-bbf4-d80129474891",
     "previous_traffic_percentage": 100,
-    "build_id": null,
-    "build_outcome": "PENDING",
-    "deployment_id": null,
-    "traffic_version": null,
-    "traffic_percentage": null,
-    "health_smoke": null,
+    "build_id": "5e8f2a01-ccac-4577-8df8-2b7c82b062ae",
+    "build_outcome": "success",
+    "deployment_id": "289b0bf6-b243-4d91-b3cd-e243daa75e01",
+    "traffic_version": "2a8f4314-576b-440c-8a09-0d31e2050972",
+    "traffic_percentage": 100,
+    "health_smoke": {
+      "url": "/api/health",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
     "changed_asset_sha256_local": {
       "public/editor-v2/editor-refresh.css": "59c4a0314ad57c05759bfd9d3a1f5ecfa2cbf8936f40cc6bd6ce8f0d9ce181ff",
       "public/editor-v2/index.html": "8b3205b1fb2527738128077a95d9b0c48ca015c5ee0ef303824b8dde9605fcb9"
     },
-    "changed_asset_sha256_live": null
+    "changed_asset_sha256_live": {
+      "public/editor-v2/editor-refresh.css": "59c4a0314ad57c05759bfd9d3a1f5ecfa2cbf8936f40cc6bd6ce8f0d9ce181ff",
+      "public/editor-v2/index.html": "8b3205b1fb2527738128077a95d9b0c48ca015c5ee0ef303824b8dde9605fcb9"
+    },
+    "build_commit": "2647c6be7bae4adce9f12498e8f030d987ff2b9b",
+    "build_commands": {
+      "build": "npm run typecheck",
+      "deploy": "npm run deploy:safe"
+    },
+    "traffic_version_number": 3795,
+    "deployment_source": "Cloudflare Builds push_event exact commit; deploy:safe succeeded; Worker deployment GET confirms 100% traffic.",
+    "d1_post_release_preflight": {
+      "method": "Cloudflare D1 query API SELECT-only",
+      "query": "SELECT name FROM d1_migrations ORDER BY name;",
+      "ledger_rows": 34,
+      "latest": "0028_media_archive.sql",
+      "changed_db": false,
+      "rows_written": 0
+    },
+    "production_cost_huf": 0
   },
   "acceptance": {
     "77_44_6_1_C": "OPEN; this desktop-canvas interaction is verified, while nested/tabbed groups, floating panels, dynamic docking zones, and full workspace lifecycle remain open.",
