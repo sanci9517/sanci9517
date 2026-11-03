@@ -365,6 +365,16 @@ test('desktop dock separators resize by keyboard, announce width and finish inte
   assert.equal(await left.getAttribute('aria-valuenow'),'362','lost pointer capture keeps and announces the last usable width');
   assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('sanci-editor-shell-v2'))?.leftWidth),362,'lostpointercapture persists partial progress');
   await page.mouse.up();
+  await page.locator('.more-actions summary').click();
+  await page.locator('#openWorkspaceAppearance').click();
+  await page.locator('#workspaceAppearanceDialog[open]').waitFor();
+  await page.locator('#undoWorkspaceLayout').click();
+  assert.equal(await left.getAttribute('aria-valuenow'),'350','workspace Undo restores the pre-drag width after lostpointercapture');
+  assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('sanci-editor-shell-v2'))?.leftWidth),350,'Undo persists the prior local shell width');
+  await page.locator('#redoWorkspaceLayout').click();
+  assert.equal(await left.getAttribute('aria-valuenow'),'362','workspace Redo reapplies the pointer-resized width');
+  assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('sanci-editor-shell-v2'))?.leftWidth),362,'Redo persists the resized local shell width');
+  await page.locator('#closeWorkspaceAppearance').click();
   await page.reload({waitUntil:'load'});
   assert.equal(await page.locator('.left-resizer').getAttribute('aria-valuenow'),'362','keyboard and pointer widths survive reload');
   assert.equal(await page.locator('.right-resizer').getAttribute('aria-valuenow'),'340','the interrupted right-panel width survives reload');

@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-11-03",
+  "plan": "77.44.6.1.C — pointer-resize workspace Undo/Redo lifecycle",
+  "status": "TEST_ONLY_PASS_RUNTIME_UNCHANGED",
+  "scope": "Prove that real pointer-resize, pointer cancellation and lost pointer capture participate in the editor workspace history, not Page Model history.",
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "verified_base_head": "6e1338e2dcd581348df0cdd4d63bd85ba3c9eca8",
+    "runtime_source_commit": "df99eb7b37abaeb79509957198a1d6012e4d2f6a",
+    "runtime_source_unchanged": true,
+    "github_combined_statuses": [],
+    "aggregate_github_ci_pass": false
+  },
+  "test_change": {
+    "file": "tests/browser/editor-workspace-appearance.test.js",
+    "behavior": "After a real desktop pointer drag and a real pointercancel/lostpointercapture lifecycle, the workspace history control restores the prior dock width; Redo reapplies the resized width and local shell persistence. Page Model Save/Publish endpoint writes remain zero.",
+    "page_model_mutations": 0,
+    "save_publish_mutations": 0,
+    "runtime_assets_changed": false,
+    "runtime_dependencies_added": false
+  },
+  "validation": {
+    "target_browser": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-workspace-appearance.test.js — PASS, 9/9.",
+    "editor_unit": "npm run test:editor — PASS, 14/14 test files.",
+    "typecheck": "npm run typecheck — PASS.",
+    "migration_guard": "npm run test:web013:migration-gate — PASS; no migrations applied.",
+    "canonical_plan": "python3 scripts/check-canonical-plan.py — PASS; one complete 13-file canonical master.",
+    "active_point": "python3 scripts/audit-active-plan-point.py — PASS; next remains 77.44.6.1.C.",
+    "plan_contract": "python3 scripts/plan_contract.py — PASS; functional acceptance remains NOT_CERTIFIED.",
+    "traceability": "python3 scripts/build-feature-traceability.py --check — PASS, 396 mappings.",
+    "diff": "git diff --check — PASS.",
+    "manual_device_acceptance": "DEFERRED until complete Visual Editor acceptance at 77.44.7.F/77.44.8."
+  },
+  "production": {
+    "worker": "sanci9517-streamer-brand",
+    "latest_runtime_build_id": "16c1598e-d6da-4f0e-88a5-fcfdd54cefa4",
+    "latest_runtime_build_outcome": "success",
+    "latest_runtime_build_commit": "df99eb7b37abaeb79509957198a1d6012e4d2f6a",
+    "deployment_id": "b461334b-c1dd-46c9-8041-d3529a54507d",
+    "traffic_version": "d4599948-201c-4218-af62-444367323d45",
+    "worker_version_number": 3793,
+    "traffic_percentage": 100,
+    "health_smoke_at_start_of_followup": {
+      "path": "/api/health",
+      "http_status": 200,
+      "body": {"ok": true, "service": "sanci9517-streamer-brand", "version": "2.0.0", "server": "cloudflare-worker"}
+    },
+    "test_only_change_redeploy": false,
+    "runtime_asset_hash_recheck_needed": false
+  },
+  "cost": {
+    "additional_cost_huf": 0,
+    "paid_services_or_dependencies_added": false,
+    "free_quota_remaining": "not queried"
+  },
+  "acceptance": {
+    "77_44_6_1_C": "OPEN; nested/tabbed panel groups, floating panels, dynamic docking zones and full workspace lifecycle acceptance remain open.",
+    "full_visual_editor_manual_and_physical_acceptance": "DEFERRED until 77.44.7.F/77.44.8."
+  }
+}
