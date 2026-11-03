@@ -1,0 +1,87 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-11-03",
+  "plan": "77.44.6.1.C — same-origin multi-tab workspace lifecycle",
+  "status": "AUTOMATED_RUNTIME_RELEASE_PASS_C_REMAINS_OPEN",
+  "scope": "Synchronize the stored editor appearance, dock state and named profiles between open tabs; invalidate stale workspace Undo/Redo; preserve the one-drawer mobile contract and isolate every change from the Page Model.",
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "verified_parent_head": "daeacde0f58c57d1de95d84b9519c801f17e9518",
+    "runtime_commit": "109c7e1db7edce7d55b3c2ff82ac6a7086c7ac9c",
+    "github_branch_head_verified": true,
+    "github_combined_statuses": [],
+    "aggregate_github_ci_pass": false
+  },
+  "implementation": {
+    "changed_runtime_files": [
+      "public/editor-v2/index.html",
+      "public/editor-v2/ui/shell.js",
+      "public/editor-v2/ui/workspace-appearance.js"
+    ],
+    "test_file": "tests/browser/editor-workspace-appearance.test.js",
+    "same_origin_storage_events": [
+      "workspace appearance, layout and profile allowlist state",
+      "dock widths, panel visibility and active left tab",
+      "browser localStorage clear returns both state groups to defaults"
+    ],
+    "stale_undo_redo_history": "cleared when a changed external workspace snapshot arrives",
+    "mobile_conflicting_drawer_state": "normalizes to one active drawer",
+    "external_profile_application": "not automatic",
+    "page_model_mutations": 0,
+    "save_publish_mutations": 0,
+    "third_party_code_or_dependency_added": false,
+    "cost_huf": 0
+  },
+  "validation": {
+    "target_chromium": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-workspace-appearance.test.js — PASS, 10/10",
+    "editor_unit": "npm run test:editor — PASS, 14/14 test files",
+    "typecheck": "npm run typecheck — PASS",
+    "migration_guard": "npm run test:web013:migration-gate — PASS; no D1 migration applied",
+    "wrangler_dry_run": "npx wrangler deploy --dry-run — PASS, Wrangler 4.130.0, 168 assets, 335.81 KiB / 87.60 KiB gzip",
+    "canonical_plan": "python scripts/check-canonical-plan.py — PASS, complete 13-file master; acceptance NOT certified",
+    "plan_contract": "python scripts/plan_contract.py — PASS; functional acceptance NOT_CERTIFIED",
+    "active_point": "python scripts/audit-active-plan-point.py — PASS; current item and next block remain 77.44.6.1.C",
+    "traceability": "python scripts/build-feature-traceability.py --check — PASS, 396 mappings",
+    "safety_gate": "PASS",
+    "javascript_syntax": "node --check on changed JavaScript and browser test — PASS",
+    "diff_check": "git diff --check — PASS",
+    "manual_device_acceptance": "DEFERRED until complete Visual Editor acceptance at 77.44.7.F/77.44.8"
+  },
+  "production": {
+    "worker": "sanci9517-streamer-brand",
+    "automatic_build_id": "34ddf0dc-08c3-4011-ae9a-74b0d4a88266",
+    "build_outcome": "success",
+    "build_commit": "109c7e1db7edce7d55b3c2ff82ac6a7086c7ac9c",
+    "build_command": "npm run typecheck",
+    "deploy_command": "npm run deploy:safe",
+    "deployment_id": "b053ab3d-d40b-4784-8ceb-2887770a8d32",
+    "traffic_version": "ec371760-4ea8-45d7-bbf4-d80129474891",
+    "worker_version_number": 3794,
+    "traffic_percentage": 100,
+    "health_smoke": {
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+      "http_status": 200,
+      "body": {"ok": true, "service": "sanci9517-streamer-brand", "version": "2.0.0", "server": "cloudflare-worker"}
+    },
+    "asset_sha256_local_and_live_equal": {
+      "public/editor-v2/index.html": "7262445b664cf422a5074665976a6448e506ad1a36219889e72e3f2be9ddca8f",
+      "public/editor-v2/ui/shell.js": "b4a16095b1b5389cc878ec0dbe329a81463d71cb8d291996d6ca2d5d34ce9dab",
+      "public/editor-v2/ui/workspace-appearance.js": "529df15beb03cd83a3daa3240ea858b7f621202bc1f3bb26931610fa4a3cda36"
+    },
+    "github_combined_statuses": [],
+    "aggregate_github_ci_pass": false
+  },
+  "production_d1": {
+    "method": "Wrangler D1 query API; SELECT-only; no migrations list command",
+    "query": "SELECT name FROM d1_migrations ORDER BY name;",
+    "before_deploy": {"ledger_rows": 34, "latest": "0028_media_archive.sql", "rows_written": 0, "changed_db": false},
+    "after_deploy": {"ledger_rows": 34, "latest": "0028_media_archive.sql", "rows_written": 0, "changed_db": false},
+    "migration_or_data_write": false,
+    "r2_operation": false
+  },
+  "acceptance": {
+    "77_44_6_1_C": "OPEN; this verifies cross-tab workspace state sync only. Nested/tabbed panel groups, floating panels, dynamic dock zones and full workspace lifecycle acceptance remain open.",
+    "full_visual_editor_manual_and_physical_acceptance": "DEFERRED until 77.44.7.F/77.44.8"
+  }
+}

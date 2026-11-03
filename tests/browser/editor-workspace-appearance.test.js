@@ -460,6 +460,9 @@ test('open editor tabs synchronize saved appearance, dock state and profiles wit
   await page.waitForFunction(()=>document.querySelector('#workspaceProfile')?.options.length===2);
   assert.equal(await page.locator('#workspaceProfile option').last().textContent(),'Másik lap nézete','saved profiles become available in other open tabs');
   assert.equal(await page.locator('#workspaceProfile').inputValue(),'','receiving the profile does not apply it unexpectedly');
+  await second.evaluate(()=>localStorage.clear());
+  await page.waitForFunction(()=>document.querySelector('.editor-app')?.dataset.workspaceTheme==='graphite'&&document.querySelector('.workspace')?.dataset.workspaceDockOrder==='left-canvas-right'&&document.querySelector('#workspaceProfile')?.options.length===1);
+  assert.equal(await page.locator('.workspace').evaluate(element=>element.classList.contains('left-open')||element.classList.contains('right-open')),false,'clearing origin-local storage returns the other tab to a safe default layout');
   assert.deepEqual(writes,[],'workspace synchronization never invokes Page Model Save or Publish');
   assert.deepEqual(errors,[]);
 });
