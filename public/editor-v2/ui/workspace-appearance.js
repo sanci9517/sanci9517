@@ -139,6 +139,9 @@ export function mountWorkspaceAppearance({documentRef=globalThis.document,root=d
     profile:documentRef.querySelector('#workspaceProfile'),
   };
   const status=documentRef.querySelector('#workspaceAppearanceStatus');
+  const announcePersistence=(saved,durableMessage,sessionMessage='Ez a beállítás csak ebben a munkamenetben érvényes, mert a böngésző tárhelye nem használható.')=>{
+    if(status)status.textContent=saved?durableMessage:sessionMessage;
+  };
   const moveLeftToolUpButton=documentRef.querySelector('#moveWorkspaceLeftToolUp');
   const moveLeftToolDownButton=documentRef.querySelector('#moveWorkspaceLeftToolDown');
   let storage=null;
@@ -191,15 +194,15 @@ export function mountWorkspaceAppearance({documentRef=globalThis.document,root=d
   };
   const setLayout=(layout,{rememberChange=true}={})=>{
     if(!layouts.has(layout)||layout===value.layout)return false;
-    if(rememberChange)remember();value={...value,layout};paint();persist();
+    if(rememberChange)remember();value={...value,layout};paint();const saved=persist();
     onLayoutChange(layout);
-    if(status)status.textContent='Az elrendezés ezen az eszközön elmentve.';
+    announcePersistence(saved,'Az elrendezés ezen az eszközön elmentve.');
     return true;
   };
   const setDockOrder=order=>{
     if(!dockOrders.has(order)||order===value.dockOrder)return false;
-    remember();value={...value,dockOrder:order};paint();persist();
-    if(status)status.textContent='A panelek sorrendje ezen az eszközön elmentve. Kis képernyőn a mobil fiók elrendezése marad.';
+    remember();value={...value,dockOrder:order};paint();const saved=persist();
+    announcePersistence(saved,'A panelek sorrendje ezen az eszközön elmentve. Kis képernyőn a mobil fiók elrendezése marad.','A panelek sorrendje csak ebben a munkamenetben érvényes; kis képernyőn a biztonságos mobil fiókelrendezés marad.');
     return true;
   };
   const updateVisual=(key,next)=>{
@@ -210,23 +213,24 @@ export function mountWorkspaceAppearance({documentRef=globalThis.document,root=d
       return false;
     }
     if(normalized[key]===value[key])return true;
-    remember();value={...value,...normalized};paint();persist();
-    if(status)status.textContent='A munkaterület beállítása ezen az eszközön elmentve.';
+    remember();value={...value,...normalized};paint();const saved=persist();
+    announcePersistence(saved,'A munkaterület beállítása ezen az eszközön elmentve.');
     return true;
   };
   const applySnapshot=entry=>{
-    value=normalizeWorkspacePreferences(entry.preferences);paint();persist();
+    value=normalizeWorkspacePreferences(entry.preferences);paint();const saved=persist();
     onLayoutChange(value.layout);
     try{applyDockState(normalizeDockState(entry.dock))}catch{}
+    return saved;
   };
-  const undo=()=>{if(!undoStack.length)return false;redoStack.push(snapshot());applySnapshot(undoStack.pop());syncHistory();if(status)status.textContent='A munkaterület lépését visszavontad. Az oldal tartalma nem változott.';return true};
-  const redo=()=>{if(!redoStack.length)return false;undoStack.push(snapshot());applySnapshot(redoStack.pop());syncHistory();if(status)status.textContent='A munkaterület lépését újra alkalmaztad. Az oldal tartalma nem változott.';return true};
+  const undo=()=>{if(!undoStack.length)return false;redoStack.push(snapshot());const saved=applySnapshot(undoStack.pop());syncHistory();announcePersistence(saved,'A munkaterület lépését visszavontad. Az oldal tartalma nem változott.','A munkaterület lépését visszavontad, de ez csak ebben a munkamenetben érvényes; a böngésző tárhelye nem használható. Az oldal tartalma nem változott.');return true};
+  const redo=()=>{if(!redoStack.length)return false;undoStack.push(snapshot());const saved=applySnapshot(redoStack.pop());syncHistory();announcePersistence(saved,'A munkaterület lépését újra alkalmaztad. Az oldal tartalma nem változott.','A munkaterület lépését újra alkalmaztad, de ez csak ebben a munkamenetben érvényes; a böngésző tárhelye nem használható. Az oldal tartalma nem változott.');return true};
   const open=()=>{if(!dialog)return;dialog.showModal();openButton?.setAttribute('aria-expanded','true');fields.layout?.focus({preventScroll:true})};
   const close=()=>{if(dialog?.open)dialog.close()};
   const reset=()=>{
-    remember();value={...WORKSPACE_PREFERENCE_DEFAULTS,profiles:[]};paint();persist();
+    remember();value={...WORKSPACE_PREFERENCE_DEFAULTS,profiles:[]};paint();const saved=persist();
     onReset();onLayoutChange(value.layout);
-    if(status)status.textContent='A munkaterület visszaállt az alapbeállításokra. Az oldal tartalma változatlan.';
+    announcePersistence(saved,'A munkaterület visszaállt az alapbeállításokra ezen az eszközön. Az oldal tartalma változatlan.','A munkaterület ebben a munkamenetben visszaállt az alapbeállításokra; a böngésző tárhelye nem használható, így újranyitáskor a korábbi mentés betöltődhet. Az oldal tartalma változatlan.');
   };
   const saveProfile=()=>{
     const name=fields.profileName?.value?.trim().slice(0,PROFILE_NAME_LIMIT)||'';
@@ -243,17 +247,17 @@ export function mountWorkspaceAppearance({documentRef=globalThis.document,root=d
   const loadProfile=()=>{
     const profile=value.profiles.find(item=>item.id===fields.profile?.value);
     if(!profile)return false;
-    remember();value={...value,...profile.appearance};paint();persist();onLayoutChange(value.layout);
+    remember();value={...value,...profile.appearance};paint();const saved=persist();onLayoutChange(value.layout);
     try{applyDockState(normalizeDockState(profile.dock))}catch{}
-    if(status)status.textContent=`„${profile.name}” munkaterület betöltve. Az oldal tartalma nem változott.`;
+    announcePersistence(saved,`„${profile.name}” munkaterület betöltve. Az oldal tartalma nem változott.`,`„${profile.name}” munkaterület csak erre a munkamenetre töltődött be; a böngésző tárhelye nem használható. Az oldal tartalma nem változott.`);
     return true;
   };
   const deleteProfile=()=>{
     const id=fields.profile?.value;
     if(!id||!value.profiles.some(profile=>profile.id===id))return false;
     const name=value.profiles.find(profile=>profile.id===id)?.name;
-    remember();value={...value,profiles:value.profiles.filter(profile=>profile.id!==id)};paint();persist();
-    if(status)status.textContent=`„${name}” munkaterület-profil törölve. Visszavonás elérhető.`;
+    remember();value={...value,profiles:value.profiles.filter(profile=>profile.id!==id)};paint();const saved=persist();
+    announcePersistence(saved,`„${name}” munkaterület-profil törölve. Visszavonás elérhető.`,`„${name}” profilja csak ebből a munkamenetből törlődött; a böngésző tárhelye nem használható. Visszavonás elérhető.`);
     return true;
   };
   const exportProfile=()=>{

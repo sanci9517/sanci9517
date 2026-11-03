@@ -672,6 +672,38 @@ test('open editor tabs synchronize saved appearance, dock state and profiles wit
   assert.deepEqual(errors,[]);
 });
 
+test('workspace appearance and dock settings report session-only changes when browser storage is blocked',async t=>{
+  const {page,writes,errors}=await openEditor(t,{width:1440,height:900});
+  await openPreferences(page);
+  await page.evaluate(key=>{
+    const original=Storage.prototype.setItem;
+    Storage.prototype.setItem=function(name,value){if(name===key)throw new DOMException('Storage is disabled','SecurityError');return original.call(this,name,value)};
+  },WORKSPACE_PREFERENCES_KEY);
+
+  await page.locator('#workspaceTheme').selectOption('ocean');
+  assert.equal(await page.locator('.editor-app').getAttribute('data-workspace-theme'),'ocean','a session-only theme still takes effect');
+  await page.waitForFunction(()=>document.querySelector('#workspaceAppearanceStatus')?.textContent.includes('csak ebben a munkamenetben'));
+  assert.match(await page.locator('#workspaceAppearanceStatus').textContent(),/böngésző tárhelye nem használható/iu);
+
+  await page.locator('#workspaceLayout').selectOption('balanced');
+  await page.waitForFunction(()=>document.querySelector('#workspaceAppearanceStatus')?.textContent.includes('csak ebben a munkamenetben'));
+  assert.equal(await page.locator('.workspace').evaluate(element=>element.classList.contains('left-open')&&element.classList.contains('right-open')),true,'the session-only layout remains usable');
+
+  await page.locator('#workspaceDockOrder').selectOption('canvas-right-left');
+  await page.waitForFunction(()=>document.querySelector('#workspaceAppearanceStatus')?.textContent.includes('csak ebben a munkamenetben'));
+  assert.equal(await page.locator('.workspace').getAttribute('data-workspace-dock-order'),'canvas-right-left','the session-only dock order still applies');
+  await page.locator('#undoWorkspaceLayout').click();
+  await page.waitForFunction(()=>document.querySelector('#workspaceAppearanceStatus')?.textContent.includes('visszavontad'));
+  assert.match(await page.locator('#workspaceAppearanceStatus').textContent(),/csak ebben a munkamenetben/iu,'Undo reports that its result is not durable');
+  await page.locator('#redoWorkspaceLayout').click();
+  await page.waitForFunction(()=>document.querySelector('#workspaceAppearanceStatus')?.textContent.includes('újra alkalmaztad'));
+  assert.match(await page.locator('#workspaceAppearanceStatus').textContent(),/csak ebben a munkamenetben/iu,'Redo reports that its result is not durable');
+
+  assert.equal(await page.evaluate(key=>localStorage.getItem(key),WORKSPACE_PREFERENCES_KEY),null,'blocked storage does not claim that settings were persisted');
+  assert.deepEqual(writes,[],'local workspace settings never Save or Publish page content');
+  assert.deepEqual(errors,[]);
+});
+
 test('profile import explains when browser storage is unavailable instead of claiming the profile was saved',async t=>{
   const {page,writes,errors}=await openEditor(t,{width:390,height:844,isMobile:true,hasTouch:true});
   await openPreferences(page);
