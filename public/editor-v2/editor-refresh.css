@@ -654,9 +654,12 @@ button:focus-visible, summary:focus-visible, .rail-btn:focus-visible { outline: 
   }
   .workspace.left-open:not(.right-open) { --left-track:minmax(250px,var(--left-dock-width)); }
   .workspace.right-open:not(.left-open) { --right-track:minmax(260px,var(--right-dock-width)); }
+  /* Keep a usable editing surface visible when a saved layout opens both docks.
+     The half-viewport cap leaves at least 400px for the canvas at the desktop
+     breakpoint while still honoring each dock's saved width on wider screens. */
   .workspace.left-open.right-open {
-    --left-track:minmax(250px,var(--left-dock-width));
-    --right-track:minmax(260px,var(--right-dock-width));
+    --left-track:minmax(250px,min(var(--left-dock-width),calc((100vw - 400px)/2)));
+    --right-track:minmax(260px,min(var(--right-dock-width),calc((100vw - 400px)/2)));
   }
   .left-dock { grid-area:left; }
   .canvas-area { grid-area:canvas; }

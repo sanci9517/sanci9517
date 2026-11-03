@@ -154,6 +154,48 @@ test('the overflow menu stays in the responsive shell flow instead of covering I
   assert.deepEqual([...desktop.errors,...mobile.errors],[]);
 });
 
+test('desktop docks preserve a usable non-overlapped canvas at every dock order and saved maximum widths',async t=>{
+  const {page,writes,errors}=await openEditor(t,{width:1025,height:900});
+  await openPreferences(page);
+  await page.locator('#workspaceLayout').selectOption('balanced');
+  await page.evaluate(()=>{
+    document.documentElement.style.setProperty('--left-dock-width','460px');
+    document.documentElement.style.setProperty('--right-dock-width','440px');
+  });
+  const oldTrackRule=await page.evaluate(()=>{
+    const style=document.createElement('style');
+    style.textContent='@media (min-width:1025px){.workspace.left-open.right-open{--left-track:minmax(250px,var(--left-dock-width));--right-track:minmax(260px,var(--right-dock-width))}}';
+    document.head.append(style);
+    const width=document.querySelector('.canvas-area').getBoundingClientRect().width;
+    style.remove();
+    return width;
+  });
+  assert.ok(oldTrackRule<400,`the regression fixture recreates how two saved wide docks used to squeeze the 1025px canvas to ${oldTrackRule}px`);
+  const orderings=['left-canvas-right','canvas-left-right','left-right-canvas','right-left-canvas','right-canvas-left','canvas-right-left'];
+  const measured=[];
+  for(const width of [1025,1100,1280,1440,1920]){
+    await page.setViewportSize({width,height:900});
+    for(const order of orderings){
+      await page.locator('#workspaceDockOrder').selectOption(order);
+      const geometry=await page.evaluate(()=>{
+        const workspace=document.querySelector('.workspace');
+        const rect=selector=>{const value=document.querySelector(selector).getBoundingClientRect();return {left:value.left,right:value.right,width:value.width}};
+        const left=rect('#leftDock'),canvas=rect('.canvas-area'),right=rect('#rightDock');
+        return {left,canvas,right,order:workspace.dataset.workspaceDockOrder,scrollWidth:document.documentElement.scrollWidth};
+      });
+      assert.equal(geometry.order,order,`${order} is applied at ${width}px`);
+      assert.ok(geometry.canvas.width>=400,`${order} keeps at least 400px of canvas visible at ${width}px with both saved maximum-width docks open: ${JSON.stringify(geometry)}`);
+      assert.ok(geometry.left.right<=geometry.canvas.left+0.5||geometry.canvas.right<=geometry.left.left+0.5,`${order} left dock never covers canvas at ${width}px: ${JSON.stringify(geometry)}`);
+      assert.ok(geometry.right.right<=geometry.canvas.left+0.5||geometry.canvas.right<=geometry.right.left+0.5,`${order} right dock never covers canvas at ${width}px: ${JSON.stringify(geometry)}`);
+      assert.ok(geometry.scrollWidth<=width,`${order} stays within the ${width}px viewport`);
+      measured.push({width,order,canvas:Math.round(geometry.canvas.width),left:Math.round(geometry.left.width),right:Math.round(geometry.right.width)});
+    }
+  }
+  t.diagnostic(JSON.stringify({legacyCanvasAt1025:Math.round(oldTrackRule),testedCombinations:measured.length,minimumCanvas:Math.min(...measured.map(item=>item.canvas)),viewportMinimums:[1025,1100,1280,1440,1920].map(width=>({width,canvas:Math.min(...measured.filter(item=>item.width===width).map(item=>item.canvas))}))}));
+  assert.deepEqual(writes,[],'opening and arranging desktop panels never Save or Publish page content');
+  assert.deepEqual(errors,[]);
+});
+
 test('desktop docks can be reordered and local workspace profiles save, reload, undo and redo without page writes',async t=>{
   const {page,writes,errors}=await openEditor(t,{width:1440,height:900});
   await openPreferences(page);
