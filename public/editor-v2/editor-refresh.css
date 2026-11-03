@@ -185,6 +185,16 @@ button:focus-visible, summary:focus-visible, .rail-btn:focus-visible { outline: 
   .canvas { padding-bottom: calc(158px + env(safe-area-inset-bottom,0px)); }
   .left-dock:not(.closed), .right-dock:not(.closed) { bottom: calc(158px + env(safe-area-inset-bottom,0px)); }
   .mobile-backdrop { bottom: calc(158px + env(safe-area-inset-bottom,0px)); }
+  /* Long Hungarian helper text must not push the first usable panel control below the fold. */
+  .dock-heading > div { min-width: 0; overflow: hidden; }
+  .dock-heading .panel-subtitle {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    overflow-wrap: anywhere;
+    line-height: 1.25;
+  }
 }
 
 /* UX-P0: editor controls are overlays and never occupy Flex/Grid cells. */

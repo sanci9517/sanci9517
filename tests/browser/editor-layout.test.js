@@ -39,6 +39,9 @@ async function audit(page,label){
       const parent=el.closest('.topbar,.canvas-toolbar,.mobile-bottom-bar');
       const p=parent?.getBoundingClientRect();
       if(p&&!el.closest('.more-actions-menu')&&(r.left<p.left-1||r.right>p.right+1||r.top<p.top-1||r.bottom>p.bottom+1))errors.push(`${id} clipped by ${parent.className}`);
+      const scroller=el.closest('.dock-content');
+      const s=scroller?.getBoundingClientRect();
+      if(s&&(r.left<s.left-1||r.right>s.right+1||r.top<s.top-1||r.bottom>s.bottom+1))errors.push(`${id} clipped by dock scroll viewport`);
       const center=document.elementFromPoint(r.left+r.width/2,r.top+r.height/2);
       if(!el.contains(center)&&!center?.contains(el)){const blocker=center?.getBoundingClientRect();errors.push(`${id} blocked at center by ${center?.id||center?.className||center?.tagName} (target ${JSON.stringify({x:r.x,y:r.y,width:r.width,height:r.height})}; blocker ${blocker&&JSON.stringify({x:blocker.x,y:blocker.y,width:blocker.width,height:blocker.height})})`)}
     }
@@ -67,7 +70,7 @@ test('Editor shell has no inaccessible or overlapping controls across widths and
   for(const width of widths)for(const zoom of scales){
     const effective=Math.floor(width/zoom);
     const page=await browser.newPage({viewport:{width:effective,height:900},deviceScaleFactor:1});
-    await page.goto(base,{waitUntil:'load'});
+    await page.goto(base,{waitUntil:'domcontentloaded'});
     await page.waitForSelector('#editorMenu');
     await page.locator('#pageSelect').evaluate(el=>{el.innerHTML='<option>Rendkívül hosszú magyar oldalcím és állapotjelzés</option>'});
     await page.locator('#saveStatus').evaluate(el=>{el.textContent='A mentés folyamatban, kérjük várj a visszajelzésre'});
@@ -75,6 +78,26 @@ test('Editor shell has no inaccessible or overlapping controls across widths and
     if(zoom===1&&[1440,768,390].includes(width))await page.screenshot({path:`/tmp/editor-issue42-${width}-closed.png`,fullPage:true});
     if(zoom===1){
       await page.locator('#editorMenu').click();
+      if(effective<=360){
+        await page.locator('.dock-heading .panel-subtitle').first().evaluate(el=>{
+          el.textContent='A munkaterület részletes oldalszerkezetének és minden kiválasztott elemének hosszú, magyar nyelvű súgóleírása, amely keskeny telefonon és nagyított nézetben sem takarhatja el az első használható panelműveletet.';
+        });
+        const compactHeader=await page.evaluate(()=>{
+          const subtitle=document.querySelector('.dock-heading .panel-subtitle');
+          const action=document.querySelector('#newPagePanel');
+          const style=getComputedStyle(subtitle),lineHeight=parseFloat(style.lineHeight);
+          const sr=subtitle.getBoundingClientRect(),ar=action.getBoundingClientRect();
+          const hit=document.elementFromPoint(ar.left+ar.width/2,ar.top+ar.height/2);
+          return {display:style.display,lineClamp:style.webkitLineClamp,boxOrient:style.webkitBoxOrient,lineHeight,subtitleHeight:sr.height,subtitleScrollHeight:subtitle.scrollHeight,
+            actionRect:{left:ar.left,right:ar.right,top:ar.top,bottom:ar.bottom},actionReachable:!!hit&&(hit===action||action.contains(hit)),
+            headerBottom:document.querySelector('.dock-heading').getBoundingClientRect().bottom};
+        });
+        assert.equal(compactHeader.lineClamp,'2',`${width}px mobile panel description uses the two-line clamp: ${JSON.stringify(compactHeader)}`);
+        assert.equal(compactHeader.boxOrient,'vertical',`${width}px mobile panel description clamps vertically`);
+        assert.ok(compactHeader.subtitleHeight<=compactHeader.lineHeight*2+1,`${width}px keeps panel help to two lines: ${JSON.stringify(compactHeader)}`);
+        assert.ok(compactHeader.headerBottom<compactHeader.actionRect.top+1,`${width}px heading does not cover its first action`);
+        assert.ok(compactHeader.actionReachable,`${width}px first panel action remains pointer reachable: ${JSON.stringify(compactHeader)}`);
+      }
       if([1440,768,390].includes(width)){
         await page.locator('#pageList').evaluate(el=>{
           const row=document.createElement('div');row.className='page-row';
@@ -88,6 +111,7 @@ test('Editor shell has no inaccessible or overlapping controls across widths and
       }
       await audit(page,`${width}px left open`);
       await page.locator('.rail-btn[data-tab="navigation"]').click();
+      if(effective<=360)await page.locator('#navigationPublish').scrollIntoViewIfNeeded();
       await audit(page,`${width}px navigation`);
       await page.locator('.rail-btn[data-tab="layers"]').click();
       await audit(page,`${width}px layers`);
@@ -119,7 +143,8 @@ test('mobile inspector is a bottom sheet with focus restoration and single publi
   const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||(existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined),args:['--no-sandbox']});
   t.after(async()=>{await browser.close();await new Promise(r=>http.close(r))});
   const page=await browser.newPage({viewport:{width:390,height:850}});
-  await page.goto(`http://127.0.0.1:${http.address().port}/editor-v2/index.html`,{waitUntil:'load'});
+  await page.goto(`http://127.0.0.1:${http.address().port}/editor-v2/index.html`,{waitUntil:'domcontentloaded'});
+  await page.waitForSelector('#editorMenu');
   const inspectorButton=page.locator('#openInspector');
   await inspectorButton.click();
   assert.equal(await inspectorButton.getAttribute('aria-expanded'),'true');
