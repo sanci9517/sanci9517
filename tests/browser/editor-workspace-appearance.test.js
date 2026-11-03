@@ -46,8 +46,12 @@ async function openEditor(t,{width=1366,height=900,isMobile=false,hasTouch=false
 
 async function openPreferences(page){
   const menu=page.locator('.more-actions');
-  if(!await menu.evaluate(element=>element.open))await menu.locator('summary').click();
-  await page.locator('#openWorkspaceAppearance').click();
+  const button=page.locator('#openWorkspaceAppearance');
+  if(!await button.isVisible()){
+    await menu.evaluate(element=>{element.open=true});
+    await button.waitFor({state:'visible'});
+  }
+  await button.click();
   await page.locator('#workspaceAppearanceDialog[open]').waitFor();
   await page.waitForFunction(()=>[...(document.querySelector('#workspaceAppearanceDialog')?.getAnimations()||[])].every(animation=>animation.playState==='finished'));
 }
@@ -392,6 +396,9 @@ test('desktop panel and canvas drag reordering is an accessible-selector peer an
   const {page,writes,errors}=await openEditor(t,{width:1440,height:900});
   await openPreferences(page);
   await page.locator('#workspaceLayout').selectOption('balanced');
+  await page.waitForFunction(()=>!document.querySelector('#leftDock')?.classList.contains('closed')&&!document.querySelector('#rightDock')?.classList.contains('closed'),'balanced desktop workspace opens both editing docks');
+  await page.locator('#workspaceDockOrder').selectOption('left-canvas-right');
+  await page.waitForFunction(()=>document.querySelector('.workspace')?.dataset.workspaceDockOrder==='left-canvas-right');
   await page.locator('#closeWorkspaceAppearance').click();
   const preview=await page.evaluate(()=>{
     const handle=document.querySelector('#leftDock .dock-heading');
@@ -420,7 +427,7 @@ test('desktop panel and canvas drag reordering is an accessible-selector peer an
     handle.dispatchEvent(new DragEvent('dragstart',{bubbles:true,cancelable:true,dataTransfer}));
     target.dispatchEvent(new DragEvent('dragover',{bubbles:true,cancelable:true,dataTransfer,clientX}));
     workspace.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true,cancelable:true}));
-    const afterEscape={order:workspace.dataset.workspaceDockOrder,saved:localStorage.getItem(key),preview:target.hasAttribute('data-dock-drop-position'),dragging:document.body.classList.contains('workspace-reordering')};
+    const afterEscape={order:workspace.dataset.workspaceDockOrder,saved:localStorage.getItem(key),preview:target.hasAttribute('data-dock-drop-position'),dragging:document.body.classList.contains('workspace-reordering'),leftOpen:!document.querySelector('#leftDock').classList.contains('closed'),rightOpen:!document.querySelector('#rightDock').classList.contains('closed')};
     target.dispatchEvent(new DragEvent('drop',{bubbles:true,cancelable:true,dataTransfer,clientX}));
     return {...afterEscape,afterLateDrop:workspace.dataset.workspaceDockOrder,savedAfterLateDrop:localStorage.getItem(key),announcement:document.querySelector('#workspaceDockStatus')?.textContent};
   },WORKSPACE_PREFERENCES_KEY);
@@ -429,8 +436,11 @@ test('desktop panel and canvas drag reordering is an accessible-selector peer an
   assert.equal(canceled.savedAfterLateDrop,canceled.saved,'an ignored drop does not persist workspace changes');
   assert.equal(canceled.preview,false,'Escape clears the temporary target marker');
   assert.equal(canceled.dragging,false,'Escape exits reordering mode');
+  assert.equal(canceled.leftOpen,true,'Escape cancels the drag without collapsing the page tools dock');
+  assert.equal(canceled.rightOpen,true,'Escape cancels the drag without collapsing the Inspector');
   assert.equal(canceled.announcement,'','a canceled move is not announced as completed');
   const result=await page.evaluate(key=>{
+    const workspace=document.querySelector('.workspace');
     const handle=document.querySelector('#leftDock .dock-heading');
     const target=document.querySelector('.canvas-area');
     const point=target.getBoundingClientRect();
@@ -440,7 +450,6 @@ test('desktop panel and canvas drag reordering is an accessible-selector peer an
     target.dispatchEvent(new DragEvent('dragover',{bubbles:true,cancelable:true,dataTransfer,clientX}));
     target.dispatchEvent(new DragEvent('drop',{bubbles:true,cancelable:true,dataTransfer,clientX}));
     handle.dispatchEvent(new DragEvent('dragend',{bubbles:true,cancelable:true,dataTransfer}));
-    const workspace=document.querySelector('.workspace');
     return {order:workspace.dataset.workspaceDockOrder,areas:getComputedStyle(workspace).gridTemplateAreas,left:document.querySelector('#leftDock').getBoundingClientRect().left,canvas:target.getBoundingClientRect().left,dragHint:handle.getAttribute('draggable'),saved:JSON.parse(localStorage.getItem(key))?.dockOrder,preview:target.hasAttribute('data-dock-drop-position'),dragging:document.body.classList.contains('workspace-reordering'),announcement:document.querySelector('#workspaceDockStatus')?.textContent};
   },WORKSPACE_PREFERENCES_KEY);
   assert.equal(result.order,'canvas-left-right');
@@ -687,9 +696,32 @@ test('open editor tabs synchronize saved appearance, dock state and profiles wit
   assert.equal(await second.locator('#undoWorkspaceLayout').isDisabled(),true,'external workspace changes clear history based on stale state');
   assert.match(await second.locator('#workspaceAppearanceStatus').textContent(),/másik szerkesztőlapon/iu,'the receiving tab explains why its local history was cleared');
 
+  await page.locator('#closeWorkspaceAppearance').click();
+  const activeDrag=await page.evaluate(()=>{
+    const handle=document.querySelector('#leftDock .dock-heading'),target=document.querySelector('.canvas-area'),rect=target.getBoundingClientRect(),dataTransfer=new DataTransfer();
+    handle.dispatchEvent(new DragEvent('dragstart',{bubbles:true,cancelable:true,dataTransfer}));
+    target.dispatchEvent(new DragEvent('dragover',{bubbles:true,cancelable:true,dataTransfer,clientX:rect.left+rect.width-4}));
+    window.__workspaceDockTransfer=dataTransfer;
+    return {order:document.querySelector('.workspace').dataset.workspaceDockOrder,preview:target.dataset.dockDropPosition,active:document.body.classList.contains('workspace-reordering')};
+  });
+  assert.equal(activeDrag.preview,'after');
+  assert.equal(activeDrag.active,true);
   await second.locator('#workspaceDockOrder').selectOption('canvas-right-left');
   await page.waitForFunction(()=>document.querySelector('.workspace')?.dataset.workspaceDockOrder==='canvas-right-left');
   assert.equal(await page.locator('#workspaceDockOrder').inputValue(),'canvas-right-left','the dock-order preference is shared across open tabs');
+  const staleDrop=await page.evaluate(()=>{
+    const target=document.querySelector('.canvas-area'),rect=target.getBoundingClientRect(),dataTransfer=window.__workspaceDockTransfer;
+    target.dispatchEvent(new DragEvent('drop',{bubbles:true,cancelable:true,dataTransfer,clientX:rect.left+rect.width-4}));
+    const result={order:document.querySelector('.workspace').dataset.workspaceDockOrder,preview:target.hasAttribute('data-dock-drop-position'),active:document.body.classList.contains('workspace-reordering'),announcement:document.querySelector('#workspaceDockStatus')?.textContent,saved:JSON.parse(localStorage.getItem('sanci-editor-workspace-preferences-v2'))?.dockOrder};
+    delete window.__workspaceDockTransfer;
+    return result;
+  });
+  assert.equal(staleDrop.order,'canvas-right-left','the external order wins over a drag started from stale geometry');
+  assert.equal(staleDrop.saved,'canvas-right-left','a canceled cross-tab drag does not persist a stale order');
+  assert.equal(staleDrop.preview,false,'external workspace changes clear the old drop target');
+  assert.equal(staleDrop.active,false,'external workspace changes cancel the in-progress interaction');
+  assert.equal(staleDrop.announcement,'','a canceled drag is not announced as a completed move');
+  await openPreferences(page);
 
   await page.locator('#workspaceLeftTool').selectOption('layers');
   await page.locator('#moveWorkspaceLeftToolUp').click();
@@ -709,6 +741,37 @@ test('open editor tabs synchronize saved appearance, dock state and profiles wit
   await page.waitForFunction(()=>document.querySelector('.editor-app')?.dataset.workspaceTheme==='graphite'&&document.querySelector('.workspace')?.dataset.workspaceDockOrder==='left-canvas-right'&&document.querySelector('#workspaceProfile')?.options.length===1);
   assert.equal(await page.locator('.workspace').evaluate(element=>element.classList.contains('left-open')||element.classList.contains('right-open')),false,'clearing origin-local storage returns the other tab to a safe default layout');
   assert.deepEqual(writes,[],'workspace synchronization never invokes Page Model Save or Publish');
+  assert.deepEqual(errors,[]);
+});
+
+
+test('desktop dock drag cancels when the viewport switches to the mobile drawer shell',async t=>{
+  const {page,writes,errors}=await openEditor(t,{width:1440,height:900});
+  await openPreferences(page);
+  await page.locator('#workspaceLayout').selectOption('balanced');
+  await page.locator('#closeWorkspaceAppearance').click();
+  const started=await page.evaluate(()=>{
+    const handle=document.querySelector('#leftDock .dock-heading'),target=document.querySelector('.canvas-area'),rect=target.getBoundingClientRect(),dataTransfer=new DataTransfer();
+    handle.dispatchEvent(new DragEvent('dragstart',{bubbles:true,cancelable:true,dataTransfer}));
+    target.dispatchEvent(new DragEvent('dragover',{bubbles:true,cancelable:true,dataTransfer,clientX:rect.left+rect.width-4}));
+    window.__workspaceDockTransfer=dataTransfer;
+    return {order:document.querySelector('.workspace').dataset.workspaceDockOrder,active:document.body.classList.contains('workspace-reordering')};
+  });
+  assert.equal(started.active,true,'desktop drag is active before the responsive boundary changes');
+  await page.setViewportSize({width:390,height:844});
+  await page.waitForFunction(()=>!document.body.classList.contains('workspace-reordering'));
+  const late=await page.evaluate(()=>{
+    const target=document.querySelector('.canvas-area'),rect=target.getBoundingClientRect(),dataTransfer=window.__workspaceDockTransfer;
+    target.dispatchEvent(new DragEvent('drop',{bubbles:true,cancelable:true,dataTransfer,clientX:rect.left+rect.width-4}));
+    const result={order:document.querySelector('.workspace').dataset.workspaceDockOrder,preview:target.hasAttribute('data-dock-drop-position'),active:document.body.classList.contains('workspace-reordering')};
+    delete window.__workspaceDockTransfer;
+    return result;
+  });
+  assert.equal(late.order,started.order,'a mobile breakpoint cancels the prior desktop insertion');
+  assert.equal(late.preview,false,'responsive change clears desktop-only target styling');
+  assert.equal(late.active,false,'mobile mode does not retain desktop drag state');
+  assert.ok(!(await page.locator('#leftDock').isVisible()&&await page.locator('#rightDock').isVisible()),'the mobile single-drawer rule remains intact');
+  assert.deepEqual(writes,[],'canceling dock interactions never writes page content');
   assert.deepEqual(errors,[]);
 });
 

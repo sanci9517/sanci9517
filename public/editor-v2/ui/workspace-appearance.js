@@ -114,7 +114,7 @@ export function applyWorkspacePreferences(root,preferences){
   root.style.setProperty('--accent',value.accent);
   return value;
 }
-export function mountWorkspaceAppearance({documentRef=globalThis.document,root=documentRef?.querySelector('.editor-app'),onLayoutChange=()=>{},onReset=()=>{},readDockState=()=>({}),applyDockState=()=>{},moveDockTab=()=>false}={}){
+export function mountWorkspaceAppearance({documentRef=globalThis.document,root=documentRef?.querySelector('.editor-app'),onLayoutChange=()=>{},onReset=()=>{},readDockState=()=>({}),applyDockState=()=>{},moveDockTab=()=>false,onExternalChange=()=>{}}={}){
   if(!documentRef||!root)throw new Error('A document and editor root are required');
   const dialog=documentRef.querySelector('#workspaceAppearanceDialog');
   const openButton=documentRef.querySelector('#openWorkspaceAppearance');
@@ -328,6 +328,7 @@ export function mountWorkspaceAppearance({documentRef=globalThis.document,root=d
     let next;
     try{next=normalizeWorkspacePreferences(event.newValue?JSON.parse(event.newValue):{})}catch{next=normalizeWorkspacePreferences({})}
     if(JSON.stringify(next)===JSON.stringify(value))return;
+    try{onExternalChange({source:'storage',area:'appearance'})}catch{}
     // History from this tab is based on an older shared workspace. Keeping it
     // would let a later Undo silently replace the state received from another tab.
     value=next;undoStack=[];redoStack=[];paint();

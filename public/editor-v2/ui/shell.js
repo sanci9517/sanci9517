@@ -19,6 +19,7 @@ const initialAppearance=readWorkspacePreferences();
 applyWorkspacePreferences(editorRoot,initialAppearance);
 let focusBeforeMobilePanel=null;
 let workspaceAppearance=null;
+let cancelWorkspaceDrag=()=>{};
 let canvasFocus=false;
 let desktopDockSnapshot=null;
 
@@ -271,6 +272,7 @@ function setupDockReordering(){
   };
   const refreshHandles=()=>workspace.querySelectorAll('.dock-heading,.canvas-toolbar').forEach(handle=>handle.setAttribute('draggable',String(!mobileQuery.matches)));
   const restoreResponsiveDockLayout=()=>{
+    finishDrag();
     if(mobileQuery.matches){
       if(!desktopDockSnapshot)desktopDockSnapshot={left:!panels.left?.classList.contains('closed'),right:!panels.right?.classList.contains('closed')};
       const focusedSide=Object.entries(panels).find(([,panel])=>panel?.contains(document.activeElement)&&!panel.classList.contains('closed'))?.[0];
@@ -335,7 +337,11 @@ function setupDockReordering(){
     finishDrag();
   });
   workspace.addEventListener('dragend',finishDrag);
-  workspace.addEventListener('keydown',event=>{if(event.key==='Escape'&&dragSourceId)finishDrag()});
+  workspace.addEventListener('keydown',event=>{
+    if(event.key!=='Escape'||!dragSourceId)return;
+    event.preventDefault();event.stopPropagation();finishDrag();
+  });
+  return finishDrag;
 }
 
 root.style.setProperty('--left-dock-width',`${clamp(Number(persisted.leftWidth),resizeLimits.left)}px`);
@@ -344,7 +350,7 @@ root.style.setProperty('--right-dock-width',`${clamp(Number(persisted.rightWidth
 setPanel('left',!mobileQuery.matches && Boolean(persisted.leftOpen),{save:false});
 setPanel('right',!mobileQuery.matches && Boolean(persisted.rightOpen),{save:false});
 showLeftTab(persisted.leftTab,{save:false,open:false});
-workspaceAppearance=mountWorkspaceAppearance({documentRef:document,root:editorRoot,onLayoutChange:applyWorkspaceLayout,readDockState:()=>persisted,moveDockTab:moveLeftTab,applyDockState:state=>{
+workspaceAppearance=mountWorkspaceAppearance({documentRef:document,root:editorRoot,onLayoutChange:applyWorkspaceLayout,onExternalChange:()=>cancelWorkspaceDrag(),readDockState:()=>persisted,moveDockTab:moveLeftTab,applyDockState:state=>{
   applyDockState(state);
 },onReset:()=>{
   persisted={...defaults};
@@ -381,13 +387,14 @@ function applyDockState(state,{save=true}={}){
 window.addEventListener('storage',event=>{
   if(event.key!==null&&event.key!==STORAGE_KEY)return;
   try{if(event.storageArea&&event.storageArea!==window.localStorage)return}catch{return}
+  cancelWorkspaceDrag();
   let next;
   try{next=event.newValue?JSON.parse(event.newValue):defaults}catch{next=defaults}
   applyDockState(next,{save:false});
   workspaceAppearance?.clearExternalDockHistory();
   emit('workspace:external-change',{source:'storage',area:'dock'});
 });
-setupDockReordering();
+cancelWorkspaceDrag=setupDockReordering()||(()=>{});
 
 document.querySelector('#editorMenu')?.addEventListener('click',()=>{
   if(canvasFocus){setCanvasFocus(false);showLeftTab(persisted.leftTab||'pages',{customize:true});return}
