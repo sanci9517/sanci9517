@@ -25,6 +25,60 @@
 .editor-app[data-workspace-theme="aurora"] .more-actions-menu {
   background: var(--editor-raised);
 }
+.editor-app[data-workspace-theme="ocean"] {
+  --editor-surface: #10232e;
+  --editor-raised: #183543;
+  --editor-line: #315365;
+  --bg: #09151d;
+  --panel: #10232e;
+  --panel2: #0d1c26;
+  --line: #315365;
+  --text: #edf8ff;
+  --muted: #abc3d0;
+}
+.editor-app[data-workspace-theme="sage"] {
+  --editor-surface: #18251b;
+  --editor-raised: #253629;
+  --editor-line: #465c49;
+  --bg: #0d160f;
+  --panel: #18251b;
+  --panel2: #121d15;
+  --line: #465c49;
+  --text: #eff8f0;
+  --muted: #b7c9b9;
+}
+.editor-app[data-workspace-theme="cinder"] {
+  --editor-surface: #261b17;
+  --editor-raised: #382720;
+  --editor-line: #63483a;
+  --bg: #160f0c;
+  --panel: #261b17;
+  --panel2: #1d1511;
+  --line: #63483a;
+  --text: #fff4ec;
+  --muted: #dec1ae;
+}
+.editor-app[data-workspace-theme="ocean"] .topbar,
+.editor-app[data-workspace-theme="ocean"] .mobile-bottom-bar { background: #0d1c26; }
+.editor-app[data-workspace-theme="sage"] .topbar,
+.editor-app[data-workspace-theme="sage"] .mobile-bottom-bar { background: #121d15; }
+.editor-app[data-workspace-theme="cinder"] .topbar,
+.editor-app[data-workspace-theme="cinder"] .mobile-bottom-bar { background: #1d1511; }
+.editor-app[data-workspace-theme="ocean"] .tool-rail { background: #0b1921; }
+.editor-app[data-workspace-theme="sage"] .tool-rail { background: #101a12; }
+.editor-app[data-workspace-theme="cinder"] .tool-rail { background: #1a120e; }
+.editor-app[data-workspace-theme="ocean"] .dock-heading,
+.editor-app[data-workspace-theme="ocean"] .dock-content,
+.editor-app[data-workspace-theme="ocean"] .right-dock .dock-content,
+.editor-app[data-workspace-theme="sage"] .dock-heading,
+.editor-app[data-workspace-theme="sage"] .dock-content,
+.editor-app[data-workspace-theme="sage"] .right-dock .dock-content,
+.editor-app[data-workspace-theme="cinder"] .dock-heading,
+.editor-app[data-workspace-theme="cinder"] .dock-content,
+.editor-app[data-workspace-theme="cinder"] .right-dock .dock-content { background: var(--editor-surface); }
+.editor-app[data-workspace-theme="ocean"] .more-actions-menu,
+.editor-app[data-workspace-theme="sage"] .more-actions-menu,
+.editor-app[data-workspace-theme="cinder"] .more-actions-menu { background: var(--editor-raised); }
 .editor-app[data-workspace-density="compact"] .dock-heading {
   min-height: 58px;
   padding-inline: 10px;

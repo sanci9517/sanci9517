@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-11-03",
+  "plan": "77.44.6.1.C — five selectable editor workspace designs",
+  "status": "PASS_RUNTIME_SLICE_FULL_C_OPEN_RELEASE_PENDING",
+  "scope": "Add selectable visual designs to the editor workspace only. This does not change page content, Page Model state, Save, or Publish. The complete 77.44.6.1.C work and full Visual Editor acceptance remain OPEN.",
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "previous_head": "e01a88b9482810cb7564557dcf6fdd675f8cd163",
+    "github_head_before_change": "e01a88b9482810cb7564557dcf6fdd675f8cd163",
+    "runtime_commit": "PENDING",
+    "push": "NOT DONE",
+    "aggregate_github_ci_pass": false
+  },
+  "designs": [
+    { "id": "graphite", "name": "Grafit", "description": "visszafogott grafitszürke" },
+    { "id": "aurora", "name": "Aurora", "description": "lila" },
+    { "id": "ocean", "name": "Óceán", "description": "kékeszöld" },
+    { "id": "sage", "name": "Zsálya", "description": "zöld" },
+    { "id": "cinder", "name": "Parázs", "description": "meleg bronz" }
+  ],
+  "implementation": {
+    "files": [
+      "public/editor-v2/index.html",
+      "public/editor-v2/ui/shell.js",
+      "public/editor-v2/ui/workspace-appearance.js",
+      "public/editor-v2/workspace-appearance.css",
+      "tests/editor-workspace-appearance.test.js",
+      "tests/browser/editor-workspace-appearance.test.js"
+    ],
+    "architecture": "Reuses the existing allowlisted workspace preference, profile, CSS variable, local history, and cross-tab mechanisms. No second theme store or runtime dependency was added.",
+    "safety": [
+      "theme ids are selected from a fixed allowlist",
+      "the workspace accent retains at least 3:1 contrast against every supported palette surface",
+      "themes only style editor shell surfaces and do not modify page content",
+      "Save and Publish remain separate operations"
+    ],
+    "local_source_sha256": {
+      "public/editor-v2/index.html": "29b402e48bdb8011df529863a394993e3eff1ae9af2b58b65481e31edc251402",
+      "public/editor-v2/ui/shell.js": "1f65b25765906c6dcfb5fabbd1324c80015a21ddb297ed582c4e880b7f8e722b",
+      "public/editor-v2/ui/workspace-appearance.js": "def1dd61d5ad4a1bd54219bd5c49f2326b0703de9ec44ab9ea2e0b7c6e70125a",
+      "public/editor-v2/workspace-appearance.css": "b44cd2bd6cec1c43569127542fd152fb2e9f194497ce7c1c26cb6f4df20fdfc3"
+    },
+    "page_model_mutations": 0,
+    "save_publish_requests_from_theme_tests": 0,
+    "runtime_dependencies_added": false,
+    "paid_services_added": false,
+    "reuse_review": "Project-owned CSS tokens and workspace preference/profile code were reused. No external product source code was copied. Existing benchmark findings for Figma, Framer, Webflow, Wix Studio, Shopify, Elementor, Bricks, Gutenberg, Canva, Squarespace, Builder, Storyblok, Penpot, and Dockview remain in the canonical plan; this slice adopts no third-party runtime code."
+  },
+  "validation": {
+    "target_browser": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-workspace-appearance.test.js — PASS, 13/13. Includes desktop and mobile five-theme visual, local persistence, Page Model and Save/Publish non-mutation coverage.",
+    "editor_unit": "npm run test:editor — PASS, 14/14 test files.",
+    "typecheck": "npm run typecheck — PASS.",
+    "migration_guard": "npm run test:web013:migration-gate — PASS; no migration applied.",
+    "canonical_plan": "python3 scripts/check-canonical-plan.py — PASS; 13-file canonical master.",
+    "active_point": "python3 scripts/audit-active-plan-point.py — PASS; next remains 77.44.6.1.C.",
+    "plan_contract": "python3 scripts/plan_contract.py — PASS; functional acceptance remains NOT_CERTIFIED.",
+    "traceability": "python3 scripts/build-feature-traceability.py --check — PASS; 396 source mappings.",
+    "wrangler_dry_run": "WRANGLER_LOG_PATH=/tmp/sanci-wrangler-logs WRANGLER_SEND_METRICS=false npx wrangler deploy --dry-run — PASS; 168 assets, 335.81 KiB / 87.60 KiB gzip.",
+    "remote_d1_preflight": {
+      "method": "Cloudflare D1 query API, SELECT-only SQL",
+      "sql": "SELECT name FROM d1_migrations ORDER BY name",
+      "rows_read": 34,
+      "latest_migration": "0028_media_archive.sql",
+      "changed_db": false,
+      "rows_written": 0
+    },
+    "production_health_and_asset_hashes": "PENDING DEPLOYMENT; no production result claimed.",
+    "github_combined_statuses": [],
+    "aggregate_github_ci_pass": false
+  },
+  "deferred": [
+    "77.44.6.1.C remains OPEN: remaining profile transfer/storage feedback, floating/nested docks and the complete workspace lifecycle are not covered by this theme slice.",
+    "Full Visual Editor manual and physical-device acceptance remains deferred until the canonical 77.44.7.F/77.44.8 gate.",
+    "Production Worker deployment, health, and changed-asset hash comparison remain pending until the verified runtime commit is pushed and rollout is observed."
+  ],
+  "cost": "0 HUF; no paid software, API, infrastructure, or dependency added."
+}

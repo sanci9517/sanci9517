@@ -37,7 +37,7 @@ async function openEditor(t,{width=1366,height=900,isMobile=false,hasTouch=false
   const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||(existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined),args:['--no-sandbox']});
   t.after(()=>browser.close());
   const context=await browser.newContext({viewport:{width,height},isMobile,hasTouch});t.after(()=>context.close());
-  const page=await context.newPage();page.setDefaultTimeout(8000);
+  const page=await context.newPage();page.setDefaultTimeout(8000);page.setDefaultNavigationTimeout(20_000);
   const errors=[];page.on('pageerror',error=>errors.push(error.message));
   await page.goto(`http://127.0.0.1:${fixture.server.address().port}/editor-v2/index.html`,{waitUntil:'load'});
   await page.locator('.page-canvas .node').first().waitFor();
@@ -45,9 +45,11 @@ async function openEditor(t,{width=1366,height=900,isMobile=false,hasTouch=false
 }
 
 async function openPreferences(page){
-  await page.locator('.more-actions summary').click();
+  const menu=page.locator('.more-actions');
+  if(!await menu.evaluate(element=>element.open))await menu.locator('summary').click();
   await page.locator('#openWorkspaceAppearance').click();
   await page.locator('#workspaceAppearanceDialog[open]').waitFor();
+  await page.waitForFunction(()=>[...(document.querySelector('#workspaceAppearanceDialog')?.getAnimations()||[])].every(animation=>animation.playState==='finished'));
 }
 
 test('personal workspace theme, density and panel layout persist locally without changing or sending page content',async t=>{
@@ -81,6 +83,48 @@ test('personal workspace theme, density and panel layout persist locally without
   assert.equal(await page.locator('#workspaceLayout').inputValue(),'canvas');
   assert.equal(await page.locator('.workspace').evaluate(element=>element.classList.contains('left-open')),false);
   assert.deepEqual(writes,[]);
+  assert.deepEqual(errors,[]);
+});
+
+test('five selectable editor designs visibly differ, persist and never alter page data',async t=>{
+  const {page,writes,errors}=await openEditor(t);
+  await openPreferences(page);
+  const themes=['graphite','aurora','ocean','sage','cinder'];
+  const colors={};
+  await page.locator('#workspaceTheme').selectOption('aurora');
+  for(const theme of themes){
+    await page.locator('#workspaceTheme').selectOption(theme);
+    assert.equal(await page.locator('.editor-app').getAttribute('data-workspace-theme'),theme);
+    colors[theme]=await page.locator('.topbar').evaluate(element=>getComputedStyle(element).backgroundColor);
+    assert.ok(colors[theme],theme+' has a visible shell color');
+    assert.equal(await page.evaluate(key=>JSON.parse(localStorage.getItem(key)).theme,WORKSPACE_PREFERENCES_KEY),theme,theme+' is saved as a local workspace preference');
+  }
+  assert.equal(new Set(Object.values(colors)).size,themes.length,'each curated design has a distinct toolbar palette');
+  assert.equal(await page.locator('#save').textContent(),'Mentés');
+  assert.equal(await page.locator('#publish').textContent(),'Publikálás');
+  assert.deepEqual(writes,[],'switching editor design never sends page Save or Publish requests');
+  await page.reload({waitUntil:'load'});
+  await openPreferences(page);
+  assert.equal(await page.locator('#workspaceTheme').inputValue(),'cinder','the selected workbench design survives reload');
+  assert.deepEqual(writes,[]);
+  assert.deepEqual(errors,[]);
+});
+
+test('mobile workspace design choices stay touch-sized, visible and page-data independent',async t=>{
+  const {page,writes,errors}=await openEditor(t,{width:390,height:844,isMobile:true,hasTouch:true});
+  await openPreferences(page);
+  const themes=['graphite','aurora','ocean','sage','cinder'];
+  const colors=[];
+  for(const theme of themes){
+    await page.locator('#workspaceTheme').selectOption(theme);
+    colors.push(await page.locator('.topbar').evaluate(element=>getComputedStyle(element).backgroundColor));
+    const touchTarget=await page.locator('#workspaceTheme').evaluate(element=>({height:element.getBoundingClientRect().height,width:element.getBoundingClientRect().width}));
+    assert.ok(touchTarget.height>=44,'the '+theme+' choice remains a 44px phone touch target');
+    assert.ok(touchTarget.width>0,'the theme selector remains visible on the phone');
+    assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'theme selection does not introduce horizontal overflow');
+  }
+  assert.equal(new Set(colors).size,themes.length,'all five palettes remain visually distinct on mobile');
+  assert.deepEqual(writes,[],'changing the mobile editor skin never saves or publishes page content');
   assert.deepEqual(errors,[]);
 });
 
@@ -330,7 +374,8 @@ test('desktop dock separators resize by keyboard, announce width and finish inte
   assert.equal(await left.getAttribute('aria-controls'),'leftDock');
   assert.equal(await left.getAttribute('aria-valuenow'),'310');
   await left.focus();
-  assert.equal(await left.evaluate(element=>document.activeElement===element),true,'the separator receives keyboard focus after leaving workspace preferences');
+  const focusState=await left.evaluate(element=>({focused:document.activeElement===element,active:document.activeElement?.id||document.activeElement?.className||document.activeElement?.tagName,dockHidden:element.closest('.dock')?.getAttribute('aria-hidden'),disabled:element.disabled,display:getComputedStyle(element).display,visibility:getComputedStyle(element).visibility,rect:element.getBoundingClientRect().toJSON()}));
+  assert.equal(focusState.focused,true,'the separator receives keyboard focus after leaving workspace preferences: '+JSON.stringify(focusState));
   await page.keyboard.press('ArrowRight');
   assert.equal(await left.getAttribute('aria-valuenow'),'326','the left separator follows the physical arrow direction');
   assert.match(await left.getAttribute('aria-valuetext'),/326 képpont/u);
@@ -408,9 +453,7 @@ test('desktop dock separators resize by keyboard, announce width and finish inte
   assert.equal(await left.getAttribute('aria-valuenow'),'362','lost pointer capture keeps and announces the last usable width');
   assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('sanci-editor-shell-v2'))?.leftWidth),362,'lostpointercapture persists partial progress');
   await page.mouse.up();
-  await page.locator('.more-actions summary').click();
-  await page.locator('#openWorkspaceAppearance').click();
-  await page.locator('#workspaceAppearanceDialog[open]').waitFor();
+  await openPreferences(page);
   await page.locator('#undoWorkspaceLayout').click();
   assert.equal(await left.getAttribute('aria-valuenow'),'350','workspace Undo restores the pre-drag width after lostpointercapture');
   assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('sanci-editor-shell-v2'))?.leftWidth),350,'Undo persists the prior local shell width');

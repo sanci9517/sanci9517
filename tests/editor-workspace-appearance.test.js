@@ -15,6 +15,17 @@ test('workspace preferences are versioned, separate from page content and tolera
   assert.deepEqual([...current.values.keys()],[LEGACY_WORKSPACE_PREFERENCES_KEY],'legacy presentation data remains intact while the next edit can migrate it');
 });
 
+test('curated workspace designs are allowlisted and remain compatible with saved profiles',()=>{
+  const themes=['graphite','aurora','ocean','sage','cinder'];
+  for(const theme of themes){
+    assert.equal(normalizeWorkspacePreferences({theme}).theme,theme);
+    const preferences=normalizeWorkspacePreferences({profiles:[{id:'profile-'+theme,name:theme,appearance:{theme}}]});
+    assert.equal(preferences.profiles[0].appearance.theme,theme);
+  }
+  assert.equal(normalizeWorkspacePreferences({theme:'url(javascript:alert(1))'}).theme,'graphite');
+  for(const accent of ['#5b8cff','#00a7c8'])assert.equal(isAccessibleWorkspaceAccent(accent),true,accent+' remains visible with every design');
+});
+
 test('dock position and saved profiles are bounded, inert data and safe to restore',()=>{
   const normalized=normalizeWorkspacePreferences({dockOrder:'right-canvas-left',profiles:[
     {id:'profile-one',name:' Creator ',appearance:{layout:'balanced',theme:'aurora',accent:'#00a7c8'},dock:{leftOpen:true,rightOpen:true,leftTab:'layers',leftWidth:999,rightWidth:290},customCss:'body{display:none}',script:'alert(1)'},

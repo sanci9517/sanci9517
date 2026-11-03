@@ -2,7 +2,7 @@ export const WORKSPACE_PREFERENCES_KEY='sanci-editor-workspace-preferences-v2';
 export const LEGACY_WORKSPACE_PREFERENCES_KEY='sanci-editor-workspace-preferences-v1';
 export const WORKSPACE_PREFERENCE_DEFAULTS=Object.freeze({version:2,layout:'canvas',theme:'graphite',density:'comfortable',accent:'#5b8cff',dockOrder:'left-canvas-right',profiles:[]});
 const layouts=new Set(['balanced','canvas','inspector','custom']);
-const themes=new Set(['graphite','aurora']);
+const themes=new Set(['graphite','aurora','ocean','sage','cinder']);
 const densities=new Set(['comfortable','compact']);
 const dockOrders=new Set(['left-canvas-right','canvas-left-right','left-right-canvas','right-left-canvas','right-canvas-left','canvas-right-left']);
 const leftTabs=new Set(['pages','elements','layers','schedule','navigation']);
@@ -76,9 +76,10 @@ function profileFileName(name){
 export function isAccessibleWorkspaceAccent(value){
   if(typeof value!=='string'||!hexColor.test(value))return false;
   const accent=value.toLowerCase();
-  // The focus/selection accent must remain visible on both supported dark
-  // surfaces. The picker never accepts arbitrary CSS or low-contrast colors.
-  return contrast(accent,'#111a26')>=3&&contrast(accent,'#17162a')>=3;
+  // Keep the focus/selection accent visible on every curated workspace palette.
+  // The picker never accepts arbitrary CSS or a color that disappears in one
+  // of the selectable designs.
+  return ['#111a26','#17162a','#10232e','#18251b','#261b17'].every(surface=>contrast(accent,surface)>=3);
 }
 export function normalizeWorkspacePreferences(value){
   const input=isRecord(value)?value:{};
