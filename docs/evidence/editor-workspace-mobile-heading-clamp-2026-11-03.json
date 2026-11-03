@@ -1,0 +1,90 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-11-03",
+  "plan": "77.44.6.1.C — mobil dock címsorának helyigénye és vezérlő-elérhetősége",
+  "status": "PASS_RUNTIME_DEPLOYED_PUBLIC_SMOKE_BLOCKED_FULL_C_OPEN",
+  "scope": "Keskeny mobil nézetben a hosszú magyar panel-alcím ne tolja le az első panelműveletet a használható területről; a címsor legfeljebb két sorra korlátozódik. A tesztek ugyanazon böngészős suite fájljainak soros futását és Linux Chromium gyermekfolyamatainak reapingjét is stabilizálják.",
+  "implementation": {
+    "runtime_files": [
+      "public/editor-v2/editor-refresh.css",
+      "public/editor-v2/index.html"
+    ],
+    "test_and_runner_files": [
+      "tests/browser/editor-layout.test.js",
+      "scripts/run-with-linux-subreaper.py",
+      "tests/run-with-linux-subreaper.test.py",
+      "package.json"
+    ],
+    "behavior_assertions": [
+      "360 CSS px alatti hosszú panel-alcím legfeljebb két soros, tördelhető és a flex panelben túlcsordulás nélkül megjelenik",
+      "a New page első Oldalak panelművelet 200 CSS px szélességnél és az ellenőrzött effektív nagyításnál is elérhető",
+      "a mobil dock és az alsó műveletsáv között nincs vezérlőre kattintást blokkoló átfedés; a scrollozható panelrész saját látható tartományában vizsgálandó",
+      "a desktop/mobil layout regresszió több szélességen és effektív zoomon lefut",
+      "Linux subreaper runner a Node által indított, parent nélkül maradt Chromium leszármazottakat a következő tesztfájl előtt begyűjti"
+    ],
+    "save_publish_contract_changed": false,
+    "page_model_contract_changed": false,
+    "new_dependency": false,
+    "third_party_runtime_code_adopted": false,
+    "cost_ft": 0
+  },
+  "validation": {
+    "editor_test_suite": "npm run test:editor — PASS; 14/14 test fájl, a runner saját tesztjei 3/3",
+    "focused_browser_layout": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-layout.test.js — PASS 2/2, 16 viewport-szélesség és 3 effektív zoom-szint, a 200px-es keskeny esetekkel",
+    "additional_browser_suites": "workspace appearance 22/22, responsive layout 1/1 és action-help 2/2 PASS; a workspace appearance 30 dock-sorrend/szélesség kombinációt ellenőriz",
+    "typecheck": "npm run typecheck — PASS",
+    "migration_safety_gate": "npm run test:web013:migration-gate — PASS; production migration nem futott",
+    "canonical_plan": "python3 scripts/check-canonical-plan.py — PASS; egyetlen teljes 13 fájlos master",
+    "plan_contract": "python3 tests/plan-contract.test.py — PASS 13/13",
+    "active_plan_audit": "python3 scripts/audit-active-plan-point.py — PASS; 77.44.6.1.C OPEN / NOT_CERTIFIED",
+    "traceability": "python3 scripts/build-feature-traceability.py --check — PASS, 396 mapping",
+    "syntax_and_diff": "node --check tests/browser/editor-layout.test.js; python3 -m py_compile scripts/run-with-linux-subreaper.py tests/run-with-linux-subreaper.test.py; git diff --check — PASS",
+    "wrangler_dry_run": "WRANGLER_LOG_PATH=/tmp/sanci9517-wrangler.log npx wrangler deploy --dry-run — PASS; Wrangler 4.130.0; 168 asset, 335.81 KiB (87.60 KiB gzip); no deployment from this command",
+    "remote_d1_preflight": "SELECT-only query SELECT name FROM d1_migrations ORDER BY name — 34 rows, latest 0028_media_archive.sql, rows_written=0, changed_db=false; no production write",
+    "github_status": "Combined status endpoint returned statuses=[]; aggregate GitHub CI PASS is not claimed",
+    "production_health": "UNVERIFIED: GET /api/health was blocked by the managed outbound proxy with HTTP 403, server=envoy, body 'error code: 1010', cf-ray=a54dbf139bdfa63a-LAX",
+    "production_public_asset_hashes": "UNVERIFIED: the same outbound proxy prevents direct public Worker asset GETs; local hashes and Cloudflare deployment upload logs are recorded separately, not treated as public byte-for-byte verification"
+  },
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "runtime_commit": "8a8ee99a75a76a56ac7209b816baca2c36354147",
+    "parent_commit": "5b5bfa673f9a5223ba0793ce509ce15f3e9110c6",
+    "remote_ref_head": "8a8ee99a75a76a56ac7209b816baca2c36354147",
+    "push": "PASS normal fast-forward; direct git ls-remote matched runtime commit",
+    "github_combined_statuses": [],
+    "aggregate_github_ci_pass": false
+  },
+  "cloudflare_rollout": {
+    "build_id": "15bcd5aa-6377-40c0-a885-1c58b39b535c",
+    "build_outcome": "success",
+    "build_source_commit": "8a8ee99a75a76a56ac7209b816baca2c36354147",
+    "build_branch": "v2/foundation",
+    "build_command": "npm run typecheck",
+    "deploy_command": "npm run deploy:safe",
+    "deploy_safety_gate": "PASS; Worker Build log shows migration-safety gate pass and deploy:safe never applied D1 migrations",
+    "deployment_id": "28d1e4a2-9576-43aa-b518-908f72bbad8d",
+    "worker_version_id": "fab2bc0b-0a9d-47e3-ab26-bf012c04d5b4",
+    "worker_version_number": 3807,
+    "traffic_percentage": 100,
+    "uploaded_public_assets": [
+      "/editor-v2/index.html",
+      "/editor-v2/editor-refresh.css"
+    ],
+    "redundant_deployment_created": false
+  },
+  "local_source_sha256": {
+    "package.json": "7fc25ddfc5ce2a67860d8bec15464ec91102760c55cd428c1b3c95cb12ee12c6",
+    "public/editor-v2/editor-refresh.css": "6df88c6bb3717336e06e31636a8a8d8a9aa77bcd9729f40e24b26d79e60a9151",
+    "public/editor-v2/index.html": "9f3c753a72f711da69090bbb7709ec31dd3fe9a79929ce94ad26d35c42c25ef4",
+    "scripts/run-with-linux-subreaper.py": "87df95fedc4f347704c2896b3941f67ab789e2bfa65bd109050b020cf367eed1",
+    "tests/browser/editor-layout.test.js": "8c55daec4b7f20168cbd6bae56d96017e2e210f819e3de266653fc86e3fda768",
+    "tests/run-with-linux-subreaper.test.py": "a8d367550c753ddd0990104cbab72c1c6e8d58fd2eed929569ef25d468c8d595"
+  },
+  "manual_acceptance": "DEFERRED until complete 77.44.7.F / 77.44.8 Editor gate",
+  "limitations": [
+    "A public health smoke test and byte-for-byte public asset hash comparison remain blocked by the environment proxy's HTTP 403/1010; Cloudflare control-plane build, deployment and traffic data do not substitute for those checks.",
+    "77.44.6.1.C remains OPEN: nested/tabbed pane groups, dynamic canvas-safe dock zones and complete workspace lifecycle acceptance remain unfinished.",
+    "The full Visual Editor manual and physical device acceptance remains deferred; this evidence is not product acceptance."
+  ]
+}
