@@ -2,14 +2,19 @@
   "schema_version": 1,
   "recorded_at": "2026-11-03",
   "plan": "77.44.6.1.C — theme-aware editor appearance settings",
-  "status": "PASS_RUNTIME_SLICE_RELEASE_PENDING_FULL_C_OPEN",
+  "status": "PASS_RUNTIME_SLICE_RELEASED_FULL_C_OPEN",
   "scope": "Keep the appearance dialog and controls consistent with all five selectable Editor workspace themes. Page content, Page Model, Save and Publish remain unaffected; the full C acceptance is still OPEN.",
   "source_control": {
     "repository": "sanci9517/sanci9517",
     "branch": "v2/foundation",
     "previous_head": "d30a2f00bd0dd8ae80149166303a4dfe4c73123d",
-    "runtime_commit": "PENDING",
-    "push": "NOT DONE"
+    "runtime_commit": "3a4681be3eb639c0afe0c43c3b913fd603ec10a9",
+    "push": "Normal fast-forward push; GitHub v2/foundation branch API confirms the runtime commit as branch HEAD.",
+    "cloudflare_build_id": "181e55fd-d62a-4fe4-a66d-d1cd0c1ab3af",
+    "cloudflare_build_outcome": "success",
+    "cloudflare_build_commit": "3a4681be3eb639c0afe0c43c3b913fd603ec10a9",
+    "github_combined_statuses": [],
+    "aggregate_github_ci_pass": false
   },
   "finding": {
     "before": "The five editor themes updated the shell, tool rail, and docks, but the appearance dialog, its fields, muted labels, and footer controls were hard-coded to Graphite. This made the theme chooser itself visibly inconsistent after selection.",
@@ -50,11 +55,28 @@
       "changed_db": false,
       "rows_written": 0
     },
-    "production_health_hashes": "PENDING: runtime change has not yet been pushed/deployed."
+    "production_health_hashes": "PASS: current Worker /api/health returned HTTP 200; deployment 100% on version 3797; changed index.html and workspace-appearance.css remote SHA-256 values exactly match local source."
   },
   "deferred": [
     "Full 77.44.6.1.C remains OPEN: nested/tabbed panel groups, floating windows, dynamic dock zones, and complete workspace lifecycle acceptance.",
     "Full Visual Editor manual/physical acceptance remains deferred until 77.44.7.F/77.44.8."
   ],
-  "cost": "0 HUF; no paid API, infrastructure, or dependency added."
+  "cost": "0 HUF; no paid API, infrastructure, or dependency added.",
+  "deployment": {
+    "cloudflare_deployment_id": "aeb725b8-7f0c-4b4a-8958-c9e98b061c4b",
+    "worker_version_id": "b5f59efc-0c14-4243-b8ff-1938c15a7b77",
+    "worker_version_number": 3797,
+    "traffic_percent": 100,
+    "health_http_status": 200,
+    "health_body": {
+      "ok": true,
+      "service": "sanci9517-streamer-brand",
+      "version": "2.0.0",
+      "server": "cloudflare-worker"
+    },
+    "changed_public_asset_sha256_match": {
+      "public/editor-v2/index.html": "fedb64c5151aa326229ae8767a17813c4da5c06b4f41c81c249d80a970ddaa03",
+      "public/editor-v2/workspace-appearance.css": "1fcf63f401f0e644478bd597c1b6a7b345abef4af31f6c3d9919493dc6ccbf90"
+    }
+  }
 }
