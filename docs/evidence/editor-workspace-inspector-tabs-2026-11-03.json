@@ -1,0 +1,122 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-11-03",
+  "plan": "77.44.6.1.C — Inspector category persistence and vertical workspace navigation",
+  "status": "RUNTIME_RELEASE_VERIFIED",
+  "scope": "Persist the selected Inspector category with workspace state across reload, saved profiles, Undo/Redo and desktop/mobile use; align left rail keyboard navigation with its vertical layout.",
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "verified_parent_head": "2662dc2cc60e798d24217f55d270eb62f592b1ed",
+    "runtime_commit": "b62658a931ba74d7104a7c3ef1648739f700ecb4",
+    "github_branch_head_verified": true,
+    "github_combined_statuses": [],
+    "github_check_runs": {
+      "Workers Builds: sanci9517-streamer-brand": "success",
+      "twitch-integration": "success",
+      "verify": "success",
+      "source-audit": "success",
+      "canonical-plan": "success",
+      "editor-core": "in_progress"
+    },
+    "aggregate_github_ci_pass": false
+  },
+  "implementation": {
+    "changed_runtime_files": [
+      "public/editor-v2/app.js",
+      "public/editor-v2/index.html",
+      "public/editor-v2/ui/shell.js",
+      "public/editor-v2/ui/workspace-appearance.js"
+    ],
+    "test_files": [
+      "tests/browser/editor-inspector-lifecycle.test.js",
+      "tests/browser/editor-workspace-appearance.test.js",
+      "tests/editor-workspace-appearance.test.js"
+    ],
+    "workspace_profile_dock_allowlist": ["leftOpen", "rightOpen", "leftTab", "inspectorTab", "leftWidth", "rightWidth"],
+    "inspector_tab_values": ["design", "content", "advanced"],
+    "left_rail_aria_orientation": "vertical",
+    "left_rail_keyboard_navigation": ["ArrowUp", "ArrowDown", "Home", "End"],
+    "cache_busting": "Updated the app, shell and appearance module URL versions so clients request the changed runtime assets.",
+    "save_publish_separate": true,
+    "page_model_mutations": 0,
+    "save_publish_mutations": 0,
+    "reused_project_solution": "The existing local shell-state key, workspace profile serializer/allowlist, event bus, Inspector tab renderer, browser storage APIs and existing Playwright/Chromium fixtures.",
+    "external_code_added": false,
+    "new_dependencies": [],
+    "cost_huf": 0
+  },
+  "validation": {
+    "browser_workspace_suite": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-workspace-appearance.test.js — PASS, 18/18; includes reload, profile restore, undo/redo, mobile touch, zero page writes, desktop canvas geometry and keyboard resize.",
+    "browser_inspector_lifecycle": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-inspector-lifecycle.test.js — PASS, 1/1; existing Inspector/Canvas/Save/reload/separate-Publish parity.",
+    "browser_inspector_lifecycle_navigation": "The test waits for navigation commit followed by the Editor's explicit ready marker instead of depending on DOMContentLoaded scheduling in the long multi-field browser lifecycle. PASS in the real Chromium rerun.",
+    "editor_unit": "npm run test:editor — PASS, 14/14 test files.",
+    "typecheck": "npm run typecheck — PASS.",
+    "migration_guard": "npm run test:web013:migration-gate — PASS; no D1 migration applied.",
+    "canonical_plan": "python3 scripts/check-canonical-plan.py — PASS, complete 13-file master; acceptance not certified.",
+    "plan_contract": "python3 scripts/plan_contract.py — PASS, 396 source mappings; acceptance not certified.",
+    "active_point": "python3 scripts/audit-active-plan-point.py — PASS; active item remains 77.44.6.1.C.",
+    "traceability": "python3 scripts/build-feature-traceability.py --check — PASS, 396 mappings.",
+    "javascript_syntax": "node --check on the three changed runtime modules and both changed browser tests — PASS.",
+    "diff_check": "git diff --check — PASS.",
+    "wrangler_dry_run": "Local Wrangler 4.130.0 deploy --dry-run — PASS, 168 assets / 335.81 KiB / 87.60 KiB gzip; exited without deployment.",
+    "production_d1_preflight_before_release": {
+      "method": "Cloudflare D1 query API; SELECT-only.",
+      "query": "SELECT name FROM d1_migrations ORDER BY name;",
+      "ledger_rows": 34,
+      "latest": "0028_media_archive.sql",
+      "changed_db": false,
+      "rows_written": 0,
+      "changes": 0
+    },
+    "workspace_suite_first_run": "One of 18 existing keyboard-resizer focus assertions failed once; the assertion passed in an isolated Chromium rerun and the complete suite then passed 18/18. The initial run is retained here rather than hidden."
+  },
+  "production": {
+    "worker": "sanci9517-streamer-brand",
+    "build_id": "8e920350-2f39-400f-85a9-3efa6d1150e0",
+    "build_check_run_id": 125745575702,
+    "build_outcome": "success",
+    "deployment_id": "70059a2e-0a70-4022-a229-018f84f807c2",
+    "traffic_version": "2f4e4d17-03ea-4420-bd43-e87b98943162",
+    "traffic_version_number": 3800,
+    "traffic_percentage": 100,
+    "direct_deployment_source": "Cloudflare Workers deployment API; latest deployment source=wrangler, created 2026-11-03T05:28:41.3352Z; GitHub Cloudflare Workers Build check records the exact commit, build id and version id.",
+    "health_smoke": {
+      "url": "/api/health",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "changed_asset_sha256_local": {
+      "public/editor-v2/app.js": "bd91a8389557f14e3f33540c844bd4fa5dfe6461e831e2146dea2c7021f6e153",
+      "public/editor-v2/index.html": "4a14bea8b67ab8499a2685013b25ed35464cb65d8de7ce59043213cd30053957",
+      "public/editor-v2/ui/shell.js": "a65293bbf08ff7a91f077939d43f19aeb356dfe2e7717043f4b86d171273287a",
+      "public/editor-v2/ui/workspace-appearance.js": "fab1c0a9a1916f9ce959fc1ad256e70ae33d632552c029361de634ff9eb8658c"
+    },
+    "changed_asset_sha256_live": {
+      "public/editor-v2/app.js": "bd91a8389557f14e3f33540c844bd4fa5dfe6461e831e2146dea2c7021f6e153",
+      "public/editor-v2/index.html": "4a14bea8b67ab8499a2685013b25ed35464cb65d8de7ce59043213cd30053957",
+      "public/editor-v2/ui/shell.js": "a65293bbf08ff7a91f077939d43f19aeb356dfe2e7717043f4b86d171273287a",
+      "public/editor-v2/ui/workspace-appearance.js": "fab1c0a9a1916f9ce959fc1ad256e70ae33d632552c029361de634ff9eb8658c"
+    },
+    "build_commit": "b62658a931ba74d7104a7c3ef1648739f700ecb4",
+    "production_d1_preflight_after_release": {
+      "method": "Cloudflare D1 query API; SELECT-only.",
+      "query": "SELECT name FROM d1_migrations ORDER BY name;",
+      "ledger_rows": 34,
+      "latest": "0028_media_archive.sql",
+      "changed_db": false,
+      "rows_written": 0,
+      "changes": 0
+    },
+    "production_cost_huf": 0
+  },
+  "acceptance": {
+    "77_44_6_1_C": "OPEN; Inspector tab persistence and the vertical rail interaction are implemented and automated, while nested/tabbed panel groups, floating panels, dynamic dock zones and complete workspace lifecycle acceptance remain open.",
+    "full_visual_editor_manual_and_physical_acceptance": "DEFERRED until 77.44.7.F/77.44.8"
+  }
+}
