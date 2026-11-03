@@ -122,12 +122,13 @@ button:focus-visible, summary:focus-visible, .rail-btn:focus-visible { outline: 
   .tool-rail { width: 72px; flex-basis: 72px; }
   .rail-btn { width: 60px; }
   .side-panel { min-width: 0; }
-  .mobile-backdrop { display: block; position: absolute; inset: 0 0 72px; z-index: 80; background: #030811b8; opacity: 0; pointer-events: none; }
+  .mobile-backdrop { display: block; position: absolute; inset: 0 0 calc(124px + env(safe-area-inset-bottom,0px)); z-index: 80; background: #030811b8; opacity: 0; pointer-events: none; }
   .workspace.left-open .mobile-backdrop, .workspace.right-open .mobile-backdrop { opacity: 1; pointer-events: auto; }
   .mobile-bottom-bar { display: grid !important; position: fixed; left: 8px; right: 8px; bottom: calc(8px + env(safe-area-inset-bottom,0px)); z-index: 1000; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 6px; min-height: 56px; padding: 6px; border: 1px solid var(--editor-line); border-radius: 14px; background: #152235; box-shadow: 0 8px 28px #0008; }
   .mobile-bottom-bar button { width: 100%; min-width: 0; min-height: 44px; height: auto; padding: 4px 6px; font-size: 13px; }
   .mobile-bottom-bar #mobileZoomOut, .mobile-bottom-bar #mobileZoomIn, .mobile-bottom-bar #mobileZoom, .mobile-bottom-bar #mobilePublish, .mobile-bottom-bar #mobileUnpublish { display: none !important; }
-  .canvas { padding-bottom: calc(90px + env(safe-area-inset-bottom,0px)); }
+  .canvas { padding-bottom: calc(124px + env(safe-area-inset-bottom,0px)); }
+  .left-dock:not(.closed), .right-dock:not(.closed) { bottom: calc(124px + env(safe-area-inset-bottom,0px)); }
   .statusbar { display: none; }
   .dock-resizer { display: none; }
 }
@@ -156,8 +157,8 @@ button:focus-visible, summary:focus-visible, .rail-btn:focus-visible { outline: 
   .canvas-toolbar .center-tools .zoom-label { flex: 0 0 52px; align-self: center; }
   .canvas-toolbar .viewport-label { display: none; }
   .canvas-toolbar .toolbar-group:last-child { display: none; }
-  .left-dock:not(.closed), .right-dock:not(.closed) { width: 100%; bottom: 72px; border-radius: 16px 16px 0 0; }
-  .mobile-backdrop { bottom: 72px; }
+  .left-dock:not(.closed), .right-dock:not(.closed) { width: 100%; bottom: calc(124px + env(safe-area-inset-bottom,0px)); border-radius: 16px 16px 0 0; }
+  .mobile-backdrop { bottom: calc(124px + env(safe-area-inset-bottom,0px)); }
   .tool-rail { width: 70px; flex-basis: 70px; }
   .rail-btn { width: 58px; }
   .mobile-multiselect-bar { top: 8px; left: 8px; right: 8px; flex-wrap: wrap; }
@@ -182,6 +183,8 @@ button:focus-visible, summary:focus-visible, .rail-btn:focus-visible { outline: 
   /* Keep all four mobile quick actions comfortably tappable at browser zoom. */
   .mobile-bottom-bar { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 4px; padding: 4px; }
   .canvas { padding-bottom: calc(158px + env(safe-area-inset-bottom,0px)); }
+  .left-dock:not(.closed), .right-dock:not(.closed) { bottom: calc(158px + env(safe-area-inset-bottom,0px)); }
+  .mobile-backdrop { bottom: calc(158px + env(safe-area-inset-bottom,0px)); }
 }
 
 /* UX-P0: editor controls are overlays and never occupy Flex/Grid cells. */
@@ -572,9 +575,9 @@ button:focus-visible, summary:focus-visible, .rail-btn:focus-visible { outline: 
   .workspace .left-dock:not(.closed),
   .workspace .right-dock:not(.closed) {
     top: auto;
-    bottom: 72px;
+    bottom: calc(124px + env(safe-area-inset-bottom,0px));
     height: min(72%, 590px);
-    max-height: calc(100% - 72px);
+    max-height: calc(100% - 124px - env(safe-area-inset-bottom,0px));
     min-height: 0;
     width: 100%;
     border-radius: 18px 18px 0 0;
@@ -585,13 +588,13 @@ button:focus-visible, summary:focus-visible, .rail-btn:focus-visible { outline: 
 }
 
 @media (max-width: 360px) {
-  /* The later, higher-specificity sheet rule must also clear the two-row bar. */
+  /* The later, higher-specificity sheet rule must clear the three-row 320px bar. */
   .workspace .left-dock:not(.closed),
   .workspace .right-dock:not(.closed) {
-    bottom: 140px;
-    max-height: calc(100% - 140px);
+    bottom: calc(158px + env(safe-area-inset-bottom,0px));
+    max-height: calc(100% - 158px - env(safe-area-inset-bottom,0px));
   }
-  .workspace .mobile-backdrop { bottom: 140px; }
+  .workspace .mobile-backdrop { bottom: calc(158px + env(safe-area-inset-bottom,0px)); }
 }
 
 /* 77.44 spacing Inspector: number and unit side by side, including 390px. */

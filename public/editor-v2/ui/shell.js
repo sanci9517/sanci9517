@@ -2,7 +2,7 @@ import {createEventBus} from './events.js';
 import {panelRegistry,featureRegistry} from './registry.js';
 import {EDITOR_ACTIONS} from './action-catalog.js?v=20261103-canvas-focus-mode';
 import {enhanceEditorActionControls} from './action-help.js?v=20261103-canvas-focus-mode';
-import {applyWorkspacePreferences,mountWorkspaceAppearance,readWorkspacePreferences} from './workspace-appearance.js?v=20261103-inspector-tab-persistence';
+import {DEFAULT_LEFT_TAB_ORDER,applyWorkspacePreferences,mountWorkspaceAppearance,normalizeLeftTabOrder,readWorkspacePreferences} from './workspace-appearance.js?v=20261103-left-tool-order';
 
 const bus=createEventBus();
 const workspace=document.querySelector('.workspace');
@@ -10,9 +10,10 @@ const root=document.documentElement;
 const editorRoot=document.querySelector('.editor-app');
 const panels={left:document.querySelector('#leftDock'),right:document.querySelector('#rightDock')};
 const actionControls=enhanceEditorActionControls(document);
+const LEFT_TABS=['pages','elements','layers','schedule','navigation'];
 const resizeLimits={left:{min:250,max:460},right:{min:260,max:440}};
 const STORAGE_KEY='sanci-editor-shell-v2';
-const defaults={leftOpen:false,rightOpen:false,leftTab:'pages',inspectorTab:'design',leftWidth:310,rightWidth:352};
+const defaults={leftOpen:false,rightOpen:false,leftTab:'pages',leftTabOrder:DEFAULT_LEFT_TAB_ORDER,inspectorTab:'design',leftWidth:310,rightWidth:352};
 const mobileQuery=window.matchMedia('(max-width: 1024px)');
 const initialAppearance=readWorkspacePreferences();
 applyWorkspacePreferences(editorRoot,initialAppearance);
@@ -36,10 +37,19 @@ if(initialAppearance.layout!=='custom'){
   persisted.leftOpen=initialLayout.left;
   persisted.rightOpen=initialLayout.right;
 }
-const LEFT_TABS=['pages','elements','layers','schedule','navigation'];
 const INSPECTOR_TABS=['design','content','advanced'];
 if(!LEFT_TABS.includes(persisted.leftTab))persisted.leftTab='pages';
+persisted.leftTabOrder=normalizeLeftTabOrder(persisted.leftTabOrder);
 if(!INSPECTOR_TABS.includes(persisted.inspectorTab))persisted.inspectorTab='design';
+function renderLeftTabOrder(){
+  const rail=document.querySelector('.tool-rail');
+  if(!rail)return;
+  for(const [index,tab] of persisted.leftTabOrder.entries()){
+    const button=rail.querySelector(`.rail-btn[data-tab="${tab}"]`);
+    if(button){button.setAttribute('aria-posinset',String(index+1));button.setAttribute('aria-setsize',String(persisted.leftTabOrder.length));rail.append(button)}
+  }
+}
+renderLeftTabOrder();
 function persist(){
   try{localStorage.setItem(STORAGE_KEY,JSON.stringify(persisted))}catch{}
 }
@@ -150,6 +160,18 @@ function setInspectorTab(tab,{save=true,notify=true}={}){
   persisted.inspectorTab=tab;
   if(save)persist();
   if(notify)emit('panel:inspector-tab',{tab});
+  return true;
+}
+function moveLeftTab(tab,direction){
+  const order=normalizeLeftTabOrder(persisted.leftTabOrder),index=order.indexOf(tab),target=index+direction;
+  if(index<0||target<0||target>=order.length)return false;
+  workspaceAppearance?.remember();
+  [order[index],order[target]]=[order[target],order[index]];
+  persisted.leftTabOrder=order;
+  renderLeftTabOrder();persist();
+  workspaceAppearance?.setLayout('custom',{rememberChange:false});
+  workspaceAppearance?.syncDockControls();
+  emit('panel:tab-order',{order:[...order]});
   return true;
 }
 function clamp(value,limits){return Math.max(limits.min,Math.min(limits.max,value))}
@@ -301,26 +323,29 @@ root.style.setProperty('--right-dock-width',`${clamp(Number(persisted.rightWidth
 setPanel('left',!mobileQuery.matches && Boolean(persisted.leftOpen),{save:false});
 setPanel('right',!mobileQuery.matches && Boolean(persisted.rightOpen),{save:false});
 showLeftTab(persisted.leftTab,{save:false,open:false});
-workspaceAppearance=mountWorkspaceAppearance({documentRef:document,root:editorRoot,onLayoutChange:applyWorkspaceLayout,readDockState:()=>persisted,applyDockState:state=>{
+workspaceAppearance=mountWorkspaceAppearance({documentRef:document,root:editorRoot,onLayoutChange:applyWorkspaceLayout,readDockState:()=>persisted,moveDockTab:moveLeftTab,applyDockState:state=>{
   applyDockState(state);
 },onReset:()=>{
   persisted={...defaults};
+  renderLeftTabOrder();
   root.style.setProperty('--left-dock-width',`${defaults.leftWidth}px`);
   root.style.setProperty('--right-dock-width',`${defaults.rightWidth}px`);
   updateResizeHandle('left',defaults.leftWidth);
   updateResizeHandle('right',defaults.rightWidth);
   persist();
+  workspaceAppearance?.syncDockControls();
 }});
 function normalizeStoredDockState(input){
   const value=input&&typeof input==='object'&&!Array.isArray(input)?input:{};
   const width=(candidate,limits,fallback)=>Number.isFinite(Number(candidate))?clamp(Number(candidate),limits):fallback;
-  const next={leftOpen:value.leftOpen===true,rightOpen:value.rightOpen===true,leftTab:LEFT_TABS.includes(value.leftTab)?value.leftTab:'pages',inspectorTab:INSPECTOR_TABS.includes(value.inspectorTab)?value.inspectorTab:'design',leftWidth:width(value.leftWidth,resizeLimits.left,defaults.leftWidth),rightWidth:width(value.rightWidth,resizeLimits.right,defaults.rightWidth)};
+  const next={leftOpen:value.leftOpen===true,rightOpen:value.rightOpen===true,leftTab:LEFT_TABS.includes(value.leftTab)?value.leftTab:'pages',leftTabOrder:normalizeLeftTabOrder(value.leftTabOrder),inspectorTab:INSPECTOR_TABS.includes(value.inspectorTab)?value.inspectorTab:'design',leftWidth:width(value.leftWidth,resizeLimits.left,defaults.leftWidth),rightWidth:width(value.rightWidth,resizeLimits.right,defaults.rightWidth)};
   if(mobileQuery.matches&&next.leftOpen&&next.rightOpen)next.leftOpen=false;
   return next;
 }
 function applyDockState(state,{save=true}={}){
   const next=normalizeStoredDockState(state);
   persisted={...persisted,...next};
+  renderLeftTabOrder();
   root.style.setProperty('--left-dock-width',`${next.leftWidth}px`);
   root.style.setProperty('--right-dock-width',`${next.rightWidth}px`);
   updateResizeHandle('left',next.leftWidth);
@@ -329,6 +354,7 @@ function applyDockState(state,{save=true}={}){
   setPanel('right',next.rightOpen,{save:false,customize:false});
   showLeftTab(next.leftTab,{save:false,open:false});
   setInspectorTab(next.inspectorTab,{save:false});
+  workspaceAppearance?.syncDockControls();
   if(save)persist();
 }
 window.addEventListener('storage',event=>{
@@ -337,6 +363,7 @@ window.addEventListener('storage',event=>{
   let next;
   try{next=event.newValue?JSON.parse(event.newValue):defaults}catch{next=defaults}
   applyDockState(next,{save:false});
+  workspaceAppearance?.clearExternalDockHistory();
   emit('workspace:external-change',{source:'storage',area:'dock'});
 });
 setupDockReordering();
@@ -384,14 +411,14 @@ wireMobileActions();
 document.querySelectorAll('.rail-btn').forEach(b=>{
   b.addEventListener('click',()=>showLeftTab(b.dataset.tab,{customize:true}));
   b.addEventListener('keydown',event=>{
-    const index=LEFT_TABS.indexOf(b.dataset.tab);if(index<0)return;
+    const index=persisted.leftTabOrder.indexOf(b.dataset.tab);if(index<0)return;
     let next=-1;
-    if(event.key==='ArrowDown')next=(index+1)%LEFT_TABS.length;
-    else if(event.key==='ArrowUp')next=(index+LEFT_TABS.length-1)%LEFT_TABS.length;
+    if(event.key==='ArrowDown')next=(index+1)%persisted.leftTabOrder.length;
+    else if(event.key==='ArrowUp')next=(index+persisted.leftTabOrder.length-1)%persisted.leftTabOrder.length;
     else if(event.key==='Home')next=0;
-    else if(event.key==='End')next=LEFT_TABS.length-1;
+    else if(event.key==='End')next=persisted.leftTabOrder.length-1;
     if(next<0)return;
-    event.preventDefault();const target=document.querySelector(`.rail-btn[data-tab="${LEFT_TABS[next]}"]`);showLeftTab(LEFT_TABS[next],{customize:true});requestAnimationFrame(()=>target?.focus());
+    event.preventDefault();const nextTab=persisted.leftTabOrder[next],target=document.querySelector(`.rail-btn[data-tab="${nextTab}"]`);showLeftTab(nextTab,{customize:true});requestAnimationFrame(()=>target?.focus());
   });
 });
 setupResizers();

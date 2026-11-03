@@ -6,6 +6,7 @@ const themes=new Set(['graphite','aurora','ocean','sage','cinder']);
 const densities=new Set(['comfortable','compact']);
 const dockOrders=new Set(['left-canvas-right','canvas-left-right','left-right-canvas','right-left-canvas','right-canvas-left','canvas-right-left']);
 const leftTabs=new Set(['pages','elements','layers','schedule','navigation']);
+export const DEFAULT_LEFT_TAB_ORDER=Object.freeze(['pages','elements','layers','schedule','navigation']);
 const inspectorTabs=new Set(['design','content','advanced']);
 const hexColor=/^#[0-9a-f]{6}$/iu;
 const PROFILE_LIMIT=8;
@@ -19,6 +20,12 @@ function luminance(hex){return [1,3,5].map(index=>linearChannel(parseInt(hex.sli
 function contrast(left,right){const a=luminance(left),b=luminance(right);return (Math.max(a,b)+0.05)/(Math.min(a,b)+0.05)}
 function isRecord(value){return value&&typeof value==='object'&&!Array.isArray(value)}
 function finiteWidth(value,min,max,fallback){const number=Number(value);return Number.isFinite(number)?Math.max(min,Math.min(max,number)):fallback}
+export function normalizeLeftTabOrder(value){
+  const seen=new Set(),order=[];
+  for(const tab of Array.isArray(value)?value:[]){if(leftTabs.has(tab)&&!seen.has(tab)){seen.add(tab);order.push(tab)}}
+  for(const tab of DEFAULT_LEFT_TAB_ORDER)if(!seen.has(tab))order.push(tab);
+  return order;
+}
 function normalizeVisualPreferences(input={}){
   return {
     layout:layouts.has(input.layout)?input.layout:WORKSPACE_PREFERENCE_DEFAULTS.layout,
@@ -34,6 +41,7 @@ function normalizeDockState(value){
     leftOpen:input.leftOpen===true,
     rightOpen:input.rightOpen===true,
     leftTab:leftTabs.has(input.leftTab)?input.leftTab:'pages',
+    leftTabOrder:normalizeLeftTabOrder(input.leftTabOrder),
     inspectorTab:inspectorTabs.has(input.inspectorTab)?input.inspectorTab:'design',
     leftWidth:finiteWidth(input.leftWidth,250,460,310),
     rightWidth:finiteWidth(input.rightWidth,260,440,352),
@@ -106,7 +114,7 @@ export function applyWorkspacePreferences(root,preferences){
   root.style.setProperty('--accent',value.accent);
   return value;
 }
-export function mountWorkspaceAppearance({documentRef=globalThis.document,root=documentRef?.querySelector('.editor-app'),onLayoutChange=()=>{},onReset=()=>{},readDockState=()=>({}),applyDockState=()=>{}}={}){
+export function mountWorkspaceAppearance({documentRef=globalThis.document,root=documentRef?.querySelector('.editor-app'),onLayoutChange=()=>{},onReset=()=>{},readDockState=()=>({}),applyDockState=()=>{},moveDockTab=()=>false}={}){
   if(!documentRef||!root)throw new Error('A document and editor root are required');
   const dialog=documentRef.querySelector('#workspaceAppearanceDialog');
   const openButton=documentRef.querySelector('#openWorkspaceAppearance');
@@ -126,16 +134,33 @@ export function mountWorkspaceAppearance({documentRef=globalThis.document,root=d
     theme:documentRef.querySelector('#workspaceTheme'),
     density:documentRef.querySelector('#workspaceDensity'),
     accent:documentRef.querySelector('#workspaceAccent'),
+    leftTool:documentRef.querySelector('#workspaceLeftTool'),
     profileName:documentRef.querySelector('#workspaceProfileName'),
     profile:documentRef.querySelector('#workspaceProfile'),
   };
   const status=documentRef.querySelector('#workspaceAppearanceStatus');
+  const moveLeftToolUpButton=documentRef.querySelector('#moveWorkspaceLeftToolUp');
+  const moveLeftToolDownButton=documentRef.querySelector('#moveWorkspaceLeftToolDown');
   let storage=null;
   try{storage=documentRef.defaultView?.localStorage}catch{}
   let value=readWorkspacePreferences(storage);
   let undoStack=[],redoStack=[],idSequence=0;
   const persist=()=>{try{if(!storage)return false;storage.setItem(WORKSPACE_PREFERENCES_KEY,JSON.stringify(value));return true}catch{return false}};
   const currentDock=()=>{try{return normalizeDockState(readDockState())}catch{return normalizeDockState({})}};
+  const renderLeftToolOrder=()=>{
+    const field=fields.leftTool;if(!field)return;
+    const names={pages:'Oldalak',elements:'Elemek',layers:'Rétegek',schedule:'Adásrend',navigation:'Navigáció'};
+    const order=normalizeLeftTabOrder(currentDock().leftTabOrder);
+    const selected=order.includes(field.value)?field.value:order[0];
+    while(field.options.length)field.remove(0);
+    for(const [index,tab] of order.entries()){
+      const option=documentRef.createElement('option');option.value=tab;option.textContent=`${index+1}. ${names[tab]}`;field.append(option);
+    }
+    field.value=selected;
+    const index=order.indexOf(selected);
+    if(moveLeftToolUpButton)moveLeftToolUpButton.disabled=index<=0;
+    if(moveLeftToolDownButton)moveLeftToolDownButton.disabled=index<0||index>=order.length-1;
+  };
   const snapshot=()=>({preferences:normalizeWorkspacePreferences(value),dock:currentDock()});
   const syncHistory=()=>{
     if(undoButton)undoButton.disabled=undoStack.length===0;
@@ -162,7 +187,7 @@ export function mountWorkspaceAppearance({documentRef=globalThis.document,root=d
   const paint=()=>{
     applyWorkspacePreferences(root,value);
     for(const key of ['layout','dockOrder','theme','density','accent'])if(fields[key])fields[key].value=value[key];
-    renderProfiles();syncHistory();
+    renderProfiles();renderLeftToolOrder();syncHistory();
   };
   const setLayout=(layout,{rememberChange=true}={})=>{
     if(!layouts.has(layout)||layout===value.layout)return false;
@@ -255,6 +280,17 @@ export function mountWorkspaceAppearance({documentRef=globalThis.document,root=d
     if(status)status.textContent=saved?`„${imported.name}” profil ezen az eszközön elmentve. A küldött fájlban lévő futtatható kódot nem használjuk.`:`„${imported.name}” profil csak ebben a munkamenetben érhető el, mert a böngésző tárhelye nem használható. A fájlból származó futtatható kódot nem használjuk.`;
     return true;
   };
+  const moveLeftTool=direction=>{
+    const tab=fields.leftTool?.value;
+    let moved=false;
+    try{moved=Boolean(moveDockTab(tab,direction))}catch{}
+    if(!moved){if(status)status.textContent='Ezt az eszközt most nem lehet áthelyezni.';return false}
+    renderLeftToolOrder();
+    if(fields.leftTool)fields.leftTool.value=tab;
+    renderLeftToolOrder();
+    if(status)status.textContent=`${fields.leftTool?.selectedOptions?.[0]?.textContent?.replace(/^\d+\.\s*/u,'')||'Az eszköz'} új helyre került. Az oldal tartalma nem változott.`;
+    return true;
+  };
   openButton?.addEventListener('click',()=>{documentRef.querySelector('.more-actions')?.removeAttribute('open');open()});
   closeButton?.addEventListener('click',close);
   dialog?.addEventListener('close',()=>{
@@ -264,6 +300,7 @@ export function mountWorkspaceAppearance({documentRef=globalThis.document,root=d
   fields.layout?.addEventListener('change',()=>setLayout(fields.layout.value));
   fields.dockOrder?.addEventListener('change',()=>setDockOrder(fields.dockOrder.value));
   fields.profile?.addEventListener('change',renderProfiles);
+  fields.leftTool?.addEventListener('change',renderLeftToolOrder);
   fields.theme?.addEventListener('change',()=>updateVisual('theme',fields.theme.value));
   fields.density?.addEventListener('change',()=>updateVisual('density',fields.density.value));
   fields.accent?.addEventListener('input',()=>updateVisual('accent',fields.accent.value));
@@ -277,6 +314,8 @@ export function mountWorkspaceAppearance({documentRef=globalThis.document,root=d
     await importProfile(file);
     profileFile.value='';
   });
+  moveLeftToolUpButton?.addEventListener('click',()=>moveLeftTool(-1));
+  moveLeftToolDownButton?.addEventListener('click',()=>moveLeftTool(1));
   const syncExternalPreferences=event=>{
     if(event.storageArea&&storage&&event.storageArea!==storage)return;
     if(event.key!==null&&event.key!==WORKSPACE_PREFERENCES_KEY&&event.key!==LEGACY_WORKSPACE_PREFERENCES_KEY)return;
@@ -291,9 +330,13 @@ export function mountWorkspaceAppearance({documentRef=globalThis.document,root=d
     try{onLayoutChange(value.layout,{save:false})}catch{}
     if(status)status.textContent='Egy másik szerkesztőlapon megváltozott a munkaterület. A friss beállításokat megjelenítettük, a régi visszavonási előzményt töröltük. Az oldal tartalma nem változott.';
   };
+  const clearExternalDockHistory=()=>{
+    undoStack=[];redoStack=[];syncHistory();
+    if(status)status.textContent='Egy másik szerkesztőlapon megváltozott az eszközök sorrendje. A friss sorrendet megjelenítettük, a korábbi visszavonási előzményt töröltük. Az oldal tartalma nem változott.';
+  };
   documentRef.defaultView?.addEventListener?.('storage',syncExternalPreferences);
   undoButton?.addEventListener('click',undo);redoButton?.addEventListener('click',redo);
   resetButton?.addEventListener('click',reset);
   paint();
-  return {get value(){return normalizeWorkspacePreferences(value)},setLayout,setDockOrder,open,close,remember,undo,redo,saveProfile,loadProfile,deleteProfile,importProfile,exportProfile,reset,destroy(){documentRef.defaultView?.removeEventListener?.('storage',syncExternalPreferences)}};
+  return {get value(){return normalizeWorkspacePreferences(value)},setLayout,setDockOrder,open,close,remember,undo,redo,saveProfile,loadProfile,deleteProfile,importProfile,exportProfile,reset,syncDockControls:renderLeftToolOrder,clearExternalDockHistory,destroy(){documentRef.defaultView?.removeEventListener?.('storage',syncExternalPreferences)}};
 }

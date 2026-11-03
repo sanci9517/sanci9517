@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import {LEGACY_WORKSPACE_PREFERENCES_KEY,WORKSPACE_PROFILE_MAX_BYTES,WORKSPACE_PREFERENCES_KEY,WORKSPACE_PREFERENCE_DEFAULTS,isAccessibleWorkspaceAccent,mountWorkspaceAppearance,normalizeWorkspacePreferences,parseWorkspaceProfileTransfer,readWorkspacePreferences,serializeWorkspaceProfile} from '../public/editor-v2/ui/workspace-appearance.js';
+import {DEFAULT_LEFT_TAB_ORDER,LEGACY_WORKSPACE_PREFERENCES_KEY,WORKSPACE_PROFILE_MAX_BYTES,WORKSPACE_PREFERENCES_KEY,WORKSPACE_PREFERENCE_DEFAULTS,isAccessibleWorkspaceAccent,mountWorkspaceAppearance,normalizeLeftTabOrder,normalizeWorkspacePreferences,parseWorkspaceProfileTransfer,readWorkspacePreferences,serializeWorkspaceProfile} from '../public/editor-v2/ui/workspace-appearance.js';
 
 function storage(initial={}){
   const values=new Map(Object.entries(initial));
@@ -35,7 +35,7 @@ test('dock position and saved profiles are bounded, inert data and safe to resto
   ]});
   assert.equal(normalized.version,2);
   assert.equal(normalized.dockOrder,'right-canvas-left');
-  assert.deepEqual(normalized.profiles,[{id:'profile-one',name:'Creator',createdAt:0,appearance:{layout:'balanced',theme:'aurora',density:'comfortable',accent:'#00a7c8',dockOrder:'left-canvas-right'},dock:{leftOpen:true,rightOpen:true,leftTab:'layers',inspectorTab:'advanced',leftWidth:460,rightWidth:290}}]);
+  assert.deepEqual(normalized.profiles,[{id:'profile-one',name:'Creator',createdAt:0,appearance:{layout:'balanced',theme:'aurora',density:'comfortable',accent:'#00a7c8',dockOrder:'left-canvas-right'},dock:{leftOpen:true,rightOpen:true,leftTab:'layers',leftTabOrder:DEFAULT_LEFT_TAB_ORDER,inspectorTab:'advanced',leftWidth:460,rightWidth:290}}]);
   assert.equal('customCss' in normalized.profiles[0],false);
   assert.equal('script' in normalized.profiles[0],false);
   assert.equal(normalizeWorkspacePreferences({dockOrder:'left-center-right'}).dockOrder,'left-canvas-right','unknown docking expressions cannot reach CSS');
@@ -43,11 +43,18 @@ test('dock position and saved profiles are bounded, inert data and safe to resto
   assert.equal(limited.profiles.length,8,'profile storage has a fixed eight-item bound');
 });
 
+test('left tool ordering keeps a complete unique allowlisted order and fills missing tools safely',()=>{
+  assert.deepEqual(normalizeLeftTabOrder(['layers','navigation','layers','<img>']),['layers','navigation','pages','elements','schedule']);
+  assert.deepEqual(normalizeLeftTabOrder(['navigation','schedule','layers','elements','pages']),['navigation','schedule','layers','elements','pages']);
+  const saved=normalizeWorkspacePreferences({profiles:[{id:'profile-order',name:'Rendező',dock:{leftTabOrder:['schedule','schedule','javascript:alert(1)']}}]});
+  assert.deepEqual(saved.profiles[0].dock.leftTabOrder,['schedule','pages','elements','layers','navigation'],'profile data cannot inject a tool or leave existing tools unreachable');
+});
+
 test('workspace profile transfer serializes only allowlisted data and rejects malformed, oversized or unsupported payloads',()=>{
   const raw=serializeWorkspaceProfile({id:'profile-original',name:'  Tervezői nézet  ',createdAt:123,appearance:{layout:'balanced',theme:'aurora',density:'compact',accent:'#00a7c8',dockOrder:'right-left-canvas'},dock:{leftOpen:true,rightOpen:true,leftTab:'layers',inspectorTab:'content',leftWidth:350,rightWidth:400},customCss:'body{display:none}',script:'alert(1)'});
   const transfer=JSON.parse(raw);
   assert.deepEqual(Object.keys(transfer).sort(),['kind','profile','version']);
-  assert.deepEqual(transfer.profile,{id:'profile-original',name:'Tervezői nézet',createdAt:123,appearance:{layout:'balanced',theme:'aurora',density:'compact',accent:'#00a7c8',dockOrder:'right-left-canvas'},dock:{leftOpen:true,rightOpen:true,leftTab:'layers',inspectorTab:'content',leftWidth:350,rightWidth:400}});
+  assert.deepEqual(transfer.profile,{id:'profile-original',name:'Tervezői nézet',createdAt:123,appearance:{layout:'balanced',theme:'aurora',density:'compact',accent:'#00a7c8',dockOrder:'right-left-canvas'},dock:{leftOpen:true,rightOpen:true,leftTab:'layers',leftTabOrder:DEFAULT_LEFT_TAB_ORDER,inspectorTab:'content',leftWidth:350,rightWidth:400}});
   assert.equal(parseWorkspaceProfileTransfer(raw).name,'Tervezői nézet');
   assert.equal(parseWorkspaceProfileTransfer('{broken'),null);
   assert.equal(parseWorkspaceProfileTransfer(JSON.stringify({...transfer,version:999})),null);

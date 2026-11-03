@@ -6,9 +6,9 @@
   <title>Sanci9517 Visual Editor v2</title>
   <link rel="stylesheet" href="/editor-v2/editor.css?v=20261103-dock-resizer-hitarea">
   <link rel="stylesheet" href="/editor-v2/schedule-preview.css?v=20260922-1">
-  <link rel="stylesheet" href="/editor-v2/editor-refresh.css?v=20261103-desktop-canvas-reserve">
+  <link rel="stylesheet" href="/editor-v2/editor-refresh.css?v=20261103-mobile-dock-toolbar-clearance">
   <link rel="stylesheet" href="/editor-v2/action-help.css?v=20261102-action-help-stateful">
-  <link rel="stylesheet" href="/editor-v2/workspace-appearance.css?v=20261103-canvas-focus-mode">
+  <link rel="stylesheet" href="/editor-v2/workspace-appearance.css?v=20261103-left-tool-order">
   <link rel="stylesheet" href="/editor-v2/text-presentation.css?v=20261018-layout">
 <link rel="stylesheet" href="/editor-v2/element-content.css?v=20261018-content"></head>
 <body>
@@ -25,6 +25,8 @@
     <div class="workspace-appearance-fields">
       <label for="workspaceLayout">Munkaterület elrendezése<select id="workspaceLayout"><option value="balanced">Kiegyensúlyozott — oldalak és beállítások</option><option value="canvas">Vászonközpontú — több hely az oldalnak</option><option value="inspector">Beállításközpontú — jobb oldali panel</option><option value="custom">Saját — kézzel beállított panelek</option></select><small>A panel szélén lévő elválasztót húzhatod. Billentyűzettel a nyilak 16, Shift+nyíl 48 képponttal állít; a Home és End a két szélességhatárt választja.</small></label>
       <label for="workspaceDockOrder">Panelek sorrendje asztali nézetben<select id="workspaceDockOrder"><option value="left-canvas-right">Panelek a vászon két oldalán</option><option value="canvas-left-right">Vászon elöl, mindkét panel jobbra</option><option value="left-right-canvas">Panelek együtt, vászon utánuk</option><option value="right-left-canvas">Beállítások, oldalak, majd vászon</option><option value="right-canvas-left">Beállítások balra, oldalak jobbra</option><option value="canvas-right-left">Vászon, beállítások, oldalak</option></select><small>A listát billentyűzettel és érintéssel is használhatod. Asztali nézetben a panel fejléceit vagy a vászon eszköztárát is húzhatod. Telefonon a biztonságos, egy paneles fiók marad.</small></label>
+      <label for="workspaceLeftTool">Bal oldali eszköz sorrendje<select id="workspaceLeftTool"><option value="pages">1. Oldalak</option><option value="elements">2. Elemek</option><option value="layers">3. Rétegek</option><option value="schedule">4. Adásrend</option><option value="navigation">5. Navigáció</option></select><small>Válaszd ki az eszközt, majd helyezd előrébb vagy hátrébb. A fülbillentyűk és a mobilos érintés is az új sorrendet követi.</small></label>
+      <div class="workspace-left-tools-move" role="group" aria-label="Kiválasztott bal oldali eszköz áthelyezése"><button id="moveWorkspaceLeftToolUp" type="button" aria-label="Kiválasztott eszköz áthelyezése előrébb">Előrébb</button><button id="moveWorkspaceLeftToolDown" type="button" aria-label="Kiválasztott eszköz áthelyezése hátrébb">Hátrébb</button></div>
       <label for="workspaceTheme">Felületi stílus<select id="workspaceTheme"><option value="graphite">Grafit — visszafogott és fókuszált</option><option value="aurora">Aurora — lila-kék alkotói tér</option><option value="ocean">Óceán — hűvös kék és türkiz</option><option value="sage">Zsálya — természetes zöld árnyalatok</option><option value="cinder">Parázs — meleg bronz és grafit</option></select><small>Csak a szerkesztő felületét változtatja meg; az oldal tartalmát, mentését és publikálását nem.</small></label>
       <label for="workspaceDensity">Felületi térköz<select id="workspaceDensity"><option value="comfortable">Kényelmes — több levegő</option><option value="compact">Tömör — több eszköz egyszerre</option></select><small>Telefonon az érintéshez szükséges gombméret akkor sem csökken.</small></label>
       <label for="workspaceAccent">Hangsúlyszín<input id="workspaceAccent" type="color" value="#5b8cff"><small>A rendszer csak jól látható, akadálymentes hangsúlyszínt fogad el.</small></label>
@@ -52,7 +54,7 @@
 </div>
 <script src="/editor-v2/boot.js?v=20260917-1"></script>
 <script type="module" src="/editor-v2/app.js?v=20261103-inspector-tab-persistence"></script>
-<script type="module" src="/editor-v2/ui/shell.js?v=20261103-inspector-tab-persistence"></script>
+<script type="module" src="/editor-v2/ui/shell.js?v=20261103-left-tool-order"></script>
 <script type="module" src="/editor-v2/ui/canvas-pan.js?v=20260917-1"></script>
 <script type="module" src="/editor-v2/ui/inspector-groups.js?v=20261030-search-group-state"></script>
 <script type="module" src="/editor-v2/ui/navigation-editor.js?v=20261016-1"></script>

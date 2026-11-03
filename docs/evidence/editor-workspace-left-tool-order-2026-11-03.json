@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-11-03",
+  "plan": "77.44.6.1.C — vászonhelyet megőrző dokk és személyre szabható eszközsorrend",
+  "status": "LOCAL_VERIFIED_PENDING_FAST_FORWARD_AND_AUTOMATIC_DEPLOY",
+  "scope": "A személyre szabható bal eszközsorrend és az asztali vásznat nem elfedő dokkmodell regressziói. A mobil alsó műveletsáv fölé csúszó réteglistát kijavítja. GitHub kiadás és Worker deployment egyelőre nincs állítva.",
+  "implementation": {
+    "runtime_files": [
+      "public/editor-v2/index.html",
+      "public/editor-v2/editor-refresh.css",
+      "public/editor-v2/workspace-appearance.css",
+      "public/editor-v2/ui/shell.js",
+      "public/editor-v2/ui/workspace-appearance.js"
+    ],
+    "test_files": [
+      "tests/editor-workspace-appearance.test.js",
+      "tests/browser/editor-workspace-appearance.test.js",
+      "tests/browser/editor-element-insertion.test.js"
+    ],
+    "behavior_assertions": [
+      "Az öt bal oldali eszköz allowlistelt sorrendje a Beállításokban átrendezhető, helyi munkaterület-állapotként mentődik, profilban importálható/exportálható, és Undo/Redo-val visszaállítható.",
+      "A függőleges eszközsín nyilai, Home és End a felhasználó által beállított sorrendet követik; a kiválasztás nem változik pusztán az átrendezéstől.",
+      "Másik szerkesztőlapon kapott külső sorrendmódosítás után a helyi elavult munkaterület-Undo/Redo előzmény törlődik.",
+      "Asztali panelrendek és legnagyobb panelek mellett legalább 400px vászon marad a legkeskenyebb tesztelt desktopon (1025px); 30 panelrend/szélesség kombináció vizsgálva.",
+      "390px mobilnézetben a dokk és a sötét háttérréteg legalább 6px-re az alsó műveletsáv fölött végződik; 320px-en az átrendező vezérlők érintési magassága legalább 44px.",
+      "Page Model írás és Save/Publish kérés minden érintett fixture-tesztben nulla."
+    ],
+    "new_dependencies": false,
+    "paid_services_added": false,
+    "production_data_writes": 0,
+    "r2_deletions": 0,
+    "manual_acceptance": "DEFERRED until the complete Visual Editor acceptance gate"
+  },
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "head_before_change": "93a1909a45c2e1c20cbc2597178f5b23deeaa154",
+    "github_head_before_change": "93a1909a45c2e1c20cbc2597178f5b23deeaa154",
+    "commit": "NOT_CREATED",
+    "push": "NOT_DONE",
+    "ci": "NOT_RUN",
+    "deployment": "NOT_DONE"
+  },
+  "validation": {
+    "browser_chromium": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-workspace-appearance.test.js tests/browser/editor-element-insertion.test.js — PASS 27/27; genuine Chromium; local mock APIs.",
+    "editor_unit": "npm run test:editor — PASS 14/14 test files.",
+    "typecheck": "npm run typecheck — PASS.",
+    "migration_safety_gate": "npm run test:web013:migration-gate — PASS; no D1 migration executed.",
+    "plan_checks": "python3 scripts/check-canonical-plan.py; python3 scripts/plan_contract.py; python3 scripts/audit-active-plan-point.py — PASS; cursor 77.44.6.1.C; functional acceptance NOT_CERTIFIED.",
+    "traceability": "python3 scripts/build-feature-traceability.py --check — PASS; 396 source mappings.",
+    "syntax_and_diff": "node --check on changed ES modules/tests and git diff --check — PASS.",
+    "wrangler_dry_run": "Wrangler 4.130.0 `wrangler deploy --dry-run` — PASS; 168 public assets; 335.81 KiB / 87.60 KiB gzip; no deployment.",
+    "remote_d1_preflight": {
+      "method": "Cloudflare D1 Query API, SELECT-only SQL",
+      "sql": "SELECT name FROM d1_migrations ORDER BY name;",
+      "rows_read": 34,
+      "latest_migration": "0028_media_archive.sql",
+      "success": true,
+      "changed_db": false,
+      "rows_written": 0,
+      "changes": 0
+    },
+    "pre_release_worker": {
+      "deployment_id": "70059a2e-0a70-4022-a229-018f84f807c2",
+      "version_id": "2f4e4d17-03ea-4420-bd43-e87b98943162",
+      "traffic_percentage": 100,
+      "health_http_status": 200,
+      "health_body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "known_earlier_attempt": "The first local Chromium launch in the restricted profile terminated before tests started (SIGTRAP). With local test network access enabled, all 27 targeted browser regressions completed successfully. An initial 19/20 browser run exposed a native dialog focus-restoration timing race in the test; a two-frame settle makes that test deterministic, and the final combined run passed 27/27."
+  },
+  "source_sha256": {
+    "public/editor-v2/index.html": "18d992e89e0a6781f8a84f82129901aa880fa43c24c95a1ef9227331fc36fd9a",
+    "public/editor-v2/editor-refresh.css": "61876c252f14de57770dd329fbab0a84b7777a509cd48d9efc9433f40dafb82e",
+    "public/editor-v2/workspace-appearance.css": "6b0e9e55a4e0a799a5f2f5add1013ddb49ed67f01e0e3754d2938d6895a96606",
+    "public/editor-v2/ui/shell.js": "89a357d47ca4f0b7ba5c96cd795a5ee553872db3601f19327b025611a045cb75",
+    "public/editor-v2/ui/workspace-appearance.js": "6f8dddca02b71343b6f095f286e3540bf2d782e63e1d696b500cbbbf6978ba01",
+    "tests/editor-workspace-appearance.test.js": "cfc4ae12b45490aa1f5cd9dd65b8642a75af47ec09c69828df7114de3d5027f5",
+    "tests/browser/editor-workspace-appearance.test.js": "422a342b05173c907c6c1877197ac41efb9b2b99cd97e20234b4abf0377671e4",
+    "tests/browser/editor-element-insertion.test.js": "5c09437d1aac9a9b1298603f0a715aa9c03719235c0310cbea68859542528cad"
+  },
+  "production_post_release": "PENDING"
+}

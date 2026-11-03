@@ -158,6 +158,7 @@ test('Inspector tab groups survive reload, profile restore, and phone use withou
   await mobile.page.locator('#inspectorTabContent').tap();
   assert.equal(await mobile.page.locator('#inspectorTabContent').getAttribute('aria-selected'),'true','the same Inspector tab group is touch-operable on a phone');
   await mobile.page.reload({waitUntil:'load'});
+  await mobile.page.waitForFunction(()=>document.documentElement.dataset.editorBoot==='ready');
   assert.equal(await mobile.page.locator('#inspectorTabContent').getAttribute('aria-selected'),'true','the mobile Inspector selection survives reload');
   assert.ok(await mobile.page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'the saved Inspector tab does not create mobile overflow');
   assert.deepEqual(mobile.writes,[]);
@@ -414,6 +415,59 @@ test('desktop panel and canvas drag reordering is an accessible-selector peer an
   assert.deepEqual(errors,[]);
 });
 
+test('left tool rail order is customizable, undoable, profile-aware and keyboard navigable',async t=>{
+  const {page,writes,errors}=await openEditor(t,{width:1366,height:900});
+  await openPreferences(page);
+  const rail=page.locator('.tool-rail');
+  const order=()=>rail.locator('.rail-btn').evaluateAll(buttons=>buttons.map(button=>button.dataset.tab));
+  assert.deepEqual(await order(),['pages','elements','layers','schedule','navigation']);
+  await page.locator('#workspaceLeftTool').selectOption('layers');
+  assert.equal(await page.locator('#moveWorkspaceLeftToolUp').isDisabled(),false);
+  await page.locator('#moveWorkspaceLeftToolUp').click();
+  assert.deepEqual(await order(),['pages','layers','elements','schedule','navigation']);
+  assert.equal(await rail.locator('.rail-btn.active').getAttribute('data-tab'),'pages','reordering does not change the selected tool');
+  assert.deepEqual(await page.evaluate(()=>JSON.parse(localStorage.getItem('sanci-editor-shell-v2')).leftTabOrder),['pages','layers','elements','schedule','navigation']);
+  assert.equal(await rail.locator('.rail-btn[data-tab="layers"]').getAttribute('aria-posinset'),'2');
+  assert.equal(await rail.locator('.rail-btn[data-tab="layers"]').getAttribute('aria-setsize'),'5');
+  await page.locator('#undoWorkspaceLayout').click();
+  assert.deepEqual(await order(),['pages','elements','layers','schedule','navigation'],'workspace Undo restores only the rail order');
+  await page.locator('#redoWorkspaceLayout').click();
+  assert.deepEqual(await order(),['pages','layers','elements','schedule','navigation'],'workspace Redo reapplies the rail order');
+  await page.locator('#workspaceProfileName').fill('Saját eszközsorrend');
+  await page.locator('#saveWorkspaceProfile').click();
+  const profileId=await page.locator('#workspaceProfile').inputValue();
+  await page.locator('#workspaceLeftTool').selectOption('navigation');
+  await page.locator('#moveWorkspaceLeftToolUp').click();
+  await page.locator('#moveWorkspaceLeftToolUp').click();
+  assert.deepEqual(await order(),['pages','layers','navigation','elements','schedule']);
+  await page.locator('#workspaceProfile').selectOption(profileId);
+  await page.locator('#loadWorkspaceProfile').click();
+  assert.deepEqual(await order(),['pages','layers','elements','schedule','navigation'],'saved profiles restore the user tool order');
+  await page.locator('#closeWorkspaceAppearance').click();
+  await page.locator('#leftTabPages').focus();
+  await page.locator('#leftTabPages').press('ArrowUp');
+  assert.equal(await rail.locator('.rail-btn[aria-selected="true"]').getAttribute('data-tab'),'navigation','vertical keyboard navigation follows the personalized order');
+  await page.reload({waitUntil:'load'});
+  assert.deepEqual(await order(),['pages','layers','elements','schedule','navigation'],'rail order survives reload');
+  assert.deepEqual(writes,[],'tool ordering, profile and workspace history never submit page content');
+  assert.deepEqual(errors,[]);
+});
+
+test('phone left tool ordering preserves touch targets, the one-drawer workspace and zero page writes',async t=>{
+  const {page,writes,errors}=await openEditor(t,{width:320,height:850,isMobile:true,hasTouch:true});
+  await openPreferences(page);
+  await page.locator('#workspaceLeftTool').selectOption('navigation');
+  const buttons=page.locator('#moveWorkspaceLeftToolUp,#moveWorkspaceLeftToolDown');
+  const sizes=await buttons.evaluateAll(items=>items.map(item=>({id:item.id,height:item.getBoundingClientRect().height,disabled:item.disabled})));
+  assert.ok(sizes.every(item=>item.height>=44),`reorder controls remain touchable at phone width: ${JSON.stringify(sizes)}`);
+  await page.locator('#moveWorkspaceLeftToolUp').tap();
+  assert.deepEqual(await page.locator('.tool-rail .rail-btn').evaluateAll(items=>items.map(item=>item.dataset.tab)),['pages','elements','layers','navigation','schedule']);
+  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'tool ordering does not introduce horizontal scrolling');
+  assert.ok(!(await page.locator('#leftDock').isVisible()&&await page.locator('#rightDock').isVisible()),'the mobile shell keeps at most one active drawer');
+  assert.deepEqual(writes,[],'the mobile rail preference never changes the page');
+  assert.deepEqual(errors,[]);
+});
+
 test('desktop dock separators resize by keyboard, announce width and finish interrupted pointer drags safely',async t=>{
   const {page,writes,errors}=await openEditor(t,{width:1440,height:900});
   await openPreferences(page);
@@ -421,6 +475,9 @@ test('desktop dock separators resize by keyboard, announce width and finish inte
   await page.locator('#closeWorkspaceAppearance').click();
   await page.locator('#workspaceAppearanceDialog[open]').waitFor({state:'hidden'});
   await page.locator('.more-actions').evaluate(element=>element.removeAttribute('open'));
+  // Wait for the browser's native-dialog focus restoration to settle before
+  // exercising the next, unrelated keyboard target.
+  await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
 
   const left=page.locator('.left-resizer');
   assert.equal(await left.getAttribute('role'),'separator');
@@ -594,6 +651,15 @@ test('open editor tabs synchronize saved appearance, dock state and profiles wit
   await page.waitForFunction(()=>document.querySelector('.workspace')?.dataset.workspaceDockOrder==='canvas-right-left');
   assert.equal(await page.locator('#workspaceDockOrder').inputValue(),'canvas-right-left','the dock-order preference is shared across open tabs');
 
+  await page.locator('#workspaceLeftTool').selectOption('layers');
+  await page.locator('#moveWorkspaceLeftToolUp').click();
+  assert.equal(await page.locator('#undoWorkspaceLayout').isEnabled(),true,'the local rail-order change enters only this tab’s workspace history');
+  await second.locator('#workspaceLeftTool').selectOption('navigation');
+  await second.locator('#moveWorkspaceLeftToolUp').click();
+  await page.waitForFunction(()=>[...document.querySelectorAll('.tool-rail .rail-btn')].map(button=>button.dataset.tab).join(',')==='pages,layers,elements,navigation,schedule');
+  assert.equal(await page.locator('#undoWorkspaceLayout').isDisabled(),true,'an external rail-order update clears a history snapshot that could overwrite it');
+  assert.match(await page.locator('#workspaceAppearanceStatus').textContent(),/másik szerkesztőlapon megváltozott az eszközök sorrendje/iu);
+
   await second.locator('#workspaceProfileName').fill('Másik lap nézete');
   await second.locator('#saveWorkspaceProfile').click();
   await page.waitForFunction(()=>document.querySelector('#workspaceProfile')?.options.length===2);
@@ -753,7 +819,7 @@ test('responsive dock resize keeps the focused panel and honors an explicit mobi
   await page.waitForFunction(()=>document.querySelector('#rightDock')?.classList.contains('closed')===false);
   assert.equal(await page.locator('#leftDock').evaluate(element=>element.classList.contains('closed')),true,'a deliberate mobile choice replaces the temporary desktop snapshot (the desktop navigation rail itself remains visible)');
   assert.equal(await page.locator('#rightDock').isVisible(),true);
-  assert.deepEqual(await page.evaluate(()=>JSON.parse(localStorage.getItem('sanci-editor-shell-v2'))),{leftOpen:false,rightOpen:true,leftTab:'layers',inspectorTab:'design',leftWidth:310,rightWidth:352});
+  assert.deepEqual(await page.evaluate(()=>JSON.parse(localStorage.getItem('sanci-editor-shell-v2'))),{leftOpen:false,rightOpen:true,leftTab:'layers',leftTabOrder:['pages','elements','layers','schedule','navigation'],inspectorTab:'design',leftWidth:310,rightWidth:352});
   assert.deepEqual(writes,[],'responsive panel changes never issue page Save or Publish requests');
   assert.deepEqual(errors,[]);
 });
