@@ -274,8 +274,23 @@ export function mountWorkspaceAppearance({documentRef=globalThis.document,root=d
     await importProfile(file);
     profileFile.value='';
   });
+  const syncExternalPreferences=event=>{
+    if(event.storageArea&&storage&&event.storageArea!==storage)return;
+    if(event.key!==null&&event.key!==WORKSPACE_PREFERENCES_KEY&&event.key!==LEGACY_WORKSPACE_PREFERENCES_KEY)return;
+    // A late v1 write must never overwrite a profile-aware v2 workspace.
+    if(event.key===LEGACY_WORKSPACE_PREFERENCES_KEY){try{if(storage?.getItem(WORKSPACE_PREFERENCES_KEY))return}catch{return}}
+    let next;
+    try{next=normalizeWorkspacePreferences(event.newValue?JSON.parse(event.newValue):{})}catch{next=normalizeWorkspacePreferences({})}
+    if(JSON.stringify(next)===JSON.stringify(value))return;
+    // History from this tab is based on an older shared workspace. Keeping it
+    // would let a later Undo silently replace the state received from another tab.
+    value=next;undoStack=[];redoStack=[];paint();
+    try{onLayoutChange(value.layout,{save:false})}catch{}
+    if(status)status.textContent='Egy másik szerkesztőlapon megváltozott a munkaterület. A friss beállításokat megjelenítettük, a régi visszavonási előzményt töröltük. Az oldal tartalma nem változott.';
+  };
+  documentRef.defaultView?.addEventListener?.('storage',syncExternalPreferences);
   undoButton?.addEventListener('click',undo);redoButton?.addEventListener('click',redo);
   resetButton?.addEventListener('click',reset);
   paint();
-  return {get value(){return normalizeWorkspacePreferences(value)},setLayout,setDockOrder,open,close,remember,undo,redo,saveProfile,loadProfile,deleteProfile,importProfile,exportProfile,reset};
+  return {get value(){return normalizeWorkspacePreferences(value)},setLayout,setDockOrder,open,close,remember,undo,redo,saveProfile,loadProfile,deleteProfile,importProfile,exportProfile,reset,destroy(){documentRef.defaultView?.removeEventListener?.('storage',syncExternalPreferences)}};
 }

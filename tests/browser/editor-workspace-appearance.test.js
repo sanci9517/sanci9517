@@ -41,7 +41,7 @@ async function openEditor(t,{width=1366,height=900,isMobile=false,hasTouch=false
   const errors=[];page.on('pageerror',error=>errors.push(error.message));
   await page.goto(`http://127.0.0.1:${fixture.server.address().port}/editor-v2/index.html`,{waitUntil:'load'});
   await page.locator('.page-canvas .node').first().waitFor();
-  return {...fixture,page,errors};
+  return {...fixture,page,context,errors};
 }
 
 async function openPreferences(page){
@@ -237,6 +237,7 @@ test('mobile profile application keeps the single-drawer model and workspace res
   await page.locator('#workspaceProfile').selectOption(savedProfileId);
   await page.locator('#loadWorkspaceProfile').tap();
   assert.ok(!(await page.locator('#leftDock').isVisible()&&await page.locator('#rightDock').isVisible()),'mobile workspace displays at most one panel drawer');
+  assert.deepEqual(await page.evaluate(()=>{const value=JSON.parse(localStorage.getItem('sanci-editor-shell-v2'));return {leftOpen:value.leftOpen,rightOpen:value.rightOpen}}),{leftOpen:false,rightOpen:true},'mobile application normalizes a profile that requests two drawers to one durable active drawer');
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'desktop dock preferences never create mobile horizontal overflow');
   await page.locator('#resetWorkspaceAppearance').tap();
   assert.equal(await page.locator('.editor-app').getAttribute('data-workspace-theme'),'graphite');
@@ -431,6 +432,35 @@ test('workspace profile export/import uses bounded allowlisted JSON, supports un
   await page.waitForFunction(()=>document.querySelector('#workspaceAppearanceStatus')?.textContent.includes('nem érvényes'));
   assert.equal(await page.locator('#workspaceProfile option').count(),3,'unsupported file versions cannot mutate local profiles');
   assert.deepEqual(writes,[],'profile file transfer and workspace history never Save or Publish page content');
+  assert.deepEqual(errors,[]);
+});
+
+test('open editor tabs synchronize saved appearance, dock state and profiles without retaining stale undo or touching page data',async t=>{
+  const {page,context,writes,errors}=await openEditor(t,{width:1366,height:900});
+  const second=await context.newPage();
+  await second.goto(page.url(),{waitUntil:'load'});
+  await second.locator('.page-canvas .node').first().waitFor();
+  await openPreferences(page);
+  await openPreferences(second);
+  await page.locator('#workspaceTheme').selectOption('aurora');
+  await second.waitForFunction(()=>document.querySelector('.editor-app')?.dataset.workspaceTheme==='aurora');
+
+  await page.locator('#workspaceLayout').selectOption('balanced');
+  await second.waitForFunction(()=>document.querySelector('.workspace')?.classList.contains('left-open')&&document.querySelector('.workspace')?.classList.contains('right-open'));
+  assert.equal(await second.locator('#workspaceLayout').inputValue(),'balanced','the second editor tab adopts the persisted layout');
+  assert.equal(await second.locator('#undoWorkspaceLayout').isDisabled(),true,'external workspace changes clear history based on stale state');
+  assert.match(await second.locator('#workspaceAppearanceStatus').textContent(),/másik szerkesztőlapon/iu,'the receiving tab explains why its local history was cleared');
+
+  await second.locator('#workspaceDockOrder').selectOption('canvas-right-left');
+  await page.waitForFunction(()=>document.querySelector('.workspace')?.dataset.workspaceDockOrder==='canvas-right-left');
+  assert.equal(await page.locator('#workspaceDockOrder').inputValue(),'canvas-right-left','the dock-order preference is shared across open tabs');
+
+  await second.locator('#workspaceProfileName').fill('Másik lap nézete');
+  await second.locator('#saveWorkspaceProfile').click();
+  await page.waitForFunction(()=>document.querySelector('#workspaceProfile')?.options.length===2);
+  assert.equal(await page.locator('#workspaceProfile option').last().textContent(),'Másik lap nézete','saved profiles become available in other open tabs');
+  assert.equal(await page.locator('#workspaceProfile').inputValue(),'','receiving the profile does not apply it unexpectedly');
+  assert.deepEqual(writes,[],'workspace synchronization never invokes Page Model Save or Publish');
   assert.deepEqual(errors,[]);
 });
 

@@ -1,8 +1,8 @@
 import {createEventBus} from './events.js';
 import {panelRegistry,featureRegistry} from './registry.js';
-import {EDITOR_ACTIONS} from './action-catalog.js?v=20261102-workspace-profiles-v2';
-import {enhanceEditorActionControls} from './action-help.js?v=20261102-workspace-profiles-v2';
-import {applyWorkspacePreferences,mountWorkspaceAppearance,readWorkspacePreferences} from './workspace-appearance.js?v=20261102-workspace-profiles-v2';
+import {EDITOR_ACTIONS} from './action-catalog.js?v=20261102-workspace-cross-tab-sync';
+import {enhanceEditorActionControls} from './action-help.js?v=20261102-workspace-cross-tab-sync';
+import {applyWorkspacePreferences,mountWorkspaceAppearance,readWorkspacePreferences} from './workspace-appearance.js?v=20261103-workspace-cross-tab-sync';
 
 const bus=createEventBus();
 const workspace=document.querySelector('.workspace');
@@ -44,11 +44,11 @@ function resolveWorkspaceLayout(layout,mobile){
   if(layout==='inspector')return {left:false,right:true};
   return mobile?{left:false,right:false}:{left:true,right:true};
 }
-function applyWorkspaceLayout(layout){
+function applyWorkspaceLayout(layout,{save=true}={}){
   if(layout==='custom')return;
   const next=resolveWorkspaceLayout(layout,mobileQuery.matches);
-  setPanel('left',next.left,{save:true});
-  setPanel('right',next.right,{save:true});
+  setPanel('left',next.left,{save});
+  setPanel('right',next.right,{save});
 }
 function emit(type,payload={}){bus.emit(type,payload)}
 function syncMobileBackdrop(){
@@ -263,15 +263,7 @@ setPanel('left',!mobileQuery.matches && Boolean(persisted.leftOpen),{save:false}
 setPanel('right',!mobileQuery.matches && Boolean(persisted.rightOpen),{save:false});
 showLeftTab(persisted.leftTab,{save:false,open:false});
 workspaceAppearance=mountWorkspaceAppearance({documentRef:document,root:editorRoot,onLayoutChange:applyWorkspaceLayout,readDockState:()=>persisted,applyDockState:state=>{
-  persisted={...persisted,...state};
-  root.style.setProperty('--left-dock-width',`${state.leftWidth}px`);
-  root.style.setProperty('--right-dock-width',`${state.rightWidth}px`);
-  updateResizeHandle('left',state.leftWidth);
-  updateResizeHandle('right',state.rightWidth);
-  setPanel('left',state.leftOpen,{save:true,customize:false});
-  setPanel('right',state.rightOpen,{save:true,customize:false});
-  showLeftTab(state.leftTab,{save:true,open:false});
-  persist();
+  applyDockState(state);
 },onReset:()=>{
   persisted={...defaults};
   root.style.setProperty('--left-dock-width',`${defaults.leftWidth}px`);
@@ -280,6 +272,33 @@ workspaceAppearance=mountWorkspaceAppearance({documentRef:document,root:editorRo
   updateResizeHandle('right',defaults.rightWidth);
   persist();
 }});
+function normalizeStoredDockState(input){
+  const value=input&&typeof input==='object'&&!Array.isArray(input)?input:{};
+  const width=(candidate,limits,fallback)=>Number.isFinite(Number(candidate))?clamp(Number(candidate),limits):fallback;
+  const next={leftOpen:value.leftOpen===true,rightOpen:value.rightOpen===true,leftTab:LEFT_TABS.includes(value.leftTab)?value.leftTab:'pages',leftWidth:width(value.leftWidth,resizeLimits.left,defaults.leftWidth),rightWidth:width(value.rightWidth,resizeLimits.right,defaults.rightWidth)};
+  if(mobileQuery.matches&&next.leftOpen&&next.rightOpen)next.leftOpen=false;
+  return next;
+}
+function applyDockState(state,{save=true}={}){
+  const next=normalizeStoredDockState(state);
+  persisted={...persisted,...next};
+  root.style.setProperty('--left-dock-width',`${next.leftWidth}px`);
+  root.style.setProperty('--right-dock-width',`${next.rightWidth}px`);
+  updateResizeHandle('left',next.leftWidth);
+  updateResizeHandle('right',next.rightWidth);
+  setPanel('left',next.leftOpen,{save:false,customize:false});
+  setPanel('right',next.rightOpen,{save:false,customize:false});
+  showLeftTab(next.leftTab,{save:false,open:false});
+  if(save)persist();
+}
+window.addEventListener('storage',event=>{
+  if(event.key!==null&&event.key!==STORAGE_KEY)return;
+  try{if(event.storageArea&&event.storageArea!==window.localStorage)return}catch{return}
+  let next;
+  try{next=event.newValue?JSON.parse(event.newValue):defaults}catch{next=defaults}
+  applyDockState(next,{save:false});
+  emit('workspace:external-change',{source:'storage',area:'dock'});
+});
 setupDockReordering();
 
 document.querySelector('#editorMenu')?.addEventListener('click',()=>{
