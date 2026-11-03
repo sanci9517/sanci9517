@@ -28,14 +28,14 @@ test('curated workspace designs are allowlisted and remain compatible with saved
 
 test('dock position and saved profiles are bounded, inert data and safe to restore',()=>{
   const normalized=normalizeWorkspacePreferences({dockOrder:'right-canvas-left',profiles:[
-    {id:'profile-one',name:' Creator ',appearance:{layout:'balanced',theme:'aurora',accent:'#00a7c8'},dock:{leftOpen:true,rightOpen:true,leftTab:'layers',leftWidth:999,rightWidth:290},customCss:'body{display:none}',script:'alert(1)'},
+    {id:'profile-one',name:' Creator ',appearance:{layout:'balanced',theme:'aurora',accent:'#00a7c8'},dock:{leftOpen:true,rightOpen:true,leftTab:'layers',inspectorTab:'advanced',leftWidth:999,rightWidth:290},customCss:'body{display:none}',script:'alert(1)'},
     {id:'profile-one',name:'Duplicate id'},
     {id:'profile-two',name:'creator'},
     {id:'bad id',name:'Invalid id'},
   ]});
   assert.equal(normalized.version,2);
   assert.equal(normalized.dockOrder,'right-canvas-left');
-  assert.deepEqual(normalized.profiles,[{id:'profile-one',name:'Creator',createdAt:0,appearance:{layout:'balanced',theme:'aurora',density:'comfortable',accent:'#00a7c8',dockOrder:'left-canvas-right'},dock:{leftOpen:true,rightOpen:true,leftTab:'layers',leftWidth:460,rightWidth:290}}]);
+  assert.deepEqual(normalized.profiles,[{id:'profile-one',name:'Creator',createdAt:0,appearance:{layout:'balanced',theme:'aurora',density:'comfortable',accent:'#00a7c8',dockOrder:'left-canvas-right'},dock:{leftOpen:true,rightOpen:true,leftTab:'layers',inspectorTab:'advanced',leftWidth:460,rightWidth:290}}]);
   assert.equal('customCss' in normalized.profiles[0],false);
   assert.equal('script' in normalized.profiles[0],false);
   assert.equal(normalizeWorkspacePreferences({dockOrder:'left-center-right'}).dockOrder,'left-canvas-right','unknown docking expressions cannot reach CSS');
@@ -44,10 +44,10 @@ test('dock position and saved profiles are bounded, inert data and safe to resto
 });
 
 test('workspace profile transfer serializes only allowlisted data and rejects malformed, oversized or unsupported payloads',()=>{
-  const raw=serializeWorkspaceProfile({id:'profile-original',name:'  Tervezői nézet  ',createdAt:123,appearance:{layout:'balanced',theme:'aurora',density:'compact',accent:'#00a7c8',dockOrder:'right-left-canvas'},dock:{leftOpen:true,rightOpen:true,leftTab:'layers',leftWidth:350,rightWidth:400},customCss:'body{display:none}',script:'alert(1)'});
+  const raw=serializeWorkspaceProfile({id:'profile-original',name:'  Tervezői nézet  ',createdAt:123,appearance:{layout:'balanced',theme:'aurora',density:'compact',accent:'#00a7c8',dockOrder:'right-left-canvas'},dock:{leftOpen:true,rightOpen:true,leftTab:'layers',inspectorTab:'content',leftWidth:350,rightWidth:400},customCss:'body{display:none}',script:'alert(1)'});
   const transfer=JSON.parse(raw);
   assert.deepEqual(Object.keys(transfer).sort(),['kind','profile','version']);
-  assert.deepEqual(transfer.profile,{id:'profile-original',name:'Tervezői nézet',createdAt:123,appearance:{layout:'balanced',theme:'aurora',density:'compact',accent:'#00a7c8',dockOrder:'right-left-canvas'},dock:{leftOpen:true,rightOpen:true,leftTab:'layers',leftWidth:350,rightWidth:400}});
+  assert.deepEqual(transfer.profile,{id:'profile-original',name:'Tervezői nézet',createdAt:123,appearance:{layout:'balanced',theme:'aurora',density:'compact',accent:'#00a7c8',dockOrder:'right-left-canvas'},dock:{leftOpen:true,rightOpen:true,leftTab:'layers',inspectorTab:'content',leftWidth:350,rightWidth:400}});
   assert.equal(parseWorkspaceProfileTransfer(raw).name,'Tervezői nézet');
   assert.equal(parseWorkspaceProfileTransfer('{broken'),null);
   assert.equal(parseWorkspaceProfileTransfer(JSON.stringify({...transfer,version:999})),null);

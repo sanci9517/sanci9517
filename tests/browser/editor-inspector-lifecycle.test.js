@@ -322,7 +322,16 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
     await response;
     await editor.waitForFunction(pub=>pub?document.querySelector('#saveStatus')?.textContent==='Publikálva':document.querySelector('#saveStatus')?.textContent?.startsWith('Mentve'),publish);
   };
-  await select(fallbackTextId);await editor.locator('.inspector-tabs button').nth(1).click();
+  await select(fallbackTextId);
+  const inspectorState=await editor.evaluate(()=>{
+    const dock=document.querySelector('#rightDock');
+    const tablist=document.querySelector('.inspector-tabs');
+    const rect=tablist?.getBoundingClientRect();
+    return {editorBoot:document.documentElement.dataset.editorBoot,dockClass:dock?.className,dockDisplay:dock&&getComputedStyle(dock).display,
+      tabCount:tablist?.querySelectorAll('button').length,tabRect:rect&&{width:rect.width,height:rect.height},selected:tablist?.querySelector('[aria-selected="true"]')?.id};
+  });
+  assert.ok(inspectorState.tabCount===3&&inspectorState.dockDisplay!=='none'&&inspectorState.tabRect?.width>0,`Inspector tabs remain available after reload and selection: ${JSON.stringify(inspectorState)}`);
+  await editor.locator('.inspector-tabs button').nth(1).click();
   assert.equal(await editor.locator('.plain-text-content[data-property-id="content.text"] textarea').inputValue(),'Inspector fallback',
     'plain-text Inspector uses the same node-name fallback as the Canvas');
   await select(itemId);await editor.locator('.inspector-tabs button').nth(1).click();
@@ -770,7 +779,13 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
     assert.equal(posts.at(-1).publish,false,`${label}: draft Save does not publish`);
     // Verify persistence after the document/app are ready without making the
     // roundtrip depend on every nonessential resource firing a window load.
-    await editor.reload({waitUntil:'domcontentloaded'});await select(nodeId);await openGroup();
+    // The editor's module graph is intentionally larger than the public-page
+    // graph. Wait for the navigation response to commit, then for the explicit
+    // boot marker, instead of making this lifecycle assertion depend on every
+    // module's DOMContentLoaded scheduling in a long multi-field browser run.
+    await editor.reload({waitUntil:'commit'});
+    await editor.waitForFunction(()=>document.documentElement.dataset.editorBoot==='ready');
+    await select(nodeId);await openGroup();
     assert.equal(await canvasValue(),next,`${label}: draft value survives Editor reload`);
     await publicPage.reload({waitUntil:'domcontentloaded'});
     assert.equal(await publicValue(),previousPublic,`${label}: public value stays unchanged after draft Save`);

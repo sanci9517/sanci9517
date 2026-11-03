@@ -6,6 +6,7 @@ const themes=new Set(['graphite','aurora','ocean','sage','cinder']);
 const densities=new Set(['comfortable','compact']);
 const dockOrders=new Set(['left-canvas-right','canvas-left-right','left-right-canvas','right-left-canvas','right-canvas-left','canvas-right-left']);
 const leftTabs=new Set(['pages','elements','layers','schedule','navigation']);
+const inspectorTabs=new Set(['design','content','advanced']);
 const hexColor=/^#[0-9a-f]{6}$/iu;
 const PROFILE_LIMIT=8;
 const PROFILE_NAME_LIMIT=32;
@@ -33,6 +34,7 @@ function normalizeDockState(value){
     leftOpen:input.leftOpen===true,
     rightOpen:input.rightOpen===true,
     leftTab:leftTabs.has(input.leftTab)?input.leftTab:'pages',
+    inspectorTab:inspectorTabs.has(input.inspectorTab)?input.inspectorTab:'design',
     leftWidth:finiteWidth(input.leftWidth,250,460,310),
     rightWidth:finiteWidth(input.rightWidth,260,440,352),
   };

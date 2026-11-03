@@ -2,7 +2,7 @@ import {createEventBus} from './events.js';
 import {panelRegistry,featureRegistry} from './registry.js';
 import {EDITOR_ACTIONS} from './action-catalog.js?v=20261103-canvas-focus-mode';
 import {enhanceEditorActionControls} from './action-help.js?v=20261103-canvas-focus-mode';
-import {applyWorkspacePreferences,mountWorkspaceAppearance,readWorkspacePreferences} from './workspace-appearance.js?v=20261103-workspace-design-choices';
+import {applyWorkspacePreferences,mountWorkspaceAppearance,readWorkspacePreferences} from './workspace-appearance.js?v=20261103-inspector-tab-persistence';
 
 const bus=createEventBus();
 const workspace=document.querySelector('.workspace');
@@ -12,7 +12,7 @@ const panels={left:document.querySelector('#leftDock'),right:document.querySelec
 const actionControls=enhanceEditorActionControls(document);
 const resizeLimits={left:{min:250,max:460},right:{min:260,max:440}};
 const STORAGE_KEY='sanci-editor-shell-v2';
-const defaults={leftOpen:false,rightOpen:false,leftTab:'pages',leftWidth:310,rightWidth:352};
+const defaults={leftOpen:false,rightOpen:false,leftTab:'pages',inspectorTab:'design',leftWidth:310,rightWidth:352};
 const mobileQuery=window.matchMedia('(max-width: 1024px)');
 const initialAppearance=readWorkspacePreferences();
 applyWorkspacePreferences(editorRoot,initialAppearance);
@@ -37,7 +37,9 @@ if(initialAppearance.layout!=='custom'){
   persisted.rightOpen=initialLayout.right;
 }
 const LEFT_TABS=['pages','elements','layers','schedule','navigation'];
+const INSPECTOR_TABS=['design','content','advanced'];
 if(!LEFT_TABS.includes(persisted.leftTab))persisted.leftTab='pages';
+if(!INSPECTOR_TABS.includes(persisted.inspectorTab))persisted.inspectorTab='design';
 function persist(){
   try{localStorage.setItem(STORAGE_KEY,JSON.stringify(persisted))}catch{}
 }
@@ -142,6 +144,13 @@ function showLeftTab(tab,{save=true,open=true,customize=false}={}){
   if(save){persisted.leftTab=tab;persist()}
   if(customize&&(opensLeft||changesTab))workspaceAppearance?.setLayout('custom',{rememberChange:false});
   emit('panel:tab',{tab});
+}
+function setInspectorTab(tab,{save=true,notify=true}={}){
+  if(!INSPECTOR_TABS.includes(tab))return false;
+  persisted.inspectorTab=tab;
+  if(save)persist();
+  if(notify)emit('panel:inspector-tab',{tab});
+  return true;
 }
 function clamp(value,limits){return Math.max(limits.min,Math.min(limits.max,value))}
 function updateResizeHandle(side,width){
@@ -305,7 +314,7 @@ workspaceAppearance=mountWorkspaceAppearance({documentRef:document,root:editorRo
 function normalizeStoredDockState(input){
   const value=input&&typeof input==='object'&&!Array.isArray(input)?input:{};
   const width=(candidate,limits,fallback)=>Number.isFinite(Number(candidate))?clamp(Number(candidate),limits):fallback;
-  const next={leftOpen:value.leftOpen===true,rightOpen:value.rightOpen===true,leftTab:LEFT_TABS.includes(value.leftTab)?value.leftTab:'pages',leftWidth:width(value.leftWidth,resizeLimits.left,defaults.leftWidth),rightWidth:width(value.rightWidth,resizeLimits.right,defaults.rightWidth)};
+  const next={leftOpen:value.leftOpen===true,rightOpen:value.rightOpen===true,leftTab:LEFT_TABS.includes(value.leftTab)?value.leftTab:'pages',inspectorTab:INSPECTOR_TABS.includes(value.inspectorTab)?value.inspectorTab:'design',leftWidth:width(value.leftWidth,resizeLimits.left,defaults.leftWidth),rightWidth:width(value.rightWidth,resizeLimits.right,defaults.rightWidth)};
   if(mobileQuery.matches&&next.leftOpen&&next.rightOpen)next.leftOpen=false;
   return next;
 }
@@ -319,6 +328,7 @@ function applyDockState(state,{save=true}={}){
   setPanel('left',next.leftOpen,{save:false,customize:false});
   setPanel('right',next.rightOpen,{save:false,customize:false});
   showLeftTab(next.leftTab,{save:false,open:false});
+  setInspectorTab(next.inspectorTab,{save:false});
   if(save)persist();
 }
 window.addEventListener('storage',event=>{
@@ -375,10 +385,9 @@ document.querySelectorAll('.rail-btn').forEach(b=>{
   b.addEventListener('click',()=>showLeftTab(b.dataset.tab,{customize:true}));
   b.addEventListener('keydown',event=>{
     const index=LEFT_TABS.indexOf(b.dataset.tab);if(index<0)return;
-    const rtl=getComputedStyle(b.parentElement).direction==='rtl';
     let next=-1;
-    if(event.key==='ArrowRight')next=(index+(rtl?-1:1)+LEFT_TABS.length)%LEFT_TABS.length;
-    else if(event.key==='ArrowLeft')next=(index+(rtl?1:-1)+LEFT_TABS.length)%LEFT_TABS.length;
+    if(event.key==='ArrowDown')next=(index+1)%LEFT_TABS.length;
+    else if(event.key==='ArrowUp')next=(index+LEFT_TABS.length-1)%LEFT_TABS.length;
     else if(event.key==='Home')next=0;
     else if(event.key==='End')next=LEFT_TABS.length-1;
     if(next<0)return;
@@ -386,7 +395,7 @@ document.querySelectorAll('.rail-btn').forEach(b=>{
   });
 });
 setupResizers();
-window.sanciEditor={version:9,bus,panels:panelRegistry,features:featureRegistry,on:bus.on,emit,openPanel:s=>setPanel(s,true),closePanel:s=>setPanel(s,false),showLeftTab,resizeDock};
+window.sanciEditor={version:9,bus,panels:panelRegistry,features:featureRegistry,on:bus.on,emit,openPanel:s=>setPanel(s,true),closePanel:s=>setPanel(s,false),showLeftTab,setInspectorTab,resizeDock};
 featureRegistry.register('shell-runtime',{version:9,persistence:'localStorage',mobileShell:'bottom-sheet'});
 syncMobileBackdrop();
 emit('shell:ready',{version:8});

@@ -114,6 +114,56 @@ test('five selectable editor designs visibly differ, persist and never alter pag
   assert.deepEqual(errors,[]);
 });
 
+test('Inspector tab groups survive reload, profile restore, and phone use without page writes',async t=>{
+  const desktop=await openEditor(t);
+  await desktop.page.locator('#openInspector').click();
+  await desktop.page.locator('#inspectorTabAdvanced').click();
+  assert.equal(await desktop.page.locator('#inspectorTabAdvanced').getAttribute('aria-selected'),'true');
+  assert.equal(await desktop.page.evaluate(()=>JSON.parse(localStorage.getItem('sanci-editor-shell-v2')).inspectorTab),'advanced');
+  await desktop.page.locator('#editorMenu').click();
+  const rail=desktop.page.locator('.tool-rail');
+  assert.equal(await rail.getAttribute('aria-orientation'),'vertical','the left tool group declares its actual vertical layout');
+  await desktop.page.locator('#leftTabPages').focus();
+  await desktop.page.locator('#leftTabPages').press('ArrowDown');
+  assert.equal(await desktop.page.locator('#leftTabElements').getAttribute('aria-selected'),'true','Down moves to the next tab in the vertical group');
+  await desktop.page.locator('#leftTabElements').press('ArrowUp');
+  assert.equal(await desktop.page.locator('#leftTabPages').getAttribute('aria-selected'),'true','Up moves to the preceding tab');
+  await desktop.page.locator('#leftTabPages').press('End');
+  assert.equal(await desktop.page.locator('#leftTabNavigation').getAttribute('aria-selected'),'true','End reaches the last tab');
+  await openPreferences(desktop.page);
+  await desktop.page.locator('#workspaceProfileName').fill('Haladó Inspector');
+  await desktop.page.locator('#saveWorkspaceProfile').click();
+  await desktop.page.locator('#closeWorkspaceAppearance').click();
+  await desktop.page.locator('#inspectorTabContent').click();
+  await desktop.page.reload({waitUntil:'domcontentloaded'});
+  await desktop.page.waitForFunction(()=>document.documentElement.dataset.editorBoot==='ready');
+  assert.equal(await desktop.page.locator('#inspectorTabContent').getAttribute('aria-selected'),'true','the most recently selected Inspector group returns after a full reload');
+  assert.equal(await desktop.page.locator('#leftTabNavigation').getAttribute('aria-selected'),'true','the left group selection also returns after reload');
+  await openPreferences(desktop.page);
+  await desktop.page.locator('#closeWorkspaceAppearance').click();
+  await desktop.page.locator('#inspectorTabContent').click();
+  await openPreferences(desktop.page);
+  await desktop.page.locator('#workspaceProfile').selectOption({label:'Haladó Inspector'});
+  await desktop.page.locator('#loadWorkspaceProfile').click();
+  assert.equal(await desktop.page.locator('#inspectorTabAdvanced').getAttribute('aria-selected'),'true','a saved workspace profile restores the nested Inspector group');
+  await desktop.page.locator('#undoWorkspaceLayout').click();
+  assert.equal(await desktop.page.locator('#inspectorTabContent').getAttribute('aria-selected'),'true','workspace Undo restores the prior Inspector group');
+  await desktop.page.locator('#redoWorkspaceLayout').click();
+  assert.equal(await desktop.page.locator('#inspectorTabAdvanced').getAttribute('aria-selected'),'true','workspace Redo reapplies the Inspector group');
+  assert.deepEqual(desktop.writes,[],'Inspector and profile changes never Save or Publish page content');
+  assert.deepEqual(desktop.errors,[]);
+
+  const mobile=await openEditor(t,{width:390,height:844,isMobile:true,hasTouch:true});
+  await mobile.page.locator('#openInspector').tap();
+  await mobile.page.locator('#inspectorTabContent').tap();
+  assert.equal(await mobile.page.locator('#inspectorTabContent').getAttribute('aria-selected'),'true','the same Inspector tab group is touch-operable on a phone');
+  await mobile.page.reload({waitUntil:'load'});
+  assert.equal(await mobile.page.locator('#inspectorTabContent').getAttribute('aria-selected'),'true','the mobile Inspector selection survives reload');
+  assert.ok(await mobile.page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'the saved Inspector tab does not create mobile overflow');
+  assert.deepEqual(mobile.writes,[]);
+  assert.deepEqual(mobile.errors,[]);
+});
+
 test('mobile workspace design choices stay touch-sized, visible and page-data independent',async t=>{
   const {page,writes,errors}=await openEditor(t,{width:390,height:844,isMobile:true,hasTouch:true});
   await openPreferences(page);
@@ -703,7 +753,7 @@ test('responsive dock resize keeps the focused panel and honors an explicit mobi
   await page.waitForFunction(()=>document.querySelector('#rightDock')?.classList.contains('closed')===false);
   assert.equal(await page.locator('#leftDock').evaluate(element=>element.classList.contains('closed')),true,'a deliberate mobile choice replaces the temporary desktop snapshot (the desktop navigation rail itself remains visible)');
   assert.equal(await page.locator('#rightDock').isVisible(),true);
-  assert.deepEqual(await page.evaluate(()=>JSON.parse(localStorage.getItem('sanci-editor-shell-v2'))),{leftOpen:false,rightOpen:true,leftTab:'layers',leftWidth:310,rightWidth:352});
+  assert.deepEqual(await page.evaluate(()=>JSON.parse(localStorage.getItem('sanci-editor-shell-v2'))),{leftOpen:false,rightOpen:true,leftTab:'layers',inspectorTab:'design',leftWidth:310,rightWidth:352});
   assert.deepEqual(writes,[],'responsive panel changes never issue page Save or Publish requests');
   assert.deepEqual(errors,[]);
 });
