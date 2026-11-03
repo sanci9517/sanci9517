@@ -20,7 +20,8 @@
     "traffic_percentage": 100,
     "runtime_fast_forward_head": "2e64ed95346c041db323c65f1b2cd14d1860f3d6",
     "documentation_commit_after_runtime_release": "01a0d33c68ca464811a745ee60030093d17c47f1",
-    "github_head_verified_after_documentation_push": "01a0d33c68ca464811a745ee60030093d17c47f1"
+    "github_head_verified_after_documentation_push": "01a0d33c68ca464811a745ee60030093d17c47f1",
+    "last_verified_branch_head_before_followup_doc_fix": "5f675318814f528b0fca19bfc17f5cd263de8a65"
   },
   "implementation": {
     "files": [
@@ -54,7 +55,7 @@
     "public/editor-v2/workspace-appearance.css": "c9d0d76db1a820a2fdb08a16cd621dc44ae98fe5b28c665cdc3affda68201135",
     "tests/browser/editor-workspace-appearance.test.js": "31b4f47f48d9fed03e0251fb47652cc838e3a894ed2b15ee83610b758adfe3e0",
     "tests/editor-action-catalog.test.js": "05e5f1b1d4c237c1e2880e738319e3687d470fac69bfab41ac8621781fffc2c2",
-    "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md": "cd66d5bfc2031fd61312c102a9b550a511f3a6be9d6f7734b34a983fdddefca0"
+    "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md": "22be137fa1066bd9c3ca0ac1d84da9932412efedf8144e990b58b2908c7ea78e"
   },
   "validation": {
     "chromium": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-action-help.test.js tests/browser/editor-workspace-appearance.test.js — combined PASS 17/17 (2 action-help + 15 workspace). Re-ran action-help after final Hungarian copy update: 2/2 PASS.",
