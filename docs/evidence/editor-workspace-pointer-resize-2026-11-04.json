@@ -1,0 +1,115 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-11-04",
+  "plan_point": "77.44.6.1.C",
+  "status": "RUNTIME_RELEASE_VERIFIED_FOUNDATION_PASS_FULL_C_OPEN",
+  "scope": "Pointer and keyboard dock resizing follow each panel's physical track relative to the canvas. Grouped panels and all separately reordered dock arrangements can grow toward or shrink away from the canvas regardless of left/right panel identity.",
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "parent_commit": "9729a1f35e43d9c5b4ddc8c6e743cdc621332100",
+    "runtime_commit": "b0edff51befc5ec8842aad4f8cb8fedbe0feee3b",
+    "runtime_message": "fix(editor): resize docks along their canvas track",
+    "push": "Normal fast-forward push verified: GitHub branch head equals runtime commit; compare reports 1 ahead and 0 behind.",
+    "github_combined_statuses": [],
+    "aggregate_github_ci_pass": false
+  },
+  "implementation": {
+    "root_cause": "Pointer resize deltas and keyboard arrow direction previously depended on the panel's left/right identity. Tabbed panel groups and the six supported three-region dock orders can place either panel on either physical side of the canvas, reversing the old direction.",
+    "fix": "The existing first-party shell now determines whether a panel is physically left or right of the canvas from visible element geometry, with the saved dock order as a fallback when a panel is not laid out. Pointer resize captures that physical side at pointerdown; keyboard resizing uses the same geometry helper. Dock identity still selects the width token and limits.",
+    "regression": "Real Chromium tests cover grouped panels on both sides plus separately reordered left-right-canvas and canvas-right-left tracks for both pointer and keyboard input. They assert width changes toward the canvas, at least 400 CSS px of unobscured canvas, no Page Model writes, and no Save or Publish calls.",
+    "cache_buster": "20261104-grouped-pointer-resize",
+    "changed_runtime_assets": [
+      "public/editor-v2/index.html",
+      "public/editor-v2/ui/shell.js"
+    ],
+    "page_model_mutations": 0,
+    "save_publish_mutations": 0,
+    "runtime_dependencies_added": false,
+    "paid_services_added": false,
+    "reuse_and_license": "Reused the repository's vanilla dock splitter, canvas-safe CSS Grid placement, saved dock-order preference, ARIA splitter contract, and Playwright/Chromium fixture. No external code or dependency was required."
+  },
+  "validation": {
+    "targeted_browser": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec --test-name-pattern='(keyboard|pointer) dock resizing follows the physical track after separate docks are reordered' tests/browser/editor-workspace-appearance.test.js — PASS, 2/2.",
+    "complete_workspace_browser": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-workspace-appearance.test.js — PASS, 31/31.",
+    "editor_unit": "npm run test:editor — PASS, 14/14 files; Linux subreaper checks 3/3 PASS.",
+    "typecheck": "npm run typecheck — PASS.",
+    "migration_guard": "npm run test:web013:migration-gate — PASS; no migration applied.",
+    "canonical_plan": "python3 scripts/check-canonical-plan.py — PASS; 13 files, one canonical master.",
+    "plan_contract": "python3 tests/plan-contract.test.py — PASS, 13/13.",
+    "active_point": "python3 scripts/audit-active-plan-point.py — PASS; cursor 77.44.6.1.C; full functional acceptance NOT_CERTIFIED.",
+    "traceability": "python3 scripts/build-feature-traceability.py --check — PASS, 396 mappings. Generated after the index cache-buster change.",
+    "syntax_and_diff": "node --check public/editor-v2/ui/shell.js; node --check tests/browser/editor-workspace-appearance.test.js; git diff --check — PASS.",
+    "wrangler_dry_run": "Wrangler 4.130.0 deploy --dry-run — PASS; 168 assets, 335.81 KiB / 87.60 KiB gzip.",
+    "full_editor_layout_suite": "NOT RUN in this block; the earlier 51-file aggregate remains INCOMPLETE / NOT PASS.",
+    "manual_device_acceptance": "DEFERRED until the full Visual Editor acceptance gate."
+  },
+  "release_preflight": {
+    "production_d1_query": "SELECT name FROM d1_migrations ORDER BY name;",
+    "query_mode": "SELECT-only through Cloudflare D1 Query API before runtime push.",
+    "ledger_row_count": 34,
+    "latest_ledger_row": "0028_media_archive.sql",
+    "rows_written": 0,
+    "changes": 0,
+    "changed_db": false,
+    "migration_applied": false,
+    "r2_mutation_or_deletion": false
+  },
+  "production": {
+    "worker": "sanci9517-streamer-brand",
+    "build_id": "76891d0c-0ceb-47e2-932d-dfae6ef0b94f",
+    "build_commit": "b0edff51befc5ec8842aad4f8cb8fedbe0feee3b",
+    "build_branch": "v2/foundation",
+    "build_outcome": "success",
+    "build_commands": [
+      "npm run typecheck",
+      "npm run deploy:safe"
+    ],
+    "migration_gate": "PASS in Cloudflare build log; deploy:safe ran the repository migration safety gate and did not apply D1 migrations.",
+    "uploaded_runtime_assets": [
+      "/editor-v2/index.html",
+      "/editor-v2/ui/shell.js"
+    ],
+    "deployment_id": "3bace7fa-0446-47ca-9bfc-34f034312587",
+    "traffic_version": "ddd41243-7102-49ec-b390-16199a0b6383",
+    "worker_version_number": 3816,
+    "traffic_percentage": 100,
+    "deployment_observed_at": "2026-11-04T15:39:18.819561Z",
+    "control_plane_verified": true,
+    "public_http_smoke": {
+      "status": "PASS",
+      "health": {
+        "path": "/api/health",
+        "http_status": 200,
+        "body": {
+          "ok": true,
+          "service": "sanci9517-streamer-brand",
+          "version": "2.0.0",
+          "server": "cloudflare-worker"
+        }
+      },
+      "assets": {
+        "/editor-v2/": {
+          "http_status": 200,
+          "local_sha256": "10cd9dc884a4f8add3527edf2fd81c0f3a67f2d74fcd78ccfd05f270cca5c155",
+          "live_sha256": "10cd9dc884a4f8add3527edf2fd81c0f3a67f2d74fcd78ccfd05f270cca5c155"
+        },
+        "/editor-v2/ui/shell.js?v=20261104-grouped-pointer-resize": {
+          "http_status": 200,
+          "local_sha256": "ac59f8c3d5e7f84df1736bc21b09f9e1677f8b596cbabdf6fd8687ea905603a4",
+          "live_sha256": "ac59f8c3d5e7f84df1736bc21b09f9e1677f8b596cbabdf6fd8687ea905603a4"
+        }
+      },
+      "public_asset_hashes_match": true
+    }
+  },
+  "cost": {
+    "additional_cost_huf": 0,
+    "paid_services_or_dependencies_added": false,
+    "quota_note": "No paid plan, quota increase, infrastructure, or dependency was introduced."
+  },
+  "acceptance": {
+    "77_44_6_1_C": "OPEN; additional dynamic dock-zone, nested/floating behavior and complete workspace lifecycle acceptance remain open.",
+    "full_visual_editor_manual_and_physical_acceptance": "DEFERRED until the full Visual Editor acceptance gate."
+  }
+}
