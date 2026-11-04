@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-11-04",
+  "plan_point": "77.44.6.1.C",
+  "status": "LOCAL_RUNTIME_FIX_VERIFIED_RELEASE_PENDING",
+  "scope": "Cancel the browser-native dragover on an invalid Layers destination while preserving a clear invalid-drop affordance.",
+  "implementation": {
+    "changed_files": [
+      "public/editor-v2/app.js",
+      "public/editor-v2/index.html",
+      "docs/evidence/feature-traceability.json",
+      "docs/evidence/editor-locked-layer-drop-native-cancel-2026-11-04.json",
+      "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md"
+    ],
+    "root_cause": "handleLayerDragOver returned for an invalid target before calling preventDefault. A drag from an unlocked layer over a locked descendant therefore allowed the browser's native drop behavior even though the Editor correctly rejected the Page Model operation.",
+    "behavior": "While a Layers drag is active, dragover is canceled before target validation. Invalid targets still use dropEffect=none, remove the visual preview, and clear the stale overId; valid targets keep the existing move preview and drop command.",
+    "script_cache_version": "app.js?v=20261104-locked-layer-drop-cancel",
+    "contracts": "No Page Model semantics, Inspector registry, authorization/lock rules, Save, Publish, D1, or R2 behavior changed. Save and Publish remain separate.",
+    "new_dependencies": false
+  },
+  "validation": {
+    "targeted_real_chromium": "PASS 1/1: tests/browser/editor-element-insertion.test.js, test 'a nested locked ancestor disables descendant editing until the ancestor is unlocked'; locked source remains unprevented, locked target cancels native dragover with no preview and dropEffect=none, and Page Model remains unchanged.",
+    "full_editor_core": "PASS 14/14; Linux subreaper runner PASS 3/3.",
+    "full_editor_layout": "NOT_PASS: all 51 browser files were invoked; 50 completed successfully. tests/browser/editor-inspector-partial-types.test.js failed at line 1031 after 984499 ms because Playwright timed out clicking the existing visible mobile boxShadow inheritance-reset button (30-second action timeout). The failure is outside the Layers drag path. A separate isolated rerun remained CPU-active in Chromium for 18 minutes without producing a result and was interrupted; it is NOT PASS and is not represented as a pass.",
+    "typecheck": "PASS: npm run typecheck.",
+    "migration_safety_gate": "PASS: npm run test:web013:migration-gate; deploy:safe does not apply migrations.",
+    "canonical_plan": "PASS: scripts/check-canonical-plan.py; active cursor audit returns 77.44.6.1.C with functional acceptance NOT_CERTIFIED.",
+    "traceability": "PASS: scripts/build-feature-traceability.py --check; 396 mappings, acceptance NOT certified.",
+    "syntax_and_diff": "PASS: node --check public/editor-v2/app.js and git diff --check.",
+    "wrangler_dry_run": "PASS: Wrangler 4.130.0 packaged 168 assets, 335.81 KiB / 87.60 KiB gzip; dry-run only, no deployment.",
+    "prechange_production_health": "PASS: direct GET /api/health returned HTTP 200, ok=true, version=2.0.0.",
+    "prechange_live_app_sha256": "bd91a8389557f14e3f33540c844bd4fa5dfe6461e831e2146dea2c7021f6e153",
+    "local_app_sha256": "11658b25ada93b5203f483d3fbc1cfe542e591d0979b62e282a260309dae4869"
+  },
+  "production_preflight": {
+    "statement": "SELECT name FROM d1_migrations ORDER BY name",
+    "ledger_rows": 34,
+    "latest_migration": "0028_media_archive.sql",
+    "rows_written": 0,
+    "changes": 0,
+    "changed_db": false,
+    "r2_mutations": false
+  },
+  "release": {
+    "base_commit": "7f1f38ded9aab2d6c95356b1fb2a234d27c4490d",
+    "base_remote_head_verified": true,
+    "runtime_commit": null,
+    "push": "NOT DONE: the broad layout run has one unrelated Inspector timeout; retain this limitation and verify exact release state before pushing.",
+    "cloudflare_build": "NOT STARTED",
+    "deployment": "NOT STARTED",
+    "traffic": "NOT CHANGED; the pre-change Worker version remains at 100%.",
+    "production_asset_hashes": "NOT VERIFIED for this change; pre-change app.js hash recorded above.",
+    "github_actions": "Existing Editor Core Test run 41877644769 failed on the locked-target dragover assertion before this fix. No manual workflow rerun was requested; a push may trigger the repository's automatic workflow.",
+    "cost_huf": 0
+  },
+  "acceptance": {
+    "77.44.6.1.C": "OPEN",
+    "full_visual_editor_manual_and_physical_acceptance": "DEFERRED to the complete Editor acceptance gate"
+  }
+}
