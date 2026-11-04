@@ -262,8 +262,13 @@ function setupResizers(){
     });
     handle.addEventListener('keydown',event=>{
       const rtl=getComputedStyle(workspace||root).direction==='rtl';
-      const increaseKey=side==='left'?(rtl?'ArrowLeft':'ArrowRight'):(rtl?'ArrowRight':'ArrowLeft');
-      const decreaseKey=side==='left'?(rtl?'ArrowRight':'ArrowLeft'):(rtl?'ArrowLeft':'ArrowRight');
+      // A tabbed group can place the left panel on the right track, or the
+      // right panel on the left track. Resize direction follows that live
+      // track position, not the panel's identity.
+      const grouped=editorRoot?.dataset.workspacePanelMode==='tabbed'&&!mobileQuery.matches;
+      const dockOnLeft=grouped?editorRoot.dataset.workspacePanelSide==='left':side==='left';
+      const increaseKey=dockOnLeft?(rtl?'ArrowLeft':'ArrowRight'):(rtl?'ArrowRight':'ArrowLeft');
+      const decreaseKey=dockOnLeft?(rtl?'ArrowRight':'ArrowLeft'):(rtl?'ArrowLeft':'ArrowRight');
       const step=event.shiftKey?48:16;
       const current=currentWidth();
       let next=current;

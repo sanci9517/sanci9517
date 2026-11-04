@@ -945,6 +945,53 @@ test('desktop dock separators resize by keyboard, announce width and finish inte
   assert.deepEqual(errors,[]);
 });
 
+test('keyboard dock resizing follows the active panel group track instead of the panel identity',async t=>{
+  const {page,writes,errors}=await openEditor(t,{width:1280,height:900});
+  await openPreferences(page);
+  await page.locator('#workspaceLayout').selectOption('balanced');
+  await page.locator('#workspacePanelMode').selectOption('tabbed');
+  await page.locator('#workspacePanelSide').selectOption('right');
+  await page.locator('#closeWorkspaceAppearance').click();
+  await page.locator('#workspacePanelTabLeft').click();
+
+  const left=page.locator('#leftDock .left-resizer');
+  assert.equal(await left.getAttribute('aria-valuenow'),'310');
+  await left.focus();
+  await page.keyboard.press('ArrowLeft');
+  assert.equal(await left.getAttribute('aria-valuenow'),'326','the left panel is on the right-side group track, so ArrowLeft must grow it into the canvas: '+JSON.stringify(await page.evaluate(()=>({focus:document.activeElement?.className,activePanel:document.querySelector('.workspace')?.dataset.workspaceActivePanel,side:document.querySelector('.editor-app')?.dataset.workspacePanelSide,leftHidden:document.querySelector('#leftDock')?.getAttribute('aria-hidden'),inert:document.querySelector('#leftDock')?.inert,leftOpen:document.querySelector('#leftDock')?.classList.contains('closed'),value:document.querySelector('.left-resizer')?.getAttribute('aria-valuenow')}))));
+  let geometry=await page.evaluate(()=>{
+    const panel=document.querySelector('#leftDock').getBoundingClientRect();
+    const canvas=document.querySelector('.canvas-area').getBoundingClientRect();
+    return {panelLeft:panel.left,panelRight:panel.right,canvasLeft:canvas.left,canvasRight:canvas.right,canvasWidth:canvas.width};
+  });
+  assert.ok(geometry.panelLeft>=geometry.canvasRight&&geometry.canvasWidth>=400,`the right-side group stays outside the canvas: ${JSON.stringify(geometry)}`);
+
+  await openPreferences(page);
+  await page.locator('#workspacePanelSide').selectOption('left');
+  await page.locator('#closeWorkspaceAppearance').click();
+  await page.locator('#workspacePanelTabRight').click();
+  const right=page.locator('#rightDock .right-resizer');
+  assert.equal(await right.getAttribute('aria-valuenow'),'352');
+  await right.focus();
+  await page.keyboard.press('ArrowRight');
+  assert.equal(await right.getAttribute('aria-valuenow'),'368','the right panel is on the left-side group track, so ArrowRight must grow it into the canvas');
+  geometry=await page.evaluate(()=>{
+    const panel=document.querySelector('#rightDock').getBoundingClientRect();
+    const canvas=document.querySelector('.canvas-area').getBoundingClientRect();
+    return {panelLeft:panel.left,panelRight:panel.right,canvasLeft:canvas.left,canvasRight:canvas.right,canvasWidth:canvas.width};
+  });
+  assert.ok(geometry.panelRight<=geometry.canvasLeft&&geometry.canvasWidth>=400,`the left-side group stays outside the canvas: ${JSON.stringify(geometry)}`);
+  assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('sanci-editor-shell-v2'))?.rightWidth),368,'the grouped resize persists in the shell width preference');
+  await openPreferences(page);
+  await page.locator('#undoWorkspaceLayout').click();
+  assert.equal(await right.getAttribute('aria-valuenow'),'352','workspace Undo restores the grouped panel width');
+  await page.locator('#redoWorkspaceLayout').click();
+  assert.equal(await right.getAttribute('aria-valuenow'),'368','workspace Redo reapplies the grouped panel width');
+  await page.locator('#closeWorkspaceAppearance').click();
+  assert.deepEqual(writes,[],'resizing the tabbed workspace never Save or Publish page content');
+  assert.deepEqual(errors,[]);
+});
+
 test('workspace profile export/import uses bounded allowlisted JSON, supports undo and never writes page data',async t=>{
   const {page,writes,errors}=await openEditor(t,{width:1366,height:900});
   await openPreferences(page);
