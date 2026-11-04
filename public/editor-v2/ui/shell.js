@@ -444,7 +444,7 @@ function applyDockState(state,{save=true}={}){
 window.addEventListener('storage',event=>{
   if(event.key!==null&&event.key!==STORAGE_KEY)return;
   try{if(event.storageArea&&event.storageArea!==window.localStorage)return}catch{return}
-  cancelWorkspaceDrag();
+  cancelWorkspaceDrag({announcement:'A másik szerkesztőlapon megváltozott a panelállapot, ezért az átrendezés megszakadt.'});
   let next;
   try{next=event.newValue?JSON.parse(event.newValue):defaults}catch{next=defaults}
   applyDockState(next,{save:false});
