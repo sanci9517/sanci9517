@@ -1,0 +1,80 @@
+{
+  "date": "2026-11-04",
+  "plan_point": "77.44.6.1.C",
+  "status": "IMPLEMENTED_LOCAL_AUTOMATED_ACCEPTANCE_PASS_RELEASE_PENDING",
+  "scope": "Dragging the active member of a desktop tabbed panel group to a canvas edge separates it into a dock track and places that dock using the existing allowlisted three-region order. One workspace Undo/Redo step changes both group mode and order. The remembered group side is retained for regrouping. Mobile single-drawer behavior is unchanged.",
+  "branch": "v2/foundation",
+  "base_commit": "7776885ad7578d6890b0b5549e614fab11ea734b",
+  "github_branch_head_before_release": "7776885ad7578d6890b0b5549e614fab11ea734b",
+  "runtime_files": [
+    "public/editor-v2/index.html",
+    "public/editor-v2/ui/shell.js",
+    "public/editor-v2/ui/workspace-appearance.js"
+  ],
+  "test_files": [
+    "tests/browser/editor-workspace-appearance.test.js"
+  ],
+  "cache_version": "20261104-dock-ungroup",
+  "runtime_contracts": {
+    "page_model_changed": false,
+    "save_publish_changed": false,
+    "floating_panel_over_canvas": false,
+    "canvas_minimum_css_px": 400,
+    "mobile_behavior": "single drawer; drag reordering is desktop-only",
+    "undo_redo": "one existing workspace history snapshot contains both panelMode and dockOrder",
+    "preference_storage": "existing local allowlisted workspace preferences",
+    "group_exit": "active dock dropped on canvas before/after edge changes panelMode to separate and updates dockOrder atomically",
+    "group_side": "retained after separating so regrouping preference remains available",
+    "hidden_group_member_geometry": "saved allowlisted dockOrder is used because display:none member coordinates are not a valid ordering source",
+    "page_api_writes": 0
+  },
+  "reused_project_patterns": [
+    "Existing desktop dock drag lifecycle, cancellation guards, and live-region announcements",
+    "Existing allowlisted dock-order preference and tabbed dock CSS Grid layout",
+    "Existing Workspace Appearance one-snapshot Undo/Redo and persistence adapter",
+    "Existing real-Chromium Playwright fixture and Page Model/API write counter"
+  ],
+  "benchmark_review": "The canonical plan's 2026-11-02/03 Dockview review already records its MIT license and broader grid/floating model. A full external docking engine is not needed to split this two-panel group into the existing three reserved regions; use of the in-house shell contract is narrower and does not add a dependency or floating-over-canvas behavior.",
+  "third_party_code_or_dependencies_added": false,
+  "checks": {
+    "targeted_ungroup_drop_browser": "PASS 1/1 real Chromium; the active right tab is dragged to the canvas before edge; mode becomes separate, order left-right-canvas, side remains right, both docks are visible, canvas stays >=400px with no overlap, announcement is clear, exactly one Undo restores tabbed + previous order, Redo reapplies both, reload preserves the new order, and Page Model Save/Publish API writes remain zero.",
+    "workspace_appearance_browser_file": "PASS 27/27 real Chromium: CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-workspace-appearance.test.js",
+    "workspace_browser_rerun_note": "The first full-file attempt had one unrelated pre-existing profile-save button stability timeout after a 30-case viewport/order sweep; the exact test passed isolated, and a complete second file run passed 27/27.",
+    "editor_unit": "PASS 14/14 test files plus 3/3 Linux subreaper runner tests; npm run test:editor",
+    "typecheck": "PASS npm run typecheck",
+    "migration_safety": "PASS npm run test:web013:migration-gate",
+    "canonical_plan_and_contract": "PASS 13 master files and plan contract; active cursor remains 77.44.6.1 -> 77.44.6.1.C; acceptance remains NOT_CERTIFIED",
+    "traceability": "PASS 396/396 source mappings after regenerating docs/evidence/feature-traceability.json for the changed source fingerprints",
+    "javascript_syntax_and_diff": "PASS node --check for changed JS files and git diff --check",
+    "wrangler_dry_run": "PASS Wrangler 4.130.0; 168 public assets; 335.81 KiB total / 87.60 KiB gzip; --dry-run only, no deployment",
+    "wide_51_file_browser_suite": {
+      "status": "INCOMPLETE_NOT_PASS",
+      "previous_execution": "The earlier aggregate run completed 29 of 51 browser files (28 pass, one unrelated 189-second reload timeout), the next exhaustive Inspector file was interrupted after more than 11 minutes without output, and 21 files were not run.",
+      "this_change": "The complete affected workspace browser file passed 27/27; the remaining 51-file aggregate is still not certified by this run."
+    }
+  },
+  "production_read_only_preflight_before_release": {
+    "method": "Cloudflare D1 Query API",
+    "query": "SELECT name FROM d1_migrations ORDER BY name;",
+    "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
+    "rows_read": 34,
+    "latest_migration": "0028_media_archive.sql",
+    "changed_db": false,
+    "rows_written": 0,
+    "production_migration_or_data_write": false
+  },
+  "release": {
+    "runtime_commit": "PENDING",
+    "github_fast_forward": "PENDING",
+    "cloudflare_build": "PENDING",
+    "deployment": "PENDING",
+    "traffic_percent": "PENDING",
+    "production_health": "PENDING",
+    "asset_hashes": "PENDING"
+  },
+  "manual_and_physical_editor_acceptance": "DEFERRED until complete editor plan gate; this slice is not full editor acceptance",
+  "cost_usd": 0,
+  "new_dependency": false,
+  "production_d1_write": false,
+  "production_r2_change": false
+}

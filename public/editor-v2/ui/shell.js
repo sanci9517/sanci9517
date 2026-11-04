@@ -2,7 +2,7 @@ import {createEventBus} from './events.js';
 import {panelRegistry,featureRegistry} from './registry.js';
 import {EDITOR_ACTIONS} from './action-catalog.js?v=20261103-canvas-focus-mode';
 import {enhanceEditorActionControls} from './action-help.js?v=20261103-canvas-focus-mode';
-import {DEFAULT_LEFT_TAB_ORDER,applyWorkspacePreferences,mountWorkspaceAppearance,normalizeLeftTabOrder,readWorkspacePreferences} from './workspace-appearance.js?v=20261104-drag-panel-grouping';
+import {DEFAULT_LEFT_TAB_ORDER,applyWorkspacePreferences,mountWorkspaceAppearance,normalizeLeftTabOrder,readWorkspacePreferences} from './workspace-appearance.js?v=20261104-dock-ungroup';
 
 const bus=createEventBus();
 const workspace=document.querySelector('.workspace');
@@ -347,7 +347,12 @@ function setupDockReordering(){
     const target=event.target.closest?.('.left-dock,.right-dock,.canvas-area');
     const targetId=target?.dataset.workspaceDockId;
     if(!source||!target||!targetId||source===target||!workspace.contains(target)){finishDrag();return}
-    const order=Object.values(regions).filter(Boolean).sort((a,b)=>a.getBoundingClientRect().left-b.getBoundingClientRect().left);
+    const ungrouping=editorRoot?.dataset.workspacePanelMode==='tabbed'&&sourceId!=='canvas'&&target===canvasArea;
+    const visualOrder=Object.values(regions).filter(Boolean).sort((a,b)=>a.getBoundingClientRect().left-b.getBoundingClientRect().left);
+    // In a tabbed view the inactive dock is display:none, so its zero-size
+    // rect cannot be used to infer the user's saved three-region order.
+    const savedOrder=ungrouping?String(editorRoot.dataset.workspaceDockOrder||'').split('-').map(id=>regions[id]):[];
+    const order=ungrouping&&savedOrder.length===3&&savedOrder.every(Boolean)?savedOrder:visualOrder;
     const sourceIndex=order.indexOf(source),targetIndex=order.indexOf(target);
     if(sourceIndex<0||targetIndex<0){finishDrag();return}
     order.splice(sourceIndex,1);
@@ -361,10 +366,14 @@ function setupDockReordering(){
     const adjustedTarget=order.indexOf(target);
     order.splice(adjustedTarget+(before?0:1),0,source);
     const value=order.map(item=>item.dataset.workspaceDockId).join('-');
-    const changed=workspaceAppearance?.setDockOrder(value);
+    const changed=ungrouping
+      ?workspaceAppearance?.setDockLayout({dockOrder:value,panelMode:'separate'})
+      :workspaceAppearance?.setDockOrder(value);
     if(changed&&liveStatus){
       const namesInOrder=order.map(item=>names[item.dataset.workspaceDockId]||'Panel').join(', ');
-      liveStatus.textContent=`A(z) ${names[sourceId]} panel ${before?'a(z) '+names[targetId]+' elé':'a(z) '+names[targetId]+' után'} került. Sorrend: ${namesInOrder}.`;
+      liveStatus.textContent=ungrouping
+        ?`A(z) ${names[sourceId]} panel külön dokkolóként a vászon ${before?'elé':'után'} került. A vászon fedetlen. Sorrend: ${namesInOrder}.`
+        :`A(z) ${names[sourceId]} panel ${before?'a(z) '+names[targetId]+' elé':'a(z) '+names[targetId]+' után'} került. Sorrend: ${namesInOrder}.`;
     }
     finishDrag();
   });

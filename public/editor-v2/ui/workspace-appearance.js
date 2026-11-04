@@ -216,6 +216,20 @@ export function mountWorkspaceAppearance({documentRef=globalThis.document,root=d
     announcePersistence(saved,'A panelek sorrendje ezen az eszközön elmentve. Kis képernyőn a mobil fiók elrendezése marad.','A panelek sorrendje csak ebben a munkamenetben érvényes; kis képernyőn a biztonságos mobil fiókelrendezés marad.');
     return true;
   };
+  const setDockLayout=changes=>{
+    const requested={
+      dockOrder:changes?.dockOrder??value.dockOrder,
+      panelMode:changes?.panelMode??value.panelMode,
+      panelSide:changes?.panelSide??value.panelSide,
+    };
+    const next=normalizeVisualPreferences({...value,...requested});
+    if(next.dockOrder!==requested.dockOrder||next.panelMode!==requested.panelMode||next.panelSide!==requested.panelSide)return false;
+    if(next.dockOrder===value.dockOrder&&next.panelMode===value.panelMode&&next.panelSide===value.panelSide)return false;
+    remember();value={...value,dockOrder:next.dockOrder,panelMode:next.panelMode,panelSide:next.panelSide};paint();const saved=persist();
+    onLayoutChange(value.layout);
+    announcePersistence(saved,'A panelek új dokkolási elrendezése ezen az eszközön elmentve. Az oldal tartalma változatlan.','A panelek új dokkolási elrendezése csak ebben a munkamenetben érvényes, mert a böngésző tárhelye nem használható. Az oldal tartalma változatlan.');
+    return true;
+  };
   const setPanelGrouping=(mode,side)=>{
     const next=normalizeVisualPreferences({...value,panelMode:mode,panelSide:side});
     if(next.panelMode!==mode||next.panelSide!==side||next.panelMode===value.panelMode&&next.panelSide===value.panelSide)return false;
@@ -365,5 +379,5 @@ export function mountWorkspaceAppearance({documentRef=globalThis.document,root=d
   undoButton?.addEventListener('click',undo);redoButton?.addEventListener('click',redo);
   resetButton?.addEventListener('click',reset);
   paint();
-  return {get value(){return normalizeWorkspacePreferences(value)},setLayout,setDockOrder,setPanelGrouping,open,close,remember,undo,redo,saveProfile,loadProfile,deleteProfile,importProfile,exportProfile,reset,syncDockControls:renderLeftToolOrder,clearExternalDockHistory,destroy(){documentRef.defaultView?.removeEventListener?.('storage',syncExternalPreferences)}};
+  return {get value(){return normalizeWorkspacePreferences(value)},setLayout,setDockOrder,setDockLayout,setPanelGrouping,open,close,remember,undo,redo,saveProfile,loadProfile,deleteProfile,importProfile,exportProfile,reset,syncDockControls:renderLeftToolOrder,clearExternalDockHistory,destroy(){documentRef.defaultView?.removeEventListener?.('storage',syncExternalPreferences)}};
 }

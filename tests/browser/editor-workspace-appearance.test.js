@@ -672,6 +672,83 @@ test('dropping the right dock into the left dock center keeps the group on the l
   assert.deepEqual(errors,[]);
 });
 
+test('dropping a dock from a tab group onto the canvas edge separates and reorders it as one undoable change',async t=>{
+  const {page,writes,errors}=await openEditor(t,{width:1280,height:900});
+  await openPreferences(page);
+  await page.locator('#workspaceLayout').selectOption('balanced');
+  await page.locator('#workspacePanelMode').selectOption('tabbed');
+  await page.locator('#workspacePanelSide').selectOption('right');
+  await page.waitForFunction(()=>!document.querySelector('#leftDock')?.classList.contains('closed')&&!document.querySelector('#rightDock')?.classList.contains('closed'));
+  await page.locator('#closeWorkspaceAppearance').click();
+  await page.reload({waitUntil:'load'});
+  await page.waitForFunction(()=>document.documentElement.dataset.editorBoot==='ready');
+  await page.locator('#workspacePanelTabRight').click();
+  await page.reload({waitUntil:'load'});
+  await page.waitForFunction(()=>document.documentElement.dataset.editorBoot==='ready');
+
+  const result=await page.evaluate(()=>{
+    const source=document.querySelector('#rightDock .dock-heading'),target=document.querySelector('.canvas-area'),canvas=target;
+    const rect=target.getBoundingClientRect(),canvasBefore=canvas.getBoundingClientRect().width,dataTransfer=new DataTransfer();
+    source.dispatchEvent(new DragEvent('dragstart',{bubbles:true,cancelable:true,dataTransfer}));
+    target.dispatchEvent(new DragEvent('dragover',{bubbles:true,cancelable:true,dataTransfer,clientX:rect.left+rect.width*0.2}));
+    const preview=target.dataset.dockDropPosition;
+    target.dispatchEvent(new DragEvent('drop',{bubbles:true,cancelable:true,dataTransfer,clientX:rect.left+rect.width*0.2}));
+    return {
+      preview,
+      mode:document.querySelector('.editor-app').dataset.workspacePanelMode,
+      side:document.querySelector('.editor-app').dataset.workspacePanelSide,
+      active:document.querySelector('.workspace').dataset.workspaceActivePanel,
+      order:document.querySelector('.workspace').dataset.workspaceDockOrder,
+      canvasBefore,
+      canvasAfter:canvas.getBoundingClientRect().width,
+      canvasLeft:canvas.getBoundingClientRect().left,
+      leftRight:document.querySelector('#leftDock').getBoundingClientRect().right,
+      rightRight:document.querySelector('#rightDock').getBoundingClientRect().right,
+      leftVisible:getComputedStyle(document.querySelector('#leftDock')).display!=='none'&&!document.querySelector('#leftDock').classList.contains('closed'),
+      rightVisible:getComputedStyle(document.querySelector('#rightDock')).display!=='none'&&!document.querySelector('#rightDock').classList.contains('closed'),
+      announcement:document.querySelector('#workspaceDockStatus').textContent,
+      previewCleared:!target.hasAttribute('data-dock-drop-position'),
+      dragFinished:!document.body.classList.contains('workspace-reordering'),
+      saved:JSON.parse(localStorage.getItem('sanci-editor-workspace-preferences-v2'))
+    };
+  });
+
+  assert.equal(result.preview,'before','the canvas edge keeps the existing before/after target affordance');
+  assert.equal(result.mode,'separate','dropping a tabbed panel on the canvas removes it from its group');
+  assert.equal(result.side,'right','the remembered group side remains available if the user groups the panels again');
+  assert.equal(result.active,'right','the moved source dock remains active');
+  assert.equal(result.order,'left-right-canvas','the source becomes a separate dock before the canvas');
+  assert.ok(result.canvasAfter>=400&&result.leftRight<=result.canvasLeft&&result.rightRight<=result.canvasLeft,'separating the docks retains a 400px canvas after both panels without overlap');
+  assert.equal(result.leftVisible,true);
+  assert.equal(result.rightVisible,true);
+  assert.match(result.announcement,/Beállítások panel külön dokkolóként a vászon elé került.*vászon fedetlen/iu);
+  assert.equal(result.previewCleared,true);
+  assert.equal(result.dragFinished,true);
+  assert.deepEqual(result.saved,{version:2,layout:'balanced',theme:'graphite',density:'comfortable',accent:'#5b8cff',dockOrder:'left-right-canvas',panelMode:'separate',panelSide:'right',profiles:[]});
+
+  await openPreferences(page);
+  assert.equal(await page.locator('#undoWorkspaceLayout').isEnabled(),true,'ungrouping and reordering share one workspace history entry');
+  await page.locator('#undoWorkspaceLayout').click();
+  assert.equal(await page.locator('#workspacePanelMode').inputValue(),'tabbed','one Undo restores the grouped mode and previous order together');
+  assert.equal(await page.locator('#workspacePanelSide').inputValue(),'right');
+  assert.equal(await page.locator('.workspace').getAttribute('data-workspace-dock-order'),'left-canvas-right');
+  assert.equal(await page.locator('#undoWorkspaceLayout').isDisabled(),true,'the combined change contributes exactly one Undo entry');
+  await page.locator('#redoWorkspaceLayout').click();
+  assert.equal(await page.locator('#workspacePanelMode').inputValue(),'separate');
+  assert.equal(await page.locator('.workspace').getAttribute('data-workspace-dock-order'),'left-right-canvas');
+  assert.equal(await page.locator('#closeWorkspaceAppearance').isVisible(),true);
+  await page.locator('#closeWorkspaceAppearance').click();
+  await page.reload({waitUntil:'load'});
+  await page.waitForFunction(()=>document.documentElement.dataset.editorBoot==='ready');
+  assert.equal(await page.locator('.editor-app').getAttribute('data-workspace-panel-mode'),'separate','the ungrouped layout persists after reload');
+  assert.equal(await page.locator('.workspace').getAttribute('data-workspace-dock-order'),'left-right-canvas');
+  assert.ok(await page.locator('.canvas-area').evaluate(element=>element.getBoundingClientRect().width>=400));
+  assert.equal(await page.locator('#save').textContent(),'Mentés');
+  assert.equal(await page.locator('#publish').textContent(),'Publikálás');
+  assert.deepEqual(writes,[],'dock ungrouping and workspace history never Save or Publish the Page Model');
+  assert.deepEqual(errors,[]);
+});
+
 test('dropping the canvas onto a dock center reorders regions instead of grouping a panel',async t=>{
   const {page,writes,errors}=await openEditor(t,{width:1440,height:900});
   await openPreferences(page);
