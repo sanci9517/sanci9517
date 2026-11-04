@@ -992,6 +992,145 @@ test('keyboard dock resizing follows the active panel group track instead of the
   assert.deepEqual(errors,[]);
 });
 
+test('keyboard dock resizing follows the physical track after separate docks are reordered',async t=>{
+  const {page,writes,errors}=await openEditor(t,{width:1440,height:900});
+  await openPreferences(page);
+  await page.locator('#workspaceLayout').selectOption('balanced');
+  await page.locator('#workspacePanelMode').selectOption('separate');
+  await page.locator('#workspaceDockOrder').selectOption('left-right-canvas');
+  await page.locator('#closeWorkspaceAppearance').click();
+
+  const right=page.locator('#rightDock .right-resizer');
+  assert.equal(await right.getAttribute('aria-valuenow'),'352');
+  await right.focus();
+  await page.keyboard.press('ArrowRight');
+  assert.equal(await right.getAttribute('aria-valuenow'),'368','the right panel is before the canvas, so ArrowRight grows its left-side dock toward the canvas');
+  let geometry=await page.evaluate(()=>{
+    const panel=document.querySelector('#rightDock').getBoundingClientRect();
+    const canvas=document.querySelector('.canvas-area').getBoundingClientRect();
+    return {panelLeft:panel.left,panelRight:panel.right,canvasLeft:canvas.left,canvasRight:canvas.right,canvasWidth:canvas.width};
+  });
+  assert.ok(geometry.panelRight<=geometry.canvasLeft&&geometry.canvasWidth>=400,`the left-side keyboard-resized dock remains outside the canvas: ${JSON.stringify(geometry)}`);
+
+  await openPreferences(page);
+  await page.locator('#workspaceDockOrder').selectOption('canvas-right-left');
+  await page.locator('#closeWorkspaceAppearance').click();
+  const left=page.locator('#leftDock .left-resizer');
+  assert.equal(await left.getAttribute('aria-valuenow'),'310');
+  await left.focus();
+  await page.keyboard.press('ArrowLeft');
+  assert.equal(await left.getAttribute('aria-valuenow'),'326','the left panel is after the canvas, so ArrowLeft grows its right-side dock toward the canvas');
+  geometry=await page.evaluate(()=>{
+    const panel=document.querySelector('#leftDock').getBoundingClientRect();
+    const canvas=document.querySelector('.canvas-area').getBoundingClientRect();
+    return {panelLeft:panel.left,panelRight:panel.right,canvasLeft:canvas.left,canvasRight:canvas.right,canvasWidth:canvas.width};
+  });
+  assert.ok(geometry.panelLeft>=geometry.canvasRight&&geometry.canvasWidth>=400,`the right-side keyboard-resized dock remains outside the canvas: ${JSON.stringify(geometry)}`);
+  assert.deepEqual(writes,[],'reordered dock keyboard resizing never invokes Page Model Save or Publish');
+  assert.deepEqual(errors,[]);
+});
+
+test('pointer dock resizing follows the active panel group track instead of the panel identity',async t=>{
+  const {page,writes,errors}=await openEditor(t,{width:1280,height:900});
+  await openPreferences(page);
+  await page.locator('#workspaceLayout').selectOption('balanced');
+  await page.locator('#workspacePanelMode').selectOption('tabbed');
+  await page.locator('#workspacePanelSide').selectOption('right');
+  await page.locator('#closeWorkspaceAppearance').click();
+  await page.locator('#workspacePanelTabLeft').click();
+
+  const left=page.locator('#leftDock .left-resizer');
+  const rightGroupHandle=await left.boundingBox();
+  assert.ok(rightGroupHandle);
+  await page.mouse.move(rightGroupHandle.x+rightGroupHandle.width/2,rightGroupHandle.y+rightGroupHandle.height/2);
+  await page.mouse.down();
+  await page.mouse.move(rightGroupHandle.x+rightGroupHandle.width/2-24,rightGroupHandle.y+rightGroupHandle.height/2);
+  await page.mouse.up();
+  assert.equal(await left.getAttribute('aria-valuenow'),'334','dragging the left panel group separator toward the canvas grows the right-side dock');
+  let geometry=await page.evaluate(()=>{
+    const panel=document.querySelector('#leftDock').getBoundingClientRect();
+    const canvas=document.querySelector('.canvas-area').getBoundingClientRect();
+    return {panelLeft:panel.left,panelRight:panel.right,canvasLeft:canvas.left,canvasRight:canvas.right,canvasWidth:canvas.width};
+  });
+  assert.ok(geometry.panelLeft>=geometry.canvasRight&&geometry.canvasWidth>=400,`the resized right-side group remains outside the canvas: ${JSON.stringify(geometry)}`);
+
+  await openPreferences(page);
+  await page.locator('#workspacePanelSide').selectOption('left');
+  await page.locator('#closeWorkspaceAppearance').click();
+  await page.locator('#workspacePanelTabRight').click();
+  const right=page.locator('#rightDock .right-resizer');
+  const leftGroupHandle=await right.boundingBox();
+  assert.ok(leftGroupHandle);
+  await page.mouse.move(leftGroupHandle.x+leftGroupHandle.width/2,leftGroupHandle.y+leftGroupHandle.height/2);
+  await page.mouse.down();
+  await page.mouse.move(leftGroupHandle.x+leftGroupHandle.width/2+24,leftGroupHandle.y+leftGroupHandle.height/2);
+  await page.mouse.up();
+  assert.equal(await right.getAttribute('aria-valuenow'),'376','dragging the right panel group separator toward the canvas grows the left-side dock');
+  geometry=await page.evaluate(()=>{
+    const panel=document.querySelector('#rightDock').getBoundingClientRect();
+    const canvas=document.querySelector('.canvas-area').getBoundingClientRect();
+    return {panelLeft:panel.left,panelRight:panel.right,canvasLeft:canvas.left,canvasRight:canvas.right,canvasWidth:canvas.width};
+  });
+  assert.ok(geometry.panelRight<=geometry.canvasLeft&&geometry.canvasWidth>=400,`the resized left-side group remains outside the canvas: ${JSON.stringify(geometry)}`);
+  assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('sanci-editor-shell-v2'))?.leftWidth),334);
+  assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('sanci-editor-shell-v2'))?.rightWidth),376);
+  await openPreferences(page);
+  await page.locator('#undoWorkspaceLayout').click();
+  assert.equal(await right.getAttribute('aria-valuenow'),'352','workspace Undo restores the pre-drag grouped width');
+  await page.locator('#redoWorkspaceLayout').click();
+  assert.equal(await right.getAttribute('aria-valuenow'),'376','workspace Redo reapplies the grouped pointer resize');
+  await page.locator('#closeWorkspaceAppearance').click();
+  assert.deepEqual(writes,[],'grouped pointer resizing never Save or Publish page content');
+  assert.deepEqual(errors,[]);
+});
+
+test('pointer dock resizing follows the physical track after separate docks are reordered',async t=>{
+  const {page,writes,errors}=await openEditor(t,{width:1440,height:900});
+  await openPreferences(page);
+  await page.locator('#workspaceLayout').selectOption('balanced');
+  await page.locator('#workspacePanelMode').selectOption('separate');
+  await page.waitForFunction(()=>!document.querySelector('#leftDock')?.classList.contains('closed')&&!document.querySelector('#rightDock')?.classList.contains('closed'));
+
+  await page.locator('#workspaceDockOrder').selectOption('left-right-canvas');
+  await page.waitForFunction(()=>document.querySelector('.workspace')?.dataset.workspaceDockOrder==='left-right-canvas');
+  await page.locator('#closeWorkspaceAppearance').click();
+  const right=page.locator('#rightDock .right-resizer');
+  let handle=await right.boundingBox();
+  assert.ok(handle);
+  await page.mouse.move(handle.x+handle.width/2,handle.y+handle.height/2);
+  await page.mouse.down();
+  await page.mouse.move(handle.x+handle.width/2+20,handle.y+handle.height/2);
+  await page.mouse.up();
+  assert.equal(await right.getAttribute('aria-valuenow'),'372','the right panel is before the canvas, so dragging its edge right grows it toward the canvas');
+  let geometry=await page.evaluate(()=>{
+    const panel=document.querySelector('#rightDock').getBoundingClientRect();
+    const canvas=document.querySelector('.canvas-area').getBoundingClientRect();
+    return {panelLeft:panel.left,panelRight:panel.right,canvasLeft:canvas.left,canvasRight:canvas.right,canvasWidth:canvas.width};
+  });
+  assert.ok(geometry.panelRight<=geometry.canvasLeft&&geometry.canvasWidth>=400,`the reordered left-side dock remains outside the canvas: ${JSON.stringify(geometry)}`);
+
+  await openPreferences(page);
+  await page.locator('#workspaceDockOrder').selectOption('canvas-right-left');
+  await page.waitForFunction(()=>document.querySelector('.workspace')?.dataset.workspaceDockOrder==='canvas-right-left');
+  await page.locator('#closeWorkspaceAppearance').click();
+  const left=page.locator('#leftDock .left-resizer');
+  handle=await left.boundingBox();
+  assert.ok(handle);
+  await page.mouse.move(handle.x+handle.width/2,handle.y+handle.height/2);
+  await page.mouse.down();
+  await page.mouse.move(handle.x+handle.width/2-20,handle.y+handle.height/2);
+  await page.mouse.up();
+  assert.equal(await left.getAttribute('aria-valuenow'),'330','the left panel is after the canvas, so dragging its edge left grows it toward the canvas');
+  geometry=await page.evaluate(()=>{
+    const panel=document.querySelector('#leftDock').getBoundingClientRect();
+    const canvas=document.querySelector('.canvas-area').getBoundingClientRect();
+    return {panelLeft:panel.left,panelRight:panel.right,canvasLeft:canvas.left,canvasRight:canvas.right,canvasWidth:canvas.width};
+  });
+  assert.ok(geometry.panelLeft>=geometry.canvasRight&&geometry.canvasWidth>=400,`the reordered right-side dock remains outside the canvas: ${JSON.stringify(geometry)}`);
+  assert.deepEqual(writes,[],'resizing separately reordered panels never invokes Page Model Save or Publish');
+  assert.deepEqual(errors,[]);
+});
+
 test('workspace profile export/import uses bounded allowlisted JSON, supports undo and never writes page data',async t=>{
   const {page,writes,errors}=await openEditor(t,{width:1366,height:900});
   await openPreferences(page);

@@ -202,6 +202,17 @@ function moveLeftTab(tab,direction){
   return true;
 }
 function clamp(value,limits){return Math.max(limits.min,Math.min(limits.max,value))}
+function dockIsOnLeft(side){
+  const panel=panels[side],canvas=document.querySelector('.canvas-area');
+  const panelRect=panel?.getBoundingClientRect(),canvasRect=canvas?.getBoundingClientRect();
+  if(panelRect?.width>0&&canvasRect?.width>0){
+    if(panelRect.right<=canvasRect.left+1)return true;
+    if(panelRect.left>=canvasRect.right-1)return false;
+  }
+  const order=String(workspace?.dataset.workspaceDockOrder||'left-canvas-right').split('-');
+  const panelIndex=order.indexOf(side),canvasIndex=order.indexOf('canvas');
+  return panelIndex>=0&&canvasIndex>=0?panelIndex<canvasIndex:side==='left';
+}
 function updateResizeHandle(side,width){
   const handle=document.querySelector(`.dock-resizer[data-resize="${side}"]`);
   if(!handle)return;
@@ -211,12 +222,12 @@ function updateResizeHandle(side,width){
   handle.setAttribute('aria-valuenow',String(Math.round(width)));
   handle.setAttribute('aria-valuetext',`${Math.round(width)} képpont széles`);
 }
-function resizeDock(side,startX,startWidth,{pointerId=null,handle=null}={}){
+function resizeDock(side,startX,startWidth,{pointerId=null,handle=null,dockOnLeft=dockIsOnLeft(side)}={}){
   workspaceAppearance?.remember();
   const limits=resizeLimits[side];
   const onMove=event=>{
     if(pointerId!==null&&event.pointerId!==pointerId)return;
-    const delta=side==='left'?event.clientX-startX:startX-event.clientX;
+    const delta=dockOnLeft?event.clientX-startX:startX-event.clientX;
     const width=clamp(startWidth+delta,limits);
     root.style.setProperty(side==='left'?'--left-dock-width':'--right-dock-width',`${width}px`);
     persisted[side==='left'?'leftWidth':'rightWidth']=width;
@@ -257,18 +268,15 @@ function setupResizers(){
       if(window.matchMedia('(max-width: 1024px)').matches)return;
       const current=currentWidth();
       try{handle.setPointerCapture?.(event.pointerId)}catch{}
-      resizeDock(side,event.clientX,current,{pointerId:event.pointerId,handle});
+      resizeDock(side,event.clientX,current,{pointerId:event.pointerId,handle,dockOnLeft:dockIsOnLeft(side)});
       event.preventDefault();
     });
     handle.addEventListener('keydown',event=>{
-      const rtl=getComputedStyle(workspace||root).direction==='rtl';
-      // A tabbed group can place the left panel on the right track, or the
-      // right panel on the left track. Resize direction follows that live
-      // track position, not the panel's identity.
-      const grouped=editorRoot?.dataset.workspacePanelMode==='tabbed'&&!mobileQuery.matches;
-      const dockOnLeft=grouped?editorRoot.dataset.workspacePanelSide==='left':side==='left';
-      const increaseKey=dockOnLeft?(rtl?'ArrowLeft':'ArrowRight'):(rtl?'ArrowRight':'ArrowLeft');
-      const decreaseKey=dockOnLeft?(rtl?'ArrowRight':'ArrowLeft'):(rtl?'ArrowLeft':'ArrowRight');
+      // Dock identity and position are independent: a saved order or tabbed
+      // group can move either separator to the opposite side of the canvas.
+      const dockOnLeft=dockIsOnLeft(side);
+      const increaseKey=dockOnLeft?'ArrowRight':'ArrowLeft';
+      const decreaseKey=dockOnLeft?'ArrowLeft':'ArrowRight';
       const step=event.shiftKey?48:16;
       const current=currentWidth();
       let next=current;
