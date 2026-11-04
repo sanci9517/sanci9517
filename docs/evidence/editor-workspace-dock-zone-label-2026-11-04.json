@@ -1,0 +1,118 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-04",
+  "plan_point": "77.44.6.1.C",
+  "status": "RUNTIME_DEPLOYED_AUTOMATED_FOUNDATION_PASS_FULL_C_OPEN",
+  "scope": "Give the desktop dock drag target a transient Hungarian action label for group/before/after zones; clear the label on drop, cancel, Escape, and drag end.",
+  "implementation": {
+    "runtime_files": [
+      "public/editor-v2/ui/shell.js",
+      "public/editor-v2/editor-refresh.css",
+      "public/editor-v2/index.html"
+    ],
+    "test_files": [
+      "tests/browser/editor-workspace-appearance.test.js"
+    ],
+    "drop_zone_labels": {
+      "group": "Panelcsoport",
+      "before": "Elé helyezés",
+      "after": "Utána helyezés"
+    },
+    "visual_behavior": "Desktop-only, small pointer-transparent target pill layered on the existing drag outline; it does not alter grid tracks or canvas dimensions.",
+    "save_publish_page_model_changed": false,
+    "mobile_behavior_changed": false,
+    "new_dependency_or_third_party_runtime_code": false,
+    "reused_project_patterns": [
+      "Existing desktop dock drag lifecycle and cancellation guards",
+      "Existing before/after/group target classification and CSS outline preview",
+      "Existing workspace profile, tab-group, grid, and Playwright/Chromium fixtures"
+    ]
+  },
+  "validation": {
+    "targeted_browser": "PASS 4/4 real Chromium cases: before/after target, grouping, reverse grouping, and canvas-edge ungroup. Each verifies the expected Hungarian label; computed pseudo-element text and pointer-events:none; label cleanup on dragend/Escape/drop; canvas-width preservation; and zero Page Model/Save/Publish writes.",
+    "workspace_browser_file": "PASS 27/27: CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-workspace-appearance.test.js",
+    "editor_unit": "PASS 14/14 files plus Linux subreaper runner tests 3/3: npm run test:editor",
+    "typecheck": "PASS npm run typecheck",
+    "migration_safety": "PASS npm run test:web013:migration-gate; no migration was applied",
+    "canonical_plan_and_contract": "PASS scripts/check-canonical-plan.py, tests/plan-contract.test.py, and scripts/audit-active-plan-point.py; complete plan remains OPEN/NOT_CERTIFIED at 77.44.6.1.C",
+    "traceability": "PASS after regenerating the project-owned source fingerprint: python3 scripts/build-feature-traceability.py --check",
+    "syntax_and_whitespace": "PASS node --check public/editor-v2/ui/shell.js; node --check tests/browser/editor-workspace-appearance.test.js; git diff --check",
+    "wrangler_dry_run": "PASS Wrangler 4.130.0; 168 public assets, 335.81 KiB (87.60 KiB gzip); --dry-run only, no deployment. XDG_CONFIG_HOME=/tmp/sanci9517-wrangler-config kept CLI logging writable.",
+    "d1_read_only_preflight": {
+      "method": "Cloudflare D1 Query API, POST /accounts/{account_id}/d1/database/{database_id}/query",
+      "sql": "SELECT name FROM d1_migrations ORDER BY name;",
+      "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
+      "rows_read": 34,
+      "latest_migration": "0028_media_archive.sql",
+      "rows_written": 0,
+      "changes": 0,
+      "changed_db": false
+    },
+    "wide_51_file_browser_suite": "NOT RUN in this work block. The prior canonical record remains INCOMPLETE/NOT PASS; this 27-case affected-file pass does not upgrade it.",
+    "direct_public_smoke": "PASS: direct GET /api/health returned HTTP 200 and the expected {ok:true,service:sanci9517-streamer-brand,version:2.0.0,server:cloudflare-worker}; /editor-v2/, editor-refresh.css, and shell.js returned successfully and their local/production SHA-256 values match exactly.",
+    "github_push": "PASS normal fast-forward: origin/v2/foundation advanced cdd60efa82267720e555e7f90d270b8294b5982f -> db0156c01e6ea57ac47673a6de9229c8356362fd; a post-push git ls-remote confirmed the exact ref. GitHub combined commit statuses are empty; aggregate GitHub CI is not claimed PASS.",
+    "current_live_worker_before_this_change": {
+      "deployment_id": "f6b8e9b3-2479-4a95-8de2-778e87fbbc05",
+      "traffic_version_id": "210ce785-a831-4cec-9604-4d897490498a",
+      "worker_version_number": 3810,
+      "traffic_percent": 100,
+      "source_note": "Cloudflare deployment list read immediately before this pending local change; it is not this change's deployment."
+    }
+  },
+  "source_sha256": {
+    "public/editor-v2/index.html": "45b3b41623e20a77f5eb8f8b68be08fb683a5cef37f762e6a610247d0e5a6db1",
+    "public/editor-v2/editor-refresh.css": "97319a2383912c8431c6207a5574830ba675bce57c9875cc2763c26925c1e502",
+    "public/editor-v2/ui/shell.js": "1e98956356f4d3c6d1913ed6c1e43942b5c8236c06f6d5e4571f1950fb88293c",
+    "tests/browser/editor-workspace-appearance.test.js": "cabac417e7ef6cc12d7b1adafb5fbf5b89b54d7693c3c7b05a7e7c2621e0a63c"
+  },
+  "production_verification": {
+    "health_url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+    "health_http_status": 200,
+    "health_body": {
+      "ok": true,
+      "service": "sanci9517-streamer-brand",
+      "version": "2.0.0",
+      "server": "cloudflare-worker"
+    },
+    "public_assets": [
+      {
+        "path": "/editor-v2/",
+        "http_status": 200,
+        "sha256": "45b3b41623e20a77f5eb8f8b68be08fb683a5cef37f762e6a610247d0e5a6db1",
+        "matches_source": true
+      },
+      {
+        "path": "/editor-v2/editor-refresh.css?v=20261104-dock-zone-label",
+        "http_status": 200,
+        "sha256": "97319a2383912c8431c6207a5574830ba675bce57c9875cc2763c26925c1e502",
+        "matches_source": true
+      },
+      {
+        "path": "/editor-v2/ui/shell.js?v=20261104-dock-zone-label",
+        "http_status": 200,
+        "sha256": "1e98956356f4d3c6d1913ed6c1e43942b5c8236c06f6d5e4571f1950fb88293c",
+        "matches_source": true
+      }
+    ]
+  },
+  "release": {
+    "branch": "v2/foundation",
+    "local_head_before_commit": "e76f1ec2075e84c6f5fe24846b293edcfde9ec4d",
+    "runtime_commit": "db0156c01e6ea57ac47673a6de9229c8356362fd",
+    "runtime_commit_parent": "e76f1ec2075e84c6f5fe24846b293edcfde9ec4d",
+    "push": "PASS normal fast-forward; remote branch HEAD verified exact-match",
+    "cloudflare_build_id": "38bd1948-c418-4f69-a674-4fc762cc233c",
+    "cloudflare_build_outcome": "success",
+    "cloudflare_build_commit": "db0156c01e6ea57ac47673a6de9229c8356362fd",
+    "cloudflare_build_and_deploy_commands": "npm run typecheck; npm run deploy:safe; log confirms the migration safety gate passed and no migration-apply command ran",
+    "cloudflare_deployment_id": "b39f7483-7e80-4f96-bd6e-a42f68480db5",
+    "worker_version_id": "fbb165de-8bee-4210-bf27-f00a2bccc267",
+    "worker_version_number": 3811,
+    "traffic_percent": 100,
+    "deployment_for_this_change": "DEPLOYED_AND_VERIFIED"
+  },
+  "cost_huf": 0,
+  "production_d1_mutation_or_migration": false,
+  "r2_operation": false,
+  "manual_visual_editor_acceptance": "DEFERRED until the complete Visual Editor plan acceptance gate"
+}
