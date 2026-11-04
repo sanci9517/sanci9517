@@ -292,7 +292,10 @@ function setupDockReordering(){
   const liveStatus=document.querySelector('#workspaceDockStatus');
   let dragSourceId=null;
   for(const [id,region] of Object.entries(regions))if(region)region.dataset.workspaceDockId=id;
-  const clearDropPreview=()=>workspace.querySelectorAll('[data-dock-drop-position]').forEach(region=>region.removeAttribute('data-dock-drop-position'));
+  const clearDropPreview=()=>workspace.querySelectorAll('[data-dock-drop-position]').forEach(region=>{
+    region.removeAttribute('data-dock-drop-position');
+    region.removeAttribute('data-dock-drop-label');
+  });
   const finishDrag=()=>{
     clearDropPreview();document.body.classList.remove('workspace-reordering');dragSourceId=null;
   };
@@ -338,6 +341,7 @@ function setupDockReordering(){
     const position=dragSourceId!=='canvas'&&target!==canvasArea&&ratio>=0.35&&ratio<=0.65?'group':ratio<0.5?'before':'after';
     if(target.dataset.dockDropPosition===position)return;
     clearDropPreview();target.dataset.dockDropPosition=position;
+    target.dataset.dockDropLabel=position==='group'?'Panelcsoport':position==='before'?'Elé helyezés':'Utána helyezés';
   });
   workspace.addEventListener('drop',event=>{
     if(mobileQuery.matches||!event.dataTransfer){finishDrag();return}

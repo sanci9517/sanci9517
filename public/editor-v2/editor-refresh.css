@@ -659,6 +659,13 @@ button:focus-visible, summary:focus-visible, .rail-btn:focus-visible { outline: 
   body.workspace-reordering .workspace [data-dock-drop-position="before"] { outline:2px solid var(--accent); outline-offset:-3px; box-shadow:inset 4px 0 0 var(--accent); }
   body.workspace-reordering .workspace [data-dock-drop-position="after"] { outline:2px solid var(--accent); outline-offset:-3px; box-shadow:inset -4px 0 0 var(--accent); }
   body.workspace-reordering .workspace [data-dock-drop-position="group"] { outline:2px solid var(--accent); outline-offset:-3px; box-shadow:inset 0 0 0 4px color-mix(in srgb,var(--accent) 22%,transparent); }
+  body.workspace-reordering .workspace [data-dock-drop-position] { position:relative; }
+  body.workspace-reordering .workspace [data-dock-drop-position]::after {
+    content:attr(data-dock-drop-label);position:absolute;z-index:8;top:8px;left:50%;transform:translateX(-50%);
+    max-width:calc(100% - 16px);overflow:hidden;padding:4px 9px;border:1px solid var(--accent);border-radius:999px;
+    background:var(--editor-raised);color:var(--editor-text,#f4f7fc);font:600 12px/1.3 Inter,system-ui,sans-serif;
+    text-overflow:ellipsis;white-space:nowrap;pointer-events:none;box-shadow:0 2px 8px #0007;
+  }
   .workspace,
   .workspace.left-open,
   .workspace.right-open,

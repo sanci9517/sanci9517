@@ -487,12 +487,12 @@ test('desktop panel and canvas drag reordering is an accessible-selector peer an
     handle.dispatchEvent(new DragEvent('dragstart',{bubbles:true,cancelable:true,dataTransfer}));
     target.dispatchEvent(new DragEvent('dragover',{bubbles:true,cancelable:true,dataTransfer,clientX}));
     const style=getComputedStyle(target);
-    const state={position:target.dataset.dockDropPosition,outline:style.outlineStyle,shadow:style.boxShadow,active:document.body.classList.contains('workspace-reordering'),canvasWidthBefore,canvasWidthDuring:target.getBoundingClientRect().width};
+    const state={position:target.dataset.dockDropPosition,label:target.dataset.dockDropLabel,labelContent:getComputedStyle(target,'::after').content,labelPointerEvents:getComputedStyle(target,'::after').pointerEvents,outline:style.outlineStyle,shadow:style.boxShadow,active:document.body.classList.contains('workspace-reordering'),canvasWidthBefore,canvasWidthDuring:target.getBoundingClientRect().width};
     handle.dispatchEvent(new DragEvent('dragend',{bubbles:true,cancelable:true,dataTransfer}));
-    return {...state,cleared:!target.hasAttribute('data-dock-drop-position')&&!document.body.classList.contains('workspace-reordering')};
+    return {...state,cleared:!target.hasAttribute('data-dock-drop-position')&&!target.hasAttribute('data-dock-drop-label')&&!document.body.classList.contains('workspace-reordering')};
   });
   const {canvasWidthBefore,canvasWidthDuring,...previewState}=preview;
-  assert.deepEqual(previewState,{position:'after',outline:'solid',shadow:'rgb(91, 140, 255) -4px 0px 0px 0px inset',active:true,cleared:true},'the current zone and insertion edge are previewed then cleared on dragend');
+  assert.deepEqual(previewState,{position:'after',label:'Utána helyezés',labelContent:'"Utána helyezés"',labelPointerEvents:'none',outline:'solid',shadow:'rgb(91, 140, 255) -4px 0px 0px 0px inset',active:true,cleared:true},'the current zone has a plain-language, non-interactive caption which clears on dragend');
   assert.equal(canvasWidthDuring,canvasWidthBefore,'the zone cue does not shrink or cover the separate canvas track');
   const canceled=await page.evaluate(key=>{
     const workspace=document.querySelector('.workspace');
@@ -504,7 +504,7 @@ test('desktop panel and canvas drag reordering is an accessible-selector peer an
     handle.dispatchEvent(new DragEvent('dragstart',{bubbles:true,cancelable:true,dataTransfer}));
     target.dispatchEvent(new DragEvent('dragover',{bubbles:true,cancelable:true,dataTransfer,clientX}));
     workspace.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true,cancelable:true}));
-    const afterEscape={order:workspace.dataset.workspaceDockOrder,saved:localStorage.getItem(key),preview:target.hasAttribute('data-dock-drop-position'),dragging:document.body.classList.contains('workspace-reordering'),leftOpen:!document.querySelector('#leftDock').classList.contains('closed'),rightOpen:!document.querySelector('#rightDock').classList.contains('closed')};
+    const afterEscape={order:workspace.dataset.workspaceDockOrder,saved:localStorage.getItem(key),preview:target.hasAttribute('data-dock-drop-position'),previewLabel:target.hasAttribute('data-dock-drop-label'),dragging:document.body.classList.contains('workspace-reordering'),leftOpen:!document.querySelector('#leftDock').classList.contains('closed'),rightOpen:!document.querySelector('#rightDock').classList.contains('closed')};
     target.dispatchEvent(new DragEvent('drop',{bubbles:true,cancelable:true,dataTransfer,clientX}));
     return {...afterEscape,afterLateDrop:workspace.dataset.workspaceDockOrder,savedAfterLateDrop:localStorage.getItem(key),announcement:document.querySelector('#workspaceDockStatus')?.textContent};
   },WORKSPACE_PREFERENCES_KEY);
@@ -512,6 +512,7 @@ test('desktop panel and canvas drag reordering is an accessible-selector peer an
   assert.equal(canceled.afterLateDrop,canceled.order,'a late drop cannot apply a drag canceled with Escape');
   assert.equal(canceled.savedAfterLateDrop,canceled.saved,'an ignored drop does not persist workspace changes');
   assert.equal(canceled.preview,false,'Escape clears the temporary target marker');
+  assert.equal(canceled.previewLabel,false,'Escape clears the explanatory drop-zone label too');
   assert.equal(canceled.dragging,false,'Escape exits reordering mode');
   assert.equal(canceled.leftOpen,true,'Escape cancels the drag without collapsing the page tools dock');
   assert.equal(canceled.rightOpen,true,'Escape cancels the drag without collapsing the Inspector');
@@ -556,7 +557,7 @@ test('dropping a dock onto another dock creates an undoable canvas-safe tab grou
     const widthBefore=canvas.getBoundingClientRect().width,dataTransfer=new DataTransfer();
     source.dispatchEvent(new DragEvent('dragstart',{bubbles:true,cancelable:true,dataTransfer}));
     target.dispatchEvent(new DragEvent('dragover',{bubbles:true,cancelable:true,dataTransfer,clientX:rect.left+rect.width/2}));
-    const preview={position:target.dataset.dockDropPosition,outline:getComputedStyle(target).outlineStyle,widthBefore,widthDuring:canvas.getBoundingClientRect().width,active:document.body.classList.contains('workspace-reordering')};
+    const preview={position:target.dataset.dockDropPosition,label:target.dataset.dockDropLabel,labelContent:getComputedStyle(target,'::after').content,labelPointerEvents:getComputedStyle(target,'::after').pointerEvents,outline:getComputedStyle(target).outlineStyle,widthBefore,widthDuring:canvas.getBoundingClientRect().width,active:document.body.classList.contains('workspace-reordering')};
     target.dispatchEvent(new DragEvent('drop',{bubbles:true,cancelable:true,dataTransfer,clientX:rect.left+rect.width/2}));
     const left=document.querySelector('#leftDock'),right=document.querySelector('#rightDock');
     return {preview,grouped:{
@@ -572,12 +573,15 @@ test('dropping a dock onto another dock creates an undoable canvas-safe tab grou
       groupLeft:left.getBoundingClientRect().left,
       order:document.querySelector('.workspace').dataset.workspaceDockOrder,
       announcement:document.querySelector('#workspaceDockStatus').textContent,
-      stalePreview:target.hasAttribute('data-dock-drop-position'),
+      stalePreview:target.hasAttribute('data-dock-drop-position')||target.hasAttribute('data-dock-drop-label'),
       dragActive:document.body.classList.contains('workspace-reordering')
     }};
   });
   const {preview,grouped}=result;
   assert.equal(preview.position,'group');
+  assert.equal(preview.label,'Panelcsoport');
+  assert.equal(preview.labelContent,'"Panelcsoport"');
+  assert.equal(preview.labelPointerEvents,'none');
   assert.equal(preview.outline,'solid');
   assert.equal(preview.widthDuring,preview.widthBefore,'the central panel zone previews grouping without taking canvas width');
   assert.equal(preview.active,true);
@@ -630,11 +634,11 @@ test('dropping the right dock into the left dock center keeps the group on the l
     const canvasBefore=canvas.getBoundingClientRect().width;
     source.dispatchEvent(new DragEvent('dragstart',{bubbles:true,cancelable:true,dataTransfer}));
     target.dispatchEvent(new DragEvent('dragover',{bubbles:true,cancelable:true,dataTransfer,clientX:rect.left+rect.width/2}));
-    const preview=target.dataset.dockDropPosition;
+    const preview=target.dataset.dockDropPosition,label=target.dataset.dockDropLabel;
     target.dispatchEvent(new DragEvent('drop',{bubbles:true,cancelable:true,dataTransfer,clientX:rect.left+rect.width/2}));
     const left=document.querySelector('#leftDock'),right=document.querySelector('#rightDock');
     return {
-      preview,
+      preview,label,
       mode:document.querySelector('.editor-app').dataset.workspacePanelMode,
       side:document.querySelector('.editor-app').dataset.workspacePanelSide,
       active:document.querySelector('.workspace').dataset.workspaceActivePanel,
@@ -649,12 +653,13 @@ test('dropping the right dock into the left dock center keeps the group on the l
       groupWidth:right.getBoundingClientRect().width,
       order:document.querySelector('.workspace').dataset.workspaceDockOrder,
       announcement:document.querySelector('#workspaceDockStatus').textContent,
-      stalePreview:target.hasAttribute('data-dock-drop-position'),
+      stalePreview:target.hasAttribute('data-dock-drop-position')||target.hasAttribute('data-dock-drop-label'),
       dragActive:document.body.classList.contains('workspace-reordering')
     };
   });
 
   assert.equal(result.preview,'group');
+  assert.equal(result.label,'Panelcsoport','the target preview names the grouping action');
   assert.equal(result.mode,'tabbed');
   assert.equal(result.side,'left');
   assert.equal(result.active,'right');
@@ -691,10 +696,10 @@ test('dropping a dock from a tab group onto the canvas edge separates and reorde
     const rect=target.getBoundingClientRect(),canvasBefore=canvas.getBoundingClientRect().width,dataTransfer=new DataTransfer();
     source.dispatchEvent(new DragEvent('dragstart',{bubbles:true,cancelable:true,dataTransfer}));
     target.dispatchEvent(new DragEvent('dragover',{bubbles:true,cancelable:true,dataTransfer,clientX:rect.left+rect.width*0.2}));
-    const preview=target.dataset.dockDropPosition;
+    const preview=target.dataset.dockDropPosition,label=target.dataset.dockDropLabel;
     target.dispatchEvent(new DragEvent('drop',{bubbles:true,cancelable:true,dataTransfer,clientX:rect.left+rect.width*0.2}));
     return {
-      preview,
+      preview,label,
       mode:document.querySelector('.editor-app').dataset.workspacePanelMode,
       side:document.querySelector('.editor-app').dataset.workspacePanelSide,
       active:document.querySelector('.workspace').dataset.workspaceActivePanel,
@@ -707,13 +712,14 @@ test('dropping a dock from a tab group onto the canvas edge separates and reorde
       leftVisible:getComputedStyle(document.querySelector('#leftDock')).display!=='none'&&!document.querySelector('#leftDock').classList.contains('closed'),
       rightVisible:getComputedStyle(document.querySelector('#rightDock')).display!=='none'&&!document.querySelector('#rightDock').classList.contains('closed'),
       announcement:document.querySelector('#workspaceDockStatus').textContent,
-      previewCleared:!target.hasAttribute('data-dock-drop-position'),
+      previewCleared:!target.hasAttribute('data-dock-drop-position')&&!target.hasAttribute('data-dock-drop-label'),
       dragFinished:!document.body.classList.contains('workspace-reordering'),
       saved:JSON.parse(localStorage.getItem('sanci-editor-workspace-preferences-v2'))
     };
   });
 
   assert.equal(result.preview,'before','the canvas edge keeps the existing before/after target affordance');
+  assert.equal(result.label,'Elé helyezés','a drop zone explains the result without relying on color alone');
   assert.equal(result.mode,'separate','dropping a tabbed panel on the canvas removes it from its group');
   assert.equal(result.side,'right','the remembered group side remains available if the user groups the panels again');
   assert.equal(result.active,'right','the moved source dock remains active');
