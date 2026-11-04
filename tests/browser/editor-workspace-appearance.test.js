@@ -541,6 +541,104 @@ test('desktop panel and canvas drag reordering is an accessible-selector peer an
   assert.deepEqual(errors,[]);
 });
 
+test('dropping a dock onto another dock creates an undoable canvas-safe tab group',async t=>{
+  const {page,writes,errors}=await openEditor(t,{width:1440,height:900});
+  await openPreferences(page);
+  await page.locator('#workspaceLayout').selectOption('balanced');
+  await page.locator('#workspacePanelMode').selectOption('separate');
+  await page.waitForFunction(()=>!document.querySelector('#leftDock')?.classList.contains('closed')&&!document.querySelector('#rightDock')?.classList.contains('closed'));
+  await page.locator('#closeWorkspaceAppearance').click();
+
+  const result=await page.evaluate(()=>{
+    const source=document.querySelector('#leftDock .dock-heading');
+    const target=document.querySelector('#rightDock');
+    const rect=target.getBoundingClientRect(),canvas=document.querySelector('.canvas-area');
+    const widthBefore=canvas.getBoundingClientRect().width,dataTransfer=new DataTransfer();
+    source.dispatchEvent(new DragEvent('dragstart',{bubbles:true,cancelable:true,dataTransfer}));
+    target.dispatchEvent(new DragEvent('dragover',{bubbles:true,cancelable:true,dataTransfer,clientX:rect.left+rect.width/2}));
+    const preview={position:target.dataset.dockDropPosition,outline:getComputedStyle(target).outlineStyle,widthBefore,widthDuring:canvas.getBoundingClientRect().width,active:document.body.classList.contains('workspace-reordering')};
+    target.dispatchEvent(new DragEvent('drop',{bubbles:true,cancelable:true,dataTransfer,clientX:rect.left+rect.width/2}));
+    const left=document.querySelector('#leftDock'),right=document.querySelector('#rightDock');
+    return {preview,grouped:{
+      mode:document.querySelector('.editor-app').dataset.workspacePanelMode,
+      side:document.querySelector('.editor-app').dataset.workspacePanelSide,
+      active:document.querySelector('.workspace').dataset.workspaceActivePanel,
+      selected:document.querySelector('#workspacePanelTabLeft').getAttribute('aria-selected'),
+      tabsVisible:getComputedStyle(document.querySelector('.workspace-panel-group-tabs')).display!=='none',
+      leftVisible:getComputedStyle(left).display!=='none'&&!left.classList.contains('closed'),
+      rightHidden:getComputedStyle(right).display==='none',
+      canvas:canvas.getBoundingClientRect().width,
+      canvasLeft:canvas.getBoundingClientRect().left,
+      groupLeft:left.getBoundingClientRect().left,
+      order:document.querySelector('.workspace').dataset.workspaceDockOrder,
+      announcement:document.querySelector('#workspaceDockStatus').textContent,
+      stalePreview:target.hasAttribute('data-dock-drop-position'),
+      dragActive:document.body.classList.contains('workspace-reordering')
+    }};
+  });
+  const {preview,grouped}=result;
+  assert.equal(preview.position,'group');
+  assert.equal(preview.outline,'solid');
+  assert.equal(preview.widthDuring,preview.widthBefore,'the central panel zone previews grouping without taking canvas width');
+  assert.equal(preview.active,true);
+  assert.equal(grouped.mode,'tabbed');
+  assert.equal(grouped.side,'right');
+  assert.equal(grouped.active,'left');
+  assert.equal(grouped.selected,'true');
+  assert.equal(grouped.tabsVisible,true);
+  assert.equal(grouped.leftVisible,true);
+  assert.equal(grouped.rightHidden,true,'the inactive group panel leaves layout and keyboard focus');
+  assert.ok(grouped.canvas>=400&&grouped.groupLeft>grouped.canvasLeft,'the dock group occupies its own right-side grid track');
+  assert.equal(grouped.order,'left-canvas-right','the side target retains the current three-region ordering');
+  assert.match(grouped.announcement,/fülei közé került.*vászon fedetlen/iu);
+  assert.equal(grouped.stalePreview,false);
+  assert.equal(grouped.dragActive,false);
+
+  await openPreferences(page);
+  assert.equal(await page.locator('#undoWorkspaceLayout').isEnabled(),true,'grouping joins workspace Undo history');
+  await page.locator('#undoWorkspaceLayout').click();
+  assert.equal(await page.locator('#workspacePanelMode').inputValue(),'separate');
+  assert.equal(await page.locator('.workspace-panel-group-tabs').isVisible(),false,'Undo restores independent dock panels');
+  await page.locator('#redoWorkspaceLayout').click();
+  assert.equal(await page.locator('#workspacePanelMode').inputValue(),'tabbed');
+  assert.equal(await page.locator('#workspacePanelSide').inputValue(),'right');
+  await page.locator('#workspaceProfileName').fill('Jobb oldali csoport');
+  await page.locator('#saveWorkspaceProfile').click();
+  await page.locator('#closeWorkspaceAppearance').click();
+  await page.reload({waitUntil:'load'});
+  await page.waitForFunction(()=>document.documentElement.dataset.editorBoot==='ready');
+  assert.equal(await page.locator('.editor-app').getAttribute('data-workspace-panel-mode'),'tabbed','the dock target persists across reload');
+  assert.equal(await page.locator('.editor-app').getAttribute('data-workspace-panel-side'),'right');
+  assert.equal(await page.locator('.workspace').evaluate(element=>element.dataset.workspaceActivePanel),'left');
+  assert.ok(await page.locator('.canvas-area').evaluate(element=>element.getBoundingClientRect().width>=400));
+  assert.deepEqual(writes,[],'dock grouping changes only shell/workspace state, never Page Model Save or Publish');
+  assert.deepEqual(errors,[]);
+});
+
+test('dropping the canvas onto a dock center reorders regions instead of grouping a panel',async t=>{
+  const {page,writes,errors}=await openEditor(t,{width:1440,height:900});
+  await openPreferences(page);
+  await page.locator('#workspaceLayout').selectOption('balanced');
+  await page.locator('#workspacePanelMode').selectOption('separate');
+  await page.locator('#closeWorkspaceAppearance').click();
+
+  const result=await page.evaluate(()=>{
+    const source=document.querySelector('.canvas-toolbar'),target=document.querySelector('#rightDock'),rect=target.getBoundingClientRect(),dataTransfer=new DataTransfer();
+    source.dispatchEvent(new DragEvent('dragstart',{bubbles:true,cancelable:true,dataTransfer}));
+    target.dispatchEvent(new DragEvent('dragover',{bubbles:true,cancelable:true,dataTransfer,clientX:rect.left+rect.width/2}));
+    const preview=target.dataset.dockDropPosition;
+    target.dispatchEvent(new DragEvent('drop',{bubbles:true,cancelable:true,dataTransfer,clientX:rect.left+rect.width/2}));
+    return {preview,mode:document.querySelector('.editor-app').dataset.workspacePanelMode,order:document.querySelector('.workspace').dataset.workspaceDockOrder,announcement:document.querySelector('#workspaceDockStatus').textContent};
+  });
+
+  assert.equal(result.preview,'after','the canvas keeps the existing edge-ordering interpretation at the dock center');
+  assert.equal(result.mode,'separate','only dock-to-dock drops may create a tab group');
+  assert.equal(result.order,'left-right-canvas');
+  assert.match(result.announcement,/Vászon.*Beállítások.*után/iu);
+  assert.deepEqual(writes,[]);
+  assert.deepEqual(errors,[]);
+});
+
 test('left tool rail order is customizable, undoable, profile-aware and keyboard navigable',async t=>{
   const {page,writes,errors}=await openEditor(t,{width:1366,height:900});
   await openPreferences(page);

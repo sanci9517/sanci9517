@@ -216,6 +216,14 @@ export function mountWorkspaceAppearance({documentRef=globalThis.document,root=d
     announcePersistence(saved,'A panelek sorrendje ezen az eszközön elmentve. Kis képernyőn a mobil fiók elrendezése marad.','A panelek sorrendje csak ebben a munkamenetben érvényes; kis képernyőn a biztonságos mobil fiókelrendezés marad.');
     return true;
   };
+  const setPanelGrouping=(mode,side)=>{
+    const next=normalizeVisualPreferences({...value,panelMode:mode,panelSide:side});
+    if(next.panelMode!==mode||next.panelSide!==side||next.panelMode===value.panelMode&&next.panelSide===value.panelSide)return false;
+    remember();value={...value,panelMode:next.panelMode,panelSide:next.panelSide};paint();const saved=persist();
+    onLayoutChange(value.layout);
+    announcePersistence(saved,'A panelek csoportja ezen az eszközön elmentve. A vászon külön, szabad terület marad.','A panelek csoportja csak ebben a munkamenetben érvényes. A vászon külön, szabad terület marad.');
+    return true;
+  };
   const updateVisual=(key,next)=>{
     const normalized=normalizeVisualPreferences({...value,[key]:next});
     if(key==='accent'&&normalized.accent!==String(next).toLowerCase()){
@@ -357,5 +365,5 @@ export function mountWorkspaceAppearance({documentRef=globalThis.document,root=d
   undoButton?.addEventListener('click',undo);redoButton?.addEventListener('click',redo);
   resetButton?.addEventListener('click',reset);
   paint();
-  return {get value(){return normalizeWorkspacePreferences(value)},setLayout,setDockOrder,open,close,remember,undo,redo,saveProfile,loadProfile,deleteProfile,importProfile,exportProfile,reset,syncDockControls:renderLeftToolOrder,clearExternalDockHistory,destroy(){documentRef.defaultView?.removeEventListener?.('storage',syncExternalPreferences)}};
+  return {get value(){return normalizeWorkspacePreferences(value)},setLayout,setDockOrder,setPanelGrouping,open,close,remember,undo,redo,saveProfile,loadProfile,deleteProfile,importProfile,exportProfile,reset,syncDockControls:renderLeftToolOrder,clearExternalDockHistory,destroy(){documentRef.defaultView?.removeEventListener?.('storage',syncExternalPreferences)}};
 }

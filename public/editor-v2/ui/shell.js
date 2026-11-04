@@ -2,7 +2,7 @@ import {createEventBus} from './events.js';
 import {panelRegistry,featureRegistry} from './registry.js';
 import {EDITOR_ACTIONS} from './action-catalog.js?v=20261103-canvas-focus-mode';
 import {enhanceEditorActionControls} from './action-help.js?v=20261103-canvas-focus-mode';
-import {DEFAULT_LEFT_TAB_ORDER,applyWorkspacePreferences,mountWorkspaceAppearance,normalizeLeftTabOrder,readWorkspacePreferences} from './workspace-appearance.js?v=20261104-tabbed-workspace-panels';
+import {DEFAULT_LEFT_TAB_ORDER,applyWorkspacePreferences,mountWorkspaceAppearance,normalizeLeftTabOrder,readWorkspacePreferences} from './workspace-appearance.js?v=20261104-drag-panel-grouping';
 
 const bus=createEventBus();
 const workspace=document.querySelector('.workspace');
@@ -334,7 +334,8 @@ function setupDockReordering(){
     const targetId=target?.dataset.workspaceDockId;
     if(!target||!targetId||targetId===dragSourceId||!workspace.contains(target)){clearDropPreview();return}
     event.preventDefault();transfer.dropEffect='move';
-    const rect=target.getBoundingClientRect(),position=event.clientX<rect.left+rect.width/2?'before':'after';
+    const rect=target.getBoundingClientRect(),ratio=rect.width?((event.clientX-rect.left)/rect.width):0.5;
+    const position=dragSourceId!=='canvas'&&target!==canvasArea&&ratio>=0.35&&ratio<=0.65?'group':ratio<0.5?'before':'after';
     if(target.dataset.dockDropPosition===position)return;
     clearDropPreview();target.dataset.dockDropPosition=position;
   });
@@ -350,8 +351,13 @@ function setupDockReordering(){
     const sourceIndex=order.indexOf(source),targetIndex=order.indexOf(target);
     if(sourceIndex<0||targetIndex<0){finishDrag();return}
     order.splice(sourceIndex,1);
-    const rect=target.getBoundingClientRect();
-    const before=event.clientX<rect.left+rect.width/2;
+    const rect=target.getBoundingClientRect(),ratio=rect.width?((event.clientX-rect.left)/rect.width):0.5;
+    if(sourceId!=='canvas'&&target!==canvasArea&&ratio>=0.35&&ratio<=0.65){
+      const grouped=workspaceAppearance?.setPanelGrouping('tabbed',targetId);
+      if(grouped){setPanel(sourceId,true,{save:true,customize:false});if(liveStatus)liveStatus.textContent=`A(z) ${names[sourceId]} panel a(z) ${names[targetId]} panelfülei közé került. A füles csoport a(z) ${targetId==='left'?'bal':'jobb'} oldalon marad, a vászon fedetlen.`}
+      finishDrag();return;
+    }
+    const before=ratio<0.5;
     const adjustedTarget=order.indexOf(target);
     order.splice(adjustedTarget+(before?0:1),0,source);
     const value=order.map(item=>item.dataset.workspaceDockId).join('-');

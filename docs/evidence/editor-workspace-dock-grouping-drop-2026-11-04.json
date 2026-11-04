@@ -1,0 +1,97 @@
+{
+  "date": "2026-11-04",
+  "plan_point": "77.44.6.1.C",
+  "status": "IMPLEMENTED_LOCAL_VALIDATION_PASS_RELEASE_PENDING",
+  "scope": "Desktop dock-to-dock center-zone drop converts the existing separate docks into an undoable tab group at the target dock side. The source dock becomes active. Edge-zone drops continue to reorder the three reserved workspace tracks. The mobile single-drawer model is unchanged.",
+  "branch": "v2/foundation",
+  "base_commit": "428032023449a4ed2a2292629d4839efeb660e85",
+  "github_branch_head_before_release": "428032023449a4ed2a2292629d4839efeb660e85",
+  "runtime_files": [
+    "public/editor-v2/index.html",
+    "public/editor-v2/editor-refresh.css",
+    "public/editor-v2/ui/shell.js",
+    "public/editor-v2/ui/workspace-appearance.js"
+  ],
+  "test_files": [
+    "tests/browser/editor-workspace-appearance.test.js"
+  ],
+  "cache_version": "20261104-drag-panel-grouping",
+  "runtime_contracts": {
+    "page_model_changed": false,
+    "save_publish_changed": false,
+    "floating_panel_over_canvas": false,
+    "inactive_panel_removed_from_focus_navigation": true,
+    "desktop_minimum_canvas_css_px": 400,
+    "mobile_behavior": "single drawer; desktop panel-group tabs hidden",
+    "undo_redo": "one atomic existing Workspace Appearance history snapshot per grouping change",
+    "preference_storage": "existing allowlisted local workspace preferences",
+    "source_drag": "desktop dock heading",
+    "canvas_source_center_drop": "never groups; keeps three-region before/after reordering",
+    "target_center_ratio": [0.35, 0.65],
+    "edge_zones": "existing before/after three-region ordering"
+  },
+  "reused_project_patterns": [
+    "Existing desktop dock drag lifecycle, cancellation guards, and live-region announcements",
+    "Existing tabbed panel-group CSS Grid reservation and accessible tab activation",
+    "Existing Workspace Appearance preference persistence and Undo/Redo adapter",
+    "Existing Playwright/Chromium local HTTP fixture and Page Model write counter"
+  ],
+  "third_party_code_or_dependencies_added": false,
+  "checks": {
+    "targeted_group_drop_browser": "PASS 1/1; CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec --test-name-pattern='dropping a dock onto another dock creates an undoable canvas-safe tab group' tests/browser/editor-workspace-appearance.test.js; real Chromium verifies target-center preview without canvas shrink, target-side tab-group placement, active source panel, inactive panel hidden from layout/focus, >=400 CSS px canvas, Hungarian live announcement, undo/redo, reload persistence, and zero Page Model writes",
+    "canvas_to_dock_center_browser": "PASS 1/1 after the source guard; a canvas-toolbar drop previews and persists ordinary three-region order instead of attempting to open a nonexistent canvas panel tab",
+    "workspace_appearance_browser_file": "PASS 25/25 after the source guard; CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-workspace-appearance.test.js",
+    "editor_unit": "PASS 14/14 test files; npm run test:editor also passed 3/3 Linux subreaper runner tests",
+    "typecheck": "PASS npm run typecheck",
+    "migration_safety": "PASS npm run test:web013:migration-gate",
+    "canonical_plan_and_contract": "PASS 13 canonical master files; 77.44.6.1 current cursor and 77.44.6.1.C next; 396 source mappings; acceptance remains NOT_CERTIFIED",
+    "javascript_syntax": "PASS node --check public/editor-v2/ui/shell.js; node --check public/editor-v2/ui/workspace-appearance.js; node --check tests/browser/editor-workspace-appearance.test.js",
+    "diff_whitespace": "PASS git diff --check",
+    "wrangler_dry_run": "PASS after the final source guard; Wrangler 4.130.0; 168 assets; 335.81 KiB total / 87.60 KiB gzip; --dry-run only; no deployment",
+    "wide_51_file_browser_suite": {
+      "status": "INCOMPLETE_NOT_PASS",
+      "timing": "This wide aggregate run was before the final canvas-source guard; the complete affected workspace browser file (25/25), editor unit and static checks were rerun after that guard.",
+      "execution": "CHROMIUM_PATH=/usr/bin/chromium npm run test:editor:layout, run with approved local process permissions because restricted sandbox Chromium exits SIGTRAP on Crashpad socket setup",
+      "completed_files": 29,
+      "passed_files": 28,
+      "failed_files": [
+        {
+          "file": "tests/browser/editor-inspector-lifecycle.test.js",
+          "failure": "page.reload timeout while waiting for domcontentloaded after 189 seconds in the serial aggregate run; this unrelated test had previously passed when isolated"
+        }
+      ],
+      "interrupted_file": "tests/browser/editor-inspector-partial-types.test.js",
+      "reason": "the single exhaustive lifecycle file remained active without output for over eleven minutes; the aggregate run was interrupted rather than treated as a pass",
+      "remaining_files": 21
+    }
+  },
+  "production_read_only_preflight_before_release": {
+    "query": "SELECT name FROM d1_migrations ORDER BY name;",
+    "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
+    "rows_read": 34,
+    "latest_migration": "0028_media_archive.sql",
+    "changed_db": false,
+    "rows_written": 0
+  },
+  "live_worker_before_release": {
+    "latest_deployment_id": "7ab72ead-819f-4fb1-81ec-8c40b71fcca5",
+    "traffic_version_id": "1b431468-a259-485f-9243-8f8bb5fdeec4",
+    "traffic_percent": 100,
+    "health": "direct GET 2026-11-04T10:16:36Z; HTTP 200; {ok:true,service:sanci9517-streamer-brand,version:2.0.0}; base worker only",
+    "asset_hashes_match_pending_worktree": false
+  },
+  "release": {
+    "status": "PENDING",
+    "runtime_commit": null,
+    "push": "NOT DONE",
+    "cloudflare_build_id": null,
+    "cloudflare_deployment_id": null,
+    "worker_version_id": null,
+    "traffic_percent": null,
+    "aggregate_github_ci": "NOT VERIFIED"
+  },
+  "cost_huf": 0,
+  "production_d1_mutation_or_migration": false,
+  "r2_operation": false,
+  "manual_visual_editor_acceptance": "DEFERRED until complete Visual Editor scope reaches its planned acceptance gate"
+}
