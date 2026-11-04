@@ -1,7 +1,7 @@
 {
   "date": "2026-11-04",
   "plan_point": "77.44.6.1.C",
-  "status": "IMPLEMENTED_LOCAL_VALIDATION_PASS_RELEASE_PENDING",
+  "status": "IMPLEMENTED_RELEASED_AUTOMATED_ACCEPTANCE_OPEN",
   "scope": "Desktop dock-to-dock center-zone drop converts the existing separate docks into an undoable tab group at the target dock side. The source dock becomes active. Edge-zone drops continue to reorder the three reserved workspace tracks. The mobile single-drawer model is unchanged.",
   "branch": "v2/foundation",
   "base_commit": "428032023449a4ed2a2292629d4839efeb660e85",
@@ -27,7 +27,10 @@
     "preference_storage": "existing allowlisted local workspace preferences",
     "source_drag": "desktop dock heading",
     "canvas_source_center_drop": "never groups; keeps three-region before/after reordering",
-    "target_center_ratio": [0.35, 0.65],
+    "target_center_ratio": [
+      0.35,
+      0.65
+    ],
     "edge_zones": "existing before/after three-region ordering"
   },
   "reused_project_patterns": [
@@ -81,14 +84,91 @@
     "asset_hashes_match_pending_worktree": false
   },
   "release": {
-    "status": "PENDING",
-    "runtime_commit": null,
-    "push": "NOT DONE",
-    "cloudflare_build_id": null,
-    "cloudflare_deployment_id": null,
-    "worker_version_id": null,
-    "traffic_percent": null,
-    "aggregate_github_ci": "NOT VERIFIED"
+    "status": "RELEASED_RUNTIME_DEPLOY_VERIFIED",
+    "runtime_commit": "7b8292ca0fb30ae81239d601ba66d7e6af9646ee",
+    "commit_parent": "428032023449a4ed2a2292629d4839efeb660e85",
+    "push": "NORMAL_FAST_FORWARD_VERIFIED_GITHUB_BRANCH_HEAD_EXACT_MATCH",
+    "github_branch_head": "7b8292ca0fb30ae81239d601ba66d7e6af9646ee",
+    "cloudflare_build_id": "a8833374-abc8-4ee8-bab7-4a4ad17f071d",
+    "cloudflare_build_outcome": "success",
+    "cloudflare_build_commit": "7b8292ca0fb30ae81239d601ba66d7e6af9646ee",
+    "cloudflare_build_command": "npm run typecheck",
+    "cloudflare_deploy_command": "npm run deploy:safe",
+    "cloudflare_deployment_id": "94e0bfb8-7878-44f4-b3e6-7e13a07a4fa6",
+    "worker_version_id": "24d4594c-e493-4d9d-9540-2419de01a90d",
+    "worker_version_number": 3809,
+    "traffic_percent": 100,
+    "health": {
+      "url": "/api/health",
+      "http_status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "aggregate_github_ci": "IN_PROGRESS_NOT_PASS",
+    "github_jobs": [
+      {
+        "name": "verify",
+        "run_id": 41813812560,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "source-audit",
+        "run_id": 41813812754,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "canonical-plan",
+        "run_id": 41813812667,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "twitch-integration",
+        "run_id": 41813812566,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "editor-core",
+        "run_id": 41813812564,
+        "status": "in_progress",
+        "current_step": "Run Editor browser layout regression"
+      }
+    ],
+    "asset_hashes": [
+      {
+        "url": "/editor-v2/",
+        "http_status": 200,
+        "sha256": "4a5c8f8023399e0ca8d3ecefd520f4c08afb14864b1498cabdc0eb18f9f9fac3",
+        "matches_local": true
+      },
+      {
+        "url": "/editor-v2/ui/shell.js?v=20261104-drag-panel-grouping",
+        "http_status": 200,
+        "sha256": "4d66ec6bf2c5b10cfaad4af5c9a7a006fc75ab218084de487ef894b3d0b2ce3e",
+        "matches_local": true
+      },
+      {
+        "url": "/editor-v2/ui/workspace-appearance.js?v=20261104-drag-panel-grouping",
+        "http_status": 200,
+        "sha256": "fe9eef6522fdc8966aadf3a6a7c3c0485245a15eab729e5fa1992daf864221e6",
+        "matches_local": true
+      },
+      {
+        "url": "/editor-v2/editor-refresh.css?v=20261104-drag-panel-grouping",
+        "http_status": 200,
+        "sha256": "d9b8c51cdc2b063fd64a3a40d38a2d6dd32058bf37e46b6ff8125a65bd9230d4",
+        "matches_local": true
+      }
+    ],
+    "verified_at_utc": "2026-11-04T10:23:23Z",
+    "wrangler_manual_deploy": "NOT RUN_AUTOMATIC_BUILD_DEPLOY_VERIFIED"
   },
   "cost_huf": 0,
   "production_d1_mutation_or_migration": false,
