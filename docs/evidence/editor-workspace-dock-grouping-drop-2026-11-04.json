@@ -43,7 +43,7 @@
   "checks": {
     "targeted_group_drop_browser": "PASS 1/1; CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec --test-name-pattern='dropping a dock onto another dock creates an undoable canvas-safe tab group' tests/browser/editor-workspace-appearance.test.js; real Chromium verifies target-center preview without canvas shrink, target-side tab-group placement, active source panel, inactive panel hidden from layout/focus, >=400 CSS px canvas, Hungarian live announcement, undo/redo, reload persistence, and zero Page Model writes",
     "canvas_to_dock_center_browser": "PASS 1/1 after the source guard; a canvas-toolbar drop previews and persists ordinary three-region order instead of attempting to open a nonexistent canvas panel tab",
-    "workspace_appearance_browser_file": "PASS 25/25 after the source guard; CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-workspace-appearance.test.js",
+    "workspace_appearance_browser_file": "PASS 26/26 after adding the reverse left-group target scenario; CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-workspace-appearance.test.js",
     "editor_unit": "PASS 14/14 test files; npm run test:editor also passed 3/3 Linux subreaper runner tests",
     "typecheck": "PASS npm run typecheck",
     "migration_safety": "PASS npm run test:web013:migration-gate",
@@ -66,7 +66,8 @@
       "interrupted_file": "tests/browser/editor-inspector-partial-types.test.js",
       "reason": "the single exhaustive lifecycle file remained active without output for over eleven minutes; the aggregate run was interrupted rather than treated as a pass",
       "remaining_files": 21
-    }
+    },
+    "reverse_group_drop_browser": "PASS 1/1 real Chromium; right dock dropped into left dock center selects the source panel in a left-side group, hides only the inactive panel, leaves dock order unchanged, preserves/expands the >=400px canvas, clears the drag preview, and makes zero Page Model/Save/Publish writes."
   },
   "production_read_only_preflight_before_release": {
     "query": "SELECT name FROM d1_migrations ORDER BY name;",

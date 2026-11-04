@@ -615,6 +615,63 @@ test('dropping a dock onto another dock creates an undoable canvas-safe tab grou
   assert.deepEqual(errors,[]);
 });
 
+test('dropping the right dock into the left dock center keeps the group on the left track',async t=>{
+  const {page,writes,errors}=await openEditor(t,{width:1280,height:900});
+  await openPreferences(page);
+  await page.locator('#workspaceLayout').selectOption('balanced');
+  await page.locator('#workspacePanelMode').selectOption('separate');
+  await page.waitForFunction(()=>!document.querySelector('#leftDock')?.classList.contains('closed')&&!document.querySelector('#rightDock')?.classList.contains('closed'));
+  await page.locator('#closeWorkspaceAppearance').click();
+
+  const result=await page.evaluate(()=>{
+    const source=document.querySelector('#rightDock .dock-heading');
+    const target=document.querySelector('#leftDock');
+    const rect=target.getBoundingClientRect(),canvas=document.querySelector('.canvas-area'),dataTransfer=new DataTransfer();
+    const canvasBefore=canvas.getBoundingClientRect().width;
+    source.dispatchEvent(new DragEvent('dragstart',{bubbles:true,cancelable:true,dataTransfer}));
+    target.dispatchEvent(new DragEvent('dragover',{bubbles:true,cancelable:true,dataTransfer,clientX:rect.left+rect.width/2}));
+    const preview=target.dataset.dockDropPosition;
+    target.dispatchEvent(new DragEvent('drop',{bubbles:true,cancelable:true,dataTransfer,clientX:rect.left+rect.width/2}));
+    const left=document.querySelector('#leftDock'),right=document.querySelector('#rightDock');
+    return {
+      preview,
+      mode:document.querySelector('.editor-app').dataset.workspacePanelMode,
+      side:document.querySelector('.editor-app').dataset.workspacePanelSide,
+      active:document.querySelector('.workspace').dataset.workspaceActivePanel,
+      leftSelected:document.querySelector('#workspacePanelTabLeft').getAttribute('aria-selected'),
+      rightSelected:document.querySelector('#workspacePanelTabRight').getAttribute('aria-selected'),
+      leftHidden:getComputedStyle(left).display==='none',
+      rightVisible:getComputedStyle(right).display!=='none'&&!right.classList.contains('closed'),
+      canvasBefore,
+      canvasAfter:canvas.getBoundingClientRect().width,
+      canvasLeft:canvas.getBoundingClientRect().left,
+      groupLeft:right.getBoundingClientRect().left,
+      groupWidth:right.getBoundingClientRect().width,
+      order:document.querySelector('.workspace').dataset.workspaceDockOrder,
+      announcement:document.querySelector('#workspaceDockStatus').textContent,
+      stalePreview:target.hasAttribute('data-dock-drop-position'),
+      dragActive:document.body.classList.contains('workspace-reordering')
+    };
+  });
+
+  assert.equal(result.preview,'group');
+  assert.equal(result.mode,'tabbed');
+  assert.equal(result.side,'left');
+  assert.equal(result.active,'right');
+  assert.equal(result.leftSelected,'false');
+  assert.equal(result.rightSelected,'true');
+  assert.equal(result.leftHidden,true);
+  assert.equal(result.rightVisible,true);
+  assert.ok(result.canvasAfter>=result.canvasBefore,'grouping on the left must not squeeze or cover the canvas');
+  assert.ok(result.canvasAfter>=400&&result.groupWidth>0&&result.groupLeft<result.canvasLeft,'the active right panel occupies the group’s left-side grid track');
+  assert.equal(result.order,'left-canvas-right');
+  assert.match(result.announcement,/fülei közé került.*bal oldalon.*vászon fedetlen/iu);
+  assert.equal(result.stalePreview,false);
+  assert.equal(result.dragActive,false);
+  assert.deepEqual(writes,[],'the reverse grouping direction never writes Page Model, Save, or Publish');
+  assert.deepEqual(errors,[]);
+});
+
 test('dropping the canvas onto a dock center reorders regions instead of grouping a panel',async t=>{
   const {page,writes,errors}=await openEditor(t,{width:1440,height:900});
   await openPreferences(page);
