@@ -70,7 +70,7 @@
     "production_health": "Direct GET /api/health HTTP 200; ok=true, version=2.0.0.",
     "current_live_deployment": "Cloudflare API read: deployment 3b105aeb-5187-441b-9af7-3cb018659f5f, Worker version b6855938-d676-4eb7-81e5-43dc3d084787 at 100% traffic (observed 2026-11-04T17:21:11Z).",
     "unchanged_live_assets": "Current live app.js, editor index, and shell.js SHA-256 match the remote branch base commit 16b33b85b86d78d0ff2469e89c6ed68a247735be. The modified local app.js is not live.",
-    "remote_branch": "v2/foundation HEAD d282cd04b7a5043d63aff3e134928cdcddfa0481 (verified with git ls-remote); docs-only follow-up commit whose runtime tree remains identical to base 16b33b85b86d78d0ff2469e89c6ed68a247735be. The local runtime edits remain uncommitted and unpushed.",
+    "remote_branch": "v2/foundation HEAD 5f15b318fc9e1a7abac81e1a1f2c821dbd43b17f (verified before this documentation-only follow-up); runtime tree remains identical to base 16b33b85b86d78d0ff2469e89c6ed68a247735be. The local runtime edits remain uncommitted and unpushed.",
     "cost_huf": 0,
     "wrangler_dry_run": "PASS: WRANGLER_LOG_PATH=/tmp/sanci-wrangler-logs npx wrangler deploy --dry-run; Wrangler 4.130.0 read 168 assets, 335.81 KiB / 87.60 KiB gzip; no deployment.",
     "live_asset_sha256": {
@@ -78,6 +78,8 @@
       "index_html": "ca7479a4dc6aaa24b0e92d67a7506c28c825fe9688a5839caf34dfc210121838",
       "shell_js": "c8e3dd5881116e424bd7fb550ddaf0685cdbb28e1c9c4ef9e4d3cf97f9d450aa"
     },
-    "post_docs_push_deployment": "Verified after docs-only push: latest production deployment is still 3b105aeb-5187-441b-9af7-3cb018659f5f at 100%; /api/health still returns ok=true. Documentation push caused no Worker deployment."
+    "post_docs_push_deployment": "Verified after docs-only push: latest production deployment is still 3b105aeb-5187-441b-9af7-3cb018659f5f at 100%; /api/health still returns ok=true. Documentation push caused no Worker deployment.",
+    "runtime_push_blocker": "NOT PUSHED: the focused changed-path browser regression passes, but the 51-file layout suite remains NOT_PASS due the unrelated cumulative Inspector timeout. A v2/foundation runtime push triggers .github/workflows/editor-core-test.yml, which runs the full browser suite; the canonical 0-HUF policy records exhausted GitHub Actions free compute and prohibits paid use/reruns. Preserve the verified local change; do not trigger that workflow until a zero-cost path exists.",
+    "github_actions": "gh run list for docs-only commit 5f15b318 returned []; no aggregate GitHub CI PASS is claimed."
   }
 }
