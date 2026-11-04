@@ -56,5 +56,27 @@
   "acceptance": {
     "77.44.6.1.C": "OPEN",
     "full_visual_editor_manual_and_physical_acceptance": "DEFERRED to the complete Editor acceptance gate"
+  },
+  "follow_up_verification": {
+    "recorded_at": "2026-11-04",
+    "targeted_browser_suite": "PASS 7/7: tests/browser/editor-element-insertion.test.js, including the nested locked-ancestor guard that previously failed in the Editor Core job.",
+    "inspector_reset_isolation": "PASS 44/44 in real Chromium: for each editable PARTIAL element type, selected the element, reset mobile opacity first, then reset mobile boxShadow inheritance. This reproduces the control ordering near the cumulative-suite timeout but isolates it from the much longer Save/Publish/other-style lifecycle; it does not certify that larger test or suite.",
+    "full_editor_layout": "REMAINS NOT_PASS: the previous 51-file run timed out in tests/browser/editor-inspector-partial-types.test.js after extensive preceding lifecycle interactions. The isolated reset passes, but the cumulative suite failure has not been explained or cleared.",
+    "editor_unit_suite": "PASS 14/14; Linux subreaper runner PASS 3/3.",
+    "typecheck": "PASS: npm run typecheck.",
+    "migration_safety_gate": "PASS: npm run test:web013:migration-gate.",
+    "plan_contract_and_traceability": "PASS: canonical plan, active cursor 77.44.6.1.C, acceptance NOT_CERTIFIED; 396/396 traceability mappings.",
+    "source_hygiene": "PASS: node --check public/editor-v2/app.js and git diff --check.",
+    "production_health": "Direct GET /api/health HTTP 200; ok=true, version=2.0.0.",
+    "current_live_deployment": "Cloudflare API read: deployment 3b105aeb-5187-441b-9af7-3cb018659f5f, Worker version b6855938-d676-4eb7-81e5-43dc3d084787 at 100% traffic (observed 2026-11-04T17:21:11Z).",
+    "unchanged_live_assets": "Current live app.js, editor index, and shell.js SHA-256 match the remote branch base commit 16b33b85b86d78d0ff2469e89c6ed68a247735be. The modified local app.js is not live.",
+    "remote_branch": "v2/foundation HEAD 16b33b85b86d78d0ff2469e89c6ed68a247735be; local runtime edits remain uncommitted and unpushed.",
+    "cost_huf": 0,
+    "wrangler_dry_run": "PASS: WRANGLER_LOG_PATH=/tmp/sanci-wrangler-logs npx wrangler deploy --dry-run; Wrangler 4.130.0 read 168 assets, 335.81 KiB / 87.60 KiB gzip; no deployment.",
+    "live_asset_sha256": {
+      "app_js": "bd91a8389557f14e3f33540c844bd4fa5dfe6461e831e2146dea2c7021f6e153",
+      "index_html": "ca7479a4dc6aaa24b0e92d67a7506c28c825fe9688a5839caf34dfc210121838",
+      "shell_js": "c8e3dd5881116e424bd7fb550ddaf0685cdbb28e1c9c4ef9e4d3cf97f9d450aa"
+    }
   }
 }
