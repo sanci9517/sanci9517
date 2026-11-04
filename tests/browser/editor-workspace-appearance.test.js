@@ -487,12 +487,13 @@ test('desktop panel and canvas drag reordering is an accessible-selector peer an
     handle.dispatchEvent(new DragEvent('dragstart',{bubbles:true,cancelable:true,dataTransfer}));
     target.dispatchEvent(new DragEvent('dragover',{bubbles:true,cancelable:true,dataTransfer,clientX}));
     const style=getComputedStyle(target);
-    const state={position:target.dataset.dockDropPosition,label:target.dataset.dockDropLabel,labelContent:getComputedStyle(target,'::after').content,labelPointerEvents:getComputedStyle(target,'::after').pointerEvents,outline:style.outlineStyle,shadow:style.boxShadow,active:document.body.classList.contains('workspace-reordering'),canvasWidthBefore,canvasWidthDuring:target.getBoundingClientRect().width};
+    const state={position:target.dataset.dockDropPosition,label:target.dataset.dockDropLabel,labelContent:getComputedStyle(target,'::after').content,labelPointerEvents:getComputedStyle(target,'::after').pointerEvents,outline:style.outlineStyle,shadow:style.boxShadow,active:document.body.classList.contains('workspace-reordering'),canvasWidthBefore,canvasWidthDuring:target.getBoundingClientRect().width,announcement:document.querySelector('#workspaceDockStatus')?.textContent};
     handle.dispatchEvent(new DragEvent('dragend',{bubbles:true,cancelable:true,dataTransfer}));
-    return {...state,cleared:!target.hasAttribute('data-dock-drop-position')&&!target.hasAttribute('data-dock-drop-label')&&!document.body.classList.contains('workspace-reordering')};
+    return {...state,cleared:!target.hasAttribute('data-dock-drop-position')&&!target.hasAttribute('data-dock-drop-label')&&!document.body.classList.contains('workspace-reordering'),finishedAnnouncement:document.querySelector('#workspaceDockStatus')?.textContent};
   });
   const {canvasWidthBefore,canvasWidthDuring,...previewState}=preview;
-  assert.deepEqual(previewState,{position:'after',label:'Utána helyezés',labelContent:'"Utána helyezés"',labelPointerEvents:'none',outline:'solid',shadow:'rgb(91, 140, 255) -4px 0px 0px 0px inset',active:true,cleared:true},'the current zone has a plain-language, non-interactive caption which clears on dragend');
+  assert.deepEqual(previewState,{position:'after',label:'Utána helyezés',labelContent:'"Utána helyezés"',labelPointerEvents:'none',outline:'solid',shadow:'rgb(91, 140, 255) -4px 0px 0px 0px inset',active:true,cleared:true,announcement:'Cél: Utána helyezés – Vászon.',finishedAnnouncement:'Az átrendezés megszakadt.'},'the current zone and cancellation are announced in plain language');
+  assert.equal(preview.announcement,'Cél: Utána helyezés – Vászon.','the hidden live region announces the current target in plain language');
   assert.equal(canvasWidthDuring,canvasWidthBefore,'the zone cue does not shrink or cover the separate canvas track');
   const canceled=await page.evaluate(key=>{
     const workspace=document.querySelector('.workspace');
@@ -516,7 +517,7 @@ test('desktop panel and canvas drag reordering is an accessible-selector peer an
   assert.equal(canceled.dragging,false,'Escape exits reordering mode');
   assert.equal(canceled.leftOpen,true,'Escape cancels the drag without collapsing the page tools dock');
   assert.equal(canceled.rightOpen,true,'Escape cancels the drag without collapsing the Inspector');
-  assert.equal(canceled.announcement,'','a canceled move is not announced as completed');
+  assert.equal(canceled.announcement,'Az átrendezés megszakítva.','Escape explains that the panel move was canceled');
   const result=await page.evaluate(key=>{
     const workspace=document.querySelector('.workspace');
     const handle=document.querySelector('#leftDock .dock-heading');
@@ -557,7 +558,7 @@ test('dropping a dock onto another dock creates an undoable canvas-safe tab grou
     const widthBefore=canvas.getBoundingClientRect().width,dataTransfer=new DataTransfer();
     source.dispatchEvent(new DragEvent('dragstart',{bubbles:true,cancelable:true,dataTransfer}));
     target.dispatchEvent(new DragEvent('dragover',{bubbles:true,cancelable:true,dataTransfer,clientX:rect.left+rect.width/2}));
-    const preview={position:target.dataset.dockDropPosition,label:target.dataset.dockDropLabel,labelContent:getComputedStyle(target,'::after').content,labelPointerEvents:getComputedStyle(target,'::after').pointerEvents,outline:getComputedStyle(target).outlineStyle,widthBefore,widthDuring:canvas.getBoundingClientRect().width,active:document.body.classList.contains('workspace-reordering')};
+    const preview={position:target.dataset.dockDropPosition,label:target.dataset.dockDropLabel,labelContent:getComputedStyle(target,'::after').content,labelPointerEvents:getComputedStyle(target,'::after').pointerEvents,outline:getComputedStyle(target).outlineStyle,widthBefore,widthDuring:canvas.getBoundingClientRect().width,active:document.body.classList.contains('workspace-reordering'),announcement:document.querySelector('#workspaceDockStatus').textContent};
     target.dispatchEvent(new DragEvent('drop',{bubbles:true,cancelable:true,dataTransfer,clientX:rect.left+rect.width/2}));
     const left=document.querySelector('#leftDock'),right=document.querySelector('#rightDock');
     return {preview,grouped:{
@@ -580,6 +581,7 @@ test('dropping a dock onto another dock creates an undoable canvas-safe tab grou
   const {preview,grouped}=result;
   assert.equal(preview.position,'group');
   assert.equal(preview.label,'Panelcsoport');
+  assert.equal(preview.announcement,'Cél: Panelcsoport – Beállítások.','the live region names the grouping action and its target before the drop');
   assert.equal(preview.labelContent,'"Panelcsoport"');
   assert.equal(preview.labelPointerEvents,'none');
   assert.equal(preview.outline,'solid');
@@ -1035,7 +1037,7 @@ test('open editor tabs synchronize saved appearance, dock state and profiles wit
   assert.equal(staleDrop.saved,'canvas-right-left','a canceled cross-tab drag does not persist a stale order');
   assert.equal(staleDrop.preview,false,'external workspace changes clear the old drop target');
   assert.equal(staleDrop.active,false,'external workspace changes cancel the in-progress interaction');
-  assert.equal(staleDrop.announcement,'','a canceled drag is not announced as a completed move');
+  assert.equal(staleDrop.announcement,'A másik szerkesztőlapon történt változás miatt az átrendezés megszakadt.','cross-tab invalidation announces why the target is no longer valid');
   await openPreferences(page);
 
   await page.locator('#workspaceLeftTool').selectOption('layers');
@@ -1070,21 +1072,23 @@ test('desktop dock drag cancels when the viewport switches to the mobile drawer 
     handle.dispatchEvent(new DragEvent('dragstart',{bubbles:true,cancelable:true,dataTransfer}));
     target.dispatchEvent(new DragEvent('dragover',{bubbles:true,cancelable:true,dataTransfer,clientX:rect.left+rect.width-4}));
     window.__workspaceDockTransfer=dataTransfer;
-    return {order:document.querySelector('.workspace').dataset.workspaceDockOrder,active:document.body.classList.contains('workspace-reordering')};
+    return {order:document.querySelector('.workspace').dataset.workspaceDockOrder,active:document.body.classList.contains('workspace-reordering'),announcement:document.querySelector('#workspaceDockStatus')?.textContent};
   });
   assert.equal(started.active,true,'desktop drag is active before the responsive boundary changes');
+  assert.equal(started.announcement,'Cél: Utána helyezés – Vászon.','the active target is announced before the breakpoint change');
   await page.setViewportSize({width:390,height:844});
   await page.waitForFunction(()=>!document.body.classList.contains('workspace-reordering'));
   const late=await page.evaluate(()=>{
     const target=document.querySelector('.canvas-area'),rect=target.getBoundingClientRect(),dataTransfer=window.__workspaceDockTransfer;
     target.dispatchEvent(new DragEvent('drop',{bubbles:true,cancelable:true,dataTransfer,clientX:rect.left+rect.width-4}));
-    const result={order:document.querySelector('.workspace').dataset.workspaceDockOrder,preview:target.hasAttribute('data-dock-drop-position'),active:document.body.classList.contains('workspace-reordering')};
+    const result={order:document.querySelector('.workspace').dataset.workspaceDockOrder,preview:target.hasAttribute('data-dock-drop-position'),active:document.body.classList.contains('workspace-reordering'),announcement:document.querySelector('#workspaceDockStatus')?.textContent};
     delete window.__workspaceDockTransfer;
     return result;
   });
   assert.equal(late.order,started.order,'a mobile breakpoint cancels the prior desktop insertion');
   assert.equal(late.preview,false,'responsive change clears desktop-only target styling');
   assert.equal(late.active,false,'mobile mode does not retain desktop drag state');
+  assert.equal(late.announcement,'A képernyőméret változott, ezért az átrendezés megszakadt.','the responsive boundary explains why the drag ended');
   assert.ok(!(await page.locator('#leftDock').isVisible()&&await page.locator('#rightDock').isVisible()),'the mobile single-drawer rule remains intact');
   assert.deepEqual(writes,[],'canceling dock interactions never writes page content');
   assert.deepEqual(errors,[]);

@@ -1,0 +1,108 @@
+{
+  "date": "2026-11-04",
+  "plan_point": "77.44.6.1.C",
+  "status": "RUNTIME_DEPLOYED_VERIFIED_AUTOMATED_FOUNDATION_PASS_FULL_C_OPEN",
+  "scope": "Announce dock-drag start, target action and region, cancellation causes, and unsuccessful/no-op outcomes through the existing polite live region.",
+  "branch": "v2/foundation",
+  "base_commit": "b43e9015f0fd51b4cd37631da1e385025e8b603a",
+  "runtime_files": [
+    "public/editor-v2/index.html",
+    "public/editor-v2/ui/shell.js"
+  ],
+  "test_files": [
+    "tests/browser/editor-workspace-appearance.test.js"
+  ],
+  "announcement_behavior": {
+    "drag_start": "Names the source panel and invites the user to select a dock or canvas drop zone.",
+    "target_preview": "Names before/after/group action and target region in Hungarian.",
+    "cancel": [
+      "Escape explicitly says the move was canceled.",
+      "A responsive viewport change explains that the drag ended.",
+      "An external workspace update in another editor tab explains why the drag ended.",
+      "Invalid drops report cancellation rather than implying success."
+    ],
+    "no_change": "A no-op group/order reports that the layout did not change.",
+    "live_region": "Existing #workspaceDockStatus role=status aria-live=polite aria-atomic=true; duplicate consecutive messages are suppressed."
+  },
+  "contracts": {
+    "page_model_changed": false,
+    "save_publish_changed": false,
+    "d1_or_r2_changed": false,
+    "desktop_canvas_geometry_changed": false,
+    "mobile_single_drawer_changed": false,
+    "new_dependency_or_third_party_runtime_code": false
+  },
+  "checks": {
+    "targeted_real_chromium": "PASS 1/1 after correcting the responsive test to assert the active target announcement before resize and the cancellation cause after resize. Earlier targeted run: three pass, one assertion failed because it expected drag-start text after a dragover had correctly replaced it with the target text.",
+    "workspace_browser_file": "PASS 27/27 via scripts/run-with-linux-subreaper.py with CHROMIUM_PATH=/usr/bin/chromium and local loopback access.",
+    "editor_unit": "PASS 14/14 Node test files; Linux subreaper runner 3/3.",
+    "typecheck": "PASS npm run typecheck.",
+    "migration_safety": "PASS npm run test:web013:migration-gate; no migration applied.",
+    "canonical_plan_and_contract": "PASS python3 scripts/check-canonical-plan.py; python3 tests/plan-contract.test.py (13/13); python3 scripts/audit-active-plan-point.py. Cursor remains 77.44.6.1.C and acceptance remains NOT_CERTIFIED.",
+    "traceability": "PASS python3 scripts/build-feature-traceability.py --check; 396/396 mappings after rebuilding the project-owned source fingerprint for index cache bust.",
+    "syntax_and_whitespace": "PASS node --check for shell.js and the browser test; git diff --check.",
+    "wrangler_dry_run": "PASS Wrangler 4.130.0; 168 assets, 335.81 KiB total / 87.60 KiB gzip; dry run only.",
+    "wide_editor_browser_suite": "NOT RUN in this work block; the prior 51-file aggregate record remains INCOMPLETE/NOT PASS and is not upgraded by this affected-file pass.",
+    "d1_read_only_preflight": {
+      "method": "Cloudflare D1 Query API",
+      "sql": "SELECT name FROM d1_migrations ORDER BY name;",
+      "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
+      "rows_read": 34,
+      "latest_migration": "0028_media_archive.sql",
+      "rows_written": 0,
+      "changes": 0,
+      "changed_db": false
+    }
+  },
+  "live_worker_before_release": {
+    "deployment_id": "b39f7483-7e80-4f96-bd6e-a42f68480db5",
+    "traffic_version_id": "fbb165de-8bee-4210-bf27-f00a2bccc267",
+    "traffic_percent": 100,
+    "source_commit": "db0156c01e6ea57ac47673a6de9229c8356362fd"
+  },
+  "release": {
+    "runtime_commit": "43eaa14051e35f229eb88bc92d7d48248f426139",
+    "runtime_commit_parent": "b43e9015f0fd51b4cd37631da1e385025e8b603a",
+    "push": "PASS normal fast-forward; git ls-remote confirmed v2/foundation exact SHA 43eaa14051e35f229eb88bc92d7d48248f426139",
+    "github_combined_statuses": [],
+    "aggregate_github_ci": "NOT CLAIMED PASS; combined status list is empty",
+    "cloudflare_build_id": "09d10aa4-9e7d-4635-a9b5-97a4ab3a9505",
+    "cloudflare_build_outcome": "success",
+    "cloudflare_build_commit": "43eaa14051e35f229eb88bc92d7d48248f426139",
+    "cloudflare_build_commands": "npm run typecheck; npm run deploy:safe; log confirms the migration-safety gate passed and no D1 migration-apply command ran",
+    "deployment_id": "16d786a8-34b7-4826-8b21-b914b99777e2",
+    "worker_version_id": "3512b4eb-7259-4f42-9003-066763b3cb6f",
+    "worker_version_number": 3812,
+    "traffic_percent": 100,
+    "direct_public_smoke": {
+      "health_url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+      "health_http_status": 200,
+      "health_body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      },
+      "assets": [
+        {
+          "path": "/editor-v2/",
+          "http_status": 200,
+          "sha256": "5ec5045ebaa6bc946ca76390ac528914470a6c458889c8fd25dfa383bff107b2",
+          "local_sha256": "5ec5045ebaa6bc946ca76390ac528914470a6c458889c8fd25dfa383bff107b2",
+          "matches_source": true
+        },
+        {
+          "path": "/editor-v2/ui/shell.js?v=20261104-dock-announcements",
+          "http_status": 200,
+          "sha256": "4703c06b869125e2547483c04eedc5da04b3a9945c055f513a1a7aa7a783921e",
+          "local_sha256": "4703c06b869125e2547483c04eedc5da04b3a9945c055f513a1a7aa7a783921e",
+          "matches_source": true
+        }
+      ]
+    }
+  },
+  "cost_huf": 0,
+  "production_d1_mutation_or_migration": false,
+  "r2_operation": false,
+  "manual_visual_editor_acceptance": "DEFERRED until the complete Visual Editor plan acceptance gate"
+}
