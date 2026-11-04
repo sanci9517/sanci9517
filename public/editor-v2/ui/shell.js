@@ -2,7 +2,7 @@ import {createEventBus} from './events.js';
 import {panelRegistry,featureRegistry} from './registry.js';
 import {EDITOR_ACTIONS} from './action-catalog.js?v=20261103-canvas-focus-mode';
 import {enhanceEditorActionControls} from './action-help.js?v=20261103-canvas-focus-mode';
-import {DEFAULT_LEFT_TAB_ORDER,applyWorkspacePreferences,mountWorkspaceAppearance,normalizeLeftTabOrder,readWorkspacePreferences} from './workspace-appearance.js?v=20261104-dock-ungroup';
+import {DEFAULT_LEFT_TAB_ORDER,applyWorkspacePreferences,mountWorkspaceAppearance,normalizeLeftTabOrder,readWorkspacePreferences} from './workspace-appearance.js?v=20261104-cross-tab-reset-announcement';
 
 const bus=createEventBus();
 const workspace=document.querySelector('.workspace');
@@ -405,7 +405,7 @@ root.style.setProperty('--right-dock-width',`${clamp(Number(persisted.rightWidth
 setPanel('left',!mobileQuery.matches && Boolean(persisted.leftOpen),{save:false});
 setPanel('right',!mobileQuery.matches && Boolean(persisted.rightOpen),{save:false});
 showLeftTab(persisted.leftTab,{save:false,open:false});
-workspaceAppearance=mountWorkspaceAppearance({documentRef:document,root:editorRoot,onLayoutChange:applyWorkspaceLayout,onExternalChange:()=>cancelWorkspaceDrag({announcement:'A másik szerkesztőlapon történt változás miatt az átrendezés megszakadt.'}),readDockState:()=>persisted,moveDockTab:moveLeftTab,applyDockState:state=>{
+workspaceAppearance=mountWorkspaceAppearance({documentRef:document,root:editorRoot,onLayoutChange:applyWorkspaceLayout,onExternalChange:({reset=false}={})=>cancelWorkspaceDrag({announcement:reset?'A másik szerkesztőlapon alaphelyzetbe állították a munkaterületet, ezért az átrendezés megszakadt.':'A másik szerkesztőlapon történt változás miatt az átrendezés megszakadt.'}),readDockState:()=>persisted,moveDockTab:moveLeftTab,applyDockState:state=>{
   applyDockState(state);
 },onReset:()=>{
   persisted={...defaults};
@@ -448,7 +448,7 @@ window.addEventListener('storage',event=>{
   let next;
   try{next=event.newValue?JSON.parse(event.newValue):defaults}catch{next=defaults}
   applyDockState(next,{save:false});
-  workspaceAppearance?.clearExternalDockHistory();
+  workspaceAppearance?.clearExternalDockHistory({reset:event.key===null});
   emit('workspace:external-change',{source:'storage',area:'dock'});
 });
 cancelWorkspaceDrag=setupDockReordering()||(()=>{});

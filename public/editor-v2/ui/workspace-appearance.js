@@ -364,16 +364,18 @@ export function mountWorkspaceAppearance({documentRef=globalThis.document,root=d
     let next;
     try{next=normalizeWorkspacePreferences(event.newValue?JSON.parse(event.newValue):{})}catch{next=normalizeWorkspacePreferences({})}
     if(JSON.stringify(next)===JSON.stringify(value))return;
-    try{onExternalChange({source:'storage',area:'appearance'})}catch{}
+    try{onExternalChange({source:'storage',area:'appearance',reset:event.key===null})}catch{}
     // History from this tab is based on an older shared workspace. Keeping it
     // would let a later Undo silently replace the state received from another tab.
     value=next;undoStack=[];redoStack=[];paint();
     try{onLayoutChange(value.layout,{save:false})}catch{}
     if(status)status.textContent='Egy másik szerkesztőlapon megváltozott a munkaterület. A friss beállításokat megjelenítettük, a régi visszavonási előzményt töröltük. Az oldal tartalma nem változott.';
   };
-  const clearExternalDockHistory=()=>{
+  const clearExternalDockHistory=({reset=false}={})=>{
     undoStack=[];redoStack=[];syncHistory();
-    if(status)status.textContent='Egy másik szerkesztőlapon megváltozott az eszközök sorrendje. A friss sorrendet megjelenítettük, a korábbi visszavonási előzményt töröltük. Az oldal tartalma nem változott.';
+    if(status)status.textContent=reset
+      ?'Egy másik szerkesztőlapon alaphelyzetbe állították a munkaterületet. A régi visszavonási előzményt töröltük. Az oldal tartalma nem változott.'
+      :'Egy másik szerkesztőlapon megváltozott a panelek állapota. A friss munkaterületet megjelenítettük, a korábbi visszavonási előzményt töröltük. Az oldal tartalma nem változott.';
   };
   documentRef.defaultView?.addEventListener?.('storage',syncExternalPreferences);
   undoButton?.addEventListener('click',undo);redoButton?.addEventListener('click',redo);
