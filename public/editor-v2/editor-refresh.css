@@ -715,3 +715,40 @@ button:focus-visible, summary:focus-visible, .rail-btn:focus-visible { outline: 
     grid-template-areas:"canvas right left";
   }
 }
+/* Tabbed dock groups reserve one real grid track, so the canvas never sits
+   underneath a panel. The unselected dock is removed from layout and focus. */
+.workspace-panel-group-tabs { display:none; }
+.workspace-panel-group-tabs[hidden] { display:none !important; }
+@media (min-width:1025px) {
+  .workspace[data-workspace-panel-mode="tabbed"].left-open,
+  .workspace[data-workspace-panel-mode="tabbed"].right-open {
+    grid-template-rows:min-content minmax(0,1fr);
+  }
+  .workspace[data-workspace-panel-mode="tabbed"][data-workspace-panel-side="right"].left-open,
+  .workspace[data-workspace-panel-mode="tabbed"][data-workspace-panel-side="right"].right-open {
+    grid-template-columns:minmax(0,1fr) minmax(250px,min(var(--active-group-width),calc(100vw - 400px)));
+    grid-template-areas:"canvas group-tabs" "canvas group-panel";
+  }
+  .workspace[data-workspace-panel-mode="tabbed"][data-workspace-panel-side="left"].left-open,
+  .workspace[data-workspace-panel-mode="tabbed"][data-workspace-panel-side="left"].right-open {
+    grid-template-columns:minmax(250px,min(var(--active-group-width),calc(100vw - 400px))) minmax(0,1fr);
+    grid-template-areas:"group-tabs canvas" "group-panel canvas";
+  }
+  .workspace[data-workspace-panel-mode="tabbed"][data-workspace-active-panel="left"] { --active-group-width:var(--left-dock-width); }
+  .workspace[data-workspace-panel-mode="tabbed"][data-workspace-active-panel="right"] { --active-group-width:var(--right-dock-width); }
+  .workspace[data-workspace-panel-mode="tabbed"] > .workspace-panel-group-tabs { display:flex; grid-area:group-tabs; min-width:0; gap:5px; padding:6px; border:1px solid var(--editor-line); background:var(--editor-surface); }
+  .workspace-panel-group-tabs button { flex:1 1 0; min-width:0; min-height:44px; padding:7px 10px; border:1px solid transparent; border-radius:8px; background:transparent; color:var(--text); font:inherit; font-size:13px; font-weight:600; line-height:1.25; }
+  .workspace-panel-group-tabs button[aria-selected="true"] { border-color:var(--editor-line); background:var(--editor-raised); box-shadow:inset 0 -2px var(--accent); }
+  .workspace-panel-group-tabs button:focus-visible { outline:3px solid var(--accent); outline-offset:1px; }
+  .workspace[data-workspace-panel-mode="tabbed"] > .left-dock,
+  .workspace[data-workspace-panel-mode="tabbed"] > .right-dock { grid-area:group-panel; min-width:0; }
+  .workspace[data-workspace-panel-mode="tabbed"][data-workspace-panel-side="right"] > .left-dock { border-right:0; border-left:1px solid var(--editor-line); }
+  .workspace[data-workspace-panel-mode="tabbed"][data-workspace-panel-side="right"][data-workspace-active-panel="left"] > .left-dock .left-resizer { right:auto; left:0; }
+  .workspace[data-workspace-panel-mode="tabbed"][data-workspace-panel-side="left"] > .right-dock { border-left:0; border-right:1px solid var(--editor-line); }
+  .workspace[data-workspace-panel-mode="tabbed"][data-workspace-panel-side="left"][data-workspace-active-panel="right"] > .right-dock .right-resizer { left:auto; right:0; }
+  .workspace[data-workspace-panel-mode="tabbed"][data-workspace-active-panel="left"] > .right-dock,
+  .workspace[data-workspace-panel-mode="tabbed"][data-workspace-active-panel="right"] > .left-dock { display:none !important; }
+  .workspace[data-workspace-panel-mode="tabbed"].right-open:not(.left-open) > .left-dock,
+  .workspace[data-workspace-panel-mode="tabbed"].left-open:not(.right-open) > .right-dock { display:none !important; }
+  .workspace[data-workspace-panel-mode="tabbed"] > .canvas-area { grid-area:canvas; grid-row:1 / span 2; min-width:400px; }
+}

@@ -71,7 +71,7 @@ test('personal workspace theme, density and panel layout persist locally without
   assert.equal(await page.locator('#rightDock').getAttribute('aria-hidden'),'false');
   assert.deepEqual(writes,[],'presentation settings do not Save or Publish the page');
   const saved=await page.evaluate(key=>JSON.parse(localStorage.getItem(key)),WORKSPACE_PREFERENCES_KEY);
-  assert.deepEqual(saved,{version:2,layout:'inspector',theme:'aurora',density:'compact',accent:'#00a7c8',dockOrder:'left-canvas-right',profiles:[]});
+  assert.deepEqual(saved,{version:2,layout:'inspector',theme:'aurora',density:'compact',accent:'#00a7c8',dockOrder:'left-canvas-right',panelMode:'separate',panelSide:'right',profiles:[]});
   await page.locator('#closeWorkspaceAppearance').click();
   assert.equal(await dialog.isVisible(),false);
   await page.waitForFunction(()=>document.activeElement?.id==='openWorkspaceAppearance');
@@ -116,6 +116,83 @@ test('five selectable editor designs visibly differ, persist and never alter pag
   assert.equal(await page.locator('#workspaceTheme').inputValue(),'cinder','the selected workbench design survives reload');
   assert.deepEqual(writes,[]);
   assert.deepEqual(errors,[]);
+});
+
+test('tabbed desktop panel groups reserve canvas space, restore profiles and fall back to one mobile drawer',async t=>{
+  const desktop=await openEditor(t,{width:1025,height:900});
+  await openPreferences(desktop.page);
+  await desktop.page.locator('#workspaceLayout').selectOption('balanced');
+  await desktop.page.locator('#workspacePanelMode').selectOption('tabbed');
+  await desktop.page.locator('#closeWorkspaceAppearance').click();
+  const tabs=desktop.page.locator('.workspace-panel-group-tabs');
+  assert.equal(await tabs.isVisible(),true,'the group selector appears only for the desktop tabbed mode');
+  assert.equal(await desktop.page.locator('#workspacePanelTabRight').getAttribute('aria-selected'),'true','the active panel is identified as a selected tab');
+  assert.equal(await desktop.page.locator('#rightDock').getAttribute('aria-labelledby'),'workspacePanelTabRight');
+  assert.equal(await desktop.page.locator('#leftDock').getAttribute('aria-hidden'),'true','the inactive panel is removed from desktop focus navigation');
+  assert.equal(await desktop.page.locator('#leftDock').evaluate(panel=>panel.getBoundingClientRect().width),0,'the inactive dock consumes no hidden overlay space');
+  const rightLayout=await desktop.page.evaluate(()=>{
+    const canvas=document.querySelector('.canvas-area').getBoundingClientRect();
+    const panel=document.querySelector('#rightDock').getBoundingClientRect();
+    return {canvasWidth:canvas.width,canvasRight:canvas.right,panelLeft:panel.left,scrollWidth:document.documentElement.scrollWidth};
+  });
+  assert.ok(rightLayout.canvasWidth>=400,`tabbed dock keeps 400px of editing surface: ${JSON.stringify(rightLayout)}`);
+  assert.ok(rightLayout.panelLeft>=rightLayout.canvasRight,'the group reserves a dock track instead of floating over the canvas');
+  assert.equal(rightLayout.scrollWidth,1025,'the narrowest desktop tabbed layout has no horizontal overflow');
+  await desktop.page.locator('#workspacePanelTabLeft').click();
+  assert.equal(await desktop.page.locator('#leftDock').getAttribute('aria-hidden'),'false');
+  assert.equal(await desktop.page.locator('#rightDock').getAttribute('aria-hidden'),'true');
+  assert.equal(await desktop.page.locator('#workspacePanelTabLeft').getAttribute('aria-selected'),'true');
+  await desktop.page.locator('#workspacePanelTabLeft').press('ArrowRight');
+  assert.equal(await desktop.page.locator('#workspacePanelTabRight').getAttribute('aria-selected'),'true','arrow-key navigation switches the panel group');
+  await openPreferences(desktop.page);
+  await desktop.page.locator('#workspacePanelSide').selectOption('left');
+  await desktop.page.locator('#closeWorkspaceAppearance').click();
+  const leftLayout=await desktop.page.evaluate(()=>{
+    const canvas=document.querySelector('.canvas-area').getBoundingClientRect();
+    const panel=document.querySelector('#leftDock').getBoundingClientRect();
+    return {canvasWidth:canvas.width,canvasLeft:canvas.left,panelRight:panel.right,scrollWidth:document.documentElement.scrollWidth};
+  });
+  assert.ok(leftLayout.canvasWidth>=400,`left group also preserves the canvas: ${JSON.stringify(leftLayout)}`);
+  assert.ok(leftLayout.panelRight<=leftLayout.canvasLeft,'left-side grouping keeps its own reserved track');
+  assert.equal(leftLayout.scrollWidth,1025);
+  await desktop.page.locator('#workspacePanelTabLeft').click();
+  await openPreferences(desktop.page);
+  await desktop.page.locator('#workspaceProfileName').fill('Tabbed panel workspace');
+  await desktop.page.locator('#saveWorkspaceProfile').click();
+  const profileId=await desktop.page.locator('#workspaceProfile').inputValue();
+  await desktop.page.locator('#workspacePanelSide').selectOption('right');
+  await desktop.page.locator('#workspacePanelMode').selectOption('separate');
+  await desktop.page.locator('#undoWorkspaceLayout').click();
+  assert.equal(await desktop.page.locator('#workspacePanelMode').inputValue(),'tabbed','workspace Undo restores the prior panel mode');
+  await desktop.page.locator('#redoWorkspaceLayout').click();
+  assert.equal(await desktop.page.locator('#workspacePanelMode').inputValue(),'separate','workspace Redo restores separate docks');
+  await desktop.page.locator('#workspaceProfile').selectOption(profileId);
+  await desktop.page.locator('#loadWorkspaceProfile').click();
+  assert.equal(await desktop.page.locator('#workspacePanelMode').inputValue(),'tabbed','the saved profile restores its panel-group mode');
+  assert.equal(await desktop.page.locator('#workspacePanelSide').inputValue(),'left','the saved profile restores its dock side');
+  assert.equal(await desktop.page.locator('#workspacePanelTabLeft').getAttribute('aria-selected'),'true','the saved profile restores its active panel');
+  await desktop.page.reload({waitUntil:'load'});
+  await desktop.page.waitForFunction(()=>document.documentElement.dataset.editorBoot==='ready');
+  assert.equal(await desktop.page.locator('.workspace-panel-group-tabs').isVisible(),true,'the tabbed panel layout survives reload');
+  assert.equal(await desktop.page.locator('#workspacePanelTabLeft').getAttribute('aria-selected'),'true','the last selected panel group survives a full reload');
+  assert.equal(await desktop.page.evaluate(()=>document.querySelector('.canvas-area').getBoundingClientRect().width>=400),true);
+  assert.deepEqual(desktop.writes,[],'changing the panel layout never saves or publishes page content');
+  assert.deepEqual(desktop.errors,[]);
+
+  const mobile=await openEditor(t,{width:390,height:844,isMobile:true,hasTouch:true});
+  await openPreferences(mobile.page);
+  await mobile.page.locator('#workspacePanelMode').selectOption('tabbed');
+  assert.equal(await mobile.page.locator('.workspace-panel-group-tabs').isVisible(),false,'phones retain the dedicated single-drawer navigation instead of the desktop group bar');
+  await mobile.page.locator('#closeWorkspaceAppearance').click();
+  await mobile.page.locator('#openInspector').tap();
+  assert.equal(await mobile.page.locator('#rightDock').isVisible(),true);
+  assert.equal(await mobile.page.locator('#leftDock').isVisible(),false);
+  await mobile.page.locator('#editorMenu').tap();
+  assert.equal(await mobile.page.locator('#leftDock').isVisible(),true);
+  assert.equal(await mobile.page.locator('#rightDock').isVisible(),false);
+  assert.equal(await mobile.page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+  assert.deepEqual(mobile.writes,[],'phone drawer switching does not change the Page Model');
+  assert.deepEqual(mobile.errors,[]);
 });
 
 test('Inspector tab groups survive reload, profile restore, and phone use without page writes',async t=>{
@@ -954,7 +1031,7 @@ test('responsive dock resize keeps the focused panel and honors an explicit mobi
   await page.waitForFunction(()=>document.querySelector('#rightDock')?.classList.contains('closed')===false);
   assert.equal(await page.locator('#leftDock').evaluate(element=>element.classList.contains('closed')),true,'a deliberate mobile choice replaces the temporary desktop snapshot (the desktop navigation rail itself remains visible)');
   assert.equal(await page.locator('#rightDock').isVisible(),true);
-  assert.deepEqual(await page.evaluate(()=>JSON.parse(localStorage.getItem('sanci-editor-shell-v2'))),{leftOpen:false,rightOpen:true,leftTab:'layers',leftTabOrder:['pages','elements','layers','schedule','navigation'],inspectorTab:'design',leftWidth:310,rightWidth:352});
+  assert.deepEqual(await page.evaluate(()=>JSON.parse(localStorage.getItem('sanci-editor-shell-v2'))),{leftOpen:false,rightOpen:true,leftTab:'layers',leftTabOrder:['pages','elements','layers','schedule','navigation'],inspectorTab:'design',panelActive:'right',leftWidth:310,rightWidth:352});
   assert.deepEqual(writes,[],'responsive panel changes never issue page Save or Publish requests');
   assert.deepEqual(errors,[]);
 });

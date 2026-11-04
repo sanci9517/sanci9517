@@ -1,0 +1,78 @@
+{
+  "date": "2026-11-04",
+  "plan_point": "77.44.6.1.C",
+  "status": "FOUNDATION_IMPLEMENTED_FULL_ITEM_OPEN",
+  "scope": "Desktop tabbed left/right panel group with left/right docking, canvas-safe reserved grid track, persisted active tab, and phone single-drawer fallback.",
+  "branch": "v2/foundation",
+  "base_commit": "eea092dc92c6c744297a572fdba52841054e9acf",
+  "github_branch_head_before_release": "eea092dc92c6c744297a572fdba52841054e9acf",
+  "runtime_files": [
+    "public/editor-v2/index.html",
+    "public/editor-v2/editor-refresh.css",
+    "public/editor-v2/ui/shell.js",
+    "public/editor-v2/ui/workspace-appearance.js"
+  ],
+  "runtime_contracts": {
+    "page_model_changed": false,
+    "save_publish_changed": false,
+    "floating_panel_over_canvas": false,
+    "desktop_minimum_canvas_css_px": 400,
+    "mobile_behavior": "single drawer; desktop panel-group tabs hidden",
+    "preferences": "allowlisted local appearance preference and existing portable workspace profile storage"
+  },
+  "reused_project_patterns": [
+    "Existing shell dock persistence and panel lifecycle",
+    "Existing Workspace Appearance preference/profile registry and Undo/Redo adapter",
+    "Existing accessible tab patterns from the tool rail and Inspector",
+    "Existing Chromium/Playwright local HTTP fixture"
+  ],
+  "third_party_code_or_dependencies_added": false,
+  "checks": {
+    "targeted_panel_group_browser": "PASS 2/2",
+    "workspace_appearance_browser_file": "PASS 23/23",
+    "inspector_lifecycle_isolated_after_wide_suite_timeouts": "PASS 2/2",
+    "editor_unit": "PASS 14/14 plus Linux subreaper runner 3/3",
+    "typecheck": "PASS npm run typecheck",
+    "migration_safety": "PASS npm run test:web013:migration-gate",
+    "canonical_plan": "PASS 13 master files, one current cursor, 396 source mappings; acceptance not certified",
+    "active_plan_cursor": "PASS main 77.44.6.1; next 77.44.6.1.C OPEN",
+    "javascript_syntax": "PASS node --check shell.js and workspace-appearance.js",
+    "diff_whitespace": "PASS git diff --check",
+    "wrangler_dry_run": "PASS Wrangler 4.130.0; 168 assets; 335.81 KiB total; 87.60 KiB gzip; --dry-run only",
+    "wide_51_file_browser_suite": {
+      "status": "INCOMPLETE_NOT_PASS",
+      "observed": [
+        "editor-inspector-lifecycle.test.js timed out during reload in the full serial suite; isolated rerun passed 1/1",
+        "editor-inspector-breakpoint-lifecycle.test.js timed out during a click in the full serial suite; isolated rerun passed 1/1"
+      ],
+      "remaining_files": "Not verified after the test execution session ended before the full 51-file suite completed"
+    }
+  },
+  "production_read_only_preflight": {
+    "query": "SELECT name FROM d1_migrations ORDER BY name;",
+    "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
+    "rows_read": 34,
+    "latest_migration": "0028_media_archive.sql",
+    "changed_db": false,
+    "rows_written": 0
+  },
+  "live_worker_before_release": {
+    "latest_deployment_id": "28d1e4a2-9576-43aa-b518-908f72bbad8d",
+    "traffic_version_id": "fab2bc0b-0a9d-47e3-ab26-bf012c04d5b4",
+    "traffic_percent": 100,
+    "health": "HTTP 200; ok=true; version=2.0.0",
+    "asset_hashes_match_deployed_base_commit": true,
+    "asset_hashes_match_pending_worktree": false
+  },
+  "release": {
+    "status": "PENDING",
+    "commit": null,
+    "push": "NOT DONE",
+    "deployment": "NOT DONE",
+    "aggregate_github_ci": "NOT CLAIMED"
+  },
+  "cost_huf": 0,
+  "production_d1_mutation_or_migration": false,
+  "r2_operation": false,
+  "manual_visual_editor_acceptance": "DEFERRED until complete Visual Editor scope reaches its planned acceptance gate"
+}

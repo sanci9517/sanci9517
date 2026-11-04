@@ -9,7 +9,7 @@ function storage(initial={}){
 
 test('workspace preferences are versioned, separate from page content and tolerate malformed local storage',()=>{
   const current=storage({[LEGACY_WORKSPACE_PREFERENCES_KEY]:JSON.stringify({version:1,layout:'inspector',theme:'aurora',density:'compact',accent:'#00a7c8'})});
-  assert.deepEqual(readWorkspacePreferences(current),{version:2,layout:'inspector',theme:'aurora',density:'compact',accent:'#00a7c8',dockOrder:'left-canvas-right',profiles:[]});
+  assert.deepEqual(readWorkspacePreferences(current),{version:2,layout:'inspector',theme:'aurora',density:'compact',accent:'#00a7c8',dockOrder:'left-canvas-right',panelMode:'separate',panelSide:'right',profiles:[]});
   assert.deepEqual(readWorkspacePreferences(storage({[WORKSPACE_PREFERENCES_KEY]:'{broken'})),WORKSPACE_PREFERENCE_DEFAULTS);
   assert.deepEqual(normalizeWorkspacePreferences({layout:'unexpected',theme:'url(javascript:alert(1))',density:'tiny',accent:'red'}),WORKSPACE_PREFERENCE_DEFAULTS);
   assert.deepEqual([...current.values.keys()],[LEGACY_WORKSPACE_PREFERENCES_KEY],'legacy presentation data remains intact while the next edit can migrate it');
@@ -35,12 +35,29 @@ test('dock position and saved profiles are bounded, inert data and safe to resto
   ]});
   assert.equal(normalized.version,2);
   assert.equal(normalized.dockOrder,'right-canvas-left');
-  assert.deepEqual(normalized.profiles,[{id:'profile-one',name:'Creator',createdAt:0,appearance:{layout:'balanced',theme:'aurora',density:'comfortable',accent:'#00a7c8',dockOrder:'left-canvas-right'},dock:{leftOpen:true,rightOpen:true,leftTab:'layers',leftTabOrder:DEFAULT_LEFT_TAB_ORDER,inspectorTab:'advanced',leftWidth:460,rightWidth:290}}]);
+  assert.deepEqual(normalized.profiles,[{id:'profile-one',name:'Creator',createdAt:0,appearance:{layout:'balanced',theme:'aurora',density:'comfortable',accent:'#00a7c8',dockOrder:'left-canvas-right',panelMode:'separate',panelSide:'right'},dock:{leftOpen:true,rightOpen:true,leftTab:'layers',leftTabOrder:DEFAULT_LEFT_TAB_ORDER,inspectorTab:'advanced',panelActive:'left',leftWidth:460,rightWidth:290}}]);
   assert.equal('customCss' in normalized.profiles[0],false);
   assert.equal('script' in normalized.profiles[0],false);
   assert.equal(normalizeWorkspacePreferences({dockOrder:'left-center-right'}).dockOrder,'left-canvas-right','unknown docking expressions cannot reach CSS');
   const limited=normalizeWorkspacePreferences({profiles:Array.from({length:12},(_,index)=>({id:`profile-${index}`,name:`Profil ${index}`}))});
   assert.equal(limited.profiles.length,8,'profile storage has a fixed eight-item bound');
+});
+
+test('panel grouping accepts only safe layout modes and sides, including in portable workspace profiles',()=>{
+  const safe=normalizeWorkspacePreferences({panelMode:'tabbed',panelSide:'left',profiles:[{id:'profile-tabbed',name:'Tabbed',appearance:{panelMode:'tabbed',panelSide:'left'},dock:{panelActive:'right'}}]});
+  assert.equal(safe.panelMode,'tabbed');
+  assert.equal(safe.panelSide,'left');
+  assert.equal(safe.profiles[0].appearance.panelMode,'tabbed');
+  assert.equal(safe.profiles[0].appearance.panelSide,'left');
+  assert.equal(safe.profiles[0].dock.panelActive,'right');
+  const unsafe=normalizeWorkspacePreferences({panelMode:'overlay',panelSide:'canvas',profiles:[{id:'profile-unsafe',name:'Safe fallback',appearance:{panelMode:'float',panelSide:'canvas'},dock:{panelActive:'overlay'}}]});
+  assert.equal(unsafe.panelMode,'separate','unrecognized overlay modes never reach the renderer');
+  assert.equal(unsafe.panelSide,'right');
+  assert.equal(unsafe.profiles[0].appearance.panelMode,'separate');
+  assert.equal(unsafe.profiles[0].appearance.panelSide,'right');
+  assert.equal(unsafe.profiles[0].dock.panelActive,'left');
+  const legacyRightOnly=normalizeWorkspacePreferences({profiles:[{id:'profile-right-only',name:'Jobb panel',dock:{leftOpen:false,rightOpen:true}}]});
+  assert.equal(legacyRightOnly.profiles[0].dock.panelActive,'right','legacy profiles with only the right dock open keep that dock visible in tabbed mode');
 });
 
 test('left tool ordering keeps a complete unique allowlisted order and fills missing tools safely',()=>{
@@ -54,7 +71,7 @@ test('workspace profile transfer serializes only allowlisted data and rejects ma
   const raw=serializeWorkspaceProfile({id:'profile-original',name:'  Tervezői nézet  ',createdAt:123,appearance:{layout:'balanced',theme:'aurora',density:'compact',accent:'#00a7c8',dockOrder:'right-left-canvas'},dock:{leftOpen:true,rightOpen:true,leftTab:'layers',inspectorTab:'content',leftWidth:350,rightWidth:400},customCss:'body{display:none}',script:'alert(1)'});
   const transfer=JSON.parse(raw);
   assert.deepEqual(Object.keys(transfer).sort(),['kind','profile','version']);
-  assert.deepEqual(transfer.profile,{id:'profile-original',name:'Tervezői nézet',createdAt:123,appearance:{layout:'balanced',theme:'aurora',density:'compact',accent:'#00a7c8',dockOrder:'right-left-canvas'},dock:{leftOpen:true,rightOpen:true,leftTab:'layers',leftTabOrder:DEFAULT_LEFT_TAB_ORDER,inspectorTab:'content',leftWidth:350,rightWidth:400}});
+  assert.deepEqual(transfer.profile,{id:'profile-original',name:'Tervezői nézet',createdAt:123,appearance:{layout:'balanced',theme:'aurora',density:'compact',accent:'#00a7c8',dockOrder:'right-left-canvas',panelMode:'separate',panelSide:'right'},dock:{leftOpen:true,rightOpen:true,leftTab:'layers',leftTabOrder:DEFAULT_LEFT_TAB_ORDER,inspectorTab:'content',panelActive:'left',leftWidth:350,rightWidth:400}});
   assert.equal(parseWorkspaceProfileTransfer(raw).name,'Tervezői nézet');
   assert.equal(parseWorkspaceProfileTransfer('{broken'),null);
   assert.equal(parseWorkspaceProfileTransfer(JSON.stringify({...transfer,version:999})),null);

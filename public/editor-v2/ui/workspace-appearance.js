@@ -1,10 +1,12 @@
 export const WORKSPACE_PREFERENCES_KEY='sanci-editor-workspace-preferences-v2';
 export const LEGACY_WORKSPACE_PREFERENCES_KEY='sanci-editor-workspace-preferences-v1';
-export const WORKSPACE_PREFERENCE_DEFAULTS=Object.freeze({version:2,layout:'canvas',theme:'graphite',density:'comfortable',accent:'#5b8cff',dockOrder:'left-canvas-right',profiles:[]});
+export const WORKSPACE_PREFERENCE_DEFAULTS=Object.freeze({version:2,layout:'canvas',theme:'graphite',density:'comfortable',accent:'#5b8cff',dockOrder:'left-canvas-right',panelMode:'separate',panelSide:'right',profiles:[]});
 const layouts=new Set(['balanced','canvas','inspector','custom']);
 const themes=new Set(['graphite','aurora','ocean','sage','cinder']);
 const densities=new Set(['comfortable','compact']);
 const dockOrders=new Set(['left-canvas-right','canvas-left-right','left-right-canvas','right-left-canvas','right-canvas-left','canvas-right-left']);
+const panelModes=new Set(['separate','tabbed']);
+const panelSides=new Set(['left','right']);
 const leftTabs=new Set(['pages','elements','layers','schedule','navigation']);
 export const DEFAULT_LEFT_TAB_ORDER=Object.freeze(['pages','elements','layers','schedule','navigation']);
 const inspectorTabs=new Set(['design','content','advanced']);
@@ -33,6 +35,8 @@ function normalizeVisualPreferences(input={}){
     density:densities.has(input.density)?input.density:WORKSPACE_PREFERENCE_DEFAULTS.density,
     accent:isAccessibleWorkspaceAccent(input.accent)?input.accent.toLowerCase():WORKSPACE_PREFERENCE_DEFAULTS.accent,
     dockOrder:dockOrders.has(input.dockOrder)?input.dockOrder:WORKSPACE_PREFERENCE_DEFAULTS.dockOrder,
+    panelMode:panelModes.has(input.panelMode)?input.panelMode:WORKSPACE_PREFERENCE_DEFAULTS.panelMode,
+    panelSide:panelSides.has(input.panelSide)?input.panelSide:WORKSPACE_PREFERENCE_DEFAULTS.panelSide,
   };
 }
 function normalizeDockState(value){
@@ -43,6 +47,7 @@ function normalizeDockState(value){
     leftTab:leftTabs.has(input.leftTab)?input.leftTab:'pages',
     leftTabOrder:normalizeLeftTabOrder(input.leftTabOrder),
     inspectorTab:inspectorTabs.has(input.inspectorTab)?input.inspectorTab:'design',
+    panelActive:panelSides.has(input.panelActive)?input.panelActive:(input.rightOpen===true&&input.leftOpen!==true?'right':'left'),
     leftWidth:finiteWidth(input.leftWidth,250,460,310),
     rightWidth:finiteWidth(input.rightWidth,260,440,352),
   };
@@ -109,8 +114,11 @@ export function applyWorkspacePreferences(root,preferences){
   root.dataset.workspaceTheme=value.theme;
   root.dataset.workspaceDensity=value.density;
   root.dataset.workspaceDockOrder=value.dockOrder;
+  root.dataset.workspacePanelMode=value.panelMode;
+  root.dataset.workspacePanelSide=value.panelSide;
   const workspace=root.matches?.('.workspace')?root:root.querySelector?.('.workspace');
   if(workspace)workspace.dataset.workspaceDockOrder=value.dockOrder;
+  if(workspace){workspace.dataset.workspacePanelMode=value.panelMode;workspace.dataset.workspacePanelSide=value.panelSide}
   root.style.setProperty('--accent',value.accent);
   return value;
 }
@@ -131,6 +139,8 @@ export function mountWorkspaceAppearance({documentRef=globalThis.document,root=d
   const fields={
     layout:documentRef.querySelector('#workspaceLayout'),
     dockOrder:documentRef.querySelector('#workspaceDockOrder'),
+    panelMode:documentRef.querySelector('#workspacePanelMode'),
+    panelSide:documentRef.querySelector('#workspacePanelSide'),
     theme:documentRef.querySelector('#workspaceTheme'),
     density:documentRef.querySelector('#workspaceDensity'),
     accent:documentRef.querySelector('#workspaceAccent'),
@@ -189,7 +199,8 @@ export function mountWorkspaceAppearance({documentRef=globalThis.document,root=d
   };
   const paint=()=>{
     applyWorkspacePreferences(root,value);
-    for(const key of ['layout','dockOrder','theme','density','accent'])if(fields[key])fields[key].value=value[key];
+    for(const key of ['layout','dockOrder','panelMode','panelSide','theme','density','accent'])if(fields[key])fields[key].value=value[key];
+    if(fields.panelSide)fields.panelSide.disabled=value.panelMode!=='tabbed';
     renderProfiles();renderLeftToolOrder();syncHistory();
   };
   const setLayout=(layout,{rememberChange=true}={})=>{
@@ -214,6 +225,7 @@ export function mountWorkspaceAppearance({documentRef=globalThis.document,root=d
     }
     if(normalized[key]===value[key])return true;
     remember();value={...value,...normalized};paint();const saved=persist();
+    if(key==='panelMode'||key==='panelSide')onLayoutChange(value.layout);
     announcePersistence(saved,'A munkaterület beállítása ezen az eszközön elmentve.');
     return true;
   };
@@ -303,6 +315,8 @@ export function mountWorkspaceAppearance({documentRef=globalThis.document,root=d
   });
   fields.layout?.addEventListener('change',()=>setLayout(fields.layout.value));
   fields.dockOrder?.addEventListener('change',()=>setDockOrder(fields.dockOrder.value));
+  fields.panelMode?.addEventListener('change',()=>updateVisual('panelMode',fields.panelMode.value));
+  fields.panelSide?.addEventListener('change',()=>updateVisual('panelSide',fields.panelSide.value));
   fields.profile?.addEventListener('change',renderProfiles);
   fields.leftTool?.addEventListener('change',renderLeftToolOrder);
   fields.theme?.addEventListener('change',()=>updateVisual('theme',fields.theme.value));

@@ -2,7 +2,7 @@ import {createEventBus} from './events.js';
 import {panelRegistry,featureRegistry} from './registry.js';
 import {EDITOR_ACTIONS} from './action-catalog.js?v=20261103-canvas-focus-mode';
 import {enhanceEditorActionControls} from './action-help.js?v=20261103-canvas-focus-mode';
-import {DEFAULT_LEFT_TAB_ORDER,applyWorkspacePreferences,mountWorkspaceAppearance,normalizeLeftTabOrder,readWorkspacePreferences} from './workspace-appearance.js?v=20261103-dock-lifecycle-guard';
+import {DEFAULT_LEFT_TAB_ORDER,applyWorkspacePreferences,mountWorkspaceAppearance,normalizeLeftTabOrder,readWorkspacePreferences} from './workspace-appearance.js?v=20261104-tabbed-workspace-panels';
 
 const bus=createEventBus();
 const workspace=document.querySelector('.workspace');
@@ -13,7 +13,7 @@ const actionControls=enhanceEditorActionControls(document);
 const LEFT_TABS=['pages','elements','layers','schedule','navigation'];
 const resizeLimits={left:{min:250,max:460},right:{min:260,max:440}};
 const STORAGE_KEY='sanci-editor-shell-v2';
-const defaults={leftOpen:false,rightOpen:false,leftTab:'pages',leftTabOrder:DEFAULT_LEFT_TAB_ORDER,inspectorTab:'design',leftWidth:310,rightWidth:352};
+const defaults={leftOpen:false,rightOpen:false,leftTab:'pages',leftTabOrder:DEFAULT_LEFT_TAB_ORDER,inspectorTab:'design',panelActive:'left',leftWidth:310,rightWidth:352};
 const mobileQuery=window.matchMedia('(max-width: 1024px)');
 const initialAppearance=readWorkspacePreferences();
 applyWorkspacePreferences(editorRoot,initialAppearance);
@@ -42,6 +42,7 @@ const INSPECTOR_TABS=['design','content','advanced'];
 if(!LEFT_TABS.includes(persisted.leftTab))persisted.leftTab='pages';
 persisted.leftTabOrder=normalizeLeftTabOrder(persisted.leftTabOrder);
 if(!INSPECTOR_TABS.includes(persisted.inspectorTab))persisted.inspectorTab='design';
+if(!['left','right'].includes(persisted.panelActive))persisted.panelActive=persisted.rightOpen?'right':'left';
 function renderLeftTabOrder(){
   const rail=document.querySelector('.tool-rail');
   if(!rail)return;
@@ -60,12 +61,27 @@ function resolveWorkspaceLayout(layout,mobile){
   return mobile?{left:false,right:false}:{left:true,right:true};
 }
 function applyWorkspaceLayout(layout,{save=true}={}){
-  if(layout==='custom')return;
+  if(layout==='custom'){syncMobileBackdrop();return}
   const next=resolveWorkspaceLayout(layout,mobileQuery.matches);
   setPanel('left',next.left,{save});
   setPanel('right',next.right,{save});
+  syncMobileBackdrop();
 }
 function emit(type,payload={}){bus.emit(type,payload)}
+function syncPanelGroup(){
+  if(workspace)workspace.dataset.workspaceActivePanel=persisted.panelActive;
+  const groupTabs=document.querySelector('.workspace-panel-group-tabs');
+  const grouped=editorRoot?.dataset.workspacePanelMode==='tabbed'&&!mobileQuery.matches;
+  if(groupTabs)groupTabs.hidden=!grouped||(!persisted.leftOpen&&!persisted.rightOpen);
+  for(const [side,panel] of Object.entries(panels)){
+    if(grouped){panel?.setAttribute('role','tabpanel');panel?.setAttribute('aria-labelledby',side==='left'?'workspacePanelTabLeft':'workspacePanelTabRight')}
+    else{panel?.removeAttribute('role');panel?.removeAttribute('aria-labelledby')}
+  }
+  document.querySelectorAll('[data-workspace-panel-tab]').forEach(button=>{
+    const selected=button.dataset.workspacePanelTab===persisted.panelActive;
+    button.setAttribute('aria-selected',String(selected));button.tabIndex=selected?0:-1;
+  });
+}
 function syncMobileBackdrop(){
   const mobile=mobileQuery.matches;
   const leftOpen=!panels.left?.classList.contains('closed');
@@ -75,14 +91,21 @@ function syncMobileBackdrop(){
   backdrop?.setAttribute('aria-hidden',String(!open));
   // Keep the hidden mobile drawer and background canvas out of keyboard
   // navigation. On desktop, the collapsed left rail remains interactive.
-  if(panels.left) {
-    panels.left.inert=canvasFocus||(mobile&&!leftOpen);
-    panels.left.setAttribute('aria-hidden',String(canvasFocus||(mobile&&!leftOpen)));
+  if(panels.left&&panels.right&&editorRoot?.dataset.workspacePanelMode==='tabbed'&&!mobile){
+    if(persisted.panelActive==='left'&&panels.left.classList.contains('closed')&&!panels.right.classList.contains('closed'))persisted.panelActive='right';
+    if(persisted.panelActive==='right'&&panels.right.classList.contains('closed')&&!panels.left.classList.contains('closed'))persisted.panelActive='left';
   }
   if(panels.right) {
-    panels.right.inert=canvasFocus||!rightOpen;
-    panels.right.setAttribute('aria-hidden',String(canvasFocus||!rightOpen));
+    const inactiveGroup=editorRoot?.dataset.workspacePanelMode==='tabbed'&&!mobile&&persisted.panelActive!=='right';
+    panels.right.inert=canvasFocus||!rightOpen||inactiveGroup;
+    panels.right.setAttribute('aria-hidden',String(canvasFocus||!rightOpen||inactiveGroup));
   }
+  if(panels.left) {
+    const inactiveGroup=editorRoot?.dataset.workspacePanelMode==='tabbed'&&!mobile&&persisted.panelActive!=='left';
+    panels.left.inert=canvasFocus||(mobile&&!leftOpen)||inactiveGroup;
+    panels.left.setAttribute('aria-hidden',String(canvasFocus||(mobile&&!leftOpen)||inactiveGroup));
+  }
+  syncPanelGroup();
   const canvasArea=document.querySelector('.canvas-area');
   if(canvasArea)canvasArea.inert=open;
   const leftToggle=document.querySelector('#editorMenu');
@@ -122,12 +145,15 @@ function setPanel(side,open,{save=true,restoreFocus=true,customize=false}={}){
     if(!wasOpen && document.activeElement instanceof HTMLElement &&
         !panel.contains(document.activeElement))focusBeforeMobilePanel=document.activeElement;
   }
+  if(open&&save)persisted.panelActive=side;
   const wasFocused=panel.contains(document.activeElement);
   panel.classList.toggle('closed',!open);
   workspace?.classList.toggle(`${side}-closed`,!open);
   workspace?.classList.toggle(`${side}-open`,open);
   if(side==='right')panel.style.display=open?'flex':'none';
-  if(save){persisted[side==='left'?'leftOpen':'rightOpen']=open;persist()}
+  if(save){persisted[side==='left'?'leftOpen':'rightOpen']=open;
+    if(!open&&persisted.panelActive===side&&!(panels[side==='left'?'right':'left']?.classList.contains('closed'))){persisted.panelActive=side==='left'?'right':'left'}
+    persist()}
   if(customize)workspaceAppearance?.setLayout('custom',{rememberChange:false});
   syncMobileBackdrop();
   if(mobileQuery.matches && open && !wasOpen){
@@ -365,7 +391,7 @@ workspaceAppearance=mountWorkspaceAppearance({documentRef:document,root:editorRo
 function normalizeStoredDockState(input){
   const value=input&&typeof input==='object'&&!Array.isArray(input)?input:{};
   const width=(candidate,limits,fallback)=>Number.isFinite(Number(candidate))?clamp(Number(candidate),limits):fallback;
-  const next={leftOpen:value.leftOpen===true,rightOpen:value.rightOpen===true,leftTab:LEFT_TABS.includes(value.leftTab)?value.leftTab:'pages',leftTabOrder:normalizeLeftTabOrder(value.leftTabOrder),inspectorTab:INSPECTOR_TABS.includes(value.inspectorTab)?value.inspectorTab:'design',leftWidth:width(value.leftWidth,resizeLimits.left,defaults.leftWidth),rightWidth:width(value.rightWidth,resizeLimits.right,defaults.rightWidth)};
+  const next={leftOpen:value.leftOpen===true,rightOpen:value.rightOpen===true,leftTab:LEFT_TABS.includes(value.leftTab)?value.leftTab:'pages',leftTabOrder:normalizeLeftTabOrder(value.leftTabOrder),inspectorTab:INSPECTOR_TABS.includes(value.inspectorTab)?value.inspectorTab:'design',panelActive:['left','right'].includes(value.panelActive)?value.panelActive:(value.rightOpen?'right':'left'),leftWidth:width(value.leftWidth,resizeLimits.left,defaults.leftWidth),rightWidth:width(value.rightWidth,resizeLimits.right,defaults.rightWidth)};
   if(mobileQuery.matches&&next.leftOpen&&next.rightOpen)next.leftOpen=false;
   return next;
 }
@@ -381,6 +407,8 @@ function applyDockState(state,{save=true}={}){
   setPanel('right',next.rightOpen,{save:false,customize:false});
   showLeftTab(next.leftTab,{save:false,open:false});
   setInspectorTab(next.inspectorTab,{save:false});
+  persisted.panelActive=next.panelActive;
+  syncMobileBackdrop();
   workspaceAppearance?.syncDockControls();
   if(save)persist();
 }
@@ -395,6 +423,18 @@ window.addEventListener('storage',event=>{
   emit('workspace:external-change',{source:'storage',area:'dock'});
 });
 cancelWorkspaceDrag=setupDockReordering()||(()=>{});
+document.querySelectorAll('[data-workspace-panel-tab]').forEach(button=>button.addEventListener('click',()=>{
+  const side=button.dataset.workspacePanelTab;if(!['left','right'].includes(side))return;
+  workspaceAppearance?.remember();persisted.panelActive=side;
+  setPanel(side,true,{customize:false});persist();syncMobileBackdrop();
+}));
+document.querySelector('.workspace-panel-group-tabs')?.addEventListener('keydown',event=>{
+  if(!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;
+  const tabs=Array.from(document.querySelectorAll('[data-workspace-panel-tab]'));
+  const current=tabs.indexOf(event.target.closest('[data-workspace-panel-tab]'));if(current<0)return;
+  event.preventDefault();const next=event.key==='Home'?0:event.key==='End'?tabs.length-1:(current+(event.key==='ArrowRight'?1:tabs.length-1))%tabs.length;
+  tabs[next]?.click();tabs[next]?.focus({preventScroll:true});
+});
 
 document.querySelector('#editorMenu')?.addEventListener('click',()=>{
   if(canvasFocus){setCanvasFocus(false);showLeftTab(persisted.leftTab||'pages',{customize:true});return}
