@@ -65,14 +65,39 @@
     "asset_hashes_match_pending_worktree": false
   },
   "release": {
-    "status": "PENDING",
-    "commit": null,
-    "push": "NOT DONE",
-    "deployment": "NOT DONE",
-    "aggregate_github_ci": "NOT CLAIMED"
+    "status": "RELEASED_AND_PRODUCTION_VERIFIED",
+    "commit": "ac0fddc29cff76fec462d900e67b343064f0bfc3",
+    "commit_message": "feat(editor): add canvas-safe tabbed panel groups",
+    "parent": "eea092dc92c6c744297a572fdba52841054e9acf",
+    "push": "NORMAL_FAST_FORWARD_CONFIRMED_BY_GITHUB_REF",
+    "cloudflare_build_id": "380be953-235e-40f6-a008-2fd55afb2c3c",
+    "cloudflare_build_status": "success",
+    "cloudflare_deploy_command": "npm run deploy:safe",
+    "cloudflare_deployment_id": "7ab72ead-819f-4fb1-81ec-8c40b71fcca5",
+    "worker_version_id": "1b431468-a259-485f-9243-8f8bb5fdeec4",
+    "worker_version_number": 3808,
+    "traffic_percent": 100,
+    "aggregate_github_ci": "PENDING_NOT_CLAIMED_PASS",
+    "editor_core_workflow_run_id": 41806288774,
+    "editor_core_workflow_status": "IN_PROGRESS; typecheck, editor core, D1-ledger, private R2 API, real media upload steps passed; browser layout regression running; later jobs pending"
   },
   "cost_huf": 0,
   "production_d1_mutation_or_migration": false,
   "r2_operation": false,
-  "manual_visual_editor_acceptance": "DEFERRED until complete Visual Editor scope reaches its planned acceptance gate"
+  "manual_visual_editor_acceptance": "DEFERRED until complete Visual Editor scope reaches its planned acceptance gate",
+  "github_branch_head_after_release": "ac0fddc29cff76fec462d900e67b343064f0bfc3",
+  "live_worker_after_release": {
+    "deployment_id": "7ab72ead-819f-4fb1-81ec-8c40b71fcca5",
+    "traffic_version_id": "1b431468-a259-485f-9243-8f8bb5fdeec4",
+    "traffic_percent": 100,
+    "health": "HTTP 200; ok=true; version=2.0.0",
+    "assets": {
+      "public/editor-v2/index.html": "758ca7788e539bb2644f8edb58d8d586a4583dbe5fc1c38721955d2d878739a3",
+      "public/editor-v2/ui/shell.js": "6e6e56ad3d0f01053f19e40207aa770a735bd10f2835605b20b49cea92bd3e95",
+      "public/editor-v2/ui/workspace-appearance.js": "174fc1e967a6ce919a67defce4248f140044f6ad1890c722063ba832fc5de649",
+      "public/editor-v2/editor-refresh.css": "f198741be180fe2b28b513da894d630162baf6cfe2417a441e5b037f0e7dafcd",
+      "public/editor-v2/workspace-appearance.css": "6b0e9e55a4e0a799a5f2f5add1013ddb49ed67f01e0e3754d2938d6895a96606"
+    },
+    "asset_hashes_match_local_commit": "ac0fddc29cff76fec462d900e67b343064f0bfc3"
+  }
 }
