@@ -376,6 +376,54 @@ test('desktop docks preserve a usable non-overlapped canvas at every dock order 
   assert.deepEqual(errors,[]);
 });
 
+test('single open docks keep the canvas clear at every desktop dock order',async t=>{
+  const {page,writes,errors}=await openEditor(t,{width:1025,height:900});
+  await openPreferences(page);
+  await page.locator('#workspaceLayout').selectOption('balanced');
+  await page.evaluate(()=>{
+    document.documentElement.style.setProperty('--left-dock-width','460px');
+    document.documentElement.style.setProperty('--right-dock-width','440px');
+  });
+  const orders=['left-canvas-right','canvas-left-right','left-right-canvas','right-left-canvas','right-canvas-left','canvas-right-left'];
+  const measured=[];
+  for(const width of [1025,1280,1920]){
+    await page.setViewportSize({width,height:900});
+    for(const order of orders){
+      await page.locator('#workspaceDockOrder').selectOption(order);
+      await page.locator('#workspaceLayout').selectOption('inspector');
+      await page.locator('#closeWorkspaceAppearance').click();
+      await page.locator('#workspaceAppearanceDialog[open]').waitFor({state:'hidden'});
+      let geometry=await page.evaluate(()=>{
+        const rect=selector=>{const value=document.querySelector(selector).getBoundingClientRect();return {left:value.left,right:value.right,width:value.width}};
+        return {left:rect('#leftDock'),canvas:rect('.canvas-area'),right:rect('#rightDock'),scrollWidth:document.documentElement.scrollWidth};
+      });
+      assert.ok(geometry.canvas.width>=400,`${order} keeps at least 400px when only the right Inspector is open at ${width}px: ${JSON.stringify(geometry)}`);
+      assert.ok(geometry.right.right<=geometry.canvas.left+0.5||geometry.canvas.right<=geometry.right.left+0.5,`${order} keeps the right Inspector in its own track at ${width}px: ${JSON.stringify(geometry)}`);
+      assert.ok(geometry.scrollWidth<=width,`${order} does not overflow with only the right Inspector open at ${width}px`);
+      measured.push({width,order,active:'right',canvas:Math.round(geometry.canvas.width)});
+
+      await openPreferences(page);
+      await page.locator('#workspaceLayout').selectOption('canvas');
+      await page.locator('#closeWorkspaceAppearance').click();
+      await page.locator('#workspaceAppearanceDialog[open]').waitFor({state:'hidden'});
+      await page.locator('#editorMenu').click();
+      await page.waitForFunction(()=>!document.querySelector('#leftDock')?.classList.contains('closed'));
+      geometry=await page.evaluate(()=>{
+        const rect=selector=>{const value=document.querySelector(selector).getBoundingClientRect();return {left:value.left,right:value.right,width:value.width}};
+        return {left:rect('#leftDock'),canvas:rect('.canvas-area'),right:rect('#rightDock'),scrollWidth:document.documentElement.scrollWidth};
+      });
+      assert.ok(geometry.canvas.width>=400,`${order} keeps at least 400px when only the Pages/tools dock is open at ${width}px: ${JSON.stringify(geometry)}`);
+      assert.ok(geometry.left.right<=geometry.canvas.left+0.5||geometry.canvas.right<=geometry.left.left+0.5,`${order} keeps the Pages/tools dock in its own track at ${width}px: ${JSON.stringify(geometry)}`);
+      assert.ok(geometry.scrollWidth<=width,`${order} does not overflow with only the Pages/tools dock open at ${width}px`);
+      measured.push({width,order,active:'left',canvas:Math.round(geometry.canvas.width)});
+      await openPreferences(page);
+    }
+  }
+  t.diagnostic(JSON.stringify({testedCombinations:measured.length,minimumCanvas:Math.min(...measured.map(item=>item.canvas)),widths:[1025,1280,1920]}));
+  assert.deepEqual(writes,[],'single-panel docking changes only the workspace shell and never Save or Publish page data');
+  assert.deepEqual(errors,[]);
+});
+
 test('desktop docks can be reordered and local workspace profiles save, reload, undo and redo without page writes',async t=>{
   const {page,writes,errors}=await openEditor(t,{width:1440,height:900});
   await openPreferences(page);

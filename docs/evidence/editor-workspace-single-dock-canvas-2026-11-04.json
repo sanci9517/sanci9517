@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-11-04",
+  "plan_point": "77.44.6.1.C",
+  "status": "AUTOMATED_RESPONSIVE_ACCEPTANCE_PASS_FULL_C_OPEN",
+  "scope": "Extend canvas-safe workspace geometry acceptance to layouts where only one desktop dock is open.",
+  "implementation": {
+    "changed_runtime_code": false,
+    "reason": "The new browser regression found the existing CSS Grid dock tracks preserved a separate, unobscured canvas; no runtime defect was reproduced.",
+    "changed_files": [
+      "tests/browser/editor-workspace-appearance.test.js"
+    ],
+    "coverage": {
+      "dock_orders": [
+        "left-canvas-right",
+        "canvas-left-right",
+        "left-right-canvas",
+        "right-left-canvas",
+        "right-canvas-left",
+        "canvas-right-left"
+      ],
+      "viewport_widths_css_px": [
+        1025,
+        1280,
+        1920
+      ],
+      "single_dock_states": [
+        "left only",
+        "right only"
+      ],
+      "assertions": [
+        "at least 400 CSS px of canvas",
+        "the visible dock does not overlap the canvas",
+        "no document-level horizontal overflow",
+        "no Page Model, Save, or Publish requests"
+      ],
+      "tested_combinations": 36,
+      "minimum_measured_canvas_css_px": 509
+    },
+    "product_invariants": {
+      "page_model_mutations": 0,
+      "save_publish_mutations": 0,
+      "r2_mutations": false,
+      "d1_mutations": false,
+      "runtime_dependencies_added": false,
+      "paid_services_added": false
+    }
+  },
+  "validation": {
+    "targeted_chromium": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec --test-name-pattern='single open docks keep the canvas clear' tests/browser/editor-workspace-appearance.test.js — PASS, 1/1; 36 dock/state/width combinations, minimum canvas 509px.",
+    "full_workspace_chromium": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-workspace-appearance.test.js — PASS, 32/32. The first aggregate attempt exposed a dialog-close animation synchronization gap in the new test; waiting for the native dialog to finish closing made the target and full suite pass.",
+    "typecheck": "PASS.",
+    "editor_unit": "PASS, 14/14 files; Linux subreaper checks 3/3.",
+    "migration_guard": "PASS; no migration was applied.",
+    "canonical_plan": "PASS; 13 master files, one canonical plan.",
+    "plan_contract": "PASS, 13/13.",
+    "active_point": "PASS; cursor 77.44.6.1.C, full functional acceptance NOT_CERTIFIED.",
+    "traceability": "PASS, 396 mappings.",
+    "diff_check": "PASS before plan/evidence finalization."
+  },
+  "release": {
+    "runtime_commit": null,
+    "worker_redeployment_required": false,
+    "github_push": "Pending normal fast-forward of test/evidence/plan-only changes; runtime source unchanged, no Worker redeployment."
+  },
+  "acceptance": {
+    "full_plan_point": "OPEN / NOT CERTIFIED",
+    "full_editor_manual_and_physical_acceptance": "DEFERRED until the complete Visual Editor is ready."
+  }
+}
