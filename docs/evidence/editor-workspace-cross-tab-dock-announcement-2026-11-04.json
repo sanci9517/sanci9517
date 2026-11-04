@@ -1,0 +1,105 @@
+{
+  "date": "2026-11-04",
+  "plan_point": "77.44.6.1.C",
+  "status": "RUNTIME_DEPLOYED_VERIFIED_AUTOMATED_FOUNDATION_PASS_FULL_C_OPEN",
+  "scope": "Announce cancellation when another editor tab changes the persisted dock state while a dock drag is active.",
+  "branch": "v2/foundation",
+  "base_commit": "7a4d5a9552a10ee8e5bb511ec4b902b44bbb48e4",
+  "runtime_files": [
+    "public/editor-v2/index.html",
+    "public/editor-v2/ui/shell.js"
+  ],
+  "test_files": [
+    "tests/browser/editor-workspace-appearance.test.js"
+  ],
+  "behavior": {
+    "trigger": "The receiving tab listens to the existing sanci-editor-shell-v2 storage event while a drag is active.",
+    "announcement": "A másik szerkesztőlapon megváltozott a panelállapot, ezért az átrendezés megszakadt.",
+    "cancel": "The drag preview and active interaction are cleared before the remote panel state is applied; a stale drop cannot overwrite it.",
+    "live_region": "The existing #workspaceDockStatus role=status aria-live=polite aria-atomic=true is reused.",
+    "storage_clear": "The same reason is used for storage clear/reset events covered by the existing dock storage listener."
+  },
+  "contracts": {
+    "page_model_changed": false,
+    "save_publish_changed": false,
+    "d1_or_r2_changed": false,
+    "desktop_canvas_geometry_changed": false,
+    "mobile_single_drawer_changed": false,
+    "new_dependency_or_third_party_runtime_code": false
+  },
+  "checks": {
+    "regression_before_fix": "PASS as a defect reproducer: real Chromium showed that the dock state synchronized and canceled the drag but the live region incorrectly retained the previous 'Cél: Utána helyezés – Vászon.' announcement.",
+    "targeted_real_chromium": "PASS 1/1: open editor tabs synchronize saved appearance, dock state and profiles without retaining stale undo or touching page data.",
+    "workspace_browser_file": "PASS 27/27 via scripts/run-with-linux-subreaper.py with CHROMIUM_PATH=/usr/bin/chromium and local loopback access.",
+    "editor_unit": "PASS npm run test:editor: 182 Node tests; Python Linux subreaper runner 3/3.",
+    "typecheck": "PASS npm run typecheck.",
+    "migration_safety": "PASS npm run test:web013:migration-gate; no migration applied.",
+    "canonical_plan_and_contract": "PASS python3 scripts/check-canonical-plan.py; python3 tests/plan-contract.test.py (13/13); python3 scripts/audit-active-plan-point.py. Cursor remains 77.44.6.1.C and full acceptance is not certified.",
+    "traceability": "PASS python3 scripts/build-feature-traceability.py --check; 396/396 source mappings. The project-owned generator rebuilt the source fingerprint after the index cache-buster changed.",
+    "syntax_and_whitespace": "PASS node --check public/editor-v2/ui/shell.js; node --check tests/browser/editor-workspace-appearance.test.js; git diff --check.",
+    "wrangler_dry_run": "PASS Wrangler 4.130.0; 168 assets, 335.81 KiB total / 87.60 KiB gzip; dry run only.",
+    "wide_editor_browser_suite": "NOT RUN in this work block; the prior 51-file aggregate remains INCOMPLETE / NOT PASS.",
+    "d1_read_only_preflight": {
+      "method": "Cloudflare D1 Query API",
+      "sql": "SELECT name FROM d1_migrations ORDER BY name;",
+      "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
+      "rows_read": 34,
+      "latest_migration": "0028_media_archive.sql",
+      "rows_written": 0,
+      "changes": 0,
+      "changed_db": false
+    }
+  },
+  "live_worker_before_release": {
+    "deployment_id": "16d786a8-34b7-4826-8b21-b914b99777e2",
+    "traffic_version_id": "3512b4eb-7259-4f42-9003-066763b3cb6f",
+    "worker_version_number": 3812,
+    "traffic_percent": 100,
+    "source_commit": "43eaa14051e35f229eb88bc92d7d48248f426139"
+  },
+  "release": {
+    "runtime_commit": "8c5943189f004ab8dac98c222d55c6b0ce6ffca3",
+    "runtime_commit_parent": "7a4d5a9552a10ee8e5bb511ec4b902b44bbb48e4",
+    "push": "PASS normal fast-forward; GitHub branch API and git ls-remote both confirmed v2/foundation exact SHA 8c5943189f004ab8dac98c222d55c6b0ce6ffca3",
+    "github_combined_statuses": [],
+    "aggregate_github_ci": "NOT CLAIMED PASS; status list was empty for the preceding commit.",
+    "cloudflare_build_id": "bf213db6-8ad0-4236-8dc5-529800f0ce76",
+    "cloudflare_build_outcome": "success",
+    "cloudflare_build_commit": "8c5943189f004ab8dac98c222d55c6b0ce6ffca3",
+    "cloudflare_build_commands": "npm run typecheck; npm run deploy:safe. The exact build log confirms the migration-safety gate passed, no migration-apply command ran, and only index.html plus shell.js were uploaded.",
+    "deployment_id": "bd977ed8-9faf-492a-b63e-a88dc64164d5",
+    "worker_version_id": "0d1109a7-8c10-4789-bde2-dc98fa7cd43e",
+    "worker_version_number": 3813,
+    "traffic_percent": 100,
+    "direct_public_smoke": {
+      "health_url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+      "health_http_status": 200,
+      "health_body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      },
+      "assets": [
+        {
+          "path": "/editor-v2/",
+          "http_status": 200,
+          "sha256": "4b0133405f60bd776fe2f4b5120d126080c1ee0a02ab19531322962097b277a0",
+          "local_sha256": "4b0133405f60bd776fe2f4b5120d126080c1ee0a02ab19531322962097b277a0",
+          "matches_source": true
+        },
+        {
+          "path": "/editor-v2/ui/shell.js?v=20261104-cross-tab-dock-announcement",
+          "http_status": 200,
+          "sha256": "929acceced5d42592c7ca211039c809a52ff0456d74291e0d4fd291485b17f6b",
+          "local_sha256": "929acceced5d42592c7ca211039c809a52ff0456d74291e0d4fd291485b17f6b",
+          "matches_source": true
+        }
+      ]
+    }
+  },
+  "cost_huf": 0,
+  "production_d1_mutation_or_migration": false,
+  "r2_operation": false,
+  "manual_visual_editor_acceptance": "DEFERRED until the complete Visual Editor plan acceptance gate"
+}

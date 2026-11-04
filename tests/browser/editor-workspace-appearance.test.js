@@ -1038,11 +1038,40 @@ test('open editor tabs synchronize saved appearance, dock state and profiles wit
   assert.equal(staleDrop.preview,false,'external workspace changes clear the old drop target');
   assert.equal(staleDrop.active,false,'external workspace changes cancel the in-progress interaction');
   assert.equal(staleDrop.announcement,'A másik szerkesztőlapon történt változás miatt az átrendezés megszakadt.','cross-tab invalidation announces why the target is no longer valid');
+
+  const dockStateDrag=await page.evaluate(()=>{
+    const handle=document.querySelector('#leftDock .dock-heading'),target=document.querySelector('.canvas-area'),rect=target.getBoundingClientRect(),dataTransfer=new DataTransfer();
+    handle.dispatchEvent(new DragEvent('dragstart',{bubbles:true,cancelable:true,dataTransfer}));
+    target.dispatchEvent(new DragEvent('dragover',{bubbles:true,cancelable:true,dataTransfer,clientX:rect.left+rect.width-4}));
+    window.__workspaceDockTransfer=dataTransfer;
+    return {preview:target.dataset.dockDropPosition,active:document.body.classList.contains('workspace-reordering')};
+  });
+  assert.equal(dockStateDrag.preview,'after');
+  assert.equal(dockStateDrag.active,true);
+  await second.locator('#closeWorkspaceAppearance').click();
+  await second.locator('#openInspector').click();
+  await page.waitForFunction(()=>!document.body.classList.contains('workspace-reordering'));
+  const dockStateStaleDrop=await page.evaluate(()=>{
+    const target=document.querySelector('.canvas-area'),rect=target.getBoundingClientRect(),dataTransfer=window.__workspaceDockTransfer;
+    target.dispatchEvent(new DragEvent('drop',{bubbles:true,cancelable:true,dataTransfer,clientX:rect.left+rect.width-4}));
+    const state=JSON.parse(localStorage.getItem('sanci-editor-shell-v2'));
+    const result={rightOpen:state.rightOpen,preview:target.hasAttribute('data-dock-drop-position'),active:document.body.classList.contains('workspace-reordering'),announcement:document.querySelector('#workspaceDockStatus')?.textContent};
+    delete window.__workspaceDockTransfer;
+    return result;
+  });
+  assert.equal(dockStateStaleDrop.rightOpen,false,'the receiving tab applies the external panel state before a stale drag can drop');
+  assert.equal(dockStateStaleDrop.preview,false,'external dock-state changes clear the old drop target');
+  assert.equal(dockStateStaleDrop.active,false,'external dock-state changes cancel the in-progress interaction');
+  assert.equal(dockStateStaleDrop.announcement,'A másik szerkesztőlapon megváltozott a panelállapot, ezért az átrendezés megszakadt.','dock-state storage changes announce why the target is no longer valid');
+  await page.bringToFront();
   await openPreferences(page);
+  assert.equal(await page.locator('#workspaceLeftTool').isVisible(),true,'the receiving tab keeps its workspace controls available after dock-state cancellation');
 
   await page.locator('#workspaceLeftTool').selectOption('layers');
   await page.locator('#moveWorkspaceLeftToolUp').click();
   assert.equal(await page.locator('#undoWorkspaceLayout').isEnabled(),true,'the local rail-order change enters only this tab’s workspace history');
+  await second.bringToFront();
+  await openPreferences(second);
   await second.locator('#workspaceLeftTool').selectOption('navigation');
   await second.locator('#moveWorkspaceLeftToolUp').click();
   await page.waitForFunction(()=>[...document.querySelectorAll('.tool-rail .rail-btn')].map(button=>button.dataset.tab).join(',')==='pages,layers,elements,navigation,schedule');
