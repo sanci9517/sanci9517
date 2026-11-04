@@ -31,12 +31,19 @@ function fixtureServer(){
   });
   return {server,writes};
 }
-async function openEditor(t,{width=1366,height=900,isMobile=false,hasTouch=false}={}){
+async function openEditor(t,{width=1366,height=900,isMobile=false,hasTouch=false,blockWorkspaceStorageReads=false}={}){
   const fixture=fixtureServer();await new Promise(done=>fixture.server.listen(0,'127.0.0.1',done));
   t.after(()=>new Promise(done=>fixture.server.close(done)));
   const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||(existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined),args:['--no-sandbox']});
   t.after(()=>browser.close());
   const context=await browser.newContext({viewport:{width,height},isMobile,hasTouch});t.after(()=>context.close());
+  if(blockWorkspaceStorageReads)await context.addInitScript(()=>{
+    const getItem=Storage.prototype.getItem;
+    Storage.prototype.getItem=function(key){
+      if(key==='sanci-editor-shell-v2'||key==='sanci-editor-workspace-preferences-v2'||key==='sanci-editor-workspace-preferences-v1')throw new DOMException('Storage is disabled','SecurityError');
+      return getItem.call(this,key);
+    };
+  });
   const page=await context.newPage();page.setDefaultTimeout(8000);page.setDefaultNavigationTimeout(20_000);
   const errors=[];page.on('pageerror',error=>errors.push(error.message));
   await page.goto(`http://127.0.0.1:${fixture.server.address().port}/editor-v2/index.html`,{waitUntil:'load'});
@@ -1409,6 +1416,20 @@ test('workspace appearance and dock settings report session-only changes when br
   assert.equal(await page.evaluate(key=>localStorage.getItem(key),WORKSPACE_PREFERENCES_KEY),null,'blocked storage does not claim that settings were persisted');
   assert.deepEqual(writes,[],'local workspace settings never Save or Publish page content');
   assert.deepEqual(errors,[]);
+});
+
+test('Editor starts with safe defaults when privacy settings deny workspace storage reads',async t=>{
+  const {page,writes,errors}=await openEditor(t,{width:1440,height:900,blockWorkspaceStorageReads:true});
+  assert.equal(await page.locator('.editor-app').getAttribute('data-workspace-theme'),'graphite');
+  assert.equal(await page.locator('.workspace').evaluate(element=>element.classList.contains('left-open')||element.classList.contains('right-open')),false,'unreadable saved state falls back to the safe canvas-first layout');
+  await openPreferences(page);
+  await page.locator('#workspaceTheme').selectOption('sage');
+  await page.waitForFunction(()=>document.querySelector('#workspaceAppearanceStatus')?.textContent.includes('csak ebben a munkamenetben'));
+  assert.equal(await page.locator('.editor-app').getAttribute('data-workspace-theme'),'sage','the user can still customize the current session');
+  assert.equal(await page.locator('#save').textContent(),'Mentés');
+  assert.equal(await page.locator('#publish').textContent(),'Publikálás');
+  assert.deepEqual(writes,[],'a denied workspace read never falls back to Page Model, Save, or Publish writes');
+  assert.deepEqual(errors,[],'denied localStorage reads do not prevent Editor startup');
 });
 
 test('profile import explains when browser storage is unavailable instead of claiming the profile was saved',async t=>{

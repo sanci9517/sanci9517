@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-11-04",
+  "plan_point": "77.44.6.1.C",
+  "status": "RUNTIME_FIX_TESTED_RELEASE_PENDING",
+  "scope": "Keep local workspace persistence honest when browser policy permits Storage access but rejects reads for the workspace keys.",
+  "implementation": {
+    "changed_files": [
+      "public/editor-v2/ui/workspace-appearance.js",
+      "tests/browser/editor-workspace-appearance.test.js",
+      "docs/evidence/feature-traceability.json",
+      "docs/evidence/editor-workspace-storage-read-denial-2026-11-04.json",
+      "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md"
+    ],
+    "behavior": "The workspace appearance adapter probes its versioned key before enabling durable writes. If that read throws, changes still apply in memory but the existing session-only explanation is shown instead of claiming that preferences were saved for reload.",
+    "data_contracts": "The Page Model, Save, Publish, API writes, D1 and R2 are unchanged. Workspace appearance remains local and distinct from page content.",
+    "new_dependencies": false
+  },
+  "validation": {
+    "targeted_real_chromium": "PASS 1/1: the editor starts with safe canvas-first defaults when localStorage getItem rejects the shell, v2 and v1 keys; current-session appearance changes remain usable and are honestly labeled session-only.",
+    "full_real_chromium_workspace_file": "PASS 33/33: CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-workspace-appearance.test.js.",
+    "editor_unit": "PASS 14/14 files; Linux subreaper 3/3.",
+    "typecheck": "PASS: npm run typecheck.",
+    "migration_safety": "PASS: npm run test:web013:migration-gate; no migration applied.",
+    "canonical_plan": "PASS: one 13-file master and plan contract 13/13; cursor remains 77.44.6.1.C and full acceptance NOT_CERTIFIED.",
+    "traceability": "PASS: scripts/build-feature-traceability.py regenerated the reviewed fingerprints; 396 mappings remain complete.",
+    "syntax_and_diff": "PASS: node --check for the modified runtime and browser test; git diff --check.",
+    "wrangler_dry_run": "PASS: Wrangler 4.130.0, 168 assets, 335.81 KiB / 87.60 KiB gzip; no upload or deployment. XDG_CONFIG_HOME pointed to /tmp because the default agent config directory is read-only.",
+    "first_browser_attempt": "BLOCKED before fixture startup by sandbox loopback listen EPERM; rerun with permitted local network completed successfully."
+  },
+  "release": {
+    "status": "PENDING_VERIFIED_FAST_FORWARD_AND_AUTOMATIC_BUILD",
+    "production_d1_preflight": "Cloudflare D1 Query API, exactly one statement: SELECT name FROM d1_migrations ORDER BY name. 34 rows, latest 0028_media_archive.sql, rows_read=34, rows_written=0, changes=0, changed_db=false.",
+    "production_d1_migration_or_data_write": false,
+    "r2_mutation_or_deletion": false,
+    "worker_deploy": "Not yet run; the runtime commit is awaiting a verified fast-forward push and the configured automatic Cloudflare Build.",
+    "live_before_release": {
+      "deployment_id": "3bace7fa-0446-47ca-9bfc-34f034312587",
+      "worker_version": "ddd41243-7102-49ec-b390-16199a0b6383",
+      "traffic_percentage": 100,
+      "health_http_status": 200,
+      "health_body": {"ok": true, "service": "sanci9517-streamer-brand", "version": "2.0.0", "server": "cloudflare-worker"},
+      "index_sha256_local_and_live": "10cd9dc884a4f8add3527edf2fd81c0f3a67f2d74fcd78ccfd05f270cca5c155",
+      "workspace_module_sha256_live_old_version": "59a3c1922fa79bdb2b23915b06dffb3d271b257c74cf388cfc24bbf3c9ce8384",
+      "workspace_module_sha256_local_after_fix": "5aeb57c310a2f3cbbb7b0c8c41b83cbfc95dc3d1afd9461f7cbfadced5971c47"
+    }
+  },
+  "acceptance": {
+    "full_plan_point": "OPEN / NOT CERTIFIED",
+    "manual_and_physical_editor_acceptance": "DEFERRED until the complete Visual Editor reaches 77.44.7.F / 77.44.8.",
+    "cost_huf": 0
+  },
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "parent_commit": "bb1671a4d9b5a16161a45564b9bfb5cfcfd23e61",
+    "remote_ref_before_release": "Verified by git ls-remote as bb1671a4d9b5a16161a45564b9bfb5cfcfd23e61.",
+    "release_commit": "PENDING"
+  }
+}
