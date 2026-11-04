@@ -2,7 +2,7 @@
   "schema_version": 1,
   "recorded_at": "2026-11-04",
   "plan_point": "77.44.6.1.C",
-  "status": "RUNTIME_FIX_TESTED_RELEASE_PENDING",
+  "status": "RUNTIME_FIX_RELEASED_AND_VERIFIED",
   "scope": "Keep local workspace persistence honest when browser policy permits Storage access but rejects reads for the workspace keys.",
   "implementation": {
     "changed_files": [
@@ -29,11 +29,18 @@
     "first_browser_attempt": "BLOCKED before fixture startup by sandbox loopback listen EPERM; rerun with permitted local network completed successfully."
   },
   "release": {
-    "status": "PENDING_VERIFIED_FAST_FORWARD_AND_AUTOMATIC_BUILD",
+    "status": "AUTOMATIC_BUILD_AND_PRODUCTION_ROLLOUT_VERIFIED",
     "production_d1_preflight": "Cloudflare D1 Query API, exactly one statement: SELECT name FROM d1_migrations ORDER BY name. 34 rows, latest 0028_media_archive.sql, rows_read=34, rows_written=0, changes=0, changed_db=false.",
     "production_d1_migration_or_data_write": false,
     "r2_mutation_or_deletion": false,
-    "worker_deploy": "Not yet run; the runtime commit is awaiting a verified fast-forward push and the configured automatic Cloudflare Build.",
+    "worker_deploy": "Configured Workers Builds automatic push deployment; exact commit build SUCCESS, npm run deploy:safe completed with migration safety gate PASS, and Wrangler uploaded only the changed workspace module.",
+    "build_id": "fc64813b-fd1d-4cec-b3e9-30509013036d",
+    "build_outcome": "success",
+    "deployment_id": "ffe73e1c-4b4e-415c-b72b-89ffc9f2bb79",
+    "traffic_version": "2ecad47f-cac9-4198-a625-3e59edb9d8c7",
+    "traffic_version_number": 3817,
+    "traffic_percentage": 100,
+    "build_log": "npm run typecheck passed; npm run deploy:safe ran the migration-safety gate; Wrangler 4.130.0 uploaded 1 new/modified asset, public/editor-v2/ui/workspace-appearance.js, and deployed version 2ecad47f-cac9-4198-a625-3e59edb9d8c7.",
     "live_before_release": {
       "deployment_id": "3bace7fa-0446-47ca-9bfc-34f034312587",
       "worker_version": "ddd41243-7102-49ec-b390-16199a0b6383",
@@ -41,8 +48,10 @@
       "health_http_status": 200,
       "health_body": {"ok": true, "service": "sanci9517-streamer-brand", "version": "2.0.0", "server": "cloudflare-worker"},
       "index_sha256_local_and_live": "10cd9dc884a4f8add3527edf2fd81c0f3a67f2d74fcd78ccfd05f270cca5c155",
-      "workspace_module_sha256_live_old_version": "59a3c1922fa79bdb2b23915b06dffb3d271b257c74cf388cfc24bbf3c9ce8384",
-      "workspace_module_sha256_local_after_fix": "5aeb57c310a2f3cbbb7b0c8c41b83cbfc95dc3d1afd9461f7cbfadced5971c47"
+      "workspace_module_sha256_live_at_exact_import_url": "5aeb57c310a2f3cbbb7b0c8c41b83cbfc95dc3d1afd9461f7cbfadced5971c47",
+      "workspace_module_sha256_local": "5aeb57c310a2f3cbbb7b0c8c41b83cbfc95dc3d1afd9461f7cbfadced5971c47",
+      "shell_sha256_local_and_live": "ac59f8c3d5e7f84df1736bc21b09f9e1677f8b596cbabdf6fd8687ea905603a4",
+      "hash_comparison": "The editor index, shell module, and changed workspace module all match their deployed-source bytes. The workspace module was fetched using the exact ?v= URL imported by shell.js."
     }
   },
   "acceptance": {
@@ -55,6 +64,8 @@
     "branch": "v2/foundation",
     "parent_commit": "bb1671a4d9b5a16161a45564b9bfb5cfcfd23e61",
     "remote_ref_before_release": "Verified by git ls-remote as bb1671a4d9b5a16161a45564b9bfb5cfcfd23e61.",
-    "release_commit": "PENDING"
+    "release_commit": "d2adb3c1df50cc236cdd2849b610d40f4f7587c5",
+    "push": "Normal fast-forward bb1671a4..d2adb3c1 verified; subsequent git ls-remote returned exact ref d2adb3c1df50cc236cdd2849b610d40f4f7587c5.",
+    "github_combined_status": {"statuses": [], "aggregate_ci_pass": false}
   }
 }
