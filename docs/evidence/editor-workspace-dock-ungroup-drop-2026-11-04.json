@@ -1,7 +1,7 @@
 {
   "date": "2026-11-04",
   "plan_point": "77.44.6.1.C",
-  "status": "IMPLEMENTED_LOCAL_AUTOMATED_ACCEPTANCE_PASS_RELEASE_PENDING",
+  "status": "DEPLOYED_100_PERCENT_LIVE_AND_AUTOMATED_ACCEPTANCE_PASS_FULL_PLAN_POINT_OPEN",
   "scope": "Dragging the active member of a desktop tabbed panel group to a canvas edge separates it into a dock track and places that dock using the existing allowlisted three-region order. One workspace Undo/Redo step changes both group mode and order. The remembered group side is retained for regrouping. Mobile single-drawer behavior is unchanged.",
   "branch": "v2/foundation",
   "base_commit": "7776885ad7578d6890b0b5549e614fab11ea734b",
@@ -64,17 +64,72 @@
     "production_migration_or_data_write": false
   },
   "release": {
-    "runtime_commit": "PENDING",
-    "github_fast_forward": "PENDING",
-    "cloudflare_build": "PENDING",
-    "deployment": "PENDING",
-    "traffic_percent": "PENDING",
-    "production_health": "PENDING",
-    "asset_hashes": "PENDING"
+    "runtime_commit": {
+      "sha": "cdd60efa82267720e555e7f90d270b8294b5982f",
+      "parent": "7776885ad7578d6890b0b5549e614fab11ea734b",
+      "branch": "v2/foundation",
+      "method": "normal fast-forward push; no reset or branch switch"
+    },
+    "github_fast_forward": "Verified exact runtime commit cdd60efa82267720e555e7f90d270b8294b5982f on v2/foundation; parent was 7776885ad7578d6890b0b5549e614fab11ea734b.",
+    "cloudflare_build": {
+      "id": "804e267b-4c35-4904-bb55-6ef76a11a766",
+      "status": "success",
+      "steps": [
+        "npm run typecheck: success",
+        "npm run deploy:safe: success",
+        "migration safety gate: success; no migration applied"
+      ],
+      "assets_uploaded": [
+        "public/editor-v2/index.html",
+        "public/editor-v2/ui/shell.js",
+        "public/editor-v2/ui/workspace-appearance.js"
+      ]
+    },
+    "deployment": {
+      "id": "f6b8e9b3-2479-4a95-8de2-778e87fbbc05",
+      "version_id": "210ce785-a831-4cec-9604-4d897490498a",
+      "worker_version_number": 3810,
+      "traffic_percent": 100,
+      "verified_from_cloudflare_control_plane_at": "2026-11-04T11:23:02Z"
+    },
+    "production_health": {
+      "method": "direct public GET after deployment",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      },
+      "follow_up_get_at": "2026-11-04T11:27Z",
+      "follow_up_get_status": "BLOCKED: local outbound proxy connection to port 8080 failed before request; the successful post-deployment GET below remains the release verification."
+    },
+    "asset_hashes": {
+      "method": "SHA-256; successful direct live GET immediately after deployment matched local assets byte-for-byte",
+      "public/editor-v2/index.html": "e9d7b8f7014908a2aaf7dc215c98163ca11e9a4ee02e0fb77099a2c9c303b152",
+      "public/editor-v2/ui/shell.js": "da8923a28af4b7ab88fd0e796123ee9e19f32a6bdce38ced4d9a5332df18e98c",
+      "public/editor-v2/ui/workspace-appearance.js": "9712f45292e5b532f0fac763732d6791d4a77408a0bb63ee77fb1d8a3d0eb622"
+    }
   },
   "manual_and_physical_editor_acceptance": "DEFERRED until complete editor plan gate; this slice is not full editor acceptance",
   "cost_usd": 0,
   "new_dependency": false,
   "production_d1_write": false,
-  "production_r2_change": false
+  "production_r2_change": false,
+  "github_checks": {
+    "commit_status_endpoint": "statuses=[]; this is not aggregate CI success",
+    "f0_baseline_workflow_run_41820357469": "completed successfully",
+    "editor_core_workflow_run_41820357612": "IN_PROGRESS at 2026-11-04T11:27Z; editor browser layout regression step in progress; downstream steps pending",
+    "aggregate_ci": "NOT PASS / pending editor-core completion"
+  },
+  "production_read_only_preflight_after_release": {
+    "method": "Cloudflare D1 Query API",
+    "query": "SELECT name FROM d1_migrations ORDER BY name;",
+    "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
+    "rows_read": 34,
+    "latest_migration": "0028_media_archive.sql",
+    "changed_db": false,
+    "rows_written": 0,
+    "production_migration_or_data_write": false
+  }
 }
