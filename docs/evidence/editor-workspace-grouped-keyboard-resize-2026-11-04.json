@@ -1,0 +1,108 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-11-04",
+  "plan_point": "77.44.6.1.C",
+  "status": "RUNTIME_RELEASE_VERIFIED_FOUNDATION_PASS_FULL_C_OPEN",
+  "scope": "Keyboard dock-resize arrows now follow the grouped panel track, so the active panel always resizes toward or away from the canvas correctly even when its group is on the opposite side.",
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "parent_commit": "a3105e35932af92c8f53fb9193aca08d205916da",
+    "runtime_commit": "116b8f4cb95ff16947f8200b41e84da9b22bc30f",
+    "runtime_message": "fix(editor): resize grouped panels toward canvas",
+    "push": "Normal fast-forward push verified by git ls-remote; GitHub compare reports 1 ahead and 0 behind with only index.html, shell.js and the browser regression changed.",
+    "github_combined_statuses": [],
+    "aggregate_github_ci_pass": false
+  },
+  "implementation": {
+    "root_cause": "setupResizers selected the increasing arrow from the panel identity (left/right), while tabbed groups can occupy either physical grid track. For a left panel grouped on the right, ArrowLeft incorrectly decreased its width, moving its edge away from the canvas; the reciprocal right-panel-on-left case was also reversed.",
+    "fix": "For desktop tabbed groups, the key handler now derives the active track from workspacePanelMode and panelSide. ArrowLeft/ArrowRight then change width according to the actual dock track and RTL direction. The non-grouped desktop behavior and mobile single-drawer layout remain unchanged.",
+    "regression": "The browser test first reproduced the bug: after activating the left panel in the right-side group, ArrowLeft left the width at 294px instead of increasing it to 326px. It also covers the right panel grouped on the left, expected 368px width, correct placement on each side of the canvas, a minimum 400px unobscured canvas, persistence, workspace Undo/Redo, no Page Model writes, and no Save/Publish calls.",
+    "cache_buster": "20261104-grouped-resizer-keyboard",
+    "page_model_mutations": 0,
+    "save_publish_mutations": 0,
+    "runtime_dependencies_added": false,
+    "paid_services_added": false,
+    "reuse_and_license": "Adapted the repository's existing first-party keyboard splitter, tabbed-group, layout and workspace-history contracts. No third-party code or runtime dependency was needed for this direction-selection correction."
+  },
+  "validation": {
+    "targeted_browser": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-workspace-appearance.test.js --test-name-pattern='keyboard dock resizing follows the active panel group track instead of the panel identity' — PASS, 1/1.",
+    "focused_workspace_browser": "Same real Chromium suite focused on group both ways, ungroup, canvas behavior, normal resize, responsive resize and grouped keyboard resize — PASS, 6/6.",
+    "complete_workspace_browser": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-workspace-appearance.test.js — PASS, 28/28.",
+    "editor_unit": "npm run test:editor — PASS, 14/14 files; Linux subreaper tests 3/3 PASS.",
+    "typecheck": "npm run typecheck — PASS.",
+    "migration_guard": "npm run test:web013:migration-gate — PASS; no migration applied.",
+    "canonical_plan": "python3 scripts/check-canonical-plan.py — PASS; 13 master files, one canonical master.",
+    "plan_contract": "python3 tests/plan-contract.test.py — PASS, 13/13.",
+    "active_point": "python3 scripts/audit-active-plan-point.py — PASS; cursor remains 77.44.6.1 and next item 77.44.6.1.C; full functional acceptance NOT_CERTIFIED.",
+    "traceability": "python3 scripts/build-feature-traceability.py --check — PASS, 396 mappings.",
+    "syntax_and_diff": "node --check public/editor-v2/ui/shell.js; node --check tests/browser/editor-workspace-appearance.test.js; git diff --check — PASS.",
+    "wrangler_dry_run": "Wrangler 4.130.0 deploy --dry-run — PASS; 168 assets, 335.81 KiB / 87.60 KiB gzip. Dry-run only; production deployment came from the configured automatic build.",
+    "full_editor_layout_suite": "NOT RUN in this block; the earlier broad suite remains INCOMPLETE / NOT PASS.",
+    "manual_device_acceptance": "DEFERRED until the full Visual Editor acceptance gate."
+  },
+  "release_preflight": {
+    "production_d1_query": "SELECT name FROM d1_migrations ORDER BY name;",
+    "query_mode": "SELECT-only through the authenticated Cloudflare D1 Query API before the runtime push.",
+    "ledger_row_count": 34,
+    "latest_ledger_row": "0028_media_archive.sql",
+    "rows_written": 0,
+    "changes": 0,
+    "changed_db": false,
+    "migration_applied": false,
+    "r2_mutation_or_deletion": false
+  },
+  "production": {
+    "worker": "sanci9517-streamer-brand",
+    "build_id": "8f49b826-4e57-4ed5-ac92-de872d95d4d8",
+    "build_commit": "116b8f4cb95ff16947f8200b41e84da9b22bc30f",
+    "build_branch": "v2/foundation",
+    "build_outcome": "success",
+    "build_commands": [
+      "npm run typecheck",
+      "npm run deploy:safe"
+    ],
+    "migration_gate": "PASS in Cloudflare build log; deploy:safe ran the repository migration safety gate and did not apply D1 migrations.",
+    "deployment_id": "1c4f9772-9fbb-4105-bcb0-02642c7a4b9c",
+    "traffic_version": "ed7c8e34-c23f-4e7d-a51f-02dbb2d1045a",
+    "worker_version_number": 3815,
+    "traffic_percentage": 100,
+    "deployment_observed_at": "2026-11-04T14:59:15Z",
+    "control_plane_verified": true,
+    "public_http_smoke": {
+      "status": "PASS",
+      "health": {
+        "path": "/api/health",
+        "http_status": 200,
+        "body": {
+          "ok": true,
+          "service": "sanci9517-streamer-brand",
+          "version": "2.0.0",
+          "server": "cloudflare-worker"
+        }
+      },
+      "assets": {
+        "/editor-v2/": {
+          "http_status": 200,
+          "local_sha256": "36263fccb895085c9ca45d1ee1b8623aff03e5264d2e46f594dc6f34088c5dee",
+          "live_sha256": "36263fccb895085c9ca45d1ee1b8623aff03e5264d2e46f594dc6f34088c5dee"
+        },
+        "/editor-v2/ui/shell.js?v=20261104-grouped-resizer-keyboard": {
+          "http_status": 200,
+          "local_sha256": "18a6a6237f9584746e8fa8c96bba42c31a1e0f2f2a8e5c28a956825df5cbe0a4",
+          "live_sha256": "18a6a6237f9584746e8fa8c96bba42c31a1e0f2f2a8e5c28a956825df5cbe0a4"
+        }
+      },
+      "public_asset_hashes_match": true
+    }
+  },
+  "cost": {
+    "additional_cost_huf": 0,
+    "paid_services_or_dependencies_added": false,
+    "quota_note": "No paid plan, quota increase, infrastructure, or dependency was introduced."
+  },
+  "acceptance": {
+    "77_44_6_1_C": "OPEN; dynamic dock zones, additional nested/floating behavior and complete workspace lifecycle acceptance remain open.",
+    "full_visual_editor_manual_and_physical_acceptance": "DEFERRED until the full Visual Editor acceptance gate."
+  }
+}
