@@ -1076,16 +1076,38 @@ test('open editor tabs synchronize saved appearance, dock state and profiles wit
   await second.locator('#moveWorkspaceLeftToolUp').click();
   await page.waitForFunction(()=>[...document.querySelectorAll('.tool-rail .rail-btn')].map(button=>button.dataset.tab).join(',')==='pages,layers,elements,navigation,schedule');
   assert.equal(await page.locator('#undoWorkspaceLayout').isDisabled(),true,'an external rail-order update clears a history snapshot that could overwrite it');
-  assert.match(await page.locator('#workspaceAppearanceStatus').textContent(),/másik szerkesztőlapon megváltozott az eszközök sorrendje/iu);
+  assert.match(await page.locator('#workspaceAppearanceStatus').textContent(),/másik szerkesztőlapon megváltozott a panelek állapota/iu);
 
   await second.locator('#workspaceProfileName').fill('Másik lap nézete');
   await second.locator('#saveWorkspaceProfile').click();
   await page.waitForFunction(()=>document.querySelector('#workspaceProfile')?.options.length===2);
   assert.equal(await page.locator('#workspaceProfile option').last().textContent(),'Másik lap nézete','saved profiles become available in other open tabs');
   assert.equal(await page.locator('#workspaceProfile').inputValue(),'','receiving the profile does not apply it unexpectedly');
+  await page.bringToFront();
+  const resetDrag=await page.evaluate(()=>{
+    const handle=document.querySelector('#leftDock .dock-heading'),target=document.querySelector('.canvas-area'),rect=target.getBoundingClientRect(),dataTransfer=new DataTransfer();
+    handle.dispatchEvent(new DragEvent('dragstart',{bubbles:true,cancelable:true,dataTransfer}));
+    target.dispatchEvent(new DragEvent('dragover',{bubbles:true,cancelable:true,dataTransfer,clientX:rect.left+rect.width-4}));
+    window.__workspaceDockTransfer=dataTransfer;
+    return {preview:target.hasAttribute('data-dock-drop-position'),active:document.body.classList.contains('workspace-reordering')};
+  });
+  assert.deepEqual(resetDrag,{preview:true,active:true},'a full storage reset can arrive while a dock drag is active');
   await second.evaluate(()=>localStorage.clear());
   await page.waitForFunction(()=>document.querySelector('.editor-app')?.dataset.workspaceTheme==='graphite'&&document.querySelector('.workspace')?.dataset.workspaceDockOrder==='left-canvas-right'&&document.querySelector('#workspaceProfile')?.options.length===1);
   assert.equal(await page.locator('.workspace').evaluate(element=>element.classList.contains('left-open')||element.classList.contains('right-open')),false,'clearing origin-local storage returns the other tab to a safe default layout');
+  const canceledResetDrag=await page.evaluate(()=>{
+    const target=document.querySelector('.canvas-area'),rect=target.getBoundingClientRect(),dataTransfer=window.__workspaceDockTransfer;
+    target.dispatchEvent(new DragEvent('drop',{bubbles:true,cancelable:true,dataTransfer,clientX:rect.left+rect.width-4}));
+    const result={preview:target.hasAttribute('data-dock-drop-position'),active:document.body.classList.contains('workspace-reordering'),dockAnnouncement:document.querySelector('#workspaceDockStatus')?.textContent,appearanceAnnouncement:document.querySelector('#workspaceAppearanceStatus')?.textContent,appearance:document.querySelector('.editor-app')?.dataset.workspaceTheme,order:document.querySelector('.workspace')?.dataset.workspaceDockOrder};
+    delete window.__workspaceDockTransfer;
+    return result;
+  });
+  assert.equal(canceledResetDrag.preview,false,'a full reset removes the old dock target');
+  assert.equal(canceledResetDrag.active,false,'a full reset cancels the in-progress dock drag');
+  assert.equal(canceledResetDrag.appearance,'graphite');
+  assert.equal(canceledResetDrag.order,'left-canvas-right');
+  assert.match(canceledResetDrag.dockAnnouncement,/alaphelyzetbe állították.*átrendezés megszakadt/iu,'the polite dock announcement explains that another tab reset the workspace');
+  assert.match(canceledResetDrag.appearanceAnnouncement,/alaphelyzetbe állították a munkaterületet.*visszavonási előzményt töröltük/iu,'reset feedback must not falsely claim only the tool order changed');
   assert.deepEqual(writes,[],'workspace synchronization never invokes Page Model Save or Publish');
   assert.deepEqual(errors,[]);
 });

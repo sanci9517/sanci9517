@@ -1,0 +1,119 @@
+{
+  "date": "2026-11-04",
+  "plan_point": "77.44.6.1.C",
+  "status": "RUNTIME_DEPLOYED_VERIFIED_AUTOMATED_FOUNDATION_PASS_FULL_C_OPEN",
+  "scope": "Give accurate, specific feedback when another editor tab clears the whole workspace storage during an active dock drag.",
+  "branch": "v2/foundation",
+  "base_commit": "02c776a562b8d06b8a4c422809f96e49305848f9",
+  "runtime_files": [
+    "public/editor-v2/index.html",
+    "public/editor-v2/ui/shell.js",
+    "public/editor-v2/ui/workspace-appearance.js"
+  ],
+  "test_files": [
+    "tests/browser/editor-workspace-appearance.test.js"
+  ],
+  "behavior": {
+    "trigger": "The receiving editor tab handles the existing storage event with key=null after another tab calls localStorage.clear().",
+    "cancellation": "An in-progress dock drag is canceled, the drop preview is removed, defaults are applied, stale drop is inert, and Page Model APIs remain untouched.",
+    "dock_announcement": "A másik szerkesztőlapon alaphelyzetbe állították a munkaterületet, ezért az átrendezés megszakadt.",
+    "appearance_announcement": "Egy másik szerkesztőlapon alaphelyzetbe állították a munkaterületet. A régi visszavonási előzményt töröltük. Az oldal tartalma nem változott.",
+    "other_storage_updates": "Ordinary external shell changes use a panel-state message; appearance-reset history no longer claims that only tool order changed.",
+    "live_regions": [
+      "#workspaceDockStatus",
+      "#workspaceAppearanceStatus"
+    ],
+    "cache_busting": "The shell module and its workspace-appearance module import use the new 20261104-cross-tab-reset-announcement query value."
+  },
+  "contracts": {
+    "page_model_changed": false,
+    "save_publish_changed": false,
+    "d1_or_r2_changed": false,
+    "dock_geometry_or_canvas_overlap_changed": false,
+    "mobile_single_drawer_changed": false,
+    "new_dependency_or_third_party_runtime_code": false
+  },
+  "checks": {
+    "regression_before_fix": "PASS as a defect reproducer: real Chromium showed storage clear canceled the drag but reported a generic change reason and the preferences live region falsely claimed only tool order changed.",
+    "targeted_real_chromium": "PASS 1/1 for the two-tab workspace synchronization scenario with clear-during-drag and stale-drop assertions.",
+    "workspace_browser_file": "PASS 27/27 in a single serial Chromium run; it also retains the 30 desktop canvas-size/order combinations and the no-overlap invariant.",
+    "cache_busted_module_reload": "PASS 1/1 for the cross-tab scenario after the final module import cache-buster change.",
+    "editor_unit": "PASS npm run test:editor: 14/14 test files; Linux subreaper runner 3/3.",
+    "typecheck": "PASS npm run typecheck.",
+    "migration_safety": "PASS npm run test:web013:migration-gate; no migration apply.",
+    "canonical_plan_and_contract": "PASS python3 scripts/check-canonical-plan.py; python3 tests/plan-contract.test.py (13/13); python3 scripts/audit-active-plan-point.py. Cursor remains 77.44.6.1.C, OPEN.",
+    "traceability": "PASS python3 scripts/build-feature-traceability.py --check; 396 mappings, acceptance not recertified.",
+    "syntax_and_whitespace": "PASS node --check on modified JavaScript files; git diff --check.",
+    "wrangler_dry_run": "PASS Wrangler 4.130.0; 168 assets, 335.81 KiB total / 87.60 KiB gzip; dry-run only.",
+    "wide_editor_browser_suite": "NOT RUN in this block; the historical 51-file aggregate remains INCOMPLETE / NOT PASS.",
+    "d1_read_only_preflight": {
+      "method": "Cloudflare D1 Query API",
+      "sql": "SELECT name FROM d1_migrations ORDER BY name;",
+      "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
+      "rows_read": 34,
+      "latest_migration": "0028_media_archive.sql",
+      "rows_written": 0,
+      "changes": 0,
+      "changed_db": false
+    }
+  },
+  "live_worker_before_release": {
+    "deployment_id": "bd977ed8-9faf-492a-b63e-a88dc64164d5",
+    "traffic_version_id": "0d1109a7-8c10-4789-bde2-dc98fa7cd43e",
+    "worker_version_number": 3813,
+    "traffic_percent": 100,
+    "source_commit": "8c5943189f004ab8dac98c222d55c6b0ce6ffca3"
+  },
+  "release": {
+    "runtime_commit": "79739698599ad4d2876e5188c4fc9767746effba",
+    "runtime_commit_parent": "02c776a562b8d06b8a4c422809f96e49305848f9",
+    "push": "PASS normal fast-forward; push output and GitHub compare verified v2/foundation 1 ahead / 0 behind.",
+    "github_combined_statuses": [],
+    "aggregate_github_ci": "NOT CLAIMED PASS; combined status list was empty.",
+    "cloudflare_build_id": "0272bbce-4367-4a87-bac0-0de340fc620d",
+    "cloudflare_build_outcome": "success",
+    "cloudflare_build_commit": "79739698599ad4d2876e5188c4fc9767746effba",
+    "cloudflare_build_commands": "npm run typecheck; npm run deploy:safe. Exact build logs show the migration safety gate PASS, no migration-apply command, and only the three changed editor assets uploaded.",
+    "deployment_id": "4f9450bc-5ebd-4037-9a34-9be48787cc19",
+    "worker_version_id": "47f5f05a-a7ec-47aa-99b8-f7924c05d57e",
+    "worker_version_number": 3814,
+    "traffic_percent": 100,
+    "direct_public_smoke": {
+      "health_url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+      "health_http_status": 200,
+      "health_body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      },
+      "assets": [
+        {
+          "path": "/editor-v2/",
+          "http_status": 200,
+          "sha256": "19527609fe480470c5b63965227261860f3fd98b7394a2bec948e7d8ad969f3c",
+          "local_sha256": "19527609fe480470c5b63965227261860f3fd98b7394a2bec948e7d8ad969f3c",
+          "matches_source": true
+        },
+        {
+          "path": "/editor-v2/ui/shell.js?v=20261104-cross-tab-reset-announcement",
+          "http_status": 200,
+          "sha256": "6f8b4982a35473920c1b1b96f9aa72ddb263165707129ba807f012b0209588fa",
+          "local_sha256": "6f8b4982a35473920c1b1b96f9aa72ddb263165707129ba807f012b0209588fa",
+          "matches_source": true
+        },
+        {
+          "path": "/editor-v2/ui/workspace-appearance.js?v=20261104-cross-tab-reset-announcement",
+          "http_status": 200,
+          "sha256": "59a3c1922fa79bdb2b23915b06dffb3d271b257c74cf388cfc24bbf3c9ce8384",
+          "local_sha256": "59a3c1922fa79bdb2b23915b06dffb3d271b257c74cf388cfc24bbf3c9ce8384",
+          "matches_source": true
+        }
+      ]
+    }
+  },
+  "cost_huf": 0,
+  "production_d1_mutation_or_migration": false,
+  "r2_operation": false,
+  "manual_visual_editor_acceptance": "DEFERRED until the complete Visual Editor plan acceptance gate"
+}
