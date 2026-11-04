@@ -291,17 +291,20 @@ function setupDockReordering(){
   const names={left:'Oldalak és eszközök',canvas:'Vászon',right:'Beállítások'};
   const liveStatus=document.querySelector('#workspaceDockStatus');
   let dragSourceId=null;
+  const announce=message=>{if(liveStatus&&liveStatus.textContent!==message)liveStatus.textContent=message;};
   for(const [id,region] of Object.entries(regions))if(region)region.dataset.workspaceDockId=id;
   const clearDropPreview=()=>workspace.querySelectorAll('[data-dock-drop-position]').forEach(region=>{
     region.removeAttribute('data-dock-drop-position');
     region.removeAttribute('data-dock-drop-label');
   });
-  const finishDrag=()=>{
+  const finishDrag=({announcement}={})=>{
+    const wasDragging=Boolean(dragSourceId);
     clearDropPreview();document.body.classList.remove('workspace-reordering');dragSourceId=null;
+    if(wasDragging&&announcement)announce(announcement);
   };
   const refreshHandles=()=>workspace.querySelectorAll('.dock-heading,.canvas-toolbar').forEach(handle=>handle.setAttribute('draggable',String(!mobileQuery.matches)));
   const restoreResponsiveDockLayout=()=>{
-    finishDrag();
+    finishDrag({announcement:'A képernyőméret változott, ezért az átrendezés megszakadt.'});
     if(mobileQuery.matches){
       if(!desktopDockSnapshot)desktopDockSnapshot={left:!panels.left?.classList.contains('closed'),right:!panels.right?.classList.contains('closed')};
       const focusedSide=Object.entries(panels).find(([,panel])=>panel?.contains(document.activeElement)&&!panel.classList.contains('closed'))?.[0];
@@ -329,28 +332,32 @@ function setupDockReordering(){
     event.dataTransfer.effectAllowed='move';
     clearDropPreview();
     document.body.classList.add('workspace-reordering');
+    announce(`${names[dragSourceId]} panel áthelyezése. Válassz célzónát a másik panelen vagy a vásznon.`);
   });
   workspace.addEventListener('dragover',event=>{
     const transfer=event.dataTransfer;
     if(mobileQuery.matches||!transfer||!Array.from(transfer.types).includes('text/plain')||!dragSourceId){clearDropPreview();return}
     const target=event.target.closest?.('.left-dock,.right-dock,.canvas-area');
     const targetId=target?.dataset.workspaceDockId;
-    if(!target||!targetId||targetId===dragSourceId||!workspace.contains(target)){clearDropPreview();return}
+    if(!target||!targetId||targetId===dragSourceId||!workspace.contains(target)){
+      clearDropPreview();announce('Nincs kiválasztott célzóna.');return;
+    }
     event.preventDefault();transfer.dropEffect='move';
     const rect=target.getBoundingClientRect(),ratio=rect.width?((event.clientX-rect.left)/rect.width):0.5;
     const position=dragSourceId!=='canvas'&&target!==canvasArea&&ratio>=0.35&&ratio<=0.65?'group':ratio<0.5?'before':'after';
     if(target.dataset.dockDropPosition===position)return;
     clearDropPreview();target.dataset.dockDropPosition=position;
     target.dataset.dockDropLabel=position==='group'?'Panelcsoport':position==='before'?'Elé helyezés':'Utána helyezés';
+    announce(`Cél: ${target.dataset.dockDropLabel} – ${names[targetId]}.`);
   });
   workspace.addEventListener('drop',event=>{
-    if(mobileQuery.matches||!event.dataTransfer){finishDrag();return}
+    if(mobileQuery.matches||!event.dataTransfer){finishDrag({announcement:'Az átrendezés megszakadt.'});return}
     const sourceId=event.dataTransfer.getData('text/plain').replace(/^sanci-workspace:/u,'');
-    if(!dragSourceId||sourceId!==dragSourceId){finishDrag();return}
+    if(!dragSourceId||sourceId!==dragSourceId){finishDrag({announcement:'Az átrendezés megszakadt.'});return}
     const source=regions[sourceId];
     const target=event.target.closest?.('.left-dock,.right-dock,.canvas-area');
     const targetId=target?.dataset.workspaceDockId;
-    if(!source||!target||!targetId||source===target||!workspace.contains(target)){finishDrag();return}
+    if(!source||!target||!targetId||source===target||!workspace.contains(target)){finishDrag({announcement:'Az átrendezés megszakadt.'});return}
     const ungrouping=editorRoot?.dataset.workspacePanelMode==='tabbed'&&sourceId!=='canvas'&&target===canvasArea;
     const visualOrder=Object.values(regions).filter(Boolean).sort((a,b)=>a.getBoundingClientRect().left-b.getBoundingClientRect().left);
     // In a tabbed view the inactive dock is display:none, so its zero-size
@@ -358,12 +365,13 @@ function setupDockReordering(){
     const savedOrder=ungrouping?String(editorRoot.dataset.workspaceDockOrder||'').split('-').map(id=>regions[id]):[];
     const order=ungrouping&&savedOrder.length===3&&savedOrder.every(Boolean)?savedOrder:visualOrder;
     const sourceIndex=order.indexOf(source),targetIndex=order.indexOf(target);
-    if(sourceIndex<0||targetIndex<0){finishDrag();return}
+    if(sourceIndex<0||targetIndex<0){finishDrag({announcement:'Az átrendezés megszakadt.'});return}
     order.splice(sourceIndex,1);
     const rect=target.getBoundingClientRect(),ratio=rect.width?((event.clientX-rect.left)/rect.width):0.5;
     if(sourceId!=='canvas'&&target!==canvasArea&&ratio>=0.35&&ratio<=0.65){
       const grouped=workspaceAppearance?.setPanelGrouping('tabbed',targetId);
-      if(grouped){setPanel(sourceId,true,{save:true,customize:false});if(liveStatus)liveStatus.textContent=`A(z) ${names[sourceId]} panel a(z) ${names[targetId]} panelfülei közé került. A füles csoport a(z) ${targetId==='left'?'bal':'jobb'} oldalon marad, a vászon fedetlen.`}
+      if(grouped){setPanel(sourceId,true,{save:true,customize:false});announce(`A(z) ${names[sourceId]} panel a(z) ${names[targetId]} panelfülei közé került. A füles csoport a(z) ${targetId==='left'?'bal':'jobb'} oldalon marad, a vászon fedetlen.`)}
+      else announce('A panelcsoport nem változott.');
       finishDrag();return;
     }
     const before=ratio<0.5;
@@ -373,18 +381,20 @@ function setupDockReordering(){
     const changed=ungrouping
       ?workspaceAppearance?.setDockLayout({dockOrder:value,panelMode:'separate'})
       :workspaceAppearance?.setDockOrder(value);
-    if(changed&&liveStatus){
+    if(changed){
       const namesInOrder=order.map(item=>names[item.dataset.workspaceDockId]||'Panel').join(', ');
-      liveStatus.textContent=ungrouping
+      announce(ungrouping
         ?`A(z) ${names[sourceId]} panel külön dokkolóként a vászon ${before?'elé':'után'} került. A vászon fedetlen. Sorrend: ${namesInOrder}.`
-        :`A(z) ${names[sourceId]} panel ${before?'a(z) '+names[targetId]+' elé':'a(z) '+names[targetId]+' után'} került. Sorrend: ${namesInOrder}.`;
+        :`A(z) ${names[sourceId]} panel ${before?'a(z) '+names[targetId]+' elé':'a(z) '+names[targetId]+' után'} került. Sorrend: ${namesInOrder}.`);
+    }else{
+      announce('A panelek elrendezése nem változott.');
     }
     finishDrag();
   });
-  workspace.addEventListener('dragend',finishDrag);
+  workspace.addEventListener('dragend',()=>finishDrag({announcement:'Az átrendezés megszakadt.'}));
   workspace.addEventListener('keydown',event=>{
     if(event.key!=='Escape'||!dragSourceId)return;
-    event.preventDefault();event.stopPropagation();finishDrag();
+    event.preventDefault();event.stopPropagation();finishDrag({announcement:'Az átrendezés megszakítva.'});
   });
   return finishDrag;
 }
@@ -395,7 +405,7 @@ root.style.setProperty('--right-dock-width',`${clamp(Number(persisted.rightWidth
 setPanel('left',!mobileQuery.matches && Boolean(persisted.leftOpen),{save:false});
 setPanel('right',!mobileQuery.matches && Boolean(persisted.rightOpen),{save:false});
 showLeftTab(persisted.leftTab,{save:false,open:false});
-workspaceAppearance=mountWorkspaceAppearance({documentRef:document,root:editorRoot,onLayoutChange:applyWorkspaceLayout,onExternalChange:()=>cancelWorkspaceDrag(),readDockState:()=>persisted,moveDockTab:moveLeftTab,applyDockState:state=>{
+workspaceAppearance=mountWorkspaceAppearance({documentRef:document,root:editorRoot,onLayoutChange:applyWorkspaceLayout,onExternalChange:()=>cancelWorkspaceDrag({announcement:'A másik szerkesztőlapon történt változás miatt az átrendezés megszakadt.'}),readDockState:()=>persisted,moveDockTab:moveLeftTab,applyDockState:state=>{
   applyDockState(state);
 },onReset:()=>{
   persisted={...defaults};
