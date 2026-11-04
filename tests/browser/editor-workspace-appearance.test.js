@@ -202,6 +202,28 @@ test('tabbed desktop panel groups reserve canvas space, restore profiles and fal
   assert.deepEqual(mobile.errors,[]);
 });
 
+test('clicking the already active dock tab does not create a no-op workspace history entry',async t=>{
+  const {page,writes,errors}=await openEditor(t,{width:1280,height:900});
+  await openPreferences(page);
+  await page.locator('#workspaceLayout').selectOption('balanced');
+  await page.locator('#workspacePanelMode').selectOption('tabbed');
+  await page.locator('#workspacePanelSide').selectOption('right');
+  await page.waitForFunction(()=>!document.querySelector('#leftDock')?.classList.contains('closed')&&!document.querySelector('#rightDock')?.classList.contains('closed'));
+  await page.locator('#closeWorkspaceAppearance').click();
+  await page.reload({waitUntil:'load'});
+  await page.waitForFunction(()=>document.documentElement.dataset.editorBoot==='ready');
+
+  const activeTab=page.locator('[data-workspace-panel-tab][aria-selected="true"]');
+  assert.equal(await activeTab.count(),1,'reload leaves exactly one selected dock tab');
+  await activeTab.click();
+  await openPreferences(page);
+  assert.equal(await page.locator('#undoWorkspaceLayout').isDisabled(),true,'reselecting the open active dock does not add an identical snapshot');
+  assert.equal(await page.locator('#redoWorkspaceLayout').isDisabled(),true,'a no-op tab click does not clear or create redo history');
+  await page.locator('#closeWorkspaceAppearance').click();
+  assert.deepEqual(writes,[],'reselecting an active dock does not change the Page Model');
+  assert.deepEqual(errors,[]);
+});
+
 test('Inspector tab groups survive reload, profile restore, and phone use without page writes',async t=>{
   const desktop=await openEditor(t);
   await desktop.page.locator('#openInspector').click();

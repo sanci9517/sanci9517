@@ -467,6 +467,7 @@ window.addEventListener('storage',event=>{
 cancelWorkspaceDrag=setupDockReordering()||(()=>{});
 document.querySelectorAll('[data-workspace-panel-tab]').forEach(button=>button.addEventListener('click',()=>{
   const side=button.dataset.workspacePanelTab;if(!['left','right'].includes(side))return;
+  if(persisted.panelActive===side&&!panels[side]?.classList.contains('closed'))return;
   workspaceAppearance?.remember();persisted.panelActive=side;
   setPanel(side,true,{customize:false});persist();syncMobileBackdrop();
 }));

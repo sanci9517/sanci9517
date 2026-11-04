@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-11-04",
+  "plan_point": "77.44.6.1.C",
+  "status": "LOCALLY_VERIFIED_RELEASE_PENDING",
+  "scope": "Do not create a no-op workspace Undo entry when a user reselects the already active, open dock tab.",
+  "implementation": {
+    "changed_files": [
+      "public/editor-v2/ui/shell.js",
+      "public/editor-v2/index.html",
+      "tests/browser/editor-workspace-appearance.test.js",
+      "docs/evidence/feature-traceability.json",
+      "docs/evidence/editor-workspace-noop-tab-history-2026-11-04.json",
+      "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md"
+    ],
+    "root_cause": "The active-tab click handler unconditionally pushed the current workspace snapshot before reapplying the already selected, open dock. This enabled Undo even though neither workspace nor Page Model state changed.",
+    "behavior": "The click handler returns before creating history or writing shell state when the selected side is already active and its dock is open. Clicking a different tab, or reopening a closed active dock, still follows the existing workspace history and persistence path.",
+    "data_contracts": "Workspace presentation remains local and separate from Page Model, Save, Publish and API writes. Desktop docks continue to reserve a non-overlapped canvas; mobile keeps its single-drawer model.",
+    "new_dependencies": false
+  },
+  "validation": {
+    "reproduction_before_fix": "PASS: real Chromium regression failed as expected because reselecting the active tab enabled the workspace Undo button.",
+    "targeted_real_chromium_after_fix": "PASS 1/1 after the production shell cache-buster was updated.",
+    "full_real_chromium_workspace_file": "PASS 34/34: CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-workspace-appearance.test.js.",
+    "editor_unit": "PASS 14/14 files; Linux subreaper runner 3/3.",
+    "typecheck": "PASS: npm run typecheck.",
+    "migration_safety": "PASS: npm run test:web013:migration-gate; no migration applied.",
+    "canonical_plan": "PASS: one 13-file master; plan contract PASS; active cursor remains 77.44.6.1.C and full acceptance NOT_CERTIFIED.",
+    "traceability": "PASS: scripts/build-feature-traceability.py refreshed source hashes; 396 mappings remain complete.",
+    "syntax_and_diff": "PASS: node --check on modified shell and browser test; git diff --check.",
+    "wrangler_dry_run": "PASS: Wrangler 4.130.0, 168 assets, 335.81 KiB / 87.60 KiB gzip; no upload or deployment.",
+    "production_d1_preflight": "Cloudflare D1 Query API, exactly one statement: SELECT name FROM d1_migrations ORDER BY name. 34 rows, latest 0028_media_archive.sql, rows_written=0, changes=0, changed_db=false.",
+    "browser_environment_note": "One post-cache-buster Chromium startup timed out before the local fixture loaded; an immediate isolated rerun passed. The full 34/34 suite had already passed after the code fix and before only the shell URL cache-buster changed."
+  },
+  "release": {
+    "status": "PENDING_NORMAL_FAST_FORWARD_PUSH_AND_PRODUCTION_VERIFICATION",
+    "remote_branch_head_before": "0fc861cb583f2546e74d91d74e68a62aeedf8847",
+    "remote_ref_read": "GitHub branch API confirmed the same v2/foundation head; ordinary git ls-remote succeeded after enabling network permission.",
+    "runtime_deploy": "Not yet verified for this fix.",
+    "production_health": "Not rechecked during this block.",
+    "production_d1_migration_or_data_write": false,
+    "r2_mutation_or_deletion": false
+  },
+  "acceptance": {
+    "full_plan_point": "OPEN / NOT CERTIFIED",
+    "manual_and_physical_editor_acceptance": "DEFERRED until the complete Visual Editor reaches 77.44.7.F / 77.44.8.",
+    "cost_huf": 0
+  },
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "parent_commit": "0fc861cb583f2546e74d91d74e68a62aeedf8847",
+    "push": "Pending verified tests and normal fast-forward release."
+  }
+}
