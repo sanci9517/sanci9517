@@ -59,12 +59,67 @@
     "diff_check": "PASS before plan/evidence finalization."
   },
   "release": {
-    "runtime_commit": null,
+    "runtime_source_changed": false,
     "worker_redeployment_required": false,
-    "github_push": "Pending normal fast-forward of test/evidence/plan-only changes; runtime source unchanged, no Worker redeployment."
+    "cloudflare_build_after_push": "No new build; the latest build remains the successful build for runtime commit b0edff51befc5ec8842aad4f8cb8fedbe0feee3b. Verified production build path excludes docs/** and tests/**.",
+    "worker_deployment_after_push": "None; confirmed unchanged by Cloudflare deployments GET.",
+    "d1_preflight": "Not run; no runtime change or Worker deployment was requested.",
+    "d1_migration_or_data_write": false,
+    "r2_mutation_or_deletion": false
   },
   "acceptance": {
     "full_plan_point": "OPEN / NOT CERTIFIED",
-    "full_editor_manual_and_physical_acceptance": "DEFERRED until the complete Visual Editor is ready."
+    "full_editor_manual_and_physical_acceptance": "DEFERRED until the complete Visual Editor is ready.",
+    "cost_huf": 0
+  },
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "parent_commit": "5873cfd434b3abf18e7600fd9450e4566dfdac6",
+    "test_commit": "f9245f03d96318e1fcc9639c1e7228a2d6d238ca",
+    "push": "Normal fast-forward push verified; git ls-remote exact branch ref equals test commit.",
+    "comparison": {
+      "ahead_by": 1,
+      "behind_by": 0,
+      "total_commits": 1
+    },
+    "github_statuses": {
+      "state": "pending",
+      "total_count": 0,
+      "statuses": []
+    },
+    "aggregate_github_ci_pass": false
+  },
+  "production": {
+    "worker": "sanci9517-streamer-brand",
+    "latest_build_id": "76891d0c-0ceb-47e2-932d-dfae6ef0b94f",
+    "latest_build_commit": "b0edff51befc5ec8842aad4f8cb8fedbe0feee3b",
+    "deployment_id": "3bace7fa-0446-47ca-9bfc-34f034312587",
+    "traffic_version": "ddd41243-7102-49ec-b390-16199a0b6383",
+    "worker_version_number": 3816,
+    "traffic_percentage": 100,
+    "observed_at": "2026-11-04T16:19:17Z",
+    "unchanged_after_test_docs_push": true,
+    "health": {
+      "http_status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "asset_hashes": {
+      "/editor-v2/": {
+        "local": "10cd9dc884a4f8add3527edf2fd81c0f3a67f2d74fcd78ccfd05f270cca5c155",
+        "live": "10cd9dc884a4f8add3527edf2fd81c0f3a67f2d74fcd78ccfd05f270cca5c155",
+        "match": true
+      },
+      "/editor-v2/ui/shell.js": {
+        "local": "ac59f8c3d5e7f84df1736bc21b09f9e1677f8b596cbabdf6fd8687ea905603a4",
+        "live": "ac59f8c3d5e7f84df1736bc21b09f9e1677f8b596cbabdf6fd8687ea905603a4",
+        "match": true
+      }
+    }
   }
 }
