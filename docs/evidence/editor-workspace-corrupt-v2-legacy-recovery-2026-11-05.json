@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "recorded_at_utc": "2026-11-05T19:11:03Z",
+  "recorded_at_utc": "2026-11-05T19:19:36Z",
   "plan_point": "77.44.6.1.C",
   "status": "VALIDATED_AWAITING_AUTOMATIC_DEPLOY",
   "scope": "Recover the last valid v1 local workbench settings when the v2 value is malformed, while always preferring a valid v2 value and preserving Save/Publish separation.",
@@ -8,8 +8,8 @@
     "repository": "sanci9517/sanci9517",
     "branch": "v2/foundation",
     "starting_head": "d5d785fc42af2ae5ca6952679017f89a2bb3ac0d",
-    "runtime_commit": null,
-    "runtime_commit_fast_forward_push_verified": false,
+    "runtime_commit": "436f9a54c795728887a6abc3ad438200293ca486",
+    "runtime_commit_fast_forward_push_verified": true,
     "runtime_files_changed": [
       "public/editor-v2/ui/workspace-appearance.js",
       "public/editor-v2/ui/shell.js",
@@ -89,19 +89,38 @@
     "health_pre_change": "HTTP 200; ok=true; version=2.0.0"
   },
   "release": {
-    "status": "PENDING_VERIFIED_RUNTIME_PUSH_AND_AUTOMATIC_BUILD",
-    "build_uuid": null,
-    "build_outcome": null,
-    "deployment_id": null,
-    "worker_version": null,
-    "traffic_percent": null,
-    "health": null,
-    "public_asset_hashes": []
+    "status": "RELEASED_AND_VERIFIED",
+    "build_uuid": "f0b9a55e-4874-4bb8-8fb9-399772be14a7",
+    "build_outcome": "SUCCESS; exact commit 436f9a54c795728887a6abc3ad438200293ca486; typecheck, deploy:safe, migration safety gate, and Wrangler upload completed; no D1 migration applied",
+    "deployment_id": "6922e8ee-26d2-4bfb-b25b-c0509ab10699",
+    "worker_version": "8fc6301e-3a5d-4e9f-ba85-88353bd2e134",
+    "traffic_percent": 100,
+    "health": "Direct GET /api/health returned HTTP 200 with {ok:true, service:sanci9517-streamer-brand, version:2.0.0, server:cloudflare-worker}.",
+    "public_asset_hashes": [
+      {
+        "path": "/editor-v2/",
+        "status": 200,
+        "sha256_local_and_live": "5f854e792a3ced726a36e5c2d7b996f5f4e674c170bfee0ee264eabdb8152cd3"
+      },
+      {
+        "path": "/editor-v2/ui/shell.js?v=20261105-workspace-legacy-recovery",
+        "status": 200,
+        "sha256_local_and_live": "96faee74fdc3f86c571a9170973fc25f0e8d91eaa8fd4ec5120b2470195ea93e"
+      },
+      {
+        "path": "/editor-v2/ui/workspace-appearance.js?v=20261105-workspace-legacy-recovery",
+        "status": 200,
+        "sha256_local_and_live": "7a47e48b544a12c218e854531835cfc736bcf02163317197a04de859258b4e96"
+      }
+    ],
+    "github_combined_statuses": [],
+    "github_aggregate_ci_pass_claimed": false,
+    "deployment_verified_at_utc": "2026-11-05T19:15:07Z"
   },
   "cost_and_acceptance": {
     "cost_huf": 0,
     "new_dependency": false,
-    "plan_point": "OPEN / NOT CERTIFIED; one verified workspace-storage lifecycle gap is fixed.",
+    "plan_point": "OPEN / NOT CERTIFIED; one verified workspace-storage lifecycle gap is fixed and released; broader dynamic docking/workspace lifecycle criteria remain open.",
     "full_visual_editor_manual_physical_acceptance": "DEFERRED until the complete Editor acceptance gate."
   }
 }
