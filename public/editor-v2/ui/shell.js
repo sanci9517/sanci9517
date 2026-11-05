@@ -455,6 +455,10 @@ function setupDockReordering(){
       ?workspaceAppearance?.setDockLayout({dockOrder:value,panelMode:'separate'})
       :workspaceAppearance?.setDockOrder(value);
     if(changed){
+      // Applying the saved visual preset can select its default panel. When a
+      // dock is pulled out of a tab group, keep that dragged dock active so
+      // the visible result follows the user's action rather than the preset.
+      if(ungrouping)setPanel(sourceId,true,{save:true,customize:false});
       const namesInOrder=order.map(item=>names[item.dataset.workspaceDockId]||'Panel').join(', ');
       announce(ungrouping
         ?`A(z) ${names[sourceId]} panel külön dokkolóként a vászon ${before?'elé':'után'} került. A vászon fedetlen. Sorrend: ${namesInOrder}.`

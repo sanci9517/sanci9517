@@ -1,0 +1,119 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-05T21:22:24Z",
+  "plan_point": "77.44.6.1.C",
+  "status": "TARGETED_MATRIX_PASS_AWAITING_RUNTIME_RELEASE",
+  "scope": "Keep the dragged panel active when ungrouping either dock from a desktop tabbed group to either canvas edge across every supported saved dock order and group side.",
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "starting_head": "fc1f29c43b3f0f8991e4fcf5d6f3d575a99d5998",
+    "runtime_commit": null,
+    "runtime_files_changed": [
+      "public/editor-v2/ui/shell.js",
+      "public/editor-v2/index.html"
+    ],
+    "test_files_changed": [
+      "tests/browser/editor-workspace-appearance.test.js"
+    ],
+    "traceability_file_changed": [
+      "docs/evidence/feature-traceability.json"
+    ]
+  },
+  "gap_and_fix": {
+    "verified_gap": "Ungrouping a dock calls setDockLayout, which reapplies the balanced visual preset. Applying that preset opens the left dock and then the right dock, so the dragged left dock loses active selection and the right Inspector is selected instead.",
+    "red_reproduction": "Real Chromium matrix failed at left-canvas-right / left-side tab group / left dock / before-canvas edge: active panel was right although the left panel was selected before dragging.",
+    "fix": "After a successful tabbed-to-separate drop, explicitly select/open the dragged source dock in the shell state. This mirrors the existing group-drop behavior and does not create another workspace history entry. Cache-busted shell URL is 20261105-tabbed-ungroup-active-dock.",
+    "contracts": [
+      "The dragged panel stays the active panel after separation.",
+      "Undo restores the prior tabbed mode, side, and dock order as one workspace step.",
+      "All six saved dock orders and both group sides preserve the selected canvas edge.",
+      "The canvas remains at least 400 CSS px and neither dock overlaps it.",
+      "The operation is workspace-only and does not invoke Page Model, Save, Publish, or renderer writes."
+    ]
+  },
+  "validation": {
+    "targeted_real_chromium_matrix": {
+      "status": "PASS",
+      "cases": 48,
+      "duration_ms": 53078.025805,
+      "dimensions": {
+        "saved_dock_orders": 6,
+        "group_sides": 2,
+        "source_docks": 2,
+        "canvas_edges": 2
+      },
+      "assertions": [
+        "drop preview identifies the selected canvas edge",
+        "tabbed mode becomes separate while remembered group side is retained",
+        "dropped source dock remains active before and after the operation",
+        "saved order matches canvas-edge placement",
+        "minimum canvas is 400 CSS px and neither dock rectangle overlaps it",
+        "drop lifecycle closes and one Undo restores the grouped mode, side, and prior order",
+        "Undo restores the selected source dock",
+        "zero Page Model/Save/Publish writes"
+      ],
+      "command": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py node --test --test-concurrency=1 --test-name-pattern='ungrouping either tabbed dock follows both canvas edges for all saved dock orders and group sides' --test-reporter=spec tests/browser/editor-workspace-appearance.test.js"
+    },
+    "full_browser_file_after_runtime_change": {
+      "status": "INTERRUPTED_BY_USER_NOT_PASS",
+      "reported_pass_before_interruption": 11,
+      "total_tests": 54,
+      "note": "The user stopped the long full-file Chromium run; outcomes for tests not yet printed are unknown."
+    },
+    "editor_unit_suite": "PASS: npm run test:editor; 14/14 Node test files, 3/3 subreaper cases.",
+    "typecheck": "PASS: npm run typecheck.",
+    "migration_gate": "PASS: npm run test:web013:migration-gate.",
+    "canonical_plan": "PASS: complete 13-file canonical plan.",
+    "plan_contract": "PASS: tests/plan-contract.test.py; 13/13.",
+    "active_cursor": "77.44.6.1.C; functional acceptance NOT_CERTIFIED.",
+    "traceability": "PASS: 396/396 mappings after regenerating the source fingerprint.",
+    "syntax_and_diff": "PASS: node --check on changed JavaScript; git diff --check.",
+    "wrangler_dry_run": {
+      "status": "PASS",
+      "version": "4.130.0",
+      "assets": 168,
+      "size_kib": 335.81,
+      "gzip_kib": 87.6,
+      "deployed": false,
+      "command": "WRANGLER_WRITE_LOGS=false npx wrangler deploy --dry-run"
+    },
+    "production_d1_preflight": {
+      "database_name": "sanci9517-db",
+      "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
+      "sql": "SELECT name FROM d1_migrations ORDER BY name",
+      "rows_read": 34,
+      "latest_migration": "0028_media_archive.sql",
+      "rows_written": 0,
+      "changes": 0,
+      "changed_db": false,
+      "served_by": "v3-prod",
+      "region": "EEUR",
+      "colo": "FRA"
+    },
+    "production_d1_migration_or_data_write": false,
+    "r2_operation_or_deletion": false
+  },
+  "pre_release_runtime_state": {
+    "deployment_id": "d4d92955-0574-498e-a885-287a258fffcf",
+    "worker_version": "9a59ae75-2f41-4503-87d3-ec5f66dcd811",
+    "traffic_percent": 100,
+    "health": "GET /api/health HTTP 200; ok=true; version=2.0.0"
+  },
+  "release": {
+    "status": "AWAITING_VERIFIED_PUSH_AND_AUTOMATIC_BUILD",
+    "build_uuid": null,
+    "build_outcome": null,
+    "deployment_id": null,
+    "worker_version": null,
+    "traffic_percent": null,
+    "production_health": null,
+    "public_asset_hashes": []
+  },
+  "cost_and_acceptance": {
+    "cost_huf": 0,
+    "new_dependency": false,
+    "full_plan_point": "OPEN / NOT CERTIFIED; this fix and targeted matrix cover one dock lifecycle defect only.",
+    "full_visual_editor_manual_physical_acceptance": "DEFERRED until the complete Editor acceptance gate."
+  }
+}
