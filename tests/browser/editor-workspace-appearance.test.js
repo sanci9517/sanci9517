@@ -786,6 +786,62 @@ test('native mouse drag groups desktop docks without covering the canvas or writ
   assert.deepEqual(errors,[]);
 });
 
+test('native mouse drag reorders a dock past the canvas edge and persists one undoable workspace change',async t=>{
+  const {page,writes,errors}=await openEditor(t,{width:1280,height:900});
+  await openPreferences(page);
+  await page.locator('#workspaceLayout').selectOption('balanced');
+  await page.locator('#workspacePanelMode').selectOption('separate');
+  await page.waitForFunction(()=>!document.querySelector('#leftDock')?.classList.contains('closed')&&!document.querySelector('#rightDock')?.classList.contains('closed'));
+  await page.locator('#closeWorkspaceAppearance').click();
+
+  const canvas=page.locator('.canvas-area');
+  const canvasBounds=await canvas.boundingBox();
+  const activePanelBefore=await page.locator('.workspace').getAttribute('data-workspace-active-panel');
+  assert.ok(canvasBounds&&canvasBounds.width>=400,'the canvas offers a wide desktop edge drop region');
+  await page.locator('#leftDock .dock-heading:visible').first().dragTo(canvas,{targetPosition:{x:canvasBounds.width-4,y:Math.min(30,canvasBounds.height/2)}});
+
+  const reordered=await page.evaluate(()=>{
+    const workspace=document.querySelector('.workspace'),canvas=document.querySelector('.canvas-area');
+    const rect=canvas.getBoundingClientRect(),left=document.querySelector('#leftDock').getBoundingClientRect(),right=document.querySelector('#rightDock').getBoundingClientRect();
+    const saved=JSON.parse(localStorage.getItem('sanci-editor-workspace-preferences-v2'));
+    return {
+      order:workspace.dataset.workspaceDockOrder,
+      savedOrder:saved?.dockOrder,
+      active:workspace.dataset.workspaceActivePanel,
+      canvasRight:rect.right,
+      leftDockLeft:left.left,
+      rightDockLeft:right.left,
+      canvasWidth:rect.width,
+      previewCleared:!document.querySelector('.canvas-area').hasAttribute('data-dock-drop-position')&&!document.querySelector('.canvas-area').hasAttribute('data-dock-drop-label'),
+      dragFinished:!document.body.classList.contains('workspace-reordering'),
+      announcement:document.querySelector('#workspaceDockStatus').textContent
+    };
+  });
+
+  assert.equal(reordered.order,'canvas-left-right','the native mouse drop selects the requested after-canvas layout');
+  assert.equal(reordered.savedOrder,reordered.order,'the dock order persists in the local allowlisted workspace preferences');
+  assert.equal(reordered.active,activePanelBefore,'reordering a dock preserves the active workspace panel instead of changing the user selection');
+  assert.ok(reordered.canvasWidth>=400&&reordered.leftDockLeft>=reordered.canvasRight&&reordered.rightDockLeft>reordered.leftDockLeft,`the rearranged regions remain distinct and canvas-safe: ${JSON.stringify(reordered)}`);
+  assert.equal(reordered.previewCleared,true,'the transient canvas edge cue is removed after the real drop');
+  assert.equal(reordered.dragFinished,true,'the native drag lifecycle ends cleanly');
+  assert.match(reordered.announcement,/Oldalak és eszközök panel.*Vászon.*után.*Sorrend:/iu,'the resulting zone and order are announced');
+
+  await openPreferences(page);
+  assert.equal(await page.locator('#undoWorkspaceLayout').isEnabled(),true,'the actual mouse reorder creates one workspace Undo entry');
+  await page.locator('#undoWorkspaceLayout').click();
+  assert.equal(await page.locator('.workspace').getAttribute('data-workspace-dock-order'),'left-canvas-right');
+  assert.equal(await page.locator('#redoWorkspaceLayout').isEnabled(),true);
+  await page.locator('#redoWorkspaceLayout').click();
+  assert.equal(await page.locator('.workspace').getAttribute('data-workspace-dock-order'),'canvas-left-right');
+  await page.locator('#closeWorkspaceAppearance').click();
+  await page.reload({waitUntil:'load'});
+  await page.waitForFunction(()=>document.documentElement.dataset.editorBoot==='ready');
+  assert.equal(await page.locator('.workspace').getAttribute('data-workspace-dock-order'),'canvas-left-right','the native drop layout survives a complete editor reload');
+  assert.ok(await page.locator('.canvas-area').evaluate(element=>element.getBoundingClientRect().width>=400));
+  assert.deepEqual(writes,[],'native dock reordering changes only local workspace preferences and never saves or publishes page data');
+  assert.deepEqual(errors,[]);
+});
+
 test('dropping the right dock into the left dock center keeps the group on the left track',async t=>{
   const {page,writes,errors}=await openEditor(t,{width:1280,height:900});
   await openPreferences(page);
