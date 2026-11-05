@@ -798,6 +798,37 @@ test('dropping the right dock into the left dock center keeps the group on the l
   assert.deepEqual(errors,[]);
 });
 
+test('grouping on a reordered dock follows the target physical side of the canvas',async t=>{
+  const {page,writes,errors}=await openEditor(t,{width:1280,height:900});
+  await openPreferences(page);
+  await page.locator('#workspaceLayout').selectOption('balanced');
+  await page.locator('#workspacePanelMode').selectOption('separate');
+  await page.locator('#workspaceDockOrder').selectOption('right-canvas-left');
+  await page.waitForFunction(()=>!document.querySelector('#leftDock')?.classList.contains('closed')&&!document.querySelector('#rightDock')?.classList.contains('closed')&&document.querySelector('.workspace')?.dataset.workspaceDockOrder==='right-canvas-left');
+  await page.locator('#closeWorkspaceAppearance').click();
+
+  const result=await page.evaluate(()=>{
+    const source=document.querySelector('#leftDock .dock-heading'),target=document.querySelector('#rightDock');
+    const rect=target.getBoundingClientRect(),canvas=document.querySelector('.canvas-area'),dataTransfer=new DataTransfer();
+    source.dispatchEvent(new DragEvent('dragstart',{bubbles:true,cancelable:true,dataTransfer}));
+    target.dispatchEvent(new DragEvent('dragover',{bubbles:true,cancelable:true,dataTransfer,clientX:rect.left+rect.width/2}));
+    const preview=target.dataset.dockDropPosition;
+    target.dispatchEvent(new DragEvent('drop',{bubbles:true,cancelable:true,dataTransfer,clientX:rect.left+rect.width/2}));
+    const group=source.closest('.left-dock,.right-dock').getBoundingClientRect(),canvasRect=canvas.getBoundingClientRect();
+    return {preview,mode:document.querySelector('.editor-app').dataset.workspacePanelMode,side:document.querySelector('.editor-app').dataset.workspacePanelSide,groupLeft:group.left,canvasLeft:canvasRect.left,canvasWidth:canvasRect.width,order:document.querySelector('.workspace').dataset.workspaceDockOrder,announcement:document.querySelector('#workspaceDockStatus').textContent};
+  });
+
+  assert.equal(result.preview,'group','the target dock center previews grouping');
+  assert.equal(result.mode,'tabbed');
+  assert.equal(result.side,'left','the saved group side follows the target dock track, not the target panel id');
+  assert.ok(result.groupLeft<result.canvasLeft,'the group stays where the dropped-on dock was physically located');
+  assert.ok(result.canvasWidth>=400,'grouping in a reordered layout keeps at least 400px of uncovered canvas');
+  assert.match(result.announcement,/bal oldalon.*vászon fedetlen/iu,'the announcement names the physical target side');
+  assert.equal(result.order,'right-canvas-left','grouping retains the user’s selected panel order');
+  assert.deepEqual(writes,[],'dock grouping remains presentation-only');
+  assert.deepEqual(errors,[]);
+});
+
 test('dropping a dock from a tab group onto the canvas edge separates and reorders it as one undoable change',async t=>{
   const {page,writes,errors}=await openEditor(t,{width:1280,height:900});
   await openPreferences(page);

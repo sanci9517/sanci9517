@@ -382,8 +382,13 @@ function setupDockReordering(){
     order.splice(sourceIndex,1);
     const rect=target.getBoundingClientRect(),ratio=rect.width?((event.clientX-rect.left)/rect.width):0.5;
     if(sourceId!=='canvas'&&target!==canvasArea&&ratio>=0.35&&ratio<=0.65){
-      const grouped=workspaceAppearance?.setPanelGrouping('tabbed',targetId);
-      if(grouped){setPanel(sourceId,true,{save:true,customize:false});announce(`A(z) ${names[sourceId]} panel a(z) ${names[targetId]} panelfülei közé került. A füles csoport a(z) ${targetId==='left'?'bal':'jobb'} oldalon marad, a vászon fedetlen.`)}
+      // A custom dock order can put the panel named "right" to the canvas's
+      // left (and vice versa). Group where the drop target is actually shown,
+      // not where its stable panel id happens to land in the CSS grid.
+      const canvasRect=canvasArea.getBoundingClientRect();
+      const groupSide=rect.left+rect.width/2<canvasRect.left+canvasRect.width/2?'left':'right';
+      const grouped=workspaceAppearance?.setPanelGrouping('tabbed',groupSide);
+      if(grouped){setPanel(sourceId,true,{save:true,customize:false});announce(`A(z) ${names[sourceId]} panel a(z) ${names[targetId]} panelfülei közé került. A füles csoport a vászon ${groupSide==='left'?'bal':'jobb'} oldalán marad, a vászon fedetlen.`)}
       else announce('A panelcsoport nem változott.');
       finishDrag();return;
     }
