@@ -829,6 +829,82 @@ test('grouping on a reordered dock follows the target physical side of the canva
   assert.deepEqual(errors,[]);
 });
 
+test('center dock zones follow the target panel across all six desktop orders and both drag directions',async t=>{
+  const {page,writes,errors}=await openEditor(t,{width:1280,height:900});
+  await openPreferences(page);
+  await page.locator('#workspaceLayout').selectOption('balanced');
+  await page.locator('#workspacePanelMode').selectOption('separate');
+  await page.waitForFunction(()=>!document.querySelector('#leftDock')?.classList.contains('closed')&&!document.querySelector('#rightDock')?.classList.contains('closed'));
+  await page.locator('#closeWorkspaceAppearance').click();
+
+  const orders=['left-canvas-right','canvas-left-right','left-right-canvas','right-left-canvas','right-canvas-left','canvas-right-left'];
+  const results=[];
+  for(const order of orders){
+    for(const [sourceId,targetId] of [['left','right'],['right','left']]){
+      await openPreferences(page);
+      await page.locator('#workspacePanelMode').selectOption('separate');
+      await page.locator('#workspaceDockOrder').selectOption(order);
+      await page.waitForFunction(expected=>{
+        const workspace=document.querySelector('.workspace');
+        return workspace?.dataset.workspacePanelMode==='separate'&&workspace?.dataset.workspaceDockOrder===expected&&
+          !document.querySelector('#leftDock')?.classList.contains('closed')&&
+          !document.querySelector('#rightDock')?.classList.contains('closed');
+      },order);
+      await page.locator('#closeWorkspaceAppearance').click();
+      await page.waitForFunction(()=>document.querySelector('.workspace')?.dataset.workspacePanelMode==='separate');
+
+      const result=await page.evaluate(({sourceId,targetId})=>{
+        const source=document.querySelector(`#${sourceId}Dock .dock-heading`);
+        const target=document.querySelector(`#${targetId}Dock`);
+        const workspace=document.querySelector('.workspace');
+        const canvas=document.querySelector('.canvas-area');
+        const modeBefore=workspace.dataset.workspacePanelMode;
+        const activeBefore=workspace.dataset.workspaceActivePanel;
+        const targetRect=target.getBoundingClientRect();
+        const canvasRect=canvas.getBoundingClientRect();
+        const point=targetRect.left+targetRect.width/2;
+        const targetSide=targetRect.right<=canvasRect.left+0.5?'left':targetRect.left>=canvasRect.right-0.5?'right':'overlap';
+        const dataTransfer=new DataTransfer();
+        source.dispatchEvent(new DragEvent('dragstart',{bubbles:true,cancelable:true,dataTransfer}));
+        target.dispatchEvent(new DragEvent('dragover',{bubbles:true,cancelable:true,dataTransfer,clientX:point}));
+        const preview=target.dataset.dockDropPosition;
+        const previewLabel=target.dataset.dockDropLabel;
+        target.dispatchEvent(new DragEvent('drop',{bubbles:true,cancelable:true,dataTransfer,clientX:point}));
+        const group=document.querySelector(`#${sourceId}Dock`).getBoundingClientRect();
+        const afterCanvas=canvas.getBoundingClientRect();
+        return {
+          preview,previewLabel,targetSide,
+          modeBefore,activeBefore,mode:document.querySelector('.editor-app').dataset.workspacePanelMode,
+          side:document.querySelector('.editor-app').dataset.workspacePanelSide,
+          order:workspace.dataset.workspaceDockOrder,
+          active:workspace.dataset.workspaceActivePanel,
+          groupLeft:group.left,groupRight:group.right,
+          canvasLeft:afterCanvas.left,canvasRight:afterCanvas.right,canvasWidth:afterCanvas.width,
+          announcement:document.querySelector('#workspaceDockStatus').textContent,
+          stalePreview:target.hasAttribute('data-dock-drop-position')||target.hasAttribute('data-dock-drop-label'),
+          dragActive:document.body.classList.contains('workspace-reordering')
+        };
+      },{sourceId,targetId});
+      assert.equal(result.preview,'group',`${order}: ${sourceId} → ${targetId} previews its center grouping zone`);
+      assert.equal(result.previewLabel,'Panelcsoport',`${order}: the preview explains grouping before the drop`);
+      assert.notEqual(result.targetSide,'overlap',`${order}: the target has its own reserved grid track`);
+      assert.equal(result.mode,'tabbed',`${order}: the center drop creates a tab group`);
+      assert.equal(result.side,result.targetSide,`${order}: the group follows the target's physical canvas side`);
+      assert.equal(result.active,sourceId,`${order}: the moved panel becomes active: ${JSON.stringify(result)}`);
+      assert.ok(result.canvasWidth>=400,`${order}: the group keeps at least 400 CSS px of uncovered canvas`);
+      assert.ok(result.side==='left'?result.groupRight<=result.canvasLeft+0.5:result.groupLeft>=result.canvasRight-0.5,`${order}: the group itself remains outside the canvas`);
+      assert.match(result.announcement,new RegExp(`vászon ${result.side==='left'?'bal':'jobb'} oldalán marad.*vászon fedetlen`,'iu'),`${order}: assistive feedback matches the physical side`);
+      assert.equal(result.stalePreview,false,`${order}: the temporary zone preview clears after grouping`);
+      assert.equal(result.dragActive,false,`${order}: grouping ends the drag lifecycle`);
+      results.push({order,sourceId,targetId,side:result.side,canvasWidth:Math.round(result.canvasWidth)});
+    }
+  }
+  assert.equal(results.length,12,'both source/target directions are checked for every supported order');
+  assert.deepEqual(writes,[],'dynamic dock targeting remains workspace-only and never saves or publishes the page');
+  assert.deepEqual(errors,[]);
+  t.diagnostic(JSON.stringify(results));
+});
+
 test('dropping a dock from a tab group onto the canvas edge separates and reorders it as one undoable change',async t=>{
   const {page,writes,errors}=await openEditor(t,{width:1280,height:900});
   await openPreferences(page);

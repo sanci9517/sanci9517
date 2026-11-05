@@ -1,0 +1,99 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-05",
+  "plan_point": "77.44.6.1.C",
+  "status": "BROWSER_MATRIX_PASS_FULL_C_OPEN",
+  "scope": "Verify that center-zone dock grouping follows the target dock's physical side of the canvas for all supported desktop orders and both panel drag directions.",
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "parent_commit": "0930282a69d390d1c5d856c7792dac34a0e17032",
+    "parent_was_verified_as_branch_head": true,
+    "test_only": true,
+    "runtime_files_changed": [],
+    "github_actions_rerun": false,
+    "aggregate_github_ci_pass": false
+  },
+  "coverage": {
+    "desktop_orders": [
+      "left-canvas-right",
+      "canvas-left-right",
+      "left-right-canvas",
+      "right-left-canvas",
+      "right-canvas-left",
+      "canvas-right-left"
+    ],
+    "drag_directions_per_order": [
+      "left to right",
+      "right to left"
+    ],
+    "matrix_cases": 12,
+    "assertions_per_case": [
+      "center zone previews grouping with a Hungarian label",
+      "target dock is physically outside the canvas",
+      "the grouped track follows the target's actual physical side, not its left/right identifier",
+      "moved panel becomes the active tab",
+      "canvas stays at least 400 CSS px and remains uncovered",
+      "accessible announcement matches the physical side",
+      "preview and drag lifecycle state are cleared after drop",
+      "no Page Model, Save, or Publish writes occur"
+    ],
+    "measured_canvas_width_css_px": {
+      "minimum": 928,
+      "maximum": 970,
+      "samples": [970, 928, 970, 928, 970, 928, 970, 928, 970, 928, 970, 928]
+    },
+    "workspace_only_mutations": true
+  },
+  "validation": {
+    "targeted_chromium_after_fixture_restoration": {
+      "status": "PASS",
+      "tests": 2,
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-name-pattern='dropping a dock onto another dock creates|center dock zones follow the target panel' tests/browser/editor-workspace-appearance.test.js"
+    },
+    "complete_workspace_chromium_file": {
+      "status": "PASS",
+      "tests": 37,
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-workspace-appearance.test.js"
+    },
+    "editor_unit": "PASS 14/14 test files; subreaper 3/3",
+    "typecheck": "PASS: npm run typecheck",
+    "migration_guard": "PASS: npm run test:web013:migration-gate; no migration applied",
+    "canonical_plan": "PASS: scripts/check-canonical-plan.py; one complete 13-file canonical master",
+    "plan_contract": "PASS: scripts/plan_contract.py; functional acceptance remains open/not certified",
+    "active_plan_point": "PASS: scripts/audit-active-plan-point.py; next point 77.44.6.1.C remains open",
+    "traceability": "PASS: scripts/build-feature-traceability.py --check; 396 source mappings",
+    "syntax_and_diff": "PASS: node --check public/editor-v2/ui/shell.js; node --check tests/browser/editor-workspace-appearance.test.js; git diff --check"
+  },
+  "release": {
+    "runtime_deployment": "NOT_APPLICABLE_TEST_AND_DOCUMENTATION_ONLY",
+    "worker": "sanci9517-streamer-brand",
+    "deployment_id": "aff433e1-97c0-4c6d-b064-b1c1317d11f0",
+    "traffic_version": "569e11f0-fce8-4bc3-981a-d1e66f11fe0e",
+    "worker_version_number": 3821,
+    "traffic_percent": 100,
+    "direct_health": {
+      "path": "/api/health",
+      "http_status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "production_asset_hash_recheck": "NOT_APPLICABLE_NO_RUNTIME_ASSET_CHANGED",
+    "production_d1_query_or_write": "NONE; no runtime deployment",
+    "r2_operation_or_deletion": false
+  },
+  "reuse_and_cost": {
+    "reused": "Existing owned native center-zone drag/drop, CSS Grid dock tracks, dock-order allowlist, Workspace Appearance state and local Chromium fixture.",
+    "external_runtime_code_added": false,
+    "dependencies_added": false,
+    "cost_huf": 0
+  },
+  "acceptance": {
+    "77_44_6_1_C": "OPEN; this 12-case center-zone matrix is one verified workspace foundation slice, not complete dynamic docking/workspace lifecycle acceptance.",
+    "full_visual_editor_manual_and_physical_acceptance": "DEFERRED until the complete Editor acceptance gate."
+  }
+}
