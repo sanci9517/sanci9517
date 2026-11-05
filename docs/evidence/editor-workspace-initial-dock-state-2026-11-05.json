@@ -1,7 +1,7 @@
 {
   "date": "2026-11-05",
   "plan_point": "77.44.6.1.C",
-  "status": "focused fix implemented and locally verified; release pending",
+  "status": "runtime fix deployed and public health/assets verified; complete C acceptance remains open",
   "finding": {
     "summary": "The workspace normalizer already strictly accepted only boolean true for an open dock, but startup bypassed it. Local storage values such as the strings \"false\" were passed through Boolean(...) and opened both docks. A truthy invalid active-side value also chose the wrong fallback.",
     "reproduction": "Before the fix, a real Chromium startup with leftOpen=\"false\" and rightOpen=\"false\" produced both docks open and active=right instead of both closed and active=left.",
@@ -40,6 +40,7 @@
     "plan_and_traceability": "PASS: scripts/check-canonical-plan.py; tests/plan-contract.test.py (13/13); scripts/audit-active-plan-point.py (77.44.6.1.C OPEN / NOT_CERTIFIED); scripts/build-feature-traceability.py --check (396/396).",
     "syntax_and_diff": "PASS: node --check on changed JavaScript, Python byte-compilation of the traceability generator, and git diff --check.",
     "wrangler_dry_run": "PASS, Wrangler 4.130.0 exited 0 and reported --dry-run: exiting now after reading 168 public assets; 335.81 KiB total, 87.60 KiB gzip. Wrangler also emitted a non-fatal EROFS warning while attempting to write its log under /home/agent/.config; the dry-run completed successfully.",
+    "github_release": "PASS: normal fast-forward push; GitHub branch API confirms exact v2/foundation HEAD 023933283ec3d782824cdbad93726b7b0ae42d3c. source-audit, canonical-plan, verify, twitch-integration, and Workers Builds checks succeeded; editor-core was still in progress at last check, so aggregate CI PASS is not claimed.",
     "browser_scope_limit": "Only the three focused real-Chromium cases were run for this block. The full Editor/layout acceptance suite was not run and remains OPEN; no full-suite PASS is claimed."
   },
   "production_d1_read_only_preflight": {
@@ -55,14 +56,43 @@
     "branch": "v2/foundation",
     "starting_head": "3f6cac1357456c686d8f65643acd247883a03c86",
     "starting_github_head": "verified equal through GitHub branch API",
-    "runtime_commit": null,
-    "push": "PENDING",
-    "github_checks": "PENDING",
-    "cloudflare_build": "PENDING",
-    "deployment": "PENDING",
-    "traffic_percent": null,
-    "direct_health": "PENDING",
-    "live_asset_sha256": "PENDING",
+    "runtime_commit": "023933283ec3d782824cdbad93726b7b0ae42d3c",
+    "push": "normal fast-forward 3f6cac1357456c686d8f65643acd247883a03c86..023933283ec3d782824cdbad93726b7b0ae42d3c; GitHub branch API verified exact HEAD",
+    "github_checks": {
+      "source-audit": "success",
+      "canonical-plan": "success",
+      "verify": "success",
+      "twitch-integration": "success",
+      "workers-builds": "success",
+      "editor-core": "in_progress at 2026-11-05T22:22Z; aggregate all-checks PASS not claimed"
+    },
+    "cloudflare_build": {
+      "id": "c6c227c1-9edf-4a30-9de3-024d70b40c40",
+      "outcome": "success",
+      "commit": "023933283ec3d782824cdbad93726b7b0ae42d3c",
+      "build_command": "npm run typecheck",
+      "deploy_command": "npm run deploy:safe",
+      "migration_gate": "PASS; no D1 migration applied",
+      "uploaded_assets": ["/editor-v2/index.html", "/editor-v2/ui/shell.js"]
+    },
+    "deployment": "abe77595-1647-4fad-a649-608a83726f53",
+    "deployed_worker_version": "c126332d-2c14-4c9e-b229-900cb16735fc",
+    "traffic_percent": 100,
+    "direct_health": "Public GET /api/health through configured outbound proxy returned HTTP 200 with {ok:true, service:sanci9517-streamer-brand, version:2.0.0, server:cloudflare-worker}. A --noproxy attempt could not connect to port 443; the normal proxy-routed public GET succeeded.",
+    "live_asset_sha256": {
+      "/editor-v2/": {
+        "http_status": 200,
+        "local_sha256": "96588973123005483ae7fb469e4db30f25fc5876bfd9b1417672658955cac473",
+        "live_sha256": "96588973123005483ae7fb469e4db30f25fc5876bfd9b1417672658955cac473",
+        "match": true
+      },
+      "/editor-v2/ui/shell.js?v=20261105-normalize-initial-dock-state": {
+        "http_status": 200,
+        "local_sha256": "af24de945257507b8ed7f9be25ac5c19ad07c2b14a8c7d0bf27600a19d73f2db",
+        "live_sha256": "af24de945257507b8ed7f9be25ac5c19ad07c2b14a8c7d0bf27600a19d73f2db",
+        "match": true
+      }
+    },
     "d1_write_or_migration": false,
     "r2_operation": false,
     "new_dependencies": false,
