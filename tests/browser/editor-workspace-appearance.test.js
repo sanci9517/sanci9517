@@ -31,7 +31,7 @@ function fixtureServer(){
   });
   return {server,writes};
 }
-async function openEditor(t,{width=1366,height=900,isMobile=false,hasTouch=false,blockWorkspaceStorageReads=false,blockShellStorageReads=false,ignoreWorkspacePreferenceWrites=false,initialDockState=null,initialAppearance=null}={}){
+async function openEditor(t,{width=1366,height=900,isMobile=false,hasTouch=false,blockWorkspaceStorageReads=false,blockShellStorageReads=false,ignoreWorkspacePreferenceWrites=false,initialDockState=null,initialAppearance=null,initialLegacyAppearance=null}={}){
   const fixture=fixtureServer();await new Promise(done=>fixture.server.listen(0,'127.0.0.1',done));
   t.after(()=>new Promise(done=>fixture.server.close(done)));
   const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||(existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined),args:['--no-sandbox']});
@@ -49,10 +49,11 @@ async function openEditor(t,{width=1366,height=900,isMobile=false,hasTouch=false
       return setItem.call(this,key,value);
     };
   },{blockWorkspaceStorageReads,blockShellStorageReads,ignoreWorkspacePreferenceWrites});
-  if(initialDockState||initialAppearance)await context.addInitScript(({dock,appearance})=>{
+  if(initialDockState||initialAppearance||initialLegacyAppearance)await context.addInitScript(({dock,appearance,legacyAppearance})=>{
     if(dock)localStorage.setItem('sanci-editor-shell-v2',JSON.stringify(dock));
-    if(appearance)localStorage.setItem('sanci-editor-workspace-preferences-v2',JSON.stringify(appearance));
-  },{dock:initialDockState,appearance:initialAppearance});
+    if(appearance)localStorage.setItem('sanci-editor-workspace-preferences-v2',typeof appearance==='string'?appearance:JSON.stringify(appearance));
+    if(legacyAppearance)localStorage.setItem('sanci-editor-workspace-preferences-v1',JSON.stringify(legacyAppearance));
+  },{dock:initialDockState,appearance:initialAppearance,legacyAppearance:initialLegacyAppearance});
   const page=await context.newPage();page.setDefaultTimeout(8000);page.setDefaultNavigationTimeout(20_000);
   const errors=[];page.on('pageerror',error=>errors.push(error.message));
   await page.goto(`http://127.0.0.1:${fixture.server.address().port}/editor-v2/index.html`,{waitUntil:'load'});
@@ -1907,6 +1908,23 @@ test('desktop dock drag cancels when the viewport switches to the mobile drawer 
   assert.equal(late.announcement,'A képernyőméret változott, ezért az átrendezés megszakadt.','the responsive boundary explains why the drag ended');
   assert.ok(!(await page.locator('#leftDock').isVisible()&&await page.locator('#rightDock').isVisible()),'the mobile single-drawer rule remains intact');
   assert.deepEqual(writes,[],'canceling dock interactions never writes page content');
+  assert.deepEqual(errors,[]);
+});
+
+test('Editor restores a valid legacy workbench after a corrupt v2 record, then migrates the next change',async t=>{
+  const {page,writes,errors}=await openEditor(t,{width:1280,height:900,initialAppearance:'{broken',initialLegacyAppearance:{version:1,layout:'inspector',theme:'sage',density:'compact',accent:'#00a7c8'}});
+  await page.waitForFunction(()=>document.querySelector('.editor-app')?.dataset.workspaceTheme==='sage'&&document.querySelector('.workspace')?.classList.contains('right-open'));
+  assert.equal(await page.locator('.editor-app').getAttribute('data-workspace-theme'),'sage','a damaged current storage entry falls back to the last valid legacy presentation');
+  assert.equal(await page.locator('#workspaceLayout').inputValue(),'inspector','legacy layout preferences remain usable after recovery');
+  const restored=await page.evaluate(()=>JSON.parse(localStorage.getItem('sanci-editor-workspace-preferences-v1')));
+  assert.equal(restored.theme,'sage','recovery does not destructively rewrite the legacy backup during startup');
+  assert.equal(await page.evaluate(()=>localStorage.getItem('sanci-editor-workspace-preferences-v2')),'{broken','startup recovery leaves the damaged current record untouched until an explicit edit');
+
+  await openPreferences(page);
+  await page.locator('#workspaceTheme').selectOption('cinder');
+  assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('sanci-editor-workspace-preferences-v2'))?.theme),'cinder','the next explicit change creates a normalized current-version record');
+  assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('sanci-editor-workspace-preferences-v1'))?.theme),'sage','the retained legacy backup remains available for recovery');
+  assert.deepEqual(writes,[],'workspace migration never invokes Page Model Save or Publish');
   assert.deepEqual(errors,[]);
 });
 

@@ -1,0 +1,107 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-05T19:11:03Z",
+  "plan_point": "77.44.6.1.C",
+  "status": "VALIDATED_AWAITING_AUTOMATIC_DEPLOY",
+  "scope": "Recover the last valid v1 local workbench settings when the v2 value is malformed, while always preferring a valid v2 value and preserving Save/Publish separation.",
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "starting_head": "d5d785fc42af2ae5ca6952679017f89a2bb3ac0d",
+    "runtime_commit": null,
+    "runtime_commit_fast_forward_push_verified": false,
+    "runtime_files_changed": [
+      "public/editor-v2/ui/workspace-appearance.js",
+      "public/editor-v2/ui/shell.js",
+      "public/editor-v2/index.html"
+    ],
+    "test_files_changed": [
+      "tests/editor-workspace-appearance.test.js",
+      "tests/browser/editor-workspace-appearance.test.js"
+    ],
+    "traceability_file_changed": [
+      "docs/evidence/feature-traceability.json"
+    ]
+  },
+  "gap_and_fix": {
+    "verified_gap": "readWorkspacePreferences returned safe defaults immediately when the v2 key contained invalid JSON, even when the legacy v1 key still contained a valid recoverable workbench. This silently discarded previously saved user layout and theme settings.",
+    "red_reproduction": "With v2='{'broken' and valid v1 {version:1,layout:'inspector',theme:'aurora'}, readWorkspacePreferences returned layout='canvas' instead of the last valid legacy layout='inspector'.",
+    "fix": "Try the v2 record first and normalize it only when it is valid JSON object data; if absent, malformed, or non-object, try the v1 record; if storage access is blocked or both records are unusable, return the existing safe defaults. Valid v2 data continues to override stale v1 data. Recovery is read-only; the next explicit user change creates the v2 record. Cache-buster updated to 20261105-workspace-legacy-recovery.",
+    "data_and_product_contracts": [
+      "Recovery does not rewrite either key at startup.",
+      "Legacy v1 remains available until the user makes an explicit workspace change.",
+      "Valid v2 values always win over stale v1 values.",
+      "No Page Model, Save, Publish, or public-renderer write is made."
+    ]
+  },
+  "validation": {
+    "baseline_reproduction": "PASS: a direct Node assertion failed before the fix with actual layout canvas versus expected inspector.",
+    "workspace_unit_file": "PASS: node --experimental-vm-modules --test tests/editor-workspace-appearance.test.js; 10/10.",
+    "targeted_real_chromium": "PASS: 1/1 legacy recovery and explicit v2 migration, 0 failed/cancelled/skipped.",
+    "full_browser_file": {
+      "status": "PASS",
+      "tests": 53,
+      "failures": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "duration_ms": 384865.64323,
+      "orphaned_browser_descendants_reaped": 224,
+      "command": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-workspace-appearance.test.js"
+    },
+    "transient_full_run": "An earlier 53-test run had 49 passes and four fixture/animation timeouts; the four affected cases passed 4/4 in an isolated serial rerun, then the complete 53-test run passed. No assertion failure reproduced.",
+    "editor_unit_suite": "PASS: npm run test:editor; 14/14 Node files and 3/3 subreaper cases.",
+    "typecheck": "PASS: npm run typecheck.",
+    "migration_gate": "PASS: npm run test:web013:migration-gate.",
+    "canonical_plan": "PASS: scripts/check-canonical-plan.py; complete 13-file plan and one current cursor.",
+    "plan_contract": "PASS: tests/plan-contract.test.py; 13/13.",
+    "active_cursor": "PASS: scripts/audit-active-plan-point.py; next point 77.44.6.1.C; NOT_CERTIFIED.",
+    "traceability": "PASS: scripts/build-feature-traceability.py --check; 396/396 mappings.",
+    "syntax_and_diff": "PASS: node --check on runtime/test JS; git diff --check.",
+    "wrangler_dry_run": {
+      "status": "PASS",
+      "version": "4.130.0",
+      "assets": 168,
+      "size_kib": 335.81,
+      "gzip_kib": 87.6,
+      "deployed": false,
+      "command": "WRANGLER_WRITE_LOGS=false npx wrangler deploy --dry-run"
+    },
+    "production_d1_preflight": {
+      "database_name": "sanci9517-db",
+      "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
+      "sql": "SELECT name FROM d1_migrations ORDER BY name",
+      "rows_read": 34,
+      "latest_migration": "0028_media_archive.sql",
+      "rows_written": 0,
+      "changes": 0,
+      "changed_db": false,
+      "served_by": "v3-prod",
+      "region": "EEUR",
+      "colo": "FRA"
+    },
+    "production_d1_migration_or_data_write": false,
+    "r2_operation_or_deletion": false
+  },
+  "pre_release_runtime_state": {
+    "deployment_id": "45db1671-bb77-4bbf-8713-85e048381609",
+    "worker_version": "929caab2-558a-45db-b9f1-981feb4d365f",
+    "traffic_percent": 100,
+    "health_pre_change": "HTTP 200; ok=true; version=2.0.0"
+  },
+  "release": {
+    "status": "PENDING_VERIFIED_RUNTIME_PUSH_AND_AUTOMATIC_BUILD",
+    "build_uuid": null,
+    "build_outcome": null,
+    "deployment_id": null,
+    "worker_version": null,
+    "traffic_percent": null,
+    "health": null,
+    "public_asset_hashes": []
+  },
+  "cost_and_acceptance": {
+    "cost_huf": 0,
+    "new_dependency": false,
+    "plan_point": "OPEN / NOT CERTIFIED; one verified workspace-storage lifecycle gap is fixed.",
+    "full_visual_editor_manual_physical_acceptance": "DEFERRED until the complete Editor acceptance gate."
+  }
+}

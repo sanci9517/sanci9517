@@ -100,13 +100,17 @@ export function normalizeWorkspacePreferences(value){
   return {version:2,...normalizeVisualPreferences(input),profiles:normalizeProfiles(input.profiles)};
 }
 export function readWorkspacePreferences(storage){
-  try{
-    const source=storage===undefined?globalThis.localStorage:storage;
-    const current=source?.getItem(WORKSPACE_PREFERENCES_KEY);
-    const saved=current||source?.getItem(LEGACY_WORKSPACE_PREFERENCES_KEY)||'{}';
-    return normalizeWorkspacePreferences(JSON.parse(saved));
+  let source;
+  try{source=storage===undefined?globalThis.localStorage:storage}catch{return {...WORKSPACE_PREFERENCE_DEFAULTS,profiles:[]}}
+  for(const key of [WORKSPACE_PREFERENCES_KEY,LEGACY_WORKSPACE_PREFERENCES_KEY]){
+    try{
+      const saved=source?.getItem(key);
+      if(!saved)continue;
+      const parsed=JSON.parse(saved);
+      if(isRecord(parsed))return normalizeWorkspacePreferences(parsed);
+    }catch{}
   }
-  catch{return {...WORKSPACE_PREFERENCE_DEFAULTS,profiles:[]}}
+  return {...WORKSPACE_PREFERENCE_DEFAULTS,profiles:[]}
 }
 export function applyWorkspacePreferences(root,preferences){
   const value=normalizeWorkspacePreferences(preferences);

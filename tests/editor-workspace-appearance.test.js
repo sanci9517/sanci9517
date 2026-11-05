@@ -15,6 +15,20 @@ test('workspace preferences are versioned, separate from page content and tolera
   assert.deepEqual([...current.values.keys()],[LEGACY_WORKSPACE_PREFERENCES_KEY],'legacy presentation data remains intact while the next edit can migrate it');
 });
 
+test('a malformed current workspace record falls back to valid legacy preferences without overriding valid v2 data',()=>{
+  const legacy={version:1,layout:'inspector',theme:'aurora',density:'compact',accent:'#00a7c8'};
+  const fallback=storage({[WORKSPACE_PREFERENCES_KEY]:'{broken',[LEGACY_WORKSPACE_PREFERENCES_KEY]:JSON.stringify(legacy)});
+  assert.equal(readWorkspacePreferences(fallback).layout,'inspector','a damaged v2 record must not discard the last valid legacy workspace');
+  assert.equal(readWorkspacePreferences(fallback).theme,'aurora');
+
+  const current=storage({
+    [WORKSPACE_PREFERENCES_KEY]:JSON.stringify({version:2,layout:'balanced',theme:'sage'}),
+    [LEGACY_WORKSPACE_PREFERENCES_KEY]:JSON.stringify(legacy),
+  });
+  assert.equal(readWorkspacePreferences(current).layout,'balanced','a valid current record always wins over stale legacy state');
+  assert.equal(readWorkspacePreferences(current).theme,'sage');
+});
+
 test('curated workspace designs are allowlisted and remain compatible with saved profiles',()=>{
   const themes=['graphite','aurora','ocean','sage','cinder'];
   for(const theme of themes){
