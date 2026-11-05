@@ -1,0 +1,90 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-05",
+  "plan_point": "77.44.6.1.C",
+  "status": "NATIVE_MOUSE_CANVAS_EDGE_REORDER_PASS_FULL_C_OPEN",
+  "scope": "Exercise the real browser mouse-driven HTML drag lifecycle when moving a desktop dock past the canvas edge, and verify persistence, workspace undo/redo, and canvas safety.",
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "base_commit": "b4bb2de29ca32daad9dfbe8310009c64c0b7b379",
+    "base_commit_was_verified_as_github_branch_head": true,
+    "test_commit": "78708c4f549c98b87b9b4b5fdce2c39577c95119",
+    "test_commit_parent": "b4bb2de29ca32daad9dfbe8310009c64c0b7b379",
+    "test_only_runtime_files_changed": false,
+    "runtime_files_changed": [],
+    "new_dependencies": false,
+    "aggregate_github_ci_pass": false,
+    "push": "Test and evidence/plan documentation commits are to be pushed as a normal fast-forward; verify the exact remote ref after push."
+  },
+  "coverage": {
+    "browser": "Chromium via existing Playwright local editor fixture",
+    "interaction": "Playwright Locator.dragTo with browser mouse input and native HTML drag events",
+    "viewport_css_px": {
+      "width": 1280,
+      "height": 900
+    },
+    "source": "visible heading of the left dock",
+    "target": "near the right edge of the canvas",
+    "result": {
+      "dock_order": "canvas-left-right",
+      "local_workspace_preference_persists": true,
+      "active_panel_is_preserved": true,
+      "canvas_minimum_width_css_px": 400,
+      "canvas_and_left_dock_rectangles_are_disjoint": true,
+      "left_and_right_dock_rectangles_remain_ordered_and_disjoint": true,
+      "transient_canvas_edge_cue_cleared": true,
+      "native_drag_lifecycle_finished": true,
+      "accessible_live_announcement_names_target_zone_and_order": true,
+      "workspace_undo_restores_previous_order": true,
+      "workspace_redo_restores_new_order": true,
+      "full_editor_reload_restores_new_order": true,
+      "page_model_save_publish_or_renderer_requests": 0
+    }
+  },
+  "validation": {
+    "targeted_native_mouse_chromium": {
+      "status": "PASS",
+      "tests": 2,
+      "command": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py node --test --test-concurrency=1 --test-reporter=spec --test-name-pattern='native mouse drag' tests/browser/editor-workspace-appearance.test.js"
+    },
+    "complete_workspace_chromium_file": {
+      "status": "PASS",
+      "tests": 40,
+      "command": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-workspace-appearance.test.js",
+      "orphaned_browser_descendants_reaped": 174
+    },
+    "editor_unit": "PASS: npm run test:editor; 14/14 Node test files plus the Linux subreaper test suite 3/3.",
+    "typecheck": "PASS: npm run typecheck.",
+    "migration_guard": "PASS: npm run test:web013:migration-gate; no production migration applied.",
+    "canonical_plan_checks": "PASS: scripts/check-canonical-plan.py (one complete 13-file master), scripts/plan_contract.py, and scripts/audit-active-plan-point.py; 77.44.6.1.C remains OPEN / NOT_CERTIFIED.",
+    "traceability": "PASS: scripts/build-feature-traceability.py --check; all 396 source mappings match current catalog, contracts and paths.",
+    "syntax_and_diff": "PASS: node --check tests/browser/editor-workspace-appearance.test.js and git diff --check.",
+    "wide_51_file_editor_layout_suite": "NOT RUN; no aggregate wide-suite claim."
+  },
+  "release": {
+    "status": "TEST_AND_DOCUMENTATION_ONLY_NO_WORKER_DEPLOY",
+    "runtime_source_changed": false,
+    "worker_deployment": "NOT_APPLICABLE; this batch contains only a browser test, evidence and canonical-plan documentation.",
+    "production_d1_query_or_write": "NONE",
+    "r2_operation_or_deletion": false,
+    "control_plane_at_run_start": {
+      "deployment_id": "17c9928a-c0d4-4ffa-bdf2-21b9623d9ef0",
+      "traffic_version": "e5ce8eba-1007-4ca5-b153-a426e2224a09",
+      "worker_version_number": 3822,
+      "traffic_percent": 100,
+      "production_health": "HTTP 200, ok=true, version=2.0.0",
+      "runtime_changed_by_this_block": false
+    }
+  },
+  "reuse_and_cost": {
+    "reused": "Existing dock-order state, CSS-grid canvas-safe tracks, native HTML drag behavior, existing Playwright fixture and installed dependency.",
+    "external_runtime_code_added": false,
+    "dependencies_added": false,
+    "cost_huf": 0
+  },
+  "acceptance": {
+    "77_44_6_1_C": "OPEN; dynamic dock zones, nested/floating layout under the no-canvas-overlay constraint, and complete workspace lifecycle acceptance remain open.",
+    "full_visual_editor_manual_and_physical_acceptance": "DEFERRED until the complete Editor acceptance gate."
+  }
+}
