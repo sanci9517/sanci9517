@@ -1,0 +1,194 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-05",
+  "plan_point": "77.44.6.1.C",
+  "status": "FULL_53_FILE_CHROMIUM_LAYOUT_SUITE_PASS_FULL_C_OPEN",
+  "scope": "Rerun the complete serial Chromium layout regression suite after prior cumulative Inspector timeouts and interrupted aggregate runs.",
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "test_base_commit": "e9a5172447388b645f7bf778aaa4623c8e5d2bc7",
+    "github_exact_ref_at_suite_start": "e9a5172447388b645f7bf778aaa4623c8e5d2bc7",
+    "test_base_combined_statuses": [],
+    "aggregate_github_ci_pass": false,
+    "runtime_files_changed": [],
+    "browser_test_files_changed": [],
+    "documentation_change": "This evidence plus the canonical plan entry; no test or runtime code changed."
+  },
+  "validation": {
+    "browser": "Installed Chromium 154 through the project Playwright dependency; serial per-file subreaper runner.",
+    "suite": {
+      "status": "PASS",
+      "expected_files": 53,
+      "completed_files": 53,
+      "failed_files": 0,
+      "command": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py npm run test:editor:layout",
+      "files": [
+        "tests/browser/editor-action-help.test.js",
+        "tests/browser/editor-workspace-appearance.test.js",
+        "tests/browser/editor-multi-validation.test.js",
+        "tests/browser/editor-page-paths.test.js",
+        "tests/browser/editor-layout.test.js",
+        "tests/browser/editor-inspector-richtext-controls.test.js",
+        "tests/browser/editor-richtext-selection.test.js",
+        "tests/browser/editor-richtext-multiblock.test.js",
+        "tests/browser/editor-richtext-nested-links.test.js",
+        "tests/browser/editor-richtext-structural-offsets.test.js",
+        "tests/browser/editor-richtext-block-transform.test.js",
+        "tests/browser/editor-richtext-partial-list.test.js",
+        "tests/browser/editor-richtext-nested-paste.test.js",
+        "tests/browser/editor-richtext-ime-final-input.test.js",
+        "tests/browser/editor-plain-text-ime.test.js",
+        "tests/browser/editor-richtext-hardbreak-clipboard.test.js",
+        "tests/browser/editor-richtext-empty-selection.test.js",
+        "tests/browser/editor-richtext-nested-styles.test.js",
+        "tests/browser/editor-richtext-save-publish.test.js",
+        "tests/browser/editor-inspector-lifecycle.test.js",
+        "tests/browser/editor-inspector-breakpoint-lifecycle.test.js",
+        "tests/browser/editor-publication-guidance.test.js",
+        "tests/browser/editor-accessibility-ime.test.js",
+        "tests/browser/editor-general-fields-ime.test.js",
+        "tests/browser/editor-layer-rename-draft.test.js",
+        "tests/browser/editor-ux-p0-workflow.test.js",
+        "tests/browser/editor-style-copy.test.js",
+        "tests/browser/editor-responsive-layout.test.js",
+        "tests/browser/editor-schedule-visibility.test.js",
+        "tests/browser/editor-inspector-partial-types.test.js",
+        "tests/browser/editor-inspector-opacity-shadow-reset.test.js",
+        "tests/browser/editor-inspector-visual-effects-partial-types.test.js",
+        "tests/browser/editor-inspector-background-image-partial-types.test.js",
+        "tests/browser/editor-legacy-media-parity.test.js",
+        "tests/browser/editor-content-system.test.js",
+        "tests/browser/editor-media-source-switch.test.js",
+        "tests/browser/editor-gallery-crop-parity.test.js",
+        "tests/browser/editor-design-tokens.test.js",
+        "tests/browser/editor-structural-parity.test.js",
+        "tests/browser/editor-structured-content.test.js",
+        "tests/browser/editor-root-style.test.js",
+        "tests/browser/editor-decorative-elements.test.js",
+        "tests/browser/editor-card-content.test.js",
+        "tests/browser/editor-countdown.test.js",
+        "tests/browser/editor-social-links.test.js",
+        "tests/browser/editor-creator-embed.test.js",
+        "tests/browser/editor-code-snippet.test.js",
+        "tests/browser/admin-media-library.test.js",
+        "tests/browser/admin-media-pagination.test.js",
+        "tests/browser/editor-media-picker-pagination.test.js",
+        "tests/browser/admin-media-retention.test.js",
+        "tests/browser/admin-media-integrity.test.js",
+        "tests/browser/editor-element-insertion.test.js"
+      ],
+      "notable_long_files": {
+        "tests/browser/editor-inspector-lifecycle.test.js": {
+          "status": "PASS",
+          "tests": 1,
+          "duration_ms": 284295
+        },
+        "tests/browser/editor-inspector-breakpoint-lifecycle.test.js": {
+          "status": "PASS",
+          "tests": 1,
+          "duration_ms": 147294
+        },
+        "tests/browser/editor-inspector-partial-types.test.js": {
+          "status": "PASS",
+          "tests": 1,
+          "duration_ms": 960396
+        },
+        "tests/browser/editor-inspector-visual-effects-partial-types.test.js": {
+          "status": "PASS",
+          "tests": 1,
+          "duration_ms": 331463
+        },
+        "tests/browser/editor-inspector-background-image-partial-types.test.js": {
+          "status": "PASS",
+          "tests": 1,
+          "duration_ms": 194370
+        }
+      }
+    },
+    "editor_unit": {
+      "status": "PASS",
+      "node_test_files": 14,
+      "linux_subreaper_cases": 3,
+      "command": "npm run test:editor"
+    },
+    "typecheck": {
+      "status": "PASS",
+      "command": "npm run typecheck"
+    },
+    "migration_safety_gate": {
+      "status": "PASS",
+      "command": "npm run test:web013:migration-gate",
+      "production_migration_or_write": false
+    },
+    "canonical_plan": {
+      "status": "PASS",
+      "command": "python3 scripts/check-canonical-plan.py",
+      "master_files": 13
+    },
+    "plan_contract": {
+      "status": "PASS",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tests/plan-contract.test.py",
+      "cases": 13
+    },
+    "active_cursor": {
+      "status": "PASS",
+      "command": "python3 scripts/audit-active-plan-point.py",
+      "next": "77.44.6.1.C",
+      "acceptance": "NOT_CERTIFIED"
+    },
+    "traceability": {
+      "status": "PASS",
+      "command": "python3 scripts/build-feature-traceability.py --check",
+      "mappings": 396
+    },
+    "previous_suite_blocker": {
+      "status": "CLEARED_FOR_THIS_RERUN",
+      "details": "The previously recorded Inspector lifecycle and 44-type partial Inspector tests both completed successfully inside the full suite."
+    }
+  },
+  "release": {
+    "status": "TEST_AND_DOCUMENTATION_ONLY_NO_WORKER_DEPLOY",
+    "worker_deployment_id": "17c9928a-c0d4-4ffa-bdf2-21b9623d9ef0",
+    "traffic_version_id": "e5ce8eba-1007-4ca5-b153-a426e2224a09",
+    "traffic_percent": 100,
+    "worker_deployment_changed": false,
+    "direct_health": {
+      "status": "PASS",
+      "http_status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "asset_hashes": {
+      "editor_index": {
+        "url": "/editor-v2/",
+        "http_status": 200,
+        "local_sha256": "63668456f29088c7fb084870c8297a6981876170e1965ec01ba134f9dc626aeb",
+        "live_sha256": "63668456f29088c7fb084870c8297a6981876170e1965ec01ba134f9dc626aeb",
+        "match": true
+      },
+      "editor_shell": {
+        "url": "/editor-v2/ui/shell.js",
+        "http_status": 200,
+        "local_sha256": "537729414b8d01275ee24b49136de717fe7ec70afe89741c3d28234b12210da2",
+        "live_sha256": "537729414b8d01275ee24b49136de717fe7ec70afe89741c3d28234b12210da2",
+        "match": true
+      }
+    },
+    "production_d1_write_or_migration": false,
+    "r2_operation_or_deletion": false
+  },
+  "reuse_and_cost": {
+    "reused": "Existing Playwright fixtures, Chromium install, test:editor:layout command and Linux subreaper runner.",
+    "runtime_dependencies_added": false,
+    "cost_huf": 0
+  },
+  "acceptance": {
+    "77_44_6_1_C": "OPEN / NOT CERTIFIED",
+    "full_editor_manual_physical_acceptance": "DEFERRED"
+  }
+}
