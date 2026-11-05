@@ -2,7 +2,7 @@
   "schema_version": 1,
   "recorded_at_utc": "2026-11-05",
   "plan_point": "77.44.6.1.C",
-  "status": "RUNTIME_DEPLOYED_LOCAL_CHECKS_PASS_GITHUB_BROWSER_CI_PENDING",
+  "status": "RUNTIME_DEPLOYED_GITHUB_BROWSER_RUN_FAILED_STALE_ANNOUNCEMENT_REGEX_TEST_FIX_LOCAL_BROWSER_BLOCKED",
   "scope": "Keep desktop dock-to-dock grouping on the physical side of the canvas where the user dropped the target panel, even when the saved dock order reverses panel IDs.",
   "implementation": {
     "runtime_files": [
@@ -43,8 +43,13 @@
     "github_editor_core_browser": {
       "run_id": 41973716568,
       "url": "https://github.com/sanci9517/sanci9517/actions/runs/41973716568",
-      "status_at_evidence_creation": "in_progress",
-      "head_sha": "626198d09079293f387288b42c7f330d40b0df5a"
+      "status": "completed",
+      "conclusion": "failure",
+      "head_sha": "626198d09079293f387288b42c7f330d40b0df5a",
+      "layout_files": {"total": 53, "passed": 51, "failed": 1},
+      "workspace_appearance_tests": {"passed": 34, "failed": 2},
+      "failure_cause": "Two assertion regexes searched for 'bal oldalon'; runtime announced the correct physical-side message 'A füles csoport a vászon bal oldalán marad, a vászon fedetlen.' The physical geometry, uncovered canvas and page-write assertions passed.",
+      "rerun": "not requested; no extra Actions usage for test-only follow-up"
     },
     "github_f0_baseline": {
       "run_id": 41973716696,
@@ -74,6 +79,20 @@
       "rows_written": 0,
       "changes": 0
     }
+  },
+  "test_follow_up": {
+    "changed_file": "tests/browser/editor-workspace-appearance.test.js",
+    "changed_assertions": 2,
+    "expected_copy": "A füles csoport a vászon bal oldalán marad, a vászon fedetlen.",
+    "runtime_files_changed": false,
+    "local_browser_attempt": {
+      "status": "BLOCKED_BEFORE_ASSERTIONS",
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-name-pattern='dropping the right dock into the left dock center|grouping on a reordered dock' tests/browser/editor-workspace-appearance.test.js",
+      "error": "Playwright Chromium SIGTRAP before fixture/test assertions: crashpad socket setsockopt returns Operation not permitted in this managed environment.",
+      "not_a_test_pass": true
+    },
+    "copy_assertion_self_check": "PASS: exact GH-recorded announcement matches both corrected regexes and not the obsolete wording",
+    "ci_rerun": "not run; no additional Actions usage"
   },
   "source_control": {
     "repository": "sanci9517/sanci9517",

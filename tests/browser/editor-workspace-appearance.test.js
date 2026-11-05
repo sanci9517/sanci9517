@@ -791,7 +791,7 @@ test('dropping the right dock into the left dock center keeps the group on the l
   assert.ok(result.canvasAfter>=result.canvasBefore,'grouping on the left must not squeeze or cover the canvas');
   assert.ok(result.canvasAfter>=400&&result.groupWidth>0&&result.groupLeft<result.canvasLeft,'the active right panel occupies the group’s left-side grid track');
   assert.equal(result.order,'left-canvas-right');
-  assert.match(result.announcement,/fülei közé került.*bal oldalon.*vászon fedetlen/iu);
+  assert.match(result.announcement,/fülei közé került.*vászon bal oldalán marad.*vászon fedetlen/iu);
   assert.equal(result.stalePreview,false);
   assert.equal(result.dragActive,false);
   assert.deepEqual(writes,[],'the reverse grouping direction never writes Page Model, Save, or Publish');
@@ -823,7 +823,7 @@ test('grouping on a reordered dock follows the target physical side of the canva
   assert.equal(result.side,'left','the saved group side follows the target dock track, not the target panel id');
   assert.ok(result.groupLeft<result.canvasLeft,'the group stays where the dropped-on dock was physically located');
   assert.ok(result.canvasWidth>=400,'grouping in a reordered layout keeps at least 400px of uncovered canvas');
-  assert.match(result.announcement,/bal oldalon.*vászon fedetlen/iu,'the announcement names the physical target side');
+  assert.match(result.announcement,/vászon bal oldalán marad.*vászon fedetlen/iu,'the announcement names the physical target side');
   assert.equal(result.order,'right-canvas-left','grouping retains the user’s selected panel order');
   assert.deepEqual(writes,[],'dock grouping remains presentation-only');
   assert.deepEqual(errors,[]);
