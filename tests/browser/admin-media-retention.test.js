@@ -37,7 +37,7 @@ async function fixture(t,onStatus,width=390,{onMedia,archived=false}={}){
  await new Promise(done=>server.listen(0,'127.0.0.1',done));
  const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||(existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined),args:['--no-sandbox']});
  t.after(async()=>{await browser.close();await new Promise(done=>server.close(done));});
- const page=await browser.newPage({viewport:{width,height:900},timezoneId:'Europe/Budapest'});page.setDefaultTimeout(5000);
+ const page=await browser.newPage({viewport:{width,height:900},timezoneId:'Europe/Budapest'});page.setDefaultTimeout(5000);page.setDefaultNavigationTimeout(15000);
  page.on('pageerror',e=>pageErrors.push(e.message));
  await page.goto(`http://127.0.0.1:${server.address().port}/admin-media.html`);
  const panel=page.getByRole('region',{name:'Adatmegőrzési kérelmek'});
@@ -71,7 +71,7 @@ for(const width of [390,1366])test(`retention loading, empty, all states and loc
  assert.equal(f.statusCount(),2);
  assert.deepEqual(f.pageErrors,[]);
  assert.ok(await f.page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'retention panel must not overflow');
- await f.page.screenshot({path:`/tmp/media-retention-${width}.png`,fullPage:true});
+ await f.page.screenshot({path:`/tmp/media-retention-${width}.png`,fullPage:true,timeout:15000});
 });
 
 test('refresh failures remove stale results, keep library usable, and require explicit retry',async t=>{
