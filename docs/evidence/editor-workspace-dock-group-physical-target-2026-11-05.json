@@ -81,6 +81,9 @@
     }
   },
   "test_follow_up": {
+    "commit": "ea6f567acddc19c5f3ac1fe2c090524f1a44bce8",
+    "parent": "626198d09079293f387288b42c7f330d40b0df5a",
+    "message": "test(editor): align dock copy assertions [skip ci]",
     "changed_file": "tests/browser/editor-workspace-appearance.test.js",
     "changed_assertions": 2,
     "expected_copy": "A füles csoport a vászon bal oldalán marad, a vászon fedetlen.",
@@ -101,6 +104,8 @@
     "runtime_commit": "626198d09079293f387288b42c7f330d40b0df5a",
     "push": "PASS, normal fast-forward; push output confirmed 22f17421..626198d0",
     "github_exact_head": "626198d09079293f387288b42c7f330d40b0df5a",
+    "test_follow_up_commit": "ea6f567acddc19c5f3ac1fe2c090524f1a44bce8",
+    "test_follow_up_push": "pending remote verification",
     "aggregate_github_ci_pass": false
   },
   "production": {
