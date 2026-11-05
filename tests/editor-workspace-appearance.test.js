@@ -43,6 +43,15 @@ test('dock position and saved profiles are bounded, inert data and safe to resto
   assert.equal(limited.profiles.length,8,'profile storage has a fixed eight-item bound');
 });
 
+test('stored workspace profiles use the same locale-aware duplicate rule as save and import',()=>{
+  const saved=normalizeWorkspacePreferences({profiles:[
+    {id:'profile-accented',name:'Munkatér'},
+    {id:'profile-unaccented',name:'Munkater'},
+    {id:'profile-distinct',name:'Másik nézet'},
+  ]});
+  assert.deepEqual(saved.profiles.map(profile=>profile.name),['Munkatér','Másik nézet'],'older or externally edited preference data cannot restore duplicate names that current save/import would reject');
+});
+
 test('panel grouping accepts only safe layout modes and sides, including in portable workspace profiles',()=>{
   const safe=normalizeWorkspacePreferences({panelMode:'tabbed',panelSide:'left',profiles:[{id:'profile-tabbed',name:'Tabbed',appearance:{panelMode:'tabbed',panelSide:'left'},dock:{panelActive:'right'}}]});
   assert.equal(safe.panelMode,'tabbed');

@@ -54,13 +54,12 @@ function normalizeDockState(value){
 }
 function normalizeProfiles(value){
   if(!Array.isArray(value))return [];
-  const result=[],ids=new Set(),names=new Set();
+  const result=[],ids=new Set(),names=[];
   for(const profile of value){
     if(!isRecord(profile)||typeof profile.id!=='string'||!/^profile-[\da-z-]{1,72}$/iu.test(profile.id)||ids.has(profile.id))continue;
     const name=typeof profile.name==='string'?profile.name.trim().slice(0,PROFILE_NAME_LIMIT):'';
-    const normalizedName=name.toLocaleLowerCase();
-    if(!name||names.has(normalizedName))continue;
-    ids.add(profile.id);names.add(normalizedName);
+    if(!name||names.some(existing=>existing.localeCompare(name,undefined,{sensitivity:'base'})===0))continue;
+    ids.add(profile.id);names.push(name);
     result.push({
       id:profile.id,
       name,
