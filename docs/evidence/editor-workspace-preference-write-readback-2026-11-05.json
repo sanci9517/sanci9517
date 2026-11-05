@@ -1,0 +1,122 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-05",
+  "plan_point": "77.44.6.1.C",
+  "status": "RUNTIME_DEPLOYED_DIRECT_PRODUCTION_SMOKE_BLOCKED_FULL_C_OPEN",
+  "scope": "Do not report editor appearance preferences as durable when localStorage silently ignores setItem; apply the preference for the current session and explain the session-only limitation.",
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "starting_head": "756266002fe5d4f2737b79e8276aa8248ecfb570",
+    "runtime_commit": "2aed09a7f43908e41d94ef2f13771754661d0098",
+    "runtime_commit_parent": "756266002fe5d4f2737b79e8276aa8248ecfb570",
+    "runtime_commit_message": "fix(editor): verify workspace preference persistence",
+    "runtime_commit_push": "Normal git push succeeded; GitHub branch API confirmed exact v2/foundation HEAD 2aed09a7f43908e41d94ef2f13771754661d0098.",
+    "runtime_files": [
+      "public/editor-v2/ui/workspace-appearance.js"
+    ],
+    "test_files": [
+      "tests/browser/editor-workspace-appearance.test.js"
+    ],
+    "generated_traceability": [
+      "docs/evidence/feature-traceability.json"
+    ],
+    "new_dependencies": [],
+    "github_workflow_runs": [
+      {"id": 42044537241, "name": "F0 baseline checks", "status_at_last_read": "completed", "conclusion": "success"},
+      {"id": 42044537243, "name": "Twitch Integration Check", "status_at_last_read": "completed", "conclusion": "success"},
+      {"id": 42044537219, "name": "Editor Core Test", "status_at_last_read": "in_progress", "conclusion": null, "url": "https://github.com/sanci9517/sanci9517/actions/runs/42044537219"}
+    ],
+    "aggregate_ci_pass_claimed": false
+  },
+  "bug_and_fix": {
+    "storage_key": "sanci-editor-workspace-preferences-v2",
+    "reproduction": "In real Chromium, override Storage.prototype.setItem to silently no-op only for the workspace appearance key. Before the fix, choosing Sage applied it in memory but the UI did not transition to the session-only status within 8 seconds.",
+    "fix": "Serialize the workspace preferences once, call setItem, then compare an immediate getItem readback to the exact serialized value. A thrown write/read or silent no-op now returns false; the UI keeps the selected appearance for the current session and announces that it is not durable.",
+    "data_boundary": "No Page Model request, page Save, Publish, production D1 write/migration, or R2 operation is involved."
+  },
+  "validation": {
+    "reproduction_before_fix": "Real Chromium target test failed as expected: waitForFunction timed out after 8000ms because the session-only warning never appeared.",
+    "target_after_fix": {
+      "status": "PASS",
+      "command": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py node --test --test-concurrency=1 --test-reporter=spec --test-name-pattern='silently ignores its local preference write' tests/browser/editor-workspace-appearance.test.js",
+      "tests": 1,
+      "passed": 1,
+      "failed": 0
+    },
+    "full_browser_file": {
+      "status": "PASS",
+      "command": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-workspace-appearance.test.js",
+      "tests": 46,
+      "passed": 46,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "duration_ms": 426421,
+      "orphan_test_descendants_reaped": 196,
+      "includes_silent_preference_write_noop_regression": true,
+      "includes_canvas_safe_dock_layout_and_grouping_matrix": true
+    },
+    "editor_unit": "PASS: npm run test:editor; 14/14 Node test files and 3/3 Linux subreaper tests.",
+    "typecheck": "PASS: npm run typecheck",
+    "migration_safety_gate": "PASS: npm run test:web013:migration-gate",
+    "canonical_plan": "PASS: python3 scripts/check-canonical-plan.py; complete 13-file canonical master.",
+    "plan_contract": "PASS: python3 tests/plan-contract.test.py; 13/13.",
+    "active_plan_audit": "PASS: python3 scripts/audit-active-plan-point.py; current next item 77.44.6.1.C; acceptance NOT_CERTIFIED.",
+    "traceability": "PASS after rebuilding and checking scripts/build-feature-traceability.py; 396 source mappings, acceptance NOT certified.",
+    "syntax_and_diff": "PASS: node --check public/editor-v2/ui/workspace-appearance.js; node --check tests/browser/editor-workspace-appearance.test.js; git diff --check.",
+    "wrangler_dry_run": {
+      "status": "PASS",
+      "command": "WRANGLER_WRITE_LOGS=false npx wrangler deploy --dry-run",
+      "wrangler_version": "4.130.0",
+      "files": 168,
+      "bundle_kib": 335.81,
+      "gzip_kib": 87.6,
+      "deployed_by_dry_run": false
+    }
+  },
+  "production_preflight": {
+    "method": "Cloudflare D1 Query API, SELECT-only",
+    "query": "SELECT name FROM d1_migrations ORDER BY name;",
+    "database": "sanci9517-db",
+    "rows_read": 34,
+    "latest_migration": "0028_media_archive.sql",
+    "rows_written": 0,
+    "changes": 0,
+    "changed_db": false,
+    "migration_applied": false,
+    "r2_operation": false
+  },
+  "release": {
+    "method": "Cloudflare Workers Build automatic deployment after exact runtime commit push; deploy command npm run deploy:safe.",
+    "build_id": "06b97e2a-6ba4-40d1-912b-5005f927016f",
+    "build_commit": "2aed09a7f43908e41d94ef2f13771754661d0098",
+    "build_outcome": "success",
+    "build_log": "npm run typecheck succeeded; migration safety gate passed; npm run deploy:safe deployed without applying D1 migrations; one changed static asset uploaded.",
+    "deployment_id": "518dcb1a-8efa-4ca9-ad55-7eb8d60ad4e7",
+    "traffic_version_id": "fb981071-cd55-44a1-a6c1-2344aa2ee49d",
+    "traffic_percent": 100,
+    "created_at_utc": "2026-11-05T14:24:57.937286Z",
+    "direct_health_smoke": {
+      "status": "BLOCKED_BY_NETWORK_POLICY",
+      "attempts": [
+        "curl --noproxy * to workers.dev returned curl error 7: Could not connect to sanci9517-streamer-brand.sandor-bogadi95.workers.dev port 443.",
+        "Cloudflare API execution attempted direct fetch; HTTP 403 body: Forbidden: requests to sanci9517-streamer-brand.sandor-bogadi95.workers.dev are not allowed."
+      ],
+      "expected_endpoint": "/api/health",
+      "verified": false
+    },
+    "direct_changed_asset_smoke": {
+      "status": "BLOCKED_BY_NETWORK_POLICY",
+      "expected_path": "/editor-v2/ui/workspace-appearance.js",
+      "local_sha256": "e9976918e03cd56d75e1c55401636c5adbf82b6768b1ebc8cffb20d3a8f70245",
+      "production_sha256": null,
+      "verified": false
+    }
+  },
+  "cost_huf": 0,
+  "manual_acceptance": "DEFERRED_UNTIL_COMPLETE_EDITOR",
+  "full_plan_point_acceptance": "NOT_CERTIFIED",
+  "plan_point_status": "OPEN",
+  "remaining_77_44_6_1_C_scope": "Complete nested/tabbed panel and docking-zone behavior across responsive layouts plus end-to-end workspace lifecycle acceptance. Keep panels out of the canvas; preserve Page Model, Save and Publish separation. Full Editor manual/device acceptance remains deferred."
+}
