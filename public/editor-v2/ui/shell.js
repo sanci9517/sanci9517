@@ -471,12 +471,34 @@ document.querySelectorAll('[data-workspace-panel-tab]').forEach(button=>button.a
   workspaceAppearance?.remember();persisted.panelActive=side;
   setPanel(side,true,{customize:false});persist();syncMobileBackdrop();
 }));
+const firstDockPanelControl=panel=>{
+  if(!panel||panel.inert||panel.classList.contains('closed'))return null;
+  const controls=panel.querySelectorAll('button:not(:disabled),a[href],input:not(:disabled),select:not(:disabled),textarea:not(:disabled),[tabindex]:not([tabindex="-1"])');
+  return Array.from(controls).find(control=>!control.closest('[hidden],[inert],[aria-hidden="true"]')&&control.getClientRects().length>0)||null;
+};
 document.querySelector('.workspace-panel-group-tabs')?.addEventListener('keydown',event=>{
+  if(event.key==='Tab'&&!event.shiftKey){
+    // The right pane follows the canvas in DOM order although its tab is before
+    // both. Preserve the tabs pattern by entering the selected pane directly.
+    const target=firstDockPanelControl(panels[persisted.panelActive]);
+    if(target){event.preventDefault();target.focus({preventScroll:true})}
+    return;
+  }
   if(!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;
   const tabs=Array.from(document.querySelectorAll('[data-workspace-panel-tab]'));
   const current=tabs.indexOf(event.target.closest('[data-workspace-panel-tab]'));if(current<0)return;
   event.preventDefault();const next=event.key==='Home'?0:event.key==='End'?tabs.length-1:(current+(event.key==='ArrowRight'?1:tabs.length-1))%tabs.length;
   tabs[next]?.click();tabs[next]?.focus({preventScroll:true});
+});
+workspace?.addEventListener('keydown',event=>{
+  if(event.key!=='Tab'||!event.shiftKey||mobileQuery.matches||editorRoot?.dataset.workspacePanelMode!=='tabbed')return;
+  const activePanel=panels[persisted.panelActive],firstControl=firstDockPanelControl(activePanel);
+  if(!firstControl||event.target!==firstControl)return;
+  const activeTab=document.querySelector(`[data-workspace-panel-tab="${persisted.panelActive}"]`);
+  if(!activeTab)return;
+  // Keep reverse navigation consistent when visual docking order differs from
+  // DOM order, and do not pull focus from later controls in the panel.
+  event.preventDefault();activeTab.focus({preventScroll:true});
 });
 
 document.querySelector('#editorMenu')?.addEventListener('click',()=>{

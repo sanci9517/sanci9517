@@ -202,6 +202,48 @@ test('tabbed desktop panel groups reserve canvas space, restore profiles and fal
   assert.deepEqual(mobile.errors,[]);
 });
 
+test('tabbing from the right dock tab enters its active panel before the canvas',async t=>{
+  const {page,writes,errors}=await openEditor(t,{width:1280,height:900});
+  await openPreferences(page);
+  await page.locator('#workspaceLayout').selectOption('balanced');
+  await page.locator('#workspacePanelMode').selectOption('tabbed');
+  await page.locator('#closeWorkspaceAppearance').click();
+  await page.waitForFunction(()=>document.activeElement?.id==='openWorkspaceAppearance');
+
+  const rightTab=page.locator('#workspacePanelTabRight');
+  await rightTab.click();
+  await rightTab.focus();
+  await page.waitForFunction(()=>document.activeElement?.id==='workspacePanelTabRight'&&document.querySelector('#rightDock')?.inert===false);
+  await rightTab.press('Tab');
+
+  const focus=await page.evaluate(()=>({
+    id:document.activeElement?.id||'',
+    inActivePanel:Boolean(document.activeElement?.closest('#rightDock')),
+    canvasFocused:document.activeElement?.id==='canvas',
+    selected:document.querySelector('#workspacePanelTabRight')?.getAttribute('aria-selected'),
+    inactiveInert:document.querySelector('#leftDock')?.inert,
+    canvasWidth:document.querySelector('.canvas-area')?.getBoundingClientRect().width,
+    pageWidth:document.documentElement.scrollWidth,
+  }));
+  assert.equal(focus.selected,'true');
+  assert.equal(focus.inactiveInert,true);
+  assert.equal(focus.canvasFocused,false,'tabbing from an active tab must enter its panel, not skip to the canvas because of DOM order');
+  assert.equal(focus.inActivePanel,true,`focus should enter the selected tab panel: ${JSON.stringify(focus)}`);
+  assert.ok(focus.canvasWidth>=400&&focus.pageWidth===1280,`the selected group keeps a clear canvas: ${JSON.stringify(focus)}`);
+  await page.keyboard.press('Shift+Tab');
+  assert.equal(await page.evaluate(()=>document.activeElement?.id),'workspacePanelTabRight','Shift+Tab from the first panel control returns to the active dock tab');
+  await page.locator('#workspacePanelTabLeft').click();
+  const leftTab=page.locator('#workspacePanelTabLeft');
+  await leftTab.focus();
+  await leftTab.press('Tab');
+  assert.equal(await page.evaluate(()=>Boolean(document.activeElement?.closest('#leftDock'))),true,'the active left tab also enters its own panel instead of following unrelated DOM order');
+  assert.equal(await page.locator('#rightDock').evaluate(panel=>panel.inert),true,'switching active tabs keeps the previous panel out of keyboard navigation');
+  await page.keyboard.press('Shift+Tab');
+  assert.equal(await page.evaluate(()=>document.activeElement?.id),'workspacePanelTabLeft','Shift+Tab from the left panel is consistent with the right panel');
+  assert.deepEqual(writes,[],'panel keyboard navigation does not mutate or save page content');
+  assert.deepEqual(errors,[]);
+});
+
 test('clicking the already active dock tab does not create a no-op workspace history entry',async t=>{
   const {page,writes,errors}=await openEditor(t,{width:1280,height:900});
   await openPreferences(page);
