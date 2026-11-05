@@ -46,7 +46,7 @@
       "status": "completed",
       "conclusion": "failure",
       "head_sha": "626198d09079293f387288b42c7f330d40b0df5a",
-      "layout_files": {"total": 53, "passed": 51, "failed": 1},
+      "layout_files": {"total": 53, "passed": 52, "failed": 1},
       "workspace_appearance_tests": {"passed": 34, "failed": 2},
       "failure_cause": "Two assertion regexes searched for 'bal oldalon'; runtime announced the correct physical-side message 'A füles csoport a vászon bal oldalán marad, a vászon fedetlen.' The physical geometry, uncovered canvas and page-write assertions passed.",
       "rerun": "not requested; no extra Actions usage for test-only follow-up"
