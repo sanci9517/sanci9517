@@ -740,6 +740,52 @@ test('dropping a dock onto another dock creates an undoable canvas-safe tab grou
   assert.deepEqual(errors,[]);
 });
 
+test('native mouse drag groups desktop docks without covering the canvas or writing page data',async t=>{
+  const {page,writes,errors}=await openEditor(t,{width:1280,height:900});
+  await openPreferences(page);
+  await page.locator('#workspaceLayout').selectOption('balanced');
+  await page.locator('#workspacePanelMode').selectOption('separate');
+  await page.waitForFunction(()=>!document.querySelector('#leftDock')?.classList.contains('closed')&&!document.querySelector('#rightDock')?.classList.contains('closed'));
+  await page.locator('#closeWorkspaceAppearance').click();
+
+  const source=page.locator('#leftDock .dock-heading:visible').first();
+  const target=page.locator('#rightDock');
+  const targetBounds=await target.boundingBox();
+  assert.ok(targetBounds,'the right dock exposes a real mouse drop target');
+  await source.dragTo(target,{targetPosition:{x:targetBounds.width/2,y:Math.min(30,targetBounds.height/2)}});
+
+  const grouped=await page.evaluate(()=>{
+    const canvas=document.querySelector('.canvas-area'),left=document.querySelector('#leftDock'),right=document.querySelector('#rightDock');
+    const rect=canvas.getBoundingClientRect();
+    const active=document.querySelector('.workspace').dataset.workspaceActivePanel;
+    const activeDock=active==='left'?left:right;
+    return {
+      mode:document.querySelector('.editor-app').dataset.workspacePanelMode,
+      side:document.querySelector('.editor-app').dataset.workspacePanelSide,
+      active,
+      previewLabel:document.querySelector('#workspaceDockStatus').textContent,
+      canvasWidth:rect.width,
+      canvasRight:rect.right,
+      groupLeft:activeDock.getBoundingClientRect().left,
+      canvasLeft:rect.left,
+      inactiveHidden:(active==='left'?getComputedStyle(right).display==='none'||right.getAttribute('aria-hidden')==='true':getComputedStyle(left).display==='none'||left.getAttribute('aria-hidden')==='true'),
+      dragFinished:!document.body.classList.contains('workspace-reordering'),
+      previewCleared:!document.querySelector('#rightDock').hasAttribute('data-dock-drop-position')&&!document.querySelector('#rightDock').hasAttribute('data-dock-drop-label')
+    };
+  });
+
+  assert.equal(grouped.mode,'tabbed','the browser-native drop creates the expected panel group');
+  assert.equal(grouped.side,'right','the group occupies the target dock track');
+  assert.equal(grouped.active,'left','the dragged panel becomes the active group tab');
+  assert.match(grouped.previewLabel,/Oldalak és eszközök panel.*panelfülei közé került.*vászon fedetlen/iu,'the native drag announces its grouping result');
+  assert.ok(grouped.canvasWidth>=400&&grouped.groupLeft>=grouped.canvasRight,`the active panel has a separate track beyond the entire canvas rectangle: ${JSON.stringify(grouped)}`);
+  assert.equal(grouped.inactiveHidden,true,'the inactive grouped dock is removed from visual and keyboard navigation');
+  assert.equal(grouped.dragFinished,true,'the native drag lifecycle is cleaned up after drop');
+  assert.equal(grouped.previewCleared,true,'the transient drop cue does not remain after a native drop');
+  assert.deepEqual(writes,[],'native dock rearrangement never invokes Page Model Save or Publish');
+  assert.deepEqual(errors,[]);
+});
+
 test('dropping the right dock into the left dock center keeps the group on the left track',async t=>{
   const {page,writes,errors}=await openEditor(t,{width:1280,height:900});
   await openPreferences(page);

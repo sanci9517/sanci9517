@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-05",
+  "plan_point": "77.44.6.1.C",
+  "status": "NATIVE_MOUSE_DOCK_GROUP_PASS_FULL_C_OPEN",
+  "scope": "Exercise the real browser mouse-driven HTML drag lifecycle for the desktop dock-to-dock center grouping zone, complementing the existing direct DragEvent matrix.",
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "base_commit": "149f5168338acac897fc0be92f9d542a3db7b366",
+    "base_commit_was_verified_as_github_branch_head": true,
+    "test_only": true,
+    "runtime_files_changed": [],
+    "new_dependencies": false,
+    "aggregate_github_ci_pass": false,
+    "parent_commit": "149f5168338acac897fc0be92f9d542a3db7b366"
+  },
+  "coverage": {
+    "browser": "Chromium via existing Playwright fixture",
+    "interaction": "Playwright Locator.dragTo using browser mouse input and native HTML drag events",
+    "viewport_css_px": {
+      "width": 1280,
+      "height": 900
+    },
+    "source": "visible dock heading in the left panel",
+    "target": "center of the right dock",
+    "result": {
+      "panel_mode": "tabbed",
+      "group_side": "right",
+      "active_panel": "left",
+      "active_panel_occupies_right_track": true,
+      "inactive_panel_hidden_from_visual_and_keyboard_navigation": true,
+      "canvas_width_css_px": 970,
+      "canvas_uncovered": true,
+      "drop_cue_and_drag_lifecycle_cleared": true,
+      "live_announcement_names_group_action_and_canvas_safety": true,
+      "page_model_save_publish_requests": 0,
+      "active_panel_track_is_disjoint_from_canvas_rect": true
+    }
+  },
+  "validation": {
+    "targeted_chromium": {
+      "status": "PASS",
+      "tests": 1,
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec --test-name-pattern='native mouse drag groups desktop docks' tests/browser/editor-workspace-appearance.test.js"
+    },
+    "complete_workspace_chromium_file": {
+      "status": "PASS",
+      "tests": 39,
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-workspace-appearance.test.js"
+    },
+    "editor_unit": "PASS: npm run test:editor; 14/14 test files and subreaper runner 3/3",
+    "typecheck": "PASS: npm run typecheck",
+    "migration_guard": "PASS: npm run test:web013:migration-gate; no production migration applied",
+    "canonical_plan_checks": "PASS: scripts/check-canonical-plan.py; scripts/plan_contract.py; scripts/audit-active-plan-point.py (77.44.6.1.C remains OPEN / NOT_CERTIFIED); scripts/build-feature-traceability.py --check (396/396)",
+    "wide_51_file_editor_layout_suite": "NOT RUN; no aggregate wide-suite claim"
+  },
+  "release": {
+    "status": "TEST_AND_DOCUMENTATION_ONLY_NO_WORKER_DEPLOY",
+    "runtime_source_changed": false,
+    "worker_deployment": "NOT_APPLICABLE",
+    "expected_behavior": "The repository Cloudflare Build excludes docs/** and tests/**; this test/evidence/plan commit must not cause a redundant Worker deployment.",
+    "production_d1_query_or_write": "NONE",
+    "r2_operation_or_deletion": false,
+    "current_worker_control_plane_check": {
+      "deployment_id": "17c9928a-c0d4-4ffa-bdf2-21b9623d9ef0",
+      "traffic_version": "e5ce8eba-1007-4ca5-b153-a426e2224a09",
+      "worker_version_number": 3822,
+      "traffic_percent": 100,
+      "verified_by": "Cloudflare GET workers/scripts/sanci9517-streamer-brand/deployments and exact version endpoint",
+      "runtime_changed_by_this_block": false
+    },
+    "direct_health_at_session_start": "HTTP 200, ok=true, version=2.0.0 (no runtime source change in this test/docs-only block)"
+  },
+  "reuse_and_cost": {
+    "reused": "Existing owned dock grouping and profile state, CSS Grid canvas-safe tracks, native HTML drag handlers, existing Playwright dependency and browser fixture.",
+    "external_runtime_code_added": false,
+    "dependencies_added": false,
+    "cost_huf": 0
+  },
+  "acceptance": {
+    "77_44_6_1_C": "OPEN; this adds actual browser mouse-path evidence for one grouping zone. Dynamic dock-zone, nested/floating behavior under the no-canvas-overlay rule, and complete workspace lifecycle acceptance remain open.",
+    "full_visual_editor_manual_and_physical_acceptance": "DEFERRED until the complete Editor acceptance gate."
+  }
+}
