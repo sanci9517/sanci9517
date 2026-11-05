@@ -15,7 +15,11 @@
     "runtime_files_changed": [],
     "new_dependencies": false,
     "aggregate_github_ci_pass": false,
-    "push": "Test and evidence/plan documentation commits are to be pushed as a normal fast-forward; verify the exact remote ref after push."
+    "push": "Normal fast-forward push verified via GitHub exact refs/heads/v2/foundation SHA e6834fb0b3e081798322bb6f1c434c960af0a659; aggregate commit checks are empty because both commits use [skip ci].",
+    "parent_commit": "b4bb2de29ca32daad9dfbe8310009c64c0b7b379",
+    "evidence_and_plan_commit_at_first_push": "e6834fb0b3e081798322bb6f1c434c960af0a659",
+    "github_exact_ref_after_first_push": "e6834fb0b3e081798322bb6f1c434c960af0a659",
+    "github_commit_statuses_after_first_push": []
   },
   "coverage": {
     "browser": "Chromium via existing Playwright local editor fixture",
