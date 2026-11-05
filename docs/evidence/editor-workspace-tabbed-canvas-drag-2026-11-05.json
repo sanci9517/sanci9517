@@ -1,0 +1,173 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-05T18:15:25Z",
+  "plan_point": "77.44.6.1.C",
+  "status": "TABBED_CANVAS_DRAG_GROUP_FIX_DEPLOYED_AND_VERIFIED; FULL_C_OPEN",
+  "scope": "Keep a tabbed desktop dock group contiguous in the saved three-region order when the canvas toolbar is dragged before/after the physical group track.",
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "starting_head": "4442a306ed7df59adb13e04d51ae47838b97eeef",
+    "runtime_commit": "9715efb1069bad12f1f9e00361d8bcbe02b81244",
+    "runtime_commit_message": "fix(editor): move tabbed dock as one canvas drag group",
+    "runtime_commit_fast_forward_push_verified": true,
+    "github_exact_ref_after_runtime_push": "9715efb1069bad12f1f9e00361d8bcbe02b81244",
+    "github_commit_statuses": [],
+    "aggregate_github_ci_pass": false,
+    "runtime_files_changed": [
+      "public/editor-v2/index.html",
+      "public/editor-v2/ui/shell.js"
+    ],
+    "test_files_changed": [
+      "tests/browser/editor-workspace-appearance.test.js"
+    ],
+    "traceability_file_changed": [
+      "docs/evidence/feature-traceability.json"
+    ]
+  },
+  "gap_and_fix": {
+    "verified_gap": "When the canvas was dragged before/after a tabbed group, sorting DOM regions by left coordinate included the inactive display:none dock at x=0; the saved dockOrder could therefore remain unchanged or split the two panel IDs around the canvas.",
+    "red_reproduction": "Native Chromium drag from canvas toolbar to the trailing edge of the visible left-side tab group failed: actual order left-canvas-right, expected the contiguous group order left-right-canvas.",
+    "fix": "Tabbed drops use the validated saved three-region order. A canvas-source drop treats the two dock IDs as one logical cluster and inserts the canvas before the first or after the last dock ID, preserving the group side and panel internal order. Cache-busted shell URL changed to 20261105-tabbed-canvas-drag-cluster.",
+    "no_page_write": "The browser fixture recorded zero Page Model/Save/Publish/renderer requests."
+  },
+  "coverage": {
+    "browser": "Real Chromium through Playwright locator.dragTo native mouse input.",
+    "viewport_css_px": {
+      "width": 1280,
+      "height": 900
+    },
+    "cases": [
+      {
+        "group_side": "left",
+        "initial_order": "left-canvas-right",
+        "drop": "before group",
+        "expected_order": "canvas-left-right"
+      },
+      {
+        "group_side": "left",
+        "initial_order": "left-canvas-right",
+        "drop": "after group",
+        "expected_order": "left-right-canvas"
+      },
+      {
+        "group_side": "right",
+        "initial_order": "right-canvas-left",
+        "drop": "before group",
+        "expected_order": "canvas-right-left"
+      },
+      {
+        "group_side": "right",
+        "initial_order": "right-canvas-left",
+        "drop": "after group",
+        "expected_order": "right-left-canvas"
+      }
+    ],
+    "assertions": [
+      "whole tabbed group remains contiguous",
+      "group physical side and mode are preserved",
+      "canvas width remains >=400 CSS px",
+      "dock rectangles do not overlap canvas",
+      "one undo step restores old order and redo reapplies new order",
+      "new order reloads with tab group intact",
+      "zero page model or publish requests"
+    ]
+  },
+  "validation": {
+    "targeted_after_fix": {
+      "status": "PASS",
+      "tests": 1,
+      "command": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py node --test --test-name-pattern='native canvas drag moves the whole tabbed dock group' --test-reporter=spec tests/browser/editor-workspace-appearance.test.js"
+    },
+    "full_browser_file": {
+      "status": "PASS",
+      "tests": 52,
+      "failures": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "duration_ms": 511013.240855,
+      "orphaned_browser_descendants_reaped": 220,
+      "command": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-workspace-appearance.test.js"
+    },
+    "editor_unit": "PASS: npm run test:editor; 14/14 Node files and 3/3 Linux subreaper cases.",
+    "typecheck": "PASS: npm run typecheck.",
+    "migration_gate": "PASS: npm run test:web013:migration-gate.",
+    "canonical_plan": "PASS: scripts/check-canonical-plan.py; complete 13-file plan and one current cursor.",
+    "plan_contract": "PASS: tests/plan-contract.test.py; 13/13.",
+    "active_cursor": "PASS: scripts/audit-active-plan-point.py; next point 77.44.6.1.C; NOT_CERTIFIED.",
+    "traceability": "PASS: scripts/build-feature-traceability.py --check; 396/396 mappings.",
+    "syntax_and_diff": "PASS: node --check on runtime and test JS; git diff --check.",
+    "wrangler_dry_run": {
+      "status": "PASS",
+      "version": "4.130.0",
+      "assets": 168,
+      "size_kib": 335.81,
+      "gzip_kib": 87.6,
+      "deployed": false,
+      "command": "WRANGLER_WRITE_LOGS=false npx wrangler deploy --dry-run"
+    },
+    "production_d1_preflight": {
+      "sql": "SELECT name FROM d1_migrations ORDER BY name",
+      "rows_read": 34,
+      "latest_migration": "0028_media_archive.sql",
+      "rows_written": 0,
+      "changes": 0,
+      "changed_db": false,
+      "served_by": "v3-prod",
+      "region": "EEUR",
+      "colo": "FRA"
+    },
+    "production_d1_migration_or_data_write": false,
+    "r2_operation_or_deletion": false
+  },
+  "release": {
+    "status": "AUTOMATIC_CLOUDFLARE_BUILD_SUCCESS_AND_DEPLOY_VERIFIED",
+    "build_uuid": "b621d455-2441-40d6-addc-d6c726dd3518",
+    "build_commit": "9715efb1069bad12f1f9e00361d8bcbe02b81244",
+    "build_outcome": "success",
+    "build_command": "npm run typecheck",
+    "deploy_command": "npm run deploy:safe",
+    "migration_safety_gate": "PASS; no D1 migration applied",
+    "deployment_id": "45db1671-bb77-4bbf-8713-85e048381609",
+    "worker_version": "929caab2-558a-45db-b9f1-981feb4d365f",
+    "traffic_percent": 100,
+    "production_health": {
+      "http_status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "public_assets": [
+      {
+        "path": "/editor-v2/",
+        "http_status": 200,
+        "local_sha256": "5545b94fcc83563360a37005108229884db6d00a0deb9c942e40e5376277ff82",
+        "production_sha256": "5545b94fcc83563360a37005108229884db6d00a0deb9c942e40e5376277ff82",
+        "matches": true
+      },
+      {
+        "path": "/editor-v2/ui/shell.js?v=20261105-tabbed-canvas-drag-cluster",
+        "http_status": 200,
+        "local_sha256": "809aef0988a4310893faa5588c5c6bc9ef5751b68086cac42352e9beae6bcda7",
+        "production_sha256": "809aef0988a4310893faa5588c5c6bc9ef5751b68086cac42352e9beae6bcda7",
+        "matches": true
+      },
+      {
+        "path": "/editor-v2/ui/workspace-appearance.js?v=20261105-tabbed-canvas-drag-cluster",
+        "http_status": 200,
+        "local_sha256": "e9976918e03cd56d75e1c55401636c5adbf82b6768b1ebc8cffb20d3a8f70245",
+        "production_sha256": "e9976918e03cd56d75e1c55401636c5adbf82b6768b1ebc8cffb20d3a8f70245",
+        "matches": true
+      }
+    ]
+  },
+  "cost_and_acceptance": {
+    "cost_huf": 0,
+    "new_dependency": false,
+    "plan_point": "OPEN / NOT CERTIFIED; only the verified tabbed-canvas drag lifecycle defect is fixed.",
+    "full_visual_editor_manual_physical_acceptance": "DEFERRED until complete Editor acceptance gate."
+  }
+}
