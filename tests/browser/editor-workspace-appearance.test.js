@@ -971,6 +971,10 @@ test('native mouse drag from the canvas toolbar repositions the canvas without c
         savedOrder:JSON.parse(localStorage.getItem('sanci-editor-workspace-preferences-v2'))?.dockOrder,
         width:rect.width,
         contentWidth:canvasRect.width,
+        leftDock:document.querySelector('#leftDock').getBoundingClientRect().toJSON(),
+        rightDock:document.querySelector('#rightDock').getBoundingClientRect().toJSON(),
+        canvasArea:{left:rect.left,right:rect.right},
+        documentWidth:document.documentElement.scrollWidth,
         previewCleared:!document.querySelector('.workspace [data-dock-drop-position]')&&!document.querySelector('.workspace [data-dock-drop-label]'),
         dragFinished:!document.body.classList.contains('workspace-reordering'),
         announcement:document.querySelector('#workspaceDockStatus').textContent
@@ -979,6 +983,8 @@ test('native mouse drag from the canvas toolbar repositions the canvas without c
     assert.equal(moved.order,item.expected,`${item.start}: the canvas toolbar moves before/after ${item.target}: ${JSON.stringify(moved)}`);
     assert.equal(moved.savedOrder,item.expected,'the canvas move stores one allowlisted local workspace order');
     assert.ok(moved.width>=400&&moved.contentWidth>0,`${item.expected}: the editing canvas retains its own visible grid track`);
+    assert.ok([moved.leftDock,moved.rightDock].every(dock=>dock.width>0&&(dock.right<=moved.canvasArea.left+0.5||dock.left>=moved.canvasArea.right-0.5)),`${item.expected}: neither desktop panel covers the canvas track: ${JSON.stringify(moved)}`);
+    assert.equal(moved.documentWidth,1280,`${item.expected}: dock placement does not create horizontal page overflow`);
     assert.equal(moved.previewCleared,true,'the native drop removes the temporary drop-zone cue');
     assert.equal(moved.dragFinished,true,'the native drag lifecycle returns to its idle state');
     assert.match(moved.announcement,/Vászon panel.*(?:Oldalak és eszközök|Beállítások).*Sorrend:/iu,'the live region explains the resulting canvas order');
