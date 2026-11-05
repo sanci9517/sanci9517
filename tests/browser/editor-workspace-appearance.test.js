@@ -2027,3 +2027,57 @@ test('desktop tabbed dock groups become one mobile sheet and restore the exact g
   assert.deepEqual(writes,[],'responsive tabbed workspace transitions never Save or Publish the Page Model');
   assert.deepEqual(errors,[]);
 });
+
+test('mobile touch-sized dock-order control keeps one safe drawer and restores the selected desktop order',async t=>{
+  const {page,writes,errors}=await openEditor(t,{width:390,height:844,isMobile:true,hasTouch:true});
+  await openPreferences(page);
+  const order=page.locator('#workspaceDockOrder');
+  assert.equal(await order.isVisible(),true,'dock order remains available in the mobile workspace dialog');
+  const control=await order.boundingBox();
+  assert.ok(control&&control.height>=44,`the native order selector keeps a touch-sized target: ${JSON.stringify(control)}`);
+  await order.tap();
+  await order.selectOption('right-canvas-left');
+  await page.waitForFunction(()=>JSON.parse(localStorage.getItem('sanci-editor-workspace-preferences-v2'))?.dockOrder==='right-canvas-left');
+  assert.match(await page.locator('#workspaceAppearanceStatus').textContent(),/Kis képernyőn a mobil fiók elrendezése marad/iu,'the settings explain that desktop ordering does not replace the mobile drawer');
+  assert.deepEqual(writes,[],'mobile workspace ordering never invokes the Page Model Save or Publish APIs');
+  await page.locator('#closeWorkspaceAppearance').tap();
+
+  await page.locator('#editorMenu').tap();
+  await page.waitForFunction(()=>document.querySelector('#leftDock')?.classList.contains('closed')===false);
+  await page.locator('#openInspector').tap();
+  await page.waitForFunction(()=>document.querySelector('#rightDock')?.classList.contains('closed')===false);
+  const drawer=await page.evaluate(()=>({
+    left:!document.querySelector('#leftDock').classList.contains('closed'),
+    right:!document.querySelector('#rightDock').classList.contains('closed'),
+    canvasInert:document.querySelector('.canvas-area').inert,
+    scrollWidth:document.documentElement.scrollWidth,
+    innerWidth
+  }));
+  assert.deepEqual({left:drawer.left,right:drawer.right},{left:false,right:true},`mobile panel switching stays a single drawer: ${JSON.stringify(drawer)}`);
+  assert.equal(drawer.canvasInert,true,'the visible drawer keeps the background canvas inert');
+  assert.ok(drawer.scrollWidth<=drawer.innerWidth,'the mobile layout has no horizontal overflow');
+  const mobileStorage=await page.evaluate(()=>({
+    shell:localStorage.getItem('sanci-editor-shell-v2'),
+    appearance:JSON.parse(localStorage.getItem('sanci-editor-workspace-preferences-v2'))
+  }));
+  assert.equal(mobileStorage.appearance.dockOrder,'right-canvas-left');
+
+  await page.setViewportSize({width:1025,height:900});
+  await page.waitForFunction(()=>!matchMedia('(max-width: 1024px)').matches&&document.querySelector('.workspace')?.dataset.workspaceDockOrder==='right-canvas-left');
+  const desktop=await page.evaluate(()=>{
+    const rect=selector=>{const value=document.querySelector(selector).getBoundingClientRect();return {left:value.left,right:value.right,width:value.width}};
+    const canvas=rect('.canvas-area'),left=rect('#leftDock'),right=rect('#rightDock');
+    return {
+      order:document.querySelector('.workspace').dataset.workspaceDockOrder,
+      canvas,left,right,
+      shell:localStorage.getItem('sanci-editor-shell-v2'),
+      appearance:localStorage.getItem('sanci-editor-workspace-preferences-v2')
+    };
+  });
+  assert.equal(desktop.order,'right-canvas-left','the saved mobile selector choice becomes the desktop CSS Grid order');
+  assert.ok(desktop.canvas.width>=400,`the restored desktop order keeps a usable canvas: ${JSON.stringify(desktop)}`);
+  assert.ok([desktop.left,desktop.right].filter(dock=>dock.width>0).every(dock=>dock.right<=desktop.canvas.left+0.5||dock.left>=desktop.canvas.right-0.5),'any open desktop dock stays physically outside the canvas');
+  assert.deepEqual({shell:desktop.shell,appearance:desktop.appearance},{shell:mobileStorage.shell,appearance:JSON.stringify(mobileStorage.appearance)},'responsive restoration adds no workspace writes beyond the explicit selection and panel choice');
+  assert.deepEqual(writes,[]);
+  assert.deepEqual(errors,[]);
+});
