@@ -1,0 +1,95 @@
+{
+  "date": "2026-11-05",
+  "plan_point": "77.44.6.1.C",
+  "status": "runtime fix deployed and directly verified; full C acceptance remains open",
+  "finding": {
+    "summary": "Saved/imported workspace profiles reject names with localeCompare(..., { sensitivity: 'base' }), but stored-profile normalization used toLocaleLowerCase() keys. Accent-equivalent legacy names therefore survived normalization as duplicate profiles.",
+    "reproduction": "normalizeWorkspacePreferences({profiles:[{id:'profile-one',name:'Munkatér'},{id:'profile-two',name:'Munkater'}]}).profiles returned both names before the fix; the same localeCompare rule used by save/import returns 0 for these names.",
+    "fix": "normalizeProfiles now retains the first profile and checks later names with the same accent/case-insensitive localeCompare rule used by profile save/import. IDs, file data bounds and the eight-profile limit remain unchanged."
+  },
+  "files": {
+    "runtime": {
+      "path": "public/editor-v2/ui/workspace-appearance.js",
+      "sha256": "70934c84938bd082dfaf53993616f36be710da976f9598aba09844f715927841"
+    },
+    "test": {
+      "path": "tests/editor-workspace-appearance.test.js",
+      "sha256": "c4f62dfac04dc582414c5850595b7931efaa62ded660f47dd5cfd756c63993c8"
+    },
+    "traceability": {
+      "path": "docs/evidence/feature-traceability.json",
+      "sha256": "545fc1e7773f644d28e08fca7bbcf4dc3999eb5316380378482f79539eccda0e"
+    }
+  },
+  "verification": {
+    "regression_unit": "PASS: node --test --test-name-pattern='stored workspace profiles' tests/editor-workspace-appearance.test.js",
+    "editor_unit_suite": "PASS: npm run test:editor; 14/14 files and 3/3 Linux subreaper tests",
+    "workspace_chromium": "PASS: local Chromium tests/browser/editor-workspace-appearance.test.js; 43/43, 0 failures, 204.9 s",
+    "grouped_dock_chromium_smoke": "PASS: local Chromium tabbed desktop panel-group test; 1/1",
+    "typecheck": "PASS: npm run typecheck",
+    "migration_safety": "PASS: npm run test:web013:migration-gate; deploy:safe does not apply D1 migrations",
+    "plan_contract": "PASS: complete 13-file plan check; plan_contract.py; tests/plan-contract.test.py 13/13",
+    "active_cursor": "PASS: 77.44.6.1.C remains the next plan point; functional acceptance NOT_CERTIFIED",
+    "traceability": "PASS: 396/396 mappings, after regenerating docs/evidence/feature-traceability.json",
+    "syntax_and_diff": "PASS: node --check on changed JavaScript; git diff --check",
+    "wrangler_dry_run": "PASS, exit 0: npx wrangler deploy --dry-run; Wrangler 4.130.0 packaged 168 public assets, 335.81 KiB (87.60 KiB gzip). Wrangler emitted a non-fatal local EROFS log-path warning for /home/agent/.config; dry-run completed and exited successfully.",
+    "real_browser_fixture_note": "The default sandbox denied loopback listen with EPERM; the authorized local Chromium run with loopback networking permission succeeded. No test was classified PASS from the blocked attempt."
+  },
+  "production_d1_read_only_preflight": {
+    "method": "Cloudflare D1 Query API; one SELECT statement only",
+    "sql": "SELECT name FROM d1_migrations ORDER BY name",
+    "row_count": 34,
+    "last_migration": "0028_media_archive.sql",
+    "rows_written": 0,
+    "changes": 0,
+    "changed_db": false
+  },
+  "release": {
+    "branch": "v2/foundation",
+    "starting_head": "7c940da6543044ce31d30db757d65be98b0fca67",
+    "starting_github_head": "verified equal before changes",
+    "commit": "8bfb15bfd509a7f3e1e851e1188daab2ebb10a1a",
+    "push": "normal fast-forward 7c940da6..8bfb15bf; GitHub branch ref directly verified exact HEAD",
+    "github_checks": {
+      "source-audit": "success",
+      "canonical-plan": "success",
+      "verify": "success",
+      "twitch-integration": "success",
+      "editor-core": "in_progress at last API check; aggregate all-checks PASS not claimed"
+    },
+    "cloudflare_build": {
+      "id": "823b7861-3f1c-47b5-be38-e8f1bffcb58e",
+      "outcome": "success",
+      "commit": "8bfb15bfd509a7f3e1e851e1188daab2ebb10a1a",
+      "build_command": "npm run typecheck",
+      "deploy_command": "npm run deploy:safe",
+      "migration_gate": "PASS; no D1 migration was applied",
+      "uploaded_asset": "public/editor-v2/ui/workspace-appearance.js",
+      "dependency_audit_notice": "npm clean-install emitted 4 high severity vulnerability notices in the existing dependency tree; no dependency changes or audit fix were made in this workspace/profile task"
+    },
+    "runtime_source_changed": true,
+    "worker_deployment": "367d08c2-d449-4472-9464-9642cef0a970",
+    "deployed_worker_version": "01f6e2db-92cd-427b-a760-c16a3a179aed",
+    "deployed_traffic_percent": 100,
+    "pre_change_live_deployment": "17c9928a-c0d4-4ffa-bdf2-21b9623d9ef0",
+    "pre_change_live_version": "e5ce8eba-1007-4ca5-b153-a426e2224a09",
+    "pre_change_live_traffic_percent": 100,
+    "pre_change_health": "HTTP 200; ok=true; version=2.0.0",
+    "post_change_health": "direct GET HTTP 200; ok=true; version=2.0.0; server=cloudflare-worker",
+    "post_change_asset": {
+      "path": "/editor-v2/ui/workspace-appearance.js?v=20261105-profile-name-normalization",
+      "http_success": true,
+      "local_sha256": "70934c84938bd082dfaf53993616f36be710da976f9598aba09844f715927841",
+      "live_sha256": "70934c84938bd082dfaf53993616f36be710da976f9598aba09844f715927841",
+      "match": true
+    },
+    "d1_write_or_migration": false,
+    "r2_operation": false,
+    "new_dependencies": false,
+    "cost_huf": 0
+  },
+  "acceptance": {
+    "editor_c_point": "OPEN; this focused lifecycle fix does not certify the complete workspace acceptance",
+    "full_editor_manual_and_physical_acceptance": "DEFERRED until the full Visual Editor plan gate"
+  }
+}
