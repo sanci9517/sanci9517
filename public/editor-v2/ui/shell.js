@@ -2,7 +2,7 @@ import {createEventBus} from './events.js';
 import {panelRegistry,featureRegistry} from './registry.js';
 import {EDITOR_ACTIONS} from './action-catalog.js?v=20261103-canvas-focus-mode';
 import {enhanceEditorActionControls} from './action-help.js?v=20261103-canvas-focus-mode';
-import {DEFAULT_LEFT_TAB_ORDER,applyWorkspacePreferences,mountWorkspaceAppearance,normalizeLeftTabOrder,readWorkspacePreferences} from './workspace-appearance.js?v=20261104-cross-tab-reset-announcement';
+import {DEFAULT_LEFT_TAB_ORDER,applyWorkspacePreferences,mountWorkspaceAppearance,normalizeLeftTabOrder,readWorkspacePreferences} from './workspace-appearance.js?v=20261105-shell-storage-readback-honesty';
 
 const bus=createEventBus();
 const workspace=document.querySelector('.workspace');
@@ -15,6 +15,7 @@ const resizeLimits={left:{min:250,max:460},right:{min:260,max:440}};
 const STORAGE_KEY='sanci-editor-shell-v2';
 const defaults={leftOpen:false,rightOpen:false,leftTab:'pages',leftTabOrder:DEFAULT_LEFT_TAB_ORDER,inspectorTab:'design',panelActive:'left',leftWidth:310,rightWidth:352};
 const mobileQuery=window.matchMedia('(max-width: 1024px)');
+let dockStorageDurable=true;
 const initialAppearance=readWorkspacePreferences();
 applyWorkspacePreferences(editorRoot,initialAppearance);
 let focusBeforeMobilePanel=null;
@@ -29,7 +30,7 @@ function readPersisted(){
     if(!raw)return {...defaults};
     const value=JSON.parse(raw);
     return {...defaults,...value};
-  }catch{return {...defaults}}
+  }catch{dockStorageDurable=false;return {...defaults}}
 }
 
 let persisted=readPersisted();
@@ -53,7 +54,19 @@ function renderLeftTabOrder(){
 }
 renderLeftTabOrder();
 function persist(){
-  try{localStorage.setItem(STORAGE_KEY,JSON.stringify(persisted))}catch{}
+  const serialized=JSON.stringify(persisted);
+  try{
+    localStorage.setItem(STORAGE_KEY,serialized);
+    if(localStorage.getItem(STORAGE_KEY)!==serialized)throw new Error('Workspace storage did not return the saved dock state');
+    dockStorageDurable=true;
+    return true;
+  }catch{
+    dockStorageDurable=false;
+    workspaceAppearance?.reportDockStorageUnavailable();
+    const status=document.querySelector('#workspaceDockStatus');
+    if(status)status.textContent='A panelbeállítások csak ebben a munkamenetben érvényesek, mert a tárhelyes mentésük nem ellenőrizhető.';
+    return false;
+  }
 }
 function resolveWorkspaceLayout(layout,mobile){
   if(layout==='canvas')return {left:false,right:false};
@@ -431,7 +444,7 @@ setPanel('right',!mobileQuery.matches && Boolean(persisted.rightOpen),{save:fals
 showLeftTab(persisted.leftTab,{save:false,open:false});
 workspaceAppearance=mountWorkspaceAppearance({documentRef:document,root:editorRoot,onLayoutChange:applyWorkspaceLayout,onExternalChange:({reset=false}={})=>cancelWorkspaceDrag({announcement:reset?'A másik szerkesztőlapon alaphelyzetbe állították a munkaterületet, ezért az átrendezés megszakadt.':'A másik szerkesztőlapon történt változás miatt az átrendezés megszakadt.'}),readDockState:()=>persisted,moveDockTab:moveLeftTab,applyDockState:state=>{
   applyDockState(state);
-},onReset:()=>{
+},canPersistDockState:()=>dockStorageDurable,onReset:()=>{
   persisted={...defaults};
   renderLeftTabOrder();
   root.style.setProperty('--left-dock-width',`${defaults.leftWidth}px`);

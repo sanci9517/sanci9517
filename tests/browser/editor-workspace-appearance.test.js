@@ -31,19 +31,19 @@ function fixtureServer(){
   });
   return {server,writes};
 }
-async function openEditor(t,{width=1366,height=900,isMobile=false,hasTouch=false,blockWorkspaceStorageReads=false,initialDockState=null,initialAppearance=null}={}){
+async function openEditor(t,{width=1366,height=900,isMobile=false,hasTouch=false,blockWorkspaceStorageReads=false,blockShellStorageReads=false,initialDockState=null,initialAppearance=null}={}){
   const fixture=fixtureServer();await new Promise(done=>fixture.server.listen(0,'127.0.0.1',done));
   t.after(()=>new Promise(done=>fixture.server.close(done)));
   const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||(existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined),args:['--no-sandbox']});
   t.after(()=>browser.close());
   const context=await browser.newContext({viewport:{width,height},isMobile,hasTouch});t.after(()=>context.close());
-  if(blockWorkspaceStorageReads)await context.addInitScript(()=>{
+  if(blockWorkspaceStorageReads||blockShellStorageReads)await context.addInitScript(({blockWorkspaceStorageReads,blockShellStorageReads})=>{
     const getItem=Storage.prototype.getItem;
     Storage.prototype.getItem=function(key){
-      if(key==='sanci-editor-shell-v2'||key==='sanci-editor-workspace-preferences-v2'||key==='sanci-editor-workspace-preferences-v1')throw new DOMException('Storage is disabled','SecurityError');
+      if((blockWorkspaceStorageReads&&(key==='sanci-editor-shell-v2'||key==='sanci-editor-workspace-preferences-v2'||key==='sanci-editor-workspace-preferences-v1'))||(blockShellStorageReads&&key==='sanci-editor-shell-v2'))throw new DOMException('Storage is disabled','SecurityError');
       return getItem.call(this,key);
     };
-  });
+  },{blockWorkspaceStorageReads,blockShellStorageReads});
   if(initialDockState||initialAppearance)await context.addInitScript(({dock,appearance})=>{
     if(dock)localStorage.setItem('sanci-editor-shell-v2',JSON.stringify(dock));
     if(appearance)localStorage.setItem('sanci-editor-workspace-preferences-v2',JSON.stringify(appearance));
@@ -1797,6 +1797,24 @@ test('Editor starts with safe defaults when privacy settings deny workspace stor
   assert.equal(await page.locator('#publish').textContent(),'Publikálás');
   assert.deepEqual(writes,[],'a denied workspace read never falls back to Page Model, Save, or Publish writes');
   assert.deepEqual(errors,[],'denied localStorage reads do not prevent Editor startup');
+});
+
+test('workspace persistence stays session-only when just the separate dock-state key cannot be read',async t=>{
+  const {page,writes,errors}=await openEditor(t,{width:1280,height:900,blockShellStorageReads:true});
+  await openPreferences(page);
+  await page.locator('#workspaceLayout').selectOption('balanced');
+  await page.locator('#workspacePanelMode').selectOption('tabbed');
+  await page.waitForFunction(()=>document.querySelector('#workspaceAppearanceStatus')?.textContent.includes('csak ebben a munkamenetben'));
+  assert.equal(await page.locator('.workspace').evaluate(element=>element.classList.contains('left-open')&&element.classList.contains('right-open')),true,'the current session remains usable when only the shell state is unreadable');
+  assert.equal(await page.evaluate(key=>JSON.parse(localStorage.getItem(key))?.layout,WORKSPACE_PREFERENCES_KEY),'balanced','the appearance key itself can be written even though the separate shell key cannot be read back');
+  assert.match(await page.locator('#workspaceAppearanceStatus').textContent(),/panelállapot tárhelyes mentése nem ellenőrizhető/iu,'appearance storage success cannot promise a durable workspace when the separate dock state cannot be verified after reload');
+
+  await page.locator('#closeWorkspaceAppearance').click();
+  await page.locator('#workspacePanelTabRight').click();
+  assert.equal(await page.locator('#workspacePanelTabRight').getAttribute('aria-selected'),'true','the user can still switch panels in the current session');
+  assert.match(await page.locator('#workspaceDockStatus').textContent(),/csak ebben a munkamenetben érvényes/iu,'shell-only state changes also announce their non-durable status outside the settings dialog');
+  assert.deepEqual(writes,[],'a partial workspace-storage failure never touches Page Model Save or Publish');
+  assert.deepEqual(errors,[]);
 });
 
 test('profile import explains when browser storage is unavailable instead of claiming the profile was saved',async t=>{

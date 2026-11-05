@@ -121,7 +121,7 @@ export function applyWorkspacePreferences(root,preferences){
   root.style.setProperty('--accent',value.accent);
   return value;
 }
-export function mountWorkspaceAppearance({documentRef=globalThis.document,root=documentRef?.querySelector('.editor-app'),onLayoutChange=()=>{},onReset=()=>{},readDockState=()=>({}),applyDockState=()=>{},moveDockTab=()=>false,onExternalChange=()=>{}}={}){
+export function mountWorkspaceAppearance({documentRef=globalThis.document,root=documentRef?.querySelector('.editor-app'),onLayoutChange=()=>{},onReset=()=>{},readDockState=()=>({}),applyDockState=()=>{},moveDockTab=()=>false,onExternalChange=()=>{},canPersistDockState=()=>true}={}){
   if(!documentRef||!root)throw new Error('A document and editor root are required');
   const dialog=documentRef.querySelector('#workspaceAppearanceDialog');
   const openButton=documentRef.querySelector('#openWorkspaceAppearance');
@@ -149,7 +149,8 @@ export function mountWorkspaceAppearance({documentRef=globalThis.document,root=d
   };
   const status=documentRef.querySelector('#workspaceAppearanceStatus');
   const announcePersistence=(saved,durableMessage,sessionMessage='Ez a beállítás csak ebben a munkamenetben érvényes, mert a böngésző tárhelye nem használható.')=>{
-    if(status)status.textContent=saved?durableMessage:sessionMessage;
+    let dockDurable=true;try{dockDurable=canPersistDockState()!==false}catch{dockDurable=false}
+    if(status)status.textContent=!saved?sessionMessage:dockDurable?durableMessage:'A munkaterület csak ebben a munkamenetben érvényes, mert a panelállapot tárhelyes mentése nem ellenőrizhető. Az oldal tartalma változatlan.';
   };
   const moveLeftToolUpButton=documentRef.querySelector('#moveWorkspaceLeftToolUp');
   const moveLeftToolDownButton=documentRef.querySelector('#moveWorkspaceLeftToolDown');
@@ -378,9 +379,12 @@ export function mountWorkspaceAppearance({documentRef=globalThis.document,root=d
       ?'Egy másik szerkesztőlapon alaphelyzetbe állították a munkaterületet. A régi visszavonási előzményt töröltük. Az oldal tartalma nem változott.'
       :'Egy másik szerkesztőlapon megváltozott a panelek állapota. A friss munkaterületet megjelenítettük, a korábbi visszavonási előzményt töröltük. Az oldal tartalma nem változott.';
   };
+  const reportDockStorageUnavailable=()=>{
+    if(status)status.textContent='A munkaterület beállításai csak ebben a munkamenetben érvényesek, mert a panelállapot tárhelyes mentése nem ellenőrizhető. Az oldal tartalma változatlan.';
+  };
   documentRef.defaultView?.addEventListener?.('storage',syncExternalPreferences);
   undoButton?.addEventListener('click',undo);redoButton?.addEventListener('click',redo);
   resetButton?.addEventListener('click',reset);
   paint();
-  return {get value(){return normalizeWorkspacePreferences(value)},setLayout,setDockOrder,setDockLayout,setPanelGrouping,open,close,remember,undo,redo,saveProfile,loadProfile,deleteProfile,importProfile,exportProfile,reset,syncDockControls:renderLeftToolOrder,clearExternalDockHistory,destroy(){documentRef.defaultView?.removeEventListener?.('storage',syncExternalPreferences)}};
+  return {get value(){return normalizeWorkspacePreferences(value)},setLayout,setDockOrder,setDockLayout,setPanelGrouping,open,close,remember,undo,redo,saveProfile,loadProfile,deleteProfile,importProfile,exportProfile,reset,syncDockControls:renderLeftToolOrder,clearExternalDockHistory,reportDockStorageUnavailable,destroy(){documentRef.defaultView?.removeEventListener?.('storage',syncExternalPreferences)}};
 }
