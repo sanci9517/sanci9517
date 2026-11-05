@@ -1,0 +1,95 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-05",
+  "plan_point": "77.44.6.1.C",
+  "status": "MOBILE_DOCK_ORDER_SELECTOR_AND_DRAWER_LIFECYCLE_PASS_FULL_C_OPEN",
+  "scope": "Prove the mobile touch-sized dock-order setting, one-drawer interaction, and restoration of the explicit desktop order without changing the Page Model.",
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "test_base_commit": "1daa3072fb2f8456b5b76b401ab375b8f84ec3e7",
+    "test_commit": "f9bf60e54ff6ad3a361e88abf702a4e92085e36c",
+    "test_commit_fast_forward_push_verified": true,
+    "github_exact_ref_after_test_push": "f9bf60e54ff6ad3a361e88abf702a4e92085e36c",
+    "github_commit_statuses": [],
+    "aggregate_github_ci_pass": false,
+    "runtime_files_changed": [],
+    "test_files_changed": ["tests/browser/editor-workspace-appearance.test.js"],
+    "documentation_files_changed_in_test_commit": false
+  },
+  "coverage": {
+    "browser": "Chromium via the existing Playwright local editor fixture",
+    "mobile_viewport_css_px": {"width": 390, "height": 844},
+    "touch_input": true,
+    "native_dock_order_selector": "#workspaceDockOrder",
+    "minimum_selector_target_height_css_px": 44,
+    "selected_order": "right-canvas-left",
+    "mobile_behavior": {
+      "desktop_order_explained_as_desktop_only": true,
+      "exactly_one_drawer_open_after_panel_switch": true,
+      "background_canvas_inert_while_drawer_open": true,
+      "horizontal_overflow": false
+    },
+    "desktop_restoration_viewport_css_px": {"width": 1025, "height": 900},
+    "saved_order_restored": true,
+    "minimum_canvas_width_css_px": 400,
+    "open_dock_overlaps_canvas": false,
+    "responsive_transition_extra_workspace_storage_writes": 0,
+    "page_model_save_publish_or_renderer_requests": 0
+  },
+  "validation": {
+    "targeted_real_chromium": {
+      "status": "PASS",
+      "tests": 1,
+      "command": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py node --test --test-concurrency=1 --test-reporter=spec --test-name-pattern='mobile touch-sized dock-order control' tests/browser/editor-workspace-appearance.test.js"
+    },
+    "complete_workspace_chromium_file": {
+      "status": "PASS",
+      "tests": 42,
+      "command": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-workspace-appearance.test.js",
+      "orphaned_browser_descendants_reaped": 182
+    },
+    "editor_unit": {
+      "status": "PASS",
+      "node_test_files": 14,
+      "linux_subreaper_cases": 3,
+      "command": "npm run test:editor"
+    },
+    "typecheck": "PASS: npm run typecheck",
+    "migration_guard": "PASS: npm run test:web013:migration-gate; no production migration applied",
+    "canonical_plan_checks": "PASS: complete master and plan contract; active cursor remains 77.44.6.1.C / OPEN.",
+    "traceability": "PASS: 396/396 mappings match current catalog, contracts and paths.",
+    "syntax_and_diff": "PASS: node --check tests/browser/editor-workspace-appearance.test.js and git diff --check",
+    "wide_51_file_editor_layout_suite": "NOT RUN; no aggregate wide-suite claim."
+  },
+  "release": {
+    "status": "TEST_AND_DOCUMENTATION_ONLY_NO_WORKER_DEPLOY",
+    "test_commit_push": "Normal fast-forward push completed; GitHub branch API returned the exact test commit as branch HEAD.",
+    "test_commit_combined_status": "No statuses (empty list); aggregate CI PASS is not claimed.",
+    "documentation_and_evidence_commit": "Recorded in the canonical plan commit that contains this evidence file.",
+    "runtime_source_changed": false,
+    "worker_deployment_changed": false,
+    "latest_worker_deployment_id": "17c9928a-c0d4-4ffa-bdf2-21b9623d9ef0",
+    "latest_worker_traffic_version": "e5ce8eba-1007-4ca5-b153-a426e2224a09",
+    "latest_worker_traffic_percent": 100,
+    "direct_public_health": {
+      "status": "PASS",
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health?codex_check=20261105-mobile-dock-order",
+      "http_status": 200,
+      "body": {"ok": true, "service": "sanci9517-streamer-brand", "version": "2.0.0", "server": "cloudflare-worker"}
+    },
+    "asset_hashes": "Not re-fetched: no runtime, asset, or deployment input changed; only a browser test and canonical plan/evidence changed.",
+    "production_d1_query_or_write": "NONE",
+    "r2_operation_or_deletion": false
+  },
+  "reuse_and_cost": {
+    "reused": "Project-owned responsive dock lifecycle, allowlisted local workspace preference, CSS Grid canvas-safe layout, touch-sized native selector, Playwright fixture, installed Chromium and existing Playwright dependency.",
+    "new_external_runtime_code": false,
+    "new_dependencies": false,
+    "cost_huf": 0
+  },
+  "acceptance": {
+    "77_44_6_1_C": "OPEN / NOT CERTIFIED; dynamic docking and complete workspace acceptance remain open.",
+    "full_visual_editor_manual_and_physical_acceptance": "DEFERRED until the complete Editor acceptance gate."
+  }
+}
