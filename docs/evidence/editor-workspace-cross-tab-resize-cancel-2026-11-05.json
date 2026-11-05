@@ -1,14 +1,14 @@
 {
   "schema_version": 1,
-  "recorded_at_utc": "2026-11-05T16:00:00Z",
+  "recorded_at_utc": "2026-11-05T16:32:00Z",
   "plan_point": "77.44.6.1.C",
-  "status": "RUNTIME_FIX_READY_FOR_RELEASE; PLAN_POINT_OPEN",
+  "status": "RUNTIME_RELEASE_VERIFIED; PLAN_POINT_OPEN",
   "scope": "Prevent an in-progress local pointer resize from overwriting newer shared dock or appearance state delivered from another open editor tab.",
   "source_control": {
     "repository": "sanci9517/sanci9517",
     "branch": "v2/foundation",
     "starting_head": "cbe99410b29661960ca85ecc529352f4e82f4a5a",
-    "runtime_commit": null,
+    "runtime_commit": "95f430776e5973deb81607fc3b33d448a5e6e29a",
     "runtime_commit_message": "fix(editor): cancel stale dock resize on workspace updates",
     "runtime_files": [
       "public/editor-v2/ui/shell.js",
@@ -19,7 +19,9 @@
     ],
     "evidence_file": "docs/evidence/editor-workspace-cross-tab-resize-cancel-2026-11-05.json",
     "new_dependencies": [],
-    "aggregate_ci_pass_claimed": false
+    "aggregate_ci_pass_claimed": false,
+    "github_branch_head_verified": "95f430776e5973deb81607fc3b33d448a5e6e29a",
+    "github_commit_status": "pending; total_count=0; statuses=[]; aggregate CI PASS not claimed"
   },
   "bug_and_fix": {
     "reproduction": "In real Chromium, start a pointer drag on the first tab's left dock resize handle and move 40 CSS px (310px to 350px). From a second same-origin Editor tab write a valid sanci-editor-shell-v2 state with leftWidth 400px. Before the fix, the receiver applied the remote 400px value but remained in resizing-dock; moving and releasing the original pointer continued the stale gesture and could persist its old width over the remote state.",
@@ -45,7 +47,11 @@
       "bundle_kib": 335.81,
       "gzip_kib": 87.6,
       "deployed": false
-    }
+    },
+    "canonical_plan": "PASS: complete 13-file canonical master.",
+    "plan_contract": "PASS: tests/plan-contract.test.py; 13/13.",
+    "active_plan_audit": "PASS: current point 77.44.6.1.C; functional acceptance NOT_CERTIFIED.",
+    "traceability": "PASS: 396 source mappings, acceptance NOT certified."
   },
   "production_preflight": {
     "method": "Cloudflare D1 Query API; SELECT-only",
@@ -60,16 +66,47 @@
     "r2_operation": false
   },
   "release": {
-    "status": "PENDING_RUNTIME_PUSH_BUILD_DEPLOY_AND_DIRECT_SMOKE_VERIFICATION",
+    "status": "RUNTIME_DEPLOYED_AND_DIRECTLY_VERIFIED",
     "previous_deployment_id": "bdb6661a-f2f1-4ca0-b44c-61d6f5d742cb",
     "previous_traffic_version_id": "9d5e3f12-2289-474a-98ea-995c5854a962",
     "previous_traffic_percent": 100,
-    "build_id": null,
-    "deployment_id": null,
-    "traffic_version_id": null,
-    "traffic_percent": null,
-    "production_health": null,
-    "changed_asset_hashes": null
+    "automatic_build_id": "a46e88a6-eedf-4a7a-90c7-c5de59e4c6e9",
+    "automatic_build_commit": "95f430776e5973deb81607fc3b33d448a5e6e29a",
+    "automatic_build_result": "SUCCESS; typecheck and deploy:safe completed; D1 migration safety gate passed; no migration applied.",
+    "build_log_notes": [
+      "npm clean-install reported four high-severity advisories.",
+      "npm warned that esbuild@0.28.1 and workerd@1.20260908.1 install scripts are pending npm allowScripts approval; this release made no dependency changes."
+    ],
+    "deployment_id": "4ba815bc-50c0-4e0e-9964-e7f1b0824ce3",
+    "traffic_version_id": "f3f4c1df-d5a1-4368-9b25-34066ba77161",
+    "traffic_percent": 100,
+    "deployment_created_on": "2026-11-05T16:31:06.876514Z",
+    "production_health": {
+      "path": "/api/health",
+      "http_status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "changed_asset_hashes": [
+      {
+        "path": "/editor-v2/",
+        "http_status": 200,
+        "sha256": "3db494862788ac8584b387a8af66853af03d940a49ca1ce992230a409014ea21",
+        "matches_local": true
+      },
+      {
+        "path": "/editor-v2/ui/shell.js?v=20261105-cross-tab-resize-cancel",
+        "http_status": 200,
+        "sha256": "74c08756f0a51b79f91b4b76a22f2a61fe9fa517102e23ad175f9a5e3ac0127f",
+        "matches_local": true
+      }
+    ],
+    "direct_production_smoke": "Direct HTTPS GET after deployment: health, editor index and versioned shell module all HTTP 200; changed asset response bodies byte-for-byte matched local source.",
+    "documentation_followup_deployment": "No redundant Worker deployment for the following docs/evidence-only commit."
   },
   "manual_acceptance": "DEFERRED_UNTIL_COMPLETE_EDITOR",
   "full_plan_point_acceptance": "NOT_CERTIFIED",
