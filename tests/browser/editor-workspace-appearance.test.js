@@ -31,7 +31,7 @@ function fixtureServer(){
   });
   return {server,writes};
 }
-async function openEditor(t,{width=1366,height=900,isMobile=false,hasTouch=false,blockWorkspaceStorageReads=false}={}){
+async function openEditor(t,{width=1366,height=900,isMobile=false,hasTouch=false,blockWorkspaceStorageReads=false,initialDockState=null,initialAppearance=null}={}){
   const fixture=fixtureServer();await new Promise(done=>fixture.server.listen(0,'127.0.0.1',done));
   t.after(()=>new Promise(done=>fixture.server.close(done)));
   const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||(existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined),args:['--no-sandbox']});
@@ -44,6 +44,10 @@ async function openEditor(t,{width=1366,height=900,isMobile=false,hasTouch=false
       return getItem.call(this,key);
     };
   });
+  if(initialDockState||initialAppearance)await context.addInitScript(({dock,appearance})=>{
+    if(dock)localStorage.setItem('sanci-editor-shell-v2',JSON.stringify(dock));
+    if(appearance)localStorage.setItem('sanci-editor-workspace-preferences-v2',JSON.stringify(appearance));
+  },{dock:initialDockState,appearance:initialAppearance});
   const page=await context.newPage();page.setDefaultTimeout(8000);page.setDefaultNavigationTimeout(20_000);
   const errors=[];page.on('pageerror',error=>errors.push(error.message));
   await page.goto(`http://127.0.0.1:${fixture.server.address().port}/editor-v2/index.html`,{waitUntil:'load'});
@@ -1977,7 +1981,10 @@ test('desktop tabbed dock groups become one mobile sheet and restore the exact g
     await page.setViewportSize({width:390,height:844});
     await page.waitForFunction(()=>{
       const workspace=document.querySelector('.workspace');
-      return matchMedia('(max-width: 1024px)').matches&&(workspace?.classList.contains('left-open')||workspace?.classList.contains('right-open'));
+      const leftOpen=!document.querySelector('#leftDock')?.classList.contains('closed');
+      const rightOpen=!document.querySelector('#rightDock')?.classList.contains('closed');
+      return matchMedia('(max-width: 1024px)').matches&&Number(leftOpen)+Number(rightOpen)===1&&
+        (leftOpen||rightOpen)&&document.querySelector('.canvas-area')?.inert===true;
     });
     const mobile=await page.evaluate(()=>({
       left:!document.querySelector('#leftDock').classList.contains('closed'),
@@ -2025,6 +2032,36 @@ test('desktop tabbed dock groups become one mobile sheet and restore the exact g
     assert.deepEqual({shell:restored.shell,appearance:restored.appearance},{shell:before.shell,appearance:before.appearance},`${side}: returning to desktop writes no workspace profile`);
   }
   assert.deepEqual(writes,[],'responsive tabbed workspace transitions never Save or Publish the Page Model');
+  assert.deepEqual(errors,[]);
+});
+
+test('a saved two-dock custom workspace starts canvas-first on mobile and restores on desktop',async t=>{
+  const dock={leftOpen:true,rightOpen:true,leftTab:'pages',leftTabOrder:['pages','elements','layers','schedule','navigation'],inspectorTab:'design',panelActive:'left',leftWidth:310,rightWidth:352};
+  const appearance={version:2,layout:'custom',theme:'graphite',density:'comfortable',accent:'#5b8cff',dockOrder:'left-canvas-right',panelMode:'tabbed',panelSide:'right',profiles:[]};
+  const {page,writes,errors}=await openEditor(t,{width:390,height:844,isMobile:true,hasTouch:true,initialDockState:dock,initialAppearance:appearance});
+  await page.waitForFunction(()=>document.documentElement.dataset.editorBoot==='ready');
+  const mobile=await page.evaluate(appearanceKey=>({
+    left:!document.querySelector('#leftDock').classList.contains('closed'),
+    right:!document.querySelector('#rightDock').classList.contains('closed'),
+    tabsDisplay:getComputedStyle(document.querySelector('.workspace-panel-group-tabs')).display,
+    canvasInert:document.querySelector('.canvas-area').inert,
+    dock:JSON.parse(localStorage.getItem('sanci-editor-shell-v2')),
+    appearance:JSON.parse(localStorage.getItem(appearanceKey)),
+  }),WORKSPACE_PREFERENCES_KEY);
+  assert.equal(Number(mobile.left)+Number(mobile.right),0,'mobile startup preserves the canvas-first workspace even when the saved desktop group keeps both panes');
+  assert.equal(mobile.tabsDisplay,'none','desktop tab controls are not used as mobile drawer navigation');
+  assert.equal(mobile.canvasInert,false,'the canvas remains interactive when no mobile drawer is open');
+  assert.deepEqual(mobile.dock,dock,'mobile startup does not rewrite the saved desktop dock state');
+  assert.deepEqual(mobile.appearance,appearance,'mobile startup does not rewrite workspace preferences');
+
+  await page.setViewportSize({width:1280,height:900});
+  await page.waitForFunction(()=>!matchMedia('(max-width: 1024px)').matches&&
+    document.querySelector('.workspace')?.classList.contains('left-open')&&
+    document.querySelector('.workspace')?.classList.contains('right-open')&&
+    document.querySelector('.workspace')?.dataset.workspacePanelMode==='tabbed');
+  assert.equal(await page.locator('#workspacePanelTabLeft').getAttribute('aria-selected'),'true','the exact selected desktop group tab is restored');
+  assert.deepEqual(await page.evaluate(()=>JSON.parse(localStorage.getItem('sanci-editor-shell-v2'))),dock);
+  assert.deepEqual(writes,[],'responsive startup and restoration never Save or Publish page content');
   assert.deepEqual(errors,[]);
 });
 
