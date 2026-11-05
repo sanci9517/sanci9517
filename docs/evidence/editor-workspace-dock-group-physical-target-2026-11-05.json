@@ -1,0 +1,129 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-05",
+  "plan_point": "77.44.6.1.C",
+  "status": "RUNTIME_DEPLOYED_LOCAL_CHECKS_PASS_GITHUB_BROWSER_CI_PENDING",
+  "scope": "Keep desktop dock-to-dock grouping on the physical side of the canvas where the user dropped the target panel, even when the saved dock order reverses panel IDs.",
+  "implementation": {
+    "runtime_files": [
+      "public/editor-v2/ui/shell.js",
+      "public/editor-v2/index.html"
+    ],
+    "test_files": [
+      "tests/browser/editor-workspace-appearance.test.js"
+    ],
+    "behavior": {
+      "group_target_side": "The actual center of the visible target dock is compared with the canvas center; the grouped panel pair occupies that physical left or right track.",
+      "announcement": "The polite live-region message identifies the resulting physical side of the canvas.",
+      "canvas": "Existing CSS Grid behavior preserves an uncovered canvas of at least 400 CSS px.",
+      "preference": "The user-selected stable three-region dock order is retained while tab grouping is enabled.",
+      "page_data": "Dock grouping changes only shell/workspace state; it does not touch Page Model, Save, or Publish."
+    },
+    "reused_project_solution": "Existing six-order dock preference, CSS Grid workspace geometry, target-region drag/drop and setPanelGrouping API are reused; the group side is derived from live target/canvas rectangles instead of the target panel identifier.",
+    "third_party_runtime_code_added": false,
+    "new_dependency": false,
+    "page_model_mutations": 0,
+    "save_requests": 0,
+    "publish_requests": 0,
+    "r2_operations": 0,
+    "cost_huf": 0
+  },
+  "validation": {
+    "local_browser_attempt": {
+      "status": "BLOCKED_BEFORE_ASSERTIONS",
+      "command": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 --test-name-pattern='grouping on a reordered dock' tests/browser/editor-workspace-appearance.test.js",
+      "error": "Chromium exits with SIGTRAP during launch: crashpad socket setsockopt returns Operation not permitted in this managed execution environment. The browser did not reach the fixture/page assertions.",
+      "not_a_test_pass": true
+    },
+    "editor_unit": "PASS 14/14 files plus Linux subreaper runner 3/3: npm run test:editor",
+    "typecheck": "PASS: npm run typecheck",
+    "migration_safety": "PASS: npm run test:web013:migration-gate; no migration was applied.",
+    "syntax_and_whitespace": "PASS: node --check public/editor-v2/ui/shell.js; node --check tests/browser/editor-workspace-appearance.test.js; git diff --check",
+    "wrangler_dry_run": "PASS: XDG_CONFIG_HOME=/tmp/sanci9517-wrangler-config npx wrangler deploy --dry-run; Wrangler 4.130.0, 168 assets, 335.81 KiB / 87.60 KiB gzip.",
+    "github_editor_core_browser": {
+      "run_id": 41973716568,
+      "url": "https://github.com/sanci9517/sanci9517/actions/runs/41973716568",
+      "status_at_evidence_creation": "in_progress",
+      "head_sha": "626198d09079293f387288b42c7f330d40b0df5a"
+    },
+    "github_f0_baseline": {
+      "run_id": 41973716696,
+      "status": "completed",
+      "conclusion": "success"
+    },
+    "github_twitch_check": {
+      "run_id": 41973716650,
+      "status": "completed",
+      "conclusion": "success"
+    },
+    "production_d1_preflight_before_release": {
+      "method": "Cloudflare D1 Query API; read-only SELECT.",
+      "query": "SELECT name FROM d1_migrations ORDER BY name;",
+      "ledger_rows": 34,
+      "latest": "0028_media_archive.sql",
+      "changed_db": false,
+      "rows_written": 0,
+      "changes": 0
+    },
+    "production_d1_preflight_after_release": {
+      "method": "Cloudflare D1 Query API; read-only SELECT.",
+      "query": "SELECT name FROM d1_migrations ORDER BY name;",
+      "ledger_rows": 34,
+      "latest": "0028_media_archive.sql",
+      "changed_db": false,
+      "rows_written": 0,
+      "changes": 0
+    }
+  },
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "parent_commit": "22f17421525041ff89758df9649a4be9b87ab299",
+    "runtime_commit": "626198d09079293f387288b42c7f330d40b0df5a",
+    "push": "PASS, normal fast-forward; push output confirmed 22f17421..626198d0",
+    "github_exact_head": "626198d09079293f387288b42c7f330d40b0df5a",
+    "aggregate_github_ci_pass": false
+  },
+  "production": {
+    "worker": "sanci9517-streamer-brand",
+    "prior_traffic_version": "4b15c7fb-4a49-4724-81a7-b65e8f569045",
+    "prior_traffic_percent": 100,
+    "deployment_id": "aff433e1-97c0-4c6d-b064-b1c1317d11f0",
+    "traffic_version": "569e11f0-fce8-4bc3-981a-d1e66f11fe0e",
+    "traffic_version_number": 3821,
+    "traffic_percent": 100,
+    "deployment_observed_at_utc": "2026-11-05T05:24:44.559946Z",
+    "health_smoke": {
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "changed_assets": [
+      {
+        "path": "public/editor-v2/index.html",
+        "live_url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/editor-v2/",
+        "status": 200,
+        "local_sha256": "f8378bb72867dea58a403cfb93a1442b7c4cfb0592e56c957e430568bdbaa581",
+        "live_sha256": "f8378bb72867dea58a403cfb93a1442b7c4cfb0592e56c957e430568bdbaa581"
+      },
+      {
+        "path": "public/editor-v2/ui/shell.js",
+        "live_url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/editor-v2/ui/shell.js?v=20261105-dock-target-track",
+        "status": 200,
+        "local_sha256": "8a0b3d7f78e8a427b6e35fb761f670eee5a4c241513eb868bf486e2dd6e7cc27",
+        "live_sha256": "8a0b3d7f78e8a427b6e35fb761f670eee5a4c241513eb868bf486e2dd6e7cc27"
+      }
+    ],
+    "production_d1_mutation_or_migration": false,
+    "production_cost_huf": 0
+  },
+  "acceptance": {
+    "77_44_6_1_C": "OPEN; target-side grouping is one verified foundation slice, not complete acceptance of dynamic docking zones, nested groups and the full workspace lifecycle.",
+    "full_visual_editor_manual_and_physical_acceptance": "DEFERRED until the complete Visual Editor plan acceptance gate."
+  }
+}
