@@ -930,6 +930,75 @@ test('native mouse canvas-edge zones move both docks across all six layouts with
   assert.deepEqual(errors,[]);
 });
 
+test('native mouse drag from the canvas toolbar repositions the canvas without covering its editing area',async t=>{
+  const {page,writes,errors}=await openEditor(t,{width:1280,height:900});
+  await openPreferences(page);
+  await page.locator('#workspaceLayout').selectOption('balanced');
+  await page.locator('#workspacePanelMode').selectOption('separate');
+  await page.waitForFunction(()=>!document.querySelector('#leftDock')?.classList.contains('closed')&&!document.querySelector('#rightDock')?.classList.contains('closed'));
+  await page.locator('#closeWorkspaceAppearance').click();
+
+  const cases=[
+    {start:'left-canvas-right',target:'left',before:true,expected:'canvas-left-right'},
+    {start:'left-canvas-right',target:'right',before:false,expected:'left-right-canvas'},
+    {start:'canvas-left-right',target:'right',before:true,expected:'left-canvas-right'},
+    {start:'canvas-left-right',target:'left',before:false,expected:'left-canvas-right'},
+    {start:'left-right-canvas',target:'right',before:true,expected:'left-canvas-right'},
+    {start:'right-left-canvas',target:'left',before:true,expected:'right-canvas-left'},
+    {start:'right-canvas-left',target:'right',before:true,expected:'canvas-right-left'},
+    {start:'canvas-right-left',target:'left',before:false,expected:'right-left-canvas'}
+  ];
+
+  for(const item of cases){
+    await openPreferences(page);
+    await page.locator('#workspaceDockOrder').selectOption(item.start);
+    await page.locator('#closeWorkspaceAppearance').click();
+    const source=page.locator('.canvas-toolbar');
+    const target=page.locator(`#${item.target}Dock`);
+    const sourceBounds=await source.boundingBox(),targetBounds=await target.boundingBox();
+    assert.ok(sourceBounds&&targetBounds,`${item.start}: the toolbar and target dock are visible`);
+    // The toolbar's right edge is its plain-text device-size label rather than
+    // an interactive button, so this is a real, discoverable drag-handle path.
+    await source.dragTo(target,{
+      sourcePosition:{x:sourceBounds.width-3,y:sourceBounds.height/2},
+      targetPosition:{x:item.before?4:targetBounds.width-4,y:Math.min(30,targetBounds.height/2)}
+    });
+    const moved=await page.evaluate(()=>{
+      const workspace=document.querySelector('.workspace'),canvasArea=document.querySelector('.canvas-area'),canvas=document.querySelector('#canvas');
+      const rect=canvasArea.getBoundingClientRect(),canvasRect=canvas.getBoundingClientRect();
+      return {
+        order:workspace.dataset.workspaceDockOrder,
+        savedOrder:JSON.parse(localStorage.getItem('sanci-editor-workspace-preferences-v2'))?.dockOrder,
+        width:rect.width,
+        contentWidth:canvasRect.width,
+        previewCleared:!document.querySelector('.workspace [data-dock-drop-position]')&&!document.querySelector('.workspace [data-dock-drop-label]'),
+        dragFinished:!document.body.classList.contains('workspace-reordering'),
+        announcement:document.querySelector('#workspaceDockStatus').textContent
+      };
+    });
+    assert.equal(moved.order,item.expected,`${item.start}: the canvas toolbar moves before/after ${item.target}: ${JSON.stringify(moved)}`);
+    assert.equal(moved.savedOrder,item.expected,'the canvas move stores one allowlisted local workspace order');
+    assert.ok(moved.width>=400&&moved.contentWidth>0,`${item.expected}: the editing canvas retains its own visible grid track`);
+    assert.equal(moved.previewCleared,true,'the native drop removes the temporary drop-zone cue');
+    assert.equal(moved.dragFinished,true,'the native drag lifecycle returns to its idle state');
+    assert.match(moved.announcement,/Vászon panel.*(?:Oldalak és eszközök|Beállítások).*Sorrend:/iu,'the live region explains the resulting canvas order');
+  }
+
+  await openPreferences(page);
+  assert.equal(await page.locator('#undoWorkspaceLayout').isEnabled(),true,'canvas moves share the workspace-only history');
+  await page.locator('#undoWorkspaceLayout').click();
+  assert.equal(await page.locator('.workspace').getAttribute('data-workspace-dock-order'),'canvas-right-left');
+  await page.locator('#redoWorkspaceLayout').click();
+  assert.equal(await page.locator('.workspace').getAttribute('data-workspace-dock-order'),'right-left-canvas');
+  await page.locator('#closeWorkspaceAppearance').click();
+  await page.reload({waitUntil:'load'});
+  await page.waitForFunction(()=>document.documentElement.dataset.editorBoot==='ready');
+  assert.equal(await page.locator('.workspace').getAttribute('data-workspace-dock-order'),'right-left-canvas','the canvas placement survives a complete editor reload');
+  assert.ok(await page.locator('.canvas-area').evaluate(element=>element.getBoundingClientRect().width>=400));
+  assert.deepEqual(writes,[],'canvas rearrangement changes only local workspace presentation, never page Save or Publish');
+  assert.deepEqual(errors,[]);
+});
+
 test('dropping the right dock into the left dock center keeps the group on the left track',async t=>{
   const {page,writes,errors}=await openEditor(t,{width:1280,height:900});
   await openPreferences(page);
