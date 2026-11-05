@@ -67,28 +67,50 @@
     "migration_safety_gate": "PASS: npm run test:web013:migration-gate.",
     "plan_contract_and_traceability": "PASS: canonical plan, active cursor 77.44.6.1.C, acceptance NOT_CERTIFIED; 396/396 traceability mappings.",
     "source_hygiene": "PASS: node --check public/editor-v2/app.js and git diff --check.",
-    "production_health": "Direct GET https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health returned HTTP 200: {\"ok\":true,\"service\":\"sanci9517-streamer-brand\",\"version\":\"2.0.0\",\"server\":\"cloudflare-worker\"}.",
-    "current_live_deployment": "Read-only Cloudflare API GET observed deployment 3b105aeb-5187-441b-9af7-3cb018659f5f, Worker version b6855938-d676-4eb7-81e5-43dc3d084787 at 100% traffic (deployment created 2026-11-04T17:21:11Z); no runtime deployment this run.",
+    "production_health": "Direct GET /api/health returned HTTP 200: {\"ok\":true,\"service\":\"sanci9517-streamer-brand\",\"version\":\"2.0.0\",\"server\":\"cloudflare-worker\"}.",
+    "current_live_deployment": "Cloudflare API GET: deployment dc51b29c-9851-48d9-ab90-5f9d2b6c0475, Worker version 3f826a40-7478-4fa4-8bd0-6fe1e0328fe6 at 100% traffic, created 2026-11-05T03:00:35Z. Deployment was produced by the exact successful Cloudflare Build for f2d9ff50.",
     "unchanged_live_assets": "Current live app.js, editor index, and shell.js SHA-256 match the remote branch base commit 16b33b85b86d78d0ff2469e89c6ed68a247735be. The modified local app.js is not live.",
     "remote_branch": "v2/foundation HEAD 5f15b318fc9e1a7abac81e1a1f2c821dbd43b17f (verified before this documentation-only follow-up); runtime tree remains identical to base 16b33b85b86d78d0ff2469e89c6ed68a247735be. The local runtime edits remain uncommitted and unpushed.",
     "cost_huf": 0,
-    "wrangler_dry_run": "PASS: WRANGLER_LOG_PATH=/tmp/sanci-wrangler-logs npx wrangler deploy --dry-run; Wrangler 4.130.0 read 168 assets, 335.81 KiB / 87.60 KiB gzip; no deployment.",
+    "wrangler_dry_run": "PASS before push: Wrangler 4.130.0 read 168 public assets; 335.81 KiB / 87.60 KiB gzip; dry-run only.",
     "live_asset_sha256": {
-      "app_js": "bd91a8389557f14e3f33540c844bd4fa5dfe6461e831e2146dea2c7021f6e153",
-      "index_html": "ca7479a4dc6aaa24b0e92d67a7506c28c825fe9688a5839caf34dfc210121838",
-      "shell_js": "c8e3dd5881116e424bd7fb550ddaf0685cdbb28e1c9c4ef9e4d3cf97f9d450aa"
+      "index_html": "42727355dea11e5fb09ff039752d92cce5227f73ddc62397d2d5d3923a53855c",
+      "app_js": "11658b25ada93b5203f483d3fbc1cfe542e591d0979b62e282a260309dae4869"
     },
     "post_docs_push_deployment": "Verified after docs-only push: latest production deployment is still 3b105aeb-5187-441b-9af7-3cb018659f5f at 100%; /api/health still returns ok=true. Documentation push caused no Worker deployment.",
     "runtime_push_blocker": "NOT PUSHED: the focused changed-path browser regression passes, but the 51-file layout suite remains NOT_PASS due the unrelated cumulative Inspector timeout. A v2/foundation runtime push triggers .github/workflows/editor-core-test.yml, which runs the full browser suite; the canonical 0-HUF policy records exhausted GitHub Actions free compute and prohibits paid use/reruns. Preserve the verified local change; do not trigger that workflow until a zero-cost path exists.",
-    "github_actions": "Exact remote HEAD 5181d3c22627eb2a41c1cde87697ca717f204b83: Editor Core Test run 41921910427 completed FAILURE; earlier job steps passed, step 11 Run Editor browser layout regression failed and later steps were skipped. The exact assertion/log was not obtainable: gh api job log redirected to the GitHub Actions result store and returned HTTP 403 Forbidden. This workflow tested the pre-split, pre-timeout-fix commit; do not treat the local 53/53 pass as remote CI. No rerun or push was made.",
+    "github_actions": "Current deployed commit f2d9ff50cc790ccce725746089f31d082af4b86d: Editor Core Test run 41958702080 was IN_PROGRESS at the real Chromium layout step when this verification was recorded; setup, dependency install, typecheck, core tests, offline D1-ledger tests, media API/storage tests, and Chromium installation were successful. No GitHub CI PASS is claimed yet. The exact prior HEAD 5181d3c run 41921910427 had failed at this same layout step; its Actions log download returned HTTP 403, so its exact assertion remains unknown.",
     "inspector_opacity_shadow_follow_up": "Moved the all-PARTIAL mobile opacity/boxShadow draft-save, separate Publish, reset, draft-save, and separate Publish lifecycle out of the cumulative editor-inspector-partial-types.test.js into tests/browser/editor-inspector-opacity-shadow-reset.test.js and registered it in test:editor:layout. Re-run with loopback permission: real Chromium PASS 1/1, 44/44 editable PARTIAL types in 73.62s. The separate test asserts draft Save does not publish, reset Save preserves the published mobile styles, explicit Publish applies/removes overrides, and desktop CSS is unchanged. A sandbox-default retry was blocked before browser assertions by local fixture listen EPERM; it passed when loopback networking was enabled for the test command.",
     "remaining_inspector_matrix": "NOT_PASS: after extracting the opacity/shadow lifecycle, a 1200-second run of the remaining tests/browser/editor-inspector-partial-types.test.js hit the external timeout (exit 124; Node reported a pending promise after cancellation). No assertion failure was reported, but the file and aggregate browser suite remain incomplete and uncertified. A prior 12-type full-lifecycle diagnostic also reached its 300-second external timeout; the one-type tooltip lifecycle had passed in 155 seconds.",
-    "current_local_branch": "v2/foundation local HEAD and read-only git ls-remote origin refs/heads/v2/foundation both returned 5181d3c22627eb2a41c1cde87697ca717f204b83 at evidence update time. The new test split and registration, prior local Layers runtime change, and related documentation/evidence are uncommitted. No push or deployment was performed this run.",
+    "current_local_branch": "v2/foundation local HEAD f2d9ff50cc790ccce725746089f31d082af4b86d and read-only git ls-remote origin refs/heads/v2/foundation exactly matched after a normal fast-forward push. No force push or branch switch.",
     "visual_effects_partial_types_test": "PASS 1/1 in real Chromium, 44 editable PARTIAL types, 315248ms test duration. The extracted test retains three-breakpoint rotate/scale/filter/transition Save-versus-Publish, reload, inheritance reset, and Undo/Redo assertions.",
     "partial_types_after_visual_effects_split": "PASS 1/1 in real Chromium, 1064159ms test duration, after extracting both mobile opacity/shadow reset and the visual-effects lifecycle into independently runnable files. All 44 editable PARTIAL types still pass the remaining Inspector, typography, visibility, hover/focus, border, and aspect-ratio scenarios.",
     "aggregate_layout_after_test_splits": "PASS: timeout 3600s npm run test:editor:layout exited 0 after all 53/53 browser files passed serially. The all-PARTIAL Inspector matrix, opacity/shadow reset lifecycle, and three-breakpoint visual-effects lifecycle passed in the same aggregate. The previous run's two admin-media-retention 5s navigation/screenshot timeouts were fixed by giving navigation and the diagnostic screenshot 15s while retaining the 5s interaction timeout; the aggregate rerun passed all 15 retention subtests. The Editor element-insertion suite passed 7/7, including desktop Schedule Save/Publish.",
     "admin_media_retention_timeout_follow_up": "The aggregate rerun exposed initial navigation and diagnostic screenshot timing limits that were both 5s because the test set only a page default action timeout. Added a dedicated 15s navigation timeout and 15s full-page screenshot timeout; action assertions remain 5s. Isolated node --test tests/browser/admin-media-retention.test.js PASS 15/15, and all 15 passed in the 53-file aggregate.",
     "editor_element_insertion_follow_up": "node --test tests/browser/editor-element-insertion.test.js PASS 7/7 after the aggregate's single desktop Schedule Publish click timed out under serial-suite resource load; the same desktop test and entire file passed in isolation and in the aggregate rerun.",
-    "release_state_after_test_split": "NOT RELEASED: local 53/53 Chromium layout aggregate passes, but the exact remote HEAD Editor Core Test run 41921910427 is FAILURE at its Editor browser layout step. Its log download was denied HTTP 403, so the exact cause is unknown. Local test splits and timeout changes have not been pushed or run in GitHub. The workflow runs on every v2/foundation push; the project records exhausted free Actions compute and the 0-HUF policy forbids paid use/reruns. No push or deployment was performed; current Worker deployment remains at 100% and health is HTTP 200."
+    "release_state_after_test_split": "LIVE AND VERIFIED: commit f2d9ff50cc790ccce725746089f31d082af4b86d is on exact v2/foundation HEAD. Cloudflare Build 922151bc-7e28-4fe2-b8c4-73fd38bb5098 completed success with npm run deploy:safe and migration safety gate; deployment dc51b29c-9851-48d9-ab90-5f9d2b6c0475 serves Worker version 3f826a40-7478-4fa4-8bd0-6fe1e0328fe6 at 100%. Health and changed asset hashes match. Local layout aggregate passed 53/53; GitHub Editor Core run 41958702080 was still in progress at the layout step when recorded, so no aggregate GitHub CI PASS is claimed. The complete 77.44.6.1.C and full Editor acceptance remain OPEN/DEFERRED.",
+    "d1_preflight_2026_11_05": {
+      "query": "SELECT name FROM d1_migrations ORDER BY name;",
+      "ledger_rows": 34,
+      "latest_migration": "0028_media_archive.sql",
+      "rows_written": 0,
+      "changes": 0,
+      "changed_db": false,
+      "r2_mutations": false
+    },
+    "cloudflare_auto_build_2026_11_05": {
+      "build_uuid": "922151bc-7e28-4fe2-b8c4-73fd38bb5098",
+      "commit": "f2d9ff50cc790ccce725746089f31d082af4b86d",
+      "outcome": "success",
+      "build_command": "npm run typecheck",
+      "deploy_command": "npm run deploy:safe",
+      "safety_gate": "PASS; deploy:safe migration gate says it never applies D1 migrations; no migration apply occurred",
+      "uploaded_asset_count": 2,
+      "version_id": "3f826a40-7478-4fa4-8bd0-6fe1e0328fe6",
+      "deployment_id": "dc51b29c-9851-48d9-ab90-5f9d2b6c0475",
+      "traffic_percent": 100,
+      "build_minutes_limit_reached": false
+    },
+    "runtime_release_verification": "PASS: exact successful Cloudflare Build and 100% Worker rollout verified; direct production health HTTP 200; live /editor-v2/ index and versioned app.js SHA-256 exactly match the committed files. No production D1 migration/data write or R2 mutation; 0 HUF."
   }
 }
