@@ -1,0 +1,153 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-05T17:24:24Z",
+  "plan_point": "77.44.6.1.C",
+  "status": "CANVAS_TOOLBAR_NATIVE_DRAG_ACCEPTANCE_PASS; FULL_C_OPEN",
+  "scope": "Close a real-browser verification gap for the already-draggable canvas toolbar: drag the canvas region before or after a dock and prove the local workspace layout remains undoable, reloadable, and canvas-safe without invoking page Save or Publish.",
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "starting_head": "2b8df3dd23839e8a1cb4cc8c348dffb552d88b51",
+    "test_commit": "d6d83a7ec334463e1714977e3c4b2238258e2575",
+    "test_commit_message": "[skip ci] test(editor): cover canvas toolbar docking",
+    "test_commit_parent": "2b8df3dd23839e8a1cb4cc8c348dffb552d88b51",
+    "test_commit_fast_forward_push_verified": true,
+    "github_exact_ref_after_test_push": "3ceeeb704e2f3d957e893836c6ea31c2825e3881",
+    "github_commit_statuses": [],
+    "aggregate_github_ci_pass": false,
+    "runtime_files_changed": [],
+    "test_files_changed": [
+      "tests/browser/editor-workspace-appearance.test.js"
+    ],
+    "documentation_files_changed_in_test_commit": false,
+    "test_followup_commit": "3ceeeb704e2f3d957e893836c6ea31c2825e3881",
+    "test_followup_commit_message": "[skip ci] test(editor): assert canvas dock separation",
+    "test_commits": [
+      {
+        "sha": "d6d83a7ec334463e1714977e3c4b2238258e2575",
+        "message": "[skip ci] test(editor): cover canvas toolbar docking",
+        "fast_forward_push_verified": true
+      },
+      {
+        "sha": "3ceeeb704e2f3d957e893836c6ea31c2825e3881",
+        "message": "[skip ci] test(editor): assert canvas dock separation",
+        "fast_forward_push_verified": true
+      }
+    ],
+    "github_commit_statuses_for_test_followup": [],
+    "github_ref_verified_after_test_followup": "3ceeeb704e2f3d957e893836c6ea31c2825e3881"
+  },
+  "gap_and_result": {
+    "verified_gap": "The existing production UI marks .canvas-toolbar draggable and the drop handler supports sourceId=canvas, but the native mouse suite only exercised left/right dock sources. A real native mouse test was absent for the canvas source path.",
+    "initial_probe": "The first targeted run's expected order for inserting the canvas before the right dock from canvas-left-right was incorrect; the actual left-canvas-right result matches the documented insertion rule. Correcting that test expectation revealed no runtime defect.",
+    "result": "No runtime change was warranted. The test now drives the browser's native mouse/HTML drag lifecycle from the plain-text right edge of the actual canvas toolbar, covers six starting orders and both insertion directions, checks undo/redo and reload, and protects the no-page-write boundary."
+  },
+  "coverage": {
+    "browser": "Real Chromium using the existing Playwright local editor fixture; native mouse Locator.dragTo, not synthetic DragEvent dispatch.",
+    "viewport_css_px": {
+      "width": 1280,
+      "height": 900
+    },
+    "starting_dock_orders": [
+      "left-canvas-right",
+      "canvas-left-right",
+      "left-right-canvas",
+      "right-left-canvas",
+      "right-canvas-left",
+      "canvas-right-left"
+    ],
+    "native_canvas_source_drops": 8,
+    "resulting_orderings_exercised": [
+      "canvas-left-right",
+      "left-canvas-right",
+      "left-right-canvas",
+      "canvas-right-left",
+      "right-canvas-left",
+      "right-left-canvas"
+    ],
+    "assertions": [
+      "canvas toolbar can be the native drag source",
+      "drop zone cue and drag state clear after each operation",
+      "workspace status describes the canvas and target dock in plain language",
+      "canvas retains a dedicated visible grid track of at least 400 CSS px",
+      "the selected order is saved only to the allowlisted workspace preference",
+      "Undo/Redo restores/reapplies the final canvas move",
+      "the final order survives a complete Editor reload",
+      "the fixture records zero Page Model Save, Publish, or renderer requests",
+      "left and right dock rectangles do not overlap the canvas grid region",
+      "desktop layout has no horizontal document overflow at 1280 CSS px"
+    ],
+    "page_model_save_publish_or_renderer_requests": 0
+  },
+  "validation": {
+    "targeted_real_mouse_chromium": {
+      "status": "PASS",
+      "tests": 1,
+      "command": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py node --test --test-name-pattern='native mouse drag from the canvas toolbar' --test-reporter=spec tests/browser/editor-workspace-appearance.test.js"
+    },
+    "complete_workspace_chromium_file": {
+      "status": "PASS",
+      "tests": 51,
+      "failures": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "duration_ms": 377488.051332,
+      "orphaned_browser_descendants_reaped": 216,
+      "command": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-workspace-appearance.test.js"
+    },
+    "editor_unit": "PASS: npm run test:editor after the final browser assertions; 14/14 Node test files and 3/3 Linux subreaper cases.",
+    "typecheck": "PASS: npm run typecheck after the final browser assertions.",
+    "migration_guard": "PASS: npm run test:web013:migration-gate; no production migration applied.",
+    "canonical_plan": "PASS: scripts/check-canonical-plan.py; one complete 13-file master and one current cursor.",
+    "plan_contract": "PASS: tests/plan-contract.test.py; 13/13.",
+    "active_plan_point": "PASS: scripts/audit-active-plan-point.py; next cursor 77.44.6.1.C, functional acceptance NOT_CERTIFIED.",
+    "traceability": "PASS: scripts/build-feature-traceability.py --check; 396/396 mappings.",
+    "syntax_and_diff": "PASS: node --check tests/browser/editor-workspace-appearance.test.js and git diff --check after final native-mouse run.",
+    "wrangler_dry_run": "NOT RUN: no Worker runtime source or configuration changed.",
+    "production_d1_preflight": "NOT RUN: test/documentation-only change, no Worker deployment; no D1 or R2 operation occurred."
+  },
+  "release": {
+    "status": "TEST_AND_DOCUMENTATION_ONLY_NO_WORKER_DEPLOY",
+    "runtime_source_changed": false,
+    "worker_deployment": "NOT DONE: test/docs-only paths are excluded from the verified Cloudflare Worker build trigger; no redundant Worker deployment was requested.",
+    "latest_deployment_at_verification": "4ba815bc-50c0-4e0e-9964-e7f1b0824ce3",
+    "traffic_version_at_verification": "f3f4c1df-d5a1-4368-9b25-34066ba77161",
+    "traffic_percent": 100,
+    "production_health": {
+      "http_status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "unchanged_public_assets": [
+      {
+        "path": "/editor-v2/",
+        "http_status": 200,
+        "local_sha256": "3db494862788ac8584b387a8af66853af03d940a49ca1ce992230a409014ea21",
+        "production_sha256": "3db494862788ac8584b387a8af66853af03d940a49ca1ce992230a409014ea21",
+        "matches_local": true
+      },
+      {
+        "path": "/editor-v2/ui/shell.js?v=20261105-cross-tab-resize-cancel",
+        "http_status": 200,
+        "local_sha256": "74c08756f0a51b79f91b4b76a22f2a61fe9fa517102e23ad175f9a5e3ac0127f",
+        "production_sha256": "74c08756f0a51b79f91b4b76a22f2a61fe9fa517102e23ad175f9a5e3ac0127f",
+        "matches_local": true
+      }
+    ],
+    "d1_mutation_or_migration": false,
+    "r2_operation_or_deletion": false
+  },
+  "reuse_and_cost": {
+    "reused": "Project-owned CSS Grid/dock ordering, existing native drag handlers, local workspace history, existing Playwright fixture, installed Chromium and existing Playwright dependency.",
+    "runtime_code_or_dependencies_added": false,
+    "cost_huf": 0
+  },
+  "acceptance": {
+    "77_44_6_1_C": "OPEN / NOT CERTIFIED; this test verifies the canvas drag-source path only, not the complete dynamic dock-zone or workspace lifecycle scope.",
+    "full_visual_editor_manual_and_physical_acceptance": "DEFERRED until the complete Editor acceptance gate."
+  }
+}
