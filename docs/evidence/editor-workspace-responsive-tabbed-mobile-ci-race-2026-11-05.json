@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-05",
+  "plan_point": "77.44.6.1.C",
+  "status": "MOBILE_BREAKPOINT_BROWSER_REGRESSION_PASS_FULL_C_OPEN",
+  "scope": "Diagnose and repair the editor-core browser-suite failure caused by observing the mobile tabbed-dock state before the asynchronous matchMedia change handler completed.",
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "starting_github_head": "a310d1d4b38dea98170865c8cc564cadc8ae3b1d",
+    "test_commit_sha": "7784553e163c5a977a9523d510dc5cc2a01ab465",
+    "test_commit_parent": "a310d1d4b38dea98170865c8cc564cadc8ae3b1d",
+    "runtime_files_changed": [],
+    "changed_test_file": "tests/browser/editor-workspace-appearance.test.js",
+    "dependency_changes": [],
+    "test_commit_message": "test: stabilize mobile dock breakpoint regression [skip ci]"
+  },
+  "previous_github_failure": {
+    "commit": "a310d1d4b38dea98170865c8cc564cadc8ae3b1d",
+    "workflow": "Editor Core Test",
+    "run_id": "42024766591",
+    "job_id": "127236095245",
+    "job_url": "https://github.com/sanci9517/sanci9517/actions/runs/42024766591/job/127236095245",
+    "conclusion": "failure",
+    "completed_at_utc": "2026-11-05T12:31:26Z",
+    "failed_step": "Run Editor browser layout regression",
+    "failed_case": "desktop tabbed dock groups become one mobile sheet and restore the exact group on resize",
+    "test_file": "tests/browser/editor-workspace-appearance.test.js",
+    "test_line": 1993,
+    "observed_state": {
+      "left_open": true,
+      "right_open": true,
+      "canvas_inert": false,
+      "viewport_width": 390
+    },
+    "root_cause": "After Playwright setViewportSize changed the CSS media query, the test wait predicate returned immediately because either desktop dock was still open. The subsequent assertion sampled the transitional DOM before the queued MediaQueryList change callback had normalized the two-dock desktop group to one mobile drawer. The shell's completed transition was correct; the browser test waited for the wrong condition."
+  },
+  "changes": {
+    "runtime": "No runtime fix was justified or made. The startup-mobility regression additionally asserts the intentional canvas-first mobile startup and exact restoration of the persisted desktop tabbed group.",
+    "test": "The resize test now waits for the stable mobile invariant: exactly one drawer is open and the canvas is inert. A second real-browser test loads a saved two-dock custom workspace at 390 CSS px, proves startup is canvas-first without rewriting the saved preferences, then proves the complete desktop group and selected tab return at 1280 CSS px.",
+    "open_source_review": "Reused the repository's existing Playwright and Chromium browser fixture and the platform matchMedia event model; no external implementation or dependency was necessary."
+  },
+  "validation": {
+    "targeted_browser": {
+      "status": "PASS",
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-name-pattern='desktop tabbed dock groups|saved two-dock custom workspace' tests/browser/editor-workspace-appearance.test.js",
+      "passed": 2,
+      "failed": 0
+    },
+    "complete_browser_file": {
+      "status": "PASS",
+      "command": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-workspace-appearance.test.js",
+      "passed": 44,
+      "failed": 0,
+      "duration_ms": 445116,
+      "reaped_orphaned_test_descendants": 188
+    },
+    "editor_unit": {
+      "status": "PASS",
+      "command": "npm run test:editor",
+      "tests_passed": 183,
+      "tests_failed": 0,
+      "subreaper_tests_passed": 3
+    },
+    "other_checks": {
+      "typecheck": "PASS — npm run typecheck",
+      "migration_safety": "PASS — npm run test:web013:migration-gate",
+      "canonical_plan": "PASS — python3 scripts/check-canonical-plan.py (13 master files)",
+      "plan_contract": "PASS — python3 tests/plan-contract.test.py (13 tests)",
+      "active_plan_point": "PASS — python3 scripts/audit-active-plan-point.py; next is 77.44.6.1.C and acceptance remains NOT_CERTIFIED",
+      "traceability": "PASS — python3 scripts/build-feature-traceability.py --check (396 mappings)",
+      "syntax": "PASS — node --check tests/browser/editor-workspace-appearance.test.js",
+      "diff": "PASS — git diff --check"
+    }
+  },
+  "github": {
+    "new_test_commit_skips_ci": true,
+    "new_commit_ci_pass_claimed": false,
+    "prior_editor_core_failure_is_not_relabelled_as_pass": true
+  },
+  "production_read_only_checks": {
+    "worker_deployment_id": "367d08c2-d449-4472-9464-9642cef0a970",
+    "worker_version_id": "01f6e2db-92cd-427b-a760-c16a3a179aed",
+    "worker_traffic_percent": 100,
+    "health": {
+      "path": "/api/health",
+      "status": 200,
+      "body": "{\"ok\":true,\"service\":\"sanci9517-streamer-brand\",\"version\":\"2.0.0\",\"server\":\"cloudflare-worker\"}"
+    },
+    "editor_index_sha256": "63668456f29088c7fb084870c8297a6981876170e1965ec01ba134f9dc626aeb",
+    "shell_js_sha256_local_and_live": "537729414b8d01275ee24b49136de717fe7ec70afe89741c3d28234b12210da2",
+    "shell_js_http_status": 200,
+    "worker_deployment_performed": false,
+    "d1_preflight_required": false,
+    "d1_migration_or_write_performed": false,
+    "r2_change_performed": false
+  },
+  "cost_usd": 0,
+  "manual_acceptance": "DEFERRED_UNTIL_COMPLETE_EDITOR",
+  "full_plan_point_acceptance": "NOT_CERTIFIED",
+  "plan_point_status": "OPEN"
+}
