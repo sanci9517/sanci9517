@@ -2081,3 +2081,33 @@ test('mobile touch-sized dock-order control keeps one safe drawer and restores t
   assert.deepEqual(writes,[]);
   assert.deepEqual(errors,[]);
 });
+
+test('compact phone keeps every desktop dock order reachable without changing the mobile drawer model',async t=>{
+  const {page,writes,errors}=await openEditor(t,{width:320,height:568,isMobile:true,hasTouch:true});
+  await openPreferences(page);
+  const order=page.locator('#workspaceDockOrder');
+  assert.equal(await order.isVisible(),true,'the desktop order setting remains reachable on a compact phone');
+  assert.equal(await order.isEnabled(),true);
+  const bounds=await order.boundingBox();
+  assert.ok(bounds&&bounds.width>0&&bounds.height>=44&&bounds.x>=0&&bounds.x+bounds.width<=320,`the touch target fits the compact phone viewport: ${JSON.stringify(bounds)}`);
+  const allowed=['left-canvas-right','canvas-left-right','left-right-canvas','right-left-canvas','right-canvas-left','canvas-right-left'];
+  assert.deepEqual(await order.locator('option').evaluateAll(options=>options.map(option=>option.value)),allowed,'the compact mobile control exposes exactly the six supported dock orders');
+  await order.tap();
+  for(const value of [...allowed.slice(1),allowed[0]]){
+    await order.selectOption(value);
+    await page.waitForFunction(expected=>JSON.parse(localStorage.getItem('sanci-editor-workspace-preferences-v2'))?.dockOrder===expected,value);
+    assert.equal(await order.inputValue(),value,`the phone control applies ${value}`);
+    assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`${value} keeps the compact page free from horizontal overflow`);
+  }
+  const state=await page.evaluate(()=>({
+    order:JSON.parse(localStorage.getItem('sanci-editor-workspace-preferences-v2'))?.dockOrder,
+    leftOpen:!document.querySelector('#leftDock').classList.contains('closed'),
+    rightOpen:!document.querySelector('#rightDock').classList.contains('closed'),
+    canvasInert:document.querySelector('.canvas-area').inert
+  }));
+  assert.equal(state.order,allowed[0]);
+  assert.ok(!(state.leftOpen&&state.rightOpen),'desktop order choices do not open both mobile drawers');
+  if(state.leftOpen||state.rightOpen)assert.equal(state.canvasInert,true,'an active compact-phone drawer keeps the page background inert');
+  assert.deepEqual(writes,[],'changing desktop layout preferences never Save or Publish page data');
+  assert.deepEqual(errors,[]);
+});
