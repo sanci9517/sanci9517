@@ -30,6 +30,8 @@
     "migration_safety": "PASS: npm run test:web013:migration-gate; deploy:safe does not apply D1 migrations",
     "plan_contract": "PASS: complete 13-file plan check; plan_contract.py; tests/plan-contract.test.py 13/13",
     "active_cursor": "PASS: 77.44.6.1.C remains the next plan point; functional acceptance NOT_CERTIFIED",
+    "production_recheck_utc": "2026-11-05T12:07:12Z",
+    "production_recheck": "Direct HTTPS GET: /api/health HTTP 200, ok=true, version=2.0.0, server=cloudflare-worker; changed public workspace-appearance.js HTTP 200, 26808 bytes, live SHA-256 matches the local source.",
     "traceability": "PASS: 396/396 mappings, after regenerating docs/evidence/feature-traceability.json",
     "syntax_and_diff": "PASS: node --check on changed JavaScript; git diff --check",
     "wrangler_dry_run": "PASS, exit 0: npx wrangler deploy --dry-run; Wrangler 4.130.0 packaged 168 public assets, 335.81 KiB (87.60 KiB gzip). Wrangler emitted a non-fatal local EROFS log-path warning for /home/agent/.config; dry-run completed and exited successfully.",
@@ -50,6 +52,13 @@
     "starting_github_head": "verified equal before changes",
     "commit": "8bfb15bfd509a7f3e1e851e1188daab2ebb10a1a",
     "push": "normal fast-forward 7c940da6..8bfb15bf; GitHub branch ref directly verified exact HEAD",
+    "documentation_only_follow_up": {
+      "commit": "60b7f874ec66e10f919abbd0ddbd6bb6b498d302",
+      "branch_ref_rechecked": "2026-11-05T12:07:12Z; exact v2/foundation ref matches this documentation commit",
+      "runtime_unchanged": true,
+      "worker_deployment_triggered": false
+    },
+    "github_editor_core_recheck_utc": "2026-11-05T12:07:12Z",
     "github_checks": {
       "source-audit": "success",
       "canonical-plan": "success",
@@ -57,6 +66,7 @@
       "twitch-integration": "success",
       "editor-core": "in_progress at last API check; aggregate all-checks PASS not claimed"
     },
+    "editor_core_job_progress": "Run 42022964589: steps 1-10 completed successfully; step 11 (Editor browser layout regression) in_progress; steps 12-17 pending.",
     "cloudflare_build": {
       "id": "823b7861-3f1c-47b5-be38-e8f1bffcb58e",
       "outcome": "success",
