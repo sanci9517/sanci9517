@@ -13,7 +13,20 @@
     "aggregate_github_ci_pass": false,
     "runtime_files_changed": [],
     "browser_test_files_changed": [],
-    "documentation_change": "This evidence plus the canonical plan entry; no test or runtime code changed."
+    "documentation_change": "This evidence plus the canonical plan entry; no test or runtime code changed.",
+    "documentation_commit_sha": "692d5fccbd2c01417cab48e60eb815e6a4d97900",
+    "documentation_commit_parent": "e9a5172447388b645f7bf778aaa4623c8e5d2bc7",
+    "normal_fast_forward_push_verified": true,
+    "push_confirmation": "git push origin HEAD:refs/heads/v2/foundation returned e9a51724..692d5fcc; branch API then returned exact HEAD 692d5fccbd2c01417cab48e60eb815e6a4d97900.",
+    "github_compare": {
+      "status": "ahead",
+      "ahead_by": 1,
+      "behind_by": 0,
+      "total_commits": 1
+    },
+    "github_commit_statuses": [],
+    "github_ci_pass_claimed": false,
+    "documentation_commit_message": "docs: record full editor chromium suite pass [skip ci]"
   },
   "validation": {
     "browser": "Installed Chromium 154 through the project Playwright dependency; serial per-file subreaper runner.",
