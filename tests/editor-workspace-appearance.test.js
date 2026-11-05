@@ -29,6 +29,21 @@ test('a malformed current workspace record falls back to valid legacy preference
   assert.equal(readWorkspacePreferences(current).theme,'sage');
 });
 
+test('semantically invalid current workspace records fall back to the last valid versioned legacy record',()=>{
+  const legacy={version:1,layout:'inspector',theme:'aurora',density:'compact',accent:'#00a7c8'};
+  for(const invalid of [{},{version:1,layout:'canvas',theme:'graphite'},{version:3,layout:'canvas',theme:'cinder'}]){
+    const saved=storage({[WORKSPACE_PREFERENCES_KEY]:JSON.stringify(invalid),[LEGACY_WORKSPACE_PREFERENCES_KEY]:JSON.stringify(legacy)});
+    const restored=readWorkspacePreferences(saved);
+    assert.equal(restored.layout,'inspector',`unsupported current record ${JSON.stringify(invalid)} must not hide a valid legacy layout`);
+    assert.equal(restored.theme,'aurora',`unsupported current record ${JSON.stringify(invalid)} must not hide a valid legacy theme`);
+    assert.deepEqual([...saved.values.keys()],[WORKSPACE_PREFERENCES_KEY,LEGACY_WORKSPACE_PREFERENCES_KEY],'fallback remains a read-only recovery until an explicit preference change');
+  }
+  assert.deepEqual(readWorkspacePreferences(storage({
+    [WORKSPACE_PREFERENCES_KEY]:'{}',
+    [LEGACY_WORKSPACE_PREFERENCES_KEY]:JSON.stringify({version:2,layout:'inspector',theme:'aurora'}),
+  })),WORKSPACE_PREFERENCE_DEFAULTS,'a record stored under the legacy key must still match that key’s v1 schema before it can be restored');
+});
+
 test('curated workspace designs are allowlisted and remain compatible with saved profiles',()=>{
   const themes=['graphite','aurora','ocean','sage','cinder'];
   for(const theme of themes){

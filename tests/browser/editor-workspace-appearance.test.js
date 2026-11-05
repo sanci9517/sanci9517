@@ -1911,14 +1911,14 @@ test('desktop dock drag cancels when the viewport switches to the mobile drawer 
   assert.deepEqual(errors,[]);
 });
 
-test('Editor restores a valid legacy workbench after a corrupt v2 record, then migrates the next change',async t=>{
-  const {page,writes,errors}=await openEditor(t,{width:1280,height:900,initialAppearance:'{broken',initialLegacyAppearance:{version:1,layout:'inspector',theme:'sage',density:'compact',accent:'#00a7c8'}});
+test('Editor restores a valid legacy workbench after an unsupported v2 record, then migrates the next change',async t=>{
+  const {page,writes,errors}=await openEditor(t,{width:1280,height:900,initialAppearance:{version:3,layout:'canvas',theme:'graphite'},initialLegacyAppearance:{version:1,layout:'inspector',theme:'sage',density:'compact',accent:'#00a7c8'}});
   await page.waitForFunction(()=>document.querySelector('.editor-app')?.dataset.workspaceTheme==='sage'&&document.querySelector('.workspace')?.classList.contains('right-open'));
-  assert.equal(await page.locator('.editor-app').getAttribute('data-workspace-theme'),'sage','a damaged current storage entry falls back to the last valid legacy presentation');
+  assert.equal(await page.locator('.editor-app').getAttribute('data-workspace-theme'),'sage','an unsupported current schema falls back to the last valid legacy presentation');
   assert.equal(await page.locator('#workspaceLayout').inputValue(),'inspector','legacy layout preferences remain usable after recovery');
   const restored=await page.evaluate(()=>JSON.parse(localStorage.getItem('sanci-editor-workspace-preferences-v1')));
   assert.equal(restored.theme,'sage','recovery does not destructively rewrite the legacy backup during startup');
-  assert.equal(await page.evaluate(()=>localStorage.getItem('sanci-editor-workspace-preferences-v2')),'{broken','startup recovery leaves the damaged current record untouched until an explicit edit');
+  assert.deepEqual(await page.evaluate(()=>JSON.parse(localStorage.getItem('sanci-editor-workspace-preferences-v2'))),{version:3,layout:'canvas',theme:'graphite'},'startup recovery leaves the unsupported current record untouched until an explicit edit');
 
   await openPreferences(page);
   await page.locator('#workspaceTheme').selectOption('cinder');

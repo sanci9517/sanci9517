@@ -107,7 +107,8 @@ export function readWorkspacePreferences(storage){
       const saved=source?.getItem(key);
       if(!saved)continue;
       const parsed=JSON.parse(saved);
-      if(isRecord(parsed))return normalizeWorkspacePreferences(parsed);
+      const expectedVersion=key===WORKSPACE_PREFERENCES_KEY?2:1;
+      if(isRecord(parsed)&&parsed.version===expectedVersion)return normalizeWorkspacePreferences(parsed);
     }catch{}
   }
   return {...WORKSPACE_PREFERENCE_DEFAULTS,profiles:[]}

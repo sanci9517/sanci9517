@@ -1,0 +1,108 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-05T20:15:01Z",
+  "plan_point": "77.44.6.1.C",
+  "status": "VALIDATED_AWAITING_RUNTIME_PUSH_AND_AUTOMATIC_DEPLOY",
+  "scope": "Recover the valid v1 workbench when the v2 key contains JSON that is not actually a version-2 record; require each storage key to match its declared schema version.",
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "starting_head": "cee701be7032e35892be9ee6ba593763f4808b7d",
+    "runtime_commit": null,
+    "runtime_commit_fast_forward_push_verified": false,
+    "runtime_files_changed": [
+      "public/editor-v2/ui/workspace-appearance.js",
+      "public/editor-v2/ui/shell.js",
+      "public/editor-v2/index.html"
+    ],
+    "test_files_changed": [
+      "tests/editor-workspace-appearance.test.js",
+      "tests/browser/editor-workspace-appearance.test.js"
+    ],
+    "traceability_file_changed": [
+      "docs/evidence/feature-traceability.json"
+    ]
+  },
+  "gap_and_fix": {
+    "verified_gap": "readWorkspacePreferences treated any parsed object in the version-2 storage key as a valid current record. Empty objects, version 1 objects under the v2 key, and unsupported future versions therefore hid an available valid v1 record and silently returned current defaults.",
+    "red_reproduction": "A new Node regression with v2='{}' and valid v1 {version:1,layout:'inspector',theme:'aurora'} failed before the fix: actual layout='canvas', expected layout='inspector'.",
+    "fix": "Accept a stored record only when it is a JSON object whose explicit version matches its storage key (v2 key requires version 2; v1 key requires version 1). Continue to the legacy record on malformed, non-object, missing-version, wrong-version, or unsupported-version data. Keep recovery read-only; explicit edits still write normalized version-2 preferences. The module cache-buster is 20261105-workspace-schema-recovery.",
+    "data_and_product_contracts": [
+      "A valid version-2 record continues to take priority over stale v1 data.",
+      "The old v1 record remains unchanged at startup and is only a recovery source.",
+      "The first explicit appearance edit writes the normalized v2 record.",
+      "A record in either key must match that key's own schema version.",
+      "No Page Model, Save, Publish, or public-renderer write is made."
+    ]
+  },
+  "validation": {
+    "baseline_reproduction": "PASS: the new assertion failed before the fix with actual canvas versus expected inspector.",
+    "targeted_real_chromium": "PASS: 1/1 actual Editor boot and explicit v2 migration after unsupported-version v2 data; 0 failures/cancelled/skipped.",
+    "full_browser_file": {
+      "status": "PASS",
+      "tests": 53,
+      "failures": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "duration_ms": 438228.027002,
+      "orphaned_browser_descendants_reaped": 224,
+      "command": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-workspace-appearance.test.js"
+    },
+    "editor_unit_suite": "PASS: npm run test:editor; 14/14 Node files and 3/3 Linux subreaper cases.",
+    "typecheck": "PASS: npm run typecheck.",
+    "migration_gate": "PASS: npm run test:web013:migration-gate.",
+    "canonical_plan": "PASS: scripts/check-canonical-plan.py; complete 13-file plan and one current cursor.",
+    "plan_contract": "PASS: tests/plan-contract.test.py; 13/13.",
+    "active_cursor": "PASS: scripts/audit-active-plan-point.py; next point 77.44.6.1.C; NOT_CERTIFIED.",
+    "traceability": "PASS: scripts/build-feature-traceability.py --check; 396/396 mappings.",
+    "syntax_and_diff": "PASS: node --check on changed runtime/test JavaScript; git diff --check.",
+    "wrangler_dry_run": {
+      "status": "PASS",
+      "version": "4.130.0",
+      "assets": 168,
+      "size_kib": 335.81,
+      "gzip_kib": 87.6,
+      "deployed": false,
+      "command": "WRANGLER_WRITE_LOGS=false npx wrangler deploy --dry-run"
+    },
+    "production_d1_preflight": {
+      "database_name": "sanci9517-db",
+      "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
+      "sql": "SELECT name FROM d1_migrations ORDER BY name",
+      "rows_read": 34,
+      "latest_migration": "0028_media_archive.sql",
+      "rows_written": 0,
+      "changes": 0,
+      "changed_db": false,
+      "served_by": "v3-prod",
+      "region": "EEUR",
+      "colo": "FRA"
+    },
+    "production_d1_migration_or_data_write": false,
+    "r2_operation_or_deletion": false
+  },
+  "pre_release_runtime_state": {
+    "deployment_id": "6922e8ee-26d2-4bfb-b25b-c0509ab10699",
+    "worker_version": "8fc6301e-3a5d-4e9f-ba85-88353bd2e134",
+    "traffic_percent": 100,
+    "direct_health_pre_change": "HTTP 200; ok=true; version=2.0.0"
+  },
+  "release": {
+    "status": "PENDING_RUNTIME_PUSH_AND_BUILD",
+    "build_uuid": null,
+    "build_outcome": null,
+    "deployment_id": null,
+    "worker_version": null,
+    "traffic_percent": null,
+    "health": null,
+    "public_asset_hashes": [],
+    "github_combined_statuses": null,
+    "github_aggregate_ci_pass_claimed": false
+  },
+  "cost_and_acceptance": {
+    "cost_huf": 0,
+    "new_dependency": false,
+    "plan_point": "OPEN / NOT CERTIFIED; one corrupt-workspace recovery gap is fixed; the broader dynamic docking and workspace-lifecycle acceptance remains open.",
+    "full_visual_editor_manual_physical_acceptance": "DEFERRED until the complete Editor acceptance gate."
+  }
+}
