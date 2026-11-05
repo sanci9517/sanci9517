@@ -13,6 +13,7 @@ const actionControls=enhanceEditorActionControls(document);
 const LEFT_TABS=['pages','elements','layers','schedule','navigation'];
 const resizeLimits={left:{min:250,max:460},right:{min:260,max:440}};
 const STORAGE_KEY='sanci-editor-shell-v2';
+const INSPECTOR_TABS=['design','content','advanced'];
 const defaults={leftOpen:false,rightOpen:false,leftTab:'pages',leftTabOrder:DEFAULT_LEFT_TAB_ORDER,inspectorTab:'design',panelActive:'left',leftWidth:310,rightWidth:352};
 const mobileQuery=window.matchMedia('(max-width: 1024px)');
 let dockStorageDurable=true;
@@ -34,13 +35,12 @@ function readPersisted(){
   }catch{dockStorageDurable=false;return {...defaults}}
 }
 
-let persisted=readPersisted();
+let persisted=normalizeStoredDockState(readPersisted(),{normalizeMobile:false});
 if(initialAppearance.layout!=='custom'){
   const initialLayout=resolveWorkspaceLayout(initialAppearance.layout,mobileQuery.matches);
   persisted.leftOpen=initialLayout.left;
   persisted.rightOpen=initialLayout.right;
 }
-const INSPECTOR_TABS=['design','content','advanced'];
 if(!LEFT_TABS.includes(persisted.leftTab))persisted.leftTab='pages';
 persisted.leftTabOrder=normalizeLeftTabOrder(persisted.leftTabOrder);
 if(!INSPECTOR_TABS.includes(persisted.inspectorTab))persisted.inspectorTab='design';
@@ -498,11 +498,11 @@ workspaceAppearance=mountWorkspaceAppearance({documentRef:document,root:editorRo
   persist();
   workspaceAppearance?.syncDockControls();
 }});
-function normalizeStoredDockState(input){
+function normalizeStoredDockState(input,{normalizeMobile=true}={}){
   const value=input&&typeof input==='object'&&!Array.isArray(input)?input:{};
   const width=(candidate,limits,fallback)=>Number.isFinite(Number(candidate))?clamp(Number(candidate),limits):fallback;
-  const next={leftOpen:value.leftOpen===true,rightOpen:value.rightOpen===true,leftTab:LEFT_TABS.includes(value.leftTab)?value.leftTab:'pages',leftTabOrder:normalizeLeftTabOrder(value.leftTabOrder),inspectorTab:INSPECTOR_TABS.includes(value.inspectorTab)?value.inspectorTab:'design',panelActive:['left','right'].includes(value.panelActive)?value.panelActive:(value.rightOpen?'right':'left'),leftWidth:width(value.leftWidth,resizeLimits.left,defaults.leftWidth),rightWidth:width(value.rightWidth,resizeLimits.right,defaults.rightWidth)};
-  if(mobileQuery.matches&&next.leftOpen&&next.rightOpen)next.leftOpen=false;
+  const next={leftOpen:value.leftOpen===true,rightOpen:value.rightOpen===true,leftTab:LEFT_TABS.includes(value.leftTab)?value.leftTab:'pages',leftTabOrder:normalizeLeftTabOrder(value.leftTabOrder),inspectorTab:INSPECTOR_TABS.includes(value.inspectorTab)?value.inspectorTab:'design',panelActive:['left','right'].includes(value.panelActive)?value.panelActive:(value.rightOpen===true?'right':'left'),leftWidth:width(value.leftWidth,resizeLimits.left,defaults.leftWidth),rightWidth:width(value.rightWidth,resizeLimits.right,defaults.rightWidth)};
+  if(normalizeMobile&&mobileQuery.matches&&next.leftOpen&&next.rightOpen)next.leftOpen=false;
   return next;
 }
 function applyDockState(state,{save=true}={}){

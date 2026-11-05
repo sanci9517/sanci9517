@@ -2053,6 +2053,30 @@ test('Editor starts with safe defaults when privacy settings deny workspace stor
   assert.deepEqual(errors,[],'denied localStorage reads do not prevent Editor startup');
 });
 
+test('malformed saved dock values normalize safely at startup without rewriting the original preference',async t=>{
+  const storedDock={leftOpen:'false',rightOpen:'false',leftTab:'unknown',leftTabOrder:['unknown'],inspectorTab:'unknown',panelActive:'unknown',leftWidth:999,rightWidth:'not-a-number'};
+  const appearance={version:2,layout:'custom',theme:'graphite',density:'comfortable',accent:'#5b8cff',dockOrder:'left-canvas-right',panelMode:'separate',panelSide:'right',profiles:[]};
+  const {page,writes,errors}=await openEditor(t,{width:1440,height:900,initialDockState:storedDock,initialAppearance:appearance});
+
+  const state=await page.evaluate(()=>({
+    leftOpen:!document.querySelector('#leftDock').classList.contains('closed'),
+    rightOpen:!document.querySelector('#rightDock').classList.contains('closed'),
+    leftWidth:Number(document.querySelector('.left-resizer').getAttribute('aria-valuenow')),
+    rightWidth:Number(document.querySelector('.right-resizer').getAttribute('aria-valuenow')),
+    active:document.querySelector('.workspace').dataset.workspaceActivePanel,
+    leftTab:document.querySelector('.rail-btn[aria-selected="true"]').dataset.tab,
+    stored:JSON.parse(localStorage.getItem('sanci-editor-shell-v2'))
+  }));
+  assert.deepEqual({leftOpen:state.leftOpen,rightOpen:state.rightOpen,active:state.active,leftTab:state.leftTab},
+    {leftOpen:false,rightOpen:false,active:'left',leftTab:'pages'},
+    'only boolean true opens a dock and invalid active/tab values fall back to safe defaults');
+  assert.equal(state.leftWidth,460,'a numeric saved width is clamped to the supported maximum');
+  assert.equal(state.rightWidth,352,'a non-numeric saved width uses the safe default');
+  assert.deepEqual(state.stored,storedDock,'startup normalization does not silently rewrite the locally stored source value');
+  assert.deepEqual(writes,[],'normalizing presentation-only dock state never saves or publishes page content');
+  assert.deepEqual(errors,[],'malformed local dock state does not block Editor startup');
+});
+
 test('workspace persistence stays session-only when just the separate dock-state key cannot be read',async t=>{
   const {page,writes,errors}=await openEditor(t,{width:1280,height:900,blockShellStorageReads:true});
   await openPreferences(page);

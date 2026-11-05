@@ -1,0 +1,75 @@
+{
+  "date": "2026-11-05",
+  "plan_point": "77.44.6.1.C",
+  "status": "focused fix implemented and locally verified; release pending",
+  "finding": {
+    "summary": "The workspace normalizer already strictly accepted only boolean true for an open dock, but startup bypassed it. Local storage values such as the strings \"false\" were passed through Boolean(...) and opened both docks. A truthy invalid active-side value also chose the wrong fallback.",
+    "reproduction": "Before the fix, a real Chromium startup with leftOpen=\"false\" and rightOpen=\"false\" produced both docks open and active=right instead of both closed and active=left.",
+    "fix": "Startup now uses the existing normalized dock-state routine, falls back to the left panel unless rightOpen is exactly boolean true, and skips breakpoint-only mobile collapse during initial normalization. The mobile shell still presents no dock at startup and retains the original two-dock desktop preference in memory for desktop restoration.",
+    "preservation": "Normalization is presentation-only; it does not rewrite the stored preference. Page Model, Save, Publish, and public rendering contracts were not changed."
+  },
+  "reuse_review": {
+    "existing_solution_reused": "The project's existing normalizeStoredDockState, allowlisted tabs, dock defaults, mobile media query, and real Chromium workspace fixture.",
+    "external_solution": "No external dependency was appropriate for this small schema-specific correction; strict JavaScript boolean validation is sufficient and avoids a parallel state system."
+  },
+  "files": {
+    "runtime": {
+      "path": "public/editor-v2/ui/shell.js",
+      "sha256": "af24de945257507b8ed7f9be25ac5c19ad07c2b14a8c7d0bf27600a19d73f2db"
+    },
+    "entrypoint": {
+      "path": "public/editor-v2/index.html",
+      "sha256": "96588973123005483ae7fb469e4db30f25fc5876bfd9b1417672658955cac473",
+      "cache_buster": "20261105-normalize-initial-dock-state"
+    },
+    "browser_test": {
+      "path": "tests/browser/editor-workspace-appearance.test.js",
+      "sha256": "7170d0f041d595bf5312aca549f20fecf889ad6df17f5bdc5f7de00e6de34116"
+    },
+    "traceability": {
+      "path": "docs/evidence/feature-traceability.json",
+      "regenerated": true,
+      "check": "PASS: 396/396 source mappings"
+    }
+  },
+  "verification": {
+    "chromium_targeted": "PASS: 3/3 focused regressions; malformed startup state, malformed-preference normalization, and saved two-dock mobile startup with desktop restoration. Linux subreaper reaped 12 orphaned test descendants.",
+    "editor_unit_suite": "PASS: npm run test:editor; 14/14 Node test files and 3/3 Linux subreaper tests.",
+    "typecheck": "PASS: npm run typecheck.",
+    "migration_safety": "PASS: npm run test:web013:migration-gate; this verifies the deploy:safe guard only and does not apply a migration.",
+    "plan_and_traceability": "PASS: scripts/check-canonical-plan.py; tests/plan-contract.test.py (13/13); scripts/audit-active-plan-point.py (77.44.6.1.C OPEN / NOT_CERTIFIED); scripts/build-feature-traceability.py --check (396/396).",
+    "syntax_and_diff": "PASS: node --check on changed JavaScript, Python byte-compilation of the traceability generator, and git diff --check.",
+    "wrangler_dry_run": "PASS, Wrangler 4.130.0 exited 0 and reported --dry-run: exiting now after reading 168 public assets; 335.81 KiB total, 87.60 KiB gzip. Wrangler also emitted a non-fatal EROFS warning while attempting to write its log under /home/agent/.config; the dry-run completed successfully.",
+    "browser_scope_limit": "Only the three focused real-Chromium cases were run for this block. The full Editor/layout acceptance suite was not run and remains OPEN; no full-suite PASS is claimed."
+  },
+  "production_d1_read_only_preflight": {
+    "method": "Cloudflare D1 Query API; SELECT-only preflight before runtime release",
+    "sql": "SELECT name FROM d1_migrations ORDER BY name",
+    "row_count": 34,
+    "last_migration": "0028_media_archive.sql",
+    "rows_written": 0,
+    "changes": 0,
+    "changed_db": false
+  },
+  "release": {
+    "branch": "v2/foundation",
+    "starting_head": "3f6cac1357456c686d8f65643acd247883a03c86",
+    "starting_github_head": "verified equal through GitHub branch API",
+    "runtime_commit": null,
+    "push": "PENDING",
+    "github_checks": "PENDING",
+    "cloudflare_build": "PENDING",
+    "deployment": "PENDING",
+    "traffic_percent": null,
+    "direct_health": "PENDING",
+    "live_asset_sha256": "PENDING",
+    "d1_write_or_migration": false,
+    "r2_operation": false,
+    "new_dependencies": false,
+    "cost_huf": 0
+  },
+  "acceptance": {
+    "editor_c_point": "OPEN; this initial-state fix does not certify complete 77.44.6.1.C acceptance",
+    "full_editor_manual_and_physical_acceptance": "DEFERRED until the full Visual Editor plan gate"
+  }
+}
