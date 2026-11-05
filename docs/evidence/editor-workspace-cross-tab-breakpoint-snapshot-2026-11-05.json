@@ -1,14 +1,14 @@
 {
   "schema_version": 1,
-  "recorded_at_utc": "2026-11-05T15:10:27Z",
+  "recorded_at_utc": "2026-11-05T15:18:30Z",
   "plan_point": "77.44.6.1.C",
-  "status": "RUNTIME_FIX_READY_FOR_RELEASE; PLAN_POINT_OPEN",
+  "status": "RUNTIME_RELEASE_VERIFIED; PLAN_POINT_OPEN",
   "scope": "Keep cross-tab workspace updates authoritative when a responsive desktop snapshot exists; a mobile breakpoint must not restore stale shell state over a newer remote dock or appearance preset.",
   "source_control": {
     "repository": "sanci9517/sanci9517",
     "branch": "v2/foundation",
     "starting_head": "626ffba5ca0e41dcb759b5bece1b373558f26400",
-    "runtime_commit": null,
+    "runtime_commit": "09ab7c263dbc7c402c16af97cd77bd6a5b891c21",
     "runtime_commit_message": "fix(editor): honor cross-tab workspace state after resize",
     "runtime_files": [
       "public/editor-v2/ui/shell.js",
@@ -22,7 +22,9 @@
     ],
     "evidence_file": "docs/evidence/editor-workspace-cross-tab-breakpoint-snapshot-2026-11-05.json",
     "new_dependencies": [],
-    "aggregate_ci_pass_claimed": false
+    "aggregate_ci_pass_claimed": false,
+    "github_branch_head_verified": "09ab7c263dbc7c402c16af97cd77bd6a5b891c21",
+    "github_commit_status": "pending; total_count=0; statuses=[]; no aggregate CI PASS claimed"
   },
   "bug_and_fix": {
     "observed_defects": [
@@ -85,13 +87,45 @@
     "r2_operation": false
   },
   "release": {
-    "status": "PENDING_RUNTIME_COMMIT_PUSH_AUTOMATIC_BUILD_AND_DEPLOYMENT_VERIFICATION",
+    "status": "RUNTIME_DEPLOYED_AND_VERIFIED",
+    "automatic_build_id": "2e9589f3-1274-4115-b6fb-3e3ff1a465a6",
+    "automatic_build_commit": "09ab7c263dbc7c402c16af97cd77bd6a5b891c21",
+    "automatic_build_result": "SUCCESS; typecheck and deploy:safe completed; migration safety gate passed; no D1 migrations applied",
+    "build_log_note": "npm clean-install reported four high-severity dependency advisories; audit remediation was not part of this release and no package changes were made.",
+    "deployment_id": "bdb6661a-f2f1-4ca0-b44c-61d6f5d742cb",
+    "traffic_version_id": "9d5e3f12-2289-474a-98ea-995c5854a962",
+    "traffic_percent": 100,
+    "deployment_created_on": "2026-11-05T15:18:11.750159Z",
     "previous_deployment_id": "518dcb1a-8efa-4ca9-ad55-7eb8d60ad4e7",
     "previous_traffic_version_id": "fb981071-cd55-44a1-a6c1-2344aa2ee49d",
     "previous_traffic_percent": 100,
-    "direct_production_smoke": "Not attempted for this not-yet-released runtime commit.",
-    "production_health": null,
-    "changed_asset_hashes": null
+    "production_health": {
+      "path": "/api/health",
+      "http_status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "changed_asset_hashes": [
+      {
+        "path": "/editor-v2/",
+        "http_status": 200,
+        "sha256": "8c119a8be537deb70e9ff0e04d2c9a0529f64d3c5442e57b145573cd57429a64",
+        "matches_local": true
+      },
+      {
+        "path": "/editor-v2/ui/shell.js?v=20261105-cross-tab-workspace-lifecycle",
+        "http_status": 200,
+        "sha256": "204b02db9c8bb8e6b330e559523870c6698d61dd481b494e9613ca207b790746",
+        "matches_local": true
+      }
+    ],
+    "deployed_by": "Cloudflare Workers Build deploy command npm run deploy:safe",
+    "direct_production_smoke": "Verified by direct HTTPS GET after deployment; health and both changed public asset responses were HTTP 200 and asset bytes matched the local source.",
+    "documentation_followup_deployment": "None; this evidence/plan follow-up is documentation-only and does not change runtime assets."
   },
   "cost_huf": 0,
   "manual_acceptance": "DEFERRED_UNTIL_COMPLETE_EDITOR",
