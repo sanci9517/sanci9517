@@ -1776,3 +1776,84 @@ test('responsive dock resize keeps the focused panel and honors an explicit mobi
   assert.deepEqual(writes,[],'responsive panel changes never issue page Save or Publish requests');
   assert.deepEqual(errors,[]);
 });
+
+test('desktop tabbed dock groups become one mobile sheet and restore the exact group on resize',async t=>{
+  const {page,writes,errors}=await openEditor(t,{width:1280,height:900});
+  for(const [side,active] of [['left','right'],['right','left']]){
+    await openPreferences(page);
+    await page.locator('#workspaceLayout').selectOption('balanced');
+    await page.locator('#workspacePanelMode').selectOption('tabbed');
+    await page.locator('#workspacePanelSide').selectOption(side);
+    await page.locator('#closeWorkspaceAppearance').click();
+    await page.locator(`#workspacePanelTab${active==='left'?'Left':'Right'}`).click();
+    await page.waitForFunction(expected=>{
+      const workspace=document.querySelector('.workspace');
+      return workspace?.dataset.workspacePanelMode==='tabbed'&&workspace?.dataset.workspacePanelSide===expected.side&&workspace?.dataset.workspaceActivePanel===expected.active;
+    },{side,active});
+    const before=await page.evaluate(active=>({
+      shell:localStorage.getItem('sanci-editor-shell-v2'),
+      appearance:localStorage.getItem('sanci-editor-workspace-preferences-v2'),
+      order:document.querySelector('.workspace').dataset.workspaceDockOrder,
+      leftTab:document.querySelector('#workspacePanelTabLeft').getAttribute('aria-selected'),
+      rightTab:document.querySelector('#workspacePanelTabRight').getAttribute('aria-selected'),
+      canvasWidth:document.querySelector('.canvas-area').getBoundingClientRect().width,
+      canvasLeft:document.querySelector('.canvas-area').getBoundingClientRect().left,
+      canvasRight:document.querySelector('.canvas-area').getBoundingClientRect().right,
+      group:document.querySelector(`#${active}Dock`).getBoundingClientRect().toJSON()
+    }),active);
+    assert.ok(before.canvasWidth>=400,`${side}: desktop group begins canvas-safe: ${before.canvasWidth}`);
+    assert.ok(side==='left'?before.group.right<=before.canvasLeft+0.5:before.group.left>=before.canvasRight-0.5,`${side}: group occupies its physical side before resize: ${JSON.stringify({group:before.group,canvasLeft:before.canvasLeft,canvasRight:before.canvasRight,order:before.order,active})}`);
+
+    await page.setViewportSize({width:390,height:844});
+    await page.waitForFunction(()=>{
+      const workspace=document.querySelector('.workspace');
+      return matchMedia('(max-width: 1024px)').matches&&(workspace?.classList.contains('left-open')||workspace?.classList.contains('right-open'));
+    });
+    const mobile=await page.evaluate(()=>({
+      left:!document.querySelector('#leftDock').classList.contains('closed'),
+      right:!document.querySelector('#rightDock').classList.contains('closed'),
+      tabDisplay:getComputedStyle(document.querySelector('.workspace-panel-group-tabs')).display,
+      groupMode:document.querySelector('.workspace').dataset.workspacePanelMode,
+      canvasInert:document.querySelector('.canvas-area').inert,
+      scrollWidth:document.documentElement.scrollWidth,
+      innerWidth,
+      shell:localStorage.getItem('sanci-editor-shell-v2'),
+      appearance:localStorage.getItem('sanci-editor-workspace-preferences-v2')
+    }));
+    assert.ok(Number(mobile.left)+Number(mobile.right)<=1,`${side}: mobile keeps at most one drawer: ${JSON.stringify(mobile)}`);
+    assert.equal(mobile.tabDisplay,'none',`${side}: desktop-only group tabs leave the mobile drawer navigation`);
+    assert.equal(mobile.groupMode,'tabbed',`${side}: responsive presentation does not rewrite the saved desktop group mode`);
+    assert.equal(mobile.canvasInert,true,`${side}: the single drawer protects the canvas from interaction`);
+    assert.ok(mobile.scrollWidth<=mobile.innerWidth,`${side}: the mobile workspace has no horizontal overflow`);
+    assert.deepEqual({shell:mobile.shell,appearance:mobile.appearance},{shell:before.shell,appearance:before.appearance},`${side}: breakpoint normalization is temporary`);
+
+    await page.setViewportSize({width:1280,height:900});
+    await page.waitForFunction(expected=>{
+      const workspace=document.querySelector('.workspace');
+      return !matchMedia('(max-width: 1024px)').matches&&workspace?.classList.contains('left-open')&&workspace?.classList.contains('right-open')&&
+        workspace?.dataset.workspacePanelMode==='tabbed'&&workspace?.dataset.workspacePanelSide===expected.side&&
+        workspace?.dataset.workspaceActivePanel===expected.active;
+    },{side,active});
+    const restored=await page.evaluate(()=>({
+      order:document.querySelector('.workspace').dataset.workspaceDockOrder,
+      leftTab:document.querySelector('#workspacePanelTabLeft').getAttribute('aria-selected'),
+      rightTab:document.querySelector('#workspacePanelTabRight').getAttribute('aria-selected'),
+      canvasWidth:document.querySelector('.canvas-area').getBoundingClientRect().width,
+      canvasLeft:document.querySelector('.canvas-area').getBoundingClientRect().left,
+      canvasRight:document.querySelector('.canvas-area').getBoundingClientRect().right,
+      groupSide:document.querySelector('.editor-app').dataset.workspacePanelSide,
+      group:document.querySelector(`#${document.querySelector('.workspace').dataset.workspaceActivePanel}Dock`).getBoundingClientRect().toJSON(),
+      shell:localStorage.getItem('sanci-editor-shell-v2'),
+      appearance:localStorage.getItem('sanci-editor-workspace-preferences-v2')
+    }));
+    assert.equal(restored.order,before.order,`${side}: desktop dock order restores exactly`);
+    assert.equal(restored.leftTab,active==='left'?'true':'false',`${side}: selected left tab restores exactly`);
+    assert.equal(restored.rightTab,active==='right'?'true':'false',`${side}: selected right tab restores exactly`);
+    assert.equal(restored.groupSide,side,`${side}: dock group returns to its exact side`);
+    assert.ok(restored.canvasWidth>=400,`${side}: restored group still leaves 400px of canvas`);
+    assert.ok(side==='left'?restored.group.right<=restored.canvasLeft+0.5:restored.group.left>=restored.canvasRight-0.5,`${side}: restored group remains outside the canvas`);
+    assert.deepEqual({shell:restored.shell,appearance:restored.appearance},{shell:before.shell,appearance:before.appearance},`${side}: returning to desktop writes no workspace profile`);
+  }
+  assert.deepEqual(writes,[],'responsive tabbed workspace transitions never Save or Publish the Page Model');
+  assert.deepEqual(errors,[]);
+});

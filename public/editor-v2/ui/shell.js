@@ -319,16 +319,22 @@ function setupDockReordering(){
   const restoreResponsiveDockLayout=()=>{
     finishDrag({announcement:'A képernyőméret változott, ezért az átrendezés megszakadt.'});
     if(mobileQuery.matches){
-      if(!desktopDockSnapshot)desktopDockSnapshot={left:!panels.left?.classList.contains('closed'),right:!panels.right?.classList.contains('closed')};
+      if(!desktopDockSnapshot)desktopDockSnapshot={left:!panels.left?.classList.contains('closed'),right:!panels.right?.classList.contains('closed'),active:persisted.panelActive};
       const focusedSide=Object.entries(panels).find(([,panel])=>panel?.contains(document.activeElement)&&!panel.classList.contains('closed'))?.[0];
       const keep=focusedSide||(desktopDockSnapshot.right?'right':desktopDockSnapshot.left?'left':null);
       setPanel('left',keep==='left',{save:false,restoreFocus:false});
       setPanel('right',keep==='right',{save:false,restoreFocus:false});
     }else{
       const restore=desktopDockSnapshot||{left:Boolean(persisted.leftOpen),right:Boolean(persisted.rightOpen)};
+      const activePanel=desktopDockSnapshot?.active||persisted.panelActive;
       desktopDockSnapshot=null;
       setPanel('left',restore.left,{save:false,restoreFocus:false});
       setPanel('right',restore.right,{save:false,restoreFocus:false});
+      // setPanel synchronizes accessibility state after each individual dock.
+      // During restoration that intermediate one-dock state must not replace
+      // the selected tab from the complete desktop group snapshot.
+      if((activePanel==='left'&&restore.left)||(activePanel==='right'&&restore.right))persisted.panelActive=activePanel;
+      syncMobileBackdrop();
     }
     refreshHandles();
   };
