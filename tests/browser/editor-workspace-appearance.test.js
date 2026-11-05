@@ -31,19 +31,24 @@ function fixtureServer(){
   });
   return {server,writes};
 }
-async function openEditor(t,{width=1366,height=900,isMobile=false,hasTouch=false,blockWorkspaceStorageReads=false,blockShellStorageReads=false,initialDockState=null,initialAppearance=null}={}){
+async function openEditor(t,{width=1366,height=900,isMobile=false,hasTouch=false,blockWorkspaceStorageReads=false,blockShellStorageReads=false,ignoreWorkspacePreferenceWrites=false,initialDockState=null,initialAppearance=null}={}){
   const fixture=fixtureServer();await new Promise(done=>fixture.server.listen(0,'127.0.0.1',done));
   t.after(()=>new Promise(done=>fixture.server.close(done)));
   const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||(existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined),args:['--no-sandbox']});
   t.after(()=>browser.close());
   const context=await browser.newContext({viewport:{width,height},isMobile,hasTouch});t.after(()=>context.close());
-  if(blockWorkspaceStorageReads||blockShellStorageReads)await context.addInitScript(({blockWorkspaceStorageReads,blockShellStorageReads})=>{
+  if(blockWorkspaceStorageReads||blockShellStorageReads||ignoreWorkspacePreferenceWrites)await context.addInitScript(({blockWorkspaceStorageReads,blockShellStorageReads,ignoreWorkspacePreferenceWrites})=>{
     const getItem=Storage.prototype.getItem;
+    const setItem=Storage.prototype.setItem;
     Storage.prototype.getItem=function(key){
       if((blockWorkspaceStorageReads&&(key==='sanci-editor-shell-v2'||key==='sanci-editor-workspace-preferences-v2'||key==='sanci-editor-workspace-preferences-v1'))||(blockShellStorageReads&&key==='sanci-editor-shell-v2'))throw new DOMException('Storage is disabled','SecurityError');
       return getItem.call(this,key);
     };
-  },{blockWorkspaceStorageReads,blockShellStorageReads});
+    Storage.prototype.setItem=function(key,value){
+      if(ignoreWorkspacePreferenceWrites&&key==='sanci-editor-workspace-preferences-v2')return;
+      return setItem.call(this,key,value);
+    };
+  },{blockWorkspaceStorageReads,blockShellStorageReads,ignoreWorkspacePreferenceWrites});
   if(initialDockState||initialAppearance)await context.addInitScript(({dock,appearance})=>{
     if(dock)localStorage.setItem('sanci-editor-shell-v2',JSON.stringify(dock));
     if(appearance)localStorage.setItem('sanci-editor-workspace-preferences-v2',JSON.stringify(appearance));
@@ -1815,6 +1820,18 @@ test('workspace persistence stays session-only when just the separate dock-state
   assert.match(await page.locator('#workspaceDockStatus').textContent(),/csak ebben a munkamenetben érvényes/iu,'shell-only state changes also announce their non-durable status outside the settings dialog');
   assert.deepEqual(writes,[],'a partial workspace-storage failure never touches Page Model Save or Publish');
   assert.deepEqual(errors,[]);
+});
+
+test('workspace appearance reports session-only when the browser silently ignores its local preference write',async t=>{
+  const {page,writes,errors}=await openEditor(t,{width:1280,height:900,ignoreWorkspacePreferenceWrites:true});
+  await openPreferences(page);
+  await page.locator('#workspaceTheme').selectOption('sage');
+  await page.waitForFunction(()=>document.querySelector('#workspaceAppearanceStatus')?.textContent.includes('csak ebben a munkamenetben'));
+  assert.equal(await page.locator('.editor-app').getAttribute('data-workspace-theme'),'sage','the current session still applies the requested presentation preference');
+  assert.equal(await page.evaluate(key=>localStorage.getItem(key),WORKSPACE_PREFERENCES_KEY),null,'the simulated storage layer silently discards only the appearance write');
+  assert.match(await page.locator('#workspaceAppearanceStatus').textContent(),/csak ebben a munkamenetben/iu,'a no-op write is never announced as saved across reloads');
+  assert.deepEqual(writes,[],'session-only appearance changes do not Save or Publish page content');
+  assert.deepEqual(errors,[],'the no-op browser storage behavior does not prevent Editor use');
 });
 
 test('profile import explains when browser storage is unavailable instead of claiming the profile was saved',async t=>{

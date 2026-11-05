@@ -160,7 +160,7 @@ export function mountWorkspaceAppearance({documentRef=globalThis.document,root=d
   try{storage?.getItem(WORKSPACE_PREFERENCES_KEY)}catch{storageReadable=false}
   let value=readWorkspacePreferences(storage);
   let undoStack=[],redoStack=[],idSequence=0;
-  const persist=()=>{try{if(!storage||!storageReadable)return false;storage.setItem(WORKSPACE_PREFERENCES_KEY,JSON.stringify(value));return true}catch{return false}};
+  const persist=()=>{try{if(!storage||!storageReadable)return false;const serialized=JSON.stringify(value);storage.setItem(WORKSPACE_PREFERENCES_KEY,serialized);return storage.getItem(WORKSPACE_PREFERENCES_KEY)===serialized}catch{return false}};
   const currentDock=()=>{try{return normalizeDockState(readDockState())}catch{return normalizeDockState({})}};
   const renderLeftToolOrder=()=>{
     const field=fields.leftTool;if(!field)return;
