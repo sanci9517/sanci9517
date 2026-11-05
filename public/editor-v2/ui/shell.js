@@ -21,6 +21,7 @@ applyWorkspacePreferences(editorRoot,initialAppearance);
 let focusBeforeMobilePanel=null;
 let workspaceAppearance=null;
 let cancelWorkspaceDrag=()=>{};
+let cancelDockResize=()=>{};
 let canvasFocus=false;
 let desktopDockSnapshot=null;
 
@@ -248,6 +249,7 @@ function updateResizeHandle(side,width){
 function resizeDock(side,startX,startWidth,{pointerId=null,handle=null,dockOnLeft=dockIsOnLeft(side)}={}){
   workspaceAppearance?.remember();
   const limits=resizeLimits[side];
+  const widthKey=side==='left'?'leftWidth':'rightWidth';
   const onMove=event=>{
     if(pointerId!==null&&event.pointerId!==pointerId)return;
     const delta=dockOnLeft?event.clientX-startX:startX-event.clientX;
@@ -257,10 +259,12 @@ function resizeDock(side,startX,startWidth,{pointerId=null,handle=null,dockOnLef
     updateResizeHandle(side,width);
     emit('panel:resize',{side,width});
   };
-  const finish=event=>{
+  const finish=(event,{persistChanges=true,announcement=''}={})=>{
     if(event&&pointerId!==null&&event.pointerId!==pointerId)return;
-    persist();
-    workspaceAppearance?.setLayout('custom',{rememberChange:false});
+    if(persistChanges){
+      persist();
+      workspaceAppearance?.setLayout('custom',{rememberChange:false});
+    }
     document.body.classList.remove('resizing-dock');
     window.removeEventListener('pointermove',onMove);
     window.removeEventListener('pointerup',finish);
@@ -269,7 +273,16 @@ function resizeDock(side,startX,startWidth,{pointerId=null,handle=null,dockOnLef
     if(pointerId!==null&&handle?.hasPointerCapture?.(pointerId)){
       try{handle.releasePointerCapture(pointerId)}catch{}
     }
+    if(cancelDockResize===cancel)cancelDockResize=()=>{};
+    if(announcement){const status=document.querySelector('#workspaceDockStatus');if(status)status.textContent=announcement}
   };
+  const cancel=({announcement='A másik szerkesztőlapon változott a munkaterület, ezért a panel átméretezése megszakadt.'}={})=>{
+    root.style.setProperty(side==='left'?'--left-dock-width':'--right-dock-width',`${startWidth}px`);
+    persisted[widthKey]=startWidth;
+    updateResizeHandle(side,startWidth);
+    finish(null,{persistChanges:false,announcement});
+  };
+  cancelDockResize=cancel;
   document.body.classList.add('resizing-dock');
   window.addEventListener('pointermove',onMove);
   window.addEventListener('pointerup',finish);
@@ -340,6 +353,7 @@ function setupDockReordering(){
   };
   const refreshHandles=()=>workspace.querySelectorAll('.dock-heading,.canvas-toolbar').forEach(handle=>handle.setAttribute('draggable',String(!mobileQuery.matches)));
   const restoreResponsiveDockLayout=()=>{
+    cancelDockResize({announcement:'A képernyőméret változott, ezért a panel átméretezése megszakadt.'});
     finishDrag({announcement:'A képernyőméret változott, ezért az átrendezés megszakadt.'});
     if(mobileQuery.matches){
       if(!desktopDockSnapshot)desktopDockSnapshot={left:!panels.left?.classList.contains('closed'),right:!panels.right?.classList.contains('closed'),active:persisted.panelActive};
@@ -454,6 +468,7 @@ setPanel('right',!mobileQuery.matches && Boolean(persisted.rightOpen),{save:fals
 showLeftTab(persisted.leftTab,{save:false,open:false});
 workspaceAppearance=mountWorkspaceAppearance({documentRef:document,root:editorRoot,onLayoutChange:applyWorkspaceLayout,onExternalChange:({reset=false}={})=>{
   desktopDockSnapshot=null;
+  cancelDockResize({announcement:reset?'A másik szerkesztőlapon alaphelyzetbe állították a munkaterületet, ezért a panel átméretezése megszakadt.':'A másik szerkesztőlapon változott a munkaterület, ezért a panel átméretezése megszakadt.'});
   cancelWorkspaceDrag({announcement:reset?'A másik szerkesztőlapon alaphelyzetbe állították a munkaterületet, ezért az átrendezés megszakadt.':'A másik szerkesztőlapon történt változás miatt az átrendezés megszakadt.'});
 },readDockState:()=>persisted,moveDockTab:moveLeftTab,applyDockState:state=>{
   applyDockState(state);
@@ -498,6 +513,7 @@ window.addEventListener('storage',event=>{
   // tab changes the shared dock state, that snapshot is stale and must not
   // overwrite the newer state when this tab returns to desktop.
   desktopDockSnapshot=null;
+  cancelDockResize({announcement:'A másik szerkesztőlapon megváltozott a panelállapot, ezért az átméretezés megszakadt.'});
   cancelWorkspaceDrag({announcement:'A másik szerkesztőlapon megváltozott a panelállapot, ezért az átrendezés megszakadt.'});
   let next;
   try{next=event.newValue?JSON.parse(event.newValue):defaults}catch{next=defaults}

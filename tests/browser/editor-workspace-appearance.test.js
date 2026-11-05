@@ -2160,6 +2160,68 @@ test('a cross-tab appearance preset replaces the desktop snapshot while this edi
   assert.deepEqual(errors,[]);
 });
 
+test('a cross-tab dock update cancels an in-progress pointer resize before stale width can be saved',async t=>{
+  const appearance={version:2,layout:'balanced',theme:'graphite',density:'comfortable',accent:'#5b8cff',dockOrder:'left-canvas-right',panelMode:'separate',panelSide:'right',profiles:[]};
+  const dock={leftOpen:true,rightOpen:true,leftTab:'pages',leftTabOrder:['pages','elements','layers','schedule','navigation'],inspectorTab:'design',panelActive:'left',leftWidth:310,rightWidth:352};
+  const {page,context,writes,errors}=await openEditor(t,{width:1440,height:900,initialDockState:dock,initialAppearance:appearance});
+  const second=await context.newPage();
+  await second.goto(page.url(),{waitUntil:'load'});
+  await second.locator('.page-canvas .node').first().waitFor();
+
+  const handle=page.locator('#leftDock .left-resizer');
+  const box=await handle.boundingBox();
+  assert.ok(box,'the receiving editor has a visible desktop resize handle');
+  const startX=box.x+box.width/2,startY=box.y+box.height/2;
+  await page.mouse.move(startX,startY);
+  await page.mouse.down();
+  await page.waitForFunction(()=>document.body.classList.contains('resizing-dock'));
+  await page.mouse.move(startX+40,startY);
+  await page.waitForFunction(()=>document.querySelector('.left-resizer')?.getAttribute('aria-valuenow')==='350');
+
+  const remote={...dock,leftWidth:400,rightWidth:352};
+  await second.evaluate(value=>localStorage.setItem('sanci-editor-shell-v2',JSON.stringify(value)),remote);
+  await page.waitForFunction(()=>document.querySelector('.left-resizer')?.getAttribute('aria-valuenow')==='400');
+  assert.equal(await page.locator('body').evaluate(element=>element.classList.contains('resizing-dock')),false,'a remote workspace update cancels the active local pointer gesture');
+
+  await page.mouse.move(startX+100,startY);
+  await page.mouse.up();
+  assert.equal(await handle.getAttribute('aria-valuenow'),'400','the canceled pointer cannot overwrite the newer shared width');
+  assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('sanci-editor-shell-v2'))?.leftWidth),400,'the newest cross-tab width remains persisted after the stale pointer is released');
+  assert.match(await page.locator('#workspaceDockStatus').textContent(),/másik szerkesztőlapon.*átméretezés megszakadt/iu,'the receiving tab explains why the resize ended');
+  assert.deepEqual(writes,[],'cross-tab dock synchronization never saves or publishes page content');
+  assert.deepEqual(errors,[]);
+});
+
+test('a responsive breakpoint cancels an in-progress dock resize without persisting its temporary width',async t=>{
+  const {page,writes,errors}=await openEditor(t,{width:1440,height:900});
+  await openPreferences(page);
+  await page.locator('#workspaceLayout').selectOption('balanced');
+  await page.locator('#closeWorkspaceAppearance').click();
+  const handle=page.locator('#leftDock .left-resizer');
+  const box=await handle.boundingBox();
+  assert.ok(box,'the desktop dock has a reachable resize handle');
+  const startX=box.x+box.width/2,startY=box.y+box.height/2;
+  await page.mouse.move(startX,startY);
+  await page.mouse.down();
+  await page.waitForFunction(()=>document.body.classList.contains('resizing-dock'));
+  await page.mouse.move(startX+32,startY);
+  await page.waitForFunction(()=>document.querySelector('.left-resizer')?.getAttribute('aria-valuenow')==='342');
+
+  await resizeAndWaitForWorkspaceBreakpoint(page,390,844);
+  assert.equal(await page.locator('body').evaluate(element=>element.classList.contains('resizing-dock')),false,'the desktop resize ends when the mobile drawer shell takes over');
+  await page.mouse.move(startX+100,startY);
+  await page.mouse.up();
+  assert.equal(await handle.getAttribute('aria-valuenow'),'310','the canceled desktop gesture reverts to its last saved width');
+
+  await resizeAndWaitForWorkspaceBreakpoint(page,1440,900);
+  await page.waitForFunction(()=>document.querySelector('#leftDock')?.classList.contains('closed')===false&&document.querySelector('#rightDock')?.classList.contains('closed')===false);
+  assert.equal(await handle.getAttribute('aria-valuenow'),'310','desktop restoration does not revive the temporary mobile pointer width');
+  assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('sanci-editor-shell-v2'))?.leftWidth),310,'a breakpoint-only cancellation does not persist an intermediate desktop width');
+  assert.match(await page.locator('#workspaceDockStatus').textContent(),/képernyőméret változott.*panel átméretezése megszakadt/iu);
+  assert.deepEqual(writes,[],'responsive dock cancellation never saves or publishes page content');
+  assert.deepEqual(errors,[]);
+});
+
 test('a saved two-dock custom workspace starts canvas-first on mobile and restores on desktop',async t=>{
   const dock={leftOpen:true,rightOpen:true,leftTab:'pages',leftTabOrder:['pages','elements','layers','schedule','navigation'],inspectorTab:'design',panelActive:'left',leftWidth:310,rightWidth:352};
   const appearance={version:2,layout:'custom',theme:'graphite',density:'comfortable',accent:'#5b8cff',dockOrder:'left-canvas-right',panelMode:'tabbed',panelSide:'right',profiles:[]};

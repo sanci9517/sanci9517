@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-05T16:00:00Z",
+  "plan_point": "77.44.6.1.C",
+  "status": "RUNTIME_FIX_READY_FOR_RELEASE; PLAN_POINT_OPEN",
+  "scope": "Prevent an in-progress local pointer resize from overwriting newer shared dock or appearance state delivered from another open editor tab.",
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "starting_head": "cbe99410b29661960ca85ecc529352f4e82f4a5a",
+    "runtime_commit": null,
+    "runtime_commit_message": "fix(editor): cancel stale dock resize on workspace updates",
+    "runtime_files": [
+      "public/editor-v2/ui/shell.js",
+      "public/editor-v2/index.html"
+    ],
+    "test_files": [
+      "tests/browser/editor-workspace-appearance.test.js"
+    ],
+    "evidence_file": "docs/evidence/editor-workspace-cross-tab-resize-cancel-2026-11-05.json",
+    "new_dependencies": [],
+    "aggregate_ci_pass_claimed": false
+  },
+  "bug_and_fix": {
+    "reproduction": "In real Chromium, start a pointer drag on the first tab's left dock resize handle and move 40 CSS px (310px to 350px). From a second same-origin Editor tab write a valid sanci-editor-shell-v2 state with leftWidth 400px. Before the fix, the receiver applied the remote 400px value but remained in resizing-dock; moving and releasing the original pointer continued the stale gesture and could persist its old width over the remote state.",
+    "pre_fix_result": "The new targeted browser regression failed as expected: after the cross-tab storage event, body.resizing-dock remained true (actual true, expected false).",
+    "fix": "Pointer resize now has a cancellation path that detaches window pointer listeners, releases pointer capture, restores the width from before the gesture, and does not persist the canceled intermediate width. External shell or appearance changes and a responsive breakpoint change invoke it before applying the incoming/temporary workspace presentation. Existing pointerup, pointercancel, and lostpointercapture completion still preserve partial progress as before.",
+    "data_boundary": "Only local editor workspace dock presentation state changes. The Page Model, page Save, Publish, renderer, D1, and R2 are not modified."
+  },
+  "validation": {
+    "targeted_regression": "PASS: the cross-tab dock-width race failed before fix and passed after; the breakpoint-cancellation regression passes after the fix; targeted combined rerun 2/2 real Chromium.",
+    "full_browser_file": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-workspace-appearance.test.js",
+      "result": "PASS: 50/50 tests, 0 failed/cancelled/skipped; 379243.162 ms; 212 orphaned descendants reaped."
+    },
+    "editor_unit": "PASS: npm run test:editor; 14/14 Node files and 3/3 Linux subreaper runner tests.",
+    "typecheck": "PASS: npm run typecheck.",
+    "migration_safety_gate": "PASS: npm run test:web013:migration-gate; no migration applied.",
+    "javascript_syntax_and_diff": "PASS: node --check public/editor-v2/ui/shell.js; node --check tests/browser/editor-workspace-appearance.test.js; git diff --check.",
+    "wrangler_dry_run": {
+      "status": "PASS",
+      "command": "WRANGLER_WRITE_LOGS=false npx wrangler deploy --dry-run",
+      "version": "4.130.0",
+      "files": 168,
+      "bundle_kib": 335.81,
+      "gzip_kib": 87.6,
+      "deployed": false
+    }
+  },
+  "production_preflight": {
+    "method": "Cloudflare D1 Query API; SELECT-only",
+    "database": "sanci9517-db",
+    "query": "SELECT name FROM d1_migrations ORDER BY name;",
+    "rows_read": 34,
+    "latest_migration": "0028_media_archive.sql",
+    "rows_written": 0,
+    "changes": 0,
+    "changed_db": false,
+    "migration_applied": false,
+    "r2_operation": false
+  },
+  "release": {
+    "status": "PENDING_RUNTIME_PUSH_BUILD_DEPLOY_AND_DIRECT_SMOKE_VERIFICATION",
+    "previous_deployment_id": "bdb6661a-f2f1-4ca0-b44c-61d6f5d742cb",
+    "previous_traffic_version_id": "9d5e3f12-2289-474a-98ea-995c5854a962",
+    "previous_traffic_percent": 100,
+    "build_id": null,
+    "deployment_id": null,
+    "traffic_version_id": null,
+    "traffic_percent": null,
+    "production_health": null,
+    "changed_asset_hashes": null
+  },
+  "manual_acceptance": "DEFERRED_UNTIL_COMPLETE_EDITOR",
+  "full_plan_point_acceptance": "NOT_CERTIFIED",
+  "plan_point_status": "OPEN",
+  "cost_huf": 0,
+  "remaining_77_44_6_1_C_scope": "Full workspace lifecycle acceptance and any remaining canvas-safe dynamic dock-zone behaviors."
+}
