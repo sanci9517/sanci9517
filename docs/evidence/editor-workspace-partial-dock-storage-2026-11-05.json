@@ -1,0 +1,113 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-05",
+  "plan_point": "77.44.6.1.C",
+  "status": "PARTIAL_STORAGE_DURABILITY_RUNTIME_FIX_DEPLOYED_AND_VERIFIED_FULL_C_OPEN",
+  "scope": "Report non-durable dock workspace state honestly when the separate shell-state key cannot be read, even if workspace appearance preferences can still be saved.",
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "starting_head": "6d2957ae13855370d1db06ae2c6061970ee25ce6",
+    "runtime_commit": "5fa92099652327a58e18131444bdb5aadd595c42",
+    "runtime_commit_parent": "6d2957ae13855370d1db06ae2c6061970ee25ce6",
+    "runtime_commit_message": "fix(editor): report non-durable dock workspace state",
+    "runtime_commit_push": "Normal fast-forward push succeeded; git ls-remote and GitHub branch API verified exact v2/foundation head 5fa92099652327a58e18131444bdb5aadd595c42.",
+    "runtime_files": [
+      "public/editor-v2/index.html",
+      "public/editor-v2/ui/shell.js",
+      "public/editor-v2/ui/workspace-appearance.js"
+    ],
+    "test_files": ["tests/browser/editor-workspace-appearance.test.js"],
+    "generated_traceability": ["docs/evidence/feature-traceability.json"],
+    "new_dependencies": [],
+    "github_commit_statuses": [],
+    "github_ci_pass_claimed": false
+  },
+  "bug_and_fix": {
+    "storage_keys": {
+      "dock_shell": "sanci-editor-shell-v2",
+      "appearance": "sanci-editor-workspace-preferences-v2"
+    },
+    "reproduction": "Deny getItem only for the shell/dock key while leaving the appearance key readable and writable. Appearance changes can persist while panel state cannot be reloaded, so a generic durable-save announcement is misleading.",
+    "fix": "Track dock-state read durability, read back the serialized shell state after writes before claiming persistence, and make workspace-appearance announcements session-only whenever dock persistence cannot be verified. The message reports unverifiable panel persistence without asserting an unobserved write failure.",
+    "data_boundary": "No Page Model, content Save, Publish, D1, or R2 operation is involved."
+  },
+  "validation": {
+    "final_complete_browser_file": {
+      "status": "PASS",
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-workspace-appearance.test.js",
+      "tests": 45,
+      "passed": 45,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "duration_ms": 508157.948533,
+      "orphan_test_descendants_reaped": 192,
+      "includes_partial_shell_storage_read_regression": true,
+      "includes_canvas_safe_dock_layout_and_grouping_matrix": true
+    },
+    "editor_unit": {
+      "status": "PASS",
+      "command": "npm run test:editor",
+      "node_test_files_passed": 14,
+      "subreaper_tests_passed": 3
+    },
+    "typecheck": "PASS: npm run typecheck",
+    "migration_safety_gate": "PASS: npm run test:web013:migration-gate",
+    "canonical_plan": "PASS: python3 scripts/check-canonical-plan.py; complete canonical 13-file plan",
+    "plan_contract": "PASS: python3 tests/plan-contract.test.py; 13 tests",
+    "active_plan_audit": "PASS: python3 scripts/audit-active-plan-point.py; next is 77.44.6.1.C; acceptance NOT_CERTIFIED",
+    "traceability": "PASS: python3 scripts/build-feature-traceability.py --check; 396 mappings",
+    "syntax_and_diff": "PASS: node --check; git diff --check",
+    "wrangler_dry_run": {
+      "status": "PASS",
+      "runs": 2,
+      "wrangler_version": "4.130.0",
+      "files": 168,
+      "bundle_kib": 335.81,
+      "gzip_kib": 87.6,
+      "deployed_by_dry_run": false
+    }
+  },
+  "production_preflight": {
+    "d1_query": "SELECT name FROM d1_migrations ORDER BY name;",
+    "rows_read": 34,
+    "latest_migration": "0028_media_archive.sql",
+    "rows_written": 0,
+    "changes": 0,
+    "changed_db": false,
+    "migration_applied": false,
+    "r2_operation": false
+  },
+  "release": {
+    "method": "npm run deploy:safe",
+    "migration_safety_gate_passed": true,
+    "deployment_id": "bfc56d40-8de3-4a3f-a698-8bea9451cb82",
+    "traffic_version_id": "02f79955-e1c8-428f-ab3b-95625ca70ce1",
+    "traffic_percent": 100,
+    "health": {
+      "path": "/api/health",
+      "http_status": 200,
+      "body": {"ok": true, "service": "sanci9517-streamer-brand", "version": "2.0.0", "server": "cloudflare-worker"}
+    },
+    "public_asset_hashes": {
+      "/editor-v2/": {
+        "http_status": 200,
+        "sha256": "d3cb972da2c58fd29b2126a0eff3eeabb823c1bddcce415eaf72c45db0d15e92"
+      },
+      "/editor-v2/ui/shell.js?v=20261105-shell-storage-readback-honesty": {
+        "http_status": 200,
+        "local_and_live_sha256": "adf77b0312432395989ed030c1796140eaea356f193ca7344fd7dfaa735cf9c3"
+      },
+      "/editor-v2/ui/workspace-appearance.js?v=20261105-shell-storage-readback-honesty": {
+        "http_status": 200,
+        "local_and_live_sha256": "5af1f6d260167db19eff656206be0a96f3747769d56519f1abbb28b8012a1449"
+      }
+    }
+  },
+  "cost_huf": 0,
+  "manual_acceptance": "DEFERRED_UNTIL_COMPLETE_EDITOR",
+  "full_plan_point_acceptance": "NOT_CERTIFIED",
+  "plan_point_status": "OPEN",
+  "remaining_77_44_6_1_C_scope": "Complete nested/tabbed panel and docking-zone behavior across responsive layouts plus end-to-end workspace lifecycle acceptance. The canvas must remain unobscured and all Save/Publish/Page Model contracts must remain intact."
+}
