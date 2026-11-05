@@ -1,0 +1,123 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-05T23:13:45Z",
+  "plan_point": "77.44.6.1.C",
+  "status": "FULL_WORKSPACE_BROWSER_REGRESSION_PASS_NO_RUNTIME_DEFECT_REPRODUCED_PRODUCTION_EDGE_SMOKE_BLOCKED",
+  "scope": "Repeat the full workspace appearance and dock lifecycle browser suite after the latest verified v2/foundation release state; do not claim full plan acceptance.",
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "local_head": "90e616d7e5b0e0d874051669f0dea5b9235a1d55",
+    "github_branch_head": "90e616d7e5b0e0d874051669f0dea5b9235a1d55",
+    "runtime_source_commit": "023933283ec3d782824cdbad93726b7b0ae42d3c",
+    "runtime_source_unchanged_this_run": true,
+    "code_files_changed": [],
+    "test_files_changed": [],
+    "documentation_files_changed": [
+      "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+      "docs/evidence/editor-workspace-full-regression-recheck-2026-11-05.json"
+    ],
+    "aggregate_github_statuses": [],
+    "aggregate_github_ci_pass": false
+  },
+  "validation": {
+    "full_workspace_browser_file": {
+      "status": "PASS",
+      "command": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-workspace-appearance.test.js",
+      "test_file": "tests/browser/editor-workspace-appearance.test.js",
+      "tests": 55,
+      "passed": 55,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "duration_ms": 492174.785525,
+      "reaped_test_descendants": 233,
+      "runtime_defect_reproduced": false,
+      "coverage_summary": [
+        "six saved desktop dock orders and canvas-safe dynamic edge/center drops",
+        "tabbed dock grouping, ungrouping, active-panel state, and workspace Undo/Redo",
+        "desktop canvas remains at least 400 CSS pixels and is not overlapped by dock tracks",
+        "desktop/mobile breakpoint transitions and single-drawer behavior",
+        "workspace profile save/load/export/import, storage fallback, and cross-tab state changes",
+        "keyboard and pointer dock resizing and interrupted gesture lifecycle",
+        "zero Page Model Save, Publish, and renderer writes in the tested presentation-only flows"
+      ]
+    },
+    "editor_unit": {
+      "status": "PASS",
+      "command": "npm run test:editor",
+      "node_test_files_passed": 14,
+      "subreaper_cases_passed": 3
+    },
+    "typecheck": {
+      "status": "PASS",
+      "command": "npm run typecheck"
+    },
+    "migration_safety_gate": {
+      "status": "PASS",
+      "command": "npm run test:web013:migration-gate"
+    },
+    "canonical_plan_and_contract": {
+      "status": "PASS",
+      "commands": [
+        "python3 scripts/check-canonical-plan.py",
+        "python3 tests/plan-contract.test.py"
+      ],
+      "master_files": 13,
+      "contract_tests": 13,
+      "functional_acceptance": "NOT_CERTIFIED"
+    },
+    "active_plan_cursor_and_traceability": {
+      "status": "PASS",
+      "active_point": "77.44.6.1.C",
+      "commands": [
+        "python3 scripts/audit-active-plan-point.py",
+        "python3 scripts/build-feature-traceability.py --check"
+      ],
+      "source_mappings": 396,
+      "acceptance": "NOT_CERTIFIED"
+    },
+    "local_runtime_sha256": {
+      "public/editor-v2/index.html": "96588973123005483ae7fb469e4db30f25fc5876bfd9b1417672658955cac473",
+      "public/editor-v2/ui/shell.js": "af24de945257507b8ed7f9be25ac5c19ad07c2b14a8c7d0bf27600a19d73f2db",
+      "public/editor-v2/ui/workspace-appearance.js": "09857ed02e2241a4f37e082448c1224db387383940263f34855daaae72df44d3"
+    },
+    "production_edge_smoke": {
+      "status": "BLOCKED_UNVERIFIED",
+      "proxy_route_error": "curl: (7) Failed to connect to proxy port 8080",
+      "direct_route_error": "curl: (7) Failed to connect to sanci9517-streamer-brand.sandor-bogadi95.workers.dev port 443 after 53 ms: Could not connect to server",
+      "health_http_status": null,
+      "live_asset_hashes": null,
+      "note": "Cloudflare control-plane deployment data does not substitute for a direct public HTTP health and asset-hash smoke check."
+    },
+    "wrangler_dry_run": "NOT_RUN_RUNTIME_SOURCE_UNCHANGED",
+    "production_d1_preflight": "NOT_RUN_RUNTIME_SOURCE_UNCHANGED"
+  },
+  "cloudflare_control_plane": {
+    "build": {
+      "id": "c6c227c1-9edf-4a30-9de3-024d70b40c40",
+      "commit": "023933283ec3d782824cdbad93726b7b0ae42d3c",
+      "outcome": "success",
+      "build_command": "npm run typecheck",
+      "deploy_command": "npm run deploy:safe"
+    },
+    "deployment": {
+      "id": "abe77595-1647-4fad-a649-608a83726f53",
+      "worker_version": "c126332d-2c14-4c9e-b229-900cb16735fc",
+      "version_number": 3833,
+      "traffic_percent": 100,
+      "created_on": "2026-11-05T22:19:44.283872Z"
+    },
+    "docs_only_commit_triggers_worker_build": false
+  },
+  "safety_and_acceptance": {
+    "production_d1_write_or_migration": false,
+    "r2_operation_or_deletion": false,
+    "save_and_publish_remain_separate": true,
+    "cost_huf": 0,
+    "new_dependency": false,
+    "full_plan_point": "OPEN / NOT CERTIFIED",
+    "full_visual_editor_manual_and_physical_acceptance": "DEFERRED until the complete Editor acceptance gate",
+    "remaining_blocker": "Production public health and asset-hash checks need direct network access."
+  }
+}
