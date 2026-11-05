@@ -95,7 +95,9 @@
       "not_a_test_pass": true
     },
     "copy_assertion_self_check": "PASS: exact GH-recorded announcement matches both corrected regexes and not the obsolete wording",
-    "ci_rerun": "not run; no additional Actions usage"
+    "ci_rerun": "not run; no additional Actions usage",
+    "push": "PASS, normal fast-forward; remote branch exact HEAD 2bb99e2fb9c13462e4ee300c9c4663d6cfcc7b5a; GitHub compare 65aadd0..2bb99e2 shows 2 ahead, 0 behind",
+    "worker_redeploy": "not triggered; both commits are test/docs-only and Cloudflare build paths exclude tests/** and docs/**"
   },
   "source_control": {
     "repository": "sanci9517/sanci9517",
@@ -103,7 +105,7 @@
     "parent_commit": "22f17421525041ff89758df9649a4be9b87ab299",
     "runtime_commit": "626198d09079293f387288b42c7f330d40b0df5a",
     "push": "PASS, normal fast-forward; push output confirmed 22f17421..626198d0",
-    "github_exact_head": "626198d09079293f387288b42c7f330d40b0df5a",
+    "github_exact_head": "2bb99e2fb9c13462e4ee300c9c4663d6cfcc7b5a",
     "test_follow_up_commit": "ea6f567acddc19c5f3ac1fe2c090524f1a44bce8",
     "test_follow_up_push": "pending remote verification",
     "aggregate_github_ci_pass": false
