@@ -829,11 +829,20 @@ test('grouping on a reordered dock follows the target physical side of the canva
   assert.deepEqual(errors,[]);
 });
 
-test('center dock zones follow the target panel across all six desktop orders and both drag directions',async t=>{
-  const {page,writes,errors}=await openEditor(t,{width:1280,height:900});
+test('center dock zones preserve the canvas at maximum widths across all desktop orders and drag directions',async t=>{
+  const {page,writes,errors}=await openEditor(t,{width:1025,height:900});
+  await page.evaluate(()=>{
+    const key='sanci-editor-shell-v2';
+    const saved=JSON.parse(localStorage.getItem(key)||'{}');
+    localStorage.setItem(key,JSON.stringify({...saved,leftWidth:460,rightWidth:440}));
+  });
+  await page.reload({waitUntil:'load'});
+  await page.waitForFunction(()=>document.documentElement.dataset.editorBoot==='ready');
   await openPreferences(page);
   await page.locator('#workspaceLayout').selectOption('balanced');
   await page.locator('#workspacePanelMode').selectOption('separate');
+  assert.equal(await page.locator('.editor-app').evaluate(element=>getComputedStyle(element).getPropertyValue('--left-dock-width').trim()),'460px');
+  assert.equal(await page.locator('.editor-app').evaluate(element=>getComputedStyle(element).getPropertyValue('--right-dock-width').trim()),'440px');
   await page.waitForFunction(()=>!document.querySelector('#leftDock')?.classList.contains('closed')&&!document.querySelector('#rightDock')?.classList.contains('closed'));
   await page.locator('#closeWorkspaceAppearance').click();
 
@@ -896,7 +905,20 @@ test('center dock zones follow the target panel across all six desktop orders an
       assert.match(result.announcement,new RegExp(`vászon ${result.side==='left'?'bal':'jobb'} oldalán marad.*vászon fedetlen`,'iu'),`${order}: assistive feedback matches the physical side`);
       assert.equal(result.stalePreview,false,`${order}: the temporary zone preview clears after grouping`);
       assert.equal(result.dragActive,false,`${order}: grouping ends the drag lifecycle`);
-      results.push({order,sourceId,targetId,side:result.side,canvasWidth:Math.round(result.canvasWidth)});
+      await page.locator(`#workspacePanelTab${targetId==='left'?'Left':'Right'}`).click();
+      const otherTab=await page.evaluate(()=>{
+        const workspace=document.querySelector('.workspace');
+        const group=document.querySelector(`#${workspace.dataset.workspaceActivePanel}Dock`);
+        const canvas=document.querySelector('.canvas-area');
+        const groupRect=group.getBoundingClientRect(),canvasRect=canvas.getBoundingClientRect();
+        return {active:workspace.dataset.workspaceActivePanel,side:document.querySelector('.editor-app').dataset.workspacePanelSide,groupLeft:groupRect.left,groupRight:groupRect.right,canvasLeft:canvasRect.left,canvasRight:canvasRect.right,canvasWidth:canvasRect.width,scrollWidth:document.documentElement.scrollWidth};
+      });
+      assert.equal(otherTab.active,targetId,`${order}: the other panel is keyboard/pointer selectable after grouping`);
+      assert.equal(otherTab.side,result.targetSide,`${order}: switching group tabs does not move the group to the panel's ID side`);
+      assert.ok(otherTab.canvasWidth>=400,`${order}: maximum saved panel width still leaves a usable canvas after tab switching: ${JSON.stringify(otherTab)}`);
+      assert.ok(otherTab.side==='left'?otherTab.groupRight<=otherTab.canvasLeft+0.5:otherTab.groupLeft>=otherTab.canvasRight-0.5,`${order}: the switched panel remains in its reserved physical track`);
+      assert.equal(otherTab.scrollWidth,1025,`${order}: the maximum-width group does not create horizontal page overflow`);
+      results.push({order,sourceId,targetId,side:result.side,canvasWidth:Math.round(result.canvasWidth),otherTabCanvasWidth:Math.round(otherTab.canvasWidth)});
     }
   }
   assert.equal(results.length,12,'both source/target directions are checked for every supported order');
