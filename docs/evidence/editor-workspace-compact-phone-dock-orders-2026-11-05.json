@@ -1,0 +1,110 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-05",
+  "plan_point": "77.44.6.1.C",
+  "status": "COMPACT_PHONE_SIX_DOCK_ORDERS_ACCESSIBLE_PASS_FULL_C_OPEN",
+  "scope": "Exercise every allowlisted desktop dock-order choice from a touch-sized control on a compact phone, preserving the one-drawer model and page-data boundary.",
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "test_base_commit": "c44d0fbfd211e6feaa2c0d43daa6c9141e3debdb",
+    "test_commit": "2960f09b7534cdc28929eacb7b7fa0c9c38f5c84",
+    "test_commit_fast_forward_push_verified": true,
+    "github_exact_ref_after_test_push": "2960f09b7534cdc28929eacb7b7fa0c9c38f5c84",
+    "github_commit_statuses": [],
+    "aggregate_github_ci_pass": false,
+    "runtime_files_changed": [],
+    "test_files_changed": [
+      "tests/browser/editor-workspace-appearance.test.js"
+    ],
+    "documentation_files_changed_in_test_commit": false
+  },
+  "coverage": {
+    "browser": "Chromium via the existing Playwright local editor fixture",
+    "viewport_css_px": {
+      "width": 320,
+      "height": 568
+    },
+    "touch_input": true,
+    "selector": "#workspaceDockOrder",
+    "minimum_target_height_css_px": 44,
+    "target_inside_viewport": true,
+    "allowlisted_choices": [
+      "left-canvas-right",
+      "canvas-left-right",
+      "left-right-canvas",
+      "right-left-canvas",
+      "right-canvas-left",
+      "canvas-right-left"
+    ],
+    "every_order_applied_and_persisted": true,
+    "document_horizontal_overflow": false,
+    "both_mobile_drawers_open_simultaneously": false,
+    "active_drawer_background_canvas_inert": true,
+    "page_model_save_publish_or_renderer_requests": 0
+  },
+  "validation": {
+    "targeted_real_chromium": {
+      "status": "PASS",
+      "tests": 1,
+      "command": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py node --test --test-concurrency=1 --test-reporter=spec --test-name-pattern='compact phone keeps every desktop dock order' tests/browser/editor-workspace-appearance.test.js"
+    },
+    "complete_workspace_chromium_file": {
+      "status": "PASS",
+      "tests": 43,
+      "command": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-workspace-appearance.test.js",
+      "orphaned_browser_descendants_reaped": 186
+    },
+    "editor_unit": {
+      "status": "PASS",
+      "node_test_files": 14,
+      "linux_subreaper_cases": 3,
+      "command": "npm run test:editor"
+    },
+    "typecheck": "PASS: npm run typecheck",
+    "migration_guard": "PASS: npm run test:web013:migration-gate; no production migration applied",
+    "canonical_plan_checks": "PASS: scripts/check-canonical-plan.py, scripts/plan_contract.py and scripts/audit-active-plan-point.py; cursor remains 77.44.6.1.C / OPEN.",
+    "traceability": "PASS: scripts/build-feature-traceability.py --check; 396/396 mappings.",
+    "syntax_and_diff": "PASS: node --check tests/browser/editor-workspace-appearance.test.js and git diff --check.",
+    "wide_51_file_editor_layout_suite": "NOT RUN; no aggregate wide-suite claim.",
+    "test_fixture_corrections": [
+      "The first targeted attempt reselected the select's existing default value and timed out waiting for a change event; the interaction sequence now cycles through the five non-default choices and returns to the default.",
+      "The next assertion expected the last item in the declaration list instead of the intentionally restored default; corrected the test expectation and reran the targeted test successfully. Neither attempt found a product runtime defect."
+    ]
+  },
+  "release": {
+    "status": "TEST_AND_DOCUMENTATION_ONLY_NO_WORKER_DEPLOY",
+    "runtime_source_changed": false,
+    "test_commit_push": "Normal fast-forward push; GitHub branch API returned the exact test commit as branch HEAD.",
+    "test_commit_combined_status": "No statuses (empty list); aggregate CI PASS is not claimed.",
+    "documentation_and_evidence_commit": "Same follow-up commit as the canonical plan entry and this evidence file.",
+    "worker_deployment_changed": false,
+    "latest_worker_deployment_id": "17c9928a-c0d4-4ffa-bdf2-21b9623d9ef0",
+    "latest_worker_traffic_version": "e5ce8eba-1007-4ca5-b153-a426e2224a09",
+    "latest_worker_traffic_percent": 100,
+    "direct_public_health": {
+      "status": "PASS",
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health?codex_check=compact-phone-dock-order",
+      "http_status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "asset_hashes": "Not re-fetched: no runtime or public asset file changed.",
+    "production_d1_query_or_write": "NONE",
+    "r2_operation_or_deletion": false
+  },
+  "reuse_and_cost": {
+    "reused": "Existing native select, allowlisted dock-order contract, responsive single-drawer lifecycle, Playwright fixture, installed Chromium and current Playwright dependency.",
+    "new_external_runtime_code": false,
+    "new_dependencies": false,
+    "cost_huf": 0
+  },
+  "acceptance": {
+    "77_44_6_1_C": "OPEN / NOT CERTIFIED; dynamic dock-zone and complete workspace lifecycle acceptance remain open.",
+    "full_visual_editor_manual_and_physical_acceptance": "DEFERRED until the complete Editor acceptance gate."
+  }
+}
