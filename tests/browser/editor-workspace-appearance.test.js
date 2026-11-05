@@ -1005,6 +1005,72 @@ test('native mouse drag from the canvas toolbar repositions the canvas without c
   assert.deepEqual(errors,[]);
 });
 
+test('native canvas drag moves the whole tabbed dock group without splitting its saved panel order',async t=>{
+  const {page,writes,errors}=await openEditor(t,{width:1280,height:900});
+  const cases=[
+    {side:'left',order:'left-canvas-right',sourceSide:'left',before:true,expected:'canvas-left-right'},
+    {side:'left',order:'left-canvas-right',sourceSide:'left',before:false,expected:'left-right-canvas'},
+    {side:'right',order:'right-canvas-left',sourceSide:'right',before:true,expected:'canvas-right-left'},
+    {side:'right',order:'right-canvas-left',sourceSide:'right',before:false,expected:'right-left-canvas'}
+  ];
+  for(const item of cases){
+    await openPreferences(page);
+    await page.locator('#workspaceLayout').selectOption('balanced');
+    await page.locator('#workspaceDockOrder').selectOption(item.order);
+    await page.locator('#workspacePanelMode').selectOption('tabbed');
+    await page.locator('#workspacePanelSide').selectOption(item.side);
+    await page.waitForFunction(side=>document.querySelector('.editor-app')?.dataset.workspacePanelSide===side&&document.querySelector('.editor-app')?.dataset.workspacePanelMode==='tabbed',item.side);
+    await page.locator('#closeWorkspaceAppearance').click();
+    await page.locator(`#workspacePanelTab${item.sourceSide==='left'?'Left':'Right'}`).click();
+    await page.waitForFunction(side=>document.querySelector('.workspace')?.dataset.workspaceActivePanel===side,item.sourceSide);
+    const source=page.locator('.canvas-toolbar'),target=page.locator(`#${item.sourceSide}Dock`);
+    const sourceBounds=await source.boundingBox(),targetBounds=await target.boundingBox();
+    assert.ok(sourceBounds&&targetBounds,`${item.side}: canvas toolbar and visible group panel are available as drag source and target`);
+    await source.dragTo(target,{sourcePosition:{x:sourceBounds.width-3,y:sourceBounds.height/2},targetPosition:{x:item.before?4:targetBounds.width-4,y:Math.min(30,targetBounds.height/2)}});
+    const result=await page.evaluate(()=>{
+      const workspace=document.querySelector('.workspace'),canvas=document.querySelector('.canvas-area');
+      const canvasRect=canvas.getBoundingClientRect();
+      return {
+        order:workspace.dataset.workspaceDockOrder,
+        mode:document.querySelector('.editor-app').dataset.workspacePanelMode,
+        side:document.querySelector('.editor-app').dataset.workspacePanelSide,
+        canvasWidth:canvasRect.width,
+        left:document.querySelector('#leftDock').getBoundingClientRect().toJSON(),
+        right:document.querySelector('#rightDock').getBoundingClientRect().toJSON(),
+        canvasLeft:canvasRect.left,
+        canvasRight:canvasRect.right,
+        active:workspace.dataset.workspaceActivePanel,
+        dragFinished:!document.body.classList.contains('workspace-reordering')
+      };
+    });
+    assert.equal(result.order,item.expected,`${item.side} group ${item.before?'before':'after'} drop preserves its full saved panel order: ${JSON.stringify(result)}`);
+    assert.equal(result.mode,'tabbed','moving the canvas keeps both docks grouped');
+    assert.equal(result.side,item.side,'moving the canvas does not move the group to the other physical side');
+    assert.ok(result.canvasWidth>=400,`the grouped panels still reserve at least 400px for the canvas: ${JSON.stringify(result)}`);
+    assert.ok([result.left,result.right].every(dock=>dock.width===0||dock.right<=result.canvasLeft+0.5||dock.left>=result.canvasRight-0.5),'the dock group does not overlap the canvas');
+    assert.equal(result.dragFinished,true,'the native drag lifecycle finishes cleanly');
+
+    await openPreferences(page);
+    assert.equal(await page.locator('#undoWorkspaceLayout').isEnabled(),true,'canvas/group reordering has one workspace-only Undo step');
+    await page.locator('#undoWorkspaceLayout').click();
+    assert.equal(await page.locator('#workspaceDockOrder').inputValue(),item.order,'Undo restores the original complete three-region order');
+    assert.equal(await page.locator('#workspacePanelMode').inputValue(),'tabbed','Undo keeps the dock group together');
+    await page.locator('#redoWorkspaceLayout').click();
+    assert.equal(await page.locator('#workspaceDockOrder').inputValue(),item.expected,'Redo reapplies the complete group/canvas order');
+    await page.locator('#closeWorkspaceAppearance').click();
+    await page.reload({waitUntil:'load'});
+    await page.waitForFunction(expected=>document.querySelector('.workspace')?.dataset.workspaceDockOrder===expected&&document.querySelector('.editor-app')?.dataset.workspacePanelMode==='tabbed',item.expected);
+    const restored=await page.evaluate(()=>{
+      const canvas=document.querySelector('.canvas-area').getBoundingClientRect();
+      return {canvasWidth:canvas.width,canvasLeft:canvas.left,canvasRight:canvas.right,left:document.querySelector('#leftDock').getBoundingClientRect().toJSON(),right:document.querySelector('#rightDock').getBoundingClientRect().toJSON()};
+    });
+    assert.ok(restored.canvasWidth>=400,`the reloaded workspace keeps at least 400px for the canvas: ${JSON.stringify(restored)}`);
+    assert.ok([restored.left,restored.right].every(dock=>dock.width===0||dock.right<=restored.canvasLeft+0.5||dock.left>=restored.canvasRight-0.5),'reloaded group docks stay outside the canvas');
+  }
+  assert.deepEqual(writes,[],'reordering the canvas beside a tab group never writes page data');
+  assert.deepEqual(errors,[]);
+});
+
 test('dropping the right dock into the left dock center keeps the group on the left track',async t=>{
   const {page,writes,errors}=await openEditor(t,{width:1280,height:900});
   await openPreferences(page);

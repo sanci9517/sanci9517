@@ -2,7 +2,7 @@ import {createEventBus} from './events.js';
 import {panelRegistry,featureRegistry} from './registry.js';
 import {EDITOR_ACTIONS} from './action-catalog.js?v=20261103-canvas-focus-mode';
 import {enhanceEditorActionControls} from './action-help.js?v=20261103-canvas-focus-mode';
-import {DEFAULT_LEFT_TAB_ORDER,applyWorkspacePreferences,mountWorkspaceAppearance,normalizeLeftTabOrder,readWorkspacePreferences} from './workspace-appearance.js?v=20261105-cross-tab-workspace-lifecycle';
+import {DEFAULT_LEFT_TAB_ORDER,applyWorkspacePreferences,mountWorkspaceAppearance,normalizeLeftTabOrder,readWorkspacePreferences} from './workspace-appearance.js?v=20261105-tabbed-canvas-drag-cluster';
 
 const bus=createEventBus();
 const workspace=document.querySelector('.workspace');
@@ -415,11 +415,12 @@ function setupDockReordering(){
     const targetId=target?.dataset.workspaceDockId;
     if(!source||!target||!targetId||source===target||!workspace.contains(target)){finishDrag({announcement:'Az átrendezés megszakadt.'});return}
     const ungrouping=editorRoot?.dataset.workspacePanelMode==='tabbed'&&sourceId!=='canvas'&&target===canvasArea;
+    const movingCanvasBesideGroup=editorRoot?.dataset.workspacePanelMode==='tabbed'&&sourceId==='canvas'&&target!==canvasArea;
     const visualOrder=Object.values(regions).filter(Boolean).sort((a,b)=>a.getBoundingClientRect().left-b.getBoundingClientRect().left);
     // In a tabbed view the inactive dock is display:none, so its zero-size
     // rect cannot be used to infer the user's saved three-region order.
-    const savedOrder=ungrouping?String(editorRoot.dataset.workspaceDockOrder||'').split('-').map(id=>regions[id]):[];
-    const order=ungrouping&&savedOrder.length===3&&savedOrder.every(Boolean)?savedOrder:visualOrder;
+    const savedOrder=ungrouping||movingCanvasBesideGroup?String(editorRoot.dataset.workspaceDockOrder||'').split('-').map(id=>regions[id]):[];
+    const order=(ungrouping||movingCanvasBesideGroup)&&savedOrder.length===3&&savedOrder.every(Boolean)?savedOrder:visualOrder;
     const sourceIndex=order.indexOf(source),targetIndex=order.indexOf(target);
     if(sourceIndex<0||targetIndex<0){finishDrag({announcement:'Az átrendezés megszakadt.'});return}
     order.splice(sourceIndex,1);
@@ -436,8 +437,19 @@ function setupDockReordering(){
       finishDrag();return;
     }
     const before=ratio<0.5;
-    const adjustedTarget=order.indexOf(target);
-    order.splice(adjustedTarget+(before?0:1),0,source);
+    if(movingCanvasBesideGroup){
+      // A tabbed pair occupies one physical track even though its two panel
+      // IDs remain in the persisted three-region order. Move the canvas to
+      // either side of that whole pair rather than splitting its future
+      // separate-dock order around the hidden panel's zero-size DOM rect.
+      const groupIndexes=order.flatMap((region,index)=>region===panels.left||region===panels.right?[index]:[]);
+      if(groupIndexes.length!==2){finishDrag({announcement:'A panelcsoport sorrendje nem állítható vissza, ezért az átrendezés megszakadt.'});return}
+      const boundary=before?Math.min(...groupIndexes):Math.max(...groupIndexes)+1;
+      order.splice(boundary,0,source);
+    }else{
+      const adjustedTarget=order.indexOf(target);
+      order.splice(adjustedTarget+(before?0:1),0,source);
+    }
     const value=order.map(item=>item.dataset.workspaceDockId).join('-');
     const changed=ungrouping
       ?workspaceAppearance?.setDockLayout({dockOrder:value,panelMode:'separate'})
