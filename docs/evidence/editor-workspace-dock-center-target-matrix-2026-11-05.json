@@ -9,6 +9,9 @@
     "branch": "v2/foundation",
     "parent_commit": "0930282a69d390d1c5d856c7792dac34a0e17032",
     "parent_was_verified_as_branch_head": true,
+    "test_commit": "ae6fcbd13290ff8c7a0e7d663567808ad34d0ce7",
+    "push": "Normal fast-forward; GitHub branch ref independently verified at the exact test commit.",
+    "github_commit_statuses": [],
     "test_only": true,
     "runtime_files_changed": [],
     "github_actions_rerun": false,
@@ -67,6 +70,7 @@
   },
   "release": {
     "runtime_deployment": "NOT_APPLICABLE_TEST_AND_DOCUMENTATION_ONLY",
+    "verified_at_utc": "2026-11-05T06:36:39Z",
     "worker": "sanci9517-streamer-brand",
     "deployment_id": "aff433e1-97c0-4c6d-b064-b1c1317d11f0",
     "traffic_version": "569e11f0-fce8-4bc3-981a-d1e66f11fe0e",
