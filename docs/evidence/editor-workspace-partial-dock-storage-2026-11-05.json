@@ -17,11 +17,17 @@
       "public/editor-v2/ui/shell.js",
       "public/editor-v2/ui/workspace-appearance.js"
     ],
-    "test_files": ["tests/browser/editor-workspace-appearance.test.js"],
-    "generated_traceability": ["docs/evidence/feature-traceability.json"],
+    "test_files": [
+      "tests/browser/editor-workspace-appearance.test.js"
+    ],
+    "generated_traceability": [
+      "docs/evidence/feature-traceability.json"
+    ],
     "new_dependencies": [],
     "github_commit_statuses": [],
-    "github_ci_pass_claimed": false
+    "github_ci_pass_claimed": false,
+    "documentation_commit_verified": "83146f9e6582363c550e686704b56b565d7a78e8",
+    "documentation_push": "Normal fast-forward push verified by git ls-remote and GitHub branch API. GitHub commit status API returned state pending with total_count=0 and statuses=[], so no CI pass is claimed."
   },
   "bug_and_fix": {
     "storage_keys": {
@@ -82,13 +88,19 @@
   "release": {
     "method": "npm run deploy:safe",
     "migration_safety_gate_passed": true,
-    "deployment_id": "bfc56d40-8de3-4a3f-a698-8bea9451cb82",
-    "traffic_version_id": "02f79955-e1c8-428f-ab3b-95625ca70ce1",
+    "deployment_id": "6ece8a12-ee7a-4a19-9848-63f40a3382ea",
+    "traffic_version_id": "a15f97a6-f2d6-4a16-9976-39a27df295ef",
     "traffic_percent": 100,
     "health": {
       "path": "/api/health",
       "http_status": 200,
-      "body": {"ok": true, "service": "sanci9517-streamer-brand", "version": "2.0.0", "server": "cloudflare-worker"}
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      },
+      "direct_recheck_after_docs_push": "HTTP 200; direct fetch; health body unchanged."
     },
     "public_asset_hashes": {
       "/editor-v2/": {
@@ -102,8 +114,11 @@
       "/editor-v2/ui/workspace-appearance.js?v=20261105-shell-storage-readback-honesty": {
         "http_status": 200,
         "local_and_live_sha256": "5af1f6d260167db19eff656206be0a96f3747769d56519f1abbb28b8012a1449"
-      }
-    }
+      },
+      "direct_recheck_after_docs_push": true
+    },
+    "deployment_created_at_utc": "2026-11-05T13:33:15.59721Z",
+    "deployment_readback": "Read-only Cloudflare deployment API checked after documentation push; latest deployment remains this runtime release created before the docs-only push, traffic 100%."
   },
   "cost_huf": 0,
   "manual_acceptance": "DEFERRED_UNTIL_COMPLETE_EDITOR",
