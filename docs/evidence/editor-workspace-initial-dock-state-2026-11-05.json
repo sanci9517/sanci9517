@@ -58,13 +58,19 @@
     "starting_github_head": "verified equal through GitHub branch API",
     "runtime_commit": "023933283ec3d782824cdbad93726b7b0ae42d3c",
     "push": "normal fast-forward 3f6cac1357456c686d8f65643acd247883a03c86..023933283ec3d782824cdbad93726b7b0ae42d3c; GitHub branch API verified exact HEAD",
+    "documentation_only_follow_up": {
+      "commit": "79097cfe631e5c0811107c3e26d4b802fd31d533",
+      "branch_ref_rechecked": "GitHub branch API verified exact v2/foundation HEAD after documentation-only follow-up",
+      "runtime_unchanged": true,
+      "worker_deployment_triggered": false
+    },
     "github_checks": {
       "source-audit": "success",
       "canonical-plan": "success",
       "verify": "success",
       "twitch-integration": "success",
       "workers-builds": "success",
-      "editor-core": "in_progress at 2026-11-05T22:22Z; aggregate all-checks PASS not claimed"
+      "editor-core": "in_progress at 2026-11-05T22:22Z; step 11 (Editor browser layout regression) running, later steps pending; aggregate all-checks PASS not claimed"
     },
     "cloudflare_build": {
       "id": "c6c227c1-9edf-4a30-9de3-024d70b40c40",
