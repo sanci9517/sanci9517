@@ -1,0 +1,101 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-05T15:10:27Z",
+  "plan_point": "77.44.6.1.C",
+  "status": "RUNTIME_FIX_READY_FOR_RELEASE; PLAN_POINT_OPEN",
+  "scope": "Keep cross-tab workspace updates authoritative when a responsive desktop snapshot exists; a mobile breakpoint must not restore stale shell state over a newer remote dock or appearance preset.",
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "starting_head": "626ffba5ca0e41dcb759b5bece1b373558f26400",
+    "runtime_commit": null,
+    "runtime_commit_message": "fix(editor): honor cross-tab workspace state after resize",
+    "runtime_files": [
+      "public/editor-v2/ui/shell.js",
+      "public/editor-v2/index.html"
+    ],
+    "test_files": [
+      "tests/browser/editor-workspace-appearance.test.js"
+    ],
+    "generated_traceability": [
+      "docs/evidence/feature-traceability.json"
+    ],
+    "evidence_file": "docs/evidence/editor-workspace-cross-tab-breakpoint-snapshot-2026-11-05.json",
+    "new_dependencies": [],
+    "aggregate_ci_pass_claimed": false
+  },
+  "bug_and_fix": {
+    "observed_defects": [
+      {
+        "trigger": "A second same-origin Editor tab writes an updated shell dock state while the first tab is in the temporary mobile presentation of a saved desktop tab group.",
+        "before_fix": "Real Chromium failed: after returning to desktop the stale temporary snapshot reopened the right dock; actual {leftOpen:true,rightOpen:true,active:'left'} while the newest shared shell state required {leftOpen:true,rightOpen:false,active:'left'}.",
+        "expected": "The latest external dock state is authoritative; the discarded responsive snapshot must not resurrect a stale dock."
+      },
+      {
+        "trigger": "A second Editor tab changes the shared appearance preset to canvas while the first is mobile, and the shell storage key silently rejects writes.",
+        "before_fix": "With the shell-key setItem made a no-op only in the source tab, the appearance-key storage event closed the mobile drawer but desktop restoration timed out because the first tab retained the previous two-dock state.",
+        "expected": "The shared preset restores its desktop meaning on breakpoint return even if the independent shell key could not be written."
+      }
+    ],
+    "fix": "Cross-tab appearance and dock events invalidate the temporary desktop snapshot. When an externally received non-custom appearance preset is applied without a shell write, the receiving tab synchronizes its in-memory desktop dock-open flags and active side from that preset. No redundant storage write is issued.",
+    "cache_busting": "Bumped the editor shell entry and workspace-appearance module query to 20261105-cross-tab-workspace-lifecycle.",
+    "data_boundary": "No Page Model, page Save, Publish, renderer, D1 write/migration, or R2 operation is involved."
+  },
+  "validation": {
+    "targeted_regressions": {
+      "cross_tab_dock_update": "PASS: 1/1 real Chromium test.",
+      "cross_tab_appearance_update": "PASS: 1/1 real Chromium test, including silent shell-key write rejection and the appearance-key-only update.",
+      "post_cache_bust_five_test_rerun": "PASS: 5/5 real Chromium tests (two new regressions plus three high-cost cases that timed out under the full suite load)."
+    },
+    "full_workspace_browser_file": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-workspace-appearance.test.js",
+      "observed": "45/48 PASS in one run. The three failures were navigation/locator timing timeouts under accumulated Chromium load: page.goto timeout in the 30-case desktop canvas matrix, Undo locator stabilization timeout in the profile lifecycle case, and dock-tab locator stabilization timeout in the 36-case center drop matrix.",
+      "isolated_rerun": "The three failed cases passed 3/3 when run separately; the two newly added cross-tab cases passed in both the full run and the targeted rerun. Across the two runs every distinct test in the 48-case file was observed passing, but a single-run 48/48 PASS is not claimed.",
+      "full_run_duration_ms": 688432,
+      "orphan_test_descendants_reaped": 204
+    },
+    "editor_unit": "PASS: npm run test:editor; 14/14 Node test files and 3/3 Linux subreaper tests.",
+    "typecheck": "PASS: npm run typecheck.",
+    "migration_safety_gate": "PASS: npm run test:web013:migration-gate; no migration applied.",
+    "canonical_plan": "PASS: scripts/check-canonical-plan.py; full 13-file canonical master.",
+    "plan_contract": "PASS: tests/plan-contract.test.py; 13/13.",
+    "active_plan_audit": "PASS: current next item 77.44.6.1.C; acceptance NOT_CERTIFIED.",
+    "traceability": "PASS after rebuilding and checking scripts/build-feature-traceability.py; 396 source mappings, functional acceptance NOT certified.",
+    "syntax_and_diff": "PASS: node --check public/editor-v2/ui/shell.js; node --check tests/browser/editor-workspace-appearance.test.js; git diff --check.",
+    "wrangler_dry_run": {
+      "status": "PASS",
+      "command": "WRANGLER_WRITE_LOGS=false npx wrangler deploy --dry-run",
+      "wrangler_version": "4.130.0",
+      "files": 168,
+      "bundle_kib": 335.81,
+      "gzip_kib": 87.6,
+      "deployed_by_dry_run": false
+    }
+  },
+  "production_preflight": {
+    "method": "Cloudflare D1 Query API, read-only SELECT only",
+    "query": "SELECT name FROM d1_migrations ORDER BY name;",
+    "database": "sanci9517-db",
+    "rows_read": 34,
+    "latest_migration": "0028_media_archive.sql",
+    "rows_written": 0,
+    "changes": 0,
+    "changed_db": false,
+    "migration_applied": false,
+    "r2_operation": false
+  },
+  "release": {
+    "status": "PENDING_RUNTIME_COMMIT_PUSH_AUTOMATIC_BUILD_AND_DEPLOYMENT_VERIFICATION",
+    "previous_deployment_id": "518dcb1a-8efa-4ca9-ad55-7eb8d60ad4e7",
+    "previous_traffic_version_id": "fb981071-cd55-44a1-a6c1-2344aa2ee49d",
+    "previous_traffic_percent": 100,
+    "direct_production_smoke": "Not attempted for this not-yet-released runtime commit.",
+    "production_health": null,
+    "changed_asset_hashes": null
+  },
+  "cost_huf": 0,
+  "manual_acceptance": "DEFERRED_UNTIL_COMPLETE_EDITOR",
+  "full_plan_point_acceptance": "NOT_CERTIFIED",
+  "plan_point_status": "OPEN",
+  "remaining_77_44_6_1_C_scope": "Full workspace lifecycle acceptance and the remaining independently movable/dynamic dock-zone behaviors; maintain non-overlap with the canvas and keep mobile one-drawer behavior."
+}

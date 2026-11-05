@@ -2,7 +2,7 @@ import {createEventBus} from './events.js';
 import {panelRegistry,featureRegistry} from './registry.js';
 import {EDITOR_ACTIONS} from './action-catalog.js?v=20261103-canvas-focus-mode';
 import {enhanceEditorActionControls} from './action-help.js?v=20261103-canvas-focus-mode';
-import {DEFAULT_LEFT_TAB_ORDER,applyWorkspacePreferences,mountWorkspaceAppearance,normalizeLeftTabOrder,readWorkspacePreferences} from './workspace-appearance.js?v=20261105-shell-storage-readback-honesty';
+import {DEFAULT_LEFT_TAB_ORDER,applyWorkspacePreferences,mountWorkspaceAppearance,normalizeLeftTabOrder,readWorkspacePreferences} from './workspace-appearance.js?v=20261105-cross-tab-workspace-lifecycle';
 
 const bus=createEventBus();
 const workspace=document.querySelector('.workspace');
@@ -76,6 +76,16 @@ function resolveWorkspaceLayout(layout,mobile){
 function applyWorkspaceLayout(layout,{save=true}={}){
   if(layout==='custom'){syncMobileBackdrop();return}
   const next=resolveWorkspaceLayout(layout,mobileQuery.matches);
+  if(!save){
+    // External appearance changes arrive on the appearance key; the shell
+    // key may be unavailable or may have rejected its separate write. Keep
+    // the in-memory desktop state aligned with the shared preset so a later
+    // breakpoint restore cannot resurrect obsolete docks.
+    const desktop=resolveWorkspaceLayout(layout,false);
+    persisted.leftOpen=desktop.left;persisted.rightOpen=desktop.right;
+    if(desktop.left&&!desktop.right)persisted.panelActive='left';
+    else if(desktop.right&&!desktop.left)persisted.panelActive='right';
+  }
   setPanel('left',next.left,{save});
   setPanel('right',next.right,{save});
   syncMobileBackdrop();
@@ -442,7 +452,10 @@ root.style.setProperty('--right-dock-width',`${clamp(Number(persisted.rightWidth
 setPanel('left',!mobileQuery.matches && Boolean(persisted.leftOpen),{save:false});
 setPanel('right',!mobileQuery.matches && Boolean(persisted.rightOpen),{save:false});
 showLeftTab(persisted.leftTab,{save:false,open:false});
-workspaceAppearance=mountWorkspaceAppearance({documentRef:document,root:editorRoot,onLayoutChange:applyWorkspaceLayout,onExternalChange:({reset=false}={})=>cancelWorkspaceDrag({announcement:reset?'A másik szerkesztőlapon alaphelyzetbe állították a munkaterületet, ezért az átrendezés megszakadt.':'A másik szerkesztőlapon történt változás miatt az átrendezés megszakadt.'}),readDockState:()=>persisted,moveDockTab:moveLeftTab,applyDockState:state=>{
+workspaceAppearance=mountWorkspaceAppearance({documentRef:document,root:editorRoot,onLayoutChange:applyWorkspaceLayout,onExternalChange:({reset=false}={})=>{
+  desktopDockSnapshot=null;
+  cancelWorkspaceDrag({announcement:reset?'A másik szerkesztőlapon alaphelyzetbe állították a munkaterületet, ezért az átrendezés megszakadt.':'A másik szerkesztőlapon történt változás miatt az átrendezés megszakadt.'});
+},readDockState:()=>persisted,moveDockTab:moveLeftTab,applyDockState:state=>{
   applyDockState(state);
 },canPersistDockState:()=>dockStorageDurable,onReset:()=>{
   persisted={...defaults};
@@ -481,6 +494,10 @@ function applyDockState(state,{save=true}={}){
 window.addEventListener('storage',event=>{
   if(event.key!==null&&event.key!==STORAGE_KEY)return;
   try{if(event.storageArea&&event.storageArea!==window.localStorage)return}catch{return}
+  // A mobile snapshot is only a temporary desktop presentation. Once another
+  // tab changes the shared dock state, that snapshot is stale and must not
+  // overwrite the newer state when this tab returns to desktop.
+  desktopDockSnapshot=null;
   cancelWorkspaceDrag({announcement:'A másik szerkesztőlapon megváltozott a panelállapot, ezért az átrendezés megszakadt.'});
   let next;
   try{next=event.newValue?JSON.parse(event.newValue):defaults}catch{next=defaults}

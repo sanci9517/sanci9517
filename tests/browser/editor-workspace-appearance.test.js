@@ -72,6 +72,17 @@ async function openPreferences(page){
   await page.waitForFunction(()=>[...(document.querySelector('#workspaceAppearanceDialog')?.getAnimations()||[])].every(animation=>animation.playState==='finished'));
 }
 
+async function resizeAndWaitForWorkspaceBreakpoint(page,width,height){
+  await page.evaluate(()=>{
+    const media=matchMedia('(max-width: 1024px)');
+    window.__workspaceBreakpointTransition=new Promise(resolve=>media.addEventListener('change',()=>{
+      requestAnimationFrame(()=>requestAnimationFrame(resolve));
+    },{once:true}));
+  });
+  await page.setViewportSize({width,height});
+  await page.evaluate(()=>window.__workspaceBreakpointTransition);
+}
+
 test('personal workspace theme, density and panel layout persist locally without changing or sending page content',async t=>{
   const {page,writes,errors}=await openEditor(t);
   await openPreferences(page);
@@ -1740,7 +1751,7 @@ test('desktop dock drag cancels when the viewport switches to the mobile drawer 
   });
   assert.equal(started.active,true,'desktop drag is active before the responsive boundary changes');
   assert.equal(started.announcement,'Cél: Utána helyezés – Vászon.','the active target is announced before the breakpoint change');
-  await page.setViewportSize({width:390,height:844});
+  await resizeAndWaitForWorkspaceBreakpoint(page,390,844);
   await page.waitForFunction(()=>!document.body.classList.contains('workspace-reordering'));
   const late=await page.evaluate(()=>{
     const target=document.querySelector('.canvas-area'),rect=target.getBoundingClientRect(),dataTransfer=window.__workspaceDockTransfer;
@@ -1934,7 +1945,7 @@ test('desktop dock layout normalizes to one mobile drawer during resize and rest
   assert.equal(await page.locator('#rightDock').isVisible(),true);
   const saved=await page.evaluate(()=>({shell:localStorage.getItem('sanci-editor-shell-v2'),appearance:localStorage.getItem('sanci-editor-workspace-preferences-v2')}));
 
-  await page.setViewportSize({width:390,height:844});
+  await resizeAndWaitForWorkspaceBreakpoint(page,390,844);
   await page.waitForFunction(()=>document.querySelector('.workspace')?.matches('.left-open,.right-open'));
   const mobile=await page.evaluate(()=>({left:!document.querySelector('#leftDock')?.classList.contains('closed'),right:!document.querySelector('#rightDock')?.classList.contains('closed'),leftHidden:document.querySelector('#leftDock')?.getAttribute('aria-hidden'),rightHidden:document.querySelector('#rightDock')?.getAttribute('aria-hidden'),canvasInert:document.querySelector('.canvas-area')?.inert,scrollWidth:document.documentElement.scrollWidth,innerWidth}));
   assert.ok(Number(mobile.left)+Number(mobile.right)<=1,`a viewport resize never leaves overlapping mobile drawers open: ${JSON.stringify(mobile)}`);
@@ -2067,6 +2078,85 @@ test('desktop tabbed dock groups become one mobile sheet and restore the exact g
     assert.deepEqual({shell:restored.shell,appearance:restored.appearance},{shell:before.shell,appearance:before.appearance},`${side}: returning to desktop writes no workspace profile`);
   }
   assert.deepEqual(writes,[],'responsive tabbed workspace transitions never Save or Publish the Page Model');
+  assert.deepEqual(errors,[]);
+});
+
+test('a cross-tab dock update replaces the temporary desktop snapshot made before a mobile breakpoint',async t=>{
+  const appearance={version:2,layout:'balanced',theme:'graphite',density:'comfortable',accent:'#5b8cff',dockOrder:'left-canvas-right',panelMode:'tabbed',panelSide:'right',profiles:[]};
+  const dock={leftOpen:true,rightOpen:true,leftTab:'pages',leftTabOrder:['pages','elements','layers','schedule','navigation'],inspectorTab:'design',panelActive:'right',leftWidth:310,rightWidth:352};
+  const {page,context,writes,errors}=await openEditor(t,{width:1280,height:900,initialDockState:dock,initialAppearance:appearance});
+  const second=await context.newPage();
+  await second.goto(page.url(),{waitUntil:'load'});
+  await second.locator('.page-canvas .node').first().waitFor();
+
+  await resizeAndWaitForWorkspaceBreakpoint(page,390,844);
+  await page.waitForFunction(()=>matchMedia('(max-width: 1024px)').matches&&
+    document.querySelector('#rightDock')?.classList.contains('closed')===false&&
+    document.querySelector('#leftDock')?.classList.contains('closed')===true);
+
+  const remoteDock={...dock,leftOpen:true,rightOpen:false,panelActive:'left'};
+  await second.evaluate(value=>localStorage.setItem('sanci-editor-shell-v2',JSON.stringify(value)),remoteDock);
+  await page.waitForFunction(()=>document.querySelector('#leftDock')?.classList.contains('closed')===false&&
+    document.querySelector('#rightDock')?.classList.contains('closed')===true);
+
+  await resizeAndWaitForWorkspaceBreakpoint(page,1280,900);
+  await page.waitForFunction(()=>!matchMedia('(max-width: 1024px)').matches&&
+    document.querySelector('.workspace')?.classList.contains('left-open'));
+  const restored=await page.evaluate(()=>({
+    leftOpen:!document.querySelector('#leftDock').classList.contains('closed'),
+    rightOpen:!document.querySelector('#rightDock').classList.contains('closed'),
+    active:document.querySelector('.workspace').dataset.workspaceActivePanel,
+    stored:JSON.parse(localStorage.getItem('sanci-editor-shell-v2'))
+  }));
+  assert.deepEqual({leftOpen:restored.leftOpen,rightOpen:restored.rightOpen,active:restored.active},
+    {leftOpen:true,rightOpen:false,active:'left'},
+    'returning to desktop must respect the latest cross-tab dock state, not the earlier responsive snapshot');
+  assert.deepEqual(restored.stored,remoteDock,'responsive restoration must not silently diverge from the latest saved dock state');
+  assert.deepEqual(writes,[],'cross-tab responsive synchronization never invokes Page Model Save or Publish');
+  assert.deepEqual(errors,[]);
+});
+
+test('a cross-tab appearance preset replaces the desktop snapshot while this editor is on mobile',async t=>{
+  const appearance={version:2,layout:'balanced',theme:'graphite',density:'comfortable',accent:'#5b8cff',dockOrder:'left-canvas-right',panelMode:'tabbed',panelSide:'right',profiles:[]};
+  const dock={leftOpen:true,rightOpen:true,leftTab:'pages',leftTabOrder:['pages','elements','layers','schedule','navigation'],inspectorTab:'design',panelActive:'right',leftWidth:310,rightWidth:352};
+  const {page,context,writes,errors}=await openEditor(t,{width:1280,height:900,initialDockState:dock,initialAppearance:appearance});
+  const second=await context.newPage();
+  await second.goto(page.url(),{waitUntil:'load'});
+  await second.locator('.page-canvas .node').first().waitFor();
+  await second.evaluate(()=>{
+    const setItem=Storage.prototype.setItem;
+    Storage.prototype.setItem=function(key,value){
+      if(key==='sanci-editor-shell-v2')return;
+      return setItem.call(this,key,value);
+    };
+  });
+
+  await resizeAndWaitForWorkspaceBreakpoint(page,390,844);
+  await page.waitForFunction(()=>matchMedia('(max-width: 1024px)').matches&&
+    document.querySelector('#rightDock')?.classList.contains('closed')===false);
+
+  await openPreferences(second);
+  await second.locator('#workspaceLayout').selectOption('canvas');
+  await page.waitForFunction(()=>document.querySelector('.editor-app')?.getAttribute('data-workspace-theme')==='graphite'&&
+    document.querySelector('#leftDock')?.classList.contains('closed')&&document.querySelector('#rightDock')?.classList.contains('closed'));
+  assert.deepEqual(await page.evaluate(()=>JSON.parse(localStorage.getItem('sanci-editor-shell-v2'))),dock,
+    'the fixture leaves the shell key unchanged to isolate the appearance-key storage event');
+
+  await resizeAndWaitForWorkspaceBreakpoint(page,1280,900);
+  await page.waitForFunction(()=>!matchMedia('(max-width: 1024px)').matches&&
+    document.querySelector('.workspace')?.classList.contains('left-open')===false&&
+    document.querySelector('.workspace')?.classList.contains('right-open')===false);
+  const restored=await page.evaluate(()=>({
+    leftOpen:!document.querySelector('#leftDock').classList.contains('closed'),
+    rightOpen:!document.querySelector('#rightDock').classList.contains('closed'),
+    layout:document.querySelector('#workspaceLayout')?.value,
+    shell:JSON.parse(localStorage.getItem('sanci-editor-shell-v2'))
+  }));
+  assert.deepEqual({leftOpen:restored.leftOpen,rightOpen:restored.rightOpen,layout:restored.layout},
+    {leftOpen:false,rightOpen:false,layout:'canvas'},
+    'the latest external appearance preset must take precedence over the old responsive desktop snapshot');
+  assert.deepEqual(restored.shell,dock,'receiving a cross-tab preset does not issue a redundant shell-storage write');
+  assert.deepEqual(writes,[],'cross-tab appearance presets never invoke Page Model Save or Publish');
   assert.deepEqual(errors,[]);
 });
 
