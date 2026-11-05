@@ -13,7 +13,11 @@
     "runtime_files_changed": [],
     "new_dependencies": false,
     "aggregate_github_ci_pass": false,
-    "parent_commit": "149f5168338acac897fc0be92f9d542a3db7b366"
+    "parent_commit": "149f5168338acac897fc0be92f9d542a3db7b366",
+    "test_commit": "d50791df85bb9d90c52569ed216513d72ea3f519",
+    "push": "Normal fast-forward confirmed; GitHub API exact v2/foundation ref equals test commit.",
+    "github_exact_ref": "d50791df85bb9d90c52569ed216513d72ea3f519",
+    "github_commit_statuses": []
   },
   "coverage": {
     "browser": "Chromium via existing Playwright fixture",
