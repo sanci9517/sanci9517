@@ -1,0 +1,87 @@
+{
+  "date": "2026-11-05",
+  "plan_point": "77.44.6.1.C",
+  "status": "FOUNDATION_IMPLEMENTED_FULL_ITEM_OPEN",
+  "scope": "Preserve the active desktop tab and exact tabbed dock state through desktop-to-mobile-to-desktop viewport changes for groups docked on either side.",
+  "branch": "v2/foundation",
+  "base_commit": "efac52cbfd933c354d3105a24f1c431668fbf850",
+  "runtime_files": [
+    "public/editor-v2/index.html",
+    "public/editor-v2/ui/shell.js"
+  ],
+  "test_files": [
+    "tests/browser/editor-workspace-appearance.test.js"
+  ],
+  "verified_behavior": {
+    "desktop_panel_group_side_and_active_tab_restored": [
+      { "side": "left", "active": "right" },
+      { "side": "right", "active": "left" }
+    ],
+    "mobile_open_docks_maximum": 1,
+    "mobile_group_tabs_hidden": true,
+    "mobile_canvas_inert_under_open_drawer": true,
+    "mobile_horizontal_overflow": false,
+    "saved_shell_and_appearance_unchanged_during_breakpoint_cycle": true,
+    "desktop_canvas_minimum_css_px": 400,
+    "page_model_or_save_publish_requests": false
+  },
+  "root_cause": "The in-memory desktop breakpoint snapshot stored only left/right open state. In a tabbed group whose active tab differed from the physical group side, restoring the desktop state could select the other tab. The snapshot now also retains the active panel and reapplies it after both dock states are restored.",
+  "reused_project_patterns": [
+    "Existing responsive desktop dock snapshot and panel lifecycle",
+    "Existing allowlisted local workspace preferences",
+    "Existing workspace tab ARIA state and canvas-safe CSS Grid",
+    "Existing local Chromium/Playwright browser fixture"
+  ],
+  "third_party_code_or_dependencies_added": false,
+  "checks": {
+    "targeted_browser": "PASS: CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-name-pattern='desktop tabbed dock groups become one mobile sheet' tests/browser/editor-workspace-appearance.test.js (1/1; repeated after final cache-buster change)",
+    "workspace_appearance_browser_file": "PASS: CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-workspace-appearance.test.js (38/38)",
+    "editor_unit": "PASS: npm run test:editor (14/14 Node test files; Linux subreaper runner 3/3)",
+    "typecheck": "PASS: npm run typecheck",
+    "migration_safety": "PASS: npm run test:web013:migration-gate",
+    "canonical_plan_and_cursor": "PASS: canonical plan, plan contract, and active cursor audit (77.44.6.1.C remains OPEN / NOT CERTIFIED)",
+    "traceability": "Rebuilt from scripts/build-feature-traceability.py after runtime source update; check must pass on final documentation state.",
+    "javascript_syntax_and_diff": "PASS: node --check public/editor-v2/ui/shell.js; node --check tests/browser/editor-workspace-appearance.test.js; git diff --check",
+    "wrangler_dry_run": "PASS: Wrangler 4.130.0, 168 assets, 335.81 KiB / 87.60 KiB gzip; --dry-run only",
+    "wide_51_file_editor_layout_suite": "NOT RUN: scoped 38-test workspace browser file and editor unit suite passed; no aggregate wide-suite claim."
+  },
+  "production_read_only_preflight": {
+    "query": "SELECT name FROM d1_migrations ORDER BY name",
+    "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
+    "rows_read": 34,
+    "latest_migration": "0028_media_archive.sql",
+    "changes": 0,
+    "changed_db": false,
+    "rows_written": 0
+  },
+  "release": {
+    "status": "RELEASED_AND_PRODUCTION_VERIFIED",
+    "commit": "b8998642474557356f33a6fe4527ea45310a6f26",
+    "commit_message": "fix(editor): preserve selected tab across responsive resize [skip ci]",
+    "parent": "efac52cbfd933c354d3105a24f1c431668fbf850",
+    "push": "NORMAL_FAST_FORWARD_CONFIRMED_BY_GITHUB_REF",
+    "github_ref_after_release": "b8998642474557356f33a6fe4527ea45310a6f26",
+    "aggregate_github_ci": "NOT_RUN: [skip ci]; combined status list empty, not PASS",
+    "automatic_cloudflare_build": "NOT_STARTED",
+    "deployment_command": "WRANGLER_WRITE_LOGS=false WRANGLER_LOG_PATH=/tmp/sanci9517-deploy-safe.log npm run deploy:safe",
+    "migration_safety_gate": "PASS; no D1 migrations applied",
+    "deployment_id": "17c9928a-c0d4-4ffa-bdf2-21b9623d9ef0",
+    "worker_version_id": "e5ce8eba-1007-4ca5-b153-a426e2224a09",
+    "worker_version_number": 3822,
+    "traffic_percent": 100
+  },
+  "live_worker_after_release": {
+    "health": "HTTP 200; {\"ok\":true,\"service\":\"sanci9517-streamer-brand\",\"version\":\"2.0.0\",\"server\":\"cloudflare-worker\"}",
+    "asset_hashes_match_local_commit": true,
+    "assets": {
+      "public/editor-v2/index.html": "63668456f29088c7fb084870c8297a6981876170e1965ec01ba134f9dc626aeb",
+      "public/editor-v2/ui/shell.js": "537729414b8d01275ee24b49136de717fe7ec70afe89741c3d28234b12210da2"
+    }
+  },
+  "cost_huf": 0,
+  "new_dependency": false,
+  "production_d1_mutation_or_migration": false,
+  "r2_operation": false,
+  "manual_visual_editor_acceptance": "DEFERRED until complete Visual Editor scope reaches its planned acceptance gate",
+  "full_plan_point": "77.44.6.1.C remains OPEN; this release is a verified breakpoint/active-tab foundation slice, not full C acceptance."
+}
