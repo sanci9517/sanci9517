@@ -88,6 +88,16 @@
     "worker": "sanci9517-streamer-brand",
     "prior_traffic_version": "4b15c7fb-4a49-4724-81a7-b65e8f569045",
     "prior_traffic_percent": 100,
+    "cloudflare_build": {
+      "id": "4f5c4003-15c2-4468-a6da-5e3ad0fefa9d",
+      "build_outcome": "success",
+      "status": "stopped",
+      "commit_hash": "626198d09079293f387288b42c7f330d40b0df5a",
+      "trigger_source": "push_event",
+      "build_command": "npm run typecheck",
+      "deploy_command": "npm run deploy:safe",
+      "path_excludes": ["docs/**", "tests/**", "AGENTS.md"]
+    },
     "deployment_id": "aff433e1-97c0-4c6d-b064-b1c1317d11f0",
     "traffic_version": "569e11f0-fce8-4bc3-981a-d1e66f11fe0e",
     "traffic_version_number": 3821,
