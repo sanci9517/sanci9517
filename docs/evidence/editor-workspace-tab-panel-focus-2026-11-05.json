@@ -1,0 +1,136 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-05",
+  "plan_point": "77.44.6.1.C",
+  "status": "RUNTIME_DEPLOYED_AUTOMATED_FOUNDATION_PASS_FULL_C_OPEN_CI_PENDING",
+  "scope": "Keep keyboard focus inside the selected dock panel when Tab navigation enters the desktop tabbed panel group, despite the right panel appearing after the canvas in DOM order.",
+  "implementation": {
+    "runtime_files": [
+      "public/editor-v2/ui/shell.js",
+      "public/editor-v2/index.html"
+    ],
+    "test_files": [
+      "tests/browser/editor-workspace-appearance.test.js"
+    ],
+    "behavior": {
+      "tab_from_active_dock_tab": "Focus enters the first visible, enabled control in the selected non-inert panel, rather than following unrelated canvas/header DOM order.",
+      "shift_tab_from_first_panel_control": "Focus returns to that selected panel tab; navigation from later controls remains native.",
+      "inactive_panel": "Remains inert and excluded from keyboard navigation.",
+      "canvas": "The existing 400 CSS px minimum and non-overlapping workspace grid remain unchanged."
+    },
+    "accessibility_reference": "WAI-ARIA Authoring Practices Guide — Tabs Pattern: https://www.w3.org/WAI/ARIA/apg/patterns/tabs/",
+    "reused_project_solution": "Existing workspace tablist, selected-panel state, dock inert/visibility lifecycle, and first-control DOM are reused; keyboard routing is adapted to the existing grid/DOM-order mismatch.",
+    "third_party_runtime_code_added": false,
+    "new_dependency": false,
+    "page_model_mutations": 0,
+    "save_requests": 0,
+    "publish_requests": 0,
+    "mobile_drawer_contract_changed": false,
+    "cost_huf": 0
+  },
+  "validation": {
+    "regression_reproduction": "Before the key handler, Tab from the selected right dock tab followed document order toward the canvas. The return direction also did not match the grouped tab pattern.",
+    "test_fixture_stabilization": "An initial assertion occasionally observed the appearance-dialog opener during asynchronous focus restoration. The browser fixture now waits for that restoration and the active dock state before issuing Tab; the final targeted case passed three consecutive times.",
+    "targeted_chromium": "PASS, 3 consecutive runs / 3 tests total: CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec --test-name-pattern='tabbing from the right dock tab' tests/browser/editor-workspace-appearance.test.js",
+    "workspace_browser_file": "PASS 35/35: CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-workspace-appearance.test.js",
+    "editor_unit": "PASS 14/14 files plus Linux subreaper runner 3/3: npm run test:editor",
+    "typecheck": "PASS: npm run typecheck",
+    "migration_safety": "PASS: npm run test:web013:migration-gate; no migration was applied.",
+    "canonical_plan_and_contract": "PASS: scripts/check-canonical-plan.py, tests/plan-contract.test.py, and scripts/audit-active-plan-point.py; current point remains 77.44.6.1.C and functional acceptance remains NOT_CERTIFIED.",
+    "traceability": "PASS 396/396 after refreshing the project-owned source fingerprint: python3 scripts/build-feature-traceability.py --check",
+    "syntax_and_whitespace": "PASS: node --check public/editor-v2/ui/shell.js; node --check tests/browser/editor-workspace-appearance.test.js; git diff --check",
+    "wrangler_dry_run": "PASS: Wrangler 4.130.0; 168 assets, 335.81 KiB (87.60 KiB gzip); dry-run only.",
+    "wide_53_file_browser_suite": "INCOMPLETE / NOT PASS: duplicate full-suite invocations collided during cleanup and the 53-file aggregate did not complete. No aggregate PASS is claimed; the complete affected workspace file and the repeated focused regression passed.",
+    "production_d1_preflight_before_release": {
+      "method": "Cloudflare D1 Query API; read-only SELECT.",
+      "query": "SELECT name FROM d1_migrations ORDER BY name;",
+      "ledger_rows": 34,
+      "latest": "0028_media_archive.sql",
+      "changed_db": false,
+      "rows_written": 0,
+      "changes": 0
+    },
+    "production_d1_preflight_after_release": {
+      "method": "Cloudflare D1 Query API; read-only SELECT.",
+      "query": "SELECT name FROM d1_migrations ORDER BY name;",
+      "ledger_rows": 34,
+      "latest": "0028_media_archive.sql",
+      "changed_db": false,
+      "rows_written": 0,
+      "changes": 0
+    }
+  },
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "parent_commit": "25f54cf1b774e1bf05cdcd8c075cd95b3f95a6fa",
+    "runtime_commit": "2617c8d61544b530db437a780ca3adbcfe6eb5a7",
+    "push": "PASS, normal fast-forward; local push output confirmed 25f54cf1..2617c8d6",
+    "github_editor_core_run": {
+      "id": 41969963181,
+      "url": "https://github.com/sanci9517/sanci9517/actions/runs/41969963181",
+      "status_at_evidence_creation": "in_progress"
+    },
+    "github_twitch_check": {
+      "id": 41969963245,
+      "status": "completed",
+      "conclusion": "success"
+    },
+    "github_f0_baseline": {
+      "id": 41969963187,
+      "status": "completed",
+      "conclusion": "success"
+    },
+    "aggregate_github_ci_pass": false
+  },
+  "production": {
+    "worker": "sanci9517-streamer-brand",
+    "previous_traffic_version": "3f826a40-7478-4fa4-8bd0-6fe1e0328fe6",
+    "previous_traffic_percent": 100,
+    "build_id": "640d2cad-532e-4968-b0e0-24d7868baccf",
+    "build_outcome": "success",
+    "build_commit": "2617c8d61544b530db437a780ca3adbcfe6eb5a7",
+    "build_commands": {
+      "build": "npm run typecheck",
+      "deploy": "npm run deploy:safe"
+    },
+    "deployment_id": "dca0f512-c82b-4377-8069-e18e36a70bb6",
+    "traffic_version": "4b15c7fb-4a49-4724-81a7-b65e8f569045",
+    "traffic_version_number": 3820,
+    "traffic_percent": 100,
+    "health_smoke": {
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "changed_assets": [
+      {
+        "path": "public/editor-v2/index.html",
+        "live_url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/editor-v2/",
+        "status": 200,
+        "local_sha256": "da9d332e2968f70822e9fe8138ff9292b8a7ad1599db1338a4d7ce3e8fc1d14c",
+        "live_sha256": "da9d332e2968f70822e9fe8138ff9292b8a7ad1599db1338a4d7ce3e8fc1d14c"
+      },
+      {
+        "path": "public/editor-v2/ui/shell.js",
+        "live_url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/editor-v2/ui/shell.js?v=20261105-tabpanel-tab-entry",
+        "status": 200,
+        "local_sha256": "c4875f52dbc8daffb518ec6569b791f1e53e70dd28e1b29d4a6ee28dbfbd1645",
+        "live_sha256": "c4875f52dbc8daffb518ec6569b791f1e53e70dd28e1b29d4a6ee28dbfbd1645"
+      }
+    ],
+    "build_minutes_limit_reached": false,
+    "production_d1_mutation_or_migration": false,
+    "r2_operation": false,
+    "production_cost_huf": 0
+  },
+  "acceptance": {
+    "77_44_6_1_C": "OPEN; tabbed dock keyboard entry/return is a verified foundation slice, not complete acceptance of nested groups, floating panels, dynamic docking zones, and the full workspace lifecycle.",
+    "full_visual_editor_manual_and_physical_acceptance": "DEFERRED until the complete Visual Editor plan acceptance gate."
+  }
+}
