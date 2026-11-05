@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "recorded_at_utc": "2026-11-05T20:15:01Z",
+  "recorded_at_utc": "2026-11-05T20:16:14Z",
   "plan_point": "77.44.6.1.C",
   "status": "VALIDATED_AWAITING_RUNTIME_PUSH_AND_AUTOMATIC_DEPLOY",
   "scope": "Recover the valid v1 workbench when the v2 key contains JSON that is not actually a version-2 record; require each storage key to match its declared schema version.",
@@ -8,8 +8,8 @@
     "repository": "sanci9517/sanci9517",
     "branch": "v2/foundation",
     "starting_head": "cee701be7032e35892be9ee6ba593763f4808b7d",
-    "runtime_commit": null,
-    "runtime_commit_fast_forward_push_verified": false,
+    "runtime_commit": "5adaebb1529fe73d3d2ef02c9494cbbc4eca536d",
+    "runtime_commit_fast_forward_push_verified": true,
     "runtime_files_changed": [
       "public/editor-v2/ui/workspace-appearance.js",
       "public/editor-v2/ui/shell.js",
@@ -88,15 +88,31 @@
     "direct_health_pre_change": "HTTP 200; ok=true; version=2.0.0"
   },
   "release": {
-    "status": "PENDING_RUNTIME_PUSH_AND_BUILD",
-    "build_uuid": null,
-    "build_outcome": null,
-    "deployment_id": null,
-    "worker_version": null,
-    "traffic_percent": null,
-    "health": null,
-    "public_asset_hashes": [],
-    "github_combined_statuses": null,
+    "status": "RELEASED_AND_VERIFIED",
+    "build_uuid": "f63f1305-d0d5-4863-8d7f-eab0e93a668c",
+    "build_outcome": "SUCCESS; exact commit 5adaebb1529fe73d3d2ef02c9494cbbc4eca536d; typecheck, deploy:safe, migration safety gate, and Wrangler upload completed; no D1 migration applied",
+    "deployment_id": "d4d92955-0574-498e-a885-287a258fffcf",
+    "worker_version": "9a59ae75-2f41-4503-87d3-ec5f66dcd811",
+    "traffic_percent": 100,
+    "health": "Direct GET /api/health returned HTTP 200 with {ok:true, service:sanci9517-streamer-brand, version:2.0.0, server:cloudflare-worker}.",
+    "public_asset_hashes": [
+      {
+        "path": "/editor-v2/",
+        "status": 200,
+        "sha256_local_and_live": "a8ffb1be5ff722c0f145a89af31961c9c7389cf004d051d70eaa416dbfe4f8c8"
+      },
+      {
+        "path": "/editor-v2/ui/shell.js?v=20261105-workspace-schema-recovery",
+        "status": 200,
+        "sha256_local_and_live": "6773dc792bb7e0eb88d97f2131c770fb3e4675bed19bab17baade52eed419e9b"
+      },
+      {
+        "path": "/editor-v2/ui/workspace-appearance.js?v=20261105-workspace-schema-recovery",
+        "status": 200,
+        "sha256_local_and_live": "09857ed02e2241a4f37e082448c1224db387383940263f34855daaae72df44d3"
+      }
+    ],
+    "github_combined_statuses": [],
     "github_aggregate_ci_pass_claimed": false
   },
   "cost_and_acceptance": {
