@@ -50,6 +50,43 @@
       "skipped": 0,
       "reaped_orphaned_test_descendants": 254
     },
+    "editor_layout_suite": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium npm run test:editor:layout",
+      "files_run": 53,
+      "status": "FAIL / NOT PASS",
+      "observed_file_failures": 5,
+      "failures": [
+        {
+          "file": "tests/browser/editor-richtext-save-publish.test.js",
+          "failure": "page.goto waitUntil=load timed out after 30000 ms in the wide sequential suite",
+          "isolated_retry": "PASS 1/1 with the same Chromium and local fixture; 39.1 s"
+        },
+        {
+          "file": "tests/browser/editor-root-style.test.js",
+          "failure": "local /p/test page.goto timed out after 7000 ms"
+        },
+        {
+          "file": "tests/browser/editor-decorative-elements.test.js",
+          "failure": "local /editor-v2/index.html page.goto timed out after 7000 ms"
+        },
+        {
+          "file": "tests/browser/editor-code-snippet.test.js",
+          "failure": "mobile page.reload timed out after 7000 ms; desktop sibling case passed"
+        },
+        {
+          "file": "tests/browser/admin-media-integrity.test.js",
+          "failure": "locator click timed out after 5000 ms after resolving a visible button; other cases in the file passed"
+        }
+      ],
+      "scope_note": "The failures are individual local-browser navigation/interaction timeouts. No timeout was edited or suppressed. The C-specific workspace file still passes 59/59."
+    },
+    "save_publish_retry": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-name-pattern='actual Inspector keeps unsaved Rich Text through Ctrl\\+S, reload and separate Publish' tests/browser/editor-richtext-save-publish.test.js",
+      "result": "PASS",
+      "passed": 1,
+      "failed": 0,
+      "duration_ms": 39111
+    },
     "editor_node_suite": "npm run test:editor — PASS, 14/14 files; Linux subreaper 3/3",
     "typecheck": "npm run typecheck — PASS",
     "migration_safety_gate": "npm run test:web013:migration-gate — PASS",
@@ -79,13 +116,14 @@
     "deployment_id": "04033d9f-8084-4147-8c67-0e5d44b22d55",
     "worker_version_id": "fc7b179e-6b92-4ef8-b36b-9503ad2c5395",
     "traffic_percentage": 100,
-    "direct_public_health_and_asset_hashes": "UNVERIFIED: the configured outbound proxy refused its connection on port 8080; no live asset hash is claimed.",
+    "direct_public_health": "PASS for the still-deployed baseline: HTTP 200, {ok:true,service:sanci9517-streamer-brand,version:2.0.0,server:cloudflare-worker} at 2026-11-06T10:53:29Z.",
+    "changed_asset_hashes_for_local_runtime_commit": "UNVERIFIED until the pending runtime commit is deployed; the current 100% version remains fc7b179e-6b92-4ef8-b36b-9503ad2c5395.",
     "new_deployment_or_worker_change": false
   },
   "release": {
     "status": "BLOCKED / NOT DEPLOYED",
     "reasons": [
-      "The repository requires the GitHub branch fast-forward before a runtime release, but the configured proxy is unavailable (previous push failed before connection on proxy port 8080).",
+      "The repository requires the GitHub branch fast-forward before a runtime release, but the configured proxy is unavailable (push failed before connection on proxy port 8080); a no-proxy public health retry also timed out during DNS resolution after 5 seconds.",
       "The canonical plan records exhausted GitHub Actions free compute quota; no paid workflow or rerun was requested.",
       "A direct production health/hash smoke could not run through the unavailable proxy."
     ],
