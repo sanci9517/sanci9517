@@ -201,7 +201,18 @@
       {"result": "PASS", "passed": 2, "failed": 0}
     ],
     "wide_local_layout_command": "CHROMIUM_PATH=/usr/bin/chromium npm run test:editor:layout",
-    "wide_local_layout_result": "INCOMPLETE; the run was stopped after reaching file 5/53. In the preceding workspace-appearance file, 59/61 passed and two unrelated editor page-load/canvas-node visibility waits timed out under this long sequential run. This is not an aggregate suite pass and does not establish a product defect.",
+    "wide_local_layout_result": "INCOMPLETE; the earlier 53-file run was stopped after reaching file 5/53. In its preceding workspace-appearance file, 59/61 passed and two unrelated editor page-load/canvas-node visibility waits timed out under that long sequential run. The same workspace file was subsequently run alone and passed 61/61, recorded below; the 53-file aggregate remains unverified.",
+    "standalone_workspace_appearance_suite": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-workspace-appearance.test.js",
+      "result": "PASS",
+      "passed": 61,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "duration_ms": 268700,
+      "orphaned_test_descendants_reaped": 4,
+      "coverage_note": "Includes the center dock-zone target cases that timed out in the earlier long sequential run, all six desktop dock orders, the non-overlapped canvas, workspace lifecycle, and mobile drawer behavior."
+    },
     "source_changes": "None. The hosted layer-rename DOM-detachment failure did not reproduce in three isolated local Chromium runs; no runtime or test-harness change was made without a reproducible root cause.",
     "actions": "No dispatch/rerun was requested because free Actions billing/quota remains unverified and the owner's cost limit is 0 HUF. The exact-SHA screenshot artifact is preserved until its verified 2026-11-13 expiration."
   }
