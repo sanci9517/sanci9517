@@ -46,7 +46,11 @@ async function fixture(t,width){
  t.after(async()=>{await browser.close();await new Promise(done=>server.close(done));});
  const base='http://127.0.0.1:'+server.address().port;
  const editor=await browser.newPage({viewport:{width,height:900}}),live=await browser.newPage({viewport:{width,height:900}});
- for(const page of [editor,live]){page.setDefaultTimeout(8000);page.on('pageerror',e=>errors.push(e.message));}
+ // This two-page lifecycle reloads the full editor after exercising both
+ // gallery types. Match the established Inspector browser-test budgets so a
+ // slow local Chromium startup is reported as a real failure, not an 8s
+ // navigation timeout.
+ for(const page of [editor,live]){page.setDefaultTimeout(15000);page.setDefaultNavigationTimeout(30000);page.on('pageerror',e=>errors.push(e.message));}
  await editor.goto(base+'/editor-v2/index.html');await live.goto(base+'/p/test');
  const node=(page,type)=>page.locator(`.creator-node[data-node-id="${ids[type]}"]`);
  const select=async type=>{await node(editor,type).evaluate(el=>el.click());if(await editor.locator('#rightDock').evaluate(el=>el.classList.contains('closed')))await editor.locator('#openInspector').click();await editor.locator('.inspector-tabs button').nth(1).click();};

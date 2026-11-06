@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-06",
+  "plan_point": "77.44.6.1.C",
+  "starting_head": "54c1c029ffd58a0cc210d7d0952f56dd5f417cd1",
+  "branch": "v2/foundation",
+  "finding": "A long local serial Chromium run completed all 53 files but exposed two environment-sensitive timeouts in resource-heavy browser tests. The failures were not stable assertions and both files passed when retried in isolation with loopback networking available.",
+  "change": {
+    "file": "tests/browser/editor-gallery-crop-parity.test.js",
+    "before": {
+      "action_timeout_ms": 8000,
+      "navigation_timeout_ms": 8000
+    },
+    "after": {
+      "action_timeout_ms": 15000,
+      "navigation_timeout_ms": 30000
+    },
+    "reason": "The two-page gallery/carousel lifecycle performs a full Editor reload after several Inspector, Save, and Publish steps. An 8s page.reload timeout was observed at 390px in the broad suite. This aligns the fixture with established Inspector lifecycle budgets without changing assertions or skipped coverage."
+  },
+  "tests": {
+    "broad_local_layout_run": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium npm run test:editor:layout",
+      "browser_files_total": 53,
+      "browser_files_completed": 53,
+      "passing_files": 51,
+      "result": "NOT_PASS",
+      "failures": [
+        {
+          "file": "tests/browser/editor-content-system.test.js",
+          "failure": "Playwright locator.click on #save exceeded its 15000ms action timeout after 167.6s total test time. The button was visible, enabled, and stable; no assertion failed."
+        },
+        {
+          "file": "tests/browser/editor-gallery-crop-parity.test.js",
+          "failure": "The 390px gallery/crop lifecycle page.reload exceeded the fixture's 8000ms navigation timeout; no assertion failed. The fixture navigation budget was then corrected as recorded above."
+        }
+      ],
+      "cancelled_or_skipped": 0
+    },
+    "targeted_retry_after_budget_change": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-content-system.test.js tests/browser/editor-gallery-crop-parity.test.js",
+      "network_permission": "Explicit loopback networking enabled for 127.0.0.1 fixtures",
+      "result": "PASS",
+      "cases": {
+        "editor_content_system": "1/1 PASS; 40.4s",
+        "gallery_crop_parity": "4/4 PASS; 38.3s"
+      }
+    },
+    "editor_unit": {
+      "command": "npm run test:editor",
+      "result": "PASS; 14/14 Node test files and 3/3 Linux subreaper tests"
+    },
+    "typecheck": {
+      "command": "npm run typecheck",
+      "result": "PASS"
+    },
+    "syntax": {
+      "command": "node --check tests/browser/editor-gallery-crop-parity.test.js",
+      "result": "PASS"
+    },
+    "plan_cursor": {
+      "active": "77.44.6.1.C",
+      "status": "OPEN / NOT CERTIFIED"
+    }
+  },
+  "release": {
+    "runtime_source_changed": false,
+    "production_d1_preflight": "NOT_REQUIRED; test harness and documentation only",
+    "worker_deployment": "NOT_REQUIRED; no Worker runtime asset changed",
+    "production_d1_write_or_migration": false,
+    "r2_operation": false,
+    "new_dependency_or_paid_service": false,
+    "cost_huf": "0 Ft incremental local work; hosted billing not checked"
+  },
+  "acceptance_boundary": "This stabilizes only the gallery/crop test fixture budget. The broad local 53-file run remains NOT_PASS because of the separate editor-content-system action timeout, despite that file passing in the targeted retry. No claim is made that the full suite passed. 77.44.6.1.C remains OPEN / NOT CERTIFIED; manual and physical Editor acceptance remains deferred until the full Editor is complete."
+}
