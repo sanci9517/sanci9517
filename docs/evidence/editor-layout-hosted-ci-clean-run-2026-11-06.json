@@ -1,0 +1,100 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-06T07:59:49Z",
+  "plan_point": "77.44.6.1.C",
+  "status": "HOSTED_FULL_LAYOUT_PASS_LOCAL_TIMEOUT_CAUSE_UNRESOLVED_C_OPEN",
+  "finding": {
+    "purpose": "Repeat the 53-file Editor browser layout regression on an isolated hosted runner after the local aggregate run had two non-reproducing timeouts.",
+    "workflow": {
+      "name": "Editor Core Test",
+      "run_id": 42178859225,
+      "job_id": 127763522812,
+      "url": "https://github.com/sanci9517/sanci9517/actions/runs/42178859225",
+      "branch": "v2/foundation",
+      "head_sha": "3ff475520154b10ba6e7974346da655285b23d2f",
+      "status": "completed",
+      "conclusion": "success",
+      "runner_image": "ubuntu-26.04",
+      "node": "v24.22.2",
+      "checkout_sha_verified_in_job_log": "3ff475520154b10ba6e7974346da655285b23d2f"
+    },
+    "layout_suite": {
+      "command": "npm run test:editor:layout",
+      "browser_files_total": 53,
+      "browser_files_seen_in_serial_subreaper_log": 53,
+      "test_cases_passed": 159,
+      "test_cases_failed": 0,
+      "test_cases_cancelled": 0,
+      "test_cases_skipped": 0,
+      "result": "PASS"
+    },
+    "workflow_checks": {
+      "exact_sha_runs_total": 5,
+      "all_success": true,
+      "runs": [
+        {"name": "Canonical Plan Active Point Audit", "run_id": 42178859100, "conclusion": "success"},
+        {"name": "F0 baseline checks", "run_id": 42178859189, "conclusion": "success"},
+        {"name": "Canonical Creator Platform Plan", "run_id": 42178859184, "conclusion": "success"},
+        {"name": "Twitch Integration Check", "run_id": 42178859185, "conclusion": "success"},
+        {"name": "Editor Core Test", "run_id": 42178859225, "conclusion": "success"}
+      ]
+    },
+    "artifact": {
+      "name": "editor-layout-screenshots",
+      "artifact_id": 13486056089,
+      "size_bytes": 2916012,
+      "sha256": "438e82279eae12e79c24f60eae711bd381d0305008dae00ac8ce4a3d1af9aadd",
+      "url": "https://github.com/sanci9517/sanci9517/actions/runs/42178859225/artifacts/13486056089",
+      "expires_at": "2027-02-04T07:08:02Z"
+    },
+    "relationship_to_local_run": "The earlier local aggregate had two timed-out files; both exact cases passed individually. The clean hosted run now passed all 53 files and all 159 cases. This confirms the suite on the hosted runner but does not prove the cause of the local timeouts.",
+    "local_timeout_cause": "UNRESOLVED_NOT_ATTRIBUTED",
+    "runtime_defect_found": false,
+    "runtime_files_changed": false,
+    "save_publish_contract_changed": false
+  },
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "head_at_verification": "3ff475520154b10ba6e7974346da655285b23d2f",
+    "untracked_preexisting_node_modules_preserved": true,
+    "runtime_source_unchanged": true,
+    "worker_redeploy_required": false
+  },
+  "production_read_only_recheck": {
+    "deployment_id": "04033d9f-8084-4147-8c67-0e5d44b22d55",
+    "worker_version_id": "fc7b179e-6b92-4ef8-b36b-9503ad2c5395",
+    "traffic_percentage": 100,
+    "health": {
+      "path": "/api/health",
+      "http_status": 200,
+      "body": {"ok": true, "service": "sanci9517-streamer-brand", "version": "2.0.0", "server": "cloudflare-worker"}
+    },
+    "editor_index": {
+      "path": "/editor-v2/",
+      "http_status": 200,
+      "local_sha256": "72a4c7e543d3195f242065cbb990c72294b40ed878c31881b2af91f95cb04113",
+      "live_sha256": "72a4c7e543d3195f242065cbb990c72294b40ed878c31881b2af91f95cb04113"
+    },
+    "editor_stylesheet": {
+      "path": "/editor-v2/editor-refresh.css",
+      "http_status": 200,
+      "local_sha256": "97319a2383912c8431c6207a5574830ba675bce57c9875cc2763c26925c1e502",
+      "live_sha256": "97319a2383912c8431c6207a5574830ba675bce57c9875cc2763c26925c1e502"
+    },
+    "worker_changed": false,
+    "worker_redeploy": "NOT_REQUIRED_DOCS_EVIDENCE_ONLY"
+  },
+  "operations": {
+    "production_d1_query": "NOT_RUN_RUNTIME_SOURCE_UNCHANGED",
+    "production_d1_write_or_migration": false,
+    "r2_operation": false,
+    "new_dependency": false,
+    "cost_huf": 0
+  },
+  "acceptance": {
+    "plan_point_status": "OPEN_NOT_CERTIFIED",
+    "manual_visual_editor_acceptance": "DEFERRED_UNTIL_COMPLETE_EDITOR",
+    "physical_device_acceptance": "DEFERRED_UNTIL_COMPLETE_EDITOR"
+  }
+}
