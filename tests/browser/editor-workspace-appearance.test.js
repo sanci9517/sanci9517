@@ -6,7 +6,7 @@ import {resolve,extname} from 'node:path';
 import {after,test} from 'node:test';
 import {chromium} from 'playwright';
 import {createDocument} from '../../public/editor-v2/core/schema.js';
-import {WORKSPACE_PREFERENCES_KEY} from '../../public/editor-v2/ui/workspace-appearance.js';
+import {LEGACY_WORKSPACE_PREFERENCES_KEY,WORKSPACE_PREFERENCES_KEY} from '../../public/editor-v2/ui/workspace-appearance.js';
 
 const root=resolve(import.meta.dirname,'../../public');
 const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.svg':'image/svg+xml'};
@@ -2048,6 +2048,43 @@ test('open editor tabs synchronize saved appearance, dock state and profiles wit
   assert.deepEqual(errors,[]);
 });
 
+
+test('cross-tab appearance changes enforce the same supported-version fallback as editor startup',async t=>{
+  const current={version:2,layout:'balanced',theme:'aurora',density:'compact',accent:'#00a7c8',dockOrder:'right-canvas-left',panelMode:'separate',panelSide:'right',profiles:[]};
+  const legacy={version:1,layout:'inspector',theme:'sage',density:'comfortable',accent:'#00a7c8'};
+  const {page,context,writes,errors}=await openEditor(t,{width:1366,height:900,initialAppearance:current,initialLegacyAppearance:legacy});
+  const second=await context.newPage();
+  await second.goto(page.url(),{waitUntil:'load'});
+  await second.waitForFunction(()=>document.documentElement.dataset.editorBoot==='ready');
+  assert.equal(await page.locator('.editor-app').getAttribute('data-workspace-theme'),'aurora','the supported current schema takes precedence at startup');
+
+  await second.evaluate(key=>localStorage.removeItem(key),WORKSPACE_PREFERENCES_KEY);
+  await page.waitForFunction(()=>document.querySelector('.editor-app')?.getAttribute('data-workspace-theme')==='sage'&&document.querySelector('.workspace')?.classList.contains('right-open'));
+  assert.deepEqual(await page.evaluate(key=>JSON.parse(localStorage.getItem(key)),LEGACY_WORKSPACE_PREFERENCES_KEY),legacy,'removing the current record restores the retained supported legacy profile');
+  assert.equal(await page.evaluate(key=>localStorage.getItem(key),WORKSPACE_PREFERENCES_KEY),null,'cross-tab recovery leaves the removed current schema absent until an explicit change');
+
+  const unsupported={version:3,layout:'canvas',theme:'ocean',density:'compact',accent:'#00a7c8',dockOrder:'left-right-canvas',panelMode:'tabbed',panelSide:'left',profiles:[]};
+  await second.evaluate(({key,value})=>localStorage.setItem(key,JSON.stringify(value)),{key:WORKSPACE_PREFERENCES_KEY,value:unsupported});
+  await page.waitForFunction(()=>document.querySelector('.editor-app')?.getAttribute('data-workspace-theme')==='sage');
+  assert.deepEqual(await page.evaluate(key=>JSON.parse(localStorage.getItem(key)),WORKSPACE_PREFERENCES_KEY),unsupported,'an unknown future schema is preserved and never treated as the current contract');
+  assert.equal(await page.locator('#workspaceLayout').inputValue(),'inspector','unsupported cross-tab data does not override the supported legacy fallback');
+
+  const refreshedLegacy={...legacy,theme:'cinder',layout:'canvas'};
+  await second.evaluate(({key,value})=>localStorage.setItem(key,JSON.stringify(value)),{key:LEGACY_WORKSPACE_PREFERENCES_KEY,value:refreshedLegacy});
+  await page.waitForFunction(()=>document.querySelector('.editor-app')?.getAttribute('data-workspace-theme')==='cinder');
+  assert.equal(await page.locator('#workspaceLayout').inputValue(),'canvas','a legacy update still propagates when the stored current schema is unsupported');
+
+  const refreshed={...current,theme:'ocean',layout:'canvas'};
+  await second.evaluate(({key,value})=>localStorage.setItem(key,JSON.stringify(value)),{key:WORKSPACE_PREFERENCES_KEY,value:refreshed});
+  await page.waitForFunction(()=>document.querySelector('.editor-app')?.getAttribute('data-workspace-theme')==='ocean');
+  assert.equal(await page.locator('#workspaceLayout').inputValue(),'canvas','a later supported v2 write becomes authoritative again');
+  const lateLegacy={...refreshedLegacy,theme:'sage',layout:'inspector'};
+  await second.evaluate(({key,value})=>localStorage.setItem(key,JSON.stringify(value)),{key:LEGACY_WORKSPACE_PREFERENCES_KEY,value:lateLegacy});
+  await page.waitForFunction(()=>document.querySelector('.editor-app')?.getAttribute('data-workspace-theme')==='ocean');
+  assert.equal(await page.locator('#workspaceLayout').inputValue(),'canvas','a late legacy write cannot replace a supported current workspace');
+  assert.deepEqual(writes,[],'schema fallback and cross-tab preference sync never Save or Publish page content');
+  assert.deepEqual(errors,[]);
+});
 
 test('desktop dock drag cancels when the viewport switches to the mobile drawer shell',async t=>{
   const {page,writes,errors}=await openEditor(t,{width:1440,height:900});

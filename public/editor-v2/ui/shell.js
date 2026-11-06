@@ -2,7 +2,7 @@ import {createEventBus} from './events.js';
 import {panelRegistry,featureRegistry} from './registry.js';
 import {EDITOR_ACTIONS} from './action-catalog.js?v=20261103-canvas-focus-mode';
 import {enhanceEditorActionControls} from './action-help.js?v=20261103-canvas-focus-mode';
-import {DEFAULT_LEFT_TAB_ORDER,applyWorkspacePreferences,mountWorkspaceAppearance,normalizeLeftTabOrder,readWorkspacePreferences} from './workspace-appearance.js?v=20261106-workspace-profile-id-collision';
+import {DEFAULT_LEFT_TAB_ORDER,applyWorkspacePreferences,mountWorkspaceAppearance,normalizeLeftTabOrder,readWorkspacePreferences} from './workspace-appearance.js?v=20261106-cross-tab-workspace-schema-fallback';
 
 const bus=createEventBus();
 const workspace=document.querySelector('.workspace');

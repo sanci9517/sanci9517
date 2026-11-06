@@ -378,9 +378,14 @@ export function mountWorkspaceAppearance({documentRef=globalThis.document,root=d
     if(event.storageArea&&storage&&event.storageArea!==storage)return;
     if(event.key!==null&&event.key!==WORKSPACE_PREFERENCES_KEY&&event.key!==LEGACY_WORKSPACE_PREFERENCES_KEY)return;
     // A late v1 write must never overwrite a profile-aware v2 workspace.
-    if(event.key===LEGACY_WORKSPACE_PREFERENCES_KEY){try{if(storage?.getItem(WORKSPACE_PREFERENCES_KEY))return}catch{return}}
+    if(event.key===LEGACY_WORKSPACE_PREFERENCES_KEY){
+      try{
+        const current=JSON.parse(storage?.getItem(WORKSPACE_PREFERENCES_KEY)||'null');
+        if(isRecord(current)&&current.version===2)return;
+      }catch{}
+    }
     let next;
-    try{next=normalizeWorkspacePreferences(event.newValue?JSON.parse(event.newValue):{})}catch{next=normalizeWorkspacePreferences({})}
+    try{next=event.key===null?normalizeWorkspacePreferences({}):readWorkspacePreferences(storage)}catch{next=normalizeWorkspacePreferences({})}
     if(JSON.stringify(next)===JSON.stringify(value))return;
     try{onExternalChange({source:'storage',area:'appearance',reset:event.key===null})}catch{}
     // History from this tab is based on an older shared workspace. Keeping it
