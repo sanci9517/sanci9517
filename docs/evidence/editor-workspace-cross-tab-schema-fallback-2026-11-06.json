@@ -1,0 +1,150 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-06T17:19:10Z",
+  "plan_point": "77.44.6.1.C",
+  "status": "CROSS_TAB_SCHEMA_FALLBACK_RUNTIME_FIX_RELEASED",
+  "scope": "Keep cross-tab appearance synchronization consistent with startup's supported v2/v1 schema recovery, including unsupported future v2-key data.",
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "starting_commit": "fa5d4b62be04b3f4cae2b510b9000043cb708388",
+    "github_branch_at_start": "fa5d4b62be04b3f4cae2b510b9000043cb708388",
+    "runtime_commit": "10e9e1fcf15a9a1dd8fac9ff49b90e1d7238f125",
+    "github_branch_after_runtime_push": "10e9e1fcf15a9a1dd8fac9ff49b90e1d7238f125",
+    "combined_commit_status": "EMPTY; no aggregate GitHub CI PASS claimed; [skip ci] used",
+    "runtime_files_changed": [
+      "public/editor-v2/ui/workspace-appearance.js",
+      "public/editor-v2/ui/shell.js"
+    ],
+    "test_files_changed": [
+      "tests/browser/editor-workspace-appearance.test.js"
+    ],
+    "documentation_files_changed": [
+      "docs/evidence/feature-traceability.json",
+      "docs/evidence/editor-workspace-cross-tab-schema-fallback-2026-11-06.json",
+      "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md"
+    ],
+    "existing_untracked_node_modules_preserved": true,
+    "existing_untracked_scripts_pycache_preserved": true
+  },
+  "finding": {
+    "audit_gap": "Startup restored the retained supported v1 workspace when the current v2-key record was unsupported, but a storage event bypassed that schema recovery by normalizing arbitrary event.newValue directly. The legacy-event guard also rejected every legacy update whenever any current-key value existed, including an unsupported future schema.",
+    "change": "Cross-tab appearance events now re-read authoritative preferences through readWorkspacePreferences(storage), the shared schema-version recovery path; storage.clear still resets to defaults. A legacy update is suppressed only when a supported version 2 record is present. The shell import cache-buster was updated.",
+    "runtime_defect_confirmed": true,
+    "save_publish_contract_changed": false,
+    "page_model_renderer_or_authorization_changed": false
+  },
+  "validation": {
+    "targeted_chromium_regression": {
+      "status": "PASS",
+      "command": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 --test-name-pattern='cross-tab appearance changes enforce' tests/browser/editor-workspace-appearance.test.js",
+      "tests": 1,
+      "passed": 1,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    "complete_workspace_appearance_file": {
+      "status": "PASS",
+      "command": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-workspace-appearance.test.js",
+      "tests": 61,
+      "passed": 61,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "duration_ms": 377569.744606,
+      "orphan_browser_descendants_reaped": 4
+    },
+    "additional_checks": {
+      "editor_unit_and_contract_tests": "PASS: npm run test:editor; 14/14 Node files and 3/3 subreaper cases",
+      "typescript": "PASS: npm run typecheck",
+      "migration_safety_gate": "PASS: npm run test:web013:migration-gate",
+      "canonical_plan": "PASS: python3 scripts/check-canonical-plan.py; 13 master files",
+      "plan_contract": "PASS: python3 scripts/plan_contract.py; 13/13",
+      "active_plan_audit": "PASS: next point 77.44.6.1.C; functional acceptance NOT_CERTIFIED",
+      "feature_traceability": "PASS: 396 source mappings, regenerated after the runtime source edits",
+      "javascript_syntax": "PASS: node --check for workspace-appearance.js, shell.js, and the changed browser test",
+      "diff_whitespace": "PASS: git diff --check"
+    },
+    "wrangler_dry_run": {
+      "status": "PASS",
+      "command": "WRANGLER_LOG_PATH=/tmp/sanci-wrangler-cross-tab-schema-final.log npx wrangler deploy --dry-run --outdir /tmp/sanci-cross-tab-schema-final-dry-run",
+      "wrangler_version": "4.130.0",
+      "asset_files": 168,
+      "total_upload_kib": 335.81,
+      "gzip_kib": 87.60,
+      "deployment_performed": false
+    }
+  },
+  "production_read_only_control": {
+    "d1_select_preflight": {
+      "method": "Cloudflare D1 Query API",
+      "sql": "SELECT name FROM d1_migrations ORDER BY name",
+      "rows": 34,
+      "latest_migration": "0028_media_archive.sql",
+      "rows_written": 0,
+      "changes": 0,
+      "changed_db": false,
+      "production_migration_or_write": false
+    },
+    "r2_operation": false
+  },
+  "release": {
+    "command": "npm run deploy:safe",
+    "exit_code": 0,
+    "migration_safety_gate": "PASS; deploy:safe does not apply D1 migrations",
+    "wrangler_version": "4.130.0",
+    "assets_uploaded": [
+      "/editor-v2/ui/workspace-appearance.js",
+      "/editor-v2/ui/shell.js"
+    ],
+    "wrangler_log_note": "Wrangler reported EROFS when attempting an auxiliary log under the read-only /home/agent path; the command continued, uploaded the two assets, reported deployment success, and exited 0.",
+    "deployment_id": "409442fd-bef0-4f3a-b646-328594c7d84f",
+    "worker_version": "eb3252b2-1169-4deb-b1df-48b7b5827764",
+    "worker_version_traffic": "100%",
+    "deployment_created_on": "2026-11-06T17:17:59.302557Z",
+    "deployment_verified_by": "Cloudflare Workers Deployments read-only GET"
+  },
+  "production_smoke": {
+    "health": {
+      "method": "GET",
+      "path": "/api/health",
+      "http_status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "assets": [
+      {
+        "path": "/editor-v2/ui/shell.js",
+        "http_status": 200,
+        "local_sha256": "de4f65a60c6060b0dde5535bc5b26e01b1b28933b58a92d49762507d9cf58c3a",
+        "live_sha256": "de4f65a60c6060b0dde5535bc5b26e01b1b28933b58a92d49762507d9cf58c3a",
+        "byte_equal": true
+      },
+      {
+        "path": "/editor-v2/ui/workspace-appearance.js",
+        "http_status": 200,
+        "local_sha256": "c911e3b3af8c2b4cc38985b2113808f2f8e57a214dbd248de9ec74c0a428106f",
+        "live_sha256": "c911e3b3af8c2b4cc38985b2113808f2f8e57a214dbd248de9ec74c0a428106f",
+        "byte_equal": true
+      }
+    ],
+    "initial_python_probe": "Python's default urllib user agent received HTTP 403; direct curl with an explicit user agent succeeded for health and both assets. No product error was inferred from the first probe."
+  },
+  "cost_and_scope": {
+    "known_incremental_cost_huf": 0,
+    "github_actions_billing": "UNVERIFIED; [skip ci] was used and no workflow rerun requested",
+    "new_dependency": false,
+    "production_d1_write_or_migration": false,
+    "r2_operation": false
+  },
+  "acceptance": {
+    "plan_point_status": "OPEN_NOT_CERTIFIED",
+    "manual_editor_acceptance": "DEFERRED_UNTIL_COMPLETE_EDITOR",
+    "physical_device_acceptance": "DEFERRED_UNTIL_COMPLETE_EDITOR"
+  }
+}
