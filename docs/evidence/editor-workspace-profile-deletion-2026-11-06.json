@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "recorded_at_utc": "2026-11-06T14:14:03Z",
+  "recorded_at_utc": "2026-11-06T14:16:00Z",
   "plan_point": "77.44.6.1.C",
   "status": "PROFILE_DELETE_UNDO_REDO_REGRESSION_COVERED_NO_RUNTIME_DEFECT_CONFIRMED",
   "scope": "Close a workspace lifecycle coverage gap: deleting a selected local workspace profile must be reversible and must never call Page Model Save or Publish.",
@@ -20,7 +20,9 @@
     "runtime_source_unchanged": true,
     "worker_redeploy_required": false,
     "existing_untracked_node_modules_preserved": true,
-    "existing_untracked_scripts_pycache_preserved": true
+    "existing_untracked_scripts_pycache_preserved": true,
+    "test_documentation_commit": "7934574a3b2bd459e43b497f79fbd31e8362df12",
+    "github_branch_after_push": "7934574a3b2bd459e43b497f79fbd31e8362df12"
   },
   "finding": {
     "initial_hypothesis": "Profile deletion and its local Undo/Redo lifecycle were not directly covered in Chromium, despite neighboring profile create/load/import tests.",
@@ -146,14 +148,30 @@
     },
     "github_ci_pass": false,
     "github_checks": "No aggregate GitHub CI PASS claimed. Test and documentation changes do not require a Worker deployment.",
-    "cloudflare_redeployment": "NOT_TRIGGERED_TEST_DOCS_ONLY",
+    "cloudflare_redeployment": "NOT_TRIGGERED_TEST_DOCS_ONLY; latest read-only deployment GET unchanged after push",
     "d1_query": "NOT_RUN_RUNTIME_SOURCE_UNCHANGED",
     "wrangler_dry_run": "NOT_RUN_RUNTIME_SOURCE_UNCHANGED",
     "production_d1_mutation_or_migration": false,
     "r2_operation": false,
     "new_dependency": false,
     "cost_huf": 0,
-    "actions_billing": "UNVERIFIED"
+    "actions_billing": "UNVERIFIED",
+    "worker_version_after_test_only_change": "7ef63f87-c1b6-4846-802b-3c3c122b59b9",
+    "deployment_after_test_only_change": "9007449d-8a4b-4458-a911-15aa1d54d648",
+    "health_smoke_after_test_only_change": {
+      "status": "PASS",
+      "method": "GET",
+      "path": "/api/health",
+      "http_status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "github_commit_statuses": [],
+    "github_actions_billing": "UNVERIFIED_NO_RUN_REQUESTED"
   },
   "acceptance": {
     "plan_point_status": "OPEN_NOT_CERTIFIED",
