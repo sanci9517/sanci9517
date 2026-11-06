@@ -52,6 +52,17 @@ function normalizeDockState(value){
     rightWidth:finiteWidth(input.rightWidth,260,440,352),
   };
 }
+export function nextWorkspaceProfileId(profiles,sequence=0,now=Date.now()){
+  const existing=new Set((Array.isArray(profiles)?profiles:[]).filter(isRecord).map(profile=>profile.id));
+  const timestamp=Number.isSafeInteger(now)&&now>=0?now:Date.now();
+  let next=Number.isSafeInteger(sequence)&&sequence>=0?sequence:0;
+  let id='';
+  do{
+    next=next>=Number.MAX_SAFE_INTEGER?1:next+1;
+    id=`profile-${timestamp.toString(36)}-${next.toString(36)}`;
+  }while(existing.has(id));
+  return {id,sequence:next};
+}
 function normalizeProfiles(value){
   if(!Array.isArray(value))return [];
   const result=[],ids=new Set(),names=[];
@@ -278,8 +289,8 @@ export function mountWorkspaceAppearance({documentRef=globalThis.document,root=d
     if(!name){if(status)status.textContent='Adj rövid nevet a mentendő munkaterületnek.';fields.profileName?.focus();return false}
     if(value.profiles.length>=PROFILE_LIMIT){if(status)status.textContent='Legfeljebb nyolc munkaterület-profilt menthetsz. Törölj egy régit, majd próbáld újra.';return false}
     if(value.profiles.some(profile=>profile.name.localeCompare(name,undefined,{sensitivity:'base'})===0)){if(status)status.textContent='Már van ilyen nevű profil. Válassz másik nevet.';fields.profileName?.focus();return false}
-    remember();idSequence+=1;
-    const id=`profile-${Date.now().toString(36)}-${idSequence.toString(36)}`;
+    remember();const generated=nextWorkspaceProfileId(value.profiles,idSequence);idSequence=generated.sequence;
+    const id=generated.id;
     value={...value,profiles:[...value.profiles,{id,name,createdAt:Date.now(),appearance:normalizeVisualPreferences(value),dock:currentDock()}]};
     paint();const saved=persist();if(fields.profile)fields.profile.value=id;renderProfiles();
     if(status)status.textContent=saved?`„${name}” munkaterület-profil elmentve ezen az eszközön.`:`„${name}” profil csak ebben a munkamenetben érhető el, mert a böngésző tárhelye nem használható.`;
@@ -319,8 +330,8 @@ export function mountWorkspaceAppearance({documentRef=globalThis.document,root=d
     if(!profile){if(status)status.textContent='A profilfájl nem érvényes vagy nem támogatott formátumú. A mentett munkaterület nem változott.';return false}
     if(value.profiles.length>=PROFILE_LIMIT){if(status)status.textContent='Már nyolc profil van elmentve. Törölj egyet az importálás előtt.';return false}
     if(value.profiles.some(item=>item.name.localeCompare(profile.name,undefined,{sensitivity:'base'})===0)){if(status)status.textContent='Már van ilyen nevű profil. Nevezd át az importált profilt vagy töröld a meglévőt.';return false}
-    remember();idSequence+=1;
-    const imported={...profile,id:`profile-${Date.now().toString(36)}-${idSequence.toString(36)}`,createdAt:Date.now()};
+    remember();const generated=nextWorkspaceProfileId(value.profiles,idSequence);idSequence=generated.sequence;
+    const imported={...profile,id:generated.id,createdAt:Date.now()};
     value={...value,profiles:[...value.profiles,imported]};paint();const saved=persist();if(fields.profile)fields.profile.value=imported.id;renderProfiles();
     if(status)status.textContent=saved?`„${imported.name}” profil ezen az eszközön elmentve. A küldött fájlban lévő futtatható kódot nem használjuk.`:`„${imported.name}” profil csak ebben a munkamenetben érhető el, mert a böngésző tárhelye nem használható. A fájlból származó futtatható kódot nem használjuk.`;
     return true;

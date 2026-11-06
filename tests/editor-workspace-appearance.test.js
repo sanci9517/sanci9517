@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import {DEFAULT_LEFT_TAB_ORDER,LEGACY_WORKSPACE_PREFERENCES_KEY,WORKSPACE_PROFILE_MAX_BYTES,WORKSPACE_PREFERENCES_KEY,WORKSPACE_PREFERENCE_DEFAULTS,isAccessibleWorkspaceAccent,mountWorkspaceAppearance,normalizeLeftTabOrder,normalizeWorkspacePreferences,parseWorkspaceProfileTransfer,readWorkspacePreferences,serializeWorkspaceProfile} from '../public/editor-v2/ui/workspace-appearance.js';
+import {DEFAULT_LEFT_TAB_ORDER,LEGACY_WORKSPACE_PREFERENCES_KEY,WORKSPACE_PROFILE_MAX_BYTES,WORKSPACE_PREFERENCES_KEY,WORKSPACE_PREFERENCE_DEFAULTS,isAccessibleWorkspaceAccent,mountWorkspaceAppearance,nextWorkspaceProfileId,normalizeLeftTabOrder,normalizeWorkspacePreferences,parseWorkspaceProfileTransfer,readWorkspacePreferences,serializeWorkspaceProfile} from '../public/editor-v2/ui/workspace-appearance.js';
 
 function storage(initial={}){
   const values=new Map(Object.entries(initial));
@@ -79,6 +79,16 @@ test('stored workspace profiles use the same locale-aware duplicate rule as save
     {id:'profile-distinct',name:'Másik nézet'},
   ]});
   assert.deepEqual(saved.profiles.map(profile=>profile.name),['Munkatér','Másik nézet'],'older or externally edited preference data cannot restore duplicate names that current save/import would reject');
+});
+
+test('profile ID generation skips stored IDs when a new editor tab repeats its clock and sequence',()=>{
+  const now=1_700_000_000_000;
+  const first=`profile-${now.toString(36)}-1`;
+  const second=`profile-${now.toString(36)}-2`;
+  const generated=nextWorkspaceProfileId([{id:first},{id:second}],0,now);
+  assert.deepEqual(generated,{id:`profile-${now.toString(36)}-3`,sequence:3},'a reloaded Editor cannot generate an ID already held by a stored profile');
+  assert.deepEqual(nextWorkspaceProfileId([{id:first}],0,now),{id:second,sequence:2},'the first available local ID remains deterministic after a clock repeat');
+  assert.deepEqual(nextWorkspaceProfileId(Array.from({length:8},(_,index)=>({id:`profile-${now.toString(36)}-${(index+1).toString(36)}`})),0,now),{id:`profile-${now.toString(36)}-9`,sequence:9},'the bounded profile list always leaves a free generated ID');
 });
 
 test('panel grouping accepts only safe layout modes and sides, including in portable workspace profiles',()=>{

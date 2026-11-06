@@ -580,6 +580,54 @@ test('desktop docks can be reordered and local workspace profiles save, reload, 
   assert.deepEqual(errors,[]);
 });
 
+test('saved and imported workspace profiles keep unique local IDs after reload and clock collision',async t=>{
+  const fixedTime=1_700_000_000_000;
+  const idAt=(sequence)=>`profile-${fixedTime.toString(36)}-${sequence.toString(36)}`;
+  const appearance={version:2,layout:'canvas',theme:'graphite',density:'comfortable',accent:'#5b8cff',dockOrder:'left-canvas-right',panelMode:'separate',panelSide:'right',profiles:[{
+    id:idAt(1),name:'Korábbi munkaterület',createdAt:fixedTime,
+    appearance:{layout:'canvas',theme:'graphite',density:'comfortable',accent:'#5b8cff',dockOrder:'left-canvas-right',panelMode:'separate',panelSide:'right'},
+    dock:{leftOpen:false,rightOpen:true,leftTab:'pages',leftTabOrder:['pages','elements','layers','schedule','navigation'],inspectorTab:'design',panelActive:'right',leftWidth:310,rightWidth:352},
+  }]};
+  const {page,writes,errors}=await openEditor(t);
+  await page.evaluate(({key,value})=>localStorage.setItem(key,JSON.stringify(value)),{key:WORKSPACE_PREFERENCES_KEY,value:appearance});
+  await page.reload({waitUntil:'load'});
+  await page.waitForFunction(()=>document.documentElement.dataset.editorBoot==='ready');
+  await openPreferences(page);
+  await page.locator('#workspaceProfileName').fill('Mentett nézet');
+  await page.evaluate(time=>{window.__restoreDateNow=Date.now;Date.now=()=>time},fixedTime);
+  await page.locator('#saveWorkspaceProfile').click();
+  await page.evaluate(()=>{if(window.__restoreDateNow)Date.now=window.__restoreDateNow});
+  const afterSave=await page.evaluate(key=>JSON.parse(localStorage.getItem(key)).profiles.map(profile=>profile.id),WORKSPACE_PREFERENCES_KEY);
+  assert.deepEqual(afterSave,[idAt(1),idAt(2)],'save skips a persisted ID from a prior Editor instance');
+
+  await page.reload({waitUntil:'load'});
+  await page.waitForFunction(()=>document.documentElement.dataset.editorBoot==='ready');
+  await openPreferences(page);
+  const transfer={kind:'sanci-editor-workspace-profile',version:1,profile:{id:'profile-portable',name:'Importált nézet',createdAt:1,
+    appearance:{layout:'balanced',theme:'aurora',density:'compact',accent:'#00a7c8',dockOrder:'right-canvas-left',panelMode:'tabbed',panelSide:'left'},
+    dock:{leftOpen:true,rightOpen:true,leftTab:'layers',leftTabOrder:['pages','elements','layers','schedule','navigation'],inspectorTab:'content',panelActive:'left',leftWidth:320,rightWidth:360}}};
+  await page.evaluate(time=>{window.__restoreDateNow=Date.now;Date.now=()=>time},fixedTime);
+  await page.locator('#workspaceProfileFile').setInputFiles({name:'import.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(transfer))});
+  await page.waitForFunction(()=>{
+    const status=document.querySelector('#workspaceAppearanceStatus')?.textContent||'';
+    return status.includes('Importált nézet')||status.includes('nem érvényes');
+  });
+  assert.match(await page.locator('#workspaceAppearanceStatus').textContent(),/Importált nézet.*mentve/iu,'the valid profile transfer is accepted');
+  assert.equal(await page.locator('#workspaceProfile option').count(),4,'the third profile receives its own selector entry');
+  await page.evaluate(()=>{if(window.__restoreDateNow)Date.now=window.__restoreDateNow});
+  const all=await page.evaluate(key=>JSON.parse(localStorage.getItem(key)).profiles,WORKSPACE_PREFERENCES_KEY);
+  const ids=all.map(profile=>profile.id);
+  assert.equal(new Set(ids).size,ids.length,'save and import never leave duplicate IDs in profile state');
+  assert.deepEqual(ids,[idAt(1),idAt(2),idAt(3)],'import skips IDs that remain after a reload and sequence reset');
+  await page.reload({waitUntil:'load'});
+  await page.waitForFunction(()=>document.documentElement.dataset.editorBoot==='ready');
+  await openPreferences(page);
+  const restored=await page.evaluate(key=>JSON.parse(localStorage.getItem(key)).profiles,WORKSPACE_PREFERENCES_KEY);
+  assert.deepEqual(restored.map(profile=>profile.id),ids,'all workspace profiles survive schema normalization and another reload');
+  assert.deepEqual(writes,[],'workspace profile save/import does not invoke Page Model Save or Publish');
+  assert.deepEqual(errors,[]);
+});
+
 test('mobile profile application keeps the single-drawer model and workspace reset restores saved preferences safely',async t=>{
   const {page,writes,errors}=await openEditor(t,{width:320,height:850,isMobile:true,hasTouch:true});
   await openPreferences(page);
