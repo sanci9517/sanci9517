@@ -112,28 +112,38 @@
     "r2_mutation": false
   },
   "production_status": {
-    "worker_deployments_api_get": "success",
-    "deployment_id": "04033d9f-8084-4147-8c67-0e5d44b22d55",
-    "worker_version_id": "fc7b179e-6b92-4ef8-b36b-9503ad2c5395",
+    "d1_preflight": "SELECT-only API preflight verified before release: SELECT name FROM d1_migrations ORDER BY name; 34 rows, latest 0028_media_archive.sql, rows_written=0, changes=0, changed_db=false; no R2 operation.",
+    "worker_deployment_api_get": "success; direct read-only Cloudflare deployments GET after release",
+    "deployment_id": "9007449d-8a4b-4458-a911-15aa1d54d648",
+    "worker_version_id": "7ef63f87-c1b6-4846-802b-3c3c122b59b9",
     "traffic_percentage": 100,
-    "direct_public_health": "PASS for the still-deployed baseline: HTTP 200, {ok:true,service:sanci9517-streamer-brand,version:2.0.0,server:cloudflare-worker} at 2026-11-06T10:53:29Z.",
-    "changed_asset_hashes_for_local_runtime_commit": "UNVERIFIED until the pending runtime commit is deployed; the current 100% version remains fc7b179e-6b92-4ef8-b36b-9503ad2c5395.",
-    "new_deployment_or_worker_change": false
+    "deployed_at": "2026-11-06T11:00:49.969382Z",
+    "direct_public_health": "PASS: GET /api/health HTTP 200, {\"ok\":true,\"service\":\"sanci9517-streamer-brand\",\"version\":\"2.0.0\",\"server\":\"cloudflare-worker\"}.",
+    "deployed_asset_sha256": {
+      "public/editor-v2/index.html": "e0a58ba052539232166221cadde6db6c877f8aa6eecff3b0bf845de13d589cc8",
+      "public/editor-v2/ui/shell.js": "72623b11e34992c708524f6f25433ea2613a577661b45700419f9c8972ae2a8c",
+      "public/editor-v2/ui/workspace-appearance.js": "39af4d06aae7b5d9abed72ad1a9cf4125a2b3856db62c4aa5663d728d725601e"
+    },
+    "asset_hash_comparison": "All three assets returned HTTP 200 and their live SHA-256 exactly matched the local deployed source.",
+    "github_branch_head": "f654e60aaf8348f790fa01622953b917ac2ea9e5",
+    "github_workers_build_check": "Cloudflare GitHub check completed as skipped for docs-only [skip ci] HEAD f654e60a; no aggregate GitHub CI PASS claimed. Runtime commit 347f998f was deployed directly with deploy:safe after the safety gate and dry-run.",
+    "deploy_safe": "PASS: repository migration safety gate passed; Wrangler 4.130.0 uploaded 3 changed static assets and deployed the Worker. No D1 migrations applied.",
+    "previous_failed_dry_run_attempt": "A first dry-run hit read-only /home/agent/.config logging; it was repeated successfully with XDG_CONFIG_HOME=/tmp/s9517-wrangler-config.",
+    "new_deployment_or_worker_change": true
   },
   "release": {
-    "status": "BLOCKED / NOT DEPLOYED",
-    "reasons": [
-      "The repository requires the GitHub branch fast-forward before a runtime release, but the configured proxy is unavailable (push failed before connection on proxy port 8080); a no-proxy public health retry also timed out during DNS resolution after 5 seconds.",
-      "The canonical plan records exhausted GitHub Actions free compute quota; no paid workflow or rerun was requested.",
-      "A direct production health/hash smoke could not run through the unavailable proxy."
-    ],
-    "safe_local_commits_preserved": true,
-    "deploy_safe_run": false,
-    "deployment_ready_claimed": false
+    "status": "DEPLOYED AND VERIFIED",
+    "runtime_commit": "347f998f",
+    "documentation_evidence_head": "f654e60aaf8348f790fa01622953b917ac2ea9e5",
+    "github_branch": "v2/foundation",
+    "fast_forward_push": "PASS; remote branch API exactly matches f654e60aaf8348f790fa01622953b917ac2ea9e5",
+    "deploy_safe_run": true,
+    "deployment_ready_claimed": true,
+    "manual_and_physical_editor_acceptance": "DEFERRED; C remains OPEN / NOT CERTIFIED"
   },
   "cost": {
     "direct_paid_service_cost_huf": 0,
-    "github_actions_billing": "UNVERIFIED; no new workflow run requested",
+    "github_actions_billing": "UNVERIFIED; docs-only [skip ci] Cloudflare check was skipped; no paid Actions workflow requested.",
     "new_dependency": false
   },
   "acceptance": {
