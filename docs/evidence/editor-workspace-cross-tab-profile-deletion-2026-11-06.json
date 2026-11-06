@@ -9,6 +9,10 @@
     "branch": "v2/foundation",
     "starting_commit": "f9e23d03d0a51933a78e24873149204cdcaeeb58",
     "github_branch_at_start": "f9e23d03d0a51933a78e24873149204cdcaeeb58",
+    "test_plan_evidence_commit": "43303cb3fb087ea66dc043d5a62d89ae312d72eb",
+    "github_branch_after_push": "43303cb3fb087ea66dc043d5a62d89ae312d72eb",
+    "git_ls_remote_after_push": "43303cb3fb087ea66dc043d5a62d89ae312d72eb",
+    "combined_commit_status": "EMPTY; no aggregate CI PASS claimed; [skip ci] used",
     "runtime_files_changed": [],
     "test_files_changed": [
       "tests/browser/editor-workspace-appearance.test.js"
