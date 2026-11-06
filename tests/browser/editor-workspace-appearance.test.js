@@ -2323,6 +2323,37 @@ test('1024px tablet drawer transitions to a non-overlapping 1025px desktop dock 
   assert.deepEqual(errors,[]);
 });
 
+test('wide mobile drawer scrim stays behind its panel and closes it from the remaining canvas',async t=>{
+  const {page,writes,errors}=await openEditor(t,{width:850,height:900,isMobile:true,hasTouch:true});
+  await page.locator('#editorMenu').tap();
+  await page.waitForFunction(()=>!document.querySelector('#leftDock')?.classList.contains('closed'));
+  const left=await page.evaluate(()=>{
+    const panel=document.querySelector('#leftDock').getBoundingClientRect();
+    const backdrop=document.querySelector('#mobileBackdrop').getBoundingClientRect();
+    return {panelRight:panel.right,backdropWidth:backdrop.width,panelZ:Number(getComputedStyle(document.querySelector('#leftDock')).zIndex),backdropZ:Number(getComputedStyle(document.querySelector('#mobileBackdrop')).zIndex)};
+  });
+  assert.ok(left.panelRight>0&&left.panelRight<850,`the capped left panel leaves an exposed canvas area: ${JSON.stringify(left)}`);
+  assert.equal(left.backdropWidth,850,'the translucent scrim covers the canvas behind the drawer');
+  assert.ok(left.panelZ>left.backdropZ,'the open dock remains above the scrim instead of appearing darkened itself');
+  await page.mouse.click(700,400);
+  await page.waitForFunction(()=>document.querySelector('#leftDock')?.classList.contains('closed'));
+
+  await page.locator('#openInspector').tap();
+  await page.waitForFunction(()=>!document.querySelector('#rightDock')?.classList.contains('closed')&&document.querySelector('#leftDock')?.classList.contains('closed'));
+  const right=await page.evaluate(()=>{
+    const panel=document.querySelector('#rightDock').getBoundingClientRect();
+    const backdrop=document.querySelector('#mobileBackdrop').getBoundingClientRect();
+    return {panelLeft:panel.left,backdropWidth:backdrop.width,panelZ:Number(getComputedStyle(document.querySelector('#rightDock')).zIndex),backdropZ:Number(getComputedStyle(document.querySelector('#mobileBackdrop')).zIndex)};
+  });
+  assert.ok(right.panelLeft>0&&right.panelLeft<850,`the capped right panel leaves an exposed canvas area: ${JSON.stringify(right)}`);
+  assert.equal(right.backdropWidth,850,'the right drawer scrim covers the canvas behind the panel');
+  assert.ok(right.panelZ>right.backdropZ,'the Inspector remains above its scrim');
+  await page.mouse.click(100,400);
+  await page.waitForFunction(()=>document.querySelector('#rightDock')?.classList.contains('closed'));
+  assert.deepEqual(writes,[],'opening responsive drawers never saves or publishes page content');
+  assert.deepEqual(errors,[]);
+});
+
 test('desktop tabbed dock groups become one mobile sheet and restore the exact group on resize',async t=>{
   const {page,writes,errors}=await openEditor(t,{width:1280,height:900});
   for(const [side,active] of [['left','right'],['right','left']]){
