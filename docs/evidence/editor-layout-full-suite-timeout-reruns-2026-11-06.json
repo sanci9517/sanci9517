@@ -60,6 +60,18 @@
       }
     ],
     "test_network_boundary": "The localhost fixture required the configured browser network permission; tests used only the local Playwright/Chromium fixture and no external paid service.",
+    "post_run_environment_snapshot": {
+      "process_count": 4858,
+      "cgroup_pids_current": 4946,
+      "cgroup_pids_max": "max",
+      "chromium_processes": 4575,
+      "chromium_zombies": 4572,
+      "zombie_parent_pid": 1,
+      "load_average_1m": 0.10,
+      "memory_available_gib": 8.7,
+      "finding": "The environment contains a large orphaned Chromium zombie population after browser testing. Its origin and contribution to the two timeouts are not proven; do not attribute it to this run alone or claim it caused the failures. The failure reason remains unresolved.",
+      "process_cleanup": "NO_PROCESSES_KILLED_SHARED_ENVIRONMENT_NOT_ATTRIBUTED"
+    },
     "workspace_appearance_file": {
       "status": "PASS",
       "tests_passed": 58,
