@@ -1,16 +1,17 @@
 {
   "schema_version": 1,
-  "recorded_at_utc": "2026-11-06T20:18:25Z",
+  "recorded_at_utc": "2026-11-06T20:25:48Z",
   "plan_point": "77.44.6.1.C",
-  "status": "IMPLEMENTED_TESTED_RELEASE_PENDING",
+  "status": "RUNTIME_RELEASED_EDITOR_CORE_CI_IN_PROGRESS",
   "scope": "Reset an already-default editor workspace without writing unchanged preferences, creating undo history, or invoking layout and dock reset callbacks.",
   "source_control": {
     "repository": "sanci9517/sanci9517",
     "branch": "v2/foundation",
     "starting_commit": "2153772e08278e9682cde62cc6e01877897517ef",
     "github_branch_at_start": "2153772e08278e9682cde62cc6e01877897517ef",
-    "runtime_commit": null,
-    "runtime_commit_status": "NOT_YET_COMMITTED",
+    "runtime_commit": "af5def0663e584d422323401fac0e2f4dda81f9c",
+    "github_branch_after_runtime_push": "af5def0663e584d422323401fac0e2f4dda81f9c",
+    "runtime_commit_status": "PUSHED_WITH_NORMAL_FAST_FORWARD",
     "runtime_files_changed": [
       "public/editor-v2/ui/workspace-appearance.js",
       "public/editor-v2/ui/shell.js"
@@ -121,9 +122,44 @@
     "pre_release_deployment": "409442fd-bef0-4f3a-b646-328594c7d84f",
     "pre_release_worker_version": "eb3252b2-1169-4deb-b1df-48b7b5827764",
     "pre_release_traffic_percent": 100,
-    "post_release_deployment": "PENDING",
-    "health_smoke": "PENDING",
-    "changed_public_asset_hashes": "PENDING",
+    "post_release_deployment": "3f9ed703-8620-4ffb-9141-8cb8a0980ee6",
+    "post_release_worker_version": "d6d48b86-2e9b-4ce2-821d-aca2ee30b367",
+    "post_release_traffic_percent": 100,
+    "deployment_path": "GitHub fast-forward started the repository's automatic Cloudflare Worker build; deployment and asset hashes were verified, so deploy:safe was not run redundantly.",
+    "health_smoke": {
+      "url": "GET /api/health?codex_release=af5def0663e584d422323401fac0e2f4dda81f9c",
+      "http_status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "changed_public_asset_hashes": {
+      "GET /editor-v2/ui/shell.js?codex_release=af5def0663e584d422323401fac0e2f4dda81f9c": {
+        "http_status": 200,
+        "local_sha256": "6c6a982c6ae27b3023dd16251906a4c7782da834644f332a52d1716a4b931486",
+        "production_sha256": "6c6a982c6ae27b3023dd16251906a4c7782da834644f332a52d1716a4b931486",
+        "match": true
+      },
+      "GET /editor-v2/ui/workspace-appearance.js?codex_release=af5def0663e584d422323401fac0e2f4dda81f9c": {
+        "http_status": 200,
+        "local_sha256": "4e76c536fd409ea016c64dbcf9c514e30082d7ccc9a0452e8af63e4741396386",
+        "production_sha256": "4e76c536fd409ea016c64dbcf9c514e30082d7ccc9a0452e8af63e4741396386",
+        "match": true
+      }
+    },
+    "github_checks": {
+      "exact_sha": "af5def0663e584d422323401fac0e2f4dda81f9c",
+      "workflow_runs": 5,
+      "success": 4,
+      "in_progress": 1,
+      "editor_core_test_run_id": 42287580280,
+      "editor_core_test_status": "IN_PROGRESS; full GitHub CI PASS not claimed",
+      "editor_core_job_completed_steps": 8,
+      "editor_core_job_current_step": "Install Chromium for layout regression"
+    },
     "production_d1_write_or_migration": false,
     "r2_operation": false
   },
@@ -135,6 +171,7 @@
   "limitations": [
     "Full 77.44.6.1.C workspace acceptance remains OPEN / NOT CERTIFIED.",
     "Complete Visual Editor manual and physical acceptance remains DEFERRED until its planned completion gate.",
-    "Production rollout and direct health/public-asset checks have not yet been performed in this work block."
+    "The exact-SHA Editor Core hosted workflow remains in progress; no aggregate all-checks PASS is claimed.",
+    "GitHub account Actions storage and remaining free compute quota could not be read through the available connector; the user's 90% dashboard snapshot is not independently refreshed."
   ]
 }
