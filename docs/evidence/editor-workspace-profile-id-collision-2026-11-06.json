@@ -78,7 +78,30 @@
           "failure": "locator click timed out after 5000 ms after resolving a visible button; other cases in the file passed"
         }
       ],
-      "scope_note": "The failures are individual local-browser navigation/interaction timeouts. No timeout was edited or suppressed. The C-specific workspace file still passes 59/59."
+      "scope_note": "The failures are individual local-browser navigation/interaction timeouts. No timeout was edited or suppressed. The C-specific workspace file still passes 59/59.",
+      "previous_attempt_failures_rechecked": {
+        "files": [
+          "tests/browser/editor-richtext-save-publish.test.js",
+          "tests/browser/editor-root-style.test.js",
+          "tests/browser/editor-decorative-elements.test.js",
+          "tests/browser/editor-code-snippet.test.js",
+          "tests/browser/admin-media-integrity.test.js"
+        ],
+        "result": "All five cases passed in the complete sequential rerun; Rich Text was previously separately 1/1 PASS. The initial local failures were not reproduced."
+      },
+      "latest_complete_rerun": {
+        "command": "CHROMIUM_PATH=/usr/bin/chromium npm run test:editor:layout",
+        "result": "PASS",
+        "files_run": 53,
+        "files_passed": 53,
+        "files_failed": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "network": "Run with explicit sandbox network/loopback permission because each browser fixture binds 127.0.0.1; network policy snapshot was unrestricted/enforced.",
+        "timeouts_changed": false,
+        "runtime_source_changed": false,
+        "aggregate_note": "The earlier local full-suite attempt had five navigation/interaction timeouts; no such failure appeared in this full rerun. This does not certify the complete Visual Editor plan item."
+      }
     },
     "save_publish_retry": {
       "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-name-pattern='actual Inspector keeps unsaved Rich Text through Ctrl\\+S, reload and separate Publish' tests/browser/editor-richtext-save-publish.test.js",
@@ -109,6 +132,15 @@
       "cancelled": 0,
       "skipped": 0,
       "assertion": "With an occupied fixed-clock profile ID sequence 1 and 2 and local sequence Number.MAX_SAFE_INTEGER, wraparound returns the first free sequence 3."
+    },
+    "workspace_browser_current_source": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium npm run test:editor:layout",
+      "file": "tests/browser/editor-workspace-appearance.test.js",
+      "result": "PASS",
+      "passed": 59,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0
     }
   },
   "production_preflight": {
