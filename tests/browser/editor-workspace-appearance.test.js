@@ -2354,6 +2354,25 @@ test('wide mobile drawer scrim stays behind its panel and closes it from the rem
   assert.deepEqual(errors,[]);
 });
 
+test('mobile drawer close controls keep a 44px touch target on compact phones',async t=>{
+  for(const width of [320,390]){
+    const {page,writes,errors}=await openEditor(t,{width,height:844,isMobile:true,hasTouch:true});
+    for(const side of ['left','right']){
+      await page.locator(side==='left'?'#editorMenu':'#openInspector').tap();
+      const panel=page.locator(`#${side}Dock`);
+      await page.waitForFunction(id=>!document.querySelector(`#${id}`)?.classList.contains('closed'),`${side}Dock`);
+      const close=panel.locator('[data-collapse]:visible').first();
+      const bounds=await close.boundingBox();
+      assert.ok(bounds&&bounds.width>=44&&bounds.height>=44,`${width}px ${side} drawer close control must remain at least 44×44px: ${JSON.stringify(bounds)}`);
+      assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`${width}px ${side} drawer keeps the viewport free of horizontal overflow`);
+      await close.tap();
+      await page.waitForFunction(id=>document.querySelector(`#${id}`)?.classList.contains('closed'),`${side}Dock`);
+    }
+    assert.deepEqual(writes,[],`${width}px drawer controls never Save or Publish the page`);
+    assert.deepEqual(errors,[],`${width}px drawer controls produce no browser errors`);
+  }
+});
+
 test('desktop tabbed dock groups become one mobile sheet and restore the exact group on resize',async t=>{
   const {page,writes,errors}=await openEditor(t,{width:1280,height:900});
   for(const [side,active] of [['left','right'],['right','left']]){
