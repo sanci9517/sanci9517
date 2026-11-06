@@ -1,6 +1,6 @@
 {
   "source_hashes": {
-    ".github/workflows/editor-core-test.yml": "7dcc4a0a4027ef5dbd16f16f116c8852d79e660751f5f2c4f8d5328b15d78ce9",
+    ".github/workflows/editor-core-test.yml": "aa466d3f949f07f4d637b5e5069a66c051298b18f3d740945f526f5f1dfc1387",
     ".github/workflows/f0-baseline.yml": "f2a1d78d5fd46ad208c8579bbd5e2d6de766321a93ddac888fc97e8714e502a5",
     "public/admin-home.html": "19937bb160950acaac6a1dc9784e0a6086ed537e9223d43318ffa21f4f84a955",
     "public/assets/admin-design.js": "1ff8c7a8cfee87cd673b736771e3f55999af9a78248afb2ca9ac7a3a26017103",
@@ -32,8 +32,8 @@
     "public/editor-v2/ui/element-content-controls.js": "a38a19e9f2e2d166534412ec2967d9771bf923dbd89ff6b7cfcf13f091af981d",
     "public/editor-v2/ui/property-controls.js": "464b94685092b373a37f25690e19c33894cf2094f20cf1564ea66ad731987208",
     "public/editor-v2/ui/responsive-group-reset.js": "fc3ed5460c17ef9c32e9067484b3e55edb00367c55d84b7570955d9f5f649c20",
-    "public/editor-v2/ui/shell.js": "de4f65a60c6060b0dde5535bc5b26e01b1b28933b58a92d49762507d9cf58c3a",
-    "public/editor-v2/ui/workspace-appearance.js": "c911e3b3af8c2b4cc38985b2113808f2f8e57a214dbd248de9ec74c0a428106f",
+    "public/editor-v2/ui/shell.js": "6c6a982c6ae27b3023dd16251906a4c7782da834644f332a52d1716a4b931486",
+    "public/editor-v2/ui/workspace-appearance.js": "4e76c536fd409ea016c64dbcf9c514e30082d7ccc9a0452e8af63e4741396386",
     "public/editor-v2/workspace-appearance.css": "6b0e9e55a4e0a799a5f2f5add1013ddb49ed67f01e0e3754d2938d6895a96606",
     "scripts/d1/ledger-reconciliation.py": "44d19ed415b40473c73c248d49980e16eaaa0e96a8a4412b7016213e0ee7ffcb",
     "scripts/web013-migration-safety-gate.mjs": "47c11202dfe94f389e458fbef133cc221dcfb88436649fca83d3849f38ccda68",

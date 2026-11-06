@@ -280,9 +280,12 @@ export function mountWorkspaceAppearance({documentRef=globalThis.document,root=d
   const open=()=>{if(!dialog)return;dialog.showModal();openButton?.setAttribute('aria-expanded','true');fields.layout?.focus({preventScroll:true})};
   const close=()=>{if(dialog?.open)dialog.close()};
   const reset=()=>{
+    const defaults={preferences:normalizeWorkspacePreferences(WORKSPACE_PREFERENCE_DEFAULTS),dock:normalizeDockState({})};
+    if(JSON.stringify(snapshot())===JSON.stringify(defaults))return false;
     remember();value={...WORKSPACE_PREFERENCE_DEFAULTS,profiles:[]};paint();const saved=persist();
     onReset();onLayoutChange(value.layout);
     announcePersistence(saved,'A munkaterület visszaállt az alapbeállításokra ezen az eszközön. Az oldal tartalma változatlan.','A munkaterület ebben a munkamenetben visszaállt az alapbeállításokra; a böngésző tárhelye nem használható, így újranyitáskor a korábbi mentés betöltődhet. Az oldal tartalma változatlan.');
+    return true;
   };
   const saveProfile=()=>{
     const name=fields.profileName?.value?.trim().slice(0,PROFILE_NAME_LIMIT)||'';

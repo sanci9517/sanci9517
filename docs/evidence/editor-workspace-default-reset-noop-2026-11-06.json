@@ -1,0 +1,140 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-06T20:18:25Z",
+  "plan_point": "77.44.6.1.C",
+  "status": "IMPLEMENTED_TESTED_RELEASE_PENDING",
+  "scope": "Reset an already-default editor workspace without writing unchanged preferences, creating undo history, or invoking layout and dock reset callbacks.",
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "starting_commit": "2153772e08278e9682cde62cc6e01877897517ef",
+    "github_branch_at_start": "2153772e08278e9682cde62cc6e01877897517ef",
+    "runtime_commit": null,
+    "runtime_commit_status": "NOT_YET_COMMITTED",
+    "runtime_files_changed": [
+      "public/editor-v2/ui/workspace-appearance.js",
+      "public/editor-v2/ui/shell.js"
+    ],
+    "test_files_changed": [
+      "tests/editor-workspace-appearance.test.js"
+    ],
+    "workflow_files_changed": [
+      ".github/workflows/editor-core-test.yml"
+    ],
+    "documentation_files_changed": [
+      "docs/evidence/feature-traceability.json",
+      "docs/evidence/editor-workspace-default-reset-noop-2026-11-06.json",
+      "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md"
+    ],
+    "preexisting_untracked_paths_preserved": [
+      "node_modules/",
+      "scripts/__pycache__/"
+    ]
+  },
+  "finding": {
+    "observed_bug": "Resetting a workspace whose preferences and dock were already at defaults still recorded undo history, rewrote the unchanged workspace preference record, reset the dock, and reapplied the layout.",
+    "red_reproduction": "Before the fix the focused test failed: workspace.reset() returned undefined rather than false for the already-default snapshot.",
+    "fix": "Compare the normalized preference-and-dock snapshot to normalized defaults before remembering history or persisting. Return false without callbacks on equality; return true after a real reset.",
+    "page_model_save_publish_unchanged": true,
+    "page_model_save_publish_requests_observed": 0
+  },
+  "verification": {
+    "focused_node_test": {
+      "command": "node --test --test-reporter=spec --test-name-pattern='resetting an already-default workspace' tests/editor-workspace-appearance.test.js",
+      "result": "PASS",
+      "passed": 1,
+      "failed": 0
+    },
+    "workspace_chromium_suite": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-workspace-appearance.test.js",
+      "result": "PASS",
+      "passed": 61,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "duration_ms": 299295,
+      "orphaned_test_descendants_reaped": 4
+    },
+    "editor_node_suite": {
+      "command": "npm run test:editor",
+      "result": "PASS",
+      "node_test_files_passed": 14,
+      "linux_subreaper_tests_passed": 3
+    },
+    "typecheck": {
+      "command": "npm run typecheck",
+      "result": "PASS"
+    },
+    "migration_safety_gate": {
+      "command": "npm run test:web013:migration-gate",
+      "result": "PASS"
+    },
+    "traceability": {
+      "command": "python3 scripts/build-feature-traceability.py --check",
+      "result": "PASS",
+      "source_mappings": 396
+    },
+    "canonical_plan": {
+      "command": "python3 scripts/check-canonical-plan.py",
+      "result": "PASS",
+      "master_files": 13
+    },
+    "plan_contract": {
+      "command": "python3 scripts/plan_contract.py",
+      "result": "PASS",
+      "checks_passed": 13
+    },
+    "active_plan_point": {
+      "command": "python3 scripts/audit-active-plan-point.py",
+      "result": "PASS",
+      "point": "77.44.6.1.C",
+      "acceptance_status": "OPEN / NOT CERTIFIED"
+    },
+    "syntax": "PASS: node --check for changed workspace, shell and test JavaScript",
+    "diff_check": "PASS: git diff --check",
+    "wrangler_dry_run": {
+      "command": "XDG_CONFIG_HOME=/tmp/sanci-wrangler-home WRANGLER_SEND_METRICS=false npx wrangler deploy --dry-run",
+      "result": "PASS; dry-run only, no deployment",
+      "wrangler_version": "4.130.0",
+      "assets": 168,
+      "bundle_kib": 335.81,
+      "gzip_kib": 87.6
+    },
+    "remote_d1_read_only_preflight": {
+      "api": "Cloudflare D1 Query API",
+      "sql": "SELECT name FROM d1_migrations ORDER BY name;",
+      "rows_read": 34,
+      "latest_migration": "0028_media_archive.sql",
+      "rows_written": 0,
+      "changes": 0,
+      "changed_db": false
+    }
+  },
+  "actions_storage": {
+    "change": "Set editor-layout-screenshots artifact retention to 7 days for future runs.",
+    "existing_artifacts_deleted": false,
+    "new_workflow_runs_dispatched": false,
+    "billing_and_remaining_free_quota": "UNVERIFIED; do not claim account-wide quota or paid-use status from this local run."
+  },
+  "production": {
+    "runtime_changed": true,
+    "pre_release_deployment": "409442fd-bef0-4f3a-b646-328594c7d84f",
+    "pre_release_worker_version": "eb3252b2-1169-4deb-b1df-48b7b5827764",
+    "pre_release_traffic_percent": 100,
+    "post_release_deployment": "PENDING",
+    "health_smoke": "PENDING",
+    "changed_public_asset_hashes": "PENDING",
+    "production_d1_write_or_migration": false,
+    "r2_operation": false
+  },
+  "cost": {
+    "new_paid_service_or_dependency": false,
+    "newly_authorized_spend_huf": 0,
+    "github_actions_billing_verified": false
+  },
+  "limitations": [
+    "Full 77.44.6.1.C workspace acceptance remains OPEN / NOT CERTIFIED.",
+    "Complete Visual Editor manual and physical acceptance remains DEFERRED until its planned completion gate.",
+    "Production rollout and direct health/public-asset checks have not yet been performed in this work block."
+  ]
+}

@@ -15,6 +15,24 @@ test('workspace preferences are versioned, separate from page content and tolera
   assert.deepEqual([...current.values.keys()],[LEGACY_WORKSPACE_PREFERENCES_KEY],'legacy presentation data remains intact while the next edit can migrate it');
 });
 
+test('resetting an already-default workspace is a no-op and does not persist history',()=>{
+  const saved=storage();
+  let writes=0,resets=0,layoutChanges=0;
+  const setItem=saved.setItem;
+  saved.setItem=(key,value)=>{writes++;setItem(key,value)};
+  const root={dataset:{},style:{setProperty(){}},matches:()=>true};
+  const view={localStorage:saved,addEventListener(){},removeEventListener(){}};
+  const documentRef={defaultView:view,querySelector:()=>null};
+  const workspace=mountWorkspaceAppearance({documentRef,root,onReset:()=>resets++,onLayoutChange:()=>layoutChanges++});
+
+  assert.equal(workspace.reset(),false,'an already-default preference and dock snapshot has nothing to undo');
+  assert.deepEqual(workspace.value,WORKSPACE_PREFERENCE_DEFAULTS);
+  assert.equal(writes,0,'a no-op reset does not write an unchanged preference record');
+  assert.equal(resets,0,'a no-op reset does not reset the shell dock');
+  assert.equal(layoutChanges,0,'a no-op reset does not reapply the same editor layout');
+  workspace.destroy();
+});
+
 test('a malformed current workspace record falls back to valid legacy preferences without overriding valid v2 data',()=>{
   const legacy={version:1,layout:'inspector',theme:'aurora',density:'compact',accent:'#00a7c8'};
   const fallback=storage({[WORKSPACE_PREFERENCES_KEY]:'{broken',[LEGACY_WORKSPACE_PREFERENCES_KEY]:JSON.stringify(legacy)});
