@@ -1,0 +1,114 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-06T05:44:06Z",
+  "plan_point": "77.44.6.1.C",
+  "status": "MOBILE_DRAWER_TOUCH_AND_ESCAPE_FOCUS_RESTORATION_TESTED",
+  "scope": "Extend the mobile drawer close regression so that both pointer/touch and Escape closure return keyboard focus to the corresponding drawer opener.",
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "starting_commit": "e1ef14d68767b7cf83d16d733f09076128a16a58",
+    "github_branch_at_start": "e1ef14d68767b7cf83d16d733f09076128a16a58",
+    "test_files_changed": ["tests/browser/editor-workspace-appearance.test.js"],
+    "documentation_files_changed": [
+      "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+      "docs/evidence/editor-mobile-drawer-focus-return-2026-11-06.json"
+    ],
+    "runtime_files_changed": [],
+    "runtime_source_unchanged": true,
+    "worker_redeploy_required": false,
+    "existing_untracked_node_modules_preserved": true
+  },
+  "finding": {
+    "initial_question": "Do mobile drawer close actions preserve keyboard/screen-reader workflow by restoring focus to the control that opened that drawer?",
+    "result": "EXISTING_BEHAVIOR_CONFIRMED_AND_REGRESSION_TEST_ADDED",
+    "observed_behavior": "On 320px and 390px real Chromium mobile contexts, touch on the visible drawer close control returns focus to #editorMenu or #openInspector as appropriate. Reopening that same drawer and pressing Escape also closes it and restores focus to its opener. No runtime defect was reproduced.",
+    "save_publish_contract_unchanged": true
+  },
+  "validation": {
+    "target_regression": {
+      "status": "PASS",
+      "command": "node --test --test-name-pattern='mobile drawer close controls keep a 44px touch target on compact phones' tests/browser/editor-workspace-appearance.test.js",
+      "tests_passed": 1,
+      "tests_failed": 0,
+      "tests_cancelled": 0,
+      "tests_skipped": 0,
+      "viewports_css_px": [320, 390],
+      "panel_sides": ["left", "right"],
+      "focus_assertions": [
+        "touch close returns focus to the matching opener",
+        "Escape close returns focus to the matching opener"
+      ],
+      "other_assertions": [
+        "visible close button width and height are each at least 44 CSS px",
+        "one drawer closes without horizontal overflow",
+        "no Page Model Save or Publish request",
+        "no browser errors"
+      ]
+    },
+    "full_workspace_browser_file": {
+      "status": "PASS",
+      "command": "python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-workspace-appearance.test.js",
+      "tests": 58,
+      "passed": 58,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "duration_ms": 298631.653223,
+      "orphaned_browser_descendants_reaped": 249
+    },
+    "editor_unit": {
+      "status": "PASS",
+      "command": "npm run test:editor",
+      "node_test_files_passed": 14,
+      "subreaper_cases_passed": 3
+    },
+    "other_checks": {
+      "typecheck": {"status": "PASS", "command": "npm run typecheck"},
+      "migration_safety_gate": {"status": "PASS", "command": "npm run test:web013:migration-gate"},
+      "canonical_plan": {"status": "PASS", "command": "python3 scripts/check-canonical-plan.py", "master_files": 13},
+      "plan_contract": {"status": "PASS", "command": "python3 tests/plan-contract.test.py", "tests_passed": 13},
+      "active_plan_cursor": {"status": "PASS", "command": "python3 scripts/audit-active-plan-point.py", "active_point": "77.44.6.1.C", "acceptance": "NOT_CERTIFIED"},
+      "traceability": {"status": "PASS", "command": "python3 scripts/build-feature-traceability.py --check", "source_mappings": 396},
+      "javascript_syntax": {"status": "PASS", "command": "node --check tests/browser/editor-workspace-appearance.test.js"},
+      "diff_check": {"status": "PASS", "command": "git diff --check"}
+    }
+  },
+  "release": {
+    "runtime_source_commit": "00bdd1694faa20e12c9a6bc89839c63daedbf68a",
+    "latest_deployment_rechecked": "04033d9f-8084-4147-8c67-0e5d44b22d55",
+    "latest_worker_version_rechecked": "fc7b179e-6b92-4ef8-b36b-9503ad2c5395",
+    "latest_worker_traffic": "100%",
+    "health_smoke": {
+      "status": "PASS",
+      "http_status": 200,
+      "path": "/api/health",
+      "body": {"ok": true, "service": "sanci9517-streamer-brand", "version": "2.0.0"}
+    },
+    "editor_asset_hash_smoke": {
+      "status": "PASS",
+      "index_path": "/editor-v2/",
+      "index_status": 200,
+      "index_local_sha256": "72a4c7e543d3195f242065cbb990c72294b40ed878c31881b2af91f95cb04113",
+      "index_live_sha256": "72a4c7e543d3195f242065cbb990c72294b40ed878c31881b2af91f95cb04113",
+      "stylesheet_path": "/editor-v2/editor-refresh.css",
+      "stylesheet_status": 200,
+      "stylesheet_local_sha256": "97319a2383912c8431c6207a5574830ba675bce57c9875cc2763c26925c1e502",
+      "stylesheet_live_sha256": "97319a2383912c8431c6207a5574830ba675bce57c9875cc2763c26925c1e502"
+    },
+    "github_statuses_at_start": [],
+    "github_ci_pass": false,
+    "github_push": "PENDING_LOCAL_VALIDATION_AND_COMMIT",
+    "worker_redeploy": "NOT_REQUIRED_TEST_DOCS_ONLY",
+    "d1_query": "NOT_RUN_RUNTIME_SOURCE_UNCHANGED",
+    "production_d1_write_or_migration": false,
+    "r2_operation": false,
+    "new_dependency": false,
+    "cost_huf": 0
+  },
+  "acceptance": {
+    "plan_point_status": "OPEN_NOT_CERTIFIED",
+    "manual_visual_editor_acceptance": "DEFERRED_UNTIL_COMPLETE_EDITOR",
+    "physical_device_acceptance": "DEFERRED_UNTIL_COMPLETE_EDITOR"
+  }
+}

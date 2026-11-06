@@ -2358,7 +2358,8 @@ test('mobile drawer close controls keep a 44px touch target on compact phones',a
   for(const width of [320,390]){
     const {page,writes,errors}=await openEditor(t,{width,height:844,isMobile:true,hasTouch:true});
     for(const side of ['left','right']){
-      await page.locator(side==='left'?'#editorMenu':'#openInspector').tap();
+      const opener=page.locator(side==='left'?'#editorMenu':'#openInspector');
+      await opener.tap();
       const panel=page.locator(`#${side}Dock`);
       await page.waitForFunction(id=>!document.querySelector(`#${id}`)?.classList.contains('closed'),`${side}Dock`);
       const close=panel.locator('[data-collapse]:visible').first();
@@ -2367,6 +2368,12 @@ test('mobile drawer close controls keep a 44px touch target on compact phones',a
       assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`${width}px ${side} drawer keeps the viewport free of horizontal overflow`);
       await close.tap();
       await page.waitForFunction(id=>document.querySelector(`#${id}`)?.classList.contains('closed'),`${side}Dock`);
+      assert.equal(await opener.evaluate(element=>document.activeElement===element),true,`${width}px ${side} touch close returns keyboard focus to its opener`);
+      await opener.tap();
+      await page.waitForFunction(id=>!document.querySelector(`#${id}`)?.classList.contains('closed'),`${side}Dock`);
+      await page.keyboard.press('Escape');
+      await page.waitForFunction(id=>document.querySelector(`#${id}`)?.classList.contains('closed'),`${side}Dock`);
+      assert.equal(await opener.evaluate(element=>document.activeElement===element),true,`${width}px ${side} Escape close returns keyboard focus to its opener`);
     }
     assert.deepEqual(writes,[],`${width}px drawer controls never Save or Publish the page`);
     assert.deepEqual(errors,[],`${width}px drawer controls produce no browser errors`);
