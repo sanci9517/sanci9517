@@ -89,6 +89,7 @@ test('profile ID generation skips stored IDs when a new editor tab repeats its c
   assert.deepEqual(generated,{id:`profile-${now.toString(36)}-3`,sequence:3},'a reloaded Editor cannot generate an ID already held by a stored profile');
   assert.deepEqual(nextWorkspaceProfileId([{id:first}],0,now),{id:second,sequence:2},'the first available local ID remains deterministic after a clock repeat');
   assert.deepEqual(nextWorkspaceProfileId(Array.from({length:8},(_,index)=>({id:`profile-${now.toString(36)}-${(index+1).toString(36)}`})),0,now),{id:`profile-${now.toString(36)}-9`,sequence:9},'the bounded profile list always leaves a free generated ID');
+  assert.deepEqual(nextWorkspaceProfileId([{id:first},{id:second}],Number.MAX_SAFE_INTEGER,now),{id:`profile-${now.toString(36)}-3`,sequence:3},'wrapping a saturated local counter still skips IDs already present in a restored profile list');
 });
 
 test('panel grouping accepts only safe layout modes and sides, including in portable workspace profiles',()=>{

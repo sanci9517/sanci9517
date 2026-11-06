@@ -27,7 +27,7 @@
       "public/editor-v2/ui/shell.js": "72623b11e34992c708524f6f25433ea2613a577661b45700419f9c8972ae2a8c",
       "public/editor-v2/ui/workspace-appearance.js": "39af4d06aae7b5d9abed72ad1a9cf4125a2b3856db62c4aa5663d728d725601e",
       "tests/browser/editor-workspace-appearance.test.js": "a0c29549f7018afba7e76d842d12756d34219d6bb412cafb871aa358cce8c0bb",
-      "tests/editor-workspace-appearance.test.js": "c4cceddacdc22b1581ca6737a5829c164774c835db9ecafb3e6ce69a23ec99a9"
+      "tests/editor-workspace-appearance.test.js": "50d3ace4b44839ab3ac7f7fc8baaab48bf326e99b68e160c1d02c44741c54def"
     },
     "cache_buster": "20261106-workspace-profile-id-collision"
   },
@@ -100,6 +100,15 @@
       "asset_count": 168,
       "size": "335.81 KiB / gzip 87.60 KiB",
       "deployment_performed": false
+    },
+    "profile_id_sequence_boundary": {
+      "command": "node --test tests/editor-workspace-appearance.test.js",
+      "result": "PASS",
+      "passed": 1,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "assertion": "With an occupied fixed-clock profile ID sequence 1 and 2 and local sequence Number.MAX_SAFE_INTEGER, wraparound returns the first free sequence 3."
     }
   },
   "production_preflight": {
