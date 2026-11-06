@@ -63,9 +63,15 @@
     }
   },
   "release": {
+    "change_commit": "ec4dc4a831fb7e6f52dc0dc0dadb177822d53db1",
+    "parent_commit": "54c1c029ffd58a0cc210d7d0952f56dd5f417cd1",
+    "github_push": "Normal fast-forward; verified by GitHub Branch API and git ls-remote exact HEAD",
+    "github_combined_statuses": [],
+    "github_ci_pass_claimed": false,
+    "skip_ci": true,
     "runtime_source_changed": false,
     "production_d1_preflight": "NOT_REQUIRED; test harness and documentation only",
-    "worker_deployment": "NOT_REQUIRED; no Worker runtime asset changed",
+    "worker_deployment": "NOT_REQUIRED; no Worker runtime asset changed; existing deployment 409442fd-bef0-4f3a-b646-328594c7d84f remained at 100% traffic",
     "production_d1_write_or_migration": false,
     "r2_operation": false,
     "new_dependency_or_paid_service": false,
