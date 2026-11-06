@@ -1,0 +1,147 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-06T02:15:56Z",
+  "plan_point": "77.44.6.1.C",
+  "status": "WIDE_EDITOR_BROWSER_SUITE_PASS_AND_PRODUCTION_RUNTIME_SMOKE_PASS_PLAN_POINT_OPEN",
+  "scope": "Run the complete serial Editor browser/layout suite, confirm prior load-sensitive timeouts, and verify the current production Worker health, traffic, and relevant public asset hashes without changing runtime code.",
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "local_head": "7901f0c78769045b33daae514696112086d2f198",
+    "github_branch_head": "7901f0c78769045b33daae514696112086d2f198",
+    "branch_head_verified_by": ["git ls-remote origin refs/heads/v2/foundation", "GitHub branch API"],
+    "runtime_source_commit": "023933283ec3d782824cdbad93726b7b0ae42d3c",
+    "runtime_source_unchanged_this_run": true,
+    "code_files_changed": [],
+    "test_files_changed": [],
+    "documentation_files_changed": [
+      "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+      "docs/evidence/editor-layout-full-suite-2026-11-06.json"
+    ],
+    "aggregate_github_statuses": [],
+    "aggregate_github_ci_pass": false
+  },
+  "validation": {
+    "full_editor_browser_suite": {
+      "status": "PASS",
+      "command": "CHROMIUM_PATH=/usr/bin/chromium npm run test:editor:layout",
+      "runner": "scripts/run-with-linux-subreaper.py, Node test concurrency 1",
+      "test_files_expected": 53,
+      "test_files_completed": 53,
+      "test_files_passed": 53,
+      "test_files_failed": 0,
+      "per_file_failures": 0,
+      "per_file_cancelled": 0,
+      "per_file_skipped": 0,
+      "notable_coverage": [
+        "55/55 workspace appearance, dock, profile, responsive, storage, and canvas non-overlap browser tests",
+        "Inspector typed controls, rich-text editing, IME composition, accessibility, layers, and responsive rendering",
+        "Inspector visual effects and background image properties for partial property types",
+        "distinct Save and Publish behavior and public-renderer parity",
+        "admin/Editor media paging, retention, integrity, and insertion"
+      ],
+      "load_sensitive_followup": {
+        "previous_wide_run_had_timeout_assertions": [
+          "tests/browser/editor-structured-content.test.js",
+          "tests/browser/admin-media-pagination.test.js",
+          "tests/browser/admin-media-retention.test.js"
+        ],
+        "current_wide_run_all_passed": true,
+        "isolated_reruns": [
+          {"file": "tests/browser/editor-structured-content.test.js", "status": "PASS", "tests": 1},
+          {"file": "tests/browser/admin-media-pagination.test.js", "status": "PASS", "tests": 1},
+          {"file": "tests/browser/admin-media-retention.test.js", "status": "PASS", "tests": 15}
+        ],
+        "conclusion": "Earlier timeout assertions were not reproduced in isolated reruns or the complete repeat suite; no runtime defect was verified."
+      }
+    },
+    "editor_unit": {
+      "status": "PASS",
+      "command": "npm run test:editor",
+      "node_test_files_passed": 14,
+      "subreaper_cases_passed": 3
+    },
+    "typecheck": {"status": "PASS", "command": "npm run typecheck"},
+    "migration_safety_gate": {"status": "PASS", "command": "npm run test:web013:migration-gate"},
+    "canonical_plan_and_contract": {
+      "status": "PASS",
+      "commands": ["python3 scripts/check-canonical-plan.py", "python3 tests/plan-contract.test.py"],
+      "master_files": 13,
+      "contract_tests": 13,
+      "functional_acceptance": "NOT_CERTIFIED"
+    },
+    "active_plan_cursor_and_traceability": {
+      "status": "PASS",
+      "active_point": "77.44.6.1.C",
+      "commands": ["python3 scripts/audit-active-plan-point.py", "python3 scripts/build-feature-traceability.py --check"],
+      "source_mappings": 396,
+      "acceptance": "NOT_CERTIFIED"
+    },
+    "production_edge_smoke": {
+      "status": "PASS",
+      "health": {
+        "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+        "method": "GET",
+        "http_status": 200,
+        "body": {"ok": true, "service": "sanci9517-streamer-brand", "version": "2.0.0", "server": "cloudflare-worker"},
+        "checked_at": "2026-11-06T01:25:14Z"
+      },
+      "public_assets": [
+        {
+          "url": "/editor-v2/?verify=20261106",
+          "http_status": 200,
+          "redirect_followed": true,
+          "source_path": "public/editor-v2/index.html",
+          "live_sha256": "96588973123005483ae7fb469e4db30f25fc5876bfd9b1417672658955cac473",
+          "runtime_source_sha256": "96588973123005483ae7fb469e4db30f25fc5876bfd9b1417672658955cac473"
+        },
+        {
+          "url": "/editor-v2/ui/shell.js?verify=20261106",
+          "http_status": 200,
+          "source_path": "public/editor-v2/ui/shell.js",
+          "live_sha256": "af24de945257507b8ed7f9be25ac5c19ad07c2b14a8c7d0bf27600a19d73f2db",
+          "runtime_source_sha256": "af24de945257507b8ed7f9be25ac5c19ad07c2b14a8c7d0bf27600a19d73f2db"
+        },
+        {
+          "url": "/editor-v2/ui/workspace-appearance.js?verify=20261106",
+          "http_status": 200,
+          "source_path": "public/editor-v2/ui/workspace-appearance.js",
+          "live_sha256": "09857ed02e2241a4f37e082448c1224db387383940263f34855daaae72df44d3",
+          "runtime_source_sha256": "09857ed02e2241a4f37e082448c1224db387383940263f34855daaae72df44d3"
+        }
+      ],
+      "hashes_match_deployed_runtime_source": true
+    },
+    "production_d1_preflight": "NOT_RUN_RUNTIME_UNCHANGED",
+    "wrangler_dry_run": "NOT_RUN_RUNTIME_UNCHANGED"
+  },
+  "cloudflare_control_plane": {
+    "build": {
+      "id": "c6c227c1-9edf-4a30-9de3-024d70b40c40",
+      "commit": "023933283ec3d782824cdbad93726b7b0ae42d3c",
+      "outcome": "success",
+      "status": "stopped",
+      "build_command": "npm run typecheck",
+      "deploy_command": "npm run deploy:safe"
+    },
+    "deployment": {
+      "id": "abe77595-1647-4fad-a649-608a83726f53",
+      "worker_version": "c126332d-2c14-4c9e-b229-900cb16735fc",
+      "version_number": 3833,
+      "traffic_percent": 100,
+      "created_on": "2026-11-05T22:19:44.283872Z"
+    },
+    "build_trigger_excludes_docs_tests_and_agents": true,
+    "worker_redeployment_this_run": false
+  },
+  "safety_and_acceptance": {
+    "production_d1_write_or_migration": false,
+    "r2_operation_or_deletion": false,
+    "save_and_publish_remain_separate": true,
+    "cost_huf": 0,
+    "new_dependency": false,
+    "full_plan_point": "OPEN / NOT CERTIFIED",
+    "full_visual_editor_manual_and_physical_acceptance": "DEFERRED until the complete Editor acceptance gate",
+    "remaining_scope": "Finish remaining dynamic dock-zone and workspace lifecycle requirements before the one consolidated manual/physical acceptance gate."
+  }
+}
