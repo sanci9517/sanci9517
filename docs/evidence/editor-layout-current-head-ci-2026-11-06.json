@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-06T08:56:02Z",
+  "plan_point": "77.44.6.1.C",
+  "status": "EXACT_HEAD_GITHUB_CI_PASS_C_OPEN_LIVE_HTTP_UNVERIFIED",
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "head_sha": "b276de9b123eed11a49f47034069e44390672c25",
+    "github_branch_ref_verified": true,
+    "worktree_runtime_source_changed": false,
+    "preexisting_untracked_preserved": ["node_modules/", "scripts/__pycache__/"]
+  },
+  "github_actions": {
+    "workflow": "Editor Core Test",
+    "run_id": 42184867139,
+    "job_id": 127782700917,
+    "url": "https://github.com/sanci9517/sanci9517/actions/runs/42184867139",
+    "head_sha_verified": "b276de9b123eed11a49f47034069e44390672c25",
+    "status": "completed",
+    "conclusion": "success",
+    "runner_image": "ubuntu-26.04",
+    "node": "v24.22.2",
+    "checks_on_exact_sha": [
+      {"name": "verify", "check_run_id": 127782702919, "conclusion": "success"},
+      {"name": "source-audit", "check_run_id": 127782701925, "conclusion": "success"},
+      {"name": "canonical-plan", "check_run_id": 127782701308, "conclusion": "success"},
+      {"name": "twitch-integration", "check_run_id": 127782701173, "conclusion": "success"},
+      {"name": "editor-core", "check_run_id": 127782700917, "conclusion": "success"}
+    ],
+    "editor_core_log_totals": {
+      "test_summary_groups": 61,
+      "test_cases": 427,
+      "passed": 427,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    "layout_regression": {
+      "command": "npm run test:editor:layout",
+      "browser_files_total": 53,
+      "browser_files_seen": 53,
+      "test_cases": 159,
+      "passed": 159,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    "screenshot_artifact": {
+      "name": "editor-layout-screenshots",
+      "artifact_id": 13488802572,
+      "files": 27,
+      "size_bytes": 2915996,
+      "sha256": "e86061bd7fc5557a0cc9c95a51f8f0cbfc3312267dc7b389849632f123a1a971",
+      "expires_at": "2027-02-04T08:02:38Z"
+    }
+  },
+  "production_read_only_status": {
+    "deployment_api": "verified via Cloudflare GET /accounts/{account_id}/workers/scripts/sanci9517-streamer-brand/deployments?per_page=1",
+    "deployment_id": "04033d9f-8084-4147-8c67-0e5d44b22d55",
+    "worker_version_id": "fc7b179e-6b92-4ef8-b36b-9503ad2c5395",
+    "traffic_percentage": 100,
+    "runtime_changed_by_this_commit": false,
+    "public_health_and_asset_hashes": "UNVERIFIED_THIS_RUN",
+    "verification_blocker": "Direct curl failed before connection: proxy port 8080 unavailable; web fetch also reported the public Worker URL inaccessible. No HTTP health or byte-hash claim is made for this run."
+  },
+  "operations": {
+    "d1_preflight": "NOT_REQUIRED_DOCS_EVIDENCE_ONLY",
+    "production_d1_query": false,
+    "production_d1_write_or_migration": false,
+    "r2_operation": false,
+    "new_dependency": false,
+    "new_paid_service_or_quota_enabled": false,
+    "github_actions_run_was_automatically_triggered_by_preexisting_push": true,
+    "github_actions_billing_cost": "UNVERIFIED; canonical plan reports the free compute quota exhausted, so no extra CI run is being requested",
+    "cost_huf": "NO_NEW_PAID_SERVICE_AUTHORIZED; BILLING_NOT_VERIFIED"
+  },
+  "acceptance": {
+    "plan_point_status": "OPEN_NOT_CERTIFIED",
+    "automated_hosted_layout_suite": "PASS",
+    "manual_visual_editor_acceptance": "DEFERRED_UNTIL_COMPLETE_EDITOR",
+    "physical_device_acceptance": "DEFERRED_UNTIL_COMPLETE_EDITOR"
+  }
+}
