@@ -1,0 +1,163 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-06T14:14:03Z",
+  "plan_point": "77.44.6.1.C",
+  "status": "PROFILE_DELETE_UNDO_REDO_REGRESSION_COVERED_NO_RUNTIME_DEFECT_CONFIRMED",
+  "scope": "Close a workspace lifecycle coverage gap: deleting a selected local workspace profile must be reversible and must never call Page Model Save or Publish.",
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "starting_commit": "a3157b92ccd1dc166394f8cb233dd94ecce5c008",
+    "github_branch_at_start": "a3157b92ccd1dc166394f8cb233dd94ecce5c008",
+    "runtime_files_changed": [],
+    "test_files_changed": [
+      "tests/browser/editor-workspace-appearance.test.js"
+    ],
+    "documentation_files_changed": [
+      "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+      "docs/evidence/editor-workspace-profile-deletion-2026-11-06.json"
+    ],
+    "runtime_source_unchanged": true,
+    "worker_redeploy_required": false,
+    "existing_untracked_node_modules_preserved": true,
+    "existing_untracked_scripts_pycache_preserved": true
+  },
+  "finding": {
+    "initial_hypothesis": "Profile deletion and its local Undo/Redo lifecycle were not directly covered in Chromium, despite neighboring profile create/load/import tests.",
+    "result": "COVERAGE_GAP_CONFIRMED_RUNTIME_DEFECT_NOT_REPRODUCED",
+    "observed_behavior": "A selected profile can be deleted, its selector clears, Undo restores the exact profile ID, and Redo removes that same ID again. No Page Model Save or Publish request occurs.",
+    "runtime_change": false,
+    "save_publish_contract_unchanged": true
+  },
+  "validation": {
+    "target_regression": {
+      "status": "PASS",
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-name-pattern='deleting a workspace profile' tests/browser/editor-workspace-appearance.test.js",
+      "tests_passed": 1,
+      "tests_failed": 0,
+      "tests_cancelled": 0,
+      "tests_skipped": 0,
+      "assertions": [
+        "selected-profile deletion persists only the remaining profile ID",
+        "deletion clears the selector when the selected profile no longer exists",
+        "Undo restores the deleted profile with the same ID",
+        "Redo removes that same profile ID again",
+        "no Page Model Save or Publish request",
+        "no browser errors"
+      ]
+    },
+    "workspace_appearance_file": {
+      "status": "PARTIAL_CUMULATIVE_RUN_WITH_ISOLATED_TIMEOUTS",
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-workspace-appearance.test.js",
+      "tests": 60,
+      "passed": 58,
+      "failed": 2,
+      "cancelled": 0,
+      "skipped": 0,
+      "duration_ms": 384015.936922,
+      "timeouts_unchanged": true,
+      "failed_tests": [
+        {
+          "name": "single open docks keep the canvas clear at every desktop dock order",
+          "failure": "Playwright openPreferences page.waitForFunction timed out after 8000ms during the cumulative serial file run",
+          "isolated_status": "PASS",
+          "isolated_command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-name-pattern='single open docks keep|ungrouping either tabbed dock' tests/browser/editor-workspace-appearance.test.js",
+          "isolated_duration_ms": 31150.418302,
+          "isolated_coverage": "36 combinations; 1025, 1280, and 1920 CSS px; minimum canvas 509px; no horizontal overflow"
+        },
+        {
+          "name": "ungrouping either tabbed dock follows both canvas edges for all saved dock orders and group sides",
+          "failure": "Playwright click on #undoWorkspaceLayout timed out after 8000ms while waiting for the control to be visible, enabled, and stable during the cumulative serial file run",
+          "isolated_status": "PASS",
+          "isolated_command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-name-pattern='single open docks keep|ungrouping either tabbed dock' tests/browser/editor-workspace-appearance.test.js",
+          "isolated_duration_ms": 116831.600434,
+          "isolated_coverage": "All saved dock orders, both group sides, both dragged docks, and undoable canvas-safe ungrouping"
+        }
+      ],
+      "new_profile_delete_test_in_cumulative_run": "PASS",
+      "aggregate_file_pass_claimed": false
+    },
+    "editor_unit": {
+      "status": "PASS",
+      "command": "npm run test:editor",
+      "node_test_files_passed": 14,
+      "subreaper_cases_passed": 3
+    },
+    "additional_checks": {
+      "typecheck": {
+        "status": "PASS",
+        "command": "npm run typecheck"
+      },
+      "migration_safety_gate": {
+        "status": "PASS",
+        "command": "npm run test:web013:migration-gate"
+      },
+      "canonical_plan": {
+        "status": "PASS",
+        "command": "python3 scripts/check-canonical-plan.py",
+        "master_files": 13
+      },
+      "plan_contract": {
+        "status": "PASS",
+        "command": "python3 tests/plan-contract.test.py",
+        "tests_passed": 13
+      },
+      "active_plan_cursor": {
+        "status": "PASS",
+        "command": "python3 scripts/audit-active-plan-point.py",
+        "current_item": "77.44.6.1.C",
+        "acceptance": "NOT_CERTIFIED"
+      },
+      "traceability": {
+        "status": "PASS",
+        "command": "python3 scripts/build-feature-traceability.py --check",
+        "source_mappings": 396
+      },
+      "test_javascript_syntax": {
+        "status": "PASS",
+        "command": "node --check tests/browser/editor-workspace-appearance.test.js"
+      },
+      "runtime_javascript_syntax": {
+        "status": "PASS",
+        "command": "node --check public/editor-v2/ui/workspace-appearance.js"
+      },
+      "diff_whitespace": {
+        "status": "PASS",
+        "command": "git diff --check"
+      }
+    },
+    "browser_harness": "The browser fixture binds loopback 127.0.0.1 and requires explicit session network permission; without it Node reports EPERM before tests load. Test operation timeouts were left unchanged. Both aggregate-run timeouts passed when rerun together in isolation with the same timeout values."
+  },
+  "release": {
+    "worker_version_before_test_only_change": "7ef63f87-c1b6-4846-802b-3c3c122b59b9",
+    "deployment_before_test_only_change": "9007449d-8a4b-4458-a911-15aa1d54d648",
+    "worker_version_traffic": "100%",
+    "health_smoke_before_test_only_change": {
+      "status": "PASS",
+      "method": "GET",
+      "path": "/api/health",
+      "http_status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "github_ci_pass": false,
+    "github_checks": "No aggregate GitHub CI PASS claimed. Test and documentation changes do not require a Worker deployment.",
+    "cloudflare_redeployment": "NOT_TRIGGERED_TEST_DOCS_ONLY",
+    "d1_query": "NOT_RUN_RUNTIME_SOURCE_UNCHANGED",
+    "wrangler_dry_run": "NOT_RUN_RUNTIME_SOURCE_UNCHANGED",
+    "production_d1_mutation_or_migration": false,
+    "r2_operation": false,
+    "new_dependency": false,
+    "cost_huf": 0,
+    "actions_billing": "UNVERIFIED"
+  },
+  "acceptance": {
+    "plan_point_status": "OPEN_NOT_CERTIFIED",
+    "manual_editor_acceptance": "DEFERRED_UNTIL_COMPLETE_EDITOR",
+    "physical_device_acceptance": "DEFERRED_UNTIL_COMPLETE_EDITOR"
+  }
+}

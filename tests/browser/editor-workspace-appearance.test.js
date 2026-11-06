@@ -657,6 +657,29 @@ test('mobile profile application keeps the single-drawer model and workspace res
   assert.deepEqual(errors,[]);
 });
 
+test('deleting a workspace profile is undoable, redoable, and independent from the page model',async t=>{
+  const {page,writes,errors}=await openEditor(t,{width:1280,height:900});
+  await openPreferences(page);
+  await page.locator('#workspaceProfileName').fill('Első nézet');
+  await page.locator('#saveWorkspaceProfile').click();
+  const firstId=await page.locator('#workspaceProfile').inputValue();
+  await page.locator('#workspaceProfileName').fill('Második nézet');
+  await page.locator('#saveWorkspaceProfile').click();
+  const secondId=await page.locator('#workspaceProfile').inputValue();
+
+  await page.locator('#workspaceProfile').selectOption(firstId);
+  await page.locator('#deleteWorkspaceProfile').click();
+  assert.deepEqual(await page.evaluate(key=>JSON.parse(localStorage.getItem(key)).profiles.map(profile=>profile.id),WORKSPACE_PREFERENCES_KEY),[secondId]);
+  assert.equal(await page.locator('#deleteWorkspaceProfile').isDisabled(),true,'deletion clears a now-missing profile selection');
+
+  await page.locator('#undoWorkspaceLayout').click();
+  assert.deepEqual(await page.evaluate(key=>JSON.parse(localStorage.getItem(key)).profiles.map(profile=>profile.id),WORKSPACE_PREFERENCES_KEY),[firstId,secondId],'Undo restores the deleted profile without changing either profile ID');
+  await page.locator('#redoWorkspaceLayout').click();
+  assert.deepEqual(await page.evaluate(key=>JSON.parse(localStorage.getItem(key)).profiles.map(profile=>profile.id),WORKSPACE_PREFERENCES_KEY),[secondId],'Redo removes the same local profile again');
+  assert.deepEqual(writes,[],'profile deletion and workspace history never invoke Page Model Save or Publish');
+  assert.deepEqual(errors,[]);
+});
+
 test('desktop panel and canvas drag reordering is an accessible-selector peer and never dispatches page writes',async t=>{
   const {page,writes,errors}=await openEditor(t,{width:1440,height:900});
   await openPreferences(page);
