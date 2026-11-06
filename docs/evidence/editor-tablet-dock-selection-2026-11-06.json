@@ -1,0 +1,184 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-06T04:14:57Z",
+  "plan_point": "77.44.6.1.C",
+  "status": "RUNTIME_DEFECT_REPRODUCED_FIXED_TESTED_RELEASE_PENDING",
+  "scope": "Persist an explicit Pages/left-dock choice made from the single tablet sheet so the desktop return does not restore stale pre-breakpoint docks.",
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "starting_commit": "995cc646238366dd76465b4207af1971046d160a",
+    "starting_github_branch_head": "995cc646238366dd76465b4207af1971046d160a",
+    "working_tree_preserved": true,
+    "runtime_files_changed": [
+      "public/editor-v2/index.html",
+      "public/editor-v2/ui/shell.js"
+    ],
+    "test_files_changed": [
+      "tests/browser/editor-workspace-appearance.test.js"
+    ],
+    "documentation_files_changed": [
+      "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+      "docs/evidence/feature-traceability.json",
+      "docs/evidence/editor-tablet-dock-selection-2026-11-06.json"
+    ],
+    "runtime_commit": "PENDING",
+    "github_fast_forward": "PENDING"
+  },
+  "defect": {
+    "reproduced_before_fix": true,
+    "steps": [
+      "Open both desktop docks at 1025 CSS px.",
+      "Resize to 1024 CSS px so the tablet layout exposes one dock drawer at a time.",
+      "Open the Pages drawer from the editor menu, which closes the Inspector drawer.",
+      "Resize back to 1025 CSS px."
+    ],
+    "observed_before_fix": {
+      "stored_shell_state_after_pages_choice": {
+        "leftOpen": false,
+        "rightOpen": true
+      },
+      "desktop_return": "both stale docks reopened"
+    },
+    "root_cause": "showLeftTab opened the panel with save:false even for a deliberate tablet-sheet choice, leaving the previous desktop dock snapshot intact.",
+    "fix": "showLeftTab now persists an explicitly opened left dock only while the mobile/tablet media query matches; desktop rail tab changes retain the previous non-dock-persist behavior.",
+    "save_publish_page_model_unchanged": true
+  },
+  "validation": {
+    "target_regression": {
+      "status": "PASS",
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-name-pattern='1024px tablet drawer transitions' tests/browser/editor-workspace-appearance.test.js",
+      "tests_passed": 1,
+      "tests_failed": 0
+    },
+    "workspace_appearance_file": {
+      "status": "PASS",
+      "command": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-workspace-appearance.test.js",
+      "tests_passed": 56,
+      "tests_failed": 0,
+      "tests_cancelled": 0,
+      "tests_skipped": 0
+    },
+    "full_editor_layout_suite": {
+      "status": "TIMEOUTS_RECOVERED_IN_ISOLATION_NOT_SINGLE_RUN_PASS",
+      "command": "CHROMIUM_PATH=/usr/bin/chromium timeout 3600s npm run test:editor:layout",
+      "files_expected": 53,
+      "files_completed": 53,
+      "files_passed_first_run": 49,
+      "files_with_timeout_failures_first_run": 4,
+      "first_run_timeout_files": [
+        "tests/browser/editor-inspector-background-image-partial-types.test.js",
+        "tests/browser/editor-legacy-media-parity.test.js",
+        "tests/browser/editor-media-source-switch.test.js",
+        "tests/browser/editor-design-tokens.test.js"
+      ],
+      "isolated_retries": {
+        "status": "PASS",
+        "files_passed": 4,
+        "files_failed": 0,
+        "tests_passed": 6,
+        "tests_failed": 0,
+        "commands": [
+          "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-inspector-background-image-partial-types.test.js",
+          "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-legacy-media-parity.test.js tests/browser/editor-media-source-switch.test.js tests/browser/editor-design-tokens.test.js"
+        ]
+      },
+      "conclusion": "All four first-run timeouts passed when rerun serially in isolation; this does not upgrade the original 53-file run to a single-run pass. No additional runtime defect was verified."
+    },
+    "editor_unit": {
+      "status": "PASS",
+      "command": "npm run test:editor",
+      "node_test_files_passed": 14,
+      "subreaper_cases_passed": 3
+    },
+    "typecheck": {
+      "status": "PASS",
+      "command": "npm run typecheck"
+    },
+    "migration_safety_gate": {
+      "status": "PASS",
+      "command": "npm run test:web013:migration-gate"
+    },
+    "canonical_plan_and_contract": {
+      "status": "PASS",
+      "commands": [
+        "python3 scripts/check-canonical-plan.py",
+        "python3 tests/plan-contract.test.py"
+      ],
+      "master_files": 13,
+      "contract_tests": 13
+    },
+    "active_plan_and_traceability": {
+      "status": "PASS",
+      "commands": [
+        "python3 scripts/audit-active-plan-point.py",
+        "python3 scripts/build-feature-traceability.py --check"
+      ],
+      "active_plan_point": "77.44.6.1.C",
+      "functional_acceptance": "NOT_CERTIFIED",
+      "traceability_mappings": 396
+    },
+    "syntax_and_diff": {
+      "status": "PASS",
+      "commands": [
+        "node --check public/editor-v2/ui/shell.js",
+        "git diff --check"
+      ]
+    },
+    "wrangler_dry_run": {
+      "status": "PASS",
+      "version": "4.130.0",
+      "command": "XDG_CONFIG_HOME=/tmp/sanci-wrangler-config npx wrangler deploy --dry-run",
+      "assets": 168,
+      "bundle_kib": 335.81,
+      "gzip_kib": 87.60,
+      "deployed": false
+    }
+  },
+  "production_preflight": {
+    "worker": "sanci9517-streamer-brand",
+    "account_id": "64bbd6a12ac732ed2cac4ca25d8bfa7e",
+    "current_deployment_before_release": "abe77595-1647-4fad-a649-608a83726f53",
+    "current_version_before_release": "c126332d-2c14-4c9e-b229-900cb16735fc",
+    "current_traffic_percent_before_release": 100,
+    "health_before_release": {
+      "http_status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "d1_query": "SELECT name FROM d1_migrations ORDER BY name;",
+    "d1_query_result": {
+      "rows": 34,
+      "latest_migration": "0028_media_archive.sql",
+      "rows_written": 0,
+      "changes": 0,
+      "changed_db": false
+    },
+    "d1_mutation_or_migration": false,
+    "r2_operation_or_deletion": false
+  },
+  "post_release": {
+    "cloudflare_build": "PENDING",
+    "deployment": "PENDING",
+    "traffic_version": "PENDING",
+    "traffic_percent": "PENDING",
+    "health_smoke": "PENDING",
+    "live_index_sha256": "PENDING",
+    "source_index_sha256": "72a4c7e543d3195f242065cbb990c72294b40ed878c31881b2af91f95cb04113",
+    "live_shell_sha256": "PENDING",
+    "source_shell_sha256": "7995b344b0fe668dbd11cb25d3206c7e61bc5db1279fcc280709c9591f2012df"
+  },
+  "safety_and_acceptance": {
+    "production_d1_data_write_or_migration": false,
+    "r2_operation_or_deletion": false,
+    "save_and_publish_separate": true,
+    "new_dependency": false,
+    "cost_huf": 0,
+    "full_plan_point": "OPEN / NOT CERTIFIED",
+    "full_editor_manual_and_physical_acceptance": "DEFERRED until the complete Editor acceptance gate"
+  }
+}

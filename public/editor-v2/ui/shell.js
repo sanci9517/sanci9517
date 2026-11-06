@@ -2,7 +2,7 @@ import {createEventBus} from './events.js';
 import {panelRegistry,featureRegistry} from './registry.js';
 import {EDITOR_ACTIONS} from './action-catalog.js?v=20261103-canvas-focus-mode';
 import {enhanceEditorActionControls} from './action-help.js?v=20261103-canvas-focus-mode';
-import {DEFAULT_LEFT_TAB_ORDER,applyWorkspacePreferences,mountWorkspaceAppearance,normalizeLeftTabOrder,readWorkspacePreferences} from './workspace-appearance.js?v=20261105-workspace-schema-recovery';
+import {DEFAULT_LEFT_TAB_ORDER,applyWorkspacePreferences,mountWorkspaceAppearance,normalizeLeftTabOrder,readWorkspacePreferences} from './workspace-appearance.js?v=20261106-mobile-left-dock-selection';
 
 const bus=createEventBus();
 const workspace=document.querySelector('.workspace');
@@ -198,7 +198,11 @@ function showLeftTab(tab,{save=true,open=true,customize=false}={}){
   const opensLeft=open&&panels.left?.classList.contains('closed');
   const changesTab=persisted.leftTab!==tab;
   if(customize&&(opensLeft||changesTab))workspaceAppearance?.remember();
-  if(open)setPanel('left',true,{save:false,customize:false});
+  // A deliberate panel choice on the mobile/tablet sheet must replace the
+  // temporary desktop snapshot and persist which dock should restore when the
+  // viewport returns to desktop. Desktop rail-tab changes still only persist
+  // the selected tab, preserving their existing dock-open behavior.
+  if(open)setPanel('left',true,{save:save&&mobileQuery.matches,customize:false});
   document.querySelectorAll('.rail-btn').forEach(b=>{const selected=b.dataset.tab===tab;b.classList.toggle('active',selected);b.setAttribute('aria-selected',String(selected));b.tabIndex=selected?0:-1});
   document.querySelectorAll('[data-content]').forEach(x=>x.classList.toggle('hidden',x.dataset.content!==tab));
   syncMobileBackdrop();

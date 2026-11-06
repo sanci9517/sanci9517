@@ -2259,6 +2259,70 @@ test('responsive dock resize keeps the focused panel and honors an explicit mobi
   assert.deepEqual(errors,[]);
 });
 
+test('1024px tablet drawer transitions to a non-overlapping 1025px desktop dock and restores the selected panel',async t=>{
+  const {page,writes,errors}=await openEditor(t,{width:1025,height:900});
+  await page.locator('#editorMenu').click();
+  await page.locator('#openInspector').click();
+  await page.waitForFunction(()=>!matchMedia('(max-width: 1024px)').matches&&
+    document.querySelector('#leftDock')?.classList.contains('left-dock')&&
+    !document.querySelector('#leftDock')?.classList.contains('closed')&&
+    !document.querySelector('#rightDock')?.classList.contains('closed'));
+  const desktop=await page.evaluate(()=>{
+    const canvas=document.querySelector('.canvas-area').getBoundingClientRect();
+    const left=document.querySelector('#leftDock').getBoundingClientRect();
+    const right=document.querySelector('#rightDock').getBoundingClientRect();
+    return {width:innerWidth,canvas:{left:canvas.left,right:canvas.right,width:canvas.width},left:{left:left.left,right:left.right},right:{left:right.left,right:right.right},scrollWidth:document.documentElement.scrollWidth};
+  });
+  assert.ok(desktop.canvas.width>=400,`1025px desktop keeps a usable canvas: ${JSON.stringify(desktop)}`);
+  assert.ok(desktop.left.right<=desktop.canvas.left+0.5||desktop.canvas.right<=desktop.left.left+0.5,`the Pages dock gets its own desktop track: ${JSON.stringify(desktop)}`);
+  assert.ok(desktop.right.right<=desktop.canvas.left+0.5||desktop.canvas.right<=desktop.right.left+0.5,`the Inspector gets its own desktop track: ${JSON.stringify(desktop)}`);
+  assert.equal(desktop.scrollWidth,1025,'the desktop side of the breakpoint has no horizontal overflow');
+
+  await resizeAndWaitForWorkspaceBreakpoint(page,1024,900);
+  await page.waitForFunction(()=>matchMedia('(max-width: 1024px)').matches&&
+    Number(!document.querySelector('#leftDock')?.classList.contains('closed'))+
+    Number(!document.querySelector('#rightDock')?.classList.contains('closed'))===1);
+  const tablet=await page.evaluate(()=>{
+    const canvas=document.querySelector('.canvas-area').getBoundingClientRect();
+    const left=document.querySelector('#leftDock');
+    const right=document.querySelector('#rightDock');
+    const open=[left,right].filter(panel=>!panel.classList.contains('closed'));
+    const panel=open[0].getBoundingClientRect();
+    return {width:innerWidth,active:open[0].id,leftHidden:left.getAttribute('aria-hidden'),rightHidden:right.getAttribute('aria-hidden'),canvasInert:document.querySelector('.canvas-area').inert,canvasWidth:canvas.width,panel:{left:panel.left,right:panel.right,width:panel.width},scrollWidth:document.documentElement.scrollWidth};
+  });
+  assert.equal(tablet.width,1024);
+  assert.equal(tablet.active,'rightDock','the existing Inspector remains the active sheet at the mobile/tablet breakpoint');
+  assert.equal(tablet.leftHidden,'true');
+  assert.equal(tablet.rightHidden,'false');
+  assert.equal(tablet.canvasInert,true,'the single tablet sheet is modal over the canvas');
+  assert.ok(tablet.canvasWidth>=400,`the canvas remains present behind the tablet sheet: ${JSON.stringify(tablet)}`);
+  assert.ok(tablet.panel.left>=0&&tablet.panel.right<=tablet.width,`the tablet sheet stays within the viewport: ${JSON.stringify(tablet)}`);
+  assert.ok(tablet.scrollWidth<=tablet.width,'the tablet sheet does not create horizontal overflow');
+
+  await page.locator('#editorMenu').click();
+  await page.waitForFunction(()=>!document.querySelector('#leftDock')?.classList.contains('closed')&&
+    document.querySelector('#rightDock')?.classList.contains('closed'));
+  assert.deepEqual(await page.evaluate(()=>{
+    const shell=JSON.parse(localStorage.getItem('sanci-editor-shell-v2'));
+    return {leftOpen:shell.leftOpen,rightOpen:shell.rightOpen,panelActive:shell.panelActive};
+  }),{leftOpen:true,rightOpen:false,panelActive:'left'},'choosing the Pages dock from a tablet sheet replaces the stale pre-breakpoint desktop selection');
+  await resizeAndWaitForWorkspaceBreakpoint(page,1025,900);
+  await page.waitForFunction(()=>!matchMedia('(max-width: 1024px)').matches&&
+    !document.querySelector('#leftDock')?.classList.contains('closed')&&
+    document.querySelector('#rightDock')?.classList.contains('closed'));
+  const restored=await page.evaluate(()=>{
+    const canvas=document.querySelector('.canvas-area').getBoundingClientRect();
+    const panel=document.querySelector('#leftDock').getBoundingClientRect();
+    return {desktop:!matchMedia('(max-width: 1024px)').matches,leftOpen:!document.querySelector('#leftDock').classList.contains('closed'),rightOpen:!document.querySelector('#rightDock').classList.contains('closed'),canvas:{left:canvas.left,right:canvas.right,width:canvas.width},panel:{left:panel.left,right:panel.right},scrollWidth:document.documentElement.scrollWidth};
+  });
+  assert.deepEqual({desktop:restored.desktop,leftOpen:restored.leftOpen,rightOpen:restored.rightOpen},{desktop:true,leftOpen:true,rightOpen:false},`returning to desktop restores the explicitly selected panel: ${JSON.stringify(restored)}`);
+  assert.ok(restored.canvas.width>=400,`returning to desktop reserves canvas and dock tracks: ${JSON.stringify(restored)}`);
+  assert.ok(restored.panel.right<=restored.canvas.left+0.5||restored.canvas.right<=restored.panel.left+0.5,`the selected Pages panel does not cover the desktop canvas: ${JSON.stringify(restored)}`);
+  assert.equal(restored.scrollWidth,1025);
+  assert.deepEqual(writes,[],'switching the viewport and dock sheet never saves or publishes page content');
+  assert.deepEqual(errors,[]);
+});
+
 test('desktop tabbed dock groups become one mobile sheet and restore the exact group on resize',async t=>{
   const {page,writes,errors}=await openEditor(t,{width:1280,height:900});
   for(const [side,active] of [['left','right'],['right','left']]){
