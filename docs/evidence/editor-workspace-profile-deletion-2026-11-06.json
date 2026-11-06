@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "recorded_at_utc": "2026-11-06T14:16:00Z",
+  "recorded_at_utc": "2026-11-06T14:36:47Z",
   "plan_point": "77.44.6.1.C",
   "status": "PROFILE_DELETE_UNDO_REDO_REGRESSION_COVERED_NO_RUNTIME_DEFECT_CONFIRMED",
   "scope": "Close a workspace lifecycle coverage gap: deleting a selected local workspace profile must be reversible and must never call Page Model Save or Publish.",
@@ -128,7 +128,36 @@
         "command": "git diff --check"
       }
     },
-    "browser_harness": "The browser fixture binds loopback 127.0.0.1 and requires explicit session network permission; without it Node reports EPERM before tests load. Test operation timeouts were left unchanged. Both aggregate-run timeouts passed when rerun together in isolation with the same timeout values."
+    "browser_harness": "The browser fixture binds loopback 127.0.0.1 and requires explicit session network permission; without it Node reports EPERM before tests load. Test operation timeouts were left unchanged. Both aggregate-run timeouts passed when rerun together in isolation with the same timeout values.",
+    "workspace_appearance_file_subreaper_rerun": {
+      "status": "PARTIAL_CUMULATIVE_RUN_WITH_ONE_ISOLATED_TIMEOUT",
+      "command": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-workspace-appearance.test.js",
+      "tests": 60,
+      "passed": 59,
+      "failed": 1,
+      "cancelled": 0,
+      "skipped": 0,
+      "duration_ms": 523554.257136,
+      "timeouts_unchanged": true,
+      "failed_test": {
+        "name": "the overflow menu stays in the responsive shell flow instead of covering Inspector tabs or mobile actions",
+        "failure": "page.goto waitUntil=load exceeded the existing 20000ms navigation timeout in the cumulative file run",
+        "isolated_status": "PASS",
+        "isolated_command": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 --test-name-pattern='overflow menu stays in the responsive shell flow' tests/browser/editor-workspace-appearance.test.js",
+        "isolated_duration_ms": 20629.612
+      },
+      "orphan_browser_descendants_reaped": 253,
+      "all_60_cases_have_a_pass_in_aggregate_or_isolated_runs": true,
+      "aggregate_file_pass_claimed": false
+    },
+    "environment_observation": {
+      "sampled_at_utc": "2026-11-06T14:28:00Z",
+      "zombie_chromium_processes_reparented_to_pid_1": 2503,
+      "zombie_chrome_crashpad_processes_reparented_to_pid_1": 2432,
+      "cgroup_pids_current": 5339,
+      "cgroup_pids_max": "max",
+      "interpretation": "High orphan/zombie Chromium counts correlate with the slow cumulative navigation and interaction timeouts; this does not prove a specific test root cause or a product defect. Linux subreaper reaped 253 descendants during the 60-test run and 8 in the isolated rerun."
+    }
   },
   "release": {
     "worker_version_before_test_only_change": "7ef63f87-c1b6-4846-802b-3c3c122b59b9",
@@ -171,7 +200,20 @@
       }
     },
     "github_commit_statuses": [],
-    "github_actions_billing": "UNVERIFIED_NO_RUN_REQUESTED"
+    "github_actions_billing": "UNVERIFIED_NO_RUN_REQUESTED",
+    "post_subreaper_rerun_verification": {
+      "checked_at_utc": "2026-11-06T14:36:47Z",
+      "latest_deployment": "9007449d-8a4b-4458-a911-15aa1d54d648",
+      "worker_version": "7ef63f87-c1b6-4846-802b-3c3c122b59b9",
+      "traffic": "100%",
+      "health_http_status": 200,
+      "health_body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    }
   },
   "acceptance": {
     "plan_point_status": "OPEN_NOT_CERTIFIED",
