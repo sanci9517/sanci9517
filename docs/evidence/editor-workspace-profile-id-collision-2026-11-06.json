@@ -1,0 +1,106 @@
+{
+  "schema_version": 1,
+  "date": "2026-11-06",
+  "plan_item": "77.44.6.1.C",
+  "status": "OPEN / NOT CERTIFIED",
+  "scope": "Workspace profile lifecycle: locally generated IDs remain unique across editor reloads when Date.now() repeats.",
+  "finding": {
+    "before": "Profile save/import used profile-${Date.now().toString(36)}-${pageLocalSequence}. The sequence restarts on each Editor mount and the candidate was not checked against already stored profiles. A same-millisecond retry after reload could duplicate an existing ID; normalization keeps the first duplicate and silently drops the later profile on restore.",
+    "fix": "Both save and import use nextWorkspaceProfileId(), which advances the local sequence until the candidate is absent from the current allowlisted profile set. The versioned profile schema and localStorage contract are unchanged.",
+    "page_model_save_publish": "No Page Model, Save, or Publish contract changed. The Chromium test asserts that profile save/import makes zero page-write requests."
+  },
+  "source": {
+    "branch": "v2/foundation",
+    "local_base_commit": "c38c9b85",
+    "remote_base_commit": "b276de9b123eed11a49f47034069e44390672c25",
+    "runtime_files": [
+      "public/editor-v2/index.html",
+      "public/editor-v2/ui/shell.js",
+      "public/editor-v2/ui/workspace-appearance.js"
+    ],
+    "test_files": [
+      "tests/browser/editor-workspace-appearance.test.js",
+      "tests/editor-workspace-appearance.test.js"
+    ],
+    "source_sha256": {
+      "public/editor-v2/index.html": "e0a58ba052539232166221cadde6db6c877f8aa6eecff3b0bf845de13d589cc8",
+      "public/editor-v2/ui/shell.js": "72623b11e34992c708524f6f25433ea2613a577661b45700419f9c8972ae2a8c",
+      "public/editor-v2/ui/workspace-appearance.js": "39af4d06aae7b5d9abed72ad1a9cf4125a2b3856db62c4aa5663d728d725601e",
+      "tests/browser/editor-workspace-appearance.test.js": "a0c29549f7018afba7e76d842d12756d34219d6bb412cafb871aa358cce8c0bb",
+      "tests/editor-workspace-appearance.test.js": "c4cceddacdc22b1581ca6737a5829c164774c835db9ecafb3e6ce69a23ec99a9"
+    },
+    "cache_buster": "20261106-workspace-profile-id-collision"
+  },
+  "verification": {
+    "pre_fix_logic": "A saved ID ending in -1 plus a newly mounted Editor with sequence 0 and the same fixed clock produces the same -1 candidate under the previous formula; the regression fixture fixes the clock and stores that prior ID.",
+    "chromium_targeted_after_cache_buster": {
+      "command": "node --test --test-name-pattern='saved and imported workspace profiles keep unique local IDs after reload and clock collision' tests/browser/editor-workspace-appearance.test.js",
+      "result": "PASS",
+      "passed": 1,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    "chromium_workspace_suite": {
+      "command": "python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-workspace-appearance.test.js",
+      "result": "PASS",
+      "passed": 59,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "reaped_orphaned_test_descendants": 254
+    },
+    "editor_node_suite": "npm run test:editor — PASS, 14/14 files; Linux subreaper 3/3",
+    "typecheck": "npm run typecheck — PASS",
+    "migration_safety_gate": "npm run test:web013:migration-gate — PASS",
+    "canonical_plan": "python3 scripts/check-canonical-plan.py and python3 tests/plan-contract.test.py — PASS, 13/13 contract tests; Editor functional acceptance remains uncertified",
+    "source_traceability": "python3 scripts/build-feature-traceability.py --check — PASS, 396/396 source mappings; acceptance is not certified",
+    "syntax_and_diff": "node --check for the two changed modules and git diff --check — PASS",
+    "wrangler_dry_run": {
+      "command": "WRANGLER_SEND_METRICS=false WRANGLER_LOG_PATH=/tmp/sanci9517-wrangler-logs npm exec -- wrangler deploy --dry-run --outdir /tmp/sanci9517-c-dry-run",
+      "result": "PASS",
+      "wrangler_version": "4.130.0",
+      "asset_count": 168,
+      "size": "335.81 KiB / gzip 87.60 KiB",
+      "deployment_performed": false
+    }
+  },
+  "production_preflight": {
+    "d1_query": "SELECT name FROM d1_migrations ORDER BY name;",
+    "result_count": 34,
+    "latest_migration": "0028_media_archive.sql",
+    "rows_written": 0,
+    "changes": 0,
+    "changed_db": false,
+    "r2_mutation": false
+  },
+  "production_status": {
+    "worker_deployments_api_get": "success",
+    "deployment_id": "04033d9f-8084-4147-8c67-0e5d44b22d55",
+    "worker_version_id": "fc7b179e-6b92-4ef8-b36b-9503ad2c5395",
+    "traffic_percentage": 100,
+    "direct_public_health_and_asset_hashes": "UNVERIFIED: the configured outbound proxy refused its connection on port 8080; no live asset hash is claimed.",
+    "new_deployment_or_worker_change": false
+  },
+  "release": {
+    "status": "BLOCKED / NOT DEPLOYED",
+    "reasons": [
+      "The repository requires the GitHub branch fast-forward before a runtime release, but the configured proxy is unavailable (previous push failed before connection on proxy port 8080).",
+      "The canonical plan records exhausted GitHub Actions free compute quota; no paid workflow or rerun was requested.",
+      "A direct production health/hash smoke could not run through the unavailable proxy."
+    ],
+    "safe_local_commits_preserved": true,
+    "deploy_safe_run": false,
+    "deployment_ready_claimed": false
+  },
+  "cost": {
+    "direct_paid_service_cost_huf": 0,
+    "github_actions_billing": "UNVERIFIED; no new workflow run requested",
+    "new_dependency": false
+  },
+  "acceptance": {
+    "workspace_foundation_for_this_issue": "PASS",
+    "full_plan_item_77_44_6_1_C": "OPEN / NOT CERTIFIED",
+    "complete_visual_editor_manual_and_physical_acceptance": "DEFERRED until the whole Editor acceptance gate"
+  }
+}
