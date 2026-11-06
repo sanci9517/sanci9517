@@ -38,6 +38,13 @@ For the SANCI9517 Creator Platform, defer user-facing manual acceptance and phys
 - Reuse existing project dependencies and platform capabilities before adding a new dependency. Evaluate maintenance, security, license, accessibility, and compatibility before adopting third-party code.
 - Fix verified defects within the authorized scope, then run checks proportional to the change and record what was and was not verified.
 
+## GitHub Actions quota and artifact storage
+
+- Keep both GitHub Actions compute minutes and artifact storage within the owner's explicit 0-cost limit. Prefer validated local checks; do not dispatch, rerun, or broaden a workflow unless it is required for a release/acceptance gate and the available free quota is known. If quota or billing is uncertain, mark the remote gate BLOCKED/UNVERIFIED rather than enabling paid use.
+- For documentation/evidence-only and test-harness-only changes, use the repository's `[skip ci]` convention after the relevant local checks, and verify that no workflow was claimed as PASS. Do not skip required CI for runtime releases or weaken test coverage.
+- Do not commit generated build directories, APK/AAB/AAR binaries, screenshots, or other reproducible outputs. Upload only artifacts needed to diagnose a failed check or preserve a current acceptance result; give them the shortest retention that still serves that purpose (normally 7 days for screenshots and 30 days for small audit text).
+- Before deleting an existing Actions artifact, verify its age, size, workflow/run, and whether current canonical evidence or a release/acceptance still references it. Preserve the newest useful exact-SHA evidence; remove only superseded completed-run artifacts, never source, release packages, or active-run outputs. If the available authenticated tools cannot delete artifacts, record that blocker and do not substitute deletion of workflow runs or repository source.
+
 ## Uniform development status report
 
 At the end of every autonomous development block (including scheduled runs), report in Hungarian using the same concise, evidence-based fields:

@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-06T18:58:14Z",
+  "scope": "sanci9517/sanci9517, v2/foundation Actions artifact storage",
+  "user_reported_storage_snapshot": {
+    "used_gb": 0.45,
+    "limit_gb": 0.5,
+    "reported_percent": 90,
+    "source": "user message; not independently available from the connected read-only GitHub endpoints"
+  },
+  "inventory": {
+    "method": "GitHub Actions branch run list first page (up to 30); artifact metadata first page for the 24 recent relevant Editor Core / canonical-audit runs",
+    "runs_examined": 24,
+    "screenshot_artifact_count": 12,
+    "screenshot_artifact_total_bytes_in_examined_window": 34958539,
+    "total_mib_in_examined_window": 33.34,
+    "inventory_complete_for_repository_or_90_day_retention_window": false,
+    "newest_current_exact_sha_artifact": {
+      "workflow_run_id": 42184867139,
+      "artifact_id": 13488802572,
+      "name": "editor-layout-screenshots",
+      "head_sha": "b276de9b123eed11a49f47034069e44390672c25",
+      "files": 27,
+      "size_bytes": 2915996,
+      "sha256": "e86061bd7fc5557a0cc9c95a51f8f0cbfc3312267dc7b389849632f123a1a971",
+      "expires_at_utc": "2027-02-04T08:02:38Z",
+      "retained": true,
+      "reason": "current exact-SHA automated layout acceptance evidence"
+    },
+    "workflow_retention": {
+      "path": ".github/workflows/editor-core-test.yml",
+      "artifact": "editor-layout-screenshots",
+      "retention_days_explicitly_set": false,
+      "observed_expiry_days": 90,
+      "recommended_retention_days": 7,
+      "workflow_changed": false,
+      "reason_not_changed": "Cloudflare build watch-path exclusion for .github/** is unverified; avoid an unrelated workflow commit that can trigger a redundant Worker build"
+    },
+    "audit_text_artifact_retention_days": 30,
+    "apk_aab_aar_found_in_accessible_project_checkouts": false,
+    "preexisting_untracked_paths_preserved": [
+      "node_modules/",
+      "scripts/__pycache__/"
+    ]
+  },
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "head_sha_before_this_policy_commit": "ee0898d9b16490ee6569414d212f3e6b72b15bd3",
+    "remote_branch_api_confirmed_exact_head": true
+  },
+  "deletion": {
+    "deleted_artifact_ids": [],
+    "status": "BLOCKED_NO_ARTIFACT_DELETE_CAPABILITY",
+    "available_github_actions_artifact_tools": [
+      "list artifact metadata for a workflow run (GET)",
+      "download workflow artifact (GET)"
+    ],
+    "delete_endpoint_or_tool_available": false,
+    "local_gh_auth": "unavailable: GH_TOKEN rejected; without GH_TOKEN, gh is not logged in",
+    "unsafe_substitutes_not_used": [
+      "deleting workflow runs",
+      "deleting repository source",
+      "deleting the current exact-SHA evidence artifact"
+    ]
+  },
+  "actions_and_cost": {
+    "new_workflow_dispatch_or_rerun": false,
+    "new_paid_limit_or_service_enabled": false,
+    "runtime_source_changed": false,
+    "new_worker_deployment_requested": false,
+    "new_authorized_spend_huf": 0,
+    "github_actions_billing_amount": "UNVERIFIED"
+  },
+  "result": {
+    "policy_recorded_in": [
+      "AGENTS.md",
+      "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md"
+    ],
+    "artifact_cleanup": "BLOCKED",
+    "manual_acceptance": "UNCHANGED; deferred until complete Visual Editor",
+    "worker_deployment": "NOT_REQUIRED_DOCS_ONLY"
+  }
+}
