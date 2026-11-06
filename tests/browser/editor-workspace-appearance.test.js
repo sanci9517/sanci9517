@@ -2006,6 +2006,19 @@ test('open editor tabs synchronize saved appearance, dock state and profiles wit
   await page.waitForFunction(()=>document.querySelector('#workspaceProfile')?.options.length===2);
   assert.equal(await page.locator('#workspaceProfile option').last().textContent(),'Másik lap nézete','saved profiles become available in other open tabs');
   assert.equal(await page.locator('#workspaceProfile').inputValue(),'','receiving the profile does not apply it unexpectedly');
+  const remoteProfileId=await second.locator('#workspaceProfile').inputValue();
+  assert.ok(remoteProfileId,'the creating tab selects its newly saved profile');
+  await page.locator('#workspaceProfile').selectOption(remoteProfileId);
+  assert.equal(await page.locator('#deleteWorkspaceProfile').isEnabled(),true,'the receiving tab can select the profile shared from another Editor tab');
+  await second.locator('#workspaceProfile').selectOption(remoteProfileId);
+  await second.locator('#deleteWorkspaceProfile').click();
+  await page.waitForFunction(()=>document.querySelector('#workspaceProfile')?.options.length===1);
+  assert.equal(await page.locator('#workspaceProfile').inputValue(),'','deleting a selected profile in another tab clears the stale selection');
+  assert.equal(await page.locator('#deleteWorkspaceProfile').isEnabled(),false,'a deleted profile cannot remain actionable in the receiving tab');
+  assert.equal(await page.locator('#loadWorkspaceProfile').isEnabled(),false,'the receiving tab cannot load a profile deleted by its peer');
+  assert.equal(await page.locator('#exportWorkspaceProfile').isEnabled(),false,'the receiving tab cannot export a profile deleted by its peer');
+  assert.equal(await page.locator('#undoWorkspaceLayout').isDisabled(),true,'external profile deletion clears history that could resurrect the deleted profile');
+  assert.match(await page.locator('#workspaceAppearanceStatus').textContent(),/másik szerkesztőlapon/iu,'the receiving tab explains that its workspace was updated elsewhere');
   await page.bringToFront();
   const resetDrag=await page.evaluate(()=>{
     const handle=document.querySelector('#leftDock .dock-heading'),target=document.querySelector('.canvas-area'),rect=target.getBoundingClientRect(),dataTransfer=new DataTransfer();

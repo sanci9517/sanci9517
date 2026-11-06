@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-06T16:13:07Z",
+  "plan_point": "77.44.6.1.C",
+  "status": "CROSS_TAB_PROFILE_DELETION_LIFECYCLE_COVERED",
+  "scope": "Verify that deleting a saved workspace profile in one open Editor tab removes the stale selection and all profile actions from another tab without retaining history that could restore the deleted profile.",
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "starting_commit": "f9e23d03d0a51933a78e24873149204cdcaeeb58",
+    "github_branch_at_start": "f9e23d03d0a51933a78e24873149204cdcaeeb58",
+    "runtime_files_changed": [],
+    "test_files_changed": [
+      "tests/browser/editor-workspace-appearance.test.js"
+    ],
+    "documentation_files_changed": [
+      "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+      "docs/evidence/editor-workspace-cross-tab-profile-deletion-2026-11-06.json"
+    ],
+    "runtime_source_unchanged": true,
+    "worker_redeploy_required": false,
+    "existing_untracked_node_modules_preserved": true,
+    "existing_untracked_scripts_pycache_preserved": true
+  },
+  "finding": {
+    "audit_gap": "The workspace appearance suite covered profile creation becoming visible in another Editor tab, local profile deletion/undo/redo, and cross-tab workspace synchronization, but did not assert the deletion of a selected profile propagates to a peer tab.",
+    "change": "Extended the existing two-tab lifecycle test: select the profile in the receiving tab, delete it in the creating tab, and verify the peer drops the option, clears selection, disables load/export/delete, clears stale undo history, and announces the external change.",
+    "runtime_defect_found": false,
+    "save_publish_contract_changed": false
+  },
+  "validation": {
+    "initial_targeted_attempt": {
+      "status": "TEST_SETUP_FAILURE_CORRECTED",
+      "failure": "The new assertion attempted to reopen the appearance dialog although the existing cross-tab test intentionally kept it open; Playwright correctly reported that the modal intercepted the opener click.",
+      "product_defect": false
+    },
+    "targeted_cross_tab_lifecycle": {
+      "status": "PASS",
+      "command": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 --test-name-pattern='open editor tabs synchronize saved appearance' tests/browser/editor-workspace-appearance.test.js",
+      "tests": 1,
+      "passed": 1,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "orphan_browser_descendants_reaped": 4
+    },
+    "complete_workspace_appearance_file": {
+      "status": "PASS",
+      "command": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-workspace-appearance.test.js",
+      "tests": 60,
+      "passed": 60,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "duration_ms": 309068.100392,
+      "orphan_browser_descendants_reaped": 4
+    },
+    "additional_checks": {
+      "editor_unit_and_contract_tests": "PASS: npm run test:editor, 14/14 files and 3/3 Linux subreaper runner tests",
+      "typescript": "PASS: npm run typecheck",
+      "migration_safety_gate": "PASS: npm run test:web013:migration-gate",
+      "canonical_plan": "PASS: python3 scripts/check-canonical-plan.py; 13 master files",
+      "plan_contract": "PASS: python3 scripts/plan_contract.py; 13/13",
+      "active_plan_audit": "PASS; next point 77.44.6.1.C; functional acceptance NOT_CERTIFIED",
+      "feature_traceability": "PASS: 396 source mappings",
+      "test_syntax": "PASS: node --check tests/browser/editor-workspace-appearance.test.js",
+      "diff_check": "PASS: git diff --check"
+    }
+  },
+  "production_read_only_control": {
+    "deployment_id": "9007449d-8a4b-4458-a911-15aa1d54d648",
+    "worker_version": "7ef63f87-c1b6-4846-802b-3c3c122b59b9",
+    "traffic": "100%",
+    "deployment_get_checked_at_utc": "2026-11-06T16:14:31Z",
+    "health": {
+      "method": "GET",
+      "path": "/api/health",
+      "checked_at_utc": "2026-11-06T16:15:02Z",
+      "http_status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "asset_hashes": "NOT_RECHECKED_TEST_AND_DOCUMENTATION_ONLY",
+    "worker_redeployment": "NOT_REQUIRED_TESTS_AND_DOCUMENTATION_ONLY",
+    "wrangler_dry_run": "NOT_REQUIRED_RUNTIME_SOURCE_UNCHANGED",
+    "d1_select_preflight": "NOT_REQUIRED_RUNTIME_SOURCE_UNCHANGED",
+    "production_d1_write_or_migration": false,
+    "r2_operation": false,
+    "new_dependency": false,
+    "cost_huf": 0,
+    "github_actions_billing": "UNVERIFIED"
+  },
+  "acceptance": {
+    "plan_point_status": "OPEN_NOT_CERTIFIED",
+    "manual_editor_acceptance": "DEFERRED_UNTIL_COMPLETE_EDITOR",
+    "physical_device_acceptance": "DEFERRED_UNTIL_COMPLETE_EDITOR"
+  }
+}
