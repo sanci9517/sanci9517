@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "recorded_at_utc": "2026-11-06T04:14:57Z",
+  "recorded_at_utc": "2026-11-06T04:23:10Z",
   "plan_point": "77.44.6.1.C",
   "status": "RUNTIME_DEFECT_REPRODUCED_FIXED_DEPLOYED_AND_PRODUCTION_SMOKE_VERIFIED",
   "scope": "Persist an explicit Pages/left-dock choice made from the single tablet sheet so the desktop return does not restore stale pre-breakpoint docks.",
@@ -23,6 +23,7 @@
       "docs/evidence/editor-tablet-dock-selection-2026-11-06.json"
     ],
     "runtime_commit": "00bdd1694faa20e12c9a6bc89839c63daedbf68a",
+    "release_evidence_previous_commit": "3f8f11c26c974b8082b9217bbba6d75cc38040d5",
     "github_fast_forward": {
       "status": "VERIFIED",
       "method": "normal git push fast-forward",
@@ -192,6 +193,7 @@
     "health_smoke": {
       "http_status": 200,
       "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+      "checked_at_utc": "2026-11-06T04:23:10Z",
       "body": {
         "ok": true,
         "service": "sanci9517-streamer-brand",
