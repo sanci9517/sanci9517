@@ -1,0 +1,95 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-06T15:12:19Z",
+  "plan_point": "77.44.6.1.C",
+  "status": "WORKSPACE_BROWSER_FIXTURE_REUSES_BROWSER_AND_FULL_FILE_PASSES",
+  "scope": "Remove unnecessary Chromium process churn from the 60-test workspace appearance browser file while preserving an isolated BrowserContext for each test.",
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "starting_commit": "64de7a6326985317243c006b8630df30f71b3ddb",
+    "github_branch_at_start": "64de7a6326985317243c006b8630df30f71b3ddb",
+    "runtime_files_changed": [],
+    "test_files_changed": [
+      "tests/browser/editor-workspace-appearance.test.js"
+    ],
+    "documentation_files_changed": [
+      "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+      "docs/evidence/editor-workspace-shared-chromium-fixture-2026-11-06.json"
+    ],
+    "runtime_source_unchanged": true,
+    "worker_redeploy_required": false,
+    "existing_untracked_node_modules_preserved": true,
+    "existing_untracked_scripts_pycache_preserved": true
+  },
+  "finding": {
+    "initial_hypothesis": "Each call to openEditor launched and closed a separate Chromium browser even though tests already used isolated browser contexts; repeated launches caused avoidable process churn in this file.",
+    "environment_observation_before_refactor": {
+      "zombie_chromium_processes_reparented_to_pid_1": 2503,
+      "zombie_chrome_crashpad_processes_reparented_to_pid_1": 2432,
+      "cgroup_pids_current": 5339,
+      "cgroup_pids_max": "max"
+    },
+    "change": "The workspace appearance file now lazily launches one Chromium Browser process per Node test-file process, creates a fresh BrowserContext per openEditor call, closes every context through its test cleanup, and closes the shared Browser in the file-level after hook.",
+    "result": "TEST_HARNESS_PROCESS_CHURN_REDUCED_NO_RUNTIME_DEFECT_FOUND",
+    "runtime_change": false,
+    "save_publish_contract_unchanged": true
+  },
+  "validation": {
+    "workspace_appearance_file": {
+      "status": "PASS",
+      "command": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-workspace-appearance.test.js",
+      "tests": 60,
+      "passed": 60,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "duration_ms": 442695.898286,
+      "orphan_browser_descendants_reaped": 4,
+      "timeouts_unchanged": true,
+      "assertions_preserved": [
+        "each test uses a separate Playwright BrowserContext",
+        "workspace storage/session state remains isolated per test",
+        "all six desktop dock orders remain covered",
+        "native mouse dock/grouping/ungrouping matrices preserve a 400px minimum unobscured canvas",
+        "mobile single-drawer and breakpoint restoration behavior remains covered",
+        "workspace profile create/import/export/delete/undo/redo never invokes Page Model Save or Publish"
+      ]
+    },
+    "comparison": {
+      "previous_subreaper_full_file": {"tests": 60, "passed": 59, "failed": 1, "duration_ms": 523554.257136, "orphan_browser_descendants_reaped": 253},
+      "isolated_previous_timeout_test": {"status": "PASS", "tests_passed": 1, "failed": 0},
+      "interpretation": "The fixture change corresponds with fewer orphaned descendants, shorter completion time, and a clean aggregate full-file run. The comparison is from separate runs in a noisy shared environment; no universal performance claim is made."
+    },
+    "additional_checks": {
+      "json_parse": {"status": "PASS", "command": "python3 -m json.tool docs/evidence/editor-workspace-shared-chromium-fixture-2026-11-06.json"},
+      "test_javascript_syntax": {"status": "PASS", "command": "node --check tests/browser/editor-workspace-appearance.test.js"}
+    }
+  },
+  "release": {
+    "deployment_before_test_only_change": "9007449d-8a4b-4458-a911-15aa1d54d648",
+    "worker_version_before_test_only_change": "7ef63f87-c1b6-4846-802b-3c3c122b59b9",
+    "traffic": "100%",
+    "checked_at_utc": "2026-11-06T15:12:19Z",
+    "health": {
+      "method": "GET",
+      "path": "/api/health",
+      "http_status": 200,
+      "body": {"ok": true, "service": "sanci9517-streamer-brand", "version": "2.0.0", "server": "cloudflare-worker"}
+    },
+    "aggregate_github_ci_pass": false,
+    "worker_redeployment": "NOT_REQUIRED_TESTS_AND_DOCUMENTATION_ONLY",
+    "wrangler_dry_run": "NOT_RUN_RUNTIME_SOURCE_UNCHANGED",
+    "d1_query": "NOT_RUN_RUNTIME_SOURCE_UNCHANGED",
+    "production_d1_write_or_migration": false,
+    "r2_operation": false,
+    "new_dependency": false,
+    "cost_huf": 0,
+    "github_actions_billing": "UNVERIFIED"
+  },
+  "acceptance": {
+    "plan_point_status": "OPEN_NOT_CERTIFIED",
+    "manual_editor_acceptance": "DEFERRED_UNTIL_COMPLETE_EDITOR",
+    "physical_device_acceptance": "DEFERRED_UNTIL_COMPLETE_EDITOR"
+  }
+}

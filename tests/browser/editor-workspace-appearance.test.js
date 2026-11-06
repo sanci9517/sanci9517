@@ -3,13 +3,21 @@ import {createServer} from 'node:http';
 import {readFile} from 'node:fs/promises';
 import {existsSync} from 'node:fs';
 import {resolve,extname} from 'node:path';
-import test from 'node:test';
+import {after,test} from 'node:test';
 import {chromium} from 'playwright';
 import {createDocument} from '../../public/editor-v2/core/schema.js';
 import {WORKSPACE_PREFERENCES_KEY} from '../../public/editor-v2/ui/workspace-appearance.js';
 
 const root=resolve(import.meta.dirname,'../../public');
 const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.svg':'image/svg+xml'};
+let browserPromise;
+function getBrowser(){
+  browserPromise??=chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||(existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined),args:['--no-sandbox']});
+  return browserPromise;
+}
+after(async()=>{
+  if(browserPromise)await (await browserPromise).close();
+});
 function fixtureServer(){
   const document=createDocument();const pageId=document.activePageId;const draft=structuredClone(document);const writes=[];
   const server=createServer(async(req,res)=>{
@@ -34,8 +42,7 @@ function fixtureServer(){
 async function openEditor(t,{width=1366,height=900,isMobile=false,hasTouch=false,blockWorkspaceStorageReads=false,blockShellStorageReads=false,ignoreWorkspacePreferenceWrites=false,initialDockState=null,initialAppearance=null,initialLegacyAppearance=null}={}){
   const fixture=fixtureServer();await new Promise(done=>fixture.server.listen(0,'127.0.0.1',done));
   t.after(()=>new Promise(done=>fixture.server.close(done)));
-  const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||(existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined),args:['--no-sandbox']});
-  t.after(()=>browser.close());
+  const browser=await getBrowser();
   const context=await browser.newContext({viewport:{width,height},isMobile,hasTouch});t.after(()=>context.close());
   if(blockWorkspaceStorageReads||blockShellStorageReads||ignoreWorkspacePreferenceWrites)await context.addInitScript(({blockWorkspaceStorageReads,blockShellStorageReads,ignoreWorkspacePreferenceWrites})=>{
     const getItem=Storage.prototype.getItem;
