@@ -1,0 +1,139 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-06T06:56:56Z",
+  "plan_point": "77.44.6.1.C",
+  "status": "BROAD_SUITE_PARTIAL_WITH_ISOLATED_RERUNS_PASS_C_OPEN",
+  "scope": "Run the full serial Chromium Editor layout suite after the dock and canvas coverage additions, diagnose the initial file-level timeouts, and retain honest aggregate results.",
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "starting_commit": "171bf785147bd458982584793ffac6190a5d0d9c",
+    "github_branch_at_start": "171bf785147bd458982584793ffac6190a5d0d9c",
+    "runtime_files_changed": [],
+    "test_files_changed": [],
+    "documentation_files_changed": [
+      "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+      "docs/evidence/editor-layout-full-suite-timeout-reruns-2026-11-06.json"
+    ],
+    "runtime_source_unchanged": true,
+    "worker_redeploy_required": false,
+    "preexisting_untracked_node_modules_preserved": true
+  },
+  "finding": {
+    "result": "NO_RUNTIME_DEFECT_REPRODUCED; BROAD_RUN_TIMING_FAILURES_NOT_RECLASSIFIED_AS_AGGREGATE_PASS",
+    "broad_run": {
+      "status": "PARTIAL_WITH_TWO_FAILED_FILES",
+      "command": "CHROMIUM_PATH=/usr/bin/chromium npm run test:editor:layout",
+      "files_total": 53,
+      "files_passed": 51,
+      "files_failed": 2,
+      "file_failures": [
+        {
+          "file": "tests/browser/editor-richtext-save-publish.test.js",
+          "failure": "page.goto timed out after 30000 ms while opening the local fixture."
+        },
+        {
+          "file": "tests/browser/editor-element-insertion.test.js",
+          "failure": "At the 1366px case, the visible Adásrend palette item locator click timed out."
+        }
+      ],
+      "aggregate_pass_claimed": false
+    },
+    "isolated_reruns": [
+      {
+        "status": "PASS",
+        "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-name-pattern='actual Inspector keeps unsaved Rich Text through Ctrl\\+S' tests/browser/editor-richtext-save-publish.test.js",
+        "tests_passed": 1,
+        "tests_failed": 0,
+        "tests_cancelled": 0,
+        "tests_skipped": 0,
+        "note": "The same test that timed out during the full serial run passed when rerun alone."
+      },
+      {
+        "status": "PASS",
+        "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-name-pattern='new Schedule palette item keeps canonical defaults and separate Save/Publish at 1366px' tests/browser/editor-element-insertion.test.js",
+        "tests_passed": 1,
+        "tests_failed": 0,
+        "tests_cancelled": 0,
+        "tests_skipped": 0,
+        "note": "The same Adásrend insertion test that timed out during the full serial run passed when rerun alone."
+      }
+    ],
+    "test_network_boundary": "The localhost fixture required the configured browser network permission; tests used only the local Playwright/Chromium fixture and no external paid service.",
+    "workspace_appearance_file": {
+      "status": "PASS",
+      "tests_passed": 58,
+      "tests_failed": 0,
+      "tests_cancelled": 0,
+      "tests_skipped": 0,
+      "coverage": [
+        "all six desktop dock orders",
+        "native pointer drag zones at the canvas edges",
+        "tab-group move and ungroup lifecycle",
+        "at least 400 CSS px of unobscured canvas",
+        "responsive breakpoint and workspace profile/persistence lifecycle"
+      ]
+    },
+    "runtime_change": false,
+    "save_publish_contract_unchanged": true
+  },
+  "validation": {
+    "editor_unit": {
+      "status": "PASS",
+      "command": "npm run test:editor",
+      "node_test_files_passed": 14,
+      "subreaper_cases_passed": 3
+    },
+    "typecheck": {"status": "PASS", "command": "npm run typecheck"},
+    "migration_safety_gate": {"status": "PASS", "command": "npm run test:web013:migration-gate"},
+    "canonical_plan": {"status": "PASS", "command": "python3 scripts/check-canonical-plan.py", "master_files": 13},
+    "plan_contract": {"status": "PASS", "command": "python3 tests/plan-contract.test.py", "tests_passed": 13},
+    "active_plan_cursor": {"status": "PASS", "command": "python3 scripts/audit-active-plan-point.py", "active_point": "77.44.6.1.C", "acceptance": "NOT_CERTIFIED"},
+    "traceability": {"status": "PASS", "command": "python3 scripts/build-feature-traceability.py --check", "source_mappings": 396},
+    "diff_check": {"status": "PASS", "command": "git diff --check"}
+  },
+  "release": {
+    "runtime_source_commit": "00bdd1694faa20e12c9a6bc89839c63daedbf68a",
+    "latest_deployment_rechecked": "04033d9f-8084-4147-8c67-0e5d44b22d55",
+    "latest_worker_version_rechecked": "fc7b179e-6b92-4ef8-b36b-9503ad2c5395",
+    "latest_worker_traffic": "100%",
+    "health_smoke": {
+      "status": "PASS",
+      "http_status": 200,
+      "path": "/api/health",
+      "body": {"ok": true, "service": "sanci9517-streamer-brand", "version": "2.0.0"}
+    },
+    "editor_asset_hash_smoke": {
+      "status": "PASS",
+      "index_path": "/editor-v2/",
+      "index_status": 200,
+      "index_local_sha256": "72a4c7e543d3195f242065cbb990c72294b40ed878c31881b2af91f95cb04113",
+      "index_live_sha256": "72a4c7e543d3195f242065cbb990c72294b40ed878c31881b2af91f95cb04113",
+      "stylesheet_path": "/editor-v2/editor-refresh.css",
+      "stylesheet_status": 200,
+      "stylesheet_local_sha256": "97319a2383912c8431c6207a5574830ba675bce57c9875cc2763c26925c1e502",
+      "stylesheet_live_sha256": "97319a2383912c8431c6207a5574830ba675bce57c9875cc2763c26925c1e502"
+    },
+    "github_statuses_at_start": [],
+    "github_actions_at_start": [
+      {"name": "Editor Core Test", "run_id": 42170464497, "conclusion": "success"},
+      {"name": "Canonical Creator Platform Plan", "run_id": 42170464534, "conclusion": "success"},
+      {"name": "Canonical Plan Active Point Audit", "run_id": 42170464499, "conclusion": "success"},
+      {"name": "Twitch Integration Check", "run_id": 42170464464, "conclusion": "success"},
+      {"name": "F0 baseline checks", "run_id": 42170464482, "conclusion": "success"}
+    ],
+    "github_ci_pass_at_start": false,
+    "github_push": "PENDING_NORMAL_FAST_FORWARD",
+    "worker_redeploy": "NOT_REQUIRED_TEST_DOCS_ONLY",
+    "d1_query": "NOT_RUN_RUNTIME_SOURCE_UNCHANGED",
+    "production_d1_write_or_migration": false,
+    "r2_operation": false,
+    "new_dependency": false,
+    "cost_huf": 0
+  },
+  "acceptance": {
+    "plan_point_status": "OPEN_NOT_CERTIFIED",
+    "manual_visual_editor_acceptance": "DEFERRED_UNTIL_COMPLETE_EDITOR",
+    "physical_device_acceptance": "DEFERRED_UNTIL_COMPLETE_EDITOR"
+  }
+}
