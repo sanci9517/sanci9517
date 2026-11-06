@@ -123,7 +123,38 @@
       {"name": "F0 baseline checks", "run_id": 42170464482, "conclusion": "success"}
     ],
     "github_ci_pass_at_start": false,
-    "github_push": "PENDING_NORMAL_FAST_FORWARD",
+    "github_push": "VERIFIED_NORMAL_FAST_FORWARD",
+    "test_documentation_commit": "6a01c4f25f1177c635e60844edf21f762188a43f",
+    "github_compare": {
+      "base": "171bf785147bd458982584793ffac6190a5d0d9c",
+      "head": "6a01c4f25f1177c635e60844edf21f762188a43f",
+      "ahead_by": 1,
+      "behind_by": 0,
+      "status": "ahead"
+    },
+    "github_actions_after_push": [
+      {"name": "Canonical Creator Platform Plan", "run_id": 42177994885, "status": "completed", "conclusion": "success"},
+      {"name": "F0 baseline checks", "run_id": 42177994904, "status": "completed", "conclusion": "success"},
+      {"name": "Twitch Integration Check", "run_id": 42177994914, "status": "completed", "conclusion": "success"},
+      {"name": "Canonical Plan Active Point Audit", "run_id": 42177994888, "status": "completed", "conclusion": "success"},
+      {"name": "Editor Core Test", "run_id": 42177994931, "status": "in_progress", "conclusion": null}
+    ],
+    "github_statuses_after_push": [],
+    "github_ci_pass_after_push": false,
+    "worker_state_after_push": "UNCHANGED_DOCS_TEST_EXCLUDED_FROM_WORKER_BUILD",
+    "post_push_deployment_api_recheck": {
+      "deployment_id": "04033d9f-8084-4147-8c67-0e5d44b22d55",
+      "version_id": "fc7b179e-6b92-4ef8-b36b-9503ad2c5395",
+      "traffic": "100%"
+    },
+    "post_push_public_smoke": {
+      "health_http_status": 200,
+      "health_body": {"ok": true, "service": "sanci9517-streamer-brand", "version": "2.0.0", "server": "cloudflare-worker"},
+      "index_http_status": 200,
+      "index_sha256_matches": true,
+      "stylesheet_http_status": 200,
+      "stylesheet_sha256_matches": true
+    },
     "worker_redeploy": "NOT_REQUIRED_TEST_DOCS_ONLY",
     "d1_query": "NOT_RUN_RUNTIME_SOURCE_UNCHANGED",
     "production_d1_write_or_migration": false,
