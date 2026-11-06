@@ -2,7 +2,7 @@
   "schema_version": 1,
   "recorded_at_utc": "2026-11-06T04:14:57Z",
   "plan_point": "77.44.6.1.C",
-  "status": "RUNTIME_DEFECT_REPRODUCED_FIXED_TESTED_RELEASE_PENDING",
+  "status": "RUNTIME_DEFECT_REPRODUCED_FIXED_DEPLOYED_AND_PRODUCTION_SMOKE_VERIFIED",
   "scope": "Persist an explicit Pages/left-dock choice made from the single tablet sheet so the desktop return does not restore stale pre-breakpoint docks.",
   "source_control": {
     "repository": "sanci9517/sanci9517",
@@ -22,8 +22,14 @@
       "docs/evidence/feature-traceability.json",
       "docs/evidence/editor-tablet-dock-selection-2026-11-06.json"
     ],
-    "runtime_commit": "PENDING",
-    "github_fast_forward": "PENDING"
+    "runtime_commit": "00bdd1694faa20e12c9a6bc89839c63daedbf68a",
+    "github_fast_forward": {
+      "status": "VERIFIED",
+      "method": "normal git push fast-forward",
+      "from": "995cc646238366dd76465b4207af1971046d160a",
+      "to": "00bdd1694faa20e12c9a6bc89839c63daedbf68a",
+      "verification": "GitHub compare v2/foundation against 00bdd169 returned identical, ahead_by=0, behind_by=0"
+    }
   },
   "defect": {
     "reproduced_before_fix": true,
@@ -162,15 +168,46 @@
     "r2_operation_or_deletion": false
   },
   "post_release": {
-    "cloudflare_build": "PENDING",
-    "deployment": "PENDING",
-    "traffic_version": "PENDING",
-    "traffic_percent": "PENDING",
-    "health_smoke": "PENDING",
-    "live_index_sha256": "PENDING",
+    "cloudflare_build": {
+      "id": "7d1d11d6-1f6f-4d81-a38e-18ee5ecb0e4d",
+      "commit": "00bdd1694faa20e12c9a6bc89839c63daedbf68a",
+      "outcome": "success",
+      "status": "stopped (completed)",
+      "build_command": "npm run typecheck",
+      "deploy_command": "npm run deploy:safe",
+      "verified_log": [
+        "typecheck command completed successfully",
+        "migration safety gate PASS; no D1 migrations applied",
+        "Wrangler 4.130.0 uploaded the modified index and shell assets",
+        "deploy command completed successfully"
+      ],
+      "completed_at_utc": "2026-11-06T04:19:02.348Z"
+    },
+    "deployment": {
+      "id": "04033d9f-8084-4147-8c67-0e5d44b22d55",
+      "created_at_utc": "2026-11-06T04:18:59.293672Z"
+    },
+    "traffic_version": "fc7b179e-6b92-4ef8-b36b-9503ad2c5395",
+    "traffic_percent": 100,
+    "health_smoke": {
+      "http_status": 200,
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "live_index_http_status": 200,
+    "live_index_sha256": "72a4c7e543d3195f242065cbb990c72294b40ed878c31881b2af91f95cb04113",
     "source_index_sha256": "72a4c7e543d3195f242065cbb990c72294b40ed878c31881b2af91f95cb04113",
-    "live_shell_sha256": "PENDING",
-    "source_shell_sha256": "7995b344b0fe668dbd11cb25d3206c7e61bc5db1279fcc280709c9591f2012df"
+    "live_shell_http_status": 200,
+    "live_shell_sha256": "7995b344b0fe668dbd11cb25d3206c7e61bc5db1279fcc280709c9591f2012df",
+    "source_shell_sha256": "7995b344b0fe668dbd11cb25d3206c7e61bc5db1279fcc280709c9591f2012df",
+    "changed_asset_hashes_match_deployed_source": true,
+    "github_commit_statuses": [],
+    "aggregate_github_ci_pass": false
   },
   "safety_and_acceptance": {
     "production_d1_data_write_or_migration": false,
