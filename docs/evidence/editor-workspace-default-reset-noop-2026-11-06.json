@@ -2,7 +2,7 @@
   "schema_version": 1,
   "recorded_at_utc": "2026-11-06T20:25:48Z",
   "plan_point": "77.44.6.1.C",
-  "status": "RUNTIME_RELEASED_EDITOR_CORE_CI_IN_PROGRESS",
+  "status": "RUNTIME_RELEASED_EDITOR_CORE_CI_FAILED_LOCAL_REPRO_NOT_REPRODUCED",
   "scope": "Reset an already-default editor workspace without writing unchanged preferences, creating undo history, or invoking layout and dock reset callbacks.",
   "source_control": {
     "repository": "sanci9517/sanci9517",
@@ -154,11 +154,29 @@
       "exact_sha": "af5def0663e584d422323401fac0e2f4dda81f9c",
       "workflow_runs": 5,
       "success": 4,
-      "in_progress": 1,
+      "failure": 1,
+      "in_progress": 0,
       "editor_core_test_run_id": 42287580280,
-      "editor_core_test_status": "IN_PROGRESS; full GitHub CI PASS not claimed",
-      "editor_core_job_completed_steps": 8,
-      "editor_core_job_current_step": "Install Chromium for layout regression"
+      "editor_core_test_status": "FAILURE; exact-SHA full GitHub CI PASS not claimed",
+      "editor_core_job_completed_steps": 11,
+      "editor_core_job_current_step": "Run Editor browser layout regression",
+      "editor_core_job_id": 128132289915,
+      "editor_core_failed_step": "Run Editor browser layout regression",
+      "editor_core_failure": {
+        "test_file": "tests/browser/editor-layer-rename-draft.test.js",
+        "test_name": "layer rename pending draft survives save, publish and selection at 1366px",
+        "line": 85,
+        "error": "Playwright locator.fill timed out after 7000 ms; the labeled layer-rename input resolved, then detached from the DOM while filling Első mentési változat.",
+        "other_steps": "The 10 preceding editor-core job steps passed; later checks were skipped by fail-fast."
+      },
+      "layout_screenshot_artifact": {
+        "id": 13540346079,
+        "name": "editor-layout-screenshots",
+        "size_bytes": 2915961,
+        "sha256": "f34e8257dd3025e454eb5d1b2d9d9749300f12301207b009a06e960eea6b8d01",
+        "expires_at_utc": "2026-11-13T20:50:24Z",
+        "deleted": false
+      }
     },
     "production_d1_write_or_migration": false,
     "r2_operation": false
@@ -171,7 +189,20 @@
   "limitations": [
     "Full 77.44.6.1.C workspace acceptance remains OPEN / NOT CERTIFIED.",
     "Complete Visual Editor manual and physical acceptance remains DEFERRED until its planned completion gate.",
-    "The exact-SHA Editor Core hosted workflow remains in progress; no aggregate all-checks PASS is claimed.",
+    "The exact-SHA Editor Core hosted workflow failed at the 1366px layer-rename locator.fill with a DOM-detachment timeout; the root cause is not established, and no aggregate all-checks PASS is claimed.",
     "GitHub account Actions storage and remaining free compute quota could not be read through the available connector; the user's 90% dashboard snapshot is not independently refreshed."
-  ]
+  ],
+  "diagnostic_followup": {
+    "recorded_at_utc": "2026-11-06",
+    "targeted_local_chromium_command": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-layer-rename-draft.test.js",
+    "targeted_local_reproductions": [
+      {"result": "PASS", "passed": 2, "failed": 0},
+      {"result": "PASS", "passed": 2, "failed": 0},
+      {"result": "PASS", "passed": 2, "failed": 0}
+    ],
+    "wide_local_layout_command": "CHROMIUM_PATH=/usr/bin/chromium npm run test:editor:layout",
+    "wide_local_layout_result": "INCOMPLETE; the run was stopped after reaching file 5/53. In the preceding workspace-appearance file, 59/61 passed and two unrelated editor page-load/canvas-node visibility waits timed out under this long sequential run. This is not an aggregate suite pass and does not establish a product defect.",
+    "source_changes": "None. The hosted layer-rename DOM-detachment failure did not reproduce in three isolated local Chromium runs; no runtime or test-harness change was made without a reproducible root cause.",
+    "actions": "No dispatch/rerun was requested because free Actions billing/quota remains unverified and the owner's cost limit is 0 HUF. The exact-SHA screenshot artifact is preserved until its verified 2026-11-13 expiration."
+  }
 }
