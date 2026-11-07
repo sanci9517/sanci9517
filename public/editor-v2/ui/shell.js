@@ -342,6 +342,13 @@ function setupDockReordering(){
   const canvasArea=document.querySelector('.canvas-area');
   const regions={left:panels.left,canvas:canvasArea,right:panels.right};
   const names={left:'Oldalak és eszközök',canvas:'Vászon',right:'Beállítások'};
+  const isDockGroupZone=(sourceId,target,rect,clientX)=>{
+    if(sourceId==='canvas'||target===canvasArea||rect.width<=0)return false;
+    // MouseEvent.clientX is quantized to a CSS-pixel boundary; keep the
+    // inclusive 35%/65% edges stable when DOMRect coordinates are fractional.
+    const offset=clientX-rect.left,tolerance=0.5;
+    return offset>=rect.width*0.35-tolerance&&offset<=rect.width*0.65+tolerance;
+  };
   const liveStatus=document.querySelector('#workspaceDockStatus');
   let dragSourceId=null;
   const announce=message=>{if(liveStatus&&liveStatus.textContent!==message)liveStatus.textContent=message;};
@@ -404,7 +411,7 @@ function setupDockReordering(){
     }
     event.preventDefault();transfer.dropEffect='move';
     const rect=target.getBoundingClientRect(),ratio=rect.width?((event.clientX-rect.left)/rect.width):0.5;
-    const position=dragSourceId!=='canvas'&&target!==canvasArea&&ratio>=0.35&&ratio<=0.65?'group':ratio<0.5?'before':'after';
+    const position=isDockGroupZone(dragSourceId,target,rect,event.clientX)?'group':ratio<0.5?'before':'after';
     if(target.dataset.dockDropPosition===position)return;
     clearDropPreview();target.dataset.dockDropPosition=position;
     target.dataset.dockDropLabel=position==='group'?'Panelcsoport':position==='before'?'Elé helyezés':'Utána helyezés';
@@ -429,7 +436,7 @@ function setupDockReordering(){
     if(sourceIndex<0||targetIndex<0){finishDrag({announcement:'Az átrendezés megszakadt.'});return}
     order.splice(sourceIndex,1);
     const rect=target.getBoundingClientRect(),ratio=rect.width?((event.clientX-rect.left)/rect.width):0.5;
-    if(sourceId!=='canvas'&&target!==canvasArea&&ratio>=0.35&&ratio<=0.65){
+    if(isDockGroupZone(sourceId,target,rect,event.clientX)){
       // A custom dock order can put the panel named "right" to the canvas's
       // left (and vice versa). Group where the drop target is actually shown,
       // not where its stable panel id happens to land in the CSS grid.

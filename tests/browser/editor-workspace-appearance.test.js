@@ -1344,7 +1344,7 @@ test('center dock zones preserve the canvas at maximum widths across all desktop
   t.diagnostic(JSON.stringify(results));
 });
 
-test('live dock-zone previews match applied actions just outside and inside the group-zone boundaries',async t=>{
+test('live dock-zone previews match applied actions outside, on and inside the group-zone boundaries',async t=>{
   const {page,writes,errors}=await openEditor(t,{width:1280,height:900});
   await openPreferences(page);
   await page.locator('#workspaceLayout').selectOption('balanced');
@@ -1355,9 +1355,9 @@ test('live dock-zone previews match applied actions just outside and inside the 
 
   const cases=[
     {ratio:0.34,position:'before',label:'Elé helyezés',order:'canvas-left-right',mode:'separate'},
-    {ratio:0.36,position:'group',label:'Panelcsoport',order:'left-canvas-right',mode:'tabbed'},
+    {ratio:0.35,position:'group',label:'Panelcsoport',order:'left-canvas-right',mode:'tabbed'},
     {ratio:0.50,position:'group',label:'Panelcsoport',order:'left-canvas-right',mode:'tabbed'},
-    {ratio:0.64,position:'group',label:'Panelcsoport',order:'left-canvas-right',mode:'tabbed'},
+    {ratio:0.65,position:'group',label:'Panelcsoport',order:'left-canvas-right',mode:'tabbed'},
     {ratio:0.66,position:'after',label:'Utána helyezés',order:'canvas-right-left',mode:'separate'}
   ];
   const results=[];
@@ -1375,14 +1375,15 @@ test('live dock-zone previews match applied actions just outside and inside the 
       const dataTransfer=new DataTransfer();
       const clientX=rect.left+rect.width*ratio;
       source.dispatchEvent(new DragEvent('dragstart',{bubbles:true,cancelable:true,dataTransfer}));
-      target.dispatchEvent(new DragEvent('dragover',{bubbles:true,cancelable:true,dataTransfer,clientX}));
-      const preview={position:target.dataset.dockDropPosition,label:target.dataset.dockDropLabel,announcement:document.querySelector('#workspaceDockStatus').textContent,canvasWidth:canvas.getBoundingClientRect().width};
+      const dragOver=new DragEvent('dragover',{bubbles:true,cancelable:true,dataTransfer,clientX});
+      target.dispatchEvent(dragOver);
+      const preview={position:target.dataset.dockDropPosition,label:target.dataset.dockDropLabel,announcement:document.querySelector('#workspaceDockStatus').textContent,canvasWidth:canvas.getBoundingClientRect().width,actualRatio:(dragOver.clientX-rect.left)/rect.width,requestedRatio:ratio};
       target.dispatchEvent(new DragEvent('drop',{bubbles:true,cancelable:true,dataTransfer,clientX}));
       const canvasRect=canvas.getBoundingClientRect();
       const docks=['#leftDock','#rightDock'].map(selector=>document.querySelector(selector).getBoundingClientRect());
       return {preview,order:document.querySelector('.workspace').dataset.workspaceDockOrder,mode:document.querySelector('.editor-app').dataset.workspacePanelMode,canvasWidth:canvasRect.width,canvasLeft:canvasRect.left,canvasRight:canvasRect.right,pageWidth:document.documentElement.scrollWidth,docks:docks.map(dock=>({left:dock.left,right:dock.right,width:dock.width})),cleared:!target.hasAttribute('data-dock-drop-position')&&!target.hasAttribute('data-dock-drop-label'),dragEnded:!document.body.classList.contains('workspace-reordering')};
     },item);
-    assert.equal(state.preview.position,item.position,`${item.ratio}: preview uses the expected side of the center-zone boundary`);
+    assert.equal(state.preview.position,item.position,`${item.ratio}: preview uses the expected inclusive center-zone boundary: ${JSON.stringify(state.preview)}`);
     assert.equal(state.preview.label,item.label,`${item.ratio}: the preview explains the action before the drop`);
     assert.match(state.preview.announcement,new RegExp(`Cél: ${item.label} – Beállítások\\.`,'u'),`${item.ratio}: assistive status describes the exact visible target action`);
     assert.equal(state.order,item.order,`${item.ratio}: dropping applies the action announced by the zone`);
