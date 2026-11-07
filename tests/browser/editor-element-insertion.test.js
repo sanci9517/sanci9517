@@ -10,6 +10,57 @@ import {DEFAULT_SCHEDULE_CONFIG} from '../../public/editor-v2/core/schedule-sche
 import {createEditorState} from '../../public/editor-v2/core/state.js';
 import {execute} from '../../public/editor-v2/core/commands.js';
 
+async function clickWithTargetDiagnostics(page,locator,{selector,text}){
+  try{
+    await locator.click();
+  }catch(error){
+    let diagnosticDetails='unavailable';
+    try{
+      const diagnostics=await page.evaluate(({selector,text})=>{
+        const target=[...document.querySelectorAll(selector)].find(button=>button.textContent.includes(text));
+        if(!target)return {targetFound:false};
+        const rect=target.getBoundingClientRect(),x=rect.left+rect.width/2,y=rect.top+rect.height/2;
+        const describe=element=>({tag:element.tagName.toLowerCase(),id:element.id||'',className:typeof element.className==='string'?element.className:'',text:(element.textContent||'').trim().slice(0,80)});
+        const scrollParents=[];
+        for(let parent=target.parentElement;parent;parent=parent.parentElement){
+          const style=getComputedStyle(parent);
+          if(/auto|scroll|overlay/.test(`${style.overflow} ${style.overflowY}`))scrollParents.push({element:describe(parent),scrollTop:parent.scrollTop,clientHeight:parent.clientHeight,scrollHeight:parent.scrollHeight});
+        }
+        return {
+          target:describe(target),ariaExpanded:target.getAttribute('aria-expanded'),
+          rect:{x:rect.x,y:rect.y,width:rect.width,height:rect.height},
+          viewport:{width:innerWidth,height:innerHeight},
+          style:{display:getComputedStyle(target).display,visibility:getComputedStyle(target).visibility,pointerEvents:getComputedStyle(target).pointerEvents,position:getComputedStyle(target).position},
+          scrollParents,
+          hitStack:document.elementsFromPoint(x,y).slice(0,6).map(describe)
+        };
+      },{selector,text});
+      diagnosticDetails=JSON.stringify(diagnostics);
+    }catch(diagnosticError){
+      diagnosticDetails=`unavailable: ${diagnosticError.message}`;
+    }
+    throw new Error(`${error.message}\nClick target diagnostics (${text}): ${diagnosticDetails}`,{cause:error});
+  }
+}
+
+test('palette click diagnostics are failure-only and preserve the original interaction error',async()=>{
+  let clicks=0,evaluations=0;
+  const page={evaluate:async(_readTarget,args)=>{evaluations++;assert.deepEqual(args,{selector:'#elementList .element',text:'Adásrend'});return {hitStack:[]}}};
+  await clickWithTargetDiagnostics(page,{click:async()=>{clicks++}},{selector:'#elementList .element',text:'Adásrend'});
+  assert.equal(clicks,1);
+  assert.equal(evaluations,0,'successful interactions do not run diagnostic page code');
+  await assert.rejects(
+    clickWithTargetDiagnostics(page,{click:async()=>{clicks++;throw new Error('pointer timeout')}},{selector:'#elementList .element',text:'Adásrend'}),
+    error=>{
+      assert.match(error.message,/Click target diagnostics \(Adásrend\): \{"hitStack":\[\]\}/);
+      assert.equal(error.cause.message,'pointer timeout');
+      return true;
+    }
+  );
+  assert.equal(clicks,2,'the diagnostic path does not retry the click');
+  assert.equal(evaluations,1,'one failure captures one diagnostic sample');
+});
+
 test('palette items are inserted beside the selected item in canvas flow and saved in that order',async t=>{
   const document=createDocument(),pageId=document.activePageId,rootId=document.pages[pageId].rootId;
   let draft=structuredClone(document),published=null,version=1;
@@ -534,9 +585,10 @@ for(const width of [390,1366])test(`new Schedule palette item keeps canonical de
   if(await editor.locator('.rail-btn[data-tab="elements"]').isVisible())await editor.locator('.rail-btn[data-tab="elements"]').click();
   else await editor.evaluate(()=>{window.sanciEditor.showLeftTab('elements');window.sanciEditor.openPanel('left')});
   const brandGroup=editor.locator('.element-group-title').filter({hasText:'Sanci9517'});
-  if(await brandGroup.getAttribute('aria-expanded')==='false')await brandGroup.click();
+  if(await brandGroup.getAttribute('aria-expanded')==='false')await clickWithTargetDiagnostics(editor,brandGroup,{selector:'.element-group-title',text:'Sanci9517'});
   const palette=editor.locator('#elementList .element');
-  await palette.filter({has:editor.locator('span').getByText('Adásrend',{exact:true})}).click();
+  const schedulePaletteItem=palette.filter({has:editor.locator('span').getByText('Adásrend',{exact:true})});
+  await clickWithTargetDiagnostics(editor,schedulePaletteItem,{selector:'#elementList .element',text:'Adásrend'});
   const scheduleHandle=await editor.waitForFunction(({rootId})=>{
     const root=document.querySelector(`.page-canvas .node[data-node-id="${rootId}"]`);
     return [...(root?.children||[])].find(node=>node.matches('.node')&&node.querySelector(':scope > .node-head small')?.textContent==='schedule')?.dataset.nodeId||false;

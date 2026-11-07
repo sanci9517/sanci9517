@@ -408,5 +408,88 @@
     "interpretation": "The 8-second palette-group click failure is not reproducible in isolated runs. The full 53-file aggregate remains incomplete/non-PASS. No code or timeout adjustment is justified; retain the exact failing line and capture a Playwright trace/screenshot if the aggregate failure recurs.",
     "source_changes": "None.",
     "actions": "No dispatch/rerun; 0 HUF spend. Billing/quota remains UNVERIFIED."
+  },
+  "schedule_palette_failure_diagnostics_2026_11_07": {
+    "recorded_at_utc": "2026-11-07T05:04:53Z",
+    "test_file_changed": "tests/browser/editor-element-insertion.test.js",
+    "change": "Added failure-only browser diagnostics around the Sanci9517 palette group and Adásrend palette item clicks. The failure report now captures the matching target's bounds, visibility and pointer-events styles, scrollable ancestor positions, and the top six elements at the click point. Normal click behavior, selectors, and timeout remain unchanged; no trace/screenshot is written on passing runs.",
+    "failed_observation_before_generic_diagnostics": {
+      "result": "INCOMPLETE",
+      "passed": 5,
+      "failed": 2,
+      "failed_cases": [
+        {
+          "viewport": 390,
+          "location": "editor-element-insertion.test.js:566",
+          "failure": "Adásrend palette button click timed out after 8 seconds while performing click action."
+        },
+        {
+          "viewport": 1366,
+          "location": "editor-element-insertion.test.js:559",
+          "failure": "Public page #page-title did not become visible within 8 seconds before the palette interaction."
+        }
+      ],
+      "duration_ms": 111602.987,
+      "environment_observation": {
+        "zombie_processes": 5270,
+        "load_average": [1.64, 0.88, 0.37],
+        "available_memory_gib": 8.7,
+        "interpretation": "Browser timing was intermittent in this managed workspace, but these readings do not establish that resource pressure caused either failure."
+      }
+    },
+    "verification_after_diagnostic_change": {
+      "node_check": "PASS: node --check tests/browser/editor-element-insertion.test.js",
+      "diagnostic_helper_test": {
+        "command": "node --test --test-name-pattern='palette click diagnostics' tests/browser/editor-element-insertion.test.js",
+        "result": "PASS",
+        "passed": 1,
+        "failed": 0,
+        "verified": "successful clicks are not retried or evaluated; failed clicks capture one diagnostic result and preserve the original error as cause"
+      },
+      "focused_schedule_tests": {
+        "command": "timeout 180s env CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 --test-name-pattern='new Schedule palette item keeps canonical defaults and separate Save/Publish' tests/browser/editor-element-insertion.test.js",
+        "result": "PASS",
+        "passed": 2,
+        "failed": 0,
+        "viewports_px": [390, 1366]
+      },
+      "complete_test_file": {
+        "command": "timeout 300s env CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-element-insertion.test.js",
+        "result": "PASS",
+        "passed": 8,
+        "failed": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "duration_ms": 50684.574035,
+        "orphaned_descendants_reaped": 28
+      }
+    },
+    "interpretation": "The diagnostic helper contract, the targeted Schedule tests, and the complete test file pass. No stable product defect or test timeout defect has been established; the previous 53-file aggregate remains INCOMPLETE and is not retroactively PASS. On a repeat, the added output should identify whether an overlay/scroll issue exists at the click point. No runtime changes, Actions run, or production mutations.",
+    "production": {
+      "runtime_source_changed": false,
+      "deployment_changed": false,
+      "d1_write_or_migration": false,
+      "r2_operation": false
+    },
+    "cost": {
+      "new_paid_service_or_dependency": false,
+      "actions_dispatched": false,
+      "spend_huf": 0,
+      "billing_quota": "UNVERIFIED"
+    }
+  },
+  "schedule_palette_failure_diagnostics_final_verification_2026_11_07": {
+    "recorded_at_utc": "2026-11-07T05:08:05Z",
+    "node_check": "PASS",
+    "focused_helper_contract": "PASS 1/1",
+    "schedule_viewports": "PASS 2/2 at 390px and 1366px",
+    "full_editor_element_insertion_file": "PASS 8/8 including diagnostic helper contract and all browser cases",
+    "diagnostics_written_on_pass": false,
+    "runtime_changed": false,
+    "production_mutations": false,
+    "actions_dispatched": false,
+    "spend_huf": 0,
+    "billing_quota": "UNVERIFIED",
+    "worktree_preexisting_untracked_preserved": ["node_modules/", "scripts/__pycache__/" ]
   }
 }
