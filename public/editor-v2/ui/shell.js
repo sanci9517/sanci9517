@@ -608,7 +608,16 @@ document.querySelector('.more-actions')?.addEventListener('toggle',event=>{
     setPanel('left',false);setPanel('right',false);
   }
 });
-document.querySelector('#mobileBackdrop')?.addEventListener('click',()=>{setPanel('left',false,{customize:true});setPanel('right',false,{customize:true})});
+document.querySelector('#mobileBackdrop')?.addEventListener('click',()=>{
+  const openSide=panels.right&&!panels.right.classList.contains('closed')?'right':'left';
+  const restore=focusBeforeMobilePanel?.isConnected
+    ?focusBeforeMobilePanel
+    :document.querySelector(openSide==='right'?'#openInspector':'#editorMenu');
+  setPanel('left',false,{customize:true,restoreFocus:false});
+  setPanel('right',false,{customize:true,restoreFocus:false});
+  if(restore?.isConnected)restore.focus({preventScroll:true});
+  focusBeforeMobilePanel=null;
+});
 window.addEventListener('resize',syncMobileBackdrop);
 window.addEventListener('keydown',event=>{
   if(event.key!=='Escape')return;

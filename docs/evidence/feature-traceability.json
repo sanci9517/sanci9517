@@ -32,7 +32,7 @@
     "public/editor-v2/ui/element-content-controls.js": "a38a19e9f2e2d166534412ec2967d9771bf923dbd89ff6b7cfcf13f091af981d",
     "public/editor-v2/ui/property-controls.js": "464b94685092b373a37f25690e19c33894cf2094f20cf1564ea66ad731987208",
     "public/editor-v2/ui/responsive-group-reset.js": "fc3ed5460c17ef9c32e9067484b3e55edb00367c55d84b7570955d9f5f649c20",
-    "public/editor-v2/ui/shell.js": "7c5cf3c5ef407d295576ba046fa5c2874cf604e08178b5a96c20df607d5f61af",
+    "public/editor-v2/ui/shell.js": "34a7944b150eeb6099346dcb3d38c13a4bca2c41b203d257a3539f49c4d43a77",
     "public/editor-v2/ui/workspace-appearance.js": "b92508c23ea9d77051e302ae3440155745ebc79c1a8432f5965a35c1ce4745b3",
     "public/editor-v2/workspace-appearance.css": "2fdce885bd091fc93d9204519742612f33a635d8ef2aa36a9b9194ed4694e5a6",
     "scripts/d1/ledger-reconciliation.py": "44d19ed415b40473c73c248d49980e16eaaa0e96a8a4412b7016213e0ee7ffcb",

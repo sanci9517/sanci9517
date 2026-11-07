@@ -2667,6 +2667,8 @@ test('wide mobile drawer scrim stays behind its panel and closes it from the rem
   assert.ok(right.panelZ>right.backdropZ,'the Inspector remains above its scrim');
   await page.mouse.click(100,400);
   await page.waitForFunction(()=>document.querySelector('#rightDock')?.classList.contains('closed'));
+  assert.equal(await page.locator('#openInspector').evaluate(element=>document.activeElement===element),true,'closing the wide mobile drawer from the exposed canvas restores focus to the Inspector opener');
+  assert.equal(await page.locator('.canvas-area').evaluate(element=>element.inert),false,'closing the scrim releases the canvas for keyboard and touch interaction');
   assert.deepEqual(writes,[],'opening responsive drawers never saves or publishes page content');
   assert.deepEqual(errors,[]);
 });
