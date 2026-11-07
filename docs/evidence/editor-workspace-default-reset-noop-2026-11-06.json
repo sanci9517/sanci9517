@@ -904,5 +904,91 @@
       "node_modules/",
       "scripts/__pycache__/"
     ]
+  },
+  "layer_rename_hosted_detachment_local_rechecks_2026_11_07": {
+    "recorded_at_utc": "2026-11-07T11:02:20Z",
+    "plan_point": "77.44.6.1.C",
+    "previous_hosted_failure": {
+      "workflow_run_id": 42287580280,
+      "commit": "af5def0663e584d422323401fac0e2f4dda81f9c",
+      "job_id": 128132289915,
+      "test": "layer rename pending draft survives save, publish and selection at 1366px",
+      "symptom": "Playwright locator.fill retried because the resolved layer-rename textbox detached; the failure was observed once on the hosted aggregate."
+    },
+    "local_rechecks": {
+      "targeted_desktop_command": "env CHROMIUM_PATH=/usr/bin/chromium node --test --test-name-pattern='layer rename pending draft survives save, publish and selection at 1366px' tests/browser/editor-layer-rename-draft.test.js",
+      "targeted_desktop_repeats": {
+        "tests_per_run": 1,
+        "runs": 5,
+        "passed": 5,
+        "failed": 0,
+        "cancelled": 0,
+        "skipped": 0
+      },
+      "full_viewport_file_command": "env CHROMIUM_PATH=/usr/bin/chromium node --test tests/browser/editor-layer-rename-draft.test.js",
+      "full_viewport_file": {
+        "tests": 2,
+        "passed": 2,
+        "failed": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "viewports_px": [
+          390,
+          1366
+        ]
+      }
+    },
+    "interpretation": "The hosted locator detachment could not be reproduced in five consecutive 1366px Chromium runs or the full 390/1366px test file. The repository already avoids locator-level Control+S after the rename input may be intentionally detached during save. No repeatable product or test defect is established; do not increase timeouts or apply force/retry behavior. The hosted exact-SHA failure remains historically FAILED and is not converted to CI PASS.",
+    "source_changes": {
+      "runtime_files_changed": false,
+      "test_files_changed": false,
+      "documentation_and_evidence_changed": true,
+      "new_dependencies": false
+    },
+    "github": {
+      "branch": "v2/foundation",
+      "starting_exact_sha": "3eee61536cbe1300742b59b6f86eda0ab2eed698",
+      "remote_exact_sha_before_changes": "3eee61536cbe1300742b59b6f86eda0ab2eed698",
+      "push_for_this_record": "pending",
+      "workflow_runs_for_starting_sha": [],
+      "ci": "No Actions dispatch/rerun; exact-SHA run listing is empty. Billing and free quota are unverified; no paid usage authorized."
+    },
+    "production_read_only_check": {
+      "deployment_id": "3f9ed703-8620-4ffb-9141-8cb8a0980ee6",
+      "worker_version_id": "d6d48b86-2e9b-4ce2-821d-aca2ee30b367",
+      "traffic_percent": 100,
+      "health": {
+        "result": "PASS",
+        "request": "GET https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+        "checked_at_utc": "2026-11-07T11:01:24Z",
+        "status": 200,
+        "body": {
+          "ok": true,
+          "service": "sanci9517-streamer-brand",
+          "version": "2.0.0",
+          "server": "cloudflare-worker"
+        }
+      },
+      "asset_hash_comparison": "Not applicable; no runtime or public assets changed."
+    },
+    "actions": {
+      "dispatches": 0,
+      "reruns": 0,
+      "artifact_downloads": 0,
+      "artifact_deletions": 0,
+      "billing_and_remaining_free_quota": "UNVERIFIED"
+    },
+    "production_mutations": {
+      "d1_migration": false,
+      "d1_data_write": false,
+      "r2_delete": false,
+      "worker_deploy": false
+    },
+    "cost_huf": 0,
+    "manual_physical_acceptance": "DEFERRED until the complete Visual Editor acceptance gate",
+    "worktree_preexisting_untracked_preserved": [
+      "node_modules/",
+      "scripts/__pycache__/"
+    ]
   }
 }
