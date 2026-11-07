@@ -392,5 +392,21 @@
       "d1_write_or_migration": false,
       "r2_operation": false
     }
+  },
+  "schedule_palette_desktop_timeout_rechecks_2026_11_07": {
+    "recorded_at_utc": "2026-11-07T04:00:26Z",
+    "command_pattern": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 --test-name-pattern='new Schedule palette item keeps canonical defaults and separate Save/Publish at 1366px' tests/browser/editor-element-insertion.test.js",
+    "repetitions": 3,
+    "result": "PASS 3/3",
+    "passed": 3,
+    "failed": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "elapsed_ms": [15530.4, 15718.5, 14873.9],
+    "orphaned_descendants_reaped_per_run": 4,
+    "combined_with_isolated_full_file": "The same 1366px test passed in the 7/7 isolated file rerun; four isolated desktop executions pass after the aggregate suite failure.",
+    "interpretation": "The 8-second palette-group click failure is not reproducible in isolated runs. The full 53-file aggregate remains incomplete/non-PASS. No code or timeout adjustment is justified; retain the exact failing line and capture a Playwright trace/screenshot if the aggregate failure recurs.",
+    "source_changes": "None.",
+    "actions": "No dispatch/rerun; 0 HUF spend. Billing/quota remains UNVERIFIED."
   }
 }
