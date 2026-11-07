@@ -55,7 +55,17 @@ for(const width of [390,1366])test(`layer rename pending draft survives save, pu
  const row=editor.locator(`.layer-row[data-node-id="${id}"]`), field=editor.getByRole('textbox',{name:'Réteg neve',exact:true});
  // Focus and F2 stay in one browser action so a render after a save cannot
  // leave a gap between focusing the layer and dispatching its rename shortcut.
- const open=async()=>{if(mobile)await editor.locator(`.layer-rename[data-node-id="${id}"]`).tap();else await row.press('F2');};
+ const open=async()=>{
+  if(mobile)await editor.locator(`.layer-rename[data-node-id="${id}"]`).tap();else await row.press('F2');
+  // The layer tree may finish a surrounding render in the same input turn.
+  // Wait for the newly mounted rename field to own focus across two frames so
+  // Playwright never starts filling a node that is still being replaced.
+  await editor.waitForFunction(()=>{
+   const input=document.querySelector('#layersTree .layer-rename-editor input');
+   return input?.isConnected&&document.activeElement===input;
+  });
+  await editor.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
+ };
  await open();await field.fill('Mentés billentyűvel');await editor.keyboard.press('Control+s');
  await editor.waitForFunction(()=>document.querySelector('#revision')?.textContent?.includes('3'));
  assert.equal(posts.length,1);assert.equal(posts[0].document.pages[pageId].nodes[id].name,'Mentés billentyűvel');assert.equal(posts[0].publish,false);assert.equal(published.pages[pageId].nodes[id].name,'Mentett elem');

@@ -2457,24 +2457,24 @@ test('responsive dock resize keeps the focused panel and honors an explicit mobi
   await page.locator('#leftTabLayers').click();
   assert.equal(await page.locator('#leftTabLayers').evaluate(element=>document.activeElement===element),true);
 
-  await page.setViewportSize({width:390,height:844});
-  await page.waitForFunction(()=>document.querySelector('#leftDock')?.classList.contains('closed')===false);
+  await resizeAndWaitForWorkspaceBreakpoint(page,390,844);
+  await page.waitForFunction(()=>document.querySelector('#leftDock')?.classList.contains('closed')===false&&document.querySelector('#rightDock')?.classList.contains('closed')===true);
   let mobile=await page.evaluate(()=>({left:!document.querySelector('#leftDock')?.classList.contains('closed'),right:!document.querySelector('#rightDock')?.classList.contains('closed'),scrollWidth:document.documentElement.scrollWidth,innerWidth}));
   assert.deepEqual({left:mobile.left,right:mobile.right},{left:true,right:false},'the panel that contained keyboard focus remains available after crossing the breakpoint');
   assert.ok(mobile.scrollWidth<=mobile.innerWidth);
 
-  await page.setViewportSize({width:1366,height:900});
-  await page.waitForFunction(()=>document.querySelector('#rightDock')?.classList.contains('closed')===false);
+  await resizeAndWaitForWorkspaceBreakpoint(page,1366,900);
+  await page.waitForFunction(()=>document.querySelector('#rightDock')?.classList.contains('closed')===false&&document.querySelector('#leftDock')?.classList.contains('closed')===false);
   assert.equal(await page.locator('#leftDock').isVisible(),true,'the original desktop layout is restored after a temporary responsive switch');
 
-  await page.setViewportSize({width:390,height:844});
-  await page.waitForFunction(()=>document.querySelector('#leftDock')?.classList.contains('closed')===false);
+  await resizeAndWaitForWorkspaceBreakpoint(page,390,844);
+  await page.waitForFunction(()=>document.querySelector('#leftDock')?.classList.contains('closed')===false&&document.querySelector('#rightDock')?.classList.contains('closed')===true);
   await page.locator('#openInspector').click();
   await page.waitForFunction(()=>document.querySelector('#rightDock')?.classList.contains('closed')===false);
   assert.equal(await page.locator('#leftDock').isVisible(),false,'a deliberate mobile panel choice closes the previous drawer');
 
-  await page.setViewportSize({width:1366,height:900});
-  await page.waitForFunction(()=>document.querySelector('#rightDock')?.classList.contains('closed')===false);
+  await resizeAndWaitForWorkspaceBreakpoint(page,1366,900);
+  await page.waitForFunction(()=>document.querySelector('#rightDock')?.classList.contains('closed')===false&&document.querySelector('#leftDock')?.classList.contains('closed')===true);
   assert.equal(await page.locator('#leftDock').evaluate(element=>element.classList.contains('closed')),true,'a deliberate mobile choice replaces the temporary desktop snapshot (the desktop navigation rail itself remains visible)');
   assert.equal(await page.locator('#rightDock').isVisible(),true);
   assert.deepEqual(await page.evaluate(()=>JSON.parse(localStorage.getItem('sanci-editor-shell-v2'))),{leftOpen:false,rightOpen:true,leftTab:'layers',leftTabOrder:['pages','elements','layers','schedule','navigation'],inspectorTab:'design',panelActive:'right',leftWidth:310,rightWidth:352});
