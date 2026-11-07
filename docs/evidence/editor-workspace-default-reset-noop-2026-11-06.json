@@ -709,5 +709,96 @@
       "node_modules/",
       "scripts/__pycache__/"
     ]
+  },
+  "full_local_layout_suite_permitted_current_2026_11_07": {
+    "recorded_at_utc": "2026-11-07T09:24:36Z",
+    "plan_point": "77.44.6.1.C",
+    "command": "timeout --signal=TERM --kill-after=30s 3600s env CHROMIUM_PATH=/usr/bin/chromium npm run test:editor:layout",
+    "initial_sandbox_attempt": {
+      "result": "BLOCKED_ENVIRONMENT",
+      "symptom": "All 53 browser test files failed at fixture startup when the sandbox denied loopback listener creation.",
+      "independent_confirmation": "node HTTP server listen on 127.0.0.1 returned EPERM: operation not permitted.",
+      "feature_assertions_executed": false
+    },
+    "permitted_rerun": {
+      "result": "PASS",
+      "browser_test_files": 53,
+      "node_test_summary": {
+        "tests": 164,
+        "passed": 164,
+        "failed": 0,
+        "cancelled": 0,
+        "skipped": 0
+      },
+      "suite_exit_code": 0,
+      "summed_file_duration_ms": 2160439,
+      "orphaned_test_descendants_reaped": 408,
+      "test_log": "/tmp/sanci-editor-layout-2026-11-07-full-permitted.log",
+      "workspace_appearance_file": {
+        "tests": 62,
+        "passed": 62,
+        "failed": 0,
+        "cancelled": 0,
+        "skipped": 0
+      },
+      "previously_failed_long_run_cases_rechecked_isolated": [
+        {
+          "case": "tabbed desktop panel groups reserve canvas space, restore profiles and fall back to one mobile drawer",
+          "tests": 1,
+          "passed": 1
+        },
+        {
+          "case": "native mouse canvas-edge zones move both docks across all six layouts without covering the narrow desktop canvas",
+          "tests": 1,
+          "passed": 1,
+          "native_mouse_drops": 12
+        }
+      ]
+    },
+    "additional_checks": {
+      "editor_node_suite": "PASS: 14/14 files; subreaper fixture 3/3",
+      "typecheck": "PASS: npm run typecheck",
+      "migration_safety": "PASS: npm run test:web013:migration-gate",
+      "canonical_plan": "PASS: 13 master files; 396 source mappings",
+      "plan_contract": "PASS",
+      "active_plan_point": "PASS audit; 77.44.6.1.C OPEN / NOT_CERTIFIED",
+      "traceability": "PASS: 396/396",
+      "syntax_json_diff_checks": "PASS"
+    },
+    "interpretation": "The two failures in the preceding denied-loopback suite were environmental fixture startup/long-run timing effects, not reproduced product defects. Both failed cases pass alone and the full permitted loopback suite passes. No runtime patch is justified by this run.",
+    "source_changes": {
+      "runtime_files_changed": false,
+      "test_files_changed_in_this_run": false,
+      "documentation_and_evidence_changed": true,
+      "new_dependencies": false
+    },
+    "github": {
+      "branch": "v2/foundation",
+      "starting_exact_sha": "239080c93e542c426f5dd7f9dd0aba67fae158e4",
+      "push_for_this_record": "pending"
+    },
+    "production_read_only_check": {
+      "deployment_id": "3f9ed703-8620-4ffb-9141-8cb8a0980ee6",
+      "worker_version_id": "d6d48b86-2e9b-4ce2-821d-aca2ee30b367",
+      "traffic_percent": 100,
+      "health": "BLOCKED_UNVERIFIED: HTTPS CONNECT tunnel returned 403 from envoy before an HTTP response; no response body was received. Do not report health PASS."
+    },
+    "actions": {
+      "dispatches": 0,
+      "reruns": 0,
+      "billing_and_remaining_free_quota": "UNVERIFIED"
+    },
+    "production_mutations": {
+      "d1_migration": false,
+      "d1_data_write": false,
+      "r2_delete": false,
+      "worker_deploy": false
+    },
+    "cost_huf": 0,
+    "manual_physical_acceptance": "DEFERRED until the complete Visual Editor acceptance gate",
+    "worktree_preexisting_untracked_preserved": [
+      "node_modules/",
+      "scripts/__pycache__/"
+    ]
   }
 }
