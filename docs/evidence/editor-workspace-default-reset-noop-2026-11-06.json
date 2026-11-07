@@ -2074,8 +2074,25 @@
       "branch_sha_after_docs_push": "11b766f8e0e3c85e59d5001317bd7a27f9063d96",
       "workflow_runs_for_docs_commit": 0
     },
-    "release_commit": "11b766f8e0e3c85e59d5001317bd7a27f9063d96",
+    "release_commit": "c49f2983a26899ee21f12b93d3f20f109e3d6df8",
     "push_status": "verified normal fast-forward push; GitHub branch API reports the exact commit SHA",
-    "verified_at_utc": "2026-11-07T15:44:27Z"
+    "verified_at_utc": "2026-11-07T15:45:45Z",
+    "source_control": {
+      "repository": "sanci9517/sanci9517",
+      "branch": "v2/foundation",
+      "last_verified_branch_head": "c49f2983a26899ee21f12b93d3f20f109e3d6df8",
+      "pushes": [
+        "11b766f8e0e3c85e59d5001317bd7a27f9063d96",
+        "c49f2983a26899ee21f12b93d3f20f109e3d6df8"
+      ],
+      "both": "normal fast-forward; docs/evidence-only and [skip ci]",
+      "git_ls_remote": "c49f2983a26899ee21f12b93d3f20f109e3d6df8 refs/heads/v2/foundation",
+      "github_branch_api": "c49f2983a26899ee21f12b93d3f20f109e3d6df8",
+      "actions_runs_for_last_verified_head": 0,
+      "untracked_paths_preserved": [
+        "node_modules/",
+        "scripts/__pycache__/"
+      ]
+    }
   }
 }
