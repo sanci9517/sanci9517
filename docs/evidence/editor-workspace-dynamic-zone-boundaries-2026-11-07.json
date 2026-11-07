@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "recorded_at": "2026-11-07T18:36:03Z",
+  "recorded_at": "2026-11-07T19:04:15Z",
   "plan_point": "77.44.6.1.C",
   "status": "RUNTIME_RELEASE_VERIFIED_LOCAL_AND_HOSTED_CI_IN_PROGRESS_FULL_C_OPEN",
   "scope": "Keep the dynamic dock-zone drag preview and committed drop action consistent at the inclusive 35% and 65% group thresholds despite fractional DOMRect geometry and integer CSS-pixel MouseEvent.clientX coordinates.",
@@ -17,8 +17,8 @@
       "run_number": 3078,
       "event": "push",
       "head_sha": "178e351a3cc68821855c75b94b0da395541609b6",
-      "status_at_recording": "in_progress",
-      "conclusion_at_recording": null,
+      "status_at_recording": "completed",
+      "conclusion_at_recording": "success",
       "job": "editor-core",
       "completed_steps": {
         "typecheck": "success",
@@ -37,14 +37,55 @@
         "Run Brand Kit storage and access regression",
         "Run Admin home contract tests"
       ],
-      "aggregate_ci_pass": false,
-      "manual_dispatch_or_rerun": false
+      "aggregate_ci_pass": true,
+      "manual_dispatch_or_rerun": false,
+      "job_completed_at": "2026-11-07T19:02:44Z",
+      "layout_browser_regression": {
+        "files": "53/53",
+        "tests": "168/168",
+        "failures": 0,
+        "cancellations": 0,
+        "skipped": 0
+      },
+      "web013_admin_mobile_browser_tests": "2/2 success",
+      "schedule_tests": "9/9 success",
+      "domain_contract_tests": "5/5 success",
+      "brand_kit_storage_access_tests": "5/5 success",
+      "admin_home_contract_tests": "16/16 success",
+      "all_job_steps_success": true,
+      "run_url": "https://github.com/sanci9517/sanci9517/actions/runs/42401734086"
     },
     "other_automatic_workflows": {
       "twitch_integration_run": 42401734079,
       "twitch_integration_conclusion": "success",
       "f0_baseline_run": 42401734054,
       "f0_baseline_conclusion": "success"
+    },
+    "completed_automatic_workflows": {
+      "twitch_integration": {
+        "run_id": 42401734079,
+        "conclusion": "success"
+      },
+      "f0_baseline": {
+        "run_id": 42401734054,
+        "conclusion": "success"
+      }
+    },
+    "hosted_artifact": {
+      "id": 13586269779,
+      "name": "editor-layout-screenshots",
+      "size_in_bytes": 2914888,
+      "sha256": "0b71c4dce0406d6c82e1812cb09074e805032cd08e2f8fb74e0639cba8d6f71c",
+      "created_at": "2026-11-07T19:02:41Z",
+      "expires_at": "2026-11-14T19:02:40Z",
+      "retention_days": 7,
+      "referenced_by_current_runtime_ci": true,
+      "delete_now": false
+    },
+    "aggregate_required_workflows": {
+      "editor_core": "success",
+      "twitch_integration": "success",
+      "f0_baseline": "success"
     }
   },
   "implementation": {
