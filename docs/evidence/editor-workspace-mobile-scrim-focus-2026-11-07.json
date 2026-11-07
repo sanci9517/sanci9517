@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "recorded_at": "2026-11-07T22:24:42Z",
+  "recorded_at": "2026-11-07T23:10:28Z",
   "plan_point": "77.44.6.1.C",
-  "status": "DEPLOYED_CONTROL_PLANE_VERIFIED_PUBLIC_SMOKE_BLOCKED_CI_IN_PROGRESS_C_OPEN",
+  "status": "DEPLOYED_CONTROL_PLANE_CI_PASS_PUBLIC_SMOKE_BLOCKED_C_OPEN",
   "scope": "Restore keyboard focus to the control that opened a mobile drawer when the user closes it by clicking the canvas scrim, including the case where the pointer click leaves document.activeElement outside the panel.",
   "source_control": {
     "repository": "sanci9517/sanci9517",
@@ -39,11 +39,35 @@
       },
       {
         "name": "editor-core",
-        "status": "in_progress",
+        "status": "completed",
         "run_id": 42420157710,
         "run_number": 3080,
-        "current_step": "Run Editor browser layout regression",
-        "aggregate_ci_pass": false
+        "current_step": "completed",
+        "aggregate_ci_pass": true,
+        "conclusion": "success",
+        "layout_regression": {
+          "files": "53/53",
+          "tests": "168/168",
+          "failures": 0,
+          "cancellations": 0,
+          "skipped": 0
+        },
+        "completed_at": "2026-11-07T22:50:17Z",
+        "run_url": "https://github.com/sanci9517/sanci9517/actions/runs/42420157710"
+      },
+      {
+        "name": "aggregate required workflows",
+        "status": "completed",
+        "conclusion": "success",
+        "workflows": [
+          "editor-core",
+          "twitch-integration",
+          "f0-baseline",
+          "source-audit",
+          "verify",
+          "canonical-plan",
+          "active-point-audit"
+        ]
       }
     ],
     "other_automatic_workflows": [
@@ -68,7 +92,41 @@
         "conclusion": "success"
       }
     ],
-    "manual_dispatch_or_rerun": false
+    "manual_dispatch_or_rerun": false,
+    "hosted_workflow": {
+      "name": "Editor Core Test",
+      "run_id": 42420157710,
+      "run_number": 3080,
+      "event": "push",
+      "head_sha": "dc4c5b174e83c4d8430227d54f911706beb4ede4",
+      "status_at_recording": "completed",
+      "conclusion_at_recording": "success",
+      "job": "editor-core",
+      "completed_steps": "all workflow steps successful",
+      "layout_browser_regression": {
+        "files": "53/53",
+        "tests": "168/168",
+        "failures": 0,
+        "cancellations": 0,
+        "skipped": 0
+      },
+      "aggregate_ci_pass": true,
+      "manual_dispatch_or_rerun": false,
+      "completed_at": "2026-11-07T22:50:17Z",
+      "run_url": "https://github.com/sanci9517/sanci9517/actions/runs/42420157710"
+    },
+    "hosted_artifact": {
+      "id": 13593523042,
+      "name": "editor-layout-screenshots",
+      "size_in_bytes": 2917049,
+      "sha256": "a2fe71b2da019421bc491c65508be0362da49ee181b7ade9e16e10e0b49980f5",
+      "created_at": "2026-11-07T22:50:13Z",
+      "expires_at": "2026-11-14T22:50:12Z",
+      "retention_days": 7,
+      "workflow_run_id": 42420157710,
+      "referenced_by_current_runtime_ci": true,
+      "delete_now": false
+    }
   },
   "implementation": {
     "root_cause": "When a mobile drawer was closed from its scrim, the pointer click could move focus outside the panel before setPanel checked whether focus was still inside it. The existing conditional focus restoration then did not return keyboard focus to the drawer opener.",
@@ -142,17 +200,39 @@
         "local_sha256": "34a7944b150eeb6099346dcb3d38c13a4bca2c41b203d257a3539f49c4d43a77",
         "live_sha256": null
       },
-      "error": "Direct HTTPS verification through the available outbound proxy failed with URLError(OSError('Tunnel connection failed: 403 Forbidden')); do not treat public health or asset hash as verified."
+      "error": "Direct GET of both /api/health and the cache-busted /editor-v2/ui/shell.js was attempted after rollout; the outbound proxy returned URLError(OSError('Tunnel connection failed: 403 Forbidden')) for each. The web-open tool also reports the URLs are inaccessible. Public health and live asset hash remain UNVERIFIED."
     }
   },
   "cost_and_storage": {
     "additional_cost_huf": 0,
     "paid_services_or_dependencies_added": false,
     "actions": "No manual workflow dispatch, rerun, extra artifact, or cleanup. Only the normal push-triggered required workflows ran. The user-reported artifact storage meter was 0.45 GB / 0.5 GB (90%); the exact account meter/quota remains unverified. Existing artifacts were not deleted because the available GitHub integration exposes artifact reads/downloads but no artifact-delete capability; current-run screenshot artifact upload was still pending at evidence capture.",
-    "artifact_deletion": "NOT AVAILABLE through connected GitHub tools; no source/workflow runs were deleted as a substitute."
+    "artifact_deletion": "NOT AVAILABLE through connected GitHub tools; no source/workflow runs were deleted as a substitute.",
+    "github_actions": "The required exact-SHA push workflows completed; no manual dispatch or rerun. The current 2.92 MB screenshot artifact is retained for 7 days and is tied to the current runtime CI evidence. User-reported artifact storage at the prior check was 0.45 GB / 0.5 GB; the exact account meter remains UNVERIFIED. The connected GitHub tools do not expose artifact deletion or account-wide artifact inventory, so no artifact was deleted."
   },
   "acceptance": {
     "77_44_6_1_C": "OPEN / NOT CERTIFIED; this focus-return regression slice is implemented, while full dock/workspace lifecycle acceptance remains open.",
     "full_visual_editor_manual_and_physical_acceptance": "DEFERRED until the complete Visual Editor acceptance gate."
+  },
+  "test_only_follow_up": {
+    "recorded_at": "2026-11-07T23:10:28Z",
+    "base_commit": "4360447776fda231459fc07955982ed4e5cbe812",
+    "scope": "Exercise focus return after selecting a different mobile drawer through the opposite top-level opener, then closing by scrim, in both directions.",
+    "runtime_source_changed": false,
+    "targeted_chromium": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-name-pattern=\"mobile drawer scrim returns focus to the latest opener\" tests/browser/editor-workspace-appearance.test.js — PASS 1/1.",
+    "complete_workspace_chromium": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-workspace-appearance.test.js — PASS 68/68; no failures, cancellations or skipped tests.",
+    "assertions": [
+      "right drawer opener retains focus after left-to-right switch and scrim close",
+      "left drawer opener retains focus after right-to-left switch and scrim close",
+      "canvas inert state clears after both closures",
+      "no Page Model, Save or Publish requests are sent"
+    ],
+    "runtime_release": "No Worker deployment for this test-only follow-up. Base runtime dc4c5b174e83c4d8430227d54f911706beb4ede4 remains deployed at 100% on version 425cfad2-3744-49e1-afde-289216ad8c2b.",
+    "hosted_ci": "Not run for the test-only follow-up; committed with the repository [skip ci] convention. The preceding runtime SHA editor-core run 42420157710 and all required workflows completed successfully.",
+    "public_health_and_asset_hash": "UNVERIFIED; both requests remain blocked by outbound proxy Tunnel connection failed: 403 Forbidden.",
+    "production_d1_mutation": false,
+    "r2_mutation_or_deletion": false,
+    "additional_cost_huf": 0,
+    "commit_scope": "This test-only change and its plan/evidence update are recorded together in a [skip ci] follow-up commit; the remote ref is verified after push."
   }
 }

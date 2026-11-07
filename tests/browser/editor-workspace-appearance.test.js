@@ -2673,6 +2673,29 @@ test('wide mobile drawer scrim stays behind its panel and closes it from the rem
   assert.deepEqual(errors,[]);
 });
 
+test('mobile drawer scrim returns focus to the latest opener after switching drawer sides',async t=>{
+  const {page,writes,errors}=await openEditor(t,{width:850,height:900,isMobile:true,hasTouch:true});
+  await page.locator('#editorMenu').tap();
+  await page.waitForFunction(()=>!document.querySelector('#leftDock')?.classList.contains('closed'));
+  await page.locator('#openInspector').tap();
+  await page.waitForFunction(()=>!document.querySelector('#rightDock')?.classList.contains('closed')&&document.querySelector('#leftDock')?.classList.contains('closed'));
+  await page.mouse.click(100,400);
+  await page.waitForFunction(()=>document.querySelector('#rightDock')?.classList.contains('closed'));
+  assert.equal(await page.locator('#openInspector').evaluate(element=>document.activeElement===element),true,'switching to the Inspector makes it the focus-return target for the next scrim close');
+  assert.equal(await page.locator('.canvas-area').evaluate(element=>element.inert),false);
+
+  await page.locator('#openInspector').tap();
+  await page.waitForFunction(()=>!document.querySelector('#rightDock')?.classList.contains('closed'));
+  await page.locator('#editorMenu').tap();
+  await page.waitForFunction(()=>!document.querySelector('#leftDock')?.classList.contains('closed')&&document.querySelector('#rightDock')?.classList.contains('closed'));
+  await page.mouse.click(700,400);
+  await page.waitForFunction(()=>document.querySelector('#leftDock')?.classList.contains('closed'));
+  assert.equal(await page.locator('#editorMenu').evaluate(element=>document.activeElement===element),true,'switching to the tool drawer makes its opener the focus-return target for the next scrim close');
+  assert.equal(await page.locator('.canvas-area').evaluate(element=>element.inert),false);
+  assert.deepEqual(writes,[],'switching or closing mobile drawers does not save or publish page content');
+  assert.deepEqual(errors,[]);
+});
+
 test('mobile drawer close controls keep a 44px touch target on compact phones',async t=>{
   for(const width of [320,390]){
     const {page,writes,errors}=await openEditor(t,{width,height:844,isMobile:true,hasTouch:true});
