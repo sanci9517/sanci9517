@@ -1918,6 +1918,7 @@ test('workspace profile export/import uses bounded allowlisted JSON, supports un
   await page.waitForFunction(()=>document.querySelector('#workspaceProfile')?.options.length===3);
   const importedId=await page.locator('#workspaceProfile').inputValue();
   assert.notEqual(importedId,originalId,'imported profiles receive a fresh local identifier');
+  assert.equal(await page.locator('#workspaceProfileName').inputValue(),'Importált elrendezés','the imported profile name is ready for an intentional rename');
   assert.equal(await page.locator('#workspaceProfile option').last().textContent(),'Importált elrendezés');
   assert.equal(await page.locator('.editor-app').getAttribute('data-workspace-theme'),'graphite','import stores a profile without unexpectedly applying it');
   const stored=await page.evaluate(key=>JSON.parse(localStorage.getItem(key)),WORKSPACE_PREFERENCES_KEY);
@@ -1941,6 +1942,76 @@ test('workspace profile export/import uses bounded allowlisted JSON, supports un
   await page.waitForFunction(()=>document.querySelector('#workspaceAppearanceStatus')?.textContent.includes('nem érvényes'));
   assert.equal(await page.locator('#workspaceProfile option').count(),3,'unsupported file versions cannot mutate local profiles');
   assert.deepEqual(writes,[],'profile file transfer and workspace history never Save or Publish page content');
+  assert.deepEqual(errors,[]);
+});
+
+test('saved workspace profiles can be renamed with unique names, undo, redo, and cross-tab sync only',async t=>{
+  const {page,context,writes,errors}=await openEditor(t,{width:1366,height:900});
+  await openPreferences(page);
+  await page.locator('#workspaceProfileName').fill('Tartalomszerkesztés');
+  await page.locator('#saveWorkspaceProfile').click();
+  const firstId=await page.locator('#workspaceProfile').inputValue();
+  await page.locator('#workspaceTheme').selectOption('aurora');
+  await page.locator('#workspaceProfileName').fill('Áttekintő nézet');
+  await page.locator('#saveWorkspaceProfile').click();
+  const secondId=await page.locator('#workspaceProfile').inputValue();
+  assert.notEqual(firstId,secondId);
+  const before=await page.evaluate(({key,id})=>JSON.parse(localStorage.getItem(key)).profiles.find(profile=>profile.id===id),{key:WORKSPACE_PREFERENCES_KEY,id:firstId});
+
+  const second=await context.newPage();
+  await second.goto(page.url(),{waitUntil:'load'});
+  await second.waitForFunction(()=>document.documentElement.dataset.editorBoot==='ready');
+  await openPreferences(second);
+  await second.locator('#workspaceProfile').selectOption(firstId);
+  assert.equal(await second.locator('#workspaceProfileName').inputValue(),'Tartalomszerkesztés','selecting a saved profile loads its current name into the rename field');
+  assert.equal(await second.locator('#renameWorkspaceProfile').isEnabled(),true);
+
+  await page.locator('#workspaceProfile').selectOption(firstId);
+  await page.locator('#workspaceProfileName').fill('  Fókuszált tartalom  ');
+  await page.locator('#renameWorkspaceProfile').click();
+  await page.waitForFunction(id=>[...document.querySelectorAll('#workspaceProfile option')].some(option=>option.value===id&&option.textContent==='Fókuszált tartalom'),firstId);
+  await second.waitForFunction(id=>[...document.querySelectorAll('#workspaceProfile option')].some(option=>option.value===id&&option.textContent==='Fókuszált tartalom'),firstId);
+  assert.equal(await second.locator('#workspaceProfileName').inputValue(),'Fókuszált tartalom','an externally renamed selected profile refreshes its name field without applying the profile');
+  assert.equal(await second.locator('#undoWorkspaceLayout').isDisabled(),true,'external profile rename clears stale workspace history');
+  const after=await page.evaluate(({key,id})=>JSON.parse(localStorage.getItem(key)).profiles.find(profile=>profile.id===id),{key:WORKSPACE_PREFERENCES_KEY,id:firstId});
+  assert.equal(after.name,'Fókuszált tartalom','profile names are trimmed before persistence');
+  assert.equal(after.id,before.id,'renaming never changes the local profile identity');
+  assert.equal(after.createdAt,before.createdAt,'renaming preserves profile creation metadata');
+  assert.deepEqual(after.appearance,before.appearance,'renaming changes no saved appearance preference');
+  assert.deepEqual(after.dock,before.dock,'renaming changes no saved panel state');
+  assert.equal(await page.locator('#workspaceAppearanceStatus').textContent(),'„Tartalomszerkesztés” profil neve „Fókuszált tartalom” lett. Visszavonás elérhető.');
+
+  await page.locator('#workspaceProfileName').fill('Áttekintő nézet');
+  await page.locator('#renameWorkspaceProfile').click();
+  await page.waitForFunction(()=>document.querySelector('#workspaceAppearanceStatus')?.textContent.includes('Már van ilyen nevű profil'));
+  assert.equal((await page.evaluate(({key,id})=>JSON.parse(localStorage.getItem(key)).profiles.find(profile=>profile.id===id),{key:WORKSPACE_PREFERENCES_KEY,id:firstId})).name,'Fókuszált tartalom','case-insensitive duplicate names are rejected without altering either profile');
+
+  await page.locator('#undoWorkspaceLayout').click();
+  assert.equal(await page.locator('#workspaceProfile option').filter({hasText:'Tartalomszerkesztés'}).count(),1,'Undo restores only the renamed profile name');
+  assert.equal(await page.locator('#workspaceProfileName').inputValue(),'Tartalomszerkesztés','Undo also restores the selected profile name in the editable field');
+  assert.equal(await page.locator('#workspaceProfile option').filter({hasText:'Áttekintő nézet'}).count(),1,'Undo preserves the other profile');
+  await page.locator('#redoWorkspaceLayout').click();
+  assert.equal(await page.locator('#workspaceProfile option').filter({hasText:'Fókuszált tartalom'}).count(),1,'Redo reapplies the profile rename');
+  assert.equal(await page.locator('#workspaceProfileName').inputValue(),'Fókuszált tartalom','Redo keeps the selected profile name field in sync');
+  assert.deepEqual(writes,[],'profile renaming and its history never Save or Publish page content');
+  assert.deepEqual(errors,[]);
+});
+
+test('mobile workspace profile rename has a touch-sized control and stays page-data independent',async t=>{
+  const {page,writes,errors}=await openEditor(t,{width:390,height:844,isMobile:true,hasTouch:true});
+  await openPreferences(page);
+  await page.locator('#workspaceProfileName').fill('Telefonos munka');
+  await page.locator('#saveWorkspaceProfile').tap();
+  const id=await page.locator('#workspaceProfile').inputValue();
+  const metrics=await page.locator('#renameWorkspaceProfile').evaluate(element=>({height:element.getBoundingClientRect().height,width:element.getBoundingClientRect().width,disabled:element.disabled}));
+  assert.ok(metrics.height>=44&&metrics.width>=44,`the rename action remains a usable mobile touch target: ${JSON.stringify(metrics)}`);
+  assert.equal(metrics.disabled,false,'the selected mobile profile can be renamed');
+  await page.locator('#workspaceProfileName').fill('Zsebes nézet');
+  await page.locator('#renameWorkspaceProfile').tap();
+  assert.equal(await page.locator('#workspaceProfile option').filter({hasText:'Zsebes nézet'}).count(),1);
+  assert.equal(await page.evaluate(({key,id})=>JSON.parse(localStorage.getItem(key)).profiles.find(profile=>profile.id===id)?.name,{key:WORKSPACE_PREFERENCES_KEY,id}),'Zsebes nézet');
+  assert.equal(await page.locator('.workspace').evaluate(element=>element.classList.contains('left-open')&&element.classList.contains('right-open')),false,'renaming does not disturb the one-drawer mobile shell');
+  assert.deepEqual(writes,[],'mobile profile rename never Save or Publish page content');
   assert.deepEqual(errors,[]);
 });
 

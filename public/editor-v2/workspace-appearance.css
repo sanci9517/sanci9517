@@ -197,6 +197,7 @@
 .workspace-profile-section p { margin:0; color:#c6d3e5; font-size:13px; line-height:1.45; }
 .workspace-profile-create,
 .workspace-profile-load { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:8px; align-items:end; }
+.workspace-profile-create { grid-template-columns:minmax(0,1fr) auto auto; }
 .workspace-profile-create label,
 .workspace-profile-load label { display:grid; gap:6px; min-width:0; font-size:13px; font-weight:650; }
 .workspace-profile-create input,

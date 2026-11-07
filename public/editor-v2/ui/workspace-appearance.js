@@ -144,6 +144,7 @@ export function mountWorkspaceAppearance({documentRef=globalThis.document,root=d
   const closeButton=documentRef.querySelector('#closeWorkspaceAppearance');
   const resetButton=documentRef.querySelector('#resetWorkspaceAppearance');
   const saveProfileButton=documentRef.querySelector('#saveWorkspaceProfile');
+  const renameProfileButton=documentRef.querySelector('#renameWorkspaceProfile');
   const loadProfileButton=documentRef.querySelector('#loadWorkspaceProfile');
   const deleteProfileButton=documentRef.querySelector('#deleteWorkspaceProfile');
   const undoButton=documentRef.querySelector('#undoWorkspaceLayout');
@@ -212,8 +213,15 @@ export function mountWorkspaceAppearance({documentRef=globalThis.document,root=d
     }
     field.value=value.profiles.some(profile=>profile.id===selected)?selected:'';
     if(deleteProfileButton)deleteProfileButton.disabled=!field.value;
+    if(renameProfileButton)renameProfileButton.disabled=!field.value;
     if(loadProfileButton)loadProfileButton.disabled=!field.value;
     if(exportProfileButton)exportProfileButton.disabled=!field.value;
+  };
+  const syncSelectedProfileName=()=>{
+    if(!fields.profileName)return;
+    const selected=fields.profile?.value;
+    const profile=value.profiles.find(item=>item.id===selected);
+    fields.profileName.value=profile?.name||'';
   };
   const paint=()=>{
     applyWorkspacePreferences(root,value);
@@ -270,7 +278,7 @@ export function mountWorkspaceAppearance({documentRef=globalThis.document,root=d
     return true;
   };
   const applySnapshot=entry=>{
-    value=normalizeWorkspacePreferences(entry.preferences);paint();const saved=persist();
+    value=normalizeWorkspacePreferences(entry.preferences);syncSelectedProfileName();paint();const saved=persist();
     onLayoutChange(value.layout);
     try{applyDockState(normalizeDockState(entry.dock))}catch{}
     return saved;
@@ -282,7 +290,7 @@ export function mountWorkspaceAppearance({documentRef=globalThis.document,root=d
   const reset=()=>{
     const defaults={preferences:normalizeWorkspacePreferences(WORKSPACE_PREFERENCE_DEFAULTS),dock:normalizeDockState({})};
     if(JSON.stringify(snapshot())===JSON.stringify(defaults))return false;
-    remember();value={...WORKSPACE_PREFERENCE_DEFAULTS,profiles:[]};paint();const saved=persist();
+    remember();value={...WORKSPACE_PREFERENCE_DEFAULTS,profiles:[]};syncSelectedProfileName();paint();const saved=persist();
     onReset();onLayoutChange(value.layout);
     announcePersistence(saved,'A munkaterület visszaállt az alapbeállításokra ezen az eszközön. Az oldal tartalma változatlan.','A munkaterület ebben a munkamenetben visszaállt az alapbeállításokra; a böngésző tárhelye nem használható, így újranyitáskor a korábbi mentés betöltődhet. Az oldal tartalma változatlan.');
     return true;
@@ -299,6 +307,27 @@ export function mountWorkspaceAppearance({documentRef=globalThis.document,root=d
     if(status)status.textContent=saved?`„${name}” munkaterület-profil elmentve ezen az eszközön.`:`„${name}” profil csak ebben a munkamenetben érhető el, mert a böngésző tárhelye nem használható.`;
     return true;
   };
+  const renameProfile=()=>{
+    const id=fields.profile?.value;
+    const profile=value.profiles.find(item=>item.id===id);
+    if(!profile){if(status)status.textContent='Válassz ki egy mentett profilt az átnevezéshez.';return false}
+    const name=fields.profileName?.value?.trim().slice(0,PROFILE_NAME_LIMIT)||'';
+    if(!name){if(status)status.textContent='Adj rövid nevet a kijelölt munkaterület-profilnak.';fields.profileName?.focus();return false}
+    if(value.profiles.some(item=>item.id!==id&&item.name.localeCompare(name,undefined,{sensitivity:'base'})===0)){
+      if(status)status.textContent='Már van ilyen nevű profil. Válassz másik nevet.';
+      fields.profileName?.focus();return false;
+    }
+    if(profile.name===name){if(status)status.textContent='A kijelölt profil már ezen a néven szerepel.';return false}
+    const oldName=profile.name;
+    remember();
+    value={...value,profiles:value.profiles.map(item=>item.id===id?{...item,name}:item)};
+    if(fields.profileName)fields.profileName.value=name;
+    paint();const saved=persist();
+    if(status)status.textContent=saved
+      ?`„${oldName}” profil neve „${name}” lett. Visszavonás elérhető.`
+      :`„${oldName}” profil neve erre a munkamenetre „${name}” lett; a böngésző tárhelye nem használható. Visszavonás elérhető.`;
+    return true;
+  };
   const loadProfile=()=>{
     const profile=value.profiles.find(item=>item.id===fields.profile?.value);
     if(!profile)return false;
@@ -311,7 +340,9 @@ export function mountWorkspaceAppearance({documentRef=globalThis.document,root=d
     const id=fields.profile?.value;
     if(!id||!value.profiles.some(profile=>profile.id===id))return false;
     const name=value.profiles.find(profile=>profile.id===id)?.name;
-    remember();value={...value,profiles:value.profiles.filter(profile=>profile.id!==id)};paint();const saved=persist();
+    remember();value={...value,profiles:value.profiles.filter(profile=>profile.id!==id)};
+    if(fields.profileName&&fields.profileName.value===name)fields.profileName.value='';
+    paint();const saved=persist();
     announcePersistence(saved,`„${name}” munkaterület-profil törölve. Visszavonás elérhető.`,`„${name}” profilja csak ebből a munkamenetből törlődött; a böngésző tárhelye nem használható. Visszavonás elérhető.`);
     return true;
   };
@@ -335,7 +366,7 @@ export function mountWorkspaceAppearance({documentRef=globalThis.document,root=d
     if(value.profiles.some(item=>item.name.localeCompare(profile.name,undefined,{sensitivity:'base'})===0)){if(status)status.textContent='Már van ilyen nevű profil. Nevezd át az importált profilt vagy töröld a meglévőt.';return false}
     remember();const generated=nextWorkspaceProfileId(value.profiles,idSequence);idSequence=generated.sequence;
     const imported={...profile,id:generated.id,createdAt:Date.now()};
-    value={...value,profiles:[...value.profiles,imported]};paint();const saved=persist();if(fields.profile)fields.profile.value=imported.id;renderProfiles();
+    value={...value,profiles:[...value.profiles,imported]};paint();const saved=persist();if(fields.profile)fields.profile.value=imported.id;if(fields.profileName)fields.profileName.value=imported.name;renderProfiles();
     if(status)status.textContent=saved?`„${imported.name}” profil ezen az eszközön elmentve. A küldött fájlban lévő futtatható kódot nem használjuk.`:`„${imported.name}” profil csak ebben a munkamenetben érhető el, mert a böngésző tárhelye nem használható. A fájlból származó futtatható kódot nem használjuk.`;
     return true;
   };
@@ -360,12 +391,17 @@ export function mountWorkspaceAppearance({documentRef=globalThis.document,root=d
   fields.dockOrder?.addEventListener('change',()=>setDockOrder(fields.dockOrder.value));
   fields.panelMode?.addEventListener('change',()=>updateVisual('panelMode',fields.panelMode.value));
   fields.panelSide?.addEventListener('change',()=>updateVisual('panelSide',fields.panelSide.value));
-  fields.profile?.addEventListener('change',renderProfiles);
+  fields.profile?.addEventListener('change',()=>{
+    const profile=value.profiles.find(item=>item.id===fields.profile?.value);
+    if(profile&&fields.profileName)fields.profileName.value=profile.name;
+    renderProfiles();
+  });
   fields.leftTool?.addEventListener('change',renderLeftToolOrder);
   fields.theme?.addEventListener('change',()=>updateVisual('theme',fields.theme.value));
   fields.density?.addEventListener('change',()=>updateVisual('density',fields.density.value));
   fields.accent?.addEventListener('input',()=>updateVisual('accent',fields.accent.value));
   saveProfileButton?.addEventListener('click',saveProfile);
+  renameProfileButton?.addEventListener('click',renameProfile);
   loadProfileButton?.addEventListener('click',loadProfile);
   deleteProfileButton?.addEventListener('click',deleteProfile);
   importProfileButton?.addEventListener('click',()=>profileFile?.click());
@@ -387,13 +423,18 @@ export function mountWorkspaceAppearance({documentRef=globalThis.document,root=d
         if(isRecord(current)&&current.version===2)return;
       }catch{}
     }
+    const selectedId=fields.profile?.value;
+    const previousSelectedName=value.profiles.find(profile=>profile.id===selectedId)?.name||'';
     let next;
     try{next=event.key===null?normalizeWorkspacePreferences({}):readWorkspacePreferences(storage)}catch{next=normalizeWorkspacePreferences({})}
     if(JSON.stringify(next)===JSON.stringify(value))return;
     try{onExternalChange({source:'storage',area:'appearance',reset:event.key===null})}catch{}
     // History from this tab is based on an older shared workspace. Keeping it
     // would let a later Undo silently replace the state received from another tab.
-    value=next;undoStack=[];redoStack=[];paint();
+    value=next;undoStack=[];redoStack=[];
+    const nextSelectedName=value.profiles.find(profile=>profile.id===selectedId)?.name||'';
+    if(fields.profileName&&fields.profileName.value===previousSelectedName&&nextSelectedName!==previousSelectedName)fields.profileName.value=nextSelectedName;
+    paint();
     try{onLayoutChange(value.layout,{save:false})}catch{}
     if(status)status.textContent='Egy másik szerkesztőlapon megváltozott a munkaterület. A friss beállításokat megjelenítettük, a régi visszavonási előzményt töröltük. Az oldal tartalma nem változott.';
   };
@@ -410,5 +451,5 @@ export function mountWorkspaceAppearance({documentRef=globalThis.document,root=d
   undoButton?.addEventListener('click',undo);redoButton?.addEventListener('click',redo);
   resetButton?.addEventListener('click',reset);
   paint();
-  return {get value(){return normalizeWorkspacePreferences(value)},setLayout,setDockOrder,setDockLayout,setPanelGrouping,open,close,remember,undo,redo,saveProfile,loadProfile,deleteProfile,importProfile,exportProfile,reset,syncDockControls:renderLeftToolOrder,clearExternalDockHistory,reportDockStorageUnavailable,destroy(){documentRef.defaultView?.removeEventListener?.('storage',syncExternalPreferences)}};
+  return {get value(){return normalizeWorkspacePreferences(value)},setLayout,setDockOrder,setDockLayout,setPanelGrouping,open,close,remember,undo,redo,saveProfile,renameProfile,loadProfile,deleteProfile,importProfile,exportProfile,reset,syncDockControls:renderLeftToolOrder,clearExternalDockHistory,reportDockStorageUnavailable,destroy(){documentRef.defaultView?.removeEventListener?.('storage',syncExternalPreferences)}};
 }
