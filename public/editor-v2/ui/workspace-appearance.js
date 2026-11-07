@@ -22,6 +22,18 @@ function luminance(hex){return [1,3,5].map(index=>linearChannel(parseInt(hex.sli
 function contrast(left,right){const a=luminance(left),b=luminance(right);return (Math.max(a,b)+0.05)/(Math.min(a,b)+0.05)}
 function isRecord(value){return value&&typeof value==='object'&&!Array.isArray(value)}
 function finiteWidth(value,min,max,fallback){const number=Number(value);return Number.isFinite(number)?Math.max(min,Math.min(max,number)):fallback}
+function truncateProfileName(value){
+  let name='',length=0;
+  for(const character of value.trim()){
+    const code=character.charCodeAt(0);
+    // Older builds could persist half of an emoji at the 32-code-unit edge.
+    // Drop malformed lone surrogates while retaining complete Unicode code points.
+    if(character.length===1&&code>=0xd800&&code<=0xdfff)continue;
+    if(length+character.length>PROFILE_NAME_LIMIT)break;
+    name+=character;length+=character.length;
+  }
+  return name;
+}
 export function normalizeLeftTabOrder(value){
   const seen=new Set(),order=[];
   for(const tab of Array.isArray(value)?value:[]){if(leftTabs.has(tab)&&!seen.has(tab)){seen.add(tab);order.push(tab)}}
@@ -68,7 +80,7 @@ function normalizeProfiles(value){
   const result=[],ids=new Set(),names=[];
   for(const profile of value){
     if(!isRecord(profile)||typeof profile.id!=='string'||!/^profile-[\da-z-]{1,72}$/iu.test(profile.id)||ids.has(profile.id))continue;
-    const name=typeof profile.name==='string'?profile.name.trim().slice(0,PROFILE_NAME_LIMIT):'';
+    const name=typeof profile.name==='string'?truncateProfileName(profile.name):'';
     if(!name||names.some(existing=>existing.localeCompare(name,undefined,{sensitivity:'base'})===0))continue;
     ids.add(profile.id);names.push(name);
     result.push({
@@ -296,7 +308,7 @@ export function mountWorkspaceAppearance({documentRef=globalThis.document,root=d
     return true;
   };
   const saveProfile=()=>{
-    const name=fields.profileName?.value?.trim().slice(0,PROFILE_NAME_LIMIT)||'';
+    const name=fields.profileName?truncateProfileName(fields.profileName.value):'';
     if(!name){if(status)status.textContent='Adj rövid nevet a mentendő munkaterületnek.';fields.profileName?.focus();return false}
     if(value.profiles.length>=PROFILE_LIMIT){if(status)status.textContent='Legfeljebb nyolc munkaterület-profilt menthetsz. Törölj egy régit, majd próbáld újra.';return false}
     if(value.profiles.some(profile=>profile.name.localeCompare(name,undefined,{sensitivity:'base'})===0)){if(status)status.textContent='Már van ilyen nevű profil. Válassz másik nevet.';fields.profileName?.focus();return false}
@@ -311,7 +323,7 @@ export function mountWorkspaceAppearance({documentRef=globalThis.document,root=d
     const id=fields.profile?.value;
     const profile=value.profiles.find(item=>item.id===id);
     if(!profile){if(status)status.textContent='Válassz ki egy mentett profilt az átnevezéshez.';return false}
-    const name=fields.profileName?.value?.trim().slice(0,PROFILE_NAME_LIMIT)||'';
+    const name=fields.profileName?truncateProfileName(fields.profileName.value):'';
     if(!name){if(status)status.textContent='Adj rövid nevet a kijelölt munkaterület-profilnak.';fields.profileName?.focus();return false}
     if(value.profiles.some(item=>item.id!==id&&item.name.localeCompare(name,undefined,{sensitivity:'base'})===0)){
       if(status)status.textContent='Már van ilyen nevű profil. Válassz másik nevet.';
