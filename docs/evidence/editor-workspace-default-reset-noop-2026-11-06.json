@@ -1775,7 +1775,7 @@
       "expires_at": "2026-11-14T13:19:21Z",
       "deleted": false,
       "contents_locally_inspected": false,
-      "local_download_blocker": "GitHub CLI responded HTTP 401 Bad credentials; artifact remains intact."
+      "local_download_blocker": "Artifact ZIP download via GitHub CLI returned Forbidden; a later run-metadata CLI request returned HTTP 401 Bad credentials. Read-only GitHub connector confirms metadata and retention, but artifact bytes are unavailable."
     },
     "diagnosis": {
       "scope": "Test harness only; runtime app files unchanged.",
