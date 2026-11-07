@@ -1948,7 +1948,7 @@
   },
   "full_local_layout_slice_and_environment_followup_2026_11_07": {
     "plan_point": "77.44.6.1.C",
-    "recorded_at_utc": "2026-11-07T15:39:30Z",
+    "recorded_at_utc": "2026-11-07T15:44:27Z",
     "scope": "Finish the 53-file serial Chromium layout regression after the F2 test-harness fix; investigate the remaining-file failures without weakening assertions/timeouts.",
     "full_layout_rerun_after_f2": {
       "source_record": "full_local_layout_suite_after_f2_harness_2026_11_07",
@@ -2041,21 +2041,41 @@
       "deployment_id": "ee926b5a-81c9-4a85-9b69-a2da549c086e",
       "worker_version_id": "9abd82eb-468d-4b87-add2-e184e4ee6546",
       "traffic_percent": 100,
-      "health_get": "BLOCKED / UNVERIFIED; curl exit 6: Could not resolve host sanci9517-streamer-brand.sandor-bogadi95.workers.dev",
-      "live_asset_get": "BLOCKED / UNVERIFIED by the same DNS failure",
+      "health_get": {
+        "status": "PASS",
+        "http_status": 200,
+        "body": {
+          "ok": true,
+          "service": "sanci9517-streamer-brand",
+          "version": "2.0.0",
+          "server": "cloudflare-worker"
+        }
+      },
+      "live_asset_get": {
+        "status": "PASS",
+        "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/editor-v2/ui/shell.js",
+        "sha256": "e6809d4c4307c44a5519d34d53d2a5595190cb4ea269bc631562e08704152c1f"
+      },
       "local_asset": "public/editor-v2/ui/shell.js",
       "local_asset_sha256": "e6809d4c4307c44a5519d34d53d2a5595190cb4ea269bc631562e08704152c1f",
       "runtime_changed": false,
       "worker_deploy": false,
       "production_d1_migration": false,
       "production_d1_data_write": false,
-      "r2_delete": false
+      "r2_delete": false,
+      "asset_hashes_match": true,
+      "verified_at_utc": "2026-11-07T15:43:54Z"
     },
     "github_read_only_check": {
       "branch": "v2/foundation",
       "github_branch_sha_at_start": "fc673563fd89ea1149ce2d226e62c37c244b8501",
       "workflow_runs_for_starting_sha": 0,
-      "workflow_api": "GET /repos/sanci9517/sanci9517/actions/runs?head_sha=fc673563fd89ea1149ce2d226e62c37c244b8501&per_page=20"
-    }
+      "workflow_api": "GET /repos/sanci9517/sanci9517/actions/runs?head_sha=fc673563fd89ea1149ce2d226e62c37c244b8501&per_page=20",
+      "branch_sha_after_docs_push": "11b766f8e0e3c85e59d5001317bd7a27f9063d96",
+      "workflow_runs_for_docs_commit": 0
+    },
+    "release_commit": "11b766f8e0e3c85e59d5001317bd7a27f9063d96",
+    "push_status": "verified normal fast-forward push; GitHub branch API reports the exact commit SHA",
+    "verified_at_utc": "2026-11-07T15:44:27Z"
   }
 }
