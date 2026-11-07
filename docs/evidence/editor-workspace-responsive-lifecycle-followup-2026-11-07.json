@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-11-07T21:58:12Z",
+  "plan_point": "77.44.6.1.C",
+  "status": "TARGETED_DESKTOP_MOBILE_DOCK_LIFECYCLE_PASS_FULL_C_OPEN",
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "verified_start_sha": "941d73312b452b4942847a706bc88f78bcc2a7a5",
+    "runtime_source_sha": "d6751f1040562cb61e625bca61bfe70c7d8ca43e",
+    "no_runtime_changes": true
+  },
+  "scope": {
+    "desktop_tabbed_dock_groups": "verified at 1025px desktop; tab accessibility, inactive-panel focus exclusion, canvas reservation and profile restoration",
+    "responsive_breakpoint": "1024px tablet drawer to 1025px non-overlapping desktop docks; explicit panel selection restores correctly",
+    "mobile_roundtrip": "tabbed dock group collapses to one mobile sheet and restores exact group on desktop return",
+    "saved_custom_workspace": "custom two-dock workspace returns canvas-first on mobile and restores its desktop dock order"
+  },
+  "validation": {
+    "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-name-pattern='tabbed desktop panel groups reserve canvas space|desktop dock layout normalizes to one mobile drawer|1024px tablet drawer transitions to a non-overlapping 1025px desktop dock|desktop tabbed dock groups become one mobile sheet|saved two-dock custom workspace starts canvas-first on mobile' tests/browser/editor-workspace-appearance.test.js",
+    "result": "PASS",
+    "tests": 5,
+    "failures": 0,
+    "cancellations": 0,
+    "skipped": 0,
+    "runtime_or_harness_fix": "none; no reproducible defect was found in this slice",
+    "save_publish_page_data_contract": "No Page Model writes were observed by these tests; Save and Publish remain distinct.",
+    "initial_sandbox_attempt": "The sandbox denied the fixture localhost bind with listen EPERM before tests started. The identical test-name selection was rerun with local loopback access and all five tests passed.",
+    "canonical_plan_and_traceability": "PASS; one 13-file master, 13/13 plan contracts, active 77.44.6.1.C OPEN / NOT_CERTIFIED, 396/396 source mappings",
+    "git_diff_check": "PASS"
+  },
+  "production": {
+    "worker": "sanci9517-streamer-brand",
+    "deployment_id": "c79afb7d-7892-4e0e-b9a6-1848bdecad48",
+    "worker_version_id": "4f034a23-d090-4c8a-95c4-7cadbe3d2636",
+    "traffic_percent": 100,
+    "source_build_outcome": "success",
+    "deployment_unchanged": true,
+    "public_health": "UNVERIFIED_BLOCKED_BY_OUTBOUND_PROXY",
+    "changed_asset_hash": "not_applicable_no_runtime_asset_changed"
+  },
+  "cost_and_safety": {
+    "cost_huf": 0,
+    "workflow_dispatch_or_rerun": false,
+    "new_dependencies": 0,
+    "production_d1_write_or_migration": false,
+    "r2_deletion": false,
+    "plan_status": "77.44.6.1.C OPEN / NOT CERTIFIED; focused responsive dock lifecycle slice only",
+    "manual_visual_editor_acceptance": "DEFERRED until the complete editor acceptance gate"
+  }
+}
