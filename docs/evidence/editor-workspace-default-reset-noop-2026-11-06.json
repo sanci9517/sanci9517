@@ -1945,5 +1945,117 @@
       ]
     },
     "verified_at_utc": "2026-11-07T14:22:00Z"
+  },
+  "full_local_layout_slice_and_environment_followup_2026_11_07": {
+    "plan_point": "77.44.6.1.C",
+    "recorded_at_utc": "2026-11-07T15:39:30Z",
+    "scope": "Finish the 53-file serial Chromium layout regression after the F2 test-harness fix; investigate the remaining-file failures without weakening assertions/timeouts.",
+    "full_layout_rerun_after_f2": {
+      "source_record": "full_local_layout_suite_after_f2_harness_2026_11_07",
+      "completed_prefix": {
+        "files": 29,
+        "tests": 99,
+        "passed": 99,
+        "failed": 0
+      },
+      "long_inspector_file": {
+        "path": "tests/browser/editor-inspector-partial-types.test.js",
+        "tests": 1,
+        "passed": 1,
+        "duration_ms": 760154,
+        "isolated": "PASS"
+      },
+      "remaining_slice": {
+        "files": 23,
+        "tests": 65,
+        "passed": 63,
+        "failed": 2,
+        "cancelled": 0,
+        "skipped": 0,
+        "log": "/tmp/sanci-layout-remaining-20261107.log"
+      },
+      "failures": [
+        {
+          "path": "tests/browser/editor-decorative-elements.test.js",
+          "test": "partial palette types and Divider/Spacer Inspector edits become public only after Publish",
+          "failure": "page.reload timed out at tests/browser/editor-decorative-elements.test.js:211 while waiting for domcontentloaded (7s Playwright timeout); target URL /p/test."
+        },
+        {
+          "path": "tests/browser/editor-element-insertion.test.js",
+          "test": "Layers hierarchy reparent works with desktop drag and touch long-press, with history parity",
+          "failure": "node locator timed out at line 490 (7s) in the slice run; targeted case later passed 1/1, then the complete file passed 8/8 in isolation."
+        }
+      ]
+    },
+    "isolated_rechecks": {
+      "editor_element_insertion_targeted": {
+        "passed": 1,
+        "failed": 0,
+        "status": "PASS"
+      },
+      "editor_element_insertion_full_file": {
+        "passed": 8,
+        "failed": 0,
+        "status": "PASS",
+        "duration_ms": 57940
+      },
+      "editor_decorative_elements": {
+        "status": "BLOCKED_BEFORE_TEST_CASE",
+        "attempts": 2,
+        "observed": "Node test worker reported only test-file-level \"test failed\" in 0.59-0.85s; no test body/stack started, so this is not a product failure reproduction."
+      }
+    },
+    "environment_diagnostic": {
+      "process_count": 5567,
+      "zombie_count": 5457,
+      "cgroup_pids_max": "max",
+      "interpretation": "Severely accumulated orphan/zombie processes make new Node test workers unreliable. Do not attempt to kill PID 1 or delete test/runtime files; defer a clean browser retry to a fresh managed runtime."
+    },
+    "additional_checks": {
+      "plan_contract": "PASS 13/13",
+      "canonical_plan_check": "PASS; one 13-file master, one current cursor, C remains OPEN / NOT CERTIFIED",
+      "traceability": "PASS 396/396",
+      "typecheck": "PASS (npm run typecheck)",
+      "migration_safety_gate": "PASS (npm run test:web013:migration-gate)",
+      "active_plan_point": "77.44.6.1.C OPEN / NOT CERTIFIED",
+      "git_status_before_evidence": "branch v2/foundation at fc673563fd89ea1149ce2d226e62c37c244b8501; existing untracked node_modules/ and scripts/__pycache__/ preserved"
+    },
+    "interpretation": "The 23-file slice is NOT PASS (63/65); one previously failing file passes in isolation. The decorative-elements test could not be re-run because the local Node test worker failed before test execution under process exhaustion. No product defect is proven, so no runtime or test-source fix is justified. Full 53-file suite remains OPEN / NOT CERTIFIED until rerun in a clean local runtime.",
+    "runtime_source_changed": false,
+    "test_source_changed": false,
+    "workflow_files_changed": false,
+    "actions_workflow_dispatched": false,
+    "new_artifacts_uploaded": false,
+    "production_mutations": {
+      "d1_migration": false,
+      "d1_data_write": false,
+      "r2_delete": false,
+      "worker_deploy": false
+    },
+    "cost_huf": 0,
+    "actions_billing_and_quota": "UNVERIFIED; no workflow dispatch or artifact upload",
+    "manual_physical_acceptance": "DEFERRED until complete Visual Editor",
+    "next_step": "Retry only tests/browser/editor-decorative-elements.test.js and the remaining serial layout files in a fresh local runtime with normal process reaping; if a real assertion fails, diagnose and fix before claiming aggregate PASS. No owner approval is required.",
+    "production_read_only_check": {
+      "deployment_api": "GET /accounts/64bbd6a12ac732ed2cac4ca25d8bfa7e/workers/scripts/sanci9517-streamer-brand/deployments?per_page=1",
+      "deployment_id": "ee926b5a-81c9-4a85-9b69-a2da549c086e",
+      "worker_version_id": "9abd82eb-468d-4b87-add2-e184e4ee6546",
+      "traffic_percent": 100,
+      "health_get": "BLOCKED / UNVERIFIED; curl exit 6: Could not resolve host sanci9517-streamer-brand.sandor-bogadi95.workers.dev",
+      "live_asset_get": "BLOCKED / UNVERIFIED by the same DNS failure",
+      "local_asset": "public/editor-v2/ui/shell.js",
+      "local_asset_sha256": "e6809d4c4307c44a5519d34d53d2a5595190cb4ea269bc631562e08704152c1f",
+      "runtime_changed": false,
+      "worker_deploy": false,
+      "production_d1_migration": false,
+      "production_d1_data_write": false,
+      "r2_delete": false
+    },
+    "github_read_only_check": {
+      "branch": "v2/foundation",
+      "github_branch_sha_at_start": "fc673563fd89ea1149ce2d226e62c37c244b8501",
+      "workflow_runs_for_starting_sha": 0,
+      "workflow_api": "GET /repos/sanci9517/sanci9517/actions/runs?head_sha=fc673563fd89ea1149ce2d226e62c37c244b8501&per_page=20"
+    }
   }
 }
