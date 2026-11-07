@@ -804,5 +804,102 @@
       "node_modules/",
       "scripts/__pycache__/"
     ]
+  },
+  "dynamic_dock_mouse_width_matrix_2026_11_07": {
+    "recorded_at_utc": "2026-11-07T09:57:30Z",
+    "plan_point": "77.44.6.1.C",
+    "command": "env CHROMIUM_PATH=/usr/bin/chromium node --test tests/browser/editor-workspace-appearance.test.js",
+    "targeted_browser_case": {
+      "result": "PASS",
+      "case": "native mouse canvas-edge zones move both docks across all six layouts at three desktop widths without covering the canvas",
+      "viewport_widths_px": [
+        1025,
+        1280,
+        1920
+      ],
+      "mouse_drop_operations": 36,
+      "matrix": "3 widths × 6 region orders × 2 source docks",
+      "minimum_canvas_width_px": 400,
+      "assertions": [
+        "persisted allowlisted dock order matches physical drag",
+        "both docks remain outside the canvas bounds",
+        "no horizontal overflow",
+        "drop preview and drag state clear",
+        "Undo and Redo restore/reapply the exact order",
+        "no Page Model Save or Publish request"
+      ]
+    },
+    "full_workspace_browser_file": {
+      "result": "PASS",
+      "tests": 62,
+      "passed": 62,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "duration_ms": 341510,
+      "test_log": "/tmp/sanci-workspace-appearance-2026-11-07.log"
+    },
+    "additional_checks": {
+      "editor_node_suite": "PASS: 14/14 Node test files; subreaper runner 3/3",
+      "typecheck": "PASS: npm run typecheck",
+      "migration_safety": "PASS: npm run test:web013:migration-gate",
+      "canonical_plan": "PASS: 13 master files; 396 source mappings",
+      "plan_contract": "PASS: 13/13",
+      "active_plan_point": "PASS audit: 77.44.6.1.C OPEN / NOT_CERTIFIED",
+      "traceability": "PASS: 396/396",
+      "javascript_syntax": "PASS: node --check tests/browser/editor-workspace-appearance.test.js",
+      "diff_check": "PASS: git diff --check"
+    },
+    "interpretation": "Desktop canvas-edge reorder behavior now has native mouse regression coverage across 1025px, 1280px and 1920px. No runtime bug was proven and no runtime source changed. This focused result does not certify the full C workspace lifecycle or the complete Visual Editor.",
+    "source_changes": {
+      "runtime_files_changed": false,
+      "test_files_changed_in_this_run": true,
+      "changed_test_file": "tests/browser/editor-workspace-appearance.test.js",
+      "documentation_and_evidence_changed": true,
+      "new_dependencies": false
+    },
+    "github": {
+      "branch": "v2/foundation",
+      "starting_exact_sha": "7535f9c118fce02ab7aa28e64fb61615b41b6b0b",
+      "remote_exact_sha_before_changes": "7535f9c118fce02ab7aa28e64fb61615b41b6b0b",
+      "push_for_this_record": "pending",
+      "workflow_runs_for_starting_sha": [],
+      "ci": "No Actions workflow was dispatched in this run; billing/quota remains unverified."
+    },
+    "production_read_only_check": {
+      "deployment_id": "3f9ed703-8620-4ffb-9141-8cb8a0980ee6",
+      "worker_version_id": "d6d48b86-2e9b-4ce2-821d-aca2ee30b367",
+      "traffic_percent": 100,
+      "health": {
+        "result": "PASS",
+        "request": "GET https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+        "checked_at_utc": "2026-11-07T09:53:10Z",
+        "status": 200,
+        "body": {
+          "ok": true,
+          "service": "sanci9517-streamer-brand",
+          "version": "2.0.0",
+          "server": "cloudflare-worker"
+        }
+      },
+      "asset_hash_comparison": "Not applicable; no runtime or public assets changed."
+    },
+    "actions": {
+      "dispatches": 0,
+      "reruns": 0,
+      "billing_and_remaining_free_quota": "UNVERIFIED"
+    },
+    "production_mutations": {
+      "d1_migration": false,
+      "d1_data_write": false,
+      "r2_delete": false,
+      "worker_deploy": false
+    },
+    "cost_huf": 0,
+    "manual_physical_acceptance": "DEFERRED until the complete Visual Editor acceptance gate",
+    "worktree_preexisting_untracked_preserved": [
+      "node_modules/",
+      "scripts/__pycache__/"
+    ]
   }
 }

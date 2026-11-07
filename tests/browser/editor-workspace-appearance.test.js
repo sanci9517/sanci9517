@@ -941,7 +941,7 @@ test('native mouse drag reorders a dock past the canvas edge and persists one un
   assert.deepEqual(errors,[]);
 });
 
-test('native mouse canvas-edge zones move both docks across all six layouts without covering the narrow desktop canvas',async t=>{
+test('native mouse canvas-edge zones move both docks across all six layouts at three desktop widths without covering the canvas',async t=>{
   const {page,writes,errors}=await openEditor(t,{width:1025,height:900});
   await openPreferences(page);
   await page.locator('#workspaceLayout').selectOption('balanced');
@@ -951,60 +951,67 @@ test('native mouse canvas-edge zones move both docks across all six layouts with
     document.documentElement.style.setProperty('--right-dock-width','440px');
   });
   const orderings=['left-canvas-right','canvas-left-right','left-right-canvas','right-left-canvas','right-canvas-left','canvas-right-left'];
+  const viewportWidths=[1025,1280,1920];
   const results=[];
 
-  for(const order of orderings){
-    for(const sourceId of ['left','right']){
-      await page.locator('#workspaceDockOrder').selectOption(order);
-      await page.locator('#workspacePanelMode').selectOption('separate');
-      await page.locator('#closeWorkspaceAppearance').click();
-      const canvas=page.locator('.canvas-area');
-      const canvasBounds=await canvas.boundingBox();
-      assert.ok(canvasBounds&&canvasBounds.width>=400,`${order} starts with a usable canvas`);
-      const sourceBeforeCanvas=order.split('-').indexOf(sourceId)<order.split('-').indexOf('canvas');
-      const dropBeforeCanvas=!sourceBeforeCanvas;
-      const source=page.locator(`#${sourceId}Dock .dock-heading:visible`).first();
-      await source.dragTo(canvas,{targetPosition:{x:dropBeforeCanvas?4:canvasBounds.width-4,y:Math.min(30,canvasBounds.height/2)}});
+  for(const viewportWidth of viewportWidths){
+    if(viewportWidth!==1025)await page.setViewportSize({width:viewportWidth,height:900});
+    assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth),viewportWidth,`${viewportWidth}px desktop layout does not overflow before drag`);
+    for(const order of orderings){
+      for(const sourceId of ['left','right']){
+        await page.locator('#workspaceDockOrder').selectOption(order);
+        await page.locator('#workspacePanelMode').selectOption('separate');
+        await page.locator('#closeWorkspaceAppearance').click();
+        const canvas=page.locator('.canvas-area');
+        const canvasBounds=await canvas.boundingBox();
+        assert.ok(canvasBounds&&canvasBounds.width>=400,`${viewportWidth}px ${order} starts with a usable canvas`);
+        const sourceBeforeCanvas=order.split('-').indexOf(sourceId)<order.split('-').indexOf('canvas');
+        const dropBeforeCanvas=!sourceBeforeCanvas;
+        const source=page.locator(`#${sourceId}Dock .dock-heading:visible`).first();
+        await source.dragTo(canvas,{targetPosition:{x:dropBeforeCanvas?4:canvasBounds.width-4,y:Math.min(30,canvasBounds.height/2)}});
 
-      const expected=order.split('-');
-      expected.splice(expected.indexOf(sourceId),1);
-      const canvasIndex=expected.indexOf('canvas');
-      expected.splice(canvasIndex+(dropBeforeCanvas?0:1),0,sourceId);
-      const expectedOrder=expected.join('-');
-      const moved=await page.evaluate(()=>{
-        const workspace=document.querySelector('.workspace'),canvas=document.querySelector('.canvas-area');
-        const canvasRect=canvas.getBoundingClientRect();
-        const dockRects=['#leftDock','#rightDock'].map(selector=>document.querySelector(selector).getBoundingClientRect());
-        return {
-          order:workspace.dataset.workspaceDockOrder,
-          savedOrder:JSON.parse(localStorage.getItem('sanci-editor-workspace-preferences-v2'))?.dockOrder,
-          canvasWidth:canvasRect.width,
-          canvasLeft:canvasRect.left,
-          canvasRight:canvasRect.right,
-          dockRects:dockRects.map(rect=>({left:rect.left,right:rect.right,width:rect.width})),
-          previewCleared:!canvas.hasAttribute('data-dock-drop-position')&&!canvas.hasAttribute('data-dock-drop-label'),
-          dragFinished:!document.body.classList.contains('workspace-reordering')
-        };
-      });
-      assert.equal(moved.order,expectedOrder,`${sourceId} crosses the physical canvas edge from ${order}`);
-      assert.equal(moved.savedOrder,expectedOrder,'each actual mouse drop persists the allowlisted workspace order');
-      assert.ok(moved.canvasWidth>=400,`${expectedOrder} reserves at least 400px at 1025px: ${JSON.stringify(moved)}`);
-      assert.ok(moved.dockRects.every(rect=>rect.width>0&&(rect.right<=moved.canvasLeft||rect.left>=moved.canvasRight)),`neither dock overlaps the canvas: ${JSON.stringify(moved)}`);
-      assert.equal(moved.previewCleared,true);
-      assert.equal(moved.dragFinished,true);
+        const expected=order.split('-');
+        expected.splice(expected.indexOf(sourceId),1);
+        const canvasIndex=expected.indexOf('canvas');
+        expected.splice(canvasIndex+(dropBeforeCanvas?0:1),0,sourceId);
+        const expectedOrder=expected.join('-');
+        const moved=await page.evaluate(()=>{
+          const workspace=document.querySelector('.workspace'),canvas=document.querySelector('.canvas-area');
+          const canvasRect=canvas.getBoundingClientRect();
+          const dockRects=['#leftDock','#rightDock'].map(selector=>document.querySelector(selector).getBoundingClientRect());
+          return {
+            order:workspace.dataset.workspaceDockOrder,
+            savedOrder:JSON.parse(localStorage.getItem('sanci-editor-workspace-preferences-v2'))?.dockOrder,
+            canvasWidth:canvasRect.width,
+            canvasLeft:canvasRect.left,
+            canvasRight:canvasRect.right,
+            pageWidth:document.documentElement.scrollWidth,
+            dockRects:dockRects.map(rect=>({left:rect.left,right:rect.right,width:rect.width})),
+            previewCleared:!canvas.hasAttribute('data-dock-drop-position')&&!canvas.hasAttribute('data-dock-drop-label'),
+            dragFinished:!document.body.classList.contains('workspace-reordering')
+          };
+        });
+        assert.equal(moved.order,expectedOrder,`${viewportWidth}px ${sourceId} crosses the physical canvas edge from ${order}`);
+        assert.equal(moved.savedOrder,expectedOrder,'each actual mouse drop persists the allowlisted workspace order');
+        assert.ok(moved.canvasWidth>=400,`${viewportWidth}px ${expectedOrder} reserves at least 400px: ${JSON.stringify(moved)}`);
+        assert.equal(moved.pageWidth,viewportWidth,`${viewportWidth}px reordered workspace has no horizontal overflow`);
+        assert.ok(moved.dockRects.every(rect=>rect.width>0&&(rect.right<=moved.canvasLeft||rect.left>=moved.canvasRight)),`neither dock overlaps the canvas: ${JSON.stringify(moved)}`);
+        assert.equal(moved.previewCleared,true);
+        assert.equal(moved.dragFinished,true);
 
-      await openPreferences(page);
-      assert.equal(await page.locator('#undoWorkspaceLayout').isEnabled(),true,'a native edge drop creates workspace history');
-      await page.locator('#undoWorkspaceLayout').click();
-      assert.equal(await page.locator('.workspace').getAttribute('data-workspace-dock-order'),order,'Undo restores the exact starting layout');
-      await page.locator('#redoWorkspaceLayout').click();
-      assert.equal(await page.locator('.workspace').getAttribute('data-workspace-dock-order'),expectedOrder,'Redo reapplies the physical edge drop');
-      results.push({startingOrder:order,sourceId,edge:dropBeforeCanvas?'before':'after',resultOrder:expectedOrder,canvasWidth:Math.round(moved.canvasWidth)});
+        await openPreferences(page);
+        assert.equal(await page.locator('#undoWorkspaceLayout').isEnabled(),true,'a native edge drop creates workspace history');
+        await page.locator('#undoWorkspaceLayout').click();
+        assert.equal(await page.locator('.workspace').getAttribute('data-workspace-dock-order'),order,'Undo restores the exact starting layout');
+        await page.locator('#redoWorkspaceLayout').click();
+        assert.equal(await page.locator('.workspace').getAttribute('data-workspace-dock-order'),expectedOrder,'Redo reapplies the physical edge drop');
+        results.push({viewportWidth,startingOrder:order,sourceId,edge:dropBeforeCanvas?'before':'after',resultOrder:expectedOrder,canvasWidth:Math.round(moved.canvasWidth)});
+      }
     }
   }
 
-  t.diagnostic(JSON.stringify({nativeMouseDrops:results.length,minimumCanvas:Math.min(...results.map(item=>item.canvasWidth)),results}));
-  assert.equal(results.length,12);
+  t.diagnostic(JSON.stringify({nativeMouseDrops:results.length,viewportWidths,minimumCanvas:Math.min(...results.map(item=>item.canvasWidth)),results}));
+  assert.equal(results.length,36);
   assert.deepEqual(writes,[],'dock placement and its workspace history never call Page Model Save or Publish');
   assert.deepEqual(errors,[]);
 });
