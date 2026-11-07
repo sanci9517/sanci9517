@@ -1,0 +1,140 @@
+{
+  "date": "2026-11-07",
+  "plan_point": "77.44.6.1.C",
+  "status": "LOCAL_TEST_HARNESS_FOLLOWUP_PASS_REMOTE_CI_FAILURE_UNRESOLVED",
+  "scope": "Diagnose the completed Editor Core browser workflow for the workspace profile rename runtime release; stabilize the two failing browser test synchronizations without changing runtime behavior.",
+  "ci_failure": {
+    "workflow": "Editor Core Test",
+    "run_id": 42394172703,
+    "run_url": "https://github.com/sanci9517/sanci9517/actions/runs/42394172703",
+    "head_sha": "6dc76de7643e46fd43856a6d008400a1c9ceb9a2",
+    "conclusion": "failure",
+    "job_id": 128467877396,
+    "job_name": "editor-core",
+    "failed_tests": [
+      {
+        "file": "tests/browser/editor-workspace-appearance.test.js",
+        "test": "responsive dock resize keeps the focused panel and honors an explicit mobile panel change",
+        "actual": {
+          "leftOpen": true,
+          "rightOpen": true
+        },
+        "expected": {
+          "leftOpen": true,
+          "rightOpen": false
+        },
+        "diagnosis": "The test waited only for the focused left dock to remain open, then sampled the second dock before it had synchronized through the breakpoint media-query change. The runtime transition handler exists; this was a test synchronization gap, not a reproduced stable-state product failure."
+      },
+      {
+        "file": "tests/browser/editor-layer-rename-draft.test.js",
+        "test": "layer rename pending draft survives save, publish and selection at 1366px",
+        "failure": "Playwright locator.fill timed out after the rename input was detached from the DOM during the open/fill turn.",
+        "diagnosis": "The browser test started filling immediately after F2/tap opened the form. It now waits for the newly mounted input to own focus and two animation frames before typing; the local full-file rerun passed. No runtime assertion failure was reproduced."
+      }
+    ]
+  },
+  "test_harness_followup": {
+    "commit": "8417b69f",
+    "commit_message": "[skip ci] test(editor): stabilize breakpoint and rename browser checks",
+    "pushed_with": "normal fast-forward to v2/foundation",
+    "files": [
+      "tests/browser/editor-workspace-appearance.test.js",
+      "tests/browser/editor-layer-rename-draft.test.js"
+    ],
+    "runtime_source_changed": false,
+    "existing_project_code_reused": "The existing resizeAndWaitForWorkspaceBreakpoint helper and the existing Node/Linux-subreaper browser runner; no new dependency or third-party code.",
+    "local_checks": [
+      {
+        "command": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-workspace-appearance.test.js",
+        "result": "PASS",
+        "tests": 65
+      },
+      {
+        "command": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-layer-rename-draft.test.js",
+        "result": "PASS",
+        "tests": 2
+      },
+      {
+        "command": "npm run test:editor",
+        "result": "PASS",
+        "test_files": 14,
+        "subreaper_contract_tests": 3
+      },
+      {
+        "command": "npm run typecheck",
+        "result": "PASS"
+      },
+      {
+        "command": "python3 tests/plan-contract.test.py",
+        "result": "PASS",
+        "tests": 13
+      },
+      {
+        "command": "python3 scripts/check-canonical-plan.py",
+        "result": "PASS"
+      },
+      {
+        "command": "python3 scripts/build-feature-traceability.py --check",
+        "result": "PASS",
+        "mappings": 396
+      },
+      {
+        "command": "npm run test:web013:migration-gate",
+        "result": "PASS"
+      },
+      {
+        "command": "node --check tests/browser/editor-workspace-appearance.test.js && node --check tests/browser/editor-layer-rename-draft.test.js && git diff --check",
+        "result": "PASS"
+      }
+    ],
+    "not_run": "The complete 53-file editor layout suite was not rerun in this test-harness-only follow-up; it had a separate prior 53/53 local PASS, which is not treated as a fresh result for this follow-up."
+  },
+  "remote_gate": {
+    "status": "FAILURE_REMAINS_UNVERIFIED_AFTER_LOCAL_FOLLOWUP",
+    "rerun_or_dispatch": false,
+    "reason": "The exact runtime-SHA browser workflow is already completed as failure. A local harness-only correction does not change that immutable run; no rerun/dispatch was started because Actions remaining compute/storage quota and billing are unverified under the 0-cost policy.",
+    "aggregate_ci_pass": false,
+    "actions_quota_billing": "UNVERIFIED"
+  },
+  "actions_artifact": {
+    "id": 13583801053,
+    "name": "editor-layout-screenshots",
+    "size_bytes": 2917145,
+    "created_at": "2026-11-07T17:29:43Z",
+    "expires_at": "2026-11-14T17:29:42Z",
+    "decision": "RETAINED",
+    "reason": "Current exact-SHA failed-run diagnostic screenshots are still useful for triage and remain within the repository normal seven-day policy. The available authenticated GitHub tools expose artifact listing/download but not artifact deletion; no workflow-run or source deletion was substituted."
+  },
+  "release_verification": {
+    "runtime_commit": "6dc76de7643e46fd43856a6d008400a1c9ceb9a2",
+    "deployment_id": "d1a2b048-60f2-4453-9e73-4274ad4392c2",
+    "worker_version": "21e96136-fe07-4afc-839a-d353eb092668",
+    "traffic_percent": 100,
+    "health": {
+      "url": "GET /api/health",
+      "http_status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "asset_sha256": {
+      "/editor-v2/": "ed2860cfeaa3391d9afe30776db3f7a90716f8559131e7890e99e017ea0bdb29",
+      "/editor-v2/workspace-appearance.css": "2fdce885bd091fc93d9204519742612f33a635d8ef2aa36a9b9194ed4694e5a6",
+      "/editor-v2/ui/workspace-appearance.js": "6fa275a15c8cc0f19c897e495df1f592d95904fe7d583e05c17f86fb25e8be59",
+      "/editor-v2/ui/shell.js": "e6809d4c4307c44a5519d34d53d2a5595190cb4ea269bc631562e08704152c1f"
+    },
+    "this_followup_deployed_worker": false,
+    "reason": "Only test-harness files changed; the production runtime source and current 100% traffic deployment are unchanged. A redundant Worker deployment was not triggered."
+  },
+  "data_and_cost": {
+    "production_d1_migration_or_write": false,
+    "r2_mutation_or_delete": false,
+    "new_dependency": false,
+    "cost_huf": 0,
+    "manual_visual_editor_acceptance": "DEFERRED until complete Editor acceptance gate; 77.44.6.1.C remains OPEN / NOT CERTIFIED.",
+    "save_publish_separate": true
+  }
+}
