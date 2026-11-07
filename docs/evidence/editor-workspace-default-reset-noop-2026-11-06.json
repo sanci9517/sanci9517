@@ -291,5 +291,49 @@
       },
       "runtime_source_changed": false
     }
+  },
+  "diagnostic_followup_exact_test_repeat_10": {
+    "recorded_at_utc": "2026-11-07T01:04:59Z",
+    "command": "for i in 1..10: CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-layer-rename-draft.test.js",
+    "result": "PASS 10/10 file runs; each run passed both viewport scenarios (20/20 scenarios total), zero failures/cancellations/skips.",
+    "viewport_widths_px": [
+      390,
+      1366
+    ],
+    "per_run_elapsed_ms": [
+      9269,
+      8139,
+      8332,
+      8206,
+      8300,
+      8083,
+      8525,
+      8111,
+      7979,
+      8502
+    ],
+    "orphaned_descendants_reaped_per_run": 8,
+    "result_interpretation": "The exact hosted layer-rename locator-detachment failure remains unreproduced after 10 additional isolated local repetitions and the prior 3 isolated runs plus the cumulative 25-file prefix. This narrows the issue but does not establish root cause or mark hosted CI PASS.",
+    "local_environment_snapshot": {
+      "chromium_zombie_processes": 4935,
+      "zombie_parent_pid": "1",
+      "cgroup_pids_current": 5376,
+      "cgroup_pids_max": "max",
+      "resource_pressure_interfaces": "/proc/pressure/{cpu,memory,io} were unavailable in this container.",
+      "interpretation": "Severe pre-existing local process-table contamination can confound local browser timing; it is not evidence that the separate GitHub hosted failure had the same cause."
+    },
+    "source_changes": "None. No runtime or test-harness change was justified without a reproducible defect or trace.",
+    "actions": "No GitHub Actions dispatch/rerun; free quota/billing is unverified and the spending cap remains 0 HUF.",
+    "source_control_at_check": {
+      "branch": "v2/foundation",
+      "exact_sha": "1d4dc1938e7deba6ce628196f626353349291bf1",
+      "actions_runs_for_exact_sha": 0
+    },
+    "production_readback": {
+      "deployment_id": "3f9ed703-8620-4ffb-9141-8cb8a0980ee6",
+      "worker_version": "d6d48b86-2e9b-4ce2-821d-aca2ee30b367",
+      "traffic_percent": 100,
+      "runtime_source_changed": false
+    }
   }
 }
