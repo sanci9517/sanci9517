@@ -775,7 +775,11 @@
     "github": {
       "branch": "v2/foundation",
       "starting_exact_sha": "239080c93e542c426f5dd7f9dd0aba67fae158e4",
-      "push_for_this_record": "pending"
+      "push_for_this_record": "pending",
+      "pushed_commit": "3a7c5cfb1c2b160b56a68ae7b0fa41d84793aee8",
+      "push": "normal fast-forward confirmed by git push output and exact git ls-remote ref",
+      "workflow_runs_for_pushed_commit": [],
+      "ci": "No workflow run found for the [skip ci] documentation/evidence-only commit; CI PASS not claimed."
     },
     "production_read_only_check": {
       "deployment_id": "3f9ed703-8620-4ffb-9141-8cb8a0980ee6",
