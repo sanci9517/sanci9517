@@ -17,11 +17,11 @@
     "remote_branch_sha_at_followup_push": "5fbfdde1bd0741064b544165ea8b883282326fb7",
     "remote_verification": "Runtime SHA was confirmed by GitHub refs API; follow-up test SHA was pushed with a normal fast-forward and the GitHub refs API confirmed refs/heads/v2/foundation at the exact follow-up SHA. Direct git ls-remote was blocked in this session because the outbound proxy could not connect to port 8080; no claim is made that ls-remote passed in this session.",
     "runtime_push": "Previously completed as a normal fast-forward push; current GitHub branch API still matches the exact runtime commit.",
-    "docs_commit": "5e5ed75e8d0711cbc399f0f7a20947986e20a04d",
-    "docs_commit_message": "[skip ci] docs(editor): record Unicode profile CI closure",
-    "docs_commit_remote_verification": "GitHub branch API confirmed this exact v2/foundation HEAD before the current evidence follow-up. Exact-SHA Actions API returned total_count=0.",
+    "docs_commit": "1fd05bbe21031762b2e348a4a96b48eb9763124b",
+    "docs_commit_message": "[skip ci] docs(editor): reconcile workspace profile evidence",
+    "docs_commit_remote_verification": "GitHub branch API confirmed this exact v2/foundation HEAD after normal fast-forward push; the exact-SHA Actions API returned total_count=0 and the Cloudflare runtime deployment remained unchanged.",
     "aggregate_ci_pass": false,
-    "documentation_followup": "This session records the verified design/profile checks and corrects the duplicate completed_steps key and stale artifact-upload status found in the prior evidence. The follow-up itself is a docs/evidence-only [skip ci] change; its push SHA is recorded in the canonical plan after normal fast-forward verification."
+    "documentation_followup": "This session records the verified design/profile checks and corrects the duplicate completed_steps key and stale artifact-upload status found in the prior evidence. The follow-up was pushed as a docs/evidence-only [skip ci] commit; the canonical plan now records that exact SHA and verification."
   },
   "implementation": {
     "files": [
