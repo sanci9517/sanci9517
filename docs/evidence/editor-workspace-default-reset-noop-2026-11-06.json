@@ -1849,5 +1849,86 @@
       "full_visual_editor_manual_and_physical": "DEFERRED"
     },
     "verified_at_utc": "2026-11-07T13:36:37Z"
+  },
+  "full_local_layout_suite_after_f2_harness_2026_11_07": {
+    "plan_point": "77.44.6.1.C",
+    "recorded_at_utc": "2026-11-07T14:17:57Z",
+    "command": "CHROMIUM_PATH=/usr/bin/chromium npm run test:editor:layout",
+    "log": "/tmp/sanci-layout-20261107.log",
+    "result": "INCOMPLETE_LOCAL_RUN_INTERRUPTED_DURING_LONG_SINGLE_TEST",
+    "browser_files_expected": 53,
+    "browser_files_started": 30,
+    "browser_files_completed_passed": 29,
+    "completed_file_tests": {
+      "total": 99,
+      "passed": 99,
+      "failed": 0,
+      "cancelled": 0
+    },
+    "changed_test_file": {
+      "path": "tests/browser/editor-layer-rename-draft.test.js",
+      "suite_position": "25/53",
+      "tests": 2,
+      "passed": 2,
+      "failed": 0
+    },
+    "interrupted_file": {
+      "path": "tests/browser/editor-inspector-partial-types.test.js",
+      "test_count": 1,
+      "elapsed_before_interrupt_ms": 388157,
+      "outcome": "INTERRUPTED_BY_LOCAL_RUNNER_SESSION_LIMIT",
+      "node_output_after_signal": {
+        "tests": 1,
+        "passed": 0,
+        "failed": 0,
+        "cancelled": 1,
+        "skipped": 0
+      },
+      "diagnostic": "Promise resolution is still pending but the event loop has already resolved",
+      "interpretation": "No assertion failure was recorded before the local test process was interrupted; the reported cancellation/error is a consequence of the interrupt and is not classified as an Editor defect."
+    },
+    "browser_files_not_started": 23,
+    "suite_exit_status": "NOT_A_PASS; interrupted before completion",
+    "additional_verification": {
+      "workspace_appearance_browser_test": {
+        "tests": 63,
+        "passed": 63,
+        "failed": 0,
+        "duration_ms": 283247
+      },
+      "plan_contract": {
+        "passed": 13,
+        "failed": 0
+      },
+      "traceability": {
+        "passed": 396,
+        "failed": 0
+      },
+      "canonical_plan_check": "PASS",
+      "active_point_audit": "77.44.6.1.C OPEN / NOT_CERTIFIED",
+      "migration_safety_gate": "PASS",
+      "typecheck": "PASS",
+      "diff_check": "PASS"
+    },
+    "runtime_source_changed": false,
+    "workflow_dispatch_or_rerun": false,
+    "new_artifacts_uploaded": false,
+    "production_mutations": {
+      "d1_migration": false,
+      "d1_data_write": false,
+      "r2_delete": false,
+      "worker_deploy": false
+    },
+    "actions_quota": "UNVERIFIED; no additional Actions run or artifact upload",
+    "cost_huf": 0,
+    "prior_full_suite_record": "full_local_layout_suite_permitted_current_2026_11_07 records an earlier, separate 53/53 local PASS before the F2 helper change; it is not substituted for this incomplete rerun.",
+    "acceptance": {
+      "workspace_plan_point": "OPEN / NOT CERTIFIED",
+      "full_visual_editor_manual_and_physical": "DEFERRED"
+    },
+    "preexisting_untracked_preserved": [
+      "node_modules/",
+      "scripts/__pycache__/"
+    ]
   }
 }
