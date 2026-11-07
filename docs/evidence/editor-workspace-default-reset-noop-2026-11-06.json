@@ -1929,6 +1929,21 @@
     "preexisting_untracked_preserved": [
       "node_modules/",
       "scripts/__pycache__/"
-    ]
+    ],
+    "source_control": {
+      "repository": "sanci9517/sanci9517",
+      "branch": "v2/foundation",
+      "docs_evidence_commit": "aa33357b790282b535cbb9360aa90d3af4249226",
+      "commit_type": "plan/evidence only; [skip ci]",
+      "push": "normal fast-forward",
+      "github_branch_after_push": "aa33357b790282b535cbb9360aa90d3af4249226",
+      "remote_ref_after_push": "aa33357b790282b535cbb9360aa90d3af4249226",
+      "github_actions_runs_for_commit": 0,
+      "untracked_paths_preserved": [
+        "node_modules/",
+        "scripts/__pycache__/"
+      ]
+    },
+    "verified_at_utc": "2026-11-07T14:22:00Z"
   }
 }
