@@ -2001,7 +2001,7 @@ test('workspace profile export/import uses bounded allowlisted JSON, supports un
   assert.deepEqual(errors,[]);
 });
 
-test('profile import truncates at a Unicode character boundary',async t=>{
+test('profile import, save and rename truncate at Unicode character boundaries',async t=>{
   const {page,writes,errors}=await openEditor(t);
   await openPreferences(page);
   const cases=[
@@ -2021,6 +2021,20 @@ test('profile import truncates at a Unicode character boundary',async t=>{
     assert.ok(Array.from(imported).every(character=>{const code=character.codePointAt(0);return code<0xd800||code>0xdfff}),`${item.file}: persisted names contain no isolated UTF-16 surrogate`);
     if(index===cases.length-1)assert.equal(await page.locator('#workspaceProfileName').inputValue(),imported,'the editor field reflects the exact normalized name');
   }
+  const savedName=`${'C'.repeat(31)}😀`;
+  await page.locator('#workspaceProfileName').fill(savedName);
+  await page.locator('#saveWorkspaceProfile').click();
+  await page.waitForFunction(()=>document.querySelector('#workspaceProfile')?.options.length===4);
+  const savedId=await page.locator('#workspaceProfile').inputValue();
+  const storedSaved=await page.evaluate(({key,id})=>JSON.parse(localStorage.getItem(key)).profiles.find(profile=>profile.id===id),{key:WORKSPACE_PREFERENCES_KEY,id:savedId});
+  assert.equal(storedSaved.name,'C'.repeat(31),'profile creation keeps the existing UTF-16 limit without splitting an emoji');
+  const renamedName=`${'D'.repeat(31)}😀`;
+  await page.locator('#workspaceProfileName').fill(renamedName);
+  await page.locator('#renameWorkspaceProfile').click();
+  const storedRenamed=await page.evaluate(({key,id})=>JSON.parse(localStorage.getItem(key)).profiles.find(profile=>profile.id===id),{key:WORKSPACE_PREFERENCES_KEY,id:savedId});
+  assert.equal(storedRenamed.name,'D'.repeat(31),'profile rename uses the same code-point-safe name normalization');
+  assert.equal(await page.locator('#workspaceProfileName').inputValue(),storedRenamed.name,'the rename field reflects the persisted normalized value');
+  for(const profile of [storedSaved,storedRenamed])assert.ok(Array.from(profile.name).every(character=>{const code=character.codePointAt(0);return code<0xd800||code>0xdfff}),'saved and renamed names do not contain isolated UTF-16 surrogates');
   assert.deepEqual(writes,[],'profile normalization never invokes Page Model Save or Publish');
   assert.deepEqual(errors,[]);
 });
