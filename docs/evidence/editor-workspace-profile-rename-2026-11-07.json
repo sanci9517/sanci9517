@@ -7,6 +7,11 @@
   "base_commit": "8f197a6c97c8b47aedd36590adab16e2f3ff4957",
   "runtime_commit": "6dc76de7643e46fd43856a6d008400a1c9ceb9a2",
   "runtime_commit_status": "PUSHED_WITH_NORMAL_FAST_FORWARD",
+  "documentation_commits": [
+    {"sha": "734a6e5ac7192d126b7e3a478039db38138631fb", "message": "[skip ci] docs: record workspace profile release", "actions_runs": 0},
+    {"sha": "43b43d1694e9d3630307b582883b9ac00a83e1ee", "message": "[skip ci] docs: record final profile browser checks", "actions_runs": 0}
+  ],
+  "final_branch_head": "43b43d1694e9d3630307b582883b9ac00a83e1ee",
   "runtime_files": [
     "public/editor-v2/index.html",
     "public/editor-v2/ui/workspace-appearance.js",
