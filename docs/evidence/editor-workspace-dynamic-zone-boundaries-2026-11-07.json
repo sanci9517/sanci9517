@@ -10,7 +10,7 @@
     "parent_commit": "8948bc98c70578fc49e38a0359e4bde9b6055d44",
     "runtime_commit": "178e351a3cc68821855c75b94b0da395541609b6",
     "runtime_message": "fix(editor): stabilize inclusive dock grouping zones",
-    "push": "Normal fast-forward push; the read-only GitHub branch API confirmed v2/foundation exact HEAD 178e351a3cc68821855c75b94b0da395541609b6. A direct git ls-remote check was blocked in this environment because the HTTPS proxy at port 8080 was unreachable; the authenticated/read-only GitHub API was used as the remote-ref verification.",
+    "push": "Normal fast-forward push. Initial git ls-remote was blocked by the sandbox proxy; after enabling the permitted network route, git ls-remote, the GitHub branch API and the docs-commit workflow query all confirmed the final remote head and no workflow on the docs-only SHA.",
     "hosted_workflow": {
       "name": "Editor Core Test",
       "run_id": 42401734086,
@@ -26,17 +26,17 @@
         "offline_d1_ledger_tests": "success",
         "private_r2_media_api_tests": "success",
         "chromium_install": "success",
-        "isolated_worker_media_upload_test": "success"
+        "isolated_worker_media_upload_test": "success",
+        "editor_browser_layout_regression": "success",
+        "web013_admin_mobile_browser_regression": "success",
+        "screenshot_artifact_upload": "success",
+        "canonical_schedule_tests": "success",
+        "domain_contract_tests": "success",
+        "brand_kit_storage_access_tests": "success",
+        "admin_home_contract_tests": "success",
+        "post_job_cleanup": "success"
       },
-      "current_step": "Run Editor browser layout regression",
-      "later_steps_pending_at_recording": [
-        "Run WEB-013 Admin mobile browser regression",
-        "Upload Editor layout screenshots",
-        "Run canonical schedule tests",
-        "Run domain contract tests",
-        "Run Brand Kit storage and access regression",
-        "Run Admin home contract tests"
-      ],
+      "current_step": "completed",
       "aggregate_ci_pass": true,
       "manual_dispatch_or_rerun": false,
       "job_completed_at": "2026-11-07T19:02:44Z",
@@ -53,7 +53,8 @@
       "brand_kit_storage_access_tests": "5/5 success",
       "admin_home_contract_tests": "16/16 success",
       "all_job_steps_success": true,
-      "run_url": "https://github.com/sanci9517/sanci9517/actions/runs/42401734086"
+      "run_url": "https://github.com/sanci9517/sanci9517/actions/runs/42401734086",
+      "pending_steps_at_final_status": []
     },
     "other_automatic_workflows": {
       "twitch_integration_run": 42401734079,
