@@ -2094,5 +2094,130 @@
         "scripts/__pycache__/"
       ]
     }
+  },
+  "full_local_layout_rerun_loopback_enabled_2026_11_07": {
+    "plan_point": "77.44.6.1.C",
+    "recorded_at_utc": "2026-11-07T16:35:20Z",
+    "command": "timeout --signal=TERM --kill-after=30s 3600s env CHROMIUM_PATH=/usr/bin/chromium python3 - (Python expands package.json test:editor:layout file list and runs scripts/run-with-linux-subreaper.py --test-files node --test --test-isolation=none --test-concurrency=1 <all files>)",
+    "network": "Additional permission enabled for test-owned 127.0.0.1 listeners only; no external application writes. All test source assertions, browser widths, and per-test timeouts unchanged.",
+    "runner_isolation": "Linux subreaper executes one Node process per browser test file; Node --test-isolation=none avoids an extra Node worker within that per-file boundary.",
+    "result": {
+      "browser_files_expected": 53,
+      "browser_files_completed": 53,
+      "browser_files_passed": 53,
+      "tests_total": 165,
+      "tests_passed": 165,
+      "tests_failed": 0,
+      "tests_cancelled": 0,
+      "tests_skipped": 0,
+      "command_exit_code": 0
+    },
+    "long_test_observations": {
+      "workspace_appearance": {
+        "tests": 63,
+        "passed": 63,
+        "duration_ms": 275510
+      },
+      "inspector_partial_types": {
+        "tests": 1,
+        "passed": 1,
+        "duration_ms": 702274
+      },
+      "editor_decorative_elements": {
+        "tests": 1,
+        "passed": 1,
+        "duration_ms": 30849
+      },
+      "editor_element_insertion": {
+        "tests": 8,
+        "passed": 8,
+        "duration_ms": 54376
+      }
+    },
+    "prior_failures_rechecked": {
+      "editor_decorative_elements": "PASS in complete suite; earlier retry under the default sandbox reproduced only listen EPERM before assertions, then the loopback-authorized real test passed.",
+      "editor_element_insertion": "PASS 8/8 in complete suite; earlier single locator timeout did not reproduce."
+    },
+    "subreaper": "reaped Chromium descendants at each file boundary; no test timeout was enlarged and no source test changes were made.",
+    "environment_note": "A high zombie count remained observable but did not prevent this explicitly loopback-authorized, per-file isolated run. The earlier generic Node-worker startup failure is superseded by this complete verified run.",
+    "source_changes": {
+      "runtime_files": false,
+      "test_files": false,
+      "workflow_files": false,
+      "documentation_and_evidence_only": true
+    },
+    "production_mutations": {
+      "d1_migration": false,
+      "d1_data_write": false,
+      "r2_delete": false,
+      "worker_deploy": false
+    },
+    "actions": {
+      "workflow_dispatch": false,
+      "rerun": false,
+      "artifact_uploaded": false,
+      "quota_and_billing": "UNVERIFIED"
+    },
+    "cost_huf": 0,
+    "acceptance": {
+      "plan_point": "77.44.6.1.C OPEN / NOT CERTIFIED",
+      "full_visual_editor_manual_and_physical": "DEFERRED"
+    },
+    "prior_untracked_paths_preserved": [
+      "node_modules/",
+      "scripts/__pycache__/"
+    ],
+    "interpretation": "The full 53-file/165-test local layout matrix now passes using a repository-compatible localhost-enabled test sandbox. This completes this automated layout regression slice only; it does not certify the entire Visual Editor or its deferred manual/physical acceptance gate.",
+    "additional_verification": {
+      "editor_runner_contract_tests": {
+        "command": "npm run test:editor",
+        "passed": 3,
+        "failed": 0,
+        "status": "PASS"
+      },
+      "editor_node_suite": {
+        "files": 14,
+        "passed": 14,
+        "failed": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "status": "PASS"
+      },
+      "typecheck": "PASS (npm run typecheck)",
+      "canonical_plan_check": "PASS (one complete 13-file master, one current cursor)",
+      "plan_contract": "PASS 13/13",
+      "traceability": "PASS 396/396",
+      "migration_safety_gate": "PASS (npm run test:web013:migration-gate)",
+      "evidence_json_parse": "PASS (python3 -m json.tool)",
+      "git_diff_check": "PASS (git diff --check)"
+    },
+    "source_control_before_evidence_commit": {
+      "branch": "v2/foundation",
+      "local_head": "e73d585bd2ffc72641f58b978403e23472ffcf78",
+      "remote_ref": "e73d585bd2ffc72641f58b978403e23472ffcf78"
+    },
+    "production_read_only_check": {
+      "deployment_id": "ee926b5a-81c9-4a85-9b69-a2da549c086e",
+      "worker_version_id": "9abd82eb-468d-4b87-add2-e184e4ee6546",
+      "traffic_percent": 100,
+      "health_url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+      "health_http_status": 200,
+      "health_body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      },
+      "live_asset": "public/editor-v2/ui/shell.js",
+      "live_asset_sha256": "e6809d4c4307c44a5519d34d53d2a5595190cb4ea269bc631562e08704152c1f",
+      "local_asset_sha256": "e6809d4c4307c44a5519d34d53d2a5595190cb4ea269bc631562e08704152c1f",
+      "asset_hashes_match": true,
+      "runtime_changed": false,
+      "worker_deploy": false,
+      "d1_migration": false,
+      "d1_data_write": false,
+      "r2_delete": false,
+      "verified_at_utc": "2026-11-07T16:38:12Z"
+    }
   }
 }
