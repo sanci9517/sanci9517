@@ -1742,5 +1742,92 @@
       "wrangler_logs": "Stored under /tmp/sanci9517-wrangler-logs because the default /home/agent/.config/.wrangler path is read-only"
     },
     "release_verification_at_utc": "2026-11-07T13:18:02Z"
+  },
+  "layer_rename_f2_ci_followup_2026_11_07": {
+    "plan_point": "77.44.6.1.C",
+    "hosted_run": {
+      "id": 42374749471,
+      "head_sha": "8f41d5c1286fd892b8d0aaef105f8590e4d6d546",
+      "workflow": "Editor Core Test",
+      "job_id": 128409946757,
+      "job_conclusion": "failure",
+      "failed_step": "Run Editor browser layout regression",
+      "step_number": 11,
+      "last_completed_browser_file": "tests/browser/editor-layer-rename-draft.test.js",
+      "browser_file_position": "25/53",
+      "viewport_results": {
+        "390px": "PASS",
+        "1366px": "FAIL"
+      },
+      "failure": {
+        "test_line": 85,
+        "operation": "locator.fill('Első mentési változat')",
+        "timeout_ms": 7000,
+        "message": "getByRole('textbox', {name:'Réteg neve', exact:true}) was not available after the F2 shortcut"
+      },
+      "later_workflow_steps": "Skipped after fail-fast; the screenshot-upload step completed successfully."
+    },
+    "artifact_retained": {
+      "id": 13574938865,
+      "name": "editor-layout-screenshots",
+      "size_bytes": 2895322,
+      "sha256": "7bc51dd1c4ba4ddafdcb73b69668153314e9b1b1f316d4a8c08a9bba56731aa0",
+      "expires_at": "2026-11-14T13:19:21Z",
+      "deleted": false,
+      "contents_locally_inspected": false,
+      "local_download_blocker": "GitHub CLI responded HTTP 401 Bad credentials; artifact remains intact."
+    },
+    "diagnosis": {
+      "scope": "Test harness only; runtime app files unchanged.",
+      "before_change": "The desktop helper used separate row.focus() and row.press(F2) actions; six isolated 1366px executions passed locally, leaving a timing-sensitive CI failure unreproduced.",
+      "change": "Use one row.press('F2') Playwright action so locator focus and key dispatch are not separated by a render timing gap.",
+      "browser_environment": {
+        "playwright": "1.64.1",
+        "repository_ci_chromium_install": "Playwright Chromium build 1248",
+        "local_test_browser": "Chromium 154.0.8037.57 at /usr/bin/chromium",
+        "playwright_chromium_local_launch": "Blocked by managed Linux sandbox: FATAL sandbox_host_linux.cc:41 Check failed: . shutdown: Operation not permitted (1)."
+      }
+    },
+    "local_validation": {
+      "whole_target_file": {
+        "command": "CHROMIUM_PATH=/usr/bin/chromium node --test tests/browser/editor-layer-rename-draft.test.js",
+        "pass": 2,
+        "fail": 0
+      },
+      "post_change_desktop_repeats": {
+        "count": 5,
+        "pass": 5,
+        "fail": 0
+      },
+      "combined_post_change_desktop_passes": 6,
+      "full_53_file_layout_suite_after_test_only_change": "NOT_RUN",
+      "full_suite_ci_status": "FAILURE on the previous runtime commit; no new CI PASS is claimed."
+    },
+    "source_control": {
+      "repository": "sanci9517/sanci9517",
+      "branch": "v2/foundation",
+      "starting_local_sha": "dd7e81d19b23979207745aca6bf1d576ef047d82",
+      "starting_remote_sha_verified_by_git_ls_remote": "dd7e81d19b23979207745aca6bf1d576ef047d82",
+      "changed_files": [
+        "tests/browser/editor-layer-rename-draft.test.js",
+        "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+        "docs/evidence/editor-workspace-default-reset-noop-2026-11-06.json"
+      ],
+      "commit_type": "test/docs/evidence only; [skip ci] required to minimize Actions use and artifact storage.",
+      "new_workflow_runs": 0
+    },
+    "production": {
+      "runtime_source_changed": false,
+      "worker_deploy": false,
+      "production_d1_migration": false,
+      "production_d1_data_write": false,
+      "r2_delete": false,
+      "cost_huf": 0
+    },
+    "actions_quota": "UNVERIFIED; do not infer account billing or remaining storage quota from this artifact API result.",
+    "acceptance": {
+      "workspace_plan_point": "OPEN / NOT CERTIFIED",
+      "full_visual_editor_manual_and_physical": "DEFERRED"
+    }
   }
 }
