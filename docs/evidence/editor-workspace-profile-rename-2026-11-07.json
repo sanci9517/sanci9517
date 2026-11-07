@@ -40,12 +40,13 @@
       "result": "PASS"
     },
     "full_workspace_chromium": {
-      "command": "node --test --test-concurrency=1 tests/browser/editor-workspace-appearance.test.js",
+      "command": "python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-workspace-appearance.test.js",
       "passed": 65,
       "failed": 0,
       "cancelled": 0,
       "skipped": 0,
-      "duration_ms": 292234,
+      "duration_ms": 265620,
+      "orphaned_test_descendants_reaped": 4,
       "result": "PASS"
     },
     "editor_unit": {
