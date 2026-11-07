@@ -15,7 +15,9 @@
     "remote_branch_sha": "d6751f1040562cb61e625bca61bfe70c7d8ca43e",
     "remote_verification": "GitHub refs API confirmed refs/heads/v2/foundation at the runtime SHA. Direct git ls-remote was blocked in this session because the outbound proxy could not connect to port 8080; no claim is made that ls-remote passed in this session.",
     "runtime_push": "Previously completed as a normal fast-forward push; current GitHub branch API still matches the exact runtime commit.",
-    "docs_commit": null,
+    "docs_commit": "2c33b9ff40f61371632023c80aef85d70b198d6a",
+    "docs_commit_message": "[skip ci] docs(editor): record Unicode profile fix evidence",
+    "docs_commit_remote_verification": "GitHub refs API confirmed the documentation commit as the exact v2/foundation HEAD. GitHub Actions runs API for the exact documentation SHA returned total_count=0.",
     "aggregate_ci_pass": false
   },
   "implementation": {
@@ -93,7 +95,10 @@
     "health": {
       "status": "UNVERIFIED_BLOCKED_BY_OUTBOUND_PROXY",
       "attempt": "GET https://sanci9517.com/api/health",
-      "observed": "The environment proxy returned HTTP 403 (Envoy CONNECT tunnel failure) before the health endpoint response could be read. A stale body file from an earlier attempt was not treated as a response from this request."
+      "observed": [
+        "Shell curl failed before reaching the hostname: CONNECT tunnel failed, response 403 (curl exit 56); a stale body file from an earlier attempt was not treated as a response from this request.",
+        "The managed Cloudflare execution route returned HTTP 403 with body 'Forbidden: requests to sanci9517.com are not allowed'."
+      ]
     },
     "changed_public_asset_hash": {
       "path": "/editor-v2/ui/workspace-appearance.js",
