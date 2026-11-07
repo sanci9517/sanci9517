@@ -1,0 +1,129 @@
+{
+  "date": "2026-11-07",
+  "plan_point": "77.44.6.1.C",
+  "status": "RUNTIME_RELEASED_VERIFIED_EDITOR_CORE_CI_PENDING",
+  "scope": "Rename a selected device-local editor workspace profile without replacing its saved appearance/dock contents or touching page data.",
+  "branch": "v2/foundation",
+  "base_commit": "8f197a6c97c8b47aedd36590adab16e2f3ff4957",
+  "runtime_commit": "6dc76de7643e46fd43856a6d008400a1c9ceb9a2",
+  "runtime_commit_status": "PUSHED_WITH_NORMAL_FAST_FORWARD",
+  "runtime_files": [
+    "public/editor-v2/index.html",
+    "public/editor-v2/ui/workspace-appearance.js",
+    "public/editor-v2/workspace-appearance.css"
+  ],
+  "test_files": ["tests/browser/editor-workspace-appearance.test.js"],
+  "observed_gap": "Saved workspace profiles could be saved, imported, exported, loaded and deleted, but their names could not be edited in place; users had to delete and recreate a profile to correct its label.",
+  "behavior": {
+    "rename": "The selected profile name is trimmed and limited to the existing 32-character input contract; case-insensitive duplicate names are rejected. Renaming preserves local ID, creation timestamp, appearance and dock snapshot.",
+    "selection": "Selecting or importing a profile puts its current name in the edit field; a selected profile rename from another tab updates that field only when it still contains the previous profile name, preserving an in-progress user draft.",
+    "history": "Rename is a workspace-only undo/redo operation. Undo and redo update both the selected profile label and its edit field. Browser storage failure keeps the change session-only and reports that limitation.",
+    "mobile": "The native labeled button remains at least 44 CSS px high and wide and is available without hover."
+  },
+  "contracts": {
+    "save_publish": "No Page Model save or publish request is sent; existing separate Save and Publish controls are unchanged.",
+    "page_model": "Unchanged.",
+    "profile_data": "Existing allowlisted profile schema and device-local storage key are reused; no executable HTML/CSS/JS is introduced.",
+    "dependencies": "No new dependency or copied third-party runtime code."
+  },
+  "checks": {
+    "focused_browser": {
+      "command": "node --test --test-name-pattern='saved workspace profiles can be renamed|mobile workspace profile rename' tests/browser/editor-workspace-appearance.test.js",
+      "passed": 2,
+      "failed": 0,
+      "result": "PASS"
+    },
+    "profile_lifecycle_recheck": {
+      "command": "node --test --test-name-pattern='saved workspace profiles can be renamed|mobile workspace profile rename|profile export/import uses|deleting a workspace profile' tests/browser/editor-workspace-appearance.test.js",
+      "passed": 4,
+      "failed": 0,
+      "result": "PASS"
+    },
+    "full_workspace_chromium": {
+      "command": "node --test --test-concurrency=1 tests/browser/editor-workspace-appearance.test.js",
+      "passed": 65,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "duration_ms": 292234,
+      "result": "PASS"
+    },
+    "editor_unit": {
+      "command": "npm run test:editor",
+      "test_files_passed": 14,
+      "linux_subreaper_contract_tests_passed": 3,
+      "result": "PASS"
+    },
+    "typecheck": "npm run typecheck — PASS",
+    "migration_safety_gate": "npm run test:web013:migration-gate — PASS",
+    "plan_contract_and_traceability": "13/13 plan-contract; canonical plan check PASS; 396/396 traceability mappings PASS",
+    "syntax_and_diff": "node --check public/editor-v2/ui/workspace-appearance.js; git diff --check — PASS",
+    "wrangler_dry_run": {
+      "command": "WRANGLER_LOG_PATH=/tmp/sanci-wrangler-logs npx wrangler deploy --dry-run",
+      "wrangler": "4.130.0",
+      "assets": 168,
+      "upload_size": "335.81 KiB",
+      "gzip_size": "87.60 KiB",
+      "exit_code": 0,
+      "result": "PASS"
+    },
+    "remote_editor_core_ci": {
+      "run_id": 42394172703,
+      "url": "https://github.com/sanci9517/sanci9517/actions/runs/42394172703",
+      "status_at_evidence_creation": "in_progress",
+      "result": "PENDING"
+    }
+  },
+  "production_d1_preflight": {
+    "api_path": "/accounts/{account_id}/d1/database/{database_id}/query",
+    "sql": "SELECT name FROM d1_migrations ORDER BY name;",
+    "applied_migrations": 34,
+    "last_migration": "0028_media_archive.sql",
+    "rows_read": 34,
+    "rows_written": 0,
+    "changes": 0,
+    "changed_db": false,
+    "result": "SELECT_ONLY_NO_MUTATION"
+  },
+  "release": {
+    "deployment_id": "d1a2b048-60f2-4453-9e73-4274ad4392c2",
+    "deployment_created_at_utc": "2026-11-07T17:01:29.032375Z",
+    "worker_version": "21e96136-fe07-4afc-839a-d353eb092668",
+    "traffic_percent": 100,
+    "source": "wrangler",
+    "health": {
+      "url": "GET /api/health?codex_release=6dc76de7643e46fd43856a6d008400a1c9ceb9a2",
+      "http_status": 200,
+      "body": {"ok": true, "service": "sanci9517-streamer-brand", "version": "2.0.0", "server": "cloudflare-worker"}
+    },
+    "changed_public_asset_sha256": {
+      "GET /editor-v2/": {
+        "local": "ed2860cfeaa3391d9afe30776db3f7a90716f8559131e7890e99e017ea0bdb29",
+        "production": "ed2860cfeaa3391d9afe30776db3f7a90716f8559131e7890e99e017ea0bdb29"
+      },
+      "GET /editor-v2/workspace-appearance.css": {
+        "local": "2fdce885bd091fc93d9204519742612f33a635d8ef2aa36a9b9194ed4694e5a6",
+        "production": "2fdce885bd091fc93d9204519742612f33a635d8ef2aa36a9b9194ed4694e5a6"
+      },
+      "GET /editor-v2/ui/workspace-appearance.js": {
+        "local": "6fa275a15c8cc0f19c897e495df1f592d95904fe7d583e05c17f86fb25e8be59",
+        "production": "6fa275a15c8cc0f19c897e495df1f592d95904fe7d583e05c17f86fb25e8be59"
+      }
+    },
+    "deployment_path": "Observed new deployment after the exact-SHA branch push; live health and all changed asset hashes match, so no redundant deploy:safe was run."
+  },
+  "actions_storage": {
+    "required_workflows_started": 3,
+    "f0_baseline": "success",
+    "twitch_integration": "success",
+    "editor_core_test": "in_progress",
+    "artifact_policy": "No workflow was dispatched or rerun manually. The existing Editor workflow uploads only diagnostic screenshots, if present, with a seven-day retention."
+  },
+  "production_mutation": {
+    "d1_migration_or_data_write": false,
+    "r2_mutation_or_deletion": false
+  },
+  "cost_huf": 0,
+  "preexisting_untracked_paths_preserved": ["node_modules/", "scripts/__pycache__/"],
+  "manual_visual_editor_acceptance": "DEFERRED until the complete Editor acceptance gate; the full 77.44.6.1.C remains OPEN."
+}
