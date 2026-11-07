@@ -576,5 +576,66 @@
       "node_modules/",
       "scripts/__pycache__/"
     ]
+  },
+  "full_local_layout_suite_retry_2026_11_07": {
+    "recorded_at_utc": "2026-11-07T07:38:49Z",
+    "command": "timeout --signal=TERM --kill-after=30s 3600s env CHROMIUM_PATH=/usr/bin/chromium npm run test:editor:layout",
+    "result": "PASS",
+    "browser_test_files": {
+      "expected": 53,
+      "passed": 53,
+      "failed": 0
+    },
+    "node_test_summary": {
+      "tests": 163,
+      "passed": 163,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "suite_exit_code": 0,
+    "summed_file_duration_ms": 2321963,
+    "orphaned_test_descendants_reaped": 408,
+    "important_rechecks": {
+      "workspace_appearance": "PASS 61/61; both previous isolated failures pass in aggregate",
+      "editor_element_insertion": "PASS 8/8 including failure-only diagnostic helper and Schedule viewports",
+      "inspector_lifecycle": "PASS 1/1, 231 s",
+      "inspector_partial_types": "PASS 1/1, 663 s",
+      "inspector_visual_effects_partial_types": "PASS 1/1, 185 s",
+      "inspector_background_image_partial_types": "PASS 1/1, 126 s",
+      "layer_rename": "PASS 2/2 at 390px and 1366px"
+    },
+    "interpretation": "The full serial 53-file local browser layout suite completed successfully with all original test and timeout limits intact. This proves this local aggregate pass only; it does not certify hosted CI gates or close the overall Visual Editor acceptance point.",
+    "test_log": "/tmp/sanci-editor-layout-2026-11-07-rerun.log (ephemeral local log; aggregate and per-file summary values recorded here)",
+    "source_changes": "No runtime or test source changed; only canonical plan and evidence updated.",
+    "github": {
+      "branch": "v2/foundation",
+      "pre_push_local_head": "31d9a9e5ab242bbe75b6de40c44d8c42cf26f0eb",
+      "planned_commit_message": "docs: record full editor layout suite pass [skip ci]"
+    },
+    "production_read_only_check": {
+      "deployment_id": "3f9ed703-8620-4ffb-9141-8cb8a0980ee6",
+      "worker_version": "d6d48b86-2e9b-4ce2-821d-aca2ee30b367",
+      "traffic_percent": 100,
+      "deployment_api_read": "Verified with Cloudflare API after the suite",
+      "direct_health_get": "BLOCKED: curl to workers.dev port 443 failed with exit 7; no HTTP status/body received",
+      "runtime_changed": false
+    },
+    "actions": {
+      "dispatch_or_rerun": false,
+      "commit_skip_ci": true,
+      "spend_huf": 0,
+      "billing_quota": "UNVERIFIED"
+    },
+    "production_mutations": {
+      "d1_write_or_migration": false,
+      "r2_operation": false,
+      "deploy": false
+    },
+    "worktree_preexisting_untracked_preserved": [
+      "node_modules/",
+      "scripts/__pycache__/"
+    ]
   }
 }
