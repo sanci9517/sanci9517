@@ -356,5 +356,41 @@
     "environment_status": "Current managed environment observations are fresh and connected; network policy enforced. No environment credential values were read or exposed.",
     "actions": "Read-only GitHub API checks only; no dispatch or rerun because billing/quota is unverified and spend cap is 0 HUF.",
     "source_changes": "No runtime or test source changes; awaiting a reproducible trigger or trace before patching."
+  },
+  "full_local_layout_run_2026_11_07": {
+    "recorded_at_utc": "2026-11-07T03:48:05Z",
+    "command": "timeout 3600s env CHROMIUM_PATH=/usr/bin/chromium npm run test:editor:layout",
+    "result": "INCOMPLETE_WITH_ONE_NONREPRODUCED_FAILURE",
+    "files_attempted": 53,
+    "files_fully_passed": 52,
+    "final_file": {
+      "path": "tests/browser/editor-element-insertion.test.js",
+      "tests": 7,
+      "passed": 6,
+      "failed": 1,
+      "failed_test": "new Schedule palette item keeps canonical defaults and separate Save/Publish at 1366px",
+      "line": 537,
+      "error": "Playwright click timed out after 8000 ms while opening the collapsed Sanci9517 palette group. The locator resolved to a visible, enabled, stable button; the click did not complete.",
+      "paired_390px_test": "PASS",
+      "other_six_tests": "PASS"
+    },
+    "isolated_recheck": {
+      "command": "timeout 300s env CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-element-insertion.test.js",
+      "result": "PASS",
+      "passed": 7,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "duration_ms": 48784.640
+    },
+    "interpretation": "The aggregate browser layout run is not PASS: 52 files passed and the last file had one 1366px failure. The same complete last file passed on immediate isolated rerun, including the failing desktop Schedule scenario, so the failure is presently nonreproduced. No runtime/test/harness change is justified without a repeatable trigger or trace.",
+    "source_changes": "None.",
+    "actions": "No dispatch/rerun. Billing and remaining quota remain UNVERIFIED; spending cap 0 HUF.",
+    "production": {
+      "runtime_source_changed": false,
+      "deployment_changed": false,
+      "d1_write_or_migration": false,
+      "r2_operation": false
+    }
   }
 }
