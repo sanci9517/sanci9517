@@ -529,15 +529,18 @@ function applyDockState(state,{save=true}={}){
 window.addEventListener('storage',event=>{
   if(event.key!==null&&event.key!==STORAGE_KEY)return;
   try{if(event.storageArea&&event.storageArea!==window.localStorage)return}catch{return}
-  // A mobile snapshot is only a temporary desktop presentation. Once another
-  // tab changes the shared dock state, that snapshot is stale and must not
-  // overwrite the newer state when this tab returns to desktop.
-  desktopDockSnapshot=null;
+  // A shared dock update is the new desktop intent, even if this tab is
+  // currently mobile. Keep that full snapshot for the next desktop return;
+  // applyDockState below still normalizes the live phone UI to one drawer.
+  let incoming;
+  try{incoming=event.newValue?JSON.parse(event.newValue):defaults}catch{incoming=defaults}
+  if(mobileQuery.matches){
+    const desktop=normalizeStoredDockState(incoming,{normalizeMobile:false});
+    desktopDockSnapshot={left:desktop.leftOpen,right:desktop.rightOpen,active:desktop.panelActive};
+  }else desktopDockSnapshot=null;
   cancelDockResize({announcement:'A másik szerkesztőlapon megváltozott a panelállapot, ezért az átméretezés megszakadt.'});
   cancelWorkspaceDrag({announcement:'A másik szerkesztőlapon megváltozott a panelállapot, ezért az átrendezés megszakadt.'});
-  let next;
-  try{next=event.newValue?JSON.parse(event.newValue):defaults}catch{next=defaults}
-  applyDockState(next,{save:false});
+  applyDockState(incoming,{save:false});
   workspaceAppearance?.clearExternalDockHistory({reset:event.key===null});
   emit('workspace:external-change',{source:'storage',area:'dock'});
 });

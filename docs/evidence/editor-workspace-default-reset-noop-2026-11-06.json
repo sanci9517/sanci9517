@@ -1597,5 +1597,108 @@
       "node_modules/",
       "scripts/__pycache__/"
     ]
+  },
+  "cross_tab_desktop_profile_mobile_restore_2026_11_07": {
+    "recorded_at_utc": "2026-11-07T12:52:23Z",
+    "plan_point": "77.44.6.1.C",
+    "status": "OPEN / NOT_CERTIFIED",
+    "scope": "Apply a saved desktop workspace profile from a second editor tab while the receiving tab is in the mobile drawer layout; preserve the full desktop dock snapshot without allowing overlapping phone drawers or page writes.",
+    "observed_bug": {
+      "red_reproduction": "Before the fix, the focused Chromium regression timed out when returning to desktop: the remotely applied profile had both docks open, but mobile normalization retained only one open panel as the desktop restore state.",
+      "cause": "The shell storage listener discarded the temporary desktop snapshot and applied the mobile-normalized one-drawer state directly to the desktop restore fields.",
+      "fix": "On a cross-tab dock storage event received while mobile, capture the normalized incoming desktop intent before mobile normalization; keep applyDockState responsible for the one-drawer phone presentation."
+    },
+    "browser_regression": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-name-pattern=\"cross-tab desktop profile keeps its complete dock state|cross-tab dock update replaces the temporary desktop snapshot|cross-tab appearance preset replaces the desktop snapshot\" tests/browser/editor-workspace-appearance.test.js",
+      "targeted_tests": 3,
+      "passed": 3,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "full_file_command": "CHROMIUM_PATH=/usr/bin/chromium node --test tests/browser/editor-workspace-appearance.test.js",
+      "full_file_tests": 63,
+      "full_file_passed": 63,
+      "full_file_failed": 0,
+      "full_file_cancelled": 0,
+      "full_file_skipped": 0,
+      "full_file_duration_ms": 249487,
+      "assertions": "The receiving phone tab exposes one drawer with a modal canvas backdrop; after returning to desktop it restores both profile docks, the advanced Inspector tab and the saved shell record."
+    },
+    "additional_checks": {
+      "editor_node_suite": {
+        "command": "npm run test:editor",
+        "files_passed": 14,
+        "files_failed": 0,
+        "tests_passed": 187,
+        "tests_failed": 0,
+        "subreaper_contract_tests_passed": 3
+      },
+      "typecheck": "npm run typecheck — PASS",
+      "migration_safety_gate": "npm run test:web013:migration-gate — PASS; no production D1 query or mutation was performed",
+      "canonical_plan": "python3 scripts/check-canonical-plan.py — PASS; one complete 13-file master",
+      "plan_contract": "python3 tests/plan-contract.test.py — PASS, 13 tests",
+      "active_plan_audit": "python3 scripts/audit-active-plan-point.py — PASS; next 77.44.6.1.C, not certified",
+      "traceability": "python3 scripts/build-feature-traceability.py --check — PASS, 396 mappings",
+      "syntax": "node --check public/editor-v2/ui/shell.js and tests/browser/editor-workspace-appearance.test.js — PASS",
+      "diff_check": "git diff --check — PASS"
+    },
+    "github": {
+      "branch": "v2/foundation",
+      "starting_exact_sha": "ef48f8c89c733a233c46dcb174c09d846a3f4aa3",
+      "github_branch_api_sha_before_change": "ef48f8c89c733a233c46dcb174c09d846a3f4aa3",
+      "git_ls_remote_sha_before_change": "ef48f8c89c733a233c46dcb174c09d846a3f4aa3",
+      "workflow_runs_for_starting_sha": 0,
+      "ci": "No CI PASS claimed; no workflow dispatched."
+    },
+    "production_read_only_check": {
+      "deployment": "3f9ed703-8620-4ffb-9141-8cb8a0980ee6",
+      "worker_version": "d6d48b86-2e9b-4ce2-821d-aca2ee30b367",
+      "traffic_percent": 100,
+      "health_checked_at_utc": "2026-11-07T12:52:23Z",
+      "health_http_status": 200,
+      "health_body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      },
+      "runtime_or_public_asset_changed": true,
+      "runtime_asset": "public/editor-v2/ui/shell.js",
+      "worker_deploy": "NOT DONE; no Worker release was performed",
+      "local_asset_sha256": "e6809d4c4307c44a5519d34d53d2a5595190cb4ea269bc631562e08704152c1f",
+      "live_asset_sha256": "6c6a982c6ae27b3023dd16251906a4c7782da834644f332a52d1716a4b931486",
+      "asset_hashes_match": false
+    },
+    "production_mutations": {
+      "d1_migration": false,
+      "d1_data_write": false,
+      "r2_delete": false,
+      "worker_deploy": false
+    },
+    "actions": {
+      "workflow_dispatch": false,
+      "new_artifacts_created": false,
+      "billing_and_remaining_free_quota": "UNVERIFIED"
+    },
+    "cost_huf": 0,
+    "manual_physical_acceptance": "DEFERRED until complete Visual Editor acceptance gate",
+    "preexisting_untracked_preserved": [
+      "node_modules/",
+      "scripts/__pycache__/"
+    ],
+    "release_preflight": {
+      "d1_query_api": "POST /accounts/{account_id}/d1/database/5a4a5e96-fdad-421a-a33c-143daaf33e98/query",
+      "sql": "SELECT name FROM sqlite_master WHERE type = 'table' AND name IN ('pages','sites') ORDER BY name",
+      "result": [
+        "pages",
+        "sites"
+      ],
+      "changed_db": false,
+      "rows_written": 0,
+      "wrangler_version": "4.130.0",
+      "dry_run_command": "WRANGLER_LOG_PATH=/tmp/sanci9517-wrangler-logs npx wrangler deploy --dry-run --outdir /tmp/sanci9517-editor-profile-dry-run",
+      "dry_run": "PASS; 168 assets, 335.81 KiB total / 87.60 KiB gzip; no remote deployment",
+      "wrangler_logs": "Stored under /tmp/sanci9517-wrangler-logs because the default /home/agent/.config/.wrangler path is read-only"
+    }
   }
 }

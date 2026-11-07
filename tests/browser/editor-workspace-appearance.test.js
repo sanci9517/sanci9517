@@ -2695,6 +2695,47 @@ test('a cross-tab appearance preset replaces the desktop snapshot while this edi
   assert.deepEqual(errors,[]);
 });
 
+test('a cross-tab desktop profile keeps its complete dock state when applied from another tab on mobile',async t=>{
+  const appearance={version:2,layout:'balanced',theme:'graphite',density:'comfortable',accent:'#5b8cff',dockOrder:'left-canvas-right',panelMode:'separate',panelSide:'right',profiles:[]};
+  const dock={leftOpen:true,rightOpen:true,leftTab:'pages',leftTabOrder:['pages','elements','layers','schedule','navigation'],inspectorTab:'advanced',panelActive:'right',leftWidth:310,rightWidth:352};
+  const {page,context,writes,errors}=await openEditor(t,{width:1280,height:900,initialDockState:dock,initialAppearance:appearance});
+  const second=await context.newPage();
+  await second.goto(page.url(),{waitUntil:'load'});
+  await second.locator('.page-canvas .node').first().waitFor();
+
+  await openPreferences(second);
+  await second.locator('#workspaceProfileName').fill('Asztali munkaterület');
+  await second.locator('#saveWorkspaceProfile').click();
+  const profileId=await second.locator('#workspaceProfile').inputValue();
+  assert.ok(profileId,'the second tab saves a desktop profile with both docks open');
+  await second.locator('#workspaceLayout').selectOption('canvas');
+  await page.waitForFunction(()=>document.querySelector('.editor-app')?.dataset.workspaceTheme==='graphite'&&
+    document.querySelector('.workspace')?.dataset.workspaceDockOrder==='left-canvas-right'&&
+    document.querySelector('#leftDock')?.classList.contains('closed')&&document.querySelector('#rightDock')?.classList.contains('closed'));
+
+  await resizeAndWaitForWorkspaceBreakpoint(page,390,844);
+  await second.locator('#workspaceProfile').selectOption(profileId);
+  await second.locator('#loadWorkspaceProfile').click();
+  await page.waitForFunction(()=>document.querySelector('.editor-app')?.dataset.workspaceTheme==='graphite'&&
+    document.querySelector('#rightDock')?.classList.contains('closed')===false&&
+    document.querySelector('#leftDock')?.classList.contains('closed')===true);
+  assert.equal(await page.locator('.canvas-area').evaluate(element=>element.inert),true,'a single mobile drawer keeps the canvas behind its backdrop');
+
+  await resizeAndWaitForWorkspaceBreakpoint(page,1280,900);
+  await page.waitForFunction(()=>!matchMedia('(max-width: 1024px)').matches&&
+    document.querySelector('#leftDock')?.classList.contains('closed')===false&&
+    document.querySelector('#rightDock')?.classList.contains('closed')===false);
+  const restored=await page.evaluate(()=>({
+    leftOpen:!document.querySelector('#leftDock').classList.contains('closed'),
+    rightOpen:!document.querySelector('#rightDock').classList.contains('closed'),
+    inspectorTab:JSON.parse(localStorage.getItem('sanci-editor-shell-v2'))?.inspectorTab,
+    stored:JSON.parse(localStorage.getItem('sanci-editor-shell-v2'))
+  }));
+  assert.deepEqual(restored,{leftOpen:true,rightOpen:true,inspectorTab:'advanced',stored:dock},'returning to desktop restores the full profile state rather than the one-drawer mobile normalization');
+  assert.deepEqual(writes,[],'cross-tab profile application never invokes Page Model Save or Publish');
+  assert.deepEqual(errors,[]);
+});
+
 test('a cross-tab dock update cancels an in-progress pointer resize before stale width can be saved',async t=>{
   const appearance={version:2,layout:'balanced',theme:'graphite',density:'comfortable',accent:'#5b8cff',dockOrder:'left-canvas-right',panelMode:'separate',panelSide:'right',profiles:[]};
   const dock={leftOpen:true,rightOpen:true,leftTab:'pages',leftTabOrder:['pages','elements','layers','schedule','navigation'],inspectorTab:'design',panelActive:'left',leftWidth:310,rightWidth:352};
