@@ -2001,6 +2001,30 @@ test('workspace profile export/import uses bounded allowlisted JSON, supports un
   assert.deepEqual(errors,[]);
 });
 
+test('profile import truncates at a Unicode character boundary',async t=>{
+  const {page,writes,errors}=await openEditor(t);
+  await openPreferences(page);
+  const cases=[
+    {id:'profile-unicode-boundary',name:`${'A'.repeat(31)}😀`,expected:'A'.repeat(31),file:'unicode-boundary.json'},
+    {id:'profile-unicode-repair',name:`${'B'.repeat(31)}\ud83d`,expected:'B'.repeat(31),file:'legacy-unpaired-surrogate.json'},
+  ];
+  for(const [index,item] of cases.entries()){
+    const transfer={kind:'sanci-editor-workspace-profile',version:1,profile:{
+      id:item.id,name:item.name,createdAt:1,
+      appearance:{theme:'graphite',layout:'canvas',density:'comfortable',accent:'#5b8cff'},
+      dock:{leftOpen:false,rightOpen:false},
+    }};
+    await page.locator('#workspaceProfileFile').setInputFiles({name:item.file,mimeType:'application/json',buffer:Buffer.from(JSON.stringify(transfer))});
+    await page.waitForFunction(count=>document.querySelector('#workspaceProfile')?.options.length===count,index+2);
+    const imported=await page.evaluate(({key,index})=>JSON.parse(localStorage.getItem(key)).profiles[index].name,{key:WORKSPACE_PREFERENCES_KEY,index});
+    assert.equal(imported,item.expected,`${item.file}: truncation and legacy repair preserve valid code-point boundaries`);
+    assert.ok(Array.from(imported).every(character=>{const code=character.codePointAt(0);return code<0xd800||code>0xdfff}),`${item.file}: persisted names contain no isolated UTF-16 surrogate`);
+    if(index===cases.length-1)assert.equal(await page.locator('#workspaceProfileName').inputValue(),imported,'the editor field reflects the exact normalized name');
+  }
+  assert.deepEqual(writes,[],'profile normalization never invokes Page Model Save or Publish');
+  assert.deepEqual(errors,[]);
+});
+
 test('saved workspace profiles can be renamed with unique names, undo, redo, and cross-tab sync only',async t=>{
   const {page,context,writes,errors}=await openEditor(t,{width:1366,height:900});
   await openPreferences(page);
