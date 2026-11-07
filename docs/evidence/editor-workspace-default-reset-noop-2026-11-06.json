@@ -1648,13 +1648,48 @@
       "github_branch_api_sha_before_change": "ef48f8c89c733a233c46dcb174c09d846a3f4aa3",
       "git_ls_remote_sha_before_change": "ef48f8c89c733a233c46dcb174c09d846a3f4aa3",
       "workflow_runs_for_starting_sha": 0,
-      "ci": "No CI PASS claimed; no workflow dispatched."
+      "ci": "Editor Core Test remains in progress at evidence time; four other push-triggered checks completed successfully. No overall CI PASS is claimed.",
+      "release_commit": "8f41d5c1286fd892b8d0aaef105f8590e4d6d546",
+      "github_branch_api_sha_after_push": "8f41d5c1286fd892b8d0aaef105f8590e4d6d546",
+      "git_ls_remote_sha_after_push": "8f41d5c1286fd892b8d0aaef105f8590e4d6d546",
+      "workflow_runs_for_release_commit": [
+        {
+          "id": 42374749471,
+          "workflow": "Editor Core Test",
+          "status": "in_progress",
+          "step": "Run Editor browser layout regression"
+        },
+        {
+          "id": 42374749449,
+          "workflow": "Canonical Plan Active Point Audit",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 42374749409,
+          "workflow": "Canonical Creator Platform Plan",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 42374749504,
+          "workflow": "Twitch Integration Check",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 42374749446,
+          "workflow": "F0 baseline checks",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
     },
     "production_read_only_check": {
-      "deployment": "3f9ed703-8620-4ffb-9141-8cb8a0980ee6",
-      "worker_version": "d6d48b86-2e9b-4ce2-821d-aca2ee30b367",
+      "deployment": "ee926b5a-81c9-4a85-9b69-a2da549c086e",
+      "worker_version": "9abd82eb-468d-4b87-add2-e184e4ee6546",
       "traffic_percent": 100,
-      "health_checked_at_utc": "2026-11-07T12:52:23Z",
+      "health_checked_at_utc": "2026-11-07T12:58:32Z",
       "health_http_status": 200,
       "health_body": {
         "ok": true,
@@ -1664,10 +1699,13 @@
       },
       "runtime_or_public_asset_changed": true,
       "runtime_asset": "public/editor-v2/ui/shell.js",
-      "worker_deploy": "NOT DONE; no Worker release was performed",
+      "worker_deploy": "Automatic Worker Build rollout after verified push; 100% traffic and live asset hash verified. deploy:safe fallback intentionally not run because automatic build succeeded.",
       "local_asset_sha256": "e6809d4c4307c44a5519d34d53d2a5595190cb4ea269bc631562e08704152c1f",
-      "live_asset_sha256": "6c6a982c6ae27b3023dd16251906a4c7782da834644f332a52d1716a4b931486",
-      "asset_hashes_match": false
+      "live_asset_sha256": "e6809d4c4307c44a5519d34d53d2a5595190cb4ea269bc631562e08704152c1f",
+      "asset_hashes_match": true,
+      "version_number": 3838,
+      "version_created_on": "2026-11-07T12:57:50.699827Z",
+      "version_source": "wrangler"
     },
     "production_mutations": {
       "d1_migration": false,
@@ -1678,7 +1716,10 @@
     "actions": {
       "workflow_dispatch": false,
       "new_artifacts_created": false,
-      "billing_and_remaining_free_quota": "UNVERIFIED"
+      "billing_and_remaining_free_quota": "UNVERIFIED; authenticated billing API returned 404",
+      "push_triggered_workflows": 5,
+      "repository_visibility": "public",
+      "additional_run_storage": "Not yet measurable while Editor Core Test is in progress; screenshot artifact step ignores missing files and uses 7-day retention."
     },
     "cost_huf": 0,
     "manual_physical_acceptance": "DEFERRED until complete Visual Editor acceptance gate",
@@ -1699,6 +1740,7 @@
       "dry_run_command": "WRANGLER_LOG_PATH=/tmp/sanci9517-wrangler-logs npx wrangler deploy --dry-run --outdir /tmp/sanci9517-editor-profile-dry-run",
       "dry_run": "PASS; 168 assets, 335.81 KiB total / 87.60 KiB gzip; no remote deployment",
       "wrangler_logs": "Stored under /tmp/sanci9517-wrangler-logs because the default /home/agent/.config/.wrangler path is read-only"
-    }
+    },
+    "release_verification_at_utc": "2026-11-07T13:18:02Z"
   }
 }
