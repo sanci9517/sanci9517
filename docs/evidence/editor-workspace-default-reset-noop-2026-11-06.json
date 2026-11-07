@@ -196,9 +196,21 @@
     "recorded_at_utc": "2026-11-06",
     "targeted_local_chromium_command": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-layer-rename-draft.test.js",
     "targeted_local_reproductions": [
-      {"result": "PASS", "passed": 2, "failed": 0},
-      {"result": "PASS", "passed": 2, "failed": 0},
-      {"result": "PASS", "passed": 2, "failed": 0}
+      {
+        "result": "PASS",
+        "passed": 2,
+        "failed": 0
+      },
+      {
+        "result": "PASS",
+        "passed": 2,
+        "failed": 0
+      },
+      {
+        "result": "PASS",
+        "passed": 2,
+        "failed": 0
+      }
     ],
     "wide_local_layout_command": "CHROMIUM_PATH=/usr/bin/chromium npm run test:editor:layout",
     "wide_local_layout_result": "INCOMPLETE; the earlier 53-file run was stopped after reaching file 5/53. In its preceding workspace-appearance file, 59/61 passed and two unrelated editor page-load/canvas-node visibility waits timed out under that long sequential run. The same workspace file was subsequently run alone and passed 61/61, recorded below; the 53-file aggregate remains unverified.",
@@ -235,5 +247,49 @@
     },
     "source_changes": "None. The hosted layer-rename DOM-detachment failure did not reproduce in three isolated local Chromium runs; no runtime or test-harness change was made without a reproducible root cause.",
     "actions": "No dispatch/rerun was requested because free Actions billing/quota remains unverified and the owner's cost limit is 0 HUF. The exact-SHA screenshot artifact is preserved until its verified 2026-11-13 expiration."
+  },
+  "diagnostic_followup_sequential_prefix_25": {
+    "recorded_at_utc": "2026-11-07T00:15:33Z",
+    "command": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 <first 25 of 53 browser test paths from npm run test:editor:layout>",
+    "scope": "Ran a serial prefix of the layout browser suite to recreate the exact-SHA hosted sequence up to and including tests/browser/editor-layer-rename-draft.test.js.",
+    "result": "INCOMPLETE; process exit 1 due two earlier, unrelated workspace-appearance timing failures. No aggregate layout-suite PASS.",
+    "workspace_appearance_in_prefix": {
+      "result": "FAIL 59/61 under cumulative browser-test load",
+      "failures": [
+        {
+          "symptom": "#closeWorkspaceAppearance click timed out while closing the workspace appearance dialog (8 s)."
+        },
+        {
+          "symptom": "mobile openEditor wait for .page-canvas .node timed out (8 s)."
+        }
+      ],
+      "isolated_repeats": "The same file had separately passed 61/61 twice (prior evidence); this prefix run does not establish a product defect or root cause."
+    },
+    "subsequent_prefix_files": "Tests following the workspace-appearance file ran sequentially through the target file; no further failures were reported.",
+    "exact_hosted_failure_reproduction": {
+      "file": "tests/browser/editor-layer-rename-draft.test.js",
+      "result": "PASS 2/2",
+      "viewports_px": [
+        390,
+        1366
+      ],
+      "elapsed_ms": 8782,
+      "note": "Both scenarios passed after the preceding browser files; the hosted 1366px DOM-detachment failure remains unreproduced locally."
+    },
+    "actions": "No Actions run was dispatched or rerun; billing/free quota remains unverified under the 0 HUF cap.",
+    "source_changes": "None. The two cumulative-run appearance timeouts and the exact hosted layer-rename failure have no reproduced source-level root cause; no product or test-harness change was made.",
+    "production_readback": {
+      "deployment_id": "3f9ed703-8620-4ffb-9141-8cb8a0980ee6",
+      "worker_version": "d6d48b86-2e9b-4ce2-821d-aca2ee30b367",
+      "traffic_percent": 100,
+      "health_http_status": 200,
+      "health_body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      },
+      "runtime_source_changed": false
+    }
   }
 }
