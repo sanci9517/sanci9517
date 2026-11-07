@@ -1344,6 +1344,61 @@ test('center dock zones preserve the canvas at maximum widths across all desktop
   t.diagnostic(JSON.stringify(results));
 });
 
+test('live dock-zone previews match applied actions just outside and inside the group-zone boundaries',async t=>{
+  const {page,writes,errors}=await openEditor(t,{width:1280,height:900});
+  await openPreferences(page);
+  await page.locator('#workspaceLayout').selectOption('balanced');
+  await page.locator('#workspacePanelMode').selectOption('separate');
+  await page.locator('#workspaceDockOrder').selectOption('left-canvas-right');
+  await page.waitForFunction(()=>!document.querySelector('#leftDock')?.classList.contains('closed')&&!document.querySelector('#rightDock')?.classList.contains('closed'));
+  await page.locator('#closeWorkspaceAppearance').click();
+
+  const cases=[
+    {ratio:0.34,position:'before',label:'Elé helyezés',order:'canvas-left-right',mode:'separate'},
+    {ratio:0.36,position:'group',label:'Panelcsoport',order:'left-canvas-right',mode:'tabbed'},
+    {ratio:0.50,position:'group',label:'Panelcsoport',order:'left-canvas-right',mode:'tabbed'},
+    {ratio:0.64,position:'group',label:'Panelcsoport',order:'left-canvas-right',mode:'tabbed'},
+    {ratio:0.66,position:'after',label:'Utána helyezés',order:'canvas-right-left',mode:'separate'}
+  ];
+  const results=[];
+  for(const item of cases){
+    await openPreferences(page);
+    await page.locator('#workspacePanelMode').selectOption('separate');
+    await page.locator('#workspaceDockOrder').selectOption('left-canvas-right');
+    await page.waitForFunction(()=>document.querySelector('.workspace')?.dataset.workspacePanelMode==='separate'&&document.querySelector('.workspace')?.dataset.workspaceDockOrder==='left-canvas-right');
+    await page.locator('#closeWorkspaceAppearance').click();
+    const state=await page.evaluate(({ratio})=>{
+      const source=document.querySelector('#leftDock .dock-heading');
+      const target=document.querySelector('#rightDock');
+      const canvas=document.querySelector('.canvas-area');
+      const rect=target.getBoundingClientRect();
+      const dataTransfer=new DataTransfer();
+      const clientX=rect.left+rect.width*ratio;
+      source.dispatchEvent(new DragEvent('dragstart',{bubbles:true,cancelable:true,dataTransfer}));
+      target.dispatchEvent(new DragEvent('dragover',{bubbles:true,cancelable:true,dataTransfer,clientX}));
+      const preview={position:target.dataset.dockDropPosition,label:target.dataset.dockDropLabel,announcement:document.querySelector('#workspaceDockStatus').textContent,canvasWidth:canvas.getBoundingClientRect().width};
+      target.dispatchEvent(new DragEvent('drop',{bubbles:true,cancelable:true,dataTransfer,clientX}));
+      const canvasRect=canvas.getBoundingClientRect();
+      const docks=['#leftDock','#rightDock'].map(selector=>document.querySelector(selector).getBoundingClientRect());
+      return {preview,order:document.querySelector('.workspace').dataset.workspaceDockOrder,mode:document.querySelector('.editor-app').dataset.workspacePanelMode,canvasWidth:canvasRect.width,canvasLeft:canvasRect.left,canvasRight:canvasRect.right,pageWidth:document.documentElement.scrollWidth,docks:docks.map(dock=>({left:dock.left,right:dock.right,width:dock.width})),cleared:!target.hasAttribute('data-dock-drop-position')&&!target.hasAttribute('data-dock-drop-label'),dragEnded:!document.body.classList.contains('workspace-reordering')};
+    },item);
+    assert.equal(state.preview.position,item.position,`${item.ratio}: preview uses the expected side of the center-zone boundary`);
+    assert.equal(state.preview.label,item.label,`${item.ratio}: the preview explains the action before the drop`);
+    assert.match(state.preview.announcement,new RegExp(`Cél: ${item.label} – Beállítások\\.`,'u'),`${item.ratio}: assistive status describes the exact visible target action`);
+    assert.equal(state.order,item.order,`${item.ratio}: dropping applies the action announced by the zone`);
+    assert.equal(state.mode,item.mode,`${item.ratio}: grouping is selected only inside its dynamic center zone`);
+    assert.ok(state.canvasWidth>=400,`${item.ratio}: the canvas keeps its minimum usable width`);
+    assert.equal(state.pageWidth,1280,`${item.ratio}: the dock operation does not introduce horizontal overflow`);
+    assert.ok(state.docks.every(dock=>dock.width===0||dock.right<=state.canvasLeft+0.5||dock.left>=state.canvasRight-0.5),`${item.ratio}: dock zones keep panels outside the canvas`);
+    assert.equal(state.cleared,true,`${item.ratio}: the temporary preview clears after the drop`);
+    assert.equal(state.dragEnded,true,`${item.ratio}: the drag lifecycle is closed after the drop`);
+    results.push({ratio:item.ratio,position:state.preview.position,order:state.order,mode:state.mode,canvasWidth:Math.round(state.canvasWidth)});
+  }
+  assert.deepEqual(writes,[],'dynamic dock zones only change workspace state and never save or publish page data');
+  assert.deepEqual(errors,[]);
+  t.diagnostic(JSON.stringify(results));
+});
+
 test('dropping a dock from a tab group onto the canvas edge separates and reorders it as one undoable change',async t=>{
   const {page,writes,errors}=await openEditor(t,{width:1280,height:900});
   await openPreferences(page);
