@@ -335,5 +335,26 @@
       "traffic_percent": 100,
       "runtime_source_changed": false
     }
+  },
+  "hosted_failure_log_artifact_followup_2026_11_07": {
+    "workflow_run_id": 42287580280,
+    "run_sha": "af5def0663e584d422323401fac0e2f4dda81f9c",
+    "job_id": 128132289915,
+    "steps_read": "The exact Editor Core job passed setup, checkout, dependency install, typecheck, editor core unit tests, offline migration tests, private R2 API tests, Chromium install and isolated Worker media tests; layout was the first failing step. Later gates were skipped due to fail-fast.",
+    "layout_log": "The runner reached file 25/53. In tests/browser/editor-layer-rename-draft.test.js, 390px passed; the 1366px test failed at line 85 after 7 seconds: Playwright resolved the textbox named “Réteg neve”, then locator.fill retried because the element detached. Later layout tests continued and passed.",
+    "existing_screenshot_artifact_rechecked": {
+      "artifact_id": 13540346079,
+      "name": "editor-layout-screenshots",
+      "size_bytes": 2915961,
+      "sha256": "f34e8257dd3025e454eb5d1b2d9d9749300f12301207b009a06e960eea6b8d01",
+      "expires_at_utc": "2026-11-13T20:50:24Z",
+      "expired": false,
+      "deleted": false,
+      "interpretation": "Current exact-SHA failure evidence; retained without increasing Actions use or altering its expiry. Download produced a temporary file reference, but no binary inspection path was available in this workspace."
+    },
+    "source_review": "Reviewed the test sequence around the failing fill, beginLayerRename, its input handlers, renderLayers and the save path. The inspected flow explains how a render can flush a pending rename, but no ordinary-flow render was observed and no causal source defect was proven.",
+    "environment_status": "Current managed environment observations are fresh and connected; network policy enforced. No environment credential values were read or exposed.",
+    "actions": "Read-only GitHub API checks only; no dispatch or rerun because billing/quota is unverified and spend cap is 0 HUF.",
+    "source_changes": "No runtime or test source changes; awaiting a reproducible trigger or trace before patching."
   }
 }
