@@ -862,9 +862,12 @@
       "branch": "v2/foundation",
       "starting_exact_sha": "7535f9c118fce02ab7aa28e64fb61615b41b6b0b",
       "remote_exact_sha_before_changes": "7535f9c118fce02ab7aa28e64fb61615b41b6b0b",
-      "push_for_this_record": "pending",
+      "push_for_this_record": "PASS: normal fast-forward push confirmed; exact git ls-remote refs/heads/v2/foundation matches pushed_commit",
       "workflow_runs_for_starting_sha": [],
-      "ci": "No Actions workflow was dispatched in this run; billing/quota remains unverified."
+      "ci": "gh run list --commit fdc97b9a returned []; no workflow was dispatched and CI PASS is not claimed.",
+      "pushed_commit": "fdc97b9a903b796bddc5ae7c81700a179d19fbde",
+      "remote_exact_sha_after_push": "fdc97b9a903b796bddc5ae7c81700a179d19fbde",
+      "workflow_runs_for_pushed_commit": []
     },
     "production_read_only_check": {
       "deployment_id": "3f9ed703-8620-4ffb-9141-8cb8a0980ee6",
