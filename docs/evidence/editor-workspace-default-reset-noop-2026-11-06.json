@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "recorded_at_utc": "2026-11-07T11:31:25Z",
+  "recorded_at_utc": "2026-11-07T11:32:53Z",
   "plan_point": "77.44.6.1.C",
   "status": "RUNTIME_RELEASED_EDITOR_CORE_CI_FAILED_LOCAL_REPRO_NOT_REPRODUCED",
   "scope": "Reset an already-default editor workspace without writing unchanged preferences, creating undo history, or invoking layout and dock reset callbacks.",
@@ -1000,7 +1000,7 @@
     ]
   },
   "actions_artifact_retention_cleanup_2026_11_07": {
-    "recorded_at_utc": "2026-11-07T11:31:25Z",
+    "recorded_at_utc": "2026-11-07T11:32:53Z",
     "active_plan_point": "77.44.6.1.C",
     "scope": "GitHub Actions metadata/artifact cleanup only; no code build, workflow dispatch, rerun, source/release package, D1, R2, Cloudflare write, or Worker deploy.",
     "retention_policy_review": {
@@ -1504,7 +1504,12 @@
       "head_sha_before_docs_commit": "cc9f0f2a35b81385da596f2fd7cc0bd26f171a11",
       "github_branch_api_sha_before_docs_commit": "cc9f0f2a35b81385da596f2fd7cc0bd26f171a11",
       "git_ls_remote_sha_before_docs_commit": "cc9f0f2a35b81385da596f2fd7cc0bd26f171a11",
-      "workflow_runs_for_pre_cleanup_head": 0
+      "workflow_runs_for_pre_cleanup_head": 0,
+      "docs_evidence_commit": "4b96ffd6deb1f7d221183b4b6a8292781cd194c3",
+      "github_branch_api_after_push": "4b96ffd6deb1f7d221183b4b6a8292781cd194c3",
+      "git_ls_remote_after_push": "4b96ffd6deb1f7d221183b4b6a8292781cd194c3",
+      "workflow_runs_for_docs_evidence_commit": 0,
+      "ci_status": "No workflow was dispatched; no CI PASS is claimed."
     }
   }
 }
