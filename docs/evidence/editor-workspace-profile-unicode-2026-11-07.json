@@ -1,19 +1,21 @@
 {
   "schema_version": 1,
-  "recorded_at": "2026-11-07T20:25:18Z",
+  "recorded_at": "2026-11-07T20:48:36Z",
   "plan_point": "77.44.6.1.C",
-  "status": "RUNTIME_BUILD_SUCCESS_100_PERCENT_TRAFFIC_PUBLIC_SMOKE_BLOCKED_HOSTED_EDITOR_CI_IN_PROGRESS",
+  "status": "RUNTIME_BUILD_AND_REQUIRED_HOSTED_CI_SUCCESS_100_PERCENT_TRAFFIC_PUBLIC_SMOKE_BLOCKED",
   "scope": "Preserve valid Unicode workspace-profile names at the 32 UTF-16-code-unit limit, including imported legacy profiles containing a truncated unpaired surrogate.",
   "source_control": {
     "repository": "sanci9517/sanci9517",
     "branch": "v2/foundation",
     "test_only_commit": "46765038e90e01a2576abb320ee0c540948500e5",
     "test_only_message": "[skip ci] test(editor): cover unicode workspace profile names",
+    "test_only_followup_commit": "5fbfdde1bd0741064b544165ea8b883282326fb7",
+    "test_only_followup_message": "[skip ci] test(editor): cover Unicode profile save and rename",
     "runtime_commit": "d6751f1040562cb61e625bca61bfe70c7d8ca43e",
     "runtime_message": "fix(editor): preserve Unicode workspace profile names",
     "runtime_parent": "46765038e90e01a2576abb320ee0c540948500e5",
-    "remote_branch_sha": "d6751f1040562cb61e625bca61bfe70c7d8ca43e",
-    "remote_verification": "GitHub refs API confirmed refs/heads/v2/foundation at the runtime SHA. Direct git ls-remote was blocked in this session because the outbound proxy could not connect to port 8080; no claim is made that ls-remote passed in this session.",
+    "remote_branch_sha_at_followup_push": "5fbfdde1bd0741064b544165ea8b883282326fb7",
+    "remote_verification": "Runtime SHA was confirmed by GitHub refs API; follow-up test SHA was pushed with a normal fast-forward and the GitHub refs API confirmed refs/heads/v2/foundation at the exact follow-up SHA. Direct git ls-remote was blocked in this session because the outbound proxy could not connect to port 8080; no claim is made that ls-remote passed in this session.",
     "runtime_push": "Previously completed as a normal fast-forward push; current GitHub branch API still matches the exact runtime commit.",
     "docs_commit": "2c33b9ff40f61371632023c80aef85d70b198d6a",
     "docs_commit_message": "[skip ci] docs(editor): record Unicode profile fix evidence",
@@ -48,7 +50,15 @@
       "failures": 0,
       "cancellations": 0,
       "skipped": 0,
-      "details": "Final complete workspace-appearance Chromium file run after the malformed-surrogate repair; the new Unicode import regression is included."
+      "details": "Final complete workspace-appearance Chromium file run after the malformed-surrogate repair; the Unicode import, save and rename boundary regression is included."
+    },
+    "save_and_rename_boundary_extension": {
+      "commit": "5fbfdde1bd0741064b544165ea8b883282326fb7",
+      "focused_command": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 --test-name-pattern='profile import, save and rename' tests/browser/editor-workspace-appearance.test.js",
+      "focused_result": "PASS; 1/1 test",
+      "complete_file_command": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-workspace-appearance.test.js",
+      "complete_file_result": "PASS; 67/67 tests, 0 failure/cancellation/skip",
+      "contracts": ["profile creation truncates before a supplementary emoji at the 32-code-unit cap", "rename uses the same boundary-safe normalization", "persisted and displayed names contain no isolated UTF-16 surrogate", "zero Page Model/Save/Publish writes"]
     },
     "editor_node_suite": "npm run test:editor — PASS; 14/14 Editor Node test files",
     "linux_subreaper_contract": "3/3 PASS",
@@ -110,9 +120,9 @@
     "runtime_sha_editor_core": {
       "run_id": 42410359864,
       "url": "https://github.com/sanci9517/sanci9517/actions/runs/42410359864",
-      "status": "in_progress",
-      "conclusion": null,
-      "last_observed_job_step": "Run Editor browser layout regression — in_progress",
+      "status": "completed",
+      "conclusion": "success",
+      "last_observed_job_step": "Complete job — success",
       "completed_steps": {
         "typecheck": "success",
         "editor_core_tests": "success",
@@ -121,7 +131,36 @@
         "chromium_install": "success",
         "isolated_worker_media_upload": "success"
       },
-      "manual_dispatch_or_rerun": false
+      "manual_dispatch_or_rerun": false,
+      "completed_steps": {
+        "typecheck": "success",
+        "editor_core_tests": "success",
+        "offline_d1_ledger": "success",
+        "private_r2_media_api": "success",
+        "chromium_install": "success",
+        "isolated_worker_media_upload": "success",
+        "editor_browser_layout_regression": "success",
+        "web013_admin_mobile_browser_regression": "success",
+        "screenshot_artifact_upload": "success",
+        "canonical_schedule_tests": "success",
+        "domain_contract_tests": "success",
+        "brand_kit_storage_access_tests": "success",
+        "admin_home_contract_tests": "success",
+        "post_job_cleanup": "success"
+      },
+      "layout_browser_regression": {
+        "files": "53/53",
+        "tests": "169/169",
+        "failures": 0,
+        "cancellations": 0,
+        "skipped": 0
+      },
+      "web013_admin_mobile_browser_tests": "2/2 success",
+      "schedule_tests": "9/9 success",
+      "domain_contract_tests": "5/5 success",
+      "brand_kit_storage_access_tests": "5/5 success",
+      "admin_home_contract_tests": "16/16 success",
+      "all_job_steps_success": true
     },
     "runtime_sha_f0_baseline": {
       "run_id": 42410359862,
@@ -133,6 +172,22 @@
       "status": "completed",
       "conclusion": "success"
     },
+    "runtime_sha_workflow_set": "GitHub Actions list for exact SHA d6751f1 contained exactly Editor Core Test, F0 baseline checks and Twitch Integration Check; all three completed successfully.",
+    "test_only_followup_commit": {
+      "sha": "5fbfdde1bd0741064b544165ea8b883282326fb7",
+      "message_uses_skip_ci": true,
+      "workflows_dispatched": false
+    },
+    "hosted_artifact": {
+      "id": 13590250899,
+      "name": "editor-layout-screenshots",
+      "size_in_bytes": 2916911,
+      "sha256": "71ec591e763cf71f93d425c52e310e0c2f2e086b66280bab467734146123bbd9",
+      "expires_at": "2026-11-14T20:43:28Z",
+      "retention_days": 7,
+      "reason_to_keep": "Latest required exact-runtime-SHA Editor layout acceptance evidence; not yet superseded.",
+      "deleted": false
+    },
     "docs_commit_workflows": "No workflow was dispatched for the planned [skip ci] documentation/evidence commit; confirm the exact SHA run list after push.",
     "artifact_retention": "The runtime Editor Core run is active; its screenshot artifact upload step is pending. No artifact was deleted or manually created in this session."
   },
@@ -140,7 +195,7 @@
     "cost_huf": 0,
     "new_dependencies": 0,
     "paid_actions_or_services": false,
-    "reported_actions_storage": "User-reported 0.45 GB of a 0.5 GB storage cap; current account billing/quota readback is unavailable and remains UNVERIFIED.",
+    "reported_actions_storage": "User-reported 0.45 GB of a 0.5 GB storage cap; current account billing/quota readback is unavailable and remains UNVERIFIED. The exact-runtime required Editor run produced one 2,916,911-byte artifact with the configured seven-day expiry; it is retained as the current exact-SHA acceptance proof.",
     "production_d1_writes_or_migrations": false,
     "r2_deletion": false,
     "manual_visual_editor_acceptance": "DEFERRED until the entire planned Visual Editor scope reaches its acceptance gate",
