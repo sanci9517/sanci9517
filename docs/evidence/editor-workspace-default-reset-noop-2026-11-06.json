@@ -637,5 +637,77 @@
       "node_modules/",
       "scripts/__pycache__/"
     ]
+  },
+  "dock_drop_search_input_payload_guard_2026_11_07": {
+    "recorded_at_utc": "2026-11-07T07:58:16Z",
+    "plan_point": "77.44.6.1.C",
+    "hypothesis": "A dock header drag sets internal text/plain data. Dropping into the element-search input might apply the browser default text-drop action after the shell processes the dock-zone drop.",
+    "focused_real_browser_test": {
+      "command": "timeout 180s env CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 --test-name-pattern='dock drop inside a live panel search' tests/browser/editor-workspace-appearance.test.js",
+      "result": "PASS 1/1",
+      "browser": "local Chromium; actual Playwright mouse drag from the right dock heading into #elementSearch",
+      "verified": [
+        "panel groups into the left dock zone",
+        "search input text remains unchanged",
+        "no Page Model Save/Publish request"
+      ]
+    },
+    "complete_relevant_browser_file": {
+      "command": "timeout 600s env CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-workspace-appearance.test.js",
+      "result": "PASS",
+      "tests": 62,
+      "passed": 62,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "duration_ms": 226904.2,
+      "orphaned_descendants_reaped": 4
+    },
+    "interpretation": "The suspected default text-drop side effect was not reproduced in Chromium. Keep the focused browser regression test; no runtime change or root-cause claim is warranted.",
+    "source_changes": {
+      "test_file": "tests/browser/editor-workspace-appearance.test.js",
+      "runtime_source_changed": false
+    },
+    "prior_full_layout_suite_context": {
+      "commit": "283457ee01f8f91a6597e9d05be7006d49da11fd",
+      "result": "PASS 53/53 files, 163/163 tests before adding this focused test",
+      "current_run_scope": "Full changed workspace/dock test file 62/62; not a new full 53-file aggregate"
+    },
+    "github": {
+      "branch": "v2/foundation",
+      "pre_push_local_head": "283457ee01f8f91a6597e9d05be7006d49da11fd",
+      "planned_commit_message": "test: cover dock drop over search field [skip ci]"
+    },
+    "production_read_only_check": {
+      "deployment_id": "3f9ed703-8620-4ffb-9141-8cb8a0980ee6",
+      "worker_version": "d6d48b86-2e9b-4ce2-821d-aca2ee30b367",
+      "traffic_percent": 100,
+      "direct_health_get": {
+        "status": "PASS",
+        "http_status": 200,
+        "body": {
+          "ok": true,
+          "service": "sanci9517-streamer-brand",
+          "version": "2.0.0",
+          "server": "cloudflare-worker"
+        }
+      },
+      "runtime_changed": false
+    },
+    "actions": {
+      "dispatch_or_rerun": false,
+      "planned_commit_skip_ci": true,
+      "spend_huf": 0,
+      "billing_quota": "UNVERIFIED"
+    },
+    "production_mutations": {
+      "d1_write_or_migration": false,
+      "r2_operation": false,
+      "deploy": false
+    },
+    "worktree_preexisting_untracked_preserved": [
+      "node_modules/",
+      "scripts/__pycache__/"
+    ]
   }
 }

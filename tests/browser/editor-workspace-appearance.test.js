@@ -1518,6 +1518,23 @@ test('dropping the canvas onto a dock center reorders regions instead of groupin
   assert.deepEqual(errors,[]);
 });
 
+test('dock drop inside a live panel search does not insert the internal drag payload into the field',async t=>{
+  const {page,writes,errors}=await openEditor(t,{width:1366,height:900});
+  const search=page.locator('#elementSearch');
+  if(await page.locator('#leftDock').evaluate(panel=>panel.classList.contains('closed')))await page.locator('#editorMenu').click();
+  const source=page.locator('#rightDock .dock-heading').first();
+  if(await page.locator('#rightDock').evaluate(panel=>panel.classList.contains('closed')))await page.locator('#openInspector').click();
+  await page.locator('#leftTabElements').click();
+  await search.waitFor({state:'visible'});
+  await source.waitFor({state:'visible'});
+  await search.fill('Keresés maradjon változatlan');
+  await source.dragTo(search,{targetPosition:{x:(await search.boundingBox()).width/2,y:12}});
+  assert.equal(await search.inputValue(),'Keresés maradjon változatlan','the browser must not apply the default text drop after the workspace handler moves the dock');
+  assert.equal(await page.locator('.editor-app').getAttribute('data-workspace-panel-mode'),'tabbed','the dock-zone action still groups the panel');
+  assert.deepEqual(writes,[],'dock movement is not a Page Model Save or Publish');
+  assert.deepEqual(errors,[]);
+});
+
 test('left tool rail order is customizable, undoable, profile-aware and keyboard navigable',async t=>{
   const {page,writes,errors}=await openEditor(t,{width:1366,height:900});
   await openPreferences(page);
