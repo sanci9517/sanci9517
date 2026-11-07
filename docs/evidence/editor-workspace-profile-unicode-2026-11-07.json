@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "recorded_at": "2026-11-07T20:48:36Z",
+  "recorded_at": "2026-11-07T21:07:11Z",
   "plan_point": "77.44.6.1.C",
   "status": "RUNTIME_BUILD_AND_REQUIRED_HOSTED_CI_SUCCESS_100_PERCENT_TRAFFIC_PUBLIC_SMOKE_BLOCKED",
   "scope": "Preserve valid Unicode workspace-profile names at the 32 UTF-16-code-unit limit, including imported legacy profiles containing a truncated unpaired surrogate.",
@@ -17,10 +17,11 @@
     "remote_branch_sha_at_followup_push": "5fbfdde1bd0741064b544165ea8b883282326fb7",
     "remote_verification": "Runtime SHA was confirmed by GitHub refs API; follow-up test SHA was pushed with a normal fast-forward and the GitHub refs API confirmed refs/heads/v2/foundation at the exact follow-up SHA. Direct git ls-remote was blocked in this session because the outbound proxy could not connect to port 8080; no claim is made that ls-remote passed in this session.",
     "runtime_push": "Previously completed as a normal fast-forward push; current GitHub branch API still matches the exact runtime commit.",
-    "docs_commit": "2c33b9ff40f61371632023c80aef85d70b198d6a",
-    "docs_commit_message": "[skip ci] docs(editor): record Unicode profile fix evidence",
-    "docs_commit_remote_verification": "GitHub refs API confirmed the documentation commit as the exact v2/foundation HEAD. GitHub Actions runs API for the exact documentation SHA returned total_count=0.",
-    "aggregate_ci_pass": false
+    "docs_commit": "5e5ed75e8d0711cbc399f0f7a20947986e20a04d",
+    "docs_commit_message": "[skip ci] docs(editor): record Unicode profile CI closure",
+    "docs_commit_remote_verification": "GitHub branch API confirmed this exact v2/foundation HEAD before the current evidence follow-up. Exact-SHA Actions API returned total_count=0.",
+    "aggregate_ci_pass": false,
+    "documentation_followup": "This session records the verified design/profile checks and corrects the duplicate completed_steps key and stale artifact-upload status found in the prior evidence. The follow-up itself is a docs/evidence-only [skip ci] change; its push SHA is recorded in the canonical plan after normal fast-forward verification."
   },
   "implementation": {
     "files": [
@@ -58,7 +59,12 @@
       "focused_result": "PASS; 1/1 test",
       "complete_file_command": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-workspace-appearance.test.js",
       "complete_file_result": "PASS; 67/67 tests, 0 failure/cancellation/skip",
-      "contracts": ["profile creation truncates before a supplementary emoji at the 32-code-unit cap", "rename uses the same boundary-safe normalization", "persisted and displayed names contain no isolated UTF-16 surrogate", "zero Page Model/Save/Publish writes"]
+      "contracts": [
+        "profile creation truncates before a supplementary emoji at the 32-code-unit cap",
+        "rename uses the same boundary-safe normalization",
+        "persisted and displayed names contain no isolated UTF-16 surrogate",
+        "zero Page Model/Save/Publish writes"
+      ]
     },
     "editor_node_suite": "npm run test:editor — PASS; 14/14 Editor Node test files",
     "linux_subreaper_contract": "3/3 PASS",
@@ -75,7 +81,28 @@
       "upload_size": "335.81 KiB / 87.60 KiB gzip",
       "production_write": false
     },
-    "syntax_and_whitespace": "JavaScript syntax checks and git diff --check — PASS"
+    "syntax_and_whitespace": "JavaScript syntax checks and git diff --check — PASS",
+    "profile_design_roundtrip_followup": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-name-pattern='five selectable editor designs|desktop docks can be reordered and local workspace profiles|saved and imported workspace profiles keep unique local IDs' tests/browser/editor-workspace-appearance.test.js",
+      "result": "PASS; 3/3 tests, 0 failures/cancellations/skips",
+      "coverage": [
+        "five selectable workspace designs produce distinct toolbar/dialog/control palettes and persist across reload",
+        "all six desktop dock orders remain distinct while saved profile limits, local IDs, import and reload are respected",
+        "profile/design behavior does not send Page Model Save or Publish requests"
+      ],
+      "runtime_changes": "none; existing product behavior was confirmed and no runtime defect reproduced",
+      "initial_sandbox_attempt": "The subreaper-wrapped attempt was blocked before tests ran because the sandbox denied the fixture localhost bind (listen EPERM); the same targeted command passed after local test execution was approved."
+    },
+    "current_session_checks": {
+      "editor_node_suite": "npm run test:editor — PASS; 14/14 Editor Node test files",
+      "subreaper_contract": "3/3 PASS",
+      "typecheck": "npm run typecheck — PASS",
+      "web013_migration_safety": "npm run test:web013:migration-gate — PASS; no production migration applied",
+      "canonical_plan": "python3 scripts/check-canonical-plan.py — PASS",
+      "plan_contract": "python3 tests/plan-contract.test.py — PASS; 13/13",
+      "traceability": "python3 scripts/build-feature-traceability.py --check — PASS; 396/396",
+      "git_diff_check": "git diff --check — PASS"
+    }
   },
   "production": {
     "worker": "sanci9517-streamer-brand",
@@ -87,7 +114,11 @@
       "branch": "v2/foundation",
       "build_command": "npm run typecheck",
       "deploy_command": "npm run deploy:safe",
-      "configured_path_exclusions": ["docs/**", "tests/**", "AGENTS.md"]
+      "configured_path_exclusions": [
+        "docs/**",
+        "tests/**",
+        "AGENTS.md"
+      ]
     },
     "deployment_id": "c79afb7d-7892-4e0e-b9a6-1848bdecad48",
     "worker_version_id": "4f034a23-d090-4c8a-95c4-7cadbe3d2636",
@@ -107,7 +138,8 @@
       "attempt": "GET https://sanci9517.com/api/health",
       "observed": [
         "Shell curl failed before reaching the hostname: CONNECT tunnel failed, response 403 (curl exit 56); a stale body file from an earlier attempt was not treated as a response from this request.",
-        "The managed Cloudflare execution route returned HTTP 403 with body 'Forbidden: requests to sanci9517.com are not allowed'."
+        "The managed Cloudflare execution route returned HTTP 403 with body 'Forbidden: requests to sanci9517.com are not allowed'.",
+        "A fresh read-only curl attempt with network permission again failed before reaching the host: CONNECT tunnel failed, response 403 (curl exit 56)."
       ]
     },
     "changed_public_asset_hash": {
@@ -122,16 +154,7 @@
       "url": "https://github.com/sanci9517/sanci9517/actions/runs/42410359864",
       "status": "completed",
       "conclusion": "success",
-      "last_observed_job_step": "Complete job — success",
-      "completed_steps": {
-        "typecheck": "success",
-        "editor_core_tests": "success",
-        "offline_d1_ledger": "success",
-        "private_r2_media_api": "success",
-        "chromium_install": "success",
-        "isolated_worker_media_upload": "success"
-      },
-      "manual_dispatch_or_rerun": false,
+      "last_observed_job_step": "Complete job — success; exact runtime-SHA run closed successfully.",
       "completed_steps": {
         "typecheck": "success",
         "editor_core_tests": "success",
@@ -148,6 +171,7 @@
         "admin_home_contract_tests": "success",
         "post_job_cleanup": "success"
       },
+      "manual_dispatch_or_rerun": false,
       "layout_browser_regression": {
         "files": "53/53",
         "tests": "169/169",
@@ -188,8 +212,8 @@
       "reason_to_keep": "Latest required exact-runtime-SHA Editor layout acceptance evidence; not yet superseded.",
       "deleted": false
     },
-    "docs_commit_workflows": "No workflow was dispatched for the planned [skip ci] documentation/evidence commit; confirm the exact SHA run list after push.",
-    "artifact_retention": "The runtime Editor Core run is active; its screenshot artifact upload step is pending. No artifact was deleted or manually created in this session."
+    "docs_commit_workflows": "The exact previously pushed docs SHA 5e5ed75e8d0711cbc399f0f7a20947986e20a04d has total_count=0 in the GitHub Actions API; this current evidence follow-up also uses [skip ci].",
+    "artifact_retention": "Exact-runtime-SHA editor-layout-screenshots artifact 13590250899 (2,916,911 bytes; 7-day expiry 2026-11-14T20:43:28Z) uploaded successfully and remains the newest useful acceptance evidence; retained, not deleted."
   },
   "cost_and_safety": {
     "cost_huf": 0,
@@ -199,6 +223,6 @@
     "production_d1_writes_or_migrations": false,
     "r2_deletion": false,
     "manual_visual_editor_acceptance": "DEFERRED until the entire planned Visual Editor scope reaches its acceptance gate",
-    "plan_status": "77.44.6.1.C OPEN / NOT CERTIFIED; this Unicode profile defect fix is one verified slice, not completion of C."
+    "plan_status": "77.44.6.1.C OPEN / NOT CERTIFIED; this round added no runtime change and confirmed one additional profile/design regression slice only."
   }
 }
