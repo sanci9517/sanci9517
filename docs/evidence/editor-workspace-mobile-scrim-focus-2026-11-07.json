@@ -1,0 +1,158 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-11-07T22:24:42Z",
+  "plan_point": "77.44.6.1.C",
+  "status": "DEPLOYED_CONTROL_PLANE_VERIFIED_PUBLIC_SMOKE_BLOCKED_CI_IN_PROGRESS_C_OPEN",
+  "scope": "Restore keyboard focus to the control that opened a mobile drawer when the user closes it by clicking the canvas scrim, including the case where the pointer click leaves document.activeElement outside the panel.",
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "parent_commit": "8a07e3f57968ce8b3f1b6de7102e709b8bf9a20b",
+    "runtime_commit": "dc4c5b174e83c4d8430227d54f911706beb4ede4",
+    "runtime_message": "fix(editor): restore focus after mobile scrim close",
+    "push": "Normal fast-forward push succeeded; GitHub branch API verified exact head dc4c5b174e83c4d8430227d54f911706beb4ede4.",
+    "checks": [
+      {
+        "name": "Workers Builds: sanci9517-streamer-brand",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "source-audit",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "verify",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "canonical-plan",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "twitch-integration",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "editor-core",
+        "status": "in_progress",
+        "run_id": 42420157710,
+        "run_number": 3080,
+        "current_step": "Run Editor browser layout regression",
+        "aggregate_ci_pass": false
+      }
+    ],
+    "other_automatic_workflows": [
+      {
+        "name": "Canonical Creator Platform Plan",
+        "run_id": 42420157631,
+        "conclusion": "success"
+      },
+      {
+        "name": "Twitch Integration Check",
+        "run_id": 42420157663,
+        "conclusion": "success"
+      },
+      {
+        "name": "Canonical Plan Active Point Audit",
+        "run_id": 42420157844,
+        "conclusion": "success"
+      },
+      {
+        "name": "F0 baseline checks",
+        "run_id": 42420157693,
+        "conclusion": "success"
+      }
+    ],
+    "manual_dispatch_or_rerun": false
+  },
+  "implementation": {
+    "root_cause": "When a mobile drawer was closed from its scrim, the pointer click could move focus outside the panel before setPanel checked whether focus was still inside it. The existing conditional focus restoration then did not return keyboard focus to the drawer opener.",
+    "fix": "The scrim close handler captures the active mobile drawer side, closes both drawers without competing focus restoration, then focuses the recorded connected opener; if that opener is unavailable, it falls back to the matching left/right drawer control. It clears the remembered target after close.",
+    "coverage": {
+      "reproduces_canvas_scrim_close_for_right_inspector": true,
+      "asserts_focus_returns_to_inspector_opener": true,
+      "asserts_canvas_inert_released": true,
+      "asserts_save_publish_page_model_mutations": 0,
+      "left_and_right_drawers_close_from_scrim": true
+    },
+    "page_model_mutations": 0,
+    "save_publish_mutations": 0,
+    "runtime_dependencies_added": false,
+    "paid_services_added": false,
+    "runtime_source_sha256": {
+      "public/editor-v2/ui/shell.js": "34a7944b150eeb6099346dcb3d38c13a4bca2c41b203d257a3539f49c4d43a77"
+    },
+    "reuse_and_license": "Extended the existing first-party mobile drawer focus lifecycle and Chromium test fixture. No external code or runtime dependency was added."
+  },
+  "validation": {
+    "targeted_chromium_regression": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-name-pattern=\"wide mobile drawer scrim stays behind its panel and closes it from the remaining canvas\" tests/browser/editor-workspace-appearance.test.js — PASS 1/1 after reproducing the pre-fix focus loss.",
+    "complete_workspace_chromium": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-workspace-appearance.test.js — PASS 67/67.",
+    "editor_unit": "npm run test:editor — PASS 187/187 node tests across 14 files; Linux subreaper contract 3/3 PASS.",
+    "typecheck": "npm run typecheck — PASS.",
+    "migration_guard": "npm run test:web013:migration-gate — PASS; no migration applied.",
+    "canonical_plan": "python3 scripts/check-canonical-plan.py — PASS.",
+    "plan_contract": "python3 tests/plan-contract.test.py — PASS 13/13.",
+    "active_point": "python3 scripts/audit-active-plan-point.py — PASS; current 77.44.6.1, next 77.44.6.1.C; functional acceptance NOT_CERTIFIED.",
+    "traceability": "python3 scripts/build-feature-traceability.py --check — PASS 396/396 after regenerating the shell.js source fingerprint.",
+    "syntax_and_diff": "node --check public/editor-v2/ui/shell.js; node --check tests/browser/editor-workspace-appearance.test.js; git diff --check — PASS.",
+    "wrangler_dry_run": "XDG_CONFIG_HOME=/tmp/sanci-wrangler-config npx wrangler deploy --dry-run — PASS, Wrangler 4.130.0, 168 assets, 335.81 KiB / gzip 87.60 KiB; no deployment made.",
+    "full_visual_editor_acceptance": "DEFERRED until the complete Visual Editor acceptance gate."
+  },
+  "release_preflight": {
+    "production_d1_query": "SELECT name FROM d1_migrations ORDER BY name",
+    "query_mode": "Single read-only SELECT through authenticated Cloudflare D1 Query API before runtime release.",
+    "ledger_row_count": 34,
+    "latest_ledger_row": "0028_media_archive.sql",
+    "rows_written": 0,
+    "changes": 0,
+    "changed_db": false,
+    "migration_applied": false,
+    "r2_mutation_or_deletion": false
+  },
+  "production": {
+    "worker": "sanci9517-streamer-brand",
+    "build_id": "019a3e46-bcaa-4627-af2b-026aec86e37f",
+    "build_outcome": "success",
+    "build_source_commit": "dc4c5b174e83c4d8430227d54f911706beb4ede4",
+    "deployment_id": "6aea7ce1-830a-451a-a00d-c88284b08ef9",
+    "traffic_version": "425cfad2-3744-49e1-afde-289216ad8c2b",
+    "traffic_percentage": 100,
+    "deployment_observed_at": "2026-11-07T22:20:52.500194Z",
+    "deployment_source": "wrangler via configured Cloudflare Worker Build",
+    "control_plane_verified": true,
+    "build_commands": {
+      "build": "npm run typecheck",
+      "deploy": "npm run deploy:safe",
+      "migration_safety_gate": "PASS"
+    },
+    "public_http_smoke": {
+      "status": "BLOCKED_OUTBOUND_PROXY",
+      "health": {
+        "path": "/api/health",
+        "status": "UNVERIFIED"
+      },
+      "asset": {
+        "path": "/editor-v2/ui/shell.js?codex_check=dc4c5b17",
+        "status": "UNVERIFIED",
+        "local_sha256": "34a7944b150eeb6099346dcb3d38c13a4bca2c41b203d257a3539f49c4d43a77",
+        "live_sha256": null
+      },
+      "error": "Direct HTTPS verification through the available outbound proxy failed with URLError(OSError('Tunnel connection failed: 403 Forbidden')); do not treat public health or asset hash as verified."
+    }
+  },
+  "cost_and_storage": {
+    "additional_cost_huf": 0,
+    "paid_services_or_dependencies_added": false,
+    "actions": "No manual workflow dispatch, rerun, extra artifact, or cleanup. Only the normal push-triggered required workflows ran. The user-reported artifact storage meter was 0.45 GB / 0.5 GB (90%); the exact account meter/quota remains unverified. Existing artifacts were not deleted because the available GitHub integration exposes artifact reads/downloads but no artifact-delete capability; current-run screenshot artifact upload was still pending at evidence capture.",
+    "artifact_deletion": "NOT AVAILABLE through connected GitHub tools; no source/workflow runs were deleted as a substitute."
+  },
+  "acceptance": {
+    "77_44_6_1_C": "OPEN / NOT CERTIFIED; this focus-return regression slice is implemented, while full dock/workspace lifecycle acceptance remains open.",
+    "full_visual_editor_manual_and_physical_acceptance": "DEFERRED until the complete Visual Editor acceptance gate."
+  }
+}
