@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "recorded_at_utc": "2026-11-07T11:32:53Z",
+  "recorded_at_utc": "2026-11-07T12:07:40Z",
   "plan_point": "77.44.6.1.C",
   "status": "RUNTIME_RELEASED_EDITOR_CORE_CI_FAILED_LOCAL_REPRO_NOT_REPRODUCED",
   "scope": "Reset an already-default editor workspace without writing unchanged preferences, creating undo history, or invoking layout and dock reset callbacks.",
@@ -1511,5 +1511,91 @@
       "workflow_runs_for_docs_evidence_commit": 0,
       "ci_status": "No workflow was dispatched; no CI PASS is claimed."
     }
+  },
+  "workspace_profile_and_responsive_lifecycle_rechecks_2026_11_07": {
+    "recorded_at_utc": "2026-11-07T12:07:40Z",
+    "plan_point": "77.44.6.1.C",
+    "status": "OPEN / NOT_CERTIFIED",
+    "browser_command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-name-pattern=\"workspace profile export/import|profile import explains when browser storage is unavailable|workspace persistence stays session-only|1024px tablet drawer transitions\" tests/browser/editor-workspace-appearance.test.js",
+    "browser_result": {
+      "tests": 4,
+      "passed": 4,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "scope": [
+        "bounded allowlisted workspace profile transfer and Undo without page writes",
+        "session-only behavior when the separate dock-state read is blocked",
+        "honest feedback when profile import cannot persist",
+        "1024px tablet drawer to 1025px desktop non-overlapping dock transition"
+      ]
+    },
+    "editor_node_suite": {
+      "command": "npm run test:editor",
+      "files": 14,
+      "tests": 187,
+      "passed": 187,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "linux_subreaper_contract_tests": 3
+    },
+    "additional_checks": {
+      "typecheck": "npm run typecheck — PASS",
+      "migration_safety_gate": "npm run test:web013:migration-gate — PASS; no production D1 query or mutation was performed",
+      "canonical_plan": "python3 scripts/check-canonical-plan.py — PASS; one 13-file master",
+      "plan_contract": "python3 tests/plan-contract.test.py — PASS, 13 tests",
+      "active_plan_audit": "python3 scripts/audit-active-plan-point.py — PASS; next 77.44.6.1.C, not certified",
+      "traceability": "python3 scripts/build-feature-traceability.py --check — PASS, 396 mappings",
+      "browser_test_syntax": "node --check tests/browser/editor-workspace-appearance.test.js — PASS",
+      "evidence_json": "python3 -m json.tool docs/evidence/editor-workspace-default-reset-noop-2026-11-06.json — PASS",
+      "diff_check": "git diff --check — PASS"
+    },
+    "interpretation": "The four workspace lifecycle/browser cases and the full 187-test editor Node suite pass. No reproducible product defect or new runtime/test source gap was established in this slice; no code behavior or Save/Publish contract was changed. These scoped automated checks do not complete the full C point or the full Editor acceptance gate.",
+    "github": {
+      "branch": "v2/foundation",
+      "starting_exact_sha": "53fc5dff5a5a05563da0b4b8d6c35910c1d89c02",
+      "github_branch_api_sha": "53fc5dff5a5a05563da0b4b8d6c35910c1d89c02",
+      "git_ls_remote_sha": "53fc5dff5a5a05563da0b4b8d6c35910c1d89c02",
+      "workflow_runs_for_starting_sha": 0,
+      "workflow_runs_dispatched": 0,
+      "ci": "No CI pass is claimed; no remote workflow was dispatched."
+    },
+    "production_read_only_check": {
+      "cloudflare_deployment": "3f9ed703-8620-4ffb-9141-8cb8a0980ee6",
+      "worker_version": "d6d48b86-2e9b-4ce2-821d-aca2ee30b367",
+      "traffic_percent": 100,
+      "health_checked_at_utc": "2026-11-07T12:07:22Z",
+      "health_http_status": 200,
+      "health_body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      },
+      "runtime_or_public_asset_changed": false,
+      "worker_deploy": "NOT DONE; runtime source unchanged"
+    },
+    "actions_storage": {
+      "new_artifacts_or_workflow_runs_created": false,
+      "post_cleanup_inventory_from_prior_check": {
+        "artifacts": 1443,
+        "bytes": 1369549779
+      },
+      "owner_reported_0_45_of_0_5_gb_meter": "Not independently verifiable from the repository artifact API",
+      "billing_and_remaining_free_quota": "UNVERIFIED"
+    },
+    "production_mutations": {
+      "d1_migration": false,
+      "d1_data_write": false,
+      "r2_delete": false,
+      "worker_deploy": false
+    },
+    "cost_huf": 0,
+    "manual_physical_acceptance": "DEFERRED until complete Visual Editor acceptance gate",
+    "worktree_preexisting_untracked_preserved": [
+      "node_modules/",
+      "scripts/__pycache__/"
+    ]
   }
 }
