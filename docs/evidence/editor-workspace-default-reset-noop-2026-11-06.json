@@ -381,7 +381,7 @@
       "failed": 0,
       "cancelled": 0,
       "skipped": 0,
-      "duration_ms": 48784.640
+      "duration_ms": 48784.64
     },
     "interpretation": "The aggregate browser layout run is not PASS: 52 files passed and the last file had one 1366px failure. The same complete last file passed on immediate isolated rerun, including the failing desktop Schedule scenario, so the failure is presently nonreproduced. No runtime/test/harness change is justified without a repeatable trigger or trace.",
     "source_changes": "None.",
@@ -402,7 +402,11 @@
     "failed": 0,
     "cancelled": 0,
     "skipped": 0,
-    "elapsed_ms": [15530.4, 15718.5, 14873.9],
+    "elapsed_ms": [
+      15530.4,
+      15718.5,
+      14873.9
+    ],
     "orphaned_descendants_reaped_per_run": 4,
     "combined_with_isolated_full_file": "The same 1366px test passed in the 7/7 isolated file rerun; four isolated desktop executions pass after the aggregate suite failure.",
     "interpretation": "The 8-second palette-group click failure is not reproducible in isolated runs. The full 53-file aggregate remains incomplete/non-PASS. No code or timeout adjustment is justified; retain the exact failing line and capture a Playwright trace/screenshot if the aggregate failure recurs.",
@@ -432,7 +436,11 @@
       "duration_ms": 111602.987,
       "environment_observation": {
         "zombie_processes": 5270,
-        "load_average": [1.64, 0.88, 0.37],
+        "load_average": [
+          1.64,
+          0.88,
+          0.37
+        ],
         "available_memory_gib": 8.7,
         "interpretation": "Browser timing was intermittent in this managed workspace, but these readings do not establish that resource pressure caused either failure."
       }
@@ -451,7 +459,10 @@
         "result": "PASS",
         "passed": 2,
         "failed": 0,
-        "viewports_px": [390, 1366]
+        "viewports_px": [
+          390,
+          1366
+        ]
       },
       "complete_test_file": {
         "command": "timeout 300s env CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-element-insertion.test.js",
@@ -490,6 +501,80 @@
     "actions_dispatched": false,
     "spend_huf": 0,
     "billing_quota": "UNVERIFIED",
-    "worktree_preexisting_untracked_preserved": ["node_modules/", "scripts/__pycache__/" ]
+    "worktree_preexisting_untracked_preserved": [
+      "node_modules/",
+      "scripts/__pycache__/"
+    ]
+  },
+  "full_local_layout_rerun_after_diagnostics_2026_11_07": {
+    "recorded_at_utc": "2026-11-07T06:38:42Z",
+    "command": "timeout 3600s env CHROMIUM_PATH=/usr/bin/chromium npm run test:editor:layout",
+    "result": "INCOMPLETE_ENVIRONMENT_RESTART_NO_FINAL_EXIT_CODE",
+    "files_in_suite": 53,
+    "last_process_observation": {
+      "completed_files": 31,
+      "active_file": "tests/browser/editor-inspector-visual-effects-partial-types.test.js",
+      "note": "The managed environment restarted while this file was active. The Node process ended without retained test output or final exit status; elapsed time was approximately 33m53s, below the 3600s command timeout."
+    },
+    "known_earlier_file_results": {
+      "path": "tests/browser/editor-workspace-appearance.test.js",
+      "passed": 59,
+      "failed": 2,
+      "result": "59/61; not a full-suite result",
+      "failures": [
+        {
+          "test": "five selectable editor designs visibly differ, persist and never alter page data",
+          "line": 128,
+          "failure": "page.goto(..., waitUntil=load) exceeded the 20-second navigation timeout."
+        },
+        {
+          "test": "tabbed desktop panel groups reserve canvas space, restore profiles and fall back to one mobile drawer",
+          "line": 156,
+          "failure": "#saveWorkspaceProfile click exceeded the 8-second Playwright timeout."
+        }
+      ]
+    },
+    "focused_rechecks": {
+      "workspace_appearance_cases": {
+        "command": "timeout 240s env CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 --test-name-pattern='five selectable editor designs visibly differ|tabbed desktop panel groups reserve canvas space' tests/browser/editor-workspace-appearance.test.js",
+        "result": "PASS 2/2",
+        "elapsed_ms": 9777.5,
+        "orphaned_descendants_reaped": 4
+      },
+      "editor_element_insertion_file": {
+        "command": "timeout 300s env CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-element-insertion.test.js",
+        "result": "PASS 8/8",
+        "elapsed_ms": 47244.9,
+        "orphaned_descendants_reaped": 28
+      }
+    },
+    "interpretation": "The two known workspace-appearance failures passed when focused; the insertion file also passed completely. The 53-file aggregate is incomplete because the environment restarted, not a PASS and not an established test failure. No root cause is proven; retain current timeout limits and capture complete output/exit on the next full run.",
+    "source_changes": "No source or test code changes in this follow-up; only evidence and canonical plan status were updated.",
+    "github": {
+      "branch": "v2/foundation",
+      "local_head": "8ff698d1642a0a25a4d8aaefa4ba651b906a0721",
+      "remote_head_before_followup": "8ff698d1642a0a25a4d8aaefa4ba651b906a0721"
+    },
+    "production_read_only_check": {
+      "deployment_id": "3f9ed703-8620-4ffb-9141-8cb8a0980ee6",
+      "worker_version": "d6d48b86-2e9b-4ce2-821d-aca2ee30b367",
+      "traffic_percent": 100,
+      "direct_health_get": "BLOCKED: direct port 443 connection failed; no HTTP status/body received",
+      "runtime_changed": false
+    },
+    "actions": {
+      "dispatch_or_rerun": false,
+      "spend_huf": 0,
+      "billing_quota": "UNVERIFIED"
+    },
+    "production_mutations": {
+      "d1_write_or_migration": false,
+      "r2_operation": false,
+      "deploy": false
+    },
+    "worktree_preexisting_untracked_preserved": [
+      "node_modules/",
+      "scripts/__pycache__/"
+    ]
   }
 }
