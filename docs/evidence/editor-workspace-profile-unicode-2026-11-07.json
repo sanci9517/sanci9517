@@ -1,0 +1,144 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-11-07T20:25:18Z",
+  "plan_point": "77.44.6.1.C",
+  "status": "RUNTIME_BUILD_SUCCESS_100_PERCENT_TRAFFIC_PUBLIC_SMOKE_BLOCKED_HOSTED_EDITOR_CI_IN_PROGRESS",
+  "scope": "Preserve valid Unicode workspace-profile names at the 32 UTF-16-code-unit limit, including imported legacy profiles containing a truncated unpaired surrogate.",
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "test_only_commit": "46765038e90e01a2576abb320ee0c540948500e5",
+    "test_only_message": "[skip ci] test(editor): cover unicode workspace profile names",
+    "runtime_commit": "d6751f1040562cb61e625bca61bfe70c7d8ca43e",
+    "runtime_message": "fix(editor): preserve Unicode workspace profile names",
+    "runtime_parent": "46765038e90e01a2576abb320ee0c540948500e5",
+    "remote_branch_sha": "d6751f1040562cb61e625bca61bfe70c7d8ca43e",
+    "remote_verification": "GitHub refs API confirmed refs/heads/v2/foundation at the runtime SHA. Direct git ls-remote was blocked in this session because the outbound proxy could not connect to port 8080; no claim is made that ls-remote passed in this session.",
+    "runtime_push": "Previously completed as a normal fast-forward push; current GitHub branch API still matches the exact runtime commit.",
+    "docs_commit": null,
+    "aggregate_ci_pass": false
+  },
+  "implementation": {
+    "files": [
+      "public/editor-v2/ui/workspace-appearance.js",
+      "tests/browser/editor-workspace-appearance.test.js"
+    ],
+    "root_cause": "Profile names were truncated with String.slice(0, 32), which counts UTF-16 code units and could split a supplementary Unicode character at the boundary. Profiles imported by an older build could also contain the lone high surrogate left by that split.",
+    "fix": "A shared code-point-aware truncation helper trims profile names, drops malformed lone surrogates from legacy values, and stops before exceeding the existing 32 UTF-16-code-unit limit. Import normalization, profile creation and rename use the same helper.",
+    "regression_cases": [
+      "31 ASCII characters followed by a supplementary emoji truncates before the emoji rather than persisting half of its surrogate pair.",
+      "31 ASCII characters followed by a legacy lone high surrogate normalize to the valid 31-character name.",
+      "The profile-name input displays the normalized imported name.",
+      "The profile flow produces zero Page Model, Save or Publish writes."
+    ],
+    "page_model_or_publish_contract_changed": false,
+    "runtime_dependencies_added": false,
+    "paid_services_added": false,
+    "local_source_sha256": {
+      "public/editor-v2/ui/workspace-appearance.js": "b92508c23ea9d77051e302ae3440155745ebc79c1a8432f5965a35c1ce4745b3"
+    }
+  },
+  "validation": {
+    "browser_regression": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-workspace-appearance.test.js",
+      "result": "PASS",
+      "tests": "67/67",
+      "failures": 0,
+      "cancellations": 0,
+      "skipped": 0,
+      "details": "Final complete workspace-appearance Chromium file run after the malformed-surrogate repair; the new Unicode import regression is included."
+    },
+    "editor_node_suite": "npm run test:editor — PASS; 14/14 Editor Node test files",
+    "linux_subreaper_contract": "3/3 PASS",
+    "typecheck": "npm run typecheck — PASS",
+    "web013_migration_safety": "npm run test:web013:migration-gate — PASS; no production migration applied",
+    "canonical_plan": "python3 scripts/check-canonical-plan.py — PASS",
+    "plan_contract": "python3 tests/plan-contract.test.py — PASS; 13/13",
+    "active_plan_point": "python3 scripts/audit-active-plan-point.py — PASS; 77.44.6.1.C OPEN / NOT_CERTIFIED",
+    "traceability": "python3 scripts/build-feature-traceability.py --check — PASS; 396/396; generated source hash reflects the runtime file SHA-256 above",
+    "wrangler_dry_run": {
+      "result": "PASS",
+      "version": "4.130.0",
+      "assets": 168,
+      "upload_size": "335.81 KiB / 87.60 KiB gzip",
+      "production_write": false
+    },
+    "syntax_and_whitespace": "JavaScript syntax checks and git diff --check — PASS"
+  },
+  "production": {
+    "worker": "sanci9517-streamer-brand",
+    "automatic_build": {
+      "build_uuid": "123d249a-ba5f-412e-999b-7b08b5f70aca",
+      "build_outcome": "success",
+      "commit_hash": "d6751f1040562cb61e625bca61bfe70c7d8ca43e",
+      "trigger": "push_event",
+      "branch": "v2/foundation",
+      "build_command": "npm run typecheck",
+      "deploy_command": "npm run deploy:safe",
+      "configured_path_exclusions": ["docs/**", "tests/**", "AGENTS.md"]
+    },
+    "deployment_id": "c79afb7d-7892-4e0e-b9a6-1848bdecad48",
+    "worker_version_id": "4f034a23-d090-4c8a-95c4-7cadbe3d2636",
+    "worker_version_number": 3841,
+    "traffic_percent": 100,
+    "release_method": "Cloudflare automatic build/deploy after runtime push; no duplicate deploy:safe was run.",
+    "production_d1_preflight": {
+      "query": "SELECT name FROM d1_migrations ORDER BY name;",
+      "rows_read": 34,
+      "latest_migration": "0028_media_archive.sql",
+      "rows_written": 0,
+      "changed_db": false,
+      "timing": "Read-only preflight before the runtime push. No migration or data write was run."
+    },
+    "health": {
+      "status": "UNVERIFIED_BLOCKED_BY_OUTBOUND_PROXY",
+      "attempt": "GET https://sanci9517.com/api/health",
+      "observed": "The environment proxy returned HTTP 403 (Envoy CONNECT tunnel failure) before the health endpoint response could be read. A stale body file from an earlier attempt was not treated as a response from this request."
+    },
+    "changed_public_asset_hash": {
+      "path": "/editor-v2/ui/workspace-appearance.js",
+      "local_sha256": "b92508c23ea9d77051e302ae3440155745ebc79c1a8432f5965a35c1ce4745b3",
+      "live_sha256": "UNVERIFIED_BLOCKED_BY_OUTBOUND_PROXY"
+    }
+  },
+  "hosted_github_actions": {
+    "runtime_sha_editor_core": {
+      "run_id": 42410359864,
+      "url": "https://github.com/sanci9517/sanci9517/actions/runs/42410359864",
+      "status": "in_progress",
+      "conclusion": null,
+      "last_observed_job_step": "Run Editor browser layout regression — in_progress",
+      "completed_steps": {
+        "typecheck": "success",
+        "editor_core_tests": "success",
+        "offline_d1_ledger": "success",
+        "private_r2_media_api": "success",
+        "chromium_install": "success",
+        "isolated_worker_media_upload": "success"
+      },
+      "manual_dispatch_or_rerun": false
+    },
+    "runtime_sha_f0_baseline": {
+      "run_id": 42410359862,
+      "status": "completed",
+      "conclusion": "success"
+    },
+    "runtime_sha_twitch_integration": {
+      "run_id": 42410360047,
+      "status": "completed",
+      "conclusion": "success"
+    },
+    "docs_commit_workflows": "No workflow was dispatched for the planned [skip ci] documentation/evidence commit; confirm the exact SHA run list after push.",
+    "artifact_retention": "The runtime Editor Core run is active; its screenshot artifact upload step is pending. No artifact was deleted or manually created in this session."
+  },
+  "cost_and_safety": {
+    "cost_huf": 0,
+    "new_dependencies": 0,
+    "paid_actions_or_services": false,
+    "reported_actions_storage": "User-reported 0.45 GB of a 0.5 GB storage cap; current account billing/quota readback is unavailable and remains UNVERIFIED.",
+    "production_d1_writes_or_migrations": false,
+    "r2_deletion": false,
+    "manual_visual_editor_acceptance": "DEFERRED until the entire planned Visual Editor scope reaches its acceptance gate",
+    "plan_status": "77.44.6.1.C OPEN / NOT CERTIFIED; this Unicode profile defect fix is one verified slice, not completion of C."
+  }
+}
