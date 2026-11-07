@@ -1,0 +1,141 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-11-07T18:36:03Z",
+  "plan_point": "77.44.6.1.C",
+  "status": "RUNTIME_RELEASE_VERIFIED_LOCAL_AND_HOSTED_CI_IN_PROGRESS_FULL_C_OPEN",
+  "scope": "Keep the dynamic dock-zone drag preview and committed drop action consistent at the inclusive 35% and 65% group thresholds despite fractional DOMRect geometry and integer CSS-pixel MouseEvent.clientX coordinates.",
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "parent_commit": "8948bc98c70578fc49e38a0359e4bde9b6055d44",
+    "runtime_commit": "178e351a3cc68821855c75b94b0da395541609b6",
+    "runtime_message": "fix(editor): stabilize inclusive dock grouping zones",
+    "push": "Normal fast-forward push; the read-only GitHub branch API confirmed v2/foundation exact HEAD 178e351a3cc68821855c75b94b0da395541609b6. A direct git ls-remote check was blocked in this environment because the HTTPS proxy at port 8080 was unreachable; the authenticated/read-only GitHub API was used as the remote-ref verification.",
+    "hosted_workflow": {
+      "name": "Editor Core Test",
+      "run_id": 42401734086,
+      "run_number": 3078,
+      "event": "push",
+      "head_sha": "178e351a3cc68821855c75b94b0da395541609b6",
+      "status_at_recording": "in_progress",
+      "conclusion_at_recording": null,
+      "job": "editor-core",
+      "completed_steps": {
+        "typecheck": "success",
+        "editor_core_tests": "success",
+        "offline_d1_ledger_tests": "success",
+        "private_r2_media_api_tests": "success",
+        "chromium_install": "success",
+        "isolated_worker_media_upload_test": "success"
+      },
+      "current_step": "Run Editor browser layout regression",
+      "later_steps_pending_at_recording": [
+        "Run WEB-013 Admin mobile browser regression",
+        "Upload Editor layout screenshots",
+        "Run canonical schedule tests",
+        "Run domain contract tests",
+        "Run Brand Kit storage and access regression",
+        "Run Admin home contract tests"
+      ],
+      "aggregate_ci_pass": false,
+      "manual_dispatch_or_rerun": false
+    },
+    "other_automatic_workflows": {
+      "twitch_integration_run": 42401734079,
+      "twitch_integration_conclusion": "success",
+      "f0_baseline_run": 42401734054,
+      "f0_baseline_conclusion": "success"
+    }
+  },
+  "implementation": {
+    "root_cause": "The 35%/65% group-zone classifier compared raw clientX against fractional DOMRect boundaries. MouseEvent.clientX is quantized to an integer CSS-pixel boundary: a pointer intended for the 35% boundary was read at ratio 0.3494318181818182 and incorrectly classified as before rather than the contractually inclusive group zone. Preview and drop must use one classifier to avoid visual/action disagreement.",
+    "fix": "The existing shared isDockGroupZone helper now applies a 0.5 CSS-pixel measurement tolerance at the inclusive group boundaries. Both dragover preview and drop commit use that same helper; the canvas and invalid-width exclusions remain unchanged.",
+    "coverage": {
+      "ratios": [
+        0.34,
+        0.35,
+        0.5,
+        0.65,
+        0.66
+      ],
+      "asserts_preview_and_aria_live_region": true,
+      "asserts_committed_zone_and_order": true,
+      "asserts_minimum_unobscured_canvas_css_px": 400,
+      "asserts_no_page_model_save_or_publish_mutations": true,
+      "asserts_stale_preview_and_drag_cleanup": true,
+      "pre_fix_observed_ratio_for_requested_035": 0.3494318181818182
+    },
+    "page_model_mutations": 0,
+    "save_publish_mutations": 0,
+    "runtime_dependencies_added": false,
+    "paid_services_added": false,
+    "reuse_and_license": "Extended the existing first-party dock-zone classifier and Chromium regression fixture. No third-party code or runtime dependency was added."
+  },
+  "validation": {
+    "targeted_browser": "python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-name-pattern='live dock-zone previews match applied actions outside' tests/browser/editor-workspace-appearance.test.js — PASS, 1/1.",
+    "complete_workspace_browser": "python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-isolation=none --test-concurrency=1 tests/browser/editor-workspace-appearance.test.js — PASS, 66/66.",
+    "editor_unit": "npm run test:editor — PASS; 14/14 Node test files and 3/3 Linux subreaper contract tests.",
+    "typecheck": "npm run typecheck — PASS.",
+    "migration_guard": "npm run test:web013:migration-gate — PASS; no migration applied.",
+    "canonical_plan": "python3 scripts/check-canonical-plan.py — PASS.",
+    "plan_contract": "python3 tests/plan-contract.test.py — PASS, 13/13.",
+    "active_point": "python3 scripts/audit-active-plan-point.py — PASS; active cursor 77.44.6.1, next 77.44.6.1.C; functional acceptance remains NOT_CERTIFIED.",
+    "traceability": "python3 scripts/build-feature-traceability.py --check — PASS, 396/396 mappings after regenerating the traceability artifact for the source fingerprint change.",
+    "syntax_and_diff": "node --check public/editor-v2/ui/shell.js; node --check tests/browser/editor-workspace-appearance.test.js; git diff --check — PASS.",
+    "wrangler_dry_run": "npx wrangler deploy --dry-run — PASS; Wrangler 4.130.0, 168 assets, 335.81 KiB / 87.60 KiB gzip. Dry-run only.",
+    "full_visual_editor_acceptance": "DEFERRED until the complete Visual Editor acceptance gate."
+  },
+  "release_preflight": {
+    "production_d1_query": "SELECT name FROM d1_migrations ORDER BY name;",
+    "query_mode": "Read-only SELECT through the authenticated Cloudflare D1 Query API before runtime release.",
+    "ledger_row_count": 34,
+    "latest_ledger_row": "0028_media_archive.sql",
+    "rows_written": 0,
+    "changes": 0,
+    "changed_db": false,
+    "migration_applied": false,
+    "r2_mutation_or_deletion": false
+  },
+  "production": {
+    "worker": "sanci9517-streamer-brand",
+    "deployment_id": "9ef6ed97-ef3e-49cc-9955-f96b3a0f6401",
+    "traffic_version": "ef2612d2-d166-4a06-a6ec-0d5b07f89242",
+    "traffic_percentage": 100,
+    "deployment_observed_at": "2026-11-07T18:32:07.483646Z",
+    "deployment_source": "wrangler",
+    "control_plane_verified": true,
+    "public_http_smoke": {
+      "status": "PASS",
+      "health": {
+        "path": "/api/health",
+        "http_status": 200,
+        "body": {
+          "ok": true,
+          "service": "sanci9517-streamer-brand",
+          "version": "2.0.0",
+          "server": "cloudflare-worker"
+        }
+      },
+      "assets": {
+        "/editor-v2/ui/shell.js?codex_check=178e351a": {
+          "http_status": 200,
+          "local_sha256": "7c5cf3c5ef407d295576ba046fa5c2874cf604e08178b5a96c20df607d5f61af",
+          "live_sha256": "7c5cf3c5ef407d295576ba046fa5c2874cf604e08178b5a96c20df607d5f61af"
+        }
+      },
+      "public_asset_hashes_match": true
+    },
+    "deployment_path": "The successful configured Cloudflare Worker build/rollout completed after the normal GitHub runtime push; no redundant deploy:safe invocation was made.",
+    "wrangler_deploy_safe": "Not run separately because the automatic production build/deployment succeeded and reached 100% traffic."
+  },
+  "cost_and_storage": {
+    "additional_cost_huf": 0,
+    "paid_services_or_dependencies_added": false,
+    "github_actions": "Only the required push-triggered workflow ran; no manual workflow dispatch or rerun. Screenshot artifact upload is governed by the repository workflow retention policy; account storage meter and billing quota remain UNVERIFIED.",
+    "user_reported_actions_storage_at_start": "0.45 GB of 0.5 GB; this repo-level action did not delete or otherwise alter existing artifacts."
+  },
+  "acceptance": {
+    "77_44_6_1_C": "OPEN / NOT CERTIFIED; other dynamic dock-zone behavior and complete workspace lifecycle acceptance remain open.",
+    "full_visual_editor_manual_and_physical_acceptance": "DEFERRED until the complete Visual Editor acceptance gate."
+  }
+}
