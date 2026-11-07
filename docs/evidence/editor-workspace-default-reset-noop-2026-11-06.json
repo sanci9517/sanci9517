@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "recorded_at_utc": "2026-11-07T12:07:40Z",
+  "recorded_at_utc": "2026-11-07T13:36:37Z",
   "plan_point": "77.44.6.1.C",
   "status": "RUNTIME_RELEASED_EDITOR_CORE_CI_FAILED_LOCAL_REPRO_NOT_REPRODUCED",
   "scope": "Reset an already-default editor workspace without writing unchanged preferences, creating undo history, or invoking layout and dock reset callbacks.",
@@ -1814,11 +1814,30 @@
         "docs/evidence/editor-workspace-default-reset-noop-2026-11-06.json"
       ],
       "commit_type": "test/docs/evidence only; [skip ci] required to minimize Actions use and artifact storage.",
-      "new_workflow_runs": 0
+      "new_workflow_runs": 0,
+      "test_commit": "2454846208c5aa236074f009fbfbbef6bcb744bc",
+      "remote_branch_sha_after_push": "2454846208c5aa236074f009fbfbbef6bcb744bc",
+      "push": "Normal fast-forward; verified by git ls-remote.",
+      "workflow_runs_for_test_commit": 0
     },
     "production": {
       "runtime_source_changed": false,
+      "latest_deployment_id": "ee926b5a-81c9-4a85-9b69-a2da549c086e",
+      "worker_version_id": "9abd82eb-468d-4b87-add2-e184e4ee6546",
+      "traffic_percent": 100,
       "worker_deploy": false,
+      "health_url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+      "health_http_status": 200,
+      "health_body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      },
+      "live_asset": "public/editor-v2/ui/shell.js",
+      "local_asset_sha256": "e6809d4c4307c44a5519d34d53d2a5595190cb4ea269bc631562e08704152c1f",
+      "live_asset_sha256": "e6809d4c4307c44a5519d34d53d2a5595190cb4ea269bc631562e08704152c1f",
+      "asset_bytes_match": true,
       "production_d1_migration": false,
       "production_d1_data_write": false,
       "r2_delete": false,
@@ -1828,6 +1847,7 @@
     "acceptance": {
       "workspace_plan_point": "OPEN / NOT CERTIFIED",
       "full_visual_editor_manual_and_physical": "DEFERRED"
-    }
+    },
+    "verified_at_utc": "2026-11-07T13:36:37Z"
   }
 }
