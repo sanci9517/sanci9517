@@ -3767,6 +3767,50 @@ test('floating dock pointer cancellation restores its last saved position withou
   assert.deepEqual(errors,[]);
 });
 
+test('another Editor tab cancels an in-progress floating dock drag before applying the shared workspace mode',async t=>{
+  const {page,context,writes,errors}=await openEditor(t,{width:1280,height:900});
+  await openPreferences(page);
+  await page.locator('#workspaceLayout').selectOption('balanced');
+  await page.locator('#workspacePanelMode').selectOption('floating');
+  await page.locator('#workspacePanelSide').selectOption('left');
+  await page.locator('#closeWorkspaceAppearance').click();
+  await page.locator('#workspacePanelTabLeft').click();
+
+  const peer=await context.newPage();peer.setDefaultTimeout(8000);peer.setDefaultNavigationTimeout(20_000);
+  const peerErrors=[];peer.on('pageerror',error=>peerErrors.push(error.message));
+  await peer.goto(page.url(),{waitUntil:'load'});
+  await peer.waitForFunction(()=>document.documentElement.dataset.editorBoot==='ready');
+
+  const handle=page.locator('#leftDock [data-floating-handle]');
+  const bounds=await handle.boundingBox();assert.ok(bounds);
+  await page.mouse.move(bounds.x+bounds.width/2,bounds.y+bounds.height/2);
+  await page.mouse.down();
+  await page.mouse.move(bounds.x+bounds.width/2+48,bounds.y+bounds.height/2+32,{steps:4});
+  const during=await page.evaluate(()=>({
+    moving:document.body.classList.contains('moving-floating-dock'),
+    saved:JSON.parse(localStorage.getItem('sanci-editor-workspace-preferences-v2'))?.floatingPosition?.left,
+    liveX:getComputedStyle(document.querySelector('.workspace')).getPropertyValue('--floating-left-x'),
+  }));
+  assert.equal(during.moving,true,'a real pointer gesture has entered the transient floating-window state');
+  assert.deepEqual(during.saved,{x:0,y:0},'the pointer has not committed its transient position yet');
+  assert.ok(parseFloat(during.liveX)>0,'the uncommitted floating panel follows the pointer');
+
+  await openPreferences(peer);
+  await peer.locator('#workspacePanelMode').selectOption('tabbed');
+  await page.waitForFunction(()=>!document.body.classList.contains('moving-floating-dock'));
+  await page.mouse.up();
+  const received=await page.evaluate(()=>({
+    mode:document.querySelector('.workspace')?.dataset.workspacePanelMode,
+    moving:document.body.classList.contains('moving-floating-dock'),
+    position:JSON.parse(localStorage.getItem('sanci-editor-workspace-preferences-v2'))?.floatingPosition?.left,
+    undoDisabled:document.querySelector('#undoWorkspaceLayout')?.disabled,
+  }));
+  assert.deepEqual(received,{mode:'tabbed',moving:false,position:{x:0,y:0},undoDisabled:true},'a stale pointerup cannot overwrite the other tab\'s workspace update or leave stale local Undo history');
+  assert.deepEqual(writes,[],'cross-tab workspace synchronization and pointer cancellation never invoke Page Model Save or Publish');
+  assert.deepEqual(errors,[]);
+  assert.deepEqual(peerErrors,[]);
+});
+
 test('floating windows clamp to their own lane at the 1025px boundary and both panel sides',async t=>{
   const {page,writes,errors}=await openEditor(t,{width:1280,height:900});
   for(const width of [1025,1280,1920]){

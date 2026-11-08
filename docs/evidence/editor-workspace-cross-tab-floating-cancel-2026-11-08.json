@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-11-08",
+  "plan": "77.44.6.1.C — cross-tab floating dock pointer lifecycle",
+  "status": "TEST_ONLY_PASS_RUNTIME_UNCHANGED",
+  "scope": "Verify a live floating-panel pointer gesture is cancelled when another same-origin Editor tab changes the shared workspace mode, and that a stale pointerup cannot overwrite the received preference.",
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "local_head": "307862e672609c012a18159e0952103a91008c02",
+    "origin_tracking_head": "d75af5439c38e2a7e19f1aa6b8b5b0cc81d6ec09",
+    "local_commits_ahead_of_origin_tracking_ref": 30,
+    "github_branch_head": "UNVERIFIED; public API GET returned HTTP 403 through the environment proxy",
+    "github_actions_status": "UNVERIFIED; network request was blocked before reaching the API"
+  },
+  "test_change": {
+    "file": "tests/browser/editor-workspace-appearance.test.js",
+    "behavior": "Real Chromium pointer drag is active in one Editor page; a second page sharing the same browser context changes panelMode from floating to tabbed; the first page cancels the gesture, applies shared mode, rejects a later stale pointerup and clears stale local Undo history.",
+    "page_model_mutations": 0,
+    "save_publish_mutations": 0,
+    "runtime_files_changed": false,
+    "runtime_dependencies_added": []
+  },
+  "validation": {
+    "targeted_browser": "python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-name-pattern='another Editor tab cancels' tests/browser/editor-workspace-appearance.test.js — PASS, 1/1; real Chromium; orphan descendants reaped.",
+    "full_workspace_browser": "python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-workspace-appearance.test.js — PASS, 81/81; 0 failures, skips or cancellations; 4 orphan descendants reaped.",
+    "editor_unit": "npm run test:editor — PASS, 14/14 Node test files and 3/3 Linux subreaper runner tests.",
+    "typecheck": "npm run typecheck — PASS.",
+    "migration_guard": "npm run test:web013:migration-gate — PASS; no production migration or write performed.",
+    "canonical_plan": "python3 scripts/check-canonical-plan.py — PASS; one complete 13-file master.",
+    "plan_contract": "python3 scripts/plan_contract.py — PASS; functional acceptance remains NOT_CERTIFIED.",
+    "active_point": "python3 scripts/audit-active-plan-point.py — PASS; 77.44.6.1.C remains next and OPEN.",
+    "traceability": "python3 scripts/build-feature-traceability.py --check — PASS, 396 mappings.",
+    "syntax_diff": "node --check tests/browser/editor-workspace-appearance.test.js and git diff --check — PASS.",
+    "full_browser_file": "Full real-Chromium workspace suite rerun after adding the cross-tab floating-dock case — PASS, 81/81."
+  },
+  "production": {
+    "worker_health": "UNVERIFIED; direct GET returned HTTP 403 through the environment proxy.",
+    "deployment_api": "Not queried; remote access blocked.",
+    "runtime_change_or_deploy": false,
+    "D1_or_R2_write": false
+  },
+  "cost": {
+    "additional_cost_huf": 0,
+    "paid_services_or_dependencies_added": false,
+    "github_actions_run_triggered": false
+  },
+  "acceptance": {
+    "77_44_6_1_C": "OPEN / NOT CERTIFIED; recursive dock-group tree, full workspace lifecycle acceptance, and other canonical C criteria remain outstanding.",
+    "full_visual_editor_manual_and_physical_acceptance": "DEFERRED until 77.44.7.F/77.44.8."
+  }
+}
