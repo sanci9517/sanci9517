@@ -279,7 +279,7 @@
     "runtime_build_or_deployment": false
   },
   "mobile_tabbed_panel_timeout_diagnostic": {
-    "recorded_at": "2026-11-08T00:59:06Z",
+    "recorded_at": "2026-11-08T01:03:27Z",
     "plan_point": "77.44.6.1.C",
     "scope": "Capture actionable browser state only if the previously flaky mobile appearance selectOption operation times out.",
     "test_source": "tests/browser/editor-workspace-appearance.test.js",
@@ -308,7 +308,7 @@
     "traceability": "python3 scripts/build-feature-traceability.py --check — PASS 396/396.",
     "syntax_and_diff": "node --check tests/browser/editor-workspace-appearance.test.js; git diff --check — PASS.",
     "environment_note": "A prior process snapshot showed 5,590 zombie processes; this is an environmental load signal, not a proven cause of the browser timeout.",
-    "hosted_ci": "No workflow dispatch/rerun. Test/docs-only follow-up uses [skip ci].",
+    "hosted_ci": "No workflow dispatch/rerun; gh run list for exact test commit returned [] (0 runs). The repository [skip ci] convention was used.",
     "production": {
       "source_commit": "dc4c5b174e83c4d8430227d54f911706beb4ede4",
       "deployment_id": "6aea7ce1-830a-451a-a00d-c88284b08ef9",
@@ -321,6 +321,13 @@
     "r2_mutation_or_deletion": false,
     "actions_artifact_added_or_deleted": false,
     "additional_cost_huf": 0,
-    "acceptance": "77.44.6.1.C remains OPEN / NOT CERTIFIED; complete Visual Editor manual/physical acceptance DEFERRED."
+    "acceptance": "77.44.6.1.C remains OPEN / NOT CERTIFIED; complete Visual Editor manual/physical acceptance DEFERRED.",
+    "source_control": {
+      "repository": "sanci9517/sanci9517",
+      "branch": "v2/foundation",
+      "test_commit": "46d9d99b5fa49acaf2e9c2947ac170a3afa43d71",
+      "test_commit_message": "[skip ci] test(editor): diagnose mobile panel timeout",
+      "push": "Normal fast-forward push succeeded; git ls-remote verified exact v2/foundation HEAD 46d9d99b5fa49acaf2e9c2947ac170a3afa43d71 before this documentation/evidence follow-up."
+    }
   }
 }
