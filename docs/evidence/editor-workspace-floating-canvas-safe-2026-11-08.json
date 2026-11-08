@@ -127,5 +127,65 @@
     "production_health": "UNVERIFIED: direct public GET failed before HTTP at outbound Envoy proxy (CONNECT tunnel 403); no health response claimed.",
     "worker_live_before_and_after": "Read-only Cloudflare API state stayed deployment 6aea7ce1-830a-451a-a00d-c88284b08ef9, Worker traffic version 425cfad2-3744-49e1-afde-289216ad8c2b at 100%; no deployment performed.",
     "manual_visual_editor_acceptance": "DEFERRED until the entire planned Editor acceptance scope is complete"
+  },
+  "grouped_mode_edge_undo_2026_11_08": {
+    "recorded_at": "2026-11-08T13:14Z",
+    "scope": "Test-only expansion of the existing canvas-edge ungrouping path across both grouped dock modes.",
+    "test": "ungrouping either grouped dock mode follows both canvas edges for all saved dock orders and group sides",
+    "matrix": {
+      "panel_modes": [
+        "tabbed",
+        "floating"
+      ],
+      "dock_orders": 6,
+      "group_sides": [
+        "left",
+        "right"
+      ],
+      "active_panels": [
+        "left",
+        "right"
+      ],
+      "canvas_edges": [
+        "before",
+        "after"
+      ],
+      "drag_undo_restore_paths": 96
+    },
+    "first_target_attempt": "FAILED in test setup: the initial workspace preferences dialog remained open, so the next openPreferences click was intercepted. The test setup now closes that dialog before entering the matrix; no product defect was inferred.",
+    "targeted_browser_regression": "PASS 1/1, 0 fail/cancel/skip; browser assertions cover all 96 drag/Undo/restore paths.",
+    "editor_unit": "PASS npm run test:editor; 14/14 Node test files; Linux subreaper contract 3/3.",
+    "typecheck": "PASS npm run typecheck.",
+    "migration_safety": "PASS npm run test:web013:migration-gate; safety gate only, no production query or migration.",
+    "canonical_plan": "PASS scripts/check-canonical-plan.py; all 13 master files.",
+    "plan_contract": "PASS tests/plan-contract.test.py; 13/13.",
+    "active_plan_cursor": "PASS scripts/audit-active-plan-point.py; main 77.44.6.1, next 77.44.6.1.C, acceptance NOT_CERTIFIED.",
+    "source_traceability": "PASS scripts/build-feature-traceability.py --check; 396/396.",
+    "syntax_and_diff": "PASS node --check tests/browser/editor-workspace-appearance.test.js and git diff --check.",
+    "full_browser_suite": "PASS 74/74 tests, 0 fail/cancel/skip, 382016 ms; repository Linux subreaper reaped 4 orphaned test descendants.",
+    "runtime_changed": false,
+    "wrangler_dry_run": "NOT RUN because runtime sources did not change.",
+    "production_d1_write_or_migration": false,
+    "r2_operation": false,
+    "artifact_operation": false,
+    "actions_run_started": false,
+    "actions_storage": "Owner-reported 0.45/0.50 GB; current account quota remains UNVERIFIED.",
+    "cost_huf": 0,
+    "github_remote_head": "d75af5439c38e2a7e19f1aa6b8b5b0cc81d6ec09",
+    "local_commits_ahead": 19,
+    "github_push": "NOT PUSHED: a normal push would also publish the 19 retained local commits, including runtime ancestors that have not passed release gates; no Actions workflow was started.",
+    "production_worker": {
+      "deployment_id": "6aea7ce1-830a-451a-a00d-c88284b08ef9",
+      "traffic_version_id": "425cfad2-3744-49e1-afde-289216ad8c2b",
+      "traffic_percentage": 100,
+      "health": "UNVERIFIED: GET /api/health on both public hosts failed before HTTP; curl exit 7 could not connect to the configured proxy port 8080.",
+      "runtime_asset_hash": "NOT APPLICABLE: no runtime asset changed."
+    },
+    "release": {
+      "status": "TEST_AND_DOCS_ONLY_NOT_PUSHED",
+      "deployment_performed": false,
+      "manual_visual_editor_acceptance": "DEFERRED until the entire planned Editor acceptance scope is complete",
+      "save_publish_contract_changed": false
+    }
   }
 }
