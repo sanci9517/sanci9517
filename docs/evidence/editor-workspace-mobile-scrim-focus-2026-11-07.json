@@ -314,7 +314,7 @@
       "deployment_id": "6aea7ce1-830a-451a-a00d-c88284b08ef9",
       "traffic_version": "425cfad2-3744-49e1-afde-289216ad8c2b",
       "traffic_percentage": 100,
-      "health": "UNVERIFIED; direct GET /api/health (2026-11-08) failed before HTTP with curl exit 56, proxy CONNECT tunnel response 403.",
+      "health": "UNVERIFIED; direct GET /api/health on 2026-11-08 failed with curl exit 56 before HTTP because outbound proxy CONNECT returned 403.",
       "asset_hash": "NOT APPLICABLE; runtime assets unchanged"
     },
     "production_d1_mutation": false,
@@ -338,14 +338,23 @@
       "timeout_cause": "The earlier isolated 67/68 timeout did not recur; its precise original cause remains unproven."
     },
     "post_full_file_local_validation": {
-      "recorded_at": "2026-11-08T02:09:21Z",
-      "editor_unit": "npm run test:editor — PASS: 187/187 tests across 14 files; subreaper runner contract 3/3 PASS.",
+      "recorded_at": "2026-11-08T03:00:36Z",
+      "editor_unit": "npm run test:editor — PASS: 187/187 node tests across 14 files; Linux subreaper runner contract 3/3 PASS.",
       "typecheck": "npm run typecheck — PASS.",
       "canonical_plan": "python3 scripts/check-canonical-plan.py — PASS, 13 files.",
       "plan_contract": "python3 tests/plan-contract.test.py — PASS 13/13.",
       "active_point": "python3 scripts/audit-active-plan-point.py — PASS; 77.44.6.1.C OPEN / NOT CERTIFIED.",
       "traceability": "python3 scripts/build-feature-traceability.py --check — PASS 396/396.",
       "json_syntax_and_diff": "python3 -m json.tool evidence; node --check test; git diff --check — PASS."
+    },
+    "repeat_full_file_confirmation": {
+      "recorded_at": "2026-11-08T03:00:36Z",
+      "command": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-workspace-appearance.test.js",
+      "result": "PASS 68/68, fail=0, cancelled=0, skipped=0; the formerly timed-out scenario passed again in the full serial file.",
+      "subreaper": "reaped 4 orphaned test descendants.",
+      "loopback_permission": "Local fixture server ran with authorized loopback networking after the restricted sandbox attempt was blocked by listen EPERM.",
+      "source_changes_in_this_rerun": false,
+      "prior_timeout_root_cause": "Not established; the earlier timeout has not reproduced in two complete serial reruns."
     }
   }
 }
