@@ -2362,6 +2362,63 @@ test('workspace profile export/import uses bounded allowlisted JSON, supports un
   assert.deepEqual(errors,[]);
 });
 
+test('workspace profile crosses isolated browser sessions only through explicit export and import',async t=>{
+  const source=await openEditor(t,{width:1366,height:900});
+  await openPreferences(source.page);
+  await source.page.locator('#workspaceLayout').selectOption('balanced');
+  await source.page.locator('#workspaceTheme').selectOption('aurora');
+  await source.page.locator('#workspaceDensity').selectOption('compact');
+  await source.page.locator('#workspaceAccent').evaluate(element=>{element.value='#00a7c8';element.dispatchEvent(new Event('input',{bubbles:true}))});
+  await source.page.locator('#workspaceDockOrder').selectOption('right-canvas-left');
+  await source.page.locator('#workspacePanelMode').selectOption('tabbed');
+  await source.page.locator('#workspacePanelSide').selectOption('left');
+  await source.page.locator('#workspaceProfileName').fill('Utazó munkaterület');
+  await source.page.locator('#saveWorkspaceProfile').click();
+  const sourceId=await source.page.locator('#workspaceProfile').inputValue();
+  assert.ok(sourceId,'source session saves its local profile');
+  const downloadPromise=source.page.waitForEvent('download');
+  await source.page.locator('#exportWorkspaceProfile').click();
+  const download=await downloadPromise;
+  const file=await download.path();
+  assert.ok(file,'profile export produces a browser download');
+  const bytes=await readFile(file);
+  await source.page.locator('#closeWorkspaceAppearance').click();
+
+  const target=await openEditor(t,{width:1280,height:900});
+  assert.equal(await target.page.locator('.editor-app').getAttribute('data-workspace-theme'),'graphite','a separate browser context starts from its own default appearance');
+  assert.equal(await target.page.locator('.editor-app').getAttribute('data-workspace-panel-mode'),'separate','the source session did not leak its dock grouping into target localStorage');
+  await openPreferences(target.page);
+  assert.equal(await target.page.locator('#workspaceProfile option').count(),1,'the target has no source-session profiles before file import');
+  await target.page.locator('#workspaceProfileFile').setInputFiles({name:download.suggestedFilename(),mimeType:'application/json',buffer:bytes});
+  await target.page.waitForFunction(()=>document.querySelector('#workspaceProfile')?.options.length===2);
+  const targetId=await target.page.locator('#workspaceProfile').inputValue();
+  assert.ok(targetId&&targetId!==sourceId,'the target session creates a fresh local profile ID');
+  assert.equal(await target.page.locator('#workspaceProfileName').inputValue(),'Utazó munkaterület');
+  assert.equal(await target.page.locator('.editor-app').getAttribute('data-workspace-theme'),'graphite','import stores the profile without applying it implicitly');
+  assert.equal(await target.page.locator('.editor-app').getAttribute('data-workspace-panel-mode'),'separate','import alone does not move the target session workspace');
+  await target.page.locator('#workspaceProfile').selectOption(targetId);
+  await target.page.locator('#loadWorkspaceProfile').click();
+  await target.page.waitForFunction(()=>document.querySelector('.editor-app')?.dataset.workspaceTheme==='aurora'&&document.querySelector('.editor-app')?.dataset.workspacePanelMode==='tabbed');
+  assert.equal(await target.page.locator('.editor-app').getAttribute('data-workspace-density'),'compact');
+  assert.equal(await target.page.locator('.editor-app').evaluate(element=>element.style.getPropertyValue('--accent')),'#00a7c8');
+  assert.equal(await target.page.locator('.editor-app').getAttribute('data-workspace-panel-side'),'left');
+  assert.equal(await target.page.locator('.workspace').getAttribute('data-workspace-dock-order'),'right-canvas-left');
+  await target.page.locator('#closeWorkspaceAppearance').click();
+  await target.page.reload({waitUntil:'load'});
+  await target.page.waitForFunction(()=>document.documentElement.dataset.editorBoot==='ready');
+  assert.equal(await target.page.locator('.editor-app').getAttribute('data-workspace-theme'),'aurora','the intentionally applied imported profile persists in its own session');
+  assert.equal(await target.page.locator('.editor-app').getAttribute('data-workspace-panel-mode'),'tabbed');
+  assert.equal(await target.page.locator('.editor-app').getAttribute('data-workspace-panel-side'),'left');
+  assert.equal(await target.page.locator('.workspace').getAttribute('data-workspace-dock-order'),'right-canvas-left');
+  await openPreferences(source.page);
+  assert.equal(await source.page.locator('#workspaceProfile option').count(),2,'export/import in the other session does not mutate the source session');
+  assert.equal(await source.page.locator('.editor-app').getAttribute('data-workspace-theme'),'aurora');
+  assert.deepEqual(source.writes,[],'source session profile export never invokes Page Model Save or Publish');
+  assert.deepEqual(target.writes,[],'target session profile import/application never invokes Page Model Save or Publish');
+  assert.deepEqual(source.errors,[]);
+  assert.deepEqual(target.errors,[]);
+});
+
 test('profile import, save and rename truncate at Unicode character boundaries',async t=>{
   const {page,writes,errors}=await openEditor(t);
   await openPreferences(page);

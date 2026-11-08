@@ -477,5 +477,115 @@
       "save_publish_contract_changed": false
     },
     "plan_status": "77.44.6.1.C OPEN / NOT CERTIFIED; this native grouping coverage does not certify nested groups or the full workspace lifecycle."
+  },
+  "cross_session_workspace_profile_2026_11_08": {
+    "scope": "Test-only browser regression for explicit named workspace-profile transfer between separate Editor sessions; production/runtime files unchanged.",
+    "test": "workspace profile crosses isolated browser sessions only through explicit export and import",
+    "contexts": "Two independent Playwright BrowserContexts created by separate openEditor calls; separate localStorage, fixture server and Editor page.",
+    "assertions": "Target begins with default graphite/separate docks and no source profile; exported real browser JSON download is explicitly imported; import creates a fresh local ID without auto-applying; only explicit Apply changes theme/density/accent/dock order/tabbed side; state survives reload; source profile/session remains unchanged; both fixture write logs contain zero Page Model, Save or Publish writes.",
+    "initial_targeted_attempt": "FAILED due to test fixture state only: source preferences dialog was still open before a second openPreferences call. The test now closes the source dialog after exporting before opening the second context. No runtime defect inferred.",
+    "targeted_regression": {
+      "command": "python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 --test-name-pattern='workspace profile crosses isolated browser sessions' tests/browser/editor-workspace-appearance.test.js",
+      "result": "PASS",
+      "tests": 1,
+      "failed": 0
+    },
+    "full_workspace_appearance_browser_file": {
+      "command": "python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-workspace-appearance.test.js",
+      "result": "PASS",
+      "tests": 77,
+      "passed": 77,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "duration_ms": 496079,
+      "orphaned_descendants_reaped": 4
+    },
+    "editor_unit": {
+      "command": "npm run test:editor",
+      "result": "PASS",
+      "node_test_files": 14,
+      "node_tests": 14,
+      "subreaper_contract_tests": 3
+    },
+    "typecheck": {
+      "command": "npm run typecheck",
+      "result": "PASS"
+    },
+    "migration_safety": {
+      "command": "npm run test:web013:migration-gate",
+      "result": "PASS",
+      "production_d1_queried": false,
+      "production_d1_written": false
+    },
+    "canonical_plan": {
+      "command": "python3 scripts/check-canonical-plan.py",
+      "result": "PASS",
+      "master_files": 13
+    },
+    "plan_contract": {
+      "command": "python3 tests/plan-contract.test.py",
+      "result": "PASS",
+      "tests": 13
+    },
+    "active_plan_cursor": {
+      "command": "python3 scripts/audit-active-plan-point.py",
+      "result": "PASS",
+      "main": "77.44.6.1",
+      "next": "77.44.6.1.C",
+      "acceptance": "NOT_CERTIFIED"
+    },
+    "source_traceability": {
+      "command": "python3 scripts/build-feature-traceability.py --check",
+      "result": "PASS",
+      "mappings": 396
+    },
+    "syntax_and_diff": {
+      "commands": [
+        "node --check tests/browser/editor-workspace-appearance.test.js",
+        "python3 -m json.tool docs/evidence/editor-workspace-floating-canvas-safe-2026-11-08.json",
+        "git diff --check"
+      ],
+      "result": "PASS"
+    },
+    "github": {
+      "branch": "v2/foundation",
+      "read_only_branch_head": "d75af5439c38e2a7e19f1aa6b8b5b0cc81d6ec09",
+      "local_head_before_follow_up": "c443a01192f88332f0c8d8624be452207dcbd90b",
+      "local_commits_ahead_before_follow_up": 25,
+      "push": "NOT PUSHED: local history includes unaudited runtime commits; a fast-forward would publish them too. Actions not started."
+    },
+    "actions_storage": {
+      "owner_reported": "0.45/0.50 GB",
+      "current_quota": "UNVERIFIED",
+      "approved_cost_huf": 0
+    },
+    "production_worker": {
+      "deployment_id": "6aea7ce1-830a-451a-a00d-c88284b08ef9",
+      "traffic_version_id": "425cfad2-3744-49e1-afde-289216ad8c2b",
+      "traffic_percentage": 100,
+      "health_this_follow_up": {
+        "checked_at_utc": "2026-11-08T17:13:39Z",
+        "result": "UNVERIFIED",
+        "attempt": "Direct public workers.dev health GET failed before HTTP: curl exit 7, could not connect to port 443; HTTP status 000."
+      },
+      "runtime_changed": false,
+      "asset_hash_comparison": "NOT APPLICABLE: no runtime or public asset changed.",
+      "deployment_performed": false
+    },
+    "release": {
+      "status": "TEST_AND_EVIDENCE_ONLY_NOT_PUSHED",
+      "deployment_performed": false,
+      "aggregate_ci": "NOT_RUN",
+      "manual_visual_editor_acceptance": "DEFERRED until the entire Visual Editor scope is complete",
+      "save_publish_contract_changed": false
+    },
+    "production_d1": "No SELECT, write or migration.",
+    "r2_operation": false,
+    "dependency_added": false,
+    "artifact_operation": false,
+    "actions_run_started": false,
+    "cost_huf": 0,
+    "plan_status": "77.44.6.1.C OPEN / NOT CERTIFIED; this cross-session profile transfer regression does not certify nested panel groups or the full workspace lifecycle."
   }
 }
