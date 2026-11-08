@@ -306,6 +306,56 @@ test('floating panel groups look detached but stay inside a reserved canvas-safe
   assert.deepEqual(errors,[]);
 });
 
+test('floating panel cards preserve their physical dock side across all six orders and desktop widths',async t=>{
+  const {page,writes,errors}=await openEditor(t,{width:1280,height:900});
+  await openPreferences(page);
+  await page.locator('#workspaceLayout').selectOption('balanced');
+  await page.locator('#workspacePanelMode').selectOption('floating');
+  await page.locator('#closeWorkspaceAppearance').click();
+  const orders=['left-canvas-right','canvas-left-right','left-right-canvas','right-left-canvas','right-canvas-left','canvas-right-left'];
+  const results=[];
+  for(const side of ['left','right']){
+    await openPreferences(page);
+    await page.locator('#workspacePanelSide').selectOption(side);
+    await page.locator('#closeWorkspaceAppearance').click();
+    for(const order of orders){
+      await openPreferences(page);
+      await page.locator('#workspaceDockOrder').selectOption(order);
+      await page.locator('#closeWorkspaceAppearance').click();
+      for(const width of [1025,1280,1920]){
+        await page.setViewportSize({width,height:900});
+        await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
+        for(const active of ['left','right']){
+          await page.locator(active==='left'?'#workspacePanelTabLeft':'#workspacePanelTabRight').click();
+          const geometry=await page.evaluate(()=>{
+            const canvas=document.querySelector('.canvas-area').getBoundingClientRect();
+            const workspace=document.querySelector('.workspace');
+            const active=workspace.dataset.workspaceActivePanel;
+            const panel=document.querySelector(active==='left'?'#leftDock':'#rightDock');
+            const rect=panel.getBoundingClientRect();
+            const style=getComputedStyle(panel);
+            return {order:workspace.dataset.workspaceDockOrder,side:workspace.dataset.workspacePanelSide,mode:workspace.dataset.workspacePanelMode,active,canvas:{left:canvas.left,right:canvas.right,width:canvas.width},panel:{left:rect.left,right:rect.right,top:rect.top,bottom:rect.bottom},shadow:style.boxShadow,radius:style.borderRadius,scrollWidth:document.documentElement.scrollWidth};
+          });
+          const key=`${side}/${order}/${width}/${active}`;
+          assert.equal(geometry.mode,'floating',`${key}: floating mode persists`);
+          assert.equal(geometry.side,side,`${key}: group side persists`);
+          assert.equal(geometry.order,order,`${key}: dock order persists`);
+          assert.ok(geometry.canvas.width>=400,`${key}: canvas minimum survives: ${JSON.stringify(geometry)}`);
+          assert.ok(side==='left'?geometry.panel.right<=geometry.canvas.left:geometry.panel.left>=geometry.canvas.right,`${key}: raised card remains in its own physical track: ${JSON.stringify(geometry)}`);
+          assert.ok(geometry.panel.top>72&&geometry.panel.bottom<900,`${key}: card remains visibly inset without covering the shell`);
+          assert.notEqual(geometry.shadow,'none',`${key}: floating surface remains visibly raised`);
+          assert.match(geometry.radius,/px/u,`${key}: card keeps rounded corners`);
+          assert.equal(geometry.scrollWidth,width,`${key}: no document overflow`);
+          results.push(key);
+        }
+      }
+    }
+  }
+  assert.equal(results.length,72,'every side/order/width/tab combination is checked');
+  assert.deepEqual(writes,[],'floating panel matrix never writes or publishes page content');
+  assert.deepEqual(errors,[]);
+});
+
 test('tabbing from the right dock tab enters its active panel before the canvas',async t=>{
   const {page,writes,errors}=await openEditor(t,{width:1280,height:900});
   await openPreferences(page);
