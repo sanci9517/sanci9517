@@ -2384,15 +2384,23 @@ test('workspace profile crosses isolated browser sessions only through explicit 
   const bytes=await readFile(file);
   await source.page.locator('#closeWorkspaceAppearance').click();
 
+  const targetLocalProfile={id:sourceId,name:'Célgép helyi nézete',createdAt:1,
+    appearance:{layout:'canvas',theme:'graphite',density:'comfortable',accent:'#5b8cff',dockOrder:'left-canvas-right',panelMode:'separate',panelSide:'right'},
+    dock:{leftOpen:false,rightOpen:false,leftTab:'pages',leftTabOrder:['pages','elements','layers','schedule','navigation'],inspectorTab:'design',panelActive:'left',leftWidth:310,rightWidth:352}};
+  const targetAppearance={version:2,layout:'canvas',theme:'graphite',density:'comfortable',accent:'#5b8cff',dockOrder:'left-canvas-right',panelMode:'separate',panelSide:'right',profiles:[targetLocalProfile]};
   const target=await openEditor(t,{width:1280,height:900});
+  await target.page.evaluate(({key,value})=>localStorage.setItem(key,JSON.stringify(value)),{key:WORKSPACE_PREFERENCES_KEY,value:targetAppearance});
+  await target.page.reload({waitUntil:'load'});
+  await target.page.waitForFunction(()=>document.documentElement.dataset.editorBoot==='ready');
   assert.equal(await target.page.locator('.editor-app').getAttribute('data-workspace-theme'),'graphite','a separate browser context starts from its own default appearance');
   assert.equal(await target.page.locator('.editor-app').getAttribute('data-workspace-panel-mode'),'separate','the source session did not leak its dock grouping into target localStorage');
   await openPreferences(target.page);
-  assert.equal(await target.page.locator('#workspaceProfile option').count(),1,'the target has no source-session profiles before file import');
+  assert.equal(await target.page.locator('#workspaceProfile option').count(),2,'the target starts with exactly its own local profile, not the source profile');
   await target.page.locator('#workspaceProfileFile').setInputFiles({name:download.suggestedFilename(),mimeType:'application/json',buffer:bytes});
-  await target.page.waitForFunction(()=>document.querySelector('#workspaceProfile')?.options.length===2);
+  await target.page.waitForFunction(()=>document.querySelector('#workspaceProfile')?.options.length===3);
   const targetId=await target.page.locator('#workspaceProfile').inputValue();
-  assert.ok(targetId&&targetId!==sourceId,'the target session creates a fresh local profile ID');
+  assert.ok(targetId&&targetId!==sourceId,'the target regenerates the imported ID when it collides with a local profile');
+  assert.equal(await target.page.locator(`#workspaceProfile option[value="${sourceId}"]`).textContent(),'Célgép helyi nézete','ID collision cannot overwrite the target session profile');
   assert.equal(await target.page.locator('#workspaceProfileName').inputValue(),'Utazó munkaterület');
   assert.equal(await target.page.locator('.editor-app').getAttribute('data-workspace-theme'),'graphite','import stores the profile without applying it implicitly');
   assert.equal(await target.page.locator('.editor-app').getAttribute('data-workspace-panel-mode'),'separate','import alone does not move the target session workspace');
