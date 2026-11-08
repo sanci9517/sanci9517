@@ -39,7 +39,7 @@
   "third_party_code_or_dependencies_added": false,
   "checks": {
     "targeted_floating_browser_regression": "PASS 1/1",
-    "workspace_appearance_browser_file": "PASS 73/73",
+    "workspace_appearance_browser_file": "PASS 74/74 in full serial layout run",
     "editor_unit": "PASS 14/14 plus Linux subreaper 3/3",
     "typecheck": "PASS npm run typecheck",
     "migration_safety": "PASS npm run test:web013:migration-gate",
@@ -81,5 +81,51 @@
     "manual_visual_editor_acceptance": "DEFERRED until the entire planned Editor acceptance scope is complete"
   },
   "cost_huf": 0,
-  "artifact_uploaded": false
+  "artifact_uploaded": false,
+  "follow_up_2026_11_08": {
+    "scope": "Test-only regression matrix for the existing floating desktop panel card; runtime sources unchanged.",
+    "added_test": "floating panel cards preserve their physical dock side across all six orders and desktop widths",
+    "matrix_combinations": 72,
+    "dimensions": {
+      "group_side": [
+        "left",
+        "right"
+      ],
+      "dock_orders": 6,
+      "desktop_widths_css_px": [
+        1025,
+        1280,
+        1920
+      ],
+      "active_tabs": [
+        "left",
+        "right"
+      ]
+    },
+    "assertions": "floating mode and selected group side/order persist; active panel remains on its physical dock track; canvas stays at least 400 CSS px wide; card remains inset/raised/rounded; no document overflow; zero Page Model, Save, or Publish writes.",
+    "targeted_browser_regression": "PASS 1/1",
+    "full_workspace_appearance_browser_file": "PASS 74/74, 0 fail/cancel/skip, 313493 ms in direct file run.",
+    "full_serial_editor_layout_suite": "PASS 53/53 isolated browser files, 176/176 tests, 0 fail/cancel/skip, wrapper exit 0; 4 orphaned descendants reaped by the repository Linux subreaper.",
+    "restricted_sandbox_attempt": "The first full-suite attempt without loopback permission failed before tests executed: local fixture bind returned listen EPERM in the isolated files. This was an environment restriction, not a product-test result.",
+    "authorized_local_loopback_retry": "The unchanged full suite passed with loopback networking enabled solely for local fixture servers.",
+    "editor_unit": "PASS 14/14 plus Linux subreaper 3/3",
+    "typecheck": "PASS npm run typecheck",
+    "migration_safety": "PASS npm run test:web013:migration-gate",
+    "canonical_plan": "PASS 13 master files; one canonical master",
+    "plan_contract": "PASS 13 tests",
+    "active_plan_cursor": "PASS main 77.44.6.1, next 77.44.6.1.C; acceptance NOT_CERTIFIED",
+    "source_traceability": "PASS 396/396 mappings",
+    "javascript_syntax_and_diff": "PASS node --check shell.js/workspace-appearance.js; git diff --check",
+    "runtime_changed": false,
+    "wrangler_dry_run": "NOT_RUN: no runtime source changes; prior runtime package remains unchanged",
+    "production_d1": "NOT_QUERIED; no write or migration",
+    "r2_operation": false,
+    "cost_huf": 0,
+    "actions_run_started": false,
+    "github_push": "NOT_PUSHED: 16 existing local commits were ahead at run start; account Actions quota remains unverified and the approved spend is 0 Ft.",
+    "aggregate_ci": "NOT_RUN",
+    "production_health": "UNVERIFIED: direct public GET failed before HTTP at outbound Envoy proxy (CONNECT tunnel 403); no health response claimed.",
+    "worker_live_before_and_after": "Read-only Cloudflare API state stayed deployment 6aea7ce1-830a-451a-a00d-c88284b08ef9, Worker traffic version 425cfad2-3744-49e1-afde-289216ad8c2b at 100%; no deployment performed.",
+    "manual_visual_editor_acceptance": "DEFERRED until the entire planned Editor acceptance scope is complete"
+  }
 }
