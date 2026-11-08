@@ -1883,6 +1883,19 @@ test('a narrow desktop tabbed group uses the width of its single physical track'
   await page.locator('#workspacePanelTabRight').click();
   const right=page.locator('#rightDock .right-resizer');
   assert.equal(await right.getAttribute('aria-valuemax'),'440','the same physical track permits the configured right-panel maximum');
+  const rightHandle=await right.boundingBox();
+  assert.ok(rightHandle,'the active right panel exposes its desktop resize handle');
+  await page.mouse.move(rightHandle.x+rightHandle.width/2,rightHandle.y+rightHandle.height/2);
+  await page.mouse.down();
+  await page.mouse.move(rightHandle.x+rightHandle.width/2-24,rightHandle.y+rightHandle.height/2);
+  await page.mouse.up();
+  assert.equal(await right.getAttribute('aria-valuenow'),'376','pointer resizing uses the full single-track budget instead of the two-dock cap');
+  geometry=await page.evaluate(()=>{
+    const panel=document.querySelector('#rightDock').getBoundingClientRect();
+    const canvas=document.querySelector('.canvas-area').getBoundingClientRect();
+    return {panelLeft:panel.left,panelRight:panel.right,canvasLeft:canvas.left,canvasRight:canvas.right,canvasWidth:canvas.width};
+  });
+  assert.ok(geometry.panelLeft>=geometry.canvasRight&&geometry.canvasWidth>=400,`the resized right-side tab remains outside the canvas: ${JSON.stringify(geometry)}`);
   assert.deepEqual(writes,[],'tabbed dock resize bounds do not Save or Publish page content');
   assert.deepEqual(errors,[]);
 });
