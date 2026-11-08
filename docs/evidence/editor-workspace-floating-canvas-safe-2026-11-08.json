@@ -1,0 +1,85 @@
+{
+  "date": "2026-11-08",
+  "plan_point": "77.44.6.1.C",
+  "status": "FOUNDATION_IMPLEMENTED_LOCAL_NOT_RELEASED",
+  "scope": "A floating-looking desktop left/right panel group that remains inside a reserved canvas-safe grid track; grouped mode and selected panel restore correctly after reload.",
+  "branch": "v2/foundation",
+  "base_commit": "711f286c60d157c180dbc78ffe79224cb18fe504",
+  "runtime_local_commit": "c8af1975",
+  "github_branch_head_before_work": "d75af5439c38e2a7e19f1aa6b8b5b0cc81d6ec09",
+  "local_commits_ahead_before_work": 14,
+  "runtime_files": [
+    "public/editor-v2/index.html",
+    "public/editor-v2/editor-refresh.css",
+    "public/editor-v2/ui/shell.js",
+    "public/editor-v2/ui/workspace-appearance.js"
+  ],
+  "runtime_contracts": {
+    "floating_mode": "A distinct rounded, raised desktop panel card inside its own reserved dock track; it never overlays the canvas.",
+    "desktop_minimum_canvas_css_px": 400,
+    "mobile_behavior": "The desktop group controls become one safe drawer; the page canvas remains inert only while the drawer is open.",
+    "active_panel_restore": "The initially selected right dock is no longer reset to the left dock while both saved panels are being restored.",
+    "page_model_changed": false,
+    "save_publish_changed": false,
+    "production_data_written": false,
+    "new_dependency": false
+  },
+  "reproduction_and_fix": {
+    "initial_red": "The new browser test first failed because the workspace mode selector had no floating option.",
+    "second_red": "After implementing floating mode, reload exposed a startup ordering bug: opening the left panel first caused grouped-state normalization to replace the stored active right panel with left before the right panel had been restored.",
+    "fix": "Defer the grouped-panel consistency repair until both saved docks have been initialized, then synchronize the group once the restored pair is available.",
+    "green_regression": "The browser test now selects right, saves the workspace profile, reloads, confirms right remains active, resizes to the mobile drawer, and returns to the desktop floating card."
+  },
+  "reused_project_patterns": [
+    "Existing grid dock renderer and 400px canvas reservation",
+    "Existing tablist/panel accessibility and local panel state",
+    "Existing workspace preference/profile allowlist and local persistence",
+    "Existing responsive single-drawer behavior and Chromium fixture"
+  ],
+  "third_party_code_or_dependencies_added": false,
+  "checks": {
+    "targeted_floating_browser_regression": "PASS 1/1",
+    "workspace_appearance_browser_file": "PASS 73/73",
+    "editor_unit": "PASS 14/14 plus Linux subreaper 3/3",
+    "typecheck": "PASS npm run typecheck",
+    "migration_safety": "PASS npm run test:web013:migration-gate",
+    "canonical_plan": "PASS 13 master files; one canonical master",
+    "plan_contract": "PASS 13 tests",
+    "active_plan_cursor": "PASS main 77.44.6.1, next 77.44.6.1.C; acceptance NOT_CERTIFIED",
+    "source_traceability": "PASS 396/396 mappings after rebuilding generated evidence",
+    "javascript_syntax": "PASS node --check shell.js and workspace-appearance.js",
+    "diff_whitespace": "PASS git diff --check",
+    "wrangler_dry_run": "PASS Wrangler 4.130.0; 168 assets; 335.81 KiB total; 87.60 KiB gzip; --dry-run only"
+  },
+  "pending_asset_sha256": {
+    "public/editor-v2/index.html": "383a5cacf789d298bd3a6c977e37a9244e264a680c673402da64cfbc3889be9a",
+    "public/editor-v2/editor-refresh.css": "b8d71ddf9ab98f2932bf482c2a53a56ed48f465a0097eb7eaed013b13df7344e",
+    "public/editor-v2/ui/shell.js": "38999f8e158e3709835b26f6f49666b1bd2adbfa471a8698853bc134ac815d18",
+    "public/editor-v2/ui/workspace-appearance.js": "3cd66e4b837c0d3dbad381b7cdedc4e3ca41c5d35f5e787c63136d09c4cea902"
+  },
+  "github_release": {
+    "status": "NOT_PUSHED",
+    "reason": "The branch was already 14 local commits ahead of GitHub before this work; publishing this runtime change would also publish those unverified commits and may start metered Actions. The Actions quota is unknown and the approved spend remains 0 Ft.",
+    "actions_run_started": false,
+    "aggregate_ci": "NOT_RUN"
+  },
+  "live_worker_before_work": {
+    "latest_deployment_id": "6aea7ce1-830a-451a-a00d-c88284b08ef9",
+    "traffic_version_id": "425cfad2-3744-49e1-afde-289216ad8c2b",
+    "traffic_percent": 100,
+    "health": "UNVERIFIED: direct public GET was blocked before HTTP by the outbound proxy with CONNECT 403; no health response is claimed.",
+    "pending_asset_hashes_match_live": false
+  },
+  "release": {
+    "status": "BLOCKED_NOT_DEPLOYED",
+    "wrangler_deploy": false,
+    "production_d1_query": false,
+    "production_d1_migration_or_write": false,
+    "r2_operation": false,
+    "worker_version_after_change": null,
+    "traffic_percent_after_change": null,
+    "manual_visual_editor_acceptance": "DEFERRED until the entire planned Editor acceptance scope is complete"
+  },
+  "cost_huf": 0,
+  "artifact_uploaded": false
+}
