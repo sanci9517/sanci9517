@@ -150,6 +150,7 @@ function syncMobileBackdrop(){
     if(!subtitle.dataset.defaultDescription)subtitle.dataset.defaultDescription=subtitle.textContent.trim();
     subtitle.textContent=mobile?(EDITOR_ACTIONS[selectedTab]?.description||subtitle.dataset.defaultDescription):subtitle.dataset.defaultDescription;
   }
+  updateResizeHandles();
 }
 function setCanvasFocus(open){
   const next=Boolean(open);
@@ -250,20 +251,37 @@ function dockIsOnLeft(side){
 function updateResizeHandle(side,width){
   const handle=document.querySelector(`.dock-resizer[data-resize="${side}"]`);
   if(!handle)return;
-  const limits=resizeLimits[side];
+  const limits=resizeBounds(side);
+  const panel=panels[side];
+  const renderedWidth=!mobileQuery.matches&&!panel?.classList.contains('closed')?panel?.getBoundingClientRect().width:0;
+  const value=renderedWidth>0?renderedWidth:clamp(width,limits);
   handle.setAttribute('aria-valuemin',String(limits.min));
   handle.setAttribute('aria-valuemax',String(limits.max));
-  handle.setAttribute('aria-valuenow',String(Math.round(width)));
-  handle.setAttribute('aria-valuetext',`${Math.round(width)} képpont széles`);
+  handle.setAttribute('aria-valuenow',String(value));
+  handle.setAttribute('aria-valuetext',`${new Intl.NumberFormat('hu-HU',{maximumFractionDigits:1}).format(value)} képpont széles`);
+}
+function resizeBounds(side){
+  const limits=resizeLimits[side];
+  const bothDesktopDocksOpen=!mobileQuery.matches&&Object.values(panels).every(panel=>panel&&!panel.classList.contains('closed'));
+  if(!bothDesktopDocksOpen)return limits;
+  // The CSS grid caps each open track so at least 400px remains for the
+  // canvas. Keep the resize range in sync with that rendered cap instead of
+  // making a narrow desktop separator operate against a larger stored width.
+  return {...limits,max:Math.max(limits.min,Math.min(limits.max,(window.innerWidth-400)/2))};
+}
+function updateResizeHandles(){
+  updateResizeHandle('left',persisted.leftWidth);
+  updateResizeHandle('right',persisted.rightWidth);
 }
 function resizeDock(side,startX,startWidth,{pointerId=null,handle=null,dockOnLeft=dockIsOnLeft(side)}={}){
   workspaceAppearance?.remember();
   const limits=resizeLimits[side];
   const widthKey=side==='left'?'leftWidth':'rightWidth';
+  const startStoredWidth=clamp(parseFloat(getComputedStyle(root).getPropertyValue(side==='left'?'--left-dock-width':'--right-dock-width'))||startWidth,limits);
   const onMove=event=>{
     if(pointerId!==null&&event.pointerId!==pointerId)return;
     const delta=dockOnLeft?event.clientX-startX:startX-event.clientX;
-    const width=clamp(startWidth+delta,limits);
+    const width=clamp(startWidth+delta,resizeBounds(side));
     root.style.setProperty(side==='left'?'--left-dock-width':'--right-dock-width',`${width}px`);
     persisted[side==='left'?'leftWidth':'rightWidth']=width;
     updateResizeHandle(side,width);
@@ -287,9 +305,12 @@ function resizeDock(side,startX,startWidth,{pointerId=null,handle=null,dockOnLef
     if(announcement){const status=document.querySelector('#workspaceDockStatus');if(status)status.textContent=announcement}
   };
   const cancel=({announcement='A másik szerkesztőlapon változott a munkaterület, ezért a panel átméretezése megszakadt.'}={})=>{
-    root.style.setProperty(side==='left'?'--left-dock-width':'--right-dock-width',`${startWidth}px`);
-    persisted[widthKey]=startWidth;
-    updateResizeHandle(side,startWidth);
+    // A narrow desktop can visually cap a panel below its saved preference.
+    // Canceling a resize must restore that preference, not replace it with
+    // the temporary viewport-constrained width.
+    root.style.setProperty(side==='left'?'--left-dock-width':'--right-dock-width',`${startStoredWidth}px`);
+    persisted[widthKey]=startStoredWidth;
+    updateResizeHandle(side,startStoredWidth);
     finish(null,{persistChanges:false,announcement});
   };
   cancelDockResize=cancel;
@@ -308,7 +329,11 @@ function setupResizers(){
     handle.setAttribute('aria-orientation','vertical');
     handle.setAttribute('aria-controls',side==='left'?'leftDock':'rightDock');
     handle.tabIndex=0;
-    const currentWidth=()=>clamp(parseFloat(getComputedStyle(root).getPropertyValue(side==='left'?'--left-dock-width':'--right-dock-width'))||limits.min,limits);
+    const currentWidth=()=>{
+      const panel=panels[side];
+      const renderedWidth=!mobileQuery.matches&&!panel?.classList.contains('closed')?panel?.getBoundingClientRect().width:0;
+      return renderedWidth>0?renderedWidth:clamp(parseFloat(getComputedStyle(root).getPropertyValue(side==='left'?'--left-dock-width':'--right-dock-width'))||limits.min,resizeBounds(side));
+    };
     updateResizeHandle(side,currentWidth());
     handle.addEventListener('pointerdown',event=>{
       if(window.matchMedia('(max-width: 1024px)').matches)return;
@@ -326,10 +351,11 @@ function setupResizers(){
       const step=event.shiftKey?48:16;
       const current=currentWidth();
       let next=current;
-      if(event.key===increaseKey)next=clamp(current+step,limits);
-      else if(event.key===decreaseKey)next=clamp(current-step,limits);
-      else if(event.key==='Home')next=limits.min;
-      else if(event.key==='End')next=limits.max;
+      const bounds=resizeBounds(side);
+      if(event.key===increaseKey)next=clamp(current+step,bounds);
+      else if(event.key===decreaseKey)next=clamp(current-step,bounds);
+      else if(event.key==='Home')next=bounds.min;
+      else if(event.key==='End')next=bounds.max;
       else return;
       event.preventDefault();
       if(next===current)return;
@@ -342,6 +368,7 @@ function setupResizers(){
       emit('panel:resize',{side,width:next,source:'keyboard'});
     });
   });
+  window.addEventListener('resize',updateResizeHandles,{passive:true});
 }
 function setupDockReordering(){
   if(!workspace)return;

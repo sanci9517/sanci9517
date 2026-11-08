@@ -493,6 +493,38 @@ test('desktop docks preserve a usable non-overlapped canvas at every dock order 
   assert.deepEqual(errors,[]);
 });
 
+test('narrow desktop resize controls track the visible dock width when both panels are canvas-clamped',async t=>{
+  const dock={leftOpen:true,rightOpen:true,leftTab:'pages',leftTabOrder:['pages','elements','layers','schedule','navigation'],inspectorTab:'design',panelActive:'left',leftWidth:460,rightWidth:440};
+  const appearance={version:2,layout:'balanced',theme:'graphite',density:'comfortable',accent:'#5b8cff',dockOrder:'left-canvas-right',panelMode:'separate',panelSide:'right',profiles:[]};
+  const {page,writes,errors}=await openEditor(t,{width:1025,height:900,initialDockState:dock,initialAppearance:appearance});
+  const left=page.locator('#leftDock .left-resizer');
+  const before=await page.evaluate(()=>({
+    actual:document.querySelector('#leftDock').getBoundingClientRect().width,
+    value:Number(document.querySelector('#leftDock .left-resizer').getAttribute('aria-valuenow')),
+    max:Number(document.querySelector('#leftDock .left-resizer').getAttribute('aria-valuemax')),
+    canvas:document.querySelector('.canvas-area').getBoundingClientRect().width
+  }));
+  assert.ok(before.canvas>=400,`both docks keep the narrow desktop canvas usable: ${JSON.stringify(before)}`);
+  assert.ok(Math.abs(before.value-before.actual)<=1,`the separator announces its rendered dock width, not the larger saved preference: ${JSON.stringify(before)}`);
+  assert.ok(Math.abs(before.max-before.actual)<=1,`the separator maximum reflects the viewport-clamped dock track: ${JSON.stringify(before)}`);
+
+  await left.focus();
+  await page.keyboard.press('ArrowLeft');
+  await page.waitForFunction(previous=>Number(document.querySelector('#leftDock .left-resizer')?.getAttribute('aria-valuenow'))<previous,before.value);
+  const after=await page.evaluate(()=>({
+    actual:document.querySelector('#leftDock').getBoundingClientRect().width,
+    value:Number(document.querySelector('#leftDock .left-resizer').getAttribute('aria-valuenow')),
+    stored:JSON.parse(localStorage.getItem('sanci-editor-shell-v2'))?.leftWidth,
+    canvas:document.querySelector('.canvas-area').getBoundingClientRect().width
+  }));
+  assert.ok(after.actual<before.actual,`one keyboard step visibly resizes the constrained dock: before=${JSON.stringify(before)} after=${JSON.stringify(after)}`);
+  assert.ok(Math.abs(after.value-after.actual)<=1,`the updated separator value follows the actual panel size: ${JSON.stringify(after)}`);
+  assert.ok(after.canvas>=400,`resizing never compromises the minimum canvas: ${JSON.stringify(after)}`);
+  assert.equal(after.stored,after.actual,'the persisted dock width matches the visible user-selected width');
+  assert.deepEqual(writes,[],'adjusting workspace dimensions never Saves or Publishes page content');
+  assert.deepEqual(errors,[]);
+});
+
 test('single open docks keep the canvas clear at every desktop dock order',async t=>{
   const {page,writes,errors}=await openEditor(t,{width:1025,height:900});
   await openPreferences(page);
@@ -3049,6 +3081,47 @@ test('a responsive breakpoint cancels an in-progress dock resize without persist
   assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('sanci-editor-shell-v2'))?.leftWidth),310,'a breakpoint-only cancellation does not persist an intermediate desktop width');
   assert.match(await page.locator('#workspaceDockStatus').textContent(),/képernyőméret változott.*panel átméretezése megszakadt/iu);
   assert.deepEqual(writes,[],'responsive dock cancellation never saves or publishes page content');
+  assert.deepEqual(errors,[]);
+});
+
+test('canceling a resize from a viewport-clamped maximum restores the saved desktop preference',async t=>{
+  const dock={leftOpen:true,rightOpen:true,leftTab:'pages',leftTabOrder:['pages','elements','layers','schedule','navigation'],inspectorTab:'design',panelActive:'left',leftWidth:460,rightWidth:440};
+  const appearance={version:2,layout:'balanced',theme:'graphite',density:'comfortable',accent:'#5b8cff',dockOrder:'left-canvas-right',panelMode:'separate',panelSide:'right',profiles:[]};
+  const {page,writes,errors}=await openEditor(t,{width:1025,height:900,initialDockState:dock,initialAppearance:appearance});
+  const handle=page.locator('#leftDock .left-resizer');
+  const before=await page.evaluate(()=>({
+    actual:document.querySelector('#leftDock').getBoundingClientRect().width,
+    stored:JSON.parse(localStorage.getItem('sanci-editor-shell-v2'))?.leftWidth
+  }));
+  assert.equal(before.stored,460);
+  assert.equal(before.actual,312.5,'the narrow desktop applies its canvas-safe track cap without replacing the saved preference');
+
+  const box=await handle.boundingBox();
+  assert.ok(box,'the constrained desktop splitter remains reachable');
+  const x=box.x+box.width/2,y=box.y+box.height/2;
+  await page.mouse.move(x,y);
+  await page.mouse.down();
+  await page.waitForFunction(()=>document.body.classList.contains('resizing-dock'));
+  await page.mouse.move(x-16,y);
+  await page.waitForFunction(()=>Number(document.querySelector('#leftDock .left-resizer')?.getAttribute('aria-valuenow'))===296.5);
+
+  await resizeAndWaitForWorkspaceBreakpoint(page,390,844);
+  assert.equal(await page.locator('body').evaluate(element=>element.classList.contains('resizing-dock')),false,'the viewport change safely cancels the active gesture');
+  assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('sanci-editor-shell-v2'))?.leftWidth),460,'canceling restores the previously saved width instead of committing the temporary cap');
+  await page.mouse.up();
+
+  await resizeAndWaitForWorkspaceBreakpoint(page,1025,900);
+  const restored=await page.evaluate(()=>({
+    actual:document.querySelector('#leftDock').getBoundingClientRect().width,
+    value:Number(document.querySelector('#leftDock .left-resizer').getAttribute('aria-valuenow')),
+    stored:JSON.parse(localStorage.getItem('sanci-editor-shell-v2'))?.leftWidth,
+    canvas:document.querySelector('.canvas-area').getBoundingClientRect().width
+  }));
+  assert.equal(restored.actual,312.5);
+  assert.equal(restored.value,312.5,'the splitter continues to expose the actual viewport-constrained width');
+  assert.equal(restored.stored,460,'restoration retains the saved preference for a wider desktop');
+  assert.ok(restored.canvas>=400,`the canvas remains usable after restoration: ${JSON.stringify(restored)}`);
+  assert.deepEqual(writes,[],'canceling responsive workspace changes never Saves or Publishes page content');
   assert.deepEqual(errors,[]);
 });
 
