@@ -1859,6 +1859,34 @@ test('keyboard dock resizing follows the active panel group track instead of the
   assert.deepEqual(errors,[]);
 });
 
+test('a narrow desktop tabbed group uses the width of its single physical track',async t=>{
+  const {page,writes,errors}=await openEditor(t,{width:1025,height:900});
+  await openPreferences(page);
+  await page.locator('#workspaceLayout').selectOption('balanced');
+  await page.locator('#workspacePanelMode').selectOption('tabbed');
+  await page.locator('#workspacePanelSide').selectOption('right');
+  await page.locator('#closeWorkspaceAppearance').click();
+  await page.locator('#workspacePanelTabLeft').click();
+
+  const left=page.locator('#leftDock .left-resizer');
+  assert.equal(await left.getAttribute('aria-valuemax'),'460','the one right-side group track permits the configured left-panel maximum');
+  await left.focus();
+  await page.keyboard.press('ArrowLeft');
+  assert.equal(await left.getAttribute('aria-valuenow'),'326','the active tabbed dock can grow beyond the two-track limit');
+  let geometry=await page.evaluate(()=>{
+    const panel=document.querySelector('#leftDock').getBoundingClientRect();
+    const canvas=document.querySelector('.canvas-area').getBoundingClientRect();
+    return {panelLeft:panel.left,panelRight:panel.right,canvasLeft:canvas.left,canvasRight:canvas.right,canvasWidth:canvas.width};
+  });
+  assert.ok(geometry.panelLeft>=geometry.canvasRight&&geometry.canvasWidth>=400,`the single right-side group still preserves the canvas floor: ${JSON.stringify(geometry)}`);
+
+  await page.locator('#workspacePanelTabRight').click();
+  const right=page.locator('#rightDock .right-resizer');
+  assert.equal(await right.getAttribute('aria-valuemax'),'440','the same physical track permits the configured right-panel maximum');
+  assert.deepEqual(writes,[],'tabbed dock resize bounds do not Save or Publish page content');
+  assert.deepEqual(errors,[]);
+});
+
 test('keyboard dock resizing follows the physical track after separate docks are reordered',async t=>{
   const {page,writes,errors}=await openEditor(t,{width:1440,height:900});
   await openPreferences(page);

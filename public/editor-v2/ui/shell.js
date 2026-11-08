@@ -264,10 +264,12 @@ function resizeBounds(side){
   const limits=resizeLimits[side];
   const bothDesktopDocksOpen=!mobileQuery.matches&&Object.values(panels).every(panel=>panel&&!panel.classList.contains('closed'));
   if(!bothDesktopDocksOpen)return limits;
-  // The CSS grid caps each open track so at least 400px remains for the
-  // canvas. Keep the resize range in sync with that rendered cap instead of
-  // making a narrow desktop separator operate against a larger stored width.
-  return {...limits,max:Math.max(limits.min,Math.min(limits.max,(window.innerWidth-400)/2))};
+  // Separate docks share the space left after reserving 400px for the canvas;
+  // a tabbed group has only one physical track and can use that whole space.
+  // Keep keyboard/pointer bounds aligned with the corresponding CSS grid cap.
+  const openTrackCount=workspace?.dataset.workspacePanelMode==='tabbed'?1:2;
+  const availableTrackWidth=(window.innerWidth-400)/openTrackCount;
+  return {...limits,max:Math.max(limits.min,Math.min(limits.max,availableTrackWidth))};
 }
 function updateResizeHandles(){
   updateResizeHandle('left',persisted.leftWidth);
