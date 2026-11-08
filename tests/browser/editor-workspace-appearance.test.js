@@ -2594,6 +2594,41 @@ test('responsive dock resize keeps the focused panel and honors an explicit mobi
   assert.deepEqual(errors,[]);
 });
 
+test('choosing the balanced workspace on mobile keeps both docks for the next desktop visit',async t=>{
+  const {page,writes,errors}=await openEditor(t,{width:390,height:844,isMobile:true,hasTouch:true});
+  await openPreferences(page);
+  await page.locator('#workspaceLayout').selectOption('balanced');
+  assert.equal(await page.locator('.workspace').evaluate(element=>element.classList.contains('left-open')),false,'the narrow viewport stays canvas-first after choosing the desktop balanced preset');
+  assert.equal(await page.locator('.workspace').evaluate(element=>element.classList.contains('right-open')),false,'the mobile viewport never overlays the canvas with both docks');
+  assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('sanci-editor-workspace-preferences-v2')).layout),'balanced');
+  await page.locator('#closeWorkspaceAppearance').tap();
+
+  await resizeAndWaitForWorkspaceBreakpoint(page,1366,900);
+  await page.waitForFunction(()=>!matchMedia('(max-width: 1024px)').matches&&
+    document.querySelector('.workspace')?.classList.contains('left-open')&&
+    document.querySelector('.workspace')?.classList.contains('right-open'));
+  assert.ok(await page.locator('.canvas-area').evaluate(element=>element.getBoundingClientRect().width>=400),'the balanced desktop preset reserves a usable, non-overlapped canvas');
+
+  await resizeAndWaitForWorkspaceBreakpoint(page,390,844);
+  await page.waitForFunction(()=>matchMedia('(max-width: 1024px)').matches&&
+    Number(!document.querySelector('#leftDock')?.classList.contains('closed'))+
+    Number(!document.querySelector('#rightDock')?.classList.contains('closed'))===1);
+  await page.locator('#editorMenu').tap();
+  await page.waitForFunction(()=>!document.querySelector('#leftDock')?.classList.contains('closed')&&
+    document.querySelector('#rightDock')?.classList.contains('closed'));
+  assert.deepEqual(await page.evaluate(()=>{
+    const shell=JSON.parse(localStorage.getItem('sanci-editor-shell-v2'));
+    return {leftOpen:shell.leftOpen,rightOpen:shell.rightOpen};
+  }),{leftOpen:true,rightOpen:false},'an explicit mobile drawer choice replaces the desktop preset with the selected panel');
+  await resizeAndWaitForWorkspaceBreakpoint(page,1366,900);
+  await page.waitForFunction(()=>!matchMedia('(max-width: 1024px)').matches&&
+    document.querySelector('.workspace')?.classList.contains('left-open')&&
+    !document.querySelector('.workspace')?.classList.contains('right-open'));
+  assert.ok(await page.locator('.canvas-area').evaluate(element=>element.getBoundingClientRect().width>=400),'the explicit mobile panel remains docked outside a usable desktop canvas');
+  assert.deepEqual(writes,[],'changing the workspace layout remains independent from Page Model Save and Publish');
+  assert.deepEqual(errors,[]);
+});
+
 test('1024px tablet drawer transitions to a non-overlapping 1025px desktop dock and restores the selected panel',async t=>{
   const {page,writes,errors}=await openEditor(t,{width:1025,height:900});
   await page.locator('#editorMenu').click();

@@ -37,7 +37,9 @@ function readPersisted(){
 
 let persisted=normalizeStoredDockState(readPersisted(),{normalizeMobile:false});
 if(initialAppearance.layout!=='custom'){
-  const initialLayout=resolveWorkspaceLayout(initialAppearance.layout,mobileQuery.matches);
+  // Keep the preference's desktop intent even when the current mobile shell
+  // presents that layout as canvas-first until the user explicitly opens a dock.
+  const initialLayout=resolveWorkspaceLayout(initialAppearance.layout,false);
   persisted.leftOpen=initialLayout.left;
   persisted.rightOpen=initialLayout.right;
 }
@@ -77,18 +79,21 @@ function resolveWorkspaceLayout(layout,mobile){
 function applyWorkspaceLayout(layout,{save=true}={}){
   if(layout==='custom'){syncMobileBackdrop();return}
   const next=resolveWorkspaceLayout(layout,mobileQuery.matches);
-  if(!save){
+  if(!save||mobileQuery.matches){
     // External appearance changes arrive on the appearance key; the shell
-    // key may be unavailable or may have rejected its separate write. Keep
-    // the in-memory desktop state aligned with the shared preset so a later
-    // breakpoint restore cannot resurrect obsolete docks.
+    // key may be unavailable or may have rejected its separate write. A
+    // mobile preset is also only a responsive presentation: retain its
+    // desktop intent in memory so the next breakpoint restore cannot persist
+    // the phone's canvas-first state over the selected desktop layout.
     const desktop=resolveWorkspaceLayout(layout,false);
     persisted.leftOpen=desktop.left;persisted.rightOpen=desktop.right;
     if(desktop.left&&!desktop.right)persisted.panelActive='left';
     else if(desktop.right&&!desktop.left)persisted.panelActive='right';
   }
-  setPanel('left',next.left,{save});
-  setPanel('right',next.right,{save});
+  const persistPanels=save&&!mobileQuery.matches;
+  if(save&&mobileQuery.matches)desktopDockSnapshot=null;
+  setPanel('left',next.left,{save:persistPanels});
+  setPanel('right',next.right,{save:persistPanels});
   syncMobileBackdrop();
 }
 function emit(type,payload={}){bus.emit(type,payload)}
@@ -166,6 +171,7 @@ function setPanel(side,open,{save=true,restoreFocus=true,customize=false}={}){
   if(open && mobileQuery.matches){
     const other=side==='left'?'right':'left';
     if(!panels[other]?.classList.contains('closed'))setPanel(other,false,{save,restoreFocus:false});
+    else if(save)persisted[other==='left'?'leftOpen':'rightOpen']=false;
     if(!wasOpen && document.activeElement instanceof HTMLElement &&
         !panel.contains(document.activeElement))focusBeforeMobilePanel=document.activeElement;
   }
@@ -605,7 +611,10 @@ document.querySelectorAll('[data-editor-action="focusCanvas"],[data-editor-actio
 document.querySelector('#openWorkspaceAppearance')?.addEventListener('click',()=>{if(canvasFocus)setCanvasFocus(false)});
 document.querySelector('.more-actions')?.addEventListener('toggle',event=>{
   if(event.target.open && !canvasFocus && window.matchMedia('(max-width: 1024px)').matches){
-    setPanel('left',false);setPanel('right',false);
+    // Opening the temporary mobile menu clears the visible drawer, not the
+    // user's saved desktop dock intent. `toggle` is async and may arrive after
+    // a new appearance preset was selected from the menu.
+    setPanel('left',false,{save:false});setPanel('right',false,{save:false});
   }
 });
 document.querySelector('#mobileBackdrop')?.addEventListener('click',()=>{
