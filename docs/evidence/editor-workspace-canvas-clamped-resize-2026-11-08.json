@@ -86,5 +86,26 @@
   "acceptance": {
     "77_44_6_1_C": "OPEN / NOT CERTIFIED. This follow-up repairs the one-track tabbed resize bound; it does not certify the full workspace lifecycle.",
     "full_visual_editor_manual_and_physical_acceptance": "DEFERRED until the complete Visual Editor acceptance gate."
+  },
+  "repeat_full_file_confirmation": {
+    "recorded_at": "2026-11-08T09:51:36Z",
+    "command": "node --test tests/browser/editor-workspace-appearance.test.js",
+    "result": "PASS 72/72; 0 failures, cancellations or skips; 331893.670 ms.",
+    "coverage_observed": "Tabbed dock geometry and profile round-trip; keyboard panel tab navigation; all six dock orders; 36 native mouse dock reorder combinations at 1025/1280/1920px; panel grouping/ungrouping; keyboard/pointer resizing; responsive mobile drawer and cross-tab lifecycle; Save/Publish independence.",
+    "runtime_source_changed": false,
+    "new_runtime_defect_found": false,
+    "worktree_head": "ef694216d9abca79439eac91a7654c14ae5cdfd3",
+    "github_v2_foundation_head": "d75af5439c38e2a7e19f1aa6b8b5b0cc81d6ec09",
+    "commits_ahead": 12,
+    "worker_deployment_id": "6aea7ce1-830a-451a-a00d-c88284b08ef9",
+    "worker_traffic_version": "425cfad2-3744-49e1-afde-289216ad8c2b",
+    "worker_traffic_percentage": 100,
+    "production_health": "UNVERIFIED: direct curl failed before HTTP with exit 56 because the configured outbound proxy returned CONNECT 403; no health response was received.",
+    "production_asset_hashes": "NOT APPLICABLE: no runtime source or built asset changed in this documentation-only follow-up.",
+    "default_sandbox_attempt": "The restricted sandbox could not start the loopback fixture server (listen EPERM); the identical test command passed with explicitly enabled local-network permission.",
+    "push_or_deploy": "NOT DONE: the current local history includes unverified runtime commits; normal fast-forward push would publish those commits and start remote release gates. No deploy was initiated.",
+    "cost_huf": 0,
+    "actions_quota": "UNVERIFIED; owner-reported artifact storage remains 0.45/0.50 GB. No workflow dispatch, rerun, or artifact operation occurred.",
+    "production_d1_or_r2_mutation": false
   }
 }
