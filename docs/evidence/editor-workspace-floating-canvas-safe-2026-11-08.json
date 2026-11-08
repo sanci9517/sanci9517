@@ -179,7 +179,9 @@
       "traffic_version_id": "425cfad2-3744-49e1-afde-289216ad8c2b",
       "traffic_percentage": 100,
       "health": "UNVERIFIED: GET /api/health on both public hosts failed before HTTP; curl exit 7 could not connect to the configured proxy port 8080.",
-      "runtime_asset_hash": "NOT APPLICABLE: no runtime asset changed."
+      "runtime_asset_hash": "NOT APPLICABLE: no runtime asset changed.",
+      "health_recheck_after_suite": "PASS: direct GET returned HTTP 200 at 2026-11-08T14:44Z with ok=true, service=sanci9517-streamer-brand, version=2.0.0, server=cloudflare-worker. The earlier proxy failures remain historical attempts.",
+      "traffic_confirmed_after_suite": "Read-only Cloudflare deployments GET confirms deployment 6aea7ce1-830a-451a-a00d-c88284b08ef9 and version 425cfad2-3744-49e1-afde-289216ad8c2b at 100%."
     },
     "release": {
       "status": "TEST_AND_DOCS_ONLY_NOT_PUSHED",
@@ -201,5 +203,25 @@
       "production_deployment": false
     },
     "full_layout_suite_status": "PASS: npm run test:editor:layout; 53/53 isolated files, 176/176 tests, 0 failed/cancelled/skipped, wrapper exit 0."
+  },
+  "live_worker_recheck_after_suite": {
+    "checked_at_utc": "2026-11-08T14:44Z",
+    "method": "Direct public GET through the configured proxy after the serial browser suite; read-only request.",
+    "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health?codex_check=canvas-edge-suite",
+    "http_status": 200,
+    "response": {
+      "ok": true,
+      "service": "sanci9517-streamer-brand",
+      "version": "2.0.0",
+      "server": "cloudflare-worker"
+    },
+    "cloudflare_control_plane": {
+      "deployment_id": "6aea7ce1-830a-451a-a00d-c88284b08ef9",
+      "traffic_version_id": "425cfad2-3744-49e1-afde-289216ad8c2b",
+      "traffic_percent": 100
+    },
+    "runtime_changed": false,
+    "asset_hash_comparison": "NOT APPLICABLE: no runtime or public asset changed.",
+    "deployment_performed": false
   }
 }
