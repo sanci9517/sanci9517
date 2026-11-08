@@ -1107,5 +1107,73 @@
     "actions_run": false,
     "r2_operation": false,
     "d1_write_or_migration": false
+  },
+  "pointer_cancel_focus_restore_2026_11_08": {
+    "recorded_at_utc": "2026-11-08",
+    "scope": "Test-only browser evidence for the existing canvas-safe floating dock lifecycle; no runtime source or public asset changed.",
+    "regressions": [
+      {
+        "name": "floating dock pointer cancellation restores its last saved position without creating history",
+        "targeted_result": "PASS, 1/1 in Chromium. A real mouse pointer drag changes only transient CSS coordinates before pointerup; dispatching pointercancel clears the moving state, restores the saved (0,0) position, leaves Undo/Redo history unchanged, and submits no page Save/Publish requests.",
+        "test_harness_correction": "The baseline history is captured after initial layout settings so those intentional changes are not mistaken for a history entry created by the canceled drag."
+      },
+      {
+        "name": "floating dock windows move inside a reserved lane with pointer, keyboard, persistence, nested tabs and Undo",
+        "targeted_result": "PASS, 1/1 in Chromium after making the test wait for the appearance dialog close animation and its focus restoration to the opener before focusing the dock handle.",
+        "reproduced_test_race": "Without waiting for the native dialog focus restoration, a delayed focus return moved focus from the dock handle back to the appearance opener between arrow-key actions. The runtime keyboard handler was responsive; the test now observes the actual browser focus lifecycle."
+      }
+    ],
+    "full_workspace_appearance_browser_file": {
+      "command": "python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-workspace-appearance.test.js",
+      "result": "PASS",
+      "tests": 80,
+      "passed": 80,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "duration_ms": 437883,
+      "orphaned_descendants_reaped": 4
+    },
+    "targeted_commands": [
+      "node --test --test-concurrency=1 --test-name-pattern='floating dock pointer cancellation restores its last saved position without creating history' tests/browser/editor-workspace-appearance.test.js",
+      "node --test --test-concurrency=1 --test-name-pattern='floating dock windows move inside a reserved lane with pointer, keyboard, persistence, nested tabs and Undo' tests/browser/editor-workspace-appearance.test.js"
+    ],
+    "runtime_changed": false,
+    "runtime_files_changed": [],
+    "public_asset_changed": false,
+    "source_sha256": {
+      "tests/browser/editor-workspace-appearance.test.js": "fe0fd7e279fd9a2eb91e59226757422cae79c3bb4f4e53db3b3bf47ea5deca5a"
+    },
+    "release": {
+      "github_branch": "v2/foundation",
+      "github_remote_head": "d75af5439c38e2a7e19f1aa6b8b5b0cc81d6ec09",
+      "local_head_at_run_start": "1bfd5c6614150bd37f4343e67cc49c9bc98e95c4",
+      "local_commits_ahead_at_run_start": 29,
+      "github_push": "NOT PUSHED: local ancestry includes retained runtime commits with release gates not completed; a fast-forward would publish them. No Actions workflow started.",
+      "actions_storage_owner_reported": "0.45/0.50 GB",
+      "actions_remaining_quota": "UNVERIFIED",
+      "deployment_id": "6aea7ce1-830a-451a-a00d-c88284b08ef9",
+      "worker_traffic_version_id": "425cfad2-3744-49e1-afde-289216ad8c2b",
+      "worker_traffic_percentage": 100,
+      "public_health": "PASS: direct GET returned HTTP 200 at 2026-11-08 in this follow-up; body ok=true, service=sanci9517-streamer-brand, version=2.0.0, server=cloudflare-worker.",
+      "wrangler_dry_run": "NOT RUN: test-only change; no runtime source changed.",
+      "production_d1_select_or_write": "NOT RUN; no SELECT, write or migration.",
+      "r2_or_artifact_operation": false,
+      "deployment_performed": false,
+      "manual_visual_editor_acceptance": "DEFERRED until the entire planned Editor acceptance scope is complete.",
+      "c_plan_status": "77.44.6.1.C OPEN / NOT CERTIFIED; this regression proves only the floating-dock cancellation/focus lifecycle slice.",
+      "public_health_checked_at_utc": "2026-11-08 (exact UTC time omitted by shell output; response was captured after local suite and before this evidence update)."
+    },
+    "cost_huf": 0,
+    "additional_local_checks": {
+      "editor_unit": "PASS npm run test:editor; subreaper contract 3/3 and Editor test files 14/14.",
+      "typecheck": "PASS npm run typecheck.",
+      "migration_safety": "PASS npm run test:web013:migration-gate; local policy gate only, no production D1 query/write/migration.",
+      "canonical_plan": "PASS scripts/check-canonical-plan.py; one complete 13-file canonical master.",
+      "plan_contract": "PASS tests/plan-contract.test.py; 13/13.",
+      "active_plan_cursor": "PASS scripts/audit-active-plan-point.py; 77.44.6.1.C remains next and NOT_CERTIFIED.",
+      "source_traceability": "PASS scripts/build-feature-traceability.py --check; 396/396.",
+      "syntax_and_diff": "PASS node --check tests/browser/editor-workspace-appearance.test.js, python3 -m json.tool on this evidence, and git diff --check."
+    }
   }
 }

@@ -3679,9 +3679,15 @@ test('floating dock windows move inside a reserved lane with pointer, keyboard, 
   await page.locator('#redoWorkspaceLayout').click();
   await page.waitForFunction(()=>JSON.parse(localStorage.getItem('sanci-editor-workspace-preferences-v2'))?.floatingPosition?.left?.x>0);
   await page.locator('#closeWorkspaceAppearance').click();
+  await page.waitForFunction(()=>{
+    const dialog=document.querySelector('#workspaceAppearanceDialog');
+    return !dialog?.open&&[...(dialog?.getAnimations()||[])].every(animation=>animation.playState==='finished');
+  });
+  await page.waitForFunction(()=>document.activeElement?.id==='openWorkspaceAppearance','wait for the closed dialog to finish restoring focus before moving keyboard focus to the dock');
 
   const beforeKeyboard=await page.evaluate(()=>JSON.parse(localStorage.getItem('sanci-editor-workspace-preferences-v2')).floatingPosition.left);
-  await handle.focus();await page.keyboard.press('ArrowRight');await page.keyboard.press('ArrowDown');
+  await handle.focus();
+  await page.keyboard.press('ArrowRight');await page.keyboard.press('ArrowDown');
   await page.waitForFunction(previous=>{
     const current=JSON.parse(localStorage.getItem('sanci-editor-workspace-preferences-v2'))?.floatingPosition?.left;
     return current?.x===previous.x+16&&current?.y===previous.y+16;
@@ -3704,6 +3710,60 @@ test('floating dock windows move inside a reserved lane with pointer, keyboard, 
   assert.ok(restored.canvasWidth>=400);
   assert.equal(restored.save,'Mentés');assert.equal(restored.publish,'Publikálás');
   assert.deepEqual(writes,[],'moving a panel, changing its workspace preference, and undo/redo do not Save or Publish page content');
+  assert.deepEqual(errors,[]);
+});
+
+test('floating dock pointer cancellation restores its last saved position without creating history',async t=>{
+  const {page,writes,errors}=await openEditor(t,{width:1280,height:900});
+  await openPreferences(page);
+  await page.locator('#workspaceLayout').selectOption('balanced');
+  await page.locator('#workspacePanelMode').selectOption('floating');
+  await page.locator('#workspacePanelSide').selectOption('left');
+  await page.locator('#closeWorkspaceAppearance').click();
+  await page.locator('#workspacePanelTabLeft').click();
+
+  const handle=page.locator('#leftDock [data-floating-handle]');
+  await page.waitForFunction(()=>document.querySelector('.workspace')?.dataset.workspacePanelMode==='floating'&&document.querySelector('#workspacePanelTabLeft')?.getAttribute('aria-selected')==='true');
+  const historyBefore=await page.evaluate(()=>({undo:document.querySelector('#undoWorkspaceLayout')?.disabled,redo:document.querySelector('#redoWorkspaceLayout')?.disabled}));
+  await page.evaluate(()=>{
+    const handle=document.querySelector('#leftDock [data-floating-handle]');
+    handle.addEventListener('pointerdown',event=>{window.__floatingCancelPointerId=event.pointerId},{once:true});
+  });
+  const bounds=await handle.boundingBox();
+  assert.ok(bounds);
+  await page.mouse.move(bounds.x+bounds.width/2,bounds.y+bounds.height/2);
+  await page.mouse.down();
+  await page.mouse.move(bounds.x+bounds.width/2+64,bounds.y+bounds.height/2+48,{steps:4});
+  const moving=await page.evaluate(()=>({
+    active:document.body.classList.contains('moving-floating-dock'),
+    pointerId:window.__floatingCancelPointerId,
+    position:JSON.parse(localStorage.getItem('sanci-editor-workspace-preferences-v2'))?.floatingPosition?.left,
+    liveX:getComputedStyle(document.querySelector('.workspace')).getPropertyValue('--floating-left-x'),
+    liveY:getComputedStyle(document.querySelector('.workspace')).getPropertyValue('--floating-left-y'),
+  }));
+  assert.equal(moving.active,true,'the real pointer drag has entered its transient movement state');
+  assert.ok(Number.isInteger(moving.pointerId),'the browser supplied the captured pointer identifier');
+  assert.ok(parseFloat(moving.liveX)>0&&parseFloat(moving.liveY)>0,'the transient card follows the pointer before persistence');
+  assert.deepEqual(moving.position,{x:0,y:0},'pointer movement remains unsaved until a successful pointerup');
+
+  await page.evaluate(pointerId=>window.dispatchEvent(new PointerEvent('pointercancel',{bubbles:true,cancelable:true,pointerId,button:0})),moving.pointerId);
+  await page.mouse.up();
+  await page.waitForFunction(()=>!document.body.classList.contains('moving-floating-dock'));
+  const canceled=await page.evaluate(()=>({
+    active:document.body.classList.contains('moving-floating-dock'),
+    position:JSON.parse(localStorage.getItem('sanci-editor-workspace-preferences-v2'))?.floatingPosition?.left,
+    liveX:getComputedStyle(document.querySelector('.workspace')).getPropertyValue('--floating-left-x'),
+    liveY:getComputedStyle(document.querySelector('.workspace')).getPropertyValue('--floating-left-y'),
+    undoDisabled:document.querySelector('#undoWorkspaceLayout')?.disabled,
+  }));
+  assert.equal(canceled.active,false,'cancellation always releases the drag lifecycle and capture');
+  assert.deepEqual(canceled.position,{x:0,y:0},'a canceled drag never persists its transient coordinates');
+  assert.equal(parseFloat(canceled.liveX),0,'the rendered horizontal offset returns to the last saved position');
+  assert.equal(parseFloat(canceled.liveY),0,'the rendered vertical offset returns to the last saved position');
+  await openPreferences(page);
+  assert.equal(await page.locator('#undoWorkspaceLayout').isDisabled(),historyBefore.undo,'a canceled drag does not change workspace Undo history');
+  assert.equal(await page.locator('#redoWorkspaceLayout').isDisabled(),historyBefore.redo,'a canceled drag does not change workspace Redo history');
+  assert.deepEqual(writes,[],'canceling dock movement does not save or publish Page Model content');
   assert.deepEqual(errors,[]);
 });
 
