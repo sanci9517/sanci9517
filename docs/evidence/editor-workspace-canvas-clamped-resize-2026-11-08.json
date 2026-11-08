@@ -14,13 +14,14 @@
     "documentation_commits": [
       "659015c9 [skip ci] docs(editor): record canvas-clamped resize verification",
       "eb64b4a5 [skip ci] docs(editor): timestamp resize evidence",
-      "pending local [skip ci] evidence/plan update for tabbed-track regression"
+      "e9f95fae4db1ec156812f111c0a04ed66a9d0da3 [skip ci] docs(editor): record tabbed track resize fix"
     ],
-    "documentation_push": "NOT DONE. Both documentation commits are preserved locally after the runtime commit, so a normal branch push would also publish the unverified runtime change and trigger its required workflows. The direct shell push path is currently blocked by the unavailable proxy. No force update or alternate branch was used.",
+    "documentation_push": "NOT DONE. These documentation/evidence commits sit after unpushed runtime fixes in local history; pushing them to v2/foundation would include those runtime changes and trigger required cloud gates. The direct shell push path and production health network are unavailable; account-wide free Actions quota remains unverified. No force-push, alternate branch or skipped runtime CI was used.",
     "preexisting_untracked_paths_preserved": [
       "node_modules/",
       "scripts/__pycache__/"
-    ]
+    ],
+    "local_head_at_record": "e9f95fae4db1ec156812f111c0a04ed66a9d0da3 (8 commits ahead of remote v2/foundation at d75af5439c38e2a7e19f1aa6b8b5b0cc81d6ec09)."
   },
   "implementation": {
     "runtime_source": "public/editor-v2/ui/shell.js",
