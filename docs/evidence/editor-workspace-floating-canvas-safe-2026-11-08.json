@@ -223,5 +223,137 @@
     "runtime_changed": false,
     "asset_hash_comparison": "NOT APPLICABLE: no runtime or public asset changed.",
     "deployment_performed": false
+  },
+  "native_mouse_group_edge_detach_2026_11_08": {
+    "recorded_at": "2026-11-08T15:00Z",
+    "scope": "Test-only native browser mouse regression for detaching either selected panel from tabbed/floating dock groups onto either canvas edge.",
+    "test": "native mouse drag detaches either selected tab from tabbed and floating groups on both canvas edges",
+    "matrix": {
+      "panel_modes": [
+        "tabbed",
+        "floating"
+      ],
+      "group_sides": [
+        "left",
+        "right"
+      ],
+      "active_panels": [
+        "left",
+        "right"
+      ],
+      "canvas_edges": [
+        "before",
+        "after"
+      ],
+      "native_drag_undo_redo_reload_paths": 16
+    },
+    "assertions": "Uses Playwright locator.dragTo against actual visible dock heading and canvas. Each case verifies grouped starting state, active tab, separate mode after native drag, expected physical dock order, retained group side and active panel, 400px minimum canvas, no dock overlap or horizontal page overflow, clean drag/edge UI lifecycle, allowlisted preference persistence, Undo restoration of mode/side/order/active tab, Redo, reload persistence, zero Page Model/Save/Publish writes, and no browser errors.",
+    "targeted_browser_regression": {
+      "command": "node --test --test-name-pattern='native mouse drag detaches either selected tab' tests/browser/editor-workspace-appearance.test.js",
+      "result": "PASS",
+      "tests": 1,
+      "duration_ms": 33805
+    },
+    "full_workspace_appearance_browser_file": {
+      "command": "python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-workspace-appearance.test.js",
+      "result": "PASS",
+      "tests": 75,
+      "passed": 75,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "duration_ms": 446656,
+      "orphaned_descendants_reaped": 4
+    },
+    "editor_unit": {
+      "command": "npm run test:editor",
+      "result": "PASS",
+      "node_test_files": 14,
+      "node_tests": 14,
+      "subreaper_contract_tests": 3
+    },
+    "typecheck": {
+      "command": "npm run typecheck",
+      "result": "PASS"
+    },
+    "migration_safety": {
+      "command": "npm run test:web013:migration-gate",
+      "result": "PASS",
+      "production_d1_queried": false,
+      "production_d1_written": false
+    },
+    "canonical_plan": {
+      "command": "python3 scripts/check-canonical-plan.py",
+      "result": "PASS",
+      "master_files": 13
+    },
+    "plan_contract": {
+      "command": "python3 tests/plan-contract.test.py",
+      "result": "PASS",
+      "tests": 13
+    },
+    "active_plan_cursor": {
+      "command": "python3 scripts/audit-active-plan-point.py",
+      "result": "PASS",
+      "main": "77.44.6.1",
+      "next": "77.44.6.1.C",
+      "acceptance": "NOT_CERTIFIED"
+    },
+    "source_traceability": {
+      "command": "python3 scripts/build-feature-traceability.py --check",
+      "result": "PASS",
+      "mappings": 396
+    },
+    "syntax_json_and_diff": {
+      "commands": [
+        "node --check tests/browser/editor-workspace-appearance.test.js",
+        "python3 -m json.tool docs/evidence/editor-workspace-floating-canvas-safe-2026-11-08.json",
+        "git diff --check"
+      ],
+      "result": "PASS"
+    },
+    "full_53_file_layout_suite": {
+      "result": "NOT_RERUN_IN_THIS_FOLLOW_UP",
+      "previous_verified_result": "53/53 browser files, 176/176 tests"
+    },
+    "runtime_changed": false,
+    "wrangler_dry_run": "NOT_RUN: only a browser test changed; no runtime source/assets changed.",
+    "production_d1": "No query, write, or migration.",
+    "r2_operation": false,
+    "dependency_added": false,
+    "actions_run_started": false,
+    "artifact_operation": false,
+    "cost_huf": 0,
+    "actions_storage": "Owner-reported 0.45/0.50 GB; current Actions quota remains UNVERIFIED.",
+    "github_remote_head": "d75af5439c38e2a7e19f1aa6b8b5b0cc81d6ec09 (read-only GitHub branch API)",
+    "local_head": "e5d9ca80b9fe036c8d28f78855d9c5fc27845e91 before this test/evidence follow-up commit",
+    "local_commits_ahead": 23,
+    "github_push": "NOT PUSHED: the 23 retained commits include unverified runtime ancestors; a normal fast-forward would publish them. Local git remote access also failed to connect to the configured outbound proxy (port 8080). No force-push or branch switch.",
+    "aggregate_ci": "NOT RUN",
+    "production_worker": {
+      "deployment_id": "6aea7ce1-830a-451a-a00d-c88284b08ef9",
+      "traffic_version_id": "425cfad2-3744-49e1-afde-289216ad8c2b",
+      "traffic_percentage": 100,
+      "health": {
+        "result": "PASS",
+        "checked_at": "2026-11-08T14:56Z",
+        "url": "workers.dev /api/health",
+        "http_status": 200,
+        "body": {
+          "ok": true,
+          "service": "sanci9517-streamer-brand",
+          "version": "2.0.0",
+          "server": "cloudflare-worker"
+        }
+      },
+      "runtime_asset_hash": "NOT APPLICABLE: no runtime asset changed."
+    },
+    "release": {
+      "status": "TEST_AND_EVIDENCE_ONLY_NOT_PUSHED",
+      "deployment_performed": false,
+      "manual_visual_editor_acceptance": "DEFERRED until the entire planned Editor acceptance scope is complete",
+      "save_publish_contract_changed": false
+    },
+    "plan_status": "77.44.6.1.C OPEN / NOT CERTIFIED; this native mouse regression does not certify full workspace lifecycle or full Editor acceptance."
   }
 }
