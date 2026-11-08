@@ -277,5 +277,50 @@
     "actions_workflows_for_test_commit": 0,
     "actions_dispatch_or_rerun": false,
     "runtime_build_or_deployment": false
+  },
+  "mobile_tabbed_panel_timeout_diagnostic": {
+    "recorded_at": "2026-11-08T00:59:06Z",
+    "plan_point": "77.44.6.1.C",
+    "scope": "Capture actionable browser state only if the previously flaky mobile appearance selectOption operation times out.",
+    "test_source": "tests/browser/editor-workspace-appearance.test.js",
+    "runtime_source_changed": false,
+    "diagnostic_fields": [
+      "select presence, disabled/hidden/inert state",
+      "computed display/visibility/pointer-events and aria-hidden ancestor",
+      "bounding rectangle",
+      "dialog open state and active animations",
+      "active element"
+    ],
+    "behavior_assertions_or_timeouts_weakened": false,
+    "targeted_chromium": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-name-pattern='tabbed desktop panel groups reserve canvas space, restore profiles and fall back to one mobile drawer' tests/browser/editor-workspace-appearance.test.js",
+      "result": "PASS 1/1 with the failure-only diagnostic installed."
+    },
+    "prior_full_file_result": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-workspace-appearance.test.js",
+      "result": "NOT PASS: 67/68. The same scenario passed in isolation 1/1; timeout root cause remains unproven. No new whole-file aggregate PASS is claimed."
+    },
+    "editor_unit": "npm run test:editor — PASS, 14/14 files; Linux subreaper contract 3/3.",
+    "typecheck": "npm run typecheck — PASS.",
+    "canonical_plan": "python3 scripts/check-canonical-plan.py — PASS, 13 files.",
+    "plan_contract": "python3 tests/plan-contract.test.py — PASS 13/13.",
+    "active_point": "python3 scripts/audit-active-plan-point.py — PASS; 77.44.6.1.C remains OPEN / NOT CERTIFIED.",
+    "traceability": "python3 scripts/build-feature-traceability.py --check — PASS 396/396.",
+    "syntax_and_diff": "node --check tests/browser/editor-workspace-appearance.test.js; git diff --check — PASS.",
+    "environment_note": "A prior process snapshot showed 5,590 zombie processes; this is an environmental load signal, not a proven cause of the browser timeout.",
+    "hosted_ci": "No workflow dispatch/rerun. Test/docs-only follow-up uses [skip ci].",
+    "production": {
+      "source_commit": "dc4c5b174e83c4d8430227d54f911706beb4ede4",
+      "deployment_id": "6aea7ce1-830a-451a-a00d-c88284b08ef9",
+      "traffic_version": "425cfad2-3744-49e1-afde-289216ad8c2b",
+      "traffic_percentage": 100,
+      "health": "UNVERIFIED; direct GET /api/health blocked by outbound proxy CONNECT HTTP 403.",
+      "asset_hash": "NOT APPLICABLE; runtime assets unchanged"
+    },
+    "production_d1_mutation": false,
+    "r2_mutation_or_deletion": false,
+    "actions_artifact_added_or_deleted": false,
+    "additional_cost_huf": 0,
+    "acceptance": "77.44.6.1.C remains OPEN / NOT CERTIFIED; complete Visual Editor manual/physical acceptance DEFERRED."
   }
 }

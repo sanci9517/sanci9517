@@ -216,7 +216,25 @@ test('tabbed desktop panel groups reserve canvas space, restore profiles and fal
 
   const mobile=await openEditor(t,{width:390,height:844,isMobile:true,hasTouch:true});
   await openPreferences(mobile.page);
-  await mobile.page.locator('#workspacePanelMode').selectOption('tabbed');
+  try{
+    await mobile.page.locator('#workspacePanelMode').selectOption('tabbed');
+  }catch(error){
+    const state=await mobile.page.evaluate(()=>{
+      const select=document.querySelector('#workspacePanelMode');
+      const dialog=document.querySelector('#workspaceAppearanceDialog');
+      if(!select)return {selectPresent:false,dialogOpen:dialog?.open??false,activeElement:document.activeElement?.id||document.activeElement?.tagName||null};
+      const rect=select.getBoundingClientRect(),style=getComputedStyle(select);
+      return {
+        selectPresent:true,disabled:select.disabled,hidden:select.hidden,inert:select.closest('[inert]')!==null,
+        display:style.display,visibility:style.visibility,pointerEvents:style.pointerEvents,
+        ariaHidden:select.closest('[aria-hidden="true"]')!==null,
+        rect:{x:rect.x,y:rect.y,width:rect.width,height:rect.height},
+        dialogOpen:dialog?.open??false,dialogAnimations:[...(dialog?.getAnimations()||[])].map(animation=>animation.playState),
+        activeElement:document.activeElement?.id||document.activeElement?.tagName||null
+      };
+    });
+    throw new Error(`${error.message}\nworkspacePanelMode failure state: ${JSON.stringify(state)}`,{cause:error});
+  }
   assert.equal(await mobile.page.locator('.workspace-panel-group-tabs').isVisible(),false,'phones retain the dedicated single-drawer navigation instead of the desktop group bar');
   await mobile.page.locator('#closeWorkspaceAppearance').click();
   await mobile.page.locator('#openInspector').tap();
