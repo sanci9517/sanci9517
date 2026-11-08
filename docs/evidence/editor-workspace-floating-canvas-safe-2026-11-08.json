@@ -355,5 +355,127 @@
       "save_publish_contract_changed": false
     },
     "plan_status": "77.44.6.1.C OPEN / NOT CERTIFIED; this native mouse regression does not certify full workspace lifecycle or full Editor acceptance."
+  },
+  "native_mouse_dynamic_group_2026_11_08": {
+    "scope": "Test-only real Playwright mouse-drag coverage for the dynamic dock-center grouping zone; checks physical target side when stable dock IDs are reversed in the saved order.",
+    "test": "native mouse dock-center drop groups panels on the target physical track with undo and reload",
+    "matrix": {
+      "starting_mode": "separate",
+      "orders": [
+        "left-canvas-right",
+        "right-canvas-left"
+      ],
+      "target_panel_ids": [
+        "left",
+        "right"
+      ],
+      "source_panel_ids": [
+        "left",
+        "right"
+      ],
+      "native_drag_history_reload_paths": 4
+    },
+    "assertions": "Native drag from the actual visible source dock heading to the actual target dock heading center; verifies tabbed grouping, target physical side rather than stable ID side, source activation, saved order/preferences, 400px canvas floor, no overlap/page overflow, drag lifecycle cleanup, one-step Undo/Redo, reload restoration, zero Page Model Save/Publish writes and no browser console errors.",
+    "first_target_attempt": "FAILED in test setup: drag coordinates used the full dock bounding box while the Playwright target was the narrower dock-heading locator. The test now derives targetPosition from the actual target heading; no runtime defect was inferred.",
+    "targeted_browser_regression": {
+      "command": "python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 --test-name-pattern='native mouse dock-center drop groups panels' tests/browser/editor-workspace-appearance.test.js",
+      "result": "PASS",
+      "tests": 1,
+      "asserted_paths": 4
+    },
+    "full_workspace_appearance_browser_file": {
+      "command": "python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-workspace-appearance.test.js",
+      "result": "PASS",
+      "tests": 76,
+      "passed": 76,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "duration_ms": 449551,
+      "orphaned_descendants_reaped": 4
+    },
+    "editor_unit": {
+      "command": "npm run test:editor",
+      "result": "PASS",
+      "node_test_files": 14,
+      "node_tests": 14,
+      "subreaper_contract_tests": 3
+    },
+    "typecheck": {
+      "command": "npm run typecheck",
+      "result": "PASS"
+    },
+    "migration_safety": {
+      "command": "npm run test:web013:migration-gate",
+      "result": "PASS",
+      "production_d1_queried": false,
+      "production_d1_written": false
+    },
+    "canonical_plan": {
+      "command": "python3 scripts/check-canonical-plan.py",
+      "result": "PASS",
+      "master_files": 13
+    },
+    "plan_contract": {
+      "command": "python3 tests/plan-contract.test.py",
+      "result": "PASS",
+      "tests": 13
+    },
+    "active_plan_cursor": {
+      "command": "python3 scripts/audit-active-plan-point.py",
+      "result": "PASS",
+      "main": "77.44.6.1",
+      "next": "77.44.6.1.C",
+      "acceptance": "NOT_CERTIFIED"
+    },
+    "source_traceability": {
+      "command": "python3 scripts/build-feature-traceability.py --check",
+      "result": "PASS",
+      "mappings": 396
+    },
+    "syntax_and_diff": {
+      "commands": [
+        "node --check tests/browser/editor-workspace-appearance.test.js",
+        "python3 -m json.tool docs/evidence/editor-workspace-floating-canvas-safe-2026-11-08.json",
+        "git diff --check"
+      ],
+      "result": "PASS"
+    },
+    "full_53_file_layout_suite": {
+      "result": "NOT_RERUN_IN_THIS_FOLLOW_UP",
+      "previous_verified_result": "53/53 files; 176/176 tests"
+    },
+    "runtime_changed": false,
+    "wrangler_dry_run": "NOT RUN: no runtime sources or public assets changed.",
+    "production_d1": "No SELECT, write, or migration.",
+    "r2_operation": false,
+    "dependency_added": false,
+    "actions_run_started": false,
+    "artifact_operation": false,
+    "cost_huf": 0,
+    "actions_storage": "Owner-reported 0.45/0.50 GB; current Actions quota remains UNVERIFIED.",
+    "github_branch_head": "d75af5439c38e2a7e19f1aa6b8b5b0cc81d6ec09 (read-only GitHub REST branch GET).",
+    "local_head_before_this_follow_up": "1f0e341501b02df07aaebad0754bfd2c0039b657",
+    "local_commits_ahead_before_this_follow_up": 24,
+    "github_push": "NOT PUSHED: the retained local history already contains unverified runtime changes, so normal fast-forward would publish them. Direct Git remote access failed at the configured network/proxy route; no alternate branch/ref mutation was attempted.",
+    "aggregate_ci": "NOT RUN",
+    "production_worker": {
+      "deployment_id": "6aea7ce1-830a-451a-a00d-c88284b08ef9",
+      "traffic_version_id": "425cfad2-3744-49e1-afde-289216ad8c2b",
+      "traffic_percentage": 100,
+      "health_this_follow_up": {
+        "result": "UNVERIFIED",
+        "attempt": "Direct workers.dev GET failed before HTTP: curl exit 7, could not connect to origin port 443.",
+        "last_successful_recheck": "Earlier current-session request returned HTTP 200, ok=true, service=sanci9517-streamer-brand, version=2.0.0 at 2026-11-08T14:56Z."
+      },
+      "runtime_asset_hash": "NOT APPLICABLE: no runtime files changed."
+    },
+    "release": {
+      "status": "TEST_AND_EVIDENCE_ONLY_NOT_PUSHED",
+      "deployment_performed": false,
+      "manual_visual_editor_acceptance": "DEFERRED until complete Visual Editor scope is implemented",
+      "save_publish_contract_changed": false
+    },
+    "plan_status": "77.44.6.1.C OPEN / NOT CERTIFIED; this native grouping coverage does not certify nested groups or the full workspace lifecycle."
   }
 }
