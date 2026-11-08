@@ -271,6 +271,11 @@
     "r2_mutation_or_deletion": false,
     "additional_cost_huf": 0,
     "actions_artifact_added_or_deleted": false,
-    "commit_scope": "Browser regression test plus canonical plan/evidence only; accompanying commit uses [skip ci], with fast-forward/remote verification to follow."
+    "commit_scope": "The test-only commit 3fd81bc2fb195aec63b19a6e3544238d9d7e405e was pushed by normal fast-forward; exact remote branch HEAD was verified and the Actions API returned zero runs. This evidence/plan confirmation is a separate [skip ci] documentation-only follow-up.",
+    "commit": "3fd81bc2fb195aec63b19a6e3544238d9d7e405e",
+    "remote_branch_head": "3fd81bc2fb195aec63b19a6e3544238d9d7e405e (GitHub API verified exact v2/foundation HEAD before this evidence-only follow-up)",
+    "actions_workflows_for_test_commit": 0,
+    "actions_dispatch_or_rerun": false,
+    "runtime_build_or_deployment": false
   }
 }
