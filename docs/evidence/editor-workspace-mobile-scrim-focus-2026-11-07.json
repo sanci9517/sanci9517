@@ -308,13 +308,13 @@
     "traceability": "python3 scripts/build-feature-traceability.py --check — PASS 396/396.",
     "syntax_and_diff": "node --check tests/browser/editor-workspace-appearance.test.js; git diff --check — PASS.",
     "environment_note": "A prior process snapshot showed 5,590 zombie processes; this is an environmental load signal, not a proven cause of the browser timeout.",
-    "hosted_ci": "No workflow dispatch/rerun; gh run list for exact test commit returned [] (0 runs). The repository [skip ci] convention was used.",
+    "hosted_ci": "No workflow dispatch/rerun for this docs/test-only work; the prior exact test/docs commits were checked and each returned an empty Actions run list. This documentation update will also use [skip ci].",
     "production": {
       "source_commit": "dc4c5b174e83c4d8430227d54f911706beb4ede4",
       "deployment_id": "6aea7ce1-830a-451a-a00d-c88284b08ef9",
       "traffic_version": "425cfad2-3744-49e1-afde-289216ad8c2b",
       "traffic_percentage": 100,
-      "health": "UNVERIFIED; direct GET /api/health blocked by outbound proxy CONNECT HTTP 403.",
+      "health": "UNVERIFIED; direct GET /api/health (2026-11-08) failed before HTTP with curl exit 56, proxy CONNECT tunnel response 403.",
       "asset_hash": "NOT APPLICABLE; runtime assets unchanged"
     },
     "production_d1_mutation": false,
@@ -328,6 +328,24 @@
       "test_commit": "46d9d99b5fa49acaf2e9c2947ac170a3afa43d71",
       "test_commit_message": "[skip ci] test(editor): diagnose mobile panel timeout",
       "push": "Normal fast-forward push succeeded; git ls-remote verified exact v2/foundation HEAD 46d9d99b5fa49acaf2e9c2947ac170a3afa43d71 before this documentation/evidence follow-up."
+    },
+    "full_file_rerun": {
+      "recorded_at": "2026-11-08T02:09:21Z",
+      "command": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-workspace-appearance.test.js",
+      "result": "PASS 68/68, fail=0, cancelled=0, skipped=0; duration 303140 ms; the mobile workspacePanelMode scenario passed; failure-only diagnostic did not activate.",
+      "subreaper": "reaped 4 orphaned test descendants after the run.",
+      "initial_sandbox_attempt": "The same suite was blocked before the test file loaded: local fixture server listen EPERM. It passed when rerun with authorized local loopback networking.",
+      "timeout_cause": "The earlier isolated 67/68 timeout did not recur; its precise original cause remains unproven."
+    },
+    "post_full_file_local_validation": {
+      "recorded_at": "2026-11-08T02:09:21Z",
+      "editor_unit": "npm run test:editor — PASS: 187/187 tests across 14 files; subreaper runner contract 3/3 PASS.",
+      "typecheck": "npm run typecheck — PASS.",
+      "canonical_plan": "python3 scripts/check-canonical-plan.py — PASS, 13 files.",
+      "plan_contract": "python3 tests/plan-contract.test.py — PASS 13/13.",
+      "active_point": "python3 scripts/audit-active-plan-point.py — PASS; 77.44.6.1.C OPEN / NOT CERTIFIED.",
+      "traceability": "python3 scripts/build-feature-traceability.py --check — PASS 396/396.",
+      "json_syntax_and_diff": "python3 -m json.tool evidence; node --check test; git diff --check — PASS."
     }
   }
 }
