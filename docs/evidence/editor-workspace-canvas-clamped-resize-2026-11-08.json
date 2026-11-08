@@ -11,6 +11,11 @@
     "local_runtime_release_commit": "971d1246",
     "runtime_commit_message": "fix(editor): align dock resizing with canvas-safe width",
     "push": "NOT DONE. The local runtime commit is preserved. The authenticated GitHub branch API verified the unchanged remote HEAD above. Pushing this runtime commit would start required GitHub Actions and Cloudflare Build gates; current free compute/storage quota cannot be verified, and the owner requires 0 Ft. Runtime CI was not skipped.",
+    "documentation_commits": [
+      "659015c9 [skip ci] docs(editor): record canvas-clamped resize verification",
+      "eb64b4a5 [skip ci] docs(editor): timestamp resize evidence"
+    ],
+    "documentation_push": "NOT DONE. Both documentation commits are preserved locally after the runtime commit, so a normal branch push would also publish the unverified runtime change and trigger its required workflows. The direct shell push path is currently blocked by the unavailable proxy. No force update or alternate branch was used.",
     "preexisting_untracked_paths_preserved": [
       "node_modules/",
       "scripts/__pycache__/"
