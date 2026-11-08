@@ -1,6 +1,6 @@
 export const WORKSPACE_PREFERENCES_KEY='sanci-editor-workspace-preferences-v2';
 export const LEGACY_WORKSPACE_PREFERENCES_KEY='sanci-editor-workspace-preferences-v1';
-export const WORKSPACE_PREFERENCE_DEFAULTS=Object.freeze({version:2,layout:'canvas',theme:'graphite',density:'comfortable',accent:'#5b8cff',dockOrder:'left-canvas-right',panelMode:'separate',panelSide:'right',profiles:[]});
+export const WORKSPACE_PREFERENCE_DEFAULTS=Object.freeze({version:2,layout:'canvas',theme:'graphite',density:'comfortable',accent:'#5b8cff',dockOrder:'left-canvas-right',panelMode:'separate',panelSide:'right',floatingPosition:{left:{x:0,y:0},right:{x:0,y:0}},profiles:[]});
 const layouts=new Set(['balanced','canvas','inspector','custom']);
 const themes=new Set(['graphite','aurora','ocean','sage','cinder']);
 const densities=new Set(['comfortable','compact']);
@@ -22,6 +22,12 @@ function luminance(hex){return [1,3,5].map(index=>linearChannel(parseInt(hex.sli
 function contrast(left,right){const a=luminance(left),b=luminance(right);return (Math.max(a,b)+0.05)/(Math.min(a,b)+0.05)}
 function isRecord(value){return value&&typeof value==='object'&&!Array.isArray(value)}
 function finiteWidth(value,min,max,fallback){const number=Number(value);return Number.isFinite(number)?Math.max(min,Math.min(max,number)):fallback}
+function finiteOffset(value){const number=Number(value);return Number.isFinite(number)?Math.round(Math.max(0,Math.min(600,number))):0}
+function normalizeFloatingPosition(value){
+  const input=isRecord(value)?value:{};
+  const point=side=>isRecord(input[side])?input[side]:{};
+  return {left:{x:finiteOffset(point('left').x),y:finiteOffset(point('left').y)},right:{x:finiteOffset(point('right').x),y:finiteOffset(point('right').y)}};
+}
 function truncateProfileName(value){
   let name='',length=0;
   for(const character of value.trim()){
@@ -49,6 +55,7 @@ function normalizeVisualPreferences(input={}){
     dockOrder:dockOrders.has(input.dockOrder)?input.dockOrder:WORKSPACE_PREFERENCE_DEFAULTS.dockOrder,
     panelMode:panelModes.has(input.panelMode)?input.panelMode:WORKSPACE_PREFERENCE_DEFAULTS.panelMode,
     panelSide:panelSides.has(input.panelSide)?input.panelSide:WORKSPACE_PREFERENCE_DEFAULTS.panelSide,
+    floatingPosition:normalizeFloatingPosition(input.floatingPosition),
   };
 }
 function normalizeDockState(value){
@@ -146,7 +153,10 @@ export function applyWorkspacePreferences(root,preferences){
   root.dataset.workspacePanelGrouped=String(value.panelMode!=='separate');
   const workspace=root.matches?.('.workspace')?root:root.querySelector?.('.workspace');
   if(workspace)workspace.dataset.workspaceDockOrder=value.dockOrder;
-  if(workspace){workspace.dataset.workspacePanelMode=value.panelMode;workspace.dataset.workspacePanelSide=value.panelSide;workspace.dataset.workspacePanelGrouped=String(value.panelMode!=='separate')}
+  if(workspace){
+    workspace.dataset.workspacePanelMode=value.panelMode;workspace.dataset.workspacePanelSide=value.panelSide;workspace.dataset.workspacePanelGrouped=String(value.panelMode!=='separate');
+    for(const side of panelSides){workspace.style.setProperty(`--floating-${side}-x`,`${value.floatingPosition[side].x}px`);workspace.style.setProperty(`--floating-${side}-y`,`${value.floatingPosition[side].y}px`)}
+  }
   root.style.setProperty('--accent',value.accent);
   return value;
 }
@@ -275,6 +285,15 @@ export function mountWorkspaceAppearance({documentRef=globalThis.document,root=d
     remember();value={...value,panelMode:next.panelMode,panelSide:next.panelSide};paint();const saved=persist();
     onLayoutChange(value.layout);
     announcePersistence(saved,'A panelek csoportja ezen az eszközön elmentve. A vászon külön, szabad terület marad.','A panelek csoportja csak ebben a munkamenetben érvényes. A vászon külön, szabad terület marad.');
+    return true;
+  };
+  const setFloatingPosition=(side,x,y)=>{
+    if(!panelSides.has(side))return false;
+    const next=normalizeFloatingPosition({...value.floatingPosition,[side]:{x,y}})[side];
+    const current=value.floatingPosition[side];
+    if(next.x===current.x&&next.y===current.y)return false;
+    remember();value={...value,floatingPosition:{...value.floatingPosition,[side]:next}};paint();const saved=persist();
+    announcePersistence(saved,'A lebegő panel helye ezen az eszközön elmentve. A vászon külön, fedetlen terület marad.','A lebegő panel új helye csak ebben a munkamenetben érvényes; a vászon külön, fedetlen terület marad.');
     return true;
   };
   const updateVisual=(key,next)=>{
@@ -464,5 +483,5 @@ export function mountWorkspaceAppearance({documentRef=globalThis.document,root=d
   undoButton?.addEventListener('click',undo);redoButton?.addEventListener('click',redo);
   resetButton?.addEventListener('click',reset);
   paint();
-  return {get value(){return normalizeWorkspacePreferences(value)},setLayout,setDockOrder,setDockLayout,setPanelGrouping,open,close,remember,undo,redo,saveProfile,renameProfile,loadProfile,deleteProfile,importProfile,exportProfile,reset,syncDockControls:renderLeftToolOrder,clearExternalDockHistory,reportDockStorageUnavailable,destroy(){documentRef.defaultView?.removeEventListener?.('storage',syncExternalPreferences)}};
+  return {get value(){return normalizeWorkspacePreferences(value)},setLayout,setDockOrder,setDockLayout,setPanelGrouping,setFloatingPosition,open,close,remember,undo,redo,saveProfile,renameProfile,loadProfile,deleteProfile,importProfile,exportProfile,reset,syncDockControls:renderLeftToolOrder,clearExternalDockHistory,reportDockStorageUnavailable,destroy(){documentRef.defaultView?.removeEventListener?.('storage',syncExternalPreferences)}};
 }

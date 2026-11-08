@@ -2,7 +2,7 @@ import {createEventBus} from './events.js';
 import {panelRegistry,featureRegistry} from './registry.js';
 import {EDITOR_ACTIONS} from './action-catalog.js?v=20261103-canvas-focus-mode';
 import {enhanceEditorActionControls} from './action-help.js?v=20261103-canvas-focus-mode';
-import {DEFAULT_LEFT_TAB_ORDER,applyWorkspacePreferences,mountWorkspaceAppearance,normalizeLeftTabOrder,readWorkspacePreferences} from './workspace-appearance.js?v=20261108-floating-dock-startup-restore';
+import {DEFAULT_LEFT_TAB_ORDER,applyWorkspacePreferences,mountWorkspaceAppearance,normalizeLeftTabOrder,readWorkspacePreferences} from './workspace-appearance.js?v=20261108-movable-canvas-safe-floating-dock';
 
 const bus=createEventBus();
 const workspace=document.querySelector('.workspace');
@@ -23,6 +23,7 @@ let focusBeforeMobilePanel=null;
 let workspaceAppearance=null;
 let cancelWorkspaceDrag=()=>{};
 let cancelDockResize=()=>{};
+let cancelFloatingDockMove=()=>{};
 let canvasFocus=false;
 let desktopDockSnapshot=null;
 let initializingDocks=true;
@@ -277,6 +278,105 @@ function updateResizeHandles(){
   updateResizeHandle('left',persisted.leftWidth);
   updateResizeHandle('right',persisted.rightWidth);
 }
+function setupFloatingDockMovement(){
+  if(!workspace)return ()=>{};
+  const status=document.querySelector('#workspaceDockStatus');
+  const handles=Array.from(document.querySelectorAll('[data-floating-handle]'));
+  let activeCancel=()=>{};
+  const supported=()=>!mobileQuery.matches&&editorRoot?.dataset.workspacePanelMode==='floating';
+  const clampOffset=(side,x,y)=>{
+    const host=panels[side],surface=host?.querySelector('[data-floating-window]');
+    if(!host||!surface)return {x:0,y:0};
+    const maxX=Math.max(0,host.clientWidth-surface.offsetWidth-16);
+    const maxY=Math.max(0,host.clientHeight-surface.offsetHeight-16);
+    return {x:Math.max(0,Math.min(maxX,Number.isFinite(x)?x:0)),y:Math.max(0,Math.min(maxY,Number.isFinite(y)?y:0))};
+  };
+  const currentOffset=side=>{
+    const style=getComputedStyle(workspace);
+    const x=parseFloat(style.getPropertyValue(`--floating-${side}-x`))||0;
+    const y=parseFloat(style.getPropertyValue(`--floating-${side}-y`))||0;
+    return clampOffset(side,x,y);
+  };
+  const setLiveOffset=(side,point)=>{
+    workspace.style.setProperty(`--floating-${side}-x`,`${point.x}px`);
+    workspace.style.setProperty(`--floating-${side}-y`,`${point.y}px`);
+  };
+  const announce=message=>{if(status)status.textContent=message};
+  const finishCurrent=()=>activeCancel({restore:true});
+  for(const handle of handles){
+    const side=handle.dataset.floatingHandle;
+    if(!['left','right'].includes(side))continue;
+    handle.addEventListener('pointerdown',event=>{
+      if(!supported()||event.button!==0)return;
+      const start=currentOffset(side),pointerId=event.pointerId,startX=event.clientX,startY=event.clientY;
+      const onMove=moveEvent=>{
+        if(moveEvent.pointerId!==pointerId)return;
+        const next=clampOffset(side,start.x+moveEvent.clientX-startX,start.y+moveEvent.clientY-startY);
+        setLiveOffset(side,next);
+        moveEvent.preventDefault();
+      };
+      const finish=(finishEvent,{restore=false,commit=false}={})=>{
+        if(finishEvent&&finishEvent.pointerId!==pointerId)return;
+        window.removeEventListener('pointermove',onMove);
+        window.removeEventListener('pointerup',onUp);
+        window.removeEventListener('pointercancel',onCancel);
+        handle.removeEventListener('lostpointercapture',onLost);
+        document.body.classList.remove('moving-floating-dock');
+        if(handle.hasPointerCapture?.(pointerId)){try{handle.releasePointerCapture(pointerId)}catch{}}
+        if(restore)applyWorkspacePreferences(editorRoot,workspaceAppearance?.value||initialAppearance);
+        if(commit){
+          const point=currentOffset(side);
+          workspaceAppearance?.setFloatingPosition(side,point.x,point.y);
+          announce(`A(z) ${side==='left'?'bal':'jobb'} lebegő panel új helye elmentve. A vászon fedetlen maradt.`);
+        }
+        if(activeCancel===cancel)activeCancel=()=>{};
+      };
+      const onUp=upEvent=>finish(upEvent,{commit:true});
+      const onCancel=cancelEvent=>finish(cancelEvent,{restore:true});
+      const onLost=lostEvent=>finish(lostEvent,{restore:true});
+      const cancel=({restore=true,announcement='A panel mozgatása megszakadt; az előző hely visszaállt.'}={})=>{
+        finish(null,{restore});announce(announcement);
+      };
+      activeCancel({restore:true,announcement:'A korábbi panelmozgatás megszakadt.'});
+      activeCancel=cancel;
+      try{handle.setPointerCapture(pointerId)}catch{}
+      document.body.classList.add('moving-floating-dock');
+      window.addEventListener('pointermove',onMove,{passive:false});
+      window.addEventListener('pointerup',onUp);
+      window.addEventListener('pointercancel',onCancel);
+      handle.addEventListener('lostpointercapture',onLost,{once:true});
+      event.preventDefault();
+    });
+    handle.addEventListener('keydown',event=>{
+      if(!supported())return;
+      const point=currentOffset(side),step=event.shiftKey?48:16;
+      const bounds=clampOffset(side,Number.MAX_SAFE_INTEGER,Number.MAX_SAFE_INTEGER);
+      const next={...point};
+      if(event.key==='ArrowLeft')next.x=Math.max(0,point.x-step);
+      else if(event.key==='ArrowRight')next.x=Math.min(bounds.x,point.x+step);
+      else if(event.key==='ArrowUp')next.y=Math.max(0,point.y-step);
+      else if(event.key==='ArrowDown')next.y=Math.min(bounds.y,point.y+step);
+      else if(event.key==='Home'){next.x=0;next.y=0}
+      else if(event.key==='End'){next.x=bounds.x;next.y=bounds.y}
+      else return;
+      event.preventDefault();
+      const clamped=clampOffset(side,next.x,next.y);
+      if(workspaceAppearance?.setFloatingPosition(side,clamped.x,clamped.y)){
+        announce(`A(z) ${side==='left'?'bal':'jobb'} lebegő panel helye: ${clamped.x} képpont vízszintesen, ${clamped.y} képpont függőlegesen.`);
+      }
+    });
+  }
+  const onResize=()=>{
+    if(document.body.classList.contains('moving-floating-dock'))finishCurrent();
+    for(const side of ['left','right'])setLiveOffset(side,currentOffset(side));
+  };
+  window.addEventListener('resize',onResize,{passive:true});
+  const observer=typeof ResizeObserver==='function'?new ResizeObserver(onResize):null;
+  for(const side of ['left','right']){const host=panels[side];if(host)observer?.observe(host)}
+  cancelFloatingDockMove=options=>activeCancel(options);
+  requestAnimationFrame(onResize);
+  return ()=>{finishCurrent();window.removeEventListener('resize',onResize);observer?.disconnect()};
+}
 function resizeDock(side,startX,startWidth,{pointerId=null,handle=null,dockOnLeft=dockIsOnLeft(side)}={}){
   workspaceAppearance?.remember();
   const limits=resizeLimits[side];
@@ -402,6 +502,7 @@ function setupDockReordering(){
   const refreshHandles=()=>workspace.querySelectorAll('.dock-heading,.canvas-toolbar').forEach(handle=>handle.setAttribute('draggable',String(!mobileQuery.matches)));
   const restoreResponsiveDockLayout=()=>{
     cancelDockResize({announcement:'A képernyőméret változott, ezért a panel átméretezése megszakadt.'});
+    cancelFloatingDockMove({announcement:'A képernyőméret változott, ezért a lebegő panel visszaállt az előző helyére.'});
     finishDrag({announcement:'A képernyőméret változott, ezért az átrendezés megszakadt.'});
     if(mobileQuery.matches){
       if(!desktopDockSnapshot)desktopDockSnapshot={left:!panels.left?.classList.contains('closed'),right:!panels.right?.classList.contains('closed'),active:persisted.panelActive};
@@ -536,6 +637,7 @@ workspaceAppearance=mountWorkspaceAppearance({documentRef:document,root:editorRo
   desktopDockSnapshot=null;
   cancelDockResize({announcement:reset?'A másik szerkesztőlapon alaphelyzetbe állították a munkaterületet, ezért a panel átméretezése megszakadt.':'A másik szerkesztőlapon változott a munkaterület, ezért a panel átméretezése megszakadt.'});
   cancelWorkspaceDrag({announcement:reset?'A másik szerkesztőlapon alaphelyzetbe állították a munkaterületet, ezért az átrendezés megszakadt.':'A másik szerkesztőlapon történt változás miatt az átrendezés megszakadt.'});
+  cancelFloatingDockMove({announcement:reset?'A másik lapon visszaállították a munkaterületet, ezért a lebegő panel helye megszakadt.':'A másik szerkesztőlapon megváltozott a munkaterület, ezért a panelmozgás megszakadt.'});
 },readDockState:()=>persisted,moveDockTab:moveLeftTab,applyDockState:state=>{
   applyDockState(state);
 },canPersistDockState:()=>dockStorageDurable,onReset:()=>{
@@ -591,6 +693,7 @@ window.addEventListener('storage',event=>{
   emit('workspace:external-change',{source:'storage',area:'dock'});
 });
 cancelWorkspaceDrag=setupDockReordering()||(()=>{});
+setupFloatingDockMovement();
 document.querySelectorAll('[data-workspace-panel-tab]').forEach(button=>button.addEventListener('click',()=>{
   const side=button.dataset.workspacePanelTab;if(!['left','right'].includes(side))return;
   if(persisted.panelActive===side&&!panels[side]?.classList.contains('closed'))return;

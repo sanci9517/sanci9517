@@ -698,5 +698,414 @@
     "artifact_operation": false,
     "cost_huf": 0,
     "plan_status": "77.44.6.1.C OPEN / NOT CERTIFIED; isolated profile transfer and ID-collision coverage do not certify nested panel groups or full workspace lifecycle acceptance."
+  },
+  "movable_floating_dock_follow_up_2026_11_08": {
+    "recorded_at_utc": "2026-11-08T21:04:11Z",
+    "plan_point": "77.44.6.1.C",
+    "status": "LOCAL_AUTOMATED_VERIFICATION_PASS_NOT_RELEASED_C_OPEN",
+    "implementation": {
+      "behavior": "Added bounded, keyboard- and pointer-movable floating dock windows inside their reserved dock lanes. Movement is workspace preference data, persists locally and through explicit workspace profiles, participates in workspace Undo/Redo, and never overlays or writes the page canvas.",
+      "responsive_contract": "Floating window controls remain desktop-only; compact view uses the existing safe drawer. Inner window/body flex layout restores mobile close-control hit testing.",
+      "regression_found_and_fixed": "A real center-point hit test showed the floating wrapper intercepted touch input for the mobile drawer close control. Shared flex layout was added to the dock floating window/body while keeping desktop positioning media-scoped; the targeted mobile regression and complete workspace browser file passed after the correction.",
+      "canvas_contract": "Pointer and keyboard offsets are normalized to finite integer values in [0,600] px; pointer and keyboard actions clamp to the selected dock lane. Tested canvas remains at least 400 CSS px at 1025, 1280 and 1920 CSS px, on both sides; Save and Publish remain separate.",
+      "save_publish_changed": false,
+      "recursive_panel_group_model_added": false,
+      "freeform_canvas_overlapping_windows_added": false
+    },
+    "checks": {
+      "targeted_mobile_drawer_hit_test": "PASS after CSS fix",
+      "workspace_appearance_browser": "PASS — 79/79 Chromium tests, 0 failed/cancelled/skipped; pointer/keyboard, persistence, profile transfer, nested tabs, responsive lane bounds, Undo/Redo and Save/Publish separation included.",
+      "full_editor_layout_suite": "PASS — npm run test:editor:layout; 53/53 browser test files completed, every per-file TAP summary reported pass with zero fail/cancel/skip. The final file (editor-element-insertion) was 8/8.",
+      "editor_unit": "PASS — npm run test:editor, 14/14 files; Linux subreaper contract 3/3.",
+      "typecheck": "PASS — npm run typecheck.",
+      "web013_migration_safety": "PASS — npm run test:web013:migration-gate; local gate only, no production D1 query/write/migration.",
+      "wrangler_dry_run": "PASS — Wrangler 4.130.0 dry-run, 168 files, 335.81 KiB / 87.60 KiB gzip; no upload/deploy. WRANGLER_LOG_PATH directed the log to /tmp to avoid the default read-only log path.",
+      "canonical_plan_contract_active_point_traceability_syntax_and_diff": {
+        "result": "PASS",
+        "commands": [
+          "python3 scripts/check-canonical-plan.py",
+          "python3 tests/plan-contract.test.py",
+          "python3 scripts/audit-active-plan-point.py",
+          "python3 scripts/build-feature-traceability.py --check",
+          "node --check public/editor-v2/ui/shell.js",
+          "node --check public/editor-v2/ui/workspace-appearance.js",
+          "node --check tests/browser/editor-workspace-appearance.test.js",
+          "python3 -m json.tool docs/evidence/editor-workspace-floating-canvas-safe-2026-11-08.json",
+          "git diff --check"
+        ],
+        "canonical_plan": "one complete 13-file master; 396 source mappings; function acceptance not certified",
+        "plan_contract": "13/13",
+        "active_point": "77.44.6.1.C OPEN / NOT_CERTIFIED",
+        "source_traceability": "396/396"
+      }
+    },
+    "source_sha256": {
+      "public/editor-v2/index.html": "2e403f5bd4fbe217e30294d4af924e32991c617d0b6c5df89934fdde5feef7bf",
+      "public/editor-v2/editor-refresh.css": "5699e29b8129a429136e7f69125c5b1763474c7435ced31b31c7381790589830",
+      "public/editor-v2/ui/shell.js": "bbc5966eefc7b0f12cd284b6bafa388e6089f0096300fc251fdca803b22bb5c6",
+      "public/editor-v2/ui/workspace-appearance.js": "55de3b6671394778b039bab2685e654515fe70fd8bc2944556d660ebaa3f06e5",
+      "tests/editor-workspace-appearance.test.js": "2c78bf4aec582b3d8c0380efe2c63746edc15482c8bf1db96e04cb845826ad1c",
+      "tests/browser/editor-workspace-appearance.test.js": "612fe9651a0520b4f0f373349c856432940584ea846d9a6d7c0e80c14b88b6cf"
+    },
+    "github": {
+      "branch": "v2/foundation",
+      "read_only_branch_head": "d75af5439c38e2a7e19f1aa6b8b5b0cc81d6ec09",
+      "local_head_before_work": "b20f31d8df1e1fa4d8e76b5f59bc665513d8e2f9",
+      "local_commits_ahead_before_work": 28,
+      "push": "NOT PUSHED: the local branch contains 28 commits ahead of the remote, including runtime commits that have not passed the required release path; a fast-forward would release that chain. No reset, rebase, force push, branch switch, or runtime [skip ci] was used."
+    },
+    "actions_storage": {
+      "owner_reported": "0.45/0.50 GB",
+      "current_quota": "UNVERIFIED",
+      "approved_cost_huf": 0,
+      "workflow_started": false,
+      "artifact_operation": false
+    },
+    "production_worker": {
+      "deployment_id": "6aea7ce1-830a-451a-a00d-c88284b08ef9",
+      "traffic_version_id": "425cfad2-3744-49e1-afde-289216ad8c2b",
+      "traffic_percentage": 100,
+      "public_health_this_run": {
+        "checked_at_utc": "2026-11-08T21:04Z",
+        "endpoint": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+        "result": "HTTP 200",
+        "body": "{\"ok\":true,\"service\":\"sanci9517-streamer-brand\",\"version\":\"2.0.0\",\"server\":\"cloudflare-worker\"}",
+        "scope": "Existing production Worker only; local runtime changes are not deployed."
+      },
+      "live_changed_asset_hashes": "NOT CHECKED / NOT APPLICABLE: runtime assets were not released; local SHA-256 values above are source evidence only.",
+      "runtime_deployed_by_this_run": false,
+      "custom_domain_health_attempt": {
+        "endpoint": "https://sanci9517.com/api/health",
+        "result": "UNVERIFIED by the sandbox; curl exited 56 because the configured proxy returned CONNECT 403 before HTTP."
+      }
+    },
+    "release": {
+      "status": "BLOCKED_PENDING_REVIEW_OF_LOCAL_RUNTIME_ANCESTRY_AND_RELEASE_GATES",
+      "select_only_production_d1_preflight": "NOT RUN — no release was attempted; no D1 query/write/migration occurred.",
+      "wrangler_deploy_dry_run": "PASS, as above.",
+      "deploy_safe": "NOT RUN.",
+      "aggregate_ci": "NOT RUN; no GitHub push or Actions workflow.",
+      "manual_visual_editor_acceptance": "DEFERRED until the entire Visual Editor scope is complete.",
+      "c_plan": "OPEN / NOT CERTIFIED — automated evidence for this slice does not certify arbitrary recursive panel groups or the full workspace lifecycle acceptance."
+    },
+    "data_safety": {
+      "production_d1_query": false,
+      "production_d1_write_or_migration": false,
+      "r2_operation": false,
+      "new_dependency": false,
+      "artifact_operation": false,
+      "cost_huf": 0
+    },
+    "next_step": "Review/preserve the 28-commit local runtime ancestry and follow the required read-only D1 preflight, Wrangler dry-run, safe fast-forward and deploy:safe only when the entire release chain is reviewed and eligible. Then directly verify production Worker traffic, public health and changed asset SHA-256. Continue unimplemented C acceptance criteria without treating this automated slice as completion."
+  },
+  "runtime_ancestry_audit_2026_11_08": {
+    "audited_at_utc": "2026-11-08T21:10:00Z",
+    "branch": "v2/foundation",
+    "base_github_head": "d75af5439c38e2a7e19f1aa6b8b5b0cc81d6ec09",
+    "local_head_before_this_uncommitted_follow_up": "b20f31d8df1e1fa4d8e76b5f59bc665513d8e2f9",
+    "commits_ahead_before_this_follow_up": 28,
+    "classification_counts": {
+      "runtime": 4,
+      "tests_or_evidence_only": 7,
+      "documentation_only": 17
+    },
+    "runtime_commit_review": [
+      {
+        "sha": "71e7a86ff9351017654c19ceb5847f4203a2d9c8",
+        "review": "Responsive desktop preset intent is kept separate from the one-drawer mobile presentation; mobile selection cannot persist a transient two-panel state. Full layout suite passed."
+      },
+      {
+        "sha": "971d12465ffa72b454677b346f8d7100169874d8",
+        "review": "Rendered separator values and limits follow the actual viewport-clamped dock tracks; resize cancellation restores the stored desktop width. Full layout suite passed."
+      },
+      {
+        "sha": "2a32f0e5e10ae710c849620ae61813e727bca559",
+        "review": "Tabbed mode resize bounds count its single physical dock track, preventing unnecessary restriction or canvas overlap. Full layout suite passed."
+      },
+      {
+        "sha": "c8af1975a0a6d8bc1ea54f8e823f1e8fb5e65e2b",
+        "review": "Floating mode uses a raised inset card in the reserved non-canvas grid lane, not an overlay; mode/side/profile state are allowlisted and mobile degrades to the one-panel drawer. The current follow-up adds bounded pointer/keyboard position and catches/fixes a mobile hit-test regression."
+      }
+    ],
+    "all_local_commits": [
+      {
+        "sha": "71e7a86ff9351017654c19ceb5847f4203a2d9c8",
+        "subject": "fix(editor): preserve desktop layout intent after mobile preset",
+        "type": "runtime",
+        "paths": [
+          "docs/evidence/feature-traceability.json",
+          "public/editor-v2/ui/shell.js",
+          "tests/browser/editor-workspace-appearance.test.js"
+        ]
+      },
+      {
+        "sha": "5dd422f561be4058fd30b838343941a52a9abef2",
+        "subject": "docs(editor): record mobile layout release state",
+        "type": "documentation_only",
+        "paths": [
+          "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+          "docs/evidence/editor-workspace-mobile-preset-restore-2026-11-08.json"
+        ]
+      },
+      {
+        "sha": "971d12465ffa72b454677b346f8d7100169874d8",
+        "subject": "fix(editor): align dock resizing with canvas-safe width",
+        "type": "runtime",
+        "paths": [
+          "docs/evidence/feature-traceability.json",
+          "public/editor-v2/ui/shell.js",
+          "tests/browser/editor-workspace-appearance.test.js"
+        ]
+      },
+      {
+        "sha": "659015c96be8c8819aeb903971d60ba5c129e8b3",
+        "subject": "[skip ci] docs(editor): record canvas-clamped resize verification",
+        "type": "documentation_only",
+        "paths": [
+          "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+          "docs/evidence/editor-workspace-canvas-clamped-resize-2026-11-08.json"
+        ]
+      },
+      {
+        "sha": "eb64b4a5d58e4be9a9c762a2645316ae5ae5efa2",
+        "subject": "[skip ci] docs(editor): timestamp resize evidence",
+        "type": "documentation_only",
+        "paths": [
+          "docs/evidence/editor-workspace-canvas-clamped-resize-2026-11-08.json"
+        ]
+      },
+      {
+        "sha": "80d70f21c66ecb8a7adb4fb0c74897cab94fa3c5",
+        "subject": "[skip ci] docs(editor): record documentation push blocker",
+        "type": "documentation_only",
+        "paths": [
+          "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+          "docs/evidence/editor-workspace-canvas-clamped-resize-2026-11-08.json"
+        ]
+      },
+      {
+        "sha": "2a32f0e5e10ae710c849620ae61813e727bca559",
+        "subject": "fix(editor): size tabbed dock resize to one track",
+        "type": "runtime",
+        "paths": [
+          "public/editor-v2/ui/shell.js",
+          "tests/browser/editor-workspace-appearance.test.js"
+        ]
+      },
+      {
+        "sha": "e9f95fae4db1ec156812f111c0a04ed66a9d0da3",
+        "subject": "[skip ci] docs(editor): record tabbed track resize fix",
+        "type": "documentation_only",
+        "paths": [
+          "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+          "docs/evidence/editor-workspace-canvas-clamped-resize-2026-11-08.json",
+          "docs/evidence/feature-traceability.json"
+        ]
+      },
+      {
+        "sha": "852b6b2fe4eaf9cdabefe3deba148d8a7e1e6152",
+        "subject": "[skip ci] docs(editor): finalize tabbed resize evidence",
+        "type": "documentation_only",
+        "paths": [
+          "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+          "docs/evidence/editor-workspace-canvas-clamped-resize-2026-11-08.json"
+        ]
+      },
+      {
+        "sha": "b2e180ccc374dbb469e64880a62b371e4f1c70ec",
+        "subject": "[skip ci] test(editor): cover narrow tabbed pointer resize",
+        "type": "tests_or_evidence_only",
+        "paths": [
+          "tests/browser/editor-workspace-appearance.test.js"
+        ]
+      },
+      {
+        "sha": "3eabac79eee142a9640540eaac97374817d463e9",
+        "subject": "[skip ci] docs(editor): record tabbed pointer resize verification",
+        "type": "documentation_only",
+        "paths": [
+          "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+          "docs/evidence/editor-workspace-canvas-clamped-resize-2026-11-08.json"
+        ]
+      },
+      {
+        "sha": "ef694216d9abca79439eac91a7654c14ae5cdfd3",
+        "subject": "[skip ci] docs(editor): record full layout suite result",
+        "type": "documentation_only",
+        "paths": [
+          "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+          "docs/evidence/editor-workspace-canvas-clamped-resize-2026-11-08.json"
+        ]
+      },
+      {
+        "sha": "6e4669e83b6ba37d8234ff83a4a6a3de6b03d83b",
+        "subject": "[skip ci] docs(editor): record workspace regression rerun",
+        "type": "documentation_only",
+        "paths": [
+          "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+          "docs/evidence/editor-workspace-canvas-clamped-resize-2026-11-08.json"
+        ]
+      },
+      {
+        "sha": "711f286c60d157c180dbc78ffe79224cb18fe504",
+        "subject": "[skip ci] docs(editor): record shell zoom regression",
+        "type": "documentation_only",
+        "paths": [
+          "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+          "docs/evidence/editor-workspace-canvas-clamped-resize-2026-11-08.json"
+        ]
+      },
+      {
+        "sha": "c8af1975a0a6d8bc1ea54f8e823f1e8fb5e65e2b",
+        "subject": "feat(editor): add canvas-safe floating panel workspace",
+        "type": "runtime",
+        "paths": [
+          "public/editor-v2/editor-refresh.css",
+          "public/editor-v2/index.html",
+          "public/editor-v2/ui/shell.js",
+          "public/editor-v2/ui/workspace-appearance.js",
+          "tests/browser/editor-workspace-appearance.test.js",
+          "tests/editor-workspace-appearance.test.js"
+        ]
+      },
+      {
+        "sha": "b115de09366788da5299e5a1f69154f4bc0fe093",
+        "subject": "docs(editor): record floating workspace evidence [skip ci]",
+        "type": "documentation_only",
+        "paths": [
+          "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+          "docs/evidence/editor-workspace-floating-canvas-safe-2026-11-08.json",
+          "docs/evidence/feature-traceability.json"
+        ]
+      },
+      {
+        "sha": "e6137a87fdb06154c7cbd54440d394e6003df787",
+        "subject": "test(editor): cover floating dock geometry matrix [skip ci]",
+        "type": "tests_or_evidence_only",
+        "paths": [
+          "tests/browser/editor-workspace-appearance.test.js"
+        ]
+      },
+      {
+        "sha": "c1bc3592807c73613f5ce5ce8183b99bb755f19e",
+        "subject": "docs(editor): record full floating dock matrix [skip ci]",
+        "type": "documentation_only",
+        "paths": [
+          "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+          "docs/evidence/editor-workspace-floating-canvas-safe-2026-11-08.json"
+        ]
+      },
+      {
+        "sha": "1ff7f2eaf9a93bf5e6744e98cf4fe8609b0b2023",
+        "subject": "docs(editor): refresh current floating workspace status [skip ci]",
+        "type": "documentation_only",
+        "paths": [
+          "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md"
+        ]
+      },
+      {
+        "sha": "316c83ecc809352da0a3938b710b2cb0cd212786",
+        "subject": "[skip ci] test(editor): cover grouped dock canvas-edge undo matrix",
+        "type": "tests_or_evidence_only",
+        "paths": [
+          "tests/browser/editor-workspace-appearance.test.js"
+        ]
+      },
+      {
+        "sha": "3fccd5e71b4ec71b38e934f9ac2614ef3d2d85c9",
+        "subject": "[skip ci] docs(editor): record grouped dock undo matrix",
+        "type": "documentation_only",
+        "paths": [
+          "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+          "docs/evidence/editor-workspace-floating-canvas-safe-2026-11-08.json"
+        ]
+      },
+      {
+        "sha": "1f8f3102441ac686d0479483c5d59010c216165b",
+        "subject": "[skip ci] docs(editor): record complete canvas-safe layout suite",
+        "type": "documentation_only",
+        "paths": [
+          "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+          "docs/evidence/editor-workspace-floating-canvas-safe-2026-11-08.json"
+        ]
+      },
+      {
+        "sha": "e5d9ca80b9fe036c8d28f78855d9c5fc27845e91",
+        "subject": "[skip ci] docs(editor): record live health recheck after layout suite",
+        "type": "documentation_only",
+        "paths": [
+          "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+          "docs/evidence/editor-workspace-floating-canvas-safe-2026-11-08.json"
+        ]
+      },
+      {
+        "sha": "1f0e341501b02df07aaebad0754bfd2c0039b657",
+        "subject": "test(editor): verify native grouped dock detach [skip ci]",
+        "type": "tests_or_evidence_only",
+        "paths": [
+          "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+          "docs/evidence/editor-workspace-floating-canvas-safe-2026-11-08.json",
+          "tests/browser/editor-workspace-appearance.test.js"
+        ]
+      },
+      {
+        "sha": "c443a01192f88332f0c8d8624be452207dcbd90b",
+        "subject": "test(editor): cover native dock center grouping [skip ci]",
+        "type": "tests_or_evidence_only",
+        "paths": [
+          "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+          "docs/evidence/editor-workspace-floating-canvas-safe-2026-11-08.json",
+          "tests/browser/editor-workspace-appearance.test.js"
+        ]
+      },
+      {
+        "sha": "b407231d63461da78e86248eabdc5149d4a454e2",
+        "subject": "test(editor): cover workspace profile cross-session import [skip ci]",
+        "type": "tests_or_evidence_only",
+        "paths": [
+          "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+          "docs/evidence/editor-workspace-floating-canvas-safe-2026-11-08.json",
+          "tests/browser/editor-workspace-appearance.test.js"
+        ]
+      },
+      {
+        "sha": "abe16b67179c718289a69aa063d7038ded8d9e20",
+        "subject": "test(editor): protect cross-session profile ID collisions [skip ci]",
+        "type": "tests_or_evidence_only",
+        "paths": [
+          "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+          "docs/evidence/editor-workspace-floating-canvas-safe-2026-11-08.json",
+          "tests/browser/editor-workspace-appearance.test.js"
+        ]
+      },
+      {
+        "sha": "b20f31d8df1e1fa4d8e76b5f59bc665513d8e2f9",
+        "subject": "docs(editor): record full C acceptance recheck [skip ci]",
+        "type": "documentation_only",
+        "paths": [
+          "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+          "docs/evidence/editor-workspace-c-acceptance-recheck-2026-11-08.json"
+        ]
+      }
+    ],
+    "review_result": "The 28-commit local ancestry is limited to four Editor runtime changes, seven test/evidence changes, and seventeen documentation/evidence-only changes; no unrelated product module, schema migration, dependency, build package or binary is in this range. Runtime source changes are covered by the complete 53-file local browser layout suite; this is not hosted CI, production release or aggregate CI acceptance.",
+    "release_gate": "BLOCKED: a normal fast-forward would publish this entire runtime chain and launch required hosted release checks. GitHub Actions remaining quota is not verified and owner cap is 0 Ft. No workflow was dispatched; do not bypass with runtime [skip ci], force push, rewritten ancestry or direct deployment.",
+    "production_d1": "No SELECT preflight was performed because no release attempt was made; no data write or migration.",
+    "production_worker": {
+      "deployment_id": "6aea7ce1-830a-451a-a00d-c88284b08ef9",
+      "traffic_version_id": "425cfad2-3744-49e1-afde-289216ad8c2b",
+      "traffic_percentage": 100,
+      "health_endpoint": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+      "health_http": 200,
+      "health_body": "{\"ok\":true,\"service\":\"sanci9517-streamer-brand\",\"version\":\"2.0.0\",\"server\":\"cloudflare-worker\"}",
+      "checked_at_utc": "2026-11-08T21:10Z",
+      "local_assets_deployed": false,
+      "local_asset_sha_comparison": "NOT APPLICABLE — no deployment."
+    },
+    "manual_acceptance": "DEFERRED until full Visual Editor completion; C remains OPEN / NOT CERTIFIED.",
+    "cost_huf": 0,
+    "actions_run": false,
+    "r2_operation": false,
+    "d1_write_or_migration": false
   }
 }

@@ -106,7 +106,7 @@ test('personal workspace theme, density and panel layout persist locally without
   assert.equal(await page.locator('#rightDock').getAttribute('aria-hidden'),'false');
   assert.deepEqual(writes,[],'presentation settings do not Save or Publish the page');
   const saved=await page.evaluate(key=>JSON.parse(localStorage.getItem(key)),WORKSPACE_PREFERENCES_KEY);
-  assert.deepEqual(saved,{version:2,layout:'inspector',theme:'aurora',density:'compact',accent:'#00a7c8',dockOrder:'left-canvas-right',panelMode:'separate',panelSide:'right',profiles:[]});
+  assert.deepEqual(saved,{version:2,layout:'inspector',theme:'aurora',density:'compact',accent:'#00a7c8',dockOrder:'left-canvas-right',panelMode:'separate',panelSide:'right',floatingPosition:{left:{x:0,y:0},right:{x:0,y:0}},profiles:[]});
   await page.locator('#closeWorkspaceAppearance').click();
   assert.equal(await dialog.isVisible(),false);
   await page.waitForFunction(()=>document.activeElement?.id==='openWorkspaceAppearance');
@@ -262,8 +262,9 @@ test('floating panel groups look detached but stay inside a reserved canvas-safe
   const geometry=async()=>page.evaluate(()=>{
     const canvas=document.querySelector('.canvas-area').getBoundingClientRect();
     const active=document.querySelector('.workspace').dataset.workspaceActivePanel==='left'?document.querySelector('#leftDock'):document.querySelector('#rightDock');
-    const panel=active.getBoundingClientRect();
-    const style=getComputedStyle(active);
+    const surface=active.querySelector('[data-floating-window]');
+    const panel=surface.getBoundingClientRect();
+    const style=getComputedStyle(surface);
     return {canvas:{left:canvas.left,right:canvas.right,width:canvas.width},panel:{left:panel.left,right:panel.right,top:panel.top,bottom:panel.bottom},shadow:style.boxShadow,radius:style.borderRadius,scrollWidth:document.documentElement.scrollWidth};
   });
   const left=await geometry();
@@ -332,8 +333,9 @@ test('floating panel cards preserve their physical dock side across all six orde
             const workspace=document.querySelector('.workspace');
             const active=workspace.dataset.workspaceActivePanel;
             const panel=document.querySelector(active==='left'?'#leftDock':'#rightDock');
-            const rect=panel.getBoundingClientRect();
-            const style=getComputedStyle(panel);
+            const surface=panel.querySelector('[data-floating-window]');
+            const rect=surface.getBoundingClientRect();
+            const style=getComputedStyle(surface);
             return {order:workspace.dataset.workspaceDockOrder,side:workspace.dataset.workspacePanelSide,mode:workspace.dataset.workspacePanelMode,active,canvas:{left:canvas.left,right:canvas.right,width:canvas.width},panel:{left:rect.left,right:rect.right,top:rect.top,bottom:rect.bottom},shadow:style.boxShadow,radius:style.borderRadius,scrollWidth:document.documentElement.scrollWidth};
           });
           const key=`${side}/${order}/${width}/${active}`;
@@ -1611,7 +1613,7 @@ test('dropping a dock from a tab group onto the canvas edge separates and reorde
   assert.match(result.announcement,/Beállítások panel külön dokkolóként a vászon elé került.*vászon fedetlen/iu);
   assert.equal(result.previewCleared,true);
   assert.equal(result.dragFinished,true);
-  assert.deepEqual(result.saved,{version:2,layout:'balanced',theme:'graphite',density:'comfortable',accent:'#5b8cff',dockOrder:'left-right-canvas',panelMode:'separate',panelSide:'right',profiles:[]});
+  assert.deepEqual(result.saved,{version:2,layout:'balanced',theme:'graphite',density:'comfortable',accent:'#5b8cff',dockOrder:'left-right-canvas',panelMode:'separate',panelSide:'right',floatingPosition:{left:{x:0,y:0},right:{x:0,y:0}},profiles:[]});
 
   await openPreferences(page);
   assert.equal(await page.locator('#undoWorkspaceLayout').isEnabled(),true,'ungrouping and reordering share one workspace history entry');
@@ -2370,8 +2372,14 @@ test('workspace profile crosses isolated browser sessions only through explicit 
   await source.page.locator('#workspaceDensity').selectOption('compact');
   await source.page.locator('#workspaceAccent').evaluate(element=>{element.value='#00a7c8';element.dispatchEvent(new Event('input',{bubbles:true}))});
   await source.page.locator('#workspaceDockOrder').selectOption('right-canvas-left');
-  await source.page.locator('#workspacePanelMode').selectOption('tabbed');
+  await source.page.locator('#workspacePanelMode').selectOption('floating');
   await source.page.locator('#workspacePanelSide').selectOption('left');
+  await source.page.locator('#closeWorkspaceAppearance').click();
+  await source.page.locator('#workspacePanelTabLeft').click();
+  await source.page.locator('#leftDock [data-floating-handle]').focus();
+  await source.page.keyboard.press('ArrowRight');
+  await source.page.waitForFunction(()=>JSON.parse(localStorage.getItem('sanci-editor-workspace-preferences-v2'))?.floatingPosition?.left?.x===16);
+  await openPreferences(source.page);
   await source.page.locator('#workspaceProfileName').fill('Utazó munkaterület');
   await source.page.locator('#saveWorkspaceProfile').click();
   const sourceId=await source.page.locator('#workspaceProfile').inputValue();
@@ -2385,7 +2393,7 @@ test('workspace profile crosses isolated browser sessions only through explicit 
   await source.page.locator('#closeWorkspaceAppearance').click();
 
   const targetLocalProfile={id:sourceId,name:'Célgép helyi nézete',createdAt:1,
-    appearance:{layout:'canvas',theme:'graphite',density:'comfortable',accent:'#5b8cff',dockOrder:'left-canvas-right',panelMode:'separate',panelSide:'right'},
+    appearance:{layout:'canvas',theme:'graphite',density:'comfortable',accent:'#5b8cff',dockOrder:'left-canvas-right',panelMode:'separate',panelSide:'right',floatingPosition:{left:{x:0,y:0},right:{x:0,y:0}}},
     dock:{leftOpen:false,rightOpen:false,leftTab:'pages',leftTabOrder:['pages','elements','layers','schedule','navigation'],inspectorTab:'design',panelActive:'left',leftWidth:310,rightWidth:352}};
   const targetAppearance={version:2,layout:'canvas',theme:'graphite',density:'comfortable',accent:'#5b8cff',dockOrder:'left-canvas-right',panelMode:'separate',panelSide:'right',profiles:[targetLocalProfile]};
   const target=await openEditor(t,{width:1280,height:900});
@@ -2406,17 +2414,19 @@ test('workspace profile crosses isolated browser sessions only through explicit 
   assert.equal(await target.page.locator('.editor-app').getAttribute('data-workspace-panel-mode'),'separate','import alone does not move the target session workspace');
   await target.page.locator('#workspaceProfile').selectOption(targetId);
   await target.page.locator('#loadWorkspaceProfile').click();
-  await target.page.waitForFunction(()=>document.querySelector('.editor-app')?.dataset.workspaceTheme==='aurora'&&document.querySelector('.editor-app')?.dataset.workspacePanelMode==='tabbed');
+  await target.page.waitForFunction(()=>document.querySelector('.editor-app')?.dataset.workspaceTheme==='aurora'&&document.querySelector('.editor-app')?.dataset.workspacePanelMode==='floating');
   assert.equal(await target.page.locator('.editor-app').getAttribute('data-workspace-density'),'compact');
   assert.equal(await target.page.locator('.editor-app').evaluate(element=>element.style.getPropertyValue('--accent')),'#00a7c8');
   assert.equal(await target.page.locator('.editor-app').getAttribute('data-workspace-panel-side'),'left');
+  assert.equal(await target.page.evaluate(()=>JSON.parse(localStorage.getItem('sanci-editor-workspace-preferences-v2')).floatingPosition.left.x),16,'portable profile import restores the bounded floating-window offset');
   assert.equal(await target.page.locator('.workspace').getAttribute('data-workspace-dock-order'),'right-canvas-left');
   await target.page.locator('#closeWorkspaceAppearance').click();
   await target.page.reload({waitUntil:'load'});
   await target.page.waitForFunction(()=>document.documentElement.dataset.editorBoot==='ready');
   assert.equal(await target.page.locator('.editor-app').getAttribute('data-workspace-theme'),'aurora','the intentionally applied imported profile persists in its own session');
-  assert.equal(await target.page.locator('.editor-app').getAttribute('data-workspace-panel-mode'),'tabbed');
+  assert.equal(await target.page.locator('.editor-app').getAttribute('data-workspace-panel-mode'),'floating');
   assert.equal(await target.page.locator('.editor-app').getAttribute('data-workspace-panel-side'),'left');
+  assert.equal(await target.page.evaluate(()=>JSON.parse(localStorage.getItem('sanci-editor-workspace-preferences-v2')).floatingPosition.left.x),16,'a restored local profile keeps its floating position after reload');
   assert.equal(await target.page.locator('.workspace').getAttribute('data-workspace-dock-order'),'right-canvas-left');
   await openPreferences(source.page);
   assert.equal(await source.page.locator('#workspaceProfile option').count(),2,'export/import in the other session does not mutate the source session');
@@ -3180,6 +3190,8 @@ test('mobile drawer close controls keep a 44px touch target on compact phones',a
       const bounds=await close.boundingBox();
       assert.ok(bounds&&bounds.width>=44&&bounds.height>=44,`${width}px ${side} drawer close control must remain at least 44×44px: ${JSON.stringify(bounds)}`);
       assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`${width}px ${side} drawer keeps the viewport free of horizontal overflow`);
+      const hit=await close.evaluate(element=>{const rect=element.getBoundingClientRect(),x=rect.left+rect.width/2,y=rect.top+rect.height/2,hit=document.elementFromPoint(x,y);return {tag:hit?.tagName,id:hit?.id,className:hit?.className,rect:{x,y,width:rect.width,height:rect.height},parent:getComputedStyle(element.parentElement).cssText,mode:matchMedia('(min-width: 1025px)').matches}});
+      assert.equal(await close.evaluate(element=>{const rect=element.getBoundingClientRect();return document.elementFromPoint(rect.left+rect.width/2,rect.top+rect.height/2)===element}),true,`${width}px ${side} drawer close target receives pointer input: ${JSON.stringify(hit)}`);
       await close.tap();
       await page.waitForFunction(id=>document.querySelector(`#${id}`)?.classList.contains('closed'),`${side}Dock`);
       assert.equal(await opener.evaluate(element=>document.activeElement===element),true,`${width}px ${side} touch close returns keyboard focus to its opener`);
@@ -3612,5 +3624,119 @@ test('compact phone keeps every desktop dock order reachable without changing th
   assert.ok(!(state.leftOpen&&state.rightOpen),'desktop order choices do not open both mobile drawers');
   if(state.leftOpen||state.rightOpen)assert.equal(state.canvasInert,true,'an active compact-phone drawer keeps the page background inert');
   assert.deepEqual(writes,[],'changing desktop layout preferences never Save or Publish page data');
+  assert.deepEqual(errors,[]);
+});
+
+test('floating dock windows move inside a reserved lane with pointer, keyboard, persistence, nested tabs and Undo',async t=>{
+  const {page,writes,errors}=await openEditor(t,{width:1280,height:900});
+  await openPreferences(page);
+  await page.locator('#workspaceLayout').selectOption('balanced');
+  await page.locator('#workspacePanelMode').selectOption('floating');
+  await page.locator('#workspacePanelSide').selectOption('left');
+  await page.locator('#closeWorkspaceAppearance').click();
+  await page.locator('#workspacePanelTabLeft').click();
+  await page.waitForFunction(()=>document.querySelector('.workspace')?.dataset.workspacePanelMode==='floating'&&document.querySelector('#workspacePanelTabLeft')?.getAttribute('aria-selected')==='true');
+
+  const nested=await page.evaluate(()=>({
+    root:document.querySelector('.workspace-panel-group-tabs[role="tablist"]')?.getAttribute('aria-label'),
+    left:document.querySelector('#leftDock[role="tabpanel"] .tool-rail[role="tablist"]')?.getAttribute('aria-label'),
+    right:document.querySelector('#rightDock[role="tabpanel"] .inspector-tabs[role="tablist"]')?.getAttribute('aria-label'),
+    side:document.querySelector('.workspace')?.dataset.workspacePanelSide,
+  }));
+  assert.equal(nested.root,'Panelcsoport','the outer dock remains a first-level tab group');
+  assert.equal(nested.left,'Szerkesztő eszközök','the active dock exposes its nested tool tab group');
+  assert.equal(nested.right,'Beállítási kategóriák','the other dock retains its own nested inspector tab group');
+  assert.equal(nested.side,'left');
+
+  const handle=page.locator('#leftDock [data-floating-handle]');
+  assert.equal(await handle.isVisible(),true,'floating mode exposes a directly labelled, keyboard-operable drag handle');
+  const start=await handle.boundingBox();
+  assert.ok(start);
+  await page.mouse.move(start.x+start.width/2,start.y+start.height/2);
+  await page.mouse.down();
+  const downState=await page.evaluate(()=>({pressed:document.querySelector('[data-floating-handle="left"]')?.matches(':active'),mode:document.querySelector('.workspace')?.dataset.workspacePanelMode,active:document.querySelector('.workspace')?.dataset.workspaceActivePanel,handle:document.querySelector('[data-floating-handle="left"]')?.getBoundingClientRect().toJSON()}));
+  await page.mouse.move(start.x+start.width/2+48,start.y+start.height/2+32,{steps:6});
+  const duringDrag=await page.evaluate(()=>({moving:document.body.classList.contains('moving-floating-dock'),x:getComputedStyle(document.querySelector('.workspace')).getPropertyValue('--floating-left-x'),y:getComputedStyle(document.querySelector('.workspace')).getPropertyValue('--floating-left-y')}));
+  await page.mouse.up();
+  await page.waitForTimeout(100);
+  const dragState=await page.evaluate(()=>({mode:document.querySelector('.workspace')?.dataset.workspacePanelMode,active:document.querySelector('.workspace')?.dataset.workspaceActivePanel,position:JSON.parse(localStorage.getItem('sanci-editor-workspace-preferences-v2'))?.floatingPosition?.left,vars:{x:getComputedStyle(document.querySelector('.workspace')).getPropertyValue('--floating-left-x'),y:getComputedStyle(document.querySelector('.workspace')).getPropertyValue('--floating-left-y')},host:document.querySelector('#leftDock')?.getBoundingClientRect().toJSON(),panel:document.querySelector('#leftDock [data-floating-window]')?.getBoundingClientRect().toJSON()}));
+  assert.ok(dragState.position?.x>0&&dragState.position?.y>0,`the pointer drag must persist a moved panel, not merely activate the button: ${JSON.stringify({downState,duringDrag,dragState,errors})}`);
+  const moved=await page.evaluate(()=>{
+    const host=document.querySelector('#leftDock').getBoundingClientRect();
+    const panel=document.querySelector('#leftDock [data-floating-window]').getBoundingClientRect();
+    const canvas=document.querySelector('.canvas-area').getBoundingClientRect();
+    const position=JSON.parse(localStorage.getItem('sanci-editor-workspace-preferences-v2')).floatingPosition.left;
+    return {host:{left:host.left,right:host.right,top:host.top,bottom:host.bottom},panel:{left:panel.left,right:panel.right,top:panel.top,bottom:panel.bottom},canvas:{left:canvas.left,right:canvas.right,width:canvas.width},position};
+  });
+  assert.ok(moved.position.x>0&&moved.position.y>0,`pointer movement persists both axes: ${JSON.stringify(moved)}`);
+  assert.ok(moved.panel.left>=moved.host.left+7&&moved.panel.right<=moved.host.right-7&&moved.panel.top>=moved.host.top+7&&moved.panel.bottom<=moved.host.bottom-7,`the window stays inside its reserved dock lane: ${JSON.stringify(moved)}`);
+  assert.ok(moved.canvas.width>=400,`the window leaves a usable canvas track: ${JSON.stringify(moved)}`);
+  assert.ok(moved.panel.right<=moved.canvas.left+0.5||moved.panel.left>=moved.canvas.right-0.5,`the floating window never overlays canvas pixels: ${JSON.stringify(moved)}`);
+
+  await openPreferences(page);
+  await page.locator('#undoWorkspaceLayout').click();
+  await page.waitForFunction(()=>JSON.parse(localStorage.getItem('sanci-editor-workspace-preferences-v2'))?.floatingPosition?.left?.x===0);
+  await page.locator('#redoWorkspaceLayout').click();
+  await page.waitForFunction(()=>JSON.parse(localStorage.getItem('sanci-editor-workspace-preferences-v2'))?.floatingPosition?.left?.x>0);
+  await page.locator('#closeWorkspaceAppearance').click();
+
+  const beforeKeyboard=await page.evaluate(()=>JSON.parse(localStorage.getItem('sanci-editor-workspace-preferences-v2')).floatingPosition.left);
+  await handle.focus();await page.keyboard.press('ArrowRight');await page.keyboard.press('ArrowDown');
+  await page.waitForFunction(previous=>{
+    const current=JSON.parse(localStorage.getItem('sanci-editor-workspace-preferences-v2'))?.floatingPosition?.left;
+    return current?.x===previous.x+16&&current?.y===previous.y+16;
+  },beforeKeyboard);
+  await page.keyboard.press('Home');
+  await page.waitForFunction(()=>{
+    const current=JSON.parse(localStorage.getItem('sanci-editor-workspace-preferences-v2'))?.floatingPosition?.left;
+    return current?.x===0&&current?.y===0;
+  });
+  await page.reload({waitUntil:'load'});
+  await page.locator('.page-canvas .node').first().waitFor();
+  const restored=await page.evaluate(()=>({
+    mode:document.querySelector('.workspace').dataset.workspacePanelMode,
+    left:JSON.parse(localStorage.getItem('sanci-editor-workspace-preferences-v2'))?.floatingPosition?.left,
+    canvasWidth:document.querySelector('.canvas-area').getBoundingClientRect().width,
+    save:document.querySelector('#save').textContent,publish:document.querySelector('#publish').textContent,
+  }));
+  assert.equal(restored.mode,'floating');
+  assert.deepEqual(restored.left,{x:0,y:0});
+  assert.ok(restored.canvasWidth>=400);
+  assert.equal(restored.save,'Mentés');assert.equal(restored.publish,'Publikálás');
+  assert.deepEqual(writes,[],'moving a panel, changing its workspace preference, and undo/redo do not Save or Publish page content');
+  assert.deepEqual(errors,[]);
+});
+
+test('floating windows clamp to their own lane at the 1025px boundary and both panel sides',async t=>{
+  const {page,writes,errors}=await openEditor(t,{width:1280,height:900});
+  for(const width of [1025,1280,1920]){
+    await page.setViewportSize({width,height:900});
+    await page.waitForFunction(expected=>innerWidth===expected,width);
+    for(const side of ['left','right']){
+      await openPreferences(page);
+      await page.locator('#workspaceLayout').selectOption('balanced');
+      await page.locator('#workspacePanelMode').selectOption('floating');
+      await page.locator('#workspacePanelSide').selectOption(side);
+      await page.locator('#closeWorkspaceAppearance').click();
+      const tab=page.locator(`#workspacePanelTab${side==='left'?'Left':'Right'}`);
+      await tab.click();
+      const handle=page.locator(`#${side}Dock [data-floating-handle]`);
+      await handle.focus();await page.keyboard.press('End');
+      await page.waitForFunction(expected=>{
+        const position=JSON.parse(localStorage.getItem('sanci-editor-workspace-preferences-v2'))?.floatingPosition?.[expected.side];
+        return position?.x>0&&position?.y>0;
+      },{side});
+      const geometry=await page.evaluate(expected=>{
+        const host=document.querySelector(`#${expected.side}Dock`).getBoundingClientRect();
+        const panel=document.querySelector(`#${expected.side}Dock [data-floating-window]`).getBoundingClientRect();
+        const canvas=document.querySelector('.canvas-area').getBoundingClientRect();
+        return {host:host.toJSON(),panel:panel.toJSON(),canvas:canvas.toJSON(),position:JSON.parse(localStorage.getItem('sanci-editor-workspace-preferences-v2')).floatingPosition[expected.side]};
+      },{side});
+      assert.ok(geometry.canvas.width>=400,`${width}px ${side}: canvas stays usable at its minimum width: ${JSON.stringify(geometry)}`);
+      assert.ok(geometry.panel.left>=geometry.host.left+7&&geometry.panel.right<=geometry.host.right-7&&geometry.panel.top>=geometry.host.top+7&&geometry.panel.bottom<=geometry.host.bottom-7,`${width}px ${side}: keyboard End clamps within the reserved panel lane: ${JSON.stringify(geometry)}`);
+      assert.ok(geometry.panel.right<=geometry.canvas.left+0.5||geometry.panel.left>=geometry.canvas.right-0.5,`${width}px ${side}: the window never overlays the canvas: ${JSON.stringify(geometry)}`);
+    }
+  }
+  assert.deepEqual(writes,[],'viewport changes and moving either floating dock never write page content');
   assert.deepEqual(errors,[]);
 });
