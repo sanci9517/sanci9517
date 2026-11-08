@@ -1636,82 +1636,87 @@ test('dropping a dock from a tab group onto the canvas edge separates and reorde
   assert.deepEqual(errors,[]);
 });
 
-test('ungrouping either tabbed dock follows both canvas edges for all saved dock orders and group sides',async t=>{
+test('ungrouping either grouped dock mode follows both canvas edges for all saved dock orders and group sides',async t=>{
   const {page,writes,errors}=await openEditor(t,{width:1440,height:900});
   const orders=['left-canvas-right','canvas-left-right','left-right-canvas','right-left-canvas','right-canvas-left','canvas-right-left'];
 
   await openPreferences(page);
   await page.locator('#workspaceLayout').selectOption('balanced');
-  await page.locator('#workspacePanelMode').selectOption('tabbed');
   await page.locator('#closeWorkspaceAppearance').click();
-
-  for(const order of orders){
+  for(const panelMode of ['tabbed','floating']){
     await openPreferences(page);
-    await page.locator('#workspaceDockOrder').selectOption(order);
+    await page.locator('#workspacePanelMode').selectOption(panelMode);
+    await page.waitForFunction(expected=>document.querySelector('.workspace')?.dataset.workspacePanelMode===expected,panelMode);
     await page.locator('#closeWorkspaceAppearance').click();
 
-    for(const groupSide of ['left','right']){
+    for(const order of orders){
       await openPreferences(page);
-      await page.locator('#workspacePanelSide').selectOption(groupSide);
+      await page.locator('#workspaceDockOrder').selectOption(order);
       await page.locator('#closeWorkspaceAppearance').click();
 
-      for(const sourceId of ['left','right']){
-        await page.locator(`#workspacePanelTab${sourceId==='left'?'Left':'Right'}`).click();
-        assert.equal(await page.locator('.workspace').getAttribute('data-workspace-active-panel'),sourceId,`${order}/${groupSide}/${sourceId}: the source panel is active before dragging`);
-        for(const edge of ['before','after']){
-          const expected=order.split('-');
-          expected.splice(expected.indexOf(sourceId),1);
-          expected.splice(expected.indexOf('canvas')+(edge==='before'?0:1),0,sourceId);
-          const result=await page.evaluate(({sourceId,edge})=>{
-            const source=document.querySelector(`#${sourceId}Dock .dock-heading`);
-            const target=document.querySelector('.canvas-area');
-            const rect=target.getBoundingClientRect();
-            const dataTransfer=new DataTransfer();
-            source.dispatchEvent(new DragEvent('dragstart',{bubbles:true,cancelable:true,dataTransfer}));
-            const clientX=rect.left+(edge==='before'?4:rect.width-4);
-            target.dispatchEvent(new DragEvent('dragover',{bubbles:true,cancelable:true,dataTransfer,clientX}));
-            const preview=target.dataset.dockDropPosition;
-            target.dispatchEvent(new DragEvent('drop',{bubbles:true,cancelable:true,dataTransfer,clientX}));
-            const canvas=target.getBoundingClientRect();
-            const left=document.querySelector('#leftDock').getBoundingClientRect();
-            const right=document.querySelector('#rightDock').getBoundingClientRect();
-            return {
-              preview,
-              mode:document.querySelector('.editor-app').dataset.workspacePanelMode,
-              side:document.querySelector('.editor-app').dataset.workspacePanelSide,
-              order:document.querySelector('.workspace').dataset.workspaceDockOrder,
-              active:document.querySelector('.workspace').dataset.workspaceActivePanel,
-              canvasWidth:canvas.width,canvasLeft:canvas.left,canvasRight:canvas.right,
-              left:left.toJSON(),right:right.toJSON(),
-              saved:JSON.parse(localStorage.getItem('sanci-editor-workspace-preferences-v2')),
-              dragActive:document.body.classList.contains('workspace-reordering')
-            };
-          },{sourceId,edge});
+      for(const groupSide of ['left','right']){
+        await openPreferences(page);
+        await page.locator('#workspacePanelSide').selectOption(groupSide);
+        await page.locator('#closeWorkspaceAppearance').click();
 
-          assert.equal(result.preview,edge,`${order}/${groupSide}/${sourceId}/${edge}: the selected edge is previewed`);
-          assert.equal(result.mode,'separate',`${order}/${groupSide}/${sourceId}/${edge}: the dock leaves its tab group`);
-          assert.equal(result.side,groupSide,`${order}/${groupSide}/${sourceId}/${edge}: the remembered group side remains stable`);
-          assert.equal(result.order,expected.join('-'),`${order}/${groupSide}/${sourceId}/${edge}: the dropped panel follows the physical canvas edge`);
-          assert.equal(result.active,sourceId,`${order}/${groupSide}/${sourceId}/${edge}: the dragged panel stays selected`);
-          assert.equal(result.saved.dockOrder,expected.join('-'));
-          assert.equal(result.saved.panelMode,'separate');
-          assert.ok(result.canvasWidth>=400,`${order}/${groupSide}/${sourceId}/${edge}: the canvas remains usable: ${JSON.stringify(result)}`);
-          assert.ok([result.left,result.right].every(dock=>dock.width===0||dock.right<=result.canvasLeft+0.5||dock.left>=result.canvasRight-0.5),`${order}/${groupSide}/${sourceId}/${edge}: neither dock overlays the canvas`);
-          assert.equal(result.dragActive,false,`${order}/${groupSide}/${sourceId}/${edge}: the drop closes its drag lifecycle`);
+        for(const sourceId of ['left','right']){
+          await page.locator(`#workspacePanelTab${sourceId==='left'?'Left':'Right'}`).click();
+          assert.equal(await page.locator('.workspace').getAttribute('data-workspace-active-panel'),sourceId,`${panelMode}/${order}/${groupSide}/${sourceId}: the source panel is active before dragging`);
+          for(const edge of ['before','after']){
+            const expected=order.split('-');
+            expected.splice(expected.indexOf(sourceId),1);
+            expected.splice(expected.indexOf('canvas')+(edge==='before'?0:1),0,sourceId);
+            const result=await page.evaluate(({sourceId,edge})=>{
+              const source=document.querySelector(`#${sourceId}Dock .dock-heading`);
+              const target=document.querySelector('.canvas-area');
+              const rect=target.getBoundingClientRect();
+              const dataTransfer=new DataTransfer();
+              source.dispatchEvent(new DragEvent('dragstart',{bubbles:true,cancelable:true,dataTransfer}));
+              const clientX=rect.left+(edge==='before'?4:rect.width-4);
+              target.dispatchEvent(new DragEvent('dragover',{bubbles:true,cancelable:true,dataTransfer,clientX}));
+              const preview=target.dataset.dockDropPosition;
+              target.dispatchEvent(new DragEvent('drop',{bubbles:true,cancelable:true,dataTransfer,clientX}));
+              const canvas=target.getBoundingClientRect();
+              const left=document.querySelector('#leftDock').getBoundingClientRect();
+              const right=document.querySelector('#rightDock').getBoundingClientRect();
+              return {
+                preview,
+                mode:document.querySelector('.editor-app').dataset.workspacePanelMode,
+                side:document.querySelector('.editor-app').dataset.workspacePanelSide,
+                order:document.querySelector('.workspace').dataset.workspaceDockOrder,
+                active:document.querySelector('.workspace').dataset.workspaceActivePanel,
+                canvasWidth:canvas.width,canvasLeft:canvas.left,canvasRight:canvas.right,
+                left:left.toJSON(),right:right.toJSON(),
+                saved:JSON.parse(localStorage.getItem('sanci-editor-workspace-preferences-v2')),
+                dragActive:document.body.classList.contains('workspace-reordering')
+              };
+            },{sourceId,edge});
 
-          await openPreferences(page);
-          await page.locator('#undoWorkspaceLayout').click();
-          assert.equal(await page.locator('#workspacePanelMode').inputValue(),'tabbed',`${order}/${groupSide}/${sourceId}/${edge}: one Undo restores the group`);
-          assert.equal(await page.locator('#workspacePanelSide').inputValue(),groupSide);
-          assert.equal(await page.locator('.workspace').getAttribute('data-workspace-active-panel'),sourceId,`${order}/${groupSide}/${sourceId}/${edge}: Undo restores the selected panel too`);
-          assert.equal(await page.locator('#workspaceDockOrder').inputValue(),order);
-          await page.locator('#closeWorkspaceAppearance').click();
+            assert.equal(result.preview,edge,`${panelMode}/${order}/${groupSide}/${sourceId}/${edge}: the selected edge is previewed`);
+            assert.equal(result.mode,'separate',`${panelMode}/${order}/${groupSide}/${sourceId}/${edge}: the dock leaves its group`);
+            assert.equal(result.side,groupSide,`${panelMode}/${order}/${groupSide}/${sourceId}/${edge}: the remembered group side remains stable`);
+            assert.equal(result.order,expected.join('-'),`${panelMode}/${order}/${groupSide}/${sourceId}/${edge}: the dropped panel follows the physical canvas edge`);
+            assert.equal(result.active,sourceId,`${panelMode}/${order}/${groupSide}/${sourceId}/${edge}: the dragged panel stays selected`);
+            assert.equal(result.saved.dockOrder,expected.join('-'));
+            assert.equal(result.saved.panelMode,'separate');
+            assert.ok(result.canvasWidth>=400,`${panelMode}/${order}/${groupSide}/${sourceId}/${edge}: the canvas remains usable: ${JSON.stringify(result)}`);
+            assert.ok([result.left,result.right].every(dock=>dock.width===0||dock.right<=result.canvasLeft+0.5||dock.left>=result.canvasRight-0.5),`${panelMode}/${order}/${groupSide}/${sourceId}/${edge}: neither dock overlays the canvas`);
+            assert.equal(result.dragActive,false,`${panelMode}/${order}/${groupSide}/${sourceId}/${edge}: the drop closes its drag lifecycle`);
+
+            await openPreferences(page);
+            await page.locator('#undoWorkspaceLayout').click();
+            assert.equal(await page.locator('#workspacePanelMode').inputValue(),panelMode,`${panelMode}/${order}/${groupSide}/${sourceId}/${edge}: one Undo restores the group mode`);
+            assert.equal(await page.locator('#workspacePanelSide').inputValue(),groupSide);
+            assert.equal(await page.locator('.workspace').getAttribute('data-workspace-active-panel'),sourceId,`${panelMode}/${order}/${groupSide}/${sourceId}/${edge}: Undo restores the selected panel too`);
+            assert.equal(await page.locator('#workspaceDockOrder').inputValue(),order);
+            await page.locator('#closeWorkspaceAppearance').click();
+          }
         }
       }
     }
   }
 
-  assert.deepEqual(writes,[],'all 48 drag, undo and restore paths remain workspace-only; Save and Publish are untouched');
+  assert.deepEqual(writes,[],'all 96 drag, undo and restore paths remain workspace-only; Save and Publish are untouched');
   assert.deepEqual(errors,[]);
 });
 
