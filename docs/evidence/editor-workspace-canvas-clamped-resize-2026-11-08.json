@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "recorded_at": "2026-11-08T06:05:00Z",
+  "recorded_at": "2026-11-08T06:08:21Z",
   "plan_point": "77.44.6.1.C",
   "status": "LOCAL_RUNTIME_FIX_VERIFIED_RELEASE_BLOCKED_BY_UNVERIFIED_ZERO_COST_ACTIONS_QUOTA",
   "scope": "Make desktop dock resizing operate on the actually rendered, canvas-safe track width when both panels are open on a narrow desktop; preserve the saved desktop preference when a responsive breakpoint cancels an in-progress resize.",
