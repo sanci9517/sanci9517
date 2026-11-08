@@ -1,19 +1,20 @@
 {
   "schema_version": 1,
-  "recorded_at": "2026-11-08T06:08:21Z",
+  "recorded_at": "2026-11-08T07:18:55Z",
   "plan_point": "77.44.6.1.C",
   "status": "LOCAL_RUNTIME_FIX_VERIFIED_RELEASE_BLOCKED_BY_UNVERIFIED_ZERO_COST_ACTIONS_QUOTA",
-  "scope": "Make desktop dock resizing operate on the actually rendered, canvas-safe track width when both panels are open on a narrow desktop; preserve the saved desktop preference when a responsive breakpoint cancels an in-progress resize.",
+  "scope": "Make desktop dock resizing operate on the actually rendered, canvas-safe track width when both panels are open on a narrow desktop; preserve the saved desktop preference when a responsive breakpoint cancels an in-progress resize. Follow-up correction: tabbed desktop docks share one panel track, so their resize bound must use the full canvas-safe track budget instead of the two-separate-track cap.",
   "source_control": {
     "repository": "sanci9517/sanci9517",
     "branch": "v2/foundation",
     "github_branch_api_head_verified": "d75af5439c38e2a7e19f1aa6b8b5b0cc81d6ec09",
-    "local_runtime_release_commit": "971d1246",
-    "runtime_commit_message": "fix(editor): align dock resizing with canvas-safe width",
-    "push": "NOT DONE. The local runtime commit is preserved. The authenticated GitHub branch API verified the unchanged remote HEAD above. Pushing this runtime commit would start required GitHub Actions and Cloudflare Build gates; current free compute/storage quota cannot be verified, and the owner requires 0 Ft. Runtime CI was not skipped.",
+    "local_runtime_release_commit": "2a32f0e5e10ae710c849620ae61813e727bca559",
+    "runtime_commit_message": "fix(editor): size tabbed dock resize to one track",
+    "push": "NOT DONE. The verified runtime/test commit is preserved locally on v2/foundation, ahead of the authenticated remote. Pushing it would launch required GitHub Actions and Cloudflare Build gates. Free compute/storage quota is not verifiable, the owner requires a 0 Ft ceiling, and runtime CI cannot be skipped.",
     "documentation_commits": [
       "659015c9 [skip ci] docs(editor): record canvas-clamped resize verification",
-      "eb64b4a5 [skip ci] docs(editor): timestamp resize evidence"
+      "eb64b4a5 [skip ci] docs(editor): timestamp resize evidence",
+      "pending local [skip ci] evidence/plan update for tabbed-track regression"
     ],
     "documentation_push": "NOT DONE. Both documentation commits are preserved locally after the runtime commit, so a normal branch push would also publish the unverified runtime change and trigger its required workflows. The direct shell push path is currently blocked by the unavailable proxy. No force update or alternate branch was used.",
     "preexisting_untracked_paths_preserved": [
@@ -23,44 +24,47 @@
   },
   "implementation": {
     "runtime_source": "public/editor-v2/ui/shell.js",
-    "runtime_source_sha256": "1efc37d5fb0fb1f5862f92b054282d618ab465df93099bd3eb62c44023990fe8",
+    "runtime_source_sha256": "a2d98ede602dade5328d5d77d5da574e92019b84d7b688dfa433575d44192644",
     "test_source": "tests/browser/editor-workspace-appearance.test.js",
-    "test_source_sha256": "8f3048d635d10860817c9ab371b420fd48dde9f30743691c4902e12f55ad923b",
+    "test_source_sha256": "5a1168ee3cb3e0c0c71c4d1384a1cfb9a30d366a1dd13f9dde777ad85bb83675",
     "changes": [
       "Derive the resize range from the same two-open-dock, 400 CSS-pixel minimum canvas constraint as the desktop workspace grid.",
       "Expose the actual rendered panel width in separator aria-valuenow/aria-valuetext, and update both separator ranges and values when the responsive viewport or panel layout changes.",
       "Use rendered width as the pointer/keyboard starting point, so one keyboard step changes the visible panel instead of silently reducing an oversized stored preference.",
       "When a breakpoint cancels a drag, restore the original stored desktop width rather than persisting the viewport-capped temporary rendered width.",
-      "Add two real-Chromium regressions: constrained keyboard resize at 1025px with both docks open; and cancellation from a 312.5px rendered cap, restoring a saved 460px desktop preference across mobile and desktop breakpoints."
+      "Add two real-Chromium regressions: constrained keyboard resize at 1025px with both docks open; and cancellation from a 312.5px rendered cap, restoring a saved 460px desktop preference across mobile and desktop breakpoints.",
+      "Choose the available resize width from the physical desktop track count: one track for tabbed groups, two tracks for separate docks.",
+      "Add a 1025px real-Chromium regression asserting the tabbed group announces the configured 460px/440px maxima, allows the active group to resize to 326px, and keeps the canvas at least 400px wide."
     ],
-    "reproduction_before_fix": "At a 1025px desktop viewport, two open docks with stored widths 460px/440px rendered the left dock at 312.5px while its separator announced aria-valuenow=460 and aria-valuemax=460; a keyboard decrement could initially produce no visible resize.",
+    "reproduction_before_fix": "At a 1025px desktop viewport, two open docks with stored widths 460px/440px rendered the left dock at 312.5px while its separator announced aria-valuenow=460 and aria-valuemax=460; a keyboard decrement could initially produce no visible resize. The follow-up test reproduced the related tabbed-mode defect: with one visible panel track at 1025px, aria-valuemax was incorrectly 312.5px instead of the panel-specific 460px (left) / 440px (right).",
     "reuse_review": "Reused the project's own persisted workspace-width model, resizeLimits, desktop grid and responsive breakpoint adapter. No external splitter package or third-party source was needed; a dependency would duplicate this narrow existing shell behavior.",
     "save_publish": "Page Model, Save and Publish paths are unchanged. Both added browser cases assert that workspace-only resizing/cancellation produces zero Page Model writes and zero Save/Publish requests."
   },
   "validation": {
-    "targeted_chromium_regressions": "PASS 4/4: constrained visible-width keyboard resize, existing pointer/keyboard and responsive cancellation, and saved-preference restoration after a constrained cancellation.",
-    "complete_workspace_appearance_chromium": "PASS 71/71; zero failures, cancellations or skips; 293968.912988ms; 4 orphan browser descendants reaped.",
-    "complete_editor_layout_browser_suite": "PASS per-file: all 53/53 serial browser files completed and each emitted a zero-failure Node test summary. The exec session handle expired before the aggregate runner exit code could be read; no failed, cancelled or skipped case appeared in any file output.",
+    "targeted_chromium_regressions": "PASS 5/5: initial width-clamped keyboard resize and cancellation/restoration cases plus the narrow-desktop tabbed-group case; the tabbed case was first run against the old code and failed at the exact 312.5px vs 460px assertion, then passed after the track-count fix.",
+    "complete_workspace_appearance_chromium": "PASS 72/72; zero failures, cancellations or skips; 279492.266331ms; 4 orphan browser descendants reaped. This includes the new narrow-desktop tabbed-group maximum and visible keyboard resize check.",
+    "complete_editor_layout_browser_suite": "NOT RE-RUN in this follow-up. Previous per-file output exists but the aggregate exit code was not captured; no aggregate PASS claimed.",
     "editor_unit": "npm run test:editor — PASS, 14/14 files and 187/187 tests; Linux subreaper runner contract 3/3.",
     "typecheck": "npm run typecheck — PASS.",
-    "migration_safety_gate": "npm run test:web013:migration-gate — PASS; no migration was applied.",
-    "wrangler_dry_run": "XDG_CONFIG_HOME=/tmp/sanci9517-wrangler-config npx wrangler deploy --dry-run --outdir /tmp/sanci9517-dock-resize-dry-run — PASS, project Wrangler 4.130.0; 168 public assets; 335.81 KiB total / 87.60 KiB gzip; no deployment made.",
+    "migration_safety_gate": "npm run test:web013:migration-gate — PASS; no migration applied.",
+    "wrangler_dry_run": "XDG_CONFIG_HOME=/tmp/sanci9517-wrangler-config ./node_modules/.bin/wrangler deploy --dry-run --outdir /tmp/sanci9517-tabbed-resize-dry-run — PASS, Wrangler 4.130.0; 168 assets; 335.81 KiB / 87.60 KiB gzip; no deployment.",
     "read_only_d1_preflight": "NOT RUN in this block because no release/deployment was performed. No D1 operation was issued.",
-    "canonical_plan": "python3 scripts/check-canonical-plan.py — PASS, one complete 13-file master with one active cursor.",
+    "canonical_plan": "python3 scripts/check-canonical-plan.py — PASS: one complete 13-file master, 396 source mappings.",
     "plan_contract": "python3 tests/plan-contract.test.py — PASS 13/13.",
     "active_point": "python3 scripts/audit-active-plan-point.py — PASS; 77.44.6.1.C remains OPEN / NOT CERTIFIED.",
-    "traceability": "python3 scripts/build-feature-traceability.py --check — PASS 396/396 source mappings after regenerating the shell.js fingerprint.",
-    "syntax_and_diff": "node --check public/editor-v2/ui/shell.js; node --check tests/browser/editor-workspace-appearance.test.js; git diff --check — PASS.",
-    "wrangler_version_probe_note": "The version was reported by the successful dry-run as 4.130.0. A separate bare npx wrangler --version probe hit read-only /home/agent/.config logging; this did not affect the dry-run, which used a writable XDG_CONFIG_HOME."
+    "traceability": "PASS: python3 scripts/build-feature-traceability.py regenerated the shell.js fingerprint, then --check confirmed 396/396 source mappings.",
+    "syntax_and_diff": "PASS: node --check public/editor-v2/ui/shell.js; node --check tests/browser/editor-workspace-appearance.test.js; python3 -m json.tool docs/evidence/editor-workspace-canvas-clamped-resize-2026-11-08.json; git diff --check.",
+    "wrangler_version_probe_note": "The version was reported by the successful dry-run as 4.130.0. A separate bare npx wrangler --version probe hit read-only /home/agent/.config logging; this did not affect the dry-run, which used a writable XDG_CONFIG_HOME.",
+    "tabbed_group_repro_before_fix": "FAIL reproduced: 1025px tabbed desktop, left separator aria-valuemax actual 312.5 expected 460; root cause was always dividing the available canvas-safe width between two panel tracks even though tabbed mode renders only one."
   },
   "production": {
     "latest_deployment_id": "6aea7ce1-830a-451a-a00d-c88284b08ef9",
     "traffic_version": "425cfad2-3744-49e1-afde-289216ad8c2b",
     "traffic_percentage": 100,
     "deployment_api_checked": true,
-    "direct_health": "UNVERIFIED. A direct GET to https://sanci9517.com/api/health failed before HTTP: proxy port 8080 connection failure (curl exit 7); no valid health status or body was received.",
+    "direct_health": "UNVERIFIED. The proxy GET failed before HTTP (curl exit 7 earlier); a direct no-proxy GET failed DNS resolution with curl exit 6. No health HTTP response/body was obtained.",
     "asset_hashes": "NOT VERIFIED for this change because the runtime commit was not pushed or deployed. Local shell.js SHA-256 is recorded above.",
-    "deploy_safe": "NOT RUN. The runtime change is not on the verified remote branch; required free Actions capacity remains unknown and production health is inaccessible from this environment."
+    "deploy_safe": "NOT RUN. Free Actions capacity is unverified and health cannot be queried from this environment; no production deployment."
   },
   "cost_and_storage": {
     "additional_cost_huf": 0,
@@ -72,7 +76,7 @@
     "actions_quota": "UNVERIFIED; the owner previously reported 0.45/0.50 GB artifact storage and requires a 0 Ft ceiling. No available authenticated read in this block established remaining account-wide free Actions quota. No paid execution was enabled."
   },
   "acceptance": {
-    "77_44_6_1_C": "OPEN / NOT CERTIFIED. This responsive resize slice does not certify the full workspace lifecycle.",
+    "77_44_6_1_C": "OPEN / NOT CERTIFIED. This follow-up repairs the one-track tabbed resize bound; it does not certify the full workspace lifecycle.",
     "full_visual_editor_manual_and_physical_acceptance": "DEFERRED until the complete Visual Editor acceptance gate."
   }
 }
