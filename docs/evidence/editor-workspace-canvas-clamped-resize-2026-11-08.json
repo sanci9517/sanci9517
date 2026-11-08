@@ -107,5 +107,20 @@
     "cost_huf": 0,
     "actions_quota": "UNVERIFIED; owner-reported artifact storage remains 0.45/0.50 GB. No workflow dispatch, rerun, or artifact operation occurred.",
     "production_d1_or_r2_mutation": false
+  },
+  "responsive_shell_zoom_confirmation": {
+    "recorded_at": "2026-11-08T10:00:58Z",
+    "command": "node --test tests/browser/editor-layout.test.js",
+    "result": "PASS 2/2 browser cases; the 200-1920 CSS-pixel/effective-zoom accessibility and overlap matrix passed, as did mobile Inspector sheet focus restoration.",
+    "runtime_source_changed": false,
+    "new_runtime_defect_found": false,
+    "github_v2_foundation_head": "d75af5439c38e2a7e19f1aa6b8b5b0cc81d6ec09",
+    "worktree_head_before_evidence_commit": "6e4669e83b6ba37d8234ff83a4a6a3de6b03d83b",
+    "worker_deployment_id": "6aea7ce1-830a-451a-a00d-c88284b08ef9",
+    "worker_traffic_version": "425cfad2-3744-49e1-afde-289216ad8c2b",
+    "worker_traffic_percentage": 100,
+    "production_health": "UNVERIFIED: proxy CONNECT returned HTTP 403 before the origin request; curl exit 56.",
+    "push_or_deploy": "NOT DONE; no runtime changed; local history contains unverified runtime commits; Actions quota unknown.",
+    "cost_huf": 0
   }
 }
