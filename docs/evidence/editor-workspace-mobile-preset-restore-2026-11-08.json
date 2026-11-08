@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-11-08T04:42:49Z",
+  "plan_point": "77.44.6.1.C",
+  "status": "LOCAL_RUNTIME_FIX_VERIFIED_RELEASE_BLOCKED_BY_UNVERIFIED_ZERO_COST_ACTIONS_QUOTA",
+  "scope": "Keep the selected desktop workspace preset when a mobile appearance selection is followed by an asynchronously delivered mobile-menu toggle; preserve the canvas-first phone view and allow an explicit mobile drawer choice to replace the saved desktop intent.",
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "branch_head_before_changes": "d75af5439c38e2a7e19f1aa6b8b5b0cc81d6ec09",
+    "github_branch_api_head_verified": true,
+    "local_runtime_release_commit": "71e7a86ff9351017654c19ceb5847f4203a2d9c8",
+    "runtime_commit_message": "fix(editor): preserve desktop layout intent after mobile preset",
+    "push": "NOT DONE. Runtime commit 71e7a86ff9351017654c19ceb5847f4203a2d9c8 is preserved locally. A push would start required GitHub Actions and Cloudflare Build workflows; available free compute/storage quota cannot be verified. The owner's 0 Ft limit and reported 0.45/0.5 GB artifact storage remain binding. No paid execution was enabled.",
+    "untracked_existing_paths_preserved": [
+      "node_modules/",
+      "scripts/__pycache__/"
+    ]
+  },
+  "implementation": {
+    "runtime_source": "public/editor-v2/ui/shell.js",
+    "runtime_source_sha256": "6a1cebb20eac87add2ce79955775d562cc818ee6dd026a04e4109f9b07fd7da4",
+    "test_source": "tests/browser/editor-workspace-appearance.test.js",
+    "test_source_sha256": "199b9fb7454578153563cece6494fcc13228bc906880dec78facf4baace41ec2",
+    "changes": [
+      "Initialize persisted left/right dock intent from the selected appearance's desktop layout even when the viewport is mobile; mobile startup still presents the safe canvas-first view.",
+      "Applying a preset while mobile updates in-memory desktop intent without persisting responsive drawer visibility. An explicit mobile drawer selection persists exactly the selected side and clears the other saved side.",
+      "The asynchronous mobile More-actions details toggle now closes visible drawers with save:false so an event queued before a preset choice cannot overwrite the newly selected desktop layout.",
+      "Added a real Chromium regression that selects the balanced preset on a 390px mobile viewport, verifies both docks remain closed on mobile, returns to desktop and verifies both docks plus a 400px minimum canvas, then explicitly chooses the left mobile drawer and verifies that this choice becomes the desktop layout. No Page Model, Save or Publish request is issued."
+    ],
+    "reuse_review": "Used the existing project-owned resolveWorkspaceLayout, setPanel, preference storage and responsive shell lifecycle. No external package or third-party code fits this narrowly scoped state race better than the existing adapter; adding a dependency would duplicate the project's established workspace model without benefit.",
+    "save_publish": "Unchanged and independently asserted by the browser fixture; the workspace-only flow sends zero Page Model, Save or Publish requests."
+  },
+  "validation": {
+    "targeted_regression": {
+      "command": "Covered within the complete serial Chromium workspace appearance file.",
+      "result": "PASS; choosing balanced on mobile restores both desktop docks, while an explicit mobile left-drawer selection replaces that intent."
+    },
+    "complete_workspace_chromium": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-workspace-appearance.test.js",
+      "result": "PASS 69/69; 0 failures, cancellations or skips; duration 285071.895641 ms; subreaper reaped 4 orphaned test descendants."
+    },
+    "editor_unit": "npm run test:editor — PASS, 14/14 files and 187/187 tests; Linux subreaper contract 3/3.",
+    "typecheck": "npm run typecheck — PASS.",
+    "migration_safety_gate": "npm run test:web013:migration-gate — PASS; no migration applied.",
+    "wrangler_dry_run": "XDG_CONFIG_HOME=/tmp/sanci-wrangler-config npx wrangler deploy --dry-run — PASS, Wrangler 4.130.0, 168 public assets, 335.81 KiB / 87.60 KiB gzip; no deployment made.",
+    "read_only_d1_preflight": {
+      "query": "SELECT name FROM d1_migrations ORDER BY name;",
+      "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
+      "result_count": 34,
+      "latest_migration": "0028_media_archive.sql",
+      "changed_db": false,
+      "changes": 0,
+      "rows_written": 0
+    },
+    "canonical_plan_initial_check": "The first check correctly failed because shell.js changed and feature-traceability.json still contained the previous fingerprint; regenerated the crosswalk with the repository-owned generator before proceeding.",
+    "canonical_plan_final": "python3 scripts/check-canonical-plan.py — PASS, one complete 13-file master, one active cursor.",
+    "plan_contract_final": "python3 tests/plan-contract.test.py — PASS 13/13.",
+    "active_point_final": "python3 scripts/audit-active-plan-point.py — PASS; next point 77.44.6.1.C, acceptance NOT_CERTIFIED.",
+    "traceability_final": "python3 scripts/build-feature-traceability.py --check — PASS 396/396 after the generator updated shell.js fingerprint.",
+    "syntax_and_diff_final": "node --check public/editor-v2/ui/shell.js; node --check tests/browser/editor-workspace-appearance.test.js; git diff --check — PASS.",
+    "full_editor_layout_suite": "NOT RUN in this block; the complete 53-file suite result is not claimed."
+  },
+  "production": {
+    "latest_deployment_id": "6aea7ce1-830a-451a-a00d-c88284b08ef9",
+    "traffic_version": "425cfad2-3744-49e1-afde-289216ad8c2b",
+    "traffic_percentage": 100,
+    "source_commit": "dc4c5b174e83c4d8430227d54f911706beb4ede4",
+    "deployment_api_checked": true,
+    "version_api_number": 3842,
+    "direct_health": "UNVERIFIED. A direct GET to https://sanci9517.com/api/health failed before HTTP with Envoy proxy CONNECT HTTP 403 (curl exit 56).",
+    "asset_hashes": "NOT VERIFIED for this change: runtime release was not pushed or deployed; local shell.js SHA-256 is recorded above and live content remains the prior deployment.",
+    "deploy_safe": "NOT RUN; no runtime push/build was authorized while required free Actions capacity remained unverified."
+  },
+  "cost_and_storage": {
+    "additional_cost_huf": 0,
+    "new_dependency": false,
+    "production_d1_migration_or_write": false,
+    "r2_mutation_or_deletion": false,
+    "actions_dispatch_or_rerun": false,
+    "artifact_added_or_deleted": false,
+    "actions_quota": "UNVERIFIED; the user previously reported 0.45/0.5 GB artifact storage. No available connected GitHub operation exposes current account-wide billing/quota for this repository. Required runtime workflows cannot be skipped or allowed to use paid quota."
+  },
+  "acceptance": {
+    "77_44_6_1_C": "OPEN / NOT CERTIFIED. This verified responsive appearance lifecycle slice does not certify the remaining full workspace/dock acceptance.",
+    "full_visual_editor_manual_and_physical_acceptance": "DEFERRED until the complete Visual Editor acceptance gate."
+  }
+}
