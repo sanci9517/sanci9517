@@ -234,5 +234,43 @@
     "r2_mutation_or_deletion": false,
     "additional_cost_huf": 0,
     "commit_scope": "This test-only change and its plan/evidence update are recorded together in a [skip ci] follow-up commit; the remote ref is verified after push."
+  },
+  "escape_after_drawer_switch_validation": {
+    "recorded_at": "2026-11-08T00:24:23Z",
+    "plan_point": "77.44.6.1.C",
+    "scope": "After switching mobile drawers, verify Escape closes the selected drawer and restores focus to that drawer’s latest opener.",
+    "runtime_source_changed": false,
+    "targeted_chromium": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-name-pattern='mobile drawer scrim returns focus to the latest opener after switching drawer sides' tests/browser/editor-workspace-appearance.test.js",
+      "result": "PASS 1/1; both scrim directions and the added right-to-left drawer switch followed by Escape restore the latest opener; canvas inert clears; zero Page Model/Save/Publish writes."
+    },
+    "complete_workspace_chromium": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-workspace-appearance.test.js",
+      "result": "NOT PASS: 67/68 passed, one timed-out tabbed desktop/mobile panel-profile scenario while selecting #workspacePanelMode in the mobile settings dialog. The affected complete scenario passed in isolation (1/1, 6.7s).",
+      "prior_direct_run": "NOT PASS: 65/68; three drag/drop/reload timeouts. Each of the three affected scenarios passed individually in serial targeted Chromium runs (1/1 each).",
+      "environment_observation": "A process snapshot during the run showed 5,590 zombie processes; subreaper reported reaping four orphaned descendants. The timeout root cause is not established, so the complete browser-file aggregate is not certified."
+    },
+    "editor_unit": "npm run test:editor — PASS, 14/14 files; Linux subreaper runner contract 3/3.",
+    "typecheck": "npm run typecheck — PASS.",
+    "canonical_plan": "python3 scripts/check-canonical-plan.py — PASS, 13-file master.",
+    "plan_contract": "python3 tests/plan-contract.test.py — PASS 13/13.",
+    "active_point": "python3 scripts/audit-active-plan-point.py — PASS; current 77.44.6.1, next C; acceptance NOT_CERTIFIED.",
+    "traceability": "python3 scripts/build-feature-traceability.py --check — PASS 396/396.",
+    "syntax_and_diff": "node --check tests/browser/editor-workspace-appearance.test.js; git diff --check — PASS.",
+    "hosted_ci": "Not run for this test-only follow-up; use [skip ci]. No new workflow dispatch or rerun.",
+    "production": {
+      "source_commit": "dc4c5b174e83c4d8430227d54f911706beb4ede4",
+      "deployment_id": "6aea7ce1-830a-451a-a00d-c88284b08ef9",
+      "traffic_version": "425cfad2-3744-49e1-afde-289216ad8c2b",
+      "traffic_percentage": 100,
+      "status": "unchanged; no Worker deployment for the test-only follow-up",
+      "health": "UNVERIFIED; direct GET /api/health blocked by outbound proxy HTTP 403 CONNECT tunnel failure",
+      "asset_hash": "NOT APPLICABLE; runtime assets unchanged"
+    },
+    "production_d1_mutation": false,
+    "r2_mutation_or_deletion": false,
+    "additional_cost_huf": 0,
+    "actions_artifact_added_or_deleted": false,
+    "commit_scope": "Browser regression test plus canonical plan/evidence only; accompanying commit uses [skip ci], with fast-forward/remote verification to follow."
   }
 }

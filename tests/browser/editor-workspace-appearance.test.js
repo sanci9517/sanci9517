@@ -2692,6 +2692,17 @@ test('mobile drawer scrim returns focus to the latest opener after switching dra
   await page.waitForFunction(()=>document.querySelector('#leftDock')?.classList.contains('closed'));
   assert.equal(await page.locator('#editorMenu').evaluate(element=>document.activeElement===element),true,'switching to the tool drawer makes its opener the focus-return target for the next scrim close');
   assert.equal(await page.locator('.canvas-area').evaluate(element=>element.inert),false);
+
+  await page.locator('#editorMenu').tap();
+  await page.waitForFunction(()=>!document.querySelector('#leftDock')?.classList.contains('closed'));
+  await page.locator('#openInspector').tap();
+  await page.waitForFunction(()=>!document.querySelector('#rightDock')?.classList.contains('closed')&&document.querySelector('#leftDock')?.classList.contains('closed'));
+  await page.locator('#editorMenu').tap();
+  await page.waitForFunction(()=>!document.querySelector('#leftDock')?.classList.contains('closed')&&document.querySelector('#rightDock')?.classList.contains('closed'));
+  await page.keyboard.press('Escape');
+  await page.waitForFunction(()=>document.querySelector('#leftDock')?.classList.contains('closed'));
+  assert.equal(await page.locator('#editorMenu').evaluate(element=>document.activeElement===element),true,'switching to the tool drawer also restores its opener when Escape closes it');
+  assert.equal(await page.locator('.canvas-area').evaluate(element=>element.inert),false,'Escape releases the canvas after closing the switched drawer');
   assert.deepEqual(writes,[],'switching or closing mobile drawers does not save or publish page content');
   assert.deepEqual(errors,[]);
 });
