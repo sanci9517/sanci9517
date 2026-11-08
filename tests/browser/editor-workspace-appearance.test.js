@@ -248,6 +248,64 @@ test('tabbed desktop panel groups reserve canvas space, restore profiles and fal
   assert.deepEqual(mobile.errors,[]);
 });
 
+test('floating panel groups look detached but stay inside a reserved canvas-safe dock track',async t=>{
+  const {page,writes,errors}=await openEditor(t,{width:1280,height:900});
+  await openPreferences(page);
+  await page.locator('#workspaceLayout').selectOption('balanced');
+  await page.locator('#workspacePanelMode').selectOption('floating');
+  await page.locator('#workspacePanelSide').selectOption('left');
+  await page.locator('#closeWorkspaceAppearance').click();
+  const tabs=page.locator('.workspace-panel-group-tabs');
+  assert.equal(await tabs.isVisible(),true,'the floating group still provides an accessible, switchable panel tablist');
+  assert.equal(await page.locator('.workspace').getAttribute('data-workspace-panel-grouped'),'true');
+  assert.equal(await page.locator('#leftDock').getAttribute('role'),'tabpanel');
+  const geometry=async()=>page.evaluate(()=>{
+    const canvas=document.querySelector('.canvas-area').getBoundingClientRect();
+    const active=document.querySelector('.workspace').dataset.workspaceActivePanel==='left'?document.querySelector('#leftDock'):document.querySelector('#rightDock');
+    const panel=active.getBoundingClientRect();
+    const style=getComputedStyle(active);
+    return {canvas:{left:canvas.left,right:canvas.right,width:canvas.width},panel:{left:panel.left,right:panel.right,top:panel.top,bottom:panel.bottom},shadow:style.boxShadow,radius:style.borderRadius,scrollWidth:document.documentElement.scrollWidth};
+  });
+  const left=await geometry();
+  assert.ok(left.canvas.width>=400,`floating panel reserves a full canvas track: ${JSON.stringify(left)}`);
+  assert.ok(left.panel.right<=left.canvas.left,`left floating card remains in its own grid track: ${JSON.stringify(left)}`);
+  assert.ok(left.panel.top>72&&left.panel.bottom<900,'the floating card is visibly inset vertically without becoming an overlay');
+  assert.notEqual(left.shadow,'none','the floating card has a distinct raised visual surface');
+  assert.match(left.radius,/px/u,'the floating card has rounded window-like corners');
+  assert.equal(left.scrollWidth,1280,'the reserved floating lane introduces no horizontal overflow');
+  await page.locator('#workspacePanelTabRight').click();
+  const right=await geometry();
+  assert.ok(right.canvas.width>=400,`switching the floating Inspector keeps the canvas reserved: ${JSON.stringify(right)}`);
+  assert.ok(right.panel.right<=right.canvas.left,`the selected floating panel remains on the chosen side: ${JSON.stringify(right)}`);
+  assert.equal(await page.locator('#workspacePanelTabRight').getAttribute('aria-selected'),'true');
+
+  await openPreferences(page);
+  await page.locator('#workspaceProfileName').fill('Lebegő, vászonbiztos nézet');
+  await page.locator('#saveWorkspaceProfile').click();
+  const profileId=await page.locator('#workspaceProfile').inputValue();
+  assert.ok(profileId,'the floating group is saved with the local workspace profile');
+  await page.locator('#closeWorkspaceAppearance').click();
+  await page.reload({waitUntil:'load'});
+  await page.waitForFunction(()=>document.documentElement.dataset.editorBoot==='ready');
+  assert.equal(await page.locator('#workspaceAppearanceDialog').getAttribute('open'),null,'profile reload leaves the appearance dialog closed');
+  assert.equal(await page.locator('.editor-app').getAttribute('data-workspace-panel-mode'),'floating','floating mode survives reload');
+  const restoredGroup=await page.evaluate(()=>({selected:document.querySelector('#workspacePanelTabRight')?.getAttribute('aria-selected'),active:document.querySelector('.workspace')?.dataset.workspaceActivePanel,stored:JSON.parse(localStorage.getItem('sanci-editor-shell-v2')||'{}'),appearance:JSON.parse(localStorage.getItem('sanci-editor-workspace-appearance-v2')||'{}')}));
+  assert.equal(restoredGroup.selected,'true',`the active group panel survives reload: ${JSON.stringify(restoredGroup)}`);
+  assert.ok((await geometry()).canvas.width>=400,'the reloaded floating card retains the canvas reservation');
+
+  await resizeAndWaitForWorkspaceBreakpoint(page,390,844);
+  await page.waitForFunction(()=>Number(!document.querySelector('#leftDock')?.classList.contains('closed'))+Number(!document.querySelector('#rightDock')?.classList.contains('closed'))===1);
+  assert.equal(await page.locator('.workspace-panel-group-tabs').isVisible(),false,'the desktop floating group becomes one mobile drawer instead of an overlay pair');
+  assert.equal(await page.evaluate(()=>document.querySelector('.canvas-area').inert),true,'the mobile drawer keeps the canvas behind its safe backdrop');
+  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,'floating desktop preference introduces no phone overflow');
+  await resizeAndWaitForWorkspaceBreakpoint(page,1280,900);
+  await page.waitForFunction(()=>document.querySelector('.workspace')?.dataset.workspacePanelMode==='floating');
+  const restored=await geometry();
+  assert.ok(restored.canvas.width>=400&&restored.panel.right<=restored.canvas.left,`desktop return restores the floating card in its reserved lane: ${JSON.stringify(restored)}`);
+  assert.deepEqual(writes,[],'floating workspace presentation never saves or publishes page content');
+  assert.deepEqual(errors,[]);
+});
+
 test('tabbing from the right dock tab enters its active panel before the canvas',async t=>{
   const {page,writes,errors}=await openEditor(t,{width:1280,height:900});
   await openPreferences(page);

@@ -117,6 +117,10 @@ test('panel grouping accepts only safe layout modes and sides, including in port
   assert.equal(safe.profiles[0].appearance.panelMode,'tabbed');
   assert.equal(safe.profiles[0].appearance.panelSide,'left');
   assert.equal(safe.profiles[0].dock.panelActive,'right');
+  const floating=normalizeWorkspacePreferences({panelMode:'floating',panelSide:'left',profiles:[{id:'profile-floating',name:'Floating',appearance:{panelMode:'floating',panelSide:'left'},dock:{panelActive:'right'}}]});
+  assert.equal(floating.panelMode,'floating','the supported floating-card group is a first-class workspace preference');
+  assert.equal(floating.profiles[0].appearance.panelMode,'floating','the floating-card mode survives profile normalization');
+  assert.equal(floating.profiles[0].appearance.panelSide,'left');
   const unsafe=normalizeWorkspacePreferences({panelMode:'overlay',panelSide:'canvas',profiles:[{id:'profile-unsafe',name:'Safe fallback',appearance:{panelMode:'float',panelSide:'canvas'},dock:{panelActive:'overlay'}}]});
   assert.equal(unsafe.panelMode,'separate','unrecognized overlay modes never reach the renderer');
   assert.equal(unsafe.panelSide,'right');

@@ -5,7 +5,7 @@ const layouts=new Set(['balanced','canvas','inspector','custom']);
 const themes=new Set(['graphite','aurora','ocean','sage','cinder']);
 const densities=new Set(['comfortable','compact']);
 const dockOrders=new Set(['left-canvas-right','canvas-left-right','left-right-canvas','right-left-canvas','right-canvas-left','canvas-right-left']);
-const panelModes=new Set(['separate','tabbed']);
+const panelModes=new Set(['separate','tabbed','floating']);
 const panelSides=new Set(['left','right']);
 const leftTabs=new Set(['pages','elements','layers','schedule','navigation']);
 export const DEFAULT_LEFT_TAB_ORDER=Object.freeze(['pages','elements','layers','schedule','navigation']);
@@ -143,9 +143,10 @@ export function applyWorkspacePreferences(root,preferences){
   root.dataset.workspaceDockOrder=value.dockOrder;
   root.dataset.workspacePanelMode=value.panelMode;
   root.dataset.workspacePanelSide=value.panelSide;
+  root.dataset.workspacePanelGrouped=String(value.panelMode!=='separate');
   const workspace=root.matches?.('.workspace')?root:root.querySelector?.('.workspace');
   if(workspace)workspace.dataset.workspaceDockOrder=value.dockOrder;
-  if(workspace){workspace.dataset.workspacePanelMode=value.panelMode;workspace.dataset.workspacePanelSide=value.panelSide}
+  if(workspace){workspace.dataset.workspacePanelMode=value.panelMode;workspace.dataset.workspacePanelSide=value.panelSide;workspace.dataset.workspacePanelGrouped=String(value.panelMode!=='separate')}
   root.style.setProperty('--accent',value.accent);
   return value;
 }
@@ -238,7 +239,7 @@ export function mountWorkspaceAppearance({documentRef=globalThis.document,root=d
   const paint=()=>{
     applyWorkspacePreferences(root,value);
     for(const key of ['layout','dockOrder','panelMode','panelSide','theme','density','accent'])if(fields[key])fields[key].value=value[key];
-    if(fields.panelSide)fields.panelSide.disabled=value.panelMode!=='tabbed';
+    if(fields.panelSide)fields.panelSide.disabled=value.panelMode==='separate';
     renderProfiles();renderLeftToolOrder();syncHistory();
   };
   const setLayout=(layout,{rememberChange=true}={})=>{

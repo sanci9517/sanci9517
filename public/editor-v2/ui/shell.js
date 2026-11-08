@@ -2,7 +2,7 @@ import {createEventBus} from './events.js';
 import {panelRegistry,featureRegistry} from './registry.js';
 import {EDITOR_ACTIONS} from './action-catalog.js?v=20261103-canvas-focus-mode';
 import {enhanceEditorActionControls} from './action-help.js?v=20261103-canvas-focus-mode';
-import {DEFAULT_LEFT_TAB_ORDER,applyWorkspacePreferences,mountWorkspaceAppearance,normalizeLeftTabOrder,readWorkspacePreferences} from './workspace-appearance.js?v=20261106-workspace-reset-noop';
+import {DEFAULT_LEFT_TAB_ORDER,applyWorkspacePreferences,mountWorkspaceAppearance,normalizeLeftTabOrder,readWorkspacePreferences} from './workspace-appearance.js?v=20261108-floating-dock-startup-restore';
 
 const bus=createEventBus();
 const workspace=document.querySelector('.workspace');
@@ -25,6 +25,7 @@ let cancelWorkspaceDrag=()=>{};
 let cancelDockResize=()=>{};
 let canvasFocus=false;
 let desktopDockSnapshot=null;
+let initializingDocks=true;
 
 function readPersisted(){
   try{
@@ -97,10 +98,11 @@ function applyWorkspaceLayout(layout,{save=true}={}){
   syncMobileBackdrop();
 }
 function emit(type,payload={}){bus.emit(type,payload)}
+function isGroupedPanelMode(){return ['tabbed','floating'].includes(editorRoot?.dataset.workspacePanelMode)}
 function syncPanelGroup(){
   if(workspace)workspace.dataset.workspaceActivePanel=persisted.panelActive;
   const groupTabs=document.querySelector('.workspace-panel-group-tabs');
-  const grouped=editorRoot?.dataset.workspacePanelMode==='tabbed'&&!mobileQuery.matches;
+  const grouped=isGroupedPanelMode()&&!mobileQuery.matches;
   if(groupTabs)groupTabs.hidden=!grouped||(!persisted.leftOpen&&!persisted.rightOpen);
   for(const [side,panel] of Object.entries(panels)){
     if(grouped){panel?.setAttribute('role','tabpanel');panel?.setAttribute('aria-labelledby',side==='left'?'workspacePanelTabLeft':'workspacePanelTabRight')}
@@ -120,17 +122,17 @@ function syncMobileBackdrop(){
   backdrop?.setAttribute('aria-hidden',String(!open));
   // Keep the hidden mobile drawer and background canvas out of keyboard
   // navigation. On desktop, the collapsed left rail remains interactive.
-  if(panels.left&&panels.right&&editorRoot?.dataset.workspacePanelMode==='tabbed'&&!mobile){
+  if(!initializingDocks&&panels.left&&panels.right&&isGroupedPanelMode()&&!mobile){
     if(persisted.panelActive==='left'&&panels.left.classList.contains('closed')&&!panels.right.classList.contains('closed'))persisted.panelActive='right';
     if(persisted.panelActive==='right'&&panels.right.classList.contains('closed')&&!panels.left.classList.contains('closed'))persisted.panelActive='left';
   }
   if(panels.right) {
-    const inactiveGroup=editorRoot?.dataset.workspacePanelMode==='tabbed'&&!mobile&&persisted.panelActive!=='right';
+    const inactiveGroup=isGroupedPanelMode()&&!mobile&&persisted.panelActive!=='right';
     panels.right.inert=canvasFocus||!rightOpen||inactiveGroup;
     panels.right.setAttribute('aria-hidden',String(canvasFocus||!rightOpen||inactiveGroup));
   }
   if(panels.left) {
-    const inactiveGroup=editorRoot?.dataset.workspacePanelMode==='tabbed'&&!mobile&&persisted.panelActive!=='left';
+    const inactiveGroup=isGroupedPanelMode()&&!mobile&&persisted.panelActive!=='left';
     panels.left.inert=canvasFocus||(mobile&&!leftOpen)||inactiveGroup;
     panels.left.setAttribute('aria-hidden',String(canvasFocus||(mobile&&!leftOpen)||inactiveGroup));
   }
@@ -267,7 +269,7 @@ function resizeBounds(side){
   // Separate docks share the space left after reserving 400px for the canvas;
   // a tabbed group has only one physical track and can use that whole space.
   // Keep keyboard/pointer bounds aligned with the corresponding CSS grid cap.
-  const openTrackCount=workspace?.dataset.workspacePanelMode==='tabbed'?1:2;
+  const openTrackCount=isGroupedPanelMode()?1:2;
   const availableTrackWidth=(window.innerWidth-400)/openTrackCount;
   return {...limits,max:Math.max(limits.min,Math.min(limits.max,availableTrackWidth))};
 }
@@ -460,8 +462,8 @@ function setupDockReordering(){
     const target=event.target.closest?.('.left-dock,.right-dock,.canvas-area');
     const targetId=target?.dataset.workspaceDockId;
     if(!source||!target||!targetId||source===target||!workspace.contains(target)){finishDrag({announcement:'Az átrendezés megszakadt.'});return}
-    const ungrouping=editorRoot?.dataset.workspacePanelMode==='tabbed'&&sourceId!=='canvas'&&target===canvasArea;
-    const movingCanvasBesideGroup=editorRoot?.dataset.workspacePanelMode==='tabbed'&&sourceId==='canvas'&&target!==canvasArea;
+    const ungrouping=isGroupedPanelMode()&&sourceId!=='canvas'&&target===canvasArea;
+    const movingCanvasBesideGroup=isGroupedPanelMode()&&sourceId==='canvas'&&target!==canvasArea;
     const visualOrder=Object.values(regions).filter(Boolean).sort((a,b)=>a.getBoundingClientRect().left-b.getBoundingClientRect().left);
     // In a tabbed view the inactive dock is display:none, so its zero-size
     // rect cannot be used to infer the user's saved three-region order.
@@ -527,6 +529,8 @@ root.style.setProperty('--right-dock-width',`${clamp(Number(persisted.rightWidth
 // A previous desktop session must not cover the mobile canvas on entry.
 setPanel('left',!mobileQuery.matches && Boolean(persisted.leftOpen),{save:false});
 setPanel('right',!mobileQuery.matches && Boolean(persisted.rightOpen),{save:false});
+initializingDocks=false;
+syncMobileBackdrop();
 showLeftTab(persisted.leftTab,{save:false,open:false});
 workspaceAppearance=mountWorkspaceAppearance({documentRef:document,root:editorRoot,onLayoutChange:applyWorkspaceLayout,onExternalChange:({reset=false}={})=>{
   desktopDockSnapshot=null;
@@ -613,7 +617,7 @@ document.querySelector('.workspace-panel-group-tabs')?.addEventListener('keydown
   tabs[next]?.click();tabs[next]?.focus({preventScroll:true});
 });
 workspace?.addEventListener('keydown',event=>{
-  if(event.key!=='Tab'||!event.shiftKey||mobileQuery.matches||editorRoot?.dataset.workspacePanelMode!=='tabbed')return;
+  if(event.key!=='Tab'||!event.shiftKey||mobileQuery.matches||!isGroupedPanelMode())return;
   const activePanel=panels[persisted.panelActive],firstControl=firstDockPanelControl(activePanel);
   if(!firstControl||event.target!==firstControl)return;
   const activeTab=document.querySelector(`[data-workspace-panel-tab="${persisted.panelActive}"]`);
