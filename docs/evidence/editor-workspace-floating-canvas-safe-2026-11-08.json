@@ -162,7 +162,7 @@
     "active_plan_cursor": "PASS scripts/audit-active-plan-point.py; main 77.44.6.1, next 77.44.6.1.C, acceptance NOT_CERTIFIED.",
     "source_traceability": "PASS scripts/build-feature-traceability.py --check; 396/396.",
     "syntax_and_diff": "PASS node --check tests/browser/editor-workspace-appearance.test.js and git diff --check.",
-    "full_browser_suite": "PASS 74/74 tests, 0 fail/cancel/skip, 382016 ms; repository Linux subreaper reaped 4 orphaned test descendants.",
+    "full_browser_suite": "PASS 74/74 tests, 0 fail/cancel/skip; workspace-appearance file rerun after 96-path matrix.",
     "runtime_changed": false,
     "wrangler_dry_run": "NOT RUN because runtime sources did not change.",
     "production_d1_write_or_migration": false,
@@ -172,8 +172,8 @@
     "actions_storage": "Owner-reported 0.45/0.50 GB; current account quota remains UNVERIFIED.",
     "cost_huf": 0,
     "github_remote_head": "d75af5439c38e2a7e19f1aa6b8b5b0cc81d6ec09",
-    "local_commits_ahead": 19,
-    "github_push": "NOT PUSHED: a normal push would also publish the 19 retained local commits, including runtime ancestors that have not passed release gates; no Actions workflow was started.",
+    "local_commits_ahead": 21,
+    "github_push": "NOT PUSHED: normal push would publish 21 retained local commits including runtime ancestors that have not passed release gates; no Actions workflow was started.",
     "production_worker": {
       "deployment_id": "6aea7ce1-830a-451a-a00d-c88284b08ef9",
       "traffic_version_id": "425cfad2-3744-49e1-afde-289216ad8c2b",
@@ -186,6 +186,20 @@
       "deployment_performed": false,
       "manual_visual_editor_acceptance": "DEFERRED until the entire planned Editor acceptance scope is complete",
       "save_publish_contract_changed": false
-    }
+    },
+    "full_serial_layout_suite_rerun": {
+      "command": "npm run test:editor:layout",
+      "result": "PASS",
+      "isolated_browser_files": 53,
+      "tests": 176,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "wrapper_exit_code": 0,
+      "notes": "Complete serial layout suite rerun after adding the 96-path grouped-mode canvas-edge/Undo matrix. All 53 file-level child runs exited 0; repository Linux subreaper reaped orphaned Chromium descendants. Long but successful cases included editor-inspector-lifecycle (215111 ms), editor-inspector-partial-types (793758 ms), editor-inspector-visual-effects-partial-types (237218 ms), and editor-inspector-background-image-partial-types (170824 ms).",
+      "runtime_changed": false,
+      "production_deployment": false
+    },
+    "full_layout_suite_status": "PASS: npm run test:editor:layout; 53/53 isolated files, 176/176 tests, 0 failed/cancelled/skipped, wrapper exit 0."
   }
 }
