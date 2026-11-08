@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-11-08",
+  "plan": "77.44.6.1.C — dockable workspace layout and local profiles",
+  "status": "C_NOT_CLOSED_RELEASE_AND_SCOPE_GAPS_REMAIN",
+  "assessment": {
+    "verified_in_scope": [
+      "Six allowlisted desktop dock orders; keyboard/touch selector and native desktop drag-and-drop.",
+      "Live before/after/group drop-zone preview and application, including both panel-group modes and all saved dock orders.",
+      "Canvas-safe grouping, ungrouping, moving, resize, reload, workspace Undo/Redo and responsive single-drawer behavior.",
+      "Versioned, bounded, allowlisted local profiles; export/import in isolated browser contexts; explicit apply; duplicate-ID/name and size/limit rejection; storage-denial feedback.",
+      "Same-origin cross-tab synchronization, stale history invalidation and no Page Model, Save or Publish writes."
+    ],
+    "remaining_scope": [
+      "No arbitrary recursive panel-group tree is implemented; the shell has two fixed top-level docks, each with its own inner tabs, and one tabbed group can contain the two docks.",
+      "No freeform desktop window is implemented. Floating mode is a raised panel card in a reserved dock track; it intentionally does not overlap the editing canvas.",
+      "The final runtime release is not on the remote branch and its post-deploy public health/asset verification is blocked in this session."
+    ],
+    "decision": "Do not mark C complete while the explicit recursive/freeform acceptance scope and production release verification remain unresolved. The canvas non-overlap invariant is preserved."
+  },
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "local_head": "abe16b67179c718289a69aa063d7038ded8d9e20",
+    "github_head": "d75af5439c38e2a7e19f1aa6b8b5b0cc81d6ec09",
+    "local_commits_ahead": 27,
+    "push": "NOT PUSHED: the fast-forward would publish 27 retained local commits, including runtime commits not released/verified on GitHub; Actions quota remains unverified and approved spend is 0 Ft."
+  },
+  "validation": {
+    "workspace_chromium": "PASS — tests/browser/editor-workspace-appearance.test.js, 77/77; includes isolated browser-session export/import, mobile/tablet transitions, cross-tab sync, storage-denial, dock-zone, group/ungroup and 96 drag/Undo/restore combinations.",
+    "editor_unit": "PASS — npm run test:editor, 14/14 Node files; Linux subreaper contract 3/3.",
+    "typecheck": "PASS — npm run typecheck.",
+    "migration_safety": "PASS — npm run test:web013:migration-gate; local safety check only, no production D1 query/write/migration.",
+    "canonical_plan": "PASS — scripts/check-canonical-plan.py; one 13-file master.",
+    "plan_contract": "PASS — scripts/plan_contract.py, 13/13.",
+    "active_plan": "PASS — scripts/audit-active-plan-point.py; 77.44.6.1.C remains current and acceptance is NOT_CERTIFIED.",
+    "traceability": "PASS — scripts/build-feature-traceability.py --check; 396/396.",
+    "syntax_and_diff": "PASS — node --check for shell, workspace module and browser test; git diff --check.",
+    "full_editor_layout_suite_this_run": "NOT COMPLETE — the C workspace file and two other files finished; a fourth file had started when the broader suite was stopped. Do not claim a 53/53 result for this run.",
+    "restricted_loopback_attempt": "The initial run without local loopback permission failed at fixture startup with listen EPERM; it was an environment limitation, not a product assertion result.",
+    "production_health": "UNVERIFIED — direct GET was blocked by the outbound Envoy proxy with CONNECT 403; proxy output is not treated as a Worker HTTP response."
+  },
+  "production_control_plane": {
+    "worker": "sanci9517-streamer-brand",
+    "deployment_id": "6aea7ce1-830a-451a-a00d-c88284b08ef9",
+    "traffic_version_id": "425cfad2-3744-49e1-afde-289216ad8c2b",
+    "traffic_percentage": 100,
+    "runtime_deployed_by_this_run": false,
+    "public_health_or_asset_hash_check": "UNVERIFIED due outbound proxy block"
+  },
+  "cost_and_data_safety": {
+    "cost_huf": 0,
+    "actions_run_started": false,
+    "production_d1_write_or_migration": false,
+    "r2_operation": false,
+    "save_publish_contract_changed": false,
+    "new_runtime_dependency": false
+  },
+  "next_step": "Keep C OPEN. First reconcile/review the 27 local commits and safely release the current runtime chain; after a successful public health and live asset-hash check, resolve explicitly whether the two-fixed-dock nested grouping and canvas-safe floating card are the accepted final C model. Add a recursive group/freeform window only if the product requirement confirms it without violating the no-canvas-overlap invariant."
+}
