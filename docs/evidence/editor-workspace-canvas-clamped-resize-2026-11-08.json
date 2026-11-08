@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "recorded_at": "2026-11-08T08:04:51Z",
+  "recorded_at": "2026-11-08T09:07:20Z",
   "plan_point": "77.44.6.1.C",
   "status": "LOCAL_RUNTIME_FIX_VERIFIED_RELEASE_BLOCKED_BY_UNVERIFIED_ZERO_COST_ACTIONS_QUOTA",
   "scope": "Make desktop dock resizing operate on the actually rendered, canvas-safe track width when both panels are open on a narrow desktop; preserve the saved desktop preference when a responsive breakpoint cancels an in-progress resize. Follow-up correction: tabbed desktop docks share one panel track, so their resize bound must use the full canvas-safe track budget instead of the two-separate-track cap. The narrow-tabbed regression now covers both keyboard and real pointer resizing on the one physical track.",
@@ -22,7 +22,7 @@
       "node_modules/",
       "scripts/__pycache__/"
     ],
-    "local_head_at_record": "b2e180ccc374dbb469e64880a62b371e4f1c70ec (10 commits ahead of remote v2/foundation at d75af5439c38e2a7e19f1aa6b8b5b0cc81d6ec09).",
+    "local_head_at_record": "3eabac79eee142a9640540eaac97374817d463e9 (11 commits ahead of remote v2/foundation at d75af5439c38e2a7e19f1aa6b8b5b0cc81d6ec09).",
     "test_commits": [
       "b2e180ccc374dbb469e64880a62b371e4f1c70ec [skip ci] test(editor): cover narrow tabbed pointer resize"
     ]
@@ -49,7 +49,8 @@
   "validation": {
     "targeted_chromium_regressions": "PASS 5/5 across the full resize slice; this follow-up separately reran the 1025px tabbed keyboard+pointer case 1/1, after the prior-code failure reproduced 312.5px vs 460px.",
     "complete_workspace_appearance_chromium": "PASS 72/72; zero failures, cancellations or skips; 303535.064654ms; 4 orphan browser descendants reaped. The tabbed case now verifies keyboard and real pointer resize against the one-track 460px/440px bounds.",
-    "complete_editor_layout_browser_suite": "NOT RE-RUN in this follow-up. Previous per-file output exists but the aggregate exit code was not captured; no aggregate PASS claimed.",
+    "complete_editor_layout_browser_suite": "PASS: npm run test:editor:layout completed all 53/53 isolated browser-test files serially with process exit code 0. Every per-file Node TAP summary reported zero failures, cancellations and skips; the wrapper has no single aggregate test-count summary. The 72-test workspace appearance file and 12-minute partial-type inspector file both passed; Linux subreaper reaped orphan Chromium descendants between files.",
+    "loopback_permission_attempt": "The default sandbox run could not start any of 53 browser files because loopback fixture servers failed with listen EPERM. Retrying the unchanged suite through the approved local-network permission completed successfully; a separate editor-action-help smoke also passed 2/2.",
     "editor_unit": "npm run test:editor — PASS, 14/14 files and 187/187 tests; Linux subreaper runner contract 3/3.",
     "typecheck": "npm run typecheck — PASS.",
     "migration_safety_gate": "npm run test:web013:migration-gate — PASS; did not apply a migration.",
@@ -68,7 +69,8 @@
     "traffic_version": "425cfad2-3744-49e1-afde-289216ad8c2b",
     "traffic_percentage": 100,
     "deployment_api_checked": true,
-    "direct_health": "UNVERIFIED. Latest direct GET attempt to https://sanci9517.com/api/health failed before HTTP because the configured proxy port 8080 was unreachable (curl exit 7); an earlier no-proxy attempt failed DNS resolution (curl exit 6). No health response/body was received.",
+    "deployment_api_rechecked_after_suite": "Cloudflare API GET /accounts/{account_id}/workers/scripts/sanci9517-streamer-brand/deployments (per_page=5) returned latest deployment 6aea7ce1-830a-451a-a00d-c88284b08ef9; version 425cfad2-3744-49e1-afde-289216ad8c2b receives 100% traffic.",
+    "direct_health": "UNVERIFIED. Latest direct GET attempt to https://sanci9517.com/api/health failed before HTTP because the configured proxy port 8080 was unreachable (curl exit 7). No health response/body was received.",
     "asset_hashes": "NOT VERIFIED for this change because the runtime commit was not pushed or deployed. Local shell.js SHA-256 is recorded above.",
     "deploy_safe": "NOT RUN. Free Actions capacity is unverified and health cannot be queried from this environment; no production deployment."
   },
