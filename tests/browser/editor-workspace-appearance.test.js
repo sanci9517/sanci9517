@@ -3817,6 +3817,59 @@ test('losing floating dock pointer capture restores the last saved position with
   assert.deepEqual(errors,[]);
 });
 
+test('resizing the viewport during a floating dock drag cancels transient movement and preserves the saved position',async t=>{
+  const {page,writes,errors}=await openEditor(t,{width:1920,height:900});
+  await openPreferences(page);
+  await page.locator('#workspaceLayout').selectOption('balanced');
+  await page.locator('#workspacePanelMode').selectOption('floating');
+  await page.locator('#workspacePanelSide').selectOption('left');
+  await page.locator('#closeWorkspaceAppearance').click();
+  await page.locator('#workspacePanelTabLeft').click();
+  const handle=page.locator('#leftDock [data-floating-handle]');
+  await handle.focus();await page.keyboard.press('Home');await page.keyboard.press('ArrowRight');await page.keyboard.press('ArrowDown');
+  const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('sanci-editor-workspace-preferences-v2'))?.floatingPosition?.left);
+  assert.ok(saved?.x>0&&saved?.y>0,`keyboard positioning establishes a persisted baseline: ${JSON.stringify(saved)}`);
+  const bounds=await handle.boundingBox();assert.ok(bounds);
+  await page.mouse.move(bounds.x+bounds.width/2,bounds.y+bounds.height/2);
+  await page.mouse.down();
+  await page.mouse.move(bounds.x+bounds.width/2+52,bounds.y+bounds.height/2+32,{steps:4});
+  const during=await page.evaluate(()=>({
+    moving:document.body.classList.contains('moving-floating-dock'),
+    saved:JSON.parse(localStorage.getItem('sanci-editor-workspace-preferences-v2'))?.floatingPosition?.left,
+    liveX:parseFloat(getComputedStyle(document.querySelector('.workspace')).getPropertyValue('--floating-left-x')),
+  }));
+  assert.equal(during.moving,true);
+  assert.deepEqual(during.saved,saved,'a transient mouse movement does not overwrite the last saved position');
+  assert.ok(during.liveX>saved.x,'the panel is visibly following the active pointer before resize');
+
+  await page.setViewportSize({width:1025,height:900});
+  await page.waitForFunction(()=>innerWidth===1025&&!document.body.classList.contains('moving-floating-dock'));
+  await page.mouse.up();
+  const narrow=await page.evaluate(()=>({
+    saved:JSON.parse(localStorage.getItem('sanci-editor-workspace-preferences-v2'))?.floatingPosition?.left,
+    liveX:parseFloat(getComputedStyle(document.querySelector('.workspace')).getPropertyValue('--floating-left-x')),
+    host:document.querySelector('#leftDock').getBoundingClientRect().toJSON(),
+    panel:document.querySelector('#leftDock [data-floating-window]').getBoundingClientRect().toJSON(),
+    canvas:document.querySelector('.canvas-area').getBoundingClientRect().toJSON(),
+  }));
+  assert.deepEqual(narrow.saved,saved,'the stale mouseup after resize cannot commit the transient coordinates');
+  assert.ok(narrow.panel.left>=narrow.host.left+7&&narrow.panel.right<=narrow.host.right-7,`viewport-constrained panel remains inside its lane: ${JSON.stringify(narrow)}`);
+  assert.ok(narrow.canvas.width>=400,`viewport cancellation preserves the usable canvas minimum: ${JSON.stringify(narrow)}`);
+  assert.ok(narrow.panel.right<=narrow.canvas.left+0.5||narrow.panel.left>=narrow.canvas.right-0.5,`viewport cancellation never overlays the canvas: ${JSON.stringify(narrow)}`);
+
+  await page.setViewportSize({width:1920,height:900});
+  await page.waitForFunction(()=>innerWidth===1920);
+  const restored=await page.evaluate(()=>({
+    saved:JSON.parse(localStorage.getItem('sanci-editor-workspace-preferences-v2'))?.floatingPosition?.left,
+    liveX:parseFloat(getComputedStyle(document.querySelector('.workspace')).getPropertyValue('--floating-left-x')),
+    liveY:parseFloat(getComputedStyle(document.querySelector('.workspace')).getPropertyValue('--floating-left-y')),
+    moving:document.body.classList.contains('moving-floating-dock'),
+  }));
+  assert.deepEqual(restored,{saved,liveX:saved.x,liveY:saved.y,moving:false},'returning to the original viewport restores the saved position exactly, without stale drag state');
+  assert.deepEqual(writes,[],'viewport-driven drag cancellation does not save or publish Page Model content');
+  assert.deepEqual(errors,[]);
+});
+
 test('another Editor tab cancels an in-progress floating dock drag before applying the shared workspace mode',async t=>{
   const {page,context,writes,errors}=await openEditor(t,{width:1280,height:900});
   await openPreferences(page);

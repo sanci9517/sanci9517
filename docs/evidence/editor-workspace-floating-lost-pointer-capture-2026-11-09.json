@@ -10,7 +10,7 @@
   "test": {
     "name": "losing floating dock pointer capture restores the last saved position without a stale pointerup commit",
     "source": "tests/browser/editor-workspace-appearance.test.js",
-    "source_sha256": "3c86b6549f06e4394e38e9180af6adc74489a4d10a67bc3c42e8f3b18277be22",
+    "source_sha256": "9104499a4aa02e2a3efb44652086fe159ae30e038b1104f91d9be78a8b8377d9",
     "assertions": "Uses a real Chromium mouse gesture and native pointer capture. It observes the assigned pointer id and transient drag, revokes capture using releasePointerCapture, waits for lostpointercapture cleanup, then sends a stale mouseup. The saved dock position and live CSS offsets return to (0,0), existing Undo/Redo state is unchanged, and Page Model/Save/Publish request and browser-error logs remain empty.",
     "first_attempt": "The test initially assumed Undo must be disabled after its own workspace setup. The setup intentionally creates history, so this was an invalid baseline expectation rather than a product failure. The regression now snapshots Undo/Redo state after setup and asserts cancellation leaves that state unchanged.",
     "targeted_result": "PASS 1/1 in Chromium; the test fixture subreaper reaped four orphan descendants.",
@@ -24,6 +24,12 @@
       "skipped": 0,
       "duration_ms": 458175,
       "orphaned_descendants_reaped": 4
+    },
+    "viewport_resize_during_drag": {
+      "name": "resizing the viewport during a floating dock drag cancels transient movement and preserves the saved position",
+      "targeted_result": "PASS 1/1 in Chromium; the browser fixture subreaper reaped four orphan descendants.",
+      "assertions": "A native mouse drag moves the floating dock transiently from a saved mid-lane position. Resizing 1920px to 1025px cancels the drag; stale mouseup does not commit the transient position; the card stays in its reserved lane, the canvas remains at least 400 CSS px and is not overlapped, and returning to 1920px restores the exact persisted position with no active movement class.",
+      "initial_attempt": "The first test attempt started from the End-key maximum, leaving no room for the subsequent pointer movement. This was a test setup error, not a runtime failure; the baseline now uses Home followed by one ArrowRight and ArrowDown step."
     }
   },
   "additional_checks": {
@@ -34,6 +40,7 @@
     "plan_contract": "PASS python3 scripts/plan_contract.py.",
     "active_plan_cursor": "PASS: main 77.44.6.1, next 77.44.6.1.C; OPEN / NOT CERTIFIED.",
     "source_traceability": "PASS python3 scripts/build-feature-traceability.py --check; 396 mappings.",
+    "full_editor_layout_suite": "NOT RUN; the full directly affected workspace browser file passed, and the plan acceptance remains open.",
     "syntax_and_diff": "PASS node --check tests/browser/editor-workspace-appearance.test.js and git diff --check."
   },
   "github_release": {
@@ -50,14 +57,9 @@
     "traffic_version_id": "425cfad2-3744-49e1-afde-289216ad8c2b",
     "traffic_percentage": 100,
     "health_endpoint": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
-    "health_http": 200,
-    "health_response": {
-      "ok": true,
-      "service": "sanci9517-streamer-brand",
-      "version": "2.0.0",
-      "server": "cloudflare-worker"
-    },
-    "checked_at_utc": "2026-11-09T00:05:16Z",
+    "health_http": "UNVERIFIED; proxy route failed with curl 7 / HTTP 000, and direct egress to workers.dev port 443 also failed before HTTP.",
+    "health_response": null,
+    "checked_at_utc": "2026-11-09T01:09Z",
     "local_asset_hash_comparison": "NOT APPLICABLE; no runtime/public asset changed."
   },
   "runtime_files_changed": [],
