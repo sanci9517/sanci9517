@@ -1,14 +1,14 @@
 {
-  "recorded_at_utc": "2026-11-09T11:26:09Z",
+  "recorded_at_utc": "2026-11-09T12:55:39Z",
   "plan_point": "77.44.6.1.C",
   "status": "LOCAL_VALIDATED_FIRST_USE_ACTIVATION_C_OPEN_RELEASE_BLOCKED",
   "source_control": {
     "repository": "sanci9517/sanci9517",
     "branch": "v2/foundation",
-    "local_head": "c8749846ac1da1a02f2f7db2bef72a5d638b7044",
+    "local_head": "4d01239187c59f335fdb2b3c0b55c967d832a968",
     "remote_head": "6f98cbefb18432de283e91d3adc1762c6c5202ae",
-    "remote_head_verified_via": "GitHub commits API with sha=v2/foundation",
-    "fast_forward_ancestry": "PASS: remote head is an ancestor of local HEAD; 6 local commits were ahead before this worktree change",
+    "remote_head_verified_via": "GitHub commits API, exact branch v2/foundation, read-only recheck 2026-11-09",
+    "fast_forward_ancestry": "PASS: remote HEAD is an ancestor of local HEAD; 8 local commits were ahead before this test/evidence-only worktree change.",
     "push": "NOT PUSHED; five v2/foundation Actions workflows would trigger; free compute quota is not observable through the connected read-only GitHub tools, so the 0 Ft limit is protected by keeping the release local.",
     "changed_runtime_paths": [
       "public/editor-v2/index.html",
@@ -28,7 +28,7 @@
       "public/editor-v2/ui/workspace-appearance.js": "9d5b44259286da1980f4c17af47c7d9c483e78e58cd2157418195a789203bf49",
       "public/editor-v2/ui/workspace-dock-tree.js": "00877096cd6dcfc91ab424c2e7fe66c1f66e84c75ea3b4b226a10b88f51c5575",
       "public/editor-v2/tests/workspace-dock-tree.test.js": "453a52117ae47faeb413a8e7b3f188a27e3d643ef413e4c734d09f29768fb54b",
-      "tests/browser/editor-workspace-appearance.test.js": "a7bf6e4252aac3dd1c00c18abf52f7156d55b8115e97bd929a5e59695569cbab"
+      "tests/browser/editor-workspace-appearance.test.js": "20a879a87db8b1b5c265ad1f4fe78fb21aa1d28f9309dc1976df3194e5d2f470"
     },
     "preexisting_untracked_preserved": [
       "node_modules/",
@@ -37,7 +37,10 @@
     "base_commit_before_changes": "c8749846ac1da1a02f2f7db2bef72a5d638b7044",
     "runtime_commit": "2bd6acf321fa9961a3cc74b9cc0d2136fd8fefc3",
     "local_commit_count_ahead_after_runtime_commit": 7,
-    "code_commit_status": "Committed locally on v2/foundation; not pushed"
+    "code_commit_status": "Runtime commit and integrated workspace lifecycle test are locally validated and committed on v2/foundation; not pushed because free Actions quota is unverified and the pending runtime history can start required CI.",
+    "local_head_before_workspace_lifecycle_evidence": "4d01239187c59f335fdb2b3c0b55c967d832a968",
+    "local_commits_ahead_before_this_evidence_commit": 8,
+    "local_commits_ahead_after_this_evidence_commit": 9
   },
   "implementation": {
     "summary": "Added an accessible first-use control that creates the recursive dock tree from the user’s current dock order, widths, and panel mode/side. It opens every live dock leaf on desktop, keeps the canvas separate and at least 400px in the 1025px first-use fixture, supports undo/redo, and has a one-click classic-layout restoration. Invalid dock orders fail closed.",
@@ -50,14 +53,15 @@
     "open_acceptance": "77.44.6.1.C remains OPEN / NOT CERTIFIED until exact branch release verification and the full Visual Editor acceptance gate; manual/physical acceptance stays DEFERRED until the complete Editor is implemented."
   },
   "validation": {
-    "targeted_browser": "PASS: CHROMIUM_PATH=/usr/bin/chromium node --test tests/browser/editor-workspace-appearance.test.js; 86/86, 0 fail/cancel/skip, 445171 ms",
-    "full_layout_gate": "PASS: CHROMIUM_PATH=/usr/bin/chromium npm run test:editor:layout; 53/53 isolated browser files, 177/177 tests (176 previously + this one new first-use test), 0 fail/cancel/skip, wrapper exit 0",
-    "editor_unit": "PASS: npm run test:editor; 15/15 Node files and 3/3 Linux subreaper contract tests",
-    "typecheck": "PASS: npm run typecheck",
-    "migration_safety": "PASS: npm run test:web013:migration-gate",
-    "syntax_diff": "PASS: node --check for dock-tree, workspace appearance, shell; git diff --check",
-    "canonical_plan_and_contract": "PASS after rebuilding current source traceability: canonical plan (13 masters), plan-contract 13/13, active-point audit OPEN / NOT CERTIFIED, source traceability 396/396.",
-    "full_test_note": "The serial full layout suite used local Chromium and loopback fixtures only; no GitHub Actions run."
+    "targeted_browser": "PASS: CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-workspace-appearance.test.js; 87/87, 0 fail/cancel/skip.",
+    "full_layout_gate": "PASS: CHROMIUM_PATH=/usr/bin/chromium npm run test:editor:layout; all 53/53 isolated Chromium files completed, 178/178 tests passed, 0 fail/cancel/skip; local browser/loopback fixtures, no GitHub Actions.",
+    "editor_unit": "PASS: npm run test:editor; 15/15 Node test files and 3/3 Linux subreaper contract tests.",
+    "typecheck": "PASS: npm run typecheck.",
+    "migration_safety": "PASS: npm run test:web013:migration-gate.",
+    "syntax_diff": "PASS: node --check tests/browser/editor-workspace-appearance.test.js; git diff --check.",
+    "canonical_plan_and_contract": "PASS after updating lifecycle evidence and rebuilding source traceability: canonical plan 13/13 masters, plan-contract 13/13, active-point audit 77.44.6.1.C OPEN / NOT_CERTIFIED, traceability 396/396.",
+    "full_test_note": "The serial full layout suite used local Chromium and loopback fixtures only; no GitHub Actions run.",
+    "integrated_workspace_lifecycle": "PASS: added test covers first-use activation, actual mouse dock grouping, nested-tree profile save/export, isolated import with local ID, reload, mobile/desktop restoration, canvas availability, and distinct Save/Publish API requests; profile/layout actions do not write Page Model."
   },
   "production_and_release": {
     "d1_read_only_preflight": {
@@ -80,14 +84,15 @@
     },
     "deployment_api_before_release": {
       "status": "READ_ONLY_CONFIRMED",
+      "checked_at_utc": "2026-11-09T12:51:10Z",
       "deployment_id": "c4573240-1f1d-4830-98f1-bbc713782c4e",
       "version_id": "a6670b60-61ec-40cf-8613-0757b6ca0954",
       "traffic_percent": 100
     },
-    "health_get": "UNVERIFIED: direct curl returned exit 7 before HTTP, unable to connect to proxy port 8080; HTTP 000",
-    "push": "NOT PUSHED; five v2/foundation workflows would trigger and the free compute quota is unavailable; zero Actions runs started.",
-    "worker_deploy": "NOT DEPLOYED",
-    "live_asset_hash_comparison": "NOT RUN; local runtime is not deployed and direct Workers.dev egress is blocked",
+    "health_get": "UNVERIFIED: direct curl to https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health exited 7, HTTP 000; proxy port 8080 could not be reached before HTTP.",
+    "push": "NOT PUSHED; Actions free compute quota remains UNVERIFIED and runtime history would trigger five workflows. Keep current 0 Ft limit; no workflow runs started.",
+    "worker_deploy": "NOT DEPLOYED; this turn changed only browser tests/evidence/plan, runtime source remains the already validated local commit.",
+    "live_asset_hash_comparison": "NOT RUN: no new runtime asset deployed; external Workers.dev health/hash egress is blocked.",
     "production_d1_write_or_migration": false,
     "r2_operations": false,
     "actions_run": false,
@@ -96,7 +101,7 @@
     "known_actions_storage": "owner-reported 0.45/0.50 GB (90%); current free compute quota unavailable from configured read-only connector",
     "actions": {
       "runs_started": false,
-      "remaining_free_quota": "UNVERIFIED; not available through connected read-only GitHub tools",
+      "remaining_free_quota": "UNVERIFIED; read-only GitHub connector does not expose billing quota, and shell GitHub credentials/network are unavailable.",
       "workflow_count": 5,
       "triggered_workflows": [
         "active-plan-audit.yml",
@@ -105,7 +110,7 @@
         "f0-baseline.yml",
         "twitch-integration-check.yml"
       ],
-      "owner_reported_artifact_storage": "0.45/0.50 GB"
+      "owner_reported_artifact_storage": "0.45/0.50 GB (90%, owner-reported); no artifact-deletion capability is configured here."
     }
   },
   "manual_physical_acceptance": "DEFERRED until the complete Visual Editor scope is implemented"

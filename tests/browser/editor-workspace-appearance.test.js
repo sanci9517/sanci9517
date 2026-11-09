@@ -201,6 +201,74 @@ test('new users can activate the recursive dock tree and return to the classic l
   assert.deepEqual(errors,[]);
 });
 
+test('recursive workspace completes activation, nested profile transfer, reload and responsive restoration without merging Save and Publish',async t=>{
+  const first=await openEditor(t,{width:1280,height:900,initialDockState:{leftOpen:false,rightOpen:false,leftTab:'pages',leftWidth:352,rightWidth:360},initialAppearance:{version:2,layout:'custom',dockOrder:'left-canvas-right',panelMode:'separate',profiles:[]}});
+  await openPreferences(first.page);
+  await first.page.locator('#enableWorkspaceDockTree').click();
+  await first.page.locator('#closeWorkspaceAppearance').click();
+  await first.page.waitForFunction(()=>document.querySelector('.workspace')?.dataset.workspaceDockTreeActive==='true');
+  assert.ok(await first.page.locator('#canvas').evaluate(element=>element.getBoundingClientRect().width>=400),'first use begins with a usable canvas');
+
+  const source=first.page.locator('#leftDock .dock-heading:visible').first();
+  const target=first.page.locator('#rightDock');
+  const targetBounds=await target.boundingBox();
+  assert.ok(targetBounds,'the second live dock is available as an actual mouse drop target');
+  await source.dragTo(target,{targetPosition:{x:targetBounds.width/2,y:Math.min(30,targetBounds.height/2)}});
+  await first.page.waitForFunction(()=>JSON.stringify(JSON.parse(localStorage.getItem('sanci-editor-workspace-preferences-v2'))?.dockTree||{}).includes('tabs-left-right'));
+  const savedTree=await first.page.evaluate(()=>JSON.parse(localStorage.getItem('sanci-editor-workspace-preferences-v2')).dockTree);
+  assert.equal(await first.page.locator('#leftDock').evaluate(node=>node.isConnected),true,'the original left panel stays live after the user creates a nested group');
+  assert.equal(await first.page.locator('#rightDock').evaluate(node=>node.isConnected),true,'the original right panel stays live after the user creates a nested group');
+  assert.ok(await first.page.locator('#canvas').evaluate(element=>element.getBoundingClientRect().width>=400),'grouping panels never covers the canvas');
+
+  await openPreferences(first.page);
+  await first.page.locator('#workspaceProfileName').fill('C lifecycle workspace');
+  await first.page.locator('#saveWorkspaceProfile').click();
+  assert.notEqual(await first.page.locator('#workspaceProfile').inputValue(),'','saving the profile selects it for transfer');
+  const [download]=await Promise.all([
+    first.page.waitForEvent('download'),
+    first.page.locator('#exportWorkspaceProfile').click(),
+  ]);
+  const transferPath=await download.path();
+  assert.ok(transferPath,'the browser produces a real portable workspace profile download');
+  const transfer=await readFile(transferPath,'utf8');
+  const exported=JSON.parse(transfer);
+  assert.deepEqual(exported.profile.appearance.dockTree,savedTree,'the profile carries the complete validated nested tree');
+
+  const second=await openEditor(t,{width:1280,height:900});
+  await openPreferences(second.page);
+  await second.page.locator('#workspaceProfileFile').setInputFiles({name:download.suggestedFilename(),mimeType:'application/json',buffer:Buffer.from(transfer)});
+  await second.page.waitForFunction(()=>[...(document.querySelector('#workspaceProfile')?.options||[])].some(option=>option.textContent.includes('C lifecycle workspace')));
+  assert.notEqual(await second.page.locator('#workspaceProfile').inputValue(),await first.page.locator('#workspaceProfile').inputValue(),'portable import generates a local profile ID');
+  await second.page.locator('#loadWorkspaceProfile').click();
+  await second.page.waitForFunction(()=>document.querySelector('.workspace')?.dataset.workspaceDockTreeActive==='true');
+  assert.deepEqual(await second.page.evaluate(()=>JSON.parse(localStorage.getItem('sanci-editor-workspace-preferences-v2')).dockTree),savedTree,'loading the imported profile restores the same nested panel arrangement');
+  await second.page.locator('#closeWorkspaceAppearance').click();
+
+  await second.page.reload({waitUntil:'load'});
+  await second.page.waitForFunction(()=>document.documentElement.dataset.editorBoot==='ready');
+  assert.equal(await second.page.locator('.workspace').getAttribute('data-workspace-dock-tree-active'),'true','the imported tree persists after a full Editor reload');
+  assert.deepEqual(await second.page.evaluate(()=>JSON.parse(localStorage.getItem('sanci-editor-workspace-preferences-v2')).dockTree),savedTree);
+  await resizeAndWaitForWorkspaceBreakpoint(second.page,900,900);
+  assert.equal(await second.page.locator('.workspace').getAttribute('data-workspace-dock-tree-active'),null,'the mobile workspace returns the original live panels to their responsive shell');
+  assert.ok(await second.page.locator('#canvas').evaluate(element=>element.getBoundingClientRect().width>0),'the canvas remains available on mobile');
+  await resizeAndWaitForWorkspaceBreakpoint(second.page,1280,900);
+  assert.equal(await second.page.locator('.workspace').getAttribute('data-workspace-dock-tree-active'),'true','returning to desktop remounts the imported recursive tree');
+  assert.deepEqual(await second.page.evaluate(()=>JSON.parse(localStorage.getItem('sanci-editor-workspace-preferences-v2')).dockTree),savedTree);
+
+  const saveResponse=second.page.waitForResponse(response=>response.url().includes('/api/admin/editor?')&&response.request().method()==='POST');
+  await second.page.locator('#save').click();
+  const savedResponse=await saveResponse;
+  assert.equal(savedResponse.request().postDataJSON().publish,false,'Save creates a draft and remains non-publication');
+  const publishResponse=second.page.waitForResponse(response=>response.url().includes('/api/admin/editor?')&&response.request().method()==='POST');
+  await second.page.locator('#publish').click();
+  const publishedResponse=await publishResponse;
+  assert.equal(publishedResponse.request().postDataJSON().publish,true,'Publish remains its own explicit publication request');
+  assert.deepEqual(second.writes.map(write=>write.publish),[false,true],'the mock Page Model API observes two deliberate, separate operations');
+  assert.deepEqual(first.writes,[],'workspace rearrangement and profile export never save or publish page content');
+  assert.deepEqual(first.errors,[]);
+  assert.deepEqual(second.errors,[]);
+});
+
 test('personal workspace theme, density and panel layout persist locally without changing or sending page content',async t=>{
   const {page,writes,errors}=await openEditor(t);
   await openPreferences(page);
