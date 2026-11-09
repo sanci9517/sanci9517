@@ -1,0 +1,86 @@
+{
+  "recorded_at_utc": "2026-11-09T06:05:24Z",
+  "plan_point": "77.44.6.1.C",
+  "status": "ISOLATED_INSPECTOR_RERUN_PASS_PRODUCTION_HEALTH_PASS_FULL_C_OPEN",
+  "scope": "Repeat the isolated Inspector lifecycle after the preceding full-suite timeout, verify the current remote branch and live Worker health/traffic, and preserve accurate plan evidence.",
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "local_head_before_docs": "bcc3a5259fb3e48b93a0485fd2996b8c09abf70f",
+    "local_commits_ahead_before_docs": 37,
+    "github_branch_head_read_only": "d75af5439c38e2a7e19f1aa6b8b5b0cc81d6ec09",
+    "github_branch_head_command": "git ls-remote origin refs/heads/v2/foundation",
+    "runtime_files_changed": [],
+    "test_source_changed": false,
+    "documentation_files_changed": [
+      "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+      "docs/evidence/editor-inspector-lifecycle-recheck-2026-11-09.json"
+    ],
+    "preexisting_untracked_preserved": ["node_modules/", "scripts/__pycache__/" ]
+  },
+  "validation": {
+    "wide_layout_suite_from_previous_work_block": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium npm run test:editor:layout",
+      "status": "FAIL_ONE_FILE",
+      "files_total": 53,
+      "files_passed": 52,
+      "files_failed": 1,
+      "failed_file": "tests/browser/editor-inspector-lifecycle.test.js",
+      "failure": "The Flex group title click timed out after 15 seconds at line 754 while visible, enabled and stable."
+    },
+    "isolated_inspector_lifecycle_rechecks": [
+      {
+        "command": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-inspector-lifecycle.test.js",
+        "status": "PASS",
+        "tests_passed": 1,
+        "tests_failed": 0,
+        "duration_ms": 222760
+      },
+      {
+        "command": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-inspector-lifecycle.test.js",
+        "status": "PASS",
+        "tests_passed": 1,
+        "tests_failed": 0,
+        "duration_ms": 258412
+      }
+    ],
+    "interpretation": "The timeout occurred only in the wide serial suite and did not reproduce in two isolated full-file reruns. No reproducible application defect was established; no runtime or test assertion was changed. The original wide-suite result remains FAIL, not PASS.",
+    "editor_unit": {"command":"npm run test:editor","status":"PASS","node_test_files":14,"subreaper_contract_tests":3},
+    "typecheck": {"command":"npm run typecheck","status":"PASS"},
+    "migration_safety": {"command":"npm run test:web013:migration-gate","status":"PASS","production_database_touched":false},
+    "production_health": {
+      "url":"https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+      "command":"curl -sS --connect-timeout 5 --max-time 10",
+      "http_status":200,
+      "body":{"ok":true,"service":"sanci9517-streamer-brand","version":"2.0.0","server":"cloudflare-worker"}
+    }
+  },
+  "production_worker": {
+    "worker":"sanci9517-streamer-brand",
+    "deployment_id":"6aea7ce1-830a-451a-a00d-c88284b08ef9",
+    "traffic_version":"425cfad2-3744-49e1-afde-289216ad8c2b",
+    "traffic_percentage":100,
+    "public_asset_hash_comparison":"NOT APPLICABLE: no runtime/public asset changed in this block. Earlier unreleased runtime commits remain in the local branch."
+  },
+  "release": {
+    "status":"NOT_PUSHED",
+    "reason":"The local branch is 37 commits ahead and contains runtime changes; pushing this documentation-only follow-up would also publish those changes. Remote Actions quota remains unverified under the explicit 0-HUF cap.",
+    "ci":"NOT RUN",
+    "deploy":"NOT RUN",
+    "actions_storage_owner_reported":"0.45/0.50 GB",
+    "remaining_actions_quota":"UNVERIFIED"
+  },
+  "product_contracts": {
+    "save_publish_separation":"UNCHANGED",
+    "full_visual_editor_manual_physical_acceptance":"DEFERRED until full Editor scope is implemented",
+    "plan_point":"OPEN / NOT CERTIFIED: recursive dock-group semantics and complete workspace-lifecycle acceptance remain open"
+  },
+  "data_cost": {
+    "production_d1_select_write_migration":false,
+    "r2_operation":false,
+    "new_dependency":false,
+    "actions_workflow":false,
+    "cost_huf":0
+  },
+  "next_step":"Continue the open 77.44.6.1.C workspace group-model/lifecycle requirement. Do not claim the wide layout suite passed; investigate or reproduce the Flex-title timeout under equivalent load before changing product/test code."
+}
