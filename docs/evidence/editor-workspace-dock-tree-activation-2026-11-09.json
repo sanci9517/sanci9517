@@ -1,13 +1,13 @@
 {
-  "recorded_at_utc": "2026-11-09T12:55:39Z",
+  "recorded_at_utc": "2026-11-09T13:15:53Z",
   "plan_point": "77.44.6.1.C",
   "status": "LOCAL_VALIDATED_FIRST_USE_ACTIVATION_C_OPEN_RELEASE_BLOCKED",
   "source_control": {
     "repository": "sanci9517/sanci9517",
     "branch": "v2/foundation",
-    "local_head": "4d01239187c59f335fdb2b3c0b55c967d832a968",
+    "local_head": "91d1fa1ac9f5735390ba12a4d37cfceff2764679",
     "remote_head": "6f98cbefb18432de283e91d3adc1762c6c5202ae",
-    "remote_head_verified_via": "GitHub commits API, exact branch v2/foundation, read-only recheck 2026-11-09",
+    "remote_head_verified_via": "GitHub commits API, exact v2/foundation branch, read-only recheck during this run",
     "fast_forward_ancestry": "PASS: remote HEAD is an ancestor of local HEAD; 8 local commits were ahead before this test/evidence-only worktree change.",
     "push": "NOT PUSHED; five v2/foundation Actions workflows would trigger; free compute quota is not observable through the connected read-only GitHub tools, so the 0 Ft limit is protected by keeping the release local.",
     "changed_runtime_paths": [
@@ -39,8 +39,8 @@
     "local_commit_count_ahead_after_runtime_commit": 7,
     "code_commit_status": "Runtime commit and integrated workspace lifecycle test are locally validated and committed on v2/foundation; not pushed because free Actions quota is unverified and the pending runtime history can start required CI.",
     "local_head_before_workspace_lifecycle_evidence": "4d01239187c59f335fdb2b3c0b55c967d832a968",
-    "local_commits_ahead_before_this_evidence_commit": 8,
-    "local_commits_ahead_after_this_evidence_commit": 9
+    "local_commits_ahead_before_this_evidence_commit": 9,
+    "local_commits_ahead_after_this_evidence_commit": 10
   },
   "implementation": {
     "summary": "Added an accessible first-use control that creates the recursive dock tree from the user’s current dock order, widths, and panel mode/side. It opens every live dock leaf on desktop, keeps the canvas separate and at least 400px in the 1025px first-use fixture, supports undo/redo, and has a one-click classic-layout restoration. Invalid dock orders fail closed.",
@@ -59,7 +59,7 @@
     "typecheck": "PASS: npm run typecheck.",
     "migration_safety": "PASS: npm run test:web013:migration-gate.",
     "syntax_diff": "PASS: node --check tests/browser/editor-workspace-appearance.test.js; git diff --check.",
-    "canonical_plan_and_contract": "PASS after updating lifecycle evidence and rebuilding source traceability: canonical plan 13/13 masters, plan-contract 13/13, active-point audit 77.44.6.1.C OPEN / NOT_CERTIFIED, traceability 396/396.",
+    "canonical_plan_and_contract": "PASS: canonical plan 13 master files, plan-contract 13/13, active point 77.44.6.1.C OPEN / NOT_CERTIFIED, feature traceability 396/396.",
     "full_test_note": "The serial full layout suite used local Chromium and loopback fixtures only; no GitHub Actions run.",
     "integrated_workspace_lifecycle": "PASS: added test covers first-use activation, actual mouse dock grouping, nested-tree profile save/export, isolated import with local ID, reload, mobile/desktop restoration, canvas availability, and distinct Save/Publish API requests; profile/layout actions do not write Page Model."
   },
@@ -84,15 +84,15 @@
     },
     "deployment_api_before_release": {
       "status": "READ_ONLY_CONFIRMED",
-      "checked_at_utc": "2026-11-09T12:51:10Z",
+      "checked_at_utc": "2026-11-09T13:15:53Z",
       "deployment_id": "c4573240-1f1d-4830-98f1-bbc713782c4e",
       "version_id": "a6670b60-61ec-40cf-8613-0757b6ca0954",
       "traffic_percent": 100
     },
-    "health_get": "UNVERIFIED: direct curl to https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health exited 7, HTTP 000; proxy port 8080 could not be reached before HTTP.",
-    "push": "NOT PUSHED; Actions free compute quota remains UNVERIFIED and runtime history would trigger five workflows. Keep current 0 Ft limit; no workflow runs started.",
+    "health_get": "PASS: direct GET https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health at 2026-11-09T13:03:16Z; HTTP 200, {\"ok\":true,\"service\":\"sanci9517-streamer-brand\",\"version\":\"2.0.0\",\"server\":\"cloudflare-worker\"}.",
+    "push": "NOT PUSHED: runtime history includes nine local commits and requires hosted CI; the billing/remaining-free-quota endpoints return inaccessible responses. No Actions run started.",
     "worker_deploy": "NOT DEPLOYED; this turn changed only browser tests/evidence/plan, runtime source remains the already validated local commit.",
-    "live_asset_hash_comparison": "NOT RUN: no new runtime asset deployed; external Workers.dev health/hash egress is blocked.",
+    "live_asset_hash_comparison": "NOT RUN: no runtime asset was deployed in this run; local runtime commit remains unpublished, so local/live hashes are not claimed.",
     "production_d1_write_or_migration": false,
     "r2_operations": false,
     "actions_run": false,
@@ -101,7 +101,7 @@
     "known_actions_storage": "owner-reported 0.45/0.50 GB (90%); current free compute quota unavailable from configured read-only connector",
     "actions": {
       "runs_started": false,
-      "remaining_free_quota": "UNVERIFIED; read-only GitHub connector does not expose billing quota, and shell GitHub credentials/network are unavailable.",
+      "remaining_free_quota": "UNVERIFIED: authenticated GitHub billing requests returned repository billing HTTP 404 and user billing HTTP 403 Resource not accessible by integration.",
       "workflow_count": 5,
       "triggered_workflows": [
         "active-plan-audit.yml",
@@ -110,7 +110,7 @@
         "f0-baseline.yml",
         "twitch-integration-check.yml"
       ],
-      "owner_reported_artifact_storage": "0.45/0.50 GB (90%, owner-reported); no artifact-deletion capability is configured here."
+      "owner_reported_artifact_storage": "0.45/0.50 GB (owner-reported; not readable via billing API). Read-only artifact-list byte sum is documented in github-actions-artifact-retention-cleanup-2026-11-09.json."
     }
   },
   "manual_physical_acceptance": "DEFERRED until the complete Visual Editor scope is implemented"

@@ -1,0 +1,98 @@
+{
+  "recorded_at_utc": "2026-11-09T13:15:53Z",
+  "repository": "sanci9517/sanci9517",
+  "branch": "v2/foundation",
+  "plan_point": "77.44.6.1.C",
+  "purpose": "Owner-authorized no-cost pruning of superseded GitHub Actions screenshot artifacts under AGENTS.md preflight rules.",
+  "billing_access": {
+    "owner_reported_storage": "0.45 GB / 0.50 GB (90%); user-provided, not billing API-verified.",
+    "repository_billing_api": "GET /repos/sanci9517/sanci9517/actions/billing/usage returned HTTP 404 Not Found.",
+    "user_billing_api": "GET /users/sanci9517/settings/billing/actions returned HTTP 403 Resource not accessible by integration.",
+    "free_compute_quota": "UNVERIFIED; do not start Actions or use paid capacity."
+  },
+  "inventory_before": {
+    "artifact_count": 1451,
+    "size_in_bytes": 1384112345,
+    "editor_layout_screenshots_count": 801,
+    "editor_layout_screenshots_bytes": 1382463505,
+    "canonical_active_point_source_count": 650,
+    "canonical_active_point_source_bytes": 1648840
+  },
+  "preflight": {
+    "screenshot_retention_days_current_workflow": 7,
+    "active_plan_audit_retention_days": 30,
+    "cutoff_utc": "2026-11-02T13:03:00Z",
+    "old_screenshot_count": 720,
+    "older_artifacts_referenced_by_docs_ids_runs_or_shas": 158,
+    "other_branch_or_non_success_or_non_editor_runs_preserved": 163,
+    "older_runs_without metadata in date-range list response preserved": 397,
+    "policy": "Only completed successful Editor Core Test runs on v2/foundation, older than seven days and with no artifact ID, workflow run ID or source SHA reference in docs were eligible. The newest useful exact-runtime acceptance artifact remained referenced and was preserved."
+  },
+  "deleted_artifacts": [
+    {
+      "artifact_id": 13112525205,
+      "name": "editor-layout-screenshots",
+      "bytes": 2875456,
+      "created_at": "2026-11-02T02:36:33Z",
+      "prior_expiry": "2027-01-31T02:07:42Z",
+      "workflow": "Editor Core Test",
+      "run_id": 41376021105,
+      "run_status": "completed",
+      "run_conclusion": "success",
+      "event": "push",
+      "branch": "v2/foundation",
+      "head_sha": "58677ad30f7cc6818ae521c666c080069e5ca6fc",
+      "docs_references": [],
+      "delete_result": "HTTP 204; follow-up GET HTTP 404"
+    },
+    {
+      "artifact_id": 13089512676,
+      "name": "editor-layout-screenshots",
+      "bytes": 2873509,
+      "created_at": "2026-11-01T15:38:24Z",
+      "prior_expiry": "2027-01-30T15:10:24Z",
+      "workflow": "Editor Core Test",
+      "run_id": 41319856134,
+      "run_status": "completed",
+      "run_conclusion": "success",
+      "event": "push",
+      "branch": "v2/foundation",
+      "head_sha": "24480f754cd8d094c9392b7ee7aa12405b5a62ba",
+      "docs_references": [],
+      "delete_result": "HTTP 204; follow-up GET HTTP 404"
+    }
+  ],
+  "deleted_total_bytes": 5748965,
+  "inventory_after": {
+    "artifact_count": 1449,
+    "size_in_bytes": 1378363380,
+    "editor_layout_screenshots_count": 799,
+    "editor_layout_screenshots_bytes": 1376714540,
+    "canonical_active_point_source_count": 650,
+    "canonical_active_point_source_bytes": 1648840,
+    "deleted_ids_absent_from_full_artifact_list": true
+  },
+  "preserved_current_acceptance_artifact": {
+    "artifact_id": 13593523042,
+    "run_id": 42420157710,
+    "name": "editor-layout-screenshots",
+    "bytes": 2917049,
+    "created_at": "2026-11-07T22:50:13Z",
+    "expires_at": "2026-11-14T22:50:12Z",
+    "head_sha": "dc4c5b174e83c4d8430227d54f911706beb4ede4",
+    "reason": "Current canonical evidence references this newest useful exact-runtime hosted acceptance artifact; retained."
+  },
+  "observations": [
+    "Only the two superseded screenshot artifacts above were deleted; workflow runs, source files, release artifacts and current acceptance evidence were not deleted.",
+    "No APK/AAB/AAR artifact name was present in the full repository artifact inventory; local checkout search previously found none.",
+    "Current sum of artifact size_in_bytes does not equal the owner-reported billing meter; the account billing meter remains unverified.",
+    "No GitHub Actions workflow was dispatched or rerun; no Worker deployment, D1 operation or R2 operation occurred.",
+    "Existing editor-core-test.yml already sets retention-days: 7 for screenshots; active-point audit text uses 30 days."
+  ],
+  "cost_huf": 0,
+  "paid_usage": false,
+  "actions_started": false,
+  "worker_deployed": false,
+  "d1_write_or_migration": false,
+  "r2_operation": false
+}
