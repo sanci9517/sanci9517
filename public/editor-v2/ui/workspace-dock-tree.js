@@ -42,3 +42,49 @@ export function workspaceDockTreeSignature(tree){
   const normalized=normalizeWorkspaceDockTree(tree);
   return normalized?JSON.stringify(normalized):'';
 }
+
+function uniqueNodeId(tree,base){
+  const ids=new Set();
+  const collect=node=>{ids.add(node.id);node.children?.forEach(collect)};
+  collect(tree);
+  let candidate=base.slice(0,64),sequence=1;
+  while(ids.has(candidate)){const suffix=`-${sequence++}`;candidate=`${base.slice(0,64-suffix.length)}${suffix}`}
+  return candidate;
+}
+
+/** Move a visible panel beside a leaf or into a panel-only tab group. */
+export function moveWorkspaceDockTreeLeaf(value,sourceId,targetId,placement,{axis='horizontal',before=true}={}){
+  const tree=normalizeWorkspaceDockTree(value);
+  if(!tree||sourceId===targetId||!['before','after','tab'].includes(placement)||!['horizontal','vertical'].includes(axis))return null;
+  const find=(node,id)=>node.id===id?node:node.children?.map(child=>find(child,id)).find(Boolean);
+  const source=find(tree,sourceId),target=find(tree,targetId);
+  if(!source||!target||!['panel','canvas'].includes(source.kind)||!['panel','canvas'].includes(target.kind))return null;
+  if(placement==='tab'&&(source.kind!=='panel'||target.kind!=='panel'))return null;
+  const remove=node=>{
+    if(node.id===sourceId)return null;
+    if(!node.children)return node;
+    const children=node.children.map(remove).filter(Boolean);
+    if(node.kind==='split'&&children.length===1)return children[0];
+    if(node.kind==='tabs'&&children.length===1)return children[0];
+    if(children.length===node.children.length&&children.every((child,index)=>child===node.children[index]))return node;
+    return node.kind==='tabs'?{...node,activeId:children.some(child=>child.id===node.activeId)?node.activeId:children[0].id,children}:{...node,children};
+  };
+  const remaining=remove(tree);
+  if(!remaining)return null;
+  let inserted=false;
+  const add=node=>{
+    if(node.id===targetId){
+      inserted=true;
+      if(placement==='tab'){
+        const children=before?[source,node]:[node,source];
+        return {id:uniqueNodeId(remaining,`tabs-${sourceId}-${targetId}`),kind:'tabs',activeId:sourceId,children};
+      }
+      const children=before?[source,node]:[node,source];
+      return {id:uniqueNodeId(remaining,`split-${sourceId}-${targetId}`),kind:'split',axis,ratio:0.5,children};
+    }
+    if(!node.children)return node;
+    return {...node,children:node.children.map(add)};
+  };
+  const result=add(remaining);
+  return inserted?normalizeWorkspaceDockTree(result):null;
+}

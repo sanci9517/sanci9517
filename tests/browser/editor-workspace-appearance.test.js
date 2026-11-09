@@ -91,6 +91,59 @@ async function resizeAndWaitForWorkspaceBreakpoint(page,width,height){
   await page.evaluate(()=>window.__workspaceBreakpointTransition);
 }
 
+test('recursive dock renderer supports accessible tabs and splits, preserves live Editor panels, and restores mobile drawers',async t=>{
+  const dockTree={id:'root',kind:'split',axis:'horizontal',ratio:0.3,children:[
+    {id:'panel-tabs',kind:'tabs',activeId:'left',children:[{id:'left',kind:'panel',side:'left'},{id:'right',kind:'panel',side:'right'}]},
+    {id:'canvas',kind:'canvas'},
+  ]};
+  const {page,writes,errors}=await openEditor(t,{initialDockState:{leftOpen:true,rightOpen:false,leftTab:'pages'},initialAppearance:{version:2,layout:'custom',dockTree}});
+  const workspace=page.locator('.workspace');
+  assert.equal(await workspace.getAttribute('data-workspace-dock-tree-active'),'true');
+  for(const id of ['leftDock','rightDock','canvas'])assert.equal(await page.locator(`#${id==='canvas'?'canvas':id}`).evaluate(node=>Boolean(node.closest('.workspace-dock-tree-root'))),true,`${id} remains the original live Editor element`);
+  assert.equal(await page.locator('.workspace-dock-tree-separator').getAttribute('role'),'separator');
+  const firstPane=page.locator('.workspace-dock-tree-split > .workspace-dock-tree-pane').first();
+  await page.locator('.workspace-dock-tree-separator').focus();
+  await page.keyboard.press('ArrowRight');
+  await page.waitForFunction(()=>JSON.parse(localStorage.getItem('sanci-editor-workspace-preferences-v2'))?.dockTree?.ratio===0.32);
+  assert.equal(await page.evaluate(()=>document.activeElement?.getAttribute('role')),'separator','keyboard resize retains separator focus after the tree rerenders');
+  const splitRatio=await firstPane.evaluate(node=>node.getBoundingClientRect().width/(node.parentElement.getBoundingClientRect().width-8));
+  assert.ok(Math.abs(splitRatio-0.32)<0.02,`rendered split ratio follows the persisted tree ratio: ${splitRatio}`);
+  const tabs=page.locator('.workspace-dock-tree-tablist [role="tab"]');
+  await tabs.first().focus();await page.keyboard.press('ArrowRight');
+  await page.waitForFunction(()=>JSON.parse(localStorage.getItem('sanci-editor-workspace-preferences-v2'))?.dockTree?.children?.[0]?.activeId==='right');
+  assert.equal(await tabs.nth(1).getAttribute('aria-selected'),'true');
+  assert.equal(await page.locator('#rightDock').evaluate(node=>node.classList.contains('closed')),false,'activating a panel tab opens its live dock');
+  await page.locator('#focusCanvas').click();
+  const focusState=await page.evaluate(()=>({focused:document.querySelector('.workspace')?.classList.contains('canvas-focus'),host:document.querySelector('.workspace-dock-tree-root')?.dataset.canvasFocused,canvasAreaParent:document.querySelector('.canvas-area')?.parentElement?.className}));
+  assert.deepEqual(focusState,{focused:true,host:'true',canvasAreaParent:'workspace-dock-tree-root'});
+  await page.locator('#focusCanvas').click();
+  assert.ok(await page.locator('.workspace-dock-tree-tablist').isVisible());
+  await tabs.first().click();
+  await page.locator('#leftDock .dock-heading').first().focus();
+  await page.keyboard.press('Alt+ArrowRight');
+  await page.waitForFunction(()=>JSON.stringify(JSON.parse(localStorage.getItem('sanci-editor-workspace-preferences-v2'))?.dockTree||{}).includes('split-left-canvas'));
+  assert.equal(await page.evaluate(()=>document.activeElement?.closest('#leftDock')!==null),true,'keyboard tree move retains focus in the moved live panel');
+  await page.evaluate(()=>{
+    const source=document.querySelector('#rightDock .dock-heading'),target=document.querySelector('#leftDock');
+    const transfer=new DataTransfer(),rect=target.getBoundingClientRect(),clientX=rect.left+rect.width/2,clientY=rect.top+rect.height/2;
+    source.dispatchEvent(new DragEvent('dragstart',{bubbles:true,cancelable:true,dataTransfer:transfer}));
+    target.dispatchEvent(new DragEvent('dragover',{bubbles:true,cancelable:true,dataTransfer:transfer,clientX,clientY}));
+    target.dispatchEvent(new DragEvent('drop',{bubbles:true,cancelable:true,dataTransfer:transfer,clientX,clientY}));
+    source.dispatchEvent(new DragEvent('dragend',{bubbles:true,dataTransfer:transfer}));
+  });
+  await page.waitForFunction(()=>JSON.stringify(JSON.parse(localStorage.getItem('sanci-editor-workspace-preferences-v2'))?.dockTree||{}).includes('tabs-right-left'));
+  assert.ok(await page.locator('.workspace-dock-tree-tablist').isVisible(),'dragging the second dock onto the first panel creates an accessible tab group');
+  assert.equal(await page.locator('.workspace-dock-tree-tablist [role="tab"]').filter({hasText:'Beállítások'}).getAttribute('aria-selected'),'true');
+  await resizeAndWaitForWorkspaceBreakpoint(page,900,900);
+  assert.equal(await workspace.getAttribute('data-workspace-dock-tree-active'),null);
+  assert.equal(await page.locator('#leftDock').evaluate(node=>node.parentElement===document.querySelector('.workspace')),true);
+  assert.equal(await page.locator('#rightDock').evaluate(node=>node.parentElement===document.querySelector('.workspace')),true);
+  await resizeAndWaitForWorkspaceBreakpoint(page,1366,900);
+  assert.equal(await workspace.getAttribute('data-workspace-dock-tree-active'),'true');
+  assert.deepEqual(writes,[],'dock-tree operations only persist local presentation preferences; page Save and Publish are untouched');
+  assert.deepEqual(errors,[]);
+});
+
 test('personal workspace theme, density and panel layout persist locally without changing or sending page content',async t=>{
   const {page,writes,errors}=await openEditor(t);
   await openPreferences(page);

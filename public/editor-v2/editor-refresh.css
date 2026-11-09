@@ -651,6 +651,46 @@ button:focus-visible, summary:focus-visible, .rail-btn:focus-visible { outline: 
 /* Inline plain-text controls are siblings of the authored Content Inspector. */
 .plain-text-content.editor-publication-required { border-inline-start: 3px solid #c58c37; padding-inline-start: 8px; }
 
+/* Recursive dock trees are an opt-in desktop presentation; the legacy mobile
+   drawers keep their original DOM positions and lifecycle. */
+.workspace-dock-tree-root { position:absolute; inset:0; z-index:1; display:flex; min-width:0; min-height:0; overflow:hidden; }
+.workspace[data-workspace-dock-tree-active="true"] { display:block; }
+.workspace[data-workspace-dock-tree-active="true"] > .workspace-dock-tree-root { z-index:1; }
+.workspace[data-workspace-dock-tree-active="true"] > .left-dock,
+.workspace[data-workspace-dock-tree-active="true"] > .right-dock,
+.workspace[data-workspace-dock-tree-active="true"] > .canvas-area,
+.workspace[data-workspace-dock-tree-active="true"] > .workspace-panel-group-tabs { display:none !important; }
+.workspace-dock-tree-split { display:flex; flex:1 1 auto; min-width:0; min-height:0; overflow:hidden; }
+.workspace-dock-tree-split[data-dock-tree-axis="horizontal"] { flex-direction:row; }
+.workspace-dock-tree-split[data-dock-tree-axis="vertical"] { flex-direction:column; }
+.workspace-dock-tree-pane { display:flex; flex:1 1 0%; min-width:0; min-height:0; overflow:hidden; }
+.workspace-dock-tree-pane > .dock,
+.workspace-dock-tree-pane > .canvas-area,
+.workspace-dock-tree-tabpanel > .dock,
+.workspace-dock-tree-tabpanel > .canvas-area { width:100%; height:100%; min-width:0; min-height:0; }
+.workspace-dock-tree-separator { position:relative; z-index:32; flex:0 0 8px; min-width:8px; min-height:8px; padding:0; border:0; border-radius:0; background:transparent; touch-action:none; }
+.workspace-dock-tree-separator[aria-orientation="vertical"] { cursor:col-resize; }
+.workspace-dock-tree-separator[aria-orientation="horizontal"] { cursor:row-resize; }
+.workspace-dock-tree-separator:hover,
+.workspace-dock-tree-separator:focus-visible { background:color-mix(in srgb,var(--accent) 24%,transparent); outline:2px solid var(--accent); outline-offset:-2px; }
+.workspace-dock-tree-tabs { display:flex; flex:1 1 auto; flex-direction:column; min-width:0; min-height:0; overflow:hidden; }
+.workspace-dock-tree-tablist { display:flex; flex:0 0 auto; min-width:0; gap:4px; padding:5px; border-bottom:1px solid var(--line); background:var(--panel2); }
+.workspace-dock-tree-tablist [role="tab"] { flex:1 1 0; min-width:0; min-height:44px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.workspace-dock-tree-tablist [role="tab"][aria-selected="true"] { border-color:var(--accent); background:color-mix(in srgb,var(--accent) 18%,var(--panel)); }
+.workspace-dock-tree-tabpanels,
+.workspace-dock-tree-tabpanel { display:flex; flex:1 1 auto; min-width:0; min-height:0; overflow:hidden; }
+.workspace-dock-tree-tabpanel[hidden] { display:none !important; }
+.workspace-dock-tree-root .dock-resizer { display:none; }
+.workspace[data-workspace-dock-tree-active="true"] .dock-floating-window { position:relative;left:auto;top:auto;width:100%;height:100%;border:0;border-radius:0;box-shadow:none; }
+.workspace[data-workspace-dock-tree-active="true"] .dock-floating-handle { display:none; }
+@media (max-width:1024px) {
+  .workspace-dock-tree-root { display:none; }
+  .workspace[data-workspace-dock-tree-active="true"] { display:grid; }
+  .workspace[data-workspace-dock-tree-active="true"] > .left-dock,
+  .workspace[data-workspace-dock-tree-active="true"] > .right-dock,
+  .workspace[data-workspace-dock-tree-active="true"] > .canvas-area { display:flex !important; }
+}
+
 /* 77.44.6.1.C: customizable desktop dock positions without changing mobile drawers. */
 @media (min-width:1025px) {
   .workspace [draggable="true"] { cursor:grab; }

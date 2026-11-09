@@ -168,7 +168,7 @@ export function applyWorkspacePreferences(root,preferences){
   root.style.setProperty('--accent',value.accent);
   return value;
 }
-export function mountWorkspaceAppearance({documentRef=globalThis.document,root=documentRef?.querySelector('.editor-app'),onLayoutChange=()=>{},onReset=()=>{},readDockState=()=>({}),applyDockState=()=>{},moveDockTab=()=>false,onExternalChange=()=>{},canPersistDockState=()=>true}={}){
+export function mountWorkspaceAppearance({documentRef=globalThis.document,root=documentRef?.querySelector('.editor-app'),onLayoutChange=()=>{},onReset=()=>{},readDockState=()=>({}),applyDockState=()=>{},moveDockTab=()=>false,onExternalChange=()=>{},onDockTreeChange=()=>{},canPersistDockState=()=>true}={}){
   if(!documentRef||!root)throw new Error('A document and editor root are required');
   const dialog=documentRef.querySelector('#workspaceAppearanceDialog');
   const openButton=documentRef.querySelector('#openWorkspaceAppearance');
@@ -256,6 +256,7 @@ export function mountWorkspaceAppearance({documentRef=globalThis.document,root=d
   };
   const paint=()=>{
     applyWorkspacePreferences(root,value);
+    try{onDockTreeChange(value.dockTree||null)}catch{}
     for(const key of ['layout','dockOrder','panelMode','panelSide','theme','density','accent'])if(fields[key])fields[key].value=value[key];
     if(fields.panelSide)fields.panelSide.disabled=value.panelMode==='separate';
     renderProfiles();renderLeftToolOrder();syncHistory();

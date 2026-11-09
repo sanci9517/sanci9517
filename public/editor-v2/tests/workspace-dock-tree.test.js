@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {normalizeWorkspaceDockTree,workspaceDockTreeSignature} from '../ui/workspace-dock-tree.js';
+import {moveWorkspaceDockTreeLeaf,normalizeWorkspaceDockTree,workspaceDockTreeSignature} from '../ui/workspace-dock-tree.js';
 import {WORKSPACE_PREFERENCES_KEY,mountWorkspaceAppearance,normalizeWorkspacePreferences,parseWorkspaceProfileTransfer,serializeWorkspaceProfile} from '../ui/workspace-appearance.js';
 
 const tree={id:'root',kind:'split',axis:'horizontal',ratio:0.28,children:[
@@ -39,6 +39,27 @@ test('dock tree signature uses only validated canonical data',()=>{
   assert.equal(workspaceDockTreeSignature(tree),JSON.stringify(tree));
   assert.equal(workspaceDockTreeSignature({...tree,unsafe:'ignored'}),JSON.stringify(tree));
   assert.equal(workspaceDockTreeSignature({id:'root',kind:'split'}),'');
+});
+
+test('dock-tree moves split leaves, group only two panels as tabs, and reject moves that would hide the canvas',()=>{
+  const beside=moveWorkspaceDockTreeLeaf(tree,'right','canvas','after',{axis:'vertical',before:false});
+  assert.ok(beside);
+  assert.deepEqual(beside.children[1],{
+    id:'split-right-canvas',kind:'split',axis:'vertical',ratio:0.5,
+    children:[{id:'canvas',kind:'canvas'},{id:'right',kind:'panel',side:'right'}],
+  });
+  const grouped=moveWorkspaceDockTreeLeaf(tree,'left','right','tab');
+  assert.ok(grouped);
+  const find=node=>node.id==='tabs-left-right'?node:node.children?.map(find).find(Boolean);
+  assert.deepEqual(find(grouped),{id:'tabs-left-right',kind:'tabs',activeId:'left',children:[{id:'left',kind:'panel',side:'left'},{id:'right',kind:'panel',side:'right'}]});
+  assert.equal(moveWorkspaceDockTreeLeaf(tree,'canvas','right','tab'),null);
+  assert.equal(moveWorkspaceDockTreeLeaf(tree,'left','left','after'),null);
+  assert.deepEqual(tree,{
+    id:'root',kind:'split',axis:'horizontal',ratio:0.28,children:[
+      {id:'left',kind:'panel',side:'left'},
+      {id:'main',kind:'split',axis:'horizontal',ratio:0.7,children:[{id:'canvas',kind:'canvas'},{id:'right',kind:'panel',side:'right'}]},
+    ],
+  },'tree operations do not mutate saved input');
 });
 
 test('nested dock tree survives preference persistence, Undo/Redo and portable profile transfer',()=>{

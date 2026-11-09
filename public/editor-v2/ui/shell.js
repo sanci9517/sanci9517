@@ -3,6 +3,8 @@ import {panelRegistry,featureRegistry} from './registry.js';
 import {EDITOR_ACTIONS} from './action-catalog.js?v=20261103-canvas-focus-mode';
 import {enhanceEditorActionControls} from './action-help.js?v=20261103-canvas-focus-mode';
 import {DEFAULT_LEFT_TAB_ORDER,applyWorkspacePreferences,mountWorkspaceAppearance,normalizeLeftTabOrder,readWorkspacePreferences} from './workspace-appearance.js?v=20261109-recursive-dock-tree-foundation';
+import {moveWorkspaceDockTreeLeaf,workspaceDockTreeSignature} from './workspace-dock-tree.js';
+import {mountWorkspaceDockTree} from './workspace-dock-renderer.js?v=20261109-recursive-dock-renderer';
 
 const bus=createEventBus();
 const workspace=document.querySelector('.workspace');
@@ -21,6 +23,8 @@ const initialAppearance=readWorkspacePreferences();
 applyWorkspacePreferences(editorRoot,initialAppearance);
 let focusBeforeMobilePanel=null;
 let workspaceAppearance=null;
+let workspaceDockRenderer=null;
+let mountedDockTreeSignature='';
 let cancelWorkspaceDrag=()=>{};
 let cancelDockResize=()=>{};
 let cancelFloatingDockMove=()=>{};
@@ -100,6 +104,12 @@ function applyWorkspaceLayout(layout,{save=true}={}){
 }
 function emit(type,payload={}){bus.emit(type,payload)}
 function isGroupedPanelMode(){return ['tabbed','floating'].includes(editorRoot?.dataset.workspacePanelMode)}
+function firstDockSide(node){
+  if(node?.kind==='panel')return node.side;
+  if(node?.kind==='tabs')return firstDockSide(node.children.find(child=>child.id===node.activeId));
+  if(node?.kind==='split')return firstDockSide(node.children[0])||firstDockSide(node.children[1]);
+  return null;
+}
 function syncPanelGroup(){
   if(workspace)workspace.dataset.workspaceActivePanel=persisted.panelActive;
   const groupTabs=document.querySelector('.workspace-panel-group-tabs');
@@ -160,6 +170,7 @@ function setCanvasFocus(open){
   if(!workspace||next===canvasFocus)return false;
   canvasFocus=next;
   workspace.classList.toggle('canvas-focus',canvasFocus);
+  workspaceDockRenderer?.setCanvasFocus(canvasFocus);
   syncMobileBackdrop();
   document.querySelectorAll('[data-editor-action="focusCanvas"],[data-editor-action="restoreCanvasFocus"]').forEach(button=>{
     button.setAttribute('aria-pressed',String(canvasFocus));
@@ -502,7 +513,11 @@ function setupDockReordering(){
     clearDropPreview();document.body.classList.remove('workspace-reordering');dragSourceId=null;
     if(wasDragging&&announcement)announce(announcement);
   };
-  const refreshHandles=()=>workspace.querySelectorAll('.dock-heading,.canvas-toolbar').forEach(handle=>handle.setAttribute('draggable',String(!mobileQuery.matches)));
+  const refreshHandles=()=>workspace.querySelectorAll('.dock-heading,.canvas-toolbar').forEach(handle=>{
+    handle.setAttribute('draggable',String(!mobileQuery.matches));
+    if(mobileQuery.matches){handle.removeAttribute('tabindex');handle.removeAttribute('aria-keyshortcuts')}
+    else{handle.setAttribute('tabindex','0');handle.setAttribute('aria-keyshortcuts','Alt+ArrowLeft Alt+ArrowRight Alt+ArrowUp Alt+ArrowDown')}
+  });
   const restoreResponsiveDockLayout=()=>{
     cancelDockResize({announcement:'A képernyőméret változott, ezért a panel átméretezése megszakadt.'});
     cancelFloatingDockMove({announcement:'A képernyőméret változott, ezért a lebegő panel visszaállt az előző helyére.'});
@@ -529,6 +544,29 @@ function setupDockReordering(){
   };
   refreshHandles();
   mobileQuery.addEventListener('change',restoreResponsiveDockLayout);
+  workspace.addEventListener('focusin',event=>{
+    const handle=event.target.closest?.('.dock-heading,.canvas-toolbar');
+    if(!handle||mobileQuery.matches)return;
+    announce('Panelmozgatás: Alt+nyíl a legközelebbi cél melletti csoportba helyezéshez; húzd a fejlécet új zónába is. A split méretét nyíllal állítsd.');
+  });
+  workspace.addEventListener('keydown',event=>{
+    const direction={ArrowLeft:{axis:'horizontal',sign:-1},ArrowRight:{axis:'horizontal',sign:1},ArrowUp:{axis:'vertical',sign:-1},ArrowDown:{axis:'vertical',sign:1}}[event.key];
+    if(!workspaceDockRenderer?.tree||mobileQuery.matches||!event.altKey||!direction)return;
+    const handle=event.target.closest?.('.dock-heading,.canvas-toolbar');
+    const source=handle?.closest?.('.left-dock,.right-dock,.canvas-area');
+    const sourceId=source?.dataset.workspaceDockId;
+    if(!source||!sourceId)return;
+    const rect=source.getBoundingClientRect(),sourcePoint=direction.axis==='horizontal'?rect.left+rect.width/2:rect.top+rect.height/2;
+    const candidates=Object.entries(regions).filter(([id,target])=>id!==sourceId&&target?.getClientRects().length).map(([id,target])=>{
+      const bounds=target.getBoundingClientRect(),point=direction.axis==='horizontal'?bounds.left+bounds.width/2:bounds.top+bounds.height/2;
+      return {id,target,point,distance:Math.abs(point-sourcePoint)};
+    }).filter(candidate=>direction.sign<0?candidate.point<sourcePoint:candidate.point>sourcePoint).sort((a,b)=>a.distance-b.distance);
+    const target=candidates[0];if(!target)return;
+    const next=moveWorkspaceDockTreeLeaf(workspaceDockRenderer.tree,sourceId,target.id,'before',{axis:direction.axis,before:sourcePoint<target.point});
+    if(!next){announce('A fókuszált panelt nem lehet ezen a célon elhelyezni. A vászon továbbra is megjelenik.');return}
+    event.preventDefault();workspaceAppearance?.setDockTree(next);source.querySelector('.dock-heading,.canvas-toolbar')?.focus({preventScroll:true});
+    announce(`A(z) ${names[sourceId]} panel a(z) ${names[target.id]} mellé került. A művelet visszavonható.`);
+  });
   workspace.addEventListener('dragstart',event=>{
     if(mobileQuery.matches){finishDrag();return}
     const handle=event.target.closest?.('.dock-heading,.canvas-toolbar');
@@ -566,6 +604,20 @@ function setupDockReordering(){
     const target=event.target.closest?.('.left-dock,.right-dock,.canvas-area');
     const targetId=target?.dataset.workspaceDockId;
     if(!source||!target||!targetId||source===target||!workspace.contains(target)){finishDrag({announcement:'Az átrendezés megszakadt.'});return}
+    if(workspaceDockRenderer?.tree){
+      const rect=target.getBoundingClientRect();
+      const axis=event.shiftKey?'vertical':'horizontal';
+      const offset=axis==='horizontal'?event.clientX-rect.left:event.clientY-rect.top;
+      const extent=axis==='horizontal'?rect.width:rect.height;
+      const placement=isDockGroupZone(sourceId,target,rect,event.clientX)?'tab':'before';
+      const before=placement==='tab'?true:extent>0&&offset/extent<0.5;
+      const next=moveWorkspaceDockTreeLeaf(workspaceDockRenderer.tree,sourceId,targetId,placement,{axis,before});
+      const changed=next&&workspaceAppearance?.setDockTree(next);
+      announce(changed
+        ?placement==='tab'?`A(z) ${names[sourceId]} és ${names[targetId]} panel egy váltható fülcsoportba került.`:`A(z) ${names[sourceId]} panel a(z) ${names[targetId]} mellé került a(z) ${axis==='horizontal'?'vízszintes':'függőleges'} osztóval.`
+        :'A panelmozgatás nem változtatta meg a munkaterületet. A vászon és mindkét panel megmarad.');
+      finishDrag();return;
+    }
     const ungrouping=isGroupedPanelMode()&&sourceId!=='canvas'&&target===canvasArea;
     const movingCanvasBesideGroup=isGroupedPanelMode()&&sourceId==='canvas'&&target!==canvasArea;
     const visualOrder=Object.values(regions).filter(Boolean).sort((a,b)=>a.getBoundingClientRect().left-b.getBoundingClientRect().left);
@@ -636,7 +688,21 @@ setPanel('right',!mobileQuery.matches && Boolean(persisted.rightOpen),{save:fals
 initializingDocks=false;
 syncMobileBackdrop();
 showLeftTab(persisted.leftTab,{save:false,open:false});
-workspaceAppearance=mountWorkspaceAppearance({documentRef:document,root:editorRoot,onLayoutChange:applyWorkspaceLayout,onExternalChange:({reset=false}={})=>{
+workspaceAppearance=mountWorkspaceAppearance({documentRef:document,root:editorRoot,onLayoutChange:applyWorkspaceLayout,onDockTreeChange:tree=>{
+  const signature=workspaceDockTreeSignature(tree);
+  if(signature===mountedDockTreeSignature)return;
+  mountedDockTreeSignature=signature;
+  if(!workspaceDockRenderer){
+    workspaceDockRenderer=mountWorkspaceDockTree({documentRef:document,workspace,tree,onChange:next=>{
+      const side=firstDockSide(next);
+      if(side&&panels[side]?.classList.contains('closed'))setPanel(side,true,{save:true,customize:false});
+      workspaceAppearance?.setDockTree(next);
+    }});
+  }
+  else workspaceDockRenderer.setTree(tree);
+  const side=firstDockSide(tree);
+  if(side&&!mobileQuery.matches&&panels[side]?.classList.contains('closed'))setPanel(side,true,{save:true,customize:false});
+},onExternalChange:({reset=false}={})=>{
   desktopDockSnapshot=null;
   cancelDockResize({announcement:reset?'A másik szerkesztőlapon alaphelyzetbe állították a munkaterületet, ezért a panel átméretezése megszakadt.':'A másik szerkesztőlapon változott a munkaterület, ezért a panel átméretezése megszakadt.'});
   cancelWorkspaceDrag({announcement:reset?'A másik szerkesztőlapon alaphelyzetbe állították a munkaterületet, ezért az átrendezés megszakadt.':'A másik szerkesztőlapon történt változás miatt az átrendezés megszakadt.'});
