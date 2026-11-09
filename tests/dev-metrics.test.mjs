@@ -58,6 +58,21 @@ test('PASS without evidence is refused, pending state survives error, report is 
     assert.equal(after.indicative_completion_date, null);
   } finally { f.cleanup(); }
 });
+test('interrupted runs are archived without invented duration', () => {
+  const f = fixture();
+  try {
+    const id = JSON.parse(f.run('start', '--trigger=scheduled').stdout).id;
+    const x = f.run('abandon', `--id=${id}`, '--reason=cloud workspace interrupted');
+    assert.equal(x.status, 0, x.stderr);
+    const record = JSON.parse(readFileSync(join(f.root, JSON.parse(x.stdout).archive), 'utf8'));
+    assert.equal(record.measured_seconds, null);
+    assert.equal(record.status, 'interrupted');
+    const report = JSON.parse(f.run('report', '--json=true').stdout);
+    assert.equal(report.runs, 0);
+    assert.equal(report.interrupted_sessions, 1);
+    assert.equal(report.total_measured_hours, 0);
+  } finally { f.cleanup(); }
+});
 test('rejects unsupported CLI input', () => {
   const f = fixture();
   try {
