@@ -1,0 +1,87 @@
+{
+  "recorded_at_utc": "2026-11-09T10:01:49Z",
+  "plan_point": "77.44.6.1.C",
+  "status": "LOCAL_VALIDATED_RENDERER_NOT_RELEASED_C_OPEN",
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "code_commit": "dc378d85fc2ae58ee7d3a7a2df7599a2c423c733",
+    "test_followup_commit": "7551b612b1e7e626a1cbdd4c38c8a40162ffbc7a",
+    "github_branch_at_start": "6f98cbefb18432de283e91d3adc1762c6c5202ae",
+    "push": "NOT PUSHED; complete C acceptance and Actions quota verification remain pending",
+    "changed_runtime_paths": [
+      "public/editor-v2/ui/workspace-dock-renderer.js",
+      "public/editor-v2/ui/workspace-dock-tree.js",
+      "public/editor-v2/ui/workspace-appearance.js",
+      "public/editor-v2/ui/shell.js",
+      "public/editor-v2/editor-refresh.css",
+      "public/editor-v2/index.html"
+    ],
+    "changed_test_paths": [
+      "public/editor-v2/tests/workspace-dock-tree.test.js",
+      "tests/browser/editor-workspace-appearance.test.js"
+    ],
+    "source_sha256": {
+      "public/editor-v2/ui/workspace-dock-renderer.js": "85f69c2c59367fb4c748f7ee768384c196a1205dbe2898626d7c31363f84f412",
+      "public/editor-v2/ui/workspace-dock-tree.js": "122d42de2a1cda66fd8fb40483343aae27f7d7fdcbd670778e707311c1f6ca68",
+      "public/editor-v2/ui/workspace-appearance.js": "9cab054a458a31171b739a1aee3edebc018189e20abfbee7111085e37423ec0e",
+      "public/editor-v2/ui/shell.js": "58f9cf640b8a6abd3609330ac6a9dd137c1b9cf448ea344f8610caf8122aeb30",
+      "public/editor-v2/editor-refresh.css": "83d07a8d244af048eb13a3855ac0e9e8248b47dbc4b82926ca15e620bcedf4cd",
+      "public/editor-v2/index.html": "1f95a134c872d63887c5912c684cccd06edde5af9541de39e10391a21920d441",
+      "public/editor-v2/tests/workspace-dock-tree.test.js": "dcc51c21927ab2f1d723f0ad026ac271e59113094afbdd7745ba00562c9a5f69",
+      "tests/browser/editor-workspace-appearance.test.js": "46d12b93cf243d148d05f2ae01ff870d5dc2c276c76c9cee8e41944d032f036e",
+      "scripts/build-feature-traceability.py": "d80a54e032f7eb8ed938c51520da7205add1ac8ea1a83ec4e9a9da9fa5adbd0b",
+      "docs/evidence/feature-traceability.json": "b5ca9f486dd6d04b853b929e410635b60e6f87cd509f81d8e95b3054f0b62342",
+      "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md": "31aa6aece2acf16878558c5d6dbff42ae1851794584d3a0b9835cf267e249251"
+    }
+  },
+  "implementation": {
+    "summary": "The validated recursive workspace tree now renders existing live canvas/panel elements into nested desktop splits and panel tabs. Pointer+keyboard separators persist ratios. Tabs are keyboard navigable. Desktop mouse drag creates split/tab arrangements; Alt+arrow moves the focused live surface. Canvas focus, undo/redo and profile preference pathways keep using the existing model; breakpoint exit restores original live DOM positions for the mobile drawer.",
+    "safety_properties": [
+      "Model normalization still requires canvas and both docks exactly once; canvas cannot be tab-hidden.",
+      "Only DOM nodes are moved, never cloned; comments restore original order at mobile breakpoints.",
+      "Unsupported/invalid trees do not render; missing tree uses the previous shell.",
+      "Split range remains normalized to 10-90%; all imported content remains allowlisted plain data.",
+      "Page Model, Save and Publish are unchanged.",
+      "No new dependency."
+    ],
+    "remaining": "C is not complete; full Editor acceptance, exhaustive recursive geometries, complete profile lifecycle/reload and full layout suite need further verification."
+  },
+  "validation": {
+    "workspace_unit": "PASS npm run test:editor: 15 Node test files, 3 Linux subreaper contract tests",
+    "dock_tree_unit": "PASS public/editor-v2/tests/workspace-dock-tree.test.js",
+    "targeted_browser": "PASS tests/browser/editor-workspace-appearance.test.js --test-name-pattern=recursive dock renderer: 1/1; includes keyboard move/tab, split ratio, DnD regroup, Undo/Redo, reload, breakpoint restore, no Page Model writes",
+    "typecheck": "PASS npm run typecheck",
+    "migration_gate": "PASS npm run test:web013:migration-gate; no D1 writes performed",
+    "plan_contract": "PASS 13/13",
+    "canonical_plan": "PASS scripts/check-canonical-plan.py",
+    "active_cursor": "PASS 77.44.6.1.C OPEN / NOT_CERTIFIED",
+    "source_traceability": "PASS 396/396 after updating EDT sources for renderer and refresh CSS",
+    "syntax_and_diff": "PASS node --check and git diff --check",
+    "full_editor_layout_suite": "NOT RUN in this slice; workspace-specific browser file is not the complete 53-file suite",
+    "workspace_browser_file_prior_version": "PASS tests/browser/editor-workspace-appearance.test.js: 85/85, 0 fail/cancel/skip, 486044 ms. This full file run preceded the additional Undo/Redo+reload assertions; the final extended renderer test passed separately at 1/1."
+  },
+  "production_and_release": {
+    "github_branch_at_start": "6f98cbefb18432de283e91d3adc1762c6c5202ae",
+    "deployment_id": "c4573240-1f1d-4830-98f1-bbc713782c4e",
+    "traffic_version_id": "a6670b60-61ec-40cf-8613-0757b6ca0954",
+    "traffic_percentage": 100,
+    "health_http": 200,
+    "health_body": {
+      "ok": true,
+      "service": "sanci9517-streamer-brand",
+      "version": "2.0.0",
+      "server": "cloudflare-worker"
+    },
+    "d1_select_preflight": "NOT RUN; incomplete C renderer is not being released",
+    "wrangler_dry_run": "NOT RUN; release deferred until full acceptance",
+    "deploy": "NOT DEPLOYED",
+    "live_asset_hash_comparison": "NOT APPLICABLE; local runtime commit not deployed",
+    "github_actions": "0 runs initiated; free quota current value UNVERIFIED; storage owner report 0.45/0.50 GB",
+    "production_d1_writes_or_migrations": false,
+    "r2_operations": false,
+    "paid_usage": false,
+    "cost_huf": 0
+  },
+  "manual_physical_acceptance": "DEFERRED until the complete Visual Editor scope is implemented"
+}
