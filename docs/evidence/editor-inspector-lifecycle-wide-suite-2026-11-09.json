@@ -1,0 +1,87 @@
+{
+  "recorded_at_utc": "2026-11-09T04:57:17Z",
+  "plan_point": "77.44.6.1.C",
+  "status": "WIDE_BROWSER_SUITE_ONE_LOAD_SENSITIVE_FAILURE_ISOLATED_PASS_PLAN_POINT_OPEN",
+  "scope": "Run the complete serial Editor layout/browser suite, isolate the sole Inspector lifecycle timeout, and verify release/production state without runtime changes.",
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "local_head": "c2bebc7e8b53b53ec2a22e9256fadf7825d18cd2",
+    "local_commits_ahead_of_origin_at_start": 36,
+    "worktree_preexisting_untracked": ["node_modules/", "scripts/__pycache__/"],
+    "github_branch_exists_read_only": true,
+    "github_branch_head_last_verified": "d75af5439c38e2a7e19f1aa6b8b5b0cc81d6ec09",
+    "runtime_source_unchanged": true,
+    "runtime_files_changed": [],
+    "test_files_changed": [],
+    "documentation_files_changed": [
+      "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+      "docs/evidence/editor-inspector-lifecycle-wide-suite-2026-11-09.json"
+    ]
+  },
+  "validation": {
+    "full_editor_layout_browser_suite": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium npm run test:editor:layout",
+      "runner": "scripts/run-with-linux-subreaper.py; Node test concurrency 1; 53 browser test files",
+      "status": "FAIL_ONE_FILE",
+      "files_completed": 53,
+      "files_passed": 52,
+      "files_failed": 1,
+      "failed_file": "tests/browser/editor-inspector-lifecycle.test.js",
+      "failure": {
+        "test": "real Inspector layout survives selection, undo, save/reload and separate publish with canvas/public parity",
+        "location": "tests/browser/editor-inspector-lifecycle.test.js:754:74",
+        "operation": "click .inspector-group-title filtered by Flex when aria-expanded=false",
+        "symptom": "Playwright click timed out after 15 seconds while the locator was visible, enabled and stable and was being scrolled into view.",
+        "file_duration_ms": 243640
+      },
+      "other_observations": "The remaining 52 browser files completed successfully, including the 45-PARTIAL-type Inspector matrix, visual effects/background image lifecycles, Save versus Publish contracts, and media/admin coverage. Browser child processes were reaped by the subreaper."
+    },
+    "isolated_inspector_lifecycle_rerun": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-inspector-lifecycle.test.js",
+      "status": "PASS",
+      "tests_passed": 1,
+      "tests_failed": 0,
+      "duration_ms": 222760,
+      "interpretation": "The wide-suite timeout did not reproduce when the same test file was run alone. This supports a load-sensitive browser-test flake; it does not establish a runtime defect or justify weakening the assertion. No test or runtime source was changed."
+    },
+    "production_health": {
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+      "status": "UNVERIFIED",
+      "attempt": "curl -sS --connect-timeout 5 --max-time 10",
+      "http_status": 0,
+      "error": "curl exit 7: could not connect to configured proxy port 8080 before HTTP"
+    }
+  },
+  "production_worker": {
+    "worker": "sanci9517-streamer-brand",
+    "latest_deployment_read_only": "6aea7ce1-830a-451a-a00d-c88284b08ef9",
+    "traffic_version_read_only": "425cfad2-3744-49e1-afde-289216ad8c2b",
+    "traffic_percentage": 100,
+    "runtime_asset_hash_comparison": "NOT APPLICABLE: no runtime/public asset changed in this test/documentation-only block; unreleased runtime commits remain in local ancestry."
+  },
+  "release_safety": {
+    "status": "NOT_PUSHED",
+    "reason": "The local branch is 36 commits ahead and includes previously preserved runtime changes. A fast-forward would release those changes as well. Actions quota remains unverified under the 0-HUF limit; the owner last reported 0.45/0.50 GB Actions artifact storage. No workflow was dispatched.",
+    "aggregate_ci": "NOT_RUN",
+    "worker_deploy": "NOT_RUN",
+    "wrangler_dry_run": "NOT_RUN: runtime source did not change",
+    "actions_storage_owner_reported": "0.45/0.50 GB",
+    "remaining_actions_quota": "UNVERIFIED"
+  },
+  "product_contracts": {
+    "save_and_publish_remain_distinct": true,
+    "full_visual_editor_manual_and_physical_acceptance": "DEFERRED until the complete Editor scope is implemented",
+    "plan_point_status": "OPEN / NOT CERTIFIED; recursive dock-group semantics, full workspace lifecycle acceptance, release and live health verification remain open"
+  },
+  "prohibited_or_paid_operations": {
+    "production_d1_select_write_or_migration": false,
+    "r2_operation": false,
+    "artifact_deletion": false,
+    "new_dependency": false,
+    "actions_workflow_dispatch": false,
+    "production_deploy": false,
+    "cost_huf": 0
+  },
+  "next_step": "Keep the current Inspector assertions intact; use the isolated PASS as evidence that the wide-suite click timeout is load-sensitive, then continue the next open 77.44.6.1.C workspace-model/lifecycle item. Revisit browser timing only if the failure reproduces in a focused environment."
+}
