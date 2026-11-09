@@ -1,0 +1,82 @@
+{
+  "recorded_at_utc": "2026-11-09T07:34:58Z",
+  "plan_point": "77.44.6.1.C",
+  "status": "COMPLETE_SERIAL_LAYOUT_SUITE_PASS_INSPECTOR_TIMEOUT_NOT_REPRODUCED_LIVE_HEALTH_PASS_C_OPEN",
+  "scope": "Repeat all 53 serial Editor/browser-layout files after the Inspector Flex group-title timeout and verify the current branch and live Worker.",
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "local_head_before_docs": "4833a2668dadf3641d94f58562a44b06e8ae3898",
+    "local_commits_ahead_before_docs": 38,
+    "github_branch_head_read_only": "d75af5439c38e2a7e19f1aa6b8b5b0cc81d6ec09",
+    "github_head_command": "git ls-remote origin refs/heads/v2/foundation",
+    "runtime_files_changed": [],
+    "test_source_changed": false,
+    "documentation_files_changed": [
+      "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+      "docs/evidence/editor-layout-suite-recheck-2026-11-09.json"
+    ],
+    "preexisting_untracked_preserved": ["node_modules/", "scripts/__pycache__/"]
+  },
+  "validation": {
+    "full_layout_browser_suite": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium npm run test:editor:layout",
+      "runner": "scripts/run-with-linux-subreaper.py; Node test concurrency 1",
+      "files_expected": 53,
+      "files_completed": 53,
+      "files_passed": 53,
+      "files_failed": 0,
+      "files_cancelled": 0,
+      "files_skipped": 0,
+      "notable": {
+        "workspace_appearance": "PASS 84/84, including nested tab/floating-dock existing coverage, Save/Publish isolation and 400px canvas floor",
+        "inspector_lifecycle": "PASS 1/1 in the full suite; Flex group-title click did not time out",
+        "partial_inspector_types": "PASS 1/1 across all compatible PARTIAL element types, Save/Publish and lifecycle",
+        "save_publish_separation": "covered throughout Inspector, Rich Text, media, structural and responsive cases"
+      },
+      "interpretation": "The sole Inspector timeout from the previous 53-file run was not reproduced in this full serial repeat. Two additional isolated full-file reruns also passed. Prior failure remains historical and is not relabelled; the current full suite is independently PASS."
+    },
+    "editor_unit": {
+      "command": "npm run test:editor",
+      "status": "PASS",
+      "node_test_files": 14,
+      "subreaper_contract_tests": 3
+    },
+    "typecheck": {"command":"npm run typecheck","status":"PASS"},
+    "migration_safety": {"command":"npm run test:web013:migration-gate","status":"PASS","production_database_touched":false},
+    "production_health": {
+      "url":"https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+      "command":"curl -sS --connect-timeout 5 --max-time 10",
+      "http_status":200,
+      "body":{"ok":true,"service":"sanci9517-streamer-brand","version":"2.0.0","server":"cloudflare-worker"}
+    }
+  },
+  "production_worker": {
+    "worker":"sanci9517-streamer-brand",
+    "deployment_id":"6aea7ce1-830a-451a-a00d-c88284b08ef9",
+    "traffic_version":"425cfad2-3744-49e1-afde-289216ad8c2b",
+    "traffic_percentage":100,
+    "runtime_asset_hash_comparison":"NOT APPLICABLE: no runtime or public asset changed in this documentation-only follow-up; prior unreleased runtime commits remain local."
+  },
+  "release": {
+    "status":"NOT_PUSHED",
+    "reason":"The local v2/foundation history is 38 commits ahead and includes runtime changes. Pushing this documentation-only evidence would also publish those commits. Actions quota is unverified under the owner's 0-HUF cap.",
+    "ci":"NOT RUN",
+    "worker_deploy":"NOT RUN",
+    "actions_storage_owner_reported":"0.45/0.50 GB",
+    "remaining_actions_quota":"UNVERIFIED"
+  },
+  "product_contracts": {
+    "save_publish_separation":"UNCHANGED and covered by browser lifecycle cases",
+    "manual_physical_acceptance":"DEFERRED until full Visual Editor scope is implemented",
+    "plan_point":"OPEN / NOT CERTIFIED: recursive dock-group semantics/full workspace-lifecycle acceptance remain open"
+  },
+  "data_cost": {
+    "production_d1_select_write_migration":false,
+    "r2_operation":false,
+    "new_dependency":false,
+    "workflow_dispatch":false,
+    "cost_huf":0
+  },
+  "next_step":"Continue the remaining 77.44.6.1.C model/lifecycle acceptance. The repeated wide-suite result removes the immediate Inspector timeout blocker but does not accept arbitrary recursive dock groups or certify all workspace semantics."
+}
