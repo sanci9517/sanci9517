@@ -1902,6 +1902,9 @@ test('ungrouping either grouped dock mode follows both canvas edges for all save
 
 test('native mouse drag detaches either selected tab from tabbed and floating groups on both canvas edges',async t=>{
   const {page,writes,errors}=await openEditor(t,{width:1280,height:900});
+  // This 16-case native drag matrix runs after the wider Editor browser suite;
+  // give its UI actions the same bounded headroom used by other long regressions.
+  page.setDefaultTimeout(15_000);
   const results=[];
   await openPreferences(page);
   await page.locator('#workspaceLayout').selectOption('balanced');

@@ -59,7 +59,9 @@ test('every PARTIAL type renders Inspector routes and preserves Save versus Publ
   t.after(async()=>{await browser.close();await new Promise(done=>server.close(done))});
   const editor=await browser.newPage({viewport:{width:1366,height:900}});
   const viewer=await browser.newPage({viewport:{width:1366,height:900}});
-  editor.setDefaultTimeout(30000);
+  // The exhaustive 44-type route is intentionally serial and expensive; keep
+  // the click deadline bounded while tolerating aggregate-suite CPU pressure.
+  editor.setDefaultTimeout(60_000);
   editor.on('pageerror',error=>editorErrors.push(error.message));
   await editor.goto(`http://127.0.0.1:${server.address().port}/editor-v2/index.html`);
   await viewer.goto(`http://127.0.0.1:${server.address().port}/p/test`);

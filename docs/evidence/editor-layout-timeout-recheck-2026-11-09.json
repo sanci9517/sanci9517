@@ -1,0 +1,127 @@
+{
+  "recorded_at_utc": "2026-11-09T18:09:08Z",
+  "plan_point": "77.44.6.1.C",
+  "status": "WIDE_LAYOUT_SUITE_FAILED_TWO_LOAD_SENSITIVE_TIMEOUTS_ISOLATED_CASES_PASS_C_OPEN",
+  "scope": "Investigate two timeout failures from the complete serial Editor browser suite without weakening its assertions; recheck the deployed Worker and branch before recording the test-harness adjustment.",
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "starting_local_head": "bc0c7a38c55145c5ac038ca8c7e89f2bb71a7cba",
+    "github_head_before_fast_forward": "481be6c1f9658a2e61e9e8c98af23ebe16c3afbf",
+    "github_compare": "The remote was three commits ahead of bc0c7a38, all in docs/SANCI9517-PUBLIC-SITE-BRIEF.md; local fetch and git merge --ff-only synchronized to 481be6c1.",
+    "local_head_after_fast_forward": "481be6c1f9658a2e61e9e8c98af23ebe16c3afbf",
+    "test_source_changed": [
+      "tests/browser/editor-workspace-appearance.test.js",
+      "tests/browser/editor-inspector-partial-types.test.js"
+    ],
+    "test_source_sha256_after_change": {
+      "tests/browser/editor-workspace-appearance.test.js": "cace1e7cb4e330b12f0eb125efe2f6a79ab160a5d8748db5ffca867277b83640",
+      "tests/browser/editor-inspector-partial-types.test.js": "056f515395b5a8efe37233c4b7f85f9bb7c31d458e2af140673d108543411ea9"
+    },
+    "runtime_source_changed": false,
+    "preexisting_untracked_preserved": ["node_modules/", "scripts/__pycache__/"],
+    "remote_transport": "git fetch origin v2/foundation succeeded; normal --ff-only merge succeeded; an earlier git ls-remote attempt returned GitHub HTTP 503, then the authenticated read-only API and fetch succeeded."
+  },
+  "validation": {
+    "full_serial_browser_suite": {
+      "command": "timeout 3600s env CHROMIUM_PATH=/usr/bin/chromium npm run test:editor:layout",
+      "runner": "scripts/run-with-linux-subreaper.py; 53 Chromium files run serially",
+      "files_completed": 53,
+      "result": "FAIL; all 53 files completed, with one timed-out case in each of two files; other 51 files passed.",
+      "failures": [
+        {
+          "file": "tests/browser/editor-workspace-appearance.test.js",
+          "test": "native mouse drag detaches either selected tab from tabbed and floating groups on both canvas edges",
+          "action": "#closeWorkspaceAppearance click before the 16-case drag matrix",
+          "timeout_ms": 8000,
+          "observation": "The locator resolved to the visible, enabled close button but Playwright did not complete its stable-click action before the default deadline."
+        },
+        {
+          "file": "tests/browser/editor-inspector-partial-types.test.js",
+          "test": "every PARTIAL type renders Inspector routes and preserves Save versus Publish for responsive, visibility, hover, and keyboard focus state",
+          "action": "reset responsive typography.textDecoration override on a PARTIAL element",
+          "timeout_ms": 30000,
+          "observation": "Playwright resolved the visible reset button but did not complete the click before the deadline while the exhaustive 44-type fixture was running in the full suite."
+        }
+      ],
+      "interpretation": "The aggregate suite remains FAIL; it is not relabelled PASS. Both cases passed as isolated browser tests, so the failures are load-sensitive test action deadlines rather than a reproduced Editor assertion/runtime defect."
+    },
+    "workspace_drag_isolated_after_timeout_adjustment": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-name-pattern='native mouse drag detaches either selected tab' tests/browser/editor-workspace-appearance.test.js",
+      "status": "PASS",
+      "tests": "1/1; all 16 group-side, selected-panel and canvas-edge drag/drop combinations passed with geometry, selection, saved layout, and workspace lifecycle assertions.",
+      "duration_ms": 42962,
+      "default_action_timeout_ms": 15000
+    },
+    "partial_inspector_types_isolated_before_timeout_adjustment": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-name-pattern='every PARTIAL type renders Inspector routes' tests/browser/editor-inspector-partial-types.test.js",
+      "status": "PASS",
+      "tests": "1/1; the complete 44-type Inspector route, mobile responsive edits, draft Save, distinct Publish and reset assertions passed.",
+      "duration_ms": 1093294,
+      "default_action_timeout_ms_during_pass": 30000,
+      "post_pass_change": "Only the bounded default action deadline was increased from 30000 to 60000; the test body and assertions were unchanged. The isolated pass therefore passed under the stricter deadline."
+    },
+    "editor_unit": {
+      "command": "npm run test:editor",
+      "status": "PASS",
+      "node_test_files": "15/15",
+      "subreaper_contract_tests": "3/3"
+    },
+    "typecheck": {"command": "npm run typecheck", "status": "PASS"},
+    "migration_safety": {"command": "npm run test:web013:migration-gate", "status": "PASS", "scope": "local code safety gate; production D1 was not queried or changed"},
+    "test_syntax": {
+      "commands": [
+        "node --check tests/browser/editor-workspace-appearance.test.js",
+        "node --check tests/browser/editor-inspector-partial-types.test.js"
+      ],
+      "status": "PASS"
+    },
+    "diff_check": {"command": "git diff --check", "status": "PASS"},
+    "github_ci": {
+      "current_test_commit": "No CI run is expected for the test/docs-only commit under AGENTS.md [skip ci] policy.",
+      "prior_release_run": {
+        "run_id": 42645044257,
+        "source_sha": "f82b33b655a1e0d54243822d8b39bcdad907dcb2",
+        "result": "FAIL",
+        "failures": [
+          "tests/browser/editor-accessibility-ime.test.js: waitForFunction timeout at 1366px",
+          "tests/browser/editor-layer-rename-draft.test.js: locator.fill timeout at 1366px"
+        ],
+        "note": "The subsequent bc0c7a38 test-only commit raises those two files' action timeouts to 15 seconds; the current local wide-suite run still failed the two separate cases listed above."
+      }
+    }
+  },
+  "production_worker": {
+    "worker": "sanci9517-streamer-brand",
+    "deployment_id": "d33e01e2-167d-4039-93ce-eb3d2dec3c64",
+    "traffic_version": "8dd3e172-56b2-44fd-a167-ca6098a794b8",
+    "traffic_percentage": 100,
+    "health": {
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+      "checked_at_utc": "2026-11-09T18:09:08Z",
+      "http_status": 200,
+      "body": {"ok": true, "service": "sanci9517-streamer-brand", "version": "2.0.0", "server": "cloudflare-worker"}
+    },
+    "asset_hash_comparison": "NOT APPLICABLE: this change only adjusts test deadlines; no runtime/public asset was changed."
+  },
+  "release": {
+    "change_type": "test harness only",
+    "timeout_adjustments": [
+      "The native drag test gets a bounded 15000ms Playwright default action deadline rather than the fixture-wide 8000ms.",
+      "The exhaustive PARTIAL Inspector test gets a bounded 60000ms default action deadline rather than 30000ms."
+    ],
+    "assertions_or_coverage_weakened": false,
+    "runtime_deploy": "NOT DONE; no runtime source changed and no redundant Worker deployment was made.",
+    "production_d1": "NOT QUERIED or changed; not required for this test-only change.",
+    "wrangler_dry_run": "NOT RUN; runtime source unchanged.",
+    "actions_storage_owner_reported": "0.45/0.50 GB (90%)",
+    "remaining_actions_compute_quota": "UNVERIFIED",
+    "cost_huf": 0
+  },
+  "product_contracts": {
+    "save_publish_separation": "unchanged and exercised by the workspace and PARTIAL Inspector browser tests",
+    "manual_physical_acceptance": "DEFERRED until full Visual Editor scope is implemented",
+    "plan_point": "77.44.6.1.C OPEN / NOT CERTIFIED; this run does not close the remaining workspace acceptance or release gates"
+  },
+  "next_step": "Rerun the full serial layout suite at the test-only adjusted deadlines; keep C OPEN until the full required acceptance and release evidence is complete."
+}
