@@ -1,5 +1,5 @@
 {
-  "recorded_at_utc": "2026-11-09T18:09:08Z",
+  "recorded_at_utc": "2026-11-09T18:12:15Z",
   "plan_point": "77.44.6.1.C",
   "status": "WIDE_LAYOUT_SUITE_FAILED_TWO_LOAD_SENSITIVE_TIMEOUTS_ISOLATED_CASES_PASS_C_OPEN",
   "scope": "Investigate two timeout failures from the complete serial Editor browser suite without weakening its assertions; recheck the deployed Worker and branch before recording the test-harness adjustment.",
@@ -10,6 +10,10 @@
     "github_head_before_fast_forward": "481be6c1f9658a2e61e9e8c98af23ebe16c3afbf",
     "github_compare": "The remote was three commits ahead of bc0c7a38, all in docs/SANCI9517-PUBLIC-SITE-BRIEF.md; local fetch and git merge --ff-only synchronized to 481be6c1.",
     "local_head_after_fast_forward": "481be6c1f9658a2e61e9e8c98af23ebe16c3afbf",
+    "test_only_commit": "56fd3236b6184c9b9fdac934e7fb1e0de3344c45",
+    "test_only_commit_message": "test(editor): bound broad-suite action timeouts [skip ci]",
+    "push": "Verified normal fast-forward push of 481be6c1..56fd3236 to origin/v2/foundation.",
+    "github_branch_api_head_after_push": "56fd3236b6184c9b9fdac934e7fb1e0de3344c45",
     "test_source_changed": [
       "tests/browser/editor-workspace-appearance.test.js",
       "tests/browser/editor-inspector-partial-types.test.js"
@@ -79,6 +83,7 @@
     "diff_check": {"command": "git diff --check", "status": "PASS"},
     "github_ci": {
       "current_test_commit": "No CI run is expected for the test/docs-only commit under AGENTS.md [skip ci] policy.",
+      "current_test_commit_run_api": {"query": "GET /repos/sanci9517/sanci9517/actions/runs?head_sha=56fd3236b6184c9b9fdac934e7fb1e0de3344c45&per_page=10", "total_count": 0},
       "prior_release_run": {
         "run_id": 42645044257,
         "source_sha": "f82b33b655a1e0d54243822d8b39bcdad907dcb2",
@@ -106,6 +111,10 @@
   },
   "release": {
     "change_type": "test harness only",
+    "commit": "56fd3236b6184c9b9fdac934e7fb1e0de3344c45",
+    "branch": "v2/foundation",
+    "push_status": "VERIFIED",
+    "ci_status": "NOT RUN by [skip ci] convention; no PASS claimed.",
     "timeout_adjustments": [
       "The native drag test gets a bounded 15000ms Playwright default action deadline rather than the fixture-wide 8000ms.",
       "The exhaustive PARTIAL Inspector test gets a bounded 60000ms default action deadline rather than 30000ms."
