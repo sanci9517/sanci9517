@@ -1,7 +1,7 @@
 # SANCI9517 — publikus weboldal: kreatív brief, dizájnrendszer és teljes tartalomterv
 
 **Dokumentum típusa:** belső, végrehajtható creator-webhely brief; NEM második platform-MASTER.  
-**Verzió:** 1.6 (tervezés) • **Dátum:** 2026-11-09 • **Státusz:** DESIGN SPEC / NOT IMPLEMENTED.  
+**Verzió:** 1.7 (jóváhagyott arculati irány; kivitelezésre vár) • **Dátum:** 2026-11-09 • **Státusz:** DESIGN SPEC / NOT IMPLEMENTED.  
 **Repository / ág:** sanci9517/sanci9517 → v2/foundation.  
 **Kanonikus termékterv:** docs/SANCI9517-CREATOR-PLATFORM-PLAN.md.  
 **Végrehajtási szabály:** AGENTS.md; ez a brief nem írhatja felül a MASTER-t, a release-gate-eket, a Save/Publish szétválasztását vagy a domainadatok tulajdonosát.  
@@ -804,3 +804,47 @@ A 15. fejezet változatlanul kötelező: az elfogadott saját logó-assetek és 
 - A főoldal továbbra is logo + aktuális stream/videó + egyértelmű továbbvezetés, nem portré és nem Rólam; a menürendszer 17.3 szerinti.
 
 **Státusz:** dizájnkoncepció kiválasztása részben megtörtént, a három logó közötti konkrét választás és minden publikáció továbbra is OPEN. Ebben a dokumentációs körben nem volt médiatár-feltöltés, kódmódosítás vagy publikus deploy.
+
+
+---
+
+## 20. Elfogadott SANCI szimbólumirány — tulajdonosi jóváhagyás (2026-11-09)
+
+**Tulajdonosi válasz:** „Elfogadom.” A közvetlenül ezt megelőző, felhasználónak megmutatott önálló SANCI márkakoncepció-tábla és asszisztensi összefoglaló a **második referenciakép középső, összefonódó alakjából továbbfejlesztett háromkarú / három csomópontos, örvénylő közösségi emblémát** emelte ki. Ezt a konkrét, legutóbb bemutatott vizuális irányt a tulajdonos ELFOGADTA. **A logóirány kiválasztása lezárult; nem kell újból a bal/középső/jobb irányt megkérdezni.** A régebbi 18–19. fejezetek kérdései archivált kreatív előzmények, a jelen döntés az irányadó.
+
+**Elfogadott formai identitás:**
+- Saját grafikai szimbólum, **nem S betű** és nem kötelező a 9517.
+- Három egymással kapcsolódó, körkörös mozgású ívelt elem, három külső csomóponttal: a közösség, összekapcsolódás és folyamatos fejlődés jelentése; a belső negatív tér mélységet és titokzatosságot ad.
+- Horizontális és álló változatban a jelhez a nagybetűs **SANCI** szójel kapcsolódik; jel önmagában is használható.
+- A legutóbbi koncepciótáblán a hangsúlyos színezés **fekete/ezüst/piros**, fényes fémes tervezési bemutatóval. Ezt a tulajdonos jóváhagyta mint *bemutatott koncepciót*, de a gyártáshoz tiszta egyszínű, áttetsző hátterű és színhű változatok is szükségesek.
+- A forma legyen felismerhető avatarban, faviconként, videós watermarkon, fejlécben, overlayen és később merch terméken. A koncepciótábla nem használható önmagában mint vektoros végleges logófájl.
+
+**Fontos különbség: BRAND CONCEPT APPROVED ≠ PRODUCTION ASSET CERTIFIED.** A most elfogadott képen egy összehasonlító márkaprezentáció is szerepel; abból még ki kell dolgozni a pontos, tisztított *önálló logó grafikát*, átlátszó hátterű, többméretes PNG/WebP variánsokat és szerkeszthető, reprodukálható alapformát. Ezen munkálatok a jóváhagyott alakot hűen követik, nem indítanak új logókeresést. A későbbi formai változtatás külön tulajdonosi döntés.
+
+### 20.1 Elfogadott irányból előállítandó teljes arculati assetcsomag
+
+1. **Symbol primary:** tiszta, transzparens SANCI háromkarú közösségi szimbólum, eredeti színkombinációban.
+2. **Symbol monochrome:** egyszínű sötét, világos és lehetőleg tintatakarékos nyomdai verzió.
+3. **Wordmark SANCI:** nem idegen brandbetű másolata; az elfogadott nagybetűs SANCI felirat tipográfiai pontossággal, önállóan.
+4. **Lockup horizontal + vertical:** jel+szójel a globális header, footer, OG, brandfelület számára.
+5. **Compact icon and avatar:** 16/24/32/48/64/256/512 px teszt és platformonként dokumentált crop.
+6. **Website favicon / OG / streaming cover / watermark:** az elfogadott jelből származtatva, egységes keretekkel, de nem az egész márkaprezentáció képernyőképének ismételt felhasználásával.
+7. **Brand guidelines:** felületi safe area, minimális méret, tiltott nyújtás/forgatás/kombináció, színprofil és dark/light állapot, ha a tényleges kivitelben releváns.
+8. **Közös Médiatár:** a 15. fejezetnek megfelelően a támogatott fájlokat egyetlen kanonikus, hitelesített Admin Médiatárba feltölteni, több oldalon ugyanazzal az asset ID-val újrahasználni; favicon/OG/site-header binding megfelelőségét kódszintű ellenőrzés igazolja.
+9. **Saját márka/egyediség ellenőrzése:** a körkörös összefonódó jelek lehetnek hasonlók más védjegyekhez; teljesen egyedi jogi státuszt vagy kizárólagosságot előzetes, valódi ellenőrzés nélkül nem állítunk.
+
+### 20.2 Work végrehajtási sorrend a jóváhagyás után
+
+- A legutóbb bemutatott, elfogadott SANCI közösségi embléma alakját vegye alapul; ne generáljon önkényes új szimbólumot és ne keverje vissza a korábbi kapu/ösvény/logó 1–3 koncepciókat.
+- **Átdolgozás gyártásra:** vegye le a prezentációs hátteret, maketteket, fémes fénybeli textúrákat; készítse el a tiszta, önálló vektoros vagy azonosíthatóan szerkeszthető alapgrafikát, megőrizve az elfogadott háromkarú/3 csomópontos alakot.
+- Mérje le a kicsinyítéses és egyszínű sziluettminőséget. Ha a költség/technikai/licenc korlátozás miatt valamelyik export nem működik, világosan jelölje blokkoltként.
+- Először **brand preview** + favicon/avatar/header/stream/OG előnézet; az elfogadott jel identitását ne írja felül egy automatikusan generált S.
+- Hitelesített admin jogosultság és a tényleges Médiatár API ellenőrzése után történhet a kompatibilis médiafeltöltés, a meglévő Save/Publish külön kezelésével. A site-wide logócseréhez és bármilyen production-adatíráshoz az AGENTS.md szerinti előfeltételek/engedélyezések továbbra is érvényesek.
+- A főoldal a jóváhagyott SANCI jel + valódi live/videó + logikus menü alapján épüljön, nem portré és nem életrajz. Rólam külön aloldal, a 17.3 oldalszerepek változatlanul érvényesek.
+- Az oldal-, fejléc-, menü-, footer-, közösség-, SEO- és médiatár-szintű integráció nincs ezzel automatikusan késznek minősítve.
+
+**Elfogadási státusz:**
+- Brand/logó **KONCEPCIÓ: APPROVED** (2026-11-09).
+- Reprodukálható, önálló logó **EXPORT / KIS MÉRETES TESZT: OPEN**.
+- **MÉDIATÁR FELTÖLTÉS: NOT DONE**; kanonikus asset ID jelenleg nincs rögzítve.
+- **PUBLIKUS WEBOLDAL / DEPLOY: NOT DONE**, e jóváhagyás csak a kreatív irányról szól.
