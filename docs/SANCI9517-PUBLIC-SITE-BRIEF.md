@@ -1,7 +1,7 @@
 # SANCI9517 — publikus weboldal: kreatív brief, dizájnrendszer és teljes tartalomterv
 
 **Dokumentum típusa:** belső, végrehajtható creator-webhely brief; NEM második platform-MASTER.  
-**Verzió:** 1.2 (tervezés) • **Dátum:** 2026-11-09 • **Státusz:** DESIGN SPEC / NOT IMPLEMENTED.  
+**Verzió:** 1.3 (tervezés) • **Dátum:** 2026-11-09 • **Státusz:** DESIGN SPEC / NOT IMPLEMENTED.  
 **Repository / ág:** sanci9517/sanci9517 → v2/foundation.  
 **Kanonikus termékterv:** docs/SANCI9517-CREATOR-PLATFORM-PLAN.md.  
 **Végrehajtási szabály:** AGENTS.md; ez a brief nem írhatja felül a MASTER-t, a release-gate-eket, a Save/Publish szétválasztását vagy a domainadatok tulajdonosát.  
@@ -14,13 +14,13 @@
 
 ## 1. Döntés: az oldal identitása
 
-**Márkanév:** SANCI9517. Rövid megszólítás: Sanci. A név vizuális használata konzisztens; a 9517 nem apró lábjegyzet.  
-**Pozicionálás:** magyar gaming streamer és digitális creator; Fortnite-fókusz, Hearthstone-tanulás, indie/roguelike felfedezés; valódi, közvetlen közösség.  
+**Márkanév:** a Sanci legyen az elsődleges személyes szójel és megszólítás; a SANCI9517 a hivatalos csatorna-/creatorazonosító. A 9517 nem kötelező logóelem. Egy brand, több következetes névváltozat.  
+**Pozicionálás:** nyugodt, közvetlen magyar gamer és tartalomkészítő, aki a játékot kikapcsolódásként éli meg; Fortnite, Hearthstone és indie/roguelike tartalom, a személyiségre és befogadó közösségre építve, nem versenykényszerre.  
 **Első látogatói kérdés:** „Élőben van? Ha nem, mit nézhetek most? Hol csatlakozhatok?” Az első képernyő ezekre válaszoljon.  
-**Márkaígéret:** szórakoztató játék, őszinte reakciók, együtt fejlődés, élő közösségi élmény. Ne állítsunk „Magyarország legnagyobb...” jellegű, alá nem támasztott szuperlatívuszt.  
-**Vezérszöveg (javaslat):** „A játék itt kezdődik. A legjobb pillanatok együtt születnek.”  
-**Rövid tagline:** „JÁTÉK. PILLANATOK. KÖZÖSSÉG.”  
-**Tone of voice:** magyar, közvetlen, vidám, személyes és gamer, de nem infantilis; üzleti oldalon magabiztos, tényszerű. Kerülendő: corporate üresség, kamu követőszám, mesterséges szuperlatívusz, túl sok emoji, mém-viccek minden elemben.  
+**Márkaígéret:** valódi, nyugodt játékélmény és közösség, ahová jó visszatérni; természetes kommunikáció és közös fejlődés. Nincs kitalált teljesítmény, harsány gamer-perszóna, hamis nézettség vagy szuperlatívusz.  
+**Vezérszöveg (új tervezet, jóváhagyásra vár):** „Játsszunk egyet. A többi alakul.”  
+**Rövid tagline (javaslat):** „JÁTÉK. KIKAPCSOLÓDÁS. KÖZÖSSÉG.”  
+**Tone of voice:** magyar, higgadt, közvetlen, személyes, természetes; a csendesebb pillanat sem hiba. A közösség az első, nem a bevétel. Nincs túlzó marketing, ordítós gamerklisé, hamis siker, bűntudatkeltő támogatáskérés vagy erőltetett szleng.  
 **Célközönség:** új néző, rendszeres néző, videót kereső, Discord-tag, márka/szponzor; minden persona 1–2 kattintással találja meg a saját célját.
 
 ### Elsődleges látogatói célok és sorrend
@@ -61,7 +61,7 @@ Csak tervezési megfigyelések, NEM automatikus másolási jogok. Az itt rögzí
 
 ### 3.1 Alapkarakter
 
-**Világ:** prémium, filmes-gaming, sötét stúdióhatás; nem sablonos gamer neonerdő. Finom műszerfal-/broadcast-motívumok, rétegelt sötét felületek, fénycsíkok, visszafogott glow, editorial videókártyák. Nagy typográfia és tudatos üres tér, ritmikus változatosság.  
+**Világ:** igényes, nyugodt személyes digitális gaming-stúdió, erős, eredeti vizuális nyitással és animációkkal, de logikus menükkel és tiszta tartalmi hierarchiával. A fekete, szürke és piros a tulajdonos kedvelt színei, nem végleges palettakorlát. Tilos a generikus neon gamer sablon, a zavaró mozgás és a végtelen kezdőoldali görgetés.  
 **Kulcsmotívum:** vékony, szegmenselt „signal line” — az adás/live pillanatok környékén életre kel, offline állapotban statikus.  
 **Hős-vizuál:** saját, felhasználásra jogosított portré vagy a Sanci csatorna saját grafikája előnyben. Ennek hiányában eredeti, absztrakt, brandelt broadcast kompozíció; nem más streamer arca vagy véletlen stock-fotó.  
 **Logó:** SANCI9517 tiszta wordmark; opcionális saját monogram terv. Ne állítsuk, hogy végleges logó/asset már rendelkezésre áll, amíg ellenőrizetlen.  
@@ -156,13 +156,13 @@ A színek **tervezési célértékek**, nem azt állítjuk, hogy minden fentit k
 
 **Kész magyar hero-copy:**  
 Eyebrow: „SANCI9517 • JÁTÉK / STREAM / KÖZÖSSÉG”  
-H1: „A JÁTÉK ITT KEZDŐDIK. A LEGJOBB PILLANATOK EGYÜTT SZÜLETNEK.”  
-Lead: „Szia, Sanci vagyok! Fortnite, Hearthstone és különleges indie játékok, őszinte reakciók és közös élmények. Nézd élőben, vagy találd meg a következő kedvenc pillanatodat.”  
+H1: „JÁTSSZUNK EGYET. A TÖBBI ALAKUL.” (jóváhagyandó új javaslat)  
+Lead: „Szia, Sanci vagyok! Nekem a játék kikapcsolódás: Fortnite, Hearthstone, indie felfedezések és beszélgetések, ahogy éppen alakulnak. Ha te is nyugodt, közvetlen társaságra vágysz, nézz be.”  
 CTA live: „Nézd az élő adást” • CTA offline: „Mutasd a videókat” • CTA közösség: „Találkozzunk a közösségben”.  
 Section 1 heading: „Amit most érdemes megnézned”  
 Section 2 heading: „Fortnite. Hearthstone. És ami még meglep.”  
-Section 3 heading: „Nem csak nézők. Közösség.”  
-Community lead: „Játék, beszélgetés, közös pillanatok — kapcsolódj be ott, ahol neked a legjobb.”  
+Section 3 heading: „Nem csak a játék számít. Az emberek is.”  
+Community lead: „Nem kell hangosnak lenned ahhoz, hogy jól érezd magad. Nézhetsz, beszélgethetsz, vagy csak együtt lehetsz a többiekkel.”  
 CTA close: „Jössz a következő körre?”
 
 **State matrix:** Live / Offline / Unknown / provider-error / no-featured-video / no-schedule / no-Discord-invite / reduced-motion / mobile narrow. Ismeretlen állapotból nincs piros élő badge.
@@ -214,7 +214,7 @@ Bevezető: „A játékok nálam sosem csak a győzelemről szólnak. Szeretem a
 ### 5.7 TikTok — /tiktok
 
 **Önálló mobil-first landing** teljes képernyőnyi üres hero nélkül: 9:16 video-cover grid, kiemelt valós shortok, platformlink, kapcsolódó hosszú videó, közösségi CTA. Nem engedély nélküli TikTok scraping/API és nem automatikus harmadik fél tracking.
-**Copy:** H1 „GYORS PILLANATOK. NAGY REAKCIÓK.” Lead „Ha rövidebben néznéd a legjobb jeleneteket, itt indulj.”
+**Copy:** H1 „RÖVID PILLANATOK A JÁTÉKBÓL.” Lead „Néhány jó jelenet, amit érdemes újranézni — röviden, ahogy történt.”
 **CTA:** „Nézz TikTokon” → igazolt https://www.tiktok.com/@sanci9517 (publish előtt ellenőrizni).
 
 ### 5.8 YouTube — /youtube
@@ -617,3 +617,73 @@ Az identitás nem generikus, hanem Sanci tényleges karakteréből épül; ezek 
 **Következő Work-lépés:** tulajdonosi válaszok integrálása → brand board és logó/shell variánsok → Médiatár asset inventory → site-global asset-binding felmérés → teljes közös navigáció/header/footer → összes P0 oldal → QA és engedélyezett publikálás. Ez a publikus site kreatív sorrendje, nem írja felül a platform kanonikus roadmapjét.
 
 **Állapot:** SPEC ONLY / NOT IMPLEMENTED / LIVE WEBOLDAL VÁLTOZATLAN.
+
+
+---
+
+## 16. V1.3 személyes márkaprofil — első tulajdonosi interjú (2026-11-09)
+
+**Forrás:** a tulajdonos saját szavaival válaszolt hét márkakérdésre. Az alábbi személyiségadatok a felhasználótól származnak. A logó, paletta, szlogen és nyilvános copy viszont még kreatív tervezet. A GitHub-repository nyilvános, ezért az olyan fölösleges azonosító részleteket, mint a személyes évszámok és a márkanév számainak pontos eredete, nem rögzítjük külön és nem publikáljuk automatikusan.
+
+### 16.1 Márkaidentitás, valódi tulajdonosi inputok
+
+- **Maximalista az alkotásban:** amit csinál, igyekszik a lehető legjobban megvalósítani, és mindig lát lehetőséget a javításra. A minőség a weboldal kivitelezésében is látszódjon; ne jelentse azt a copy, hogy ő hibátlan vagy minden játékban profi.
+- **Nyugodt és csendes személyiség:** jó társaságban megnyílik, szeret beszélgetni, de ez néha lassabban megy. Tudatosan fejlődni szeretne kommunikációban; a csendesebb adásrész természetes, nem hiba vagy marketingfogás.
+- **Chill játékélmény:** a játékot kikapcsolódásként éli meg, nem kényszeres versengésként és nem idegeskedve.
+- **Hobbi, közösség, fejlődés:** a streamelés számára személyes öröm és közösségépítés, amelyben kommunikációban is fejlődhet. A főállás egy lehetséges jövő, nem biztos ígéret.
+- **Név:** Sanci elsődleges, SANCI9517 az online handle. A 9517 használható kisebb opcionális brandrészletként, de nincs előírva, hogy a fő logón látszódjon.
+- **Látvány:** egyedi, animált, emlékezetes és logikusan áttekinthető legyen, ne sablonos végtelen scroll. A fekete, szürke és piros tetszik a tulajdonosnak, de más szín is elfogadható.
+- **Arc és logó:** felvállalja valódi arcát; saját fotóval lehet az oldal főszereplője, amint engedélyezett kép elérhető. Jelenleg nincs kész logó, tehát új, eredeti logótervezés kötelező Work-feladat.
+- **Látogatói érzés:** tudja meg, ki Sanci, mikor és mit játszik; akarjon a közösséghez tartozni. Támogatás csak önkéntes, nem pénzvezérelt manipulatív kampány, nem belépőfeltétel.
+
+**Belső brandjelzők:** nyugodt, hiteles, közvetlen, kitartó, közösségépítő.  
+**Brand-archetípus:** nyugodt házigazda + folyamatosan fejlődő alkotó.  
+**Megkülönböztető kontraszt:** maximalizmus a kivitelezésben, lazaság a játékban. **Prémium weboldal, emberi hangulat.**
+
+### 16.2 Új személyes copy-tervezetek — még nem publikált szövegek
+
+**Főoldali üzenet A:** „Játsszunk egyet. A többi alakul.”  
+**Főoldali üzenet B:** „Játék, kikapcsolódás, jó társaság.”  
+**Lead:** „Szia, Sanci vagyok! Szeretek játszani, új dolgokat felfedezni, és közben jókat beszélgetni. Nekem a stream kikapcsolódás, amit másokkal is szeretnék megosztani. Ha kedved van, tarts velem.”  
+**Elsődleges CTA:** ha tényleg live „Nézz be az adásba”; offline „Nézz egy videót”. Másodlagos: „Ismerd meg a közösséget”.
+
+**Rólam — első személyű, tulajdonosi válaszokra épülő változat:**
+
+Szia, Sanci vagyok! Alapvetően nyugodt, csendesebb ember vagyok. Ha jó a társaság, egyre könnyebben megnyílok, és szeretek beszélgetni.
+
+A játék nekem kikapcsolódás. Nem azért streamelek, hogy mindig minden meccset megnyerjek, hanem mert szeretek játszani, kipróbálni új dolgokat, és ezt az élményt másokkal is szívesen megosztom.
+
+A streamelést hobbiként kezdtem. Egy jó közösséget szeretnék építeni, és közben én is fejlődöm, például abban, hogy könnyebben kommunikáljak. Van, hogy csendesebb vagyok, van, hogy alakul a beszélgetés. Mindkettő én vagyok.
+
+Ha valamibe belekezdek, igyekszem minél jobban csinálni. Mindig úgy érzem, lehetne még jobb. Jó lenne, ha egyszer több időt tudnék szentelni a streamelésnek, akár főállásban is. De először is magamért csinálom: mert szeretek játszani, és jó lenne egy közösség, ahová szívesen visszajárnak az emberek.
+
+**Közösségi üzenet:** „Nem kell hangosnak lenned, hogy itt jól érezd magad. Nézhetsz, beszélgethetsz, vagy egyszerűen csak együtt lehetsz a többiekkel.”
+
+**Támogatás — csak később, valós támogatási útvonallal:** „Ha nézed vagy megosztod a videóimat, azzal már sokat segítesz. Ha más módon is támogatnál, annak is örülök, de semmi sem kötelező.” Semmilyen főállás-garancia és nyomásgyakorló CTA nem megengedett.
+
+### 16.3 Három lehetséges saját arculat és logó
+
+**A — QUIET SIGNAL (javasolt kiindulás):** fekete és grafitszürke, törtfehér tipográfia, mélyvörös finom akcentus. Geometrikus S jel, finom adás-jelhullámmal; nagy, letisztult SANCI szójel, kisebb opcionális 9517. Látványos első képernyő, visszafogott menürendszer. A piros brandgrafika nem téveszthető össze a hiteles LIVE jelzéssel.
+
+**B — WARM STUDIO:** meleg sötétszürke és törtfehér, rozsdavörös vagy narancs akcentus. Fotós, szerkesztőségi, emberközeli nyitás, tipográfia-központú SANCI logó és apró barátságos geometrikus jel. Filmesség, kevesebb gaming HUD.
+
+**C — PLAYFUL DEPTH:** antracit, puha bordó/lila vagy türkiz kiemelések, enyhén térbeli geometrikus S szimbólum. Játékos, de nem zavaró micro-motion, karakteres videókártyák. Nem villódzó neon/RGB streamer sablon.
+
+**Követelmény Worknek:** mindhárom esetben következetes header, footer, navigáció, ikon, OG, favicon, mobil/tablet/PC layout, 15. fejezet szerinti közös médiaasset-forrás. A Work legalább két különböző logó és hero koncepciót mutasson meg valódi desktop/mobil előnézettel; csak a tulajdonos által jóváhagyott márkairány terjedhet ki minden oldalra. A felhasználó személyes fotóját csak kapott, jóváhagyott assetként használja.
+
+### 16.4 Navigáció és marketing a valós személyiséghez illesztve
+
+- A látogató három értelmes úttal indulhat: „Nézz most”, „Nézz vissza”, „Csatlakozz”. A részletes oldalak logikus menüben vannak, nem egyetlen óriási nyitóoldalon.
+- A mozgás látványos ott, ahol segít megjegyezni a márkát, de a menü kezelése, tartalomolvasás és CTA mindig egyszerű. Reduced-motion esetén az animációk ne rejtsenek tartalmat.
+- Az oldal legyen személyes: saját portré és valós adatok, a nyugodt hangot ne váltsa fel harsány gamer stockgrafika.
+- A támogatás önkéntes, egy lehetséges jövőbeli rész; a közösség és a nézhető tartalom az első.
+
+### 16.5 A következő márkainterjú konkrét nyitott döntései
+
+1. Melyik kreatív irány áll hozzá legközelebb: A Quiet Signal, B Warm Studio, C Playful Depth vagy keverék?
+2. A hero főképe: saját portré és videó, animált logó, vagy ezek vegyesen? Milyen saját fotóanyag elérhető?
+3. Logó: csak SANCI szöveg, S-alapú jel, vagy valami egészen más szimbólum? Jelenjen-e meg kisebb kiegészítésként a 9517?
+4. Van-e valóban visszatérő saját mondat, szokás, vicc vagy közösségi motívum? Nem találunk ki ilyet.
+5. Mely vizuális klisét tiltsuk: koponya, gamer headset, neon, égő lángok, agresszív logó, túl sok effekt vagy más?
+
+**Állapot:** V1.3 kreatív terv és személyes brandirány. Új asset nem készült, semmit nem töltöttünk a médiatárba, és az éles webhelyet nem változtattuk meg. A Work a válaszok és a már érvényes 15. fejezet szerinti közös médiatár alapján folytathatja, az AGENTS.md és a MASTER elsőbbségével.
