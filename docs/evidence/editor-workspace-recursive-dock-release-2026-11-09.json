@@ -1,0 +1,76 @@
+{
+  "date": "2026-11-09",
+  "plan_point": "77.44.6.1.C",
+  "scope": "Recursive workspace dock tree foundation and complete C browser regression preflight",
+  "branch": "v2/foundation",
+  "base_github_sha_before_release": "6f98cbefb18432de283e91d3adc1762c6c5202ae",
+  "local_head_before_release_evidence_commit": "8e8105b00f9eb5eeaf714121a5e1be757cdd5528",
+  "local_commits_ahead_before_release": 12,
+  "runtime_commits_in_pending_chain": [
+    "80dfa4b8 feat(editor): add validated recursive dock tree foundation",
+    "2bd6acf3 feat(editor): add first-use recursive dock controls",
+    "dc378d85 Add recursive workspace dock tree renderer"
+  ],
+  "implementation": {
+    "recursive_split_tree": "Validated allowlisted dock-tree model with bounded splits, ratios and active-tab normalization; renderer mounts existing Editor panel elements into DOM split/tab zones and restores their original DOM locations at breakpoints.",
+    "interaction": "Keyboard and pointer split resizing, keyboard tab activation, Alt+arrow reflow and desktop detach/regroup are backed by the shared workspace history and allowlisted persistence.",
+    "canvas_safety": "Floating card presentation remains within its separately reserved dock track; the workspace canvas is not covered and retains its tested minimum width.",
+    "save_publish": "Workspace-only layout operations do not write the page model or call the page Save/Publish endpoints. Editor content Save and explicit Publish remain separate paths.",
+    "reuse_and_cost": "Reuses the project's existing Page Model boundary, workspace appearance store, dock panel DOM, Node test runner, Playwright/Chromium and CSS grid. No external source, dependency, D1 mutation, R2 operation or paid service was added; cost 0 Ft."
+  },
+  "automated_checks": {
+    "full_browser_suite": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium npm run test:editor:layout",
+      "result": "PASS",
+      "files": "53/53",
+      "failed_cancelled_skipped": 0,
+      "notes": "The first sandboxed attempt failed to bind the fixture's loopback port (EPERM). The unchanged suite was rerun with the permitted loopback/network capability and completed with exit code 0. The exhaustive Inspector PARTIAL-type Save/Publish lifecycle passed 1/1 across all 44 editable PARTIAL types in 1008.4 seconds."
+    },
+    "editor_unit_suite": "npm run test:editor — PASS, 15/15 Node test files; Linux subreaper runner 3/3.",
+    "typecheck": "npm run typecheck — PASS (tsc --noEmit).",
+    "migration_safety": "npm run test:web013:migration-gate — PASS; deploy:safe cannot auto-apply D1 migrations.",
+    "plan_contract": "python3 tests/plan-contract.test.py — PASS, 13/13.",
+    "traceability": "python3 scripts/build-feature-traceability.py --check — PASS, 396/396 mappings; this source mapping check is not semantic acceptance of all 396 features.",
+    "canonical_plan": "python3 scripts/check-canonical-plan.py — PASS, 13-file master.",
+    "active_cursor": "python3 scripts/audit-active-plan-point.py — PASS, cursor 77.44.6.1.C; reports functional_acceptance=NOT_CERTIFIED for the broader product crosswalk, not this C foundation release.",
+    "diff_check": "git diff --check — PASS."
+  },
+  "release_preflight": {
+    "d1": {
+      "method": "Cloudflare D1 Query API, read-only SELECT only",
+      "sql": "SELECT name FROM d1_migrations ORDER BY name;",
+      "rows_read": 34,
+      "latest_migration": "0028_media_archive.sql",
+      "rows_written": 0,
+      "changes": 0,
+      "changed_db": false
+    },
+    "wrangler": {
+      "command": "XDG_CONFIG_HOME=/tmp/sanci-xdg-config WRANGLER_SEND_METRICS=false npx wrangler deploy --dry-run",
+      "result": "PASS",
+      "version": "4.130.0",
+      "assets_read": 171,
+      "upload_size": "335.81 KiB",
+      "gzip_size": "87.60 KiB",
+      "deployed": false
+    },
+    "github_public_standard_runner_cost_check": "Repository visibility was verified as public. All five applicable workflows use GitHub-hosted ubuntu-latest/ubuntu-24.04 standard runners. GitHub's published Actions billing guidance says standard runner usage is free for public repositories; the repository owner separately reported artifact storage at 90%, so artifact retention was minimized and no extra artifact was uploaded locally.",
+    "github_cost_documentation": [
+      "https://docs.github.com/en/actions/concepts/billing-and-usage",
+      "https://docs.github.com/en/actions/how-tos/write-workflows/choose-where-workflows-run/choose-the-runner-for-a-job"
+    ],
+    "pre_release_worker": {
+      "deployment_id": "c4573240-1f1d-4830-98f1-bbc713782c4e",
+      "version_id": "a6670b60-61ec-40cf-8613-0757b6ca0954",
+      "traffic_percent": 100,
+      "health": "A direct health request succeeded HTTP 200 before this release preflight; this is the old 100% Worker, not evidence for the pending runtime changes."
+    }
+  },
+  "release": {
+    "status": "PENDING_FAST_FORWARD_CI_CLOUDFLARE_BUILD_HEALTH_ASSET_HASHES",
+    "production_migration_or_data_write": false,
+    "r2_operation": false,
+    "paid_usage": false
+  },
+  "acceptance_boundary": "C foundation can close only after the pushed commit, required hosted CI, exact Worker deployment at 100%, direct production health and changed-asset hash comparisons are verified. Full Editor manual/physical acceptance remains explicitly deferred to 77.44.7.F/77.44.8; this release does not claim that broader acceptance or all 396 product features are certified."
+}
