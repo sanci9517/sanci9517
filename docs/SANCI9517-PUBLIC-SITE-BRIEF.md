@@ -1,7 +1,7 @@
 # SANCI9517 — publikus weboldal: kreatív brief, dizájnrendszer és teljes tartalomterv
 
 **Dokumentum típusa:** belső, végrehajtható creator-webhely brief; NEM második platform-MASTER.  
-**Verzió:** 1.4 (tervezés) • **Dátum:** 2026-11-09 • **Státusz:** DESIGN SPEC / NOT IMPLEMENTED.  
+**Verzió:** 1.5 (tervezés) • **Dátum:** 2026-11-09 • **Státusz:** DESIGN SPEC / NOT IMPLEMENTED.  
 **Repository / ág:** sanci9517/sanci9517 → v2/foundation.  
 **Kanonikus termékterv:** docs/SANCI9517-CREATOR-PLATFORM-PLAN.md.  
 **Végrehajtási szabály:** AGENTS.md; ez a brief nem írhatja felül a MASTER-t, a release-gate-eket, a Save/Publish szétválasztását vagy a domainadatok tulajdonosát.  
@@ -756,3 +756,21 @@ A 15. fejezet változatlanul kötelező: az elfogadott saját logó-assetek és 
 **A Work következő, ellenőrizhető munkadarabja:** négy valóban különböző SANCI embléma + SANCI szójel látható tervként, két kiválasztott irány finomítása; ehhez 1440px/390px hero és menü demonstráció, érdemi összehasonlítás. A végső embléma kiválasztása a tulajdonos döntése; csak utána terjedhet végig az arculat, social/favikon/OG és a közös site shell minden felületén.
 
 **Státusz:** SPEC ONLY. Logó még nem készült, nem töltöttünk fel semmit, a publikus oldal és Worker változatlan.
+
+
+---
+
+## 18. Logó első vizuális visszajelzés és finomítási kör (2026-11-09)
+
+**Közvetlen tulajdonosi visszajelzés a négy elkészült bemutatóképről:** „3 de az sem az igazi”. A 3-as számmal jelzett *Rejtett S* irány a jelenlegi legközelebbi kiindulópont, de **sem a konkrét forma, sem a logó nincs elfogadva**. A bemutató korábbi fényes/fémes, csiszolt játékos stílusa nem tekinthető a végleges arculat jóváhagyásának.
+
+**Iterációs döntés:**
+- Ne ugyanazt az S alakot színezzük újra; formailag különböző, saját sziluettű **rejtett S** tanulmányokat készítsünk.
+- Először csak valódi fekete/fehér **egyszínű alak**, negatív tér, arányok és apróméret-olvashatóság. A 3D, bevel, chrome, glow, e-sport éles csíkozás, AI-art textúra, automatikus betűgenerálás és túl sok effekt **nem szükséges és nem kívánatos**.
+- Az ötletek közösség + mélység + titokzatosság jelentéstartalmát ne kötelezővé tett ikonszimbólumokkal, hanem egyszerű kapcsolódó formákkal, ritmussal és felfedezhető karakterrel fejezzük ki.
+- 3 új, **különböző rajzi logika** kötelező: (a) kivágott/negatív tér, (b) kapcsolódó kettős forma, (c) aszimmetrikus, gesztusszerű vagy ösvényforma. Mind a három mellé rendezett, nem sablonos SANCI szójel.
+- A Work hasonlítsa össze a jeleket avatar-, stream watermark- és favicon-méretben, logómentes formaként is; nézzen hasonlóságot létező brandekkel. A valódi egyediség nem garantálható csak egy AI által előállított koncepciótáblából.
+- **Előnyben:** letisztult, megjegyezhető, akár enyhén szokatlan, emberileg tudatos formatervezés. **Nem elfogadott:** „3-as kész”, automatikus médiatárba feltöltés vagy publikus logócsere.
+- Kérdés a következő tulajdonosi feedbackhez: az S rejtettsége, a forma lágyabb/élesebb jellege, a jel karaktere vagy a túl technikai stílus nem működik-e; a válasz alapján szerkesztendő a végleges változat.
+
+**Állapot:** csak tervezési és vizuális iteráció, nincs végleges logó és nincs live oldal-, Worker- vagy Médiatár-változás.
