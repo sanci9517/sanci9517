@@ -1,7 +1,7 @@
 # SANCI9517 — publikus weboldal: kreatív brief, dizájnrendszer és teljes tartalomterv
 
 **Dokumentum típusa:** belső, végrehajtható creator-webhely brief; NEM második platform-MASTER.  
-**Verzió:** 1.7 (jóváhagyott arculati irány; kivitelezésre vár) • **Dátum:** 2026-11-09 • **Státusz:** DESIGN SPEC / NOT IMPLEMENTED.  
+**Verzió:** 1.8 (részletes SANCI DARK DEPTH webhelyspecifikáció; kivitelezésre vár) • **Dátum:** 2026-11-09 • **Státusz:** DESIGN SPEC / NOT IMPLEMENTED.  
 **Repository / ág:** sanci9517/sanci9517 → v2/foundation.  
 **Kanonikus termékterv:** docs/SANCI9517-CREATOR-PLATFORM-PLAN.md.  
 **Végrehajtási szabály:** AGENTS.md; ez a brief nem írhatja felül a MASTER-t, a release-gate-eket, a Save/Publish szétválasztását vagy a domainadatok tulajdonosát.  
@@ -848,3 +848,239 @@ A 15. fejezet változatlanul kötelező: az elfogadott saját logó-assetek és 
 - Reprodukálható, önálló logó **EXPORT / KIS MÉRETES TESZT: OPEN**.
 - **MÉDIATÁR FELTÖLTÉS: NOT DONE**; kanonikus asset ID jelenleg nincs rögzítve.
 - **PUBLIKUS WEBOLDAL / DEPLOY: NOT DONE**, e jóváhagyás csak a kreatív irányról szól.
+
+
+---
+
+## 21. SANCI DARK DEPTH — az elfogadott filmes képi világ teljes webhelyspecifikációja (2026-11-09)
+
+**Legfrissebb tulajdonosi döntés:** a 2026-11-09-én bemutatott, SANCI összefonódó háromkarú emblémát, sötét, filmszerű tájat, vörös fényutat és külön desktop/tablet/mobil kompozíciót alkalmazó márka- és honlaplátványterv tetszik. Kérés: a teljes publikus webhelyet alaposan így tervezzük meg. A funkciók hiánya ne korlátozza a végcélt; a valóban szükséges képességeket a kanonikus Visual Editor/Brand Kit/Web/Media követelményekhez kell hozzárendelni, és ha még nincsenek meg, később, a teljes Editor megfelelő megvalósítási szakaszában lehet megépíteni.
+
+**Kreatív munkanév:** SANCI DARK DEPTH. **Alapüzenet:** Játék, kikapcsolódás, jó társaság. A filmszerű atmoszféra a VIZUÁLIS világ része; nem szabad Sanciból erőltetett fantasy hőst, agresszív esports figurát vagy folyton kiabáló karaktert csinálni. Az oldalon továbbra is a nyugodt, maximalista, közösségre építő valós személyiség szerepel.
+
+**Előzmények elsőbbsége:** a 20. fejezet elfogadott SANCI közösségi emblémája megmarad; a 17. fejezet főoldal ≠ Rólam és logikus külön oldalak döntése érvényes. Ez a fejezet felülírja a régebbi, C-vel ellentétes, kötelező arcot vagy sok hero-életrajzot javasló alternatívákat. A bemutatott kép referencia, nem felhasználásra kész weboldal-screenshot, nem bizonyított végleges grafikai export.
+
+### 21.1 Amit átveszünk / amit nem
+
+**Megtartandó:** mély éjfekete–grafit rétegek, a jóváhagyott körkörös SANCI embléma, egy távoli hegygerinc és ködös erdő, finoman kanyargó saját vörös fényút, ritka hidegkék ellenfény, karakteres SANCI tipográfia, gazdag de nyugodt tér, visszafogott világítás, tiszta szekcióváltás.
+
+**Elkerülendő:** a márkaprezentáció teljes képe mint honlap; előre rajzolt, valójában nem kattintható menük; kapucnis figura/arc/fényképes főszereplő a kezdőoldalon; 20 piros keretes gamer panel; agresszív fényvillogás, kötelező autoplay film, idegen játékscreenshot, jogtalan stock és AI-közhelyes 3D chrome.
+
+**Vizuális állandók:** a jel, a vékony vörös fényív, a grafitfelület arányai, világos tipográfia, azonos sarokritmus, visszafogott mélység és egyetlen akcentus-cél egy blokkon belül. Egy aloldal lehet eltérő kompozíciójú, de nem térhet el a SANCI-világtól.
+
+## 22. A teljes SANCI arculat és grafikai gyártási szerződés
+
+### 22.1 Elfogadott szimbólum használata
+
+- Önálló grafikai jel: a 20. fejezet három egymáshoz kapcsolódó ívével és három külső csomópontjával. Nem kötelező S betű és nem kerül 9517 minden felületre.
+- Elsődleges horizontális jel + SANCI szójel: desktop navigáció és más hosszú felületek.
+- Kompakt embléma: favicon, mobilheader, profilkép, vízjel, overlay.
+- Álló logó: social borító és közösségi megjelenés, csak ahol optikailag indokolt.
+- A valódi alapjel monokróm, kis méretben is működő, reprodukálható formát igényel. A fémes/glow hatás külön dekoratív prezentációs változat, nem a geometria helyettesítője.
+- 16, 24, 32, 48, 64, 256 és 512 pixeles ellenőrzés, sötét és világos felület, transzparencia, safe area, minimális méret és színkontraszt dokumentálása. A hasonlóságot más creator/tech márkákkal ellenőrizni kell; kizárólagos védjegyjog nem állítható vizsgálat nélkül.
+
+### 22.2 Ajánlott színek — még implementációs validációval
+
+| Név | HEX | Szerep |
+|---|---|---|
+| Deep night | #090C12 | site háttér és hero-sötétítés |
+| Graphite | #141A25 | navigáció, footer, panel |
+| Raised card | #1C2633 | interaktív kártyák |
+| Edge | #344253 | finom elválasztás |
+| White text | #F5F7FB | fő szöveg |
+| Muted | #B8C4D3 | kiegészítő szöveg |
+| Ember red | #E14D61 | akcentus és valódi CTA |
+| Burgundy | #8D253B | filmes út és távoli fény |
+| Moon blue | #78B8D4 | ritka mélységfény |
+| LIVE state | #FF4C64 | csak tényleges LIVE felirat kontextusában |
+
+A jelenlegi design-tokens.js csak meghatározott tokeneket ismer. Ez **tervezett színrendszer**, nem automatikusan a Brand Kitből beállítható kész mezők listája. A kontraszt csak mért ellenőrzés után PASS. A LIVE jelölést mindig szöveggel is meg kell jeleníteni; a dekoratív vörös nem hamisíthat státuszt.
+
+### 22.3 Tipográfia, térköz és forma
+
+- Saját SANCI szójel a logó része; olvasható system-ui fallback a webes bodyhoz, helyben vagy jogtisztán kiszolgált ingyenes font csak ellenőrzött támogatással.
+- Desktop hero 48–76px főcímcél, aloldali H1 40–56px, H2 28–36px, body 16–18px, kártyacím 18–22px; mobilon explicit adaptáció, nem CSS magic scaling.
+- Tartalmi szélesség 1280–1360px; olvasható szövegsorok ennél jóval keskenyebbek. 8px lépcsőjű spacing, következetes sarok- és border-rendszer.
+- Levegő a szekciók között, tudatos aszimmetria, egy fő képi elem. A sötét felület nem válhat minden kártyán összefolyó köddé; legyen olvasható hierarchy és fókusz.
+- Ikonok egy következetes, licencellenőrzött családból, de a SANCI embléma EGYEDI.
+
+### 22.4 Hero háttérkép előállítása, rétegek
+
+**Kreatív kép:** saját, nem konkrét valós helyet idéző éjszakai táj: hegygerinc a távolban, köd és ritka fa-sziluettek, vörösen derengő útvonal, finom hidegkék fény a messzeségben. Sem ember, sem arc, sem idegen videojátékhoz tartozó karakter. A jel és a SANCI felirat **külön réteg/asset**, nem a háttérbe beégetett kép.
+
+**Négy logikai réteg:** atmoszféra/horizont, középtáji táj, finom fényút, foreground gradient/contrast. Egyetlen optimalizált összefoglalt háttérkép P0-ként elfogadható; a több, valóban mozgó layer P1, ha a renderer támogatja. Desktop és mobil saját kivágás/focal-point, 16:9 és 4:5/9:16 kompatibilis artwork. Az artwork maradjon használható teljesen statikusan is.
+
+**Képellenőrzés:** ne legyen homályos a fő fókusz, ne menjen a fényút a H1 alá, a fontos médium mobil cropban se vesszen el, ne legyen nagy fényfolt a CTA-n. H1/CTA valódi DOM-elemek, a háttérképen nincs rárajzolt gomb vagy szöveg.
+
+### 22.5 Animációk
+
+- Logo reveal: rövid, maximum körülbelül 800ms nem blokkoló szimbólum-megjelenés.
+- Vörös fényút: első belépéskor finom fény-lélegzés, nem villogás és nem kötelező hosszú loop.
+- Kártyafókusz: 120–220ms mozgás/árnyék, hover-független működés mobilon.
+- Navigáció: stabil aktív aláhúzás/fény és 140–220ms átmenet, mindig valódi aria-current.
+- Oldalváltás: egyszerű, nem tartalmat eltüntető fade, vagy natív gyors betöltés.
+- Reduced motion teljes fallback, szöveg/CTA/menü nem tűnhet el; nincs autoplay hang, agresszív parallax vagy harmadik fél által betöltött súlyos 3D engine.
+
+## 23. Egységes fejléc, menürendszer, lábléc és rendszerállapotok
+
+### 23.1 Desktop menü
+
+Javasolt felső sorrend: **Főoldal | Élő | Videók | Menetrend | Közösség | Rólam**. Bal oldalt közös SANCI logó, jobb oldalt igazolt LIVE → „Nézd az adást”, egyébként „Videók” vagy legfrissebb valódi videó. A kapcsolat, YouTube/TikTok és további oldalak nem duplikálják a főmenü összes elemét.
+
+A Videók pont alatt indokolt rövid másodlagos navigáció: Összes, VOD, Klipek, Rövidek, YouTube, TikTok. Csak valós oldalak és működő szűrők; halott link nem kerülhet a menübe. A menüfa a WEB-009 kanonikus navigációból, ne kilenc oldalsablonba másolt markupból jöjjön.
+
+### 23.2 Responsive site shell
+
+- Desktop 1440x900: körülbelül 72px magas, jól olvasható globális fejléc, maximum 6 link és egy CTA, végig következetes aktív állapot.
+- Tablet 768–1199: a navigáció valóban újrarendeződik, vagy tudatosan drawerre vált. Nem zsugorítjuk 10px-es linkekké.
+- Mobil 320–767: legfeljebb 64px magas header, kompakt SANCI jel, 44px körüli érintési cél, hamburger; egyetlen rövid menüpanel, a főlinkek előre, platformok/Kapcsolat a másodlagos csoportba. Bezárás, Escape, fókuszvisszaadás, háttérscroll kezelése és képernyőolvasó külön teszt.
+- A footer minden oldalon közös: SANCI jel + rövid üzenet, Felfedezés, Platformok, Rólam/Kapcsolat, jogi linkek. Partner/sponsor sáv csak igazolt partnerrel, nem azonos a belső admin menüvel.
+- A site-global logó/favicon/OG és a globális Brand Kit médiaasset ID binding a jelenlegi kódban külön ellenőrizendő. Ha még nincs, a WEB-010, DSN-001/017, RES-001/008 és kapcsolódó EDT feladatokban fejlesztendő, nem tiltott hardcoded fork.
+
+## 24. Főoldal — rövid, mégis világszínvonalú belépőoldal
+
+**Főoldal célja:** a látogató 5 másodpercen belül lássa a SANCI márkát, az aktuális lehetőséget és a következő helyes kattintást. Nem Rólam-oldal, nem teljes videóarchívum, nem tízoldalnyi görgetés.
+
+**Szekció 1 — Hero / SANCI világ:** jóváhagyott embléma és SANCI szójel, saját sötét táj finom vörös ösvénnyel, 1–2 soros emberi fő üzenet. Javasolt H1: „Játsszunk egyet. A többi alakul.” Lead: „Fortnite, Hearthstone és különleges játékok, nyugodt közös pillanatokkal. Nézz be egy adásba, vagy válassz egy videót.” Valós LIVE esetén első CTA „Nézd az adást”, offline/unknown esetén „Nézz videókat”. Második CTA legfeljebb „Közösség” vagy valóban hiteles következő adás. A logó/CTA nem tolhatja ki a következő blokkot a teljes képernyőből.
+
+**Szekció 2 — Most nálam:** desktopon egy domináns aránytartó 16:9 videó/stream panel, mellette valós live/offline/unknown állapot, hiteles következő időpont, ha van. Nem létező integráció helyett működő Twitch csatornalink vagy egy valós kurált videó. A player click-to-load, megőrzi a layout helyét és a provider szabályait. Nem hamis élő cím vagy viewer-szám.
+
+**Szekció 3 — Kiemelt pillanatok:** aszimmetrikus 1 nagy + max 2 kisebb videó/klip kártya valódi thumbnaillel és hivatkozással, tovább a Videók oldalra. Ha csak 1 valós kiemelhető videó van, pontosan 1 kártya jelenik meg, nem 2 lorem placeholder.
+
+**Szekció 4 — Merre tovább?:** 3 bejárat: „Menetrend” (mikor találkozunk?), „Közösség” (kapcsolódás), „Rólam” (megismerés), kizárólag rövid link-kártyaként. Ezután azonnal közös footer. Nem kerül teljes életrajz a nyitóoldalra.
+
+**Desktop 1440x900:** SANCI a bal/harmonikus középső fókuszban, a táj és vörös fényút inkább jobb háttér-kompozíció, a navigáció és CTA valódi html. Következő szekció kezdete már megpillantható a fold alján.  
+**Tablet 1024x768:** 2 oszlop csak ha valóban olvasható, egyébként egymás alá, kurált média 2+1.  
+**Mobil 390x844 és 320x700:** header → kompakt SANCI jel → H1 → max 3 sor lead → valós CTA → rövid mobil-crop táj vagy preview → Most nálam. Nincs arc/kapucnis figura. Mobilon nincs alapértelmezett parallax. Egyoszlopos kártyák, nulla vízszintes scroll.
+
+## 25. Aloldalak — szerepek, konkrét tartalom, állapotok
+
+| Oldal | H1 és fő feladat | Szekciók | Nyitott / hibás állapot |
+|---|---|---|---|
+| Élő | „Találkozzunk élőben” — tényleges megtekintés | valós player/link, cím/game csak igazoltan, rövid menetrend és community link | offline: kiemelt VOD; unknown: platformlink és őszinte magyarázat |
+| Videók | „Válogass a videók között” — tartalomfelfedezés | egy featured, valós VOD/klipek/Shortok, játékkategória és platformok | üresen kurált csatornalink; nincs hamis feltöltés |
+| Menetrend | „Mikor találkozunk?” — rögzített adások | következő valós időpont, további alkalmak, magyar időzóna és változásjelzés | nincs időpont: világos üzenet, nem kitalált heti adás |
+| Közösség | „Jó, hogy itt vagy” — befogadó kapcsolódás | nézőként / beszélgetni / közösen játszani, hiteles Discord/Twitch stb., egyszerű szabályok | nincs Discord invite: valós másik csatorna |
+| Rólam | „Szia, Sanci vagyok” — személyes történet | nyugodt karakter, játék mint kikapcsolódás, streamelés mint hobbi, fejlődés, közösségi cél | nincs kötelező portré, nem duplikált home |
+| Kapcsolat | „Beszéljünk!” — kapcsolatfelvétel | nézői út / üzleti út, valódi e-mail vagy űrlap | űrlap csak kész validáció/consent esetén |
+| YouTube | „Videók, amiket visszanézhetsz” | hosszú videók, VOD, hiteles profil és borítók | ha kevés anyag, Videók oldali link helyettesíti |
+| TikTok | „Rövidebb pillanatok” | 9:16 shortok, hiteles profil, kapcsolódó videók | nincs kitalált feed vagy scraping |
+| 404/500 | „Erre most nincs út” / hibaüzenet | saját visszafogott tájmotívum, Főoldal/Videók út | valódi 404/5xx HTTP, nem 200-ba rejtett hiba |
+
+**P1, későbbi céloldalak:** klip/VOD részletes nézet, setup, partnerek, shop, támogatás, tagság, esemény. Csak tényleges releváns tartalom és megfelelő domain/kész funkció után. Nem nyitunk üres menüt, nem gyártunk kitalált terméket.
+
+**Rólam szövegtörzs:** a 16.2-ben már tulajdonosi válaszok alapján megírt, személyes és nyugodt hang; a külön fejezetekhez tartozó szövegeket ide rendezzük át. Arc nem kötelező a Rólam oldalon sem. Az aloldalak saját rövidebb title-bandot használhatnak a közös táj eltérő kivágásával, nem minden oldalon full 100vh ugyanaz a háttér.
+
+## 26. Tartalom- és platformadatok: igazságforrás
+
+**Oldalmodell:** oldalszerkezet, meta, elhelyezés, override, hivatkozás. **Nem** birtokolhatja a Twitch live adatot, YouTube csatorna API rekordot, Schedule eseményt, Content Studio VOD rekordot vagy a Media bináris objektumot.
+
+- SANCI tulajdonosi copy: e brief + később jóváhagyott Web Content adat.
+- Stream: hiteles Integrations/Twitch live state, OFFLINE/UNKNOWN és frissesség-fallback, link akkor is működjön, ha az embed nem.
+- Videó: kanonikus Content Studio / valós szolgáltató URL; először kézzel kurált hiteles tételek.
+- Menetrend: kizárólag kanonikus Schedule / timezone; frissítés nélküli statikus órarendet nem szabad valósként kijelezni.
+- Platformok: igazolt Twitch SANCI9517, TikTok SANCI9517, YouTube pontos csatornaazonosító külön validációval, Discord/Kick csak működő adatokkal.
+- Partner/támogatás: a pénz nem elsődleges motiváció; nincsenek kitalált szponzorok, donation URL-ek, támogatói statisztikák vagy guilt-based CTA-k.
+- HU az első hiteles locale, EN/DE/UKR csak a kanonikus localization és szerkesztett fordítás után; nincs vegyesen félig lefordított menü.
+
+## 27. A közös Médiatár és készülő assetcsomag
+
+**A jelenlegi forrás szerint** a kép/kártya/galéria/háttér elemek ID-hivatkozása részben létezik; jelenlegi közvetlen upload MIME PNG, JPEG, GIF, WebP, MP3/OGG/WAV és WebM, 4 MiB/fájl és alkalmazásszintű 5 GB/site kerettel. Ez nem felhőszolgáltatói számlázási garancia. Az SVG/MP4 nem szerepel a jelenlegi engedélylistában. Második media storage, file-on-page blob és minden oldalon újrafeltöltött logó TILOS.
+
+**Elkészítendő különálló eredeti és szerkeszthető assetek:**
+- A jóváhagyott SANCI embléma tiszta, átlátszó PNG/WebP és jövőbeli hitelesen tisztított vektor master.
+- Horizontális, álló és kompakt SANCI lockup; sötét/világos és monochrome variáns.
+- Avatar és favicon 16/32/64/256/512 teszt, OG alap 1200x630 a valós site SEO binding szerint.
+- Külön **hero-desktop** optimalizált éjszakai táj, **hero-mobile** tudatos másik kivágás, **page-band** képek a részletes aloldalakon.
+- SANCI 16:9 és 9:16 videócover minták, amelyek csak tényleges videó tartalommal kapnak publikálható borítófunkciót.
+- Saját 404 motívum, platform- és állapotikonok egyetlen jogtiszta családból.
+- Asset metadata: ID, használati hely, forrás/jog, alt/decorative, formátum, optimalizált méret, crop/focal, kiadás státusz. Használatihely-vizsgálat/archiválás/visszaállítás meglévő Media modulból.
+
+**Kötelező:** a végleges publikus oldalon a logó, a háttértáj és a videókártya külön DOM/media elem. A korábbi márkabemutató képet nem szabad mint egész weboldalt kirakni. A site-global logo/favicon/OG asset ID képes kezelését külön bizonyítani és szükség szerint fejleszteni.
+
+## 28. Hiányzó vagy részben kész Editor/Web/Brand Kit képességek: részletes függőségi gap-jegyzék
+
+**Alapelv:** a felhasználó elfogadta, hogy egyes igények a Visual Editor teljes elkészülte után vagy a megfelelő fejlesztési lépcsőben kerüljenek be. Nem gyártunk külön SANCI-only editort vagy kézzel fork-olt második webhelymotort. Minden új capability egy meglévő kanonikus tulajdonoshoz és ID-hez kapcsolódik; a tényleges megvalósítottságot a repókód és pozitív/negatív tesztek bizonyítják. A kanonikus MASTER P02/P03, DSN/EDT/WEB/RES pontjait kell kiegészíteni, nem duplikált követelmény-ID-ket feltalálni.
+
+| Gap / részletes capability | Kanonikus owner / létező ID | Minimális szerződés és negatív teszt | Státusz most |
+|---|---|---|---|
+| Site-global logo, favicon, OG asset binding | P02.3 DSN-001/017; P03 WEB-010; RES-001/008 | 1 site assetcsere látszik header/footer és jogosult SEO targeteken; archivált asset fallback; nem mutat idegen site ID-t | OPEN / teljes működés nem bizonyított |
+| Teljes global shell és nested navigáció | P03.1 WEB-009/010/011; EDT-017 | kanonikus menüfa, drawer focus, active, breadcrumb/redirect, Save/Publish izoláció; hiányzó/archivált cél blokkol | OPEN / részfunkciók létezhetnek |
+| Hero szerkeszthető média-rétegek | P03.2 EDT-016/018/021/028; P02 RES-004/006; DSN-001 | media ID, responsive crop/focal, gradient és sötétítés egy UI-ban, editor–public paritás, hiányzó asset fallback | részben van backgroundAssetId, teljes art-direction OPEN |
+| Responsive art direction / per-breakpoint override | EDT-021/028/035/036; DSN-006 | desktop/tablet/mobil képfókusz és láthatóság, draft mentés/Undo/Publish eltérés és teszt 320–1440px | részben implementált; teljes gate OPEN |
+| Szerkeszthető, újrahasználható SANCI section/card/navigation component | DSN-009–014; EDT-016/017; WEB-010 | single source + instance override/detach, globális változtatás hatáslista, rollback; nem másolja vakon a fákat | OPEN / nincs globális PASS |
+| Biztonságos motion presetek és logo reveal | EDT-039/040; DSN-016 | deklaratív motion, page enter/card hover/active state; reduced-motion, no custom JS injection, resource cap, accessibility | OPEN / több elem partial |
+| Szerkeszthető státuszfüggő live/offline/unknown blokk | EDT-039; WEB-015; INT provider owner; DYN content binding | igazolt provider state, stale/unknown őszinte fallback, nincs kettős adatgazda/hamis adás | OPEN |
+| Kurált videógrids és platform szűrés | WEB-017; CNT-020; EDT-016/019; DSN-010 | 1/3/N valódi tartalom és 16:9/9:16, loading/empty/error, only published records | OPEN |
+| A11y-ellenőrzött click-to-load embed | WEB-032; EDT-017/019; QA-005 | domain/parent, TLS, provider min. 400x300 a Twitch videóhoz; kisebb mobilon valós link fallback, keyboard/focus/CSP | OPEN |
+| Focal crop és media variant cache | RES-004/006/012; WEB-030 | desktop/mobile rendelt crop ugyanarra a source ID-ra, AVIF/WebP csak támogatottan, lazy load, no CLS | OPEN |
+| Site-wide dizájn QA preview | EDT-022/034/037; QA-004/005; WEB-030 | 320/390/768/1024/1440 preview, color contrast, focus, reduced motion, visual regresszió, no published draft leak | OPEN |
+| Localized navigation, page titles, OG | WEB-009/010; SEO-001–005; localization owner | HU elsődleges, lokalizált meta/nav később; hibás/hiányzó locale fallback | OPEN |
+| Strukturált, szerkeszthető site import a Worktől | P03.1/2 WEB-001; EDT-001/003/028, MASTER 76.06.A | dokumentált Page Model draft import, Undo/Redo, Save/reload/Preview, csak külön Publish; nincs szerkeszthetetlen flatten HTML | SPEC / OPEN |
+
+**Különösen fontos:** a MASTER már ismeri az EDT-039/040 interaction/motion, WEB-009–011 globális navigáció, DSN-001–018 Brand Kit és RES-001–015 Media képességeket. A fenti igényeket ezek **részletes elfogadási kritériumaiként** kell bevezetni. Új, párhuzamos domainek, szabadon futó JavaScript, random CSS-fork vagy második Theme-adatmodell tilos.
+
+### 28.1 Új kötelező Editor inspector/felület-specifikációk, ha még hiányoznak
+
+- **Hero Section Inspector**: asset picker; media layer order; dark gradient overlay; focal point x/y; desktop/tablet/mobile alternate crop vagy konzisztens media variant; max hero height / min height; border/shape; reduced-motion preview. Minden mező typed/validated. A meglévő Page Model property registryhez illesztve, nincs tetszőleges CSS string injekció.
+- **Motion Inspector**: gyűjtemény-alapú enter/hover/focus/scroll-intent preset, időtartam/easing/once vs replay és reduced-motion; deklaratív Page Model state; safe defaults; max performance cost. Scroll animáció nem lehet a szöveg megjelenítésének előfeltétele.
+- **Global Shell Editor**: shared SANCI logo/media hivatkozás, header/footer layout és nav tree canonical binding, breakpoints, active/focus/hover state; csak a joggal rendelkező admin módosíthatja; preview/draft/published diff.
+- **Responsive art direction presets**: 1440 hero split, 1024 compact, 768 stack, 390/320 mobile, független content order ha a schema támogatja; nincs kényszerű copy/paste 5 oldalhoz.
+- **Content and provider block**: published Content feed, Twitch state, Schedule next slot, fallback szöveg, source freshness; szükség esetén UI no-data szerkesztés, de ne változtathasson az Editor stream provider üzleti rekordokat.
+- **Reusable SANCI components**: hero, site-header, featured media, content card, link-card, title band, sponsor strip, site-footer; instance és canonical template kétirányú editability, váratlan override nélkül.
+
+**Ha az Inspector pontos mezőtípusa még nem létezik:** a Work előbb bizonyítsa a szükségességét az elfogadott artwork és szerkesztési feladat alapján, majd kösse a létező registry/typed command, responsive cascade, public renderer, publication validator, undo/redo és test contract rendszerbe. Nem szabad egy működésképtelen díszgombot késznek jelenteni.
+
+## 29. Work implementációs terv — két pálya, egy végső cél
+
+**A. Előkészítés az Editor teljes elkészülte előtt (most engedélyezett és hasznos):**
+1. Read-only valós page/slug/nav/media/design-token inventory, verzió és jelenlegi shell-képesség.
+2. A 20. fejezetben elfogadott SANCI embléma tisztított, reprodukálható változatai, 16/24/32px és sötét/világos teszttel.
+3. Egyedi éjszakai hero táj **külön logó nélkül**, desktop/mobile artwork, optimalizált export és jog-inventory.
+4. Page-by-page hi-fidelity 1440x900, 1024x768, 390x844 és 320x700 wireframe/render terve, a 23–25. fejezet szerint, tényleges Editor képességmátrixhoz kötve.
+5. A MASTER meglévő P02/P03/EDT/WEB/RES/DSN kritériumainak konkrét gap-jei; nincs új második master.
+6. Ami már biztonságosan és kanonikusan elkészíthető, az draftként, teljes editálhatósággal elkészíthető. Save külön Publish. Semmi hamis „kész” állítás.
+
+**B. Teljes Visual Editor és Site Kit stabilitása után (valós capability függésben):**
+1. A hiányzó typed Inspector/media/motion/global-brand binding fejlesztése a MASTER szerinti normál sorrendben.
+2. Shared site shell és responsive page template a kanonikus modellben, nem egyedi HTML oldalforrással.
+3. P0 oldalak valós tulajdonosi copyval, képekkel és platformlinkekkel; eltérő aloldali kompozíciókkal.
+4. Content/Schedule/Twitch live adatprojekció és az összes offline/error fallback, amennyiben a kapcsolódó modul kész.
+5. Full browser QA, link/SEO, perf, a11y, responsive, kisméretű logó; csak az AGENTS.md előfeltételei után éles publish/deploy.
+
+**Nem várunk az AI modulra**: a már megtervezett struktúrált Page Model import külső jogosult asszisztenst is kiszolgálhat a megfelelő fejlesztési kapu után.
+
+## 30. Elfogadási mátrix — látvány, funkció, valódi adatok
+
+| Gate | Mit kell bizonyítani? | Módszer |
+|---|---|---|
+| VIS-01 | a SANCI brand az első képernyőn portré nélkül felismerhető | desktop/mobile screenshot review |
+| VIS-02 | a tájkép nem takarja a H1/CTA-t és nem okoz szövegbeégetett, hamis UI-t | DOM és screenshot |
+| VIS-03 | 320/390/768/1024/1440 viewporton nem lóg ki menü vagy kártya | browser layout assert és screenshot |
+| UX-01 | minden fő menüpont egyértelmű és valós URL-re vezet | kanonikus navigáció + HTTP/link report |
+| UX-02 | menü keyboard/ESC/focus/active/route-scope teszt PASS | valódi Chromium és mobil viewport |
+| UX-03 | Főoldal max 4 fő tartalmi blokk, részletek saját oldalon | site inventory és manual design review |
+| DATA-01 | LIVE csak hitelesen; OFFLINE/UNKNOWN és provider-hiba korrekt | provider fixture + browser |
+| DATA-02 | videó/menetrend valós source vagy őszinte fallback | canonical domain API |
+| DATA-03 | ugyanaz az asset ID több kompatibilis oldalelemben | admin picker / public media QA |
+| EDT-01 | brand/nav/media/motion editability teljes Editorban | Inspector/Undo/Redo/Save/reload/Preview/Publish |
+| EDT-02 | Save nem változtatja meg az éles megjelenést | draft/published snapshot teszt |
+| EDT-03 | publish rollback/revision és cross-site deny teszt | browser+API+security |
+| SEO-01 | egyedi title/description/canonical, OG és helyes 404/redirect | HTTP+HTML metadata |
+| A11Y-01 | WCAG 2.2 AA cél, 200% zoom, focus, reduced-motion, alt és feliratozási útvonal | axe + keyboard + expert review |
+| PERF-01 | LCP legfeljebb 2.5 s, INP legfeljebb 200 ms, CLS legfeljebb 0.1 cél valós adaton p75 szerint | lab és field measurement; mérés nélkül NOT VERIFIED |
+| SAFE-01 | 0 Ft új költés, nincs önkényes prod mutáció, nincs API bypass | release evidence és költség review |
+
+**A mérések célok, nem a jelenlegi oldalról állított tények.** Twitch video iframe esetében a hivatalos parent-domain és az előírt legalább 400x300 méret miatt mobilon és nem megfelelő viewporton az egyszerű hivatalos platform-link fallback kötelező. A WCAG 2.2 AA a Web Content Accessibility Guidelines szerinti cél, nem puszta checklista.
+
+**Külső technikai kontrollforrások, 2026-11-09 ellenőrzés:**
+- W3C WCAG 2.2: https://www.w3.org/TR/WCAG22/
+- Google Core Web Vitals: https://developers.google.com/search/docs/appearance/core-web-vitals
+- Twitch embedding rules: https://dev.twitch.tv/docs/embed
+- Twitch video and clips: https://dev.twitch.tv/docs/embed/video-and-clips/
+
+## 31. Végrehajtási prompt Work számára a friss jóváhagyással
+
+**Indítószöveg:** „A SANCI9517 Creator Platform aktív v2/foundation ágán dolgozz. Olvasd az AGENTS.md teljes tartalmát és a kanonikus docs/SANCI9517-CREATOR-PLATFORM-PLAN.md MASTER-t, majd a docs/SANCI9517-PUBLIC-SITE-BRIEF.md 20–31. fejezeteit. A felhasználó a sötét, filmes SANCI DARK DEPTH dizájnvilágot, külön a háromkarú közösségi logószimbólumot fogadta el. A weboldal világklasszis, de könnyen kezelhető, külön oldalakra szervezett creator-site legyen; a főoldalon sem arckép, sem hosszú Rólam nem lehet. A hiányzó Editor/Brand Kit/Media/Web funkciókat igazolt gapként, a meglévő MASTER stable ID-jaihoz kösd; ne készíts második Website Engine-t, és ne állíts késznek tervezett funkcionalitást. Készíts külön használható, tiszta logó-asseteket és hero artworkot, egységes menü/footer/site shell dizájnt, szerkeszthető 9 P0 oldalt és valós source/fallback tartalmat a tényleges capability függőségek szerint. A hiányzó funkciók a teljes Visual Editor megfelelő későbbi implementációs szakaszában is készülhetnek. Teszt: mobil/tablet/desktop, keyboard, a11y, reduced-motion, SEO, biztonság, brand/media ID és Save/Publish elválasztás. 0 Ft új költés, semmi kitalált csatorna/szponzor/adat. A végén pontos commit, tényleges tesztek, blokkolók és külön éles státusz magyarul.”  
+
+**Állapot:** csak tervezés/specifikáció. Nem helyettesíti a MASTER-t. A vizuális referenciát még át kell dolgozni tényleges különálló médiafájlokká; a hiányzó Editor-képességek OPEN státuszúak, és nem szolgálnak ürügyül félkész, nem szerkeszthető éles oldal közzétételére.
