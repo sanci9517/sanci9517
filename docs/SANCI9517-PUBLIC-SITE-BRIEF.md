@@ -1,7 +1,7 @@
 # SANCI9517 — publikus weboldal: kreatív brief, dizájnrendszer és teljes tartalomterv
 
 **Dokumentum típusa:** belső, végrehajtható creator-webhely brief; NEM második platform-MASTER.  
-**Verzió:** 1.3 (tervezés) • **Dátum:** 2026-11-09 • **Státusz:** DESIGN SPEC / NOT IMPLEMENTED.  
+**Verzió:** 1.4 (tervezés) • **Dátum:** 2026-11-09 • **Státusz:** DESIGN SPEC / NOT IMPLEMENTED.  
 **Repository / ág:** sanci9517/sanci9517 → v2/foundation.  
 **Kanonikus termékterv:** docs/SANCI9517-CREATOR-PLATFORM-PLAN.md.  
 **Végrehajtási szabály:** AGENTS.md; ez a brief nem írhatja felül a MASTER-t, a release-gate-eket, a Save/Publish szétválasztását vagy a domainadatok tulajdonosát.  
@@ -633,7 +633,7 @@ Az identitás nem generikus, hanem Sanci tényleges karakteréből épül; ezek 
 - **Hobbi, közösség, fejlődés:** a streamelés számára személyes öröm és közösségépítés, amelyben kommunikációban is fejlődhet. A főállás egy lehetséges jövő, nem biztos ígéret.
 - **Név:** Sanci elsődleges, SANCI9517 az online handle. A 9517 használható kisebb opcionális brandrészletként, de nincs előírva, hogy a fő logón látszódjon.
 - **Látvány:** egyedi, animált, emlékezetes és logikusan áttekinthető legyen, ne sablonos végtelen scroll. A fekete, szürke és piros tetszik a tulajdonosnak, de más szín is elfogadható.
-- **Arc és logó:** felvállalja valódi arcát; saját fotóval lehet az oldal főszereplője, amint engedélyezett kép elérhető. Jelenleg nincs kész logó, tehát új, eredeti logótervezés kötelező Work-feladat.
+- **Arc és logó (friss tulajdonosi pontosítás):** a FŐOLDALON ne legyen portré, a fő vizuális elem az egyedi SANCI embléma legyen. A személyes bemutatkozás a Rólam oldalon kap helyet, képhasználatról később külön döntés. Jelenleg nincs logó, eredeti embléma és szójel készítése kötelező Work-feladat.
 - **Látogatói érzés:** tudja meg, ki Sanci, mikor és mit játszik; akarjon a közösséghez tartozni. Támogatás csak önkéntes, nem pénzvezérelt manipulatív kampány, nem belépőfeltétel.
 
 **Belső brandjelzők:** nyugodt, hiteles, közvetlen, kitartó, közösségépítő.  
@@ -675,10 +675,10 @@ Ha valamibe belekezdek, igyekszem minél jobban csinálni. Mindig úgy érzem, l
 
 - A látogató három értelmes úttal indulhat: „Nézz most”, „Nézz vissza”, „Csatlakozz”. A részletes oldalak logikus menüben vannak, nem egyetlen óriási nyitóoldalon.
 - A mozgás látványos ott, ahol segít megjegyezni a márkát, de a menü kezelése, tartalomolvasás és CTA mindig egyszerű. Reduced-motion esetén az animációk ne rejtsenek tartalmat.
-- Az oldal legyen személyes: saját portré és valós adatok, a nyugodt hangot ne váltsa fel harsány gamer stockgrafika.
+- Az oldal valódi személyiséget és tényszerű tartalmakat mutasson, de a főoldalon NE legyen portré és NE legyen hosszú bemutatkozás. A Rólam a részletes személyes céloldal; harsány gamer stockgrafika kizárva.
 - A támogatás önkéntes, egy lehetséges jövőbeli rész; a közösség és a nézhető tartalom az első.
 
-### 16.5 A következő márkainterjú konkrét nyitott döntései
+### 16.5 Korábbi nyitott döntések (a tulajdonos 17. fejezetben pontosította)
 
 1. Melyik kreatív irány áll hozzá legközelebb: A Quiet Signal, B Warm Studio, C Playful Depth vagy keverék?
 2. A hero főképe: saját portré és videó, animált logó, vagy ezek vegyesen? Milyen saját fotóanyag elérhető?
@@ -687,3 +687,72 @@ Ha valamibe belekezdek, igyekszem minél jobban csinálni. Mindig úgy érzem, l
 5. Mely vizuális klisét tiltsuk: koponya, gamer headset, neon, égő lángok, agresszív logó, túl sok effekt vagy más?
 
 **Állapot:** V1.3 kreatív terv és személyes brandirány. Új asset nem készült, semmit nem töltöttünk a médiatárba, és az éles webhelyet nem változtattuk meg. A Work a válaszok és a már érvényes 15. fejezet szerinti közös médiatár alapján folytathatja, az AGENTS.md és a MASTER elsőbbségével.
+
+
+---
+
+## 17. V1.4 SANCI saját embléma, több forma és logikus teljes oldalstruktúra — 2026-11-09
+
+### 17.1 Rögzített tulajdonosi döntések
+
+**Elsődleges márkanév a logón:** SANCI. A SANCI9517 az online csatornaazonosító maradhat; a számok nem kötelező logórészek.
+
+**Logó típusa:** A opció — a saját SANCI szójel MELLÉ egy önállóan használható, teljesen egyedi embléma. Az embléma legyen önmagában felismerhető a profilképen, stream overlayen, weboldalon, faviconban és akár ruhán is. Nem elegendő egy szép, de általános S-betű.
+
+**Belső jelentés és hangulat:** mélység, titokzatosság, közösség. E három fogalmat egyetlen eredeti vizuális történet és jel kapcsolja össze, nem három stockikon.
+
+**Formakialakítás:** a tulajdonos még nem választott éles/lekerekített/geometrikus/organikus formát; több, TÉNYLEG ELTÉRŐ formai változat szükséges, nem ugyanaz a logo új színekben.
+
+**Kizárt eredmény:** „AI-szagú” megjelenés. Kerülendő az összetéveszthető gamer/tech logó, az automatikus stockmonogram, a véletlenszerű 3D fényes S, az alaktalan neon-glow, a túlzott szimmetria, az egymástól független geometrikus motívumok és a sablonos marketinglayout. Az egyediség a KIDOLGOZOTT FORMÁBÓL származzon, ne véletlen effektből. A Work használhat eszközt a kreatív folyamatban, de a végső grafika tudatosan megszerkesztett és ellenőrzött alkotás legyen.
+
+**Vizuális stílus:** a C / Playful Depth legyen a DOMINÁNS arculat. A / Quiet Signal adja a navigáció, rács, kontraszt és tipográfia fegyelmét; B / Warm Studio adhat emberibb tónusokat, de ne legyen fotóközpontú a főoldal. Nem három össze nem illő dizájn keveréke. A kedvelt fekete/szürke/piros színek nem kötelezőek.
+
+**Főoldal:** nincs arckép, nincs életrajz, és nem kell egyetlen végtelen görgetős landing. A személyes történet a külön Rólam oldal feladata; a nyitóoldal a valódi adáshoz, videókhoz, közösséghez és menetrendhez vezessen.
+
+**Felülírási klauzula:** a korábbi 1–16. fejezet bármely arcot/portrét a főoldali hero centrumába javasló, az A-t elsődlegesnek nevező, vagy a teljes SANCI9517-et kötelező logónévnek előíró szakasza csak korábbi alternatíva. A jelen 17. fejezet fenti közvetlen tulajdonosi döntései az irányadóak.
+
+### 17.2 Négy KÜLÖNBÖZŐ embléma-elképzelés — nem kész logók, hanem Work-tervezési feladatok
+
+1. **Rejtett kapcsolat (L1):** önálló formák közötti negatív tér egy új jelet alkot; a kapcsolódás érzete nem általános ember-/link-/wifiikon.
+2. **Mélységkapu (L2):** egyetlen egyszerű jel belső tere és optikai mélysége a felfedezést idézi; egyszínű és kisméretű verzióban is felismerhető, nem általános portálgrafika.
+3. **Rejtett S (L3):** szokatlan, visszafogott S-logika, ami nem sablonos esportmonogram; elsőre ikon, később felfedezhető benne a SANCI-jelentés.
+4. **Közös pálya (L4):** több irányból egymáshoz tartó, egyetlen saját szimbólummá kapcsolódó forma; sem lánc, sem Discord-embléma, sem szabványos kapcsolatpiktogram.
+
+A Work mind a négy irányhoz valóban külön sziluettet, SANCI szójelpárosítást és rövid formakoncepciót készít. A két legígéretesebbhez további formai finomítás szükséges; **nem színvariációk**. Nincs kész, automatikusan jóváhagyott logó. Az alkotásnál a tartalmas visszajelzés és az egyediség legyen elsődleges, ne a gyors generálás.
+
+**Logo identity deliverables:** (a) önálló ikon, (b) horizontális embléma + SANCI, (c) kompakt/álló verzió, (d) 1 színes és legalább 2 mono pozitív-negatív változat, (e) 16/24/32/64px olvashatóság, (f) Twitch/TikTok/YouTube avatar, web header és mobilmenü, stream overlay, videós watermark és későbbi merch próba, (g) statikus és akadálymentes finoman animált webes változat. A színek/animáció nem pótolhatják a gyenge alapformát.
+
+**Minőségtesztek:** könnyen megjegyezhető-e, működik-e logó szöveg nélkül, felismerhető-e kicsiben és 1 színnel, idegen-e a stock gamer jelektől, összeillik-e a csendes, befogadó személyiséggel, és tényleg erős-e a sötét/világos háttéren? A Work vizsgáljon hasonlóságot más gaming és creator márkákhoz és lehetőség szerint a releváns védjegynyilvántartásokhoz; a „saját” kreatív cél nem jelent garantált védjegy-oltalmat.
+
+### 17.3 Véglegesített oldalszerepek és javasolt menühierarchia
+
+**Fő navigáció PC-n:** Főoldal | Élő | Videók | Menetrend | Közösség | Rólam.  
+**További:** Kapcsolat jól elérhető a Rólam/Közösség oldalról és a közös footerből; TikTok és YouTube saját, már meglévő vagy tervezett céloldala a Videók oldali platformnavigációból. A pontos url/slug/308 redirect megőrzendő, csak valós tartalmú oldalak kerüljenek ki a publikus menübe. Mobilon külön, rövid logikus menü, nem egymásba nyíló végtelen almenük.
+
+| Oldal | Egyetlen elsődleges feladat | Ne legyen ott |
+|---|---|---|
+| Főoldal / | Azonnali útvonalválasztás és friss, tényleges tartalom | hosszú élettörténet, teljes videóarchívum, óriási feed |
+| Élő /elo | Valós live / offline és streammegtekintés | második főoldal vagy hamis live jelző |
+| Videók /videok | Kurált visszanézhető tartalom, klip/VOD/short és platformok | különálló, ismétlődő általános promo szakaszok |
+| Menetrend /menetrend | Tényleges következő adás és időzóna | kitalált gyakoriság/üres naptárszínjáték |
+| Közösség /kozosseg | Belépés, részvétel, szabályok, hiteles platformlinkek | terjengős Sanci-életrajz |
+| Rólam /rolam | Valós személyiség, hobbi, motiváció, fejlődéstörténet | streamplayer-központú főoldal |
+| Kapcsolat /kapcsolat | Nézői / üzleti hiteles elérés | nem működő űrlap |
+| TikTok /tiktok, YouTube /youtube | Tartalomorientált platform-belépés | duplikált top-level menüpontok |
+| Rendszeroldalak | SEO/OG, 404, jogi, publikus státuszok | félkész design vagy halott linkek |
+
+**A FŐOLDAL pontos sorrendje (maximum négy értelmes blokk + közös footer):**
+1. Egyedi SANCI logó + nagyon rövid lényegre törő szöveg + egy tényleges adás/videó CTA; NINCS arc és NINCS részletes bemutatkozás.
+2. MOST: igazolt live állapot vagy offline tartalom/valós következő adás — a megtekintés rögtön elérhető legyen.
+3. KIEMELT: egy nagy, igazolt videó és legfeljebb két másodlagos kártya — tovább a Videók oldalra.
+4. FEDEZD FEL: világos belépők Menetrend / Közösség / Rólam irányába, további szekciók halmozása nélkül.
+
+**UX-elv:** az oldal ne legyen tartalom nélküli rövid és ne legyen görgetőlabirintus sem. Minden információ ott jelenjen meg részletesen, ahol a látogató logikusan keresi. Közös shell, azonos SANCI logo/brand az összes oldalon, jól megkülönböztetett hover/active/focus állapotok. Mobil/tablet/PC külön ellenőrzés.
+
+### 17.4 Médiatár és megvalósítási kapu
+
+A 15. fejezet változatlanul kötelező: az elfogadott saját logó-assetek és grafikai variánsok a **meglévő, közös Admin Médiatár** kompatibilis feltöltéseivel kezelendők; a különböző oldalelemek a támogatott helyeken **ugyanarra a canonical asset ID-ra** hivatkoznak, nem duplikált képfájlokra. Előbb tényleges Media/Asset API, jogosultság, MIME, 4 MiB/file, kvóta, alt/decorative és használatihely-leltár; a globális header-logo/favicon/OG saját bindingját hitelesen kell ellenőrizni, szükség esetén a MASTER-ben rögzített feladatként fejleszteni. Sem automatikus site publish, sem prod D1/R2 adatmutáció nem következik pusztán a brief elfogadásából.
+
+**A Work következő, ellenőrizhető munkadarabja:** négy valóban különböző SANCI embléma + SANCI szójel látható tervként, két kiválasztott irány finomítása; ehhez 1440px/390px hero és menü demonstráció, érdemi összehasonlítás. A végső embléma kiválasztása a tulajdonos döntése; csak utána terjedhet végig az arculat, social/favikon/OG és a közös site shell minden felületén.
+
+**Státusz:** SPEC ONLY. Logó még nem készült, nem töltöttünk fel semmit, a publikus oldal és Worker változatlan.
