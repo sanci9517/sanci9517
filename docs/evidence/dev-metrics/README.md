@@ -17,6 +17,14 @@ node tests/dev-metrics.mjs pause --id=RUN_ID
 node tests/dev-metrics.mjs resume --id=RUN_ID
 ```
 
+Ha a korábbi futás félbeszakadt, és a lezárás időpontja már nem rekonstruálható, nem szabad utólag munkának számolni. Az ügynök explicit **interrupted** naplóként archiválhatja a nyitott állapotot, és új mérést kezdhet:
+
+```sh
+node tests/dev-metrics.mjs abandon --id=RUN_ID --reason="cloud run megszakadt"
+```
+
+Ez az `interrupted/` mappába ment, `measured_seconds: null` értékkel. A `report` külön mutatja az ilyen futások számát, **nem** számolja őket a mért órák közé.
+
 A munka végén, **valós** eredménnyel és konkrét ellenőrzéssel:
 
 ```sh
