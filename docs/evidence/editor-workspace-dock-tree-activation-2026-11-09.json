@@ -1,5 +1,5 @@
 {
-  "recorded_at_utc": "2026-11-09T13:15:53Z",
+  "recorded_at_utc": "2026-11-09T13:49:23Z",
   "plan_point": "77.44.6.1.C",
   "status": "LOCAL_VALIDATED_FIRST_USE_ACTIVATION_C_OPEN_RELEASE_BLOCKED",
   "source_control": {
@@ -7,7 +7,7 @@
     "branch": "v2/foundation",
     "local_head": "91d1fa1ac9f5735390ba12a4d37cfceff2764679",
     "remote_head": "6f98cbefb18432de283e91d3adc1762c6c5202ae",
-    "remote_head_verified_via": "GitHub commits API, exact v2/foundation branch, read-only recheck during this run",
+    "remote_head_verified_via": "GitHub REST branches/v2/foundation API via authenticated connector, exact SHA read-only recheck at 2026-11-09T13:48Z",
     "fast_forward_ancestry": "PASS: remote HEAD is an ancestor of local HEAD; 8 local commits were ahead before this test/evidence-only worktree change.",
     "push": "NOT PUSHED; five v2/foundation Actions workflows would trigger; free compute quota is not observable through the connected read-only GitHub tools, so the 0 Ft limit is protected by keeping the release local.",
     "changed_runtime_paths": [
@@ -84,12 +84,12 @@
     },
     "deployment_api_before_release": {
       "status": "READ_ONLY_CONFIRMED",
-      "checked_at_utc": "2026-11-09T13:15:53Z",
+      "checked_at_utc": "2026-11-09T13:48Z",
       "deployment_id": "c4573240-1f1d-4830-98f1-bbc713782c4e",
       "version_id": "a6670b60-61ec-40cf-8613-0757b6ca0954",
       "traffic_percent": 100
     },
-    "health_get": "PASS: direct GET https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health at 2026-11-09T13:03:16Z; HTTP 200, {\"ok\":true,\"service\":\"sanci9517-streamer-brand\",\"version\":\"2.0.0\",\"server\":\"cloudflare-worker\"}.",
+    "health_get": "PASS: direct GET https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health at 2026-11-09T13:03:16Z; HTTP 200, {\"ok\":true,\"service\":\"sanci9517-streamer-brand\",\"version\":\"2.0.0\",\"server\":\"cloudflare-worker\"}. A fresh direct retry at 2026-11-09T13:48Z was BLOCKED before HTTP: curl exit 7, configured proxy port 8080 unavailable; the earlier HTTP 200 is the latest successful direct health response.",
     "push": "NOT PUSHED: runtime history includes nine local commits and requires hosted CI; the billing/remaining-free-quota endpoints return inaccessible responses. No Actions run started.",
     "worker_deploy": "NOT DEPLOYED; this turn changed only browser tests/evidence/plan, runtime source remains the already validated local commit.",
     "live_asset_hash_comparison": "NOT RUN: no runtime asset was deployed in this run; local runtime commit remains unpublished, so local/live hashes are not claimed.",
