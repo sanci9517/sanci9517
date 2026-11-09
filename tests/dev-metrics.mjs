@@ -8,6 +8,7 @@ import { fileURLToPath } from 'node:url';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const archiveDir = join(root, 'docs', 'evidence', 'dev-metrics', 'runs');
+const interruptedDir = join(root, 'docs', 'evidence', 'dev-metrics', 'interrupted');
 const now = () => new Date().toISOString();
 const fail = (message) => { throw new Error(message); };
 const git = (...args) => execFileSync('git', args, { cwd: root, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim();
@@ -20,11 +21,11 @@ const flags = Object.fromEntries(process.argv.slice(3).map(x => {
 }));
 const command = process.argv[2];
 const allowedFlags = {
-  start: ['task', 'trigger'], pause: ['id'], resume: ['id'],
+  start: ['task', 'trigger'], pause: ['id'], resume: ['id'], abandon: ['id', 'reason'],
   finish: ['id', 'status', 'kind', 'summary', 'evidence', 'checks'],
   report: ['days', 'remaining-hours', 'json']
 };
-if (!Object.hasOwn(allowedFlags, command)) fail('Usage: node tests/dev-metrics.mjs start|pause|resume|finish|report [--key=value]');
+if (!Object.hasOwn(allowedFlags, command)) fail('Usage: node tests/dev-metrics.mjs start|pause|resume|abandon|finish|report [--key=value]');
 for (const key of Object.keys(flags)) if (!allowedFlags[command].includes(key)) fail(`Unknown flag: --${key}`);
 const safeId = x => typeof x === 'string' && /^[\w.-]{1,100}$/.test(x);
 const read = p => JSON.parse(readFileSync(p, 'utf8'));
@@ -71,6 +72,16 @@ try {
     }
     write(p, v);
     console.log(JSON.stringify({ ok: true, id: v.id, state: command, at: time }));
+  } else if (command === 'abandon') {
+    const { p, value: v } = active();
+    const reason = flags.reason || 'interrupted without a reliable end time';
+    if (reason.length > 300) fail('Reason too long.');
+    const abandonedAt = now();
+    const dest = join(interruptedDir, abandonedAt.slice(0, 10), `${v.id}.json`);
+    if (existsSync(dest)) fail('Interrupted session already archived.');
+    write(dest, { schema: 1, id: v.id, task: v.task, trigger: v.trigger, started_at: v.started_at, abandoned_at: abandonedAt, measured_seconds: null, status: 'interrupted', reason, started_revision: v.started_revision, measurement: 'missing end time; excluded from elapsed time and ETA' });
+    unlinkSync(p);
+    console.log(JSON.stringify({ ok: true, id: v.id, status: 'interrupted', archive: dest.slice(root.length + 1) }));
   } else if (command === 'finish') {
     const { p, value: v } = active();
     const status = flags.status || 'partial';
@@ -113,6 +124,15 @@ try {
         if (record.schema === 1 && Number.isFinite(record.measured_seconds) && Date.parse(record.finished_at) >= from) records.push(record);
       }
     }
+    const interrupted = [];
+    if (existsSync(interruptedDir)) for (const date of readdirSync(interruptedDir)) {
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) continue;
+      for (const file of readdirSync(join(interruptedDir, date))) {
+        if (!file.endsWith('.json')) continue;
+        const value = read(join(interruptedDir, date, file));
+        if (value.status === 'interrupted' && Date.parse(value.abandoned_at) >= from) interrupted.push(value);
+      }
+    }
     const seen = new Set();
     for (const r of records) {
       if (seen.has(r.id)) fail(`Duplicate session ID: ${r.id}`);
@@ -126,7 +146,7 @@ try {
     const eligible = days >= 7 && records.length >= 5 && weeklyLinkedHours > 0;
     const eta = eligible ? new Date(Date.now() + remaining / weeklyLinkedHours * 7 * 86400000).toISOString().slice(0, 10) : null;
     const result = {
-      window_days: days, runs: records.length, incomplete_sessions: pendingIds().length,
+      window_days: days, runs: records.length, incomplete_sessions: pendingIds().length, interrupted_sessions: interrupted.length,
       total_measured_hours: +(totalSeconds / 3600).toFixed(3),
       evidence_linked_code_test_hours: +(linkedSeconds / 3600).toFixed(3),
       statuses: Object.fromEntries(['pass', 'partial', 'blocked', 'failed'].map(s => [s, records.filter(r => r.status === s).length])),
