@@ -3953,10 +3953,11 @@ test('backgrounding the Editor cancels a floating dock drag before a stale point
     saved:JSON.parse(localStorage.getItem('sanci-editor-workspace-preferences-v2'))?.floatingPosition?.left,
     liveX:parseFloat(getComputedStyle(document.querySelector('.workspace')).getPropertyValue('--floating-left-x')),
     liveY:parseFloat(getComputedStyle(document.querySelector('.workspace')).getPropertyValue('--floating-left-y')),
+    announcement:document.querySelector('#workspaceDockStatus')?.textContent.trim(),
     undoDisabled:document.querySelector('#undoWorkspaceLayout')?.disabled,
     redoDisabled:document.querySelector('#redoWorkspaceLayout')?.disabled,
   }));
-  assert.deepEqual(backgrounded,{active:false,saved:{x:0,y:0},liveX:0,liveY:0,...historyBefore},'losing the Editor window focus cancels the transient drag and restores its saved workspace state');
+  assert.deepEqual(backgrounded,{active:false,saved:{x:0,y:0},liveX:0,liveY:0,announcement:'Az ablak elvesztette a fókuszt; a panel visszaállt az előző helyére.',...historyBefore},'losing the Editor window focus cancels the transient drag, restores its saved workspace state, and announces the recovery');
 
   await page.bringToFront();
   await page.mouse.up();

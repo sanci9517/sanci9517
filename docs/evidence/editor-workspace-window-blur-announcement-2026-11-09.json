@@ -1,0 +1,47 @@
+{
+  "date": "2026-11-09",
+  "plan_point": "77.44.6.1.C",
+  "status": "TEST_ONLY_PASS_NOT_RELEASED",
+  "scope": "Strengthen the focus-loss dock cancellation regression with an explicit accessible live-region announcement assertion.",
+  "branch": "v2/foundation",
+  "head_before_work": "14104ecba7e480c62a8733fd8c55397e9e5d30f5",
+  "github_branch_head_read_only": "d75af5439c38e2a7e19f1aa6b8b5b0cc81d6ec09",
+  "local_commits_ahead_before_work": 35,
+  "test": {
+    "name": "backgrounding the Editor cancels a floating dock drag before a stale pointerup can commit it",
+    "source": "tests/browser/editor-workspace-appearance.test.js",
+    "assertion_added": "After window.blur restores the persisted dock location, #workspaceDockStatus must announce: Az ablak elvesztette a fókuszt; a panel visszaállt az előző helyére.",
+    "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-name-pattern='backgrounding the Editor cancels a floating dock drag' tests/browser/editor-workspace-appearance.test.js",
+    "result": "PASS 1/1 in Chromium with local loopback enabled for the fixture server; Page Model/Save/Publish write log remains empty.",
+    "initial_sandbox_attempt": "The default restricted environment failed before the browser assertion and emitted only a test-file-level failure. Repeating with explicitly enabled network permission for the local fixture passed; no external service was accessed."
+  },
+  "changes": {
+    "runtime_files_changed_in_this_block": [],
+    "test_files_changed": ["tests/browser/editor-workspace-appearance.test.js"],
+    "planning_and_evidence_files_changed": ["docs/SANCI9517-CREATOR-PLATFORM-PLAN.md", "docs/evidence/editor-workspace-window-blur-announcement-2026-11-09.json"],
+    "save_publish_contract_changed": false,
+    "d1_write_or_migration": false,
+    "r2_operation": false,
+    "new_dependency": false
+  },
+  "github_release": {
+    "branch_head_read_only_verified": true,
+    "status": "NOT_PUSHED",
+    "reason": "The parent local history was already 35 commits ahead and contains runtime changes not yet released. A fast-forward would publish those runtime commits and trigger the Worker release path; the Actions/Cloudflare free-quota status is unverified under the owner's 0-HUF limit. This test-only commit is preserved locally with [skip ci]; no Actions workflow was dispatched.",
+    "actions_storage_owner_reported": "0.45/0.50 GB",
+    "actions_remaining_quota": "UNVERIFIED",
+    "aggregate_ci": "NOT_RUN"
+  },
+  "production_worker": {
+    "worker": "sanci9517-streamer-brand",
+    "deployment_id": "6aea7ce1-830a-451a-a00d-c88284b08ef9",
+    "traffic_version_id": "425cfad2-3744-49e1-afde-289216ad8c2b",
+    "traffic_percentage": 100,
+    "health_http": "UNVERIFIED; direct curl failed before HTTP because proxy port 8080 was unreachable.",
+    "runtime_public_asset_comparison": "NOT APPLICABLE to this test-only block; a previous local commit in the branch changes runtime shell.js and remains unreleased."
+  },
+  "c_plan_status": "OPEN / NOT CERTIFIED. The accessible recovery announcement is covered; recursive dock-group tree/model semantics and complete workspace lifecycle acceptance remain open.",
+  "manual_visual_editor_acceptance": "DEFERRED until the complete planned Visual Editor scope is implemented.",
+  "actions_run_started": false,
+  "cost_huf": 0
+}
