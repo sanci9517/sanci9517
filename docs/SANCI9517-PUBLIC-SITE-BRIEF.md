@@ -1,7 +1,7 @@
 # SANCI9517 — publikus weboldal: kreatív brief, dizájnrendszer és teljes tartalomterv
 
 **Dokumentum típusa:** belső, végrehajtható creator-webhely brief; NEM második platform-MASTER.  
-**Verzió:** 1.1 (tervezés) • **Dátum:** 2026-11-09 • **Státusz:** DESIGN SPEC / NOT IMPLEMENTED.  
+**Verzió:** 1.2 (tervezés) • **Dátum:** 2026-11-09 • **Státusz:** DESIGN SPEC / NOT IMPLEMENTED.  
 **Repository / ág:** sanci9517/sanci9517 → v2/foundation.  
 **Kanonikus termékterv:** docs/SANCI9517-CREATOR-PLATFORM-PLAN.md.  
 **Végrehajtási szabály:** AGENTS.md; ez a brief nem írhatja felül a MASTER-t, a release-gate-eket, a Save/Publish szétválasztását vagy a domainadatok tulajdonosát.  
@@ -539,3 +539,81 @@ A tényleges világszintű vizuális eredményhez nem elég CSS és helyőrző. 
 **Frissített prioritási mondat Worknek:** „Ne egy teljesített menüpontlistát adj át, hanem egy olyan saját, élő tartalomélményt, ahol a SANCI9517 név már az első képernyőn vizuálisan egyértelmű, a videó és közösség ténylegesen használható, és a mobil verzió nem kompromisszum.”
 
 **Állapot:** spec only / not implemented / no live publish. E kreatív irány maga nem jogosít D1 éles írásra, migrációra, R2 törlésre, új fizetős szolgáltatásra vagy az Editor korai kézi elfogadására.
+
+
+---
+
+## 15. V1.2 teljes site-shell, logók, navigáció és közös médiatár (2026-11-09)
+
+**Felhasználói döntés:** a Work feladata nemcsak a publikus oldalak szövegének és szekcióinak elkészítése, hanem **a teljes publikus webhely összes vizuális és működő rendszerének** megtervezése és megvalósítása: központi arculat, szójel/embléma/favicon, globális fejléc és mobilmenü, navigáció, lábléc, CTA-k, közös kártyák, státuszok, partnermegjelenés, SEO/OG képek, minden oldaltípus és responsive állapot. A végeredménynek egyetlen egységes, felismerhető SANCI9517 márkaként kell működnie, nem egymás mellé tett független oldalaknak.
+
+**Elsőbbség:** a kanonikus MASTER és AGENTS.md változatlanul irányadó. Ez a fájl kreatív/site-implementációs brief és nem új fejlesztési terv.
+
+### 15.1 Teljes webhelykomponens-leltár
+
+| Tartomány | Kötelező feladat | Elfogadás |
+|---|---|---|
+| Arculat | SANCI9517 wordmark, kompakt embléma, logo-variánsok, színek, tipó, ikonok, formák, fény és mozgás | minden oldalon felismerhető eredeti identitás |
+| Globális shell | desktop/tablet/mobile header, menü, almenü, aktív állapot, megnyitás/bezárás, CTA, breadcrumb ahol kell, közös footer | minden releváns publikus oldalon egyező navigáció és keretrendszer |
+| Mobilmenü | kényelmes drawer, megfelelő linkhierarchia, billentyűzet/fókusz, ESC, visszatérő fókusz, scroll-lock | nincs takart tartalom vagy használhatatlan navigáció |
+| Képi elemek | hero, avatár, streaming banner, wide/vertical videó-cover, OG cover, favicon, 404 saját grafika | saját jogosult assetek, összehangolt crop és alt |
+| Újrahasznosítható UI | videókártya, stream-status, menetrend-kártya, CTA, social CTA, sponsor strip, section-heading, footer | egyetlen designrendszer, nem különálló ad hoc oldalsablon |
+| Állapotok | live/offline/unknown, loading/empty/error, hover/focus/active, reduced motion | valódi adat és akadálymentes működés |
+| Publikus oldalak | P0/P1 tartalom, SEO, 404, jogi, menü/redirect, külön PC/tablet/mobil kompozíció | valós kattintási útvonalak, hibamentes működés |
+
+A logó, a header/footer, a menük és a site-wide megjelenés ugyanúgy feladat és tesztelendő átadás, mint a kilenc P0 oldal. Ne álljon meg a Work a főoldali hero elkészültével.
+
+### 15.2 Kötelező: ugyanaz a Médiatár és asset ID mindenhol
+
+**Forrás:** meglévő, jogosultsághoz kötött Admin Médiatár / R2 / site-scoped asset registry. Nem hozható létre második logótár vagy párhuzamos nyilvános media storage.
+
+1. A Work először listázza a már feltöltött saját elemeket, vizsgálja azok verzióit, képleírásait, használati helyeit és jogait; a meglévő kompatibilis asseteket **újrafelhasználja**.
+2. Új saját/eredeti/jogtiszta grafika feltölthető az **egyetlen meglévő Médiatárba** a hitelesített, a felhasználó által engedélyezett felületen, a hatályos media API szerződés és AGENTS.md előellenőrzése után.
+3. Ugyanaz a kép a hero, image/card, gallery, background, videóborító vagy más támogatott Editor-elemben **ugyanarra a canonical asset ID-ra** hivatkozzon. Nem készül minden oldalon új példány és ugyanazon fájl nem töltődik fel feleslegesen újra.
+4. A **site-global wordmark, header/footer logó, favicon, OG grafika és sponsor bar** esetében Work előbb ellenőrizze, hogy a jelenlegi Site Manager / Brand Kit / SEO / navigáció / shell pontosan milyen asset-hivatkozást támogat. Ha még nincs közös médiatáras kötés, az igazolt WEB/DSN/EDT/RES hiányt a MASTER megfelelő pontjához kell kapcsolni; nem lehet csendben hardcoded, külön karbantartandó kerülőutat építeni.
+5. Asset-cserénél a régi asset-hivatkozásokat és publikált revíziókat meg kell őrizni, a Médiatár „Használati helyek” vizsgálatával és újraellenőrzött előnézettel. Törlés/archiválás nem történhet a biztonsági kapuk megkerülésével.
+6. Alt text / decorative jelölés, jogosultság/licenc, crop, méret, MIME, változat, asset ID és tényleges oldalbeli használat kerül a márka-asset jegyzékébe.
+
+**Forráskódban ellenőrzött 2026-11-09-i jelenlegi limit:** a Médiatár elfogad PNG, JPEG, GIF, WebP képet, MP3/OGG/WAV hangot és WebM videót, legfeljebb **4 MiB/fájl** és alkalmazásszintű **5 GB/site** korláttal. Ezek nem pénzügyi 0 Ft garanciák. Az ellenőrzött upload MIME engedélylistában **SVG és MP4 nincs**. A logók médiatárhoz illeszkedő minőségi PNG/WebP variánst kapjanak; favicon/OG végleges összekötése külön verifikálandó.
+
+A jelenlegi forrásban a képek/kártyák/galériák és háttérképek több helyen asset-ID hivatkozással működnek, és a Média endpoint elemhasználatot is tud ellenőrizni. Ez **nem** igazolja, hogy a teljes site-global header/footer/SEO logóbinding már kész. A Worknek külön fel kell mérnie a tényleges támogatást.
+
+### 15.3 Webhelyszintű dizájn-részletek
+
+**Desktop:** tiszta, kb. 72px fejléc, SANCI9517 szójel, max. hat elsődleges navigációs elem, kiemelt valós Stream/Videó CTA; a másodlagos oldalak a megfelelő oldalcsoportban és a footerben. A fejléc ne legyen túlzsúfolt és ne takarja az oldalt.
+
+**Tablet:** saját töréspont és átrendezés, nem desktop egyszerű zsugorítása; nyitható menü, valós státusz, könnyen érinthető kontrollok.
+
+**Mobil:** embléma/szójel, 44px körüli kényelmes menünyitó, egyetlen logikus drawer. Sorrend: Főoldal, Élő, Videók, Menetrend, Közösség, Rólam; utána platformok és kapcsolat. Nincs végtelen menü, nem működő submenu és két párhuzamos navigáció.
+
+**Footer:** egységes arculat, rövid márkaüzenet, navigáció, hiteles platformlinkek, kapcsolat, tényleges jogi oldalak, soha nem admin-funkciók. Header / footer ugyanabból a kanonikus navigációs és site-shell rendszerből működjön.
+
+**Logó/brand asset-csomag:** primary wordmark, reverse wordmark, compact S/9517 mark, favicon forrás, saját social avatar, 1200×630 OG, wide hero artwork, 16:9 és 9:16 videó-cover, branded 404 artwork, konzisztens ikoncsalád. Minden egyes változat legyen méretezhető és ténylegesen használható a támogatott felületeken.
+
+### 15.4 Kötelező Work QA és átadás
+
+- Egyező wordmark, header, footer és menü minden publikált P0 oldalon. Meglévő slugok / 308 redirectek megőrzése.
+- A logó, favicon és OG kép legalább desktop/tablet/mobil előnézetben, továbbá valós social preview-kompatibilitás esetén ellenőrizve.
+- Legalább egy szerkesztői médiaelem újrahasználata ugyanazzal az asset ID-val több oldalon; publikus és editor preview paritás.
+- 320/390/768/1024/1440px vizuális, link-, billentyűzetes és SEO ellenőrzés; külön mobilmenü teszt.
+- Nincs kitalált adásstátusz/partner/adat és nincs idegen streamer grafika, védjegy vagy portré engedély nélkül.
+- A médiafeltöltés, valós adatmutáció és Publish csak a megfelelő jogosultsággal, előellenőrzéssel és a kötelező kapukkal; dokumentációs módosítás miatt nem szükséges Worker deploy.
+- Ha a site-global médiatárbinding vagy reusable site shell jelenleg hiányzik, az nem nevezhető PASS-nak: a feladatot és függőségét a MASTER-ben kell nyilvántartani.
+
+### 15.5 Személyes márkainterjú — a tulajdonos válaszai szükségesek
+
+Az identitás nem generikus, hanem Sanci tényleges karakteréből épül; ezek a témák a következő tulajdonosi válaszokból kapnak végleges irányt:
+
+- Hogyan jellemezné magát 3–5 szóval, milyen a humora és mikor van igazán elemében?
+- Honnan jön a SANCI9517 név; van-e saját becenév, történet, különleges jelentés?
+- Mit szeret a legjobban a streamelésben, miért térnének vissza hozzá a nézők; vannak-e saját szokások, poénok, mondatok?
+- Milyen személyes világot sugározzon a site: filmes/sötét, energikus/színes, letisztult/komoly, játékos/rajzolt vagy más? Melyik szín, szimbólum, forma tetszik, mi nem?
+- Látható legyen-e a valódi arca a hero és Rólam oldalon? Vannak-e felhasználásra jóváhagyott saját portrék, videók, grafikák vagy meglévő logó?
+- A látogatók milyen érzéssel távozzanak; mit tegyenek első látogatáskor; mennyire személyes legyen az élettörténet?
+- Melyik social/Discord/Kick/YouTube link és üzleti elérhetőség hiteles, nyilvános, mely részletek maradjanak privátak?
+
+**Szabály:** a válaszokat a Work ebbe a belső briefbe írja be jóváhagyott márkaspecifikációként; személyes tény, lore, adásidő, közösségi szleng vagy vizuális karakter nem található ki. Ha még nincs válasz, ne legyen hamis kész márkanarratíva. A designer készíthet alternatívákat, de a felhasználó személyéről szóló állításokat tényszerűen jóvá kell hagyatni.
+
+**Következő Work-lépés:** tulajdonosi válaszok integrálása → brand board és logó/shell variánsok → Médiatár asset inventory → site-global asset-binding felmérés → teljes közös navigáció/header/footer → összes P0 oldal → QA és engedélyezett publikálás. Ez a publikus site kreatív sorrendje, nem írja felül a platform kanonikus roadmapjét.
+
+**Állapot:** SPEC ONLY / NOT IMPLEMENTED / LIVE WEBOLDAL VÁLTOZATLAN.
