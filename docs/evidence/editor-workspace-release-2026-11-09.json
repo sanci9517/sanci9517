@@ -1,0 +1,106 @@
+{
+  "recorded_at_utc": "2026-11-09T08:04:38Z",
+  "plan_point": "77.44.6.1.C",
+  "status": "VERIFIED_PARTIAL_RUNTIME_RELEASE_C_OPEN",
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "commit": "83366e4f13edd84e71e90ebccf84124db9e782c2",
+    "push": "normal fast-forward verified by GitHub Branch API exact SHA",
+    "github_actions_runs_for_commit": 0,
+    "cloudflare_auto_build": {
+      "build_uuid": "2cd1d980-cf2a-483d-ab66-a97c34d42cac",
+      "outcome": "skipped",
+      "reason": "the exact pushed HEAD commit changed docs only; the verified trigger excludes docs/**, tests/** and AGENTS.md"
+    },
+    "runtime_changed_paths": [
+      "public/editor-v2/editor-refresh.css",
+      "public/editor-v2/index.html",
+      "public/editor-v2/ui/shell.js",
+      "public/editor-v2/ui/workspace-appearance.js"
+    ],
+    "no_backend_migrations_or_workflow_changes": true
+  },
+  "validation": {
+    "full_browser_layout_suite": "PASS 53/53 files, 0 fail/cancel/skip; Inspector timeout not reproduced",
+    "editor_unit": "PASS 14 Node test files and 3 Linux subreaper contract tests",
+    "typecheck": "PASS npm run typecheck",
+    "migration_gate": "PASS npm run test:web013:migration-gate",
+    "canonical_plan": "PASS one complete 13-file master",
+    "plan_contract": "PASS 13 tests",
+    "active_plan_point": "77.44.6.1.C OPEN / NOT_CERTIFIED",
+    "source_traceability": "PASS 396/396",
+    "javascript_syntax": "PASS",
+    "diff_check": "PASS",
+    "production_d1_preflight": {
+      "sql": "SELECT name FROM d1_migrations ORDER BY name",
+      "rows_read": 34,
+      "last_migration": "0028_media_archive.sql",
+      "rows_written": 0,
+      "changes": 0,
+      "changed_db": false
+    },
+    "wrangler_dry_run": {
+      "command": "npx wrangler deploy --dry-run",
+      "exit_code": 0,
+      "files": 168,
+      "total_size": "335.81 KiB",
+      "gzip_size": "87.60 KiB",
+      "note": "Wrangler emitted an EROFS warning while writing a debug log under /home/agent/.config; packaging and dry-run completed successfully"
+    }
+  },
+  "deployment": {
+    "command": "npm run deploy:safe",
+    "status": "PASS",
+    "migration_safety_gate": "PASS; deploy:safe does not apply migrations",
+    "uploaded_assets": 4,
+    "version_id": "a6670b60-61ec-40cf-8613-0757b6ca0954",
+    "deployment_id": "c4573240-1f1d-4830-98f1-bbc713782c4e",
+    "traffic_percentage": 100,
+    "health": {
+      "http_status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "public_asset_sha256": {
+      "editor-v2/index.html": {
+        "http": 200,
+        "local": "2e403f5bd4fbe217e30294d4af924e32991c617d0b6c5df89934fdde5feef7bf",
+        "live": "2e403f5bd4fbe217e30294d4af924e32991c617d0b6c5df89934fdde5feef7bf"
+      },
+      "editor-v2/editor-refresh.css": {
+        "http": 200,
+        "local": "5699e29b8129a429136e7f69125c5b1763474c7435ced31b31c7381790589830",
+        "live": "5699e29b8129a429136e7f69125c5b1763474c7435ced31b31c7381790589830"
+      },
+      "editor-v2/ui/shell.js": {
+        "http": 200,
+        "local": "a26db1c53b151e6eb172f5d626278482cc11c4c08076637108b3ffea282d7c28",
+        "live": "a26db1c53b151e6eb172f5d626278482cc11c4c08076637108b3ffea282d7c28"
+      },
+      "editor-v2/ui/workspace-appearance.js": {
+        "http": 200,
+        "local": "55de3b6671394778b039bab2685e654515fe70fd8bc2944556d660ebaa3f06e5",
+        "live": "55de3b6671394778b039bab2685e654515fe70fd8bc2944556d660ebaa3f06e5"
+      }
+    }
+  },
+  "remaining_c_gaps": [
+    "arbitrary recursive/nested panel-group model and interaction are not yet implemented",
+    "complete workspace lifecycle semantic acceptance is still open"
+  ],
+  "safety_and_cost": {
+    "production_d1_writes_or_migrations": false,
+    "r2_operations": false,
+    "new_dependency": false,
+    "workflow_dispatch_or_rerun": false,
+    "paid_usage": false,
+    "cost_huf": 0,
+    "actions_storage_reported_by_owner": "0.45/0.50 GB"
+  },
+  "manual_physical_acceptance": "DEFERRED until the full Visual Editor plan scope is implemented"
+}
