@@ -1,3 +1,4 @@
+import {normalizeWorkspaceDockTree} from './workspace-dock-tree.js';
 export const WORKSPACE_PREFERENCES_KEY='sanci-editor-workspace-preferences-v2';
 export const LEGACY_WORKSPACE_PREFERENCES_KEY='sanci-editor-workspace-preferences-v1';
 export const WORKSPACE_PREFERENCE_DEFAULTS=Object.freeze({version:2,layout:'canvas',theme:'graphite',density:'comfortable',accent:'#5b8cff',dockOrder:'left-canvas-right',panelMode:'separate',panelSide:'right',floatingPosition:{left:{x:0,y:0},right:{x:0,y:0}},profiles:[]});
@@ -47,7 +48,7 @@ export function normalizeLeftTabOrder(value){
   return order;
 }
 function normalizeVisualPreferences(input={}){
-  return {
+  const normalized={
     layout:layouts.has(input.layout)?input.layout:WORKSPACE_PREFERENCE_DEFAULTS.layout,
     theme:themes.has(input.theme)?input.theme:WORKSPACE_PREFERENCE_DEFAULTS.theme,
     density:densities.has(input.density)?input.density:WORKSPACE_PREFERENCE_DEFAULTS.density,
@@ -57,6 +58,9 @@ function normalizeVisualPreferences(input={}){
     panelSide:panelSides.has(input.panelSide)?input.panelSide:WORKSPACE_PREFERENCE_DEFAULTS.panelSide,
     floatingPosition:normalizeFloatingPosition(input.floatingPosition),
   };
+  const dockTree=normalizeWorkspaceDockTree(input.dockTree);
+  if(dockTree)normalized.dockTree=dockTree;
+  return normalized;
 }
 function normalizeDockState(value){
   const input=isRecord(value)?value:{};
@@ -151,10 +155,14 @@ export function applyWorkspacePreferences(root,preferences){
   root.dataset.workspacePanelMode=value.panelMode;
   root.dataset.workspacePanelSide=value.panelSide;
   root.dataset.workspacePanelGrouped=String(value.panelMode!=='separate');
+  if(value.dockTree)root.dataset.workspaceDockTree=JSON.stringify(value.dockTree);
+  else delete root.dataset.workspaceDockTree;
   const workspace=root.matches?.('.workspace')?root:root.querySelector?.('.workspace');
   if(workspace)workspace.dataset.workspaceDockOrder=value.dockOrder;
   if(workspace){
     workspace.dataset.workspacePanelMode=value.panelMode;workspace.dataset.workspacePanelSide=value.panelSide;workspace.dataset.workspacePanelGrouped=String(value.panelMode!=='separate');
+    if(value.dockTree)workspace.dataset.workspaceDockTree=JSON.stringify(value.dockTree);
+    else delete workspace.dataset.workspaceDockTree;
     for(const side of panelSides){workspace.style.setProperty(`--floating-${side}-x`,`${value.floatingPosition[side].x}px`);workspace.style.setProperty(`--floating-${side}-y`,`${value.floatingPosition[side].y}px`)}
   }
   root.style.setProperty('--accent',value.accent);
@@ -285,6 +293,14 @@ export function mountWorkspaceAppearance({documentRef=globalThis.document,root=d
     remember();value={...value,panelMode:next.panelMode,panelSide:next.panelSide};paint();const saved=persist();
     onLayoutChange(value.layout);
     announcePersistence(saved,'A panelek csoportja ezen az eszközön elmentve. A vászon külön, szabad terület marad.','A panelek csoportja csak ebben a munkamenetben érvényes. A vászon külön, szabad terület marad.');
+    return true;
+  };
+  const setDockTree=tree=>{
+    const next=normalizeWorkspaceDockTree(tree);
+    if(!next)return false;
+    if(JSON.stringify(next)===JSON.stringify(value.dockTree||null))return false;
+    remember();value={...value,dockTree:next};paint();const saved=persist();
+    announcePersistence(saved,'A munkaterület csoportfája ezen az eszközön elmentve. Az oldal tartalma változatlan.','A munkaterület csoportfája csak ebben a munkamenetben érvényes, mert a böngésző tárhelye nem használható. Az oldal tartalma változatlan.');
     return true;
   };
   const setFloatingPosition=(side,x,y)=>{
@@ -483,5 +499,5 @@ export function mountWorkspaceAppearance({documentRef=globalThis.document,root=d
   undoButton?.addEventListener('click',undo);redoButton?.addEventListener('click',redo);
   resetButton?.addEventListener('click',reset);
   paint();
-  return {get value(){return normalizeWorkspacePreferences(value)},setLayout,setDockOrder,setDockLayout,setPanelGrouping,setFloatingPosition,open,close,remember,undo,redo,saveProfile,renameProfile,loadProfile,deleteProfile,importProfile,exportProfile,reset,syncDockControls:renderLeftToolOrder,clearExternalDockHistory,reportDockStorageUnavailable,destroy(){documentRef.defaultView?.removeEventListener?.('storage',syncExternalPreferences)}};
+  return {get value(){return normalizeWorkspacePreferences(value)},setLayout,setDockOrder,setDockLayout,setPanelGrouping,setDockTree,setFloatingPosition,open,close,remember,undo,redo,saveProfile,renameProfile,loadProfile,deleteProfile,importProfile,exportProfile,reset,syncDockControls:renderLeftToolOrder,clearExternalDockHistory,reportDockStorageUnavailable,destroy(){documentRef.defaultView?.removeEventListener?.('storage',syncExternalPreferences)}};
 }
