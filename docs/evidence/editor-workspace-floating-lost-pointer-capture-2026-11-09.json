@@ -1,0 +1,75 @@
+{
+  "date": "2026-11-09",
+  "plan_point": "77.44.6.1.C",
+  "status": "TEST_ONLY_PASS_RUNTIME_UNCHANGED_NOT_RELEASED",
+  "scope": "Native Chromium lostpointercapture regression for the existing canvas-safe floating dock drag lifecycle.",
+  "branch": "v2/foundation",
+  "local_head_before_evidence": "9dbdeb0dd85a19cc75064a37ea8ff1fcda195c96",
+  "github_branch_head": "d75af5439c38e2a7e19f1aa6b8b5b0cc81d6ec09",
+  "local_commits_ahead_before_work": 31,
+  "test": {
+    "name": "losing floating dock pointer capture restores the last saved position without a stale pointerup commit",
+    "source": "tests/browser/editor-workspace-appearance.test.js",
+    "source_sha256": "3c86b6549f06e4394e38e9180af6adc74489a4d10a67bc3c42e8f3b18277be22",
+    "assertions": "Uses a real Chromium mouse gesture and native pointer capture. It observes the assigned pointer id and transient drag, revokes capture using releasePointerCapture, waits for lostpointercapture cleanup, then sends a stale mouseup. The saved dock position and live CSS offsets return to (0,0), existing Undo/Redo state is unchanged, and Page Model/Save/Publish request and browser-error logs remain empty.",
+    "first_attempt": "The test initially assumed Undo must be disabled after its own workspace setup. The setup intentionally creates history, so this was an invalid baseline expectation rather than a product failure. The regression now snapshots Undo/Redo state after setup and asserts cancellation leaves that state unchanged.",
+    "targeted_result": "PASS 1/1 in Chromium; the test fixture subreaper reaped four orphan descendants.",
+    "full_workspace_appearance_browser_file": {
+      "command": "python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-workspace-appearance.test.js",
+      "result": "PASS",
+      "tests": 82,
+      "passed": 82,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "duration_ms": 458175,
+      "orphaned_descendants_reaped": 4
+    }
+  },
+  "additional_checks": {
+    "editor_unit": "PASS npm run test:editor; 14/14 test files and Linux subreaper contract 3/3.",
+    "typecheck": "PASS npm run typecheck.",
+    "migration_safety": "PASS npm run test:web013:migration-gate; local static safety gate only, no production D1 access.",
+    "canonical_plan": "PASS python3 scripts/check-canonical-plan.py; one complete 13-file canonical master.",
+    "plan_contract": "PASS python3 scripts/plan_contract.py.",
+    "active_plan_cursor": "PASS: main 77.44.6.1, next 77.44.6.1.C; OPEN / NOT CERTIFIED.",
+    "source_traceability": "PASS python3 scripts/build-feature-traceability.py --check; 396 mappings.",
+    "syntax_and_diff": "PASS node --check tests/browser/editor-workspace-appearance.test.js and git diff --check."
+  },
+  "github_release": {
+    "api_branch_check": "PASS read-only GitHub Branch API returned v2/foundation at github_branch_head.",
+    "status": "NOT_PUSHED",
+    "reason": "The local branch contains 31 commits ahead, including runtime ancestors. A normal fast-forward would publish those commits as well; their release gates are not complete and current Actions quota is unverified. No workflow was dispatched.",
+    "actions_storage_owner_reported": "0.45/0.50 GB",
+    "actions_remaining_quota": "UNVERIFIED",
+    "aggregate_ci": "NOT_RUN"
+  },
+  "production_worker": {
+    "worker": "sanci9517-streamer-brand",
+    "deployment_id": "6aea7ce1-830a-451a-a00d-c88284b08ef9",
+    "traffic_version_id": "425cfad2-3744-49e1-afde-289216ad8c2b",
+    "traffic_percentage": 100,
+    "health_endpoint": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+    "health_http": 200,
+    "health_response": {
+      "ok": true,
+      "service": "sanci9517-streamer-brand",
+      "version": "2.0.0",
+      "server": "cloudflare-worker"
+    },
+    "checked_at_utc": "2026-11-09T00:05:16Z",
+    "local_asset_hash_comparison": "NOT APPLICABLE; no runtime/public asset changed."
+  },
+  "runtime_files_changed": [],
+  "runtime_changed": false,
+  "wrangler_dry_run": "NOT RUN; this is a test-only change.",
+  "production_d1_select_write_or_migration": false,
+  "r2_operation": false,
+  "deployment_performed": false,
+  "new_dependency": false,
+  "save_publish_contract_changed": false,
+  "c_plan_status": "OPEN / NOT CERTIFIED. This proves the lost-pointer-capture lifecycle only; nested dock-group tree and complete workspace lifecycle acceptance remain open.",
+  "manual_visual_editor_acceptance": "DEFERRED until the complete planned Visual Editor acceptance scope is ready.",
+  "actions_run_started": false,
+  "cost_huf": 0
+}

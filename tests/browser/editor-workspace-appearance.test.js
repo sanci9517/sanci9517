@@ -3767,6 +3767,56 @@ test('floating dock pointer cancellation restores its last saved position withou
   assert.deepEqual(errors,[]);
 });
 
+test('losing floating dock pointer capture restores the last saved position without a stale pointerup commit',async t=>{
+  const {page,writes,errors}=await openEditor(t,{width:1280,height:900});
+  await openPreferences(page);
+  await page.locator('#workspaceLayout').selectOption('balanced');
+  await page.locator('#workspacePanelMode').selectOption('floating');
+  await page.locator('#workspacePanelSide').selectOption('left');
+  await page.locator('#closeWorkspaceAppearance').click();
+  await page.locator('#workspacePanelTabLeft').click();
+  const handle=page.locator('#leftDock [data-floating-handle]');
+  const bounds=await handle.boundingBox();assert.ok(bounds);
+  const historyBefore=await page.evaluate(()=>({
+    undoDisabled:document.querySelector('#undoWorkspaceLayout')?.disabled,
+    redoDisabled:document.querySelector('#redoWorkspaceLayout')?.disabled,
+  }));
+  await page.evaluate(()=>document.querySelector('#leftDock [data-floating-handle]')?.addEventListener('pointerdown',event=>{window.__floatingLostCapturePointerId=event.pointerId},{once:true}));
+  await page.mouse.move(bounds.x+bounds.width/2,bounds.y+bounds.height/2);
+  await page.mouse.down();
+  await page.mouse.move(bounds.x+bounds.width/2+56,bounds.y+bounds.height/2+40,{steps:4});
+  const moving=await page.evaluate(()=>({
+    active:document.body.classList.contains('moving-floating-dock'),
+    pointerId:window.__floatingLostCapturePointerId,
+    saved:JSON.parse(localStorage.getItem('sanci-editor-workspace-preferences-v2'))?.floatingPosition?.left,
+    liveX:getComputedStyle(document.querySelector('.workspace')).getPropertyValue('--floating-left-x'),
+  }));
+  assert.equal(moving.active,true,'the actual pointer gesture is active before capture is revoked');
+  assert.ok(Number.isInteger(moving.pointerId),'the browser assigned a pointer identifier');
+  assert.ok(parseFloat(moving.liveX)>0,'the live dock moved while its persisted position remains pending');
+  assert.deepEqual(moving.saved,{x:0,y:0});
+
+  const released=await page.evaluate(pointerId=>{
+    const handle=document.querySelector('#leftDock [data-floating-handle]');
+    const held=handle?.hasPointerCapture(pointerId)===true;
+    if(held)handle.releasePointerCapture(pointerId);
+    return held;
+  },moving.pointerId);
+  assert.equal(released,true,'the Editor held native pointer capture before the test revokes it');
+  await page.waitForFunction(()=>!document.body.classList.contains('moving-floating-dock'));
+  await page.mouse.up();
+  const canceled=await page.evaluate(()=>({
+    position:JSON.parse(localStorage.getItem('sanci-editor-workspace-preferences-v2'))?.floatingPosition?.left,
+    liveX:getComputedStyle(document.querySelector('.workspace')).getPropertyValue('--floating-left-x'),
+    liveY:getComputedStyle(document.querySelector('.workspace')).getPropertyValue('--floating-left-y'),
+    undoDisabled:document.querySelector('#undoWorkspaceLayout')?.disabled,
+    redoDisabled:document.querySelector('#redoWorkspaceLayout')?.disabled,
+  }));
+  assert.deepEqual(canceled,{position:{x:0,y:0},liveX:'0px',liveY:'0px',...historyBefore},'lostpointercapture restores the saved position, closes transient movement and leaves existing workspace history unchanged');
+  assert.deepEqual(writes,[],'lost pointer capture never invokes Page Model Save or Publish');
+  assert.deepEqual(errors,[]);
+});
+
 test('another Editor tab cancels an in-progress floating dock drag before applying the shared workspace mode',async t=>{
   const {page,context,writes,errors}=await openEditor(t,{width:1280,height:900});
   await openPreferences(page);
