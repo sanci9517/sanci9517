@@ -1,0 +1,77 @@
+{
+  "date": "2026-11-09",
+  "plan_point": "77.44.6.1.C",
+  "status": "LOCAL_REGRESSION_PASS_NOT_RELEASED",
+  "scope": "Cancel a floating dock drag and restore its last persisted workspace coordinates when the Editor window loses focus.",
+  "branch": "v2/foundation",
+  "repository": "/workspace/sanci9517-codex-work",
+  "head_before_work": "a5689867e07005a5f432e054f5037770657d9514",
+  "github_branch_head_read_only": "d75af5439c38e2a7e19f1aa6b8b5b0cc81d6ec09",
+  "local_commits_ahead_before_work": 34,
+  "runtime_files_changed": [
+    "public/editor-v2/ui/shell.js"
+  ],
+  "test_files_changed": [
+    "tests/browser/editor-workspace-appearance.test.js"
+  ],
+  "source_sha256": {
+    "public/editor-v2/ui/shell.js": "a26db1c53b151e6eb172f5d626278482cc11c4c08076637108b3ffea282d7c28",
+    "tests/browser/editor-workspace-appearance.test.js": "9de2a9ff0aea50165e5e80168b32e8dd2676a082e6958d4184e7c6a290f612cf"
+  },
+  "test": {
+    "name": "backgrounding the Editor cancels a floating dock drag before a stale pointerup can commit it",
+    "source": "tests/browser/editor-workspace-appearance.test.js",
+    "red_before_fix": "PASS AS REGRESSION PROOF: before the runtime fix, the in-progress drag remained active after window blur and kept transient x/y offsets rather than restoring the persisted origin.",
+    "targeted_after_fix": "PASS 1/1 in Chromium. A real mouse drag first changes transient coordinates; dispatching window blur cancels the drag and restores saved coordinates; a later mouseup does not persist stale coordinates. Undo/Redo and Page Model/Save/Publish request logs remain unchanged.",
+    "full_browser_file": {
+      "command": "python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-workspace-appearance.test.js",
+      "initial_run": "One unrelated pre-existing geometry dialog-visibility timeout; the geometry test passed when immediately rerun alone.",
+      "complete_rerun": "PASS",
+      "tests": 84,
+      "passed": 84,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "duration_ms": 428609,
+      "orphaned_descendants_reaped": 4
+    }
+  },
+  "additional_checks": {
+    "editor_unit": "PASS npm run test:editor; 14/14 Node test files and subreaper contract 3/3.",
+    "typecheck": "PASS npm run typecheck.",
+    "migration_safety": "PASS npm run test:web013:migration-gate; local static gate only.",
+    "wrangler_dry_run": "PASS wrangler 4.130.0 deploy --dry-run; 168 public assets, 335.81 KiB / 87.60 KiB gzip; dry-run exited 0. Wrangler could not write its debug log to the read-only /home/agent/.config directory (EROFS), but continued packaging and exited successfully.",
+    "canonical_plan": "PASS python3 scripts/check-canonical-plan.py; one complete 13-file master.",
+    "plan_contract": "PASS python3 scripts/plan_contract.py.",
+    "active_plan_cursor": "PASS main 77.44.6.1, next 77.44.6.1.C; OPEN / NOT CERTIFIED.",
+    "source_traceability": "PASS after running the repository-owned builder to refresh the shell.js fingerprint; 396 mappings, acceptance NOT certified.",
+    "syntax_and_diff": "PASS node --check public/editor-v2/ui/shell.js; node --check tests/browser/editor-workspace-appearance.test.js; git diff --check."
+  },
+  "github_release": {
+    "api_branch_check": "Read-only GitHub branch API verified v2/foundation at the recorded remote SHA.",
+    "status": "NOT_PUSHED",
+    "reason": "The local branch was already 34 commits ahead and includes runtime ancestors whose release gates have not been completed. Pushing by fast-forward would publish those ancestors too. Actions remaining quota is unverified and the approved spend is 0 HUF; no workflow was dispatched.",
+    "actions_storage_owner_reported": "0.45/0.50 GB",
+    "actions_remaining_quota": "UNVERIFIED",
+    "aggregate_ci": "NOT_RUN"
+  },
+  "production_worker": {
+    "worker": "sanci9517-streamer-brand",
+    "deployment_id": "6aea7ce1-830a-451a-a00d-c88284b08ef9",
+    "traffic_version_id": "425cfad2-3744-49e1-afde-289216ad8c2b",
+    "traffic_percentage": 100,
+    "health_endpoint": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+    "health_http": "UNVERIFIED; direct curl failed before HTTP (proxy route curl 7 / HTTP 000; direct workers.dev egress unavailable).",
+    "health_response": null,
+    "public_asset_sha256_comparison": "UNVERIFIED; the shell.js source is part of the public asset set and deployment is blocked, so no local/live equality is asserted."
+  },
+  "production_d1_select_write_or_migration": false,
+  "r2_operation": false,
+  "deployment_performed": false,
+  "new_dependency": false,
+  "save_publish_contract_changed": false,
+  "c_plan_status": "OPEN / NOT CERTIFIED. This addresses focus-loss cancellation only. The plan's nested dock-group/tree and full workspace-lifecycle acceptance remain open.",
+  "manual_visual_editor_acceptance": "DEFERRED until the complete planned Visual Editor acceptance scope is ready.",
+  "actions_run_started": false,
+  "cost_huf": 0
+}

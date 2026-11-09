@@ -320,6 +320,7 @@ function setupFloatingDockMovement(){
         window.removeEventListener('pointermove',onMove);
         window.removeEventListener('pointerup',onUp);
         window.removeEventListener('pointercancel',onCancel);
+        window.removeEventListener('blur',onWindowBlur);
         handle.removeEventListener('lostpointercapture',onLost);
         document.body.classList.remove('moving-floating-dock');
         if(handle.hasPointerCapture?.(pointerId)){try{handle.releasePointerCapture(pointerId)}catch{}}
@@ -337,6 +338,7 @@ function setupFloatingDockMovement(){
       const cancel=({restore=true,announcement='A panel mozgatása megszakadt; az előző hely visszaállt.'}={})=>{
         finish(null,{restore});announce(announcement);
       };
+      const onWindowBlur=()=>cancel({restore:true,announcement:'Az ablak elvesztette a fókuszt; a panel visszaállt az előző helyére.'});
       activeCancel({restore:true,announcement:'A korábbi panelmozgatás megszakadt.'});
       activeCancel=cancel;
       try{handle.setPointerCapture(pointerId)}catch{}
@@ -344,6 +346,7 @@ function setupFloatingDockMovement(){
       window.addEventListener('pointermove',onMove,{passive:false});
       window.addEventListener('pointerup',onUp);
       window.addEventListener('pointercancel',onCancel);
+      window.addEventListener('blur',onWindowBlur,{once:true});
       handle.addEventListener('lostpointercapture',onLost,{once:true});
       event.preventDefault();
     });

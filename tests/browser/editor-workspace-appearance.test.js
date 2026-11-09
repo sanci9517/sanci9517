@@ -3914,6 +3914,63 @@ test('another Editor tab cancels an in-progress floating dock drag before applyi
   assert.deepEqual(peerErrors,[]);
 });
 
+test('backgrounding the Editor cancels a floating dock drag before a stale pointerup can commit it',async t=>{
+  const {page,context,writes,errors}=await openEditor(t,{width:1280,height:900});
+  await openPreferences(page);
+  await page.locator('#workspaceLayout').selectOption('balanced');
+  await page.locator('#workspacePanelMode').selectOption('floating');
+  await page.locator('#workspacePanelSide').selectOption('left');
+  await page.locator('#closeWorkspaceAppearance').click();
+  await page.locator('#workspacePanelTabLeft').click();
+  const historyBefore=await page.evaluate(()=>({
+    undoDisabled:document.querySelector('#undoWorkspaceLayout')?.disabled,
+    redoDisabled:document.querySelector('#redoWorkspaceLayout')?.disabled,
+  }));
+  const peer=await context.newPage();peer.setDefaultTimeout(8000);peer.setDefaultNavigationTimeout(20_000);
+  await peer.goto(page.url(),{waitUntil:'load'});
+  await peer.waitForFunction(()=>document.documentElement.dataset.editorBoot==='ready');
+  await page.bringToFront();
+
+  const handle=page.locator('#leftDock [data-floating-handle]');
+  const bounds=await handle.boundingBox();assert.ok(bounds);
+  await page.mouse.move(bounds.x+bounds.width/2,bounds.y+bounds.height/2);
+  await page.mouse.down();
+  await page.mouse.move(bounds.x+bounds.width/2+56,bounds.y+bounds.height/2+40,{steps:4});
+  const moving=await page.evaluate(()=>({
+    active:document.body.classList.contains('moving-floating-dock'),
+    saved:JSON.parse(localStorage.getItem('sanci-editor-workspace-preferences-v2'))?.floatingPosition?.left,
+    liveX:parseFloat(getComputedStyle(document.querySelector('.workspace')).getPropertyValue('--floating-left-x')),
+  }));
+  assert.equal(moving.active,true,'the first Editor owns a live pointer drag before it is backgrounded');
+  assert.deepEqual(moving.saved,{x:0,y:0},'the transient drag has not been saved');
+  assert.ok(moving.liveX>0);
+
+  await peer.bringToFront();
+  await page.evaluate(()=>window.dispatchEvent(new Event('blur')));
+  await page.waitForTimeout(40);
+  const backgrounded=await page.evaluate(()=>({
+    active:document.body.classList.contains('moving-floating-dock'),
+    saved:JSON.parse(localStorage.getItem('sanci-editor-workspace-preferences-v2'))?.floatingPosition?.left,
+    liveX:parseFloat(getComputedStyle(document.querySelector('.workspace')).getPropertyValue('--floating-left-x')),
+    liveY:parseFloat(getComputedStyle(document.querySelector('.workspace')).getPropertyValue('--floating-left-y')),
+    undoDisabled:document.querySelector('#undoWorkspaceLayout')?.disabled,
+    redoDisabled:document.querySelector('#redoWorkspaceLayout')?.disabled,
+  }));
+  assert.deepEqual(backgrounded,{active:false,saved:{x:0,y:0},liveX:0,liveY:0,...historyBefore},'losing the Editor window focus cancels the transient drag and restores its saved workspace state');
+
+  await page.bringToFront();
+  await page.mouse.up();
+  await page.waitForFunction(()=>!document.body.classList.contains('moving-floating-dock'));
+  const restored=await page.evaluate(()=>({
+    saved:JSON.parse(localStorage.getItem('sanci-editor-workspace-preferences-v2'))?.floatingPosition?.left,
+    liveX:parseFloat(getComputedStyle(document.querySelector('.workspace')).getPropertyValue('--floating-left-x')),
+    liveY:parseFloat(getComputedStyle(document.querySelector('.workspace')).getPropertyValue('--floating-left-y')),
+  }));
+  assert.deepEqual(restored,{saved:{x:0,y:0},liveX:0,liveY:0},'a stale pointerup after the tab switch cannot commit a dock position');
+  assert.deepEqual(writes,[],'window focus changes and canceled dock movement never Save or Publish page data');
+  assert.deepEqual(errors,[]);
+});
+
 test('floating windows clamp to their own lane at the 1025px boundary and both panel sides',async t=>{
   const {page,writes,errors}=await openEditor(t,{width:1280,height:900});
   for(const width of [1025,1280,1920]){
