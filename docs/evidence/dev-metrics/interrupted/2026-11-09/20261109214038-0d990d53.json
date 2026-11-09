@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "id": "20261109214038-0d990d53",
+  "task": "77.44.6.1.C",
+  "trigger": "manual",
+  "started_at": "2026-11-09T21:40:38.866Z",
+  "abandoned_at": "2026-11-09T22:17:17.700Z",
+  "measured_seconds": null,
+  "status": "interrupted",
+  "reason": "execution environment restarted during remaining serial layout files; exact completion time unavailable",
+  "started_revision": "4b497c29bc12e5355a6344be6d3ee6fe5120759c",
+  "measurement": "missing end time; excluded from elapsed time and ETA"
+}

@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "id": "20261109210339-790cc0bb",
+  "task": "77.44.6.1.C",
+  "trigger": "manual",
+  "started_at": "2026-11-09T21:03:39.667Z",
+  "abandoned_at": "2026-11-09T21:40:12.553Z",
+  "measured_seconds": null,
+  "status": "interrupted",
+  "reason": "execution environment disconnected during serial layout suite; completion and end time unavailable",
+  "started_revision": "4b497c29bc12e5355a6344be6d3ee6fe5120759c",
+  "measurement": "missing end time; excluded from elapsed time and ETA"
+}

@@ -576,7 +576,7 @@ for(const width of [390,1366])test(`new Schedule palette item keeps canonical de
   const base=`http://127.0.0.1:${server.address().port}`;
   const context=await browser.newContext({viewport:{width,height:850},isMobile:width<=850,hasTouch:width<=850});
   const editor=await context.newPage(),viewer=await context.newPage();
-  for(const page of [editor,viewer]){page.setDefaultTimeout(8000);page.setDefaultNavigationTimeout(15000);page.on('pageerror',error=>pageErrors.push(error.message))}
+  for(const page of [editor,viewer]){page.setDefaultTimeout(8000);page.setDefaultNavigationTimeout(60_000);page.on('pageerror',error=>pageErrors.push(error.message))}
   await editor.goto(base+'/editor-v2/index.html');
   await editor.locator(`.node[data-node-id="${rootId}"] > .node-head`).waitFor();
   await viewer.goto(base+'/p/schedule-test');

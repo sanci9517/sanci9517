@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261109221717-fc5ad0c7",
+  "task": "77.44.6.1.C",
+  "trigger": "manual",
+  "started_at": "2026-11-09T22:17:17.826Z",
+  "finished_at": "2026-11-09T22:33:10.604Z",
+  "wall_seconds": 953,
+  "paused_seconds": 0,
+  "measured_seconds": 953,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "Completed segmented 53-file Chromium layout acceptance; fixed the bounded Schedule reload test deadline and verified the full affected file, but canonical C remains open.",
+  "evidence": [
+    "tests/browser/editor-element-insertion.test.js:8/8",
+    "docs/evidence/editor-layout-timeout-recheck-followup-2026-11-09.json"
+  ],
+  "checks": "53 distinct layout files PASS across serial segments; Editor 194/194; typecheck, migration gate, plan contract 13/13, traceability 396/396",
+  "started_revision": "4b497c29bc12e5355a6344be6d3ee6fe5120759c",
+  "finished_revision": "4b497c29bc12e5355a6344be6d3ee6fe5120759c",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

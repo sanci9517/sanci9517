@@ -1,0 +1,90 @@
+{
+  "recorded_at_utc": "2026-11-09T22:31:14Z",
+  "plan_point": "77.44.6.1.C",
+  "status": "OPEN_NOT_CERTIFIED",
+  "scope": "Finish the broad Editor layout rerun after two environment restarts; isolate and correct the remaining schedule-page reload timeout without reducing coverage.",
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "head_before_changes": "4b497c29bc12e5355a6344be6d3ee6fe5120759c",
+    "runtime_source_changed": false,
+    "production_deployment_changed": false,
+    "preexisting_untracked_preserved": [
+      "node_modules/",
+      "scripts/__pycache__/"
+    ]
+  },
+  "test_harness_change": {
+    "file": "tests/browser/editor-element-insertion.test.js",
+    "case": "new Schedule palette item keeps canonical defaults and separate Save/Publish at 390px and 1366px",
+    "change": "Raise only the bounded page navigation timeout in this two-page Schedule lifecycle fixture from 15,000 ms to 60,000 ms; default action timeout remains 8,000 ms.",
+    "reason": "The broad serial layout run reached /p/schedule-test but timed out waiting for domcontentloaded at 15 seconds under aggregate load. The same 1366px case passed in isolation in 52,559 ms total. No assertions, test iterations, Save/Publish checks, or runtime files changed.",
+    "final_affected_file_result": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test tests/browser/editor-element-insertion.test.js",
+      "passed": 8,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "duration_ms": 64818
+    }
+  },
+  "layout_acceptance": {
+    "required_files": 53,
+    "distinct_files_passed": 53,
+    "method": "Sequential split of the canonical 53-file command across environment restarts, plus a separate rerun of the interrupted accessibility file and a final full-file rerun of the only failing file. Browser/server fixtures ran serially; no files or scenarios were skipped.",
+    "first_segment": "Files 1-22 passed before the environment disconnected; file 23 was separately rerun and passed 2/2.",
+    "middle_segment": "Files 24-41 passed before the second environment restart.",
+    "final_segment": "Files 42-52 passed. File 53 initially passed 7/8 and failed only because viewer.reload exceeded its 15-second navigation deadline; the exact 1366px case passed 1/1 in isolation, then the full changed file passed 8/8 with the bounded 60-second deadline.",
+    "aggregate_result": "PASS across all 53 distinct browser files; not one uninterrupted Node process. One stale 15-second navigation deadline was corrected and the whole affected file rerun.",
+    "save_publish_separation": "Assertions and coverage unchanged; Save and explicit Publish remained distinct in the workspace, Inspector, schedule and authored-element cases."
+  },
+  "other_checks": {
+    "dev_metrics_unit_tests": "4/4 PASS",
+    "editor_unit_suite": "194/194 PASS; Linux subreaper contract 3/3 PASS",
+    "typecheck": "npm run typecheck PASS",
+    "local_migration_safety_gate": "npm run test:web013:migration-gate PASS; production D1 was not queried or modified",
+    "canonical_master": "13/13 files PASS",
+    "plan_contract": "13/13 PASS",
+    "active_cursor_audit": "77.44.6.1.C OPEN / NOT_CERTIFIED; functional acceptance remains not certified",
+    "traceability": "396/396 mappings PASS",
+    "javascript_syntax": "node --check tests/browser/editor-element-insertion.test.js PASS",
+    "diff_check": "git diff --check PASS"
+  },
+  "production_read_only": {
+    "worker": "sanci9517-streamer-brand",
+    "deployment_id": "d33e01e2-167d-4039-93ce-eb3d2dec3c64",
+    "traffic_version": "8dd3e172-56b2-44fd-a167-ca6098a794b8",
+    "traffic_percentage": 100,
+    "deployment_api": "Cloudflare authenticated GET /accounts/{account_id}/workers/scripts/sanci9517-streamer-brand/deployments",
+    "health": {
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+      "http_status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      },
+      "verified_at_utc": "2026-11-09T22:29:49Z"
+    },
+    "homepage": {
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/",
+      "http_status": 200,
+      "bytes": 6048,
+      "title": "Sanci9517",
+      "stylesheet_reference": "/assets/site.css?v=20261016-3",
+      "verified_at_utc": "2026-11-09T22:30Z"
+    },
+    "asset_hash_comparison": "Not applicable: this test-only commit does not change a public asset or runtime source.",
+    "deployment_action": "NOT DONE; no redundant Worker deployment for a test-only change"
+  },
+  "cost_and_limits": {
+    "additional_cost_huf": 0,
+    "github_actions_runs": 0,
+    "actions_compute_quota": "UNVERIFIED; no workflow was dispatched",
+    "production_d1_write_or_migration": false,
+    "r2_operation": false,
+    "new_dependency": false
+  },
+  "remaining": "77.44.6.1.C remains OPEN / NOT CERTIFIED; this resolves its latest broad-layout timeout block only. Full plan acceptance and any separate release gate remain open. Visual Editor manual/physical acceptance remains deferred until full Editor scope is complete."
+}
