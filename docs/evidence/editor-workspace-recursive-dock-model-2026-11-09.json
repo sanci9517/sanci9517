@@ -1,0 +1,93 @@
+{
+  "recorded_at_utc": "2026-11-09T08:56:34Z",
+  "plan_point": "77.44.6.1.C",
+  "status": "LOCAL_VALIDATED_FOUNDATION_NOT_RELEASED_C_OPEN",
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "base_commit": "6f98cbefb18432de283e91d3adc1762c6c5202ae",
+    "code_commit": "80dfa4b8754c84993a85338ea6b5220b507a7028",
+    "test_followup_commit": "60e4c14e3d238c9c0057243d1616c3e0773c4bc6",
+    "validated_local_tip": "60e4c14e3d238c9c0057243d1616c3e0773c4bc6",
+    "github_branch_at_start": "6f98cbefb18432de283e91d3adc1762c6c5202ae",
+    "push": "NOT PUSHED; runtime feature remains incomplete and remote Actions quota is unverified",
+    "runtime_changed_paths": [
+      "public/editor-v2/ui/shell.js",
+      "public/editor-v2/ui/workspace-appearance.js",
+      "public/editor-v2/ui/workspace-dock-tree.js"
+    ],
+    "test_changed_paths": [
+      "public/editor-v2/tests/workspace-dock-tree.test.js",
+      "package.json"
+    ],
+    "traceability_mapping_change": "scripts/build-feature-traceability.py now includes the recursive dock-tree model in the EDT implementation source set",
+    "source_sha256": {
+      "scripts/build-feature-traceability.py": "fd551680e9b9dbb7c0980281c16563765458a1813e9683a0fd8d355a441542ee",
+      "public/editor-v2/ui/workspace-dock-tree.js": "53d2dbf22077a3d5f58d5d77576c388ccb9a55654a8ddf603defb36a5ba0d233",
+      "public/editor-v2/tests/workspace-dock-tree.test.js": "26b98cd23e55e87cf3f0537198bcb881cbefe9b381974785c00b7bca50f4b63d",
+      "docs/evidence/feature-traceability.json": "d5d870b26c0b6946442c37218eddeb6e4a3b62f60afaec16930a283ee65d6573"
+    },
+    "source_traceability": "Regenerated and verified 396 mappings; exact tracked runtime-source hashes are stored in docs/evidence/feature-traceability.json"
+  },
+  "implementation": {
+    "summary": "Added a bounded, allowlisted serializable nested split/tab dock-tree foundation with required canvas/left/right leaves; integrated normalization into workspace preference and portable profile serialization; added setDockTree with persistence and Undo/Redo, and exposed only sanitized tree data to the Editor root/workspace dataset.",
+    "safety_properties": [
+      "Every valid tree contains canvas, left panel and right panel exactly once.",
+      "The canvas cannot be nested under a tab group.",
+      "Split axes, ratios, node identifiers, tab children, active child, depth and node count are validated.",
+      "Unknown fields are stripped; invalid trees do not replace the current valid tree.",
+      "The tree is workspace preference/profile data, separate from the page model and publish flow."
+    ],
+    "scope_limit": "The current shell still renders the existing fixed dock regions; arbitrary nested-tree drag/drop rendering and dynamic zone interaction remain unimplemented. This commit is a model/persistence foundation, not completion of C."
+  },
+  "validation": {
+    "targeted_model_tests": "PASS 4/4 workspace dock-tree tests",
+    "editor_unit": "PASS npm run test:editor: 15 Node test files and 3 Linux subreaper contract tests",
+    "workspace_browser_regression": "PASS tests/browser/editor-workspace-appearance.test.js: 84/84, 0 failed/cancelled/skipped, 475472 ms; sandboxed loopback attempt first failed with EPERM and this target rerun passed with local-only elevated permission",
+    "typecheck": "PASS npm run typecheck",
+    "migration_gate": "PASS npm run test:web013:migration-gate (local contract only)",
+    "plan_contract": "PASS python3 tests/plan-contract.test.py: 13/13",
+    "canonical_plan": "PASS python3 scripts/check-canonical-plan.py",
+    "active_plan_point": "PASS audit reports 77.44.6.1.C OPEN / NOT_CERTIFIED",
+    "source_traceability": "PASS 396/396",
+    "syntax_and_diff": "PASS JavaScript node --check and git diff --check",
+    "broad_browser_layout_suite": "NOT RUN TO COMPLETION: initial sandbox execution could not bind temporary localhost servers (EPERM); the directly affected complete workspace-appearance browser file passed after retry."
+  },
+  "production_and_release": {
+    "current_github_head_checked_read_only": "6f98cbefb18432de283e91d3adc1762c6c5202ae",
+    "current_deployment_id": "c4573240-1f1d-4830-98f1-bbc713782c4e",
+    "current_traffic_version_id": "a6670b60-61ec-40cf-8613-0757b6ca0954",
+    "current_traffic_percentage": 100,
+    "current_health": {
+      "http_status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "production_d1_select_preflight": "NOT RUN; no remote release is being initiated for this incomplete model/persistence slice",
+    "wrangler_dry_run": "NOT RUN; runtime release is deferred pending recursive UI interaction and acceptance",
+    "deployment": "NOT DEPLOYED; existing 100% deployment remains unchanged",
+    "changed_public_asset_hash_comparison": "NOT APPLICABLE; this commit is local and was not deployed",
+    "github_actions": "No push, dispatch or rerun; local work only. Available free quota remains UNVERIFIED and must not be exceeded or converted to paid use.",
+    "actions_storage_owner_reported": "0.45/0.50 GB"
+  },
+  "remaining_c_gaps": [
+    "Render and interact with arbitrary recursive/nested panel groups in the actual workspace shell.",
+    "Add dynamic drag/drop zones and keyboard-accessible tree operations, including detach, regroup, reorder, Undo/Redo, reload/profile and responsive lifecycle behavior.",
+    "Complete workspace lifecycle semantic acceptance; keep full Visual Editor manual/physical acceptance deferred until the whole Editor scope is complete."
+  ],
+  "safety_and_cost": {
+    "production_d1_writes_or_migrations": false,
+    "r2_operations": false,
+    "new_dependency": false,
+    "github_actions_run": false,
+    "test_source_sha256": "26b98cd23e55e87cf3f0537198bcb881cbefe9b381974785c00b7bca50f4b63d",
+    "paid_usage": false,
+    "cost_huf": 0,
+    "save_and_publish": "unchanged and separate"
+  },
+  "manual_physical_acceptance": "DEFERRED until the complete Visual Editor scope is implemented"
+}
