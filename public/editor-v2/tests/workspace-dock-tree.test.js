@@ -25,6 +25,7 @@ test('dock tree normalization rejects unsafe IDs, duplicate leaves, hidden canva
     {...tree,id:'bad id'},
     {...tree,children:[tree.children[0],tree.children[0]]},
     {id:'root',kind:'tabs',activeId:'canvas',children:[{id:'canvas',kind:'canvas'},{id:'left',kind:'panel',side:'left'},{id:'right',kind:'panel',side:'right'}]},
+    {id:'root',kind:'tabs',activeId:'missing',children:[{id:'left',kind:'panel',side:'left'},{id:'right',kind:'panel',side:'right'},{id:'canvas',kind:'canvas'}]},
     {...tree,axis:'diagonal'},
     {...tree,ratio:0.99},
   ];
