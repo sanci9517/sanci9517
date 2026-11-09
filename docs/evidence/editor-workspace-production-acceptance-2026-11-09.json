@@ -1,0 +1,109 @@
+{
+  "recorded_at_utc": "2026-11-09T22:54:00Z",
+  "plan_point": "77.44.6.1.C",
+  "acceptance": "PASS",
+  "scope": "Automated workspace lifecycle plus direct production health and changed-asset hash verification; does not certify the complete Visual Editor or manual/physical acceptance.",
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "branch_head_before_documentation_update": "0e3d05e3c927976484f66852b499bf1caac6cfcc",
+    "branch_head_verified_via": "GitHub REST GET /repos/sanci9517/sanci9517/branches/v2/foundation",
+    "runtime_source_commit": "2bd6acf321fa9961a3cc74b9cc0d2136fd8fefc3",
+    "runtime_paths": [
+      "public/editor-v2/index.html",
+      "public/editor-v2/workspace-appearance.css",
+      "public/editor-v2/ui/shell.js",
+      "public/editor-v2/ui/workspace-appearance.js",
+      "public/editor-v2/ui/workspace-dock-tree.js"
+    ]
+  },
+  "production": {
+    "base_url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev",
+    "checked_at_utc": "2026-11-09T22:54:00Z",
+    "deployment_id": "d33e01e2-167d-4039-93ce-eb3d2dec3c64",
+    "worker_version_id": "8dd3e172-56b2-44fd-a167-ca6098a794b8",
+    "worker_version_number": 3844,
+    "traffic_percent": 100,
+    "worker_version_and_traffic_source": "Read-only Cloudflare deployments and version APIs",
+    "get_checks": [
+      {
+        "path": "/api/health",
+        "status": 200,
+        "bytes": 95,
+        "sha256": "0313b3785c7394ec3f0adc7f7664115116822aed017561b931eb834be156d49b",
+        "json": {"ok": true, "service": "sanci9517-streamer-brand", "version": "2.0.0", "server": "cloudflare-worker"}
+      },
+      {
+        "path": "/",
+        "status": 200,
+        "bytes": 6048,
+        "sha256": "2afb1fcbf428a1e0f193310ba3f5ea2a769bd9890fe192ab4cf95a50d9e1500f",
+        "note": "Existing public homepage is unchanged by this Editor workspace point."
+      },
+      {
+        "path": "/editor-v2/",
+        "status": 200,
+        "bytes": 25894,
+        "sha256": "2bdc01749a46a69720497e267bbaa7582f703773f7c2ab2919f6f8fb783d4857",
+        "local_file": "public/editor-v2/index.html",
+        "local_sha256_matches": true
+      },
+      {
+        "path": "/editor-v2/workspace-appearance.css?v=20261109-recursive-dock-activation",
+        "status": 200,
+        "bytes": 12844,
+        "sha256": "179612b4faca385e012290c48f6f9b06121b50e47fb82c7ae02a18cb5e7c6e8f",
+        "local_file": "public/editor-v2/workspace-appearance.css",
+        "local_sha256_matches": true
+      },
+      {
+        "path": "/editor-v2/ui/shell.js?v=20261109-recursive-dock-activation",
+        "status": 200,
+        "bytes": 53005,
+        "sha256": "d0334af2fc57dbe12fcd452534e86344a31bb46e97f5d99ca460053dde5fa50f",
+        "local_file": "public/editor-v2/ui/shell.js",
+        "local_sha256_matches": true
+      },
+      {
+        "path": "/editor-v2/ui/workspace-appearance.js?v=20261109-recursive-dock-activation",
+        "status": 200,
+        "bytes": 35414,
+        "sha256": "9d5b44259286da1980f4c17af47c7d9c483e78e58cd2157418195a789203bf49",
+        "local_file": "public/editor-v2/ui/workspace-appearance.js",
+        "local_sha256_matches": true
+      },
+      {
+        "path": "/editor-v2/ui/workspace-dock-tree.js?v=20261109-recursive-dock-activation",
+        "status": 200,
+        "bytes": 6520,
+        "sha256": "00877096cd6dcfc91ab424c2e7fe66c1f66e84c75ea3b4b226a10b88f51c5575",
+        "local_file": "public/editor-v2/ui/workspace-dock-tree.js",
+        "local_sha256_matches": true
+      }
+    ]
+  },
+  "automated_acceptance": {
+    "workspace_chromium_file": "87/87 PASS",
+    "full_serial_editor_layout_suite": "53/53 Chromium files, 178/178 tests PASS; zero fail/cancel/skip",
+    "editor_unit_suite": "15/15 files PASS",
+    "linux_subreaper_contract": "3/3 PASS",
+    "typecheck": "PASS",
+    "web013_migration_safety_gate": "PASS (local gate only; no migration applied)",
+    "canonical_plan": "13/13 files PASS",
+    "plan_contract": "13/13 PASS",
+    "source_traceability": "396/396 PASS",
+    "details": "The referenced lifecycle evidence records first-use recursive dock activation, live DOM identity, nested mouse grouping, canvas minimum, profile save/export/import with new local ID, reload, mobile/desktop restoration, and separate Save/Publish requests without Page Model writes."
+  },
+  "manual_physical_acceptance": "DEFERRED until the complete Visual Editor is implemented (77.44.7.F/77.44.8).",
+  "release_actions": {
+    "documentation_commit_uses_skip_ci": true,
+    "new_github_actions_run_started": false,
+    "worker_redeploy_performed": false,
+    "production_d1_write_or_migration": false,
+    "r2_operation": false,
+    "new_dependency": false,
+    "cost_huf": 0,
+    "remaining_free_actions_compute": "UNVERIFIED"
+  },
+  "next_plan_point": "77.44.7.D / OPEN"
+}
