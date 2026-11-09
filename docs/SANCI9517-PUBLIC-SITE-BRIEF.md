@@ -1,7 +1,7 @@
 # SANCI9517 — publikus weboldal: kreatív brief, dizájnrendszer és teljes tartalomterv
 
 **Dokumentum típusa:** belső, végrehajtható creator-webhely brief; NEM második platform-MASTER.  
-**Verzió:** 1.5 (tervezés) • **Dátum:** 2026-11-09 • **Státusz:** DESIGN SPEC / NOT IMPLEMENTED.  
+**Verzió:** 1.6 (tervezés) • **Dátum:** 2026-11-09 • **Státusz:** DESIGN SPEC / NOT IMPLEMENTED.  
 **Repository / ág:** sanci9517/sanci9517 → v2/foundation.  
 **Kanonikus termékterv:** docs/SANCI9517-CREATOR-PLATFORM-PLAN.md.  
 **Végrehajtási szabály:** AGENTS.md; ez a brief nem írhatja felül a MASTER-t, a release-gate-eket, a Save/Publish szétválasztását vagy a domainadatok tulajdonosát.  
@@ -774,3 +774,33 @@ A 15. fejezet változatlanul kötelező: az elfogadott saját logó-assetek és 
 - Kérdés a következő tulajdonosi feedbackhez: az S rejtettsége, a forma lágyabb/élesebb jellege, a jel karaktere vagy a túl technikai stílus nem működik-e; a válasz alapján szerkesztendő a végleges változat.
 
 **Állapot:** csak tervezési és vizuális iteráció, nincs végleges logó és nincs live oldal-, Worker- vagy Médiatár-változás.
+
+---
+
+## 19. A második referenciakép logóiról folytatjuk (2026-11-09)
+
+**Új tulajdonosi döntés:** „Második kép logóin dolgozunk.” Ez a beszélgetésben legutóbb bemutatott **három kép közül a második, világos háttérrel és három sötétszürke/acélkék SANCI-emblémával** készült összehasonlító kép. Nem a filmes, piros/fantasy harmadik táblára építünk, és nem a régebbi Rejtett S szükségszerű továbbviteléről van szó.
+
+**A második kép három konkrét formája:**
+
+1. **Bal — zártabb tér / nyíló mag:** sokszögletű, egymás köré rétegzett forma, közepén apró fénylő rombusz. Jelentés: mélység, felfedezhető középpont. Kockázat: fényes kamera-rekesz / tech-app asszociáció; apró méretben a mag elveszhet.
+2. **Közép — összefonódó három kar / közös mag:** három íves, egymáshoz tartozó forma egy központi kör körül. Jelentés: kapcsolódás és közösség. Kockázat: generikus triskelion/orbit/forgó szimbólum és 3D stock jelleg.
+3. **Jobb — nyitott pálya / mélységösvény:** aszimmetrikus, egymásra rétegződő ívek és nyitott körív. Jelentés: út, nyitottság, továbbhaladás. Kockázat: S-betűre, gyorsaságjelre vagy generikus swoosh-ra emlékeztethet.
+
+**Fontos:** a tulajdonos **a második képcsoportot** nevezte meg, nem választotta ki egyértelműen annak bal, középső vagy jobb logóját. Mindhárom irány NYITOTT. A mostani külön bemutatott, körkörösen kapcsolódó közösségi márkajel csak a KÖZÉPSŐ változat továbbgondolási kísérlete, nem elfogadott végleges embléma.
+
+### 19.1 Finomítási szabályok
+
+- Tartani kell a második kép formavilágának legjobb tulajdonságait: visszafogott, térbeli, mélységet adó, tiszta, nem harsány. A SANCI szójel elsődleges, 9517 nem kötelező.
+- A fényes fém, túlságosan generikus orbit, ékkő és kékes díszítőfény **nem azonos a jó logóformával**. A következő iterációban 100%-ban egyszínű, valóban kidolgozott sziluett és finomított negatív tér készüljön.
+- A bal, középső és jobb alapból legalább egy-egy javított, egymástól eltérő **kontúrváltozat**, mindegyiknek SANCI szójelpárosítás és 24/48 px teszt kell. Ne kényszerítsük az S betűt a jelbe; saját szimbólum legyen.
+- Színeket csak ezután vizsgáljunk. Web/stream/profil/merch alapra is kell működnie, lehetőleg monokróm jelként.
+- Következő szükséges tulajdonosi pontosítás: a második képen belül **bal / középső / jobb** szimbólum, vagy ezek kombinációja az alap. Ezt nem szabad kikövetkeztetni pusztán abból, hogy a második képet választotta.
+
+### 19.2 A teljes weboldalra ható következmények
+
+- A még nem jóváhagyott logót nem szabad a globális navigációban, médiatárban, OG-fájlban vagy éles webhelyen végleges elemként megjelentetni.
+- Későbbi elfogadás után a jóváhagyott assetek a 15. fejezet szerint a meglévő közös Médiatárba kerülhetnek, hitelesített és engedélyezett feltöltéssel; újrahasználat azonos media asset ID-val a kompatibilis elemeken.
+- A főoldal továbbra is logo + aktuális stream/videó + egyértelmű továbbvezetés, nem portré és nem Rólam; a menürendszer 17.3 szerinti.
+
+**Státusz:** dizájnkoncepció kiválasztása részben megtörtént, a három logó közötti konkrét választás és minden publikáció továbbra is OPEN. Ebben a dokumentációs körben nem volt médiatár-feltöltés, kódmódosítás vagy publikus deploy.
