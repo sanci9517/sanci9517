@@ -4,9 +4,10 @@
   "status": "TEST_ONLY_PASS_RUNTIME_UNCHANGED_NOT_RELEASED",
   "scope": "Native Chromium lostpointercapture regression for the existing canvas-safe floating dock drag lifecycle.",
   "branch": "v2/foundation",
-  "local_head_before_evidence": "9dbdeb0dd85a19cc75064a37ea8ff1fcda195c96",
+    "local_head_before_evidence": "c267f6030c323a1c90467b31b1b6963c21723b07",
   "github_branch_head": "d75af5439c38e2a7e19f1aa6b8b5b0cc81d6ec09",
-  "local_commits_ahead_before_work": 31,
+    "local_commits_ahead_before_work": 32,
+    "local_test_commit": "e622008a",
   "test": {
     "name": "losing floating dock pointer capture restores the last saved position without a stale pointerup commit",
     "source": "tests/browser/editor-workspace-appearance.test.js",
@@ -17,12 +18,12 @@
     "full_workspace_appearance_browser_file": {
       "command": "python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-workspace-appearance.test.js",
       "result": "PASS",
-      "tests": 82,
-      "passed": 82,
+      "tests": 83,
+      "passed": 83,
       "failed": 0,
       "cancelled": 0,
       "skipped": 0,
-      "duration_ms": 458175,
+      "duration_ms": 479933,
       "orphaned_descendants_reaped": 4
     },
     "viewport_resize_during_drag": {
@@ -46,7 +47,7 @@
   "github_release": {
     "api_branch_check": "PASS read-only GitHub Branch API returned v2/foundation at github_branch_head.",
     "status": "NOT_PUSHED",
-    "reason": "The local branch contains 31 commits ahead, including runtime ancestors. A normal fast-forward would publish those commits as well; their release gates are not complete and current Actions quota is unverified. No workflow was dispatched.",
+    "reason": "The local branch contained 32 commits ahead at run start, including runtime ancestors; the tested test-only commit makes 33 local commits ahead. A normal fast-forward would publish those ancestors as well; their release gates are not complete and current Actions quota is unverified. No workflow was dispatched.",
     "actions_storage_owner_reported": "0.45/0.50 GB",
     "actions_remaining_quota": "UNVERIFIED",
     "aggregate_ci": "NOT_RUN"
