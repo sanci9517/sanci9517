@@ -179,6 +179,13 @@
 .workspace-left-tools-move { display:flex; align-items:end; gap:8px; padding-top:22px; }
 .workspace-left-tools-move button { flex:1 1 0; min-width:0; min-height:44px; padding:8px 10px; border:1px solid var(--workspace-dialog-line,#465c77); border-radius:9px; background:var(--workspace-dialog-raised,#1b2b40); color:var(--workspace-dialog-text,#f1f5fb); font:inherit; cursor:pointer; }
 .workspace-left-tools-move button:disabled { opacity:.5; cursor:not-allowed; }
+.workspace-dock-tree-controls { display:grid; grid-column:1/-1; gap:10px; margin-top:2px; padding:12px; border:1px solid #34465d; border-radius:12px; background:color-mix(in srgb,var(--workspace-dialog-raised,#1b2b40) 55%,transparent); }
+.workspace-dock-tree-controls h3 { margin:0 0 4px; font-size:15px; }
+.workspace-dock-tree-controls p { margin:0; color:var(--workspace-dialog-muted,#c6d3e5); font-size:13px; line-height:1.45; }
+.workspace-dock-tree-controls [role="group"] { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
+.workspace-dock-tree-controls button { min-width:0; min-height:44px; padding:8px 10px; border:1px solid var(--workspace-dialog-line,#465c77); border-radius:9px; background:var(--workspace-dialog-raised,#1b2b40); color:var(--workspace-dialog-text,#f1f5fb); font:inherit; cursor:pointer; }
+.workspace-dock-tree-controls button:disabled { opacity:.52; cursor:not-allowed; }
+.workspace-dock-tree-controls button:focus-visible { outline:3px solid var(--accent,#8ba8ff); outline-offset:2px; }
 #workspaceAppearanceStatus { min-height: 24px; margin: 14px 0 8px; color: var(--workspace-dialog-text, #dce8fa); font-size: 13px; line-height: 1.45; }
 .workspace-appearance-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; padding-top: 12px; border-top: 1px solid var(--workspace-dialog-line, #34465d); }
 .workspace-appearance-actions span { flex: 1 1 180px; color: var(--workspace-dialog-muted, #aebdd1); font-size: 12px; line-height: 1.4; }
@@ -188,6 +195,7 @@
   .workspace-appearance-fields { grid-template-columns: minmax(0, 1fr); gap: 12px; }
   .workspace-appearance-heading { align-items: center; }
   .workspace-left-tools-move { padding-top:0; }
+  .workspace-dock-tree-controls [role="group"] { grid-template-columns:minmax(0,1fr); }
 }
 @media (prefers-reduced-motion: reduce) {
   .workspace-appearance-dialog[open] { animation: none; }

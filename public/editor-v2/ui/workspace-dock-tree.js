@@ -43,6 +43,42 @@ export function workspaceDockTreeSignature(tree){
   return normalized?JSON.stringify(normalized):'';
 }
 
+/** Build the first editable tree from the user's existing dock preferences. */
+export function createWorkspaceDockTree(preferences={},dockState={}){
+  const order=typeof preferences?.dockOrder==='string'?preferences.dockOrder:'left-canvas-right';
+  const dockOrder=['left-canvas-right','canvas-left-right','left-right-canvas','right-left-canvas','right-canvas-left','canvas-right-left'];
+  const weights={
+    left:finiteDockWidth(dockState?.leftWidth,310),
+    right:finiteDockWidth(dockState?.rightWidth,352),
+    canvas:704,
+  };
+  if(!dockOrder.includes(order))return null;
+  const leaf={canvas:{id:'canvas',kind:'canvas'},left:{id:'left',kind:'panel',side:'left'},right:{id:'right',kind:'panel',side:'right'}};
+  if(['tabbed','floating'].includes(preferences?.panelMode)){
+    const activeId=preferences.panelSide==='left'?'left':'right';
+    const group={id:'panel-group',kind:'tabs',activeId,children:[leaf.left,leaf.right]};
+    const groupWidth=Math.max(weights.left,weights.right);
+    const ratio=preferences.panelSide==='left'?groupWidth/(groupWidth+weights.canvas):weights.canvas/(groupWidth+weights.canvas);
+    const children=preferences.panelSide==='left'?[group,leaf.canvas]:[leaf.canvas,group];
+    const tree={id:'root',kind:'split',axis:'horizontal',ratio,children};
+    return normalizeWorkspaceDockTree(tree);
+  }
+  const names=order.split('-');
+  const width=name=>weights[name];
+  const build=items=>{
+    if(items.length===1)return leaf[items[0]];
+    const first=items[0],rest=items.slice(1),remainder=build(rest);
+    const restWidth=rest.reduce((sum,name)=>sum+width(name),0);
+    return {id:`split-${first}-${rest[0]}`,kind:'split',axis:'horizontal',ratio:width(first)/(width(first)+restWidth),children:[leaf[first],remainder]};
+  };
+  return normalizeWorkspaceDockTree({...build(names),id:'root'});
+}
+
+function finiteDockWidth(value,fallback){
+  const number=Number(value);
+  return Number.isFinite(number)?Math.max(250,Math.min(460,number)):fallback;
+}
+
 function uniqueNodeId(tree,base){
   const ids=new Set();
   const collect=node=>{ids.add(node.id);node.children?.forEach(collect)};

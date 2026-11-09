@@ -157,6 +157,50 @@ test('recursive dock renderer supports accessible tabs and splits, preserves liv
   assert.deepEqual(errors,[]);
 });
 
+test('new users can activate the recursive dock tree and return to the classic layout',async t=>{
+  const {page,writes,errors}=await openEditor(t,{width:1025,height:900,initialDockState:{leftOpen:false,rightOpen:false,leftTab:'pages',leftWidth:460,rightWidth:440},initialAppearance:{version:2,layout:'custom',dockOrder:'left-canvas-right'}});
+  await page.evaluate(()=>{window.__originalWorkspaceNodes=['#leftDock','#canvas','#rightDock'].map(selector=>document.querySelector(selector))});
+  assert.notEqual(await page.locator('.workspace').getAttribute('data-workspace-dock-tree-active'),'true');
+  await openPreferences(page);
+  assert.equal(await page.locator('#enableWorkspaceDockTree').isEnabled(),true);
+  assert.equal(await page.locator('#classicWorkspaceDockLayout').isDisabled(),true);
+  await page.locator('#enableWorkspaceDockTree').click();
+  await page.waitForFunction(()=>document.querySelector('.workspace')?.dataset.workspaceDockTreeActive==='true');
+  const enabled=await page.evaluate(()=>({
+    tree:JSON.parse(localStorage.getItem('sanci-editor-workspace-preferences-v2'))?.dockTree,
+    canvas:document.querySelector('#canvas')?.getBoundingClientRect().width,
+    liveNodes:['#leftDock','#canvas','#rightDock'].every((selector,index)=>document.querySelector(selector)===window.__originalWorkspaceNodes[index]),
+    docksOpen:['#leftDock','#rightDock'].every(selector=>!document.querySelector(selector)?.classList.contains('closed')),
+    savePublish:[document.querySelector('#save')?.getAttribute('data-editor-action'),document.querySelector('#publish')?.getAttribute('data-editor-action')],
+  }));
+  assert.ok(enabled.tree,'the appearance control seeds a validated tree from the selected order');
+  assert.ok(enabled.canvas>=400,`canvas remains at least 400px wide in the narrow desktop preset: ${enabled.canvas}`);
+  assert.equal(enabled.liveNodes,true,'activation keeps the existing Editor nodes rather than cloning them');
+  assert.equal(enabled.docksOpen,true,'activating the tree opens both live panel leaves even when the prior profile had both closed');
+  assert.deepEqual(enabled.savePublish,['saveDraft','publishDraft']);
+  assert.equal(await page.locator('#enableWorkspaceDockTree').isDisabled(),true);
+  assert.equal(await page.locator('#classicWorkspaceDockLayout').isEnabled(),true);
+  await page.locator('#classicWorkspaceDockLayout').click();
+  await page.waitForFunction(()=>document.querySelector('.workspace')?.dataset.workspaceDockTreeActive!=='true');
+  assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('sanci-editor-workspace-preferences-v2'))?.dockTree),undefined);
+  assert.equal(await page.locator('#enableWorkspaceDockTree').isEnabled(),true);
+  assert.equal(await page.locator('#classicWorkspaceDockLayout').isDisabled(),true);
+  assert.equal(await page.locator('#undoWorkspaceLayout').isEnabled(),true);
+  await page.locator('#undoWorkspaceLayout').click();
+  await page.waitForFunction(()=>document.querySelector('.workspace')?.dataset.workspaceDockTreeActive==='true');
+  await page.locator('#redoWorkspaceLayout').click();
+  await page.waitForFunction(()=>document.querySelector('.workspace')?.dataset.workspaceDockTreeActive!=='true');
+  await page.locator('#workspacePanelMode').selectOption('tabbed');
+  await page.locator('#workspacePanelSide').selectOption('right');
+  await page.locator('#enableWorkspaceDockTree').click();
+  await page.waitForFunction(()=>document.querySelector('.workspace-dock-tree-tablist [role="tab"][aria-selected="true"]')?.textContent==='Beállítások');
+  assert.ok(await page.locator('#canvas').evaluate(node=>node.getBoundingClientRect().width>=400),'the tabbed right-panel starting layout preserves the canvas at 1025px');
+  await page.locator('#classicWorkspaceDockLayout').click();
+  await page.waitForFunction(()=>document.querySelector('.workspace')?.dataset.workspaceDockTreeActive!=='true');
+  assert.equal(writes.length,0,'dock-tree UI never calls the page Save or Publish route');
+  assert.deepEqual(errors,[]);
+});
+
 test('personal workspace theme, density and panel layout persist locally without changing or sending page content',async t=>{
   const {page,writes,errors}=await openEditor(t);
   await openPreferences(page);

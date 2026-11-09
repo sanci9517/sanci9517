@@ -2,7 +2,7 @@ import {createEventBus} from './events.js';
 import {panelRegistry,featureRegistry} from './registry.js';
 import {EDITOR_ACTIONS} from './action-catalog.js?v=20261103-canvas-focus-mode';
 import {enhanceEditorActionControls} from './action-help.js?v=20261103-canvas-focus-mode';
-import {DEFAULT_LEFT_TAB_ORDER,applyWorkspacePreferences,mountWorkspaceAppearance,normalizeLeftTabOrder,readWorkspacePreferences} from './workspace-appearance.js?v=20261109-recursive-dock-tree-foundation';
+import {DEFAULT_LEFT_TAB_ORDER,applyWorkspacePreferences,mountWorkspaceAppearance,normalizeLeftTabOrder,readWorkspacePreferences} from './workspace-appearance.js?v=20261109-recursive-dock-activation';
 import {moveWorkspaceDockTreeLeaf,workspaceDockTreeSignature} from './workspace-dock-tree.js';
 import {mountWorkspaceDockTree} from './workspace-dock-renderer.js?v=20261109-recursive-dock-renderer';
 
@@ -109,6 +109,11 @@ function firstDockSide(node){
   if(node?.kind==='tabs')return firstDockSide(node.children.find(child=>child.id===node.activeId));
   if(node?.kind==='split')return firstDockSide(node.children[0])||firstDockSide(node.children[1]);
   return null;
+}
+function allDockSides(node){
+  if(node?.kind==='panel')return [node.side];
+  if(!Array.isArray(node?.children))return [];
+  return [...new Set(node.children.flatMap(allDockSides))];
 }
 function syncPanelGroup(){
   if(workspace)workspace.dataset.workspaceActivePanel=persisted.panelActive;
@@ -700,8 +705,9 @@ workspaceAppearance=mountWorkspaceAppearance({documentRef:document,root:editorRo
     }});
   }
   else workspaceDockRenderer.setTree(tree);
-  const side=firstDockSide(tree);
-  if(side&&!mobileQuery.matches&&panels[side]?.classList.contains('closed'))setPanel(side,true,{save:true,customize:false});
+  if(!mobileQuery.matches){
+    for(const side of allDockSides(tree))if(panels[side]?.classList.contains('closed'))setPanel(side,true,{save:true,customize:false});
+  }
 },onExternalChange:({reset=false}={})=>{
   desktopDockSnapshot=null;
   cancelDockResize({announcement:reset?'A másik szerkesztőlapon alaphelyzetbe állították a munkaterületet, ezért a panel átméretezése megszakadt.':'A másik szerkesztőlapon változott a munkaterület, ezért a panel átméretezése megszakadt.'});

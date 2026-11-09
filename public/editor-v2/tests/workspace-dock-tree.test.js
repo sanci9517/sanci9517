@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {moveWorkspaceDockTreeLeaf,normalizeWorkspaceDockTree,workspaceDockTreeSignature} from '../ui/workspace-dock-tree.js';
+import {createWorkspaceDockTree,moveWorkspaceDockTreeLeaf,normalizeWorkspaceDockTree,workspaceDockTreeSignature} from '../ui/workspace-dock-tree.js';
 import {WORKSPACE_PREFERENCES_KEY,mountWorkspaceAppearance,normalizeWorkspacePreferences,parseWorkspaceProfileTransfer,serializeWorkspaceProfile} from '../ui/workspace-appearance.js';
 
 const tree={id:'root',kind:'split',axis:'horizontal',ratio:0.28,children:[
@@ -41,6 +41,32 @@ test('dock tree signature uses only validated canonical data',()=>{
   assert.equal(workspaceDockTreeSignature({id:'root',kind:'split'}),'');
 });
 
+test('first dock tree follows each saved dock order and selected panel grouping without hiding the canvas',()=>{
+  const orders=['left-canvas-right','canvas-left-right','left-right-canvas','right-left-canvas','right-canvas-left','canvas-right-left'];
+  for(const dockOrder of orders){
+    const created=createWorkspaceDockTree({dockOrder},{leftWidth:460,rightWidth:440});
+    assert.ok(created,dockOrder);
+    assert.deepEqual(normalizeWorkspaceDockTree(created),created,dockOrder);
+    const leaves=[];
+    const visit=node=>{if(node.kind==='panel')leaves.push(node.side);else if(node.kind==='canvas')leaves.push('canvas');else node.children.forEach(visit)};
+    visit(created);
+    assert.deepEqual(leaves,dockOrder.split('-'),dockOrder);
+    const canvasShare=node=>node.kind==='canvas'?1:node.kind==='panel'?0:node.kind==='tabs'?0:node.ratio*canvasShare(node.children[0])+(1-node.ratio)*canvasShare(node.children[1]);
+    assert.ok(1025*canvasShare(created)-16>=400,dockOrder,'wide-desktop starting ratios leave the planned 400px canvas after separator hit areas');
+  }
+  for(const panelMode of ['tabbed','floating'])for(const panelSide of ['left','right']){
+    const grouped=createWorkspaceDockTree({panelMode,panelSide,dockOrder:'right-canvas-left'},{leftWidth:460,rightWidth:440});
+    assert.ok(grouped,`${panelMode}/${panelSide}`);
+    const tabs=grouped.children.find(node=>node.kind==='tabs');
+    assert.equal(tabs?.activeId,panelSide,`${panelMode}/${panelSide}`);
+    assert.deepEqual(tabs?.children.map(node=>node.side),['left','right']);
+    assert.ok(grouped.children.some(node=>node.kind==='canvas'));
+    const canvasShare=node=>node.kind==='canvas'?1:node.kind==='panel'?0:node.kind==='tabs'?0:node.ratio*canvasShare(node.children[0])+(1-node.ratio)*canvasShare(node.children[1]);
+    assert.ok(1025*canvasShare(grouped)-8>=400,`${panelMode}/${panelSide} starting layout preserves the 400px canvas`);
+  }
+  assert.equal(createWorkspaceDockTree({dockOrder:'canvas-right-left;danger'}),null);
+});
+
 test('dock-tree moves split leaves, group only two panels as tabs, and reject moves that would hide the canvas',()=>{
   const beside=moveWorkspaceDockTreeLeaf(tree,'right','canvas','after',{axis:'vertical',before:false});
   assert.ok(beside);
@@ -77,6 +103,12 @@ test('nested dock tree survives preference persistence, Undo/Redo and portable p
   assert.equal(appearance.redo(),true);
   assert.deepEqual(appearance.value.dockTree,tree);
   assert.equal(appearance.setDockTree({id:'bad',kind:'canvas'}),false,'invalid imported groups never replace the last good layout');
+  assert.equal(appearance.setDockTree(null),true,'the user can return to the legacy classic dock layout');
+  assert.equal(appearance.value.dockTree,undefined);
+  assert.equal(appearance.undo(),true);
+  assert.deepEqual(appearance.value.dockTree,tree);
+  assert.equal(appearance.redo(),true);
+  assert.equal(appearance.value.dockTree,undefined);
 
   const raw=serializeWorkspaceProfile({id:'profile-tree',name:'Rekurzív panelok',appearance:{dockTree:tree}});
   assert.deepEqual(parseWorkspaceProfileTransfer(raw).appearance.dockTree,tree);

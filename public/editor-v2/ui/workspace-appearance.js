@@ -1,4 +1,4 @@
-import {normalizeWorkspaceDockTree} from './workspace-dock-tree.js';
+import {createWorkspaceDockTree,normalizeWorkspaceDockTree} from './workspace-dock-tree.js';
 export const WORKSPACE_PREFERENCES_KEY='sanci-editor-workspace-preferences-v2';
 export const LEGACY_WORKSPACE_PREFERENCES_KEY='sanci-editor-workspace-preferences-v1';
 export const WORKSPACE_PREFERENCE_DEFAULTS=Object.freeze({version:2,layout:'canvas',theme:'graphite',density:'comfortable',accent:'#5b8cff',dockOrder:'left-canvas-right',panelMode:'separate',panelSide:'right',floatingPosition:{left:{x:0,y:0},right:{x:0,y:0}},profiles:[]});
@@ -180,6 +180,8 @@ export function mountWorkspaceAppearance({documentRef=globalThis.document,root=d
   const deleteProfileButton=documentRef.querySelector('#deleteWorkspaceProfile');
   const undoButton=documentRef.querySelector('#undoWorkspaceLayout');
   const redoButton=documentRef.querySelector('#redoWorkspaceLayout');
+  const enableDockTreeButton=documentRef.querySelector('#enableWorkspaceDockTree');
+  const classicDockLayoutButton=documentRef.querySelector('#classicWorkspaceDockLayout');
   const importProfileButton=documentRef.querySelector('#importWorkspaceProfile');
   const exportProfileButton=documentRef.querySelector('#exportWorkspaceProfile');
   const profileFile=documentRef.querySelector('#workspaceProfileFile');
@@ -259,6 +261,8 @@ export function mountWorkspaceAppearance({documentRef=globalThis.document,root=d
     try{onDockTreeChange(value.dockTree||null)}catch{}
     for(const key of ['layout','dockOrder','panelMode','panelSide','theme','density','accent'])if(fields[key])fields[key].value=value[key];
     if(fields.panelSide)fields.panelSide.disabled=value.panelMode==='separate';
+    if(enableDockTreeButton)enableDockTreeButton.disabled=Boolean(value.dockTree);
+    if(classicDockLayoutButton)classicDockLayoutButton.disabled=!value.dockTree;
     renderProfiles();renderLeftToolOrder();syncHistory();
   };
   const setLayout=(layout,{rememberChange=true}={})=>{
@@ -297,12 +301,20 @@ export function mountWorkspaceAppearance({documentRef=globalThis.document,root=d
     return true;
   };
   const setDockTree=tree=>{
-    const next=normalizeWorkspaceDockTree(tree);
-    if(!next)return false;
+    const next=tree===null?null:normalizeWorkspaceDockTree(tree);
+    if(tree!==null&&!next)return false;
     if(JSON.stringify(next)===JSON.stringify(value.dockTree||null))return false;
-    remember();value={...value,dockTree:next};paint();const saved=persist();
-    announcePersistence(saved,'A munkaterület csoportfája ezen az eszközön elmentve. Az oldal tartalma változatlan.','A munkaterület csoportfája csak ebben a munkamenetben érvényes, mert a böngésző tárhelye nem használható. Az oldal tartalma változatlan.');
+    remember();
+    value={...value};
+    if(next)value.dockTree=next;else delete value.dockTree;
+    paint();const saved=persist();
+    announcePersistence(saved,next?'A munkaterület csoportfája ezen az eszközön elmentve. Az oldal tartalma változatlan.':'Visszatértél a klasszikus panel-elrendezéshez. A munkaterület előzménye megmarad; az oldal tartalma nem változott.','A munkaterület elrendezése csak ebben a munkamenetben változott, mert a böngésző tárhelye nem használható. Az oldal tartalma változatlan.');
     return true;
+  };
+  const enableDockTree=()=>{
+    const tree=createWorkspaceDockTree(value,currentDock());
+    if(!tree){if(status)status.textContent='A jelenlegi panelbeállításokból nem készíthető biztonságos panel-fa.';return false}
+    return setDockTree(tree);
   };
   const setFloatingPosition=(side,x,y)=>{
     if(!panelSides.has(side))return false;
@@ -449,6 +461,8 @@ export function mountWorkspaceAppearance({documentRef=globalThis.document,root=d
   fields.theme?.addEventListener('change',()=>updateVisual('theme',fields.theme.value));
   fields.density?.addEventListener('change',()=>updateVisual('density',fields.density.value));
   fields.accent?.addEventListener('input',()=>updateVisual('accent',fields.accent.value));
+  enableDockTreeButton?.addEventListener('click',enableDockTree);
+  classicDockLayoutButton?.addEventListener('click',()=>setDockTree(null));
   saveProfileButton?.addEventListener('click',saveProfile);
   renameProfileButton?.addEventListener('click',renameProfile);
   loadProfileButton?.addEventListener('click',loadProfile);
@@ -500,5 +514,5 @@ export function mountWorkspaceAppearance({documentRef=globalThis.document,root=d
   undoButton?.addEventListener('click',undo);redoButton?.addEventListener('click',redo);
   resetButton?.addEventListener('click',reset);
   paint();
-  return {get value(){return normalizeWorkspacePreferences(value)},setLayout,setDockOrder,setDockLayout,setPanelGrouping,setDockTree,setFloatingPosition,open,close,remember,undo,redo,saveProfile,renameProfile,loadProfile,deleteProfile,importProfile,exportProfile,reset,syncDockControls:renderLeftToolOrder,clearExternalDockHistory,reportDockStorageUnavailable,destroy(){documentRef.defaultView?.removeEventListener?.('storage',syncExternalPreferences)}};
+  return {get value(){return normalizeWorkspacePreferences(value)},setLayout,setDockOrder,setDockLayout,setPanelGrouping,setDockTree,enableDockTree,setFloatingPosition,open,close,remember,undo,redo,saveProfile,renameProfile,loadProfile,deleteProfile,importProfile,exportProfile,reset,syncDockControls:renderLeftToolOrder,clearExternalDockHistory,reportDockStorageUnavailable,destroy(){documentRef.defaultView?.removeEventListener?.('storage',syncExternalPreferences)}};
 }
