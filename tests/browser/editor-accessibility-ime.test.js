@@ -39,7 +39,10 @@ for(const width of [390,1366])test(`accessibility Inspector IME validation and p
  const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||(existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined),args:['--no-sandbox']});
  t.after(async()=>{await browser.close();await new Promise(done=>server.close(done));});
  const base='http://127.0.0.1:'+server.address().port,editor=await browser.newPage({viewport:{width,height:900}}),viewer=await browser.newPage({viewport:{width,height:900}});
- for(const page of [editor,viewer]){page.setDefaultTimeout(7000);page.on('pageerror',error=>errors.push(error.message));}
+ // The full serial browser suite can exceed seven seconds for a single
+ // accessibility render on hosted Chromium; retain finite waits without
+ // turning scheduler pressure into a false UI regression.
+ for(const page of [editor,viewer]){page.setDefaultTimeout(15000);page.on('pageerror',error=>errors.push(error.message));}
  editor.on('dialog',async dialog=>{dialogs.push(dialog.message());await dialog.dismiss();});
  await editor.goto(base+'/editor-v2/index.html');await viewer.goto(base+'/p/test');
  const canvas=id=>editor.locator(`.node[data-node-id="${id}"]`),live=id=>viewer.locator(`[data-node-id="${id}"]`);

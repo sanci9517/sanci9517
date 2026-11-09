@@ -48,7 +48,10 @@ for(const width of [390,1366])test(`layer rename pending draft survives save, pu
  const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||(existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined),args:['--no-sandbox']});
  t.after(async()=>{await browser.close();await new Promise(done=>server.close(done));});
  const base='http://127.0.0.1:'+server.address().port,mobile=width<=850,contextOptions={viewport:{width,height:900},isMobile:mobile,hasTouch:mobile},editor=await browser.newPage(contextOptions);
- for(const page of [editor]){page.setDefaultTimeout(7000);page.setDefaultNavigationTimeout(12000);page.on('pageerror',error=>errors.push(error.message));}
+ // This lifecycle is near the end of the full serial browser suite, where
+ // hosted Chromium may be slower than an isolated local run. Keep finite
+ // assertions, but allow scheduler pressure without masking state failures.
+ for(const page of [editor]){page.setDefaultTimeout(15000);page.setDefaultNavigationTimeout(12000);page.on('pageerror',error=>errors.push(error.message));}
  await editor.goto(base+'/editor-v2/index.html');
  await editor.locator(`.node[data-node-id="${id}"]`).evaluate(el=>el.click());
  if(await editor.locator('.rail-btn[data-tab="layers"]').isVisible())await editor.locator('.rail-btn[data-tab="layers"]').click();else await editor.evaluate(()=>{window.sanciEditor.showLeftTab('layers');window.sanciEditor.openPanel('left')});

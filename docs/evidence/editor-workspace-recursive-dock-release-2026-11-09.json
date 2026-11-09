@@ -67,10 +67,105 @@
     }
   },
   "release": {
-    "status": "PENDING_FAST_FORWARD_CI_CLOUDFLARE_BUILD_HEALTH_ASSET_HASHES",
+    "status": "DEPLOYED_CI_FAILED_UNRELATED_BROWSER_TIMEOUTS",
+    "github_fast_forward": {
+      "result": "PASS",
+      "expected_previous_remote_sha": "6f98cbefb18432de283e91d3adc1762c6c5202ae",
+      "new_remote_sha": "f82b33b655a1e0d54243822d8b39bcdad907dcb2",
+      "force": false,
+      "commit_message": "test(editor): record recursive dock release preflight"
+    },
+    "github_actions_for_exact_sha": {
+      "editor_core_test": {
+        "run_id": 42645044257,
+        "status_at_check": "in_progress",
+        "completed_steps_through": "Test real Worker media upload with isolated D1 and R2: success; 53-file Editor Chromium regression still running",
+        "status": "completed",
+        "conclusion": "failure",
+        "layout_step": "failure at 53/53; 51 browser files passed",
+        "failure_details": [
+          {
+            "file": "tests/browser/editor-accessibility-ime.test.js",
+            "error": "page.waitForFunction timeout 7000ms at line 73 in 1366px case"
+          },
+          {
+            "file": "tests/browser/editor-layer-rename-draft.test.js",
+            "error": "locator.fill timeout 7000ms waiting for Réteg neve at line 97 in 1366px case"
+          }
+        ],
+        "unrelated_followup": "Both tests passed in isolated Chromium rerun after increasing only their finite Playwright default operation timeout from 7000ms to 15000ms; exact targeted rerun 4/4. No assertions or production code changed."
+      },
+      "canonical_active_point_audit": {
+        "run_id": 42645044328,
+        "conclusion": "success"
+      },
+      "canonical_plan": {
+        "run_id": 42645044322,
+        "conclusion": "success"
+      },
+      "twitch_integration_check": {
+        "run_id": 42645044335,
+        "conclusion": "success"
+      },
+      "f0_baseline": {
+        "run_id": 42645044296,
+        "conclusion": "success"
+      }
+    },
+    "cloudflare_build": {
+      "build_uuid": "960eabec-63b2-48a9-bbb5-3e65eb59915c",
+      "version_id": "8dd3e172-56b2-44fd-a167-ca6098a794b8",
+      "commit_sha": "f82b33b655a1e0d54243822d8b39bcdad907dcb2",
+      "build_outcome": "success",
+      "command": "npm run typecheck",
+      "deploy_command": "npm run deploy:safe",
+      "migration_safety_gate": "PASS",
+      "d1_migration_apply": false,
+      "changed_assets_uploaded": 8
+    },
+    "production_deployment": {
+      "deployment_id": "d33e01e2-167d-4039-93ce-eb3d2dec3c64",
+      "version_id": "8dd3e172-56b2-44fd-a167-ca6098a794b8",
+      "traffic_percent": 100,
+      "health": {
+        "status": 200,
+        "body": {
+          "ok": true,
+          "service": "sanci9517-streamer-brand",
+          "version": "2.0.0",
+          "server": "cloudflare-worker"
+        }
+      }
+    },
+    "live_asset_sha256": {
+      "public/editor-v2/ui/workspace-dock-tree.js": "00877096cd6dcfc91ab424c2e7fe66c1f66e84c75ea3b4b226a10b88f51c5575",
+      "public/editor-v2/workspace-appearance.css": "179612b4faca385e012290c48f6f9b06121b50e47fb82c7ae02a18cb5e7c6e8f",
+      "public/editor-v2/ui/shell.js": "d0334af2fc57dbe12fcd452534e86344a31bb46e97f5d99ca460053dde5fa50f",
+      "public/editor-v2/tests/workspace-dock-tree.test.js": "453a52117ae47faeb413a8e7b3f188a27e3d643ef413e4c734d09f29768fb54b",
+      "public/editor-v2/index.html": "2bdc01749a46a69720497e267bbaa7582f703773f7c2ab2919f6f8fb783d4857",
+      "public/editor-v2/editor-refresh.css": "83d07a8d244af048eb13a3855ac0e9e8248b47dbc4b82926ca15e620bcedf4cd",
+      "public/editor-v2/ui/workspace-dock-renderer.js": "85f69c2c59367fb4c748f7ee768384c196a1205dbe2898626d7c31363f84f412",
+      "public/editor-v2/ui/workspace-appearance.js": "9d5b44259286da1980f4c17af47c7d9c483e78e58cd2157418195a789203bf49"
+    },
     "production_migration_or_data_write": false,
     "r2_operation": false,
-    "paid_usage": false
+    "paid_usage": false,
+    "acceptance_boundary": "C remains OPEN / NOT CERTIFIED until required release checks are green. The recursive dock code is deployed at 100% and its health/assets are verified; the exact release CI had 2 unrelated browser timing failures, so an overall CI PASS is not claimed. Full Editor manual/physical acceptance remains deferred to 77.44.7.F/77.44.8."
   },
-  "acceptance_boundary": "C foundation can close only after the pushed commit, required hosted CI, exact Worker deployment at 100%, direct production health and changed-asset hash comparisons are verified. Full Editor manual/physical acceptance remains explicitly deferred to 77.44.7.F/77.44.8; this release does not claim that broader acceptance or all 396 product features are certified."
+  "acceptance_boundary": "C foundation can close only after the pushed commit, required hosted CI, exact Worker deployment at 100%, direct production health and changed-asset hash comparisons are verified. Full Editor manual/physical acceptance remains explicitly deferred to 77.44.7.F/77.44.8; this release does not claim that broader acceptance or all 396 product features are certified.",
+  "ci_failure_and_followup": {
+    "observed_at_utc": "2026-11-09",
+    "exact_commit": "f82b33b655a1e0d54243822d8b39bcdad907dcb2",
+    "workflow_run_id": 42645044257,
+    "job_id": 129255924040,
+    "summary": "Editor Core job completed with failure after the full 53-file browser layout suite. The failure-only step status was failure, with 51 files completed successfully and two unrelated files each exceeding 7s Playwright operation timeout in their 1366px case.",
+    "local_followup": {
+      "change": "Raised only those two test files default Playwright operation timeout from 7000ms to 15000ms; assertions and navigation timeouts unchanged.",
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test tests/browser/editor-accessibility-ime.test.js tests/browser/editor-layer-rename-draft.test.js",
+      "result": "PASS 4/4, exit 0; node --check both files and git diff --check PASS.",
+      "full_suite_before_timeout_only_change": "PASS 53/53 browser files and 0 failures on exact deployed source commit f82b33b."
+    },
+    "remote_ci_claim": "FAILURE; no aggregate CI PASS.",
+    "cost_and_storage": "0 Ft. Workflow screenshot artifact 2,897,834 bytes, retention 7 days; no duplicate rerun initiated."
+  }
 }
