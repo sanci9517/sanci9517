@@ -1,7 +1,7 @@
 # SANCI9517 — publikus weboldal: kreatív brief, dizájnrendszer és teljes tartalomterv
 
 **Dokumentum típusa:** belső, végrehajtható creator-webhely brief; NEM második platform-MASTER.  
-**Verzió:** 1.0 (tervezés) • **Dátum:** 2026-11-09 • **Státusz:** DESIGN SPEC / NOT IMPLEMENTED.  
+**Verzió:** 1.1 (tervezés) • **Dátum:** 2026-11-09 • **Státusz:** DESIGN SPEC / NOT IMPLEMENTED.  
 **Repository / ág:** sanci9517/sanci9517 → v2/foundation.  
 **Kanonikus termékterv:** docs/SANCI9517-CREATOR-PLATFORM-PLAN.md.  
 **Végrehajtási szabály:** AGENTS.md; ez a brief nem írhatja felül a MASTER-t, a release-gate-eket, a Save/Publish szétválasztását vagy a domainadatok tulajdonosát.  
@@ -411,3 +411,131 @@ A 404 oldal saját, játékos, világos CTA-val: „Ez a pálya most nem találh
 Ezek nem akadályozhatják a **tényszerű statikus** elemek minőségi megvalósítását; a hitelesítést igénylő szekciók átmenetileg rejtve vagy őszinte fallbackkal működjenek.
 
 **Dokumentum státusza:** csak kreatív és tartalmi brief, nem kész runtime funkció, nem éles publikálás, nem elfogadott Editor-kapu. A tényleges végrehajtás eredménye kizárólag ellenőrzött commit/teszt/éles bizonyíték alapján frissíthető.
+
+
+---
+
+## 14. V1.1 kreatív kiegészítés: nem weboldal, hanem felismerhető SANCI9517-élmény (2026-11-09)
+
+**Indok:** az 1.0 brief teljes információarchitektúrát és szerkesztett szöveget ad, de a világszintű minőséghez ez önmagában nem elég. Hiányzik az egyedi vizuális kulcsjelenet, az élmény időbeli változása, a visszatérési ok, a saját grafikai assetterv és a képernyőszintű vizuális minőségbiztosítás. Ez a kiegészítés ugyanazon **belső brief** része, nem új MASTER és nem jár automatikus feature-scope bővítéssel.
+
+### 14.1 Egy mondatos kreatív cél
+
+**A SANCI9517 weboldala egy saját digitális gaming stúdió:** megmutatja, mi történik épp, hova érdemes bekapcsolódni, és milyen pillanatról maradtál le. A látogató nem statikus névjegykártyát néz, hanem egy rendezett, élő creator-univerzumba érkezik.
+
+**Kreatív megkülönböztető:** „SANCI SIGNAL” — jel, adás, játék, felfedezés és a közösség együtt. Nem „cyberpunk stock-site”, nem agresszív RGB gamer-dashboard, nem tucat stream CTA grid. A jel-motívum összeköti a logót, a live állapotot, a tartalomkártyát, a szekcióváltásokat és a 404 oldalt.
+
+**Kreatív ellenpélda:** ha a SANCI9517 nevet és képeket más streamerére cserélve az oldal ugyanúgy működne, az arculat még túl általános; a vizuális tervet át kell dolgozni, nem elég a színcsere.
+
+**Valódiság:** Sanci személyisége és humora a később kiválasztott valódi videókból, hangulatokból és jóváhagyott saját szövegekből épüljön fel. Nem találunk ki poénokat, visszatérő közösségi szlenget, élettörténetet vagy brand-mitológiát helyette.
+
+### 14.2 Signature brand system — öt felismerhető elem
+
+1. **S / 9517 jel:** saját tervezésű, egyszerű, kisméretben és monochrome verzióban is működő geometrikus jel. Nem használható idegen védjegy. Brand boardon logó/ikon/fav/OG teszt.
+2. **Signal line:** rövid, szakaszos grafikai vonal, 1–2 px, cián → lila fényhatással. A navigáció aktív állapotán, videókártya-szélen és live panelen használható; legfeljebb 1–2 hangsúlyos helyen egyszerre.
+3. **Stage cut:** finom átlós / levágott sarok a kiemelt videó-média felületen. Az általános kártyákat nem szabdaljuk túl; egyetlen felismerhető forma.
+4. **Episode marker:** szerkesztett epizód/klip kártyákon következetes „FORTNITE / HEARTHSTONE / INDIE” kis címke és videótípus. Nem automatikus epizódszám, ha nincs adat.
+5. **Broadcast state:** három valós állapot látható különbséggel: LIVE (piros, tényleges igazolás), OFFLINE (semleges, legújabb tartalom), UNKNOWN (egyértelmű, nem hazudik).
+
+**Működéskorlátozás:** hover, scroll animációk, dynamic live update és stateful widgetek csak a valóban implementált Inspector/Canvas/Public útvonalon. Ha nincs meg, statikus, vizuálisan teljes P0 fallback.
+
+### 14.3 Főoldali „wow” storyboard: 0–5, 5–20, 20–60 másodperc
+
+**0–5 mp / első kép:** sötét, elegáns fejléc; hatalmas, jól olvasható SANCI9517 tipográfia; saját portré/eredeti grafikai „stage” a jobb oldalon. Egy valódi, elsődleges művelet. A státuszsáv nem takarja a címet.
+
+**5–20 mp / azonnal nézhető érték:** a hero után „MOST A SANCI VILÁGÁBAN” szerkesztett 3-as modul. A bal, nagy kártya a hét *valódi* kiválasztott videója; mellette 2 kisebb: kiemelt rövid pillanat és hiteles következő adás / alternatíva. Ez az oldal vizuális aláírása: aszimmetrikus, magazinszerű kártyakompozíció, nem három ugyanakkora téglalap.
+
+**20–60 mp / maradjak?** két külön hangulatú rész: játékvilág és közösség. Játékvilág: Fortnite / Hearthstone / indie „kapszulák”; közösség: saját, vállalható szöveg és ellenőrzött link. Kevesebb szekció, több tartalmi minőség.
+
+**Láthatatlan minőségi pillérek:** az első frame kiváló LCP és olvashatóság, no autoplay, érvényes CTA, nem ugorhat a layout a videó betöltésekor, mobilon sem tűnhet el az elsődleges művelet.
+
+### 14.4 Konkrét high-fidelity kompozíciók — a Work kötelező vizuális célja
+
+**A. 1440×900 desktop fold**  
+- Header 72–80px; bal wordmark, közép maximum 5–6 főlink, jobb érvényes watch CTA.  
+- Hero max 1320px content, bal kb. 55%, jobb kb. 45%; H1 maximum 2–3 sor; kiemelt címszavak saját tipográfiai kezeléssel, nem túlzsúfolt gradient text.  
+- Jobb media: saját portré/branding, mögötte finom „signal halo”, alul 1 sor valós platform/epizód jelölés.  
+- Fold alján részben már látszódjon a „Most érdemes megnézned” szekció — nem egy egész képernyős dekoratív üres blokk.
+
+**B. 390×844 mobil fold**  
+- Header 60–68px; embléma, valós status, hamburger 44×44px cél.  
+- Eyebrow után max 3–4 sor hero H1; pár soros lead; első CTA teljes szélesség, másodlagos megkülönböztetett, alatta 16:9 nyitómédia.  
+- A CTA-k nem csúszhatnak egy óriási portré mögé; legalább az elsődleges CTA elérhető a korai scrollban; nincs vízszintes túlcsordulás.
+- LIVE esetén mobilon diszkrét sticky watch CTA *csak ha nem akadályoz navigációt/hozzáférhetőséget és a renderer valóban tudja*; OFFLINE esetén nem tartunk fenn felesleges helyet.
+
+**C. 1024×768 tablet fold**  
+- Opcionális kétoszlopos hero, de 1024px-nél szabad tudatosan 1 oszlopra váltani.  
+- A videókártyák 2 oszlopban, a hamburger/drawer kényelmesen kezelhető; a képarányok nem torzulnak.
+
+**Kötelező visual-output gate:** Work készítsen az aktuális megoldásról screenshotokat legalább 1440×900, 1024×768, 390×844 és 320×700 nézetben az összes P0 oldalt reprezentáló kompozíciókról. Ezek alapján érdemi, 1–2 iterációs vizuális review: hierarchia, szín, üresség, tartalom, CTA, konzisztens assetek, mobil olvashatóság. A screenshot NEM jelent teljes Editor-fizikai elfogadást és nem kerül automatikusan a repóba.
+
+### 14.5 Három saját tartalmi „signature” — csökkentett kockázatú változat
+
+**SIGNAL NOW — „Most nálam”:**  
+- LIVE esetén valós adás/cím/csatorna, offline esetén kurált videó + következő hiteles menetrend.  
+- P0: meglévő schedule / validált link / statikus layout.  
+- Később: valódi kanonikus live-state integráció, helyi időzóna, frissítési állapot.  
+- Nem tartunk külön párhuzamos „live cache” adatbázist az Editorban.
+
+**SANCI MOMENTS — „A hét pillanata”:**  
+- P0: kézzel kurált, jogtiszta, valódi egy darab videó vagy klip nagy méretben; manuálisan frissíthető.
+- Később: Content Studio gyűjtemény, kategória/tag és automatikus ajánlás, ha már működik.
+- A „hét” megnevezés csak akkor szerepelhet, ha ténylegesen hetente változik; különben „Kiemelt pillanat”.
+
+**CHOOSE YOUR ROUTE — „Mire vagy kíváncsi?”:**  
+- P0: három jól tervezett, valóban működő vizuális belépési pont: „Nézz most”, „Nézz vissza”, „Gyere a közösségbe”. Ezt nem külön füles, adat nélküli szolgáltatásnak, hanem több létező oldalra vezető egyszerű komponensnek kell elkészíteni.
+- Később: érdeklődésalapú tartalomszűrés/egyéni kedvencek, kizárólag valódi beleegyezés és adatmodell alapján.
+- Egyedi, hasznos interakció legyen — nem animált látványfunkció öncélúan.
+
+### 14.6 Visszatérési ok: szerkesztőségi ritmus
+
+A weboldal legyen friss akkor is, ha éppen nincs stream. Ehhez ne feltételezzünk automatikus, már kész integrációt. Induló manuális „content operations” ritmus:
+
+| Esemény | Mit frissítünk? | Biztonságos P0 forrás |
+|---|---|---|
+| Új megerősített stream | Következő alkalom / téma | Kanonikus Schedule |
+| Új videó | Főoldali kiemelés és Videók gyűjtő | Igazolt csatornalink + jóváhagyott kép |
+| Jó klip | Kiemelt pillanat | Valós klip link és cover |
+| Esemény | Közösségi blokk | Jóváhagyott esemény |
+| Partneri együttműködés | Vékony szponzorsáv / Partnerek | Szerződésben engedélyezett logo és URL |
+
+**Szerkesztési idők:** nem ígérünk 24/7 automatikus frissességet; ha semmi új nincs, a jó statikus anyag marad, és nem jelenik meg hamis dátum/státusz.
+
+### 14.7 Saját brand asset-csomag — implementációtól külön előállítandó
+
+A tényleges világszintű vizuális eredményhez nem elég CSS és helyőrző. Worknek inventoryzni kell az Asset Registryt, majd a hiányzó *eredeti, jogosult* asseteket létrehozni vagy bekérni, új költség nélkül:
+
+- Wordmark: SANCI9517 horizontális és kompakt nézet, kis méretes teszttel.
+- Saját S/9517 embléma és favicon készlet; vektoros/bitmap korrekt export.
+- Egy jóváhagyott portré vagy saját grafikai karakteres hero kompozíció, legalább 16:9 és 4:5 crop-terv.
+- Legalább 3 egymással rokon, de külön Fortnite / Hearthstone / indie videó-cover rendszer; ne más játék vagy streamer védett borítóját másoljuk.
+- 9:16 rövid videó cover / 16:9 hosszú videó cover komponens, és saját OG (1200×630).
+- Signal-line, kapcsolódó szekcióminták, vizuálisan egyedi, de akadálymentes 404 grafika.
+- Jóváhagyott saját portré, aktuális csatornalinkek, 6–12 tényleges tartalom alapanyagként nagyobb értéket adnak, mint bármilyen szintetikus dekoráció.
+
+**Előírás:** ne legyen a végső publikált oldal tele stock gaming silhouette, idegen arc, irreális látványstatisztika vagy hamis gameplay screenshot. Engedély és asset hiányában használjunk eredeti márkaalapú grafikát és valódi csatornalinket.
+
+### 14.8 „Nem szabad összekeverni” — világklasszis minőség és feature-bloat
+
+| Most megvalósítható megjelenés a jelenlegi Editor validált képességeivel | Későbbi, csak MASTER szerinti funkció |
+|---|---|
+| Signature hero + egyedi brandkártyák + kurált kiemelés | automatikusan rangsorolt VOD/Short feed |
+| Kézzel frissíthető kiemelt videó és menetrend-kötés | minden provider adatát egyesítő real-time hub |
+| Vizuális community CTA és kapcsolati oldal | hitelesített fan profil, szavazás, ranglista |
+| Saját dekoratív „signal line”, reduced motion | komplex interaktív 3D tér, gamifikált vizuális motormodul |
+| Szabadon szerkeszthető tartalomblokkok | teljes önálló kampány-/shop-/membership workflow |
+
+**Alapelv:** egy eredeti, kiválóan kidolgozott főoldal és 8 minőségi aloldal jobb, mint 25 félkész modul. Minden megjelenített interakció valódi; minden planned elem függősége bejegyezendő a MASTER meglévő pontjába, ha igazolt gap.
+
+### 14.9 Work vizuális minőségkapu — ne álljon meg a „minden oldal létezik” szinten
+
+1. **Moodboard & 2 art-direction út:** az A irány „Cinematic Signal”, a B irány „Editorial Studio”. Mindkettő saját Sanci-tartalommal, a jelenlegi komponenskészlettel megvalósíthatóként legyen kidolgozva; válaszd azt, amelyik jobban olvasható és valódi márkaidentitást épít, ne keverd őket kontroll nélkül. Eltérő anyagi vagy márkaigény esetén tulajdonosi döntés.
+2. **Hero és 1 aloldal nagyfelbontású, működő kompozíciója:** ne csak szöveges prompt; valódi oldalrender, screenshot kontroll. A tartalom addig nem tekinthető dizájnban késznek, amíg az első képernyő generikus template-szerű.
+3. **Egyetlen komponensvizuális nyelv:** navigáció, button states, cards, page-header, video cover, footer. Eltérő oldalkompozíció megengedett, arculati szétesés nem.
+4. **Valódi tartalmi feltöltés:** ha nincs publikus adathoz vagy médiaassethez hozzáférés, őszinte fallback; ne jelenjen meg kitalált stream/videó.
+5. **Responsive review:** mobil és tablet ne „resized desktop”, hanem kész art-directed verzió. Hero- és CTA-rend, kártyák, video aspect és menükezelés külön ellenőrizendő.
+6. **A minőséget mérd, ne nevezd ki:** screenshot párhuzamos összehasonlítás, valós működés, linkek, Lighthouse / Web Vitals, hozzáférhetőség és törésponti regresszió; csak ellenőrzött PASS.
+
+**Frissített prioritási mondat Worknek:** „Ne egy teljesített menüpontlistát adj át, hanem egy olyan saját, élő tartalomélményt, ahol a SANCI9517 név már az első képernyőn vizuálisan egyértelmű, a videó és közösség ténylegesen használható, és a mobil verzió nem kompromisszum.”
+
+**Állapot:** spec only / not implemented / no live publish. E kreatív irány maga nem jogosít D1 éles írásra, migrációra, R2 törlésre, új fizetős szolgáltatásra vagy az Editor korai kézi elfogadására.
