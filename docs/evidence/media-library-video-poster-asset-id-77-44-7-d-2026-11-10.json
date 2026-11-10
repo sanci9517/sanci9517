@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "recorded_at_utc": "2026-11-10T20:11:30Z",
+  "recorded_at_utc": "2026-11-10T20:17:39Z",
   "plan_point": "77.44.7.D",
-  "status": "DEPLOYED_GITHUB_EDITOR_CORE_IN_PROGRESS",
+  "status": "DEPLOYED_LATEST_PUBLIC_DESIGN_BUILD_SUCCESS_EDITOR_CORE_CI_IN_PROGRESS",
   "scope": "Allow published Media Library video asset IDs to authorize a Media Library poster asset reference.",
   "finding": {
     "source": "src/routes/admin/media.ts",
@@ -31,9 +31,9 @@
     "branch": "v2/foundation",
     "verified_remote_head_before_release": "02b076a33acfe01bd0d7fb31aa32834dd6be521a",
     "runtime_commit": "02ec11a70796fe65225773bdc4e2d2d02c46b522",
-    "normal_fast_forward_push": "PASS; 02b076a3..02ec11a7 -> v2/foundation; git ls-remote confirmed exact branch SHA.",
+    "normal_fast_forward_push": "PASS; runtime commit 02ec11a7 pushed normally. Docs/evidence commit 8010625f was preserved; after concurrent public-design commits the branch was safely joined in merge commit 380c9113, pushed with remote 57f0ef01 as an ancestor. GitHub branch API verified exact HEAD 380c9113.",
     "github_actions": {
-      "public_runner_cost_basis": "PASS; repository metadata reports visibility=public; all workflow jobs use standard ubuntu-latest/ubuntu-24.04 runners. Official GitHub billing docs state standard hosted runner use remains free for public repositories: https://docs.github.com/en/billing/concepts/product-billing/github-actions.",
+      "public_runner_cost_basis": "Repository visibility public; standard ubuntu-latest/ubuntu-24.04 hosted runners are free for public repositories per https://docs.github.com/en/billing/concepts/product-billing/github-actions.",
       "exact_sha_runs": [
         {
           "name": "Canonical Creator Platform Plan",
@@ -77,11 +77,20 @@
             "Chromium install",
             "real Worker media upload with isolated D1/R2"
           ],
-          "current_step": "Editor browser layout regression"
+          "current_step": "Editor browser layout regression as of 2026-11-10T20:17Z"
         }
       ]
     },
-    "storage_budget": "Last owner-provided snapshot 0.45/0.50 GB. Current workflow uploads screenshots only when its always-run artifact step finds them; prior diagnostic artifact 2,894,137 bytes with 7-day retention. No artifact upload is yet reported for this exact-SHA run; preserve newest exact-SHA evidence."
+    "storage_budget": "Last owner-provided snapshot 0.45/0.50 GB. Current workflow uploads screenshots only when its always-run artifact step finds them; prior diagnostic artifact 2,894,137 bytes with 7-day retention. No artifact upload is yet reported for this exact-SHA run; preserve newest exact-SHA evidence.",
+    "github_branch_head": "380c91139213ef68f3fd9804b0e64d52432c4476",
+    "concurrent_remote_public_changes_preserved": [
+      "a4cf76d31c8ee8abf937756ac6ff91f910d059ae",
+      "16d790bd0007c9266688a215b73e8096a09262c6",
+      "9a58c0e4fc027412b89902650f70108f5624390a",
+      "1094fc241ecf80159f3bc956e4b82286ad628476",
+      "57f0ef017887113548ffbe11a843cd33a85df265"
+    ],
+    "docs_merge_worker_deploy": "No new Worker deploy was triggered by docs commit 801 or merge 380; configured Build excludes docs/**, tests/** and AGENTS.md. The final merge diff against remote 57f0ef01 contains only plan/evidence/metrics files."
   },
   "production": {
     "worker": "sanci9517-streamer-brand",
@@ -91,9 +100,9 @@
     "preflight_rows_written": 0,
     "preflight_changes": 0,
     "preflight_changed_db": false,
-    "worker_deploy": "DONE; Cloudflare Workers Build API verified exact commit 02ec11a, successful build, deploy:safe command, exact deployment/version, 100% traffic.",
+    "worker_deploy": "The video poster fix commit deployed at 100%. Subsequent public style/content commits on the same branch auto-built successfully and remain at 100%, including the fix as an ancestor. Docs-only commit/merge did not cause a redundant build.",
     "production_r2_operation": false,
-    "changed_public_assets": "None; only Worker route logic, tests, plan and evidence changed. Public Editor index and renderer were fetched and verified byte-identical to their local public sources.",
+    "changed_public_assets": "Concurrent public design commits changed public/visual-page.html and public/assets/site.css; the latest deployed public CSS hash exactly matches local. The root response is Worker-transformed HTML and was byte-for-byte reproduced from the local template and source transformation. Editor shell and renderer hashes also match.",
     "save_publish_separation_changed": false,
     "manual_physical_editor_acceptance": "DEFERRED until complete Editor acceptance gate.",
     "worker_build": {
@@ -148,8 +157,95 @@
       "rows_written": 0,
       "changes": 0,
       "changed_db": false
-    }
+    },
+    "runtime_fix_build": {
+      "build_uuid": "95ef7a3d-bfee-4e60-8889-1d2c8c099e65",
+      "source_commit": "02ec11a70796fe65225773bdc4e2d2d02c46b522",
+      "outcome": "success",
+      "command": "npm run typecheck && npm run deploy:safe",
+      "traffic_version": "c12e2fc2-8cf8-4339-b764-e2286df051da",
+      "deployment_id": "f1fb3306-bb0d-4e6f-ae2c-5876e9dafe41",
+      "traffic_percentage": 100
+    },
+    "latest_production_source_commit": "57f0ef017887113548ffbe11a843cd33a85df265",
+    "latest_production_build": {
+      "build_uuid": "ad082efe-9229-40a5-aa1c-f0e1f551520b",
+      "outcome": "success",
+      "command": "npm run typecheck && npm run deploy:safe",
+      "source": "concurrent public content/style follow-up; descends from runtime fix 02ec11a7"
+    },
+    "latest_deployment_id": "25e45611-5697-4e34-877f-01d3a7f1b2ba",
+    "latest_traffic_version": "a8d2a9df-e8a1-4e22-bead-a8352ec5d9f9",
+    "latest_traffic_percentage": 100,
+    "latest_deployment_checked_at_utc": "2026-11-10T20:15:47.040835Z",
+    "direct_health_after_latest_deployment": {
+      "checked_at_utc": "2026-11-10T20:17:39Z",
+      "status": 200,
+      "body": "{\"ok\":true,\"service\":\"sanci9517-streamer-brand\",\"version\":\"2.0.0\",\"server\":\"cloudflare-worker\"}",
+      "sha256": "0313b3785c7394ec3f0adc7f7664115116822aed017561b931eb834be156d49b"
+    },
+    "public_smoke_after_latest_deployment": {
+      "/": {
+        "status": 200,
+        "bytes": 7555,
+        "sha256": "885d34d9bd667fe0a439bcbe76e047705e4bb27617a20451006e15156a8bb428",
+        "verification": "Exact byte/hash match with the local visual-page.html after simulating src/index.ts publicPageHtml title/canonical/OG tag transformation."
+      },
+      "/assets/site.css": {
+        "status": 200,
+        "bytes": 17305,
+        "sha256": "ddbf229c236e74d91c9a4ce53a38becfda6ef1167469a4462b27e33f2b278049",
+        "local_sha256_matches": true
+      },
+      "/editor-v2/": {
+        "status": 200,
+        "bytes": 25894,
+        "sha256": "2bdc01749a46a69720497e267bbaa7582f703773f7c2ab2919f6f8fb783d4857",
+        "local_sha256_matches": true
+      },
+      "/editor-v2/core/authored-content.js": {
+        "status": 200,
+        "bytes": 30689,
+        "sha256": "3bf1f67a689b7554efd50abb34ffe248e75668bfa9cb72c717c8a668301e6d7d",
+        "local_sha256_matches": true
+      }
+    },
+    "production_d1_readback_after_latest_deployment": {
+      "query": "SELECT name FROM d1_migrations ORDER BY name;",
+      "rows_read": 34,
+      "last_migration": "0028_media_archive.sql",
+      "rows_written": 0,
+      "changes": 0,
+      "changed_db": false
+    },
+    "public_style_followup_builds": [
+      {
+        "source": "a4cf76d31c8ee8abf937756ac6ff91f910d059ae",
+        "build_uuid": "edc49c0d-3f62-4eee-a46b-0988dd4be2f6",
+        "outcome": "success"
+      },
+      {
+        "source": "16d790bd0007c9266688a215b73e8096a09262c6",
+        "build_uuid": "15231a61-9cf1-4605-9216-650eaa7f2c2e",
+        "outcome": "success"
+      },
+      {
+        "source": "9a58c0e4fc027412b89902650f70108f5624390a",
+        "build_uuid": "e1c01aca-ae81-497f-bc5f-17e205721334",
+        "outcome": "success"
+      },
+      {
+        "source": "1094fc241ecf80159f3bc956e4b82286ad628476",
+        "build_uuid": "efcc5203-2622-4e7f-8ae5-c5de89ae2d3a",
+        "outcome": "success"
+      },
+      {
+        "source": "57f0ef017887113548ffbe11a843cd33a85df265",
+        "build_uuid": "ad082efe-9229-40a5-aa1c-f0e1f551520b",
+        "outcome": "success"
+      }
+    ]
   },
   "cost_huf": 0,
-  "next_step": "Wait for exact-SHA Editor Core run 42892369134 to finish; if it succeeds, record its PASS and inspect any 7-day artifact. If it fails, record exact step/log and keep the plan point OPEN; the runtime code is already deployed. Continue remaining plan-defined 77.44.7.D media/content capability matrix. No production D1 write/migration or R2 delete."
+  "next_step": "Wait for exact-SHA Editor Core 42892369134 final result and record it; four other exact-SHA workflows are PASS. Continue remaining media/content capability requirements under 77.44.7.D. No production D1 writes/migrations, R2 deletion, or Editor manual acceptance until the full planned gate."
 }
