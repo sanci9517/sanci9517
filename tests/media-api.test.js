@@ -37,9 +37,10 @@ async function fixture(t) {
     db.prepare("INSERT INTO sessions VALUES (?,?,?)").run(await hashSessionToken(role),role,"2999-01-01");
   }
   const files = new Map();
+  const mediaReads = { count: 0 };
   const bucket = {
     async put(key,bytes) { files.set(key,Uint8Array.from(bytes)); },
-    async get(key) { const bytes=files.get(key); return bytes ? {body:new Blob([bytes]).stream()} : null; },
+    async get(key) { mediaReads.count++; const bytes=files.get(key); return bytes ? {body:new Blob([bytes]).stream()} : null; },
     async delete(key) { files.delete(key); },
     async head(key) { return files.has(key) ? {size:files.get(key).length} : null; },
     async list({prefix,limit,cursor}) {
@@ -83,7 +84,7 @@ async function fixture(t) {
     if(method==="POST"||method==="PATCH"||method==="DELETE") { headers.set("Origin",opts.origin||url.origin);headers.set("Content-Type",opts.contentType||(method==="PATCH"?"application/json":"image/png")); }
     return adminMediaRoute(new Request(url,{method,headers,...(body?{body}: {})}),env,opts.site||"site-default");
   };
-  return {db,env,files,call};
+  return {db,env,files,mediaReads,call};
 }
 
 test("authenticated image upload produces private asset and site-scoped listing",async t=>{
@@ -643,6 +644,43 @@ test("published Media Library delivery stops at the bounded root-child scan budg
   const response=await publishedMediaRoute(new Request(`https://example.test/media/${asset.id}`),f.env,"site-default",asset.id);
   assert.equal(response.status,404,"an incomplete visibility walk must not expose an uninspected late media node");
   assert.equal(f.files.size,1,"a bounded public reference walk is read-only");
+});
+
+test("published Media Library shares one scan budget across candidate pages",async t=>{
+  const f=await fixture(t);
+  const asset=(await (await f.call("POST","editor",png,{name:"cross-page-budget.png"})).json()).data;
+  const insert=f.db.prepare("INSERT INTO pages (id,site_id,archived_at,is_published,published_content_json,content_json,title,slug) VALUES(?,?,?,?,?,?,?,?)");
+  const makeTree=(prefix,count,includeImage=false)=>{
+    const children=Array.from({length:count},(_,index)=>`${prefix}-${String(index).padStart(5,"0")}`);
+    const nodes={root:{type:"root",metadata:{rootStyleVersion:1,legacyMarker:asset.id},children},...Object.fromEntries(children.map(id=>[id,{type:"text"}]))};
+    if(includeImage){children.push("zz-image");nodes.root.children=children;nodes["zz-image"]={type:"image",props:{assetId:asset.id}};}
+    return JSON.stringify({pages:{[prefix]:{rootId:"root",nodes}}});
+  };
+  // Each candidate is below the per-document cap, but their combined visibility
+  // walks exceed it. The valid reference is deliberately last in the second tree.
+  insert.run("a-heavy","site-default",null,1,makeTree("a-heavy",2_500),"{}","Heavy","a-heavy");
+  insert.run("b-late","site-default",null,1,makeTree("b-late",1_000,true),"{}","Late image","b-late");
+
+  const response=await publishedMediaRoute(new Request(`https://example.test/media/${asset.id}`),f.env,"site-default",asset.id);
+  assert.equal(response.status,404,"a later page must not receive a fresh per-document budget after the request budget is exhausted");
+  assert.equal(f.mediaReads.count,0,"incomplete proof must be rejected before reading the private R2 object");
+});
+
+test("published Media Library bounds candidate-page result materialization",async t=>{
+  const f=await fixture(t);
+  const asset=(await (await f.call("POST","editor",png,{name:"many-candidate-pages.png"})).json()).data;
+  const insert=f.db.prepare("INSERT INTO pages (id,site_id,archived_at,is_published,published_content_json,content_json,title,slug) VALUES(?,?,?,?,?,?,?,?)");
+  for(let index=0;index<100;index++){
+    const id=`candidate-${String(index).padStart(3,"0")}`;
+    const published=JSON.stringify({pages:{[id]:{rootId:"root",nodes:{root:{type:"root",metadata:{rootStyleVersion:1,legacyMarker:asset.id},children:[]}}}}});
+    insert.run(id,"site-default",null,1,published,"{}","Candidate",id);
+  }
+  const valid=JSON.stringify({pages:{"zz-valid":{rootId:"root",nodes:{root:{type:"root",metadata:{rootStyleVersion:1},children:["image"]},image:{type:"image",props:{assetId:asset.id}}}}}});
+  insert.run("zz-valid","site-default",null,1,valid,"{}","Valid reference beyond page cap","zz-valid");
+
+  const response=await publishedMediaRoute(new Request(`https://example.test/media/${asset.id}`),f.env,"site-default",asset.id);
+  assert.equal(response.status,404,"public authorization must fail closed when the bounded candidate window contains no exact rendered reference");
+  assert.equal(f.mediaReads.count,0,"an asset outside the bounded candidate window must not cause an R2 read");
 });
 
 test("anonymous, viewer and cross-origin writers cannot read or create media",async t=>{

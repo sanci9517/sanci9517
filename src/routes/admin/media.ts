@@ -17,6 +17,7 @@ const SITE_MEDIA_LIMIT_BYTES = 5 * 1000 * 1000 * 1000;
 const MAX_USAGE_SNAPSHOTS = 100;
 const MAX_USAGE_REFERENCES = 100;
 const MAX_USAGE_SCAN_ENTRIES = 20_000;
+const MAX_PUBLIC_MEDIA_SNAPSHOTS = 100;
 
 type MediaRow = {
   id: string; site_id: string; object_key: string; original_name: string;
@@ -685,11 +686,22 @@ export async function publishedMediaRoute(request: Request, env: Env, siteId: st
   ).bind(assetId, siteId).first<MediaRow>();
   if (!row || row.archived_at || !(MEDIA_MIMES as readonly string[]).includes(row.mime_type)) return error("MEDIA_NOT_FOUND", 404);
   const pages = await env.DB.prepare(
-    "SELECT id,published_content_json FROM pages WHERE site_id=? AND archived_at IS NULL AND is_published=1 AND published_content_json IS NOT NULL AND instr(published_content_json,?)>0"
+    `SELECT id,published_content_json FROM pages WHERE site_id=? AND archived_at IS NULL AND is_published=1 AND published_content_json IS NOT NULL AND instr(published_content_json,?)>0 ORDER BY id LIMIT ${MAX_PUBLIC_MEDIA_SNAPSHOTS}`
   ).bind(siteId, assetId).all<{ id: string; published_content_json: string }>();
-  const allowed = pages.results.some(page => {
-    try { return documentAssetReferences(page.published_content_json, page.id, assetId, true, row.mime_type).length > 0; } catch { return false; }
-  });
+  // A single public request may inspect multiple candidate snapshots. Reuse
+  // one budget across them and cap result materialization so many pages with
+  // incidental ID text cannot create unbounded parsing, memory or R2 reads.
+  const scan: AssetReferenceScanStatus = { complete: true, visited: 0 };
+  let allowed = false;
+  for (const page of pages.results) {
+    if (!scan.complete) break;
+    try {
+      if (documentAssetReferences(page.published_content_json, page.id, assetId, true, row.mime_type, scan).length) {
+        allowed = true;
+        break;
+      }
+    } catch { /* Corrupt published snapshots do not authorize delivery. */ }
+  }
   if (!allowed) return error("MEDIA_NOT_FOUND", 404);
   const object = await env.MEDIA.get(row.object_key);
   if (!object) return error("MEDIA_OBJECT_MISSING", 404);
