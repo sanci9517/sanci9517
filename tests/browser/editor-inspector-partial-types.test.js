@@ -646,6 +646,7 @@ test('every PARTIAL type renders Inspector routes and preserves Save versus Publ
   await editor.locator('.canvas-device-btn[data-device="desktop"]').click();
   await viewer.setViewportSize({width:1366,height:900});
   await viewer.reload();
+  await viewer.waitForFunction(expected=>document.querySelectorAll('.visual-editor-node[data-node-id]').length>=expected,editableNodes.length);
   for(const {type,id} of editableNodes){
     assert.equal(await publicNode(id).count(),1,`${type}: mobile visibility changes preserve desktop public output`);
     assert.equal(published.pages[pageId].nodes[id].visibility.desktop,true,`${type}: mobile actions preserve normalized desktop visibility`);

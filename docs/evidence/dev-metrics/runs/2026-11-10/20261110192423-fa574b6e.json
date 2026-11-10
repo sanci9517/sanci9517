@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "id": "20261110192423-fa574b6e",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-10T19:24:23.473Z",
+  "finished_at": "2026-11-10T19:39:05.524Z",
+  "wall_seconds": 882,
+  "paused_seconds": 0,
+  "measured_seconds": 882,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "A production runtime fix is live; the exact-SHA hosted Editor Core workflow failed in one browser assertion. Added a readiness wait and verified the complete targeted browser file locally; documented the unresolved hosted CI and kept plan point 77.44.7.D open.",
+  "evidence": [
+    "docs/evidence/media-reference-depth-guard-77-44-7-d-2026-11-10.json",
+    "tests/browser/editor-inspector-partial-types.test.js",
+    "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md"
+  ],
+  "checks": "Plan contract 13/13; canonical master 13 files; traceability 396/396; targeted browser 1/1 PASS; syntax, evidence JSON and diff checks PASS; hosted run 42876022023 FAILURE; no paid or quota-consuming rerun.",
+  "started_revision": "280dd39e239f61cb6bb3e124c6c7bd47d67a6e85",
+  "finished_revision": "280dd39e239f61cb6bb3e124c6c7bd47d67a6e85",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

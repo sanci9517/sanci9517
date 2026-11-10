@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "recorded_at_utc": "2026-11-10T18:22:06Z",
+  "recorded_at_utc": "2026-11-10T19:39:09Z",
   "plan_point": "77.44.7.D",
-  "status": "OPEN_LOCAL_FIX_VERIFIED_RELEASE_BLOCKED",
+  "status": "LOCAL_FIX_DEPLOYED_EDITOR_CORE_CI_FAILED_TEST_HARNESS_LOCAL_PASS",
   "scope": "Fail closed when media usage inspection reaches its recursion-depth bound, so retention cannot rely on an incomplete reference scan.",
   "finding": {
     "source": "src/routes/admin/media.ts",
@@ -31,26 +31,105 @@
   "source_control": {
     "repository": "sanci9517/sanci9517",
     "branch": "v2/foundation",
-    "local_head_sha": "80c6b8878047dc2556e5d1e7534d2da2708e907c",
-    "github_branch_api_head_sha": "80c6b8878047dc2556e5d1e7534d2da2708e907c",
-    "change_pushed": false,
-    "workflow_for_this_change": "NOT STARTED; no commit was pushed.",
-    "actions_quota": "UNVERIFIED. Owner's latest reported artifact-storage snapshot was 0.45/0.50 GB (90%); current free Actions compute/storage allowance could not be verified through the available GitHub API connection."
+    "local_head_sha": "280dd39e239f61cb6bb3e124c6c7bd47d67a6e85",
+    "github_branch_api_head_sha": "280dd39e239f61cb6bb3e124c6c7bd47d67a6e85",
+    "parent_sha": "80c6b8878047dc2556e5d1e7534d2da2708e907c",
+    "change_pushed": true,
+    "push_method": "Normal fast-forward push to v2/foundation; GitHub branch API verified the exact resulting SHA.",
+    "github_actions": {
+      "canonical_plan_active_point_audit": {
+        "run_id": 42876021969,
+        "status": "success"
+      },
+      "canonical_creator_platform_plan": {
+        "run_id": 42876021884,
+        "status": "success"
+      },
+      "f0_baseline_checks": {
+        "run_id": 42876021892,
+        "status": "success"
+      },
+      "twitch_integration_check": {
+        "run_id": 42876021890,
+        "status": "success"
+      },
+      "editor_core_test": {
+        "run_id": 42876022023,
+        "status": "failure",
+        "completed_at_utc": "2026-11-10T18:54:54Z",
+        "failed_step": "Run Editor browser layout regression",
+        "failed_test": "tests/browser/editor-inspector-partial-types.test.js:20:1",
+        "failure": "At 1366px, immediately after viewport resize and viewer.reload(), the test expected one public section element but observed zero. The renderer loads page data asynchronously; this assertion had no readiness wait at this point.",
+        "layout_files": "52/53 pass; 1 failed",
+        "subsequent_fail_fast_checks": "skipped",
+        "other_exact_sha_workflows": "4 success",
+        "current_local_test_harness_fix": "Added waitForFunction for expected public node count after desktop reload before assertions; local full 44-PARTIAL-type browser file passes 1/1.",
+        "local_post_fix_rerun": "PASS; node tests/browser/editor-inspector-partial-types.test.js; 1/1 test; 474774.478 ms (7m54.774s). Hosted run 42876022023 remains failure.",
+        "diagnostic_artifact": {
+          "id": 13794265541,
+          "name": "editor-layout-screenshots",
+          "size_bytes": 2894137,
+          "created_at_utc": "2026-11-10T18:54:52Z",
+          "expires_at_utc": "2026-11-17T18:54:51Z",
+          "sha256": "c862be660bd4014a507100f29e1bc3f2c94cd051e2e3c53e170f84a194933e91",
+          "retention_days": 7,
+          "content_reviewed": false
+        }
+      }
+    },
+    "actions_storage": "Owner's latest snapshot was 0.45/0.50 GB (90%). This repository is public; the current workflow's diagnostic screenshot artifact is configured for 7-day retention. Exact current storage meter was not exposed by the available API connection.",
+    "paid_actions_use": "None observed or authorized; 0 HUF.",
+    "followup_change": "Test-only synchronization fix plus canonical plan/evidence/metrics; intended normal fast-forward push uses [skip ci], no Worker deploy because runtime files are unchanged."
   },
   "production": {
     "worker": "sanci9517-streamer-brand",
-    "deployment_id": "d33e01e2-167d-4039-93ce-eb3d2dec3c64",
-    "traffic_version": "8dd3e172-56b2-44fd-a167-ca6098a794b8",
+    "build_uuid": "cc7acd82-f540-44fb-8cc9-ce78df86b252",
+    "build_outcome": "success",
+    "build_command": "npm run typecheck",
+    "deploy_command": "npm run deploy:safe",
+    "build_commit_sha": "280dd39e239f61cb6bb3e124c6c7bd47d67a6e85",
+    "deployment_id": "2d252f2a-1199-4615-8f13-6e8b6ba2d9b0",
+    "traffic_version": "14d7ce59-7a00-4b2d-8b1f-930dc112c63c",
     "traffic_percentage": 100,
-    "read_only_deployments_api_checked_at_utc": "2026-11-10T18:21:00Z",
+    "read_only_deployments_api_checked_at_utc": "2026-11-10T19:26:00Z",
     "direct_health": {
-      "checked_at_utc": "2026-11-10T18:22:06Z",
+      "checked_at_utc": "2026-11-10T18:52:44Z",
       "status": 200,
       "body": "{\"ok\":true,\"service\":\"sanci9517-streamer-brand\",\"version\":\"2.0.0\",\"server\":\"cloudflare-worker\"}"
     },
-    "public_asset_hash_comparison": "NOT APPLICABLE; this fix changes Worker source only and no public asset.",
-    "production_d1_preflight": "NOT RUN; deployment is blocked before release gates by unverified zero-cost Actions quota. No production D1 query, write, or migration occurred.",
-    "worker_deploy": "NOT DONE."
+    "public_http_smoke": {
+      "/": {
+        "status": 200,
+        "bytes": 6048,
+        "checked_at_utc": "2026-11-10T18:52:44Z"
+      },
+      "/editor-v2/": {
+        "status": 200,
+        "bytes": 25894,
+        "checked_at_utc": "2026-11-10T18:52:44Z",
+        "sha256": "2bdc01749a46a69720497e267bbaa7582f703773f7c2ab2919f6f8fb783d4857",
+        "local_sha256_matches": true
+      }
+    },
+    "public_asset_hash_comparison": "No public assets changed in commit 280dd39e. The Editor entry HTML was also fetched and byte-for-byte matched local source; production asset hash comparison for changed assets is not applicable.",
+    "production_d1_preflight_before_deploy": {
+      "query": "SELECT name FROM d1_migrations ORDER BY name;",
+      "rows_read": 34,
+      "last_migration": "0028_media_archive.sql",
+      "rows_written": 0,
+      "changes": 0,
+      "changed_db": false
+    },
+    "production_d1_readback_after_deploy": {
+      "query": "SELECT name FROM d1_migrations ORDER BY name;",
+      "rows_read": 34,
+      "last_migration": "0028_media_archive.sql",
+      "rows_written": 0,
+      "changes": 0,
+      "changed_db": false
+    },
+    "worker_deploy": "DONE via authorized Cloudflare automatic Workers Build; deploy:safe migration gate ran, no production migration was applied.",
+    "current_known_live_worker_state": "Read-only Cloudflare Deployments API recheck: latest deployment remains 2d252f2a-1199-4615-8f13-6e8b6ba2d9b0, traffic version 14d7ce59-7a00-4b2d-8b1f-930dc112c63c at 100%. A fresh direct health GET attempted in this session was blocked by outbound proxy CONNECT HTTP 403, so no new live health response is claimed; the last successful direct health GET is documented above at 2026-11-10T18:52:44Z."
   },
   "cost_huf": 0,
   "dev_metrics_run": "docs/evidence/dev-metrics/runs/2026-11-10/20261110180248-d14311bf.json",
@@ -58,5 +137,6 @@
   "production_r2_operation": false,
   "save_publish_separation_changed": false,
   "manual_physical_editor_acceptance": "DEFERRED until the complete Editor acceptance gate.",
-  "next_step": "Keep 77.44.7.D OPEN. Verify that required GitHub/Cloudflare release checks fit the owner's remaining free quota before pushing the runtime commit. Then run the read-only production D1 preflight, repeat the Wrangler dry-run against the release commit, perform a normal fast-forward push and required CI/automatic Worker Build, verify 100% traffic and direct health. If automatic deployment does not start or succeed, use deploy:safe only after all release gates pass."
+  "next_step": "Keep 77.44.7.D OPEN. Continue the plan-defined media/content capability matrix at its next unimplemented behavior; establish a focused regression and production-safe release gates for any runtime change. Do not rerun GitHub Actions until the free compute quota is verified; do not change Save/Publish separation or perform production D1 writes/migrations or R2 deletion.",
+  "ci_followup_dev_metrics_run": "docs/evidence/dev-metrics/runs/2026-11-10/20261110192423-fa574b6e.json"
 }

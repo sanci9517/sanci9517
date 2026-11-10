@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "id": "20261110190552-d7e9c980",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-10T19:05:52.353Z",
+  "abandoned_at": "2026-11-10T19:24:23.416Z",
+  "measured_seconds": null,
+  "status": "interrupted",
+  "reason": "user interrupted the browser-test block and requested a pause to clarify production visibility; no reliable end time",
+  "started_revision": "280dd39e239f61cb6bb3e124c6c7bd47d67a6e85",
+  "measurement": "missing end time; excluded from elapsed time and ETA"
+}
