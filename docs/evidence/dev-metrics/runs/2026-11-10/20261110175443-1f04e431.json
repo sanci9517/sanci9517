@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261110175443-1f04e431",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-10T17:54:43.102Z",
+  "finished_at": "2026-11-10T17:55:29.355Z",
+  "wall_seconds": 46,
+  "paused_seconds": 0,
+  "measured_seconds": 46,
+  "status": "pass",
+  "kind": "docs",
+  "summary": "Corrected the recovery record to the verified final remote SHA, exact remote divergence, and zero Actions runs on both docs commits.",
+  "evidence": [
+    "docs/evidence/recovery-source-2026-11-10.json",
+    "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md"
+  ],
+  "checks": "canonical plan; active cursor; traceability 396/396; plan-contract 13/13; diff check",
+  "started_revision": "193541c2f5db38ffc004fd342c6ef7a5d55981c3",
+  "finished_revision": "193541c2f5db38ffc004fd342c6ef7a5d55981c3",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

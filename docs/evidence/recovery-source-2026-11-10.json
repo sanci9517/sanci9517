@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "recorded_at_utc": "2026-11-10T17:48:21Z",
-  "last_updated_at_utc": "2026-11-10T17:53:09Z",
+  "last_updated_at_utc": "2026-11-10T17:54:39Z",
   "plan_point": "77.44.7.D",
   "status": "OPEN_RECOVERY_RECONCILED",
   "scope": "Recover the latest GitHub source into a separate worktree, preserve the older worktree, and rerun local checks for the media publication path. This is not a claim that unavailable private workspace state was recovered.",
@@ -9,17 +9,18 @@
     "repository": "sanci9517/sanci9517",
     "branch": "v2/foundation",
     "initial_recovery_head_sha": "fa1637c8288634f757db72a6674fadfe0a2a2122",
-    "github_head_sha": "0afd38a5bc5dd88d0dd742c442a027ed21bf2e1f",
-    "github_head_subject": "[skip ci] docs(recovery): restore and validate GitHub state",
+    "recovery_commit_sha": "0afd38a5bc5dd88d0dd742c442a027ed21bf2e1f",
+    "github_head_sha": "193541c2f5db38ffc004fd342c6ef7a5d55981c3",
+    "github_head_subject": "[skip ci] docs(recovery): verify pushed recovery record",
     "fetch": "Verified GitHub read-only fetch; local v2/foundation ref advanced by fast-forward only.",
     "recovery_worktree": "v2/foundation attached worktree at the exact GitHub HEAD; clean after checks.",
-    "recovery_commit_push": "Normal fast-forward push verified by GitHub Branch API and git ls-remote.",
-    "actions_runs_for_recovery_commit": 0,
+    "recovery_commit_push": "Both recovery commits were pushed normally; the final exact SHA was verified by GitHub Branch API and git ls-remote.",
+    "actions_runs_for_recovery_commits": 0,
     "older_worktree": {
       "branch": "work",
       "head_sha": "cff56293d0cd55a36f7bc2a4fb69a44dcaa14dc6",
       "working_tree": "clean",
-      "relation": "ancestor of GitHub v2/foundation; 1473 remote commits ahead and zero commits unique to the old work branch."
+      "relation": "ancestor of GitHub v2/foundation; 1474 remote commits ahead and zero commits unique to the old work branch."
     },
     "prior_unavailable_workspace": {
       "reported_head_sha": "1e36abe495c84fce4d14c3662fd7c4f46f0642f0",
