@@ -2,7 +2,7 @@
   "schema": 1,
   "task": "77.44.7.D",
   "subtask": "Public media HEAD metadata response without R2 body read",
-  "checked_at_utc": "2026-11-10T21:37:00Z",
+  "checked_at_utc": "2026-11-10T21:41:41Z",
   "source": {
     "branch": "v2/foundation",
     "commit": "e4fd4fe62834bbdfc09a47bf5ab833f752d1c1d4",
@@ -140,6 +140,15 @@
       "cache_control": "public, max-age=300, s-maxage=300",
       "body_downloaded": false,
       "asset_id": "omitted; public page reference used"
+    },
+    "custom_domain_health": {
+      "urls": [
+        "https://sanci9517.com/api/health",
+        "https://www.sanci9517.com/api/health"
+      ],
+      "checked_at_utc": "2026-11-10T21:41:41Z",
+      "status": "BLOCKED before HTTP response",
+      "error": "outbound proxy CONNECT returned HTTP 403; this is an environment egress restriction, not evidence of a site failure"
     }
   },
   "cost_and_safety": {
@@ -156,5 +165,10 @@
     "status": "partial",
     "measured_seconds": 863,
     "path": "docs/evidence/dev-metrics/runs/2026-11-10/20261110212359-d21c6873.json"
+  },
+  "dev_metrics_followup": {
+    "id": "20261110214141-97112311",
+    "status": "partial",
+    "path": "docs/evidence/dev-metrics/runs/2026-11-10/20261110214141-97112311.json"
   }
 }
