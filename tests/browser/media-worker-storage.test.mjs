@@ -18,8 +18,16 @@ const png=Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42
 const digest=bytes=>createHash('sha256').update(Buffer.from(bytes)).digest('hex');
 
 test('real Worker login, image upload, duplicate, Editor background asset lifecycle and non-empty diagnostics with local D1/R2', {timeout:180000},async t=>{
+ const cleanups=[];
+ // Node test-context after hooks run in registration order, so keep dependent
+ // resources in one stack and tear them down in reverse acquisition order.
+ t.after(async()=>{
+  const failures=[];
+  for(const cleanup of cleanups.reverse())try{await cleanup()}catch(error){failures.push(error)}
+  if(failures.length)throw new AggregateError(failures,'media storage fixture cleanup failed');
+ });
  const mf=new Miniflare(convertV4MiniflareOptions({modules:true,script:'',d1Databases:{DB:'media-acceptance-local'},r2Buckets:{MEDIA:'media-acceptance-local'}}));
- t.after(()=>mf.dispose());
+ cleanups.push(()=>mf.dispose());
  const DB=await mf.getD1Database('DB'), MEDIA=await mf.getR2Bucket('MEDIA');
  // This committed evidence contains DDL only, not production business rows.
  const schema=JSON.parse(readFileSync(resolve(root,'docs/evidence/d1-ledger-preflight.json'),'utf8')).result[0].results;
@@ -57,9 +65,9 @@ print(json.dumps(result))`],{cwd:root,encoding:'utf8'}));
   }catch{res.writeHead(500);res.end('Fixture request failed')}
  });
  await new Promise(done=>server.listen(0,'127.0.0.1',done));
- t.after(async()=>{await new Promise(done=>server.close(done));await Promise.all(pending)});
+ cleanups.push(async()=>{await new Promise((resolve,reject)=>server.close(error=>error?reject(error):resolve()));await Promise.all(pending)});
  const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||(existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined),args:['--no-sandbox']});
- t.after(()=>browser.close());
+ cleanups.push(()=>browser.close());
  const context=await browser.newContext({viewport:{width:390,height:900}}), page=await context.newPage();
  page.setDefaultTimeout(10000);
  const base='http://127.0.0.1:'+server.address().port;

@@ -1,0 +1,70 @@
+{
+  "schema": 1,
+  "task": "77.44.7.D",
+  "subtask": "Media storage browser fixture cleanup ordering",
+  "checked_at_utc": "2026-11-10T22:23:41Z",
+  "source": {
+    "branch": "v2/foundation",
+    "base_commit": "fbb4520b2bf3ecb1c77e06c41be7082b3b24352c",
+    "runtime_commit": "e4fd4fe62834bbdfc09a47bf5ab833f752d1c1d4",
+    "changed_files": [
+      "tests/browser/media-worker-storage.test.mjs"
+    ],
+    "behavior": "The integration-test fixture now registers one cleanup stack and tears resources down in reverse acquisition order: Chromium, local HTTP server and pending requests, then Miniflare. Cleanup failures are collected and surfaced as AggregateError. Runtime source, Save/Publish behavior and production data are unchanged."
+  },
+  "local_checks": {
+    "CHROMIUM_PATH=/usr/bin/chromium timeout --signal=TERM --kill-after=5s 300s npm run test:media:storage": "PASS, 1/1, 60.1 s; isolated local Worker/D1/R2 fixture and Chromium; loopback permission enabled for this run",
+    "npm run test:media": "PASS, 5/5 files",
+    "npm run test:editor": "PASS, 15/15 files and 3/3 Linux subreaper tests",
+    "npm run typecheck": "PASS",
+    "npm run test:web013:migration-gate": "PASS; local safety contract only",
+    "python3 -B tests/plan-contract.test.py": "PASS, 13/13",
+    "python3 -B scripts/check-canonical-plan.py": "PASS, 13 master files and 396 feature mappings; acceptance not certified",
+    "python3 -B scripts/audit-active-plan-point.py": "PASS; cursor 77.44.7.D remains OPEN / NOT_CERTIFIED",
+    "python3 scripts/build-feature-traceability.py --check": "PASS, 396/396 mappings",
+    "node --check tests/browser/media-worker-storage.test.mjs": "PASS",
+    "git diff --check": "PASS"
+  },
+  "execution_environment": {
+    "default_sandbox_result": "The fixture cannot bind 127.0.0.1 without local loopback permission (listen EPERM); a run in that mode is blocked before product assertions and may not be treated as a test failure.",
+    "permitted_test_run": "The same code and test passed with local loopback networking enabled; no external service or production resource was used."
+  },
+  "github": {
+    "branch_head_before_test_only_commit": "fbb4520b2bf3ecb1c77e06c41be7082b3b24352c",
+    "runtime_sha_workflows": [
+      {"name": "Canonical Plan Active Point Audit", "run_id": 42905624406, "conclusion": "success"},
+      {"name": "Canonical Creator Platform Plan", "run_id": 42905623861, "conclusion": "success"},
+      {"name": "Twitch Integration Check", "run_id": 42905623710, "conclusion": "success"},
+      {"name": "F0 baseline checks", "run_id": 42905624151, "conclusion": "success"},
+      {"name": "Editor Core Test", "run_id": 42905624067, "conclusion": "failure"}
+    ],
+    "editor_core_failure": "At tests/browser/editor-layer-rename-draft.test.js:100, the 1366px case timed out waiting for textbox Réteg neve. This independent browser-layout failure is not changed by the media storage fixture teardown fix.",
+    "test_only_sha_workflows": "No Actions workflows are associated with the prior docs-only SHA fbb4520b2bf3ecb1c77e06c41be7082b3b24352c; this test-only change will use the repository [skip ci] convention and no CI rerun is claimed."
+  },
+  "cloudflare": {
+    "worker": "sanci9517-streamer-brand",
+    "latest_deployment_id": "10adc383-9a7b-43d0-b31b-5df8850663af",
+    "latest_deployment_at_utc": "2026-11-10T21:30:32.194966Z",
+    "traffic_version": "d3048753-ded0-4aa8-b165-c98ebe3a15d9",
+    "traffic_percent": 100,
+    "runtime_source_commit": "e4fd4fe62834bbdfc09a47bf5ab833f752d1c1d4",
+    "test_only_change_deployed": false,
+    "asset_hash_comparison": "Not applicable: the change affects only tests and does not modify public assets."
+  },
+  "production_smoke": {
+    "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+    "checked_at_utc": "2026-11-10T22:23:41Z",
+    "method": "GET",
+    "http": 200,
+    "body": {"ok": true, "service": "sanci9517-streamer-brand", "version": "2.0.0", "server": "cloudflare-worker"}
+  },
+  "cost_and_safety": {
+    "new_paid_services_or_spending": "none; 0 Ft",
+    "current_invoice_or_actions_quota": "not available; no bill/quota guarantee claimed",
+    "production_d1_write_or_migration": "none",
+    "production_r2_write_or_delete": "none",
+    "save_publish_separation": "unchanged",
+    "full_visual_editor_manual_physical_acceptance": "DEFERRED until complete Editor scope"
+  },
+  "status": "Local storage integration test and relevant regression checks pass with permitted loopback. The test-only fix is not deployed and causes no Worker deployment. Existing exact-SHA Editor Core CI is FAILURE on a separate layer-rename browser timeout. Active plan point 77.44.7.D remains OPEN; this subtask does not certify the full D capability matrix."
+}

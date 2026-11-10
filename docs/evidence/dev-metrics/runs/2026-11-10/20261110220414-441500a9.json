@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261110220414-441500a9",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-10T22:04:14.276Z",
+  "finished_at": "2026-11-10T22:25:01.133Z",
+  "wall_seconds": 1247,
+  "paused_seconds": 0,
+  "measured_seconds": 1247,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "Stabilized local media storage browser-fixture teardown; targeted isolated test and relevant local checks pass, while exact-SHA Editor Core hosted CI has a separate layer-rename timeout.",
+  "evidence": [
+    "docs/evidence/media-worker-storage-teardown-77-44-7-d-2026-11-10.json"
+  ],
+  "checks": "media:storage 1/1 with authorized loopback; media 5/5; editor 15/15 plus subreaper 3/3; typecheck/migration gate/canonical plan/plan contract/active cursor/traceability/syntax/diff PASS; Editor Core exact-SHA FAILURE on independent editor-layer-rename-draft 1366px textbox timeout; production health HTTP 200; no deploy or production writes",
+  "started_revision": "fbb4520b2bf3ecb1c77e06c41be7082b3b24352c",
+  "finished_revision": "fbb4520b2bf3ecb1c77e06c41be7082b3b24352c",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
