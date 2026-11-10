@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "id": "20261110174206-44adaab8",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-10T17:42:06.388Z",
+  "abandoned_at": "2026-11-10T17:50:40.381Z",
+  "measured_seconds": null,
+  "status": "interrupted",
+  "reason": "The temporary worktree holding the pending metrics file was removed during safe cleanup; work completion time is unavailable, so do not measure or inflate it.",
+  "started_revision": "fa1637c8288634f757db72a6674fadfe0a2a2122",
+  "measurement": "missing end time; excluded from elapsed time and ETA"
+}

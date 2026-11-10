@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-10T17:48:21Z",
+  "plan_point": "77.44.7.D",
+  "status": "OPEN_RECOVERY_RECONCILED",
+  "scope": "Recover the latest GitHub source into a separate worktree, preserve the older worktree, and rerun local checks for the media publication path. This is not a claim that unavailable private workspace state was recovered.",
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "github_head_sha": "fa1637c8288634f757db72a6674fadfe0a2a2122",
+    "github_head_subject": "docs(plan): close editor workspace acceptance [skip ci]",
+    "fetch": "Verified GitHub read-only fetch; local v2/foundation ref advanced by fast-forward only.",
+    "recovery_worktree": "v2/foundation attached worktree at the exact GitHub HEAD; clean after checks.",
+    "older_worktree": {
+      "branch": "work",
+      "head_sha": "cff56293d0cd55a36f7bc2a4fb69a44dcaa14dc6",
+      "working_tree": "clean",
+      "relation": "ancestor of GitHub v2/foundation; 1472 remote commits ahead and zero commits unique to the old work branch."
+    },
+    "prior_unavailable_workspace": {
+      "reported_head_sha": "1e36abe495c84fce4d14c3662fd7c4f46f0642f0",
+      "reported_local_commits_ahead": 22,
+      "current_object_lookup": "Not found after fetching all reachable GitHub history.",
+      "archive_found": false,
+      "recovery_limit": "Unique uncommitted files or commits only in the unavailable workspace cannot be reconstructed from GitHub."
+    }
+  },
+  "recovered_media_path": {
+    "source": "src/routes/admin/media.ts",
+    "tests": "tests/media-api.test.js",
+    "finding": "Video asset IDs and video poster asset IDs are already matched against rendered publication paths with media-role/source checks; the legacy video/poster lifecycle is covered. No speculative code rewrite was needed.",
+    "source_changed": false
+  },
+  "checks": {
+    "npm_ci": "PASS; lockfile-resolved packages, ignore-scripts, no audit/funding calls",
+    "npm_run_test:media": "PASS; 5/5 test files",
+    "npm_run_test:editor": "PASS; 15/15 editor test files; Linux subreaper 3/3",
+    "npm_run_typecheck": "PASS",
+    "npm_run_test:web013:migration-gate": "PASS",
+    "git_diff_check": "PASS"
+  },
+  "production": {
+    "latest_recorded_deployment_id": "d33e01e2-167d-4039-93ce-eb3d2dec3c64",
+    "latest_recorded_traffic_version": "8dd3e172-56b2-44fd-a167-ca6098a794b8",
+    "latest_recorded_traffic_percentage": 100,
+    "last_recorded_health_check": "HTTP 200 on 2026-11-09 22:54 UTC",
+    "fresh_read_only_check_this_run": false,
+    "runtime_change_or_deploy_this_run": false
+  },
+  "actions_quota": "UNVERIFIED; no workflow was dispatched.",
+  "cost_huf": 0,
+  "production_d1_write_or_migration": false,
+  "production_r2_operation": false,
+  "save_publish_separation_changed": false,
+  "manual_physical_editor_acceptance": "DEFERRED until the full Editor acceptance gate",
+  "next_step": "Continue the remaining 77.44.7.D media/content capability work from the restored v2/foundation source; keep D open until its complete acceptance matrix passes."
+}
