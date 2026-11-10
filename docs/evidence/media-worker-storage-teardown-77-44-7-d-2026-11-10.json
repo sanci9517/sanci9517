@@ -7,6 +7,7 @@
     "branch": "v2/foundation",
     "base_commit": "fbb4520b2bf3ecb1c77e06c41be7082b3b24352c",
     "runtime_commit": "e4fd4fe62834bbdfc09a47bf5ab833f752d1c1d4",
+    "test_only_commit": "99a453f4a62365c848755ab72f5e338f2c258f59",
     "changed_files": [
       "tests/browser/media-worker-storage.test.mjs"
     ],
@@ -30,6 +31,7 @@
     "permitted_test_run": "The same code and test passed with local loopback networking enabled; no external service or production resource was used."
   },
   "github": {
+    "test_only_commit_ref_verified": "99a453f4a62365c848755ab72f5e338f2c258f59",
     "branch_head_before_test_only_commit": "fbb4520b2bf3ecb1c77e06c41be7082b3b24352c",
     "runtime_sha_workflows": [
       {"name": "Canonical Plan Active Point Audit", "run_id": 42905624406, "conclusion": "success"},
@@ -39,7 +41,7 @@
       {"name": "Editor Core Test", "run_id": 42905624067, "conclusion": "failure"}
     ],
     "editor_core_failure": "At tests/browser/editor-layer-rename-draft.test.js:100, the 1366px case timed out waiting for textbox Réteg neve. This independent browser-layout failure is not changed by the media storage fixture teardown fix.",
-    "test_only_sha_workflows": "No Actions workflows are associated with the prior docs-only SHA fbb4520b2bf3ecb1c77e06c41be7082b3b24352c; this test-only change will use the repository [skip ci] convention and no CI rerun is claimed."
+    "test_only_sha_workflows": "GitHub Actions API exact-SHA query for 99a453f4a62365c848755ab72f5e338f2c258f59 returned total_count=0; the [skip ci] test/docs commit has no workflow result and no CI PASS is claimed."
   },
   "cloudflare": {
     "worker": "sanci9517-streamer-brand",
@@ -49,11 +51,12 @@
     "traffic_percent": 100,
     "runtime_source_commit": "e4fd4fe62834bbdfc09a47bf5ab833f752d1c1d4",
     "test_only_change_deployed": false,
+    "verified_unchanged_after_push": true,
     "asset_hash_comparison": "Not applicable: the change affects only tests and does not modify public assets."
   },
   "production_smoke": {
     "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
-    "checked_at_utc": "2026-11-10T22:23:41Z",
+    "checked_at_utc": "2026-11-10T22:25:46Z",
     "method": "GET",
     "http": 200,
     "body": {"ok": true, "service": "sanci9517-streamer-brand", "version": "2.0.0", "server": "cloudflare-worker"}
