@@ -1,0 +1,112 @@
+{
+  "schema": 1,
+  "task": "77.44.7.D",
+  "subtask": "Bound public media authorization candidate scans",
+  "checked_at_utc": "2026-11-10T21:19:59Z",
+  "implementation": {
+    "commit": "161f591b57cf73d0fd95184b3f6c6e087c03becd",
+    "message": "fix(media): bound public authorization scans",
+    "files": [
+      "src/routes/admin/media.ts",
+      "tests/media-api.test.js",
+      "docs/evidence/feature-traceability.json"
+    ],
+    "behavior": "A single shared AssetReferenceScanStatus budget now bounds work across published Page Models considered for public authorization; the query orders candidates deterministically and limits the candidate set to 100. Scan exhaustion or failure to prove a real rendered reference fails closed. A reference on candidate page 101 can therefore be unavailable until the candidate set changes, but it is never served without positive authorization evidence.",
+    "save_publish_separation_changed": false
+  },
+  "regressions": [
+    {
+      "case": "Across-candidate shared budget",
+      "setup": "Two published candidate Page Models each remain individually within the 20,000-unit budget while their combined scan exhausts the shared budget before the later valid reference.",
+      "expected": "404 and zero R2 get operations; the later uninspected candidate cannot authorize the asset."
+    },
+    {
+      "case": "Candidate query upper bound",
+      "setup": "The first 100 ordered candidate snapshots contain an asset ID only in irrelevant metadata; a genuinely rendered reference exists on candidate 101.",
+      "expected": "404 and zero R2 get operations; the route never scans or serves beyond the configured candidate cap."
+    }
+  ],
+  "local_checks": {
+    "npm_run_test_media": "PASS, 5 test files, 5 passed, 0 failed (rerun 2026-11-10)",
+    "npm_run_typecheck": "PASS (rerun 2026-11-10)",
+    "npm_run_test_editor": "PASS in implementation check: 15 unit-test files and 3 Linux-subreaper checks",
+    "npm_run_test_web013_migration_gate": "PASS; deploy:safe does not apply production D1 migrations",
+    "python_tests_plan_contract": "PASS, 13/13 (rerun 2026-11-10)",
+    "python_scripts_audit_active_plan_point": "PASS; 77.44.7.D remains OPEN and functional acceptance NOT_CERTIFIED (rerun 2026-11-10)",
+    "git_diff_check": "PASS before docs-only evidence update",
+    "wrangler_deploy_dry_run": "PASS with Wrangler 4.130.0 in implementation check; read 171 assets without deploying",
+    "npm_run_test_media_storage": "BLOCKED locally: the isolated Miniflare/D1/R2/Chromium test made no progress for over four minutes; after interrupt, node:test reported 'Promise resolution is still pending but the event loop has already resolved' and exit 130. This is not a PASS. The exact-SHA hosted Editor Core job separately completed its isolated real Worker/D1/R2 media-upload step successfully."
+  },
+  "production_preflight": {
+    "operation": "SELECT name FROM d1_migrations ORDER BY name;",
+    "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
+    "rows_read": 34,
+    "last_migration": "0028_media_archive.sql",
+    "rows_written": 0,
+    "changes": 0,
+    "changed_db": false,
+    "production_migration_or_write_performed": false
+  },
+  "github": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "verified_branch_head": "161f591b57cf73d0fd95184b3f6c6e087c03becd",
+    "push": "normal fast-forward; no force push",
+    "exact_sha_workflows": {
+      "Canonical Creator Platform Plan": "SUCCESS (run 42903225460)",
+      "Canonical Plan Active Point Audit": "SUCCESS (run 42903225391)",
+      "Twitch Integration Check": "SUCCESS (run 42903225329)",
+      "F0 baseline checks": "SUCCESS (run 42903225323)",
+      "Editor Core Test": "IN_PROGRESS at 2026-11-10T21:19Z; browser layout regression running, later steps pending; aggregate CI is not complete"
+    },
+    "editor_core_run_url": "https://github.com/sanci9517/sanci9517/actions/runs/42903225342",
+    "artifact_and_quota": "No manual workflow dispatch or rerun. Current artifact-storage usage and invoice amount are not available to this check; the last user-provided snapshot was 0.45/0.50 GB."
+  },
+  "cloudflare": {
+    "build_uuid": "f37d7f07-c32f-4f4f-8506-2e4ab9e768b2",
+    "build_api_status": "stopped (terminal)",
+    "build_outcome": "SUCCESS",
+    "build_source_commit": "161f591b57cf73d0fd95184b3f6c6e087c03becd",
+    "build_command": "npm run typecheck",
+    "deploy_command": "npm run deploy:safe",
+    "build_log": "typecheck succeeded; WEB-013 migration safety gate passed without applying migrations; Wrangler 4.130.0 read 171 public assets, uploaded no changed asset files, deployed successfully, and printed Worker version d9427fb9-33f5-48ad-b0df-2300377d667f.",
+    "deployment_id": "2bf70019-d718-48b7-a86e-68bda704c36b",
+    "traffic_version_id": "d9427fb9-33f5-48ad-b0df-2300377d667f",
+    "traffic_percent": 100,
+    "direct_worker_health": {
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+      "checked_at_utc": "2026-11-10T21:19:59Z",
+      "status": 200,
+      "body": "{\"ok\":true,\"service\":\"sanci9517-streamer-brand\",\"version\":\"2.0.0\",\"server\":\"cloudflare-worker\"}"
+    },
+    "public_assets": {
+      "/editor-v2/": {
+        "status": 200,
+        "bytes": 25894,
+        "sha256": "2bdc01749a46a69720497e267bbaa7582f703773f7c2ab2919f6f8fb783d4857",
+        "local_sha256_matches": true
+      },
+      "/editor-v2/core/authored-content.js": {
+        "status": 200,
+        "bytes": 30689,
+        "sha256": "3bf1f67a689b7554efd50abb34ffe248e75668bfa9cb72c717c8a668301e6d7d",
+        "local_sha256_matches": true
+      },
+      "changed_public_assets": "None; the successful Cloudflare build log reports no updated public files to upload."
+    },
+    "custom_domain_health": "UNVERIFIED in this environment; direct custom-domain requests were previously blocked by its outbound proxy route. The workers.dev production endpoint returned 200."
+  },
+  "cost_and_mutations": {
+    "new_paid_service_or_limit_increase": false,
+    "user_cost_huf_claimed": 0,
+    "invoice_amount": "Not exposed by the available read-only checks; no invoice-zero guarantee is inferred.",
+    "production_d1_write_or_migration": false,
+    "production_r2_write_or_delete": false
+  },
+  "acceptance": {
+    "77_44_7_D": "OPEN; this subtask closes one authorization scan-bound gap only",
+    "visual_editor_manual_and_physical": "DEFERRED until the complete Editor acceptance gate",
+    "save_publish": "separate"
+  },
+  "next_step": "Continue the remaining 77.44.7.D media/content capability matrix after the exact-SHA Editor Core browser layout run completes. Do not call overall CI PASS until that workflow finishes; revisit the local storage-test runner separately without weakening coverage."
+}
