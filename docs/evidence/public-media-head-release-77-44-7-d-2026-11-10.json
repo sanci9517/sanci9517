@@ -1,0 +1,160 @@
+{
+  "schema": 1,
+  "task": "77.44.7.D",
+  "subtask": "Public media HEAD metadata response without R2 body read",
+  "checked_at_utc": "2026-11-10T21:37:00Z",
+  "source": {
+    "branch": "v2/foundation",
+    "commit": "e4fd4fe62834bbdfc09a47bf5ab833f752d1c1d4",
+    "message": "fix(media): avoid R2 body reads for public HEAD",
+    "files": [
+      "src/routes/admin/media.ts",
+      "tests/media-api.test.js",
+      "docs/evidence/feature-traceability.json"
+    ],
+    "behavior": "publishedMediaRoute now calls MEDIA.head for HEAD, returns metadata-derived Content-Length and null body; GET remains MEDIA.get and streams the object body. Missing R2 objects still return 404. Save and Publish are unchanged."
+  },
+  "local_checks": {
+    "npm run test:media": "PASS, all 5 files, including the new HEAD regression",
+    "npm run typecheck": "PASS",
+    "npm run test:editor": "PASS, 15 test files plus 3 Linux-subreaper checks",
+    "npm run test:web013:migration-gate": "PASS; gate confirms deploy:safe does not apply D1 migrations",
+    "python3 scripts/build-feature-traceability.py": "PASS",
+    "python3 tests/plan-contract.test.py": "PASS, 13/13",
+    "python3 scripts/check-canonical-plan.py": "PASS, 13 master files and 396 feature mappings; functional acceptance not certified",
+    "python3 scripts/audit-active-plan-point.py": "PASS; cursor 77.44.7.D remains OPEN / NOT_CERTIFIED",
+    "XDG_CONFIG_HOME=/tmp/sanci-wrangler-config ./node_modules/.bin/wrangler deploy --dry-run": "PASS, Wrangler 4.130.0; 171 assets read, no upload or deployment",
+    "git diff --check": "PASS",
+    "npm run test:media:storage": "BLOCKED in the preceding media block: local isolated Miniflare/D1/R2/Chromium process stalled without output and ended with Promise resolution pending / exit 130; not reported as PASS and not rerun here"
+  },
+  "github": {
+    "ref": "refs/heads/v2/foundation",
+    "head_sha_verified": "e4fd4fe62834bbdfc09a47bf5ab833f752d1c1d4",
+    "exact_sha_workflows": [
+      {
+        "name": "Canonical Plan Active Point Audit",
+        "run_id": 42905624406,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Canonical Creator Platform Plan",
+        "run_id": 42905623861,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Twitch Integration Check",
+        "run_id": 42905623710,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "F0 baseline checks",
+        "run_id": 42905624151,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Editor Core Test",
+        "run_id": 42905624067,
+        "status": "in_progress",
+        "conclusion": null
+      }
+    ],
+    "editor_core_completed_steps": [
+      "typecheck",
+      "editor core tests",
+      "offline D1 reconciliation and bootstrap tests",
+      "media API tests",
+      "Chromium setup",
+      "isolated Worker/D1/R2 media-upload test"
+    ],
+    "editor_core_active_step": "Editor browser layout regression",
+    "aggregate_ci": "INCOMPLETE; no overall PASS claim"
+  },
+  "cloudflare": {
+    "worker": "sanci9517-streamer-brand",
+    "build_uuid": "70e1b848-a5dd-416c-b505-4d52b424312c",
+    "build_outcome": "success",
+    "build_terminal_status": "stopped (terminal state)",
+    "build_source_commit": "e4fd4fe62834bbdfc09a47bf5ab833f752d1c1d4",
+    "build_branch": "v2/foundation",
+    "build_commands": [
+      "npm run typecheck",
+      "npm run deploy:safe"
+    ],
+    "deployment_id": "10adc383-9a7b-43d0-b31b-5df8850663af",
+    "deployed_at_utc": "2026-11-10T21:30:32.194966Z",
+    "traffic_version": "d3048753-ded0-4aa8-b165-c98ebe3a15d9",
+    "traffic_percent": 100,
+    "deploy_log_checks": [
+      "migration safety gate passed; no D1 migration was applied",
+      "171 public assets read",
+      "No updated asset files to upload",
+      "Wrangler deploy command completed successfully"
+    ],
+    "production_d1_preflight_and_post_release_readback": {
+      "sql": "SELECT name FROM d1_migrations ORDER BY name;",
+      "rows_read": 34,
+      "last_migration": "0028_media_archive.sql",
+      "rows_written": 0,
+      "changes": 0,
+      "changed_db": false
+    }
+  },
+  "production_smoke": {
+    "base_url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev",
+    "health": {
+      "url": "/api/health",
+      "checked_at_utc": "2026-11-10T21:33:26Z",
+      "http": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "public_assets_unchanged_by_this_runtime_fix": [
+      {
+        "path": "/editor-v2/",
+        "http": 200,
+        "bytes": 25894,
+        "sha256_local_and_production": "2bdc01749a46a69720497e267bbaa7582f703773f7c2ab2919f6f8fb783d4857"
+      },
+      {
+        "path": "/editor-v2/core/authored-content.js",
+        "http": 200,
+        "bytes": 30689,
+        "sha256_local_and_production": "3bf1f67a689b7554efd50abb34ffe248e75668bfa9cb72c717c8a668301e6d7d"
+      }
+    ],
+    "head_behavior": {
+      "path": "/media/:assetId",
+      "request_method": "HEAD",
+      "checked_at_utc": "2026-11-10T21:36:59Z",
+      "http": 200,
+      "content_type": "image/png",
+      "content_length": 1848009,
+      "cache_control": "public, max-age=300, s-maxage=300",
+      "body_downloaded": false,
+      "asset_id": "omitted; public page reference used"
+    }
+  },
+  "cost_and_safety": {
+    "new_paid_services_or_spending": "none",
+    "invoice_or_current_quota": "not available from these checks; no billing guarantee claimed",
+    "production_d1_mutation_or_migration": "none",
+    "r2_write_or_delete": "none",
+    "save_publish_separation": "preserved",
+    "full_visual_editor_manual_physical_acceptance": "DEFERRED until the complete Editor scope is implemented"
+  },
+  "status": "Runtime behavior is deployed and directly smoke-tested. Exact-SHA required GitHub aggregate CI remains INCOMPLETE while Editor Core browser layout regression runs. Active plan point 77.44.7.D remains OPEN; this subtask does not certify the full D point.",
+  "dev_metrics": {
+    "id": "20261110212359-d21c6873",
+    "status": "partial",
+    "measured_seconds": 863,
+    "path": "docs/evidence/dev-metrics/runs/2026-11-10/20261110212359-d21c6873.json"
+  }
+}

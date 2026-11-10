@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261110212359-d21c6873",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-10T21:23:59.045Z",
+  "finished_at": "2026-11-10T21:38:21.761Z",
+  "wall_seconds": 863,
+  "paused_seconds": 0,
+  "measured_seconds": 863,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "Public media HEAD now validates R2 metadata without body reads; released and directly smoke-verified. Aggregate exact-SHA Editor Core CI still running; storage test remains blocked.",
+  "evidence": [
+    "docs/evidence/public-media-head-release-77-44-7-d-2026-11-10.json"
+  ],
+  "checks": "media/typecheck/editor/migration gate/plan checks/dry-run PASS; exact-SHA Editor Core browser regression IN_PROGRESS; storage test BLOCKED",
+  "started_revision": "5bc768653c64a9c951e492f1a19fbe4bfecab03b",
+  "finished_revision": "e4fd4fe62834bbdfc09a47bf5ab833f752d1c1d4",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
