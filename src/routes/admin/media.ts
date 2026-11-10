@@ -24,6 +24,7 @@ type MediaRow = {
 
 const PLAYABLE_MIMES = ["audio/mpeg", "audio/ogg", "audio/wav", "video/webm"] as const;
 const MEDIA_MIMES = [...IMAGE_MIMES, ...PLAYABLE_MIMES] as const;
+const MEDIA_ASSET_ID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 function mediaMime(bytes: Uint8Array): string | null {
   if (bytes.length >= 8 && [137,80,78,71,13,10,26,10].every((v,i) => bytes[i] === v)) return "image/png";
   if (bytes.length >= 3 && bytes[0] === 255 && bytes[1] === 216 && bytes[2] === 255) return "image/jpeg";
@@ -175,7 +176,7 @@ function documentAssetReferences(json: string, pageId: string, assetId: string, 
       catch { return false; }
     };
     const validVideoSource = () => {
-      try { return typeof props?.src === "string" && Boolean(safeMediaUrl(props.src)); }
+      try { return (typeof props?.assetId === "string" && MEDIA_ASSET_ID.test(props.assetId)) || (typeof props?.src === "string" && Boolean(safeMediaUrl(props.src))); }
       catch { return false; }
     };
     const renderedBackground = (path: string): boolean => {

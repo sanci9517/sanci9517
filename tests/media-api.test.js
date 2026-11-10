@@ -547,7 +547,7 @@ test("published legacy image, video, audio and video-poster asset IDs resolve th
       image:{type:"image",props:{assetId:image.id,src:"/old-image.png"}},
       video:{type:"video",props:{assetId:video.id,src:"/old-video.webm"}},
       audio:{type:"audio",props:{assetId:audio.id,src:"/old-audio.wav"}},
-      "poster-video":{type:"video",props:{src:"/old-video.webm",posterAssetId:poster.id}}
+      "poster-video":{type:"video",props:{assetId:video.id,posterAssetId:poster.id}}
     }
   }}};
   f.db.prepare("INSERT INTO pages (id,site_id,archived_at,is_published,published_content_json,content_json,title,slug) VALUES(?,?,?,?,?,?,?,?)")

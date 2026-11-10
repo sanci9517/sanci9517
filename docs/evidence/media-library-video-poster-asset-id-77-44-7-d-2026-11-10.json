@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-10T20:10:00Z",
+  "plan_point": "77.44.7.D",
+  "status": "IMPLEMENTED_LOCAL_RELEASE_PENDING",
+  "scope": "Allow published Media Library video asset IDs to authorize a Media Library poster asset reference.",
+  "finding": {
+    "source": "src/routes/admin/media.ts",
+    "reproduction": "The published public renderer supports video props.assetId and posterAssetId independently. The shared public media authorization scanner only recognized a video props.src URL as a valid video source, so a Media Library video with no external src made its otherwise rendered poster reference return HTTP 404.",
+    "regression_before_fix": "The updated media API regression failed against the old predicate: the published poster asset returned 404 where the assertion required 200.",
+    "fix": "Treat a strictly validated UUID-shaped props.assetId as a valid video source alongside the existing safeMediaUrl props.src path. The poster remains gated by video node type, source validity, and image MIME compatibility; publication/site scoping checks are unchanged.",
+    "regression_after_fix": "The poster-video fixture uses a real UUID Media Library video assetId with no src and confirms its published poster asset resolves through the shared public media route.",
+    "production_data_touched": false
+  },
+  "checks": {
+    "node_media_api_test": "PASS; 37/37 tests, including published video/poster Media Library UUID path.",
+    "npm_run_test:media": "PASS; 5/5 test files.",
+    "npm_run_test:editor": "PASS; 15/15 Node test files; Linux subreaper contract 3/3.",
+    "npm_run_typecheck": "PASS.",
+    "npm_run_test:web013:migration-gate": "PASS; local safety gate only, no production write.",
+    "plan_contract": "PASS; 13 tests after regenerating the source fingerprint traceability.",
+    "feature_traceability": "PASS; 396 source mappings.",
+    "canonical_plan": "PASS; one complete 13-file master; functional acceptance remains NOT_CERTIFIED.",
+    "git_diff_check": "PASS.",
+    "npm_run_test:media:storage": "BLOCKED; isolated local Worker + Miniflare + Chromium test emitted no test output and did not exit within its 180-second test limit; the local process was stopped after hanging. No remote resources or production data were involved.",
+    "wrangler_dry_run": "PASS; Wrangler 4.130.0 read 171 public assets; 336.20 KiB total / 87.71 KiB gzip; --dry-run exited without deploying. Wrangler printed a non-fatal log-directory ENOENT warning before completing.",
+    "production_health_before_release": "PASS; direct GET /api/health at 2026-11-10T20:05:45Z returned HTTP 200, ok=true, version=2.0.0. This is pre-release state only."
+  },
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "verified_remote_head_before_release": "02b076a33acfe01bd0d7fb31aa32834dd6be521a",
+    "runtime_commit": "PENDING",
+    "normal_fast_forward_push": "PENDING",
+    "github_actions": "PENDING exact runtime SHA checks; the GitHub repository is public and workflows use standard ubuntu-latest runners, whose compute remains free for public repositories according to https://docs.github.com/en/billing/concepts/product-billing/github-actions.",
+    "storage_budget": "The last owner-provided Actions storage snapshot was 0.45/0.50 GB. This run did not upload an artifact. The previous exact-SHA diagnostic screenshot artifact was 2,894,137 bytes with 7-day retention, expiring 2026-11-17."
+  },
+  "production": {
+    "worker": "sanci9517-streamer-brand",
+    "preflight_query": "SELECT name FROM d1_migrations ORDER BY name;",
+    "preflight_last_migration": "0028_media_archive.sql",
+    "preflight_rows_read": 34,
+    "preflight_rows_written": 0,
+    "preflight_changes": 0,
+    "preflight_changed_db": false,
+    "worker_deploy": "PENDING required CI / fast-forward / deployment checks.",
+    "production_r2_operation": false,
+    "changed_public_assets": [],
+    "save_publish_separation_changed": false,
+    "manual_physical_editor_acceptance": "DEFERRED until complete Editor acceptance gate."
+  },
+  "cost_huf": 0,
+  "next_step": "Finish any remaining local release checks, commit and normal-fast-forward-push the runtime fix without a CI skip, then verify exact-SHA workflows and Cloudflare automatic Worker Build. If the build succeeds, confirm 100% traffic, direct health and unchanged public asset hashes; perform only the documented read-only D1 verification. Do not apply migrations, mutate production data or delete R2 objects."
+}
