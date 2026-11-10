@@ -101,20 +101,29 @@ function dto(row: MediaRow) {
 
 function escapeLike(value: string): string { return value.replace(/[\^%_]/g, "^$&"); }
 
-function assetPaths(value: unknown, assetId: string, path = "", depth = 0): string[] {
-  if (depth > 16 || !value || typeof value !== "object") return [];
-  if (Array.isArray(value)) return value.flatMap((item, index) => assetPaths(item, assetId, `${path}[${index}]`, depth + 1));
+type AssetReferenceScanStatus = { complete: boolean };
+
+function assetPaths(value: unknown, assetId: string, path = "", depth = 0, scan?: AssetReferenceScanStatus): string[] {
+  if (!value || typeof value !== "object") return [];
+  if (depth > 16) {
+    // A bounded scan is useful only when truncation cannot be mistaken for
+    // proof that an asset is unused. Retirement and archive checks consume
+    // this status and must fail closed if a nested record could not be read.
+    if (scan) scan.complete = false;
+    return [];
+  }
+  if (Array.isArray(value)) return value.flatMap((item, index) => assetPaths(item, assetId, `${path}[${index}]`, depth + 1, scan));
   const record = value as Record<string, unknown>;
   const paths: string[] = [];
   for (const [key, item] of Object.entries(record)) {
     const next = path ? `${path}.${key}` : key;
     if ((key === "assetId" || key === "backgroundAssetId" || key === "imageAssetId" || key === "posterAssetId") && item === assetId) paths.push(next);
-    else if (item && typeof item === "object") paths.push(...assetPaths(item, assetId, next, depth + 1));
+    else if (item && typeof item === "object") paths.push(...assetPaths(item, assetId, next, depth + 1, scan));
   }
   return paths;
 }
 
-function documentAssetReferences(json: string, pageId: string, assetId: string, publicOnly = false, mime = ""): { nodeId: string; nodeName: string; path: string }[] {
+function documentAssetReferences(json: string, pageId: string, assetId: string, publicOnly = false, mime = "", scan?: AssetReferenceScanStatus): { nodeId: string; nodeName: string; path: string }[] {
   const model = JSON.parse(json) as { pages?: Record<string, { rootId?: string; nodes?: Record<string, { name?: string; type?: string; metadata?: {cardContentVersion?: number;contentVersion?: number;editorContentVersion?: number;rootStyleVersion?: number;editorRootVersion?: number}; props?: unknown; style?: unknown; responsive?: unknown; visibility?: unknown; children?: string[] }> }> };
   const page = model?.pages?.[pageId];
   const nodes = page?.nodes;
@@ -199,7 +208,7 @@ function documentAssetReferences(json: string, pageId: string, assetId: string, 
         renderedBackground(path) && compatible("image");
     };
     return ["props", "style", "responsive"].flatMap(field =>
-      assetPaths(node[field as keyof typeof node], assetId, field)
+      assetPaths(node[field as keyof typeof node], assetId, field, 0, scan)
         .filter(renderedReference)
         .map(path => ({ nodeId, nodeName, path })));
   });
@@ -219,7 +228,10 @@ async function mediaUsage(env: Env, siteId: string, assetId: string): Promise<Re
   const add = (json: string | null, page: { id: string; title: string; slug: string; archived_at: string | null }, source: "draft" | "published" | "revision", version?: number) => {
     if (!json || !json.includes(assetId)) return;
     try {
-      for (const ref of documentAssetReferences(json, page.id, assetId)) {
+      const scan: AssetReferenceScanStatus = { complete: true };
+      const found = documentAssetReferences(json, page.id, assetId, false, "", scan);
+      if (!scan.complete) complete = false;
+      for (const ref of found) {
         if (references.length >= MAX_USAGE_REFERENCES) { complete = false; return; }
         references.push({ pageId: page.id, pageTitle: page.title, slug: page.slug, archived: Boolean(page.archived_at), source, ...(version === undefined ? {} : { version }), ...ref });
       }

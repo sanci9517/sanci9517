@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-10T18:22:06Z",
+  "plan_point": "77.44.7.D",
+  "status": "OPEN_LOCAL_FIX_VERIFIED_RELEASE_BLOCKED",
+  "scope": "Fail closed when media usage inspection reaches its recursion-depth bound, so retention cannot rely on an incomplete reference scan.",
+  "finding": {
+    "source": "src/routes/admin/media.ts",
+    "reproduction": "A saved page model contained the target asset ID below 16 nested objects. The usage endpoint returned complete=true with an empty reference list, and the retention request could therefore treat an uninspected document as unused.",
+    "fix": "assetPaths accepts a per-document scan status and marks it incomplete when a nested object crosses the bounded depth. mediaUsage propagates this to usage.complete; no guessed reference path is returned.",
+    "safety_effect": "The existing retentionRequest complete-usage guard responds 409 / USAGE_INCOMPLETE. The regression asserts that no retention request row is inserted and the local R2 fixture object remains present.",
+    "production_data_touched": false
+  },
+  "checks": {
+    "red_before_fix": "The new deep-reference regression failed before the implementation change: expected complete=false, observed complete=true.",
+    "targeted_regression": "PASS; complete=false, no guessed references, HTTP 409 USAGE_INCOMPLETE, no request row, fixture object preserved.",
+    "npm_run_test:media": "PASS; 5/5 test files.",
+    "npm_run_test:editor": "PASS; 15/15 Node test files; Linux subreaper 3/3.",
+    "targeted_browser_media": "PASS; admin-media-integrity, admin-media-library, and admin-media-retention suites.",
+    "targeted_editor_browser_regression": "PASS; editor-accessibility-ime and editor-layer-rename-draft, 4/4 cases.",
+    "npm_run_test:media:storage": "PASS; 1/1 local Worker storage integration test using local D1/R2 fixtures.",
+    "npm_run_typecheck": "PASS.",
+    "npm_run_test:web013:migration-gate": "PASS; local safety gate only, no production database access.",
+    "plan_contract": "PASS; tests/plan-contract.test.py, 13 tests.",
+    "canonical_plan": "PASS; 13 master files; functional acceptance remains NOT_CERTIFIED.",
+    "active_plan_audit": "PASS; next point 77.44.7.D; acceptance NOT_CERTIFIED.",
+    "feature_traceability": "PASS; 396 source mappings.",
+    "git_diff_check": "PASS.",
+    "wrangler_dry_run": "PASS; Wrangler 4.130.0, 171 public assets read, 336.02 KiB total / 87.65 KiB gzip; no deployment performed."
+  },
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "local_head_sha": "80c6b8878047dc2556e5d1e7534d2da2708e907c",
+    "github_branch_api_head_sha": "80c6b8878047dc2556e5d1e7534d2da2708e907c",
+    "change_pushed": false,
+    "workflow_for_this_change": "NOT STARTED; no commit was pushed.",
+    "actions_quota": "UNVERIFIED. Owner's latest reported artifact-storage snapshot was 0.45/0.50 GB (90%); current free Actions compute/storage allowance could not be verified through the available GitHub API connection."
+  },
+  "production": {
+    "worker": "sanci9517-streamer-brand",
+    "deployment_id": "d33e01e2-167d-4039-93ce-eb3d2dec3c64",
+    "traffic_version": "8dd3e172-56b2-44fd-a167-ca6098a794b8",
+    "traffic_percentage": 100,
+    "read_only_deployments_api_checked_at_utc": "2026-11-10T18:21:00Z",
+    "direct_health": {
+      "checked_at_utc": "2026-11-10T18:22:06Z",
+      "status": 200,
+      "body": "{\"ok\":true,\"service\":\"sanci9517-streamer-brand\",\"version\":\"2.0.0\",\"server\":\"cloudflare-worker\"}"
+    },
+    "public_asset_hash_comparison": "NOT APPLICABLE; this fix changes Worker source only and no public asset.",
+    "production_d1_preflight": "NOT RUN; deployment is blocked before release gates by unverified zero-cost Actions quota. No production D1 query, write, or migration occurred.",
+    "worker_deploy": "NOT DONE."
+  },
+  "cost_huf": 0,
+  "dev_metrics_run": "docs/evidence/dev-metrics/runs/2026-11-10/20261110180248-d14311bf.json",
+  "production_d1_write_or_migration": false,
+  "production_r2_operation": false,
+  "save_publish_separation_changed": false,
+  "manual_physical_editor_acceptance": "DEFERRED until the complete Editor acceptance gate.",
+  "next_step": "Keep 77.44.7.D OPEN. Verify that required GitHub/Cloudflare release checks fit the owner's remaining free quota before pushing the runtime commit. Then run the read-only production D1 preflight, repeat the Wrangler dry-run against the release commit, perform a normal fast-forward push and required CI/automatic Worker Build, verify 100% traffic and direct health. If automatic deployment does not start or succeed, use deploy:safe only after all release gates pass."
+}

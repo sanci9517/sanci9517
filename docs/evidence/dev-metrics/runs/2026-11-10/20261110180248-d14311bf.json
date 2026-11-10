@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261110180248-d14311bf",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-10T18:02:48.553Z",
+  "finished_at": "2026-11-10T18:24:09.313Z",
+  "wall_seconds": 1281,
+  "paused_seconds": 0,
+  "measured_seconds": 1281,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "Fixed deep media-reference truncation locally; tests pass; production release is blocked pending verification of free Actions quota.",
+  "evidence": [
+    "docs/evidence/media-reference-depth-guard-77-44-7-d-2026-11-10.json"
+  ],
+  "checks": "npm run test:media; npm run test:editor; npm run typecheck; npm run test:web013:migration-gate; plan gates; Wrangler dry-run; production health GET 200",
+  "started_revision": "80c6b8878047dc2556e5d1e7534d2da2708e907c",
+  "finished_revision": "80c6b8878047dc2556e5d1e7534d2da2708e907c",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

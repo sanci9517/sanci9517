@@ -591,6 +591,25 @@ test("usage report includes exact site-scoped draft, published, archived and rev
   assert.equal((await (await f.call("GET","editor",null,{usage:asset.id})).json()).data.complete,false,"corrupt saved data must not produce an authoritative empty-usage report");
 });
 
+test("usage report fails closed when nested media references exceed the inspection depth",async t=>{
+  const f=await fixture(t);
+  const asset=(await (await f.call("POST","editor",png,{name:"deep-reference.png"})).json()).data;
+  let props={assetId:asset.id};
+  for(let depth=0;depth<20;depth++)props={nested:props};
+  const draft=JSON.stringify({pages:{"page-1":{nodes:{image:{type:"image",props}}}}});
+  f.db.prepare("INSERT INTO pages (id,site_id,archived_at,is_published,published_content_json,content_json,title,slug) VALUES(?,?,?,?,?,?,?,?)")
+    .run("page-1","site-default",null,0,null,draft,"Bemutatkozás","about");
+
+  const usage=(await (await f.call("GET","editor",null,{usage:asset.id})).json()).data;
+  assert.equal(usage.complete,false,"a depth-limited scan must not claim the asset has no references");
+  assert.deepEqual(usage.references,[],"the scanner must not invent an exact path it did not inspect");
+  const request=await f.call("POST","editor",null,{id:asset.id,retentionRequest:true});
+  assert.equal(request.status,409,"an incomplete reference scan must block retention");
+  assert.equal((await request.json()).error.code,"USAGE_INCOMPLETE");
+  assert.equal(f.db.prepare("SELECT COUNT(*) AS n FROM media_retention_requests").get().n,0);
+  assert.equal(f.files.size,1,"a reference-scan limit must not mutate the object store");
+});
+
 test("anonymous, viewer and cross-origin writers cannot read or create media",async t=>{
   const f=await fixture(t);
   assert.equal((await f.call("GET","")).status,401);
