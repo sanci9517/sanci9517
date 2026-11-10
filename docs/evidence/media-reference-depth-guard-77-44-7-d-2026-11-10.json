@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "recorded_at_utc": "2026-11-10T19:39:09Z",
+  "recorded_at_utc": "2026-11-10T19:42:29Z",
   "plan_point": "77.44.7.D",
   "status": "LOCAL_FIX_DEPLOYED_EDITOR_CORE_CI_FAILED_TEST_HARNESS_LOCAL_PASS",
   "scope": "Fail closed when media usage inspection reaches its recursion-depth bound, so retention cannot rely on an incomplete reference scan.",
@@ -79,7 +79,16 @@
     },
     "actions_storage": "Owner's latest snapshot was 0.45/0.50 GB (90%). This repository is public; the current workflow's diagnostic screenshot artifact is configured for 7-day retention. Exact current storage meter was not exposed by the available API connection.",
     "paid_actions_use": "None observed or authorized; 0 HUF.",
-    "followup_change": "Test-only synchronization fix plus canonical plan/evidence/metrics; intended normal fast-forward push uses [skip ci], no Worker deploy because runtime files are unchanged."
+    "followup_change": "Test-only synchronization fix plus canonical plan/evidence/metrics; intended normal fast-forward push uses [skip ci], no Worker deploy because runtime files are unchanged.",
+    "test_harness_followup": {
+      "commit_sha": "f18b3b7bf6cd3c10b63fde888b455a55c053611c",
+      "subject": "[skip ci] test(editor): await desktop render after reload",
+      "push": "normal fast-forward to v2/foundation; git ls-remote confirmed exact ref",
+      "workflow_runs_for_commit": [],
+      "workflow_verification": "GitHub Actions API query for branch v2/foundation found no run with this exact SHA; the newest run remained on runtime SHA 280dd39e. Prior Editor Core run 42876022023 remains FAILURE.",
+      "runtime_changed": false,
+      "worker_deploy_expected": false
+    }
   },
   "production": {
     "worker": "sanci9517-streamer-brand",
@@ -91,7 +100,7 @@
     "deployment_id": "2d252f2a-1199-4615-8f13-6e8b6ba2d9b0",
     "traffic_version": "14d7ce59-7a00-4b2d-8b1f-930dc112c63c",
     "traffic_percentage": 100,
-    "read_only_deployments_api_checked_at_utc": "2026-11-10T19:26:00Z",
+    "read_only_deployments_api_checked_at_utc": "2026-11-10T19:42Z",
     "direct_health": {
       "checked_at_utc": "2026-11-10T18:52:44Z",
       "status": 200,
@@ -129,7 +138,8 @@
       "changed_db": false
     },
     "worker_deploy": "DONE via authorized Cloudflare automatic Workers Build; deploy:safe migration gate ran, no production migration was applied.",
-    "current_known_live_worker_state": "Read-only Cloudflare Deployments API recheck: latest deployment remains 2d252f2a-1199-4615-8f13-6e8b6ba2d9b0, traffic version 14d7ce59-7a00-4b2d-8b1f-930dc112c63c at 100%. A fresh direct health GET attempted in this session was blocked by outbound proxy CONNECT HTTP 403, so no new live health response is claimed; the last successful direct health GET is documented above at 2026-11-10T18:52:44Z."
+    "current_known_live_worker_state": "Read-only Cloudflare Deployments API recheck: latest deployment remains 2d252f2a-1199-4615-8f13-6e8b6ba2d9b0, traffic version 14d7ce59-7a00-4b2d-8b1f-930dc112c63c at 100%. A fresh direct health GET attempted in this session was blocked by outbound proxy CONNECT HTTP 403, so no new live health response is claimed; the last successful direct health GET is documented above at 2026-11-10T18:52:44Z.",
+    "followup_deployment_verification": "After test/docs-only commit f18b3b7b, read-only Cloudflare deployment list still shows deployment 2d252f2a-1199-4615-8f13-6e8b6ba2d9b0 and version 14d7ce59-7a00-4b2d-8b1f-930dc112c63c at 100%; no redundant Worker deployment."
   },
   "cost_huf": 0,
   "dev_metrics_run": "docs/evidence/dev-metrics/runs/2026-11-10/20261110180248-d14311bf.json",
