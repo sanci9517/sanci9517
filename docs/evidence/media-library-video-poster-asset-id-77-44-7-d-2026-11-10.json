@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "recorded_at_utc": "2026-11-10T20:10:00Z",
+  "recorded_at_utc": "2026-11-10T20:11:30Z",
   "plan_point": "77.44.7.D",
-  "status": "IMPLEMENTED_LOCAL_RELEASE_PENDING",
+  "status": "DEPLOYED_GITHUB_EDITOR_CORE_IN_PROGRESS",
   "scope": "Allow published Media Library video asset IDs to authorize a Media Library poster asset reference.",
   "finding": {
     "source": "src/routes/admin/media.ts",
@@ -30,10 +30,58 @@
     "repository": "sanci9517/sanci9517",
     "branch": "v2/foundation",
     "verified_remote_head_before_release": "02b076a33acfe01bd0d7fb31aa32834dd6be521a",
-    "runtime_commit": "PENDING",
-    "normal_fast_forward_push": "PENDING",
-    "github_actions": "PENDING exact runtime SHA checks; the GitHub repository is public and workflows use standard ubuntu-latest runners, whose compute remains free for public repositories according to https://docs.github.com/en/billing/concepts/product-billing/github-actions.",
-    "storage_budget": "The last owner-provided Actions storage snapshot was 0.45/0.50 GB. This run did not upload an artifact. The previous exact-SHA diagnostic screenshot artifact was 2,894,137 bytes with 7-day retention, expiring 2026-11-17."
+    "runtime_commit": "02ec11a70796fe65225773bdc4e2d2d02c46b522",
+    "normal_fast_forward_push": "PASS; 02b076a3..02ec11a7 -> v2/foundation; git ls-remote confirmed exact branch SHA.",
+    "github_actions": {
+      "public_runner_cost_basis": "PASS; repository metadata reports visibility=public; all workflow jobs use standard ubuntu-latest/ubuntu-24.04 runners. Official GitHub billing docs state standard hosted runner use remains free for public repositories: https://docs.github.com/en/billing/concepts/product-billing/github-actions.",
+      "exact_sha_runs": [
+        {
+          "name": "Canonical Creator Platform Plan",
+          "run_id": 42892368967,
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/sanci9517/sanci9517/actions/runs/42892368967"
+        },
+        {
+          "name": "Canonical Plan Active Point Audit",
+          "run_id": 42892369041,
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/sanci9517/sanci9517/actions/runs/42892369041"
+        },
+        {
+          "name": "F0 baseline checks",
+          "run_id": 42892369231,
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/sanci9517/sanci9517/actions/runs/42892369231"
+        },
+        {
+          "name": "Twitch Integration Check",
+          "run_id": 42892368987,
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/sanci9517/sanci9517/actions/runs/42892368987"
+        },
+        {
+          "name": "Editor Core Test",
+          "run_id": 42892369134,
+          "status": "in_progress",
+          "conclusion": null,
+          "url": "https://github.com/sanci9517/sanci9517/actions/runs/42892369134",
+          "completed_steps": [
+            "typecheck",
+            "editor core",
+            "offline D1 reconciliation/bootstrap",
+            "media API",
+            "Chromium install",
+            "real Worker media upload with isolated D1/R2"
+          ],
+          "current_step": "Editor browser layout regression"
+        }
+      ]
+    },
+    "storage_budget": "Last owner-provided snapshot 0.45/0.50 GB. Current workflow uploads screenshots only when its always-run artifact step finds them; prior diagnostic artifact 2,894,137 bytes with 7-day retention. No artifact upload is yet reported for this exact-SHA run; preserve newest exact-SHA evidence."
   },
   "production": {
     "worker": "sanci9517-streamer-brand",
@@ -43,12 +91,65 @@
     "preflight_rows_written": 0,
     "preflight_changes": 0,
     "preflight_changed_db": false,
-    "worker_deploy": "PENDING required CI / fast-forward / deployment checks.",
+    "worker_deploy": "DONE; Cloudflare Workers Build API verified exact commit 02ec11a, successful build, deploy:safe command, exact deployment/version, 100% traffic.",
     "production_r2_operation": false,
-    "changed_public_assets": [],
+    "changed_public_assets": "None; only Worker route logic, tests, plan and evidence changed. Public Editor index and renderer were fetched and verified byte-identical to their local public sources.",
     "save_publish_separation_changed": false,
-    "manual_physical_editor_acceptance": "DEFERRED until complete Editor acceptance gate."
+    "manual_physical_editor_acceptance": "DEFERRED until complete Editor acceptance gate.",
+    "worker_build": {
+      "build_uuid": "95ef7a3d-bfee-4e60-8889-1d2c8c099e65",
+      "source_commit": "02ec11a70796fe65225773bdc4e2d2d02c46b522",
+      "outcome": "success",
+      "build_command": "npm run typecheck",
+      "deploy_command": "npm run deploy:safe",
+      "path_trigger": "verified configured v2/foundation push; docs/**, tests/** and AGENTS.md excluded"
+    },
+    "deployment_id": "f1fb3306-bb0d-4e6f-ae2c-5876e9dafe41",
+    "traffic_version": "c12e2fc2-8cf8-4339-b764-e2286df051da",
+    "traffic_percentage": 100,
+    "deployment_verified_at_utc": "2026-11-10T20:09:23.798426Z",
+    "direct_health_after_release": {
+      "checked_at_utc": "2026-11-10T20:11:30Z",
+      "status": 200,
+      "body": "{\"ok\":true,\"service\":\"sanci9517-streamer-brand\",\"version\":\"2.0.0\",\"server\":\"cloudflare-worker\"}"
+    },
+    "public_smoke_after_release": {
+      "/": {
+        "status": 200,
+        "bytes": 6048,
+        "sha256": "2afb1fcbf428a1e0f193310ba3f5ea2a769bd9890fe192ab4cf95a50d9e1500f",
+        "local_source": "no public/index.html source; root is generated/served by runtime"
+      },
+      "/editor-v2/": {
+        "status": 200,
+        "bytes": 25894,
+        "sha256": "2bdc01749a46a69720497e267bbaa7582f703773f7c2ab2919f6f8fb783d4857",
+        "local_sha256_matches": true
+      },
+      "/editor-v2/core/authored-content.js": {
+        "status": 200,
+        "bytes": 30689,
+        "sha256": "3bf1f67a689b7554efd50abb34ffe248e75668bfa9cb72c717c8a668301e6d7d",
+        "local_sha256_matches": true
+      }
+    },
+    "production_d1_readback_after_deploy": {
+      "query": "SELECT name FROM d1_migrations ORDER BY name;",
+      "rows_read": 34,
+      "last_migration": "0028_media_archive.sql",
+      "rows_written": 0,
+      "changes": 0,
+      "changed_db": false
+    },
+    "production_d1_preflight_before_deploy": {
+      "query": "SELECT name FROM d1_migrations ORDER BY name;",
+      "rows_read": 34,
+      "last_migration": "0028_media_archive.sql",
+      "rows_written": 0,
+      "changes": 0,
+      "changed_db": false
+    }
   },
   "cost_huf": 0,
-  "next_step": "Finish any remaining local release checks, commit and normal-fast-forward-push the runtime fix without a CI skip, then verify exact-SHA workflows and Cloudflare automatic Worker Build. If the build succeeds, confirm 100% traffic, direct health and unchanged public asset hashes; perform only the documented read-only D1 verification. Do not apply migrations, mutate production data or delete R2 objects."
+  "next_step": "Wait for exact-SHA Editor Core run 42892369134 to finish; if it succeeds, record its PASS and inspect any 7-day artifact. If it fails, record exact step/log and keep the plan point OPEN; the runtime code is already deployed. Continue remaining plan-defined 77.44.7.D media/content capability matrix. No production D1 write/migration or R2 delete."
 }

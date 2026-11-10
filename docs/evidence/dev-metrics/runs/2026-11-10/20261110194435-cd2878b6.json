@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261110194435-cd2878b6",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-10T19:44:35.864Z",
+  "finished_at": "2026-11-10T20:13:50.050Z",
+  "wall_seconds": 1754,
+  "paused_seconds": 0,
+  "measured_seconds": 1754,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "Shipped the video Media Library assetId/poster authorization fix to 100% production traffic; local suites and release gates pass, while the broad local media storage browser process hung and exact-SHA Editor Core layout CI is still running.",
+  "evidence": [
+    "docs/evidence/media-library-video-poster-asset-id-77-44-7-d-2026-11-10.json"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "02b076a33acfe01bd0d7fb31aa32834dd6be521a",
+  "finished_revision": "02ec11a70796fe65225773bdc4e2d2d02c46b522",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
