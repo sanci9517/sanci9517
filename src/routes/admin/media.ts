@@ -16,6 +16,7 @@ const MAX_MEDIA_BYTES = 4 * 1024 * 1024;
 const SITE_MEDIA_LIMIT_BYTES = 5 * 1000 * 1000 * 1000;
 const MAX_USAGE_SNAPSHOTS = 100;
 const MAX_USAGE_REFERENCES = 100;
+const MAX_USAGE_SCAN_ENTRIES = 20_000;
 
 type MediaRow = {
   id: string; site_id: string; object_key: string; original_name: string;
@@ -102,7 +103,17 @@ function dto(row: MediaRow) {
 
 function escapeLike(value: string): string { return value.replace(/[\^%_]/g, "^$&"); }
 
-type AssetReferenceScanStatus = { complete: boolean };
+type AssetReferenceScanStatus = { complete: boolean; visited: number };
+
+function visitAssetReference(scan: AssetReferenceScanStatus): boolean {
+  if (!scan.complete) return false;
+  if (scan.visited >= MAX_USAGE_SCAN_ENTRIES) {
+    scan.complete = false;
+    return false;
+  }
+  scan.visited++;
+  return true;
+}
 
 function assetPaths(value: unknown, assetId: string, path = "", depth = 0, scan?: AssetReferenceScanStatus): string[] {
   if (!value || typeof value !== "object") return [];
@@ -113,10 +124,20 @@ function assetPaths(value: unknown, assetId: string, path = "", depth = 0, scan?
     if (scan) scan.complete = false;
     return [];
   }
-  if (Array.isArray(value)) return value.flatMap((item, index) => assetPaths(item, assetId, `${path}[${index}]`, depth + 1, scan));
+  if (Array.isArray(value)) {
+    const paths: string[] = [];
+    for (let index = 0; index < value.length; index++) {
+      if (scan && !visitAssetReference(scan)) break;
+      paths.push(...assetPaths(value[index], assetId, `${path}[${index}]`, depth + 1, scan));
+    }
+    return paths;
+  }
   const record = value as Record<string, unknown>;
   const paths: string[] = [];
-  for (const [key, item] of Object.entries(record)) {
+  for (const key in record) {
+    if (!Object.prototype.hasOwnProperty.call(record, key)) continue;
+    if (scan && !visitAssetReference(scan)) break;
+    const item = record[key];
     const next = path ? `${path}.${key}` : key;
     if ((key === "assetId" || key === "backgroundAssetId" || key === "imageAssetId" || key === "posterAssetId") && item === assetId) paths.push(next);
     else if (item && typeof item === "object") paths.push(...assetPaths(item, assetId, next, depth + 1, scan));
@@ -125,6 +146,7 @@ function assetPaths(value: unknown, assetId: string, path = "", depth = 0, scan?
 }
 
 function documentAssetReferences(json: string, pageId: string, assetId: string, publicOnly = false, mime = "", scan?: AssetReferenceScanStatus): { nodeId: string; nodeName: string; path: string }[] {
+  const scanStatus = scan || { complete: true, visited: 0 };
   const model = JSON.parse(json) as { pages?: Record<string, { rootId?: string; nodes?: Record<string, { name?: string; type?: string; metadata?: {cardContentVersion?: number;contentVersion?: number;editorContentVersion?: number;rootStyleVersion?: number;editorRootVersion?: number}; props?: unknown; style?: unknown; responsive?: unknown; visibility?: unknown; children?: string[] }> }> };
   const page = model?.pages?.[pageId];
   const nodes = page?.nodes;
@@ -138,6 +160,7 @@ function documentAssetReferences(json: string, pageId: string, assetId: string, 
       const visited = new Set<string>();
       const pending = [page.rootId];
       while (pending.length) {
+        if (!visitAssetReference(scanStatus)) break;
         const id = pending.pop()!;
         const node = nodes[id];
         if (visited.has(id) || !node || node.visibility === false ||
@@ -155,16 +178,24 @@ function documentAssetReferences(json: string, pageId: string, assetId: string, 
           try { normalizeCardContent((node.props as Record<string, unknown> | undefined)?.cardContent); }
           catch { continue; } // A malformed Card renders only its fallback, without children.
         }
-        if (!dropsChildren) for (const child of Array.isArray(node.children) ? node.children : []) if (typeof child === "string") pending.push(child);
+        if (!dropsChildren) for (const child of Array.isArray(node.children) ? node.children : []) {
+          if (typeof child !== "string") continue;
+          if (!visitAssetReference(scanStatus)) break;
+          pending.push(child);
+        }
       }
     }
   }
-  return Object.entries(nodes).flatMap(([nodeId, node]) => {
+  const references: { nodeId: string; nodeName: string; path: string }[] = [];
+  for (const nodeId in nodes) {
+    if (!Object.prototype.hasOwnProperty.call(nodes, nodeId)) continue;
+    if (!visitAssetReference(scanStatus)) break;
+    const node = nodes[nodeId];
     const visibleDevices = visibleAt.get(nodeId);
-    if (publicOnly && !visibleDevices?.size) return [];
-    if (!node || typeof node !== "object") return [];
+    if (publicOnly && !visibleDevices?.size) continue;
+    if (!node || typeof node !== "object") continue;
     const visibility = node.visibility;
-    if (publicOnly && (visibility === false || visibility && typeof visibility === "object" && ["desktop", "tablet", "mobile"].every(device => (visibility as Record<string, unknown>)[device] === false))) return [];
+    if (publicOnly && (visibility === false || visibility && typeof visibility === "object" && ["desktop", "tablet", "mobile"].every(device => (visibility as Record<string, unknown>)[device] === false))) continue;
     const nodeName = typeof node.name === "string" && node.name.trim() ? node.name : node.type || nodeId;
     const props = node.props as Record<string, unknown> | undefined;
     const compatible = (kind: "image" | "video" | "audio") => !mime || (
@@ -208,11 +239,15 @@ function documentAssetReferences(json: string, pageId: string, assetId: string, 
         /^props\.items\[\d+\]\.assetId$/.test(path) && Number(path.match(/\[(\d+)\]/)?.[1]) < 40 && ["gallery", "carousel"].includes(node.type || "") && node.metadata?.contentVersion === 1 && compatible("image") ||
         renderedBackground(path) && compatible("image");
     };
-    return ["props", "style", "responsive"].flatMap(field =>
-      assetPaths(node[field as keyof typeof node], assetId, field, 0, scan)
-        .filter(renderedReference)
-        .map(path => ({ nodeId, nodeName, path })));
-  });
+    for (const field of ["props", "style", "responsive"] as const) {
+      const paths = assetPaths(node[field], assetId, field, 0, scanStatus);
+      for (const path of paths) if (renderedReference(path)) references.push({ nodeId, nodeName, path });
+      if (!scanStatus.complete) break;
+    }
+    if (!scanStatus.complete) break;
+  }
+  if (scan) scan.complete = scanStatus.complete;
+  return references;
 }
 
 async function mediaUsage(env: Env, siteId: string, assetId: string): Promise<Response> {
@@ -226,10 +261,10 @@ async function mediaUsage(env: Env, siteId: string, assetId: string): Promise<Re
   ).bind(siteId, assetId).all<{ page_id: string; title: string; slug: string; archived_at: string | null; version: number; document_json: string }>();
   const references: { pageId: string; pageTitle: string; slug: string; archived: boolean; source: "draft" | "published" | "revision"; version?: number; nodeId: string; nodeName: string; path: string }[] = [];
   let complete = pages.results.length <= MAX_USAGE_SNAPSHOTS && revisions.results.length <= MAX_USAGE_SNAPSHOTS;
+  const scan: AssetReferenceScanStatus = { complete: true, visited: 0 };
   const add = (json: string | null, page: { id: string; title: string; slug: string; archived_at: string | null }, source: "draft" | "published" | "revision", version?: number) => {
-    if (!json || !json.includes(assetId)) return;
+    if (!json || !json.includes(assetId) || !scan.complete) return;
     try {
-      const scan: AssetReferenceScanStatus = { complete: true };
       const found = documentAssetReferences(json, page.id, assetId, false, "", scan);
       if (!scan.complete) complete = false;
       for (const ref of found) {

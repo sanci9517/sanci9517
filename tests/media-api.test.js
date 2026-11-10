@@ -610,6 +610,41 @@ test("usage report fails closed when nested media references exceed the inspecti
   assert.equal(f.files.size,1,"a reference-scan limit must not mutate the object store");
 });
 
+test("usage report fails closed when a wide saved Page Model exceeds the inspection budget",async t=>{
+  const f=await fixture(t);
+  const asset=(await (await f.call("POST","editor",png,{name:"wide-background.png"})).json()).data;
+  const nodes=Object.fromEntries(Array.from({length:20_001},(_,index)=>[`legacy-${index}`,{type:"text"}]));
+  nodes.background={type:"section",style:{backgroundAssetId:asset.id}};
+  const draft=JSON.stringify({pages:{"page-1":{nodes}}});
+  f.db.prepare("INSERT INTO pages (id,site_id,archived_at,is_published,published_content_json,content_json,title,slug) VALUES(?,?,?,?,?,?,?,?)")
+    .run("page-1","site-default",null,0,null,draft,"Örökölt széles oldal","wide-page");
+
+  const usage=(await (await f.call("GET","editor",null,{usage:asset.id})).json()).data;
+  assert.equal(usage.complete,false,"a scan budget must not turn a truncated search into proof that a background is unused");
+  assert.deepEqual(usage.references,[],"the scanner must not invent a path beyond the inspected portion of a Page Model");
+  const request=await f.call("POST","editor",null,{id:asset.id,retentionRequest:true});
+  assert.equal(request.status,409,"an incomplete wide-model scan must block the retention request");
+  assert.equal((await request.json()).error.code,"USAGE_INCOMPLETE");
+  assert.equal(f.db.prepare("SELECT COUNT(*) AS n FROM media_retention_requests").get().n,0);
+  assert.equal(f.db.prepare("SELECT archived_at FROM media WHERE id=?").get(asset.id).archived_at,null);
+  assert.equal(f.files.size,1,"a wide-model scan limit must not mutate the object store");
+});
+
+test("published Media Library delivery stops at the bounded root-child scan budget",async t=>{
+  const f=await fixture(t);
+  const asset=(await (await f.call("POST","editor",png,{name:"wide-public-background.png"})).json()).data;
+  const children=Array.from({length:20_001},(_,index)=>`legacy-${index}`);
+  const nodes={root:{type:"root",children:[...children,"image"]},...Object.fromEntries(children.map(id=>[id,{type:"text"}]))};
+  nodes.image={type:"image",props:{assetId:asset.id}};
+  const published=JSON.stringify({pages:{"page-1":{rootId:"root",nodes}}});
+  f.db.prepare("INSERT INTO pages (id,site_id,archived_at,is_published,published_content_json,content_json,title,slug) VALUES(?,?,?,?,?,?,?,?)")
+    .run("page-1","site-default",null,1,published,"{}","Széles publikus fa","wide-tree");
+
+  const response=await publishedMediaRoute(new Request(`https://example.test/media/${asset.id}`),f.env,"site-default",asset.id);
+  assert.equal(response.status,404,"an incomplete visibility walk must not expose an uninspected late media node");
+  assert.equal(f.files.size,1,"a bounded public reference walk is read-only");
+});
+
 test("anonymous, viewer and cross-origin writers cannot read or create media",async t=>{
   const f=await fixture(t);
   assert.equal((await f.call("GET","")).status,401);
