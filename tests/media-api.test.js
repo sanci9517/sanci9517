@@ -37,12 +37,12 @@ async function fixture(t) {
     db.prepare("INSERT INTO sessions VALUES (?,?,?)").run(await hashSessionToken(role),role,"2999-01-01");
   }
   const files = new Map();
-  const mediaReads = { count: 0 };
+  const mediaReads = { count: 0, headCount: 0 };
   const bucket = {
     async put(key,bytes) { files.set(key,Uint8Array.from(bytes)); },
     async get(key) { mediaReads.count++; const bytes=files.get(key); return bytes ? {body:new Blob([bytes]).stream()} : null; },
     async delete(key) { files.delete(key); },
-    async head(key) { return files.has(key) ? {size:files.get(key).length} : null; },
+    async head(key) { mediaReads.headCount++; return files.has(key) ? {size:files.get(key).length} : null; },
     async list({prefix,limit,cursor}) {
       const keys=[...files.keys()].filter(key=>key.startsWith(prefix)).sort();
       const start=cursor?Number(cursor):0;
@@ -528,6 +528,33 @@ test("site-scoped search, safe alt metadata and published-only delivery",async t
   assert.equal((await media()).status,404,"unreachable video poster stays private");
   f.db.prepare("UPDATE pages SET is_published=0").run();
   assert.equal((await media()).status,404);
+});
+
+test("published media HEAD checks R2 metadata without reading the object body",async t=>{
+  const f=await fixture(t);
+  const uploaded=await f.call("POST","editor",png,{name:"head-cover.png"});
+  assert.equal(uploaded.status,201);
+  const asset=(await uploaded.json()).data;
+  const document={pages:{"head-page":{rootId:"root",nodes:{
+    root:{type:"root",children:["image"]},
+    image:{type:"image",props:{assetId:asset.id}}
+  }}}};
+  f.db.prepare("INSERT INTO pages (id,site_id,archived_at,is_published,published_content_json,content_json,title,slug) VALUES(?,?,?,?,?,?,?,?)")
+    .run("head-page","site-default",null,1,JSON.stringify(document),"{}","HEAD test","head-test");
+  const before={...f.mediaReads};
+  const response=await publishedMediaRoute(new Request("https://example.test/media/"+asset.id,{method:"HEAD"}),f.env,"site-default",asset.id);
+  assert.equal(response.status,200);
+  assert.equal(response.body,null,"HEAD must not expose a response stream");
+  assert.equal(response.headers.get("Content-Type"),"image/png");
+  assert.equal(response.headers.get("Content-Length"),String(png.length));
+  assert.equal(f.mediaReads.headCount,before.headCount+1,"HEAD should verify object metadata");
+  assert.equal(f.mediaReads.count,before.count,"HEAD should not open an R2 object body");
+
+  const key=f.db.prepare("SELECT object_key FROM media WHERE id=?").get(asset.id).object_key;
+  f.files.delete(key);
+  const missing=await publishedMediaRoute(new Request("https://example.test/media/"+asset.id,{method:"HEAD"}),f.env,"site-default",asset.id);
+  assert.equal(missing.status,404,"HEAD must not report a missing object as available");
+  assert.equal(f.mediaReads.count,before.count,"missing HEAD remains metadata-only");
 });
 
 test("published legacy image, video, audio and video-poster asset IDs resolve through the shared media route",async t=>{

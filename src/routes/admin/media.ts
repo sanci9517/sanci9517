@@ -703,14 +703,24 @@ export async function publishedMediaRoute(request: Request, env: Env, siteId: st
     } catch { /* Corrupt published snapshots do not authorize delivery. */ }
   }
   if (!allowed) return error("MEDIA_NOT_FOUND", 404);
-  const object = await env.MEDIA.get(row.object_key);
-  if (!object) return error("MEDIA_OBJECT_MISSING", 404);
+  let objectSize = row.size_bytes;
+  let body: ReadableStream | null = null;
+  if (request.method === "HEAD") {
+    const metadata = await env.MEDIA.head(row.object_key);
+    if (!metadata) return error("MEDIA_OBJECT_MISSING", 404);
+    objectSize = metadata.size;
+  } else {
+    const object = await env.MEDIA.get(row.object_key);
+    if (!object) return error("MEDIA_OBJECT_MISSING", 404);
+    objectSize = object.size;
+    body = object.body;
+  }
   const headers = new Headers({
     "Content-Type": row.mime_type,
     "Cache-Control": "public, max-age=300, s-maxage=300",
     "X-Content-Type-Options": "nosniff",
     "Content-Disposition": "inline",
-    "Content-Length": String(row.size_bytes)
+    "Content-Length": String(objectSize)
   });
-  return new Response(request.method === "HEAD" ? null : object.body, { headers });
+  return new Response(body, { headers });
 }
