@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261110175235-0065dc90",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-10T17:52:35.074Z",
+  "finished_at": "2026-11-10T17:53:27.824Z",
+  "wall_seconds": 53,
+  "paused_seconds": 0,
+  "measured_seconds": 53,
+  "status": "pass",
+  "kind": "docs",
+  "summary": "Updated recovery evidence to record the verified GitHub push, exact HEAD, and zero Actions runs.",
+  "evidence": [
+    "docs/evidence/recovery-source-2026-11-10.json",
+    "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md"
+  ],
+  "checks": "canonical plan 13 files; active cursor 77.44.7.D; traceability 396/396; plan contract 13/13; diff check",
+  "started_revision": "0afd38a5bc5dd88d0dd742c442a027ed21bf2e1f",
+  "finished_revision": "0afd38a5bc5dd88d0dd742c442a027ed21bf2e1f",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
