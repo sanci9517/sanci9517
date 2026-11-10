@@ -583,6 +583,7 @@ test('every PARTIAL type renders Inspector routes and preserves Save versus Publ
     assert.equal(published.pages[pageId].nodes[id].visibility.mobile,true,`${type}: Save does not change published visibility`);
   }
   await viewer.reload();
+  await viewer.waitForFunction(expected=>document.querySelectorAll('.visual-editor-node[data-node-id]').length>=expected,editableNodes.length);
   for(const {type,id} of editableNodes)assert.equal(await publicNode(id).count(),1,`${type}: Save preserves mobile public visibility`);
   await editor.locator('#publish').click();
   await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));

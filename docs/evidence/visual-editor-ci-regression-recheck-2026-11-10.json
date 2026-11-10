@@ -1,0 +1,81 @@
+{
+  "schema": 1,
+  "captured_at": "2026-11-10T23:07:47Z",
+  "plan_item": "77.44.7.D",
+  "status": "OPEN / NOT_CERTIFIED",
+  "repository": {
+    "branch": "v2/foundation",
+    "github_head": "9cc72592590ec1adc31ad17ccdd46a1928f3f3fe",
+    "local_head_at_capture": "9cc72592590ec1adc31ad17ccdd46a1928f3f3fe"
+  },
+  "changes": {
+    "runtime": [
+      {
+        "path": "public/assets/site.css",
+        "change": "Removed !important from visual-divider fallback border color so authored inline border color is honored.",
+        "local_sha256": "eed81d014eeeb75c116836aedb5887dd8ee9bb66f4b3df2a77a41c10c91ce6ae",
+        "released": false
+      },
+      {
+        "path": "public/visual-page.html",
+        "change": "Bumped the site.css cache key to 20261110-divider-cascade.",
+        "released": false
+      }
+    ],
+    "test_harness": [
+      {
+        "path": "tests/browser/editor-inspector-partial-types.test.js",
+        "change": "Wait for all expected published nodes after the async public-page reload before asserting Save isolation; assertions and coverage retained."
+      }
+    ]
+  },
+  "checks": [
+    { "command": "CHROMIUM_PATH=/usr/bin/chromium node --test tests/browser/editor-decorative-elements.test.js", "result": "PASS 1/1 after divider CSS fix" },
+    { "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-reporter=spec tests/browser/editor-inspector-partial-types.test.js", "result": "PASS 1/1; 44 PARTIAL types; 489798 ms" },
+    { "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-reporter=spec tests/browser/editor-layer-rename-draft.test.js", "result": "PASS 2/2 at 390px and 1366px" },
+    { "command": "npm run test:editor", "result": "PASS 15/15 unit files; Linux subreaper PASS 3/3" },
+    { "command": "npm run typecheck", "result": "PASS" },
+    { "command": "npm run test:web013:migration-gate", "result": "PASS; no production D1 migration executed" },
+    { "command": "python3 scripts/check-canonical-plan.py", "result": "PASS; 13 master files and 396 source mappings" },
+    { "command": "python3 scripts/audit-active-plan-point.py", "result": "PASS; 77.44.7.D remains OPEN / NOT_CERTIFIED" },
+    { "command": "git diff --check", "result": "PASS" },
+    { "command": "XDG_CONFIG_HOME=/tmp/sanci-wrangler-xdg npx wrangler deploy --dry-run", "result": "PASS; 171 assets read; no deployment" },
+    { "command": "53-file browser layout suite", "result": "NOT RUN to completion in this block" }
+  ],
+  "github": {
+    "previous_runtime_sha": "e4fd4fe62834bbdfc09a47bf5ab833f752d1c1d4",
+    "previous_editor_core_run": "42905624067 FAILURE",
+    "locally_rechecked_failures": [
+      "divider authored border color overridden by !important fallback; fixed and decorative-elements test passes",
+      "partial-type visibility test queried before async public render completed; synchronization fixed and full test passes",
+      "layer rename textbox timeout at 1366px; current test passes locally at both viewports"
+    ],
+    "actions_free_quota": "UNVERIFIED; no dispatch or rerun performed",
+    "runtime_push": "NOT DONE; runtime release held to avoid unverified Actions spend"
+  },
+  "production": {
+    "deployment_id": "10adc383-9a7b-43d0-b31b-5df8850663af",
+    "worker_version_id": "d3048753-ded0-4aa8-b165-c98ebe3a15d9",
+    "traffic_percent": 100,
+    "health": {
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+      "checked_at": "2026-11-10T23:05:40Z",
+      "http_status": 200,
+      "body": { "ok": true, "service": "sanci9517-streamer-brand", "version": "2.0.0", "server": "cloudflare-worker" }
+    },
+    "public_asset": {
+      "url": "/assets/site.css?v=20261016-3",
+      "http_status": 200,
+      "deployed_sha256": "b67c9aed36f66ee244fc3effdb3ad63f79e92661018266ed863e9bbcbe3e05b7",
+      "github_head_sha256": "b67c9aed36f66ee244fc3effdb3ad63f79e92661018266ed863e9bbcbe3e05b7",
+      "working_tree_sha256": "eed81d014eeeb75c116836aedb5887dd8ee9bb66f4b3df2a77a41c10c91ce6ae",
+      "interpretation": "Production remains on the pre-fix CSS, as expected because runtime changes have not been pushed or deployed."
+    },
+    "visual_page_html": "UNVERIFIED; direct /visual-page.html returned HTTP 307 and no bytes"
+  },
+  "cost_and_data": {
+    "new_paid_usage": "none",
+    "production_d1_reads_writes_or_migrations": "none",
+    "r2_operations": "none"
+  }
+}

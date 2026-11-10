@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261110222806-2bb19f14",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-10T22:28:06.983Z",
+  "finished_at": "2026-11-10T23:09:44.657Z",
+  "wall_seconds": 2498,
+  "paused_seconds": 0,
+  "measured_seconds": 2498,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "Fixed divider authored-color CSS cascade and flaky async render assertion; targeted browser tests and local gates pass, runtime release blocked because GitHub Actions free quota is unverified.",
+  "evidence": [
+    "docs/evidence/visual-editor-ci-regression-recheck-2026-11-10.json"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "9cc72592590ec1adc31ad17ccdd46a1928f3f3fe",
+  "finished_revision": "9cc72592590ec1adc31ad17ccdd46a1928f3f3fe",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
