@@ -5,7 +5,8 @@
   "status": "OPEN / NOT_CERTIFIED",
   "repository": {
     "branch": "v2/foundation",
-    "github_head": "e7dc2edf1ada26634a16048bf7761dde3b3f502f",
+    "github_head_at_test_verification": "e7dc2edf1ada26634a16048bf7761dde3b3f502f",
+    "latest_verified_github_head": "93a04cb9182483bef5d55a6bd7f0acfe6fc9770",
     "local_test_docs_commit": "e7dc2edf1ada26634a16048bf7761dde3b3f502f",
     "parent_head": "9cc72592590ec1adc31ad17ccdd46a1928f3f3fe"
   },
@@ -54,6 +55,7 @@
     "actions_free_quota": "UNVERIFIED; no dispatch or rerun performed",
     "test_docs_commit": "e7dc2edf1ada26634a16048bf7761dde3b3f502f pushed by normal fast-forward with [skip ci]",
     "test_docs_commit_workflows": 0,
+    "plan_metadata_followup": "93a04cb9182483bef5d55a6bd7f0acfe6fc9770",
     "runtime_push": "NOT DONE; runtime release held to avoid unverified Actions spend"
   },
   "production": {
@@ -62,7 +64,7 @@
     "traffic_percent": 100,
     "health": {
       "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
-      "checked_at": "2026-11-10T23:05:40Z",
+      "checked_at": "2026-11-10T23:13:50Z",
       "http_status": 200,
       "body": { "ok": true, "service": "sanci9517-streamer-brand", "version": "2.0.0", "server": "cloudflare-worker" }
     },
