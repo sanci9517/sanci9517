@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261110202558-2bf7368b",
+  "task": "77.44.7.D",
+  "trigger": "scheduled",
+  "started_at": "2026-11-10T20:25:58.360Z",
+  "finished_at": "2026-11-10T20:54:48.708Z",
+  "wall_seconds": 1730,
+  "paused_seconds": 0,
+  "measured_seconds": 1730,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "Bound Page Model media reference work; live Worker deployed, Editor Core CI still running; custom domain blocked by proxy",
+  "evidence": [
+    "docs/evidence/media-reference-scan-budget-77-44-7-d-2026-11-10.json"
+  ],
+  "checks": "media,typecheck,editor-local,migration-gate,plan,traceability,wrangler-dry-run,Cloudflare-build,live-worker-health,asset-hashes",
+  "started_revision": "afcf06764585043bd3c8fca12402daa36e100b62",
+  "finished_revision": "096f61659bb866b072c37e241b8375ceac081729",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

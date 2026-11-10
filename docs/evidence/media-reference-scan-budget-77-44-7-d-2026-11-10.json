@@ -1,0 +1,103 @@
+{
+  "schema": 1,
+  "task": "77.44.7.D",
+  "subtask": "Bound page-model reference scans and fail closed on exhaustion",
+  "date_utc": "2026-11-10",
+  "implementation": {
+    "commit": "096f61659bb866b072c37e241b8375ceac081729",
+    "message": "fix(media): bound reference scans fail-closed",
+    "files": [
+      "src/routes/admin/media.ts",
+      "tests/media-api.test.js",
+      "docs/evidence/feature-traceability.json"
+    ],
+    "behavior": "A single 20,000-unit reference-scan budget bounds work across Page Model nodes, object properties, array items and public-visibility traversal. Exhaustion marks the scan incomplete. Media retention refuses incomplete usage (409 USAGE_INCOMPLETE) and does not record retention or mutate R2; public resolution does not infer references beyond inspected data and fails closed when a late asset is outside the budget.",
+    "save_publish_separation_changed": false
+  },
+  "local_checks": {
+    "npm_run_test_media": "PASS, 5 files",
+    "npm_run_typecheck": "PASS",
+    "npm_run_test_editor": "PASS, 15 unit-test files and 3 Linux-subreaper checks; no manual/physical acceptance claimed",
+    "npm_run_test_web013_migration_gate": "PASS; deploy:safe does not apply migrations",
+    "python_scripts_build_feature_traceability": "PASS",
+    "python_tests_plan_contract": "PASS, 13/13 after refreshing source fingerprints",
+    "python_scripts_check_canonical_plan": "PASS, 13 source parts and 396 feature mappings; functional acceptance remains NOT_CERTIFIED",
+    "python_scripts_audit_active_plan_point": "PASS; active 77.44.7.D, 396 features, NOT_CERTIFIED",
+    "git_diff_check": "PASS",
+    "wrangler_deploy_dry_run": "PASS, Wrangler 4.130.0; read 171 assets; no upload or deployment from dry-run"
+  },
+  "production_preflight": {
+    "operation": "SELECT name FROM d1_migrations ORDER BY name;",
+    "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
+    "rows_read": 34,
+    "last_migration": "0028_media_archive.sql",
+    "rows_written": 0,
+    "changes": 0,
+    "changed_db": false,
+    "migration_or_write_performed": false
+  },
+  "github": {
+    "branch": "v2/foundation",
+    "verified_head": "096f61659bb866b072c37e241b8375ceac081729",
+    "push": "verified fast-forward; no force push",
+    "actions_for_exact_sha": {
+      "Twitch Integration Check": "SUCCESS",
+      "Canonical Plan Active Point Audit": "SUCCESS",
+      "Canonical Creator Platform Plan": "SUCCESS",
+      "F0 baseline checks": "SUCCESS",
+      "Editor Core Test": "IN_PROGRESS at 2026-11-10T20:52Z; not reported as PASS"
+    },
+    "actions_artifact_snapshot": "No artifact/cost or billing amount inferred from this run; the user's last supplied storage snapshot was 0.45/0.50 GB. No manual dispatch or rerun was triggered."
+  },
+  "cloudflare": {
+    "workers_build_uuid": "0be81aa5-7f64-482e-a2b3-e3372e4751cd",
+    "build_source_commit": "096f61659bb866b072c37e241b8375ceac081729",
+    "build_outcome": "SUCCESS",
+    "build_log": "npm run typecheck succeeded; npm run deploy:safe ran the migration safety gate (PASS, no migration apply) and Wrangler 4.130.0 deployment; build read 171 public assets and uploaded no updated asset files.",
+    "deployment_id": "4797c4e8-59fc-45dc-8a7e-56ec3768f3ad",
+    "traffic_version_id": "b0fde7ba-0da8-44f9-b3e9-30e650e34f15",
+    "traffic_percent": 100,
+    "workers_build_minutes_limit_reached": false,
+    "direct_worker_health": {
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+      "checked_at_utc": "2026-11-10T20:52:33Z",
+      "status": 200,
+      "body": "{\"ok\":true,\"service\":\"sanci9517-streamer-brand\",\"version\":\"2.0.0\",\"server\":\"cloudflare-worker\"}"
+    },
+    "custom_domain_health": {
+      "url": "https://sanci9517.com/api/health",
+      "result": "BLOCKED by outbound network proxy: curl CONNECT tunnel returned HTTP 403; no website HTTP status/body received. This is not evidence of a production-site failure or a successful custom-domain health response."
+    },
+    "live_public_assets": {
+      "/editor-v2/": {
+        "status": 200,
+        "bytes": 25894,
+        "sha256": "2bdc01749a46a69720497e267bbaa7582f703773f7c2ab2919f6f8fb783d4857",
+        "local_sha256_matches": true
+      },
+      "/editor-v2/core/authored-content.js": {
+        "status": 200,
+        "bytes": 30689,
+        "sha256": "3bf1f67a689b7554efd50abb34ffe248e75668bfa9cb72c717c8a668301e6d7d",
+        "local_sha256_matches": true
+      },
+      "changed_public_assets": "None in this runtime-only fix; Cloudflare build confirmed no updated asset files to upload."
+    }
+  },
+  "cost_and_mutations": {
+    "paid_service_or_limit_increase_activated": false,
+    "manual_paid_actions": false,
+    "direct_invoice_amount": "Not available to this session; do not interpret absence of billing access as a zero-cost invoice guarantee.",
+    "new_production_d1_migration_or_write": false,
+    "production_r2_delete_or_write": false,
+    "cost_huf_claimed": 0,
+    "cost_note": "No paid feature, subscription, limit increase or manual paid action was introduced. Cloudflare reports the build-minute limit has not been reached; actual billing totals are not exposed by the available read APIs."
+  },
+  "acceptance": {
+    "77_44_7_D": "OPEN; this bounded-scan fix does not complete the whole media/content capability matrix",
+    "visual_editor_manual_physical": "DEFERRED until the complete Editor acceptance gate",
+    "save_publish": "separate"
+  },
+  "next_step": "Continue the plan-defined 77.44.7.D media/content capability audit. Finish and inspect the exact-SHA Editor Core workflow; do not call aggregate CI PASS while it is in progress. Retry custom-domain health/public smoke only from a network allowed to reach sanci9517.com.",
+  "dev_metrics_run": "docs/evidence/dev-metrics/runs/2026-11-10/20261110202558-2bf7368b.json"
+}
