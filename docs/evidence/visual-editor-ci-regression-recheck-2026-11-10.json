@@ -5,8 +5,9 @@
   "status": "OPEN / NOT_CERTIFIED",
   "repository": {
     "branch": "v2/foundation",
-    "github_head": "9cc72592590ec1adc31ad17ccdd46a1928f3f3fe",
-    "local_head_at_capture": "9cc72592590ec1adc31ad17ccdd46a1928f3f3fe"
+    "github_head": "e7dc2edf1ada26634a16048bf7761dde3b3f502f",
+    "local_test_docs_commit": "e7dc2edf1ada26634a16048bf7761dde3b3f502f",
+    "parent_head": "9cc72592590ec1adc31ad17ccdd46a1928f3f3fe"
   },
   "changes": {
     "runtime": [
@@ -51,6 +52,8 @@
       "layer rename textbox timeout at 1366px; current test passes locally at both viewports"
     ],
     "actions_free_quota": "UNVERIFIED; no dispatch or rerun performed",
+    "test_docs_commit": "e7dc2edf1ada26634a16048bf7761dde3b3f502f pushed by normal fast-forward with [skip ci]",
+    "test_docs_commit_workflows": 0,
     "runtime_push": "NOT DONE; runtime release held to avoid unverified Actions spend"
   },
   "production": {
