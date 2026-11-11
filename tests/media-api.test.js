@@ -300,6 +300,9 @@ test("same-origin absolute media URLs remain protected references and publishabl
   const response=await publishedMediaRoute(new Request(`https://example.test/media/${asset.id}`),f.env,"site-default",asset.id);
   assert.equal(response.status,200,"same-origin absolute media URLs rendered by the page authorize their asset");
   assert.deepEqual(new Uint8Array(await response.arrayBuffer()),png);
+  const aliasHead=await publishedMediaRoute(new Request(`https://example.test/media/${asset.id}`,{method:"HEAD"}),f.env,"site-default",asset.id);
+  assert.equal(aliasHead.status,200,"verified absolute alias references authorize metadata-only HEAD delivery");
+  assert.equal(aliasHead.body,null,"absolute alias HEAD delivery must not expose an object body");
 
   const foreignUpload=await f.call("POST","editor",Uint8Array.from([...png,0x0f]),{name:"foreign-origin.png"});
   assert.equal(foreignUpload.status,201);
