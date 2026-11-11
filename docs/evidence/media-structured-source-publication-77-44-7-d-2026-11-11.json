@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "plan_point": "77.44.7.D",
+  "status": "LOCAL_PASS_RELEASE_PENDING",
+  "finding": "A structured Gallery or Carousel item can carry an imported assetId that the renderer ignores. The publication scanner previously preferred that ID and ignored the actual src, allowing an archived media URL into a published snapshot.",
+  "red_test": "tests/media-api.test.js: publication validates local media URLs against site, archive state and media role; 53 passed, 1 failed, because the structured Carousel archived src returned null instead of MEDIA_NOT_FOUND.",
+  "change": "For structured Gallery and Carousel contentModel, the publication origin precheck, asset validation and live-snapshot canonicalization now use the existing normalizeElementContent renderer model. Unrendered imported item fields are excluded; Save and Publish remain separate.",
+  "checks": {
+    "media_api_direct": "PASS: 54/54",
+    "tenant_pages_editor": "PASS: 17/17; archived src rejected, previous live snapshot preserved, repaired explicit Publish accepted, unsupported assetId removed and URL casing canonicalized",
+    "media": "PASS: npm run test:media, 5/5 files",
+    "web013": "PASS: npm run test:web013, 68/68, with local loopback network permission",
+    "editor": "PASS: npm run test:editor, 15/15 files and 3/3 subreaper cases",
+    "typecheck": "PASS",
+    "plan_contract": "PASS: 13/13",
+    "canonical_plan": "PASS: 13 master files, 396 mappings; acceptance NOT_CERTIFIED",
+    "feature_traceability": "PASS: 396 mappings after regeneration",
+    "active_plan_audit": "77.44.7.D OPEN / NOT_CERTIFIED",
+    "production_d1_preflight": "PASS: 3 SELECT-only queries; each changes=0, rows_written=0, changed_db=false; 34 migrations latest 0028_media_archive.sql; 6 media rows, 1 verified domain",
+    "wrangler_dry_run": "PASS: Wrangler 4.130.0, 171 public assets, no upload",
+    "git_diff_check": "PASS"
+  },
+  "dev_metrics_run": "docs/evidence/dev-metrics/runs/2026-11-11/20261111210938-73469b2c.json",
+  "release": "PENDING: normal fast-forward push, exact-source automatic deploy:safe build and production verification",
+  "cost": "No paid service, production D1 mutation/migration, or R2 deletion."
+}

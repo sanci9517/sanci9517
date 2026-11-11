@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261111210938-73469b2c",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-11T21:09:38.577Z",
+  "finished_at": "2026-11-11T21:13:06.300Z",
+  "wall_seconds": 208,
+  "paused_seconds": 0,
+  "measured_seconds": 208,
+  "status": "pass",
+  "kind": "mixed",
+  "summary": "Fixed structured Gallery and Carousel publication source validation against renderer normalization; red test, integration and local checks passed",
+  "evidence": [
+    "tests/media-api.test.js"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "3a1d424f65f494a3ce5ea835d7bc876f2b5bce3a",
+  "finished_revision": "3a1d424f65f494a3ce5ea835d7bc876f2b5bce3a",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

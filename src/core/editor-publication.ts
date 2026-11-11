@@ -1,5 +1,6 @@
 import type { Env } from "../types/env";
 import { safeMediaUrl } from "../../public/editor-v2/core/authored-content.js";
+import { normalizeElementContent } from "../../public/editor-v2/core/element-content.js";
 
 const PUBLISHABLE_MEDIA_MIMES=new Set(['image/png','image/jpeg','image/gif','image/webp','audio/mpeg','audio/ogg','audio/wav','video/webm']);
 const ROLE_MIMES={
@@ -13,6 +14,19 @@ const IMAGE_REFERENCE_KEYS=new Set(['backgroundAssetId','imageAssetId','posterAs
 const ASSET_ID=/^[0-9a-f-]{36}$/i;
 const ROUTE_ASSET_ID=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const INVALID_MEDIA_REFERENCE='invalid-media-route';
+
+function renderedPublicationValue(parent:Record<string,unknown>,key:string,value:unknown):unknown{
+ if(key==='props'&&(parent.type==='gallery'||parent.type==='carousel')&&value&&typeof value==='object'){
+  const props=value as Record<string,unknown>;
+  if(props.contentModel!==undefined){
+   try{return {...props,contentModel:normalizeElementContent(parent.type,props.contentModel)};}catch{/* Publish rejects invalid structured content before media validation. */}
+  }
+ }
+ if(key==='contentModel'&&(parent.type==='gallery'||parent.type==='carousel')){
+  try{return normalizeElementContent(parent.type,value);}catch{/* Publish rejects invalid structured content before media validation. */}
+ }
+ return value;
+}
 
 function localMediaUrlAssetId(value:unknown,allowedOrigins:ReadonlySet<string>):string|null{
  if(typeof value!=='string')return null;
@@ -51,7 +65,7 @@ export function hasAbsoluteMediaLibraryUrl(value:unknown,depth=0):boolean{
     }catch{ /* Invalid sources cannot authorize or require a tenant domain. */ }
    }
   }
-  if(item&&typeof item==='object'&&hasAbsoluteMediaLibraryUrl(item,depth+1))return true;
+  if(item&&typeof item==='object'&&hasAbsoluteMediaLibraryUrl(renderedPublicationValue(value as Record<string,unknown>,key,item),depth+1))return true;
  }
  return false;
 }
@@ -70,7 +84,7 @@ export function canonicalizePublicationMediaReferences(value:any,allowedOrigins:
    if(!(typeof value[override]==='string'&&ASSET_ID.test(value[override]))&&mediaId&&mediaId!==INVALID_MEDIA_REFERENCE){
     result[key]=safeMediaUrl(item).replace(/(\/media\/)([0-9a-f-]{36})(?=\/*(?:[?#]|$))/i,(_match:string,prefix:string,id:string)=>prefix+id.toLowerCase());
    }
-  }else if(item&&typeof item==='object')result[key]=canonicalizePublicationMediaReferences(item,allowedOrigins,depth+1);
+  }else if(item&&typeof item==='object')result[key]=canonicalizePublicationMediaReferences(renderedPublicationValue(value,key,item),allowedOrigins,depth+1);
  }
  return result;
 }
@@ -97,7 +111,7 @@ function collectPublicationAssetRoles(value:any,out=new Map<string,Set<MediaRole
   }
   if(item&&typeof item==='object'){
    const itemRole=key==='items'&&['gallery','carousel'].includes(value.type)?'image':nodeRole;
-   collectPublicationAssetRoles(item,out,itemRole,depth+1,allowedOrigins);
+   collectPublicationAssetRoles(renderedPublicationValue(value,key,item),out,itemRole,depth+1,allowedOrigins);
   }
  }
  return out;

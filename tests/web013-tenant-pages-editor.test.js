@@ -232,6 +232,26 @@ test('reserved media paths with invalid asset IDs cannot become public',async t=
   }
 });
 
+test('structured carousel renders its src even when an imported item carries an unused assetId',async t=>{
+  const f=await fixture(t),active='6b1c2e65-e46e-4764-b234-123456789abc',archived='7b1c2e65-e46e-4764-b234-123456789abc';
+  for(const [id,archivedAt] of [[active,null],[archived,'2026-11-01']])f.db.prepare('INSERT INTO media(id,site_id,object_key,mime_type,original_name,size_bytes,archived_at) VALUES(?,?,?,?,?,?,?)')
+    .run(id,'other','sites/other/media/'+id,'image/png',id+'.png',100,archivedAt);
+  const document=f.document('b');
+  document.pages.b.nodes.root.children=['carousel'];
+  document.pages.b.nodes.carousel={id:'carousel',type:'carousel',parentId:'root',children:[],metadata:{structuredContentVersion:1},props:{contentModel:{version:1,items:[{assetId:active,label:'Dia',content:'Leírás',src:`https://trusted.example.test/media/${archived.toUpperCase()}`,alt:'Borítókép'}]}}};
+  const before=f.db.prepare('SELECT published_content_json FROM pages WHERE id=?').get('b').published_content_json;
+  assert.equal((await f.editor('editor','other','POST',{pageId:'b',expectedVersion:1,document,publish:false})).status,200);
+  const publish=await f.editor('editor','other','POST',{pageId:'b',expectedVersion:2,document,publish:true});
+  assert.equal(publish.status,409);
+  assert.equal((await publish.json()).error.code,'MEDIA_NOT_FOUND');
+  assert.equal(f.db.prepare('SELECT published_content_json FROM pages WHERE id=?').get('b').published_content_json,before);
+  f.db.prepare('UPDATE media SET archived_at=NULL WHERE id=?').run(archived);
+  assert.equal((await f.editor('editor','other','POST',{pageId:'b',expectedVersion:2,document,publish:true})).status,200);
+  const slide=JSON.parse(f.db.prepare('SELECT published_content_json FROM pages WHERE id=?').get('b').published_content_json).pages.b.nodes.carousel.props.contentModel.items[0];
+  assert.equal(slide.src,`https://trusted.example.test/media/${archived}`);
+  assert.equal(Object.hasOwn(slide,'assetId'),false,'the public snapshot contains only renderer-supported structured slide fields');
+});
+
 test('missing membership schema returns 503 and legacy role is default-site only',async t=>{
   const f=await fixture(t);f.db.exec('DROP TABLE site_memberships');
   assert.equal((await f.pages('admin','site-default')).status,503);

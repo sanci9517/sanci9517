@@ -534,6 +534,10 @@ test("publication validates local media URLs against site, archive state and med
   assert.equal(await validatePublicationAssets(f.env.DB,"site-default",{type:"card",props:{cardContent:{imageSrc:`/media/${archived}`}}}),"MEDIA_NOT_FOUND");
   assert.equal(await validatePublicationAssets(f.env.DB,"site-default",imageNode({assetId:image,src:`/media/${archived}`})),null,
     "the renderer uses assetId before a stale src fallback");
+  assert.equal(await validatePublicationAssets(f.env.DB,"site-default",{type:"carousel",props:{contentModel:{version:1,items:[{assetId:image,label:"Dia",content:"Leírás",src:`/media/${archived}`,alt:"Borítókép"}]}}}),"MEDIA_NOT_FOUND",
+    "structured carousel renders src and must not treat an ignored imported assetId as its source");
+  assert.equal(await validatePublicationAssets(f.env.DB,"site-default",{type:"gallery",props:{contentModel:{version:1,items:[{assetId:image,src:`/media/${archived}`,alt:"Borítókép"}]}}}),"MEDIA_NOT_FOUND",
+    "structured gallery also renders src rather than an imported assetId");
   assert.equal(await validatePublicationAssets(f.env.DB,"site-default",imageNode({src:"https://images.example.test/remote.png"})),null,
     "external HTTPS media remains outside this site's D1 library");
   for(const path of ['/media/not-a-uuid','/media/','/media/6b1c2e65-e46e-4764-b234-123456789abc/extra']){
