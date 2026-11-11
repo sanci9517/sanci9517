@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "recorded_at_utc": "2026-11-11T00:44:50Z",
+  "recorded_at_utc": "2026-11-11T00:45:10Z",
   "plan_point": "77.44.7.D",
   "status": "RUNTIME_DEPLOYED_AND_LIVE_VERIFIED; TEST_ONLY_FOLLOWUP_PUSHED; FULL_LOCAL_F0_BLOCKED; EDITOR_CORE_IN_PROGRESS; PLAN_POINT_OPEN",
   "scope": "Preserve Media Library references in legacy sanci-document page backgrounds and fail closed when legacy page selection or traversal exceeds the shared scan budget.",
@@ -41,7 +41,8 @@
     "post_release_live_health": "PASS; direct GET workers.dev/api/health at 2026-11-11T00:43:59Z HTTP 200, ok=true, version=2.0.0.",
     "post_release_live_public_assets": "PASS; direct GET / returned 200, 9,730 bytes and references site.css?v=20261110-divider-cascade. /visual-page.html redirected to /visual-page (307 then 200); served HTML is 9,497 bytes and SHA-256 3b1be7e30a0325bfcaeb41dac71c9d3df10ff54aa5437ef531eab624c592ceb1, equal to public/visual-page.html. /assets/site.css SHA-256 eed81d014eeeb75c116836aedb5887dd8ee9bb66f4b3df2a77a41c10c91ce6ae equals local public/assets/site.css.",
     "production_d1_post_release_readback": "PASS; SELECT name FROM d1_migrations ORDER BY name; 34 rows through 0028_media_archive.sql; rows_read=34, rows_written=0, changes=0, changed_db=false.",
-    "test_only_followup_worker_deployment": "NOT TRIGGERED; the Cloudflare Worker Build excludes tests/** and docs/**. Read-only deployments API still reports 06fc9da8-b41a-42af-941e-7525ddc74701 / 90b859b9-578d-4692-bc09-d8818159fc18 at 100% traffic."
+    "test_only_followup_worker_deployment": "NOT TRIGGERED; the Cloudflare Worker Build excludes tests/** and docs/**. Read-only deployments API still reports 06fc9da8-b41a-42af-941e-7525ddc74701 / 90b859b9-578d-4692-bc09-d8818159fc18 at 100% traffic.",
+    "custom_domain_health": "UNVERIFIED; direct curl probes for https://sanci9517.com/api/health and https://www.sanci9517.com/api/health failed before reaching either origin with CONNECT tunnel HTTP 403 from the environment proxy. This is not evidence of a site-origin failure; the workers.dev endpoint above was directly verified."
   },
   "source_control": {
     "repository": "sanci9517/sanci9517",
@@ -97,9 +98,10 @@
     "production_d1_migration_or_write": false,
     "production_r2_mutation_or_delete": false,
     "traffic_version_after_release": "90b859b9-578d-4692-bc09-d8818159fc18",
-    "traffic_percentage_after_release": 100
+    "traffic_percentage_after_release": 100,
+    "custom_domain_health": "UNVERIFIED; outbound proxy rejected the direct sanci9517.com and www.sanci9517.com connections with HTTP 403 before the request reached Cloudflare."
   },
   "cost_huf": 0,
   "cost_note": "No paid service, quota purchase, subscription, new dependency, production D1 write/migration, or R2 mutation/deletion was enabled or performed. Cloudflare exposes that the Build-minute limit is not reached; the connected GitHub read API does not expose current aggregate artifact-storage usage or account invoice totals.",
-  "next_step": "Continue the remaining 77.44.7.D media/content capability audit in canonical order. Diagnose the local F0 reproduction hang at tests/web013-html-anchor-extractor.test.js without reducing coverage; monitor exact-SHA Editor Core run 42932082249 to completion. The test/evidence commit is already pushed; no Worker deployment is needed for it."
+  "next_step": "Continue the remaining 77.44.7.D media/content capability audit in canonical order. Diagnose the local F0 reproduction hang at tests/web013-html-anchor-extractor.test.js without reducing coverage; monitor exact-SHA Editor Core run 42932082249 to completion. Retest custom-domain health from a network path that can reach it. The test/evidence commit is pushed; no Worker deployment is needed."
 }
