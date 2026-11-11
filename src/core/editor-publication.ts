@@ -11,8 +11,8 @@ const ROLE_MIMES={
 type MediaRole=keyof typeof ROLE_MIMES|'any';
 const MEDIA_NODE_ROLES:Record<string,MediaRole>={image:'image',audio:'audio',video:'video',gallery:'image',carousel:'image'};
 const IMAGE_REFERENCE_KEYS=new Set(['backgroundAssetId','imageAssetId','posterAssetId']);
-const ASSET_ID=/^[0-9a-f-]{36}$/i;
 const ROUTE_ASSET_ID=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const ASSET_ID=ROUTE_ASSET_ID;
 const INVALID_MEDIA_REFERENCE='invalid-media-route';
 
 function renderedPublicationValue(parent:Record<string,unknown>,key:string,value:unknown):unknown{

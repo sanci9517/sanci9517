@@ -534,6 +534,8 @@ test("publication validates local media URLs against site, archive state and med
   assert.equal(await validatePublicationAssets(f.env.DB,"site-default",{type:"card",props:{cardContent:{imageSrc:`/media/${archived}`}}}),"MEDIA_NOT_FOUND");
   assert.equal(await validatePublicationAssets(f.env.DB,"site-default",imageNode({assetId:image,src:`/media/${archived}`})),null,
     "the renderer uses assetId before a stale src fallback");
+  assert.equal(await validatePublicationAssets(f.env.DB,"site-default",imageNode({assetId:'00000000-0000-0000-0000-000000000000',src:`/media/${image}`})),null,
+    "a malformed imported assetId cannot suppress the renderer's valid src fallback");
   assert.equal(await validatePublicationAssets(f.env.DB,"site-default",{type:"carousel",props:{contentModel:{version:1,items:[{assetId:image,label:"Dia",content:"Leírás",src:`/media/${archived}`,alt:"Borítókép"}]}}}),"MEDIA_NOT_FOUND",
     "structured carousel renders src and must not treat an ignored imported assetId as its source");
   assert.equal(await validatePublicationAssets(f.env.DB,"site-default",{type:"gallery",props:{contentModel:{version:1,items:[{assetId:image,src:`/media/${archived}`,alt:"Borítókép"}]}}}),"MEDIA_NOT_FOUND",
@@ -555,6 +557,7 @@ test("publication validates local media URLs against site, archive state and med
   assert.equal(hasAbsoluteMediaLibraryUrl(imageNode({src:'https://trusted.example.test/media/'})),true);
   assert.equal(hasAbsoluteMediaLibraryUrl(imageNode({src:`https://trusted.example.test/media/${archived}/extra`})),true);
   assert.equal(hasAbsoluteMediaLibraryUrl(imageNode({assetId:image,src:`https://trusted.example.test/media/${archived}`})),false);
+  assert.equal(hasAbsoluteMediaLibraryUrl(imageNode({assetId:'00000000-0000-0000-0000-000000000000',src:`https://trusted.example.test/media/${archived}`})),true);
   assert.equal(hasAbsoluteMediaLibraryUrl(imageNode({src:`/media/${archived}`})),false);
   assert.equal(await validatePublicationAssets(f.env.DB,"site-default",imageNode({src:`https://trusted.example.test/media/${archived}`}),alias),"MEDIA_NOT_FOUND",
     "the site's verified media alias cannot publish an archived asset");

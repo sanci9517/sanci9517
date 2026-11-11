@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261111230042-252dd0a1",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-11T23:00:42.559Z",
+  "finished_at": "2026-11-11T23:03:24.831Z",
+  "wall_seconds": 162,
+  "paused_seconds": 0,
+  "measured_seconds": 162,
+  "status": "pass",
+  "kind": "mixed",
+  "summary": "Strict UUID parity for publication media asset IDs; red-green regression and local release gates",
+  "evidence": [
+    "tests/media-api.test.js"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "b1cbd1d0abfc92b6372a5cf5f76be80e56d55814",
+  "finished_revision": "b1cbd1d0abfc92b6372a5cf5f76be80e56d55814",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

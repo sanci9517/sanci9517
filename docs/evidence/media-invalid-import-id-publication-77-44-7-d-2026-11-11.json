@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "plan_point": "77.44.7.D",
+  "status": "LOCAL_CHECKS_PASS_RELEASE_PENDING",
+  "finding": "The publication validator accepted a loosely formatted 36-character imported assetId that the renderer rejects. This suppressed the rendered src fallback and falsely returned MEDIA_NOT_FOUND for an active image.",
+  "red_test": "tests/media-api.test.js publication validates local media URLs against site, archive state and media role: 53 pass, 1 fail; expected null, received MEDIA_NOT_FOUND for an invalid imported assetId with an active src.",
+  "change": "The publication asset ID matcher now uses the same strict UUID version/variant route matcher as the renderer. Save and Publish remain separate.",
+  "checks": {
+    "media_api_direct": "PASS 54/54, including malformed ID and HTTPS preflight fallback",
+    "media": "PASS 5/5 files",
+    "web013": "PASS 68/68 with local loopback permission",
+    "editor": "PASS 15/15 files and 3/3 subreaper cases",
+    "typecheck": "PASS",
+    "plan_contract": "PASS 13/13",
+    "canonical_plan": "PASS 13 master files, 396 mappings; acceptance NOT_CERTIFIED",
+    "feature_traceability": "PASS 396 mappings after refresh",
+    "active_plan_audit": "77.44.7.D OPEN / NOT_CERTIFIED",
+    "production_d1_preflight": "SELECT name FROM d1_migrations ORDER BY name: 34 rows read; changes=0, rows_written=0, changed_db=false; latest 0028_media_archive.sql",
+    "wrangler_dry_run": "PASS Wrangler 4.130.0, 171 public assets, no upload",
+    "git_diff_check": "PASS"
+  },
+  "dev_metrics_run": "docs/evidence/dev-metrics/runs/2026-11-11/20261111230042-252dd0a1.json",
+  "release": "Pending exact-SHA push, CI, Cloudflare build and direct traffic/health/hash checks",
+  "cost": "No paid service, production D1 mutation/migration, or R2 deletion."
+}
