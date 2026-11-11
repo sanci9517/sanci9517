@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261111035710-f69fc704",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-11T03:57:10.480Z",
+  "finished_at": "2026-11-11T04:01:47.334Z",
+  "wall_seconds": 277,
+  "paused_seconds": 0,
+  "measured_seconds": 277,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "77.44.7.D authored Video/Audio internal media URL regression coverage: fixed dedupe-colliding fixture, targeted and full media checks passed; previous runtime-SHA Editor Core CI remains failed and no paid/unknown-quota rerun was started.",
+  "evidence": [
+    "docs/evidence/media-url-reference-protection-77-44-7-d-2026-11-11.json"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "6dcc4fd6e7ad3a376566c79d447831adf7c8642c",
+  "finished_revision": "6dcc4fd6e7ad3a376566c79d447831adf7c8642c",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

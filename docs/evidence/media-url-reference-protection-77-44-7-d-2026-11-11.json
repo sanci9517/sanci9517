@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
-  "recorded_at_utc": "2026-11-11T02:05:47Z",
+  "recorded_at_utc": "2026-11-11T04:02:00Z",
   "plan_point": "77.44.7.D",
   "status": "DEPLOYED_EXACT_SHA_EDITOR_CORE_IN_PROGRESS",
-  "scope": "Protect authored and legacy relative /media/<asset-id> references in renderer-supported page content; cover image, card, gallery, video poster and legacy video/audio sources, and avoid successful-run screenshot artifact storage.",
+  "scope": "Protect authored and legacy relative /media/<asset-id> references in renderer-supported page content; cover image, card, gallery, video poster and legacy video/audio sources, and avoid successful-run screenshot artifact storage.; authored versioned Video/Audio src coverage added locally after finding the earlier regression exercised legacy nodes only.",
   "finding": {
     "source": "src/routes/admin/media.ts",
     "reproduction": "The public renderer accepts safe internal URL values in versioned authored image/video/audio sources, video posters, normalized Card imageSrc, authored Gallery/Carousel item src, and normalized structured Gallery/Carousel item src. The reference scan only matched explicit assetId fields. A published internal URL could therefore be omitted from usage/archive checks and public media authorization. The legacy sanci-document adapter also renders contentVersion-free image.src, video/audio.src, and video.poster values; the first authored-only pass missed that renderer path.",
@@ -15,36 +15,39 @@
       "Editor screenshots upload only after the complete Editor Core job fails, after every required check, with a 7-day retention window.",
       "The active-plan audit continues to upload only its bounded text artifact with a 30-day retention window.",
       "A legacy sanci-document Image src and Video poster remain visible usage references and authorize the exact local fixture bytes; a Media Library ID override continues to deny the stale URL.",
-      "Legacy sanci-document Video src and Audio src internal URLs are reported by usage, block archive with HTTP 409, and authorize exact matching local WebM/WAV fixture bytes."
+      "Legacy sanci-document Video src and Audio src internal URLs are reported by usage, block archive with HTTP 409, and authorize exact matching local WebM/WAV fixture bytes.",
+      "A distinct authored v1 WebM Video src and WAV Audio src at /media/{id} each appear in usage, block archival with HTTP 409, and authorize exact matching fixture bytes; distinct bytes isolate the authored assertions from content-addressed deduplication."
     ],
     "save_publish_separation_changed": false,
     "production_data_touched": false
   },
   "checks": {
-    "npm_run_test:media": "PASS; 5/5 files, including 46 media API tests in tests/media-api.test.js.",
-    "npm_run_typecheck": "PASS after the authored and legacy renderer-path fix.",
+    "npm_run_test:media": "PASS; 5/5 test files, including 46 media API cases; rerun after authored Video/Audio fixture isolation.",
+    "npm_run_typecheck": "PASS; TypeScript no-emit check after authored regression test change.",
     "npm_run_test:media:storage": "PASS; 1/1 real Worker integration with isolated local D1/R2 and Chromium, 60.2 seconds after the sandbox-denied loopback attempt was retried with local loopback permission.",
     "npm_run_test:editor": "PASS; 15/15 Node test files and 3/3 Linux subreaper tests.",
     "npm_run_test:web013": "PASS; 63/63 tests and the repository migration-safety gate.",
     "npm_run_test:domain": "PASS; 1/1.",
     "npm_run_test:schedule": "PASS; 1/1.",
     "node_test_workflow_artifact_retention": "PASS; 2/2.",
-    "canonical_plan": "PASS; complete 13-file master and 396 mappings; functional acceptance NOT_CERTIFIED.",
-    "plan_contract": "PASS; 13/13.",
+    "canonical_plan": "PASS; python3 scripts/check-canonical-plan.py, one complete 13-file master and 396 source mappings.",
+    "plan_contract": "PASS; python3 tests/plan-contract.test.py, 13/13.",
     "active_plan_point": "PASS audit; 77.44.7.D remains OPEN / NOT_CERTIFIED.",
     "feature_traceability": "PASS; 396/396 source mappings regenerated and checked.",
-    "git_diff_check": "PASS.",
+    "git_diff_check": "PASS; git diff --check.",
     "wrangler_dry_run": "PASS; Wrangler 4.130.0 read 171 public files, 344.35 KiB / 89.62 KiB gzip, and exited --dry-run. A harmless log-directory warning did not affect the exit status.",
     "production_d1_preflight": "PASS; only SELECT name FROM d1_migrations ORDER BY name; 34 rows, rows_read=34, rows_written=0, changes=0, changed_db=false.",
     "pre_release_live_health": "PASS; direct workers.dev GET 2026-11-11T01:23:19Z HTTP 200; ok=true, service=sanci9517-streamer-brand, version=2.0.0, server=cloudflare-worker.",
-    "public_asset_changes": "No public/ source changed in this runtime diff; changed-public-asset hash comparison is not applicable.",
-    "github_remote_gate": "PARTIAL; exact commit has 4 successful workflows (F0 42941236447, canonical plan 42941236366, active point audit 42941236326, Twitch 42941236300); Editor Core 42941236307 was IN_PROGRESS in its Chromium layout suite at the last check. No retry/dispatch.",
+    "public_asset_changes": "No public/ source changed in the authored test-only follow-up; changed asset hash comparison is N/A.",
+    "github_remote_gate": "FAILURE/NOT PASS; read-only Actions API reconfirmed Editor Core run 42941236307 on runtime SHA 425c5000322969d6531493d3295885c8c416ca93 completed with conclusion failure. No rerun/dispatch; Actions quota/storage remains unverified and paid use prohibited. New local test-only follow-up uses [skip ci] and has no CI claim.",
     "cloudflare_deploy": "PASS; exact Cloudflare Build e7552f7b-ef56-43b3-9ca0-669c306ab4ef succeeded with npm run deploy:safe; deployment 64d0bf72-b77f-464d-a474-f41919832cca, version 9df2bd30-83da-425a-9934-84e275ecb017 at 100% traffic.",
     "actions_quota": "PARTIAL / STORAGE UNVERIFIED; owner snapshot 0.45/0.50 GB. Exact latest Editor failure artifact 2,973,643 bytes, created 2026-11-11 and expires 2026-11-18. Successful Editor runs no longer upload screenshots; no old artifact deleted and no paid usage.",
     "npm_run_test_media": "PASS; 5/5 files after adding legacy Video src and Audio src URL coverage; tests/media-api.test.js adds usage, archive guard (409), and exact-byte delivery assertions for matching WebM/WAV fixtures.",
     "npm_run_test_media_storage": "PASS; 1/1 real Worker integration with isolated local D1/R2 and Chromium, 59.0 seconds after the legacy URL regression was added.",
     "cloudflare_build_quota": "PASS read-only Cloudflare Build limits: monthly limit not reached; refresh 2026-11-30. Current Build and trigger GET confirms v2/foundation and npm run deploy:safe, excluding docs/**, tests/** and AGENTS.md.",
-    "post_release_health": "PASS; direct GET to production workers.dev/api/health after deployment returned HTTP 200: ok=true, service=sanci9517-streamer-brand, version=2.0.0, server=cloudflare-worker."
+    "post_release_health": "PASS; direct GET to https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health at 2026-11-11T04:01:35Z returned HTTP 200, ok=true, service=sanci9517-streamer-brand, version=2.0.0, server=cloudflare-worker.",
+    "authored_video_audio_url_regression": "PASS; tests/media-api.test.js: internal public media URL regression covers authored v1 Video and Audio props.src with distinct WebM/WAV bytes, usage, archive 409, and exact-byte delivery.",
+    "node_media_api_direct": "PASS; 46/46 tests, 0 failures after isolating content-addressed fixture hashes."
   },
   "source_control": {
     "repository": "sanci9517/sanci9517",
@@ -55,7 +58,7 @@
     "push": "PUSHED normal fast-forward to v2/foundation; GitHub Branch API confirmed exact SHA.",
     "repository_visibility": "public",
     "runtime_commit_remote_head_at_push": "425c5000322969d6531493d3295885c8c416ca93",
-    "test_only_followup": "Follow-up scope is tests/docs/evidence only (legacy Video/Audio URL regression); commit uses [skip ci]. Runtime source and deployed Worker are unchanged."
+    "test_only_followup": "Local test-only change adds authored v1 Video/Audio /media URL coverage; distinct fixture bytes prevent same-file content-address dedupe from coupling authored assertions to legacy assets. Evidence and canonical plan follow-up are test/docs-only; commit using [skip ci], no Worker deployment."
   },
   "production": {
     "worker": "sanci9517-streamer-brand",
@@ -66,16 +69,16 @@
     "public_asset_hashes": "No public assets changed.",
     "production_d1_migration_or_write": false,
     "production_r2_mutation_or_delete": false,
-    "deployment_after_release": "64d0bf72-b77f-464d-a474-f41919832cca",
-    "traffic_version_after_release": "9df2bd30-83da-425a-9934-84e275ecb017",
+    "deployment_after_release": "64d0bf72-b77f-464d-a474-f41919832cca (read-only Cloudflare API rechecked 2026-11-11T04:01Z)",
+    "traffic_version_after_release": "9df2bd30-83da-425a-9934-84e275ecb017 (100%)",
     "traffic_percentage_after_release": 100,
     "health_after_release": "PASS; direct workers.dev GET after deployment returned HTTP 200 with ok=true and version 2.0.0.",
-    "post_followup_health": "Direct production workers.dev/api/health GET on 2026-11-11T03:13:10Z returned HTTP 200; ok=true, service=sanci9517-streamer-brand, version=2.0.0."
+    "post_followup_health": "Direct production workers.dev/api/health GET at 2026-11-11T04:01:35Z returned HTTP 200; ok=true, service=sanci9517-streamer-brand, version=2.0.0."
   },
   "cost_huf": 0,
   "cost_note": "No paid service, quota purchase, subscription, new dependency, production D1 write/migration, R2 mutation/deletion, workflow dispatch, or rerun was performed.",
-  "next_step": "When free Actions quota/storage is known or a required authorized exact-SHA release gate is available, rerun the Editor Core workflow for runtime SHA 425c5000322969d6531493d3295885c8c416ca93 after validating the test follow-up; do not treat the previous failure or test-only SHA as CI PASS. Continue remaining 77.44.7.D matrix only after recording the browser gate status. No paid use, production D1 write/migration, or R2 mutation/deletion.",
-  "session_metrics": "docs/evidence/dev-metrics/runs/2026-11-11/20261111005845-26d8c71a.json (runtime release, partial while hosted Editor CI runs); docs/evidence/dev-metrics/runs/2026-11-11/20261111020425-c329b2a3.json (82s, partial because exact-SHA Editor Core browser step is still in progress).",
+  "next_step": "Commit and push the isolated test/evidence/plan follow-up with [skip ci], verify exact remote v2/foundation SHA and zero Actions runs; runtime Worker remains unchanged. Continue 77.44.7.D only after required hosted editor gate is unblocked by known free Actions quota; no paid use, production D1 write/migration, or R2 mutation/deletion.",
+  "session_metrics": "docs/evidence/dev-metrics/runs/2026-11-11/20261111005845-26d8c71a.json (runtime release, partial while hosted Editor CI ran); docs/evidence/dev-metrics/runs/2026-11-11/20261111020425-c329b2a3.json (82s, partial); docs/evidence/dev-metrics/runs/2026-11-11/20261111030558-c5a6fb7f.json (test follow-up, partial); docs/evidence/dev-metrics/runs/2026-11-11/20261111035710-f69fc704.json (authored media test/evidence follow-up, partial).",
   "documentation_followup": {
     "status": "PUSHED",
     "commit_message": "[skip ci] docs: record media URL release verification",
