@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "recorded_at_utc": "2026-11-11T01:43:32Z",
+  "recorded_at_utc": "2026-11-11T01:57:42Z",
   "plan_point": "77.44.7.D",
-  "status": "LOCAL_VALIDATION_PASS_REMOTE_RELEASE_PENDING",
+  "status": "DEPLOYED_EXACT_SHA_EDITOR_CORE_IN_PROGRESS",
   "scope": "Keep relative public /media/<asset-id> URLs in authored Page Model content protected as live media references, and avoid successful-run screenshot artifact storage.",
   "finding": {
     "source": "src/routes/admin/media.ts",
@@ -37,22 +37,23 @@
     "production_d1_preflight": "PASS; only SELECT name FROM d1_migrations ORDER BY name; 34 rows, rows_read=34, rows_written=0, changes=0, changed_db=false.",
     "pre_release_live_health": "PASS; direct workers.dev GET 2026-11-11T01:23:19Z HTTP 200; ok=true, service=sanci9517-streamer-brand, version=2.0.0, server=cloudflare-worker.",
     "public_asset_changes": "No public/ source changed in this runtime diff; changed-public-asset hash comparison is not applicable.",
-    "github_remote_gate": "NOT RUN for local uncommitted source. Direct GitHub Branch API confirms exact v2/foundation HEAD b0e107daf83f61fd7a2db912c94e3bcdb97541f2.",
-    "cloudflare_deploy": "NOT DONE; runtime commit is not yet pushed. Previous deployment remains 100% traffic.",
+    "github_remote_gate": "PARTIAL; exact commit has 4 successful workflows (F0 42941236447, canonical plan 42941236366, active point audit 42941236326, Twitch 42941236300); Editor Core 42941236307 was IN_PROGRESS in its Chromium layout suite at the last check. No retry/dispatch.",
+    "cloudflare_deploy": "PASS; exact Cloudflare Build e7552f7b-ef56-43b3-9ca0-669c306ab4ef succeeded with npm run deploy:safe; deployment 64d0bf72-b77f-464d-a474-f41919832cca, version 9df2bd30-83da-425a-9934-84e275ecb017 at 100% traffic.",
     "actions_quota": "PARTIAL / STORAGE UNVERIFIED; owner snapshot 0.45/0.50 GB. Exact latest Editor failure artifact 2,973,643 bytes, created 2026-11-11 and expires 2026-11-18. Successful Editor runs no longer upload screenshots; no old artifact deleted and no paid usage.",
     "npm_run_test_media": "PASS; 5/5 files after the legacy media URL regression was added.",
-    "npm_run_test_media_storage": "PASS; 1/1 real Worker integration with isolated local D1/R2 and Chromium after the legacy regression, 59.0 seconds.",
-    "cloudflare_build_quota": "PASS read-only Cloudflare Build limits: monthly limit not reached; refresh 2026-11-30. Current Build and trigger GET confirms v2/foundation and npm run deploy:safe, excluding docs/**, tests/** and AGENTS.md."
+    "npm_run_test_media_storage": "PASS; 1/1 real Worker integration with isolated local D1/R2 and Chromium, 59.0 seconds after the legacy URL regression was added.",
+    "cloudflare_build_quota": "PASS read-only Cloudflare Build limits: monthly limit not reached; refresh 2026-11-30. Current Build and trigger GET confirms v2/foundation and npm run deploy:safe, excluding docs/**, tests/** and AGENTS.md.",
+    "post_release_health": "PASS; direct GET to production workers.dev/api/health after deployment returned HTTP 200: ok=true, service=sanci9517-streamer-brand, version=2.0.0, server=cloudflare-worker."
   },
   "source_control": {
     "repository": "sanci9517/sanci9517",
     "branch": "v2/foundation",
     "verified_remote_head": "b0e107daf83f61fd7a2db912c94e3bcdb97541f2",
     "local_head_before_change": "b0e107daf83f61fd7a2db912c94e3bcdb97541f2",
-    "runtime_commit": null,
-    "push": "NOT DONE; local validation and free Cloudflare Build capacity verified; required exact-SHA Actions and Cloudflare auto-build are pending release.",
+    "runtime_commit": "425c5000322969d6531493d3295885c8c416ca93",
+    "push": "PUSHED normal fast-forward to v2/foundation; GitHub Branch API confirmed exact SHA.",
     "repository_visibility": "public",
-    "remote_head_verified": "b0e107daf83f61fd7a2db912c94e3bcdb97541f2"
+    "runtime_commit_remote_head_at_push": "425c5000322969d6531493d3295885c8c416ca93"
   },
   "production": {
     "worker": "sanci9517-streamer-brand",
@@ -62,9 +63,14 @@
     "health_before_release": "PASS; direct GET workers.dev/api/health 2026-11-11T01:23:19Z, HTTP 200, ok=true, version=2.0.0.",
     "public_asset_hashes": "No public assets changed.",
     "production_d1_migration_or_write": false,
-    "production_r2_mutation_or_delete": false
+    "production_r2_mutation_or_delete": false,
+    "deployment_after_release": "64d0bf72-b77f-464d-a474-f41919832cca",
+    "traffic_version_after_release": "9df2bd30-83da-425a-9934-84e275ecb017",
+    "traffic_percentage_after_release": 100,
+    "health_after_release": "PASS; direct workers.dev GET after deployment returned HTTP 200 with ok=true and version 2.0.0."
   },
   "cost_huf": 0,
   "cost_note": "No paid service, quota purchase, subscription, new dependency, production D1 write/migration, R2 mutation/deletion, workflow dispatch, or rerun was performed.",
-  "next_step": "Commit and normal fast-forward push the validated runtime/test/evidence change to v2/foundation without enabling paid usage; verify exact-SHA Actions and Cloudflare deploy:safe build, 100% traffic, direct health, and changed public asset hashes; continue the open 77.44.7.D capability/lifecycle audit."
+  "next_step": "Finish observing exact-SHA Editor Core run 42941236307 without rerun. If successful, record final exact-SHA workflows in a docs-only [skip ci] follow-up; then continue the remaining 77.44.7.D media/content lifecycle matrix. Do not enable paid quota or modify production data.",
+  "session_metrics": "docs/evidence/dev-metrics/runs/2026-11-11/20261111005845-26d8c71a.json; measured 2948 seconds excluding 589 seconds paused; partial because exact-SHA Editor Core browser suite remains in progress."
 }

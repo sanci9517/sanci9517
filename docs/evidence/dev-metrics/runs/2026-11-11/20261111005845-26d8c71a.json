@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261111005845-26d8c71a",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-11T00:58:45.916Z",
+  "finished_at": "2026-11-11T01:57:42.531Z",
+  "wall_seconds": 3537,
+  "paused_seconds": 589,
+  "measured_seconds": 2948,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "A renderer belső média URL-hivatkozás javítása forrásból ellenőrizve, célzott tesztekkel validálva és 100%-os Worker forgalomra telepítve. A négy GitHub workflow PASS, de az Editor Core browser suite még fut; ezért az exact-SHA gate nem teljes.",
+  "evidence": [
+    "docs/evidence/media-url-reference-protection-77-44-7-d-2026-11-11.json",
+    "https://github.com/sanci9517/sanci9517/commit/425c5000322969d6531493d3295885c8c416ca93"
+  ],
+  "checks": "test:media PASS; typecheck PASS; local media storage PASS; test:editor PASS; web013/domain/schedule PASS; plan/traceability PASS; Wrangler dry-run PASS; Cloudflare deploy and health PASS; exact-SHA Editor Core IN_PROGRESS",
+  "started_revision": "b0e107daf83f61fd7a2db912c94e3bcdb97541f2",
+  "finished_revision": "425c5000322969d6531493d3295885c8c416ca93",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
