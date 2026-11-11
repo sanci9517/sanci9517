@@ -337,6 +337,26 @@ test("verified media origin lookup failure fails closed for archive and public d
   assert.equal(f.mediaReads.count,0,"fail-closed public authorization must not read R2");
 });
 
+test("revoked or incomplete verified aliases lose absolute media authorization",async t=>{
+  const f=await fixture(t);
+  const upload=await f.call("POST","editor",png,{name:"alias-lifecycle.png"});
+  assert.equal(upload.status,201);
+  const asset=(await upload.json()).data;
+  const document={type:"sanci-page-document",schemaVersion:1,activePageId:"alias-page",pages:{"alias-page":{id:"alias-page",rootId:"root",nodes:{
+    root:{id:"root",type:"root",children:["image"]},
+    image:{id:"image",type:"image",metadata:{contentVersion:1},props:{src:`https://trusted.example.test/media/${asset.id}`,alt:"Alias lifecycle"},children:[]}
+  }}}};
+  f.db.prepare("INSERT INTO pages (id,site_id,archived_at,is_published,published_content_json,content_json,title,slug) VALUES(?,?,?,?,?,?,?,?)")
+    .run("alias-page","site-default",null,1,JSON.stringify(document),JSON.stringify(document),"Alias lifecycle","alias-lifecycle");
+  assert.equal((await publishedMediaRoute(new Request(`https://example.test/media/${asset.id}`),f.env,"site-default",asset.id)).status,200);
+  f.db.prepare("UPDATE site_domains SET status='revoked' WHERE hostname='trusted.example.test'").run();
+  assert.equal((await publishedMediaRoute(new Request(`https://example.test/media/${asset.id}`),f.env,"site-default",asset.id)).status,404,
+    "revoked tenant alias cannot authorize an absolute media source");
+  f.db.prepare("UPDATE site_domains SET status='verified',verified_at=NULL WHERE hostname='trusted.example.test'").run();
+  assert.equal((await publishedMediaRoute(new Request(`https://example.test/media/${asset.id}`),f.env,"site-default",asset.id)).status,404,
+    "an incomplete verified alias cannot authorize an absolute media source");
+});
+
 test("media URL references match renderer normalization and reject invalid path variants",async t=>{
   const f=await fixture(t);
   const upload=await f.call("POST","editor",gif,{name:"whitespace-url.gif",contentType:"image/gif"});

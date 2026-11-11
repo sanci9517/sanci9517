@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "id": "20261111091040-6187762b",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-11T09:10:40.166Z",
+  "finished_at": "2026-11-11T09:11:05.127Z",
+  "wall_seconds": 25,
+  "paused_seconds": 0,
+  "measured_seconds": 25,
+  "status": "pass",
+  "kind": "mixed",
+  "summary": "verified-domain-alias-revocation-tested",
+  "evidence": [
+    "tests/media-api.test.js",
+    "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+    "docs/evidence/media-domain-alias-lifecycle-77-44-7-d-2026-11-11.json"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "7eb4e07c9b60c041b576923404fd3240488ccb87",
+  "finished_revision": "7eb4e07c9b60c041b576923404fd3240488ccb87",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
