@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "recorded_at_utc": "2026-11-11T09:01:22Z",
+  "recorded_at_utc": "2026-11-11T09:03:14Z",
   "plan_point": "77.44.7.D",
   "status": "TEST_AND_DOCS_VERIFIED_PUSH_PENDING",
   "scope": "Exercise the tenant verified-domain D1 query failure path introduced for absolute media URL authorization and prove it fails closed without mutation or storage reads.",
@@ -31,20 +31,22 @@
     "cloudflare_worker": "No Worker deployment expected for this test/docs-only change; trigger excludes docs/** and tests/**.",
     "cost": "No paid service. Standard public repository Actions are free; no workflow rerun or dispatch. Cloudflare Build limit last read-only check has_reached_build_minutes_limit=false; no build/deploy for test/docs-only change.",
     "measured_session": "docs/evidence/dev-metrics/runs/2026-11-11/20261111085637-8f54f998.json; PASS for test/docs verification and push preparation, 200 measured wall-clock seconds; not Codex active time.",
-    "pending_commit": "Normal fast-forward test/docs commit and [skip ci] exact-SHA verification pending.",
+    "test_docs_commit": "PASS; c68bd9ff164b49adc9cd0b847a95aa4f51846f1d pushed normal fast-forward to v2/foundation; GitHub Branch API confirmed exact SHA. Exact-SHA Actions query count=0 as expected for [skip ci], not CI PASS.",
+    "post_docs_cloudflare": "PASS read-only; latest deployment unchanged at 8a071cb9-afb7-42d0-b649-058b8d595fb8, version 9815d441-e39d-40c7-8c51-79ac7a0163d4 at 100%; no Worker redeploy.",
+    "post_docs_health": "PASS direct GET 2026-11-11T09:03:13Z HTTP 200; {\"ok\":true,\"service\":\"sanci9517-streamer-brand\",\"version\":\"2.0.0\",\"server\":\"cloudflare-worker\"}.",
     "production_mutations": "false; no production D1 writes/migrations, R2 writes/deletes, or public asset changes."
   },
   "production_baseline": {
     "deployment_id": "8a071cb9-afb7-42d0-b649-058b8d595fb8",
     "worker_version_id": "9815d441-e39d-40c7-8c51-79ac7a0163d4",
     "traffic_percent": 100,
-    "health": "Direct read-only GET 2026-11-11T09:01:22Z returned HTTP 200 and {\"ok\":true,\"service\":\"sanci9517-streamer-brand\",\"version\":\"2.0.0\",\"server\":\"cloudflare-worker\"}. This test/docs block makes no runtime change."
+    "health": "Direct read-only GET 2026-11-11T09:03:13Z returned HTTP 200 and {\"ok\":true,\"service\":\"sanci9517-streamer-brand\",\"version\":\"2.0.0\",\"server\":\"cloudflare-worker\"}. This test/docs block makes no runtime change."
   },
   "source_control": {
     "repository": "sanci9517/sanci9517",
     "branch": "v2/foundation",
     "base_sha": "dc02f3511ad6dda405948c24c2176679fe1387fb",
-    "test_docs_commit": "PENDING",
-    "verified_remote_head": "PENDING"
+    "test_docs_commit": "c68bd9ff164b49adc9cd0b847a95aa4f51846f1d",
+    "verified_remote_head": "c68bd9ff164b49adc9cd0b847a95aa4f51846f1d"
   }
 }
