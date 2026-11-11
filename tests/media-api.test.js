@@ -466,6 +466,35 @@ test("publication and public media delivery reject assets used in a different me
  }
 });
 
+test("URL media references cannot deliver an asset with an incompatible rendered role",async t=>{
+  const f=await fixture(t);
+  const videoResponse=await f.call("POST","editor",webm,{name:"wrong-image-role.webm",contentType:"video/webm"});
+  assert.equal(videoResponse.status,201);
+  const video=(await videoResponse.json()).data;
+  const audioResponse=await f.call("POST","editor",wav,{name:"wrong-poster-role.wav",contentType:"audio/wav"});
+  assert.equal(audioResponse.status,201);
+  const audio=(await audioResponse.json()).data;
+  const nodes={
+    root:{type:"root",children:["image","gallery","carousel","poster"]},
+    image:{type:"image",metadata:{contentVersion:1},props:{src:`/media/${video.id}`}},
+    gallery:{type:"gallery",metadata:{contentVersion:1},props:{items:[{src:`/media/${video.id}`,alt:"Clip"}]}},
+    carousel:{type:"carousel",metadata:{structuredContentVersion:1},props:{contentModel:{version:1,items:[{src:`/media/${video.id}`,alt:"Clip"}]}}},
+    poster:{type:"video",metadata:{contentVersion:1},props:{src:"/clip.webm",poster:`/media/${audio.id}`}}
+  };
+  const document={pages:{"wrong-role-page":{rootId:"root",nodes}}};
+  f.db.prepare("INSERT INTO pages (id,site_id,archived_at,is_published,published_content_json,content_json,title,slug) VALUES(?,?,?,?,?,?,?,?)")
+    .run("wrong-role-page","site-default",null,1,JSON.stringify(document),JSON.stringify(document),"Wrong roles","wrong-roles");
+  for(const asset of [video,audio]){
+    const usage=(await (await f.call("GET","editor",null,{usage:asset.id})).json()).data;
+    assert.equal(usage.complete,true);
+    assert.ok(usage.references.length>0,"archive audit conservatively keeps the malformed reference");
+    assert.equal((await f.call("PATCH","editor",JSON.stringify({archived:true}),{id:asset.id})).status,409);
+    assert.equal((await publishedMediaRoute(new Request(`https://example.test/media/${asset.id}`),f.env,"site-default",asset.id)).status,404,
+      "a rendered image role cannot authorize video or audio bytes");
+  }
+  assert.equal(f.mediaReads.count,0,"incompatible media roles must be rejected before R2 reads");
+});
+
 
 test("site quota telemetry includes archived assets, excludes other sites and is filter-independent",async t=>{
   const f=await fixture(t);

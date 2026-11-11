@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261111104750-75bd71a3",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-11T10:47:50.586Z",
+  "finished_at": "2026-11-11T10:48:51.024Z",
+  "wall_seconds": 60,
+  "paused_seconds": 0,
+  "measured_seconds": 60,
+  "status": "pass",
+  "kind": "mixed",
+  "summary": "verified URL-backed media MIME roles fail closed for public delivery and archive",
+  "evidence": [
+    "tests/media-api.test.js; docs/SANCI9517-CREATOR-PLATFORM-PLAN.md"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "e52ba97087bcc8de6873cc4cbe25283b5bcd3f83",
+  "finished_revision": "e52ba97087bcc8de6873cc4cbe25283b5bcd3f83",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
