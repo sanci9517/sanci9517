@@ -3149,6 +3149,6 @@ A `77.44.7.D` továbbra **OPEN / NOT CERTIFIED**; a domain életciklus egy újab
 
 ### 77.44.7.D — Domain alias evidence lezárása (2026-11-11 09:12 UTC)
 
-A domain-életciklus regresszióteszt és a hozzá tartozó bizonyíték most már a tényleges fast-forward GitHub-fejet rögzíti: `ab64622f41f3e164fb36c73bb5b89e2d710681e8`. A bizonyíték státusza `TEST_DOCS_VERIFIED_PUSHED`; a teszt/docs-only változás nem indított Worker újratelepítést, production D1/R2 műveletet vagy fizetős CI-futtatást. A production baseline változatlan: deployment `8a071cb9-afb7-42d0-b649-058b8d595fb8`, Worker-verzió `9815d441-e39d-40c7-8c51-79ac7a0163d4`, 100% traffic, health HTTP 200.
+A domain-életciklus regresszióteszt és a hozzá tartozó bizonyíték most már a tényleges fast-forward GitHub-fejet rögzíti: `f23cb800462dbde74127ca37d20ccb940e3ee3c7`. A bizonyíték státusza `TEST_DOCS_VERIFIED_PUSHED`; a teszt/docs-only változás nem indított Worker újratelepítést, production D1/R2 műveletet vagy fizetős CI-futtatást. A production baseline változatlan: deployment `8a071cb9-afb7-42d0-b649-058b8d595fb8`, Worker-verzió `9815d441-e39d-40c7-8c51-79ac7a0163d4`, 100% traffic, health HTTP 200.
 
 Az aktív `77.44.7.D` továbbra **OPEN / NOT CERTIFIED**; ez a bejegyzés a forráskontroll-bizonyítékot zárja, nem a teljes média-/Editor-képességmátrixot. A teljes Visual Editor kézi/fizikai elfogadása **DEFERRED**, Save és Publish külön marad. Következő lépés: az exact-SHA Editor Core workflow read-only állapotának ellenőrzése, majd a média renderer következő nyitott paritási sora.
