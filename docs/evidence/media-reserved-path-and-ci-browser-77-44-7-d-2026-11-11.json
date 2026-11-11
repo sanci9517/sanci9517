@@ -24,11 +24,12 @@
     "feature_traceability": "PASS: 396 current source mappings",
     "workflow_yaml": "PASS: parsed with PyYAML",
     "git_diff_check": "PASS",
-    "github_exact_sha_editor_core": "IN_PROGRESS: run 43054562549; no PASS claimed",
+    "github_exact_sha_editor_core": "IN_PROGRESS: run 43054562549; Chromium installation and isolated Worker media-storage steps SUCCESS, browser regression running; no full CI PASS claimed",
     "github_exact_sha_active_plan_audit": "SUCCESS: run 43054562752",
     "github_exact_sha_canonical_plan": "SUCCESS: run 43054562554",
     "github_exact_sha_twitch": "SUCCESS: run 43054562623",
-    "github_exact_sha_f0": "SUCCESS: run 43054562680"
+    "github_exact_sha_f0": "SUCCESS: run 43054562680",
+    "npm_run_test_web013": "PASS: 67/67 tests with local loopback network permission; earlier restricted-sandbox run hung in Miniflare"
   },
   "source_control": {
     "branch": "v2/foundation",
@@ -42,7 +43,8 @@
     "health": "Direct GET /api/health HTTP 200; ok=true, service=sanci9517-streamer-brand, version=2.0.0",
     "changed_public_assets": [],
     "build": "13da412c-990b-4224-ac23-73eaa0b8ec17: stopped/success, push_event exact SHA, typecheck and deploy:safe",
-    "unchanged_renderer_asset_sha256": "public/editor-v2/core/authored-content.js and direct production GET: 3bf1f67a689b7554efd50abb34ffe248e75668bfa9cb72c717c8a668301e6d7d"
+    "unchanged_renderer_asset_sha256": "public/editor-v2/core/authored-content.js and direct production GET: 3bf1f67a689b7554efd50abb34ffe248e75668bfa9cb72c717c8a668301e6d7d",
+    "reserved_invalid_media_get": "Direct unauthenticated GET /media/not-a-uuid HTTP 404, MEDIA_NOT_FOUND"
   },
   "cost": "No paid service, production D1 mutation/migration, or R2 deletion."
 }
