@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "recorded_at_utc": "2026-11-11T08:37:05Z",
+  "recorded_at_utc": "2026-11-11T08:49:09Z",
   "plan_point": "77.44.7.D",
-  "status": "LOCAL_VERIFIED_RELEASE_PENDING",
+  "status": "DEPLOYED_EXACT_SHA_EDITOR_CORE_IN_PROGRESS",
   "scope": "Keep the media usage/archive scanner and public media delivery in agreement with renderer-supported same-origin and verified tenant-alias HTTPS media URLs, without allowing foreign hosts to authorize tenant media.",
   "finding": {
     "source": "src/routes/admin/media.ts",
@@ -34,12 +34,13 @@
     "wrangler_dry_run": "PASS; Wrangler 4.130.0, 171 assets, 345.97 KiB / 89.96 KiB gzip; dry-run only, no deployment.",
     "production_d1_preflight": "PASS; SELECT name FROM d1_migrations ORDER BY name; 34 rows read, 0 writes, 0 changes, changed_db=false.",
     "github_pre_release_branch": "PASS read-only; repository sanci9517/sanci9517, branch v2/foundation at starting SHA c334c5e29081895f42a06cd25327a3c995e6b2f5.",
-    "github_runtime_ci": "PENDING exact-SHA GitHub Actions result after the runtime fast-forward push.",
-    "cloudflare_deploy": "PENDING exact source SHA Build/deploy result.",
-    "post_release_traffic_version": "PENDING read-only Cloudflare deployment verification.",
-    "post_release_health": "PENDING direct production GET after deployment.",
-    "public_asset_changes": "No public/ asset was changed; confirm deployment does not update assets, then hash comparison is N/A.",
+    "github_runtime_ci": "Exact SHA cccb76fe0220e2502178600d2706873f7f79a51b: Canonical Creator Platform Plan 42989563336 SUCCESS; Canonical Plan Active Point Audit 42989563244 SUCCESS; Twitch Integration Check 42989563471 SUCCESS; F0 baseline checks 42989563676 SUCCESS; Editor Core Test 42989563431 IN_PROGRESS at Editor browser layout regression. No complete exact-SHA Editor Core pass claimed.",
+    "cloudflare_deploy": "PASS; exact SHA cccb76fe0220e2502178600d2706873f7f79a51b Build 7ec53271-78cf-4813-b257-da0e34ea84ef succeeded. Logs confirm npm run typecheck and npm run deploy:safe; migration safety gate passed and no migration applied.",
+    "post_release_traffic_version": "PASS read-only deployment list: deployment 8a071cb9-afb7-42d0-b649-058b8d595fb8, Worker version 9815d441-e39d-40c7-8c51-79ac7a0163d4, 100% traffic.",
+    "post_release_health": "PASS direct GET 2026-11-11T08:47:47Z, HTTP 200, body {\"ok\":true,\"service\":\"sanci9517-streamer-brand\",\"version\":\"2.0.0\",\"server\":\"cloudflare-worker\"}.",
+    "public_asset_changes": "PASS; git diff from pre-release HEAD c334c5e29081895f42a06cd25327a3c995e6b2f5 shows no public/ changes; Cloudflare build log says No updated asset files to upload. Asset hash comparison N/A.",
     "actions_cost": "No workflow dispatch or rerun; the repository is public and normal standard GitHub-hosted Actions runs are free. Read-only Cloudflare Build limits report has_reached_build_minutes_limit=false, refresh 2026-11-30T23:59:59.999Z. GitHub artifact-storage current meter is unavailable; no paid use or storage deletion.",
+    "measured_session": "docs/evidence/dev-metrics/runs/2026-11-11/20261111080727-ccd9ea50.json; partial, 2578 measured wall-clock seconds; not Codex active time.",
     "production_mutations": "false; no production D1 write/migration or R2 mutation/deletion."
   },
   "source_control": {
@@ -47,7 +48,7 @@
     "branch": "v2/foundation",
     "verified_remote_head_before_change": "c334c5e29081895f42a06cd25327a3c995e6b2f5",
     "local_head_before_change": "c334c5e29081895f42a06cd25327a3c995e6b2f5",
-    "runtime_commit": "PENDING",
-    "push": "PENDING normal fast-forward only."
+    "runtime_commit": "cccb76fe0220e2502178600d2706873f7f79a51b",
+    "push": "PASS; normal fast-forward c334c5e29081895f42a06cd25327a3c995e6b2f5..cccb76fe0220e2502178600d2706873f7f79a51b to v2/foundation; GitHub Branch API verified exact full SHA."
   }
 }
