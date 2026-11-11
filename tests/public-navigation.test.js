@@ -91,7 +91,7 @@ test('public menu toggle exposes the controlled navigation panel to assistive te
   assert.match(visualPage, /data-menu-button[^>]*aria-controls="public-menu"/);
   assert.match(visualPage, /<nav[^>]*id="public-menu"[^>]*data-menu-panel/);
   assert.match(visualPage, /<script src="\/assets\/site\.js\?v=20261016-5"><\/script>/);
-  assert.match(visualPage, /site\.css\?v=20261016-3/);
+  assert.match(visualPage, /site\.css\?v=20261110-divider-cascade/);
   const css = readFileSync(new URL('../public/assets/site.css', import.meta.url), 'utf8');
   assert.match(css, /\.menu-link:focus-visible/);
   assert.match(css, /\.menu-panel\{[^}]*max-height:calc\(100vh - 100px\);overflow-y:auto;overscroll-behavior:contain/);

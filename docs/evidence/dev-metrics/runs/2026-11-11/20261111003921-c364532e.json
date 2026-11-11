@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "id": "20261111003921-c364532e",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-11T00:39:21.450Z",
+  "finished_at": "2026-11-11T00:46:27.695Z",
+  "wall_seconds": 426,
+  "paused_seconds": 0,
+  "measured_seconds": 426,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "Örökölt háttér asset runtime fix élesítése és közvetlen ellenőrzése; a stale F0 cache assertion javítva és helyben pass, de a teljes helyi F0 HTML-parser alfolyamat elakadt, a hosted F0 failure történelmi státusz marad; WEB-011 D pont nyitva.",
+  "evidence": [
+    "evidence/legacy-page-background-asset-usage-77-44-7-d-2026-11-11.json",
+    "tests/public-navigation.test.js",
+    "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md"
+  ],
+  "checks": "test/public-navigation 1/1 PASS; plan contract 13/13 PASS; canonical 13/396 PASS; audit 77.44.7.D OPEN; traceability 396/396 PASS; local full F0 BLOCKED at WEB013 parser; GitHub F0 historical failure; Worker 100% live hashes match.",
+  "started_revision": "c6161fe910c2f1049a50ecf89ff3e54fc152b38a",
+  "finished_revision": "c6161fe910c2f1049a50ecf89ff3e54fc152b38a",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
