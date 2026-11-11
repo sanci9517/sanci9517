@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "plan_point": "77.44.7.D",
-  "status": "LOCAL_CHECKS_PASS_RELEASE_PENDING",
+  "status": "DEPLOYED_EXACT_SHA_EDITOR_CI_IN_PROGRESS_SCOPE_OPEN",
   "finding": "The publication validator accepted a loosely formatted 36-character imported assetId that the renderer rejects. This suppressed the rendered src fallback and falsely returned MEDIA_NOT_FOUND for an active image.",
   "red_test": "tests/media-api.test.js publication validates local media URLs against site, archive state and media role: 53 pass, 1 fail; expected null, received MEDIA_NOT_FOUND for an invalid imported assetId with an active src.",
   "change": "The publication asset ID matcher now uses the same strict UUID version/variant route matcher as the renderer. Save and Publish remain separate.",
@@ -20,6 +20,16 @@
     "git_diff_check": "PASS"
   },
   "dev_metrics_run": "docs/evidence/dev-metrics/runs/2026-11-11/20261111230042-252dd0a1.json",
-  "release": "Pending exact-SHA push, CI, Cloudflare build and direct traffic/health/hash checks",
+  "release": {
+    "source_commit": "dbd24dced11b7fe411bd687f4af1521ffa168068",
+    "verified_remote_branch": "v2/foundation at exact source SHA after normal fast-forward push",
+    "cloudflare_build": "9b990efb-a3ec-4dd6-8453-0b4f4baaff70 stopped/success at exact source SHA; typecheck, deploy:safe and migration safety gate succeeded; no updated public assets",
+    "deployment": "c1247a0b-e1ee-4272-9052-4f8a18b0f109",
+    "traffic_version": "d522c2f5-677a-454f-a704-b6a379fbee69 at 100%",
+    "health": "Direct GET /api/health HTTP 200; ok=true, service=sanci9517-streamer-brand, version=2.0.0",
+    "changed_public_assets": [],
+    "unchanged_renderer_asset_sha256": "public/editor-v2/core/authored-content.js local and direct production GET: 3bf1f67a689b7554efd50abb34ffe248e75668bfa9cb72c717c8a668301e6d7d",
+    "exact_sha_github_ci": "Canonical Plan 43116932769, Active Point Audit 43116932716, Twitch 43116932633, F0 43116932630 completed/success; Editor Core 43116932582 in_progress"
+  },
   "cost": "No paid service, production D1 mutation/migration, or R2 deletion."
 }
