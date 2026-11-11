@@ -381,6 +381,28 @@ test("another site's verified alias cannot authorize this site's media",async t=
   assert.equal(f.mediaReads.count,0,"cross-site alias denial must happen before R2 reads");
 });
 
+test("uppercase UUID media references remain protected and publicly deliverable",async t=>{
+  const f=await fixture(t);
+  const upload=await f.call("POST","editor",png,{name:"imported-uppercase-id.png"});
+  assert.equal(upload.status,201);
+  const asset=(await upload.json()).data;
+  const upper=asset.id.toUpperCase();
+  assert.equal(await validatePublicationAssets(f.env.DB,"site-default",{type:"image",props:{assetId:upper}}),null,
+    "publication accepts the same UUID casing as the renderer");
+  const document={pages:{"uppercase-media-page":{rootId:"root",nodes:{
+    root:{type:"root",children:["image"]},
+    image:{type:"image",metadata:{contentVersion:1},props:{src:`/media/${upper}`,alt:"Imported image"}}
+  }}}};
+  f.db.prepare("INSERT INTO pages (id,site_id,archived_at,is_published,published_content_json,content_json,title,slug) VALUES(?,?,?,?,?,?,?,?)")
+    .run("uppercase-media-page","site-default",null,1,JSON.stringify(document),JSON.stringify(document),"Uppercase media","uppercase-media");
+  const usage=(await (await f.call("GET","editor",null,{usage:asset.id})).json()).data;
+  assert.ok(usage.references.some(ref=>ref.pageId==="uppercase-media-page"&&ref.path==="props.src"));
+  assert.equal((await f.call("PATCH","editor",JSON.stringify({archived:true}),{id:asset.id})).status,409);
+  const delivered=await publishedMediaRoute(new Request(`https://example.test/media/${upper}`),f.env,"site-default",upper);
+  assert.equal(delivered.status,200);
+  assert.deepEqual(new Uint8Array(await delivered.arrayBuffer()),png);
+});
+
 test("media URL references match renderer normalization and reject invalid path variants",async t=>{
   const f=await fixture(t);
   const upload=await f.call("POST","editor",gif,{name:"whitespace-url.gif",contentType:"image/gif"});

@@ -18,7 +18,8 @@ function collectPublicationAssetRoles(value:any,out=new Map<string,Set<MediaRole
  for(const [key,item] of Object.entries(value)){
   if((key==='assetId'||IMAGE_REFERENCE_KEYS.has(key))&&typeof item==='string'&&ASSET_ID.test(item)){
    const role:MediaRole=IMAGE_REFERENCE_KEYS.has(key)?'image':nodeRole;
-   const roles=out.get(item)||new Set<MediaRole>();roles.add(role);out.set(item,roles);
+   const id=item.toLowerCase();
+   const roles=out.get(id)||new Set<MediaRole>();roles.add(role);out.set(id,roles);
   }
   if(item&&typeof item==='object'){
    const itemRole=key==='items'&&['gallery','carousel'].includes(value.type)?'image':nodeRole;

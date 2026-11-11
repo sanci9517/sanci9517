@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261111111740-3b668242",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-11T11:17:40.354Z",
+  "finished_at": "2026-11-11T11:21:06.601Z",
+  "wall_seconds": 206,
+  "paused_seconds": 0,
+  "measured_seconds": 206,
+  "status": "pass",
+  "kind": "mixed",
+  "summary": "Uppercase media UUID usage, publication, archival and public delivery parity fixed; local tests and D1 SELECT-only preflight verified",
+  "evidence": [
+    "tests/media-api.test.js"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "57dfa96746e55a7742378c1706ebe76aebd7b658",
+  "finished_revision": "57dfa96746e55a7742378c1706ebe76aebd7b658",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

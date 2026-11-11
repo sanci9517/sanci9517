@@ -155,7 +155,7 @@ function publicMediaUrlAssetId(value: unknown, allowedOrigins: ReadonlySet<strin
     }
     const pathname = url.pathname.replace(/\/+$/, "");
     const match = pathname.match(/^\/media\/([^/]+)$/);
-    return match && MEDIA_ASSET_ID.test(match[1]) ? match[1] : null;
+    return match && MEDIA_ASSET_ID.test(match[1]) ? match[1].toLowerCase() : null;
   } catch {
     return null;
   }
@@ -185,7 +185,7 @@ function assetPaths(value: unknown, assetId: string, path = "", depth = 0, scan?
     if (scan && !visitAssetReference(scan)) break;
     const item = record[key];
     const next = path ? `${path}.${key}` : key;
-    if ((key === "assetId" || key === "backgroundAssetId" || key === "imageAssetId" || key === "posterAssetId") && item === assetId) paths.push(next);
+    if ((key === "assetId" || key === "backgroundAssetId" || key === "imageAssetId" || key === "posterAssetId") && typeof item === "string" && MEDIA_ASSET_ID.test(item) && item.toLowerCase() === assetId) paths.push(next);
     else if ((key === "src" || key === "poster" || key === "imageSrc") && publicMediaUrlAssetId(item, allowedOrigins) === assetId) paths.push(next);
     else if (item && typeof item === "object") paths.push(...assetPaths(item, assetId, next, depth + 1, scan, allowedOrigins));
   }
@@ -308,7 +308,7 @@ function documentAssetReferences(json: string, pageId: string, assetId: string, 
       kind === "video" ? mime === "video/webm" : (PLAYABLE_MIMES as readonly string[]).includes(mime) && mime !== "video/webm"
     );
     const validCardImage = () => {
-      try { return normalizeCardContent(props?.cardContent).imageAssetId === assetId; }
+      try { return normalizeCardContent(props?.cardContent).imageAssetId?.toLowerCase() === assetId; }
       catch { return false; }
     };
     const validCardImageUrl = () => {
@@ -347,7 +347,7 @@ function documentAssetReferences(json: string, pageId: string, assetId: string, 
           const override = responsive?.[viewport]?.backgroundAssetId;
           if (override !== undefined && override !== null && override !== "") effective = override;
         }
-        return effective === assetId;
+        return typeof effective === "string" && effective.toLowerCase() === assetId;
       });
     };
     const renderedReference = (path: string): boolean => {
@@ -388,16 +388,16 @@ async function mediaUsage(request: Request, env: Env, siteId: string, assetId: s
   const asset = await env.DB.prepare("SELECT id FROM media WHERE id=? AND site_id=? LIMIT 1").bind(assetId, siteId).first<{ id: string }>();
   if (!asset) return error("MEDIA_NOT_FOUND", 404);
   const pages = await env.DB.prepare(
-    `SELECT id,title,slug,archived_at,content_json,published_content_json,is_published FROM pages WHERE site_id=? AND (instr(content_json,?)>0 OR instr(published_content_json,?)>0) ORDER BY id LIMIT ${MAX_USAGE_SNAPSHOTS + 1}`
+    `SELECT id,title,slug,archived_at,content_json,published_content_json,is_published FROM pages WHERE site_id=? AND (instr(lower(content_json),?)>0 OR instr(lower(published_content_json),?)>0) ORDER BY id LIMIT ${MAX_USAGE_SNAPSHOTS + 1}`
   ).bind(siteId, assetId, assetId).all<{ id: string; title: string; slug: string; archived_at: string | null; content_json: string; published_content_json: string | null; is_published: number }>();
   const revisions = await env.DB.prepare(
-    `SELECT p.id AS page_id,p.title,p.slug,p.archived_at,er.version,er.document_json FROM editor_revisions er JOIN pages p ON p.id=er.page_id WHERE p.site_id=? AND instr(er.document_json,?)>0 ORDER BY er.version DESC,er.id DESC LIMIT ${MAX_USAGE_SNAPSHOTS + 1}`
+    `SELECT p.id AS page_id,p.title,p.slug,p.archived_at,er.version,er.document_json FROM editor_revisions er JOIN pages p ON p.id=er.page_id WHERE p.site_id=? AND instr(lower(er.document_json),?)>0 ORDER BY er.version DESC,er.id DESC LIMIT ${MAX_USAGE_SNAPSHOTS + 1}`
   ).bind(siteId, assetId).all<{ page_id: string; title: string; slug: string; archived_at: string | null; version: number; document_json: string }>();
   const references: { pageId: string; pageTitle: string; slug: string; archived: boolean; source: "draft" | "published" | "revision"; version?: number; nodeId: string; nodeName: string; path: string }[] = [];
   let complete = pages.results.length <= MAX_USAGE_SNAPSHOTS && revisions.results.length <= MAX_USAGE_SNAPSHOTS;
   const scan: AssetReferenceScanStatus = { complete: true, visited: 0 };
   const add = (json: string | null, page: { id: string; title: string; slug: string; archived_at: string | null }, source: "draft" | "published" | "revision", version?: number) => {
-    if (!json || !json.includes(assetId) || !scan.complete) return;
+    if (!json || !json.toLowerCase().includes(assetId) || !scan.complete) return;
     try {
       const found = documentAssetReferences(json, page.id, assetId, false, "", scan, allowedOrigins);
       if (!scan.complete) complete = false;
@@ -707,8 +707,8 @@ export async function adminMediaRoute(request: Request, env: Env, siteId: string
         // existing draft, live snapshot, archived page or editor revision.
         const changed=await env.DB.prepare(
           "UPDATE media SET archived_at=CURRENT_TIMESTAMP WHERE id=? AND site_id=? AND archived_at IS NULL "+
-          "AND NOT EXISTS (SELECT 1 FROM pages p WHERE p.site_id=? AND (instr(COALESCE(p.content_json,''),?)>0 OR instr(COALESCE(p.published_content_json,''),?)>0)) "+
-          "AND NOT EXISTS (SELECT 1 FROM editor_revisions er JOIN pages p ON p.id=er.page_id WHERE p.site_id=? AND instr(er.document_json,?)>0)"
+          "AND NOT EXISTS (SELECT 1 FROM pages p WHERE p.site_id=? AND (instr(lower(COALESCE(p.content_json,'')),?)>0 OR instr(lower(COALESCE(p.published_content_json,'')),?)>0)) "+
+          "AND NOT EXISTS (SELECT 1 FROM editor_revisions er JOIN pages p ON p.id=er.page_id WHERE p.site_id=? AND instr(lower(er.document_json),?)>0)"
         ).bind(id,siteId,siteId,id,id,siteId,id).run();
         if (Number(changed.meta?.changes??0)!==1) return error('MEDIA_ASSET_IN_USE',409);
       } else {
@@ -818,14 +818,14 @@ export async function publishedMediaRoute(request: Request, env: Env, siteId: st
   // safeMediaUrl and the reference scanner accept a media pathname with a
   // trailing slash. Normalize the route suffix identically before lookup so
   // a renderer-valid reference is not protected from archival but then 404s.
-  const normalizedAssetId = assetId.replace(/\/+$/, "");
+  const normalizedAssetId = assetId.replace(/\/+$/, "").toLowerCase();
   if (!MEDIA_ASSET_ID.test(normalizedAssetId) || !env.MEDIA) return error("MEDIA_NOT_FOUND", 404);
   const row = await env.DB.prepare(
     "SELECT id,site_id,object_key,original_name,mime_type,size_bytes,alt_text,created_at,archived_at FROM media WHERE id=? AND site_id=? LIMIT 1"
   ).bind(normalizedAssetId, siteId).first<MediaRow>();
   if (!row || row.archived_at || !(MEDIA_MIMES as readonly string[]).includes(row.mime_type)) return error("MEDIA_NOT_FOUND", 404);
   const pages = await env.DB.prepare(
-    `SELECT id,published_content_json FROM pages WHERE site_id=? AND archived_at IS NULL AND is_published=1 AND published_content_json IS NOT NULL AND instr(published_content_json,?)>0 ORDER BY id LIMIT ${MAX_PUBLIC_MEDIA_SNAPSHOTS}`
+    `SELECT id,published_content_json FROM pages WHERE site_id=? AND archived_at IS NULL AND is_published=1 AND published_content_json IS NOT NULL AND instr(lower(published_content_json),?)>0 ORDER BY id LIMIT ${MAX_PUBLIC_MEDIA_SNAPSHOTS}`
   ).bind(siteId, normalizedAssetId).all<{ id: string; published_content_json: string }>();
   // A single public request may inspect multiple candidate snapshots. Reuse
   // one budget across them and cap result materialization so many pages with

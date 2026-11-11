@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-11T11:21:06Z",
+  "plan_point": "77.44.7.D",
+  "status": "LOCAL_VERIFIED_RELEASE_PENDING",
+  "finding": "The renderer accepted uppercase UUID media references, while case-sensitive D1 candidate scans, archive predicates, publication asset lookup and public delivery did not. A published reference could be omitted from usage and return 404.",
+  "change": "Canonicalize valid media UUID references to lowercase at trust boundaries and compare case-insensitively in snapshot candidate scans and atomic archive protection. Preserve site and MIME checks, bounded scanning, and Save/Publish separation.",
+  "red_test": "The new uppercase UUID media API test failed before the fix at the missing usage reference (52 pass, 1 fail).",
+  "checks": {
+    "npm_run_test_media": "PASS: 5/5 test files",
+    "npm_run_test_editor": "PASS: 15/15 test files",
+    "npm_run_typecheck": "PASS",
+    "plan_contract": "PASS: 13/13",
+    "canonical_plan": "PASS: 13 master files, 396 mappings; acceptance NOT_CERTIFIED",
+    "active_plan_audit": "77.44.7.D remains OPEN / NOT_CERTIFIED",
+    "wrangler_dry_run": "PASS: Wrangler 4.130.0, 171 public files, Worker bundle generated without upload",
+    "production_d1_preflight": "Cloudflare D1 Query API: 5 read-only statements, rows_written=0 and changed_db=false for each, 34 migration rows (latest 0028_media_archive.sql), foreign_key_check empty, quick_check ok"
+  },
+  "source_control": {
+    "branch": "v2/foundation",
+    "base_sha": "57dfa96746e55a7742378c1706ebe76aebd7b658",
+    "release_commit": "PENDING",
+    "verified_remote_head": "PENDING"
+  },
+  "production": {
+    "deployment": "PENDING",
+    "traffic_version": "PENDING",
+    "health": "PENDING",
+    "changed_public_assets": []
+  },
+  "cost": "No paid service, production migration, production data mutation or R2 deletion."
+}
