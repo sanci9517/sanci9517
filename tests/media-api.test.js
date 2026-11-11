@@ -218,6 +218,35 @@ test("internal public media URLs remain protected references across authored and
     assert.equal(delivery.status,200,"the legacy renderer's exact internal source URL authorizes matching media");
     assert.deepEqual(new Uint8Array(await delivery.arrayBuffer()),bytes);
   }
+
+  // Keep these fixtures distinct from the legacy media above so content-addressed
+  // upload deduplication cannot make this authored-source regression ambiguous.
+  const authoredWebm=Uint8Array.from([...webm,0x01]);
+  const authoredWav=Uint8Array.from([...wav,0x01]);
+  const authoredVideoUpload=await f.call("POST","editor",authoredWebm,{name:"authored-url.webm",contentType:"video/webm"});
+  assert.equal(authoredVideoUpload.status,201);
+  const authoredVideo=(await authoredVideoUpload.json()).data;
+  const authoredAudioUpload=await f.call("POST","editor",authoredWav,{name:"authored-url.wav",contentType:"audio/wav"});
+  assert.equal(authoredAudioUpload.status,201);
+  const authoredAudio=(await authoredAudioUpload.json()).data;
+  const authoredDocument={type:"sanci-page-document",schemaVersion:1,activePageId:"authored-url-page",pages:{"authored-url-page":{id:"authored-url-page",rootId:"authored-root",nodes:{
+    "authored-root":{id:"authored-root",type:"root",children:["authored-video","authored-audio"]},
+    "authored-video":{id:"authored-video",type:"video",metadata:{contentVersion:1},props:{src:`/media/${authoredVideo.id}`,controls:true},children:[]},
+    "authored-audio":{id:"authored-audio",type:"audio",metadata:{contentVersion:1},props:{src:`/media/${authoredAudio.id}`,controls:true},children:[]}
+  }}}};
+  f.db.prepare("INSERT INTO pages (id,site_id,archived_at,is_published,published_content_json,content_json,title,slug) VALUES(?,?,?,?,?,?,?,?)")
+    .run("authored-url-page","site-default",null,1,JSON.stringify(authoredDocument),JSON.stringify(authoredDocument),"Authored URL media","authored-url-media");
+  for(const [authoredAsset,bytes,type] of [[authoredVideo,authoredWebm,"video"],[authoredAudio,authoredWav,"audio"]]){
+    const authoredUsage=(await (await f.call("GET","editor",null,{usage:authoredAsset.id})).json()).data;
+    assert.equal(authoredUsage.complete,true);
+    assert.ok(authoredUsage.references.some(reference=>reference.pageId==="authored-url-page"&&reference.path==="props.src"),
+      `authored ${type} source URLs remain visible to the usage scanner`);
+    assert.equal((await f.call("PATCH","editor",JSON.stringify({archived:true}),{id:authoredAsset.id})).status,409,
+      `an authored ${type} source URL blocks archival`);
+    const delivery=await publishedMediaRoute(new Request(`https://example.test/media/${authoredAsset.id}`),f.env,"site-default",authoredAsset.id);
+    assert.equal(delivery.status,200,`the authored ${type} source URL authorizes matching media`);
+    assert.deepEqual(new Uint8Array(await delivery.arrayBuffer()),bytes);
+  }
 });
 
 test("publication and public media delivery reject assets used in a different media role",async t=>{
