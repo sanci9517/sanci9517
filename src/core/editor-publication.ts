@@ -44,7 +44,10 @@ export function hasAbsoluteMediaLibraryUrl(value:unknown,depth=0):boolean{
    if(!(typeof (value as Record<string,unknown>)[override]==='string'&&ASSET_ID.test((value as Record<string,string>)[override]))){
     try{
      const normalized=safeMediaUrl(item);
-     if(normalized.startsWith('https:')&&/^\/media\/[^/]+\/?$/.test(new URL(normalized).pathname))return true;
+     if(normalized.startsWith('https:')){
+      const pathname=new URL(normalized).pathname;
+      if(pathname==='/media'||pathname.startsWith('/media/'))return true;
+     }
     }catch{ /* Invalid sources cannot authorize or require a tenant domain. */ }
    }
   }

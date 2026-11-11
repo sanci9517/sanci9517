@@ -546,6 +546,8 @@ test("publication validates local media URLs against site, archive state and med
   assert.equal(await validatePublicationAssets(f.env.DB,"site-default",imageNode({src:'https://trusted.example.test/media/not-a-uuid'}),alias),"MEDIA_NOT_FOUND",
     "a verified alias cannot publish a broken reserved media route");
   assert.equal(hasAbsoluteMediaLibraryUrl(imageNode({src:`https://trusted.example.test/media/${archived}`})),true);
+  assert.equal(hasAbsoluteMediaLibraryUrl(imageNode({src:'https://trusted.example.test/media/'})),true);
+  assert.equal(hasAbsoluteMediaLibraryUrl(imageNode({src:`https://trusted.example.test/media/${archived}/extra`})),true);
   assert.equal(hasAbsoluteMediaLibraryUrl(imageNode({assetId:image,src:`https://trusted.example.test/media/${archived}`})),false);
   assert.equal(hasAbsoluteMediaLibraryUrl(imageNode({src:`/media/${archived}`})),false);
   assert.equal(await validatePublicationAssets(f.env.DB,"site-default",imageNode({src:`https://trusted.example.test/media/${archived}`}),alias),"MEDIA_NOT_FOUND",

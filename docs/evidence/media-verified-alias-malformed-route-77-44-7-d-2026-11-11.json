@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "plan_point": "77.44.7.D",
+  "status": "LOCAL_PASS_RELEASE_PENDING",
+  "finding": "Publish and initial public page creation could accept a verified tenant HTTPS media alias with a malformed /media/{id}/extra path. The absolute-URL precheck only detected one-segment media paths and therefore did not load the verified origin allowlist for validation.",
+  "red_test": "tests/web013-tenant-pages-editor.test.js: reserved media paths with invalid asset IDs cannot become public; Publish returned HTTP 200 instead of 409 for https://trusted.example.test/media/6b1c2e65-e46e-4764-b234-123456789abc/extra (15 passed, 1 failed).",
+  "change": "The absolute media precheck now detects every reserved /media path before validation. Validation then rejects malformed aliases with MEDIA_NOT_FOUND while Save retains a private draft and failed Publish preserves the prior live snapshot. No new dependency or production migration.",
+  "checks": {
+    "tenant_pages_editor": "PASS: 16/16",
+    "media": "PASS: npm run test:media, 5/5 files",
+    "web013": "PASS: npm run test:web013, 67/67 with local loopback network permission; restricted network attempt stalled in Miniflare and was not counted",
+    "editor": "PASS: npm run test:editor, 15/15 files and 3/3 subreaper cases",
+    "typecheck": "PASS",
+    "plan_contract": "PASS: 13/13 after traceability regeneration",
+    "canonical_plan": "PASS: 13 master files, 396 source mappings; acceptance NOT_CERTIFIED",
+    "feature_traceability": "PASS: 396 mappings",
+    "active_plan_audit": "77.44.7.D OPEN / NOT_CERTIFIED",
+    "git_diff_check": "PASS",
+    "production_d1_preflight": "PASS: 3 SELECT-only D1 Query API calls; each changes=0, rows_written=0, changed_db=false; 34 migrations, latest 0028_media_archive.sql; media_count=6, verified_domains=1",
+    "wrangler_dry_run": "PASS: Wrangler 4.130.0, 171 public assets, no upload",
+    "previous_exact_sha_editor_core_ci": "SUCCESS: run 43054562549, source 774fe3972c17cc52117513af92f60329cc42e9b7"
+  },
+  "dev_metrics_run": "docs/evidence/dev-metrics/runs/2026-11-11/20261111170258-7d434603.json",
+  "release": "PENDING: normal fast-forward push, automatic deploy:safe build, exact Worker traffic and health verification",
+  "cost": "No paid service, production D1 mutation/migration, or R2 deletion."
+}

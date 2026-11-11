@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261111170258-7d434603",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-11T17:02:58.290Z",
+  "finished_at": "2026-11-11T17:07:34.834Z",
+  "wall_seconds": 277,
+  "paused_seconds": 0,
+  "measured_seconds": 277,
+  "status": "pass",
+  "kind": "mixed",
+  "summary": "Verified media alias malformed route Publish guard; red integration test, fixed classifier, local checks passed",
+  "evidence": [
+    "tests/web013-tenant-pages-editor.test.js"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "a15796a5e72540658e64912107911795025d7700",
+  "finished_revision": "a15796a5e72540658e64912107911795025d7700",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
