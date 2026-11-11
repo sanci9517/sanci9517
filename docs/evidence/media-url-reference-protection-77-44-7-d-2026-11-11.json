@@ -55,7 +55,7 @@
     "push": "PUSHED normal fast-forward to v2/foundation; GitHub Branch API confirmed exact SHA.",
     "repository_visibility": "public",
     "runtime_commit_remote_head_at_push": "425c5000322969d6531493d3295885c8c416ca93",
-    "test_only_followup": "Local tests/media-api.test.js regression test-only change is ready for a [skip ci] normal fast-forward test/evidence follow-up. No runtime source change or deployment is part of this follow-up."
+    "test_only_followup": "Follow-up scope is tests/docs/evidence only (legacy Video/Audio URL regression); commit uses [skip ci]. Runtime source and deployed Worker are unchanged."
   },
   "production": {
     "worker": "sanci9517-streamer-brand",
