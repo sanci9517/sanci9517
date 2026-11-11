@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261111100643-b2f6f51c",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-11T10:06:43.851Z",
+  "finished_at": "2026-11-11T10:07:12.335Z",
+  "wall_seconds": 28,
+  "paused_seconds": 0,
+  "measured_seconds": 28,
+  "status": "pass",
+  "kind": "docs",
+  "summary": "verified Editor Core exact-SHA workflow completion and documented production baseline",
+  "evidence": [
+    "docs/evidence/editor-core-gate-77-44-7-d-2026-11-11.json"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "eefeca2f22141ed6fcd6b6eb926b892fcae75f9a",
+  "finished_revision": "eefeca2f22141ed6fcd6b6eb926b892fcae75f9a",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

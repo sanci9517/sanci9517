@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-11T10:07:02Z",
+  "plan_point": "77.44.7.D",
+  "status": "READ_ONLY_GATE_VERIFIED",
+  "workflow": {
+    "run_id": 42989563431,
+    "name": "Editor Core Test",
+    "head_sha": "cccb76fe0220e2502178600d2706873f7f79a51b",
+    "status": "completed",
+    "conclusion": "success",
+    "job": "editor-core"
+  },
+  "checks": {
+    "canonical_plan": "success",
+    "active_point_audit": "success",
+    "f0_baseline": "success",
+    "twitch_integration": "success",
+    "runtime_source": "No runtime change in this docs-only follow-up.",
+    "cost": "No dispatch, rerun, paid service, production D1/R2 mutation or asset deletion."
+  },
+  "production_baseline": {
+    "deployment_id": "8a071cb9-afb7-42d0-b649-058b8d595fb8",
+    "worker_version_id": "9815d441-e39d-40c7-8c51-79ac7a0163d4",
+    "traffic_percent": 100,
+    "health": "HTTP 200; ok=true; version=2.0.0."
+  },
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "base_sha": "eefeca2f22141ed6fcd6b6eb926b892fcae75f9a",
+    "docs_commit": "PENDING",
+    "verified_remote_head": "PENDING"
+  }
+}
