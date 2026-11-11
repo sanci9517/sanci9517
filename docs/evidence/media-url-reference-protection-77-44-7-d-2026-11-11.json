@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-11T01:43:32Z",
+  "plan_point": "77.44.7.D",
+  "status": "LOCAL_VALIDATION_PASS_REMOTE_RELEASE_PENDING",
+  "scope": "Keep relative public /media/<asset-id> URLs in authored Page Model content protected as live media references, and avoid successful-run screenshot artifact storage.",
+  "finding": {
+    "source": "src/routes/admin/media.ts",
+    "reproduction": "The public renderer accepts safe internal URL values in versioned authored image/video/audio sources, video posters, normalized Card imageSrc, authored Gallery/Carousel item src, and normalized structured Gallery/Carousel item src. The reference scan only matched explicit assetId fields. A published internal URL could therefore be omitted from usage/archive checks and public media authorization. The legacy sanci-document adapter also renders contentVersion-free image.src, video/audio.src, and video.poster values; the first authored-only pass missed that renderer path.",
+    "fix": "Recognize only an exact relative /media/<MEDIA_ASSET_ID> pathname (allowing the renderer's trailing slash normalization and query string). Apply renderer-specific version, node type, media MIME, Media Library ID override, Card normalization, Gallery/Carousel 40-item bounds, and normalized structured-content checks before a URL-backed reference authorizes public access. The exact URL authorizer now accepts both authored v1 and metadata-free legacy media nodes while preserving MIME and Media Library ID precedence.",
+    "regressions": [
+      "A published model containing direct image src, Card imageSrc, authored Gallery items[0].src, structured Gallery contentModel.items[0].src, and video poster URLs reports all five references.",
+      "An active internal URL reference prevents media archival with HTTP 409.",
+      "The published media route returns the exact local R2 fixture bytes for a referenced internal URL.",
+      "Editor screenshots upload only after the complete Editor Core job fails, after every required check, with a 7-day retention window.",
+      "The active-plan audit continues to upload only its bounded text artifact with a 30-day retention window.",
+      "A legacy sanci-document Image src and Video poster remain visible usage references and authorize the exact local fixture bytes; a Media Library ID override continues to deny the stale URL."
+    ],
+    "save_publish_separation_changed": false,
+    "production_data_touched": false
+  },
+  "checks": {
+    "npm_run_test:media": "PASS; 5/5 files, including 46 media API tests in tests/media-api.test.js.",
+    "npm_run_typecheck": "PASS after the authored and legacy renderer-path fix.",
+    "npm_run_test:media:storage": "PASS; 1/1 real Worker integration with isolated local D1/R2 and Chromium, 60.2 seconds after the sandbox-denied loopback attempt was retried with local loopback permission.",
+    "npm_run_test:editor": "PASS; 15/15 Node test files and 3/3 Linux subreaper tests.",
+    "npm_run_test:web013": "PASS; 63/63 tests and the repository migration-safety gate.",
+    "npm_run_test:domain": "PASS; 1/1.",
+    "npm_run_test:schedule": "PASS; 1/1.",
+    "node_test_workflow_artifact_retention": "PASS; 2/2.",
+    "canonical_plan": "PASS; complete 13-file master and 396 mappings; functional acceptance NOT_CERTIFIED.",
+    "plan_contract": "PASS; 13/13.",
+    "active_plan_point": "PASS audit; 77.44.7.D remains OPEN / NOT_CERTIFIED.",
+    "feature_traceability": "PASS; 396/396 source mappings regenerated and checked.",
+    "git_diff_check": "PASS.",
+    "wrangler_dry_run": "PASS; Wrangler 4.130.0 read 171 public files, 344.35 KiB / 89.62 KiB gzip, and exited --dry-run. A harmless log-directory warning did not affect the exit status.",
+    "production_d1_preflight": "PASS; only SELECT name FROM d1_migrations ORDER BY name; 34 rows, rows_read=34, rows_written=0, changes=0, changed_db=false.",
+    "pre_release_live_health": "PASS; direct workers.dev GET 2026-11-11T01:23:19Z HTTP 200; ok=true, service=sanci9517-streamer-brand, version=2.0.0, server=cloudflare-worker.",
+    "public_asset_changes": "No public/ source changed in this runtime diff; changed-public-asset hash comparison is not applicable.",
+    "github_remote_gate": "NOT RUN for local uncommitted source. Direct GitHub Branch API confirms exact v2/foundation HEAD b0e107daf83f61fd7a2db912c94e3bcdb97541f2.",
+    "cloudflare_deploy": "NOT DONE; runtime commit is not yet pushed. Previous deployment remains 100% traffic.",
+    "actions_quota": "PARTIAL / STORAGE UNVERIFIED; owner snapshot 0.45/0.50 GB. Exact latest Editor failure artifact 2,973,643 bytes, created 2026-11-11 and expires 2026-11-18. Successful Editor runs no longer upload screenshots; no old artifact deleted and no paid usage.",
+    "npm_run_test_media": "PASS; 5/5 files after the legacy media URL regression was added.",
+    "npm_run_test_media_storage": "PASS; 1/1 real Worker integration with isolated local D1/R2 and Chromium after the legacy regression, 59.0 seconds.",
+    "cloudflare_build_quota": "PASS read-only Cloudflare Build limits: monthly limit not reached; refresh 2026-11-30. Current Build and trigger GET confirms v2/foundation and npm run deploy:safe, excluding docs/**, tests/** and AGENTS.md."
+  },
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "verified_remote_head": "b0e107daf83f61fd7a2db912c94e3bcdb97541f2",
+    "local_head_before_change": "b0e107daf83f61fd7a2db912c94e3bcdb97541f2",
+    "runtime_commit": null,
+    "push": "NOT DONE; local validation and free Cloudflare Build capacity verified; required exact-SHA Actions and Cloudflare auto-build are pending release.",
+    "repository_visibility": "public",
+    "remote_head_verified": "b0e107daf83f61fd7a2db912c94e3bcdb97541f2"
+  },
+  "production": {
+    "worker": "sanci9517-streamer-brand",
+    "deployment_before_release": "06fc9da8-b41a-42af-941e-7525ddc74701",
+    "traffic_version_before_release": "90b859b9-578d-4692-bc09-d8818159fc18",
+    "traffic_percentage_before_release": 100,
+    "health_before_release": "PASS; direct GET workers.dev/api/health 2026-11-11T01:23:19Z, HTTP 200, ok=true, version=2.0.0.",
+    "public_asset_hashes": "No public assets changed.",
+    "production_d1_migration_or_write": false,
+    "production_r2_mutation_or_delete": false
+  },
+  "cost_huf": 0,
+  "cost_note": "No paid service, quota purchase, subscription, new dependency, production D1 write/migration, R2 mutation/deletion, workflow dispatch, or rerun was performed.",
+  "next_step": "Commit and normal fast-forward push the validated runtime/test/evidence change to v2/foundation without enabling paid usage; verify exact-SHA Actions and Cloudflare deploy:safe build, 100% traffic, direct health, and changed public asset hashes; continue the open 77.44.7.D capability/lifecycle audit."
+}

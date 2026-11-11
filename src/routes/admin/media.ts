@@ -6,7 +6,7 @@ import type { Env } from "../../types/env";
 import { normalizeCardContent } from "../../../public/editor-v2/core/card-content.js";
 import { CONTENT_TYPES, IMAGE_MIMES, safeMediaUrl } from "../../../public/editor-v2/core/authored-content.js";
 import { isLeafType } from "../../../public/editor-v2/core/schema.js";
-import { isStructuredType } from "../../../public/editor-v2/core/element-content.js";
+import { isStructuredType, normalizeElementContent } from "../../../public/editor-v2/core/element-content.js";
 import { prepareRetentionRequest, prepareRetentionCancellation } from "../../core/media-retention-request.js";
 import { retentionQueries } from "../../core/media-retention-queries.js";
 
@@ -116,6 +116,17 @@ function visitAssetReference(scan: AssetReferenceScanStatus): boolean {
   return true;
 }
 
+function publicMediaUrlAssetId(value: unknown): string | null {
+  if (typeof value !== "string" || !value.startsWith("/") || value.startsWith("//") || value.startsWith("/\\")) return null;
+  try {
+    const pathname = new URL(value, "https://media-reference.invalid").pathname.replace(/\/+$/, "");
+    const match = pathname.match(/^\/media\/([^/]+)$/);
+    return match && MEDIA_ASSET_ID.test(match[1]) ? match[1] : null;
+  } catch {
+    return null;
+  }
+}
+
 function assetPaths(value: unknown, assetId: string, path = "", depth = 0, scan?: AssetReferenceScanStatus): string[] {
   if (!value || typeof value !== "object") return [];
   if (depth > 16) {
@@ -141,6 +152,7 @@ function assetPaths(value: unknown, assetId: string, path = "", depth = 0, scan?
     const item = record[key];
     const next = path ? `${path}.${key}` : key;
     if ((key === "assetId" || key === "backgroundAssetId" || key === "imageAssetId" || key === "posterAssetId") && item === assetId) paths.push(next);
+    else if ((key === "src" || key === "poster" || key === "imageSrc") && publicMediaUrlAssetId(item) === assetId) paths.push(next);
     else if (item && typeof item === "object") paths.push(...assetPaths(item, assetId, next, depth + 1, scan));
   }
   return paths;
@@ -256,6 +268,7 @@ function documentAssetReferences(json: string, pageId: string, assetId: string, 
     if (publicOnly && (visibility === false || visibility && typeof visibility === "object" && ["desktop", "tablet", "mobile"].every(device => (visibility as Record<string, unknown>)[device] === false))) continue;
     const nodeName = typeof node.name === "string" && node.name.trim() ? node.name : node.type || nodeId;
     const props = node.props as Record<string, unknown> | undefined;
+    const rendererAssetId = (value: unknown) => typeof value === "string" && /^[0-9a-f-]{36}$/i.test(value);
     const compatible = (kind: "image" | "video" | "audio") => !mime || (
       kind === "image" ? (IMAGE_MIMES as readonly string[]).includes(mime) :
       kind === "video" ? mime === "video/webm" : (PLAYABLE_MIMES as readonly string[]).includes(mime) && mime !== "video/webm"
@@ -264,9 +277,29 @@ function documentAssetReferences(json: string, pageId: string, assetId: string, 
       try { return normalizeCardContent(props?.cardContent).imageAssetId === assetId; }
       catch { return false; }
     };
+    const validCardImageUrl = () => {
+      try {
+        const card = normalizeCardContent(props?.cardContent);
+        return !rendererAssetId(card.imageAssetId) && publicMediaUrlAssetId(card.imageSrc) === assetId;
+      } catch { return false; }
+    };
     const validVideoSource = () => {
       try { return (typeof props?.assetId === "string" && MEDIA_ASSET_ID.test(props.assetId)) || (typeof props?.src === "string" && Boolean(safeMediaUrl(props.src))); }
       catch { return false; }
+    };
+    const authoredGallerySource = (path: string): boolean => {
+      const match = path.match(/^props\.items\[(\d+)\]\.src$/);
+      if (!match || Number(match[1]) >= 40 || !["gallery", "carousel"].includes(node.type || "") || node.metadata?.contentVersion !== 1) return false;
+      const items = Array.isArray(props?.items) ? props.items as Record<string, unknown>[] : [];
+      return !rendererAssetId(items[Number(match[1])]?.assetId);
+    };
+    const structuredGallerySource = (path: string): boolean => {
+      const match = path.match(/^props\.contentModel\.items\[(\d+)\]\.src$/);
+      if (!match || Number(match[1]) >= 40 || !["gallery", "carousel"].includes(node.type || "")) return false;
+      try {
+        const content = normalizeElementContent(node.type || "", props?.contentModel) as { items?: { src?: string }[] };
+        return publicMediaUrlAssetId(content.items?.[Number(match[1])]?.src) === assetId;
+      } catch { return false; }
     };
     const renderedBackground = (path: string): boolean => {
       if (!/^(?:style|responsive\.(?:desktop|tablet|mobile))\.backgroundAssetId$/.test(path)) return false;
@@ -292,9 +325,16 @@ function documentAssetReferences(json: string, pageId: string, assetId: string, 
       return path === "props.assetId" && node.type === "image" && compatible("image") ||
         path === "props.assetId" && node.type === "video" && compatible("video") ||
         path === "props.assetId" && node.type === "audio" && compatible("audio") ||
+        path === "props.src" && (node.metadata?.contentVersion === 1 || node.metadata?.contentVersion === undefined) && node.type === "image" && !rendererAssetId(props?.assetId) && compatible("image") ||
+        path === "props.src" && (node.metadata?.contentVersion === 1 || node.metadata?.contentVersion === undefined) && node.type === "video" && !rendererAssetId(props?.assetId) && compatible("video") ||
+        path === "props.src" && (node.metadata?.contentVersion === 1 || node.metadata?.contentVersion === undefined) && node.type === "audio" && !rendererAssetId(props?.assetId) && compatible("audio") ||
+        path === "props.poster" && (node.metadata?.contentVersion === 1 || node.metadata?.contentVersion === undefined) && node.type === "video" && !rendererAssetId(props?.posterAssetId) && validVideoSource() && compatible("image") ||
         path === "props.cardContent.imageAssetId" && node.type === "card" && node.metadata?.cardContentVersion === 1 && validCardImage() && compatible("image") ||
+        path === "props.cardContent.imageSrc" && node.type === "card" && node.metadata?.cardContentVersion === 1 && validCardImageUrl() && compatible("image") ||
         path === "props.posterAssetId" && node.type === "video" && validVideoSource() && compatible("image") ||
         /^props\.items\[\d+\]\.assetId$/.test(path) && Number(path.match(/\[(\d+)\]/)?.[1]) < 40 && ["gallery", "carousel"].includes(node.type || "") && node.metadata?.contentVersion === 1 && compatible("image") ||
+        authoredGallerySource(path) && compatible("image") ||
+        structuredGallerySource(path) && compatible("image") ||
         renderedBackground(path) && compatible("image");
     };
     for (const field of ["props", "style", "responsive"] as const) {

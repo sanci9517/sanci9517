@@ -27,6 +27,9 @@ jobs:
       - name: Run TypeScript typecheck
         run: npm run typecheck
 
+      - name: Keep diagnostic artifacts only for failed checks
+        run: node --test tests/workflow-artifact-retention.test.mjs
+
       - name: Run editor core tests
         run: npm run test:editor
 
@@ -52,8 +55,20 @@ jobs:
       - name: Run WEB-013 Admin mobile browser regression
         run: npm run test:web013:browser
 
+      - name: Run canonical schedule tests
+        run: npm run test:schedule
+
+      - name: Run domain contract tests
+        run: npm run test:domain
+
+      - name: Run Brand Kit storage and access regression
+        run: npm run test:design
+
+      - name: Run Admin home contract tests
+        run: npm run test:admin-home
+
       - name: Upload Editor layout screenshots
-        if: always()
+        if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: editor-layout-screenshots
@@ -66,15 +81,3 @@ jobs:
             /tmp/media-worker-storage-*.png
           if-no-files-found: ignore
           retention-days: 7
-
-      - name: Run canonical schedule tests
-        run: npm run test:schedule
-
-      - name: Run domain contract tests
-        run: npm run test:domain
-
-      - name: Run Brand Kit storage and access regression
-        run: npm run test:design
-
-      - name: Run Admin home contract tests
-        run: npm run test:admin-home

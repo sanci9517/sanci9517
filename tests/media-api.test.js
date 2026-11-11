@@ -137,6 +137,65 @@ test("authenticated playable media remains site-scoped and becomes public only t
   assert.equal((await publishedMediaRoute(new Request("https://example.test/media/"+video.id),f.env,"site-default",video.id)).status,404,"a video asset cannot be exposed through an audio node");
 });
 
+test("internal public media URLs remain protected references across authored and structured content",async t=>{
+  const f=await fixture(t);
+  const upload=await f.call("POST","editor",png,{name:"referenced-by-url.png"});
+  assert.equal(upload.status,201);
+  const asset=(await upload.json()).data;
+  const mediaUrl=`/media/${asset.id}`;
+  const nodes={
+    root:{id:"root",type:"root",metadata:{rootStyleVersion:1},children:["image","card","gallery","structured-gallery","video"]},
+    image:{id:"image",type:"image",metadata:{contentVersion:1},props:{src:mediaUrl,alt:"Kép"},children:[]},
+    card:{id:"card",type:"card",metadata:{cardContentVersion:1},props:{cardContent:{version:1,title:"Kártya",description:"",variant:"solid",imageSrc:mediaUrl,imageAssetId:"",imageAlt:"Kép",actionLabel:"",actionHref:"",newWindow:false}},children:[]},
+    gallery:{id:"gallery",type:"gallery",metadata:{contentVersion:1},props:{items:[{src:mediaUrl,alt:"",caption:"Képaláírás"}]},children:[]},
+    "structured-gallery":{id:"structured-gallery",type:"gallery",metadata:{structuredContentVersion:1},props:{contentModel:{version:1,items:[{src:mediaUrl,alt:"Kép",caption:""}]}},children:[]},
+    video:{id:"video",type:"video",metadata:{contentVersion:1},props:{src:"/fixture.webm",poster:mediaUrl},children:[]}
+  };
+  const document={type:"sanci-page-document",schemaVersion:1,activePageId:"url-media-page",pages:{"url-media-page":{id:"url-media-page",rootId:"root",nodes}}};
+  f.db.prepare("INSERT INTO pages (id,site_id,archived_at,is_published,published_content_json,content_json,title,slug) VALUES(?,?,?,?,?,?,?,?)")
+    .run("url-media-page","site-default",null,1,JSON.stringify(document),JSON.stringify(document),"URL media","url-media");
+
+  const usage=(await (await f.call("GET","editor",null,{usage:asset.id})).json()).data;
+  assert.equal(usage.complete,true);
+  assert.deepEqual(new Set(usage.references.map(reference=>reference.path)),new Set([
+    "props.src",
+    "props.cardContent.imageSrc",
+    "props.items[0].src",
+    "props.contentModel.items[0].src",
+    "props.poster"
+  ]),"URL-backed assets must be found in each renderer-supported media source");
+  assert.equal((await f.call("PATCH","editor",JSON.stringify({archived:true}),{id:asset.id})).status,409,
+    "a rendered internal URL prevents archiving the referenced asset");
+  const response=await publishedMediaRoute(new Request(`https://example.test/media/${asset.id}`),f.env,"site-default",asset.id);
+  assert.equal(response.status,200,"the asset URL embedded in the published Page Model must resolve");
+  assert.deepEqual(new Uint8Array(await response.arrayBuffer()),png);
+
+  const overriddenId="40000000-0000-4000-8000-000000000009";
+  const overriddenDocument={type:"sanci-page-document",schemaVersion:1,activePageId:"url-media-page",pages:{"url-media-page":{id:"url-media-page",rootId:"root",nodes:{
+    root:{id:"root",type:"root",children:["image"]},
+    image:{id:"image",type:"image",metadata:{contentVersion:1},props:{assetId:overriddenId,src:mediaUrl,alt:"A Médiatár azonosítója elsőbbséget élvez"},children:[]}
+  }}}};
+  f.db.prepare("UPDATE pages SET published_content_json=? WHERE id=?").run(JSON.stringify(overriddenDocument),"url-media-page");
+  const overridden=await publishedMediaRoute(new Request(`https://example.test/media/${asset.id}`),f.env,"site-default",asset.id);
+  assert.equal(overridden.status,404,"a legacy URL cannot authorize an asset when the renderer's Media Library ID overrides it");
+
+  const legacyDocument={type:"sanci-document",pages:[{id:"legacy-url-page",root:{id:"legacy-root",type:"root",children:[
+    {id:"legacy-image",type:"image",props:{src:mediaUrl,alt:"Régi kép"},children:[]},
+    {id:"legacy-video",type:"video",props:{src:"/fixture.webm",poster:mediaUrl},children:[]}
+  ]}}]};
+  f.db.prepare("INSERT INTO pages (id,site_id,archived_at,is_published,published_content_json,content_json,title,slug) VALUES(?,?,?,?,?,?,?,?)")
+    .run("legacy-url-page","site-default",null,1,JSON.stringify(legacyDocument),JSON.stringify(legacyDocument),"Legacy URL media","legacy-url-media");
+  const legacyUsage=(await (await f.call("GET","editor",null,{usage:asset.id})).json()).data;
+  assert.equal(legacyUsage.complete,true);
+  assert.ok(legacyUsage.references.some(reference=>reference.pageId==="legacy-url-page"&&reference.path==="props.src"),
+    "legacy Image source URLs remain visible to the usage scanner");
+  assert.ok(legacyUsage.references.some(reference=>reference.pageId==="legacy-url-page"&&reference.path==="props.poster"),
+    "legacy Video poster URLs remain visible to the usage scanner");
+  const legacyResponse=await publishedMediaRoute(new Request(`https://example.test/media/${asset.id}`),f.env,"site-default",asset.id);
+  assert.equal(legacyResponse.status,200,"legacy media renderers may reference the same safe internal URL");
+  assert.deepEqual(new Uint8Array(await legacyResponse.arrayBuffer()),png);
+});
+
 test("publication and public media delivery reject assets used in a different media role",async t=>{
  const f=await fixture(t);
  const assets=[
