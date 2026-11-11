@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261111030558-c5a6fb7f",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-11T03:05:58.384Z",
+  "finished_at": "2026-11-11T03:14:01.330Z",
+  "wall_seconds": 483,
+  "paused_seconds": 0,
+  "measured_seconds": 483,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "Diagnosed exact-SHA Editor Core browser test failure, stabilized the test synchronization, validated locally, pushed test-only follow-up; remote exact-SHA CI remains failed and unrerun under 0-cost quota policy.",
+  "evidence": [
+    "docs/evidence/media-url-reference-protection-77-44-7-d-2026-11-11.json"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "71ee5a713ec54ed0794fa0d3255e34937cbcc609",
+  "finished_revision": "ccb909ee8c4aa4acd0f77458edd4766e5e84f1b4",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

@@ -69,16 +69,41 @@
     "deployment_after_release": "64d0bf72-b77f-464d-a474-f41919832cca",
     "traffic_version_after_release": "9df2bd30-83da-425a-9934-84e275ecb017",
     "traffic_percentage_after_release": 100,
-    "health_after_release": "PASS; direct workers.dev GET after deployment returned HTTP 200 with ok=true and version 2.0.0."
+    "health_after_release": "PASS; direct workers.dev GET after deployment returned HTTP 200 with ok=true and version 2.0.0.",
+    "post_followup_health": "Direct production workers.dev/api/health GET on 2026-11-11T03:13:10Z returned HTTP 200; ok=true, service=sanci9517-streamer-brand, version=2.0.0."
   },
   "cost_huf": 0,
   "cost_note": "No paid service, quota purchase, subscription, new dependency, production D1 write/migration, R2 mutation/deletion, workflow dispatch, or rerun was performed.",
-  "next_step": "Keep observing exact-SHA Editor Core run 42941236307 without rerun; then continue the remaining 77.44.7.D media/content lifecycle matrix. The legacy video/audio URL regression is locally verified but does not certify the full matrix. Do not enable paid quota or modify production data.",
+  "next_step": "When free Actions quota/storage is known or a required authorized exact-SHA release gate is available, rerun the Editor Core workflow for runtime SHA 425c5000322969d6531493d3295885c8c416ca93 after validating the test follow-up; do not treat the previous failure or test-only SHA as CI PASS. Continue remaining 77.44.7.D matrix only after recording the browser gate status. No paid use, production D1 write/migration, or R2 mutation/deletion.",
   "session_metrics": "docs/evidence/dev-metrics/runs/2026-11-11/20261111005845-26d8c71a.json (runtime release, partial while hosted Editor CI runs); docs/evidence/dev-metrics/runs/2026-11-11/20261111020425-c329b2a3.json (82s, partial because exact-SHA Editor Core browser step is still in progress).",
   "documentation_followup": {
     "status": "PUSHED",
     "commit_message": "[skip ci] docs: record media URL release verification",
     "branch": "v2/foundation",
     "verification": "GitHub Branch API confirmed the post-push branch head; exact-SHA Actions query for the documentation commit returned zero workflow runs. Cloudflare deployments API still shows the runtime deployment at 100% traffic."
+  },
+  "editor_core_failure_followup": {
+    "plan_point": "77.44.7.D",
+    "runtime_source_sha": "425c5000322969d6531493d3295885c8c416ca93",
+    "remote_workflow_run_id": 42941236307,
+    "remote_result": "FAILURE",
+    "failing_job_id": 130263285533,
+    "failing_step": "Run Editor browser layout regression",
+    "failing_test": "tests/browser/editor-layer-rename-draft.test.js:100, 1366px viewport",
+    "failure": "Playwright locator.fill timed out after 15s waiting for textbox name \"Réteg neve\"; layer rename field had been opened and observed focused before a two-frame boundary.",
+    "local_reproduction": "One failure during repeated serial local runs before the follow-up; followed by four consecutive PASS runs after the follow-up plus one additional focused PASS.",
+    "followup_change": "After the animation frame boundary, the browser test now waits again for the same connected, focused input with the expected aria-label, and verifies that the accessible textbox is visible before filling. This strengthens the browser test synchronization without relaxing assertions or changing runtime source.",
+    "test_only_commit": "ccb909ee",
+    "test_commit_message": "[skip ci] test: stabilize rename editor after render",
+    "push": "Normal fast-forward pushed to v2/foundation; exact remote branch head checked.",
+    "new_exact_sha_actions": "No workflow run for ccb909ee, as expected for test-only [skip ci]. No rerun/dispatch was started because Actions storage/free quota remains unverified.",
+    "runtime_unchanged": true,
+    "production_deployment_unchanged": true,
+    "manual_physical_acceptance": "DEFERRED until complete Visual Editor scope.",
+    "save_publish_separation_changed": false,
+    "production_data_touched": false,
+    "status": "BLOCKED_REMOTE_CI_NOT_RERUN; local regression stabilized and pass-verified.",
+    "post_release_health": "Direct production workers.dev/api/health GET on 2026-11-11T03:13:10Z returned HTTP 200; ok=true, service=sanci9517-streamer-brand, version=2.0.0.",
+    "health_proxy_note": "Initial curl inherited an unavailable session proxy; direct no-proxy authorized GET succeeded."
   }
 }
