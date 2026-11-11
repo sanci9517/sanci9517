@@ -884,6 +884,9 @@ test("published media HEAD checks R2 metadata without reading the object body",a
   assert.equal(response.headers.get("Content-Length"),String(png.length));
   assert.equal(f.mediaReads.headCount,before.headCount+1,"HEAD should verify object metadata");
   assert.equal(f.mediaReads.count,before.count,"HEAD should not open an R2 object body");
+  const trailingSlash=await publishedMediaRoute(new Request(`https://example.test/media/${asset.id}/`,{method:"HEAD"}),f.env,"site-default",asset.id);
+  assert.equal(trailingSlash.status,200,"HEAD must preserve the same trailing-slash normalization as GET");
+  assert.equal(trailingSlash.body,null,"trailing-slash HEAD must remain bodyless");
 
   const key=f.db.prepare("SELECT object_key FROM media WHERE id=?").get(asset.id).object_key;
   f.files.delete(key);

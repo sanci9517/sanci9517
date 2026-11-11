@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-11T10:12:10Z",
+  "plan_point": "77.44.7.D",
+  "status": "TEST_VERIFIED_PUSH_PENDING",
+  "scope": "Prove that public media HEAD delivery preserves the same trailing-slash asset-ID normalization as GET.",
+  "test": {
+    "file": "tests/media-api.test.js",
+    "name": "published media HEAD checks R2 metadata without reading the object body",
+    "assertions": [
+      "canonical HEAD returns 200 with metadata and no body",
+      "trailing-slash HEAD returns 200 with no body",
+      "missing object remains 404 without an R2 body read"
+    ],
+    "runtime_code_changed": false,
+    "production_data_touched": false,
+    "save_publish_separation_changed": false
+  },
+  "checks": {
+    "node_media_api_direct": "PASS; 50/50.",
+    "npm_run_test_media": "PASS; 5/5 files.",
+    "npm_run_typecheck": "PASS; tsc --noEmit.",
+    "plan_contract": "PASS; 13/13.",
+    "canonical_plan": "PASS; 13 master files / 396 source mappings.",
+    "active_plan_point": "PASS audit; 77.44.7.D remains OPEN / NOT_CERTIFIED.",
+    "git_diff_check": "PASS.",
+    "measured_session": "docs/evidence/dev-metrics/runs/2026-11-11/20261111101137-00355608.json; pass, 23 measured seconds; not Codex active time.",
+    "cloudflare_worker": "No runtime change; no deployment expected for test/docs-only change.",
+    "cost": "No paid service, dispatch, rerun, production D1/R2 mutation or asset deletion."
+  },
+  "production_baseline": {
+    "deployment_id": "8a071cb9-afb7-42d0-b649-058b8d595fb8",
+    "worker_version_id": "9815d441-e39d-40c7-8c51-79ac7a0163d4",
+    "traffic_percent": 100,
+    "health": "Direct health returned HTTP 200 with ok=true and version=2.0.0 during this run."
+  },
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "base_sha": "eefdfa5a35c092b8376d89ea8c8ae965b01b8afc",
+    "test_docs_commit": "PENDING",
+    "verified_remote_head": "PENDING"
+  }
+}
