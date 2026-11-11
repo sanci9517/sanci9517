@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "id": "20261111055759-f0aa0af1",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-11T05:57:59.862Z",
+  "finished_at": "2026-11-11T06:28:12.815Z",
+  "wall_seconds": 1813,
+  "paused_seconds": 0,
+  "measured_seconds": 1813,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "Aligned media URL reference scanning with renderer validation, added normalization/security regression coverage, and released exact SHA; full hosted Editor Core remains in progress.",
+  "evidence": [
+    "src/routes/admin/media.ts",
+    "tests/media-api.test.js",
+    "docs/evidence/media-url-reference-protection-77-44-7-d-2026-11-11.json"
+  ],
+  "checks": "media 47/47; media storage 1/1; editor 15/15+3/3; typecheck and migration gate; plan/canonical/traceability; Wrangler dry-run; SELECT-only D1; Cloudflare safe build 100% traffic and health 200; GitHub Editor Core in progress",
+  "started_revision": "70d72ae65612b38ae3c7be14ba9977cd894a0e41",
+  "finished_revision": "7335c9c5cb7048ef99ffac588c3212beb8a0cdc1",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
