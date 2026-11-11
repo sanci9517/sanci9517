@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261111220348-4ee0fad7",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-11T22:03:48.921Z",
+  "finished_at": "2026-11-11T22:04:28.722Z",
+  "wall_seconds": 40,
+  "paused_seconds": 0,
+  "measured_seconds": 40,
+  "status": "pass",
+  "kind": "mixed",
+  "summary": "Verified structured Gallery stale assetId does not suppress public src reference and confirmed exact runtime SHA Editor Core CI success",
+  "evidence": [
+    "tests/media-api.test.js"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "25e72f902a20dac1a70d6c21f83f143bcf260fef",
+  "finished_revision": "25e72f902a20dac1a70d6c21f83f143bcf260fef",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

@@ -150,7 +150,7 @@ test("internal public media URLs remain protected references across authored and
     image:{id:"image",type:"image",metadata:{contentVersion:1},props:{src:mediaUrl,alt:"Kép"},children:[]},
     card:{id:"card",type:"card",metadata:{cardContentVersion:1},props:{cardContent:{version:1,title:"Kártya",description:"",variant:"solid",imageSrc:mediaUrl,imageAssetId:"",imageAlt:"Kép",actionLabel:"",actionHref:"",newWindow:false}},children:[]},
     gallery:{id:"gallery",type:"gallery",metadata:{contentVersion:1},props:{items:[{src:mediaUrl,alt:"",caption:"Képaláírás"}]},children:[]},
-    "structured-gallery":{id:"structured-gallery",type:"gallery",metadata:{structuredContentVersion:1},props:{contentModel:{version:1,items:[{src:mediaUrl,alt:"Kép",caption:""}]}},children:[]},
+    "structured-gallery":{id:"structured-gallery",type:"gallery",metadata:{structuredContentVersion:1},props:{contentModel:{version:1,items:[{assetId:"40000000-0000-4000-8000-000000000009",src:mediaUrl,alt:"Kép",caption:""}]}},children:[]},
     video:{id:"video",type:"video",metadata:{contentVersion:1},props:{src:"/fixture.webm",poster:mediaUrl},children:[]}
   };
   const document={type:"sanci-page-document",schemaVersion:1,activePageId:"url-media-page",pages:{"url-media-page":{id:"url-media-page",rootId:"root",nodes}}};

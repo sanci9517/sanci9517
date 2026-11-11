@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "plan_point": "77.44.7.D",
-  "status": "DEPLOYED_EXACT_SHA_CI_PENDING",
+  "status": "DEPLOYED_EXACT_SHA_CI_SUCCESS_SCOPE_OPEN",
   "finding": "A structured Gallery or Carousel item can carry an imported assetId that the renderer ignores. The publication scanner previously preferred that ID and ignored the actual src, allowing an archived media URL into a published snapshot.",
   "red_test": "tests/media-api.test.js: publication validates local media URLs against site, archive state and media role; 53 passed, 1 failed, because the structured Carousel archived src returned null instead of MEDIA_NOT_FOUND.",
   "change": "For structured Gallery and Carousel contentModel, the publication origin precheck, asset validation and live-snapshot canonicalization now use the existing normalizeElementContent renderer model. Unrendered imported item fields are excluded; Save and Publish remain separate.",
@@ -19,7 +19,7 @@
     "production_d1_preflight": "PASS: 3 SELECT-only queries; each changes=0, rows_written=0, changed_db=false; 34 migrations latest 0028_media_archive.sql; 6 media rows, 1 verified domain",
     "wrangler_dry_run": "PASS: Wrangler 4.130.0, 171 public assets, no upload",
     "git_diff_check": "PASS",
-    "exact_sha_github_ci": "SUCCESS: Canonical Creator Platform Plan 43101309911, Active Point Audit 43101309929, F0 43101309820, Twitch 43101309830; Editor Core 43101309776 IN_PROGRESS"
+    "exact_sha_github_ci": "SUCCESS: Canonical Creator Platform Plan 43101309911, Active Point Audit 43101309929, F0 43101309820, Twitch 43101309830, Editor Core 43101309776; source fb63c82a3ee0f74f2c03acc52ccb10b8826a53e5"
   },
   "dev_metrics_run": "docs/evidence/dev-metrics/runs/2026-11-11/20261111210938-73469b2c.json",
   "release": {
