@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261111020425-c329b2a3",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-11T02:04:25.554Z",
+  "finished_at": "2026-11-11T02:05:47.905Z",
+  "wall_seconds": 82,
+  "paused_seconds": 0,
+  "measured_seconds": 82,
+  "status": "partial",
+  "kind": "test",
+  "summary": "A meglévő legacy belső média-URL regressziót kiegészítettem video.src és audio.src esetekkel: a használat, archiválási 409 és az exact R2-fixture tartalom célzottan ellenőrzött; a média suite 5/5. Az exact-SHA Editor Core remote browser job továbbra in progress, ezért az átfogó CI/77.44.7.D státusz nyitott.",
+  "evidence": [
+    "tests/media-api.test.js",
+    "docs/evidence/media-url-reference-protection-77-44-7-d-2026-11-11.json"
+  ],
+  "checks": "npm run test:media PASS (5/5 files); git diff --check PASS; exact-SHA Editor Core 42941236307 IN_PROGRESS; no runtime source change/deploy",
+  "started_revision": "180e5e98b860974660c62fabdf309a8c209a6886",
+  "finished_revision": "180e5e98b860974660c62fabdf309a8c209a6886",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

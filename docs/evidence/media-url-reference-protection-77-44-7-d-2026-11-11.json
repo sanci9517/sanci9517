@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
-  "recorded_at_utc": "2026-11-11T01:57:42Z",
+  "recorded_at_utc": "2026-11-11T02:05:47Z",
   "plan_point": "77.44.7.D",
   "status": "DEPLOYED_EXACT_SHA_EDITOR_CORE_IN_PROGRESS",
-  "scope": "Keep relative public /media/<asset-id> URLs in authored Page Model content protected as live media references, and avoid successful-run screenshot artifact storage.",
+  "scope": "Protect authored and legacy relative /media/<asset-id> references in renderer-supported page content; cover image, card, gallery, video poster and legacy video/audio sources, and avoid successful-run screenshot artifact storage.",
   "finding": {
     "source": "src/routes/admin/media.ts",
     "reproduction": "The public renderer accepts safe internal URL values in versioned authored image/video/audio sources, video posters, normalized Card imageSrc, authored Gallery/Carousel item src, and normalized structured Gallery/Carousel item src. The reference scan only matched explicit assetId fields. A published internal URL could therefore be omitted from usage/archive checks and public media authorization. The legacy sanci-document adapter also renders contentVersion-free image.src, video/audio.src, and video.poster values; the first authored-only pass missed that renderer path.",
@@ -14,7 +14,8 @@
       "The published media route returns the exact local R2 fixture bytes for a referenced internal URL.",
       "Editor screenshots upload only after the complete Editor Core job fails, after every required check, with a 7-day retention window.",
       "The active-plan audit continues to upload only its bounded text artifact with a 30-day retention window.",
-      "A legacy sanci-document Image src and Video poster remain visible usage references and authorize the exact local fixture bytes; a Media Library ID override continues to deny the stale URL."
+      "A legacy sanci-document Image src and Video poster remain visible usage references and authorize the exact local fixture bytes; a Media Library ID override continues to deny the stale URL.",
+      "Legacy sanci-document Video src and Audio src internal URLs are reported by usage, block archive with HTTP 409, and authorize exact matching local WebM/WAV fixture bytes."
     ],
     "save_publish_separation_changed": false,
     "production_data_touched": false
@@ -40,7 +41,7 @@
     "github_remote_gate": "PARTIAL; exact commit has 4 successful workflows (F0 42941236447, canonical plan 42941236366, active point audit 42941236326, Twitch 42941236300); Editor Core 42941236307 was IN_PROGRESS in its Chromium layout suite at the last check. No retry/dispatch.",
     "cloudflare_deploy": "PASS; exact Cloudflare Build e7552f7b-ef56-43b3-9ca0-669c306ab4ef succeeded with npm run deploy:safe; deployment 64d0bf72-b77f-464d-a474-f41919832cca, version 9df2bd30-83da-425a-9934-84e275ecb017 at 100% traffic.",
     "actions_quota": "PARTIAL / STORAGE UNVERIFIED; owner snapshot 0.45/0.50 GB. Exact latest Editor failure artifact 2,973,643 bytes, created 2026-11-11 and expires 2026-11-18. Successful Editor runs no longer upload screenshots; no old artifact deleted and no paid usage.",
-    "npm_run_test_media": "PASS; 5/5 files after the legacy media URL regression was added.",
+    "npm_run_test_media": "PASS; 5/5 files after adding legacy Video src and Audio src URL coverage; tests/media-api.test.js adds usage, archive guard (409), and exact-byte delivery assertions for matching WebM/WAV fixtures.",
     "npm_run_test_media_storage": "PASS; 1/1 real Worker integration with isolated local D1/R2 and Chromium, 59.0 seconds after the legacy URL regression was added.",
     "cloudflare_build_quota": "PASS read-only Cloudflare Build limits: monthly limit not reached; refresh 2026-11-30. Current Build and trigger GET confirms v2/foundation and npm run deploy:safe, excluding docs/**, tests/** and AGENTS.md.",
     "post_release_health": "PASS; direct GET to production workers.dev/api/health after deployment returned HTTP 200: ok=true, service=sanci9517-streamer-brand, version=2.0.0, server=cloudflare-worker."
@@ -53,7 +54,8 @@
     "runtime_commit": "425c5000322969d6531493d3295885c8c416ca93",
     "push": "PUSHED normal fast-forward to v2/foundation; GitHub Branch API confirmed exact SHA.",
     "repository_visibility": "public",
-    "runtime_commit_remote_head_at_push": "425c5000322969d6531493d3295885c8c416ca93"
+    "runtime_commit_remote_head_at_push": "425c5000322969d6531493d3295885c8c416ca93",
+    "test_only_followup": "Local tests/media-api.test.js regression test-only change is ready for a [skip ci] normal fast-forward test/evidence follow-up. No runtime source change or deployment is part of this follow-up."
   },
   "production": {
     "worker": "sanci9517-streamer-brand",
@@ -71,8 +73,8 @@
   },
   "cost_huf": 0,
   "cost_note": "No paid service, quota purchase, subscription, new dependency, production D1 write/migration, R2 mutation/deletion, workflow dispatch, or rerun was performed.",
-  "next_step": "Finish observing exact-SHA Editor Core run 42941236307 without rerun. If successful, record final exact-SHA workflows in a docs-only [skip ci] follow-up; then continue the remaining 77.44.7.D media/content lifecycle matrix. Do not enable paid quota or modify production data.",
-  "session_metrics": "docs/evidence/dev-metrics/runs/2026-11-11/20261111005845-26d8c71a.json; measured 2948 seconds excluding 589 seconds paused; partial because exact-SHA Editor Core browser suite remains in progress.",
+  "next_step": "Keep observing exact-SHA Editor Core run 42941236307 without rerun; then continue the remaining 77.44.7.D media/content lifecycle matrix. The legacy video/audio URL regression is locally verified but does not certify the full matrix. Do not enable paid quota or modify production data.",
+  "session_metrics": "docs/evidence/dev-metrics/runs/2026-11-11/20261111005845-26d8c71a.json (runtime release, partial while hosted Editor CI runs); docs/evidence/dev-metrics/runs/2026-11-11/20261111020425-c329b2a3.json (82s, partial because exact-SHA Editor Core browser step is still in progress).",
   "documentation_followup": {
     "status": "PUSHED",
     "commit_message": "[skip ci] docs: record media URL release verification",

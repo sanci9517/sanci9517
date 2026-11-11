@@ -179,9 +179,16 @@ test("internal public media URLs remain protected references across authored and
   const overridden=await publishedMediaRoute(new Request(`https://example.test/media/${asset.id}`),f.env,"site-default",asset.id);
   assert.equal(overridden.status,404,"a legacy URL cannot authorize an asset when the renderer's Media Library ID overrides it");
 
+  const legacyVideoUpload=await f.call("POST","editor",webm,{name:"legacy-url.webm",contentType:"video/webm"});
+  assert.equal(legacyVideoUpload.status,201);
+  const legacyVideoAsset=(await legacyVideoUpload.json()).data;
+  const legacyAudioUpload=await f.call("POST","editor",wav,{name:"legacy-url.wav",contentType:"audio/wav"});
+  assert.equal(legacyAudioUpload.status,201);
+  const legacyAudioAsset=(await legacyAudioUpload.json()).data;
   const legacyDocument={type:"sanci-document",pages:[{id:"legacy-url-page",root:{id:"legacy-root",type:"root",children:[
     {id:"legacy-image",type:"image",props:{src:mediaUrl,alt:"Régi kép"},children:[]},
-    {id:"legacy-video",type:"video",props:{src:"/fixture.webm",poster:mediaUrl},children:[]}
+    {id:"legacy-video",type:"video",props:{src:`/media/${legacyVideoAsset.id}`,poster:mediaUrl},children:[]},
+    {id:"legacy-audio",type:"audio",props:{src:`/media/${legacyAudioAsset.id}`},children:[]}
   ]}}]};
   f.db.prepare("INSERT INTO pages (id,site_id,archived_at,is_published,published_content_json,content_json,title,slug) VALUES(?,?,?,?,?,?,?,?)")
     .run("legacy-url-page","site-default",null,1,JSON.stringify(legacyDocument),JSON.stringify(legacyDocument),"Legacy URL media","legacy-url-media");
@@ -191,9 +198,26 @@ test("internal public media URLs remain protected references across authored and
     "legacy Image source URLs remain visible to the usage scanner");
   assert.ok(legacyUsage.references.some(reference=>reference.pageId==="legacy-url-page"&&reference.path==="props.poster"),
     "legacy Video poster URLs remain visible to the usage scanner");
+  const legacyVideoUsage=(await (await f.call("GET","editor",null,{usage:legacyVideoAsset.id})).json()).data;
+  assert.equal(legacyVideoUsage.complete,true);
+  assert.ok(legacyVideoUsage.references.some(reference=>reference.pageId==="legacy-url-page"&&reference.path==="props.src"),
+    "legacy Video source URLs remain visible to the usage scanner");
+  const legacyAudioUsage=(await (await f.call("GET","editor",null,{usage:legacyAudioAsset.id})).json()).data;
+  assert.equal(legacyAudioUsage.complete,true);
+  assert.ok(legacyAudioUsage.references.some(reference=>reference.pageId==="legacy-url-page"&&reference.path==="props.src"),
+    "legacy Audio source URLs remain visible to the usage scanner");
+  assert.equal((await f.call("PATCH","editor",JSON.stringify({archived:true}),{id:legacyVideoAsset.id})).status,409,
+    "a legacy rendered video source blocks archival");
+  assert.equal((await f.call("PATCH","editor",JSON.stringify({archived:true}),{id:legacyAudioAsset.id})).status,409,
+    "a legacy rendered audio source blocks archival");
   const legacyResponse=await publishedMediaRoute(new Request(`https://example.test/media/${asset.id}`),f.env,"site-default",asset.id);
   assert.equal(legacyResponse.status,200,"legacy media renderers may reference the same safe internal URL");
   assert.deepEqual(new Uint8Array(await legacyResponse.arrayBuffer()),png);
+  for(const [legacyAsset,bytes] of [[legacyVideoAsset,webm],[legacyAudioAsset,wav]]){
+    const delivery=await publishedMediaRoute(new Request(`https://example.test/media/${legacyAsset.id}`),f.env,"site-default",legacyAsset.id);
+    assert.equal(delivery.status,200,"the legacy renderer's exact internal source URL authorizes matching media");
+    assert.deepEqual(new Uint8Array(await delivery.arrayBuffer()),bytes);
+  }
 });
 
 test("publication and public media delivery reject assets used in a different media role",async t=>{
