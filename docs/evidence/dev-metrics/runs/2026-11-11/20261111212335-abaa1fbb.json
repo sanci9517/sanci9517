@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261111212335-abaa1fbb",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-11T21:23:35.735Z",
+  "finished_at": "2026-11-11T21:23:52.694Z",
+  "wall_seconds": 17,
+  "paused_seconds": 0,
+  "measured_seconds": 17,
+  "status": "pass",
+  "kind": "test",
+  "summary": "Verified structured media alias preflight ignores imported assetId and checks rendered src",
+  "evidence": [
+    "tests/media-api.test.js"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "5a2be2e21ce477950bf9938226432b3a27775cbe",
+  "finished_revision": "5a2be2e21ce477950bf9938226432b3a27775cbe",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

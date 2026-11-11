@@ -538,6 +538,8 @@ test("publication validates local media URLs against site, archive state and med
     "structured carousel renders src and must not treat an ignored imported assetId as its source");
   assert.equal(await validatePublicationAssets(f.env.DB,"site-default",{type:"gallery",props:{contentModel:{version:1,items:[{assetId:image,src:`/media/${archived}`,alt:"Borítókép"}]}}}),"MEDIA_NOT_FOUND",
     "structured gallery also renders src rather than an imported assetId");
+  assert.equal(hasAbsoluteMediaLibraryUrl({type:"carousel",props:{contentModel:{version:1,items:[{assetId:image,src:`https://trusted.example.test/media/${archived}`,label:"Dia",content:"Leírás",alt:"Borítókép"}]}}}),true,
+    "an ignored structured assetId must not suppress verified-alias preflight for the rendered src");
   assert.equal(await validatePublicationAssets(f.env.DB,"site-default",imageNode({src:"https://images.example.test/remote.png"})),null,
     "external HTTPS media remains outside this site's D1 library");
   for(const path of ['/media/not-a-uuid','/media/','/media/6b1c2e65-e46e-4764-b234-123456789abc/extra']){
