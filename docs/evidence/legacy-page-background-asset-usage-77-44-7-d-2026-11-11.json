@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "recorded_at_utc": "2026-11-11T00:44:00Z",
+  "recorded_at_utc": "2026-11-11T00:44:50Z",
   "plan_point": "77.44.7.D",
-  "status": "RUNTIME_DEPLOYED_AND_LIVE_VERIFIED; TEST_ONLY_CI_EXPECTATION_FIX_LOCAL_PASS; FULL_LOCAL_F0_BLOCKED; PLAN_POINT_OPEN",
+  "status": "RUNTIME_DEPLOYED_AND_LIVE_VERIFIED; TEST_ONLY_FOLLOWUP_PUSHED; FULL_LOCAL_F0_BLOCKED; EDITOR_CORE_IN_PROGRESS; PLAN_POINT_OPEN",
   "scope": "Preserve Media Library references in legacy sanci-document page backgrounds and fail closed when legacy page selection or traversal exceeds the shared scan budget.",
   "finding": {
     "source": "src/routes/admin/media.ts",
@@ -33,21 +33,22 @@
     "pre_release_live_health": "PASS; GET workers.dev/api/health at 2026-11-11T00:29:45Z returned HTTP 200, ok=true, version=2.0.0.",
     "pre_release_live_assets": "PASS baseline; / returned 9,716 bytes and still referenced site.css?v=20261016-3; live /assets/site.css SHA-256 b67c9aed36f66ee244fc3effdb3ad63f79e92661018266ed863e9bbcbe3e05b7 exactly matches pre-release HEAD, while the pending local CSS SHA-256 is eed81d014eeeb75c116836aedb5887dd8ee9bb66f4b3df2a77a41c10c91ce6ae.",
     "f0_baseline_hosted": "FAIL; exact SHA c6161fe910c2f1049a50ecf89ff3e54fc152b38a; failed only at node --test tests/public-navigation.test.js because its expected CSS cache key was stale after the intentional runtime key update.",
-    "f0_baseline_expectation_followup": "PASS locally; updated tests/public-navigation.test.js to expect site.css?v=20261110-divider-cascade; node --test tests/public-navigation.test.js 1/1. Test-only follow-up not yet pushed at time of evidence preparation; will be pushed with [skip ci] after plan/evidence checks.",
+    "f0_baseline_expectation_followup": "PASS locally; updated tests/public-navigation.test.js expected cache key and its focused test 1/1. Test-only follow-up commit 00081ed8e7764f50317adacc2fbe8ae7bcb45734 pushed to v2/foundation with [skip ci]; exact-SHA Actions API returns zero workflows, so no hosted PASS is claimed.",
     "f0_full_local_reproduction": "BLOCKED; exact F0 sequence reached tests/web013-html-anchor-extractor.test.js and emitted no result for 6m58s; Node diagnostic report had an empty JavaScript stack and a long unreferenced timer; the isolated test process was terminated. This is not reported as PASS or as a product regression.",
     "github_editor_core_exact_sha": "IN_PROGRESS at 2026-11-11T00:43Z; run 42932082249 is still running the Editor browser layout regression. No aggregate CI PASS is claimed.",
     "github_other_exact_sha_workflows": "Twitch Integration Check 42932082197 SUCCESS; Canonical Creator Platform Plan 42932082121 SUCCESS; Canonical Plan Active Point Audit 42932082155 SUCCESS.",
     "cloudflare_build_after_release": "PASS; exact runtime source c6161fe910c2f1049a50ecf89ff3e54fc152b38a; build 94421806-65cc-436b-9485-152d8489372a; typecheck and deploy:safe/migration safety gate succeeded; 171 public assets packaged.",
     "post_release_live_health": "PASS; direct GET workers.dev/api/health at 2026-11-11T00:43:59Z HTTP 200, ok=true, version=2.0.0.",
     "post_release_live_public_assets": "PASS; direct GET / returned 200, 9,730 bytes and references site.css?v=20261110-divider-cascade. /visual-page.html redirected to /visual-page (307 then 200); served HTML is 9,497 bytes and SHA-256 3b1be7e30a0325bfcaeb41dac71c9d3df10ff54aa5437ef531eab624c592ceb1, equal to public/visual-page.html. /assets/site.css SHA-256 eed81d014eeeb75c116836aedb5887dd8ee9bb66f4b3df2a77a41c10c91ce6ae equals local public/assets/site.css.",
-    "production_d1_post_release_readback": "PASS; SELECT name FROM d1_migrations ORDER BY name; 34 rows through 0028_media_archive.sql; rows_read=34, rows_written=0, changes=0, changed_db=false."
+    "production_d1_post_release_readback": "PASS; SELECT name FROM d1_migrations ORDER BY name; 34 rows through 0028_media_archive.sql; rows_read=34, rows_written=0, changes=0, changed_db=false.",
+    "test_only_followup_worker_deployment": "NOT TRIGGERED; the Cloudflare Worker Build excludes tests/** and docs/**. Read-only deployments API still reports 06fc9da8-b41a-42af-941e-7525ddc74701 / 90b859b9-578d-4692-bc09-d8818159fc18 at 100% traffic."
   },
   "source_control": {
     "repository": "sanci9517/sanci9517",
     "branch": "v2/foundation",
     "verified_remote_head_before_release": "91d537f203c13b30f08f66447afca6ec272f337e",
     "runtime_commit": "c6161fe910c2f1049a50ecf89ff3e54fc152b38a",
-    "normal_fast_forward_push": "PASS; v2/foundation branch API exact HEAD c6161fe910c2f1049a50ecf89ff3e54fc152b38a; parent 91d537f203c13b30f08f66447afca6ec272f337e; no force-push or branch switch.",
+    "normal_fast_forward_push": "PASS for runtime commit c6161fe910c2f1049a50ecf89ff3e54fc152b38a; its parent was remote HEAD 91d537f203c13b30f08f66447afca6ec272f337e. No force-push or branch switch.",
     "github_actions": {
       "repository_visibility": "public",
       "standard_hosted_runner_cost": "0 HUF for public repository standard runners.",
@@ -58,7 +59,7 @@
           "id": 42932082389,
           "status": "failure",
           "failed_step": "Run node --test tests/public-navigation.test.js",
-          "reason": "Stale cache-key assertion; fixed locally in tests/public-navigation.test.js, focused test 1/1 PASS."
+          "reason": "Stale CSS cache-key assertion; corrected in tests/public-navigation.test.js and the test-only correction was pushed separately with [skip ci]. The failed historical runtime-SHA run is not rerun or reclassified."
         },
         "Editor Core Test": {
           "id": 42932082249,
@@ -77,8 +78,10 @@
           "id": 42932082155,
           "status": "success"
         }
-      }
-    }
+      },
+      "test_evidence_followup_workflows": "0 exact-SHA workflows; no CI PASS claimed for the [skip ci] commit."
+    },
+    "test_evidence_followup_commit": "00081ed8e7764f50317adacc2fbe8ae7bcb45734; [skip ci] docs/test-only follow-up, normal fast-forward pushed; exact GitHub branch HEAD confirmed."
   },
   "production": {
     "worker": "sanci9517-streamer-brand",
@@ -98,5 +101,5 @@
   },
   "cost_huf": 0,
   "cost_note": "No paid service, quota purchase, subscription, new dependency, production D1 write/migration, or R2 mutation/deletion was enabled or performed. Cloudflare exposes that the Build-minute limit is not reached; the connected GitHub read API does not expose current aggregate artifact-storage usage or account invoice totals.",
-  "next_step": "Push the validated test/evidence/plan-only follow-up with [skip ci] and verify the branch head; do not trigger a redundant Worker deploy. Then continue the remaining 77.44.7.D media/content capability audit in canonical order. Resolve the local WEB-013 HTML parser test hang without reducing coverage; verify the in-progress exact-SHA Editor Core run when it finishes. Full editor acceptance remains deferred."
+  "next_step": "Continue the remaining 77.44.7.D media/content capability audit in canonical order. Diagnose the local F0 reproduction hang at tests/web013-html-anchor-extractor.test.js without reducing coverage; monitor exact-SHA Editor Core run 42932082249 to completion. The test/evidence commit is already pushed; no Worker deployment is needed for it."
 }
