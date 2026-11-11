@@ -7,7 +7,8 @@ import type { Env } from "../../types/env";
 import { auditStatement } from "../../core/audit";
 import { DEFAULT_SITE_ID } from "../../core/site-context";
 import { validatePublishDocument } from "../../core/editor-validation";
-import { validatePublicationAssets } from "../../core/editor-publication";
+import { canonicalizePublicationMediaReferences, hasAbsoluteMediaLibraryUrl, validatePublicationAssets } from "../../core/editor-publication";
+import { mediaUrlOrigins } from "./media";
 
 type PageRow={archived_at?:string|null;parent_page_id?:string|null;published_parent_page_id?:string|null;published_slug?:string|null;id:string;slug:string;title:string;description:string;content_json:string;published_content_json:string|null;is_published:number;published_revision_id:string|null;sort_order:number;created_at:string;updated_at:string;revision?:number};
 type PageBody={action?:unknown;id?:unknown;parentPageId?:unknown;expectedParentPageId?:unknown;sourcePageId?:unknown;slug?:unknown;title?:unknown;description?:unknown;document?:unknown;isPublished?:unknown;sortOrder?:unknown;expectedVersion?:unknown};
@@ -138,12 +139,13 @@ async function adminPagesRouteImpl(request:Request,env:Env,siteId:string):Promis
  const initialJson=JSON.stringify(initialDocument);
  if(initialJson.length>180000)return error('PAGE_TOO_LARGE',400);
  const isPublished=body.isPublished===true;
- if(isPublished){const validationError=validatePublishDocument(initialDocument,id);if(validationError)return error(validationError,409,'Az új oldal dokumentuma publikálás előtt nem felel meg az Editor v2 Page Model ellenőrzésnek.');if(await validatePublicationAssets(env.DB,siteId,initialDocument))return error('MEDIA_NOT_FOUND',409,'A publikált oldal valamelyik kiválasztott médiafájlja nem érhető el ehhez a webhelyhez.')}
+ let publishedInitialJson=initialJson;
+ if(isPublished){const validationError=validatePublishDocument(initialDocument,id);if(validationError)return error(validationError,409,'Az új oldal dokumentuma publikálás előtt nem felel meg az Editor v2 Page Model ellenőrzésnek.');const allowedMediaOrigins=hasAbsoluteMediaLibraryUrl(initialDocument)?await mediaUrlOrigins(env,siteId,new URL(request.url).origin):new Set<string>();if(!allowedMediaOrigins)return error('MEDIA_NOT_FOUND',409,'A webhely média-domainjei nem ellenőrizhetők.');if(await validatePublicationAssets(env.DB,siteId,initialDocument,allowedMediaOrigins))return error('MEDIA_NOT_FOUND',409,'A publikált oldal valamelyik kiválasztott médiafájlja nem érhető el ehhez a webhelyhez.');publishedInitialJson=JSON.stringify(canonicalizePublicationMediaReferences(initialDocument,allowedMediaOrigins))}
  const revisionId=crypto.randomUUID();
  const nextOrderRow=await env.DB.prepare('SELECT COALESCE(MAX(sort_order),-1)+1 AS next FROM pages WHERE site_id=? AND archived_at IS NULL').bind(siteId).first<{next:number}>();
  const nextOrder=Number(nextOrderRow?.next??0);
  try{
-  const pageInsert=env.DB.prepare('INSERT INTO pages (id,site_id,slug,title,description,content_json,published_content_json,published_revision_id,is_published,sort_order,published_slug,published_title,published_description,published_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,CASE WHEN ?=1 THEN CURRENT_TIMESTAMP ELSE NULL END,CURRENT_TIMESTAMP)').bind(id,siteId,slug,title,description,initialJson,isPublished?initialJson:null,isPublished?revisionId:null,isPublished?1:0,nextOrder,isPublished?slug:null,isPublished?title:null,isPublished?description:null,isPublished?1:0);
+  const pageInsert=env.DB.prepare('INSERT INTO pages (id,site_id,slug,title,description,content_json,published_content_json,published_revision_id,is_published,sort_order,published_slug,published_title,published_description,published_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,CASE WHEN ?=1 THEN CURRENT_TIMESTAMP ELSE NULL END,CURRENT_TIMESTAMP)').bind(id,siteId,slug,title,description,initialJson,isPublished?publishedInitialJson:null,isPublished?revisionId:null,isPublished?1:0,nextOrder,isPublished?slug:null,isPublished?title:null,isPublished?description:null,isPublished?1:0);
   const revisionInsert=env.DB.prepare('INSERT INTO editor_revisions (id,page_id,version,document_json,created_by,note) VALUES (?,?,?,?,?,?)').bind(revisionId,id,1,initialJson,user.id,'Oldal létrehozva az Editor v2-ben');
   await env.DB.batch([pageInsert,revisionInsert,auditStatement(env,user.id,'page.create','page',id,{slug,title,revisionId})]);
  }catch(e){
@@ -155,6 +157,7 @@ async function adminPagesRouteImpl(request:Request,env:Env,siteId:string):Promis
 
 export async function adminPagesRoute(request:Request,env:Env,siteId:string=DEFAULT_SITE_ID):Promise<Response>{
  try{return await adminPagesRouteImpl(request,env,siteId)}catch(e){
+  if(String(e).includes('ARCHIVED_MEDIA_REFERENCE'))return error('MEDIA_NOT_FOUND',409,'A kiválasztott médiafájl időközben archiválva lett.');
   if(String(e).includes('PAGE_SLUG_RESERVED'))return error('SLUG_RESERVED',409,'A slug egy másik oldal élő vagy korábbi URL-je. Válassz másikat.');
   if(String(e).includes('PAGE_HIERARCHY_CYCLE'))return error('PAGE_HIERARCHY_CYCLE',409,'Az oldal nem lehet saját maga vagy leszármazottja alá rendezve.');
   if(String(e).includes('INVALID_PAGE_PARENT'))return error('INVALID_PAGE_PARENT',409,'A szülőoldal nem található ezen a webhelyen, vagy archivált.');

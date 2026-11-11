@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-11T15:16:00Z",
+  "plan_point": "77.44.7.D",
+  "status": "LOCAL_VERIFIED_RELEASE_PENDING",
+  "finding": "Publication validation checked direct asset IDs but did not validate renderer-accepted /media/{uuid} sources or tenant-verified absolute media URLs, allowing archived, cross-site or wrong-MIME references into a public snapshot.",
+  "red_test": "tests/media-api.test.js: publication validates local media URLs against site, archive state and media role failed before the fix (53 passed, 1 failed; expected MEDIA_NOT_FOUND, actual null).",
+  "change": "Resolve local media URLs with the existing renderer URL policy and site domain allowlist; enforce active site-owned MIME-compatible media at Publish and initial public page creation. Canonicalize published media UUID casing so existing archive triggers catch validation/write races. Translate trigger rejection to HTTP 409 MEDIA_NOT_FOUND. Preserve draft Save separately.",
+  "checks": {
+    "npm_run_typecheck": "PASS",
+    "npm_run_test_media": "PASS: 5/5 files",
+    "npm_run_test_web013": "CANCELLED: full local suite hung in unrelated html-anchor-extractor test process; targeted tenant pages/editor 14/14 and route integration 17/17 passed",
+    "npm_run_test_editor": "PASS: 15/15 files after updating the source contract for publishedJson",
+    "browser_layer_rename_local": "PASS: 2/2 viewport tests (390px and 1366px)",
+    "browser_layer_rename_prior_exact_sha_ci": "FAIL: run 43011373249, 1366px focus wait timed out at tests/browser/editor-layer-rename-draft.test.js:76; no CI pass claimed",
+    "plan_contract": "PASS: 13/13",
+    "canonical_plan": "PASS: 13 master files, 396 mappings; active point OPEN / NOT_CERTIFIED",
+    "wrangler_dry_run": "PASS: Wrangler 4.130.0, 171 public assets, no deployment",
+    "production_d1_select_only_preflight": "PASS: 3 SELECT queries through D1 Query API, rows_written=0, changed_db=false, changes=0 each; 34 migrations latest 0028_media_archive.sql; media_count=6; verified_domains=1",
+    "feature_traceability": "PASS: 396 current source mappings",
+    "migration_safety_gate": "PASS: deploy:safe does not apply migrations",
+    "git_diff_check": "PASS"
+  },
+  "source_control": {
+    "branch": "v2/foundation",
+    "base_sha": "4648578d81631e79c30857c56bb759a013dd119e",
+    "release_commit": "PENDING",
+    "verified_remote_head": "PENDING"
+  },
+  "production": {
+    "deployment": "PENDING",
+    "traffic_version": "PENDING",
+    "health": "PENDING",
+    "changed_public_assets": []
+  },
+  "cost": "No paid service or quota, production D1 mutation/migration, or R2 deletion."
+}

@@ -20,6 +20,8 @@ async function fixture(t, enabled=true) {
       created_by TEXT,note TEXT,created_at TEXT DEFAULT CURRENT_TIMESTAMP,UNIQUE(page_id,version));
     CREATE TABLE page_slug_redirects(site_id TEXT,from_slug TEXT,page_id TEXT,PRIMARY KEY(site_id,from_slug));
     CREATE TABLE media(id TEXT PRIMARY KEY,site_id TEXT NOT NULL,object_key TEXT NOT NULL,mime_type TEXT NOT NULL,original_name TEXT NOT NULL,size_bytes INTEGER NOT NULL,alt_text TEXT NOT NULL DEFAULT '',created_at TEXT DEFAULT CURRENT_TIMESTAMP,archived_at TEXT DEFAULT NULL);
+    CREATE TABLE site_domains(hostname TEXT,site_id TEXT,status TEXT,verified_at TEXT,verification_method TEXT);
+    INSERT INTO site_domains VALUES ('trusted.example.test','other','verified','2026-11-01','test');
     CREATE TABLE audit_log(id TEXT PRIMARY KEY,user_id TEXT,action TEXT,entity_type TEXT,entity_id TEXT,metadata_json TEXT);
     INSERT INTO sites VALUES ('site-default','active'),('other','active');
     INSERT INTO users VALUES ('admin','a@test','Admin','admin',1),('editor','e@test','Editor','viewer',1),('viewer','v@test','Viewer','viewer',1);
@@ -133,6 +135,76 @@ test('Save keeps cross-kind media references private and Publish rejects the mis
   const repaired=await f.editor('editor','other','POST',{pageId:'b',expectedVersion:2,document:documentFor(image),publish:true});
   assert.equal(repaired.status,200,'correcting the reference allows an explicit Publish');
   assert.equal(f.db.prepare("SELECT json_extract(published_content_json,'$.pages.b.nodes.image.props.assetId') AS id FROM pages WHERE id=?").get('b').id,image);
+});
+
+test('Save keeps an archived media URL private and Publish checks a verified alias before changing the live snapshot',async t=>{
+  const f=await fixture(t),asset='6b1c2e65-e46e-4764-b234-123456789abc';
+  f.db.prepare('INSERT INTO media(id,site_id,object_key,mime_type,original_name,size_bytes,archived_at) VALUES(?,?,?,?,?,?,?)')
+    .run(asset,'other','sites/other/media/'+asset,'image/png','archived.png',100,'2026-11-01');
+  const document={type:'sanci-page-document',schemaVersion:1,activePageId:'b',revision:1,pages:{b:{id:'b',rootId:'root',nodes:{
+    root:{id:'root',type:'root',parentId:null,children:['image']},
+    image:{id:'image',type:'image',parentId:'root',children:[],metadata:{contentVersion:1},props:{src:`https://trusted.example.test/media/${asset.toUpperCase()}`,alt:'Borítókép'}}
+  }}}};
+  const before=f.db.prepare('SELECT published_content_json FROM pages WHERE id=?').get('b').published_content_json;
+  const saved=await f.editor('editor','other','POST',{pageId:'b',expectedVersion:1,document,publish:false});
+  assert.equal(saved.status,200);
+  assert.equal(f.db.prepare('SELECT published_content_json FROM pages WHERE id=?').get('b').published_content_json,before);
+  const rejected=await f.editor('editor','other','POST',{pageId:'b',expectedVersion:2,document,publish:true});
+  assert.equal(rejected.status,409);
+  assert.equal((await rejected.json()).error.code,'MEDIA_NOT_FOUND');
+  assert.equal(f.db.prepare('SELECT published_content_json FROM pages WHERE id=?').get('b').published_content_json,before);
+  f.db.prepare('UPDATE media SET archived_at=NULL WHERE id=?').run(asset);
+  const published=await f.editor('editor','other','POST',{pageId:'b',expectedVersion:2,document,publish:true});
+  assert.equal(published.status,200);
+  assert.equal(f.db.prepare('SELECT is_published FROM pages WHERE id=?').get('b').is_published,1);
+  assert.equal(f.db.prepare("SELECT json_extract(published_content_json,'$.pages.b.nodes.image.props.src') AS src FROM pages WHERE id=?").get('b').src,
+    `https://trusted.example.test/media/${asset}`,'the live snapshot uses the D1 archive trigger’s canonical ID casing');
+});
+
+test('initial page publication checks a verified media alias before inserting a public page',async t=>{
+  const f=await fixture(t),asset='6b1c2e65-e46e-4764-b234-123456789abc';
+  f.db.prepare('INSERT INTO media(id,site_id,object_key,mime_type,original_name,size_bytes,archived_at) VALUES(?,?,?,?,?,?,?)')
+    .run(asset,'other','sites/other/media/'+asset,'image/png','archived.png',100,'2026-11-01');
+  const document={type:'sanci-page-document',schemaVersion:1,activePageId:'new-media',revision:1,pages:{'new-media':{id:'new-media',rootId:'root',nodes:{
+    root:{id:'root',type:'root',parentId:null,children:['image']},
+    image:{id:'image',type:'image',parentId:'root',children:[],metadata:{contentVersion:1},props:{src:`https://trusted.example.test/media/${asset.toUpperCase()}`,alt:'Borítókép'}}
+  }}}};
+  const body={id:'new-media',slug:'new-media',title:'New media',description:'',document,isPublished:true};
+  const rejected=await f.pages('editor','other','POST',body);
+  assert.equal(rejected.status,409);
+  assert.equal((await rejected.json()).error.code,'MEDIA_NOT_FOUND');
+  assert.equal(f.db.prepare('SELECT COUNT(*) AS n FROM pages WHERE id=?').get('new-media').n,0);
+  f.db.prepare('UPDATE media SET archived_at=NULL WHERE id=?').run(asset);
+  assert.equal((await f.pages('editor','other','POST',body)).status,200);
+  assert.equal(f.db.prepare('SELECT is_published FROM pages WHERE id=?').get('new-media').is_published,1);
+  assert.equal(f.db.prepare("SELECT json_extract(published_content_json,'$.pages.new-media.nodes.image.props.src') AS src FROM pages WHERE id=?").get('new-media').src,
+    `https://trusted.example.test/media/${asset}`);
+});
+
+test('archive racing with Publish rejects the whole batch and preserves the live snapshot',async t=>{
+  const f=await fixture(t),asset='6b1c2e65-e46e-4764-b234-123456789abc';
+  f.db.prepare('INSERT INTO media(id,site_id,object_key,mime_type,original_name,size_bytes) VALUES(?,?,?,?,?,?)')
+    .run(asset,'other','sites/other/media/'+asset,'image/png','race.png',100);
+  f.db.exec(`CREATE TRIGGER media_archive_pages_update_guard BEFORE UPDATE OF content_json,published_content_json ON pages
+    WHEN EXISTS (SELECT 1 FROM media m WHERE m.site_id=NEW.site_id AND m.archived_at IS NOT NULL
+      AND (instr(COALESCE(NEW.content_json,''),m.id)>0 OR instr(COALESCE(NEW.published_content_json,''),m.id)>0))
+    BEGIN SELECT RAISE(ABORT,'ARCHIVED_MEDIA_REFERENCE'); END;`);
+  const document={type:'sanci-page-document',schemaVersion:1,activePageId:'b',revision:1,pages:{b:{id:'b',rootId:'root',nodes:{
+    root:{id:'root',type:'root',parentId:null,children:['image']},
+    image:{id:'image',type:'image',parentId:'root',children:[],metadata:{contentVersion:1},props:{src:`https://trusted.example.test/media/${asset.toUpperCase()}`,alt:'Borítókép'}}
+  }}}};
+  const before=f.db.prepare('SELECT published_content_json FROM pages WHERE id=?').get('b').published_content_json;
+  const originalBatch=f.env.DB.batch;
+  f.env.DB.batch=async statements=>{
+    f.db.prepare('UPDATE media SET archived_at=? WHERE id=?').run('2026-11-11',asset);
+    return originalBatch(statements);
+  };
+  const response=await f.editor('editor','other','POST',{pageId:'b',expectedVersion:1,document,publish:true});
+  assert.equal(response.status,409);
+  assert.equal((await response.json()).error.code,'MEDIA_NOT_FOUND');
+  assert.equal(f.db.prepare('SELECT published_content_json FROM pages WHERE id=?').get('b').published_content_json,before);
+  assert.equal(f.db.prepare('SELECT COUNT(*) AS n FROM editor_revisions WHERE page_id=?').get('b').n,1);
+  assert.equal(f.db.prepare('SELECT COUNT(*) AS n FROM audit_log').get().n,0);
 });
 
 test('missing membership schema returns 503 and legacy role is default-site only',async t=>{

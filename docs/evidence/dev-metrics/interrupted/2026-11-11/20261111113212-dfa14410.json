@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "id": "20261111113212-dfa14410",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-11T11:32:12.404Z",
+  "abandoned_at": "2026-11-11T15:10:50.721Z",
+  "measured_seconds": null,
+  "status": "interrupted",
+  "reason": "Interrupted turn before completion; elapsed time cannot be attributed to active work",
+  "started_revision": "4648578d81631e79c30857c56bb759a013dd119e",
+  "measurement": "missing end time; excluded from elapsed time and ETA"
+}

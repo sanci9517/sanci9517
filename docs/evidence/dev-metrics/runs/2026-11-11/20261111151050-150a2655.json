@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261111151050-150a2655",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-11T15:10:50.771Z",
+  "finished_at": "2026-11-11T15:17:29.279Z",
+  "wall_seconds": 399,
+  "paused_seconds": 0,
+  "measured_seconds": 399,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "Media URL publication validation and archive-race protection verified locally; release pending",
+  "evidence": [
+    "docs/evidence/media-publication-url-validation-77-44-7-d-2026-11-11.json"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "4648578d81631e79c30857c56bb759a013dd119e",
+  "finished_revision": "4648578d81631e79c30857c56bb759a013dd119e",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

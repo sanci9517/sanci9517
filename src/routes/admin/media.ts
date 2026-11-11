@@ -116,7 +116,7 @@ function visitAssetReference(scan: AssetReferenceScanStatus): boolean {
   return true;
 }
 
-async function mediaUrlOrigins(env: Env, siteId: string, requestOrigin: string): Promise<Set<string> | null> {
+export async function mediaUrlOrigins(env: Env, siteId: string, requestOrigin: string): Promise<Set<string> | null> {
   try {
     const requestUrl = new URL(requestOrigin);
     if (!/^https?:$/.test(requestUrl.protocol)) return null;

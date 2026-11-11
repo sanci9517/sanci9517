@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { DatabaseSync } from "node:sqlite";
 import { adminMediaRoute, publishedMediaRoute } from "../src/routes/admin/media.ts";
-import { validatePublicationAssets } from "../src/core/editor-publication.ts";
+import { hasAbsoluteMediaLibraryUrl, validatePublicationAssets } from "../src/core/editor-publication.ts";
 import { hashSessionToken } from "../src/core/auth/session.ts";
 
 const png = Uint8Array.from([137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,1,0,0,0,1]);
@@ -509,6 +509,41 @@ test("publication and public media delivery reject assets used in a different me
   page(document);
   assert.equal((await publishedMediaRoute(new Request("https://example.test/media/"+asset.id),f.env,"site-default",asset.id)).status,404,`${label} cannot publish another media kind`);
  }
+});
+
+test("publication validates local media URLs against site, archive state and media role",async t=>{
+  const f=await fixture(t);
+  const image="20000000-0000-4000-8000-000000000001";
+  const archived="20000000-0000-4000-8000-000000000002";
+  const video="20000000-0000-4000-8000-000000000003";
+  const foreign="20000000-0000-4000-8000-000000000004";
+  for(const [id,mime,site,archivedAt] of [
+    [image,"image/png","site-default",null],
+    [archived,"image/png","site-default","2026-11-01"],
+    [video,"video/webm","site-default",null],
+    [foreign,"image/png","other",null]
+  ])f.db.prepare("INSERT INTO media(id,object_key,original_name,mime_type,size_bytes,alt_text,site_id,archived_at) VALUES(?,?,?,?,?,?,?,?)")
+    .run(id,id,id,mime,20,"",site,archivedAt);
+  const imageNode=props=>({type:"image",metadata:{contentVersion:1},props});
+  assert.equal(await validatePublicationAssets(f.env.DB,"site-default",imageNode({src:`/media/${image}`})),null);
+  for(const id of [archived,video,foreign]){
+    assert.equal(await validatePublicationAssets(f.env.DB,"site-default",imageNode({src:`/media/${id.toUpperCase()}`})),"MEDIA_NOT_FOUND",id);
+  }
+  assert.equal(await validatePublicationAssets(f.env.DB,"site-default",{type:"gallery",props:{items:[{src:`/media/${video}`,alt:"Wrong role"}]}}),"MEDIA_NOT_FOUND");
+  assert.equal(await validatePublicationAssets(f.env.DB,"site-default",{type:"video",props:{src:"https://example.test/clip.webm",poster:`/media/${archived}`}}),"MEDIA_NOT_FOUND");
+  assert.equal(await validatePublicationAssets(f.env.DB,"site-default",{type:"card",props:{cardContent:{imageSrc:`/media/${archived}`}}}),"MEDIA_NOT_FOUND");
+  assert.equal(await validatePublicationAssets(f.env.DB,"site-default",imageNode({assetId:image,src:`/media/${archived}`})),null,
+    "the renderer uses assetId before a stale src fallback");
+  assert.equal(await validatePublicationAssets(f.env.DB,"site-default",imageNode({src:"https://images.example.test/remote.png"})),null,
+    "external HTTPS media remains outside this site's D1 library");
+  const alias=new Set(["https://trusted.example.test"]);
+  assert.equal(hasAbsoluteMediaLibraryUrl(imageNode({src:`https://trusted.example.test/media/${archived}`})),true);
+  assert.equal(hasAbsoluteMediaLibraryUrl(imageNode({assetId:image,src:`https://trusted.example.test/media/${archived}`})),false);
+  assert.equal(hasAbsoluteMediaLibraryUrl(imageNode({src:`/media/${archived}`})),false);
+  assert.equal(await validatePublicationAssets(f.env.DB,"site-default",imageNode({src:`https://trusted.example.test/media/${archived}`}),alias),"MEDIA_NOT_FOUND",
+    "the site's verified media alias cannot publish an archived asset");
+  assert.equal(await validatePublicationAssets(f.env.DB,"site-default",imageNode({src:`https://other-site.example.test/media/${archived}`}),alias),null,
+    "another site's origin is not treated as this site's media library");
 });
 
 test("URL media references cannot deliver an asset with an incompatible rendered role",async t=>{
