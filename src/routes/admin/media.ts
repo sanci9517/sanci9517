@@ -146,10 +146,67 @@ function assetPaths(value: unknown, assetId: string, path = "", depth = 0, scan?
   return paths;
 }
 
+function legacyPageModel(value: Record<string, unknown>, pageId: string, scan: AssetReferenceScanStatus): { rootId: string; nodes: Record<string, any> } | null {
+  if (value.type !== "sanci-document" || !Array.isArray(value.pages) || !value.pages.length) return null;
+  const pages = value.pages as unknown[];
+  let requested: unknown = null;
+  for (const page of pages) {
+    if (!visitAssetReference(scan)) return null;
+    if (page && typeof page === "object" && (page as Record<string, unknown>).id === pageId) { requested = page; break; }
+  }
+  const legacyPage = (requested || pages[0]) as Record<string, unknown> | null;
+  if (!legacyPage || typeof legacyPage !== "object") { scan.complete = false; return null; }
+  const sourceRoot = legacyPage.root && typeof legacyPage.root === "object" ? legacyPage.root as Record<string, unknown> : {};
+  const rootId = `root-${pageId}`;
+  const nodes: Record<string, any> = Object.create(null);
+  const root = { id: rootId, type: "root", name: sourceRoot.name || "Oldal gyökér", parentId: null, children: [] as string[], metadata: {}, props: {}, style: {}, responsive: { desktop: {}, tablet: {}, mobile: {} }, visibility: { desktop: true, tablet: true, mobile: true } };
+  nodes[rootId] = root;
+  const stack: { source: Record<string, unknown>; nodeId: string; depth: number; nextChild: number }[] = [
+    { source: sourceRoot, nodeId: rootId, depth: 0, nextChild: 0 }
+  ];
+  let generatedId = 0;
+  while (stack.length) {
+    const parent = stack[stack.length - 1];
+    const nested = Array.isArray(parent.source.children) ? parent.source.children : [];
+    if (parent.nextChild >= nested.length) { stack.pop(); continue; }
+    const child = nested[parent.nextChild++];
+    const depth = parent.depth + 1;
+    if (depth > 16 || !visitAssetReference(scan)) { scan.complete = false; break; }
+    const source = child && typeof child === "object" ? child as Record<string, unknown> : {};
+    const sourceId = typeof source.id === "string" && source.id ? source.id : `legacy-${++generatedId}`;
+    // The canonical legacy adapter flattens into an ordinary object. Refuse
+    // ambiguous/prototype-sensitive IDs rather than scanning a different tree.
+    if (sourceId === rootId || sourceId === "__proto__" || sourceId === "constructor" || sourceId === "prototype" || Object.prototype.hasOwnProperty.call(nodes, sourceId)) {
+      scan.complete = false;
+      break;
+    }
+    const content = source.content && typeof source.content === "object" ? source.content as Record<string, unknown> : {};
+    const node = {
+      id: sourceId,
+      type: typeof source.type === "string" && source.type ? source.type : "custom",
+      name: typeof source.name === "string" && source.name ? source.name : typeof content.text === "string" && content.text ? content.text : typeof source.type === "string" && source.type ? source.type : "Elem",
+      parentId: parent.nodeId,
+      children: [] as string[],
+      metadata: source.metadata && typeof source.metadata === "object" ? source.metadata : {},
+      props: source.props && typeof source.props === "object" ? source.props : content,
+      style: source.style && typeof source.style === "object" ? source.style : {},
+      responsive: source.responsive && typeof source.responsive === "object" ? source.responsive : { desktop: {}, tablet: {}, mobile: {} },
+      visibility: source.visibility && typeof source.visibility === "object" ? source.visibility : { desktop: source.visibility !== false, tablet: source.visibility !== false, mobile: source.visibility !== false }
+    };
+    nodes[sourceId] = node;
+    nodes[parent.nodeId].children.push(sourceId);
+    stack.push({ source, nodeId: sourceId, depth, nextChild: 0 });
+  }
+  return scan.complete ? { rootId, nodes } : null;
+}
+
 function documentAssetReferences(json: string, pageId: string, assetId: string, publicOnly = false, mime = "", scan?: AssetReferenceScanStatus): { nodeId: string; nodeName: string; path: string }[] {
   const scanStatus = scan || { complete: true, visited: 0 };
-  const model = JSON.parse(json) as { pages?: Record<string, { rootId?: string; nodes?: Record<string, { name?: string; type?: string; metadata?: {cardContentVersion?: number;contentVersion?: number;editorContentVersion?: number;rootStyleVersion?: number;editorRootVersion?: number}; props?: unknown; style?: unknown; responsive?: unknown; visibility?: unknown; children?: string[] }> }> };
-  const page = model?.pages?.[pageId];
+  const parsed = JSON.parse(json) as Record<string, unknown>;
+  const model = parsed as { pages?: Record<string, { rootId?: string; nodes?: Record<string, { name?: string; type?: string; metadata?: {cardContentVersion?: number;contentVersion?: number;editorContentVersion?: number;rootStyleVersion?: number;editorRootVersion?: number}; props?: unknown; style?: unknown; responsive?: unknown; visibility?: unknown; children?: string[] }> }> };
+  const legacy = legacyPageModel(parsed, pageId, scanStatus);
+  const page = legacy || model?.pages?.[pageId];
+  if (!page) { scanStatus.complete = false; if (scan) scan.complete = false; return []; }
   const nodes = page?.nodes;
   if (!nodes || typeof nodes !== "object") return [];
   const visibleAt = new Map<string, Set<string>>();

@@ -530,6 +530,61 @@ test("site-scoped search, safe alt metadata and published-only delivery",async t
   assert.equal((await media()).status,404);
 });
 
+test("legacy published Page Model background assets remain visible to usage audit and public delivery",async t=>{
+  const f=await fixture(t);
+  const asset=(await (await f.call("POST","editor",png,{name:"legacy-background.png"})).json()).data;
+  const legacy=JSON.stringify({type:"sanci-document",pages:[{
+    id:"page-1",name:"Régi oldal",root:{name:"Régi gyökér",children:[{
+      id:"hero",type:"section",name:"Régi hős",style:{backgroundAssetId:asset.id},children:[]
+    }]}
+  }]});
+  f.db.prepare("INSERT INTO pages (id,site_id,archived_at,is_published,published_content_json,content_json,title,slug) VALUES(?,?,?,?,?,?,?,?)")
+    .run("page-1","site-default",null,1,legacy,legacy,"Régi oldal","legacy");
+
+  const usage=(await (await f.call("GET","editor",null,{usage:asset.id})).json()).data;
+  assert.equal(usage.complete,true);
+  assert.ok(usage.references.some(reference=>reference.source==="draft"&&reference.nodeId==="hero"&&reference.path==="style.backgroundAssetId"));
+  assert.ok(usage.references.some(reference=>reference.source==="published"&&reference.nodeId==="hero"&&reference.path==="style.backgroundAssetId"));
+  const delivered=await publishedMediaRoute(new Request(`https://example.test/media/${asset.id}`),f.env,"site-default",asset.id);
+  assert.equal(delivered.status,200,"the published legacy renderer still resolves its Page Model background asset");
+  assert.deepEqual(new Uint8Array(await delivered.arrayBuffer()),png);
+});
+
+test("legacy Page Model usage traversal fails closed beyond its shared depth budget",async t=>{
+  const f=await fixture(t);
+  const asset=(await (await f.call("POST","editor",png,{name:"deep-legacy-background.png"})).json()).data;
+  let node={id:"hero",type:"section",style:{backgroundAssetId:asset.id},children:[]};
+  for(let depth=0;depth<20;depth++)node={id:`nested-${depth}`,type:"section",children:[node]};
+  const legacy=JSON.stringify({type:"sanci-document",pages:[{id:"page-1",root:{children:[node]}}]});
+  f.db.prepare("INSERT INTO pages (id,site_id,archived_at,is_published,published_content_json,content_json,title,slug) VALUES(?,?,?,?,?,?,?,?)")
+    .run("page-1","site-default",null,1,legacy,legacy,"Régi mély oldal","legacy-deep");
+
+  const usage=(await (await f.call("GET","editor",null,{usage:asset.id})).json()).data;
+  assert.equal(usage.complete,false,"unscanned legacy descendants must not be reported as unused");
+  assert.deepEqual(usage.references,[]);
+  assert.equal((await f.call("PATCH","editor",JSON.stringify({archived:true}),{id:asset.id})).status,409);
+  assert.equal((await publishedMediaRoute(new Request(`https://example.test/media/${asset.id}`),f.env,"site-default",asset.id)).status,404);
+  assert.equal(f.db.prepare("SELECT archived_at FROM media WHERE id=?").get(asset.id).archived_at,null);
+  assert.equal(f.files.size,1,"bounded legacy traversal must not remove the R2 fixture object");
+});
+
+test("legacy Page Model page selection respects the shared scan budget",async t=>{
+  const f=await fixture(t);
+  const asset=(await (await f.call("POST","editor",png,{name:"late-legacy-page-background.png"})).json()).data;
+  const pages=Array.from({length:20_001},(_,index)=>({id:`legacy-${index}`,root:{children:[]}}));
+  pages[pages.length-1]={id:"page-1",root:{children:[{id:"hero",type:"section",style:{backgroundAssetId:asset.id},children:[]}]}};
+  const legacy=JSON.stringify({type:"sanci-document",pages});
+  f.db.prepare("INSERT INTO pages (id,site_id,archived_at,is_published,published_content_json,content_json,title,slug) VALUES(?,?,?,?,?,?,?,?)")
+    .run("page-1","site-default",null,1,legacy,legacy,"Kései régi oldal","late-legacy");
+
+  const usage=(await (await f.call("GET","editor",null,{usage:asset.id})).json()).data;
+  assert.equal(usage.complete,false,"an over-budget legacy page lookup cannot claim no media usage");
+  assert.equal((await f.call("PATCH","editor",JSON.stringify({archived:true}),{id:asset.id})).status,409);
+  assert.equal((await publishedMediaRoute(new Request(`https://example.test/media/${asset.id}`),f.env,"site-default",asset.id)).status,404);
+  assert.equal(f.db.prepare("SELECT archived_at FROM media WHERE id=?").get(asset.id).archived_at,null);
+  assert.equal(f.files.size,1);
+});
+
 test("published media HEAD checks R2 metadata without reading the object body",async t=>{
   const f=await fixture(t);
   const uploaded=await f.call("POST","editor",png,{name:"head-cover.png"});

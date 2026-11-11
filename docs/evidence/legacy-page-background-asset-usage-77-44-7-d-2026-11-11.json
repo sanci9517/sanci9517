@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-11T00:30:59Z",
+  "plan_point": "77.44.7.D",
+  "status": "LOCAL_VERIFIED_RELEASE_PENDING",
+  "scope": "Preserve Media Library references in legacy sanci-document page backgrounds and fail closed when legacy page selection or traversal exceeds the shared scan budget.",
+  "finding": {
+    "source": "src/routes/admin/media.ts",
+    "reproduction": "The public Page Model normalizer accepts legacy sanci-document documents with pages[].root.children[]. A published legacy node may resolve style.backgroundAssetId at render time, but the shared media usage and public authorization scanner previously read only canonical pages[pageId]. That made a rendered background appear unused to archive protection and denied its public media URL.",
+    "fix": "Adapt only the requested legacy page into the bounded scanner's Page Model. Use an iterative depth-first traversal with a shared 20,000-entry budget; reject duplicate or prototype-sensitive IDs and mark incomplete on depth, page-selection, or entry-budget exhaustion. Incomplete scans cannot authorize public delivery or retention and return no guessed references.",
+    "regressions": [
+      "Legacy draft and published backgroundAssetId references are reported and the actually rendered published image is delivered.",
+      "A legacy tree deeper than the scanner cap yields incomplete usage, blocks archive, denies public media, and preserves the local R2 fixture.",
+      "A matching legacy page after 20,000 page candidates yields incomplete usage, blocks archive, denies public media, and preserves the local R2 fixture."
+    ],
+    "save_publish_separation_changed": false,
+    "production_data_touched": false
+  },
+  "checks": {
+    "npm_run_test:media": "PASS; 5/5 files, 45 media API tests in the API file.",
+    "npm_run_test:media:storage": "PASS; 1/1 real Worker integration test using isolated local D1/R2 and Chromium, 60.2 seconds.",
+    "npm_run_typecheck": "PASS.",
+    "npm_run_test:editor": "PASS; 15/15 Node files and 3/3 Linux subreaper contract tests.",
+    "npm_run_test:web013:migration-gate": "PASS; local safety gate only, no migration was applied.",
+    "targeted_browser_regressions": "PASS in the preceding validation block: divider cascade 1/1; layer rename desktop/mobile 2/2; 44 PARTIAL-type inspector 1/1. Local Chromium only.",
+    "plan_contract": "PASS; 13 tests.",
+    "canonical_plan": "PASS; one complete 13-file master, 396 source mappings, acceptance remains NOT_CERTIFIED.",
+    "feature_traceability": "PASS; reproducible 396/396 mapping check.",
+    "active_plan_point": "PASS audit; current cursor is 77.44.7.D and remains OPEN / NOT_CERTIFIED.",
+    "git_diff_check": "PASS.",
+    "wrangler_dry_run": "PASS; Wrangler 4.130.0 read 171 public assets (341.29 KiB / 89.11 KiB gzip) and exited without deploying.",
+    "production_d1_preflight": "PASS; SELECT name FROM d1_migrations ORDER BY name; 34 rows through 0028_media_archive.sql, rows_read=34, rows_written=0, changes=0, changed_db=false.",
+    "pre_release_live_health": "PASS; GET workers.dev/api/health at 2026-11-11T00:29:45Z returned HTTP 200, ok=true, version=2.0.0.",
+    "pre_release_live_assets": "PASS baseline; / returned 9,716 bytes and still referenced site.css?v=20261016-3; live /assets/site.css SHA-256 b67c9aed36f66ee244fc3effdb3ad63f79e92661018266ed863e9bbcbe3e05b7 exactly matches pre-release HEAD, while the pending local CSS SHA-256 is eed81d014eeeb75c116836aedb5887dd8ee9bb66f4b3df2a77a41c10c91ce6ae."
+  },
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "verified_remote_head_before_release": "91d537f203c13b30f08f66447afca6ec272f337e",
+    "runtime_commit": "PENDING",
+    "normal_fast_forward_push": "PENDING; no branch rewrite or branch switch.",
+    "github_actions": {
+      "repository_visibility": "public",
+      "standard_hosted_runner_cost": "0 HUF for public repository standard runners.",
+      "cloudflare_build_minutes": "Latest read-only account limits response: has_reached_build_minutes_limit=false; next refresh 2026-11-30T23:59:59.999Z.",
+      "artifact_storage": "Latest owner-provided snapshot was 0.45/0.50 GB; current aggregate usage is not exposed in the available read-only GitHub connection. The required release workflow uploads only its configured short-lived diagnostic screenshot set (7 days) and plan-audit text (30 days); no manual workflow or rerun will be started."
+    }
+  },
+  "production": {
+    "worker": "sanci9517-streamer-brand",
+    "current_deployment_before_release": "10adc383-9a7b-43d0-b31b-5df8850663af",
+    "current_traffic_version_before_release": "d3048753-ded0-4aa8-b165-c98ebe3a15d9",
+    "current_traffic_percentage_before_release": 100,
+    "deployment_after_release": "PENDING",
+    "health_after_release": "PENDING",
+    "public_asset_hashes_after_release": "PENDING",
+    "production_d1_migration_or_write": false,
+    "production_r2_mutation_or_delete": false
+  },
+  "cost_huf": 0,
+  "cost_note": "No paid service, quota purchase, subscription, new dependency, production D1 write/migration, or R2 mutation/deletion was enabled or performed. Cloudflare exposes that the Build-minute limit is not reached; the connected GitHub read API does not expose current aggregate artifact-storage usage or account invoice totals.",
+  "next_step": "Push the fully verified runtime commit with a normal fast-forward, let the configured required CI/Cloudflare build run only on the public repository's free hosted runners, then verify exact-SHA CI, the 100% Worker deployment, direct production health, and public hashes. Append final release evidence to this file and the canonical plan without a redundant Worker deployment."
+}
