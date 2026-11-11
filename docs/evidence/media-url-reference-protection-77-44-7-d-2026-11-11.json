@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "recorded_at_utc": "2026-11-11T05:05:22Z",
+  "recorded_at_utc": "2026-11-11T05:06:15Z",
   "plan_point": "77.44.7.D",
   "status": "DEPLOYED_EXACT_SHA_EDITOR_CORE_IN_PROGRESS",
   "scope": "Protect authored and legacy relative /media/<asset-id> references in renderer-supported page content; cover image, card, gallery, video poster and legacy video/audio sources, and avoid successful-run screenshot artifact storage.; authored versioned Video/Audio src coverage added locally after finding the earlier regression exercised legacy nodes only.; regression coverage now separately verifies authored and structured Carousel URL source paths, archive protection, and exact-byte public delivery.",
@@ -49,10 +49,10 @@
     "post_release_health": "PASS; direct GET to workers.dev/api/health at 2026-11-11T05:05:22Z returned HTTP 200, ok=true, service=sanci9517-streamer-brand, version=2.0.0, server=cloudflare-worker.",
     "authored_video_audio_url_regression": "PASS; tests/media-api.test.js: internal public media URL regression covers authored v1 Video and Audio props.src with distinct WebM/WAV bytes, usage, archive 409, and exact-byte delivery.",
     "node_media_api_direct": "PASS; 46/46 tests after authored/structured Carousel URL source assertions.",
-    "github_test_only_sha": "PASS for release convention only: Actions workflow query for exact test commit fc9c69475a658ecbe4d774b1da3931ed5711e2a2 returned zero runs, as expected for [skip ci]; this is not a CI PASS.",
-    "github_docs_only_sha": "PASS for release convention only: Actions workflow query for exact docs commit 2e301eebabbe9ac14bf38cedd669ddad06f1818a returned zero runs, as expected for [skip ci]; branch API confirmed this exact remote head.",
+    "github_test_only_sha": "PASS for release convention only: exact-SHA Actions workflow query for test commit 07c4cd21514a0dff46c354d0b67fb894e2207f6c returned zero runs, as expected with [skip ci]; not CI PASS.",
+    "github_docs_only_sha": "PASS for release convention only: exact-SHA Actions workflow query for docs commit f44b1bec8536c58f4b369914e74cfd752b36e48e returned zero runs, as expected with [skip ci]; branch API confirmed exact v2/foundation head.",
     "github_previous_editor_core_run": "FAILURE reconfirmed via read-only GitHub Actions API at 2026-11-11 04:00 UTC: run 42941236307, runtime SHA 425c5000322969d6531493d3295885c8c416ca93. The local follow-up is test-only and does not rewrite that result.",
-    "cloudflare_post_docs_push": "PASS read-only Workers deployments GET: latest deployment 64d0bf72-b77f-464d-a474-f41919832cca, version 9df2bd30-83da-425a-9934-84e275ecb017 at 100%; documentation and test commits caused no Worker deployment.",
+    "cloudflare_post_docs_push": "PASS read-only deployment GET: latest deployment 64d0bf72-b77f-464d-a474-f41919832cca with version 9df2bd30-83da-425a-9934-84e275ecb017 at 100%; no Worker redeploy from test/docs commits.",
     "carousel_internal_url_regression": "PASS; tests/media-api.test.js isolates both authored Carousel and structured Carousel image URLs with distinct local PNG assets and verifies usage, archive 409, and exact-byte delivery.",
     "previous_editor_core_run": "FAILURE remains; read-only GitHub API confirms run 42941236307 on runtime SHA 425c5000322969d6531493d3295885c8c416ca93 concluded failure. No paid-quota/unknown-quota rerun or dispatch.",
     "test_only_commit": "PUSHED normal fast-forward: 07c4cd21514a0dff46c354d0b67fb894e2207f6c ([skip ci] test: cover carousel media URL references).",
@@ -67,11 +67,12 @@
     "push": "Both commits pushed with normal fast-forward; GitHub branch page 3 confirms exact v2/foundation head 2e301eebabbe9ac14bf38cedd669ddad06f1818a.",
     "repository_visibility": "public",
     "runtime_commit_remote_head_at_push": "425c5000322969d6531493d3295885c8c416ca93",
-    "test_only_followup": "PUSHED normal fast-forward commit 07c4cd21514a0dff46c354d0b67fb894e2207f6c ([skip ci] test: cover carousel media URL references); verify exact branch SHA and zero workflow records before final report.",
+    "test_only_followup": "PUSHED normal fast-forward test commit 07c4cd21514a0dff46c354d0b67fb894e2207f6c ([skip ci]); GitHub API exact-SHA workflow query returned zero records. Evidence/plan/metrics docs commit is pushed as f44b1bec8536c58f4b369914e74cfd752b36e48e; GitHub branch API confirmed v2/foundation exact HEAD f44b1bec8536c58f4b369914e74cfd752b36e48e.",
     "runtime_unchanged": true,
     "final_remote_head": "2e301eebabbe9ac14bf38cedd669ddad06f1818a",
-    "test_commit": "fc9c69475a658ecbe4d774b1da3931ed5711e2a2",
-    "documentation_commit": "2e301eebabbe9ac14bf38cedd669ddad06f1818a"
+    "test_commit": "07c4cd21514a0dff46c354d0b67fb894e2207f6c",
+    "documentation_commit": "f44b1bec8536c58f4b369914e74cfd752b36e48e",
+    "verified_remote_head_after_docs": "f44b1bec8536c58f4b369914e74cfd752b36e48e"
   },
   "production": {
     "worker": "sanci9517-streamer-brand",
