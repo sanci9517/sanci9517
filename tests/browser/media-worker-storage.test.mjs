@@ -143,6 +143,9 @@ print(json.dumps(result))`],{cwd:root,encoding:'utf8'}));
  const publicResponse=await context.request.get(base+'/media/'+row.id);
  assert.equal(publicResponse.status(),200,'explicit Publish activates the public asset route');
  assert.equal(digest(await publicResponse.body()),digest(png),'the Worker returns the exact uploaded bytes');
+ const publicTrailingSlashResponse=await context.request.get(base+'/media/'+row.id+'/');
+ assert.equal(publicTrailingSlashResponse.status(),200,'the actual Worker route preserves renderer-valid trailing-slash media URLs');
+ assert.equal(digest(await publicTrailingSlashResponse.body()),digest(png),'the normalized Worker route returns the same exact uploaded bytes');
  await live.goto(base+'/p/'+fixturePage.slug);
  const publicNode=live.locator(`[data-node-id="${targetNode.id}"]`);await publicNode.waitFor();
  assert.ok((await publicNode.evaluate(el=>getComputedStyle(el).backgroundImage)).includes(`/media/${row.id}`),

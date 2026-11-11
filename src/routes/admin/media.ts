@@ -781,14 +781,18 @@ export async function adminMediaRoute(request: Request, env: Env, siteId: string
 /** Public delivery is granted only while an active published page in this site references the asset. */
 export async function publishedMediaRoute(request: Request, env: Env, siteId: string, assetId: string): Promise<Response> {
   if (request.method !== "GET" && request.method !== "HEAD") return error("METHOD_NOT_ALLOWED", 405);
-  if (!/^[0-9a-f-]{36}$/.test(assetId) || !env.MEDIA) return error("MEDIA_NOT_FOUND", 404);
+  // safeMediaUrl and the reference scanner accept a media pathname with a
+  // trailing slash. Normalize the route suffix identically before lookup so
+  // a renderer-valid reference is not protected from archival but then 404s.
+  const normalizedAssetId = assetId.replace(/\/+$/, "");
+  if (!MEDIA_ASSET_ID.test(normalizedAssetId) || !env.MEDIA) return error("MEDIA_NOT_FOUND", 404);
   const row = await env.DB.prepare(
     "SELECT id,site_id,object_key,original_name,mime_type,size_bytes,alt_text,created_at,archived_at FROM media WHERE id=? AND site_id=? LIMIT 1"
-  ).bind(assetId, siteId).first<MediaRow>();
+  ).bind(normalizedAssetId, siteId).first<MediaRow>();
   if (!row || row.archived_at || !(MEDIA_MIMES as readonly string[]).includes(row.mime_type)) return error("MEDIA_NOT_FOUND", 404);
   const pages = await env.DB.prepare(
     `SELECT id,published_content_json FROM pages WHERE site_id=? AND archived_at IS NULL AND is_published=1 AND published_content_json IS NOT NULL AND instr(published_content_json,?)>0 ORDER BY id LIMIT ${MAX_PUBLIC_MEDIA_SNAPSHOTS}`
-  ).bind(siteId, assetId).all<{ id: string; published_content_json: string }>();
+  ).bind(siteId, normalizedAssetId).all<{ id: string; published_content_json: string }>();
   // A single public request may inspect multiple candidate snapshots. Reuse
   // one budget across them and cap result materialization so many pages with
   // incidental ID text cannot create unbounded parsing, memory or R2 reads.
@@ -797,7 +801,7 @@ export async function publishedMediaRoute(request: Request, env: Env, siteId: st
   for (const page of pages.results) {
     if (!scan.complete) break;
     try {
-      if (documentAssetReferences(page.published_content_json, page.id, assetId, true, row.mime_type, scan).length) {
+      if (documentAssetReferences(page.published_content_json, page.id, normalizedAssetId, true, row.mime_type, scan).length) {
         allowed = true;
         break;
       }

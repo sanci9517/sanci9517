@@ -296,6 +296,21 @@ test("media URL references match renderer normalization and reject invalid path 
   assert.deepEqual(new Uint8Array(await delivered.arrayBuffer()),gif);
   assert.equal((await f.call("PATCH","editor",JSON.stringify({archived:true}),{id:asset.id})).status,409,
     "renderer-normalized internal media cannot be archived as unused");
+  const trailingSlashUrl=`/media/${asset.id}/`;
+  const trailingSlashDocument={type:"sanci-page-document",schemaVersion:1,activePageId:"trailing-slash-page",pages:{"trailing-slash-page":{
+    id:"trailing-slash-page",rootId:"root",nodes:{
+      root:{id:"root",type:"root",children:["image"]},
+      image:{id:"image",type:"image",metadata:{contentVersion:1},props:{src:trailingSlashUrl,alt:"Záró perjeles belső média-URL"},children:[]}
+    }
+  }}};
+  f.db.prepare("INSERT INTO pages (id,site_id,archived_at,is_published,published_content_json,content_json,title,slug) VALUES(?,?,?,?,?,?,?,?)")
+    .run("trailing-slash-page","site-default",null,1,JSON.stringify(trailingSlashDocument),JSON.stringify(trailingSlashDocument),"Trailing slash media","trailing-slash-media");
+  const trailingUsage=(await (await f.call("GET","editor",null,{usage:asset.id})).json()).data;
+  assert.ok(trailingUsage.references.some(reference=>reference.pageId==="trailing-slash-page"&&reference.path==="props.src"),
+    "the usage scanner treats a renderer-accepted trailing-slash path as an internal reference");
+  const trailingSlashDelivery=await publishedMediaRoute(new Request(`https://example.test${trailingSlashUrl}`),f.env,"site-default",asset.id+"/");
+  assert.equal(trailingSlashDelivery.status,200,"the public route must deliver the same renderer-accepted trailing-slash media URL");
+  assert.deepEqual(new Uint8Array(await trailingSlashDelivery.arrayBuffer()),gif);
 
   const malformedUpload=await f.call("POST","editor",png,{name:"invalid-backslash-url.png"});
   assert.equal(malformedUpload.status,201);
