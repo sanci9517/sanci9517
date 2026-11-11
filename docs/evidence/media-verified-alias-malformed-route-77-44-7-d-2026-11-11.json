@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "plan_point": "77.44.7.D",
-  "status": "LOCAL_PASS_RELEASE_PENDING",
+  "status": "DEPLOYED_EXACT_SHA_CI_PENDING",
   "finding": "Publish and initial public page creation could accept a verified tenant HTTPS media alias with a malformed /media/{id}/extra path. The absolute-URL precheck only detected one-segment media paths and therefore did not load the verified origin allowlist for validation.",
   "red_test": "tests/web013-tenant-pages-editor.test.js: reserved media paths with invalid asset IDs cannot become public; Publish returned HTTP 200 instead of 409 for https://trusted.example.test/media/6b1c2e65-e46e-4764-b234-123456789abc/extra (15 passed, 1 failed).",
   "change": "The absolute media precheck now detects every reserved /media path before validation. Validation then rejects malformed aliases with MEDIA_NOT_FOUND while Save retains a private draft and failed Publish preserves the prior live snapshot. No new dependency or production migration.",
@@ -18,9 +18,20 @@
     "git_diff_check": "PASS",
     "production_d1_preflight": "PASS: 3 SELECT-only D1 Query API calls; each changes=0, rows_written=0, changed_db=false; 34 migrations, latest 0028_media_archive.sql; media_count=6, verified_domains=1",
     "wrangler_dry_run": "PASS: Wrangler 4.130.0, 171 public assets, no upload",
-    "previous_exact_sha_editor_core_ci": "SUCCESS: run 43054562549, source 774fe3972c17cc52117513af92f60329cc42e9b7"
+    "previous_exact_sha_editor_core_ci": "SUCCESS: run 43054562549, source 774fe3972c17cc52117513af92f60329cc42e9b7",
+    "release_exact_sha_ci": "SUCCESS: Active Point Audit 43065255039, Canonical Plan 43065254657, Twitch 43065254801, F0 43065254950; Editor Core 43065254916 IN_PROGRESS; all source a0b68c1ac605ddb80556684a098b9e219228be01"
   },
   "dev_metrics_run": "docs/evidence/dev-metrics/runs/2026-11-11/20261111170258-7d434603.json",
-  "release": "PENDING: normal fast-forward push, automatic deploy:safe build, exact Worker traffic and health verification",
+  "release": {
+    "source_commit": "a0b68c1ac605ddb80556684a098b9e219228be01",
+    "verified_remote_branch": "v2/foundation at exact source SHA",
+    "cloudflare_build": "ed9763c2-4aaf-4b89-9e93-8f75f33004f8: stopped/success, exact source SHA, typecheck and deploy:safe including migration gate successful, no updated public asset files to upload",
+    "deployment": "472d48b5-a42a-4c8b-9ee7-c52e67ac285f",
+    "traffic_version": "b97258c6-da8b-46da-a8e2-357e045ee737 at 100%",
+    "health": "Direct GET /api/health HTTP 200; ok=true, service=sanci9517-streamer-brand, version=2.0.0",
+    "invalid_media_get": "Direct GET /media/not-a-uuid HTTP 404",
+    "changed_public_assets": [],
+    "unchanged_renderer_asset_sha256": "public/editor-v2/core/authored-content.js local and direct production GET: 3bf1f67a689b7554efd50abb34ffe248e75668bfa9cb72c717c8a668301e6d7d"
+  },
   "cost": "No paid service, production D1 mutation/migration, or R2 deletion."
 }
