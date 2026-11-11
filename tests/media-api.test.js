@@ -229,10 +229,20 @@ test("internal public media URLs remain protected references across authored and
   const authoredAudioUpload=await f.call("POST","editor",authoredWav,{name:"authored-url.wav",contentType:"audio/wav"});
   assert.equal(authoredAudioUpload.status,201);
   const authoredAudio=(await authoredAudioUpload.json()).data;
+  const carouselPng=Uint8Array.from([...png,0x11]);
+  const structuredCarouselPng=Uint8Array.from([...png,0x12]);
+  const carouselUpload=await f.call("POST","editor",carouselPng,{name:"authored-carousel.png"});
+  assert.equal(carouselUpload.status,201);
+  const carouselAsset=(await carouselUpload.json()).data;
+  const structuredCarouselUpload=await f.call("POST","editor",structuredCarouselPng,{name:"structured-carousel.png"});
+  assert.equal(structuredCarouselUpload.status,201);
+  const structuredCarouselAsset=(await structuredCarouselUpload.json()).data;
   const authoredDocument={type:"sanci-page-document",schemaVersion:1,activePageId:"authored-url-page",pages:{"authored-url-page":{id:"authored-url-page",rootId:"authored-root",nodes:{
-    "authored-root":{id:"authored-root",type:"root",children:["authored-video","authored-audio"]},
+    "authored-root":{id:"authored-root",type:"root",children:["authored-video","authored-audio","authored-carousel","structured-carousel"]},
     "authored-video":{id:"authored-video",type:"video",metadata:{contentVersion:1},props:{src:`/media/${authoredVideo.id}`,controls:true},children:[]},
-    "authored-audio":{id:"authored-audio",type:"audio",metadata:{contentVersion:1},props:{src:`/media/${authoredAudio.id}`,controls:true},children:[]}
+    "authored-audio":{id:"authored-audio",type:"audio",metadata:{contentVersion:1},props:{src:`/media/${authoredAudio.id}`,controls:true},children:[]},
+    "authored-carousel":{id:"authored-carousel",type:"carousel",metadata:{contentVersion:1},props:{items:[{src:`/media/${carouselAsset.id}`,alt:"Dia képe",label:"Dia",content:"Dia leírása"}]},children:[]},
+    "structured-carousel":{id:"structured-carousel",type:"carousel",metadata:{structuredContentVersion:1},props:{contentModel:{version:1,items:[{src:`/media/${structuredCarouselAsset.id}`,alt:"Strukturált dia képe",label:"Strukturált dia",content:"Strukturált dia leírása"}]}},children:[]}
   }}}};
   f.db.prepare("INSERT INTO pages (id,site_id,archived_at,is_published,published_content_json,content_json,title,slug) VALUES(?,?,?,?,?,?,?,?)")
     .run("authored-url-page","site-default",null,1,JSON.stringify(authoredDocument),JSON.stringify(authoredDocument),"Authored URL media","authored-url-media");
@@ -245,6 +255,20 @@ test("internal public media URLs remain protected references across authored and
       `an authored ${type} source URL blocks archival`);
     const delivery=await publishedMediaRoute(new Request(`https://example.test/media/${authoredAsset.id}`),f.env,"site-default",authoredAsset.id);
     assert.equal(delivery.status,200,`the authored ${type} source URL authorizes matching media`);
+    assert.deepEqual(new Uint8Array(await delivery.arrayBuffer()),bytes);
+  }
+  for(const [carouselImage,bytes,nodeId,path,type] of [
+    [carouselAsset,carouselPng,"authored-carousel","props.items[0].src","authored"],
+    [structuredCarouselAsset,structuredCarouselPng,"structured-carousel","props.contentModel.items[0].src","structured"]
+  ]){
+    const carouselUsage=(await (await f.call("GET","editor",null,{usage:carouselImage.id})).json()).data;
+    assert.equal(carouselUsage.complete,true);
+    assert.ok(carouselUsage.references.some(reference=>reference.pageId==="authored-url-page"&&reference.nodeId===nodeId&&reference.path===path),
+      `${type} Carousel image URLs remain visible to the usage scanner`);
+    assert.equal((await f.call("PATCH","editor",JSON.stringify({archived:true}),{id:carouselImage.id})).status,409,
+      `a rendered ${type} Carousel image URL blocks archival`);
+    const delivery=await publishedMediaRoute(new Request(`https://example.test/media/${carouselImage.id}`),f.env,"site-default",carouselImage.id);
+    assert.equal(delivery.status,200,`the ${type} Carousel source URL authorizes matching media`);
     assert.deepEqual(new Uint8Array(await delivery.arrayBuffer()),bytes);
   }
 });
