@@ -38,7 +38,7 @@
     "repository": "sanci9517/sanci9517",
     "branch": "v2/foundation",
     "base_sha": "eefdfa5a35c092b8376d89ea8c8ae965b01b8afc",
-    "test_docs_commit": "PENDING",
-    "verified_remote_head": "PENDING"
+    "test_docs_commit": "b23f9c17e42cb5d5d58669a3cba31038a44748c8",
+    "verified_remote_head": "b23f9c17e42cb5d5d58669a3cba31038a44748c8"
   }
 }
