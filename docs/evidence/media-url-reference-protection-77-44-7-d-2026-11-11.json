@@ -72,5 +72,11 @@
   "cost_huf": 0,
   "cost_note": "No paid service, quota purchase, subscription, new dependency, production D1 write/migration, R2 mutation/deletion, workflow dispatch, or rerun was performed.",
   "next_step": "Finish observing exact-SHA Editor Core run 42941236307 without rerun. If successful, record final exact-SHA workflows in a docs-only [skip ci] follow-up; then continue the remaining 77.44.7.D media/content lifecycle matrix. Do not enable paid quota or modify production data.",
-  "session_metrics": "docs/evidence/dev-metrics/runs/2026-11-11/20261111005845-26d8c71a.json; measured 2948 seconds excluding 589 seconds paused; partial because exact-SHA Editor Core browser suite remains in progress."
+  "session_metrics": "docs/evidence/dev-metrics/runs/2026-11-11/20261111005845-26d8c71a.json; measured 2948 seconds excluding 589 seconds paused; partial because exact-SHA Editor Core browser suite remains in progress.",
+  "documentation_followup": {
+    "status": "PUSHED",
+    "commit_message": "[skip ci] docs: record media URL release verification",
+    "branch": "v2/foundation",
+    "verification": "GitHub Branch API confirmed the post-push branch head; exact-SHA Actions query for the documentation commit returned zero workflow runs. Cloudflare deployments API still shows the runtime deployment at 100% traffic."
+  }
 }
