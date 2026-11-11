@@ -2,7 +2,7 @@
   "schema_version": 1,
   "recorded_at_utc": "2026-11-11T09:10:40Z",
   "plan_point": "77.44.7.D",
-  "status": "TEST_DOCS_VERIFIED_PUSH_PENDING",
+  "status": "TEST_DOCS_VERIFIED_PUSHED",
   "scope": "Prove that absolute media URLs on verified tenant aliases lose public authorization immediately when the alias is revoked or its verification timestamp is incomplete.",
   "test": {
     "file": "tests/media-api.test.js",
@@ -38,7 +38,7 @@
     "repository": "sanci9517/sanci9517",
     "branch": "v2/foundation",
     "base_sha": "7eb4e07c9b60c041b576923404fd3240488ccb87",
-    "test_docs_commit": "PENDING",
-    "verified_remote_head": "PENDING"
+    "test_docs_commit": "ab64622f41f3e164fb36c73bb5b89e2d710681e8",
+    "verified_remote_head": "ab64622f41f3e164fb36c73bb5b89e2d710681e8"
   }
 }
