@@ -3,6 +3,7 @@ import { test } from "node:test";
 import { DatabaseSync } from "node:sqlite";
 import { adminMediaRoute, publishedMediaRoute } from "../src/routes/admin/media.ts";
 import { hasAbsoluteMediaLibraryUrl, validatePublicationAssets } from "../src/core/editor-publication.ts";
+import { authoredNodeHtml } from "../public/editor-v2/core/authored-content.js";
 import { hashSessionToken } from "../src/core/auth/session.ts";
 
 const png = Uint8Array.from([137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,1,0,0,0,1]);
@@ -536,6 +537,10 @@ test("publication validates local media URLs against site, archive state and med
     "the renderer uses assetId before a stale src fallback");
   assert.equal(await validatePublicationAssets(f.env.DB,"site-default",imageNode({assetId:'00000000-0000-0000-0000-000000000000',src:`/media/${image}`})),null,
     "a malformed imported assetId cannot suppress the renderer's valid src fallback");
+  assert.match(authoredNodeHtml(imageNode({assetId:'00000000-0000-0000-0000-000000000000',src:`/media/${image}`,alt:'Active image'})),new RegExp(`/media/${image}`),
+    "the renderer must use the same valid src fallback that publication validates");
+  assert.match(authoredNodeHtml({type:'video',props:{assetId:'00000000-0000-0000-0000-000000000000',src:'https://trusted.example.test/clip.webm',posterAssetId:'00000000-0000-0000-0000-000000000000',poster:`/media/${image}`}}),new RegExp(`src="https://trusted.example.test/clip.webm"[^>]*poster="/media/${image}"`),
+    "video and poster fallbacks must use the same strict ID contract as publication");
   assert.equal(await validatePublicationAssets(f.env.DB,"site-default",{type:"carousel",props:{contentModel:{version:1,items:[{assetId:image,label:"Dia",content:"Leírás",src:`/media/${archived}`,alt:"Borítókép"}]}}}),"MEDIA_NOT_FOUND",
     "structured carousel renders src and must not treat an ignored imported assetId as its source");
   assert.equal(await validatePublicationAssets(f.env.DB,"site-default",{type:"gallery",props:{contentModel:{version:1,items:[{assetId:image,src:`/media/${archived}`,alt:"Borítókép"}]}}}),"MEDIA_NOT_FOUND",

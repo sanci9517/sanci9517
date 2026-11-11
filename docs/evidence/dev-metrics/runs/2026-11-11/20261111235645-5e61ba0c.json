@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261111235645-5e61ba0c",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-11T23:56:45.276Z",
+  "finished_at": "2026-11-11T23:58:44.111Z",
+  "wall_seconds": 119,
+  "paused_seconds": 0,
+  "measured_seconds": 119,
+  "status": "pass",
+  "kind": "mixed",
+  "summary": "Renderer and media usage strict UUID parity; red-green regression and release gates",
+  "evidence": [
+    "tests/media-api.test.js"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "5f03267d0c5e2180f150c89c971661446e851e07",
+  "finished_revision": "5f03267d0c5e2180f150c89c971661446e851e07",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

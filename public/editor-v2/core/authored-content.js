@@ -3,6 +3,7 @@ import { validatedLinkHref } from './richtext-links.js';
 export const CONTENT_VERSION=1;
 // Shared by the editor picker and the server-side media upload/list contract.
 export const IMAGE_MIMES=Object.freeze(['image/png','image/jpeg','image/gif','image/webp']);
+const MEDIA_ASSET_ID=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const field=(key,label,type='text',extra={})=>({key,label,type,...extra});
 const text=field('text','Szöveg','textarea',{max:20000});
 const href=field('href','Hivatkozás','url',{help:'Belső /p/oldal vagy #azonosító, illetve teljes https:// vagy mailto: cím. Üresen az elem nem navigál.'});
@@ -64,7 +65,7 @@ export function normalizeContentField(definition,value){
     return number;
   }
   if(definition.type==='asset'){
-    const result=String(value??'');if(result&&!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(result))throw new Error('Érvénytelen Médiatár-azonosító.');return result;
+    const result=String(value??'');if(result&&!MEDIA_ASSET_ID.test(result))throw new Error('Érvénytelen Médiatár-azonosító.');return result;
   }
   if(typeof value!=='string'&&typeof value!=='number')throw new Error('Szöveges érték szükséges.');
   const result=String(value);if(result.length>(definition.max||2048))throw new Error('Túl hosszú érték.');
@@ -184,7 +185,7 @@ export function contentAttributes(node){
 }
 export function authoredNodeHtml(node,{childrenHtml='',device='desktop',editor=false}={}){
   const p=contentProperties(node),text=esc(p.text??p.content??node.name??''),id='creator-'+(typeof node.id==='string'?node.id:'').replace(/[^\w-]/g,'-');
-  const imageSource=item=>typeof item.assetId==='string'&&/^[0-9a-f-]{36}$/i.test(item.assetId)?`/${editor?'api/admin/media?id=':'media/'}${encodeURIComponent(item.assetId)}`:safeSrc(item.src);
+  const imageSource=item=>typeof item.assetId==='string'&&MEDIA_ASSET_ID.test(item.assetId)?`/${editor?'api/admin/media?id=':'media/'}${encodeURIComponent(item.assetId)}`:safeSrc(item.src);
   const image=item=>{const src=imageSource(item),{focalX:x,focalY:y}=imageFocalPosition(item);return src?`<img src="${esc(src)}" alt="${esc(imageAlt(item))}" loading="${item.loading==='eager'?'eager':'lazy'}" decoding="async" style="object-fit:${['cover','contain','fill','none','scale-down'].includes(item.fit)?item.fit:'cover'};object-position:${x}% ${y}%">`:`<span class="creator-media-empty">${editor?'Válassz képet a Médiatárból vagy adj meg képcímet.':'A kép nem érhető el.'}</span>`};
   const items=Array.isArray(p.items)?p.items.slice(0,40).map(item=>item&&typeof item==='object'&&!Array.isArray(item)?item:{}):[];
   const authoredLabel=trimmedText(p.ariaLabel).slice(0,160);
@@ -196,7 +197,7 @@ export function authoredNodeHtml(node,{childrenHtml='',device='desktop',editor=f
   if(node.type==='icon'){const icon=typeof p.icon==='string'?p.icon:'';return `<span aria-hidden="true">${({star:'★',heart:'♥',play:'▶',check:'✓',arrow:'➜',bolt:'ϟ',camera:'📷',music:'♫',globe:'◎',mail:'✉'})[icon]||'★'}</span>`}
   if(node.type==='image')return `<div class="creator-image-frame"${['16 / 9','4 / 3','1 / 1','3 / 4'].includes(p.ratio)?` style="aspect-ratio:${p.ratio}"`:''}>${image(p)}</div>${imageCaption(p)?`<figcaption>${esc(imageCaption(p))}</figcaption>`:''}`;
   if(['video','audio'].includes(node.type)){
-    const asset=typeof p.assetId==='string'&&/^[0-9a-f-]{36}$/i.test(p.assetId)?`/${editor?'api/admin/media?id=':'media/'}${encodeURIComponent(p.assetId)}`:'';const src=asset||safeSrc(p.src);if(!src)return `<span class="creator-media-empty">${editor?'Válassz fájlt a Médiatárból vagy adj meg médiaforrást.':'A média nem érhető el.'}</span>`;
+    const asset=typeof p.assetId==='string'&&MEDIA_ASSET_ID.test(p.assetId)?`/${editor?'api/admin/media?id=':'media/'}${encodeURIComponent(p.assetId)}`:'';const src=asset||safeSrc(p.src);if(!src)return `<span class="creator-media-empty">${editor?'Válassz fájlt a Médiatárból vagy adj meg médiaforrást.':'A média nem érhető el.'}</span>`;
     const tag=node.type,poster=tag==='video'?imageSource({assetId:p.posterAssetId,src:p.poster}):'';return `<${tag} src="${esc(src)}" preload="metadata"${p.controls!==false?' controls':''}${p.loop?' loop':''}${p.muted?' muted':''}${p.autoplay&&p.muted&&!editor?' autoplay':''}${tag==='video'?' playsinline':''}${poster?` poster="${esc(poster)}"`:''}></${tag}>`;
   }
   if(node.type==='list')return `<${p.ordered?'ol':'ul'}>${items.map(item=>{const href=safeHref(item.href),label=displayText(item.text);return `<li>${href?`<a href="${esc(href)}">${esc(label||'Hivatkozás')}</a>`:esc(item.text)}</li>`}).join('')}</${p.ordered?'ol':'ul'}>`;

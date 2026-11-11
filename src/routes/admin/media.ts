@@ -302,7 +302,7 @@ function documentAssetReferences(json: string, pageId: string, assetId: string, 
     if (publicOnly && (visibility === false || visibility && typeof visibility === "object" && ["desktop", "tablet", "mobile"].every(device => (visibility as Record<string, unknown>)[device] === false))) continue;
     const nodeName = typeof node.name === "string" && node.name.trim() ? node.name : node.type || nodeId;
     const props = node.props as Record<string, unknown> | undefined;
-    const rendererAssetId = (value: unknown) => typeof value === "string" && /^[0-9a-f-]{36}$/i.test(value);
+    const rendererAssetId = (value: unknown) => typeof value === "string" && MEDIA_ASSET_ID.test(value);
     const compatible = (kind: "image" | "video" | "audio") => !mime || (
       kind === "image" ? (IMAGE_MIMES as readonly string[]).includes(mime) :
       kind === "video" ? mime === "video/webm" : (PLAYABLE_MIMES as readonly string[]).includes(mime) && mime !== "video/webm"
