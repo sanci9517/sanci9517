@@ -68,6 +68,16 @@ for(const width of [390,1366])test(`layer rename pending draft survives save, pu
    return input?.isConnected&&document.activeElement===input;
   });
   await editor.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
+  // At desktop viewport the full serial CI suite occasionally finishes a
+  // surrounding layer-tree refresh after the first focus observation. Recheck
+  // the editable control after the frame boundary before addressing it through
+  // its accessible name; this keeps the accessibility assertion while avoiding
+  // a fill against a detached/in-transition rename field.
+  await editor.waitForFunction(()=>{
+   const input=document.querySelector('#layersTree .layer-rename-editor input');
+   return input?.isConnected&&document.activeElement===input&&input.getAttribute('aria-label')==='Réteg neve';
+  });
+  await field.waitFor({state:'visible'});
  };
  await open();await field.fill('Mentés billentyűvel');await editor.keyboard.press('Control+s');
  await editor.waitForFunction(()=>document.querySelector('#revision')?.textContent?.includes('3'));
