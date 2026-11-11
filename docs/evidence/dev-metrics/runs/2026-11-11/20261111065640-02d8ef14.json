@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261111065640-02d8ef14",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-11T06:56:40.996Z",
+  "finished_at": "2026-11-11T07:24:37.984Z",
+  "wall_seconds": 1677,
+  "paused_seconds": 165,
+  "measured_seconds": 1512,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "Published-media trailing-slash route parity fix was released and production health/traffic verified; exact-SHA GitHub Editor Core CI remains in progress.",
+  "evidence": [
+    "docs/evidence/media-url-reference-protection-77-44-7-d-2026-11-11.json",
+    "https://github.com/sanci9517/sanci9517/actions/runs/42977977726"
+  ],
+  "checks": "plan contract 13/13; canonical plan 13 files/396 mappings; active point remains OPEN; Cloudflare build/deploy success; live health HTTP 200; GitHub Editor Core IN_PROGRESS.",
+  "started_revision": "ec4a862221c743caa3e944fbbf6b8bffe818fda0",
+  "finished_revision": "9a766f07437c7c94163ba340f217cd38150ee282",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
