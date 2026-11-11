@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261111105645-8a896dde",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-11T10:56:45.315Z",
+  "finished_at": "2026-11-11T10:57:25.138Z",
+  "wall_seconds": 40,
+  "paused_seconds": 0,
+  "measured_seconds": 40,
+  "status": "pass",
+  "kind": "mixed",
+  "summary": "expanded evidence SHA integrity test to all release records",
+  "evidence": [
+    "tests/evidence-commit-sha.test.py; docs/SANCI9517-CREATOR-PLATFORM-PLAN.md"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "1d8da0d92dffb082952528407359dc6fc253687d",
+  "finished_revision": "1d8da0d92dffb082952528407359dc6fc253687d",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
