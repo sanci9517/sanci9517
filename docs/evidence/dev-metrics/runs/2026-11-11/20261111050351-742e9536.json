@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261111050351-742e9536",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-11T05:03:51.766Z",
+  "finished_at": "2026-11-11T05:06:49.454Z",
+  "wall_seconds": 178,
+  "paused_seconds": 0,
+  "measured_seconds": 178,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "77.44.7.D: identified uncovered authored/structured Carousel internal-media URL paths, added isolated usage/archive/public-byte regression checks, passed media suite/typecheck/plan gates. Pushed test-only SHA; prior runtime Editor Core CI remains failed, no paid/unknown-quota rerun.",
+  "evidence": [
+    "docs/evidence/media-url-reference-protection-77-44-7-d-2026-11-11.json"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "69bf396a7d8b00cb34a651c975da2211f32553f8",
+  "finished_revision": "07c4cd21514a0dff46c354d0b67fb894e2207f6c",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
