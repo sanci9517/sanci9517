@@ -314,6 +314,29 @@ test("same-origin absolute media URLs remain protected references and publishabl
   assert.equal(foreignDelivery.status,404,"a foreign absolute source must not authorize this tenant's stored media");
 });
 
+test("verified media origin lookup failure fails closed for archive and public delivery",async t=>{
+  const f=await fixture(t);
+  const upload=await f.call("POST","editor",png,{name:"origin-query-failure.png"});
+  assert.equal(upload.status,201);
+  const asset=(await upload.json()).data;
+  const prepare=f.env.DB.prepare.bind(f.env.DB);
+  f.env.DB.prepare=sql=>{
+    if(sql.includes("FROM site_domains"))throw new Error("verified domain lookup unavailable");
+    return prepare(sql);
+  };
+
+  const usage=await f.call("GET","editor",null,{usage:asset.id});
+  assert.equal(usage.status,409,"an incomplete origin allowlist cannot be treated as an unused asset");
+  assert.equal((await usage.json()).error.code,"MEDIA_USAGE_INCOMPLETE");
+  const archive=await f.call("PATCH","editor",JSON.stringify({archived:true}),{id:asset.id});
+  assert.equal(archive.status,409,"origin lookup failure must not mutate the archive state");
+  assert.equal(f.db.prepare("SELECT archived_at FROM media WHERE id=?").get(asset.id).archived_at,null);
+
+  const publicResponse=await publishedMediaRoute(new Request(`https://example.test/media/${asset.id}`),f.env,"site-default",asset.id);
+  assert.equal(publicResponse.status,404,"public access cannot be proven when the tenant origin query fails");
+  assert.equal(f.mediaReads.count,0,"fail-closed public authorization must not read R2");
+});
+
 test("media URL references match renderer normalization and reject invalid path variants",async t=>{
   const f=await fixture(t);
   const upload=await f.call("POST","editor",gif,{name:"whitespace-url.gif",contentType:"image/gif"});

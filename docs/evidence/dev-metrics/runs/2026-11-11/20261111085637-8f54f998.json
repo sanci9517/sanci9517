@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "id": "20261111085637-8f54f998",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-11T08:56:37.257Z",
+  "finished_at": "2026-11-11T08:59:57.492Z",
+  "wall_seconds": 200,
+  "paused_seconds": 0,
+  "measured_seconds": 200,
+  "status": "pass",
+  "kind": "mixed",
+  "summary": "verified-domain-query-fails-closed-tested",
+  "evidence": [
+    "tests/media-api.test.js",
+    "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+    "docs/evidence/media-domain-query-failure-77-44-7-d-2026-11-11.json"
+  ],
+  "checks": "49/49 direct media API tests; npm run test:media 5/5; typecheck; plan-contract 13/13; canonical plan 13 files/396 mappings; active point remains OPEN/NOT_CERTIFIED; diff check; test/docs commit and branch verification to follow.",
+  "started_revision": "dc02f3511ad6dda405948c24c2176679fe1387fb",
+  "finished_revision": "dc02f3511ad6dda405948c24c2176679fe1387fb",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
