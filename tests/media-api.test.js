@@ -19,6 +19,8 @@ async function fixture(t) {
     "CREATE TABLE users(id TEXT PRIMARY KEY,email TEXT,display_name TEXT,role TEXT,is_active INTEGER);",
     "CREATE TABLE sessions(token_hash TEXT,user_id TEXT,expires_at TEXT);",
     "CREATE TABLE site_memberships(site_id TEXT,user_id TEXT,role TEXT,status TEXT);",
+    "CREATE TABLE site_domains(hostname TEXT,site_id TEXT,status TEXT,verified_at TEXT,verification_method TEXT);",
+    "INSERT INTO site_domains VALUES('trusted.example.test','site-default','verified','2026-01-01T00:00:00Z','test');",
     "CREATE TABLE media(id TEXT PRIMARY KEY, object_key TEXT UNIQUE NOT NULL,",
     "original_name TEXT NOT NULL, mime_type TEXT NOT NULL, size_bytes INTEGER NOT NULL,",
     "alt_text TEXT NOT NULL DEFAULT '', created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,",
@@ -271,6 +273,45 @@ test("internal public media URLs remain protected references across authored and
     assert.equal(delivery.status,200,`the ${type} Carousel source URL authorizes matching media`);
     assert.deepEqual(new Uint8Array(await delivery.arrayBuffer()),bytes);
   }
+});
+
+test("same-origin absolute media URLs remain protected references and publishable",async t=>{
+  const f=await fixture(t);
+  const upload=await f.call("POST","editor",png,{name:"absolute-origin-media.png"});
+  assert.equal(upload.status,201);
+  const asset=(await upload.json()).data;
+  const mediaUrl=`https://example.test/media/${asset.id}`;
+  const document={type:"sanci-page-document",schemaVersion:1,activePageId:"absolute-media-page",pages:{"absolute-media-page":{id:"absolute-media-page",rootId:"root",nodes:{
+    root:{id:"root",type:"root",children:["image","alias-image"]},
+    image:{id:"image",type:"image",metadata:{contentVersion:1},props:{src:mediaUrl,alt:"Abszolút médiacím"},children:[]},
+    "alias-image":{id:"alias-image",type:"image",metadata:{contentVersion:1},props:{src:`https://trusted.example.test/media/${asset.id}`,alt:"Ellenőrzött alias"},children:[]}
+  }}}};
+  f.db.prepare("INSERT INTO pages (id,site_id,archived_at,is_published,published_content_json,content_json,title,slug) VALUES(?,?,?,?,?,?,?,?)")
+    .run("absolute-media-page","site-default",null,1,JSON.stringify(document),JSON.stringify(document),"Absolute media","absolute-media");
+
+  const usage=(await (await f.call("GET","editor",null,{usage:asset.id})).json()).data;
+  assert.equal(usage.complete,true);
+  assert.ok(usage.references.some(reference=>reference.pageId==="absolute-media-page"&&reference.path==="props.src"),
+    "same-origin absolute source URLs accepted by safeMediaUrl remain visible to usage and archival checks");
+  assert.equal(usage.references.filter(reference=>reference.pageId==="absolute-media-page"&&reference.path==="props.src").length,4,
+    "both same-origin and verified-alias URLs are trusted in draft and published snapshots");
+  assert.equal((await f.call("PATCH","editor",JSON.stringify({archived:true}),{id:asset.id})).status,409,
+    "a same-origin absolute media reference prevents archival");
+  const response=await publishedMediaRoute(new Request(`https://example.test/media/${asset.id}`),f.env,"site-default",asset.id);
+  assert.equal(response.status,200,"same-origin absolute media URLs rendered by the page authorize their asset");
+  assert.deepEqual(new Uint8Array(await response.arrayBuffer()),png);
+
+  const foreignUpload=await f.call("POST","editor",Uint8Array.from([...png,0x0f]),{name:"foreign-origin.png"});
+  assert.equal(foreignUpload.status,201);
+  const foreignAsset=(await foreignUpload.json()).data;
+  const foreignDocument={type:"sanci-page-document",schemaVersion:1,activePageId:"foreign-media-page",pages:{"foreign-media-page":{id:"foreign-media-page",rootId:"root",nodes:{
+    root:{id:"root",type:"root",children:["image"]},
+    image:{id:"image",type:"image",metadata:{contentVersion:1},props:{src:`https://attacker.test/media/${foreignAsset.id}`,alt:"Foreign host"},children:[]}
+  }}}};
+  f.db.prepare("INSERT INTO pages (id,site_id,archived_at,is_published,published_content_json,content_json,title,slug) VALUES(?,?,?,?,?,?,?,?)")
+    .run("foreign-media-page","site-default",null,1,JSON.stringify(foreignDocument),JSON.stringify(foreignDocument),"Foreign media","foreign-media");
+  const foreignDelivery=await publishedMediaRoute(new Request(`https://example.test/media/${foreignAsset.id}`),f.env,"site-default",foreignAsset.id);
+  assert.equal(foreignDelivery.status,404,"a foreign absolute source must not authorize this tenant's stored media");
 });
 
 test("media URL references match renderer normalization and reject invalid path variants",async t=>{

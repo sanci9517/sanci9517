@@ -116,14 +116,44 @@ function visitAssetReference(scan: AssetReferenceScanStatus): boolean {
   return true;
 }
 
-function publicMediaUrlAssetId(value: unknown): string | null {
+async function mediaUrlOrigins(env: Env, siteId: string, requestOrigin: string): Promise<Set<string> | null> {
+  try {
+    const requestUrl = new URL(requestOrigin);
+    if (!/^https?:$/.test(requestUrl.protocol)) return null;
+    const origins = new Set<string>([requestUrl.origin]);
+    const domains = await env.DB.prepare(
+      "SELECT hostname FROM site_domains WHERE site_id=? AND status='verified' AND verified_at IS NOT NULL ORDER BY hostname"
+    ).bind(siteId).all<{ hostname: string }>();
+    for (const row of domains.results) {
+      // site_domains is constrained to lower-case DNS hostnames by its
+      // migration. Recheck at this trust boundary before constructing origins.
+      if (/^(?=.{1,253}$)[a-z0-9](?:[a-z0-9.-]*[a-z0-9])?$/.test(row.hostname)) {
+        origins.add(`https://${row.hostname}`);
+      }
+    }
+    return origins;
+  } catch {
+    // Without the tenant-domain allowlist the archive/public checks cannot
+    // distinguish an internal absolute URL from a foreign host. Fail closed.
+    return null;
+  }
+}
+
+function publicMediaUrlAssetId(value: unknown, allowedOrigins: ReadonlySet<string>): string | null {
   if (typeof value !== "string") return null;
   try {
     // Use the exact renderer validator so normalization cannot authorize a
     // malformed URL (for example, WHATWG backslash-to-slash normalization).
     const normalized = safeMediaUrl(value);
-    if (!normalized.startsWith("/") || normalized.startsWith("//") || normalized.startsWith("/\\")) return null;
-    const pathname = new URL(normalized, "https://media-reference.invalid").pathname.replace(/\/+$/, "");
+    let url: URL;
+    if (normalized.startsWith("/")) {
+      if (normalized.startsWith("//") || normalized.startsWith("/\\")) return null;
+      url = new URL(normalized, "https://media-reference.invalid");
+    } else {
+      url = new URL(normalized);
+      if (url.protocol !== "https:" || !allowedOrigins.has(url.origin)) return null;
+    }
+    const pathname = url.pathname.replace(/\/+$/, "");
     const match = pathname.match(/^\/media\/([^/]+)$/);
     return match && MEDIA_ASSET_ID.test(match[1]) ? match[1] : null;
   } catch {
@@ -131,7 +161,7 @@ function publicMediaUrlAssetId(value: unknown): string | null {
   }
 }
 
-function assetPaths(value: unknown, assetId: string, path = "", depth = 0, scan?: AssetReferenceScanStatus): string[] {
+function assetPaths(value: unknown, assetId: string, path = "", depth = 0, scan?: AssetReferenceScanStatus, allowedOrigins: ReadonlySet<string> = new Set()): string[] {
   if (!value || typeof value !== "object") return [];
   if (depth > 16) {
     // A bounded scan is useful only when truncation cannot be mistaken for
@@ -144,7 +174,7 @@ function assetPaths(value: unknown, assetId: string, path = "", depth = 0, scan?
     const paths: string[] = [];
     for (let index = 0; index < value.length; index++) {
       if (scan && !visitAssetReference(scan)) break;
-      paths.push(...assetPaths(value[index], assetId, `${path}[${index}]`, depth + 1, scan));
+      paths.push(...assetPaths(value[index], assetId, `${path}[${index}]`, depth + 1, scan, allowedOrigins));
     }
     return paths;
   }
@@ -156,8 +186,8 @@ function assetPaths(value: unknown, assetId: string, path = "", depth = 0, scan?
     const item = record[key];
     const next = path ? `${path}.${key}` : key;
     if ((key === "assetId" || key === "backgroundAssetId" || key === "imageAssetId" || key === "posterAssetId") && item === assetId) paths.push(next);
-    else if ((key === "src" || key === "poster" || key === "imageSrc") && publicMediaUrlAssetId(item) === assetId) paths.push(next);
-    else if (item && typeof item === "object") paths.push(...assetPaths(item, assetId, next, depth + 1, scan));
+    else if ((key === "src" || key === "poster" || key === "imageSrc") && publicMediaUrlAssetId(item, allowedOrigins) === assetId) paths.push(next);
+    else if (item && typeof item === "object") paths.push(...assetPaths(item, assetId, next, depth + 1, scan, allowedOrigins));
   }
   return paths;
 }
@@ -216,7 +246,7 @@ function legacyPageModel(value: Record<string, unknown>, pageId: string, scan: A
   return scan.complete ? { rootId, nodes } : null;
 }
 
-function documentAssetReferences(json: string, pageId: string, assetId: string, publicOnly = false, mime = "", scan?: AssetReferenceScanStatus): { nodeId: string; nodeName: string; path: string }[] {
+function documentAssetReferences(json: string, pageId: string, assetId: string, publicOnly = false, mime = "", scan?: AssetReferenceScanStatus, allowedOrigins: ReadonlySet<string> = new Set()): { nodeId: string; nodeName: string; path: string }[] {
   const scanStatus = scan || { complete: true, visited: 0 };
   const parsed = JSON.parse(json) as Record<string, unknown>;
   const model = parsed as { pages?: Record<string, { rootId?: string; nodes?: Record<string, { name?: string; type?: string; metadata?: {cardContentVersion?: number;contentVersion?: number;editorContentVersion?: number;rootStyleVersion?: number;editorRootVersion?: number}; props?: unknown; style?: unknown; responsive?: unknown; visibility?: unknown; children?: string[] }> }> };
@@ -284,7 +314,7 @@ function documentAssetReferences(json: string, pageId: string, assetId: string, 
     const validCardImageUrl = () => {
       try {
         const card = normalizeCardContent(props?.cardContent);
-        return !rendererAssetId(card.imageAssetId) && publicMediaUrlAssetId(card.imageSrc) === assetId;
+        return !rendererAssetId(card.imageAssetId) && publicMediaUrlAssetId(card.imageSrc, allowedOrigins) === assetId;
       } catch { return false; }
     };
     const validVideoSource = () => {
@@ -302,7 +332,7 @@ function documentAssetReferences(json: string, pageId: string, assetId: string, 
       if (!match || Number(match[1]) >= 40 || !["gallery", "carousel"].includes(node.type || "")) return false;
       try {
         const content = normalizeElementContent(node.type || "", props?.contentModel) as { items?: { src?: string }[] };
-        return publicMediaUrlAssetId(content.items?.[Number(match[1])]?.src) === assetId;
+        return publicMediaUrlAssetId(content.items?.[Number(match[1])]?.src, allowedOrigins) === assetId;
       } catch { return false; }
     };
     const renderedBackground = (path: string): boolean => {
@@ -342,7 +372,7 @@ function documentAssetReferences(json: string, pageId: string, assetId: string, 
         renderedBackground(path) && compatible("image");
     };
     for (const field of ["props", "style", "responsive"] as const) {
-      const paths = assetPaths(node[field], assetId, field, 0, scanStatus);
+      const paths = assetPaths(node[field], assetId, field, 0, scanStatus, allowedOrigins);
       for (const path of paths) if (renderedReference(path)) references.push({ nodeId, nodeName, path });
       if (!scanStatus.complete) break;
     }
@@ -352,7 +382,9 @@ function documentAssetReferences(json: string, pageId: string, assetId: string, 
   return references;
 }
 
-async function mediaUsage(env: Env, siteId: string, assetId: string): Promise<Response> {
+async function mediaUsage(request: Request, env: Env, siteId: string, assetId: string): Promise<Response> {
+  const allowedOrigins = await mediaUrlOrigins(env, siteId, new URL(request.url).origin);
+  if (!allowedOrigins) return error("MEDIA_USAGE_INCOMPLETE", 409);
   const asset = await env.DB.prepare("SELECT id FROM media WHERE id=? AND site_id=? LIMIT 1").bind(assetId, siteId).first<{ id: string }>();
   if (!asset) return error("MEDIA_NOT_FOUND", 404);
   const pages = await env.DB.prepare(
@@ -367,7 +399,7 @@ async function mediaUsage(env: Env, siteId: string, assetId: string): Promise<Re
   const add = (json: string | null, page: { id: string; title: string; slug: string; archived_at: string | null }, source: "draft" | "published" | "revision", version?: number) => {
     if (!json || !json.includes(assetId) || !scan.complete) return;
     try {
-      const found = documentAssetReferences(json, page.id, assetId, false, "", scan);
+      const found = documentAssetReferences(json, page.id, assetId, false, "", scan, allowedOrigins);
       if (!scan.complete) complete = false;
       for (const ref of found) {
         if (references.length >= MAX_USAGE_REFERENCES) { complete = false; return; }
@@ -415,7 +447,7 @@ export async function adminMediaRoute(request: Request, env: Env, siteId: string
     if (!/^[0-9a-f-]{36}$/.test(id) || url.searchParams.has("name")) return error("INVALID_RETENTION_REQUEST",400);
     const asset=await env.DB.prepare("SELECT id,site_id,object_key,original_name,mime_type,size_bytes,alt_text,created_at,archived_at FROM media WHERE id=? AND site_id=? LIMIT 1").bind(id,siteId).first<MediaRow>();
     if (!asset) return error("MEDIA_NOT_FOUND",404);
-    const report=await mediaUsage(env,siteId,id);
+    const report=await mediaUsage(request,env,siteId,id);
     if (!report.ok) return error("MEDIA_USAGE_INCOMPLETE",409);
     const usage=(await report.json() as {data?:{complete?:boolean;references?:unknown[]}}).data;
     let objectPresent:boolean; try { objectPresent=Boolean(await env.MEDIA.head(asset.object_key)); } catch { return error("MEDIA_STORAGE_FAILED",503); }
@@ -466,7 +498,7 @@ export async function adminMediaRoute(request: Request, env: Env, siteId: string
       "SELECT id,site_id,object_key,original_name,mime_type,size_bytes,alt_text,created_at,archived_at FROM media WHERE id=? AND site_id=? LIMIT 1"
     ).bind(id,siteId).first<MediaRow>();
     if(!existing) return error("MEDIA_NOT_FOUND",404);
-    const report=await mediaUsage(env,siteId,id);
+    const report=await mediaUsage(request,env,siteId,id);
     if(!report.ok) return error("MEDIA_USAGE_INCOMPLETE",409);
     const payload=await report.json() as {data?:{complete?:boolean;references?:unknown[]}};
     const complete=payload.data?.complete===true;
@@ -575,7 +607,7 @@ export async function adminMediaRoute(request: Request, env: Env, siteId: string
     }
     if (usageId !== null) {
       if (id !== null || !/^[0-9a-f-]{36}$/.test(usageId)) return error("MEDIA_NOT_FOUND", 404);
-      return mediaUsage(env, siteId, usageId);
+      return mediaUsage(request, env, siteId, usageId);
     }
     if (!id) {
       const query = (url.searchParams.get("q") || "").trim().slice(0, 100);
@@ -666,7 +698,7 @@ export async function adminMediaRoute(request: Request, env: Env, siteId: string
       if (!existing) return error('MEDIA_NOT_FOUND',404);
       if (Boolean(existing.archived_at)===archived) return ok({id,archived,changed:false});
       if (archived) {
-        const report=await mediaUsage(env,siteId,id);
+        const report=await mediaUsage(request,env,siteId,id);
         if (!report.ok) return error('MEDIA_USAGE_INCOMPLETE',409);
         const data=await report.json() as {data?:{complete?:boolean;references?:unknown[]}};
         if (!data.data?.complete) return error('MEDIA_USAGE_INCOMPLETE',409);
@@ -781,6 +813,8 @@ export async function adminMediaRoute(request: Request, env: Env, siteId: string
 /** Public delivery is granted only while an active published page in this site references the asset. */
 export async function publishedMediaRoute(request: Request, env: Env, siteId: string, assetId: string): Promise<Response> {
   if (request.method !== "GET" && request.method !== "HEAD") return error("METHOD_NOT_ALLOWED", 405);
+  const allowedOrigins = await mediaUrlOrigins(env, siteId, new URL(request.url).origin);
+  if (!allowedOrigins) return error("MEDIA_NOT_FOUND", 404);
   // safeMediaUrl and the reference scanner accept a media pathname with a
   // trailing slash. Normalize the route suffix identically before lookup so
   // a renderer-valid reference is not protected from archival but then 404s.
@@ -801,7 +835,7 @@ export async function publishedMediaRoute(request: Request, env: Env, siteId: st
   for (const page of pages.results) {
     if (!scan.complete) break;
     try {
-      if (documentAssetReferences(page.published_content_json, page.id, normalizedAssetId, true, row.mime_type, scan).length) {
+      if (documentAssetReferences(page.published_content_json, page.id, normalizedAssetId, true, row.mime_type, scan, allowedOrigins).length) {
         allowed = true;
         break;
       }

@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-11T08:37:05Z",
+  "plan_point": "77.44.7.D",
+  "status": "LOCAL_VERIFIED_RELEASE_PENDING",
+  "scope": "Keep the media usage/archive scanner and public media delivery in agreement with renderer-supported same-origin and verified tenant-alias HTTPS media URLs, without allowing foreign hosts to authorize tenant media.",
+  "finding": {
+    "source": "src/routes/admin/media.ts",
+    "reproduction": "The public renderer accepts absolute HTTPS media URLs for media sources. The usage scanner previously recognized only relative /media/{id} URLs, so an absolute URL could be omitted from usage and archival checks; arbitrary absolute hosts must not confer public access.",
+    "fix": "For usage/archive and public delivery, compute the allowed origins from the request origin and the site's verified site_domains rows (verified_at is non-null). Accept absolute references only for HTTPS and exact allowed origin; continue accepting safe relative media URLs. Domain query errors fail closed. The same origin set is applied through the nested renderer-specific reference scan.",
+    "regressions": [
+      "Same-origin absolute media URL is reported by the site-scoped usage endpoint.",
+      "A verified tenant domain alias is reported by usage and authorizes the matching asset.",
+      "Archiving the referenced media remains rejected with HTTP 409.",
+      "Published delivery returns the exact matching fixture bytes.",
+      "A foreign absolute host does not authorize tenant media and returns HTTP 404."
+    ],
+    "save_publish_separation_changed": false,
+    "production_data_touched": false
+  },
+  "checks": {
+    "node_media_api_direct": "PASS; 48/48 tests, including same-origin, verified-alias and foreign-origin cases. The new test was reproduced failing before the runtime fix.",
+    "npm_run_test_media": "PASS; 5/5 media test files.",
+    "npm_run_typecheck": "PASS; tsc --noEmit.",
+    "npm_run_test_editor": "PASS; 15/15 Node test files and 3/3 Linux subreaper tests.",
+    "npm_run_test_media_storage": "PASS; 1/1 Chromium/real local Worker integration, isolated synthetic local D1/R2 data.",
+    "npm_run_test_web013": "PASS; 63/63 tests and migration safety gate.",
+    "npm_run_test_web013_migration_gate": "PASS; deploy:safe gate, no production migration applied.",
+    "npm_run_test_domain": "PASS; 1/1.",
+    "npm_run_test_schedule": "PASS; 1/1.",
+    "plan_contract": "PASS; 13/13.",
+    "canonical_plan": "PASS; 13 master files / 396 source mappings.",
+    "feature_traceability": "PASS; regenerated for the updated runtime source fingerprint.",
+    "wrangler_dry_run": "PASS; Wrangler 4.130.0, 171 assets, 345.97 KiB / 89.96 KiB gzip; dry-run only, no deployment.",
+    "production_d1_preflight": "PASS; SELECT name FROM d1_migrations ORDER BY name; 34 rows read, 0 writes, 0 changes, changed_db=false.",
+    "github_pre_release_branch": "PASS read-only; repository sanci9517/sanci9517, branch v2/foundation at starting SHA c334c5e29081895f42a06cd25327a3c995e6b2f5.",
+    "github_runtime_ci": "PENDING exact-SHA GitHub Actions result after the runtime fast-forward push.",
+    "cloudflare_deploy": "PENDING exact source SHA Build/deploy result.",
+    "post_release_traffic_version": "PENDING read-only Cloudflare deployment verification.",
+    "post_release_health": "PENDING direct production GET after deployment.",
+    "public_asset_changes": "No public/ asset was changed; confirm deployment does not update assets, then hash comparison is N/A.",
+    "actions_cost": "No workflow dispatch or rerun; the repository is public and normal standard GitHub-hosted Actions runs are free. Read-only Cloudflare Build limits report has_reached_build_minutes_limit=false, refresh 2026-11-30T23:59:59.999Z. GitHub artifact-storage current meter is unavailable; no paid use or storage deletion.",
+    "production_mutations": "false; no production D1 write/migration or R2 mutation/deletion."
+  },
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "verified_remote_head_before_change": "c334c5e29081895f42a06cd25327a3c995e6b2f5",
+    "local_head_before_change": "c334c5e29081895f42a06cd25327a3c995e6b2f5",
+    "runtime_commit": "PENDING",
+    "push": "PENDING normal fast-forward only."
+  }
+}
