@@ -117,9 +117,13 @@ function visitAssetReference(scan: AssetReferenceScanStatus): boolean {
 }
 
 function publicMediaUrlAssetId(value: unknown): string | null {
-  if (typeof value !== "string" || !value.startsWith("/") || value.startsWith("//") || value.startsWith("/\\")) return null;
+  if (typeof value !== "string") return null;
   try {
-    const pathname = new URL(value, "https://media-reference.invalid").pathname.replace(/\/+$/, "");
+    // Use the exact renderer validator so normalization cannot authorize a
+    // malformed URL (for example, WHATWG backslash-to-slash normalization).
+    const normalized = safeMediaUrl(value);
+    if (!normalized.startsWith("/") || normalized.startsWith("//") || normalized.startsWith("/\\")) return null;
+    const pathname = new URL(normalized, "https://media-reference.invalid").pathname.replace(/\/+$/, "");
     const match = pathname.match(/^\/media\/([^/]+)$/);
     return match && MEDIA_ASSET_ID.test(match[1]) ? match[1] : null;
   } catch {

@@ -273,6 +273,48 @@ test("internal public media URLs remain protected references across authored and
   }
 });
 
+test("media URL references match renderer normalization and reject invalid path variants",async t=>{
+  const f=await fixture(t);
+  const upload=await f.call("POST","editor",gif,{name:"whitespace-url.gif",contentType:"image/gif"});
+  assert.equal(upload.status,201);
+  const asset=(await upload.json()).data;
+  const document={type:"sanci-page-document",schemaVersion:1,activePageId:"whitespace-url-page",pages:{"whitespace-url-page":{
+    id:"whitespace-url-page",rootId:"root",nodes:{
+      root:{id:"root",type:"root",children:["image"]},
+      image:{id:"image",type:"image",metadata:{contentVersion:1},props:{src:` \t/media/${asset.id} \r\n`,alt:"Whitespace-t hagyó importált URL"},children:[]}
+    }
+  }}};
+  f.db.prepare("INSERT INTO pages (id,site_id,archived_at,is_published,published_content_json,content_json,title,slug) VALUES(?,?,?,?,?,?,?,?)")
+    .run("whitespace-url-page","site-default",null,1,JSON.stringify(document),JSON.stringify(document),"Whitespace media","whitespace-media");
+
+  const usage=(await (await f.call("GET","editor",null,{usage:asset.id})).json()).data;
+  assert.equal(usage.complete,true);
+  assert.ok(usage.references.some(reference=>reference.pageId==="whitespace-url-page"&&reference.nodeId==="image"&&reference.path==="props.src"),
+    "usage scanning must normalize the same leading/trailing whitespace as safeMediaUrl");
+  const delivered=await publishedMediaRoute(new Request(`https://example.test/media/${asset.id}`),f.env,"site-default",asset.id);
+  assert.equal(delivered.status,200,"the renderer normalizes this URL and therefore its asset must remain publicly resolvable");
+  assert.deepEqual(new Uint8Array(await delivered.arrayBuffer()),gif);
+  assert.equal((await f.call("PATCH","editor",JSON.stringify({archived:true}),{id:asset.id})).status,409,
+    "renderer-normalized internal media cannot be archived as unused");
+
+  const malformedUpload=await f.call("POST","editor",png,{name:"invalid-backslash-url.png"});
+  assert.equal(malformedUpload.status,201);
+  const malformedAsset=(await malformedUpload.json()).data;
+  const malformedDocument={type:"sanci-page-document",schemaVersion:1,activePageId:"malformed-url-page",pages:{"malformed-url-page":{
+    id:"malformed-url-page",rootId:"root",nodes:{
+      root:{id:"root",type:"root",children:["image"]},
+      image:{id:"image",type:"image",metadata:{contentVersion:1},props:{src:`/media/${malformedAsset.id}\\`,alt:"Hibás URL"},children:[]}
+    }
+  }}};
+  f.db.prepare("INSERT INTO pages (id,site_id,archived_at,is_published,published_content_json,content_json,title,slug) VALUES(?,?,?,?,?,?,?,?)")
+    .run("malformed-url-page","site-default",null,1,JSON.stringify(malformedDocument),JSON.stringify(malformedDocument),"Malformed media","malformed-media");
+  const malformedUsage=(await (await f.call("GET","editor",null,{usage:malformedAsset.id})).json()).data;
+  assert.equal(malformedUsage.complete,true);
+  assert.deepEqual(malformedUsage.references,[],"URL parser backslash normalization must not invent a renderer-valid media reference");
+  assert.equal((await publishedMediaRoute(new Request(`https://example.test/media/${malformedAsset.id}`),f.env,"site-default",malformedAsset.id)).status,404,
+    "a backslash path rejected by safeMediaUrl must not grant public media access");
+});
+
 test("publication and public media delivery reject assets used in a different media role",async t=>{
  const f=await fixture(t);
  const assets=[
