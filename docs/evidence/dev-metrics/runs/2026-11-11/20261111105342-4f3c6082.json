@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261111105342-4f3c6082",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-11T10:53:42.812Z",
+  "finished_at": "2026-11-11T10:54:24.888Z",
+  "wall_seconds": 42,
+  "paused_seconds": 0,
+  "measured_seconds": 42,
+  "status": "pass",
+  "kind": "mixed",
+  "summary": "verified cross-tenant domain aliases cannot authorize media delivery",
+  "evidence": [
+    "tests/media-api.test.js; docs/SANCI9517-CREATOR-PLATFORM-PLAN.md"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "6a4061dc41799534a4d11efafb40f31f219ef03a",
+  "finished_revision": "6a4061dc41799534a4d11efafb40f31f219ef03a",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

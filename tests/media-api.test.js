@@ -360,6 +360,27 @@ test("revoked or incomplete verified aliases lose absolute media authorization",
     "an incomplete verified alias cannot authorize an absolute media source");
 });
 
+test("another site's verified alias cannot authorize this site's media",async t=>{
+  const f=await fixture(t);
+  f.db.prepare("INSERT INTO site_domains VALUES(?,?,?,?,?)").run("other-site.example.test","other","verified","2026-01-01T00:00:00Z","test");
+  const upload=await f.call("POST","editor",png,{name:"cross-site-alias.png"});
+  assert.equal(upload.status,201);
+  const asset=(await upload.json()).data;
+  const source=`https://other-site.example.test/media/${asset.id}`;
+  const document={pages:{"alias-isolation-page":{rootId:"root",nodes:{
+    root:{type:"root",children:["image"]},
+    image:{type:"image",metadata:{contentVersion:1},props:{src:source,alt:"Other tenant"}}
+  }}}};
+  f.db.prepare("INSERT INTO pages (id,site_id,archived_at,is_published,published_content_json,content_json,title,slug) VALUES(?,?,?,?,?,?,?,?)")
+    .run("alias-isolation-page","site-default",null,1,JSON.stringify(document),JSON.stringify(document),"Alias isolation","alias-isolation");
+  const usage=(await (await f.call("GET","editor",null,{usage:asset.id})).json()).data;
+  assert.equal(usage.complete,true);
+  assert.equal(usage.references.length,0,"another tenant's verified hostname cannot become an owned media reference");
+  const delivery=await publishedMediaRoute(new Request(`https://example.test/media/${asset.id}`),f.env,"site-default",asset.id);
+  assert.equal(delivery.status,404,"another tenant's alias cannot authorize public delivery");
+  assert.equal(f.mediaReads.count,0,"cross-site alias denial must happen before R2 reads");
+});
+
 test("media URL references match renderer normalization and reject invalid path variants",async t=>{
   const f=await fixture(t);
   const upload=await f.call("POST","editor",gif,{name:"whitespace-url.gif",contentType:"image/gif"});
