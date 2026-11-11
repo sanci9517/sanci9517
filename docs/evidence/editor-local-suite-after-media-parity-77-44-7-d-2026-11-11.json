@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-11T10:22:10Z",
+  "plan_point": "77.44.7.D",
+  "status": "LOCAL_REGRESSION_VERIFIED",
+  "checks": {
+    "npm_run_test_editor": "PASS; 15/15 Node test files and 3/3 Linux subreaper tests.",
+    "npm_run_test_media": "PASS; 5/5 files.",
+    "node_media_api_direct": "PASS; 50/50.",
+    "typecheck": "PASS.",
+    "plan_contract": "PASS; 13/13.",
+    "canonical_plan": "PASS; 13 master files / 396 source mappings.",
+    "active_plan_point": "PASS audit; 77.44.7.D remains OPEN / NOT_CERTIFIED.",
+    "git_diff_check": "PASS.",
+    "cost": "No paid service, dispatch, rerun, production D1/R2 mutation or asset deletion."
+  },
+  "production_baseline": {
+    "deployment_id": "8a071cb9-afb7-42d0-b649-058b8d595fb8",
+    "worker_version_id": "9815d441-e39d-40c7-8c51-79ac7a0163d4",
+    "traffic_percent": 100,
+    "health": "Direct health returned HTTP 200 with ok=true and version=2.0.0."
+  },
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "base_sha": "00dd46b672438774ec89881281e0bfc8a3b7e9eb",
+    "docs_commit": "PENDING",
+    "verified_remote_head": "PENDING"
+  }
+}

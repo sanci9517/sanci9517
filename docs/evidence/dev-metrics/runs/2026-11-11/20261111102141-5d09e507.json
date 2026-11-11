@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261111102141-5d09e507",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-11T10:21:41.126Z",
+  "finished_at": "2026-11-11T10:22:09.290Z",
+  "wall_seconds": 28,
+  "paused_seconds": 0,
+  "measured_seconds": 28,
+  "status": "pass",
+  "kind": "mixed",
+  "summary": "rechecked full Editor and media suites after renderer parity follow-up",
+  "evidence": [
+    "docs/evidence/editor-local-suite-after-media-parity-77-44-7-d-2026-11-11.json"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "00dd46b672438774ec89881281e0bfc8a3b7e9eb",
+  "finished_revision": "00dd46b672438774ec89881281e0bfc8a3b7e9eb",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
