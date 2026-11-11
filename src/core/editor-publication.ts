@@ -12,6 +12,7 @@ const MEDIA_NODE_ROLES:Record<string,MediaRole>={image:'image',audio:'audio',vid
 const IMAGE_REFERENCE_KEYS=new Set(['backgroundAssetId','imageAssetId','posterAssetId']);
 const ASSET_ID=/^[0-9a-f-]{36}$/i;
 const ROUTE_ASSET_ID=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const INVALID_MEDIA_REFERENCE='invalid-media-route';
 
 function localMediaUrlAssetId(value:unknown,allowedOrigins:ReadonlySet<string>):string|null{
  if(typeof value!=='string')return null;
@@ -26,8 +27,11 @@ function localMediaUrlAssetId(value:unknown,allowedOrigins:ReadonlySet<string>):
    if(url.protocol!=='https:'||!allowedOrigins.has(url.origin))return null;
   }
   const pathname=url.pathname.replace(/\/+$/,'');
-  const match=pathname.match(/^\/media\/([^/]+)$/);
-  return match&&ROUTE_ASSET_ID.test(match[1])?match[1].toLowerCase():null;
+  if(pathname==='/media'||pathname.startsWith('/media/')){
+   const match=pathname.match(/^\/media\/([^/]+)$/);
+   return match&&ROUTE_ASSET_ID.test(match[1])?match[1].toLowerCase():INVALID_MEDIA_REFERENCE;
+  }
+  return null;
  }catch{return null;}
 }
 
@@ -59,7 +63,8 @@ export function canonicalizePublicationMediaReferences(value:any,allowedOrigins:
   if((key==='assetId'||IMAGE_REFERENCE_KEYS.has(key))&&typeof item==='string'&&ASSET_ID.test(item))result[key]=item.toLowerCase();
   else if((key==='src'||key==='poster'||key==='imageSrc')&&typeof item==='string'){
    const override=key==='poster'?'posterAssetId':key==='imageSrc'?'imageAssetId':'assetId';
-   if(!(typeof value[override]==='string'&&ASSET_ID.test(value[override]))&&localMediaUrlAssetId(item,allowedOrigins)){
+   const mediaId=localMediaUrlAssetId(item,allowedOrigins);
+   if(!(typeof value[override]==='string'&&ASSET_ID.test(value[override]))&&mediaId&&mediaId!==INVALID_MEDIA_REFERENCE){
     result[key]=safeMediaUrl(item).replace(/(\/media\/)([0-9a-f-]{36})(?=\/*(?:[?#]|$))/i,(_match:string,prefix:string,id:string)=>prefix+id.toLowerCase());
    }
   }else if(item&&typeof item==='object')result[key]=canonicalizePublicationMediaReferences(item,allowedOrigins,depth+1);

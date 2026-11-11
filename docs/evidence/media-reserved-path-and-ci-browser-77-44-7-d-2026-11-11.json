@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-11T16:05:00Z",
+  "plan_point": "77.44.7.D",
+  "status": "LOCAL_VERIFIED_RELEASE_PENDING",
+  "finding": "Publish accepted malformed paths in the reserved /media/ route as external media. Exact-SHA Editor Core CI 43047019026 failed before browser tests when Playwright --with-deps could not resolve Ubuntu apt hosts.",
+  "red_test": "tests/media-api.test.js: publication validates local media URLs against site, archive state and media role: 53 passed, 1 failed; /media/not-a-uuid returned null instead of MEDIA_NOT_FOUND.",
+  "change": "Treat malformed reserved media paths as invalid library references during publication, including verified aliases, while preserving assetId precedence and Save/Publish separation. Pin the Editor Core runner to supported ubuntu-24.04; install the existing Playwright Chromium without apt package download, then launch it and load a page before browser regressions.",
+  "checks": {
+    "typecheck": "PASS",
+    "media": "PASS: npm run test:media, 5/5 files",
+    "editor": "PASS: npm run test:editor, 15/15 files",
+    "tenant_pages_editor": "PASS: 16/16 tests",
+    "layer_rename_browser_local": "PASS: 390px and 1366px",
+    "chromium_install_and_smoke_local": "PASS: Playwright Chromium 156.0.8078.4 installed in /tmp (not uploaded); launch and data: page load passed",
+    "workflow_artifact_retention": "PASS: 1/1",
+    "migration_safety_gate": "PASS",
+    "plan_contract": "PASS: 13/13",
+    "canonical_plan": "PASS: 13 master files, 396 source mappings, acceptance NOT_CERTIFIED",
+    "wrangler_dry_run": "PASS: Wrangler 4.130.0, 171 public files, no upload",
+    "production_d1_select_only_preflight": "PASS: 3 SELECT queries via D1 Query API; each changes=0, changed_db=false, rows_written=0; 34 migrations latest 0028_media_archive.sql; media_count=6; verified_domains=1",
+    "media_api_direct": "PASS: 54/54 tests",
+    "active_plan_audit": "77.44.7.D OPEN / NOT_CERTIFIED",
+    "feature_traceability": "PASS: 396 current source mappings",
+    "workflow_yaml": "PASS: parsed with PyYAML",
+    "git_diff_check": "PASS"
+  },
+  "source_control": {
+    "branch": "v2/foundation",
+    "base_sha": "713c2484605951feaeffa722a23c95473db5fdc9",
+    "release_commit": "PENDING",
+    "verified_remote_head": "PENDING"
+  },
+  "production": {
+    "deployment": "PENDING",
+    "traffic_version": "PENDING",
+    "health": "PENDING",
+    "changed_public_assets": []
+  },
+  "cost": "No paid service, production D1 mutation/migration, or R2 deletion."
+}

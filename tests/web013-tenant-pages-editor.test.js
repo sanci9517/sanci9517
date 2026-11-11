@@ -207,6 +207,27 @@ test('archive racing with Publish rejects the whole batch and preserves the live
   assert.equal(f.db.prepare('SELECT COUNT(*) AS n FROM audit_log').get().n,0);
 });
 
+test('reserved media paths with invalid asset IDs cannot become public',async t=>{
+  const f=await fixture(t);
+  const document=f.document('b');
+  document.pages.b.nodes.root.children=['image'];
+  document.pages.b.nodes.image={id:'image',type:'image',parentId:'root',children:[],metadata:{contentVersion:1},props:{src:'/media/not-a-uuid',alt:'Hibás médiaútvonal'}};
+  const before=f.db.prepare('SELECT published_content_json FROM pages WHERE id=?').get('b').published_content_json;
+  const saved=await f.editor('editor','other','POST',{pageId:'b',expectedVersion:1,document,publish:false});
+  assert.equal(saved.status,200,'Save preserves the private draft for correction');
+  const rejected=await f.editor('editor','other','POST',{pageId:'b',expectedVersion:2,document,publish:true});
+  assert.equal(rejected.status,409);
+  assert.equal((await rejected.json()).error.code,'MEDIA_NOT_FOUND');
+  assert.equal(f.db.prepare('SELECT published_content_json FROM pages WHERE id=?').get('b').published_content_json,before);
+  const initial=f.document('new-invalid-media');
+  initial.pages['new-invalid-media'].nodes.root.children=['image'];
+  initial.pages['new-invalid-media'].nodes.image={id:'image',type:'image',parentId:'root',children:[],metadata:{contentVersion:1},props:{src:'/media/not-a-uuid',alt:'Hibás médiaútvonal'}};
+  const created=await f.pages('editor','other','POST',{id:'new-invalid-media',slug:'invalid-media',title:'Invalid media',document:initial,isPublished:true});
+  assert.equal(created.status,409);
+  assert.equal((await created.json()).error.code,'MEDIA_NOT_FOUND');
+  assert.equal(f.db.prepare('SELECT COUNT(*) AS n FROM pages WHERE id=?').get('new-invalid-media').n,0);
+});
+
 test('missing membership schema returns 503 and legacy role is default-site only',async t=>{
   const f=await fixture(t);f.db.exec('DROP TABLE site_memberships');
   assert.equal((await f.pages('admin','site-default')).status,503);

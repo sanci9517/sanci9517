@@ -11,7 +11,7 @@ on:
 
 jobs:
   editor-core:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -44,7 +44,9 @@ jobs:
         run: npm run test:media
 
       - name: Install Chromium for layout regression
-        run: npx playwright install --with-deps chromium
+        run: |
+          npx playwright install chromium
+          node --input-type=module -e "import {chromium} from 'playwright'; const browser=await chromium.launch({headless:true,args:['--no-sandbox']}); const page=await browser.newPage(); await page.goto('data:text/html,<title>ok</title>'); if(await page.title()!=='ok')process.exitCode=1; await browser.close();"
 
       - name: Test real Worker media upload with isolated D1 and R2
         run: npm run test:media:storage

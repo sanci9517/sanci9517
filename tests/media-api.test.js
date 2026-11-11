@@ -536,7 +536,15 @@ test("publication validates local media URLs against site, archive state and med
     "the renderer uses assetId before a stale src fallback");
   assert.equal(await validatePublicationAssets(f.env.DB,"site-default",imageNode({src:"https://images.example.test/remote.png"})),null,
     "external HTTPS media remains outside this site's D1 library");
+  for(const path of ['/media/not-a-uuid','/media/','/media/6b1c2e65-e46e-4764-b234-123456789abc/extra']){
+    assert.equal(await validatePublicationAssets(f.env.DB,"site-default",imageNode({src:path})),"MEDIA_NOT_FOUND",
+      `the reserved media route cannot publish a broken reference: ${path}`);
+  }
+  assert.equal(await validatePublicationAssets(f.env.DB,"site-default",imageNode({assetId:image,src:'/media/not-a-uuid'})),null,
+    "the selected asset still takes precedence over a stale fallback URL");
   const alias=new Set(["https://trusted.example.test"]);
+  assert.equal(await validatePublicationAssets(f.env.DB,"site-default",imageNode({src:'https://trusted.example.test/media/not-a-uuid'}),alias),"MEDIA_NOT_FOUND",
+    "a verified alias cannot publish a broken reserved media route");
   assert.equal(hasAbsoluteMediaLibraryUrl(imageNode({src:`https://trusted.example.test/media/${archived}`})),true);
   assert.equal(hasAbsoluteMediaLibraryUrl(imageNode({assetId:image,src:`https://trusted.example.test/media/${archived}`})),false);
   assert.equal(hasAbsoluteMediaLibraryUrl(imageNode({src:`/media/${archived}`})),false);

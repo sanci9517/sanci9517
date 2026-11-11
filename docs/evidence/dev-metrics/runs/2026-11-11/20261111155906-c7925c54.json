@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261111155906-c7925c54",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-11T15:59:06.211Z",
+  "finished_at": "2026-11-11T16:03:26.780Z",
+  "wall_seconds": 261,
+  "paused_seconds": 0,
+  "measured_seconds": 261,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "Reserved media route validation and Chromium CI installation repair locally verified; runtime release pending",
+  "evidence": [
+    "docs/evidence/media-reserved-path-and-ci-browser-77-44-7-d-2026-11-11.json"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "713c2484605951feaeffa722a23c95473db5fdc9",
+  "finished_revision": "713c2484605951feaeffa722a23c95473db5fdc9",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

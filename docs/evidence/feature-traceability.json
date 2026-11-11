@@ -1,6 +1,6 @@
 {
   "source_hashes": {
-    ".github/workflows/editor-core-test.yml": "92c872c4b703de4009eec79dc2196c6ab1b1b5997e6993a9a6fd0344903e7d45",
+    ".github/workflows/editor-core-test.yml": "ae9305a606535b4a1a99330d61db4a3a17da1eeabf208caacfdaf71fabe614b1",
     ".github/workflows/f0-baseline.yml": "f2a1d78d5fd46ad208c8579bbd5e2d6de766321a93ddac888fc97e8714e502a5",
     "public/admin-home.html": "19937bb160950acaac6a1dc9784e0a6086ed537e9223d43318ffa21f4f84a955",
     "public/assets/admin-design.js": "1ff8c7a8cfee87cd673b736771e3f55999af9a78248afb2ca9ac7a3a26017103",
@@ -45,7 +45,7 @@
     "src/core/auth/require-auth.ts": "7933ad739fe34dd47234a2ab66a3e54a06daee75c8b96de60f1007cec246788e",
     "src/core/auth/session.ts": "39289ef8bffad7b09a6ec6476b7d280e8bf664635d0bc5327ce216edfde7866b",
     "src/core/auth/site-access.ts": "1651ea7a2437ebd9b86700ee87fb6ec7fc5944e84c13869dc957e889e78b47ff",
-    "src/core/editor-publication.ts": "ca1c473d8b9e6cd45d16be2af9d0aaf17aab706966f8c2c231cdba7ad3d2c184",
+    "src/core/editor-publication.ts": "1bc575c3b882b20b2b6cd151c8d67e7a17429e1726ab731a47ce6e71903ec379",
     "src/core/editor-validation.ts": "4690a64f97a83fffde07d9ad598980559f8e38408d46be1c89223c51037ba231",
     "src/core/media-retention-policy.js": "0bb1a1bb04acc1105372c04aeab1ff55c364945aad1e97e500ab5fd2563ecfe7",
     "src/core/page-redirects.ts": "5e4cab4b3ab9d01f3072058c93ec8b91b35aa41e139f459c66aa85b887e5f06f",
