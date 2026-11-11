@@ -2,7 +2,7 @@
   "schema_version": 1,
   "recorded_at_utc": "2026-11-11T09:03:14Z",
   "plan_point": "77.44.7.D",
-  "status": "TEST_AND_DOCS_VERIFIED_PUSH_PENDING",
+  "status": "TEST_AND_DOCS_PUSHED_SKIP_CI",
   "scope": "Exercise the tenant verified-domain D1 query failure path introduced for absolute media URL authorization and prove it fails closed without mutation or storage reads.",
   "reproduction": "No media-api regression previously forced env.DB.prepare to throw only for the site_domains verified-origin SELECT; the fail-closed path existed in runtime but was not asserted.",
   "test": {
@@ -32,6 +32,7 @@
     "cost": "No paid service. Standard public repository Actions are free; no workflow rerun or dispatch. Cloudflare Build limit last read-only check has_reached_build_minutes_limit=false; no build/deploy for test/docs-only change.",
     "measured_session": "docs/evidence/dev-metrics/runs/2026-11-11/20261111085637-8f54f998.json; PASS for test/docs verification and push preparation, 200 measured wall-clock seconds; not Codex active time.",
     "test_docs_commit": "PASS; c68bd9ff164b49adc9cd0b847a95aa4f51846f1d pushed normal fast-forward to v2/foundation; GitHub Branch API confirmed exact SHA. Exact-SHA Actions query count=0 as expected for [skip ci], not CI PASS.",
+    "evidence_followup_commit": "PASS; documentation evidence follow-up dc02f3511ad6dda405948c24c2176679fe1387fb pushed normal fast-forward, then final docs follow-up 87d40d13ab9287c1caa87427245c3f3396380b8e was verified as exact branch head. Exact-SHA Actions query count=0, as expected for [skip ci].",
     "post_docs_cloudflare": "PASS read-only; latest deployment unchanged at 8a071cb9-afb7-42d0-b649-058b8d595fb8, version 9815d441-e39d-40c7-8c51-79ac7a0163d4 at 100%; no Worker redeploy.",
     "post_docs_health": "PASS direct GET 2026-11-11T09:03:13Z HTTP 200; {\"ok\":true,\"service\":\"sanci9517-streamer-brand\",\"version\":\"2.0.0\",\"server\":\"cloudflare-worker\"}.",
     "production_mutations": "false; no production D1 writes/migrations, R2 writes/deletes, or public asset changes."
@@ -47,6 +48,7 @@
     "branch": "v2/foundation",
     "base_sha": "dc02f3511ad6dda405948c24c2176679fe1387fb",
     "test_docs_commit": "c68bd9ff164b49adc9cd0b847a95aa4f51846f1d",
-    "verified_remote_head": "c68bd9ff164b49adc9cd0b847a95aa4f51846f1d"
+    "verified_remote_head_after_docs_followup": "87d40d13ab9287c1caa87427245c3f3396380b8e",
+    "verified_remote_head": "87d40d13ab9287c1caa87427245c3f3396380b8e"
   }
 }
