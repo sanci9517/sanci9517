@@ -19,7 +19,7 @@
     "production_d1_preflight": "PASS: 3 SELECT-only D1 Query API calls; each changes=0, rows_written=0, changed_db=false; 34 migrations, latest 0028_media_archive.sql; media_count=6, verified_domains=1",
     "wrangler_dry_run": "PASS: Wrangler 4.130.0, 171 public assets, no upload",
     "previous_exact_sha_editor_core_ci": "SUCCESS: run 43054562549, source 774fe3972c17cc52117513af92f60329cc42e9b7",
-    "release_exact_sha_ci": "SUCCESS: Active Point Audit 43065255039, Canonical Plan 43065254657, Twitch 43065254801, F0 43065254950; Editor Core 43065254916 IN_PROGRESS; all source a0b68c1ac605ddb80556684a098b9e219228be01"
+    "release_exact_sha_ci": "SUCCESS: Active Point Audit 43065255039, Canonical Plan 43065254657, Twitch 43065254801, F0 43065254950; Editor Core 43065254916 FAILURE at browser suite 25/53 post-Publish layer rename; all source a0b68c1ac605ddb80556684a098b9e219228be01; follow-up in editor-layer-rename-post-publish-ci-77-44-7-d-2026-11-11.json"
   },
   "dev_metrics_run": "docs/evidence/dev-metrics/runs/2026-11-11/20261111170258-7d434603.json",
   "release": {

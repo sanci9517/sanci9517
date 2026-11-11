@@ -104,7 +104,7 @@ for(const width of [390,1366])test(`layer rename pending draft survives save, pu
  await editor.locator('#save').click();assert.equal(posts.length,1,'active composition blocks Save');assert.equal(await field.count(),1);
  await field.evaluate(input=>{input.dispatchEvent(new CompositionEvent('compositionend',{bubbles:true}));input.value='Publikált név';input.dispatchEvent(new InputEvent('input',{bubbles:true,isComposing:false}));});
  await editor.evaluate(()=>new Promise(resolve=>requestAnimationFrame(resolve)));
- await editor.locator('#publish').click();await editor.waitForFunction(()=>document.querySelector('#revision')?.textContent?.includes('4'));
+ await editor.locator('#publish').click();await editor.waitForFunction(()=>document.querySelector('#revision')?.textContent?.includes('4')&&document.querySelector('#saveStatus')?.textContent?.includes('Publikálva'));
  assert.equal(posts.length,2);assert.equal(posts[1].publish,true);assert.equal(posts[1].document.pages[pageId].nodes[id].name,'Publikált név');assert.equal(published.pages[pageId].nodes[id].name,'Publikált név');
  hold=true;const requestStarted=new Promise(resolve=>{onRequest=resolve});
  await open();await field.fill('Első mentési változat');

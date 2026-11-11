@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "plan_point": "77.44.7.D",
+  "status": "TEST_FIX_LOCAL_PASS_REMOTE_GATE_UNVERIFIED",
+  "failed_exact_sha_ci": {
+    "run": 43065254916,
+    "job": 130678375692,
+    "source_sha": "a0b68c1ac605ddb80556684a098b9e219228be01",
+    "result": "failure: Editor browser layout regression, suite 25/53, tests/browser/editor-layer-rename-draft.test.js at 1366px, open() line 76 waitForFunction timeout after Publish; four other exact-SHA workflows success",
+    "log_source": "GitHub workflow job logs API, not a status inference"
+  },
+  "local_reproduction": "The unchanged browser test failed locally after Publish at line 110: 390px pass, 1366px waitForFunction timeout. Diagnostic inspection showed a connected layer row with no rename form and focus on body; the revision had advanced before the final Publish render/status completed.",
+  "change": "The browser test waits for both revision 4 and the settled Publikálva status before the next F2. The F2 keyboard action and focused accessible textbox assertions remain in place. No runtime or public source changed.",
+  "checks": {
+    "local_chromium": "PASS: 10 consecutive complete two-viewport runs after the fix, 20/20 cases",
+    "editor": "PASS: npm run test:editor, 15/15 files plus 3/3 subreaper contract cases",
+    "typecheck": "PASS",
+    "browser_test_syntax": "PASS",
+    "plan_contract": "PASS: 13/13",
+    "canonical_plan": "PASS: 13 files, 396 mappings, NOT_CERTIFIED",
+    "git_diff_check": "PASS"
+  },
+  "dev_metrics_run": "docs/evidence/dev-metrics/runs/2026-11-11/20261111210152-188bd04d.json",
+  "production_unchanged": "Cloudflare build ed9763c2-4aaf-4b89-9e93-8f75f33004f8; deployment 472d48b5-a42a-4c8b-9ee7-c52e67ac285f; version b97258c6-da8b-46da-a8e2-357e045ee737, 100%; direct health HTTP 200. Test/docs-only follow-up requires no Worker redeploy.",
+  "cost": "No new paid service or manual GitHub Actions rerun; seven-day failed-run screenshot artifact was uploaded automatically by the existing workflow. No production D1 write/migration or R2 deletion."
+}
