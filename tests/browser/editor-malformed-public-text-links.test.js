@@ -104,6 +104,9 @@ test('published page and Canvas handle malformed text, links and CSS without Sav
   // Older imports can contain self-references, back-edges, root references,
   // or duplicated child IDs. The public renderer must visit each node once,
   // like Canvas visibility, and keep healthy siblings without rewriting data.
+  // A leaf heading with a broken reference to a later healthy root sibling
+  // must not consume that sibling before its own root-level turn to render.
+  page.nodes[corruptedHeadingId].children=[corruptedHeadingId,intactHeadingId];
   page.nodes[intactHeadingId].children=[intactHeadingId,buttonId];
   page.nodes[rootId].children.push(rootId,buttonId);
   await tab.reload();
@@ -114,6 +117,8 @@ test('published page and Canvas handle malformed text, links and CSS without Sav
   assert.equal(await root(validLinkId).count(),1,'valid sibling survives cyclic legacy references');
   assert.deepEqual(errors,[],'cyclic and duplicate child references cannot crash public rendering');
   assert.deepEqual(page.nodes[intactHeadingId].children,[intactHeadingId,buttonId],'read-only rendering preserves the cyclic Page Model');
+  assert.deepEqual(page.nodes[corruptedHeadingId].children,[corruptedHeadingId,intactHeadingId],
+    'invalid leaf child reference is neither consumed nor silently persisted away');
   // The root itself may have a corrupted collection in a legacy snapshot.
   // A safe empty-page fallback is correct; displaying a 404 is not.
   page.nodes[rootId].children=invalid;

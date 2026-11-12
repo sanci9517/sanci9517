@@ -98,12 +98,14 @@ import {backgroundImageValue,legacyBackgroundCompound,MEDIA_ASSET_ID} from "../e
    return `<${tag}${align}>${inlines(block?.children)}</${tag}>`;
   }).join('');
  }
- function renderNodeHtml(page,id,managed,seen){const n=page.nodes?.[id];if(!n||!isVisibleOnDevice(n,currentDevice))return'';const t=esc(n.props?.text??n.name??'');const p=n.props||{};const children=safeNodeChildIds(n).map(child=>nodeHtml(page,child,managed,seen)).join('');const st=style(n);if(n.metadata?.contentVersion===1&&isAuthoredContent(n)){const tag=contentTag(n),attrs=Object.entries(contentAttributes(n)).map(([key,value])=>' '+key+'="'+esc(value)+'"').join('');return '<'+tag+' class="visual-editor-node creator-node" data-content-type="'+esc(n.type)+'"'+attrs+' style="'+st+'">'+authoredNodeHtml(n,{childrenHtml:children,device:currentDevice})+'</'+tag+'>'}if(n.type==='schedule')return scheduleHtml(n);if(sanci[n.type])return `<section class="visual-editor-node visual-sanci-block" style="${st}">${sanciBlock(n)}${children}</section>`;if(isStructuredType(n.type)&&p.contentModel)return `<section class="visual-editor-node visual-structured" style="${st}">${renderElementContent(n.type,p.contentModel,n.id)}</section>`;if(n.type==='code'&&n.metadata?.codeSnippetVersion===1)
- return `<section class="visual-editor-node visual-code-container" style="${st}">${renderCodeSnippet(p.codeSnippet)}${children}</section>`;
+ function renderNodeHtml(page,id,managed,seen){const n=page.nodes?.[id];if(!n||!isVisibleOnDevice(n,currentDevice))return'';const t=esc(n.props?.text??n.name??'');const p=n.props||{};// Leaf nodes must not consume descendants from other valid branches.
+  // Resolve children only for templates that actually output them.
+  let childCache;const children=()=>childCache??=(safeNodeChildIds(n).map(child=>nodeHtml(page,child,managed,seen)).join(''));const st=style(n);if(n.metadata?.contentVersion===1&&isAuthoredContent(n)){const tag=contentTag(n),attrs=Object.entries(contentAttributes(n)).map(([key,value])=>' '+key+'="'+esc(value)+'"').join('');return '<'+tag+' class="visual-editor-node creator-node" data-content-type="'+esc(n.type)+'"'+attrs+' style="'+st+'">'+authoredNodeHtml(n,{childrenHtml:children(),device:currentDevice})+'</'+tag+'>'}if(n.type==='schedule')return scheduleHtml(n);if(sanci[n.type])return `<section class="visual-editor-node visual-sanci-block" style="${st}">${sanciBlock(n)}${children()}</section>`;if(isStructuredType(n.type)&&p.contentModel)return `<section class="visual-editor-node visual-structured" style="${st}">${renderElementContent(n.type,p.contentModel,n.id)}</section>`;if(n.type==='code'&&n.metadata?.codeSnippetVersion===1)
+ return `<section class="visual-editor-node visual-code-container" style="${st}">${renderCodeSnippet(p.codeSnippet)}${children()}</section>`;
 if(n.type==='embed'&&n.metadata?.embedContentVersion===1)
- return `<section class="visual-editor-node visual-creator-embed" style="${st}">${renderEmbedHtml(p.embedContent)}${children}</section>`;
+ return `<section class="visual-editor-node visual-creator-embed" style="${st}">${renderEmbedHtml(p.embedContent)}${children()}</section>`;
 if(n.type==='social'&&n.metadata?.socialLinksVersion===1)
- return `<section class="visual-editor-node visual-social" style="${st}">${renderSocialLinksHtml(p.socialLinks)}${children}</section>`;
+ return `<section class="visual-editor-node visual-social" style="${st}">${renderSocialLinksHtml(p.socialLinks)}${children()}</section>`;
 if(n.type==='countdown'&&n.metadata?.countdownVersion===1)
  return `<section class="visual-editor-node visual-countdown" style="${st}">${renderCountdownContent(p.countdown)}</section>`;
 if(n.type==='card'&&n.metadata?.cardContentVersion===1){
@@ -112,7 +114,7 @@ if(n.type==='card'&&n.metadata?.cardContentVersion===1){
  const cardSrc=cardImageSrc(cfg);const media=cardSrc?`<img class="visual-card-media" src="${esc(cardSrc)}" alt="${esc(cfg.imageAlt)}" loading="lazy">`:'';
  const description=cfg.description?`<p class="visual-card-description">${esc(cfg.description)}</p>`:'';
  const action=cfg.actionHref?`<a class="visual-card-action" href="${esc(safeRichUrl(cfg.actionHref))}"${cfg.newWindow?' target="_blank" rel="noopener noreferrer"':''}>${esc(cfg.actionLabel)}</a>`:'';
- return `<article class="visual-editor-node visual-card visual-card-${cfg.variant}" style="${st}">${media}<h3 class="visual-card-title">${esc(cfg.title)}</h3>${description}${children}${action}</article>`;
+ return `<article class="visual-editor-node visual-card visual-card-${cfg.variant}" style="${st}">${media}<h3 class="visual-card-title">${esc(cfg.title)}</h3>${description}${children()}${action}</article>`;
 }if(n.type==='badge')return `<span class="visual-editor-node visual-badge" style="${st}">${esc(p.text??'')}</span>`;
  if(n.type==='quote')return `<blockquote class="visual-editor-node visual-quote" style="${st}"><p>${esc(p.text??'')}</p>${p.attribution?`<footer><cite>${esc(p.attribution)}</cite></footer>`:''}</blockquote>`;
  if(n.type==='icon'){const icon=iconById(p.icon);return `<span class="visual-editor-node visual-icon" role="img" aria-label="${esc(p.label||icon.label)}" style="${st}">${icon.glyph}</span>`;}
@@ -146,7 +148,7 @@ if(n.type==='card'&&n.metadata?.cardContentVersion===1){
  return n.metadata?.spacerVersion===1
   ?`<div class="visual-editor-node visual-layout-managed visual-spacer" aria-hidden="true" style="min-height:0;${st}"></div>`
   :`<div class="visual-editor-node" style="${legacyMinimum}${st}"></div>`;
-}if(managed&&LAYOUT_TYPES.includes(n.type))return `<section class="visual-editor-node visual-layout" style="${st}">${children}</section>`;return `<section class="visual-editor-node visual-card" style="${st}">${children||`<strong>${t}</strong>`}</section>`}
+}if(managed&&LAYOUT_TYPES.includes(n.type))return `<section class="visual-editor-node visual-layout" style="${st}">${children()}</section>`;return `<section class="visual-editor-node visual-card" style="${st}">${children()||`<strong>${t}</strong>`}</section>`}
  function nodeHtml(page,id,managed=false,seen=new Set([page?.rootId])){
   // Persisted legacy trees may contain cycles and duplicate child references.
   // Match Canvas visibility's single-visit policy without modifying the model.
