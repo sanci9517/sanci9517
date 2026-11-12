@@ -1,0 +1,107 @@
+{
+  "schema": "sanci.release-evidence.v1",
+  "date": "2026-11-12",
+  "planItem": "77.44.7.D",
+  "planStatus": "OPEN / NOT_CERTIFIED",
+  "pr": 327,
+  "prExactHead": "a737b6e190402da366d4c3b129ef040f5373346b",
+  "mergeCommit": "dc36e1a43f22bf7bbc8d8e2918672f7517ae62b9",
+  "branch": "v2/foundation",
+  "scope": [
+    "public page renderer guarded cyclic and duplicated legacy Page Model children",
+    "authored content leaves do not consume valid siblings",
+    "Canvas root traversal parity",
+    "real Chromium negative regression",
+    "5-file exact source smoke"
+  ],
+  "exactPRHeadGates": {
+    "canonicalPlan": "43297320718 PASS",
+    "f0": "43297320641 PASS",
+    "twitch": "43297320749 PASS",
+    "wranglerDryRun": "43297320757 PASS",
+    "editorCoreChromium": "43297321266 PASS"
+  },
+  "productionD1PreAndPostflight": {
+    "queries": "SELECT-only",
+    "migrationCount": 34,
+    "lastMigration": "0028_media_archive.sql",
+    "changes": 0,
+    "rowsWritten": 0,
+    "changedDb": false
+  },
+  "cloudflareBuild": {
+    "id": "709c70ec-99a7-4fd9-a3c8-ad47a59af7aa",
+    "sourceCommit": "dc36e1a43f22bf7bbc8d8e2918672f7517ae62b9",
+    "buildOutcome": "success",
+    "buildCommand": "npm run typecheck",
+    "deployCommand": "npm run deploy:safe"
+  },
+  "deployment": {
+    "id": "6ea8f081-43f6-48d4-b8f9-257a2ee11171",
+    "versionId": "7d3fd341-3fc2-4617-a113-8109fe79e544",
+    "trafficPercent": 100
+  },
+  "exactSourceSmoke": {
+    "workflowRun": 43304235394,
+    "result": "PASS",
+    "health": "GET /api/health HTTP 200",
+    "sourceFiles": [
+      "public/visual-page.html",
+      "public/assets/page-renderer.js",
+      "public/editor-v2/core/canvas-engine.js",
+      "public/editor-v2/core/visibility.js",
+      "public/editor-v2/core/element-content.js"
+    ],
+    "sha256Match": "PASS"
+  },
+  "mergeShaChecks": {
+    "Workers Builds: sanci9517-streamer-brand": {
+      "status": "completed",
+      "conclusion": "success"
+    },
+    "Verify live health and exact changed public source bytes": {
+      "status": "completed",
+      "conclusion": "success"
+    },
+    "canonical-plan": {
+      "status": "completed",
+      "conclusion": "success"
+    },
+    "source-audit": {
+      "status": "completed",
+      "conclusion": "success"
+    },
+    "editor-core": {
+      "status": "in_progress",
+      "conclusion": null
+    },
+    "verify": {
+      "status": "completed",
+      "conclusion": "success"
+    },
+    "twitch-integration": {
+      "status": "completed",
+      "conclusion": "success"
+    }
+  },
+  "mergeShaEditorCoreStatus": "IN_PROGRESS / NOT_CERTIFIED",
+  "d06Followup": {
+    "pr": 328,
+    "head": "1960b06339bf1c04443bb4135c56ae37893df3f9",
+    "status": "DRAFT; separate test-only, exact-head CI in progress; no production changes",
+    "coverage": "authored leaf cycle/public asset reachability, use index and archive 409"
+  },
+  "safety": {
+    "savePublishSeparate": true,
+    "productionD1Mutation": false,
+    "productionD1Migration": false,
+    "productionR2Deletion": false,
+    "redundantManualDeploy": false,
+    "newPaidSpendAuthorized": false
+  },
+  "notCertified": [
+    "full type-by-type Inspector/Canvas/Save/Publish/public/Media cross-site matrix",
+    "live production R2 end-to-end writes or deletes",
+    "consolidated full-editor manual/physical acceptance"
+  ]
+}
