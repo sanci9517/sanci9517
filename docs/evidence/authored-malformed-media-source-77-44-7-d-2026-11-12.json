@@ -18,6 +18,28 @@
   },
   "production_d1_preflight": {"query":"SELECT name FROM d1_migrations ORDER BY name","rows_read":34,"rows_written":0,"changes":0,"changed_db":false,"last":"0028_media_archive.sql"},
   "wrangler_dry_run": {"public_assets":171,"deployed":false},
-  "release": {"status":"PENDING"},
+  "release": {
+    "status": "VERIFIED",
+    "runtime_commit": "b3ad7ca44b21b03558c696d98f28bb97be2c4c85",
+    "remote_branch": "v2/foundation",
+    "build_id": "aa81fc80-8f27-48ff-9e9e-17583ac5da41",
+    "build_outcome": "success",
+    "deploy_command": "npm run deploy:safe",
+    "deployment_id": "60bdb89e-7e49-474d-b027-6a116873b6f9",
+    "worker_version": "a65c11f2-6799-44b1-8d88-8aa70e348b65",
+    "traffic_percent": 100,
+    "health": "HTTP 200; ok=true; version=2.0.0",
+    "public_asset_sha256": {
+      "editor-v2/core/authored-content.js": "6d23c6e03146dd598ecf18a57d71f8de749cdd22fe04633f451e97077d99fadc",
+      "editor-v2/tests/element-content.test.js": "4d05f2e819de5aede18c97d323a1481848d93474afbb44cdd09ffd7da5064f6d"
+    },
+    "github_ci_at_observation": {
+      "Canonical Creator Platform Plan": "43190360882 completed/success",
+      "Canonical Plan Active Point Audit": "43190360895 completed/success",
+      "Twitch Integration Check": "43190360918 completed/success",
+      "F0 baseline checks": "43190360891 completed/success",
+      "Editor Core Test": "43190360956 in_progress"
+    }
+  },
   "cost_huf": 0
 }
