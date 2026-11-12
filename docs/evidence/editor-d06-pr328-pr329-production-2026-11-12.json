@@ -1,0 +1,116 @@
+{
+  "date": "2026-11-12",
+  "plan": "77.44.7.D/D-06",
+  "status": "OPEN_NOT_CERTIFIED",
+  "runtimeRelease": {
+    "pr": 329,
+    "head": "d4554ad08d25f12bafaa01f748f9d31f7b9f0245",
+    "merge": "3883e7982140e9f979458a126e1b4a6e3b3215d7",
+    "exactPRChecks": {
+      "Workers Builds: sanci9517-streamer-brand": {
+        "status": "completed",
+        "conclusion": "success"
+      },
+      "twitch-integration": {
+        "status": "completed",
+        "conclusion": "success"
+      },
+      "editor-core": {
+        "status": "completed",
+        "conclusion": "success"
+      },
+      "Verify Worker bundle without deploying": {
+        "status": "completed",
+        "conclusion": "success"
+      },
+      "verify": {
+        "status": "completed",
+        "conclusion": "success"
+      }
+    },
+    "offlineNodeTest": {
+      "passed": 2,
+      "failed": 0,
+      "environment": "Node v22.16.0, local node:sqlite in-memory DB with mirrored repository SQL and test files"
+    },
+    "cloudflare": {
+      "build": "f6af9238-ae54-44f5-9391-0788b4368e60",
+      "outcome": "success",
+      "sourceCommit": "3883e7982140e9f979458a126e1b4a6e3b3215d7",
+      "buildCommand": "npm run typecheck",
+      "deployCommand": "npm run deploy:safe",
+      "deployment": "e87f818a-e23c-4938-a042-37945dd24045",
+      "workerVersion": "5fbe26e3-4342-4053-8b37-82f6c374c7fe",
+      "trafficPercent": 100
+    },
+    "productionSourceSmoke": {
+      "run": 43310266513,
+      "result": "success",
+      "health": true,
+      "limitation": "does not byte-readback server-side SQL"
+    },
+    "mergeShaEditorCore": {
+      "status": "in_progress",
+      "conclusion": null
+    }
+  },
+  "testOnlyRelease": {
+    "pr": 328,
+    "head": "1960b06339bf1c04443bb4135c56ae37893df3f9",
+    "merge": "4c26a6e25d8df45060b4f1d813064fdc010d2232",
+    "exactPRChecks": {
+      "verify": {
+        "status": "completed",
+        "conclusion": "success"
+      },
+      "twitch-integration": {
+        "status": "completed",
+        "conclusion": "success"
+      },
+      "editor-core": {
+        "status": "completed",
+        "conclusion": "success"
+      },
+      "Workers Builds: sanci9517-streamer-brand": {
+        "status": "completed",
+        "conclusion": "success"
+      }
+    },
+    "onlyPath": "tests/media-api.test.js",
+    "mergeCiSkip": true,
+    "workerBuildResult": "skipped",
+    "newDeployment": false
+  },
+  "productionD1Postflight": {
+    "readOnly": true,
+    "migrationCount": 34,
+    "lastMigration": "0028_media_archive.sql",
+    "rowsWritten": 0,
+    "changes": 0,
+    "changedDb": false,
+    "casefoldArchivedTriggers": "NOT_CHANGED: 3 original triggers still case-sensitive"
+  },
+  "manualMigrationPreparation": {
+    "branch": "draft/77-44-7-d-archive-trigger-casefold-manual-20261112",
+    "head": "8328d74e40507058ea17414fc8b73d113b78c1cc",
+    "offlineNodeSQLiteTests": {
+      "passed": 3,
+      "failed": 0
+    },
+    "testScope": [
+      "precondition",
+      "archive trigger casefold and site isolation",
+      "atomic offline rollback"
+    ],
+    "deployment": "NOT EXECUTED",
+    "approval": "REQUIRED",
+    "caution": "REST batch atomicity not verified from binding documentation"
+  },
+  "guards": {
+    "saveAndPublishSeparate": true,
+    "newPaidServiceActivated": false,
+    "productionD1Writes": false,
+    "productionR2Deletion": false,
+    "dPointCertified": false
+  }
+}
