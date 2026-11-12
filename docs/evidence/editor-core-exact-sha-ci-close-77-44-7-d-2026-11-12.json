@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "task": "77.44.7.D",
+  "observed_date": "2026-11-12",
+  "branch": "v2/foundation",
+  "runtime_commit": "b3ad7ca44b21b03558c696d98f28bb97be2c4c85",
+  "documentation_head_at_check": "c3879fa5d2a99721eb3258a3c492a5aff9a24b1e",
+  "github_actions": {
+    "exact_sha": "b3ad7ca44b21b03558c696d98f28bb97be2c4c85",
+    "runs": [
+      {
+        "name": "Canonical Plan Active Point Audit",
+        "id": 43190360895,
+        "conclusion": "success"
+      },
+      {
+        "name": "Canonical Creator Platform Plan",
+        "id": 43190360882,
+        "conclusion": "success"
+      },
+      {
+        "name": "Twitch Integration Check",
+        "id": 43190360918,
+        "conclusion": "success"
+      },
+      {
+        "name": "F0 baseline checks",
+        "id": 43190360891,
+        "conclusion": "success"
+      },
+      {
+        "name": "Editor Core Test",
+        "id": 43190360956,
+        "job_id": 131087812522,
+        "completed_at": "2026-11-12T09:52:15Z",
+        "conclusion": "success",
+        "verified_steps": [
+          "Run TypeScript typecheck",
+          "Run editor core tests",
+          "Test offline D1 ledger reconciliation and bootstrap",
+          "Run private R2 media API tests",
+          "Test real Worker media upload with isolated D1 and R2",
+          "Run Editor browser layout regression",
+          "Run WEB-013 Admin mobile browser regression",
+          "Run canonical schedule tests",
+          "Run domain contract tests",
+          "Run Brand Kit storage and access regression",
+          "Run Admin home contract tests"
+        ]
+      }
+    ],
+    "aggregate_exact_runtime_sha": "PASS"
+  },
+  "release": {
+    "worker_version_from_previous_record": "a65c11f2-6799-44b1-8d88-8aa70e348b65",
+    "new_deployment_this_block": false,
+    "live_health_retested_this_block": false
+  },
+  "acceptance": {
+    "status": "OPEN / NOT_CERTIFIED",
+    "manual_visual_editor": "DEFERRED until complete Editor",
+    "save_and_publish_separate": true
+  },
+  "cost": {
+    "new_huf_spending": 0,
+    "additional_workflow_dispatched": false
+  },
+  "limitations": [
+    "Only existing exact-SHA GitHub Actions runs were read.",
+    "Cloudflare production readback and local full regression were not repeated in this follow-up."
+  ]
+}
