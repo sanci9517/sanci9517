@@ -49,12 +49,12 @@
   ],
   "tests": {
     "v8_parser": "PASS",
-    "hosted_f0": "IN_PROGRESS",
-    "hosted_twitch": "IN_PROGRESS",
+    "hosted_f0": "PASS",
+    "hosted_twitch": "PASS",
     "hosted_editor_core": "IN_PROGRESS",
     "hosted_editor_core_id": 43210747102,
-    "wrangler_dry_run": "NOT_RUN",
-    "remote_d1_preflight_for_pr319": "NOT_RUN",
+    "wrangler_dry_run": "PASS",
+    "remote_d1_preflight_for_pr319": "PASS",
     "production_post_merge": "NOT_RUN",
     "exact_source_old_vs_new": {
       "result": "PASS",
@@ -94,6 +94,32 @@
       "repository_workflow": ".github/workflows/worker-production-source-smoke.yml",
       "no_credentials": true,
       "no_mutations": true
+    },
+    "production_d1_preflight": {
+      "sql": "SELECT name FROM d1_migrations ORDER BY name;",
+      "success": true,
+      "row_count": 34,
+      "last_migration": "0028_media_archive.sql",
+      "rows_read": 34,
+      "rows_written": 0,
+      "changes": 0,
+      "changed_db": false,
+      "method": "Cloudflare D1 query API; SELECT-only"
+    },
+    "current_worker": {
+      "version": "ac1c5e45-0cf2-43d5-ad1e-b396642858fd",
+      "traffic_percent": 100,
+      "from_merged_pr": 318,
+      "pr319_live": false
+    },
+    "current_pr_build_preview": {
+      "build_uuid": "8ced0bed-e8c2-4fa7-9683-456253205e05",
+      "outcome": "success",
+      "production_deployment_claim": false
+    },
+    "health_and_asset_hash": {
+      "status": "UNVERIFIED",
+      "blocker": "No current direct HTTP GET; container DNS and web fetch unavailable"
     }
   },
   "constraints": {
@@ -103,5 +129,5 @@
     "new_cost_authorized_huf": 0,
     "editor_manual_acceptance": "DEFERRED"
   },
-  "next": "Wait for exact-head Editor Core PASS, perform remote SELECT-only preflight, normal PR merge, Cloudflare auto deploy; check new GitHub production source-smoke outcome."
+  "next": "Wait for exact-head Editor Core 43214843055 PASS; do not merge while in_progress; release only after all gates."
 }
