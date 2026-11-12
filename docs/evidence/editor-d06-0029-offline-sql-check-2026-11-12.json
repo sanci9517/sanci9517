@@ -1,0 +1,28 @@
+{
+  "date": "2026-11-12",
+  "planPoint": "77.44.7.D/D-06",
+  "status": "DRAFT_OFFLINE_PASS_NOT_PRODUCTION_CERTIFIED",
+  "draftBranch": "draft/77-44-7-d-archive-trigger-casefold-manual-20261112",
+  "previousCommit": "375821db7ec233ce1c4578746756495f9985cda4",
+  "tests": {
+    "command": "node --test /tmp/sanci-d06-offline/tests/media-archive-trigger-casefold.test.mjs",
+    "runner": "Node.js v22.16.0 (node:sqlite, isolated memory SQLite)",
+    "result": "PASS",
+    "passed": 3,
+    "failed": 0,
+    "scenarios": [
+      "0028 ledger precondition failure does not remove original guards",
+      "uppercase draft/published/update/revision denied and site isolation preserved",
+      "late error in explicit SQLite transaction restores original trigger SQL and removes staging guard"
+    ]
+  },
+  "production": {
+    "d1Mutation": false,
+    "d1Migration": false,
+    "triggerChange": false,
+    "r2Change": false
+  },
+  "risk": "REST D1 batch/semicolon transaction atomicity not proven by local SQLite tests; approved migration transport and rollback proof needed",
+  "cloudflareDoc": "https://developers.cloudflare.com/d1/worker-api/d1-database/",
+  "approval": "REQUIRED"
+}

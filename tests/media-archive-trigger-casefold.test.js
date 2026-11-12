@@ -50,3 +50,18 @@ test('casefold archive triggers reject uppercase draft, publication, revision an
   assert.equal(db.prepare('SELECT COUNT(*) AS n FROM editor_revisions').get().n,1);
  }finally{db.close();}
 });
+
+test('offline atomic rollback restores exact original triggers if the migration batch later fails',()=>{
+ const db=fixture();
+ try{
+  const stmt=db.prepare("SELECT name,sql FROM sqlite_master WHERE type='trigger' AND name LIKE 'media_archive_%' ORDER BY name");
+  const original=stmt.all();
+  db.exec('BEGIN IMMEDIATE');
+  try{
+   db.exec(read('0029_media_archive_casefold_guards.sql'));
+   assert.throws(()=>db.exec('INSERT INTO a_missing_table(value) VALUES(1)'),/no such table/);
+  }finally{db.exec('ROLLBACK');}
+  assert.deepEqual(stmt.all(),original,'rollback must restore the original D1 0028 guards without partial replacement');
+  assert.equal(db.prepare("SELECT COUNT(*) AS n FROM sqlite_master WHERE type='table' AND name='__media_0029_casefold_guard'").get().n,0);
+ }finally{db.close();}
+});
