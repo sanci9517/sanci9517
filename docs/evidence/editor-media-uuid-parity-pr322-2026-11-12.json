@@ -10,9 +10,11 @@
     "branch": "fix/77-44-7-d-media-uuid-parity-20261112",
     "head_commit": "2a2c8dc9e8d0657725eb2b08042022ddf06d5271",
     "base_commit_at_review": "32fa245c00243354e07e4a76ede09fc2dd556c35",
-    "draft": true,
-    "merged": false,
-    "deployed": false
+    "draft": false,
+    "merged": true,
+    "deployed": true,
+    "merge_commit": "c50e0898f3c96368cb071fdade1205832596c36a",
+    "merge_method": "merge"
   },
   "defect": {
     "validator": "src/core/editor-validation.ts",
@@ -51,8 +53,9 @@
     },
     "editor_core": {
       "id": 43235891665,
-      "status": "in_progress",
-      "conclusion": null
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "2a2c8dc9e8d0657725eb2b08042022ddf06d5271"
     }
   },
   "read_only_d1_preflight": {
@@ -78,5 +81,53 @@
     "save_publish_separate": true,
     "manual_editor_acceptance": "DEFERRED"
   },
-  "next": "Check exact-head Editor Core PASS; if all four checks are PASS and PR mergeable, normal merge; verify exact-sha Cloudflare npm run deploy:safe, Worker 100% deployment, production health and changed-source readback; no redundant manual deployment."
+  "next": "PR #322 runtime and production rollout VERIFIED. Track its merge-SHA Editor Core result independently, then continue actual 77.44.7.D coverage of site-scoped Media Library archive/usage and responsive background across breakpoints; no claim of full D acceptance.",
+  "production_release": {
+    "build": {
+      "id": "48a59c4d-d9ac-4ceb-aabf-8790189a369f",
+      "outcome": "success",
+      "source_sha": "c50e0898f3c96368cb071fdade1205832596c36a",
+      "build_command": "npm run typecheck",
+      "deploy_command": "npm run deploy:safe"
+    },
+    "worker": {
+      "deployment_id": "7d87588b-b5c6-4860-8245-77315b5f94ad",
+      "version_id": "4596bd7a-a6dd-4a12-92e5-1b89d5762607",
+      "traffic_percent": 100
+    },
+    "source_smoke": {
+      "workflow_id": 43242727610,
+      "status": "completed",
+      "conclusion": "success",
+      "checks": [
+        "/api/health HTTP 200",
+        "public/assets/page-renderer.js source SHA-256 matches production",
+        "public/editor-v2/core/element-content.js source SHA-256 matches production"
+      ],
+      "note": "The PR modifies server-side Publish validation rather than public JS bytes; the build source commit is independently confirmed."
+    },
+    "postmerge_checks": {
+      "f0": {
+        "id": 43242727586,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      "twitch": {
+        "id": 43242727596,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      "editor_core": {
+        "id": 43242727725,
+        "status": "in_progress",
+        "conclusion": null
+      }
+    },
+    "d1_postflight": {
+      "rows_written": 0,
+      "changes": 0,
+      "changed_db": false,
+      "latest_migration": "0028_media_archive.sql"
+    }
+  }
 }
