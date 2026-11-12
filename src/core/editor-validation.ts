@@ -11,6 +11,7 @@ import {validateAccessibility} from '../../public/editor-v2/core/accessibility.j
 import {validateStateStyles} from '../../public/editor-v2/core/state-styles.js';
 import {validatePageForPublication,validateElementContent as validateAuthoredElementContent} from '../../public/editor-v2/core/authored-content.js';
 import {validateInspectorStyleContract} from '../../public/editor-v2/core/inspector-style-contract.js';
+import {MEDIA_ASSET_ID} from '../../public/editor-v2/core/background-asset.js';
 
 function validateScheduleConfig(config:any):boolean{
  if(!config||typeof config!=='object'||config.version!==1)return false;
@@ -37,13 +38,13 @@ function validMediaSource(value:unknown):boolean{
 function validateBackgroundAssets(node:any):string|null{
  for(const scope of [node.style,node.responsive?.desktop,node.responsive?.tablet,node.responsive?.mobile]){
   const id=scope?.backgroundAssetId;
-  if(id!==undefined&&id!==null&&id!==''&&id!=='none'&&(typeof id!=='string'||!/^[0-9a-f-]{36}$/i.test(id)))return 'INVALID_BACKGROUND_ASSET';
+  if(id!==undefined&&id!==null&&id!==''&&id!=='none'&&(typeof id!=='string'||!MEDIA_ASSET_ID.test(id)))return 'INVALID_BACKGROUND_ASSET';
  }
  return null;
 }
 function validateMediaNode(node:any):string|null{
  if(!hasContentProfile(node,'media-v1'))return null;
- if(node.props?.assetId!==undefined&&typeof node.props.assetId==='string'&&/^[0-9a-f-]{36}$/i.test(node.props.assetId)){}else if(!validMediaSource(node.props?.src))return 'INVALID_MEDIA_SOURCE';
+ if(node.props?.assetId!==undefined&&typeof node.props.assetId==='string'&&MEDIA_ASSET_ID.test(node.props.assetId)){}else if(!validMediaSource(node.props?.src))return 'INVALID_MEDIA_SOURCE';
  if(node.type==='image'&&!node.accessibility?.decorative&&!String(node.props?.alt||'').trim())return 'IMAGE_ALT_REQUIRED';
  return null;
 }

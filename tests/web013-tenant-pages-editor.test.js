@@ -4,6 +4,8 @@ import { DatabaseSync } from 'node:sqlite';
 import { hashSessionToken } from '../src/core/auth/session.ts';
 import { adminPagesRoute } from '../src/routes/admin/pages.ts';
 import { adminEditorRoute } from '../src/routes/admin/editor.ts';
+import {collectPublicationAssetIds} from '../src/core/editor-publication.ts';
+import {MEDIA_ASSET_ID,backgroundImageValue} from '../public/editor-v2/core/background-asset.js';
 
 async function fixture(t, enabled=true) {
   const db=new DatabaseSync(':memory:');t.after(()=>db.close());
@@ -114,6 +116,66 @@ test('asset references save as private drafts and Publish accepts only media own
   assert.equal(publishedBackground.status,200);
   assert.equal(f.db.prepare('SELECT json_extract(published_content_json,\'$.pages.b.nodes.root.responsive.desktop.backgroundAssetId\') AS asset FROM pages WHERE id=?').get('b').asset,own);
 });
+
+
+test('background media UUID parity: draft Save stays private; invalid style/responsive IDs cannot Publish',async t=>{
+  const f=await fixture(t),valid='6b1c2e65-e46e-4764-b234-123456789abc',malformed='------------------------------------';
+  f.db.prepare('INSERT INTO media(id,site_id,object_key,mime_type,original_name,size_bytes) VALUES(?,?,?,?,?,?)')
+    .run(valid,'other','sites/other/media/'+valid,'image/png','background.png',100);
+  assert.equal(MEDIA_ASSET_ID.test(malformed),false,'the public renderer does not recognize the malformed ID');
+  assert.equal(backgroundImageValue({backgroundAssetId:malformed}),'none','malformed ID never emits a public image URL');
+  assert.equal(collectPublicationAssetIds({style:{backgroundAssetId:malformed}}).size,0,'the reference index cannot protect an unrenderable ID');
+
+  const draft=f.document('b');
+  draft.pages.b.nodes.root.responsive={desktop:{backgroundAssetId:malformed}};
+  const saved=await f.editor('editor','other','POST',{pageId:'b',expectedVersion:1,document:draft,publish:false});
+  assert.equal(saved.status,200,'Save allows a private draft for repair without Publish');
+  const publishedBefore=f.db.prepare('SELECT published_content_json FROM pages WHERE id=?').get('b').published_content_json;
+  const revisionCount=f.db.prepare('SELECT COUNT(*) AS n FROM editor_revisions WHERE page_id=?').get('b').n;
+  const auditCount=f.db.prepare('SELECT COUNT(*) AS n FROM audit_log').get().n;
+  for(const scope of ['style','desktop','tablet','mobile']){
+    const candidate=structuredClone(draft),root=candidate.pages.b.nodes.root;
+    root.responsive={};
+    root.style={};
+    if(scope==='style')root.style.backgroundAssetId=malformed;
+    else root.responsive[scope]={backgroundAssetId:malformed};
+    const rejected=await f.editor('editor','other','POST',{pageId:'b',expectedVersion:2,document:candidate,publish:true});
+    assert.equal(rejected.status,409,scope+' must reject a UUID shape the renderer and usage scanner ignore');
+    assert.equal((await rejected.json()).error.code,'INVALID_BACKGROUND_ASSET',scope);
+    assert.equal(f.db.prepare('SELECT published_content_json FROM pages WHERE id=?').get('b').published_content_json,publishedBefore);
+    assert.equal(f.db.prepare('SELECT COUNT(*) AS n FROM editor_revisions WHERE page_id=?').get('b').n,revisionCount);
+    assert.equal(f.db.prepare('SELECT COUNT(*) AS n FROM audit_log').get().n,auditCount);
+  }
+
+  const repaired=structuredClone(draft);
+  repaired.pages.b.nodes.root.responsive={desktop:{backgroundAssetId:valid.toUpperCase()},mobile:{backgroundAssetId:'none'}};
+  assert.equal(MEDIA_ASSET_ID.test(repaired.pages.b.nodes.root.responsive.desktop.backgroundAssetId),true);
+  assert.ok(collectPublicationAssetIds(repaired).has(valid),'the usage scanner recognizes the same valid asset');
+  const published=await f.editor('editor','other','POST',{pageId:'b',expectedVersion:2,document:repaired,publish:true});
+  assert.equal(published.status,200,'valid site-owned uppercase UUID remains publishable');
+  const live=JSON.parse(f.db.prepare('SELECT published_content_json FROM pages WHERE id=?').get('b').published_content_json);
+  assert.equal(live.pages.b.nodes.root.responsive.desktop.backgroundAssetId,valid,'the live reference is canonical');
+});
+
+test('media UUID rejects malformed authored source before Publish and accepts valid uppercase ID',async t=>{
+  const f=await fixture(t),malformed='------------------------------------',valid='6b1c2e65-e46e-4764-b234-123456789abc';
+  f.db.prepare('INSERT INTO media(id,site_id,object_key,mime_type,original_name,size_bytes) VALUES(?,?,?,?,?,?)')
+    .run(valid,'other','sites/other/media/'+valid,'image/png','picture.png',100);
+  const document=f.document('b'),page=document.pages.b;
+  page.nodes.root.children=['image'];
+  page.nodes.image={id:'image',type:'image',parentId:'root',children:[],metadata:{contentVersion:1},props:{assetId:malformed,alt:'Fotó'}};
+  assert.equal((await f.editor('editor','other','POST',{pageId:'b',expectedVersion:1,document,publish:false})).status,200);
+  const before=f.db.prepare('SELECT published_content_json FROM pages WHERE id=?').get('b').published_content_json;
+  const rejected=await f.editor('editor','other','POST',{pageId:'b',expectedVersion:2,document,publish:true});
+  assert.equal(rejected.status,409);
+  assert.equal((await rejected.json()).error.code,'INVALID_EDITOR_CONTENT','authored content rejects the malformed ID before the secondary media source gate');
+  assert.equal(f.db.prepare('SELECT published_content_json FROM pages WHERE id=?').get('b').published_content_json,before);
+  page.nodes.image.props.assetId=valid.toUpperCase();
+  assert.equal((await f.editor('editor','other','POST',{pageId:'b',expectedVersion:2,document,publish:true})).status,200);
+  const live=JSON.parse(f.db.prepare('SELECT published_content_json FROM pages WHERE id=?').get('b').published_content_json);
+  assert.equal(live.pages.b.nodes.image.props.assetId,valid,'valid uppercase ID remains publishable and canonical');
+});
+
 
 test('Save keeps cross-kind media references private and Publish rejects the mismatched media role',async t=>{
   const f=await fixture(t),image='6b1c2e65-e46e-4764-b234-123456789abc',video='cdb85522-f682-4561-bd61-bfb83c4381b2';
