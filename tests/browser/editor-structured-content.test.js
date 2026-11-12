@@ -227,6 +227,12 @@ test('structured Inspector editing survives Save, Publish and public interaction
  await tableRows.nth(2).getByRole('textbox',{name:'Oszlop 2',exact:true}).fill('77');
  await keyboard(tableRows.nth(2).getByRole('button',{name:'↑ Sor fel',exact:true}));
  assert.equal(await tableRows.nth(1).getByRole('textbox',{name:'Oszlop 1',exact:true}).inputValue(),'További játék');
+ await editor.keyboard.press('Control+z');
+ assert.equal(await tableRows.nth(2).getByRole('textbox',{name:'Oszlop 1',exact:true}).inputValue(),'További játék',
+  'Undo restores the previous table row order');
+ await editor.keyboard.press('Control+Shift+z');
+ assert.equal(await tableRows.nth(1).getByRole('textbox',{name:'Oszlop 1',exact:true}).inputValue(),'További játék',
+  'Redo restores the moved table row without changing its values');
  await keyboard(tableRows.nth(1).getByRole('button',{name:'↓ Sor le',exact:true}));
  assert.equal(await tableRows.nth(2).getByRole('textbox',{name:'Oszlop 2',exact:true}).inputValue(),'77',
   'reordered row keeps the second column on the moved record');
