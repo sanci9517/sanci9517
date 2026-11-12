@@ -217,6 +217,20 @@ test('structured Inspector editing survives Save, Publish and public interaction
    }
   }
  }
+ // Persist a genuine row insertion and reorder through the separate Save and
+ // Publish API calls, rather than undoing every structural change before Save.
+ await select(ids.table);
+ const tableInspector=editor.locator('.structured-inspector'),tableRows=tableInspector.locator('.structured-item');
+ await keyboard(tableRows.last().getByRole('button',{name:'＋ Sor alá',exact:true}));
+ assert.equal(await tableRows.count(),3,'insert below existing table data row');
+ await tableRows.nth(2).getByRole('textbox',{name:'Oszlop 1',exact:true}).fill('További játék');
+ await tableRows.nth(2).getByRole('textbox',{name:'Oszlop 2',exact:true}).fill('77');
+ await keyboard(tableRows.nth(2).getByRole('button',{name:'↑ Sor fel',exact:true}));
+ assert.equal(await tableRows.nth(1).getByRole('textbox',{name:'Oszlop 1',exact:true}).inputValue(),'További játék');
+ await keyboard(tableRows.nth(1).getByRole('button',{name:'↓ Sor le',exact:true}));
+ assert.equal(await tableRows.nth(2).getByRole('textbox',{name:'Oszlop 2',exact:true}).inputValue(),'77',
+  'reordered row keeps the second column on the moved record');
+ expectedModels.table.rows.push(['További játék','77']);
  await select(ids.tabs);
  const limited=editor.locator('.structured-item').first().getByRole('textbox',{name:'Fül neve',exact:true});
  await limited.fill('x'.repeat(120));await limited.press('y');assert.equal(await limited.inputValue(),'x'.repeat(120),'native editing stops at the canonical boundary');
@@ -234,6 +248,8 @@ test('structured Inspector editing survives Save, Publish and public interaction
  assert.equal(draft.pages[pageId].nodes[ids.icon].props.label,finalIcon);
  assert.equal(draft.pages[pageId].nodes[ids.icon].props.icon,'star');
  await viewer.goto(base+'/p/test');
+ assert.equal(await viewer.locator('.visual-editor-node[data-node-id="'+ids.table+'"] tbody tr').count(),1,
+   'draft Save must not make the new table row public before a separate Publish');
  assert.equal(await viewer.locator('.visual-badge[data-node-id="'+ids.badge+'"]').textContent(),'Címke','Save cannot expose the new badge');
  assert.match(await viewer.locator('blockquote[data-node-id="'+ids.quote+'"]').textContent(),/Idézet első változat/);
  assert.equal(await viewer.locator('.visual-icon[data-node-id="'+ids.icon+'"]').getAttribute('aria-label'),'Szív ikon');
@@ -323,6 +339,9 @@ test('structured Inspector editing survives Save, Publish and public interaction
  assert.equal(await list.locator('li').count(),3);
  const table=viewer.locator('.visual-editor-node[data-node-id="'+ids.table+'"]');
  assert.equal(await table.locator('th').count(),2);
+ assert.equal(await table.locator('tbody tr').count(),2,'published table includes inserted and reordered data');
+ assert.deepEqual(await table.locator('tbody tr').last().locator('td').allTextContents(),
+  ['További játék','77'],'row order and both cells survive Save, reload and separate Publish');
  await editor.screenshot({path:'/tmp/creator-ux-p0-structured-desktop.png'});
  await viewer.screenshot({path:'/tmp/creator-ux-p0-public-content.png'});
  await editor.setViewportSize({width:390,height:800});
