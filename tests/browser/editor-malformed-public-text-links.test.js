@@ -25,6 +25,10 @@ test('published page and Canvas handle malformed text, links and CSS without Sav
   const intactHeadingId=add(NODE_TYPES.HEADING);
   const page=state.document.pages[pageId];
   const invalid={toString:null};
+  // An old published snapshot may have malformed child collections or IDs.
+  // Neither may discard healthy siblings or turn a read-only page into a 404.
+  page.nodes[corruptedHeadingId].children=invalid;
+  page.nodes[rootId].children.splice(1,0,invalid);
   page.nodes[corruptedHeadingId].props={text:invalid};
   page.nodes[corruptedHeadingId].style={color:invalid,border:invalid,background:invalid,backgroundSize:invalid,margin:invalid,radius:invalid,fontSize:invalid,x:invalid,padding:'12px',height:'38px'};
   page.nodes[buttonId].responsive={mobile:{width:invalid,padding:'8px'}};
@@ -78,6 +82,31 @@ test('published page and Canvas handle malformed text, links and CSS without Sav
   });
   assert.deepEqual(canvas,{padding:'14px',height:'42px',color:'',border:'',width:'',left:''},
     'Canvas ignores invalid JSON CSS without changing valid dimensions or persisting defaults');
+  const visibility=await tab.evaluate(async()=>{
+    const {collectVisibleDescendants,safeNodeChildIds}=await import('/editor-v2/core/visibility.js?v=20261112-safe-node-children');
+    const invalid={toString:null};
+    const fixture={rootId:'root',nodes:{
+      root:{id:'root',children:['a',invalid,42,'b']},
+      a:{id:'a',children:invalid},
+      b:{id:'b',children:[invalid,null,'c']},
+      c:{id:'c',children:[]}
+    }};
+    return {
+      ids:collectVisibleDescendants(fixture,'mobile').map(node=>node.id),
+      rootChildCount:fixture.nodes.root.children.length,
+      invalidRootChildren:safeNodeChildIds({children:invalid}),
+      validChildren:safeNodeChildIds(fixture.nodes.root)
+    };
+  });
+  assert.deepEqual(visibility,{ids:['a','b','c'],rootChildCount:4,invalidRootChildren:[],validChildren:['a','b']},
+    'Canvas/public visibility traversal ignores malformed child data without changing the saved tree');
   assert.deepEqual(errors,[],'malformed persisted data must not abort public page rendering or Canvas style calculation');
+  // The root itself may have a corrupted collection in a legacy snapshot.
+  // A safe empty-page fallback is correct; displaying a 404 is not.
+  page.nodes[rootId].children=invalid;
+  await tab.reload();
+  await tab.locator('.builder-text').waitFor({timeout:20000});
+  assert.match(await tab.locator('.builder-text').textContent(),/oldalnak még nincs tartalma/i);
+  assert.deepEqual(errors,[],'a malformed root must not generate an unhandled page error');
   assert.equal(writes,0,'rendering public content must never Save or Publish');
 });

@@ -1,6 +1,13 @@
 /* Canonical per-device visibility for Editor Canvas and public Page Model. */
 export const VISIBILITY_DEVICES=Object.freeze(['desktop','tablet','mobile']);
 
+/** Read persisted child IDs without coercing corrupted JSON objects or mutating the Page Model. */
+export function safeNodeChildIds(node){
+  return Array.isArray(node?.children)
+    ? node.children.filter(id=>typeof id==='string'&&id.length>0)
+    : [];
+}
+
 export function isVisibleOnDevice(node,device='desktop'){
   if(!node)return false;
   // Old persisted Page Models may use a single false value.
@@ -42,8 +49,8 @@ export function collectVisibleDescendants(page,device='desktop'){
     const node=nodes[id];
     if(!isVisibleOnDevice(node,device))return;
     visible.push(node);
-    for(const child of node.children??[])visit(child);
+    for(const child of safeNodeChildIds(node))visit(child);
   };
-  for(const id of nodes[page?.rootId]?.children??[])visit(id);
+  for(const id of safeNodeChildIds(nodes[page?.rootId]))visit(id);
   return visible;
 }
