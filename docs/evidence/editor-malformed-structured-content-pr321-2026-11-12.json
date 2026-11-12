@@ -10,10 +10,12 @@
     "original_commit": "3de01cfbcaa71a7c17e8e7cab2ac60b637e2fcbd",
     "reconciled_head": "5d2535b1c925386635d7d76f40dabe47fcf92a97",
     "base_merge_parent": "ca51e82b358ac13b0f734dfe8444d98042483b0a",
-    "draft": true,
-    "merged": false,
+    "draft": false,
+    "merged": true,
     "previous_reconciled_head": "a693156df76e02f15ea90a91213d0f4f32439d71",
-    "worker_source_smoke_workflow_commit": "5d2535b1c925386635d7d76f40dabe47fcf92a97"
+    "worker_source_smoke_workflow_commit": "5d2535b1c925386635d7d76f40dabe47fcf92a97",
+    "merge_commit": "4935b74e1d0df0a40a5f68407b2e2b20c3a9ea34",
+    "method": "merge"
   },
   "code": {
     "changes": [
@@ -37,7 +39,7 @@
     },
     "unit_regression": {
       "file": "public/editor-v2/tests/element-content.test.js",
-      "status": "COMMITTED_CI_PENDING"
+      "status": "PASS_PR_EXACT_HEAD_EDITOR_CORE"
     },
     "github": {
       "f0": {
@@ -57,21 +59,23 @@
       },
       "editor_core": {
         "id": 43226229587,
-        "status": "in_progress",
-        "conclusion": null
+        "status": "completed",
+        "conclusion": "success"
       }
     },
-    "production": "NOT_MERGED_NOT_DEPLOYED",
+    "production": "LIVE_DEPLOYED_AND_DUAL_HASH_PASS",
     "production_source_smoke": {
-      "status": "NOT_RUN",
-      "trigger": "v2/foundation runtime push after normal merge",
+      "status": "completed",
+      "conclusion": "success",
+      "run_id": 43233534790,
+      "job_id": 131234789322,
+      "source_commit": "4935b74e1d0df0a40a5f68407b2e2b20c3a9ea34",
       "health_http": 200,
-      "compare_exact_asset_paths": [
-        "/assets/page-renderer.js",
-        "/editor-v2/core/element-content.js"
-      ],
-      "expected_source_sha256s": "computed from exact merge checkout by source-smoke workflow",
-      "expected_result": "both live SHA-256 match, not claimed PASS yet"
+      "match_attempt": 3,
+      "renderer_sha256": "478a2bc66be3f08e778be8351d42975755dad4860bca9d935c7e8c0faab4f8a2",
+      "element_content_sha256": "40efc323b648dcf724136159cde63d656eaca3f8838d1265df7a684248a818c0",
+      "two_old_source_hash_observations": true,
+      "live_bytes_match_exact_checkout": true
     }
   },
   "constraints": {
@@ -82,5 +86,63 @@
     "production_r2_delete": false,
     "manual_editor_acceptance": "DEFERRED"
   },
-  "next": "Wait exact-head 5d2535 CI all success, Cloudflare SELECT-only preflight, normal merge and deploy:safe; verify Worker 100% and dual asset SHA-256 + health on production."
+  "next": "Full exact-merge-SHA Editor Core post-merge CI check is pending; subsequent D-point audit found permissive backgroundAssetId Publish pattern vs strict renderer/asset usage UUID shape. Regression test required before any change. D remains OPEN/NOT_CERTIFIED.",
+  "release": {
+    "merged": true,
+    "merge_commit": "4935b74e1d0df0a40a5f68407b2e2b20c3a9ea34",
+    "cloudflare": {
+      "build_uuid": "071115fd-717c-4bf7-8c9a-8dddc27e794b",
+      "build_outcome": "success",
+      "source_commit": "4935b74e1d0df0a40a5f68407b2e2b20c3a9ea34",
+      "build_command": "npm run typecheck",
+      "deploy_command": "npm run deploy:safe",
+      "deployment_id": "b31c9eaf-211b-489f-bd1c-77a5daef0598",
+      "worker_version": "3fb23fc3-2685-4e6d-ada4-57bc93a106ad",
+      "traffic_percent": 100
+    },
+    "d1": {
+      "preflight_sql": [
+        "SELECT name FROM sqlite_master WHERE type = 'table' AND name IN ('d1_migrations','_cf_KV') ORDER BY name",
+        "SELECT * FROM d1_migrations ORDER BY id DESC LIMIT 8"
+      ],
+      "postflight_sql": "SELECT id, name, applied_at FROM d1_migrations ORDER BY id DESC LIMIT 5",
+      "latest_migration": "0028_media_archive.sql",
+      "preflight_rows_written": 0,
+      "postflight_rows_written": 0,
+      "preflight_changed_db": false,
+      "postflight_changed_db": false
+    },
+    "merge_commit_ci": {
+      "f0": {
+        "id": 43233535085,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      "twitch": {
+        "id": 43233534909,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      "source_smoke": {
+        "id": 43233534790,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      "editor_core": {
+        "id": 43233534614,
+        "status": "in_progress",
+        "conclusion": null
+      }
+    }
+  },
+  "audit": {
+    "candidate": "backgroundAssetId UUID parity",
+    "scope": "read_only_source_regex_comparison",
+    "publish_validator": "/^[0-9a-f-]{36}$/i",
+    "renderer_and_media_usage": "strict UUID pattern",
+    "malformed_example": "------------------------------------",
+    "publish_pattern_match": true,
+    "renderer_pattern_match": false,
+    "full_editor_browser_regression": "NOT_RUN"
+  }
 }
