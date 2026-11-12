@@ -1,0 +1,82 @@
+{
+  "schema": "sanci9517.dev-evidence.v1",
+  "date": "2026-11-12",
+  "plan_item": "77.44.7.D",
+  "status": "OPEN_NOT_CERTIFIED",
+  "scope": "Media background/element UUID parity across Inspector/Publish/public-renderer/usage index",
+  "pr": {
+    "number": 322,
+    "url": "https://github.com/sanci9517/sanci9517/pull/322",
+    "branch": "fix/77-44-7-d-media-uuid-parity-20261112",
+    "head_commit": "2a2c8dc9e8d0657725eb2b08042022ddf06d5271",
+    "base_commit_at_review": "32fa245c00243354e07e4a76ede09fc2dd556c35",
+    "draft": true,
+    "merged": false,
+    "deployed": false
+  },
+  "defect": {
+    "validator": "src/core/editor-validation.ts",
+    "previous": "/^[0-9a-f-]{36}$/i",
+    "existing_shared_validator": "public/editor-v2/core/background-asset.js MEDIA_ASSET_ID",
+    "evidence": "36 hyphens matched Publish regex but failed public renderer and reference-index UUID check",
+    "new_behavior": "Publish uses the existing strict shared media UUID regex for backgroundAssetId and versioned media assetId"
+  },
+  "changed_paths": [
+    "public/editor-v2/core/background-asset.d.ts",
+    "src/core/editor-validation.ts",
+    "tests/web013-tenant-pages-editor.test.js"
+  ],
+  "test_cases": [
+    "Save preserves malformed background ID only as private draft",
+    "Publish rejects malformed style/desktop/tablet/mobile background ID without published JSON/revision/audit changes",
+    "public backgroundImageValue and publication asset usage index agree on invalid/valid UUID",
+    "valid uppercase site-owned background canonicalizes on Publish",
+    "versioned image malformed ID rejected at first authored-content gate; valid uppercase UUID accepted and canonicalized"
+  ],
+  "exact_head_checks": {
+    "f0": {
+      "id": 43235891877,
+      "status": "completed",
+      "conclusion": "success"
+    },
+    "twitch": {
+      "id": 43235891754,
+      "status": "completed",
+      "conclusion": "success"
+    },
+    "worker_release_dry_run": {
+      "id": 43235892137,
+      "status": "completed",
+      "conclusion": "success"
+    },
+    "editor_core": {
+      "id": 43235891665,
+      "status": "in_progress",
+      "conclusion": null
+    }
+  },
+  "read_only_d1_preflight": {
+    "query": "SELECT id,name,applied_at FROM d1_migrations ORDER BY id DESC LIMIT 5",
+    "rows_written": 0,
+    "changes": 0,
+    "changed_db": false,
+    "latest_migration": "0028_media_archive.sql"
+  },
+  "cloudflare_build_limit": {
+    "has_reached_build_minutes_limit": false
+  },
+  "previous_worker": {
+    "deployment_id": "b31c9eaf-211b-489f-bd1c-77a5daef0598",
+    "version_id": "3fb23fc3-2685-4e6d-ada4-57bc93a106ad",
+    "traffic_percent": 100
+  },
+  "constraints": {
+    "new_spending_authorized_huf": 0,
+    "production_d1_mutation": false,
+    "production_d1_migration": false,
+    "production_r2_deletion": false,
+    "save_publish_separate": true,
+    "manual_editor_acceptance": "DEFERRED"
+  },
+  "next": "Check exact-head Editor Core PASS; if all four checks are PASS and PR mergeable, normal merge; verify exact-sha Cloudflare npm run deploy:safe, Worker 100% deployment, production health and changed-source readback; no redundant manual deployment."
+}
