@@ -8,9 +8,11 @@
     "url": "https://github.com/sanci9517/sanci9517/pull/323",
     "head_sha": "5172796a887dd02f54dc0b8003e14f6623e4d3e9",
     "branch": "test/77-44-7-d-responsive-media-usage-20261112",
-    "draft": true,
-    "merged": false,
-    "deployed": false
+    "draft": false,
+    "merged": true,
+    "deployed": false,
+    "merge_commit": "4b060b014afb494053968676c3137677da6c0c3b",
+    "merge_method": "merge"
   },
   "scope": "Site-scoped Media Library per-viewport responsive background, visibility, inherited legacy root gate, public media authorization, archived-reference protection",
   "test_file": "tests/media-api.test.js",
@@ -41,8 +43,8 @@
     },
     "editor_core": {
       "id": 43244166264,
-      "status": "in_progress",
-      "conclusion": null,
+      "status": "completed",
+      "conclusion": "success",
       "steps_verified": [
         {
           "name": "Run TypeScript typecheck",
@@ -61,12 +63,37 @@
           "conclusion": "success"
         }
       ],
-      "current_step": "Run Editor browser layout regression"
+      "current_step": null
     },
     "worker_dry_run": {
       "status": "not_triggered_test_only",
       "conclusion": null
     }
   },
-  "next": "New exact-head media tests passed in Editor Core private R2 media API step, but full Chromium suite still IN_PROGRESS. Merge test-only PR #323 only after final full Editor Core SUCCESS; no runtime deploy."
+  "next": "PR #323 exact-head F0/Twitch/Editor Core PASS and normally MERGED. Verify final post-merge runs independently; no runtime build needed for test-only merge. Continue independent runtime PR #324 subject to all four exact-head gates and fresh D1 SELECT preflight.",
+  "release": {
+    "runtime_changes": false,
+    "worker_deploy_required": false,
+    "worker_deploy_triggered": false,
+    "last_verified_worker_version_id": "4596bd7a-a6dd-4a12-92e5-1b89d5762607",
+    "traffic_percent": 100,
+    "check": "Cloudflare read-only deployment query after merge",
+    "post_merge_checks": {
+      "f0": {
+        "id": 43249841891,
+        "status": "in_progress",
+        "conclusion": null
+      },
+      "twitch": {
+        "id": 43249841560,
+        "status": "in_progress",
+        "conclusion": null
+      },
+      "editor_core": {
+        "id": 43249841877,
+        "status": "in_progress",
+        "conclusion": null
+      }
+    }
+  }
 }
