@@ -1,0 +1,63 @@
+{
+  "plan_item": "77.44.7.D / D-06",
+  "status": "OPEN / NOT_CERTIFIED",
+  "date": "2026-11-12",
+  "kind": "verified-gap-and-unmerged-fixes",
+  "findings": [
+    {
+      "scope": "future retention request SQL",
+      "source": "src/core/media-retention-queries.js",
+      "old": "instr(COALESCE(document_json,''),m.id)",
+      "repro": "Isolated SQLite uppercase asset UUID referenced in saved draft: old SQL improperly inserts 1 requested retention row; fixed case-fold SQL inserts 0",
+      "risk": "uppercase saved UUID can bypass final retention request guard",
+      "fixPR": 329,
+      "head": "d4554ad08d25f12bafaa01f748f9d31f7b9f0245",
+      "state": "DRAFT, exact-head CI in progress"
+    },
+    {
+      "scope": "production D1 archived-media triggers",
+      "readOnlyCloudflareCheck": {
+        "query": "SELECT name,sql FROM sqlite_master WHERE type='trigger' AND name IN (...) ORDER BY name",
+        "triggers": [
+          "media_archive_pages_insert_guard",
+          "media_archive_pages_update_guard",
+          "media_archive_revisions_insert_guard"
+        ],
+        "hasCasefold": false,
+        "changes": 0,
+        "rowsWritten": 0,
+        "changedDb": false
+      },
+      "risk": "uppercase references to archived assets are not detected by existing trigger substring checks",
+      "resolution": "manual-only new D1 migration review; explicit owner approval required before any production schema/trigger mutation",
+      "draftBranch": "draft/77-44-7-d-archive-trigger-casefold-manual-20261112",
+      "draftCommit": "375821db7ec233ce1c4578746756495f9985cda4",
+      "files": [
+        "scripts/pending/0029_media_archive_casefold_guards.sql",
+        "tests/media-archive-trigger-casefold.test.js"
+      ],
+      "status": "DRAFT ONLY, NOT MERGED, NOT EXECUTED",
+      "prototype": "isolated SQLite: uppercase insert/update/revision deny; foreign site allowed",
+      "newNodeTest": "NOT RUN"
+    }
+  ],
+  "d06RelatedPR": {
+    "id": 328,
+    "head": "1960b06339bf1c04443bb4135c56ae37893df3f9",
+    "scope": "authored-leaf media reachability, usage and archive 409",
+    "status": "DRAFT, Editor Core CI running"
+  },
+  "requirements": [
+    "continue current single canonical plan",
+    "no edits to immutable applied 0028 SQL",
+    "review and test migration in isolated D1 before approval",
+    "explicit production D1 migration approval necessary",
+    "Save != Publish",
+    "manual Editor acceptance deferred",
+    "0 Ft new paid approval"
+  ],
+  "productionWrites": false,
+  "productionMigrations": false,
+  "productionR2Deletes": false,
+  "workerRuntimeChangedByThisDocument": false
+}
