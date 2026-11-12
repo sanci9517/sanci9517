@@ -78,11 +78,17 @@ export const STYLE_MAP = Object.freeze({
   top: 'top'
 });
 
+// Stored JSON values may be malformed objects with no usable toString.
+// Public and Canvas CSS rendering must never coerce those into a value or throw.
+export function safeCssText(value) {
+  return typeof value==='string'?value:typeof value==='number'&&Number.isFinite(value)?String(value):'';
+}
+
 // Offsets are stored separately from CSS `position` so dragging remains a
 // simple responsive edit. CSS ignores left/top on static elements, therefore
 // every renderer must make the node positioned when an offset is present.
 export function needsRelativeOffsetPosition(style = {}) {
-  const hasOffset = [style.x, style.y].some(value => value !== undefined && value !== null && value !== '');
+  const hasOffset = [style.x, style.y].some(value => safeCssText(value) !== '');
   return hasOffset && (!style.position || style.position === 'static');
 }
 
@@ -114,31 +120,27 @@ export function applyNodeStyle(element, node, device = 'desktop') {
 
   // Older documents may contain the CSS border shorthand. Apply it as a
   // fallback before Inspector longhands so responsive edits take precedence.
-  if (style.border !== undefined && style.border !== null && style.border !== '') {
-    element.style.border = String(style.border);
-  }
+  const border=safeCssText(style.border);
+  if (border) element.style.border = border;
 
   // Canonical order matters for shorthand/longhand pairs such as border radius.
   // The public renderer also emits declarations in STYLE_MAP order.
   for (const [property, cssProperty] of Object.entries(STYLE_MAP)) {
     if(property==='backgroundImage')continue;
-    const value = style[property];
-    if (!cssProperty || value === undefined || value === null || value === '') continue;
-    element.style[cssProperty] = String(value);
+    const value = safeCssText(style[property]);
+    if (!cssProperty || value === '') continue;
+    element.style[cssProperty] = value;
   }
   element.style.backgroundImage=backgroundImageValue(style,{editor:true,legacyBackground:rootStyleEnabled});
-  if(MEDIA_ASSET_ID.test(String(style.backgroundAssetId||''))){
-    if(!style.backgroundSize)element.style.backgroundSize='cover';
-    if(!style.backgroundPosition)element.style.backgroundPosition='center center';
-    if(!style.backgroundRepeat)element.style.backgroundRepeat='no-repeat';
+  if(typeof style.backgroundAssetId==='string'&&MEDIA_ASSET_ID.test(style.backgroundAssetId)){
+    if(!safeCssText(style.backgroundSize))element.style.backgroundSize='cover';
+    if(!safeCssText(style.backgroundPosition))element.style.backgroundPosition='center center';
+    if(!safeCssText(style.backgroundRepeat))element.style.backgroundRepeat='no-repeat';
   }
 
-  if (style.x !== undefined && style.x !== '') {
-    element.style.left = String(style.x);
-  }
-  if (style.y !== undefined && style.y !== '') {
-    element.style.top = String(style.y);
-  }
+  const x=safeCssText(style.x),y=safeCssText(style.y);
+  if (x) element.style.left = x;
+  if (y) element.style.top = y;
   if (needsRelativeOffsetPosition(style)) element.style.position = 'relative';
 
   return style;
