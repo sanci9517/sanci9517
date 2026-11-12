@@ -4,6 +4,7 @@ import { DatabaseSync } from 'node:sqlite';
 import { hashSessionToken } from '../src/core/auth/session.ts';
 import { adminPagesRoute } from '../src/routes/admin/pages.ts';
 import { adminEditorRoute } from '../src/routes/admin/editor.ts';
+import {validatePublishDocument} from '../src/core/editor-validation.ts';
 import {collectPublicationAssetIds} from '../src/core/editor-publication.ts';
 import {MEDIA_ASSET_ID,backgroundImageValue} from '../public/editor-v2/core/background-asset.js';
 
@@ -116,6 +117,45 @@ test('asset references save as private drafts and Publish accepts only media own
   assert.equal(publishedBackground.status,200);
   assert.equal(f.db.prepare('SELECT json_extract(published_content_json,\'$.pages.b.nodes.root.responsive.desktop.backgroundAssetId\') AS asset FROM pages WHERE id=?').get('b').asset,own);
 });
+
+
+
+for(const specimen of [
+  {type:'image',metadata:{editorContentVersion:1},props:{src:'/picture.png',alt:{toString:null}},field:'alt',fixed:'Valós képleírás',error:'IMAGE_ALT_REQUIRED'},
+  {type:'badge',metadata:{basicContentVersion:1},props:{text:{toString:null}},field:'text',fixed:'Olvasható jelvény',error:'EMPTY_BASIC_CONTENT'},
+  {type:'quote',metadata:{basicContentVersion:1},props:{text:{toString:null}},field:'text',fixed:'Olvasható idézet',error:'EMPTY_BASIC_CONTENT'}
+]){
+  test('malformed legacy '+specimen.type+' text never crashes Publish or changes the live snapshot',async t=>{
+    const f=await fixture(t);
+    const candidate=f.document('b');
+    candidate.pages.b.nodes.root.children=['content'];
+    candidate.pages.b.nodes.content={
+      id:'content',name:'Legacy '+specimen.type,type:specimen.type,parentId:'root',children:[],
+      metadata:specimen.metadata,props:specimen.props
+    };
+    const original=f.db.prepare('SELECT published_content_json FROM pages WHERE id=?').get('b').published_content_json;
+    const saved=await f.editor('editor','other','POST',{pageId:'b',expectedVersion:1,document:candidate,publish:false});
+    assert.equal(saved.status,200,'Save remains available for repairing old drafts');
+    assert.equal(f.db.prepare('SELECT published_content_json FROM pages WHERE id=?').get('b').published_content_json,original);
+    const beforeRevisions=f.db.prepare('SELECT COUNT(*) AS n FROM editor_revisions WHERE page_id=?').get('b').n;
+    const beforeAudit=f.db.prepare('SELECT COUNT(*) AS n FROM audit_log').get().n;
+    assert.equal(validatePublishDocument(candidate,'b'),specimen.error,'the validation result is a controlled error code');
+    const rejected=await f.editor('editor','other','POST',{pageId:'b',expectedVersion:2,document:candidate,publish:true});
+    assert.equal(rejected.status,409,'malformed authored JSON cannot produce HTTP 500');
+    assert.equal((await rejected.json()).error.code,specimen.error);
+    assert.equal(f.db.prepare('SELECT published_content_json FROM pages WHERE id=?').get('b').published_content_json,original);
+    assert.equal(f.db.prepare('SELECT COUNT(*) AS n FROM editor_revisions WHERE page_id=?').get('b').n,beforeRevisions);
+    assert.equal(f.db.prepare('SELECT COUNT(*) AS n FROM audit_log').get().n,beforeAudit);
+
+    const repaired=structuredClone(candidate);
+    repaired.pages.b.nodes.content.props[specimen.field]=specimen.fixed;
+    assert.equal(validatePublishDocument(repaired,'b'),null,'a valid repaired value must retain the existing Publish contract');
+    const published=await f.editor('editor','other','POST',{pageId:'b',expectedVersion:2,document:repaired,publish:true});
+    assert.equal(published.status,200,'Publish succeeds after explicit repair');
+    const live=JSON.parse(f.db.prepare('SELECT published_content_json FROM pages WHERE id=?').get('b').published_content_json);
+    assert.equal(live.pages.b.nodes.content.props[specimen.field],specimen.fixed);
+  });
+}
 
 
 test('background media UUID parity: draft Save stays private; invalid style/responsive IDs cannot Publish',async t=>{
