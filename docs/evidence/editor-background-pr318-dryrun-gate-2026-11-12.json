@@ -1,0 +1,75 @@
+{
+  "schema": "sanci9517.release-gate-evidence.v1",
+  "date": "2026-11-12",
+  "plan_item": "77.44.7.D",
+  "status": "OPEN_NOT_CERTIFIED",
+  "pr_url": "https://github.com/sanci9517/sanci9517/pull/318",
+  "pr_number": 318,
+  "pr_head": "dba6a9423f3345ba58e77b792199f9ba1feece09",
+  "runtime_fix_commit": "41f96fb27470bd78b21c4d06a93320fc5371c874",
+  "workflow_file": ".github/workflows/worker-release-dry-run.yml",
+  "workflow_commit": "dba6a9423f3345ba58e77b792199f9ba1feece09",
+  "hosted_ci": {
+    "previous_runtime_fix_commit": {
+      "editor_core": {
+        "id": 43200625653,
+        "conclusion": "success"
+      },
+      "f0": {
+        "id": 43200625419,
+        "conclusion": "success"
+      },
+      "twitch": {
+        "id": 43200625852,
+        "conclusion": "success"
+      }
+    },
+    "new_head": {
+      "worker_dry_run": {
+        "run_id": 43207888455,
+        "conclusion": "success",
+        "step": "Wrangler deploy dry-run (never publish)",
+        "step_conclusion": "success",
+        "command": "npx --no-install wrangler deploy --dry-run --outdir \"$RUNNER_TEMP/sanci-worker-dry-run\""
+      },
+      "f0": {
+        "id": 43207888449,
+        "conclusion": "success"
+      },
+      "twitch": {
+        "id": 43207888401,
+        "conclusion": "success"
+      },
+      "editor_core": {
+        "id": 43207888369,
+        "status": "in_progress",
+        "conclusion": null
+      }
+    }
+  },
+  "d1_remote_preflight": {
+    "sql": "SELECT name FROM d1_migrations ORDER BY name;",
+    "result_count": 34,
+    "last_migration": "0028_media_archive.sql",
+    "rows_read": 34,
+    "rows_written": 0,
+    "changes": 0,
+    "changed_db": false
+  },
+  "production": {
+    "deployed_fix": false,
+    "existing_worker_version": "a65c11f2-6799-44b1-8d88-8aa70e348b65",
+    "existing_worker_traffic_percent": 100,
+    "post_change_health": "NOT_RUN",
+    "post_change_asset_hash": "NOT_RUN"
+  },
+  "constraints": {
+    "cost_authorization_huf": 0,
+    "standard_public_repo_runner": true,
+    "save_publish_separate": true,
+    "editor_manual_acceptance": "DEFERRED",
+    "no_production_d1_write": true,
+    "no_production_r2_delete": true
+  },
+  "next_step": "Check exact-SHA Editor Core completion, then normal merge and automatic deploy:safe verification."
+}
