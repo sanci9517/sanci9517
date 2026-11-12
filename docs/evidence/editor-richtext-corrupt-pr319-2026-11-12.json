@@ -1,0 +1,70 @@
+{
+  "schema": "sanci9517.dev-evidence.v1",
+  "date": "2026-11-12",
+  "plan_item": "77.44.7.D",
+  "status": "OPEN_NOT_CERTIFIED",
+  "problem": "Malformed JSON-compatible published Rich Text rows, cells, text and marks can throw in public page renderer.",
+  "isolated_old_code_reproduction": [
+    {
+      "case": "String({toString:null})",
+      "result": "TypeError"
+    },
+    {
+      "case": "{includes:null}.includes('bold')",
+      "result": "TypeError"
+    },
+    {
+      "case": "null.cells",
+      "result": "TypeError"
+    },
+    {
+      "case": "{map:null}.map(...)",
+      "result": "TypeError"
+    }
+  ],
+  "branch": "fix/77-44-7-d-corrupt-richtext-public-20261112",
+  "pr": {
+    "number": 319,
+    "url": "https://github.com/sanci9517/sanci9517/pull/319",
+    "state": "open",
+    "draft": true,
+    "merged": false
+  },
+  "commits": {
+    "runtime": "6c4b76ea7d67f52f2f5d4a0f6aebfca17f597450",
+    "test": "33c6dbcbb1006a1a8e19dd1a3e8e11fdd5269d81"
+  },
+  "changed_files": [
+    "public/assets/page-renderer.js",
+    "tests/browser/editor-richtext-save-publish.test.js"
+  ],
+  "tests": {
+    "v8_parser": "PASS",
+    "hosted_f0": "IN_PROGRESS",
+    "hosted_twitch": "IN_PROGRESS",
+    "hosted_editor_core": "IN_PROGRESS",
+    "hosted_editor_core_id": 43210747102,
+    "wrangler_dry_run": "NOT_RUN",
+    "remote_d1_preflight_for_pr319": "NOT_RUN",
+    "production_post_merge": "NOT_RUN",
+    "exact_source_old_vs_new": {
+      "result": "PASS",
+      "old_malformed_snapshot": "TypeError: Cannot read properties of null (reading 'cells')",
+      "new_malformed_snapshot": {
+        "contains_table_header": true,
+        "contains_followup_paragraph": true,
+        "leaks_object_string": false
+      },
+      "valid_snapshot_byte_identical": true,
+      "method": "Extract richTextHtml from exact GitHub baseline and PR branch, inject same dependencies, execute deterministic inputs; no actual browser used"
+    }
+  },
+  "constraints": {
+    "save_and_publish_separate": true,
+    "d1_production_writes": 0,
+    "r2_production_deletes": 0,
+    "new_cost_authorized_huf": 0,
+    "editor_manual_acceptance": "DEFERRED"
+  },
+  "next": "Finish PR #318 independent release; require new exact-head CI and dry-run for PR #319 before any merge/deploy."
+}

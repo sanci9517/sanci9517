@@ -546,9 +546,8 @@ test('corrupt saved Rich Text rows and inline values do not abort the public pag
     }catch{res.writeHead(404).end();}
   });
   await new Promise(done=>server.listen(0,'127.0.0.1',done));
-  t.after(()=>new Promise(done=>server.close(done)));
   const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||(existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined),args:['--no-sandbox']});
-  t.after(()=>browser.close());
+  t.after(async()=>{await browser.close();await new Promise(done=>server.close(done));});
   const viewer=await browser.newPage({viewport:{width:1366,height:900}});
   const errors=[];viewer.on('pageerror',err=>errors.push(err.message));
   await viewer.goto('http://127.0.0.1:'+server.address().port+'/p/test');
