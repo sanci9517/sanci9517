@@ -507,9 +507,9 @@ test('actual Inspector keeps unsaved Rich Text through Ctrl+S, reload and separa
 test('corrupt saved Rich Text rows and inline values do not abort the public page',async t=>{
   const state=createEditorState(createDocument(undefined,{modern:true}));
   const pageId=state.document.activePageId;
-  execute(state,{type:'element.add',payload:{type:NODE_TYPES.RICHTEXT}});
+  execute(state,{type:'element.add',payload:{type:NODE_TYPES.RICHTEXT,parentId:state.document.pages[pageId].rootId}});
   const richId=state.selection.primaryId;
-  execute(state,{type:'element.add',payload:{type:NODE_TYPES.HEADING}});
+  execute(state,{type:'element.add',payload:{type:NODE_TYPES.HEADING,parentId:state.document.pages[pageId].rootId}});
   const headingId=state.selection.primaryId;
   const published=state.document.pages[pageId];
   published.nodes[headingId].props={...published.nodes[headingId].props,text:'A publikus oldal tovább működik'};
