@@ -433,8 +433,14 @@ test('structured Inspector editing survives Save, Publish and public interaction
   for(const node of [make('locked-focus',undefined,'list',true),make('minimum-list',{version:1,ordered:false,items:['One']}),make('maximum-list',{version:1,ordered:false,items:Array(40).fill('One')}),make('minimum-table',{version:1,rows:[['Header']]},'table'),make('maximum-table',{version:1,rows:[Array(12).fill('Header')]},'table')]){
    mount(node,()=>{calls++;return true;});for(const disabled of host.querySelectorAll('button:disabled'))disabled.click();
   }
-  checks.disabled=calls===0;host.remove();outside.remove();return checks;
+  checks.disabled=calls===0;
+  const capRows={version:1,rows:Array.from({length:40},(_,i)=>[i===0?'Fejléc':'Sor '+i])};
+  mount(make('max-table-rows',capRows,'table'),()=>{calls++;return true;});
+  checks.tableRowLimit=button('add-row')?.disabled===true&&
+    [...host.querySelectorAll('[data-structured-action="insert-row"]')].length===40&&
+    [...host.querySelectorAll('[data-structured-action="insert-row"]')].every(el=>el.disabled);
+  host.remove();outside.remove();return checks;
  });
- assert.deepEqual(focusGuards,{rejected:true,newerFocus:true,differentNode:true,sameNodeNewRender:true,closedPanel:true,programmatic:true,newestAction:true,disabled:true});
+ assert.deepEqual(focusGuards,{rejected:true,newerFocus:true,differentNode:true,sameNodeNewRender:true,closedPanel:true,programmatic:true,newestAction:true,disabled:true,tableRowLimit:true});
  assert.deepEqual(errors,[]);
 });
