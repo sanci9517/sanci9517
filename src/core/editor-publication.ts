@@ -67,8 +67,10 @@ export function hasAbsoluteMediaLibraryUrl(value:unknown,depth=0):boolean{
    if(!(typeof (value as Record<string,unknown>)[override]==='string'&&ASSET_ID.test((value as Record<string,string>)[override]))){
     try{
      const normalized=safeMediaUrl(item);
-     if(normalized.startsWith('https:')){
-      const rawPath=new URL(normalized).pathname;
+     if(!normalized.startsWith('/')){
+      const url=new URL(normalized);
+      if(url.protocol!=='https:')continue;
+      const rawPath=url.pathname;
       const pathname=decodedMediaPath(rawPath);
       if(pathname==='/media'||pathname?.startsWith('/media/')||isPrivateMediaPath(rawPath))return true;
      }

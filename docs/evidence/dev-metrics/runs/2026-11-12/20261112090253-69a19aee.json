@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261112090253-69a19aee",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-12T09:02:53.315Z",
+  "finished_at": "2026-11-12T09:05:44.242Z",
+  "wall_seconds": 171,
+  "paused_seconds": 0,
+  "measured_seconds": 171,
+  "status": "pass",
+  "kind": "mixed",
+  "summary": "HTTPS scheme case no longer bypasses media-origin preflight; red/green tests and release checks passed",
+  "evidence": [
+    "docs/evidence/publication-https-scheme-case-77-44-7-d-2026-11-12.json"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "3a4c3182b834bb9592ee451383c1a327e400c9aa",
+  "finished_revision": "3a4c3182b834bb9592ee451383c1a327e400c9aa",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
