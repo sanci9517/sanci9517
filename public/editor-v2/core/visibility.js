@@ -42,7 +42,7 @@ export function getNodeVisibilityState(page,nodeId,device='desktop'){
  */
 export function collectVisibleDescendants(page,device='desktop'){
   const nodes=page?.nodes??{};
-  const visible=[],seen=new Set();
+  const visible=[],seen=new Set([page?.rootId]);
   const visit=id=>{
     if(seen.has(id))return;
     seen.add(id);
