@@ -9,9 +9,22 @@
     "number": 320,
     "url": "https://github.com/sanci9517/sanci9517/pull/320",
     "branch": "fix/77-44-7-d-malformed-public-text-links-20261112",
-    "head_commit": "e16a04978140a6284b79bcd3b3d5ce470aa4cc9a",
+    "head_commit": "987e3e81d993c41da11b9ad5f8af858443f1f3aa",
     "state": "draft",
-    "merged": false
+    "merged": false,
+    "reconciled_with_main": {
+      "merge_commit": "987e3e81d993c41da11b9ad5f8af858443f1f3aa",
+      "parents": [
+        "e16a04978140a6284b79bcd3b3d5ce470aa4cc9a",
+        "96b3ece213b1d5a357224c1532749b46e36ab592"
+      ],
+      "preserved_guards": [
+        "backgroundAssetId",
+        "Rich Text",
+        "CTA/link"
+      ],
+      "force": false
+    }
   },
   "runtime_commit": "5559f8a01736fec6013f374d5898388f66ebaef5",
   "files": [
@@ -52,37 +65,36 @@
     },
     "hosted_ci": {
       "editor_core": {
-        "id": 43217720305,
+        "id": 43219545462,
         "status": "in_progress",
         "conclusion": null
       },
       "f0": {
-        "id": 43217721034,
-        "status": "in_progress",
-        "conclusion": null
+        "id": 43219545546,
+        "status": "completed",
+        "conclusion": "success"
       },
       "twitch": {
-        "id": 43217720319,
-        "status": "in_progress",
-        "conclusion": null
+        "id": 43219545281,
+        "status": "completed",
+        "conclusion": "success"
       },
       "worker_dry_run": {
-        "id": 43217720329,
-        "status": "in_progress",
-        "conclusion": null
+        "id": 43219545288,
+        "status": "completed",
+        "conclusion": "success"
       }
     }
   },
   "release": {
-    "state": "NOT_MERGED_NOT_DEPLOYED",
+    "state": "DRAFT_NOT_MERGED_NOT_DEPLOYED",
     "post_merge_cloudflare_build": "NOT_RUN",
     "post_merge_worker_version": "NOT_RUN",
     "remote_d1_select_preflight_for_this_pr": "NOT_RUN",
     "production_http_health": "NOT_RUN",
     "production_asset_hash": "NOT_RUN",
     "blocked_by": [
-      "exact-head required CI pending",
-      "PR #319 independently modifies same public renderer; reconcile changes before merge"
+      "exact PR320 HEAD editor-core 43219545462 still in progress"
     ]
   },
   "constraints": {

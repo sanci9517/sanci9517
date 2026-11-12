@@ -1,0 +1,78 @@
+{
+  "schema": "sanci9517.release-evidence.v1",
+  "date": "2026-11-12",
+  "item": "77.44.7.D",
+  "status": "PARTIAL_RELEASE_VERIFIED",
+  "pr": {
+    "number": 319,
+    "url": "https://github.com/sanci9517/sanci9517/pull/319",
+    "head": "bdb68846018197eaae7f729a4e87bd50fdb04116",
+    "merge": "96b3ece213b1d5a357224c1532749b46e36ab592",
+    "parents": [
+      "e038d9070ed60a178b2f851ff69bcfb60cbbed99",
+      "bdb68846018197eaae7f729a4e87bd50fdb04116"
+    ],
+    "merge_method": "merge"
+  },
+  "github": {
+    "editor_core": {
+      "id": 43214843055,
+      "conclusion": "success"
+    },
+    "f0": {
+      "id": 43214842673,
+      "conclusion": "success"
+    },
+    "twitch": {
+      "id": 43214842796,
+      "conclusion": "success"
+    },
+    "worker_dry_run": {
+      "id": 43214842650,
+      "conclusion": "success"
+    },
+    "production_source_smoke": {
+      "id": 43219167114,
+      "conclusion": "success",
+      "head_sha": "96b3ece213b1d5a357224c1532749b46e36ab592",
+      "health_http_code": 200,
+      "expected_renderer_sha256": "98df1e5a0a60d36e97e4099c141cc8ff4185799491ec2629052eb10d0748cd39",
+      "live_renderer_sha256": "98df1e5a0a60d36e97e4099c141cc8ff4185799491ec2629052eb10d0748cd39",
+      "success_attempt": 3
+    }
+  },
+  "cloudflare": {
+    "build_uuid": "7adf558c-5b8c-4364-ae81-14b8a71575a2",
+    "commit": "96b3ece213b1d5a357224c1532749b46e36ab592",
+    "build_outcome": "success",
+    "build_command": "npm run typecheck",
+    "deploy_command": "npm run deploy:safe",
+    "migration_gate": "success",
+    "deployment_id": "f3575a4c-eb08-4b32-a11e-6abe99393296",
+    "worker_version": "716e4bea-ff2e-404a-b5c9-3374ea1f608a",
+    "traffic_percent": 100
+  },
+  "d1": {
+    "preflight_and_postflight_sql": "SELECT name FROM d1_migrations ORDER BY name;",
+    "migration_rows": 34,
+    "last": "0028_media_archive.sql",
+    "rows_written": 0,
+    "changes": 0,
+    "changed_db": false
+  },
+  "constraints": {
+    "additional_cost_authorized_huf": 0,
+    "production_d1_writes": false,
+    "production_d1_migrations": false,
+    "production_r2_deletes": false,
+    "save_publish_separate": true,
+    "editor_full_manual_acceptance": "DEFERRED"
+  },
+  "followup_pr": {
+    "number": 320,
+    "head": "987e3e81d993c41da11b9ad5f8af858443f1f3aa",
+    "state": "draft",
+    "editor_core_run": 43219545462,
+    "editor_core_status": "in_progress"
+  }
+}

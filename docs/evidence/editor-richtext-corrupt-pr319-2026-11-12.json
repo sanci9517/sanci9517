@@ -2,7 +2,7 @@
   "schema": "sanci9517.dev-evidence.v1",
   "date": "2026-11-12",
   "plan_item": "77.44.7.D",
-  "status": "OPEN_NOT_CERTIFIED",
+  "status": "PARTIAL_RELEASE_VERIFIED",
   "problem": "Malformed JSON-compatible published Rich Text rows, cells, text and marks can throw in public page renderer.",
   "isolated_old_code_reproduction": [
     {
@@ -26,9 +26,9 @@
   "pr": {
     "number": 319,
     "url": "https://github.com/sanci9517/sanci9517/pull/319",
-    "state": "open",
-    "draft": true,
-    "merged": false,
+    "state": "merged",
+    "draft": false,
+    "merged": true,
     "current_head": "bdb68846018197eaae7f729a4e87bd50fdb04116",
     "reconciled_with_main": {
       "merge_commit": "69f50593267a2c5517ba22a845af980f9ed313d2",
@@ -36,7 +36,8 @@
       "preserved_pr318_background_guard": true,
       "preserved_pr319_richtext_guard": true,
       "forced_update": false
-    }
+    },
+    "merge_sha": "96b3ece213b1d5a357224c1532749b46e36ab592"
   },
   "commits": {
     "runtime": "6c4b76ea7d67f52f2f5d4a0f6aebfca17f597450",
@@ -51,11 +52,11 @@
     "v8_parser": "PASS",
     "hosted_f0": "PASS",
     "hosted_twitch": "PASS",
-    "hosted_editor_core": "IN_PROGRESS",
+    "hosted_editor_core": "PASS",
     "hosted_editor_core_id": 43210747102,
     "wrangler_dry_run": "PASS",
     "remote_d1_preflight_for_pr319": "PASS",
-    "production_post_merge": "NOT_RUN",
+    "production_post_merge": "PASS_WITH_CONTROL_PLANE_AND_REAL_HTTP",
     "exact_source_old_vs_new": {
       "result": "PASS",
       "old_malformed_snapshot": "TypeError: Cannot read properties of null (reading 'cells')",
@@ -81,19 +82,19 @@
     },
     "exact_head_editor_core": {
       "run_id": 43214843055,
-      "status": "in_progress",
-      "conclusion": null
+      "status": "completed",
+      "conclusion": "success"
     },
     "production_source_smoke": {
-      "status": "NOT_RUN",
-      "trigger": "v2/foundation runtime push after merge",
-      "checks": [
-        "GET /api/health HTTP 200",
-        "GET /assets/page-renderer.js SHA-256 = checkout source"
-      ],
-      "repository_workflow": ".github/workflows/worker-production-source-smoke.yml",
-      "no_credentials": true,
-      "no_mutations": true
+      "run_id": 43219167114,
+      "status": "completed",
+      "conclusion": "success",
+      "source_commit": "96b3ece213b1d5a357224c1532749b46e36ab592",
+      "health_http_code": 200,
+      "expected_renderer_sha256": "98df1e5a0a60d36e97e4099c141cc8ff4185799491ec2629052eb10d0748cd39",
+      "live_renderer_sha256": "98df1e5a0a60d36e97e4099c141cc8ff4185799491ec2629052eb10d0748cd39",
+      "matched_on_attempt": 3,
+      "first_two_attempts": "old renderer SHA shown before deploy completed"
     },
     "production_d1_preflight": {
       "sql": "SELECT name FROM d1_migrations ORDER BY name;",
@@ -120,6 +121,22 @@
     "health_and_asset_hash": {
       "status": "UNVERIFIED",
       "blocker": "No current direct HTTP GET; container DNS and web fetch unavailable"
+    },
+    "production_worker": {
+      "build_uuid": "7adf558c-5b8c-4364-ae81-14b8a71575a2",
+      "build_outcome": "success",
+      "deployment_id": "f3575a4c-eb08-4b32-a11e-6abe99393296",
+      "worker_version": "716e4bea-ff2e-404a-b5c9-3374ea1f608a",
+      "traffic_percent": 100,
+      "command": "npm run deploy:safe"
+    },
+    "production_d1_postflight": {
+      "sql": "SELECT name FROM d1_migrations ORDER BY name;",
+      "records": 34,
+      "last": "0028_media_archive.sql",
+      "rows_written": 0,
+      "changes": 0,
+      "changed_db": false
     }
   },
   "constraints": {
@@ -129,5 +146,5 @@
     "new_cost_authorized_huf": 0,
     "editor_manual_acceptance": "DEFERRED"
   },
-  "next": "Wait for exact-head Editor Core 43214843055 PASS; do not merge while in_progress; release only after all gates."
+  "next": "Continue PR #320 exact-head CI; if full PASS, new SELECT-only preflight, normal merge and automatic deploy with smoke."
 }
