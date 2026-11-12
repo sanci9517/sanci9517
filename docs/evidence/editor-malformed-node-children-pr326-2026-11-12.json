@@ -1,0 +1,49 @@
+{
+  "canonical_item": "77.44.7.D",
+  "date": "2026-11-12",
+  "status": "DRAFT / NOT_CERTIFIED",
+  "defect": "persisted non-array node.children / non-primitive child IDs throw in public page render and visibility traversal; invalid root produces full 404",
+  "original_sources": {
+    "public/assets/page-renderer.js": "2855d14689545cf81826c2b7ca01cd86b04bab32",
+    "public/editor-v2/core/visibility.js": "5a296bb857e783e748ef7069a1bd0cf79872e3b8",
+    "tests/browser/editor-malformed-public-text-links.test.js": "918759e703dc0fa0b2c7ca0f3c3de1fd3fb19ec3"
+  },
+  "isolated_reproduction": {
+    "badArrayMapTypeError": true,
+    "badObjectAsPropertyKeyTypeError": true,
+    "safeValidIds": [
+      "a",
+      "b"
+    ],
+    "badRootIds": [],
+    "outcome": "PASS (isolated JS only)"
+  },
+  "changes": [
+    "Shared safeNodeChildIds in the existing visibility module",
+    "Public root and nested node rendering consume child IDs safely",
+    "Canvas/public visible descendants consume the same helper",
+    "Real Chromium fixture checks malformed IDs and non-array root/child with no mutation"
+  ],
+  "tests": {
+    "real_chromium": "PENDING CI",
+    "full_editor_core": "PENDING CI",
+    "f0": "PENDING CI",
+    "twitch": "PENDING CI",
+    "wrangler_dry_run": "PENDING CI"
+  },
+  "deployment": {
+    "merged": false,
+    "worker_deployed": false,
+    "production_source_hash_verified": false
+  },
+  "restrictions": {
+    "save_publish_separate": true,
+    "production_d1_mutation_forbidden": true,
+    "r2_deletion_forbidden": true,
+    "paid_spending_authorized": false
+  },
+  "limitations": [
+    "No complete checked-out repository in this connector workspace; isolated JS reproduction is not full browser execution.",
+    "No dev-metrics work hours fabricated; actual Codex CLI not available in this session."
+  ]
+}
