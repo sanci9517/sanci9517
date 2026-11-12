@@ -503,3 +503,60 @@ test('actual Inspector keeps unsaved Rich Text through Ctrl+S, reload and separa
   for(const [tag,text] of [['s','Hello'],['sub','fresh'],['sup','Inspector']])
     assert.equal(await publicTab.locator(`.visual-richtext ${tag}`).textContent(),text,`explicit Publish renders ${tag}`);
 });
+
+test('corrupt saved Rich Text rows and inline values do not abort the public page',async t=>{
+  const state=createEditorState(createDocument(undefined,{modern:true}));
+  const pageId=state.document.activePageId;
+  execute(state,{type:'element.add',payload:{type:NODE_TYPES.RICHTEXT}});
+  const richId=state.selection.primaryId;
+  execute(state,{type:'element.add',payload:{type:NODE_TYPES.HEADING}});
+  const headingId=state.selection.primaryId;
+  const published=state.document.pages[pageId];
+  published.nodes[headingId].props={...published.nodes[headingId].props,text:'A publikus oldal tovább működik'};
+  published.nodes[richId].props={...published.nodes[richId].props,richText:{
+    type:'richtext-document',schemaVersion:1,blocks:[
+      null,
+      {type:'table',rows:[
+        null,
+        {cells:[
+          null,
+          {header:true,children:[{type:'text',text:'Biztonságos táblázatcella',marks:{includes:null}}]},
+          {children:[{type:'text',text:{toString:null},marks:[]}]}
+        ]},
+        {cells:{map:null}}
+      ]},
+      {type:'paragraph',children:[null,{type:'text',text:'Szöveg a sérült adatok után'}]}
+    ]
+  }};
+  let writeRequests=0;
+  const server=createServer(async(req,res)=>{
+    const url=new URL(req.url,'http://localhost');
+    const json=data=>{res.setHeader('content-type','application/json');res.end(JSON.stringify(data));};
+    if(!['GET','HEAD'].includes(req.method))writeRequests++;
+    if(url.pathname==='/api/public/pages')return json({ok:true,data:{id:pageId,slug:'test',title:'Rich Text',description:'',content:published}});
+    if(url.pathname==='/api/public/navigation')return json({ok:true,data:{items:[]}});
+    if(url.pathname==='/api/integrations/twitch/connection')return json({ok:true,data:{connected:false}});
+    if(url.pathname.startsWith('/api/'))return json({ok:true,data:{siteName:'Rich Text'}});
+    const asset=url.pathname==='/p/test'?'/visual-page.html':url.pathname;
+    const file=resolve(root,'.'+asset);
+    if(!file.startsWith(root+'/'))return res.writeHead(403).end();
+    try{
+      res.setHeader('content-type',{'.html':'text/html','.js':'text/javascript','.css':'text/css'}[extname(file)]||'application/octet-stream');
+      res.end(await readFile(file));
+    }catch{res.writeHead(404).end();}
+  });
+  await new Promise(done=>server.listen(0,'127.0.0.1',done));
+  t.after(()=>new Promise(done=>server.close(done)));
+  const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||(existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined),args:['--no-sandbox']});
+  t.after(()=>browser.close());
+  const viewer=await browser.newPage({viewport:{width:1366,height:900}});
+  const errors=[];viewer.on('pageerror',err=>errors.push(err.message));
+  await viewer.goto('http://127.0.0.1:'+server.address().port+'/p/test');
+  const heading=viewer.locator('.visual-heading[data-node-id="'+headingId+'"]');
+  await heading.waitFor({timeout:20000});
+  assert.equal((await heading.textContent()).trim(),'A publikus oldal tovább működik');
+  assert.equal(await viewer.locator('.visual-richtext th').first().textContent(),'Biztonságos táblázatcella');
+  assert.ok((await viewer.locator('.visual-richtext').textContent()).includes('Szöveg a sérült adatok után'));
+  assert.deepEqual(errors,[],'corrupt stored Rich Text must not cause an uncaught browser error');
+  assert.equal(writeRequests,0,'public rendering must never Save or Publish');
+});
