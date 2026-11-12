@@ -14,6 +14,7 @@ const IMAGE_REFERENCE_KEYS=new Set(['backgroundAssetId','imageAssetId','posterAs
 const ROUTE_ASSET_ID=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const ASSET_ID=ROUTE_ASSET_ID;
 const INVALID_MEDIA_REFERENCE='invalid-media-route';
+const isPrivateMediaPath=(pathname:string)=>pathname==='/api/admin/media'||pathname.startsWith('/api/admin/media/');
 
 function renderedPublicationValue(parent:Record<string,unknown>,key:string,value:unknown):unknown{
  if(key==='props'&&(parent.type==='gallery'||parent.type==='carousel')&&value&&typeof value==='object'){
@@ -41,6 +42,7 @@ function localMediaUrlAssetId(value:unknown,allowedOrigins:ReadonlySet<string>):
    if(url.protocol!=='https:'||!allowedOrigins.has(url.origin))return null;
   }
   const pathname=url.pathname.replace(/\/+$/,'');
+  if(isPrivateMediaPath(pathname))return INVALID_MEDIA_REFERENCE;
   if(pathname==='/media'||pathname.startsWith('/media/')){
    const match=pathname.match(/^\/media\/([^/]+)$/);
    return match&&ROUTE_ASSET_ID.test(match[1])?match[1].toLowerCase():INVALID_MEDIA_REFERENCE;
@@ -60,7 +62,7 @@ export function hasAbsoluteMediaLibraryUrl(value:unknown,depth=0):boolean{
      const normalized=safeMediaUrl(item);
      if(normalized.startsWith('https:')){
       const pathname=new URL(normalized).pathname;
-      if(pathname==='/media'||pathname.startsWith('/media/'))return true;
+      if(pathname==='/media'||pathname.startsWith('/media/')||isPrivateMediaPath(pathname))return true;
      }
     }catch{ /* Invalid sources cannot authorize or require a tenant domain. */ }
    }

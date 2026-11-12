@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261112040436-d55bdf8b",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-12T04:04:36.469Z",
+  "finished_at": "2026-11-12T04:06:18.683Z",
+  "wall_seconds": 102,
+  "paused_seconds": 0,
+  "measured_seconds": 102,
+  "status": "pass",
+  "kind": "mixed",
+  "summary": "Publication private media URL rejection with API and Save-Publish integration regressions",
+  "evidence": [
+    "tests/web013-tenant-pages-editor.test.js"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "c16db48c116e24bf8d8dbf651115138c841ec781",
+  "finished_revision": "c16db48c116e24bf8d8dbf651115138c841ec781",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

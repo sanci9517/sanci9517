@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "plan_point": "77.44.7.D",
+  "status": "LOCAL_CHECKS_PASS_RELEASE_PENDING",
+  "finding": "The publication media scanner only treated /media paths as reserved. Authored image/video/poster sources could publish a local private /api/admin/media editor preview URL, which cannot serve a public viewer.",
+  "red_test": "tests/media-api.test.js: 53 pass, 1 fail; validatePublicationAssets returned null instead of MEDIA_NOT_FOUND for an image src pointing to /api/admin/media?id=...",
+  "change": "The publication scanner rejects private admin media paths for local and verified HTTPS alias URLs. The absolute-URL origin preflight includes this route; a valid selected assetId still overrides a stale fallback. Save and Publish remain separate.",
+  "checks": {
+    "media_api_direct": "PASS 54/54 after fix",
+    "tenant_pages_editor": "PASS 17/17; Save preserves draft, Publish and initial publication reject local/verified-alias private previews, prior live snapshot unchanged",
+    "media": "PASS 5/5 files",
+    "editor": "PASS 15/15 files and 3/3 subreaper cases",
+    "web013": "PASS 68/68 with local loopback permission",
+    "typecheck": "PASS",
+    "plan_contract": "PASS 13/13",
+    "canonical_plan": "PASS 13 master files, 396 mappings; acceptance NOT_CERTIFIED",
+    "feature_traceability": "PASS 396 mappings after refresh",
+    "active_plan_audit": "77.44.7.D OPEN / NOT_CERTIFIED",
+    "production_d1_preflight": "SELECT name FROM d1_migrations ORDER BY name: 34 rows read; changes=0, rows_written=0, changed_db=false; latest 0028_media_archive.sql",
+    "wrangler_dry_run": "PASS Wrangler 4.130.0, 171 public assets, no upload",
+    "git_diff_check": "PASS"
+  },
+  "dev_metrics_run": "docs/evidence/dev-metrics/runs/2026-11-12/20261112040436-d55bdf8b.json",
+  "release": "Pending exact-SHA push, CI, Cloudflare build and direct traffic/health/unchanged-asset hash checks",
+  "cost": "No paid service, production D1 mutation/migration, or R2 deletion."
+}
