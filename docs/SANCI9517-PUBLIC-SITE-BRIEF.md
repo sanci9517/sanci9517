@@ -63,7 +63,7 @@ Csak tervezési megfigyelések, NEM automatikus másolási jogok. Az itt rögzí
 
 **Identitás:** SANCI szójel + a 2026-11-09-én elfogadott, három összefonódó ívből és három külső csomópontból álló saját embléma. NEM geometrikus S, NEM kötelező 9517 a logóban. A vizuális világ és a leendő merch ugyanebből a jelből és ugyanebből a filmvilágból származik.
 
-**Világ:** mély éjsötét, grafit, finom ezüst/fémes anyagszerűség, vörös fényút a ködös távoli fenyves/hegygerinc kompozícióban, ritka hűvös ellenfény. Paletta: \`#090C12\` háttér; \`#141A25\` grafit; \`#1C2633\` emelt kártya; \`#344253\` szegély; \`#F5F7FB\` fehér szöveg; \`#B8C4D3\` mellékszöveg; \`#E14D61\` visszafogott CTA; \`#8D253B\` fényút; \`#78B8D4\` ritka távolfény; \`#FF4C64\` csak tényleges LIVE állapothoz, felirattal. A régi cián/lila „signal” paletta és alternatív design-név nem használható.
+**Világ:** mély éjsötét, grafit, finom ezüst/fémes anyagszerűség, vörös fényút a ködös távoli fenyves/hegygerinc kompozícióban, ritka hűvös ellenfény. Paletta: `#090C12` háttér; `#141A25` grafit; `#1C2633` emelt kártya; `#344253` szegély; `#F5F7FB` fehér szöveg; `#B8C4D3` mellékszöveg; `#E14D61` visszafogott CTA; `#8D253B` fényút; `#78B8D4` ritka távolfény; `#FF4C64` csak tényleges LIVE állapothoz, felirattal. A régi cián/lila „signal” paletta és alternatív design-név nem használható.
 
 **Karakteres, de nem tolakodó motívum:** opcionális, **hátulról látható, arc nélküli kapucnis alak** a távoli képi világban, vagy csak egy váll-, kapucni-, ujj-, hátprint-részlet. Ruháján a valós elfogadott SANCI szimbólum szerepelhet; nem Sanci arcképe, nem állítunk valós identitást, nincs fegyver, horror, agresszív póz vagy stock/generikus fantasy harcos. A főoldal dominánsa az embléma, nem a figura. Egy nézetben legfeljebb egy domináns merch-utalás; nem minden oldalon kell figura.
 
@@ -158,7 +158,7 @@ Csak tervezési megfigyelések, NEM automatikus másolási jogok. Az itt rögzí
 
 ### 5.6 Rólam — /rolam
 
-**Elv:** a korábbi főoldalra került életrajz erre az oldalra tartozik. Prémium editorial profil: saját portré/illusztráció, címsor, három személyes fejezet, játékpreferenciák, felszerelés teaser, FAQ, kontakt CTA.
+**Elv:** a korábbi főoldalra került életrajz erre az oldalra tartozik. Prémium editorial profil: opcionális, felhasználásra jóváhagyott saját portré vagy eredeti logóalapú illusztráció, címsor, három személyes fejezet, játékpreferenciák, felszerelés teaser, FAQ, kontakt CTA.
 **Publikálható első személyű copy-tervezet (személyes részletek tulajdonosi ellenőrzéssel):**  
 H1: „SZIA, SANCI VAGYOK.”  
 Bevezető: „A játékok nálam sosem csak a győzelemről szólnak. Szeretem azokat a pillanatokat, amiket együtt élünk át — amikor valami váratlan történik, tanulunk egy hibából, vagy egyszerűen csak jókat nevetünk.”  
@@ -461,7 +461,7 @@ Ha valamibe belekezdek, igyekszem minél jobban csinálni. Mindig úgy érzem, l
 5. **Compact icon and avatar:** 16/24/32/48/64/256/512 px teszt és platformonként dokumentált crop.
 6. **Website favicon / OG / streaming cover / watermark:** az elfogadott jelből származtatva, egységes keretekkel, de nem az egész márkaprezentáció képernyőképének ismételt felhasználásával.
 7. **Brand guidelines:** felületi safe area, minimális méret, tiltott nyújtás/forgatás/kombináció, színprofil és dark/light állapot, ha a tényleges kivitelben releváns.
-8. **Közös Médiatár:** a 15. fejezetnek megfelelően a támogatott fájlokat egyetlen kanonikus, hitelesített Admin Médiatárba feltölteni, több oldalon ugyanazzal az asset ID-val újrahasználni; favicon/OG/site-header binding megfelelőségét kódszintű ellenőrzés igazolja.
+8. **Közös Médiatár:** a kanonikus RES/Médiatár szerződésnek megfelelően a támogatott fájlokat egyetlen kanonikus, hitelesített Admin Médiatárba feltölteni, több oldalon ugyanazzal az asset ID-val újrahasználni; favicon/OG/site-header binding megfelelőségét kódszintű ellenőrzés igazolja.
 9. **Saját márka/egyediség ellenőrzése:** a körkörös összefonódó jelek lehetnek hasonlók más védjegyekhez; teljesen egyedi jogi státuszt vagy kizárólagosságot előzetes, valódi ellenőrzés nélkül nem állítunk.
 
 ### 20.2 Work végrehajtási sorrend a jóváhagyás után
@@ -495,7 +495,7 @@ Ha valamibe belekezdek, igyekszem minél jobban csinálni. Mindig úgy érzem, l
 
 **Megtartandó:** mély éjfekete–grafit rétegek, a jóváhagyott körkörös SANCI embléma, egy távoli hegygerinc és ködös erdő, finoman kanyargó saját vörös fényút, ritka hidegkék ellenfény, karakteres SANCI tipográfia, gazdag de nyugodt tér, visszafogott világítás, tiszta szekcióváltás.
 
-**Elkerülendő:** a márkaprezentáció teljes képe mint honlap; előre rajzolt, valójában nem kattintható menük; kapucnis figura/arc/fényképes főszereplő a kezdőoldalon; 20 piros keretes gamer panel; agresszív fényvillogás, kötelező autoplay film, idegen játékscreenshot, jogtalan stock és AI-közhelyes 3D chrome.
+**Elkerülendő:** a márkaprezentáció teljes képe mint honlap; előre rajzolt, valójában nem kattintható menük; arcos vagy túlzottan domináns kapucnis főszereplő a kezdőoldalon (ritka, arc nélküli háttalak megengedett); 20 piros keretes gamer panel; agresszív fényvillogás, kötelező autoplay film, idegen játékscreenshot, jogtalan stock és AI-közhelyes 3D chrome.
 
 **Vizuális állandók:** a jel, a vékony vörös fényív, a grafitfelület arányai, világos tipográfia, azonos sarokritmus, visszafogott mélység és egyetlen akcentus-cél egy blokkon belül. Egy aloldal lehet eltérő kompozíciójú, de nem térhet el a SANCI-világtól.
 
@@ -582,7 +582,7 @@ A Videók pont alatt indokolt rövid másodlagos navigáció: Összes, VOD, Klip
 
 **Desktop 1440x900:** SANCI a bal/harmonikus középső fókuszban, a táj és vörös fényút inkább jobb háttér-kompozíció, a navigáció és CTA valódi html. Következő szekció kezdete már megpillantható a fold alján.  
 **Tablet 1024x768:** 2 oszlop csak ha valóban olvasható, egyébként egymás alá, kurált média 2+1.  
-**Mobil 390x844 és 320x700:** header → kompakt SANCI jel → H1 → max 3 sor lead → valós CTA → rövid mobil-crop táj vagy preview → Most nálam. Nincs arc/kapucnis figura. Mobilon nincs alapértelmezett parallax. Egyoszlopos kártyák, nulla vízszintes scroll.
+**Mobil 390x844 és 320x700:** header → kompakt SANCI jel → H1 → max 3 sor lead → valós CTA → rövid mobil-crop táj vagy preview → Most nálam. Nincs arc; az opcionális kapucnis hátalak mobilon csak zavartalan olvashatósággal maradhat, különben elhagyandó. Mobilon nincs alapértelmezett parallax. Egyoszlopos kártyák, nulla vízszintes scroll.
 
 ## 25. Aloldalak — szerepek, konkrét tartalom, állapotok
 
@@ -712,7 +712,7 @@ A Videók pont alatt indokolt rövid másodlagos navigáció: Összes, VOD, Klip
 
 ## 31. Végrehajtási prompt Work számára a friss jóváhagyással
 
-**Indítószöveg:** „A SANCI9517 Creator Platform aktív v2/foundation ágán dolgozz. Olvasd az AGENTS.md teljes tartalmát és a kanonikus docs/SANCI9517-CREATOR-PLATFORM-PLAN.md MASTER-t, majd a docs/SANCI9517-PUBLIC-SITE-BRIEF.md 20–31. fejezeteit. A felhasználó a sötét, filmes SANCI DARK DEPTH dizájnvilágot, külön a háromkarú közösségi logószimbólumot fogadta el. A weboldal világklasszis, de könnyen kezelhető, külön oldalakra szervezett creator-site legyen; a főoldalon sem arckép, sem hosszú Rólam nem lehet. A hiányzó Editor/Brand Kit/Media/Web funkciókat igazolt gapként, a meglévő MASTER stable ID-jaihoz kösd; ne készíts második Website Engine-t, és ne állíts késznek tervezett funkcionalitást. Készíts külön használható, tiszta logó-asseteket és hero artworkot, egységes menü/footer/site shell dizájnt, szerkeszthető 9 P0 oldalt és valós source/fallback tartalmat a tényleges capability függőségek szerint. A hiányzó funkciók a teljes Visual Editor megfelelő későbbi implementációs szakaszában is készülhetnek. Teszt: mobil/tablet/desktop, keyboard, a11y, reduced-motion, SEO, biztonság, brand/media ID és Save/Publish elválasztás. 0 Ft új költés, semmi kitalált csatorna/szponzor/adat. A végén pontos commit, tényleges tesztek, blokkolók és külön éles státusz magyarul.”  
+**Indítószöveg:** „A SANCI9517 Creator Platform aktív v2/foundation ágán dolgozz. Olvasd az AGENTS.md teljes tartalmát és a kanonikus docs/SANCI9517-CREATOR-PLATFORM-PLAN.md MASTER-t, majd a docs/SANCI9517-PUBLIC-SITE-BRIEF.md 20–32. fejezeteit. A felhasználó a sötét, filmes SANCI DARK DEPTH dizájnvilágot, külön a háromkarú közösségi logószimbólumot fogadta el. A weboldal világklasszis, de könnyen kezelhető, külön oldalakra szervezett creator-site legyen; a főoldalon sem arckép, sem hosszú Rólam nem lehet. A hiányzó Editor/Brand Kit/Media/Web funkciókat igazolt gapként, a meglévő MASTER stable ID-jaihoz kösd; ne készíts második Website Engine-t, és ne állíts késznek tervezett funkcionalitást. Készíts külön használható, tiszta logó-asseteket és hero artworkot, egységes menü/footer/site shell dizájnt, szerkeszthető 9 P0 oldalt és valós source/fallback tartalmat a tényleges capability függőségek szerint. A hiányzó funkciók a teljes Visual Editor megfelelő későbbi implementációs szakaszában is készülhetnek. Teszt: mobil/tablet/desktop, keyboard, a11y, reduced-motion, SEO, biztonság, brand/media ID és Save/Publish elválasztás. 0 Ft új költés, semmi kitalált csatorna/szponzor/adat. A végén pontos commit, tényleges tesztek, blokkolók és külön éles státusz magyarul.”  
 
 **Állapot:** csak tervezés/specifikáció. Nem helyettesíti a MASTER-t. A vizuális referenciát még át kell dolgozni tényleges különálló médiafájlokká; a hiányzó Editor-képességek OPEN státuszúak, és nem szolgálnak ürügyül félkész, nem szerkeszthető éles oldal közzétételére.
 
@@ -750,7 +750,7 @@ Ritka visszatérő, hátulról vagy részletében látott **kitalált** sziluett
 
 ### 32.4 Benchmarkból átvenni, de semmit sem másolni
 
-- **AvidIsOdd:** a saját domain (\`avidisodd.hu\`) és a nyilvános \`avidisodd.hu/store\` út a később külön elérhető merch-struktúrára adhat mintát. Az oldal közvetlen vizuális megnyitása 2026-11-12-én sikertelen, ezért a konkrét designról, színekről, termékekről nem állítunk ellenőrzött tényt. A felhasználónak tetsző hangulat inspiráció, de SANCI-t nem klónozzuk.
+- **AvidIsOdd:** a saját domain (`avidisodd.hu`) és a nyilvános `avidisodd.hu/store` út a később külön elérhető merch-struktúrára adhat mintát. Az oldal közvetlen vizuális megnyitása 2026-11-12-én sikertelen, ezért a konkrét designról, színekről, termékekről nem állítunk ellenőrzött tényt. A felhasználónak tetsző hangulat inspiráció, de SANCI-t nem klónozzuk.
 - **TheVR:** rögtön felfogható élő/menetrend, világos VOD/tematikus oldalak.
 - **Zsozeatya:** önálló felismerhető márkahang és külön tényleges bolt, de nem a karakterét vagy hangerejét másoljuk.
 - **TimTheTatman:** közösségi identitás és később autentikus merch, SANCI-nál végig a stream/videó/közösség az első.
