@@ -1,0 +1,76 @@
+{
+  "schema": "sanci9517.release-evidence.v1",
+  "date": "2026-11-12",
+  "plan_item": "77.44.7.D",
+  "status": "PARTIAL_RELEASE_VERIFIED",
+  "pr": {
+    "number": 320,
+    "url": "https://github.com/sanci9517/sanci9517/pull/320",
+    "head": "987e3e81d993c41da11b9ad5f8af858443f1f3aa",
+    "merge": "ca51e82b358ac13b0f734dfe8444d98042483b0a",
+    "parents": [
+      "b12169405b919140e410317d7cd0126d966c5564",
+      "987e3e81d993c41da11b9ad5f8af858443f1f3aa"
+    ],
+    "method": "merge"
+  },
+  "ci": {
+    "editor_core": {
+      "run": 43219545462,
+      "status": "completed",
+      "conclusion": "success"
+    },
+    "f0": {
+      "run": 43219545546,
+      "status": "completed",
+      "conclusion": "success"
+    },
+    "twitch": {
+      "run": 43219545281,
+      "status": "completed",
+      "conclusion": "success"
+    },
+    "wrangler_dry_run": {
+      "run": 43219545288,
+      "status": "completed",
+      "conclusion": "success"
+    }
+  },
+  "cloudflare": {
+    "build_uuid": "487fc95a-0955-42c3-b902-08f1cb54dae9",
+    "build_outcome": "success",
+    "source_commit": "ca51e82b358ac13b0f734dfe8444d98042483b0a",
+    "deploy_command": "npm run deploy:safe",
+    "deployment_id": "8e420a9d-d314-4b14-904a-c6356f5bfc12",
+    "worker_version": "9efa69db-6258-4f28-8673-b94c71f28d82",
+    "traffic_percent": 100
+  },
+  "d1": {
+    "sql": "SELECT name FROM d1_migrations ORDER BY name;",
+    "preflight_success": true,
+    "postflight_success": true,
+    "rows": 34,
+    "last_migration": "0028_media_archive.sql",
+    "rows_written": 0,
+    "changes": 0,
+    "changed_db": false
+  },
+  "production_smoke": {
+    "run": 43224936907,
+    "job": 131205585309,
+    "status": "completed",
+    "conclusion": "success",
+    "http_health": 200,
+    "expected_sha256": "478a2bc66be3f08e778be8351d42975755dad4860bca9d935c7e8c0faab4f8a2",
+    "actual_sha256": "478a2bc66be3f08e778be8351d42975755dad4860bca9d935c7e8c0faab4f8a2",
+    "match_attempt": 4,
+    "earlier_old_live_sha256": "98df1e5a0a60d36e97e4099c141cc8ff4185799491ec2629052eb10d0748cd39"
+  },
+  "constraints": {
+    "new_spending_authorized_huf": 0,
+    "production_d1_mutations": false,
+    "production_r2_deletions": false,
+    "save_publish_separate": true,
+    "editor_full_manual_acceptance": "DEFERRED"
+  }
+}

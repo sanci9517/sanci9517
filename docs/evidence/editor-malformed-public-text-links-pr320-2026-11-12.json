@@ -10,8 +10,8 @@
     "url": "https://github.com/sanci9517/sanci9517/pull/320",
     "branch": "fix/77-44-7-d-malformed-public-text-links-20261112",
     "head_commit": "987e3e81d993c41da11b9ad5f8af858443f1f3aa",
-    "state": "draft",
-    "merged": false,
+    "state": "merged",
+    "merged": true,
     "reconciled_with_main": {
       "merge_commit": "987e3e81d993c41da11b9ad5f8af858443f1f3aa",
       "parents": [
@@ -24,7 +24,13 @@
         "CTA/link"
       ],
       "force": false
-    }
+    },
+    "draft": false,
+    "merge_commit": "ca51e82b358ac13b0f734dfe8444d98042483b0a",
+    "merge_parents": [
+      "b12169405b919140e410317d7cd0126d966c5564",
+      "987e3e81d993c41da11b9ad5f8af858443f1f3aa"
+    ]
   },
   "runtime_commit": "5559f8a01736fec6013f374d5898388f66ebaef5",
   "files": [
@@ -66,8 +72,8 @@
     "hosted_ci": {
       "editor_core": {
         "id": 43219545462,
-        "status": "in_progress",
-        "conclusion": null
+        "status": "completed",
+        "conclusion": "success"
       },
       "f0": {
         "id": 43219545546,
@@ -87,15 +93,26 @@
     }
   },
   "release": {
-    "state": "DRAFT_NOT_MERGED_NOT_DEPLOYED",
-    "post_merge_cloudflare_build": "NOT_RUN",
-    "post_merge_worker_version": "NOT_RUN",
-    "remote_d1_select_preflight_for_this_pr": "NOT_RUN",
-    "production_http_health": "NOT_RUN",
-    "production_asset_hash": "NOT_RUN",
-    "blocked_by": [
-      "exact PR320 HEAD editor-core 43219545462 still in progress"
-    ]
+    "state": "PRODUCTION_RELEASE_VERIFIED",
+    "build_uuid": "487fc95a-0955-42c3-b902-08f1cb54dae9",
+    "build_source_commit": "ca51e82b358ac13b0f734dfe8444d98042483b0a",
+    "build_outcome": "success",
+    "deployment_id": "8e420a9d-d314-4b14-904a-c6356f5bfc12",
+    "worker_version": "9efa69db-6258-4f28-8673-b94c71f28d82",
+    "traffic_percent": 100,
+    "production_http_health": 200,
+    "production_asset_sha256": "478a2bc66be3f08e778be8351d42975755dad4860bca9d935c7e8c0faab4f8a2",
+    "source_sha256": "478a2bc66be3f08e778be8351d42975755dad4860bca9d935c7e8c0faab4f8a2",
+    "source_smoke_run": 43224936907,
+    "source_smoke_outcome": "success",
+    "source_smoke_match_attempt": 4,
+    "d1": {
+      "migration_rows": 34,
+      "last": "0028_media_archive.sql",
+      "rows_written": 0,
+      "changes": 0,
+      "changed_db": false
+    }
   },
   "constraints": {
     "new_paid_resources": false,

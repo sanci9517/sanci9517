@@ -1,0 +1,69 @@
+{
+  "schema": "sanci9517.dev-evidence.v1",
+  "date": "2026-11-12",
+  "plan_item": "77.44.7.D",
+  "status": "OPEN_NOT_CERTIFIED",
+  "pr": {
+    "number": 321,
+    "url": "https://github.com/sanci9517/sanci9517/pull/321",
+    "branch": "fix/77-44-7-d-malformed-structured-content-20261112",
+    "original_commit": "3de01cfbcaa71a7c17e8e7cab2ac60b637e2fcbd",
+    "reconciled_head": "a693156df76e02f15ea90a91213d0f4f32439d71",
+    "base_merge_parent": "ca51e82b358ac13b0f734dfe8444d98042483b0a",
+    "draft": true,
+    "merged": false
+  },
+  "code": {
+    "changes": [
+      "public/editor-v2/core/element-content.js",
+      "public/editor-v2/tests/element-content.test.js"
+    ],
+    "bug": "Object-shaped legacy values coerced by String(): TypeError on toString:null, or fabricated media URLs; list with one bad item hid valid neighbors.",
+    "fix": "Reject nonstring media URL; render malformed persisted nested object text as empty, retaining safe adjacent items and validation."
+  },
+  "tests": {
+    "isolated_source": {
+      "result": "PASS",
+      "checks": 9,
+      "old_malformed_url": "TypeError",
+      "old_list": "visual-structured-error",
+      "new_url": "",
+      "new_list_keeps_valid_text": true,
+      "new_table_keeps_valid_text": true,
+      "new_gallery_requires_valid_source": true,
+      "good_html_unchanged": true
+    },
+    "unit_regression": {
+      "file": "public/editor-v2/tests/element-content.test.js",
+      "status": "COMMITTED_CI_PENDING"
+    },
+    "github": {
+      "f0": {
+        "id": 43225318705,
+        "status": "in_progress"
+      },
+      "twitch": {
+        "id": 43225318602,
+        "status": "in_progress"
+      },
+      "wrangler_dry_run": {
+        "id": 43225318613,
+        "status": "in_progress"
+      },
+      "editor_core": {
+        "id": 43225318688,
+        "status": "in_progress"
+      }
+    },
+    "production": "NOT_MERGED_NOT_DEPLOYED"
+  },
+  "constraints": {
+    "no_new_cost": true,
+    "save_and_publish_separate": true,
+    "production_d1_write": false,
+    "production_migration": false,
+    "production_r2_delete": false,
+    "manual_editor_acceptance": "DEFERRED"
+  },
+  "next": "Verify all exact-head PR321 CI success, remote SELECT-only D1 preflight; normal merge and Cloudflare automatic deploy; exact-SHA production health/source smoke."
+}
