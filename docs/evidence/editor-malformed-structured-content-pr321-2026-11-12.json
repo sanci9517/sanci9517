@@ -86,7 +86,7 @@
     "production_r2_delete": false,
     "manual_editor_acceptance": "DEFERRED"
   },
-  "next": "Full exact-merge-SHA Editor Core post-merge CI check is pending; subsequent D-point audit found permissive backgroundAssetId Publish pattern vs strict renderer/asset usage UUID shape. Regression test required before any change. D remains OPEN/NOT_CERTIFIED.",
+  "next": "PR #321 exact-merge-SHA Editor Core, F0, Twitch and public source smoke are all PASS; release verified. Continue distinct PR #322, still OPEN and pending its exact-head Editor Core; D overall OPEN/NOT_CERTIFIED.",
   "release": {
     "merged": true,
     "merge_commit": "4935b74e1d0df0a40a5f68407b2e2b20c3a9ea34",
@@ -130,10 +130,101 @@
       },
       "editor_core": {
         "id": 43233534614,
-        "status": "in_progress",
-        "conclusion": null
+        "sha": "4935b74e1d0df0a40a5f68407b2e2b20c3a9ea34",
+        "status": "completed",
+        "conclusion": "success",
+        "completed_at": "2026-11-12T14:29:40Z",
+        "job_conclusion": "success",
+        "checks": [
+          {
+            "name": "Checkout",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Setup Node.js",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Install dependencies",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run TypeScript typecheck",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Keep diagnostic artifacts only for failed checks",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run editor core tests",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Test offline D1 ledger reconciliation and bootstrap",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run private R2 media API tests",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Install Chromium for layout regression",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Test real Worker media upload with isolated D1 and R2",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run Editor browser layout regression",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run WEB-013 Admin mobile browser regression",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run canonical schedule tests",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run domain contract tests",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run Brand Kit storage and access regression",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run Admin home contract tests",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Upload Editor layout screenshots",
+            "status": "completed",
+            "conclusion": "skipped"
+          }
+        ]
       }
-    }
+    },
+    "certified_exact_merge_ci": true
   },
   "audit": {
     "candidate": "backgroundAssetId UUID parity",
