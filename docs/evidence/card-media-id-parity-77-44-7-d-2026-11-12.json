@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "plan_point": "77.44.7.D",
-  "status": "LOCAL_CHECKS_PASS_RELEASE_PENDING",
+  "status": "DEPLOYED_EXACT_SHA_EDITOR_CI_IN_PROGRESS_SCOPE_OPEN",
   "finding": "Card image rendering and normalization still accepted a loosely formatted 36-character imported imageAssetId. The renderer preferred its broken media URL over a valid imageSrc fallback, diverging from the strict publication/media route contract.",
   "red_test": "public/editor-v2/tests/core.test.js Card shared Media IDs: 75 pass, 1 fail; actual /media/00000000-0000-0000-0000-000000000000, expected /images/legacy.jpg.",
   "change": "Card rendering and editing normalization use the strict UUID version/variant asset pattern. Invalid imported IDs cannot hide the rendered fallback, and editing rejects them.",
@@ -21,6 +21,18 @@
   },
   "dev_metrics_run": "docs/evidence/dev-metrics/runs/2026-11-12/20261112010238-4d0ea1cc.json",
   "changed_public_asset_sha256_local": "public/editor-v2/core/card-content.js d8e667eaa56a16fac815f58406a030a056ae6ce65dfafb21d99461b8d72881db",
-  "release": "Pending exact-SHA push, CI, Cloudflare build and direct traffic/health/asset-hash checks",
+  "release": {
+    "source_commit": "29d38d8e2cbd23590157840bc25f73a4248afbdd",
+    "verified_remote_branch": "v2/foundation at exact source SHA after normal fast-forward push",
+    "cloudflare_build": "6a221fff-7452-4bd9-926f-a0cb9374bd17 stopped/success at exact source SHA; typecheck, deploy:safe and migration safety gate succeeded; two modified public files uploaded",
+    "deployment": "0274bbc4-e806-43e7-b3f6-a9384e52d0ef",
+    "traffic_version": "c2722dde-acdb-4fa9-b1e5-d68d7a2e4a19 at 100%",
+    "health": "Direct GET /api/health HTTP 200; ok=true, service=sanci9517-streamer-brand, version=2.0.0",
+    "changed_public_asset_sha256": {
+      "public/editor-v2/core/card-content.js": "local and direct production GET d8e667eaa56a16fac815f58406a030a056ae6ce65dfafb21d99461b8d72881db",
+      "public/editor-v2/tests/core.test.js": "local and direct production GET 63b24bb1919784e61c6e7127575a8950a4ec1d4531e4671ccc4c15b35904b5b8"
+    },
+    "exact_sha_github_ci": "Canonical Plan 43132053977, Active Point Audit 43132054023 and Twitch 43132054118 completed/success; F0 43132053971 and Editor Core 43132054090 in_progress"
+  },
   "cost": "No paid service, production D1 mutation/migration, or R2 deletion."
 }
