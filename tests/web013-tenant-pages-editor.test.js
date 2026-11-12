@@ -157,7 +157,7 @@ test('background media UUID parity: draft Save stays private; invalid style/resp
   assert.equal(live.pages.b.nodes.root.responsive.desktop.backgroundAssetId,valid,'the live reference is canonical');
 });
 
-test('media node UUID guard matches the public renderer without weakening valid source fallback',async t=>{
+test('media UUID rejects malformed authored source before Publish and accepts valid uppercase ID',async t=>{
   const f=await fixture(t),malformed='------------------------------------',valid='6b1c2e65-e46e-4764-b234-123456789abc';
   f.db.prepare('INSERT INTO media(id,site_id,object_key,mime_type,original_name,size_bytes) VALUES(?,?,?,?,?,?)')
     .run(valid,'other','sites/other/media/'+valid,'image/png','picture.png',100);
@@ -168,7 +168,7 @@ test('media node UUID guard matches the public renderer without weakening valid 
   const before=f.db.prepare('SELECT published_content_json FROM pages WHERE id=?').get('b').published_content_json;
   const rejected=await f.editor('editor','other','POST',{pageId:'b',expectedVersion:2,document,publish:true});
   assert.equal(rejected.status,409);
-  assert.equal((await rejected.json()).error.code,'INVALID_MEDIA_SOURCE','a malformed ID alone cannot authorize publication');
+  assert.equal((await rejected.json()).error.code,'INVALID_EDITOR_CONTENT','authored content rejects the malformed ID before the secondary media source gate');
   assert.equal(f.db.prepare('SELECT published_content_json FROM pages WHERE id=?').get('b').published_content_json,before);
   page.nodes.image.props.assetId=valid.toUpperCase();
   assert.equal((await f.editor('editor','other','POST',{pageId:'b',expectedVersion:2,document,publish:true})).status,200);
