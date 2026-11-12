@@ -1,7 +1,7 @@
 // Canonical static Card content. This does not introduce a second CMS or shop.
 // Explicitly authored cards opt in; legacy layout cards retain their behavior.
 export const CARD_VARIANTS=Object.freeze(['solid','outline','glass']);
-const ASSET_ID=/^[0-9a-f-]{36}$/i;
+const ASSET_ID=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 export function cardImageSrc(content,{editor=false}={}){
  const id=content?.imageAssetId;
  if(typeof id==='string'&&ASSET_ID.test(id))return editor?'/api/admin/media?id='+encodeURIComponent(id):'/media/'+encodeURIComponent(id);

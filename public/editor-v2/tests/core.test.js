@@ -1367,6 +1367,9 @@ test('Card shared Media IDs preserve legacy URLs and reject malformed unpublishe
  assert.equal(cardImageSrc(selected,{editor:true}),'/api/admin/media?id='+id);
  assert.equal(cardImageSrc(selected),'/media/'+id);
  assert.equal(normalizeCardContent(selected).imageAssetId,id);
+ const malformed={...original,imageAssetId:'00000000-0000-0000-0000-000000000000'};
+ assert.equal(cardImageSrc(malformed),'/images/legacy.jpg','an invalid imported ID cannot hide the visible URL fallback');
+ assert.throws(()=>normalizeCardContent(malformed),'the editor must reject the same malformed ID');
  assert.throws(()=>normalizeCardContent({...selected,imageAssetId:'javascript:alert(1)'}));
  assert.throws(()=>normalizeCardContent({...selected,imageAlt:''}));
  const state=createEditorState(),root=activePage(state).rootId;

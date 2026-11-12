@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261112010238-4d0ea1cc",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-12T01:02:38.810Z",
+  "finished_at": "2026-11-12T01:04:29.678Z",
+  "wall_seconds": 111,
+  "paused_seconds": 0,
+  "measured_seconds": 111,
+  "status": "pass",
+  "kind": "mixed",
+  "summary": "Card media UUID parity red-green regression and release gates",
+  "evidence": [
+    "public/editor-v2/tests/core.test.js"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "695943ef39ed5d62cb0e038cf81cda8c356684f7",
+  "finished_revision": "695943ef39ed5d62cb0e038cf81cda8c356684f7",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

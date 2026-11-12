@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "plan_point": "77.44.7.D",
+  "status": "LOCAL_CHECKS_PASS_RELEASE_PENDING",
+  "finding": "Card image rendering and normalization still accepted a loosely formatted 36-character imported imageAssetId. The renderer preferred its broken media URL over a valid imageSrc fallback, diverging from the strict publication/media route contract.",
+  "red_test": "public/editor-v2/tests/core.test.js Card shared Media IDs: 75 pass, 1 fail; actual /media/00000000-0000-0000-0000-000000000000, expected /images/legacy.jpg.",
+  "change": "Card rendering and editing normalization use the strict UUID version/variant asset pattern. Invalid imported IDs cannot hide the rendered fallback, and editing rejects them.",
+  "checks": {
+    "card_core_direct": "PASS 76/76 after fix",
+    "editor": "PASS 15/15 files and 3/3 subreaper cases",
+    "media": "PASS 5/5 files",
+    "web013": "PASS 68/68 with local loopback permission",
+    "typecheck": "PASS",
+    "plan_contract": "PASS 13/13",
+    "canonical_plan": "PASS 13 master files, 396 mappings; acceptance NOT_CERTIFIED",
+    "feature_traceability": "PASS 396 mappings",
+    "active_plan_audit": "77.44.7.D OPEN / NOT_CERTIFIED",
+    "production_d1_preflight": "SELECT name FROM d1_migrations ORDER BY name: 34 rows read; changes=0, rows_written=0, changed_db=false; latest 0028_media_archive.sql",
+    "wrangler_dry_run": "PASS Wrangler 4.130.0, 171 public assets, no upload",
+    "git_diff_check": "PASS"
+  },
+  "dev_metrics_run": "docs/evidence/dev-metrics/runs/2026-11-12/20261112010238-4d0ea1cc.json",
+  "changed_public_asset_sha256_local": "public/editor-v2/core/card-content.js d8e667eaa56a16fac815f58406a030a056ae6ce65dfafb21d99461b8d72881db",
+  "release": "Pending exact-SHA push, CI, Cloudflare build and direct traffic/health/asset-hash checks",
+  "cost": "No paid service, production D1 mutation/migration, or R2 deletion."
+}
