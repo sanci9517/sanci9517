@@ -50,7 +50,7 @@ import {backgroundImageValue,legacyBackgroundCompound,MEDIA_ASSET_ID} from "../e
    const background=backgroundImageValue(values,{legacyBackground:legacyRoot});
    const hasCanonicalImage=values.backgroundImage!==undefined&&values.backgroundImage!==null&&values.backgroundImage!=='';
    if(background!=='none'||hasCanonicalImage)out+=`background-image:${esc(background)};`;
-   const hasAsset=MEDIA_ASSET_ID.test(String(values.backgroundAssetId||''));
+   const hasAsset=typeof values.backgroundAssetId==='string'&&MEDIA_ASSET_ID.test(values.backgroundAssetId);
    for(const [key,property,fallback] of [['backgroundSize','background-size','cover'],['backgroundPosition','background-position','center center'],['backgroundRepeat','background-repeat','no-repeat']]){
     const value=values[key]||(hasAsset?fallback:'');
     if(value&&CSS.supports(property,String(value)))out+=`${property}:${esc(value)};`;
