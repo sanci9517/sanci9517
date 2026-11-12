@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "task": "77.44.7.D",
+  "date": "2026-11-12",
+  "finding": {
+    "file": "public/assets/page-renderer.js",
+    "old_expression": "MEDIA_ASSET_ID.test(String(values.backgroundAssetId||''))",
+    "reproducer": "{toString:null}",
+    "before": "TypeError: Cannot convert object to primitive value",
+    "after_expression": "typeof values.backgroundAssetId==='string'&&MEDIA_ASSET_ID.test(values.backgroundAssetId)",
+    "after": "false"
+  },
+  "implementation": {
+    "branch": "fix/77-44-7-d-malformed-background-id-20261112",
+    "commit": "41f96fb27470bd78b21c4d06a93320fc5371c874",
+    "pr": 318,
+    "pr_status": "OPEN / DRAFT",
+    "runtime_files": [
+      "public/assets/page-renderer.js"
+    ],
+    "regression_files": [
+      "tests/browser/editor-inspector-background-image-partial-types.test.js"
+    ]
+  },
+  "checks": {
+    "focused_js_old_vs_new": "PASS",
+    "modified_javascript_parser": "PASS",
+    "local_browser": "NOT RUN",
+    "full_repository_suite": "NOT RUN",
+    "pr_ci_at_observation": {
+      "F0 baseline checks": "43200625419 completed/success",
+      "Twitch Integration Check": "43200625852 completed/success",
+      "Editor Core Test": "43200625653 in_progress"
+    },
+    "worker_dry_run": "NOT RUN",
+    "production_readback": "NOT RUN"
+  },
+  "release": {
+    "status": "NOT DONE",
+    "deployed": false,
+    "d1_writes": 0,
+    "r2_mutations": 0
+  },
+  "cost": {
+    "new_spend_huf": 0,
+    "public_hosted_actions_cost_not_account_verified": true
+  },
+  "acceptance": {
+    "d": "OPEN / NOT_CERTIFIED",
+    "complete_editor_manual": "DEFERRED"
+  },
+  "limitations": [
+    "Run status is a dated snapshot, not a future CI verdict.",
+    "Development timing script unavailable without a local repository checkout; no invented measurement."
+  ]
+}
