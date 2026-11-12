@@ -254,3 +254,47 @@ test('background image media picker reaches Canvas, draft and public renderer fo
   }
   assert.deepEqual(errors,[],'media picker and both renderers produce no uncaught browser errors');
 });
+
+test('public renderer safely ignores corrupt background asset IDs without aborting the page',async t=>{
+  const state=createEditorState(createDocument(undefined,{modern:true}));
+  const pageId=state.document.activePageId;
+  const published=state.document.pages[pageId];
+  const rootId=published.rootId;
+  execute(state,{type:'element.add',payload:{type:'heading',parentId:rootId,authored:true}});
+  const headingId=state.selection.primaryId;
+  execute(state,{type:'element.content.set',payload:{nodeId:headingId,content:'A címsor megmarad'}});
+  for(const id of [rootId,headingId]){
+    const node=published.nodes[id];
+    node.style={...(node.style||{}),backgroundAssetId:{toString:null}};
+  }
+
+  let writeRequests=0;
+  const server=createServer(async(req,res)=>{
+    const url=new URL(req.url,'http://localhost');
+    const json=value=>{res.setHeader('content-type','application/json');res.end(JSON.stringify(value));};
+    if(!['GET','HEAD'].includes(req.method))writeRequests++;
+    if(url.pathname==='/api/public/pages')return json({ok:true,data:{id:pageId,slug:'corrupt-background',title:'Háttér regresszió',description:'',content:published}});
+    if(url.pathname==='/api/public/navigation')return json({ok:true,data:{items:[]}});
+    if(url.pathname==='/api/integrations/twitch/connection')return json({ok:true,data:{connected:false}});
+    if(url.pathname.startsWith('/api/'))return json({ok:true,data:{siteName:'Háttér regresszió'}});
+    const file=resolve(publicDir,'.'+(url.pathname==='/p/test'?'/visual-page.html':url.pathname));
+    if(!file.startsWith(publicDir+'/'))return res.writeHead(403).end();
+    try{
+      res.setHeader('content-type',{'.html':'text/html','.js':'text/javascript','.css':'text/css'}[extname(file)]||'application/octet-stream');
+      res.end(await readFile(file));
+    }catch{res.writeHead(404).end();}
+  });
+  await new Promise(done=>server.listen(0,'127.0.0.1',done));
+  t.after(()=>new Promise(done=>server.close(done)));
+  const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||(existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined),args:['--no-sandbox']});
+  t.after(()=>browser.close());
+  const viewer=await browser.newPage({viewport:{width:1366,height:900}});
+  const pageErrors=[];
+  viewer.on('pageerror',err=>pageErrors.push(err.message));
+  await viewer.goto('http://127.0.0.1:'+server.address().port+'/p/test');
+  const heading=viewer.locator('.visual-editor-node[data-node-id="'+headingId+'"]');
+  await heading.waitFor({timeout:20000});
+  assert.ok((await heading.textContent()).includes('A címsor megmarad'));
+  assert.deepEqual(pageErrors,[],'malformed persisted background IDs must not crash the public renderer');
+  assert.equal(writeRequests,0,'rendering a corrupt published snapshot never triggers Save or Publish');
+});
