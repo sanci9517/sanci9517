@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "date": "2026-11-12",
+  "task": "77.44.7.D",
+  "branch_head_before": "c11896464920289b7a4c1a670514c83dae8e928b",
+  "pull_request": {
+    "number": 318,
+    "head": "41f96fb27470bd78b21c4d06a93320fc5371c874",
+    "status": "open/draft/not_merged",
+    "ci": {
+      "f0": "43200625419 completed/success",
+      "twitch": "43200625852 completed/success",
+      "editor_core": "43200625653 in_progress",
+      "editor_core_completed_steps": [
+        "typecheck",
+        "unit",
+        "offline D1",
+        "media API",
+        "isolated Worker/D1/R2"
+      ],
+      "editor_layout": "in_progress"
+    }
+  },
+  "cloudflare": {
+    "last_deployment": "60bdb89e-7e49-474d-b027-6a116873b6f9",
+    "last_worker_version": "a65c11f2-6799-44b1-8d88-8aa70e348b65",
+    "traffic_pct": 100,
+    "prior_build": "aa81fc80-8f27-48ff-9e9e-17583ac5da41",
+    "prior_build_status": "success",
+    "build_command": "npm run typecheck",
+    "deploy_command": "npm run deploy:safe",
+    "build_limit_reached": false,
+    "live_health_retested": false
+  },
+  "d1": {
+    "read_only": true,
+    "sql": "SELECT name FROM d1_migrations ORDER BY name;",
+    "rows_read": 34,
+    "rows_written": 0,
+    "changes": 0,
+    "changed_db": false,
+    "latest_migration": "0028_media_archive.sql"
+  },
+  "release": {
+    "new_deploy": false,
+    "d1_writes": 0,
+    "r2_mutations": 0,
+    "production_asset_hash": "NOT_RECHECKED"
+  },
+  "automation": {
+    "title": "SANCI PR #318 élesítési kapu",
+    "scheduled_at_budapest": "2026-11-12T12:09:58+01:00",
+    "purpose": "recheck CI and release only after all required gates",
+    "automation_creation_confirmed": true
+  },
+  "cost": {
+    "additional_spending_authorized": false,
+    "cloudflare_billing_not_verified": true
+  },
+  "limitations": [
+    "No local repository checkout or Wrangler dry-run was available in this current executor.",
+    "Current PR runtime code was not merged or deployed.",
+    "No actual development time claimed without the dev-metrics script."
+  ]
+}
