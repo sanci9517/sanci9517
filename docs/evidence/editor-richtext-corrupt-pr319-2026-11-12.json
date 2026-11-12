@@ -28,11 +28,20 @@
     "url": "https://github.com/sanci9517/sanci9517/pull/319",
     "state": "open",
     "draft": true,
-    "merged": false
+    "merged": false,
+    "current_head": "bdb68846018197eaae7f729a4e87bd50fdb04116",
+    "reconciled_with_main": {
+      "merge_commit": "69f50593267a2c5517ba22a845af980f9ed313d2",
+      "base_main_commit": "d7189393c0ea7edb90876d40c8012eab5b68a0eb",
+      "preserved_pr318_background_guard": true,
+      "preserved_pr319_richtext_guard": true,
+      "forced_update": false
+    }
   },
   "commits": {
     "runtime": "6c4b76ea7d67f52f2f5d4a0f6aebfca17f597450",
-    "test": "33c6dbcbb1006a1a8e19dd1a3e8e11fdd5269d81"
+    "test": "33c6dbcbb1006a1a8e19dd1a3e8e11fdd5269d81",
+    "production_source_smoke_workflow": "bdb68846018197eaae7f729a4e87bd50fdb04116"
   },
   "changed_files": [
     "public/assets/page-renderer.js",
@@ -57,6 +66,34 @@
       },
       "valid_snapshot_byte_identical": true,
       "method": "Extract richTextHtml from exact GitHub baseline and PR branch, inject same dependencies, execute deterministic inputs; no actual browser used"
+    },
+    "exact_head_dry_run": {
+      "run_id": 43214842650,
+      "conclusion": "success"
+    },
+    "exact_head_f0": {
+      "run_id": 43214842673,
+      "conclusion": "success"
+    },
+    "exact_head_twitch": {
+      "run_id": 43214842796,
+      "conclusion": "success"
+    },
+    "exact_head_editor_core": {
+      "run_id": 43214843055,
+      "status": "in_progress",
+      "conclusion": null
+    },
+    "production_source_smoke": {
+      "status": "NOT_RUN",
+      "trigger": "v2/foundation runtime push after merge",
+      "checks": [
+        "GET /api/health HTTP 200",
+        "GET /assets/page-renderer.js SHA-256 = checkout source"
+      ],
+      "repository_workflow": ".github/workflows/worker-production-source-smoke.yml",
+      "no_credentials": true,
+      "no_mutations": true
     }
   },
   "constraints": {
@@ -66,5 +103,5 @@
     "new_cost_authorized_huf": 0,
     "editor_manual_acceptance": "DEFERRED"
   },
-  "next": "Finish PR #318 independent release; require new exact-head CI and dry-run for PR #319 before any merge/deploy."
+  "next": "Wait for exact-head Editor Core PASS, perform remote SELECT-only preflight, normal PR merge, Cloudflare auto deploy; check new GitHub production source-smoke outcome."
 }
