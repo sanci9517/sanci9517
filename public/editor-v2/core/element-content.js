@@ -2,9 +2,9 @@
    This module has no DOM dependencies. Only explicit new/edited nodes opt into v1. */
 export const STRUCTURED_TYPES=Object.freeze(['list','table','tabs','accordion','gallery','carousel']);
 export const isStructuredType=type=>STRUCTURED_TYPES.includes(type);
-const text=(v,max=2000)=>String(v??'').slice(0,max);
+const text=(v,max=2000)=>(v===null||v===undefined||typeof v==='object'?'':String(v)).slice(0,max);
 export function safeMediaUrl(value){
- const raw=String(value??'').trim();
+ const raw=typeof value==='string'?value.trim():'';
  if(!raw||raw.startsWith('//')||/[\u0000-\u001f\u007f\\]/.test(raw)||!(/^(https?:\/\/|\/(?!\/))/.test(raw)))return '';
  try{const url=new URL(raw,'https://sanci.invalid');return ['http:','https:'].includes(url.protocol)&&!url.username&&!url.password?raw:''}catch{return ''}
 }

@@ -345,3 +345,29 @@ test('accessibility validation remains pure and preserves unrelated aliases and 
  assert.throws(()=>normalizeAccessibility(node,{id:'taken'},{node,other:{id:'other',accessibility:{id:'taken'}}}),/foglalt/);
  assert.throws(()=>normalizeAccessibility(node,{lang:'h'}),/nyelv/);assert.throws(()=>normalizeAccessibility({...node,type:'root'},{id:'new-root'}),/védett/);assert.deepEqual(node,before);
 });
+
+
+import {safeMediaUrl as safeStructuredMediaUrl,renderElementContent as renderStructuredContent,validateElementContent as validateStructuredContent} from '../core/element-content.js';
+
+test('legacy structured content ignores malformed JSON object values without losing safe neighboring items',()=>{
+  const malformed={toString:null};
+  const objectWithUrl={toString:()=>'/media/00000000-0000-4000-8000-000000000123'};
+  assert.equal(safeStructuredMediaUrl(malformed),'','malformed object must not be String-coerced');
+  assert.equal(safeStructuredMediaUrl(objectWithUrl),'','custom toString cannot fabricate a media URL');
+  assert.equal(safeStructuredMediaUrl(['/media/00000000-0000-4000-8000-000000000123']),'','array cannot fabricate a URL');
+  assert.equal(safeStructuredMediaUrl('/image.png'),'/image.png','valid relative URL preserved');
+  const list=renderStructuredContent('list',{version:1,ordered:false,items:[malformed,'Ép listaelem']},'list-legacy');
+  assert.match(list,/Ép listaelem/);
+  assert.doesNotMatch(list,/\[object Object\]|visual-structured-error/);
+  const table=renderStructuredContent('table',{version:1,rows:[['Cím'],[malformed],['Ép sor']]},'table-legacy');
+  assert.match(table,/<td>Ép sor<\/td>/);
+  assert.doesNotMatch(table,/\[object Object\]|visual-structured-error/);
+  const gallery={version:1,items:[{src:objectWithUrl,alt:'Régi kép'},{src:'/image.jpg',alt:'Ép kép'}]};
+  assert.equal(validateStructuredContent('gallery',gallery),'INVALID_GALLERY_IMAGE','invalid item remains unpublishable');
+  const galleryHtml=renderStructuredContent('gallery',gallery,'gallery-legacy');
+  assert.match(galleryHtml,/<img src="\/image.jpg"/);
+  assert.doesNotMatch(galleryHtml,/\/media\/00000000-0000-4000-8000-000000000123|\[object Object\]/);
+  const validEscaped=renderStructuredContent('list',{version:1,items:['<script>alert("x")<\/script>']},'list-escaped');
+  assert.match(validEscaped,/&lt;script&gt;/);
+  assert.doesNotMatch(validEscaped,/<script>/);
+});
