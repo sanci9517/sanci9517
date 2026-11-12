@@ -182,6 +182,22 @@ test('structured Inspector editing survives Save, Publish and public interaction
    await keyboard(rows.last().getByRole('button',{name:'Sor törlése',exact:true}));await expectFocus(cell(1));
    await keyboard(rows.last().getByRole('button',{name:'Sor törlése',exact:true}));await expectFocus(cell(0));
    await editor.keyboard.press('Control+z');assert.equal(await rows.count(),2,'the protected header survives deletion of the last data row');
+   const originalRow=await cell(1).inputValue();
+   await keyboard(rows.first().getByRole('button',{name:'＋ Sor alá',exact:true}));
+   await expectFocus(cell(1));assert.equal(await rows.count(),3,'table insert adds a data row under the header');
+   await cell(1).fill('Beszúrt próbasor');
+   assert.equal(await rows.nth(1).getByRole('button',{name:'↑ Sor fel',exact:true}).isDisabled(),true,
+    'the first data row cannot move ahead of the protected header');
+   await keyboard(rows.nth(1).getByRole('button',{name:'↓ Sor le',exact:true}));
+   await expectFocus(rows.nth(2).getByRole('button',{name:'↑ Sor fel',exact:true}));
+   assert.equal(await cell(2).inputValue(),'Beszúrt próbasor','moving down preserves the row cells');
+   await keyboard(rows.nth(2).getByRole('button',{name:'↑ Sor fel',exact:true}));
+   await expectFocus(rows.nth(1).getByRole('button',{name:'↓ Sor le',exact:true}));
+   assert.equal(await cell(1).inputValue(),'Beszúrt próbasor','moving up preserves the row cells');
+   await keyboard(rows.nth(1).getByRole('button',{name:'Sor törlése',exact:true}));
+   await expectFocus(cell(1));
+   assert.equal(await rows.count(),2,'deleting inserted data restores the original row count');
+   assert.equal(await cell(1).inputValue(),originalRow,'header and existing data must survive insert/reorder/delete');
   }else{
    const originalCount=expectedModels[type].items.length;
    await keyboard(panel.getByRole('button',{name:'＋ Új elem',exact:true}));await expectFocus(cell(originalCount));
