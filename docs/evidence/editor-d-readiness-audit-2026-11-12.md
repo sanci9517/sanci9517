@@ -1,6 +1,6 @@
 # 77.44.7.D — Tételes készültségi pillanatkép (2026-11-12)
 
-> **Állapot:** AUDIT / BECSLÉS, **nem** külön roadmap és **nem** D acceptance PASS. A kizárólagos terv: [SANCI9517-CREATOR-PLATFORM-PLAN.md](../../SANCI9517-CREATOR-PLATFORM-PLAN.md). Ez az olvasási pillanatkép a `v2/foundation` `189f371d50f7f6663939c3d9f09c5994e32b2a9b` SHA-hoz és a 2026-11-12-i forráshoz kötött. Nem módosítja a terv aktuális `77.44.7.D OPEN / NOT_CERTIFIED` állapotát, sorrendjét, jóváhagyási kapuit vagy a 0 Ft-os korlátot.
+> **Állapot:** AUDIT / BECSLÉS, **nem** külön roadmap és **nem** D acceptance PASS. A kizárólagos terv: [SANCI9517-CREATOR-PLATFORM-PLAN.md](../SANCI9517-CREATOR-PLATFORM-PLAN.md). Ez az olvasási pillanatkép a `v2/foundation` `189f371d50f7f6663939c3d9f09c5994e32b2a9b` SHA-hoz és a 2026-11-12-i forráshoz kötött. Nem módosítja a terv aktuális `77.44.7.D OPEN / NOT_CERTIFIED` állapotát, sorrendjét, jóváhagyási kapuit vagy a 0 Ft-os korlátot.
 
 ## Mit lehet tényszerűen megállapítani?
 
@@ -40,7 +40,7 @@ Dokumentáció-only pillanatkép, új runtime vagy dependency nincs; **nem szük
 
 ## Források
 
-- [Egyetlen kanonikus terv](../../SANCI9517-CREATOR-PLATFORM-PLAN.md), különösen a `77.44.7` sorrend és a 2026-11-12-i `77.44.7.D` release/evidence bejegyzések
-- [D-képességszerződés](../../../public/editor-v2/core/capability-matrix.js), [elemtípusok](../../../public/editor-v2/core/schema.js), [tartalomprofilok](../../../public/editor-v2/core/content-profiles.js), [structured content](../../../public/editor-v2/core/element-content.js), [authored mezők](../../../public/editor-v2/core/authored-content.js)
-- [Traceability forrás-index](../feature-traceability.json) — **nem készültségigazolás**
+- [Egyetlen kanonikus terv](../SANCI9517-CREATOR-PLATFORM-PLAN.md), különösen a `77.44.7` sorrend és a 2026-11-12-i `77.44.7.D` release/evidence bejegyzések
+- [D-képességszerződés](../../public/editor-v2/core/capability-matrix.js), [elemtípusok](../../public/editor-v2/core/schema.js), [tartalomprofilok](../../public/editor-v2/core/content-profiles.js), [structured content](../../public/editor-v2/core/element-content.js), [authored mezők](../../public/editor-v2/core/authored-content.js)
+- [Traceability forrás-index](feature-traceability.json) — **nem készültségigazolás**
 - [PR #318](https://github.com/sanci9517/sanci9517/pull/318)
