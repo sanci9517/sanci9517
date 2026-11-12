@@ -1363,6 +1363,11 @@ test('Card shared Media IDs preserve legacy URLs and reject malformed unpublishe
  const original={...defaultCardContent(),imageSrc:'/images/legacy.jpg',imageAlt:'Kártya fénykép'};
  assert.equal(normalizeCardContent(original).imageAssetId,'','legacy URL cards need no migration');
  assert.equal(cardImageSrc(original),'/images/legacy.jpg');
+ const insecure={...original,imageSrc:'http://images.example.test/cover.jpg'};
+ assert.equal(cardImageSrc(insecure),'','Card images follow the editor HTTPS-or-local media contract');
+ assert.throws(()=>normalizeCardContent(insecure),'an insecure Card image cannot enter an authored document');
+ assert.equal(cardImageSrc({...original,imageSrc:'https://images.example.test/cover.jpg'}),'https://images.example.test/cover.jpg');
+ assert.equal(normalizeCardContent({...original,actionLabel:'Open',actionHref:'http://example.test/page'}).actionHref,'http://example.test/page','the Card action URL retains its independent link policy');
  const selected={...original,imageAssetId:id};
  assert.equal(cardImageSrc(selected,{editor:true}),'/api/admin/media?id='+id);
  assert.equal(cardImageSrc(selected),'/media/'+id);

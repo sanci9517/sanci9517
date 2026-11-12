@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261112020016-9b9bcdb5",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-12T02:00:16.676Z",
+  "finished_at": "2026-11-12T02:02:11.834Z",
+  "wall_seconds": 115,
+  "paused_seconds": 0,
+  "measured_seconds": 115,
+  "status": "pass",
+  "kind": "mixed",
+  "summary": "Card image HTTPS policy regression and release gates",
+  "evidence": [
+    "public/editor-v2/tests/core.test.js"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "2dcb7847c107f34f2fca4818eda89685e23574b0",
+  "finished_revision": "2dcb7847c107f34f2fca4818eda89685e23574b0",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

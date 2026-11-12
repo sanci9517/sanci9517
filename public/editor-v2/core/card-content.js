@@ -14,7 +14,7 @@ const safeUrl=(raw,{image=false}={})=>{
  if([...value].some(ch=>{const n=ch.charCodeAt(0);return n<32||n===127||n===92})||value.startsWith('//'))return false;
  if(!image&&value.startsWith('#')&&value.length>1)return true;
  if(value.startsWith('/')&&!value.startsWith('//'))return true;
- try{const url=new URL(value);return ['http:','https:'].includes(url.protocol)&&!url.username&&!url.password;}
+ try{const url=new URL(value);return (image?url.protocol==='https:':['http:','https:'].includes(url.protocol))&&!url.username&&!url.password;}
  catch{return false}
 };
 export function defaultCardContent(){
