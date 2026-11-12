@@ -1,0 +1,61 @@
+{
+  "schema": "sanci9517.dev-evidence.v1",
+  "date": "2026-11-12",
+  "plan_item": "77.44.7.D",
+  "status": "OPEN_NOT_CERTIFIED",
+  "pr": {
+    "number": 325,
+    "url": "https://github.com/sanci9517/sanci9517/pull/325",
+    "head_commit": "7e650b97f4e4f16f40139a0d41331788c3bfc303",
+    "branch": "fix/77-44-7-d-malformed-css-value-parity-20261112",
+    "draft": true,
+    "merged": false,
+    "deployed": false
+  },
+  "audit": {
+    "candidate_failpoint": "public/assets/page-renderer.js style(n) uses String(value) / Number(value) on unconstrained persisted Page Model style and responsive CSS values; public/editor-v2/core/canvas-engine.js applyNodeStyle uses the same unsafe coercion",
+    "reproduction_primitive": "JSON.parse('{\"toString\":null}') throws TypeError when passed through String/Number",
+    "real_route_reproduction": "PENDING_CHROMIUM",
+    "change": "Shared safeCssText guarded for valid strings and finite numbers only; ignored invalid CSS without mutating saved data, with public and Canvas parity"
+  },
+  "modified_files": [
+    "public/editor-v2/core/canvas-engine.js",
+    "public/assets/page-renderer.js",
+    "tests/browser/editor-malformed-public-text-links.test.js"
+  ],
+  "regression": "Real Chromium fixture checks valid CSS still renders alongside malformed legacy border, map styles, responsive width, fallback dimensions and x/y offset; independent Canvas DOM applyNodeStyle with bad JSON; zero JS page errors and zero writes",
+  "checks": {
+    "f0": {
+      "id": 43258650484,
+      "status": "completed",
+      "conclusion": "success"
+    },
+    "twitch": {
+      "id": 43258650441,
+      "status": "completed",
+      "conclusion": "success"
+    },
+    "worker_release_dry_run": {
+      "id": 43258650461,
+      "status": "completed",
+      "conclusion": "success"
+    },
+    "editor_core": {
+      "id": 43258650587,
+      "status": "in_progress",
+      "conclusion": null
+    }
+  },
+  "constraints": {
+    "runtime_changes": true,
+    "production_deployment": false,
+    "production_d1_write": false,
+    "production_d1_migration": false,
+    "production_r2_delete": false,
+    "new_paid_dependencies": false,
+    "save_publish_separate": true,
+    "manual_editor_acceptance": "DEFERRED",
+    "huf_new_spending_approved": 0
+  },
+  "next": "Await exact-head full Editor Core+Chromium SUCCESS or inspect failure logs and repair. Fresh SELECT-only D1 preflight then normal merge only with exact head SHA unchanged and 4 PASS checks. Verify Cloudflare automatic deploy:safe exact-source Worker 100%, production health and changed public file SHA-256. D remains OPEN/NOT_CERTIFIED."
+}
