@@ -11,7 +11,7 @@ import {execute} from '../../public/editor-v2/core/commands.js';
 
 const publicDir=resolve(import.meta.dirname,'../../public');
 
-test('published page handles malformed text and link URLs without Save or Publish',async t=>{
+test('published page and Canvas handle malformed text, links and CSS without Save or Publish',async t=>{
   const state=createEditorState(createDocument(undefined,{modern:true}));
   const pageId=state.document.activePageId, rootId=state.document.pages[pageId].rootId;
   const add=type=>{
@@ -26,6 +26,8 @@ test('published page handles malformed text and link URLs without Save or Publis
   const page=state.document.pages[pageId];
   const invalid={toString:null};
   page.nodes[corruptedHeadingId].props={text:invalid};
+  page.nodes[corruptedHeadingId].style={color:invalid,border:invalid,background:invalid,backgroundSize:invalid,margin:invalid,radius:invalid,fontSize:invalid,x:invalid,padding:'12px',height:'38px'};
+  page.nodes[buttonId].responsive={mobile:{width:invalid,padding:'8px'}};
   page.nodes[buttonId].props={text:'Biztonságos gomb',url:invalid};
   page.nodes[linkId].props={text:'Biztonságos hivatkozás',href:invalid};
   page.nodes[validLinkId].props={text:'Érvényes cél',href:'/p/valid'};
@@ -57,11 +59,25 @@ test('published page handles malformed text and link URLs without Save or Publis
   await root(intactHeadingId).waitFor({timeout:20000});
   assert.equal((await root(intactHeadingId).textContent()).trim(),'A teljes oldal megmarad');
   assert.equal((await root(corruptedHeadingId).textContent()).trim(),'','bad text must not be coerced to an object label');
+  assert.equal(await root(corruptedHeadingId).evaluate(el=>el.style.padding),'12px','valid CSS on the same malformed node is preserved');
+  assert.equal(await root(corruptedHeadingId).evaluate(el=>el.style.color),'','malformed CSS must not become a public color');
+  assert.equal(await root(corruptedHeadingId).evaluate(el=>el.style.border),'','malformed legacy border must not become CSS');
+  assert.equal(await root(buttonId).evaluate(el=>el.style.padding),'8px','valid mobile CSS survives a malformed responsive width');
+  assert.equal(await root(buttonId).evaluate(el=>el.style.width),'','malformed responsive width must not become public CSS');
   assert.equal((await root(buttonId).textContent()).trim(),'Biztonságos gomb');
   assert.equal(await root(buttonId).getAttribute('href'),null,'malformed URL cannot become a clickable button');
   assert.equal((await root(linkId).textContent()).trim(),'Biztonságos hivatkozás');
   assert.equal(await root(linkId).getAttribute('href'),null,'malformed URL cannot become a clickable link');
   assert.equal(await root(validLinkId).getAttribute('href'),'/p/valid','valid same-site links stay clickable');
-  assert.deepEqual(errors,[],'malformed persisted data must not abort public page rendering');
+  const canvas=await tab.evaluate(async()=>{
+    const {applyNodeStyle}=await import('/editor-v2/core/canvas-engine.js?v=20261112-safe-css-parity');
+    const invalid={toString:null};
+    const element=document.createElement('div');
+    applyNodeStyle(element,{type:'heading',style:{color:invalid,border:invalid,backgroundAssetId:invalid,x:invalid,padding:'14px',height:'42px'},responsive:{mobile:{width:invalid}}},'mobile');
+    return {padding:element.style.padding,height:element.style.height,color:element.style.color,border:element.style.border,width:element.style.width,left:element.style.left};
+  });
+  assert.deepEqual(canvas,{padding:'14px',height:'42px',color:'',border:'',width:'',left:''},
+    'Canvas ignores invalid JSON CSS without changing valid dimensions or persisting defaults');
+  assert.deepEqual(errors,[],'malformed persisted data must not abort public page rendering or Canvas style calculation');
   assert.equal(writes,0,'rendering public content must never Save or Publish');
 });
