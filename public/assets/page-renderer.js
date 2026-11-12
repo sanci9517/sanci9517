@@ -1,5 +1,5 @@
 /* Sanci9517 canonical public Page Model renderer — Editor v2 compatible. */
-import { resolveNodeStyle, STYLE_MAP, needsRelativeOffsetPosition, legacyBackgroundColor } from "../editor-v2/core/canvas-engine.js?v=20261030-legacy-background-compound";
+import { resolveNodeStyle, STYLE_MAP, needsRelativeOffsetPosition, legacyBackgroundColor, safeCssText } from "../editor-v2/core/canvas-engine.js?v=20261112-safe-css-parity";
 import { RICH_TEXT_FONT_FAMILIES } from "../editor-v2/core/schema.js?v=20261101-richtext-link-target";
 import { resolveRichTextLinkTarget } from "../editor-v2/core/richtext-links.js?v=20261101-richtext-link-target";
 import { LAYOUT_TYPES, isManagedLayout } from "../editor-v2/core/layout-presets.js";
@@ -31,12 +31,13 @@ import {backgroundImageValue,legacyBackgroundCompound,MEDIA_ASSET_ID} from "../e
   if(legacyBackground)out+=`background:${esc(legacyBackground)};`;
   else if(legacyCompound?.color)out+=`background-color:${esc(legacyCompound.color)};`;
   // Preserve legacy shorthand defaults while allowing Inspector longhands to override them.
-  if(values.border&&CSS.supports('border',String(values.border)))out+=`border:${esc(values.border)};`;
+  const border=safeCssText(values.border);
+  if(border&&CSS.supports('border',border))out+=`border:${esc(border)};`;
   for(const [key,property] of Object.entries(STYLE_MAP)){
     if(['backgroundImage','backgroundSize','backgroundPosition','backgroundRepeat'].includes(key))continue;
    const cssProperty=property.replace(/[A-Z]/g,letter=>'-'+letter.toLowerCase());
    const value=values[key];if(value===undefined||value===null||value==='')continue;
-   const text=String(value);if(/[\u0000-\u001f\u007f;]/.test(text)||!CSS.supports(cssProperty,text))continue;
+   const text=safeCssText(value);if(!text||/[\u0000-\u001f\u007f;]/.test(text)||!CSS.supports(cssProperty,text))continue;
    out+=`${cssProperty}:${esc(text)};`;
    if(currentDevice==='mobile'){if(key==='width')out+=`--editor-mobile-width:${esc(text)};`;if(key==='minWidth')out+=`--editor-mobile-min-width:${esc(text)};`;if(key==='maxWidth')out+=`--editor-mobile-max-width:${esc(text)};`;if(key==='height')out+=`--editor-mobile-height:${esc(text)};`;if(key==='minHeight')out+=`--editor-mobile-min-height:${esc(text)};`;if(key==='position')out+=`--editor-mobile-position:${esc(needsRelativeOffsetPosition(values)?'relative':text)};`}
   }
@@ -45,20 +46,22 @@ import {backgroundImageValue,legacyBackgroundCompound,MEDIA_ASSET_ID} from "../e
   // relative positioning for the same Page Model value.
   if(needsRelativeOffsetPosition(values))out+='position:relative;';
    for(const [legacy,property] of [['background','background']]){
-   if(legacyRoot&&!legacyBackground&&!legacyCompound&&values[legacy]&&CSS.supports(property,String(values[legacy])))out+=`${property}:${esc(values[legacy])};`;
+   const value=safeCssText(values[legacy]);
+   if(legacyRoot&&!legacyBackground&&!legacyCompound&&value&&CSS.supports(property,value))out+=`${property}:${esc(value)};`;
   }
    const background=backgroundImageValue(values,{legacyBackground:legacyRoot});
    const hasCanonicalImage=values.backgroundImage!==undefined&&values.backgroundImage!==null&&values.backgroundImage!=='';
    if(background!=='none'||hasCanonicalImage)out+=`background-image:${esc(background)};`;
    const hasAsset=typeof values.backgroundAssetId==='string'&&MEDIA_ASSET_ID.test(values.backgroundAssetId);
    for(const [key,property,fallback] of [['backgroundSize','background-size','cover'],['backgroundPosition','background-position','center center'],['backgroundRepeat','background-repeat','no-repeat']]){
-    const value=values[key]||(hasAsset?fallback:'');
-    if(value&&CSS.supports(property,String(value)))out+=`${property}:${esc(value)};`;
+    const value=safeCssText(values[key])||(hasAsset?fallback:'');
+    if(value&&CSS.supports(property,value))out+=`${property}:${esc(value)};`;
    }
-  if(values.radius!==undefined&&Number.isFinite(Number(values.radius)))out+=`border-radius:${Math.max(0,Number(values.radius))}px;`;
-  if(values.fontSize!==undefined&&Number.isFinite(Number(values.fontSize)))out+=`font-size:${Math.max(8,Number(values.fontSize))}px;`;
+  const radius=safeCssText(values.radius),fontSize=safeCssText(values.fontSize);
+  if(radius!==''&&Number.isFinite(Number(radius)))out+=`border-radius:${Math.max(0,Number(radius))}px;`;
+  if(fontSize!==''&&Number.isFinite(Number(fontSize)))out+=`font-size:${Math.max(8,Number(fontSize))}px;`;
   for(const [key,property] of [['x','left'],['y','top']]){
-   const value=values[key];if(value!==undefined&&CSS.supports(property,String(value))){out+=`${property}:${esc(value)};`;if(currentDevice==='mobile')out+=`--editor-mobile-${property}:${esc(value)};`;}
+   const value=safeCssText(values[key]);if(value&&CSS.supports(property,value)){out+=`${property}:${esc(value)};`;if(currentDevice==='mobile')out+=`--editor-mobile-${property}:${esc(value)};`;}
   }
   return out;
  }
