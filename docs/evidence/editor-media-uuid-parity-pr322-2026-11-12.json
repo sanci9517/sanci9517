@@ -81,7 +81,7 @@
     "save_publish_separate": true,
     "manual_editor_acceptance": "DEFERRED"
   },
-  "next": "PR #322 runtime and production rollout VERIFIED. Track its merge-SHA Editor Core result independently, then continue actual 77.44.7.D coverage of site-scoped Media Library archive/usage and responsive background across breakpoints; no claim of full D acceptance.",
+  "next": "PR #322 exact-merge-SHA Editor Core, F0, Twitch, production source smoke and 100% Worker rollout are confirmed PASS; full D remains OPEN/NOT_CERTIFIED. Continue #323 and #324 independent acceptance/fixes.",
   "production_release": {
     "build": {
       "id": "48a59c4d-d9ac-4ceb-aabf-8790189a369f",
@@ -119,8 +119,10 @@
       },
       "editor_core": {
         "id": 43242727725,
-        "status": "in_progress",
-        "conclusion": null
+        "status": "completed",
+        "conclusion": "success",
+        "sha": "c50e0898f3c96368cb071fdade1205832596c36a",
+        "completed_at": "2026-11-12T15:26:46Z"
       }
     },
     "d1_postflight": {
@@ -128,6 +130,7 @@
       "changes": 0,
       "changed_db": false,
       "latest_migration": "0028_media_archive.sql"
-    }
+    },
+    "postmerge_ci_complete": true
   }
 }
