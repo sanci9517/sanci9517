@@ -86,10 +86,10 @@ test('published page and Canvas handle malformed text, links and CSS without Sav
     const {collectVisibleDescendants,safeNodeChildIds}=await import('/editor-v2/core/visibility.js?v=20261112-safe-node-children');
     const invalid={toString:null};
     const fixture={rootId:'root',nodes:{
-      root:{id:'root',children:['a',invalid,42,'b']},
-      a:{id:'a',children:invalid},
-      b:{id:'b',children:[invalid,null,'c']},
-      c:{id:'c',children:[]}
+      root:{id:'root',children:['a',invalid,42,'b','root','a']},
+      a:{id:'a',children:['a','b']},
+      b:{id:'b',children:[invalid,null,'c','root']},
+      c:{id:'c',children:['a']}
     }};
     return {
       ids:collectVisibleDescendants(fixture,'mobile').map(node=>node.id),
@@ -98,9 +98,22 @@ test('published page and Canvas handle malformed text, links and CSS without Sav
       validChildren:safeNodeChildIds(fixture.nodes.root)
     };
   });
-  assert.deepEqual(visibility,{ids:['a','b','c'],rootChildCount:4,invalidRootChildren:[],validChildren:['a','b']},
+  assert.deepEqual(visibility,{ids:['a','b','c'],rootChildCount:6,invalidRootChildren:[],validChildren:['a','b','root','a']},
     'Canvas/public visibility traversal ignores malformed child data without changing the saved tree');
   assert.deepEqual(errors,[],'malformed persisted data must not abort public page rendering or Canvas style calculation');
+  // Older imports can contain self-references, back-edges, root references,
+  // or duplicated child IDs. The public renderer must visit each node once,
+  // like Canvas visibility, and keep healthy siblings without rewriting data.
+  page.nodes[intactHeadingId].children=[intactHeadingId,buttonId];
+  page.nodes[rootId].children.push(rootId,buttonId);
+  await tab.reload();
+  await root(intactHeadingId).waitFor({timeout:20000});
+  assert.equal((await root(intactHeadingId).textContent()).trim(),'A teljes oldal megmarad');
+  assert.equal(await root(intactHeadingId).count(),1,'self-cycle does not duplicate its heading');
+  assert.equal(await root(buttonId).count(),1,'duplicate root child and back-edge render button only once');
+  assert.equal(await root(validLinkId).count(),1,'valid sibling survives cyclic legacy references');
+  assert.deepEqual(errors,[],'cyclic and duplicate child references cannot crash public rendering');
+  assert.deepEqual(page.nodes[intactHeadingId].children,[intactHeadingId,buttonId],'read-only rendering preserves the cyclic Page Model');
   // The root itself may have a corrupted collection in a legacy snapshot.
   // A safe empty-page fallback is correct; displaying a 404 is not.
   page.nodes[rootId].children=invalid;
