@@ -1,0 +1,26 @@
+{
+  "plan_point": "77.44.7.D",
+  "date_utc": "2026-11-12",
+  "finding": "A Publish médiaellenőrzése a kódolt /api/admin/media privát előnézeti URL-t átengedte.",
+  "red_test": "media-api: 53 pass, 1 fail; a /api/%61dmin/media forrásra MEDIA_NOT_FOUND helyett null validációs eredmény jött",
+  "fix": "A privát médiaútvonalat a közös publikálási scanner dekódolt pathname alapján azonosítja helyi és ellenőrzött HTTPS alias alatt; a kiválasztott assetId elsőbbsége és a Save/Publish elkülönítése megmarad.",
+  "local_checks": {
+    "media_api": "54/54 pass",
+    "tenant_pages_editor": "17/17 pass",
+    "media": "5/5 test files pass",
+    "editor": "15/15 test files pass; 3/3 subreaper tests pass",
+    "web013": "68/68 pass",
+    "typecheck": "pass",
+    "plan_contract": "13/13 pass",
+    "canonical_plan": "13 master files, 396 mappings pass",
+    "feature_traceability": "396/396 pass after rebuild",
+    "active_point": "OPEN / NOT_CERTIFIED"
+  },
+  "release_preflight": {
+    "production_d1": "SELECT name FROM d1_migrations ORDER BY name: 34 rows, 0 writes, changed_db=false",
+    "wrangler_dry_run": "pass, 171 public assets"
+  },
+  "release_status": "PENDING",
+  "cost": "0 Ft",
+  "manual_editor_acceptance": "DEFERRED"
+}

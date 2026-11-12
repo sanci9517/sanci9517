@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261112070353-6be331ee",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-12T07:03:53.399Z",
+  "finished_at": "2026-11-12T07:07:25.038Z",
+  "wall_seconds": 212,
+  "paused_seconds": 0,
+  "measured_seconds": 212,
+  "status": "pass",
+  "kind": "mixed",
+  "summary": "Encoded private media preview blocked at Publish; red/green API and tenant tests, checks and release preflight passed",
+  "evidence": [
+    "docs/evidence/publication-encoded-private-media-77-44-7-d-2026-11-12.json"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "7496f162cc68808573650b38d58263304ac3f9c2",
+  "finished_revision": "7496f162cc68808573650b38d58263304ac3f9c2",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

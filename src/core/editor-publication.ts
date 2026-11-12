@@ -14,7 +14,11 @@ const IMAGE_REFERENCE_KEYS=new Set(['backgroundAssetId','imageAssetId','posterAs
 const ROUTE_ASSET_ID=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const ASSET_ID=ROUTE_ASSET_ID;
 const INVALID_MEDIA_REFERENCE='invalid-media-route';
-const isPrivateMediaPath=(pathname:string)=>pathname==='/api/admin/media'||pathname.startsWith('/api/admin/media/');
+const isPrivateMediaPath=(pathname:string)=>{
+ let decoded:string;
+ try{decoded=decodeURIComponent(pathname);}catch{return false;}
+ return decoded==='/api/admin/media'||decoded.startsWith('/api/admin/media/');
+};
 
 function renderedPublicationValue(parent:Record<string,unknown>,key:string,value:unknown):unknown{
  if(key==='props'&&(parent.type==='gallery'||parent.type==='carousel')&&value&&typeof value==='object'){

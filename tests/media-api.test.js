@@ -529,6 +529,10 @@ test("publication validates local media URLs against site, archive state and med
   assert.equal(await validatePublicationAssets(f.env.DB,"site-default",imageNode({src:`/media/${image}`})),null);
   assert.equal(await validatePublicationAssets(f.env.DB,"site-default",imageNode({src:`/api/admin/media?id=${image}`})),"MEDIA_NOT_FOUND",
     "a private editor preview URL cannot become a public authored image source");
+  for(const src of [`/api/%61dmin/media?id=${image}`,`/%61pi/admin/media?id=${image}`,`/api/admin%2fmedia?id=${image}`]){
+    assert.equal(await validatePublicationAssets(f.env.DB,"site-default",imageNode({src})),"MEDIA_NOT_FOUND",
+      `an encoded private preview cannot become public: ${src}`);
+  }
   assert.equal(await validatePublicationAssets(f.env.DB,"site-default",imageNode({assetId:image,src:`/api/admin/media?id=${image}`})),null,
     "a selected library asset still overrides a stale private preview fallback");
   for(const id of [archived,video,foreign]){
@@ -561,6 +565,10 @@ test("publication validates local media URLs against site, archive state and med
     "the selected asset still takes precedence over a stale fallback URL");
   const alias=new Set(["https://trusted.example.test"]);
   assert.equal(hasAbsoluteMediaLibraryUrl(imageNode({src:`https://trusted.example.test/api/admin/media?id=${image}`})),true);
+  assert.equal(hasAbsoluteMediaLibraryUrl(imageNode({src:`https://trusted.example.test/api/%61dmin/media?id=${image}`})),true,
+    "an encoded private alias still requires the verified-origin preflight");
+  assert.equal(await validatePublicationAssets(f.env.DB,"site-default",imageNode({src:`https://trusted.example.test/api/%61dmin/media?id=${image}`}),alias),"MEDIA_NOT_FOUND",
+    "an encoded private preview on a verified alias cannot publish");
   assert.equal(await validatePublicationAssets(f.env.DB,"site-default",imageNode({src:`https://trusted.example.test/api/admin/media?id=${image}`}),alias),"MEDIA_NOT_FOUND",
     "the site's verified HTTPS alias cannot publish its private media preview route");
   assert.equal(await validatePublicationAssets(f.env.DB,"site-default",imageNode({src:'https://trusted.example.test/media/not-a-uuid'}),alias),"MEDIA_NOT_FOUND",
