@@ -5,6 +5,15 @@
 import {safeMediaUrl} from './element-content.js';
 
 const MEDIA_ASSET_ID=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const legacySource=(src,editor)=>{
+  if(typeof src!=='string')return '';
+  const url=safeMediaUrl(src);
+  if(!url||editor||!url.startsWith('/'))return url;
+  try{
+    const path=decodeURIComponent(new URL(url,'https://sanci.invalid').pathname);
+    return /^\/api\/admin(?:\/|$)/i.test(path)?'':url;
+  }catch{return ''}
+};
 
 /** Editable text for legacy media, without coercing malformed persisted JSON.
  * Reading the Inspector must never rewrite the original Page Model.
@@ -30,14 +39,14 @@ export function legacyImageSource(props,{editor=false}={}){
   }
   // Old persisted Page Models can contain malformed structured src values.
   // Never coerce them to strings: custom conversion can throw or create a URL.
-  return typeof props?.src==='string'?safeMediaUrl(props.src):'';
+  return legacySource(props?.src,editor);
 }
 
 /** Shared, non-coercing source check for old video and audio elements. */
 export function legacyPlayableSource(props,{editor=false}={}){
   const id=props?.assetId;
   if(typeof id==='string'&&MEDIA_ASSET_ID.test(id))return editor?'/api/admin/media?id='+encodeURIComponent(id):'/media/'+encodeURIComponent(id);
-  return typeof props?.src==='string'?safeMediaUrl(props.src):'';
+  return legacySource(props?.src,editor);
 }
 
 /** Same playback flags in legacy Editor Canvas and the published page. */

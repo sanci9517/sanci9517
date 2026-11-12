@@ -1,0 +1,25 @@
+{
+  "plan_point": "77.44.7.D",
+  "date_utc": "2026-11-12",
+  "finding": "A régi Page Model publikus médiaforrása átengedte a privát /api/admin/media Editor-előnézeti URL-t.",
+  "red_test": "element-content.test.js: 25 pass, 1 fail; legacyImageSource returned the private URL instead of an empty public source",
+  "fix": "A legacy kép, videó, hang és videóborítókép közös forrásválasztása kizárja a helyi privát admin útvonalat publikus módban; az Editor előnézete és a publikus /media útvonal megmarad.",
+  "local_checks": {
+    "targeted": "26/26 pass",
+    "editor": "15/15 test files pass; 3/3 subreaper tests pass",
+    "media": "5/5 test files pass",
+    "web013": "68/68 pass",
+    "typecheck": "pass",
+    "plan_contract": "13/13 pass",
+    "canonical_plan": "13 master files, 396 mappings pass",
+    "feature_traceability": "396/396 pass",
+    "active_point": "OPEN / NOT_CERTIFIED"
+  },
+  "release_preflight": {
+    "production_d1": "SELECT name FROM d1_migrations ORDER BY name: 34 rows, 0 writes, changed_db=false",
+    "wrangler_dry_run": "pass, 171 public assets"
+  },
+  "release_status": "PENDING",
+  "cost": "0 Ft",
+  "manual_editor_acceptance": "DEFERRED"
+}

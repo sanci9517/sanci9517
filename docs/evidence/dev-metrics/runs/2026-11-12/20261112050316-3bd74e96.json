@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261112050316-3bd74e96",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-12T05:03:16.385Z",
+  "finished_at": "2026-11-12T05:07:03.170Z",
+  "wall_seconds": 227,
+  "paused_seconds": 0,
+  "measured_seconds": 227,
+  "status": "pass",
+  "kind": "mixed",
+  "summary": "Legacy public media preview route excluded; red/green test and release checks passed",
+  "evidence": [
+    "docs/evidence/legacy-private-media-source-77-44-7-d-2026-11-12.json"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "e4453bb56d4c2186e26bc4ff770c47fe659d60be",
+  "finished_revision": "e4453bb56d4c2186e26bc4ff770c47fe659d60be",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

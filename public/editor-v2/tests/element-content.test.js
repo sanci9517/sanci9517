@@ -208,6 +208,17 @@ test('legacy media source ignores malformed structured URLs without throwing',()
  assert.equal(legacyImageSource({src:'https://example.com/media.png'}),'https://example.com/media.png');
 });
 
+test('legacy public media sources never expose private editor previews',()=>{
+ const preview='/api/admin/media?id=00000000-0000-4000-8000-000000000123';
+ for(const source of [legacyImageSource,legacyPlayableSource]){
+  for(const src of [preview,'/api/%61dmin/media?id=x','/foo/../api/admin/media?id=x'])assert.equal(source({src}), '');
+  assert.equal(source({src:preview},{editor:true}),preview);
+  assert.equal(source({src:'/media/00000000-0000-4000-8000-000000000123'}),'/media/00000000-0000-4000-8000-000000000123');
+ }
+ assert.equal(legacyPlaybackSettings({poster:preview},{video:true}).poster,'');
+ assert.equal(legacyPlaybackSettings({poster:preview},{video:true,editor:true}).poster,preview);
+});
+
 test('legacy video and audio reject corrupt nonstring source without coercion',()=>{
  const assetId='00000000-0000-4000-8000-000000000123';
  for(const src of [null,42,true,['/fixture.webm'],{toString:null},{valueOf:null,toString:null}]){
