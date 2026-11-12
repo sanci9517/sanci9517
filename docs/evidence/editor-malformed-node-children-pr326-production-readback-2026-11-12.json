@@ -1,0 +1,137 @@
+{
+  "schema_version": 1,
+  "project": "SANCI9517 Creator Platform",
+  "plan_item": "77.44.7.D",
+  "date_utc": "2026-11-12",
+  "release": {
+    "pr": 326,
+    "pr_url": "https://github.com/sanci9517/sanci9517/pull/326",
+    "source_head": "d970b4064012e9fd10e20e8ab4170eee72b52957",
+    "merge_commit": "9dc850b3cd8918caed2084ba34406d9f1959dbe5",
+    "branch": "v2/foundation",
+    "merge_method": "merge",
+    "deployed": true
+  },
+  "exact_pr_head_checks": {
+    "canonical_plan": {
+      "run_id": 43272730805,
+      "result": "completed/success"
+    },
+    "f0": {
+      "run_id": 43272731012,
+      "result": "completed/success"
+    },
+    "twitch": {
+      "run_id": 43272730835,
+      "result": "completed/success"
+    },
+    "worker_release_dry_run": {
+      "run_id": 43272730782,
+      "result": "completed/success"
+    },
+    "editor_core_real_chromium": {
+      "run_id": 43272730816,
+      "result": "completed/success"
+    }
+  },
+  "production": {
+    "cloudflare_worker": "sanci9517-streamer-brand",
+    "build_uuid": "dd1cd61d-fc33-4015-86d8-321be87512a9",
+    "build_status": "stopped",
+    "build_outcome": "success",
+    "build_source_commit": "9dc850b3cd8918caed2084ba34406d9f1959dbe5",
+    "build_command": "npm run typecheck",
+    "deploy_command": "npm run deploy:safe",
+    "migration_gate": "passed; no migrations applied",
+    "deployment_id": "51265a4c-b6e7-4500-8f64-5b51851748ef",
+    "worker_version_id": "d4d8814d-2111-4d78-b7c2-1db0807d28e7",
+    "traffic_percentage": 100,
+    "readback": {
+      "run_id": 43281756150,
+      "status": "completed",
+      "conclusion": "success",
+      "verified_health_http_status": 200,
+      "files_exact_sha256_match": true,
+      "files": [
+        "public/assets/page-renderer.js",
+        "public/editor-v2/core/canvas-engine.js",
+        "public/editor-v2/core/visibility.js",
+        "public/editor-v2/core/element-content.js"
+      ]
+    }
+  },
+  "production_d1": {
+    "preflight": {
+      "success": true,
+      "sql_type": "SELECT-only",
+      "migrations": 34,
+      "last": {
+        "id": 34,
+        "name": "0028_media_archive.sql"
+      },
+      "changes": 0,
+      "rows_written": 0,
+      "changed_db": false
+    },
+    "postflight": {
+      "success": true,
+      "sql_type": "SELECT-only",
+      "migrations": 34,
+      "last": {
+        "id": 34,
+        "name": "0028_media_archive.sql"
+      },
+      "changes": 0,
+      "rows_written": 0,
+      "changed_db": false
+    },
+    "migrated": false,
+    "production_data_mutation": false
+  },
+  "merge_sha_checks": {
+    "canonical_plan": {
+      "run_id": 43281755977,
+      "status": "completed",
+      "conclusion": "success"
+    },
+    "active_plan_audit": {
+      "run_id": 43281756003,
+      "status": "completed",
+      "conclusion": "success"
+    },
+    "f0": {
+      "run_id": 43281756071,
+      "status": "completed",
+      "conclusion": "success"
+    },
+    "twitch": {
+      "run_id": 43281756033,
+      "status": "completed",
+      "conclusion": "success"
+    },
+    "production_source_smoke": {
+      "run_id": 43281756150,
+      "status": "completed",
+      "conclusion": "success"
+    },
+    "editor_core": {
+      "run_id": 43281756152,
+      "status": "in_progress",
+      "conclusion": null,
+      "at_evidence_time": "IN_PROGRESS; must check later"
+    }
+  },
+  "limits": {
+    "no_new_paid_service_authorized": true,
+    "no_paid_spend_authorized": true,
+    "cloudflare_build_minutes_limit_reached": false,
+    "billing_guarantee": false
+  },
+  "capability_acceptance": {
+    "plan": "77.44.7.D",
+    "status": "OPEN / NOT_CERTIFIED",
+    "manual_physical_editor_acceptance": "DEFERRED",
+    "save_publish_separate": true,
+    "scope": "read-only malformed node children fallback; not full end-to-end editor matrix"
+  }
+}
