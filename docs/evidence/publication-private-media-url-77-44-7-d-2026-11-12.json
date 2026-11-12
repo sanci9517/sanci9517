@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "plan_point": "77.44.7.D",
-  "status": "LOCAL_CHECKS_PASS_RELEASE_PENDING",
+  "status": "DEPLOYED_EXACT_SHA_EDITOR_CI_IN_PROGRESS_SCOPE_OPEN",
   "finding": "The publication media scanner only treated /media paths as reserved. Authored image/video/poster sources could publish a local private /api/admin/media editor preview URL, which cannot serve a public viewer.",
   "red_test": "tests/media-api.test.js: 53 pass, 1 fail; validatePublicationAssets returned null instead of MEDIA_NOT_FOUND for an image src pointing to /api/admin/media?id=...",
   "change": "The publication scanner rejects private admin media paths for local and verified HTTPS alias URLs. The absolute-URL origin preflight includes this route; a valid selected assetId still overrides a stale fallback. Save and Publish remain separate.",
@@ -21,6 +21,16 @@
     "git_diff_check": "PASS"
   },
   "dev_metrics_run": "docs/evidence/dev-metrics/runs/2026-11-12/20261112040436-d55bdf8b.json",
-  "release": "Pending exact-SHA push, CI, Cloudflare build and direct traffic/health/unchanged-asset hash checks",
+  "release": {
+    "source_commit": "5188f722927404e3c3b0b02fa66691b67ff7a27b",
+    "verified_remote_branch": "v2/foundation at exact source SHA after normal fast-forward push",
+    "cloudflare_build": "fe7cf7a3-8fc0-491e-b17c-cfb2ea621083 stopped/success at exact source SHA; typecheck, deploy:safe and migration safety gate succeeded; no updated public assets",
+    "deployment": "30375e93-2ebf-44ef-8c3f-ca7d4dc69bfb",
+    "traffic_version": "7201b864-0dc6-4ed9-8e6a-bd6a452a1899 at 100%",
+    "health": "Direct GET /api/health HTTP 200; ok=true, service=sanci9517-streamer-brand, version=2.0.0",
+    "changed_public_assets": [],
+    "unchanged_renderer_asset_sha256": "public/editor-v2/core/authored-content.js local and direct production GET cc61aa77518b3c66f25d70f9e8ac642e05025f700468c26be94f88489ffab453",
+    "exact_sha_github_ci": "Canonical Plan 43152707554, Active Point Audit 43152707523, Twitch 43152707558 and F0 43152707516 completed/success; Editor Core 43152707548 in_progress"
+  },
   "cost": "No paid service, production D1 mutation/migration, or R2 deletion."
 }
