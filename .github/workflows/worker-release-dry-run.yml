@@ -1,0 +1,36 @@
+name: Worker release dry-run
+
+on:
+  pull_request:
+    branches:
+      - v2/foundation
+    paths:
+      - 'public/**'
+      - 'src/**'
+      - 'wrangler.jsonc'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/worker-release-dry-run.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  worker-release-dry-run:
+    name: Verify Worker bundle without deploying
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Checkout exact PR source
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Install locked dependencies
+        run: npm ci --no-audit --no-fund
+      - name: Wrangler deploy dry-run (never publish)
+        env:
+          CI: 'true'
+          WRANGLER_SEND_METRICS: 'false'
+        run: npx --no-install wrangler deploy --dry-run --outdir "$RUNNER_TEMP/sanci-worker-dry-run"
