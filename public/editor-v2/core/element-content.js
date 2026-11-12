@@ -8,6 +8,15 @@ export function safeMediaUrl(value){
  if(!raw||raw.startsWith('//')||/[\u0000-\u001f\u007f\\]/.test(raw)||!(/^(https?:\/\/|\/(?!\/))/.test(raw)))return '';
  try{const url=new URL(raw,'https://sanci.invalid');return ['http:','https:'].includes(url.protocol)&&!url.username&&!url.password?raw:''}catch{return ''}
 }
+/** Public-only media contract. Keep safeMediaUrl for authenticated Editor previews. */
+export function safePublishedMediaUrl(value){
+ const url=safeMediaUrl(value);
+ if(!url||!url.startsWith('/'))return url;
+ try{
+  const path=decodeURIComponent(new URL(url,'https://sanci.invalid').pathname);
+  return /^\/api\/admin(?:\/|$)/i.test(path)?'':url;
+ }catch{return ''}
+}
 export function createElementContent(type){
  switch(type){
  case 'list':return {version:1,items:['Első pont','Második pont','Harmadik pont'],ordered:false};
@@ -42,14 +51,14 @@ export function validateElementContent(type,value){
  let model;try{model=normalizeElementContent(type,value)}catch{return 'INVALID_STRUCTURED_CONTENT'}
  if(type==='gallery'){
   for(const item of model.items){
-   if(!safeMediaUrl(item.src))return 'INVALID_GALLERY_IMAGE';
+   if(!safePublishedMediaUrl(item.src))return 'INVALID_GALLERY_IMAGE';
    if(!item.alt.trim())return 'GALLERY_ALT_REQUIRED';
   }
  }
  if(type==='carousel'){
   for(const item of model.items){
    if(!item.label.trim()||!item.content.trim())return 'INCOMPLETE_CAROUSEL_SLIDE';
-   if(item.src&&!safeMediaUrl(item.src))return 'INVALID_CAROUSEL_IMAGE';
+   if(item.src&&!safePublishedMediaUrl(item.src))return 'INVALID_CAROUSEL_IMAGE';
    if(item.src&&!item.alt.trim())return 'CAROUSEL_ALT_REQUIRED';
   }
  }
@@ -67,13 +76,13 @@ export function renderElementContent(type,value,nodeId){
   const tag=m.ordered?'ol':'ul';return `<${tag} class="visual-structured-list">${m.items.map(i=>`<li>${esc(i)}</li>`).join('')}</${tag}>`;
  }
  if(type==='table')return `<div class="visual-structured-table-scroll" tabindex="0" role="region" aria-label="Táblázat"><table class="visual-structured-table"><thead><tr>${m.rows[0].map(v=>`<th scope="col">${esc(v)}</th>`).join('')}</tr></thead><tbody>${m.rows.slice(1).map(row=>`<tr>${row.map(v=>`<td>${esc(v)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
- if(type==='carousel')return `<section class="visual-structured-carousel" data-structured-carousel aria-roledescription="carousel"><div class="visual-carousel-track">${m.items.map((item,i)=>{const src=safeMediaUrl(item.src);return `<article class="visual-carousel-slide" role="group" aria-roledescription="dia" aria-label="${i+1}. / ${m.items.length}. dia"${i===0?'':' hidden'}>${src?`<img src="${esc(src)}" alt="${esc(item.alt)}" loading="lazy">`:''}<h3>${esc(item.label)}</h3><p>${esc(item.content)}</p></article>`}).join('')}</div><div class="visual-carousel-controls"><button type="button" class="visual-carousel-prev" aria-label="Előző dia">‹</button><span class="visual-carousel-count" aria-live="polite">1 / ${m.items.length}</span><button type="button" class="visual-carousel-next" aria-label="Következő dia">›</button></div></section>`;
+ if(type==='carousel')return `<section class="visual-structured-carousel" data-structured-carousel aria-roledescription="carousel"><div class="visual-carousel-track">${m.items.map((item,i)=>{const src=safePublishedMediaUrl(item.src);return `<article class="visual-carousel-slide" role="group" aria-roledescription="dia" aria-label="${i+1}. / ${m.items.length}. dia"${i===0?'':' hidden'}>${src?`<img src="${esc(src)}" alt="${esc(item.alt)}" loading="lazy">`:''}<h3>${esc(item.label)}</h3><p>${esc(item.content)}</p></article>`}).join('')}</div><div class="visual-carousel-controls"><button type="button" class="visual-carousel-prev" aria-label="Előző dia">‹</button><span class="visual-carousel-count" aria-live="polite">1 / ${m.items.length}</span><button type="button" class="visual-carousel-next" aria-label="Következő dia">›</button></div></section>`;
  if(type==='accordion')return `<div class="visual-structured-accordion">${m.items.map((item,i)=>`<details${i===0?' open':''}><summary>${esc(item.label)}</summary><div class="visual-structured-panel">${esc(item.content)}</div></details>`).join('')}</div>`;
  if(type==='tabs'){
   const prefix='tab-'+idSafe(nodeId);
-  return `<div class="visual-structured-tabs" data-structured-tabs><div role="tablist" aria-label="Tartalomfülek">${m.items.map((item,i)=>`<button type="button" role="tab" id="${prefix}-t${i}" aria-controls="${prefix}-p${i}" aria-selected="${i===0}" tabindex="${i===0?0:-1}">${esc(item.label)}</button>`).join('')}</div>${m.items.map((item,i)=>`<div role="tabpanel" id="${prefix}-p${i}" aria-labelledby="${prefix}-t${i}"${i===0?'':' hidden'} class="visual-structured-panel">${esc(item.content)}</div>`).join('')}</div>`;
+  return `<div class="visual-structured-tabs" data-structured-tabs><div role="tablist" aria-label="Tartalomfülek">${m.items.map((item,i)=>`<button type="button" role="tab" id="${prefix}-t${i}" aria-controls="${prefix}-p${i}" aria-selected="${i===0}" tabindex="${i===0?0:-1}">${esc(item.label)}</button>`).join('')}</div>${m.items.map((item,i)=>`<div role="tabpanel" id="${prefix}-p${i}" aria-labelledby="${prefix}-t${i}" tabindex="0"${i===0?'':' hidden'} class="visual-structured-panel">${esc(item.content)}</div>`).join('')}</div>`;
  }
- return `<div class="visual-structured-gallery" data-structured-gallery>${m.items.map((item,i)=>{const url=safeMediaUrl(item.src);return url?`<button type="button" class="visual-gallery-thumb" data-gallery-index="${i}" aria-label="Kép megnyitása: ${esc(item.alt)}"><img src="${esc(url)}" alt="${esc(item.alt)}" loading="lazy">${item.caption?`<span>${esc(item.caption)}</span>`:''}</button>`:`<div class="visual-gallery-empty">Kép URL megadása szükséges</div>`}).join('')}<dialog class="visual-gallery-dialog" aria-label="Galéria nagyított képe"><button type="button" class="visual-gallery-close" aria-label="Bezárás">×</button><button type="button" class="visual-gallery-prev" aria-label="Előző kép">‹</button><img alt=""><button type="button" class="visual-gallery-next" aria-label="Következő kép">›</button><p></p></dialog></div>`;
+ return `<div class="visual-structured-gallery" data-structured-gallery>${m.items.map((item,i)=>{const url=safePublishedMediaUrl(item.src);return url?`<button type="button" class="visual-gallery-thumb" data-gallery-index="${i}" aria-label="Kép megnyitása: ${esc(item.alt)}"><img src="${esc(url)}" alt="${esc(item.alt)}" loading="lazy">${item.caption?`<span>${esc(item.caption)}</span>`:''}</button>`:`<div class="visual-gallery-empty">Kép URL megadása szükséges</div>`}).join('')}<dialog class="visual-gallery-dialog" aria-label="Galéria nagyított képe"><button type="button" class="visual-gallery-close" aria-label="Bezárás">×</button><button type="button" class="visual-gallery-prev" aria-label="Előző kép">‹</button><img alt=""><button type="button" class="visual-gallery-next" aria-label="Következő kép">›</button><p></p></dialog></div>`;
 }
 export function activateStructuredContent(root){
  for(const host of root.querySelectorAll('[data-structured-tabs]')){
