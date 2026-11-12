@@ -1,0 +1,97 @@
+{
+  "schema": "sanci9517.release-evidence.v1",
+  "date": "2026-11-12",
+  "plan_item": "77.44.7.D",
+  "status": "PARTIAL_RELEASE_VERIFIED",
+  "pr": {
+    "number": 318,
+    "url": "https://github.com/sanci9517/sanci9517/pull/318",
+    "head": "dba6a9423f3345ba58e77b792199f9ba1feece09",
+    "merged": true,
+    "merge_sha": "7dd8606819d3aeaf22120bf7cf83d9cf7daea2a7",
+    "parents": [
+      "20bb945b761b887d618df3ec1179cf58a8a38eed",
+      "dba6a9423f3345ba58e77b792199f9ba1feece09"
+    ],
+    "method": "merge"
+  },
+  "ci": {
+    "editor_core": {
+      "run": 43207888369,
+      "conclusion": "success",
+      "includes": [
+        "typecheck",
+        "Editor unit",
+        "offline D1",
+        "Media API",
+        "isolated D1/R2 Worker",
+        "Chromium Editor layout",
+        "WEB-013 mobile browser",
+        "schedule",
+        "domain",
+        "Brand Kit",
+        "Admin home"
+      ]
+    },
+    "f0": {
+      "run": 43207888449,
+      "conclusion": "success"
+    },
+    "twitch": {
+      "run": 43207888401,
+      "conclusion": "success"
+    },
+    "wrangler_release_dry_run": {
+      "run": 43207888455,
+      "conclusion": "success",
+      "step": "Wrangler deploy dry-run (never publish)",
+      "conclusion_step": "success"
+    },
+    "head_check_runs": {
+      "count": 5,
+      "all_success": true
+    }
+  },
+  "cloudflare": {
+    "build_uuid": "8a5f3756-8dd3-4696-918e-4a479201077f",
+    "build_outcome": "success",
+    "source_commit": "7dd8606819d3aeaf22120bf7cf83d9cf7daea2a7",
+    "commands": {
+      "typecheck": "success",
+      "deploy_safe": "success",
+      "migration_safety_gate": "success",
+      "wrangler_deploy": "success"
+    },
+    "deployment_id": "45bdb4e1-141c-4d60-b1fa-63e7f5468df6",
+    "worker_version": "ac1c5e45-0cf2-43d5-ad1e-b396642858fd",
+    "traffic_percent": 100,
+    "assets_seen": 171,
+    "asset_upload_log": "No updated asset files to upload. Proceeding with deployment..."
+  },
+  "d1_pre_and_postflight": {
+    "sql": "SELECT name FROM d1_migrations ORDER BY name;",
+    "record_count": 34,
+    "last_migration": "0028_media_archive.sql",
+    "rows_written": 0,
+    "changes": 0,
+    "changed_db": false
+  },
+  "health_http": {
+    "status": "UNVERIFIED",
+    "blocker": "container cannot resolve host; web fetch reports inaccessible"
+  },
+  "changed_asset_sha256": {
+    "path": "/assets/page-renderer.js",
+    "status": "UNVERIFIED",
+    "blocker": "direct production asset GET unavailable; Cloudflare API build/version alone not proof"
+  },
+  "constraints": {
+    "new_spending_authorized_huf": 0,
+    "production_d1_write": false,
+    "production_migrations": false,
+    "production_r2_deletion": false,
+    "save_publish_distinct": true,
+    "complete_editor_manual_acceptance": "DEFERRED"
+  },
+  "next": "Complete PR #319 independent release checks and reconcile with PR #318; separate live health and asset hash verification when outbound request is possible."
+}
