@@ -1,12 +1,14 @@
 # SANCI9517 — publikus weboldal: kreatív brief, dizájnrendszer és teljes tartalomterv
 
 **Dokumentum típusa:** belső, végrehajtható creator-webhely brief; NEM második platform-MASTER.  
-**Verzió:** 1.8 (részletes SANCI DARK DEPTH webhelyspecifikáció; kivitelezésre vár) • **Dátum:** 2026-11-09 • **Státusz:** DESIGN SPEC / NOT IMPLEMENTED.  
+**Verzió:** 2.0 (2026-11-12) • **Státusz:** SANCI DARK DEPTH ONLY / KÖTELEZŐ SPEC / KIVITELEZÉS OPEN.
 **Repository / ág:** sanci9517/sanci9517 → v2/foundation.  
 **Kanonikus termékterv:** docs/SANCI9517-CREATOR-PLATFORM-PLAN.md.  
 **Végrehajtási szabály:** AGENTS.md; ez a brief nem írhatja felül a MASTER-t, a release-gate-eket, a Save/Publish szétválasztását vagy a domainadatok tulajdonosát.  
 **Költség:** 0 Ft új költés; bármely fizetős komponenshez előzetes tulajdonosi döntés kell.  
 **Feladat:** SANCI9517 saját nyilvános, egyedi, többoldalas streamer/creator márkawebhelyének professzionális kialakítása a meglévő Editor v2 és a kanonikus publikus renderer felhasználásával. **Nem** a Creator Platform általános marketing-weboldala és **nem** egyetlen hosszú „Rólam” oldal.
+
+> **Egyetlen vizuális irány:** SANCI DARK DEPTH, a jóváhagyott háromkarú emblémával. Nincs második logó/irány/merch-téma. A MASTER az egyetlen kanonikus terv; ez csak alárendelt, oldalankénti kivitelezési brief. A korábbi, egymással versengő koncepciók lezárt előzmények.
 
 > A dokumentumban a tervezett szövegek publikálható copy-tervezetek, de a külső csatornaadatokat, személyes tényeket, együttműködéseket, élő státuszt és konkrét adásidőpontokat ellenőrzés nélkül nem szabad tényként publikálni.
 
@@ -14,7 +16,7 @@
 
 ## 1. Döntés: az oldal identitása
 
-**Márkanév:** a Sanci legyen az elsődleges személyes szójel és megszólítás; a SANCI9517 a hivatalos csatorna-/creatorazonosító. A 9517 nem kötelező logóelem. Egy brand, több következetes névváltozat.  
+**Márkanév:** a SANCI legyen az elsődleges nagybetűs márka-szójel és megszólítás; a SANCI9517 a hivatalos csatorna-/creatorazonosító. A 9517 nem kötelező logóelem. Egy brand, több következetes névváltozat.  
 **Pozicionálás:** nyugodt, közvetlen magyar gamer és tartalomkészítő, aki a játékot kikapcsolódásként éli meg; Fortnite, Hearthstone és indie/roguelike tartalom, a személyiségre és befogadó közösségre építve, nem versenykényszerre.  
 **Első látogatói kérdés:** „Élőben van? Ha nem, mit nézhetek most? Hol csatlakozhatok?” Az első képernyő ezekre válaszoljon.  
 **Márkaígéret:** valódi, nyugodt játékélmény és közösség, ahová jó visszatérni; természetes kommunikáció és közös fejlődés. Nincs kitalált teljesítmény, harsány gamer-perszóna, hamis nézettség vagy szuperlatívusz.  
@@ -57,48 +59,21 @@ Csak tervezési megfigyelések, NEM automatikus másolási jogok. Az itt rögzí
 
 ---
 
-## 3. Kreatív art direction — „SANCI SIGNAL”
+## 3. EGYETLEN kreatív arculat — SANCI DARK DEPTH (végleges irány, produkciós assetek még OPEN)
 
-### 3.1 Alapkarakter
+**Identitás:** SANCI szójel + a 2026-11-09-én elfogadott, három összefonódó ívből és három külső csomópontból álló saját embléma. NEM geometrikus S, NEM kötelező 9517 a logóban. A vizuális világ és a leendő merch ugyanebből a jelből és ugyanebből a filmvilágból származik.
 
-**Világ:** igényes, nyugodt személyes digitális gaming-stúdió, erős, eredeti vizuális nyitással és animációkkal, de logikus menükkel és tiszta tartalmi hierarchiával. A fekete, szürke és piros a tulajdonos kedvelt színei, nem végleges palettakorlát. Tilos a generikus neon gamer sablon, a zavaró mozgás és a végtelen kezdőoldali görgetés.  
-**Kulcsmotívum:** vékony, szegmenselt „signal line” — az adás/live pillanatok környékén életre kel, offline állapotban statikus.  
-**Hős-vizuál:** saját, felhasználásra jogosított portré vagy a Sanci csatorna saját grafikája előnyben. Ennek hiányában eredeti, absztrakt, brandelt broadcast kompozíció; nem más streamer arca vagy véletlen stock-fotó.  
-**Logó:** SANCI9517 tiszta wordmark; opcionális saját monogram terv. Ne állítsuk, hogy végleges logó/asset már rendelkezésre áll, amíg ellenőrizetlen.  
-**Téma:** elsődlegesen dark; light/high-contrast opcionális későbbi fejlesztés, ahol a Brand Kit és renderer támogatja.
+**Világ:** mély éjsötét, grafit, finom ezüst/fémes anyagszerűség, vörös fényút a ködös távoli fenyves/hegygerinc kompozícióban, ritka hűvös ellenfény. Paletta: \`#090C12\` háttér; \`#141A25\` grafit; \`#1C2633\` emelt kártya; \`#344253\` szegély; \`#F5F7FB\` fehér szöveg; \`#B8C4D3\` mellékszöveg; \`#E14D61\` visszafogott CTA; \`#8D253B\` fényút; \`#78B8D4\` ritka távolfény; \`#FF4C64\` csak tényleges LIVE állapothoz, felirattal. A régi cián/lila „signal” paletta és alternatív design-név nem használható.
 
-### 3.2 Javasolt paletta
+**Karakteres, de nem tolakodó motívum:** opcionális, **hátulról látható, arc nélküli kapucnis alak** a távoli képi világban, vagy csak egy váll-, kapucni-, ujj-, hátprint-részlet. Ruháján a valós elfogadott SANCI szimbólum szerepelhet; nem Sanci arcképe, nem állítunk valós identitást, nincs fegyver, horror, agresszív póz vagy stock/generikus fantasy harcos. A főoldal dominánsa az embléma, nem a figura. Egy nézetben legfeljebb egy domináns merch-utalás; nem minden oldalon kell figura.
 
-| Szerep | HEX | Használat |
-|---|---|---|
-| Háttér alap | #090C13 | site background |
-| Sötét másodlagos | #111724 | váltakozó szekciók |
-| Card | #192131 | video / info cards |
-| Erős szöveg | #F7F9FC | H1 / H2 / fő content |
-| Másodlagos szöveg | #B7C3D6 | leírások |
-| Signal cyan | #49D9F5 | elsődleges CTA, fókusz |
-| Accent violet | #A88BFF | glow, kiegészítő badge |
-| Live | #FF5269 | csak ténylegesen LIVE állapot / figyelmeztető külön szemantika |
-| Border | #334155 | 1 px csendes elválasztás |
+**Merch előkészítése:** ugyanabból a grafikai alapból jövő apró mellszimbólum, nagyobb hátminta, ujjpatch, hímzés, címke, sapka-patch, matrica, csomagolás-jel későbbi megtervezési lehetőség; jelenleg nincsen kész termék, webshop, ár, drop, készlet vagy vásárlási CTA. A főoldalon a stream, videó, közösség elsődleges. A szemlélő idővel felfedezhet visszatérő részleteket.
 
-A színek **tervezési célértékek**, nem azt állítjuk, hogy minden fentit központi tokenként támogat a jelenlegi Brand Kit. A központilag létező tokenek: primary/text/surface/border, font/bodySize/headingSize/lineHeight, spacing, radius és árnyék; a többi csak validált page/node style vagy további kanonikus termékfejlesztés után kerülhet be. A light/dark különbeállítás megvalósítottságát ellenőrizni kell.
+**Tipográfia:** saját SANCI szójel, olvasható jogtiszta body font, 48–76px desktop hero (mobil 38–48px körüli tudatos adaptáció), body 16–18px, 1280–1360px site max és keskenyebb szövegoszlop; ritmus és negatív tér. Hero külön desktop/mobile asset és kép-kivágás, a H1/gomb/logó önálló szerkeszthető elem, nem a képbe égetett felület.
 
-### 3.3 Tipográfia és mérhető ritmus
+**Motion:** legfeljebb rövid, nem blokkoló logo-reveal, finom vörös fény és 120–220ms card hover/focus; akadálymentes reduced-motion és statikus fallback. Tilos villogás, autoplay hang/film, kötelező WebGL, 20 piros doboz és túlzsúfolt parallax. A megjelenés prémium, emberi, nyugodt.
 
-- Betűk: induláskor system-ui / Arial fallback; nem függünk külső fizetős fonttól. Egyedi display font csak igazolt szabad licenccel és kompatibilis fontkezeléssel.
-- H1: desktop 64–84 px cél, tablet 48–64 px, mobil 38–48 px. H2: 40–52 / 34–42 / 28–34 px; törzsszöveg 17–18 / 17 / 16 px. Az Editor által ténylegesen elfogadott egységekre kell leképezni.
-- Content max width: 1240–1320 px; nyugodt olvashatósághoz 62–72 karakter széles szövegoszlop.
-- 12 oszlop desktop; 8 tablet; 4 mobil mint vizuális tervezési rács, nem feltételezett kész Grid preset.
-- Space scale: 8 / 12 / 16 / 24 / 32 / 48 / 64 / 96 px. Hero és fontos szekciók között több tér, de ne legyen üres végtelen görgetés.
-- Border radius: card 18–24 px, gomb 12–14 px; ne minden legyen egyforma.
-- Használható képarányok: 16:9 videók, 9:16 shortok, 1:1 játék-kártyák; minőségi forrásképekkel.
-
-### 3.4 Mozgás és interakció
-
-- Finom hover emelkedés és fény; opcionális rövid 150–250 ms átmenet; scroll belépő animáció csak akkor, ha a valós Editor/runtime támogatja és a reduced-motion is biztosított.
-- Tilos automatikus hang, autoplay videó, villódzó/nehezen olvasható effektek; tartalom ne legyen animáció nélkül elrejtve.
-- Live pill: kizárólag hiteles aktuális státusz esetén piros; offline állapot semleges.
-- Loading skeleton csak valós aszinkron kéréshez; a hiányzó tartalmat nem „szépen” hamisítjuk.
+**Elsőbbség:** minden további 20–32. fejezet részletezi ugyanazt az egy irányt. Nincs párhuzamos frontend, Brand Kit vagy külön merch-dizájn. A valós implementáltságot csak Editor/renderer/QA elfogadás bizonyíthatja.
 
 ---
 
@@ -136,36 +111,18 @@ A színek **tervezési célértékek**, nem azt állítjuk, hogy minden fentit k
 
 ## 5. Teljes tartalmi és UX specifikáció — oldalanként
 
-### 5.1 Főoldal — / — „a SANCI9517 műsor főbejárata”
+### 5.1 Főoldal — / — 4 kompakt tartalmi egység, egyetlen SANCI márka
 
-**Első képernyő desktop:** 60/40 split: baloldalon kicsi eybrow „SANCI9517 / GAMING CREATOR”, erős 2–3 soros H1, 2 mondatos értékajánlat, LIVE/stream CTA és Videók CTA. Jobboldalt eredeti cover art, csatornakép vagy kattintásra aktiválható élő videó előnézet; háttérben visszafogott signal line. A két CTA első pillantásra egyértelmű.  
-**Mobil első képernyő:** sorrend: LIVE pill (ha tényleg live) → nagy H1 → 2 CTA → szép, de nem túl magas media thumbnail; az első tartalom már az első-két scrollban látszódjon.  
-**Szekciók pontos sorrendben:**
-1. Top ribbon: live esetén „MOST ÉLŐBEN” + stream címe; offline esetén „LEGÚJABB VIDEÓ” vagy „KÖVETKEZŐ ADÁS” csak valós adattal.
-2. Hero, CTA: „Nézd élőben” vagy offline „Irány a videók”, secondary „Csatlakozz a közösséghez”.
-3. „Most a SANCI világában” — 3 kurált tartalomkártya: legjobb videó, friss klip, következő igazolt adás; tartalom hiányában legfeljebb 2 jó kártya, nem üres keretek.
-4. „Mi pörög most?” — valódi játék/témakártyák: Fortnite, Hearthstone, indie/roguelike; mutasson a kapcsolódó tartalmakra.
-5. Széles editorial featured video (16:9), valós cover, időtartam, platform, játék; kattintáskor valódi cél.
-6. „Következő közös játék” — menetrendből, ha létezik megbízható event; eltérő adatforrásból nem duplikálható.
-7. „A közösség része vagy?” — Discord/community blokkon és platformonkénti hivatalos CTA; nincs kitalált tagszám.
-8. „A rövid pillanatok” — legfeljebb 3–4 valódi TikTok/Short, gyors linkkel.
-9. „Ismerj meg” — csupán 2 mondat és egy kiemelt saját kép/képzőművészeti kompozíció; CTA „Bővebben rólam”.
-10. Szponzorsáv **csak** jóváhagyott aktív partnerlogókkal, különben ne renderelődjön.
-11. Rövid záró CTA: „A következő jó pillanatnál találkozunk.” + platformlinkek.
-12. Közös footer. Nem reklámtornyot és nem végtelen home scrollt építünk.
+1. **Hero:** saját elfogadott logó és külön sötét táj/vörös út, 1–2 soros őszinte üzenet, éles live állapotban stream-CTA, offline/unknown állapotban valódi videó-/platform-CTA. Legfeljebb egy másodlagos CTA. Arc és hosszú élettörténet nincs. Opcionális, távoli háttal álló hoodie-sziluett vagy diszkrét ruharészlet lehet a képen, **nem kötelező** és mobilon elhagyható.
+2. **Most nálam:** igazolt LIVE / OFFLINE / UNKNOWN és a valós stream vagy kurált videó. Hiteles következő időpont csak kanonikus Schedule-adatból. Iframe csak szabályos mérettel és click-to-load/fallback linkkel.
+3. **Kiemelt pillanatok:** egy domináns videó/klip és legfeljebb két kisebb, valós képekkel/URL-ekkel; hiányzó tartalomnál nincs üres kártya.
+4. **Merre tovább?:** három logikus bejárat Menetrend, Közösség, Rólam. Utána közös footer. Nincs külön Shop-blokk, felesleges ezer statisztika, 12-szekciós főoldal vagy direkt merch teaser.
 
-**Kész magyar hero-copy:**  
-Eyebrow: „SANCI9517 • JÁTÉK / STREAM / KÖZÖSSÉG”  
-H1: „JÁTSSZUNK EGYET. A TÖBBI ALAKUL.” (jóváhagyandó új javaslat)  
-Lead: „Szia, Sanci vagyok! Nekem a játék kikapcsolódás: Fortnite, Hearthstone, indie felfedezések és beszélgetések, ahogy éppen alakulnak. Ha te is nyugodt, közvetlen társaságra vágysz, nézz be.”  
-CTA live: „Nézd az élő adást” • CTA offline: „Mutasd a videókat” • CTA közösség: „Találkozzunk a közösségben”.  
-Section 1 heading: „Amit most érdemes megnézned”  
-Section 2 heading: „Fortnite. Hearthstone. És ami még meglep.”  
-Section 3 heading: „Nem csak a játék számít. Az emberek is.”  
-Community lead: „Nem kell hangosnak lenned ahhoz, hogy jól érezd magad. Nézhetsz, beszélgethetsz, vagy csak együtt lehetsz a többiekkel.”  
-CTA close: „Jössz a következő körre?”
+**Copy-tervezet, jóváhagyástól függően szerkeszthető:** „Játsszunk egyet. A többi alakul.” / „Fortnite, Hearthstone és különleges játékok, nyugodt közös pillanatokkal. Nézz be egy adásba, vagy válassz egy videót.” / „Nézd az adást” (LIVE), „Nézz videókat” (OFFLINE/UNKNOWN), „Közösség”.
 
-**State matrix:** Live / Offline / Unknown / provider-error / no-featured-video / no-schedule / no-Discord-invite / reduced-motion / mobile narrow. Ismeretlen állapotból nincs piros élő badge.
+**Elvárt responsive:** 1440x900 és 1024x768 tudatos filmes hero-kompozíció; 768-on logikus váltás; 390x844 és 320x700 egyszerűsített art crop és egyoszlopos card. A fő CTA, H1, logó nem takarható; nulla vízszintes scroll és látható tartalmi belépés a kezdőképernyő közelében. A hoodie- és merch-seed díszítő alréteg, nem új szekció. Az Editor v2-ben minden teljesen szerkeszthető, Save és Publish külön.
+
+---
 
 ### 5.2 Élő adás — /elo
 
@@ -415,215 +372,9 @@ Ezek nem akadályozhatják a **tényszerű statikus** elemek minőségi megvaló
 
 ---
 
-## 14. V1.1 kreatív kiegészítés: nem weboldal, hanem felismerhető SANCI9517-élmény (2026-11-09)
+## 14–19. Lezárt kreatív előzmények — nem végrehajtandó alternatívák
 
-**Indok:** az 1.0 brief teljes információarchitektúrát és szerkesztett szöveget ad, de a világszintű minőséghez ez önmagában nem elég. Hiányzik az egyedi vizuális kulcsjelenet, az élmény időbeli változása, a visszatérési ok, a saját grafikai assetterv és a képernyőszintű vizuális minőségbiztosítás. Ez a kiegészítés ugyanazon **belső brief** része, nem új MASTER és nem jár automatikus feature-scope bővítéssel.
-
-### 14.1 Egy mondatos kreatív cél
-
-**A SANCI9517 weboldala egy saját digitális gaming stúdió:** megmutatja, mi történik épp, hova érdemes bekapcsolódni, és milyen pillanatról maradtál le. A látogató nem statikus névjegykártyát néz, hanem egy rendezett, élő creator-univerzumba érkezik.
-
-**Kreatív megkülönböztető:** „SANCI SIGNAL” — jel, adás, játék, felfedezés és a közösség együtt. Nem „cyberpunk stock-site”, nem agresszív RGB gamer-dashboard, nem tucat stream CTA grid. A jel-motívum összeköti a logót, a live állapotot, a tartalomkártyát, a szekcióváltásokat és a 404 oldalt.
-
-**Kreatív ellenpélda:** ha a SANCI9517 nevet és képeket más streamerére cserélve az oldal ugyanúgy működne, az arculat még túl általános; a vizuális tervet át kell dolgozni, nem elég a színcsere.
-
-**Valódiság:** Sanci személyisége és humora a később kiválasztott valódi videókból, hangulatokból és jóváhagyott saját szövegekből épüljön fel. Nem találunk ki poénokat, visszatérő közösségi szlenget, élettörténetet vagy brand-mitológiát helyette.
-
-### 14.2 Signature brand system — öt felismerhető elem
-
-1. **S / 9517 jel:** saját tervezésű, egyszerű, kisméretben és monochrome verzióban is működő geometrikus jel. Nem használható idegen védjegy. Brand boardon logó/ikon/fav/OG teszt.
-2. **Signal line:** rövid, szakaszos grafikai vonal, 1–2 px, cián → lila fényhatással. A navigáció aktív állapotán, videókártya-szélen és live panelen használható; legfeljebb 1–2 hangsúlyos helyen egyszerre.
-3. **Stage cut:** finom átlós / levágott sarok a kiemelt videó-média felületen. Az általános kártyákat nem szabdaljuk túl; egyetlen felismerhető forma.
-4. **Episode marker:** szerkesztett epizód/klip kártyákon következetes „FORTNITE / HEARTHSTONE / INDIE” kis címke és videótípus. Nem automatikus epizódszám, ha nincs adat.
-5. **Broadcast state:** három valós állapot látható különbséggel: LIVE (piros, tényleges igazolás), OFFLINE (semleges, legújabb tartalom), UNKNOWN (egyértelmű, nem hazudik).
-
-**Működéskorlátozás:** hover, scroll animációk, dynamic live update és stateful widgetek csak a valóban implementált Inspector/Canvas/Public útvonalon. Ha nincs meg, statikus, vizuálisan teljes P0 fallback.
-
-### 14.3 Főoldali „wow” storyboard: 0–5, 5–20, 20–60 másodperc
-
-**0–5 mp / első kép:** sötét, elegáns fejléc; hatalmas, jól olvasható SANCI9517 tipográfia; saját portré/eredeti grafikai „stage” a jobb oldalon. Egy valódi, elsődleges művelet. A státuszsáv nem takarja a címet.
-
-**5–20 mp / azonnal nézhető érték:** a hero után „MOST A SANCI VILÁGÁBAN” szerkesztett 3-as modul. A bal, nagy kártya a hét *valódi* kiválasztott videója; mellette 2 kisebb: kiemelt rövid pillanat és hiteles következő adás / alternatíva. Ez az oldal vizuális aláírása: aszimmetrikus, magazinszerű kártyakompozíció, nem három ugyanakkora téglalap.
-
-**20–60 mp / maradjak?** két külön hangulatú rész: játékvilág és közösség. Játékvilág: Fortnite / Hearthstone / indie „kapszulák”; közösség: saját, vállalható szöveg és ellenőrzött link. Kevesebb szekció, több tartalmi minőség.
-
-**Láthatatlan minőségi pillérek:** az első frame kiváló LCP és olvashatóság, no autoplay, érvényes CTA, nem ugorhat a layout a videó betöltésekor, mobilon sem tűnhet el az elsődleges művelet.
-
-### 14.4 Konkrét high-fidelity kompozíciók — a Work kötelező vizuális célja
-
-**A. 1440×900 desktop fold**  
-- Header 72–80px; bal wordmark, közép maximum 5–6 főlink, jobb érvényes watch CTA.  
-- Hero max 1320px content, bal kb. 55%, jobb kb. 45%; H1 maximum 2–3 sor; kiemelt címszavak saját tipográfiai kezeléssel, nem túlzsúfolt gradient text.  
-- Jobb media: saját portré/branding, mögötte finom „signal halo”, alul 1 sor valós platform/epizód jelölés.  
-- Fold alján részben már látszódjon a „Most érdemes megnézned” szekció — nem egy egész képernyős dekoratív üres blokk.
-
-**B. 390×844 mobil fold**  
-- Header 60–68px; embléma, valós status, hamburger 44×44px cél.  
-- Eyebrow után max 3–4 sor hero H1; pár soros lead; első CTA teljes szélesség, másodlagos megkülönböztetett, alatta 16:9 nyitómédia.  
-- A CTA-k nem csúszhatnak egy óriási portré mögé; legalább az elsődleges CTA elérhető a korai scrollban; nincs vízszintes túlcsordulás.
-- LIVE esetén mobilon diszkrét sticky watch CTA *csak ha nem akadályoz navigációt/hozzáférhetőséget és a renderer valóban tudja*; OFFLINE esetén nem tartunk fenn felesleges helyet.
-
-**C. 1024×768 tablet fold**  
-- Opcionális kétoszlopos hero, de 1024px-nél szabad tudatosan 1 oszlopra váltani.  
-- A videókártyák 2 oszlopban, a hamburger/drawer kényelmesen kezelhető; a képarányok nem torzulnak.
-
-**Kötelező visual-output gate:** Work készítsen az aktuális megoldásról screenshotokat legalább 1440×900, 1024×768, 390×844 és 320×700 nézetben az összes P0 oldalt reprezentáló kompozíciókról. Ezek alapján érdemi, 1–2 iterációs vizuális review: hierarchia, szín, üresség, tartalom, CTA, konzisztens assetek, mobil olvashatóság. A screenshot NEM jelent teljes Editor-fizikai elfogadást és nem kerül automatikusan a repóba.
-
-### 14.5 Három saját tartalmi „signature” — csökkentett kockázatú változat
-
-**SIGNAL NOW — „Most nálam”:**  
-- LIVE esetén valós adás/cím/csatorna, offline esetén kurált videó + következő hiteles menetrend.  
-- P0: meglévő schedule / validált link / statikus layout.  
-- Később: valódi kanonikus live-state integráció, helyi időzóna, frissítési állapot.  
-- Nem tartunk külön párhuzamos „live cache” adatbázist az Editorban.
-
-**SANCI MOMENTS — „A hét pillanata”:**  
-- P0: kézzel kurált, jogtiszta, valódi egy darab videó vagy klip nagy méretben; manuálisan frissíthető.
-- Később: Content Studio gyűjtemény, kategória/tag és automatikus ajánlás, ha már működik.
-- A „hét” megnevezés csak akkor szerepelhet, ha ténylegesen hetente változik; különben „Kiemelt pillanat”.
-
-**CHOOSE YOUR ROUTE — „Mire vagy kíváncsi?”:**  
-- P0: három jól tervezett, valóban működő vizuális belépési pont: „Nézz most”, „Nézz vissza”, „Gyere a közösségbe”. Ezt nem külön füles, adat nélküli szolgáltatásnak, hanem több létező oldalra vezető egyszerű komponensnek kell elkészíteni.
-- Később: érdeklődésalapú tartalomszűrés/egyéni kedvencek, kizárólag valódi beleegyezés és adatmodell alapján.
-- Egyedi, hasznos interakció legyen — nem animált látványfunkció öncélúan.
-
-### 14.6 Visszatérési ok: szerkesztőségi ritmus
-
-A weboldal legyen friss akkor is, ha éppen nincs stream. Ehhez ne feltételezzünk automatikus, már kész integrációt. Induló manuális „content operations” ritmus:
-
-| Esemény | Mit frissítünk? | Biztonságos P0 forrás |
-|---|---|---|
-| Új megerősített stream | Következő alkalom / téma | Kanonikus Schedule |
-| Új videó | Főoldali kiemelés és Videók gyűjtő | Igazolt csatornalink + jóváhagyott kép |
-| Jó klip | Kiemelt pillanat | Valós klip link és cover |
-| Esemény | Közösségi blokk | Jóváhagyott esemény |
-| Partneri együttműködés | Vékony szponzorsáv / Partnerek | Szerződésben engedélyezett logo és URL |
-
-**Szerkesztési idők:** nem ígérünk 24/7 automatikus frissességet; ha semmi új nincs, a jó statikus anyag marad, és nem jelenik meg hamis dátum/státusz.
-
-### 14.7 Saját brand asset-csomag — implementációtól külön előállítandó
-
-A tényleges világszintű vizuális eredményhez nem elég CSS és helyőrző. Worknek inventoryzni kell az Asset Registryt, majd a hiányzó *eredeti, jogosult* asseteket létrehozni vagy bekérni, új költség nélkül:
-
-- Wordmark: SANCI9517 horizontális és kompakt nézet, kis méretes teszttel.
-- Saját S/9517 embléma és favicon készlet; vektoros/bitmap korrekt export.
-- Egy jóváhagyott portré vagy saját grafikai karakteres hero kompozíció, legalább 16:9 és 4:5 crop-terv.
-- Legalább 3 egymással rokon, de külön Fortnite / Hearthstone / indie videó-cover rendszer; ne más játék vagy streamer védett borítóját másoljuk.
-- 9:16 rövid videó cover / 16:9 hosszú videó cover komponens, és saját OG (1200×630).
-- Signal-line, kapcsolódó szekcióminták, vizuálisan egyedi, de akadálymentes 404 grafika.
-- Jóváhagyott saját portré, aktuális csatornalinkek, 6–12 tényleges tartalom alapanyagként nagyobb értéket adnak, mint bármilyen szintetikus dekoráció.
-
-**Előírás:** ne legyen a végső publikált oldal tele stock gaming silhouette, idegen arc, irreális látványstatisztika vagy hamis gameplay screenshot. Engedély és asset hiányában használjunk eredeti márkaalapú grafikát és valódi csatornalinket.
-
-### 14.8 „Nem szabad összekeverni” — világklasszis minőség és feature-bloat
-
-| Most megvalósítható megjelenés a jelenlegi Editor validált képességeivel | Későbbi, csak MASTER szerinti funkció |
-|---|---|
-| Signature hero + egyedi brandkártyák + kurált kiemelés | automatikusan rangsorolt VOD/Short feed |
-| Kézzel frissíthető kiemelt videó és menetrend-kötés | minden provider adatát egyesítő real-time hub |
-| Vizuális community CTA és kapcsolati oldal | hitelesített fan profil, szavazás, ranglista |
-| Saját dekoratív „signal line”, reduced motion | komplex interaktív 3D tér, gamifikált vizuális motormodul |
-| Szabadon szerkeszthető tartalomblokkok | teljes önálló kampány-/shop-/membership workflow |
-
-**Alapelv:** egy eredeti, kiválóan kidolgozott főoldal és 8 minőségi aloldal jobb, mint 25 félkész modul. Minden megjelenített interakció valódi; minden planned elem függősége bejegyezendő a MASTER meglévő pontjába, ha igazolt gap.
-
-### 14.9 Work vizuális minőségkapu — ne álljon meg a „minden oldal létezik” szinten
-
-1. **Moodboard & 2 art-direction út:** az A irány „Cinematic Signal”, a B irány „Editorial Studio”. Mindkettő saját Sanci-tartalommal, a jelenlegi komponenskészlettel megvalósíthatóként legyen kidolgozva; válaszd azt, amelyik jobban olvasható és valódi márkaidentitást épít, ne keverd őket kontroll nélkül. Eltérő anyagi vagy márkaigény esetén tulajdonosi döntés.
-2. **Hero és 1 aloldal nagyfelbontású, működő kompozíciója:** ne csak szöveges prompt; valódi oldalrender, screenshot kontroll. A tartalom addig nem tekinthető dizájnban késznek, amíg az első képernyő generikus template-szerű.
-3. **Egyetlen komponensvizuális nyelv:** navigáció, button states, cards, page-header, video cover, footer. Eltérő oldalkompozíció megengedett, arculati szétesés nem.
-4. **Valódi tartalmi feltöltés:** ha nincs publikus adathoz vagy médiaassethez hozzáférés, őszinte fallback; ne jelenjen meg kitalált stream/videó.
-5. **Responsive review:** mobil és tablet ne „resized desktop”, hanem kész art-directed verzió. Hero- és CTA-rend, kártyák, video aspect és menükezelés külön ellenőrizendő.
-6. **A minőséget mérd, ne nevezd ki:** screenshot párhuzamos összehasonlítás, valós működés, linkek, Lighthouse / Web Vitals, hozzáférhetőség és törésponti regresszió; csak ellenőrzött PASS.
-
-**Frissített prioritási mondat Worknek:** „Ne egy teljesített menüpontlistát adj át, hanem egy olyan saját, élő tartalomélményt, ahol a SANCI9517 név már az első képernyőn vizuálisan egyértelmű, a videó és közösség ténylegesen használható, és a mobil verzió nem kompromisszum.”
-
-**Állapot:** spec only / not implemented / no live publish. E kreatív irány maga nem jogosít D1 éles írásra, migrációra, R2 törlésre, új fizetős szolgáltatásra vagy az Editor korai kézi elfogadására.
-
-
----
-
-## 15. V1.2 teljes site-shell, logók, navigáció és közös médiatár (2026-11-09)
-
-**Felhasználói döntés:** a Work feladata nemcsak a publikus oldalak szövegének és szekcióinak elkészítése, hanem **a teljes publikus webhely összes vizuális és működő rendszerének** megtervezése és megvalósítása: központi arculat, szójel/embléma/favicon, globális fejléc és mobilmenü, navigáció, lábléc, CTA-k, közös kártyák, státuszok, partnermegjelenés, SEO/OG képek, minden oldaltípus és responsive állapot. A végeredménynek egyetlen egységes, felismerhető SANCI9517 márkaként kell működnie, nem egymás mellé tett független oldalaknak.
-
-**Elsőbbség:** a kanonikus MASTER és AGENTS.md változatlanul irányadó. Ez a fájl kreatív/site-implementációs brief és nem új fejlesztési terv.
-
-### 15.1 Teljes webhelykomponens-leltár
-
-| Tartomány | Kötelező feladat | Elfogadás |
-|---|---|---|
-| Arculat | SANCI9517 wordmark, kompakt embléma, logo-variánsok, színek, tipó, ikonok, formák, fény és mozgás | minden oldalon felismerhető eredeti identitás |
-| Globális shell | desktop/tablet/mobile header, menü, almenü, aktív állapot, megnyitás/bezárás, CTA, breadcrumb ahol kell, közös footer | minden releváns publikus oldalon egyező navigáció és keretrendszer |
-| Mobilmenü | kényelmes drawer, megfelelő linkhierarchia, billentyűzet/fókusz, ESC, visszatérő fókusz, scroll-lock | nincs takart tartalom vagy használhatatlan navigáció |
-| Képi elemek | hero, avatár, streaming banner, wide/vertical videó-cover, OG cover, favicon, 404 saját grafika | saját jogosult assetek, összehangolt crop és alt |
-| Újrahasznosítható UI | videókártya, stream-status, menetrend-kártya, CTA, social CTA, sponsor strip, section-heading, footer | egyetlen designrendszer, nem különálló ad hoc oldalsablon |
-| Állapotok | live/offline/unknown, loading/empty/error, hover/focus/active, reduced motion | valódi adat és akadálymentes működés |
-| Publikus oldalak | P0/P1 tartalom, SEO, 404, jogi, menü/redirect, külön PC/tablet/mobil kompozíció | valós kattintási útvonalak, hibamentes működés |
-
-A logó, a header/footer, a menük és a site-wide megjelenés ugyanúgy feladat és tesztelendő átadás, mint a kilenc P0 oldal. Ne álljon meg a Work a főoldali hero elkészültével.
-
-### 15.2 Kötelező: ugyanaz a Médiatár és asset ID mindenhol
-
-**Forrás:** meglévő, jogosultsághoz kötött Admin Médiatár / R2 / site-scoped asset registry. Nem hozható létre második logótár vagy párhuzamos nyilvános media storage.
-
-1. A Work először listázza a már feltöltött saját elemeket, vizsgálja azok verzióit, képleírásait, használati helyeit és jogait; a meglévő kompatibilis asseteket **újrafelhasználja**.
-2. Új saját/eredeti/jogtiszta grafika feltölthető az **egyetlen meglévő Médiatárba** a hitelesített, a felhasználó által engedélyezett felületen, a hatályos media API szerződés és AGENTS.md előellenőrzése után.
-3. Ugyanaz a kép a hero, image/card, gallery, background, videóborító vagy más támogatott Editor-elemben **ugyanarra a canonical asset ID-ra** hivatkozzon. Nem készül minden oldalon új példány és ugyanazon fájl nem töltődik fel feleslegesen újra.
-4. A **site-global wordmark, header/footer logó, favicon, OG grafika és sponsor bar** esetében Work előbb ellenőrizze, hogy a jelenlegi Site Manager / Brand Kit / SEO / navigáció / shell pontosan milyen asset-hivatkozást támogat. Ha még nincs közös médiatáras kötés, az igazolt WEB/DSN/EDT/RES hiányt a MASTER megfelelő pontjához kell kapcsolni; nem lehet csendben hardcoded, külön karbantartandó kerülőutat építeni.
-5. Asset-cserénél a régi asset-hivatkozásokat és publikált revíziókat meg kell őrizni, a Médiatár „Használati helyek” vizsgálatával és újraellenőrzött előnézettel. Törlés/archiválás nem történhet a biztonsági kapuk megkerülésével.
-6. Alt text / decorative jelölés, jogosultság/licenc, crop, méret, MIME, változat, asset ID és tényleges oldalbeli használat kerül a márka-asset jegyzékébe.
-
-**Forráskódban ellenőrzött 2026-11-09-i jelenlegi limit:** a Médiatár elfogad PNG, JPEG, GIF, WebP képet, MP3/OGG/WAV hangot és WebM videót, legfeljebb **4 MiB/fájl** és alkalmazásszintű **5 GB/site** korláttal. Ezek nem pénzügyi 0 Ft garanciák. Az ellenőrzött upload MIME engedélylistában **SVG és MP4 nincs**. A logók médiatárhoz illeszkedő minőségi PNG/WebP variánst kapjanak; favicon/OG végleges összekötése külön verifikálandó.
-
-A jelenlegi forrásban a képek/kártyák/galériák és háttérképek több helyen asset-ID hivatkozással működnek, és a Média endpoint elemhasználatot is tud ellenőrizni. Ez **nem** igazolja, hogy a teljes site-global header/footer/SEO logóbinding már kész. A Worknek külön fel kell mérnie a tényleges támogatást.
-
-### 15.3 Webhelyszintű dizájn-részletek
-
-**Desktop:** tiszta, kb. 72px fejléc, SANCI9517 szójel, max. hat elsődleges navigációs elem, kiemelt valós Stream/Videó CTA; a másodlagos oldalak a megfelelő oldalcsoportban és a footerben. A fejléc ne legyen túlzsúfolt és ne takarja az oldalt.
-
-**Tablet:** saját töréspont és átrendezés, nem desktop egyszerű zsugorítása; nyitható menü, valós státusz, könnyen érinthető kontrollok.
-
-**Mobil:** embléma/szójel, 44px körüli kényelmes menünyitó, egyetlen logikus drawer. Sorrend: Főoldal, Élő, Videók, Menetrend, Közösség, Rólam; utána platformok és kapcsolat. Nincs végtelen menü, nem működő submenu és két párhuzamos navigáció.
-
-**Footer:** egységes arculat, rövid márkaüzenet, navigáció, hiteles platformlinkek, kapcsolat, tényleges jogi oldalak, soha nem admin-funkciók. Header / footer ugyanabból a kanonikus navigációs és site-shell rendszerből működjön.
-
-**Logó/brand asset-csomag:** primary wordmark, reverse wordmark, compact S/9517 mark, favicon forrás, saját social avatar, 1200×630 OG, wide hero artwork, 16:9 és 9:16 videó-cover, branded 404 artwork, konzisztens ikoncsalád. Minden egyes változat legyen méretezhető és ténylegesen használható a támogatott felületeken.
-
-### 15.4 Kötelező Work QA és átadás
-
-- Egyező wordmark, header, footer és menü minden publikált P0 oldalon. Meglévő slugok / 308 redirectek megőrzése.
-- A logó, favicon és OG kép legalább desktop/tablet/mobil előnézetben, továbbá valós social preview-kompatibilitás esetén ellenőrizve.
-- Legalább egy szerkesztői médiaelem újrahasználata ugyanazzal az asset ID-val több oldalon; publikus és editor preview paritás.
-- 320/390/768/1024/1440px vizuális, link-, billentyűzetes és SEO ellenőrzés; külön mobilmenü teszt.
-- Nincs kitalált adásstátusz/partner/adat és nincs idegen streamer grafika, védjegy vagy portré engedély nélkül.
-- A médiafeltöltés, valós adatmutáció és Publish csak a megfelelő jogosultsággal, előellenőrzéssel és a kötelező kapukkal; dokumentációs módosítás miatt nem szükséges Worker deploy.
-- Ha a site-global médiatárbinding vagy reusable site shell jelenleg hiányzik, az nem nevezhető PASS-nak: a feladatot és függőségét a MASTER-ben kell nyilvántartani.
-
-### 15.5 Személyes márkainterjú — a tulajdonos válaszai szükségesek
-
-Az identitás nem generikus, hanem Sanci tényleges karakteréből épül; ezek a témák a következő tulajdonosi válaszokból kapnak végleges irányt:
-
-- Hogyan jellemezné magát 3–5 szóval, milyen a humora és mikor van igazán elemében?
-- Honnan jön a SANCI9517 név; van-e saját becenév, történet, különleges jelentés?
-- Mit szeret a legjobban a streamelésben, miért térnének vissza hozzá a nézők; vannak-e saját szokások, poénok, mondatok?
-- Milyen személyes világot sugározzon a site: filmes/sötét, energikus/színes, letisztult/komoly, játékos/rajzolt vagy más? Melyik szín, szimbólum, forma tetszik, mi nem?
-- Látható legyen-e a valódi arca a hero és Rólam oldalon? Vannak-e felhasználásra jóváhagyott saját portrék, videók, grafikák vagy meglévő logó?
-- A látogatók milyen érzéssel távozzanak; mit tegyenek első látogatáskor; mennyire személyes legyen az élettörténet?
-- Melyik social/Discord/Kick/YouTube link és üzleti elérhetőség hiteles, nyilvános, mely részletek maradjanak privátak?
-
-**Szabály:** a válaszokat a Work ebbe a belső briefbe írja be jóváhagyott márkaspecifikációként; személyes tény, lore, adásidő, közösségi szleng vagy vizuális karakter nem található ki. Ha még nincs válasz, ne legyen hamis kész márkanarratíva. A designer készíthet alternatívákat, de a felhasználó személyéről szóló állításokat tényszerűen jóvá kell hagyatni.
-
-**Következő Work-lépés:** tulajdonosi válaszok integrálása → brand board és logó/shell variánsok → Médiatár asset inventory → site-global asset-binding felmérés → teljes közös navigáció/header/footer → összes P0 oldal → QA és engedélyezett publikálás. Ez a publikus site kreatív sorrendje, nem írja felül a platform kanonikus roadmapjét.
-
-**Állapot:** SPEC ONLY / NOT IMPLEMENTED / LIVE WEBOLDAL VÁLTOZATLAN.
-
-
----
-
-## 16. V1.3 személyes márkaprofil — első tulajdonosi interjú (2026-11-09)
-
-**Forrás:** a tulajdonos saját szavaival válaszolt hét márkakérdésre. Az alábbi személyiségadatok a felhasználótól származnak. A logó, paletta, szlogen és nyilvános copy viszont még kreatív tervezet. A GitHub-repository nyilvános, ezért az olyan fölösleges azonosító részleteket, mint a személyes évszámok és a márkanév számainak pontos eredete, nem rögzítjük külön és nem publikáljuk automatikusan.
+A korábbi SIGNAL/QUIET SIGNAL/WARM STUDIO/PLAYFUL DEPTH, az S-monogramos ötletek és többkonceptes logóválasztás **lezártak**. A kreatív döntések a Git történetében megvannak, de nem aktív fejlesztési irányok. Az egyetlen elfogadott márkaidentitást a MASTER és a 20–32. fejezet írja elő. Az alábbi, tulajdonostól származó tényszerű személyiséginformációk, copy-tervezetek és a menühierarchia viszont megmaradnak.
 
 ### 16.1 Márkaidentitás, valódi tulajdonosi inputok
 
@@ -661,69 +412,6 @@ Ha valamibe belekezdek, igyekszem minél jobban csinálni. Mindig úgy érzem, l
 
 **Támogatás — csak később, valós támogatási útvonallal:** „Ha nézed vagy megosztod a videóimat, azzal már sokat segítesz. Ha más módon is támogatnál, annak is örülök, de semmi sem kötelező.” Semmilyen főállás-garancia és nyomásgyakorló CTA nem megengedett.
 
-### 16.3 Három lehetséges saját arculat és logó
-
-**A — QUIET SIGNAL (javasolt kiindulás):** fekete és grafitszürke, törtfehér tipográfia, mélyvörös finom akcentus. Geometrikus S jel, finom adás-jelhullámmal; nagy, letisztult SANCI szójel, kisebb opcionális 9517. Látványos első képernyő, visszafogott menürendszer. A piros brandgrafika nem téveszthető össze a hiteles LIVE jelzéssel.
-
-**B — WARM STUDIO:** meleg sötétszürke és törtfehér, rozsdavörös vagy narancs akcentus. Fotós, szerkesztőségi, emberközeli nyitás, tipográfia-központú SANCI logó és apró barátságos geometrikus jel. Filmesség, kevesebb gaming HUD.
-
-**C — PLAYFUL DEPTH:** antracit, puha bordó/lila vagy türkiz kiemelések, enyhén térbeli geometrikus S szimbólum. Játékos, de nem zavaró micro-motion, karakteres videókártyák. Nem villódzó neon/RGB streamer sablon.
-
-**Követelmény Worknek:** mindhárom esetben következetes header, footer, navigáció, ikon, OG, favicon, mobil/tablet/PC layout, 15. fejezet szerinti közös médiaasset-forrás. A Work legalább két különböző logó és hero koncepciót mutasson meg valódi desktop/mobil előnézettel; csak a tulajdonos által jóváhagyott márkairány terjedhet ki minden oldalra. A felhasználó személyes fotóját csak kapott, jóváhagyott assetként használja.
-
-### 16.4 Navigáció és marketing a valós személyiséghez illesztve
-
-- A látogató három értelmes úttal indulhat: „Nézz most”, „Nézz vissza”, „Csatlakozz”. A részletes oldalak logikus menüben vannak, nem egyetlen óriási nyitóoldalon.
-- A mozgás látványos ott, ahol segít megjegyezni a márkát, de a menü kezelése, tartalomolvasás és CTA mindig egyszerű. Reduced-motion esetén az animációk ne rejtsenek tartalmat.
-- Az oldal valódi személyiséget és tényszerű tartalmakat mutasson, de a főoldalon NE legyen portré és NE legyen hosszú bemutatkozás. A Rólam a részletes személyes céloldal; harsány gamer stockgrafika kizárva.
-- A támogatás önkéntes, egy lehetséges jövőbeli rész; a közösség és a nézhető tartalom az első.
-
-### 16.5 Korábbi nyitott döntések (a tulajdonos 17. fejezetben pontosította)
-
-1. Melyik kreatív irány áll hozzá legközelebb: A Quiet Signal, B Warm Studio, C Playful Depth vagy keverék?
-2. A hero főképe: saját portré és videó, animált logó, vagy ezek vegyesen? Milyen saját fotóanyag elérhető?
-3. Logó: csak SANCI szöveg, S-alapú jel, vagy valami egészen más szimbólum? Jelenjen-e meg kisebb kiegészítésként a 9517?
-4. Van-e valóban visszatérő saját mondat, szokás, vicc vagy közösségi motívum? Nem találunk ki ilyet.
-5. Mely vizuális klisét tiltsuk: koponya, gamer headset, neon, égő lángok, agresszív logó, túl sok effekt vagy más?
-
-**Állapot:** V1.3 kreatív terv és személyes brandirány. Új asset nem készült, semmit nem töltöttünk a médiatárba, és az éles webhelyet nem változtattuk meg. A Work a válaszok és a már érvényes 15. fejezet szerinti közös médiatár alapján folytathatja, az AGENTS.md és a MASTER elsőbbségével.
-
-
----
-
-## 17. V1.4 SANCI saját embléma, több forma és logikus teljes oldalstruktúra — 2026-11-09
-
-### 17.1 Rögzített tulajdonosi döntések
-
-**Elsődleges márkanév a logón:** SANCI. A SANCI9517 az online csatornaazonosító maradhat; a számok nem kötelező logórészek.
-
-**Logó típusa:** A opció — a saját SANCI szójel MELLÉ egy önállóan használható, teljesen egyedi embléma. Az embléma legyen önmagában felismerhető a profilképen, stream overlayen, weboldalon, faviconban és akár ruhán is. Nem elegendő egy szép, de általános S-betű.
-
-**Belső jelentés és hangulat:** mélység, titokzatosság, közösség. E három fogalmat egyetlen eredeti vizuális történet és jel kapcsolja össze, nem három stockikon.
-
-**Formakialakítás:** a tulajdonos még nem választott éles/lekerekített/geometrikus/organikus formát; több, TÉNYLEG ELTÉRŐ formai változat szükséges, nem ugyanaz a logo új színekben.
-
-**Kizárt eredmény:** „AI-szagú” megjelenés. Kerülendő az összetéveszthető gamer/tech logó, az automatikus stockmonogram, a véletlenszerű 3D fényes S, az alaktalan neon-glow, a túlzott szimmetria, az egymástól független geometrikus motívumok és a sablonos marketinglayout. Az egyediség a KIDOLGOZOTT FORMÁBÓL származzon, ne véletlen effektből. A Work használhat eszközt a kreatív folyamatban, de a végső grafika tudatosan megszerkesztett és ellenőrzött alkotás legyen.
-
-**Vizuális stílus:** a C / Playful Depth legyen a DOMINÁNS arculat. A / Quiet Signal adja a navigáció, rács, kontraszt és tipográfia fegyelmét; B / Warm Studio adhat emberibb tónusokat, de ne legyen fotóközpontú a főoldal. Nem három össze nem illő dizájn keveréke. A kedvelt fekete/szürke/piros színek nem kötelezőek.
-
-**Főoldal:** nincs arckép, nincs életrajz, és nem kell egyetlen végtelen görgetős landing. A személyes történet a külön Rólam oldal feladata; a nyitóoldal a valódi adáshoz, videókhoz, közösséghez és menetrendhez vezessen.
-
-**Felülírási klauzula:** a korábbi 1–16. fejezet bármely arcot/portrét a főoldali hero centrumába javasló, az A-t elsődlegesnek nevező, vagy a teljes SANCI9517-et kötelező logónévnek előíró szakasza csak korábbi alternatíva. A jelen 17. fejezet fenti közvetlen tulajdonosi döntései az irányadóak.
-
-### 17.2 Négy KÜLÖNBÖZŐ embléma-elképzelés — nem kész logók, hanem Work-tervezési feladatok
-
-1. **Rejtett kapcsolat (L1):** önálló formák közötti negatív tér egy új jelet alkot; a kapcsolódás érzete nem általános ember-/link-/wifiikon.
-2. **Mélységkapu (L2):** egyetlen egyszerű jel belső tere és optikai mélysége a felfedezést idézi; egyszínű és kisméretű verzióban is felismerhető, nem általános portálgrafika.
-3. **Rejtett S (L3):** szokatlan, visszafogott S-logika, ami nem sablonos esportmonogram; elsőre ikon, később felfedezhető benne a SANCI-jelentés.
-4. **Közös pálya (L4):** több irányból egymáshoz tartó, egyetlen saját szimbólummá kapcsolódó forma; sem lánc, sem Discord-embléma, sem szabványos kapcsolatpiktogram.
-
-A Work mind a négy irányhoz valóban külön sziluettet, SANCI szójelpárosítást és rövid formakoncepciót készít. A két legígéretesebbhez további formai finomítás szükséges; **nem színvariációk**. Nincs kész, automatikusan jóváhagyott logó. Az alkotásnál a tartalmas visszajelzés és az egyediség legyen elsődleges, ne a gyors generálás.
-
-**Logo identity deliverables:** (a) önálló ikon, (b) horizontális embléma + SANCI, (c) kompakt/álló verzió, (d) 1 színes és legalább 2 mono pozitív-negatív változat, (e) 16/24/32/64px olvashatóság, (f) Twitch/TikTok/YouTube avatar, web header és mobilmenü, stream overlay, videós watermark és későbbi merch próba, (g) statikus és akadálymentes finoman animált webes változat. A színek/animáció nem pótolhatják a gyenge alapformát.
-
-**Minőségtesztek:** könnyen megjegyezhető-e, működik-e logó szöveg nélkül, felismerhető-e kicsiben és 1 színnel, idegen-e a stock gamer jelektől, összeillik-e a csendes, befogadó személyiséggel, és tényleg erős-e a sötét/világos háttéren? A Work vizsgáljon hasonlóságot más gaming és creator márkákhoz és lehetőség szerint a releváns védjegynyilvántartásokhoz; a „saját” kreatív cél nem jelent garantált védjegy-oltalmat.
-
 ### 17.3 Véglegesített oldalszerepek és javasolt menühierarchia
 
 **Fő navigáció PC-n:** Főoldal | Élő | Videók | Menetrend | Közösség | Rólam.  
@@ -748,63 +436,6 @@ A Work mind a négy irányhoz valóban külön sziluettet, SANCI szójelpárosí
 4. FEDEZD FEL: világos belépők Menetrend / Közösség / Rólam irányába, további szekciók halmozása nélkül.
 
 **UX-elv:** az oldal ne legyen tartalom nélküli rövid és ne legyen görgetőlabirintus sem. Minden információ ott jelenjen meg részletesen, ahol a látogató logikusan keresi. Közös shell, azonos SANCI logo/brand az összes oldalon, jól megkülönböztetett hover/active/focus állapotok. Mobil/tablet/PC külön ellenőrzés.
-
-### 17.4 Médiatár és megvalósítási kapu
-
-A 15. fejezet változatlanul kötelező: az elfogadott saját logó-assetek és grafikai variánsok a **meglévő, közös Admin Médiatár** kompatibilis feltöltéseivel kezelendők; a különböző oldalelemek a támogatott helyeken **ugyanarra a canonical asset ID-ra** hivatkoznak, nem duplikált képfájlokra. Előbb tényleges Media/Asset API, jogosultság, MIME, 4 MiB/file, kvóta, alt/decorative és használatihely-leltár; a globális header-logo/favicon/OG saját bindingját hitelesen kell ellenőrizni, szükség esetén a MASTER-ben rögzített feladatként fejleszteni. Sem automatikus site publish, sem prod D1/R2 adatmutáció nem következik pusztán a brief elfogadásából.
-
-**A Work következő, ellenőrizhető munkadarabja:** négy valóban különböző SANCI embléma + SANCI szójel látható tervként, két kiválasztott irány finomítása; ehhez 1440px/390px hero és menü demonstráció, érdemi összehasonlítás. A végső embléma kiválasztása a tulajdonos döntése; csak utána terjedhet végig az arculat, social/favikon/OG és a közös site shell minden felületén.
-
-**Státusz:** SPEC ONLY. Logó még nem készült, nem töltöttünk fel semmit, a publikus oldal és Worker változatlan.
-
-
----
-
-## 18. Logó első vizuális visszajelzés és finomítási kör (2026-11-09)
-
-**Közvetlen tulajdonosi visszajelzés a négy elkészült bemutatóképről:** „3 de az sem az igazi”. A 3-as számmal jelzett *Rejtett S* irány a jelenlegi legközelebbi kiindulópont, de **sem a konkrét forma, sem a logó nincs elfogadva**. A bemutató korábbi fényes/fémes, csiszolt játékos stílusa nem tekinthető a végleges arculat jóváhagyásának.
-
-**Iterációs döntés:**
-- Ne ugyanazt az S alakot színezzük újra; formailag különböző, saját sziluettű **rejtett S** tanulmányokat készítsünk.
-- Először csak valódi fekete/fehér **egyszínű alak**, negatív tér, arányok és apróméret-olvashatóság. A 3D, bevel, chrome, glow, e-sport éles csíkozás, AI-art textúra, automatikus betűgenerálás és túl sok effekt **nem szükséges és nem kívánatos**.
-- Az ötletek közösség + mélység + titokzatosság jelentéstartalmát ne kötelezővé tett ikonszimbólumokkal, hanem egyszerű kapcsolódó formákkal, ritmussal és felfedezhető karakterrel fejezzük ki.
-- 3 új, **különböző rajzi logika** kötelező: (a) kivágott/negatív tér, (b) kapcsolódó kettős forma, (c) aszimmetrikus, gesztusszerű vagy ösvényforma. Mind a három mellé rendezett, nem sablonos SANCI szójel.
-- A Work hasonlítsa össze a jeleket avatar-, stream watermark- és favicon-méretben, logómentes formaként is; nézzen hasonlóságot létező brandekkel. A valódi egyediség nem garantálható csak egy AI által előállított koncepciótáblából.
-- **Előnyben:** letisztult, megjegyezhető, akár enyhén szokatlan, emberileg tudatos formatervezés. **Nem elfogadott:** „3-as kész”, automatikus médiatárba feltöltés vagy publikus logócsere.
-- Kérdés a következő tulajdonosi feedbackhez: az S rejtettsége, a forma lágyabb/élesebb jellege, a jel karaktere vagy a túl technikai stílus nem működik-e; a válasz alapján szerkesztendő a végleges változat.
-
-**Állapot:** csak tervezési és vizuális iteráció, nincs végleges logó és nincs live oldal-, Worker- vagy Médiatár-változás.
-
----
-
-## 19. A második referenciakép logóiról folytatjuk (2026-11-09)
-
-**Új tulajdonosi döntés:** „Második kép logóin dolgozunk.” Ez a beszélgetésben legutóbb bemutatott **három kép közül a második, világos háttérrel és három sötétszürke/acélkék SANCI-emblémával** készült összehasonlító kép. Nem a filmes, piros/fantasy harmadik táblára építünk, és nem a régebbi Rejtett S szükségszerű továbbviteléről van szó.
-
-**A második kép három konkrét formája:**
-
-1. **Bal — zártabb tér / nyíló mag:** sokszögletű, egymás köré rétegzett forma, közepén apró fénylő rombusz. Jelentés: mélység, felfedezhető középpont. Kockázat: fényes kamera-rekesz / tech-app asszociáció; apró méretben a mag elveszhet.
-2. **Közép — összefonódó három kar / közös mag:** három íves, egymáshoz tartozó forma egy központi kör körül. Jelentés: kapcsolódás és közösség. Kockázat: generikus triskelion/orbit/forgó szimbólum és 3D stock jelleg.
-3. **Jobb — nyitott pálya / mélységösvény:** aszimmetrikus, egymásra rétegződő ívek és nyitott körív. Jelentés: út, nyitottság, továbbhaladás. Kockázat: S-betűre, gyorsaságjelre vagy generikus swoosh-ra emlékeztethet.
-
-**Fontos:** a tulajdonos **a második képcsoportot** nevezte meg, nem választotta ki egyértelműen annak bal, középső vagy jobb logóját. Mindhárom irány NYITOTT. A mostani külön bemutatott, körkörösen kapcsolódó közösségi márkajel csak a KÖZÉPSŐ változat továbbgondolási kísérlete, nem elfogadott végleges embléma.
-
-### 19.1 Finomítási szabályok
-
-- Tartani kell a második kép formavilágának legjobb tulajdonságait: visszafogott, térbeli, mélységet adó, tiszta, nem harsány. A SANCI szójel elsődleges, 9517 nem kötelező.
-- A fényes fém, túlságosan generikus orbit, ékkő és kékes díszítőfény **nem azonos a jó logóformával**. A következő iterációban 100%-ban egyszínű, valóban kidolgozott sziluett és finomított negatív tér készüljön.
-- A bal, középső és jobb alapból legalább egy-egy javított, egymástól eltérő **kontúrváltozat**, mindegyiknek SANCI szójelpárosítás és 24/48 px teszt kell. Ne kényszerítsük az S betűt a jelbe; saját szimbólum legyen.
-- Színeket csak ezután vizsgáljunk. Web/stream/profil/merch alapra is kell működnie, lehetőleg monokróm jelként.
-- Következő szükséges tulajdonosi pontosítás: a második képen belül **bal / középső / jobb** szimbólum, vagy ezek kombinációja az alap. Ezt nem szabad kikövetkeztetni pusztán abból, hogy a második képet választotta.
-
-### 19.2 A teljes weboldalra ható következmények
-
-- A még nem jóváhagyott logót nem szabad a globális navigációban, médiatárban, OG-fájlban vagy éles webhelyen végleges elemként megjelentetni.
-- Későbbi elfogadás után a jóváhagyott assetek a 15. fejezet szerint a meglévő közös Médiatárba kerülhetnek, hitelesített és engedélyezett feltöltéssel; újrahasználat azonos media asset ID-val a kompatibilis elemeken.
-- A főoldal továbbra is logo + aktuális stream/videó + egyértelmű továbbvezetés, nem portré és nem Rólam; a menürendszer 17.3 szerinti.
-
-**Státusz:** dizájnkoncepció kiválasztása részben megtörtént, a három logó közötti konkrét választás és minden publikáció továbbra is OPEN. Ebben a dokumentációs körben nem volt médiatár-feltöltés, kódmódosítás vagy publikus deploy.
-
 
 ---
 
@@ -1084,3 +715,54 @@ A Videók pont alatt indokolt rövid másodlagos navigáció: Összes, VOD, Klip
 **Indítószöveg:** „A SANCI9517 Creator Platform aktív v2/foundation ágán dolgozz. Olvasd az AGENTS.md teljes tartalmát és a kanonikus docs/SANCI9517-CREATOR-PLATFORM-PLAN.md MASTER-t, majd a docs/SANCI9517-PUBLIC-SITE-BRIEF.md 20–31. fejezeteit. A felhasználó a sötét, filmes SANCI DARK DEPTH dizájnvilágot, külön a háromkarú közösségi logószimbólumot fogadta el. A weboldal világklasszis, de könnyen kezelhető, külön oldalakra szervezett creator-site legyen; a főoldalon sem arckép, sem hosszú Rólam nem lehet. A hiányzó Editor/Brand Kit/Media/Web funkciókat igazolt gapként, a meglévő MASTER stable ID-jaihoz kösd; ne készíts második Website Engine-t, és ne állíts késznek tervezett funkcionalitást. Készíts külön használható, tiszta logó-asseteket és hero artworkot, egységes menü/footer/site shell dizájnt, szerkeszthető 9 P0 oldalt és valós source/fallback tartalmat a tényleges capability függőségek szerint. A hiányzó funkciók a teljes Visual Editor megfelelő későbbi implementációs szakaszában is készülhetnek. Teszt: mobil/tablet/desktop, keyboard, a11y, reduced-motion, SEO, biztonság, brand/media ID és Save/Publish elválasztás. 0 Ft új költés, semmi kitalált csatorna/szponzor/adat. A végén pontos commit, tényleges tesztek, blokkolók és külön éles státusz magyarul.”  
 
 **Állapot:** csak tervezés/specifikáció. Nem helyettesíti a MASTER-t. A vizuális referenciát még át kell dolgozni tényleges különálló médiafájlokká; a hiányzó Editor-képességek OPEN státuszúak, és nem szolgálnak ürügyül félkész, nem szerkeszthető éles oldal közzétételére.
+
+---
+
+## 32. Egy brand mindenhol — diszkrét hoodie-/merch-nyomok és vizuális QA (2026-11-12)
+
+**Kötelező márkaelv:** egy logó, egy szójel, egy filmszerű látványrendszer, egy eredeti háromkarú formából származó ruhagrafikai motívum. A SANCI nem agresszívan elad, hanem tartalommal/közösséggel közben *fokozatosan felismerhetővé válik*. Minden felületből ugyanahhoz az identitáshoz kell visszatalálni. A saját brand nem írja felül a későbbi többi platformfelhasználó site-specifikus választásait.
+
+### 32.1 Hol jelenjen meg?
+
+| Felület | Elsődleges | Finom kapcsolódó részlet (opcionális) |
+|---|---|---|
+| Hero | SANCI embléma + szójel, külön képi háttér | hátulról látható, arc nélküli hoodie vagy vörös út |
+| Élő | valós stream/állapot és csendes brand watermark | fényív, nem merch CTA |
+| Videó/Short | egységes címkék és valódi thumbnail | jel- vagy út-motívum a borítón |
+| Menetrend | hiteles adatok, jól olvasható időpontok | finom összekötő vonal |
+| Közösség | három kapcsolódó ív, emberközeli hang | kis csomópontmotívum |
+| Rólam | valódi személyes történet, nem fiktív lore | ruharészlet vagy hátalak, NEM tulajdonosi portré |
+| Kapcsolat/partner | tiszta kompozíció, valós elérhetőség | diszkrét hivatalos logó |
+| 404/hibalap | egyértelmű hazavezető CTA | ködös út és SANCI-jel |
+| Overlay/avatar | ugyanaz a monokróm/kis méretű szimbólum | visszafogott ember-red |
+| Későbbi hoodie | hiteles márkaembléma | mini chest + backprint + sleeve patch (külön gyártási döntés) |
+
+### 32.2 Kapucnis alak — karakter, nem termék
+
+Ritka visszatérő, hátulról vagy részletében látott **kitalált** sziluett; az ösvény mellett vagy a távoli ködben. Nincs arc, terror-, fegyver-, horror- vagy „titokzatos harcos” klisé. A ruhán látható logó aránya/geometriája a jóváhagyott jellel azonos, nem AI által újraértelmezett S. Ha a figura nem működik természetesen a mobilkivágásban, elmarad. A kép önmagában is szép és jogtiszta, a H1/CTA valódi szerkeszthető HTML/Page Model réteg. A figura **nem kötelező minden oldalra**.
+
+### 32.3 Merch megjelenési lépcsők
+
+1. **Most:** tisztított embléma + avatar, web, VOD/short cover, OBS, OG, favicon, egységes brand tokenek; nincs kereskedelem.
+2. **Későbbi filmes utalások:** maximum egy csendes merch-easter egg jelenetenként, például kapucni hátán a jel, patch, ujjhímzés vagy belső címke. Se ár, se shoplink, se „hamarosan” kényszer.
+3. **Csak külön döntéssel:** hoodie, póló, sapka, matrica és csomagolás valódi grafikai/nyomdai próbája; jog, költség és gyártás ellenőrzés.
+4. **Csak kész rendszerrel:** tényleges SKU, fulfillment, szállítás, adatkezelés, jogi feltételek, fizetés és checkout; addig a shop-link nem jelenhet meg értékesítési útvonalként.
+
+### 32.4 Benchmarkból átvenni, de semmit sem másolni
+
+- **AvidIsOdd:** a saját domain (\`avidisodd.hu\`) és a nyilvános \`avidisodd.hu/store\` út a később külön elérhető merch-struktúrára adhat mintát. Az oldal közvetlen vizuális megnyitása 2026-11-12-én sikertelen, ezért a konkrét designról, színekről, termékekről nem állítunk ellenőrzött tényt. A felhasználónak tetsző hangulat inspiráció, de SANCI-t nem klónozzuk.
+- **TheVR:** rögtön felfogható élő/menetrend, világos VOD/tematikus oldalak.
+- **Zsozeatya:** önálló felismerhető márkahang és külön tényleges bolt, de nem a karakterét vagy hangerejét másoljuk.
+- **TimTheTatman:** közösségi identitás és később autentikus merch, SANCI-nál végig a stream/videó/közösség az első.
+
+### 32.5 Kötelező elfogadás és hiányok (most OPEN)
+
+- Egyetlen kiválasztott háromkarú jel monokróm, 16/24/32/64px, avatar/favicon/OG/OBS és 1 jövőbeli hoodie *mockup* méretben, saját joggal; ez még nem kész nyomdai termék.
+- 1440/1024/768/390/320px + 200% zoom + reduced-motion: nem takart H1/CTA, képkivágás, tipográfia, keyboard/focus, nulla vízszintes túlfolyás és gyors betöltés.
+- Oldalak teljes Editor Page Model és RES/DSN asset ID szerkeszthetősége, közös header/footer, működő navigáció, Responsive/Undo/Redo/Save/reload/Preview/**külön Publish**/rollback, site-ownership tesztek.
+- LIVE/OFFLINE/UNKNOWN; valós videó/menetrend/partner, őszinte empty/error fallback. Kitalált merch, termék vagy stream-adat = kritikus FAIL.
+- A design reviewer ne tudja egy másik streamer nevére és logójára cserélve változatlannak tekinteni az oldalt: egyértelmű SANCI filmes világ, eredeti grafika és gondozott tartalom szükséges.
+- Kép, logo, crop, ruhamotívum, shared header, footer, motion és statikus fallback csak a már létező **DSN, RES, EDT, WEB, CNT, SCH, QA, SEO** stable ID-k alatt bővítendő. Nincs külön brand motor vagy külön, szerkeszthetetlen SANCI-fork.
+- A teljes szerkesztő kézi/fizikai acceptance a MASTER későbbi kapuján marad. Az AI és a tényleges merch értékesítés külön későbbi funkció, nem indítási előfeltétel. 0 Ft új költés; nincs prod D1/R2 írás, Worker deploy vagy Publish pusztán ezen dokumentációtól.
+
+**Státusz:** dokumentációs integráció, nem kész site/asset vagy élesítés.
