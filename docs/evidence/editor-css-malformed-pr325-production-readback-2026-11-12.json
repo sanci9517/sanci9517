@@ -1,0 +1,106 @@
+{
+  "canonical_plan_item": "77.44.7.D",
+  "status": "OPEN / NOT_CERTIFIED",
+  "scope": "#325 malformed Page Model CSS Canvas/public renderer parity runtime release",
+  "release_date_utc": "2026-11-12",
+  "pr": {
+    "number": 325,
+    "url": "https://github.com/sanci9517/sanci9517/pull/325",
+    "head": "f32e515dabb10000b3c751d34ae1eeecf6cd3f7e",
+    "merged": true,
+    "merge_commit": "c0228afd71381f91c6c722fe3a658881e585c9df",
+    "base": "v2/foundation",
+    "method": "merge"
+  },
+  "exact_head_ci": {
+    "f0": {
+      "run_id": 43261317664,
+      "conclusion": "success"
+    },
+    "twitch": {
+      "run_id": 43261317629,
+      "conclusion": "success"
+    },
+    "wrangler_release_dry_run": {
+      "run_id": 43261317751,
+      "conclusion": "success"
+    },
+    "editor_core_real_chromium": {
+      "run_id": 43261317773,
+      "conclusion": "success"
+    }
+  },
+  "deployment": {
+    "cloudflare_build_id": "e3cb494a-b752-472f-931d-4f9a57661fd8",
+    "build_outcome": "success",
+    "build_source_commit": "c0228afd71381f91c6c722fe3a658881e585c9df",
+    "build_command": "npm run typecheck",
+    "deploy_command": "npm run deploy:safe",
+    "migration_safety_gate": "pass",
+    "deployment_id": "eedc9e09-8dae-42a8-aa22-2120e37dd7cd",
+    "worker_version_id": "a9303faa-7b6d-4b9c-b264-5c38a171aeef",
+    "traffic_percentage": 100
+  },
+  "production_source_smoke": {
+    "run_id": 43267392389,
+    "url": "https://github.com/sanci9517/sanci9517/actions/runs/43267392389",
+    "conclusion": "success",
+    "live_http_health_status": 200,
+    "source_hashes_sha256": {
+      "public/assets/page-renderer.js": "bdf2576f58c1952c8dadd46e897a3f540fdc677e7c229faf21c39965e3b1d799",
+      "public/editor-v2/core/canvas-engine.js": "62971bfe77f0fae7a1d43bf9b8a22c40219732bf676589d33458f6e1554c95b3",
+      "public/editor-v2/core/element-content.js": "40efc323b648dcf724136159cde63d656eaca3f8838d1265df7a684248a818c0"
+    },
+    "matched_attempt": 3,
+    "earlier_attempts": "1 and 2 saw old live JS assets; preserved in workflow log"
+  },
+  "d1_remote_select_only": {
+    "database": "sanci9517-db",
+    "preflight": {
+      "migration_count": 34,
+      "latest_migration": "0028_media_archive.sql",
+      "rows_written": 0,
+      "changes": 0,
+      "changed_db": false
+    },
+    "postflight": {
+      "migration_count": 34,
+      "latest_migration": "0028_media_archive.sql",
+      "rows_written": 0,
+      "changes": 0,
+      "changed_db": false
+    }
+  },
+  "merge_sha_checks": {
+    "f0": {
+      "run_id": 43267392176,
+      "conclusion": "success"
+    },
+    "twitch": {
+      "run_id": 43267392254,
+      "conclusion": "success"
+    },
+    "editor_core": {
+      "run_id": 43267392284,
+      "conclusion": "in_progress_at_evidence_capture"
+    }
+  },
+  "guardrails": {
+    "save_publish_separate": true,
+    "production_d1_writes": 0,
+    "production_d1_migrations": 0,
+    "production_r2_deletions": 0,
+    "new_paid_services": false,
+    "full_manual_editor_acceptance": "deferred",
+    "cloudflare_build_limit_reached": false
+  },
+  "limitations": [
+    "The post-merge Editor Core was still running at capture; no aggregate merge-SHA CI pass claimed.",
+    "Direct Worker HTTP from this chat environment unavailable; production health and exact bytes independently verified by GitHub Actions smoke.",
+    "Dev-metrics local CLI not run because this connector session has no checked-out repository; no work time fabricated."
+  ],
+  "references": [
+    "https://github.com/sanci9517/sanci9517/actions/runs/43261317773",
+    "https://github.com/sanci9517/sanci9517/actions/runs/43267392389"
+  ]
+}
