@@ -1,0 +1,23 @@
+{
+  "plan_item": "77.44.7.D",
+  "date": "2026-11-12",
+  "finding": "The authored public renderer coerced malformed persisted media src arrays/objects to strings, producing URLs that the publication contract does not accept.",
+  "reproduction": "node public/editor-v2/tests/element-content.test.js: 26 passed, 1 failed before the fix; a malformed array source generated an img src URL.",
+  "fix": "safeSrc now passes only string sources to safeMediaUrl; image, video, audio, gallery and carousel share this path.",
+  "checks": {
+    "targeted": "27/27 passed",
+    "editor": "15/15 files and 3/3 subreaper passed",
+    "media": "5/5 files passed",
+    "web013": "68/68 passed",
+    "typecheck": "passed",
+    "plan_contract": "13/13 passed",
+    "canonical_plan": "13 files, 396 mappings passed",
+    "feature_traceability": "396/396 passed",
+    "active_point": "OPEN / NOT_CERTIFIED",
+    "diff_check": "passed"
+  },
+  "production_d1_preflight": {"query":"SELECT name FROM d1_migrations ORDER BY name","rows_read":34,"rows_written":0,"changes":0,"changed_db":false,"last":"0028_media_archive.sql"},
+  "wrangler_dry_run": {"public_assets":171,"deployed":false},
+  "release": {"status":"PENDING"},
+  "cost_huf": 0
+}

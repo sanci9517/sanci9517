@@ -160,7 +160,7 @@ const renderableText=value=>typeof value==='string'?value:typeof value==='number
 const displayText=value=>renderableText(value).trim();
 const esc=value=>renderableText(value).replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
 const safeHref=value=>{try{return value?validatedLinkHref(value):''}catch{return ''}};
-const safeSrc=value=>{try{return safeMediaUrl(value)}catch{return ''}};
+const safeSrc=value=>{try{return typeof value==='string'?safeMediaUrl(value):''}catch{return ''}};
 const trimmedText=value=>typeof value==='string'?value.trim():'';
 const imageAlt=item=>item?.decorative?'':trimmedText(item?.alt);
 const imageCaption=item=>trimmedText(item?.caption);

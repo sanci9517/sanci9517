@@ -35,6 +35,20 @@ test('links, media, repeaters and table contents reject unsafe or invalid values
   assert.throws(()=>validateElementContent({...node('heading'),props:{level:'8'}}));
 });
 
+test('authored public media never coerces malformed persisted sources into URLs',()=>{
+ const src='/media/00000000-0000-4000-8000-000000000123';
+ const node=(type,props)=>({id:'malformed-source',type,metadata:{contentVersion:1},props});
+ for(const malformed of [[src],{toString:()=>src}]){
+  for(const type of ['image','video','audio']){
+   assert.doesNotMatch(authoredNodeHtml(node(type,{src:malformed,alt:'Kép'})),/\/media\/00000000/);
+  }
+  for(const type of ['gallery','carousel']){
+   assert.doesNotMatch(authoredNodeHtml(node(type,{items:[{src:malformed,alt:'Kép',label:'Dia',content:'Tartalom'}]})),/\/media\/00000000/);
+  }
+ }
+ assert.match(authoredNodeHtml(node('image',{src,alt:'Kép'})),/\/media\/00000000/);
+});
+
 test('authored markup escapes text, preserves link security and uses native accessible structures',()=>{
   const node={id:'node-1',type:'button',metadata:{contentVersion:1},props:{text:'<img src=x onerror=alert(1)>',href:'/p/home',target:'_blank',ariaLabel:'Kezdőlap'}};
   assert.equal(contentTag(node),'a');assert.deepEqual(contentAttributes(node),{href:'/p/home',target:'_blank',rel:'noopener noreferrer','aria-label':'Kezdőlap'});
