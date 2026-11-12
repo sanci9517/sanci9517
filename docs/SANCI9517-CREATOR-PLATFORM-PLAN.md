@@ -3384,3 +3384,12 @@ A `fix/77-44-7-d-corrupt-richtext-public-20261112` ág `6c4b76ea7d67f52f2f5d4a0f
 A [draft PR #319](https://github.com/sanci9517/sanci9517/pull/319) **OPEN / NOT MERGED / NOT DEPLOYED**. Külön, az épp futó PR #318 kiadásától független javítás; nem olvasztjuk össze automatikusan a két PR-t, és a #318 kiadási kapuit nem kerüljük meg. Az új runtime javításhoz még kötelező exact-head összes CI PASS, Wrangler dry-run, Cloudflare D1 SELECT-only előellenőrzés, normál merge, majd automatikus `deploy:safe` és production exact-SHA ellenőrzések. [PR #319 gépi evidence](evidence/editor-richtext-corrupt-pr319-2026-11-12.json).
 
 A `77.44.7.D` továbbra **OPEN / NOT_CERTIFIED**; Editor kézi/fizikai acceptance **DEFERRED**, Save és Publish külön; 0 Ft és production D1/R2 írás/törlés tilalma változatlan.
+
+
+### 77.44.7.D — PR #318 ellenőrzött kiadási lezárás (2026-11-12)
+
+A PR #318 exact HEAD `dba6a9423f3345ba58e77b792199f9ba1feece09` kötelező ellenőrzései: Worker release dry-run `43207888455` **PASS**, F0 `43207888449` **PASS**, Twitch `43207888401` **PASS**, Editor Core `43207888369` **PASS**. A PR ready állapotba került, majd normál, nem squash és nem force merge történt: `7dd8606819d3aeaf22120bf7cf83d9cf7daea2a7`; a `v2/foundation` ág fejét a merge után közvetlenül ellenőriztük. Cloudflare D1 kizárólag `SELECT name FROM d1_migrations ORDER BY name;` előellenőrzést kapott: 34 sor, utolsó `0028_media_archive.sql`, **0 rows_written / 0 changes / changed_db=false**. Nem volt produkciós migráció, D1-adatírás vagy R2-törlés.
+
+A meglévő automatikus Cloudflare Worker Build `8a5f3756-8dd3-4696-918e-4a479201077f` pontos forrás SHA-ja `7dd8606819d3aeaf22120bf7cf83d9cf7daea2a7`, eredménye **stopped / success**; beállított parancsok `npm run typecheck` és `npm run deploy:safe`. A `45bdb4e1-141c-4d60-b1fa-63e7f5468df6` deployment `ac1c5e45-0cf2-43d5-ad1e-b396642858fd` Worker-verziót **100%** forgalomra helyezte. Külön redundáns deploy nem indult. A közvetlen production `/api/health` GET és az éles `public/assets/page-renderer.js` SHA-256 összehasonlítás **UNVERIFIED**, mert az elérhető HTTP kliens nem tudta elérni a production domaint; ezeket nem tekintjük PASS-nak. [Gépi bizonyíték](evidence/editor-background-pr318-release-closure-2026-11-12.json).
+
+A teljes `77.44.7.D` **OPEN / NOT_CERTIFIED**; a teljes Visual Editor kézi/fizikai acceptance **DEFERRED**, Save és Publish külön; új költés nincs. A dokumentációs lezárás `[skip ci]` commit, runtime változtatás nélkül; külön Worker deploy nem szükséges.

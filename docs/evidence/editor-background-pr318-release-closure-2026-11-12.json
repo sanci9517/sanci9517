@@ -1,0 +1,59 @@
+{
+  "date": "2026-11-12",
+  "plan_item": "77.44.7.D",
+  "status": "OPEN / NOT_CERTIFIED",
+  "pr": 318,
+  "pr_head": "dba6a9423f3345ba58e77b792199f9ba1feece09",
+  "merge_commit": "7dd8606819d3aeaf22120bf7cf83d9cf7daea2a7",
+  "branch": "v2/foundation",
+  "checks": {
+    "worker_dry_run": {
+      "run": 43207888455,
+      "conclusion": "success"
+    },
+    "editor_core": {
+      "run": 43207888369,
+      "conclusion": "success"
+    },
+    "f0": {
+      "run": 43207888449,
+      "conclusion": "success"
+    },
+    "twitch": {
+      "run": 43207888401,
+      "conclusion": "success"
+    },
+    "exact_head_all_required": "PASS"
+  },
+  "d1_read_only_preflight": {
+    "sql": "SELECT name FROM d1_migrations ORDER BY name;",
+    "rows": 34,
+    "last": "0028_media_archive.sql",
+    "rows_written": 0,
+    "changes": 0,
+    "changed_db": false
+  },
+  "cloudflare": {
+    "build_id": "8a5f3756-8dd3-4696-918e-4a479201077f",
+    "source_sha": "7dd8606819d3aeaf22120bf7cf83d9cf7daea2a7",
+    "build_outcome": "success",
+    "build_status": "stopped",
+    "build_command": "npm run typecheck",
+    "deploy_command": "npm run deploy:safe",
+    "deployment_id": "45bdb4e1-141c-4d60-b1fa-63e7f5468df6",
+    "worker_version": "ac1c5e45-0cf2-43d5-ad1e-b396642858fd",
+    "traffic_percentage": 100
+  },
+  "production_health_get": "UNVERIFIED (HTTP network/DNS inaccessible from available runtime)",
+  "public_js_asset_sha256_match": "UNVERIFIED (production HTTP fetch inaccessible)",
+  "production_mutations": {
+    "d1_migration": false,
+    "d1_write": false,
+    "r2_delete": false
+  },
+  "extra_deploy_triggered": false,
+  "manual_editor_acceptance": "DEFERRED",
+  "save_publish_separate": true,
+  "new_spend_authorized": false,
+  "notes": "GitHub exact PR merge and Cloudflare source-matched auto-build verified. Documentation-only commit must not trigger Worker build. No runtime modifications in this evidence commit."
+}
