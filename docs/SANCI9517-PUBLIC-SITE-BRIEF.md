@@ -1,7 +1,7 @@
 # SANCI9517 — publikus weboldal: kreatív brief, dizájnrendszer és teljes tartalomterv
 
 **Dokumentum típusa:** belső, végrehajtható creator-webhely brief; NEM második platform-MASTER.  
-**Verzió:** 2.1 (2026-11-12) • **Státusz:** SANCI DARK DEPTH ONLY / KÖTELEZŐ SPEC / KIVITELEZÉS OPEN.
+**Verzió:** 2.2 (2026-11-12) • **Státusz:** SANCI DARK DEPTH ONLY / KÖTELEZŐ SPEC / KIVITELEZÉS OPEN.
 **Repository / ág:** sanci9517/sanci9517 → v2/foundation.  
 **Kanonikus termékterv:** docs/SANCI9517-CREATOR-PLATFORM-PLAN.md.  
 **Végrehajtási szabály:** AGENTS.md; ez a brief nem írhatja felül a MASTER-t, a release-gate-eket, a Save/Publish szétválasztását vagy a domainadatok tulajdonosát.  
@@ -750,29 +750,37 @@ Ritka visszatérő, hátulról vagy részletében látott **kitalált** sziluett
 
 ### 32.4 Benchmarkból átvenni, de semmit sem másolni
 
-- **AvidIsOdd:** a saját domain (`avidisodd.hu`) és a nyilvános `avidisodd.hu/store` út a később külön elérhető merch-struktúrára adhat mintát. Az oldal közvetlen vizuális megnyitása 2026-11-12-én sikertelen, ezért a konkrét designról, színekről, termékekről nem állítunk ellenőrzött tényt. A felhasználónak tetsző hangulat inspiráció, de SANCI-t nem klónozzuk.
+- **AvidIsOdd:** a tulajdonos négy mobil-screenshoton megmutatta a platformgombokat, a videótípus-váltót, a heti menetrendet és a partner/shop blokkokat. Ezek a 32.4.1 szerint *ellenőrzött képi minták*, míg a mozgás és mögöttes kód nem ellenőrzött. Csak az alapelveket adaptáljuk, a SANCI saját arculatával.
 - **TheVR:** rögtön felfogható élő/menetrend, világos VOD/tematikus oldalak.
 - **Zsozeatya:** önálló felismerhető márkahang és külön tényleges bolt, de nem a karakterét vagy hangerejét másoljuk.
 - **TimTheTatman:** közösségi identitás és később autentikus merch, SANCI-nál végig a stream/videó/közösség az első.
 
-### 32.4.1 AvidIsOdd — felhasználói vizuális referencia, SANCI-ra adaptálva (2026-11-12)
+### 32.4.1 AvidIsOdd — ellenőrzött mobil UI-minták, nem másolandó dizájn (2026-11-12)
 
-**Tulajdonosi kérés:** \`https://avidisodd.hu/\` — az oldalon **vannak** olyan dizájnmegoldások, amelyek tetszenek; nézzük meg és vegyünk át belőlük **eredeti megvalósítású alapelveket**, nem teljes koncepciót vagy másik brandet. Ez a MASTER egyetlen SANCI DARK DEPTH irányát **nem változtatja meg**, új aktív tematika nem jön létre. A későbbi Creator Platform-felhasználók **minden** arculati részletet a saját site-jukon szabadon személyre szabhatnak; a SANCI preset nem globális korlátozás.
+**Tulajdonosi döntés:** a látott **jó ötleteket** kell beépíteni az egyetlen SANCI DARK DEPTH irányba, **nem pixelpontos másolatként**, és nem mint minden SANCI oldalon kötelező, merev sablon. A SANCI az első saját site. A Creator Platform összes későbbi felhasználója szabadon változtathatja a logót, színeket, elrendezést, menüt, animációkat, komponenseket és a teljes saját webhelyét. Nincs globális SANCI design-kényszer.
 
-**Bizonyítékhatár:** a webhely \`/\`, \`www\` és \`/store\` URL-jeit 2026-11-12-én több úton próbáltuk elérni, de közvetlen vizuális oldaltartalom/screenshot nem volt hozzáférhető (web cache miss / DNS-feloldási hiba). A Kick és harmadik fél által indexelt, 2026-11-05–11 körüli közvetítéscímekben a \`avidisodd.hu/store\` út valóban szerepel; a tényleges webshoptermékek, vizuális komponensek, betűtípusok, menü, animáció és pontos elrendezés emiatt **NEM ELLENŐRZÖTT**. Nem állíthatjuk, hogy a következő jelölt dizájnelemek ott valóban megtalálhatók. A pontos képi összehasonlításhoz hozzáférhető screenshot vagy későbbi működő oldalmegnyitás szükséges.
+**Tényleges referencia:** a tulajdonos négy mobil képernyőképet töltött fel. Ellenőrzött, hogy látszanak rajtuk a Kick/Twitch/Discord pill-gombok; aláírás/brand motívum és játékborítós „Következő stream” kártya; a Shortok/VOD-ok/Videók szegmensváltó és álló videókártyák; heti dátumlapozás, „Ma” kiemelés, játékborítók és Szabadnap státusz; a Szponzorok és partnerek logósor, külön webshopkártyák, videó és footer. Ez felülírja a korábbi „vizuális részletek nem ellenőrzöttek” megállapítást **a feltöltött képeken látható elemekre**. Az animáció valódi sebessége/ciklusa állóképből nem bizonyítható; a **végtelen vízszintes logócsík** a tulajdonos külön igénye, nem az eredeti referencia mért működése.
 
-**SANCI-specifikus vizuális jelöltminták — eredeti javaslatok, egyenként screen-review után:**
+| Inspiráció | SANCI-ban javasolt, alakítható pattern | Korlát |
+|---|---|---|
+| Nagy platform-pill gombok | Hero/Élő/Közösség: ikonos CTA-csoport, egyedi gombstílus, saját sorrend, szín, méret, felirat, mobil elrendezés | Csak valós, működő platformhivatkozás, keyboard/focus, wrap |
+| Kiemelt következő stream | Főoldali „Most” részen borító, valódi dátum és idő, játék, link a teljes menetrendre | LIVE/OFFLINE/UNKNOWN és üres Schedule fallback; nincs kitalált stream |
+| Shortok/VOD-ok/Videók kapcsoló | Videók aloldal: gyors szegmens-/tabváltás, egy helyen külön 9:16 és 16:9 tartalom, platformhoz kötött valós lista | URL/deep-link vagy route, back/forward, kiválasztás és fókusz, keyboard, lazy-load, empty state |
+| Feltárható másodlagos tartalom | További videók, kategória- és platformszűrő, lapozás, disclosure, szerkeszthető alapértelmezett nézet | Nem végtelen scroll; hozzáférhető, nem rejtetten betöltött „elveszett” tartalom |
+| Heti kártyás menetrend | Menetrend oldal: előző/következő hét, Ez a hét, mai nap, valós szabadnap, borító, játék, kezdés | Europe/Budapest megjelenítés, valódi Schedule-adat, mobil+desktop eltérő layout |
+| Tartalomkártyák | Főoldalon 1 hangsúlyos + max. 2 kis valódi tartalom; Videók oldalon short portrait-grid | Nincs fake nézettség, tartam vagy szponzor |
+| Szponzor-/támogató logósor | Partnerek/Közösség oldalon vagy valós adat esetén kis feltételes site-sáv: egyedi logók, sorrend, link, alt, sebesség, irány; konfigurálható **folyamatos végtelen horizontal marquee** | Csak jogosult, valós partnerek és beleegyező támogatók; adat híján rejtve |
+| Animációk és gombok | Finom gomb hover/focus, tab/kártya átmenet; opcionális loop-motion preset | Reduced-motion statikus, pause on hover/focus és Pause lehetőség, nincs horizontális overflow |
+| Jövőbeli webshop | Egyedi termékkártyák és saját merch arculat külön Shop útvonalon, ha egyszer valóban létezik | Most nem nyitunk üres/fiktív Shop-ot, nincs hamis ár vagy rendelés |
 
-1. **Erős, teljes szélességű nyitókompozíció:** monumentális, de egyszerű, filmes táj + SANCI jel; kevés szöveg, 1 működő elsődleges CTA; külön desktop és mobil artwork. Ez nem egy poszterként beégetett oldal.
-2. **Változó szekcióritmus:** a négy kezdőoldali blokk ne négy egyforma grid-sáv legyen; legyen levegős hero, erős valódi LIVE/media panel, aszimmetrikus nagy+2 kis videó és csendes útválasztó szakasz. Közös térköz/kontraszt, megfontolt negatív tér.
-3. **Igényes tárgyi és ruhaminta-részletek:** logóval hímzett kapucni, apró textilpatch, finom fémes/logó-felület az önálló SANCI grafikákban; egyetlen csöndes merch-seed jelenetenként, nulla boltnyomás.
-4. **Navigáció és hover vizuális visszajelzés:** elegáns, tiszta, mindig érthető 6-pontos desktop menü; mobil drawer, jól látható aktív oldal/focus; diszkrét, gyors mozgás, touch és reduced-motion fallback. Nem kötelező mágneses kurzor, fölösleges scroll-játék vagy nagy JS-csomag.
-5. **Összetartó oldalspecifikus látvány:** ugyanazt a logót, vörös út-motívumot és eredeti arculati anyagokat használjuk más kivágással a Menetrend, Videók, Élő és Közösség oldalakon; nem egyszerű nagy háttérkép-csere és nem tartalom nélküli promo.
-6. **A márka és a későbbi kereskedelem szétválasztása:** ellenőrzött \`/store\` említésből átvehető a **külön célútvonal** elve, nem az, hogy a SANCI főoldal shop lesz. Amíg nincs ténylegesen jogilag és technikailag kész merch, nincs ár, rendelés, kitalált termék vagy promóció.
+**Végtelen logócsík valódi elfogadási szabálya:** hézagmentes, nem ugráló, vizuálisan folytonos mozgás; statikus fallback kevés logó esetén; pointer/focus alatt szüneteltethető, szükség esetén Pause vezérlővel; prefers-reduced-motion esetén nincs automatikus mozgás; a vizuális ismétlés nem duplikálja a képernyőolvasó számára a logókat vagy linkeket; nem okoz overflow-t, CLS-t vagy érzékelhető lassulást. A támogató nevek nyilvánosságához megfelelő hozzájárulás szükséges. Az egész modul kikapcsolható; nem kötelező bármely site-on.
 
-**Ellenőrzési feladat, nem kitalált tény:** amikor a referencia képernyőképen/böngészővel hitelesen vizsgálható, 1440 és 390px nézetben **képelemről képelemre** dokumentálni, pontosan melyik tipográfiai, hero, menü, mozgás, szekció-/footer-megoldás tetszhet; mindegyiknél felvenni (a) eredeti minta leírása, (b) SANCI DARK DEPTH saját alternatívája, (c) mobil/a11y/perf korlát, (d) Editor-képesség és stable ID. Az elfogadás előtt a felhasználó konkrét preferenciái dönthetnek az apró kidolgozási részletekről, **nem** a teljes brandirányról. Semmilyen idegen képet, védjegyet, másolt HTML/CSS-t nem veszünk át.
+**Információarchitektúra változatlan:** SANCI főoldala max. 4 fő tartalmi egység + közös footer. A platformgomb a hero része, a következő stream a „Most” blokkban, a főoldali videók csak előnézetek; a teljes videóváltó a Videók, a teljes heti menetrend a Menetrend, a hosszú partner/támogatói sor a megfelelő aloldalon van. A marquee legfeljebb egy diszkrét feltételes kiegészítő sáv, nem ötödik kötelező marketingblokk. Merch csak későbbi, valódi működés esetén.
 
-**Hatókör:** csak a SANCI első, tulajdonosi webhelyének art directionje; a rendszer többfelhasználós editorában minden más creator/brand választhat saját logót, navot, színvilágot, layoutot, animációt és tartalmat, site-scoped adattal és jogosultságokkal. Dokumentációs P0/visual review pont, nem publikált implementáció és nem külön MASTER.
+**Technikai építés:** a tab, pill-CTA, kibontás, marquee és menetrendkártya újrahasználható, site-scoped és teljesen testreszabható Editor/Brand Kit komponens legyen a meglévő DSN/EDT/WEB/RES/CNT/SCH/QA tervpontok alatt; a SANCI színei és logója csak a saját site konfigurációja. Editor insert/configure/breakpoint, Undo/Redo, Save/reload/Preview, külön Publish, rollback, cross-site deny, keyboard/focus, reduced-motion és valódi böngészős QA. Nem veszünk át eredeti HTML/CSS-t, grafikát, védjegyet. 0 Ft új költés.
+
+**Állapot:** az inspirációs UI látható elemei SCREENSHOT VERIFIED; a SANCI adaptáció SPEC / IMPLEMENTATION OPEN. Ez a dokumentációs követelmény nem jelent automatikus élesítést, tartalomfeltöltést vagy új Worker deployt.
+
 
 ### 32.5 Kötelező elfogadás és hiányok (most OPEN)
 
