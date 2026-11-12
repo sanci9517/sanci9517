@@ -119,6 +119,16 @@ test('published page and Canvas handle malformed text, links and CSS without Sav
   assert.deepEqual(page.nodes[intactHeadingId].children,[intactHeadingId,buttonId],'read-only rendering preserves the cyclic Page Model');
   assert.deepEqual(page.nodes[corruptedHeadingId].children,[corruptedHeadingId,intactHeadingId],
     'invalid leaf child reference is neither consumed nor silently persisted away');
+  // An authored content leaf ignores its saved child pointers too. The older
+  // legacy-heading regression above alone would miss this eager traversal bug.
+  page.nodes[corruptedHeadingId].metadata={...page.nodes[corruptedHeadingId].metadata,contentVersion:1};
+  await tab.reload();
+  await root(intactHeadingId).waitFor({timeout:20000});
+  assert.equal(await root(intactHeadingId).count(),1,
+    'authored heading with a corrupt child edge must not consume a healthy root sibling');
+  assert.equal((await root(intactHeadingId).textContent()).trim(),'A teljes oldal megmarad');
+  assert.equal(await root(buttonId).count(),1,'other root siblings remain visible with authored leaf corruption');
+  assert.deepEqual(errors,[],'authored leaf child pointers cannot cause public page errors');
   // The root itself may have a corrupted collection in a legacy snapshot.
   // A safe empty-page fallback is correct; displaying a 404 is not.
   page.nodes[rootId].children=invalid;
