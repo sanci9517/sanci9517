@@ -46,7 +46,18 @@
     "hosted_editor_core_id": 43210747102,
     "wrangler_dry_run": "NOT_RUN",
     "remote_d1_preflight_for_pr319": "NOT_RUN",
-    "production_post_merge": "NOT_RUN"
+    "production_post_merge": "NOT_RUN",
+    "exact_source_old_vs_new": {
+      "result": "PASS",
+      "old_malformed_snapshot": "TypeError: Cannot read properties of null (reading 'cells')",
+      "new_malformed_snapshot": {
+        "contains_table_header": true,
+        "contains_followup_paragraph": true,
+        "leaks_object_string": false
+      },
+      "valid_snapshot_byte_identical": true,
+      "method": "Extract richTextHtml from exact GitHub baseline and PR branch, inject same dependencies, execute deterministic inputs; no actual browser used"
+    }
   },
   "constraints": {
     "save_and_publish_separate": true,
