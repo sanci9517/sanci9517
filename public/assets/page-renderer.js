@@ -65,12 +65,13 @@ import {backgroundImageValue,legacyBackgroundCompound,MEDIA_ASSET_ID} from "../e
  function richTextHtml(value){
   if(value?.type!=='richtext-document'||value.schemaVersion!==1||!Array.isArray(value.blocks))return'';
   const inlines=items=>(Array.isArray(items)?items:[]).map(item=>{
-   let label=esc(item?.text??'');
+   const runText=typeof item?.text==='string'?item.text:typeof item?.text==='number'&&Number.isFinite(item.text)?String(item.text):'';
+   let label=esc(runText);
    // A page style can override .visual-text white-space. Keep explicit
    // Shift+Enter / clipboard hard breaks visible without changing textContent
    // (a <br> element would lose the canonical \\n on DOM roundtrip).
-   if(String(item?.text??'').includes('\n'))label=`<span style="white-space:pre-wrap">${label}</span>`;
-   for(const [mark,tag] of [['bold','strong'],['italic','em'],['underline','u'],['strikethrough','s'],['subscript','sub'],['superscript','sup'],['code','code']])if(item?.marks?.includes(mark))label=`<${tag}>${label}</${tag}>`;
+   if(runText.includes('\n'))label=`<span style="white-space:pre-wrap">${label}</span>`;
+   for(const [mark,tag] of [['bold','strong'],['italic','em'],['underline','u'],['strikethrough','s'],['subscript','sub'],['superscript','sup'],['code','code']])if(Array.isArray(item?.marks)&&item.marks.includes(mark))label=`<${tag}>${label}</${tag}>`;
    const safeColor=value=>typeof value==='string'&&/^#(?:[\da-f]{3}|[\da-f]{4}|[\da-f]{6}|[\da-f]{8})$/i.test(value)?value:'';
    const styles=[];const color=safeColor(item?.styles?.color),highlight=safeColor(item?.styles?.backgroundColor);if(color)styles.push(`color:${color}`);if(highlight)styles.push(`background-color:${highlight}`);const fontSize=typeof item?.styles?.fontSize==='string'&&/^(?:[8-9]|[1-8]\d|9[0-6])px$/.test(item.styles.fontSize)?item.styles.fontSize:'';if(fontSize)styles.push(`font-size:${fontSize}`);const fontFamily=RICH_TEXT_FONT_FAMILIES.includes(item?.styles?.fontFamily)?item.styles.fontFamily:'';if(fontFamily)styles.push(`font-family:${esc(fontFamily)}`);if(styles.length)label=`<span style="${styles.join(';')}">${label}</span>`;
    const href=typeof item?.link?.href==='string'?safeRichUrl(item.link.href):'';
@@ -82,7 +83,8 @@ import {backgroundImageValue,legacyBackgroundCompound,MEDIA_ASSET_ID} from "../e
    return `<a href="${esc(href)}"${targetAttributes}${title}>${label}</a>`;
   }).join('');
   return value.blocks.map(block=>{
-   if(block?.type==='table'&&Array.isArray(block.rows))return `<div class="visual-richtext-table-wrap"><table class="visual-richtext-table"><tbody>${block.rows.map(row=>`<tr>${(row.cells||[]).map(cell=>{const tag=cell.header?'th':'td',align=['left','center','right','justify'].includes(cell.align)?` style="text-align:${cell.align}"`:'';return `<${tag}${align}>${inlines(cell.children)}</${tag}>`}).join('')}</tr>`).join('')}</tbody></table></div>`;
+   if(!block||typeof block!=='object'||Array.isArray(block))return '';
+   if(block?.type==='table'&&Array.isArray(block.rows))return `<div class="visual-richtext-table-wrap"><table class="visual-richtext-table"><tbody>${block.rows.map(row=>`<tr>${(Array.isArray(row?.cells)?row.cells:[]).map(cell=>{const safeCell=cell&&typeof cell==='object'&&!Array.isArray(cell)?cell:{};const tag=safeCell.header?'th':'td',align=['left','center','right','justify'].includes(safeCell.align)?` style="text-align:${safeCell.align}"`:'';return `<${tag}${align}>${inlines(safeCell.children)}</${tag}>`}).join('')}</tr>`).join('')}</tbody></table></div>`;
    if(block?.type==='bulleted-list'||block?.type==='numbered-list'){
     const tag=block.type==='bulleted-list'?'ul':'ol';
     const items=Array.isArray(block.items)?block.items:[];
