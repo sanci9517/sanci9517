@@ -1367,6 +1367,10 @@ test('Card shared Media IDs preserve legacy URLs and reject malformed unpublishe
  assert.equal(cardImageSrc(privatePreview),'','a private editor preview is not a public Card image URL');
  assert.throws(()=>normalizeCardContent(privatePreview),'the Card editor must reject private media preview URLs');
  assert.equal(cardImageSrc({...original,imageSrc:'/api/admin/media/../media?id='+id}),'','normalized private API paths remain private');
+ for(const encoded of ['/api/%61dmin/media?id='+id,'/%61pi/admin/media?id='+id,'/api/admin%2fmedia?id='+id]){
+  assert.equal(cardImageSrc({...original,imageSrc:encoded}),'','encoded private API paths are not public Card images');
+  assert.throws(()=>normalizeCardContent({...original,imageSrc:encoded}),'the editor rejects encoded private media paths');
+ }
  assert.equal(cardImageSrc({...original,imageSrc:'/media/'+id}),'/media/'+id,'the public media route remains available');
  const insecure={...original,imageSrc:'http://images.example.test/cover.jpg'};
  assert.equal(cardImageSrc(insecure),'','Card images follow the editor HTTPS-or-local media contract');

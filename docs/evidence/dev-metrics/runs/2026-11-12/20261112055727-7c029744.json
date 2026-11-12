@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261112055727-7c029744",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-12T05:57:27.617Z",
+  "finished_at": "2026-11-12T05:59:33.529Z",
+  "wall_seconds": 126,
+  "paused_seconds": 0,
+  "measured_seconds": 126,
+  "status": "pass",
+  "kind": "mixed",
+  "summary": "Card encoded private media route rejected; red/green test and release preflight passed",
+  "evidence": [
+    "docs/evidence/card-encoded-private-media-77-44-7-d-2026-11-12.json"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "a84cc360c3272b8dacb47f8143a46e03b65fe83a",
+  "finished_revision": "a84cc360c3272b8dacb47f8143a46e03b65fe83a",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

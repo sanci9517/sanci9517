@@ -1,0 +1,25 @@
+{
+  "plan_point": "77.44.7.D",
+  "date_utc": "2026-11-12",
+  "finding": "A Card képforrása a kódolt /api/admin/media útvonalat publikus képként átengedte.",
+  "red_test": "Card core: 75 pass, 1 fail; a /api/%61dmin/media forrás megjelent a publikus képnél",
+  "fix": "A Card a helyi képútvonalat normalizálja és dekódolja a privát admin-prefix ellenőrzése előtt; a kódolt privát képet a publikált képforrás és a szerkesztési normalizálás is elutasítja.",
+  "local_checks": {
+    "card_core": "76/76 pass",
+    "editor": "15/15 files pass; 3/3 subreaper tests pass",
+    "media": "5/5 files pass",
+    "typecheck": "pass",
+    "plan_contract": "13/13 pass",
+    "canonical_plan": "13 master files, 396 mappings pass",
+    "feature_traceability": "396/396 pass",
+    "active_point": "OPEN / NOT_CERTIFIED",
+    "diff_check": "pass"
+  },
+  "release_preflight": {
+    "production_d1": "SELECT name FROM d1_migrations ORDER BY name: 34 rows, 0 writes, changed_db=false",
+    "wrangler_dry_run": "pass, 171 public assets"
+  },
+  "release_status": "PENDING",
+  "cost": "0 Ft",
+  "manual_editor_acceptance": "DEFERRED"
+}

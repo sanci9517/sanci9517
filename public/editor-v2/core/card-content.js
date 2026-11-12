@@ -14,7 +14,12 @@ const safeUrl=(raw,{image=false}={})=>{
  if([...value].some(ch=>{const n=ch.charCodeAt(0);return n<32||n===127||n===92})||value.startsWith('//'))return false;
  if(!image&&value.startsWith('#')&&value.length>1)return true;
  if(value.startsWith('/')&&!value.startsWith('//')){
-  if(image){const path=new URL(value,'https://card-image.invalid').pathname;if(path==='/api/admin'||path.startsWith('/api/admin/'))return false;}
+  if(image){
+   try{
+    const path=decodeURIComponent(new URL(value,'https://card-image.invalid').pathname);
+    if(/^\/api\/admin(?:\/|$)/i.test(path))return false;
+   }catch{return false}
+  }
   return true;
  }
  try{const url=new URL(value);return (image?url.protocol==='https:':['http:','https:'].includes(url.protocol))&&!url.username&&!url.password;}
