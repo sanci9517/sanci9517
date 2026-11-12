@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261112030229-21801b49",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-12T03:02:29.991Z",
+  "finished_at": "2026-11-12T03:03:56.194Z",
+  "wall_seconds": 86,
+  "paused_seconds": 0,
+  "measured_seconds": 86,
+  "status": "pass",
+  "kind": "mixed",
+  "summary": "Card private preview URL rejection red-green regression and release gates",
+  "evidence": [
+    "public/editor-v2/tests/core.test.js"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "9b79ce94ffa87b5df10af73ae1d67f7b93c51294",
+  "finished_revision": "9b79ce94ffa87b5df10af73ae1d67f7b93c51294",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
