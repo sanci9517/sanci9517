@@ -1,0 +1,50 @@
+{
+  "schema": "sanci9517.dev-evidence.v1",
+  "date": "2026-11-12",
+  "plan_item": "77.44.7.D",
+  "status": "OPEN_NOT_CERTIFIED",
+  "pr": {
+    "number": 323,
+    "url": "https://github.com/sanci9517/sanci9517/pull/323",
+    "head_sha": "5172796a887dd02f54dc0b8003e14f6623e4d3e9",
+    "branch": "test/77-44-7-d-responsive-media-usage-20261112",
+    "draft": true,
+    "merged": false,
+    "deployed": false
+  },
+  "scope": "Site-scoped Media Library per-viewport responsive background, visibility, inherited legacy root gate, public media authorization, archived-reference protection",
+  "test_file": "tests/media-api.test.js",
+  "added_tests": [
+    "published responsive root backgrounds resolve per viewport while usage and archive retain every draft reference",
+    "published media access follows background element visibility and never traverses leaf descendants"
+  ],
+  "release_safety": {
+    "runtime_changes": false,
+    "production_deploy_required": false,
+    "production_d1_mutation": false,
+    "production_d1_migration": false,
+    "production_r2_deletion": false,
+    "new_spending_authorized_huf": 0,
+    "save_publish_separate": true,
+    "manual_acceptance": "DEFERRED"
+  },
+  "checks": {
+    "editor_core": {
+      "status": "in_progress",
+      "conclusion": null
+    },
+    "f0": {
+      "status": "in_progress",
+      "conclusion": null
+    },
+    "twitch": {
+      "status": "in_progress",
+      "conclusion": null
+    },
+    "worker_dry_run": {
+      "status": "not_triggered_test_only",
+      "conclusion": null
+    }
+  },
+  "next": "Review exact-head CI results; fix if failing; on verified green checks merge normally as test-only with no Worker deployment. If a reproduction exposes actual runtime defect, implement narrow, separately tested fix before claiming D acceptance."
+}
