@@ -8,9 +8,11 @@
     "url": "https://github.com/sanci9517/sanci9517/pull/324",
     "branch": "fix/77-44-7-d-malformed-publish-text-20261112",
     "head_sha": "cb73e9b46edd93ddca7c6bdb306439841c7ee1f0",
-    "draft": true,
-    "merged": false,
-    "deployed": false
+    "draft": false,
+    "merged": true,
+    "deployed": true,
+    "merge_commit": "59298a4ff15f5b518d0cbfc6db99bd63e3008050",
+    "merge_method": "merge"
   },
   "defect": {
     "source": "src/core/editor-validation.ts",
@@ -57,18 +59,62 @@
     },
     "editor_core": {
       "id": 43247636629,
-      "status": "in_progress",
-      "conclusion": null
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "cb73e9b46edd93ddca7c6bdb306439841c7ee1f0"
     }
   },
   "release": {
-    "merged": false,
-    "cloudflare_deployed": false,
+    "merged": true,
+    "cloudflare_deployed": true,
     "manual_editor_acceptance": "DEFERRED",
     "d1_migration": false,
     "production_d1_write": false,
     "production_r2_delete": false,
-    "new_spending_authorized_huf": 0
+    "new_spending_authorized_huf": 0,
+    "merge_sha": "59298a4ff15f5b518d0cbfc6db99bd63e3008050",
+    "cloudflare_build_id": "33f3a5b8-7cd9-4c78-9a3a-71028e77646a",
+    "cloudflare_build_outcome": "success",
+    "cloudflare_build_source_sha": "59298a4ff15f5b518d0cbfc6db99bd63e3008050",
+    "deploy_command": "npm run deploy:safe",
+    "worker_deployment": "afc7916d-d32c-4ec3-a7aa-b42e687ed8e2",
+    "worker_version": "c5d2cc08-2838-4f54-adcc-4e40cef05a31",
+    "worker_traffic_percentage": 100,
+    "merge_source_smoke": {
+      "id": 43256895295,
+      "status": "completed",
+      "conclusion": "success",
+      "checks": [
+        "/api/health HTTP 200",
+        "public/assets/page-renderer.js source SHA-256 equals served asset",
+        "public/editor-v2/core/element-content.js source SHA-256 equals served asset"
+      ],
+      "note": "Source-smoke verifies static asset bytes, not the new server-side validation directly; Cloudflare build metadata proves the exact merged source."
+    },
+    "merge_ci": {
+      "f0": {
+        "id": 43256895018,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      "twitch": {
+        "id": 43256895162,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      "editor_core": {
+        "id": 43256895053,
+        "status": "in_progress",
+        "conclusion": null
+      }
+    },
+    "d1_postflight": {
+      "query": "SELECT id,name,applied_at FROM d1_migrations ORDER BY id DESC LIMIT 5",
+      "rows_written": 0,
+      "changes": 0,
+      "changed_db": false,
+      "latest_migration": "0028_media_archive.sql"
+    }
   },
-  "next": "Await exact-head full Editor Core PASS; run fresh read-only Cloudflare D1 SELECT preflight, normally merge only if all four gates PASS, then verify automatic npm run deploy:safe exact-source Worker build, 100% traffic and /api/health + changed source readback. Keep D OPEN/NOT_CERTIFIED."
+  "next": "Production runtime VERIFIED with exact merge source + 100% Worker traffic, but independently track post-merge exact-SHA Editor Core final conclusion. Continue D content capability matrix and media lifecycle; full Editor manual acceptance deferred."
 }
