@@ -1,0 +1,96 @@
+{
+  "schema": "sanci9517.dev-evidence.v1",
+  "date": "2026-11-12",
+  "plan_item": "77.44.7.D",
+  "status": "OPEN_NOT_CERTIFIED",
+  "project": "sanci9517/sanci9517",
+  "base_branch": "v2/foundation",
+  "pr": {
+    "number": 320,
+    "url": "https://github.com/sanci9517/sanci9517/pull/320",
+    "branch": "fix/77-44-7-d-malformed-public-text-links-20261112",
+    "head_commit": "e16a04978140a6284b79bcd3b3d5ce470aa4cc9a",
+    "state": "draft",
+    "merged": false
+  },
+  "runtime_commit": "5559f8a01736fec6013f374d5898388f66ebaef5",
+  "files": [
+    "public/assets/page-renderer.js",
+    "tests/browser/editor-malformed-public-text-links.test.js"
+  ],
+  "source_bug": {
+    "esc": "String(v??'') throws on persisted {toString:null} heading/text fields",
+    "safeRichUrl": "String(v??'').trim() throws on persisted {toString:null} Button/Link URL"
+  },
+  "validation": {
+    "parser": {
+      "result": "PASS",
+      "method": "V8 syntax compile of exact fetched renderer and browser test after stripping ESM imports; no browser executed"
+    },
+    "old_vs_new": {
+      "result": "PASS",
+      "method": "Exact-source extraction and isolated evaluation of esc, safeRichUrl",
+      "old_error_esc": "TypeError",
+      "old_error_safeRichUrl": "TypeError",
+      "new_esc_empty": true,
+      "new_safeRichUrl_empty": true,
+      "valid_html_escape_unchanged": true,
+      "valid_internal_link_unchanged": true,
+      "javascript_href_rejected": true
+    },
+    "chromium_test": {
+      "status": "PENDING",
+      "path": "tests/browser/editor-malformed-public-text-links.test.js",
+      "assertions": [
+        "valid heading",
+        "corrupt heading safe",
+        "malformed Button/Link URL refused",
+        "valid internal link preserved",
+        "no pageerror",
+        "zero Save/Publish request"
+      ]
+    },
+    "hosted_ci": {
+      "editor_core": {
+        "id": 43217720305,
+        "status": "in_progress",
+        "conclusion": null
+      },
+      "f0": {
+        "id": 43217721034,
+        "status": "in_progress",
+        "conclusion": null
+      },
+      "twitch": {
+        "id": 43217720319,
+        "status": "in_progress",
+        "conclusion": null
+      },
+      "worker_dry_run": {
+        "id": 43217720329,
+        "status": "in_progress",
+        "conclusion": null
+      }
+    }
+  },
+  "release": {
+    "state": "NOT_MERGED_NOT_DEPLOYED",
+    "post_merge_cloudflare_build": "NOT_RUN",
+    "post_merge_worker_version": "NOT_RUN",
+    "remote_d1_select_preflight_for_this_pr": "NOT_RUN",
+    "production_http_health": "NOT_RUN",
+    "production_asset_hash": "NOT_RUN",
+    "blocked_by": [
+      "exact-head required CI pending",
+      "PR #319 independently modifies same public renderer; reconcile changes before merge"
+    ]
+  },
+  "constraints": {
+    "new_paid_resources": false,
+    "production_d1_writes": false,
+    "production_migrations": false,
+    "production_r2_deletions": false,
+    "save_publish_separate": true,
+    "manual_editor_acceptance": "DEFERRED"
+  }
+}
