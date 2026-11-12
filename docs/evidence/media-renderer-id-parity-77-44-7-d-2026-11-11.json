@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "plan_point": "77.44.7.D",
-  "status": "LOCAL_CHECKS_PASS_RELEASE_PENDING",
+  "status": "DEPLOYED_EXACT_SHA_EDITOR_CI_IN_PROGRESS_SCOPE_OPEN",
   "finding": "The renderer still accepted a loosely formatted 36-character imported media assetId after the publication validator adopted strict route UUID validation. It rendered a broken media URL instead of the valid src fallback; the media usage scanner had the same loose renderer predicate.",
   "red_test": "tests/media-api.test.js: 53 pass, 1 fail; authoredNodeHtml produced /media/00000000-0000-0000-0000-000000000000 instead of the active /media/20000000-0000-4000-8000-000000000001 fallback.",
   "change": "Reuse the existing strict asset UUID pattern within the authored renderer's input, image, audio, video and poster handling; align the media usage scanner's renderer predicate. No dependency or D1 schema change; Save and Publish remain separate.",
@@ -20,7 +20,16 @@
     "git_diff_check": "PASS"
   },
   "dev_metrics_run": "docs/evidence/dev-metrics/runs/2026-11-11/20261111235645-5e61ba0c.json",
-  "release": "Pending exact-SHA push, CI, Cloudflare build and direct traffic/health/changed-asset hash checks",
+  "release": {
+    "source_commit": "21a1e3b4c2c8a7ea12b07618c90cd16b5205fb7f",
+    "verified_remote_branch": "v2/foundation at exact source SHA after normal fast-forward push",
+    "cloudflare_build": "5b337493-7795-4e34-be59-2ab137040a2a stopped/success at exact source SHA; typecheck, deploy:safe and migration gate succeeded; one changed public asset uploaded",
+    "deployment": "293d123e-13a5-4b77-b336-7caa35e07bd2",
+    "traffic_version": "38b07c0d-c30e-4d49-8d9f-05cdbb05f78e at 100%",
+    "health": "Direct GET /api/health HTTP 200; ok=true, service=sanci9517-streamer-brand, version=2.0.0",
+    "changed_public_asset_sha256": "public/editor-v2/core/authored-content.js local and direct production GET: cc61aa77518b3c66f25d70f9e8ac642e05025f700468c26be94f88489ffab453",
+    "exact_sha_github_ci": "Canonical Plan 43123977802, Active Point Audit 43123977814, Twitch 43123977815 and F0 43123977880 completed/success; Editor Core 43123977816 in_progress"
+  },
   "changed_public_asset_sha256_local": "public/editor-v2/core/authored-content.js cc61aa77518b3c66f25d70f9e8ac642e05025f700468c26be94f88489ffab453",
   "cost": "No paid service, production D1 mutation/migration, or R2 deletion."
 }
