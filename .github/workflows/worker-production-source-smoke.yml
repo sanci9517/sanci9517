@@ -33,7 +33,7 @@ jobs:
           WORKER_ORIGIN: https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev
         run: |
           set -euo pipefail
-          source_files=("public/assets/page-renderer.js" "public/editor-v2/core/canvas-engine.js" "public/editor-v2/core/visibility.js" "public/editor-v2/core/element-content.js")
+          source_files=("public/visual-page.html" "public/assets/page-renderer.js" "public/editor-v2/core/canvas-engine.js" "public/editor-v2/core/visibility.js" "public/editor-v2/core/element-content.js")
           printf 'Source commit: %s\n' "$GITHUB_SHA"
           for file in "${source_files[@]}"; do
             printf 'Expected %s SHA-256: %s\n' "$file" "$(sha256sum "$file" | awk '{print $1}')"
