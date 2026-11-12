@@ -738,6 +738,42 @@ test("published media access follows background element visibility and never tra
   f.db.prepare("UPDATE pages SET published_content_json=? WHERE id=?").run(JSON.stringify(leaf),pageId);
   assert.equal((await deliver()).status,404,
     "a background under a leaf node that drops its children cannot authorize public media");
+
+  // 77.44.7.D: the authored Page Model must have the same child-edge
+  // reachability rule as the live renderer (PR #327). An authored Heading
+  // consumes no children even when imported data contains cycles, duplicate
+  // IDs and references to a separate, otherwise healthy section.
+  const authoredLeaf=structuredClone(visible);
+  authoredLeaf.pages[pageId].nodes.heading={
+    id:"heading",type:"heading",parentId:"root",
+    metadata:{contentVersion:1},props:{text:"Read-only legacy repair"},
+    children:["heading","section","root","section"]
+  };
+  authoredLeaf.pages[pageId].nodes.root.children=["heading"];
+  f.db.prepare("UPDATE pages SET published_content_json=? WHERE id=?")
+    .run(JSON.stringify(authoredLeaf),pageId);
+  assert.equal((await deliver()).status,404,
+    "a malformed authored content leaf must not grant public access to its hidden descendants");
+
+  // A real root sibling must remain publicly reachable regardless of the
+  // malformed pointers in an earlier authored leaf. Duplicate references,
+  // back-edges and root-cycles must not hide or over-authorize this asset.
+  const validSibling=structuredClone(authoredLeaf);
+  validSibling.pages[pageId].nodes.root.children=["heading","section","root","section"];
+  f.db.prepare("UPDATE pages SET published_content_json=? WHERE id=?")
+    .run(JSON.stringify(validSibling),pageId);
+  const siblingDelivery=await deliver();
+  assert.equal(siblingDelivery.status,200,
+    "a healthy published root sibling remains publicly reachable despite earlier cyclic leaf pointers");
+  assert.deepEqual(new Uint8Array(await siblingDelivery.arrayBuffer()),png);
+  const protectedUsage=await f.call("GET","editor",null,{usage:asset.id});
+  assert.equal(protectedUsage.status,200);
+  const usageData=(await protectedUsage.json()).data;
+  assert.equal(usageData.complete,true,"cycles in published data must not make the usage audit falsely complete or crash");
+  assert.ok(usageData.references.some(ref=>ref.source==="published" && ref.path==="style.backgroundAssetId"),
+    "the usage audit still finds the genuine published background reference");
+  assert.equal((await f.call("PATCH","editor",JSON.stringify({archived:true}),{id:asset.id})).status,409,
+    "the referenced asset remains protected from archive after cyclic authored source data");
 });
 
 test("site quota telemetry includes archived assets, excludes other sites and is filter-independent",async t=>{
