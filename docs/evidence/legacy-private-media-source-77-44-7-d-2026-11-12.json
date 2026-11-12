@@ -19,7 +19,19 @@
     "production_d1": "SELECT name FROM d1_migrations ORDER BY name: 34 rows, 0 writes, changed_db=false",
     "wrangler_dry_run": "pass, 171 public assets"
   },
-  "release_status": "PENDING",
+  "release_status": {
+    "runtime_commit": "3ae2570ed1c2348d47a6baf7ea5db68bb8c5c23a",
+    "verified_remote_head": "3ae2570ed1c2348d47a6baf7ea5db68bb8c5c23a",
+    "cloudflare_build": "bb8cb02d-42d6-4267-ab4e-7f70932d185f: success, exact source SHA, typecheck and deploy:safe success",
+    "deployment": "b3c10cae-fd73-4bb2-8977-dc22b4239c0d",
+    "traffic_version": "2f35d570-e18f-4dea-801c-7d899e057715: 100%",
+    "health": "HTTP 200, ok=true, version=2.0.0",
+    "public_asset_hashes": {
+      "/editor-v2/core/legacy-media-source.js": "0d41e7abcf8bd266d636be88fe77efc1274fd6d0c603ef2fbda0864987be26b9",
+      "/editor-v2/tests/element-content.test.js": "7a70358e7e62cd59fcadc60f294e9a080ac9e75b4da2461b0f58fdf9c962684c"
+    },
+    "github_exact_sha": "Canonical Plan 43159282303 success; Active Point 43159282238 success; Twitch 43159282234 success; F0 43159282268 success; Editor Core 43159282305 in_progress"
+  },
   "cost": "0 Ft",
   "manual_editor_acceptance": "DEFERRED"
 }
