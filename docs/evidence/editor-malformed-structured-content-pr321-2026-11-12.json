@@ -8,10 +8,12 @@
     "url": "https://github.com/sanci9517/sanci9517/pull/321",
     "branch": "fix/77-44-7-d-malformed-structured-content-20261112",
     "original_commit": "3de01cfbcaa71a7c17e8e7cab2ac60b637e2fcbd",
-    "reconciled_head": "a693156df76e02f15ea90a91213d0f4f32439d71",
+    "reconciled_head": "5d2535b1c925386635d7d76f40dabe47fcf92a97",
     "base_merge_parent": "ca51e82b358ac13b0f734dfe8444d98042483b0a",
     "draft": true,
-    "merged": false
+    "merged": false,
+    "previous_reconciled_head": "a693156df76e02f15ea90a91213d0f4f32439d71",
+    "worker_source_smoke_workflow_commit": "5d2535b1c925386635d7d76f40dabe47fcf92a97"
   },
   "code": {
     "changes": [
@@ -39,23 +41,38 @@
     },
     "github": {
       "f0": {
-        "id": 43225318705,
-        "status": "in_progress"
+        "id": 43226229510,
+        "status": "completed",
+        "conclusion": "success"
       },
       "twitch": {
-        "id": 43225318602,
-        "status": "in_progress"
+        "id": 43226229812,
+        "status": "completed",
+        "conclusion": "success"
       },
       "wrangler_dry_run": {
-        "id": 43225318613,
-        "status": "in_progress"
+        "id": 43226229459,
+        "status": "completed",
+        "conclusion": "success"
       },
       "editor_core": {
-        "id": 43225318688,
-        "status": "in_progress"
+        "id": 43226229587,
+        "status": "in_progress",
+        "conclusion": null
       }
     },
-    "production": "NOT_MERGED_NOT_DEPLOYED"
+    "production": "NOT_MERGED_NOT_DEPLOYED",
+    "production_source_smoke": {
+      "status": "NOT_RUN",
+      "trigger": "v2/foundation runtime push after normal merge",
+      "health_http": 200,
+      "compare_exact_asset_paths": [
+        "/assets/page-renderer.js",
+        "/editor-v2/core/element-content.js"
+      ],
+      "expected_source_sha256s": "computed from exact merge checkout by source-smoke workflow",
+      "expected_result": "both live SHA-256 match, not claimed PASS yet"
+    }
   },
   "constraints": {
     "no_new_cost": true,
@@ -65,5 +82,5 @@
     "production_r2_delete": false,
     "manual_editor_acceptance": "DEFERRED"
   },
-  "next": "Verify all exact-head PR321 CI success, remote SELECT-only D1 preflight; normal merge and Cloudflare automatic deploy; exact-SHA production health/source smoke."
+  "next": "Wait exact-head 5d2535 CI all success, Cloudflare SELECT-only preflight, normal merge and deploy:safe; verify Worker 100% and dual asset SHA-256 + health on production."
 }
