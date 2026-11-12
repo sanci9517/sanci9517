@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261112080559-069c4e90",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-12T08:05:59.022Z",
+  "finished_at": "2026-11-12T08:08:34.862Z",
+  "wall_seconds": 156,
+  "paused_seconds": 0,
+  "measured_seconds": 156,
+  "status": "pass",
+  "kind": "mixed",
+  "summary": "Encoded reserved media routes blocked at Publish; red/green tests, full checks and preflight passed",
+  "evidence": [
+    "docs/evidence/publication-encoded-reserved-media-77-44-7-d-2026-11-12.json"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "344f8c9b4807da970f81cf77bbe31fe601baeb83",
+  "finished_revision": "344f8c9b4807da970f81cf77bbe31fe601baeb83",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

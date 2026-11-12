@@ -14,10 +14,10 @@ const IMAGE_REFERENCE_KEYS=new Set(['backgroundAssetId','imageAssetId','posterAs
 const ROUTE_ASSET_ID=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const ASSET_ID=ROUTE_ASSET_ID;
 const INVALID_MEDIA_REFERENCE='invalid-media-route';
+const decodedMediaPath=(pathname:string)=>{try{return decodeURIComponent(pathname);}catch{return null;}};
 const isPrivateMediaPath=(pathname:string)=>{
- let decoded:string;
- try{decoded=decodeURIComponent(pathname);}catch{return false;}
- return decoded==='/api/admin/media'||decoded.startsWith('/api/admin/media/');
+ const decoded=decodedMediaPath(pathname);
+ return decoded==='/api/admin/media'||Boolean(decoded?.startsWith('/api/admin/media/'));
 };
 
 function renderedPublicationValue(parent:Record<string,unknown>,key:string,value:unknown):unknown{
@@ -45,9 +45,12 @@ function localMediaUrlAssetId(value:unknown,allowedOrigins:ReadonlySet<string>):
    url=new URL(normalized);
    if(url.protocol!=='https:'||!allowedOrigins.has(url.origin))return null;
   }
-  const pathname=url.pathname.replace(/\/+$/,'');
-  if(isPrivateMediaPath(pathname))return INVALID_MEDIA_REFERENCE;
+  const rawPath=url.pathname.replace(/\/+$/,'');
+  const pathname=decodedMediaPath(rawPath);
+  if(pathname===null)return null;
+  if(isPrivateMediaPath(rawPath))return INVALID_MEDIA_REFERENCE;
   if(pathname==='/media'||pathname.startsWith('/media/')){
+   if(pathname!==rawPath)return INVALID_MEDIA_REFERENCE;
    const match=pathname.match(/^\/media\/([^/]+)$/);
    return match&&ROUTE_ASSET_ID.test(match[1])?match[1].toLowerCase():INVALID_MEDIA_REFERENCE;
   }
@@ -65,8 +68,9 @@ export function hasAbsoluteMediaLibraryUrl(value:unknown,depth=0):boolean{
     try{
      const normalized=safeMediaUrl(item);
      if(normalized.startsWith('https:')){
-      const pathname=new URL(normalized).pathname;
-      if(pathname==='/media'||pathname.startsWith('/media/')||isPrivateMediaPath(pathname))return true;
+      const rawPath=new URL(normalized).pathname;
+      const pathname=decodedMediaPath(rawPath);
+      if(pathname==='/media'||pathname?.startsWith('/media/')||isPrivateMediaPath(rawPath))return true;
      }
     }catch{ /* Invalid sources cannot authorize or require a tenant domain. */ }
    }

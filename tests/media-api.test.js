@@ -527,6 +527,10 @@ test("publication validates local media URLs against site, archive state and med
     .run(id,id,id,mime,20,"",site,archivedAt);
   const imageNode=props=>({type:"image",metadata:{contentVersion:1},props});
   assert.equal(await validatePublicationAssets(f.env.DB,"site-default",imageNode({src:`/media/${image}`})),null);
+  for(const src of [`/%6dedia/${image}`,`/media%2f${image}`]){
+    assert.equal(await validatePublicationAssets(f.env.DB,"site-default",imageNode({src})),"MEDIA_NOT_FOUND",
+      `an encoded reserved media route cannot bypass Publish: ${src}`);
+  }
   assert.equal(await validatePublicationAssets(f.env.DB,"site-default",imageNode({src:`/api/admin/media?id=${image}`})),"MEDIA_NOT_FOUND",
     "a private editor preview URL cannot become a public authored image source");
   for(const src of [`/api/%61dmin/media?id=${image}`,`/%61pi/admin/media?id=${image}`,`/api/admin%2fmedia?id=${image}`]){
@@ -574,6 +578,10 @@ test("publication validates local media URLs against site, archive state and med
   assert.equal(await validatePublicationAssets(f.env.DB,"site-default",imageNode({src:'https://trusted.example.test/media/not-a-uuid'}),alias),"MEDIA_NOT_FOUND",
     "a verified alias cannot publish a broken reserved media route");
   assert.equal(hasAbsoluteMediaLibraryUrl(imageNode({src:`https://trusted.example.test/media/${archived}`})),true);
+  assert.equal(hasAbsoluteMediaLibraryUrl(imageNode({src:`https://trusted.example.test/%6dedia/${archived}`})),true,
+    "an encoded reserved media route on a verified alias requires origin preflight");
+  assert.equal(await validatePublicationAssets(f.env.DB,"site-default",imageNode({src:`https://trusted.example.test/%6dedia/${archived}`}),alias),"MEDIA_NOT_FOUND",
+    "an encoded alias route cannot bypass archive validation");
   assert.equal(hasAbsoluteMediaLibraryUrl(imageNode({src:'https://trusted.example.test/media/'})),true);
   assert.equal(hasAbsoluteMediaLibraryUrl(imageNode({src:`https://trusted.example.test/media/${archived}/extra`})),true);
   assert.equal(hasAbsoluteMediaLibraryUrl(imageNode({assetId:image,src:`https://trusted.example.test/media/${archived}`})),false);

@@ -210,7 +210,7 @@ test('archive racing with Publish rejects the whole batch and preserves the live
 test('reserved media paths with invalid asset IDs cannot become public',async t=>{
   const f=await fixture(t);
   const before=f.db.prepare('SELECT published_content_json FROM pages WHERE id=?').get('b').published_content_json;
-  for(const [index,src] of ['/media/not-a-uuid','https://trusted.example.test/media/not-a-uuid','https://trusted.example.test/media/6b1c2e65-e46e-4764-b234-123456789abc/extra','/api/admin/media?id=6b1c2e65-e46e-4764-b234-123456789abc','https://trusted.example.test/api/admin/media?id=6b1c2e65-e46e-4764-b234-123456789abc','/api/%61dmin/media?id=6b1c2e65-e46e-4764-b234-123456789abc','https://trusted.example.test/api/%61dmin/media?id=6b1c2e65-e46e-4764-b234-123456789abc'].entries()){
+  for(const [index,src] of ['/media/not-a-uuid','https://trusted.example.test/media/not-a-uuid','https://trusted.example.test/media/6b1c2e65-e46e-4764-b234-123456789abc/extra','/%6dedia/6b1c2e65-e46e-4764-b234-123456789abc','https://trusted.example.test/%6dedia/6b1c2e65-e46e-4764-b234-123456789abc','/api/admin/media?id=6b1c2e65-e46e-4764-b234-123456789abc','https://trusted.example.test/api/admin/media?id=6b1c2e65-e46e-4764-b234-123456789abc','/api/%61dmin/media?id=6b1c2e65-e46e-4764-b234-123456789abc','https://trusted.example.test/api/%61dmin/media?id=6b1c2e65-e46e-4764-b234-123456789abc'].entries()){
     const document=f.document('b');
     document.pages.b.nodes.root.children=['image'];
     document.pages.b.nodes.image={id:'image',type:'image',parentId:'root',children:[],metadata:{contentVersion:1},props:{src,alt:'Hibás médiaútvonal'}};

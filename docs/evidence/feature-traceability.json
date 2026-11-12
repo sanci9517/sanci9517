@@ -45,7 +45,7 @@
     "src/core/auth/require-auth.ts": "7933ad739fe34dd47234a2ab66a3e54a06daee75c8b96de60f1007cec246788e",
     "src/core/auth/session.ts": "39289ef8bffad7b09a6ec6476b7d280e8bf664635d0bc5327ce216edfde7866b",
     "src/core/auth/site-access.ts": "1651ea7a2437ebd9b86700ee87fb6ec7fc5944e84c13869dc957e889e78b47ff",
-    "src/core/editor-publication.ts": "237683e7385e734da19389f7a7da49a3cbc31d49d4be625d724c4516ce4182a9",
+    "src/core/editor-publication.ts": "250a074166538f8a95f5be63090ddc82136e370097cfee6be28fcb114ae5fec0",
     "src/core/editor-validation.ts": "4690a64f97a83fffde07d9ad598980559f8e38408d46be1c89223c51037ba231",
     "src/core/media-retention-policy.js": "0bb1a1bb04acc1105372c04aeab1ff55c364945aad1e97e500ab5fd2563ecfe7",
     "src/core/page-redirects.ts": "5e4cab4b3ab9d01f3072058c93ec8b91b35aa41e139f459c66aa85b887e5f06f",
