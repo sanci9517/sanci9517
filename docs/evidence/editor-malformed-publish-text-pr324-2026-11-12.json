@@ -1,0 +1,74 @@
+{
+  "schema": "sanci9517.dev-evidence.v1",
+  "date": "2026-11-12",
+  "plan_item": "77.44.7.D",
+  "status": "OPEN_NOT_CERTIFIED",
+  "pr": {
+    "number": 324,
+    "url": "https://github.com/sanci9517/sanci9517/pull/324",
+    "branch": "fix/77-44-7-d-malformed-publish-text-20261112",
+    "head_sha": "cb73e9b46edd93ddca7c6bdb306439841c7ee1f0",
+    "draft": true,
+    "merged": false,
+    "deployed": false
+  },
+  "defect": {
+    "source": "src/core/editor-validation.ts",
+    "fields": [
+      "media-v1 image props.alt",
+      "basic-v1 badge props.text",
+      "basic-v1 quote props.text"
+    ],
+    "reproduction": "JSON.parse('{\"toString\":null}') fed through String(value||'').trim() throws TypeError: Cannot convert object to primitive value; this conversion previously occurred outside authored validation catch",
+    "consequence": "Malformed persisted content could escape the intended 409 validation path"
+  },
+  "repair": {
+    "function": "hasVisibleContentText",
+    "input": "non-empty string or finite number",
+    "invalid_result": "IMAGE_ALT_REQUIRED or EMPTY_BASIC_CONTENT, not unhandled throw",
+    "files": [
+      "src/core/editor-validation.ts",
+      "tests/web013-tenant-pages-editor.test.js"
+    ],
+    "test_cases": 3,
+    "save_publish_separate": true,
+    "failed_publish_no_mutation": [
+      "published_content_json",
+      "editor_revisions",
+      "audit_log"
+    ],
+    "fixed_content_publish": true
+  },
+  "exact_head_checks": {
+    "f0": {
+      "id": 43247636256,
+      "status": "completed",
+      "conclusion": "success"
+    },
+    "twitch": {
+      "id": 43247636463,
+      "status": "completed",
+      "conclusion": "success"
+    },
+    "worker_release_dry_run": {
+      "id": 43247636310,
+      "status": "completed",
+      "conclusion": "success"
+    },
+    "editor_core": {
+      "id": 43247636629,
+      "status": "in_progress",
+      "conclusion": null
+    }
+  },
+  "release": {
+    "merged": false,
+    "cloudflare_deployed": false,
+    "manual_editor_acceptance": "DEFERRED",
+    "d1_migration": false,
+    "production_d1_write": false,
+    "production_r2_delete": false,
+    "new_spending_authorized_huf": 0
+  },
+  "next": "Await exact-head full Editor Core PASS; run fresh read-only Cloudflare D1 SELECT preflight, normally merge only if all four gates PASS, then verify automatic npm run deploy:safe exact-source Worker build, 100% traffic and /api/health + changed source readback. Keep D OPEN/NOT_CERTIFIED."
+}
