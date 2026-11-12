@@ -629,6 +629,117 @@ test("URL media references cannot deliver an asset with an incompatible rendered
 });
 
 
+
+test("published responsive root backgrounds resolve per viewport while usage and archive retain every draft reference",async t=>{
+  const f=await fixture(t);
+  const sources=[
+    ["base.png",png,"image/png"],
+    ["desktop.gif",gif,"image/gif"],
+    ["mobile.png",Uint8Array.from([...png,0x21]),"image/png"]
+  ];
+  const assets=[];
+  for(const [name,bytes,mime] of sources){
+    const response=await f.call("POST","editor",bytes,{name,contentType:mime});
+    assert.equal(response.status,201,"fixture upload "+name);
+    assets.push((await response.json()).data);
+  }
+  const [base,desktop,mobile]=assets;
+  const pageId="responsive-background-page";
+  const node={
+    id:"root",type:"root",metadata:{rootStyleVersion:1},children:[],
+    style:{backgroundAssetId:base.id.toUpperCase()},
+    responsive:{
+      desktop:{backgroundAssetId:desktop.id.toUpperCase()},
+      tablet:{backgroundAssetId:"none"},
+      mobile:{backgroundAssetId:mobile.id.toUpperCase()}
+    }
+  };
+  const document={type:"sanci-page-document",schemaVersion:1,activePageId:pageId,
+    pages:{[pageId]:{id:pageId,rootId:"root",nodes:{root:node}}}};
+  const sql="INSERT INTO pages(id,site_id,archived_at,is_published,published_content_json,content_json,title,slug) VALUES(?,?,?,?,?,?,?,?)";
+  f.db.prepare(sql).run(pageId,"site-default",null,1,JSON.stringify(document),JSON.stringify(document),"Responsive background","responsive-background");
+  const deliver=asset=>publishedMediaRoute(new Request("https://example.test/media/"+asset.id.toUpperCase()),f.env,"site-default",asset.id.toUpperCase());
+
+  assert.equal((await deliver(base)).status,404,
+    "a root base ID shadowed on all viewports must not authorize public media");
+  assert.equal(f.mediaReads.count,0,"shadowed private background must not read its R2 body");
+  for(const [asset,bytes] of [[desktop,gif],[mobile,Uint8Array.from([...png,0x21])]]){
+    const response=await deliver(asset);
+    assert.equal(response.status,200,"published "+asset.id+" is rendered on at least one viewport");
+    assert.deepEqual(new Uint8Array(await response.arrayBuffer()),bytes);
+  }
+  for(const [asset,path] of [[base,"style.backgroundAssetId"],[desktop,"responsive.desktop.backgroundAssetId"],[mobile,"responsive.mobile.backgroundAssetId"]]){
+    const response=await f.call("GET","editor",null,{usage:asset.id});
+    assert.equal(response.status,200);
+    const usage=(await response.json()).data;
+    assert.equal(usage.complete,true,"site-scoped usage scan completes");
+    assert.ok(usage.references.some(ref=>ref.pageId===pageId&&ref.path===path&&ref.source==="published"),
+      "published snapshot retains the "+path+" ID");
+    assert.ok(usage.references.some(ref=>ref.pageId===pageId&&ref.path===path&&ref.source==="draft"),
+      "private draft retains the "+path+" ID even when hidden by cascading");
+    assert.equal((await f.call("PATCH","editor",JSON.stringify({archived:true}),{id:asset.id})).status,409,
+      "do not archive assets still referenced by a saved Page Model");
+    assert.equal(f.db.prepare("SELECT archived_at FROM media WHERE id=?").get(asset.id).archived_at,null);
+  }
+
+  const inherited=structuredClone(document);
+  inherited.pages[pageId].nodes.root.responsive={desktop:{backgroundAssetId:base.id.toUpperCase()}};
+  f.db.prepare("UPDATE pages SET published_content_json=? WHERE id=?").run(JSON.stringify(inherited),pageId);
+  assert.equal((await deliver(base)).status,200,
+    "without tablet/mobile overrides the desktop UUID must be inherited and publicly deliverable");
+  for(const unused of [desktop,mobile])assert.equal((await deliver(unused)).status,404,
+    "obsolete published override must stop authorizing public delivery even if still present in the draft");
+
+  const legacy=structuredClone(inherited);
+  delete legacy.pages[pageId].nodes.root.metadata.rootStyleVersion;
+  f.db.prepare("UPDATE pages SET published_content_json=? WHERE id=?").run(JSON.stringify(legacy),pageId);
+  assert.equal((await deliver(base)).status,404,
+    "unversioned legacy root does not render canonical background assets");
+});
+
+test("published media access follows background element visibility and never traverses leaf descendants",async t=>{
+  const f=await fixture(t);
+  const response=await f.call("POST","editor",png,{name:"visibility-background.png"});
+  assert.equal(response.status,201);
+  const asset=(await response.json()).data;
+  const pageId="background-visibility-page";
+  const section={id:"section",type:"section",parentId:"root",children:[],
+    style:{backgroundAssetId:asset.id.toUpperCase()},
+    visibility:{desktop:false,tablet:false,mobile:false}};
+  const document={pages:{[pageId]:{rootId:"root",nodes:{
+    root:{id:"root",type:"root",children:["section"]},
+    section
+  }}}};
+  const sql="INSERT INTO pages(id,site_id,archived_at,is_published,published_content_json,content_json,title,slug) VALUES(?,?,?,?,?,?,?,?)";
+  f.db.prepare(sql).run(pageId,"site-default",null,1,JSON.stringify(document),JSON.stringify(document),"Background visibility","background-visibility");
+  const deliver=()=>publishedMediaRoute(new Request("https://example.test/media/"+asset.id),f.env,"site-default",asset.id);
+
+  assert.equal((await deliver()).status,404,"a hidden background cannot make private media public");
+  assert.equal(f.mediaReads.count,0,"denied background never reads R2");
+  const report=await f.call("GET","editor",null,{usage:asset.id});
+  assert.equal(report.status,200);
+  const usage=(await report.json()).data;
+  assert.equal(usage.complete,true);
+  assert.ok(usage.references.some(ref=>ref.path==="style.backgroundAssetId"&&ref.source==="draft"),
+    "the usage scanner protects hidden but saved draft media");
+  assert.equal((await f.call("PATCH","editor",JSON.stringify({archived:true}),{id:asset.id})).status,409,
+    "hidden but referenced media still cannot be archived");
+
+  const visible=structuredClone(document);
+  visible.pages[pageId].nodes.section.visibility.mobile=true;
+  f.db.prepare("UPDATE pages SET published_content_json=? WHERE id=?").run(JSON.stringify(visible),pageId);
+  const delivered=await deliver();
+  assert.equal(delivered.status,200,"a visible mobile background grants its actual public media route");
+  assert.deepEqual(new Uint8Array(await delivered.arrayBuffer()),png);
+
+  const leaf=structuredClone(visible);
+  leaf.pages[pageId].nodes.root.children=["image"];
+  leaf.pages[pageId].nodes.image={id:"image",type:"image",children:["section"],props:{alt:"Kép"}};
+  f.db.prepare("UPDATE pages SET published_content_json=? WHERE id=?").run(JSON.stringify(leaf),pageId);
+  assert.equal((await deliver()).status,404,
+    "a background under a leaf node that drops its children cannot authorize public media");
+});
+
 test("site quota telemetry includes archived assets, excludes other sites and is filter-independent",async t=>{
   const f=await fixture(t);
   f.db.prepare("INSERT INTO site_memberships VALUES('other','editor','editor','active')").run();
