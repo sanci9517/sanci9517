@@ -29,22 +29,44 @@
     "manual_acceptance": "DEFERRED"
   },
   "checks": {
-    "editor_core": {
-      "status": "in_progress",
-      "conclusion": null
-    },
     "f0": {
-      "status": "in_progress",
-      "conclusion": null
+      "id": 43244166099,
+      "status": "completed",
+      "conclusion": "success"
     },
     "twitch": {
+      "id": 43244166164,
+      "status": "completed",
+      "conclusion": "success"
+    },
+    "editor_core": {
+      "id": 43244166264,
       "status": "in_progress",
-      "conclusion": null
+      "conclusion": null,
+      "steps_verified": [
+        {
+          "name": "Run TypeScript typecheck",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run editor core tests",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run private R2 media API tests",
+          "conclusion": "success"
+        },
+        {
+          "name": "Test real Worker media upload with isolated D1 and R2",
+          "conclusion": "success"
+        }
+      ],
+      "current_step": "Run Editor browser layout regression"
     },
     "worker_dry_run": {
       "status": "not_triggered_test_only",
       "conclusion": null
     }
   },
-  "next": "Review exact-head CI results; fix if failing; on verified green checks merge normally as test-only with no Worker deployment. If a reproduction exposes actual runtime defect, implement narrow, separately tested fix before claiming D acceptance."
+  "next": "New exact-head media tests passed in Editor Core private R2 media API step, but full Chromium suite still IN_PROGRESS. Merge test-only PR #323 only after final full Editor Core SUCCESS; no runtime deploy."
 }
