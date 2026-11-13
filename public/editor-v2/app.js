@@ -633,7 +633,12 @@ function renderScheduleInspector(node,composition){
     const text=document.createElement('span');text.textContent=label;
     const select=document.createElement('select');
     for(const optionValue of options){const option=document.createElement('option');option.value=optionValue;option.textContent=key==='mode'?({upcoming:'Következő adások',all:'Összes adás',next:'Egy következő adás',week:'Heti naptár'}[optionValue]||optionValue):optionValue;option.selected=optionValue===value;select.append(option)}
-    select.onchange=()=>command('schedule.config.set',{nodeId:node.id,patch:{[key]:select.value}});
+    select.onchange=()=>{
+      const patch=key==='mode'&&select.value==='week'
+        ?{mode:'week',limit:50,showStatus:true,showEndTime:true,showNotes:true}
+        :{[key]:select.value};
+      command('schedule.config.set',{nodeId:node.id,patch});
+    };
     wrap.append(text,select);return wrap;
   };
 
