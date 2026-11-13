@@ -413,6 +413,20 @@ async function mediaUsage(request: Request, env: Env, siteId: string, assetId: s
     if (page.is_published) add(page.published_content_json, page, "published");
   }
   for (const revision of revisions.results.slice(0, MAX_USAGE_SNAPSHOTS)) add(revision.document_json, { ...revision, id: revision.page_id }, "revision", revision.version);
+  // Protect live schedule cover images against archival/deletion and list them
+  // in the same usage report as ordinary page references.
+  const scheduleImages = await env.DB.prepare(
+    `SELECT e.id,e.title FROM schedule_items e
+     INNER JOIN site_settings artwork ON artwork.key=('schedule-artwork:' || e.site_id || ':' || e.id)
+     WHERE e.site_id=? AND artwork.value_json=? ORDER BY e.id LIMIT ${MAX_USAGE_REFERENCES + 1}`
+  ).bind(siteId, JSON.stringify({ assetId })).all<{ id: string; title: string }>();
+  if(scheduleImages.results.length>MAX_USAGE_REFERENCES)complete=false;
+  for(const item of scheduleImages.results.slice(0,MAX_USAGE_REFERENCES)){
+    if(references.length>=MAX_USAGE_REFERENCES){complete=false;break}
+    references.push({pageId:"schedule:"+item.id,pageTitle:"Menetrend / "+item.title,
+      slug:"schedule",archived:false,source:"published",nodeId:item.id,
+      nodeName:"Adás borítóképe",path:"schedule_items.artwork"});
+  }
   return ok({ assetId, references, complete });
 }
 
@@ -830,6 +844,16 @@ export async function publishedMediaRoute(request: Request, env: Env, siteId: st
   // Scope the one explicit identity asset to the default site only. All other
   // media retain the existing published-page reference check.
   let allowed = siteId === DEFAULT_SITE_ID && normalizedAssetId === "67045b51-9df7-45b0-a426-6b015ab985f1" && row.mime_type === "image/png";
+  if (!allowed && row.mime_type.startsWith("image/")) {
+    // Schedule item media is a live domain record, independent from Page Model
+    // publication. Only an active event on this exact site can expose its image.
+    const scheduled = await env.DB.prepare(
+      `SELECT e.id FROM schedule_items e
+       INNER JOIN site_settings artwork ON artwork.key=('schedule-artwork:' || e.site_id || ':' || e.id)
+       WHERE e.site_id=? AND artwork.value_json=? LIMIT 1`
+    ).bind(siteId, JSON.stringify({ assetId: normalizedAssetId })).first<{ id: string }>();
+    allowed = Boolean(scheduled);
+  }
   if (!allowed) {
     const pages = await env.DB.prepare(
       `SELECT id,published_content_json FROM pages WHERE site_id=? AND archived_at IS NULL AND is_published=1 AND published_content_json IS NOT NULL AND ${mediaReferenceSql("published_content_json","?")} ORDER BY id LIMIT ${MAX_PUBLIC_MEDIA_SNAPSHOTS}`
