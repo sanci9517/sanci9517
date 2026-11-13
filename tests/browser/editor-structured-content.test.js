@@ -125,7 +125,7 @@ test('structured Inspector editing survives Save, Publish and public interaction
  const structuredFields=[
    ['list',0,'Szöveg',null,'.visual-structured-list li:first-child'],
    ['table',0,'Oszlop 1',0,'.visual-structured-table th:first-child'],
-   ['table',1,'Oszlop 2',1,'.visual-structured-table td:nth-child(2)'],
+   ['table',1,'Oszlop 2',1,'.visual-structured-table tbody tr:first-child td:nth-child(2)'],
    ['tabs',0,'Fül neve','label','[role="tab"]:first-child'],
    ['tabs',0,'Tartalom','content','[role="tabpanel"]:not([hidden])'],
    ['accordion',0,'Cím','label','.visual-structured-accordion details:first-child summary'],
