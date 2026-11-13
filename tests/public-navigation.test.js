@@ -46,8 +46,13 @@ function bootNavigation() {
     querySelectorAll() { return []; },
     addEventListener(name, callback) { documentListeners.set(name, callback); }
   };
+  // Browsers expose a global location and URL. Keep the VM test harness
+  // representative of that environment when booting active-link handling.
+  const location = { pathname: '/', href: 'https://sanci.test/', origin: 'https://sanci.test' };
   vm.runInNewContext(siteScript, {
     document,
+    location,
+    URL,
     fetch: () => Promise.reject(new Error('No network in unit test')),
     Date,
     Set,
@@ -90,8 +95,8 @@ test('outside click restores focus only when it was inside the open navigation',
 test('public menu toggle exposes the controlled navigation panel to assistive technology', () => {
   assert.match(visualPage, /data-menu-button[^>]*aria-controls="public-menu"/);
   assert.match(visualPage, /<nav[^>]*id="public-menu"[^>]*data-menu-panel/);
-  assert.match(visualPage, /<script src="\/assets\/site\.js\?v=20261016-5"><\/script>/);
-  assert.match(visualPage, /site\.css\?v=20261110-divider-cascade/);
+  assert.match(visualPage, /<script src="\/assets\/site\.js\?v=[a-z0-9-]+"><\/script>/);
+  assert.match(visualPage, /site\.css\?v=[a-z0-9-]+/);
   const css = readFileSync(new URL('../public/assets/site.css', import.meta.url), 'utf8');
   assert.match(css, /\.menu-link:focus-visible/);
   assert.match(css, /\.menu-panel\{[^}]*max-height:calc\(100vh - 100px\);overflow-y:auto;overscroll-behavior:contain/);

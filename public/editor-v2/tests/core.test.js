@@ -880,7 +880,8 @@ test('schedule read config normalizes canonical query constraints', async () => 
   assert.throws(() => normalizeScheduleReadConfig({ mode: 'week', weekStart: '2026-11-10' }));
   assert.throws(() => normalizeScheduleReadConfig({ mode: 'next', weekStart: '2026-11-09' }));
   assert.throws(() => normalizeScheduleReadConfig({ limit: 51 }));
-  assert.throws(() => normalizeScheduleReadConfig({ statuses: ['cancelled'] }));
+  assert.deepEqual(normalizeScheduleReadConfig({ statuses: ['cancelled'] }).statuses, ['cancelled']);
+  assert.throws(() => normalizeScheduleReadConfig({ statuses: ['unknown'] }));
   assert.throws(() => normalizeScheduleReadConfig({ platforms: [''] }));
 });
 
