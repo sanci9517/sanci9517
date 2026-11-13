@@ -3,7 +3,7 @@ import { getAuthenticatedUser, hasRole } from "../../core/auth/require-auth";
 import type { Env } from "../../types/env";
 import { auditStatement } from "../../core/audit";
 import { getCanonicalSiteContext } from "../../core/site-context";
-import { scheduleArtworkKey, SCHEDULE_ARTWORK_JOIN, SCHEDULE_ARTWORK_SELECT, validScheduleArtworkId } from "../../core/schedule-artwork";
+import { scheduleArtworkKey, SCHEDULE_ARTWORK_JOIN, SCHEDULE_ARTWORK_SELECT, validScheduleArtworkId } from "../../core/schedule-artwork.ts";
 
 type ScheduleBody = { id?: unknown; title?: unknown; platform?: unknown; startsAt?: unknown; endsAt?: unknown; status?: unknown; url?: unknown; notes?: unknown };
 type ScheduleRow = { id: string; title: string; platform: string; starts_at: string; ends_at: string | null; status: string; url: string | null; notes: string; image_asset_id: string | null };
