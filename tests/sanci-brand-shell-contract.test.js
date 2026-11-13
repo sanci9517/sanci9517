@@ -64,3 +64,12 @@ test('mobile footer does not concatenate copyright and tagline or strand the thi
   assert.match(js,/revealSignedInAdmin\(\)/);
   assert.match(js,/result\.data\?\.authenticated===true/);
 });
+
+test('SANCI branded page grid cannot retain three columns on phones or tablets',()=>{
+  // The page HTML provides a weaker mobile 1fr rule; the canonical brand rule
+  // previously had higher specificity and collapsed the middle grid track.
+  assert.match(css,/body\[data-sanci-shell="1"\] \.public-page-layout\{grid-template-columns:minmax\(0,1fr\) minmax\(0,1320px\) minmax\(0,1fr\)\}/);
+  assert.match(css,/@media\(max-width:1360px\)\{[\s\S]*?body\[data-sanci-shell="1"\] \.public-page-layout\{display:block;grid-template-columns:minmax\(0,1fr\)\}/);
+  assert.match(css,/@media\(max-width:700px\)\{[\s\S]*?body\[data-sanci-shell="1"\] \.public-page-layout>\.content-page\{width:calc\(100% - 24px\)\}/);
+  assert.match(shell,/site\.css\?v=20261113-sanci-mobile-grid-v5/);
+});
