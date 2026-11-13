@@ -1,7 +1,7 @@
 # SANCI9517 — publikus weboldal: kreatív brief, dizájnrendszer és teljes tartalomterv
 
 **Dokumentum típusa:** belső, végrehajtható creator-webhely brief; NEM második platform-MASTER.  
-**Verzió:** 2.5 (2026-11-13) • **Státusz:** SANCI DARK DEPTH ONLY / KÖTELEZŐ SPEC / KIVITELEZÉS OPEN.
+**Verzió:** 2.6 (2026-11-13) • **Státusz:** SANCI DARK DEPTH ONLY / KÖTELEZŐ SPEC / KIVITELEZÉS OPEN.
 **Repository / ág:** sanci9517/sanci9517 → v2/foundation.  
 **Kanonikus termékterv:** docs/SANCI9517-CREATOR-PLATFORM-PLAN.md.  
 **Végrehajtási szabály:** AGENTS.md; ez a brief nem írhatja felül a MASTER-t, a release-gate-eket, a Save/Publish szétválasztását vagy a domainadatok tulajdonosát.  
@@ -137,6 +137,22 @@ Csak tervezési megfigyelések, NEM automatikus másolási jogok. Az itt rögzí
 **Grafikai szabály:** egy oldal = egy jól elkülönülő, a saját márkamédiatárban lévő hero-háttér; a túl sok köztes kép helyett fókuszált typográfia és nagy légköz. A szövegréteg háttérszíne `rgba(5,9,16,.86)`, finom borderrel, 660px maximális szövegsávval, a kontrasztot segítő fehér főcímmel, 31–43px mobil H1-tartománnyal. Hero-szekció mobilon a tartalom magasságával nőhet; a háttérkép `cover` és oldalspecifikus pozicionálás mellett látható. A belső 8 oldalas navigáció változatlan; a színpad elsődleges feladata mindig a megfelelő Twitch/YouTube/TikTok/Discord/menetrend/kapcsolat útvonal.
 
 **Felülírás:** ez a 4.2-es megvalósítás a 4.1-es részben javasolt „kép alatt szöveg” SANCI-változat **legfrissebb tulajdonosi módosítása**; az általános Editor-komponensek és a MASTER valamennyi korábbi követelménye továbbra is megmarad. A designer copy a D1 Editor dokumentumokba került; a publikálás a Save művelettől elkülönítve, CAS + audit kapun ment át. Az éles D1 8/8 kiadás igazolt, a teljes Chrome/Android, 320/390/768/1440 pixel és valódi WCAG kontraszt ellenőrzése **OPEN**, nem minősített teljes vizuális PASS.
+
+### 4.3 SANCI főoldal – tudatos, kétszakaszos brandbelépő (2026-11-13)
+
+**Tulajdonosi kérés:** „a főoldalon ne legyen minden, minden a megfelelő helyen legyen”, a korábban küldött AvidIsOdd referenciaképek karakteres első képernyőjének, könnyen értelmezhető gombjainak és levegős felépítésének SANCI-specifikus adaptációjával. A referencia élő weboldala az aktuális webes ellenőrzésben nem nyílt meg, ezért nem állítunk pontos oldalszemlét, külső kód/motion elemzést vagy másolást. A négy korábbi, tulajdonostól kapott screenshot és a már dokumentált 32.4.1 megbízhatóbb vizuális forrás.
+
+**Közzétett SANCI főoldali szerkezet (v110):**
+
+1. **01 / Filmszerű belépés:** a SANCI eredeti, könnyű `sanci_home_hero.webp` háttérképe, sötét 76%-os szöveg-overlay; egy H1: **„JÁTSSZUNK EGYET. A TÖBBI ALAKUL.”** Rövid, természetes megfogalmazás Fortnite, Hearthstone, indie játékok és az előre nem kiszámítható pillanatok hangulatáról. Két egyértelmű, jól kontrasztos CTA: **NÉZD AZ ÉLŐ ADÁST** → `/p/twitch`, **KI AZ A SANCI?** → `/p/about`. Nagy, fókuszált kép desktopon kb. 610px min. magassággal, mobilon kb. 500px automatikusan növekedő magassággal; tördelődő csoport és kb. 29–39px közötti reszponzív mobil H1.
+2. **02 / Minimal editorial átvezetés:** nagy, képek és újabb platformblokkok nélküli, vékony elválasztóvonallal elkülönített szövegszakasz. Kiemelt H2: **„A KÖVETKEZŐ KÖR ITT KEZDŐDIK.”** Rövid, valóságos tájékoztatás: a meghirdetett adások a saját Menetrend oldalon vannak. Egy CTA: **MEGNÉZEM A MENETRENDET** → `/p/schedule`.
+3. **A közös fejléc/lábléc és a nyolcoldalas navigáció marad:** a YouTube, TikTok, Discord/közösség és a teljes heti naptár **nem** jelenik meg külön főoldali galéria/ajánló/duplikált kártyaként. A hozzájuk vezető funkcionális hivatkozások a saját kanonikus oldalukon és a globális navigációban találhatók. Nem hozunk létre új, indokolatlan oldalt.
+
+**Avid-szerű, de SANCI-saját választás:** a figyelmet megragadó hero és egyszerű, nagy CTA-kat átvesszük mint *UX-elvet*; a többszintű videótár, ismétlődő nagy gombsor, partnerszponzor-marquee és shop-kártya viszont **nem** a SANCI főoldalra való, és különösen nem üres/fiktív adatokkal. Valódi, jóváhagyott partner esetén a szponzorsáv a saját feltételes komponensében jelenhet meg később. A Creator Platformon minden más alkotó továbbra is szabadon építhet egyedi főoldalt.
+
+**Működés és visszaállíthatóság:** a SANCI D1 `page-home` Editor dokumentuma 109→110 revízió, csomópontszám 32→17 (15 fölösleges csomópont kivezetve), aktív főoldali szekció 4→2, CTA 6→3, egyetlen saját háttérkép. Meglévő `sanci-page-document` / `editor_revisions` / Save és Publish elkülönítés, site-scope, audit, korábbi v109 visszaállítható. A meglevő közös Worker-kódhoz vagy a többi hét oldalhoz nem kellett hozzányúlni.
+
+**Minőségkapu:** D1 Save/Publish/postflight PASS, a valódi 320/390/768/1024/1440px teljes képernyős vizuális/crop/kontraszt/fókusz elfogadás **OPEN / NOT_CERTIFIED**. A homepage nem kap ál-LIVE státuszt, hamis követőszámot vagy kitalált streamidőpontot.
 
 ## 5. Teljes tartalmi és UX specifikáció — oldalanként
 
