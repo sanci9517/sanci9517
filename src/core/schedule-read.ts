@@ -1,6 +1,7 @@
 import type { D1Database } from "@cloudflare/workers-types";
 import { DEFAULT_SITE_ID } from "./site-context.ts";
 import { SCHEDULE_ARTWORK_JOIN,SCHEDULE_ARTWORK_SELECT,validScheduleArtworkId } from "./schedule-artwork.ts";
+import { scheduleStartEpoch } from "../../public/editor-v2/core/schedule-time.js";
 
 export const SCHEDULE_READ_MODES = ["upcoming", "all", "next", "week"] as const;
 export const SCHEDULE_READ_ORDERS = ["asc", "desc"] as const;
@@ -99,8 +100,12 @@ export async function readPublicSchedule(db: D1Database, input: ScheduleReadConf
   where.push(`e.status IN (${config.statuses.map(() => "?").join(",")})`);
   binds.push(...config.statuses);
 
-  if (config.mode === "upcoming" || config.mode === "next") {
+  if (config.mode === "upcoming") {
     where.push("e.starts_at >= datetime('now')");
+  } else if (config.mode === "next") {
+    // Budapest wall-clock schedule rows can be UTC+1/+2. A short backward
+    // query window admits the local boundary; strict epoch filtering follows.
+    where.push("e.starts_at >= datetime('now','-3 hours')");
   }
 
   if (config.mode === "week" && config.weekStart) {
@@ -120,7 +125,7 @@ export async function readPublicSchedule(db: D1Database, input: ScheduleReadConf
      FROM schedule_items e${SCHEDULE_ARTWORK_JOIN}
      WHERE ${where.join(" AND ")}
      ORDER BY e.starts_at ${config.order === "desc" ? "DESC" : "ASC"}
-     LIMIT ${config.mode === "week" ? 300 : config.limit}`
+     LIMIT ${config.mode === "week" ? 300 : config.mode === "next" ? 100 : config.limit}`
   ).bind(...binds).all<{
     id: string; title: string; platform: string; starts_at: string;
     ends_at: string | null; status: string; url: string | null; notes: string; image_asset_id: string | null;
@@ -137,6 +142,14 @@ export async function readPublicSchedule(db: D1Database, input: ScheduleReadConf
     notes: row.notes,
     imageAssetId: validScheduleArtworkId(row.image_asset_id) ? row.image_asset_id.toLowerCase() : null
   }));
+  if (config.mode === "next") {
+    const now=Date.now();
+    return mapped
+      .map(item=>({item,time:scheduleStartEpoch(item.startsAt)}))
+      .filter(entry=>entry.time!==null&&entry.time>now)
+      .sort((a,b)=>(a.time as number)-(b.time as number))
+      .slice(0,1).map(entry=>entry.item);
+  }
   if (config.mode !== "week" || !config.weekStart) return mapped;
   const lastExclusive = plusDays(config.weekStart, 7);
   const weekly = mapped.filter(row => {
