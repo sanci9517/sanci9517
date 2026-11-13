@@ -1,0 +1,65 @@
+{
+  "schema": "sanci9517.editor.d06.current-contents-snapshot.v1",
+  "date": "2026-11-13",
+  "plan_point": "77.44.7.D / D-06",
+  "status": "NEW_COMPLETE_LOGICAL_SNAPSHOT_PASS_MIGRATION_STILL_OPEN",
+  "observation": {
+    "old_snapshot": {
+      "name": "sanci9517_d06_restore_20261113",
+      "tables": 27,
+      "rows": 921,
+      "verified_at_creation": true,
+      "retained": true
+    },
+    "later_read_only_comparison": {
+      "production_rows": 988,
+      "old_clone_rows": 921,
+      "matching_table_hashes": 22,
+      "total_tables": 27,
+      "changed_tables": [
+        "audit_log",
+        "editor_revisions",
+        "media",
+        "pages",
+        "site_navigation"
+      ],
+      "schema_still_identical": true,
+      "production_integrity": "ok",
+      "production_fk_issues": 0
+    },
+    "interpretation": "Production has been updated by other site/editor activity after the previous 921-row snapshot; this does not indicate backup corruption. Never restore the older clone on top of these new live changes."
+  },
+  "new_snapshot": {
+    "name": "sanci9517_d06_restore_20261113_b",
+    "method": "Single D1 REST multi-SELECT request for all application tables and sqlite_master schema; dependency-ordered writes into separate D1 using small batches and bound oversized-page parameter",
+    "application_tables": 27,
+    "schema_objects": 83,
+    "snapshot_rows": 992,
+    "sha256_complete_table_content_matches": 27,
+    "identical_sqlite_master_schema": true,
+    "quick_check": "ok",
+    "foreign_key_issues": 0,
+    "small_sql_insert_batches": 50,
+    "oversize_page_rows_parameterized": 1,
+    "circular_page_fk_relinks": 10,
+    "auxiliary_schema_objects": 56,
+    "old_snapshot_retained": true,
+    "clone_not_publicly_bound": true,
+    "note": "This new clone contains production user/session/auth data. Remains inside the user's Cloudflare D1 account; no dump uploaded to GitHub or shared.",
+    "failure_recovered": "Earlier attempt to copy a 91-kB page row as literal SQL hit OVERSIZE_ROW; incomplete clone deleted, retry succeeded using SQL params for that record.",
+    "restorability_scope": "Full data + schema round-trip validated. A separate Time Travel test was completed on older clone; this new clone has not had an additional Time Travel trial."
+  },
+  "production": {
+    "source_writes_by_this_task": 0,
+    "migration_count": 34,
+    "migration_0029": 0,
+    "data_writes_detected_from_other_ongoing_activity": true
+  },
+  "release_boundaries": [
+    "Literal Cloudflare SQL export signed-URL download/import remains BLOCKED by tool-side policy 403.",
+    "Production 0029 has not been applied.",
+    "The new backup represents an as-of-snapshot state; ongoing page/media changes can make it stale again.",
+    "The complete D-01..D-07 lifecycle/Inspector/Canvas/Save/reload/separate Publish/public and tenant acceptance remains NOT_CERTIFIED.",
+    "Keep 0 Ft spending limit; billing final amount unverified; no R2 production deletion."
+  ]
+}
