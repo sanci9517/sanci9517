@@ -286,3 +286,31 @@ A minimal repro bizonyítja a gyökérokot és a CSS-javítás geometriáját, d
 **GitHub/Workers release:** ehhez a körhöz nem kellett runtime Worker vagy frontend kódot módosítani: az aktuális, már működő Editor Page Model tartalom és responsive Inspector stílusok módosultak D1-ben. Az alárendelt SANCI public brief v2.4-re módosítva, nem keletkezett új MASTER. Nem futott GitHub Actions dispatch, fizetős szolgáltatás, D1-migráció vagy R2 törlés.
 
 **Nyitott QA:** valódi 320/390/768/1024/1440px full browser/screenshot, image object-position, szövegtördelés, kontraszt, teljes Editor manual acceptance és hitelesített API-s Publish regresszió továbbra OPEN / NOT_CERTIFIED. A Workers.dev oldal a web toolból nem hozzáférhető; ezt nem állítjuk PASS-nak. Az új vizuális irányhoz nincs szükség tulajdonosi új linkre vagy egyéb költségre.
+
+
+## 2026-11-13 — tulajdonos által kért SANCI háttérképes hero/overlay marketing redesign, 8/8
+
+**Feladat:** a korábbi, csak a képek alá tett szöveges megoldás helyett az elfogadott SANCI DARK DEPTH meglévő nyolc oldala egy-egy eltérő, az egyetlen site médiatárában szereplő hero képet és felette kontrasztos, kiemelt marketingcopy-t kapjon. A márka, fejléclogó, menü és Save/Publish folyamat nem változik; minden node Editor-kompatibilis, jövőbeli más tenantokra a SANCI-kompozíció nem terjed ki. Nincs új oldal: a nyolc már egyértelmű és elegendő.
+
+### Tartalom/szerkezet
+- Főoldal v109: \`sanci_home_hero.webp\` sötét overlay, a SANCI „Játsszunk egyet. A többi alakul.” H1, új rövid márkaígéret, élő adás és Rólam CTA. Alatta egy-egy célorientált heti menetrend, YouTube/TikTok, közösség út; a felesleges külön streamkép, a másik oldal erdős hátterének ismétlése és a duplázott Twitch gomb kivezetve. Minden külső út a megfelelő dedikált oldalon.
+- Twitch v11: \`sanci_live_studio.webp\` hero, „Élőben a legjobb.”, a Twitch- és Menetrend-CTA a képen; a korábbi ismétlődő CTA/információs panel megszűnt. A click-to-load \`twitch-live\` embed a hero alatt, változatlan provider/channel/privacy.
+- YouTube v23: egyetlen \`sanci_vod_background.webp\` hero, „Ha lemaradtál, itt folytatódik.”, a valódi \`https://www.youtube.com/@sanci9517vod\` CTA átkerült az overlay-be. Külön, rövid VOD-leírás alatta; nincs TikTok-CTA vagy fake YouTube-videókártya.
+- TikTok v18: \`sanci_video_gallery.webp\` saját dekoratív hero (nem egyedileg beazonosított videóborító), „Egy pillanat. És már nevetünk.” és \`https://www.tiktok.com/@sanci9517\` CTA. A videó nélküli, ismétlődő második tartalmi szekció törölve.
+- Menetrend v16: \`sanci_schedule_forest.webp\` háttér, „A következő kör.” overlay; a heti \`schedule\` komponens **átkerült a hero alá** külön, teljes értékű naptárként; nem kerültek kitalált streamidőpontok a naptárba. Twitch CTA az alsó blokkon.
+- Közösség v36: \`sanci_community_forest.webp\` hero, egyedi Discord CTA és új közösségi üzenet; a közösségi elveket a kép alatti tartalomban hagytuk.
+- Rólam v83: \`sanci_about_hooded.webp\` a kedvelt kapucnis brandalak; a korábbi inline image node helyett editoros háttérkép, alatta külön személyes hangvételű történet, szükségtelen többszörös platform CTA törölve.
+- Kapcsolat v13: \`sanci_stream_offline.webp\` diszkrét hero, „Van egy ötleted? Beszéljünk.”, két elkülönített nézői Discord és üzleti e-mail blokk; nincs kitalált partnerségi referencialista.
+
+**Kompozíció:** 8/8 aktív SANCI oldal 1 darab külön háttérassetet használ; új renderelt, másolat-képként ismétlődő inline image node 0; egy szemantikus H1/oldal; \`rgba(5,9,16,.86)\` overlay, kontrollált maxWidth / 31–43px mobil H1, szerkeszthető responsive Node Model stílusok. A médiatár id-ket read-only D1 ellenőrzéssel validáltuk; képet, node-ot, R2 objektumot nem írtunk át/töröltünk. A redukció kizárólag a brand oldalakon lévő Editor-kompozíciót érinti, nem az Editor általános média-képességeit.
+
+### Save/Publish valódi külön műveletek, bizonyíték
+- Read-only preflight: D1 oldalak is_published=1, draft=live az induláskor, a 13-as flat nav published, 8/8 kanonikus dokumentum és összes saját média aktív, site-scoped.
+- **D1 Save:** 8×(editor_revisions vN + pages.content_json CAS + audit_log)=**24/24** változás. Egyik published tartalom sem módosult a Save fázisban. Minden oldalspecifikus vállalás és a teljes Editor node fa validálva, 8/8 **PASS** (1 H1, nincs ciklus/árva, képi asset létezik, belső URL a nyolc aktív slugra mutat, csak saját platform CTA, heti naptár és Twitch player megmaradt).
+- **D1 Publish külön:** 8×(pages published snapshot+revision CAS és audit)=**16/16** változás, valamennyi rekord egyes változása=1. A régi editor_revisions megmaradt.
+- **D1 postflight új külön SELECT:** 8/8 \`is_published=1\`, \`content_json=published_content_json\`, latest editor_revisions ID=published_revision_id, \`heroOverlayVersion=1\`, 8/8 egy háttérkép, 1 H1, 0 külön beillesztett dekoratív kép. 8 publish audit rekord; site_navigation v13 published és draft=live. A \`page-schedule\` naptár komponens és a \`page-twitch\` click-to-load embed külön ellenőrzött.
+- **Worker code:** nincs runtime-forrásváltozás; csak Editor Page Model D1 tartalom és alárendelt brief/evidence változott. Cloudflare Worker deployment read-only API: \`86a814f4-23fe-4b0c-94a6-dc56e744fd34\`, Worker-version \`a235554e-2e34-44a1-8a35-604e4c758284\`, 100% forgalom a vizsgálat pillanatában (a deployment nem változott a D1 tartalomátírástól). Nem indítottunk fölösleges új Workers buildet, GitHub Actions futást, D1 migrációt, R2 törlést vagy fizetős szolgáltatást.
+
+**Fontos nyitott minőségkapu:** a nyilvános workers.dev URL-t a web eszköz \`Internal Error / URL is not accessible\` eredménnyel nem tudta visszaolvasni; ezért nincs valódi site screenshot, a teljes 320/390/768/1024/1440px Playwright/Chrome QA, CLI typecheck, színkontraszt, media HTTP GET/bytes, valódi Android asset megjelenítési és Editor-manual acceptance **NOT RUN/UNVERIFIED**, nem PASS. A SANCI designer vizuális elfogadás és a Visual Editor teljes 77.44.7.D kapuja továbbra is **OPEN / NOT_CERTIFIED**. 0 Ft új költés.
+
+**Alárendelt brief:** \`docs/SANCI9517-PUBLIC-SITE-BRIEF.md\` v2.5 rögzíti a legfrissebb image-overlay SANCI-döntést, és felülírja a korábbi „kép alatt szöveg” ajánlást; **nem** keletkezett második MASTER terv.
