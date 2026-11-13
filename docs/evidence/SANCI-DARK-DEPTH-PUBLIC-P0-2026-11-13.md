@@ -106,3 +106,11 @@ Nincs screenshot-alapú vizuális QA, nincs teljes `validatePublishDocument` fut
 - A jelenlegi adatokban csak szeptemberi múltbeli teszt-adások vannak, nem gyártottunk aktuális jövőbeni menetrendet. A jelenlegi hét a valós jövőbeli bejegyzésig **üres állapotot** mutathat.
 
 **Kapuk:** a teljes \`test:schedule\`/TypeScript/build + \`wrangler deploy --dry-run\`/read-only D1 preflight/100%-os deployment és valódi API+mobile smoke elvégzendő. Ezután külön a \`page-schedule\` draft **Publish**. A teljes Visual Editor fizikai elfogadási kapuja változatlanul a MASTER későbbi, egyetlen kapuján marad. A megoldás nem második menetrendmotor és nem új master-terv.
+
+### Heti Schedule későbbi korrekciók (2026-11-13, ugyanaz a blokk)
+
+A szerveroldali `src/core/editor-validation.ts` Publish-kapu korábban csak a három régi módot és három státuszt engedte; javítva `week` és az opcionális `cancelled` elfogadására. A `tests/editor-content-initial-publication-contract.test.js` új regressziós tesztet tartalmaz az érvényes v1 heti dokumentum és a hibás mód elutasításához. **Ezeket a full-repo teszteket a chatben nem futtattuk végig.**
+
+A `page-schedule` P0 heti piszkozatot egy szerkeszthető keret/padding korrekcióval **v13**-ra emeltük, D1 batch 3/3 sikeres, auditban szerepel, Publish nem történt. A korábbi **v8 publikált változat** és az Editor revision history megmaradt. A régebbi, v12-es piszkozat az előző pont szerinti részlépés, nem a legfrissebb verzió.
+
+**Fontos:** a Cloudflare legutóbb látott deployment 2026-11-13T19:54:39Z időpontú és 100% forgalmú volt, de nem igazolt teljes forrás-SHA paritást vagy a `week` API HTTP-smoke-ját; a fejlesztés kiadási/Browser QA státusza továbbra is **UNVERIFIED / OPEN**. Új adatbázis-migráció nincs.
