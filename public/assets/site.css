@@ -63,6 +63,23 @@ body[data-sanci-shell="1"] .public-footer-brand p{color:#bcc8d6;max-width:300px;
 body[data-sanci-shell="1"] .public-footer-status{font-size:10px;color:#8495a7}
 body[data-sanci-shell="1"] .public-footer-bottom{font-size:12px;color:#8795a5}
 body[data-sanci-shell="1"] .public-page-layout{grid-template-columns:minmax(0,1fr) minmax(0,1320px) minmax(0,1fr)}
+/* The canonical desktop three-track shell must become ONE content column
+   before the viewport is narrower than its 1320px centre track. This selector
+   intentionally matches the brand rule's specificity: the inline page style
+   used a weaker .public-page-layout selector and was being overridden on
+   phones, collapsing the content track to just a few pixels. */
+@media(max-width:1360px){
+ body[data-sanci-shell="1"] .public-page-layout{display:block;grid-template-columns:minmax(0,1fr)}
+ body[data-sanci-shell="1"] .public-page-layout>.content-page{min-width:0;width:calc(100% - 36px);max-width:1320px;margin-inline:auto}
+ body[data-sanci-shell="1"] .public-page-layout>.public-side-zone{display:none}
+}
+@media(max-width:700px){
+ body[data-sanci-shell="1"] .public-page-layout>.content-page{width:calc(100% - 24px)}
+ body.sanci-editorial-page[data-sanci-shell="1"] .content-canvas{width:100%;max-width:100%;min-width:0}
+ body.sanci-editorial-page[data-sanci-shell="1"] .content-canvas>.visual-editor-node{max-width:100%;min-width:0}
+ body.sanci-editorial-page[data-sanci-shell="1"] .visual-layout{min-width:0;max-width:100%}
+ body.sanci-editorial-page[data-sanci-shell="1"] .visual-text{overflow-wrap:break-word}
+}
 body[data-sanci-shell="1"] .public-page-layout>.content-page{max-width:1320px}
 body.sanci-editorial-page[data-sanci-shell="1"] .page{padding-top:20px;padding-bottom:24px}
 body.sanci-editorial-page[data-sanci-shell="1"] .content-hero{display:none}
