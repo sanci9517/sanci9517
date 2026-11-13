@@ -115,3 +115,8 @@ body[data-sanci-shell="1"] .public-footer-column a{min-width:0;overflow-wrap:any
  body[data-sanci-shell="1"] .public-footer-column a{min-height:38px;display:flex;align-items:center}
  body[data-sanci-shell="1"] .public-footer-bottom{border-top:1px solid rgba(205,217,235,.12);padding-top:22px}
 }
+
+
+/* Source-backed stream cover, responsive and no cropping of text. */
+.sanci-week-event-image{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;border-radius:8px;margin:0 0 5px;border:1px solid rgba(216,228,241,.22);background:#090c12}
+.sanci-week-day .sanci-week-event-image{max-width:100%;min-width:0}
