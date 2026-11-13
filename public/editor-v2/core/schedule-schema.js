@@ -28,6 +28,7 @@ export const DEFAULT_SCHEDULE_CONFIG = Object.freeze({
   showEndTime: false,
   showStatus: false,
   showNotes: false,
+  showArtwork: true,
   showLink: true,
   emptyText: 'Nincs tervezett stream.'
 });
@@ -112,7 +113,7 @@ export function normalizeScheduleConfig(value = {}) {
   const order = value.order ?? DEFAULT_SCHEDULE_CONFIG.order;
   if (!SCHEDULE_ORDERS.includes(order)) throw new Error(`Unsupported Schedule order: ${order}`);
 
-  const booleans = ['showTitle', 'showPlatform', 'showTime', 'showEndTime', 'showStatus', 'showNotes', 'showLink'];
+  const booleans = ['showTitle', 'showPlatform', 'showTime', 'showEndTime', 'showStatus', 'showNotes', 'showArtwork', 'showLink'];
   const normalized = {
     version: SCHEDULE_SCHEMA_VERSION,
     mode,
