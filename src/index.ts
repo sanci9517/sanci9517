@@ -87,10 +87,10 @@ export default {
       return env.ASSETS.fetch(assetRequest("/admin-home.html", request));
     }
     if (pathname === "/admin/schedule") {
-      const user=await getAuthenticatedUser(request,env);
-      if(!user)return Response.redirect(new URL("/admin/login",request.url).toString(),302);
-      if(!hasRole(user,"editor"))return new Response("Forbidden",{status:403});
-      return env.ASSETS.fetch(assetRequest("/admin-schedule.html",request));
+      const user = await getAuthenticatedUser(request, env);
+      if (!user) return Response.redirect(new URL("/admin/login", request.url).toString(), 302);
+      if (!hasRole(user, "editor")) return new Response("Forbidden", { status: 403 });
+      return env.ASSETS.fetch(assetRequest("/admin-schedule.html", request));
     }
     if (pathname === "/admin/media") {
       const user = await getAuthenticatedUser(request, env);
