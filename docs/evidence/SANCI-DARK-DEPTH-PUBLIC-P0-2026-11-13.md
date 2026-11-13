@@ -77,3 +77,32 @@ A tulajdonos jelezte, hogy az első 357-node-os verzió nem éri el az elfogadot
 Legutóbbi D1 revíziók: `page-home` 105, `page-twitch` 6, `page-schedule` 11, `page-sanci-videok` 5, `legacy-community` 32, `page-about` 79, `page-tiktok` 14, `page-youtube` 19, `page-contact` 9. Visszaolvasás: **9/9 szerkezeti ellenőrzés PASS**, **337 node**, **55 hover/focus CTA**. Minden oldal új piszkozat-revíziója a jelenlegi közzétett változat felett van; egyik új revíziót sem publikáltuk. A Videók oldal közzétett állapota továbbra is a külön Editorból létrejött v2, a megújított v5 csak piszkozat. Az 11-es közzétett és a 12-es draft navigáció külön maradt.
 
 Nincs screenshot-alapú vizuális QA, nincs teljes `validatePublishDocument` futtatás, nincs Worker-asset módosítás vagy deploy. Kiadás és „világszínvonalú” minősítés: **OPEN / NOT CERTIFIED**.
+
+
+## 2026-11-13 — SANCI heti menetrend fejlesztési blokk (tulajdonosi engedéllyel)
+
+**Tulajdonosi kérés:** a médiatárba feltöltött teljes SANCI csomag ellenőrzése után a Menetrend oldal valódi, áttekinthető hétfő–vasárnap heti naptárnézetet kapjon. A tulajdonos külön engedélyezte a teljesebb menetrend fejlesztését.
+
+**Kód a \`v2/foundation\` ágon:**
+- \`public/editor-v2/core/schedule-week.js\` — önálló, 0 új dependencyvel működő magyar heti naptár; Budapest-idő, DST, 7 dátum, napi csoportok, biztonságos HTML, gombok;
+- \`src/core/schedule-read.ts\` — új \`mode=week\`, kötelező érvényes hétfő \`weekStart=YYYY-MM-DD\`, szűkített SQL-előszűrés, majd Budapest-nap szerinti szűrés (UTC-határ átlépés); végső 50 rekord;
+- \`src/routes/public/schedule.ts\` — a \`weekStart\` query mező továbbítása;
+- \`public/editor-v2/core/schedule-schema.js\` — \`week\` a meglévő Schedule-v1 dokumentum szerződésében, opcionális \`cancelled\` státusz;
+- \`public/editor-v2/app.js\` — magyar \`Heti naptár\` Inspector-mód, váltáskor teljes, max. 50-es nézet és státuszok/megfigyelések megjelenítése;
+- \`public/editor-v2/core/schedule-preview.js\`, \`public/editor-v2/schedule-preview.css\` — 7-napos Editor szerkezeti előnézet **kitalált adás nélkül**;
+- \`public/assets/page-renderer.js\`, \`public/assets/site.css\` — hétléptetés kliensoldalon, aktuális hét, 7-oszlopos desktop / 4, 2, végül 1 oszlopos mobil képernyő, focus-visible és üres nap;
+- \`public/visual-page.html\`, \`public/editor-v2/index.html\` — asset verziófrissítés a cache miatt;
+- \`public/editor-v2/tests/schedule-week.test.js\`, \`public/editor-v2/tests/schedule-source.test.js\`, \`package.json\` — a 6 új UI egységteszt és új API-határtesztek a szokásos \`test:schedule\` részei.
+
+**D1 alapú, visszaolvasott P0 draft:** \`page-schedule\`, \`site-default\`, **v12**, \`mode=week\`, max. 50 rekord, négy állapot (\`scheduled/live/completed/cancelled\`), hétfő–vasárnap, valós Twitch és Discord CTA. Az eredetileg 28-node-os hero/kártya tömeg helyett **10-node-os naptárcentrikus layout**, a régi piszkozatok és revíziók megmaradtak. A D1 visszaolvasott root/parent-child ellenőrzése **PASS**, auditbejegyzés **PASS**, a publikált oldal **v8**, **változatlan**. Save és Publish külön; a v12 **nem publikált**.
+
+**Médiatár:** a tulajdonos által feltöltött új \`sanci_home_hero.webp\`, \`sanci_live_studio.webp\`, \`sanci_schedule_forest.webp\`, \`sanci_community_forest.webp\`, \`sanci_video_gallery.webp\` és társaik metaadatai D1-ben láthatók. Az új Menetrend képcentrikus helyett naptárközpontú lett, ezért nem terheltük újabb óriási hero képpel.
+
+**Teszt / kiadás bizonyíték:**
+- Helyben egy külön átvett, reprodukálható Schedule Week helperen \`node --test /mnt/data/sanci-schedule-week/schedule-week.test.mjs\`: **6/6 PASS** (date/DST/HTML/üres napok); a GitHubon levő tényleges helper kód V8 futtatott öt releváns ellenőrzése: **5/5 PASS**; a \`page-renderer.js\`, \`app.js\`, \`schedule-preview.js\` JavaScript-szintaxis ellenőrzése: **PASS**.
+- A teljes repository checkout és \`npm run test:schedule\`, \`npm run typecheck\`, \`wrangler deploy --dry-run\`, valódi böngészős mobil screenshot és release 100%-os **verifikációja NEM FUTOTT** a jelen chat eszközkörnyezetében. Nem állítunk teljes CI- vagy browser PASS-t.
+- A Cloudflare deployment listáján 2026-11-13 19:54 UTC-kor volt 100%-os Worker deployment, de **nem bizonyított**, hogy annak csomagja pontosan a fenti utolsó GitHub SHA-kat tartalmazza. Az éles weekly API működése ezért **UNVERIFIED**.
+- GitHub Actions futtatás nem indult; új fizetős szolgáltatást nem használtunk.
+- A jelenlegi adatokban csak szeptemberi múltbeli teszt-adások vannak, nem gyártottunk aktuális jövőbeni menetrendet. A jelenlegi hét a valós jövőbeli bejegyzésig **üres állapotot** mutathat.
+
+**Kapuk:** a teljes \`test:schedule\`/TypeScript/build + \`wrangler deploy --dry-run\`/read-only D1 preflight/100%-os deployment és valódi API+mobile smoke elvégzendő. Ezután külön a \`page-schedule\` draft **Publish**. A teljes Visual Editor fizikai elfogadási kapuja változatlanul a MASTER későbbi, egyetlen kapuján marad. A megoldás nem második menetrendmotor és nem új master-terv.
