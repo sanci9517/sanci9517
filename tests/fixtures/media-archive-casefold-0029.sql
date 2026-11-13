@@ -2,6 +2,9 @@
 -- This is not a Wrangler migration and MUST NOT be run as individual REST /query
 -- statements. A single proven-atomic D1 execution context is mandatory.
 -- The immutable 0028 migration remains untouched; no R2 operations occur.
+-- Decode JSON Unicode escapes with json_tree only when a \u sequence is present.
+-- This prevents an archived UUID hidden by JSON escapes from bypassing guards.
+-- Malformed legacy JSON falls back to the original raw-text matching.
 -- The temporary guard aborts if 0028, exact original guards, or a fresh 0029
 -- ledger slot is absent. Review all three trigger definitions independently
 -- with read-only sqlite_master queries immediately before any approved change.
@@ -31,8 +34,16 @@ CREATE TRIGGER media_archive_pages_insert_guard
 BEFORE INSERT ON pages
 WHEN EXISTS (
  SELECT 1 FROM media m WHERE m.site_id=NEW.site_id AND m.archived_at IS NOT NULL
- AND (instr(lower(COALESCE(NEW.content_json,'')),lower(m.id))>0
-      OR instr(lower(COALESCE(NEW.published_content_json,'')),lower(m.id))>0)
+ AND (
+      instr(lower(COALESCE(NEW.content_json,'')),lower(m.id))>0
+      OR (instr(COALESCE(NEW.content_json,''),char(92)||'u')>0
+          AND EXISTS (SELECT 1 FROM json_tree(CASE WHEN json_valid(NEW.content_json) THEN NEW.content_json ELSE 'null' END) j
+                      WHERE j.type='text' AND instr(lower(j.value),lower(m.id))>0))
+      OR instr(lower(COALESCE(NEW.published_content_json,'')),lower(m.id))>0
+      OR (instr(COALESCE(NEW.published_content_json,''),char(92)||'u')>0
+          AND EXISTS (SELECT 1 FROM json_tree(CASE WHEN json_valid(NEW.published_content_json) THEN NEW.published_content_json ELSE 'null' END) j
+                      WHERE j.type='text' AND instr(lower(j.value),lower(m.id))>0))
+ )
 )
 BEGIN SELECT RAISE(ABORT,'ARCHIVED_MEDIA_REFERENCE'); END;
 
@@ -40,8 +51,16 @@ CREATE TRIGGER media_archive_pages_update_guard
 BEFORE UPDATE OF content_json,published_content_json ON pages
 WHEN EXISTS (
  SELECT 1 FROM media m WHERE m.site_id=NEW.site_id AND m.archived_at IS NOT NULL
- AND (instr(lower(COALESCE(NEW.content_json,'')),lower(m.id))>0
-      OR instr(lower(COALESCE(NEW.published_content_json,'')),lower(m.id))>0)
+ AND (
+      instr(lower(COALESCE(NEW.content_json,'')),lower(m.id))>0
+      OR (instr(COALESCE(NEW.content_json,''),char(92)||'u')>0
+          AND EXISTS (SELECT 1 FROM json_tree(CASE WHEN json_valid(NEW.content_json) THEN NEW.content_json ELSE 'null' END) j
+                      WHERE j.type='text' AND instr(lower(j.value),lower(m.id))>0))
+      OR instr(lower(COALESCE(NEW.published_content_json,'')),lower(m.id))>0
+      OR (instr(COALESCE(NEW.published_content_json,''),char(92)||'u')>0
+          AND EXISTS (SELECT 1 FROM json_tree(CASE WHEN json_valid(NEW.published_content_json) THEN NEW.published_content_json ELSE 'null' END) j
+                      WHERE j.type='text' AND instr(lower(j.value),lower(m.id))>0))
+ )
 )
 BEGIN SELECT RAISE(ABORT,'ARCHIVED_MEDIA_REFERENCE'); END;
 
@@ -50,7 +69,10 @@ BEFORE INSERT ON editor_revisions
 WHEN EXISTS (
  SELECT 1 FROM media m JOIN pages p ON p.site_id=m.site_id
  WHERE p.id=NEW.page_id AND m.archived_at IS NOT NULL
-   AND instr(lower(COALESCE(NEW.document_json,'')),lower(m.id))>0
+   AND (instr(lower(COALESCE(NEW.document_json,'')),lower(m.id))>0
+        OR (instr(COALESCE(NEW.document_json,''),char(92)||'u')>0
+            AND EXISTS (SELECT 1 FROM json_tree(CASE WHEN json_valid(NEW.document_json) THEN NEW.document_json ELSE 'null' END) j
+                        WHERE j.type='text' AND instr(lower(j.value),lower(m.id))>0)))
 )
 BEGIN SELECT RAISE(ABORT,'ARCHIVED_MEDIA_REFERENCE'); END;
 

@@ -1,0 +1,52 @@
+{
+  "schema": "sanci-d6-json-unicode-candidate-v1",
+  "date": "2026-11-13",
+  "task": "77.44.7.D / D-06",
+  "status": "OFFLINE REPAIR PASS / NOT PRODUCTION APPLIED",
+  "reproduced": {
+    "fixture": "0029 previous casefold candidate",
+    "encoded_json_asset_id": "\\\\u00611b2c3d4-0000-4000-8000-123456789abc",
+    "decoded_asset_id": "a1b2c3d4-0000-4000-8000-123456789abc",
+    "prior_guard_bypassed": true
+  },
+  "changed_files": [
+    "tests/fixtures/media-archive-casefold-0029.sql",
+    "tests/media-archive-trigger-casefold.test.js",
+    "docs/evidence/media-archive-0029-candidate-runbook-2026-11-13.md",
+    "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md"
+  ],
+  "offline_tests": [
+    {
+      "command": "node --test tests/media-archive-trigger-casefold.test.js",
+      "pass": 5,
+      "fail": 0,
+      "node": "22.16.0"
+    },
+    {
+      "command": "node --test tests/media-retention-migration.test.js",
+      "pass": 6,
+      "fail": 0,
+      "node": "22.16.0"
+    }
+  ],
+  "behavior": [
+    "Guard rejects JSON Unicode-escaped archived UUID from page draft insert, publish insert/update, revision insert",
+    "An unrelated escape remains valid",
+    "Cross-site references remain permitted",
+    "Existing casefold and full transaction rollback suites still PASS"
+  ],
+  "blockers": [
+    "Runtime usage/published/archival/retention raw-UUID filtering still misses escaped IDs",
+    "Cloudflare isolated atomic DDL & ledger rollback not proven",
+    "Isolated D1 export/restore not proven",
+    "No production owner-specific migration execution authorized by this test commit"
+  ],
+  "invariant": {
+    "production_d1_writes": 0,
+    "production_r2_deletes": 0,
+    "worker_deploys": 0,
+    "paid_service_enabled": false,
+    "save_vs_publish_separate": true,
+    "full_d": "OPEN / NOT_CERTIFIED"
+  }
+}

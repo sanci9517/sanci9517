@@ -94,3 +94,28 @@ test('0029 candidate transaction rollback restores exact old triggers and ledger
   assert.equal(db.prepare("SELECT COUNT(*) n FROM sqlite_master WHERE name='__media_0029_casefold_guard'").get().n,0);
  }finally{db.close();}
 });
+
+
+test('0029 blocks archived UUIDs hidden inside JSON Unicode escapes across every stored document snapshot',()=>{
+ const db=fixture();
+ try{
+  atomic(db);
+  const id='a1b2c3d4-0000-4000-8000-123456789abc';
+  const escaped='\\u0061'+id.slice(1); // decoded JSON string is the lowercase archived ID
+  const encoded=key=>'{' + JSON.stringify(key) + ':"' + escaped + '"}';
+  assert.equal(JSON.parse(encoded('assetId')).assetId,id);
+  db.prepare('INSERT INTO media(id,site_id,created_at,archived_at) VALUES(?,?,?,?)').run(id,'site-a','2026-11-13','2026-11-13');
+  const insert=db.prepare('INSERT INTO pages(id,site_id,content_json,published_content_json) VALUES(?,?,?,?)');
+  assert.throws(()=>insert.run('escaped-draft','site-a',encoded('assetId'),null),/ARCHIVED_MEDIA_REFERENCE/);
+  assert.throws(()=>insert.run('escaped-published','site-a','{}',encoded('posterAssetId')),/ARCHIVED_MEDIA_REFERENCE/);
+  insert.run('safe','site-a','{}',null);
+  assert.throws(()=>db.prepare("UPDATE pages SET content_json=? WHERE id='safe'").run(encoded('backgroundAssetId')),/ARCHIVED_MEDIA_REFERENCE/);
+  assert.throws(()=>db.prepare("UPDATE pages SET published_content_json=? WHERE id='safe'").run(encoded('imageAssetId')),/ARCHIVED_MEDIA_REFERENCE/);
+  assert.throws(()=>db.prepare('INSERT INTO editor_revisions(id,page_id,document_json) VALUES(?,?,?)').run('escaped-revision','safe',encoded('assetId')),/ARCHIVED_MEDIA_REFERENCE/);
+  // Valid unrelated Unicode escapes are not blocked, nor are cross-site IDs.
+  insert.run('unrelated','site-a','{"title":"\\u0062"}',null);
+  insert.run('other-site','site-b',encoded('assetId'),null);
+  assert.equal(db.prepare('SELECT COUNT(*) AS n FROM pages').get().n,3);
+  assert.deepEqual(ledger(db),['0028_media_archive.sql',migrationName]);
+ } finally {db.close();}
+});
