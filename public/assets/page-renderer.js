@@ -19,6 +19,9 @@ import {applyStateStyles,hasStateStyles} from "../editor-v2/core/state-styles.js
 import {currentBudapestMonday,shiftScheduleWeek,renderScheduleWeek} from "../editor-v2/core/schedule-week.js";
 import {backgroundImageValue,legacyBackgroundCompound,MEDIA_ASSET_ID} from "../editor-v2/core/background-asset.js?v=20261030-legacy-background-compound";
 (()=>{
+ // Draft preview may show authenticated assets without granting public access
+ // to media that has not yet passed the separate Publish gate.
+ const previewMedia = new URL(location.href).searchParams.get('preview') === '1';
  const esc=v=>{const text=v===null||v===undefined||typeof v==='object'?'':String(v);return text.replace(/[&<>\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))};
  const safeUrl=v=>{const raw=safeMediaUrl(v);if(!raw)return '';try{return new URL(raw,location.origin).href}catch{return''}};
  const safeRichUrl=v=>{const raw=typeof v==='string'?v.trim():'';if(!raw||/[\u0000-\u001f\u007f\\]/.test(raw)||raw.startsWith('//'))return'';if(raw.startsWith('#')&&raw.length>1)return raw;if(raw.startsWith('/')&&!raw.startsWith('//'))return raw;try{const u=new URL(raw);return !u.username&&!u.password&&['http:','https:','mailto:'].includes(u.protocol)?raw:''}catch{return''}};
@@ -50,7 +53,7 @@ import {backgroundImageValue,legacyBackgroundCompound,MEDIA_ASSET_ID} from "../e
    const value=safeCssText(values[legacy]);
    if(legacyRoot&&!legacyBackground&&!legacyCompound&&value&&CSS.supports(property,value))out+=`${property}:${esc(value)};`;
   }
-   const background=backgroundImageValue(values,{legacyBackground:legacyRoot});
+   const background=backgroundImageValue(values,{legacyBackground:legacyRoot,editor:previewMedia});
    const hasCanonicalImage=values.backgroundImage!==undefined&&values.backgroundImage!==null&&values.backgroundImage!=='';
    if(background!=='none'||hasCanonicalImage)out+=`background-image:${esc(background)};`;
    const hasAsset=typeof values.backgroundAssetId==='string'&&MEDIA_ASSET_ID.test(values.backgroundAssetId);
@@ -120,7 +123,7 @@ if(n.type==='card'&&n.metadata?.cardContentVersion===1){
  if(n.type==='quote')return `<blockquote class="visual-editor-node visual-quote" style="${st}"><p>${esc(p.text??'')}</p>${p.attribution?`<footer><cite>${esc(p.attribution)}</cite></footer>`:''}</blockquote>`;
  if(n.type==='icon'){const icon=iconById(p.icon);return `<span class="visual-editor-node visual-icon" role="img" aria-label="${esc(p.label||icon.label)}" style="${st}">${icon.glyph}</span>`;}
  if(n.type==='heading'){const level=Number.isInteger(p.level)&&p.level>=1&&p.level<=6?p.level:2;return `<h${level} class="visual-editor-node visual-heading" style="${st}">${t}</h${level}>`}if(n.type==='richtext')return `<div class="visual-editor-node visual-text visual-richtext" style="${st}">${p.richText?richTextHtml(p.richText):t}</div>`;if(n.type==='text')return `<div class="visual-editor-node visual-text" style="${st}">${t}</div>`;if(['button','submit'].includes(n.type)){const u=safeRichUrl(p.url||p.href);const blank=Boolean(p.newWindow);return u?`<a class="visual-editor-node visual-button" style="${st}" href="${esc(u)}"${blank?' target="_blank" rel="noopener noreferrer"':''}>${t}</a>`:`<div class="visual-editor-node visual-button" style="${st}">${t}</div>`}if(n.type==='link'){const u=safeRichUrl(p.url||p.href);const blank=Boolean(p.newWindow);return u?`<a class="visual-editor-node visual-button" style="${st}" href="${esc(u)}"${blank?' target="_blank" rel="noopener noreferrer"':''}>${t}</a>`:`<div class="visual-editor-node visual-text" style="${st}">${t}</div>`}if(n.type==='image'){
-  const u=safeUrl(legacyImageSource(p)),cfg=legacyImagePresentation(p),caption=legacyImageCaption(p);
+  const u=safeUrl(legacyImageSource(p,{editor:previewMedia})),cfg=legacyImagePresentation(p),caption=legacyImageCaption(p);
   if(!u)return `<div class="visual-editor-node visual-card" style="${st}">Kép</div>`;
   const image=`<img class="visual-image" style="object-fit:${cfg.fit};object-position:${cfg.objectPosition};aspect-ratio:${cfg.ratio};" src="${esc(u)}" alt="${esc(cfg.alt)}"${cfg.decorative?' role="presentation"':''} loading="${cfg.loading}">`;
   return caption?`<figure class="visual-editor-node visual-image-figure" style="margin:0;max-width:100%;${st}"><span style="display:block;max-width:100%;">${image}</span><figcaption style="display:block;padding-top:.5em;font-size:.85em;opacity:.8;white-space:pre-wrap;overflow-wrap:anywhere;">${esc(caption)}</figcaption></figure>`:`<img class="visual-editor-node visual-image" style="object-fit:${cfg.fit};object-position:${cfg.objectPosition};aspect-ratio:${cfg.ratio};${st}" src="${esc(u)}" alt="${esc(cfg.alt)}"${cfg.decorative?' role="presentation"':''} loading="${cfg.loading}">`;
