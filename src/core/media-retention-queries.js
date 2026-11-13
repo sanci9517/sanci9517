@@ -1,3 +1,5 @@
+import {mediaReferenceSql} from "./media-reference-sql.js";
+
 // Safe SQL statements for the future media retention adapter. None delete media or R2.
 // Stored Page Models may contain upper-case UUIDs; both archived-asset checks
 // must normalize case at the SQL commit boundary, not only at API preflight.
@@ -16,10 +18,10 @@ export const retentionQueries = Object.freeze({
        WHERE m.id=? AND m.site_id=? AND m.archived_at IS NOT NULL
          AND NOT EXISTS (
            SELECT 1 FROM pages p WHERE p.site_id=m.site_id
-             AND (instr(lower(COALESCE(p.content_json,'')),lower(m.id))>0 OR instr(lower(COALESCE(p.published_content_json,'')),lower(m.id))>0))
+             AND (${mediaReferenceSql("p.content_json","m.id")} OR ${mediaReferenceSql("p.published_content_json","m.id")}))
          AND NOT EXISTS (
            SELECT 1 FROM editor_revisions r JOIN pages p ON p.id=r.page_id
-           WHERE p.site_id=m.site_id AND instr(lower(COALESCE(r.document_json,'')),lower(m.id))>0
+           WHERE p.site_id=m.site_id AND ${mediaReferenceSql("r.document_json","m.id")}
          )`,
   cancel: `UPDATE media_retention_requests SET state='cancelled',updated_at=CURRENT_TIMESTAMP
        WHERE id=? AND site_id=? AND state IN ('requested','quarantined','revalidated','blocked')`
