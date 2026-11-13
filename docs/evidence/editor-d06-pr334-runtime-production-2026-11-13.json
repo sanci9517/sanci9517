@@ -1,0 +1,93 @@
+{
+  "schema": "sanci-d06-runtime-production-release-v1",
+  "date": "2026-11-13",
+  "task": "77.44.7.D / D-06",
+  "status": "RUNTIME FIX MERGED AND WORKER LIVE; FULL D-06 OPEN / NOT_CERTIFIED",
+  "pr": {
+    "number": 334,
+    "head_sha": "0d0b116f5a087fc8d4b83832a2f3d2bed4913f85",
+    "merge_sha": "59d617ed0862076029567b6c5f5dfeefe3ba4f84",
+    "merge_method": "merge",
+    "merged": true,
+    "url": "https://github.com/sanci9517/sanci9517/pull/334"
+  },
+  "scope": [
+    "media usage candidate filtering including JSON Unicode escaped IDs",
+    "published media site-scoped candidate filtering",
+    "atomic media archive reference checks",
+    "retention request reference checks",
+    "isolated sqlite and real Worker API tests"
+  ],
+  "pr_head_ci": {
+    "editor_core": {
+      "run_id": 43425660386,
+      "conclusion": "success"
+    },
+    "f0": {
+      "run_id": 43425660335,
+      "conclusion": "success"
+    },
+    "twitch": {
+      "run_id": 43425660596,
+      "conclusion": "success"
+    },
+    "worker_dry_run": {
+      "run_id": 43425660545,
+      "conclusion": "success"
+    }
+  },
+  "merge_ci": {
+    "editor_core": {
+      "run_id": 43440327874,
+      "status": "in_progress",
+      "conclusion": null
+    },
+    "f0": {
+      "run_id": 43440327790,
+      "conclusion": "success"
+    },
+    "twitch": {
+      "run_id": 43440327863,
+      "conclusion": "success"
+    },
+    "production_source_smoke": {
+      "run_id": 43440327788,
+      "conclusion": "success",
+      "observed_at": "2026-11-13T14:11:19Z",
+      "limitation": "Source-smoke ran before deployment; checked health 200 and six unchanged public assets, not changed backend TypeScript JS"
+    }
+  },
+  "cloudflare": {
+    "worker": "sanci9517-streamer-brand",
+    "build_id": "4a7ff90f-543e-4341-bfb0-82bf1a6d198f",
+    "build_commit": "59d617ed0862076029567b6c5f5dfeefe3ba4f84",
+    "build_outcome": "success",
+    "deployment_id": "06a89710-f9d8-4c14-8ca7-6718345884f5",
+    "version_id": "7028f295-e558-4169-a932-a58b96c95292",
+    "traffic_percent": 100,
+    "deploy_created": "2026-11-13T14:11:43.343234Z"
+  },
+  "production_d1_preflight": {
+    "migration_count": 34,
+    "last_migration": "0028_media_archive.sql",
+    "migration_0029_count": 0,
+    "archival_triggers": "original case-sensitive 0028",
+    "quick_check": "ok",
+    "foreign_key_check_rows": 0,
+    "rows_written": 0,
+    "changed_db": false,
+    "changes": 0
+  },
+  "constraints": {
+    "save_publish_separate": true,
+    "production_d1_schema_write": false,
+    "production_r2_delete": false,
+    "new_paid_service_authorized": false,
+    "full_editor_manual_acceptance": "deferred"
+  },
+  "blockers": [
+    "0029 archived-media trigger schema patch still not applied: production full export and isolated independent restore are missing",
+    "No post-deployment changed backend content hash/same-site signed regression verified via live HTTP",
+    "Full D-01..D-07 Inspector→Canvas→Save/reload→Publish→public/site-scoped Media matrix is not certified"
+  ]
+}
