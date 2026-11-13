@@ -340,18 +340,26 @@ export function cloneDocument(document) {
   return structuredClone(document);
 }
 
+// Corrupted imported models can contain inherited property names as IDs.
+function ownRecordValue(record, id) {
+  if (!record || typeof record !== 'object' || Array.isArray(record)
+      || typeof id !== 'string' || !Object.hasOwn(record, id)) return null;
+  const value = record[id];
+  return value && typeof value === 'object' && !Array.isArray(value) ? value : null;
+}
+
 export function getPage(document, pageId = document?.activePageId) {
-  return document?.pages?.[pageId] ?? null;
+  return ownRecordValue(document?.pages, pageId);
 }
 
 export function getNode(page, nodeId) {
-  return page?.nodes?.[nodeId] ?? null;
+  return ownRecordValue(page?.nodes, nodeId);
 }
 
 export function getChildren(page, nodeId) {
   const node = getNode(page, nodeId);
-  if (!node) return [];
-  return node.children.map((id) => page.nodes[id]).filter(Boolean);
+  if (!node || !Array.isArray(node.children)) return [];
+  return node.children.map((id) => getNode(page, id)).filter(Boolean);
 }
 
 export function canContain(parent, childType) {
@@ -359,6 +367,12 @@ export function canContain(parent, childType) {
   if (isLeafType(parent.type)) return false;
   if (childType === NODE_TYPES.ROOT) return false;
   return true;
+}
+
+// Never invoke authored object conversion hooks while reporting a validation error.
+function safeModelDiagnostic(value) {
+  if (value === null || value === undefined || ['string', 'number', 'boolean', 'bigint'].includes(typeof value)) return String(value);
+  return '[invalid]';
 }
 
 export function validatePage(page) {
@@ -370,11 +384,16 @@ export function validatePage(page) {
   }
 
   if (!page.id || !page.rootId) errors.push('page.id and page.rootId are required');
-  if (!page.nodes || typeof page.nodes !== 'object') errors.push('page.nodes must be an object');
+  const nodes = page.nodes && typeof page.nodes === 'object' && !Array.isArray(page.nodes) ? page.nodes : null;
+  if (!nodes) errors.push('page.nodes must be an object');
 
-  for (const [id, node] of Object.entries(page.nodes ?? {})) {
+  for (const [id, node] of Object.entries(nodes ?? {})) {
     if (seen.has(id)) errors.push(`duplicate node id: ${id}`);
     seen.add(id);
+    if (!node || typeof node !== 'object' || Array.isArray(node)) {
+      errors.push(`invalid node: ${id}`);
+      continue;
+    }
 
     if (!node.id || node.id !== id) errors.push(`node id mismatch: ${id}`);
     if (!node.type) errors.push(`node type missing: ${id}`);
@@ -382,19 +401,19 @@ export function validatePage(page) {
       try {
         normalizeScheduleConfig(node.props?.schedule);
       } catch (error) {
-        errors.push(`invalid schedule config: ${id}: ${error instanceof Error ? error.message : String(error)}`);
+        errors.push(`invalid schedule config: ${id}: ${safeModelDiagnostic(error instanceof Error ? error.message : error)}`);
       }
     }
     if (!Array.isArray(node.children)) errors.push(`children must be an array: ${id}`);
 
-    for (const childId of node.children ?? []) {
-      const child = page.nodes[childId];
-      if (!child) errors.push(`missing child ${childId} referenced by ${id}`);
-      else if (child.parentId !== id) errors.push(`parent mismatch: ${childId} -> ${id}`);
+    for (const childId of Array.isArray(node.children) ? node.children : []) {
+      const child = getNode(page, childId);
+      if (!child) errors.push(`missing child ${safeModelDiagnostic(childId)} referenced by ${id}`);
+      else if (child.parentId !== id) errors.push(`parent mismatch: ${safeModelDiagnostic(childId)} -> ${id}`);
     }
   }
 
-  const root = page.nodes?.[page.rootId];
+  const root = getNode(page, page.rootId);
   if (!root) errors.push('root node missing');
   else if (root.parentId !== null) errors.push('root parentId must be null');
 
@@ -404,15 +423,16 @@ export function validatePage(page) {
 export function validateDocument(document) {
   const errors = [];
   if (!document || typeof document !== 'object') return ['document must be an object'];
-  if (document.type !== DOCUMENT_TYPE) errors.push(`invalid document type: ${document.type}`);
-  if (document.schemaVersion !== SCHEMA_VERSION) errors.push(`unsupported schema version: ${document.schemaVersion}`);
-  if (!document.pages || typeof document.pages !== 'object') errors.push('document.pages must be an object');
-  if (!document.activePageId || !document.pages?.[document.activePageId]) {
+  if (document.type !== DOCUMENT_TYPE) errors.push(`invalid document type: ${safeModelDiagnostic(document.type)}`);
+  if (document.schemaVersion !== SCHEMA_VERSION) errors.push(`unsupported schema version: ${safeModelDiagnostic(document.schemaVersion)}`);
+  const pages = document.pages && typeof document.pages === 'object' && !Array.isArray(document.pages) ? document.pages : null;
+  if (!pages) errors.push('document.pages must be an object');
+  if (!document.activePageId || !getPage(document, document.activePageId)) {
     errors.push('activePageId must reference an existing page');
   }
 
-  for (const page of Object.values(document.pages ?? {})) {
-    errors.push(...validatePage(page).map((error) => `page ${page.id}: ${error}`));
+  for (const [id, page] of Object.entries(pages ?? {})) {
+    errors.push(...validatePage(page).map((error) => `page ${safeModelDiagnostic(page?.id ?? id)}: ${error}`));
   }
 
   return errors;
