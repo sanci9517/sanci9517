@@ -5,6 +5,7 @@ import {readFileSync} from "node:fs";
 import {retentionQueries} from "../src/core/media-retention-queries.js";
 import "./media-reference-sql.test.js";
 import "./media-archive-additive-unicode.test.js";
+import "./d1-0029-release-batch.test.js";
 
 test("retention SQL cannot schedule referenced assets and cancellation is tenant-scoped",()=>{
  const db=new DatabaseSync(":memory:");
