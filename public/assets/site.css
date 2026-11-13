@@ -87,3 +87,9 @@ body[data-sanci-shell="1"] .desktop-primary-nav a:focus-visible{outline:3px soli
 body[data-sanci-shell="0"] .desktop-primary-nav{display:none}
 @media(max-width:1140px){body[data-sanci-shell="1"] .desktop-primary-nav{display:none}body[data-sanci-shell="1"] .public-header-status{margin-left:auto}}
 @media(max-width:620px){body[data-sanci-shell="1"] .public-header-status{display:none}}
+
+/* Editorial CTAs retain compact desktop width; mobile Inspector width remains authoritative. */
+body.sanci-editorial-page[data-sanci-shell="1"] .visual-button{width:auto;max-width:100%;box-shadow:none}
+body.sanci-editorial-page[data-sanci-shell="1"] .visual-heading{text-wrap:balance}
+body.sanci-editorial-page[data-sanci-shell="1"] .visual-layout{min-width:0}
+@media(max-width:620px){body.sanci-editorial-page[data-sanci-shell="1"] .visual-button{width:100%}}
