@@ -1,0 +1,91 @@
+{
+  "schema": "sanci9517.d06.full-logical-db-clone.v1",
+  "date": "2026-11-13",
+  "plan_point": "77.44.7.D / D-06",
+  "status": "ISOLATED_FULL_CLONE_AND_ROLLBACK_PASS_PRODUCTION_0029_NOT_APPLIED",
+  "user_authorization": "Development-only website, temporary DB export interruption and isolated testing permitted; 0 Ft remains an enforced ceiling.",
+  "production_preflight": {
+    "name": "sanci9517-db",
+    "size_bytes": 1822720,
+    "application_tables": 27,
+    "sqlite_schema_objects": 83,
+    "row_count_at_snapshot": 921,
+    "quick_check": "ok",
+    "foreign_key_issues": 0,
+    "production_data_changed_by_backup": false
+  },
+  "export": {
+    "api_status": "complete",
+    "compatibility": "d1",
+    "literal_dump_download": "BLOCKED",
+    "reason": "Cloudflare execution environment returns HTTP 403 policy disallowing requests to signed Cloudflare internal R2 object URL",
+    "literal_sql_export_to_restored_DB_verified": false
+  },
+  "logical_clone": {
+    "name": "sanci9517_d06_restore_20261113",
+    "stored": "Same protected Cloudflare D1 account; not publicly connected",
+    "tables": 27,
+    "sqlite_objects": 83,
+    "rows": 921,
+    "all_table_data_sha256_equal": true,
+    "all_sqlite_master_sql_equal": true,
+    "quick_check": "ok",
+    "foreign_key_issues": 0,
+    "source_unchanged": true,
+    "batched_inserts": 32,
+    "temporary_circular_page_revision_relinks": 9,
+    "auxiliary_schema_objects": 56,
+    "initial_sqlite_toobig_failed_clone_deleted": true,
+    "backup_retained": true
+  },
+  "candidate": {
+    "file": "tests/fixtures/0029_media_archive_unicode_additive.sql",
+    "git_blob_sha": "bf78d8df926d9091ed42b6af6f1009c29343917f",
+    "additive_triggers": 4,
+    "original_triggers_unchanged": 19,
+    "full_clone_tests_passed": 15,
+    "full_clone_tests_total": 15,
+    "full_clone_tests_failed": 0,
+    "coverage": [
+      "Unicode-escaped draft and published media",
+      "uppercase UUID",
+      "cross-tenant positive and negative",
+      "page ownership transfer",
+      "revision insertion/update and parent transfer",
+      "historical revision site transfer",
+      "legacy malformed JSON",
+      "SQLite integrity"
+    ]
+  },
+  "time_travel_restore": {
+    "scope": "CLONE_ONLY",
+    "api_status": "success",
+    "restored_original_triggers": 19,
+    "remaining_unicode_triggers": 0,
+    "all_27_tables_sha256_reverified": true,
+    "changed_tables": [],
+    "quick_check": "ok",
+    "foreign_key_issues": 0,
+    "migration_0029_marker": 0
+  },
+  "production_release": {
+    "pr": "https://github.com/sanci9517/sanci9517/pull/336",
+    "merged_commit": "9b0b90e02cc7cf8e63da3ea45c45e852bf08de11",
+    "pr_exact_head_ci": "6/6 PASS including real Chromium",
+    "worker_deployment": "e62fc91f-8243-442b-8bd5-4f87d60f0083",
+    "worker_version": "d1b681f9-4b3e-4371-8867-1de4ffa08d04",
+    "traffic_percent": 100,
+    "source_smoke": "https://github.com/sanci9517/sanci9517/actions/runs/43478679093",
+    "source_smoke_status": "success, health HTTP 200 and six specified public asset hashes matched",
+    "changed_schema_js_live_hash": "NOT_VERIFIED due current tool outbound 403 policy",
+    "production_migration_count": 34,
+    "production_0029_count": 0,
+    "production_data_or_schema_written_for_0029": false
+  },
+  "limitations": [
+    "Logical clone and clone Time Travel rollback do not prove import of the literal SQL file exported by D1.",
+    "Clone contains sensitive production internal auth/session data in same protected account; do not publish/export to GitHub.",
+    "The complete D-01 to D-07 and Editor lifecycle/accessibility/cross-tenant acceptance remains NOT_CERTIFIED.",
+    "No R2 production deletion or new paid service; actual billing receipt not independently inspected."
+  ]
+}
