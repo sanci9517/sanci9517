@@ -2,17 +2,12 @@
  * Media-library image IDs have the same UUID shape as authored content fields.
  * A selected image takes precedence over any older external source URL.
  */
-import {safeMediaUrl} from './element-content.js';
+import {safeMediaUrl,safePublishedMediaUrl} from './element-content.js';
 
 const MEDIA_ASSET_ID=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const legacySource=(src,editor)=>{
-  if(typeof src!=='string')return '';
-  const url=safeMediaUrl(src);
-  if(!url||editor||!url.startsWith('/'))return url;
-  try{
-    const path=decodeURIComponent(new URL(url,'https://sanci.invalid').pathname);
-    return /^\/api\/admin(?:\/|$)/i.test(path)?'':url;
-  }catch{return ''}
+ if(typeof src!=='string')return '';
+ return editor?safeMediaUrl(src):safePublishedMediaUrl(src);
 };
 
 /** Editable text for legacy media, without coercing malformed persisted JSON.

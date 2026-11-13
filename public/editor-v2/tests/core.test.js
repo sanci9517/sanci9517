@@ -1,5 +1,5 @@
 import {ICON_CHOICES,iconById,isSupportedIcon} from '../core/icon-options.js';
-import {createElementContent,normalizeElementContent,validateElementContent,renderElementContent,safeMediaUrl} from '../core/element-content.js';
+import {createElementContent,normalizeElementContent,validateElementContent,renderElementContent,safeMediaUrl,safePublishedMediaUrl} from '../core/element-content.js';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -1154,6 +1154,29 @@ test('structured elements share a versioned content contract, publish guard and 
   execute(state,{type:'history.undo'});
   assertValidEditorDocument(state.document);
  }
+});
+test('structured gallery/carousel refuse private Editor preview URL on Publish and render',()=>{
+ const id='00000000-0000-4000-8000-000000000123';
+ const blocked=['/api/admin/media?id='+id,'/api/%61dmin/media?id='+id,
+  '/%61pi/admin/media?id='+id,'/public/../api/admin/media?id='+id,'/api/admin','/api/admin/'];
+ for(const source of blocked){
+  assert.equal(safeMediaUrl(source),source,'authenticated Canvas preview stays readable');
+  assert.equal(safePublishedMediaUrl(source),'');
+  const g={version:1,items:[{src:source,alt:'Privát',caption:''}]};
+  const c={version:1,items:[{src:source,alt:'Privát',label:'Cím',content:'Tartalom'}]};
+  assert.equal(validateElementContent('gallery',g),'INVALID_GALLERY_IMAGE');
+  assert.equal(validateElementContent('carousel',c),'INVALID_CAROUSEL_IMAGE');
+  assert.doesNotMatch(renderElementContent('gallery',g,'g'),/<img[^>]*src=/);
+  assert.doesNotMatch(renderElementContent('carousel',c,'c'),/<img[^>]*src=/);
+ }
+ for(const source of ['/image.png','/media/'+id,'https://cdn.example.test/image.png']){
+  assert.equal(safePublishedMediaUrl(source),source);
+  const g={version:1,items:[{src:source,alt:'Nyilvános',caption:''}]};
+  assert.equal(validateElementContent('gallery',g),null);
+  assert.match(renderElementContent('gallery',g,'g2'),/<img src=/);
+ }
+ const tabs=renderElementContent('tabs',{version:1,items:[{label:'Első',content:'Szöveg'},{label:'Második',content:'Szöveg'}]},'tabs');
+ assert.equal((tabs.match(/role="tabpanel"[^>]*tabindex="0"/g)||[]).length,2);
 });
 test('structured models sanitize content and strictly validate dimensions',()=>{
  assert.equal(safeMediaUrl('javascript:alert(1)'),'');
