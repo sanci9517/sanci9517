@@ -15,9 +15,9 @@ import {MEDIA_ASSET_ID} from '../../public/editor-v2/core/background-asset.js';
 
 function validateScheduleConfig(config:any):boolean{
  if(!config||typeof config!=='object'||config.version!==1)return false;
- if(!['upcoming','all','next'].includes(config.mode))return false;
+ if(!['upcoming','all','next','week'].includes(config.mode))return false;
  if(!Number.isInteger(config.limit)||config.limit<1||config.limit>50)return false;
- if(!Array.isArray(config.statuses)||config.statuses.length===0||config.statuses.some((v:any)=>!['scheduled','live','completed'].includes(v)))return false;
+ if(!Array.isArray(config.statuses)||config.statuses.length===0||config.statuses.some((v:any)=>!['scheduled','live','completed','cancelled'].includes(v)))return false;
  if(!Array.isArray(config.platforms)||config.platforms.length>20||config.platforms.some((v:any)=>typeof v!=='string'||!v.trim()||v.trim().length>40))return false;
  if(!['asc','desc'].includes(config.order))return false;
  for(const key of ['showTitle','showPlatform','showTime','showEndTime','showStatus','showNotes','showLink'])if(typeof config[key]!=='boolean')return false;
