@@ -254,8 +254,9 @@ test('public schedule DTO does not leak source or sync fields', async () => {
 
   const result = await readPublicSchedule(db);
   assert.deepEqual(Object.keys(result[0]).sort(), [
-    'endsAt', 'id', 'notes', 'platform', 'startsAt', 'status', 'title', 'url'
+    'endsAt', 'id', 'imageAssetId', 'notes', 'platform', 'startsAt', 'status', 'title', 'url'
   ]);
+  assert.equal(result[0].imageAssetId, null, 'no sidecar must not expose a stale image');
   assert.equal(result[0].source, undefined);
   assert.equal(result[0].sourceId, undefined);
   assert.equal(result[0].sourceAccountId, undefined);
