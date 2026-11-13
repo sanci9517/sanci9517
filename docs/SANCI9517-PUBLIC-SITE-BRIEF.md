@@ -1,7 +1,7 @@
 # SANCI9517 — publikus weboldal: kreatív brief, dizájnrendszer és teljes tartalomterv
 
 **Dokumentum típusa:** belső, végrehajtható creator-webhely brief; NEM második platform-MASTER.  
-**Verzió:** 2.3 (2026-11-13) • **Státusz:** SANCI DARK DEPTH ONLY / KÖTELEZŐ SPEC / KIVITELEZÉS OPEN.
+**Verzió:** 2.4 (2026-11-13) • **Státusz:** SANCI DARK DEPTH ONLY / KÖTELEZŐ SPEC / KIVITELEZÉS OPEN.
 **Repository / ág:** sanci9517/sanci9517 → v2/foundation.  
 **Kanonikus termékterv:** docs/SANCI9517-CREATOR-PLATFORM-PLAN.md.  
 **Végrehajtási szabály:** AGENTS.md; ez a brief nem írhatja felül a MASTER-t, a release-gate-eket, a Save/Publish szétválasztását vagy a domainadatok tulajdonosát.  
@@ -107,6 +107,17 @@ Csak tervezési megfigyelések, NEM automatikus másolási jogok. Az itt rögzí
 **2026-11-13 D1 állapot:** a publikus navigáció 13-as közzétett változata nyolc egyszintű oldalt tartalmaz. A korábbi `page-sanci-videok`, `alkotasok` és a korai `page-chatgpt-proba-20261113` oldal az Editorban archivált, revíziójuk megmaradt. A publikált YouTube és TikTok oldalak saját, elkülönített tartalmukra szűkültek; az éles SVG menü teljes böngészős QA-ja ettől külön OPEN. A korábbi, általános gyűjtőoldal-minták más felhasználók számára továbbra is technikai opciók, de nem aktivált SANCI oldalak.
 
 ---
+
+### 4.1 SANCI editorial rhythm — képi és tipográfiai tervezési döntés (2026-11-13)
+
+**A tulajdonos által kért, publikált arculati finomítás:** a korábbi túlzottan képközpontú, több helyen kétoszlopos fotó-szöveg felületet nyugodtabb, magazinszerű képi hierarchia váltja. Ez **csak az első SANCI creator-webhely tartalmi kompozíciója**, nem a Visual Editor generikus funkcióinak vagy a jövőbeli tenantok sablonjainak korlátozása.
+
+- **Fotó, majd tartalom:** ahol a kép valóban történetet ad, a kép teljes szekciószélességben jelenik meg, és a hozzá tartozó alcím, leírás és CTA a kép **után, alatta** található, nem felváltva a bal és jobb szélen. Az önálló különleges hero-borítókép megmaradhat háttérként, olvasható overlay-szöveggel.
+- **Képi költségvetés a SANCI-oldalakra:** Főoldal 1 beillesztett médiakép + 1 szerkeszthető, csendes háttér; Rólam 1 eredeti kapucnis kép; YouTube 1 vízszintes VOD-illusztráció; TikTok 0 dekoratív, másik oldalról újrahasznált kép (csak később hitelesített videók saját borítói), Élő 0 extra dekoráció (az élő player a fő média), Menetrend 0 oldalháttérkép (valós események később rendelkezhetnek egyedi borítóval), Közösség 0 beillesztett fotó + 1 rövidebb brand-háttér, Kapcsolat 0 külön logó/állókép. A SANCI embléma **egyszer, a közös fejlécben** jelenik meg; nem minden oldal első bekezdése előtt még egyszer.
+- **Méret és ritmus:** nagy képek asztali 16:7 vagy 16:8 jellegű max. 315–410 px magas fókuszban, telefonon kb. 235 px plafon; képen túl nem következhet második ugyanolyan nagy dekoráció közvetlenül. Közös olvasható szövegsáv jellemzően 760–840 px, 320–390 px viewporton egyoszlopos, bő légközzel. A hero-magösszegeket a főoldalon kb. 490/370 px, a közösségi brand-szakaszt kb. 430/310 px desktop/mobile minimumra szabályozzuk.
+- **Szemantika és tartalmi igazság:** a meglévő egy H1/oldal, saját médiatári alt-szövegek, valós platformlinkek, nem kitalált LIVE/videó/szponzor adatok, click-to-load Twitch, meglévő heti Schedule mindenütt megmaradnak. Ne tegyünk stocknak ható pseudo-thumbnailt oda, ahol valós TikTok- vagy YouTube-videót várnak.
+- **Teljes szerkeszthetőség:** minden kép, szöveg, szekció-sorrend, mobil/asztali stílus és egyedi elem a meglevő v1 `sanci-page-document` modell és Editor `Save / Publish` kettős folyamata szerint marad. Visszavonhatóság: a korábbi published revision rekordok és a média megmaradnak.
+- **Minőségkapu:** pusztán éles adatbázis-snapshot és a szerkezet QA nem jelenti a valódi 320/390/768/1024/1440 px mobil/desktop vizuális elfogadást; a teljes böngészős, kontrasztos, platform CTA és képkivágási ellenőrzés továbbra is OPEN.
 
 ## 5. Teljes tartalmi és UX specifikáció — oldalanként
 
