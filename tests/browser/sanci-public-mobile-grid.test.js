@@ -7,10 +7,10 @@ import {resolve,extname} from 'node:path';
 import {chromium} from 'playwright';
 
 const root=resolve(import.meta.dirname,'../../public');
-const slugs=['home','twitch','videok','schedule','community','about','tiktok','youtube','contact'];
+const slugs=['home','twitch','youtube','tiktok','schedule','community','about','contact'];
 function documentFor(slug){
   // Canonical Page Model with the same nested flex / two-column grid / mobile
-  // overrides used in the 9 real SANCI editorial snapshots.
+  // overrides used in the 8 current SANCI editorial pages.
   const nodes={
     root:{id:'root',type:'root',name:'Oldal',parentId:null,children:['outer'],props:{},style:{},responsive:{desktop:{},tablet:{},mobile:{}},metadata:{}},
     outer:{id:'outer',type:'container',parentId:'root',children:['column','tiles'],props:{},style:{maxWidth:'1240px',margin:'0 auto',minWidth:'0',padding:'12px 0 44px'},
@@ -32,7 +32,7 @@ function documentFor(slug){
   }},style:{width:'100%',maxWidth:'100%',minWidth:'0',padding:'16px'},responsive:{desktop:{},tablet:{},mobile:{}}};
   return {rootId:'root',metadata:{sanciEditorialVersion:1},nodes};
 }
-test('all nine editorial pages preserve a usable content column at 320-390 px',async t=>{
+test('all eight current editorial pages preserve mobile layout and platform icons',async t=>{
   const server=createServer(async(req,res)=>{
     const url=new URL(req.url,'http://127.0.0.1');
     if(url.pathname.startsWith('/api/')){
@@ -40,7 +40,7 @@ test('all nine editorial pages preserve a usable content column at 320-390 px',a
       const result=url.pathname==='/api/public/pages'?{ok:true,data:{id:slug,slug,title:'SANCI',description:'',content:documentFor(slug)}}:
         url.pathname==='/api/public/schedule'?{ok:true,data:[]}:
         url.pathname==='/api/auth/session'?{ok:true,data:{authenticated:false,user:null}}:
-        {ok:true,data:{items:[],siteName:'SANCI9517'}};
+        {ok:true,data:{items:slugs.map((id,i)=>({id:'page:'+id,type:'page',slug:id,href:'/p/'+id,label:{home:'Főoldal',twitch:'Élő adás',youtube:'YouTube',tiktok:'TikTok',schedule:'Menetrend',community:'Közösség',about:'Rólam',contact:'Kapcsolat'}[id],children:[]})),siteName:'SANCI9517'}};
       res.writeHead(200,{'Content-Type':'application/json','Cache-Control':'no-store'}).end(JSON.stringify(result));return;
     }
     const name=url.pathname.startsWith('/p/')||url.pathname==='/'?'/visual-page.html':url.pathname;
@@ -66,6 +66,14 @@ test('all nine editorial pages preserve a usable content column at 320-390 px',a
     for(const slug of group){
       await page.goto(host+'/p/'+slug,{waitUntil:'load'});
       await page.locator('#content-canvas .visual-text').first().waitFor();
+      if(width===390){
+        await page.locator('.menu-nav-item').first().waitFor();
+        assert.equal(await page.locator('.menu-nav-item').count(),8);
+        assert.equal(await page.locator('.menu-nav-child').count(),0);
+        assert.equal(await page.locator('.menu-nav-icon-youtube svg').count(),2,'desktop and drawer YouTube marks');
+        assert.equal(await page.locator('.menu-nav-icon-tiktok svg').count(),2,'desktop and drawer TikTok marks');
+        assert.equal(await page.locator('a[href="/p/videok"]').count(),0);
+      }
       const m=await page.evaluate(()=>{
         const r=x=>document.querySelector(x).getBoundingClientRect();
         return {w:innerWidth,layout:getComputedStyle(document.querySelector('.public-page-layout')).display,
