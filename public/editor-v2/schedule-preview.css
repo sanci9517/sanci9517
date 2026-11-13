@@ -1,1 +1,15 @@
 .schedule-preview{width:100%;box-sizing:border-box;padding:14px;border:1px solid #d7dce5;border-radius:12px;background:#fff}.schedule-preview-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}.schedule-preview-header strong{font-size:16px}.schedule-preview-header span{font-size:10px;letter-spacing:.08em;padding:3px 6px;border:1px solid #cbd2dc;border-radius:999px}.schedule-preview-list{display:grid;gap:8px}.schedule-preview-card{display:grid;gap:5px;padding:10px;border:1px solid #e1e5eb;border-radius:9px;background:#f8f9fb}.schedule-preview-title{font-size:14px}.schedule-preview-meta{display:flex;flex-wrap:wrap;gap:6px;font-size:12px;color:#596273}.schedule-preview-meta span{padding:2px 6px;border-radius:6px;background:#eef1f5}.schedule-preview-status{font-size:11px}.schedule-preview-notes{margin:0;font-size:12px;color:#596273}.schedule-preview-card a{width:max-content;font-size:12px}.schedule-preview-empty{padding:14px;text-align:center;font-size:13px;color:#667085;border:1px dashed #cbd2dc;border-radius:8px}
+/* Weekly schedule view in the Inspector: data is preview-only, never published. */
+.schedule-preview .sanci-week-calendar{color:#172033;margin-top:12px;min-width:0}
+.schedule-preview .sanci-week-toolbar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.schedule-preview .sanci-week-heading{display:grid;gap:3px}
+.schedule-preview .sanci-week-heading strong{font-size:15px}
+.schedule-preview .sanci-week-heading span{font-size:11px;color:#657184}
+.schedule-preview .sanci-week-navigation{display:flex;flex-wrap:wrap;gap:6px}
+.schedule-preview .sanci-week-navigation button{font-size:12px;padding:7px;min-height:36px;border-radius:7px;border:1px solid #ccd3dd;background:#f2f5f8;color:#334155}
+.schedule-preview .sanci-week-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.schedule-preview .sanci-week-day{min-width:0;border:1px solid #dce2ec;border-radius:8px;background:#f6f8fa;padding:8px}
+.schedule-preview .sanci-week-day.is-today{border-color:#b51f37}
+.schedule-preview .sanci-week-day-header{display:flex;justify-content:space-between;gap:5px;color:#253144;font-size:11px;font-weight:800}
+.schedule-preview .sanci-week-day-empty{display:block;padding:6px 0 2px;color:#6b7481;font-size:11px}
+.schedule-preview .sanci-week-global-empty{font-size:12px;line-height:1.5;color:#58677a;margin-top:9px}
