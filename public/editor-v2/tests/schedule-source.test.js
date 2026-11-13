@@ -254,7 +254,7 @@ test('public schedule DTO does not leak source or sync fields', async () => {
 
   const result = await readPublicSchedule(db);
   assert.deepEqual(Object.keys(result[0]).sort(), [
-    'endsAt', 'id', 'notes', 'platform', 'startsAt', 'status', 'title', 'url'
+    'endsAt', 'id', 'imageAssetId', 'notes', 'platform', 'startsAt', 'status', 'title', 'url'
   ]);
   assert.equal(result[0].source, undefined);
   assert.equal(result[0].sourceId, undefined);
@@ -292,4 +292,20 @@ test('public weekly schedule filters by actual Europe/Budapest day, including UT
   assert.ok(binds.includes('2026-11-08'));
   assert.ok(binds.includes('2026-11-17'));
   assert.ok(!result.some(x=>x.source||x.sourceId));
+});
+
+test('public next stream selects the actual future event, not a stale Budapest-time item',async()=>{
+ const now=Date.now();
+ let sql='',binds=[];
+ const row=(id,start)=>({id,title:id,platform:'Twitch',starts_at:start,
+  ends_at:null,status:'scheduled',url:null,notes:'',image_asset_id:null});
+ const past=row('previous',new Date(now-15*60000).toISOString());
+ const future=row('next-stream',new Date(now+65*60000).toISOString());
+ const db={prepare(query){sql=query;return{bind(...args){binds=args;return{
+  all:async()=>({results:[past,future]})}}}}};
+ const result=await readPublicSchedule(db,{mode:'next',siteId:'site-default',statuses:['scheduled']});
+ assert.deepEqual(result.map(x=>x.id),['next-stream']);
+ assert.match(sql,/e\.starts_at >= datetime\('now','-3 hours'\)/);
+ assert.match(sql,/LIMIT 100/);
+ assert.deepEqual(binds.slice(0,2),['site-default','scheduled']);
 });
