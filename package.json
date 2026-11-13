@@ -30,7 +30,8 @@
     "test:media:storage": "node --experimental-loader ./tests/ts-extension-loader.mjs --test tests/browser/media-worker-storage.test.mjs",
     "test:brand": "node --test tests/sanci-brand-shell-contract.test.js",
     "test:brand:browser": "node --test tests/browser/sanci-public-mobile-grid.test.js",
-    "test:countdown": "node --test tests/countdown-next-stream.test.js"
+    "test:countdown": "node --test tests/countdown-next-stream.test.js",
+    "test:countdown:browser": "node --test tests/browser/home-next-stream-countdown.test.js"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "5.20260908.1",
