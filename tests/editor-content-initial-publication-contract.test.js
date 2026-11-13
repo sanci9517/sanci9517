@@ -198,3 +198,22 @@ test('publication guidance uses the same required-field rule as server publicati
  assert.equal(getPublicationContentGuidance(complete.node),null);
  assert.equal(getPublicationContentGuidance(createNode('heading')),null);
 });
+
+
+test('weekly Schedule remains an Editor-owned v1 document and passes server publish validation',()=>{
+  const state=createEditorState();
+  execute(state,{type:'element.add',payload:{type:'schedule',props:{schedule:{
+    mode:'week',limit:50,statuses:['scheduled','live','completed','cancelled'],
+    showStatus:true,showNotes:true,showEndTime:true
+  }}}});
+  const page=state.document.pages[state.document.activePageId];
+  const node=page.nodes[state.selection.primaryId];
+  assert.equal(node.props.schedule.mode,'week');
+  assert.equal(node.props.schedule.version,1);
+  assert.deepEqual(node.props.schedule.statuses,['scheduled','live','completed','cancelled']);
+  assert.equal(validatePublishDocument(state.document,page.id),null);
+  // A bogus mode must continue to fail without changing the persisted document.
+  const invalid=structuredClone(state.document);
+  invalid.pages[page.id].nodes[node.id].props.schedule.mode='invalid-mode';
+  assert.equal(validatePublishDocument(invalid,page.id),'INVALID_SCHEDULE_CONFIG');
+});
