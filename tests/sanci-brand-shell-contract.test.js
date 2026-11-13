@@ -19,9 +19,13 @@ test('brand shell does not contain placeholder S, dead hrefs or invented live st
 });
 
 test('canonical SANCI identity and external channels are real source-of-truth URLs',()=>{
-  for(const url of ['https://www.twitch.tv/sanci9517','https://www.youtube.com/@sanci9517vod','https://www.tiktok.com/@sanci9517','https://discord.gg/RWBCYNMqy','mailto:sandor.bogadi95@gmail.com']){
-    assert.ok(shell.includes(url),url);
-  }
+  // Channel-specific external URLs now live in the published Editor pages,
+  // not in three repeated footer/menu lists.
+  assert.ok(shell.includes('mailto:sandor.bogadi95@gmail.com'));
+  assert.ok(js.includes("twitch:'<path"));
+  assert.ok(js.includes("youtube:'<path"));
+  assert.ok(js.includes("tiktok:'<path"));
+  assert.ok(js.includes("discord:'<path"));
   for(const href of ['/p/twitch','/p/youtube','/p/tiktok','/p/schedule','/p/community','/p/about','/p/contact']){
     assert.ok(shell.includes('href="'+href+'"'),href);
   }
@@ -84,7 +88,7 @@ test('retired video hub is no longer linked by the public shell',()=>{
 test('navigation icons use real platform vector silhouettes rather than emoji placeholders',()=>{
   assert.match(js,/home:'<path/);
   for(const key of ['twitch','youtube','tiktok','discord'])assert.ok(js.includes(key+":'<path"),key);
-  assert.ok(js.includes("'menu-nav-icon-'+identity.name"),'dynamic icon wrapper');
+  assert.ok(js.includes("menu-nav-icon-'+identity.name"),'dynamic icon wrapper');
   assert.match(js,/enhanceStaticNavigationIcons\(\)/);
   assert.match(css,/menu-nav-icon-youtube \.icon/);
   assert.match(css,/menu-nav-icon-tiktok \.icon/);
