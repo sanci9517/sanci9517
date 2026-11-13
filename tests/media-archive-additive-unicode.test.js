@@ -132,3 +132,25 @@ test('D-06 additive SQL works with production-like D1 table columns and FK const
   assert.equal(db.prepare('PRAGMA quick_check').get().quick_check,'ok');
  }finally{db.close();}
 });
+
+
+test('D-06 JSON Unicode-escape positions and nested payloads reject archived references without cross-site leakage',()=>{
+ const escapeAt=(value,index)=>value.slice(0,index)+'\\u'+value.charCodeAt(index).toString(16).padStart(4,'0')+value.slice(index+1);
+ const doc=value=>'{'+'"sections":[{"meta":{"assetId":"'+value+'"}}]}';
+ const samples=[id.toUpperCase(),escapeAt(id,0),escapeAt(id,8),escapeAt(id,12),escapeAt(id,id.length-1),
+  escapeAt(escapeAt(id,0),id.length+4)];
+ for(const [index,encodedId] of samples.entries()){
+  assert.equal(JSON.parse(doc(encodedId)).sections[0].meta.assetId.toLowerCase(),id);
+  const db=fixture();try{
+   db.exec(candidateSql);
+   const page=db.prepare(insert);
+   assertArchived(()=>page.run('draft-'+index,'site-a',doc(encodedId),null));
+   assertArchived(()=>page.run('live-'+index,'site-a','{}',doc(encodedId)));
+   page.run('safe-'+index,'site-a','{}',null);
+   assertArchived(()=>db.prepare('UPDATE pages SET content_json=? WHERE id=?').run(doc(encodedId),'safe-'+index));
+   assertArchived(()=>db.prepare('INSERT INTO editor_revisions(id,page_id,document_json) VALUES(?,?,?)').run('history-'+index,'safe-'+index,doc(encodedId)));
+   page.run('cross-'+index,'site-b',doc(encodedId),null);
+   db.prepare('INSERT INTO editor_revisions(id,page_id,document_json) VALUES(?,?,?)').run('foreign-'+index,'cross-'+index,doc(encodedId));
+  }finally{db.close();}
+ }
+});
