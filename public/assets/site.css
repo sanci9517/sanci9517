@@ -93,3 +93,25 @@ body.sanci-editorial-page[data-sanci-shell="1"] .visual-button{width:auto;max-wi
 body.sanci-editorial-page[data-sanci-shell="1"] .visual-heading{text-wrap:balance}
 body.sanci-editorial-page[data-sanci-shell="1"] .visual-layout{min-width:0}
 @media(max-width:620px){body.sanci-editorial-page[data-sanci-shell="1"] .visual-button{width:100%}}
+
+
+/* Mobile footer repair — prevent text collisions and stranded third column. */
+body[data-sanci-shell="1"] .public-footer-bottom{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+body[data-sanci-shell="1"] .public-footer-bottom>span{display:block;min-width:0;overflow-wrap:anywhere}
+body[data-sanci-shell="1"] .public-footer-bottom [data-admin-shortcut]:not([hidden]){display:inline-flex;align-items:center;min-height:44px;padding:6px 12px;border:1px solid #344253;border-radius:8px;color:#b8c4d3;text-decoration:none}
+body[data-sanci-shell="1"] .public-footer-bottom [hidden]{display:none!important}
+body[data-sanci-shell="1"] .public-footer-column{min-width:0}
+body[data-sanci-shell="1"] .public-footer-column a{min-width:0;overflow-wrap:anywhere;min-height:30px}
+@media(max-width:620px){
+ body[data-sanci-shell="1"] .public-footer-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:30px 18px}
+ body[data-sanci-shell="1"] .public-footer-column:last-child{grid-column:1/-1}
+ body[data-sanci-shell="1"] .public-footer-bottom{display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:10px}
+ body[data-sanci-shell="1"] .public-footer-bottom>span{display:block;max-width:100%;line-height:1.55}
+}
+@media(max-width:480px){
+ body[data-sanci-shell="1"] .public-footer-grid{grid-template-columns:minmax(0,1fr);gap:26px}
+ body[data-sanci-shell="1"] .public-footer-brand,body[data-sanci-shell="1"] .public-footer-column:last-child{grid-column:1}
+ body[data-sanci-shell="1"] .public-footer-column{gap:9px}
+ body[data-sanci-shell="1"] .public-footer-column a{min-height:38px;display:flex;align-items:center}
+ body[data-sanci-shell="1"] .public-footer-bottom{border-top:1px solid rgba(205,217,235,.12);padding-top:22px}
+}
