@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="hu"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><meta name="color-scheme" content="dark">
+<title>Menetrend kezelése | SANCI9517 Admin</title>
+<style>
+:root{color-scheme:dark;--bg:#090c12;--surface:#131b28;--line:#344253;--text:#f5f7fb;--muted:#b8c4d3;--accent:#e14d61;font:16px/1.5 system-ui,-apple-system,Segoe UI,sans-serif}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:linear-gradient(160deg,#090c12,#101826);color:var(--text)}
+a{color:#e9b8c1}button,input,select,textarea{font:inherit}button{cursor:pointer}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #e14d61;outline-offset:3px}
+.top{border-bottom:1px solid var(--line);background:#090c12ee}
+.top-inner{display:flex;align-items:center;flex-wrap:wrap;gap:16px;justify-content:space-between;padding:15px 0}
+.wrap{width:min(1320px,calc(100% - 32px));margin:0 auto}
+.brand{font-weight:900;letter-spacing:.13em;font-size:18px;color:white;text-decoration:none}
+.topnav{display:flex;gap:12px;flex-wrap:wrap}.topnav a{display:inline-flex;align-items:center;min-height:44px;padding:7px 12px;border:1px solid var(--line);border-radius:10px;color:var(--muted);text-decoration:none;font-size:13px}
+main{padding:35px 0 90px}h1{font-size:clamp(30px,5vw,52px);line-height:1.08;letter-spacing:-.05em;margin:12px 0}h2{font-size:22px;margin:0 0 12px}
+.intro{max-width:850px;color:var(--muted);margin:0 0 32px}
+.badge{color:#9bc5e7;font-size:12px;font-weight:850;letter-spacing:.13em}
+.layout{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(280px,.85fr);gap:24px;align-items:start}
+.panel{padding:clamp(18px,2.8vw,30px);background:rgba(19,27,40,.95);border:1px solid var(--line);border-radius:20px;min-width:0}
+.form-stack{display:grid;gap:16px}.field{display:grid;gap:7px;font-size:13px;font-weight:700;color:#e9edf3}.field small{color:#98aabc;font-weight:400}
+.field input,.field select,.field textarea{display:block;width:100%;min-height:45px;border:1px solid #4a586a;border-radius:10px;padding:10px 12px;background:#0b111c;color:#fff;font-weight:450}
+.field textarea{min-height:105px;resize:vertical}.form-two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-actions{display:flex;gap:10px;flex-wrap:wrap}
+.action{min-height:45px;padding:10px 18px;border:1px solid #4a586a;border-radius:10px;background:#202b3a;color:#fff;font-weight:780}
+.action.primary{background:#b7354e;border-color:#e14d61}
+.action:disabled{opacity:.5;cursor:wait}
+.image-preview{display:block;width:min(100%,380px);height:170px;object-fit:cover;border:1px solid #4a586a;border-radius:12px;background:#090c12}
+.image-preview[hidden]{display:none}
+.info{margin:12px 0;color:#b8c4d3;font-size:13px}
+.status{min-height:22px;color:#d1e1f0;font-weight:700}
+.status[data-kind="error"]{color:#ff8f9f}.status[data-kind="success"]{color:#95edc1}
+.toolbar{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin:10px 0 20px}
+.toolbar .week-actions{display:flex;gap:8px}
+.calendar{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:10px}
+.day{min-width:0;background:#0c131e;border:1px solid #344253;border-radius:12px;padding:10px}
+.day.today{border-color:var(--accent)}.day strong{display:block;font-size:13px;margin-bottom:12px}
+.event{display:grid;gap:6px;width:100%;text-align:left;background:#20202b;color:#fff;border:1px solid #654657;border-radius:9px;padding:9px;margin:0 0 8px;overflow-wrap:anywhere}
+.event img{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:6px}
+.event span{font-size:12px;font-weight:850}.event small{font-size:11px;color:#bac9d7}
+.empty{color:#8093a6;font-size:12px;line-height:1.5}.items{display:grid;gap:9px;margin-top:18px}
+.item{display:flex;align-items:center;gap:14px;justify-content:space-between;flex-wrap:wrap;background:#0b131e;border:1px solid #344253;border-radius:11px;padding:12px}
+.item strong{display:block;font-size:14px}.item small{display:block;color:#adbdcd;font-size:12px}.item-actions{display:flex;gap:7px}
+.item-actions button{min-height:40px;padding:7px 11px;border:1px solid #4a586a;background:#1b2736;border-radius:9px;color:white}
+.item-actions button.danger{color:#ffacb9;border-color:#714251}
+.help{font-size:12px;color:#9daec0;line-height:1.6}
+@media(max-width:1060px){.calendar{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:850px){.layout{grid-template-columns:1fr}.calendar{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:430px){.form-two{grid-template-columns:1fr}.calendar{grid-template-columns:1fr}.day{min-height:auto}.topnav{width:100%}.topnav a{flex:1;justify-content:center}}
+</style></head>
+<body><header class="top"><div class="wrap top-inner"><a class="brand" href="/admin">SANCI9517 / ADMIN</a>
+<nav class="topnav" aria-label="Admin navigáció"><a href="/admin">Vezérlőpult</a><a href="/admin/editor">Visual Editor</a><a href="/admin/media">Médiatár</a><a href="/p/schedule">Publikus menetrend</a></nav></div></header>
+<main class="wrap"><span class="badge">STREAM / MENETREND / 01</span><h1>AZ ADÁSREND A TE KEZEDBEN.</h1>
+<p class="intro">Hozzáadhatsz és módosíthatsz adásokat, időpontot, platformot, leírást és médiatári borítót. A heti naptár valódi adatokat mutat magyarországi idő szerint. Az oldal kinézetét továbbra is a Visual Editorban szerkesztheted.</p>
+<div class="layout"><section class="panel" aria-labelledby="calendar-title"><div class="toolbar"><div><h2 id="calendar-title">Heti adásnaptár</h2><span id="week-label" class="help">Betöltés…</span></div><div class="week-actions"><button class="action" type="button" id="prev-week" aria-label="Előző hét">‹</button><button class="action" type="button" id="current-week">Ez a hét</button><button class="action" type="button" id="next-week" aria-label="Következő hét">›</button></div></div><div class="calendar" id="calendar" aria-live="polite"></div>
+<h2 style="margin-top:36px">Összes rögzített adás</h2><div class="items" id="items" aria-live="polite"></div></section>
+<section class="panel" aria-labelledby="edit-title"><h2 id="edit-title">Új adás felvétele</h2>
+<form id="event-form" class="form-stack">
+<label class="field">Cím <input name="title" required maxlength="160" placeholder="Például: Fortnite – közös játék"></label>
+<div class="form-two"><label class="field">Platform <select name="platform" required><option value="Twitch">Twitch</option><option value="YouTube">YouTube</option><option value="TikTok">TikTok</option><option value="Kick">Kick</option><option value="Discord">Discord</option></select></label>
+<label class="field">Állapot <select name="status"><option value="scheduled">Tervezett</option><option value="live">Élő</option><option value="completed">Lezajlott</option><option value="cancelled">Elmarad</option></select></label></div>
+<div class="form-two"><label class="field">Kezdés <small>Magyarországi idő</small><input type="datetime-local" name="startsAt" required></label>
+<label class="field">Befejezés (opcionális) <small>Magyarországi idő</small><input type="datetime-local" name="endsAt"></label></div>
+<label class="field">Adáslink (opcionális) <input type="url" name="url" maxlength="500" placeholder="https://www.twitch.tv/sanci9517"></label>
+<label class="field">Megjegyzés <textarea name="notes" maxlength="500" placeholder="Miről fog szólni?"></textarea></label>
+<label class="field">Borítókép a médiatárból <small>Nem kötelező. Csak a saját, aktív képeid választhatók.</small><select name="imageAssetId" id="image-select"><option value="">Nincs borítókép</option></select></label>
+<img id="image-preview" class="image-preview" alt="Kiválasztott adásborító előnézete" hidden>
+<p class="help">A képet a <a href="/admin/media">Médiatárban</a> tudod feltölteni. Az adás borítója a publikus heti naptárkártyán jelenik meg. Ha más elrendezést szeretnél, a <a href="/admin/editor">Visual Editorban</a> az egész naptár oldalát alakíthatod.</p>
+<div class="form-actions"><button id="save-event" class="action primary" type="submit">Adás mentése</button><button id="clear-event" class="action" type="button">Új adás</button></div></form>
+<p id="status" class="status" role="status" aria-live="polite"></p>
+</section></div></main>
+<script type="module" src="/assets/admin-schedule.js?v=20261113-1"></script></body></html>
