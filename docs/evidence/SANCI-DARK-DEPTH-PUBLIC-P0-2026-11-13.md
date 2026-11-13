@@ -314,3 +314,28 @@ A minimal repro bizonyítja a gyökérokot és a CSS-javítás geometriáját, d
 **Fontos nyitott minőségkapu:** a nyilvános workers.dev URL-t a web eszköz \`Internal Error / URL is not accessible\` eredménnyel nem tudta visszaolvasni; ezért nincs valódi site screenshot, a teljes 320/390/768/1024/1440px Playwright/Chrome QA, CLI typecheck, színkontraszt, media HTTP GET/bytes, valódi Android asset megjelenítési és Editor-manual acceptance **NOT RUN/UNVERIFIED**, nem PASS. A SANCI designer vizuális elfogadás és a Visual Editor teljes 77.44.7.D kapuja továbbra is **OPEN / NOT_CERTIFIED**. 0 Ft új költés.
 
 **Alárendelt brief:** \`docs/SANCI9517-PUBLIC-SITE-BRIEF.md\` v2.5 rögzíti a legfrissebb image-overlay SANCI-döntést, és felülírja a korábbi „kép alatt szöveg” ajánlást; **nem** keletkezett második MASTER terv.
+
+
+## 2026-11-13 késő este – SANCI homepage UX fókusz, AvidIsOdd inspiráció
+
+**Tulajdonosi döntés:** a korábbi főoldal a menü ellenére még túl sokféle tartalmat és többszörös ajánlóblokkokat mutatott. Az AvidIsOdd korábban feltöltött screenshotjaiból a meghatározó arculati nyitás, a nagy CTA és az áttekinthetőség inspirációját vesszük át, **nem** a platform-gombok/videóváltó/shop/partnercsík pontos felépítését. Az \`https://avidisodd.hu/\` a webes ellenőrzés idején nem volt közvetlenül elérhető; nincs valótlan élő weboldal-audit állítás.
+
+**Ellenőrzött D1 baseline:** \`site-default\`, \`page-home\`, Save/Publish v109 szinkronban, eredeti \`sanci_home_hero.webp\` aktív site-owned mediarekord; nav draft=published=13 és hét másik változatlan publikus oldal. A régi főoldal 32 csomópontot, 4 felső szekciót, 6 CTA-t tartalmazott; főoldali YouTube/TikTok/Discord platformlisták és erős visszatérő márkajelentés duplikálták az aloldalakat.
+
+### Megvalósult szerkeszthető Page Model redesign
+
+- **Nyitókép:** egyetlen, saját WEBP hero-háttér, kb. 610px desktop/500px mobil adaptív magasság, a kép alsó részén olvasható, \`rgba(5,9,16,.76)\` szöveg-overlay. Megőrzött eredeti H1 „Játsszunk egyet. A többi alakul.”, friss, közvetlen szöveg a Fortnite/Hearthstone/indie játékokról. Egy fő gomb \`/p/twitch\` és egy másodlagos \`/p/about\`. A SANCI logó továbbra is csak a közös fejlécben; nem ismételjük az oldaltartalom tetején.
+- **Második, egyetlen átvezető szekció:** világos editorial tipográfia, finom felső vonal, külön fotó és kártyarács nélkül; H2 „A következő kör itt kezdődik.”, rövid mondat a valódi heti menetrendről és az egyetlen \`/p/schedule\` CTA.
+- **Kivezetés:** a külön „02 / AMIT NÉZHETSZ” (YouTube/TikTok) és a „03 / KÖZÖSSÉG” saját háttérrel, plusz platform CTA-k teljes subtree-ját **visszafordíthatóan csak az új v110 dokumentumból** vettük ki; a korábbi v109 teljes Editor-revízió változatlanul rendelkezésre áll. A teljes YouTube/TikTok/Discord tartalom az eredeti dedikált oldalon változatlan. Nincs új oldal, mert a meglevő 8 világos feladatú aloldal elegendő.
+- **Mérhető eredmény:** 32→17 Editor csomópont (15 kivezetett), 4→2 fő szakasz, 6→3 egyértelmű CTA, 1→1 saját hero kép; új homepage SEO description. A többi oldal, a navigáció, R2, a Worker runtime, menetrend és Twitch embed érintetlen. \`Save\` és \`Publish\` teljesen külön.
+
+### Read-only preflight / Save / Publish / postflight
+
+1. **Előellenőrzés:** utolsó Editor revízió és mindkét page-snapshot v109, media UUID aktív, nav published v13; nincs konkurens draft. PASS.
+2. **Mentés:** új v110 \`editor_revisions\` + feltételes CAS \`pages.content_json\` és új leírás + audit, **3/3 változás PASS**; a v109 published snapshot még nem változott. Az első helyi JS layout-ellenőrzés egy hibás *elvárt törölt csomópontszámot* (14 helyett valós 15) észlelt még az írás ELŐTT; nem történt hibás vagy részleges első adatírás. A korrigált 15-ös invariánssal új preflight és CAS mentés végig PASS.
+3. **Post-save QA:** külön read-only D1 SELECT 17/17 elérhető node, nincs árva/ciklus, egy H1, két szekció, három releváns \`/p/\` link, aktív hero-media, mobil stack, nincs YouTube/TikTok/Discord főoldali ajánlókártya, v109 publikus snapshot változatlan, navigáció 13. **PASS.**
+4. **Publish:** feltételes CAS közzététel \`published_content_json\`, \`published_revision_id\`, \`published_description\` és audit, **2/2 módosítás PASS**. Az előző teljes v109 revízió megmaradt.
+5. **Postflight:** újabb read-only D1 SELECT, published v110 = draft v110, aktuális revízió ID megvan, nodeCount=17, sections=2, CTA=3, 1 hero-image, 0 külön beillesztett image, audit Save és Publish 2/2, navigáció 13. A hét másik publikus oldal revíziója változatlan. **PASS.**
+6. **Worker:** ugyanaz a már működő, 100% forgalmú Cloudflare deployment \`86a814f4-23fe-4b0c-94a6-dc56e744fd34\` / version \`a235554e-2e34-44a1-8a35-604e4c758284\`; nem indítottunk indokolatlan runtime deployt, GitHub Actions-t, D1-migrációt vagy fizetős szolgáltatást. \`docs/SANCI9517-PUBLIC-SITE-BRIEF.md\` v2.6 rögzíti a módosítást, a MASTER változatlanul egyetlen kanonikus terv.
+
+**Nyitott / NOT RUN:** valódi éles Chrome/Android 320/390/768/1024/1440px screenshot, belső Hero overlay színhű/kontraszt/szövegtördelés és CTA fókusz teljes mérés, source-asset hash, \`npm run test:brand:browser\` és egész Editor manuális elfogadása. A webes ellenőrző nem tudta megnyitni a Workers.dev élő oldalt. A D1 tartalom-kiadás nem bizonyítja, hogy a mobilon minden pixel már végleges. A Visual Editor \`77.44.7.D\` teljes kapuja továbbra **OPEN / NOT_CERTIFIED**. Nincs új költség.
