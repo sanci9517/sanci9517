@@ -3,7 +3,7 @@ import { DEFAULT_SITE_ID } from "./site-context.ts";
 
 export const SCHEDULE_READ_MODES = ["upcoming", "all", "next", "week"] as const;
 export const SCHEDULE_READ_ORDERS = ["asc", "desc"] as const;
-export const SCHEDULE_READ_STATUSES = ["scheduled", "live", "completed"] as const;
+export const SCHEDULE_READ_STATUSES = ["scheduled", "live", "completed", "cancelled"] as const;
 
 export type ScheduleReadConfig = {
   siteId?: string;
@@ -91,7 +91,7 @@ function plusDays(day: string, amount: number): string {
 
 export async function readPublicSchedule(db: D1Database, input: ScheduleReadConfig = {}): Promise<PublicScheduleItem[]> {
   const config = normalizeScheduleReadConfig(input);
-  const where = ["site_id = ?", "status != 'cancelled'"];
+  const where = ["site_id = ?"]; // The requested status list controls cancellations.
   const binds: unknown[] = [config.siteId ?? DEFAULT_SITE_ID];
 
   where.push(`status IN (${config.statuses.map(() => "?").join(",")})`);
@@ -136,11 +136,13 @@ export async function readPublicSchedule(db: D1Database, input: ScheduleReadConf
   }));
   if (config.mode !== "week" || !config.weekStart) return mapped;
   const lastExclusive = plusDays(config.weekStart, 7);
-  return mapped.filter(row => {
+  const weekly = mapped.filter(row => {
     const localDay = dayKey(row.startsAt);
     return localDay >= config.weekStart! && localDay < lastExclusive;
   }).sort((a, b) => {
     const dateOrder = dayKey(a.startsAt).localeCompare(dayKey(b.startsAt));
     return dateOrder || a.startsAt.localeCompare(b.startsAt);
-  }).slice(0, config.limit);
+  });
+  if (config.order === "desc") weekly.reverse();
+  return weekly.slice(0, config.limit);
 }
