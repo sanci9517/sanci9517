@@ -342,9 +342,10 @@ export function cloneDocument(document) {
 
 // Corrupted imported models can contain inherited property names as IDs.
 function ownRecordValue(record, id) {
-  return record && typeof record === 'object' && !Array.isArray(record)
-    && typeof id === 'string' && Object.hasOwn(record, id)
-    ? record[id] ?? null : null;
+  if (!record || typeof record !== 'object' || Array.isArray(record)
+      || typeof id !== 'string' || !Object.hasOwn(record, id)) return null;
+  const value = record[id];
+  return value && typeof value === 'object' && !Array.isArray(value) ? value : null;
 }
 
 export function getPage(document, pageId = document?.activePageId) {
