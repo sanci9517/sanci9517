@@ -3694,3 +3694,8 @@ A D-06 éles D1 `SELECT` és Cloudflare R2 `GET objects` read-only páros leltá
 A friss éles D1: 34 ledger-sor, legutolsó `0028_media_archive.sql`; `PRAGMA quick_check=ok`, `PRAGMA foreign_key_check` 0 sor; minden lekérdezés `changed_db=false`, `rows_written=0`. A három 0028 archiválásvédelmi trigger továbbra **case-sensitive**, a 0029 nem futott. A R2 listing nem helyettesíti az éles GET/HEAD/409 böngészős és titkosított tartaloméletciklus tesztet, és a jelenlegi éles adatban nincs archivált asset, amin a 0029 bug természetesen kipróbálható lenne.
 
 **D-06 részleges, read-only leltár PASS; teljes 77.44.7.D OPEN / NOT_CERTIFIED.** Minden módosító adatbázis- vagy R2-művelet, fizetős szolgáltatás és redundáns Worker deploy nélkül. Gépi bizonyíték: `docs/evidence/editor-d06-d1-r2-inventory-2026-11-13.json`.
+
+
+### 77.44.7.D / D-06 — 0029 trigger és ledger atomikus PR-jelölt (2026-11-13)
+
+A korábbi külön draft ágon lévő, nem éles 0029 casefold script és SQLite regresszió az aktuális egyetlen MASTER tervhez visszavezetett PR-jelöltben folytatódik. A script immutábilis 0028-ból induló trigger- és ledger-szerződést vár, elutasítja az ismételt 0029 alkalmazást, és kizárólag igazoltan atomikus D1Database.batch egységben hajtható végre. A marker a három triggerrel együtt commit/rollbackel. A tests/media-archive-trigger-casefold.test.js az npm run test:media része, de a pontos PR-head hosted CI és a valódi Cloudflare D1 binding atomikus migrációs útvonal/backup-restore még NEM PASS; a jelen PR nem indít production D1 adatírást vagy migrációt. Az aktuális D1/R2 read-only állományegyezés 6/6, archivált média 0. Save és Publish külön marad, 0 Ft költségkorlát, a teljes 77.44.7.D OPEN / NOT_CERTIFIED.
