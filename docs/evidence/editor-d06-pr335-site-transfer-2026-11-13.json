@@ -14,7 +14,7 @@
   },
   "source_verified": {
     "tests/fixtures/0029_media_archive_unicode_additive.sql": "bf78d8df926d9091ed42b6af6f1009c29343917f",
-    "tests/media-archive-additive-unicode.test.js": "a1a5349ea93648995eab831f12b374aac2e5459b"
+    "tests/media-archive-additive-unicode.test.js": "93249cd1efb3025610cae751129c9b329000edfd"
   },
   "local_checks": [
     {
@@ -24,12 +24,17 @@
     {
       "command": "node --test tests/media-archive-additive-unicode.test.js",
       "result": "PASS",
-      "tests": 5,
+      "tests": 6,
       "failures": 0
     },
     {
       "command": "git hash-object tests/fixtures/0029_media_archive_unicode_additive.sql && git hash-object tests/media-archive-additive-unicode.test.js",
       "result": "MATCH_GITHUB_BLOBS"
+    },
+    {
+      "command": "node --test tests/media-archive-additive-unicode.test.js [production-shaped D1 table constraints]",
+      "result": "PASS",
+      "details": "Additional test recreates the production D1 pages/media/editor_revisions required columns and FK/UNIQUE constraints in isolated local Node SQLite; 0028 and staged 0029 triggers compile, reject escaped page insert and historical-only site transfer, PRAGMA quick_check=ok and FK check empty."
     }
   ],
   "production_d1_read_only": {
@@ -45,7 +50,8 @@
     "observed_changes": 0,
     "observed_rows_written": 0,
     "observed_changed_db": false,
-    "source": "Cloudflare D1 authenticated SELECT/PRAGMA queries; 2026-11-13"
+    "source": "Cloudflare D1 authenticated SELECT/PRAGMA queries; 2026-11-13",
+    "time_travel_bookmark_available": true
   },
   "unverified": [
     "full npm run test:media",
@@ -55,7 +61,8 @@
     "isolated Cloudflare D1 actual 0029 trigger atomicity",
     "production migration approval",
     "production schema write",
-    "full 77.44.7.D capability matrix"
+    "full 77.44.7.D capability matrix",
+    "exact production D1 replay in an isolated Cloudflare D1 database"
   ],
   "safeguards": [
     "no secrets in evidence",
