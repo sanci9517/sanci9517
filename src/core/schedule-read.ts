@@ -1,5 +1,6 @@
 import type { D1Database } from "@cloudflare/workers-types";
 import { DEFAULT_SITE_ID } from "./site-context.ts";
+import { SCHEDULE_ARTWORK_JOIN,SCHEDULE_ARTWORK_SELECT,validScheduleArtworkId } from "./schedule-artwork";
 
 export const SCHEDULE_READ_MODES = ["upcoming", "all", "next", "week"] as const;
 export const SCHEDULE_READ_ORDERS = ["asc", "desc"] as const;
@@ -24,6 +25,7 @@ export type PublicScheduleItem = {
   status: string;
   url: string | null;
   notes: string;
+  imageAssetId: string | null;
 };
 
 const DEFAULTS = {
@@ -91,37 +93,37 @@ function plusDays(day: string, amount: number): string {
 
 export async function readPublicSchedule(db: D1Database, input: ScheduleReadConfig = {}): Promise<PublicScheduleItem[]> {
   const config = normalizeScheduleReadConfig(input);
-  const where = ["site_id = ?"]; // The requested status list controls cancellations.
+  const where = ["e.site_id = ?"]; // The requested status list controls cancellations.
   const binds: unknown[] = [config.siteId ?? DEFAULT_SITE_ID];
 
-  where.push(`status IN (${config.statuses.map(() => "?").join(",")})`);
+  where.push(`e.status IN (${config.statuses.map(() => "?").join(",")})`);
   binds.push(...config.statuses);
 
   if (config.mode === "upcoming" || config.mode === "next") {
-    where.push("starts_at >= datetime('now')");
+    where.push("e.starts_at >= datetime('now')");
   }
 
   if (config.mode === "week" && config.weekStart) {
     // One day on both sides accounts for UTC/offest events crossing local midnight.
     // Exact Europe/Budapest day filtering happens after retrieval.
-    where.push("substr(starts_at, 1, 10) >= ? AND substr(starts_at, 1, 10) < ?");
+    where.push("substr(e.starts_at, 1, 10) >= ? AND substr(e.starts_at, 1, 10) < ?");
     binds.push(plusDays(config.weekStart, -1), plusDays(config.weekStart, 8));
   }
 
   if (config.platforms.length) {
-    where.push(`platform IN (${config.platforms.map(() => "?").join(",")})`);
+    where.push(`e.platform IN (${config.platforms.map(() => "?").join(",")})`);
     binds.push(...config.platforms);
   }
 
   const rows = await db.prepare(
-    `SELECT id,title,platform,starts_at,ends_at,status,url,notes
-     FROM schedule_items
+    `SELECT e.id,e.title,e.platform,e.starts_at,e.ends_at,e.status,e.url,e.notes,${SCHEDULE_ARTWORK_SELECT}
+     FROM schedule_items e${SCHEDULE_ARTWORK_JOIN}
      WHERE ${where.join(" AND ")}
-     ORDER BY starts_at ${config.order === "desc" ? "DESC" : "ASC"}
+     ORDER BY e.starts_at ${config.order === "desc" ? "DESC" : "ASC"}
      LIMIT ${config.mode === "week" ? 300 : config.limit}`
   ).bind(...binds).all<{
     id: string; title: string; platform: string; starts_at: string;
-    ends_at: string | null; status: string; url: string | null; notes: string;
+    ends_at: string | null; status: string; url: string | null; notes: string; image_asset_id: string | null;
   }>();
 
   const mapped = rows.results.map(row => ({
@@ -132,7 +134,8 @@ export async function readPublicSchedule(db: D1Database, input: ScheduleReadConf
     endsAt: row.ends_at,
     status: row.status,
     url: row.url,
-    notes: row.notes
+    notes: row.notes,
+    imageAssetId: validScheduleArtworkId(row.image_asset_id) ? row.image_asset_id.toLowerCase() : null
   }));
   if (config.mode !== "week" || !config.weekStart) return mapped;
   const lastExclusive = plusDays(config.weekStart, 7);
