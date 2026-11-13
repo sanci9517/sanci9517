@@ -1,4 +1,5 @@
 import { normalizeScheduleConfig } from './schedule-schema.js';
+import {renderScheduleWeek,currentBudapestMonday} from './schedule-week.js';
 
 const PREVIEW_ITEMS = Object.freeze([
   {
@@ -60,6 +61,19 @@ export function renderSchedulePreview(container, config = {}) {
   badge.textContent = 'PREVIEW';
   header.append(title, badge);
   container.append(header);
+
+  if (normalized.mode === 'week') {
+    // The Editor preview does not invent real broadcasts; live data belongs to
+    // the public API and the separate schedule domain, never the Page Model.
+    const note = document.createElement('p');
+    note.className = 'schedule-preview-notes';
+    note.textContent = 'Heti naptár — szerkezeti előnézet. A valós adásokat a menetrend-adatforrás tölti be.';
+    const week = document.createElement('div');
+    week.innerHTML = renderScheduleWeek([], currentBudapestMonday(), normalized);
+    week.querySelectorAll('[data-schedule-week-action]').forEach(button => { button.disabled = true; });
+    container.append(note, week);
+    return;
+  }
 
   if (!items.length) {
     const empty = document.createElement('div');
