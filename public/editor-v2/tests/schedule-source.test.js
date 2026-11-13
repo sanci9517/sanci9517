@@ -4,7 +4,7 @@ import test from 'node:test';
 const { normalizeScheduleSyncWindow } = await import('../../../src/core/schedule/types.ts');
 const { mapTwitchScheduleSegment } = await import('../../../src/core/schedule/mapper.ts');
 const { mapTwitchScheduleResponseStatus } = await import('../../../src/core/schedule/twitch-errors.ts');
-const { readPublicSchedule } = await import('../../../src/core/schedule-read.ts');
+const { readPublicSchedule, normalizeScheduleReadConfig } = await import('../../../src/core/schedule-read.ts');
 const { syncCanonicalTwitchSchedule } = await import('../../../src/core/schedule/sync.ts');
 const { fetchTwitchSchedule } = await import('../../../src/core/schedule/twitch-adapter.ts');
 const { encryptTwitchToken } = await import('../../../src/core/twitch-crypto.ts');
@@ -264,4 +264,32 @@ test('public schedule DTO does not leak source or sync fields', async () => {
   assert.equal(result[0].sourceMissingAt, undefined);
   assert.equal(result[0].sourceCategoryId, undefined);
   assert.equal(result[0].sourceCategoryName, undefined);
+});
+
+
+test('week query accepts Monday and rejects malformed, Sunday and arbitrary ranges', () => {
+  const config=normalizeScheduleReadConfig({mode:'week',weekStart:'2026-11-09',limit:50});
+  assert.equal(config.mode,'week');
+  assert.equal(config.weekStart,'2026-11-09');
+  assert.throws(()=>normalizeScheduleReadConfig({mode:'week',weekStart:'2026-11-08'}),/Monday/);
+  assert.throws(()=>normalizeScheduleReadConfig({mode:'week',weekStart:'2026-11-99'}),/Monday/);
+  assert.throws(()=>normalizeScheduleReadConfig({mode:'week'}),/week start/);
+  assert.throws(()=>normalizeScheduleReadConfig({mode:'all',weekStart:'2026-11-09'}),/requires week mode/);
+});
+
+test('public weekly schedule filters by actual Europe/Budapest day, including UTC midnight crossover', async () => {
+  let executedSql='',binds=[];
+  const rows=[
+    {id:'monday-utc-edge',title:'Hétfő',platform:'Twitch',starts_at:'2026-11-08T23:30:00Z',ends_at:null,status:'scheduled',url:null,notes:''},
+    {id:'monday-local',title:'Kedd előtt',platform:'Twitch',starts_at:'2026-11-09T18:00',ends_at:null,status:'scheduled',url:null,notes:''},
+    {id:'sunday-local',title:'Vasárnap',platform:'Twitch',starts_at:'2026-11-15T20:30',ends_at:null,status:'scheduled',url:null,notes:''},
+    {id:'next-week',title:'Következő hét',platform:'Twitch',starts_at:'2026-11-16T10:00',ends_at:null,status:'scheduled',url:null,notes:''}
+  ];
+  const db={prepare(sql){executedSql=sql;return{bind(...args){binds=args;return{all:async()=>({results:rows})}}}}};
+  const result=await readPublicSchedule(db,{mode:'week',weekStart:'2026-11-09',limit:10});
+  assert.deepEqual(result.map(x=>x.id),['monday-utc-edge','monday-local','sunday-local']);
+  assert.match(executedSql,/substr\(starts_at, 1, 10\)/);
+  assert.ok(binds.includes('2026-11-08'));
+  assert.ok(binds.includes('2026-11-17'));
+  assert.ok(!result.some(x=>x.source||x.sourceId));
 });
