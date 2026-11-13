@@ -259,3 +259,30 @@ A minimal repro bizonyítja a gyökérokot és a CSS-javítás geometriáját, d
 **Release státusz:** Cloudflare Worker API legutóbbi visszaolvasás 2026-11-13T21:49:53Z, deployment \`86a814f4-23fe-4b0c-94a6-dc56e744fd34\`, Worker verzió \`a235554e-2e34-44a1-8a35-604e4c758284\`, 100% forgalom, source wrangler. A GitHub HEAD egy későbbi dokumentációs frissítésre is mutathat; **exact build SHA, published CSS/JS asset hash, /p/videok 308 HTTP smoke és tényleges telefonos screenshot NEM igazolt**, mert a nyilvános workers.dev URL a web-feloldó környezetből nem elérhető. \`npm run test:brand\`, \`npm run test:brand:browser\`, \`npm run typecheck\` és \`wrangler deploy --dry-run\` **NOT RUN**. Nincs fizetős infrastruktúra, GitHub Actions dispatch, R2 törlés, direkt D1 migráció.
 
 **Nyitott elfogadási kapu:** teljes browser/navigáció/fókusz/ikon megjelenítési ellenőrzés 320, 390, 768, 1024, 1440px; exact Worker SHA + asset-hash és éles HTTP GET/308; majd további tartalomgazdagítás valódi, hiteles videólinkekkel. A felhasználó által elfogadott Creative Direction változatlan, a Visual Editor 77.44.7.D általános manual gate OPEN.
+
+## 2026-11-13 — SANCI designer review: kevesebb kép, képet követő tartalom
+
+**Tulajdonosi kérés:** kevesebb ismétlődő nagy kép, a szöveg az adott kép alatt; modern, levegős, magazinszerű SANCI DARK DEPTH. A korábbi, jóváhagyott kapucnis figura és főoldali brand-háttér megmarad. Nem második frontend és nem generikus Editor-korlátozás.
+
+**Inspiráció:** TheVR oldala (https://thevr.hu/) mint tartalmi hierarchia, valamint a korábbi creator-site benchmarkok; idegen képet, jogvédett dizájnt, kódot nem vettünk át.
+
+**Read-only preflight:** site-default 8 aktív, korábban publikált oldal, minden draft=published; 8 beillesztett image node (home 3, about 2, youtube 1, tiktok 1, contact 1) és két háttérképes hero, site-owned média assetek. Site navigation 13-as publikált verzió.
+
+| Oldal | Előző → új revízió | Beillesztett képek | Változás |
+|---|---|---|---|
+| Home | 107→108 | 3→1 | Helyettesítő logó és fölösleges VOD-kép kivezetése, megmaradt kép a teljes szekció elején, alatta a felvezetés; rövidebb 490/370px desktop/mobil hero |
+| About | 81→82 | 2→1 | Ismételt embléma törlése, a kapucnis alkotás megőrzése, kép a bevezető H1 és történet előtt |
+| YouTube | 21→22 | 1→1 | 16:7-es filmgrafika az elején, szöveg és hiteles YouTube CTA alatta, 315px magassági korláttal |
+| TikTok | 16→17 | 1→0 | A Rólamról átemelt nem valódi TikTok-thumbnail eltűnt; kizárólag TikTok-tartalomhoz illő felvezetés |
+| Twitch | 9→10 | 0→0 | Elsődleges lejátszó, alatta tájékoztató blokk, nem kétoszlopos zsúfolás |
+| Community | 34→35 | 0→0 | Brand-háttér 620→430px desktop / 310px mobil; alatta áttekinthető közösségi szabályok |
+| Contact | 11→12 | 1→0 | Ismételt oldal-embléma törlése; főkapcsolati szövegek maradtak |
+| Schedule | 14→15 | 0→0 | Megmaradt a valódi heti naptár, az ismételt Discord-CTA megszűnt |
+
+**Mentés és publikálás ténylegesen külön:** 8 Editor Page Model revízió CAS 3×oldal, összesen 24/24 sikeres mentési/adatbázis-audit művelet; a köztes állapotban a nyilvános snapshotok változatlanok maradtak. Külön QA SELECT: 8/8 helyes node-fa, egy H1, nincs árva/ciklus, minden képi asset létezik, saját platformlinkek és a Schedule hét nézete megmaradtak. Külön közzététel: 8 oldal + 8 audit művelet, összesen 16/16 sikeres, minden esetben published_revision_id CAS ellenőrzéssel. A korábbi Editor-revíziók megmaradtak.
+
+**Postflight read-only SELECT:** 8/8 aktív oldal legújabb published revision ID és document JSON egyezik a szerkesztett drafttal, editorialRhythmVersion=2, hiányzó médiatári asset 0, nyolc publish audit rekord. A navigáció draft=published=13 és nem változott. 8→3 az oldalba tett képekre igaz; a külön hero-háttérképek és jövőbeli adásborítók nem részei ennek a számnak.
+
+**GitHub/Workers release:** ehhez a körhöz nem kellett runtime Worker vagy frontend kódot módosítani: az aktuális, már működő Editor Page Model tartalom és responsive Inspector stílusok módosultak D1-ben. Az alárendelt SANCI public brief v2.4-re módosítva, nem keletkezett új MASTER. Nem futott GitHub Actions dispatch, fizetős szolgáltatás, D1-migráció vagy R2 törlés.
+
+**Nyitott QA:** valódi 320/390/768/1024/1440px full browser/screenshot, image object-position, szövegtördelés, kontraszt, teljes Editor manual acceptance és hitelesített API-s Publish regresszió továbbra OPEN / NOT_CERTIFIED. A Workers.dev oldal a web toolból nem hozzáférhető; ezt nem állítjuk PASS-nak. Az új vizuális irányhoz nincs szükség tulajdonosi új linkre vagy egyéb költségre.
