@@ -1,0 +1,77 @@
+{
+  "schema": "sanci9517.d06.cloudflare.isolated.rest.v1",
+  "date": "2026-11-13",
+  "plan_point": "77.44.7.D / D-06",
+  "status": "ISOLATED_CLOUDFLARE_D1_REST_PASS_NOT_PRODUCTION_CERTIFIED",
+  "source": {
+    "pull_request": "https://github.com/sanci9517/sanci9517/pull/335",
+    "branch": "test/77-44-7-d06-unicode-guards-20261113",
+    "observed_pre_evidence_head": "39b517e73e654a96232cf6c77ed21d0fb99b0703",
+    "candidate_sql_path": "tests/fixtures/0029_media_archive_unicode_additive.sql",
+    "candidate_sql_blob_sha": "bf78d8df926d9091ed42b6af6f1009c29343917f",
+    "original_sql_path": "scripts/pending/0028_media_archive.sql",
+    "production_schema_shape": "Actual live sqlite_master CREATE TABLE for sites,media,pages,editor_revisions; no live data copied",
+    "query_path": "Cloudflare D1 REST /query",
+    "auto_deployment": false
+  },
+  "execution": {
+    "synthetic_data_only": true,
+    "temporary_database": "sanci9517_d06_unicode_rest_probe_20261113",
+    "temporary_database_id": "8baf5057-1298-42cc-8c72-4324518339e1",
+    "temporary_database_created": true,
+    "temporary_database_deleted": true,
+    "cleanup_verified_by_followup_list": true,
+    "database_count_before": 1,
+    "database_count_after": 1,
+    "production_database_queried_select_only": true,
+    "production_d1_data_or_schema_mutated": false,
+    "migration_0029_applied_to_production": false,
+    "temporary_schema_derived_from_live": true,
+    "original_0028_trigger_count": 3,
+    "staged_additive_trigger_count": 4,
+    "failing_batch_sql": "Original three triggers + four staged candidate CREATE TRIGGER statements then deliberate missing-table failure; REST /query returned failure and no new triggers remained",
+    "status": "PASS",
+    "assertions_passed": 15,
+    "assertions_total": 15,
+    "checks": [
+      "exact_live_schema_plus_original_0028",
+      "D1_REST_late_error_rollback",
+      "seven_triggers_original_three_unchanged",
+      "escaped_draft",
+      "escaped_published",
+      "uppercase_archive",
+      "cross_tenant_insert",
+      "page_site_transfer",
+      "revision_insert",
+      "revision_update",
+      "history_only_site_transfer",
+      "revision_parent_transfer",
+      "invalid_legacy_JSON_does_not_throw",
+      "sqlite_quick_check",
+      "sqlite_fk_check"
+    ],
+    "errors": [],
+    "production_worker": {
+      "deployment_id": "06a89710-f9d8-4c14-8ca7-6718345884f5",
+      "version_id": "7028f295-e558-4169-a932-a58b96c95292",
+      "traffic_percent": 100,
+      "no_new_deploy": true
+    }
+  },
+  "limitations": [
+    "Candidate remains tests/fixture only; no production 0029 migration file/ledger marker was installed.",
+    "Only four live tables were cloned as schema; no full production D1 export, backup restore or complete index/trigger replay was performed.",
+    "Cloudflare REST /query atomicity in this isolated test is not a blanket guarantee for alternative execution paths.",
+    "GitHub Actions exact-head CI (including full Editor Core + Chromium) and free quota remain unverified here.",
+    "Production schema change requires independent explicit approval after complete backup/export and isolated restore verification.",
+    "Complete D-01 through D-07 editor/public/media matrix and owner physical/manual acceptance remain deferred/open."
+  ],
+  "safeguards": [
+    "No production D1 mutation",
+    "No R2 mutation/deletion",
+    "No new paid service",
+    "Save remains distinct from Publish",
+    "No Worker runtime code changed",
+    "No production Worker deployment required for docs/test evidence"
+  ]
+}

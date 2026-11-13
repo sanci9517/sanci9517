@@ -1,0 +1,91 @@
+{
+  "schema": "sanci9517.d06.review.evidence.v1",
+  "date": "2026-11-13",
+  "plan_point": "77.44.7.D / D-06",
+  "status": "PARTIAL_TEST_PASS_NOT_CERTIFIED",
+  "pull_request": "https://github.com/sanci9517/sanci9517/pull/335",
+  "source_branch": "test/77-44-7-d06-unicode-guards-20261113",
+  "base_observed": "49935b9682cf47430b97e8d023fd77377d329dea",
+  "finding": {
+    "description": "The staged four-trigger draft blocked page content site_id moves, but not an archived same-site media ID referenced solely by an editor_revisions history row when changing pages.site_id.",
+    "reproduction": "Python sqlite3 in-memory with exact 0028 and draft 0029 fixtures returned successful UPDATE pages SET site_id='site-a' on a history-only cross-tenant case; after proposed guard added, a Node SQLite regression rejects it with ARCHIVED_MEDIA_REFERENCE.",
+    "fix": "pages UPDATE (content_json,published_content_json,site_id) guard now checks existing editor_revisions when tenant ownership changes, combining casefold and decoded JSON Unicode escapes.",
+    "production_migration": false
+  },
+  "source_verified": {
+    "tests/fixtures/0029_media_archive_unicode_additive.sql": "bf78d8df926d9091ed42b6af6f1009c29343917f",
+    "tests/media-archive-additive-unicode.test.js": "5727c2d6fc4cfcf453f2726ea0f2979718f6b475"
+  },
+  "local_checks": [
+    {
+      "command": "node --check tests/media-archive-additive-unicode.test.js",
+      "result": "PASS"
+    },
+    {
+      "command": "node --test tests/media-archive-additive-unicode.test.js",
+      "result": "PASS",
+      "tests": 6,
+      "failures": 0
+    },
+    {
+      "command": "git hash-object tests/fixtures/0029_media_archive_unicode_additive.sql && git hash-object tests/media-archive-additive-unicode.test.js",
+      "result": "MATCH_GITHUB_BLOBS"
+    },
+    {
+      "command": "node --test tests/media-archive-additive-unicode.test.js [production-shaped D1 table constraints]",
+      "result": "PASS",
+      "details": "Additional test recreates the production D1 pages/media/editor_revisions required columns and FK/UNIQUE constraints in isolated local Node SQLite; 0028 and staged 0029 triggers compile, reject escaped page insert and historical-only site transfer, PRAGMA quick_check=ok and FK check empty."
+    },
+    {
+      "command": "node --check tests/media-archive-additive-unicode.test.js && node --test tests/media-archive-additive-unicode.test.js",
+      "result": "PASS",
+      "tests": 7,
+      "failures": 0,
+      "details": "Node v22.16.0: exact downloaded GitHub candidate SQL and same-blob JS test with new nested JSON and Unicode escaped UUIDs at multiple positions, lowercase/uppercase UUID variants, draft/published/revision, and cross-site negative controls. Local git hash-object matches uploaded GitHub blob 5727c2d6fc4cfcf453f2726ea0f2979718f6b475."
+    }
+  ],
+  "production_d1_read_only": {
+    "database_name": "sanci9517-db",
+    "migration_count": 34,
+    "latest_migration": "0028_media_archive.sql",
+    "original_archive_triggers": 3,
+    "unicode_archive_triggers": 0,
+    "quick_check": "ok",
+    "foreign_key_check_violations": 0,
+    "media_rows": 6,
+    "archived_media_rows": 0,
+    "observed_changes": 0,
+    "observed_rows_written": 0,
+    "observed_changed_db": false,
+    "source": "Cloudflare D1 authenticated SELECT/PRAGMA queries; 2026-11-13",
+    "time_travel_bookmark_available": true,
+    "original_0028_trigger_sql_all_three_match": true,
+    "trigger_comparison": "Authenticated Cloudflare D1 SELECT name,sql FROM sqlite_master; matched checked-in scripts/pending/0028_media_archive.sql all three CREATE TRIGGER definitions after only whitespace collapse and stripping final semicolon. No schema write.",
+    "trigger_sql_comparison_names": [
+      "media_archive_pages_insert_guard",
+      "media_archive_pages_update_guard",
+      "media_archive_revisions_insert_guard"
+    ],
+    "trigger_sql_comparison_read_only": true
+  },
+  "unverified": [
+    "full npm run test:media",
+    "complete Editor Core real Chromium",
+    "full exact-head GitHub Actions checks",
+    "D1 Cloudflare production backup/export and isolated restore",
+    "isolated Cloudflare D1 actual 0029 trigger atomicity",
+    "production migration approval",
+    "production schema write",
+    "full 77.44.7.D capability matrix",
+    "exact production D1 replay in an isolated Cloudflare D1 database"
+  ],
+  "safeguards": [
+    "no secrets in evidence",
+    "no new dependency",
+    "no paid quota authorized",
+    "no schema/write to production D1",
+    "no production R2 deletion",
+    "Save separate from Publish",
+    "no routine Worker deployment for docs/tests only"
+  ]
+}
