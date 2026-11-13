@@ -125,7 +125,7 @@ test('structured Inspector editing survives Save, Publish and public interaction
  const structuredFields=[
    ['list',0,'Szöveg',null,'.visual-structured-list li:first-child'],
    ['table',0,'Oszlop 1',0,'.visual-structured-table th:first-child'],
-   ['table',1,'Oszlop 2',1,'.visual-structured-table td:nth-child(2)'],
+   ['table',1,'Oszlop 2',1,'.visual-structured-table tbody tr:first-child td:nth-child(2)'],
    ['tabs',0,'Fül neve','label','[role="tab"]:first-child'],
    ['tabs',0,'Tartalom','content','[role="tabpanel"]:not([hidden])'],
    ['accordion',0,'Cím','label','.visual-structured-accordion details:first-child summary'],
@@ -182,6 +182,22 @@ test('structured Inspector editing survives Save, Publish and public interaction
    await keyboard(rows.last().getByRole('button',{name:'Sor törlése',exact:true}));await expectFocus(cell(1));
    await keyboard(rows.last().getByRole('button',{name:'Sor törlése',exact:true}));await expectFocus(cell(0));
    await editor.keyboard.press('Control+z');assert.equal(await rows.count(),2,'the protected header survives deletion of the last data row');
+   const originalRow=await cell(1).inputValue();
+   await keyboard(rows.first().getByRole('button',{name:'＋ Sor alá',exact:true}));
+   await expectFocus(cell(1));assert.equal(await rows.count(),3,'table insert adds a data row under the header');
+   await cell(1).fill('Beszúrt próbasor');
+   assert.equal(await rows.nth(1).getByRole('button',{name:'↑ Sor fel',exact:true}).isDisabled(),true,
+    'the first data row cannot move ahead of the protected header');
+   await keyboard(rows.nth(1).getByRole('button',{name:'↓ Sor le',exact:true}));
+   await expectFocus(rows.nth(2).getByRole('button',{name:'↑ Sor fel',exact:true}));
+   assert.equal(await cell(2).inputValue(),'Beszúrt próbasor','moving down preserves the row cells');
+   await keyboard(rows.nth(2).getByRole('button',{name:'↑ Sor fel',exact:true}));
+   await expectFocus(rows.nth(1).getByRole('button',{name:'↓ Sor le',exact:true}));
+   assert.equal(await cell(1).inputValue(),'Beszúrt próbasor','moving up preserves the row cells');
+   await keyboard(rows.nth(1).getByRole('button',{name:'Sor törlése',exact:true}));
+   await expectFocus(cell(1));
+   assert.equal(await rows.count(),2,'deleting inserted data restores the original row count');
+   assert.equal(await cell(1).inputValue(),originalRow,'header and existing data must survive insert/reorder/delete');
   }else{
    const originalCount=expectedModels[type].items.length;
    await keyboard(panel.getByRole('button',{name:'＋ Új elem',exact:true}));await expectFocus(cell(originalCount));
@@ -201,6 +217,26 @@ test('structured Inspector editing survives Save, Publish and public interaction
    }
   }
  }
+ // Persist a genuine row insertion and reorder through the separate Save and
+ // Publish API calls, rather than undoing every structural change before Save.
+ await select(ids.table);
+ const tableInspector=editor.locator('.structured-inspector'),tableRows=tableInspector.locator('.structured-item');
+ await keyboard(tableRows.last().getByRole('button',{name:'＋ Sor alá',exact:true}));
+ assert.equal(await tableRows.count(),3,'insert below existing table data row');
+ await tableRows.nth(2).getByRole('textbox',{name:'Oszlop 1',exact:true}).fill('További játék');
+ await tableRows.nth(2).getByRole('textbox',{name:'Oszlop 2',exact:true}).fill('77');
+ await keyboard(tableRows.nth(2).getByRole('button',{name:'↑ Sor fel',exact:true}));
+ assert.equal(await tableRows.nth(1).getByRole('textbox',{name:'Oszlop 1',exact:true}).inputValue(),'További játék');
+ await editor.keyboard.press('Control+z');
+ assert.equal(await tableRows.nth(2).getByRole('textbox',{name:'Oszlop 1',exact:true}).inputValue(),'További játék',
+  'Undo restores the previous table row order');
+ await editor.keyboard.press('Control+Shift+z');
+ assert.equal(await tableRows.nth(1).getByRole('textbox',{name:'Oszlop 1',exact:true}).inputValue(),'További játék',
+  'Redo restores the moved table row without changing its values');
+ await keyboard(tableRows.nth(1).getByRole('button',{name:'↓ Sor le',exact:true}));
+ assert.equal(await tableRows.nth(2).getByRole('textbox',{name:'Oszlop 2',exact:true}).inputValue(),'77',
+  'reordered row keeps the second column on the moved record');
+ expectedModels.table.rows.push(['További játék','77']);
  await select(ids.tabs);
  const limited=editor.locator('.structured-item').first().getByRole('textbox',{name:'Fül neve',exact:true});
  await limited.fill('x'.repeat(120));await limited.press('y');assert.equal(await limited.inputValue(),'x'.repeat(120),'native editing stops at the canonical boundary');
@@ -218,6 +254,8 @@ test('structured Inspector editing survives Save, Publish and public interaction
  assert.equal(draft.pages[pageId].nodes[ids.icon].props.label,finalIcon);
  assert.equal(draft.pages[pageId].nodes[ids.icon].props.icon,'star');
  await viewer.goto(base+'/p/test');
+ assert.equal(await viewer.locator('.visual-editor-node[data-node-id="'+ids.table+'"] tbody tr').count(),1,
+   'draft Save must not make the new table row public before a separate Publish');
  assert.equal(await viewer.locator('.visual-badge[data-node-id="'+ids.badge+'"]').textContent(),'Címke','Save cannot expose the new badge');
  assert.match(await viewer.locator('blockquote[data-node-id="'+ids.quote+'"]').textContent(),/Idézet első változat/);
  assert.equal(await viewer.locator('.visual-icon[data-node-id="'+ids.icon+'"]').getAttribute('aria-label'),'Szív ikon');
@@ -307,6 +345,9 @@ test('structured Inspector editing survives Save, Publish and public interaction
  assert.equal(await list.locator('li').count(),3);
  const table=viewer.locator('.visual-editor-node[data-node-id="'+ids.table+'"]');
  assert.equal(await table.locator('th').count(),2);
+ assert.equal(await table.locator('tbody tr').count(),2,'published table includes inserted and reordered data');
+ assert.deepEqual(await table.locator('tbody tr').last().locator('td').allTextContents(),
+  ['További játék','77'],'row order and both cells survive Save, reload and separate Publish');
  await editor.screenshot({path:'/tmp/creator-ux-p0-structured-desktop.png'});
  await viewer.screenshot({path:'/tmp/creator-ux-p0-public-content.png'});
  await editor.setViewportSize({width:390,height:800});
@@ -392,8 +433,14 @@ test('structured Inspector editing survives Save, Publish and public interaction
   for(const node of [make('locked-focus',undefined,'list',true),make('minimum-list',{version:1,ordered:false,items:['One']}),make('maximum-list',{version:1,ordered:false,items:Array(40).fill('One')}),make('minimum-table',{version:1,rows:[['Header']]},'table'),make('maximum-table',{version:1,rows:[Array(12).fill('Header')]},'table')]){
    mount(node,()=>{calls++;return true;});for(const disabled of host.querySelectorAll('button:disabled'))disabled.click();
   }
-  checks.disabled=calls===0;host.remove();outside.remove();return checks;
+  checks.disabled=calls===0;
+  const capRows={version:1,rows:Array.from({length:40},(_,i)=>[i===0?'Fejléc':'Sor '+i])};
+  mount(make('max-table-rows',capRows,'table'),()=>{calls++;return true;});
+  checks.tableRowLimit=button('add-row')?.disabled===true&&
+    [...host.querySelectorAll('[data-structured-action="insert-row"]')].length===40&&
+    [...host.querySelectorAll('[data-structured-action="insert-row"]')].every(el=>el.disabled);
+  host.remove();outside.remove();return checks;
  });
- assert.deepEqual(focusGuards,{rejected:true,newerFocus:true,differentNode:true,sameNodeNewRender:true,closedPanel:true,programmatic:true,newestAction:true,disabled:true});
+ assert.deepEqual(focusGuards,{rejected:true,newerFocus:true,differentNode:true,sameNodeNewRender:true,closedPanel:true,programmatic:true,newestAction:true,disabled:true,tableRowLimit:true});
  assert.deepEqual(errors,[]);
 });
