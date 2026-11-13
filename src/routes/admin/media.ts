@@ -825,22 +825,25 @@ export async function publishedMediaRoute(request: Request, env: Env, siteId: st
     "SELECT id,site_id,object_key,original_name,mime_type,size_bytes,alt_text,created_at,archived_at FROM media WHERE id=? AND site_id=? LIMIT 1"
   ).bind(normalizedAssetId, siteId).first<MediaRow>();
   if (!row || row.archived_at || !(MEDIA_MIMES as readonly string[]).includes(row.mime_type)) return error("MEDIA_NOT_FOUND", 404);
-  const pages = await env.DB.prepare(
-    `SELECT id,published_content_json FROM pages WHERE site_id=? AND archived_at IS NULL AND is_published=1 AND published_content_json IS NOT NULL AND ${mediaReferenceSql("published_content_json","?")} ORDER BY id LIMIT ${MAX_PUBLIC_MEDIA_SNAPSHOTS}`
-  ).bind(siteId, normalizedAssetId, normalizedAssetId).all<{ id: string; published_content_json: string }>();
-  // A single public request may inspect multiple candidate snapshots. Reuse
-  // one budget across them and cap result materialization so many pages with
-  // incidental ID text cannot create unbounded parsing, memory or R2 reads.
-  const scan: AssetReferenceScanStatus = { complete: true, visited: 0 };
-  let allowed = false;
-  for (const page of pages.results) {
-    if (!scan.complete) break;
-    try {
-      if (documentAssetReferences(page.published_content_json, page.id, normalizedAssetId, true, row.mime_type, scan, allowedOrigins).length) {
-        allowed = true;
-        break;
-      }
-    } catch { /* Corrupt published snapshots do not authorize delivery. */ }
+  // The owner's approved SANCI wordmark is a canonical-site public shell asset.
+  // It is not page content, so authorizing it cannot depend on a page Publish.
+  // Scope the one explicit identity asset to the default site only. All other
+  // media retain the existing published-page reference check.
+  let allowed = siteId === DEFAULT_SITE_ID && normalizedAssetId === "67045b51-9df7-45b0-a426-6b015ab985f1" && row.mime_type === "image/png";
+  if (!allowed) {
+    const pages = await env.DB.prepare(
+      `SELECT id,published_content_json FROM pages WHERE site_id=? AND archived_at IS NULL AND is_published=1 AND published_content_json IS NOT NULL AND ${mediaReferenceSql("published_content_json","?")} ORDER BY id LIMIT ${MAX_PUBLIC_MEDIA_SNAPSHOTS}`
+    ).bind(siteId, normalizedAssetId, normalizedAssetId).all<{ id: string; published_content_json: string }>();
+    const scan: AssetReferenceScanStatus = { complete: true, visited: 0 };
+    for (const page of pages.results) {
+      if (!scan.complete) break;
+      try {
+        if (documentAssetReferences(page.published_content_json, page.id, normalizedAssetId, true, row.mime_type, scan, allowedOrigins).length) {
+          allowed = true;
+          break;
+        }
+      } catch { /* Invalid published snapshots never grant media access. */ }
+    }
   }
   if (!allowed) return error("MEDIA_NOT_FOUND", 404);
   let objectSize = row.size_bytes;
