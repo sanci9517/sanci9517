@@ -14,7 +14,7 @@
   },
   "source_verified": {
     "tests/fixtures/0029_media_archive_unicode_additive.sql": "bf78d8df926d9091ed42b6af6f1009c29343917f",
-    "tests/media-archive-additive-unicode.test.js": "93249cd1efb3025610cae751129c9b329000edfd"
+    "tests/media-archive-additive-unicode.test.js": "5727c2d6fc4cfcf453f2726ea0f2979718f6b475"
   },
   "local_checks": [
     {
@@ -35,6 +35,13 @@
       "command": "node --test tests/media-archive-additive-unicode.test.js [production-shaped D1 table constraints]",
       "result": "PASS",
       "details": "Additional test recreates the production D1 pages/media/editor_revisions required columns and FK/UNIQUE constraints in isolated local Node SQLite; 0028 and staged 0029 triggers compile, reject escaped page insert and historical-only site transfer, PRAGMA quick_check=ok and FK check empty."
+    },
+    {
+      "command": "node --check tests/media-archive-additive-unicode.test.js && node --test tests/media-archive-additive-unicode.test.js",
+      "result": "PASS",
+      "tests": 7,
+      "failures": 0,
+      "details": "Node v22.16.0: exact downloaded GitHub candidate SQL and same-blob JS test with new nested JSON and Unicode escaped UUIDs at multiple positions, lowercase/uppercase UUID variants, draft/published/revision, and cross-site negative controls. Local git hash-object matches uploaded GitHub blob 5727c2d6fc4cfcf453f2726ea0f2979718f6b475."
     }
   ],
   "production_d1_read_only": {
