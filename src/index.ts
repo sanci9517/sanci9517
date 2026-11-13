@@ -171,6 +171,16 @@ async function publicPageHtml(request: Request, env: Env, canonicalPath: string 
     : '<span class="brand-generic-mark" aria-hidden="true">✦</span>';
   html = html.replaceAll('<span data-sanci-brand-slot></span>', brandImage)
     .replace('data-sanci-shell="__SANCI_SHELL__"', 'data-sanci-shell="' + (canonicalBrand ? '1' : '0') + '"');
+  if (!canonicalBrand) {
+    // The shared public template must not display SANCI channels or legal
+    // claims on future independent creator sites, even while nav is loading.
+    html = html.replace('<span class="public-header-status">JÁTÉK <span aria-hidden="true">·</span> KÖZÖSSÉG</span>', '')
+      .replace('<a class="header-cta" href="/p/twitch">Élő adás</a>', '')
+      .replace(/<div class="menu-grid" data-canonical-menu>[\\s\\S]*?<\\/div>/, '<div class="menu-grid" data-canonical-menu></div>')
+      .replace(/<div class="menu-panel-foot">[\\s\\S]*?<\\/div>/, '')
+      .replace(/<footer class="footer public-footer">[\\s\\S]*?<\\/footer>/,
+        '<footer class="footer"><div class="wrap footer-row"><span>© <span data-year></span> <span data-site-name></span></span></div></footer>');
+  }
   html = html.replace("</head>", `${headTags}</head>`);
   const headers = new Headers(asset.headers);
   headers.set("Content-Type", "text/html; charset=utf-8");
