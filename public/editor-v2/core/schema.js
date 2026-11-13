@@ -369,6 +369,12 @@ export function canContain(parent, childType) {
   return true;
 }
 
+// Never invoke authored object conversion hooks while reporting a validation error.
+function safeModelDiagnostic(value) {
+  if (value === null || value === undefined || ['string', 'number', 'boolean', 'bigint'].includes(typeof value)) return String(value);
+  return '[invalid]';
+}
+
 export function validatePage(page) {
   const errors = [];
   const seen = new Set();
@@ -395,15 +401,15 @@ export function validatePage(page) {
       try {
         normalizeScheduleConfig(node.props?.schedule);
       } catch (error) {
-        errors.push(`invalid schedule config: ${id}: ${error instanceof Error ? error.message : String(error)}`);
+        errors.push(`invalid schedule config: ${id}: ${safeModelDiagnostic(error instanceof Error ? error.message : error)}`);
       }
     }
     if (!Array.isArray(node.children)) errors.push(`children must be an array: ${id}`);
 
     for (const childId of Array.isArray(node.children) ? node.children : []) {
       const child = getNode(page, childId);
-      if (!child) errors.push(`missing child ${childId} referenced by ${id}`);
-      else if (child.parentId !== id) errors.push(`parent mismatch: ${childId} -> ${id}`);
+      if (!child) errors.push(`missing child ${safeModelDiagnostic(childId)} referenced by ${id}`);
+      else if (child.parentId !== id) errors.push(`parent mismatch: ${safeModelDiagnostic(childId)} -> ${id}`);
     }
   }
 
@@ -417,8 +423,8 @@ export function validatePage(page) {
 export function validateDocument(document) {
   const errors = [];
   if (!document || typeof document !== 'object') return ['document must be an object'];
-  if (document.type !== DOCUMENT_TYPE) errors.push(`invalid document type: ${document.type}`);
-  if (document.schemaVersion !== SCHEMA_VERSION) errors.push(`unsupported schema version: ${document.schemaVersion}`);
+  if (document.type !== DOCUMENT_TYPE) errors.push(`invalid document type: ${safeModelDiagnostic(document.type)}`);
+  if (document.schemaVersion !== SCHEMA_VERSION) errors.push(`unsupported schema version: ${safeModelDiagnostic(document.schemaVersion)}`);
   const pages = document.pages && typeof document.pages === 'object' && !Array.isArray(document.pages) ? document.pages : null;
   if (!pages) errors.push('document.pages must be an object');
   if (!document.activePageId || !getPage(document, document.activePageId)) {
@@ -426,7 +432,7 @@ export function validateDocument(document) {
   }
 
   for (const [id, page] of Object.entries(pages ?? {})) {
-    errors.push(...validatePage(page).map((error) => `page ${page?.id ?? id}: ${error}`));
+    errors.push(...validatePage(page).map((error) => `page ${safeModelDiagnostic(page?.id ?? id)}: ${error}`));
   }
 
   return errors;

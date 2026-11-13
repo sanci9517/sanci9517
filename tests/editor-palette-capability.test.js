@@ -71,3 +71,23 @@ test('D-07 imported inherited page/node identifiers cannot resolve through Objec
  assert.ok(errors.includes('page missing: page must be an object'));
  assert.ok(validateDocument({...doc,pages:[]}).includes('document.pages must be an object'));
 });
+
+test('D-07 unprintable authored Page Model values fail closed without diagnostic crashes',()=>{
+ const impossible={toString:null};
+ const page={id:'page-a',rootId:'root',nodes:{
+  root:{id:'root',type:NODE_TYPES.ROOT,parentId:null,children:[impossible]}
+ }};
+ assert.ok(validatePage(page).includes('missing child [invalid] referenced by root'));
+ const malformedPage={...page,id:impossible,nodes:{root:{...page.nodes.root,children:[]}}};
+ const document={type:'sanci-page-document',schemaVersion:1,activePageId:'page-a',pages:{'page-a':malformedPage}};
+ assert.ok(validateDocument(document).includes('page [invalid]: page.id and page.rootId are required')===false,'no fabricated missing-ID error');
+ const badType={...document,type:impossible,schemaVersion:impossible};
+ const errors=validateDocument(badType);
+ assert.ok(errors.includes('invalid document type: [invalid]'));
+ assert.ok(errors.includes('unsupported schema version: [invalid]'));
+ const childPage={...page,nodes:{...page.nodes,child:{id:'child',parentId:'other',type:NODE_TYPES.TEXT,children:[]}}};
+ childPage.nodes.root.children=[impossible,'child'];
+ const childErrors=validatePage(childPage);
+ assert.ok(childErrors.includes('missing child [invalid] referenced by root'));
+ assert.ok(childErrors.includes('parent mismatch: child -> root'));
+});

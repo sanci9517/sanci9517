@@ -50,5 +50,13 @@
   "gates": "Full exact-head repo tests+typecheck+Chromium/F0/Twitch/canonical/dry-run, read-only prod D1, 0-cost quota verification, normal merge, deploy:safe and post-deploy smoke before release.",
   "cost_protection": "GitHub repository is confirmed public and required workflows run on standard ubuntu-24.04/ubuntu-latest runners (GitHub public standard runners free according to GitHub's billing docs). No paid larger runner; retain failure-only artifacts 7 days. Workflow status still to be verified.",
   "next_gate": "Trigger PR CI on exact non-skipped head, verify completed results, address failures, typecheck and browser tests, then production D1 SELECT-only preflight + Wrangler dry-run before normal merge and safe production deploy.",
-  "process": "Owner gave general development authorization; does NOT automatically mean approved production D1 schema migration or spending over 0 Ft."
+  "process": "Owner gave general development authorization; does NOT automatically mean approved production D1 schema migration or spending over 0 Ft.",
+  "adversarial_diagnostics": {
+    "checks": 5,
+    "passed": 5,
+    "source": "in-process exact candidate script in isolated V8 (schedule imports mocked)",
+    "observed_issue": "Malformed stored toString:null on page ID, document type/version or child ID previously threw TypeError while constructing diagnostic",
+    "resolution": "safeModelDiagnostic prevents coercing authored objects",
+    "full_editor_ci": "PENDING_EXACT_HEAD"
+  }
 }
