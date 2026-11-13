@@ -1,0 +1,102 @@
+{
+  "schema": "sanci-d-release-evidence-v1",
+  "date": "2026-11-13",
+  "task": "77.44.7.D",
+  "scope": [
+    "D-05"
+  ],
+  "status": "D-05 released; full D OPEN / NOT_CERTIFIED",
+  "pr": {
+    "number": 331,
+    "head_sha": "3049c8936183bf1186c3883d2f96f42825811054",
+    "merge_sha": "64a28a6c493710855a2eb063ab9e47dacbf1defb",
+    "merged": true,
+    "url": "https://github.com/sanci9517/sanci9517/pull/331"
+  },
+  "pr_head_ci": {
+    "editor_core_chromium": {
+      "id": 43407881360,
+      "conclusion": "success"
+    },
+    "f0": {
+      "id": 43407880966,
+      "conclusion": "success"
+    },
+    "twitch": {
+      "id": 43407881241,
+      "conclusion": "success"
+    },
+    "canonical": {
+      "id": 43407881336,
+      "conclusion": "success"
+    },
+    "worker_dry_run": {
+      "id": 43407881318,
+      "conclusion": "success"
+    }
+  },
+  "merge_ci": {
+    "source_smoke": {
+      "id": 43412194145,
+      "conclusion": "success",
+      "limitation": "HTTP health 200 and six unchanged public source SHA-256 matches BEFORE new deployment; changed authenticated Inspector asset not hash-verified"
+    },
+    "f0": {
+      "id": 43412194544,
+      "conclusion": "success"
+    },
+    "twitch": {
+      "id": 43412194194,
+      "conclusion": "success"
+    },
+    "canonical": {
+      "id": 43412194141,
+      "conclusion": "success"
+    },
+    "active_point": {
+      "id": 43412194142,
+      "conclusion": "success"
+    },
+    "editor_core": {
+      "id": 43412194144,
+      "status": "in_progress",
+      "conclusion": null
+    }
+  },
+  "cloudflare": {
+    "build_id": "95323171-3884-4897-a6e6-45ff2440720b",
+    "build_commit": "64a28a6c493710855a2eb063ab9e47dacbf1defb",
+    "build_outcome": "success",
+    "build_deploy_command": "npm run deploy:safe",
+    "deployment_id": "c0f7fa0d-1f2e-4743-b819-96b94ddc15b9",
+    "version_id": "e327146f-c7c2-4a88-b3f1-c99adad5636b",
+    "traffic_percent": 100,
+    "deploy_created_on": "2026-11-13T10:51:09.320476Z"
+  },
+  "d1_read_only": {
+    "count_migrations": 34,
+    "last_migration": "0028_media_archive.sql",
+    "quick_check": "ok",
+    "foreign_key_errors": 0,
+    "rows_written": 0,
+    "changed_db": false,
+    "media_archive_guard_case_sensitive": true,
+    "migration_0029_applied": false
+  },
+  "invariants": {
+    "save_publish_separate": true,
+    "protected_header": true,
+    "max_rows": 40,
+    "max_columns": 12,
+    "new_paid_service": false,
+    "production_d1_write": false,
+    "production_r2_delete": false,
+    "full_editor_manual_acceptance": "deferred"
+  },
+  "limitations": [
+    "Exact merge-SHA Editor Core is still pending at capture; exact PR-head full Editor Core is PASS",
+    "Changed structured-inspector.js authenticated production source hash is not independently verified",
+    "D-06 0029 migration requires separate explicit approval",
+    "Full D-01 through D-07 capability and media lifecycle acceptance remains OPEN / NOT_CERTIFIED"
+  ]
+}
