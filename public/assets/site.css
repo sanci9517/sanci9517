@@ -34,3 +34,47 @@
 @media(max-width:760px){.sanci-week-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.sanci-week-day{min-height:110px}.sanci-week-toolbar{align-items:flex-start}}
 @media(max-width:440px){.sanci-week-grid{grid-template-columns:1fr}.sanci-week-day{min-height:0;padding:14px}.sanci-week-day-events{gap:8px}.sanci-week-heading strong{font-size:21px}.sanci-week-navigation{width:100%;justify-content:space-between}.sanci-week-navigation button:nth-child(2){flex:1}}
 @media(prefers-reduced-motion:reduce){.sanci-week-navigation button{transition:none!important}}
+
+
+/* SANCI DARK DEPTH / editorial shell v2. Canonical site only; tenant-specific
+   identity must never inherit the SANCI logo or brand-only presentation. */
+body[data-sanci-shell="1"]{--bg:#090c12;--bg2:#101722;--panel:rgba(20,26,37,.90);--line:rgba(197,210,230,.16);--line-hot:rgba(225,77,97,.62);--text:#f5f7fb;--muted:#b8c4d3;--accent:#e14d61;--accent-2:#8d253b;--max:1320px;background:radial-gradient(circle at 72% -18%,rgba(116,26,43,.23),transparent 38%),radial-gradient(circle at -12% 36%,rgba(76,93,112,.11),transparent 34%),linear-gradient(160deg,#090c12,#090d15 44%,#06090e)}
+body[data-sanci-shell="1"]:before{opacity:.08;background-size:56px 56px}
+body[data-sanci-shell="1"] .site-header{background:rgba(7,10,16,.92);border-bottom:1px solid rgba(194,206,227,.15);backdrop-filter:blur(18px)}
+body[data-sanci-shell="1"] .nav{height:84px;gap:24px}
+body[data-sanci-shell="1"] .brand{flex:0 0 auto;gap:0;min-width:0}
+.brand-logo{display:block;width:clamp(151px,16vw,196px);height:auto;max-height:64px;object-fit:contain}
+body[data-sanci-shell="1"] .brand-fallback{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+body[data-sanci-shell="0"] .brand-generic-mark{display:grid;place-items:center;width:42px;height:42px;border:1px solid var(--line);border-radius:12px;color:var(--accent)}
+body[data-sanci-shell="1"] .public-header-status{color:#9baabb;letter-spacing:.16em;font-size:10px}
+body[data-sanci-shell="1"] .header-cta{border:1px solid rgba(225,77,97,.58);background:rgba(134,32,53,.16);color:#ffe0e5;min-height:44px;border-radius:10px;padding:0 20px;letter-spacing:.04em}
+body[data-sanci-shell="1"] .header-cta:hover{background:#8d253b;color:#fff}
+body[data-sanci-shell="1"] .menu-button{background:#111720;border-color:rgba(194,206,227,.24);border-radius:10px;transition:background-color .18s,border-color .18s}
+body[data-sanci-shell="1"] .menu-panel{background:#0c111b;border:1px solid #344253;border-radius:16px;top:calc(100% + 8px);box-shadow:0 35px 120px #000b}
+body[data-sanci-shell="1"] .menu-link{background:#101722;border:1px solid rgba(194,206,227,.12);border-radius:10px;min-height:68px;transition:background-color .18s,border-color .18s}
+body[data-sanci-shell="1"] .menu-link:hover,body[data-sanci-shell="1"] .menu-link:focus-visible{background:#1c2633;border-color:#e14d61;transform:none}
+body[data-sanci-shell="1"] .menu-link:focus-visible,body[data-sanci-shell="1"] :is(.header-cta,.menu-button,.brand,.public-footer a):focus-visible{outline:3px solid #e14d61;outline-offset:3px}
+body[data-sanci-shell="1"] .public-footer{background:linear-gradient(180deg,#0c1018,#06090e);border-top:1px solid rgba(225,77,97,.25)}
+body[data-sanci-shell="1"] .public-footer-grid{grid-template-columns:minmax(220px,1.5fr) repeat(3,minmax(120px,1fr));gap:clamp(20px,4vw,58px);padding:68px 0 50px}
+body[data-sanci-shell="1"] .public-footer-column strong{color:#f5f7fb}
+body[data-sanci-shell="1"] .public-footer-column a{color:#a9b6c5;transition:color .15s}
+body[data-sanci-shell="1"] .public-footer-column a:hover{color:#f5f7fb}
+body[data-sanci-shell="1"] .public-footer-brand p{color:#bcc8d6;max-width:300px;font-size:14px}
+body[data-sanci-shell="1"] .public-footer-status{font-size:10px;color:#8495a7}
+body[data-sanci-shell="1"] .public-footer-bottom{font-size:12px;color:#8795a5}
+body[data-sanci-shell="1"] .public-page-layout{grid-template-columns:minmax(0,1fr) minmax(0,1320px) minmax(0,1fr)}
+body[data-sanci-shell="1"] .public-page-layout>.content-page{max-width:1320px}
+body.sanci-editorial-page[data-sanci-shell="1"] .page{padding-top:20px;padding-bottom:24px}
+body.sanci-editorial-page[data-sanci-shell="1"] .content-hero{display:none}
+body.sanci-editorial-page[data-sanci-shell="1"] .content-canvas{padding:0;min-height:320px}
+body.sanci-editorial-page[data-sanci-shell="1"] .content-back{display:none}
+body.sanci-editorial-page[data-sanci-shell="1"] .visual-image{display:block;max-width:100%;height:auto}
+body.sanci-editorial-page[data-sanci-shell="1"] .visual-embed-load{border-color:#344253;background:linear-gradient(140deg,#19151f,#070b12)}
+body.sanci-editorial-page[data-sanci-shell="1"] .visual-embed-load:hover{background:#241725}
+body.sanci-editorial-page[data-sanci-shell="1"] .visual-embed-load>span:first-child{background:#a82f46}
+body.sanci-editorial-page[data-sanci-shell="1"] .visual-button:focus-visible{outline:3px solid #f19ca9;outline-offset:4px}
+body.sanci-editorial-page[data-sanci-shell="1"] .visual-button:hover{filter:brightness(1.1);transform:translateY(-2px)}
+@media(max-width:900px){body[data-sanci-shell="1"] .public-footer-grid{grid-template-columns:1fr 1fr;gap:30px}body[data-sanci-shell="1"] .public-footer-brand{grid-column:1/-1}}
+@media(max-width:620px){body[data-sanci-shell="1"] .nav{height:68px}body[data-sanci-shell="1"] .brand-logo{width:151px;max-height:48px}body[data-sanci-shell="1"] .menu-panel{top:calc(100% + 6px)}body[data-sanci-shell="1"] .public-footer-grid{grid-template-columns:1fr 1fr;gap:24px;padding:38px 0}body[data-sanci-shell="1"] .public-footer-brand{grid-column:1/-1}body.sanci-editorial-page[data-sanci-shell="1"] .page{padding-top:8px}body.sanci-editorial-page[data-sanci-shell="1"] .visual-button{min-height:48px}}
+@media(max-width:380px){body[data-sanci-shell="1"] .public-footer-grid{grid-template-columns:1fr}body[data-sanci-shell="1"] .public-footer-brand{grid-column:auto}}
+@media(prefers-reduced-motion:reduce){body.sanci-editorial-page[data-sanci-shell="1"] .visual-button:hover{transform:none}}
