@@ -1,0 +1,97 @@
+{
+  "schema": "sanci-d06-isolated-cloudflare-atomic-test-v1",
+  "date": "2026-11-13",
+  "task": "77.44.7.D / D-06",
+  "scope": "Disposable Cloudflare D1 database only, never production",
+  "test_asset": "sanci9517_d06_atomic_probe_20261113",
+  "probe_database_id": "f7fca3b4-6181-4ad0-9ee8-ceef2b289128",
+  "test_endpoint": "D1 REST POST /query multi-statement SQL",
+  "fixture_source": "scripts/pending/0028_media_archive.sql",
+  "candidate_source": "tests/fixtures/media-archive-casefold-0029.sql",
+  "candidate_source_blob": "2a07dc108a8308e35177d9d29e54339120aa17f4",
+  "baseline": {
+    "migration_0028_count": 1,
+    "archived_media_guard_count": 3,
+    "migration_0029_count": 0
+  },
+  "forced_late_failure": {
+    "introduced_failure": "INSERT into intentionally missing table after complete 0029 candidate",
+    "http_status": 400,
+    "sqlite_error": "no such table",
+    "postflight": {
+      "migration_0029": 0,
+      "guards": 3,
+      "json_decoded_guards": 0,
+      "scratch_table": 0
+    },
+    "outcome": "Complete rollback observed on isolated D1 REST multi-statement request"
+  },
+  "success_path": {
+    "executed_statements": 10,
+    "all_success": true,
+    "postflight": {
+      "migration_0029": 1,
+      "archived_media_guards": 3,
+      "json_decoded_guards": 3,
+      "scratch_table": 0
+    }
+  },
+  "behavior": {
+    "archived_media_fixture_count": 1,
+    "escaped_reference_same_site": "rejected",
+    "uppercase_reference_same_site": "rejected",
+    "escaped_reference_other_site": "accepted",
+    "unrelated_text_same_site": "accepted",
+    "verified_error_code": "ARCHIVED_MEDIA_REFERENCE: SQLITE_CONSTRAINT_TRIGGER",
+    "pages_persisted_after_behavioral_probes": 2
+  },
+  "recovery": {
+    "method": "Cloudflare D1 Time Travel restore to bookmark captured before candidate",
+    "restore_api_success": true,
+    "after_restore": {
+      "migration_0029": 0,
+      "original_guard_count": 3,
+      "json_decoded_guards": 0,
+      "test_media_rows": 0
+    },
+    "scope": "isolated disposable D1 only"
+  },
+  "cleanup": {
+    "temporary_db_deleted": true,
+    "isolate_absent": true,
+    "remaining_database_names": [
+      "sanci9517-db"
+    ],
+    "production_database_untouched": true
+  },
+  "production_preflight": {
+    "sql": [
+      "SELECT COUNT(*) AS count,MAX(name) AS newest FROM d1_migrations",
+      "SELECT COUNT(*) AS new_marker FROM d1_migrations WHERE name='0029_media_archive_casefold_guards.sql'",
+      "SELECT name,sql FROM sqlite_master WHERE type='trigger' AND name LIKE 'media_archive_%' ORDER BY name",
+      "PRAGMA quick_check",
+      "PRAGMA foreign_key_check"
+    ],
+    "migrations": 34,
+    "last_migration": "0028_media_archive.sql",
+    "migration_0029_count": 0,
+    "original_case_sensitive_triggers": 3,
+    "quick_check": "ok",
+    "foreign_key_errors": 0,
+    "rows_written": 0,
+    "changed_db": false
+  },
+  "pending": [
+    "Production full backup/export and isolated restore of that backup have not been demonstrated",
+    "Production 0029 migration not applied; requires operation-scoped approval and fresh exact-live-trigger verification",
+    "Draft PR #334 Unicode escaped reference runtime must finish exact-head Editor Core and release before production schema modification",
+    "The REST multi-statement rollback is empirically verified here; do not generalize to other D1 execution routes",
+    "Full D-01..D-07 and physical device acceptance remain OPEN / NOT_CERTIFIED"
+  ],
+  "cost": {
+    "new_paid_services": false,
+    "temporary_database_removed": true,
+    "production_r2_delete": false,
+    "production_d1_write": false
+  }
+}
