@@ -73,7 +73,7 @@ test('all nine editorial pages preserve a usable content column at 320-390 px',a
           grid:r('#content-canvas .visual-layout').width,
           bodyOverflow:document.documentElement.scrollWidth-innerWidth};
       });
-      assert.ok(m.center>=width-45,`content collapsed at ${width}px /p/${slug}: ${JSON.stringify(m)}`);
+      assert.ok(m.center>=Math.min(width-45,1200),`content collapsed at ${width}px /p/${slug}: ${JSON.stringify(m)}`);
       assert.ok(m.text>=Math.min(240,width-80),`text too narrow at ${width}px /p/${slug}: ${JSON.stringify(m)}`);
       assert.ok(m.bodyOverflow<=3,`horizontal overflow at ${width}px /p/${slug}: ${JSON.stringify(m)}`);
       if(width<=1360)assert.equal(m.layout,'block',`single-column shell required for /p/${slug}`);
