@@ -64,6 +64,22 @@ export function renderStructuredInspector(node,update,{pending=()=>{}}={}){
   model.rows.forEach((row,ri)=>{
    const item=document.createElement('fieldset');item.className='structured-item';const legend=document.createElement('legend');legend.textContent=ri===0?'Fejléc':`Sor ${ri}`;item.append(legend);
    row.forEach((v,ci)=>item.append(input('rows[][]',`Oszlop ${ci+1}`,v,(val,options)=>{const rows=model.rows.map(r=>[...r]);rows[ri][ci]=val;return save({...model,rows},options)})));
+   // Keep the table header fixed while allowing data rows to be inserted,
+   // rearranged and removed without losing any neighboring cell values.
+   item.append(action('rows','＋ Sor alá',()=>{
+    const rows=model.rows.map(r=>[...r]);rows.splice(ri+1,0,Array(cols).fill(''));
+    return structural({...model,rows},{row:ri+1});
+   },model.rows.length>=40,'insert-row'));
+   if(ri>0)item.append(
+    action('rows','↑ Sor fel',()=>{
+     const rows=model.rows.map(r=>[...r]);[rows[ri-1],rows[ri]]=[rows[ri],rows[ri-1]];
+     return structural({...model,rows},{row:ri-1,action:'up'});
+    },ri<=1,'up'),
+    action('rows','↓ Sor le',()=>{
+     const rows=model.rows.map(r=>[...r]);[rows[ri],rows[ri+1]]=[rows[ri+1],rows[ri]];
+     return structural({...model,rows},{row:ri+1,action:'down'});
+    },ri===model.rows.length-1,'down')
+   );
    item.append(action('rows','Sor törlése',()=>structural({...model,rows:model.rows.filter((_,i)=>i!==ri)},{row:Math.min(ri,model.rows.length-2)}),model.rows.length===1||ri===0,'remove-row'));
    section.append(item);
   });
