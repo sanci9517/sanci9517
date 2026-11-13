@@ -34,7 +34,7 @@ function upgradeIcons(){document.querySelectorAll('.menu-link,.btn,.card-icon,.s
 // Canonical SANCI navigation is backed by published D1 page IDs. Icons come
 // from our existing local SVG paths (never Unicode placeholders or remote fonts).
 const PAGE_ICON=Object.freeze({home:'home',twitch:'twitch',youtube:'youtube',tiktok:'tiktok',schedule:'schedule',community:'discord',about:'about',contact:'contact'});
-const PAGE_CONTEXT=Object.freeze({home:'Kezdőlap',twitch:'Twitch · élő adás',youtube:'YouTube · teljes VOD',tiktok:'TikTok · rövid klipek',schedule:'Heti adásnaptár',community:'Discord · közösség',about:'A márka mögött',contact:'Üzenet és együttműködés'});
+const PAGE_CONTEXT=Object.freeze({home:'A SANCI világa',twitch:'Élő közvetítés',youtube:'Teljes adások és VOD',tiktok:'Rövid klipek',schedule:'Heti adásnaptár',community:'Discord közösség',about:'A márka mögött',contact:'Üzenet és együttműködés'});
 function menuIdentity(item){
   const slug=typeof item.slug==='string'?item.slug:(item.href==='/'?'home':typeof item.href==='string'&&/^\/p\/[a-z0-9-]+$/.test(item.href)?item.href.slice(3):'');
   if(PAGE_ICON[slug])return {name:PAGE_ICON[slug],description:PAGE_CONTEXT[slug]};
