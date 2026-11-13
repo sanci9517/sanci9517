@@ -71,22 +71,22 @@ test('SANCI branded page grid cannot retain three columns on phones or tablets',
   assert.match(css,/body\[data-sanci-shell="1"\] \.public-page-layout\{grid-template-columns:minmax\(0,1fr\) minmax\(0,1320px\) minmax\(0,1fr\)\}/);
   assert.match(css,/@media\(max-width:1360px\)\{[\s\S]*?body\[data-sanci-shell="1"\] \.public-page-layout\{display:block;grid-template-columns:minmax\(0,1fr\)\}/);
   assert.match(css,/@media\(max-width:700px\)\{[\s\S]*?body\[data-sanci-shell="1"\] \.public-page-layout>\.content-page\{width:calc\(100% - 24px\)\}/);
-  assert.match(shell,/site\.css\?v=20261113-sanci-mobile-grid-v5/);
+  assert.match(shell,/site\.css\?v=20261113-sanci-nav-v6/);
 });
 
 
 test('retired video hub is no longer linked by the public shell',()=>{
-  assert.doesNotMatch(shell,/href="\\/p\\/videok"/);
-  assert.doesNotMatch(shell,/href="\\/p\\/alkotasok"/);
-  assert.match(worker,/"\\/p\\/videok": "\\/p\\/youtube"/);
-  assert.match(worker,/"\\/p\\/alkotasok": "\\/p\\/about"/);
+  assert.equal(shell.includes('href="/p/videok"'),false);
+  assert.equal(shell.includes('href="/p/alkotasok"'),false);
+  assert.ok(worker.includes('"/p/videok": "/p/youtube"'));
+  assert.ok(worker.includes('"/p/alkotasok": "/p/about"'));
 });
 test('navigation icons use real platform vector silhouettes rather than emoji placeholders',()=>{
   assert.match(js,/home:'<path/);
   for(const key of ['twitch','youtube','tiktok','discord'])assert.ok(js.includes(key+":'<path"),key);
-  for(const key of ['twitch','youtube','tiktok','discord'])assert.ok(js.includes('menu-nav-icon-'+identity.name),'dynamic icon wrapper');
-  assert.match(js,/enhanceStaticNavigationIcons\\(\\)/);
-  assert.match(css,/menu-nav-icon-youtube \\.icon/);
-  assert.match(css,/menu-nav-icon-tiktok \\.icon/);
-  assert.match(css,/menu-nav-icon-discord \\.icon/);
+  assert.ok(js.includes("'menu-nav-icon-'+identity.name"),'dynamic icon wrapper');
+  assert.match(js,/enhanceStaticNavigationIcons\(\)/);
+  assert.match(css,/menu-nav-icon-youtube \.icon/);
+  assert.match(css,/menu-nav-icon-tiktok \.icon/);
+  assert.match(css,/menu-nav-icon-discord \.icon/);
 });
