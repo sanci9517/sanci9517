@@ -1,0 +1,80 @@
+{
+  "schema": "sanci9517.editor.d06.pr337.atomic-review.v1",
+  "date": "2026-11-13",
+  "point": "77.44.7.D / D-06",
+  "status": "ISOLATED_D1_SQL_ATOMIC_REHEARSAL_PASS_NODE_CI_PENDING",
+  "branch": "test/77-44-7-d06-0029-atomic-release-20261113",
+  "head_before_evidence": "e09a9864d1333ea98bf01b1cb3b0cf8d49e6e2a5",
+  "owned_sources": {
+    "generator": "tests/review/prepare-0029-release.mjs",
+    "generator_blob": "1c796bee2aa6841ce97fb6406871e29103f426c1",
+    "node_test": "tests/d1-0029-release-batch.test.js",
+    "node_test_blob": "14248a26201f1a756e78a47c7abfaad4656b2783",
+    "fixture": "tests/fixtures/0029_media_archive_unicode_additive.sql",
+    "fixture_sha256": "911df535238d48bcdda3db2702bbe716c3c8e6c62c841334a0ebd143394c9ac8",
+    "media_suite_import": "tests/media-retention-queries.test.js"
+  },
+  "behavior": "Review-only generator pinned to verified 0029 SQL. Creates one fail-closed D1 REST /query batch with 34-ledger, last-0028, three-original-trigger, no-partial-install and zero foreign-key preflight. Adds four triggers and one ledger marker atomically, removes ephemeral guard table.",
+  "isolated_tests": [
+    {
+      "name": "late SQL error after all four triggers and ledger insert",
+      "result": "PASS",
+      "rollback": {
+        "ledger": 34,
+        "total_triggers": 19,
+        "temporary_guard_tables": 0,
+        "quick_check": "ok",
+        "fk_issues": 0
+      }
+    },
+    {
+      "name": "exact generated 0029 success",
+      "result": "PASS",
+      "after": {
+        "ledger": 35,
+        "total_triggers": 23,
+        "original_19_definitions_unchanged": true,
+        "guard_table_absent": true
+      }
+    },
+    {
+      "name": "replaying successful package rejected",
+      "result": "PASS",
+      "after": {
+        "ledger": 35,
+        "total_triggers": 23
+      }
+    },
+    {
+      "name": "Cloudflare clone Time Travel restore to original bookmark",
+      "result": "PASS",
+      "after": {
+        "ledger": 34,
+        "total_triggers": 19,
+        "quick_check": "ok",
+        "fk_issues": 0
+      }
+    }
+  ],
+  "full_clone_reference": "docs/evidence/editor-d06-full-logical-clone-time-travel-2026-11-13.json",
+  "checks": {
+    "actual_generated_sql_on_real_cloudflare_d1_rest": "3/3 PASS + restore PASS",
+    "new_node_tests": "6 NEW / NOT RUN at evidence commit",
+    "full_editor_core_chromium": "NOT RUN on this PR head yet"
+  },
+  "production": {
+    "d1_writes": 0,
+    "migrations": 34,
+    "last_migration": "0028_media_archive.sql",
+    "migration_0029_applied": false,
+    "worker_runtime_change": false
+  },
+  "release_gate": "OPEN — literal SQL file export/import independently restored is NOT verified due Cloudflare R2 signed-url network allowlist 403; single operation D1 schema-write approval must be reconfirmed at release; full D lifecycle capability matrix and manual Editor acceptance remain OPEN.",
+  "constraints": [
+    "Never put generated 0029 SQL under migrations/",
+    "Must execute as one /query request only",
+    "0 Ft new spend",
+    "Save/Publish distinct",
+    "No R2 deletion"
+  ]
+}
