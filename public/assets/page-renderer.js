@@ -16,6 +16,7 @@ import {isAuthoredContent,CONTENT_TYPES,contentTag,contentAttributes,authoredNod
 import {defaultTokens,applyTokenVariables} from "../editor-v2/core/design-tokens.js";
 import {isVisibleOnDevice,collectVisibleDescendants,safeNodeChildIds} from "../editor-v2/core/visibility.js?v=20261112-safe-node-children";
 import {applyStateStyles,hasStateStyles} from "../editor-v2/core/state-styles.js";
+import {currentBudapestMonday,shiftScheduleWeek,renderScheduleWeek} from "../editor-v2/core/schedule-week.js";
 import {backgroundImageValue,legacyBackgroundCompound,MEDIA_ASSET_ID} from "../editor-v2/core/background-asset.js?v=20261030-legacy-background-compound";
 (()=>{
  const esc=v=>{const text=v===null||v===undefined||typeof v==='object'?'':String(v);return text.replace(/[&<>\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))};
@@ -191,13 +192,60 @@ if(n.type==='card'&&n.metadata?.cardContentVersion===1){
  let currentDevice=window.innerWidth<=700?'mobile':window.innerWidth<=900?'tablet':'desktop';
  let scheduleCache=new Map();
  let scheduleFailures=new Set();
+ let scheduleWeekByNode=new Map();
+ let scheduleActiveNodes=new Map();
+ const scheduleWeekPending=new Set();
  let pageLoadToken=0;
  const scheduleDefaults={version:1,mode:'upcoming',limit:10,statuses:['scheduled','live'],platforms:[],order:'asc',showTitle:true,showPlatform:true,showTime:true,showEndTime:false,showStatus:false,showNotes:false,showLink:true,emptyText:'Nincs tervezett stream.'};
- function scheduleConfig(value){const v=value&&typeof value==='object'?value:{};const cfg={...scheduleDefaults,...v};if(cfg.version!==1||!['upcoming','all','next'].includes(cfg.mode)||!Number.isInteger(cfg.limit)||cfg.limit<1||cfg.limit>50||!Array.isArray(cfg.statuses)||!cfg.statuses.length||cfg.statuses.some(x=>!['scheduled','live','completed'].includes(x))||!Array.isArray(cfg.platforms)||cfg.platforms.length>20||cfg.platforms.some(x=>typeof x!=='string'||!x.trim()||x.trim().length>40)||!['asc','desc'].includes(cfg.order))throw new Error('INVALID_SCHEDULE_CONFIG');for(const k of ['showTitle','showPlatform','showTime','showEndTime','showStatus','showNotes','showLink'])if(typeof cfg[k]!=='boolean')throw new Error('INVALID_SCHEDULE_CONFIG');if(typeof cfg.emptyText!=='string'||!cfg.emptyText.trim()||cfg.emptyText.trim().length>200)throw new Error('INVALID_SCHEDULE_CONFIG');return cfg}
- function scheduleQuery(cfg){const p=new URLSearchParams({mode:cfg.mode,limit:String(cfg.limit),statuses:cfg.statuses.join(','),order:cfg.order});if(cfg.platforms.length)p.set('platforms',cfg.platforms.join(','));return p.toString()}
+ function scheduleConfig(value){const v=value&&typeof value==='object'?value:{};const cfg={...scheduleDefaults,...v};if(cfg.version!==1||!['upcoming','all','next','week'].includes(cfg.mode)||!Number.isInteger(cfg.limit)||cfg.limit<1||cfg.limit>50||!Array.isArray(cfg.statuses)||!cfg.statuses.length||cfg.statuses.some(x=>!['scheduled','live','completed','cancelled'].includes(x))||!Array.isArray(cfg.platforms)||cfg.platforms.length>20||cfg.platforms.some(x=>typeof x!=='string'||!x.trim()||x.trim().length>40)||!['asc','desc'].includes(cfg.order))throw new Error('INVALID_SCHEDULE_CONFIG');for(const k of ['showTitle','showPlatform','showTime','showEndTime','showStatus','showNotes','showLink'])if(typeof cfg[k]!=='boolean')throw new Error('INVALID_SCHEDULE_CONFIG');if(typeof cfg.emptyText!=='string'||!cfg.emptyText.trim()||cfg.emptyText.trim().length>200)throw new Error('INVALID_SCHEDULE_CONFIG');return cfg}
+ function scheduleKey(cfg,weekStart){return JSON.stringify(cfg)+(cfg.mode==='week'?'|'+weekStart:'')}
+ function scheduleQuery(cfg,weekStart){const p=new URLSearchParams({mode:cfg.mode,limit:String(cfg.limit),statuses:cfg.statuses.join(','),order:cfg.order});if(cfg.platforms.length)p.set('platforms',cfg.platforms.join(','));if(cfg.mode==='week')p.set('weekStart',weekStart||currentBudapestMonday());return p.toString()}
  function scheduleDate(v){const d=new Date(v);return Number.isNaN(d.getTime())?String(v||''):new Intl.DateTimeFormat('hu-HU',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}).format(d)}
  function unavailableScheduleHtml(n){return '<section class="visual-editor-node visual-schedule" style="'+style(n)+'"><div class="visual-schedule-header"><strong>Adásrend</strong></div><p class="visual-schedule-error" role="status">Az adásrend átmenetileg nem tölthető be. Kérjük, próbáld meg később.</p></section>'}
- function scheduleHtml(n){let cfg;try{cfg=scheduleConfig(n.props?.schedule)}catch{return unavailableScheduleHtml(n)}const key=JSON.stringify(cfg);if(scheduleFailures.has(key))return unavailableScheduleHtml(n);const items=scheduleCache.get(key)||[];let cards='';for(const item of items){let h='';if(cfg.showTitle)h+='<strong class="visual-schedule-title">'+esc(item.title)+'</strong>';let meta='';if(cfg.showPlatform)meta+='<span>'+esc(item.platform)+'</span>';if(cfg.showTime)meta+='<span>'+esc(scheduleDate(item.startsAt))+'</span>';if(cfg.showEndTime&&item.endsAt)meta+='<span>'+esc(scheduleDate(item.endsAt))+'</span>';if(meta)h+='<div class="visual-schedule-meta">'+meta+'</div>';if(cfg.showStatus)h+='<span class="visual-schedule-status">'+esc(item.status)+'</span>';if(cfg.showNotes&&item.notes)h+='<p class="visual-schedule-notes">'+esc(item.notes)+'</p>';if(cfg.showLink&&item.url){const u=safeUrl(item.url);if(u)h+='<a class="visual-schedule-link" href="'+esc(u)+'" target="_blank" rel="noopener noreferrer">Megnyitás</a>'}cards+='<article class="visual-schedule-card">'+h+'</article>'}return '<section class="visual-editor-node visual-schedule" style="'+style(n)+'"><div class="visual-schedule-header"><strong>Adásrend</strong></div>'+(cards||'<div class="visual-schedule-empty">'+esc(cfg.emptyText)+'</div>')+'</section>'}
+ function scheduleHtml(n){let cfg;try{cfg=scheduleConfig(n.props?.schedule)}catch{return unavailableScheduleHtml(n)}const weekStart=cfg.mode==='week'?(scheduleWeekByNode.get(n.id)||currentBudapestMonday()):null;const key=scheduleKey(cfg,weekStart);if(cfg.mode==='week'){const failed=scheduleFailures.has(key);const items=failed?[]:(scheduleCache.get(key)||[]);const notice=failed?'<p class="visual-schedule-error" role="status">Az adásrend most nem tölthető be. A hetet újra kiválasztva ismét próbálkozhatsz.</p>':'';return '<section class="visual-editor-node visual-schedule" data-schedule-week-node="'+esc(n.id)+'" style="'+style(n)+'">'+notice+renderScheduleWeek(items,weekStart,cfg)+'</section>'}if(scheduleFailures.has(key))return unavailableScheduleHtml(n);const items=scheduleCache.get(key)||[];let cards='';for(const item of items){let h='';if(cfg.showTitle)h+='<strong class="visual-schedule-title">'+esc(item.title)+'</strong>';let meta='';if(cfg.showPlatform)meta+='<span>'+esc(item.platform)+'</span>';if(cfg.showTime)meta+='<span>'+esc(scheduleDate(item.startsAt))+'</span>';if(cfg.showEndTime&&item.endsAt)meta+='<span>'+esc(scheduleDate(item.endsAt))+'</span>';if(meta)h+='<div class="visual-schedule-meta">'+meta+'</div>';if(cfg.showStatus)h+='<span class="visual-schedule-status">'+esc(item.status)+'</span>';if(cfg.showNotes&&item.notes)h+='<p class="visual-schedule-notes">'+esc(item.notes)+'</p>';if(cfg.showLink&&item.url){const u=safeUrl(item.url);if(u)h+='<a class="visual-schedule-link" href="'+esc(u)+'" target="_blank" rel="noopener noreferrer">Megnyitás</a>'}cards+='<article class="visual-schedule-card">'+h+'</article>'}return '<section class="visual-editor-node visual-schedule" style="'+style(n)+'"><div class="visual-schedule-header"><strong>Adásrend</strong></div>'+(cards||'<div class="visual-schedule-empty">'+esc(cfg.emptyText)+'</div>')+'</section>'}
+
+
+ // Week navigation updates only the Schedule node, not the Page Model or the whole document.
+ // The user's current selection survives viewport redraws but is not persisted as a draft.
+ const scheduleCanvas=document.getElementById('content-canvas');
+ scheduleCanvas?.addEventListener('click',async event=>{
+  const target=event.target;
+  if(!(target instanceof Element))return;
+  const button=target.closest('button[data-schedule-week-action]');
+  const host=button?.closest('section[data-schedule-week-node]');
+  if(!button||!host)return;
+  const nodeId=host.getAttribute('data-schedule-week-node'),node=scheduleActiveNodes.get(nodeId);
+  if(!node||scheduleWeekPending.has(nodeId))return;
+  let cfg;try{cfg=scheduleConfig(node.props?.schedule)}catch{return}
+  if(cfg.mode!=='week')return;
+  const previous=scheduleWeekByNode.get(nodeId)||currentBudapestMonday();
+  const action=button.dataset.scheduleWeekAction;
+  const selected=action==='today'?currentBudapestMonday():action==='previous'?shiftScheduleWeek(previous,-1):action==='next'?shiftScheduleWeek(previous,1):null;
+  if(!selected)return;
+  const key=scheduleKey(cfg,selected),token=pageLoadToken;
+  scheduleWeekPending.add(nodeId);
+  host.setAttribute('aria-busy','true');
+  host.querySelectorAll('button[data-schedule-week-action]').forEach(b=>{b.disabled=true});
+  try{
+   if(!scheduleCache.has(key)){
+    const response=await fetch('/api/public/schedule?'+scheduleQuery(cfg,selected),{cache:'no-store',credentials:'same-origin'});
+    const result=await response.json().catch(()=>({}));
+    if(!response.ok||!result.ok||!Array.isArray(result.data))throw new Error('schedule-fetch-failed');
+    scheduleCache.set(key,result.data);
+   }
+   scheduleFailures.delete(key);
+  }catch{scheduleFailures.add(key)}
+  finally{
+   scheduleWeekPending.delete(nodeId);
+   if(token===pageLoadToken&&host.isConnected){
+    scheduleWeekByNode.set(nodeId,selected);
+    const failed=scheduleFailures.has(key);
+    host.innerHTML=(failed?'<p class="visual-schedule-error" role="status">A heti adások nem tölthetők be. Próbáld újra.</p>':'')+renderScheduleWeek(failed?[]:(scheduleCache.get(key)||[]),selected,cfg);
+    host.removeAttribute('aria-busy');
+    host.querySelector('button[data-schedule-week-action="'+action+'"]')?.focus();
+   }
+  }
+ });
 
  function setupPreview(){
   const params=new URL(location.href).searchParams;
@@ -244,7 +292,7 @@ if(n.type==='card'&&n.metadata?.cardContentVersion===1){
   setDevice(['desktop','tablet','mobile'].includes(params.get('device'))?params.get('device'):'desktop');
   return true;
  }
- async function loadPage(){const loadToken=++pageLoadToken,failures=new Set(),nextScheduleCache=new Map();const raw=location.pathname.startsWith('/p/')?location.pathname.slice(3).split('/')[0]:'';const slug=decodeURIComponent(raw||'home').trim();const title=document.getElementById('page-title'),desc=document.getElementById('page-description'),canvas=document.getElementById('content-canvas');if(!slug){title.textContent='Hiányzó oldal';canvas.innerHTML='<div class="content-error"><h1>Hiányzó oldal</h1></div>';return}try{const preview=new URL(location.href).searchParams.get('preview')==='1';const r=await fetch('/api/public/pages?slug='+encodeURIComponent(slug)+(preview?'&preview=1':''),{cache:'no-store',credentials:'same-origin'});const payload=await r.json().catch(()=>({}));if(!r.ok||!payload.ok)throw new Error(payload?.error?.message||'not-found');if(loadToken!==pageLoadToken)return;const p=payload.data||{},c=p.content||{};document.title=(p.title||'Sanci9517')+' — Sanci9517';title.textContent=p.title||'Sanci9517';desc.textContent=p.description||'';ensureStyle();const rootId=c.rootId;const page=c;if(!rootId||!page.nodes?.[rootId])throw new Error('invalid-document');const root=page.nodes[rootId];const scheduleNodes=collectVisibleDescendants(page,currentDevice).filter(n=>n.type==='schedule');for(const node of scheduleNodes){let key;try{const cfg=scheduleConfig(node.props?.schedule);key=JSON.stringify(cfg);if(!nextScheduleCache.has(key)&&!failures.has(key)){const sr=await fetch('/api/public/schedule?'+scheduleQuery(cfg),{cache:'no-store',credentials:'same-origin'});const sp=await sr.json().catch(()=>({}));if(!sr.ok||!sp.ok||!Array.isArray(sp.data))throw new Error('schedule-load-failed');nextScheduleCache.set(key,sp.data)}}catch{if(key)failures.add(key)}if(loadToken!==pageLoadToken)return}scheduleCache=nextScheduleCache;scheduleFailures=failures;canvas.className='content-canvas visual-editor-canvas';canvas.style.cssText='';canvas.removeAttribute('data-node-id');
+ async function loadPage(){const loadToken=++pageLoadToken,failures=new Set(),nextScheduleCache=new Map();const raw=location.pathname.startsWith('/p/')?location.pathname.slice(3).split('/')[0]:'';const slug=decodeURIComponent(raw||'home').trim();const title=document.getElementById('page-title'),desc=document.getElementById('page-description'),canvas=document.getElementById('content-canvas');if(!slug){title.textContent='Hiányzó oldal';canvas.innerHTML='<div class="content-error"><h1>Hiányzó oldal</h1></div>';return}try{const preview=new URL(location.href).searchParams.get('preview')==='1';const r=await fetch('/api/public/pages?slug='+encodeURIComponent(slug)+(preview?'&preview=1':''),{cache:'no-store',credentials:'same-origin'});const payload=await r.json().catch(()=>({}));if(!r.ok||!payload.ok)throw new Error(payload?.error?.message||'not-found');if(loadToken!==pageLoadToken)return;const p=payload.data||{},c=p.content||{};document.title=(p.title||'Sanci9517')+' — Sanci9517';title.textContent=p.title||'Sanci9517';desc.textContent=p.description||'';ensureStyle();const rootId=c.rootId;const page=c;if(!rootId||!page.nodes?.[rootId])throw new Error('invalid-document');const root=page.nodes[rootId];const scheduleNodes=collectVisibleDescendants(page,currentDevice).filter(n=>n.type==='schedule');for(const node of scheduleNodes){let key;try{const cfg=scheduleConfig(node.props?.schedule);const weekStart=cfg.mode==='week'?(scheduleWeekByNode.get(node.id)||currentBudapestMonday()):null;key=scheduleKey(cfg,weekStart);if(!nextScheduleCache.has(key)&&!failures.has(key)){const sr=await fetch('/api/public/schedule?'+scheduleQuery(cfg,weekStart),{cache:'no-store',credentials:'same-origin'});const sp=await sr.json().catch(()=>({}));if(!sr.ok||!sp.ok||!Array.isArray(sp.data))throw new Error('schedule-load-failed');nextScheduleCache.set(key,sp.data)}}catch{if(key)failures.add(key)}if(loadToken!==pageLoadToken)return}scheduleCache=nextScheduleCache;scheduleFailures=failures;scheduleActiveNodes=new Map(scheduleNodes.map(node=>[node.id,node]));canvas.className='content-canvas visual-editor-canvas';canvas.style.cssText='';canvas.removeAttribute('data-node-id');
 // Explicit root editing opts into the same responsive style as the canvas.
 // The canvas keeps its technical ID; explicit root accessibility owns only these attributes.
 for(const key of ['aria-label','lang']){const value=root.metadata?.a11yVersion===1?contentAttributes(root)[key]:undefined;if(value===undefined)canvas.removeAttribute(key);else canvas.setAttribute(key,value)}
