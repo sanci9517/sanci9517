@@ -44,6 +44,11 @@ test('D-07 malformed Page Model child lists and null nodes return validation err
  const errors=validatePage(page);
  assert.ok(errors.includes('children must be an array: root'));
  assert.ok(errors.includes('invalid node: child'));
+ page.nodes.root.children=['child'];
+ page.nodes.child='invalid-node-value';
+ assert.equal(getNode(page,'child'),null);
+ assert.deepEqual(getChildren(page,'root'),[],'primitive child payload cannot leak into Canvas tree');
+ assert.ok(validatePage(page).includes('invalid node: child'));
  assert.ok(validatePage({...page,nodes:[]}).includes('page.nodes must be an object'));
  assert.ok(validatePage({...page,nodes:null}).includes('page.nodes must be an object'));
 });
