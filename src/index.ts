@@ -10,6 +10,7 @@ import { authLogoutRoute } from "./routes/auth/logout";
 import { authSessionRoute } from "./routes/auth/session";
 import { adminSettingsRoute } from "./routes/admin/settings";
 import { adminScheduleRoute } from "./routes/admin/schedule";
+import { adminScheduleMediaRoute } from "./routes/admin/schedule-media";
 import { adminTwitchScheduleSyncRoute } from "./routes/admin/twitch-schedule-sync";
 import { adminPagesRoute } from "./routes/admin/pages";
 import { adminEditorRoute } from "./routes/admin/editor";
@@ -61,6 +62,7 @@ export default {
     if (pathname === "/admin/design") { const user=await presentationAccess(request,env,siteId);if(user instanceof Response)return user.status===401?Response.redirect(new URL("/admin/login",request.url).toString(),302):user;return env.ASSETS.fetch(assetRequest("/admin-design.html",request)); }
     if (pathname === "/api/admin/settings") return adminSettingsRoute(request, env, siteId, site.siteName);
     if (pathname === "/api/admin/schedule") return adminScheduleRoute(request, env);
+    if (pathname === "/api/admin/schedule/media") return adminScheduleMediaRoute(request, env);
     if (pathname === "/api/admin/twitch/schedule-sync") return adminTwitchScheduleSyncRoute(request, env);
     if (pathname === "/api/admin/link-report") return adminLinkReportRoute(request, env);
     if (pathname === "/api/admin/pages") return adminPagesRoute(request, env, siteId);
@@ -84,6 +86,12 @@ export default {
       if (!user) return Response.redirect(new URL("/admin/login", request.url).toString(), 302);
       return env.ASSETS.fetch(assetRequest("/admin-home.html", request));
     }
+    if (pathname === "/admin/schedule") {
+      const user=await getAuthenticatedUser(request,env);
+      if(!user)return Response.redirect(new URL("/admin/login",request.url).toString(),302);
+      if(!hasRole(user,"editor"))return new Response("Forbidden",{status:403});
+      return env.ASSETS.fetch(assetRequest("/admin-schedule.html",request));
+    }
     if (pathname === "/admin/media") {
       const user = await getAuthenticatedUser(request, env);
       if (!user) return Response.redirect(new URL("/admin/login", request.url).toString(), 302);
@@ -98,7 +106,7 @@ export default {
       return env.ASSETS.fetch(assetRequest("/editor-v2/index.html", request));
     }
     // Retired entry points must not expose the backing HTML assets directly.
-    if (["/admin-media.html", "/admin-design.html", "/admin-login.html", "/admin-home.html", "/admin.html", "/admin/home", "/editor-v2", "/editor-v2/index.html", "/about.html", "/community.html", "/contact.html", "/schedule.html", "/tiktok.html", "/twitch.html", "/vod.html", "/youtube.html"].includes(pathname)) {
+    if (["/admin-media.html", "/admin-schedule.html", "/admin-design.html", "/admin-login.html", "/admin-home.html", "/admin.html", "/admin/home", "/editor-v2", "/editor-v2/index.html", "/about.html", "/community.html", "/contact.html", "/schedule.html", "/tiktok.html", "/twitch.html", "/vod.html", "/youtube.html"].includes(pathname)) {
       return new Response("Gone", { status: 410 });
     }
     if (pathname === "/" || pathname === "/index.html") return publicPageHtml(request, env, "/", false, { title: site.siteName }, siteId);
