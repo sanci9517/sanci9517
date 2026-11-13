@@ -1,6 +1,6 @@
-const ICONS={twitch:'<path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714Z"/>',youtube:'<path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>',tiktok:'<path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/>',discord:'<path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.074 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.0771.0771 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.0771.0771 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.949-.5219 6.0023-3.0294a.076.076 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286z"/>',x:'<path d="M14.234 10.162 22.977 0h-2.072l-7.591 8.824L7.251 0H.258l9.168 13.343L.258 24H2.33l8.016-9.318L16.749 24h6.993zm-2.837 3.299-.929-1.329L3.076 1.56h3.182l5.965 8.532.929 1.329 7.754 11.09h-3.182z"/>',live:'<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/>',schedule:'<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M8 3v4M16 3v4M4 9h16M8 13h3M13 13h3M8 17h3"/>',vod:'<rect x="4" y="5" width="16" height="14" rx="2"/><path d="m10 9 5 3-5 3V9Z"/>',community:'<circle cx="9" cy="9" r="3"/><circle cx="17" cy="10" r="2.5"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0M14 18a4.5 4.5 0 0 1 6.5 1"/>',about:'<circle cx="12" cy="12" r="8"/><path d="M12 10v6M12 7.5h.01"/>',contact:'<rect x="4" y="5" width="16" height="14" rx="2"/><path d="m5 7 7 5 7-5"/>',handshake:'<path d="m7 12 2-2 3 2 3-3 2 2-4 4h-2l-2-2-2 2-3-3 2-2"/><path d="m4 10 3-3 4 1M20 10l-3-3-4 1"/>',menu:'<path d="M4 7h16M4 12h16M4 17h16"/>',close:'<path d="m6 6 12 12M18 6 6 18"/>'};
+const ICONS={home:'<path d="M3 11 12 3l9 8v9a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/>',twitch:'<path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714Z"/>',youtube:'<path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>',tiktok:'<path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/>',discord:'<path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.074 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.0771.0771 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.0771.0771 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.949-.5219 6.0023-3.0294a.076.076 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286z"/>',x:'<path d="M14.234 10.162 22.977 0h-2.072l-7.591 8.824L7.251 0H.258l9.168 13.343L.258 24H2.33l8.016-9.318L16.749 24h6.993zm-2.837 3.299-.929-1.329L3.076 1.56h3.182l5.965 8.532.929 1.329 7.754 11.09h-3.182z"/>',live:'<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/>',schedule:'<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M8 3v4M16 3v4M4 9h16M8 13h3M13 13h3M8 17h3"/>',vod:'<rect x="4" y="5" width="16" height="14" rx="2"/><path d="m10 9 5 3-5 3V9Z"/>',community:'<circle cx="9" cy="9" r="3"/><circle cx="17" cy="10" r="2.5"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0M14 18a4.5 4.5 0 0 1 6.5 1"/>',about:'<circle cx="12" cy="12" r="8"/><path d="M12 10v6M12 7.5h.01"/>',contact:'<rect x="4" y="5" width="16" height="14" rx="2"/><path d="m5 7 7 5 7-5"/>',handshake:'<path d="m7 12 2-2 3 2 3-3 2 2-4 4h-2l-2-2-2 2-3-3 2-2"/><path d="m4 10 3-3 4 1M20 10l-3-3-4 1"/>',menu:'<path d="M4 7h16M4 12h16M4 17h16"/>',close:'<path d="m6 6 12 12M18 6 6 18"/>'};
 const BRAND_ICONS=new Set(['twitch','youtube','tiktok','discord','x']);
-const FUNCTIONAL_ICONS=new Set(['live','schedule','vod','community','about','contact','handshake']);
+const FUNCTIONAL_ICONS=new Set(['home','live','schedule','vod','community','about','contact','handshake']);
 function icon(name,label=''){const paths=ICONS[name]||ICONS.about;const brandClass=BRAND_ICONS.has(name)?` brand-icon brand-${name}`:'';const functionalClass=FUNCTIONAL_ICONS.has(name)?` functional-icon functional-${name}`:'';return `<span class="icon${brandClass}${functionalClass}" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false">${paths}</svg></span>${label}`}
 const ICON_MAP=[['🎮','twitch'],['📅','schedule'],['▶','youtube'],['♪','tiktok'],['🎥','vod'],['👥','community'],['◉','about'],['✉️','contact'],['✉','contact'],['🤝','handshake']];
 const EMOJI_MAP=new Map([['schedule','📅'],['vod','🎥'],['community','👥'],['about','ℹ️'],['contact','✉️'],['handshake','🤝']]);
@@ -31,10 +31,82 @@ if(menuButton&&menuPanel){
   });
 }
 function upgradeIcons(){document.querySelectorAll('.menu-link,.btn,.card-icon,.status').forEach(el=>{for(const [token,name] of ICON_MAP){for(const node of [...el.childNodes]){if(node.nodeType===Node.TEXT_NODE&&node.textContent?.trim().startsWith(token)){const rest=node.textContent.replace(token,'').replace(/^\s+/,'');if(EMOJI_MAP.has(name)){const emoji=EMOJI_MAP.get(name);node.replaceWith(document.createTextNode(emoji+' '+rest))}else{node.replaceWith(document.createRange().createContextualFragment(icon(name,rest)))}break}}}});document.querySelectorAll('[data-icon]').forEach(el=>{const name=el.getAttribute('data-icon');if(name&&ICONS[name])el.innerHTML=EMOJI_MAP.has(name)?`${EMOJI_MAP.get(name)} ${el.getAttribute('data-icon-label')||''}`:icon(name,el.getAttribute('data-icon-label')||'')})}
-async function loadPublicContentNavigation(){try{const r=await fetch('/api/public/navigation',{headers:{Accept:'application/json'},cache:'no-store'});if(!r.ok)return;const payload=await r.json();const panel=document.querySelector('[data-menu-panel]');const grid=panel?.querySelector('.menu-grid');if(!grid)return;grid.replaceChildren();if(!payload?.ok||!Array.isArray(payload.data?.items))return;const labels={twitch:['🎮','Twitch'],schedule:['📅','Időpontok'],youtube:['▶','YouTube'],tiktok:['♪','TikTok'],community:['👥','Közösség'],about:['◉','Rólam'],contact:['✉️','Kapcsolat'],vod:['🎥','VOD'],support:['🤝','Támogatás']};const build=(item,depth=0)=>{if(!item||typeof item.href!=='string'||typeof item.label!=='string')return null;const wrapper=document.createElement('div');wrapper.className='menu-nav-item'+(depth?' menu-nav-child':'');const link=document.createElement('a');link.className='menu-link';link.href=item.href;const meta=labels[item.slug]||['✦',item.label];const iconLabel=document.createElement('span');iconLabel.className='menu-nav-icon';iconLabel.textContent=meta[0];const title=document.createElement('span');title.className='menu-nav-title';title.textContent=item.label;const detail=document.createElement('small');detail.textContent=meta[1]||item.label;link.append(iconLabel,title,detail);link.addEventListener('click',()=>{if(menuPanel)menuPanel.classList.remove('open');if(menuButton){menuButton.setAttribute('aria-expanded','false');setMenuIcon(false)}});wrapper.append(link);if(Array.isArray(item.children)&&item.children.length){const children=document.createElement('div');children.className='menu-nav-children';for(const child of item.children){const node=build(child,depth+1);if(node)children.append(node)}wrapper.append(children)}return wrapper};for(const item of payload.data.items){const node=build(item);if(node)grid.append(node)}upgradeIcons();markActiveNavigation();if(panel.classList.contains('open')&&document.activeElement===menuButton)focusFirstLink()}catch{}}
+// Canonical SANCI navigation is backed by published D1 page IDs. Icons come
+// from our existing local SVG paths (never Unicode placeholders or remote fonts).
+const PAGE_ICON=Object.freeze({home:'home',twitch:'twitch',youtube:'youtube',tiktok:'tiktok',schedule:'schedule',community:'discord',about:'about',contact:'contact'});
+const PAGE_CONTEXT=Object.freeze({home:'Kezdőlap',twitch:'Twitch · élő adás',youtube:'YouTube · teljes VOD',tiktok:'TikTok · rövid klipek',schedule:'Heti adásnaptár',community:'Discord · közösség',about:'A márka mögött',contact:'Üzenet és együttműködés'});
+function menuIdentity(item){
+  const slug=typeof item.slug==='string'?item.slug:'';
+  if(PAGE_ICON[slug])return {name:PAGE_ICON[slug],description:PAGE_CONTEXT[slug]};
+  // External links may be displayed in user-configured navigation.
+  try{const u=new URL(item.href,location.href);if(u.protocol==='https:'){
+    const host=u.hostname.toLowerCase();
+    if(host==='www.twitch.tv'||host==='twitch.tv')return{name:'twitch',description:'Twitch'};
+    if(host==='www.youtube.com'||host==='youtube.com'||host==='youtu.be')return{name:'youtube',description:'YouTube'};
+    if(host==='www.tiktok.com'||host==='tiktok.com')return{name:'tiktok',description:'TikTok'};
+    if(host==='discord.gg'||host==='discord.com')return{name:'discord',description:'Discord'};
+  }}catch{}
+  return{name:'about',description:''};
+}
+function safeMenuHref(value){
+  if(typeof value!=='string')return '';
+  if(value==='/'||/^\/p\/[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value))return value;
+  try{const url=new URL(value);return url.protocol==='https:'&&!url.username&&!url.password?url.href:''}catch{return''}
+}
+async function loadPublicContentNavigation(){
+  try{
+    const response=await fetch('/api/public/navigation',{headers:{Accept:'application/json'},cache:'no-store'});
+    if(!response.ok)return;
+    const payload=await response.json();
+    const panel=document.querySelector('[data-menu-panel]');
+    const grid=panel?.querySelector('.menu-grid');
+    if(!grid||!payload?.ok||!Array.isArray(payload.data?.items))return;
+    const build=(item,depth=0)=>{
+      if(!item||typeof item.label!=='string')return null;
+      const href=safeMenuHref(item.href);
+      if(!href)return null;
+      const identity=menuIdentity(item);
+      const wrapper=document.createElement('div');
+      wrapper.className='menu-nav-item'+(depth?' menu-nav-child':'');
+      const link=document.createElement('a');
+      link.className='menu-link';link.href=href;
+      if(href.startsWith('https://')){link.target='_blank';link.rel='noopener noreferrer';}
+      const iconWrap=document.createElement('span');
+      iconWrap.className='menu-nav-icon menu-nav-icon-'+identity.name;
+      iconWrap.setAttribute('aria-hidden','true');
+      iconWrap.innerHTML=icon(identity.name);
+      const title=document.createElement('span');
+      title.className='menu-nav-title';title.textContent=item.label.trim();
+      link.append(iconWrap,title);
+      if(identity.description){
+        const small=document.createElement('small');small.className='menu-nav-detail';
+        small.textContent=identity.description;link.append(small);
+      }
+      link.addEventListener('click',()=>{
+        panel.classList.remove('open');
+        menuButton?.setAttribute('aria-expanded','false');
+        setMenuIcon(false);
+      });
+      wrapper.append(link);
+      if(Array.isArray(item.children)&&item.children.length&&depth<3){
+        const children=document.createElement('div');children.className='menu-nav-children';
+        for(const child of item.children){const element=build(child,depth+1);if(element)children.append(element)}
+        if(children.childElementCount)wrapper.append(children);
+      }
+      return wrapper;
+    };
+    const fragment=document.createDocumentFragment();
+    for(const item of payload.data.items){const element=build(item);if(element)fragment.append(element)}
+    // An empty/invalid response must not destroy the static fallback menu.
+    if(!fragment.childNodes.length)return;
+    grid.replaceChildren(fragment);
+    markActiveNavigation();
+    if(panel.classList.contains('open')&&document.activeElement===menuButton)focusFirstLink();
+  }catch{} // Keep the accessible static fallback during transient API errors.
+}
 const year=document.querySelector('[data-year]');if(year)year.textContent=new Date().getFullYear();async function loadSiteSettings(){try{const r=await fetch('/api/public/site-settings',{headers:{Accept:'application/json'},cache:'no-store'});if(!r.ok)return;const s=await r.json();document.querySelectorAll('[data-site-name]').forEach(el=>{if(typeof s.siteName==='string'&&s.siteName.trim())el.textContent=s.siteName.trim()});document.querySelectorAll('[data-site-tagline]').forEach(el=>{if(typeof s.tagline==='string')el.textContent=s.tagline})}catch{}}
 function markActiveNavigation(){
-  const current=location.pathname==='/index.html'?'/':location.pathname;
+  const current=location.pathname==='/index.html'||location.pathname==='/p/home'?'/':location.pathname;
   document.querySelectorAll('.desktop-primary-nav a[href],.menu-panel a[href]').forEach(link=>{
     try{const target=new URL(link.getAttribute('href'),location.href);if(target.origin===location.origin&&target.pathname===current)link.setAttribute('aria-current','page');else link.removeAttribute('aria-current')}catch{}
   });
