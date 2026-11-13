@@ -137,3 +137,42 @@ body[data-sanci-shell="1"] .public-footer-column a{min-width:0;overflow-wrap:any
 /* Source-backed stream cover, responsive and no cropping of text. */
 .sanci-week-event-image{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;border-radius:8px;margin:0 0 5px;border:1px solid rgba(216,228,241,.22);background:#090c12}
 .sanci-week-day .sanci-week-event-image{max-width:100%;min-width:0}
+
+
+/* SANCI 2026-11-13: an icon-led, single-purpose information architecture.
+   The source SVGs are bundled with site.js (no brand-logo image requests). */
+body[data-sanci-shell="1"] .menu-panel{width:min(438px,calc(100vw - 24px));padding:16px}
+body[data-sanci-shell="1"] .menu-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:7px}
+body[data-sanci-shell="1"] .menu-nav-item{min-width:0}
+body[data-sanci-shell="1"] .menu-nav-item>.menu-link,
+body[data-sanci-shell="1"] .menu-grid>a.menu-link{display:grid;grid-template-columns:46px minmax(0,1fr);grid-template-rows:auto auto;column-gap:12px;row-gap:1px;align-items:center;align-content:center;min-height:68px;padding:10px 13px;background:#121925;border:1px solid #303c4d;border-radius:12px;overflow:hidden;transform:none}
+body[data-sanci-shell="1"] .menu-nav-item>.menu-link:hover,
+body[data-sanci-shell="1"] .menu-grid>a.menu-link:hover,
+body[data-sanci-shell="1"] .menu-link[aria-current="page"]{background:#1b2532;border-color:rgba(225,77,97,.72)}
+body[data-sanci-shell="1"] .menu-nav-icon{display:grid;place-items:center;width:44px;height:44px;flex-shrink:0;grid-column:1;grid-row:1/span 2;background:#1c2633;border:1px solid rgba(211,221,235,.13);border-radius:10px;overflow:hidden}
+body[data-sanci-shell="1"] .menu-nav-icon .icon{width:23px;height:23px}
+body[data-sanci-shell="1"] .menu-nav-icon .icon svg{width:100%;height:100%}
+body[data-sanci-shell="1"] .menu-nav-icon-twitch .icon{color:#aa86ea}
+body[data-sanci-shell="1"] .menu-nav-icon-youtube .icon{color:#ff5965}
+body[data-sanci-shell="1"] .menu-nav-icon-tiktok .icon{color:#f5f8fc;filter:drop-shadow(-1px -1px 0 #5cd8df) drop-shadow(1px 1px 0 #e35c86)}
+body[data-sanci-shell="1"] .menu-nav-icon-discord .icon{color:#91a3ff}
+body[data-sanci-shell="1"] .menu-nav-icon-home .icon,
+body[data-sanci-shell="1"] .menu-nav-icon-schedule .icon,
+body[data-sanci-shell="1"] .menu-nav-icon-about .icon,
+body[data-sanci-shell="1"] .menu-nav-icon-contact .icon{color:#cbd8e9}
+body[data-sanci-shell="1"] .menu-nav-title{grid-column:2;grid-row:1;color:#f5f7fb;font-size:15px;font-weight:780;letter-spacing:0;line-height:1.3;min-width:0;overflow-wrap:break-word}
+body[data-sanci-shell="1"] .menu-nav-detail{grid-column:2;grid-row:2;color:#9bacc0;font-size:11px;line-height:1.45;letter-spacing:.012em;min-width:0;margin:0;padding:0}
+body[data-sanci-shell="1"] .menu-grid>a.menu-link{grid-template-rows:1fr}
+body[data-sanci-shell="1"] .menu-grid>a.menu-link .menu-nav-icon{grid-row:1}
+body[data-sanci-shell="1"] .menu-nav-children{margin:7px 0 6px 20px;padding-left:15px;border-color:#344253}
+body[data-sanci-shell="1"] .menu-nav-child>.menu-link{min-height:58px}
+body[data-sanci-shell="1"] .menu-panel-foot{color:#8498af;justify-content:flex-start}
+body[data-sanci-shell="1"] .desktop-primary-nav a{gap:7px}
+body[data-sanci-shell="1"] .desktop-primary-nav .menu-nav-icon{border:0;border-radius:0;width:20px;height:20px;background:transparent}
+body[data-sanci-shell="1"] .desktop-primary-nav .menu-nav-icon .icon{width:19px;height:19px}
+body[data-sanci-shell="1"] .menu-button:focus-visible{outline:3px solid #e14d61;outline-offset:3px}
+@media(max-width:620px){
+ body[data-sanci-shell="1"] .menu-panel{right:12px;max-height:calc(100dvh - 86px);padding:12px}
+ body[data-sanci-shell="1"] .menu-nav-item>.menu-link{min-height:62px}
+}
+@media(prefers-reduced-motion:reduce){body[data-sanci-shell="1"] .menu-nav-item>.menu-link{transition:none}}
