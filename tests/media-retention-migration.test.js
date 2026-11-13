@@ -23,3 +23,5 @@ test("retention state migration is additive, inert and keeps one request per sit
   assert.equal(db.prepare("SELECT COUNT(*) n FROM media_retention_requests").get().n,1);
  } finally { db.close(); }
 });
+// D-06 manual-only 0029 candidate and atomic rollback regressions.
+import "./media-archive-trigger-casefold.test.js";
