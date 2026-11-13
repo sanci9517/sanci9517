@@ -103,3 +103,32 @@ test('D-06 late failed SQL rolls back staged triggers and leaves 0028/ledger unc
   assert.equal(db.prepare('SELECT COUNT(*) AS total FROM d1_migrations').get().total,1);
  }finally{db.close();}
 });
+
+// Separate fixture keeps the relevant real D1 NOT NULL, UNIQUE, and FK schema
+// shapes; the simpler fixture above makes individual trigger paths easier to test.
+test('D-06 additive SQL works with production-like D1 table columns and FK constraints',()=>{
+ const db=new DatabaseSync(':memory:');try{
+  db.exec('PRAGMA foreign_keys=ON');
+  db.exec(`
+   CREATE TABLE sites(id TEXT PRIMARY KEY);
+   INSERT INTO sites VALUES('site-a'),('site-b');
+   CREATE TABLE media(id TEXT PRIMARY KEY,object_key TEXT NOT NULL UNIQUE,original_name TEXT NOT NULL,mime_type TEXT NOT NULL,size_bytes INTEGER NOT NULL,alt_text TEXT NOT NULL DEFAULT '',created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,site_id TEXT NOT NULL REFERENCES sites(id) ON DELETE RESTRICT);
+   CREATE TABLE pages(id TEXT PRIMARY KEY,slug TEXT NOT NULL,title TEXT NOT NULL,description TEXT NOT NULL DEFAULT '',content_json TEXT NOT NULL DEFAULT '{}',is_published INTEGER NOT NULL DEFAULT 1 CHECK(is_published IN(0,1)),created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,published_content_json TEXT,sort_order INTEGER NOT NULL DEFAULT 0,published_revision_id TEXT REFERENCES editor_revisions(id) ON DELETE SET NULL,site_id TEXT NOT NULL REFERENCES sites(id) ON DELETE RESTRICT,published_slug TEXT,published_title TEXT,published_description TEXT,published_at TEXT,archived_at TEXT,parent_page_id TEXT REFERENCES pages(id) ON DELETE RESTRICT,published_parent_page_id TEXT REFERENCES pages(id) ON DELETE RESTRICT);
+   CREATE TABLE editor_revisions(id TEXT PRIMARY KEY,page_id TEXT NOT NULL,version INTEGER NOT NULL,document_json TEXT NOT NULL,created_by TEXT,created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,note TEXT DEFAULT '',UNIQUE(page_id,version),FOREIGN KEY(page_id) REFERENCES pages(id) ON DELETE CASCADE);
+  `);
+  // The test mirrors the pre-0028 media column and applies the same immutable 0028.
+  db.exec(originalSql);
+  db.exec(candidateSql);
+  db.prepare('INSERT INTO media(id,object_key,original_name,mime_type,size_bytes,site_id,archived_at) VALUES (?,?,?,?,?,?,?)')
+   .run(id,'sites/site-a/media/archive','archived.png','image/png',128,'site-a','2026-11-13');
+  const page=db.prepare('INSERT INTO pages(id,slug,title,site_id,content_json,published_content_json) VALUES (?,?,?,?,?,?)');
+  assertArchived(()=>page.run('live','live','Live','site-a',encoded('assetId'),null));
+  page.run('history-only','history-only','History','site-b','{}',null);
+  db.prepare('INSERT INTO editor_revisions(id,page_id,version,document_json) VALUES (?,?,?,?)')
+   .run('old-revision','history-only',1,encoded('posterAssetId'));
+  assertArchived(()=>db.prepare("UPDATE pages SET site_id='site-a' WHERE id='history-only'").run());
+  assert.equal(db.prepare("SELECT site_id FROM pages WHERE id='history-only'").get().site_id,'site-b');
+  assert.equal(db.prepare('PRAGMA foreign_key_check').all().length,0);
+  assert.equal(db.prepare('PRAGMA quick_check').get().quick_check,'ok');
+ }finally{db.close();}
+});
