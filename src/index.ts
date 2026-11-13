@@ -174,7 +174,9 @@ async function publicPageHtml(request: Request, env: Env, canonicalPath: string 
   if (!canonicalBrand) {
     // The shared public template must not display SANCI channels or legal
     // claims on future independent creator sites, even while nav is loading.
-    html = html.replace(/<nav class="desktop-primary-nav"[\s\S]*?<\/nav>/, '')
+    html = html.replace('Sanci9517 • Tartalom', 'Tartalom')
+      .replace('<small>SANCI DARK DEPTH</small>', '')
+      .replace(/<nav class="desktop-primary-nav"[\s\S]*?<\/nav>/, '')
       .replace('<span class="public-header-status">JÁTÉK <span aria-hidden="true">·</span> KÖZÖSSÉG</span>', '')
       .replace('<a class="header-cta" href="/p/twitch">Élő adás</a>', '')
       .replace(/<div class="menu-grid" data-canonical-menu>[\s\S]*?<\/div>/, '<div class="menu-grid" data-canonical-menu></div>')
