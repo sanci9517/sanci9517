@@ -288,7 +288,7 @@ test('public weekly schedule filters by actual Europe/Budapest day, including UT
   const db={prepare(sql){executedSql=sql;return{bind(...args){binds=args;return{all:async()=>({results:rows})}}}}};
   const result=await readPublicSchedule(db,{mode:'week',weekStart:'2026-11-09',limit:10});
   assert.deepEqual(result.map(x=>x.id),['monday-utc-edge','monday-local','sunday-local']);
-  assert.match(executedSql,/substr\(starts_at, 1, 10\)/);
+  assert.match(executedSql,/substr\(e\.starts_at, 1, 10\)/);
   assert.ok(binds.includes('2026-11-08'));
   assert.ok(binds.includes('2026-11-17'));
   assert.ok(!result.some(x=>x.source||x.sourceId));
