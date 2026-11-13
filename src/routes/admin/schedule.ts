@@ -3,9 +3,10 @@ import { getAuthenticatedUser, hasRole } from "../../core/auth/require-auth";
 import type { Env } from "../../types/env";
 import { auditStatement } from "../../core/audit";
 import { getCanonicalSiteContext } from "../../core/site-context";
+import { scheduleArtworkKey, SCHEDULE_ARTWORK_JOIN, SCHEDULE_ARTWORK_SELECT, validScheduleArtworkId } from "../../core/schedule-artwork";
 
 type ScheduleBody = { id?: unknown; title?: unknown; platform?: unknown; startsAt?: unknown; endsAt?: unknown; status?: unknown; url?: unknown; notes?: unknown };
-type ScheduleRow = { id: string; title: string; platform: string; starts_at: string; ends_at: string | null; status: string; url: string | null; notes: string };
+type ScheduleRow = { id: string; title: string; platform: string; starts_at: string; ends_at: string | null; status: string; url: string | null; notes: string; image_asset_id: string | null };
 const STATUSES = new Set(["scheduled", "live", "completed", "cancelled"]);
 
 function normalize(body: ScheduleBody) {
@@ -32,7 +33,7 @@ function normalize(body: ScheduleBody) {
 
   return { title, platform, startsAt, endsAt, status, url, notes };
 }
-function mapRow(row: ScheduleRow) { return { id: row.id, title: row.title, platform: row.platform, startsAt: row.starts_at, endsAt: row.ends_at, status: row.status, url: row.url, notes: row.notes }; }
+function mapRow(row: ScheduleRow) { return { id: row.id, title: row.title, platform: row.platform, startsAt: row.starts_at, endsAt: row.ends_at, status: row.status, url: row.url, notes: row.notes, imageAssetId: validScheduleArtworkId(row.image_asset_id) ? row.image_asset_id.toLowerCase() : null }; }
 
 export async function adminScheduleRoute(request: Request, env: Env): Promise<Response> {
   const { siteId } = getCanonicalSiteContext();
@@ -40,7 +41,7 @@ export async function adminScheduleRoute(request: Request, env: Env): Promise<Re
   if (!user) return error("UNAUTHORIZED", 401, "Authentication required");
   if (!hasRole(user, "editor")) return error("FORBIDDEN", 403, "Editor role required");
   if (request.method === "GET") {
-    const rows = await env.DB.prepare("SELECT id,title,platform,starts_at,ends_at,status,url,notes FROM schedule_items WHERE site_id=? ORDER BY starts_at ASC").bind(siteId).all<ScheduleRow>();
+    const rows = await env.DB.prepare(`SELECT e.id,e.title,e.platform,e.starts_at,e.ends_at,e.status,e.url,e.notes,${SCHEDULE_ARTWORK_SELECT} FROM schedule_items e${SCHEDULE_ARTWORK_JOIN} WHERE e.site_id=? ORDER BY e.starts_at ASC LIMIT 500`).bind(siteId).all<ScheduleRow>();
     return ok(rows.results.map(mapRow));
   }
   let body: ScheduleBody;
@@ -70,6 +71,7 @@ export async function adminScheduleRoute(request: Request, env: Env): Promise<Re
     const result = await env.DB.prepare("SELECT id FROM schedule_items WHERE id=? AND site_id=? LIMIT 1").bind(id, siteId).first<{id:string}>();
     if (!result) return error("NOT_FOUND", 404, "Schedule item not found");
     await env.DB.batch([
+      env.DB.prepare("DELETE FROM site_settings WHERE key=?").bind(scheduleArtworkKey(siteId,id)),
       env.DB.prepare("DELETE FROM schedule_items WHERE id=? AND site_id=?").bind(id,siteId),
       auditStatement(env, user.id, "schedule.delete", "schedule_item", id, {})
     ]);
