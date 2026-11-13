@@ -68,7 +68,13 @@ function scheduleCard(item, config) {
   const endText = end && config.showEndTime ? ` – ${escapeHTML(end.time)}` : '';
   const statusNames = {scheduled:'Tervezett',live:'Élő',completed:'Lezajlott',cancelled:'Elmarad'};
   const href = config.showLink ? safeExternalURL(item.url) : '';
+  // Media IDs are site-owned server records, never unvalidated user URLs.
+  const imageId = typeof item.imageAssetId==='string'&&/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(item.imageAssetId)
+    ? item.imageAssetId.toLowerCase() : '';
+  const image = imageId && config.showArtwork!==false
+    ? `<img class="sanci-week-event-image" src="/media/${imageId}" alt="" loading="lazy" decoding="async">` : '';
   return `<article class="sanci-week-event${item.status==='live'?' is-live':''}${item.status==='cancelled'?' is-cancelled':''}">`+
+    image+
     `${config.showTime?`<time class="sanci-week-event-time" datetime="${escapeHTML(item.startsAt)}">${time}${endText}</time>`:''}`+
     `${config.showTitle?`<strong class="sanci-week-event-title">${escapeHTML(item.title)}</strong>`:''}`+
     `${config.showPlatform?`<span class="sanci-week-event-platform">${escapeHTML(item.platform)}</span>`:''}`+
