@@ -2,7 +2,7 @@
   "schema": "sanci9517.editor.d07.page-model-guard.review.v1",
   "date": "2026-11-13",
   "plan_point": "77.44.7.D",
-  "status": "BRANCH_ONLY_NOT_CERTIFIED",
+  "status": "CANDIDATE_V8_SMOKE_PASS_REAL_REPO_CI_PENDING",
   "branch": "fix/77-44-7-d-malformed-page-model-20261113",
   "base_commit": "3365da0a8ac75e1d2e3c0e5c4385cd9365171f83",
   "review_head_before_evidence": "24ead465d639af5d6226c7e74468ef8c6a8e1de2",
@@ -19,25 +19,25 @@
   ],
   "checks": [
     {
-      "command": "node --test /tmp/sanci-page-model-isolated.test.mjs",
-      "status": "PASS (2/2)",
-      "scope": "Locally reproduced logic smoke only. Not executed from an exact repository checkout."
+      "command": "direct execution of exact committed schema.js via isolated V8 loader",
+      "status": "23/23 PASS",
+      "scope": "Actual Git blob 5993941b95754fe968281bc60a774460e78b39b8; schedule-schema imports mocked; checks valid page/doc parity, malformed children/nodes, inherited IDs; NOT the full repository test suite."
     },
     {
       "command": "npm run test:editor",
-      "status": "NOT_RUN"
+      "status": "PENDING_REAL_CI"
     },
     {
       "command": "npm run typecheck",
-      "status": "NOT_RUN"
+      "status": "PENDING_REAL_CI"
     },
     {
-      "command": "real Chromium Editor Core",
-      "status": "NOT_RUN"
+      "command": "npm run test:editor:layout + Chromium",
+      "status": "PENDING_REAL_CI"
     },
     {
-      "command": "GitHub Actions exact-head",
-      "status": "NOT_RUN_FREE_QUOTA_UNVERIFIED"
+      "command": "npm run test:media",
+      "status": "PENDING_REAL_CI"
     }
   ],
   "release": "NOT MERGED, NOT DEPLOYED",
@@ -47,5 +47,8 @@
     "No paid service",
     "Save and Publish separate"
   ],
-  "gates": "Full exact-head repo tests+typecheck+Chromium/F0/Twitch/canonical/dry-run, read-only prod D1, 0-cost quota verification, normal merge, deploy:safe and post-deploy smoke before release."
+  "gates": "Full exact-head repo tests+typecheck+Chromium/F0/Twitch/canonical/dry-run, read-only prod D1, 0-cost quota verification, normal merge, deploy:safe and post-deploy smoke before release.",
+  "cost_protection": "GitHub repository is confirmed public and required workflows run on standard ubuntu-24.04/ubuntu-latest runners (GitHub public standard runners free according to GitHub's billing docs). No paid larger runner; retain failure-only artifacts 7 days. Workflow status still to be verified.",
+  "next_gate": "Trigger PR CI on exact non-skipped head, verify completed results, address failures, typecheck and browser tests, then production D1 SELECT-only preflight + Wrangler dry-run before normal merge and safe production deploy.",
+  "process": "Owner gave general development authorization; does NOT automatically mean approved production D1 schema migration or spending over 0 Ft."
 }
