@@ -1,0 +1,51 @@
+{
+  "schema": "sanci9517.editor.d07.page-model-guard.review.v1",
+  "date": "2026-11-13",
+  "plan_point": "77.44.7.D",
+  "status": "BRANCH_ONLY_NOT_CERTIFIED",
+  "branch": "fix/77-44-7-d-malformed-page-model-20261113",
+  "base_commit": "3365da0a8ac75e1d2e3c0e5c4385cd9365171f83",
+  "review_head_before_evidence": "24ead465d639af5d6226c7e74468ef8c6a8e1de2",
+  "source_git_blobs": {
+    "public/editor-v2/core/schema.js": "5993941b95754fe968281bc60a774460e78b39b8",
+    "tests/editor-palette-capability.test.js": "b878212f5a4036b1a18daefd9b11f7c07a9e7d02"
+  },
+  "finding": "Malformed non-iterable children formerly threw in validatePage/getChildren; null nodes were directly dereferenced; prototype-inherited page/node IDs were accidentally visible through ordinary object property access.",
+  "implemented": [
+    "Own-property lookups and object-only pages/nodes for model getters",
+    "Empty child list rather than throw for malformed node.children",
+    "Explicit validation errors for malformed nodes, children and pages",
+    "Negative regression tests for null/primitive nodes and inherited identifiers"
+  ],
+  "checks": [
+    {
+      "command": "node --test /tmp/sanci-page-model-isolated.test.mjs",
+      "status": "PASS (2/2)",
+      "scope": "Locally reproduced logic smoke only. Not executed from an exact repository checkout."
+    },
+    {
+      "command": "npm run test:editor",
+      "status": "NOT_RUN"
+    },
+    {
+      "command": "npm run typecheck",
+      "status": "NOT_RUN"
+    },
+    {
+      "command": "real Chromium Editor Core",
+      "status": "NOT_RUN"
+    },
+    {
+      "command": "GitHub Actions exact-head",
+      "status": "NOT_RUN_FREE_QUOTA_UNVERIFIED"
+    }
+  ],
+  "release": "NOT MERGED, NOT DEPLOYED",
+  "controls": [
+    "No production D1 change",
+    "No R2 deletion",
+    "No paid service",
+    "Save and Publish separate"
+  ],
+  "gates": "Full exact-head repo tests+typecheck+Chromium/F0/Twitch/canonical/dry-run, read-only prod D1, 0-cost quota verification, normal merge, deploy:safe and post-deploy smoke before release."
+}
