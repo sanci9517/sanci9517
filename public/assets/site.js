@@ -121,7 +121,7 @@ const year=document.querySelector('[data-year]');if(year)year.textContent=new Da
 function markActiveNavigation(){
   const current=location.pathname==='/index.html'||location.pathname==='/p/home'?'/':location.pathname;
   document.querySelectorAll('.desktop-primary-nav a[href],.menu-panel a[href]').forEach(link=>{
-    try{const target=new URL(link.getAttribute('href'),location.href);if(target.origin===location.origin&&target.pathname===current)link.setAttribute('aria-current','page');else link.removeAttribute('aria-current')}catch{}
+    try{const target=new URL(link.getAttribute('href'),location.href);const normalized=target.pathname==='/p/home'?'/':target.pathname;if(target.origin===location.origin&&normalized===current)link.setAttribute('aria-current','page');else link.removeAttribute('aria-current')}catch{}
   });
 }
 async function revealSignedInAdmin(){
