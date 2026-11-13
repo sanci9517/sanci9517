@@ -69,6 +69,12 @@ test('D-06 moving site ownership cannot smuggle archived reference into tenant',
   db.prepare(insert).run('foreign-b','site-b',encoded('assetId'),null);
   db.prepare('INSERT INTO editor_revisions(id,page_id,document_json) VALUES(?,?,?)').run('rev-move','foreign-b',encoded('assetId'));
   assertArchived(()=>db.prepare("UPDATE editor_revisions SET page_id='safe-a' WHERE id='rev-move'").run());
+  // A page can have clean current content but archived-asset references in history.
+  // Moving it into the tenant that owns the archived asset must not bypass guards.
+  db.prepare(insert).run('history-only','site-b','{}',null);
+  db.prepare('INSERT INTO editor_revisions(id,page_id,document_json) VALUES(?,?,?)').run('rev-history','history-only',encoded('assetId'));
+  assertArchived(()=>db.prepare("UPDATE pages SET site_id='site-a' WHERE id='history-only'").run());
+  assert.equal(db.prepare("SELECT site_id FROM pages WHERE id='history-only'").get().site_id,'site-b');
  }finally{db.close();}
 });
 
