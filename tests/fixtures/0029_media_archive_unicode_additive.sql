@@ -35,6 +35,13 @@ WHEN EXISTS (
   OR (instr(COALESCE(NEW.published_content_json,''),char(92)||'u')>0 AND EXISTS (
    SELECT 1 FROM json_tree(CASE WHEN json_valid(NEW.published_content_json) THEN NEW.published_content_json ELSE 'null' END) j
    WHERE j.type='text' AND instr(lower(j.value),lower(m.id))>0))
+  OR (NEW.site_id<>OLD.site_id AND EXISTS (
+   SELECT 1 FROM editor_revisions er WHERE er.page_id=NEW.id AND (
+    instr(lower(COALESCE(er.document_json,'')),lower(m.id))>0
+    OR (instr(COALESCE(er.document_json,''),char(92)||'u')>0 AND EXISTS (
+     SELECT 1 FROM json_tree(CASE WHEN json_valid(er.document_json) THEN er.document_json ELSE 'null' END) j
+     WHERE j.type='text' AND instr(lower(j.value),lower(m.id))>0))
+   )))
  )
 )
 BEGIN SELECT RAISE(ABORT,'ARCHIVED_MEDIA_REFERENCE'); END;
