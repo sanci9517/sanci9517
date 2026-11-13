@@ -2,7 +2,7 @@ import { error,ok } from "../../core/response";
 import { getAuthenticatedUser,hasRole } from "../../core/auth/require-auth";
 import { auditStatement } from "../../core/audit";
 import { getCanonicalSiteContext } from "../../core/site-context";
-import { scheduleArtworkJSON,scheduleArtworkKey,validScheduleArtworkId } from "../../core/schedule-artwork";
+import { scheduleArtworkJSON,scheduleArtworkKey,validScheduleArtworkId } from "../../core/schedule-artwork.ts";
 import type { Env } from "../../types/env";
 
 type Payload = { itemId?: unknown; assetId?: unknown };
