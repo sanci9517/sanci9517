@@ -164,3 +164,49 @@ A `page-schedule` P0 heti piszkozatot egy szerkeszthető keret/padding korrekci�
 - A Cloudflare deployment API legutóbbi visszaolvasásakor a 2026-11-13T20:37:14Z deploy \`540f84c3-f124-45df-a01a-3d3cc82dcb47\` / Worker verzió \`fda40b18-5805-4cd7-ae20-377a4f23144c\` **100%** forgalmat kapott. Ez **nem igazolt exact GitHub-SHA, asset hash vagy képernyőn mért teljesítmény**; a legfrissebb dokumentációs és tesztcommitok ennél későbbiek is lehetnek. Az éles publikus webhely dokumentumai továbbra is a régebbi published snapshotok.
 - Valódi tartalomrendszerezéshez a YouTube/TikTok egyedi, publikusan elérhető videóazonosítói még hiányoznak. Külső kereséssel sem áll rendelkezésre biztos saját videó-ID; nincs hamis videókártya. Shop/merch és sponsor sáv hiteles adat hiányában nincs kiemelve.
 - **Állapot:** UX-P0 OPEN, publish QA OPEN, brand visual acceptance OPEN. Nem nevezhető kész vagy nemzetközi szinten igazolt site-nak, amíg a teljes browser/Editor/heti schedule tesztek és biztonságos Publish/SEO/asset verifikáció nem dokumentált.
+
+
+## 2026-11-13 — Felhasználói mobil screenshot regresszió, teljes editorial éles publikálás, heti képes menetrend
+
+**Tulajdonosi kérés:** a feltöltött 393 px körüli mobil screenshoton az új SANCI fejléc alatt régi lila/gombos tartalom és nagy fekete üres zóna maradt; a lábléc ©/szlogen sor összefolyt; az Admin főoldal nehezen volt megtalálható; a menetrendhez önállóan hozzáadható/módosítható adások és médiatári képek kellenek. A tulajdonos kérte az összes új oldal publikálását és finomítását.
+
+**Gyökérok az előző dokumentumokban:** a \`page-home\` publikus snapshot továbbra is a korábbi, 6 csomópontos legacy oldal (v101) volt; a legújabb 36-node-os SANCI hero csak draft (v106). A screenshoton egyszerre jelent meg a legújabb header/footer és a régi publikált tartalom; a publikus footer több ellentmondó mobil media-query szabálya miatt a © és a szlogen összefolyt. \`/admin\` Worker route és a \`public/admin-home.html\` 99 KB-os kódja végig létezett; csak a felhasználó számára látható visszavezető publikus link hiányzott.
+
+### GitHub runtime fejlesztések
+
+- \`public/visual-page.html\` + \`public/assets/site.js\`: SANCI láblécben új \`/admin\` shortcut; alapból \`hidden\`, csak igazolt \`/api/auth/session\` bejelentkezés esetén válik láthatóvá. Nem teszünk nyilvános admin megnyitó gombot anonim látogatóknak.
+- \`public/assets/site.css\`: mobil footer-grid 480px alatt 1 oszlop, a © és a szlogen külön flex-sorokban; a harmadik oszlop sem árvul. Cél a screenshoton látható összeolvadó copyright sor és töredezett lábléc megszüntetése.
+- \`src/index.ts\`: \`/admin/schedule\` új hitelesített frontend útvonal; \`/api/admin/schedule/media\` role/editor + origin ellenőrzéssel; direkt \`/admin-schedule.html\` asset megnyitás tiltva, nincs második Admin főoldal.
+- \`public/admin-home.html\`: az Adásrend navigáció és a Következő adás panel az új kezelőfelületre visz.
+- \`public/admin-schedule.html\`, \`public/assets/admin-schedule.js\`: hétfő–vasárnap profi, mobilon egyoszlopos Admin heti kezelő; előző/következő hét, teljes adáslista, felvétel/szerkesztés/törlés, indulás/vég, platform, állapot (tervezett/élő/lezajlott/elmaradt), URL, megjegyzés, **a médiatár aktív, azonos site-hoz tartozó képeinek kiválasztása**. A teljes oldalkompozíció továbbra is a Visual Editorban marad szerkeszthető.
+- \`src/core/schedule-artwork.ts\`, \`src/routes/admin/schedule-media.ts\`: \`site_settings\` előtagolású (site+event UUID) kép-hozzárendelés **új D1 migráció nélkül**; médiamime/site/archive ellenőrzés; audit, Origin+role ellenőrzés. A menetrend esemény törlése eltávolítja a képkapcsolatot, de nem törli a felhasználó R2 médiáját.
+- \`src/core/schedule-read.ts\`, \`src/routes/admin/schedule.ts\`: read-only left join a schedule domain és a képkapcsolat között; \`imageAssetId\` visszaadása; meglévő CRUD endpoint az új Admin UI számára azonos originű JSON védelmet kapott.
+- \`src/routes/admin/media.ts\`: a **valós site-hoz tartozó** élő menetrend esemény borítója ugyanazon médiatári assetet használhatja a /media/ útvonalon; a mediaUsage védett referenciái most schedule-event használatot is rögzítenek, ezért az ilyen aktív képet nem lehet simán „árvának” tekinteni.
+- \`public/editor-v2/core/schedule-schema.js\`, \`public/editor-v2/app.js\`, \`src/core/editor-validation.ts\`: \`showArtwork\` kapcsoló a Schedule Inspectorban, link az Admin adáskezelőhöz, szerveroldali Publish-validátor is elfogadja.
+- \`public/editor-v2/core/schedule-week.js\`, \`public/assets/page-renderer.js\`, \`public/assets/site.css\`: a publikus heti naptár valódi esemény borítókat mutat, kizárólag valid UUID \`/media/\` forrásból; mobilon is adaptív, képes kártya, default \`showArtwork:true\`.
+- Tesztfájlok: \`public/editor-v2/tests/schedule-week.test.js\`, \`public/editor-v2/tests/schedule-source.test.js\`, \`tests/schedule-artwork-contract.test.js\`, \`tests/admin-asset-access-contract.test.js\`, \`tests/sanci-brand-shell-contract.test.js\`. A \`package.json\` \`test:schedule\` ezeket a schedule-ellenőrzéseket felveszi.
+
+**Bizonyított ellenőrzések:** 6 érintett publikus/editor JS forrás V8 parser **PASS** (source fetch + \`new Function\`, nem Node teljes tesztsor); a valós Cloudflare D1-hez SELECT-only JOIN a három, 2026. szeptemberi adáson **PASS** (3/3, jelenleg nincs hozzájuk beállított borító); a 9 Editor-piszkozatot újra ellenőrző külön read-only preflight **9/9 PASS** (kanonikus dokumentum, revízió, nem ciklikus parent/child, 1 H1, létező képi asset, route, heti mód, Twitch click-to-load). A frontend/biztonság forrása GitHubon pusholva, de \`npm run test:schedule\`, \`npm run test:brand\`, \`npm run typecheck\`, \`wrangler deploy --dry-run\`, autentikált Admin HTTP smoke, CSS/320/390/768/1440 screenshot és R2 HEAD **NOT RUN** a chat eszközkörnyezetében.
+
+### A kilenc oldal tulajdonos által kért tényleges publikálása
+
+A dokumentumok összes saját szerkezetét és R2 médiarekordjait kiadás előtt read-only SELECT-tel újraellenőriztük, majd az **engedélyezett SANCI production site egyetlen oldal-/navigáció-tartalmi publikálási műveletét** CAS-vezérelt D1 batchben végeztük. A művelet a dolgozó Editor-csatorna UI-ra nem épülő, auditált adminisztratív adatírás, de nem új Editor API, és nem azt állítjuk, hogy a teljes rendes \`POST /api/admin/editor\` publish pipeline tesztje lefutott. A Save/Publish két külön lépése és a régi \`editor_revisions\` megmaradt.
+
+| Oldal | Új közzétett Editor revízió | Korábbi revízió auditban, visszaállítható |
+|---|---:|---|
+| Főoldal \`page-home\` | 106 | régi v101 |
+| Élő \`page-twitch\` | 8 | régi v3 |
+| Videók \`page-sanci-videok\` | 6 | régi v2 |
+| Menetrend \`page-schedule\` | 14 | régi v8 |
+| Közösség \`legacy-community\` | 33 | régi v29 |
+| Rólam \`page-about\` | 80 | régi v76 |
+| TikTok \`page-tiktok\` | 15 | régi v10 |
+| YouTube \`page-youtube\` | 20 | régi v15 |
+| Kapcsolat \`page-contact\` | 10 | régi v6 |
+
+- D1 batch: **18/18 változás** (9 page snapshot + 9 audit). Külön navigation publish a \`site_navigation\` 12-es szerkesztett verziója alapján **2/2 változás** (snapshot és audit), régi 11-es megőrizhető a korábbi adatbázis/revíziótörténet alapján.
+- Postflight külön read-only D1 SELECT: **9/9** \`is_published=1\`, \`published_content_json=content_json\`, \`published_revision_id\` a legutóbbi Editor revízióhoz kötött, \`sanciEditorialVersion=1\`, mindegyik published slug rendben; \`site_navigation\` \`published_revision=12\`, \`draft_json=published_json\`; **9 publikálási auditbejegyzés**. A tulajdonosi próbapiszkozat \`page-chatgpt-proba-20261113\` nem lett publikálva.
+- Minden más Admin/R2/media és migráció adat változatlan; **nincs manuálisan beírt hamis jövőbeli menetrend vagy hamis LIVE**. A három régi szeptemberi tesztesemény megmaradt, ezért a mai heti kártyák üresek, amíg a tulajdonos valós időpontot nem vesz fel.
+- Cloudflare Worker deployment GET a legutóbbi vizsgálatkor \`770ce4e2-defc-4e99-bad6-4d86727797bd\`, Worker verzió \`c6072f74-e8f7-4b47-a2cb-0cd42aa8bf5c\` (2026-11-13T21:02:10Z, 100% forgalom), **nem** bizonyított exact Git SHA, statikus file hash vagy jóváhagyott teljes CI gate. Éles domain HTTP smoke ebből a tool-futtatásból nem elérhető. Ebből **nem** vezethető le, hogy az új /admin/schedule script már renderelhető.
+
+**Nyitott:** valódi böngészős QA/akadálymentesség/média GET, a teljes hivatalos Editor Publish API regressziós PASS, a Schedule repeat/move és Twitch-synced recurring UX, az Admin saját tenant-scoping jövőbeli multiuser változata; a nemzetközi vizuális színvonal elfogadása és minden hozzá tartozó végleges tartalom még **OPEN / NOT_CERTIFIED**. Költség: új fizetős szolgáltatás/Actions dispatch nincs.
