@@ -20,6 +20,7 @@ function validateScheduleConfig(config:any):boolean{
  if(!Array.isArray(config.statuses)||config.statuses.length===0||config.statuses.some((v:any)=>!['scheduled','live','completed','cancelled'].includes(v)))return false;
  if(!Array.isArray(config.platforms)||config.platforms.length>20||config.platforms.some((v:any)=>typeof v!=='string'||!v.trim()||v.trim().length>40))return false;
  if(!['asc','desc'].includes(config.order))return false;
+ if(config.showArtwork!==undefined&&typeof config.showArtwork!=='boolean')return false;
  for(const key of ['showTitle','showPlatform','showTime','showEndTime','showStatus','showNotes','showLink'])if(typeof config[key]!=='boolean')return false;
  if(typeof config.emptyText!=='string'||!config.emptyText.trim()||config.emptyText.trim().length>200)return false;
  return true;
