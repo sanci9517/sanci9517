@@ -36,7 +36,7 @@ function upgradeIcons(){document.querySelectorAll('.menu-link,.btn,.card-icon,.s
 const PAGE_ICON=Object.freeze({home:'home',twitch:'twitch',youtube:'youtube',tiktok:'tiktok',schedule:'schedule',community:'discord',about:'about',contact:'contact'});
 const PAGE_CONTEXT=Object.freeze({home:'Kezdőlap',twitch:'Twitch · élő adás',youtube:'YouTube · teljes VOD',tiktok:'TikTok · rövid klipek',schedule:'Heti adásnaptár',community:'Discord · közösség',about:'A márka mögött',contact:'Üzenet és együttműködés'});
 function menuIdentity(item){
-  const slug=typeof item.slug==='string'?item.slug:'';
+  const slug=typeof item.slug==='string'?item.slug:(item.href==='/'?'home':typeof item.href==='string'&&/^\/p\/[a-z0-9-]+$/.test(item.href)?item.href.slice(3):'');
   if(PAGE_ICON[slug])return {name:PAGE_ICON[slug],description:PAGE_CONTEXT[slug]};
   // External links may be displayed in user-configured navigation.
   try{const u=new URL(item.href,location.href);if(u.protocol==='https:'){
@@ -104,6 +104,19 @@ async function loadPublicContentNavigation(){
     if(panel.classList.contains('open')&&document.activeElement===menuButton)focusFirstLink();
   }catch{} // Keep the accessible static fallback during transient API errors.
 }
+function enhanceStaticNavigationIcons(){
+  // Shared shell fallback and desktop navigation use the same trusted SVGs
+  // as D1-sourced drawer links, without remote brand images.
+  document.querySelectorAll('.desktop-primary-nav a[href],.menu-grid>a.menu-link[href]').forEach(link=>{
+    if(link.querySelector('.menu-nav-icon'))return;
+    const identity=menuIdentity({href:link.getAttribute('href')});
+    const wrapper=document.createElement('span');
+    wrapper.className='menu-nav-icon menu-nav-icon-'+identity.name;
+    wrapper.setAttribute('aria-hidden','true');
+    wrapper.innerHTML=icon(identity.name);
+    link.prepend(wrapper);
+  });
+}
 const year=document.querySelector('[data-year]');if(year)year.textContent=new Date().getFullYear();async function loadSiteSettings(){try{const r=await fetch('/api/public/site-settings',{headers:{Accept:'application/json'},cache:'no-store'});if(!r.ok)return;const s=await r.json();document.querySelectorAll('[data-site-name]').forEach(el=>{if(typeof s.siteName==='string'&&s.siteName.trim())el.textContent=s.siteName.trim()});document.querySelectorAll('[data-site-tagline]').forEach(el=>{if(typeof s.tagline==='string')el.textContent=s.tagline})}catch{}}
 function markActiveNavigation(){
   const current=location.pathname==='/index.html'||location.pathname==='/p/home'?'/':location.pathname;
@@ -122,4 +135,4 @@ async function revealSignedInAdmin(){
     if(result?.ok===true&&result.data?.authenticated===true&&result.data.user?.id)link.hidden=false;
   }catch{} // Anonymous visitors keep the shortcut hidden.
 }
-upgradeIcons();markActiveNavigation();loadSiteSettings();loadPublicContentNavigation();revealSignedInAdmin();
+upgradeIcons();enhanceStaticNavigationIcons();markActiveNavigation();loadSiteSettings();loadPublicContentNavigation();revealSignedInAdmin();
