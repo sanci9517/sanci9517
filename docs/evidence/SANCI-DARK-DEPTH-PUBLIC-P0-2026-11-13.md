@@ -210,3 +210,29 @@ A dokumentumok összes saját szerkezetét és R2 médiarekordjait kiadás előt
 - Cloudflare Worker deployment GET a legutóbbi vizsgálatkor \`770ce4e2-defc-4e99-bad6-4d86727797bd\`, Worker verzió \`c6072f74-e8f7-4b47-a2cb-0cd42aa8bf5c\` (2026-11-13T21:02:10Z, 100% forgalom), **nem** bizonyított exact Git SHA, statikus file hash vagy jóváhagyott teljes CI gate. Éles domain HTTP smoke ebből a tool-futtatásból nem elérhető. Ebből **nem** vezethető le, hogy az új /admin/schedule script már renderelhető.
 
 **Nyitott:** valódi böngészős QA/akadálymentesség/média GET, a teljes hivatalos Editor Publish API regressziós PASS, a Schedule repeat/move és Twitch-synced recurring UX, az Admin saját tenant-scoping jövőbeli multiuser változata; a nemzetközi vizuális színvonal elfogadása és minden hozzá tartozó végleges tartalom még **OPEN / NOT_CERTIFIED**. Költség: új fizetős szolgáltatás/Actions dispatch nincs.
+
+
+## 2026-11-13 21:23–21:27 UTC — UX-P0: mobil teljes rácsösszeomlás, felhasználói screenshot alapján
+
+**Regresszió / tényleges gyökérok:** az új SANCI közös \`site.css\` szabálya \`body[data-sanci-shell="1"] .public-page-layout{grid-template-columns:minmax(0,1fr) minmax(0,1320px) minmax(0,1fr)}\` magasabb CSS-specificityvel **minden viewporton** megmaradt. A \`public/visual-page.html\` helyesebb, de gyengébb \`@media(max-width:700px){.public-page-layout{grid-template-columns:minmax(0,1fr)}}\` szabályát felülírta. A 393 px-es saját telefonos screenshoton ezért a schedule H1 balra lógott, a bevezető szöveg betűnként egy keskeny oszlopba tört, és indokolatlanul hosszú lett az oldal. A közös szerkezet miatt 9/9 editorial SANCI-oldal veszélyeztetett.
+
+**Javítás:**
+- \`public/assets/site.css\`: a kanonikus SANCI háromoszlopos shell 1360 px és kisebb szélességnél **display:block, 1 tartalmi oszlop**, a két üres oldalsáv elrejtve; a tartalmi oszlop explicit width+auto margin+min-width:0; 700 px és alatta 24 px vízszintes összes oldalmargó, a Canvas és gyermekcsomópontok méretbiztonsága. 1360 px felett az eredeti háromoszlopos design marad; a nem SANCI tenantokhoz a szabály nem nyúl. Első lépésben nincs egyetlen D1 tartalommódosítás sem.
+- \`public/visual-page.html\`: CSS URL v5 cache bust (\`?v=20261113-sanci-mobile-grid-v5\`), hogy a mobil ne tartsa meg a korábbi v4 hibás layoutját.
+- \`tests/browser/sanci-public-mobile-grid.test.js\`: 9 editor-alapú oldal-szerű renderelt fixture, teljes real Chromium DOM-méret mérés a canonical HTML / Page Model renderer / CSS útvonalon (320, 390, 768, 1024, 1440 px), ellenőrzi a .content-page, belső .visual-text szélességét, vízszintes túlfolyás és JS pageerror hiányát. \`package.json\` új \`test:brand:browser\`; \`tests/sanci-brand-shell-contract.test.js\` forrás regresszió.
+- GitHub commitok a \`v2/foundation\` ágon: runtime CSS \`f1b7b88bc120aee54d60af9e6251963656d47c39\`, runtime HTML cache bust \`2285c5081fecfb372e526b82dac3c8624f8b6d25\`, browser fixture \`65498a3ebad0b5e4cde29ad0a2e3b871c60ff078\`, viewport assertion fix \`ee33701577442510872098457bccacea43b12928\`, package script \`bf6d66aaccd7bec50f66486eccd45f6a0adb0aa1\`, test contract \`e8b6fe288c15eaef8622960893ac8b05c6660e4c\`.
+
+**Valódi böngészős részleges validálás:** helyi /usr/bin/chromium + Python Playwright alatt *ugyanazon css-selectorokkal és oldalelrendezési törzs-elemekkel épített minimális, kontrollált reprodukció* (nem a teljes oldal letöltése) mérés:
+| Szélesség | Előtte .content-page szélesség | Javítva | Body scrollWidth |
+|---:|---:|---:|---:|
+| 320 px | 0 px | **296 px** | 320 px |
+| 390 px | 0 px | **366 px** | 390 px |
+| 430 px | 0 px | **406 px** | 430 px |
+| 768 px | 732 px | 732 px | 768 px |
+| 1024 px | 988 px | 988 px | 1024 px |
+| 1366 px | 1284 px | 1284 px | 1366 px |
+| 1440 px | 1284 px | 1284 px | 1440 px |
+
+A minimal repro bizonyítja a gyökérokot és a CSS-javítás geometriáját, de **NEM** a valódi bejelentkezett éles mobil screenshotot vagy a teljes 9-oldalas Chromium teszt PASS-t. A browser testet GitHubon felvettük, de \`npm run test:brand:browser\`, \`typecheck\`, \`deploy --dry-run\` és konkrét Worker asset hash összevetés nem futott a hálózatmentes chat-konténerből. A Cloudflare API GET egy 2026-11-13T21:25:17Z, 100%-os forgalmú Worker deploymentet jelzett, de az pontos forrás-SHA egyezése és az éles CSS/HTML tartalma nem igazolt; nem állítunk forrás-egyezős release PASS-t.
+
+**Státusz:** UX-P0 MOBIL GRID CODE FIX PUSHED / MANUAL BROWSER ACCEPTANCE OPEN / FULL RELEASE GATE UNVERIFIED. A 9/9 korábban publikált új oldaldokumentum és az Admin, a Save/Publish, a tulajdonosi médiaérvényesség, a szerkesztő UI, a D1 és R2 adatok ez alatt nem változtak. Következő lépés: a fenti 320/390/768/1024/1440 pixel teljes repo-browser-teszt, deploy source-SHA és asset hash, valódi Android screenshot, végül a komponensszintű responsive QA. Nincs új fizetős szolgáltatás vagy GitHub Actions dispatch.
