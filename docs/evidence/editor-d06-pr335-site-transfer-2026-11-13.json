@@ -58,7 +58,15 @@
     "observed_rows_written": 0,
     "observed_changed_db": false,
     "source": "Cloudflare D1 authenticated SELECT/PRAGMA queries; 2026-11-13",
-    "time_travel_bookmark_available": true
+    "time_travel_bookmark_available": true,
+    "original_0028_trigger_sql_all_three_match": true,
+    "trigger_comparison": "Authenticated Cloudflare D1 SELECT name,sql FROM sqlite_master; matched checked-in scripts/pending/0028_media_archive.sql all three CREATE TRIGGER definitions after only whitespace collapse and stripping final semicolon. No schema write.",
+    "trigger_sql_comparison_names": [
+      "media_archive_pages_insert_guard",
+      "media_archive_pages_update_guard",
+      "media_archive_revisions_insert_guard"
+    ],
+    "trigger_sql_comparison_read_only": true
   },
   "unverified": [
     "full npm run test:media",
