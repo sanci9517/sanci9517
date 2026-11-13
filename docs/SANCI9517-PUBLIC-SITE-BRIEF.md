@@ -1,7 +1,7 @@
 # SANCI9517 — publikus weboldal: kreatív brief, dizájnrendszer és teljes tartalomterv
 
 **Dokumentum típusa:** belső, végrehajtható creator-webhely brief; NEM második platform-MASTER.  
-**Verzió:** 2.4 (2026-11-13) • **Státusz:** SANCI DARK DEPTH ONLY / KÖTELEZŐ SPEC / KIVITELEZÉS OPEN.
+**Verzió:** 2.5 (2026-11-13) • **Státusz:** SANCI DARK DEPTH ONLY / KÖTELEZŐ SPEC / KIVITELEZÉS OPEN.
 **Repository / ág:** sanci9517/sanci9517 → v2/foundation.  
 **Kanonikus termékterv:** docs/SANCI9517-CREATOR-PLATFORM-PLAN.md.  
 **Végrehajtási szabály:** AGENTS.md; ez a brief nem írhatja felül a MASTER-t, a release-gate-eket, a Save/Publish szétválasztását vagy a domainadatok tulajdonosát.  
@@ -118,6 +118,25 @@ Csak tervezési megfigyelések, NEM automatikus másolási jogok. Az itt rögzí
 - **Szemantika és tartalmi igazság:** a meglévő egy H1/oldal, saját médiatári alt-szövegek, valós platformlinkek, nem kitalált LIVE/videó/szponzor adatok, click-to-load Twitch, meglévő heti Schedule mindenütt megmaradnak. Ne tegyünk stocknak ható pseudo-thumbnailt oda, ahol valós TikTok- vagy YouTube-videót várnak.
 - **Teljes szerkeszthetőség:** minden kép, szöveg, szekció-sorrend, mobil/asztali stílus és egyedi elem a meglevő v1 `sanci-page-document` modell és Editor `Save / Publish` kettős folyamata szerint marad. Visszavonhatóság: a korábbi published revision rekordok és a média megmaradnak.
 - **Minőségkapu:** pusztán éles adatbázis-snapshot és a szerkezet QA nem jelenti a valódi 320/390/768/1024/1440 px mobil/desktop vizuális elfogadást; a teljes böngészős, kontrasztos, platform CTA és képkivágási ellenőrzés továbbra is OPEN.
+
+### 4.2 SANCI hero-overlay kreatív megvalósítás – tulajdonosi döntés (2026-11-13)
+
+**Elfogadott irány:** az előző, „külön kép, alatta szöveg” fázis helyett az első SANCI márkaoldalak **saját, médiatári, nagy kiemelt háttérképpel és rajta olvasható, sötét áttetsző szövegréteggel** indulnak. A szemantikailag különálló Heading, Text, Button és Container node-ok a meglévő Visual Editorban továbbra is módosíthatók és reszponzívak. A képi/hero elemek nem helyettesítik a Twitch-lejátszót vagy a menetrend valódi adatkomponensét. Ez SANCI-specifikus tartalmi kompozíció, nem platformszintű korlátozás más alkotók számára.
+
+| Aktív oldal | Egyetlen fő háttérasset | Publikált új H1 | Hero alatti, saját feladata |
+|---|---|---|---|
+| Főoldal | `sanci_home_hero.webp` | **JÁTSSZUNK EGYET. A TÖBBI ALAKUL.** | heti menetrend, hosszú vs rövid formátum, Discord közösség; platformhivatkozásokat nem ismétel |
+| Élő adás | `sanci_live_studio.webp` | **ÉLŐBEN A LEGJOBB.** | kattintásra betöltődő Twitch player, nem kitalált élő státusz |
+| YouTube | `sanci_vod_background.webp` | **HA LEMARADTÁL, ITT FOLYTATÓDIK.** | kizárólag a teljes VOD-ok és a saját YouTube-csatorna |
+| TikTok | `sanci_video_gallery.webp` | **EGY PILLANAT. ÉS MÁR NEVETÜNK.** | csak TikTok-link; nincsen nem létező videógaléria, helyőrző thumbnail vagy másik platform |
+| Menetrend | `sanci_schedule_forest.webp` | **A KÖVETKEZŐ KÖR.** | a teljes heti, működő Schedule komponens a képes herón **kívül**, saját olvasható oszlopában |
+| Közösség | `sanci_community_forest.webp` | **NE CSAK NÉZD. LÉGY A RÉSZE.** | a valódi Discord-közösség és tömör közösségi alapelvek |
+| Rólam | `sanci_about_hooded.webp` | **SANCI VAGYOK. EZ AZ ÉN VILÁGOM.** | a kedvelt kapucnis SANCI-karakter, személyes bemutatkozás és kapcsolat |
+| Kapcsolat | `sanci_stream_offline.webp` | **VAN EGY ÖTLETED? BESZÉLJÜNK.** | külön nézői/Discord és üzleti/e-mail út, nem fiktív kapcsolatfelvételi űrlap |
+
+**Grafikai szabály:** egy oldal = egy jól elkülönülő, a saját márkamédiatárban lévő hero-háttér; a túl sok köztes kép helyett fókuszált typográfia és nagy légköz. A szövegréteg háttérszíne `rgba(5,9,16,.86)`, finom borderrel, 660px maximális szövegsávval, a kontrasztot segítő fehér főcímmel, 31–43px mobil H1-tartománnyal. Hero-szekció mobilon a tartalom magasságával nőhet; a háttérkép `cover` és oldalspecifikus pozicionálás mellett látható. A belső 8 oldalas navigáció változatlan; a színpad elsődleges feladata mindig a megfelelő Twitch/YouTube/TikTok/Discord/menetrend/kapcsolat útvonal.
+
+**Felülírás:** ez a 4.2-es megvalósítás a 4.1-es részben javasolt „kép alatt szöveg” SANCI-változat **legfrissebb tulajdonosi módosítása**; az általános Editor-komponensek és a MASTER valamennyi korábbi követelménye továbbra is megmarad. A designer copy a D1 Editor dokumentumokba került; a publikálás a Save művelettől elkülönítve, CAS + audit kapun ment át. Az éles D1 8/8 kiadás igazolt, a teljes Chrome/Android, 320/390/768/1440 pixel és valódi WCAG kontraszt ellenőrzése **OPEN**, nem minősített teljes vizuális PASS.
 
 ## 5. Teljes tartalmi és UX specifikáció — oldalanként
 
