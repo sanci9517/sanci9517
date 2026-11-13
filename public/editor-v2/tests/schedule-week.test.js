@@ -52,3 +52,15 @@ test('calendar: empty week displays seven real dates and no invented streams', (
   assert.equal((html.match(/<section class="sanci-week-day/g)||[]).length,7);
   assert.doesNotMatch(html, /Fortnite/);
 });
+
+test('calendar: renders only valid media library IDs and supports hiding covers',()=>{
+  const item={id:'photo',title:'Játékest',platform:'Twitch',startsAt:'2026-11-13T20:00',status:'scheduled',
+    imageAssetId:'2c969288-284e-4491-aa3c-49767a75da8d'};
+  const visible=renderScheduleWeek([item],'2026-11-09',{showTitle:true,showArtwork:true});
+  assert.match(visible,/class="sanci-week-event-image"/);
+  assert.match(visible,/src="\/media\/2c969288-284e-4491-aa3c-49767a75da8d"/);
+  const hidden=renderScheduleWeek([item],'2026-11-09',{showArtwork:false});
+  assert.doesNotMatch(hidden,/sanci-week-event-image/);
+  const injection=renderScheduleWeek([{...item,imageAssetId:'javascript:alert(1)'}],'2026-11-09',{showArtwork:true});
+  assert.doesNotMatch(injection,/javascript:|sanci-week-event-image/);
+});
