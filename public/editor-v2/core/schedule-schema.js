@@ -7,9 +7,9 @@
 
 export const SCHEDULE_SCHEMA_VERSION = 1;
 
-export const SCHEDULE_MODES = Object.freeze(['upcoming', 'all', 'next']);
+export const SCHEDULE_MODES = Object.freeze(['upcoming', 'all', 'next', 'week']);
 export const SCHEDULE_ORDERS = Object.freeze(['asc', 'desc']);
-export const SCHEDULE_STATUSES = Object.freeze(['scheduled', 'live', 'completed']);
+export const SCHEDULE_STATUSES = Object.freeze(['scheduled', 'live', 'completed', 'cancelled']);
 export const SCHEDULE_LIMIT_MAX = 50;
 export const SCHEDULE_PLATFORM_MAX = 40;
 export const SCHEDULE_PLATFORMS_MAX = 20;
