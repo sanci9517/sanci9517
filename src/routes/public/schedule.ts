@@ -17,7 +17,8 @@ export async function publicScheduleRoute(request: Request, env: Env, siteId = g
       limit: url.searchParams.has("limit") ? Number(url.searchParams.get("limit")) : undefined,
       statuses: parseList(url.searchParams.get("statuses")),
       platforms: parseList(url.searchParams.get("platforms")),
-      order: url.searchParams.get("order") ?? undefined
+      order: url.searchParams.get("order") ?? undefined,
+      weekStart: url.searchParams.get("weekStart") ?? undefined
     });
     return ok(items);
   } catch {
