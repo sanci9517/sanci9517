@@ -1,0 +1,65 @@
+{
+  "schema": "sanci-d6-media-inventory-evidence-v1",
+  "date": "2026-11-13",
+  "task": "77.44.7.D / D-06",
+  "status": "READ_ONLY PRODUCTION INVENTORY PASS; FULL D-06 OPEN / NOT_CERTIFIED",
+  "account_resource": {
+    "worker": "sanci9517-streamer-brand",
+    "db": "sanci9517-db",
+    "bucket": "sanci9517-media"
+  },
+  "provenance": {
+    "d1": "Cloudflare D1 /query SELECT-only",
+    "r2": "Cloudflare R2 objects GET listing, per_page=1000; complete 6 objects"
+  },
+  "inventory": {
+    "d1_rows": 6,
+    "r2_objects": 6,
+    "match_by_exact_object_key": 6,
+    "match_by_size_bytes": 6,
+    "d1_missing_r2": 0,
+    "r2_missing_d1": 0,
+    "archived_d1_rows": 0,
+    "mime_types": [
+      "image/png",
+      "image/jpeg"
+    ],
+    "r2_list_truncated": false
+  },
+  "textual_usage_prefilter": {
+    "description": "Lowercase ID substring search in site-matched page/revision JSON; these are candidate mentions, not proven structured or live public entitlements",
+    "media_ids_in_draft_json": 1,
+    "media_ids_in_active_published_json": 1,
+    "media_ids_in_revision_json": 3,
+    "total_media_ids": 6
+  },
+  "db_integrity": {
+    "migrations": 34,
+    "last": "0028_media_archive.sql",
+    "quick_check": "ok",
+    "foreign_key_check_violations": 0,
+    "changed_db": false,
+    "rows_written": 0,
+    "changes": 0
+  },
+  "d6_blockers": [
+    "Three live 0028 archive trigger definitions are still case-sensitive",
+    "The prepared 0029 draft needs verified atomic migration runner, tested rollback/restore and deliberate production change management",
+    "No public GET/HEAD media 200/404/409 E2E or byte-integrity test was performed by this read-only R2 listing",
+    "No archive/delete/restore scenario was exercised against production (0 archived rows)"
+  ],
+  "release_followup": {
+    "merge_sha": "64a28a6c493710855a2eb063ab9e47dacbf1defb",
+    "merge_editor_core_run": 43412194144,
+    "merge_editor_core_conclusion": "success",
+    "prior_documented_evidence": "docs/evidence/editor-d05-pr331-production-2026-11-13.json"
+  },
+  "constraints": {
+    "production_database_mutations": 0,
+    "r2_deletions": 0,
+    "worker_deployment": false,
+    "new_paid_services": false,
+    "save_and_publish_separate": true,
+    "full_editor_manual_acceptance": "deferred"
+  }
+}

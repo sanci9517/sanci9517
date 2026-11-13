@@ -3684,3 +3684,13 @@ Merge-SHA F0, Twitch, kanonikus és active-point ellenőrzés PASS. A merge-SHA 
 A friss produkciós D1 SELECT/PRAGMA-only előellenőrzés: 34 migráció; utolsó 0028_media_archive.sql; quick_check=ok; 0 FK-hiba; changed_db=false, rows_written=0. A három archiválási trigger még case-sensitive; 0029 nem alkalmazott és külön jóváhagyás kell. Nincs éles D1-írás/migráció, R2-törlés, új fizetős szolgáltatás vagy Save/Publish összevonás.
 
 **D-05 kód/automatizált teszt/Worker kiadás igazolt; a teljes 77.44.7.D OPEN / NOT_CERTIFIED.** A hiányzó D-06 archiválási guard, a további D-01–D-07 capability és lifecycle-mátrix, valamint az Editor összevont fizikai/kézi acceptance továbbra nyitott. Evidence: docs/evidence/editor-d05-pr331-production-2026-11-13.json.
+
+### 77.44.7.D / D-05 utóteszt + D-06 éles D1↔R2 read-only médiaegyeztetés (2026-11-13)
+
+A D-05 #331 normál merge `64a28a6c493710855a2eb063ab9e47dacbf1defb` pontos merge-SHA GitHub Actions Editor Core + valódi Chromium futása [#43412194144](https://github.com/sanci9517/sanci9517/actions/runs/43412194144) utólag **completed/success** lett. A korábbi release-evidence a futás közbeni állapotot rögzíti, ezért ezt az új, önálló utóigazolást kell figyelembe venni.
+
+A D-06 éles D1 `SELECT` és Cloudflare R2 `GET objects` read-only páros leltár **6 D1 assetet és 6 R2 objektumot** talált; mind a 6 objektum kulcsa és bájtmérete egyezik, **0 hiányzó D1→R2** és **0 R2→D1 árva** elem. A 6 objektum PNG/JPEG kép, archivált `media` rekord **0**. A kisbetűs azonosító-alapú, site-scoped JSON-hivatkozás előszűrése 1 draftban, 1 aktív publikált oldalon, 3 revision-állapotban előforduló külön média-ID-t talált. Ez *szöveges jelöltszámlálás*, nem bizonyítja, hogy mindegyik hivatkozás strukturálisan renderelt, autorizált vagy publikus HTTP-n elérhető.
+
+A friss éles D1: 34 ledger-sor, legutolsó `0028_media_archive.sql`; `PRAGMA quick_check=ok`, `PRAGMA foreign_key_check` 0 sor; minden lekérdezés `changed_db=false`, `rows_written=0`. A három 0028 archiválásvédelmi trigger továbbra **case-sensitive**, a 0029 nem futott. A R2 listing nem helyettesíti az éles GET/HEAD/409 böngészős és titkosított tartaloméletciklus tesztet, és a jelenlegi éles adatban nincs archivált asset, amin a 0029 bug természetesen kipróbálható lenne.
+
+**D-06 részleges, read-only leltár PASS; teljes 77.44.7.D OPEN / NOT_CERTIFIED.** Minden módosító adatbázis- vagy R2-művelet, fizetős szolgáltatás és redundáns Worker deploy nélkül. Gépi bizonyíték: `docs/evidence/editor-d06-d1-r2-inventory-2026-11-13.json`.
