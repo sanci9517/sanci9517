@@ -1704,3 +1704,36 @@ test("full orphan pages respect D1's 100-parameter limit and fail closed if the 
  const error=await failed.json();assert.equal(error.error.code,"MEDIA_METADATA_FAILED");assert.equal(error.data,undefined,"no partial diagnostic may be returned as success");
  assert.deepEqual(f.db.prepare("SELECT * FROM media ORDER BY id").all(),before);assert.deepEqual(f.files,files);assert.equal(storageWrites,0);
 });
+
+
+test("Unicode-escaped IDs across media usage, public delivery, atomic archive and revisions are protected",async t=>{
+ const f=await fixture(t);
+ const upload=await f.call("POST","editor",png,{name:"encoded-media.png"});
+ assert.equal(upload.status,201);
+ const asset=(await upload.json()).data;
+ const encodedId=String.fromCharCode(92)+"u"+asset.id.charCodeAt(0).toString(16).padStart(4,"0")+asset.id.slice(1);
+ const document={pages:{"page-1":{rootId:"root",nodes:{root:{type:"root",children:["photo"]},photo:{type:"image",metadata:{contentVersion:1},props:{assetId:asset.id,alt:"Photo"}}}}}};
+ const raw=JSON.stringify(document).replace(asset.id,encodedId);
+ assert.equal(JSON.parse(raw).pages["page-1"].nodes.photo.props.assetId,asset.id);
+ f.db.prepare("INSERT INTO pages(id,site_id,archived_at,is_published,published_content_json,content_json,title,slug) VALUES(?,?,?,?,?,?,?,?)")
+  .run("page-1","site-default",null,1,raw,"{}","Encoded media","encoded");
+ const usage=await f.call("GET","editor",null,{usage:asset.id});
+ assert.equal(usage.status,200);
+ const data=(await usage.json()).data;
+ assert.equal(data.complete,true);
+ assert.ok(data.references?.some(ref=>ref.source==="published"),"escaped asset ID must reach structured usage analysis");
+ const live=await publishedMediaRoute(new Request("https://example.test/media/"+asset.id),f.env,"site-default",asset.id);
+ assert.equal(live.status,200,"visible published escaped asset reference grants delivery");
+ assert.deepEqual(new Uint8Array(await live.arrayBuffer()),png);
+ const archive=()=>f.call("PATCH","editor",JSON.stringify({archived:true}),{id:asset.id});
+ assert.equal((await archive()).status,409,"escaped published reference cannot be archived");
+ f.db.prepare("UPDATE pages SET is_published=0,published_content_json=NULL,content_json=? WHERE id='page-1'").run(raw);
+ assert.equal((await archive()).status,409,"escaped draft reference cannot be archived");
+ f.db.exec("UPDATE pages SET content_json='{}' WHERE id='page-1'");
+ f.db.prepare("INSERT INTO editor_revisions(id,page_id,version,document_json) VALUES(?,?,?,?)").run("unicode-rev","page-1",1,raw);
+ assert.equal((await archive()).status,409,"escaped revision reference cannot be archived");
+ assert.equal(f.db.prepare("SELECT archived_at FROM media WHERE id=?").get(asset.id).archived_at,null);
+ f.db.exec("DELETE FROM editor_revisions WHERE id='unicode-rev'");
+ f.db.prepare("UPDATE pages SET content_json=? WHERE id='page-1'").run("{\"label\":\"\\u0062\"}");
+ assert.equal((await archive()).status,200,"irrelevant Unicode escapes do not block safe archive");
+});

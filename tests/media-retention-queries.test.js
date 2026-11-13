@@ -3,6 +3,7 @@ import {test} from "node:test";
 import {DatabaseSync} from "node:sqlite";
 import {readFileSync} from "node:fs";
 import {retentionQueries} from "../src/core/media-retention-queries.js";
+import "./media-reference-sql.test.js";
 
 test("retention SQL cannot schedule referenced assets and cancellation is tenant-scoped",()=>{
  const db=new DatabaseSync(":memory:");
@@ -55,4 +56,31 @@ test("retention request rejects mixed-case references in draft, published snapsh
   assert.equal(request.run(...args).changes,1,"another site's identical uppercase UUID must not block this site after clearing its own references");
   assert.equal(db.prepare("SELECT COUNT(*) AS total FROM media_retention_requests").get().total,1);
  } finally {db.close();}
+});
+
+
+test("retention request rejects Unicode-escaped UUID references and respects site ownership",()=>{
+ const db=new DatabaseSync(":memory:");
+ try{
+  db.exec("CREATE TABLE media(id TEXT PRIMARY KEY,site_id TEXT NOT NULL,object_key TEXT NOT NULL,archived_at TEXT);CREATE TABLE pages(id TEXT PRIMARY KEY,site_id TEXT,content_json TEXT,published_content_json TEXT);CREATE TABLE editor_revisions(id TEXT PRIMARY KEY,page_id TEXT,document_json TEXT);");
+  db.exec(readFileSync(new URL("../scripts/pending/media_retention_requests.sql",import.meta.url),"utf8"));
+  const id="a1b2c3d4-0000-4000-8000-123456789abc";
+  const escaped=String.fromCharCode(92)+"u0061"+id.slice(1);
+  const raw=key=>"{"+JSON.stringify(key)+":\""+escaped+"\"}";
+  assert.equal(JSON.parse(raw("assetId")).assetId,id);
+  db.prepare("INSERT INTO media VALUES(?,?,?,?)").run(id,"site-a","sites/site-a/media/unicode","2026-11-13");
+  const request=db.prepare(retentionQueries.request);
+  const args=["req-unicode","2026-12-13",id,"site-a"];
+  db.prepare("INSERT INTO pages VALUES(?,?,?,?)").run("p","site-a",raw("assetId"),null);
+  assert.equal(request.run(...args).changes,0,"encoded draft ID blocks retention");
+  db.prepare("UPDATE pages SET content_json='{}',published_content_json=? WHERE id='p'").run(raw("posterAssetId"));
+  assert.equal(request.run(...args).changes,0,"encoded published poster blocks retention");
+  db.exec("UPDATE pages SET published_content_json=NULL WHERE id='p'");
+  db.prepare("INSERT INTO editor_revisions VALUES(?,?,?)").run("rev","p",raw("backgroundAssetId"));
+  assert.equal(request.run(...args).changes,0,"encoded revision ID blocks retention");
+  db.exec("DELETE FROM editor_revisions");
+  db.prepare("UPDATE pages SET content_json=? WHERE id='p'").run("{\"label\":\"\\u0062\"}");
+  db.prepare("INSERT INTO pages VALUES(?,?,?,?)").run("foreign","site-b",raw("assetId"),null);
+  assert.equal(request.run(...args).changes,1,"unrelated escape and foreign site must not block own retention");
+ }finally{db.close();}
 });
