@@ -22,7 +22,7 @@ test('canonical SANCI identity and external channels are real source-of-truth UR
   for(const url of ['https://www.twitch.tv/sanci9517','https://www.youtube.com/@sanci9517vod','https://www.tiktok.com/@sanci9517','https://discord.gg/RWBCYNMqy','mailto:sandor.bogadi95@gmail.com']){
     assert.ok(shell.includes(url),url);
   }
-  for(const href of ['/p/twitch','/p/videok','/p/schedule','/p/community','/p/about','/p/contact']){
+  for(const href of ['/p/twitch','/p/youtube','/p/tiktok','/p/schedule','/p/community','/p/about','/p/contact']){
     assert.ok(shell.includes('href="'+href+'"'),href);
   }
 });
@@ -72,4 +72,21 @@ test('SANCI branded page grid cannot retain three columns on phones or tablets',
   assert.match(css,/@media\(max-width:1360px\)\{[\s\S]*?body\[data-sanci-shell="1"\] \.public-page-layout\{display:block;grid-template-columns:minmax\(0,1fr\)\}/);
   assert.match(css,/@media\(max-width:700px\)\{[\s\S]*?body\[data-sanci-shell="1"\] \.public-page-layout>\.content-page\{width:calc\(100% - 24px\)\}/);
   assert.match(shell,/site\.css\?v=20261113-sanci-mobile-grid-v5/);
+});
+
+
+test('retired video hub is no longer linked by the public shell',()=>{
+  assert.doesNotMatch(shell,/href="\\/p\\/videok"/);
+  assert.doesNotMatch(shell,/href="\\/p\\/alkotasok"/);
+  assert.match(worker,/"\\/p\\/videok": "\\/p\\/youtube"/);
+  assert.match(worker,/"\\/p\\/alkotasok": "\\/p\\/about"/);
+});
+test('navigation icons use real platform vector silhouettes rather than emoji placeholders',()=>{
+  assert.match(js,/home:'<path/);
+  for(const key of ['twitch','youtube','tiktok','discord'])assert.ok(js.includes(key+":'<path"),key);
+  for(const key of ['twitch','youtube','tiktok','discord'])assert.ok(js.includes('menu-nav-icon-'+identity.name),'dynamic icon wrapper');
+  assert.match(js,/enhanceStaticNavigationIcons\\(\\)/);
+  assert.match(css,/menu-nav-icon-youtube \\.icon/);
+  assert.match(css,/menu-nav-icon-tiktok \\.icon/);
+  assert.match(css,/menu-nav-icon-discord \\.icon/);
 });
