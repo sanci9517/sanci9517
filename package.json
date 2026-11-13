@@ -27,7 +27,8 @@
     "test:tenant-preview": "node --experimental-loader ./tests/ts-extension-loader.mjs --test tests/web013-tenant-preview.test.js",
     "test:tenant-navigation": "node --experimental-loader ./tests/ts-extension-loader.mjs --test tests/web013-tenant-navigation.test.js",
     "test:media": "node --experimental-loader ./tests/ts-extension-loader.mjs --test tests/media-api.test.js tests/media-retention-migration.test.js tests/media-retention-policy.test.js tests/media-retention-request.test.js tests/media-retention-queries.test.js",
-    "test:media:storage": "node --experimental-loader ./tests/ts-extension-loader.mjs --test tests/browser/media-worker-storage.test.mjs"
+    "test:media:storage": "node --experimental-loader ./tests/ts-extension-loader.mjs --test tests/browser/media-worker-storage.test.mjs",
+    "test:brand": "node --test tests/sanci-brand-shell-contract.test.js"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "5.20260908.1",
