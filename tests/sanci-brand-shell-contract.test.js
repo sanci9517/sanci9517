@@ -75,7 +75,7 @@ test('SANCI branded page grid cannot retain three columns on phones or tablets',
   assert.match(css,/body\[data-sanci-shell="1"\] \.public-page-layout\{grid-template-columns:minmax\(0,1fr\) minmax\(0,1320px\) minmax\(0,1fr\)\}/);
   assert.match(css,/@media\(max-width:1360px\)\{[\s\S]*?body\[data-sanci-shell="1"\] \.public-page-layout\{display:block;grid-template-columns:minmax\(0,1fr\)\}/);
   assert.match(css,/@media\(max-width:700px\)\{[\s\S]*?body\[data-sanci-shell="1"\] \.public-page-layout>\.content-page\{width:calc\(100% - 24px\)\}/);
-  assert.match(shell,/site\.css\?v=20261113-sanci-nav-v6/);
+  assert.match(shell,/site\.css\?v=20261113-sanci-nav-v7/);
 });
 
 
