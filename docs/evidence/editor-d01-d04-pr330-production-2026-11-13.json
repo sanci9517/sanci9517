@@ -1,0 +1,112 @@
+{
+  "schema": "sanci-d-release-evidence-v1",
+  "date": "2026-11-13",
+  "task": "77.44.7.D",
+  "scope": [
+    "D-01",
+    "D-04"
+  ],
+  "status": "OPEN / NOT_CERTIFIED",
+  "pr": {
+    "number": 330,
+    "url": "https://github.com/sanci9517/sanci9517/pull/330",
+    "head_sha": "7b9e16d83e5a55f22efc5b8ce6e5f9648d3de470",
+    "merge_sha": "2d89714f7174c8126e897bfaa70b938c7dc5840c",
+    "merged": true,
+    "base": "v2/foundation"
+  },
+  "pr_head_workflows": {
+    "f0": {
+      "id": 43320391574,
+      "conclusion": "success"
+    },
+    "twitch": {
+      "id": 43320391340,
+      "conclusion": "success"
+    },
+    "canonical_plan": {
+      "id": 43320391459,
+      "conclusion": "success"
+    },
+    "worker_dry_run": {
+      "id": 43320391342,
+      "conclusion": "success"
+    },
+    "editor_core_chromium": {
+      "id": 43320391306,
+      "conclusion": "success"
+    }
+  },
+  "merge_workflows": {
+    "source_smoke": {
+      "id": 43402548423,
+      "conclusion": "success",
+      "checks": [
+        "production health",
+        "public source SHA-256"
+      ]
+    },
+    "f0": {
+      "id": 43402548318,
+      "conclusion": "success"
+    },
+    "twitch": {
+      "id": 43402548480,
+      "conclusion": "success"
+    },
+    "canonical_plan": {
+      "id": 43402548414,
+      "conclusion": "success"
+    },
+    "active_point": {
+      "id": 43402548413,
+      "conclusion": "success"
+    },
+    "editor_core": {
+      "id": 43402548453,
+      "status": "in_progress",
+      "conclusion": null
+    }
+  },
+  "cloudflare": {
+    "worker": "sanci9517-streamer-brand",
+    "deployment_id": "54aec530-b90c-44f6-8a83-2572d8153dd8",
+    "version_id": "6ac61e31-c5af-4317-a77b-0c021a5f27bf",
+    "version_number": 3942,
+    "traffic_percent": 100,
+    "created_on": "2026-11-13T09:35:58.072289Z"
+  },
+  "production_d1_read_only": {
+    "queries": [
+      "SELECT name FROM d1_migrations ORDER BY name DESC LIMIT 3",
+      "SELECT name, sql FROM sqlite_master WHERE type='trigger' AND name LIKE 'media_archive_%' ORDER BY name",
+      "PRAGMA quick_check",
+      "PRAGMA foreign_key_check"
+    ],
+    "changes": 0,
+    "rows_written": 0,
+    "changed_db": false,
+    "last_migration": "0028_media_archive.sql",
+    "quick_check": "ok",
+    "foreign_key_errors": 0,
+    "live_triggers": [
+      "media_archive_pages_insert_guard",
+      "media_archive_pages_update_guard",
+      "media_archive_revisions_insert_guard"
+    ],
+    "live_triggers_case_sensitive": true,
+    "migration_0029_applied": false
+  },
+  "unchanged_invariants": {
+    "save_separate_from_publish": true,
+    "production_d1_write": false,
+    "production_r2_delete": false,
+    "new_paid_service_authorized": false,
+    "manual_editor_acceptance": "deferred"
+  },
+  "source_limitations": [
+    "Exact merge-SHA Editor Core was still in progress at evidence capture",
+    "This release does not certify the complete D-01 through D-07 matrix",
+    "No production 0029 migration was attempted"
+  ]
+}
