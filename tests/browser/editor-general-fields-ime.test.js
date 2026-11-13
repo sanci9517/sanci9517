@@ -72,8 +72,9 @@ for(const width of [390,1366])test(`general Inspector name and Schedule empty te
  assert.equal(await alignError.textContent(),'','valid correction clears stale guidance');
  await editor.locator('.inspector-tabs button').nth(0).click();
  const scheduleRoutes=await editor.locator('.schedule-inspector [data-inspector-command]').evaluateAll(rows=>rows.map(row=>({command:row.dataset.inspectorCommand,key:row.dataset.inspectorKey})));
- assert.deepEqual(scheduleRoutes.map(route=>route.key),['mode','order','limit','statuses','showTitle','showPlatform','showTime','showEndTime','showStatus','showNotes','showLink','emptyText']);
+ assert.deepEqual(scheduleRoutes.map(route=>route.key),['mode','order','limit','statuses','showTitle','showPlatform','showTime','showEndTime','showStatus','showNotes','showArtwork','showLink','emptyText']);
  assert.ok(scheduleRoutes.every(route=>route.command==='schedule.config.set'),'each Schedule Inspector field exposes its actual config command');
+ assert.equal(await editor.locator('.schedule-inspector [data-inspector-key="showArtwork"] input[type="checkbox"]').count(),1,'Schedule artwork toggle is exposed as a native checkbox');
  const statusGroup=editor.getByRole('group',{name:'Státuszok',exact:true});
  assert.equal(await statusGroup.count(),1,'Schedule status checkboxes are exposed as a named accessible group');
  const statusHintId=await statusGroup.getAttribute('aria-describedby');
