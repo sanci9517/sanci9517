@@ -9,6 +9,7 @@ import { isLeafType } from "../../../public/editor-v2/core/schema.js";
 import { isStructuredType, normalizeElementContent } from "../../../public/editor-v2/core/element-content.js";
 import { prepareRetentionRequest, prepareRetentionCancellation } from "../../core/media-retention-request.js";
 import { retentionQueries } from "../../core/media-retention-queries.js";
+import { mediaReferenceSql } from "../../core/media-reference-sql.js";
 
 // Keep playable uploads inside the existing low-cost, application-level cap.
 // This is not a provider billing ceiling and deliberately excludes large video.
@@ -388,16 +389,16 @@ async function mediaUsage(request: Request, env: Env, siteId: string, assetId: s
   const asset = await env.DB.prepare("SELECT id FROM media WHERE id=? AND site_id=? LIMIT 1").bind(assetId, siteId).first<{ id: string }>();
   if (!asset) return error("MEDIA_NOT_FOUND", 404);
   const pages = await env.DB.prepare(
-    `SELECT id,title,slug,archived_at,content_json,published_content_json,is_published FROM pages WHERE site_id=? AND (instr(lower(content_json),?)>0 OR instr(lower(published_content_json),?)>0) ORDER BY id LIMIT ${MAX_USAGE_SNAPSHOTS + 1}`
-  ).bind(siteId, assetId, assetId).all<{ id: string; title: string; slug: string; archived_at: string | null; content_json: string; published_content_json: string | null; is_published: number }>();
+    `SELECT id,title,slug,archived_at,content_json,published_content_json,is_published FROM pages WHERE site_id=? AND (${mediaReferenceSql("content_json","?")} OR ${mediaReferenceSql("published_content_json","?")}) ORDER BY id LIMIT ${MAX_USAGE_SNAPSHOTS + 1}`
+  ).bind(siteId, assetId, assetId, assetId, assetId).all<{ id: string; title: string; slug: string; archived_at: string | null; content_json: string; published_content_json: string | null; is_published: number }>();
   const revisions = await env.DB.prepare(
-    `SELECT p.id AS page_id,p.title,p.slug,p.archived_at,er.version,er.document_json FROM editor_revisions er JOIN pages p ON p.id=er.page_id WHERE p.site_id=? AND instr(lower(er.document_json),?)>0 ORDER BY er.version DESC,er.id DESC LIMIT ${MAX_USAGE_SNAPSHOTS + 1}`
-  ).bind(siteId, assetId).all<{ page_id: string; title: string; slug: string; archived_at: string | null; version: number; document_json: string }>();
+    `SELECT p.id AS page_id,p.title,p.slug,p.archived_at,er.version,er.document_json FROM editor_revisions er JOIN pages p ON p.id=er.page_id WHERE p.site_id=? AND ${mediaReferenceSql("er.document_json","?")} ORDER BY er.version DESC,er.id DESC LIMIT ${MAX_USAGE_SNAPSHOTS + 1}`
+  ).bind(siteId, assetId, assetId).all<{ page_id: string; title: string; slug: string; archived_at: string | null; version: number; document_json: string }>();
   const references: { pageId: string; pageTitle: string; slug: string; archived: boolean; source: "draft" | "published" | "revision"; version?: number; nodeId: string; nodeName: string; path: string }[] = [];
   let complete = pages.results.length <= MAX_USAGE_SNAPSHOTS && revisions.results.length <= MAX_USAGE_SNAPSHOTS;
   const scan: AssetReferenceScanStatus = { complete: true, visited: 0 };
   const add = (json: string | null, page: { id: string; title: string; slug: string; archived_at: string | null }, source: "draft" | "published" | "revision", version?: number) => {
-    if (!json || !json.toLowerCase().includes(assetId) || !scan.complete) return;
+    if (!json || !scan.complete || !(json.toLowerCase().includes(assetId) || json.includes("\\u"))) return;
     try {
       const found = documentAssetReferences(json, page.id, assetId, false, "", scan, allowedOrigins);
       if (!scan.complete) complete = false;
@@ -707,9 +708,9 @@ export async function adminMediaRoute(request: Request, env: Env, siteId: string
         // existing draft, live snapshot, archived page or editor revision.
         const changed=await env.DB.prepare(
           "UPDATE media SET archived_at=CURRENT_TIMESTAMP WHERE id=? AND site_id=? AND archived_at IS NULL "+
-          "AND NOT EXISTS (SELECT 1 FROM pages p WHERE p.site_id=? AND (instr(lower(COALESCE(p.content_json,'')),?)>0 OR instr(lower(COALESCE(p.published_content_json,'')),?)>0)) "+
-          "AND NOT EXISTS (SELECT 1 FROM editor_revisions er JOIN pages p ON p.id=er.page_id WHERE p.site_id=? AND instr(lower(er.document_json),?)>0)"
-        ).bind(id,siteId,siteId,id,id,siteId,id).run();
+          "AND NOT EXISTS (SELECT 1 FROM pages p WHERE p.site_id=? AND ("+mediaReferenceSql("p.content_json","?")+" OR "+mediaReferenceSql("p.published_content_json","?")+")) "+
+          "AND NOT EXISTS (SELECT 1 FROM editor_revisions er JOIN pages p ON p.id=er.page_id WHERE p.site_id=? AND "+mediaReferenceSql("er.document_json","?")+")"
+        ).bind(id,siteId,siteId,id,id,id,id,siteId,id,id).run();
         if (Number(changed.meta?.changes??0)!==1) return error('MEDIA_ASSET_IN_USE',409);
       } else {
         let present:unknown;
@@ -825,8 +826,8 @@ export async function publishedMediaRoute(request: Request, env: Env, siteId: st
   ).bind(normalizedAssetId, siteId).first<MediaRow>();
   if (!row || row.archived_at || !(MEDIA_MIMES as readonly string[]).includes(row.mime_type)) return error("MEDIA_NOT_FOUND", 404);
   const pages = await env.DB.prepare(
-    `SELECT id,published_content_json FROM pages WHERE site_id=? AND archived_at IS NULL AND is_published=1 AND published_content_json IS NOT NULL AND instr(lower(published_content_json),?)>0 ORDER BY id LIMIT ${MAX_PUBLIC_MEDIA_SNAPSHOTS}`
-  ).bind(siteId, normalizedAssetId).all<{ id: string; published_content_json: string }>();
+    `SELECT id,published_content_json FROM pages WHERE site_id=? AND archived_at IS NULL AND is_published=1 AND published_content_json IS NOT NULL AND ${mediaReferenceSql("published_content_json","?")} ORDER BY id LIMIT ${MAX_PUBLIC_MEDIA_SNAPSHOTS}`
+  ).bind(siteId, normalizedAssetId, normalizedAssetId).all<{ id: string; published_content_json: string }>();
   // A single public request may inspect multiple candidate snapshots. Reuse
   // one budget across them and cap result materialization so many pages with
   // incidental ID text cannot create unbounded parsing, memory or R2 reads.
