@@ -36,3 +36,11 @@ A read-only Cloudflare D1 preflight szerint `site-default` `schedule_items` táb
 ## Továbbra nyitott
 
 Valós honlap HTTP smoke, Countdown API GET és tényleges 320/390/768/1440px mobil render QA, exact asset hash, teljes `npm run typecheck`, `npm run test:schedule`, `npm run test:countdown:browser`, `npm run deploy:safe` lánc objektív validálása. Ha bármelyik hibázik, visszaállítható a v110 oldal, mert a régi `editor_revisions` nem lett törölve. A heti menetrend és az Editor további fejlesztése az egyetlen MASTER terv szerinti következő munka.
+
+## Utólagos működési próba – 2026-11-14
+
+A legfrissebb GitHub `countdown-content.js` és `schedule-time.js` kódot V8-ban, kontrollált DOM/API helyettesítőkkel ténylegesen végrehajtottuk: **6/6 PASS**. A pozitív, jövőbeli `scheduled` API-válasz négy numerikus cellát, a valós eseménycím/platform mezőt és ISO `<time datetime>` attribútumot eredményezett; üres API-válasznál „Még nincs meghirdetett adás.”, hálózati hiba esetén „Az időpont most nem érhető el.” szerepelt, mindkettő megtévesztő számlálás nélkül. Egyetlen időzítő indult egy elemhez. A teszt nem azonos a teljes Chromium/valódi webes végpont tesztjével.
+
+A produkciós D1-en a kód által használt `mode=next` SELECT-szűrés `e.starts_at >= datetime('now','-3 hours')`, `site-default` és `status=scheduled` feltételekkel **egy jövőbeli „Forti”, 2026-11-14T15:27 Europe/Budapest** rekordot adott, a média JOIN működött. A D1 SELECT `changes=0`, további streamidőpont adatírás nem történt.
+
+A Worker továbbra 100%-os forgalmon: `659bca7f-feac-42e3-97d9-833c41b1b442`. **Éles Workers.dev HTTP / teljes Chromium és pontos statikus asset hash továbbra NOT VERIFIED**; nem soroljuk ide a V8 DOM-helyettesítő sikerét.
