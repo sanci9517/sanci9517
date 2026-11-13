@@ -1,7 +1,7 @@
 # SANCI9517 — publikus weboldal: kreatív brief, dizájnrendszer és teljes tartalomterv
 
 **Dokumentum típusa:** belső, végrehajtható creator-webhely brief; NEM második platform-MASTER.  
-**Verzió:** 2.2 (2026-11-12) • **Státusz:** SANCI DARK DEPTH ONLY / KÖTELEZŐ SPEC / KIVITELEZÉS OPEN.
+**Verzió:** 2.3 (2026-11-13) • **Státusz:** SANCI DARK DEPTH ONLY / KÖTELEZŐ SPEC / KIVITELEZÉS OPEN.
 **Repository / ág:** sanci9517/sanci9517 → v2/foundation.  
 **Kanonikus termékterv:** docs/SANCI9517-CREATOR-PLATFORM-PLAN.md.  
 **Végrehajtási szabály:** AGENTS.md; ez a brief nem írhatja felül a MASTER-t, a release-gate-eket, a Save/Publish szétválasztását vagy a domainadatok tulajdonosát.  
@@ -79,33 +79,32 @@ Csak tervezési megfigyelések, NEM automatikus másolási jogok. Az itt rögzí
 
 ## 4. Globális navigáció és teljes információarchitektúra
 
-**Desktop fejléc:** bal: SANCI9517 wordmark; közép: Főoldal · Élő adás · Videók · Menetrend · Közösség · Rólam; jobb: valódi LIVE státusz (ha hiteles), „Nézd a streamet” CTA; a Partner/Kapcsolat a footerben és Rólam környezetében. Sticky header háttér-elmosással csak akkor, ha kontraszt és teljesítmény rendben.  
-**Tablet:** rövidebb topnav, szükség esetén „Továbbiak” legördülő.  
-**Mobil:** logo + visszafogott valódi státusz + menügomb; egyetlen logikus drawer; erős, felhasználói szándék szerinti CTA és legfeljebb néhány látható elsődleges elem. Nincs vízszintes menütúltöltés.  
-**Footer:** tartalmak / közösség / információ / jogi / hitelesített hivatalos platformlinkek / copyright. Ne kerüljön bele belső admin link vagy fejlesztői komment.  
-**Oldalfa / tervezett útvonalak:** az alábbi slugok *javaslatok*, Worknek ellenőriznie kell az aktuálisan már publikált URL-eket és redirect-kontraktust, és nem szabad törni őket.
+**Jóváhagyott, az élő D1-ben 2026-11-13-án közzétett SANCI információarchitektúra.** Ez a tulajdonosi döntés a brief minden korábbi, köztes /videok, /videok/klipek, /videok/vod vagy Alkotások menüpontot javasló részét felülírja **a SANCI első felhasználó tartalmi megjelenésében**. Az Editor és a többfelhasználós Creator Platform képességeit nem szűkíti: egy másik creator később saját gyűjtőoldalt is építhet.
 
-| Prioritás | Publikus oldal | Preferált útvonal | Feladat |
+- **Asztali fejléc:** SANCI szójel; Főoldal, Élő adás, YouTube, TikTok, Menetrend, Közösség. Rólam és Kapcsolat a mobilmenüben és láblécben is elérhető. Nincs nem igazolt LIVE-jelvény.
+- **Mobil/tablet:** SANCI szójel és egyetlen akadálymentes menügomb; a drawer legfeljebb nyolc önálló, egyszintű céloldalt kínál, kényelmes érintési mérettel, aktív oldal kijelöléssel és Esc/fókusz kezeléssel.
+- **Logók/ikonok:** helyi, forráskódban már meglévő Twitch, YouTube, TikTok és Discord SVG-vonalrajzok/sziluettek, SANCI DARK DEPTH grafitkerettel és visszafogott saját platformsávos színnel. Főoldal=otthon, Menetrend=naptár, Rólam=információ, Kapcsolat=levél. Nincs emoji-helyettesítő és nincs külső ikon-CDN.
+- **Lábléc:** egy márkajel és csak két tiszta oszlop (Tartalom és SANCI); ugyanaz a külső csatorna ne szerepeljen újra harmadik, redundáns oszlopban. Az Admin hivatkozás csak hitelesített szerkesztőnek jelenhet meg, anonim látogatóknak nem.
+- **Platformoldalak tartalmi határa:** a YouTube-oldal csak valódi YouTube-felvételeket/VOD-ot és a saját YouTube-csatornát mutassa; TikTok-oldalon csak saját TikTok-shortok és TikTok-csatorna szerepelhet. Nem ajánlják egymást külön keresztértékesítési blokkokban. A Twitch az élő adásra, a Közösség a Discordra, a Menetrend a saját heti naptárára koncentrál. A főoldal kizárólag összefoglaló útválasztásra használhat több platformhivatkozást.
+- **Átirányítás:** a visszaállíthatóan archivált `/p/videok` 308-cal a `/p/youtube` oldalra, a régi `/p/alkotasok` 308-cal a `/p/about` oldalra irányít a SANCI kanonikus webhelyén, más tenantot nem érint.
+- **Felhasználói tartalom joga:** minden oldal továbbra is a Visual Editorban szerkeszthető. Save és Publish külön marad; archiválás nem adat- vagy médiatári törlés.
+
+| Prioritás | Élő SANCI oldal | Kanonikus útvonal | Egyértelmű feladat |
 |---|---|---|---|
-| P0 | Főoldal | / | élő státusz, tartalomfelfedezés, CTA, közösség |
-| P0 | Élő adás | /elo | élő nézet / offline fallback és következő adás |
-| P0 | Videók | /videok | kiemelt videók, VOD, klipek, shorts; szerkesztett gyűjtő |
-| P0 | Menetrend | /menetrend | valós adásrend és állapotok |
-| P0 | Közösség | /kozosseg | csatlakozás, szabályok, közösségi érték |
-| P0 | Rólam | /rolam | személyes történet, játékok, setup teaser |
-| P0 | Kapcsolat | /kapcsolat | üzleti és nézői kapcsolat elválasztva |
-| P0 | TikTok | /tiktok | short-form csatorna-landing, nem üres linkoldal |
-| P0 | YouTube | /youtube | csatorna/VOD-landing, nem üres linkoldal |
-| P1 | Klipek / rövid videók | /videok/klipek | kereshető válogatás, ha az adatok és oldalmodell engedik |
-| P1 | VOD / visszanézés | /videok/vod | hosszabb adások, ha az adatok és oldalmodell engedik |
-| P1 | Setup és játékok | /felszereles | ténylegesen használt gamer/streaming eszközök |
-| P1 | Partnerek / médiaajánlat | /partnerek | hiteles márkaajánlat és űrlap vagy kapcsolatút |
-| P1 (feltételes) | Merch | /shop | CSAK működő kínálat/checkout vagy igazolt külső bolt esetén |
-| Rendszer | 404 / 500 / adatvédelem | meglévő site-kontraktus szerint | nem zsákutcás rendszeroldalak |
+| P0 | Főoldal | / (a /p/home ugyanaz a tartalom) | SANCI brand, élő nézési út, válogatott tartalom, közösség |
+| P0 | Élő adás / Twitch | /p/twitch | élő stream, offline állapot és Twitch-hozzáférés |
+| P0 | YouTube VOD | /p/youtube | kizárólag a saját YouTube-csatorna és felvételek |
+| P0 | TikTok | /p/tiktok | kizárólag saját rövid TikTok-klipek |
+| P0 | Menetrend | /p/schedule | szerkeszthető, valódi heti adásrend és médiatári borítók |
+| P0 | Közösség | /p/community | Discord és közösségi elvek |
+| P0 | Rólam | /p/about | személyes történet, SANCI márka |
+| P0 | Kapcsolat | /p/contact | üzleti e-mail és közösségi kapcsolat |
+| P1 (csak később) | Valódi, kurált YouTube lejátszási listák | a meglévő /p/youtube oldalon | saját videóazonosítók és hiteles borítók |
+| P1 (csak később) | Valódi TikTok-válogatás | a meglévő /p/tiktok oldalon | saját clipazonosítók és hiteles borítók |
+| P1 (feltételes) | Setup, partnerek, merch | csak igazolt tartalom és működő funkció esetén | szükség esetén új, egyedi Editor oldal |
+| Rendszer | 404/500/adatvédelem | meglévő kanonikus site-kontraktus | nem zsákutcás rendszeroldalak |
 
-**Migráció:** korábbi létrehozott nyolc oldal: Főoldal, Rólam, Adásrend, Élő adás, TikTok, YouTube, Kapcsolat, Közösség (korábbi beszélgetés állítása, jelenleg az élő D1 állapot nincs megerősítve). Minden oldalt előbb listázni és ugyanazon oldalt szerkeszteni, nem vakon duplikálni. Amennyiben az aktuális /élőadás stb. útvonal más, megőrizni/308 redirectet a kanonikus URL-kontraktussal, validálni.
-
-**Tilos:** tucatnyi üres vagy „hamarosan” menüpont; navigációból elérhető kizárólag éles és értelmes oldal. P1 oldalak rejtve lehetnek, amíg tartalmuk és funkcióik nem készek; ettől a teljes terv nem szűkül.
+**2026-11-13 D1 állapot:** a publikus navigáció 13-as közzétett változata nyolc egyszintű oldalt tartalmaz. A korábbi `page-sanci-videok`, `alkotasok` és a korai `page-chatgpt-proba-20261113` oldal az Editorban archivált, revíziójuk megmaradt. A publikált YouTube és TikTok oldalak saját, elkülönített tartalmukra szűkültek; az éles SVG menü teljes böngészős QA-ja ettől külön OPEN. A korábbi, általános gyűjtőoldal-minták más felhasználók számára továbbra is technikai opciók, de nem aktivált SANCI oldalak.
 
 ---
 
