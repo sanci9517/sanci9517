@@ -1,6 +1,6 @@
 import type { D1Database } from "@cloudflare/workers-types";
 import { DEFAULT_SITE_ID } from "./site-context.ts";
-import { SCHEDULE_ARTWORK_JOIN,SCHEDULE_ARTWORK_SELECT,validScheduleArtworkId } from "./schedule-artwork";
+import { SCHEDULE_ARTWORK_JOIN,SCHEDULE_ARTWORK_SELECT,validScheduleArtworkId } from "./schedule-artwork.ts";
 
 export const SCHEDULE_READ_MODES = ["upcoming", "all", "next", "week"] as const;
 export const SCHEDULE_READ_ORDERS = ["asc", "desc"] as const;
