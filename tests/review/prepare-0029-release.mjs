@@ -22,7 +22,7 @@ export const EXPECTED_NEW_TRIGGERS=Object.freeze([
  'media_archive_revisions_insert_unicode_guard',
  'media_archive_revisions_update_unicode_guard'
 ]);
-const candidateUrl=new URL('../../../tests/fixtures/0029_media_archive_unicode_additive.sql',import.meta.url);
+const candidateUrl=new URL('../fixtures/0029_media_archive_unicode_additive.sql',import.meta.url);
 
 /** Returns a single D1 REST transaction batch; it NEVER executes the SQL. */
 export function build0029ReleaseSql(){
@@ -60,7 +60,7 @@ export function build0029ReleaseSql(){
 const runningDirectly=process.argv[1]&&resolve(process.argv[1])===fileURLToPath(import.meta.url);
 if(runningDirectly){
  if(process.argv.length!==3||process.argv[2]!=='--print'){
-  process.stderr.write('Usage: node scripts/d1/review/prepare-0029-release.mjs --print (review only)\n');
+  process.stderr.write('Usage: node tests/review/prepare-0029-release.mjs --print (review only)\n');
   process.exitCode=2;
  }else process.stdout.write(build0029ReleaseSql());
 }

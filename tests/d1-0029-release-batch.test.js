@@ -5,7 +5,7 @@ import test from 'node:test';
 import {DatabaseSync} from 'node:sqlite';
 import {
  build0029ReleaseSql,FIXTURE_SHA256,EXPECTED_NEW_TRIGGERS,MIGRATION_NAME
-} from '../scripts/d1/review/prepare-0029-release.mjs';
+} from './review/prepare-0029-release.mjs';
 
 const read=path=>readFileSync(new URL(path,import.meta.url),'utf8');
 const original0028=read('../scripts/pending/0028_media_archive.sql');
