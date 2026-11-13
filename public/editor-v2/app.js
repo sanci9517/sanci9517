@@ -677,6 +677,7 @@ function renderScheduleInspector(node,composition){
     ['showTitle','Cím megjelenítése'],['showPlatform','Platform megjelenítése'],
     ['showTime','Kezdés megjelenítése'],['showEndTime','Befejezés megjelenítése'],
     ['showStatus','Státusz megjelenítése'],['showNotes','Megjegyzés megjelenítése'],
+    ['showArtwork','Borítóképek megjelenítése'],
     ['showLink','Link megjelenítése']
   ];
   for(const [key,labelText] of toggles){
@@ -694,6 +695,11 @@ function renderScheduleInspector(node,composition){
     const normalized=normalizeScheduleConfig({...current,emptyText:value});
     return commitInspectorText('schedule.config.set',{nodeId:node.id,patch:{emptyText:normalized.emptyText}},options);
   },isNodeEffectivelyLocked(page(),node),true,composition),'emptyText'));
+  const link=document.createElement('a');link.href='/admin/schedule';link.target='_blank';link.rel='noopener noreferrer';
+  link.textContent='Adások, időpontok és médiatári képek kezelése ↗';
+  link.className='property-help';
+  link.style.cssText='display:inline-flex;align-items:center;min-height:44px;margin-top:10px;text-decoration:underline';
+  section.append(link);
   return section;
 }
 
