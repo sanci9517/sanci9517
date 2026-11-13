@@ -793,3 +793,48 @@ Ritka visszatérő, hátulról vagy részletében látott **kitalált** sziluett
 - A teljes szerkesztő kézi/fizikai acceptance a MASTER későbbi kapuján marad. Az AI és a tényleges merch értékesítés külön későbbi funkció, nem indítási előfeltétel. 0 Ft új költés; nincs prod D1/R2 írás, Worker deploy vagy Publish pusztán ezen dokumentációtól.
 
 **Státusz:** dokumentációs integráció, nem kész site/asset vagy élesítés.
+
+
+---
+
+## 33. Nemzetközi top-streamer benchmark és tulajdonosi UX-korrekció (2026-11-13)
+
+**Tulajdonosi visszajelzés (kritikus, a következő dizájn-iteráció előtt):** a 2026-11-13-i, ChatGPT által D1-be írt P0-draftok „adathalmaznak” hatnak: túl sok azonos hero, ismétlődő kártya, nem eléggé világos az oldalak külön feladata, és a használt logó NEM az elfogadott. A D1-konzisztencia vagy 337 node NEM vizuális elfogadási mérce. Az ilyen draft **VISUAL REJECTED / UX-P0 OPEN**; még egyszerű finomhangolással nem tekinthető megoldottnak. Következő Editor/D1 dizájnalkotás csak e hiányok feltárása után következzen, ne automatikusan folytatódjon a 9 azonos sablon ismétlése.
+
+### 33.1 Pontos, külföldi saját webhelyek és a funkciójuk (ellenőrizve 2026-11-13)
+
+| Saját oldal / forrás | Ellenőrzött tényleges oldal-funkció | SANCI-nál átvehető design-tanulság | Tilos / nem illik |
+|---|---|---|---|
+| **Shroud** — https://shroudyrowdy.com/ | Karakteres, nagy, képcentrikus nyitókompozíció; „watch LIVE”, Twitch belépő, air time, offline alternatíva, üzleti kapcsolat, FAQ; kevés, de jelentős főblokk | SOKKAL erősebb egyedi art direction; watch-first homepage; offline fallback; nem egyforma kártyaözön | Az ő szlogenje, képei, színei, FPS-fegyveres motívumai, egyedi betűje; nem kell FPS-professzionális karaktert utánozni |
+| **Pokimane** — https://pokimane.com/ | A jelenlegi cím márka/merch-kampány **HOME / COLLECTION / LOOKBOOK**, nem általános streamer-videóarchívum | Emlékezetes saját márka és limitált kampányokkal szerkesztett, magazinszerű lookbook; különleges kép/tipó kezelés | A webshopot/termékeket nem szabad a SANCI kezdőoldalára másolni, hiszen nincs aktív termék |
+| **TimTheTatman** — https://www.timthetatman.com/ | Önálló „About Tim”, „Watch”, „Social” és később merch | A személyiség, a tartalom és a brand eltérő, de összetartozó szerepben jelenik meg; működő nézési CTA | Más creator életrajza, közösségi számok, termékek |
+| **Valkyrae** — https://valkyrae.com/ és https://link.me/valkyrae | Az első webshop/kategória-kollekció, a második külön creator-linkhub legfrissebb videóval, social/műsor/kapcsolat útvonalakkal | Videótár vs brand-termékek vs kapcsolati hub külön; erős szerkesztett válogatás | Nem jelenítünk meg kitalált merch, kedvezmény, kampány |
+| **CouRageJD** — https://link.me/couragejd | Elkülönített több YouTube-típus, rövidvideó, social, latest videos, shop | A formátumok szerinti tartalomosztás a megfelelő aloldalra irányít; ne ismételjük minden oldalon | Nem másoljuk az ő szponzorait, statisztikáit, megjelenését |
+
+**Értelmezés:** nem minden világhírű streamer saját domainje streaming portál; Pokimane és Valkyrae vizsgált domainje kifejezetten shop-központú, míg Shroud watch-first. Ezekből **funkcióspecifikus mintát** veszünk át, nem 1:1 webhelyet. Továbbra is a már jóváhagyott SANCI DARK DEPTH egyedi filmes nyelve az egyetlen arculat, nem Shroud-, Pokimane- vagy Tim-klón.
+
+### 33.2 A 9 P0 oldalnak eltérő szerkezete és információs feladata legyen (felülírja az ismétlődő mintakártyás korábbi D1-draftot)
+
+1. **Főoldal:** egy megkomponált, nagyképernyős SANCI hero (valódi márkaembléma, saját kép, külön szerkeszthető H1+CTA); pontos LIVE/OFFLINE/UNKNOWN; *egy* hiteles featured video és 2 kompakt belépő Videók/Közösség. Legfeljebb 4 tömör képi blokk. Nem hosszú adatlista, nem játékcímek ismétlése.
+2. **Élő adás:** **player-first, stream command center**; először a valós stream/player vagy offline üzenet; Twitch CTA, chat csak ahol technikailag korrekt, következő igazolt időpont külön komponens. Semmiképpen nem a Főoldal herojának másolata.
+3. **Videók:** **editorial media library**, egyetlen kurált feature video; tényleges thumbnailok, Klipek (9:16)/VOD (16:9) külön; Fortnite/Hearthstone/Indie szűrés *csak valódi metaadat esetén*. Működő videónyitás és tartalmi hierarchia. NEM több általános gombkártya videók helyett.
+4. **Menetrend:** **calendar/timetable first**, valós jövőbeli dátumok, időzóna, offline/üres állapot; nincs óriási képes hero vagy ismételt videókártya.
+5. **Közösség:** saját, szövegszegény **Discord-csatlakozás + community scene** (https://discord.gg/RWBCYNMqy, user supplied), rövid szabályok és valódi események; semmi bolti vagy videóarchívum-blokk.
+6. **Rólam:** **magazinos személyes történet**, valódi alkotói hang, fejezetek, a SANCI szimbólum és jól megválasztott saját képek; setup csak valós adatokkal és a megfelelő aloldalra vezetve. Nem reklám-/linkkártyák tömege.
+7. **YouTube/VOD:** **16:9-videók és archívum** az igazolt https://www.youtube.com/@sanci9517vod csatornával; ez NEM a Videók főgyűjtő megkettőzése.
+8. **TikTok:** **vertical 9:16 short-first**, mobilos görgetés/képtárolás és a hivatalos TikTok-profil; NEM 16:9 YouTube-oldal átcímkézve.
+9. **Kapcsolat:** **kapcsolati szerkesztőségi/üzleti oldal**, direkt mailto:sandor.bogadi95@gmail.com, együttműködés iránti megkeresés, rövid tiszta formátum. Nem közösségi videó-gyűjtő.
+
+**Azonos mindenhol CSAK:** azonos, jóváhagyott SANCI-identitás és design tokenek; fejléc, következetes nav, akadálymentesség, visszafogott lábléc. **Nem azonos:** hero mérete/formája, képarány, rács, feature, modulok sorrendje, CTA, háttérréteg, oldalszerep. A valódi nemzetközi minőségi jel az oldalak céljának és komponenshierarchiájának különbsége; a node-k vagy kártyák száma nem KPI.
+
+### 33.3 Elfogadott logó és grafikai döntési kapu
+
+A jóváhagyott régi szimbólumirány **három egymásba fonódó ív + három kerek csomópont**, SANCI szójel; a 2026-11-09-i SANCI Közösségi Szimbólum Márkastílustábla az újrakeresett tulajdonosi referencia. Az Editorban jelenleg használt puszta „S” és az ismeretlen/eltérő logóasset **NEM elfogadott**. Egy korábban feltöltött, nagyon kicsi képkivágat önmagában nem bizonyítja, hogy a megfelelő, teljes felbontású, tiszta és transzparens arculati asset rendelkezésre áll.
+
+**Release/QA kapu:** a szimbólum tényleges grafikai formáját és szójelét közvetlenül az elfogadott referencia alapján, külön képi/vektorfájlként, márka- és jogosultságellenőrzés után vizuálisan össze kell vetni. Headerhez, faviconhoz és merch/mockuphoz csak a helyes, éles, skálázható asset kapcsolható. Nem helyettesítjük a logót egy generikus S-betűvel, készletillusztrációval, más streamer motívumaival vagy a márkatábla teljes, apró kivágatával.
+
+### 33.4 Kivitelezési sorrend és minimum minőségkapu
+
+**Mielőtt újabb D1-Editor page build történne:** (a) nemzetközi minták és SANCI konkrét navigációja egyeztetve a lenti tartalmi szerepekkel; (b) jóváhagyott embléma mintázata és exportjai képi QA-val igazolva; (c) a **főoldal, videótár és élő oldal egymástól erősen eltérő kompozíciója** 1440/390px prezentálható; (d) a publikus shell fejléc/lábléc, valódi CTA, responsive és a hiányzó editor-komponensek ellenőrzése kész. A vizuális irány elfogadása előtt ne automatikusan nyolc másolatot mentsünk.
+
+Ez nem a MASTER helyett létrehozott új terv, hanem annak a már létező, végrehajtható SANCI publikus briefjében végrehajtott **kritikus minőségkorrekció**. A régebbi D1 piszkozatok és verziók megmaradnak összehasonlításra; nem lettek ezen benchmark miatt automatikusan publikálva. **Státusz:** új UI/média implementáció **NOT DONE**, vizuális minősítés **OPEN/REJECTED**, 0 Ft új kiadás.
