@@ -8,7 +8,7 @@ import {legacyImageSource,legacyPlayableSource,legacyPlaybackSettings,legacyImag
 import {iconById} from "../editor-v2/core/icon-options.js";
 import {normalizeDividerStyle} from "../editor-v2/core/decorative-elements.js";
 import {normalizeCardContent,cardImageSrc} from "../editor-v2/core/card-content.js";
-import {renderCountdownContent,activateCountdowns} from "../editor-v2/core/countdown-content.js";
+import {renderCountdownContent,activateCountdowns} from "../editor-v2/core/countdown-content.js?v=20261114-next-stream-clock-v1";
 import {renderSocialLinksHtml} from "../editor-v2/core/social-links.js";
 import {renderEmbedHtml,activateEmbeds} from "../editor-v2/core/creator-embed.js";
 import {renderCodeSnippet,activateCodeBlocks} from "../editor-v2/core/code-snippet.js";
