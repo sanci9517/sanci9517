@@ -44,6 +44,10 @@ export async function adminScheduleRoute(request: Request, env: Env): Promise<Re
     const rows = await env.DB.prepare(`SELECT e.id,e.title,e.platform,e.starts_at,e.ends_at,e.status,e.url,e.notes,${SCHEDULE_ARTWORK_SELECT} FROM schedule_items e${SCHEDULE_ARTWORK_JOIN} WHERE e.site_id=? ORDER BY e.starts_at ASC LIMIT 500`).bind(siteId).all<ScheduleRow>();
     return ok(rows.results.map(mapRow));
   }
+  if(request.headers.get("Origin")!==new URL(request.url).origin||request.headers.get("Sec-Fetch-Site")==="cross-site")
+    return error("INVALID_ORIGIN",403);
+  if(!/^application\/json(?:\s*;|\s*$)/i.test(request.headers.get("Content-Type")||""))
+    return error("INVALID_CONTENT_TYPE",415);
   let body: ScheduleBody;
   try { body = (await request.json()) as ScheduleBody; } catch { return error("INVALID_JSON", 400); }
   if (request.method === "POST") {
