@@ -27,9 +27,30 @@ export function renderCountdownInspector(node,update,{pending=()=>{}}={}){
   wrap.append(input,composition.attach(input,(value,options)=>save({[key]:value},options)));section.append(wrap);
  };
  text('Esemény neve','title');
- section.append(route(renderCountdownDateControl(model.targetISO,{
-  apply:targetISO=>save({targetISO},{render:false}),pending:watch('date'),disabled:Boolean(node.locked)
- }),'targetISO'));
+ const source=route(document.createElement('label'),'source');source.className='field';
+ source.append(document.createTextNode('Időpont forrása'));
+ const mode=document.createElement('select');
+ mode.setAttribute('aria-label','Időpont forrása');
+ mode.disabled=Boolean(node.locked);
+ for(const [value,label] of [['manual','Saját dátum'],['next-stream','Következő adás a menetrendből']]){
+  const option=document.createElement('option');option.value=value;option.textContent=label;mode.append(option);
+ }
+ mode.value=model.source==='next-stream'?'next-stream':'manual';
+ mode.onchange=()=>{
+  const next=mode.value==='next-stream'?'next-stream':'manual';
+  if(save({source:next,targetISO:''})===false)mode.value=model.source==='next-stream'?'next-stream':'manual';
+ };
+ source.append(mode);section.append(source);
+ if(model.source!=='next-stream'){
+  section.append(route(renderCountdownDateControl(model.targetISO,{
+   apply:targetISO=>save({targetISO},{render:false}),pending:watch('date'),disabled:Boolean(node.locked)
+  }),'targetISO'));
+ }else{
+  section.append(Object.assign(document.createElement('p'),{
+   className:'field-help',
+   textContent:'A következő valódi adás dátuma automatikusan a Menetrendből érkezik. Nincs kézzel beírt időpont.'
+  }));
+ }
  text('Lejáratkor megjelenő üzenet','finishText');
  const toggle=document.createElement('input');toggle.type='checkbox';toggle.checked=Boolean(model.showSeconds);toggle.disabled=Boolean(node.locked);
  toggle.setAttribute('aria-label','Másodpercek megjelenítése');
