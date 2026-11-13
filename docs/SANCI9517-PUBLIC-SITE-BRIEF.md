@@ -1,7 +1,7 @@
 # SANCI9517 — publikus weboldal: kreatív brief, dizájnrendszer és teljes tartalomterv
 
 **Dokumentum típusa:** belső, végrehajtható creator-webhely brief; NEM második platform-MASTER.  
-**Verzió:** 2.6 (2026-11-13) • **Státusz:** SANCI DARK DEPTH ONLY / KÖTELEZŐ SPEC / KIVITELEZÉS OPEN.
+**Verzió:** 2.7 (2026-11-14) • **Státusz:** SANCI DARK DEPTH ONLY / KÖTELEZŐ SPEC / KIVITELEZÉS OPEN.
 **Repository / ág:** sanci9517/sanci9517 → v2/foundation.  
 **Kanonikus termékterv:** docs/SANCI9517-CREATOR-PLATFORM-PLAN.md.  
 **Végrehajtási szabály:** AGENTS.md; ez a brief nem írhatja felül a MASTER-t, a release-gate-eket, a Save/Publish szétválasztását vagy a domainadatok tulajdonosát.  
@@ -153,6 +153,18 @@ Csak tervezési megfigyelések, NEM automatikus másolási jogok. Az itt rögzí
 **Működés és visszaállíthatóság:** a SANCI D1 `page-home` Editor dokumentuma 109→110 revízió, csomópontszám 32→17 (15 fölösleges csomópont kivezetve), aktív főoldali szekció 4→2, CTA 6→3, egyetlen saját háttérkép. Meglévő `sanci-page-document` / `editor_revisions` / Save és Publish elkülönítés, site-scope, audit, korábbi v109 visszaállítható. A meglevő közös Worker-kódhoz vagy a többi hét oldalhoz nem kellett hozzányúlni.
 
 **Minőségkapu:** D1 Save/Publish/postflight PASS, a valódi 320/390/768/1024/1440px teljes képernyős vizuális/crop/kontraszt/fókusz elfogadás **OPEN / NOT_CERTIFIED**. A homepage nem kap ál-LIVE státuszt, hamis követőszámot vagy kitalált streamidőpontot.
+
+### 4.4 Főoldali, menetrendvezérelt visszaszámláló — 2026-11-14
+
+A SANCI v111 főoldalon az 01-es filmes hero és a 02-es rövid menetrend-átvezető **változatlan, kétfókuszos IA** marad. A második szakaszban, a Menetrend CTA előtt **egy darab, reszponzív Countdown elem** mutatja a következő *valóban meghirdetett* streamig fennmaradó nap/óra/perc/mp időt. A teljes heti program továbbra is csak a dedikált Menetrend oldalon van.
+
+**Forrás:** a kanonikus, site-scoped `schedule_items` adatból a meglévő `/api/public/schedule?mode=next&statuses=scheduled&limit=1` API, soha nem kézzel beírt, hamis célidőpont. A cím, stream neve, platform és a Europe/Budapest dátum egyértelmű; a magyar időzóna DST-váltása (tavaszi nem létező és őszi kétszer előforduló helyi óra) kezelve. Adás létrehozása vagy módosítása után 60 másodpercen belül frissül a nyitott főoldalon, újratöltéssel azonnal. A számok másodpercenként frissülnek, lejárat után a következő tényleges időpontra váltanak. Nincs saját vagy következő valós adás, vagy az API hibázik? A felület megtévesztő időpont és hamis LIVE címke helyett értelmes üres/error állapotot mutat, a Menetrend link továbbra is elérhető.
+
+**Editor-kompatibilitás:** a már meglévő `countdown` Page Model elem `countdownVersion=1` profiljához opcionális `source:'next-stream'` mező. A Tartalom Inspector `Időpont forrása` választója `Saját dátum` és `Következő adás a menetrendből` módot kínál. A kézi, ISO időzónával megadott `targetISO` működése megmarad. A főoldal új node-ja teljesen szerkeszthető, a beépített Countdown komponensből renderel, nem SANCI-specifikus hardcoded HTML fork.
+
+**Design:** négy numerikus cella, 320–390px széles telefonon is elfér, világos nagy számjegyek, alatta a cím/valódi időpont; képernyőolvasónak olvasható, a másodpercenkénti változás nem generál folyamatos aria-live bejelentést. Nem animálunk feleslegesen és nem torzítjuk a két szakaszos főoldali ritmust.
+
+**Kiadási szerződés:** külön CAS Save (Page Model v111) és Publish; a v110 és korábbi editor_revisions megmaradnak. A CDN-kód és az API javítása a `v2/foundation` Runtime Code/Worker Build folyamatban, nincs D1 migráció, új függőség, külön fizetős szolgáltatás vagy CI dispatch. A read-only D1 preflight és postflight 8-oldalas snapshotmegőrzést igazol. **Nyitott minőségkapu:** teljes, valódi telefonos Chromium/browser HTTP smoke + CSS/asset hash/exact source SHA és a Visual Editor későbbi teljes fizikai elfogadása **OPEN / NOT_CERTIFIED**; a D1 PASS nem helyettesíti ezeket.
 
 ## 5. Teljes tartalmi és UX specifikáció — oldalanként
 
