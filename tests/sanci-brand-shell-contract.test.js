@@ -55,3 +55,12 @@ test('navigational focus, keyboard menu and reduced motion are preserved',()=>{
   assert.match(css,/desktop-primary-nav a:focus-visible/);
   assert.match(css,/prefers-reduced-motion:reduce/);
 });
+
+test('mobile footer does not concatenate copyright and tagline or strand the third column',()=>{
+  assert.match(css,/Mobile footer repair/);
+  assert.match(css,/max-width:480px/);
+  assert.match(css,/public-footer-bottom\{display:flex;flex-direction:column/);
+  assert.match(shell,/data-admin-shortcut hidden/);
+  assert.match(js,/revealSignedInAdmin\(\)/);
+  assert.match(js,/result\.data\?\.authenticated===true/);
+});
