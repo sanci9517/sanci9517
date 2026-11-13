@@ -68,3 +68,12 @@ A tulajdonos jelezte, hogy az első 357-node-os verzió nem éri el az elfogadot
 **Nyitott és nem eltagadható hiányok:** a jelenlegi közös `public/visual-page.html` és `public/assets/site.css` statikus fejléc/lábléc még S-helyettesítő márkajellel és ellenőrizetlen/broken linkekkel működik; nem teljesen Editor-szerkeszthető. Ezt később önálló runtime-fejlesztéssel és AGENTS.md szerint tesztelt Worker release-szel kell javítani. Továbbá konkrét YouTube/TikTok videók, engedélyezett thumbnailek, LIVE/OFFLINE integráció, működő sponsor strip valódi partnerekkel, elrejthető videós nézetek, reszponzív/akadálymentességi és szerver Publish QA szükséges. A tervezett mozgó sponsorsávhoz partneradattal és reduced-motion fallbackkel tényleges Editor-komponens szükséges. Ne állítsuk, hogy a webhely világszínvonalú, amíg a vizuális és funkcionális kapuk teljesülését nem igazoltuk.
 
 **GitHub Worker code / deploy:** ebben a második kivitelezési részben nem módosult; D1 draft és ez az evidence változott. A GitHub Actions futtatását nem kértük, új fizetős erőforrás nem került bevezetésre.
+
+
+## 2026-11-13: CTA hover/focus és végső, read-only D1 QA
+
+Új, Editor-kontraktus szerinti `metadata.stateVersion=1` állapotstílusok mind a **55 szerkeszthető CTA gombon**: visszafogott bordó hover és látható focus-visible, 180 ms átmenet. A meglévő site CSS `prefers-reduced-motion` fallbackje tiltja az animált átmenetet az erre érzékeny böngészőkben. A Page Model Save nem Publish.
+
+Legutóbbi D1 revíziók: `page-home` 105, `page-twitch` 6, `page-schedule` 11, `page-sanci-videok` 5, `legacy-community` 32, `page-about` 79, `page-tiktok` 14, `page-youtube` 19, `page-contact` 9. Visszaolvasás: **9/9 szerkezeti ellenőrzés PASS**, **337 node**, **55 hover/focus CTA**. Minden oldal új piszkozat-revíziója a jelenlegi közzétett változat felett van; egyik új revíziót sem publikáltuk. A Videók oldal közzétett állapota továbbra is a külön Editorból létrejött v2, a megújított v5 csak piszkozat. Az 11-es közzétett és a 12-es draft navigáció külön maradt.
+
+Nincs screenshot-alapú vizuális QA, nincs teljes `validatePublishDocument` futtatás, nincs Worker-asset módosítás vagy deploy. Kiadás és „világszínvonalú” minősítés: **OPEN / NOT CERTIFIED**.
