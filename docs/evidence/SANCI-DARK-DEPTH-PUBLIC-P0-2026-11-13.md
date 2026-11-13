@@ -114,3 +114,43 @@ A szerveroldali `src/core/editor-validation.ts` Publish-kapu korábban csak a h�
 A `page-schedule` P0 heti piszkozatot egy szerkeszthető keret/padding korrekcióval **v13**-ra emeltük, D1 batch 3/3 sikeres, auditban szerepel, Publish nem történt. A korábbi **v8 publikált változat** és az Editor revision history megmaradt. A régebbi, v12-es piszkozat az előző pont szerinti részlépés, nem a legfrissebb verzió.
 
 **Fontos:** a Cloudflare legutóbb látott deployment 2026-11-13T19:54:39Z időpontú és 100% forgalmú volt, de nem igazolt teljes forrás-SHA paritást vagy a `week` API HTTP-smoke-ját; a fejlesztés kiadási/Browser QA státusza továbbra is **UNVERIFIED / OPEN**. Új adatbázis-migráció nincs.
+
+
+## SANCI DARK DEPTH — 2026-11-13, teljes P0 editorial újjáépítés (következő munkablokk)
+
+**Kérelem:** a tulajdonos engedélyezte a világszínvonalú SANCI márkawebhelyhez szükséges hiányzó funkciók fejlesztését. Az új dizájn nem a kilenc korábbi, túlzottan ismétlődő oldal kártyáinak kiszínezése. Shroud watch-first, Pokimane brand/campaign, TimTheTatman creator/community hierarchia mintáiból inspirálódva egyetlen SANCI DARK DEPTH arculatot alkalmaz, de egymástól eltérő, feladatspecifikus oldalkompozícióval. A referencia-webhelyek tulajdonosi képei és kódjai NEM kerültek átvételre.
+
+### GitHub forráskód és működési határok
+
+Ág: \`v2/foundation\`. Valós, normál GitHub update_file commitok (nincs force-push).
+
+- \`public/visual-page.html\`: a helyettesítő S-mark, hibás /p/kozosseg /p/rolam /p/menetrend, üres href="#" linkek és kitalált public live-jelölés kivezetve; valós platformlinkek, tiszta footer, látható asztali elsődleges navigáció, SANCI-slot a helyes médiatári logóhoz. Footerben nincsen hamis Kick/merch/sponsor és belső admin link.
+- \`src/index.ts\`: a kanonikus, site-scoped SANCI logó server-side slot feloldása (\`/media/67045b51-9df7-45b0-a426-6b015ab985f1\`); a független többi tenant NEM kap SANCI-branded navot, footert, logót vagy csatornákat. SiteId az oldal- és 404 render útvonalakon is átadásra kerül. Az összes új SANCI HTML/CSS feltétele továbbra is ugyanaz az egy Editor/renderer modell.
+- \`public/assets/site.css\`: SANCI DARK DEPTH célzott cinematikus, grafit-szürke/vörös shell, responsive desktop top-nav, kisebb viewports-on a működő drawer, fókusz, reduced-motion, prémium, takarékos lábléc. Csak \`body[data-sanci-shell="1"]\` megjelenése módosul.
+- \`public/assets/site.js\`: desktop/drawer aktív link jelzés a már meglévő billentyűzettel használható menü megőrzésével.
+- \`public/assets/page-renderer.js\`: csak az új \`sanciEditorialVersion:1\` Page Model oldalakon a külön vizuális H1-et tartalmazó generikus content-hero shell rejtve; publikálatlan média az autentikált Editor preview-ban \`/api/admin/media?id=\` útvonalról (nem nyilvánosan), továbbra is az eredeti kanonikus rendererből.
+- \`src/routes/admin/media.ts\`: kizárólag a kanonikus SANCI site egyetlen jóváhagyott \`image/png\` fejléc-logó ID-jának explicit, site-scoped publikus elérése, **nem** általános médiatár-public fallback. Minden más média ugyanazon oldal-published asset-reference ellenőrzésen halad át, mint korábban.
+- \`tests/sanci-brand-shell-contract.test.js\` és \`package.json\` \`test:brand\`: fókuszált shell / tenant izoláció / valós csatornák / draft média / akadálymentes nav regressziós szerződések.
+
+**D1 Editor v2 rebuild — 9/9 P0 oldal sikeres piszkozat** (a mostani, 2026-11-13-i visszaolvasás szerint; a Twitch csatornaazonosító mentése és a Menetrend H1 korrekció külön revíziót kapott):
+
+| Page ID | Slug | Utolsó mentett draft | Editor-node-ok | Oldalspecifikus forma |
+|---|---|---:|---:|---|
+| \`page-home\` | home | 106 | 36 | Filmiskola-szerű kapucnis/sötét erdős hero, élő/film és közösségi editorial fejezetek |
+| \`page-twitch\` | twitch | **8** | 26 | Egy valódi, click-to-load Twitch-embed (\`sanci9517\` csatornaazonosító), menetrend és offline fallback |
+| \`page-sanci-videok\` | videok | 6 | 26 | 16:9 VOD vs 9:16 Shorts külön felfedezői formátumok |
+| \`page-schedule\` | schedule | **14** | 10 | Egy teljes heti naptár, igazolt időpontok, külön szerkeszthető H1 és Twitch/Discord CTA |
+| \`legacy-community\` | community | 33 | 19 | Eredeti erdei brand scene, Discord és alapelvek |
+| \`page-about\` | about | 80 | 21 | Magazinszerű bemutatkozás és kapucnis alak |
+| \`page-tiktok\` | tiktok | 15 | 17 | Álló, mobilbarát short-form landing |
+| \`page-youtube\` | youtube | 20 | 20 | 16:9 VOD-csatorna és szerkesztett storytelling |
+| \`page-contact\` | contact | 10 | 22 | Külön közösségi és márkakapcsolati útvonal |
+| **Összesen** | | | **197** | **Nem identikus komponensfák** |
+
+**D1 QA SELECT:** a 8 közvetlen újjáépítés egyenként egy H1, fa-ciklus/árva mentes, a médiatári UUID-k léteznek, a belső hivatkozások a tényleges meglévő slugokra, a külsők a tulajdonos csatornáira mutatnak, dokumentum \`revision\` = revision ledger; **8/8 célzott ellenőrzés PASS**. A \`page-schedule\` v14 külön CAS 3/3 és audit PASS, week mode megmaradt. A régi publikált snapshotok és korábbi \`editor_revisions\` változatlanok. Navigáció \`draft_revision=12\`, \`published_revision=11\`; az új oldalak, menü és képek Publish-je NEM történt meg, kivéve a korábban külön publikált régi videóoldal v2-jét (nem ez az új v6 draft). Nincs oldaltörlés, D1 migráció vagy R2 törlés.
+
+**Külső média tartalom:** a feltöltött SANCI média D1 rekordjai alapján ellenőrizve, a logó képi elfogadása és a vizuális jelenetek *fizikai screenshot review* továbbra is nyitott. A kreatív háttérképek nem hamis videók/thumbnailok: **nincsen ellenőrzött egyedi YouTube/TikTok videóazonosító**, ezért egyelőre a tényleges hivatalos csatorna- és VOD-URL-ek a működő CTA-k. Nincs kitalált LIVE, streamidőpont, támogató, követőszám, shop vagy üzleti állítás.
+
+**Ellenőrzési státusz és nyitott release gate:** a GitHubról frissen visszaolvasott \`page-renderer.js\` és \`site.js\` JavaScript syntax V8 **PASS**, a \`visual-page.html\` fallback shell két SANCI-logo slotot, meglévő route-okat és 0 hamis href="#" linket tartalmaz, az új média- és tenant-guards forráskódból ellenőrizve. Az egységteszt *forrása létrejött*, de **\`npm run test:brand\` / TypeScript typecheck / \`wrangler deploy --dry-run\` / exact-source 100% Worker deploy / authenticated browser 320–1440px screenshot / full publish-server validation NOT RUN / UNVERIFIED**: itt nem áll rendelkezésre bejelentkezett remote build-shell, a konténerből GitHub DNS nem elérhető, a Work-keret fogyasztását nem indítottuk. A User full Editor kézi elfogadása a MASTER későbbi kapuja. Az aktuális screenshot nélküli elrendezést **NEM** nevezzük világszínvonalúként elfogadottnak.
+
+**Release elv és költség:** az összes Editor-módosítás \`Save\` / piszkozat. A repo forrás-commitok nem bizonyítják a teljes Workers éles kiadást. **Új fizetős szolgáltatás, GitHub Actions dispatch, R2 deletion vagy költséget igénylő infrastruktúra: nincs.** A további lépések a jelenlegi egyetlen MASTER és annak meglévő briefje szerint: konzisztenst/tenant biztonságos build és \`test:brand\`/CI kapu; tényleges Worker 100%-os deploy forrás-SHA + /media/{logo} + /api/public/pages preview/public Smoke; reszponzív keyboard / vizuális QA; hiányzó valódi videók metaadatai, majd külön, tudatos Publish. Ez a fájl bizonyíték, nem új terv.
