@@ -39,4 +39,15 @@ function markActiveNavigation(){
     try{const target=new URL(link.getAttribute('href'),location.href);if(target.origin===location.origin&&target.pathname===current)link.setAttribute('aria-current','page');else link.removeAttribute('aria-current')}catch{}
   });
 }
-upgradeIcons();markActiveNavigation();loadSiteSettings();loadPublicContentNavigation();
+async function revealSignedInAdmin(){
+  if(document.body?.dataset.sanciShell!=='1')return;
+  const link=document.querySelector('[data-admin-shortcut]');
+  if(!link)return;
+  try{
+    const response=await fetch('/api/auth/session',{credentials:'same-origin',cache:'no-store',headers:{Accept:'application/json'}});
+    if(!response.ok)return;
+    const result=await response.json();
+    if(result?.ok===true&&result.data?.authenticated===true&&result.data.user?.id)link.hidden=false;
+  }catch{} // Anonymous visitors keep the shortcut hidden.
+}
+upgradeIcons();markActiveNavigation();loadSiteSettings();loadPublicContentNavigation();revealSignedInAdmin();
