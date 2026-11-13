@@ -109,6 +109,19 @@ export default {
     if (["/admin-media.html", "/admin-schedule.html", "/admin-design.html", "/admin-login.html", "/admin-home.html", "/admin.html", "/admin/home", "/editor-v2", "/editor-v2/index.html", "/about.html", "/community.html", "/contact.html", "/schedule.html", "/tiktok.html", "/twitch.html", "/vod.html", "/youtube.html"].includes(pathname)) {
       return new Response("Gone", { status: 410 });
     }
+    // Legacy SANCI-only sections were consolidated into single-purpose pages.
+    // Keep historical external links alive after reversible Editor archiving.
+    if (siteId === getCanonicalSiteContext().siteId && url.searchParams.get("preview") !== "1") {
+      const archivedAliases: Record<string,string> = {
+        "/p/videok": "/p/youtube",
+        "/p/alkotasok": "/p/about"
+      };
+      const destination = archivedAliases[pathname];
+      if (destination) return new Response(null, {
+        status: 308,
+        headers: { "Location": destination, "Cache-Control": "private, no-store, max-age=0" }
+      });
+    }
     if (pathname === "/" || pathname === "/index.html") return publicPageHtml(request, env, "/", false, { title: site.siteName }, siteId);
     if (pathname.startsWith("/p/") && pathname.length > 3) {
       let slug: string;
