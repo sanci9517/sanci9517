@@ -78,3 +78,12 @@ body.sanci-editorial-page[data-sanci-shell="1"] .visual-button:hover{filter:brig
 @media(max-width:620px){body[data-sanci-shell="1"] .nav{height:68px}body[data-sanci-shell="1"] .brand-logo{width:151px;max-height:48px}body[data-sanci-shell="1"] .menu-panel{top:calc(100% + 6px)}body[data-sanci-shell="1"] .public-footer-grid{grid-template-columns:1fr 1fr;gap:24px;padding:38px 0}body[data-sanci-shell="1"] .public-footer-brand{grid-column:1/-1}body.sanci-editorial-page[data-sanci-shell="1"] .page{padding-top:8px}body.sanci-editorial-page[data-sanci-shell="1"] .visual-button{min-height:48px}}
 @media(max-width:380px){body[data-sanci-shell="1"] .public-footer-grid{grid-template-columns:1fr}body[data-sanci-shell="1"] .public-footer-brand{grid-column:auto}}
 @media(prefers-reduced-motion:reduce){body.sanci-editorial-page[data-sanci-shell="1"] .visual-button:hover{transform:none}}
+
+/* SANCI cinematic desktop navigation */
+body[data-sanci-shell="1"] .desktop-primary-nav{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:clamp(11px,1.8vw,28px);margin:0 auto}
+body[data-sanci-shell="1"] .desktop-primary-nav a{display:inline-flex;align-items:center;min-height:44px;color:#b9c5d3;font-size:12px;font-weight:750;white-space:nowrap;letter-spacing:.018em;border-bottom:2px solid transparent;transition:color .16s,border-color .16s}
+body[data-sanci-shell="1"] .desktop-primary-nav a:hover,body[data-sanci-shell="1"] .desktop-primary-nav a[aria-current="page"]{color:#fff;border-color:#e14d61}
+body[data-sanci-shell="1"] .desktop-primary-nav a:focus-visible{outline:3px solid #e14d61;outline-offset:3px;border-radius:4px}
+body[data-sanci-shell="0"] .desktop-primary-nav{display:none}
+@media(max-width:1140px){body[data-sanci-shell="1"] .desktop-primary-nav{display:none}body[data-sanci-shell="1"] .public-header-status{margin-left:auto}}
+@media(max-width:620px){body[data-sanci-shell="1"] .public-header-status{display:none}}
