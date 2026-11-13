@@ -101,15 +101,15 @@ export default {
     if (["/admin-media.html", "/admin-design.html", "/admin-login.html", "/admin-home.html", "/admin.html", "/admin/home", "/editor-v2", "/editor-v2/index.html", "/about.html", "/community.html", "/contact.html", "/schedule.html", "/tiktok.html", "/twitch.html", "/vod.html", "/youtube.html"].includes(pathname)) {
       return new Response("Gone", { status: 410 });
     }
-    if (pathname === "/" || pathname === "/index.html") return publicPageHtml(request, env, "/", false, { title: site.siteName });
+    if (pathname === "/" || pathname === "/index.html") return publicPageHtml(request, env, "/", false, { title: site.siteName }, siteId);
     if (pathname.startsWith("/p/") && pathname.length > 3) {
       let slug: string;
       try {
         slug = decodeURIComponent(pathname.slice(3));
       } catch {
-        return publicPageWithStatus(request, env, 404);
+        return publicPageWithStatus(request, env, 404, siteId);
       }
-      if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) return publicPageWithStatus(request, env, 404);
+      if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) return publicPageWithStatus(request, env, 404, siteId);
 
       const pageUrl = new URL("/api/public/pages", request.url);
       pageUrl.searchParams.set("slug", slug);
@@ -127,10 +127,10 @@ export default {
             }
           });
         }
-        return publicPageWithStatus(request, env, 404);
+        return publicPageWithStatus(request, env, 404, siteId);
       }
       if (pageResponse.status === 401 || pageResponse.status === 403) {
-        return publicPageWithStatus(request, env, pageResponse.status);
+        return publicPageWithStatus(request, env, pageResponse.status, siteId);
       }
       if (!pageResponse.ok) {
         return new Response("A közzétett oldal jelenleg nem érhető el.", {
@@ -139,7 +139,7 @@ export default {
         });
       }
       const payload = await pageResponse.json() as { data?: { title?: string; description?: string } };
-      return publicPageHtml(request, env, preview ? null : `/p/${encodeURIComponent(slug)}`, preview, payload.data);
+      return publicPageHtml(request, env, preview ? null : `/p/${encodeURIComponent(slug)}`, preview, payload.data, siteId);
     }
     return env.ASSETS.fetch(request);
   }
@@ -149,7 +149,7 @@ function assetRequest(pathname: string, request: Request): Request { const url =
 type PublicPageSeo = { title?: string; description?: string };
 const escapeHtml = (value: string): string => value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
 
-async function publicPageHtml(request: Request, env: Env, canonicalPath: string | null, noIndex = false, seo?: PublicPageSeo): Promise<Response> {
+async function publicPageHtml(request: Request, env: Env, canonicalPath: string | null, noIndex = false, seo?: PublicPageSeo, siteId = getCanonicalSiteContext().siteId): Promise<Response> {
   const asset = await env.ASSETS.fetch(assetRequest("/visual-page.html", request));
   if (!asset.ok) return asset;
   const canonicalUrl = canonicalPath && !noIndex ? new URL(canonicalPath, request.url).toString() : null;
@@ -163,6 +163,14 @@ async function publicPageHtml(request: Request, env: Env, canonicalPath: string 
     canonicalUrl && seo ? `<meta property="og:title" content="${escapeHtml(title)}"><meta property="og:url" content="${escapeHtml(canonicalUrl)}">` : "",
     canonicalUrl && description ? `<meta property="og:description" content="${escapeHtml(description)}">` : ""
   ].join("");
+  // Brand imagery is explicitly canonical-site scoped. Future creator tenants receive
+  // their own site-name fallback, never the SANCI logo or contact details by accident.
+  const canonicalBrand = siteId === getCanonicalSiteContext().siteId;
+  const brandImage = canonicalBrand
+    ? '<img class="brand-logo" src="/media/67045b51-9df7-45b0-a426-6b015ab985f1" alt="SANCI" width="196" height="65" decoding="async">'
+    : '<span class="brand-generic-mark" aria-hidden="true">✦</span>';
+  html = html.replaceAll('<span data-sanci-brand-slot></span>', brandImage)
+    .replace('data-sanci-shell="__SANCI_SHELL__"', 'data-sanci-shell="' + (canonicalBrand ? '1' : '0') + '"');
   html = html.replace("</head>", `${headTags}</head>`);
   const headers = new Headers(asset.headers);
   headers.set("Content-Type", "text/html; charset=utf-8");
@@ -172,8 +180,8 @@ async function publicPageHtml(request: Request, env: Env, canonicalPath: string 
   return new Response(html, { status: asset.status, headers });
 }
 
-async function publicPageWithStatus(request: Request, env: Env, status: number): Promise<Response> {
-  const page = await publicPageHtml(request, env, null, true);
+async function publicPageWithStatus(request: Request, env: Env, status: number, siteId = getCanonicalSiteContext().siteId): Promise<Response> {
+  const page = await publicPageHtml(request, env, null, true, undefined, siteId);
   const headers = new Headers(page.headers);
   headers.set("Cache-Control", "no-store");
   return new Response(page.body, { status, headers });
