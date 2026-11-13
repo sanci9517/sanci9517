@@ -4,7 +4,7 @@ const $=id=>document.getElementById(id);
 const form=$('event-form'),status=$('status'),select=$('image-select'),preview=$('image-preview');
 const LABELS={scheduled:'Tervezett',live:'Élő',completed:'Lezajlott',cancelled:'Elmarad'};
 const ASSET_ID=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-let events=[],artwork=[],week=currentBudapestMonday(),editingId=null,mediaLoaded=false,busy=false;
+let events=[],artwork=[],week=currentBudapestMonday(),editingId=null,mediaLoaded=false,busy=false,pendingImageId='';
 
 function message(text,kind='info'){
   status.textContent=text;
@@ -41,7 +41,8 @@ async function loadArtwork(){
   if(selected&&artwork.some(a=>a.id===selected))select.value=selected;
   mediaLoaded=true;
   select.disabled=false;
-  updatePreview();
+  if(pendingImageId)selectImage(pendingImageId);
+  else updatePreview();
 }
 function updatePreview(){
   const id=select.value;
@@ -50,8 +51,9 @@ function updatePreview(){
   preview.alt='Kiválasztott médiatári kép előnézete';
 }
 function selectImage(id){
-  if(!mediaLoaded)return;
   const normalized=ASSET_ID.test(id||'')?id:'';
+  if(!mediaLoaded){pendingImageId=normalized;return;}
+  pendingImageId='';
   if(normalized&&!artwork.some(a=>a.id===normalized))select.append(opt('Korábban kiválasztott kép',normalized));
   select.value=normalized;
   updatePreview();
@@ -167,8 +169,10 @@ async function save(event){
       try{await request('/api/admin/schedule/media',{method:'PUT',body:JSON.stringify({itemId,assetId:select.value||null})})}
       catch{imageFailed=true}
     }
-    await loadEvents();clear();
-    message(imageFailed?'Az adás mentve, de a borító nem. Válaszd ki újra és mentsd el.':'Az adás és a kiválasztott borító mentve.','success');
+    await loadEvents();
+    if(imageFailed){const item=events.find(x=>x.id===itemId);if(item)edit(item);
+      message('Az adás mentve, de a kép nem. Válaszd ki újra a képet és mentsd el.','error');}
+    else{clear();message('Az adás és a kiválasztott borító mentve.','success');}
   }catch(e){message(e.message,'error')}
   finally{busy=false;$('save-event').disabled=false}
 }
