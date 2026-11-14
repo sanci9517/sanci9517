@@ -25,10 +25,16 @@ export const SCHEDULE_ARTWORK_JOIN =
 export const SCHEDULE_ARTWORK_SELECT =
   `(SELECT m.id FROM media m
      WHERE m.site_id=e.site_id
-       AND m.id=(CASE WHEN json_valid(artwork.value_json) THEN json_extract(artwork.value_json,'$.assetId') ELSE NULL END)
+       AND lower(m.id)=lower(CASE WHEN json_valid(artwork.value_json) THEN json_extract(artwork.value_json,'$.assetId') ELSE NULL END)
        AND m.archived_at IS NULL
        AND m.mime_type IN ('image/png','image/jpeg','image/webp','image/gif')
      LIMIT 1) AS image_asset_id`;
+
+// Match actual decoded JSON value rather than byte-for-byte serialized JSON.
+// This preserves historical Unicode escapes, whitespace and UUID letter-case
+// without ever authorizing malformed JSON or another tenant's event.
+export const SCHEDULE_ARTWORK_ASSET_MATCH =
+  "lower(CASE WHEN json_valid(artwork.value_json) THEN json_extract(artwork.value_json,'$.assetId') ELSE NULL END)=lower(?)";
 
 // The archive preflight is advisory. This predicate is evaluated atomically
 // with UPDATE media, so a freshly linked schedule cover can never be archived
