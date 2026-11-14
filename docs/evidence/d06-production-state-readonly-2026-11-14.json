@@ -1,0 +1,60 @@
+{
+  "schema": 1,
+  "captured_at": "2026-11-14T21:52:54Z",
+  "plan_point": "77.44.7.D / D-06 media lifecycle and production readiness",
+  "status": "PARTIAL_READ_ONLY_STATE_CAPTURE; FULL_D_OPEN_NOT_CERTIFIED",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "head_sha": "2de5425a953921215ae5c3977f106561615efd2e",
+    "head_message": "[skip ci] docs: record D-06 Schedule grant production evidence",
+    "runtime_source_parent_sha": "849310ee9d523feb608ed12763f4ed77d9033c88"
+  },
+  "production_worker": {
+    "name": "sanci9517-streamer-brand",
+    "latest_deployment_id": "bf413087-8322-451c-ad4f-3d7128b0ad3d",
+    "version_id": "c133e810-bf8f-4a7f-9c34-fa353c176b83",
+    "traffic_percent": 100,
+    "exact_source_sha": "849310ee9d523feb608ed12763f4ed77d9033c88",
+    "source_sha_evidence": "Cloudflare Build b9221841-0cea-4a77-b983-7e3824b333ab, previous exact-source evidence; no new build/deploy in this block"
+  },
+  "production_d1": {
+    "method": "Cloudflare D1 API; SELECT-only",
+    "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
+    "migration_count": 34,
+    "latest_migration": "0028_media_archive.sql",
+    "media_rows_site_default": 23,
+    "active_media_rows": 22,
+    "archived_media_rows": 1,
+    "media_metadata_bytes_including_archived": 22337740,
+    "queries": [
+      "SELECT name, applied_at FROM d1_migrations ORDER BY name",
+      "SELECT id, object_key, mime_type, size_bytes, archived_at FROM media WHERE site_id='site-default' ORDER BY id"
+    ],
+    "query_write_meta": {
+      "changed_db": false,
+      "rows_written": 0,
+      "changes": 0
+    },
+    "0029_applied": false
+  },
+  "r2": {
+    "bucket": "sanci9517-media",
+    "inventory_status": "UNVERIFIED",
+    "note": "A read-only Cloudflare List Objects request was attempted, but its result envelope was not captured in a certifiable form in this run. No R2 object was read, written, or deleted; no orphan/missing-object conclusion is made. Cloudflare OpenAPI confirms the response result is an array."
+  },
+  "health": {
+    "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+    "this_run": "UNVERIFIED; curl could not connect to the configured sandbox proxy (port 8080; HTTP 000)",
+    "prior_exact_release_evidence": "HTTP 403 Cloudflare error 1010 from this execution environment; not repeated as a current result"
+  },
+  "changes_in_this_block": {
+    "runtime_source": false,
+    "tests": false,
+    "new_deployment": false,
+    "d1_migration_or_write": false,
+    "r2_mutation_or_deletion": false,
+    "paid_infrastructure_or_ci_dispatch": false
+  },
+  "limitation": "The full D-06 capability/lifecycle matrix and the D-01–D-07 acceptance block remain OPEN / NOT_CERTIFIED. The local attached worktree is stale at 4cd79c5; Git fetch is blocked by the sandbox proxy. No local runtime edit was made from stale source. The accurate next step is to retry the R2 read audit through an authorized, result-normalized read path only if its free quota/cost is known, then continue the D-06 acceptance gates."
+}

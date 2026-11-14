@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261114214133-8fab571f",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-14T21:41:33.763Z",
+  "finished_at": "2026-11-14T21:53:57.166Z",
+  "wall_seconds": 743,
+  "paused_seconds": 0,
+  "measured_seconds": 743,
+  "status": "partial",
+  "kind": "docs",
+  "summary": "D-06 production read-only state refreshed: 0028 latest; 23 D1 media rows, 22 active/1 archived; current deployment API shows c133e810 at 100%. R2 inventory response not certifiably captured, health curl blocked at proxy; no runtime/data mutation.",
+  "evidence": [
+    "docs/evidence/d06-production-state-readonly-2026-11-14.json"
+  ],
+  "checks": "PASS: node JSON.parse for production evidence and metrics; python3 scripts/audit-active-plan-point.py reports 77.44.7.D OPEN; python3 scripts/check-canonical-plan.py PASS; python3 tests/plan-contract.test.py 14/14 PASS; git diff --check PASS. No runtime tests, CI dispatch, Wrangler dry-run, or deployment because this block changed docs/evidence only.",
+  "started_revision": "4cd79c5cc8c3c0c74137e50c44763e4baf56892e",
+  "finished_revision": "4cd79c5cc8c3c0c74137e50c44763e4baf56892e",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
