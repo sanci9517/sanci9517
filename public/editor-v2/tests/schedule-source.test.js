@@ -306,7 +306,7 @@ test('public next stream selects the actual future event, not a stale Budapest-t
   all:async()=>({results:[past,future]})}}}}};
  const result=await readPublicSchedule(db,{mode:'next',siteId:'site-default',statuses:['scheduled']});
  assert.deepEqual(result.map(x=>x.id),['next-stream']);
- assert.match(sql,/e\.starts_at >= datetime\('now','-3 hours'\)/);
+ assert.match(sql,/datetime\(e\.starts_at\) >= datetime\('now','-3 hours'\)/);
  assert.match(sql,/LIMIT 100/);
  assert.deepEqual(binds.slice(0,2),['site-default','scheduled']);
 });
