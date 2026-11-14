@@ -211,8 +211,8 @@ test('schedule artwork audit is commit-guarded and never records a rejected link
 });
 
 test('API reads both write and audit result metadata before reporting artwork success',()=>{
- assert.match(admin,/env\\.DB\\.batch\\(\\[statement,audit\\]\\)/);
- assert.match(admin,/results\\?\\.\\[0\\]\\?\\.meta\\?\\.changes/);
- assert.match(admin,/results\\?\\.\\[1\\]\\?\\.meta\\?\\.changes/);
+ assert.ok(admin.includes('env.DB.batch([statement,audit])'),'batch must include the guarded audit');
+ assert.ok(admin.includes('results?.[0]?.meta?.changes'),'association commit count is checked');
+ assert.ok(admin.includes('results?.[1]?.meta?.changes'),'audit commit count is checked');
  assert.match(admin,/SCHEDULE_ARTWORK_CONFLICT/);
 });
