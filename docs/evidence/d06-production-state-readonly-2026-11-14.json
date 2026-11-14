@@ -41,7 +41,7 @@
   "r2": {
     "bucket": "sanci9517-media",
     "inventory_status": "UNVERIFIED",
-    "note": "A read-only Cloudflare List Objects request was attempted, but its result envelope was not captured in a certifiable form in this run. No R2 object was read, written, or deleted; no orphan/missing-object conclusion is made. Cloudflare OpenAPI confirms the response result is an array."
+    "note": "One read-only Cloudflare List Objects request was attempted; its response result array was not captured in certifiable form. Only object-list metadata was requested; no object body was downloaded and no R2 write or deletion occurred. No orphan/missing-object conclusion is made. Cloudflare OpenAPI confirms the response result is an array."
   },
   "health": {
     "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
@@ -56,5 +56,5 @@
     "r2_mutation_or_deletion": false,
     "paid_infrastructure_or_ci_dispatch": false
   },
-  "limitation": "The full D-06 capability/lifecycle matrix and the D-01–D-07 acceptance block remain OPEN / NOT_CERTIFIED. The local attached worktree is stale at 4cd79c5; Git fetch is blocked by the sandbox proxy. No local runtime edit was made from stale source. The accurate next step is to retry the R2 read audit through an authorized, result-normalized read path only if its free quota/cost is known, then continue the D-06 acceptance gates."
+  "limitation": "The full D-06 capability/lifecycle matrix and the D-01\u2013D-07 acceptance block remain OPEN / NOT_CERTIFIED. The local attached worktree is stale at 4cd79c5; Git fetch is blocked by the sandbox proxy. No local runtime edit was made from stale source. The accurate next step is to retry the R2 read audit through an authorized, result-normalized read path only if its free quota/cost is known, then continue the D-06 acceptance gates."
 }
