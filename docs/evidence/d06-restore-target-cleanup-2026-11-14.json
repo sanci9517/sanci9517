@@ -1,0 +1,50 @@
+{
+  "schema": 1,
+  "captured_at": "2026-11-14T22:49:35Z",
+  "plan_point": "77.44.7.D / D-06 isolated restore target cleanup",
+  "status": "CLEANUP_PASS; PRODUCTION_UNCHANGED; FULL_D_OPEN_NOT_CERTIFIED",
+  "authorization": "Owner explicitly confirmed deletion of the exact temporary restore D1 after learning that its internal table row count was not readable.",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "head_before_evidence": "06b6008fa388551d55732f91e43a0f46d624ff42",
+    "runtime_source_sha": "849310ee9d523feb608ed12763f4ed77d9033c88"
+  },
+  "operation": {
+    "type": "delete only the temporary test D1 created during the D-06 restore attempt",
+    "database_name": "sanci9517_d06_restore_prod_20261114_221251",
+    "database_id": "8c131bde-9021-4964-9ace-89344b9f696f",
+    "identity_checked_before_delete": true,
+    "delete_api_success": true,
+    "absence_verified_after_delete": true,
+    "account_d1_count_before_temp_creation": 3,
+    "account_d1_count_after_cleanup": 3,
+    "remaining_databases": [
+      "sanci9517_d06_restore_20261113_b",
+      "sanci9517_d06_restore_20261113",
+      "sanci9517-db"
+    ],
+    "no_export_sql_was_uploaded": true
+  },
+  "production_d1": {
+    "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
+    "schema_or_row_mutation": false,
+    "migration_0029_applied": false,
+    "export_payload_downloaded": false
+  },
+  "worker": {
+    "deployment_id": "bf413087-8322-451c-ad4f-3d7128b0ad3d",
+    "version_id": "c133e810-bf8f-4a7f-9c34-fa353c176b83",
+    "traffic_percent": 100,
+    "runtime_change_or_deploy": false,
+    "public_health": "NOT RECHECKED in this cleanup block; prior direct health was unverified due network proxy"
+  },
+  "cost_and_ci": {
+    "paid_service": false,
+    "new_ci_dispatch": false,
+    "new_worker_deploy": false,
+    "extra_test_d1_remaining": false,
+    "billing_readback": "Unavailable; no intentional paid use"
+  },
+  "scope_limit": "This proves cleanup only. Fresh production export restore remains blocked because the signed download returned HTTP 403. D-06, D-01–D-07 lifecycle acceptance, and full 77.44.7.D remain OPEN / NOT_CERTIFIED. Save and Publish remain separate; full Editor manual/physical acceptance remains DEFERRED."
+}
