@@ -45,10 +45,17 @@ export function renderCountdownInspector(node,update,{pending=()=>{}}={}){
   section.append(route(renderCountdownDateControl(model.targetISO,{
    apply:targetISO=>save({targetISO},{render:false}),pending:watch('date'),disabled:Boolean(node.locked)
   }),'targetISO'));
+  if(!model.targetISO){
+   const guidance=document.createElement('small');
+   guidance.className='field-help countdown-manual-hint';
+   guidance.setAttribute('role','status');
+   guidance.textContent='Kézi módhoz adj meg érvényes időpontot. Enélkül az oldal nem publikálható.';
+   section.append(guidance);
+  }
  }else{
   section.append(Object.assign(document.createElement('p'),{
    className:'field-help',
-   textContent:'A következő valódi adás dátuma automatikusan a Menetrendből érkezik. Nincs kézzel beírt időpont.'
+   textContent:'Az időpont a közzétett Menetrendből érkezik. Ha ott átírod a következő adást, a számláló automatikusan frissül.'
   }));
  }
  text('Lejáratkor megjelenő üzenet','finishText');
