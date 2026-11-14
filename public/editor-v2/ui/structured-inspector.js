@@ -6,8 +6,20 @@ const typeLabels={list:'Lista',table:'Táblázat',tabs:'Fülek',accordion:'Lenyi
 export function renderStructuredInspector(node,update,{pending=()=>{}}={}){
  const composition=createCompositionInputs(pending);
  if(!isStructuredType(node.type))return null;
- let model;try{model=normalizeElementContent(node.type,node.props?.contentModel??createElementContent(node.type))}
- catch{model=createElementContent(node.type)}
+ const hasSavedContent=Object.hasOwn(node.props||{},'contentModel');
+ let model;try{model=normalizeElementContent(node.type,hasSavedContent?node.props.contentModel:createElementContent(node.type))}
+ catch{
+  // Never turn a malformed persisted model into defaults during an unrelated
+  // edit. Keep the damaged content visible as a read-only warning until the
+  // user explicitly chooses the destructive recovery action.
+  const section=document.createElement('section');section.className='structured-inspector';section.dataset.nodeId=node.id;
+  const title=document.createElement('h3');title.textContent=typeLabels[node.type];section.append(title);
+  const warning=document.createElement('p');warning.className='property-validation structured-inspector-error';warning.setAttribute('role','alert');
+  warning.textContent='A mentett tartalom hibás vagy nem támogatott formátumú. Az adatvesztés elkerülésére a mezők zárolva vannak.';section.append(warning);
+  const reset=document.createElement('button');reset.type='button';reset.className='structured-action';reset.dataset.structuredAction='reset-invalid';reset.textContent='Alapértelmezett tartalom visszaállítása';reset.disabled=Boolean(node.locked);
+  reset.onclick=()=>{if(!reset.disabled)update(createElementContent(node.type));};section.append(reset);
+  return section;
+ }
  const section=document.createElement('section');section.className='structured-inspector';section.dataset.nodeId=node.id;
  const route=(control,key)=>{control.dataset.inspectorCommand='element.update';control.dataset.inspectorKey='props.contentModel.'+key;return control;};
  const title=document.createElement('h3');title.textContent=typeLabels[node.type];section.append(title);

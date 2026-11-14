@@ -437,6 +437,25 @@ test('structured Inspector editing survives Save, Publish and public interaction
   }return results;
  });
  for(const result of structuredRecovery)for(const key of ['rejected','escaped','fresh','unchanged','lockedSafe'])assert.equal(result[key],true,JSON.stringify(result));
+ const invalidStructuredRecovery=await editor.evaluate(async()=>{
+  const {renderStructuredInspector}=await import('/editor-v2/ui/structured-inspector.js');
+  const node={id:'invalid-structured-table',type:'table',props:{contentModel:{version:1,rows:[['Fejléc','Megmaradó adat'],['Rövid sor']]}}};
+  const original=structuredClone(node.props);let recovered=null;
+  const panel=renderStructuredInspector(node,next=>{recovered=structuredClone(next);return true;});
+  document.querySelector('#inspectorBody').append(panel);
+  const warning=panel.querySelector('[role="alert"]');
+  const editControls=panel.querySelectorAll('.structured-input input,.structured-input textarea,[data-structured-action]:not([data-structured-action="reset-invalid"])');
+  const reset=panel.querySelector('[data-structured-action="reset-invalid"]');
+  const readOnly=Boolean(warning)&&editControls.length===0&&JSON.stringify(node.props)===JSON.stringify(original);
+  reset?.click();
+  const result={readOnly,warning:warning?.textContent||'',resetAvailable:Boolean(reset),recovered,recoveredOnlyAfterExplicitAction:Boolean(recovered)};
+  panel.remove();return result;
+ });
+ assert.equal(invalidStructuredRecovery.readOnly,true,'malformed saved rows must not appear editable as default content or be overwritten by a later field edit');
+ assert.match(invalidStructuredRecovery.warning,/hibás|sérült|formátum/i);
+ assert.equal(invalidStructuredRecovery.resetAvailable,true,'a destructive recovery remains explicit and user controlled');
+ assert.equal(invalidStructuredRecovery.recoveredOnlyAfterExplicitAction,true);
+ assert.deepEqual(invalidStructuredRecovery.recovered,{version:1,rows:[['Oszlop 1','Oszlop 2'],['Adat 1','Adat 2']]});
  const focusGuards=await editor.evaluate(async()=>{
   const {renderStructuredInspector}=await import('/editor-v2/ui/structured-inspector.js');
   const {createElementContent}=await import('/editor-v2/core/element-content.js');

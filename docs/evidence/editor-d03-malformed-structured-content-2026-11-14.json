@@ -1,0 +1,68 @@
+{
+  "schema": 1,
+  "plan_point": "77.44.7.D / D-03",
+  "date": "2026-11-14",
+  "status": "LOCAL_FIX_VALIDATED; RELEASE_BLOCKED; FULL_D_OPEN_NOT_CERTIFIED",
+  "finding": {
+    "root_cause": "structured-inspector.js caught normalization failures for persisted props.contentModel and substituted createElementContent(type). Rendering and a later edit could therefore discard the malformed saved model without an explicit recovery decision.",
+    "affected_contract": "structured-v1 Inspector contentModel for list, table, tabs, accordion, gallery, and carousel",
+    "reproduction": "A table with rows of different lengths throws from normalizeElementContent; the prior catch silently displayed a fresh default model."
+  },
+  "change": {
+    "runtime": "Persisted invalid content now renders as a read-only alert with no editing fields. A separately labeled reset-to-default button is the only callback path; locked nodes cannot invoke it. Missing contentModel on legacy nodes still receives the documented default model.",
+    "tests": [
+      "Added a deterministic Node regression using a minimal DOM stub to verify no mutation on render, explicit-only recovery, the exact default model and locked-node protection.",
+      "Added an end-to-end browser assertion to the existing structured Inspector Save/Publish regression for read-only warning and explicit recovery."
+    ],
+    "save_publish": "No behavior change; reset only edits the draft through the existing callback and does not publish."
+  },
+  "checks": {
+    "node_targeted": "node --test public/editor-v2/tests/structured-inspector-invalid-content.test.js — PASS, 1/1",
+    "editor_unit_suite": "npm run test:editor — PASS, 16/16 files; subreaper harness 3/3",
+    "typecheck": "npm run typecheck — PASS",
+    "wrangler_dry_run": "Wrangler 4.130.0; 181 static assets read; dry-run exited without upload/deployment",
+    "production_read_only_d1_preflight": {
+      "queries": "5 queries, SELECT/PRAGMA only, through Cloudflare D1 Query API",
+      "migrations": 34,
+      "latest_migration": "0028_media_archive.sql",
+      "0029_marker_rows": 0,
+      "media_archive_triggers": 3,
+      "foreign_key_check_rows": 0,
+      "quick_check": "ok",
+      "all_queries_changed_db": false,
+      "all_queries_rows_written": 0,
+      "all_queries_changes": 0
+    },
+    "browser_test": "NOT RUN/PASS: local Chromium cannot launch in this sandbox; standalone Playwright launch reported setsockopt: Operation not permitted and Chromium exited SIGTRAP (133). A public health curl was independently blocked before HTTP, curl exit 7 (proxy port 8080).",
+    "github_ci": "NOT RUN: repository policy records exhausted GitHub Actions free compute. Runtime release requires exact-source CI; no dispatch/rerun or push was initiated.",
+    "diff_check": "PASS"
+  },
+  "repository": {
+    "branch": "v2/foundation",
+    "base_sha": "cd7f51a08fcf14ed20193294f17f116bfefc8cc5",
+    "github_branch_sha_at_check": "cd7f51a08fcf14ed20193294f17f116bfefc8cc5",
+    "working_tree": "Runtime fix and tests remain local; not pushed because browser acceptance/remote CI and no-cost release gate are unverified."
+  },
+  "production": {
+    "deployment": "4cc8ce22-cfae-467b-8f87-4ffbdbdc3736",
+    "worker_version": "420b860c-920c-408e-a3fb-19a18b722204",
+    "traffic_percent": 100,
+    "workers_build": {
+      "id": "bfd48c35-7178-42fb-8640-c656c658c1e4",
+      "outcome": "success",
+      "source_sha": "092cfd7792df397ee53f9e6fb13cadbdd73d0504",
+      "deploy_command": "npm run deploy:safe"
+    },
+    "cloudflare_build_minutes_limit_reached": false,
+    "health": "UNVERIFIED: shell cannot connect to proxy port 8080; Cloudflare tool external fetch returned 403 policy denial.",
+    "changed_asset_hashes": "NOT CHECKED against live assets because this runtime change was not deployed."
+  },
+  "mutations": {
+    "production_d1_write_or_migration": false,
+    "r2_deletion": false,
+    "worker_deployment": false,
+    "ci_dispatch_or_rerun": false
+  },
+  "cost_huf": 0,
+  "scope_limit": "This closes only the verified Inspector data-loss regression slice. 77.44.7.D / D-01..D-07 remains OPEN / NOT_CERTIFIED; full Visual Editor manual/physical acceptance remains deferred."
+}
