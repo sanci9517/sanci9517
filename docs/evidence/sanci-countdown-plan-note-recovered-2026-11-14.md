@@ -1,0 +1,12 @@
+# Recovered countdown correctness note — 2026-11-14
+
+Source note preserved verbatim from main before restoring the canonical master plan.
+
+
+### 77.44.7.D / SANCI főoldali következő-stream óra – megbízhatósági utómunka (2026-11-14)
+
+A már közzétett SANCI `page-home` v111 Editor Countdown a meglévő, site-scoped `schedule_items` menetrendből olvas, nem hamis dátumból. Ehhez 2026-11-14-én következő, szűk célzott javítás készült ugyanazon `v2/foundation` ágon: a közös Europe/Budapest dátumértelmező az explicit időzónás **lehetetlen naptári dátumokat is elutasítja**, a helyi időpontok milliszekundumait megőrzi; a `mode=next` API D1-előszűrője `datetime(e.starts_at)` normalizálással kezeli az eltérő UTC/offset/helyi tárolási formákat. Lejárt, megszűnt vagy átütemezett streamnél a publikus Countdown az elavult `datetime` és felolvasó `aria-label` attribútumot törli. A Countdown Inspector a kézi dátummód hiányzó időpontját és a menetrendből frissülő automatikus módot külön ismerteti; a Save és Publish külön marad.
+
+**Ellenőrizhető részkapuk:** éles, SELECT-only D1 query `datetime(e.starts_at)` **1 valódi jövőbeli „Forti” adást** hozott és **0 adatváltozással** zárt; az aktuális, GitHubból visszaolvasott `schedule-time.js` kódon CET/CEST/DST/hibás offset/milliszekundum célesetek **18/18**, publikus óra DOM-állapotváltás és hozzáférhetőség **6/6** izolált V8 végrehajtás PASS. A normál Node és teljes Chromium tesztkészlet bővült, de e chatben a repository/node_modules tényleges helyi checkoutja hiányzik: `npm run typecheck`, `npm run test:schedule`, `npm run test:countdown:browser`, `wrangler deploy --dry-run` **NOT RUN**, nem nevezhetők PASS-nak. Automatikus Worker deployment `0ac3cd8d-91b2-474d-ba71-983efb6b9e38` (2026-11-14 07:44 UTC) 100% forgalom API szerint, **pontos GitHub build-SHA, éles HTTP és mobil képernyős QA UNVERIFIED**. Nincs kézi GitHub Actions indítás, új díjas erőforrás, D1 írás/migráció vagy R2 törlés ebben a blokkban.
+
+A kanonikus blokk **77.44.7.D / D-06 továbbra OPEN / NOT_CERTIFIED**, az adat-visszaállítási/0029 migrációs és a teljes összevont Visual Editor kézi elfogadási kapu változatlan; nem kerülhet PASS-ba e szűk, bizonyított frontend-javítás miatt. A részletes végrehajtási bizonyíték a meglévő `docs/evidence/SANCI-NEXT-STREAM-COUNTDOWN-2026-11-14.md` alatt.
