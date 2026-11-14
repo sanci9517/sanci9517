@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261114213155-d4834469",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-14T21:31:55.835Z",
+  "finished_at": "2026-11-14T21:34:47.833Z",
+  "wall_seconds": 172,
+  "paused_seconds": 0,
+  "measured_seconds": 172,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "PR #344 exact CI 4/4 zöld; D-06 Schedule HTML site-grant fix merge SHA 849310e kiment, Cloudflare deploy:safe sikeres, Worker c133e810 100% forgalom. D1 read-only postflight tiszta, 0029 nincs alkalmazva. Közvetlen health 1010 blokkolja a végső HTTP ellenőrzést; teljes D-06/D nyitott.",
+  "evidence": [
+    "docs/evidence/editor-d06-schedule-html-site-grant-849310-2026-11-14.json"
+  ],
+  "checks": "F0/Twitch/Worker dry-run/Editor Core Chromium CI: PASS; source 849310ee9d523feb608ed12763f4ed77d9033c88; Cloudflare build b9221841-0cea-4a77-b983-7e3824b333ab success; deployment bf413087-8322-451c-ad4f-3d7128b0ad3d, 100%; D1 0028 latest, quick_check ok, FK empty, rows_written 0; HTTP health blocked 403/1010.",
+  "started_revision": "4cd79c5cc8c3c0c74137e50c44763e4baf56892e",
+  "finished_revision": "4cd79c5cc8c3c0c74137e50c44763e4baf56892e",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

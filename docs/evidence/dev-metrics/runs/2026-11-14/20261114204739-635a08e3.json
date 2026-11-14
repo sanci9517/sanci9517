@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261114204739-635a08e3",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-14T20:47:39.559Z",
+  "finished_at": "2026-11-14T21:23:34.338Z",
+  "wall_seconds": 2155,
+  "paused_seconds": 1578,
+  "measured_seconds": 577,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "D-06: frissítettem a 344-es PR-t az aktuális 4cd79c5 alapra fast-forward merge commit 18252a2-vel; célzott schedule/admin tesztek, typecheck, migration safety gate és Wrangler dry-run sikeres; F0/Twitch/Worker dry-run CI zöld, Editor Core Chromium layout lépése még fut, ezért merge és production deploy ebben a mérési szakaszban még nincs.",
+  "evidence": [
+    "https://github.com/sanci9517/sanci9517/pull/344; https://github.com/sanci9517/sanci9517/actions/runs/43640078799; https://github.com/sanci9517/sanci9517/actions/runs/43640078799"
+  ],
+  "checks": "test:schedule PASS; test:admin-home PASS; test:web013:migration-gate PASS; typecheck PASS; Wrangler 4.130.0 deploy --dry-run packaged 181 assets; F0 43640078822 PASS; Twitch 43640078875 PASS; Worker dry-run 43640078814 PASS; Editor Core 43640078799 IN_PROGRESS",
+  "started_revision": "4cd79c5cc8c3c0c74137e50c44763e4baf56892e",
+  "finished_revision": "4cd79c5cc8c3c0c74137e50c44763e4baf56892e",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

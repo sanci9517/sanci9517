@@ -1,0 +1,66 @@
+{
+  "schema": 1,
+  "date": "2026-11-14",
+  "plan_point": "77.44.7.D / D-06 Schedule Admin HTML site-grant enforcement",
+  "status": "RUNTIME_DEPLOYED; EXACT_PR_HEAD_CI_PASS; SOURCE_SHA_VERIFIED; WORKER_100_PERCENT; DIRECT_HTTP_HEALTH_BLOCKED_1010; FULL_D_OPEN_NOT_CERTIFIED",
+  "scope": ["D-06"],
+  "finding": {
+    "root_cause": "The /admin/schedule HTML shell used the legacy global users.role editor check even while site-membership enforcement was enabled, while the central ingress did not require a same-site editor grant for that route.",
+    "impact": "A global viewer with an active site-editor grant was incorrectly denied, while a global editor without an active same-site grant could fetch the HTML shell."
+  },
+  "change": {
+    "pull_request": 344,
+    "tested_head_sha": "18252a239ae7c76814ebf1a70c2b0b457045a7e8",
+    "merge_sha": "849310ee9d523feb608ed12763f4ed77d9033c88",
+    "files": [
+      "src/core/auth/admin-tenant-gate.ts",
+      "src/index.ts",
+      "tests/web013-admin-tenant-gate.test.js",
+      "tests/admin-home-contract.test.js",
+      "package.json"
+    ],
+    "behavior": "When site-membership enforcement is active, /admin/schedule requires an active same-site editor grant at Worker ingress; anonymous HTML requests keep the login redirect; the legacy global role check remains only when the gate is disabled."
+  },
+  "checks": {
+    "local": {
+      "test:schedule": "PASS",
+      "test:admin-home": "PASS",
+      "test:web013:migration-gate": "PASS",
+      "typecheck": "PASS",
+      "wrangler": "4.130.0 deploy --dry-run packaged 181 files; no deployment"
+    },
+    "github_exact_pr_head": {
+      "f0_baseline": {"run_id": 43640078822, "result": "success"},
+      "twitch_integration": {"run_id": 43640078875, "result": "success"},
+      "worker_release_dry_run": {"run_id": 43640078814, "result": "success"},
+      "editor_core_chromium_d1_r2_schedule": {"run_id": 43640078799, "result": "success"}
+    }
+  },
+  "production": {
+    "cloudflare_build_uuid": "b9221841-0cea-4a77-b983-7e3824b333ab",
+    "build_source_sha": "849310ee9d523feb608ed12763f4ed77d9033c88",
+    "build_outcome": "success",
+    "command": "npm run deploy:safe",
+    "migration_gate": "PASS; the safe deployment command did not apply migrations",
+    "deployment_id": "bf413087-8322-451c-ad4f-3d7128b0ad3d",
+    "worker_version_id": "c133e810-bf8f-4a7f-9c34-fa353c176b83",
+    "worker_version_number": 4065,
+    "traffic_percent": 100,
+    "public_assets_changed_by_this_pr": false,
+    "asset_upload": "Cloudflare reported no updated asset files to upload"
+  },
+  "production_d1_read_only_postflight": {
+    "latest_migration": "0028_media_archive.sql",
+    "quick_check": "ok",
+    "foreign_key_check_rows": 0,
+    "all_queries": {"changed_db": false, "rows_written": 0, "changes": 0},
+    "0029_applied": false
+  },
+  "health_check": {
+    "result": "NOT_VERIFIED_FROM_THIS_EXECUTION_ENVIRONMENT",
+    "observed_response": "HTTP 403, Cloudflare error code 1010",
+    "note": "Direct GET requests to the production Worker health and asset URLs were blocked by Cloudflare 1010. Worker deployment/version/traffic and exact source SHA were verified via the Cloudflare API."
+  },
+  "scope_limit": "This releases the Schedule HTML site-grant defect only. Full 77.44.7.D and D-06 remain OPEN / NOT_CERTIFIED pending the separately documented restore/lifecycle/capability acceptance gates. No production D1 migration/write or R2 deletion. Save and Publish remain separate; full Editor manual/physical acceptance remains deferred.",
+  "cost": "0 Ft new paid services or quota overage"
+}
