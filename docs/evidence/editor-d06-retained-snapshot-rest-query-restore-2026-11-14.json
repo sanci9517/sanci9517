@@ -1,0 +1,162 @@
+{
+  "schema": "sanci9517.d06.retained-snapshot-rest-query-restore.v1",
+  "date": "2026-11-14",
+  "plan_point": "77.44.7.D / D-06",
+  "status": "RETAINED_SNAPSHOT_FULL_REST_QUERY_RESTORE_PASS_CURRENT_PRODUCTION_BACKUP_GATE_OPEN",
+  "git": {
+    "branch": "v2/foundation",
+    "head_at_start": "0e6da7f63ac9c99a3735be164b723b1492c23462",
+    "origin_head_at_start": "0e6da7f63ac9c99a3735be164b723b1492c23462",
+    "local_worktree_clean_at_start": true
+  },
+  "source": {
+    "database_name": "sanci9517_d06_restore_20261113_b",
+    "database_id": "9c0961f8-2352-4f8f-9131-d20cb4f92ab3",
+    "classification": "retained isolated snapshot; not current production",
+    "export_format": "D1 SQL export",
+    "export_bytes": 2523217,
+    "export_sha256": "9e17bc50781c01d0c1448b339e3c4b5f7ef93324e017e7bb6d5a2cffbd34d6ef",
+    "ordered_sql_bytes": 2524294,
+    "ordered_sql_sha256": "f47b1c259e5cdbfa43c810b4a991287a2e1a07b138fdfcc78b9406f25518ffa9",
+    "statement_count": 1078,
+    "phase_counts": [1, 27, 994, 37, 19],
+    "max_statement_bytes": 80227,
+    "statements_over_100kb": 0,
+    "json_request_bytes": 2859658,
+    "private_export_and_row_values_committed": false
+  },
+  "restore": {
+    "method": "Cloudflare D1 REST POST /query; one SQL string containing the complete ordered export as a single 1,078-statement batch, beginning with PRAGMA defer_foreign_keys=ON",
+    "official_docs": [
+      "https://developers.cloudflare.com/api/resources/d1/subresources/database/methods/query/",
+      "https://developers.cloudflare.com/d1/sql-api/foreign-keys/",
+      "https://developers.cloudflare.com/d1/platform/limits/"
+    ],
+    "target_name": "s9517_d06_query_restore_20261114",
+    "target_id": "07736795-5249-4d32-897c-1dea08e89d17",
+    "target_created_for_isolated_restore": true,
+    "target_region": "EEUR",
+    "http_status": 200,
+    "api_success": true,
+    "statement_results": 1078,
+    "rows_written_to_scratch": 4801,
+    "rows_read_during_restore": 6086,
+    "read_only_readback_queries": 30,
+    "read_only_readback_rows_written": 0,
+    "schema_objects": 83,
+    "schema_exact_match": true,
+    "tables": 27,
+    "total_rows": 992,
+    "table_row_counts": [
+      {"table": "admin_audit_log", "rows": 0},
+      {"table": "app_settings", "rows": 0},
+      {"table": "audit_log", "rows": 560},
+      {"table": "d1_migrations", "rows": 34},
+      {"table": "design_tokens", "rows": 0},
+      {"table": "editor_components", "rows": 0},
+      {"table": "editor_preferences", "rows": 0},
+      {"table": "editor_revisions", "rows": 284},
+      {"table": "media", "rows": 11},
+      {"table": "media_retention_requests", "rows": 0},
+      {"table": "page_slug_redirects", "rows": 1},
+      {"table": "pages", "rows": 11},
+      {"table": "schedule_items", "rows": 3},
+      {"table": "schedule_sync_state", "rows": 1},
+      {"table": "sessions", "rows": 74},
+      {"table": "site_domains", "rows": 1},
+      {"table": "site_memberships", "rows": 1},
+      {"table": "site_navigation", "rows": 1},
+      {"table": "site_scoped_settings", "rows": 1},
+      {"table": "site_settings", "rows": 1},
+      {"table": "sites", "rows": 1},
+      {"table": "social_accounts", "rows": 0},
+      {"table": "system_page_content", "rows": 3},
+      {"table": "twitch_connections", "rows": 1},
+      {"table": "twitch_oauth_states", "rows": 2},
+      {"table": "twitch_oauth_tokens", "rows": 0},
+      {"table": "users", "rows": 1}
+    ],
+    "readback_data_exact_match": true,
+    "schema_sha256": "ecd1b0f5df256b755d314bfdcf49ddbe1ff026845bd397abbfe5aa6ecc8aff92",
+    "combined_data_sha256": "001051a3ec794a380d55c3ef8e876a60ad259b60cb859975a679d77a6e51cbdb",
+    "quick_check": "ok",
+    "foreign_key_issues": 0,
+    "all_readback_queries_changed_db": false,
+    "target_cleanup": {
+      "exact_id_and_name_confirmed_before_delete": true,
+      "delete_api_success": true,
+      "scratch_name_remaining_after_cleanup": 0,
+      "database_names_after_cleanup": [
+        "sanci9517_d06_restore_20261113_b",
+        "sanci9517_d06_restore_20261113",
+        "sanci9517-db"
+      ],
+      "remaining_database_count": 3
+    }
+  },
+  "current_production_read_only_preflight": {
+    "database_name": "sanci9517-db",
+    "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
+    "queries": [
+      "SELECT COUNT(*) FROM d1_migrations",
+      "SELECT latest migration from d1_migrations",
+      "SELECT migration 0029 marker count",
+      "SELECT trigger names and SQL from sqlite_master",
+      "PRAGMA quick_check",
+      "PRAGMA foreign_key_check"
+    ],
+    "migration_count": 34,
+    "latest_migration": "0028_media_archive.sql",
+    "migration_0029_count": 0,
+    "media_archive_trigger_names": [
+      "media_archive_pages_insert_guard",
+      "media_archive_pages_update_guard",
+      "media_archive_revisions_insert_guard"
+    ],
+    "quick_check": "ok",
+    "foreign_key_issues": 0,
+    "all_queries_changed_db": false,
+    "all_queries_rows_written": 0,
+    "all_queries_changes": 0,
+    "all_queries_size_after_bytes": 3706880,
+    "production_export_performed": false,
+    "production_database_mutated": false
+  },
+  "worker": {
+    "name": "sanci9517-streamer-brand",
+    "latest_deployment_id": "4cc8ce22-cfae-467b-8f87-4ffbdbdc3736",
+    "traffic_version_id": "420b860c-920c-408e-a3fb-19a18b722204",
+    "traffic_percent": 100,
+    "source_changed": false,
+    "worker_deployment_performed": false,
+    "health_url": "https://sanci9517.com/api/health",
+    "health_this_run": "UNVERIFIED: authorized network retry reached the environment proxy, which rejected the HTTPS CONNECT tunnel with HTTP 403; the origin returned no HTTP response"
+  },
+  "cost_and_quota": {
+    "newly_billed_cost": "0 Ft",
+    "scratch_rows_written": 4801,
+    "free_plan_daily_row_write_limit": 100000,
+    "scratch_database_created": 1,
+    "scratch_database_deleted": 1,
+    "final_database_count": 3,
+    "paid_service_enabled": false
+  },
+  "checks": {
+    "python3 tests/d1-restore-order.test.py": "PASS 7/7 (current checked-in test fixture)",
+    "node tests/d1-restore-order-miniflare.mjs": "PASS in preceding run for ordered restore and late FK rollback; retained here as context, not rerun during this evidence-only block",
+    "node --check tests/d1-restore-order-miniflare.mjs": "NOT RUN in this evidence-only block",
+    "production D1 read-only REST preflight": "PASS; six statements, every changed_db=false, rows_written=0, changes=0",
+    "node tests/dev-metrics.test.mjs": "BLOCKED/FAIL in this sandbox: all four fixture tests fail at test setup with spawnSync git EPERM (git init); no production or repository data was affected",
+    "git diff --check": "PASS",
+    "plan contracts": "PASS 14/14; canonical master PASS (13 files/396 mappings); feature traceability PASS (396/396); plan change verified append-only from exact HEAD blob"
+  },
+  "limitations": [
+    "This proves an exact full restore of the retained 2026-11-13 snapshot through D1 REST /query, not a fresh current-production export and restore.",
+    "Cloudflare documents that D1 export requires D1 Write permission and locks the database during export; a fresh production export/restore needs a separately scheduled safe maintenance window and owner operation approval because it can block production queries.",
+    "Production 0029 remains unapplied; the production D1 was only queried read-only.",
+    "The direct public health request was rejected at the environment proxy (CONNECT HTTP 403); no origin response was received. The current deployment/version/traffic was verified via Cloudflare API, but health remains unverified in this run.",
+    "The complete 77.44.7.D, D-01 through D-07 lifecycle matrix and complete Editor acceptance remain OPEN / NOT_CERTIFIED; manual/physical Visual Editor acceptance is deferred; Save and Publish remain separate."
+  ],
+  "metrics_run_id": "20261114182156-3797fbe2",
+  "cost": "0 Ft"
+}
