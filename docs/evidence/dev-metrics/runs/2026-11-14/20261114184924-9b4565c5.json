@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261114184924-9b4565c5",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-14T18:49:24.615Z",
+  "finished_at": "2026-11-14T18:55:51.551Z",
+  "wall_seconds": 387,
+  "paused_seconds": 0,
+  "measured_seconds": 387,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "D-03 authored table 100x16 contract verified; extended boundary regression and evidence; full D remains OPEN; live health blocked by proxy 403.",
+  "evidence": [
+    "docs/evidence/editor-d03-authored-table-boundary-2026-11-14.json"
+  ],
+  "checks": "targeted element-content 1/1 file PASS; npm run test:editor 15/15 files PASS; npm run typecheck PASS; canonical plan 14/14 PASS; active plan audit 77.44.7.D OPEN; traceability 396/396 PASS; git diff --check PASS; production health UNVERIFIED proxy CONNECT 403; no CI/deploy.",
+  "started_revision": "480e7ed3ece845fc811ff11c70ba38cff6b55c99",
+  "finished_revision": "480e7ed3ece845fc811ff11c70ba38cff6b55c99",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

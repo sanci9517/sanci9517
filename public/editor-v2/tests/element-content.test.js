@@ -38,6 +38,26 @@ test('links, media, repeaters and table contents reject unsafe or invalid values
   assert.throws(()=>validateElementContent({...node('heading'),props:{level:'8'}}));
 });
 
+test('authored tables retain their own 100-row and 16-column contract through public rendering',()=>{
+  const authored={id:'authored-table-boundaries',type:'table',metadata:{contentVersion:1},props:{header:true}};
+  const rows=Array.from({length:100},(_,row)=>Array.from({length:16},(_,column)=>`r${row}-c${column}`));
+  const normalized=normalizeElementContent(authored,{rows});
+  assert.equal(normalized.rows.length,100);
+  assert.equal(normalized.rows[0].length,16);
+  assert.equal(normalized.rows[99][15],'r99-c15');
+  validateElementContent({...authored,props:normalized});
+  const html=authoredNodeHtml({...authored,props:normalized});
+  assert.equal((html.match(/<tr>/g)||[]).length,100,'published renderer retains every supported row');
+  assert.equal((html.match(/<td>/g)||[]).length,99*16,'published renderer retains every supported body cell');
+  assert.equal((html.match(/<th scope="col">/g)||[]).length,16,'published renderer retains the full header width');
+  assert.doesNotThrow(()=>validatePageForPublication({rootId:'root',nodes:{
+    root:{id:'root',type:'root',children:[authored.id]},
+    [authored.id]:{...authored,children:[],props:normalized}
+  }}),'the page-level Publish gate accepts the same authored-v1 boundary');
+  assert.throws(()=>normalizeElementContent(authored,{rows:[...rows,Array(16).fill('extra')]}),/100 sor/);
+  assert.throws(()=>normalizeElementContent(authored,{rows:[Array(17).fill('extra')]}),/1–16 oszlop/);
+});
+
 test('authored public media never coerces malformed persisted sources into URLs',()=>{
  const src='/media/00000000-0000-4000-8000-000000000123';
  const node=(type,props)=>({id:'malformed-source',type,metadata:{contentVersion:1},props});
