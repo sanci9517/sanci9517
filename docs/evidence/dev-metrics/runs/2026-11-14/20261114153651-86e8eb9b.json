@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261114153651-86e8eb9b",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-14T15:36:51.307Z",
+  "finished_at": "2026-11-14T16:03:31.787Z",
+  "wall_seconds": 1600,
+  "paused_seconds": 0,
+  "measured_seconds": 1600,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "D-04 structured tab DOM-ID collision fix deployed and verified; full D-01..D-07 remains open and exact-SHA Editor Core Chromium workflow is still running.",
+  "evidence": [
+    "docs/evidence/editor-d04-structured-tabs-colliding-node-ids-2026-11-14.json"
+  ],
+  "checks": "local editor 15/15; Chromium 2/2; typecheck, migration gate, plan 13 files, plan contract 14/14, traceability 396/396, Wrangler dry-run PASS; exact-SHA Cloudflare build success and 100% Worker health/asset hash verified; GitHub Editor Core 43612918745 in_progress",
+  "started_revision": "72c53571ea50bf4f687e6dd18ed040a931cdc163",
+  "finished_revision": "092cfd7792df397ee53f9e6fb13cadbdd73d0504",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

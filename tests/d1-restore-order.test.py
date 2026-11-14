@@ -3,6 +3,8 @@ from pathlib import Path
 import sqlite3
 import tempfile
 import hashlib
+import re
+import json
 import subprocess
 import sys
 import unittest
@@ -40,6 +42,27 @@ class RestoreOrder(unittest.TestCase):
   ordered,_=m.ordered_export(source)
   self.assertTrue(ordered.endswith('-- tail; comment\n/* more; comment */'))
   self.assertEqual(len(m.statements(ordered)[0]),len(m.statements(FIXTURE)[0]))
+ def test_deferred_fk_pragma_is_unique_and_first_in_restore_batch(self):
+  ordered,summary=m.ordered_export(FIXTURE)
+  actual,_=m.statements(ordered)
+  pragmas=[s for s in actual if m.strip_comments(s).strip().upper().startswith('PRAGMA ')]
+  self.assertEqual(len(pragmas),1)
+  self.assertRegex(m.strip_comments(actual[0]).strip(),r'(?i)^PRAGMA\s+defer_foreign_keys\s*=\s*(?:TRUE|ON|1)\s*;$')
+  self.assertEqual(summary['phases'][0],1)
+  self.assertFalse(any(re.match(r'\s*(?:BEGIN|COMMIT)\b',m.strip_comments(s),re.I) for s in actual))
+ def test_miniflare_json_fixture_matches_sql_source_and_local_fixture(self):
+  source=(ROOT/'tests/fixtures/d1-export-order.sql').read_text()
+  ordered,_=m.ordered_export(source)
+  reference=sqlite3.connect(':memory:');reference.executescript(source)
+  query="SELECT type,name,tbl_name,sql FROM sqlite_master WHERE sql IS NOT NULL AND name NOT LIKE 'sqlite_%' AND name NOT GLOB '_cf_*' ORDER BY type,name"
+  expected={'original':m.statements(source)[0],'ordered':m.statements(ordered)[0],
+   'schema':reference.execute(query).fetchall(),
+   'tables':{t:reference.execute('SELECT * FROM '+t+' ORDER BY 1').fetchall() for t in ['pages','editor_revisions','events','sqlite_sequence']},
+   'schemaQuery':query}
+  expected=json.loads(json.dumps(expected))
+  stored=json.loads((ROOT/'tests/fixtures/d1-export-order-miniflare.json').read_text())
+  self.assertEqual(stored,expected)
+  reference.close()
  def test_unknown_or_unsafe_statements_fail_closed(self):
   for tail in ['UPDATE pages SET body=\'no\';','PRAGMA foreign_keys=OFF;','DROP TABLE pages;','DELETE FROM pages;','BEGIN;']:
    with self.assertRaises(ValueError):m.ordered_export(FIXTURE+tail)

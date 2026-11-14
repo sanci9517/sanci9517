@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261114163458-c2adcddd",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-14T16:34:58.066Z",
+  "finished_at": "2026-11-14T16:35:45.951Z",
+  "wall_seconds": 48,
+  "paused_seconds": 0,
+  "measured_seconds": 48,
+  "status": "partial",
+  "kind": "docs",
+  "summary": "Recorded completed exact-SHA D-03 Editor Core CI, including Chromium, with no rerun or redeploy; full D remains open.",
+  "evidence": [
+    "docs/evidence/editor-table-width-77-44-7-d-2026-11-14.json"
+  ],
+  "checks": "Six exact-SHA GitHub workflows 43606735475/498/493/473/497/486 success; canonical plan PASS; plan contract 14/14; traceability 396/396; diff-check PASS",
+  "started_revision": "79c0c12b11b52fc4ea1c3491cbc5ab89941d4bbc",
+  "finished_revision": "79c0c12b11b52fc4ea1c3491cbc5ab89941d4bbc",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

@@ -1,0 +1,99 @@
+{
+  "schema": 1,
+  "plan_point": "77.44.7.D / D-03",
+  "date": "2026-11-14",
+  "status": "RUNTIME_DEPLOYED; EXACT_SHA_CI_PASS; FULL_D_OPEN_NOT_CERTIFIED",
+  "finding": {
+    "root_cause": "structured-inspector.js caught normalization failures for persisted props.contentModel and substituted createElementContent(type). Rendering and a later edit could therefore discard the malformed saved model without an explicit recovery decision.",
+    "affected_contract": "structured-v1 Inspector contentModel for list, table, tabs, accordion, gallery, and carousel",
+    "reproduction": "A table with rows of different lengths throws from normalizeElementContent; the prior catch silently displayed a fresh default model."
+  },
+  "change": {
+    "runtime": "Persisted invalid content now renders as a read-only alert with no editing fields. A separately labeled reset-to-default button is the only callback path; locked nodes cannot invoke it. Missing contentModel on legacy nodes still receives the documented default model.",
+    "tests": [
+      "Added a deterministic Node regression using a minimal DOM stub to verify no mutation on render, explicit-only recovery, the exact default model and locked-node protection.",
+      "Added an end-to-end browser assertion to the existing structured Inspector Save/Publish regression for read-only warning and explicit recovery."
+    ],
+    "save_publish": "No behavior change; reset only edits the draft through the existing callback and does not publish."
+  },
+  "checks": {
+    "node_targeted": "node --test public/editor-v2/tests/structured-inspector-invalid-content.test.js — PASS, 1/1",
+    "editor_unit_suite": "npm run test:editor — PASS, 16/16 files; subreaper harness 3/3",
+    "typecheck": "npm run typecheck — PASS",
+    "wrangler_dry_run": "Wrangler 4.130.0; 181 static assets read; dry-run exited without upload/deployment",
+    "production_read_only_d1_preflight": {
+      "queries": "5 queries, SELECT/PRAGMA only, through Cloudflare D1 Query API",
+      "migrations": 34,
+      "latest_migration": "0028_media_archive.sql",
+      "0029_marker_rows": 0,
+      "media_archive_triggers": 3,
+      "foreign_key_check_rows": 0,
+      "quick_check": "ok",
+      "all_queries_changed_db": false,
+      "all_queries_rows_written": 0,
+      "all_queries_changes": 0
+    },
+    "browser_test": "PASS on exact SHA 64be7ac20c089a2d789e7971c5f074273b1d1514: GitHub Editor Core real Chromium Editor layout regression and WEB-013 Admin mobile browser regression completed/success. All mandatory workflow steps succeeded; conditional screenshot upload skipped because no checks failed.",
+    "github_ci": "PASS: exact-source Editor Core 43632609317 completed/success, F0 43632609391 success, Twitch 43632609377 success.",
+    "diff_check": "PASS",
+    "editor_core_steps": {
+      "typecheck": "success",
+      "editor core tests": "success",
+      "offline D1 ledger/bootstrap": "success",
+      "private R2 media API": "success",
+      "Chromium install": "success",
+      "isolated media storage": "success",
+      "real Chromium Editor browser layout regression": "success",
+      "WEB-013 Admin mobile browser regression": "success",
+      "canonical schedule": "success",
+      "domain contracts": "success",
+      "Brand Kit": "success",
+      "Admin home": "success",
+      "cleanup": "success"
+    },
+    "conditional_screenshot_upload": "skipped (no failed checks)"
+  },
+  "repository": {
+    "branch": "v2/foundation",
+    "base_sha": "cd7f51a08fcf14ed20193294f17f116bfefc8cc5",
+    "github_branch_sha_at_check": "cd7f51a08fcf14ed20193294f17f116bfefc8cc5",
+    "working_tree": "Runtime and test source pushed via verified fast-forward; documentation/meter follow-up being updated locally.",
+    "branch_head": "64be7ac20c089a2d789e7971c5f074273b1d1514",
+    "runtime_commit": "61a3d80f98b7302a7d2e0a68bb93778c54589f1c",
+    "metrics_followup_commit": "8e8b6d1bd60107fb9b2e35d16558363f2b3b1251",
+    "ci_trigger_commit": "64be7ac20c089a2d789e7971c5f074273b1d1514",
+    "editor_core_ci_run": 43632609317,
+    "editor_core_ci_status": "completed/success"
+  },
+  "production": {
+    "deployment": "141916e9-f6b8-4b5a-a1a2-9c2a064f58a2",
+    "worker_version": "3f0f97e4-c70a-43c3-bca7-257aed8a31af",
+    "traffic_percent": 100,
+    "workers_build": {
+      "id": "0a88fcc3-a239-4c88-a6c7-ff54285c980d",
+      "outcome": "success",
+      "source_sha": "64be7ac20c089a2d789e7971c5f074273b1d1514",
+      "deploy_command": "npm run deploy:safe"
+    },
+    "cloudflare_build_minutes_limit_reached": false,
+    "health": "PASS: direct GET /api/health HTTP 200; {\"ok\":true,\"service\":\"sanci9517-streamer-brand\",\"version\":\"2.0.0\",\"server\":\"cloudflare-worker\"}",
+    "changed_asset_hashes": {
+      "public/editor-v2/ui/structured-inspector.js": {
+        "local_sha256": "947bb2ba1d7e4b0b738930974e65dfe087146defde13a64200e46e73ea672ef6",
+        "live_sha256": "947bb2ba1d7e4b0b738930974e65dfe087146defde13a64200e46e73ea672ef6",
+        "match": true
+      }
+    },
+    "worker_version_number": 4061,
+    "runtime_source_unchanged_after_release": true
+  },
+  "mutations": {
+    "production_d1_write_or_migration": false,
+    "r2_deletion": false,
+    "worker_deployment": true,
+    "ci_dispatch_or_rerun": false,
+    "note": "Normal fast-forward push triggered exact-source CI and Cloudflare automatic Worker Build; no manual workflow dispatch/rerun."
+  },
+  "cost_huf": 0,
+  "scope_limit": "This closes only the verified Inspector data-loss regression slice. 77.44.7.D / D-01..D-07 remains OPEN / NOT_CERTIFIED; full Visual Editor manual/physical acceptance remains deferred."
+}

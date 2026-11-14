@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "id": "20261114192809-a1889f85",
+  "task": "77.44.7.D-D03",
+  "trigger": "scheduled",
+  "started_at": "2026-11-14T19:28:09.054Z",
+  "abandoned_at": "2026-11-14T19:30:06.998Z",
+  "measured_seconds": null,
+  "status": "interrupted",
+  "reason": "Previous run ended before reliable completion; new user input authorized free CI quota.",
+  "started_revision": "8e8b6d1bd60107fb9b2e35d16558363f2b3b1251",
+  "measurement": "missing end time; excluded from elapsed time and ETA"
+}

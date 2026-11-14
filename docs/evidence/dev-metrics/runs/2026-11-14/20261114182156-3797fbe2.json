@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261114182156-3797fbe2",
+  "task": "77.44.7.D-D06-export-access",
+  "trigger": "manual",
+  "started_at": "2026-11-14T18:21:56.058Z",
+  "finished_at": "2026-11-14T18:41:31.865Z",
+  "wall_seconds": 1176,
+  "paused_seconds": 0,
+  "measured_seconds": 1176,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "Retained D1 snapshot restored end-to-end through REST query batch with exact schema/data parity; current production export/restore still open because export locks live queries and needs a safe maintenance window.",
+  "evidence": [
+    "docs/evidence/editor-d06-retained-snapshot-rest-query-restore-2026-11-14.json"
+  ],
+  "checks": "python3 tests/plan-contract.test.py:14/14 PASS; python3 scripts/check-canonical-plan.py:PASS 13 files/396 mappings; python3 scripts/build-feature-traceability.py --check:PASS 396/396; python3 tests/d1-restore-order.test.py:7/7 PASS; production D1 SELECT/PRAGMA preflight:PASS 6 queries, 0 writes; full Editor CI:NOT RUN; production health:UNVERIFIED (proxy blocked)",
+  "started_revision": "0e6da7f63ac9c99a3735be164b723b1492c23462",
+  "finished_revision": "0e6da7f63ac9c99a3735be164b723b1492c23462",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261114203445-c6c5f823",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-14T20:34:45.393Z",
+  "finished_at": "2026-11-14T20:42:39.570Z",
+  "wall_seconds": 474,
+  "paused_seconds": 0,
+  "measured_seconds": 474,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "D-01 private authored-media preview guard shipped and production-verified; exact-SHA Editor Core still running, full D remains open.",
+  "evidence": [
+    "docs/evidence/editor-d01-private-preview-publication-c982-2026-11-14.json"
+  ],
+  "checks": "editor unit/typecheck/web013 migration-gate PASS; Wrangler dry-run PASS; production health and asset SHA PASS; exact-SHA Editor Core pending",
+  "started_revision": "c9822643a323558c8a0a9ff0b28bd528f4908980",
+  "finished_revision": "c9822643a323558c8a0a9ff0b28bd528f4908980",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

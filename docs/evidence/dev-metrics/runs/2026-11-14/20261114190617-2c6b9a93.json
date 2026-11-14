@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261114190617-2c6b9a93",
+  "task": "77.44.7.D-D03",
+  "trigger": "scheduled",
+  "started_at": "2026-11-14T19:06:17.049Z",
+  "finished_at": "2026-11-14T19:19:39.032Z",
+  "wall_seconds": 802,
+  "paused_seconds": 0,
+  "measured_seconds": 802,
+  "status": "blocked",
+  "kind": "mixed",
+  "summary": "D-03 malformed structured Inspector data-loss fix and regression tests passed locally; release blocked by Chromium sandbox SIGTRAP and exhausted GitHub Actions quota.",
+  "evidence": [
+    "docs/evidence/editor-d03-malformed-structured-content-2026-11-14.json",
+    "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md"
+  ],
+  "checks": "targeted Node 1/1; npm run test:editor 16/16; typecheck PASS; plan contract 14/14; canonical plan 13 files/396 mappings PASS; traceability PASS; D1 SELECT/PRAGMA 0 writes; Wrangler dry-run 181 assets PASS; real Chromium UNVERIFIED setsockopt EPERM/SIGTRAP; production health UNVERIFIED proxy 403/exit 7; runtime push and CI NOT DONE",
+  "started_revision": "cd7f51a08fcf14ed20193294f17f116bfefc8cc5",
+  "finished_revision": "61a3d80f98b7302a7d2e0a68bb93778c54589f1c",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

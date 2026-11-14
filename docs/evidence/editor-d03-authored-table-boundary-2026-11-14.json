@@ -1,0 +1,42 @@
+{
+  "schema": 1,
+  "plan_point": "77.44.7.D / D-03",
+  "status": "PARTIAL_REGRESSION_COVERAGE; full 77.44.7.D remains OPEN / NOT_CERTIFIED",
+  "finding_review": {
+    "reported_mismatch": "The 100-row/16-column authored table limit appeared inconsistent with the structured Inspector's 40-row/12-column limit.",
+    "result": "Not a bug: these are two separately versioned contracts. authored-v1 stores props.rows and uses authored-content.js plus element-content-controls.js; structured-v1 stores props.contentModel and uses element-content.js plus structured-inspector.js.",
+    "source_evidence": [
+      "public/editor-v2/core/content-profiles.js: authored-v1 marker is contentVersion; structured-v1 marker is structuredContentVersion and storage is props.contentModel",
+      "public/editor-v2/ui/element-content-controls.js: authored table editor serializes rows to tab/newline text and submits through authored normalization",
+      "public/editor-v2/core/authored-content.js: authored table accepts 1-100 rows and 1-16 equal-width columns; authoredNodeHtml renders up to 100 rows and 16 cells per row",
+      "public/editor-v2/ui/structured-inspector.js and public/editor-v2/core/element-content.js: separate structured-v1 contentModel is capped at 40 rows and 12 columns"
+    ]
+  },
+  "change": {
+    "files": ["public/editor-v2/tests/element-content.test.js"],
+    "runtime_changed": false,
+    "test": "New regression verifies authored-v1 normalization, publish validation, and public rendering retain all 100 rows and 16 columns; 101 rows and 17 columns are rejected.",
+    "save_publish": "No behavior change; validation/rendering contracts only."
+  },
+  "checks": {
+    "targeted": "node --test public/editor-v2/tests/element-content.test.js — PASS (1 test file)",
+    "editor_unit_suite": "npm run test:editor — PASS (15/15 test files; runner guards 3/3)",
+    "typecheck": "npm run typecheck — PASS",
+    "active_plan_audit": "python3 scripts/audit-active-plan-point.py — PASS; 77.44.7.D OPEN / NOT_CERTIFIED",
+    "traceability": "python3 scripts/build-feature-traceability.py --check — PASS (396 mappings; acceptance not certified)",
+    "canonical_plan": "python3 scripts/check-canonical-plan.py and python3 tests/plan-contract.test.py — PASS (14/14 contract tests)",
+    "diff_check": "git diff --check — PASS"
+  },
+  "production": {
+    "d1": "No export, migration, or data write in this block. Current-turn SELECT/PRAGMA-only preflight was previously recorded: 34 migrations through 0028, 0029 absent, quick_check ok, FK 0, rows_written 0, changed_db false.",
+    "worker": "Cloudflare API read reported deployment 4cc8ce22-cfae-467b-8f87-4ffbdbdc3736, version 420b860c-920c-408e-a3fb-19a18b722204 at 100% traffic; no deployment performed.",
+    "health": "UNVERIFIED: direct HTTPS request was blocked by environment proxy CONNECT 403.",
+    "changed_asset_hashes": "None; runtime assets unchanged."
+  },
+  "cost_huf": 0,
+  "limitations": [
+    "This does not close the full D-03 lifecycle or D-01..D-07 matrix.",
+    "Fresh production export plus isolated restore is still outstanding for D-06; the export operation locks the live D1 query path and needs a safe maintenance window.",
+    "Full Visual Editor manual/physical acceptance remains deferred until the complete Editor is implemented."
+  ]
+}

@@ -1,0 +1,88 @@
+{
+  "original": [
+    "-- Synthetic regression for workers-sdk #5683. No production data.\nPRAGMA defer_foreign_keys=TRUE;",
+    "\nCREATE TABLE pages(id TEXT PRIMARY KEY, revision_id TEXT REFERENCES editor_revisions(id), body TEXT CHECK(length(body)>0));",
+    "\nINSERT INTO pages VALUES('page','revision','fixture;''quoted\nvalue');",
+    "\nCREATE TABLE editor_revisions(id TEXT PRIMARY KEY, page_id TEXT REFERENCES pages(id));",
+    "\nINSERT INTO editor_revisions VALUES('revision','page');",
+    "\nCREATE TABLE events(id INTEGER PRIMARY KEY AUTOINCREMENT, value TEXT);",
+    "\nINSERT INTO events VALUES(9,'preserve sequence');",
+    "\nDELETE FROM sqlite_sequence;",
+    "\nINSERT INTO sqlite_sequence VALUES('events',42);",
+    "\nCREATE UNIQUE INDEX idx_pages_revision ON pages(revision_id) WHERE revision_id IS NOT NULL;",
+    "\nCREATE TRIGGER pages_guard BEFORE UPDATE ON pages\nBEGIN\n SELECT CASE WHEN NEW.body='' THEN RAISE(ABORT,'empty;body') END;\n SELECT CASE WHEN NEW.id='' THEN RAISE(ABORT,'empty id') END;\nEND;"
+  ],
+  "ordered": [
+    "-- Synthetic regression for workers-sdk #5683. No production data.\nPRAGMA defer_foreign_keys=TRUE;",
+    "\n\nCREATE TABLE pages(id TEXT PRIMARY KEY, revision_id TEXT REFERENCES editor_revisions(id), body TEXT CHECK(length(body)>0));",
+    "\n\nCREATE TABLE editor_revisions(id TEXT PRIMARY KEY, page_id TEXT REFERENCES pages(id));",
+    "\n\nCREATE TABLE events(id INTEGER PRIMARY KEY AUTOINCREMENT, value TEXT);",
+    "\n\nINSERT INTO pages VALUES('page','revision','fixture;''quoted\nvalue');",
+    "\n\nINSERT INTO editor_revisions VALUES('revision','page');",
+    "\n\nINSERT INTO events VALUES(9,'preserve sequence');",
+    "\n\nDELETE FROM sqlite_sequence;",
+    "\n\nINSERT INTO sqlite_sequence VALUES('events',42);",
+    "\n\nCREATE UNIQUE INDEX idx_pages_revision ON pages(revision_id) WHERE revision_id IS NOT NULL;",
+    "\n\nCREATE TRIGGER pages_guard BEFORE UPDATE ON pages\nBEGIN\n SELECT CASE WHEN NEW.body='' THEN RAISE(ABORT,'empty;body') END;\n SELECT CASE WHEN NEW.id='' THEN RAISE(ABORT,'empty id') END;\nEND;"
+  ],
+  "schema": [
+    [
+      "index",
+      "idx_pages_revision",
+      "pages",
+      "CREATE UNIQUE INDEX idx_pages_revision ON pages(revision_id) WHERE revision_id IS NOT NULL"
+    ],
+    [
+      "table",
+      "editor_revisions",
+      "editor_revisions",
+      "CREATE TABLE editor_revisions(id TEXT PRIMARY KEY, page_id TEXT REFERENCES pages(id))"
+    ],
+    [
+      "table",
+      "events",
+      "events",
+      "CREATE TABLE events(id INTEGER PRIMARY KEY AUTOINCREMENT, value TEXT)"
+    ],
+    [
+      "table",
+      "pages",
+      "pages",
+      "CREATE TABLE pages(id TEXT PRIMARY KEY, revision_id TEXT REFERENCES editor_revisions(id), body TEXT CHECK(length(body)>0))"
+    ],
+    [
+      "trigger",
+      "pages_guard",
+      "pages",
+      "CREATE TRIGGER pages_guard BEFORE UPDATE ON pages\nBEGIN\n SELECT CASE WHEN NEW.body='' THEN RAISE(ABORT,'empty;body') END;\n SELECT CASE WHEN NEW.id='' THEN RAISE(ABORT,'empty id') END;\nEND"
+    ]
+  ],
+  "tables": {
+    "pages": [
+      [
+        "page",
+        "revision",
+        "fixture;'quoted\nvalue"
+      ]
+    ],
+    "editor_revisions": [
+      [
+        "revision",
+        "page"
+      ]
+    ],
+    "events": [
+      [
+        9,
+        "preserve sequence"
+      ]
+    ],
+    "sqlite_sequence": [
+      [
+        "events",
+        42
+      ]
+    ]
+  },
+  "schemaQuery": "SELECT type,name,tbl_name,sql FROM sqlite_master WHERE sql IS NOT NULL AND name NOT LIKE 'sqlite_%' AND name NOT GLOB '_cf_*' ORDER BY type,name"
+}

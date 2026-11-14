@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261114163044-e7ddea63",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-14T16:30:44.080Z",
+  "finished_at": "2026-11-14T16:33:34.198Z",
+  "wall_seconds": 170,
+  "paused_seconds": 0,
+  "measured_seconds": 170,
+  "status": "partial",
+  "kind": "docs",
+  "summary": "Recorded exact-SHA Editor Core completion and reverified live health/asset after D-04 release; full D-01..D-07 remains open.",
+  "evidence": [
+    "docs/evidence/editor-d04-structured-tabs-colliding-node-ids-2026-11-14.json"
+  ],
+  "checks": "Exact-SHA GitHub runs 43612918745/43612918727/43612918722/43612918738 all success; CF deployment 4cc8ce22-cfae-467b-8f87-4ffbdbdc3736 Worker 420b860c 100%; health 200 and asset SHA exact; canonical plan PASS; plan contract 14/14; traceability 396/396",
+  "started_revision": "2463fcd3c8bfe8b6d647f6ff34e42da4b0d2a74c",
+  "finished_revision": "2463fcd3c8bfe8b6d647f6ff34e42da4b0d2a74c",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

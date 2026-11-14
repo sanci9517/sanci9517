@@ -1187,6 +1187,34 @@ test('structured gallery/carousel refuse private Editor preview URL on Publish a
  const tabs=renderElementContent('tabs',{version:1,items:[{label:'Első',content:'Szöveg'},{label:'Második',content:'Szöveg'}]},'tabs');
  assert.equal((tabs.match(/role="tabpanel"[^>]*tabindex="0"/g)||[]).length,2);
 });
+test('structured tabs keep accessible control IDs unique when node IDs normalize to the same text',()=>{
+ const model={version:1,items:[{label:'Első',content:'Első tartalom'},{label:'Második',content:'Második tartalom'}]};
+ const first=renderElementContent('tabs',model,'node/a');
+ const second=renderElementContent('tabs',model,'node?a');
+ const longFirst=renderElementContent('tabs',model,`node/${'x'.repeat(5000)}a`);
+ const longSecond=renderElementContent('tabs',model,`node/${'x'.repeat(5000)}b`);
+ const safeBoundary=renderElementContent('tabs',model,'a'.repeat(88));
+ const overSafeBoundary=renderElementContent('tabs',model,'a'.repeat(89));
+ const firstTab=first.match(/role="tab" id="([^"]+)" aria-controls="([^"]+)"/);
+ const secondTab=second.match(/role="tab" id="([^"]+)" aria-controls="([^"]+)"/);
+ const longFirstId=longFirst.match(/role="tab" id="([^"]+)"/);
+ const longSecondId=longSecond.match(/role="tab" id="([^"]+)"/);
+ const boundaryId=safeBoundary.match(/role="tab" id="([^"]+)"/);
+ const overBoundaryId=overSafeBoundary.match(/role="tab" id="([^"]+)"/);
+ assert.ok(firstTab&&secondTab,'both renderings expose a tab and its controlled panel');
+ assert.notEqual(firstTab[1],secondTab[1],'distinct Page Model node IDs must not collapse to one tab ID');
+ assert.notEqual(firstTab[2],secondTab[2],'distinct Page Model node IDs must not collapse to one panel ID');
+ assert.ok(longFirstId&&longSecondId,'long identifiers still render valid tab controls');
+ assert.notEqual(longFirstId[1],longSecondId[1],'the encoded suffix includes characters beyond the readable prefix');
+ assert.ok(longFirstId[1].length<=100&&longSecondId[1].length<=100,'encoded DOM identifiers remain bounded for oversized Page Model IDs');
+ assert.ok(boundaryId&&overBoundaryId,'IDs on both sides of the safe readable limit still render');
+ assert.notEqual(boundaryId[1],overBoundaryId[1],'encoding near the readable limit remains collision resistant');
+ assert.ok(boundaryId[1].length<=100&&overBoundaryId[1].length<=100,'IDs at and above the readable limit remain bounded');
+ assert.match(first,new RegExp(`id="${firstTab[2]}" aria-labelledby="${firstTab[1]}"`),
+  'each tab controls its own panel and the panel points back to that tab');
+ assert.match(second,new RegExp(`id="${secondTab[2]}" aria-labelledby="${secondTab[1]}"`),
+  'the second tab set keeps its own complete ARIA relationship');
+});
 test('structured models sanitize content and strictly validate dimensions',()=>{
  assert.equal(safeMediaUrl('javascript:alert(1)'),'');
  assert.equal(safeMediaUrl('//attacker.example/image.png'),'');

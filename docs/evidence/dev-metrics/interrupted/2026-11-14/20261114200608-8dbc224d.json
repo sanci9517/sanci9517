@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "id": "20261114200608-8dbc224d",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-14T20:06:08.362Z",
+  "abandoned_at": "2026-11-14T20:34:45.340Z",
+  "measured_seconds": null,
+  "status": "interrupted",
+  "reason": "A korábbi kiadási munkablokk lezárása nem rekonstruálható megszakítás után.",
+  "started_revision": "8e6f3fb33c38c54217857abca6b4e4ace48f7199",
+  "measurement": "missing end time; excluded from elapsed time and ETA"
+}

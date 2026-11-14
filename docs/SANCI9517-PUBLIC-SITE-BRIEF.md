@@ -1,7 +1,7 @@
 # SANCI9517 — publikus weboldal: kreatív brief, dizájnrendszer és teljes tartalomterv
 
 **Dokumentum típusa:** belső, végrehajtható creator-webhely brief; NEM második platform-MASTER.  
-**Verzió:** 2.7 (2026-11-14) • **Státusz:** SANCI DARK DEPTH ONLY / KÖTELEZŐ SPEC / KIVITELEZÉS OPEN.
+**Verzió:** 2.8 (2026-11-14) • **Státusz:** SANCI DARK DEPTH ONLY / KÖTELEZŐ SPEC / KIVITELEZÉS OPEN.
 **Repository / ág:** sanci9517/sanci9517 → v2/foundation.  
 **Kanonikus termékterv:** docs/SANCI9517-CREATOR-PLATFORM-PLAN.md.  
 **Végrehajtási szabály:** AGENTS.md; ez a brief nem írhatja felül a MASTER-t, a release-gate-eket, a Save/Publish szétválasztását vagy a domainadatok tulajdonosát.  
@@ -165,6 +165,19 @@ A SANCI v111 főoldalon az 01-es filmes hero és a 02-es rövid menetrend-átvez
 **Design:** négy numerikus cella, 320–390px széles telefonon is elfér, világos nagy számjegyek, alatta a cím/valódi időpont; képernyőolvasónak olvasható, a másodpercenkénti változás nem generál folyamatos aria-live bejelentést. Nem animálunk feleslegesen és nem torzítjuk a két szakaszos főoldali ritmust.
 
 **Kiadási szerződés:** külön CAS Save (Page Model v111) és Publish; a v110 és korábbi editor_revisions megmaradnak. A CDN-kód és az API javítása a `v2/foundation` Runtime Code/Worker Build folyamatban, nincs D1 migráció, új függőség, külön fizetős szolgáltatás vagy CI dispatch. A read-only D1 preflight és postflight 8-oldalas snapshotmegőrzést igazol. **Nyitott minőségkapu:** teljes, valódi telefonos Chromium/browser HTTP smoke + CSS/asset hash/exact source SHA és a Visual Editor későbbi teljes fizikai elfogadása **OPEN / NOT_CERTIFIED**; a D1 PASS nem helyettesíti ezeket.
+
+### 4.5 SANCI DARK DEPTH v2 — AvidIsOdd-hangulat, saját arculat és szerkeszthető szignó (2026-11-14)
+
+**Tulajdonosi irány:** „az egész Avid oldala tetszik, de ne kópia legyen, az aláírás is legyen az elején”. A már megőrzött 32.4.1 AvidIsOdd négy referencia-screenshotja az ellenőrzött vizuális alap. Az élő `https://avidisodd.hu/` lekérése a webes böngészőből jelenleg cache miss, így nem állítunk hozzáférést az eredeti CSS/animáció kódjához. Saját grafika, szín, elrendezés, szöveg és ikonkészlet; nincs külső média, fizetett függőség vagy jogosulatlan másolat.
+
+**Megvalósítási egység:**
+- A SANCI nyolc, már létező, egyértelmű feladatú aloldalán **egyetlen közös, opcionálisan aktivált vizuális presentation layer**, amely a meglévő Editor-v2 `data-node-id` elemeket osztályozza. Nincs új, párhuzamos frontend, elvesző Editorkomponens, vagy más tenantot érintő márkakényszer.
+- **Saját Sanci-szignó a főoldal legelején:** `sanci-home-autograph-20261114` Visual Editor `text` node, `Sanci` tartalommal, kézírásos betűcsalád-fallbackkel, finom saját aláhúzással. Külön módosítható, megőrzött SANCI embléma a közös fejlécben. A szignó a hero overlay **legelső gyermeke**, nem újabb külön dekoráció vagy ismételt logó. A mobilos elem `width:fit-content`, `maxWidth:100%` beállítást kapott.
+- **Grafikai nyelv:** eredeti médiatári hero képek + enyhe gradient és blur az olvashatósághoz, keskeny rubinszínű vonalak, helyes platform-ikonok SVG-je, fókuszgyűrűvel rendelkező legalább 48px magas gombok. Twitch visszafogott lila, YouTube rubinvörös, TikTok két tónus, Discord kék/lila accents csak a megfelelő helyen; minden oldalon a SANCI-sötét háttér marad.
+- **Mozgás:** opcionális, rövid intro/reveal, csak már látható, valós tartalomnál; `prefers-reduced-motion:reduce` esetén nincs belépő animáció. A forráskód JavaScript-hibája, vagy IntersectionObserver hiánya nem rejtheti el az Editor-tartalmat.
+- **Tartalmi fegyelem:** a főoldalon továbbra is két fő szekció (hero és valódi, menetrendvezérelt Countdown), három célzott CTA. A YouTube önálló, a TikTok önálló, a Közösség a Discordé, a Menetrend a teljes heti naptáré. Fiktív merch/szponzor/video/nézettség/LIVE címke tilos. A partner-marquee, valódi videóváltó és shop csak valódi adatok és az egyetlen MASTER megfelelő kapuja szerint.
+
+**Valós tárolási és kiadási állapot:** `page-home` Save v112→v113 és külön Publish v113 a szerkeszthető aláíráshoz CAS + audit kapun megtörtént. A SANCI CSS/JS a `v2/foundation` ágra került. Az éles Worker pontos megjelenítési és statikus asset-hash ellenőrzése, a teljes Chromium regressziós csomag, a Visual Editor kézi konszolidált elfogadása **OPEN / NOT_CERTIFIED**, nem jelenthető PASS-nak a részleges szintaxis-/DOM-/fixture ellenőrzése alapján. Az egyetlen kanonikus MASTER-változat érintetlen; ezt az alárendelt brief szakaszt a korábbi, „csak két CTA és text-only” főoldali arculati döntések konkrét stílusrétegeként kell értelmezni.
 
 ## 5. Teljes tartalmi és UX specifikáció — oldalanként
 

@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
 import test from 'node:test';
 import {classifySanciDestination,decorateSanciShowcase} from '../public/assets/sanci-showcase.js';
 
@@ -75,4 +76,46 @@ test('original signature, icons and next-stream roles decorate SANCI only, witho
  }finally{
   if(previous===undefined)delete globalThis.document;else globalThis.document=previous;
  }
+});
+
+
+test('outlined icons retain their stroke, and navigation keeps its existing icon system',()=>{
+ const css=readFileSync(new URL('../public/assets/sanci-showcase.css',import.meta.url),'utf8');
+ const siteJS=readFileSync(new URL('../public/assets/site.js',import.meta.url),'utf8');
+ const showcaseJS=readFileSync(new URL('../public/assets/sanci-showcase.js',import.meta.url),'utf8');
+ assert.match(css,/\.sanci-cta-symbol svg\[fill="none"\]\s*\{\s*fill:none;/);
+ assert.match(css,/background-image:none;/,'SANCI CTA must honor user-authored backgroundColor');
+ assert.match(siteJS,/function enhanceStaticNavigationIcons\(/);
+ assert.match(siteJS,/menu-nav-icon/);
+ assert.doesNotMatch(showcaseJS,/querySelectorAll\(['"]\.desktop-primary-nav/);
+ assert.match(css,/prefers-reduced-motion:\s*reduce/);
+ assert.match(css,/data-sanci-role="signature"/);
+});
+
+
+test('decorations run after all authored content activators, not before their DOM rewrites',()=>{
+ const renderer=readFileSync(new URL('../public/assets/page-renderer.js',import.meta.url),'utf8');
+ const activation=renderer.indexOf('activateStructuredContent(canvas);activateCountdowns(canvas);activateEmbeds(canvas);activateCodeBlocks(canvas);');
+ const decoration=renderer.indexOf('decorateSanciShowcase(canvas,page,{slug,enabled:isSanciShowcase});');
+ assert.ok(activation>0&&decoration>activation,'icons, autograph and highlights are attached after activation');
+ assert.equal(renderer.indexOf('decorateSanciShowcase(canvas,page,{slug,enabled:isSanciShowcase});',decoration+1),-1);
+});
+
+
+test('compact footer is SANCI-only, preserves original link order and large touch targets',()=>{
+ const css=readFileSync(new URL('../public/assets/sanci-showcase.css',import.meta.url),'utf8');
+ const html=readFileSync(new URL('../public/visual-page.html',import.meta.url),'utf8');
+ const intro=css.indexOf('SANCI compact footer v3');
+ const block=css.slice(intro);
+ assert.ok(intro>0,'mobile footer scope exists');
+ assert.match(block,/body\.sanci-editorial-page\[data-sanci-showcase="depth-v2"\]\s+\.public-footer-grid/);
+ assert.match(block,/grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/);
+ assert.match(block,/min-height:44px/);
+ assert.match(block,/\.public-footer-column:last-child/);
+ const footer=html.split('<footer class="footer public-footer">')[1]?.split('</footer>')[0];
+ assert.ok(footer,'the canonical HTML footer must exist');
+ const destinations=['/p/twitch','/p/youtube','/p/tiktok','/p/schedule',
+  '/p/community','/p/about','/p/contact','mailto:sandor.bogadi95@gmail.com'];
+ for(const href of destinations)assert.ok(footer.includes('href="'+href+'"'),href);
+ assert.match(html,/\/assets\/sanci-showcase\.css\?v=20261114-depth-v4/);
 });

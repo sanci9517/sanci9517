@@ -1,0 +1,91 @@
+{
+  "schema": 1,
+  "date": "2026-11-14",
+  "plan_point": "77.44.7.D / D-01 private authored-media preview publication guard",
+  "status": "RUNTIME_DEPLOYED; LOCAL_CHECKS_PASS; EXACT_SHA_EDITOR_CORE_CI_PENDING; FULL_D_OPEN_NOT_CERTIFIED",
+  "scope": ["D-01"],
+  "finding": {
+    "root_cause": "Editor-only /api/admin/media preview URLs were accepted as authored public media sources. Absolute-origin and repeatedly encoded paths could bypass checks which only matched a root-relative URL prefix.",
+    "impact": "An old or malformed authored draft could emit a private API URL into public markup or attempt to publish without a valid public source.",
+    "affected_contracts": ["Editor preview", "Publish validation", "public authored-content rendering"]
+  },
+  "change": {
+    "commits": [
+      "b152852e38cedfa8ec83dbebb5ef9253fa85f458",
+      "c9822643a323558c8a0a9ff0b28bd528f4908980"
+    ],
+    "release_sha": "c9822643a323558c8a0a9ff0b28bd528f4908980",
+    "files": [
+      "public/editor-v2/core/authored-content.js",
+      "tests/editor-accessible-icon-label.test.js",
+      "tests/web013-tenant-pages-editor.test.js"
+    ],
+    "behavior": "Private Editor preview remains usable inside the editor but is excluded from public HTML and is rejected as a Publish source. The guard normalizes absolute/protocol-relative URLs and repeatedly decodes paths before checking reserved admin media routes. Invalid private-only content receives field guidance; valid public/asset-ID sources continue to work. Save remains draft-only and distinct from Publish.",
+    "regressions": [
+      "absolute-origin private preview URL",
+      "root-relative, encoded and double-encoded admin media routes",
+      "gallery image and video poster private-preview sources",
+      "valid asset-ID media route and ordinary mailto/internal links",
+      "Publish guidance and tenant-page contract for private versus malformed/reserved media URLs"
+    ]
+  },
+  "checks": {
+    "editor_unit_suite": "npm run test:editor — PASS (16/16 files; runner guards 3/3)",
+    "web013_migration_safety_gate": "npm run test:web013:migration-gate — PASS",
+    "web013_tenant_page_editor_regression": "node --experimental-loader ./tests/ts-extension-loader.mjs --test tests/web013-tenant-pages-editor.test.js — PASS",
+    "typecheck": "npm run typecheck — PASS",
+    "browser_regressions": "Targeted legacy-media, publication-guidance, media-source-switch and structured-content browser files passed; editor-content-system passed on isolated rerun after correcting a mailto regression found by the first combined run.",
+    "wrangler_dry_run": "Wrangler 4.130.0 — PASS; read 181 public assets, 375.00 KiB total / 96.00 KiB gzip; --dry-run exited without deploying.",
+    "canonical_plan": "python3 scripts/check-canonical-plan.py — PASS; python3 tests/plan-contract.test.py — PASS (14/14).",
+    "diff_check": "git diff --check — PASS before documentation-only evidence follow-up."
+  },
+  "production_preflight": {
+    "d1": {
+      "database": "sanci9517-db",
+      "query": "SELECT name FROM d1_migrations ORDER BY name DESC LIMIT 1",
+      "last_migration": "0028_media_archive.sql",
+      "rows_written": 0,
+      "changes": 0,
+      "changed_db": false,
+      "other_operations": "No production D1 writes, migration, export, or R2 deletion."
+    }
+  },
+  "github": {
+    "branch": "v2/foundation",
+    "push": "Normal fast-forward from b152852e38cedfa8ec83dbebb5ef9253fa85f458; remote branch head verified as c9822643a323558c8a0a9ff0b28bd528f4908980.",
+    "exact_sha_workflows": {
+      "production_source_smoke": {"id": 43638324959, "conclusion": "success"},
+      "twitch_integration": {"id": 43638324995, "conclusion": "success"},
+      "f0_baseline": {"id": 43638325026, "conclusion": "success"},
+      "editor_core": {"id": 43638324975, "status_at_recording": "in_progress", "conclusion": null}
+    }
+  },
+  "cloudflare": {
+    "worker": "sanci9517-streamer-brand",
+    "build_id": "e71a7b52-71b4-41ed-866d-ab0e17d97096",
+    "build_source_sha": "c9822643a323558c8a0a9ff0b28bd528f4908980",
+    "build_outcome": "success",
+    "build_command": "npm run typecheck",
+    "deploy_command": "npm run deploy:safe",
+    "deployment_id": "79da8098-48c6-4449-9620-1da18af7c5d4",
+    "version_id": "4be36c9f-ca84-401b-81f7-c8733eaac550",
+    "version_number": 4063,
+    "traffic_percent": 100
+  },
+  "live_smoke": {
+    "health_url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+    "health_http": 200,
+    "health_body": {"ok": true, "service": "sanci9517-streamer-brand", "version": "2.0.0", "server": "cloudflare-worker"},
+    "asset_path": "/editor-v2/core/authored-content.js",
+    "local_sha256": "c035fda78172d801a9cb16b1776c2102c906cc7d929217ebe5b96b3dbd030425",
+    "live_sha256": "c035fda78172d801a9cb16b1776c2102c906cc7d929217ebe5b96b3dbd030425",
+    "hash_match": true
+  },
+  "cost_huf": 0,
+  "limitations": [
+    "The current private-preview regression slice is shipped and verified, but the full 77.44.7.D and D-01 through D-07 matrix remains OPEN / NOT_CERTIFIED.",
+    "The exact-SHA Editor Core workflow was still running the browser layout regression when this evidence was first prepared; its result must be verified before claiming complete remote CI PASS.",
+    "D-06 still requires a fresh, recoverable production snapshot and isolated restore procedure in an agreed maintenance window; no production migration was attempted.",
+    "The complete Visual Editor manual and physical-device acceptance remains deferred until the full Editor scope is implemented."
+  ]
+}

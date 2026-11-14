@@ -321,7 +321,10 @@ test('reserved media paths with invalid asset IDs cannot become public',async t=
     assert.equal(saved.status,200,`Save preserves the private draft for correction: ${src}`);
     const rejected=await f.editor('editor','other','POST',{pageId:'b',expectedVersion:version+1,document,publish:true});
     assert.equal(rejected.status,409,`Publish rejects ${src}`);
-    assert.equal((await rejected.json()).error.code,'MEDIA_NOT_FOUND');
+    const rejectedCode=(await rejected.json()).error.code;
+    const privateEditorPreview=/\/(?:api|%61pi)(?:\/|%2f)/i.test(src);
+    assert.equal(rejectedCode,privateEditorPreview?'INCOMPLETE_EDITOR_CONTENT':'MEDIA_NOT_FOUND',
+      `Publish gives field-level content guidance before the media lookup for a private Editor URL: ${src}`);
     assert.equal(f.db.prepare('SELECT published_content_json FROM pages WHERE id=?').get('b').published_content_json,before);
     const pageId=`new-invalid-media-${index}`;
     const initial=f.document(pageId);
@@ -329,7 +332,8 @@ test('reserved media paths with invalid asset IDs cannot become public',async t=
     initial.pages[pageId].nodes.image={id:'image',type:'image',parentId:'root',children:[],metadata:{contentVersion:1},props:{src,alt:'Hibás médiaútvonal'}};
     const created=await f.pages('editor','other','POST',{id:pageId,slug:pageId,title:'Invalid media',document:initial,isPublished:true});
     assert.equal(created.status,409,`initial publication rejects ${src}`);
-    assert.equal((await created.json()).error.code,'MEDIA_NOT_FOUND');
+    assert.equal((await created.json()).error.code,privateEditorPreview?'INCOMPLETE_EDITOR_CONTENT':'MEDIA_NOT_FOUND',
+      `initial Publish keeps the same content/media validation precedence: ${src}`);
     assert.equal(f.db.prepare('SELECT COUNT(*) AS n FROM pages WHERE id=?').get(pageId).n,0);
   }
 });

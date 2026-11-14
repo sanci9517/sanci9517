@@ -10,6 +10,36 @@ import {createDocument} from '../../public/editor-v2/core/schema.js';
 import {createEditorState,activePage} from '../../public/editor-v2/core/state.js';
 import {execute} from '../../public/editor-v2/core/commands.js';
 import {iconById} from '../../public/editor-v2/core/icon-options.js';
+import {renderElementContent} from '../../public/editor-v2/core/element-content.js';
+
+test('structured tab ARIA references stay unique across sanitization-colliding node IDs',async t=>{
+ const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||(existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined),args:['--no-sandbox']});
+ t.after(()=>browser.close());
+ const page=await browser.newPage();
+ const model={version:1,items:[{label:'Első',content:'Első tartalom'},{label:'Második',content:'Második tartalom'}]};
+ const markup=renderElementContent('tabs',model,'node/a')+renderElementContent('tabs',model,'node?a')+
+  renderElementContent('tabs',model,`node/${'x'.repeat(5000)}a`)+renderElementContent('tabs',model,`node/${'x'.repeat(5000)}b`)+
+  renderElementContent('tabs',model,'a'.repeat(88))+renderElementContent('tabs',model,'a'.repeat(89));
+ await page.setContent(`<main>${markup}</main>`);
+ const references=await page.evaluate(()=>[...document.querySelectorAll('[data-structured-tabs]')].map(host=>{
+  const tab=host.querySelector('[role="tab"]'),panelId=tab?.getAttribute('aria-controls');
+  const panel=panelId?document.getElementById(panelId):null;
+  return {tabId:tab?.id,panelId,tabCount:document.querySelectorAll(`#${CSS.escape(tab?.id||'')}`).length,
+   panelCount:panelId?document.querySelectorAll(`#${CSS.escape(panelId)}`).length:0,
+   panelBelongsToHost:Boolean(panel&&host.contains(panel)),panelLabelsTab:panel?.getAttribute('aria-labelledby')===tab?.id};
+ }));
+ assert.equal(references.length,6);
+ assert.equal(new Set(references.map(({tabId})=>tabId)).size,6,'separate, long, and boundary node IDs produce distinct DOM IDs');
+ assert.ok(references.every(({tabId,panelId})=>tabId.length<=100&&panelId.length<=100),'rendered ARIA IDs stay bounded');
+ assert.deepEqual(references.map(({tabCount,panelCount,panelBelongsToHost,panelLabelsTab})=>({tabCount,panelCount,panelBelongsToHost,panelLabelsTab})),[
+  {tabCount:1,panelCount:1,panelBelongsToHost:true,panelLabelsTab:true},
+  {tabCount:1,panelCount:1,panelBelongsToHost:true,panelLabelsTab:true},
+  {tabCount:1,panelCount:1,panelBelongsToHost:true,panelLabelsTab:true},
+  {tabCount:1,panelCount:1,panelBelongsToHost:true,panelLabelsTab:true},
+  {tabCount:1,panelCount:1,panelBelongsToHost:true,panelLabelsTab:true},
+  {tabCount:1,panelCount:1,panelBelongsToHost:true,panelLabelsTab:true}
+ ],'each public tab controls exactly one panel in its own widget and that panel names its tab');
+});
 
 test('structured Inspector editing survives Save, Publish and public interaction on desktop and mobile',async t=>{
  const model=createEditorState(createDocument()),pageId=model.document.activePageId;
@@ -407,6 +437,25 @@ test('structured Inspector editing survives Save, Publish and public interaction
   }return results;
  });
  for(const result of structuredRecovery)for(const key of ['rejected','escaped','fresh','unchanged','lockedSafe'])assert.equal(result[key],true,JSON.stringify(result));
+ const invalidStructuredRecovery=await editor.evaluate(async()=>{
+  const {renderStructuredInspector}=await import('/editor-v2/ui/structured-inspector.js');
+  const node={id:'invalid-structured-table',type:'table',props:{contentModel:{version:1,rows:[['Fejléc','Megmaradó adat'],['Rövid sor']]}}};
+  const original=structuredClone(node.props);let recovered=null;
+  const panel=renderStructuredInspector(node,next=>{recovered=structuredClone(next);return true;});
+  document.querySelector('#inspectorBody').append(panel);
+  const warning=panel.querySelector('[role="alert"]');
+  const editControls=panel.querySelectorAll('.structured-input input,.structured-input textarea,[data-structured-action]:not([data-structured-action="reset-invalid"])');
+  const reset=panel.querySelector('[data-structured-action="reset-invalid"]');
+  const readOnly=Boolean(warning)&&editControls.length===0&&JSON.stringify(node.props)===JSON.stringify(original);
+  reset?.click();
+  const result={readOnly,warning:warning?.textContent||'',resetAvailable:Boolean(reset),recovered,recoveredOnlyAfterExplicitAction:Boolean(recovered)};
+  panel.remove();return result;
+ });
+ assert.equal(invalidStructuredRecovery.readOnly,true,'malformed saved rows must not appear editable as default content or be overwritten by a later field edit');
+ assert.match(invalidStructuredRecovery.warning,/hibás|sérült|formátum/i);
+ assert.equal(invalidStructuredRecovery.resetAvailable,true,'a destructive recovery remains explicit and user controlled');
+ assert.equal(invalidStructuredRecovery.recoveredOnlyAfterExplicitAction,true);
+ assert.deepEqual(invalidStructuredRecovery.recovered,{version:1,rows:[['Oszlop 1','Oszlop 2'],['Adat 1','Adat 2']]});
  const focusGuards=await editor.evaluate(async()=>{
   const {renderStructuredInspector}=await import('/editor-v2/ui/structured-inspector.js');
   const {createElementContent}=await import('/editor-v2/core/element-content.js');

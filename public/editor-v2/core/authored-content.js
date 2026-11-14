@@ -49,6 +49,30 @@ export function safeMediaUrl(value){
   if(valid.startsWith('/')&&!valid.startsWith('//')&&!valid.startsWith('/\\'))return valid;
   const url=new URL(valid);if(url.protocol!=='https:')throw new Error('A médiaforrás csak HTTPS vagy belső útvonal lehet.');return valid;
 }
+// The authenticated Editor may preview /api/admin/media, but a public page
+// must never publish that private route. Decode repeatedly because old drafts
+// can contain nested percent-encoding and the request path may be normalized
+// by more than one layer before route matching.
+function isEditorOnlyMediaUrl(value){
+  if(typeof value!=='string'||!value.trim())return false;
+  try{
+    let path=new URL(value,'https://sanci.invalid').pathname;
+    for(let pass=0;pass<10;pass++){
+      // A decoded leading slash can turn /%2Fapi/... into //api/...; browsers
+      // normalize that form as a network-path reference, so treat any run of
+      // leading slashes as the private route boundary.
+      if(/^\/+api\/admin(?:\/|$)/i.test(path))return true;
+      const decoded=decodeURIComponent(path);
+      if(decoded===path)return false;
+      path=decoded;
+    }
+    return true;
+  }catch{return true}
+}
+function safePublishedMediaUrl(value){
+  const source=safeSrc(value);
+  return source&&isEditorOnlyMediaUrl(source)?'':source;
+}
 export function normalizeContentField(definition,value){
   if(definition.type==='boolean'){if(typeof value!=='boolean')throw new Error('Logikai érték szükséges.');return value}
   if(definition.type==='repeater'){
@@ -57,7 +81,9 @@ export function normalizeContentField(definition,value){
   }
   if(definition.type==='table'){
     if(!Array.isArray(value)||value.length>100)throw new Error('Legfeljebb 100 sor adható meg.');
-    return value.map(row=>{if(!Array.isArray(row)||row.length>16)throw new Error('Legfeljebb 16 oszlop használható.');return row.map(cell=>normalizeContentField({type:'text',max:2000},cell))});
+    const width=value[0]?.length;
+    if(!Number.isInteger(width)||width<1||width>16)throw new Error('A táblázatban 1–16 oszlop használható.');
+    return value.map(row=>{if(!Array.isArray(row)||row.length!==width)throw new Error('A táblázat sorainak azonos számú oszlopot kell tartalmazniuk.');return row.map(cell=>normalizeContentField({type:'text',max:2000},cell))});
   }
   if(definition.type==='range'){
     const number=typeof value==='number'?value:Number(value);
@@ -89,6 +115,15 @@ export function validateElementContent(node){
   if(!isAuthoredContent(node)||!CONTENT_FIELDS[node.type])return;
   const patch=Object.fromEntries(CONTENT_FIELDS[node.type].filter(field=>node.props?.[field.key]!==undefined).map(field=>[field.key,node.props[field.key]]));
   normalizeElementContent(node,patch);
+  const props=contentProperties(node),hasAsset=id=>typeof id==='string'&&MEDIA_ASSET_ID.test(id);
+  const assertPublicSource=(value,assetId,field)=>{
+    if(!hasAsset(assetId)&&isEditorOnlyMediaUrl(safeSrc(value)||value))throw new Error(`${field}: a privát szerkesztői előnézet nem publikálható.`);
+  };
+  if(['image','video','audio'].includes(node.type))assertPublicSource(props.src,props.assetId,'src');
+  if(node.type==='video')assertPublicSource(props.poster,props.posterAssetId,'poster');
+  if(['gallery','carousel'].includes(node.type))for(const [index,item] of (Array.isArray(props.items)?props.items:[]).entries()){
+    if(item&&typeof item==='object'&&!Array.isArray(item))assertPublicSource(item.src,item.assetId,`items.${index}.src`);
+  }
 }
 // Single source for the visible authored-content publication gate. The Inspector can
 // read this without mutating a draft; the server uses the same decision.
@@ -98,15 +133,16 @@ export function getPublicationContentGuidance(node){
   if(!isAuthoredContent(node)||!CONTENT_FIELDS[node?.type])return null;
   const p=contentProperties(node);
   const hasText=value=>typeof value==='string'?Boolean(value.trim()):typeof value==='number'&&Number.isFinite(value);
-  const hasMediaSource=value=>typeof value==='string'&&Boolean(value.trim());
+  const hasMediaSource=value=>typeof value==='string'&&Boolean(value.trim())&&Boolean(safePublishedMediaUrl(value));
   const hasAssetId=value=>typeof value==='string'&&Boolean(value.trim());
   const items=Array.isArray(p.items)?p.items:[];
   const rows=Array.isArray(p.rows)?p.rows:[];
   let missing=null;
   const requireField=(fieldKey,message)=>{missing={fieldKey,message}};
   if(['image','video','audio'].includes(node.type)&&!hasMediaSource(p.src)&&!hasAssetId(p.assetId))requireField('src','Válassz Médiatár-fájlt vagy adj meg médiaforrást.');
+  if(node.type==='video'&&!hasAssetId(p.posterAssetId)&&isEditorOnlyMediaUrl(safeSrc(p.poster)||p.poster))requireField('poster','A szerkesztői előnézeti útvonal nem használható videó-borítóképként a publikált oldalon.');
   if(node.type==='image'&&(hasMediaSource(p.src)||hasAssetId(p.assetId))&&!p.decorative&&!hasText(p.alt))requireField('alt','Adj meg képleírást, vagy jelöld a képet díszítőnek.');
-  if(['link','button'].includes(node.type)&&!hasMediaSource(p.href))requireField('href','Adj meg hivatkozási célt. Művelet nélküli gomb nem publikálható.');
+  if(['link','button'].includes(node.type)&&!safeHref(p.href))requireField('href','Adj meg hivatkozási célt. Művelet nélküli gomb nem publikálható.');
   if(node.type==='heading'&&!hasText(p.text))requireField('text','A címsor nem lehet üres.');
   if(['gallery','carousel'].includes(node.type)&&(!items.length||items.some(item=>!item||typeof item!=='object'||Array.isArray(item)||(!hasMediaSource(item.src)&&!hasAssetId(item.assetId))||!(hasText(item.alt)||hasText(item.caption)))))requireField('items','A képekhez Médiatár-fájl vagy forrás, és leírás vagy képaláírás szükséges.');
   if(['tabs','accordion','dropdown'].includes(node.type)&&(!items.length||items.some(item=>!item||typeof item!=='object'||Array.isArray(item)||!hasText(item.title))))requireField('items','Legalább egy elnevezett rész szükséges.');
@@ -185,7 +221,7 @@ export function contentAttributes(node){
 }
 export function authoredNodeHtml(node,{childrenHtml='',device='desktop',editor=false}={}){
   const p=contentProperties(node),text=esc(p.text??p.content??node.name??''),id='creator-'+(typeof node.id==='string'?node.id:'').replace(/[^\w-]/g,'-');
-  const imageSource=item=>typeof item.assetId==='string'&&MEDIA_ASSET_ID.test(item.assetId)?`/${editor?'api/admin/media?id=':'media/'}${encodeURIComponent(item.assetId)}`:safeSrc(item.src);
+  const imageSource=item=>typeof item.assetId==='string'&&MEDIA_ASSET_ID.test(item.assetId)?`/${editor?'api/admin/media?id=':'media/'}${encodeURIComponent(item.assetId)}`:editor?safeSrc(item.src):safePublishedMediaUrl(item.src);
   const image=item=>{const src=imageSource(item),{focalX:x,focalY:y}=imageFocalPosition(item);return src?`<img src="${esc(src)}" alt="${esc(imageAlt(item))}" loading="${item.loading==='eager'?'eager':'lazy'}" decoding="async" style="object-fit:${['cover','contain','fill','none','scale-down'].includes(item.fit)?item.fit:'cover'};object-position:${x}% ${y}%">`:`<span class="creator-media-empty">${editor?'Válassz képet a Médiatárból vagy adj meg képcímet.':'A kép nem érhető el.'}</span>`};
   const items=Array.isArray(p.items)?p.items.slice(0,40).map(item=>item&&typeof item==='object'&&!Array.isArray(item)?item:{}):[];
   const authoredLabel=trimmedText(p.ariaLabel).slice(0,160);
@@ -197,7 +233,7 @@ export function authoredNodeHtml(node,{childrenHtml='',device='desktop',editor=f
   if(node.type==='icon'){const icon=typeof p.icon==='string'?p.icon:'';return `<span aria-hidden="true">${({star:'★',heart:'♥',play:'▶',check:'✓',arrow:'➜',bolt:'ϟ',camera:'📷',music:'♫',globe:'◎',mail:'✉'})[icon]||'★'}</span>`}
   if(node.type==='image')return `<div class="creator-image-frame"${['16 / 9','4 / 3','1 / 1','3 / 4'].includes(p.ratio)?` style="aspect-ratio:${p.ratio}"`:''}>${image(p)}</div>${imageCaption(p)?`<figcaption>${esc(imageCaption(p))}</figcaption>`:''}`;
   if(['video','audio'].includes(node.type)){
-    const asset=typeof p.assetId==='string'&&MEDIA_ASSET_ID.test(p.assetId)?`/${editor?'api/admin/media?id=':'media/'}${encodeURIComponent(p.assetId)}`:'';const src=asset||safeSrc(p.src);if(!src)return `<span class="creator-media-empty">${editor?'Válassz fájlt a Médiatárból vagy adj meg médiaforrást.':'A média nem érhető el.'}</span>`;
+    const asset=typeof p.assetId==='string'&&MEDIA_ASSET_ID.test(p.assetId)?`/${editor?'api/admin/media?id=':'media/'}${encodeURIComponent(p.assetId)}`:'';const src=asset||(editor?safeSrc(p.src):safePublishedMediaUrl(p.src));if(!src)return `<span class="creator-media-empty">${editor?'Válassz fájlt a Médiatárból vagy adj meg médiaforrást.':'A média nem érhető el.'}</span>`;
     const tag=node.type,poster=tag==='video'?imageSource({assetId:p.posterAssetId,src:p.poster}):'';return `<${tag} src="${esc(src)}" preload="metadata"${p.controls!==false?' controls':''}${p.loop?' loop':''}${p.muted?' muted':''}${p.autoplay&&p.muted&&!editor?' autoplay':''}${tag==='video'?' playsinline':''}${poster?` poster="${esc(poster)}"`:''}></${tag}>`;
   }
   if(node.type==='list')return `<${p.ordered?'ol':'ul'}>${items.map(item=>{const href=safeHref(item.href),label=displayText(item.text);return `<li>${href?`<a href="${esc(href)}">${esc(label||'Hivatkozás')}</a>`:esc(item.text)}</li>`}).join('')}</${p.ordered?'ol':'ul'}>`;

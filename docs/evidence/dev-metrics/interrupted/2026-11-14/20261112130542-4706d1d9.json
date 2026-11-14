@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "id": "20261112130542-4706d1d9",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-12T13:05:42.179Z",
+  "abandoned_at": "2026-11-14T14:45:50.932Z",
+  "measured_seconds": null,
+  "status": "interrupted",
+  "reason": "Previous session interrupted without a reliable end time",
+  "started_revision": "b12169405b919140e410317d7cd0126d966c5564",
+  "measurement": "missing end time; excluded from elapsed time and ETA"
+}
