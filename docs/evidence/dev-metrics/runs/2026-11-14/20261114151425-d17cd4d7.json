@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261114151425-d17cd4d7",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-14T15:14:25.591Z",
+  "finished_at": "2026-11-14T15:32:56.707Z",
+  "wall_seconds": 1111,
+  "paused_seconds": 0,
+  "measured_seconds": 1111,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "D-06: helyi rendezett export restore PASS; Cloudflare D1 literal restore két natív importkorlát miatt BLOCKED. Éles preflight read-only, evidence és tervfrissítés elkészült.",
+  "evidence": [
+    "docs/evidence/editor-d06-export-restore-import-2026-11-14.json"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "f00aab4c2ffe6a9d9a30e6187833647e3953b4c0",
+  "finished_revision": "f00aab4c2ffe6a9d9a30e6187833647e3953b4c0",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
