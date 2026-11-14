@@ -63,6 +63,7 @@ test('role policy is limited to actual privileged paths, not login or public pag
   assert.equal(requiredSiteRole('/admin/login', url), null);
   assert.equal(requiredSiteRole('/admin', url), 'viewer');
   assert.equal(requiredSiteRole('/admin/editor', url), 'editor');
+  assert.equal(requiredSiteRole('/admin/schedule', url), 'editor');
   assert.equal(requiredSiteRole('/api/admin/settings', url), 'admin');
   assert.equal(requiredSiteRole('/api/admin/pages', url), 'editor');
   assert.equal(requiredSiteRole('/api/public/pages', url), null);
@@ -79,6 +80,48 @@ test('tenant enforcement retains the HTML login redirect without revealing Admin
   assert.equal((await f.fetch('/admin/login')).status, 200);
   assert.equal(f.assetsServed(), 1);
   assert.equal((await f.fetch('/api/admin/settings')).status, 401);
+});
+
+test('Schedule HTML route obeys the active site grant and preserves browser login redirects', async t => {
+  const f=await fixture(t);
+  const unauthenticated=await f.fetch('/admin/schedule');
+  assert.equal(unauthenticated.status,302,'anonymous Schedule access redirects to login');
+  assert.equal(unauthenticated.headers.get('Location'),bootstrapOrigin+'/admin/login');
+  assert.equal(f.assetsServed(),0,'anonymous cannot fetch the Schedule HTML asset');
+
+  assert.equal((await f.fetch('/admin/schedule','viewer')).status,403,
+    'legacy viewer without an active site editor grant cannot open Schedule');
+  assert.equal((await f.fetch('/admin/schedule','editor')).status,200,
+    'member with an editor grant may open Schedule');
+  assert.equal(f.assetsServed(),1,'only the authorized request served an asset');
+
+  f.db.prepare("UPDATE site_memberships SET role='viewer' WHERE user_id='editor' AND site_id='site-default'").run();
+  assert.equal((await f.fetch('/admin/schedule','editor')).status,403,
+    'global editor alone cannot override a site viewer grant');
+
+  f.db.prepare("UPDATE site_memberships SET role='editor' WHERE user_id='viewer' AND site_id='site-default'").run();
+  assert.equal((await f.fetch('/admin/schedule','viewer')).status,200,
+    'global viewer with an active site editor grant can open Schedule');
+  assert.equal(f.assetsServed(),2);
+
+  f.db.prepare("UPDATE site_memberships SET status='revoked' WHERE user_id='viewer' AND site_id='site-default'").run();
+  assert.equal((await f.fetch('/admin/schedule','viewer')).status,403,
+    'a revoked site editor cannot fetch Schedule HTML');
+});
+
+test('Schedule HTML site enforcement fails closed without schema and preserves legacy compatibility',async t=>{
+  const missing=await fixture(t,{installed:false,enabled:true});
+  assert.equal((await missing.fetch('/admin/schedule','owner')).status,503,
+    'missing membership schema cannot grant an authenticated admin access');
+  assert.equal((await missing.fetch('/admin/schedule')).status,302,
+    'anonymous browser keeps the existing login redirect');
+  assert.equal(missing.assetsServed(),0);
+
+  const legacy=await fixture(t,{installed:false,enabled:false});
+  assert.equal((await legacy.fetch('/admin/schedule','editor')).status,200,
+    'legacy editor retains original-site HTML access with enforcement disabled');
+  assert.equal((await legacy.fetch('/admin/schedule','viewer')).status,403,
+    'legacy viewer is forbidden');
 });
 
 test('default-site grants restrict roles and prohibit cross-site privilege inheritance', async t => {

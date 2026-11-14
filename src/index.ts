@@ -89,7 +89,12 @@ export default {
     if (pathname === "/admin/schedule") {
       const user = await getAuthenticatedUser(request, env);
       if (!user) return Response.redirect(new URL("/admin/login", request.url).toString(), 302);
-      if (!hasRole(user, "editor")) return new Response("Forbidden", { status: 403 });
+      // When tenant enforcement is enabled, the central Worker ingress has
+      // already required an active editor grant for the resolved site. The
+      // global legacy role is valid only when that feature is disabled.
+      if (env.SITE_MEMBERSHIP_ENFORCEMENT !== "enabled" && !hasRole(user, "editor")) {
+        return new Response("Forbidden", { status: 403 });
+      }
       return env.ASSETS.fetch(assetRequest("/admin-schedule.html", request));
     }
     if (pathname === "/admin/media") {
