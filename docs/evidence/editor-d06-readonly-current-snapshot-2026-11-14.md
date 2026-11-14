@@ -1,0 +1,14 @@
+# D-06 read-only production safety evidence — 2026-11-14
+
+The following note was recorded during an authenticated read-only D1 preflight. The canonical plan is restored independently to its original exact Git blob.
+
+
+### 77.44.7.D / D-06 — változó éles média- és Editor-adatok, új SELECT-only mentési kapu (2026-11-14)
+
+A #338 [test-only PR](https://github.com/sanci9517/sanci9517/pull/338) exact `ae770c29a83cedfe5dda6138f8ec13fa2f0b21b6` forrásfején a F0, Twitch és Worker release dry-run **PASS**; az Editor Core típus-/unit-/offline D1-/media API-/isolated Worker+D1+R2 lépések **PASS**, de a teljes Chromium ellenőrzés e bejegyzéskor **IN_PROGRESS / NOT_CERTIFIED**. Emiatt a PR ekkor **nem volt beolvasztva**, Worker deploy nem történt ezzel a csomaggal. A #338 korábbi feje két mobil/desktop browser-teszten a már működő `showArtwork` kapcsoló hiányzó elvárása miatt FAIL lett; az új head a tényleges Inspector-mezőlistát és natív checkboxot ellenőrzi. **A teljes CI PASS-t csak lezárt futás után szabad kijelenteni.**
+
+Az új, hitelesített Cloudflare D1 `SELECT`/read-only `PRAGMA` előellenőrzés az éles `sanci9517-db` adatbázison **5/5 módosításmentes választ** adott: `changed_db=false`, `changes=0`, `rows_written=0` mindegyiknél; **34 migráció**, utolsó `0028_media_archive.sql`, továbbra csak a **3 régi case-sensitive** `media_archive_*` trigger (nincs alkalmazott 0029); `quick_check=ok`, `foreign_key_check` üres. Aktuális táblaszámlálók: **11 oldal, 320 Editor-revízió, 23 médiarekord, 637 audit esemény, 1 navigációs rekord**. Ezek kizárólag pillanatképi darabszámok, nem adategyezőségi igazolások.
+
+A korábbi, elkülönített `sanci9517_d06_restore_20261113_b` teljes logikai klón most `11 oldal / 284 revízió / 11 média / 560 audit`, míg az eredeti `sanci9517_d06_restore_20261113` klón `10 oldal / 252 revízió / 6 média / 527 audit`; mindkét klón SELECT-only számlálása `changed_db=false`, `rows_written=0`. **Egyik korábbi klón sem aktuális forrásállapot**, ezért őket éles adatokra visszaállítani tilos. Az új, tényleges kiadás előtt friss konzisztens mentés, azon igazolt restore és adat-/sémaellenőrzés, a Cloudflare exportált SQL-fájljának külön importkapu-feloldása, új read-only preflight és kifejezett éles D1-sémamódosítási jóváhagyás szükséges.
+
+**Állapot:** D-06 és teljes `77.44.7.D OPEN / NOT_CERTIFIED`; 0029 production **NOT APPLIED**; Save ≠ Publish; a teljes Editor összevont kézi/fizikai acceptance **DEFERRED**. E blokkban nem történt éles D1-írás, R2-törlés, migráció, Worker-deploy vagy új fizetős erőforrás. A fejlesztési munkaórákat a kötelező helyi `tests/dev-metrics.mjs` futtatás nélkül **nem tekintjük mérve**.
