@@ -18,7 +18,7 @@ import {isVisibleOnDevice,collectVisibleDescendants,safeNodeChildIds} from "../e
 import {applyStateStyles,hasStateStyles} from "../editor-v2/core/state-styles.js";
 import {currentBudapestMonday,shiftScheduleWeek,renderScheduleWeek} from "../editor-v2/core/schedule-week.js";
 import {backgroundImageValue,legacyBackgroundCompound,MEDIA_ASSET_ID} from "../editor-v2/core/background-asset.js?v=20261030-legacy-background-compound";
-import {decorateSanciShowcase} from "./sanci-showcase.js?v=20261114-depth-v2";
+import {decorateSanciShowcase} from "./sanci-showcase.js?v=20261114-depth-v3";
 (()=>{
  // Draft preview may show authenticated assets without granting public access
  // to media that has not yet passed the separate Publish gate.
