@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {scheduleStartEpoch,scheduleStartISO} from '../public/editor-v2/core/schedule-time.js';
-import {defaultCountdownContent,normalizeCountdownContent,renderCountdownContent,remainingParts} from '../public/editor-v2/core/countdown-content.js';
+import {defaultCountdownContent,normalizeCountdownContent,renderCountdownContent,remainingParts,activateCountdowns} from '../public/editor-v2/core/countdown-content.js';
 
 test('next scheduled Budapest stream is parsed as CET, independent of viewer timezone',()=>{
  const start=scheduleStartEpoch('2026-11-14T15:27');
@@ -43,4 +43,53 @@ test('manual date countdown stays backward compatible',()=>{
  assert.throws(()=>normalizeCountdownContent(original),/időzóna/);
  const remaining=remainingParts('2030-12-31T20:30:00Z',Date.parse('2030-12-31T20:29:59Z'));
  assert.equal(remaining.seconds,1);
+});
+
+
+test('rescheduled/empty countdown removes stale datetime and screen-reader labels',async()=>{
+ const original={doc:globalThis.document,fetch:globalThis.fetch,
+   setInterval:globalThis.setInterval,clearInterval:globalThis.clearInterval,now:Date.now};
+ class El{
+  constructor(tag='span'){this.tag=tag;this.children=[];this._text='';this.attrs={};
+   this.dataset={};this.className='';this.isConnected=true;this.time=null;this.details=null;}
+  get textContent(){return this.children.length?this.children.map(x=>x.textContent).join(''):this._text}
+  set textContent(v){this._text=String(v);this.children=[]}
+  append(...items){this.children.push(...items)}
+  replaceChildren(...items){this.children=items.flatMap(x=>x.tag==='fragment'?x.children:[x]);this._text=''}
+  querySelector(s){return s.includes('clock')?this.time:s.includes('details')?this.details:null}
+  querySelectorAll(s){return s==='.sanci-timer-value'
+   ?this.children.flatMap(c=>c.children.filter(x=>x.className==='sanci-timer-value')):[]}
+  setAttribute(k,v){this.attrs[k]=String(v)}
+  getAttribute(k){return this.attrs[k]??null}
+  removeAttribute(k){delete this.attrs[k]}
+ }
+ let now=Date.parse('2026-11-14T12:00:00Z'),mode='future';
+ const future='2026-11-14T12:02:30.000Z',intervals=[];
+ const host=new El();host.dataset={countdownSource:'next-stream',countdownTarget:'',
+  countdownSeconds:'true',countdownFinish:'Kezdés!'};host.time=new El('time');host.details=new El();
+ try{
+  globalThis.document={createElement:tag=>new El(tag),createDocumentFragment:()=>new El('fragment')};
+  globalThis.setInterval=cb=>{intervals.push(cb);return intervals.length};
+  globalThis.clearInterval=()=>{};
+  Date.now=()=>now;
+  globalThis.fetch=async()=>({ok:true,json:async()=>({ok:true,data:mode==='future'
+   ?[{title:'Forti',platform:'Twitch',startsAt:future,status:'scheduled'}]:[]})});
+  activateCountdowns({querySelectorAll:()=>[host]});
+  await new Promise(setImmediate);
+  assert.equal(intervals.length,1);
+  assert.equal(host.time.getAttribute('datetime'),future);
+  assert.match(host.time.getAttribute('aria-label'),/nap/);
+  assert.equal(host.time.querySelectorAll('.sanci-timer-value').length,4);
+  mode='empty';now+=61000;intervals[0]();
+  await new Promise(setImmediate);
+  assert.equal(host.time.textContent,'Még nincs meghirdetett adás.');
+  assert.equal(host.time.getAttribute('datetime'),null);
+  assert.equal(host.time.getAttribute('aria-label'),null);
+  assert.match(host.details.textContent,/menetrendben/);
+  host.isConnected=false;intervals[0]();
+ }finally{
+  if(original.doc===undefined)delete globalThis.document;else globalThis.document=original.doc;
+  globalThis.fetch=original.fetch;globalThis.setInterval=original.setInterval;
+  globalThis.clearInterval=original.clearInterval;Date.now=original.now;
+ }
 });
