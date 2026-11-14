@@ -1,0 +1,66 @@
+{
+  "schema": 1,
+  "captured_at": "2026-11-14T22:04:58Z",
+  "plan_point": "77.44.7.D / D-06 current-production export and isolated-restore gate",
+  "status": "EXPORT_COMPLETE; DATA_TRANSFER_REVIEW_BLOCKED; RESTORE_NOT_VERIFIED; FULL_D_OPEN_NOT_CERTIFIED",
+  "source": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "head_sha_before_evidence": "15ed2770b13f50c494c57f631765f2325bc9ba24",
+    "runtime_source_sha": "849310ee9d523feb608ed12763f4ed77d9033c88"
+  },
+  "production_preflight": {
+    "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
+    "method": "SELECT-only D1 Query API before export",
+    "migration_count": 34,
+    "latest_migration": "0028_media_archive.sql",
+    "media_rows_site_default": 23,
+    "active_media_rows": 22,
+    "archived_media_rows": 1,
+    "changed_db": false,
+    "rows_written": 0,
+    "changes": 0
+  },
+  "export": {
+    "api": "Cloudflare D1 Export API",
+    "format": "d1",
+    "status": "complete",
+    "filename": "5a4a5e96-fdad-421a-a33c-143daaf33e98-00000bae-00000000-00005123-109003907e510f0db544c30b6912ee0d.sql",
+    "signed_url_host": "1ad59b064bfa3690063414a9906129e4.r2.cloudflarestorage.com",
+    "returned_sql_contents_to_this_session": false,
+    "production_d1_schema_or_row_mutation": false
+  },
+  "transfer_review": {
+    "status": "AUTO_REVIEW_REJECTED",
+    "operation": "Download the complete signed production D1 SQL export into the connector execution environment for restore testing",
+    "review_reason": "The full sensitive production D1 export would leave Cloudflare for the execution environment; the backup/restore goal was authorized, but this exact full data payload and destination were not separately authorized.",
+    "workaround_attempted": false,
+    "next_step": "Obtain explicit owner approval for the exact data path and isolated destination, or use a Cloudflare-approved in-account restore workflow; do not bypass the review through another export, R2, API, or indirect route."
+  },
+  "production_worker": {
+    "latest_deployment_id": "bf413087-8322-451c-ad4f-3d7128b0ad3d",
+    "version_id": "c133e810-bf8f-4a7f-9c34-fa353c176b83",
+    "traffic_percent": 100,
+    "exact_source_sha": "849310ee9d523feb608ed12763f4ed77d9033c88",
+    "runtime_change_or_deploy_this_block": false
+  },
+  "public_health": {
+    "status": "UNVERIFIED",
+    "reason": "Direct curl failed before connecting: configured sandbox proxy port 8080 unavailable; HTTP 000. No stale temporary response was treated as current."
+  },
+  "r2": {
+    "bucket": "sanci9517-media",
+    "inventory": "UNVERIFIED; prior single metadata-list attempt was not captured in normalized form",
+    "object_bodies_downloaded": 0,
+    "writes_or_deletes": 0
+  },
+  "cost_and_scope": {
+    "new_paid_service": false,
+    "ci_dispatch_or_rerun": false,
+    "new_worker_deploy": false,
+    "production_d1_migration_or_write": false,
+    "r2_object_delete": false,
+    "billing_quota_readback": "UNAVAILABLE; no paid resource was created and no intentional paid quota use was made"
+  },
+  "scope_limit": "Only the D-06 export job completion is verified. The export payload, fresh isolated restore, 0029 production gate, D-01–D-07 acceptance matrix and full 77.44.7.D remain OPEN / NOT_CERTIFIED. Save and Publish remain separate; consolidated Editor manual/physical acceptance is deferred."
+}

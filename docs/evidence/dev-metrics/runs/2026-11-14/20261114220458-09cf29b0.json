@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261114220458-09cf29b0",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-14T22:04:58.449Z",
+  "finished_at": "2026-11-14T22:05:39.617Z",
+  "wall_seconds": 41,
+  "paused_seconds": 0,
+  "measured_seconds": 41,
+  "status": "partial",
+  "kind": "docs",
+  "summary": "D-06: a friss production D1 export API job completed after SELECT-only preflight; transfer into execution environment was automatically rejected as an unapproved sensitive full-data egress, no workaround. No D1 write/migration, R2 delete, CI or deploy; Worker API remains 100% c133e810. Added exact-scope evidence.",
+  "evidence": [
+    "docs/evidence/d06-production-export-transfer-gate-2026-11-14.json"
+  ],
+  "checks": "PASS: node evidence JSON parse; python3 scripts/audit-active-plan-point.py (77.44.7.D OPEN); python3 scripts/check-canonical-plan.py; python3 tests/plan-contract.test.py 14/14; git diff --check. No runtime checks/CI/Wrangler dry-run because docs/evidence-only; production HTTP health blocked before proxy connection.",
+  "started_revision": "4cd79c5cc8c3c0c74137e50c44763e4baf56892e",
+  "finished_revision": "4cd79c5cc8c3c0c74137e50c44763e4baf56892e",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
