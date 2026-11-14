@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261114175540-e45fcab1",
+  "task": "77.44.7.D-D06",
+  "trigger": "manual",
+  "started_at": "2026-11-14T17:55:40.496Z",
+  "finished_at": "2026-11-14T18:12:43.574Z",
+  "wall_seconds": 1023,
+  "paused_seconds": 0,
+  "measured_seconds": 1023,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "D-06 isolated REST batch proved deferred circular-FK route; full literal export restore remains blocked by signed-URL HTTP 403; added restore regression fixture and evidence.",
+  "evidence": [
+    "docs/evidence/editor-d06-rest-query-circular-fk-2026-11-14.json"
+  ],
+  "checks": "python3 tests/d1-restore-order.test.py 7/7; node tests/d1-restore-order-miniflare.mjs PASS; plan-contract 14/14; canonical plan PASS; traceability 396; git diff --check PASS",
+  "started_revision": "40d212ac74bafd5780bb44a3a25afbf3cf3630a4",
+  "finished_revision": "40d212ac74bafd5780bb44a3a25afbf3cf3630a4",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
