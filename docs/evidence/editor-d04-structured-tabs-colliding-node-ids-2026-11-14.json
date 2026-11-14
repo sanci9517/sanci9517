@@ -1,0 +1,54 @@
+{
+  "item": "77.44.7.D / D-04 scoped regression",
+  "date": "2026-11-14",
+  "finding": "The structured tab DOM ID sanitizer replaced punctuation with hyphens, so distinct authored IDs such as node/a and node?a could produce the same tab/panel IDs and ARIA references. The previous length budget also did not include the emitted tab/panel suffix.",
+  "fix": "Namespace safe IDs and encode unsafe identifiers with a bounded readable prefix plus two deterministic rolling hashes over the full input. Include the final tab/panel prefix and suffix in the 100-character cap.",
+  "regressions": [
+    "Distinct unsafe authored IDs generate distinct tab and panel IDs.",
+    "Each tab aria-controls resolves to its own panel, and each panel labels the correct tab.",
+    "Inputs sharing a long readable prefix remain distinguishable when their tail differs.",
+    "88/89-character boundary and oversized input outputs remain within the 100-character DOM ID cap."
+  ],
+  "checks": {
+    "npm_run_test_editor": "PASS: 15/15 files",
+    "real_chromium_editor_structured_content": "PASS: 2/2 cases; includes the regression and existing desktop/mobile Inspector Save/reload/separate Publish/public behavior",
+    "npm_run_typecheck": "PASS",
+    "npm_run_test_web013_migration_gate": "PASS",
+    "canonical_plan_check": "PASS: 13 master files",
+    "plan_contract": "PASS: 14/14",
+    "feature_traceability": "PASS: 396/396 mappings",
+    "wrangler_deploy_dry_run": "PASS: Wrangler 4.130.0; 180 assets; no deployment",
+    "git_diff_check": "PASS"
+  },
+  "production_d1_read_only_preflight": {
+    "queries": "SELECT and PRAGMA only",
+    "latest_migration": "0028_media_archive.sql",
+    "migration_0029_marker_rows": 0,
+    "media_archive_trigger_count": 3,
+    "quick_check": "ok",
+    "foreign_key_check_rows": 0,
+    "all_queries_changed_db": false,
+    "rows_written": 0,
+    "changes": 0
+  },
+  "release": {
+    "branch": "v2/foundation",
+    "commit": "092cfd7792df397ee53f9e6fb13cadbdd73d0504",
+    "github_branch_sha": "092cfd7792df397ee53f9e6fb13cadbdd73d0504",
+    "github_editor_core_run": "https://github.com/sanci9517/sanci9517/actions/runs/43612918745",
+    "github_editor_core_state_at_evidence": "in_progress at real Chromium Editor browser layout regression; preceding required steps passed; do not treat the run as complete",
+    "cloudflare_build": "bfd48c35-7178-42fb-8640-c656c658c1e4",
+    "cloudflare_build_source_sha": "092cfd7792df397ee53f9e6fb13cadbdd73d0504",
+    "cloudflare_build_outcome": "success",
+    "cloudflare_deployment": "4cc8ce22-cfae-467b-8f87-4ffbdbdc3736",
+    "worker_version": "420b860c-920c-408e-a3fb-19a18b722204",
+    "worker_traffic_percent": 100,
+    "production_health": "HTTP 200; ok=true; version 2.0.0",
+    "changed_public_asset": "public/editor-v2/core/element-content.js",
+    "local_sha256": "7d5ef66be8dc904ed2a81407aac1d18f9baf4907e0e57a51ff57baef791403a5",
+    "live_sha256": "7d5ef66be8dc904ed2a81407aac1d18f9baf4907e0e57a51ff57baef791403a5"
+  },
+  "scope_status": "D-04 scoped collision regression shipped; full 77.44.7.D / D-01..D-07 remains OPEN / NOT_CERTIFIED. Full Visual Editor manual/physical acceptance remains deferred. Save and Publish remain separate.",
+  "production_mutations": "None: no production D1 migration/data write and no R2 deletion.",
+  "cost_huf": 0
+}
