@@ -37,6 +37,21 @@ class PlanContractTest(unittest.TestCase):
     def current_next_block(self):
         return cursor(self.root)['next']
 
+    def test_oversized_canonical_master_is_not_silently_truncated(self):
+        # GitHub Contents API may return encoding:none/empty content for files
+        # above 1 MiB. Treating that as the full original has twice erased
+        # the canonical 1.55 MB plan. Intentional compaction needs explicit
+        # review and an updated, independently validated byte contract.
+        master = ROOT / MASTER
+        self.assertGreaterEqual(
+            master.stat().st_size, 1_000_000,
+            'The canonical master plan was unexpectedly truncated below 1 MB',
+        )
+        text = master.read_text(encoding='utf-8')
+        self.assertIn('## AKTUÁLIS VÉGREHAJTÁSI ÁLLAPOT', text)
+        self.assertIn('creator-master/part-12-of-12.md', text)
+        self.assertIn('77.44.7.D', text)
+
     def test_valid_contract_does_not_certify_functionality(self):
         report = validate(self.root)
         self.assertEqual(report['feature_count'], 396)
