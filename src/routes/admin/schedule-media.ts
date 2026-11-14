@@ -1,8 +1,8 @@
 import { error,ok } from "../../core/response";
 import { getAuthenticatedUser,hasRole } from "../../core/auth/require-auth";
-import { auditStatement } from "../../core/audit";
+
 import { getCanonicalSiteContext } from "../../core/site-context";
-import { scheduleArtworkJSON,scheduleArtworkKey,validScheduleArtworkId,SCHEDULE_ARTWORK_ACTIVE_IMAGE_RECHECK } from "../../core/schedule-artwork.ts";
+import { scheduleArtworkJSON,scheduleArtworkKey,validScheduleArtworkId,SCHEDULE_ARTWORK_ACTIVE_IMAGE_RECHECK,SCHEDULE_ARTWORK_COMMIT_AUDIT_GUARD,SCHEDULE_ARTWORK_CLEAR_AUDIT_GUARD } from "../../core/schedule-artwork.ts";
 import type { Env } from "../../types/env";
 
 type Payload = { itemId?: unknown; assetId?: unknown };
@@ -40,14 +40,24 @@ export async function adminScheduleMediaRoute(request:Request,env:Env):Promise<R
       ON CONFLICT(key) DO UPDATE SET value_json=excluded.value_json,updated_at=CURRENT_TIMESTAMP`)
       .bind(key,scheduleArtworkJSON(normalizedAssetId),scheduleId,siteId,normalizedAssetId,siteId):
     env.DB.prepare("DELETE FROM site_settings WHERE key=?").bind(key);
-  const results=await env.DB.batch([
-    statement,
-    auditStatement(env,user.id,"schedule.artwork.update","schedule_item",scheduleId,
-      {siteId,assetId:normalizedAssetId})
-  ]);
-  // An archive or event deletion may win after the initial read. Report the
-  // failed conditional UPSERT rather than claiming an image was attached.
-  if(normalizedAssetId && Number(results?.[0]?.meta?.changes??0)!==1)
+  // The batch is transactional: audit is committed only if the event still
+  // exists and, when attaching an image, the actual sidecar and active image
+  // satisfy the same commit-time preconditions as the UPSERT. An advisory
+  // preflight must never produce a success audit record on a failed write.
+  const auditWhere=normalizedAssetId?SCHEDULE_ARTWORK_COMMIT_AUDIT_GUARD:SCHEDULE_ARTWORK_CLEAR_AUDIT_GUARD;
+  const auditBind=normalizedAssetId?
+    [normalizedAssetId,scheduleId,siteId,scheduleArtworkJSON(normalizedAssetId)]:
+    [scheduleId,siteId];
+  const audit=env.DB.prepare(`INSERT INTO audit_log (id,user_id,action,entity_type,entity_id,metadata_json)
+    SELECT ?,?,?,?,?,? WHERE ${auditWhere}`)
+    .bind(crypto.randomUUID(),user.id,"schedule.artwork.update","schedule_item",scheduleId,
+      JSON.stringify({siteId,assetId:normalizedAssetId}),...auditBind);
+  const results=await env.DB.batch([statement,audit]);
+  // A vanished event or archived image produces no association and no false
+  // audit entry. A cleared-but-already-absent sidecar is an idempotent success
+  // only while the requested schedule event itself still exists.
+  if((normalizedAssetId && Number(results?.[0]?.meta?.changes??0)!==1) ||
+    Number(results?.[1]?.meta?.changes??0)!==1)
     return error("SCHEDULE_ARTWORK_CONFLICT",409,"The event or image changed; refresh before retrying.");
   return ok({itemId:scheduleId,imageAssetId:normalizedAssetId});
 }

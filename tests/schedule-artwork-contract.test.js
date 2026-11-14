@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {DatabaseSync} from 'node:sqlite';
-import {scheduleArtworkKey,scheduleArtworkJSON,validScheduleArtworkId,SCHEDULE_ARTWORK_JOIN,SCHEDULE_ARTWORK_SELECT,SCHEDULE_ARTWORK_ARCHIVE_GUARD,SCHEDULE_ARTWORK_ACTIVE_IMAGE_RECHECK,SCHEDULE_ARTWORK_ASSET_MATCH} from '../src/core/schedule-artwork.ts';
+import {scheduleArtworkKey,scheduleArtworkJSON,validScheduleArtworkId,SCHEDULE_ARTWORK_JOIN,SCHEDULE_ARTWORK_SELECT,SCHEDULE_ARTWORK_ARCHIVE_GUARD,SCHEDULE_ARTWORK_ACTIVE_IMAGE_RECHECK,SCHEDULE_ARTWORK_ASSET_MATCH,SCHEDULE_ARTWORK_COMMIT_AUDIT_GUARD,SCHEDULE_ARTWORK_CLEAR_AUDIT_GUARD} from '../src/core/schedule-artwork.ts';
 import {renderScheduleWeek} from '../public/editor-v2/core/schedule-week.js';
 
 const file=p=>readFileSync(new URL(p,import.meta.url),'utf8');
@@ -24,7 +24,7 @@ test('schedule artwork key and payload stay site-scoped without new migrations',
   assert.match(SCHEDULE_ARTWORK_JOIN,/artwork\.key/);
 });
 test('artwork setter verifies session role, Origin, same-site event and an active image',()=>{
-  for(const required of ['getAuthenticatedUser','hasRole(user,"editor")','request.headers.get("Origin")','site_id=?','archived_at IS NULL','image/png','site_settings','auditStatement']){
+  for(const required of ['getAuthenticatedUser','hasRole(user,"editor")','request.headers.get("Origin")','site_id=?','archived_at IS NULL','image/png','site_settings','audit_log','SCHEDULE_ARTWORK_COMMIT_AUDIT_GUARD']){
     assert.ok(admin.includes(required),required);
   }
   assert.match(admin,/request\.method!=="PUT"/);
@@ -160,4 +160,59 @@ test('equivalent schedule sidecar JSON matches public projection and media usage
    assert.equal(published.get(ITEM,'site-default').image_asset_id,null,'malformed sidecar does not reveal image ID');
   }
  }finally{db.close();}
+});
+
+test('schedule artwork audit is commit-guarded and never records a rejected link or removed event',()=>{
+ const db=artworkFixture();
+ try{
+  db.exec(`CREATE TABLE audit_log(
+    id TEXT PRIMARY KEY,user_id TEXT,action TEXT,entity_type TEXT,entity_id TEXT,metadata_json TEXT
+  )`);
+  const key=scheduleArtworkKey('site-default',ITEM);
+  const setter=db.prepare(`INSERT INTO site_settings (key,value_json,updated_at)
+    SELECT ?,?,CURRENT_TIMESTAMP WHERE EXISTS (SELECT 1 FROM schedule_items WHERE id=? AND site_id=?)
+    ${SCHEDULE_ARTWORK_ACTIVE_IMAGE_RECHECK}
+    ON CONFLICT(key) DO UPDATE SET value_json=excluded.value_json,updated_at=CURRENT_TIMESTAMP`);
+  const guardedAudit=db.prepare(`INSERT INTO audit_log
+    (id,user_id,action,entity_type,entity_id,metadata_json)
+    SELECT ?,?,?,?,?,? WHERE ${SCHEDULE_ARTWORK_COMMIT_AUDIT_GUARD}`);
+  let seq=0;
+  const attach=(item=ITEM,site='site-default',mediaId=IMAGE)=>{
+   const json=scheduleArtworkJSON(mediaId);
+   db.exec('BEGIN');
+   const changed=setter.run(key,json,item,site,mediaId,site).changes;
+   const audited=guardedAudit.run('audit-'+(++seq),'editor','schedule.artwork.update','schedule_item',item,
+     JSON.stringify({siteId:site,assetId:mediaId}),mediaId,item,site,json).changes;
+   db.exec('COMMIT');
+   return {changed,audited};
+  };
+  assert.deepEqual(attach(),{changed:1,audited:1},'live same-site artwork creates an audit row');
+  assert.equal(db.prepare('SELECT COUNT(*) n FROM audit_log').get().n,1);
+  db.prepare('DELETE FROM site_settings WHERE key=?').run(key);
+  db.prepare('UPDATE media SET archived_at=? WHERE id=?').run('2026-11-14',IMAGE);
+  assert.deepEqual(attach(),{changed:0,audited:0},'archive-after-preflight never yields a success audit');
+  assert.equal(db.prepare('SELECT COUNT(*) n FROM audit_log').get().n,1);
+  db.prepare('UPDATE media SET archived_at=NULL WHERE id=?').run(IMAGE);
+  assert.deepEqual(attach(ITEM,'site-other'),{changed:0,audited:0},'wrong tenant cannot create audit');
+  db.prepare('DELETE FROM schedule_items WHERE id=?').run(ITEM);
+  assert.deepEqual(attach(),{changed:0,audited:0},'event deletion after preflight produces no audit');
+  assert.equal(db.prepare('SELECT COUNT(*) n FROM audit_log').get().n,1);
+  const clearAudit=db.prepare(`INSERT INTO audit_log
+    (id,user_id,action,entity_type,entity_id,metadata_json)
+    SELECT ?,?,?,?,?,? WHERE ${SCHEDULE_ARTWORK_CLEAR_AUDIT_GUARD}`);
+  assert.equal(clearAudit.run('audit-missing','editor','schedule.artwork.update','schedule_item',ITEM,
+    '{}',ITEM,'site-default').changes,0,'clearing deleted event is not reported as successful');
+  db.prepare('INSERT INTO schedule_items(id,site_id,title) VALUES (?,?,?)').run(ITEM,'site-default','Restored');
+  assert.equal(db.prepare('DELETE FROM site_settings WHERE key=?').run(key).changes,0,'idempotent clear needs no sidecar');
+  assert.equal(clearAudit.run('audit-clear','editor','schedule.artwork.update','schedule_item',ITEM,
+    '{}',ITEM,'site-default').changes,1,'idempotent clear still records authorized intent');
+  assert.equal(db.prepare('SELECT COUNT(*) n FROM audit_log').get().n,2,'only committed valid actions were audited');
+ }finally{db.close();}
+});
+
+test('API reads both write and audit result metadata before reporting artwork success',()=>{
+ assert.match(admin,/env\\.DB\\.batch\\(\\[statement,audit\\]\\)/);
+ assert.match(admin,/results\\?\\.\\[0\\]\\?\\.meta\\?\\.changes/);
+ assert.match(admin,/results\\?\\.\\[1\\]\\?\\.meta\\?\\.changes/);
+ assert.match(admin,/SCHEDULE_ARTWORK_CONFLICT/);
 });

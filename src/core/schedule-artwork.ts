@@ -49,6 +49,23 @@ export const SCHEDULE_ARTWORK_ARCHIVE_GUARD =
         THEN json_extract(artwork.value_json,'$.assetId') ELSE NULL END)=lower(media.id)
   )`;
 
+// In the same D1 batch as the conditional artwork UPSERT, audit success only
+// if the intended value now exists on a real event and active same-site image.
+// This avoids false-success history when the initial read races an archive or
+// event removal. The clear audit intentionally allows idempotent no-op clears
+// while still requiring a live same-site schedule event.
+export const SCHEDULE_ARTWORK_COMMIT_AUDIT_GUARD =
+  `EXISTS (
+    SELECT 1 FROM schedule_items e
+    JOIN site_settings artwork ON artwork.key=('schedule-artwork:' || e.site_id || ':' || e.id)
+    JOIN media m ON m.id=? AND m.site_id=e.site_id
+    WHERE e.id=? AND e.site_id=? AND artwork.value_json=?
+      AND m.archived_at IS NULL
+      AND m.mime_type IN ('image/png','image/jpeg','image/webp','image/gif')
+  )`;
+export const SCHEDULE_ARTWORK_CLEAR_AUDIT_GUARD =
+  "EXISTS (SELECT 1 FROM schedule_items WHERE id=? AND site_id=?)";
+
 // Recheck the same-site active image inside the artwork UPSERT itself. This
 // complements the archive guard in the other transaction direction.
 export const SCHEDULE_ARTWORK_ACTIVE_IMAGE_RECHECK =
