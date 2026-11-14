@@ -116,7 +116,7 @@ test('archive and cover UPSERT check each other at SQL commit time without D1 sc
   // Historic uppercase and JSON-escaped UUIDs must also block the archive.
   db.prepare('UPDATE site_settings SET value_json=? WHERE key=?').run(JSON.stringify({assetId:IMAGE.toUpperCase()}),key);
   assert.equal(archive.run(IMAGE,'site-default').changes,0,'case variant cannot bypass archive guard');
-  db.prepare('UPDATE site_settings SET value_json=? WHERE key=?').run('{"assetId":"'+String.raw`\\u0032`+IMAGE.slice(1)+'"}',key);
+  db.prepare('UPDATE site_settings SET value_json=? WHERE key=?').run('{"assetId":"'+String.raw`\u0032`+IMAGE.slice(1)+'"}',key);
   assert.equal(archive.run(IMAGE,'site-default').changes,0,'Unicode-escaped JSON cannot bypass archive guard');
   db.prepare('DELETE FROM site_settings WHERE key=?').run(key);
   assert.equal(archive.run(IMAGE,'site-default').changes,1,'unreferenced image can be archived');
