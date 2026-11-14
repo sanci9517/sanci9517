@@ -120,6 +120,7 @@ test('malformed saved values produce publication guidance instead of crashing In
 test('private editor media previews remain editable but cannot pass Publish or render publicly',()=>{
   const privateSources=[
     '/api/admin/media?id=asset',
+    'https://media.example.test/api/admin/media?id=asset',
     '/API/admin/media?id=asset',
     '/%61pi/admin/media?id=asset',
     '/api%2Fadmin/media?id=asset',

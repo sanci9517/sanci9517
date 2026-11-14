@@ -54,7 +54,7 @@ export function safeMediaUrl(value){
 // can contain nested percent-encoding and the request path may be normalized
 // by more than one layer before route matching.
 function isEditorOnlyMediaUrl(value){
-  if(typeof value!=='string'||!value.startsWith('/'))return false;
+  if(typeof value!=='string'||!value.trim())return false;
   try{
     let path=new URL(value,'https://sanci.invalid').pathname;
     for(let pass=0;pass<10;pass++){
