@@ -88,6 +88,11 @@ body.sanci-editorial-page[data-sanci-showcase="depth-v2"] .sanci-showcase-cta .s
 body.sanci-editorial-page[data-sanci-showcase="depth-v2"] .sanci-cta-symbol svg{
  display:block;width:21px;height:21px;fill:currentColor;
 }
+/* Outline destinations must retain open contours. The shared default fill
+ * would otherwise paint calendar, about and envelope SVGs as solid shapes. */
+body.sanci-editorial-page[data-sanci-showcase="depth-v2"] .sanci-cta-symbol svg[fill="none"]{
+ fill:none;
+}
 body.sanci-editorial-page[data-sanci-showcase="depth-v2"] a.sanci-showcase-cta[data-sanci-platform="twitch"] .sanci-cta-symbol{color:#b696ff}
 body.sanci-editorial-page[data-sanci-showcase="depth-v2"] a.sanci-showcase-cta[data-sanci-platform="youtube"] .sanci-cta-symbol{color:#fa6772}
 body.sanci-editorial-page[data-sanci-showcase="depth-v2"] a.sanci-showcase-cta[data-sanci-platform="tiktok"] .sanci-cta-symbol{color:#fff;filter:drop-shadow(-1px -1px 0 #59d2dd) drop-shadow(1px 1px 0 #e85178)}
