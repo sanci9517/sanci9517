@@ -1759,3 +1759,39 @@ test("schedule cover image is reported as site-scoped media usage and protects i
   const other=await f.call("GET","editor",null,{usage:asset.id,site:"other"});
   assert.equal(other.status,403,"other tenant cannot inspect this site's media");
 });
+
+
+test("schedule cover JSON representations stay identical in usage index, public media and archive checks",async t=>{
+  const f=await fixture(t);
+  const upload=await f.call("POST","editor",png,{name:"schedule-json-equivalent.png"});
+  assert.equal(upload.status,201);
+  const asset=(await upload.json()).data;
+  const eventId="3f7a0000-0000-4000-8000-000000000014",key="schedule-artwork:site-default:"+eventId;
+  f.db.prepare("INSERT INTO schedule_items(id,site_id,title) VALUES (?,?,?)").run(eventId,"site-default","Adásborító");
+  const save=f.db.prepare("INSERT INTO site_settings(key,value_json) VALUES (?,?) ON CONFLICT(key) DO UPDATE SET value_json=excluded.value_json");
+  const unicodeId=String.fromCharCode(92)+"u"+asset.id.charCodeAt(0).toString(16).padStart(4,"0")+asset.id.slice(1);
+  const variants=[
+    JSON.stringify({assetId:asset.id}),
+    JSON.stringify({assetId:asset.id.toUpperCase()}),
+    '{  "assetId" : "'+asset.id+'" }',
+    '{"assetId":"'+unicodeId+'"}'
+  ];
+  for(const value of variants){
+    save.run(key,value);
+    const report=await f.call("GET","editor",null,{usage:asset.id});
+    assert.equal(report.status,200);
+    const usage=(await report.json()).data;
+    assert.equal(usage.complete,true);
+    assert.deepEqual(usage.references.map(ref=>ref.path),["schedule_items.artwork"],
+      "all semantically identical sidecars must report the same live usage");
+    const publicResponse=await publishedMediaRoute(new Request("https://example.test/media/"+asset.id),f.env,"site-default",asset.id);
+    assert.equal(publicResponse.status,200,"equivalent valid schedule artwork must have public access");
+    assert.deepEqual(new Uint8Array(await publicResponse.arrayBuffer()),png,"the permitted object remains byte-identical");
+    assert.equal((await f.call("PATCH","editor",JSON.stringify({archived:true}),{id:asset.id})).status,409,
+      "a referenced image may never be archived regardless of JSON serialization");
+  }
+  save.run(key,'{"assetId":');
+  assert.equal((await (await f.call("GET","editor",null,{usage:asset.id})).json()).data.references.length,0);
+  assert.equal((await publishedMediaRoute(new Request("https://example.test/media/"+asset.id),f.env,"site-default",asset.id)).status,404,
+    "a malformed schedule sidecar grants no public access");
+});

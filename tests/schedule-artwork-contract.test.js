@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {DatabaseSync} from 'node:sqlite';
-import {scheduleArtworkKey,scheduleArtworkJSON,validScheduleArtworkId,SCHEDULE_ARTWORK_JOIN,SCHEDULE_ARTWORK_SELECT,SCHEDULE_ARTWORK_ARCHIVE_GUARD,SCHEDULE_ARTWORK_ACTIVE_IMAGE_RECHECK} from '../src/core/schedule-artwork.ts';
+import {scheduleArtworkKey,scheduleArtworkJSON,validScheduleArtworkId,SCHEDULE_ARTWORK_JOIN,SCHEDULE_ARTWORK_SELECT,SCHEDULE_ARTWORK_ARCHIVE_GUARD,SCHEDULE_ARTWORK_ACTIVE_IMAGE_RECHECK,SCHEDULE_ARTWORK_ASSET_MATCH} from '../src/core/schedule-artwork.ts';
 import {renderScheduleWeek} from '../public/editor-v2/core/schedule-week.js';
 
 const file=p=>readFileSync(new URL(p,import.meta.url),'utf8');
@@ -38,6 +38,7 @@ test('public image access is granted for real schedule associations only, never 
   assert.match(media,/INNER JOIN site_settings artwork/);
   assert.match(media,/row\.mime_type\.startsWith\("image\/"\)/);
   assert.match(media,/documentAssetReferences\(page\.published_content_json/);
+  assert.match(media,/SCHEDULE_ARTWORK_ASSET_MATCH/,'both usage and published access must share decoded asset matching');
   assert.match(media,/SCHEDULE_ARTWORK_ARCHIVE_GUARD/,'archive commit must recheck active schedule associations');
   assert.match(admin,/SCHEDULE_ARTWORK_ACTIVE_IMAGE_RECHECK/,'setter must atomically recheck active image before association');
   assert.match(admin,/SCHEDULE_ARTWORK_CONFLICT/,'a lost precondition is reported rather than acknowledged');
@@ -127,5 +128,36 @@ test('archive and cover UPSERT check each other at SQL commit time without D1 sc
   assert.equal(setter.run(key,scheduleArtworkJSON(IMAGE),'nonexistent','site-default',IMAGE,'site-default').changes,0,'missing event fails the SQL precondition');
   assert.equal(setter.run(key,scheduleArtworkJSON(IMAGE),ITEM,'site-other',IMAGE,'site-default').changes,0,'cross-site event fails the SQL precondition');
   assert.equal(setter.run(key,scheduleArtworkJSON(IMAGE),ITEM,'site-default',IMAGE,'site-other').changes,0,'cross-site media fails the SQL precondition');
+ }finally{db.close();}
+});
+
+test('equivalent schedule sidecar JSON matches public projection and media usage by decoded, tenant-scoped UUID',()=>{
+ const db=artworkFixture();
+ try{
+  const key=scheduleArtworkKey('site-default',ITEM);
+  const update=db.prepare('INSERT INTO site_settings(key,value_json) VALUES (?,?) ON CONFLICT(key) DO UPDATE SET value_json=excluded.value_json');
+  const usage=db.prepare(`SELECT e.id FROM schedule_items e
+     INNER JOIN site_settings artwork ON artwork.key=('schedule-artwork:' || e.site_id || ':' || e.id)
+     WHERE e.site_id=? AND ${SCHEDULE_ARTWORK_ASSET_MATCH} LIMIT 1`);
+  const published=db.prepare(`SELECT ${SCHEDULE_ARTWORK_SELECT} FROM schedule_items e${SCHEDULE_ARTWORK_JOIN} WHERE e.id=? AND e.site_id=?`);
+  const unicode='{"assetId":"'+String.raw`\u0032`+IMAGE.slice(1)+'"}';
+  const valid=[
+   JSON.stringify({assetId:IMAGE}),
+   JSON.stringify({assetId:IMAGE.toUpperCase()}),
+   '{  "assetId" : "'+IMAGE+'" }',
+   unicode
+  ];
+  for(const json of valid){
+   update.run(key,json);
+   assert.equal(usage.get('site-default',IMAGE)?.id,ITEM,'valid equivalent JSON must appear in the usage index');
+   assert.equal(usage.get('site-other',IMAGE),undefined,'another tenant cannot inspect the link');
+   assert.equal(usage.get('site-default','7e000000-0000-4000-8000-000000000007'),undefined,'other images are not linked');
+   assert.equal(published.get(ITEM,'site-default').image_asset_id,IMAGE,'real active image is projected with canonical asset ID');
+  }
+  for(const json of ['{"assetId":',JSON.stringify({assetId:0}),JSON.stringify({assetId:{bad:true}})]){
+   update.run(key,json);
+   assert.equal(usage.get('site-default',IMAGE),undefined,'malformed or non-string value is not a valid link');
+   assert.equal(published.get(ITEM,'site-default').image_asset_id,null,'malformed sidecar does not reveal image ID');
+  }
  }finally{db.close();}
 });
