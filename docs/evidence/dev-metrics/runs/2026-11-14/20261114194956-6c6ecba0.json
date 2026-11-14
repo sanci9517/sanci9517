@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261114194956-6c6ecba0",
+  "task": "77.44.7.D-D03",
+  "trigger": "manual",
+  "started_at": "2026-11-14T19:49:56.220Z",
+  "finished_at": "2026-11-14T20:00:20.481Z",
+  "wall_seconds": 624,
+  "paused_seconds": 447,
+  "measured_seconds": 177,
+  "status": "pass",
+  "kind": "test",
+  "summary": "Exact-SHA D-03 Editor Core, Chromium and required workflows completed successfully; release evidence and canonical status updated.",
+  "evidence": [
+    "docs/evidence/editor-d03-malformed-structured-content-2026-11-14.json",
+    "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md"
+  ],
+  "checks": "Editor Core 43632609317 exact SHA completed/success; F0 43632609391 and Twitch 43632609377 success. Canonical plan 13 files/396 mappings, plan contract 14/14, traceability 396/396; production deployment/health/hash recorded.",
+  "started_revision": "11defe01aa0c10bd438a91fdf08e5990ed1a18ab",
+  "finished_revision": "11defe01aa0c10bd438a91fdf08e5990ed1a18ab",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

@@ -2,7 +2,7 @@
   "schema": 1,
   "plan_point": "77.44.7.D / D-03",
   "date": "2026-11-14",
-  "status": "RUNTIME_DEPLOYED; EXACT_SHA_CI_IN_PROGRESS; FULL_D_OPEN_NOT_CERTIFIED",
+  "status": "RUNTIME_DEPLOYED; EXACT_SHA_CI_PASS; FULL_D_OPEN_NOT_CERTIFIED",
   "finding": {
     "root_cause": "structured-inspector.js caught normalization failures for persisted props.contentModel and substituted createElementContent(type). Rendering and a later edit could therefore discard the malformed saved model without an explicit recovery decision.",
     "affected_contract": "structured-v1 Inspector contentModel for list, table, tabs, accordion, gallery, and carousel",
@@ -33,9 +33,25 @@
       "all_queries_rows_written": 0,
       "all_queries_changes": 0
     },
-    "browser_test": "Remote GitHub Editor Core run 43632609317: Chromium install and isolated storage completed; Editor browser layout regression still in progress. Prior local sandbox Chromium launch remains blocked by setsockopt EPERM/SIGTRAP.",
-    "github_ci": "IN_PROGRESS exact-source Editor Core run 43632609317; F0 baseline 43632609391 and Twitch Integration 43632609377 success; Editor browser layout regression in progress.",
-    "diff_check": "PASS"
+    "browser_test": "PASS on exact SHA 64be7ac20c089a2d789e7971c5f074273b1d1514: GitHub Editor Core real Chromium Editor layout regression and WEB-013 Admin mobile browser regression completed/success. All mandatory workflow steps succeeded; conditional screenshot upload skipped because no checks failed.",
+    "github_ci": "PASS: exact-source Editor Core 43632609317 completed/success, F0 43632609391 success, Twitch 43632609377 success.",
+    "diff_check": "PASS",
+    "editor_core_steps": {
+      "typecheck": "success",
+      "editor core tests": "success",
+      "offline D1 ledger/bootstrap": "success",
+      "private R2 media API": "success",
+      "Chromium install": "success",
+      "isolated media storage": "success",
+      "real Chromium Editor browser layout regression": "success",
+      "WEB-013 Admin mobile browser regression": "success",
+      "canonical schedule": "success",
+      "domain contracts": "success",
+      "Brand Kit": "success",
+      "Admin home": "success",
+      "cleanup": "success"
+    },
+    "conditional_screenshot_upload": "skipped (no failed checks)"
   },
   "repository": {
     "branch": "v2/foundation",
@@ -45,7 +61,9 @@
     "branch_head": "64be7ac20c089a2d789e7971c5f074273b1d1514",
     "runtime_commit": "61a3d80f98b7302a7d2e0a68bb93778c54589f1c",
     "metrics_followup_commit": "8e8b6d1bd60107fb9b2e35d16558363f2b3b1251",
-    "ci_trigger_commit": "64be7ac20c089a2d789e7971c5f074273b1d1514"
+    "ci_trigger_commit": "64be7ac20c089a2d789e7971c5f074273b1d1514",
+    "editor_core_ci_run": 43632609317,
+    "editor_core_ci_status": "completed/success"
   },
   "production": {
     "deployment": "141916e9-f6b8-4b5a-a1a2-9c2a064f58a2",
@@ -66,7 +84,8 @@
         "match": true
       }
     },
-    "worker_version_number": 4061
+    "worker_version_number": 4061,
+    "runtime_source_unchanged_after_release": true
   },
   "mutations": {
     "production_d1_write_or_migration": false,
