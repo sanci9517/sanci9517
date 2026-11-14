@@ -90,3 +90,12 @@ test('outlined icons retain their stroke, and navigation keeps its existing icon
  assert.match(css,/prefers-reduced-motion:\s*reduce/);
  assert.match(css,/data-sanci-role="signature"/);
 });
+
+
+test('decorations run after all authored content activators, not before their DOM rewrites',()=>{
+ const renderer=readFileSync(new URL('../public/assets/page-renderer.js',import.meta.url),'utf8');
+ const activation=renderer.indexOf('activateStructuredContent(canvas);activateCountdowns(canvas);activateEmbeds(canvas);activateCodeBlocks(canvas);');
+ const decoration=renderer.indexOf('decorateSanciShowcase(canvas,page,{slug,enabled:isSanciShowcase});');
+ assert.ok(activation>0&&decoration>activation,'icons, autograph and highlights are attached after activation');
+ assert.equal(renderer.indexOf('decorateSanciShowcase(canvas,page,{slug,enabled:isSanciShowcase});',decoration+1),-1);
+});
