@@ -1,0 +1,20 @@
+# 77.44.7.D / D-06 — #343 site-scoped Schedule authorization and retention guard: release evidence
+
+Date: 2026-11-14. **D-06 remains OPEN / NOT_CERTIFIED**. This note records one narrow verified runtime release, not acceptance of the full Visual Editor or 0029 D1 migration.
+
+## Git, code, and exact-head tests
+- [PR #343](https://github.com/sanci9517/sanci9517/pull/343) exact tested source commit `876257cc2db0e0f9dc0e989c0d0d09954f8b670d`, normal two-parent merge `6371236fd6cf8c6bf7383604bc09d5d1f09933af`. Prior work and all other commits preserved, no force update.
+- `src/core/auth/schedule-editor-access.ts` now enforces active editor/admin `site_memberships` whenever `SITE_MEMBERSHIP_ENFORCEMENT=enabled`, with a fail-closed D1/schema path and legacy global editor role only on `site-default` when enforcement is disabled. Both `src/routes/admin/schedule.ts` and `src/routes/admin/schedule-media.ts` use the same check.
+- `src/core/media-retention-queries.js` now blocks actual retention request SQL for archived media still referenced as same-site Schedule cover, including legacy uppercase/Unicode-escaped/whitespace-formatted JSON. Other-tenant sidecars cannot block another site's asset. No permanent R2 deletion or schema write is performed.
+- `tests/schedule-site-access.test.js` calls actual handlers against isolated SQLite, including revoked/absent grants, schema failure, valid authorized event cover+clear, late archive/event-deletion races with zero false audit entries. `tests/media-retention-queries.test.js` checks same-site legacy sidecars and foreign tenant semantics. The new tests are registered in `npm run test:schedule` and `npm run test:media`.
+- Exact-head CI: F0 baseline `43589273758` **SUCCESS**, Twitch integration `43589273741` **SUCCESS**, Worker release dry-run `43589273768` **SUCCESS**, Editor Core + full Chromium and isolated real Worker D1/R2 `43589273771` **SUCCESS**. Earlier head with a stale static contract test failed, then the corrected exact head passed; do not claim that earlier head passed.
+
+## Live production read-only and deploy
+- Fresh Cloudflare D1 REST SELECT/PRAGMA read-only preflight: **34** migration entries, last `0028_media_archive.sql`; `quick_check=ok`, `foreign_key_check` empty; at least one active original-site administrator membership; all query metadata `changed_db=false`, `rows_written=0`. Production 0029 migration **NOT APPLIED**.
+- The production `media_retention_requests` **table exists**, despite older historical notes that it was missing; live read-only query reports **zero current requests**. The request-creation API path already exists, so #343 protects a real available request path, not merely inert planned SQL. The retention *deletion* transition remains unimplemented and R2 objects are **not deleted** by this change.
+- Cloudflare automatic Workers Build `success` from exact merged SHA `6371236fd6cf8c6bf7383604bc09d5d1f09933af`; deployment `eb76e7e5-a570-4b19-aa75-1770bd6520b3`; Worker version `a447a6b4-5d97-4c73-bdd3-2d1133f63ede`, **100% production traffic**, deployed 2026-11-14T12:58:45Z. Direct production HTTP/content-hash smoke **NOT VERIFIED** in current tool environment; the Cloudflare deployment readback is separate evidence.
+
+## Important scope limit and next steps
+- The central `/admin/schedule` **HTML route** still used a legacy global-role check even after the underlying APIs gained site-grant authorization; [PR #344](https://github.com/sanci9517/sanci9517/pull/344) addresses that separate verified gap. This #343 release evidence **does not certify** the HTML issue as fixed.
+- No production D1 data migration/mutation, no R2 deletion and no new paid infrastructure in this release. Save and Publish remain separate. 0029 production approval, literal export → independent import/restore, and D-01…D-07 full Inspector→Canvas→Save/reload→separate Publish→public site capability matrix **OPEN / NOT_CERTIFIED**. Final manual/physical Editor acceptance remains **DEFERRED**.
+- Single canonical master file remains exactly 1,555,044 bytes at Git blob `6388d6d67f4719cfcde6000e69976c9d09d071b0`; this evidence note is **not** a new plan.
