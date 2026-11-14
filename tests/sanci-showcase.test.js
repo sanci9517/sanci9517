@@ -84,6 +84,7 @@ test('outlined icons retain their stroke, and navigation keeps its existing icon
  const siteJS=readFileSync(new URL('../public/assets/site.js',import.meta.url),'utf8');
  const showcaseJS=readFileSync(new URL('../public/assets/sanci-showcase.js',import.meta.url),'utf8');
  assert.match(css,/\.sanci-cta-symbol svg\[fill="none"\]\s*\{\s*fill:none;/);
+ assert.match(css,/background-image:none;/,'SANCI CTA must honor user-authored backgroundColor');
  assert.match(siteJS,/function enhanceStaticNavigationIcons\(/);
  assert.match(siteJS,/menu-nav-icon/);
  assert.doesNotMatch(showcaseJS,/querySelectorAll\(['"]\.desktop-primary-nav/);
