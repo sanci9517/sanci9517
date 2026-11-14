@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261114193007-27be447e",
+  "task": "77.44.7.D-D03",
+  "trigger": "manual",
+  "started_at": "2026-11-14T19:30:07.075Z",
+  "finished_at": "2026-11-14T19:45:08.120Z",
+  "wall_seconds": 901,
+  "paused_seconds": 465,
+  "measured_seconds": 436,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "D-03 malformed structured content fix released at exact source SHA; live health and changed asset hash verified; F0/Twitch pass; exact-SHA Editor Core Chromium browser CI still running.",
+  "evidence": [
+    "docs/evidence/editor-d03-malformed-structured-content-2026-11-14.json",
+    "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md"
+  ],
+  "checks": "Local targeted 1/1; editor 16/16; typecheck, plan contract 14/14, canonical 13 files/396, traceability and Wrangler dry-run PASS. Read-only D1 5 queries/0 writes. GitHub Editor Core 43632609317 IN_PROGRESS at browser layout; F0 43632609391 PASS; Twitch 43632609377 PASS. Cloudflare build 0a88fcc3 success from 64be7ac2; deployment 141916e9/version 3f0f97e4 100%; health HTTP 200; modified asset SHA match.",
+  "started_revision": "8e8b6d1bd60107fb9b2e35d16558363f2b3b1251",
+  "finished_revision": "64be7ac20c089a2d789e7971c5f074273b1d1514",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

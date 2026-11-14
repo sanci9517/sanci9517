@@ -2,7 +2,7 @@
   "schema": 1,
   "plan_point": "77.44.7.D / D-03",
   "date": "2026-11-14",
-  "status": "LOCAL_FIX_VALIDATED; RELEASE_BLOCKED; FULL_D_OPEN_NOT_CERTIFIED",
+  "status": "RUNTIME_DEPLOYED; EXACT_SHA_CI_IN_PROGRESS; FULL_D_OPEN_NOT_CERTIFIED",
   "finding": {
     "root_cause": "structured-inspector.js caught normalization failures for persisted props.contentModel and substituted createElementContent(type). Rendering and a later edit could therefore discard the malformed saved model without an explicit recovery decision.",
     "affected_contract": "structured-v1 Inspector contentModel for list, table, tabs, accordion, gallery, and carousel",
@@ -33,35 +33,47 @@
       "all_queries_rows_written": 0,
       "all_queries_changes": 0
     },
-    "browser_test": "NOT RUN/PASS: local Chromium cannot launch in this sandbox; standalone Playwright launch reported setsockopt: Operation not permitted and Chromium exited SIGTRAP (133). A public health curl was independently blocked before HTTP, curl exit 7 (proxy port 8080).",
-    "github_ci": "NOT RUN: repository policy records exhausted GitHub Actions free compute. Runtime release requires exact-source CI; no dispatch/rerun or push was initiated.",
+    "browser_test": "Remote GitHub Editor Core run 43632609317: Chromium install and isolated storage completed; Editor browser layout regression still in progress. Prior local sandbox Chromium launch remains blocked by setsockopt EPERM/SIGTRAP.",
+    "github_ci": "IN_PROGRESS exact-source Editor Core run 43632609317; F0 baseline 43632609391 and Twitch Integration 43632609377 success; Editor browser layout regression in progress.",
     "diff_check": "PASS"
   },
   "repository": {
     "branch": "v2/foundation",
     "base_sha": "cd7f51a08fcf14ed20193294f17f116bfefc8cc5",
     "github_branch_sha_at_check": "cd7f51a08fcf14ed20193294f17f116bfefc8cc5",
-    "working_tree": "Runtime fix and tests remain local; not pushed because browser acceptance/remote CI and no-cost release gate are unverified."
+    "working_tree": "Runtime and test source pushed via verified fast-forward; documentation/meter follow-up being updated locally.",
+    "branch_head": "64be7ac20c089a2d789e7971c5f074273b1d1514",
+    "runtime_commit": "61a3d80f98b7302a7d2e0a68bb93778c54589f1c",
+    "metrics_followup_commit": "8e8b6d1bd60107fb9b2e35d16558363f2b3b1251",
+    "ci_trigger_commit": "64be7ac20c089a2d789e7971c5f074273b1d1514"
   },
   "production": {
-    "deployment": "4cc8ce22-cfae-467b-8f87-4ffbdbdc3736",
-    "worker_version": "420b860c-920c-408e-a3fb-19a18b722204",
+    "deployment": "141916e9-f6b8-4b5a-a1a2-9c2a064f58a2",
+    "worker_version": "3f0f97e4-c70a-43c3-bca7-257aed8a31af",
     "traffic_percent": 100,
     "workers_build": {
-      "id": "bfd48c35-7178-42fb-8640-c656c658c1e4",
+      "id": "0a88fcc3-a239-4c88-a6c7-ff54285c980d",
       "outcome": "success",
-      "source_sha": "092cfd7792df397ee53f9e6fb13cadbdd73d0504",
+      "source_sha": "64be7ac20c089a2d789e7971c5f074273b1d1514",
       "deploy_command": "npm run deploy:safe"
     },
     "cloudflare_build_minutes_limit_reached": false,
-    "health": "UNVERIFIED: shell cannot connect to proxy port 8080; Cloudflare tool external fetch returned 403 policy denial.",
-    "changed_asset_hashes": "NOT CHECKED against live assets because this runtime change was not deployed."
+    "health": "PASS: direct GET /api/health HTTP 200; {\"ok\":true,\"service\":\"sanci9517-streamer-brand\",\"version\":\"2.0.0\",\"server\":\"cloudflare-worker\"}",
+    "changed_asset_hashes": {
+      "public/editor-v2/ui/structured-inspector.js": {
+        "local_sha256": "947bb2ba1d7e4b0b738930974e65dfe087146defde13a64200e46e73ea672ef6",
+        "live_sha256": "947bb2ba1d7e4b0b738930974e65dfe087146defde13a64200e46e73ea672ef6",
+        "match": true
+      }
+    },
+    "worker_version_number": 4061
   },
   "mutations": {
     "production_d1_write_or_migration": false,
     "r2_deletion": false,
-    "worker_deployment": false,
-    "ci_dispatch_or_rerun": false
+    "worker_deployment": true,
+    "ci_dispatch_or_rerun": false,
+    "note": "Normal fast-forward push triggered exact-source CI and Cloudflare automatic Worker Build; no manual workflow dispatch/rerun."
   },
   "cost_huf": 0,
   "scope_limit": "This closes only the verified Inspector data-loss regression slice. 77.44.7.D / D-01..D-07 remains OPEN / NOT_CERTIFIED; full Visual Editor manual/physical acceptance remains deferred."
