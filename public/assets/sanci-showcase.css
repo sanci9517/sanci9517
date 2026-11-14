@@ -239,3 +239,91 @@ body.sanci-editorial-page[data-sanci-showcase="depth-v2"] .sanci-in-view{
   opacity:1;transform:none;
  }
 }
+
+
+/* SANCI compact footer v3 — a two-column mobile directory instead of
+   the one-column stack that made the bottom of every page excessively long.
+   All original destinations remain in the canonical shared HTML. */
+@media (max-width:620px){
+ body.sanci-editorial-page[data-sanci-showcase="depth-v2"] .public-footer{
+  margin-top:clamp(28px,7vw,45px);
+  padding-bottom:23px;
+ }
+ body.sanci-editorial-page[data-sanci-showcase="depth-v2"] .public-footer-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  column-gap:clamp(12px,4vw,26px);
+  row-gap:24px;
+  padding:clamp(27px,7vw,38px) 0 24px;
+ }
+ body.sanci-editorial-page[data-sanci-showcase="depth-v2"] .public-footer-brand{
+  grid-column:1/-1;
+  min-width:0;
+ }
+ body.sanci-editorial-page[data-sanci-showcase="depth-v2"] .public-footer-brand .brand{
+  display:inline-flex;
+  max-width:100%;
+ }
+ body.sanci-editorial-page[data-sanci-showcase="depth-v2"] .public-footer-brand .brand-logo{
+  display:block;
+  width:min(210px,57vw);
+  max-width:100%;
+  height:auto;
+ }
+ body.sanci-editorial-page[data-sanci-showcase="depth-v2"] .public-footer-brand p{
+  max-width:100%;
+  margin:11px 0 7px;
+ }
+ body.sanci-editorial-page[data-sanci-showcase="depth-v2"] .public-footer-column,
+ body.sanci-editorial-page[data-sanci-showcase="depth-v2"] .public-footer-column:last-child{
+  grid-column:auto;
+  min-width:0;
+  gap:5px;
+  align-content:start;
+ }
+ body.sanci-editorial-page[data-sanci-showcase="depth-v2"] .public-footer-column strong{
+  font-size:11px;
+  line-height:1.5;
+  margin-bottom:4px;
+  letter-spacing:.085em;
+ }
+ body.sanci-editorial-page[data-sanci-showcase="depth-v2"] .public-footer-column a{
+  display:flex;
+  align-items:center;
+  min-width:0;
+  min-height:44px;
+  font-size:clamp(12px,3.6vw,14px);
+  line-height:1.5;
+  overflow-wrap:anywhere;
+ }
+ body.sanci-editorial-page[data-sanci-showcase="depth-v2"] .public-footer-bottom{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:7px;
+  padding-top:16px;
+  overflow-wrap:anywhere;
+ }
+}
+@media (max-width:340px){
+ body.sanci-editorial-page[data-sanci-showcase="depth-v2"] .public-footer-grid{
+  column-gap:12px;
+ }
+}
+/* All editor-authored text stays readable even with narrow grid/flex children,
+   without overriding author-chosen font sizes, padding, or image treatments. */
+@media (max-width:700px){
+ body.sanci-editorial-page[data-sanci-showcase="depth-v2"] .content-canvas{
+  min-width:0;
+  max-width:100%;
+ }
+ body.sanci-editorial-page[data-sanci-showcase="depth-v2"] [data-sanci-role="hero-copy"]{
+  min-width:0;
+  max-width:100%;
+ }
+ body.sanci-editorial-page[data-sanci-showcase="depth-v2"] [data-sanci-role="hero-copy"] :is(.visual-text,.visual-heading,.visual-button){
+  min-width:0;
+  max-width:100%;
+  overflow-wrap:break-word;
+ }
+}
