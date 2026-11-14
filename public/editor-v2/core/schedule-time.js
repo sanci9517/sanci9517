@@ -20,7 +20,7 @@ export function scheduleStartEpoch(value){
     // Date.parse silently normalizes impossible calendar days such as Feb 30.
     // Source imports must never turn a malformed stream date into a real timer.
     if(!validCalendar(explicit))return null;
-    if(explicit[9]&&(Number(explicit[10])>23||Number(explicit[11])>59))return null;
+    if(explicit[8]&&(Number(explicit[9])>23||Number(explicit[10])>59))return null;
     const t=Date.parse(value);return Number.isFinite(t)?t:null;
   }
   const match=wall.exec(value);
