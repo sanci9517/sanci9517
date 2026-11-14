@@ -44,3 +44,22 @@ A legfrissebb GitHub `countdown-content.js` és `schedule-time.js` kódot V8-ban
 A produkciós D1-en a kód által használt `mode=next` SELECT-szűrés `e.starts_at >= datetime('now','-3 hours')`, `site-default` és `status=scheduled` feltételekkel **egy jövőbeli „Forti”, 2026-11-14T15:27 Europe/Budapest** rekordot adott, a média JOIN működött. A D1 SELECT `changes=0`, további streamidőpont adatírás nem történt.
 
 A Worker továbbra 100%-os forgalmon: `659bca7f-feac-42e3-97d9-833c41b1b442`. **Éles Workers.dev HTTP / teljes Chromium és pontos statikus asset hash továbbra NOT VERIFIED**; nem soroljuk ide a V8 DOM-helyettesítő sikerét.
+
+
+## 2026-11-14 08:33–08:45 Europe/Budapest – folytatás: precíz időpont és képernyőolvasó QA
+
+A tulajdonos a már éles `page-home` v111 visszaszámlálójának finomítását kérte: a meglévő egyetlen SANCI terv és Editor-komponens mentén haladtunk. **Nem történt új főoldali D1-írás:** az utolsó read-only előellenőrzésnél a `page-home` továbbra is publikált v111, az `audit` és a v13 navigáció érintetlen. A `schedule_items` tábla négy `scheduled` rekordjából egy jövőbeli adás: **Forti / Twitch, 2026-11-14 15:27 Europe/Budapest**; nem készítettünk fiktív időpontot.
+
+**Konkrét kódjavítások:**
+
+1. `public/editor-v2/core/schedule-time.js`: explicit `Z`/`±HH:MM` ISO időpontoknál sem fogad el 2026-02-30-hoz hasonló lehetetlen napot vagy hibás offsetet; helyi `.125` milliszekundumot megtartja; téli/nyári magyar idő, DST gap/fold változatlan szerződés szerint. Kizárólag a beépített `Intl` és JS Date kerül felhasználásra, 0 Ft/0 új függőség.
+2. `src/core/schedule-read.ts`: `mode=next` SQL előszűrőben `datetime(e.starts_at)` normalizálja a tárolt `YYYY-MM-DDTHH:mm`, `Z` és explicit offsetes formátumokat, a tényleges UTC-epochot utána a meglévő helyi, szigorú `epoch > Date.now()` döntés választja ki. A D1 read-only próba `SELECT datetime('2026-11-14T15:27')` és `datetime('2026-11-14T15:27+01:00')` megfelelt; az új, tényleges site-scoped SELECT a Forti bejegyzést visszaadta, `changes=0`.
+3. `public/editor-v2/core/countdown-content.js`: az API üres/törölt/lejárt esetén `<time>` `datetime` **és** elavult `aria-label` attribútuma is törlődik, nem marad képernyőolvasó számára hamis régi hátralévő idő. A pozitív API-eseménynél négy cella és valós title/platform megmarad.
+4. `public/editor-v2/ui/countdown-inspector.js`: a menetrendforrást magyarázó egyértelmű rövid szöveg, és kézi módba visszakapcsolva, hiányzó időpontnál külön, `role=status` figyelmeztetés; sem saját dátumot, sem fiktív adást nem választ helyetted.
+5. Normál forrás-szerződést lefedő tesztek: `tests/countdown-next-stream.test.js` több hibás ISO és milliszekundum, későbbi API-válasznál elavult `aria-label` törlése; `public/editor-v2/tests/schedule-source.test.js` az új SQL-normalizálás; `tests/browser/editor-countdown.test.js` a kézi→automatikus→kézi Editor/Publish-váltás.
+
+**Futtatott, tényleges ellenőrzések:** az aktuális GitHub-forrásból izolált, végrehajtott V8 próba 18/18 célzott dátum-/kompatibilitási assert PASS; kontrollált in-memory DOM és visszatérő schedule-válasz esetén 6/6 automatikus óra/stale-`datetime`/stale-`aria-label`/üres állapot PASS. A módosított JavaScript-fájlok önálló szintaxisellenőrzése PASS; a `public/editor-v2/tests/schedule-source.test.js` felső szintű ESM `await import` miatt a sima `new Function` parszerben nem ellenőrizhető (nem jelent hibás ESM-szintaxist). Az éles D1 read-only `SELECT` `changed=0`.
+
+**Kiadás állapota:** GitHub `v2/foundation` normál fast-forward commitok, az újabb Cloudflare Worker deployment `c9eca625-2fe2-4c2c-9aff-fd036db79b83`, Worker version `0ac3cd8d-91b2-474d-ba71-983efb6b9e38`, 2026-11-14T07:44:21Z, 100% forgalom; a Worker-version script etag `5b50b323d84730a8ce0283afcd49f5f72dd5556a070d306b24cd461d3df06d87`. A pontos Worker build-forrás SHA, tényleges statikus asset tartalomhash, éles web HTTP és teljes 320/390/768/1440px Chromium render **UNVERIFIED**, mivel a workers.dev URL a webes ellenőrző környezetben nem feloldható és nincs teljes helyi checkout. `npm run typecheck`, `npm run test:schedule`, `npm run test:countdown:browser`, `wrangler deploy --dry-run` továbbra **NOT RUN**, GitHub Actions dispatch **NOT DONE** a felhasználó 0 Ft-os quota korlátja miatt. A `77.44.7.D / D-06` általános acceptance **OPEN / NOT_CERTIFIED**.
+
+**Ár:** 0 Ft új erőforrás, új dependency 0, D1 prod írás 0, migráció 0, R2 törlés 0. A főoldali Save≠Publish különválasztás és az Editor revíziók megmaradtak.
