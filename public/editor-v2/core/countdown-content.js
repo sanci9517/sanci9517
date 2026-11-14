@@ -82,6 +82,7 @@ function activateNextStreamCountdown(host,time){
  const details=host.querySelector('.visual-countdown-details');
  const showSeconds=host.dataset.countdownSeconds==='true';
  const showInfo=value=>{if(details&&details.textContent!==value)details.textContent=value};
+ const showMessage=value=>{time.textContent=value;time.removeAttribute('datetime');time.removeAttribute('aria-label')};
  const load=async()=>{
   if(state.loading||!host.isConnected)return;
   state.loading=true;state.lastRequest=Date.now();
@@ -101,14 +102,13 @@ function activateNextStreamCountdown(host,time){
     showInfo([name,budapestDisplay.format(epoch),platform].filter(Boolean).join(' · '));
    }else{
     state.epoch=null;state.event=null;
-    time.textContent='Még nincs meghirdetett adás.';
-    time.removeAttribute('datetime');
+    showMessage('Még nincs meghirdetett adás.');
     showInfo('Az új időpontok a menetrendben jelennek meg.');
    }
   }catch{
    if(!host.isConnected)return;
    if(state.epoch===null){
-    time.textContent='Az időpont most nem érhető el.';
+    showMessage('Az időpont most nem érhető el.');
     showInfo('Próbáld meg később, vagy nézd meg a menetrendet.');
    }
   }finally{state.loading=false}
@@ -120,8 +120,7 @@ function activateNextStreamCountdown(host,time){
    if(now<state.epoch)renderDynamicClock(time,state.epoch,showSeconds);
    else{
     state.epoch=null;state.event=null;state.lastRequest=0;
-    time.textContent=host.dataset.countdownFinish||'Az adás kezdése elérkezett.';
-    time.removeAttribute('datetime');
+    showMessage(host.dataset.countdownFinish||'Az adás kezdése elérkezett.');
     showInfo('Ha már elindult, a Twitch oldalon tudsz csatlakozni.');
    }
   }
