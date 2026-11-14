@@ -22,6 +22,16 @@ export const retentionQueries = Object.freeze({
          AND NOT EXISTS (
            SELECT 1 FROM editor_revisions r JOIN pages p ON p.id=r.page_id
            WHERE p.site_id=m.site_id AND ${mediaReferenceSql("r.document_json","m.id")}
+         )
+         -- Guard late/legacy archived rows that still have a live schedule
+         -- cover sidecar. Compare the decoded JSON string rather than raw
+         -- serialization, so uppercase and Unicode-escaped IDs cannot pass.
+         AND NOT EXISTS (
+           SELECT 1 FROM schedule_items e
+           JOIN site_settings artwork ON artwork.key=('schedule-artwork:' || e.site_id || ':' || e.id)
+           WHERE e.site_id=m.site_id
+             AND lower(CASE WHEN json_valid(artwork.value_json)
+               THEN json_extract(artwork.value_json,'$.assetId') ELSE NULL END)=lower(m.id)
          )`,
   cancel: `UPDATE media_retention_requests SET state='cancelled',updated_at=CURRENT_TIMESTAMP
        WHERE id=? AND site_id=? AND state IN ('requested','quarantined','revalidated','blocked')`
