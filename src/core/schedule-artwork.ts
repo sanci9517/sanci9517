@@ -19,5 +19,33 @@ export function scheduleArtworkJSON(assetId: string): string {
 }
 export const SCHEDULE_ARTWORK_JOIN =
   " LEFT JOIN site_settings artwork ON artwork.key = ('schedule-artwork:' || e.site_id || ':' || e.id)";
+// Only return a public artwork ID while the linked image is active, on the
+// same site and one of the supported safe image MIME types. Untrusted or stale
+// sidecars do not expose private asset IDs.
 export const SCHEDULE_ARTWORK_SELECT =
-  "CASE WHEN json_valid(artwork.value_json) THEN json_extract(artwork.value_json, '$.assetId') ELSE NULL END AS image_asset_id";
+  `(SELECT m.id FROM media m
+     WHERE m.site_id=e.site_id
+       AND m.id=(CASE WHEN json_valid(artwork.value_json) THEN json_extract(artwork.value_json,'$.assetId') ELSE NULL END)
+       AND m.archived_at IS NULL
+       AND m.mime_type IN ('image/png','image/jpeg','image/webp','image/gif')
+     LIMIT 1) AS image_asset_id`;
+
+// The archive preflight is advisory. This predicate is evaluated atomically
+// with UPDATE media, so a freshly linked schedule cover can never be archived
+// between the preflight and commit. Invalid legacy JSON fails closed as a
+// reference only when its actual assetId is still recognizable.
+export const SCHEDULE_ARTWORK_ARCHIVE_GUARD =
+  ` AND NOT EXISTS (
+    SELECT 1 FROM schedule_items e
+    JOIN site_settings artwork ON artwork.key=('schedule-artwork:' || e.site_id || ':' || e.id)
+    WHERE e.site_id=media.site_id
+      AND lower(CASE WHEN json_valid(artwork.value_json)
+        THEN json_extract(artwork.value_json,'$.assetId') ELSE NULL END)=lower(media.id)
+  )`;
+
+// Recheck the same-site active image inside the artwork UPSERT itself. This
+// complements the archive guard in the other transaction direction.
+export const SCHEDULE_ARTWORK_ACTIVE_IMAGE_RECHECK =
+  ` AND EXISTS (SELECT 1 FROM media
+    WHERE id=? AND site_id=? AND archived_at IS NULL
+      AND mime_type IN ('image/png','image/jpeg','image/webp','image/gif'))`;
