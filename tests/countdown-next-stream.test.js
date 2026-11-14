@@ -10,9 +10,12 @@ test('next scheduled Budapest stream is parsed as CET, independent of viewer tim
  assert.equal(scheduleStartEpoch('2026-07-14T15:27'),Date.parse('2026-07-14T13:27:00Z'));
  assert.equal(scheduleStartEpoch('2026-11-14T14:27:00Z'),start);
  assert.equal(scheduleStartEpoch('2026-11-14T15:27+01:00'),start);
+ // Milliseconds must survive normalization, including Budapest local entries.
+ assert.equal(scheduleStartISO('2026-11-14T15:27:00.125'),'2026-11-14T14:27:00.125Z');
+ assert.equal(scheduleStartISO('2026-11-14T15:27:00.125+01:00'),'2026-11-14T14:27:00.125Z');
 });
 test('DST spring gap and malformed values cannot become a fake event',()=>{
- for(const value of ['2026-03-29T02:30','2026-11-31T12:30','2026-02-30T12:30','javascript:alert(1)','2026-11-14T25:00','2026-11-14','2026-11-14T12:99']){
+ for(const value of ['2026-03-29T02:30','2026-11-31T12:30','2026-02-30T12:30','2026-02-30T12:30:00Z','2026-11-31T12:30:00+01:00','2026-11-14T12:30:00+25:00','2026-11-14T12:30:00+01:75','javascript:alert(1)','2026-11-14T25:00','2026-11-14','2026-11-14T12:99']){
   assert.equal(scheduleStartEpoch(value),null,value);
  }
  // Ambiguous CET fold selects the earlier occurrence consistently.
