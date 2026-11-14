@@ -10,7 +10,7 @@ import { isStructuredType, normalizeElementContent } from "../../../public/edito
 import { prepareRetentionRequest, prepareRetentionCancellation } from "../../core/media-retention-request.js";
 import { retentionQueries } from "../../core/media-retention-queries.js";
 import { mediaReferenceSql } from "../../core/media-reference-sql.js";
-import { SCHEDULE_ARTWORK_ARCHIVE_GUARD } from "../../core/schedule-artwork.ts";
+import { SCHEDULE_ARTWORK_ARCHIVE_GUARD,SCHEDULE_ARTWORK_ASSET_MATCH } from "../../core/schedule-artwork.ts";
 
 // Keep playable uploads inside the existing low-cost, application-level cap.
 // This is not a provider billing ceiling and deliberately excludes large video.
@@ -419,8 +419,8 @@ async function mediaUsage(request: Request, env: Env, siteId: string, assetId: s
   const scheduleImages = await env.DB.prepare(
     `SELECT e.id,e.title FROM schedule_items e
      INNER JOIN site_settings artwork ON artwork.key=('schedule-artwork:' || e.site_id || ':' || e.id)
-     WHERE e.site_id=? AND artwork.value_json=? ORDER BY e.id LIMIT ${MAX_USAGE_REFERENCES + 1}`
-  ).bind(siteId, JSON.stringify({ assetId })).all<{ id: string; title: string }>();
+     WHERE e.site_id=? AND ${SCHEDULE_ARTWORK_ASSET_MATCH} ORDER BY e.id LIMIT ${MAX_USAGE_REFERENCES + 1}`
+  ).bind(siteId, assetId).all<{ id: string; title: string }>();
   if(scheduleImages.results.length>MAX_USAGE_REFERENCES)complete=false;
   for(const item of scheduleImages.results.slice(0,MAX_USAGE_REFERENCES)){
     if(references.length>=MAX_USAGE_REFERENCES){complete=false;break}
@@ -851,8 +851,8 @@ export async function publishedMediaRoute(request: Request, env: Env, siteId: st
     const scheduled = await env.DB.prepare(
       `SELECT e.id FROM schedule_items e
        INNER JOIN site_settings artwork ON artwork.key=('schedule-artwork:' || e.site_id || ':' || e.id)
-       WHERE e.site_id=? AND artwork.value_json=? LIMIT 1`
-    ).bind(siteId, JSON.stringify({ assetId: normalizedAssetId })).first<{ id: string }>();
+       WHERE e.site_id=? AND ${SCHEDULE_ARTWORK_ASSET_MATCH} LIMIT 1`
+    ).bind(siteId, normalizedAssetId).first<{ id: string }>();
     allowed = Boolean(scheduled);
   }
   if (!allowed) {
