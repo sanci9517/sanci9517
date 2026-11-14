@@ -69,7 +69,22 @@ export function validateElementContent(type,value){
  return null;
 }
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const idSafe=v=>String(v??'node').replace(/[^a-zA-Z0-9_-]/g,'-').slice(0,100);
+const idSafe=v=>{
+ const id=typeof v==='string'?v:'node';
+ // Sanitizing/truncating arbitrary Page Model IDs is not injective: e.g. "a/b"
+ // and "a?b" both become "a-b". Keep safe IDs readable and encode unsafe IDs
+ // into a bounded, namespaced value whose suffix depends on the complete input.
+ if(/^[a-zA-Z0-9_-]{1,88}$/.test(id))return `safe-${id}`;
+ let left=0x811c9dc5,right=0x9e3779b9;
+ for(const char of id){
+  const point=char.codePointAt(0);
+  left=Math.imul(left^point,0x01000193);
+  right=Math.imul(right^(point+(left>>>0)),0x85ebca6b);
+ }
+ const prefix=Array.from(id).slice(0,8).map(char=>char.codePointAt(0).toString(16)).join('-')||'empty';
+ const suffix=`${(left>>>0).toString(36)}-${(right>>>0).toString(36)}`;
+ return `encoded-${prefix}-${suffix}`;
+};
 export function renderElementContent(type,value,nodeId){
  let m;try{m=normalizeElementContent(type,value)}catch{return '<div class="visual-structured-error">A tartalom hiányos</div>'}
  if(type==='list'){
