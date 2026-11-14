@@ -8,6 +8,7 @@ const loginPage = readFileSync(new URL("../public/admin-login.html", import.meta
 const adminSettingsRoute = readFileSync(new URL("../src/routes/admin/settings.ts", import.meta.url), "utf8");
 const adminPagesRoute = readFileSync(new URL("../src/routes/admin/pages.ts", import.meta.url), "utf8");
 const adminScheduleRoute = readFileSync(new URL("../src/routes/admin/schedule.ts", import.meta.url), "utf8");
+const scheduleAccess = readFileSync(new URL("../src/core/auth/schedule-editor-access.ts", import.meta.url), "utf8");
 const adminEditorRoute = readFileSync(new URL("../src/routes/admin/editor.ts", import.meta.url), "utf8");
 
 test("Admin and Editor pages authenticate before serving assets and their APIs enforce roles", () => {
@@ -35,7 +36,11 @@ test("Admin and Editor pages authenticate before serving assets and their APIs e
   assert.ok(worker.includes('adminPagesRoute(request, env, siteId)'));
   assert.ok(adminPagesRoute.includes("requireSiteGrant(request,env,siteId,'editor')"));
   assert.ok(adminPagesRoute.includes("hasRole(legacyUser,'editor')"));
-  assert.ok(adminScheduleRoute.includes('if (!hasRole(user, "editor")) return error("FORBIDDEN", 403, "Editor role required");'));
+  assert.ok(adminScheduleRoute.includes('requireScheduleEditorAccess(request,env,siteId)'));
+  assert.ok(scheduleAccess.includes('requireSiteGrant(request,env,siteId,"editor")'),
+    "Schedule must apply the active site's editor membership gate");
+  assert.ok(scheduleAccess.includes('if(siteId!==DEFAULT_SITE_ID)'),
+    "legacy global editor role is restricted to the original site");
   assert.ok(worker.includes('adminEditorRoute(request, env, siteId)'));
   assert.ok(adminEditorRoute.includes("requireSiteGrant(request,env,siteId,'editor')"));
   assert.ok(adminEditorRoute.includes("hasRole(legacyUser,'editor')"));

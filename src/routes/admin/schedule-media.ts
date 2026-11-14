@@ -1,5 +1,5 @@
 import { error,ok } from "../../core/response";
-import { getAuthenticatedUser,hasRole } from "../../core/auth/require-auth";
+import { requireScheduleEditorAccess } from "../../core/auth/schedule-editor-access";
 
 import { getCanonicalSiteContext } from "../../core/site-context";
 import { scheduleArtworkJSON,scheduleArtworkKey,validScheduleArtworkId,SCHEDULE_ARTWORK_ACTIVE_IMAGE_RECHECK,SCHEDULE_ARTWORK_COMMIT_AUDIT_GUARD,SCHEDULE_ARTWORK_CLEAR_AUDIT_GUARD } from "../../core/schedule-artwork.ts";
@@ -9,9 +9,9 @@ type Payload = { itemId?: unknown; assetId?: unknown };
 
 export async function adminScheduleMediaRoute(request:Request,env:Env):Promise<Response> {
   const {siteId}=getCanonicalSiteContext();
-  const user=await getAuthenticatedUser(request,env);
-  if(!user)return error("UNAUTHORIZED",401,"Authentication required");
-  if(!hasRole(user,"editor"))return error("FORBIDDEN",403,"Editor role required");
+  const access=await requireScheduleEditorAccess(request,env,siteId);
+  if(access instanceof Response)return access;
+  const user=access;
   if(request.method!=="PUT")return error("METHOD_NOT_ALLOWED",405);
   const url=new URL(request.url);
   if(request.headers.get("Origin")!==url.origin||request.headers.get("Sec-Fetch-Site")==="cross-site")

@@ -24,7 +24,7 @@ test('schedule artwork key and payload stay site-scoped without new migrations',
   assert.match(SCHEDULE_ARTWORK_JOIN,/artwork\.key/);
 });
 test('artwork setter verifies session role, Origin, same-site event and an active image',()=>{
-  for(const required of ['getAuthenticatedUser','hasRole(user,"editor")','request.headers.get("Origin")','site_id=?','archived_at IS NULL','image/png','site_settings','audit_log','SCHEDULE_ARTWORK_COMMIT_AUDIT_GUARD']){
+  for(const required of ['requireScheduleEditorAccess','request.headers.get("Origin")','site_id=?','archived_at IS NULL','image/png','site_settings','audit_log','SCHEDULE_ARTWORK_COMMIT_AUDIT_GUARD']){
     assert.ok(admin.includes(required),required);
   }
   assert.match(admin,/request\.method!=="PUT"/);

@@ -1,5 +1,5 @@
 import { error, ok } from "../../core/response";
-import { getAuthenticatedUser, hasRole } from "../../core/auth/require-auth";
+import { requireScheduleEditorAccess } from "../../core/auth/schedule-editor-access";
 import type { Env } from "../../types/env";
 import { auditStatement } from "../../core/audit";
 import { getCanonicalSiteContext } from "../../core/site-context";
@@ -37,9 +37,9 @@ function mapRow(row: ScheduleRow) { return { id: row.id, title: row.title, platf
 
 export async function adminScheduleRoute(request: Request, env: Env): Promise<Response> {
   const { siteId } = getCanonicalSiteContext();
- const user = await getAuthenticatedUser(request, env);
-  if (!user) return error("UNAUTHORIZED", 401, "Authentication required");
-  if (!hasRole(user, "editor")) return error("FORBIDDEN", 403, "Editor role required");
+  const access=await requireScheduleEditorAccess(request,env,siteId);
+  if(access instanceof Response)return access;
+  const user=access;
   if (request.method === "GET") {
     const rows = await env.DB.prepare(`SELECT e.id,e.title,e.platform,e.starts_at,e.ends_at,e.status,e.url,e.notes,${SCHEDULE_ARTWORK_SELECT} FROM schedule_items e${SCHEDULE_ARTWORK_JOIN} WHERE e.site_id=? ORDER BY e.starts_at ASC LIMIT 500`).bind(siteId).all<ScheduleRow>();
     return ok(rows.results.map(mapRow));
