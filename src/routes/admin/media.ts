@@ -10,6 +10,7 @@ import { isStructuredType, normalizeElementContent } from "../../../public/edito
 import { prepareRetentionRequest, prepareRetentionCancellation } from "../../core/media-retention-request.js";
 import { retentionQueries } from "../../core/media-retention-queries.js";
 import { mediaReferenceSql } from "../../core/media-reference-sql.js";
+import { SCHEDULE_ARTWORK_ARCHIVE_GUARD } from "../../core/schedule-artwork.ts";
 
 // Keep playable uploads inside the existing low-cost, application-level cap.
 // This is not a provider billing ceiling and deliberately excludes large video.
@@ -723,7 +724,7 @@ export async function adminMediaRoute(request: Request, env: Env, siteId: string
         const changed=await env.DB.prepare(
           "UPDATE media SET archived_at=CURRENT_TIMESTAMP WHERE id=? AND site_id=? AND archived_at IS NULL "+
           "AND NOT EXISTS (SELECT 1 FROM pages p WHERE p.site_id=? AND ("+mediaReferenceSql("p.content_json","?")+" OR "+mediaReferenceSql("p.published_content_json","?")+")) "+
-          "AND NOT EXISTS (SELECT 1 FROM editor_revisions er JOIN pages p ON p.id=er.page_id WHERE p.site_id=? AND "+mediaReferenceSql("er.document_json","?")+")"
+          "AND NOT EXISTS (SELECT 1 FROM editor_revisions er JOIN pages p ON p.id=er.page_id WHERE p.site_id=? AND "+mediaReferenceSql("er.document_json","?")+")"+SCHEDULE_ARTWORK_ARCHIVE_GUARD
         ).bind(id,siteId,siteId,id,id,id,id,siteId,id,id).run();
         if (Number(changed.meta?.changes??0)!==1) return error('MEDIA_ASSET_IN_USE',409);
       } else {
