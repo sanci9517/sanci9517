@@ -31,7 +31,10 @@ test("Admin and Editor pages authenticate before serving assets and their APIs e
   assert.ok(scheduleStart >= 0 && mediaStart > scheduleStart, "schedule route must exist before media");
   const scheduleBlock = worker.slice(scheduleStart, mediaStart);
   assert.ok(scheduleBlock.includes("const user = await getAuthenticatedUser(request, env);"));
-  assert.ok(scheduleBlock.includes('if (!hasRole(user, "editor")) return new Response("Forbidden", { status: 403 });'));
+  assert.ok(scheduleBlock.includes('env.SITE_MEMBERSHIP_ENFORCEMENT !== "enabled" && !hasRole(user, "editor")'),
+    "global role check applies only when the site grant gate is disabled");
+  assert.ok(worker.includes('enforceAdminTenantGate(request, env, siteId, pathname)'));
+  assert.ok(scheduleAccess.includes('requireSiteGrant(request,env,siteId,"editor")'));
   assert.ok(scheduleBlock.includes('assetRequest("/admin-schedule.html", request)'));
   assert.ok(worker.includes('adminPagesRoute(request, env, siteId)'));
   assert.ok(adminPagesRoute.includes("requireSiteGrant(request,env,siteId,'editor')"));
