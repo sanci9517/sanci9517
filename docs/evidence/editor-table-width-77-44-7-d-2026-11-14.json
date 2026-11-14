@@ -4,10 +4,77 @@
   "finding": "Authored table normalization accepted zero-column and inconsistent-width rows.",
   "red": "node public/editor-v2/tests/element-content.test.js failed on inconsistent width before the fix",
   "fix": "Require 1-16 columns and the same column count in every authored table row, including publication validation.",
-  "checks": {"targeted":"PASS", "editor":"15/15 files PASS", "typecheck":"PASS", "traceability":"396/396 PASS after refreshing stale renderer fingerprint", "canonical_plan":"13 files PASS", "plan_contract":"13/13 PASS"},
-  "d1_preflight": {"sql":"SELECT name FROM d1_migrations ORDER BY name", "rows_read":34, "rows_written":0, "changes":0, "changed_db":false},
-  "wrangler_dry_run": {"assets":180, "deployed":false},
-  "release": {"commit":"4a03343ea465156c8d4ceff7db175709bcca6ce1","build":"9adb8214-7a79-4cc7-a9e9-75e773151ea5","build_result":"success","deploy_command":"npm run deploy:safe","deployment":"d218a611-49d9-4f2f-835f-f3b35a1bb71f","version":"6901f15c-bf03-4807-8576-13a7e84f0a35","traffic_percent":100,"health":"HTTP 200 ok=true","asset_sha256":{"editor-v2/core/authored-content.js":"a65914d2d923dda690a3a33654f80ece99cb72e52649f9885f831aed79e15151","editor-v2/tests/element-content.test.js":"f2882b88803da4c900f76c46ea479731ec1c88e7d8fae74c283dc91ed0ca03f2"},"github_ci":"Canonical Plan 43606735475, Active Audit 43606735498, source smoke 43606735493, Twitch 43606735473 and F0 43606735497 success; Editor Core 43606735486 in_progress"},
+  "checks": {
+    "targeted": "PASS",
+    "editor": "15/15 files PASS",
+    "typecheck": "PASS",
+    "traceability": "396/396 PASS after refreshing stale renderer fingerprint",
+    "canonical_plan": "13 files PASS",
+    "plan_contract": "13/13 PASS"
+  },
+  "d1_preflight": {
+    "sql": "SELECT name FROM d1_migrations ORDER BY name",
+    "rows_read": 34,
+    "rows_written": 0,
+    "changes": 0,
+    "changed_db": false
+  },
+  "wrangler_dry_run": {
+    "assets": 180,
+    "deployed": false
+  },
+  "release": {
+    "commit": "4a03343ea465156c8d4ceff7db175709bcca6ce1",
+    "build": "9adb8214-7a79-4cc7-a9e9-75e773151ea5",
+    "build_result": "success",
+    "deploy_command": "npm run deploy:safe",
+    "deployment": "d218a611-49d9-4f2f-835f-f3b35a1bb71f",
+    "version": "6901f15c-bf03-4807-8576-13a7e84f0a35",
+    "traffic_percent": 100,
+    "health": "HTTP 200 ok=true",
+    "asset_sha256": {
+      "editor-v2/core/authored-content.js": "a65914d2d923dda690a3a33654f80ece99cb72e52649f9885f831aed79e15151",
+      "editor-v2/tests/element-content.test.js": "f2882b88803da4c900f76c46ea479731ec1c88e7d8fae74c283dc91ed0ca03f2"
+    },
+    "github_ci": "Canonical Plan 43606735475, Active Audit 43606735498, source smoke 43606735493, Twitch 43606735473 and F0 43606735497 success; Editor Core 43606735486 in_progress"
+  },
   "acceptance": "D OPEN / NOT_CERTIFIED",
-  "cost_huf": 0
+  "cost_huf": 0,
+  "github_ci": {
+    "sha": "4a03343ea465156c8d4ceff7db175709bcca6ce1",
+    "runs": [
+      {
+        "id": 43606735475,
+        "name": "Canonical Creator Platform Plan",
+        "conclusion": "success"
+      },
+      {
+        "id": 43606735498,
+        "name": "Canonical Plan Active Point Audit",
+        "conclusion": "success"
+      },
+      {
+        "id": 43606735493,
+        "name": "Production Worker source smoke",
+        "conclusion": "success"
+      },
+      {
+        "id": 43606735473,
+        "name": "Twitch Integration Check",
+        "conclusion": "success"
+      },
+      {
+        "id": 43606735497,
+        "name": "F0 baseline checks",
+        "conclusion": "success"
+      },
+      {
+        "id": 43606735486,
+        "name": "Editor Core Test",
+        "conclusion": "success"
+      }
+    ],
+    "editor_core_steps": "completed/success, including real Chromium Editor browser layout regression",
+    "note": "The prior entry recorded Editor Core while it was in progress; direct GitHub run read now confirms the exact-SHA run completed successfully."
+  }
 }
