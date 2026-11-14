@@ -14,6 +14,13 @@ Never run a production D1 migration, production data mutation, or R2 deletion wi
 
 Keep Save and Publish behavior separate. Do not claim a push, deployment, test pass, or production result until it has been directly verified.
 
+## Protect the oversized canonical master plan from silent truncation
+
+- The ONE canonical `docs/SANCI9517-CREATOR-PLATFORM-PLAN.md` was **1,555,044 bytes** at verified Git blob `6388d6d67f4719cfcde6000e69976c9d09d071b0` on 2026-11-14. GitHub Contents API and `fetch_file` can return empty/partial text for files over 1 MiB, **while still returning a SHA**. **Never** append to or replace the canonical file from such a result using `update_file`/Contents API. An empty or implausibly short read is an error, NOT an empty plan.
+- For this file, require source byte-size and exact blob verification *before any write*, and a complete, lossless diff that preserves all existing sections and other agents' commits. Do not overwrite it if the complete source bytes are unavailable. Do not bypass the 12-part master/cursor/396-feature structural checks by adding `[skip ci]` to a risky rewrite.
+- Store independent audit findings in `docs/evidence/` instead of rewriting a 1.55 MB master just to append evidence. A plan change must remain the **same one canonical plan**, not a second roadmap, and must be verified before and after the write. A Git tree referencing the exact existing master blob plus a new evidence blob is a safe alternative when only evidence is needed.
+- A truncated or missing master is an urgent repair: retrieve the last proven intact blob from the immediately preceding correct commit, preserve all later *legitimate* new notes separately, restore through a normal, non-force commit and expected-head lease, then verify the restored Git tree's exact blob SHA and size. Never reset the main branch or lose concurrent runtime commits. Existing plan contracts must run on any future deliberate master rewrite; if they are skipped, the change is **NOT CERTIFIED**.
+
 # Responsible autonomous development
 
 The developer agent's default is maximum responsible autonomy. Starting from the canonical plan and actual code state, work in large, logically connected blocks at senior engineering quality: plan, implement, test, repair, and document. Do not request unnecessary intermediate approval or stop after a partial task. Ask for intervention only when a genuine user decision, permission, or security approval is required. Every feature reported as complete must have verifiable evidence.
