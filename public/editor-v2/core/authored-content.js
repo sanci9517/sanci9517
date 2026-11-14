@@ -57,7 +57,9 @@ export function normalizeContentField(definition,value){
   }
   if(definition.type==='table'){
     if(!Array.isArray(value)||value.length>100)throw new Error('Legfeljebb 100 sor adható meg.');
-    return value.map(row=>{if(!Array.isArray(row)||row.length>16)throw new Error('Legfeljebb 16 oszlop használható.');return row.map(cell=>normalizeContentField({type:'text',max:2000},cell))});
+    const width=value[0]?.length;
+    if(!Number.isInteger(width)||width<1||width>16)throw new Error('A táblázatban 1–16 oszlop használható.');
+    return value.map(row=>{if(!Array.isArray(row)||row.length!==width)throw new Error('A táblázat sorainak azonos számú oszlopot kell tartalmazniuk.');return row.map(cell=>normalizeContentField({type:'text',max:2000},cell))});
   }
   if(definition.type==='range'){
     const number=typeof value==='number'?value:Number(value);

@@ -29,6 +29,9 @@ test('links, media, repeaters and table contents reject unsafe or invalid values
   assert.throws(()=>normalizeElementContent(node('video'),{autoplay:true,muted:false}),/némítva/);
   assert.throws(()=>normalizeElementContent(node('list'),{items:[{text:'Hello',href:'javascript:evil()'}]}));
   assert.throws(()=>normalizeElementContent(node('table'),{rows:[new Array(17).fill('x')]}));
+  assert.throws(()=>normalizeElementContent(node('table'),{rows:[['Fejléc','Érték'],['Csak egy cella']]}),/oszlop/);
+  assert.throws(()=>normalizeElementContent(node('table'),{rows:[[]]}),/oszlop/);
+  assert.throws(()=>validateElementContent({...node('table'),props:{rows:[['Fejléc','Érték'],['Hiányos']]} }),/oszlop/);
   assert.throws(()=>normalizeElementContent(node('gallery'),{items:new Array(41).fill({src:'/a.png'})}));
   assert.equal(contentProperties(node('video')).controls,true);
   assert.equal(contentProperties(node('heading')).level,'2');

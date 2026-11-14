@@ -1,0 +1,13 @@
+{
+  "item": "77.44.7.D / D-03",
+  "date": "2026-11-14",
+  "finding": "Authored table normalization accepted zero-column and inconsistent-width rows.",
+  "red": "node public/editor-v2/tests/element-content.test.js failed on inconsistent width before the fix",
+  "fix": "Require 1-16 columns and the same column count in every authored table row, including publication validation.",
+  "checks": {"targeted":"PASS", "editor":"15/15 files PASS", "typecheck":"PASS", "traceability":"396/396 PASS after refreshing stale renderer fingerprint", "canonical_plan":"13 files PASS", "plan_contract":"13/13 PASS"},
+  "d1_preflight": {"sql":"SELECT name FROM d1_migrations ORDER BY name", "rows_read":34, "rows_written":0, "changes":0, "changed_db":false},
+  "wrangler_dry_run": {"assets":180, "deployed":false},
+  "release": "PENDING",
+  "acceptance": "D OPEN / NOT_CERTIFIED",
+  "cost_huf": 0
+}
