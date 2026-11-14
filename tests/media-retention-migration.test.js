@@ -23,5 +23,11 @@ test("retention state migration is additive, inert and keeps one request per sit
   assert.equal(db.prepare("SELECT COUNT(*) n FROM media_retention_requests").get().n,1);
  } finally { db.close(); }
 });
-// D-06 manual-only 0029 candidate and atomic rollback regressions.
+// 77.44.7.D / D-06: these imports register the archived-media, Unicode,
+// atomic 0029 review-batch, and media-reference SQL regressions in the
+// required "npm run test:media" CI gate. All D1 writes use in-memory SQLite
+// fixtures; the candidate 0029 migration is never applied to production.
 import "./media-archive-trigger-casefold.test.js";
+import "./media-archive-additive-unicode.test.js";
+import "./d1-0029-release-batch.test.js";
+import "./media-reference-sql.test.js";

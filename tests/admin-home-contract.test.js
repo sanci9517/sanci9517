@@ -24,6 +24,14 @@ test("Admin and Editor pages authenticate before serving assets and their APIs e
   assert.ok(editorRouteBlock.includes('return env.ASSETS.fetch(assetRequest("/editor-v2/index.html", request));'));
   assert.ok(adminSettingsRoute.includes('requireSiteGrant(request, env, siteId, "admin")'));
   assert.ok(adminSettingsRoute.includes('if (!hasRole(legacyUser, "admin")) return error("FORBIDDEN", 403, "Admin role required");'));
+  // The schedule page is a real, role-gated Admin route, not a stale link.
+  const scheduleStart = worker.indexOf('if (pathname === "/admin/schedule") {');
+  const mediaStart = worker.indexOf('if (pathname === "/admin/media") {');
+  assert.ok(scheduleStart >= 0 && mediaStart > scheduleStart, "schedule route must exist before media");
+  const scheduleBlock = worker.slice(scheduleStart, mediaStart);
+  assert.ok(scheduleBlock.includes("const user = await getAuthenticatedUser(request, env);"));
+  assert.ok(scheduleBlock.includes('if (!hasRole(user, "editor")) return new Response("Forbidden", { status: 403 });'));
+  assert.ok(scheduleBlock.includes('assetRequest("/admin-schedule.html", request)'));
   assert.ok(worker.includes('adminPagesRoute(request, env, siteId)'));
   assert.ok(adminPagesRoute.includes("requireSiteGrant(request,env,siteId,'editor')"));
   assert.ok(adminPagesRoute.includes("hasRole(legacyUser,'editor')"));
@@ -143,7 +151,7 @@ test("future modules are visibly disabled rather than presented as implemented",
 
 test("every dashboard link targets the canonical Admin, Editor, public site, or an existing section", () => {
   const destinations = [...dashboard.matchAll(/\bhref="([^"]+)"/g)].map((match) => match[1]);
-  const allowed = new Set(["/admin", "/admin/editor", "/admin/design", "/admin/media", "/", "#platformCapabilities"]);
+  const allowed = new Set(["/admin", "/admin/editor", "/admin/design", "/admin/media", "/admin/schedule", "/", "#platformCapabilities"]);
   assert.ok(destinations.length > 0, "dashboard must contain navigable destinations");
   for (const destination of destinations) {
     assert.ok(allowed.has(destination), `unexpected dashboard destination: ${destination}`);
@@ -163,7 +171,7 @@ test("every enabled sidebar destination is a canonical, authenticated Admin rout
   assert.ok(destinations.length > 0, "sidebar must expose at least one active destination");
   for (const destination of destinations) {
     assert.ok(
-      ["/admin", "/admin/editor", "/admin/design", "/admin/media"].includes(destination),
+      ["/admin", "/admin/editor", "/admin/design", "/admin/media", "/admin/schedule"].includes(destination),
       `unexpected active sidebar destination: ${destination}`
     );
   }

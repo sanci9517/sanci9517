@@ -136,6 +136,7 @@ test('Schedule config uses canonical defaults and normalizes valid input', () =>
     showEndTime: false,
     showStatus: false,
     showNotes: false,
+    showArtwork: true,
     showLink: true,
     emptyText: 'Nincs tervezett stream.'
   });
@@ -169,6 +170,7 @@ test('Schedule config uses canonical defaults and normalizes valid input', () =>
     showEndTime: true,
     showStatus: true,
     showNotes: false,
+    showArtwork: true,
     showLink: false,
     emptyText: 'Nincs következő stream.'
   });
@@ -178,7 +180,9 @@ test('Schedule config rejects unsupported or unsafe values', () => {
   assert.throws(() => normalizeScheduleConfig({ mode: 'random' }));
   assert.throws(() => normalizeScheduleConfig({ limit: 0 }));
   assert.throws(() => normalizeScheduleConfig({ limit: 51 }));
-  assert.throws(() => normalizeScheduleConfig({ statuses: ['cancelled'] }));
+  // Cancelled broadcasts are intentionally queryable, but not part of defaults.
+  assert.deepEqual(normalizeScheduleConfig({ statuses: ['cancelled'] }).statuses, ['cancelled']);
+  assert.throws(() => normalizeScheduleConfig({ statuses: ['unknown'] }));
   assert.throws(() => normalizeScheduleConfig({ statuses: [] }));
   assert.throws(() => normalizeScheduleConfig({ platforms: ['   '] }));
   assert.throws(() => normalizeScheduleConfig({ showTitle: 'true' }));
@@ -869,10 +873,15 @@ test('schedule read config normalizes canonical query constraints', async () => 
     limit: 1,
     statuses: ['live'],
     platforms: ['Twitch'],
-    order: 'desc'
+    order: 'desc',
+    weekStart: undefined
   });
+  assert.equal(normalizeScheduleReadConfig({ mode: 'week', weekStart: '2026-11-09' }).weekStart, '2026-11-09');
+  assert.throws(() => normalizeScheduleReadConfig({ mode: 'week', weekStart: '2026-11-10' }));
+  assert.throws(() => normalizeScheduleReadConfig({ mode: 'next', weekStart: '2026-11-09' }));
   assert.throws(() => normalizeScheduleReadConfig({ limit: 51 }));
-  assert.throws(() => normalizeScheduleReadConfig({ statuses: ['cancelled'] }));
+  assert.deepEqual(normalizeScheduleReadConfig({ statuses: ['cancelled'] }).statuses, ['cancelled']);
+  assert.throws(() => normalizeScheduleReadConfig({ statuses: ['unknown'] }));
   assert.throws(() => normalizeScheduleReadConfig({ platforms: [''] }));
 });
 

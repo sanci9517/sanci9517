@@ -28,6 +28,8 @@ async function fixture(t) {
     "site_id TEXT NOT NULL, archived_at TEXT DEFAULT NULL);",
     "CREATE TABLE pages(id TEXT PRIMARY KEY,site_id TEXT,archived_at TEXT,is_published INTEGER,published_content_json TEXT,content_json TEXT,title TEXT,slug TEXT);",
     "CREATE TABLE editor_revisions(id TEXT PRIMARY KEY,page_id TEXT,version INTEGER,document_json TEXT);",
+    "CREATE TABLE schedule_items(id TEXT PRIMARY KEY,site_id TEXT NOT NULL,title TEXT NOT NULL);",
+    "CREATE TABLE site_settings(key TEXT PRIMARY KEY,value_json TEXT NOT NULL);",
     "CREATE INDEX idx_media_site_id ON media(site_id);",
     "CREATE TRIGGER media_archive_pages_insert_guard BEFORE INSERT ON pages WHEN EXISTS (SELECT 1 FROM media m WHERE m.site_id=NEW.site_id AND m.archived_at IS NOT NULL AND (instr(COALESCE(NEW.content_json,''),m.id)>0 OR instr(COALESCE(NEW.published_content_json,''),m.id)>0)) BEGIN SELECT RAISE(ABORT,'ARCHIVED_MEDIA_REFERENCE'); END;",
     "CREATE TRIGGER media_archive_pages_update_guard BEFORE UPDATE OF content_json,published_content_json ON pages WHEN EXISTS (SELECT 1 FROM media m WHERE m.site_id=NEW.site_id AND m.archived_at IS NOT NULL AND (instr(COALESCE(NEW.content_json,''),m.id)>0 OR instr(COALESCE(NEW.published_content_json,''),m.id)>0)) BEGIN SELECT RAISE(ABORT,'ARCHIVED_MEDIA_REFERENCE'); END;",
@@ -1736,4 +1738,24 @@ test("Unicode-escaped IDs across media usage, public delivery, atomic archive an
  f.db.exec("DELETE FROM editor_revisions WHERE id='unicode-rev'");
  f.db.prepare("UPDATE pages SET content_json=? WHERE id='page-1'").run("{\"label\":\"\\u0062\"}");
  assert.equal((await archive()).status,200,"irrelevant Unicode escapes do not block safe archive");
+});
+
+test("schedule cover image is reported as site-scoped media usage and protects it from archival",async t=>{
+  const f=await fixture(t);
+  const response=await f.call("POST","editor",png,{name:"calendar-cover.png"});
+  assert.equal(response.status,201);
+  const asset=(await response.json()).data;
+  const eventId="3f7a0000-0000-4000-8000-000000000001";
+  f.db.prepare("INSERT INTO schedule_items(id,site_id,title) VALUES (?,?,?)")
+    .run(eventId,"site-default","Valós időpont borítóképe");
+  f.db.prepare("INSERT INTO site_settings(key,value_json) VALUES (?,?)")
+    .run("schedule-artwork:site-default:"+eventId,JSON.stringify({assetId:asset.id}));
+  const report=await f.call("GET","editor",null,{usage:asset.id});
+  assert.equal(report.status,200);
+  const usage=(await report.json()).data;
+  assert.equal(usage.complete,true);
+  assert.deepEqual(usage.references.map(ref=>({pageId:ref.pageId,path:ref.path,source:ref.source})),
+    [{pageId:"schedule:"+eventId,path:"schedule_items.artwork",source:"published"}]);
+  const other=await f.call("GET","editor",null,{usage:asset.id,site:"other"});
+  assert.equal(other.status,403,"other tenant cannot inspect this site's media");
 });
