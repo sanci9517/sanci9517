@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
 import test from 'node:test';
 import {classifySanciDestination,decorateSanciShowcase} from '../public/assets/sanci-showcase.js';
 
@@ -75,4 +76,17 @@ test('original signature, icons and next-stream roles decorate SANCI only, witho
  }finally{
   if(previous===undefined)delete globalThis.document;else globalThis.document=previous;
  }
+});
+
+
+test('outlined icons retain their stroke, and navigation keeps its existing icon system',()=>{
+ const css=readFileSync(new URL('../public/assets/sanci-showcase.css',import.meta.url),'utf8');
+ const siteJS=readFileSync(new URL('../public/assets/site.js',import.meta.url),'utf8');
+ const showcaseJS=readFileSync(new URL('../public/assets/sanci-showcase.js',import.meta.url),'utf8');
+ assert.match(css,/\.sanci-cta-symbol svg\[fill="none"\]\s*\{\s*fill:none;/);
+ assert.match(siteJS,/function enhanceStaticNavigationIcons\(/);
+ assert.match(siteJS,/menu-nav-icon/);
+ assert.doesNotMatch(showcaseJS,/querySelectorAll\(['"]\.desktop-primary-nav/);
+ assert.match(css,/prefers-reduced-motion:\s*reduce/);
+ assert.match(css,/data-sanci-role="signature"/);
 });
