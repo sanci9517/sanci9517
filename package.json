@@ -31,7 +31,9 @@
     "test:brand": "node --test tests/sanci-brand-shell-contract.test.js",
     "test:brand:browser": "node --test tests/browser/sanci-public-mobile-grid.test.js",
     "test:countdown": "node --test tests/countdown-next-stream.test.js",
-    "test:countdown:browser": "node --test tests/browser/home-next-stream-countdown.test.js"
+    "test:countdown:browser": "node --test tests/browser/home-next-stream-countdown.test.js",
+    "test:showcase": "node --test tests/sanci-showcase.test.js",
+    "test:showcase:browser": "node --test tests/browser/sanci-showcase.test.js"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "5.20260908.1",
