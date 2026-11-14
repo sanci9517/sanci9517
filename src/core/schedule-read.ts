@@ -105,7 +105,7 @@ export async function readPublicSchedule(db: D1Database, input: ScheduleReadConf
   } else if (config.mode === "next") {
     // Budapest wall-clock schedule rows can be UTC+1/+2. A short backward
     // query window admits the local boundary; strict epoch filtering follows.
-    where.push("e.starts_at >= datetime('now','-3 hours')");
+    where.push("datetime(e.starts_at) >= datetime('now','-3 hours')");
   }
 
   if (config.mode === "week" && config.weekStart) {
