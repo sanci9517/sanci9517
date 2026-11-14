@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {authoredNodeHtml,contentAttributes,contentDefaults,getPublicationContentGuidance} from '../public/editor-v2/core/authored-content.js';
+import {authoredNodeHtml,contentAttributes,contentDefaults,getPublicationContentGuidance,validateElementContent} from '../public/editor-v2/core/authored-content.js';
 
 test('blank accessibility labels do not create empty accessible names',()=>{
   const blankIcon={type:'icon',props:{ariaLabel:'   '},accessibility:{}};
@@ -115,4 +115,50 @@ test('malformed saved values produce publication guidance instead of crashing In
   assert.equal(guidance('tabs',{items:[{title:'Munkáim'}]}),null);
   assert.equal(guidance('table',{rows:[['Hónap'],['Június']]}),null);
   assert.equal(guidance('list',{items:[{text:'Első pont'}]}),null);
+});
+
+test('private editor media previews remain editable but cannot pass Publish or render publicly',()=>{
+  const privateSources=[
+    '/api/admin/media?id=asset',
+    '/API/admin/media?id=asset',
+    '/%61pi/admin/media?id=asset',
+    '/api%2Fadmin/media?id=asset',
+    '/%252Fapi%252Fadmin%252Fmedia?id=asset'
+  ];
+  for(const src of privateSources){
+    const image={id:'private-image',type:'image',metadata:{contentVersion:1},props:{src,alt:'Privát előnézet'}};
+    assert.match(authoredNodeHtml(image,{editor:true}),new RegExp(src.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')),
+      'the authenticated Editor retains its media preview');
+    assert.doesNotMatch(authoredNodeHtml(image),/src="[^"]*api[^\"]*admin/i,
+      'public rendering never emits an authenticated Editor endpoint');
+    assert.deepEqual(getPublicationContentGuidance(image),{
+      fieldKey:'src',message:'Válassz Médiatár-fájlt vagy adj meg médiaforrást.'
+    });
+    assert.throws(()=>validateElementContent(image),/privát szerkesztői előnézet/,
+      'the server-side Publish validation rejects legacy private preview paths');
+  }
+
+  const video={id:'private-poster',type:'video',metadata:{contentVersion:1},props:{src:'https://media.example/video.mp4',poster:'/api/admin/media?id=poster'}};
+  assert.match(authoredNodeHtml(video,{editor:true}),/poster="\/api\/admin\/media\?id=poster"/);
+  assert.doesNotMatch(authoredNodeHtml(video),/poster="[^"]*api\/admin/i);
+  assert.deepEqual(getPublicationContentGuidance(video),{
+    fieldKey:'poster',message:'A szerkesztői előnézeti útvonal nem használható videó-borítóképként a publikált oldalon.'
+  });
+  assert.throws(()=>validateElementContent(video),/privát szerkesztői előnézet/);
+
+  const gallery={id:'private-gallery',type:'gallery',metadata:{contentVersion:1},props:{items:[{src:'/api/admin/media?id=gallery-image',alt:'Képgaléria'}]}};
+  assert.match(authoredNodeHtml(gallery,{editor:true}),/src="\/api\/admin\/media\?id=gallery-image"/);
+  assert.doesNotMatch(authoredNodeHtml(gallery),/src="[^"]*api\/admin/i);
+  assert.throws(()=>validateElementContent(gallery),/privát szerkesztői előnézet/);
+
+  const publicAsset={id:'public-asset',type:'image',metadata:{contentVersion:1},props:{assetId:'123e4567-e89b-42d3-a456-426614174000',alt:'Nyilvános kép'}};
+  assert.match(authoredNodeHtml(publicAsset),/src="\/media\/123e4567-e89b-42d3-a456-426614174000"/,
+    'the approved public media proxy is unchanged');
+  assert.equal(getPublicationContentGuidance(publicAsset),null);
+  assert.doesNotThrow(()=>validateElementContent(publicAsset));
+
+  assert.equal(getPublicationContentGuidance({type:'link',metadata:{contentVersion:1},props:{href:'mailto:creator@example.com'}}),null,
+    'media-route filtering does not reject an intentionally supported mailto link');
+  assert.equal(getPublicationContentGuidance({type:'button',metadata:{contentVersion:1},props:{href:'/p/portfolio'}}),null,
+    'ordinary internal links keep the existing publication contract');
 });
