@@ -47,6 +47,20 @@ body.sanci-editorial-page[data-sanci-showcase="depth-v2"] [data-sanci-role="hero
  overflow:visible;
  box-shadow:0 22px 65px rgba(0,0,0,.3);
 }
+/* An original, authored SANCI autograph — NOT Avid's signature.
+   All text and inline design attributes remain editable in Visual Editor. */
+body.sanci-editorial-page[data-sanci-showcase="depth-v2"] [data-sanci-role="signature"]{
+ position:relative;align-self:flex-start;display:inline-block;max-width:100%;
+ white-space:nowrap;overflow:visible;
+ color:#f9edea;text-shadow:0 2px 18px rgba(0,0,0,.42);
+ transform:rotate(-6deg);transform-origin:20% 50%;
+}
+body.sanci-editorial-page[data-sanci-showcase="depth-v2"] [data-sanci-role="signature"]::after{
+ content:"";position:absolute;pointer-events:none;left:8%;right:12%;
+ bottom:-5px;height:2px;border-radius:100% 20% 100% 20%;
+ transform:rotate(-5deg);
+ background:linear-gradient(90deg,transparent,rgba(247,211,216,.9) 28%,rgba(233,89,117,.8) 75%,transparent);
+}
 body.sanci-editorial-page[data-sanci-showcase="depth-v2"] [data-sanci-role="hero-copy"]::before{
  content:"";display:block;width:44px;height:3px;
  background:linear-gradient(90deg,#fa657c,#c63349);border-radius:999px;
