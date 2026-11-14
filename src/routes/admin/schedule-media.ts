@@ -2,7 +2,7 @@ import { error,ok } from "../../core/response";
 import { getAuthenticatedUser,hasRole } from "../../core/auth/require-auth";
 import { auditStatement } from "../../core/audit";
 import { getCanonicalSiteContext } from "../../core/site-context";
-import { scheduleArtworkJSON,scheduleArtworkKey,validScheduleArtworkId } from "../../core/schedule-artwork.ts";
+import { scheduleArtworkJSON,scheduleArtworkKey,validScheduleArtworkId,SCHEDULE_ARTWORK_ACTIVE_IMAGE_RECHECK } from "../../core/schedule-artwork.ts";
 import type { Env } from "../../types/env";
 
 type Payload = { itemId?: unknown; assetId?: unknown };
@@ -36,13 +36,18 @@ export async function adminScheduleMediaRoute(request:Request,env:Env):Promise<R
   const key=scheduleArtworkKey(siteId,scheduleId),statement=normalizedAssetId?
     env.DB.prepare(`INSERT INTO site_settings (key,value_json,updated_at)
       SELECT ?,?,CURRENT_TIMESTAMP WHERE EXISTS (SELECT 1 FROM schedule_items WHERE id=? AND site_id=?)
+      ${SCHEDULE_ARTWORK_ACTIVE_IMAGE_RECHECK}
       ON CONFLICT(key) DO UPDATE SET value_json=excluded.value_json,updated_at=CURRENT_TIMESTAMP`)
-      .bind(key,scheduleArtworkJSON(normalizedAssetId),scheduleId,siteId):
+      .bind(key,scheduleArtworkJSON(normalizedAssetId),scheduleId,siteId,normalizedAssetId,siteId):
     env.DB.prepare("DELETE FROM site_settings WHERE key=?").bind(key);
-  await env.DB.batch([
+  const results=await env.DB.batch([
     statement,
     auditStatement(env,user.id,"schedule.artwork.update","schedule_item",scheduleId,
       {siteId,assetId:normalizedAssetId})
   ]);
+  // An archive or event deletion may win after the initial read. Report the
+  // failed conditional UPSERT rather than claiming an image was attached.
+  if(normalizedAssetId && Number(results?.[0]?.meta?.changes??0)!==1)
+    return error("SCHEDULE_ARTWORK_CONFLICT",409,"The event or image changed; refresh before retrying.");
   return ok({itemId:scheduleId,imageAssetId:normalizedAssetId});
 }

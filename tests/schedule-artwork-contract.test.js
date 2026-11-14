@@ -1,7 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {scheduleArtworkKey,scheduleArtworkJSON,validScheduleArtworkId,SCHEDULE_ARTWORK_JOIN} from '../src/core/schedule-artwork.ts';
+import {DatabaseSync} from 'node:sqlite';
+import {scheduleArtworkKey,scheduleArtworkJSON,validScheduleArtworkId,SCHEDULE_ARTWORK_JOIN,SCHEDULE_ARTWORK_SELECT,SCHEDULE_ARTWORK_ARCHIVE_GUARD,SCHEDULE_ARTWORK_ACTIVE_IMAGE_RECHECK} from '../src/core/schedule-artwork.ts';
 import {renderScheduleWeek} from '../public/editor-v2/core/schedule-week.js';
 
 const file=p=>readFileSync(new URL(p,import.meta.url),'utf8');
@@ -37,6 +38,9 @@ test('public image access is granted for real schedule associations only, never 
   assert.match(media,/INNER JOIN site_settings artwork/);
   assert.match(media,/row\.mime_type\.startsWith\("image\/"\)/);
   assert.match(media,/documentAssetReferences\(page\.published_content_json/);
+  assert.match(media,/SCHEDULE_ARTWORK_ARCHIVE_GUARD/,'archive commit must recheck active schedule associations');
+  assert.match(admin,/SCHEDULE_ARTWORK_ACTIVE_IMAGE_RECHECK/,'setter must atomically recheck active image before association');
+  assert.match(admin,/SCHEDULE_ARTWORK_CONFLICT/,'a lost precondition is reported rather than acknowledged');
 });
 test('Admin schedule page has accessible CRUD and image-picker entry points',()=>{
   for(const name of ['startsAt','endsAt','status','url','notes','title','platform','imageAssetId']){
@@ -57,4 +61,71 @@ test('one valid asset is visible with image toggle, malicious source is not',()=
   assert.match(view,new RegExp('/media/'+IMAGE));
   assert.doesNotMatch(renderScheduleWeek([base],'2026-11-09',{showArtwork:false}),/sanci-week-event-image/);
   assert.doesNotMatch(renderScheduleWeek([{...base,imageAssetId:'data:image/svg+xml,...'}],'2026-11-09',{showArtwork:true}),/data:image|sanci-week-event-image/);
+});
+
+
+// Isolated D1-compatible SQL regression. No production D1/R2 resources are used.
+function artworkFixture(){
+ const db=new DatabaseSync(':memory:');
+ db.exec(`
+   CREATE TABLE media(id TEXT PRIMARY KEY,site_id TEXT NOT NULL,archived_at TEXT,mime_type TEXT NOT NULL);
+   CREATE TABLE schedule_items(id TEXT PRIMARY KEY,site_id TEXT NOT NULL,title TEXT NOT NULL);
+   CREATE TABLE site_settings(key TEXT PRIMARY KEY,value_json TEXT NOT NULL,updated_at TEXT DEFAULT CURRENT_TIMESTAMP);
+ `);
+ db.prepare("INSERT INTO schedule_items(id,site_id,title) VALUES (?,'site-default','Fortnite')").run(ITEM);
+ db.prepare("INSERT INTO media(id,site_id,archived_at,mime_type) VALUES (?,'site-default',NULL,'image/png')").run(IMAGE);
+ return db;
+}
+
+test('public schedule artwork never exposes archived, wrong-site, wrong-MIME or malformed sidecar images',()=>{
+ const db=artworkFixture();
+ try{
+  const key=scheduleArtworkKey('site-default',ITEM);
+  const set=value=>db.prepare('INSERT INTO site_settings(key,value_json) VALUES (?,?) ON CONFLICT(key) DO UPDATE SET value_json=excluded.value_json').run(key,value);
+  const view=()=>db.prepare(`SELECT ${SCHEDULE_ARTWORK_SELECT} FROM schedule_items e${SCHEDULE_ARTWORK_JOIN} WHERE e.site_id=? AND e.id=?`).get('site-default',ITEM)?.image_asset_id;
+  assert.equal(view(),null,'missing sidecar is private');
+  set(scheduleArtworkJSON(IMAGE));
+  assert.equal(view(),IMAGE,'same-site active image is visible');
+  db.prepare('UPDATE media SET archived_at=? WHERE id=?').run('2026-11-14',IMAGE);
+  assert.equal(view(),null,'archived media is never exposed in public schedule DTO');
+  db.prepare('UPDATE media SET archived_at=NULL,mime_type=? WHERE id=?').run('audio/mpeg',IMAGE);
+  assert.equal(view(),null,'non-image is not exposed as cover art');
+  db.prepare('UPDATE media SET mime_type=? WHERE id=?').run('image/png',IMAGE);
+  const foreign='3f7a0000-0000-4000-8000-000000000002';
+  db.prepare("INSERT INTO media(id,site_id,archived_at,mime_type) VALUES (?,'site-other',NULL,'image/png')").run(foreign);
+  set(scheduleArtworkJSON(foreign));
+  assert.equal(view(),null,'another tenant\'s image ID stays private');
+  set('{malformed');
+  assert.equal(view(),null,'bad historic JSON is handled without throwing');
+ }finally{db.close();}
+});
+
+test('archive and cover UPSERT check each other at SQL commit time without D1 schema changes',()=>{
+ const db=artworkFixture();
+ try{
+  const key=scheduleArtworkKey('site-default',ITEM);
+  const setter=db.prepare(`INSERT INTO site_settings(key,value_json,updated_at)
+    SELECT ?,?,CURRENT_TIMESTAMP WHERE EXISTS (SELECT 1 FROM schedule_items WHERE id=? AND site_id=?)
+    ${SCHEDULE_ARTWORK_ACTIVE_IMAGE_RECHECK}
+    ON CONFLICT(key) DO UPDATE SET value_json=excluded.value_json,updated_at=CURRENT_TIMESTAMP`);
+  const link=(asset=IMAGE)=>setter.run(key,scheduleArtworkJSON(asset),ITEM,'site-default',asset,'site-default').changes;
+  const archive=db.prepare(`UPDATE media SET archived_at=CURRENT_TIMESTAMP
+    WHERE id=? AND site_id=? AND archived_at IS NULL ${SCHEDULE_ARTWORK_ARCHIVE_GUARD}`);
+  assert.equal(link(),1,'active media can be linked');
+  assert.equal(archive.run(IMAGE,'site-default').changes,0,'an already linked live cover cannot be archived');
+  // Historic uppercase and JSON-escaped UUIDs must also block the archive.
+  db.prepare('UPDATE site_settings SET value_json=? WHERE key=?').run(JSON.stringify({assetId:IMAGE.toUpperCase()}),key);
+  assert.equal(archive.run(IMAGE,'site-default').changes,0,'case variant cannot bypass archive guard');
+  db.prepare('UPDATE site_settings SET value_json=? WHERE key=?').run('{"assetId":"'+String.raw`\u0032`+IMAGE.slice(1)+'"}',key);
+  assert.equal(archive.run(IMAGE,'site-default').changes,0,'Unicode-escaped JSON cannot bypass archive guard');
+  db.prepare('DELETE FROM site_settings WHERE key=?').run(key);
+  assert.equal(archive.run(IMAGE,'site-default').changes,1,'unreferenced image can be archived');
+  assert.equal(link(),0,'a now-archived image cannot be attached by a stale writer');
+  assert.equal(db.prepare('SELECT COUNT(*) n FROM site_settings WHERE key=?').get(key).n,0,'failed association never persists');
+  db.prepare('UPDATE media SET archived_at=NULL WHERE id=?').run(IMAGE);
+  assert.equal(link(),1,'restored active media can be linked again');
+  assert.equal(setter.run(key,scheduleArtworkJSON(IMAGE),'nonexistent','site-default',IMAGE,'site-default').changes,0,'missing event fails the SQL precondition');
+  assert.equal(setter.run(key,scheduleArtworkJSON(IMAGE),ITEM,'site-other',IMAGE,'site-default').changes,0,'cross-site event fails the SQL precondition');
+  assert.equal(setter.run(key,scheduleArtworkJSON(IMAGE),ITEM,'site-default',IMAGE,'site-other').changes,0,'cross-site media fails the SQL precondition');
+ }finally{db.close();}
 });
