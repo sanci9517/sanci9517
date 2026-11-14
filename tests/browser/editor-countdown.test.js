@@ -174,5 +174,24 @@ for(const [width,timezoneId,gap,overlapISO,overlapLocal] of [[390,'Europe/Budape
   });
   for(const result of recovery)for(const key of ['rejected','escaped','fresh','unchanged','lockedSafe'])assert.equal(result[key],true,JSON.stringify(result));
  }
+ if(width===390){
+  // Recover from a non-publishable manual draft by binding to real Schedule.
+  await field.getByRole('combobox',{name:'Időpont forrása'}).selectOption('next-stream');
+  assert.equal(await field.locator('input[type="datetime-local"]').count(),0,'no manual date in schedule mode');
+  assert.match(await field.locator('.field-help').last().textContent(),/Menetrendből/);
+  await editor.locator('#save').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+  assert.equal(draft.pages[pageId].nodes[id].props.countdown.source,'next-stream');
+  assert.equal(draft.pages[pageId].nodes[id].props.countdown.targetISO,'');
+  await editor.locator('#publish').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
+  await viewer.reload();
+  assert.equal(await viewer.locator('.visual-countdown-content').getAttribute('data-countdown-source'),'next-stream');
+  // Switching back must offer the editable date field, not fabricate a timestamp.
+  await field.getByRole('combobox',{name:'Időpont forrása'}).selectOption('manual');
+  await field.locator('input[type="datetime-local"]').waitFor();
+  assert.match(await field.locator('.countdown-manual-hint').textContent(),/érvényes időpontot/);
+  assert.equal(await field.locator('input[type="datetime-local"]').inputValue(),'');
+ }
  assert.deepEqual(errors,[]);
 });
