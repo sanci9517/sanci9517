@@ -50,5 +50,32 @@
   },
   "scope_status": "D-04 scoped collision regression shipped; full 77.44.7.D / D-01..D-07 remains OPEN / NOT_CERTIFIED. Full Visual Editor manual/physical acceptance remains deferred. Save and Publish remain separate.",
   "production_mutations": "None: no production D1 migration/data write and no R2 deletion.",
-  "cost_huf": 0
+  "cost_huf": 0,
+  "github_editor_core_state_at_evidence": "completed/success; all steps passed, including Editor browser layout regression, WEB-013 Admin mobile browser regression, canonical schedule, domain contract, Brand Kit storage/access, and Admin home contract checks.",
+  "exact_sha_ci": {
+    "github_workflows": [
+      {
+        "id": 43612918745,
+        "name": "Editor Core Test",
+        "conclusion": "success"
+      },
+      {
+        "id": 43612918727,
+        "name": "F0 baseline checks",
+        "conclusion": "success"
+      },
+      {
+        "id": 43612918722,
+        "name": "Twitch Integration Check",
+        "conclusion": "success"
+      },
+      {
+        "id": 43612918738,
+        "name": "Production Worker source smoke",
+        "conclusion": "success"
+      }
+    ],
+    "editor_core_steps": "all required steps success; failure-only screenshot artifact upload skipped because no failure",
+    "docs_followup_commit_actions": "0 workflow runs, verified after docs-only [skip ci] push"
+  }
 }
