@@ -100,3 +100,22 @@ test('decorations run after all authored content activators, not before their DO
  assert.ok(activation>0&&decoration>activation,'icons, autograph and highlights are attached after activation');
  assert.equal(renderer.indexOf('decorateSanciShowcase(canvas,page,{slug,enabled:isSanciShowcase});',decoration+1),-1);
 });
+
+
+test('compact footer is SANCI-only, preserves original link order and large touch targets',()=>{
+ const css=readFileSync(new URL('../public/assets/sanci-showcase.css',import.meta.url),'utf8');
+ const html=readFileSync(new URL('../public/visual-page.html',import.meta.url),'utf8');
+ const intro=css.indexOf('SANCI compact footer v3');
+ const block=css.slice(intro);
+ assert.ok(intro>0,'mobile footer scope exists');
+ assert.match(block,/body\.sanci-editorial-page\[data-sanci-showcase="depth-v2"\]\s+\.public-footer-grid/);
+ assert.match(block,/grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/);
+ assert.match(block,/min-height:44px/);
+ assert.match(block,/\.public-footer-column:last-child/);
+ const footer=html.split('<footer class="footer public-footer">')[1]?.split('</footer>')[0];
+ assert.ok(footer,'the canonical HTML footer must exist');
+ const destinations=['/p/twitch','/p/youtube','/p/tiktok','/p/schedule',
+  '/p/community','/p/about','/p/contact','mailto:sandor.bogadi95@gmail.com'];
+ for(const href of destinations)assert.ok(footer.includes('href="'+href+'"'),href);
+ assert.match(html,/\/assets\/sanci-showcase\.css\?v=20261114-depth-v4/);
+});
