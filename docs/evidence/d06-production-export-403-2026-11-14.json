@@ -1,0 +1,93 @@
+{
+  "schema": 1,
+  "captured_at": "2026-11-14T22:29:23Z",
+  "plan_point": "77.44.7.D / D-06 exact production D1 export and isolated restore gate",
+  "status": "PRODUCTION_PREFLIGHT_PASS; EXPORT_JOB_COMPLETE; SIGNED_DOWNLOAD_HTTP_403; RESTORE_NOT_RUN; FULL_D_OPEN_NOT_CERTIFIED",
+  "approval": {
+    "owner_response": "User explicitly authorized all work required to proceed with the full D block, including the previously specified transfer of the complete production D1 export to the execution environment solely for isolated restore testing.",
+    "scope": "No SQL export contents to GitHub or chat; use an isolated D1 target; preserve Save/Publish separation."
+  },
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "remote_head_before_evidence": "9c132222fc165478c7962b5255cc033ab258e6ea",
+    "runtime_source_sha": "849310ee9d523feb608ed12763f4ed77d9033c88",
+    "master_plan_blob_sha": "d351cbe753a45985470cafdcab8bcc42628c6a7b"
+  },
+  "production_preflight": {
+    "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
+    "migrations_count": 34,
+    "latest_migration": "0028_media_archive.sql",
+    "media_site_default": {
+      "rows": 23,
+      "bytes": 22337740,
+      "active": 22,
+      "archived": 1
+    },
+    "cloudflare_d1_size_after_read_only_queries": 3706880,
+    "archive_triggers": [
+      "media_archive_pages_insert_guard",
+      "media_archive_pages_update_guard",
+      "media_archive_revisions_insert_guard"
+    ],
+    "trigger_state": "all three definitions remain case-sensitive",
+    "quick_check": "ok",
+    "foreign_key_check_rows": 0,
+    "read_only_metadata": {
+      "changed_db": false,
+      "rows_written": 0,
+      "changes": 0
+    }
+  },
+  "export": {
+    "api": "Cloudflare D1 Export API",
+    "status": "complete",
+    "filename": "5a4a5e96-fdad-421a-a33c-143daaf33e98-00000bb1-00000000-00005123-a28095549670edeb048356de1d708b7e.sql",
+    "signed_download_attempt": "direct fetch of returned signed URL from approved execution environment",
+    "http_status": 403,
+    "sql_bytes_downloaded": 0,
+    "sql_contents_exposed_to_executor": false,
+    "production_schema_or_rows_mutated": false
+  },
+  "restore_target": {
+    "name": "sanci9517_d06_restore_prod_20261114_221251",
+    "database_id": "8c131bde-9021-4964-9ace-89344b9f696f",
+    "account_d1_count_before": 3,
+    "account_d1_count_after": 4,
+    "no_export_sql_uploaded": true,
+    "visible_sqlite_master_objects": [
+      "Cloudflare internal _cf_KV table only"
+    ],
+    "internal_row_count": "UNVERIFIED; SELECT denied with SQLITE_AUTH",
+    "cleanup_attempt": "DELETE of exact target rejected by automatic review because emptiness could not be proven; no deletion request executed and no alternate route attempted",
+    "current_state": "temporary D1 target remains; do not claim empty"
+  },
+  "verification": {
+    "local_restore_order_python": "PASS 7/7",
+    "local_miniflare": "BLOCKED: listen EPERM on 127.0.0.1 in execution sandbox",
+    "canonical_plan_script": "PASS",
+    "plan_contract": "PASS 14/14",
+    "active_plan_audit": "77.44 / WEB-011, next 77.44.7.D; 396 features; NOT_CERTIFIED",
+    "git_diff_check": "PASS",
+    "runtime_ci": "NOT RUN; evidence-only docs commit uses [skip ci]",
+    "runtime_deploy": "NOT RUN; no runtime change"
+  },
+  "production_worker": {
+    "deployment_id": "bf413087-8322-451c-ad4f-3d7128b0ad3d",
+    "version_id": "c133e810-bf8f-4a7f-9c34-fa353c176b83",
+    "traffic_percent": 100,
+    "source_sha": "849310ee9d523feb608ed12763f4ed77d9033c88",
+    "runtime_changed_this_block": false,
+    "public_health": "UNVERIFIED; sandbox egress proxy prevents direct request"
+  },
+  "cost_and_safety": {
+    "paid_service_created": false,
+    "known_free_d1_database_limit": 10,
+    "d1_database_count_after": 4,
+    "ci_dispatch": false,
+    "production_d1_write_or_migration": false,
+    "r2_delete": false,
+    "billing_readback": "Unavailable; no intentional paid quota or paid service use"
+  },
+  "scope_limit": "Fresh production export is complete, but exact SQL restore and hash comparison were not completed due signed URL HTTP 403. The temporary test DB remains because its internal row count could not be proven and deletion was rejected. Production 0029 remains unapplied. D-01–D-07 full capability/lifecycle acceptance and full 77.44.7.D are OPEN / NOT_CERTIFIED. Full Editor manual/physical acceptance remains DEFERRED; Save and Publish remain separate."
+}

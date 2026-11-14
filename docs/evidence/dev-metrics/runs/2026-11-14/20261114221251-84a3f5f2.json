@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261114221251-84a3f5f2",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-14T22:12:51.684Z",
+  "finished_at": "2026-11-14T22:29:23.453Z",
+  "wall_seconds": 992,
+  "paused_seconds": 0,
+  "measured_seconds": 992,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "D-06 production read-only preflight and exact export completed; signed download returned HTTP 403 so no restore; isolated target left after cleanup auto-review rejected; Python restore-order 7/7 and plan contracts pass; Miniflare listener EPERM; runtime unchanged at c133/100%; no CI/deploy.",
+  "evidence": [
+    "docs/evidence/d06-production-export-403-2026-11-14.json"
+  ],
+  "checks": "PASS: python3 tests/d1-restore-order.test.py (7/7); python3 scripts/check-canonical-plan.py; python3 tests/plan-contract.test.py (14/14); python3 scripts/audit-active-plan-point.py (77.44.7.D OPEN / NOT_CERTIFIED); git diff --check. BLOCKED: node tests/d1-restore-order-miniflare.mjs (listen EPERM 127.0.0.1); fresh production export signed URL HTTP 403; temporary target deletion rejected by auto-review. NOT RUN: Worker CI/deploy (no runtime change; evidence-only commit [skip ci]).",
+  "started_revision": "4cd79c5cc8c3c0c74137e50c44763e4baf56892e",
+  "finished_revision": "4cd79c5cc8c3c0c74137e50c44763e4baf56892e",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
