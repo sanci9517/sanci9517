@@ -73,6 +73,11 @@ export function decorateSanciShowcase(canvas,page,{slug,enabled=false}={}){
     el.prepend(staticSymbol(kind));
     buttons++;
   }
+  const signatures=all.filter(n=>n.type==='text'&&n.metadata?.sanciSignature===1);
+  for(const n of signatures){
+    if(String(slug)==='home'&&page.metadata?.sanciSignatureVersion===1)
+      elements.get(n.id)?.setAttribute('data-sanci-role','signature');
+  }
   const clocks=all.filter(n=>n.type==='countdown'&&n.props?.countdown?.source==='next-stream');
   for(const n of clocks)elements.get(n.id)?.setAttribute('data-sanci-role','next-stream');
   const main=hero?.parentId&&page.nodes[hero.parentId];
@@ -96,5 +101,5 @@ export function decorateSanciShowcase(canvas,page,{slug,enabled=false}={}){
       activeObservers.set(canvas,observer);
     }
   }
-  return {active:true,slug:String(slug||''),hero:Boolean(heroElement),buttons,features:features.length,clocks:clocks.length};
+  return {active:true,slug:String(slug||''),hero:Boolean(heroElement),buttons,features:features.length,clocks:clocks.length,signatures:signatures.length};
 }
