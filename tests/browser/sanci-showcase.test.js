@@ -33,6 +33,11 @@ const fixture=[
 '<span class="sanci-timer-cell"><span class="sanci-timer-value">25</span><span class="sanci-timer-unit">perc</span></span>',
 '<span class="sanci-timer-cell"><span class="sanci-timer-value">12</span><span class="sanci-timer-unit">mp</span></span></time>',
 '</div></div></section></div></div></div>',
+'<footer class="footer public-footer"><div class="wrap public-footer-grid">',
+'<div class="public-footer-brand"><a class="brand" href="/">SANCI</a><p>Játsszunk egyet.</p></div>',
+'<div class="public-footer-column"><strong>Tartalom</strong><a href="/p/twitch">Élő adás</a><a href="/p/youtube">YouTube</a><a href="/p/tiktok">TikTok</a><a href="/p/schedule">Menetrend</a></div>',
+'<div class="public-footer-column"><strong>SANCI</strong><a href="/p/community">Közösség</a><a href="/p/about">Rólam</a><a href="/p/contact">Kapcsolat</a><a href="mailto:sandor.bogadi95@gmail.com">E-mail</a></div>',
+'</div><div class="wrap footer-row public-footer-bottom"><span>© SANCI9517</span><span>Játék. Kikapcsolódás. Közösség.</span></div></footer>',
 '<script type="module">',
 'import {decorateSanciShowcase} from "/assets/sanci-showcase.js";',
 'const nodes={root:{id:"root",type:"root",children:["hero","feature"]},hero:{id:"hero",type:"container",parentId:"root",children:["copy"],style:{backgroundAssetId:"image"}},',
@@ -68,6 +73,22 @@ test('SANCI autograph, CTA symbols and countdown remain responsive and reduced-m
   assert.equal(await page.locator('[data-sanci-role="next-stream"]').count(),1);
   const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-innerWidth);
   assert.ok(overflow<=2,'horizontal overflow at '+width+'px: '+overflow);
+  if(width<=390){
+   const footer=await page.evaluate(()=>{
+    const columns=document.querySelectorAll('.public-footer-column');
+    const grid=document.querySelector('.public-footer-grid');
+    const rows=[...columns].map(c=>c.getBoundingClientRect());
+    const targets=[...document.querySelectorAll('.public-footer-column a')];
+    return {columns:getComputedStyle(grid).gridTemplateColumns.split(' ').length,
+      aligned:Math.abs(rows[0].top-rows[1].top)<3,
+      eightLinks:targets.length===8,
+      minTapHeight:Math.min(...targets.map(a=>a.getBoundingClientRect().height))};
+   });
+   assert.equal(footer.columns,2,'SANCI mobile footer needs two content columns');
+   assert.equal(footer.aligned,true,'footer link groups must share the same row');
+   assert.equal(footer.eightLinks,true,'no original destination may disappear');
+   assert.ok(footer.minTapHeight>=44,'footer tap targets must be >=44px');
+  }
   assert.deepEqual(errors,[]);
   await page.close();
  }
