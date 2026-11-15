@@ -23,7 +23,7 @@
     ],
     "save_publish": "Unchanged and separate. Malformed persisted records are neither auto-repaired nor saved/published.",
     "production_data_mutation": false,
-    "r2_mutation": false,
+    "production_r2_mutation": false,
     "new_runtime_dependency": false
   },
   "local_checks": {
@@ -81,6 +81,7 @@
     "source_sha": "1ed58dce67e9b982142551ee4d0cd14ea59b2401",
     "status_at_recording": "in_progress",
     "completed_steps": ["typecheck", "editor core tests", "offline D1 ledger and bootstrap tests", "private R2 media API tests", "Chromium installation", "real Worker media upload with isolated D1 and R2"],
+    "r2_scope": "The workflow's media-storage test ran against isolated test bindings; no production R2 object was modified or deleted by this D-07 block.",
     "active_step": "Run Editor browser layout regression",
     "result": "PENDING"
   },
