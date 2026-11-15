@@ -1,0 +1,72 @@
+{
+  "schema": 1,
+  "captured_at": "2026-11-15T19:30:41Z",
+  "plan_item": "77.44.7.D",
+  "plan_item_status": "OPEN / NOT_CERTIFIED",
+  "audit_counts": {"total_features": 396, "partial_source": 146, "unverified": 250, "functional_acceptance": "NOT_CERTIFIED"},
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "base_head": "0fdca7405367cca7f575731461cba0b95413b9e2",
+    "remote_head_before_push": "0fdca7405367cca7f575731461cba0b95413b9e2"
+  },
+  "change": {
+    "kind": "test-harness-only",
+    "path": "tests/browser/editor-accessibility-ime.test.js",
+    "description": "Replaced the frame-polled wait for a synchronous aria-invalid update after Playwright fill() with a direct assertion. The input handler and normalization behavior were unchanged.",
+    "reason": "The prior Editor Core run timed out while polling the expected invalid state at 1366px. The file already documents Chromium scheduler pressure in the serial suite. A direct assertion checks the synchronous input contract without a RAF/polling timeout.",
+    "runtime_changed": false
+  },
+  "ci_failure_review": {
+    "workflow_run": "43749516956",
+    "job": "132920116872",
+    "source_sha": "8f94c1eb2423f92e0a0868373ab2d11c82667a94",
+    "failed_check": "Editor Core",
+    "failed_test": "tests/browser/editor-accessibility-ime.test.js",
+    "failure": "page.waitForFunction timed out at the unsupported-language aria-invalid assertion at 1366px; 390px case passed in that run.",
+    "interpretation": "The timeout was in a test synchronization wait. The UI contract passed locally before and after removing the wait; no runtime UI defect was reproduced.",
+    "rerun": "NOT STARTED; test-harness-only change uses the repository [skip ci] convention after targeted local validation. The historical failure is not relabeled as a pass."
+  },
+  "checks": [
+    {
+      "command": "python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-accessibility-ime.test.js",
+      "result": "PASS: 2/2 Chromium cases (390px and 1366px) after direct assertion change."
+    },
+    {
+      "command": "git diff --check",
+      "result": "PASS"
+    },
+    {
+      "command": "Canonical plan audit",
+      "result": "77.44 / WEB-011; D remains OPEN / NOT_CERTIFIED; 396 features remain in the audit."
+    }
+  ],
+  "production": {
+    "runtime_source_sha": "8f94c1eb2423f92e0a0868373ab2d11c82667a94",
+    "worker": "sanci9517-streamer-brand",
+    "deployment_id": "182d946d-49cf-44e9-9b08-1e23739e6adf",
+    "worker_version_id": "a0fbaaba-358a-43c5-8c64-8d2df9998106",
+    "traffic_percent": 100,
+    "health_checked_at": "2026-11-15T19:20:39Z",
+    "health_http_status": 200,
+    "health_body": {
+      "ok": true,
+      "service": "sanci9517-streamer-brand",
+      "version": "2.0.0",
+      "server": "cloudflare-worker"
+    },
+    "this_change_deployed": false,
+    "reason": "Tests and evidence are excluded from the verified Worker build trigger; no runtime code or public assets changed."
+  },
+  "cost_and_data": {
+    "new_paid_usage": "none",
+    "production_d1_reads_writes_or_migrations": "none",
+    "r2_operations": "none",
+    "github_actions_dispatch_or_rerun": "none"
+  },
+  "limitations": [
+    "The full Visual Editor acceptance remains deferred until the entire planned Editor is implemented.",
+    "This test repair does not certify the full 77.44.7.D or WEB-011 acceptance gate.",
+    "No GitHub workflow pass is claimed for the modified test on the new commit."
+  ]
+}
