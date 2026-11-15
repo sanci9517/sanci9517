@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261115154752-b49a39cd",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-15T15:47:52.741Z",
+  "finished_at": "2026-11-15T15:49:33.836Z",
+  "wall_seconds": 101,
+  "paused_seconds": 0,
+  "measured_seconds": 101,
+  "status": "partial",
+  "kind": "none",
+  "summary": "A D-03 kiadás minden authored-content consumerét célzottan átvizsgáltam; a cache-busteres runtime importok teljesek, nincs új hiány vagy forrásmódosítás. Az előző részkapu éles/evidence állapotát rögzítettem; az exact-SHA Editor Core széles Chromium kapuja tovább fut.",
+  "evidence": [
+    "docs/evidence/editor-d03-saveable-table-payload-2026-11-15.json"
+  ],
+  "checks": "rg authored-content.js import audit: all production consumers versioned; exact-SHA workflow 43730985024 still in_progress at browser layout regression; deployment 5451c750 100%; direct health/assets pass",
+  "started_revision": "b98adff908f72be0f679ff479d97dcec9ffdc3d7",
+  "finished_revision": "b98adff908f72be0f679ff479d97dcec9ffdc3d7",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
