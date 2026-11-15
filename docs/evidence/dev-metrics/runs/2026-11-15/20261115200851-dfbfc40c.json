@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261115200851-dfbfc40c",
+  "task": "77.44.7.D-D04-tabs-hidden-panel-css",
+  "trigger": "manual",
+  "started_at": "2026-11-15T20:08:51.243Z",
+  "finished_at": "2026-11-15T20:11:24.367Z",
+  "wall_seconds": 153,
+  "paused_seconds": 0,
+  "measured_seconds": 153,
+  "status": "partial",
+  "kind": "none",
+  "summary": "D-04 source audit completed; no new reproducible defect. Switched to verified adjacent D-03 TSV parser acceptance gap; no files changed.",
+  "evidence": [
+    "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "8807d302e446d739521e820f4f73ef0fb573e567",
+  "finished_revision": "8807d302e446d739521e820f4f73ef0fb573e567",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

@@ -1,0 +1,106 @@
+{
+  "schema_version": 1,
+  "plan_point": "77.44.7.D / D-03 terminal TSV record delimiter regression",
+  "scope_status": "LOCAL_AND_PREFLIGHT_PASS; overall D remains OPEN / NOT_CERTIFIED",
+  "repository": "sanci9517/sanci9517",
+  "branch": "v2/foundation",
+  "source_commit": "filled by post-release exact-SHA follow-up",
+  "branch_head_before": "8807d302e446d739521e820f4f73ef0fb573e567",
+  "defect": "An Excel-style TSV ending in CRLF was parsed with a phantom one-cell final row, making otherwise valid authored tables fail the declared rectangular row/column contract.",
+  "implementation": [
+    "The shared table TSV parser no longer emits a phantom row for a single terminal CR/LF delimiter.",
+    "Explicit blank records and empty-source behavior remain intact.",
+    "The rich-text clipboard adapter preserves its historical extra blank-row semantics.",
+    "The real Chromium Inspector regression enters a trailing-CRLF table, confirms row/cell values, and confirms typing remains draft-only before Save."
+  ],
+  "tests": {
+    "npm run test:editor": {
+      "result": "PASS",
+      "test_files": 16,
+      "failures": 0
+    },
+    "targeted TSV unit": {
+      "result": "PASS",
+      "tests": 30,
+      "failures": 0
+    },
+    "editor-content-system real Chromium": {
+      "result": "PASS",
+      "tests": 1,
+      "failures": 0
+    },
+    "npm run typecheck": {
+      "result": "PASS"
+    },
+    "npm run test:web013:migration-gate": {
+      "result": "PASS"
+    },
+    "tests/plan-contract.test.py": {
+      "result": "PASS",
+      "tests": 14
+    },
+    "scripts/check-canonical-plan.py": {
+      "result": "PASS",
+      "masters": 13,
+      "features": 396
+    },
+    "scripts/audit-active-plan-point.py": {
+      "result": "PASS",
+      "next": "77.44.7.D",
+      "functional_acceptance": "NOT_CERTIFIED",
+      "source_status_counts": {
+        "PARTIAL_SOURCE": 146,
+        "UNVERIFIED": 250
+      }
+    },
+    "scripts/build-feature-traceability.py --check": {
+      "result": "PASS",
+      "features": 396
+    },
+    "changed JavaScript syntax and git diff whitespace": {
+      "result": "PASS"
+    },
+    "npm run deploy:safe -- --dry-run": {
+      "result": "PASS",
+      "wrangler": "4.130.0",
+      "public_assets": 182,
+      "deployment": "not performed"
+    }
+  },
+  "production_d1_preflight": {
+    "queries": [
+      "SELECT COUNT(*) AS migration_count, MAX(name) AS latest_migration FROM d1_migrations",
+      "SELECT name, sql FROM sqlite_master WHERE type='trigger' AND name LIKE 'media_archive_%' ORDER BY name"
+    ],
+    "migration_count": 35,
+    "latest_migration": "0029_media_archive_unicode_additive.sql",
+    "media_archive_triggers": 7,
+    "rows_written": 0,
+    "changes": 0,
+    "changed_db": false,
+    "production_migration_or_data_write": "NONE"
+  },
+  "release": {
+    "status": "PENDING_NORMAL_FAST_FORWARD_PUSH_AND_AUTOMATIC_CLOUDFLARE_BUILD",
+    "automatic_deployment_expected": true,
+    "dry_run_only": true
+  },
+  "assets_local_sha256": {
+    "public/editor-v2/core/table-tsv.js": "2160e1efe0c413bed124bffd93a58dc49a0496e7c4d53a86a6f1c0d57c48e189",
+    "public/editor-v2/core/richtext-import.js": "28bc2d680926de306907686f9610cc19587f8ce1023ef2719c244f12a2b2ba15",
+    "public/editor-v2/ui/element-content-controls.js": "7025958670a8fc28e5204b4820424e4d5aa8e1d8ff3dd8102e125862dec3740c",
+    "public/editor-v2/tests/element-content.test.js": "2e3862514071d6287b7bf8b076b00ab05f853178dc48b5b7128a8bff05af5bb3"
+  },
+  "limitations": [
+    "This is a D-03 TSV terminal-delimiter regression subgate, not closure of D-03 or D-01 through D-07.",
+    "The full 77.44.7.D lifecycle/capability matrix remains OPEN / NOT_CERTIFIED.",
+    "Full Visual Editor manual and physical acceptance remains DEFERRED."
+  ],
+  "data_safety": {
+    "r2_changes": "NONE",
+    "production_d1_writes": 0,
+    "new_dependencies": 0,
+    "new_cost_huf": 0
+  },
+  "plan_commit_base_blob": "205a93839699bfbe05ace3cae2a45887cc7be698"
+}

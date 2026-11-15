@@ -106,6 +106,14 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
       assert.equal(await rowsField.inputValue(),serializeTableTsv(tableRows),'a supported authored table larger than 40,000 characters opens without truncation');
       assert.equal(await rowsField.evaluate(el=>el.maxLength),MAX_AUTHORED_TABLE_TSV_CHARS,
         'Inspector maxLength derives from the full row/column/cell contract, not a smaller legacy cap');
+      await rowsField.fill('Fejléc\tMásodik\r\nZárósor\tÉrték\r\n');
+      assert.equal(await rowsField.getAttribute('aria-invalid'),null,
+        'a trailing Excel CRLF is accepted as the final record delimiter, not a malformed extra row');
+      assert.equal(await node(editor,'table').locator('tbody tr').count(),2,
+        'a final clipboard line ending does not add a one-cell row to the authored table');
+      assert.equal(await node(editor,'table').locator('tbody tr').last().locator('td').last().textContent(),'Érték');
+      assert.equal(posts.length,0,'pasting a complete TSV remains draft-only before Save');
+      await rowsField.fill(serializeTableTsv(tableRows));
       await rowsField.evaluate(el=>{el.focus();el.setSelectionRange(el.value.length,el.value.length)});
       await rowsField.pressSequentially('!');
       assert.equal(await rowsField.inputValue(),serializeTableTsv(expectedTableRows),

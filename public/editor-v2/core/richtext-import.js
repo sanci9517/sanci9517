@@ -192,6 +192,10 @@ function fromPlainText(text) {
     // empty record; preserve additional terminal blank rows as intentional data.
     const tableText=normalized.endsWith('\n')?normalized.slice(0,-1):normalized;
     const rows=parseTableTsv(tableText);
+    // parseTableTsv treats one final row terminator as non-data. The legacy
+    // clipboard contract has already removed its single terminator above, so a
+    // remaining terminal newline represents an intentional extra blank row.
+    if(tableText.endsWith('\n'))rows.push(['']);
     if (rows.length > MAX_TABLE_ROWS || Math.max(...rows.map(row => row.length)) > MAX_TABLE_COLUMNS) {
       throw new Error('A beillesztett táblázat legfeljebb 100 sort és 24 oszlopot tartalmazhat.');
     }

@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261115201124-23d7994e",
+  "task": "77.44.7.D-D03-table-tsv-terminal-record",
+  "trigger": "manual",
+  "started_at": "2026-11-15T20:11:24.423Z",
+  "finished_at": "2026-11-15T20:23:13.939Z",
+  "wall_seconds": 710,
+  "paused_seconds": 0,
+  "measured_seconds": 710,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "D-03 trailing TSV terminator regression implemented; local unit/Chromium/type/plan checks and SELECT-only D1 plus Wrangler dry-run passed; runtime push and production rollout remain pending.",
+  "evidence": [
+    "docs/evidence/editor-d03-terminal-tsv-delimiter-2026-11-15.json",
+    "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md"
+  ],
+  "checks": "Editor 16 files; TSV unit 30/30; Chromium 1/1; typecheck; migration gate; plan-contract 14/14; canonical 13/13; audit; traceability 396; Wrangler dry-run; SELECT-only D1",
+  "started_revision": "8807d302e446d739521e820f4f73ef0fb573e567",
+  "finished_revision": "8807d302e446d739521e820f4f73ef0fb573e567",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

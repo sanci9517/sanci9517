@@ -101,6 +101,12 @@ test('authored table TSV contract covers the full model and preserves quoted cel
   }
   assert.deepEqual(parseTableTsv('A\tB\r\nC\tD'),[['A','B'],['C','D']],
     'ordinary Excel-style CRLF TSV remains supported');
+  assert.deepEqual(parseTableTsv('A\tB\r\nC\tD\r\n'),[['A','B'],['C','D']],
+    'a terminal Excel line ending does not create a phantom one-cell row');
+  assert.deepEqual(parseTableTsv('A\tB\n'),[['A','B']],
+    'a terminal LF has the same no-phantom-row behavior as Excel CRLF');
+  assert.deepEqual(parseTableTsv('A\tB\n\n'),[['A','B'],['']],
+    'an additional blank record remains distinguishable from one terminal line ending');
   assert.throws(()=>parseTableTsv('"lezáratlan\tcell'),/nincs lezárva/);
   assert.throws(()=>parseTableTsv('"idézett"utótag\tB'),/záró idézőjel/);
 });
