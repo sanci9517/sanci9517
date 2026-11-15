@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261115145245-76c0617b",
+  "task": "77.44.7.D-next-audit-and-regression",
+  "trigger": "manual",
+  "started_at": "2026-11-15T14:52:45.862Z",
+  "finished_at": "2026-11-15T15:14:47.224Z",
+  "wall_seconds": 1321,
+  "paused_seconds": 0,
+  "measured_seconds": 1321,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "Released D-03 lossless full-limit table TSV editor; overall D remains open and exact-SHA Editor Core workflow is still running.",
+  "evidence": [
+    "docs/evidence/editor-d03-authored-table-tsv-2026-11-15.json"
+  ],
+  "checks": "Editor unit 16 pass; real Chromium lifecycle 1 pass; typecheck; plan contract 14; canonical plan 13 files; source traceability 396; Wrangler deploy:safe dry-run; exact source smoke and Cloudflare production build success",
+  "started_revision": "4ccc7f394c4a8f80084ab56807ef1348de4a1a0c",
+  "finished_revision": "669bf0d817e4752a1417e09bea76be908bbeb0bf",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

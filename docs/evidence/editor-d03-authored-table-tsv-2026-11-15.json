@@ -1,0 +1,127 @@
+{
+  "schema_version": 1,
+  "plan_point": "77.44.7.D / D-03 authored table Inspector round-trip",
+  "scope_status": "PARTIAL_ACCEPTANCE_PASS; overall D remains OPEN / NOT_CERTIFIED",
+  "repository": "sanci9517/sanci9517",
+  "branch": "v2/foundation",
+  "source_commit": "669bf0d817e4752a1417e09bea76be908bbeb0bf",
+  "commit_url": "https://github.com/sanci9517/sanci9517/commit/669bf0d817e4752a1417e09bea76be908bbeb0bf",
+  "defect": "Legacy table Inspector used a 40,000-character TSV cap although authored-content accepts 100 rows x 16 columns x 2,000 characters per cell; additionally naive tab/newline split lost cell delimiters.",
+  "implementation": [
+    "Shared row/column/cell limits drive normalization and a 6,404,799 UTF-16-code-unit max including worst-case quoting/separators.",
+    "New dependency-free RFC-style quoted TSV serializer/parser preserves embedded tabs, quotes, LF and CRLF.",
+    "Updated cache-busted module consumers so deployed Editor modules refresh.",
+    "Save, reload and Publish remain separate; unsaved keystrokes issue no draft or publish request."
+  ],
+  "tests": {
+    "npm run test:editor": {
+      "result": "PASS",
+      "tests": 16,
+      "failures": 0
+    },
+    "node --test --test-concurrency=1 tests/browser/editor-content-system.test.js": {
+      "result": "PASS",
+      "tests": 1,
+      "failures": 0,
+      "browser": "Chromium; test covers a 21x2 table >40,000 chars, last-cell edit, Save, reload, separate Publish"
+    },
+    "npm run typecheck": {
+      "result": "PASS"
+    },
+    "python3 tests/plan-contract.test.py": {
+      "result": "PASS",
+      "tests": 14
+    },
+    "python3 scripts/check-canonical-plan.py": {
+      "result": "PASS",
+      "masters": 13,
+      "features": 396
+    },
+    "python3 scripts/audit-active-plan-point.py": {
+      "result": "PASS",
+      "next": "77.44.7.D",
+      "D_status": "OPEN / NOT_CERTIFIED"
+    },
+    "python3 scripts/build-feature-traceability.py --check": {
+      "result": "PASS",
+      "features": 396
+    },
+    "node --check changed JavaScript files; git diff --check": {
+      "result": "PASS"
+    },
+    "npm run deploy:safe -- --dry-run": {
+      "result": "PASS",
+      "wrangler": "4.130.0",
+      "public_assets": 182,
+      "upload_bytes": 376070,
+      "gzip_bytes": 96200,
+      "warning": "Wrangler ENOENT attempting to create /home/agent/.config/.wrangler/logs; command exited 0 and printed --dry-run: exiting now."
+    }
+  },
+  "production_d1_preflight": {
+    "sql": "SELECT COUNT(*) AS migration_count, MAX(name) AS latest_migration FROM d1_migrations",
+    "before_and_after": {
+      "migration_count": 35,
+      "latest_migration": "0029_media_archive_unicode_additive.sql",
+      "rows_written": 0,
+      "changes": 0,
+      "changed_db": false
+    },
+    "production_migration_or_data_write": "NONE"
+  },
+  "cloudflare_build": {
+    "id": "bb11ade0-9456-4782-a5cd-40c442584abe",
+    "outcome": "success",
+    "source_commit": "669bf0d817e4752a1417e09bea76be908bbeb0bf",
+    "build_command": "npm run typecheck",
+    "deploy_command": "npm run deploy:safe"
+  },
+  "production": {
+    "deployment_id": "97f4b058-5080-4925-9573-0ffd1bf023d5",
+    "worker_version": "a87efbec-1d90-4b85-9ecc-4b409fdb4d54",
+    "traffic_percentage": 100,
+    "health": {
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+      "http_status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "changed_public_asset_sha256": {
+      "editor-v2/app.js": "de780ee586acb29dcb4c089d3e5cbb5ce7a49617e240dcb9c20bc5cc1c5fbdbc",
+      "editor-v2/core/authored-content.js": "b5b2f1f79522ce2adb22ddca37a4d4a89c3cbcd749f7d6bae2fd8d9982293638",
+      "editor-v2/core/table-tsv.js": "48fcdaff19e96b1dd17168bf1ac31d275a38941ddbf2f4c84ebbab678c369196",
+      "editor-v2/tests/element-content.test.js": "a3e6e6573c42a5fecc56f12689036232ab76f8ee256c120027c0e4ae507b2e79",
+      "editor-v2/ui/card-content-inspector.js": "c109163cd06d223f4517c88eda9b0877d833190c7cdb755934657066a90c4ad2",
+      "editor-v2/ui/element-content-controls.js": "686d845151ec8e598aec2f60972aad75847693fdd1bbb0f10b493fa918d1716f",
+      "editor-v2/ui/legacy-media-inspector.js": "c1165de204bf4e2bc7d3fa16fd457d59c8b06caa9f577f45c746b14928e10a57",
+      "editor-v2/ui/property-controls.js": "b98783eda9da6c737a8c76a7c3c3068dfaca3c48639f73fc0f2e72847c3bd366"
+    },
+    "all_changed_public_assets_http_200_and_hash_match": true
+  },
+  "github_actions": {
+    "production_source_smoke_run": {
+      "id": 43728127086,
+      "status": "success",
+      "url": "https://github.com/sanci9517/sanci9517/actions/runs/43728127086"
+    },
+    "editor_core_run": {
+      "id": 43728126954,
+      "status": "in_progress_at_snapshot",
+      "url": "https://github.com/sanci9517/sanci9517/actions/runs/43728126954"
+    },
+    "aggregate_ci": "IN_PROGRESS; no aggregate PASS claimed"
+  },
+  "limitations": [
+    "This verifies the D-03 table editing slice only; it does not close D-01 through D-07 or the full 77.44.7.D matrix.",
+    "Full Visual Editor manual/physical acceptance remains deferred to the complete Editor acceptance gate."
+  ],
+  "data_safety": {
+    "r2_changes": "NONE",
+    "new_dependencies": 0,
+    "new_cost_huf": 0
+  }
+}
