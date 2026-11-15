@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "plan_point": "77.44.7.D / D-04 published structured-tabs keyboard and ARIA regression",
+  "plan_status": "D-04 bounded public-browser regression PASS; full D-04, D-01..D-07 and 77.44.7.D remain OPEN / NOT_CERTIFIED",
+  "repository": "sanci9517/sanci9517",
+  "branch": "v2/foundation",
+  "runtime_source_commit": "8204a089c1284202fb23ed86269a9df615d4fab8",
+  "test_commit": "e8029e440192aa1a875a030a00e0a81d2304b174",
+  "test_commit_parent": "85fd083109645469dab9a261c2f7f7e8c7203298",
+  "test_commit_url": "https://github.com/sanci9517/sanci9517/commit/e8029e440192aa1a875a030a00e0a81d2304b174",
+  "change_kind": "test-only; no Worker runtime or public asset changed",
+  "test_file": "tests/browser/editor-content-system.test.js",
+  "test_file_sha256": "328d8d38644c6a629b3c4a62cef9b62d12d79c069ad36ecb7bac9723145e8933",
+  "regression_case": {
+    "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-content-system.test.js",
+    "result": "PASS",
+    "tests": 1,
+    "context": "The test exercises the actual public renderer after the existing separate Publish action.",
+    "assertions": [
+      "ArrowRight wraps from the final published tab to the first tab; ArrowLeft wraps from the first tab to the final tab.",
+      "Home and End select the first and last published tabs.",
+      "After each keyboard selection exactly one tab has aria-selected=true and tabindex=0, only the corresponding panel is visible, and focus is on the selected tab.",
+      "Every tab/panel pair has unique IDs and consistent aria-controls/aria-labelledby references; the selected panel text matches the authored content."
+    ]
+  },
+  "additional_checks": {
+    "npm run test:editor": "PASS (16 test files and 3 Linux subreaper checks)",
+    "python3 tests/plan-contract.test.py": "PASS (14/14)",
+    "python3 scripts/check-canonical-plan.py": "PASS (13 master files, one cursor, 396 mappings)",
+    "python3 scripts/audit-active-plan-point.py": "PASS; next 77.44.7.D; functional acceptance NOT_CERTIFIED",
+    "python3 scripts/build-feature-traceability.py --check": "PASS (396/396)",
+    "node --check tests/browser/editor-content-system.test.js": "PASS",
+    "git diff --check": "PASS",
+    "initial_sandboxed_browser_attempt": "BLOCKED before test assertions: local 127.0.0.1 fixture listen returned EPERM; rerun with permitted loopback/network execution passed. This was a runner restriction, not a product failure."
+  },
+  "remote_state": {
+    "branch_head_verified_via_git_ls_remote_at": "2026-11-15T16:17:33Z",
+    "branch_head": "e8029e440192aa1a875a030a00e0a81d2304b174",
+    "github_check_runs_for_test_commit": 0,
+    "ci_reason": "The test-only commit uses the repository-required [skip ci] convention; local browser and unit checks were run. No remote CI PASS is claimed.",
+    "github_actions_free_quota": "Not verified in this run; no workflow or dispatch was started."
+  },
+  "production_read_only_check": {
+    "latest_deployment_id": "f5051413-1d52-4db1-b016-a0971822fb80",
+    "latest_worker_version": "5451c750-502f-45cc-95e9-130471e46d31",
+    "traffic_percentage": 100,
+    "deployment_api_read_at": "2026-11-15T16:17Z",
+    "health_current": "UNVERIFIED: direct HTTPS health request was blocked before reaching the Worker by the execution environment CONNECT proxy (403). No runtime source changed.",
+    "changed_public_assets": [],
+    "public_asset_hash_comparison": "NOT APPLICABLE: no runtime or public asset source changed.",
+    "production_d1_or_r2_mutation": "NONE"
+  },
+  "cost_huf": 0,
+  "development_measurement_id": "20261115161232-4d67fcb5"
+}

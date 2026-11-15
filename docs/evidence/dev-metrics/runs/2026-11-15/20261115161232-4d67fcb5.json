@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261115161232-4d67fcb5",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-15T16:12:32.545Z",
+  "finished_at": "2026-11-15T16:18:43.692Z",
+  "wall_seconds": 371,
+  "paused_seconds": 0,
+  "measured_seconds": 371,
+  "status": "pass",
+  "kind": "mixed",
+  "summary": "D-04 publikus structured tab keyboard/ARIA Chromium regresszió PASS; canonical plan és gépi evidence frissítve. A teljes D továbbra OPEN.",
+  "evidence": [
+    "docs/evidence/editor-d04-published-tab-keyboard-aria-2026-11-15.json"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "85fd083109645469dab9a261c2f7f7e8c7203298",
+  "finished_revision": "e8029e440192aa1a875a030a00e0a81d2304b174",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
