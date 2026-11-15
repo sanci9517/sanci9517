@@ -375,11 +375,24 @@ test('structured Inspector editing survives Save, Publish and public interaction
  assert.notEqual(primaryControls,isolatedControls,'independent published widgets expose distinct panel references');
  assert.equal(await tabs.locator('#'+primaryControls).getAttribute('aria-labelledby'),await tabs.getByRole('tab').nth(1).getAttribute('id'));
  assert.equal(await isolatedTabs.locator('#'+isolatedControls).getAttribute('aria-labelledby'),await isolatedTabs.getByRole('tab').nth(1).getAttribute('id'));
+ await isolatedTabs.getByRole('tab').first().click();
+ assert.equal(await isolatedTabs.getByRole('tab').first().getAttribute('aria-selected'),'true',
+  'pointer selection activates only the clicked widget tab');
+ assert.equal(await isolatedTabs.locator('[role="tabpanel"]').first().textContent(),'Külön csoport első tartalma');
+ assert.equal(await isolatedTabs.getByRole('tab').first().evaluate(el=>document.activeElement===el),true,
+  'pointer selection leaves focus on its selected tab');
+ assert.equal(await tabs.getByRole('tab').nth(1).getAttribute('aria-selected'),'true',
+  'pointer navigation in the second widget does not change the first widget');
+ await tabs.getByRole('tab').first().click();
+ assert.equal(await tabs.getByRole('tab').first().getAttribute('aria-selected'),'true');
+ assert.equal(await tabs.locator('[role="tabpanel"]').first().textContent(),expectedModels.tabs.items[0].content);
+ assert.equal(await isolatedTabs.getByRole('tab').first().getAttribute('aria-selected'),'true',
+  'pointer navigation in the first widget does not change the second widget');
  await tabs.getByRole('tab').nth(1).focus();
  await viewer.keyboard.press('ArrowRight');
  assert.equal(await tabs.getByRole('tab').first().getAttribute('aria-selected'),'true');
- assert.equal(await isolatedTabs.getByRole('tab').nth(1).getAttribute('aria-selected'),'true',
-  'changing the first published tab widget leaves the second selection isolated');
+ assert.equal(await isolatedTabs.getByRole('tab').first().getAttribute('aria-selected'),'true',
+  'changing the first published tab widget leaves the second widget selection isolated');
  const accordion=viewer.locator('.visual-editor-node[data-node-id="'+ids.accordion+'"]');
  assert.equal(await accordion.locator('details').count(),2);
  await accordion.locator('summary').nth(1).click();
