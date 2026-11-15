@@ -246,6 +246,19 @@ test('hierarchy validation reports malformed child data without iterating or coe
   assert.throws(()=>assertValidEditorDocument(document),/invalid child id/);
 });
 
+test('hierarchy validation rejects duplicate sibling references without changing the Page Model', () => {
+  const document=createDocument();
+  const page=document.pages[document.activePageId],root=page.nodes[page.rootId];
+  const child=createNode(NODE_TYPES.SECTION,{parentId:root.id});
+  page.nodes[child.id]=child;
+  root.children=[child.id,child.id];
+  const persisted=JSON.stringify(document);
+
+  assert.match(validateHierarchy(page).join('; '),/duplicate child id/);
+  assert.throws(()=>assertValidEditorDocument(document),/duplicate child id/);
+  assert.equal(JSON.stringify(document),persisted,'validation does not repair or rewrite imported data');
+});
+
 test('property registry exposes extensible inspector groups and properties', () => {
   assert.ok(listPropertyGroups().some((group) => group.id === 'typography'));
   assert.ok(listPropertyGroups().some((group) => group.id === 'responsive'));

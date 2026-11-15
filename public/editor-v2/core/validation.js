@@ -57,11 +57,17 @@ export function validateHierarchy(page) {
     if (!Array.isArray(node.children)) {
       errors.push(`invalid children collection at node: ${nodeId}`);
     }
+    const siblingIds = new Set();
     for (const childId of Array.isArray(node.children) ? node.children : []) {
       if (typeof childId !== 'string' || !childId) {
         errors.push(`invalid child id at node: ${nodeId}`);
         continue;
       }
+      if (siblingIds.has(childId)) {
+        errors.push(`duplicate child id at node: ${nodeId}`);
+        continue;
+      }
+      siblingIds.add(childId);
       const child = getNode(page, childId);
       if (!child) {
         errors.push(`missing child ${childId} referenced by ${nodeId}`);

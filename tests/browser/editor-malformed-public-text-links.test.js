@@ -185,4 +185,16 @@ test('D-07 Editor rejects corrupt Page Model child lists safely without rewritin
   assert.deepEqual(errors,[],'corrupt persisted children are handled by the Editor boot error boundary');
   assert.deepEqual(writes,[],'loading invalid data never Saves or Publishes it');
   assert.equal(JSON.stringify(state.document),persisted,'the fixture’s persisted Page Model remains byte-for-byte unchanged');
+
+  // A duplicate valid child ID passes the string/reference checks but makes
+  // the saved page non-tree-shaped; the editor must fail closed rather than
+  // render the same node twice or silently normalize the imported snapshot.
+  page.nodes[rootId].children=[sectionId,headingId,headingId];
+  const duplicatePersisted=JSON.stringify(state.document);
+  await tab.reload();
+  await tab.waitForTimeout(300);
+  assert.match(await tab.locator('#saveStatus').textContent(),/Invalid editor document:.*duplicate child id/i);
+  assert.deepEqual(errors,[],'duplicate persisted children use the controlled boot error state');
+  assert.deepEqual(writes,[],'duplicate child validation never Saves or Publishes');
+  assert.equal(JSON.stringify(state.document),duplicatePersisted,'duplicate references remain unmodified for recovery');
 });
