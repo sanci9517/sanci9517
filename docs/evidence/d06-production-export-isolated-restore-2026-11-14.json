@@ -1,0 +1,168 @@
+{
+  "schema": 1,
+  "captured_at": "2026-11-14T23:27:27Z",
+  "plan_point": "77.44.7.D / D-06 fresh production export and isolated restore",
+  "status": "FRESH_PRODUCTION_EXPORT_RESTORED_AND_HASH_VERIFIED; 0029_VERIFIED_ON_EXACT_SNAPSHOT_IN_ISOLATED_D1; PRODUCTION_0029_GATE_OPEN; FULL_D_OPEN_NOT_CERTIFIED",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "remote_head_before_evidence": "7fa576276264d9d9f18f6f118faa5ee2c78ecb63",
+    "runtime_source_sha": "849310ee9d523feb608ed12763f4ed77d9033c88",
+    "canonical_plan_blob_sha": "d351cbe753a45985470cafdcab8bcc42628c6a7b"
+  },
+  "owner_approval": {
+    "scope": "Owner explicitly authorized completing the full D block and approved moving the complete current-production D1 export only into this execution environment for isolated restore verification.",
+    "production_mutations": "None; production D1 remained SELECT/PRAGMA-only.",
+    "save_publish": "Remain separate."
+  },
+  "production_preflight": {
+    "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
+    "queries": [
+      "SELECT name FROM d1_migrations ORDER BY name DESC LIMIT 1",
+      "PRAGMA quick_check",
+      "PRAGMA foreign_key_check"
+    ],
+    "latest_migration": "0028_media_archive.sql",
+    "quick_check": "ok",
+    "foreign_key_violation_rows": 0,
+    "each_query_changed_db": false,
+    "rows_written": 0,
+    "changes": 0
+  },
+  "export_transfer": {
+    "api": "Cloudflare D1 Export API",
+    "filename": "5a4a5e96-fdad-421a-a33c-143daaf33e98-00000bb2-00000000-00005123-76f07aeed6548b6ccedbc36436b9e7e4.sql",
+    "download": "The exact API-returned signed URL was fetched over the approved network path; the SQL body was kept only in mode-0600 files under /tmp and was not placed in GitHub, evidence, or chat.",
+    "http_status": 200,
+    "export_bytes": 3058810,
+    "export_sha256": "17351979192d1693ff011109cf403e4de97f06dc34c28b261c416df7e88769e9",
+    "ordered_restore_sha256": "5a6071c1cd97e6634596f01edfbe562bd582748868738760997f2a8f52cb9aeb",
+    "statement_count": 1213,
+    "statement_phases": [1, 27, 1129, 37, 19],
+    "maximum_statement_bytes": 42246,
+    "json_batch_request_bytes": 3469704
+  },
+  "isolated_restore": {
+    "database_name": "sanci9517_d06_prod_restore_20261114_2306",
+    "database_id": "a4aa2dd4-af7a-4d98-8ed1-4a1ad39bd45a",
+    "region": "eu / eeur",
+    "initial_account_database_count": 3,
+    "batch_endpoint": "Cloudflare D1 REST /query; one batch containing all 1213 ordered statements",
+    "batch_http_status": 200,
+    "batch_api_success": true,
+    "batch_result_items": 1213,
+    "batch_failed_items": 0,
+    "batch_reported_rows_written": 5430,
+    "batch_reported_changes": 1129,
+    "readback": {
+      "http_status": 200,
+      "statements": 31,
+      "schema_object_count": 83,
+      "schema_sha256": "ecd1b0f5df256b755d314bfdcf49ddbe1ff026845bd397abbfe5aa6ecc8aff92",
+      "application_table_count": 27,
+      "additional_sqlite_sequence_table": true,
+      "tables_hash_and_row_count_match": true,
+      "table_hash_count_including_sqlite_sequence": 28,
+      "row_count_including_sqlite_sequence": 1128,
+      "quick_check": "ok",
+      "foreign_key_violation_rows": 0,
+      "readback_rows_written": 0,
+      "readback_changes": 0,
+      "readback_changed_db": false,
+      "mismatches": []
+    },
+    "cleanup": {
+      "target_absent_after_test": true,
+      "post_test_account_database_count": 3,
+      "post_test_list_contains_target": false,
+      "explicit_delete_request": false,
+      "note": "A direct metadata GET returned 404 and the subsequent account list contained only the three pre-existing databases. No DELETE was issued because the exact target could not be re-confirmed immediately before deletion."
+    }
+  },
+  "isolated_0029_candidate_trial": {
+    "database_name": "sanci9517_d06_0029_trial_20261114_2318",
+    "database_id": "ffa71be9-b813-4d8a-a429-74d4ccf097f7",
+    "candidate_fixture_sha256": "911df535238d48bcdda3db2702bbe716c3c8e6c62c841334a0ebd143394c9ac8",
+    "one_shot_release_batch_sha256": "9fcfa5be797b5dbaeab01e861e4d0888299f804c205eb8ed78fb3ce43217506c",
+    "apply_http_status": 200,
+    "apply_api_success": true,
+    "apply_result_items": 8,
+    "apply_failed_items": 0,
+    "api_reported_rows_written": 10,
+    "api_reported_changes": 2,
+    "readback_http_status": 200,
+    "readback_statements": 33,
+    "schema_objects": 87,
+    "schema_sha256": "c29d8401c7fd80bee9649e8fb6e78793900d23c3c94a341b078e2b0863032c74",
+    "application_tables": 27,
+    "preexisting_table_data_hashes_preserved": true,
+    "preexisting_data_rows_in_hash_readback": 1128,
+    "additional_migration_marker": "0029_media_archive_unicode_additive.sql",
+    "migration_count_after_trial": 35,
+    "trigger_count_after_trial": 7,
+    "trigger_names_after_trial": [
+      "media_archive_pages_insert_guard",
+      "media_archive_pages_insert_unicode_guard",
+      "media_archive_pages_update_guard",
+      "media_archive_pages_update_unicode_guard",
+      "media_archive_revisions_insert_guard",
+      "media_archive_revisions_insert_unicode_guard",
+      "media_archive_revisions_update_unicode_guard"
+    ],
+    "trigger_sha256": "68ec47de11d89d0553249a33cb32682335326ce11ce0c81b686520e324e8734b",
+    "quick_check": "ok",
+    "foreign_key_violation_rows": 0,
+    "readback_rows_written": 0,
+    "readback_changes": 0,
+    "readback_changed_db": false,
+    "unicode_escape_negative_insert": {
+      "http_status": 400,
+      "api_success": false,
+      "blocked_by_expected_trigger": true,
+      "error_code_exposed_in_evidence": false,
+      "followup_select_http_status": 200,
+      "rejected_row_count": 0
+    },
+    "cleanup": {
+      "delete_request": "Exact ID/name identity was freshly checked before deletion.",
+      "delete_api_success": true,
+      "target_absent_after_delete": true,
+      "final_account_database_count": 3,
+      "remaining_databases_are_the_three_preexisting_ids": true
+    }
+  },
+  "local_checks": {
+    "python3 tests/d1-restore-order.test.py": "PASS, 7/7",
+    "node --test tests/d1-0029-release-batch.test.js tests/media-archive-additive-unicode.test.js": "PASS, 2 test files",
+    "python3 scripts/check-canonical-plan.py": "PASS, 13 master files and 396 source mappings",
+    "python3 tests/plan-contract.test.py": "PASS, 14/14",
+    "python3 scripts/audit-active-plan-point.py": "77.44 / WEB-011; next 77.44.7.D; 396 features; NOT_CERTIFIED",
+    "git diff --check": "PASS"
+  },
+  "production_worker": {
+    "name": "sanci9517-streamer-brand",
+    "deployment_id": "bf413087-8322-451c-ad4f-3d7128b0ad3d",
+    "version_id": "c133e810-bf8f-4a7f-9c34-fa353c176b83",
+    "traffic_percent": 100,
+    "source_sha": "849310ee9d523feb608ed12763f4ed77d9033c88",
+    "source_sha_reference": "Previously verified exact source build; no runtime source change or deployment in this evidence block.",
+    "health_http_status": 200,
+    "health_body": {
+      "ok": true,
+      "service": "sanci9517-streamer-brand",
+      "version": "2.0.0",
+      "server": "cloudflare-worker"
+    }
+  },
+  "cost_and_scope": {
+    "new_paid_service": false,
+    "known_free_d1_database_limit": 10,
+    "test_database_created_and_absent_after_test": true,
+    "github_actions_ci_dispatch_or_rerun": false,
+    "worker_deploy": false,
+    "production_d1_migration_or_write": false,
+    "application_r2_object_download_or_delete": false,
+    "billing_quota_readback": "Unavailable; no paid resource was created and no intentional paid quota use was made."
+  },
+  "scope_limit": "This closes the fresh current-production D1 export, transfer, full isolated restore, integrity, schema, data-hash and FK verification portion of D-06, and proves the staged 0029 candidate works on the exact production snapshot in an isolated D1. No 0029 was applied to production: the production migration/release gate, exact branch/runtime-source integration and production post-migration verification remain OPEN. The D-01–D-07 Editor/save/reload/separate-publish/public/media lifecycle matrix and full 77.44.7.D remain OPEN / NOT_CERTIFIED. The full Visual Editor manual/physical acceptance remains DEFERRED."
+}

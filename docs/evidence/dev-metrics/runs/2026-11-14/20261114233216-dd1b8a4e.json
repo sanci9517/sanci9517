@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261114233216-dd1b8a4e",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-14T23:32:16.766Z",
+  "finished_at": "2026-11-14T23:38:48.881Z",
+  "wall_seconds": 392,
+  "paused_seconds": 0,
+  "measured_seconds": 392,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "D-06 evidence reconciled: current-prod export and exact-snapshot 0029 isolated trial documented in canonical plan; full focused regressions pass; production migration remains held for exact-head CI. Verified current Worker via API; direct health request blocked by runner network.",
+  "evidence": [
+    "docs/evidence/d06-production-export-review-2026-11-14.json",
+    "docs/evidence/d06-production-export-isolated-restore-2026-11-14.json"
+  ],
+  "checks": "PASS: 0029/unicode tests 2/2 files; restore-order 7/7; test:media 5/5 files; migration gate; canonical plan 13 files/396 mappings; plan contract 14/14; active point audit NOT_CERTIFIED; diff/evidence JSON. Cloudflare deployment c133 at 100%; D1 inventory count 3; no production writes/deploy/CI. Public health current-session NOT VERIFIED (network connect failure).",
+  "started_revision": "4cd79c5cc8c3c0c74137e50c44763e4baf56892e",
+  "finished_revision": "4cd79c5cc8c3c0c74137e50c44763e4baf56892e",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

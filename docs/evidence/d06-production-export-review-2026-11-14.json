@@ -1,0 +1,60 @@
+{
+  "schema": 1,
+  "captured_at": "2026-11-14T23:37:56Z",
+  "plan_point": "77.44.7.D / D-06 fresh production export restore follow-up review",
+  "status": "ISOLATED_RESTORE_AND_0029_TRIAL_VERIFIED; PRODUCTION_RELEASE_GATE_OPEN; FULL_D_OPEN_NOT_CERTIFIED",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "remote_head": "7fa576276264d9d9f18f6f118faa5ee2c78ecb63",
+    "local_head": "4cd79c5cc8c3c0c74137e50c44763e4baf56892e",
+    "canonical_plan_before_followup": "d351cbe753a45985470cafdcab8bcc42628c6a7b",
+    "runtime_source_sha": "849310ee9d523feb608ed12763f4ed77d9033c88"
+  },
+  "verification": {
+    "canonical_plan": "Full local master was read; its pre-edit Git blob matched the remote master blob exactly. The appended section preserves the single canonical 13-file plan.",
+    "github": "Branch API GET confirmed remote head 7fa576276264d9d9f18f6f118faa5ee2c78ecb63. Combined status returned no statuses; associated workflow-run lookups for this SHA and merged D-06 package SHA returned no runs.",
+    "cloudflare_worker": {
+      "deployment_id": "bf413087-8322-451c-ad4f-3d7128b0ad3d",
+      "version_id": "c133e810-bf8f-4a7f-9c34-fa353c176b83",
+      "traffic_percent": 100,
+      "source_sha": "849310ee9d523feb608ed12763f4ed77d9033c88",
+      "runtime_changed": false,
+      "deployment_created": false
+    },
+    "public_health": {
+      "this_session": "UNVERIFIED: direct curl to the public Worker failed to establish a network connection from this runner; no HTTP status/body was received.",
+      "previous_same_version_evidence": "The isolated-restore evidence records a direct HTTP 200 response with the Worker health JSON before this follow-up session."
+    },
+    "d1_inventory": {
+      "api_list_count": 3,
+      "databases": [
+        "sanci9517_d06_restore_20261113_b",
+        "sanci9517_d06_restore_20261113",
+        "sanci9517-db"
+      ],
+      "test_restore_targets_present": false,
+      "production_migration_0029_applied": false
+    }
+  },
+  "local_checks": {
+    "node --test tests/d1-0029-release-batch.test.js tests/media-archive-additive-unicode.test.js": "PASS, 2/2 files",
+    "python3 tests/d1-restore-order.test.py": "PASS, 7/7",
+    "npm run test:media": "PASS, 5/5 files",
+    "npm run test:web013:migration-gate": "PASS",
+    "python3 scripts/check-canonical-plan.py": "PASS, 13 master files and 396 source mappings",
+    "python3 tests/plan-contract.test.py": "PASS, 14/14 before the new plan note; rerun after the note required",
+    "python3 scripts/audit-active-plan-point.py": "77.44 / WEB-011; next 77.44.7.D; 396 features; NOT_CERTIFIED",
+    "git diff --check": "PASS before the new plan note; rerun after the note required",
+    "temporary_sensitive_files": "All /tmp/sanci9517-d06-* files created for the export, SQL batches and data readbacks were removed; no raw SQL or row data is in evidence/GitHub."
+  },
+  "release_gate": {
+    "production_d1_write_or_migration": false,
+    "exact_head_ci": "UNVERIFIED; no status checks or associated workflow runs returned",
+    "ci_dispatch_or_rerun": false,
+    "worker_deployment": false,
+    "changed_public_asset_hashes": "Not applicable: no runtime/public asset changed",
+    "new_paid_cost": "0 Ft intentional spend; billing API readback unavailable"
+  },
+  "scope_limit": "Current-production export restore and exact-snapshot 0029 trial are verified in disposable isolated D1s, and those targets are absent. This does not authorize or certify production 0029. Exact-head CI and its separate fresh preflight/release gate remain open. Full D-06 lifecycle/capability acceptance, D-01–D-07, and 77.44.7.D remain OPEN / NOT_CERTIFIED. Full Editor manual/physical acceptance remains DEFERRED; Save and Publish remain separate."
+}
