@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261115195959-c57e1fc7",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-15T19:59:59.632Z",
+  "finished_at": "2026-11-15T20:03:28.021Z",
+  "wall_seconds": 208,
+  "paused_seconds": 0,
+  "measured_seconds": 208,
+  "status": "partial",
+  "kind": "docs",
+  "summary": "Rechecked production D1 0029 state with SELECT-only queries and confirmed the live Worker health/traffic; full D acceptance remains open.",
+  "evidence": [
+    "docs/evidence/d06-production-readonly-preflight-2026-11-15.json"
+  ],
+  "checks": "active point audit PASS; traceability 396/396 PASS; SELECT-only D1 no changes; production health HTTP 200",
+  "started_revision": "b916da11158dfd21e7eb226144588b9103f16943",
+  "finished_revision": "aab3887b9f4cf63621fe55cfd35007cc6f1fd110",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
