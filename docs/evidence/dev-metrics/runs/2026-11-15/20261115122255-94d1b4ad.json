@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261115122255-94d1b4ad",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-15T12:22:55.329Z",
+  "finished_at": "2026-11-15T12:34:42.893Z",
+  "wall_seconds": 708,
+  "paused_seconds": 0,
+  "measured_seconds": 708,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "D-07 duplikált gyermekhivatkozás javítva, regresszióteszttel; exact-source Worker éles, a széles Editor CI még fut",
+  "evidence": [
+    "docs/evidence/editor-d07-duplicate-sibling-references-2026-11-15.json"
+  ],
+  "checks": "npm run test:editor PASS; targeted Chromium 2/2 PASS; typecheck, migration gate, plan-contract 14/14, canonical-plan, active-point audit, traceability 396/396, Wrangler dry-run exit 0; exact-SHA Editor Core still IN_PROGRESS",
+  "started_revision": "17c6df1d41154c2746c05e14dd4ef4252929aafe",
+  "finished_revision": "c606ff3924b01684f309bd46c4ffe37f27d56051",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

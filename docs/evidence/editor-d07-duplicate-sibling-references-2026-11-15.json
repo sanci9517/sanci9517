@@ -1,0 +1,116 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-15T12:33:00Z",
+  "plan_point": "77.44.7.D / D-07 duplicate persisted sibling references",
+  "status": "D07_DUPLICATE_CHILD_SUBGATE_PASS_FULL_D_OPEN_NOT_CERTIFIED",
+  "repository": {
+    "full_name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "parent_sha": "17c6df1d41154c2746c05e14dd4ef4252929aafe",
+    "runtime_commit": "c606ff3924b01684f309bd46c4ffe37f27d56051",
+    "commit_message": "fix(editor): reject duplicate persisted child references",
+    "remote_head_verified": true,
+    "push": "normal fast-forward; no force push, reset, or branch switch"
+  },
+  "defect_and_fix": {
+    "reproduction": "A persisted Page Model may list the same valid child ID more than once under one parent. The previous hierarchy validator visited the node once and silently accepted the duplicate; Editor Canvas consumers could render the same node multiple times.",
+    "fix": [
+      "validateHierarchy now rejects repeated child IDs within one sibling collection with a controlled duplicate-child diagnostic.",
+      "The validator does not coerce, repair, or rewrite persisted Page Model data; the Editor boot path remains fail-closed before Save or Publish.",
+      "Added a core regression for the duplicated valid reference and a real Chromium Editor boot regression proving controlled failure, no browser exception, no write, and byte-for-byte unchanged fixture data.",
+      "Updated validation module cache URLs for commands/state and the Editor entry URL so deployed clients load the new validation behavior."
+    ],
+    "save_publish": "Separate; malformed stored structure fails closed and neither Save nor Publish is called.",
+    "production_data_mutation": false,
+    "r2_write_or_delete": false,
+    "new_runtime_dependency": false
+  },
+  "local_checks": {
+    "editor_core": {
+      "command": "npm run test:editor",
+      "result": "PASS",
+      "files": 16,
+      "tests": 207,
+      "linux_subreaper_tests": 3
+    },
+    "core_target": {
+      "command": "node --experimental-vm-modules --test public/editor-v2/tests/core.test.js",
+      "result": "PASS"
+    },
+    "targeted_chromium": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-malformed-public-text-links.test.js",
+      "result": "PASS",
+      "tests": 2,
+      "coverage": "The malformed-content browser case and corrupt Editor Page Model case, extended with duplicate valid sibling IDs; validation boot error, no browser errors, no writes, persisted fixture unchanged."
+    },
+    "typecheck": "PASS; npm run typecheck",
+    "migration_gate": "PASS; npm run test:web013:migration-gate",
+    "plan_contract": "PASS; python3 tests/plan-contract.test.py, 14/14 after source-traceability regeneration",
+    "canonical_plan": "PASS; python3 scripts/check-canonical-plan.py; one complete 13-file master, 396 mappings",
+    "active_plan_audit": "PASS; python3 scripts/audit-active-plan-point.py; cursor 77.44.7.D, functional acceptance NOT_CERTIFIED",
+    "feature_traceability": "PASS; python3 scripts/build-feature-traceability.py --check, 396/396",
+    "wrangler_dry_run": {
+      "command": "wrangler 4.130.0 deploy --dry-run",
+      "result": "PASS; exit 0; 181 public files read; 375.32 KiB / 96.02 KiB gzip",
+      "note": "Wrangler reported the runner's missing /home/agent/.config/.wrangler/logs directory but completed the dry-run with exit 0; no deploy was made by this dry-run."
+    },
+    "production_d1_preflight": {
+      "method": "Cloudflare D1 Query API; one SELECT-only query",
+      "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
+      "query": "SELECT COUNT(*) AS migration_count, MAX(name) AS latest_migration FROM d1_migrations",
+      "migration_count": 35,
+      "latest_migration": "0029_media_archive_unicode_additive.sql",
+      "rows_read": 35,
+      "rows_written": 0,
+      "changes": 0,
+      "changed_db": false
+    }
+  },
+  "source_control_and_ci": {
+    "exact_source_commit_url": "https://github.com/sanci9517/sanci9517/commit/c606ff3924b01684f309bd46c4ffe37f27d56051",
+    "exact_sha_workflows": [
+      {"id": 43714092099, "name": "Canonical Creator Platform Plan", "result": "PASS"},
+      {"id": 43714092136, "name": "Canonical Plan Active Point Audit", "result": "PASS"},
+      {"id": 43714092067, "name": "Production Worker source smoke", "result": "PASS"},
+      {"id": 43714092106, "name": "F0 baseline checks", "result": "PASS"},
+      {"id": 43714092175, "name": "Twitch Integration Check", "result": "PASS"},
+      {"id": 43714092133, "name": "Editor Core Test", "result": "IN_PROGRESS at Editor browser layout regression; not a PASS"}
+    ],
+    "previous_exact_source_editor_core_run": {"id": 43712088214, "result": "IN_PROGRESS at last check; no rerun was dispatched"},
+    "aggregate_exact_sha_ci_pass": false
+  },
+  "production_release": {
+    "worker": "sanci9517-streamer-brand",
+    "cloudflare_build_id": "02e41cb5-722f-429a-a368-d61776f7c89e",
+    "build_source_sha": "c606ff3924b01684f309bd46c4ffe37f27d56051",
+    "build_branch": "v2/foundation",
+    "build_outcome": "success",
+    "build_command": "npm run typecheck",
+    "deploy_command": "npm run deploy:safe",
+    "migration_safety_gate": "PASS in the exact-source build logs; the gate did not apply D1 migrations.",
+    "deployment_id": "44d291d1-225b-439d-9a5e-e5e4e935b7ee",
+    "worker_version_id": "db34d1a1-e7f4-420c-8398-ec60917985ee",
+    "traffic_percent": 100,
+    "health": {
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health?release=c606ff39",
+      "http_status": 200,
+      "body": {"ok": true, "service": "sanci9517-streamer-brand", "version": "2.0.0", "server": "cloudflare-worker"}
+    },
+    "changed_public_asset_sha256_local_equals_live": {
+      "public/editor-v2/index.html": "9151dbd8105c58bd8853379d70211571504c23581deb3e1d9d8c8b21e2022076",
+      "public/editor-v2/core/validation.js": "0fb665cdec4ab02351d0ab50605b83b6a8e7ba74f48d415482e2abe303947d95",
+      "public/editor-v2/core/commands.js": "07ae90b2e3383a4d8d5e3f31d31a3027416f36a32da7ee2d6c623801f7d7050d",
+      "public/editor-v2/core/state.js": "a7ad77bf63790b8d9e93b959757b669e54defd9ca3c220e1aafb50e37b955b17",
+      "public/editor-v2/tests/core.test.js": "ae6c2364cc11e47c6749a7d68436d0d5a56eaeb4eaeaa55b501c6865bddfdb98"
+    }
+  },
+  "cost_and_limits": {
+    "new_paid_service_or_dependency": false,
+    "d1_write_or_migration": false,
+    "r2_write_or_delete": false,
+    "cloudflare_build_minutes_limit_reached": false,
+    "build_minutes_refresh_on": "2026-11-30T23:59:59.999Z",
+    "new_cost": "0 Ft"
+  },
+  "scope_limit": "The duplicate-child D-07 regression subgate is PASS. Full D-07 type/field acceptance, the D-01-D-07 lifecycle/capability matrix and 77.44.7.D remain OPEN / NOT_CERTIFIED. Full Visual Editor manual/physical acceptance is DEFERRED."
+}
