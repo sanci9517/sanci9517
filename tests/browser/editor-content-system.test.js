@@ -111,6 +111,30 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
       assert.equal(await rowsField.inputValue(),serializeTableTsv(expectedTableRows),
         'a user can edit the final cell after the existing 40,000-character boundary');
       assert.equal(posts.length,0,'large-table Inspector edits remain draft-only before Save');
+      const oversizedRows=Array.from({length:4},()=>Array(16).fill('x'.repeat(2000)));
+      const oversizedTsv=serializeTableTsv(oversizedRows);
+      assert.ok(oversizedTsv.length<MAX_AUTHORED_TABLE_TSV_CHARS,
+        'the fixture remains inside the Inspector textarea limit');
+      assert.ok(JSON.stringify(oversizedRows).length>120_000,
+        'the fixture exceeds the Page Model table payload limit');
+      const tableRowsBeforeInvalidEdit=await node(editor,'table').locator('tbody tr').count();
+      await rowsField.fill(oversizedTsv);
+      assert.equal(await rowsField.getAttribute('aria-invalid'),'true',
+        'a TSV-valid but unsaveable table is marked invalid');
+      const tableValidationId=await rowsField.getAttribute('aria-describedby');
+      assert.equal(await editor.locator(`#${tableValidationId}`).getAttribute('role'),'status',
+        'the rejected edit is announced through the associated status region');
+      assert.match(await table.locator('.content-field-help').textContent(),/120\s?000/,
+        'persistent table guidance explains the Page Model size limit');
+      assert.equal(await node(editor,'table').locator('tbody tr').count(),tableRowsBeforeInvalidEdit,
+        'an oversized table does not replace the last valid Canvas content');
+      await editor.locator('#save').click();
+      await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent.includes('Javítsd a jelzett mezőt'));
+      assert.equal(posts.length,0,'Save is blocked while the authored table is unsaveable');
+      await rowsField.fill(serializeTableTsv(expectedTableRows));
+      assert.equal(await rowsField.getAttribute('aria-invalid'),null,
+        'correcting the table clears the invalid state');
+      assert.equal(posts.length,0,'correcting the table still does not autosave');
     }
     const repeater=editor.locator('.content-repeater');
     if(await repeater.count()){

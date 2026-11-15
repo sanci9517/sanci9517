@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261115155410-03ec3257",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-15T15:54:10.016Z",
+  "finished_at": "2026-11-15T16:05:27.970Z",
+  "wall_seconds": 678,
+  "paused_seconds": 0,
+  "measured_seconds": 678,
+  "status": "pass",
+  "kind": "test",
+  "summary": "D-03 oversized-table Save guard browser regression passed; full D block remains open.",
+  "evidence": [
+    "docs/evidence/editor-d03-table-oversize-save-guard-2026-11-15.json"
+  ],
+  "checks": "Chromium editor-content-system 1/1, authored-content unit pass, syntax and diff checks pass",
+  "started_revision": "4a44ddb4d39fb9a05a8a3413be13366f2689b3cb",
+  "finished_revision": "4a44ddb4d39fb9a05a8a3413be13366f2689b3cb",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
