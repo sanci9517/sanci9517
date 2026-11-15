@@ -7,7 +7,13 @@
     "name": "sanci9517/sanci9517",
     "branch": "v2/foundation",
     "verified_base_sha": "9dbff27c57541467d24318d63ea5e672008233c9",
-    "change": "tests/browser/editor-malformed-public-text-links.test.js only; no runtime or public asset source modified"
+    "change": "tests/browser/editor-malformed-public-text-links.test.js only; no runtime or public asset source modified",
+    "test_documentation_commit": {
+      "sha": "cc5d9b5a58096aa84028dbc0c9989e06b74c466c",
+      "message": "[skip ci] test(editor): cover malformed authored CTA in public Chromium",
+      "parent": "9dbff27c57541467d24318d63ea5e672008233c9",
+      "push": "Normal non-force fast-forward push completed; GitHub compare verified branch ahead_by=1, behind_by=0 and exact v2/foundation head cc5d9b5a58096aa84028dbc0c9989e06b74c466c."
+    }
   },
   "regression": {
     "fixture": "The actual public visual-page.html and page-renderer.js are served by an isolated loopback test server with a JSON-serialized persisted Page Model.",
@@ -48,8 +54,8 @@
     "worker_deploy": "Not needed and not performed."
   },
   "release": {
-    "github_push": "Not yet performed; intended as a normal fast-forward test/docs-only commit from the verified branch head.",
-    "ci": "NOT RUN by design under the [skip ci] docs/test convention.",
+    "github_push": "PASS: test/docs commit cc5d9b5a58096aa84028dbc0c9989e06b74c466c was pushed normal fast-forward from 9dbff27c57541467d24318d63ea5e672008233c9; GitHub compare confirms exact branch head.",
+    "ci": "NOT RUN by design: GitHub Actions query for exact commit returned total_count=0; the test/docs commit uses [skip ci], no CI PASS is claimed.",
     "cost": "0 Ft new spend; no paid service or quota use.",
     "save_publish_remain_separate": true
   },

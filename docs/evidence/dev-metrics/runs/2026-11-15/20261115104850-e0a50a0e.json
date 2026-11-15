@@ -14,9 +14,11 @@
   "evidence": [
     "docs/evidence/editor-d02-malformed-cta-browser-2026-11-15.json"
   ],
-  "checks": "NOT_RECORDED",
+  "checks": "PASS: targeted real Chromium browser regression 1/1; npm run test:editor:publish-guard 18/18; public/editor-v2/tests/core.test.js 79/79; plan-contract 14/14; traceability 396/396; canonical-plan 13/13; active-point audit confirms OPEN; JS/JSON syntax and git diff --check. GitHub Actions intentionally NOT RUN under [skip ci].",
   "started_revision": "4cd79c5cc8c3c0c74137e50c44763e4baf56892e",
   "finished_revision": "4cd79c5cc8c3c0c74137e50c44763e4baf56892e",
   "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
-  "verification": "agent-reported; references are not independently checked by this script"
+  "verification": "agent-reported; references are not independently checked by this script",
+  "validation_base_revision": "9dbff27c57541467d24318d63ea5e672008233c9 (verified detached worktree; original dirty worktree preserved)",
+  "published_test_commit": "cc5d9b5a58096aa84028dbc0c9989e06b74c466c"
 }
