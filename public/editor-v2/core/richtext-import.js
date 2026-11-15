@@ -1,5 +1,6 @@
 import { resolveRichTextLinkTarget, validatedLinkHref } from './richtext-links.js?v=20261101-richtext-backward-selection';
 import { RICH_TEXT_FONT_FAMILIES } from './schema.js?v=20261101-richtext-multiblock-links';
+import { parseTableTsv } from './table-tsv.js';
 
 const MAX_CLIPBOARD_CHARS = 250_000;
 const MAX_TABLE_ROWS = 100;
@@ -185,14 +186,20 @@ function fromPlainText(text) {
   const normalized = String(text ?? '').replace(/\r\n?/g, '\n');
   const lines = normalized.split('\n');
   if (lines.some(line => line.includes('\t'))) {
-    if (lines.length > MAX_TABLE_ROWS || Math.max(...lines.map(line => line.split('\t').length)) > MAX_TABLE_COLUMNS) {
+    // Reuse the authored-table parser so clipboard TSV decodes quoted tabs,
+    // embedded line breaks, and doubled quotes instead of splitting cell data.
+    // A single terminal newline is the clipboard's row terminator, not a new
+    // empty record; preserve additional terminal blank rows as intentional data.
+    const tableText=normalized.endsWith('\n')?normalized.slice(0,-1):normalized;
+    const rows=parseTableTsv(tableText);
+    if (rows.length > MAX_TABLE_ROWS || Math.max(...rows.map(row => row.length)) > MAX_TABLE_COLUMNS) {
       throw new Error('A beillesztett táblázat legfeljebb 100 sort és 24 oszlopot tartalmazhat.');
     }
-    const width = Math.max(...lines.map(line => line.split('\t').length));
+    const width = Math.max(...rows.map(row => row.length));
     return {
       schemaVersion: 1, type: 'richtext-document', blocks: [{
-        type: 'table', rows: lines.map(line => ({cells: Array.from({length: width}, (_, index) => ({
-          header: false, children: [{type: 'text', text: line.split('\t')[index] ?? '', marks: []}]
+        type: 'table', rows: rows.map(row => ({cells: Array.from({length: width}, (_, index) => ({
+          header: false, children: [{type: 'text', text: row[index] ?? '', marks: []}]
         }))}))
       }]
     };
