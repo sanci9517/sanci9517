@@ -5,12 +5,12 @@
   "repository": "sanci9517/sanci9517",
   "branch": "v2/foundation",
   "runtime_source_commit": "8204a089c1284202fb23ed86269a9df615d4fab8",
-  "test_commit": "ff805537d34d5e7e0dffd9abcdc1798d75b8ac74",
-  "test_commit_parent": "24da8cb6a536dbff5cabdae60b340fee4f4a070e",
-  "test_commit_url": "https://github.com/sanci9517/sanci9517/commit/ff805537d34d5e7e0dffd9abcdc1798d75b8ac74",
+  "test_commit": "52dcce15b54588a2ea2d0d98b761f4e23258a87c",
+  "test_commit_parent": "7ae17adaf0c46e4339463391181f6b336c2e4adf",
+  "test_commit_url": "https://github.com/sanci9517/sanci9517/commit/52dcce15b54588a2ea2d0d98b761f4e23258a87c",
   "change_kind": "test-only; no Worker runtime or public asset changed",
   "test_file": "tests/browser/editor-structured-content.test.js",
-  "test_file_sha256": "198fb774b240828b27aff3b12afdc3afb101beed6252e64b0504a0b945420e2c",
+  "test_file_sha256": "cc43f446c23ef96209c76b560e161324fa5882bf66dde4c8be660b5abc03756e",
   "regression_case": {
     "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-structured-content.test.js",
     "result": "PASS",
@@ -22,7 +22,9 @@
       "After navigation in the first widget, the second widget retains its independent selection.",
       "Pointer selection in either published tab widget updates only that widget, displays its own panel, and leaves focus on the selected tab.",
       "Subsequent keyboard navigation in the first widget preserves the second widget pointer-selected state.",
-      "Pointer selection in either published widget updates only that widget, displays its own panel, and leaves focus on the selected tab."
+      "Pointer selection in either published widget updates only that widget, displays its own panel, and leaves focus on the selected tab.",
+      "Tab from a selected tab leaves the tablist for its selected panel.",
+      "The next Tab reaches the first selected tab in the next independent widget; tab selection in either widget remains unchanged."
     ]
   },
   "additional_checks": {
@@ -68,21 +70,20 @@
       "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-structured-content.test.js",
       "result": "PASS",
       "tests": 2,
-      "duration_ms": 39523,
+      "duration_ms": 38598,
       "assertions_added": [
-        "pointer selection and focus inside widget B",
-        "widget A selection/panel unchanged during widget B pointer action",
-        "widget B unchanged during widget A pointer action",
-        "keyboard navigation after pointer changes keeps the other widget isolated"
+        "Tab moves from the selected tab into its selected panel.",
+        "A second Tab reaches the next independent widget tablist without changing either widget selection."
       ],
-      "note": "One initial rerun had a stale fixture-state assertion after the newly added click; after correcting the expectation, the complete test file passed. No runtime/product source or dependency changed."
+      "sandbox_attempt": "BLOCKED before assertions: local loopback listen EPERM and Chromium crashpad setsockopt EPERM/SIGTRAP.",
+      "approved_local_rerun": "PASS after requesting the sandbox execution gate; binds only to 127.0.0.1, no external network or paid service."
     },
     "github_test_commit": {
-      "commit": "ff805537d34d5e7e0dffd9abcdc1798d75b8ac74",
-      "parent": "24da8cb6a536dbff5cabdae60b340fee4f4a070e",
-      "message": "[skip ci] test(editor): isolate published tab pointer state",
+      "commit": "52dcce15b54588a2ea2d0d98b761f4e23258a87c",
+      "parent": "7ae17adaf0c46e4339463391181f6b336c2e4adf",
+      "message": "[skip ci] test(editor): cover structured tab keyboard focus sequence",
       "change_kind": "browser test harness only",
-      "combined_status": "no status checks returned; expected for [skip ci], no remote CI PASS claimed"
+      "combined_status": "no status checks; [skip ci] expected, no remote CI PASS claimed"
     },
     "github_branch": {
       "verified_by": "GitHub compare API",
@@ -114,10 +115,10 @@
       }
     },
     "canonical_master_integrity": {
-      "local_bytes": 1620659,
+      "bytes": 1620659,
       "head_blob_sha": "205a93839699bfbe05ace3cae2a45887cc7be698",
       "worktree_blob_sha": "205a93839699bfbe05ace3cae2a45887cc7be698",
-      "edited": "no; preserved the oversized one-plan master and recorded only machine evidence"
+      "edited": false
     },
     "scope": "D-04 pointer and keyboard multi-widget browser regression subgate only. Full D-04, D-01..D-07 and 77.44.7.D remain OPEN / NOT_CERTIFIED. No runtime/public assets, production D1/R2, CI dispatch or deployment changes.",
     "cost_huf": 0,
@@ -142,12 +143,42 @@
     "evidence_review_correction": {
       "checked_at": "2026-11-15T17:31:34Z",
       "correction": "Removed two repeated pointer-interaction assertions from the JSON evidence list; test source and test results are unchanged."
-    }
+    },
+    "branch_before_evidence_update": {
+      "checked_at": "2026-11-15T17:47:22Z",
+      "compare_base": "52dcce15b54588a2ea2d0d98b761f4e23258a87c",
+      "branch": "v2/foundation",
+      "status": "identical",
+      "ahead_by": 0,
+      "behind_by": 0,
+      "note": "Pre-evidence-update branch snapshot; this evidence update will add a docs-only fast-forward commit."
+    },
+    "runtime_and_deployment": {
+      "runtime_source_changed": "no",
+      "deployment_id": "f5051413-1d52-4db1-b016-a0971822fb80",
+      "worker_version": "5451c750-502f-45cc-95e9-130471e46d31",
+      "traffic_percentage": 100,
+      "note": "Latest read-only deployment check before this test-only change; no Worker build, deploy, or asset change expected."
+    },
+    "production_health": {
+      "status": "UNVERIFIED for the most recent refresh",
+      "last_successful_direct_get": "2026-11-15T16:48:01Z",
+      "http_status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      },
+      "later_attempt": "Blocked before Worker by the execution-environment HTTPS proxy/CONNECT; no runtime code changed."
+    },
+    "recorded_at": "2026-11-15T17:47:22Z"
   },
   "prior_test_commit": {
     "sha": "6a07ee113a9e15829ee08bcf35aab71b4e4659ca",
     "url": "https://github.com/sanci9517/sanci9517/commit/6a07ee113a9e15829ee08bcf35aab71b4e4659ca",
     "note": "Original keyboard/multi-widget fixture expansion."
   },
-  "prior_development_measurement_id": "20261115164331-fba397c3"
+  "prior_development_measurement_id": "20261115164331-fba397c3",
+  "scope": "D-04 public structured-tab keyboard focus order and multi-widget state isolation subgate PASS only. Full D-04, D-01..D-07 and 77.44.7.D remain OPEN / NOT_CERTIFIED; complete Visual Editor manual/physical acceptance DEFERRED."
 }
