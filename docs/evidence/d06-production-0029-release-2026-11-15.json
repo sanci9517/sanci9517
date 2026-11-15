@@ -1,0 +1,128 @@
+{
+  "schema": 1,
+  "captured_at": "2026-11-15T09:22:13Z",
+  "plan_point": "77.44.7.D / D-06 production 0029 migration and postflight",
+  "status": "PRODUCTION_0029_APPLIED_AND_READONLY_POSTFLIGHT_VERIFIED; FULL_D06_ACCEPTANCE_OPEN; FULL_D_OPEN_NOT_CERTIFIED",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "remote_head_at_capture": "33b7fbe420b4fc4bc2d82ed9a3e9d6fe13290a60",
+    "local_head_at_capture": "4cd79c5cc8c3c0c74137e50c44763e4baf56892e",
+    "runtime_source_sha": "849310ee9d523feb608ed12763f4ed77d9033c88",
+    "canonical_plan_blob_before_this_update": "2228a6ce7581263959a6c22f6efa5a373a370cb8",
+    "candidate_release_batch_sha256": "9fcfa5be797b5dbaeab01e861e4d0888299f804c205eb8ed78fb3ce43217506c"
+  },
+  "owner_approval": {
+    "scope": "Owner explicitly authorized the full D block and production work required to advance it, with no new paid cost.",
+    "operation": "Apply only the review-generated additive D1 migration 0029 to the production database after SELECT-only preflight and exact-snapshot isolated restore/trial evidence.",
+    "data_protection": "No production application-row write, export/readback of application row content, R2 deletion, or Worker deploy in this operation."
+  },
+  "preflight": {
+    "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
+    "mode": "Cloudflare D1 REST query API; SELECT/PRAGMA only",
+    "migration_count_before": 34,
+    "latest_migration_before": "0028_media_archive.sql",
+    "0029_marker_rows_before": 0,
+    "expected_original_media_archive_triggers": 3,
+    "quick_check_before": "ok",
+    "foreign_key_violation_rows_before": 0,
+    "changed_db": false,
+    "rows_written": 0,
+    "changes": 0,
+    "isolated_restore_and_candidate_trial": "PASS; exact production export SHA-256 17351979192d1693ff011109cf403e4de97f06dc34c28b261c416df7e88769e9; all 83 schema objects and 28 table hashes/row counts matched; quick_check ok; FK 0; candidate 0029 trial preserved prior table data and blocked the invalid Unicode-escaped reference. Full prior evidence: docs/evidence/d06-production-export-isolated-restore-2026-11-14.json"
+  },
+  "migration": {
+    "request": "One production D1 REST /query request using the locally generated, fixture-hash-guarded exact candidate batch; candidate batch SHA-256 recorded above.",
+    "response_visibility": "The request was sent once. The tool wrapper raised ReferenceError: TextEncoder is not defined while formatting its response, after awaiting the Cloudflare call. The request was not retried. Immediate independent SELECT-only postflight, below, is the authority for applied state.",
+    "no_blind_retry": true
+  },
+  "postflight": {
+    "mode": "Fresh Cloudflare D1 REST /query batch; SELECT/PRAGMA only",
+    "migration_count": 35,
+    "latest_migration": "0029_media_archive_unicode_additive.sql",
+    "0029_marker_rows": 1,
+    "expected_trigger_count": 7,
+    "trigger_names": [
+      "media_archive_pages_insert_guard",
+      "media_archive_pages_insert_unicode_guard",
+      "media_archive_pages_update_guard",
+      "media_archive_pages_update_unicode_guard",
+      "media_archive_revisions_insert_guard",
+      "media_archive_revisions_insert_unicode_guard",
+      "media_archive_revisions_update_unicode_guard"
+    ],
+    "temporary_guard_table_rows": 0,
+    "quick_check": "ok",
+    "foreign_key_violation_rows": 0,
+    "each_query_changed_db": false,
+    "rows_written": 0,
+    "changes": 0
+  },
+  "ci": {
+    "candidate_pr": 337,
+    "exact_candidate_head": "539b8730f9066b43cee10eab3b85038dc5b05ce6",
+    "workflows": [
+      {
+        "name": "Editor Core Test",
+        "run_id": 43488181406,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Canonical Creator Platform Plan",
+        "run_id": 43488181445,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "F0 baseline checks",
+        "run_id": 43488181331,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Twitch Integration Check",
+        "run_id": 43488181322,
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ],
+    "note": "These runs are on the exact candidate PR head. This follow-up changes only documentation/evidence and is not represented as a new CI run."
+  },
+  "worker": {
+    "name": "sanci9517-streamer-brand",
+    "latest_deployment_id": "bf413087-8322-451c-ad4f-3d7128b0ad3d",
+    "version_id": "c133e810-bf8f-4a7f-9c34-fa353c176b83",
+    "traffic_percent": 100,
+    "source_build_id": "b9221841-0cea-4a77-b983-7e3824b333ab",
+    "source_sha": "849310ee9d523feb608ed12763f4ed77d9033c88",
+    "build_outcome": "success",
+    "build_command": "npm run typecheck",
+    "deploy_command": "npm run deploy:safe",
+    "runtime_changed": false,
+    "new_deployment": false,
+    "direct_health": "UNVERIFIED: curl failed DNS resolution (exit 6, Could not resolve host) in this execution environment; no HTTP response was obtained.",
+    "changed_public_asset_hashes": "Not applicable: no Worker/public asset source changed."
+  },
+  "local_checks": {
+    "node --test tests/d1-0029-release-batch.test.js tests/media-archive-additive-unicode.test.js": "PASS, 2/2",
+    "python3 tests/d1-restore-order.test.py": "PASS, 7/7",
+    "python3 scripts/check-canonical-plan.py": "PASS, one complete 13-file master and 396 source mappings",
+    "python3 scripts/audit-active-plan-point.py": "PASS; cursor 77.44 / WEB-011, next 77.44.7.D, functional acceptance NOT_CERTIFIED",
+    "python3 tests/plan-contract.test.py": "PASS, 14/14 after plan update",
+    "npm run typecheck": "PASS",
+    "git diff --check": "PASS after final documentation changes",
+    "python3 -m json.tool docs/evidence/d06-production-0029-release-2026-11-15.json": "PASS"
+  },
+  "scope_and_cost": {
+    "production_schema_migration_0029": true,
+    "production_application_data_mutation": false,
+    "r2_delete": false,
+    "worker_deployment": false,
+    "new_paid_service_or_quota": false,
+    "new_ci_dispatch_or_rerun": false,
+    "save_publish_separate": true
+  },
+  "scope_limit": "This proves the 0029 production schema migration and its read-only postflight, completing that D-06 sub-gate. It does not certify every D-06 lifecycle/capability criterion, the full D-01–D-07 matrix, the current 396-feature crosswalk (146 PARTIAL_SOURCE, 250 UNVERIFIED), or 77.44.7.D. Full Editor manual/physical acceptance remains DEFERRED. Direct health remains UNVERIFIED in this run.",
+  "development_metric_run_id": "20261115090959-0a931a6a"
+}

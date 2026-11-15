@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261115090959-0a931a6a",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-15T09:09:59.219Z",
+  "finished_at": "2026-11-15T09:24:12.944Z",
+  "wall_seconds": 854,
+  "paused_seconds": 0,
+  "measured_seconds": 854,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "D-06 0029 production schema change verified by read-only postflight; targeted regressions, restore-order test, plan contracts and typecheck pass. Health DNS blocked; Worker runtime unchanged.",
+  "evidence": [
+    "docs/evidence/d06-production-0029-release-2026-11-15.json",
+    "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md"
+  ],
+  "checks": "2 node tests; 7 restore tests; 14 plan contracts; canonical plan/audit; typecheck; diff/json hygiene PASS",
+  "started_revision": "4cd79c5cc8c3c0c74137e50c44763e4baf56892e",
+  "finished_revision": "4cd79c5cc8c3c0c74137e50c44763e4baf56892e",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
