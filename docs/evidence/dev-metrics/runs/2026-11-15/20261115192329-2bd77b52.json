@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261115192329-2bd77b52",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-15T19:23:29.381Z",
+  "finished_at": "2026-11-15T19:30:57.493Z",
+  "wall_seconds": 448,
+  "paused_seconds": 0,
+  "measured_seconds": 448,
+  "status": "pass",
+  "kind": "test",
+  "summary": "Stabilized the accessibility IME invalid-state browser assertion; targeted Chromium desktop/mobile regression passed.",
+  "evidence": [
+    "docs/evidence/editor-accessibility-ime-test-sync-2026-11-15.json",
+    "2f62d5a2"
+  ],
+  "checks": "focused Chromium 2/2; git diff --check PASS; GitHub rerun skipped by test-only [skip ci] policy",
+  "started_revision": "0fdca7405367cca7f575731461cba0b95413b9e2",
+  "finished_revision": "2f62d5a293d6f5ee70425e57c030810ac9f3f353",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
