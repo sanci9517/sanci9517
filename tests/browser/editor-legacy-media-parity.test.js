@@ -10,6 +10,7 @@ import {createDocument} from '../../public/editor-v2/core/schema.js';
 import {createEditorState,activePage} from '../../public/editor-v2/core/state.js';
 import {execute} from '../../public/editor-v2/core/commands.js';
 import {safeMediaUrl} from '../../public/editor-v2/core/element-content.js';
+import './d06-media-archive-save-publish.test.js';
 
 test('legacy image video audio share guarded media URLs in Inspector Canvas and public Save/Publish',async t=>{
   const model=createEditorState(createDocument());

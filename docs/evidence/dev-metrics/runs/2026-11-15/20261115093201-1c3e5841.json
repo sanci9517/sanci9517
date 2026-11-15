@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "id": "20261115093201-1c3e5841",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-15T09:32:01.013Z",
+  "finished_at": "2026-11-15T09:45:22.334Z",
+  "wall_seconds": 801,
+  "paused_seconds": 333,
+  "measured_seconds": 468,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "D-06 integration gap closed by real Chromium regression: Save/reload remains draft-only, separate Publish changes public media, archive use guard and site scope verified. Production D1 read-only postflight and media suite remain healthy.",
+  "evidence": [
+    "docs/evidence/editor-d06-media-archive-save-publish-2026-11-15.json",
+    "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+    "tests/browser/d06-media-archive-save-publish.test.js"
+  ],
+  "checks": "D06 Chromium integration 1/1; legacy media plus imported regression 2/2; media API suite 5/5; plan-contract 14/14; canonical plan/audit; diff/json syntax PASS",
+  "started_revision": "4cd79c5cc8c3c0c74137e50c44763e4baf56892e",
+  "finished_revision": "4cd79c5cc8c3c0c74137e50c44763e4baf56892e",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

@@ -1,0 +1,71 @@
+{
+  "schema": 1,
+  "captured_at": "2026-11-15T09:45:00Z",
+  "plan_point": "77.44.7.D / D-06 browser-integrated media archive and Save/Publish lifecycle",
+  "status": "TARGETED_BROWSER_REGRESSION_PASS; FULL_D06_OPEN; FULL_D_OPEN_NOT_CERTIFIED",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "local_head_at_capture": "4cd79c5cc8c3c0c74137e50c44763e4baf56892e",
+    "remote_head_at_capture": "6ced38a24f8ca7154f50d292fa383624113b48f5",
+    "new_test": "tests/browser/d06-media-archive-save-publish.test.js",
+    "new_test_sha256": "7e1ea60f3237888c214ac7b2da8e3f4c26a5c059fec206e1a096dd34a37197d3",
+    "suite_registration": "tests/browser/editor-legacy-media-parity.test.js imports the new test so the existing test:editor:layout command collects it",
+    "registration_file_sha256": "663d84055ef30544579202a2434015e830c2a870032a14541ebb0332e3f2ec3c"
+  },
+  "regression": {
+    "coverage": [
+      "Real Chromium Editor and media-library UI share a route-mocked isolated server.",
+      "An existing public image A is replaced by B in the Editor; Save persists draft B while the public page still renders published A.",
+      "Reload restores the saved draft B without publishing it.",
+      "The media library's archive preflight blocks A while the published Page Model still references it.",
+      "Explicit Publish is a separate request; after reload the public page renders B and A is no longer referenced.",
+      "A can then be archived, moves to the archived library, and is denied by public media delivery.",
+      "A second site receives 404 for the first site's private media, archive mutation and public media; its own media remains accessible.",
+      "The collected Page Model writes are exactly [Save=false, Publish=true]."
+    ],
+    "production_data": "None; all requests are handled by a local route-mocked test server."
+  },
+  "checks": {
+    "node --test tests/browser/d06-media-archive-save-publish.test.js": "Initial default sandbox attempt failed because loopback networking was denied; rerun with the permitted local network sandbox passed 1/1.",
+    "python3 scripts/run-with-linux-subreaper.py --test-files node --test tests/browser/d06-media-archive-save-publish.test.js with local-network sandbox": "PASS, 1/1; Chromium child processes reaped.",
+    "python3 scripts/run-with-linux-subreaper.py --test-files node --test tests/browser/editor-legacy-media-parity.test.js with local-network sandbox": "PASS, 2/2 including the new D-06 test and existing legacy-media parity test; Chromium child processes reaped.",
+    "node --check tests/browser/d06-media-archive-save-publish.test.js": "PASS",
+    "git diff --check": "PASS",
+    "npm run test:media": "PASS, 5/5 files (run earlier in this work block before the new browser test; no media runtime source changed)",
+    "python3 scripts/check-canonical-plan.py": "PASS, one complete 13-file master and 396 mappings",
+    "python3 scripts/audit-active-plan-point.py": "PASS; next 77.44.7.D; functional acceptance NOT_CERTIFIED",
+    "python3 tests/plan-contract.test.py": "PASS, 14/14 after canonical note",
+    "python3 -m json.tool docs/evidence/editor-d06-media-archive-save-publish-2026-11-15.json": "PASS"
+  },
+  "production_state": {
+    "D1_database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
+    "most_recent_readonly_postflight_in_this_work_block": {
+      "migration_count": 35,
+      "latest_migration": "0029_media_archive_unicode_additive.sql",
+      "archive_trigger_count": 7,
+      "quick_check": "ok",
+      "foreign_key_violation_rows": 0,
+      "changed_db": false,
+      "rows_written": 0,
+      "changes": 0
+    },
+    "Worker_deployment_id": "bf413087-8322-451c-ad4f-3d7128b0ad3d",
+    "Worker_version_id": "c133e810-bf8f-4a7f-9c34-fa353c176b83",
+    "Worker_traffic_percent": 100,
+    "Worker_source_sha": "849310ee9d523feb608ed12763f4ed77d9033c88",
+    "runtime_source_changed": false,
+    "new_deploy": false,
+    "health_this_run": "NOT_CHECKED; no runtime source changed and shell DNS is unavailable in this execution environment."
+  },
+  "release": {
+    "exact_sha_ci_for_new_test": "NOT_RUN; test-only follow-up uses the repository [skip ci] convention after targeted local Chromium checks.",
+    "worker_deploy": false,
+    "production_d1_write_or_migration": false,
+    "r2_operation": false,
+    "new_paid_service_or_quota": false,
+    "save_publish_remain_separate": true
+  },
+  "scope_limit": "This closes one D-06 end-to-end browser regression gap only. D-06's full lifecycle/capability acceptance, the D-01–D-07 type/field matrix, and 77.44.7.D remain OPEN / NOT_CERTIFIED. Full Visual Editor manual/physical acceptance remains DEFERRED.",
+  "development_metric_run_id": "20261115093201-1c3e5841"
+}
