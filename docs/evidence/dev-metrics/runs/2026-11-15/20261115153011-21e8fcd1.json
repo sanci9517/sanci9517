@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261115153011-21e8fcd1",
+  "task": "77.44.7.D-saveable-table-payload-budget",
+  "trigger": "manual",
+  "started_at": "2026-11-15T15:30:11.771Z",
+  "finished_at": "2026-11-15T15:46:16.515Z",
+  "wall_seconds": 965,
+  "paused_seconds": 0,
+  "measured_seconds": 965,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "D-03 táblázat-menthetőségi keret javítva; helyi regressziós kapuk és exact-SHA éles release igazolva; az Editor Core exact-SHA CI még fut, a teljes D továbbra nyitott.",
+  "evidence": [
+    "docs/evidence/editor-d03-saveable-table-payload-2026-11-15.json"
+  ],
+  "checks": "npm run test:editor PASS; Chromium editor-content-system 1/1 PASS; npm run typecheck PASS; migration gate PASS; Wrangler dry-run PASS; Cloudflare Build exact SHA success; 100% deployment + live health/hash PASS; Editor Core GitHub run in_progress",
+  "started_revision": "92db5594f4a9a493210d5cda0fba46fb67cc203f",
+  "finished_revision": "8204a089c1284202fb23ed86269a9df615d4fab8",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

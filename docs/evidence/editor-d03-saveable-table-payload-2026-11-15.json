@@ -1,0 +1,132 @@
+{
+  "schema_version": 1,
+  "plan_point": "77.44.7.D / D-03 authored table Inspector saveable payload budget",
+  "scope_status": "PARTIAL_ACCEPTANCE_PASS; overall 77.44.7.D and D-01..D-07 remain OPEN / NOT_CERTIFIED",
+  "repository": "sanci9517/sanci9517",
+  "branch": "v2/foundation",
+  "source_commit": "8204a089c1284202fb23ed86269a9df615d4fab8",
+  "commit_url": "https://github.com/sanci9517/sanci9517/commit/8204a089c1284202fb23ed86269a9df615d4fab8",
+  "defect": "The table inspector accepted TSV shaped within the table schema but whose serialized JSON table payload could exceed the 180,000-character Page Model Save/Publish guard. The editor could therefore appear to accept an edit that Save and Publish necessarily reject.",
+  "implementation": [
+    "Keep the shared server Page Model ceiling unchanged at 180,000 characters and cap normalized table JSON at 120,000 characters, reserving budget for the rest of the page model.",
+    "Bound table TSV input at 180,000 characters so the textarea cap does not truncate accepted table input; reject a table whose normalized serialized JSON exceeds the saveable table budget with actionable Hungarian guidance.",
+    "Keep Save and Publish separate and ensure validation failure does not mutate editor state.",
+    "Bump cache query versions on the changed authored-content module and its production consumers so the updated cap reaches deployed browsers."
+  ],
+  "tests": {
+    "node --test public/editor-v2/tests/element-content.test.js": {
+      "result": "PASS",
+      "coverage": "largest tested table remains inside the persisted JSON budget; oversized JSON and quote-heavy TSV are rejected without mutation; TSV delimiters/quotes/newlines round-trip; text input cap is not below an accepted serialization"
+    },
+    "npm run test:editor": {
+      "result": "PASS",
+      "tests": 16,
+      "failures": 0
+    },
+    "npm run typecheck": { "result": "PASS" },
+    "npm run test:web013:migration-gate": { "result": "PASS" },
+    "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-content-system.test.js": {
+      "result": "PASS",
+      "tests": 1,
+      "failures": 0,
+      "coverage": "real browser editor content flow with Save/reload and separate Publish"
+    },
+    "python3 tests/plan-contract.test.py": { "result": "PASS", "tests": 14 },
+    "python3 scripts/check-canonical-plan.py": { "result": "PASS", "masters": 13, "features": 396 },
+    "python3 scripts/audit-active-plan-point.py": {
+      "result": "PASS",
+      "next": "77.44.7.D",
+      "functional_acceptance": "NOT_CERTIFIED",
+      "source_status_counts": { "PARTIAL_SOURCE": 146, "UNVERIFIED": 250 }
+    },
+    "python3 scripts/build-feature-traceability.py --check": { "result": "PASS", "features": 396 },
+    "node --check changed JavaScript files and git diff --check": { "result": "PASS" },
+    "npm run deploy:safe -- --dry-run": {
+      "result": "PASS",
+      "wrangler": "4.130.0",
+      "public_assets": 182,
+      "reported_size": "383.56 KiB / 98.33 KiB gzip",
+      "deployed": false,
+      "warning": "Wrangler logged ENOENT while attempting to create /home/agent/.config/.wrangler/logs; the command exited 0 and ended with --dry-run: exiting now."
+    }
+  },
+  "production_d1_preflight": {
+    "sql": "SELECT COUNT(*) AS migration_count, MAX(name) AS latest_migration FROM d1_migrations",
+    "migration_count": 35,
+    "latest_migration": "0029_media_archive_unicode_additive.sql",
+    "rows_written": 0,
+    "changes": 0,
+    "changed_db": false,
+    "production_migration_or_data_write": "NONE"
+  },
+  "cloudflare_build": {
+    "id": "f6b653f3-18b4-45e9-8db0-1ccee61d2955",
+    "outcome": "success",
+    "source_commit": "8204a089c1284202fb23ed86269a9df615d4fab8",
+    "branch": "v2/foundation",
+    "build_command": "npm run typecheck",
+    "deploy_command": "npm run deploy:safe"
+  },
+  "production": {
+    "verified_at": "2026-11-15T15:45:03Z",
+    "deployment_id": "f5051413-1d52-4db1-b016-a0971822fb80",
+    "worker_version": "5451c750-502f-45cc-95e9-130471e46d31",
+    "worker_version_number": 4072,
+    "traffic_percentage": 100,
+    "health": {
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+      "http_status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "changed_public_asset_sha256": {
+      "public/editor-v2/app.js": "9cacb2db0f20c37d8b1db752b95ecbcfae67f22f6a649acd8d01237d0778b6f5",
+      "public/editor-v2/core/authored-content.js": "64f609a55bbfc5e849bbeacaae5c5bd2fb3e56045554bd2bba0223c592eb7c64",
+      "public/editor-v2/core/canvas-engine.js": "6eadf7faf411a20e12daaaddc1e82224c44f20f7176ad30ded573ea6c6060ee1",
+      "public/editor-v2/core/capability-matrix.js": "377d1bc48acbdddb0804b764aff9c8e9148031e550520a81862bac8bc3678b26",
+      "public/editor-v2/core/commands.js": "9110bb48022dca1abd695a2799d66ad15a6a97dac1b7cfebbf48023e07537f8a",
+      "public/editor-v2/core/content-profiles.js": "ea3d56524a7c706727430be97387ec37b022ec3ecddfcd433877337d0f4aa20f",
+      "public/editor-v2/core/validation.js": "02e84cb29a6e4e4793afea6df5d788bafbcd257212c033f6c7bea5975a76d7a4",
+      "public/editor-v2/ui/accessibility-fields.js": "00758bf042189c79aa3a12e7b205113a0fa41128d948eb44e558aedfd2e84e04",
+      "public/editor-v2/ui/element-content-controls.js": "c30686578e81a39c7c44e311cfd429c997d41a73681a6d070929fc0a69915db0",
+      "public/editor-v2/tests/element-content.test.js": "58319391f7ce8c4e8cb31bfedbccde263c6bf9924246ff89e76bd91355075019"
+    },
+    "all_changed_public_assets_http_200_and_hash_match": true,
+    "source_smoke_run": {
+      "id": 43730985099,
+      "status": "success",
+      "url": "https://github.com/sanci9517/sanci9517/actions/runs/43730985099"
+    }
+  },
+  "github_actions": {
+    "exact_sha_editor_core_run": {
+      "id": 43730985024,
+      "status": "in_progress",
+      "conclusion": null,
+      "current_step": "Run Editor browser layout regression",
+      "url": "https://github.com/sanci9517/sanci9517/actions/runs/43730985024"
+    },
+    "other_exact_sha_runs": {
+      "canonical_plan": { "id": 43730985044, "status": "success" },
+      "active_point_audit": { "id": 43730985015, "status": "success" },
+      "F0_baseline": { "id": 43730985117, "status": "success" },
+      "Twitch_integration": { "id": 43730985008, "status": "success" },
+      "production_source_smoke": { "id": 43730985099, "status": "success" }
+    },
+    "aggregate_ci": "PENDING; the exact-SHA Editor Core run has not completed"
+  },
+  "limitations": [
+    "This proves only the D-03 table payload/saveability regression slice; it does not close D-01..D-07 or the full 77.44.7.D acceptance matrix.",
+    "Full Visual Editor manual and physical-device acceptance remains deferred until the complete Visual Editor is implemented.",
+    "The exact-SHA Editor Core GitHub workflow is still in progress; no aggregate CI PASS is claimed."
+  ],
+  "data_safety": {
+    "r2_changes": "NONE",
+    "new_dependencies": 0,
+    "new_cost_huf": 0
+  }
+}
