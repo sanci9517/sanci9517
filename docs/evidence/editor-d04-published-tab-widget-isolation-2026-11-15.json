@@ -22,8 +22,7 @@
       "After navigation in the first widget, the second widget retains its independent selection.",
       "Pointer selection in either published tab widget updates only that widget, displays its own panel, and leaves focus on the selected tab.",
       "Subsequent keyboard navigation in the first widget preserves the second widget pointer-selected state.",
-      "Pointer selection in either published widget updates only that widget, displays its own panel, and leaves focus on the selected tab.",
-      "Subsequent keyboard navigation in the first widget preserves the second widget pointer-selected state."
+      "Pointer selection in either published widget updates only that widget, displays its own panel, and leaves focus on the selected tab."
     ]
   },
   "additional_checks": {
@@ -121,7 +120,29 @@
       "edited": "no; preserved the oversized one-plan master and recorded only machine evidence"
     },
     "scope": "D-04 pointer and keyboard multi-widget browser regression subgate only. Full D-04, D-01..D-07 and 77.44.7.D remain OPEN / NOT_CERTIFIED. No runtime/public assets, production D1/R2, CI dispatch or deployment changes.",
-    "cost_huf": 0
+    "cost_huf": 0,
+    "final_repository_review": {
+      "checked_at": "2026-11-15T17:31:22Z",
+      "github_compare": {
+        "base": "a8ae4878276151cdb9c6c053da2d1eb147872f17",
+        "branch": "v2/foundation",
+        "status": "identical",
+        "ahead_by": 0,
+        "behind_by": 0
+      },
+      "note": "The branch head was rechecked after the earlier test/evidence/measurement commits; this statement is a pre-update snapshot. This evidence-only correction is submitted separately with [skip ci]."
+    },
+    "latest_worker_read_only_check": {
+      "checked_at": "2026-11-15T17:31:08Z",
+      "deployment_id": "f5051413-1d52-4db1-b016-a0971822fb80",
+      "worker_version": "5451c750-502f-45cc-95e9-130471e46d31",
+      "traffic_percentage": 100,
+      "source_change": "none; only test/evidence/measurement commits were made"
+    },
+    "evidence_review_correction": {
+      "checked_at": "2026-11-15T17:31:34Z",
+      "correction": "Removed two repeated pointer-interaction assertions from the JSON evidence list; test source and test results are unchanged."
+    }
   },
   "prior_test_commit": {
     "sha": "6a07ee113a9e15829ee08bcf35aab71b4e4659ca",
