@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261115110606-9213ac55",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-15T11:06:06.523Z",
+  "finished_at": "2026-11-15T12:12:07.601Z",
+  "wall_seconds": 3961,
+  "paused_seconds": 0,
+  "measured_seconds": 3961,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "D-07 malformed child-list validation shipped and verified in production; targeted and core checks passed, one broad browser-run assertion passed on isolated rerun, exact-SHA Editor Core workflow still running.",
+  "evidence": [
+    "docs/evidence/editor-malformed-child-hierarchy-d07-2026-11-15.json"
+  ],
+  "checks": "npm run test:editor PASS 16 files/207 tests; targeted Chromium PASS 2/2; workspace Chromium rerun PASS 87/87; typecheck/migration gate/plan/canonical/traceability/dry-run PASS; live health and six asset hashes PASS; broad first run not clean and GitHub Editor Core in progress",
+  "started_revision": "9054efd614cbc5deddee9ea1c7e98c698c233217",
+  "finished_revision": "39c34be141f352119f98184da68ac5d69ff16fa0",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

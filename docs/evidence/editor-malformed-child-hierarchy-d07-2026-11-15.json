@@ -1,0 +1,136 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-15T12:10:26Z",
+  "plan_point": "77.44.7.D / D-07 malformed Page Model child-list validation and rendering",
+  "status": "RUNTIME_RELEASE_VERIFIED_D07_SUBGATE_PASS_FULL_D_OPEN_NOT_CERTIFIED",
+  "repository": {
+    "full_name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "parent_sha": "9054efd614cbc5deddee9ea1c7e98c698c233217",
+    "runtime_commit": "39c34be141f352119f98184da68ac5d69ff16fa0",
+    "runtime_commit_message": "fix(editor): fail closed on corrupt child lists",
+    "remote_fast_forward": true
+  },
+  "defect": {
+    "reproduction": "A JSON-persisted Page Model may contain children={toString:null} or children=[{toString:null},\"missing-node\"]. The previous hierarchy validator and Canvas/layer traversal could iterate a non-iterable object and throw before presenting the controlled validation failure.",
+    "fix": [
+      "Hierarchy validation now accepts child collections only when they are arrays, validates every child ID before lookup, and emits safe diagnostics without coercing malformed objects.",
+      "Reachability traversal ignores invalid IDs and malformed child collections while the canonical validator reports the defect; invalid data is rejected before editing or saving.",
+      "Canvas rendering, layer traversal, selection ranges, layout Inspector and hierarchy move/drop logic use the schema's safe getChildren accessor.",
+      "Bumped the index/app/schema and commands/state validation cache URLs so the production browser cannot retain the previous validator module.",
+      "Added core and real Chromium regressions proving a controlled boot error, no page writes, and an unchanged persisted Page Model."
+    ],
+    "save_publish": "Separate; loading corrupt data fails closed and never saves or publishes it.",
+    "production_data_mutation": false,
+    "r2_mutation_or_deletion": false,
+    "new_runtime_dependency": false
+  },
+  "local_checks": {
+    "editor_unit": {
+      "command": "npm run test:editor",
+      "result": "PASS",
+      "files": 16,
+      "tests": 207,
+      "linux_subreaper_tests": 3
+    },
+    "targeted_chromium": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-malformed-public-text-links.test.js",
+      "result": "PASS",
+      "tests": 2,
+      "coverage": "Malformed public text/link regression plus corrupt persisted Page Model child lists in the real Editor boot path; no browser exceptions, no writes, exact fixture bytes preserved."
+    },
+    "workspace_browser_rerun": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-workspace-appearance.test.js",
+      "result": "PASS",
+      "tests": 87
+    },
+    "wide_browser_suite": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium npm run test:editor:layout",
+      "result": "NOT_CLEAN_ON_FIRST_RUN",
+      "detail": "The 54-file suite completed; one workspace appearance keyboard-navigation assertion expected navigation but observed pages. The same test file was rerun independently and passed 87/87. This does not certify the first broad suite; exact-SHA GitHub Editor Core CI remains the release-level broad check and was in progress at evidence capture."
+    },
+    "typecheck": "PASS; npm run typecheck",
+    "migration_gate": "PASS; npm run test:web013:migration-gate",
+    "plan_contract": "PASS; python3 tests/plan-contract.test.py, 14/14",
+    "canonical_plan": "PASS; python3 scripts/check-canonical-plan.py, 13 master files",
+    "active_plan_audit": "PASS; next item 77.44.7.D; 396 features; functional acceptance NOT_CERTIFIED",
+    "feature_traceability": "PASS; python3 scripts/build-feature-traceability.py --check, 396/396",
+    "syntax_and_diff": "PASS; node --check on changed JavaScript and git diff --check",
+    "wrangler_dry_run": {
+      "result": "PASS; dry-run only, no deployment",
+      "wrangler": "4.130.0",
+      "files_read": 181,
+      "upload_size": "375.32 KiB / 96.02 KiB gzip",
+      "note": "Wrangler emitted an environment log-directory ENOENT warning, but exited 0 and produced the complete dry-run; no production action followed from this local command."
+    },
+    "production_d1_preflight": {
+      "method": "Cloudflare D1 Query API; SELECT-only",
+      "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
+      "query": "SELECT COUNT(*) AS migration_count, MAX(name) AS latest_migration FROM d1_migrations",
+      "migration_count": 35,
+      "latest_migration": "0029_media_archive_unicode_additive.sql",
+      "rows_read": 35,
+      "rows_written": 0,
+      "changes": 0,
+      "changed_db": false
+    }
+  },
+  "source_control_and_ci": {
+    "remote_head_before_push": "9054efd614cbc5deddee9ea1c7e98c698c233217",
+    "push": "Verified normal fast-forward; no branch switch, reset or force push.",
+    "exact_sha_github_workflows": [
+      {"id": 43712088485, "name": "Canonical Plan Active Point Audit", "result": "PASS"},
+      {"id": 43712088218, "name": "Production Worker source smoke", "result": "PASS"},
+      {"id": 43712088262, "name": "Canonical Creator Platform Plan", "result": "PASS"},
+      {"id": 43712088207, "name": "Twitch Integration Check", "result": "PASS"},
+      {"id": 43712088230, "name": "F0 baseline checks", "result": "PASS"},
+      {"id": 43712088214, "name": "Editor Core Test", "result": "IN_PROGRESS at evidence capture; browser layout regression running"}
+    ],
+    "aggregate_github_ci_pass": false
+  },
+  "production_release": {
+    "worker": "sanci9517-streamer-brand",
+    "cloudflare_build_id": "751781b3-3307-4ac3-b6a4-d93ca841c2f2",
+    "build_source_sha": "39c34be141f352119f98184da68ac5d69ff16fa0",
+    "build_branch": "v2/foundation",
+    "build_outcome": "success",
+    "build_command": "npm run typecheck",
+    "deploy_command": "npm run deploy:safe",
+    "migration_safety_gate": "PASS in exact-source Cloudflare build log; D1 migrations were not applied.",
+    "assets_uploaded": [
+      "public/editor-v2/app.js",
+      "public/editor-v2/core/commands.js",
+      "public/editor-v2/core/state.js",
+      "public/editor-v2/core/validation.js",
+      "public/editor-v2/index.html",
+      "public/editor-v2/tests/core.test.js"
+    ],
+    "deployment_id": "223f7376-fecb-4155-8e95-0cf71903ed48",
+    "worker_version_id": "12c80ee7-cf37-42d8-be34-6cb89f047f54",
+    "worker_version_number": 4066,
+    "traffic_percent": 100,
+    "health": {
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health?release=39c34be141f352119f98184da68ac5d69ff16fa0",
+      "http_status": 200,
+      "body": {"ok": true, "service": "sanci9517-streamer-brand", "version": "2.0.0", "server": "cloudflare-worker"}
+    },
+    "public_asset_sha256_local_equals_live": {
+      "public/editor-v2/index.html": "7a06ac55e04c013e222d06e58050894e72a6d585c1021f9245d3df8f08d39b41",
+      "public/editor-v2/app.js": "cb58af9b37555d35026c81219080dfd00307c948af90e25e5a4829b533520d69",
+      "public/editor-v2/core/commands.js": "1014a30957c84ca18405c0353b8f2fcc1577bcf6dd0a2150ffe45f92224abe94",
+      "public/editor-v2/core/state.js": "f7d0f669766e2688bcda1158f6fdcbe13ff1b65ed1dc91cc71c2aee77d6eb222",
+      "public/editor-v2/core/validation.js": "4c073d4dfede4fdeb0fa2009abd3fe482840e39b7d05dfb7e565b60da098eb01",
+      "public/editor-v2/tests/core.test.js": "a7346be929ffb6dd59089e4f58f18ad36da0ad39e392cfef07477e174664a11a"
+    },
+    "observed_at_utc": "2026-11-15T12:06:20Z"
+  },
+  "cost_and_limits": {
+    "new_paid_service_or_dependency": false,
+    "d1_write_or_migration": false,
+    "r2_write_or_delete": false,
+    "cloudflare_build_limit_reached": false,
+    "build_minutes_refresh_on": "2026-11-30T23:59:59.999Z",
+    "new_cost": "0 Ft"
+  },
+  "scope_limit": "This proves one D-07 malformed-child validation/rendering regression sub-gate only. The full D-07 field/type matrix, full D acceptance, all remaining 77.44.7.D scope and Visual Editor manual/physical acceptance remain OPEN / NOT_CERTIFIED / DEFERRED."
+}
