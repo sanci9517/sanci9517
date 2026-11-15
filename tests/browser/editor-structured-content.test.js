@@ -39,6 +39,16 @@ test('structured tab ARIA references stay unique across sanitization-colliding n
   {tabCount:1,panelCount:1,panelBelongsToHost:true,panelLabelsTab:true},
   {tabCount:1,panelCount:1,panelBelongsToHost:true,panelLabelsTab:true}
  ],'each public tab controls exactly one panel in its own widget and that panel names its tab');
+ const firstWidget=page.locator('[data-structured-tabs]').nth(0),secondWidget=page.locator('[data-structured-tabs]').nth(1);
+ await firstWidget.getByRole('tab').first().focus();
+ await page.keyboard.press('Tab');
+ assert.equal(await firstWidget.locator('[role="tabpanel"]').first().evaluate(el=>document.activeElement===el),true,
+  'Tab leaves the first tablist for its selected text-only panel');
+ await page.keyboard.press('Tab');
+ assert.equal(await secondWidget.getByRole('tab').first().evaluate(el=>document.activeElement===el),true,
+  'Tab continues to the next independent widget without trapping or merging tab stops');
+ assert.equal(await firstWidget.getByRole('tab').first().getAttribute('aria-selected'),'true');
+ assert.equal(await secondWidget.getByRole('tab').first().getAttribute('aria-selected'),'true');
 });
 
 test('structured Inspector editing survives Save, Publish and public interaction on desktop and mobile',async t=>{
