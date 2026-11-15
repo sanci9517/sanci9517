@@ -100,16 +100,17 @@
       "change_since_prior_check": "none; test-only changes do not alter the Worker source"
     },
     "production_health_recheck": {
-      "status": "UNVERIFIED for this run; runtime unchanged so no new public GET was attempted.",
-      "last_successful_direct_health_get": "2026-11-15T16:48:01Z",
-      "last_successful_http_status": 200,
-      "last_successful_body": {
+      "status": "PASS",
+      "checked_at": "2026-11-15T17:53:28Z",
+      "method": "Direct read-only HTTPS GET through approved network gate",
+      "http_status": 200,
+      "body": {
         "ok": true,
         "service": "sanci9517-streamer-brand",
         "version": "2.0.0",
         "server": "cloudflare-worker"
       },
-      "later_proxy_block": "The execution-environment HTTPS CONNECT proxy previously failed before the request reached Worker."
+      "runtime_change": "none; existing live Worker only"
     },
     "canonical_master_integrity": {
       "bytes": 1620659,
