@@ -1,0 +1,52 @@
+{
+  "schema": 1,
+  "captured_at": "2026-11-15T10:05:14Z",
+  "plan_point": "77.44.7.D / D-06 real Media Library UI archive denial through Worker",
+  "status": "TARGETED_BROWSER_REGRESSION_PASS; FULL_D06_OPEN; FULL_D_OPEN_NOT_CERTIFIED",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "local_head_at_start": "4cd79c5cc8c3c0c74137e50c44763e4baf56892e",
+    "remote_head_at_start": "63d10d526cd70fac4203b6e1a32c8ee1e7d89e98",
+    "changed_file": "tests/browser/media-worker-storage.test.mjs",
+    "change_kind": "browser-test harness only; no runtime or public asset change"
+  },
+  "regression": {
+    "fixture": "real Worker module + Miniflare local D1/R2 + Chromium, with synthetic records and bytes only",
+    "flow": [
+      "A media image is uploaded through the real Media Library and stored in local D1/R2.",
+      "The Editor publishes then removes its reference from the draft; a historical revision continues referencing the asset.",
+      "The actual Media Library archive button requires a separate confirmation click; the first click issues no request.",
+      "The second click reaches the actual Worker PATCH route, receives HTTP 409, and shows the historical revision usage in the UI.",
+      "D1 media rows, retention rows, R2 object listing, and exact object SHA-256 remain unchanged across the denial."
+    ],
+    "first_attempt": "The product correctly returned 409 and exposed two historical revisions; the initial assertion incorrectly assumed one matching link. The test was corrected to require at least one link.",
+    "production_data": "None; all D1/R2 data is disposable Miniflare fixture state."
+  },
+  "checks": {
+    "node --check tests/browser/media-worker-storage.test.mjs": "PASS",
+    "git diff --check": "PASS",
+    "npm run test:media:storage": "PASS, 1/1; real local Worker/D1/R2 and Chromium integration"
+  },
+  "production_state": {
+    "worker_name": "sanci9517-streamer-brand",
+    "deployment_id": "bf413087-8322-451c-ad4f-3d7128b0ad3d",
+    "version_id": "c133e810-bf8f-4a7f-9c34-fa353c176b83",
+    "traffic_percent": 100,
+    "source_sha": "849310ee9d523feb608ed12763f4ed77d9033c88",
+    "direct_health": "HTTP 200 at /api/health during this work block; response identifies sanci9517-streamer-brand",
+    "runtime_changed": false,
+    "new_deploy": false,
+    "changed_public_asset_hashes": "Not applicable; no runtime/public asset source changed."
+  },
+  "release": {
+    "exact_sha_ci": "NOT RUN; test-only change uses [skip ci] after relevant local browser integration passed",
+    "worker_deploy": false,
+    "production_d1_query_or_mutation": false,
+    "production_r2_operation": false,
+    "paid_service_or_quota": false,
+    "save_publish_remain_separate": true
+  },
+  "scope_limit": "This closes one D-06 browser/UI integration gap only. Full D-06, D-01–D-07 type/field acceptance, and 77.44.7.D remain OPEN / NOT_CERTIFIED. Consolidated Visual Editor manual/physical acceptance remains DEFERRED.",
+  "development_metric_run_id": "20261115095724-78ef0e04"
+}

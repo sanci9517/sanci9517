@@ -171,8 +171,27 @@ print(json.dumps(result))`],{cwd:root,encoding:'utf8'}));
  assert.equal(usageAfterRemoval.complete,true);
  assert.ok(usageAfterRemoval.references.some(ref=>ref.source==='revision'&&ref.path==='responsive.desktop.backgroundAssetId'),
   'historical revisions keep the asset in use after the published reference is removed');
- const archive=await context.request.patch(base+'/api/admin/media?id='+row.id,{headers:{Origin:base},data:{archived:true}});
- assert.equal(archive.status(),409,'the safe usage report blocks archival while historical versions still reference the asset');
+ const archiveTile=page.locator('.tile').filter({hasText:'isolated-acceptance.png'});
+ await archiveTile.waitFor();
+ const archiveButton=archiveTile.getByRole('button',{name:'Médiafájl archiválása',exact:true});
+ const beforeArchive=await snapshot(),archiveCallIndex=calls.length;
+ await archiveButton.click();
+ assert.equal(calls.length,archiveCallIndex,'the first archive click only arms confirmation');
+ const archiveResponse=page.waitForResponse(response=>{
+  const url=new URL(response.url());
+  return url.pathname==='/api/admin/media'&&url.searchParams.get('id')===row.id&&response.request().method()==='PATCH';
+ });
+ await archiveTile.getByRole('button',{name:'Archiválás megerősítése',exact:true}).click();
+ assert.equal((await archiveResponse).status(),409,'the real Worker rejects the archive while a historical revision references the asset');
+ await archiveTile.getByText(/A médiafájlra oldal vagy korábbi verzió hivatkozik/).waitFor();
+ const historyLinks=archiveTile.getByRole('link',{name:/Korábbi verzió/});
+ await historyLinks.first().waitFor();
+ assert.ok(await historyLinks.count()>=1,'the UI exposes the historical Editor revision that blocks archiving');
+ await page.waitForFunction(()=>document.querySelector('.tile .media-usage')?.hidden===false,
+  null,{timeout:10000});
+ assert.deepEqual(await snapshot(),beforeArchive,'the real Media Library archive denial leaves D1 rows and R2 bytes unchanged');
+ assert.ok(calls.slice(archiveCallIndex).some(call=>call.method==='GET'&&call.query.includes('usage='+row.id)),
+  'the real Media Library reveals the historical usage report after the Worker rejects archival');
  await scan('missing','empty',1);assert.equal(digest(await(await MEDIA.get(row.object_key)).arrayBuffer()),digest(png),'archive preserves object bytes');
  const orphanKey='sites/site-default/media/isolated-orphan-fixture.png';await MEDIA.put(orphanKey,png);
  const orphanPanel=await scan('orphan','findings',2);assert.match(await orphanPanel.textContent(),/isolated-orphan-fixture/);
