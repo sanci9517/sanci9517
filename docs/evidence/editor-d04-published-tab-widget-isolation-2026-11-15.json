@@ -62,7 +62,7 @@
     "production_d1_or_r2_mutation": "NONE"
   },
   "cost_huf": 0,
-  "development_measurement_id": "20261115173026-ba703a85",
+  "development_measurement_id": "20261115175057-b9d1e6ff",
   "followup_verification": {
     "checked_at": "2026-11-15T17:24:56Z",
     "local_browser_rerun": {
@@ -117,7 +117,7 @@
       "worktree_blob_sha": "205a93839699bfbe05ace3cae2a45887cc7be698",
       "edited": false
     },
-    "scope": "D-04 public structured-tab keyboard focus-order and multi-widget state-isolation regression subgate only. Full D-04, D-01..D-07 and 77.44.7.D remain OPEN / NOT_CERTIFIED; full Visual Editor manual/physical acceptance DEFERRED.",
+    "scope": "D-04 public structured-tab keyboard focus order and pointer/keyboard multi-widget state-isolation subgate PASS only. Full D-04, D-01..D-07 and 77.44.7.D remain OPEN / NOT_CERTIFIED; complete Visual Editor manual/physical acceptance DEFERRED.",
     "cost_huf": 0,
     "final_repository_review": {
       "checked_at": "2026-11-15T17:31:22Z",
@@ -184,13 +184,24 @@
       "test_commit": "52dcce15b54588a2ea2d0d98b761f4e23258a87c",
       "ci": "No remote checks for [skip ci]; not claimed as PASS."
     },
-    "development_measurement_id": "20261115173026-ba703a85"
+    "development_measurement_id": "20261115173026-ba703a85",
+    "measurement_scope": {
+      "current_id": "20261115175057-b9d1e6ff",
+      "note": "This metric was started after the Chromium test and test commit in this block. It measures evidence correction, exact remote verification, and metric archival only; no earlier browser duration has been retroactively assigned."
+    },
+    "browser_focus_sequence_test": {
+      "test_commit": "52dcce15b54588a2ea2d0d98b761f4e23258a87c",
+      "content_blob_sha": "f5b2fb22e33aa79f075b56f8d6b9fdf6a86884df",
+      "source_sha256": "cc43f446c23ef96209c76b560e161324fa5882bf66dde4c8be660b5abc03756e",
+      "result": "PASS 2/2 before current documentation-verification metric started",
+      "new_behavior": "Tab focus moves selected tab → its panel → next independent tab widget; widget selection stays independent."
+    }
   },
   "prior_test_commit": {
     "sha": "6a07ee113a9e15829ee08bcf35aab71b4e4659ca",
     "url": "https://github.com/sanci9517/sanci9517/commit/6a07ee113a9e15829ee08bcf35aab71b4e4659ca",
     "note": "Original keyboard/multi-widget fixture expansion."
   },
-  "prior_development_measurement_id": "20261115164331-fba397c3",
+  "prior_development_measurement_id": "20261115171930-634eb575",
   "scope": "D-04 public structured-tab keyboard focus order and multi-widget state isolation subgate PASS only. Full D-04, D-01..D-07 and 77.44.7.D remain OPEN / NOT_CERTIFIED; complete Visual Editor manual/physical acceptance DEFERRED."
 }
