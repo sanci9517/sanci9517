@@ -23,6 +23,7 @@ test('published page and Canvas handle malformed text, links and CSS without Sav
   const linkId=add(NODE_TYPES.LINK);
   const validLinkId=add(NODE_TYPES.LINK);
   const intactHeadingId=add(NODE_TYPES.HEADING);
+  const authoredButtonId=add(NODE_TYPES.BUTTON);
   const page=state.document.pages[pageId];
   const invalid={toString:null};
   // An old published snapshot may have malformed child collections or IDs.
@@ -36,6 +37,8 @@ test('published page and Canvas handle malformed text, links and CSS without Sav
   page.nodes[linkId].props={text:'Biztonságos hivatkozás',href:invalid};
   page.nodes[validLinkId].props={text:'Érvényes cél',href:'/p/valid'};
   page.nodes[intactHeadingId].props={text:'A teljes oldal megmarad'};
+  page.nodes[authoredButtonId].metadata={...page.nodes[authoredButtonId].metadata,contentVersion:1};
+  page.nodes[authoredButtonId].props={text:'Sérült authored CTA',href:invalid};
   let writes=0;
   const server=createServer(async(req,res)=>{
     const url=new URL(req.url,'http://localhost');
@@ -73,6 +76,12 @@ test('published page and Canvas handle malformed text, links and CSS without Sav
   assert.equal((await root(linkId).textContent()).trim(),'Biztonságos hivatkozás');
   assert.equal(await root(linkId).getAttribute('href'),null,'malformed URL cannot become a clickable link');
   assert.equal(await root(validLinkId).getAttribute('href'),'/p/valid','valid same-site links stay clickable');
+  assert.equal(await root(authoredButtonId).evaluate(el=>el.tagName),'BUTTON',
+    'malformed authored CTA data must not render as an anchor');
+  assert.equal(await root(authoredButtonId).getAttribute('href'),null,
+    'malformed persisted authored CTA URL cannot become a clickable public link');
+  assert.equal((await root(authoredButtonId).textContent()).trim(),'Sérült authored CTA',
+    'malformed CTA preserves its safe visible label');
   const canvas=await tab.evaluate(async()=>{
     const {applyNodeStyle}=await import('/editor-v2/core/canvas-engine.js?v=20261112-safe-css-parity');
     const invalid={toString:null};

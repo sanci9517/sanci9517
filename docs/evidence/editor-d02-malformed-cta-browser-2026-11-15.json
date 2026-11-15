@@ -1,0 +1,59 @@
+{
+  "schema": 1,
+  "captured_at": "2026-11-15T10:55:21Z",
+  "plan_point": "77.44.7.D / D-02 malformed authored CTA public-browser regression",
+  "status": "TARGETED_PUBLIC_CHROMIUM_PASS; FULL_D02_OPEN; FULL_D_OPEN_NOT_CERTIFIED",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "verified_base_sha": "9dbff27c57541467d24318d63ea5e672008233c9",
+    "change": "tests/browser/editor-malformed-public-text-links.test.js only; no runtime or public asset source modified"
+  },
+  "regression": {
+    "fixture": "The actual public visual-page.html and page-renderer.js are served by an isolated loopback test server with a JSON-serialized persisted Page Model.",
+    "scenario": "A contentVersion=1 authored button has href={toString:null}; Chromium verifies it renders as BUTTON with no href and its safe label intact, while a valid sibling link and unrelated page content still render.",
+    "side_effects": "Read-only rendering; the fixture asserts zero non-GET/HEAD requests and no Save or Publish action."
+  },
+  "checks": {
+    "CHROMIUM_PATH=/usr/bin/chromium node --test --test-reporter=spec tests/browser/editor-malformed-public-text-links.test.js": "PASS 1/1 in Chromium; first sandboxed launch was blocked before assertions (setsockopt: Operation not permitted, SIGTRAP); the same isolated test passed in approved unsandboxed execution.",
+    "npm run test:editor:publish-guard": "PASS 18/18, including D-02 route-level Save/Publish separation and no snapshot mutation on invalid Publish.",
+    "node --experimental-vm-modules --test-reporter=spec public/editor-v2/tests/core.test.js": "PASS 79/79, including malformed CTA Publish validation and non-clickable fallback.",
+    "python3 tests/plan-contract.test.py": "PASS 14/14",
+    "python3 scripts/build-feature-traceability.py --check": "PASS 396/396",
+    "python3 scripts/check-canonical-plan.py": "PASS; one intact 13-master-file plan and 396 mappings",
+    "python3 scripts/audit-active-plan-point.py": "PASS as an audit; current item 77.44.7.D remains OPEN and functional acceptance NOT_CERTIFIED",
+    "node --check tests/browser/editor-malformed-public-text-links.test.js": "PASS",
+    "git diff --check": "PASS",
+    "full aggregate Editor Core/browser CI": "NOT RUN; test-only/doc-only follow-up will use [skip ci], so no remote CI PASS is claimed"
+  },
+  "production": {
+    "worker_name": "sanci9517-streamer-brand",
+    "deployment_id": "bf413087-8322-451c-ad4f-3d7128b0ad3d",
+    "version_id": "c133e810-bf8f-4a7f-9c34-fa353c176b83",
+    "traffic_percent": 100,
+    "latest_known_runtime_source_sha": "849310ee9d523feb608ed12763f4ed77d9033c88",
+    "deployment_api_read": "Read-only Cloudflare GET during this block reports the latest deployment and version above at 100%; no new deployment.",
+    "direct_health_get": {
+      "checked_at": "2026-11-15T10:54:46Z",
+      "http_status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "asset_hashes": "Not applicable: this test-only change did not modify public assets.",
+    "production_d1_or_r2": "No production D1 queries or mutations and no R2 operations in this block.",
+    "worker_deploy": "Not needed and not performed."
+  },
+  "release": {
+    "github_push": "Not yet performed; intended as a normal fast-forward test/docs-only commit from the verified branch head.",
+    "ci": "NOT RUN by design under the [skip ci] docs/test convention.",
+    "cost": "0 Ft new spend; no paid service or quota use.",
+    "save_publish_remain_separate": true
+  },
+  "scope_limit": "This closes one D-02 public rendering regression slice, together with the prior D-02 route/Core evidence. Full D-02, the D-01–D-07 lifecycle/capability matrix, and 77.44.7.D remain OPEN / NOT_CERTIFIED. Consolidated manual/physical Editor acceptance remains DEFERRED.",
+  "development_metric_run_id": "20261115104850-e0a50a0e",
+  "development_measurement_seconds": 478
+}
