@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261115175057-b9d1e6ff",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-15T17:50:57.301Z",
+  "finished_at": "2026-11-15T17:51:55.508Z",
+  "wall_seconds": 58,
+  "paused_seconds": 0,
+  "measured_seconds": 58,
+  "status": "pass",
+  "kind": "docs",
+  "summary": "Archived D-04 tab focus-order evidence and corrected measurement scope; evidence-only updates verified on v2/foundation; Worker unchanged.",
+  "evidence": [
+    "docs/evidence/editor-d04-published-tab-widget-isolation-2026-11-15.json",
+    "tests/browser/editor-structured-content.test.js:cc43f446c23ef96209c76b560e161324fa5882bf66dde4c8be660b5abc03756e"
+  ],
+  "checks": "JSON parse; diff check; GitHub compare and blobs; test workflow status empty as expected [skip ci]; Worker GET 100%",
+  "started_revision": "6a07ee113a9e15829ee08bcf35aab71b4e4659ca",
+  "finished_revision": "6a07ee113a9e15829ee08bcf35aab71b4e4659ca",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
