@@ -44,9 +44,28 @@
     "latest_worker_version": "5451c750-502f-45cc-95e9-130471e46d31",
     "traffic_percentage": 100,
     "deployment_api_read_at": "Verified during this run; exact timestamp was not captured.",
-    "health_current": "UNVERIFIED: the authenticated connector's fetch policy returned 403 Forbidden for the workers.dev URL; prior direct HTTP 200 is recorded in the linked release evidence.",
-    "production_d1_or_r2_mutation": "NONE"
+    "health_current": "PASS: direct GET returned HTTP 200 and {\"ok\":true,\"service\":\"sanci9517-streamer-brand\",\"version\":\"2.0.0\",\"server\":\"cloudflare-worker\"}.",
+    "production_d1_or_r2_mutation": "NONE",
+    "health_verified_at": "2026-11-15T16:07:49Z"
   },
   "cost_huf": 0,
-  "development_measurement_id": "20261115155410-03ec3257"
+  "development_measurement_id": "20261115155410-03ec3257",
+  "hosted_ci": {
+    "workflow": "Editor Core Test",
+    "run_id": 43730985024,
+    "url": "https://github.com/sanci9517/sanci9517/actions/runs/43730985024",
+    "source_commit": "8204a089c1284202fb23ed86269a9df615d4fab8",
+    "status": "completed",
+    "conclusion": "success",
+    "checks": {
+      "required": 18,
+      "passed": 17,
+      "conditional_artifact_upload": "skipped because no diagnostic failure"
+    },
+    "test_only_follow_up_commit": {
+      "sha": "1a0cfcf5f9841737a1c8d5a56670b07cea46258c",
+      "workflow_runs": 0,
+      "reason": "[skip ci]; local browser regression run covers this test harness delta"
+    }
+  }
 }
