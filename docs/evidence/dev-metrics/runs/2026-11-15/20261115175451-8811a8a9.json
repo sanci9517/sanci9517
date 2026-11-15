@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261115175451-8811a8a9",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-15T17:54:51.225Z",
+  "finished_at": "2026-11-15T17:55:35.515Z",
+  "wall_seconds": 44,
+  "paused_seconds": 0,
+  "measured_seconds": 44,
+  "status": "pass",
+  "kind": "docs",
+  "summary": "D-04 evidence corrected with direct health HTTP 200 and measurement scope; only docs changed, no Worker deploy.",
+  "evidence": [
+    "docs/evidence/editor-d04-published-tab-widget-isolation-2026-11-15.json",
+    "tests/browser/editor-structured-content.test.js:cc43f446c23ef96209c76b560e161324fa5882bf66dde4c8be660b5abc03756e"
+  ],
+  "checks": "JSON parse; GitHub evidence blob exact; pre-update compare identical; direct production health GET 200; Worker API previously 100%",
+  "started_revision": "6a07ee113a9e15829ee08bcf35aab71b4e4659ca",
+  "finished_revision": "6a07ee113a9e15829ee08bcf35aab71b4e4659ca",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
