@@ -1,0 +1,71 @@
+{
+  "schema": 1,
+  "captured_at": "2026-11-15T20:02:13Z",
+  "plan_item": "77.44.7.D / D-06",
+  "status": "D-06 READ-ONLY PRODUCTION STATE VERIFIED; FULL D OPEN / NOT_CERTIFIED",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "head": "b916da11158dfd21e7eb226144588b9103f16943",
+    "runtime_source_unchanged": true,
+    "runtime_diff_review": "Only tests/** and docs/evidence/** differ from deployed source; no production code or public asset changed."
+  },
+  "production_d1": {
+    "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
+    "endpoint": "Cloudflare D1 REST Query API",
+    "statements": [
+      "SELECT COUNT(*) AS migration_count, MAX(name) AS latest_migration FROM d1_migrations",
+      "SELECT name, sql FROM sqlite_master WHERE type = 'trigger' AND name LIKE 'media_archive_%' ORDER BY name",
+      "SELECT name FROM sqlite_master WHERE type = 'table' AND name IN ('pages','editor_revisions','media') ORDER BY name"
+    ],
+    "result": {
+      "migration_count": 35,
+      "latest_migration": "0029_media_archive_unicode_additive.sql",
+      "archive_triggers": [
+        "media_archive_pages_insert_guard",
+        "media_archive_pages_insert_unicode_guard",
+        "media_archive_pages_update_guard",
+        "media_archive_pages_update_unicode_guard",
+        "media_archive_revisions_insert_guard",
+        "media_archive_revisions_insert_unicode_guard",
+        "media_archive_revisions_update_unicode_guard"
+      ],
+      "expected_tables_present": ["editor_revisions", "media", "pages"],
+      "total_rows_read_reported": 295,
+      "rows_written": 0,
+      "changes": 0,
+      "changed_db": false,
+      "total_attempts": 1
+    },
+    "mutations": "No migration, INSERT/UPDATE/DELETE, data export, or schema modification was issued. All submitted SQL statements were SELECT-only."
+  },
+  "production_worker": {
+    "worker": "sanci9517-streamer-brand",
+    "deployment_id": "182d946d-49cf-44e9-9b08-1e23739e6adf",
+    "deployment_created_on": "2026-11-15T18:56:18.344474Z",
+    "version_id": "a0fbaaba-358a-43c5-8c64-8d2df9998106",
+    "traffic_percent": 100,
+    "health_checked_at": "2026-11-15T20:02:13Z",
+    "health_http_status": 200,
+    "health_body": {
+      "ok": true,
+      "service": "sanci9517-streamer-brand",
+      "version": "2.0.0",
+      "server": "cloudflare-worker"
+    },
+    "deployment_created_by_this_block": false
+  },
+  "checks": {
+    "active_plan_audit": "77.44 / WEB-011; next 77.44.7.D; 396 mapped features; 146 PARTIAL_SOURCE; 250 UNVERIFIED; functional acceptance NOT_CERTIFIED.",
+    "feature_traceability": "PASS: 396 source mappings match catalog/contracts/file paths; this is source traceability, not functional acceptance.",
+    "current_github_head": "Verified as b916da11158dfd21e7eb226144588b9103f16943 before this evidence-only follow-up."
+  },
+  "scope_limit": "This records a fresh read-only D1 state check and production health/deployment observation. It does not close D-06 lifecycle/capability acceptance or the full 77.44.7.D. Save and Publish remain separate. Full Visual Editor manual/physical acceptance remains deferred until the entire Editor scope is complete.",
+  "cost_and_data": {
+    "new_paid_usage": "none",
+    "production_d1_writes_or_migrations": "none",
+    "r2_operations": "none",
+    "worker_deployment": "none",
+    "ci_dispatch_or_rerun": "none"
+  }
+}
