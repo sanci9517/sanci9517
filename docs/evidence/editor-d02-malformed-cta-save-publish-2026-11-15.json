@@ -1,8 +1,8 @@
 {
   "schema": 1,
-  "captured_at": "2026-11-15T10:37:03Z",
+  "captured_at": "2026-11-15T10:44:16Z",
   "plan_point": "77.44.7.D / D-02 malformed authored CTA Save/Publish boundary",
-  "status": "TARGETED_LOCAL_REGRESSION_PASS; FULL_D02_OPEN; FULL_D_OPEN_NOT_CERTIFIED",
+  "status": "TARGETED_ROUTE_AND_CORE_REGRESSION_PASS; BROWSER_BLOCKED; FULL_D02_OPEN; FULL_D_OPEN_NOT_CERTIFIED",
   "repository": {
     "name": "sanci9517/sanci9517",
     "branch": "v2/foundation",
@@ -10,7 +10,9 @@
     "original_primary_worktree_head": "4cd79c5cc8c3c0c74137e50c44763e4baf56892e",
     "primary_worktree_is_14_commits_behind": true,
     "validation_worktree": "isolated detached worktree created exactly at verified v2/foundation base; original dirty worktree preserved",
-    "runtime_or_public_asset_changed": false
+    "runtime_or_public_asset_changed": false,
+    "test_documentation_commit": "877d015a54bb315b6a282e201e55505d1bd59eb4",
+    "git_publish": "Normal non-force fast-forward push from 577bf482a5f51e58fbb0b1910985f9d6321e7893; GitHub compare verified v2/foundation exactly at 877d015a54bb315b6a282e201e55505d1bd59eb4 (ahead_by=1, behind_by=0) before evidence-only follow-up."
   },
   "regression": {
     "route_fixture": "SQLite-backed route integration fixture invoking the admin editor and public-page routes; no production database",
@@ -43,19 +45,28 @@
     "latest_version_traffic_percent": 100,
     "deployment_api_read": "GET deployment list and script settings via Cloudflare API during this run; deployment list identifies latest version at 100%. API did not expose the source SHA.",
     "last_previously_verified_source_sha": "849310ee9d523feb608ed12763f4ed77d9033c88",
-    "direct_health": "UNVERIFIED: Cloudflare execution sandbox blocked an outbound fetch to the workers.dev health URL before an origin response; no production HTTP status is claimed.",
+    "direct_health": "PASS: direct read-only GET returned HTTP 200 and {\"ok\":true,\"service\":\"sanci9517-streamer-brand\",\"version\":\"2.0.0\",\"server\":\"cloudflare-worker\"}.",
     "runtime_changed": false,
     "new_worker_deploy": false,
     "production_d1_query_or_mutation": false,
-    "production_r2_operation": false
+    "production_r2_operation": false,
+    "last_health_check_utc": "2026-11-15T10:44:16Z",
+    "latest_deployment_read": "Cloudflare API GET after test push at 2026-11-15T10:44Z confirms latest deployment remains bf413087-8322-451c-ad4f-3d7128b0ad3d, with c133e810-bf8f-4a7f-9c34-fa353c176b83 at 100%; no new deployment."
   },
   "release": {
-    "github_push": "Not yet attempted at evidence creation; final status must be verified against the branch ref after the test/docs-only commit.",
-    "ci": "Not dispatched; commits will use [skip ci], so remote CI is not claimed as PASS.",
+    "github_push": "PASS for test/source commit 877d015a54bb315b6a282e201e55505d1bd59eb4: normal fast-forward from verified base 577bf482a5f51e58fbb0b1910985f9d6321e7893; GitHub compare confirmed the exact ref.",
+    "ci": "NOT RUN by design: test/docs-only commit uses [skip ci]; no remote CI result is claimed.",
     "changed_public_asset_hashes": "Not applicable; runtime source and public assets unchanged.",
     "cost": "0 Ft new spend; no paid service or quota used.",
-    "save_publish_remain_separate": true
+    "save_publish_remain_separate": true,
+    "worker_deploy": "NOT NEEDED and not performed: no Worker runtime/public asset source changed; Cloudflare API confirms no new deployment.",
+    "production_health": "PASS HTTP 200 direct GET at 2026-11-15T10:44:16Z; expected service/version JSON."
   },
   "scope_limit": "This validates a route-level and Editor Core test slice only. Full D-02, the complete D-01–D-07 lifecycle/capability matrix, and 77.44.7.D remain OPEN / NOT_CERTIFIED. Real browser acceptance is blocked in this runner; consolidated full-Editor manual/device acceptance remains deferred.",
-  "development_metric_run_id": "20261115100802-d5061bc0"
+  "development_metric_run_id": "20261115100802-d5061bc0",
+  "canonical_master_pre_followup": {
+    "remote_blob_sha": "279ab335ad213aafb4efc4637b966be0a48c5c97",
+    "byte_length": 1598094,
+    "verification": "GitHub fetch_file SHA exactly matched full local bytewise source before this small documentation update; no truncated Contents API result was used."
+  }
 }
