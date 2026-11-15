@@ -4,7 +4,7 @@
   "scope_status": "LOCAL_AND_PREFLIGHT_PASS; overall D remains OPEN / NOT_CERTIFIED",
   "repository": "sanci9517/sanci9517",
   "branch": "v2/foundation",
-  "source_commit": "filled by post-release exact-SHA follow-up",
+  "source_commit": "effec1ce4af65eedb3b8889bdc58f11a782c2c2d",
   "branch_head_before": "8807d302e446d739521e820f4f73ef0fb573e567",
   "defect": "An Excel-style TSV ending in CRLF was parsed with a phantom one-cell final row, making otherwise valid authored tables fail the declared rectangular row/column contract.",
   "implementation": [
@@ -81,9 +81,74 @@
     "production_migration_or_data_write": "NONE"
   },
   "release": {
-    "status": "PENDING_NORMAL_FAST_FORWARD_PUSH_AND_AUTOMATIC_CLOUDFLARE_BUILD",
-    "automatic_deployment_expected": true,
-    "dry_run_only": true
+    "status": "DEPLOYED; exact modified public-asset readback partially blocked by current execution proxy",
+    "push": "normal fast-forward 8807d302e446d739521e820f4f73ef0fb573e567 -> effec1ce4af65eedb3b8889bdc58f11a782c2c2d",
+    "github_ref_head": "effec1ce4af65eedb3b8889bdc58f11a782c2c2d",
+    "cloudflare_build": {
+      "id": "28aee11a-49ee-4de5-a856-c45e1489a43d",
+      "source_sha": "effec1ce4af65eedb3b8889bdc58f11a782c2c2d",
+      "outcome": "success",
+      "build_command": "npm run typecheck",
+      "deploy_command": "npm run deploy:safe",
+      "migration_gate": "PASS; no migration executed",
+      "wrangler": "4.130.0",
+      "uploaded_asset_count": 4,
+      "uploaded_asset_paths": [
+        "/editor-v2/core/table-tsv.js",
+        "/editor-v2/tests/element-content.test.js",
+        "/editor-v2/core/richtext-import.js",
+        "/editor-v2/ui/element-content-controls.js"
+      ],
+      "deployed_version": "e622b79d-580d-4014-b9f9-74fe88ba9b3c"
+    },
+    "deployment": {
+      "id": "5b5e0564-a546-40bd-9157-21662aacb56e",
+      "version": "e622b79d-580d-4014-b9f9-74fe88ba9b3c",
+      "traffic_percentage": 100
+    },
+    "production_health": {
+      "status": "PASS",
+      "http_status": 200,
+      "verified_by": "exact-SHA GitHub production source smoke, run 43757847164, job 132945759708"
+    },
+    "live_asset_hash_readback": {
+      "modified_assets_status": "NOT_VERIFIED_FROM_CURRENT_EXECUTION_ENVIRONMENT",
+      "reason": "Direct GETs to workers.dev returned HTTP 403 from the execution proxy. Cloudflare Build confirms the exact four changed paths uploaded from the exact source SHA; the production smoke workflow passed health plus its configured baseline asset hashes, but does not include these four newly modified paths.",
+      "verified_baseline_assets": {
+        "public/visual-page.html": "8a0cb3d229162c4313a2f913ed62c1205135318e7394c77d1268cc098fdd3c5f",
+        "public/assets/page-renderer.js": "29a864d77a3b4dddc4df99587219cbcd0677a2816e5507c9b4bd06fc9b1a3bfb",
+        "public/editor-v2/core/canvas-engine.js": "6eadf7faf411a20e12daaaddc1e82224c44f20f7176ad30ded573ea6c6060ee1",
+        "public/editor-v2/core/visibility.js": "29738baaa5af08b6364209ca03d955dffdcf8f6df773ef32d9e7efffe1436e7d",
+        "public/editor-v2/core/element-content.js": "857238fe532e849fe2efaec632cab56f055d469151f45f74b334b4f25d977568",
+        "public/editor-v2/core/legacy-media-source.js": "90b53de061731cc35fd848e1229913e2044cb1ed3decf9c7907d0f97e47fbb37"
+      }
+    },
+    "github_actions": {
+      "source_smoke": {
+        "run_id": 43757847164,
+        "status": "success"
+      },
+      "source_audit": {
+        "status": "success"
+      },
+      "verify": {
+        "status": "success"
+      },
+      "canonical_plan": {
+        "status": "success"
+      },
+      "twitch_integration": {
+        "status": "success"
+      },
+      "workers_build_check": {
+        "status": "success"
+      },
+      "editor_core": {
+        "run_id": 43757847254,
+        "status": "in_progress_at_evidence_snapshot",
+        "remaining_stage": "Run Editor browser layout regression and subsequent workflow steps"
+      }
+    }
   },
   "assets_local_sha256": {
     "public/editor-v2/core/table-tsv.js": "2160e1efe0c413bed124bffd93a58dc49a0496e7c4d53a86a6f1c0d57c48e189",
@@ -102,5 +167,6 @@
     "new_dependencies": 0,
     "new_cost_huf": 0
   },
-  "plan_commit_base_blob": "205a93839699bfbe05ace3cae2a45887cc7be698"
+  "plan_commit_base_blob": "205a93839699bfbe05ace3cae2a45887cc7be698",
+  "commit_url": "https://github.com/sanci9517/sanci9517/commit/effec1ce4af65eedb3b8889bdc58f11a782c2c2d"
 }
