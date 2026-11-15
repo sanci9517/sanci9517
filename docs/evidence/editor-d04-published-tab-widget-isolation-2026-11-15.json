@@ -5,12 +5,12 @@
   "repository": "sanci9517/sanci9517",
   "branch": "v2/foundation",
   "runtime_source_commit": "8204a089c1284202fb23ed86269a9df615d4fab8",
-  "test_commit": "6a07ee113a9e15829ee08bcf35aab71b4e4659ca",
-  "test_commit_parent": "0264a60f19a72db508049d215adc498c52f0f2de",
-  "test_commit_url": "https://github.com/sanci9517/sanci9517/commit/6a07ee113a9e15829ee08bcf35aab71b4e4659ca",
+  "test_commit": "ff805537d34d5e7e0dffd9abcdc1798d75b8ac74",
+  "test_commit_parent": "24da8cb6a536dbff5cabdae60b340fee4f4a070e",
+  "test_commit_url": "https://github.com/sanci9517/sanci9517/commit/ff805537d34d5e7e0dffd9abcdc1798d75b8ac74",
   "change_kind": "test-only; no Worker runtime or public asset changed",
   "test_file": "tests/browser/editor-structured-content.test.js",
-  "test_file_sha256": "b52db9670ab7d0a1e58f85976ae25524926cf18c0e259f00d604521dc0e23d7f",
+  "test_file_sha256": "198fb774b240828b27aff3b12afdc3afb101beed6252e64b0504a0b945420e2c",
   "regression_case": {
     "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-structured-content.test.js",
     "result": "PASS",
@@ -19,7 +19,11 @@
       "The fixture has two independent structured tab widgets on one page and includes both in the saved draft and separately published document.",
       "ArrowRight selection and focus inside the second widget do not change the first widget's selected tab or panel content.",
       "The widgets expose distinct panel IDs; each widget's aria-controls points to its own panel and that panel's aria-labelledby points back to the selected tab.",
-      "After navigation in the first widget, the second widget retains its independent selection."
+      "After navigation in the first widget, the second widget retains its independent selection.",
+      "Pointer selection in either published tab widget updates only that widget, displays its own panel, and leaves focus on the selected tab.",
+      "Subsequent keyboard navigation in the first widget preserves the second widget pointer-selected state.",
+      "Pointer selection in either published widget updates only that widget, displays its own panel, and leaves focus on the selected tab.",
+      "Subsequent keyboard navigation in the first widget preserves the second widget pointer-selected state."
     ]
   },
   "additional_checks": {
@@ -28,9 +32,9 @@
     "python3 scripts/check-canonical-plan.py": "PASS (13 master files, one cursor, 396 mappings)",
     "python3 scripts/audit-active-plan-point.py": "PASS; next 77.44.7.D; functional acceptance NOT_CERTIFIED",
     "python3 scripts/build-feature-traceability.py --check": "PASS (396/396)",
-    "node --check tests/browser/editor-structured-content.test.js": "PASS",
-    "git diff --check": "PASS",
-    "initial_test_attempt": "FAIL in the new test's Playwright locator: getByRole('tabpanel') excludes the hidden inactive panel; switched the assertion to the raw [role=tabpanel] locator, then reran the complete file successfully. No product defect was observed."
+    "node --check tests/browser/editor-structured-content.test.js": "PASS (current test source)",
+    "git diff --check": "PASS (current changes)",
+    "initial_test_attempt": "The added pointer test first exposed a stale test expectation: after clicking the second widget first tab, a later assertion still expected its pre-click second tab. The assertion was corrected to the intentional post-click state; the complete rerun then passed 2/2. No product defect observed."
   },
   "remote_state": {
     "branch_head_verified_via_git_ls_remote": "6a07ee113a9e15829ee08bcf35aab71b4e4659ca",
@@ -58,38 +62,49 @@
     "production_d1_or_r2_mutation": "NONE"
   },
   "cost_huf": 0,
-  "development_measurement_id": "20261115164331-fba397c3",
+  "development_measurement_id": "20261115171930-634eb575",
   "followup_verification": {
-    "checked_at": "2026-11-15T16:55:42Z",
+    "checked_at": "2026-11-15T17:24:56Z",
     "local_browser_rerun": {
       "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-structured-content.test.js",
       "result": "PASS",
       "tests": 2,
-      "duration_ms": 37702,
-      "note": "A first rerun attempt used a dependency path without Playwright and stopped before assertions; rerun with the already-installed Playwright from the attached worktree passed both tests. No source or dependency changes."
+      "duration_ms": 39523,
+      "assertions_added": [
+        "pointer selection and focus inside widget B",
+        "widget A selection/panel unchanged during widget B pointer action",
+        "widget B unchanged during widget A pointer action",
+        "keyboard navigation after pointer changes keeps the other widget isolated"
+      ],
+      "note": "One initial rerun had a stale fixture-state assertion after the newly added click; after correcting the expectation, the complete test file passed. No runtime/product source or dependency changed."
+    },
+    "github_test_commit": {
+      "commit": "ff805537d34d5e7e0dffd9abcdc1798d75b8ac74",
+      "parent": "24da8cb6a536dbff5cabdae60b340fee4f4a070e",
+      "message": "[skip ci] test(editor): isolate published tab pointer state",
+      "change_kind": "browser test harness only",
+      "combined_status": "no status checks returned; expected for [skip ci], no remote CI PASS claimed"
     },
     "github_branch": {
       "verified_by": "GitHub compare API",
-      "base_commit": "6a07ee113a9e15829ee08bcf35aab71b4e4659ca",
+      "base_commit": "ff805537d34d5e7e0dffd9abcdc1798d75b8ac74",
       "branch": "v2/foundation",
       "status": "identical",
       "ahead_by": 0,
-      "behind_by": 0,
-      "combined_status": "no status checks returned; expected for [skip ci], no remote CI PASS claimed"
+      "behind_by": 0
     },
     "production_deployment_recheck": {
-      "checked_at": "2026-11-15T16:55:42.892Z",
+      "checked_at": "2026-11-15T17:17:32.458Z",
       "deployment_id": "f5051413-1d52-4db1-b016-a0971822fb80",
       "worker_version": "5451c750-502f-45cc-95e9-130471e46d31",
       "traffic_percentage": 100,
-      "runtime_source_commit": "8204a089c1284202fb23ed86269a9df615d4fab8",
-      "change_since_prior_check": "none"
+      "change_since_prior_check": "none; test-only changes do not alter the Worker source"
     },
     "production_health_recheck": {
       "attempted_at": "2026-11-15T16:55:38Z",
       "result": "BLOCKED_BEFORE_WORKER",
       "curl_exit": 7,
-      "error": "Unable to connect to execution-environment proxy port 8080; no HTTP request reached the Worker.",
+      "error": "Execution-environment proxy port 8080 connection failed before the HTTPS request reached the Worker.",
       "last_successful_direct_health_get": "2026-11-15T16:48:01Z",
       "last_successful_http_status": 200,
       "last_successful_body": {
@@ -103,9 +118,15 @@
       "local_bytes": 1620659,
       "head_blob_sha": "205a93839699bfbe05ace3cae2a45887cc7be698",
       "worktree_blob_sha": "205a93839699bfbe05ace3cae2a45887cc7be698",
-      "edited": "no; kept the oversized master untouched and recorded follow-up only in evidence"
+      "edited": "no; preserved the oversized one-plan master and recorded only machine evidence"
     },
-    "scope": "D-04 multi-widget browser regression subgate only. Full D-04, D-01..D-07, 77.44.7.D remain OPEN / NOT_CERTIFIED. No runtime/public assets, production D1/R2, CI dispatch, or deployment changes.",
+    "scope": "D-04 pointer and keyboard multi-widget browser regression subgate only. Full D-04, D-01..D-07 and 77.44.7.D remain OPEN / NOT_CERTIFIED. No runtime/public assets, production D1/R2, CI dispatch or deployment changes.",
     "cost_huf": 0
-  }
+  },
+  "prior_test_commit": {
+    "sha": "6a07ee113a9e15829ee08bcf35aab71b4e4659ca",
+    "url": "https://github.com/sanci9517/sanci9517/commit/6a07ee113a9e15829ee08bcf35aab71b4e4659ca",
+    "note": "Original keyboard/multi-widget fixture expansion."
+  },
+  "prior_development_measurement_id": "20261115164331-fba397c3"
 }
