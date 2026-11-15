@@ -17,14 +17,13 @@
     "tests": 2,
     "assertions": [
       "The fixture has two independent structured tab widgets on one page and includes both in the saved draft and separately published document.",
-      "ArrowRight selection and focus inside the second widget do not change the first widget's selected tab or panel content.",
-      "The widgets expose distinct panel IDs; each widget's aria-controls points to its own panel and that panel's aria-labelledby points back to the selected tab.",
-      "After navigation in the first widget, the second widget retains its independent selection.",
-      "Pointer selection in either published tab widget updates only that widget, displays its own panel, and leaves focus on the selected tab.",
-      "Subsequent keyboard navigation in the first widget preserves the second widget pointer-selected state.",
-      "Pointer selection in either published widget updates only that widget, displays its own panel, and leaves focus on the selected tab.",
-      "Tab from a selected tab leaves the tablist for its selected panel.",
-      "The next Tab reaches the first selected tab in the next independent widget; tab selection in either widget remains unchanged."
+      "ArrowRight selection and focus inside widget B do not change widget A selection or panel content.",
+      "Each widget has distinct tab/panel IDs and its own reciprocal aria-controls/aria-labelledby references.",
+      "Keyboard navigation in widget A preserves widget B selection.",
+      "Pointer selection in either widget updates only that widget, displays its own panel and leaves focus on its selected tab.",
+      "After pointer selection, keyboard navigation in widget A preserves widget B state.",
+      "Tab from a selected tab moves focus to its selected text-only panel.",
+      "The next Tab reaches the selected tab in the next widget without trapping focus or changing either widget selection."
     ]
   },
   "additional_checks": {
@@ -63,7 +62,7 @@
     "production_d1_or_r2_mutation": "NONE"
   },
   "cost_huf": 0,
-  "development_measurement_id": "20261115171930-634eb575",
+  "development_measurement_id": "20261115173026-ba703a85",
   "followup_verification": {
     "checked_at": "2026-11-15T17:24:56Z",
     "local_browser_rerun": {
@@ -101,10 +100,7 @@
       "change_since_prior_check": "none; test-only changes do not alter the Worker source"
     },
     "production_health_recheck": {
-      "attempted_at": "2026-11-15T16:55:38Z",
-      "result": "BLOCKED_BEFORE_WORKER",
-      "curl_exit": 7,
-      "error": "Execution-environment proxy port 8080 connection failed before the HTTPS request reached the Worker.",
+      "status": "UNVERIFIED for this run; runtime unchanged so no new public GET was attempted.",
       "last_successful_direct_health_get": "2026-11-15T16:48:01Z",
       "last_successful_http_status": 200,
       "last_successful_body": {
@@ -112,7 +108,8 @@
         "service": "sanci9517-streamer-brand",
         "version": "2.0.0",
         "server": "cloudflare-worker"
-      }
+      },
+      "later_proxy_block": "The execution-environment HTTPS CONNECT proxy previously failed before the request reached Worker."
     },
     "canonical_master_integrity": {
       "bytes": 1620659,
@@ -120,7 +117,7 @@
       "worktree_blob_sha": "205a93839699bfbe05ace3cae2a45887cc7be698",
       "edited": false
     },
-    "scope": "D-04 pointer and keyboard multi-widget browser regression subgate only. Full D-04, D-01..D-07 and 77.44.7.D remain OPEN / NOT_CERTIFIED. No runtime/public assets, production D1/R2, CI dispatch or deployment changes.",
+    "scope": "D-04 public structured-tab keyboard focus-order and multi-widget state-isolation regression subgate only. Full D-04, D-01..D-07 and 77.44.7.D remain OPEN / NOT_CERTIFIED; full Visual Editor manual/physical acceptance DEFERRED.",
     "cost_huf": 0,
     "final_repository_review": {
       "checked_at": "2026-11-15T17:31:22Z",
@@ -134,11 +131,12 @@
       "note": "The branch head was rechecked after the earlier test/evidence/measurement commits; this statement is a pre-update snapshot. This evidence-only correction is submitted separately with [skip ci]."
     },
     "latest_worker_read_only_check": {
-      "checked_at": "2026-11-15T17:31:08Z",
+      "checked_at": "2026-11-15T17:49:38Z",
       "deployment_id": "f5051413-1d52-4db1-b016-a0971822fb80",
+      "created_on": "2026-11-15T15:38:31.432259Z",
       "worker_version": "5451c750-502f-45cc-95e9-130471e46d31",
       "traffic_percentage": 100,
-      "source_change": "none; only test/evidence/measurement commits were made"
+      "source_change": "none; test and evidence only"
     },
     "evidence_review_correction": {
       "checked_at": "2026-11-15T17:31:34Z",
@@ -172,7 +170,21 @@
       },
       "later_attempt": "Blocked before Worker by the execution-environment HTTPS proxy/CONNECT; no runtime code changed."
     },
-    "recorded_at": "2026-11-15T17:47:22Z"
+    "recorded_at": "2026-11-15T17:47:22Z",
+    "remote_review_before_metric_archive": {
+      "checked_at": "2026-11-15T17:49:38Z",
+      "github_compare": {
+        "base": "7d86906f6ab7e754e5d7592428f920563dc68526",
+        "branch": "v2/foundation",
+        "status": "identical",
+        "ahead_by": 0,
+        "behind_by": 0
+      },
+      "test_commit_statuses": [],
+      "test_commit": "52dcce15b54588a2ea2d0d98b761f4e23258a87c",
+      "ci": "No remote checks for [skip ci]; not claimed as PASS."
+    },
+    "development_measurement_id": "20261115173026-ba703a85"
   },
   "prior_test_commit": {
     "sha": "6a07ee113a9e15829ee08bcf35aab71b4e4659ca",
