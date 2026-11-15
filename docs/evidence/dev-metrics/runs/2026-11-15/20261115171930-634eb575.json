@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261115171930-634eb575",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-15T17:19:30.888Z",
+  "finished_at": "2026-11-15T17:25:46.330Z",
+  "wall_seconds": 375,
+  "paused_seconds": 0,
+  "measured_seconds": 375,
+  "status": "pass",
+  "kind": "mixed",
+  "summary": "D-04 structured tabs keyboard+pointer isolation Chromium 2/2 PASS; full D remains OPEN/NOT_CERTIFIED.",
+  "evidence": [
+    "docs/evidence/editor-d04-published-tab-widget-isolation-2026-11-15.json",
+    "tests/browser/editor-structured-content.test.js:PASS"
+  ],
+  "checks": "Chromium 2/2; plan-contract 14/14; canonical plan 13/396; active-point audit; traceability 396/396; JS syntax and diff check",
+  "started_revision": "6a07ee113a9e15829ee08bcf35aab71b4e4659ca",
+  "finished_revision": "6a07ee113a9e15829ee08bcf35aab71b4e4659ca",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
