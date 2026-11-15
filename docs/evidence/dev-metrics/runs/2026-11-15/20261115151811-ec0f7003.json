@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261115151811-ec0f7003",
+  "task": "77.44.7.D-next-safe-audit",
+  "trigger": "manual",
+  "started_at": "2026-11-15T15:18:11.451Z",
+  "finished_at": "2026-11-15T15:18:49.633Z",
+  "wall_seconds": 38,
+  "paused_seconds": 0,
+  "measured_seconds": 38,
+  "status": "partial",
+  "kind": "none",
+  "summary": "Verified D-03 release docs are safely on branch; Workers Build confirms successful exact-source build and docs exclusions, but exact-SHA Editor Core remains in progress; full D remains uncertified.",
+  "evidence": [
+    "docs/evidence/editor-d03-authored-table-tsv-2026-11-15.json"
+  ],
+  "checks": "plan contract 14; canonical plan 13/13; source traceability 396/396; docs-only [skip ci] commit eb7c0edf remote SHA verified; Cloudflare exact build read-only GET success; live deployment list GET 100% traffic; GitHub Editor Core run still in progress",
+  "started_revision": "eb7c0edfdddc4f2a8268a1ff705447c5f9978dc8",
+  "finished_revision": "eb7c0edfdddc4f2a8268a1ff705447c5f9978dc8",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
