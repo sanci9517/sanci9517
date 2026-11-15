@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261115135412-9d86f4de",
+  "task": "77.44.7.D-D04-tab-id-limit",
+  "trigger": "manual",
+  "started_at": "2026-11-15T13:54:12.625Z",
+  "finished_at": "2026-11-15T14:03:20.830Z",
+  "wall_seconds": 548,
+  "paused_seconds": 0,
+  "measured_seconds": 548,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "D-04 structured tab DOM ID 100-character cap fixed, tested and exact SHA deployed; full D acceptance and Editor Core CI remain open.",
+  "evidence": [
+    "docs/evidence/editor-d04-tab-dom-id-bound-2026-11-15.json"
+  ],
+  "checks": "editor suites 16/16; Chromium 1/1; typecheck/migration gate/plan contract/canonical/traceability/Wrangler dry-run PASS; Cloudflare build/deployment/health and 9 asset hashes verified; entry HTML anonymous HTTP 307; Editor Core CI in_progress",
+  "started_revision": "3e2fe01254803d444e804f5f9fd7651875f8b374",
+  "finished_revision": "4ccc7f394c4a8f80084ab56807ef1348de4a1a0c",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

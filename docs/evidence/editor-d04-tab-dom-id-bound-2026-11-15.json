@@ -1,0 +1,115 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-15T14:01:00Z",
+  "plan_point": "77.44.7.D / D-04 structured tabs DOM identifier bound",
+  "status": "D04_TAB_ID_BOUND_SUBGATE_RELEASED_FULL_D_OPEN_NOT_CERTIFIED",
+  "repository": {
+    "full_name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "parent_sha": "3e2fe01254803d444e804f5f9fd7651875f8b374",
+    "runtime_commit": "4ccc7f394c4a8f80084ab56807ef1348de4a1a0c",
+    "commit_message": "fix(editor): cap structured tab ARIA identifiers",
+    "remote_head_verified": true,
+    "push": "normal fast-forward; no reset, force-push, or branch switch"
+  },
+  "defect_and_fix": {
+    "reproduction": "The D-04 DOM ID contract caps structured tab/panel ids at 100 characters. idSafe treated an 88-character safe Page Model id as readable, but the emitted tab namespace and two-digit item suffix produced a 101-character id on item 40.",
+    "fix": [
+      "Reduced the direct readable node-id limit to 87 characters, reserving room for tab-/panel namespaces and the maximum '-t39'/'-p39' suffix.",
+      "Added regression coverage for 40-tab models at both sides of the safe-ID boundary; all tab and panel ids must be <=100, unique, and cross-linked by aria-controls/aria-labelledby.",
+      "Versioned the element-content module imports and Editor entry URL so clients do not retain stale cached IDs."
+    ],
+    "save_publish": "Unchanged; Save and Publish remain separate.",
+    "production_d1_mutation": false,
+    "production_r2_mutation": false,
+    "new_runtime_dependency": false
+  },
+  "local_checks": {
+    "editor_unit": {
+      "command": "npm run test:editor",
+      "result": "PASS",
+      "file_level_suites": "16/16"
+    },
+    "chromium": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-content-system.test.js",
+      "result": "PASS",
+      "tests": 1,
+      "note": "The test runs the Editor→Save/reload→separate Publish content flow in Chromium."
+    },
+    "typecheck": "PASS",
+    "web013_migration_gate": "PASS",
+    "plan_contract": "PASS 14/14",
+    "canonical_plan": "PASS 13/13 master files",
+    "active_plan_audit": "PASS; cursor remains 77.44.7.D; full functional acceptance NOT_CERTIFIED",
+    "traceability": "PASS 396/396",
+    "wrangler_dry_run": {
+      "command": "npm run deploy:safe -- --dry-run",
+      "result": "PASS; 181 assets read, no migration/deployment",
+      "warning": "Wrangler could not create /home/agent/.config/.wrangler/logs in the restricted workspace; it completed the dry-run and exited successfully."
+    },
+    "diff_check": "PASS"
+  },
+  "production_d1_preflight": {
+    "query": "SELECT COUNT(*) AS migration_count, MAX(name) AS latest_migration FROM d1_migrations",
+    "migration_count": 35,
+    "latest_migration": "0029_media_archive_unicode_additive.sql",
+    "rows_written": 0,
+    "changes": 0,
+    "changed_db": false
+  },
+  "cloudflare_build_and_release": {
+    "build_uuid": "4e41994a-5210-4453-a9cb-3d6fbaf7ea96",
+    "build_outcome": "success",
+    "build_source_branch": "v2/foundation",
+    "build_source_sha": "4ccc7f394c4a8f80084ab56807ef1348de4a1a0c",
+    "build_commands": ["npm run typecheck", "npm run deploy:safe"],
+    "deployment_id": "4786d632-a6e2-48de-872f-40d627ee7ba8",
+    "worker_version_id": "61a0881a-da6b-42c2-83e5-429759412c75",
+    "traffic_percent": 100,
+    "health": {
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+      "http_status": 200,
+      "body": {"ok": true, "service": "sanci9517-streamer-brand", "version": "2.0.0", "server": "cloudflare-worker"}
+    },
+    "live_asset_sha256_matches_local": {
+      "public/editor-v2/app.js": "c69e2cb62e1010b7502662f6b2d7de3df4a07e9036dfdad681c5519644f07061",
+      "public/editor-v2/core/commands.js": "5957cac695f71970ec0f486a567fc6278cc1d9adc8a5b5e6013981f19363f1f8",
+      "public/editor-v2/core/content-profiles.js": "2d06b3395cd05bdd88a37c6152cea58d9c42297ed984efa6384c43a3e044cc36",
+      "public/editor-v2/core/element-content.js": "857238fe532e849fe2efaec632cab56f055d469151f45f74b334b4f25d977568",
+      "public/editor-v2/core/legacy-media-source.js": "90b53de061731cc35fd848e1229913e2044cb1ed3decf9c7907d0f97e47fbb37",
+      "public/editor-v2/core/validation.js": "111e78c0f8f50ce9f81e954e0d938c3a85b99f145f6e953450ae4b1c7510248a",
+      "public/editor-v2/tests/core.test.js": "7afb786620e90e5e45531d92fedb90a67c654b118082b46b88712f691ecc4b97",
+      "public/editor-v2/ui/legacy-media-inspector.js": "606c6bf8ecccf1b4ee7984741853607eccab45c45a8ccfa1b0965076075e04ef",
+      "public/editor-v2/ui/structured-inspector.js": "ecd19bf1589d864033d4b493017dffdfcd76c56bdb601641850bb2607293ac03"
+    },
+    "gated_editor_index": {
+      "asset": "public/editor-v2/index.html",
+      "anonymous_http_status": 307,
+      "live_raw_sha256": "UNAVAILABLE: Editor entry requires the authenticated admin route; the direct anonymous asset URL redirects."
+    }
+  },
+  "github_ci": {
+    "source_sha": "4ccc7f394c4a8f80084ab56807ef1348de4a1a0c",
+    "passed": [
+      {"id": 43721569129, "name": "F0 baseline checks", "conclusion": "success"},
+      {"id": 43721569244, "name": "Canonical Plan Active Point Audit", "conclusion": "success"},
+      {"id": 43721569100, "name": "Canonical Creator Platform Plan", "conclusion": "success"},
+      {"id": 43721569060, "name": "Twitch Integration Check", "conclusion": "success"},
+      {"id": 43721569078, "name": "Production Worker source smoke", "conclusion": "success"}
+    ],
+    "editor_core": {
+      "run_id": 43721569127,
+      "status_at_recording": "in_progress",
+      "conclusion": null,
+      "completed_successful_steps": 11,
+      "active_step": "Run Editor browser layout regression"
+    }
+  },
+  "scope": {
+    "full_d04": "OPEN / NOT_CERTIFIED",
+    "full_d01_d07_acceptance_matrix": "OPEN / NOT_CERTIFIED",
+    "full_77_44_7_d": "OPEN / NOT_CERTIFIED",
+    "visual_editor_manual_physical_acceptance": "DEFERRED",
+    "new_cost_huf": 0
+  }
+}
