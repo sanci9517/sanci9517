@@ -6,7 +6,7 @@
  */
 
 import { canContain, cloneDocument, createEmptyRichText, createNode, getNode, normalizeRichText } from './schema.js';
-import { assertValidEditorDocument } from './validation.js';
+import { assertValidEditorDocument } from './validation.js?v=20261115-d07-safe-children-v1';
 import { activePage, clearSelection, setSelection } from './state.js';
 import { createDefaultScheduleConfig, normalizeScheduleConfig } from './schedule-schema.js';
 import {isStructuredType,createElementContent,normalizeElementContent} from './element-content.js';

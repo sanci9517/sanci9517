@@ -7,7 +7,7 @@ import { SourceTextModule } from 'node:vm';
 import test from 'node:test';
 
 import { createDocument, createNode, NODE_TYPES, normalizeRichText } from '../core/schema.js';
-import { assertValidEditorDocument } from '../core/validation.js';
+import { assertValidEditorDocument,findReachableNodeIds,validateHierarchy } from '../core/validation.js';
 import { createEditorState, activePage } from '../core/state.js';
 import { beginTransaction, commitTransaction, execute, executeBatch, rollbackTransaction } from '../core/commands.js';
 import { getProperty, listProperties, listPropertyGroups, registerProperty } from '../core/property-registry.js?v=20261030-inspector-layout-container-contract';
@@ -228,6 +228,22 @@ test('new document is structurally valid', () => {
   const document = createDocument();
   assertValidEditorDocument(document);
   assert.equal(document.pages[document.activePageId].nodes[document.pages[document.activePageId].rootId].children.length, 0);
+});
+
+test('hierarchy validation reports malformed child data without iterating or coercing it', () => {
+  const document=createDocument();
+  const page=document.pages[document.activePageId],root=page.nodes[page.rootId];
+  root.children={toString:null};
+  assert.doesNotThrow(()=>validateHierarchy(page));
+  assert.match(validateHierarchy(page).join('; '),/invalid children collection/);
+  assert.deepEqual([...findReachableNodeIds(page)],[root.id]);
+  assert.throws(()=>assertValidEditorDocument(document),/invalid children collection/);
+
+  root.children=[{toString:null},'missing-child'];
+  assert.doesNotThrow(()=>validateHierarchy(page));
+  assert.match(validateHierarchy(page).join('; '),/invalid child id/);
+  assert.deepEqual([...findReachableNodeIds(page)],[root.id]);
+  assert.throws(()=>assertValidEditorDocument(document),/invalid child id/);
 });
 
 test('property registry exposes extensible inspector groups and properties', () => {

@@ -13,12 +13,15 @@ import {validateStateStyles} from './state-styles.js';
 
 export function findReachableNodeIds(page) {
   const reachable = new Set();
-  if (!page?.rootId || !page.nodes?.[page.rootId]) return reachable;
+  if (typeof page?.rootId !== 'string' || !getNode(page, page.rootId)) return reachable;
 
   const visit = (nodeId) => {
+    if (typeof nodeId !== 'string' || !nodeId) return;
+    if (!getNode(page, nodeId)) return;
     if (reachable.has(nodeId)) return;
     reachable.add(nodeId);
-    for (const childId of page.nodes[nodeId]?.children ?? []) visit(childId);
+    const children = getNode(page, nodeId)?.children;
+    if (Array.isArray(children)) for (const childId of children) visit(childId);
   };
 
   visit(page.rootId);
@@ -33,6 +36,11 @@ export function validateHierarchy(page) {
   const visited = new Set();
 
   const walk = (nodeId) => {
+    if (typeof nodeId !== 'string' || !nodeId) {
+      errors.push('invalid node id in hierarchy');
+      return;
+    }
+
     if (visiting.has(nodeId)) {
       errors.push(`cycle detected at node: ${nodeId}`);
       return;
@@ -46,14 +54,22 @@ export function validateHierarchy(page) {
     }
 
     visiting.add(nodeId);
-    for (const childId of node.children ?? []) {
+    if (!Array.isArray(node.children)) {
+      errors.push(`invalid children collection at node: ${nodeId}`);
+    }
+    for (const childId of Array.isArray(node.children) ? node.children : []) {
+      if (typeof childId !== 'string' || !childId) {
+        errors.push(`invalid child id at node: ${nodeId}`);
+        continue;
+      }
       const child = getNode(page, childId);
       if (!child) {
         errors.push(`missing child ${childId} referenced by ${nodeId}`);
         continue;
       }
       if (child.parentId !== nodeId) {
-        errors.push(`parent mismatch: ${childId} declares ${child.parentId}, expected ${nodeId}`);
+        const declaredParent = typeof child.parentId === 'string' ? child.parentId : '[invalid parent id]';
+        errors.push(`parent mismatch: ${childId} declares ${declaredParent}, expected ${nodeId}`);
       }
       walk(childId);
     }

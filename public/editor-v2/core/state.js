@@ -1,7 +1,7 @@
 /* Sanci9517 Visual Editor v2 — isolated editor state. */
 
 import { cloneDocument, createDocument, getPage } from './schema.js';
-import { assertValidEditorDocument } from './validation.js';
+import { assertValidEditorDocument } from './validation.js?v=20261115-d07-safe-children-v1';
 
 export const HISTORY_LIMIT = 100;
 

@@ -147,3 +147,42 @@ test('published page and Canvas handle malformed text, links and CSS without Sav
   assert.deepEqual(errors,[],'a malformed root must not generate an unhandled page error');
   assert.equal(writes,0,'rendering public content must never Save or Publish');
 });
+
+test('D-07 Editor rejects corrupt Page Model child lists safely without rewriting them',async t=>{
+  const state=createEditorState(createDocument());
+  const pageId=state.document.activePageId,rootId=state.document.pages[pageId].rootId;
+  execute(state,{type:'element.add',payload:{type:NODE_TYPES.SECTION,parentId:rootId}});
+  const sectionId=state.selection.primaryId;
+  execute(state,{type:'element.add',payload:{type:NODE_TYPES.HEADING,parentId:rootId,props:{text:'Safer sibling'}}});
+  const headingId=state.selection.primaryId;
+  const page=state.document.pages[pageId],invalid={toString:null};
+  page.nodes[sectionId].children=invalid;
+  page.nodes[rootId].children.push(invalid,'missing-node');
+  const persisted=JSON.stringify(state.document),writes=[];
+  const server=createServer(async(req,res)=>{
+    const url=new URL(req.url,'http://localhost');
+    const json=(data,status=200)=>{res.statusCode=status;res.setHeader('content-type','application/json');res.end(JSON.stringify({ok:true,data}));};
+    if(req.method!=='GET'&&req.method!=='HEAD')writes.push(`${req.method} ${url.pathname}`);
+    if(url.pathname==='/api/admin/pages')return json(url.searchParams.has('archived')?[]:[{id:pageId,slug:'test',title:'Tesztoldal',description:'',content:state.document,isPublished:false,revision:1}]);
+    if(url.pathname==='/api/admin/editor')return json({page:{id:pageId,slug:'test',title:'Tesztoldal',description:'',document:state.document,publishedRevisionId:null},revisions:[{id:'r1',version:1}]});
+    if(url.pathname.startsWith('/api/'))return json({});
+    const filename=resolve(publicDir,'.'+url.pathname);
+    if(!filename.startsWith(publicDir+'/'))return res.writeHead(403).end();
+    try{
+      res.setHeader('content-type',{'.html':'text/html','.js':'text/javascript','.css':'text/css'}[extname(filename)]||'application/octet-stream');
+      res.end(await readFile(filename));
+    }catch{return res.writeHead(404).end();}
+  });
+  await new Promise(done=>server.listen(0,'127.0.0.1',done));
+  t.after(async()=>new Promise(done=>server.close(done)));
+  const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||(existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined),args:['--no-sandbox']});
+  t.after(()=>browser.close());
+  const tab=await browser.newPage({viewport:{width:1366,height:900}}),errors=[];
+  tab.on('pageerror',error=>errors.push(error.message));
+  await tab.goto('http://127.0.0.1:'+server.address().port+'/editor-v2/index.html');
+  await tab.waitForTimeout(1000);
+  assert.match(await tab.locator('#saveStatus').textContent(),/Invalid editor document:.*invalid child id/i,'the Editor reports a controlled model validation error instead of an iteration failure');
+  assert.deepEqual(errors,[],'corrupt persisted children are handled by the Editor boot error boundary');
+  assert.deepEqual(writes,[],'loading invalid data never Saves or Publishes it');
+  assert.equal(JSON.stringify(state.document),persisted,'the fixture’s persisted Page Model remains byte-for-byte unchanged');
+});
