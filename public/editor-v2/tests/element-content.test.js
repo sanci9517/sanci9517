@@ -94,7 +94,7 @@ test('authored table TSV contract covers the full model and preserves quoted cel
   const rows=[['Fejléc','Második'],['Tabulátor\t a cellában','Két sor\nfolytatás'],['Idézet: "igen"','CRLF\r\nmegmarad']];
   const text=serializeTableTsv(rows);
   assert.deepEqual(parseTableTsv(text),rows,'quotes, embedded tabs, LF and CRLF survive an Inspector edit round trip');
-  for(const value of ['x'.repeat(2000),'"'.repeat(2000),'\\'.repeat(2000),'\t'.repeat(2000),'\n'.repeat(2000),'\r\n'.repeat(1000),'\u0000'.repeat(2000)]){
+  for(const value of ['x'.repeat(2000),'"'.repeat(2000),'\\'.repeat(2000),'\t'.repeat(2000),'\n'.repeat(2000),'\r'.repeat(2000),'\r\n'.repeat(1000),'\u0000'.repeat(2000)]){
     const encoded=serializeTableTsv([[value]]),decoded=parseTableTsv(encoded);
     assert.ok(encoded.length<=JSON.stringify(decoded).length,
       'the 180,000-character textarea cap cannot truncate a table whose serialized rows fit the 120,000-character persisted budget');
@@ -105,8 +105,12 @@ test('authored table TSV contract covers the full model and preserves quoted cel
     'a terminal Excel line ending does not create a phantom one-cell row');
   assert.deepEqual(parseTableTsv('A\tB\n'),[['A','B']],
     'a terminal LF has the same no-phantom-row behavior as Excel CRLF');
+  assert.deepEqual(parseTableTsv('A\tB\rC\tD\r'),[['A','B'],['C','D']],
+    'legacy CR-only records and one terminal CR do not create a phantom row');
   assert.deepEqual(parseTableTsv('A\tB\n\n'),[['A','B'],['']],
     'an additional blank record remains distinguishable from one terminal line ending');
+  assert.deepEqual(parseTableTsv('A\tB\r\r'),[['A','B'],['']],
+    'an explicit blank CR-only record remains distinguishable from one terminal CR');
   assert.throws(()=>parseTableTsv('"lezáratlan\tcell'),/nincs lezárva/);
   assert.throws(()=>parseTableTsv('"idézett"utótag\tB'),/záró idézőjel/);
 });

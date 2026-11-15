@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261115212821-fcf4a18e",
+  "task": "77.44.7.D-D03-legacy-cr-tsv-coverage",
+  "trigger": "manual",
+  "started_at": "2026-11-15T21:28:21.276Z",
+  "finished_at": "2026-11-15T21:29:36.871Z",
+  "wall_seconds": 76,
+  "paused_seconds": 0,
+  "measured_seconds": 76,
+  "status": "pass",
+  "kind": "test",
+  "summary": "Added D03 legacy CR-only TSV delimiter and blank-record regressions; focused and full Editor suites pass.",
+  "evidence": [
+    "public/editor-v2/tests/element-content.test.js",
+    "docs/evidence/editor-d03-terminal-tsv-delimiter-2026-11-15.json"
+  ],
+  "checks": "element-content 1/1; npm run test:editor 16/16 plus subreaper 3/3; plan-contract 14/14; canonical-plan 13/13; active audit D remains open; traceability 396/396",
+  "started_revision": "51126661cd4e83078c3b9a3fc4545a873f2de334",
+  "finished_revision": "51126661cd4e83078c3b9a3fc4545a873f2de334",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

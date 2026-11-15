@@ -72,6 +72,27 @@
       "failures": 0,
       "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-countdown.test.js",
       "note": "Both 390px Europe/Budapest and 1366px America/New_York cases passed locally after the exact-SHA GitHub failure; the remote failure remains a failure and is not reclassified."
+    },
+    "editor-content TSV legacy CR-only follow-up": {
+      "result": "PASS",
+      "focused_file": {
+        "command": "node --experimental-vm-modules --test public/editor-v2/tests/element-content.test.js",
+        "tests": 1,
+        "failures": 0
+      },
+      "editor_suite": {
+        "command": "npm run test:editor",
+        "test_files": 16,
+        "failures": 0,
+        "linux_subreaper_tests": 3
+      },
+      "assertions_added": [
+        "legacy CR-only rows with one terminal CR do not add a phantom row",
+        "CR-only empty record remains distinguishable from one terminal CR",
+        "quoted cell values containing bare CR survive serialize/parse"
+      ],
+      "runtime_source_changed": false,
+      "test_file_sha256": "149894eaf6b5d0def02f859bf7e4d7ee064a1690935e7bd5d69ae70970b028fd"
     }
   },
   "production_d1_preflight": {
@@ -210,6 +231,12 @@
     "local_targeted_browser_test": "2/2 PASS",
     "remote_editor_core": "FAIL; exact SHA effec1ce...; no rerun",
     "worker_state": "Cloudflare API still reports deployment 5b5e0564-a546-40bd-9157-21662aacb56e, version e622b79d-580d-4014-b9f9-74fe88ba9b3c at 100%",
-    "runtime_source_changed": "NO in this follow-up; documentation/evidence only"
+    "runtime_source_changed": "NO in this follow-up; documentation/evidence only",
+    "test_coverage_follow_up": {
+      "date_utc": "2026-11-15",
+      "plan_point": "77.44.7.D / D-03 legacy CR-only TSV delimiter acceptance",
+      "test_file": "public/editor-v2/tests/element-content.test.js",
+      "test_only_commit_required": "[skip ci]; no Worker deploy"
+    }
   }
 }
