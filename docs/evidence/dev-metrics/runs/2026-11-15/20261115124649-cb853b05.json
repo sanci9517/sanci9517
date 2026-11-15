@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261115124649-cb853b05",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-15T12:46:49.243Z",
+  "finished_at": "2026-11-15T12:58:12.897Z",
+  "wall_seconds": 684,
+  "paused_seconds": 0,
+  "measured_seconds": 684,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "Fixed D-07 persisted null/primitive node records; source passed targeted tests and deployed, exact-SHA Editor aggregate CI still running.",
+  "evidence": [
+    "docs/evidence/editor-d07-malformed-node-records-2026-11-15.json"
+  ],
+  "checks": "editor 209 pass; core 82 pass; chromium 2/2; typecheck; migration gate; plan 14/14; canonical 13 masters; traceability 396/396; Wrangler dry-run; D1 SELECT-only; Cloudflare exact-source deploy+health+5 hashes; Editor exact-SHA CI in_progress",
+  "started_revision": "f6f7f557e81a8f95786cb2eb1602325569c5981c",
+  "finished_revision": "1637f7d480ded976152b7afc64396a504559702c",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

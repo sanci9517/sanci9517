@@ -1,0 +1,117 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-15T12:53:30Z",
+  "plan_point": "77.44.7.D / D-07 malformed persisted node records",
+  "status": "D07_MALFORMED_NODE_RECORD_SUBGATE_RELEASED_FULL_D_OPEN_NOT_CERTIFIED",
+  "repository": {
+    "full_name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "parent_sha": "f6f7f557e81a8f95786cb2eb1602325569c5981c",
+    "runtime_commit": "1637f7d480ded976152b7afc64396a504559702c",
+    "commit_message": "fix(editor): fail closed on malformed saved node records",
+    "remote_head_verified": true,
+    "push": "normal fast-forward; no force push, reset, or branch switch"
+  },
+  "defect_and_fix": {
+    "reproduction": "A saved Page Model can contain a null or primitive value in page.nodes. The accessibility preflight dereferenced node.metadata and assertValidEditorDocument inspected the malformed node before hierarchy validation, leaking a TypeError instead of the controlled invalid-document state.",
+    "fix": [
+      "Accessibility validation skips malformed node values so structural validation remains the single diagnostic path.",
+      "Hierarchy validation reports non-object, null, and array node records as invalid node record and does not dereference parentId on them.",
+      "assertValidEditorDocument skips semantic checks for malformed records and lets validateEditorDocument reject them through its normal error path.",
+      "Added unit coverage for a null root record, null orphan record, and false primitive orphan; validation neither repairs nor serializes altered data.",
+      "Extended the real Chromium Editor boot regression with persisted null/false nodes and asserts controlled feedback, no page errors, zero writes, and unchanged snapshot.",
+      "Updated the validation-module browser cache key for commands and state."
+    ],
+    "save_publish": "Separate and unchanged; corrupt data is not automatically rewritten and loading it invokes neither Save nor Publish.",
+    "production_data_mutation": false,
+    "r2_write_or_delete": false,
+    "new_runtime_dependency": false
+  },
+  "local_checks": {
+    "editor_core": {
+      "command": "npm run test:editor",
+      "result": "PASS",
+      "files": 16,
+      "tests": 209,
+      "linux_subreaper_tests": 3
+    },
+    "core_target": {
+      "command": "node --experimental-vm-modules public/editor-v2/tests/core.test.js",
+      "result": "PASS",
+      "tests": 82
+    },
+    "targeted_chromium": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-malformed-public-text-links.test.js",
+      "result": "PASS",
+      "tests": 2,
+      "coverage": "Malformed persisted child IDs, duplicate references, null and false node records; controlled Editor boot error, no unhandled page errors, no Save/Publish writes, unchanged Page Model snapshot."
+    },
+    "typecheck": "PASS; npm run typecheck",
+    "migration_gate": "PASS; npm run test:web013:migration-gate",
+    "plan_contract": "PASS; python3 tests/plan-contract.test.py, 14/14",
+    "canonical_plan": "PASS; python3 scripts/check-canonical-plan.py; one complete 13-file master, 396 mappings",
+    "active_plan_audit": "PASS; python3 scripts/audit-active-plan-point.py; cursor 77.44.7.D, functional acceptance NOT_CERTIFIED",
+    "feature_traceability": "PASS; python3 scripts/build-feature-traceability.py --check, 396/396",
+    "wrangler_dry_run": {
+      "command": "npm run deploy:safe -- --dry-run",
+      "result": "PASS; Wrangler 4.130.0; migration safety gate PASS; 181 public files read; total upload 375.13 KiB / 96.00 KiB gzip; no deployment by dry-run.",
+      "warning": "The runner lacks /home/agent/.config/.wrangler/logs, so Wrangler emitted its known ENOENT log-directory warning but exited 0 and completed the dry-run."
+    },
+    "production_d1_preflight": {
+      "method": "Cloudflare D1 Query API; one SELECT-only query",
+      "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
+      "query": "SELECT COUNT(*) AS migration_count, MAX(name) AS latest_migration FROM d1_migrations",
+      "migration_count": 35,
+      "latest_migration": "0029_media_archive_unicode_additive.sql",
+      "rows_read": 35,
+      "rows_written": 0,
+      "changes": 0,
+      "changed_db": false
+    }
+  },
+  "source_control_and_ci": {
+    "remote_branch_head": "1637f7d480ded976152b7afc64396a504559702c",
+    "exact_source_workflows": [
+      {"id": 43716062015, "name": "F0 baseline checks", "result": "PASS"},
+      {"id": 43716062030, "name": "Canonical Creator Platform Plan", "result": "PASS"},
+      {"id": 43716062071, "name": "Canonical Plan Active Point Audit", "result": "PASS"},
+      {"id": 43716062082, "name": "Production Worker source smoke", "result": "PASS"},
+      {"id": 43716062092, "name": "Twitch Integration Check", "result": "PASS"},
+      {"id": 43716062037, "name": "Editor Core Test", "result": "IN_PROGRESS at Editor browser layout regression; not a PASS"}
+    ],
+    "aggregate_exact_sha_ci_pass": false
+  },
+  "production_release": {
+    "worker": "sanci9517-streamer-brand",
+    "cloudflare_build_id": "c82d1eb7-0aa0-4469-94c6-cd3653b0e453",
+    "build_source_sha": "1637f7d480ded976152b7afc64396a504559702c",
+    "build_branch": "v2/foundation",
+    "build_outcome": "success",
+    "build_command": "npm run typecheck",
+    "deploy_command": "npm run deploy:safe",
+    "migration_safety_gate": "PASS in exact-source build logs; deploy:safe did not apply a D1 migration.",
+    "deployment_id": "8ddce45f-b8cf-4fa2-ba42-84ea2df6e9ae",
+    "worker_version_id": "ef9f298c-5578-4b96-be06-40c99343195e",
+    "traffic_percent": 100,
+    "health": {
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health?release=1637f7d4",
+      "http_status": 200,
+      "body": {"ok": true, "service": "sanci9517-streamer-brand", "version": "2.0.0", "server": "cloudflare-worker"}
+    },
+    "changed_public_asset_sha256_local_equals_live": {
+      "public/editor-v2/core/validation.js": "c0daa26984eb5bcade39999f4b7a825637e90376afc985287df98ee4e51b166e",
+      "public/editor-v2/core/accessibility.js": "9b17a4170d3cdd8b4c702e837a758f2675aed749cb274b4a67eaebb15a62e8df",
+      "public/editor-v2/core/commands.js": "97a64e5a7d68cae21f95e2713308ab6b3395e07bfd62b5484e1ca8056ad5f2c6",
+      "public/editor-v2/core/state.js": "c3e77d07c656614c363f8ed76b1289de4030fb6b16781cb620dd0a70118d8d3e",
+      "public/editor-v2/tests/core.test.js": "06e844bf542038ae81c4dec5fbec06a96bb39f5547294c382925bce9235b35f6"
+    }
+  },
+  "cost_and_limits": {
+    "new_paid_service_or_dependency": false,
+    "d1_write_or_migration": false,
+    "r2_write_or_delete": false,
+    "new_cost": "0 Ft",
+    "build_log_warning": "Cloudflare npm clean-install reported four high-severity dependency vulnerabilities; this release did not alter dependencies or automatically force-upgrade them. Follow-up security review is needed."
+  },
+  "scope_limit": "The malformed-node D-07 regression subgate is released and production-verified. Full D-07 type/field acceptance, the D-01-D-07 lifecycle/capability matrix and 77.44.7.D remain OPEN / NOT_CERTIFIED. Full Visual Editor manual/physical acceptance is DEFERRED."
+}
