@@ -458,8 +458,28 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   assert.equal(await node(live,'video').locator('video[controls]').count(),1);assert.equal(await node(live,'audio').locator('audio[controls]').count(),1);
   for(const type of ['video','audio']){const playback=await node(live,type).locator(type).evaluate(async media=>{if(media.readyState<1)await new Promise((resolve,reject)=>{media.addEventListener('loadedmetadata',resolve,{once:true});media.addEventListener('error',reject,{once:true})});media.muted=true;await media.play();const result={playing:!media.paused,duration:media.duration,readyState:media.readyState};media.pause();return result});assert.equal(playback.playing,true);assert.ok(playback.duration>0);assert.ok(playback.readyState>=2)}
   assert.equal(await node(live,'code').locator('script').count(),0);assert.match(await node(live,'code').locator('code').textContent(),/<script>/);
-  await node(live,'tabs').getByRole('tab',{name:'Bemutatkozás',exact:true}).click();assert.equal(await node(live,'tabs').getByRole('tabpanel').textContent(),'Személyes történet');
-  await node(live,'tabs').getByRole('tab',{name:'Bemutatkozás',exact:true}).press('Home');assert.equal(await node(live,'tabs').getByRole('tabpanel').textContent(),'Videólista');
+  const liveTabs=node(live,'tabs'),publicTablist=liveTabs.getByRole('tablist',{name:'Bemutatkozás & videók'});
+  const publicTabs=publicTablist.getByRole('tab'),publicPanels=liveTabs.locator('[role="tabpanel"]');
+  const assertPublicTabState=async(index,content)=>{
+    const tabIds=await publicTabs.evaluateAll(items=>items.map(tab=>({id:tab.id,controls:tab.getAttribute('aria-controls'),selected:tab.getAttribute('aria-selected'),tabindex:tab.getAttribute('tabindex')})));
+    const panelIds=await publicPanels.evaluateAll(items=>items.map(panel=>({id:panel.id,labelledby:panel.getAttribute('aria-labelledby'),visible:!panel.hidden,text:panel.textContent})));
+    assert.equal(tabIds.length,2,'published tabs expose every tab exactly once');
+    assert.equal(panelIds.length,2,'published tabs expose one panel for each tab');
+    assert.equal(new Set(tabIds.map(tab=>tab.id)).size,tabIds.length,'published tab IDs are unique');
+    assert.equal(new Set(panelIds.map(panel=>panel.id)).size,panelIds.length,'published panel IDs are unique');
+    assert.deepEqual(tabIds.map(tab=>tab.selected),tabIds.map((_,i)=>String(i===index)),'exactly the requested published tab is selected');
+    assert.deepEqual(tabIds.map(tab=>tab.tabindex),tabIds.map((_,i)=>i===index?'0':'-1'),'published tabs keep one roving keyboard tab stop');
+    assert.deepEqual(panelIds.map(panel=>panel.visible),panelIds.map((_,i)=>i===index),'only the selected published panel is visible');
+    assert.equal(tabIds[index].controls,panelIds[index].id,'selected tab controls its corresponding panel');
+    assert.equal(panelIds[index].labelledby,tabIds[index].id,'selected panel is labelled by its corresponding tab');
+    assert.equal(panelIds[index].text,content,'keyboard selection displays the matching published content');
+    assert.equal(await publicTabs.nth(index).evaluate(tab=>document.activeElement===tab),true,'keyboard selection moves focus to the selected tab');
+  };
+  await publicTabs.nth(1).click();await assertPublicTabState(1,'Személyes történet');
+  await publicTabs.nth(1).press('ArrowRight');await assertPublicTabState(0,'Videólista');
+  await publicTabs.nth(0).press('ArrowLeft');await assertPublicTabState(1,'Személyes történet');
+  await publicTabs.nth(1).press('Home');await assertPublicTabState(0,'Videólista');
+  await publicTabs.nth(0).press('End');await assertPublicTabState(1,'Személyes történet');
   const accordion=node(live,'accordion').getByRole('group',{name:'Kérdések & válaszok'});
   assert.deepEqual(await accordion.locator('details').evaluateAll(items=>items.map(el=>el.open)),[true,false],
     'Accordion opens its first section initially after Publish');
