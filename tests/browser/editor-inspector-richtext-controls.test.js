@@ -220,6 +220,7 @@ test('typed Inspector controls and link selection work with real browser DOM at 
       const importedEditor=document.createElement('div');renderRichTextEditor(importedEditor,importedWord);const importedRoundTrip=normalizeRichText(richTextEditorToDocument(importedEditor));
       const officeStyles=normalizeRichText(importRichTextClipboard({html:'<p style="text-align:right;font-family:Calibri;font-size:18pt;color:#112233">Office typography</p>'}));
       const importedTsv=normalizeRichText(importRichTextClipboard({text:'Name\tValue\nRevenue\t100'}));
+      const quotedTsv=normalizeRichText(importRichTextClipboard({text:'Név\tMegjegyzés\r\n"Bevétel\tQ4"\t"Első sor\r\nMásodik sor"\r\n"Azt mondta ""igen"""\t2026\r\n'}));
       let oversizedPasteRejected=false;try{importRichTextClipboard({text:'x'.repeat(250001)})}catch{oversizedPasteRejected=true}
       const model={
         schemaVersion:1,type:'richtext-document',
@@ -261,7 +262,8 @@ test('typed Inspector controls and link selection work with real browser DOM at 
         importedBlocks:importedRoundTrip.blocks.map(block=>block.type),importedText:importedRoundTrip.blocks[0].children[0].text,importedAlignment:importedRoundTrip.blocks[0].align,
         importedMarks:importedRoundTrip.blocks[1].children.map(run=>run.marks),importedInlineStyles:importedRoundTrip.blocks[1].children.map(run=>run.styles??{}),
         importedLinks:importedRoundTrip.blocks[1].children.filter(run=>run.link).length,importedTable:importedRoundTrip.blocks[3].rows.map(row=>row.cells.map(cell=>cell.children.map(run=>run.text).join(''))),officeStyles:officeStyles.blocks[0],tableCell:importedRoundTrip.blocks[3].rows[2].cells[1],
-        tsvType:importedTsv.blocks[0].type,tsvShape:[importedTsv.blocks[0].rows.length,importedTsv.blocks[0].rows[0].cells.length],oversizedPasteRejected,
+        tsvType:importedTsv.blocks[0].type,tsvShape:[importedTsv.blocks[0].rows.length,importedTsv.blocks[0].rows[0].cells.length],
+        quotedTsvRows:quotedTsv.blocks[0].rows.map(row=>row.cells.map(cell=>cell.children.map(run=>run.text).join(''))),oversizedPasteRejected,
         pasteAttack:window.__pasteAttack,
         markedRun:aligned.blocks[0].children.find(x=>x.text==='world'),alignment:aligned.blocks[0].align,
         multiSelection,multiBlocks:multiAligned.blocks,
@@ -282,6 +284,8 @@ test('typed Inspector controls and link selection work with real browser DOM at 
     if(width<=850)assert.ok(data.assetTouchTargets.openButton>=44&&data.assetTouchTargets.search>=44,`mobile asset picker controls must meet the 44px touch target contract: ${JSON.stringify(data.assetTouchTargets)}`);
     if(width<=850)assert.ok(data.responsiveResetHeight>=44,`mobile per-property reset must meet the 44px touch target contract: ${data.responsiveResetHeight}px`);
     assert.equal(data.latestSearchWins,true,'late search responses must not replace the newest Media results');
+    assert.deepEqual(data.quotedTsvRows,[['Név','Megjegyzés'],['Bevétel\tQ4','Első sor\nMásodik sor'],['Azt mondta "igen"','2026']],
+      'the browser clipboard import decodes quoted Excel tabs, newlines, and escaped quotes without extra terminal rows');
     assert.ok(Object.keys(data.presetResults).length>=20);
     assert.ok(data.helpLengths.length>=45);
     assert.ok(data.helpLengths.every(([,length])=>length>=100),`every property needs detailed guidance: ${data.helpLengths.filter(([,length])=>length<100).map(([id])=>id).join(', ')}`);

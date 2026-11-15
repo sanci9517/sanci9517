@@ -15,6 +15,7 @@ import { hasResponsiveOverride, resolveResponsiveValue, setResponsiveValue } fro
 import {collectVisibleDescendants} from '../core/visibility.js';
 import {normalizeVisibility,isVisibleOnDevice,getNodeVisibilityState} from '../core/visibility.js';
 import { plainTextToRichText } from '../core/richtext-engine.js';
+import { importRichTextClipboard } from '../core/richtext-import.js';
 import { createDefaultScheduleConfig, normalizeScheduleConfig, validateScheduleConfig } from '../core/schedule-schema.js';
 import { getSchedulePreviewItems } from '../core/schedule-preview.js';
 import { computeCanvasMinHeight } from '../core/canvas-extent.js';
@@ -23,6 +24,23 @@ import { needsRelativeOffsetPosition,legacyBackgroundColor,applyNodeStyle } from
 import {legacyBackgroundGradient,legacyBackgroundCompound} from '../core/background-asset.js';
 import {tokenReference} from '../core/design-tokens.js';
 import { validatePublishDocument } from '../../../src/core/editor-validation.ts';
+
+test('Excel TSV clipboard import decodes quoted tabs, newlines, doubled quotes, and trailing CRLF',()=>{
+  const document=importRichTextClipboard({text:'Név\tMegjegyzés\r\n"Bevétel\tQ4"\t"Első sor\r\nMásodik sor"\r\n"Azt mondta ""igen"""\t2026\r\n'});
+  assert.equal(document.blocks.length,1);
+  assert.equal(document.blocks[0].type,'table');
+  assert.deepEqual(document.blocks[0].rows.map(row=>row.cells.map(cell=>cell.children.map(run=>run.text).join(''))),[
+    ['Név','Megjegyzés'],
+    ['Bevétel\tQ4','Első sor\nMásodik sor'],
+    ['Azt mondta "igen"','2026']
+  ]);
+  assert.throws(()=>importRichTextClipboard({text:'"Lezáratlan\tcell'}),/nincs lezárva/,
+    'malformed TSV quoting is rejected instead of being silently corrupted');
+  const blankFinalRow=importRichTextClipboard({text:'A\tB\r\n\r\n'}).blocks[0].rows;
+  assert.equal(blankFinalRow.length,2,'one terminal CRLF is not an extra row, but an additional blank record is preserved');
+  assert.throws(()=>importRichTextClipboard({text:Array.from({length:101},()=> 'A\tB').join('\n')}),/100 sort/);
+  assert.throws(()=>importRichTextClipboard({text:Array.from({length:25},(_,i)=>`C${i}`).join('\t')}),/24 oszlop/);
+});
 
 test('canvas minimum height follows content below the default page extent', () => {
   assert.equal(computeCanvasMinHeight([], 1), 844);

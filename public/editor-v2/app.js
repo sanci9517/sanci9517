@@ -20,7 +20,7 @@ import {getRichTextBlockSelection,getRichTextFormattingSelection,getRichTextBloc
 import {initialPageId,rememberPageId,requestedPageId} from './core/page-url.js';
 import {getElementCapability} from './core/capability-matrix.js?v=20261030-inspector-layout-container-contract';
 import {renderGeometryPresets} from './ui/geometry-presets.js';
-import {importRichTextClipboard} from './core/richtext-import.js?v=20261101-richtext-backward-selection';
+import {importRichTextClipboard} from './core/richtext-import.js?v=20261115-quoted-tsv-import';
 import {pasteRichTextDocument} from './core/richtext-paste.js';
 import {captureStyleSnapshot,STYLE_SNAPSHOT_PROPERTIES} from './core/style-snapshot.js';
 import {LAYOUT_PRESETS,LAYOUT_TYPES,layoutMode,isManagedLayout,isLayoutPropertyRelevant,explicitGridColumnCount} from './core/layout-presets.js';
