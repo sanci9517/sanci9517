@@ -62,7 +62,7 @@
     "production_d1_or_r2_mutation": "NONE"
   },
   "cost_huf": 0,
-  "development_measurement_id": "20261115175057-b9d1e6ff",
+  "development_measurement_id": "20261115175451-8811a8a9",
   "followup_verification": {
     "checked_at": "2026-11-15T17:24:56Z",
     "local_browser_rerun": {
@@ -185,10 +185,10 @@
       "test_commit": "52dcce15b54588a2ea2d0d98b761f4e23258a87c",
       "ci": "No remote checks for [skip ci]; not claimed as PASS."
     },
-    "development_measurement_id": "20261115173026-ba703a85",
+    "development_measurement_id": "20261115175451-8811a8a9",
     "measurement_scope": {
-      "current_id": "20261115175057-b9d1e6ff",
-      "note": "This metric was started after the Chromium test and test commit in this block. It measures evidence correction, exact remote verification, and metric archival only; no earlier browser duration has been retroactively assigned."
+      "current_id": "20261115175451-8811a8a9",
+      "note": "This measurement began after the browser test and production health GET. It covers recording the already observed HTTP 200 health result, the final evidence-only GitHub update and post-update branch/blob verification; no earlier activity was backfilled."
     },
     "browser_focus_sequence_test": {
       "test_commit": "52dcce15b54588a2ea2d0d98b761f4e23258a87c",
@@ -196,6 +196,14 @@
       "source_sha256": "cc43f446c23ef96209c76b560e161324fa5882bf66dde4c8be660b5abc03756e",
       "result": "PASS 2/2 before current documentation-verification metric started",
       "new_behavior": "Tab focus moves selected tab → its panel → next independent tab widget; widget selection stays independent."
+    },
+    "branch_before_final_evidence_update": {
+      "checked_at": "2026-11-15T17:54:59Z",
+      "base": "0a9dc2ca51a274fdffd5541ea417d9ae4ffb0e3f",
+      "branch": "v2/foundation",
+      "status": "identical",
+      "ahead_by": 0,
+      "behind_by": 0
     }
   },
   "prior_test_commit": {
@@ -203,6 +211,6 @@
     "url": "https://github.com/sanci9517/sanci9517/commit/6a07ee113a9e15829ee08bcf35aab71b4e4659ca",
     "note": "Original keyboard/multi-widget fixture expansion."
   },
-  "prior_development_measurement_id": "20261115171930-634eb575",
+  "prior_development_measurement_id": "20261115175057-b9d1e6ff",
   "scope": "D-04 public structured-tab keyboard focus order and multi-widget state isolation subgate PASS only. Full D-04, D-01..D-07 and 77.44.7.D remain OPEN / NOT_CERTIFIED; complete Visual Editor manual/physical acceptance DEFERRED."
 }
