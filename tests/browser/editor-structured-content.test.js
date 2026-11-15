@@ -48,6 +48,13 @@ test('structured Inspector editing survives Save, Publish and public interaction
   execute(model,{type:'element.add',payload:{type,parentId:root,name:type}});
   ids[type]=model.selection.primaryId;
  }
+ execute(model,{type:'element.add',payload:{type:'tabs',parentId:root,name:'secondary-tabs'}});
+ ids.secondaryTabs=model.selection.primaryId;
+ const secondaryTabsNode=activePage(model).nodes[ids.secondaryTabs];
+ execute(model,{type:'element.update',payload:{nodeId:ids.secondaryTabs,patch:{props:{...secondaryTabsNode.props,contentModel:{version:1,items:[
+  {label:'Külön csoport első',content:'Külön csoport első tartalma'},
+  {label:'Külön csoport második',content:'Külön csoport második tartalma'}
+ ]}}}}});
  for(const type of ['badge','quote','icon']){
   execute(model,{type:'element.add',payload:{type,parentId:root}});
   ids[type]=model.selection.primaryId;
@@ -71,6 +78,7 @@ test('structured Inspector editing survives Save, Publish and public interaction
  const carouselNode=activePage(model).nodes[ids.carousel];
  execute(model,{type:'element.update',payload:{nodeId:carouselNode.id,patch:{props:{...carouselNode.props,contentModel:{...carouselNode.props.contentModel,items:carouselNode.props.contentModel.items.map((item,index)=>index===0?{...item,src:'/media/carousel.jpg',alt:'Kezdő dia'}:item)}}}}});
  const expectedModels=Object.fromEntries(['list','table','tabs','accordion','gallery','carousel'].map(type=>[type,structuredClone(activePage(model).nodes[ids[type]].props.contentModel)]));
+ expectedModels.secondaryTabs=structuredClone(activePage(model).nodes[ids.secondaryTabs].props.contentModel);
  const initialModels=structuredClone(expectedModels);
  let draft=structuredClone(model.document),published=structuredClone(model.document),version=1;
  const posts=[];
@@ -352,6 +360,26 @@ test('structured Inspector editing survives Save, Publish and public interaction
  await viewer.keyboard.press('Tab');
  assert.equal(await tabs.locator('[role=tabpanel]:visible').evaluate(el=>document.activeElement===el),true,
   'selected text-only tabpanel receives keyboard focus');
+ const isolatedTabs=viewer.locator('.visual-editor-node[data-node-id="'+ids.secondaryTabs+'"]');
+ await isolatedTabs.getByRole('tab').first().focus();
+ await viewer.keyboard.press('ArrowRight');
+ assert.equal(await isolatedTabs.getByRole('tab').nth(1).getAttribute('aria-selected'),'true');
+ assert.equal(await isolatedTabs.locator('[role="tabpanel"]').nth(1).textContent(),'Külön csoport második tartalma');
+ assert.equal(await isolatedTabs.getByRole('tab').nth(1).evaluate(el=>document.activeElement===el),true);
+ assert.equal(await tabs.getByRole('tab').nth(1).getAttribute('aria-selected'),'true',
+  'navigating a second published tab widget does not change the first widget selection');
+ assert.equal(await tabs.locator('[role="tabpanel"]').nth(1).textContent(),expectedModels.tabs.items[1].content,
+  'the first widget keeps its own selected panel content');
+ const primaryControls=await tabs.getByRole('tab').nth(1).getAttribute('aria-controls');
+ const isolatedControls=await isolatedTabs.getByRole('tab').nth(1).getAttribute('aria-controls');
+ assert.notEqual(primaryControls,isolatedControls,'independent published widgets expose distinct panel references');
+ assert.equal(await tabs.locator('#'+primaryControls).getAttribute('aria-labelledby'),await tabs.getByRole('tab').nth(1).getAttribute('id'));
+ assert.equal(await isolatedTabs.locator('#'+isolatedControls).getAttribute('aria-labelledby'),await isolatedTabs.getByRole('tab').nth(1).getAttribute('id'));
+ await tabs.getByRole('tab').nth(1).focus();
+ await viewer.keyboard.press('ArrowRight');
+ assert.equal(await tabs.getByRole('tab').first().getAttribute('aria-selected'),'true');
+ assert.equal(await isolatedTabs.getByRole('tab').nth(1).getAttribute('aria-selected'),'true',
+  'changing the first published tab widget leaves the second selection isolated');
  const accordion=viewer.locator('.visual-editor-node[data-node-id="'+ids.accordion+'"]');
  assert.equal(await accordion.locator('details').count(),2);
  await accordion.locator('summary').nth(1).click();
