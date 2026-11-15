@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261114230411-0caf8bd2",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-14T23:04:11.461Z",
+  "finished_at": "2026-11-14T23:30:02.101Z",
+  "wall_seconds": 1551,
+  "paused_seconds": 0,
+  "measured_seconds": 1551,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "D-06 complete current-production D1 export restored and hash-verified in isolated D1; staged 0029 candidate and unicode-escape trigger tested on the exact snapshot; production 0029 not applied; full D remains open.",
+  "evidence": [
+    "docs/evidence/d06-production-export-isolated-restore-2026-11-14.json"
+  ],
+  "checks": "PASS: Python restore-order 7/7, targeted 0029/unicode tests 2 files, canonical plan 13 files/396 mappings, plan contract 14/14, audit 396 features NOT_CERTIFIED, diff check; Cloudflare trial 1213-statement restore, 0029 trial, 33-query readback, unicode guard rejection, production health HTTP 200; no production D1 mutation, CI, or Worker deploy.",
+  "started_revision": "4cd79c5cc8c3c0c74137e50c44763e4baf56892e",
+  "finished_revision": "4cd79c5cc8c3c0c74137e50c44763e4baf56892e",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
