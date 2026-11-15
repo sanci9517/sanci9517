@@ -86,6 +86,10 @@ export function validateHierarchy(page) {
   walk(page.rootId);
 
   for (const [nodeId, node] of Object.entries(page.nodes ?? {})) {
+    if (!node || typeof node !== 'object' || Array.isArray(node)) {
+      errors.push(`invalid node record: ${nodeId}`);
+      continue;
+    }
     if (!visited.has(nodeId)) {
       errors.push(`orphan node: ${nodeId}`);
     }
@@ -116,7 +120,17 @@ export function validateEditorDocument(document) {
 }
 
 export function assertValidEditorDocument(document) {
-  for(const page of Object.values(document?.pages||{})){validateAccessibility(page);for(const node of Object.values(page.nodes||{})){if(node.metadata?.structuredContentVersion===1&&isStructuredType(node.type))validateStructuredContent(node.type,node.props?.contentModel);validateAuthoredContent(node);validateStateStyles(node)}}
+  for(const page of Object.values(document?.pages||{})){
+    validateAccessibility(page);
+    for(const node of Object.values(page.nodes||{})){
+      // Let validateEditorDocument report malformed persisted records through
+      // the normal validation path instead of throwing while inspecting them.
+      if(!node||typeof node!=='object'||Array.isArray(node))continue;
+      if(node.metadata?.structuredContentVersion===1&&isStructuredType(node.type))validateStructuredContent(node.type,node.props?.contentModel);
+      validateAuthoredContent(node);
+      validateStateStyles(node);
+    }
+  }
   const errors = validateEditorDocument(document);
   if (errors.length) {
     throw new Error(`Invalid editor document: ${errors.join('; ')}`);

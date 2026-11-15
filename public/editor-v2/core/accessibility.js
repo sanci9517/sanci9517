@@ -20,7 +20,7 @@ export function normalizeAccessibility(node,patch,nodes={}){
   return result;
 }
 export function validateAccessibility(page){
-  for(const node of Object.values(page?.nodes||{}))if(node.metadata?.a11yVersion===1){const patch=Object.fromEntries(['label','id','lang','decorative'].filter(key=>node.accessibility?.[key]!==undefined).map(key=>[key,node.accessibility[key]]));normalizeAccessibility(node,patch,page.nodes)}
+  for(const node of Object.values(page?.nodes||{}))if(node?.metadata?.a11yVersion===1){const patch=Object.fromEntries(['label','id','lang','decorative'].filter(key=>node.accessibility?.[key]!==undefined).map(key=>[key,node.accessibility[key]]));normalizeAccessibility(node,patch,page.nodes)}
 }
 
 export function remapDuplicateAnchors(copies,existingNodes){

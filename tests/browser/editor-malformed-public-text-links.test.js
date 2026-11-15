@@ -156,6 +156,7 @@ test('D-07 Editor rejects corrupt Page Model child lists safely without rewritin
   execute(state,{type:'element.add',payload:{type:NODE_TYPES.HEADING,parentId:rootId,props:{text:'Safer sibling'}}});
   const headingId=state.selection.primaryId;
   const page=state.document.pages[pageId],invalid={toString:null};
+  const validHeading=structuredClone(page.nodes[headingId]);
   page.nodes[sectionId].children=invalid;
   page.nodes[rootId].children.push(invalid,'missing-node');
   const persisted=JSON.stringify(state.document),writes=[];
@@ -197,4 +198,18 @@ test('D-07 Editor rejects corrupt Page Model child lists safely without rewritin
   assert.deepEqual(errors,[],'duplicate persisted children use the controlled boot error state');
   assert.deepEqual(writes,[],'duplicate child validation never Saves or Publishes');
   assert.equal(JSON.stringify(state.document),duplicatePersisted,'duplicate references remain unmodified for recovery');
+
+  page.nodes[rootId].children=[sectionId,headingId];
+  for(const malformed of [null,false]){
+    page.nodes[headingId]=malformed;
+    const malformedPersisted=JSON.stringify(state.document);
+    await tab.reload();
+    await tab.waitForTimeout(300);
+    assert.match(await tab.locator('#saveStatus').textContent(),/Invalid editor document:.*invalid node record/i,
+      'malformed saved node records produce controlled validation feedback');
+    assert.deepEqual(errors,[],'malformed node records do not escape the Editor boot error boundary');
+    assert.deepEqual(writes,[],'malformed node records are never silently Saved or Published');
+    assert.equal(JSON.stringify(state.document),malformedPersisted,'malformed persisted records remain unchanged for recovery');
+    page.nodes[headingId]=structuredClone(validHeading);
+  }
 });

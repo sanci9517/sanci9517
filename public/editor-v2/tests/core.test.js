@@ -259,6 +259,28 @@ test('hierarchy validation rejects duplicate sibling references without changing
   assert.equal(JSON.stringify(document),persisted,'validation does not repair or rewrite imported data');
 });
 
+test('hierarchy validation fails closed for null or primitive persisted node records', () => {
+  for(const corrupt of ['orphan-record','root-record']){
+    const document=createDocument();
+    const page=document.pages[document.activePageId];
+    const nodeId=corrupt==='root-record'?page.rootId:'corrupt-orphan';
+    page.nodes[nodeId]=null;
+    const persisted=JSON.stringify(document);
+
+    assert.doesNotThrow(()=>validateHierarchy(page));
+    assert.match(validateHierarchy(page).join('; '),/invalid node record/);
+    assert.throws(()=>assertValidEditorDocument(document),/invalid node record/);
+    assert.equal(JSON.stringify(document),persisted,'validation never repairs or rewrites corrupted saved data');
+  }
+
+  const document=createDocument();
+  const page=document.pages[document.activePageId];
+  page.nodes['primitive-orphan']=false;
+  assert.doesNotThrow(()=>validateHierarchy(page));
+  assert.match(validateHierarchy(page).join('; '),/invalid node record: primitive-orphan/);
+  assert.throws(()=>assertValidEditorDocument(document),/invalid node record: primitive-orphan/);
+});
+
 test('property registry exposes extensible inspector groups and properties', () => {
   assert.ok(listPropertyGroups().some((group) => group.id === 'typography'));
   assert.ok(listPropertyGroups().some((group) => group.id === 'responsive'));
