@@ -1,0 +1,152 @@
+{
+  "schema": 1,
+  "captured_at": "2026-11-15T18:58:20Z",
+  "plan_point": "77.44.7.D / D-03 — quoted Excel TSV clipboard import",
+  "status": "PRODUCTION_VERIFIED_D03_SLICE",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "base_branch": "v2/foundation",
+    "base_sha": "8f94c1eb2423f92e0a0868373ab2d11c82667a94",
+    "candidate_branch": "codex/d03-quoted-excel-tsv-20261115",
+    "candidate_sha": "aed8b6fb6ec9876a98a622b81ef7f7cfc88221d7",
+    "pull_request": "https://github.com/sanci9517/sanci9517/pull/345",
+    "candidate_changes": [
+      "public/editor-v2/core/richtext-import.js",
+      "public/editor-v2/app.js",
+      "public/editor-v2/tests/core.test.js",
+      "tests/browser/editor-inspector-richtext-controls.test.js",
+      "docs/evidence/feature-traceability.json"
+    ],
+    "pull_request_state": "merged",
+    "merge_sha": "8f94c1eb2423f92e0a0868373ab2d11c82667a94"
+  },
+  "regression": {
+    "root_cause": "Plain-text TSV clipboard import split each line on literal tabs. Quoted cells containing tabs or line breaks were corrupted, doubled quotes were not decoded, and terminal CRLF could create an unintended empty record.",
+    "before_fix": "The targeted core regression failed: quoted delimiters and embedded newlines were split into separate cells/rows.",
+    "implementation": "Reuse dependency-free core/table-tsv.js parseTableTsv for plain-text TSV. Normalize CRLF, remove only one terminal clipboard row terminator, preserve additional blank records, pad ragged rows, keep the 100-row/24-column limits, and invalidate the cached richtext-import module URL.",
+    "cases": [
+      "quoted tab in cell",
+      "quoted CRLF inside cell normalized to LF",
+      "doubled quote decoded",
+      "one terminal CRLF ignored while an additional blank record is preserved",
+      "malformed quote rejected",
+      "101 rows and 25 columns rejected"
+    ],
+    "save_publish": "No lifecycle code changed; Save remains a draft operation and Publish remains separate."
+  },
+  "checks": {
+    "npm run test:editor": "PASS; 16/16 test files, 3/3 Linux subreaper runner checks",
+    "targeted core regression": "PASS as part of Editor Core suite",
+    "tests/browser/editor-inspector-richtext-controls.test.js": "PASS in real Chromium; 2/2 at desktop and mobile widths, including quoted TSV import through browser module loading",
+    "npm run typecheck": "PASS",
+    "npm run test:web013:migration-gate": "PASS; deploy:safe runs the gate and does not apply migrations",
+    "npm run deploy:safe -- --dry-run": "PASS with Wrangler 4.130.0; 182 public assets, 383.38 KiB (98.31 KiB gzip); no deployment",
+    "python3 tests/plan-contract.test.py": "PASS; 14/14",
+    "python3 scripts/check-canonical-plan.py": "PASS; one complete 13-file master, 396 source mappings; functional acceptance NOT_CERTIFIED",
+    "python3 scripts/audit-active-plan-point.py": "PASS; next point 77.44.7.D; acceptance NOT_CERTIFIED",
+    "python3 scripts/build-feature-traceability.py --check": "PASS; 396/396 mappings",
+    "git diff --check": "PASS"
+  },
+  "production_preflight": {
+    "d1_operation": "SELECT only",
+    "query": "SELECT COUNT(*) AS migration_count, MAX(name) AS latest_migration FROM d1_migrations",
+    "result": {
+      "migration_count": 35,
+      "latest_migration": "0029_media_archive_unicode_additive.sql",
+      "changed_db": false,
+      "rows_written": 0,
+      "changes": 0
+    },
+    "r2_operation": "none"
+  },
+  "pre_release_runtime": {
+    "worker": "sanci9517-streamer-brand",
+    "latest_deployment": "f5051413-1d52-4db1-b016-a0971822fb80",
+    "worker_version": "5451c750-502f-45cc-95e9-130471e46d31",
+    "traffic_percent": 100,
+    "direct_health": "HTTP 200 at 2026-11-15T18:25:35Z; expected service identity and version 2.0.0",
+    "deployment_of_candidate": false,
+    "candidate_preview_build": "8ee13168-2eba-478b-bc75-0bbf8f974d15",
+    "candidate_preview_source_sha": "aed8b6fb6ec9876a98a622b81ef7f7cfc88221d7",
+    "candidate_preview": {
+      "health": "GET /api/health HTTP 200; expected service identity and version 2.0.0",
+      "app_js_sha256": "dba8d6fd1ec282e8a1b4a88234199fc59258de08edbc93405178b7696c671517",
+      "app_js_source_sha256": "dba8d6fd1ec282e8a1b4a88234199fc59258de08edbc93405178b7696c671517",
+      "richtext_import_js_sha256": "1f3a08bfa6bc1c1507f8f46921e908bbd20868aec2e9ee6a0e74a173c1176d5b",
+      "richtext_import_js_source_sha256": "1f3a08bfa6bc1c1507f8f46921e908bbd20868aec2e9ee6a0e74a173c1176d5b"
+    }
+  },
+  "ci": {
+    "candidate_sha": "aed8b6fb6ec9876a98a622b81ef7f7cfc88221d7",
+    "editor_core": {
+      "run_id": 43746572085,
+      "status": "completed/success"
+    },
+    "worker_release_dry_run": {
+      "run_id": 43746572087,
+      "status": "completed/success"
+    },
+    "twitch_integration": {
+      "run_id": 43746572103,
+      "status": "completed/success"
+    },
+    "canonical_plan": {
+      "run_id": 43746572139,
+      "status": "completed/success"
+    },
+    "f0_baseline": {
+      "run_id": 43746572112,
+      "status": "completed/success"
+    }
+  },
+  "release": {
+    "merge": "MERGED at 8f94c1eb2423f92e0a0868373ab2d11c82667a94",
+    "production_build": "SUCCESS exact v2/foundation source SHA",
+    "production_deployment": "100% traffic on Worker version 4074 a0fbaaba-358a-43c5-8c64-8d2df9998106",
+    "post_release_health": "HTTP 200 at 2026-11-15T18:58:20Z",
+    "live_asset_hashes": "PASS: both changed assets exactly match source SHA-256"
+  },
+  "scope_limit": "The D-03 quoted-Excel-TSV clipboard regression slice is merged and production-verified. Full D-01–D-07 lifecycle/capability acceptance and 77.44.7.D remain OPEN / NOT_CERTIFIED. Full Visual Editor manual/device acceptance remains DEFERRED. No production D1 migration/write or R2 operation occurred. Save and Publish remain separate.",
+  "cost": "0 Ft; no paid services or quota overrides used",
+  "development_metric_run_id": "20261115182009-a19839fa",
+  "production_release": {
+    "build_id": "d2808903-f6ae-433c-a56e-e3588cd8d842",
+    "build_outcome": "success",
+    "source_sha": "8f94c1eb2423f92e0a0868373ab2d11c82667a94",
+    "branch": "v2/foundation",
+    "build_command": "npm run typecheck",
+    "deploy_command": "npm run deploy:safe",
+    "deployment_id": "182d946d-49cf-44e9-9b08-1e23739e6adf",
+    "worker_version_id": "a0fbaaba-358a-43c5-8c64-8d2df9998106",
+    "worker_version_number": 4074,
+    "traffic_percent": 100,
+    "version_metadata_created_on": "2026-11-15T18:56:17.64899Z",
+    "deployed_on": "2026-11-15T18:56:18.344474Z",
+    "direct_health": {
+      "checked_at": "2026-11-15T18:58:20Z",
+      "http_status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "public_assets": [
+      {
+        "path": "/editor-v2/app.js",
+        "http_status": 200,
+        "live_sha256": "dba8d6fd1ec282e8a1b4a88234199fc59258de08edbc93405178b7696c671517",
+        "source_sha256": "dba8d6fd1ec282e8a1b4a88234199fc59258de08edbc93405178b7696c671517",
+        "match": true
+      },
+      {
+        "path": "/editor-v2/core/richtext-import.js",
+        "http_status": 200,
+        "live_sha256": "1f3a08bfa6bc1c1507f8f46921e908bbd20868aec2e9ee6a0e74a173c1176d5b",
+        "source_sha256": "1f3a08bfa6bc1c1507f8f46921e908bbd20868aec2e9ee6a0e74a173c1176d5b",
+        "match": true
+      }
+    ]
+  }
+}
