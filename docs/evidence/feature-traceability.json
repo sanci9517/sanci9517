@@ -41,7 +41,7 @@
     "scripts/d1/ledger-reconciliation.py": "44d19ed415b40473c73c248d49980e16eaaa0e96a8a4412b7016213e0ee7ffcb",
     "scripts/web013-migration-safety-gate.mjs": "47c11202dfe94f389e458fbef133cc221dcfb88436649fca83d3849f38ccda68",
     "src/core/audit.ts": "9321698ebcdc7bc0227df3d12e8a7485703011235836df936ce7b837bb4b67ba",
-    "src/core/auth/admin-tenant-gate.ts": "2baab92e4243a9197640891fe22adb9490a5abab9e7d386ee5f14c0507fec034",
+    "src/core/auth/admin-tenant-gate.ts": "26e56e9d04e16950eb434f0f89842abda23f5349f361d00e2096310091ea01a8",
     "src/core/auth/require-auth.ts": "7933ad739fe34dd47234a2ab66a3e54a06daee75c8b96de60f1007cec246788e",
     "src/core/auth/session.ts": "39289ef8bffad7b09a6ec6476b7d280e8bf664635d0bc5327ce216edfde7866b",
     "src/core/auth/site-access.ts": "1651ea7a2437ebd9b86700ee87fb6ec7fc5944e84c13869dc957e889e78b47ff",
@@ -57,7 +57,7 @@
     "src/core/site-scoped-settings.ts": "1c7f00a6928ae656e57af0b405124ca96eb9bce635f1c3607c21b46b44c2219c",
     "src/core/twitch-oauth.ts": "da36e187e6ec0e8ffa6a9e43aa3e0a91709323ea0fe717009d82c304c17605fc",
     "src/core/twitch-site-ownership.ts": "096f63a1cf168c4dc9ad0be019987ddd077cb64ee86f3a364a68cf31f6b433d2",
-    "src/index.ts": "98f072d8e8af54e4b8b6405c17758d1106a232e4b1f579a5e15465f9220b9cd3",
+    "src/index.ts": "1bb2be11cf297b18e792734cf8155ea8054aacd8db659e599d1ac23e3bb2d576",
     "src/routes/admin/editor.ts": "36517ffd7a905b0410879804b34a0d301eb1719fcbec1f2b381011449fd27022",
     "src/routes/admin/link-report.ts": "6e46a65b6996e8c0b595b64c9dc55463f6dc2e31ad55fc90e2f5116113fcfcbe",
     "src/routes/admin/media.ts": "e6b604647d3d869361b3b3a2c88e37a500ebbdd723057bed6d8e638b2bd7d29a",
@@ -73,7 +73,7 @@
     "src/routes/integrations/twitch.ts": "ae6e4b4e9db5a6f495089f3d3e55c7010a36bdf38a86ff4219a9ced2ce436841",
     "src/routes/public/pages.ts": "4eae3fc245dd45b4befaf891b7950898e52010064cf0a1bb79a4e431c79253e5",
     "src/routes/public/seo.ts": "fa73a6c252df558862136e85e9a6594d84a19d2fffb130ac5dd38656074be60f",
-    "tests/f0-3-route-integration.test.js": "47173431e62a43570fe1712c8e929006f1d60cfa6b6016c52e1513f02053307c"
+    "tests/f0-3-route-integration.test.js": "837bd520b15cbbc2a53b6bf8969a233eb2d8d6aac59c30d9b8caf11253b83f4b"
   },
   "schema_version": 1,
   "kind": "source-traceability-not-acceptance",

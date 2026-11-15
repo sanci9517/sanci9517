@@ -33,7 +33,8 @@
     "test:countdown": "node --test tests/countdown-next-stream.test.js",
     "test:countdown:browser": "node --test tests/browser/home-next-stream-countdown.test.js",
     "test:showcase": "node --test tests/sanci-showcase.test.js",
-    "test:showcase:browser": "node --test tests/browser/sanci-showcase.test.js"
+    "test:showcase:browser": "node --test tests/browser/sanci-showcase.test.js",
+    "test:editor:publish-guard": "node --experimental-loader ./tests/ts-extension-loader.mjs tests/f0-3-route-integration.test.js"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "5.20260908.1",

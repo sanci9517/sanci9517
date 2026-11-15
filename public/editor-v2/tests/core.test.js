@@ -840,6 +840,24 @@ test('publish validator blocks invalid Page Model and accepts valid document', (
   assert.equal(validatePublishDocument(cycle, pageId), 'INVALID_HIERARCHY');
 });
 
+test('malformed authored CTA URLs fail publication and render as non-clickable buttons', async () => {
+  const document = createDocument(undefined, {modern:true});
+  const pageId = document.activePageId, page = document.pages[pageId];
+  const cta = createNode(NODE_TYPES.BUTTON, {
+    name:'Biztonságos CTA', parentId:page.rootId, metadata:{contentVersion:1},
+    props:{text:'Céloldal',href:'/p/valid-target'}
+  });
+  page.nodes[cta.id]=cta;page.nodes[page.rootId].children.push(cta.id);
+  assert.equal(validatePublishDocument(document,pageId),null,'a valid authored CTA is publishable');
+
+  const {contentTag,contentAttributes}=await import('../core/authored-content.js');
+  cta.props.href={toString:null};
+  assert.equal(validatePublishDocument(document,pageId),'INCOMPLETE_EDITOR_CONTENT',
+    'a malformed persisted URL cannot satisfy required authored CTA content');
+  assert.equal(contentTag(cta),'button','malformed legacy CTA data renders as a button rather than an anchor');
+  assert.equal(Object.hasOwn(contentAttributes(cta),'href'),false,'malformed legacy CTA data cannot create a clickable URL');
+});
+
 test('Schedule preview renderer uses canonical config without mutating domain data', () => {
   const defaults = createDefaultScheduleConfig();
   const upcoming = getSchedulePreviewItems(defaults);

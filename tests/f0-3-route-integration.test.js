@@ -108,6 +108,44 @@ test('save isolates draft, publish exposes it, rollback remains draft until repu
   assert.match(JSON.stringify(await (await f.read()).json()), /original/);
 });
 
+test('malformed authored CTA drafts save separately but cannot replace the published snapshot', async t => {
+  const f = await fixture(t), document = f.document('root-content');
+  const page = document.pages.p, root = page.nodes.root;
+  root.children = ['cta'];
+  page.nodes.cta = {
+    id:'cta',type:'button',name:'Publikált CTA',parentId:'root',children:[],
+    props:{text:'Publikált hivatkozás',href:'/p/valid-target'},style:{},
+    responsive:{desktop:{},tablet:{},mobile:{}},states:{},accessibility:{},
+    metadata:{contentVersion:1}
+  };
+  const initial = await f.edit({...f.publish('unused'),document,publish:true});
+  assert.equal(initial.status,200,'a valid authored CTA establishes the live baseline');
+  const liveBefore = await f.read();
+  const liveBody = await liveBefore.json();
+  assert.equal(liveBody.data.content.nodes.cta.props.href,'/p/valid-target');
+  const publishedSnapshot = f.db.prepare("SELECT published_content_json,published_revision_id FROM pages WHERE id='p'").get();
+
+  const invalidDraft = structuredClone(document);
+  invalidDraft.pages.p.nodes.cta.props.href = {toString:null};
+  const saved = await f.edit({pageId:'p',document:invalidDraft,publish:false,expectedVersion:2});
+  assert.equal(saved.status,200,'Save preserves malformed historical/API data as an unpublished draft');
+  assert.equal((await saved.json()).data.published,false,'Save never implicitly publishes');
+  const stored = f.db.prepare("SELECT content_json,published_content_json,published_revision_id,is_published FROM pages WHERE id='p'").get();
+  assert.deepEqual(JSON.parse(stored.content_json).pages.p.nodes.cta.props.href,{toString:null});
+  assert.equal(stored.published_content_json,publishedSnapshot.published_content_json,'draft Save preserves the already-published serialized snapshot');
+  assert.equal(stored.published_revision_id,publishedSnapshot.published_revision_id);
+  assert.equal(stored.is_published,1);
+
+  const beforeRejectedPublish = f.state();
+  const rejected = await f.edit({pageId:'p',document:invalidDraft,publish:true,expectedVersion:3});
+  assert.equal(rejected.status,409,'the server independently rejects invalid authored CTA data on Publish');
+  assert.equal((await rejected.json()).error.code,'INCOMPLETE_EDITOR_CONTENT');
+  assert.deepEqual(f.state(),beforeRejectedPublish,'rejected Publish inserts no revision and performs no snapshot write');
+  const liveAfter = await f.read();
+  assert.equal(liveAfter.status,200);
+  assert.deepEqual(await liveAfter.json(),liveBody,'public content remains identical to the valid pre-error publication');
+});
+
 test('two publishers reading the same version yield one winner and one conflict', async t => {
   const f = await fixture(t);
   f.env.DB.beforeBatch = async () => assert.equal((await f.edit(f.publish('winner'))).status, 200);

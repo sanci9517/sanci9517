@@ -1,0 +1,61 @@
+{
+  "schema": 1,
+  "captured_at": "2026-11-15T10:37:03Z",
+  "plan_point": "77.44.7.D / D-02 malformed authored CTA Save/Publish boundary",
+  "status": "TARGETED_LOCAL_REGRESSION_PASS; FULL_D02_OPEN; FULL_D_OPEN_NOT_CERTIFIED",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "verified_remote_base": "577bf482a5f51e58fbb0b1910985f9d6321e7893",
+    "original_primary_worktree_head": "4cd79c5cc8c3c0c74137e50c44763e4baf56892e",
+    "primary_worktree_is_14_commits_behind": true,
+    "validation_worktree": "isolated detached worktree created exactly at verified v2/foundation base; original dirty worktree preserved",
+    "runtime_or_public_asset_changed": false
+  },
+  "regression": {
+    "route_fixture": "SQLite-backed route integration fixture invoking the admin editor and public-page routes; no production database",
+    "scenario": [
+      "A valid authored CTA is saved and separately published as the public baseline.",
+      "A malformed persisted CTA href ({toString:null}) is accepted as an unpublished draft by Save.",
+      "Draft Save leaves the published JSON, published revision, and public response unchanged.",
+      "Publish of the malformed draft is rejected with HTTP 409 INCOMPLETE_EDITOR_CONTENT before revision or snapshot mutation.",
+      "Editor Core validation rejects the malformed value and its renderer degrades it to a non-clickable button without an href attribute."
+    ],
+    "production_data": "None; SQLite and route state are disposable local fixture state."
+  },
+  "checks": {
+    "npm run test:editor:publish-guard": "PASS 18/18 route integration cases on the exact verified remote base plus this regression",
+    "node --experimental-vm-modules --test-reporter=spec public/editor-v2/tests/core.test.js": "PASS 79/79 Editor Core unit cases",
+    "node --check tests/f0-3-route-integration.test.js": "PASS",
+    "package.json JSON parse": "PASS",
+    "python3 tests/plan-contract.test.py": "PASS 14/14 after regenerating stale source fingerprints",
+    "python3 scripts/build-feature-traceability.py --check": "PASS 396/396 source mappings after generator refreshed route-test and stale remote admin-tenant-gate fingerprints",
+    "python3 scripts/audit-active-plan-point.py": "PASS; next item 77.44.7.D; functional acceptance remains NOT_CERTIFIED",
+    "python3 scripts/check-canonical-plan.py": "PASS; one full 13-file master and 396 mappings",
+    "git diff --check": "PASS in isolated worktree",
+    "real browser / Chromium": "BLOCKED: this managed runner exits Chromium with SIGTRAP and setsockopt: Operation not permitted; no browser assertions were performed",
+    "Miniflare Worker browser fixture": "BLOCKED: the attempted fixture stalled in this runner and was stopped; no product failure established"
+  },
+  "production_state": {
+    "worker_name": "sanci9517-streamer-brand",
+    "latest_deployment_id": "bf413087-8322-451c-ad4f-3d7128b0ad3d",
+    "latest_version_id": "c133e810-bf8f-4a7f-9c34-fa353c176b83",
+    "latest_version_traffic_percent": 100,
+    "deployment_api_read": "GET deployment list and script settings via Cloudflare API during this run; deployment list identifies latest version at 100%. API did not expose the source SHA.",
+    "last_previously_verified_source_sha": "849310ee9d523feb608ed12763f4ed77d9033c88",
+    "direct_health": "UNVERIFIED: Cloudflare execution sandbox blocked an outbound fetch to the workers.dev health URL before an origin response; no production HTTP status is claimed.",
+    "runtime_changed": false,
+    "new_worker_deploy": false,
+    "production_d1_query_or_mutation": false,
+    "production_r2_operation": false
+  },
+  "release": {
+    "github_push": "Not yet attempted at evidence creation; final status must be verified against the branch ref after the test/docs-only commit.",
+    "ci": "Not dispatched; commits will use [skip ci], so remote CI is not claimed as PASS.",
+    "changed_public_asset_hashes": "Not applicable; runtime source and public assets unchanged.",
+    "cost": "0 Ft new spend; no paid service or quota used.",
+    "save_publish_remain_separate": true
+  },
+  "scope_limit": "This validates a route-level and Editor Core test slice only. Full D-02, the complete D-01–D-07 lifecycle/capability matrix, and 77.44.7.D remain OPEN / NOT_CERTIFIED. Real browser acceptance is blocked in this runner; consolidated full-Editor manual/device acceptance remains deferred.",
+  "development_metric_run_id": "20261115100802-d5061bc0"
+}

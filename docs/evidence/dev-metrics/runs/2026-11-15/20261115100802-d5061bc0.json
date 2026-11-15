@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261115100802-d5061bc0",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-15T10:08:02.506Z",
+  "finished_at": "2026-11-15T10:39:33.303Z",
+  "wall_seconds": 1891,
+  "paused_seconds": 0,
+  "measured_seconds": 1891,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "D-02 hibás CTA Save/Publish route+Core regresszió és traceability frissítés; helyi 18+79 teszt PASS, Chromium blokk miatt teljes D nyitott.",
+  "evidence": [
+    "docs/evidence/editor-d02-malformed-cta-save-publish-2026-11-15.json"
+  ],
+  "checks": "isolated remote-base route integration 18/18; Editor Core 79/79; plan-contract 14/14; traceability 396/396; canonical-plan 13/13; active point 77.44.7.D OPEN; browser acceptance BLOCKED by runner.",
+  "started_revision": "4cd79c5cc8c3c0c74137e50c44763e4baf56892e",
+  "finished_revision": "4cd79c5cc8c3c0c74137e50c44763e4baf56892e",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
