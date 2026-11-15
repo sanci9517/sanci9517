@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261115131325-c0634e9a",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-15T13:13:25.225Z",
+  "finished_at": "2026-11-15T13:24:39.545Z",
+  "wall_seconds": 674,
+  "paused_seconds": 0,
+  "measured_seconds": 674,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "D-07 null/primitív oldaldokumentum validációja regresszióval tesztelve és pontos SHA alapján élesítve; teljes D és Editor Core CI még nyitott.",
+  "evidence": [
+    "docs/evidence/editor-d07-malformed-page-records-2026-11-15.json"
+  ],
+  "checks": "editor 210 PASS; targeted Chromium 2/2 PASS; typecheck/migration gate/plan contracts/traceability/wrangler dry-run PASS; Cloudflare build+deployment+health+asset hashes verified; GitHub Editor Core in_progress",
+  "started_revision": "e490d007c3fe485a45ec9b18e45c70646181f0c6",
+  "finished_revision": "1ed58dce67e9b982142551ee4d0cd14ea59b2401",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

@@ -1,0 +1,94 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-15T13:25:29Z",
+  "plan_point": "77.44.7.D / D-07 malformed persisted page records",
+  "status": "D07_MALFORMED_PAGE_RECORD_SUBGATE_RELEASED_FULL_D_OPEN_NOT_CERTIFIED",
+  "repository": {
+    "full_name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "parent_sha": "e490d007c3fe485a45ec9b18e45c70646181f0c6",
+    "runtime_commit": "1ed58dce67e9b982142551ee4d0cd14ea59b2401",
+    "commit_message": "fix(editor): reject malformed saved page records",
+    "remote_head_verified": true,
+    "push": "normal fast-forward; no force push, reset, or branch switch"
+  },
+  "defect_and_fix": {
+    "reproduction": "A saved Editor v2 document can contain a null or primitive page value in document.pages. The validator dereferenced page.id when formatting hierarchy errors, and semantic preflight dereferenced page.nodes, causing a TypeError rather than a controlled invalid-document result.",
+    "fix": [
+      "Document validation now iterates page key/value pairs and uses the key as a safe diagnostic id when a record has no usable id.",
+      "Hierarchy validation remains the source of the malformed-page diagnostic; semantic/accessibility preflight skips null, primitive, and array page records so they cannot escape as TypeErrors.",
+      "Added regression coverage for null and false persisted page records; validation throws only the controlled invalid-document error and does not rewrite the record.",
+      "Extended the real Chromium Editor boot regression to assert a controlled visible load error, no uncaught page errors, no persistence writes, and unchanged malformed data.",
+      "Bumped the validation module cache key in Editor commands and state so production clients load the fixed validator."
+    ],
+    "save_publish": "Unchanged and separate. Malformed persisted records are neither auto-repaired nor saved/published.",
+    "production_data_mutation": false,
+    "r2_mutation": false,
+    "new_runtime_dependency": false
+  },
+  "local_checks": {
+    "editor_suite": {
+      "command": "npm run test:editor",
+      "result": "PASS",
+      "tests": 210
+    },
+    "targeted_chromium": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-malformed-public-text-links.test.js",
+      "result": "PASS",
+      "tests": 2
+    },
+    "typecheck": "PASS",
+    "web013_migration_gate": "PASS",
+    "plan_contract": "PASS 14/14",
+    "canonical_plan": "PASS 13/13",
+    "active_plan_audit": "PASS; 77.44.7.D remains the active point",
+    "traceability": "PASS 396/396",
+    "wrangler_dry_run": "PASS; npm run deploy:safe -- --dry-run; no deployment or production migration from the dry-run"
+  },
+  "production_preflight": {
+    "query": "SELECT COUNT(*) AS migration_count, MAX(name) AS latest_migration FROM d1_migrations",
+    "migration_count": 35,
+    "latest_migration": "0029_media_archive_unicode_additive.sql",
+    "rows_written": 0,
+    "changes": 0,
+    "changed_db": false
+  },
+  "cloudflare_build_and_release": {
+    "build_uuid": "6056cd30-3817-4ab2-ba53-bfd7ad905b92",
+    "build_outcome": "success",
+    "build_trigger": "push_event",
+    "source_branch": "v2/foundation",
+    "source_sha": "1ed58dce67e9b982142551ee4d0cd14ea59b2401",
+    "commands": ["npm run typecheck", "npm run deploy:safe"],
+    "deployment_id": "5efc89c1-8aa7-452c-a212-5edb62090402",
+    "worker_version_id": "8a4cf649-6fd7-45d5-a20a-bff9dff39f4c",
+    "traffic_percent": 100,
+    "health": {
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+      "http_status": 200,
+      "body": {"ok": true, "service": "sanci9517-streamer-brand", "version": "2.0.0", "server": "cloudflare-worker"}
+    },
+    "live_asset_sha256_matches_local": {
+      "public/editor-v2/core/validation.js": "6cb000646c53b53936fed6e20e58cdc5c5f541cd6542fa1cf4f509e0fc3e7b31",
+      "public/editor-v2/core/commands.js": "6ea1091b398623f377cdddb8fb22bd94564965c66df1cc030cc4de860efb26e1",
+      "public/editor-v2/core/state.js": "b042679d4cddf6efb47e0be03f9b74fbf3458450dbe20cc8ed18d6305c29c8b4",
+      "public/editor-v2/tests/core.test.js": "a696cd9d0a3b2d152aebd9b055e53242f823b0f45a06186f44c1d9468ad7df70"
+    }
+  },
+  "github_ci": {
+    "run_id": 43718338682,
+    "workflow": "Editor Core Test",
+    "source_sha": "1ed58dce67e9b982142551ee4d0cd14ea59b2401",
+    "status_at_recording": "in_progress",
+    "completed_steps": ["typecheck", "editor core tests", "offline D1 ledger and bootstrap tests", "private R2 media API tests", "Chromium installation", "real Worker media upload with isolated D1 and R2"],
+    "active_step": "Run Editor browser layout regression",
+    "result": "PENDING"
+  },
+  "scope": {
+    "full_d07": "OPEN / NOT_CERTIFIED",
+    "full_d01_d07_acceptance_matrix": "OPEN / NOT_CERTIFIED",
+    "full_77_44_7_d": "OPEN / NOT_CERTIFIED",
+    "visual_editor_manual_physical_acceptance": "DEFERRED",
+    "new_cost_huf": 0
+  }
+}
