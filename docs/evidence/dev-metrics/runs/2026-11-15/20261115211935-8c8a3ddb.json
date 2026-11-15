@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261115211935-8c8a3ddb",
+  "task": "77.44.7.D-D03-editor-core-countdown-mobile-timeout",
+  "trigger": "manual",
+  "started_at": "2026-11-15T21:19:35.163Z",
+  "finished_at": "2026-11-15T21:26:37.173Z",
+  "wall_seconds": 422,
+  "paused_seconds": 0,
+  "measured_seconds": 422,
+  "status": "partial",
+  "kind": "docs",
+  "summary": "Recorded exact-SHA Editor Core CI failure, local Chromium 2/2 pass and production asset/proxy limitation; full D remains open.",
+  "evidence": [
+    "docs/evidence/editor-d03-terminal-tsv-delimiter-2026-11-15.json",
+    "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md"
+  ],
+  "checks": "editor-countdown local Chromium 2/2; GitHub exact-SHA checks 6/7 with editor-core failure; D1/Worker read only; plan-contract 14/14; canonical plan 13 files; traceability 396/396; JSON and git diff check",
+  "started_revision": "741acca64267e2753dc209f186d46afc3b1b95ed",
+  "finished_revision": "741acca64267e2753dc209f186d46afc3b1b95ed",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
