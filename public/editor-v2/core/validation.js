@@ -112,15 +112,18 @@ export function validateRichTextNode(node) {
 
 export function validateEditorDocument(document) {
   const errors = validateDocument(document);
-  for (const page of Object.values(document?.pages ?? {})) {
-    errors.push(...validateHierarchy(page).map((error) => `page ${page.id}: ${error}`));
-    for (const node of Object.values(page.nodes ?? {})) errors.push(...validateRichTextNode(node).map((error) => `page ${page.id}: ${error}`));
+  for (const [pageKey, page] of Object.entries(document?.pages ?? {})) {
+    const pageId=typeof page?.id==='string'&&page.id?page.id:pageKey;
+    errors.push(...validateHierarchy(page).map((error) => `page ${pageId}: ${error}`));
+    if(!page||typeof page!=='object'||Array.isArray(page))continue;
+    for (const node of Object.values(page.nodes ?? {})) errors.push(...validateRichTextNode(node).map((error) => `page ${pageId}: ${error}`));
   }
   return [...new Set(errors)];
 }
 
 export function assertValidEditorDocument(document) {
   for(const page of Object.values(document?.pages||{})){
+    if(!page||typeof page!=='object'||Array.isArray(page))continue;
     validateAccessibility(page);
     for(const node of Object.values(page.nodes||{})){
       // Let validateEditorDocument report malformed persisted records through

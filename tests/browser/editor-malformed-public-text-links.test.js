@@ -151,6 +151,7 @@ test('published page and Canvas handle malformed text, links and CSS without Sav
 test('D-07 Editor rejects corrupt Page Model child lists safely without rewriting them',async t=>{
   const state=createEditorState(createDocument());
   const pageId=state.document.activePageId,rootId=state.document.pages[pageId].rootId;
+  const validPage=structuredClone(state.document.pages[pageId]);
   execute(state,{type:'element.add',payload:{type:NODE_TYPES.SECTION,parentId:rootId}});
   const sectionId=state.selection.primaryId;
   execute(state,{type:'element.add',payload:{type:NODE_TYPES.HEADING,parentId:rootId,props:{text:'Safer sibling'}}});
@@ -211,5 +212,18 @@ test('D-07 Editor rejects corrupt Page Model child lists safely without rewritin
     assert.deepEqual(writes,[],'malformed node records are never silently Saved or Published');
     assert.equal(JSON.stringify(state.document),malformedPersisted,'malformed persisted records remain unchanged for recovery');
     page.nodes[headingId]=structuredClone(validHeading);
+  }
+
+  for(const malformed of [null,false]){
+    state.document.pages[pageId]=malformed;
+    const malformedPersisted=JSON.stringify(state.document);
+    await tab.reload();
+    await tab.waitForTimeout(300);
+    assert.match(await tab.locator('#saveStatus').textContent(),/Editor betöltési hiba:.*nem canonical Editor v2 dokumentum/i,
+      'malformed saved page records produce controlled, non-canonical-document feedback');
+    assert.deepEqual(errors,[],'malformed page records do not escape the Editor boot error boundary');
+    assert.deepEqual(writes,[],'malformed page records are never silently Saved or Published');
+    assert.equal(JSON.stringify(state.document),malformedPersisted,'malformed persisted pages remain unchanged for recovery');
+    state.document.pages[pageId]=structuredClone(validPage);
   }
 });

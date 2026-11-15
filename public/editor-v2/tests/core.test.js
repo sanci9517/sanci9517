@@ -7,7 +7,7 @@ import { SourceTextModule } from 'node:vm';
 import test from 'node:test';
 
 import { createDocument, createNode, NODE_TYPES, normalizeRichText } from '../core/schema.js';
-import { assertValidEditorDocument,findReachableNodeIds,validateHierarchy } from '../core/validation.js';
+import { assertValidEditorDocument,findReachableNodeIds,validateEditorDocument,validateHierarchy } from '../core/validation.js';
 import { createEditorState, activePage } from '../core/state.js';
 import { beginTransaction, commitTransaction, execute, executeBatch, rollbackTransaction } from '../core/commands.js';
 import { getProperty, listProperties, listPropertyGroups, registerProperty } from '../core/property-registry.js?v=20261030-inspector-layout-container-contract';
@@ -279,6 +279,19 @@ test('hierarchy validation fails closed for null or primitive persisted node rec
   assert.doesNotThrow(()=>validateHierarchy(page));
   assert.match(validateHierarchy(page).join('; '),/invalid node record: primitive-orphan/);
   assert.throws(()=>assertValidEditorDocument(document),/invalid node record: primitive-orphan/);
+});
+
+test('document validation reports malformed persisted page records without throwing or rewriting them',()=>{
+  for(const malformed of [null,false]){
+    const document=createDocument();
+    const pageId=document.activePageId;
+    document.pages[pageId]=malformed;
+    const persisted=JSON.stringify(document);
+
+    assert.doesNotThrow(()=>validateEditorDocument(document));
+    assert.throws(()=>assertValidEditorDocument(document),/Invalid editor document:.*page must be an object/);
+    assert.equal(JSON.stringify(document),persisted,'validation leaves a corrupt saved page unchanged for explicit recovery');
+  }
 });
 
 test('property registry exposes extensible inspector groups and properties', () => {
