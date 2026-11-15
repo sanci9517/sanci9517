@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261115185734-d7618b48",
+  "task": "77.44.7.D",
+  "trigger": "scheduled",
+  "started_at": "2026-11-15T18:57:34.248Z",
+  "finished_at": "2026-11-15T18:59:06.906Z",
+  "wall_seconds": 93,
+  "paused_seconds": 0,
+  "measured_seconds": 93,
+  "status": "pass",
+  "kind": "docs",
+  "summary": "Verified merged D-03 release: successful v2/foundation deploy, 100% Worker version 4074 traffic, direct health HTTP 200, and both changed asset hashes match source.",
+  "evidence": [
+    "docs/evidence/editor-d03-quoted-excel-tsv-2026-11-15.json"
+  ],
+  "checks": "PR #345 CI exact SHA all success; Cloudflare build d2808903 success; deployment 182d946d 100%; health and assets HTTP 200/hash match",
+  "started_revision": "4cd79c5cc8c3c0c74137e50c44763e4baf56892e",
+  "finished_revision": "4cd79c5cc8c3c0c74137e50c44763e4baf56892e",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
