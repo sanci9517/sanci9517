@@ -1,5 +1,5 @@
 import {legacyMediaInspectorValues,legacyImagePresentation,legacyImageCaption} from '../core/legacy-media-source.js';
-import {safeMediaUrl} from '../core/element-content.js';
+import {safeMediaUrl} from '../core/element-content.js?v=20261115-d04-tab-id-bound-v1';
 import {createCompositionInputs} from './composition-inputs.js';
 import {IMAGE_MIMES,mediaAssetPicker,setMediaAssetPickerSelection} from './element-content-controls.js?v=20261101-richtext-multiblock-links';
 

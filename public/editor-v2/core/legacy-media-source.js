@@ -2,7 +2,7 @@
  * Media-library image IDs have the same UUID shape as authored content fields.
  * A selected image takes precedence over any older external source URL.
  */
-import {safeMediaUrl,safePublishedMediaUrl} from './element-content.js';
+import {safeMediaUrl,safePublishedMediaUrl} from './element-content.js?v=20261115-d04-tab-id-bound-v1';
 
 const MEDIA_ASSET_ID=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const legacySource=(src,editor)=>{

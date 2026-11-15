@@ -1296,6 +1296,22 @@ test('structured tabs keep accessible control IDs unique when node IDs normalize
   'each tab controls its own panel and the panel points back to that tab');
  assert.match(second,new RegExp(`id="${secondTab[2]}" aria-labelledby="${secondTab[1]}"`),
   'the second tab set keeps its own complete ARIA relationship');
+ const fortyItems={version:1,items:Array.from({length:40},(_,index)=>({label:`Fül ${index+1}`,content:`Tartalom ${index+1}`}))};
+ for(const nodeId of ['a'.repeat(87),'a'.repeat(88)]){
+  const html=renderElementContent('tabs',fortyItems,nodeId);
+  const tabs=[...html.matchAll(/<button[^>]*role="tab" id="([^"]+)" aria-controls="([^"]+)"/g)];
+  const panels=[...html.matchAll(/<div role="tabpanel" id="([^"]+)" aria-labelledby="([^"]+)"/g)];
+  assert.equal(tabs.length,40,'all supported tabs render for boundary identifiers');
+  assert.equal(panels.length,40,'all tab panels render for boundary identifiers');
+  assert.equal(new Set(tabs.map(([,id])=>id)).size,40,'every tab id remains unique');
+  assert.equal(new Set(panels.map(([,id])=>id)).size,40,'every panel id remains unique');
+  for(let index=0;index<40;index++){
+   assert.ok(tabs[index][1].length<=100,`tab ${index+1} id stays within the documented DOM ID cap`);
+   assert.ok(panels[index][1].length<=100,`panel ${index+1} id stays within the documented DOM ID cap`);
+   assert.equal(tabs[index][2],panels[index][1],'tab controls its matching panel');
+   assert.equal(panels[index][2],tabs[index][1],'panel labels its matching tab');
+  }
+ }
 });
 test('structured models sanitize content and strictly validate dimensions',()=>{
  assert.equal(safeMediaUrl('javascript:alert(1)'),'');

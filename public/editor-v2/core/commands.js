@@ -9,7 +9,7 @@ import { canContain, cloneDocument, createEmptyRichText, createNode, getNode, no
 import { assertValidEditorDocument } from './validation.js?v=20261115-d07-malformed-node-records-v2';
 import { activePage, clearSelection, setSelection } from './state.js';
 import { createDefaultScheduleConfig, normalizeScheduleConfig } from './schedule-schema.js';
-import {isStructuredType,createElementContent,normalizeElementContent} from './element-content.js';
+import {isStructuredType,createElementContent,normalizeElementContent} from './element-content.js?v=20261115-d04-tab-id-bound-v1';
 import {defaultDividerStyle,normalizeDividerStyle} from './decorative-elements.js';
 import {defaultCardContent,normalizeCardContent} from './card-content.js';
 import {defaultCountdownContent} from './countdown-content.js';

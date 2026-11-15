@@ -7,7 +7,7 @@ import {validateAccessibility} from './accessibility.js';
  */
 
 import { getNode, validateDocument, normalizeRichText } from './schema.js';
-import { validateElementContent as validateStructuredContent,isStructuredType } from './element-content.js';
+import { validateElementContent as validateStructuredContent,isStructuredType } from './element-content.js?v=20261115-d04-tab-id-bound-v1';
 import { validateElementContent as validateAuthoredContent } from './authored-content.js';
 import {validateStateStyles} from './state-styles.js';
 

@@ -1,5 +1,5 @@
 import {isAuthoredContent,CONTENT_FIELDS,CONTENT_TYPES,STRUCTURAL_TYPES} from './authored-content.js';
-import {isStructuredType} from './element-content.js';
+import {isStructuredType} from './element-content.js?v=20261115-d04-tab-id-bound-v1';
 
 // These describe existing version gates, not a new content schema or validator.
 // More than one gate may apply: publication must not skip a legacy gate merely

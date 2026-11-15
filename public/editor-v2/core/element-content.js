@@ -74,7 +74,9 @@ const idSafe=v=>{
  // Sanitizing/truncating arbitrary Page Model IDs is not injective: e.g. "a/b"
  // and "a?b" both become "a-b". Keep safe IDs readable and encode unsafe IDs
  // into a bounded, namespaced value whose suffix depends on the complete input.
- if(/^[a-zA-Z0-9_-]{1,88}$/.test(id))return `safe-${id}`;
+ // Reserve room for the emitted "tab-" namespace plus the "-t39"/"-p39"
+ // suffix used by the maximum supported 40-item tabs collection.
+ if(/^[a-zA-Z0-9_-]{1,87}$/.test(id))return `safe-${id}`;
  let left=0x811c9dc5,right=0x9e3779b9;
  for(const char of id){
   const point=char.codePointAt(0);
