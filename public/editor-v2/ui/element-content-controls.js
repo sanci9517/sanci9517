@@ -1,4 +1,5 @@
-import {CONTENT_FIELDS,IMAGE_MIMES,normalizeContentField,contentProperties,imageFocalPosition,getPublicationContentGuidance} from '../core/authored-content.js';
+import {CONTENT_FIELDS,IMAGE_MIMES,normalizeContentField,contentProperties,imageFocalPosition,getPublicationContentGuidance} from '../core/authored-content.js?v=20261115-d03-table-tsv-v1';
+import {parseTableTsv,serializeTableTsv} from '../core/table-tsv.js?v=20261115-d03-table-tsv-v1';
 import {getProperty} from '../core/property-registry.js?v=20261030-inspector-layout-container-contract';
 export {IMAGE_MIMES};
 
@@ -330,10 +331,10 @@ export function renderElementContentControls(node,{apply,pending,exclude=[],page
       };
       section.append(add);root.append(section);
     }else if(definition.type==='table'){
-      const note=document.createElement('p');note.className='content-field-help';note.textContent='Soronként egy sor, tabulátorral elválasztott cellák. Excelből másolt egyszerű táblázat is beilleszthető. A cellák szöveget tárolnak, képletek nem futnak.';root.append(note);
+      const note=document.createElement('p');note.className='content-field-help';note.textContent='Soronként egy sor, tabulátorral elválasztott cellák. Excelből másolt egyszerű táblázat is beilleszthető; az idézőjeles cellák tabulátort és sortörést is megőrizhetnek. A cellák szöveget tárolnak, képletek nem futnak.';root.append(note);
       const rows=Array.isArray(node.props?.rows)?node.props.rows:[];
-      const tableText=rows.map(row=>Array.isArray(row)?row.map(inspectorText).join('\t'):'').join('\n');
-      root.append(control({...definition,type:'textarea',max:40000},tableText,(value,group)=>save(value.split('\n').map(row=>row.split('\t')),group),update=>top.register(definition.key,update),'rows[][]'));
+      const tableText=serializeTableTsv(rows);
+      root.append(control({...definition,type:'textarea'},tableText,(value,group)=>save(parseTableTsv(value),group),update=>top.register(definition.key,update),'rows[][]'));
     }else root.append(control(definition,working[definition.key],(value,typingGroup,asset)=>top.save(definition.key,value,typingGroup,asset),update=>top.register(definition.key,update)));
   }
   root.addEventListener('editor:external-content-updated',event=>{

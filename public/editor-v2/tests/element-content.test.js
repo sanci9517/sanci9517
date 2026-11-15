@@ -4,7 +4,8 @@ import assert from 'node:assert/strict';
 import {createDocument} from '../core/schema.js';
 import {createEditorState,activePage} from '../core/state.js';
 import {execute} from '../core/commands.js';
-import {authoredNodeHtml,contentAttributes,contentTag,normalizeElementContent,validateElementContent,validatePageForPublication,contentProperties,imageFocalPosition} from '../core/authored-content.js';
+import {AUTHORED_TABLE_LIMITS,MAX_AUTHORED_TABLE_TSV_CHARS,authoredNodeHtml,contentAttributes,contentTag,normalizeElementContent,validateElementContent,validatePageForPublication,contentProperties,imageFocalPosition} from '../core/authored-content.js';
+import {parseTableTsv,serializeTableTsv} from '../core/table-tsv.js';
 import {normalizeAccessibility,opaqueContrast} from '../core/accessibility.js';
 import {legacyImageSource,legacyPlayableSource,legacyPlaybackSettings,legacyImagePresentation,legacyImageCaption,legacyMediaInspectorValues} from '../core/legacy-media-source.js';
 
@@ -56,6 +57,21 @@ test('authored tables retain their own 100-row and 16-column contract through pu
   }}),'the page-level Publish gate accepts the same authored-v1 boundary');
   assert.throws(()=>normalizeElementContent(authored,{rows:[...rows,Array(16).fill('extra')]}),/100 sor/);
   assert.throws(()=>normalizeElementContent(authored,{rows:[Array(17).fill('extra')]}),/1–16 oszlop/);
+});
+
+test('authored table TSV contract covers the full model and preserves quoted cell delimiters',()=>{
+  assert.equal(AUTHORED_TABLE_LIMITS.rows,100);
+  assert.equal(AUTHORED_TABLE_LIMITS.columns,16);
+  assert.equal(AUTHORED_TABLE_LIMITS.cellCharacters,2000);
+  assert.equal(MAX_AUTHORED_TABLE_TSV_CHARS,100*16*(2000*2+2)+(100*16-1),
+    'the textarea cap includes the worst-case quote escaping and separators for every supported cell');
+  const rows=[['Fejléc','Második'],['Tabulátor\t a cellában','Két sor\nfolytatás'],['Idézet: "igen"','CRLF\r\nmegmarad']];
+  const text=serializeTableTsv(rows);
+  assert.deepEqual(parseTableTsv(text),rows,'quotes, embedded tabs, LF and CRLF survive an Inspector edit round trip');
+  assert.deepEqual(parseTableTsv('A\tB\r\nC\tD'),[['A','B'],['C','D']],
+    'ordinary Excel-style CRLF TSV remains supported');
+  assert.throws(()=>parseTableTsv('"lezáratlan\tcell'),/nincs lezárva/);
+  assert.throws(()=>parseTableTsv('"idézett"utótag\tB'),/záró idézőjel/);
 });
 
 test('authored public media never coerces malformed persisted sources into URLs',()=>{

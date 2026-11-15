@@ -8,17 +8,24 @@ import {chromium} from 'playwright';
 import {createDocument} from '../../public/editor-v2/core/schema.js';
 import {createEditorState,activePage} from '../../public/editor-v2/core/state.js';
 import {execute} from '../../public/editor-v2/core/commands.js';
+import {MAX_AUTHORED_TABLE_TSV_CHARS} from '../../public/editor-v2/core/authored-content.js';
+import {serializeTableTsv} from '../../public/editor-v2/core/table-tsv.js';
 
 // editor-sample.webm is a 619-byte, procedurally generated purple VP9 frame (ffmpeg lavfi color).
 test('typed authored elements survive Inspector edits, reload and separate Publish with real accessible content and interactions',async t=>{
   const state=createEditorState(createDocument()),pageId=state.document.activePageId,rootId=activePage(state).rootId,ids={},assetId='6b1c2e65-e46e-4764-b234-123456789abc';
   execute(state,{type:'root.appearance.enable',payload:{nodeId:rootId}});
   execute(state,{type:'responsive.set',payload:{nodeId:rootId,device:'desktop',patch:{padding:'16px',color:'#182335',backgroundColor:'#ffffff'}}});
+  const tableRows=Array.from({length:21},(_,row)=>[
+    `${row===0?'Fejléc':'Sor '+row} ${'N'.repeat(1000)}`,
+    `${row===0?'Oszlop':'Érték'} ${row} ${'V'.repeat(1000)}`
+  ]);
+  const expectedTableRows=structuredClone(tableRows);expectedTableRows.at(-1)[1]+='!';
   const definitions={
     heading:{text:'Alkotói főcím',level:'1'},text:{text:'Egyedi szöveg'},button:{text:'Tovább',href:'/p/home',target:'_blank'},link:{text:'Kapcsolat',href:'mailto:creator@example.com'},
     quote:{text:'A kreativitás tanulható.',citation:'Egy alkotó'},badge:{text:'Új sorozat'},icon:{icon:'star',ariaLabel:'Kedvenc'},
     image:{src:'/fixture.svg',alt:'Tesztillusztráció',caption:'Képaláírás',fit:'contain',ratio:'1 / 1'},video:{src:'/fixture.webm',poster:'/fixture.svg',controls:true,muted:true},audio:{src:'/fixture.mp3',controls:true},
-    list:{ordered:true,items:[{text:'Első hivatkozás',href:'/p/home'},{text:'Második elem'}]},table:{caption:'Eredmények',header:true,rows:[['Név','Érték'],['Nézők','42']]},
+    list:{ordered:true,items:[{text:'Első hivatkozás',href:'/p/home'},{text:'Második elem'}]},table:{caption:'Eredmények',header:true,rows:tableRows},
     tabs:{ariaLabel:'Eredeti fülek',items:[{title:'Videók',text:'Videólista'},{title:'Bemutatkozás',text:'Személyes történet'}]},accordion:{items:[{title:'Hogyan készült?',text:'A kulisszák mögött.'},{title:'Hol találom?',text:'A szerkesztőben.'}]},dropdown:{items:[{title:'További részletek',text:'Kiegészítés'},{title:'Másik rész',text:'Új információ'}]},
     gallery:{ariaLabel:'Eredeti képrács',columns:'3',items:[{src:'/fixture.svg',alt:'Első kép'},{src:'/fixture.svg',alt:'  Második kép  ',caption:'  Második képaláírás  '}]},carousel:{ariaLabel:'Alkotói galéria',items:[{src:'/fixture.svg',alt:'Első dia'},{src:'/fixture.svg',alt:'Második dia'}]},
     code:{code:'<script>alert("Nem futok le")</script>',wrap:true},tooltip:{text:'Mi ez?',description:'Részletes magyarázat'},divider:{},spacer:{}
@@ -95,6 +102,15 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
     if(type==='table'){
       assert.equal(await table.getAttribute('data-inspector-command'),'content.properties.set');
       assert.equal(await table.getAttribute('data-inspector-key'),'props.rows[][]','table cells map to nested row/cell values');
+      const rowsField=table.locator('textarea');
+      assert.equal(await rowsField.inputValue(),serializeTableTsv(tableRows),'a supported authored table larger than 40,000 characters opens without truncation');
+      assert.equal(await rowsField.evaluate(el=>el.maxLength),MAX_AUTHORED_TABLE_TSV_CHARS,
+        'Inspector maxLength derives from the full row/column/cell contract, not a smaller legacy cap');
+      await rowsField.evaluate(el=>{el.focus();el.setSelectionRange(el.value.length,el.value.length)});
+      await rowsField.pressSequentially('!');
+      assert.equal(await rowsField.inputValue(),serializeTableTsv(expectedTableRows),
+        'a user can edit the final cell after the existing 40,000-character boundary');
+      assert.equal(posts.length,0,'large-table Inspector edits remain draft-only before Save');
     }
     const repeater=editor.locator('.content-repeater');
     if(await repeater.count()){
@@ -349,6 +365,8 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   await editor.getByRole('button',{name:'1. elem: Le',exact:true}).click();assert.match(await node(editor,'list').locator('ol').textContent(),/^Második elem/);
   assert.equal(posts.length,1);
   await editor.locator('#save').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));assert.equal(posts.at(-1).publish,false);
+  assert.deepEqual(posts.at(-1).document.pages[pageId].nodes[ids.table].props.rows,expectedTableRows,
+    'Save retains every long table cell and its final edit in the draft');
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.video].props.posterAssetId,assetId,'Save retains poster ID as draft only');
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.video].props.src,'/fixture.webm','video source is not overwritten by image picker');
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.image].props.assetId,assetId,'Save persists the site asset reference but never publishes it');
@@ -374,7 +392,10 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
     'a newly named carousel is still draft-only after Save');
   assert.equal(await node(live,'button').evaluate(el=>getComputedStyle(el).backgroundImage),'none','draft background stays private before Publish');
   assert.equal(await node(live,'image').locator('img').evaluate(el=>getComputedStyle(el).objectPosition),'50% 50%','Save does not publish image crop');
-  await editor.reload();await select('heading');assert.equal(await editor.getByLabel('Címsor szemantikai szintje',{exact:true}).inputValue(),'3');
+  await editor.reload();await select('table');
+  assert.equal(await editor.locator('.content-schema-field[data-content-key="rows"] textarea').inputValue(),serializeTableTsv(expectedTableRows),
+    'reload restores the complete long table before separate Publish');
+  await select('heading');assert.equal(await editor.getByLabel('Címsor szemantikai szintje',{exact:true}).inputValue(),'3');
   await editor.locator('#publish').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent==='Publikálva');await live.reload();
   assert.equal(await node(live,'icon').getAttribute('aria-label'),null,'Publish removes a whitespace-only icon name');
   assert.equal(await node(live,'icon').getAttribute('role'),null);
@@ -406,7 +427,11 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
     'Publish exposes the editable Dropdown group name');
   assert.equal(await node(live,'carousel').getByRole('region',{name:'Képes történeteim & fotók'}).count(),1,
     'published carousel region inherits the exact accessible Inspector name');
-  assert.equal(await node(live,'table').locator('th[scope=col]').count(),2);assert.equal(await node(live,'video').locator('video[controls]').count(),1);assert.equal(await node(live,'audio').locator('audio[controls]').count(),1);
+  assert.equal(await node(live,'table').locator('th[scope=col]').count(),2);
+  assert.equal(await node(live,'table').locator('tbody tr').count(),expectedTableRows.length,'Publish preserves all supported rows');
+  assert.equal(await node(live,'table').locator('tbody tr').last().locator('td').last().textContent(),expectedTableRows.at(-1)[1],
+    'separate Publish exposes the final long cell without truncation');
+  assert.equal(await node(live,'video').locator('video[controls]').count(),1);assert.equal(await node(live,'audio').locator('audio[controls]').count(),1);
   for(const type of ['video','audio']){const playback=await node(live,type).locator(type).evaluate(async media=>{if(media.readyState<1)await new Promise((resolve,reject)=>{media.addEventListener('loadedmetadata',resolve,{once:true});media.addEventListener('error',reject,{once:true})});media.muted=true;await media.play();const result={playing:!media.paused,duration:media.duration,readyState:media.readyState};media.pause();return result});assert.equal(playback.playing,true);assert.ok(playback.duration>0);assert.ok(playback.readyState>=2)}
   assert.equal(await node(live,'code').locator('script').count(),0);assert.match(await node(live,'code').locator('code').textContent(),/<script>/);
   await node(live,'tabs').getByRole('tab',{name:'Bemutatkozás',exact:true}).click();assert.equal(await node(live,'tabs').getByRole('tabpanel').textContent(),'Személyes történet');
