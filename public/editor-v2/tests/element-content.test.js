@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import {createDocument} from '../core/schema.js';
 import {createEditorState,activePage} from '../core/state.js';
 import {execute} from '../core/commands.js';
-import {AUTHORED_TABLE_LIMITS,MAX_AUTHORED_TABLE_TSV_CHARS,authoredNodeHtml,contentAttributes,contentTag,normalizeElementContent,validateElementContent,validatePageForPublication,contentProperties,imageFocalPosition} from '../core/authored-content.js';
+import {AUTHORED_TABLE_LIMITS,MAX_AUTHORED_TABLE_JSON_CHARS,MAX_AUTHORED_TABLE_TSV_CHARS,authoredNodeHtml,contentAttributes,contentTag,normalizeElementContent,normalizeContentField,CONTENT_FIELDS,validateElementContent,validatePageForPublication,contentProperties,imageFocalPosition} from '../core/authored-content.js';
 import {parseTableTsv,serializeTableTsv} from '../core/table-tsv.js';
 import {normalizeAccessibility,opaqueContrast} from '../core/accessibility.js';
 import {legacyImageSource,legacyPlayableSource,legacyPlaybackSettings,legacyImagePresentation,legacyImageCaption,legacyMediaInspectorValues} from '../core/legacy-media-source.js';
@@ -63,11 +63,42 @@ test('authored table TSV contract covers the full model and preserves quoted cel
   assert.equal(AUTHORED_TABLE_LIMITS.rows,100);
   assert.equal(AUTHORED_TABLE_LIMITS.columns,16);
   assert.equal(AUTHORED_TABLE_LIMITS.cellCharacters,2000);
-  assert.equal(MAX_AUTHORED_TABLE_TSV_CHARS,100*16*(2000*2+2)+(100*16-1),
-    'the textarea cap includes the worst-case quote escaping and separators for every supported cell');
+  assert.equal(MAX_AUTHORED_TABLE_JSON_CHARS,120000,
+    'serialized table content reserves room under the server 180,000-character Page Model cap');
+  assert.equal(MAX_AUTHORED_TABLE_TSV_CHARS,180000,
+    'the textarea does not truncate at the smaller serialized content budget');
+  assert.equal(CONTENT_FIELDS.table.find(field=>field.key==='rows').max,MAX_AUTHORED_TABLE_TSV_CHARS);
+  const tableNode={id:'table-budget',type:'table',metadata:{contentVersion:1},props:{}};
+  const withinBudget=Array.from({length:3},()=>Array(16).fill('x'.repeat(2000)));
+  const accepted=normalizeContentField(CONTENT_FIELDS.table.find(field=>field.key==='rows'),withinBudget);
+  assert.ok(JSON.stringify(accepted).length<=MAX_AUTHORED_TABLE_JSON_CHARS,
+    'a dense table near 100 KB JSON remains within the persistable table budget');
+  const state=createEditorState(createDocument()),parentId=activePage(state).rootId;
+  execute(state,{type:'element.add',payload:{type:'table',parentId}});
+  const nodeId=state.selection.primaryId;
+  execute(state,{type:'content.properties.set',payload:{nodeId,patch:{rows:accepted}}});
+  assert.ok(JSON.stringify(state.document).length<180000,
+    'a dense table inside its budget fits a minimal saved Page Model under the route limit');
+  const overBudget=[...withinBudget,Array(16).fill('x'.repeat(2000))];
+  assert.throws(()=>normalizeElementContent(tableNode,{rows:overBudget}),/120 000 karakter/,
+    'the Inspector rejects a valid cell/row shape that could not fit in the documented Save limit');
+  const quoteHeavy=Array.from({length:3},()=>Array(16).fill('"'.repeat(1300)));
+  assert.ok(serializeTableTsv(quoteHeavy).length<MAX_AUTHORED_TABLE_TSV_CHARS,
+    'escaped quotes remain below the generous textarea ceiling');
+  assert.throws(()=>normalizeElementContent(tableNode,{rows:quoteHeavy}),/120 000 karakter/,
+    'the persisted JSON budget accounts for quote escaping rather than raw TSV length alone');
+  const before=structuredClone(state.document);
+  assert.throws(()=>execute(state,{type:'content.properties.set',payload:{nodeId,patch:{rows:overBudget}}}),/120 000 karakter/,
+    'the command rejects the over-budget table before a draft mutation');
+  assert.deepEqual(state.document,before,'an invalid large table cannot mutate the saved editor model');
   const rows=[['Fejléc','Második'],['Tabulátor\t a cellában','Két sor\nfolytatás'],['Idézet: "igen"','CRLF\r\nmegmarad']];
   const text=serializeTableTsv(rows);
   assert.deepEqual(parseTableTsv(text),rows,'quotes, embedded tabs, LF and CRLF survive an Inspector edit round trip');
+  for(const value of ['x'.repeat(2000),'"'.repeat(2000),'\\'.repeat(2000),'\t'.repeat(2000),'\n'.repeat(2000),'\r\n'.repeat(1000),'\u0000'.repeat(2000)]){
+    const encoded=serializeTableTsv([[value]]),decoded=parseTableTsv(encoded);
+    assert.ok(encoded.length<=JSON.stringify(decoded).length,
+      'the 180,000-character textarea cap cannot truncate a table whose serialized rows fit the 120,000-character persisted budget');
+  }
   assert.deepEqual(parseTableTsv('A\tB\r\nC\tD'),[['A','B'],['C','D']],
     'ordinary Excel-style CRLF TSV remains supported');
   assert.throws(()=>parseTableTsv('"lezáratlan\tcell'),/nincs lezárva/);

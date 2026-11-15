@@ -4,9 +4,14 @@ export const CONTENT_VERSION=1;
 // Shared by the editor picker and the server-side media upload/list contract.
 export const IMAGE_MIMES=Object.freeze(['image/png','image/jpeg','image/gif','image/webp']);
 export const AUTHORED_TABLE_LIMITS=Object.freeze({rows:100,columns:16,cellCharacters:2000});
-// The Inspector's quoted TSV representation can double embedded quotes and
-// adds one pair of quotes around each cell at the worst-case boundary.
-export const MAX_AUTHORED_TABLE_TSV_CHARS=AUTHORED_TABLE_LIMITS.rows*AUTHORED_TABLE_LIMITS.columns*(AUTHORED_TABLE_LIMITS.cellCharacters*2+2)+(AUTHORED_TABLE_LIMITS.rows*AUTHORED_TABLE_LIMITS.columns-1);
+// Page Save/Publish currently caps the complete serialized Page Model at
+// 180,000 characters. Reserve space for the node/document envelope and other
+// content so a table cannot be valid in the Inspector but impossible to save.
+export const MAX_AUTHORED_TABLE_JSON_CHARS=120_000;
+// The TSV textarea has a larger input ceiling than the persisted table budget.
+// Normalization below is authoritative and rejects oversized tables without
+// relying on the browser's maxLength (which could silently truncate a paste).
+export const MAX_AUTHORED_TABLE_TSV_CHARS=180_000;
 const MEDIA_ASSET_ID=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const field=(key,label,type='text',extra={})=>({key,label,type,...extra});
 const text=field('text','Szöveg','textarea',{max:20000});
@@ -21,7 +26,7 @@ export const CONTENT_FIELDS=Object.freeze({
   text:[text],button:[text,...linkFields],link:[text,...linkFields],quote:[text,field('citation','Forrás / szerző')],badge:[text],icon:[field('icon','Ikon','select',{options:{star:'Csillag',heart:'Szív',play:'Lejátszás',check:'Pipa',arrow:'Nyíl',bolt:'Villám',camera:'Kamera',music:'Zene',globe:'Web',mail:'Levél'}}),field('ariaLabel','Ikon leírása','text',{max:160})],
   image:imageFields,video:[...externalMedia,field('poster','Külső borítókép címe','media-url',{help:'Meglévő HTTPS vagy belső kép-URL. A Médiatárból választott borítókép elsőbbséget kap.'}),field('posterAssetId','Borítókép a Médiatárból','asset',{help:'A videó továbbra is URL-ből játszódik le; csak a borítókép kerül a privát kép-Médiatárból az oldalra.'}),field('controls','Lejátszó vezérlők','boolean'),field('muted','Némítás','boolean'),field('loop','Ismétlés','boolean'),field('autoplay','Automatikus indítás némítva','boolean')],audio:[...externalMedia,field('controls','Lejátszó vezérlők','boolean'),field('loop','Ismétlés','boolean')],
   list:[field('ordered','Számozott lista','boolean'),field('items','Listaelemek','repeater',{itemFields:[text,href]})],
-  table:[field('caption','Táblázat címe'),field('header','Az első sor fejléc','boolean'),field('rows','Táblázat sorai','table',{max:MAX_AUTHORED_TABLE_TSV_CHARS})],
+  table:[field('caption','Táblázat címe'),field('header','Az első sor fejléc','boolean'),field('rows','Táblázat sorai','table',{max:MAX_AUTHORED_TABLE_TSV_CHARS,help:'A menthető táblázattartalom legfeljebb 120 000 karakteres; ennél nagyobb adatnál csökkentsd a cellák vagy sorok tartalmát.'})],
   tabs:[field('ariaLabel','Fülcsoport elnevezése','text',{max:160}),field('items','Fülek','repeater',{itemFields:[field('title','Fül címe'),text]})],accordion:[field('ariaLabel','Harmonikacsoport elnevezése','text',{max:160}),field('singleOpen','Egyszerre csak egy nyitott rész','boolean'),field('openFirst','Első rész kezdetben nyitva','boolean'),field('items','Lenyitható részek','repeater',{itemFields:[field('title','Rész címe'),text]})],dropdown:[field('ariaLabel','Lenyitható csoport elnevezése','text',{max:160}),field('singleOpen','Egyszerre csak egy nyitott rész','boolean'),field('openFirst','Első rész kezdetben nyitva','boolean'),field('items','Lenyitható részek','repeater',{itemFields:[field('title','Rész címe'),text]})],
   gallery:[field('ariaLabel','Képgaléria elnevezése','text',{max:160}),field('columns','Oszlopok asztalon','select',{options:{2:'2 oszlop',3:'3 oszlop',4:'4 oszlop'}}),field('items','Képek','repeater',{itemFields:[...media,field('alt','Képleírás'),field('caption','Képaláírás'),field('fit','Kép illesztése','select',{options:{cover:'Kitöltés, vágással',contain:'Teljes kép'}}),...focalFields]})],
   carousel:[field('ariaLabel','Galéria elnevezése'),field('items','Lapozható képek','repeater',{itemFields:[...media,field('alt','Képleírás'),field('caption','Képaláírás'),field('fit','Kép illesztése','select',{options:{cover:'Kitöltés, vágással',contain:'Teljes kép'}}),...focalFields]})],
@@ -87,7 +92,9 @@ export function normalizeContentField(definition,value){
     if(!Array.isArray(value)||value.length>AUTHORED_TABLE_LIMITS.rows)throw new Error(`Legfeljebb ${AUTHORED_TABLE_LIMITS.rows} sor adható meg.`);
     const width=value[0]?.length;
     if(!Number.isInteger(width)||width<1||width>AUTHORED_TABLE_LIMITS.columns)throw new Error(`A táblázatban 1–${AUTHORED_TABLE_LIMITS.columns} oszlop használható.`);
-    return value.map(row=>{if(!Array.isArray(row)||row.length!==width)throw new Error('A táblázat sorainak azonos számú oszlopot kell tartalmazniuk.');return row.map(cell=>normalizeContentField({type:'text',max:AUTHORED_TABLE_LIMITS.cellCharacters},cell))});
+    const rows=value.map(row=>{if(!Array.isArray(row)||row.length!==width)throw new Error('A táblázat sorainak azonos számú oszlopot kell tartalmazniuk.');return row.map(cell=>normalizeContentField({type:'text',max:AUTHORED_TABLE_LIMITS.cellCharacters},cell))});
+    if(JSON.stringify(rows).length>MAX_AUTHORED_TABLE_JSON_CHARS)throw new Error(`A mentett táblázattartalom legfeljebb ${MAX_AUTHORED_TABLE_JSON_CHARS.toLocaleString('hu-HU')} karakter lehet.`);
+    return rows;
   }
   if(definition.type==='range'){
     const number=typeof value==='number'?value:Number(value);

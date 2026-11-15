@@ -1,4 +1,4 @@
-import {isAuthoredContent,CONTENT_FIELDS,CONTENT_TYPES,STRUCTURAL_TYPES} from './authored-content.js';
+import {isAuthoredContent,CONTENT_FIELDS,CONTENT_TYPES,STRUCTURAL_TYPES} from './authored-content.js?v=20261115-d03-saveable-table-v1';
 import {isStructuredType} from './element-content.js?v=20261115-d04-tab-id-bound-v1';
 
 // These describe existing version gates, not a new content schema or validator.

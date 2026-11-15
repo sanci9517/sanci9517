@@ -1,6 +1,6 @@
 import {createCompositionInputs} from './composition-inputs.js';
 import {normalizeAccessibility} from '../core/accessibility.js';
-import {contentAttributes} from '../core/authored-content.js';
+import {contentAttributes} from '../core/authored-content.js?v=20261115-d03-saveable-table-v1';
 
 export function renderAccessibilityFields(node,apply,{nodes=()=>({}),pending=()=>{}}={}){
  const root=document.createElement('div');root.className='accessibility-fields';
