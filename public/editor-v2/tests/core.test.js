@@ -940,6 +940,19 @@ test('malformed authored CTA URLs fail publication and render as non-clickable b
   assert.equal(Object.hasOwn(contentAttributes(cta),'href'),false,'malformed legacy CTA data cannot create a clickable URL');
 });
 
+test('persisted authored CTA errors can be loaded and repaired without weakening command validation', () => {
+  const document=createDocument(undefined,{modern:true}),pageId=document.activePageId,page=document.pages[pageId];
+  const cta=createNode(NODE_TYPES.BUTTON,{name:'Javítandó CTA',parentId:page.rootId,metadata:{contentVersion:1},props:{text:'Céloldal',href:{toString:null}}});
+  page.nodes[cta.id]=cta;page.nodes[page.rootId].children.push(cta.id);
+  assert.throws(()=>createEditorState(document),/Szöveges érték szükséges\./,'strict state creation still rejects malformed authored content');
+  const state=createEditorState(document,{allowInvalidAuthoredContent:true});
+  assert.deepEqual(state.document.pages[pageId].nodes[cta.id].props.href,{toString:null},'loading keeps the original value intact for recovery');
+  assert.throws(()=>execute(state,{type:'element.update',payload:{nodeId:cta.id,patch:{name:'Másik név'}}}),/Szöveges érték szükséges\./,'unrelated mutations remain blocked until the invalid content is repaired');
+  execute(state,{type:'content.properties.set',payload:{nodeId:cta.id,patch:{href:'/p/fixed-target'}}});
+  assert.equal(state.document.pages[pageId].nodes[cta.id].props.href,'/p/fixed-target','the invalid field can be repaired through its normal command');
+  assert.doesNotThrow(()=>assertValidEditorDocument(state.document),'the repaired document returns to strict validity');
+});
+
 test('Schedule preview renderer uses canonical config without mutating domain data', () => {
   const defaults = createDefaultScheduleConfig();
   const upcoming = getSchedulePreviewItems(defaults);

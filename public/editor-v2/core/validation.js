@@ -121,7 +121,7 @@ export function validateEditorDocument(document) {
   return [...new Set(errors)];
 }
 
-export function assertValidEditorDocument(document) {
+export function assertValidEditorDocument(document,{allowInvalidAuthoredContent=false}={}) {
   for(const page of Object.values(document?.pages||{})){
     if(!page||typeof page!=='object'||Array.isArray(page))continue;
     validateAccessibility(page);
@@ -130,7 +130,7 @@ export function assertValidEditorDocument(document) {
       // the normal validation path instead of throwing while inspecting them.
       if(!node||typeof node!=='object'||Array.isArray(node))continue;
       if(node.metadata?.structuredContentVersion===1&&isStructuredType(node.type))validateStructuredContent(node.type,node.props?.contentModel);
-      validateAuthoredContent(node);
+      if(!allowInvalidAuthoredContent)validateAuthoredContent(node);
       validateStateStyles(node);
     }
   }
