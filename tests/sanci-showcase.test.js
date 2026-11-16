@@ -36,12 +36,12 @@ test('home stream image and pulse remain scoped, responsive, accessible and cach
  const html=readFileSync(new URL('../public/visual-page.html',import.meta.url),'utf8');
  assert.match(js,/mode=next&statuses=scheduled&limit=1/);
  assert.match(js,/mode=all&statuses=live&order=desc&limit=10/);
- assert.match(js,/image.src='\\/media\\/'\\+selection.imageAssetId/);
- assert.match(css,/body\\.sanci-editorial-page\\[data-sanci-showcase="depth-v2"\\] \\[data-sanci-role="next-stream"\\]\\.is-streaming/);
- assert.match(css,/@media\\(max-width:700px\\)/);
- assert.match(css,/@media\\(prefers-reduced-motion:reduce\\)/);
- assert.match(html,/sanci-showcase\\.css\\?v=20261116-home-live-artwork-v1/);
- assert.match(html,/page-renderer\\.js\\?v=20261116-home-live-artwork-v1/);
+ assert.ok(js.includes("image.src='/media/'+selection.imageAssetId"));
+ assert.ok(css.includes('body.sanci-editorial-page[data-sanci-showcase="depth-v2"] [data-sanci-role="next-stream"].is-streaming'));
+ assert.ok(css.includes('@media(max-width:700px)'));
+ assert.ok(css.includes('@media(prefers-reduced-motion:reduce)'));
+ assert.ok(html.includes('sanci-showcase.css?v=20261116-home-live-artwork-v1'));
+ assert.ok(html.includes('page-renderer.js?v=20261116-home-live-artwork-v1'));
 });
 
 test('SANCI pill icons activate only for real platform destinations',()=>{
