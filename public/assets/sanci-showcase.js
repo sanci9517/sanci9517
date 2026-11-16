@@ -27,6 +27,12 @@ export function classifySanciDestination(href){
   return '';
 }
 const activeObservers=new WeakMap();
+function clearRevealState(canvas){
+  if(typeof canvas?.querySelectorAll!=='function')return;
+  for(const el of canvas.querySelectorAll('.sanci-await-view,.sanci-in-view')){
+    el.classList.remove('sanci-await-view','sanci-in-view');
+  }
+}
 function staticSymbol(kind){
   const symbol=document.createElement('span');
   symbol.className='sanci-cta-symbol';
@@ -49,6 +55,10 @@ function staticSymbol(kind){
 export function decorateSanciShowcase(canvas,page,{slug,enabled=false}={}){
   const previous=activeObservers.get(canvas);
   if(previous){previous.disconnect();activeObservers.delete(canvas)}
+  // A rerender or disable can happen before an observed section enters the
+  // viewport. Remove the pending opacity state before detaching its observer;
+  // otherwise the editorial DOM can remain invisible after the observer dies.
+  clearRevealState(canvas);
   if(!enabled||!canvas||!page?.nodes||typeof canvas.querySelectorAll!=='function')return {active:false};
   const elements=new Map([...canvas.querySelectorAll('[data-node-id]')]
     .filter(el=>el.dataset?.nodeId).map(el=>[el.dataset.nodeId,el]));

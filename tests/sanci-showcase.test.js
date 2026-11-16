@@ -27,8 +27,12 @@ test('SANCI pill icons activate only for real platform destinations',()=>{
 class FakeNode{
  constructor(id,tag='SECTION',href=''){
   this.dataset={nodeId:id};this.tagName=tag;this.attrs={href};this.children=[];
-  this.className='';this.classes=[];
-  this.classList={add:name=>this.classes.push(name)};
+  this.className='';this.classes=new Set();
+  this.classList={
+   add:(...names)=>names.forEach(name=>this.classes.add(name)),
+   remove:(...names)=>names.forEach(name=>this.classes.delete(name)),
+   contains:name=>this.classes.has(name)
+  };
  }
  getAttribute(key){return this.attrs[key]??null}
  setAttribute(key,value){this.attrs[key]=value}
@@ -38,6 +42,52 @@ class FakeNode{
   ?this.children.find(x=>x.className==='sanci-cta-symbol')||null:null}
  getBoundingClientRect(){return {top:0}}
 }
+
+test('rerendering or disabling the showcase restores content hidden for pending scroll reveals',()=>{
+ const previous={observer:globalThis.IntersectionObserver,window:globalThis.window,matchMedia:globalThis.matchMedia};
+ const observers=[];
+ globalThis.IntersectionObserver=class{
+  constructor(callback){this.callback=callback;this.observed=[];this.disconnected=false;observers.push(this)}
+  observe(element){this.observed.push(element)}
+  unobserve(element){this.observed=this.observed.filter(item=>item!==element)}
+  disconnect(){this.disconnected=true;this.observed=[]}
+ };
+ globalThis.window={innerHeight:500};
+ globalThis.matchMedia=()=>({matches:false});
+ try{
+  const nodes={
+   root:{id:'root',type:'root',children:['hero','feature']},
+   hero:{id:'hero',type:'container',parentId:'root',style:{backgroundAssetId:'valid'},children:['copy']},
+   copy:{id:'copy',type:'container',parentId:'hero',children:[]},
+   feature:{id:'feature',type:'container',parentId:'root',children:[]}
+  };
+  const elements=[new FakeNode('hero'),new FakeNode('copy'),new FakeNode('feature')];
+  elements[2].getBoundingClientRect=()=>({top:1200});
+  const canvas={querySelectorAll(selector){
+   if(selector==='[data-node-id]')return elements;
+   if(selector==='.sanci-await-view,.sanci-in-view')return elements.filter(el=>el.classList.contains('sanci-await-view')||el.classList.contains('sanci-in-view'));
+   return [];
+  }};
+  assert.equal(decorateSanciShowcase(canvas,{nodes},{slug:'home',enabled:true}).active,true);
+  assert.equal(elements[2].classList.contains('sanci-await-view'),true,'offscreen feature is pending its reveal');
+  assert.equal(observers.length,1);
+  observers[0].callback([{target:elements[2],isIntersecting:true}]);
+  assert.equal(elements[2].classList.contains('sanci-in-view'),true,'an intersecting feature enters its visible state');
+  assert.equal(decorateSanciShowcase(canvas,{nodes},{slug:'home',enabled:true}).active,true,'same-canvas rerender can initialize a fresh reveal');
+  assert.equal(observers[0].disconnected,true,'the rerender detaches the previous observer');
+  assert.equal(elements[2].classList.contains('sanci-in-view'),false,'a stale completion class cannot leak into a new render');
+  assert.equal(elements[2].classList.contains('sanci-await-view'),true,'the new observer owns the pending state');
+  assert.equal(observers.length,2);
+  assert.equal(decorateSanciShowcase(canvas,{nodes},{slug:'home',enabled:false}).active,false);
+  assert.equal(observers[1].disconnected,true,'the active observer is disconnected before cleanup');
+  assert.equal(elements[2].classList.contains('sanci-await-view'),false,'content is visible when the feature is disabled');
+  assert.equal(elements[2].classList.contains('sanci-in-view'),false,'stale reveal state is removed on the same canvas');
+ }finally{
+  for(const [key,value] of Object.entries({IntersectionObserver:previous.observer,window:previous.window,matchMedia:previous.matchMedia})){
+   if(value===undefined)delete globalThis[key];else globalThis[key]=value;
+  }
+ }
+});
 
 test('original signature, icons and next-stream roles decorate SANCI only, without duplicating links',()=>{
  const previous=globalThis.document;
@@ -95,9 +145,13 @@ test('outlined icons retain their stroke, and navigation keeps its existing icon
 
 test('decorations run after all authored content activators, not before their DOM rewrites',()=>{
  const renderer=readFileSync(new URL('../public/assets/page-renderer.js',import.meta.url),'utf8');
+ const shell=readFileSync(new URL('../public/visual-page.html',import.meta.url),'utf8');
  const activation=renderer.indexOf('activateStructuredContent(canvas);activateCountdowns(canvas);activateEmbeds(canvas);activateCodeBlocks(canvas);');
  const decoration=renderer.indexOf('decorateSanciShowcase(canvas,page,{slug,enabled:isSanciShowcase});');
  assert.ok(activation>0&&decoration>activation,'icons, autograph and highlights are attached after activation');
+ assert.match(renderer,/sanci-showcase\.js\?v=20261116-reveal-cleanup-v1/);
+ assert.match(shell,/page-renderer\.js\?v=20261116-reveal-state-cleanup-v1/,
+  'the page shell must request the runtime that contains the observer cleanup');
  assert.equal(renderer.indexOf('decorateSanciShowcase(canvas,page,{slug,enabled:isSanciShowcase});',decoration+1),-1);
 });
 
