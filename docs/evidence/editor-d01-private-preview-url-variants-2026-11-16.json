@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "planPoint": "77.44.7.D / D-01 private media-preview URL variants at authored video/audio Inspector boundary",
+  "date": "2026-11-16",
+  "status": "PARTIAL_PASS",
+  "scope": [
+    "video/audio authored src Inspector rejects exact, percent-encoded and path-normalized private Media preview routes",
+    "invalid source leaves prior Canvas source intact",
+    "Save and Publish issue no request and do not mutate public snapshot for invalid variants"
+  ],
+  "verification": {
+    "browser": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-content-system.test.js",
+      "result": "PASS",
+      "tests": "1/1",
+      "notes": "The same authenticated preview variants are tested for both video and audio: direct API path, encoded admin segment, encoded api segment, and a path-normalized private API route. A first sandbox-default attempt was denied only at loopback bind; rerun with local network permission passed."
+    },
+    "planAudit": {
+      "command": "python3 scripts/audit-active-plan-point.py",
+      "result": "PASS",
+      "cursor": "77.44 / WEB-011 -> 77.44.7.D",
+      "featureCount": 396,
+      "sourceCounts": {
+        "PARTIAL_SOURCE": 146,
+        "UNVERIFIED": 250
+      }
+    },
+    "runtime": {
+      "runtimeChanged": false,
+      "deploymentId": "5f49764b-cfd0-44c5-9767-6f882690a838",
+      "workerVersion": "f9173eca-4d17-4712-8c4a-61d62d6d4de2",
+      "versionNumber": 4076,
+      "trafficPercent": 100,
+      "health": "NOT_RECHECKED_RUNTIME_UNCHANGED",
+      "assetHashes": "NOT_RECHECKED_RUNTIME_UNCHANGED"
+    }
+  },
+  "productionData": {
+    "d1Write": "NONE",
+    "r2Mutation": "NONE",
+    "newHostedCi": "NONE",
+    "costHuf": 0
+  },
+  "testSha256": {
+    "tests/browser/editor-content-system.test.js": "721fbab595c2a68bfb61d591f89a23aa47d5b7f97cd206fdcf2b30c0c54b0565"
+  },
+  "agentsSha256": "d23cdc8d6e8e12814f99a81cd556e3b7e0ae4092fbe41145ba0bbb2835d6820f",
+  "scopeLimit": "This closes only the private-media URL-variant browser subgate for D-01 video/audio sources. Full D-01, D-02 through D-07, production media lifecycle, and complete Editor physical acceptance remain OPEN / NOT_CERTIFIED / DEFERRED. Save and Publish remain separate."
+}

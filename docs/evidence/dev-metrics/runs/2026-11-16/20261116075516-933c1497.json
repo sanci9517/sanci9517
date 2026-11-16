@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261116075516-933c1497",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-16T07:55:16.959Z",
+  "finished_at": "2026-11-16T07:56:53.528Z",
+  "wall_seconds": 97,
+  "paused_seconds": 0,
+  "measured_seconds": 97,
+  "status": "partial",
+  "kind": "test",
+  "summary": "D-01 video/audio Inspector rejects encoded and normalized private media-preview URL variants; targeted browser 1/1 PASS, D remains open.",
+  "evidence": [
+    "docs/evidence/editor-d01-private-preview-url-variants-2026-11-16.json"
+  ],
+  "checks": "targeted Chromium 1/1 PASS; plan-contract 14/14; canonical-plan 13 master/396 mappings PASS; active-point audit identifies 77.44.7.D OPEN; traceability 396/396; syntax, JSON and diff-check PASS",
+  "started_revision": "b541c8318ad810a21aebaf7725ade39208443a91",
+  "finished_revision": "b541c8318ad810a21aebaf7725ade39208443a91",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
