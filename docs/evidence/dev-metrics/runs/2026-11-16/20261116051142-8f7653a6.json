@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261116051142-8f7653a6",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-16T05:11:42.869Z",
+  "finished_at": "2026-11-16T05:31:35.894Z",
+  "wall_seconds": 1193,
+  "paused_seconds": 0,
+  "measured_seconds": 1193,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "A D authored-mezők Inspector/Canvas/Save-reload/Publish böngészős keresztellenőrzése 17/17 PASS; a teljes D mezőnkénti elfogadása tovább OPEN",
+  "evidence": [
+    "docs/evidence/editor-d-browser-lifecycle-crosswalk-2026-11-16.json"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "4211a8483761b7a280eba858120fdd880a5fbc5c",
+  "finished_revision": "4211a8483761b7a280eba858120fdd880a5fbc5c",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

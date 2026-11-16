@@ -1,0 +1,165 @@
+{
+  "schema": "sanci.editor.d.browser-lifecycle-crosswalk.v1",
+  "captured_at_utc": "2026-11-16T05:32:25Z",
+  "plan_point": "77.44.7.D — element-specific content and media",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "local_head": "4211a8483761b7a280eba858120fdd880a5fbc5c",
+    "remote_head_verified": "4211a8483761b7a280eba858120fdd880a5fbc5c",
+    "runtime_source_sha": "a7eaf769eb8d61f4bfa81f3e1262d02b87f73d35",
+    "canonical_plan_sha256_before_append": "9b67dfb981bc1e0d9ab1e5f2238489a8ba7ca7ae96b4d79dc35a23f9983ccc0e"
+  },
+  "browser_lifecycle_crosswalk": [
+    {
+      "content_types": [
+        "button",
+        "link",
+        "icon",
+        "image",
+        "video",
+        "audio",
+        "list",
+        "table",
+        "tabs",
+        "accordion",
+        "dropdown",
+        "gallery",
+        "carousel"
+      ],
+      "test": "tests/browser/editor-content-system.test.js",
+      "test_name": "typed authored elements survive Inspector edits, reload and separate Publish with real accessible content and interactions",
+      "observed_scope": [
+        "each defined type selected in the real Editor",
+        "Inspector command and Page Model property path for every declared field",
+        "type-specific edits and Canvas feedback",
+        "Save remains draft-only",
+        "Editor reload restores saved draft",
+        "separate Publish updates public renderer",
+        "public tab keyboard/ARIA interactions and media URL handling"
+      ]
+    },
+    {
+      "content_types": [
+        "list",
+        "table",
+        "tabs",
+        "accordion",
+        "dropdown",
+        "gallery",
+        "carousel"
+      ],
+      "test": "tests/browser/editor-structured-content.test.js",
+      "test_name": "structured Inspector editing survives Save, Publish and public interaction on desktop and mobile",
+      "observed_scope": [
+        "repeaters and nested rows",
+        "Save/reload/Publish separation",
+        "public structured renderer and keyboard interaction"
+      ]
+    },
+    {
+      "content_types": [
+        "image",
+        "gallery",
+        "carousel",
+        "video"
+      ],
+      "test": "tests/browser/editor-media-source-switch.test.js",
+      "observed_scope": [
+        "source switching",
+        "companion field preservation",
+        "failed source commit recovery",
+        "Save and Publish remain separate"
+      ]
+    },
+    {
+      "content_types": [
+        "gallery",
+        "carousel"
+      ],
+      "test": "tests/browser/editor-gallery-crop-parity.test.js",
+      "observed_scope": [
+        "Inspector/Canvas/public crop parity",
+        "source changes",
+        "Save and Publish"
+      ]
+    },
+    {
+      "content_types": [
+        "image",
+        "video",
+        "audio"
+      ],
+      "test": "tests/browser/editor-legacy-media-parity.test.js",
+      "observed_scope": [
+        "guarded media URL parity in Inspector, Canvas and public Save/Publish"
+      ]
+    },
+    {
+      "content_types": [
+        "card"
+      ],
+      "test": "tests/browser/editor-card-content.test.js",
+      "observed_scope": [
+        "independent Card profile, IME, Media source, and Save/Publish isolation at 390px and 1366px"
+      ]
+    },
+    {
+      "content_types": [
+        "image",
+        "button",
+        "shared Inspector element types"
+      ],
+      "test": "tests/browser/editor-inspector-lifecycle.test.js",
+      "observed_scope": [
+        "responsive desktop/tablet/mobile values through draft Save, reload, and separate Publish",
+        "background Media identity and site-scoped public route"
+      ]
+    },
+    {
+      "content_types": [
+        "all supported partial Inspector types"
+      ],
+      "test": "tests/browser/editor-inspector-partial-types.test.js",
+      "observed_scope": [
+        "real Inspector routes and Save-versus-Publish for responsive, visibility, hover, and keyboard-focus state"
+      ]
+    },
+    {
+      "content_types": [
+        "Inspector responsive values"
+      ],
+      "test": "tests/browser/editor-inspector-breakpoint-lifecycle.test.js",
+      "observed_scope": [
+        "desktop/tablet/mobile isolation over Save and Publish"
+      ]
+    }
+  ],
+  "verification": {
+    "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-content-system.test.js tests/browser/editor-structured-content.test.js tests/browser/editor-card-content.test.js tests/browser/editor-media-source-switch.test.js tests/browser/editor-inspector-partial-types.test.js tests/browser/editor-inspector-lifecycle.test.js tests/browser/editor-inspector-breakpoint-lifecycle.test.js tests/browser/editor-gallery-crop-parity.test.js tests/browser/editor-legacy-media-parity.test.js",
+    "result": "PASS",
+    "reported_tests": 17,
+    "reported_failures": 0,
+    "execution": "Chromium launched successfully outside the sandbox after sandbox crashpad setsockopt was blocked; npm ci from existing lockfile installed 47 packages with scripts/audit/funding disabled and /tmp cache",
+    "hosted_ci": "not run; docs/evidence-only follow-up uses [skip ci], no quota rerun required"
+  },
+  "release": {
+    "runtime_changed": false,
+    "public_assets_changed": false,
+    "worker_deployed": false,
+    "latest_deployment_id": "5f49764b-cfd0-44c5-9767-6f882690a838",
+    "worker_version_id": "f9173eca-4d17-4712-8c4a-61d62d6d4de2",
+    "traffic_percent": 100,
+    "health_get": "not repeated; no runtime change",
+    "production_d1": "no write or migration",
+    "production_r2": "no operation",
+    "new_cost_huf": 0
+  },
+  "status": "D_BROWSER_LIFECYCLE_CROSSWALK_PARTIAL_GATE_PASS; FULL_77_44_7_D_OPEN_NOT_CERTIFIED",
+  "limitations": [
+    "The browser suite validates a large shared authored-element lifecycle, but it does not individually edit, validate and assert every field at every breakpoint for all types.",
+    "Site-scoped Media is exercised with an isolated fixture, not against production data.",
+    "Full D-01–D-07 capability/lifecycle acceptance and full Editor physical acceptance remain open/deferred.",
+    "Save and Publish remain distinct actions."
+  ]
+}
