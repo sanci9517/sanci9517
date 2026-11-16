@@ -1,0 +1,127 @@
+{
+  "schema": 1,
+  "recorded_at": "2026-11-16T12:16:45Z",
+  "scope": "public SANCI progressive reveal resilience",
+  "canonical_plan": "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+  "plan_item": "UX-REF-AVID.6 / accessibility, reduced-motion and public/editor parity",
+  "plan_status": "OPEN; this release closes only the stale-scroll-reveal defect, not the full Visual Editor acceptance scope",
+  "finding": "When the same public canvas was decorated again, or its SANCI treatment was disabled, IntersectionObserver was disconnected while pending sanci-await-view opacity classes could remain on the Page Model DOM. The CSS makes these pending elements transparent, so an offscreen section could remain invisible after re-render/disable.",
+  "implementation": {
+    "commit": "087b798a1ca5a8cbc011fbe6b79d316ca48caf36",
+    "branch": "v2/foundation",
+    "parent": "1ad5dac1192f348cb3a088590721c519c956ce75",
+    "changes": [
+      "Clear stale sanci-await-view and sanci-in-view classes after disconnecting the old observer, before applying the new decoration or returning disabled.",
+      "Bump the showcase and Page Renderer cache keys so the live browser requests the corrected module.",
+      "Add a regression contract that simulates offscreen pending state, an observer intersection, same-canvas re-render, and disable cleanup."
+    ],
+    "save_publish": "No Page Model content, Save, Publish, production D1 data, or R2 state was modified."
+  },
+  "checks": {
+    "npm run test:showcase": "PASS",
+    "npm run test:design": "PASS",
+    "npm run typecheck": "PASS",
+    "npm run test:web013:migration-gate": "PASS",
+    "XDG_CONFIG_HOME=/tmp/sanci-wrangler-config npx wrangler deploy --dry-run": "PASS, exit 0, Wrangler 4.130.0",
+    "git diff --check": "PASS",
+    "playwright tests/browser/sanci-showcase.test.js": "BLOCKED: Chromium SIGTRAPs in this sandbox; direct /usr/bin/chromium smoke reported setsockopt: Operation not permitted. Not reported as PASS."
+  },
+  "read_only_d1_preflight": {
+    "method": "Cloudflare D1 Query API; SELECT statements only",
+    "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
+    "schema_tables_observed": [
+      "d1_migrations",
+      "media",
+      "pages",
+      "schedule_items",
+      "social_accounts",
+      "twitch_connections",
+      "twitch_oauth_states"
+    ],
+    "applied_migrations": 35,
+    "latest_migration": "0029_media_archive_unicode_additive.sql",
+    "observed_row_counts": {
+      "pages": 11,
+      "schedule_items": 4,
+      "media": 23,
+      "social_accounts": 0
+    },
+    "all_queries_metadata": {
+      "rows_written": 0,
+      "changes": 0,
+      "changed_db": false
+    }
+  },
+  "github": {
+    "push": "normal fast-forward confirmed",
+    "head_sha": "087b798a1ca5a8cbc011fbe6b79d316ca48caf36",
+    "workflow_runs": [
+      {
+        "name": "Production Worker source smoke",
+        "id": 43864304715,
+        "status": "success",
+        "url": "https://github.com/sanci9517/sanci9517/actions/runs/43864304715"
+      },
+      {
+        "name": "F0 baseline checks",
+        "id": 43864304350,
+        "status": "success",
+        "url": "https://github.com/sanci9517/sanci9517/actions/runs/43864304350"
+      },
+      {
+        "name": "Twitch Integration Check",
+        "id": 43864304598,
+        "status": "success",
+        "url": "https://github.com/sanci9517/sanci9517/actions/runs/43864304598"
+      },
+      {
+        "name": "Editor Core Test",
+        "id": 43864304402,
+        "status": "in_progress",
+        "url": "https://github.com/sanci9517/sanci9517/actions/runs/43864304402"
+      }
+    ]
+  },
+  "production": {
+    "deployment_id": "164e7b6b-2660-4efb-9653-c207e975941b",
+    "worker_version": "7d4cf80b-f693-4cda-bf82-69421624d799",
+    "worker_version_number": 4080,
+    "traffic_percent": 100,
+    "deployed_at": "2026-11-16T12:11:54.727534Z",
+    "health": {
+      "status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "public_routes": {
+      "/": 200,
+      "/p/twitch": 200,
+      "/p/youtube": 200,
+      "/p/tiktok": 200,
+      "/p/schedule": 200,
+      "/p/community": 200,
+      "/p/about": 200,
+      "/p/contact": 200
+    },
+    "live_shell_cache_keys": {
+      "showcase_css": true,
+      "page_renderer": true
+    },
+    "asset_sha256_source_equals_live": {
+      "public/assets/page-renderer.js": "c5fb3e8f3d0a611636ec681bc6c01ac0e2cbc3d5a32e3c19202ac907b13c5160",
+      "public/assets/sanci-showcase.js": "478446f5105c747efa381d8ffced947b10b92fc7b184e5aa81a8c8b023fffc5e"
+    },
+    "direct_visual_page_html_asset": "not served as a static file; verified the canonical routed homepage HTML contains the bumped script/style cache keys instead"
+  },
+  "cost": "0 Ft new service spend; no paid service invoked",
+  "data_safety": "No production D1 writes/migrations, no R2 operation, no Page Model mutation.",
+  "limitations": [
+    "The browser automation could not run in this sandbox due to Chromium process restrictions.",
+    "The full UX-REF-AVID.6 and Visual Editor physical acceptance remain open."
+  ],
+  "metrics_run": "20261116115850-6a770e23"
+}

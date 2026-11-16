@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "id": "20261116115850-6a770e23",
+  "task": "public-site-live-404-triage",
+  "trigger": "manual",
+  "started_at": "2026-11-16T11:58:50.051Z",
+  "finished_at": "2026-11-16T12:16:23.700Z",
+  "wall_seconds": 1054,
+  "paused_seconds": 0,
+  "measured_seconds": 1054,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "Fixed stale progressive-reveal state on same-canvas render/disable and shipped to production; local regression/design/type/build gates passed, while sandbox Chromium browser test was blocked and Editor Core CI browser checks remained in progress.",
+  "evidence": [
+    "087b798a1ca5a8cbc011fbe6b79d316ca48caf36",
+    "docs/evidence/sanci-public-reveal-cleanup-2026-11-16.json",
+    "tests/sanci-showcase.test.js"
+  ],
+  "checks": "showcase/design/typecheck/migration gate/Wrangler dry-run PASS; SELECT-only D1 no writes; runtime deployed and live hashes/routes verified; browser sandbox BLOCKED; Editor Core CI IN_PROGRESS",
+  "started_revision": "1ad5dac1192f348cb3a088590721c519c956ce75",
+  "finished_revision": "087b798a1ca5a8cbc011fbe6b79d316ca48caf36",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
