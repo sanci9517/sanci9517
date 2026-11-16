@@ -48,6 +48,12 @@ jobs:
           npx playwright install chromium
           node --input-type=module -e "import {chromium} from 'playwright'; const browser=await chromium.launch({headless:true,args:['--no-sandbox']}); const page=await browser.newPage(); await page.goto('data:text/html,<title>ok</title>'); if(await page.title()!=='ok')process.exitCode=1; await browser.close();"
 
+      - name: Run SANCI public showcase unit regression
+        run: npm run test:showcase
+
+      - name: Run SANCI public showcase Chromium regression
+        run: npm run test:showcase:browser
+
       - name: Test real Worker media upload with isolated D1 and R2
         run: npm run test:media:storage
 
