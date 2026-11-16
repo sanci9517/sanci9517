@@ -1,14 +1,14 @@
 {
   "schema": "sanci.editor.d.link-lifecycle.v1",
-  "captured_at_utc": "2026-11-16T05:44:33Z",
+  "captured_at_utc": "2026-11-16T05:53:15Z",
   "plan_point": "77.44.7.D — element-specific content and media",
   "repository": {
     "name": "sanci9517/sanci9517",
     "branch": "v2/foundation",
-    "source_commit": "8bb8bf0a3c906d27bd0da2320dfec4f5a930f649",
-    "remote_head_before_change": "8bb8bf0a3c906d27bd0da2320dfec4f5a930f649",
+    "source_commit": "d972c09ff8b8c537e7fa141651281e372c975d57",
+    "remote_head_before_change": "d972c09ff8b8c537e7fa141651281e372c975d57",
     "runtime_source_sha": "a7eaf769eb8d61f4bfa81f3e1262d02b87f73d35",
-    "canonical_plan_sha256_before_append": "3ea1b5a6b36e67df10ea99debb917214a7979cb6b357fa802787b329420738ce"
+    "canonical_plan_sha256_before_append": "fda19b29b3b76cac6c24d7a429d160bad11e85b51289d8eb9b4be5fa8e16cd60"
   },
   "change": {
     "test": "tests/browser/editor-content-system.test.js",
@@ -17,7 +17,8 @@
       "link href, target and ariaLabel Inspector controls retain their authored values",
       "Save records link text and link fields in the draft while the public page remains unchanged",
       "Editor reload restores the saved link text, href, target and accessible name",
-      "separate Publish updates the public link destination, target, rel=noopener noreferrer, accessible name and text"
+      "separate Publish updates the public link destination, target, rel=noopener noreferrer, accessible name and text",
+      "unsafe javascript: URL is rejected inline with aria-invalid and an accessible validation message; valid HTTPS clears the error before Save"
     ],
     "harness_corrections": [
       "link text is exposed through the dedicated .plain-text-editor, while the shared schema controls expose href, target and ariaLabel",
@@ -37,7 +38,8 @@
     "canonical_plan": "13 master files / 396 features PASS",
     "active_cursor": "77.44.7.D / OPEN / NOT_CERTIFIED",
     "feature_traceability": "396/396 PASS",
-    "git_diff_check": "PASS"
+    "git_diff_check": "PASS",
+    "unsafe_link_validation": "PASS; same targeted real-Chromium browser test 1/1"
   },
   "release": {
     "runtime_changed": false,
