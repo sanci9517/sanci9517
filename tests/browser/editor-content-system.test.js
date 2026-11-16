@@ -8,7 +8,7 @@ import {chromium} from 'playwright';
 import {createDocument} from '../../public/editor-v2/core/schema.js';
 import {createEditorState,activePage} from '../../public/editor-v2/core/state.js';
 import {execute} from '../../public/editor-v2/core/commands.js';
-import {MAX_AUTHORED_TABLE_TSV_CHARS} from '../../public/editor-v2/core/authored-content.js';
+import {CONTENT_FIELDS,MAX_AUTHORED_TABLE_TSV_CHARS} from '../../public/editor-v2/core/authored-content.js';
 import {serializeTableTsv} from '../../public/editor-v2/core/table-tsv.js';
 
 // editor-sample.webm is a 619-byte, procedurally generated purple VP9 frame (ffmpeg lavfi color).
@@ -74,6 +74,7 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   // This fixture mounts every authored content type and exercises multiple
   // Inspector/Canvas/save/reload routes; keep the assertion strict while
   // allowing the same interaction budget as the other full Inspector tests.
+  const dContentTypes=new Set(['button','link','icon','image','video','audio','list','table','tabs','accordion','dropdown','gallery','carousel']);
   editor.setDefaultTimeout(15000);live.setDefaultTimeout(15000);editor.setDefaultNavigationTimeout(30000);live.setDefaultNavigationTimeout(30000);editor.on('pageerror',e=>errors.push(e.message));live.on('pageerror',e=>errors.push(e.message));
   const node=(tab,type)=>tab.locator(`.creator-node[data-node-id="${ids[type]}"]`);
   const select=async type=>{await node(editor,type).evaluate(el=>el.click());if(await editor.locator('#rightDock').evaluate(el=>el.classList.contains('closed')))await editor.locator('#openInspector').click();await editor.locator('.inspector-tabs button').nth(1).click()};
@@ -92,8 +93,16 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
       const repeater=field.closest('.content-repeater');
       const path=type==='table'&&field.dataset.contentKey==='rows'?'rows[][]':
         (repeater?repeater.dataset.contentKey+'[].':'')+field.dataset.contentKey;
-      return {key:field.dataset.inspectorKey,command:field.dataset.inspectorCommand,expected:'props.'+path};
+      return {contentKey:field.dataset.contentKey,key:field.dataset.inspectorKey,command:field.dataset.inspectorCommand,expected:'props.'+path};
     }),type);
+    const plainTextTypes=new Set(['heading','text','button','link']);
+    const expectedSchemaKeys=CONTENT_FIELDS[type].flatMap(field=>{
+      if(plainTextTypes.has(type)&&field.key==='text')return [];
+      if(field.type==='repeater')return Array.from({length:Array.isArray(definitions[type][field.key])?definitions[type][field.key].length:0},()=>field.itemFields.map(item=>item.key)).flat();
+      return [field.key];
+    });
+    if(dContentTypes.has(type))assert.deepEqual(fields.map(field=>field.contentKey),expectedSchemaKeys,`${type} renders every declared Inspector field exactly once`);
+    if(plainTextTypes.has(type))assert.equal(await editor.locator(`.plain-text-editor[data-text-node-id="${ids[type]}"]`).count(),1,`${type} exposes text in its dedicated Editor control`);
     for(const field of fields){
       assert.equal(field.command,'content.properties.set',`${type}/${field.expected} command`);
       assert.equal(field.key,field.expected,`${type} field route`);

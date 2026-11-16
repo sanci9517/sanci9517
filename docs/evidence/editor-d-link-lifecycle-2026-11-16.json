@@ -1,6 +1,6 @@
 {
   "schema": "sanci.editor.d.link-lifecycle.v1",
-  "captured_at_utc": "2026-11-16T05:53:15Z",
+  "captured_at_utc": "2026-11-16T05:58:30Z",
   "plan_point": "77.44.7.D — element-specific content and media",
   "repository": {
     "name": "sanci9517/sanci9517",
@@ -18,11 +18,13 @@
       "Save records link text and link fields in the draft while the public page remains unchanged",
       "Editor reload restores the saved link text, href, target and accessible name",
       "separate Publish updates the public link destination, target, rel=noopener noreferrer, accessible name and text",
-      "unsafe javascript: URL is rejected inline with aria-invalid and an accessible validation message; valid HTTPS clears the error before Save"
+      "unsafe javascript: URL is rejected inline with aria-invalid and an accessible validation message; valid HTTPS clears the error before Save",
+      "browser acceptance now requires the rendered Inspector field-key list for every D type to exactly equal the field contract, including nested repeater child controls and the dedicated text control"
     ],
     "harness_corrections": [
       "link text is exposed through the dedicated .plain-text-editor, while the shared schema controls expose href, target and ariaLabel",
-      "Editor Canvas intentionally renders non-navigable node-content; public link attributes are asserted on the published node"
+      "Editor Canvas intentionally renders non-navigable node-content; public link attributes are asserted on the published node",
+      "the exact key-set expectation expands repeater child fields for fixture rows and is scoped to the 13 D authored types; early assertions exposed the wrong initial assumptions and final real-browser suite passes"
     ]
   },
   "verification": {
@@ -39,7 +41,8 @@
     "active_cursor": "77.44.7.D / OPEN / NOT_CERTIFIED",
     "feature_traceability": "396/396 PASS",
     "git_diff_check": "PASS",
-    "unsafe_link_validation": "PASS; same targeted real-Chromium browser test 1/1"
+    "unsafe_link_validation": "PASS; same targeted real-Chromium browser test 1/1",
+    "d_type_field_render_completeness": "PASS; exact visible D field set checked for 13 types; nested repeater rows and dedicated text fields included"
   },
   "release": {
     "runtime_changed": false,
@@ -58,6 +61,7 @@
   "limitations": [
     "This targeted link interaction does not close all per-field validation, responsive, renderer, Media authorization or physical device acceptance across the entire D scope.",
     "Full 77.44.7.D remains OPEN / NOT_CERTIFIED; complete Visual Editor manual/physical acceptance remains deferred.",
-    "Save remains distinct from Publish."
+    "Save remains distinct from Publish.",
+    "The DOM field-presence assertion guards the shared D fixture schema and rendered controls; it is not independent value-edit/invalid-input/public-render acceptance for every individual field."
   ]
 }
