@@ -1,6 +1,7 @@
 // Time-zone aware, deterministic countdown. Source of truth is the ISO timestamp.
 import {scheduleStartEpoch} from './schedule-time.js';
 const unsafeText=value=>String(value??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+const authoredText=(value,fallback)=>typeof value==='string'&&value?value:fallback;
 export function defaultCountdownContent(){
  return {version:1,title:'Következő stream',targetISO:'',finishText:'Az esemény elkezdődött.',showSeconds:true};
 }
@@ -44,10 +45,13 @@ export function remainingText(targetISO,now=Date.now(),showSeconds=true,finishTe
 }
 export function renderCountdownContent(value){
  const cfg=value&&typeof value==='object'?{...defaultCountdownContent(),...value}:defaultCountdownContent();
- const title=unsafeText(cfg.title||'Visszaszámláló');
+ // Persisted published content can outlive validation rules. Never coerce an
+ // object into a primitive while rendering the public page; Publish still
+ // rejects malformed authored values through normalizeCountdownContent().
+ const title=unsafeText(authoredText(cfg.title,'Visszaszámláló'));
  const dynamic=cfg.source==='next-stream';
  const target=dynamic?'':typeof cfg.targetISO==='string'&&Number.isFinite(Date.parse(cfg.targetISO))?cfg.targetISO:'';
- const finishText=String(cfg.finishText||'Az esemény elkezdődött.');
+ const finishText=authoredText(cfg.finishText,defaultCountdownContent().finishText);
  const text=dynamic?'Következő adás keresése…':remainingText(target,Date.now(),Boolean(cfg.showSeconds),finishText);
  const detail=dynamic?'<span class="visual-countdown-details" role="status" aria-live="polite">A meghirdetett adásokból frissül.</span>':'';
  return `<div class="visual-countdown-content" data-countdown-source="${dynamic?'next-stream':'manual'}" data-countdown-target="${unsafeText(target)}" data-countdown-finish="${unsafeText(finishText)}" data-countdown-seconds="${cfg.showSeconds?'true':'false'}"><strong class="visual-countdown-heading">${title}</strong><time class="visual-countdown-clock" aria-live="off" datetime="${unsafeText(target)}">${unsafeText(text)}</time>${detail}</div>`;

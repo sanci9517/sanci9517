@@ -195,5 +195,12 @@ for(const [width,timezoneId,gap,overlapISO,overlapLocal] of [[390,'Europe/Budape
   assert.match(await field.locator('.countdown-manual-hint').textContent(),/érvényes időpontot/);
   assert.equal(await field.locator('input[type="datetime-local"]').inputValue(),'');
  }
- assert.deepEqual(errors,[]);
+ // Corrupt legacy published text must not take down the entire public page;
+ // it stays visible with safe display defaults and is still blocked at Publish.
+ published.pages[pageId].nodes[id].props.countdown.title={toString:null};
+ published.pages[pageId].nodes[id].props.countdown.finishText={toString:null};
+ await viewer.reload();
+ assert.equal(await viewer.locator('.visual-countdown-heading').textContent(),'Visszaszámláló');
+ assert.equal(await viewer.locator('.visual-countdown-content').getAttribute('data-countdown-finish'),'Az esemény elkezdődött.');
+ assert.deepEqual(errors,[],'malformed persisted Countdown text cannot crash the public renderer');
 });

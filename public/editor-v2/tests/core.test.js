@@ -1576,7 +1576,7 @@ test('Card shared Media IDs preserve legacy URLs and reject malformed unpublishe
 });
 
 test('Countdown deadline is stable, editable and blocked at Publish if incomplete',async()=>{
- const {remainingText,remainingParts,normalizeCountdownContent,defaultCountdownContent}=await import('../core/countdown-content.js');
+ const {remainingText,remainingParts,normalizeCountdownContent,defaultCountdownContent,renderCountdownContent}=await import('../core/countdown-content.js');
  const state=createEditorState(),root=activePage(state).rootId;
  execute(state,{type:'element.add',payload:{type:NODE_TYPES.COUNTDOWN,parentId:root}});
  const id=state.selection.primaryId,pageId=state.document.activePageId;
@@ -1601,6 +1601,13 @@ test('Countdown deadline is stable, editable and blocked at Publish if incomplet
  const broken=structuredClone(state.document);
  broken.pages[pageId].nodes[id].props.countdown.targetISO='bad date';
  assert.equal(validatePublishDocument(broken,pageId),'INVALID_COUNTDOWN_CONTENT');
+ const malformed=structuredClone(state.document);
+ malformed.pages[pageId].nodes[id].props.countdown={...valid,title:{toString:null},finishText:{toString:null}};
+ assert.equal(validatePublishDocument(malformed,pageId),'INVALID_COUNTDOWN_CONTENT','malformed authored text remains blocked from Publish');
+ assert.doesNotThrow(()=>renderCountdownContent(malformed.pages[pageId].nodes[id].props.countdown),'the public renderer must remain available for a previously published malformed Countdown');
+ const safeHtml=renderCountdownContent(malformed.pages[pageId].nodes[id].props.countdown);
+ assert.match(safeHtml,/<strong class="visual-countdown-heading">Visszaszámláló<\/strong>/);
+ assert.match(safeHtml,/data-countdown-finish="Az esemény elkezdődött\."/);
  const legacy=structuredClone(state.document);
  delete legacy.pages[pageId].nodes[id].metadata.countdownVersion;
  legacy.pages[pageId].nodes[id].props.countdown={bad:'old'};
