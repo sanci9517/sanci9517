@@ -1,5 +1,5 @@
 import {normalizeRichText} from './schema.js';
-import {renderRichTextEditor,richTextToPlainText} from './richtext-engine.js';
+import {renderRichTextEditor,richTextToPlainText} from './richtext-engine.js?v=20261116-d02-private-media-link-guard-v1';
 
 /**
  * Insert a sanitized Rich Text document at the active native selection.

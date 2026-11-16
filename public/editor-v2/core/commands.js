@@ -16,7 +16,7 @@ import {defaultCountdownContent} from './countdown-content.js';
 import {defaultSocialLinks} from './social-links.js';
 import {defaultEmbedContent} from './creator-embed.js';
 import {defaultCodeSnippet} from './code-snippet.js';
-import { normalizeElementContent as normalizeAuthoredElementContent, CONTENT_TYPES } from './authored-content.js?v=20261115-d03-saveable-table-v1';
+import { normalizeElementContent as normalizeAuthoredElementContent, CONTENT_TYPES } from './authored-content.js?v=20261116-d02-private-media-link-guard-v1';
 import {normalizeAccessibility,remapDuplicateAnchors} from './accessibility.js';
 import {normalizeStatePatch} from './state-styles.js';
 import { applyStyleSnapshot } from './style-snapshot.js';

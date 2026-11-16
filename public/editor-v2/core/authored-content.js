@@ -1,4 +1,4 @@
-import { validatedLinkHref } from './richtext-links.js';
+import { validatedLinkHref } from './richtext-links.js?v=20261116-d02-private-media-link-guard-v1';
 
 export const CONTENT_VERSION=1;
 // Shared by the editor picker and the server-side media upload/list contract.
@@ -54,7 +54,7 @@ export const STRUCTURAL_TYPES=Object.freeze(['section','container','row','column
 export function isAuthoredContent(node){return node?.metadata?.contentVersion===CONTENT_VERSION}
 export function safeMediaUrl(value){
   const raw=String(value??'').trim();if(!raw)return '';
-  const valid=validatedLinkHref(raw);
+  const valid=validatedLinkHref(raw,{allowEditorMediaPreview:true});
   if(valid.startsWith('/')&&!valid.startsWith('//')&&!valid.startsWith('/\\'))return valid;
   const url=new URL(valid);if(url.protocol!=='https:')throw new Error('A médiaforrás csak HTTPS vagy belső útvonal lehet.');return valid;
 }

@@ -7,7 +7,7 @@
  */
 
 import { resolveResponsiveValue } from './responsive.js';
-import { contentDefaults } from './authored-content.js?v=20261115-d03-saveable-table-v1';
+import { contentDefaults } from './authored-content.js?v=20261116-d02-private-media-link-guard-v1';
 import { backgroundImageValue, legacyBackgroundColor, legacyBackgroundCompound, MEDIA_ASSET_ID } from './background-asset.js?v=20261030-legacy-background-compound';
 export {legacyBackgroundColor} from './background-asset.js?v=20261030-legacy-background-compound';
 

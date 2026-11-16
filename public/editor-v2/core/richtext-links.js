@@ -6,12 +6,46 @@ import { textOffsetWithin, locateRichTextOffset } from './richtext-selection-off
  * A selection may cross blocks, but each block boundary remains structural.
  * All mutations preserve the structured model and use the canonical command.
  */
-export function validatedLinkHref(value) {
+function isPrivateEditorMediaRoute(href) {
+  try {
+    let path = new URL(href, 'https://creator.invalid').pathname;
+    // Decode and normalize repeatedly: URL parsers preserve encoded separators,
+    // while proxies and origin routers may decode them before route matching.
+    // Treat malformed or excessively nested encodings as invalid rather than
+    // letting an ambiguous private preview path become a public link.
+    for (let depth = 0; depth < 10; depth++) {
+      const forwardSlashes = path.replace(/\\/g, '/');
+      const normalized = new URL(
+        `/${forwardSlashes.replace(/^\/+/, '')}`,
+        'https://creator.invalid'
+      ).pathname.replace(/\/{2,}/g, '/');
+      if (/^\/api\/admin\/media(?:\/|$)/i.test(normalized)) return true;
+      let decoded;
+      try {
+        decoded = decodeURIComponent(normalized);
+      } catch {
+        return true;
+      }
+      if (decoded === normalized) return false;
+      path = decoded;
+    }
+    return true;
+  } catch {
+    return true;
+  }
+}
+
+export function validatedLinkHref(value, { allowEditorMediaPreview = false } = {}) {
   const href = String(value ?? '').trim();
   if (!href || href.length > 2048 || /[\u0000-\u001f\u007f\\]/.test(href)) {
     throw new Error('Érvénytelen vagy túl hosszú hivatkozás.');
   }
-  if (href.startsWith('/') && !href.startsWith('//')) return href;
+  if (href.startsWith('/') && !href.startsWith('//')) {
+    if (!allowEditorMediaPreview && isPrivateEditorMediaRoute(href)) {
+      throw new Error('Privát szerkesztői média-előnézeti URL nem használható publikálható hivatkozásként.');
+    }
+    return href;
+  }
   if (href.startsWith('#') && href.length > 1) return href;
   try {
     const url = new URL(href);

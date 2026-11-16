@@ -1,4 +1,4 @@
-import { resolveRichTextLinkTarget, validatedLinkHref } from './richtext-links.js?v=20261101-richtext-backward-selection';
+import { resolveRichTextLinkTarget, validatedLinkHref } from './richtext-links.js?v=20261116-d02-private-media-link-guard-v1';
 import { RICH_TEXT_FONT_FAMILIES } from './schema.js?v=20261101-richtext-multiblock-links';
 import { parseTableTsv } from './table-tsv.js';
 
