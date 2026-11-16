@@ -1,0 +1,78 @@
+{
+  "schema": "sanci.editor.d-full-browser-regression.v1",
+  "captured_at_utc": "2026-11-16T16:12:30Z",
+  "plan_point": "77.44.7.D — element-specific content and media",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "head_before_test_evidence_followup": "a17984dc3c24953f8e2e0995376a70c4ffa14bb4",
+    "runtime_source_sha": "bd748a061901474bbdc14b23c5ad6df4940caca2"
+  },
+  "scope": "Full local Chromium browser regression suite, run once serially with the repository Linux subreaper wrapper; this is an automated regression gate, not certification of every production feature or closure of D-01 through D-07.",
+  "primary_check": {
+    "command": "CHROMIUM_PATH=/usr/bin/chromium npm run test:editor:layout",
+    "result": "PASS",
+    "browser_test_files_passed": 54,
+    "browser_test_files_failed": 0,
+    "skipped": 0,
+    "cancelled": 0,
+    "execution": "Local Chromium and repository fixtures; serial execution; loopback permission was enabled only for local test fixtures. No hosted browser service."
+  },
+  "coverage_highlights": [
+    "Editor layout, workspace, dock, public-side zones, and responsive workspace behavior",
+    "Inspector fields for all partially supported authored types, responsive/visibility/hover/keyboard behavior, and the distinct Save and Publish boundary",
+    "Inspector and authored content/media lifecycles including link validation, image alt/loading, video mute/autoplay/loop, gallery/crop, media picker/source switching, and structured content",
+    "IME/accessibility, rich text editing, save/reload/publish, design tokens, insertion, malformed public text links, and public rendering",
+    "D-06 legacy media usage/archive/editor Save/reload/Publish/site-scope regression and D-07 corrupted Page Model regression"
+  ],
+  "additional_checks": {
+    "editor_unit": "PASS — npm run test:editor, 17/17 test files; runner guard 3/3",
+    "media_unit": "PASS — npm run test:media, 5/5 test files",
+    "plan_contract": "PASS — python3 tests/plan-contract.test.py, 14/14",
+    "canonical_plan": "PASS — python3 scripts/check-canonical-plan.py, 13 master files / 396 mappings",
+    "feature_traceability": "PASS — python3 scripts/build-feature-traceability.py --check, 396/396",
+    "active_plan_audit": "PASS as an audit command; reports 77.44.7.D OPEN / NOT_CERTIFIED, 146 PARTIAL_SOURCE and 250 UNVERIFIED",
+    "git_diff_check": "PASS after evidence and plan changes"
+  },
+  "ci": {
+    "test_followup_ci": "NOT_RUN",
+    "reason": "Test/evidence/canonical-plan-only change; canonical plan records GitHub Actions free compute exhausted and 0 Ft additional spend. No redundant dispatch/rerun was launched.",
+    "latest_exact_runtime_source_run": {
+      "run_id": 43874863819,
+      "url": "https://github.com/sanci9517/sanci9517/actions/runs/43874863819",
+      "source_sha": "bd748a061901474bbdc14b23c5ad6df4940caca2",
+      "conclusion": "success",
+      "scope_note": "This run validates the unchanged runtime source, not the current test-only evidence follow-up."
+    }
+  },
+  "production": {
+    "latest_read_only_cloudflare_deployment_id": "80986873-0dbe-4d5a-9d76-f89144297008",
+    "worker_version_id": "67b3ae5b-2909-44a7-82fc-c7ecf4ee492b",
+    "traffic_percent": 100,
+    "worker_deploy_for_this_change": false,
+    "health_probe": "NOT_RUN — no runtime change; no new production-health claim is made.",
+    "public_asset_hashes": "NOT_REMEASURED — no runtime or public asset changed.",
+    "production_d1_migration_or_write": false,
+    "production_r2_operation_or_deletion": false
+  },
+  "limitations": [
+    "Automated browser pass does not prove all 396 mapped features in production; the current canonical traceability audit still reports 146 PARTIAL_SOURCE and 250 UNVERIFIED.",
+    "The full D-01 through D-07 field/capability/breakpoint/public-output/Media matrix remains OPEN / NOT_CERTIFIED.",
+    "Full Visual Editor manual and physical-device acceptance remains DEFERRED until the complete Editor is ready.",
+    "Save remains separate from Publish."
+  ],
+  "change_class": {
+    "runtime_changed": false,
+    "public_asset_changed": false,
+    "dependency_or_lockfile_changed": false,
+    "files": [
+      "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+      "docs/evidence/editor-d-full-browser-regression-2026-11-16.json"
+    ]
+  },
+  "cost_huf": 0,
+  "canonical_plan_after_append": {
+    "sha256": "0c1cdced839431c54ba35885afd9a88065ee0abcfbf99d6b2312ffeae152bda6",
+    "bytes": 1652942
+  }
+}
