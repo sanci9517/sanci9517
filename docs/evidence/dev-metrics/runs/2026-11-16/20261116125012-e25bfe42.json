@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261116125012-e25bfe42",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-16T12:50:12.148Z",
+  "finished_at": "2026-11-16T13:12:39.829Z",
+  "wall_seconds": 1348,
+  "paused_seconds": 0,
+  "measured_seconds": 1348,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "Éles schedule-card vizuális fejlesztés; a helyi és publikus ellenőrzések PASS, az exact-SHA Editor Core CI még fut.",
+  "evidence": [
+    "docs/evidence/public-schedule-cards-2026-11-16.json"
+  ],
+  "checks": "showcase+schedule+design+brand+typecheck+Chromium+Wrangler dry-run+D1 read-only+Worker build+health+asset hash PASS; Editor Core CI in progress",
+  "started_revision": "41fda1568b77013b14fef37623979f9213196047",
+  "finished_revision": "0d8faa657d81e705f87b088926031b3ff9c2b834",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

@@ -1,0 +1,93 @@
+{
+  "schema_version": 1,
+  "date": "2026-11-16",
+  "plan_point": "77.44.7.D",
+  "scope": "Public SANCI weekly schedule card presentation",
+  "status": "released_slice_verified",
+  "repository": "sanci9517/sanci9517",
+  "branch": "v2/foundation",
+  "source_commit": "0d8faa657d81e705f87b088926031b3ff9c2b834",
+  "parent_commit": "41fda1568b77013b14fef37623979f9213196047",
+  "commit_message": "feat(public): polish weekly schedule cards",
+  "changes": [
+    "Polished SANCI-only weekly event cards with restrained depth, a status accent rail, clearer live/cancelled states, tabular times, readable chips, and keyboard focus visibility.",
+    "Kept card lift and accent glow to fine-pointer hover; disabled hover motion under prefers-reduced-motion.",
+    "Raised the stream link target to 44px and bumped the public stylesheet cache key.",
+    "Added deterministic browser fixture coverage; no real creator schedule records, Page Model content, Save, or Publish state was changed."
+  ],
+  "checks": {
+    "npm_run_test_showcase": "PASS",
+    "npm_run_test_showcase_browser": "PASS; Chromium at 320, 390, 768, and 1440 CSS px plus touch and reduced-motion contexts",
+    "npm_run_test_schedule": "PASS; 6 tests across 6 files",
+    "npm_run_test_design": "PASS",
+    "npm_run_test_brand": "PASS",
+    "npm_run_typecheck": "PASS",
+    "node_check_browser_test": "PASS",
+    "git_diff_check": "PASS",
+    "wrangler_deploy_dry_run": "PASS; Wrangler 4.130.0; 182 public asset files; no deploy performed by dry-run"
+  },
+  "production_d1_read_only_preflight": {
+    "query": "SELECT name FROM d1_migrations ORDER BY name;",
+    "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
+    "rows_read": 35,
+    "rows_written": 0,
+    "changes": 0,
+    "changed_db": false,
+    "latest_migration": "0029_media_archive_unicode_additive.sql"
+  },
+  "production_release": {
+    "build_uuid": "1a84a0cb-15f0-4174-b37d-f9f9d501c9a3",
+    "build_outcome": "success",
+    "build_source_commit": "0d8faa657d81e705f87b088926031b3ff9c2b834",
+    "build_command": "npm run typecheck",
+    "deploy_command": "npm run deploy:safe",
+    "deployment_id": "bf2338b4-7634-4ca7-8fb7-742056bab280",
+    "worker_version_id": "2fbc6244-0935-484f-8782-5ada02303fda",
+    "traffic_percentage": 100,
+    "created_on": "2026-11-16T13:07:54.14609Z",
+    "health": {
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+      "http_status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "schedule_page": {
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/p/schedule",
+      "http_status": 200,
+      "stylesheet_href": "/assets/sanci-showcase.css?v=20261116-schedule-cards-v1"
+    },
+    "public_stylesheet": {
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/assets/sanci-showcase.css?v=20261116-schedule-cards-v1",
+      "http_status": 200,
+      "content_type": "text/css",
+      "cache_control": "public, max-age=0, must-revalidate",
+      "local_sha256": "980359f51a46e1cae7820f7c8e97b9a34227aead3647ea3c50ae9b3bcc9d5906",
+      "production_sha256": "980359f51a46e1cae7820f7c8e97b9a34227aead3647ea3c50ae9b3bcc9d5906",
+      "hashes_match": true
+    }
+  },
+  "github_ci": {
+    "workflow": "Editor Core Test",
+    "run_id": 43872792295,
+    "commit": "0d8faa657d81e705f87b088926031b3ff9c2b834",
+    "observed_status": "in_progress",
+    "last_observed_step": "Test real Worker media upload with isolated D1 and R2",
+    "completed_checks_observed": "typecheck, Editor core, offline D1 ledger and bootstrap, private R2 API tests, and SANCI public showcase unit and Chromium regressions passed",
+    "no_rerun_dispatched": true
+  },
+  "data_safety": {
+    "production_d1_migrations_applied": false,
+    "production_data_mutated": false,
+    "r2_deletions": false,
+    "page_model_changed": false,
+    "save_publish_state_changed": false,
+    "synthetic_schedule_fixture_only": true
+  },
+  "full_plan_point_certified": false,
+  "full_visual_editor_manual_acceptance": "deferred per plan",
+  "cost_note": "No paid third-party service, subscription, migration, or production data operation was used. Existing authorized GitHub CI and Cloudflare Workers Builds pipeline only."
+}
