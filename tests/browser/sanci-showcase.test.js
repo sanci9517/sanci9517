@@ -17,7 +17,7 @@ const week=renderScheduleWeek([{
 
 const fixture=[
 '<!doctype html><html lang="hu"><head><meta name="viewport" content="width=device-width, initial-scale=1">',
-'<link rel="stylesheet" href="/assets/site.css"><link rel="stylesheet" href="/assets/sanci-showcase.css?v=20261116-schedule-cards-v1">',
+'<link rel="stylesheet" href="/assets/site.css"><link rel="stylesheet" href="/assets/sanci-showcase.css?v=20261116-live-status-pulse-v1">',
 '<style>.public-page-layout{display:block}.content-page{max-width:1180px;margin:auto}',
 '.fixture-root{padding:12px;max-width:1160px;margin:auto}.fixture-hero{min-height:580px;padding:22px;background:linear-gradient(145deg,#0a1020,#341a27);border-radius:20px;display:flex;align-items:flex-end}',
 '.fixture-copy{padding:22px;max-width:100%;width:100%;background:rgba(5,9,16,.76);display:flex;flex-direction:column;gap:12px}',
@@ -86,12 +86,14 @@ test('SANCI autograph, CTA symbols and countdown remain responsive and reduced-m
    radius:parseFloat(getComputedStyle(el).borderTopLeftRadius),
    shadow:getComputedStyle(el).boxShadow,
    linkHeight:el.querySelector('.sanci-week-event-link').getBoundingClientRect().height,
-   timeVariant:getComputedStyle(el.querySelector('.sanci-week-event-time')).fontVariantNumeric
+   timeVariant:getComputedStyle(el.querySelector('.sanci-week-event-time')).fontVariantNumeric,
+   liveIndicator:getComputedStyle(el.querySelector('.sanci-week-event-status'),'::before').animationName
   }));
   assert.ok(cardPresentation.radius>=13,'schedule cards use the polished rounded treatment');
   assert.ok(cardPresentation.shadow!=='none','schedule cards retain separation against the weekly grid');
   assert.ok(cardPresentation.linkHeight>=44,'the stream link remains a comfortable touch target');
   assert.equal(cardPresentation.timeVariant,'tabular-nums','stream times align numerically');
+  assert.equal(cardPresentation.liveIndicator,'sanci-live-indicator-pulse','only an authored live event gets the slow status pulse');
   const composition=await page.evaluate(()=>{
    const hero=document.querySelector('[data-sanci-role="hero"]');
    const copy=document.querySelector('[data-sanci-role="hero-copy"]');
@@ -155,6 +157,8 @@ test('SANCI autograph, CTA symbols and countdown remain responsive and reduced-m
  await reduced.locator('.sanci-week-event.is-live').hover();
  assert.equal(await reduced.locator('.sanci-week-event.is-live').evaluate(el=>getComputedStyle(el).transform),'none',
   'reduced-motion visitors do not receive the hover lift');
+ assert.equal(await reduced.locator('.sanci-week-event-status').evaluate(el=>getComputedStyle(el,'::before').animationName),'none',
+  'reduced-motion visitors do not receive the live pulse');
  await reduced.close();
  const touch=await browser.newPage({viewport:{width:390,height:850},isMobile:true,hasTouch:true});
  await touch.goto(origin+'/');

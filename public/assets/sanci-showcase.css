@@ -187,6 +187,14 @@ body.sanci-editorial-page[data-sanci-showcase="depth-v2"] .sanci-week-event.is-l
 body.sanci-editorial-page[data-sanci-showcase="depth-v2"] .sanci-week-event.is-live .sanci-week-event-status{
  border-color:rgba(255,107,129,.42);background:rgba(199,44,70,.2);color:#ffd2d9;
 }
+body.sanci-editorial-page[data-sanci-showcase="depth-v2"] .sanci-week-event.is-live .sanci-week-event-status::before{
+ content:"";display:inline-block;width:6px;height:6px;margin:0 6px 1px 0;border-radius:50%;
+ background:#ff748b;vertical-align:middle;animation:sanci-live-indicator-pulse 2.4s ease-out infinite;
+}
+@keyframes sanci-live-indicator-pulse{
+ 0%,100%{box-shadow:0 0 0 0 rgba(255,116,139,.48)}
+ 65%{box-shadow:0 0 0 5px rgba(255,116,139,0)}
+}
 body.sanci-editorial-page[data-sanci-showcase="depth-v2"] .sanci-week-event.is-cancelled{
  border-color:rgba(173,184,201,.19);background:linear-gradient(145deg,rgba(31,35,43,.82),rgba(14,16,21,.8));
 }
@@ -443,5 +451,8 @@ body.sanci-editorial-page[data-sanci-showcase="depth-v2"] [data-sanci-role="hero
  }
  body.sanci-editorial-page[data-sanci-showcase="depth-v2"] .sanci-week-event:hover{
   transform:none!important;
+ }
+ body.sanci-editorial-page[data-sanci-showcase="depth-v2"] .sanci-week-event.is-live .sanci-week-event-status::before{
+  animation:none!important;
  }
 }
