@@ -3,7 +3,7 @@
   "task": "Public SANCI homepage visual polish",
   "branch": "v2/foundation",
   "base_commit": "84cfe7c70c181854ee3fc318d0c562aaea02773e",
-  "status": "release-pending",
+  "status": "production-verified",
   "user_goal": "Make the public streamer/creator brand site feel more cinematic and keep authored hero artwork visible on desktop without harming mobile layout or editing Save/Publish data.",
   "finding": {
     "live_origin": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev",
@@ -40,7 +40,8 @@
     "npm_run_test_countdown_browser": "PASS real Chromium, schedule-backed countdown and truthful empty state",
     "npm_run_typecheck": "PASS",
     "git_diff_check": "PASS",
-    "live_browser_preview": "PASS: eight routes HTTP 200; all render authored content and SANCI showcase; 1440px hero panel 800px; 390px home hero 368px/panel 336px; horizontal overflow 0; no page errors. The browser preview overlaid the candidate CSS locally; this is not the deployed asset check."
+    "live_browser_preview": "PASS: Chromium visited all eight routes over the live Worker; all returned HTTP 200, rendered authored content and SANCI showcase, and had no page errors or horizontal overflow. Candidate CSS preview measured an 800px desktop panel.",
+    "production_browser_after_release": "PASS: live page loaded deployed CSS without interception. At 1440x900 hero width=1160px, copy panel=800px, 321.56px of artwork remains visible to the right, overflow=0. At 390x844 hero=368px and panel=336px, overflow=0."
   },
   "release_preflight": {
     "production_d1": "SELECT-only query of d1_migrations: 35 entries, latest 0029_media_archive_unicode_additive.sql, rows_written=0, changes=0, changed_db=false.",
@@ -48,12 +49,23 @@
     "production_mutations": "No D1 writes/migrations, R2 operations, or paid services."
   },
   "release": {
-    "commit": null,
-    "github_workflow": null,
-    "cloudflare_deployment": null,
-    "worker_version_traffic": null,
-    "health_http": null,
-    "live_asset_sha256": null,
+    "commit": "2cb65799545dd81447656665d612300554489076",
+    "github_branch_fast_forward": "v2/foundation updated from exact base 84cfe7c70c181854ee3fc318d0c562aaea02773e; no force push.",
+    "github_workflow": {
+      "production_source_smoke": {"run_id": 43861212645, "conclusion": "success", "url": "https://github.com/sanci9517/sanci9517/actions/runs/43861212645"},
+      "f0_baseline": {"run_id": 43861212572, "conclusion": "success", "url": "https://github.com/sanci9517/sanci9517/actions/runs/43861212572"},
+      "canonical_plan": {"run_id": 43861212470, "conclusion": "success", "url": "https://github.com/sanci9517/sanci9517/actions/runs/43861212470"},
+      "twitch_integration": {"run_id": 43861212508, "conclusion": "success", "url": "https://github.com/sanci9517/sanci9517/actions/runs/43861212508"},
+      "editor_core": {"run_id": 43861212597, "status": "in_progress", "url": "https://github.com/sanci9517/sanci9517/actions/runs/43861212597"}
+    },
+    "cloudflare_deployment": "22fbaf5e-8004-4671-ab70-c2d31e2e6ca1",
+    "worker_version": "3c848fe1-ff8a-4ed2-8dcb-d0c44ee2b0a4",
+    "worker_version_traffic": "100%",
+    "health_http": 200,
+    "live_asset_sha256": {
+      "public/assets/sanci-showcase.css": "0e0ec75bb79227829c7dd78d53b9bf1e2b1f808bcaf7f3341da6b4d162719271",
+      "public/visual-page.html": "fe7e62c83ea789eac156c0f464c247c867220b1d3c10a13fb0fc0df5f0b7b809"
+    },
     "new_cost_huf": 0
   },
   "limitations": [

@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261116112602-c0b9c692",
+  "task": "public-site-brand-experience",
+  "trigger": "manual",
+  "started_at": "2026-11-16T11:26:02.174Z",
+  "finished_at": "2026-11-16T11:54:26.364Z",
+  "wall_seconds": 1704,
+  "paused_seconds": 0,
+  "measured_seconds": 1704,
+  "status": "pass",
+  "kind": "mixed",
+  "summary": "Production SANCI hero artwork reveal shipped; focused tests, live eight-route Chromium, mobile/desktop, exact source hashes, health and 100% Worker traffic verified. Editor Core CI is unrelated and still in progress.",
+  "evidence": [
+    "docs/evidence/sanci-public-hero-art-reveal-2026-11-16.json",
+    "https://github.com/sanci9517/sanci9517/actions/runs/43861212645"
+  ],
+  "checks": "unit/browser/typecheck/dry-run/D1/source-smoke/production",
+  "started_revision": "4cd79c5cc8c3c0c74137e50c44763e4baf56892e",
+  "finished_revision": "4cd79c5cc8c3c0c74137e50c44763e4baf56892e",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
