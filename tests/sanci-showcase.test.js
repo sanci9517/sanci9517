@@ -1,7 +1,48 @@
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import test from 'node:test';
-import {classifySanciDestination,decorateSanciShowcase} from '../public/assets/sanci-showcase.js';
+import {classifySanciDestination,decorateSanciShowcase,selectHomeScheduleSpotlight} from '../public/assets/sanci-showcase.js';
+
+
+test('homepage schedule artwork follows the canonical next stream and only verified live status animates',()=>{
+ const now=Date.parse('2026-11-16T19:00:00Z');
+ const nextArt='75afc3a8-25c7-4354-ba2d-c6bf353440b2';
+ const liveArt='62d1dc2b-2f09-4d5f-97eb-a03dae142242';
+ const next={title:'Fortnite',platform:'Twitch',startsAt:'2026-11-17T18:00',status:'scheduled',imageAssetId:nextArt.toUpperCase()};
+ const current={title:'Aktuális adás',platform:'Twitch',startsAt:'2026-11-16T18:30',status:'live',imageAssetId:liveArt};
+ assert.deepEqual(selectHomeScheduleSpotlight([], [next], now),{
+  live:false,title:'Fortnite',platform:'Twitch',imageAssetId:nextArt
+ });
+ assert.deepEqual(selectHomeScheduleSpotlight([current],[next],now),{
+  live:true,title:'Aktuális adás',platform:'Twitch',imageAssetId:liveArt
+ });
+ assert.equal(selectHomeScheduleSpotlight([{...current,imageAssetId:null}],[next],now).imageAssetId,nextArt,
+  'live event without artwork reuses the upcoming event image');
+ assert.equal(selectHomeScheduleSpotlight([{...current,imageAssetId:'https://evil.example/logo.png'}],[next],now).imageAssetId,nextArt,
+  'unvalidated external artwork URLs must never be rendered');
+ assert.equal(selectHomeScheduleSpotlight([{...current,startsAt:'2026-11-17T18:00'}],[next],now).live,false,
+  'future event must not claim LIVE');
+ assert.equal(selectHomeScheduleSpotlight([{...current,endsAt:'2026-11-16T19:00:00Z'}],[next],now).live,false,
+  'ended events are not LIVE');
+ assert.equal(selectHomeScheduleSpotlight([{...current,startsAt:'2026-11-15T16:00'}],[next],now).live,false,
+  'stale live flags older than one day are ignored');
+ assert.equal(selectHomeScheduleSpotlight([], [{...next,startsAt:'2026-11-15T18:00'}],now),null);
+ assert.equal(selectHomeScheduleSpotlight([], [], now),null);
+});
+
+test('home stream image and pulse remain scoped, responsive, accessible and cache-busted',()=>{
+ const css=readFileSync(new URL('../public/assets/sanci-showcase.css',import.meta.url),'utf8');
+ const js=readFileSync(new URL('../public/assets/sanci-showcase.js',import.meta.url),'utf8');
+ const html=readFileSync(new URL('../public/visual-page.html',import.meta.url),'utf8');
+ assert.match(js,/mode=next&statuses=scheduled&limit=1/);
+ assert.match(js,/mode=all&statuses=live&order=desc&limit=10/);
+ assert.match(js,/image.src='\\/media\\/'\\+selection.imageAssetId/);
+ assert.match(css,/body\\.sanci-editorial-page\\[data-sanci-showcase="depth-v2"\\] \\[data-sanci-role="next-stream"\\]\\.is-streaming/);
+ assert.match(css,/@media\\(max-width:700px\\)/);
+ assert.match(css,/@media\\(prefers-reduced-motion:reduce\\)/);
+ assert.match(html,/sanci-showcase\\.css\\?v=20261116-home-live-artwork-v1/);
+ assert.match(html,/page-renderer\\.js\\?v=20261116-home-live-artwork-v1/);
+});
 
 test('SANCI pill icons activate only for real platform destinations',()=>{
  const good=[
@@ -190,8 +231,8 @@ test('decorations run after all authored content activators, not before their DO
  const activation=renderer.indexOf('activateStructuredContent(canvas);activateCountdowns(canvas);activateEmbeds(canvas);activateCodeBlocks(canvas);');
  const decoration=renderer.indexOf('decorateSanciShowcase(canvas,page,{slug,enabled:isSanciShowcase});');
  assert.ok(activation>0&&decoration>activation,'icons, autograph and highlights are attached after activation');
- assert.match(renderer,/sanci-showcase\.js\?v=20261116-hero-spotlight-v1/);
- assert.match(shell,/page-renderer\.js\?v=20261116-hero-spotlight-v1/,
+ assert.match(renderer,/sanci-showcase\.js\?v=20261116-home-live-artwork-v1/);
+ assert.match(shell,/page-renderer\.js\?v=20261116-home-live-artwork-v1/,
   'the page shell must request the runtime that contains the observer cleanup');
  assert.equal(renderer.indexOf('decorateSanciShowcase(canvas,page,{slug,enabled:isSanciShowcase});',decoration+1),-1);
 });
@@ -212,7 +253,7 @@ test('compact footer is SANCI-only, preserves original link order and large touc
  const destinations=['/p/twitch','/p/youtube','/p/tiktok','/p/schedule',
   '/p/community','/p/about','/p/contact','mailto:sandor.bogadi95@gmail.com'];
  for(const href of destinations)assert.ok(footer.includes('href="'+href+'"'),href);
- assert.match(html,/\/assets\/sanci-showcase\.css\?v=20261116-live-status-pulse-v1/);
+ assert.match(html,/\/assets\/sanci-showcase\.css\?v=20261116-home-live-artwork-v1/);
 });
 
 test('wide SANCI hero overlays are capped so authored key art stays visible, with full-width mobile copy',()=>{
@@ -245,6 +286,6 @@ test('weekly schedule cards get SANCI-only focus, live-state and reduced-motion-
  assert.match(css,/@media\(prefers-reduced-motion:reduce\)[\s\S]*\.sanci-week-event:hover\{\s*transform:none!important/);
  assert.match(css,/@media\(prefers-reduced-motion:reduce\)[\s\S]*\.sanci-week-event\.is-live \.sanci-week-event-status::before\{\s*animation:none!important/);
  const html=readFileSync(new URL('../public/visual-page.html',import.meta.url),'utf8');
- assert.match(html,/sanci-showcase\.css\?v=20261116-live-status-pulse-v1/,
+ assert.match(html,/sanci-showcase\.css\?v=20261116-home-live-artwork-v1/,
   'the page shell must bypass a cached previous schedule treatment');
 });
