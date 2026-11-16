@@ -1,0 +1,66 @@
+{
+  "schema": "sanci.editor.d.video-audio-url-lifecycle.v1",
+  "captured_at_utc": "2026-11-16T06:13:48.299882Z",
+  "plan_point": "77.44.7.D / D-01 video and audio authored media source validation and lifecycle",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "base_commit": "bfefae337ec04ac31e66e0cc1252a3453f6f462d",
+    "remote_head_before_change": "bfefae337ec04ac31e66e0cc1252a3453f6f462d",
+    "canonical_plan_sha256_before_append": "3a9af0604052a8313b553f387f4c21cce411da3c443c5d95186db4ed0b1a0685",
+    "test_path": "tests/browser/editor-content-system.test.js",
+    "test_sha256": "10ae8ac8bcd02c24bbbfb469d35a577fbec6f55719d110751dcffc5d49ea7a9d"
+  },
+  "change": {
+    "scope": "test-only browser acceptance; runtime files and dependencies unchanged",
+    "types": [
+      "video",
+      "audio"
+    ],
+    "coverage": [
+      "Inspector rejects javascript: as a video or audio playback source and exposes aria-invalid",
+      "Invalid input preserves the previously committed Canvas media source and does not reach Save",
+      "A same-site URL with query parameters clears the validation error and updates Canvas without an implicit write",
+      "Save stores both validated sources to the draft while the live page retains the previously published sources",
+      "Editor reload restores both saved sources before explicit Publish",
+      "Separate Publish updates the public video and audio source attributes",
+      "The existing real-browser playback checks still load and play the local video and audio fixtures after Publish"
+    ],
+    "fixtures": "The route-mocked local browser server resolves query-bearing fixture media URLs by pathname; no external media service is contacted."
+  },
+  "verification": {
+    "targeted_browser_command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-content-system.test.js",
+    "targeted_browser_result": "PASS",
+    "targeted_browser_tests": 1,
+    "editor_unit_command": "npm run test:editor",
+    "editor_unit_result": "PASS: 17 test files; Linux subreaper 3/3",
+    "web013_migration_gate": "PASS; validation only, no D1 operation",
+    "plan_contract": "PASS: 14/14",
+    "canonical_plan": "PASS: 13 master files / 396 features",
+    "active_plan_point": "PASS audit reports next=77.44.7.D and NOT_CERTIFIED",
+    "feature_traceability": "PASS: 396/396; acceptance remains NOT_CERTIFIED",
+    "javascript_syntax": "PASS",
+    "diff_check": "PASS",
+    "sandbox_note": "Initial browser launch without loopback permission failed before assertions with listen EPERM; rerun with local network permission passed."
+  },
+  "release": {
+    "runtime_source_sha": "a7eaf769eb8d61f4bfa81f3e1262d02b87f73d35",
+    "worker_deployment_id": "5f49764b-cfd0-44c5-9767-6f882690a838",
+    "worker_version_id": "f9173eca-4d17-4712-8c4a-61d62d6d4de2",
+    "worker_traffic_percentage": 100,
+    "source_changed": false,
+    "worker_deployed": false,
+    "production_health_rechecked": false,
+    "asset_hashes_rechecked": false,
+    "hosted_ci": "NOT RUN: test-only follow-up will use [skip ci]",
+    "d1_writes_or_migrations": false,
+    "r2_mutations": false,
+    "new_cost_huf": 0
+  },
+  "status": "TARGETED_D01_BROWSER_REGRESSION_PASS; FULL_D01_OPEN; FULL_D_OPEN_NOT_CERTIFIED",
+  "limitations": [
+    "This exact browser fixture closes only the local video/audio authored source safety and Save/reload/Publish slice.",
+    "It does not certify every media type, breakpoint, media library edge, production R2 lifecycle, Media/Brand Kit usage index, or the full D capability matrix.",
+    "Manual/physical Editor acceptance remains deferred to the final Editor gate."
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261116060743-853cee2b",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-16T06:07:43.827Z",
+  "finished_at": "2026-11-16T06:13:57.913Z",
+  "wall_seconds": 374,
+  "paused_seconds": 0,
+  "measured_seconds": 374,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "D-01 video/audio authored URL rejection and Save/reload/separate Publish Chromium acceptance; full D remains open",
+  "evidence": [
+    "docs/evidence/editor-d-video-audio-url-lifecycle-2026-11-16.json"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "bfefae337ec04ac31e66e0cc1252a3453f6f462d",
+  "finished_revision": "bfefae337ec04ac31e66e0cc1252a3453f6f462d",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

@@ -426,6 +426,21 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   await select('list');const texts=editor.locator('.content-repeater textarea');await texts.first().fill('Átírt listaelem');
   await editor.getByRole('button',{name:'1. elem: Le',exact:true}).click();assert.match(await node(editor,'list').locator('ol').textContent(),/^Második elem/);
   assert.equal(posts.length,1);
+  const authoredMediaSources={video:'/fixture.webm?source=creator&v=2',audio:'/fixture.mp3?source=creator&v=2'};
+  for(const [type,tag,originalSource] of [['video','video','/fixture.webm'],['audio','audio','/fixture.mp3']]){
+    await select(type);
+    const sourceField=editor.locator('.content-schema-field[data-content-key="src"] input');
+    await sourceField.fill('javascript:alert(1)');
+    assert.equal(await sourceField.getAttribute('aria-invalid'),'true',`${type} rejects executable media URLs at the Inspector boundary`);
+    assert.equal(await node(editor,type).locator(tag).getAttribute('src'),originalSource,`invalid ${type} input leaves the previously committed playback source intact`);
+    await editor.locator('#save').click();
+    await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent.includes('Javítsd a jelzett mezőt'));
+    assert.equal(posts.length,1,`an invalid ${type} source cannot be written by Save`);
+    await sourceField.fill(authoredMediaSources[type]);
+    assert.equal(await sourceField.getAttribute('aria-invalid'),null,`a safe same-site ${type} URL clears the field error`);
+    assert.equal(await node(editor,type).locator(tag).getAttribute('src'),authoredMediaSources[type],`valid ${type} source edits reach the Canvas without saving`);
+    assert.equal(posts.length,1,`valid ${type} edits remain draft-only until explicit Save`);
+  }
   await editor.locator('#save').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));assert.equal(posts.at(-1).publish,false);
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.link].props.href,authoredLinkHref,'Save stores the authored link destination in the draft');
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.link].props.target,'_blank','Save stores the authored link target in the draft');
@@ -433,7 +448,8 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   assert.deepEqual(posts.at(-1).document.pages[pageId].nodes[ids.table].props.rows,expectedTableRows,
     'Save retains every long table cell and its final edit in the draft');
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.video].props.posterAssetId,assetId,'Save retains poster ID as draft only');
-  assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.video].props.src,'/fixture.webm','video source is not overwritten by image picker');
+  assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.video].props.src,authoredMediaSources.video,'Save stores the validated video playback URL in the draft');
+  assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.audio].props.src,authoredMediaSources.audio,'Save stores the validated audio playback URL in the draft');
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.image].props.assetId,assetId,'Save persists the site asset reference but never publishes it');
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.gallery].props.items[0].assetId,assetId);
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.gallery].props.items[1].alt,'  Második kép  ','rendering must not silently rewrite the saved draft');
@@ -445,6 +461,8 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   assert.equal(await node(live,'icon').getAttribute('aria-label'),'Kedvenc','Save keeps the previous published icon name live');
   assert.equal(await node(live,'icon').getAttribute('role'),'img');
   assert.equal(await node(live,'video').locator('video').getAttribute('poster'),'/fixture.svg','Save never publishes the newly chosen poster');
+  assert.equal(await node(live,'video').locator('video').getAttribute('src'),'/fixture.webm','video source Save remains separate from the currently published page');
+  assert.equal(await node(live,'audio').locator('audio').getAttribute('src'),'/fixture.mp3','audio source Save remains separate from the currently published page');
   assert.equal(await node(live,'gallery').locator('.creator-image-zoom').first().getAttribute('data-lightbox-src'),'/fixture.svg','Save does not publish the new gallery image');
   assert.equal(await node(live,'gallery').getByRole('region',{name:'Eredeti képrács'}).count(),1,
     'gallery Inspector name stays draft-only after Save');
@@ -462,6 +480,11 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   await editor.reload();await select('table');
   assert.equal(await editor.locator('.content-schema-field[data-content-key="rows"] textarea').inputValue(),serializeTableTsv(expectedTableRows),
     'reload restores the complete long table before separate Publish');
+  for(const type of ['video','audio']){
+    await select(type);
+    assert.equal(await editor.locator('.content-schema-field[data-content-key="src"] input').inputValue(),authoredMediaSources[type],
+      `Editor reload restores the saved ${type} source without publishing it`);
+  }
   await select('link');
   assert.equal(await editor.locator(`.plain-text-editor[data-text-node-id="${ids.link}"]`).inputValue(),authoredLinkText,'Editor reload restores the authored link text');
   assert.equal(await editor.locator('[data-content-key="href"] input').inputValue(),authoredLinkHref,'Editor reload restores the authored link destination');
@@ -478,7 +501,8 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   assert.equal(await node(live,'icon').getAttribute('role'),null);
   assert.equal(await node(live,'icon').getAttribute('aria-hidden'),'true','published unnamed icon is decorative');
   assert.equal(await node(live,'video').locator('video').getAttribute('poster'),'/media/'+assetId,'Publish uses guarded site image route for poster');
-  assert.equal(await node(live,'video').locator('video').getAttribute('src'),'/fixture.webm','original video playback URL survives Publish');
+  assert.equal(await node(live,'video').locator('video').getAttribute('src'),authoredMediaSources.video,'separate Publish exposes the validated video source to the public page');
+  assert.equal(await node(live,'audio').locator('audio').getAttribute('src'),authoredMediaSources.audio,'separate Publish exposes the validated audio source to the public page');
   assert.equal(await node(live,'image').locator('img').getAttribute('src'),'/media/'+assetId,'published content resolves the public media route');
   assert.equal(await live.locator(`h3[data-node-id="${ids.heading}"]`).textContent(),'Módosított főcím');
   assert.equal(await node(live,'button').getAttribute('href'),'/p/updated');assert.equal(await node(live,'button').getAttribute('rel'),'noopener noreferrer');
