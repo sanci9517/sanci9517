@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261116043648-c7986f78",
+  "task": "77.44.7.D-type-field-crosswalk-and-content-regressions",
+  "trigger": "manual",
+  "started_at": "2026-11-16T04:36:48.541Z",
+  "finished_at": "2026-11-16T04:41:50.902Z",
+  "wall_seconds": 302,
+  "paused_seconds": 0,
+  "measured_seconds": 302,
+  "status": "partial",
+  "kind": "test",
+  "summary": "D típus/mező keresztellenőrző hozzáadva és az Editor unit suite-ban validálva; teljes acceptance nyitott",
+  "evidence": [
+    "docs/evidence/editor-d-type-field-crosswalk-2026-11-16.json:3/3 direct test; 17/17 Editor unit files"
+  ],
+  "checks": "npm run test:editor: 17/17 files, subreaper 3/3; direct new test 3/3; npm run test:media 5/5; plan-contract 14/14; canonical plan 13/13; active point audit OPEN; traceability 396/396; JSON, node --check and diff-check PASS; Chromium rerun blocked by missing Playwright install",
+  "started_revision": "0b21c207c0d0b069128304028eb28350531fde9c",
+  "finished_revision": "0b21c207c0d0b069128304028eb28350531fde9c",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

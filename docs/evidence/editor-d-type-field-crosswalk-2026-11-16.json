@@ -1,0 +1,71 @@
+{
+  "schema": "sanci.editor.d.type-field-crosswalk.v1",
+  "captured_at_utc": "2026-11-16T04:40:16Z",
+  "plan_point": "77.44.7.D — element-specific content and media",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "base_sha": "0b21c207c0d0b069128304028eb28350531fde9c",
+    "runtime_source_sha": "a7eaf769eb8d61f4bfa81f3e1262d02b87f73d35",
+    "canonical_plan_sha256_at_start": "0ca3250cbd4968499cdeb263736973fbcfb0f27a9e134019c53e1b9a6ec54e06"
+  },
+  "crosswalk_guard": {
+    "test_file": "tests/editor-d-content-contract.test.js",
+    "registered_in": "package.json#scripts.test:editor",
+    "checked_type_count": 14,
+    "authored_content_types_and_fields": {
+      "button": ["text", "href", "target", "ariaLabel"],
+      "link": ["text", "href", "target", "ariaLabel"],
+      "icon": ["icon", "ariaLabel"],
+      "image": ["src", "assetId", "alt", "decorative", "caption", "fit", "ratio", "focalX", "focalY", "loading"],
+      "video": ["src", "poster", "posterAssetId", "controls", "muted", "loop", "autoplay"],
+      "audio": ["src", "controls", "loop"],
+      "list": ["ordered", "items"],
+      "table": ["caption", "header", "rows"],
+      "tabs": ["ariaLabel", "items"],
+      "accordion": ["ariaLabel", "singleOpen", "openFirst", "items"],
+      "dropdown": ["ariaLabel", "singleOpen", "openFirst", "items"],
+      "gallery": ["ariaLabel", "columns", "items"],
+      "carousel": ["ariaLabel", "items"]
+    },
+    "card_profile": "cardContentVersion with title, description, variant, imageSrc, imageAssetId, imageAlt, actionLabel, actionHref and newWindow",
+    "assertions": [
+      "field keys/order in CONTENT_FIELDS and getElementContentContract stay equal to the explicit D-scope list",
+      "all structured repeaters keep structuredContentVersion and structured-v1 validation",
+      "image/video/audio keep media-v1 and Card keeps its independent card-v1 profile",
+      "all D authored and nested repeater fields use registered control kinds with unique keys"
+    ]
+  },
+  "checks": {
+    "npm_run_test:editor": "PASS; 17/17 Editor unit files and 3/3 subreaper runner tests",
+    "direct_new_test": "PASS; 3/3 tests",
+    "npm_run_test:media": "PASS; 5/5 files (same source tree, prior check in this current work sequence)",
+    "new_test_node_check": "PASS",
+    "package_json_parse": "PASS",
+    "plan_contract": "PASS; 14/14",
+    "canonical_plan": "PASS; all 13 master parts and the 396-feature catalog",
+    "active_point_audit": "PASS; 77.44.7.D remains OPEN / NOT_CERTIFIED",
+    "source_traceability": "PASS; 396/396",
+    "git_diff_check": "PASS"
+  },
+  "release": {
+    "runtime_changed": false,
+    "public_assets_changed": false,
+    "worker_deploy": false,
+    "production_d1_operation": "none",
+    "production_r2_operation": "none",
+    "hosted_ci": "not started; test/package/docs-only change uses the required [skip ci] follow-up",
+    "last_known_worker_deployment_id": "5f49764b-cfd0-44c5-9767-6f882690a838",
+    "last_known_worker_version_id": "f9173eca-4d17-4712-8c4a-61d62d6d4de2",
+    "last_known_worker_traffic_percent": 100,
+    "source_smoke_run": "43798364177"
+  },
+  "status": "D_TYPE_FIELD_SCHEMA_CROSSWALK_GUARD_ADDED_AND_LOCAL_TESTED; FULL_D_OPEN_NOT_CERTIFIED",
+  "limitations": [
+    "This guard locks the authored D field declaration/profile crosswalk; it does not certify every Inspector interaction, renderer result, breakpoint, lifecycle, site-scoped Media path or public asset for every type.",
+    "The full browser test could not be newly run from this checkout because node_modules/playwright is absent. No dependency install was performed; existing exact-source CI evidence is unchanged.",
+    "Full D and full Editor acceptance remain open; physical-device acceptance is still deferred to the complete Editor gate."
+  ],
+  "save_and_publish_separate": true,
+  "new_cost_huf": 0
+}
