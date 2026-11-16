@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261116074105-646395ca",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-16T07:41:05.139Z",
+  "finished_at": "2026-11-16T07:45:29.556Z",
+  "wall_seconds": 264,
+  "paused_seconds": 0,
+  "measured_seconds": 264,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "D-01 background-media/usage acceptance audited; targeted browser 2/2 and media API 5/5 pass, read-only Worker traffic at 100%; D remains open.",
+  "evidence": [
+    "docs/evidence/editor-d01-background-media-usage-2026-11-16.json"
+  ],
+  "checks": "background browser 2/2 PASS; media suite 5/5 PASS; plan-contract 14/14; canonical-plan PASS; traceability 396/396; diff-check PASS",
+  "started_revision": "b541c8318ad810a21aebaf7725ade39208443a91",
+  "finished_revision": "b541c8318ad810a21aebaf7725ade39208443a91",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

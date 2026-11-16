@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "planPoint": "77.44.7.D / D-01 responsive background media and asset usage references",
+  "date": "2026-11-16",
+  "status": "PARTIAL_PASS",
+  "scope": [
+    "Inspector background-image lifecycle across compatible element types and desktop/tablet/mobile",
+    "responsive base/override/none inheritance and separate draft/public snapshots",
+    "Media usage report path attribution and archive protection for base and responsive background IDs",
+    "public delivery only for a background reference actually rendered at a visible viewport"
+  ],
+  "verification": {
+    "browser": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-inspector-background-image-partial-types.test.js",
+      "result": "PASS",
+      "tests": "2/2",
+      "notes": "The main browser test covers Inspector picker -> Canvas -> draft Save -> reload -> separate Publish -> public renderer for every compatible PARTIAL type, all viewports, removal, inheritance reset, Undo/Redo, and corrupt-ID public-renderer safety."
+    },
+    "mediaApi": {
+      "command": "npm run test:media",
+      "result": "PASS",
+      "tests": "5/5 suites",
+      "notes": "Includes site-scoped usage, responsive root background path attribution, retained hidden draft references, rendered visibility, no-R2-read on denied delivery, and archive protection."
+    },
+    "runtimeAudit": {
+      "sourceChanged": false,
+      "deploymentId": "5f49764b-cfd0-44c5-9767-6f882690a838",
+      "workerVersion": "f9173eca-4d17-4712-8c4a-61d62d6d4de2",
+      "versionNumber": 4076,
+      "trafficPercent": 100,
+      "readOnlyApiVerified": true,
+      "healthGet": "NOT_RUN_RUNTIME_UNCHANGED",
+      "assetHashRecheck": "NOT_RUN_RUNTIME_UNCHANGED"
+    },
+    "productionData": {
+      "d1Write": "NONE",
+      "r2Mutation": "NONE",
+      "costHuf": 0
+    }
+  },
+  "interpretation": "The inspected background and asset-usage safeguards passed their existing automated acceptance. No source/runtime defect was demonstrated; this evidence closes only this D-01 sub-slice and does not certify all fields, all D groups, production R2 lifecycle, or physical device acceptance.",
+  "remaining": [
+    "all D-01 fields and states are not yet covered by a single exhaustive per-field acceptance matrix",
+    "D-02 through D-07 remain open",
+    "full Editor physical acceptance remains deferred"
+  ],
+  "testSha256": {
+    "tests/browser/editor-inspector-background-image-partial-types.test.js": "2d1af2fe547e67728e57be1473619ecc17fb969f62eb694886af71f24a6c585f",
+    "tests/media-api.test.js": "2c249c0004b6bb481c76a15e1d1b713e9c48928062a15c484dbe89f561c37338",
+    "src/routes/admin/media.ts": "e6b604647d3d869361b3b3a2c88e37a500ebbdd723057bed6d8e638b2bd7d29a"
+  },
+  "planSha256BeforeAppend": "327b7411c27736e5cbfbc54d8ad00ba3e514ad1d373b5cc70dc94d9b24ffac28",
+  "agentsSha256": "d23cdc8d6e8e12814f99a81cd556e3b7e0ae4092fbe41145ba0bbb2835d6820f"
+}
