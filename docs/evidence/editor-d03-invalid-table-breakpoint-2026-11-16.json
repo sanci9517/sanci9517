@@ -58,7 +58,8 @@
   },
   "ci": {
     "runtime_release_editor_core_run_id": 43839941161,
-    "runtime_release_editor_core_status_at_capture": "IN_PROGRESS on the long Editor browser layout regression; no rerun or dispatch started",
+    "runtime_release_editor_core_result": "COMPLETED / SUCCESS at 2026-11-16T09:52:03Z for exact runtime source commit e0b2d255eeeb13ae5c00a97e2d92b7dfe29caa06. This workflow did not include the subsequent test-only commit; the added D-03 coverage passed locally.",
+    "test_only_commit_policy": "[skip ci] used for this test/evidence-only follow-up; no duplicate workflow or Worker deployment started",
     "test_docs_commit_policy": "[skip ci]; local browser and unit checks run, no redundant Worker deploy"
   },
   "limits": [
