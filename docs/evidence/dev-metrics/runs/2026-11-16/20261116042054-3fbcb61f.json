@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261116042054-3fbcb61f",
+  "task": "77.44.7.D-D01-D07-readonly-evidence-audit",
+  "trigger": "manual",
+  "started_at": "2026-11-16T04:20:54.834Z",
+  "finished_at": "2026-11-16T04:27:28.115Z",
+  "wall_seconds": 393,
+  "paused_seconds": 0,
+  "measured_seconds": 393,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "D háttérmédia evidence audit; a célzott média API csomag zöld, teljes típus/mező mátrix nyitott",
+  "evidence": [
+    "docs/evidence/editor-d-scope-audit-2026-11-16.json:PASS részleges scope-audit"
+  ],
+  "checks": "npm run test:media 5/5 PASS; browser újraindítás Playwright hiánya miatt blokkolt; plan-contract 14/14 PASS; canonical plan 13 fájl PASS; active cursor OPEN; feature crosswalk 396/396 PASS; json + git diff --check PASS",
+  "started_revision": "ebdf1f12b1277dd289f5203eee2d47c3bac38864",
+  "finished_revision": "ebdf1f12b1277dd289f5203eee2d47c3bac38864",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

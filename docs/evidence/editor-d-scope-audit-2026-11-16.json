@@ -1,0 +1,70 @@
+{
+  "schema": "sanci.editor.d.scope-audit.v1",
+  "captured_at_utc": "2026-11-16T04:26:22Z",
+  "plan_point": "77.44.7.D — element-specific content and media",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "remote_head_at_audit_start": "ebdf1f12b1277dd289f5203eee2d47c3bac38864",
+    "runtime_source_sha": "a7eaf769eb8d61f4bfa81f3e1262d02b87f73d35",
+    "plan_sha256_at_audit_start": "aded3f0fcb531de5ec4fa912874f44994e4d27bc2e8612b90bb41dc9a857a5b2"
+  },
+  "canonical_scope": [
+    "image, gallery, video and their content/media properties",
+    "CTA and icon content",
+    "table and list editing",
+    "UI components and repeating/structured data",
+    "shared Media Library and Brand Kit integration",
+    "per-type Inspector to Canvas to Save/reload to separate Publish to public/site-scoped media behavior"
+  ],
+  "read_only_release_state": {
+    "cloudflare_deployment_id": "5f49764b-cfd0-44c5-9767-6f882690a838",
+    "worker_version_id": "f9173eca-4d17-4712-8c4a-61d62d6d4de2",
+    "traffic_percent": 100,
+    "source_smoke_run": "43798364177",
+    "source_editor_core_run": "43798364063",
+    "health_http": 200,
+    "read_this_audit": "No deployment or production health request was made in this audit; these values are the last directly recorded release checks for the unchanged runtime source."
+  },
+  "targeted_check_this_audit": {
+    "command": "npm run test:media",
+    "result": "PASS",
+    "files_passed": 5,
+    "failures": 0,
+    "coverage_relevant_to_d": [
+      "responsive background media references and public delivery",
+      "hidden/overridden background media denial while saved references remain protected from archive",
+      "site-scoped media reference and archive behavior"
+    ],
+    "production_d1_or_r2_operation": "none"
+  },
+  "existing_evidence_reviewed": [
+    "docs/evidence/inspector-background-image-partial-types-2026-10-31.json",
+    "docs/evidence/editor-d01-private-preview-publication-c982-2026-11-14.json",
+    "docs/evidence/editor-d02-malformed-cta-browser-2026-11-15.json",
+    "docs/evidence/editor-d03-authored-table-tsv-2026-11-15.json",
+    "docs/evidence/editor-d04-published-tab-keyboard-aria-2026-11-15.json",
+    "docs/evidence/editor-d05-pr331-production-2026-11-13.json",
+    "docs/evidence/d06-production-0029-release-2026-11-15.json",
+    "docs/evidence/editor-d06-media-archive-save-publish-2026-11-15.json",
+    "docs/evidence/editor-d07-malformed-page-records-2026-11-15.json",
+    "docs/evidence/editor-d03-countdown-escape-exact-sha-ci-2026-11-16.json"
+  ],
+  "scope_result": {
+    "status": "AUDIT_ONLY; TARGETED_MEDIA_SUITE_PASS; FULL_77_44_7_D_OPEN_NOT_CERTIFIED",
+    "runtime_change": false,
+    "public_asset_change": false,
+    "worker_deploy": false,
+    "new_ci_dispatch_or_rerun": false,
+    "production_d1_migration_or_data_write": false,
+    "production_r2_operation": false,
+    "save_publish_separate": true,
+    "manual_physical_editor_acceptance": "deferred to the complete Editor gate"
+  },
+  "blockers_and_next_step": [
+    "The reviewed records are bounded regression slices and do not yet provide one complete type/property acceptance matrix for the canonical D scope.",
+    "The real Chromium test file tests/browser/editor-inspector-background-image-partial-types.test.js could not be run from this checkout: Playwright is not installed (ERR_MODULE_NOT_FOUND); this is an environment limitation, not a test pass or product failure.",
+    "Do not install dependencies or dispatch another hosted run solely to duplicate existing checks. Next, build the exact D-scope type/property-to-test/evidence crosswalk and choose the first uncovered testable contract; keep full D open until every required row and the final Editor acceptance gates are actually satisfied."
+  ],
+  "cost_huf": 0
+}
