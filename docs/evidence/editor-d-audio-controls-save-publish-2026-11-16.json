@@ -1,11 +1,13 @@
 {
   "schema": "sanci.editor.d-audio-controls-save-publish.v1",
-  "captured_at_utc": "2026-11-16T16:54:36Z",
+  "captured_at_utc": "2026-11-16T16:57:46Z",
   "plan_point": "77.44.7.D — element-specific content and media",
   "repository": {
     "name": "sanci9517/sanci9517",
     "branch": "v2/foundation",
     "branch_head_before_change": "fbe68b33a102c6c0700af7dc6b9ba5d507ff39c1",
+    "branch_head_after_change": "24fddcf9440706822df8af46cb98f2137975609e",
+    "branch_head_verified_by": "GitHub branch API and git ls-remote",
     "runtime_source_sha": "bd748a061901474bbdc14b23c5ad6df4940caca2",
     "changed_test_sha256": {
       "tests/browser/editor-content-system.test.js": "d093a84b1a77cb66416ad82e752777b24c315b60fb9f524fa41591ae32226951",
@@ -87,14 +89,20 @@
     ],
     "hosted_ci": {
       "result": "NOT RUN / UNVERIFIED",
-      "reason": "No available read-only quota/billing endpoint was reachable from this environment; AGENTS.md requires the free quota to be known before dispatch. Test/evidence-only convention is [skip ci]."
+      "workflow_runs_for_test_commit": 0,
+      "reason": "The canonical plan records GitHub Actions free compute as exhausted; no Actions dispatch/rerun was started. The test/evidence-only commit uses [skip ci]."
     }
   },
   "production": {
     "latest_plan_recorded_deployment_id": "80986873-0dbe-4d5a-9d76-f89144297008",
     "latest_plan_recorded_worker_version_id": "67b3ae5b-2909-44a7-82fc-c7ecf4ee492b",
     "latest_plan_recorded_traffic_percent": 100,
-    "production_state_rechecked_this_run": false,
+    "deployment_readonly_api_checked_this_run": true,
+    "latest_deployment_id_verified_this_run": "80986873-0dbe-4d5a-9d76-f89144297008",
+    "worker_version_id_verified_this_run": "67b3ae5b-2909-44a7-82fc-c7ecf4ee492b",
+    "traffic_percent_verified_this_run": 100,
+    "runtime_source_sha_verified_from_deployment_this_run": false,
+    "health_or_asset_hash_checked_this_run": false,
     "worker_deploy_for_this_change": false,
     "health_or_asset_hash_checked_this_run": false,
     "production_d1_mutation": false,

@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261116165744-9f55d25e",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-16T16:57:44.349Z",
+  "finished_at": "2026-11-16T16:58:11.067Z",
+  "wall_seconds": 27,
+  "paused_seconds": 0,
+  "measured_seconds": 27,
+  "status": "partial",
+  "kind": "docs",
+  "summary": "Recorded exact fast-forward and read-only live traffic postflight; D remains open",
+  "evidence": [
+    "docs/evidence/editor-d-audio-controls-save-publish-2026-11-16.json"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "24fddcf9440706822df8af46cb98f2137975609e",
+  "finished_revision": "24fddcf9440706822df8af46cb98f2137975609e",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
