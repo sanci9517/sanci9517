@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "id": "20261116104758-a4fbdeff",
+  "task": "public-home-empty-countdown",
+  "trigger": "manual",
+  "started_at": "2026-11-16T10:47:58.652Z",
+  "finished_at": "2026-11-16T11:10:11.247Z",
+  "wall_seconds": 1333,
+  "paused_seconds": 0,
+  "measured_seconds": 1333,
+  "status": "pass",
+  "kind": "mixed",
+  "summary": "Corrected the live SANCI public-home schedule empty-state wrap; retained the real-time countdown grid, corrected mobile navigation browser harness, passed focused Chromium/regression tests, deployed through the normal v2/foundation worker pipeline, and verified exact live CSS hash/health/100% traffic.",
+  "evidence": [
+    "docs/evidence/public-home-empty-countdown-2026-11-16.json",
+    "docs/SANCI9517-PUBLIC-SITE-BRIEF.md",
+    "https://github.com/sanci9517/sanci9517/commit/4a4e96e834f19b66241e210b7140c350315c3aac"
+  ],
+  "checks": "npm run test:countdown:browser PASS; npm run test:countdown PASS 5/5; npm run test:brand PASS 10/10; npm run test:brand:browser PASS; npm run test:showcase:browser PASS; npm run deploy:safe -- --dry-run PASS; D1 SELECT-only preflight rows_written=0 changed_db=false; production worker source smoke PASS; production health HTTP 200; live CSS sha256 exact match",
+  "started_revision": "b541c8318ad810a21aebaf7725ade39208443a91",
+  "finished_revision": "b541c8318ad810a21aebaf7725ade39208443a91",
+  "release_source_revision": "4a4e96e834f19b66241e210b7140c350315c3aac",
+  "release_note": "The provided checkout was detached at the older revision above. The verified release was created and fast-forwarded on GitHub v2/foundation; this exact commit is the source revision used by the passing production Worker workflow. No branch switch or reset was performed.",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

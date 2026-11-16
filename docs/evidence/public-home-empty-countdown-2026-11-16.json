@@ -25,16 +25,19 @@
     "brandContract": "PASS, 10/10",
     "showcaseBrowser": "PASS",
     "brandMobileBrowser": "PASS after correcting its harness to open the collapsed mobile menu before waiting for visible links.",
-    "liveHealthPreflight": "PASS, production /api/health HTTP 200; previous public stylesheet URL HTTP 200. This is a pre-deploy check.",
+    "liveHealthPreflight": "PASS, production /api/health HTTP 200; previous public stylesheet URL HTTP 200.",
     "productionD1Preflight": "PASS, Cloudflare query API SELECT against sqlite_master; rows_written=0, changed_db=false.",
-    "deploy": "NOT DONE"
+    "deployDryRun": "PASS via npm run deploy:safe -- --dry-run; migration-safety gate passed and Wrangler read 182 public assets.",
+    "deploymentWorkflow": "PASS, Production Worker source smoke run 43854907565 for exact source SHA; source smoke verified production health and changed public source SHA-256.",
+    "postDeployLiveBrowser": "PASS, GET /api/health HTTP 200; real Chromium checked the served SANCI home at 320/390/768/1440 px; empty state is one line, no horizontal overflow.",
+    "postDeployAsset": "PASS, public /assets/site.css HTTP 200; SHA-256 exactly matches the committed public/assets/site.css bytes."
   },
   "release": {
     "branch": "v2/foundation",
     "sourceShaBeforeRelease": "fcbaa01cf7c23aaf10698f423597b81f67ea47e8",
-    "workerDeploymentAfter": "PENDING push and automatic Worker Build",
-    "publicCssSha256After": "PENDING post-deploy GET and SHA-256 comparison",
-    "sourceShaAfterRelease": "PENDING GitHub branch verification"
+    "workerDeploymentAfter": {"deploymentId":"d3b64db7-935d-4232-a407-442bb6ab89b7","versionId":"fa8e2820-51d8-4ce3-bf9a-75b5acdbeaa3","trafficPercent":100},
+    "publicCssSha256After": "30911922d5096da9ac9bc1cb19737680a663e430d6f22608731baa3bdd04fc23",
+    "sourceShaAfterRelease": "4a4e96e834f19b66241e210b7140c350315c3aac"
   },
   "cost": "0 Ft; no paid service, production data writes, migrations, or R2 mutations."
 }
