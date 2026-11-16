@@ -26,7 +26,7 @@ export function classifySanciDestination(href){
   if(/^\/p\/contact(?:[?#]|$)/.test(href)||href.startsWith('mailto:'))return 'contact';
   return '';
 }
-const activeObservers=new WeakMap();
+const activeEnhancements=new WeakMap();
 function clearRevealState(canvas){
   if(typeof canvas?.querySelectorAll!=='function')return;
   for(const el of canvas.querySelectorAll('.sanci-await-view,.sanci-in-view')){
@@ -53,8 +53,8 @@ function staticSymbol(kind){
   return symbol;
 }
 export function decorateSanciShowcase(canvas,page,{slug,enabled=false}={}){
-  const previous=activeObservers.get(canvas);
-  if(previous){previous.disconnect();activeObservers.delete(canvas)}
+  const previous=activeEnhancements.get(canvas);
+  if(previous){previous.disconnect();previous.cleanup();activeEnhancements.delete(canvas)}
   // A rerender or disable can happen before an observed section enters the
   // viewport. Remove the pending opacity state before detaching its observer;
   // otherwise the editorial DOM can remain invisible after the observer dies.
@@ -70,6 +70,33 @@ export function decorateSanciShowcase(canvas,page,{slug,enabled=false}={}){
     const copy=hero.children?.map(id=>page.nodes[id]).find(n=>n?.type==='container');
     const copyElement=copy&&elements.get(copy.id);
     if(copyElement)copyElement.dataset.sanciRole='hero-copy';
+  }
+  let removeSpotlight=null;
+  const reduced=typeof matchMedia==='function'&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(heroElement&&!reduced&&typeof matchMedia==='function'&&
+    matchMedia('(hover: hover) and (pointer: fine)').matches){
+    const light=document.createElement('span');
+    light.className='sanci-hero-spotlight';
+    light.setAttribute('aria-hidden','true');
+    heroElement.append(light);
+    const move=event=>{
+      if(event.pointerType&&event.pointerType!=='mouse')return;
+      const rect=heroElement.getBoundingClientRect();
+      if(!rect.width||!rect.height)return;
+      const x=Math.max(0,Math.min(rect.width,event.clientX-rect.left));
+      const y=Math.max(0,Math.min(rect.height,event.clientY-rect.top));
+      light.style.setProperty('--sanci-spotlight-x',`${x}px`);
+      light.style.setProperty('--sanci-spotlight-y',`${y}px`);
+      light.classList.add('is-active');
+    };
+    const leave=()=>light.classList.remove('is-active');
+    heroElement.addEventListener('pointermove',move,{passive:true});
+    heroElement.addEventListener('pointerleave',leave,{passive:true});
+    removeSpotlight=()=>{
+      heroElement.removeEventListener('pointermove',move);
+      heroElement.removeEventListener('pointerleave',leave);
+      light.remove();
+    };
   }
   let buttons=0;
   for(const n of all){
@@ -95,7 +122,7 @@ export function decorateSanciShowcase(canvas,page,{slug,enabled=false}={}){
   for(const el of features)el.dataset.sanciRole='feature';
   // Optional progressive disclosure on the way into view. JS failure, reduced
   // motion and old browsers leave all editorial content fully visible.
-  const reduced=typeof matchMedia==='function'&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let revealObserver=null;
   if(!reduced&&typeof IntersectionObserver==='function'&&typeof window!=='undefined'){
     const below=features.filter(el=>el.getBoundingClientRect().top>window.innerHeight*.9);
     if(below.length){
@@ -108,8 +135,11 @@ export function decorateSanciShowcase(canvas,page,{slug,enabled=false}={}){
         }
       },{rootMargin:'0px 0px -24px 0px',threshold:.08});
       for(const el of below){el.classList.add('sanci-await-view');observer.observe(el)}
-      activeObservers.set(canvas,observer);
+      revealObserver=observer;
     }
+  }
+  if(revealObserver||removeSpotlight){
+    activeEnhancements.set(canvas,{disconnect:()=>revealObserver?.disconnect(),cleanup:removeSpotlight||(()=>{})});
   }
   return {active:true,slug:String(slug||''),hero:Boolean(heroElement),buttons,features:features.length,clocks:clocks.length,signatures:signatures.length};
 }

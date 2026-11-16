@@ -28,6 +28,7 @@ class FakeNode{
  constructor(id,tag='SECTION',href=''){
   this.dataset={nodeId:id};this.tagName=tag;this.attrs={href};this.children=[];
   this.className='';this.classes=new Set();
+  this.listeners=new Map();this.style={values:{},setProperty(key,value){this.values[key]=value}};
   this.classList={
    add:(...names)=>names.forEach(name=>this.classes.add(name)),
    remove:(...names)=>names.forEach(name=>this.classes.delete(name)),
@@ -36,7 +37,10 @@ class FakeNode{
  }
  getAttribute(key){return this.attrs[key]??null}
  setAttribute(key,value){this.attrs[key]=value}
- append(...nodes){this.children.push(...nodes)}
+ append(...nodes){for(const node of nodes)node.parent=this;this.children.push(...nodes)}
+ remove(){if(this.parent)this.parent.children=this.parent.children.filter(node=>node!==this)}
+ addEventListener(type,handler){this.listeners.set(type,handler)}
+ removeEventListener(type,handler){if(this.listeners.get(type)===handler)this.listeners.delete(type)}
  prepend(node){this.children.unshift(node)}
  querySelector(selector){return selector==='.sanci-cta-symbol'
   ?this.children.find(x=>x.className==='sanci-cta-symbol')||null:null}
@@ -84,6 +88,43 @@ test('rerendering or disabling the showcase restores content hidden for pending 
   assert.equal(elements[2].classList.contains('sanci-in-view'),false,'stale reveal state is removed on the same canvas');
  }finally{
   for(const [key,value] of Object.entries({IntersectionObserver:previous.observer,window:previous.window,matchMedia:previous.matchMedia})){
+   if(value===undefined)delete globalThis[key];else globalThis[key]=value;
+  }
+ }
+});
+
+test('SANCI hero spotlight follows a fine pointer and is removed on cleanup',()=>{
+ const previous={document:globalThis.document,window:globalThis.window,matchMedia:globalThis.matchMedia,IntersectionObserver:globalThis.IntersectionObserver};
+ globalThis.document={createElement:tag=>new FakeNode('spotlight',tag.toUpperCase())};
+ globalThis.window={innerHeight:500};
+ globalThis.matchMedia=query=>({matches:query.includes('hover: hover')});
+ delete globalThis.IntersectionObserver;
+ try{
+  const nodes={root:{id:'root',type:'root',children:['hero']},hero:{id:'hero',type:'container',parentId:'root',style:{backgroundAssetId:'key-art'},children:[]}};
+  const hero=new FakeNode('hero');
+  hero.getBoundingClientRect=()=>({left:10,top:20,width:300,height:200});
+  const canvas={querySelectorAll:selector=>selector==='[data-node-id]'?[hero]:[]};
+  decorateSanciShowcase(canvas,{nodes},{slug:'home',enabled:true});
+  const layer=hero.children.find(child=>child.className==='sanci-hero-spotlight');
+  assert.ok(layer,'the interactive light is a separate decorative layer');
+  assert.equal(layer.attrs['aria-hidden'],'true');
+  hero.listeners.get('pointermove')({pointerType:'touch',clientX:100,clientY:120});
+  assert.deepEqual(layer.style.values,{},'touch never starts the spotlight');
+  hero.listeners.get('pointermove')({pointerType:'mouse',clientX:110,clientY:70});
+  assert.equal(layer.style.values['--sanci-spotlight-x'],'100px');
+  assert.equal(layer.style.values['--sanci-spotlight-y'],'50px');
+  assert.equal(layer.classList.contains('is-active'),true);
+  hero.listeners.get('pointerleave')();
+  assert.equal(layer.classList.contains('is-active'),false,'leaving the hero restores the composed artwork');
+  decorateSanciShowcase(canvas,{nodes},{slug:'home',enabled:false});
+  assert.equal(hero.children.includes(layer),false,'rerender removes the detached enhancement layer');
+  assert.equal(hero.listeners.size,0,'rerender also detaches pointer handlers');
+  globalThis.matchMedia=query=>({matches:query.includes('prefers-reduced-motion')});
+  decorateSanciShowcase(canvas,{nodes},{slug:'home',enabled:true});
+  assert.equal(hero.children.length,0,'reduced-motion users receive the authored artwork without pointer effects');
+  assert.equal(hero.listeners.size,0);
+ }finally{
+  for(const [key,value] of Object.entries(previous)){
    if(value===undefined)delete globalThis[key];else globalThis[key]=value;
   }
  }
@@ -149,8 +190,8 @@ test('decorations run after all authored content activators, not before their DO
  const activation=renderer.indexOf('activateStructuredContent(canvas);activateCountdowns(canvas);activateEmbeds(canvas);activateCodeBlocks(canvas);');
  const decoration=renderer.indexOf('decorateSanciShowcase(canvas,page,{slug,enabled:isSanciShowcase});');
  assert.ok(activation>0&&decoration>activation,'icons, autograph and highlights are attached after activation');
- assert.match(renderer,/sanci-showcase\.js\?v=20261116-reveal-cleanup-v1/);
- assert.match(shell,/page-renderer\.js\?v=20261116-reveal-state-cleanup-v1/,
+ assert.match(renderer,/sanci-showcase\.js\?v=20261116-hero-spotlight-v1/);
+ assert.match(shell,/page-renderer\.js\?v=20261116-hero-spotlight-v1/,
   'the page shell must request the runtime that contains the observer cleanup');
  assert.equal(renderer.indexOf('decorateSanciShowcase(canvas,page,{slug,enabled:isSanciShowcase});',decoration+1),-1);
 });
@@ -171,7 +212,7 @@ test('compact footer is SANCI-only, preserves original link order and large touc
  const destinations=['/p/twitch','/p/youtube','/p/tiktok','/p/schedule',
   '/p/community','/p/about','/p/contact','mailto:sandor.bogadi95@gmail.com'];
  for(const href of destinations)assert.ok(footer.includes('href="'+href+'"'),href);
- assert.match(html,/\/assets\/sanci-showcase\.css\?v=20261116-art-reveal-v1/);
+ assert.match(html,/\/assets\/sanci-showcase\.css\?v=20261116-hero-spotlight-v1/);
 });
 
 test('wide SANCI hero overlays are capped so authored key art stays visible, with full-width mobile copy',()=>{

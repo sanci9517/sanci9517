@@ -352,3 +352,23 @@ body.sanci-editorial-page[data-sanci-showcase="depth-v2"] [data-sanci-role="hero
   align-self:stretch;
  }
 }
+
+/* Cursor-following light adds a restrained, game-inspired moment to SANCI's
+   own authored key art. The layer carries no content and never captures input. */
+@media(hover:hover) and (pointer:fine){
+ body.sanci-editorial-page[data-sanci-showcase="depth-v2"] [data-sanci-role="hero"]>.sanci-hero-spotlight{
+  position:absolute;inset:0;z-index:1;display:block;pointer-events:none;
+  opacity:0;mix-blend-mode:screen;
+  background:radial-gradient(circle 360px at var(--sanci-spotlight-x,50%) var(--sanci-spotlight-y,50%),rgba(238,91,118,.21),rgba(151,43,74,.09) 45%,transparent 76%);
+  transition:opacity .28s ease;
+ }
+ body.sanci-editorial-page[data-sanci-showcase="depth-v2"] [data-sanci-role="hero"]>.sanci-hero-spotlight.is-active{opacity:1}
+}
+@media(max-width:700px){
+ body.sanci-editorial-page[data-sanci-showcase="depth-v2"] [data-sanci-role="hero"]>.sanci-hero-spotlight{
+  background:radial-gradient(circle 210px at var(--sanci-spotlight-x,50%) var(--sanci-spotlight-y,50%),rgba(238,91,118,.18),rgba(151,43,74,.07) 45%,transparent 76%);
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ body.sanci-editorial-page[data-sanci-showcase="depth-v2"] .sanci-hero-spotlight{display:none!important;transition:none!important}
+}

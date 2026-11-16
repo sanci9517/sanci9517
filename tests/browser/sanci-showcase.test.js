@@ -103,6 +103,16 @@ test('SANCI autograph, CTA symbols and countdown remain responsive and reduced-m
    assert.equal(footer.eightLinks,true,'no original destination may disappear');
    assert.ok(footer.minTapHeight>=44,'footer tap targets must be >=44px');
   }
+  const supportsSpotlight=await page.evaluate(()=>matchMedia('(hover: hover) and (pointer: fine)').matches&&!matchMedia('(prefers-reduced-motion: reduce)').matches);
+  if(supportsSpotlight){
+   const rect=await page.locator('[data-sanci-role="hero"]').boundingBox();
+   await page.mouse.move(rect.x+rect.width/2,rect.y+rect.height/2);
+   const light=page.locator('.sanci-hero-spotlight');
+   assert.equal(await light.count(),1,'fine-pointer hero receives one decorative light layer');
+   await page.waitForFunction(()=>getComputedStyle(document.querySelector('.sanci-hero-spotlight')).opacity==='1');
+   await page.mouse.move(0,0);
+   await page.waitForFunction(()=>getComputedStyle(document.querySelector('.sanci-hero-spotlight')).opacity==='0');
+  }else assert.equal(await page.locator('.sanci-hero-spotlight').count(),0,'coarse pointers never receive hover-only decoration');
   assert.deepEqual(errors,[]);
   await page.close();
  }
@@ -110,5 +120,11 @@ test('SANCI autograph, CTA symbols and countdown remain responsive and reduced-m
  await reduced.goto(origin+'/');
  await reduced.locator('[data-sanci-role="hero-copy"]').waitFor();
  assert.equal(await reduced.locator('[data-sanci-role="hero-copy"]').evaluate(el=>getComputedStyle(el).animationName),'none');
+ assert.equal(await reduced.locator('.sanci-hero-spotlight').count(),0,'reduced-motion visitors are not wired to a hover effect');
  await reduced.close();
+ const touch=await browser.newPage({viewport:{width:390,height:850},isMobile:true,hasTouch:true});
+ await touch.goto(origin+'/');
+ await touch.locator('[data-sanci-role="hero-copy"]').waitFor();
+ assert.equal(await touch.locator('.sanci-hero-spotlight').count(),0,'touch view has no mouse-only enhancement node');
+ await touch.close();
 });
