@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261116165850-6d2425e9",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-16T16:58:50.058Z",
+  "finished_at": "2026-11-16T17:38:20.811Z",
+  "wall_seconds": 2371,
+  "paused_seconds": 0,
+  "measured_seconds": 2371,
+  "status": "pass",
+  "kind": "test",
+  "summary": "Full Editor Chromium/layout regression completed: 54/54 files passed",
+  "evidence": [
+    "tests/browser/editor-content-system.test.js:PASS"
+  ],
+  "checks": "CHROMIUM_PATH=/usr/bin/chromium npm run test:editor:layout:54/54 PASS; route 19/19 PASS; editor 17/17 PASS; plan contract 14/14 PASS; canonical 396 mappings PASS",
+  "started_revision": "1012ffe226594b23564d9105db7914915d3aa3c6",
+  "finished_revision": "1012ffe226594b23564d9105db7914915d3aa3c6",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

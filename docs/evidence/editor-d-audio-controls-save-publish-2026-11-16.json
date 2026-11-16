@@ -6,7 +6,7 @@
     "name": "sanci9517/sanci9517",
     "branch": "v2/foundation",
     "branch_head_before_change": "fbe68b33a102c6c0700af7dc6b9ba5d507ff39c1",
-    "branch_head_after_change": "24fddcf9440706822df8af46cb98f2137975609e",
+    "branch_head_after_change": "1012ffe226594b23564d9105db7914915d3aa3c6",
     "branch_head_verified_by": "GitHub branch API and git ls-remote",
     "runtime_source_sha": "bd748a061901474bbdc14b23c5ad6df4940caca2",
     "changed_test_sha256": {
@@ -90,7 +90,16 @@
     "hosted_ci": {
       "result": "NOT RUN / UNVERIFIED",
       "workflow_runs_for_test_commit": 0,
-      "reason": "The canonical plan records GitHub Actions free compute as exhausted; no Actions dispatch/rerun was started. The test/evidence-only commit uses [skip ci]."
+      "reason": "No Actions dispatch/rerun started. The canonical plan records free compute exhausted; test-only commits carry [skip ci]. No hosted CI PASS is claimed."
+    },
+    "full_browser_layout": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium npm run test:editor:layout",
+      "result": "PASS",
+      "browser_test_files": 54,
+      "failures": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "notes": "Serial repository browser/layout runner; all 54/54 files completed with exit code 0, including the newly changed audio Save/reload/separate Publish test and broad D-06/D-07 regressions."
     }
   },
   "production": {
@@ -104,15 +113,14 @@
     "runtime_source_sha_verified_from_deployment_this_run": false,
     "health_or_asset_hash_checked_this_run": false,
     "worker_deploy_for_this_change": false,
-    "health_or_asset_hash_checked_this_run": false,
     "production_d1_mutation": false,
     "production_r2_operation": false
   },
   "limitations": [
     "This closes the audio native-controls Save/reload/Publish regression slice only; full D-01 through D-07 and 77.44.7.D remain OPEN / NOT_CERTIFIED.",
-    "Hosted CI was not started and no hosted PASS is claimed; the remote free-quota status remains unknown from this environment.",
     "The full Visual Editor manual/physical acceptance remains deferred until the complete Editor gate.",
-    "Save and Publish remain distinct operations."
+    "Save and Publish remain distinct operations.",
+    "Hosted CI was not run and has no PASS claim; canonical quota record is exhausted. Full browser/layout validation is local Chromium only."
   ],
   "cost_huf": 0
 }
