@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261116133846-70302c71",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-16T13:38:46.167Z",
+  "finished_at": "2026-11-16T13:40:19.986Z",
+  "wall_seconds": 94,
+  "paused_seconds": 0,
+  "measured_seconds": 94,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "Closed local cross-check and canonical status refresh for the authored decorative-image lifecycle regression; remote Editor Core CI and full D matrix remain open.",
+  "evidence": [
+    "docs/evidence/editor-d-authored-image-decorative-alt-2026-11-16.json"
+  ],
+  "checks": "targeted real Chromium 1/1 PASS; npm run test:editor 17/17 PASS; plan-contract 14/14 PASS; canonical plan 13/396 PASS; active cursor 77.44.7.D OPEN (146 PARTIAL_SOURCE, 250 UNVERIFIED); traceability 396/396 PASS; JSON/JS/diff checks PASS; Cloudflare GET confirms deployment 80986873 version 67b3ae5b at 100%; GitHub Editor Core exact SHA 43874863819 still in_progress at browser-layout step; fresh shell workers.dev probe blocked by ECONNREFUSED/ENETUNREACH",
+  "started_revision": "bd748a061901474bbdc14b23c5ad6df4940caca2",
+  "finished_revision": "bd748a061901474bbdc14b23c5ad6df4940caca2",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

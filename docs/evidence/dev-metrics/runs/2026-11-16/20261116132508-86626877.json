@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261116132508-86626877",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-16T13:25:08.104Z",
+  "finished_at": "2026-11-16T13:36:21.694Z",
+  "wall_seconds": 674,
+  "paused_seconds": 0,
+  "measured_seconds": 674,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "Added and verified authored-image decorative-alt Inspector-to-Publish lifecycle regression; D remains open and exact-SHA Editor Core CI is still running.",
+  "evidence": [
+    "docs/evidence/editor-d-authored-image-decorative-alt-2026-11-16.json",
+    "docs/evidence/live-schedule-status-pulse-2026-11-16.json"
+  ],
+  "checks": "targeted real Chromium 1/1 PASS; npm run test:editor 17/17 PASS; plan-contract 14/14 PASS; canonical master 13 files/396 mappings PASS; active cursor 77.44.7.D OPEN, PARTIAL_SOURCE 146/UNVERIFIED 250; source traceability 396/396 PASS; node --check and diff-check PASS; exact source CI 43874863819 still in_progress; current Worker deployment 80986873 / version 67b3ae5b at 100%; fresh public egress blocked, prior release health/hash evidence retained",
+  "started_revision": "bd748a061901474bbdc14b23c5ad6df4940caca2",
+  "finished_revision": "bd748a061901474bbdc14b23c5ad6df4940caca2",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

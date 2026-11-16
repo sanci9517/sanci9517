@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "id": "20261116131833-5a38aeed",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-16T13:18:33.863Z",
+  "abandoned_at": "2026-11-16T13:25:08.037Z",
+  "measured_seconds": null,
+  "status": "interrupted",
+  "reason": "Az előző aktív mérés kód/evidence push után lezáratlanul maradt; megbízható lezárási idő nem igazolható, ezért nincs hozzáadott idő.",
+  "started_revision": "1790f1dcd093a68842047ac5884f732a3c7dd0d2",
+  "measurement": "missing end time; excluded from elapsed time and ETA"
+}

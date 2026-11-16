@@ -307,6 +307,23 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   await editor.locator('.editor-media-choice').click();
   await editor.waitForFunction(id=>document.querySelector(`[data-node-id="${id}"] img`)?.getAttribute('src')==='/api/admin/media?id=6b1c2e65-e46e-4764-b234-123456789abc',ids.image);
   assert.equal(await node(editor,'image').locator('img').getAttribute('alt'),'Új képleírás','choosing an asset preserves a manually written alt');
+  const authoredImageAlt=editor.getByLabel('Kép szöveges leírása',{exact:true});
+  const authoredImageDecorative=editor.getByLabel('Csak díszítő kép',{exact:true});
+  await authoredImageAlt.fill('Megőrzött kép leírása');
+  await authoredImageDecorative.check();
+  assert.equal(await authoredImageAlt.inputValue(),'Megőrzött kép leírása','decorative mode never deletes the authored image description');
+  assert.equal(await node(editor,'image').locator('img').getAttribute('alt'),'','decorative authored images expose an empty alternative text in the Canvas');
+  await authoredImageDecorative.uncheck();
+  assert.equal(await node(editor,'image').locator('img').getAttribute('alt'),'Megőrzött kép leírása','turning decorative mode off restores the preserved description without retyping');
+  await authoredImageAlt.fill('');
+  await editor.waitForFunction(()=>document.querySelector('.editor-publication-warning')?.textContent.includes('Adj meg képleírást, vagy jelöld a képet díszítőnek.'));
+  assert.equal(await authoredImageDecorative.isChecked(),false,'a content image with an empty alt is not silently treated as decorative');
+  await authoredImageDecorative.check();
+  await editor.waitForFunction(()=>document.querySelector('.editor-publication-warning')?.hidden===true);
+  assert.equal(await node(editor,'image').locator('img').getAttribute('alt'),'','an explicitly decorative content image clears its required-alt publication warning');
+  assert.equal(posts.length,1,'authored image accessibility edits stay in the local draft until explicit Save');
+  await authoredImageDecorative.uncheck();
+  assert.equal(await node(editor,'image').locator('img').getAttribute('alt'),'','switching a deliberately empty-alt image back to informative mode does not invent a description');
   await editor.getByLabel('Kép szöveges leírása',{exact:true}).fill('');
   await editor.locator('[data-content-key="assetId"]').getByRole('button',{name:'Médiatár megnyitása'}).click();
   await editor.locator('[data-content-key="assetId"] .editor-media-choice').click();
@@ -319,6 +336,10 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   // Choose the library image explicitly again for the publication checks below.
   await editor.locator('[data-content-key="assetId"]').getByRole('button',{name:'Médiatár megnyitása'}).click();
   await editor.locator('[data-content-key="assetId"] .editor-media-choice').click();
+  await authoredImageAlt.fill('Mentés után is megőrzött leírás');
+  await authoredImageDecorative.check();
+  assert.equal(await authoredImageAlt.inputValue(),'Mentés után is megőrzött leírás','enabling decorative mode preserves alt metadata through the next Save');
+  await authoredImageAlt.fill('');
   await select('tabs');
   await node(editor,'tabs').getByRole('tab',{name:'Bemutatkozás',exact:true}).click();
   assert.equal(await node(editor,'tabs').getByRole('tab',{name:'Bemutatkozás',exact:true}).getAttribute('aria-selected'),'true');
@@ -517,6 +538,8 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.video].props.src,authoredMediaSources.video,'Save stores the validated video playback URL in the draft');
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.audio].props.src,authoredMediaSources.audio,'Save stores the validated audio playback URL in the draft');
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.image].props.assetId,assetId,'Save persists the site asset reference but never publishes it');
+  assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.image].props.decorative,true,'Save persists the explicit decorative choice');
+  assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.image].props.alt,'','Save keeps the empty alt separate from the preserved description case');
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.gallery].props.items[0].assetId,assetId);
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.gallery].props.items[1].alt,'  Második kép  ','rendering must not silently rewrite the saved draft');
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.gallery].props.items[1].caption,'  Második képaláírás  ');
@@ -551,6 +574,9 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
     assert.equal(await editor.locator('.content-schema-field[data-content-key="src"] input').inputValue(),authoredMediaSources[type],
       `Editor reload restores the saved ${type} source without publishing it`);
   }
+  await select('image');
+  assert.equal(await editor.getByLabel('Csak díszítő kép',{exact:true}).isChecked(),true,'Editor reload restores the authored decorative image mode');
+  assert.equal(await editor.getByLabel('Kép szöveges leírása',{exact:true}).inputValue(),'','Editor reload preserves the intentionally empty alt value');
   await select('link');
   assert.equal(await editor.locator(`.plain-text-editor[data-text-node-id="${ids.link}"]`).inputValue(),authoredLinkText,'Editor reload restores the authored link text');
   assert.equal(await editor.locator('[data-content-key="href"] input').inputValue(),authoredLinkHref,'Editor reload restores the authored link destination');
@@ -580,7 +606,7 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   await live.keyboard.press('Tab');await node(live,'button').focus();await live.waitForFunction(id=>getComputedStyle(document.querySelector(`[data-node-id="${id}"]`)).backgroundColor==='rgb(37, 99, 235)',ids.button);
   assert.equal(await node(live,'button').evaluate(el=>getComputedStyle(el).rotate),'3deg');
   await live.emulateMedia({reducedMotion:'reduce'});assert.equal(await node(live,'button').evaluate(el=>getComputedStyle(el).transitionDuration),'0s');
-  assert.equal(await node(live,'image').locator('img').getAttribute('alt'),'Márkajel');assert.equal(await node(live,'image').locator('img').evaluate(el=>getComputedStyle(el).objectPosition),'18% 82%');assert.equal(await node(live,'image').locator('figcaption').textContent(),'Képaláírás');
+  assert.equal(await node(live,'image').locator('img').getAttribute('alt'),'','separate Publish exposes the explicit decorative image as empty alt');assert.equal(await node(live,'image').locator('img').getAttribute('role'),null,'native empty-alt semantics remain intact without an unnecessary role override');assert.equal(await node(live,'image').locator('img').evaluate(el=>getComputedStyle(el).objectPosition),'18% 82%');assert.equal(await node(live,'image').locator('figcaption').textContent(),'Képaláírás');
   assert.equal(await node(live,'gallery').locator('img').first().evaluate(el=>getComputedStyle(el).objectPosition),'24% 68%','published gallery item retains its independent crop');
   assert.equal(await node(live,'gallery').locator('img').nth(1).getAttribute('alt'),'Második kép','Publish renders trimmed alt text from the preserved draft');
   assert.equal(await node(live,'gallery').locator('img').nth(1).locator('xpath=ancestor::figure').locator('figcaption').textContent(),'Második képaláírás');

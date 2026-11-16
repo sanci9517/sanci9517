@@ -1,0 +1,94 @@
+{
+  "schema_version": 1,
+  "date": "2026-11-16",
+  "plan_point": "77.44.7.D",
+  "scope": "Public live schedule status indicator",
+  "status": "released_slice_verified",
+  "repository": "sanci9517/sanci9517",
+  "branch": "v2/foundation",
+  "runtime_commit": "bd748a061901474bbdc14b23c5ad6df4940caca2",
+  "parent_commit": "1790f1dcd093a68842047ac5884f732a3c7dd0d2",
+  "commit_message": "feat(public): animate live schedule status",
+  "design_reference_review": {
+    "url": "https://avidisodd.hu/",
+    "observed": "Clear latest-content section and distinct creator/community navigation.",
+    "application": "Applied no copied text, images, or markup; the SANCI change uses only its own authored live schedule state."
+  },
+  "changes": [
+    "Added a low-contrast, 2.4-second decorative pulse to the existing textual live status on a schedule event that is already marked live.",
+    "Disabled the pulse with prefers-reduced-motion; normal and cancelled schedule events do not receive it.",
+    "Updated the stylesheet cache key and extended source-level and real-Chromium regressions."
+  ],
+  "checks": {
+    "npm_run_test_showcase": "PASS",
+    "npm_run_test_showcase_browser": "PASS; 320, 390, 768, and 1440 px plus touch and reduced-motion contexts",
+    "npm_run_test_schedule": "PASS; 6 files",
+    "npm_run_typecheck": "PASS",
+    "node_check_browser_test": "PASS",
+    "git_diff_check": "PASS",
+    "wrangler_deploy_dry_run": "PASS; Wrangler 4.130.0; 182 assets; dry-run only"
+  },
+  "production_d1_read_only_preflight": {
+    "query": "SELECT name FROM d1_migrations ORDER BY name;",
+    "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
+    "rows_read": 35,
+    "rows_written": 0,
+    "changes": 0,
+    "changed_db": false,
+    "latest_migration": "0029_media_archive_unicode_additive.sql"
+  },
+  "production_release": {
+    "build_uuid": "a3aa4d9e-0852-4a1c-8603-1e6121a3f4e1",
+    "build_outcome": "success",
+    "build_source_commit": "bd748a061901474bbdc14b23c5ad6df4940caca2",
+    "build_command": "npm run typecheck",
+    "deploy_command": "npm run deploy:safe",
+    "deployment_id": "80986873-0dbe-4d5a-9d76-f89144297008",
+    "worker_version_id": "67b3ae5b-2909-44a7-82fc-c7ecf4ee492b",
+    "worker_version_number": 4085,
+    "traffic_percentage": 100,
+    "created_on": "2026-11-16T13:21:06.703394Z",
+    "health": {
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+      "http_status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "schedule_page": {
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/p/schedule",
+      "http_status": 200,
+      "stylesheet_href": "/assets/sanci-showcase.css?v=20261116-live-status-pulse-v1"
+    },
+    "public_stylesheet": {
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/assets/sanci-showcase.css?v=20261116-live-status-pulse-v1",
+      "http_status": 200,
+      "local_sha256": "b2e8a273ba44ff429fb240f326751e5e9de391e5ce23895dd2df260c51fb399f",
+      "production_sha256": "b2e8a273ba44ff429fb240f326751e5e9de391e5ce23895dd2df260c51fb399f",
+      "hashes_match": true
+    }
+  },
+  "github_ci": {
+    "workflow": "Editor Core Test",
+    "run_id": 43874863819,
+    "commit": "bd748a061901474bbdc14b23c5ad6df4940caca2",
+    "observed_status": "in_progress",
+    "last_observed_step": "Test real Worker media upload with isolated D1 and R2",
+    "passed_steps_observed": "typecheck, Editor Core unit, offline D1 ledger/bootstrap, private R2 media API, public showcase unit and Chromium",
+    "no_rerun_dispatched": true
+  },
+  "data_safety": {
+    "production_d1_migrations_applied": false,
+    "production_data_mutated": false,
+    "r2_deletions": false,
+    "page_model_changed": false,
+    "save_publish_state_changed": false,
+    "indicator_uses_existing_authored_live_state": true
+  },
+  "full_plan_point_certified": false,
+  "full_visual_editor_manual_acceptance": "deferred per plan",
+  "cost_note": "No paid service, production data operation, or extra CI dispatch was used. The existing push-triggered GitHub and Cloudflare pipelines ran."
+}

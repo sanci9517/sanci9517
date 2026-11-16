@@ -1,0 +1,73 @@
+{
+  "schema": "sanci.editor.d-authored-image-decorative-alt.v1",
+  "captured_at_utc": "2026-11-16T13:25:08Z",
+  "updated_at_utc": "2026-11-16T13:38:36Z",
+  "plan_point": "77.44.7.D — element-specific content and media",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "runtime_source_sha": "bd748a061901474bbdc14b23c5ad6df4940caca2",
+    "plan_sha256": "3a9af0604052a8313b553f387f4c21cce411da3c443c5d95186db4ed0b1a0685"
+  },
+  "gap": "D image decorative mode was present in legacy-media tests but not exercised through the authored image Inspector → Canvas → Save/reload → separate Publish browser lifecycle.",
+  "reused_implementation": [
+    "The existing authored CONTENT_FIELDS image Inspector and validated content.properties.set command.",
+    "The shared authored image renderer and existing isolated real-Chromium Editor/public route fixture.",
+    "No copied third-party implementation and no dependency change."
+  ],
+  "test_change": {
+    "file": "tests/browser/editor-content-system.test.js",
+    "assertions": [
+      "An authored image can keep a non-empty alt value while marked decorative; its Canvas image receives alt=empty without rewriting the stored text.",
+      "Turning decorative mode off restores the prior authored description without retyping.",
+      "A non-decorative authored image with an empty alt shows the publication warning; explicit decorative mode clears that warning.",
+      "These Inspector changes remain draft-only until explicit Save.",
+      "Save/reload retains the intentional decorative flag and empty alt.",
+      "The published image uses native empty-alt semantics, without an unnecessary role override, and its visible caption remains intact."
+    ],
+    "initial_attempt": "One first browser assertion ran the pre-existing Media-library metadata test while the fixture still had decorative mode enabled; the test was sequenced to restore informative mode before that independent metadata assertion. No product behavior was changed."
+  },
+  "checks": {
+    "targeted_real_chromium": "PASS — CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-content-system.test.js; 1/1 file; final run required the authorized local-loopback network permission because the default managed sandbox returned listen EPERM before assertions",
+    "npm_run_test_editor": "PASS — 17/17 files; Linux subreaper guard 3/3",
+    "plan_contract": "PASS — 14/14",
+    "canonical_plan_integrity": "PASS — 13 master files, 396 mappings; functional acceptance remains NOT_CERTIFIED",
+    "active_plan_cursor": "77.44.7.D OPEN / NOT_CERTIFIED",
+    "source_traceability": "PASS — 396/396 after project generator refreshed stale workflow-source fingerprint",
+    "node_check_and_diff_check": "PASS",
+    "live_probe_attempt_2026_11_16T13_35Z": "UNVERIFIED — current shell egress to workers.dev failed with ECONNREFUSED/ENETUNREACH on port 443; no public health/hash result is claimed from this attempt"
+  },
+  "runtime_and_production": {
+    "runtime_source_changed": false,
+    "public_asset_changed": false,
+    "worker_deployment_for_this_block": false,
+    "current_cloudflare_deployment": "80986873-0dbe-4d5a-9d76-f89144297008",
+    "current_worker_version": "67b3ae5b-2909-44a7-82fc-c7ecf4ee492b",
+    "current_worker_traffic_percent": 100,
+    "production_d1_migration_or_write": false,
+    "production_r2_operation_or_deletion": false,
+    "save_publish_separation_preserved": true
+  },
+  "latest_read_only_cloudflare_deployments_get": {
+    "observed_at_utc": "2026-11-16T13:35:00Z",
+    "latest_deployment_id": "80986873-0dbe-4d5a-9d76-f89144297008",
+    "latest_version_id": "67b3ae5b-2909-44a7-82fc-c7ecf4ee492b",
+    "traffic_percentage": 100,
+    "runtime_source_sha": "bd748a061901474bbdc14b23c5ad6df4940caca2"
+  },
+  "github_ci": {
+    "editor_core_run_id": 43874863819,
+    "source_commit": "bd748a061901474bbdc14b23c5ad6df4940caca2",
+    "last_observed_status": "in_progress",
+    "last_observed_step": "Run Editor browser layout regression",
+    "last_checked_at_utc": "2026-11-16T13:38:36Z",
+    "rerun_or_dispatch": false,
+    "this_test_evidence_commit_uses_skip_ci": true
+  },
+  "limitations": [
+    "A fresh public health/hash fetch from this final shell context was blocked by external egress (ECONNREFUSED/ENETUNREACH); the earlier successful exact-source release smoke remains recorded separately in the schedule release evidence.",
+    "This is one authored image accessibility/lifecycle subgate, not complete D-01 through D-07 acceptance or full 77.44.7.D certification.",
+    "Full Visual Editor manual and physical acceptance remains deferred until the complete Editor gate."
+  ],
+  "cost_huf": 0
+}
