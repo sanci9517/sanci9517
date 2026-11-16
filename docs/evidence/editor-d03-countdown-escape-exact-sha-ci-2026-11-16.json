@@ -1,0 +1,61 @@
+{
+  "task": "77.44.7.D-D03-countdown-escape-exact-sha-ci-followup",
+  "title": "Countdown Escape regression test exact-SHA CI follow-up",
+  "recorded_at": "2026-11-16",
+  "branch": "v2/foundation",
+  "head_commit": "e5b3b28dbdab92786f33c31353ed17f153893dc3",
+  "runtime_source_commit": "a7eaf769eb8d61f4bfa81f3e1262d02b87f73d35",
+  "test_harness_fix_commit": "222a38a19441338e8ad3c5b47466114b98d462b5",
+  "plan_source": {
+    "path": "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+    "bytes_before_append": 1628379,
+    "git_blob_before_append": "95df5c4a47d0487ee50a31ea3fa6c832f7d6d3a0"
+  },
+  "ci": {
+    "workflow": "Editor Core Test",
+    "run_id": 43798364063,
+    "run_url": "https://github.com/sanci9517/sanci9517/actions/runs/43798364063",
+    "source_sha": "a7eaf769eb8d61f4bfa81f3e1262d02b87f73d35",
+    "job_id": 133072333298,
+    "job_conclusion": "success",
+    "steps": {
+      "typescript_typecheck": "success",
+      "editor_core_tests": "success",
+      "offline_d1_ledger_reconciliation": "success",
+      "private_r2_media_api_tests": "success",
+      "isolated_worker_media_upload": "success",
+      "editor_browser_layout_regression": "success",
+      "admin_mobile_browser_regression": "success",
+      "canonical_schedule_tests": "success",
+      "domain_contract_tests": "success",
+      "brand_kit_storage_access_regression": "success",
+      "admin_home_contract_tests": "success",
+      "diagnostic_screenshot_upload": "skipped_conditionally"
+    }
+  },
+  "prior_failed_run": {
+    "run_id": 43757847254,
+    "source_sha": "effec1ce4af65eedb3b8889bdc58f11a782c2c2d",
+    "conclusion": "failure",
+    "note": "This older exact-SHA run remains a failure. The passing run above is a separate run on descendant source a7eaf76 that includes the Escape test harness fix; it does not rewrite the historical result."
+  },
+  "runtime": {
+    "changed_in_this_followup": false,
+    "latest_cloudflare_deployment": "5f49764b-cfd0-44c5-9767-6f882690a838",
+    "worker_version": "f9173eca-4d17-4712-8c4a-61d62d6d4de2",
+    "traffic_percent": 100,
+    "production_health": "Previously verified HTTP 200 on runtime source a7eaf76; no new health GET performed in this documentation/CI follow-up.",
+    "production_d1_or_r2_mutation": false
+  },
+  "scope": {
+    "save_publish_separate": true,
+    "d03_exact_sha_ci_followup": "PASS",
+    "d03_complete": false,
+    "d01_d07_capability_lifecycle_matrix": "OPEN / NOT_CERTIFIED",
+    "complete_editor_manual_physical_acceptance": "DEFERRED"
+  },
+  "cost": {
+    "new_paid_services": false,
+    "new_cost_huf": 0
+  }
+}

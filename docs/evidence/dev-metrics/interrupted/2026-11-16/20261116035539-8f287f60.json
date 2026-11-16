@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "id": "20261116035539-8f287f60",
+  "task": "77.44.7.D-D06-escaped-media-reference-guard",
+  "trigger": "manual",
+  "started_at": "2026-11-16T03:55:39.280Z",
+  "abandoned_at": "2026-11-16T04:05:03.017Z",
+  "measured_seconds": null,
+  "status": "interrupted",
+  "reason": "Task focus shifted to exact-SHA D-03 CI follow-up; previous media-reference check found no reproducible remaining gap and cannot be measured as completed implementation; archive without crediting idle time.",
+  "started_revision": "e5b3b28dbdab92786f33c31353ed17f153893dc3",
+  "measurement": "missing end time; excluded from elapsed time and ETA"
+}
