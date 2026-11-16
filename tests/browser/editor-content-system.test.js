@@ -199,6 +199,20 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   assert.equal(await buttonHref.inputValue(),'/p/updated','the content Inspector retains the edited link');
   await editor.locator('#undo').click();assert.equal(await editor.locator('[data-content-key="href"] input').inputValue(),'/p/home','Undo restores the previous link');
   await editor.locator('#redo').click();assert.equal(await editor.locator('[data-content-key="href"] input').inputValue(),'/p/updated','Redo restores the selected link');
+  await select('link');
+  const authoredLinkHref='https://artist.example.com/story?source=editor&mode=public';
+  const authoredLinkText='Olvasd el az alkotó történetét';
+  const authoredLinkLabel='Alkotói történet megnyitása';
+  await editor.locator(`.plain-text-editor[data-text-node-id="${ids.link}"]`).fill(authoredLinkText);
+  await editor.locator('[data-content-key="href"] input').fill(authoredLinkHref);
+  await editor.locator('[data-content-key="target"] select').selectOption('_blank');
+  await editor.locator('[data-content-key="ariaLabel"] input').fill(authoredLinkLabel);
+  assert.equal(await node(editor,'link').locator('.node-content').textContent(),authoredLinkText,'the authored link preview renders its edited text without making the canvas navigable');
+  assert.equal(await editor.locator('[data-content-key="href"] input').inputValue(),authoredLinkHref,'the link Inspector retains the edited HTTPS destination');
+  assert.equal(await editor.locator('[data-content-key="target"] select').inputValue(),'_blank','the link Inspector retains the selected window target');
+  assert.equal(await editor.locator('[data-content-key="ariaLabel"] input').inputValue(),authoredLinkLabel,'the link Inspector retains its explicit accessible name');
+  assert.equal(posts.length,0,'editing authored link fields does not Save or Publish');
+  await select('button');
   await editor.locator('.inspector-tabs button').first().click();
   await editor.locator('.inspector-tabs button').nth(2).click();await openGroup('Rámutatás és fókusz');
   await editor.getByLabel('Állapot előnézete',{exact:true}).selectOption('hover');
@@ -397,6 +411,9 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   await editor.getByRole('button',{name:'1. elem: Le',exact:true}).click();assert.match(await node(editor,'list').locator('ol').textContent(),/^Második elem/);
   assert.equal(posts.length,1);
   await editor.locator('#save').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));assert.equal(posts.at(-1).publish,false);
+  assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.link].props.href,authoredLinkHref,'Save stores the authored link destination in the draft');
+  assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.link].props.target,'_blank','Save stores the authored link target in the draft');
+  assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.link].props.ariaLabel,authoredLinkLabel,'Save stores the authored link accessible name in the draft');
   assert.deepEqual(posts.at(-1).document.pages[pageId].nodes[ids.table].props.rows,expectedTableRows,
     'Save retains every long table cell and its final edit in the draft');
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.video].props.posterAssetId,assetId,'Save retains poster ID as draft only');
@@ -407,6 +424,8 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.gallery].props.items[1].caption,'  Második képaláírás  ');
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.button].responsive.desktop.backgroundAssetId,assetId,'Save stores the background asset ID');
   await live.goto(base+'/p/test');assert.equal(await live.locator('h1[data-node-id]').textContent(),'Alkotói főcím');
+  assert.equal(await node(live,'link').getAttribute('href'),'mailto:creator@example.com','draft Save does not publish the authored link destination');
+  assert.equal(await node(live,'link').textContent(),'Kapcsolat','draft Save does not publish the authored link text');
   assert.equal(await node(live,'icon').getAttribute('aria-label'),'Kedvenc','Save keeps the previous published icon name live');
   assert.equal(await node(live,'icon').getAttribute('role'),'img');
   assert.equal(await node(live,'video').locator('video').getAttribute('poster'),'/fixture.svg','Save never publishes the newly chosen poster');
@@ -427,8 +446,18 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   await editor.reload();await select('table');
   assert.equal(await editor.locator('.content-schema-field[data-content-key="rows"] textarea').inputValue(),serializeTableTsv(expectedTableRows),
     'reload restores the complete long table before separate Publish');
+  await select('link');
+  assert.equal(await editor.locator(`.plain-text-editor[data-text-node-id="${ids.link}"]`).inputValue(),authoredLinkText,'Editor reload restores the authored link text');
+  assert.equal(await editor.locator('[data-content-key="href"] input').inputValue(),authoredLinkHref,'Editor reload restores the authored link destination');
+  assert.equal(await editor.locator('[data-content-key="target"] select').inputValue(),'_blank','Editor reload restores the authored link target');
+  assert.equal(await editor.locator('[data-content-key="ariaLabel"] input').inputValue(),authoredLinkLabel,'Editor reload restores the authored link accessible name');
   await select('heading');assert.equal(await editor.getByLabel('Címsor szemantikai szintje',{exact:true}).inputValue(),'3');
   await editor.locator('#publish').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent==='Publikálva');await live.reload();
+  assert.equal(await node(live,'link').getAttribute('href'),authoredLinkHref,'separate Publish exposes the authored link destination');
+  assert.equal(await node(live,'link').getAttribute('target'),'_blank');
+  assert.equal(await node(live,'link').getAttribute('rel'),'noopener noreferrer');
+  assert.equal(await node(live,'link').getAttribute('aria-label'),authoredLinkLabel);
+  assert.equal(await node(live,'link').textContent(),authoredLinkText,'separate Publish exposes the authored link text');
   assert.equal(await node(live,'icon').getAttribute('aria-label'),null,'Publish removes a whitespace-only icon name');
   assert.equal(await node(live,'icon').getAttribute('role'),null);
   assert.equal(await node(live,'icon').getAttribute('aria-hidden'),'true','published unnamed icon is decorative');

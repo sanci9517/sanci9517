@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "id": "20261116053629-233eb343",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-16T05:36:29.471Z",
+  "finished_at": "2026-11-16T05:45:39.341Z",
+  "wall_seconds": 550,
+  "paused_seconds": 0,
+  "measured_seconds": 550,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "D link authored-field lifecycle regression passes in real Chromium; full D scope remains open.",
+  "evidence": [
+    "docs/evidence/editor-d-link-lifecycle-2026-11-16.json",
+    "tests/browser/editor-content-system.test.js",
+    "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md"
+  ],
+  "checks": "target browser 1/1 PASS; editor unit 17/17 PASS; Linux subreaper 3/3 PASS; plan-contract 14/14 PASS; traceability 396/396 PASS; no hosted CI or deployment",
+  "started_revision": "8bb8bf0a3c906d27bd0da2320dfec4f5a930f649",
+  "finished_revision": "8bb8bf0a3c906d27bd0da2320dfec4f5a930f649",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

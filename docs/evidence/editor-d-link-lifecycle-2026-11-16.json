@@ -1,0 +1,61 @@
+{
+  "schema": "sanci.editor.d.link-lifecycle.v1",
+  "captured_at_utc": "2026-11-16T05:44:33Z",
+  "plan_point": "77.44.7.D — element-specific content and media",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "source_commit": "8bb8bf0a3c906d27bd0da2320dfec4f5a930f649",
+    "remote_head_before_change": "8bb8bf0a3c906d27bd0da2320dfec4f5a930f649",
+    "runtime_source_sha": "a7eaf769eb8d61f4bfa81f3e1262d02b87f73d35",
+    "canonical_plan_sha256_before_append": "3ea1b5a6b36e67df10ea99debb917214a7979cb6b357fa802787b329420738ce"
+  },
+  "change": {
+    "test": "tests/browser/editor-content-system.test.js",
+    "coverage": [
+      "link plain text edit updates the draft Canvas preview without making the Editor Canvas navigable",
+      "link href, target and ariaLabel Inspector controls retain their authored values",
+      "Save records link text and link fields in the draft while the public page remains unchanged",
+      "Editor reload restores the saved link text, href, target and accessible name",
+      "separate Publish updates the public link destination, target, rel=noopener noreferrer, accessible name and text"
+    ],
+    "harness_corrections": [
+      "link text is exposed through the dedicated .plain-text-editor, while the shared schema controls expose href, target and ariaLabel",
+      "Editor Canvas intentionally renders non-navigable node-content; public link attributes are asserted on the published node"
+    ]
+  },
+  "verification": {
+    "targeted_browser_command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-content-system.test.js",
+    "targeted_browser_result": "PASS",
+    "targeted_browser_tests": 1,
+    "targeted_browser_failures": 0,
+    "editor_unit_command": "npm run test:editor",
+    "editor_unit_result": "PASS",
+    "editor_unit_files": 17,
+    "linux_subreaper_cases": 3,
+    "plan_contract": "14/14 PASS",
+    "canonical_plan": "13 master files / 396 features PASS",
+    "active_cursor": "77.44.7.D / OPEN / NOT_CERTIFIED",
+    "feature_traceability": "396/396 PASS",
+    "git_diff_check": "PASS"
+  },
+  "release": {
+    "runtime_changed": false,
+    "public_assets_changed": false,
+    "worker_deployed": false,
+    "deployment_id": "5f49764b-cfd0-44c5-9767-6f882690a838",
+    "worker_version_id": "f9173eca-4d17-4712-8c4a-61d62d6d4de2",
+    "traffic_percent": 100,
+    "health_get": "not repeated; no runtime change",
+    "production_d1": "no write or migration",
+    "production_r2": "no operation",
+    "hosted_ci": "not run; test/docs evidence follow-up uses [skip ci]",
+    "new_cost_huf": 0
+  },
+  "status": "D_LINK_LIFECYCLE_TEST_PASS; FULL_77_44_7_D_OPEN_NOT_CERTIFIED",
+  "limitations": [
+    "This targeted link interaction does not close all per-field validation, responsive, renderer, Media authorization or physical device acceptance across the entire D scope.",
+    "Full 77.44.7.D remains OPEN / NOT_CERTIFIED; complete Visual Editor manual/physical acceptance remains deferred.",
+    "Save remains distinct from Publish."
+  ]
+}
