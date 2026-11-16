@@ -440,6 +440,19 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
     assert.equal(await sourceField.getAttribute('aria-invalid'),null,`a safe same-site ${type} URL clears the field error`);
     assert.equal(await node(editor,type).locator(tag).getAttribute('src'),authoredMediaSources[type],`valid ${type} source edits reach the Canvas without saving`);
     assert.equal(posts.length,1,`valid ${type} edits remain draft-only until explicit Save`);
+    const privatePreview=`/api/admin/media?id=${assetId}`;
+    await sourceField.fill(privatePreview);
+    assert.equal(await sourceField.getAttribute('aria-invalid'),'true',`${type} rejects an authenticated Editor preview URL at the authored-content boundary`);
+    assert.equal(await node(editor,type).locator(tag).getAttribute('src'),authoredMediaSources[type],`a private ${type} preview cannot replace the safe draft playback URL`);
+    await editor.locator('#save').click();
+    await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent.includes('Javítsd a jelzett mezőt mentés vagy publikálás előtt'));
+    assert.equal(posts.length,1,`Save cannot send the rejected private ${type} preview`);
+    await editor.locator('#publish').click();
+    await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent.includes('Javítsd a jelzett mezőt mentés vagy publikálás előtt'));
+    assert.equal(posts.length,1,`Publish cannot send the rejected private ${type} preview`);
+    assert.equal(published.pages[pageId].nodes[ids[type]].props.src,originalSource,`rejected ${type} publication leaves the public playback URL unchanged`);
+    await sourceField.fill(authoredMediaSources[type]);
+    assert.equal(posts.length,1,`repairing the ${type} source still does not Save or Publish implicitly`);
   }
   await editor.locator('#save').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));assert.equal(posts.at(-1).publish,false);
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.link].props.href,authoredLinkHref,'Save stores the authored link destination in the draft');

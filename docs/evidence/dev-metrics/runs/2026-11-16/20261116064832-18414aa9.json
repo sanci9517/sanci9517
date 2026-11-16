@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261116064832-18414aa9",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-16T06:48:32.075Z",
+  "finished_at": "2026-11-16T07:01:51.974Z",
+  "wall_seconds": 800,
+  "paused_seconds": 0,
+  "measured_seconds": 800,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "D-01 privát videó/hang előnézet fail-closed browser regression and evidence added; targeted browser 1/1 and editor unit 17/17 pass. Broad 54-file browser run interrupted after 4 files; D remains open.",
+  "evidence": [
+    "docs/evidence/editor-d01-private-media-preview-fail-closed-2026-11-16.json"
+  ],
+  "checks": "browser-target 1/1 PASS; test:editor 17/17 PASS; broad browser partial; diff-check PASS",
+  "started_revision": "b541c8318ad810a21aebaf7725ade39208443a91",
+  "finished_revision": "b541c8318ad810a21aebaf7725ade39208443a91",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "planPoint": "77.44.7.D / D-01 authored video/audio media",
+  "date": "2026-11-16",
+  "status": "PARTIAL",
+  "scope": "The authenticated Editor-only /api/admin/media preview route is rejected when supplied as authored video/audio src. The previously committed safe authored URL remains on Canvas and in the public snapshot. Save and Publish make no API write while that field is invalid.",
+  "change": {
+    "path": "tests/browser/editor-content-system.test.js",
+    "kind": "browser regression coverage only",
+    "assertions": [
+      "video and audio Inspector reject /api/admin/media preview src values with aria-invalid",
+      "the last safe same-site Canvas src remains unchanged",
+      "Save is blocked and does not issue another write",
+      "Publish is blocked and does not issue another write",
+      "the public snapshot keeps the prior safe playback URL",
+      "repairing the field does not implicitly Save or Publish"
+    ]
+  },
+  "verification": {
+    "targetedBrowser": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-content-system.test.js",
+      "result": "PASS",
+      "tests": "1/1"
+    },
+    "editorUnitRegression": {
+      "command": "npm run test:editor",
+      "result": "PASS",
+      "tests": "17/17 node suites; Linux subreaper 3/3"
+    },
+    "broadBrowserSuite": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium npm run test:editor:layout",
+      "result": "INTERRUPTED_AFTER_PARTIAL_PROGRESS",
+      "note": "This 54-file suite was stopped after the first four files passed (87, 2, 2, and 2 tests respectively); file 5 had started. No result is claimed for the full suite."
+    },
+    "diffCheck": "PASS"
+  },
+  "initialTestAdjustment": "The first new assertion expected publication guidance, but the current contract rejects the private preview earlier in the Inspector command boundary. The regression was corrected to assert that boundary and the Save/Publish fail-closed behavior; this did not establish a product defect.",
+  "release": {
+    "runtimeSourceSha": "a7eaf769eb8d61f4bfa81f3e1262d02b87f73d35",
+    "runtimeChanged": false,
+    "workerDeployment": "NONE",
+    "productionD1Mutation": "NONE",
+    "productionR2Mutation": "NONE",
+    "newCostHuf": 0,
+    "saveAndPublishRemainDistinct": true,
+    "fullEditorPhysicalAcceptance": "DEFERRED"
+  },
+  "remaining": [
+    "complete D-01 media/background-asset usage-reference audit and all relevant breakpoint/public-renderer acceptance",
+    "D-02 through D-07 capability groups",
+    "production media lifecycle and native desktop/phone acceptance"
+  ],
+  "sourceSha256": "b3dab20e9fc0bba0ad7b5e3b5b55d561bbcec705293310e4802924b03d40044b",
+  "canonicalPlanSha256": "327b7411c27736e5cbfbc54d8ad00ba3e514ad1d373b5cc70dc94d9b24ffac28",
+  "agentsSha256": "d23cdc8d6e8e12814f99a81cd556e3b7e0ae4092fbe41145ba0bbb2835d6820f"
+}
