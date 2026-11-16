@@ -1,0 +1,76 @@
+{
+  "schema": "sanci.editor.d-video-playback-settings-lifecycle.v1",
+  "captured_at_utc": "2026-11-16T14:23:37Z",
+  "plan_point": "77.44.7.D — element-specific content and media",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "branch_head_before_change": "d3d9e331876c2c655f70a42ba1678696aedf1936",
+    "runtime_source_sha": "bd748a061901474bbdc14b23c5ad6df4940caca2",
+    "canonical_plan_sha256_before_change": "03a56cbfbb2463d6bf0a1d93a71317ec3f93a2ebbc6a9f31edd25f18977f9bcf",
+    "canonical_plan_sha256_after_change": "cdc4e097361e6dab10b589f545fcbf9c02521251b3477aa25b9e41a7ec64e5c9",
+    "canonical_plan_bytes_after_change": 1649849
+  },
+  "gap": "The video fields existed in CONTENT_FIELDS and the general authored-media lifecycle, but the real Editor/Canvas/Save/reload/separate Publish test did not prove the autoplay-requires-muted rule or the publication boundary for autoplay and loop.",
+  "change": {
+    "file": "tests/browser/editor-content-system.test.js",
+    "runtime_changed": false,
+    "public_asset_changed": false,
+    "dependency_or_lockfile_changed": false,
+    "assertions": [
+      "Unmuted autoplay is rejected by the Inspector with aria-invalid and does not reach the Canvas.",
+      "Invalid unmuted autoplay blocks both explicit Save and Publish without a mutation request.",
+      "After correcting the invalid draft, muted autoplay and loop preview safely; the Editor preview does not set autoplay.",
+      "Save persists muted/autoplay/loop to the draft while the public snapshot retains its original attributes.",
+      "Editor reload restores all three authored controls.",
+      "Only separate Publish exposes muted/autoplay/loop on the public video element."
+    ]
+  },
+  "checks": {
+    "targeted_real_chromium": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-content-system.test.js",
+      "result": "PASS",
+      "tests": 1,
+      "failures": 0,
+      "duration_ms": 35978,
+      "execution": "Local Chromium, isolated loopback fixture; network permission enabled only so the fixture could bind 127.0.0.1. No external browser service."
+    },
+    "first_default_sandbox_attempt": "BLOCKED before assertions: listen EPERM on 127.0.0.1; retried with local-loopback permission and the complete test passed.",
+    "editor_unit": "PASS — npm run test:editor; 17/17 files, Linux subreaper guard 3/3.",
+    "media_unit": "PASS — npm run test:media; 5/5 files.",
+    "plan_contract": "PASS — python3 tests/plan-contract.test.py; 14/14.",
+    "canonical_plan": "PASS — python3 scripts/check-canonical-plan.py; one 13-file master and 396 feature mappings.",
+    "traceability": "PASS — python3 scripts/build-feature-traceability.py --check; 396/396.",
+    "active_plan_point": "OPEN / NOT_CERTIFIED; 146 PARTIAL_SOURCE and 250 UNVERIFIED features remain.",
+    "git_diff_check": "PASS — git diff --check.",
+    "exact_runtime_source_editor_core_ci": {
+      "run_id": 43874863819,
+      "source_sha": "bd748a061901474bbdc14b23c5ad6df4940caca2",
+      "status": "completed",
+      "conclusion": "success",
+      "scope_note": "This is the latest exact-source runtime Editor Core workflow, not CI for the current test-only follow-up."
+    },
+    "new_followup_ci": "Not started; the test/evidence/plan-only follow-up follows [skip ci]. No CI pass is claimed for this follow-up."
+  },
+  "production": {
+    "latest_read_only_deployment_id": "80986873-0dbe-4d5a-9d76-f89144297008",
+    "worker_version_id": "67b3ae5b-2909-44a7-82fc-c7ecf4ee492b",
+    "traffic_percent": 100,
+    "read_only_cloudflare_deployment_api_checked": true,
+    "public_health_attempt": {
+      "result": "UNVERIFIED",
+      "detail": "HTTPS CONNECT proxy returned HTTP 403 before reaching the workers.dev origin."
+    },
+    "worker_deploy_for_this_change": false,
+    "production_d1_migration_or_write": false,
+    "production_r2_operation_or_deletion": false
+  },
+  "limitations": [
+    "This is the video playback-settings validation/lifecycle subgate only; D-01 through D-07 and the full 77.44.7.D capability/field/breakpoint/public/Media matrix remain OPEN / NOT_CERTIFIED.",
+    "No new CI run is claimed for this test-only commit; exact-source CI is for the unchanged runtime source SHA.",
+    "Health was blocked by the environment proxy and no changed public asset hashes were measured because no runtime assets changed.",
+    "Full Visual Editor manual and physical-device acceptance remains deferred until the complete Editor gate.",
+    "Save remains separate from Publish."
+  ],
+  "cost_huf": 0
+}

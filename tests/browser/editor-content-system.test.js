@@ -24,7 +24,7 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   const definitions={
     heading:{text:'Alkotói főcím',level:'1'},text:{text:'Egyedi szöveg'},button:{text:'Tovább',href:'/p/home',target:'_blank'},link:{text:'Kapcsolat',href:'mailto:creator@example.com'},
     quote:{text:'A kreativitás tanulható.',citation:'Egy alkotó'},badge:{text:'Új sorozat'},icon:{icon:'star',ariaLabel:'Kedvenc'},
-    image:{src:'/fixture.svg',alt:'Tesztillusztráció',caption:'Képaláírás',fit:'contain',ratio:'1 / 1'},video:{src:'/fixture.webm',poster:'/fixture.svg',controls:true,muted:true},audio:{src:'/fixture.mp3',controls:true},
+    image:{src:'/fixture.svg',alt:'Tesztillusztráció',caption:'Képaláírás',fit:'contain',ratio:'1 / 1'},video:{src:'/fixture.webm',poster:'/fixture.svg',controls:true,muted:false,autoplay:false,loop:false},audio:{src:'/fixture.mp3',controls:true},
     list:{ordered:true,items:[{text:'Első hivatkozás',href:'/p/home'},{text:'Második elem'}]},table:{caption:'Eredmények',header:true,rows:tableRows},
     tabs:{ariaLabel:'Eredeti fülek',items:[{title:'Videók',text:'Videólista'},{title:'Bemutatkozás',text:'Személyes történet'}]},accordion:{items:[{title:'Hogyan készült?',text:'A kulisszák mögött.'},{title:'Hol találom?',text:'A szerkesztőben.'}]},dropdown:{items:[{title:'További részletek',text:'Kiegészítés'},{title:'Másik rész',text:'Új információ'}]},
     gallery:{ariaLabel:'Eredeti képrács',columns:'3',items:[{src:'/fixture.svg',alt:'Első kép'},{src:'/fixture.svg',alt:'  Második kép  ',caption:'  Második képaláírás  '}]},carousel:{ariaLabel:'Alkotói galéria',items:[{src:'/fixture.svg',alt:'Első dia'},{src:'/fixture.svg',alt:'Második dia'}]},
@@ -457,6 +457,23 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   await posterPicker.locator('.editor-media-choice').click();
   assert.equal(await node(editor,'video').locator('video').getAttribute('poster'),'/api/admin/media?id='+assetId,'Editor video poster uses authenticated preview');
   assert.equal(await node(editor,'video').locator('video').getAttribute('src'),'/fixture.webm','choosing a cover does not change video source');
+  const mutedField=editor.locator('[data-content-key="muted"] input'),autoplayField=editor.locator('[data-content-key="autoplay"] input'),loopField=editor.locator('[data-content-key="loop"] input');
+  const postsBeforeAutoplay=posts.length;
+  await autoplayField.check();
+  assert.equal(await autoplayField.getAttribute('aria-invalid'),'true','Editor refuses unmuted autoplay at the authored-field boundary');
+  assert.equal(await node(editor,'video').locator('video').getAttribute('autoplay'),null,'rejected autoplay never reaches the Canvas');
+  await editor.locator('#save').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent.includes('Javítsd a jelzett mezőt'));
+  await editor.locator('#publish').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent.includes('Javítsd a jelzett mezőt'));
+  assert.equal(posts.length,postsBeforeAutoplay,'invalid unmuted autoplay blocks both Save and Publish');
+  await autoplayField.uncheck();
+  assert.equal(await autoplayField.getAttribute('aria-invalid'),null,'the invalid autoplay choice can be safely discarded');
+  await mutedField.check();await autoplayField.check();await loopField.check();
+  assert.equal(await node(editor,'video').locator('video').getAttribute('muted'),'', 'muted state previews immediately in the Canvas');
+  assert.equal(await node(editor,'video').locator('video').getAttribute('loop'),'', 'loop state previews immediately in the Canvas');
+  assert.equal(await node(editor,'video').locator('video').getAttribute('autoplay'),null, 'Editor preview never starts playback without an explicit user gesture');
+  assert.equal(posts.length,postsBeforeAutoplay,'valid video settings remain draft-only before explicit Save');
   // Desktop and narrow-screen Inspector text fields must not persist an
   // unfinished IME candidate; the confirmed replacement may arrive after
   // compositionend, or the compositionend may be the last event.
@@ -539,6 +556,9 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
     'Save retains every long table cell and its final edit in the draft');
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.video].props.posterAssetId,assetId,'Save retains poster ID as draft only');
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.video].props.src,authoredMediaSources.video,'Save stores the validated video playback URL in the draft');
+  assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.video].props.muted,true,'Save persists the required mute state with autoplay');
+  assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.video].props.autoplay,true,'Save persists the authored muted-autoplay setting');
+  assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.video].props.loop,true,'Save persists the authored loop setting');
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.audio].props.src,authoredMediaSources.audio,'Save stores the validated audio playback URL in the draft');
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.image].props.assetId,assetId,'Save persists the site asset reference but never publishes it');
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.image].props.decorative,true,'Save persists the explicit decorative choice');
@@ -555,6 +575,9 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   assert.equal(await node(live,'icon').getAttribute('role'),'img');
   assert.equal(await node(live,'video').locator('video').getAttribute('poster'),'/fixture.svg','Save never publishes the newly chosen poster');
   assert.equal(await node(live,'video').locator('video').getAttribute('src'),'/fixture.webm','video source Save remains separate from the currently published page');
+  assert.equal(await node(live,'video').locator('video').getAttribute('muted'),null,'Save does not publish the newly authored mute state');
+  assert.equal(await node(live,'video').locator('video').getAttribute('autoplay'),null,'Save does not publish autoplay');
+  assert.equal(await node(live,'video').locator('video').getAttribute('loop'),null,'Save does not publish loop');
   assert.equal(await node(live,'audio').locator('audio').getAttribute('src'),'/fixture.mp3','audio source Save remains separate from the currently published page');
   assert.equal(await node(live,'gallery').locator('.creator-image-zoom').first().getAttribute('data-lightbox-src'),'/fixture.svg','Save does not publish the new gallery image');
   assert.equal(await node(live,'gallery').getByRole('region',{name:'Eredeti képrács'}).count(),1,
@@ -579,6 +602,10 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
     assert.equal(await editor.locator('.content-schema-field[data-content-key="src"] input').inputValue(),authoredMediaSources[type],
       `Editor reload restores the saved ${type} source without publishing it`);
   }
+  await select('video');
+  assert.equal(await mutedField.isChecked(),true,'Editor reload restores the authored video mute state');
+  assert.equal(await autoplayField.isChecked(),true,'Editor reload restores the authored autoplay setting');
+  assert.equal(await loopField.isChecked(),true,'Editor reload restores the authored loop setting');
   await select('image');
   assert.equal(await editor.getByLabel('Csak díszítő kép',{exact:true}).isChecked(),true,'Editor reload restores the authored decorative image mode');
   assert.equal(await editor.getByLabel('Kép szöveges leírása',{exact:true}).inputValue(),'','Editor reload preserves the intentionally empty alt value');
@@ -600,6 +627,9 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   assert.equal(await node(live,'icon').getAttribute('aria-hidden'),'true','published unnamed icon is decorative');
   assert.equal(await node(live,'video').locator('video').getAttribute('poster'),'/media/'+assetId,'Publish uses guarded site image route for poster');
   assert.equal(await node(live,'video').locator('video').getAttribute('src'),authoredMediaSources.video,'separate Publish exposes the validated video source to the public page');
+  assert.equal(await node(live,'video').locator('video').getAttribute('muted'),'', 'separate Publish exposes the authored muted setting');
+  assert.equal(await node(live,'video').locator('video').getAttribute('autoplay'),'', 'separate Publish exposes autoplay only with the required mute state');
+  assert.equal(await node(live,'video').locator('video').getAttribute('loop'),'', 'separate Publish exposes the authored loop setting');
   assert.equal(await node(live,'audio').locator('audio').getAttribute('src'),authoredMediaSources.audio,'separate Publish exposes the validated audio source to the public page');
   assert.equal(await node(live,'image').locator('img').getAttribute('src'),'/media/'+assetId,'published content resolves the public media route');
   assert.equal(await live.locator(`h3[data-node-id="${ids.heading}"]`).textContent(),'Módosított főcím');

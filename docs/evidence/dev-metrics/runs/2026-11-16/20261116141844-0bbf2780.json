@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261116141844-0bbf2780",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-16T14:18:44.298Z",
+  "finished_at": "2026-11-16T14:24:16.417Z",
+  "wall_seconds": 332,
+  "paused_seconds": 0,
+  "measured_seconds": 332,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "77.44.7.D video mute/autoplay/loop acceptance: real Chromium confirms invalid unmuted autoplay blocks Save/Publish, corrected settings persist to draft/reload and reach public only after separate Publish; local tests and plan/evidence checks pass, full D remains open.",
+  "evidence": [
+    "docs/evidence/editor-d-video-playback-settings-lifecycle-2026-11-16.json"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "d3d9e331876c2c655f70a42ba1678696aedf1936",
+  "finished_revision": "d3d9e331876c2c655f70a42ba1678696aedf1936",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
