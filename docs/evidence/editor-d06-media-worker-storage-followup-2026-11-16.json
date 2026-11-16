@@ -1,0 +1,87 @@
+{
+  "schema": "sanci.editor.d06-media-worker-storage-followup.v1",
+  "captured_at_utc": "2026-11-16T16:28:20Z",
+  "plan_point": "77.44.7.D / D-06 — media library, scoped authorization, archive and Editor publication lifecycle",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "head_before_test_evidence_followup": "cf74d5991545aec7cac537dbfb7e5aac77c00251",
+    "runtime_source_sha": "bd748a061901474bbdc14b23c5ad6df4940caca2"
+  },
+  "primary_check": {
+    "command": "npm run test:media:storage",
+    "result": "PASS",
+    "tests_passed": 1,
+    "tests_failed": 0,
+    "duration_ms": 75508,
+    "fixture": "Actual repository Worker code in Miniflare with synthetic local D1 and R2 bindings, localhost fixture routes and Chromium; no production media or external browser service.",
+    "asserted_flows": [
+      "Password login, image upload, exact object-byte hash, duplicate upload reuses the same D1/R2 asset",
+      "Real Editor background media picker, canvas preview, Undo/Redo, Save-only draft, reload and separate Publish",
+      "Draft-only assets are not public; Save removal preserves the current published page; Publish removal revokes public media unless retained by revision history",
+      "Other site cannot read or mutate the first site's media and can still use its own scope",
+      "Media Library UI requires explicit two-step archive confirmation and rejects a historically referenced asset with HTTP 409",
+      "Read-only missing/orphan diagnostics retain D1 registration and nonregistered R2 objects; fixture's synthetic R2 object is deleted only locally to create the missing-object test case",
+      "D1/R2 fixture snapshots, retention rows, object bytes, foreign-key check and quick_check are asserted"
+    ]
+  },
+  "sandbox_attempt": {
+    "first_attempt": "The default restricted run did not bind the local fixture; it was stopped before assertions.",
+    "authorized_rerun": "The same test passed with local-loopback permission enabled; no external networking or service was used."
+  },
+  "related_d_gates": {
+    "restore_order": "PASS — python3 tests/d1-restore-order.test.py, 7/7",
+    "0029_release_batch": "PASS — node --test tests/d1-0029-release-batch.test.js, 1/1 top-level test",
+    "unicode_archive": "PASS — node --test tests/media-archive-additive-unicode.test.js, 1/1 top-level test",
+    "full_local_editor_chromium_from_previous_same-source-block": "PASS — npm run test:editor:layout, 54/54 files; source unchanged since that run"
+  },
+  "production_read_only_d1_postflight": {
+    "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
+    "endpoint": "POST /accounts/{account_id}/d1/database/{database_id}/query",
+    "sql": [
+      "SELECT COUNT(*) AS migration_count, MAX(name) AS latest_migration FROM d1_migrations",
+      "SELECT type, name FROM sqlite_master WHERE type = 'trigger' AND name LIKE 'media_archive_%' ORDER BY name",
+      "SELECT COUNT(*) AS retention_requests FROM media_retention_requests",
+      "PRAGMA quick_check",
+      "PRAGMA foreign_key_check"
+    ],
+    "result": {
+      "migration_count": 35,
+      "latest_migration": "0029_media_archive_unicode_additive.sql",
+      "archive_trigger_count": 7,
+      "retention_request_count": 0,
+      "quick_check": "ok",
+      "foreign_key_violations": 0
+    },
+    "all_queries_changed_db": false,
+    "all_queries_rows_written": 0,
+    "all_queries_changes": 0
+  },
+  "production_worker": {
+    "read_only_deployment_api_checked": true,
+    "deployment_id": "80986873-0dbe-4d5a-9d76-f89144297008",
+    "worker_version_id": "67b3ae5b-2909-44a7-82fc-c7ecf4ee492b",
+    "traffic_percent": 100,
+    "worker_deploy_for_this_change": false,
+    "health_probe": "NOT_RUN — test/evidence-only change and unchanged runtime source",
+    "public_asset_hashes": "NOT_REMEASURED — no runtime/public asset change"
+  },
+  "ci": {
+    "new_ci_run": "NOT_RUN",
+    "reason": "This block changes tests/evidence/documentation only; canonical 0 Ft plan says Actions free compute is exhausted. No dispatch/rerun or paid use."
+  },
+  "change_class": {
+    "runtime_changed": false,
+    "public_assets_changed": false,
+    "production_d1_write_or_migration": false,
+    "production_r2_operation_or_deletion": false,
+    "new_dependency_or_lockfile_change": false,
+    "cost_huf": 0
+  },
+  "limitations": [
+    "This advances the integrated D-06 local Worker/Media Library regression gate; it does not close the entire D-06 capability/lifecycle acceptance.",
+    "The complete D-01 through D-07 field, type, breakpoint, public output and site-scoped media matrix and full 77.44.7.D remain OPEN / NOT_CERTIFIED.",
+    "The complete Visual Editor manual and physical-device acceptance remains DEFERRED until the Editor is complete.",
+    "Save remains separate from Publish."
+  ]
+}

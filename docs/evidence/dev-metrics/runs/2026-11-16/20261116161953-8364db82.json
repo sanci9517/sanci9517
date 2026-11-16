@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261116161953-8364db82",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-16T16:19:53.758Z",
+  "finished_at": "2026-11-16T16:29:40.855Z",
+  "wall_seconds": 587,
+  "paused_seconds": 0,
+  "measured_seconds": 587,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "Re-ran D-06 isolated local Worker/Miniflare D1-R2 Chromium acceptance 1/1, D1 restore 7/7, 0029 batch and Unicode guards; production D1 SELECT-only postflight confirms 0029 and integrity, 0 writes. Full D remains OPEN/NOT_CERTIFIED.",
+  "evidence": [
+    "docs/evidence/editor-d06-media-worker-storage-followup-2026-11-16.json"
+  ],
+  "checks": "media:storage 1/1 PASS; d1-restore-order 7/7 PASS; d1-0029-release-batch 1/1 PASS; archive Unicode 1/1 PASS; plan-contract 14/14; canonical 13/396; traceability 396/396; cursor D OPEN; diff-check PASS; prod D1 SELECT/PRAGMA 0 writes; Worker 100%; no CI/deploy",
+  "started_revision": "cf74d5991545aec7cac537dbfb7e5aac77c00251",
+  "finished_revision": "cf74d5991545aec7cac537dbfb7e5aac77c00251",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
