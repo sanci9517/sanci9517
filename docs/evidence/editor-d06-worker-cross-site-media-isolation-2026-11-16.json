@@ -1,0 +1,132 @@
+{
+  "schema": "sanci.editor.d06-worker-cross-site-media-isolation.v1",
+  "captured_at_utc": "2026-11-16T18:52:51.687Z",
+  "plan_point": "77.44.7.D / D-06 — real Worker Media tenant-scope isolation",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "base_commit": "cf8041938f82c1275ab80824e4d5b034ff2c1284",
+    "runtime_source_sha": "bd748a061901474bbdc14b23c5ad6df4940caca2",
+    "changed_test_sha256": {
+      "tests/browser/media-worker-storage.test.mjs": "3acc69a38cddcade06d19efbeae25ac4574ad574b663c4fe86d9fc3e3f7d000a"
+    },
+    "canonical_plan_sha256": "19be54a296096a501cdb8c3c9e3533eb0b643ed9b0915d617a8d75162b4b73c3",
+    "canonical_plan_bytes": 1661534
+  },
+  "gap": "Prior actual Worker+Miniflare Media integration seeded only one verified host/site. Route-mocked tests did not exercise site resolver and site-scoped public media together.",
+  "change": {
+    "files": [
+      "tests/browser/media-worker-storage.test.mjs",
+      "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md"
+    ],
+    "runtime_changed": false,
+    "public_asset_changed": false,
+    "dependency_or_lockfile_changed": false,
+    "local_fixture": {
+      "sites": [
+        "site-default",
+        "site-secondary"
+      ],
+      "verified_hosts": [
+        "127.0.0.1",
+        "secondary.fixture"
+      ],
+      "storage": "isolated Miniflare D1 and R2; synthetic image only"
+    },
+    "assertions": [
+      "Verified secondary host resolves to its seeded site (404, not unknown-host 421).",
+      "Primary published image is not returned to a different site; response bytes hash differs from the R2 image.",
+      "Authenticated primary admin cookie cannot read or inspect usage for Media from the secondary site (403).",
+      "Authenticated primary admin cannot archive or unarchive Media through the secondary host (403).",
+      "D1/R2 snapshot stays unchanged across cross-site attempts.",
+      "Same-site published asset still returns HTTP 200 with exact original bytes."
+    ]
+  },
+  "checks": {
+    "targeted_real_worker_browser": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --experimental-loader ./tests/ts-extension-loader.mjs --test --test-concurrency=1 tests/browser/media-worker-storage.test.mjs",
+      "result": "PASS",
+      "tests": 1,
+      "failures": 0,
+      "duration_ms": 75114,
+      "execution": "Local Chromium + actual src/index.ts Worker fetch; Miniflare-only D1/R2; local loopback permission only."
+    },
+    "media_unit": {
+      "command": "npm run test:media",
+      "result": "PASS",
+      "files": 5,
+      "failures": 0
+    },
+    "editor_unit": {
+      "command": "npm run test:editor",
+      "result": "PASS",
+      "files": 17,
+      "failures": 0,
+      "linux_subreaper_tests": 3
+    },
+    "typecheck": {
+      "command": "npm run typecheck",
+      "result": "PASS"
+    },
+    "syntax_and_diff": {
+      "command": "node --check tests/browser/media-worker-storage.test.mjs && git diff --check",
+      "result": "PASS"
+    },
+    "failed_iterations": [
+      {
+        "command": "sandbox-restricted initial loopback attempt",
+        "result": "BLOCKED",
+        "note": "No assertion ran before local listener sandbox restriction; retried with local-only loopback permission."
+      },
+      {
+        "command": "initial cross-site test assertion",
+        "result": "TEST_ASSERTION_FIXED",
+        "note": "404 correctly returns JSON error bytes; the test now asserts those bytes cannot equal the private R2 image, rather than requiring an empty body."
+      }
+    ],
+    "active_plan_audit": {
+      "result": "OPEN / NOT_CERTIFIED",
+      "partial_source": 146,
+      "unverified": 250
+    }
+  },
+  "cloudflare_read_only": {
+    "worker_name": "sanci9517-streamer-brand",
+    "deployment_id": "80986873-0dbe-4d5a-9d76-f89144297008",
+    "version_id": "67b3ae5b-2909-44a7-82fc-c7ecf4ee492b",
+    "traffic_percent": 100,
+    "health_get": "not repeated because runtime unchanged"
+  },
+  "production": {
+    "d1": "no query, migration, or write in this block",
+    "r2": "no production operation; only isolated local fixture objects",
+    "worker_deploy": false,
+    "asset_hash_check": "not applicable; no public asset changed"
+  },
+  "ci": {
+    "authorization": "Owner explicitly authorizes free GitHub Actions for D acceptance.",
+    "repository_visibility": "public",
+    "runner_class": "standard GitHub-hosted Ubuntu; no large runners",
+    "cost_huf": 0,
+    "state": "PENDING exact-SHA push; five gated workflows will be inspected after completion; no CI PASS claimed yet.",
+    "workflows": [
+      "editor-core-test.yml",
+      "f0-baseline.yml",
+      "twitch-integration-check.yml",
+      "canonical-plan.yml",
+      "active-plan-audit.yml"
+    ],
+    "worker_release_trigger_expected": false
+  },
+  "status": "D06_REAL_WORKER_CROSS_SITE_MEDIA_ISOLATION_TEST_PASS; FULL_77_44_7_D_OPEN_NOT_CERTIFIED",
+  "limitations": [
+    "This proves the tested real Worker cross-site denial paths only; it does not certify every authored field, breakpoint, renderer, or Media lifecycle.",
+    "The full D-01–D-07 acceptance matrix remains open; separate Editor manual/physical acceptance remains deferred.",
+    "Save and Publish remain distinct."
+  ],
+  "cost_huf": 0,
+  "canonical_plan_after_update": {
+    "sha256": "19be54a296096a501cdb8c3c9e3533eb0b643ed9b0915d617a8d75162b4b73c3",
+    "bytes": 1661534
+  }
+}

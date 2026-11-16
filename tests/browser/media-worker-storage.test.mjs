@@ -44,12 +44,14 @@ print(json.dumps(result))`],{cwd:root,encoding:'utf8'}));
  const password=crypto.randomUUID(), salt=generateSalt();
  await DB.batch([
   DB.prepare("INSERT INTO sites(id,slug,name) VALUES('site-default','fixture','Isolated media fixture')"),
+  DB.prepare("INSERT INTO sites(id,slug,name) VALUES('site-secondary','secondary-fixture','Secondary isolated media fixture')"),
   DB.prepare("INSERT INTO users(id,email,display_name,role,password_hash,password_salt) VALUES('fixture-user','media@example.invalid','Fixture','admin',?,?)").bind(await hashPassword(password,salt),bytesToBase64(salt)),
   DB.prepare("INSERT INTO site_memberships(site_id,user_id,role,status) VALUES('site-default','fixture-user','admin','active')"),
-  DB.prepare("INSERT INTO site_domains(hostname,site_id,status,verified_at,verification_method) VALUES('127.0.0.1','site-default','verified','2026-01-01','fixture')")
+  DB.prepare("INSERT INTO site_domains(hostname,site_id,status,verified_at,verification_method) VALUES('127.0.0.1','site-default','verified','2026-01-01','fixture')"),
+  DB.prepare("INSERT INTO site_domains(hostname,site_id,status,verified_at,verification_method) VALUES('secondary.fixture','site-secondary','verified','2026-01-01','fixture')")
  ]);
  const publicRoot=resolve(root,'public');
- const env={DB,MEDIA,SITE_MEMBERSHIP_ENFORCEMENT:'enabled',SITE_SCOPED_SETTINGS_ENABLED:'enabled',SITE_HOST_BINDINGS:'{"127.0.0.1":"site-default"}',ASSETS:{async fetch(request){
+ const env={DB,MEDIA,SITE_MEMBERSHIP_ENFORCEMENT:'enabled',SITE_SCOPED_SETTINGS_ENABLED:'enabled',SITE_HOST_BINDINGS:JSON.stringify({'127.0.0.1':'site-default','secondary.fixture':'site-secondary'}),ASSETS:{async fetch(request){
   const file=resolve(publicRoot,'.'+new URL(request.url).pathname);
   if(!file.startsWith(publicRoot+'/'))return new Response('Not found',{status:404});
   try{if(!(await stat(file)).isFile())return new Response('Not found',{status:404});return new Response(await readFile(file),{headers:{'Content-Type':({'.html':'text/html','.js':'text/javascript','.css':'text/css','.svg':'image/svg+xml'})[extname(file)]||'application/octet-stream'}})}catch{return new Response('Not found',{status:404})}
@@ -142,7 +144,30 @@ print(json.dumps(result))`],{cwd:root,encoding:'utf8'}));
  await save(true);
  const publicResponse=await context.request.get(base+'/media/'+row.id);
  assert.equal(publicResponse.status(),200,'explicit Publish activates the public asset route');
- assert.equal(digest(await publicResponse.body()),digest(png),'the Worker returns the exact uploaded bytes');
+ const publishedBytes=await publicResponse.body();
+ assert.equal(digest(publishedBytes),digest(png),'the Worker returns the exact uploaded bytes');
+ const workerFetch=(url,init={})=>worker.fetch(new Request(url,init),env,{waitUntil(p){pending.push(p)}});
+ const primaryPublishedBytes=digest(publishedBytes);
+ const otherSitePublic=await workerFetch('http://secondary.fixture/media/'+row.id);
+ assert.equal(otherSitePublic.status,404,'a verified second site cannot fetch an asset referenced only by the primary site');
+ assert.notEqual(otherSitePublic.status,421,'the 404 proves secondary.fixture resolves to its independently seeded site');
+ assert.notEqual(digest(await otherSitePublic.arrayBuffer()),digest(png),'cross-site denial never returns the primary site R2 bytes');
+ const crossSiteCookie=(await context.cookies(base)).map(cookie=>cookie.name+'='+cookie.value).join('; ');
+ const beforeCrossSiteAttempts=await snapshot();
+ const crossSiteHeaders={cookie:crossSiteCookie,'content-type':'application/json'};
+ for(const [method,path,body] of [
+  ['GET','/api/admin/media?id='+encodeURIComponent(row.id)],
+  ['GET','/api/admin/media?usage='+encodeURIComponent(row.id)],
+  ['PATCH','/api/admin/media',{id:row.id,archived:true}],
+  ['PATCH','/api/admin/media',{id:row.id,archived:false}]
+ ]){
+  const denied=await workerFetch('http://secondary.fixture'+path,{method,headers:crossSiteHeaders,...(body?{body:JSON.stringify(body)}:{})});
+  assert.equal(denied.status,403,`${method} ${path} remains unavailable to the primary site's authenticated admin from another site`);
+ }
+ assert.deepEqual(await snapshot(),beforeCrossSiteAttempts,'cross-site admin reads and archive toggles do not mutate the primary D1/R2 fixture');
+ const sameSiteStillServes=await context.request.get(base+'/media/'+row.id);
+ assert.equal(sameSiteStillServes.status(),200,'site isolation does not disrupt the same-site published media route');
+ assert.equal(digest(await sameSiteStillServes.body()),primaryPublishedBytes,'same-site delivery keeps the exact published bytes');
  const publicTrailingSlashResponse=await context.request.get(base+'/media/'+row.id+'/');
  assert.equal(publicTrailingSlashResponse.status(),200,'the actual Worker route preserves renderer-valid trailing-slash media URLs');
  assert.equal(digest(await publicTrailingSlashResponse.body()),digest(png),'the normalized Worker route returns the same exact uploaded bytes');
