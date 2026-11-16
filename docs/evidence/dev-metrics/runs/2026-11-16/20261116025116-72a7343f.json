@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261116025116-72a7343f",
+  "task": "77.44.7.D-D03-countdown-timeout-triage",
+  "trigger": "manual",
+  "started_at": "2026-11-16T02:51:16.205Z",
+  "finished_at": "2026-11-16T02:53:26.317Z",
+  "wall_seconds": 130,
+  "paused_seconds": 0,
+  "measured_seconds": 130,
+  "status": "pass",
+  "kind": "test",
+  "summary": "Hardened the D03 Countdown Escape browser assertion to directly verify its synchronous state restore; focused Chromium 2/2 pass.",
+  "evidence": [
+    "tests/browser/editor-countdown.test.js",
+    "docs/evidence/editor-d03-terminal-tsv-delimiter-2026-11-15.json"
+  ],
+  "checks": "targeted real Chromium countdown 2/2; node --check; plan-contract 14/14; canonical plan 13 files; active audit 77.44.7.D still open; traceability 396/396; diff check",
+  "started_revision": "d5593c8c1acefc64968d55ed6d16194afb5b1794",
+  "finished_revision": "d5593c8c1acefc64968d55ed6d16194afb5b1794",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

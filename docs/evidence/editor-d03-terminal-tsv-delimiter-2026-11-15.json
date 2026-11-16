@@ -93,6 +93,15 @@
       ],
       "runtime_source_changed": false,
       "test_file_sha256": "149894eaf6b5d0def02f859bf7e4d7ee064a1690935e7bd5d69ae70970b028fd"
+    },
+    "editor-countdown synchronous Escape assertion follow-up": {
+      "result": "PASS",
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-countdown.test.js",
+      "tests": 2,
+      "failures": 0,
+      "assertion_change": "Replaced a 15-second waitForFunction for a synchronous Escape handler with an immediate field-value assertion.",
+      "interpretation": "The earlier exact-SHA CI run remains failed; the original failure cause is not proven by this local pass.",
+      "runtime_source_changed": false
     }
   },
   "production_d1_preflight": {
@@ -181,7 +190,8 @@
           "error": "page.waitForFunction: Timeout 15000ms exceeded after Escape was expected to restore the blocked title draft",
           "paired_case": "1366px America/New_York passed",
           "later_workflow_steps": "skipped after failing browser layout regression",
-          "local_follow_up": "same complete test file 2/2 PASS under real Chromium; cannot prove the remote timeout cause or override its result"
+          "local_follow_up": "same complete test file 2/2 PASS under real Chromium; cannot prove the remote timeout cause or override its result",
+          "root_cause": "UNRESOLVED; local focused Chromium test passes after the test now directly asserts the synchronous Escape result."
         }
       },
       "exact_sha_summary": {
@@ -216,7 +226,8 @@
     "The full 77.44.7.D lifecycle/capability matrix remains OPEN / NOT_CERTIFIED.",
     "Full Visual Editor manual and physical acceptance remains DEFERRED.",
     "The exact-SHA Editor Core browser workflow later failed only the 390px Europe/Budapest countdown Escape-restoration wait (15s); local real-Chromium rerun passed both viewport/timezone cases, but no CI rerun or root-cause fix was established. The overall exact-SHA CI is therefore not PASS.",
-    "Direct production workers.dev health/changed-asset GETs were blocked before HTTP by curl exit 7 on port 443. The pre-existing source-smoke health result remains valid; four changed asset hash readbacks remain UNVERIFIED."
+    "Direct production workers.dev health/changed-asset GETs were blocked before HTTP by curl exit 7 on port 443. The pre-existing source-smoke health result remains valid; four changed asset hash readbacks remain UNVERIFIED.",
+    "The earlier exact-SHA Editor Core timeout root cause was not established. The browser harness now asserts the synchronous Escape restoration directly; a passing local rerun does not change the GitHub failure status."
   ],
   "data_safety": {
     "r2_changes": "NONE",
@@ -237,6 +248,11 @@
       "plan_point": "77.44.7.D / D-03 legacy CR-only TSV delimiter acceptance",
       "test_file": "public/editor-v2/tests/element-content.test.js",
       "test_only_commit_required": "[skip ci]; no Worker deploy"
+    },
+    "countdown_escape_test_diagnostic": {
+      "date_utc": "2026-11-16",
+      "worker_redeploy": "NOT_REQUIRED; test-harness-only",
+      "runtime_source_changed": false
     }
   }
 }

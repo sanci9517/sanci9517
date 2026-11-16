@@ -87,8 +87,10 @@ for(const [width,timezoneId,gap,overlapISO,overlapLocal] of [[390,'Europe/Budape
  await title.fill('Nem menthető cím');
  assert.equal(await selected.locator('.visual-countdown-heading').textContent(),'Élő premier <script>alert(1)</script>','invalid date blocks unrelated model changes');
  assert.equal(await field.locator('input[type="datetime-local"]').getAttribute('aria-invalid'),'true','a blocked title edit must not clear the invalid date state');
+ // The Escape handler restores the committed value synchronously. Assert that
+ // key path directly so a missing event fails with the actual input value
+ // instead of consuming a 15-second browser polling timeout.
  await title.press('Escape');
- await editor.waitForFunction(expected=>document.querySelector('.countdown-inspector input[aria-label="Esemény neve"]')?.value===expected,'Élő premier <script>alert(1)</script>',{timeout:15000});
  assert.equal(await title.inputValue(),'Élő premier <script>alert(1)</script>','Escape discards the blocked title draft');
  for(const action of ['#save','#publish']){await editor.locator(action).click();assert.equal(posts.length,0,'invalid local time blocks all API writes');}
  await field.locator('input[type="datetime-local"]').fill(localDate);await field.locator('input[type="datetime-local"]').press('Tab');
