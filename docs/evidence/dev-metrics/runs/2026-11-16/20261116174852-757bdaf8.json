@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "id": "20261116174852-757bdaf8",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-16T17:48:52.490Z",
+  "finished_at": "2026-11-16T18:28:30.167Z",
+  "wall_seconds": 2378,
+  "paused_seconds": 0,
+  "measured_seconds": 2378,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "D-acceptance CI költségtérkép frissítve: a tulajdonos által engedélyezett 5 exact-SHA standard-runner workflow success; a teljes D továbbra OPEN, mert a mezőnkénti acceptance-mátrix és final physical gate nem teljes.",
+  "evidence": [
+    "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+    "docs/evidence/editor-d-audio-controls-save-publish-2026-11-16.json",
+    "docs/evidence/dev-metrics/runs/2026-11-16/20261116174852-757bdaf8.json"
+  ],
+  "checks": "Local Chromium Editor layout 54/54 PASS; Editor Core Actions workflow 43922797679 SUCCESS; F0 43922797788 SUCCESS; Twitch 43922797899 SUCCESS; canonical-plan 43922797958 SUCCESS; active-plan-audit 43922797973 SUCCESS; plan-contract 14/14 PASS; canonical-plan 13 master/396 mappings PASS; traceability 396/396 PASS; active D 146 PARTIAL_SOURCE + 250 UNVERIFIED, NOT_CERTIFIED; git diff --check PASS; runtime unchanged, no deployment, 0 Ft.",
+  "started_revision": "073124cff4d05fb3b2ee7693b5e36e5b664b00f5",
+  "finished_revision": "25b1734e869407e265da7826f24ffcdfabddfa97",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

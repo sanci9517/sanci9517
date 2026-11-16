@@ -116,9 +116,45 @@
         "canonical-plan.yml",
         "active-plan-audit.yml"
       ],
-      "state": "PENDING — push of this plan/evidence commit will trigger push workflows; exact-SHA run API verification required.",
+      "state": "COMPLETED — all 5 exact-SHA workflows SUCCESS.",
       "runtime_deploy_expected": false,
-      "basis": "Workflow triggers reviewed; runtime-only smoke workflow path filter excludes docs/tests. Cloudflare Worker build excludes docs/** and tests/**."
+      "basis": "Workflow triggers reviewed; runtime-only smoke workflow path filter excludes docs/tests. Cloudflare Worker build excludes docs/** and tests/**.",
+      "source_sha": "25b1734e869407e265da7826f24ffcdfabddfa97",
+      "runs": [
+        {
+          "name": "Editor Core Test",
+          "id": 43922797679,
+          "conclusion": "success",
+          "url": "https://github.com/sanci9517/sanci9517/actions/runs/43922797679"
+        },
+        {
+          "name": "F0 baseline checks",
+          "id": 43922797788,
+          "conclusion": "success",
+          "url": "https://github.com/sanci9517/sanci9517/actions/runs/43922797788"
+        },
+        {
+          "name": "Twitch Integration Check",
+          "id": 43922797899,
+          "conclusion": "success",
+          "url": "https://github.com/sanci9517/sanci9517/actions/runs/43922797899"
+        },
+        {
+          "name": "Canonical Creator Platform Plan",
+          "id": 43922797958,
+          "conclusion": "success",
+          "url": "https://github.com/sanci9517/sanci9517/actions/runs/43922797958"
+        },
+        {
+          "name": "Canonical Plan Active Point Audit",
+          "id": 43922797973,
+          "conclusion": "success",
+          "url": "https://github.com/sanci9517/sanci9517/actions/runs/43922797973"
+        }
+      ],
+      "editor_core_scope": "typecheck, editor unit, offline D1 ledger/restore, private media API, Chromium install, public showcase, isolated Worker D1/R2 storage, full Editor browser layout regression, WEB-013 browser, schedule/domain/Brand Kit/Admin Home. All job steps success.",
+      "runtime_source_changed": false,
+      "worker_deployment_expected": false
     }
   },
   "production": {
@@ -143,7 +179,7 @@
   ],
   "cost_huf": 0,
   "canonical_plan_after_update": {
-    "sha256": "9e0226384fdad39fe31d324ed555be69a8460eb53c4a419f54d167863618fb87",
-    "bytes": 1658297
+    "sha256": "9de6297121e776a4bb739d254484aefb4b6f9a6330a5ddbd22fb6765c45d2731",
+    "bytes": 1658438
   }
 }
