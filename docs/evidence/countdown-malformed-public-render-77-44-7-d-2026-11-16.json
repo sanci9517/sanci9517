@@ -1,0 +1,68 @@
+{
+  "task": "77.44.7.D-D03",
+  "title": "Keep malformed persisted Countdown text from crashing public rendering",
+  "status": "RUNTIME_RELEASED; EDITOR_CORE_CI_IN_PROGRESS",
+  "source_commit": "a7eaf769eb8d61f4bfa81f3e1262d02b87f73d35",
+  "branch": "v2/foundation",
+  "change": {
+    "files": [
+      "public/editor-v2/core/countdown-content.js",
+      "public/assets/page-renderer.js",
+      "public/editor-v2/tests/core.test.js",
+      "tests/browser/editor-countdown.test.js",
+      "docs/evidence/feature-traceability.json"
+    ],
+    "behavior": "Public Countdown rendering accepts only authored strings for title and finish text and uses safe display defaults for malformed persisted values. Publish validation continues to reject malformed content with INVALID_COUNTDOWN_CONTENT.",
+    "cache_bust": "20261116-countdown-malformed-text-fallback-v1",
+    "save_publish_separate": true
+  },
+  "local_checks": {
+    "countdown_core": "PASS: node --experimental-vm-modules --test public/editor-v2/tests/core.test.js (84/84)",
+    "editor_core": "PASS: npm run test:editor (16/16 files; linux subreaper checks 3/3)",
+    "countdown_chromium": "PASS: CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-countdown.test.js (2/2; 390px Europe/Budapest and 1366px America/New_York)",
+    "typecheck": "PASS: npm run typecheck",
+    "migration_safety_gate": "PASS: npm run test:web013:migration-gate",
+    "plan_contract": "PASS: python3 tests/plan-contract.test.py (14/14)",
+    "canonical_plan": "PASS: python3 scripts/check-canonical-plan.py (one 13-file canonical master; 396 source mappings)",
+    "active_plan_audit": "PASS / NOT_CERTIFIED: active cursor remains 77.44.7.D; functional acceptance remains open; 146 PARTIAL_SOURCE and 250 UNVERIFIED",
+    "traceability": "PASS: python3 scripts/build-feature-traceability.py --check (396/396)",
+    "wrangler_dry_run": "PASS: Wrangler 4.130.0 deploy --dry-run, 182 public assets read, 383.56 KiB total / 98.33 KiB gzip; no deployment",
+    "diff_check": "PASS: git diff --check",
+    "full_editor_browser_local": "NOT_COMPLETED: npm run test:editor:layout was stopped after 5/54 files because the exact-SHA required CI was already executing the same suite. The initial sandbox-restricted attempt could not access local loopback; the targeted real-Chromium Countdown test passed with local-network permission."
+  },
+  "production_preflight": {
+    "database_name": "sanci9517-db",
+    "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
+    "sql": "SELECT name FROM d1_migrations ORDER BY name;",
+    "rows_returned": 35,
+    "rows_written": 0,
+    "changed_db": false,
+    "migration_or_data_write": false,
+    "r2_mutation": false
+  },
+  "release": {
+    "method": "normal fast-forward push; Cloudflare Workers Builds automatic pipeline",
+    "commit": "a7eaf769eb8d61f4bfa81f3e1262d02b87f73d35",
+    "deployment_id": "5f49764b-cfd0-44c5-9767-6f882690a838",
+    "worker_version": "f9173eca-4d17-4712-8c4a-61d62d6d4de2",
+    "worker_version_number": 4076,
+    "traffic_percent": 100,
+    "health": "HTTP 200; {\"ok\":true,\"service\":\"sanci9517-streamer-brand\",\"version\":\"2.0.0\",\"server\":\"cloudflare-worker\"}",
+    "asset_sha256": {
+      "public/assets/page-renderer.js": "7647b6e98551063a2ef1f9e8323e894143772d73bf64f0bc4bd98f67b8aaf352",
+      "public/editor-v2/core/countdown-content.js": "23d6654f73174744fe55709c55c0a231ddba379c9818d513d3654a150d6e8339"
+    },
+    "live_hashes_match_source": true,
+    "remote_source_smoke": "PASS on exact source SHA; GitHub check run 43798364177"
+  },
+  "github_exact_sha_checks": {
+    "editor_core": "IN_PROGRESS on exact source SHA a7eaf769eb8d61f4bfa81f3e1262d02b87f73d35; real browser layout step is running (job 133072333298).",
+    "canonical_plan": "PASS; run 43798364086",
+    "active_plan_audit": "PASS; run 43798364030",
+    "worker_production_source_smoke": "PASS; run 43798364177",
+    "f0_baseline": "PASS; run 43798364097",
+    "twitch_integration": "PASS; run 43798364065",
+    "cloudflare_workers_build": "PASS; exact source SHA a7eaf769eb8d61f4bfa81f3e1262d02b87f73d35"
+  },
+  "plan_scope": "This verified D-03 regression fix does not close 77.44.7.D or certify the complete Visual Editor. Manual/physical Editor acceptance remains deferred until the complete Editor scope."
+}

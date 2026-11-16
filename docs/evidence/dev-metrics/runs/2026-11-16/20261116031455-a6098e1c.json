@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261116031455-a6098e1c",
+  "task": "77.44.7.D-D03-countdown-malformed-public-render",
+  "trigger": "manual",
+  "started_at": "2026-11-16T03:14:55.072Z",
+  "finished_at": "2026-11-16T03:32:46.886Z",
+  "wall_seconds": 1072,
+  "paused_seconds": 285,
+  "measured_seconds": 787,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "Fixed malformed persisted Countdown text crash; exact source deployed and live health/assets verified. Local unit/editor/typecheck and targeted Chromium pass; required exact-SHA Editor Core browser workflow remains in progress.",
+  "evidence": [
+    "docs/evidence/countdown-malformed-public-render-77-44-7-d-2026-11-16.json"
+  ],
+  "checks": "Countdown core 84/84; test:editor 16/16 + subreaper 3/3; targeted Chromium 2/2; typecheck/migration gate/plan 14/14/canonical 13/audit/traceability/diff PASS; dry-run 182 assets; production D1 SELECT 35 rows, 0 writes; production health 200 and two asset hashes match; Cloudflare auto build/deploy source a7eaf769, version f9173eca 100%; exact-SHA Editor Core CI in progress; local full browser suite intentionally stopped after 5/54 because exact-SHA CI runs it.",
+  "started_revision": "1a8f9db0c87fb4c9e2aa7b3ad6b6ae1ea571d130",
+  "finished_revision": "a7eaf769eb8d61f4bfa81f3e1262d02b87f73d35",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
