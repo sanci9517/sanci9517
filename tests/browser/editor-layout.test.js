@@ -24,13 +24,13 @@ function server(){return createServer(async(req,res)=>{
 async function audit(page,label){
   const issues=await page.evaluate(selector=>{
     const errors=[];
-    const visible=el=>{if(el.matches('.dock-resizer'))return false;/* Resize handles intentionally overlay dock edges. */const s=getComputedStyle(el);const r=el.getBoundingClientRect();if(s.visibility==='hidden'||s.display==='none'||r.width<=0||r.height<=0||!el.getClientRects().length)return false;const scroller=el.closest('.dock-content');if(scroller){const c=scroller.getBoundingClientRect();if(r.bottom<=c.top||r.top>=c.bottom||r.right<=c.left||r.left>=c.right)return false}return true};
+    const visible=el=>{if(el.matches('.dock-resizer'))return false;/* Resize handles intentionally overlay dock edges. */const s=getComputedStyle(el);const r=el.getBoundingClientRect();if(s.visibility==='hidden'||s.display==='none'||r.width<=0||r.height<=0||!el.getClientRects().length)return false;const scroller=el.closest('.dock-content,.tool-rail');if(scroller){const c=scroller.getBoundingClientRect();if(r.bottom<=c.top||r.top>=c.bottom||r.right<=c.left||r.left>=c.right)return false}return true};
     const sheetOpen=innerWidth<=1024 && document.querySelector('.workspace')?.matches('.left-open,.right-open');
     const menuOpen=innerWidth<=1024 && document.querySelector('.more-actions')?.open;
     // An open mobile drawer intentionally covers the canvas and its toolbar.
     const nodes=[...document.querySelectorAll(selector)].filter(el=>visible(el)&&!((sheetOpen||menuOpen)&&el.closest('.canvas-toolbar')));
     for(const id of ['save','publish'])if(!visible(document.getElementById(id)))errors.push(`${id} not visible`);
-    const boxes=nodes.map(el=>({id:el.id||el.textContent.trim().slice(0,25),el,r:el.getBoundingClientRect()}));
+    const boxes=nodes.map(el=>{const box=el.getBoundingClientRect(),clip=el.closest('.dock-content,.tool-rail')?.getBoundingClientRect();const r=clip?{left:Math.max(box.left,clip.left),right:Math.min(box.right,clip.right),top:Math.max(box.top,clip.top),bottom:Math.min(box.bottom,clip.bottom),width:Math.max(0,Math.min(box.right,clip.right)-Math.max(box.left,clip.left)),height:Math.max(0,Math.min(box.bottom,clip.bottom)-Math.max(box.top,clip.top))}:box;return {id:el.id||el.textContent.trim().slice(0,25),el,r}});
     const width=document.documentElement.clientWidth;
     if(document.documentElement.scrollWidth>width+1)errors.push(`document horizontal overflow ${document.documentElement.scrollWidth}>${width}`);
     for(const {id,el,r} of boxes){
@@ -174,4 +174,35 @@ test('mobile inspector is a bottom sheet with focus restoration and single publi
     return count;
   });
   assert.equal(forwarded,0,'one mobile click must never also dispatch desktop publish');
+});
+
+test('Editor shell remains usable at an effective 200% zoom and short viewport',async t=>{
+  const http=server();await new Promise(r=>http.listen(0,'127.0.0.1',r));
+  const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||(existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined),args:['--no-sandbox']});
+  t.after(async()=>{await browser.close();await new Promise(r=>http.close(r))});
+  // A 1440×900 CSS-pixel desktop at 200% page zoom exposes a 720×450
+  // effective viewport. This exercises the real responsive shell and the
+  // lowest planned vertical space without pretending device scale is zoom.
+  const page=await browser.newPage({viewport:{width:720,height:450},deviceScaleFactor:1});
+  await page.goto(`http://127.0.0.1:${http.address().port}/editor-v2/index.html`,{waitUntil:'domcontentloaded'});
+  await page.waitForSelector('#editorMenu');
+  assert.equal(await page.evaluate(()=>[innerWidth,innerHeight].join('×')),'720×450','effective viewport represents 200% zoom of the desktop baseline');
+  await audit(page,'200% effective zoom / closed shell');
+  await page.locator('#editorMenu').click();
+  await audit(page,'200% effective zoom / navigation drawer');
+  const rail=page.locator('.tool-rail');
+  for(const id of ['leftTabPages','leftTabElements','leftTabLayers','leftTabSchedule','leftTabNavigation']){
+    const tab=page.locator('#'+id);await tab.scrollIntoViewIfNeeded();
+    const reachability=await tab.evaluate(el=>{const rail=el.closest('.tool-rail'),r=el.getBoundingClientRect(),c=rail.getBoundingClientRect(),hit=document.elementFromPoint(r.left+r.width/2,r.top+r.height/2);return {scrollTop:rail.scrollTop,inside:r.top>=c.top&&r.bottom<=c.bottom,hit:!!hit&&(hit===el||el.contains(hit))}});
+    assert.ok(reachability.inside&&reachability.hit,`${id} remains reachable within the scrollable rail: ${JSON.stringify(reachability)}`);
+  }
+  assert.ok(await rail.evaluate(el=>el.scrollHeight>el.clientHeight),'200% zoom should expose the rail as a scrollable panel');
+  await page.locator('.rail-btn[data-tab="layers"]').click();
+  await audit(page,'200% effective zoom / layers drawer');
+  await page.locator('#openInspector').click();
+  await audit(page,'200% effective zoom / Inspector drawer');
+  await page.locator('.more-actions summary').click();
+  await audit(page,'200% effective zoom / overflow actions');
+  assert.equal(await page.locator('#save').count(),1,'the explicit Save action remains in the shell');
+  assert.equal(await page.locator('#publish').count(),1,'the separate Publish action remains in the shell');
 });
