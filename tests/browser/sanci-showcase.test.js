@@ -12,7 +12,7 @@ const fixture=[
 '<link rel="stylesheet" href="/assets/site.css"><link rel="stylesheet" href="/assets/sanci-showcase.css">',
 '<style>.public-page-layout{display:block}.content-page{max-width:1180px;margin:auto}',
 '.fixture-root{padding:12px;max-width:1160px;margin:auto}.fixture-hero{min-height:580px;padding:22px;background:linear-gradient(145deg,#0a1020,#341a27);border-radius:20px;display:flex;align-items:flex-end}',
-'.fixture-copy{padding:22px;max-width:650px;width:100%;background:rgba(5,9,16,.76);display:flex;flex-direction:column;gap:12px}',
+'.fixture-copy{padding:22px;max-width:100%;width:100%;background:rgba(5,9,16,.76);display:flex;flex-direction:column;gap:12px}',
 '.fixture-copy h1{font-size:clamp(29px,5vw,65px);line-height:1.07;overflow-wrap:anywhere}',
 '.fixture-signature{font-family:"Segoe Script",cursive;font-size:clamp(43px,6vw,69px);font-style:italic;line-height:1.1}',
 '.fixture-cta{display:flex;flex-wrap:wrap;gap:8px}.fixture-cta a{padding:13px;background:#162033;color:white;border:1px solid #546076;border-radius:10px}',
@@ -71,6 +71,20 @@ test('SANCI autograph, CTA symbols and countdown remain responsive and reduced-m
   assert.equal(await page.locator('.sanci-cta-symbol').count(),2);
   assert.equal(await page.locator('[data-sanci-role="hero"]').count(),1);
   assert.equal(await page.locator('[data-sanci-role="next-stream"]').count(),1);
+  const composition=await page.evaluate(()=>{
+   const hero=document.querySelector('[data-sanci-role="hero"]');
+   const copy=document.querySelector('[data-sanci-role="hero-copy"]');
+   const art=hero.getBoundingClientRect(),panel=copy.getBoundingClientRect();
+   return {heroWidth:art.width,heroHeight:art.height,panelWidth:panel.width,
+    revealedRight:art.right-panel.right,panelMaxWidth:getComputedStyle(copy).maxWidth};
+  });
+  if(width>=701){
+   assert.ok(composition.panelWidth<=800.5,'desktop hero text panel must preserve the background artwork: '+JSON.stringify(composition));
+   assert.ok(composition.panelWidth<composition.heroWidth,'desktop text panel may not cover the entire hero');
+  }else{
+   assert.ok(composition.panelWidth<=composition.heroWidth,'mobile hero copy must remain within its authored image');
+  }
+  if(width===1440)assert.ok(composition.revealedRight>=160,'wide composition must visibly reveal the source artwork beside the copy panel');
   const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-innerWidth);
   assert.ok(overflow<=2,'horizontal overflow at '+width+'px: '+overflow);
   if(width<=390){

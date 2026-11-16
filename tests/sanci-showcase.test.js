@@ -117,5 +117,18 @@ test('compact footer is SANCI-only, preserves original link order and large touc
  const destinations=['/p/twitch','/p/youtube','/p/tiktok','/p/schedule',
   '/p/community','/p/about','/p/contact','mailto:sandor.bogadi95@gmail.com'];
  for(const href of destinations)assert.ok(footer.includes('href="'+href+'"'),href);
- assert.match(html,/\/assets\/sanci-showcase\.css\?v=20261114-depth-v4/);
+ assert.match(html,/\/assets\/sanci-showcase\.css\?v=20261116-art-reveal-v1/);
+});
+
+test('wide SANCI hero overlays are capped so authored key art stays visible, with full-width mobile copy',()=>{
+ const css=readFileSync(new URL('../public/assets/sanci-showcase.css',import.meta.url),'utf8');
+ const rule=css.slice(css.indexOf('Let SANCI\'s authored key art breathe'));
+ assert.match(rule,/body\.sanci-editorial-page\[data-sanci-showcase="depth-v2"\]\s+\[data-sanci-role="hero-copy"\]/);
+ assert.match(rule,/width:min\(100%,800px\)!important/);
+ assert.match(rule,/max-width:min\(100%,800px\)!important/);
+ assert.match(rule,/@media\(min-width:701px\)/);
+ assert.match(rule,/padding:clamp\(26px,2\.6vw,38px\)!important/);
+ assert.match(rule,/@media\(max-width:700px\)[\s\S]*width:100%!important[\s\S]*max-width:100%!important/);
+ assert.ok(rule.includes('body.sanci-editorial-page[data-sanci-showcase="depth-v2"]'),
+   'the art-reveal treatment is scoped to the SANCI public brand only');
 });

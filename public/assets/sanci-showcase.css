@@ -327,3 +327,28 @@ body.sanci-editorial-page[data-sanci-showcase="depth-v2"] .sanci-in-view{
   overflow-wrap:break-word;
  }
 }
+
+/* Let SANCI's authored key art breathe on wide screens. The Page Model keeps
+   its editable width, while the public editorial treatment caps only the
+   decorative overlay; the mobile layout still uses the full content width. */
+body.sanci-editorial-page[data-sanci-showcase="depth-v2"] [data-sanci-role="hero-copy"]{
+ box-sizing:border-box;
+ align-self:flex-start;
+ width:min(100%,800px)!important;
+ max-width:min(100%,800px)!important;
+}
+@media(min-width:701px){
+ body.sanci-editorial-page[data-sanci-showcase="depth-v2"] [data-sanci-role="hero"]{
+  padding:clamp(26px,2.6vw,38px)!important;
+ }
+ body.sanci-editorial-page[data-sanci-showcase="depth-v2"] [data-sanci-role="hero-copy"]{
+  padding:clamp(24px,2.2vw,32px)!important;
+ }
+}
+@media(max-width:700px){
+ body.sanci-editorial-page[data-sanci-showcase="depth-v2"] [data-sanci-role="hero-copy"]{
+  width:100%!important;
+  max-width:100%!important;
+  align-self:stretch;
+ }
+}

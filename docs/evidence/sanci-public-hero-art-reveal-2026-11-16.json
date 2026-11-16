@@ -1,0 +1,63 @@
+{
+  "date": "2026-11-16",
+  "task": "Public SANCI homepage visual polish",
+  "branch": "v2/foundation",
+  "base_commit": "84cfe7c70c181854ee3fc318d0c562aaea02773e",
+  "status": "release-pending",
+  "user_goal": "Make the public streamer/creator brand site feel more cinematic and keep authored hero artwork visible on desktop without harming mobile layout or editing Save/Publish data.",
+  "finding": {
+    "live_origin": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev",
+    "viewport": "1440x900",
+    "home_hero_copy_panel_width_before_css": 1030,
+    "home_hero_copy_panel_width_after_css_preview": 800,
+    "source_of_width": "The published Editor Page Model owns the wide copy panel; the presentation override is deliberately CSS-only."
+  },
+  "changes": [
+    {
+      "file": "public/assets/sanci-showcase.css",
+      "detail": "Cap the wide-screen SANCI hero copy overlay at 800px, tighten desktop inset padding responsively, preserve full-width copy on narrow screens; scope the treatment to the SANCI editorial page."
+    },
+    {
+      "file": "public/visual-page.html",
+      "detail": "Version the SANCI presentation stylesheet URL to art-reveal-v1 so browsers fetch the published CSS."
+    },
+    {
+      "file": "tests/sanci-showcase.test.js",
+      "detail": "Assert SANCI-only selector scope, desktop panel cap, mobile full width and breakpoint rules."
+    },
+    {
+      "file": "tests/browser/sanci-showcase.test.js",
+      "detail": "Exercise 320/390/768/1440 widths, hero-art reveal, mobile fit, horizontal overflow and reduced motion."
+    }
+  ],
+  "validation": {
+    "npm_run_test_showcase": "PASS 6/6",
+    "npm_run_test_brand": "PASS 10/10",
+    "npm_run_test_countdown": "PASS 5/5",
+    "npm_run_test_design": "PASS 5/5",
+    "npm_run_test_showcase_browser": "PASS real Chromium 320/390/768/1440 and reduced motion",
+    "npm_run_test_brand_browser": "PASS real Chromium across eight public editorial routes at mobile width",
+    "npm_run_test_countdown_browser": "PASS real Chromium, schedule-backed countdown and truthful empty state",
+    "npm_run_typecheck": "PASS",
+    "git_diff_check": "PASS",
+    "live_browser_preview": "PASS: eight routes HTTP 200; all render authored content and SANCI showcase; 1440px hero panel 800px; 390px home hero 368px/panel 336px; horizontal overflow 0; no page errors. The browser preview overlaid the candidate CSS locally; this is not the deployed asset check."
+  },
+  "release_preflight": {
+    "production_d1": "SELECT-only query of d1_migrations: 35 entries, latest 0029_media_archive_unicode_additive.sql, rows_written=0, changes=0, changed_db=false.",
+    "wrangler": "PASS wrangler 4.130.0 deploy --dry-run; 182 static assets; 384.49 KiB total / 98.63 KiB gzip; no deploy occurred.",
+    "production_mutations": "No D1 writes/migrations, R2 operations, or paid services."
+  },
+  "release": {
+    "commit": null,
+    "github_workflow": null,
+    "cloudflare_deployment": null,
+    "worker_version_traffic": null,
+    "health_http": null,
+    "live_asset_sha256": null,
+    "new_cost_huf": 0
+  },
+  "limitations": [
+    "This focused release is a visual hero-composition improvement; it does not certify the complete 77.44.7.D Visual Editor capability matrix or its deferred full manual/physical acceptance.",
+    "Save and Publish remain separate and the Editor Page Model is unchanged."
+  ]
+}
