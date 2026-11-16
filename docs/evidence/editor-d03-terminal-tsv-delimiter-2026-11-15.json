@@ -265,6 +265,15 @@
         "failure": "page.waitForFunction timed out after 15000ms while expecting Escape to restore the committed title",
         "other_browser_suite_files": "53 passed",
         "interpretation": "Confirms the failure was isolated to the named browser file in the exact-SHA job; this log review does not prove the root cause, rerun the job, or change its failure conclusion."
+      },
+      "local_repeated_regression_check": {
+        "date_utc": "2026-11-16",
+        "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-name-pattern='390px in Europe/Budapest' tests/browser/editor-countdown.test.js",
+        "repetitions": 5,
+        "result": "5/5 PASS; each run exercised one real-Chromium browser case",
+        "runtime_source_changed": false,
+        "dependency_install_or_change": "NONE; existing compatible local Playwright installation reused temporarily",
+        "interpretation": "No local reproduction under five serial runs. The exact-SHA GitHub failure remains FAILED and the remote root cause remains UNRESOLVED; no CI rerun was performed."
       }
     }
   }

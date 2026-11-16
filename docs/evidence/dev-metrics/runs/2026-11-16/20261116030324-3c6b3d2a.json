@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261116030324-3c6b3d2a",
+  "task": "77.44.7.D-D03-countdown-escape-regression",
+  "trigger": "manual",
+  "started_at": "2026-11-16T03:03:24.156Z",
+  "finished_at": "2026-11-16T03:06:49.388Z",
+  "wall_seconds": 205,
+  "paused_seconds": 0,
+  "measured_seconds": 205,
+  "status": "partial",
+  "kind": "test",
+  "summary": "Repeated the exact previously failing 390px Europe/Budapest Countdown case five times in real Chromium; 5/5 passed. This does not prove the old remote CI cause or overwrite its failure status.",
+  "evidence": [
+    "docs/evidence/editor-d03-terminal-tsv-delimiter-2026-11-15.json"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "d97bf48cb969a1f42469485ab9160bef062a6154",
+  "finished_revision": "d97bf48cb969a1f42469485ab9160bef062a6154",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
