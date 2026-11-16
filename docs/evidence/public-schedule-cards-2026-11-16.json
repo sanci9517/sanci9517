@@ -36,15 +36,16 @@
     "latest_migration": "0029_media_archive_unicode_additive.sql"
   },
   "production_release": {
-    "build_uuid": "1a84a0cb-15f0-4174-b37d-f9f9d501c9a3",
+    "build_uuid": "fed90d85-68c5-4934-a865-78c25dabb844",
     "build_outcome": "success",
     "build_source_commit": "0d8faa657d81e705f87b088926031b3ff9c2b834",
     "build_command": "npm run typecheck",
     "deploy_command": "npm run deploy:safe",
-    "deployment_id": "bf2338b4-7634-4ca7-8fb7-742056bab280",
-    "worker_version_id": "2fbc6244-0935-484f-8782-5ada02303fda",
+    "deployment_id": "c8bfc2b1-86ae-44e2-8a81-293fc8b98e8a",
+    "worker_version_id": "82e64603-5be3-4f69-84f0-e6a56f626c9d",
+    "worker_version_number": 4084,
     "traffic_percentage": 100,
-    "created_on": "2026-11-16T13:07:54.14609Z",
+    "created_on": "2026-11-16T13:08:18.020082Z",
     "health": {
       "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
       "http_status": 200,
@@ -75,8 +76,8 @@
     "run_id": 43872792295,
     "commit": "0d8faa657d81e705f87b088926031b3ff9c2b834",
     "observed_status": "in_progress",
-    "last_observed_step": "Test real Worker media upload with isolated D1 and R2",
-    "completed_checks_observed": "typecheck, Editor core, offline D1 ledger and bootstrap, private R2 API tests, and SANCI public showcase unit and Chromium regressions passed",
+    "last_observed_step": "Run Editor browser layout regression",
+    "completed_checks_observed": "typecheck, Editor core, offline D1 ledger and bootstrap, private R2 API tests, SANCI public showcase unit and Chromium regressions, and isolated Worker media D1/R2 tests passed",
     "no_rerun_dispatched": true
   },
   "data_safety": {
