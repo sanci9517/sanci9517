@@ -99,7 +99,10 @@
       "failures": 0,
       "cancelled": 0,
       "skipped": 0,
-      "notes": "Serial repository browser/layout runner; all 54/54 files completed with exit code 0, including the newly changed audio Save/reload/separate Publish test and broad D-06/D-07 regressions."
+      "notes": "Serial repository browser/layout runner; all 54/54 files completed with exit code 0, including the newly changed audio Save/reload/separate Publish test and broad D-06/D-07 regressions.",
+      "source_revision": "1012ffe226594b23564d9105db7914915d3aa3c6",
+      "elapsed_wall_seconds_from_dev_metrics": 2371,
+      "active_worktime_note": "Metric covers start-to-finish wall time, not verified active CPU time."
     }
   },
   "production": {
@@ -122,5 +125,9 @@
     "Save and Publish remain distinct operations.",
     "Hosted CI was not run and has no PASS claim; canonical quota record is exhausted. Full browser/layout validation is local Chromium only."
   ],
-  "cost_huf": 0
+  "cost_huf": 0,
+  "canonical_plan_after_update": {
+    "sha256": "8e399aa5f6a5a1085f36790ce545759c3aa64531c3bb17fa185882f1ac6a3b53",
+    "bytes": 1656499
+  }
 }
