@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261116041123-83db5ad1",
+  "task": "77.44.7.D-current-plan-status-reconcile-pr321",
+  "trigger": "manual",
+  "started_at": "2026-11-16T04:11:23.307Z",
+  "finished_at": "2026-11-16T04:12:44.717Z",
+  "wall_seconds": 81,
+  "paused_seconds": 0,
+  "measured_seconds": 81,
+  "status": "pass",
+  "kind": "docs",
+  "summary": "Corrected the canonical current-status line: PR #321 was already merged and passed exact-head plus merge-SHA Editor Core; confirmed current Worker deployment is 100%. Full D remains OPEN / NOT_CERTIFIED.",
+  "evidence": [
+    "docs/evidence/editor-malformed-structured-content-pr321-2026-11-12.json",
+    "docs/evidence/editor-d03-countdown-escape-exact-sha-ci-2026-11-16.json"
+  ],
+  "checks": "GitHub PR API #321 merged at 4935b74e; exact PR-head four checks completed/success and merge-SHA Editor Core 43233534614 success; Cloudflare GET current deployment 5f49764b Worker f9173eca 100%; plan-contract 14/14, canonical 13/13, audit OPEN/NOT_CERTIFIED, traceability 396/396, diff check PASS.",
+  "started_revision": "d9df608409528e21f72d34f07f1970c5370d8734",
+  "finished_revision": "d9df608409528e21f72d34f07f1970c5370d8734",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
