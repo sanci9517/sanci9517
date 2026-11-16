@@ -27,8 +27,9 @@
     "brandMobileBrowser": "PASS after correcting its harness to open the collapsed mobile menu before waiting for visible links.",
     "liveHealthPreflight": "PASS, production /api/health HTTP 200; previous public stylesheet URL HTTP 200.",
     "productionD1Preflight": "PASS, Cloudflare query API SELECT against sqlite_master; rows_written=0, changed_db=false.",
-    "deployDryRun": "PASS via npm run deploy:safe -- --dry-run; migration-safety gate passed and Wrangler read 182 public assets.",
+    "deployDryRun": "PASS via npm run deploy:safe -- --dry-run; migration-safety gate passed and Wrangler read 182 public assets. Wrangler reported a non-blocking missing /home/agent/.config/.wrangler/logs directory and completed with exit code 0.",
     "deploymentWorkflow": "PASS, Production Worker source smoke run 43854907565 for exact source SHA; source smoke verified production health and changed public source SHA-256.",
+    "otherCiForSourceSha": {"F0 baseline checks":"success", "Canonical Creator Platform Plan":"success", "Twitch Integration Check":"success", "Editor Core Test":"in_progress at evidence capture; no rerun dispatched"},
     "postDeployLiveBrowser": "PASS, GET /api/health HTTP 200; real Chromium checked the served SANCI home at 320/390/768/1440 px; empty state is one line, no horizontal overflow.",
     "postDeployAsset": "PASS, public /assets/site.css HTTP 200; SHA-256 exactly matches the committed public/assets/site.css bytes."
   },
