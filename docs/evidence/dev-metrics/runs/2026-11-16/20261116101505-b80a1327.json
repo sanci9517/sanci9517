@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261116101505-b80a1327",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-16T10:15:05.055Z",
+  "finished_at": "2026-11-16T10:15:57.408Z",
+  "wall_seconds": 52,
+  "paused_seconds": 0,
+  "measured_seconds": 52,
+  "status": "pass",
+  "kind": "test",
+  "summary": "D-03 oversized table invalid-state and responsive breakpoint regression added; targeted Chromium, Editor unit suite and plan contract PASS. Full D remains open.",
+  "evidence": [
+    "docs/evidence/editor-d03-invalid-table-breakpoint-2026-11-16.json"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "b541c8318ad810a21aebaf7725ade39208443a91",
+  "finished_revision": "b541c8318ad810a21aebaf7725ade39208443a91",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

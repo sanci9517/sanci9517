@@ -1,0 +1,70 @@
+{
+  "schema": "sanci.editor.d03.invalid-table-breakpoint.v1",
+  "captured_at_utc": "2026-11-16T10:16:00Z",
+  "plan_point": "77.44.7.D / D-03 table Inspector invalid-state and responsive breakpoint lifecycle",
+  "status": "D03_TABLE_BREAKPOINT_SUBGATE_PASS; FULL_77_44_7_D_OPEN_NOT_CERTIFIED",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "latest_verified_commit": "2ee9e2c6678f523d355ba1b1161fce3eb72caea0",
+    "runtime_source_commit": "e0b2d255eeeb13ae5c00a97e2d92b7dfe29caa06"
+  },
+  "change": {
+    "kind": "browser regression coverage only",
+    "file": "tests/browser/editor-content-system.test.js",
+    "assertions": [
+      "a table exceeding the persisted Page Model budget is marked aria-invalid while its last valid Canvas rows remain visible",
+      "a breakpoint switch while the field is invalid is rejected, keeps the prior responsive device selected, and retains the invalid TSV for correction",
+      "Save remains blocked and no POST is issued while the table is invalid",
+      "after correction, mobile/tablet/desktop breakpoint switching succeeds without changing the table rows or issuing Save/Publish"
+    ],
+    "save_publish_contract": "Save remains separate from Publish; validation and breakpoint changes do not persist a draft or published snapshot."
+  },
+  "local_verification": {
+    "targeted_browser": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-content-system.test.js",
+      "result": "PASS",
+      "tests": 1,
+      "failures": 0,
+      "notes": "Real local Chromium; browser test uses only a loopback fixture. The app correctly rejects breakpoint changes while authored field validation is blocking."
+    },
+    "editor_unit_suite": {
+      "command": "npm run test:editor",
+      "result": "PASS",
+      "test_files": 17,
+      "failures": 0,
+      "linux_subreaper_cases": 3
+    },
+    "plan_contract": {
+      "command": "python3 tests/plan-contract.test.py",
+      "result": "PASS",
+      "tests": 14,
+      "failures": 0
+    },
+    "diff_check": "PASS"
+  },
+  "production": {
+    "runtime_changed": false,
+    "deployment_created": false,
+    "worker_expected_unchanged": {
+      "deployment_id": "56e3b74b-ed64-4be5-a48b-7033aba20029",
+      "version_id": "ebba145a-5deb-4eba-9b3b-78168a9cf942",
+      "traffic_percent": 100,
+      "source_commit": "e0b2d255eeeb13ae5c00a97e2d92b7dfe29caa06"
+    },
+    "d1_write_or_migration": "NONE",
+    "r2_mutation": "NONE",
+    "new_cost_huf": 0
+  },
+  "ci": {
+    "runtime_release_editor_core_run_id": 43839941161,
+    "runtime_release_editor_core_status_at_capture": "IN_PROGRESS on the long Editor browser layout regression; no rerun or dispatch started",
+    "test_docs_commit_policy": "[skip ci]; local browser and unit checks run, no redundant Worker deploy"
+  },
+  "limits": [
+    "This closes only the D-03 oversized-table invalid-state and breakpoint-guard regression subgate.",
+    "The full D-03 table field matrix and D-01 through D-07 lifecycle/capability acceptance remain open.",
+    "The full 77.44.7.D and WEB-011 functional acceptance remain OPEN / NOT_CERTIFIED.",
+    "Full Visual Editor manual/physical acceptance is deferred until the Editor is complete."
+  ]
+}

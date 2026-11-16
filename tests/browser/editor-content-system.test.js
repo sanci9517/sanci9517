@@ -145,6 +145,16 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
         'persistent table guidance explains the Page Model size limit');
       assert.equal(await node(editor,'table').locator('tbody tr').count(),tableRowsBeforeInvalidEdit,
         'an oversized table does not replace the last valid Canvas content');
+      await editor.locator('.canvas-device-btn[data-device="mobile"]').click();
+      assert.equal(await editor.locator('.canvas-device-btn[data-device="desktop"]').getAttribute('aria-pressed'),'true',
+        'an invalid table prevents switching away from the current responsive breakpoint');
+      assert.equal(await editor.locator('.canvas-device-btn[data-device="mobile"]').getAttribute('aria-pressed'),'false');
+      await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent.includes('Javítsd a hibás mezőt a nézetváltás előtt.'));
+      assert.equal(await rowsField.getAttribute('aria-invalid'),'true','a blocked responsive switch retains the invalid table feedback');
+      assert.equal(await rowsField.inputValue(),oversizedTsv,'a blocked responsive switch retains the exact table draft for correction');
+      assert.equal(await node(editor,'table').locator('tbody tr').count(),tableRowsBeforeInvalidEdit,
+        'a blocked responsive switch preserves the last valid table Canvas content');
+      assert.equal(posts.length,0,'a blocked responsive switch never Saves or Publishes');
       await editor.locator('#save').click();
       await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent.includes('Javítsd a jelzett mezőt'));
       assert.equal(posts.length,0,'Save is blocked while the authored table is unsaveable');
@@ -152,6 +162,16 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
       assert.equal(await rowsField.getAttribute('aria-invalid'),null,
         'correcting the table clears the invalid state');
       assert.equal(posts.length,0,'correcting the table still does not autosave');
+      for(const [device,width] of [['mobile',390],['tablet',768],['desktop',1366]]){
+        await editor.setViewportSize({width:1366,height:900});
+        await editor.locator(`.canvas-device-btn[data-device="${device}"]`).click();
+        await editor.setViewportSize({width,height:900});
+        assert.equal(await editor.locator(`.canvas-device-btn[data-device="${device}"]`).getAttribute('aria-pressed'),'true',
+          `the corrected table can switch to the ${device} breakpoint`);
+        assert.equal(await node(editor,'table').locator('tbody tr').count(),tableRowsBeforeInvalidEdit,
+          `the corrected table Canvas content remains intact at the ${device} breakpoint`);
+        assert.equal(posts.length,0,`valid responsive table checks remain draft-only at the ${device} breakpoint`);
+      }
     }
     const repeater=editor.locator('.content-repeater');
     if(await repeater.count()){
