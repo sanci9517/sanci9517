@@ -5,11 +5,19 @@ import {readFile} from 'node:fs/promises';
 import {existsSync} from 'node:fs';
 import {resolve,extname} from 'node:path';
 import {chromium} from 'playwright';
+import {renderScheduleWeek} from '../../public/editor-v2/core/schedule-week.js';
 const root=resolve(import.meta.dirname,'../../public');
+
+const week=renderScheduleWeek([{
+ id:'fixture-live',title:'Közösségi játékest',platform:'Twitch',
+ startsAt:'2026-11-16T12:00:00Z',endsAt:'2026-11-16T15:00:00Z',
+ status:'live',url:'https://www.twitch.tv/sanci9517'
+}],'2026-11-16',{showTitle:true,showPlatform:true,showTime:true,showEndTime:true,
+ showStatus:true,showLink:true,showNotes:false,showArtwork:false},'2026-11-16');
 
 const fixture=[
 '<!doctype html><html lang="hu"><head><meta name="viewport" content="width=device-width, initial-scale=1">',
-'<link rel="stylesheet" href="/assets/site.css"><link rel="stylesheet" href="/assets/sanci-showcase.css">',
+'<link rel="stylesheet" href="/assets/site.css"><link rel="stylesheet" href="/assets/sanci-showcase.css?v=20261116-schedule-cards-v1">',
 '<style>.public-page-layout{display:block}.content-page{max-width:1180px;margin:auto}',
 '.fixture-root{padding:12px;max-width:1160px;margin:auto}.fixture-hero{min-height:580px;padding:22px;background:linear-gradient(145deg,#0a1020,#341a27);border-radius:20px;display:flex;align-items:flex-end}',
 '.fixture-copy{padding:22px;max-width:100%;width:100%;background:rgba(5,9,16,.76);display:flex;flex-direction:column;gap:12px}',
@@ -32,7 +40,7 @@ const fixture=[
 '<span class="sanci-timer-cell"><span class="sanci-timer-value">03</span><span class="sanci-timer-unit">óra</span></span>',
 '<span class="sanci-timer-cell"><span class="sanci-timer-value">25</span><span class="sanci-timer-unit">perc</span></span>',
 '<span class="sanci-timer-cell"><span class="sanci-timer-value">12</span><span class="sanci-timer-unit">mp</span></span></time>',
-'</div></div></section></div></div></div>',
+'</div></div><div class="fixture-schedule">'+week+'</div></section></div></div></div>',
 '<footer class="footer public-footer"><div class="wrap public-footer-grid">',
 '<div class="public-footer-brand"><a class="brand" href="/">SANCI</a><p>Játsszunk egyet.</p></div>',
 '<div class="public-footer-column"><strong>Tartalom</strong><a href="/p/twitch">Élő adás</a><a href="/p/youtube">YouTube</a><a href="/p/tiktok">TikTok</a><a href="/p/schedule">Menetrend</a></div>',
@@ -50,7 +58,7 @@ const fixture=[
 
 test('SANCI autograph, CTA symbols and countdown remain responsive and reduced-motion-safe',async t=>{
  const server=createServer(async(req,res)=>{
-  if(req.url==='/'){res.writeHead(200,{'Content-Type':'text/html'}).end(fixture);return}
+  if(req.url==='/'){res.writeHead(200,{'Content-Type':'text/html; charset=utf-8'}).end(fixture);return}
   const url=new URL(req.url,'http://localhost');
   const file=resolve(root,'.'+url.pathname);
   if(!file.startsWith(root+'/')){res.writeHead(403).end();return}
@@ -71,6 +79,19 @@ test('SANCI autograph, CTA symbols and countdown remain responsive and reduced-m
   assert.equal(await page.locator('.sanci-cta-symbol').count(),2);
   assert.equal(await page.locator('[data-sanci-role="hero"]').count(),1);
   assert.equal(await page.locator('[data-sanci-role="next-stream"]').count(),1);
+  const scheduleCard=page.locator('.sanci-week-event.is-live');
+  assert.equal(await scheduleCard.count(),1,'the schedule component must render its authored live state');
+  assert.equal(await scheduleCard.locator('.sanci-week-event-status').textContent(),'Élő');
+  const cardPresentation=await scheduleCard.evaluate(el=>({
+   radius:parseFloat(getComputedStyle(el).borderTopLeftRadius),
+   shadow:getComputedStyle(el).boxShadow,
+   linkHeight:el.querySelector('.sanci-week-event-link').getBoundingClientRect().height,
+   timeVariant:getComputedStyle(el.querySelector('.sanci-week-event-time')).fontVariantNumeric
+  }));
+  assert.ok(cardPresentation.radius>=13,'schedule cards use the polished rounded treatment');
+  assert.ok(cardPresentation.shadow!=='none','schedule cards retain separation against the weekly grid');
+  assert.ok(cardPresentation.linkHeight>=44,'the stream link remains a comfortable touch target');
+  assert.equal(cardPresentation.timeVariant,'tabular-nums','stream times align numerically');
   const composition=await page.evaluate(()=>{
    const hero=document.querySelector('[data-sanci-role="hero"]');
    const copy=document.querySelector('[data-sanci-role="hero-copy"]');
@@ -85,6 +106,12 @@ test('SANCI autograph, CTA symbols and countdown remain responsive and reduced-m
    assert.ok(composition.panelWidth<=composition.heroWidth,'mobile hero copy must remain within its authored image');
   }
   if(width===1440)assert.ok(composition.revealedRight>=160,'wide composition must visibly reveal the source artwork beside the copy panel');
+  if(width===1440){
+   await scheduleCard.hover();
+   await page.waitForFunction(()=>getComputedStyle(document.querySelector('.sanci-week-event.is-live')).transform!=='none');
+   assert.notEqual(await scheduleCard.evaluate(el=>getComputedStyle(el).transform),'none',
+    'fine-pointer hover provides a restrained schedule-card lift');
+  }
   const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-innerWidth);
   assert.ok(overflow<=2,'horizontal overflow at '+width+'px: '+overflow);
   if(width<=390){
@@ -105,13 +132,17 @@ test('SANCI autograph, CTA symbols and countdown remain responsive and reduced-m
   }
   const supportsSpotlight=await page.evaluate(()=>matchMedia('(hover: hover) and (pointer: fine)').matches&&!matchMedia('(prefers-reduced-motion: reduce)').matches);
   if(supportsSpotlight){
+   await page.locator('[data-sanci-role="hero"]').scrollIntoViewIfNeeded();
    const rect=await page.locator('[data-sanci-role="hero"]').boundingBox();
    await page.mouse.move(rect.x+rect.width/2,rect.y+rect.height/2);
    const light=page.locator('.sanci-hero-spotlight');
    assert.equal(await light.count(),1,'fine-pointer hero receives one decorative light layer');
-   await page.waitForFunction(()=>getComputedStyle(document.querySelector('.sanci-hero-spotlight')).opacity==='1');
+   await page.waitForFunction(()=>document.querySelector('.sanci-hero-spotlight')?.classList.contains('is-active'),null,{timeout:2000});
+   await page.waitForTimeout(100);
+   const spotlightState=await light.evaluate(el=>({active:el.classList.contains('is-active'),opacity:getComputedStyle(el).opacity,display:getComputedStyle(el).display,media:matchMedia('(hover: hover) and (pointer: fine)').matches}));
+   assert.ok(parseFloat(spotlightState.opacity)>.25,'fine-pointer light visibly fades in after pointer entry: '+JSON.stringify(spotlightState));
    await page.mouse.move(0,0);
-   await page.waitForFunction(()=>getComputedStyle(document.querySelector('.sanci-hero-spotlight')).opacity==='0');
+   await page.waitForFunction(()=>parseFloat(getComputedStyle(document.querySelector('.sanci-hero-spotlight')).opacity)<.01,null,{timeout:2000});
   }else assert.equal(await page.locator('.sanci-hero-spotlight').count(),0,'coarse pointers never receive hover-only decoration');
   assert.deepEqual(errors,[]);
   await page.close();
@@ -121,6 +152,9 @@ test('SANCI autograph, CTA symbols and countdown remain responsive and reduced-m
  await reduced.locator('[data-sanci-role="hero-copy"]').waitFor();
  assert.equal(await reduced.locator('[data-sanci-role="hero-copy"]').evaluate(el=>getComputedStyle(el).animationName),'none');
  assert.equal(await reduced.locator('.sanci-hero-spotlight').count(),0,'reduced-motion visitors are not wired to a hover effect');
+ await reduced.locator('.sanci-week-event.is-live').hover();
+ assert.equal(await reduced.locator('.sanci-week-event.is-live').evaluate(el=>getComputedStyle(el).transform),'none',
+  'reduced-motion visitors do not receive the hover lift');
  await reduced.close();
  const touch=await browser.newPage({viewport:{width:390,height:850},isMobile:true,hasTouch:true});
  await touch.goto(origin+'/');

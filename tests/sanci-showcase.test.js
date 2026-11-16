@@ -212,7 +212,7 @@ test('compact footer is SANCI-only, preserves original link order and large touc
  const destinations=['/p/twitch','/p/youtube','/p/tiktok','/p/schedule',
   '/p/community','/p/about','/p/contact','mailto:sandor.bogadi95@gmail.com'];
  for(const href of destinations)assert.ok(footer.includes('href="'+href+'"'),href);
- assert.match(html,/\/assets\/sanci-showcase\.css\?v=20261116-hero-spotlight-v1/);
+ assert.match(html,/\/assets\/sanci-showcase\.css\?v=20261116-schedule-cards-v1/);
 });
 
 test('wide SANCI hero overlays are capped so authored key art stays visible, with full-width mobile copy',()=>{
@@ -226,4 +226,22 @@ test('wide SANCI hero overlays are capped so authored key art stays visible, wit
  assert.match(rule,/@media\(max-width:700px\)[\s\S]*width:100%!important[\s\S]*max-width:100%!important/);
  assert.ok(rule.includes('body.sanci-editorial-page[data-sanci-showcase="depth-v2"]'),
    'the art-reveal treatment is scoped to the SANCI public brand only');
+});
+
+test('weekly schedule cards get SANCI-only focus, live-state and reduced-motion-safe polish',()=>{
+ const css=readFileSync(new URL('../public/assets/sanci-showcase.css',import.meta.url),'utf8');
+ const scope='body.sanci-editorial-page[data-sanci-showcase="depth-v2"]';
+ assert.ok(css.includes(`${scope} .sanci-week-event{`),
+  'schedule polish is scoped to the canonical SANCI editorial pages');
+ assert.ok(css.includes(`${scope} .sanci-week-event.is-live{`),
+  'the authored live state has its own treatment');
+ assert.ok(css.includes(`${scope} .sanci-week-event.is-live .sanci-week-event-status{`),
+  'the existing status toggle controls whether a textual live label is shown');
+ assert.ok(css.includes(`${scope} .sanci-week-event:focus-within{`),
+  'keyboard focus remains visible');
+ assert.match(css,/@media\(hover:hover\) and \(pointer:fine\)/);
+ assert.match(css,/@media\(prefers-reduced-motion:reduce\)[\s\S]*\.sanci-week-event:hover\{\s*transform:none!important/);
+ const html=readFileSync(new URL('../public/visual-page.html',import.meta.url),'utf8');
+ assert.match(html,/sanci-showcase\.css\?v=20261116-schedule-cards-v1/,
+  'the page shell must bypass a cached previous schedule treatment');
 });
