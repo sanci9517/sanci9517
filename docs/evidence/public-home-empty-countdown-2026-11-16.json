@@ -1,0 +1,40 @@
+{
+  "feature": "public-home-empty-countdown-wrap",
+  "date": "2026-11-16",
+  "reference": "https://avidisodd.hu/ is visual inspiration only; the production target is the SANCI9517 Worker public site.",
+  "target": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/",
+  "observation": {
+    "source": "Real Chromium screenshot and text-range measurements of the live SANCI page with reduced motion enabled.",
+    "emptyMessage": "Még nincs meghirdetett adás.",
+    "before": {
+      "320": {"messageLines": 5, "messageHeight": 114, "timerWidth": 268},
+      "390": {"messageLines": 5, "messageHeight": 114, "timerWidth": 338},
+      "768": {"messageLines": 3, "messageHeight": 90, "timerWidth": 660},
+      "1440": {"messageLines": 3, "messageHeight": 112, "timerWidth": 660}
+    },
+    "cause": "A text-only empty state was an anonymous child of the four-column countdown CSS grid and therefore occupied only its first column."
+  },
+  "change": {
+    "runtime": ["public/assets/site.css", "public/visual-page.html"],
+    "tests": ["tests/browser/home-next-stream-countdown.test.js", "tests/browser/sanci-showcase.test.js", "tests/sanci-brand-shell-contract.test.js"],
+    "fix": "The next-stream clock with no datetime renders as a centered full-width block; a real datetime keeps the four-cell grid. The public stylesheet cache token is bumped."
+  },
+  "checks": {
+    "countdownBrowser": "PASS, 320/390/768/1440 px, after fix; includes real timer and empty schedule states.",
+    "countdownLogic": "PASS",
+    "brandContract": "PASS, 10/10",
+    "showcaseBrowser": "PASS",
+    "brandMobileBrowser": "PASS after correcting its harness to open the collapsed mobile menu before waiting for visible links.",
+    "liveHealthPreflight": "PASS, production /api/health HTTP 200; previous public stylesheet URL HTTP 200. This is a pre-deploy check.",
+    "productionD1Preflight": "PASS, Cloudflare query API SELECT against sqlite_master; rows_written=0, changed_db=false.",
+    "deploy": "NOT DONE"
+  },
+  "release": {
+    "branch": "v2/foundation",
+    "sourceShaBeforeRelease": "fcbaa01cf7c23aaf10698f423597b81f67ea47e8",
+    "workerDeploymentAfter": "PENDING push and automatic Worker Build",
+    "publicCssSha256After": "PENDING post-deploy GET and SHA-256 comparison",
+    "sourceShaAfterRelease": "PENDING GitHub branch verification"
+  },
+  "cost": "0 Ft; no paid service, production data writes, migrations, or R2 mutations."
+}

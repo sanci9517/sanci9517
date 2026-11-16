@@ -67,6 +67,9 @@ test('all eight current editorial pages preserve mobile layout and platform icon
       await page.goto(host+'/p/'+slug,{waitUntil:'load'});
       await page.locator('#content-canvas .visual-text').first().waitFor();
       if(width===390){
+        // Menu links are inside the collapsed drawer. Open it before waiting
+        // for visibility so this checks the actual mobile navigation flow.
+        await page.locator('[data-menu-button]').click();
         await page.locator('.menu-nav-item').first().waitFor();
         assert.equal(await page.locator('.menu-nav-item').count(),8);
         assert.equal(await page.locator('.menu-nav-child').count(),0);

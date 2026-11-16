@@ -56,12 +56,21 @@ test('real Chromium renders the schedule-backed timer without phone overflow and
   assert.deepEqual(errors,[]);
   await page.close();
  }
- const empty=await browser.newPage({viewport:{width:390,height:820}});
- await empty.route('**/api/public/schedule?*',route=>route.fulfill({status:200,contentType:'application/json',
-  body:JSON.stringify({ok:true,data:[]})}));
- await empty.goto(origin+'/clock');
- await empty.getByText('Még nincs meghirdetett adás.').waitFor();
- assert.equal(await empty.locator('.sanci-timer-value').count(),0);
- assert.match(await empty.locator('.visual-countdown-details').textContent(),/menetrendben/);
- await empty.close();
+ for(const width of [320,390,768,1440]){
+  const empty=await browser.newPage({viewport:{width,height:820}});
+  await empty.route('**/api/public/schedule?*',route=>route.fulfill({status:200,contentType:'application/json',
+   body:JSON.stringify({ok:true,data:[]})}));
+  await empty.goto(origin+'/clock');
+  await empty.getByText('Még nincs meghirdetett adás.').waitFor();
+  assert.equal(await empty.locator('.sanci-timer-value').count(),0);
+  assert.match(await empty.locator('.visual-countdown-details').textContent(),/menetrendben/);
+  const messageLayout=await empty.locator('.visual-countdown-clock').evaluate(time=>{
+   const range=document.createRange();range.selectNodeContents(time);
+   return {display:getComputedStyle(time).display,width:time.getBoundingClientRect().width,lines:range.getClientRects().length};
+  });
+  assert.equal(messageLayout.display,'block',`empty schedule message must use a full-width block at ${width}px`);
+  assert.ok(messageLayout.width>=Math.min(width-60,600),`empty schedule message is unexpectedly narrow at ${width}px: ${messageLayout.width}px`);
+  assert.ok(messageLayout.lines<=2,`empty schedule message wraps into ${messageLayout.lines} lines at ${width}px`);
+  await empty.close();
+ }
 });

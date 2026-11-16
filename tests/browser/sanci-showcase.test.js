@@ -28,7 +28,7 @@ const fixture=[
 '</div></section><section data-node-id="feature" class="fixture-feature"><h2>A KÖVETKEZŐ KÖR ITT KEZDŐDIK.</h2>',
 '<div data-node-id="clock"><div class="visual-countdown-content" data-countdown-source="next-stream">',
 '<strong class="visual-countdown-heading">KÖVETKEZŐ STREAMIG</strong>',
-'<time class="visual-countdown-clock"><span class="sanci-timer-cell"><span class="sanci-timer-value">01</span><span class="sanci-timer-unit">nap</span></span>',
+'<time class="visual-countdown-clock" datetime="2027-01-01T20:00:00+01:00"><span class="sanci-timer-cell"><span class="sanci-timer-value">01</span><span class="sanci-timer-unit">nap</span></span>',
 '<span class="sanci-timer-cell"><span class="sanci-timer-value">03</span><span class="sanci-timer-unit">óra</span></span>',
 '<span class="sanci-timer-cell"><span class="sanci-timer-value">25</span><span class="sanci-timer-unit">perc</span></span>',
 '<span class="sanci-timer-cell"><span class="sanci-timer-value">12</span><span class="sanci-timer-unit">mp</span></span></time>',
