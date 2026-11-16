@@ -103,6 +103,22 @@
       "source_revision": "1012ffe226594b23564d9105db7914915d3aa3c6",
       "elapsed_wall_seconds_from_dev_metrics": 2371,
       "active_worktime_note": "Metric covers start-to-finish wall time, not verified active CPU time."
+    },
+    "owner_authorized_ci": {
+      "authorization": "Owner explicitly authorized CI for the D acceptance gate on 2026-11-16.",
+      "repository_visibility": "public (GitHub repository metadata API)",
+      "runner_class": "standard GitHub-hosted ubuntu-24.04/ubuntu-latest; no large runners",
+      "cost_huf": 0,
+      "planned_exact_sha_workflows": [
+        "editor-core-test.yml",
+        "f0-baseline.yml",
+        "twitch-integration-check.yml",
+        "canonical-plan.yml",
+        "active-plan-audit.yml"
+      ],
+      "state": "PENDING — push of this plan/evidence commit will trigger push workflows; exact-SHA run API verification required.",
+      "runtime_deploy_expected": false,
+      "basis": "Workflow triggers reviewed; runtime-only smoke workflow path filter excludes docs/tests. Cloudflare Worker build excludes docs/** and tests/**."
     }
   },
   "production": {
@@ -127,7 +143,7 @@
   ],
   "cost_huf": 0,
   "canonical_plan_after_update": {
-    "sha256": "8e399aa5f6a5a1085f36790ce545759c3aa64531c3bb17fa185882f1ac6a3b53",
-    "bytes": 1656499
+    "sha256": "9e0226384fdad39fe31d324ed555be69a8460eb53c4a419f54d167863618fb87",
+    "bytes": 1658297
   }
 }
