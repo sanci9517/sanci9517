@@ -1,0 +1,110 @@
+{
+  "schema": "sanci.editor.d-audio-controls-save-publish.v1",
+  "captured_at_utc": "2026-11-16T16:54:36Z",
+  "plan_point": "77.44.7.D — element-specific content and media",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "branch_head_before_change": "fbe68b33a102c6c0700af7dc6b9ba5d507ff39c1",
+    "runtime_source_sha": "bd748a061901474bbdc14b23c5ad6df4940caca2",
+    "changed_test_sha256": {
+      "tests/browser/editor-content-system.test.js": "d093a84b1a77cb66416ad82e752777b24c315b60fb9f524fa41591ae32226951",
+      "tests/f0-3-route-integration.test.js": "f21f8710bb9f11cc25fd636b002745e797580aee8a8c530597822a0aaa1f7c20"
+    }
+  },
+  "gap": "The real Editor browser flow covered audio URL save/reload/publish, while the real production editor route's server-side no-controls rejection was not tied to the same audio controls draft lifecycle. The UI intentionally leaves Publish available for an attempt; the backend is the authoritative validation gate.",
+  "change": {
+    "files": [
+      "tests/browser/editor-content-system.test.js",
+      "tests/f0-3-route-integration.test.js",
+      "docs/evidence/feature-traceability.json"
+    ],
+    "runtime_changed": false,
+    "public_asset_changed": false,
+    "dependency_or_lockfile_changed": false,
+    "assertions": [
+      "An audio loop toggle previews on the Canvas but does not trigger an implicit request.",
+      "Hiding native audio controls shows the publication requirement while preserving the explicit draft Save path.",
+      "The production admin-editor route accepts the no-controls configuration as a draft and preserves the prior published snapshot/revision.",
+      "The same production route rejects Publish with HTTP 409 INCOMPLETE_EDITOR_CONTENT and performs no revision or public snapshot write.",
+      "Editor reload restores the draft controls=false and loop=true values; restoring controls then requires a separate Publish before the public player changes."
+    ]
+  },
+  "checks": {
+    "targeted_real_chromium": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-content-system.test.js",
+      "result": "PASS",
+      "tests": 1,
+      "failures": 0,
+      "duration_ms": 41206,
+      "execution": "Local Chromium with permission only for the fixture to bind 127.0.0.1; no external browser service."
+    },
+    "production_route_integration": {
+      "command": "node --experimental-loader ./tests/ts-extension-loader.mjs tests/f0-3-route-integration.test.js",
+      "result": "PASS",
+      "tests": 19,
+      "failures": 0,
+      "covers": "Repository adminEditorRoute against in-memory SQLite; not a deployed Worker or production D1."
+    },
+    "editor_unit": {
+      "command": "npm run test:editor",
+      "result": "PASS",
+      "files": 17,
+      "runner_guard_tests": 3,
+      "failures": 0
+    },
+    "plan_contract": {
+      "command": "python3 tests/plan-contract.test.py",
+      "result": "PASS",
+      "tests": 14,
+      "failures": 0
+    },
+    "canonical_plan": {
+      "command": "python3 scripts/check-canonical-plan.py",
+      "result": "PASS",
+      "master_files": 13,
+      "feature_mappings": 396
+    },
+    "traceability": {
+      "command": "python3 scripts/build-feature-traceability.py --check",
+      "result": "PASS",
+      "mappings": 396
+    },
+    "active_point_audit": {
+      "command": "python3 scripts/audit-active-plan-point.py",
+      "result": "OPEN / NOT_CERTIFIED",
+      "cursor": "77.44.7.D",
+      "partial_source": 146,
+      "unverified": 250
+    },
+    "syntax_and_diff": {
+      "command": "node --check tests/browser/editor-content-system.test.js && node --check tests/f0-3-route-integration.test.js && git diff --check",
+      "result": "PASS"
+    },
+    "test_iterations": [
+      "Initial browser run exposed two faulty expectations in the new test (audio loop defaults absent; Publish is intentionally enabled); corrected assertions to match the existing contract and reran the complete test successfully.",
+      "Plan-contract/canonical checks initially reported the route-test source fingerprint stale; regenerated the repository-owned feature traceability crosswalk and all plan-contract checks passed on rerun."
+    ],
+    "hosted_ci": {
+      "result": "NOT RUN / UNVERIFIED",
+      "reason": "No available read-only quota/billing endpoint was reachable from this environment; AGENTS.md requires the free quota to be known before dispatch. Test/evidence-only convention is [skip ci]."
+    }
+  },
+  "production": {
+    "latest_plan_recorded_deployment_id": "80986873-0dbe-4d5a-9d76-f89144297008",
+    "latest_plan_recorded_worker_version_id": "67b3ae5b-2909-44a7-82fc-c7ecf4ee492b",
+    "latest_plan_recorded_traffic_percent": 100,
+    "production_state_rechecked_this_run": false,
+    "worker_deploy_for_this_change": false,
+    "health_or_asset_hash_checked_this_run": false,
+    "production_d1_mutation": false,
+    "production_r2_operation": false
+  },
+  "limitations": [
+    "This closes the audio native-controls Save/reload/Publish regression slice only; full D-01 through D-07 and 77.44.7.D remain OPEN / NOT_CERTIFIED.",
+    "Hosted CI was not started and no hosted PASS is claimed; the remote free-quota status remains unknown from this environment.",
+    "The full Visual Editor manual/physical acceptance remains deferred until the complete Editor gate.",
+    "Save and Publish remain distinct operations."
+  ],
+  "cost_huf": 0
+}

@@ -146,6 +146,47 @@ test('malformed authored CTA drafts save separately but cannot replace the publi
   assert.deepEqual(await liveAfter.json(),liveBody,'public content remains identical to the valid pre-error publication');
 });
 
+test('D authored audio without native controls saves only as a draft and server rejects Publish', async t => {
+  const f = await fixture(t), document = f.document('root-content');
+  const page = document.pages.p, root = page.nodes.root;
+  root.children = ['audio'];
+  page.nodes.audio = {
+    id:'audio',type:'audio',name:'Hanganyag',parentId:'root',children:[],
+    props:{src:'/audio.ogg',controls:true,loop:false},style:{},
+    responsive:{desktop:{},tablet:{},mobile:{}},states:{},accessibility:{},
+    metadata:{contentVersion:1,editorContentVersion:1}
+  };
+  const initial = await f.edit({...f.publish('unused'),document,publish:true});
+  assert.equal(initial.status,200,'valid audio establishes a published baseline');
+  const liveBefore = await f.read();
+  const liveBody = await liveBefore.json();
+  assert.equal(liveBody.data.content.nodes.audio.props.controls,true);
+  const publishedSnapshot = f.db.prepare("SELECT published_content_json,published_revision_id FROM pages WHERE id='p'").get();
+
+  const invalidDraft = structuredClone(document);
+  invalidDraft.pages.p.nodes.audio.props.controls = false;
+  invalidDraft.pages.p.nodes.audio.props.loop = true;
+  const saved = await f.edit({pageId:'p',document:invalidDraft,publish:false,expectedVersion:2});
+  assert.equal(saved.status,200,'the incomplete audio configuration remains editable and Save stays draft-only');
+  assert.equal((await saved.json()).data.published,false);
+  const stored = f.db.prepare("SELECT content_json,published_content_json,published_revision_id,is_published FROM pages WHERE id='p'").get();
+  const draft = JSON.parse(stored.content_json).pages.p.nodes.audio.props;
+  assert.equal(draft.controls,false);
+  assert.equal(draft.loop,true);
+  assert.equal(stored.published_content_json,publishedSnapshot.published_content_json);
+  assert.equal(stored.published_revision_id,publishedSnapshot.published_revision_id);
+  assert.equal(stored.is_published,1);
+
+  const beforeRejectedPublish = f.state();
+  const rejected = await f.edit({pageId:'p',document:invalidDraft,publish:true,expectedVersion:3});
+  assert.equal(rejected.status,409,'the server independently rejects hiding native audio controls');
+  assert.equal((await rejected.json()).error.code,'INCOMPLETE_EDITOR_CONTENT');
+  assert.deepEqual(f.state(),beforeRejectedPublish,'rejected Publish inserts no revision and performs no snapshot write');
+  const liveAfter = await f.read();
+  assert.equal(liveAfter.status,200);
+  assert.deepEqual(await liveAfter.json(),liveBody,'the valid public audio remains unchanged after rejected Publish');
+});
+
 test('two publishers reading the same version yield one winner and one conflict', async t => {
   const f = await fixture(t);
   f.env.DB.beforeBatch = async () => assert.equal((await f.edit(f.publish('winner'))).status, 200);

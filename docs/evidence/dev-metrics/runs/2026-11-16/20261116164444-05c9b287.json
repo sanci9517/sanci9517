@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261116164444-05c9b287",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-16T16:44:44.858Z",
+  "finished_at": "2026-11-16T16:55:34.700Z",
+  "wall_seconds": 650,
+  "paused_seconds": 0,
+  "measured_seconds": 650,
+  "status": "partial",
+  "kind": "test",
+  "summary": "D audio controls lifecycle route and Chromium regression pass; complete D remains open",
+  "evidence": [
+    "docs/evidence/editor-d-audio-controls-save-publish-2026-11-16.json"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "4cd79c5cc8c3c0c74137e50c44763e4baf56892e",
+  "finished_revision": "4cd79c5cc8c3c0c74137e50c44763e4baf56892e",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

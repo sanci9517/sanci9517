@@ -657,6 +657,47 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
     'Publish exposes the editable Dropdown group name');
   assert.equal(await node(live,'carousel').getByRole('region',{name:'Képes történeteim & fotók'}).count(),1,
     'published carousel region inherits the exact accessible Inspector name');
+  // Audio playback controls are part of the authored lifecycle, not merely a
+  // renderer default: an incomplete draft may be saved, but must stay private
+  // until the required native controls are restored and explicitly Published.
+  await select('audio');
+  const controlsField=editor.locator('.content-schema-field[data-content-key="controls"] input');
+  const audioLoopDraft=editor.locator('.content-schema-field[data-content-key="loop"] input');
+  assert.equal(await controlsField.isChecked(),true,'audio controls default to the accessible native player');
+  const beforeAudioLoopEdit=posts.length;
+  await audioLoopDraft.check();
+  assert.equal(await node(editor,'audio').locator('audio').getAttribute('loop'),'', 'audio loop previews immediately in the Canvas');
+  assert.equal(posts.length,beforeAudioLoopEdit,'audio loop editing remains local until explicit Save');
+  await controlsField.uncheck();
+  assert.equal(await node(editor,'audio').locator('audio').getAttribute('controls'),null,'the invalid audio draft visibly reflects the missing controls');
+  assert.match(await editor.locator('.editor-publication-warning').textContent(),/hanglejátszó vezérlőit nem rejtheted el/,
+    'the Inspector explains why hiding native audio controls cannot be published');
+  await editor.locator('#save').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent.startsWith('Mentve'));
+  assert.equal(posts.at(-1).publish,false,'an incomplete but normalized audio state can be saved only as a draft');
+  assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.audio].props.controls,false);
+  assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.audio].props.loop,true);
+  await live.reload();
+  assert.equal(await node(live,'audio').locator('audio').getAttribute('controls'),'', 'draft Save leaves the previous accessible public audio player unchanged');
+  assert.equal(await node(live,'audio').locator('audio').getAttribute('loop'),null, 'draft Save leaves the previous published loop setting unchanged');
+  await editor.reload();
+  await select('audio');
+  const controlsAfterReload=editor.locator('.content-schema-field[data-content-key="controls"] input');
+  const loopAfterReload=editor.locator('.content-schema-field[data-content-key="loop"] input');
+  assert.equal(await controlsAfterReload.isChecked(),false,'reload restores the intentionally incomplete audio draft');
+  assert.equal(await loopAfterReload.isChecked(),true,'reload restores the authored audio loop setting');
+  assert.equal(await editor.locator('#publish').isDisabled(),false,
+    'the separate Publish action remains available; the server is the authoritative content-validation gate');
+  await controlsAfterReload.check();
+  assert.equal(await editor.locator('#publish').isDisabled(),false,'restoring native controls clears the publication blocker');
+  const beforeAudioPublish=posts.length;
+  await editor.locator('#publish').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent==='Publikálva');
+  assert.equal(posts.length,beforeAudioPublish+1);
+  assert.equal(posts.at(-1).publish,true,'the repaired audio content reaches the distinct Publish operation');
+  await live.reload();
+  assert.equal(await node(live,'audio').locator('audio').getAttribute('controls'),'', 'Publish exposes accessible native audio controls');
+  assert.equal(await node(live,'audio').locator('audio').getAttribute('loop'),'', 'Publish exposes the authored audio loop setting');
   assert.equal(await node(live,'table').locator('th[scope=col]').count(),2);
   assert.equal(await node(live,'table').locator('tbody tr').count(),expectedTableRows.length,'Publish preserves all supported rows');
   assert.equal(await node(live,'table').locator('tbody tr').last().locator('td').last().textContent(),expectedTableRows.at(-1)[1],
