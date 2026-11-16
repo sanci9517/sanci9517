@@ -1,8 +1,8 @@
 {
   "schema": 1,
-  "captured_at": "2026-11-16T20:05:00Z",
+  "captured_at": "2026-11-16T21:10:00Z",
   "plan_point": "77.44.7.D / D-02 malformed authored CTA draft recovery",
-  "status": "SOURCE_REGRESSION_PASS; DRY_RUN_PASS; D1_READ_ONLY_PASS; RELEASE_PENDING",
+  "status": "SOURCE_AND_WORKER_100_PERCENT_VERIFIED; EDITOR_CORE_CI_IN_PROGRESS; D_POINT_OPEN_NOT_CERTIFIED",
   "repository": {
     "name": "sanci9517/sanci9517",
     "branch": "v2/foundation",
@@ -66,16 +66,42 @@
     "health_for_this_source_change": "NOT YET VERIFIED; release is pending"
   },
   "release": {
-    "commit": "NOT CREATED YET",
-    "push": "PENDING; normal fast-forward only",
-    "ci": "PENDING; no rerun/dispatch started",
-    "worker_deployment": "PENDING; will verify auto deployment, otherwise use deploy:safe after CI and rollout checks",
-    "cost": "0 Ft additional spend; free public GitHub Actions only; no paid services or quota overrun"
+    "commit": "ed24f95288bde70ac070997fd369bfd5e3304dad",
+    "push": "PASS; normal fast-forward from verified 3605c38d1c38275dba0452c39cd7267b686f9861 to exact v2/foundation HEAD.",
+    "ci": {
+      "canonical_plan": "43956691376 COMPLETED/SUCCESS",
+      "active_plan_audit": "43956689775 COMPLETED/SUCCESS",
+      "f0_baseline": "43956689571 COMPLETED/SUCCESS",
+      "twitch": "43956689502 COMPLETED/SUCCESS",
+      "worker_source_smoke": "43956689519 COMPLETED/SUCCESS",
+      "editor_core": "43956689597 IN_PROGRESS at 2026-11-16T21:10:00Z; all steps through isolated D1/R2 browser fixture passed; Chromium Editor layout regression active"
+    },
+    "worker_deployment": "PASS automatic Cloudflare deployment, version 47456280-bc0c-4351-94d4-9d9e4800b48e at 100%; no manual deploy required.",
+    "production_health": "PASS direct GET HTTP 200 after rollout.",
+    "cost": "0 Ft additional spend; public standard GitHub-hosted runners; no paid services or quota overrun."
   },
   "limitations": [
-    "77.44.7.D remains OPEN / NOT_CERTIFIED pending full feature matrix and acceptance evidence.",
-    "This patch repairs a persisted-data recovery path; it does not certify the entire Editor.",
+    "77.44.7.D remains OPEN / NOT_CERTIFIED pending the complete D-01–D-07 capability matrix and all required acceptance evidence.",
+    "This released patch repairs the D-02 persisted authored-content load/repair boundary; it does not certify the entire Editor.",
     "Full Editor manual/device acceptance remains deferred to the end-of-Editor gate."
   ],
-  "save_publish_separate": true
+  "save_publish_separate": true,
+  "production_worker_after_release": {
+    "name": "sanci9517-streamer-brand",
+    "deployment_id": "188c8d90-a3e3-4d86-877c-bc3b80b7a288",
+    "version_id": "47456280-bc0c-4351-94d4-9d9e4800b48e",
+    "version_number": 4098,
+    "traffic_percent": 100,
+    "deployed_at": "2026-11-16T21:07:07.175611Z",
+    "health_get": {
+      "status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "source_sha_attestation": "Production Worker source-smoke GitHub workflow 43956689519 completed success for exact commit ed24f95288bde70ac070997fd369bfd5e3304dad; direct GET hashes for all four changed public Editor assets also match."
+  }
 }
