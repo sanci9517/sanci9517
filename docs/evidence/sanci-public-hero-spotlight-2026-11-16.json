@@ -1,0 +1,145 @@
+{
+  "schema": 1,
+  "recorded_at": "2026-11-16T12:44:51Z",
+  "task": "UX-REF-AVID.5",
+  "plan_state": {
+    "canonical": "77.44 / WEB-011 and 77.44.7.D",
+    "status": "OPEN / NOT_CERTIFIED",
+    "scope_note": "This release is one public presentation slice; it does not certify the full homepage, Visual Editor, or D-01 through D-07 acceptance."
+  },
+  "change": {
+    "summary": "Added a subtle mouse-following radial light over the authored SANCI hero key art. It is an aria-hidden decorative layer, only initialized for fine hover pointers, ignores touch events, follows the hero bounds, fades on pointer leave, and removes its listeners/layer during rerender or disable. Reduced-motion visitors and browsers without fine-pointer media support keep the unchanged authored artwork. No Page Model content, Save, Publish, D1 schema/data, R2 object, or third-party dependency changed.",
+    "inspiration": "Uses a broadly familiar interactive light treatment from modern gaming/creator design, implemented with SANCI's own palette and existing editor-authored image; no reference code, logo, media, copy, or graphics were copied.",
+    "cache_keys": {
+      "shell_css": "/assets/sanci-showcase.css?v=20261116-hero-spotlight-v1",
+      "shell_renderer": "/assets/page-renderer.js?v=20261116-hero-spotlight-v1",
+      "renderer_module": "/assets/sanci-showcase.js?v=20261116-hero-spotlight-v1"
+    }
+  },
+  "source": {
+    "runtime_commit": "11b5ade8ab09c9c2eb63bb543666a1560fa9a74e",
+    "runtime_commit_subject": "feat(public): add accessible hero spotlight",
+    "followup_head": "8dd514eca78beb972a70f60de037a7a1bf85c241",
+    "followup_subject": "test(ci): run public showcase regressions",
+    "branch": "v2/foundation",
+    "branch_head_verified": "8dd514eca78beb972a70f60de037a7a1bf85c241",
+    "followup_diff_scope": ".github/workflows/editor-core-test.yml only; no runtime assets, migrations, or Page Model changes."
+  },
+  "checks": {
+    "local": {
+      "npm_run_test_showcase": "PASS",
+      "npm_run_test_design": "PASS",
+      "npm_run_test_web013_migration_gate": "PASS",
+      "npm_run_typecheck": "PASS",
+      "node_check_browser_test": "PASS",
+      "git_diff_check": "PASS",
+      "wrangler_deploy_dry_run": "PASS; Wrangler 4.130.0; 182 asset files; no deployment performed by the dry run.",
+      "showcase_browser_test": "LOCAL BLOCKED: installed /usr/bin/chromium exits with SIGTRAP / setsockopt Operation not permitted in this sandbox; not recorded as local PASS."
+    },
+    "github_actions": {
+      "source_smoke": {
+        "run_id": 43868063700,
+        "sha": "11b5ade8ab09c9c2eb63bb543666a1560fa9a74e",
+        "status": "completed / success",
+        "scope": "Production /api/health and workflow-declared exact public source SHA-256 checks. The three changed showcase/renderer assets were separately fetched and hashed below."
+      },
+      "f0_baseline": {
+        "run_id": 43868728274,
+        "sha": "8dd514eca78beb972a70f60de037a7a1bf85c241",
+        "status": "completed / success"
+      },
+      "twitch_integration": {
+        "run_id": 43868728109,
+        "sha": "8dd514eca78beb972a70f60de037a7a1bf85c241",
+        "status": "completed / success"
+      },
+      "showcase_ci_regression": {
+        "run_id": 43868728162,
+        "sha": "8dd514eca78beb972a70f60de037a7a1bf85c241",
+        "unit_step": "completed / success",
+        "chromium_step": "completed / success",
+        "overall_editor_core": "in progress at last check; remaining Editor/media/layout/browser and contract steps are not certified here."
+      }
+    }
+  },
+  "production": {
+    "worker_origin": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev",
+    "latest_deployment": {
+      "id": "1507275c-4a3b-4484-9abd-85d1d4a7ea7f",
+      "created_on": "2026-11-16T12:40:52.038451Z",
+      "version_id": "fcd292b5-0572-425f-b694-d5f7e0affa84",
+      "version_number": 4082,
+      "traffic": "100%",
+      "source": "wrangler",
+      "script_etag": "9e09541177ddb273ad8e91324802a22624f30cd7493314085093286423831af8"
+    },
+    "readback_at": "2026-11-16T12:44:00Z",
+    "health": {
+      "path": "/api/health",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "public_routes": {
+      "/": 200,
+      "/p/twitch": 200,
+      "/p/youtube": 200,
+      "/p/tiktok": 200,
+      "/p/schedule": 200,
+      "/p/community": 200,
+      "/p/about": 200,
+      "/p/contact": 200
+    },
+    "asset_hashes": {
+      "/assets/sanci-showcase.js?v=20261116-hero-spotlight-v1": {
+        "status": 200,
+        "sha256": "dd44b4b2ba0674cea56f44b7b819eee2bed224a9eb8dffa4ac9c3cfa5c552ba6",
+        "matches_local_source": true
+      },
+      "/assets/sanci-showcase.css?v=20261116-hero-spotlight-v1": {
+        "status": 200,
+        "sha256": "88b62205515a53c0b4f789ec86e44395281a8243aed2eada0fd1894da5e502b1",
+        "matches_local_source": true
+      },
+      "/assets/page-renderer.js?v=20261116-hero-spotlight-v1": {
+        "status": 200,
+        "sha256": "71259a4bdd5db33a4941daef27a257b37f21aa4818b2cf9765f2d9fc7e4d7a7e",
+        "matches_local_source": true
+      }
+    },
+    "home_shell": "The live home HTML references the versioned CSS and renderer query keys above."
+  },
+  "production_d1_preflight": {
+    "transport": "Cloudflare D1 REST Query API; POST /query",
+    "sql_policy": "SELECT-only; no migration or mutation statement sent.",
+    "ledger_rows": 35,
+    "latest_migration": "0029_media_archive_unicode_additive.sql",
+    "counts": {
+      "pages": 11,
+      "schedule_items": 4,
+      "media": 23,
+      "social_accounts": 0
+    },
+    "aggregate_query_metadata": {
+      "rows_written": 0,
+      "changes": 0,
+      "changed_db": false
+    },
+    "note": "A first SELECT-only batch named the schedule table incorrectly and returned SQLITE_ERROR (no such table: schedule); the corrected SELECT-only batch used schedule_items and succeeded. Both batches were read-only."
+  },
+  "cost": {
+    "new_paid_services": 0,
+    "new_dependencies": 0,
+    "production_d1_writes": 0,
+    "r2_deletions": 0
+  },
+  "remaining": [
+    "The Editor Core GitHub workflow was still in progress after the two SANCI showcase steps passed.",
+    "No owner-authored highlighted video VOD IDs were available; no fake clip/title/art was introduced.",
+    "The user-facing hand review of the overall creative direction and the full Visual Editor physical/manual acceptance remain open."
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "id": "20261116122520-32fd8721",
+  "task": "UX-REF-AVID.5",
+  "trigger": "manual",
+  "started_at": "2026-11-16T12:25:20.561Z",
+  "finished_at": "2026-11-16T12:46:11.112Z",
+  "wall_seconds": 1251,
+  "paused_seconds": 0,
+  "measured_seconds": 1251,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "Deployed original SANCI hero spotlight with pointer/reduced-motion coverage; production health and asset hashes verified; full Editor Core CI still running.",
+  "evidence": [
+    "11b5ade8ab09c9c2eb63bb543666a1560fa9a74e",
+    "8dd514eca78beb972a70f60de037a7a1bf85c241",
+    "docs/evidence/sanci-public-hero-spotlight-2026-11-16.json"
+  ],
+  "checks": "showcase/design/typecheck/migration gate/dry-run PASS; D1 read-only; Worker v4082 100%; live health/routes/hash PASS; local browser blocked; CI browser step PASS; full Editor Core IN_PROGRESS",
+  "started_revision": "264aa5f26dd7b0666056f7325c53bcb14a68cde1",
+  "finished_revision": "8dd514eca78beb972a70f60de037a7a1bf85c241",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
