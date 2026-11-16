@@ -204,6 +204,19 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   assert.match(await node(editor,'button').evaluate(el=>getComputedStyle(el).backgroundImage),/api\/admin\/media\?id=/,'canvas uses authenticated background preview');
   await editor.locator('.inspector-tabs button').nth(1).click();
   const buttonHref=editor.locator('[data-content-key="href"] input');
+  for(const privateHref of [
+    '/api/admin/media?id='+assetId,
+    '/api/%61dmin/media?id='+assetId,
+    '/%61pi/admin/media?id='+assetId,
+    '/api%2fadmin%2fmedia?id='+assetId,
+    '/%252fapi%252fadmin%252fmedia?id='+assetId,
+    '/%255capi%255cadmin%255cmedia?id='+assetId,
+    '/public/../api/admin/media?id='+assetId
+  ]){
+    await buttonHref.fill(privateHref);
+    assert.equal(await buttonHref.getAttribute('aria-invalid'),'true','button CTA cannot publish private Editor media URL: '+privateHref);
+    assert.equal(posts.length,0,'blocked button CTA remains an unsaved draft: '+privateHref);
+  }
   await buttonHref.fill('/p/updated');
   assert.equal(await buttonHref.inputValue(),'/p/updated','the content Inspector retains the edited link');
   await editor.locator('#undo').click();assert.equal(await editor.locator('[data-content-key="href"] input').inputValue(),'/p/home','Undo restores the previous link');
@@ -219,6 +232,19 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   const linkValidationId=await linkHrefField.getAttribute('aria-describedby');
   assert.match(await editor.locator(`#${linkValidationId}`).textContent(),/Csak biztonságos/,'the invalid link exposes an accessible validation explanation');
   assert.equal(posts.length,0,'an invalid authored link never reaches Save or Publish');
+  for(const privateHref of [
+    '/api/admin/media?id='+assetId,
+    '/api/%61dmin/media?id='+assetId,
+    '/%61pi/admin/media?id='+assetId,
+    '/api%2fadmin%2fmedia?id='+assetId,
+    '/%252fapi%252fadmin%252fmedia?id='+assetId,
+    '/%255capi%255cadmin%255cmedia?id='+assetId,
+    '/public/../api/admin/media?id='+assetId
+  ]){
+    await linkHrefField.fill(privateHref);
+    assert.equal(await linkHrefField.getAttribute('aria-invalid'),'true','authored text link cannot publish private Editor media URL: '+privateHref);
+    assert.equal(posts.length,0,'blocked text link remains an unsaved draft: '+privateHref);
+  }
   await linkHrefField.fill(authoredLinkHref);
   assert.equal(await linkHrefField.getAttribute('aria-invalid'),null,'a valid HTTPS URL clears the link validation error');
   await editor.locator('[data-content-key="target"] select').selectOption('_blank');

@@ -1,0 +1,135 @@
+{
+  "schema": "sanci.editor.d02.private-media-preview-links.v1",
+  "captured_at_utc": "2026-11-16T09:40:49Z",
+  "plan_point": "77.44.7.D / D-02 private Editor Media preview routes in authored navigation",
+  "status": "D02_RUNTIME_RELEASE_VERIFIED; FULL_77_44_7_D_OPEN_NOT_CERTIFIED",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "previous_head": "602c6356eb4e67cb431ae8eb524c45bbc6f0c541",
+    "source_commit": "e0b2d255eeeb13ae5c00a97e2d92b7dfe29caa06",
+    "fast_forward": true,
+    "commit_message": "fix(editor): block private media-preview CTA links"
+  },
+  "change": {
+    "scope": [
+      "shared authored navigation rejects exact /api/admin/media paths",
+      "repeated percent-encoding, encoded separators, backslash forms, dot segments and malformed/deep encodings fail closed",
+      "public media element sources still allow the intended authenticated Editor preview route",
+      "cache query version refreshed for all affected Editor module imports and entry asset",
+      "button CTA and Rich Text link Inspector fields preserve the current value and do not send Save or Publish requests for rejected private preview URLs"
+    ],
+    "save_publish_contract": "Separate operations retained; invalid authored URLs remain draft-only and cannot replace the published snapshot."
+  },
+  "local_verification": {
+    "editor_unit_suite": {
+      "command": "npm run test:editor",
+      "result": "PASS",
+      "test_files": 17,
+      "failures": 0,
+      "linux_subreaper_cases": 3
+    },
+    "targeted_browser": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-content-system.test.js",
+      "result": "PASS",
+      "files": 1,
+      "tests": 1,
+      "notes": "Real local Chromium exercised Inspector input, blocked Canvas mutation, zero POST for invalid CTA/text links and the separate Save/reload/Publish lifecycle. Local loopback required the permitted workspace network option."
+    },
+    "typecheck": "PASS",
+    "plan_contract": "14/14 PASS",
+    "canonical_plan_contract": "13 master files / 396 features PASS; canonical master was not rewritten",
+    "active_point_audit": "77.44.7.D / OPEN / NOT_CERTIFIED",
+    "feature_traceability": "396/396 PASS",
+    "syntax_and_diff_check": "PASS",
+    "wrangler_dry_run": {
+      "command": "npm run deploy:safe -- --dry-run",
+      "result": "PASS",
+      "wrangler": "4.130.0",
+      "assets_read": 182,
+      "upload_size": "384.49 KiB",
+      "deployment_or_migration": "NONE",
+      "note": "Wrangler emitted an ENOENT diagnostic-log-directory warning, then exited 0 with --dry-run: exiting now."
+    }
+  },
+  "production_preflight": {
+    "d1_query": "SELECT name FROM d1_migrations ORDER BY name",
+    "database": "sanci9517-db / 5a4a5e96-fdad-421a-a33c-143daaf33e98",
+    "migrations_read": 35,
+    "latest_migration": "0029_media_archive_unicode_additive.sql",
+    "rows_written": 0,
+    "changes": 0,
+    "changed_db": false,
+    "production_d1_migration_or_write": "NONE",
+    "production_r2_mutation": "NONE"
+  },
+  "production_release": {
+    "cloudflare_build_id": "1026be99-09a7-4f7f-9eeb-c890a7fb34ef",
+    "cloudflare_build_outcome": "success",
+    "cloudflare_build_commit": "e0b2d255eeeb13ae5c00a97e2d92b7dfe29caa06",
+    "build_command": "npm run typecheck",
+    "deploy_command": "npm run deploy:safe",
+    "deployment_id": "56e3b74b-ed64-4be5-a48b-7033aba20029",
+    "worker_version_id": "ebba145a-5deb-4eba-9b3b-78168a9cf942",
+    "worker_version_number": 4077,
+    "traffic_percent": 100,
+    "health_get": {
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health?release=e0b2d255eeeb13ae5c00a97e2d92b7dfe29caa06",
+      "http_status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "changed_public_asset_hashes": {
+      "algorithm": "SHA-256",
+      "method": "GET each production asset with unique release query and compare raw response bytes to exact source commit working bytes",
+      "all_http_200_and_equal": true,
+      "assets": {
+        "public/editor-v2/app.js": "37a2bd73c53a08697cd674e94fc3b3b9953a33252121ec6aad37bffb90a3a796",
+        "public/editor-v2/core/authored-content.js": "5420745df02654997f9ee554e24a2bac820a0c7ce6c137ef130c0d950a7e9148",
+        "public/editor-v2/core/canvas-engine.js": "5aaaa1d559f1fb893beacc5cbc88a14f7b49395052ac5c39e567a1ca4ddee946",
+        "public/editor-v2/core/capability-matrix.js": "b2143c131d47d8af508f6315076067bd63e298172388fb7314650b6c3fb7e417",
+        "public/editor-v2/core/commands.js": "c189a23795bd0805ab3565c4287b26bab3db97cbe7a449c7848b254a09fe5a56",
+        "public/editor-v2/core/content-profiles.js": "0f64049da7d3fa6ea46158e410f028beaa98d3a83ca13af11b9cf13890d392e1",
+        "public/editor-v2/core/property-values.js": "74868f346017bdeb3e0730026b8b4917ec6814720f79dd3a6b23a2e47d429add",
+        "public/editor-v2/core/richtext-engine.js": "03333e6b97e9ab9f081b9365a4af5fedd106b2f4ed875eb7e300c28162a4bb2b",
+        "public/editor-v2/core/richtext-import.js": "f26d715fe870f1e72f03a9185574a739bff5ca1fd8dbc26652c545b59480eae2",
+        "public/editor-v2/core/richtext-links.js": "3c57429d77966acffb9980adb3450d8f0df3351da67e1aaf9b3b930ad695379c",
+        "public/editor-v2/core/richtext-paste.js": "e7be0494dffb88a92f004d39bac198d56a7637d977e6189f5a6b80381bd48352",
+        "public/editor-v2/core/validation.js": "768d4f280bbac0d091affe5c791aa1a8af3096b58998d8ccfe5f70bacdbd9743",
+        "public/editor-v2/index.html": "a3b77cf53b64264a4fc2a88e1a916bded3bfbec490bc5aff2dea84b4cef61405",
+        "public/editor-v2/ui/accessibility-fields.js": "f14245600c0e90a877d15c94e2a1793d471601dffbb015e087d7c6f8716fcbae",
+        "public/editor-v2/ui/element-content-controls.js": "311d97bb09a414265727fc9e23ece89674f317407fb463091a442bb5b7fddc77"
+      }
+    }
+  },
+  "exact_source_ci": {
+    "editor_core_run_id": 43839941161,
+    "editor_core_status_at_capture": "IN_PROGRESS; typecheck, core unit tests, D1 ledger, private R2 API, isolated real Worker media upload already succeeded; long Editor Chromium layout step still running",
+    "f0_baseline_run_id": 43839941099,
+    "f0_baseline_result": "SUCCESS",
+    "twitch_run_id": 43839941104,
+    "twitch_result": "SUCCESS",
+    "production_source_smoke_run_id": 43839941217,
+    "production_source_smoke_result": "SUCCESS; exact-SHA health and six-file smoke (the 15-file direct hash check above independently covers every changed D-02 runtime asset)"
+  },
+  "regression_test_sha256": {
+    "tests/browser/editor-content-system.test.js": "eb6241d5301e451717e77e98db0dbc3e1a28307591d772aeae31931ed8be1496",
+    "tests/editor-d-content-contract.test.js": "d2240bf565313ef16f6ac9ca86243865369903a06cfa8543bc9c684474b96213"
+  },
+  "agent_file_sha256": "d23cdc8d6e8e12814f99a81cd556e3b7e0ae4092fbe41145ba0bbb2835d6820f",
+  "metrics_session": {
+    "id": "20261116090114-b118566d",
+    "file": "docs/evidence/dev-metrics/runs/2026-11-16/20261116090114-b118566d.json",
+    "status": "partial"
+  },
+  "limits": [
+    "This closes one D-02 private-preview URL-safety runtime subgate; all D-01 through D-07 acceptance, every D field's valid/invalid/responsive/renderer matrix, full 77.44.7.D and final Editor acceptance remain OPEN / NOT_CERTIFIED / DEFERRED.",
+    "Save remains separate from Publish.",
+    "The canonical plan exceeds 1 MiB and was not rewritten from a potentially truncated remote read; this machine evidence is stored separately as required by AGENTS.md."
+  ],
+  "new_cost_huf": 0
+}

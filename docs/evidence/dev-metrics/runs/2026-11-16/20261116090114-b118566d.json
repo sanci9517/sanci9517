@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261116090114-b118566d",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-16T09:01:14.760Z",
+  "finished_at": "2026-11-16T09:38:35.618Z",
+  "wall_seconds": 2241,
+  "paused_seconds": 0,
+  "measured_seconds": 2241,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "D-02 private preview route guard released to Worker v4077 at 100%; health and 15 asset hashes verified; D remains open.",
+  "evidence": [
+    "docs/evidence/editor-d02-private-media-preview-links-2026-11-16.json"
+  ],
+  "checks": "npm run test:editor 17/17 files PASS; target Chromium 1/1 PASS; typecheck and plan contracts PASS; Wrangler dry-run PASS 182 assets; Cloudflare build success; exact-SHA Editor Core still in progress at capture",
+  "started_revision": "b541c8318ad810a21aebaf7725ade39208443a91",
+  "finished_revision": "b541c8318ad810a21aebaf7725ade39208443a91",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

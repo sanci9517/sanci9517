@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { CONTENT_FIELDS } from '../public/editor-v2/core/authored-content.js';
+import { validatedLinkHref } from '../public/editor-v2/core/richtext-links.js';
 import { isStructuredType } from '../public/editor-v2/core/element-content.js';
 import { defaultCardContent, normalizeCardContent } from '../public/editor-v2/core/card-content.js';
 import {
@@ -26,6 +27,30 @@ const D_CONTENT_FIELDS = Object.freeze({
   dropdown: ['ariaLabel', 'singleOpen', 'openFirst', 'items'],
   gallery: ['ariaLabel', 'columns', 'items'],
   carousel: ['ariaLabel', 'items']
+});
+
+test('D authored CTA links reject private Editor media-preview routes after URL normalization', () => {
+  const id = '00000000-0000-4000-8000-000000000123';
+  const blocked = [
+    `/api/admin/media?id=${id}`,
+    `/api/%61dmin/media?id=${id}`,
+    `/%61pi/admin/media?id=${id}`,
+    `/api%2fadmin%2fmedia?id=${id}`,
+    `/%2fapi%2fadmin%2fmedia?id=${id}`,
+    `/%252fapi%252fadmin%252fmedia?id=${id}`,
+    `/%255capi%255cadmin%255cmedia?id=${id}`,
+    `/public/../api/admin/media?id=${id}`,
+    `/api/admin/%6dedia?id=${id}`,
+    `/api/admin/media/preview?id=${id}`
+  ];
+  for (const href of blocked) assert.throws(
+    () => validatedLinkHref(href),
+    /Privát szerkesztői média-előnézeti URL/,
+    href
+  );
+  for (const href of ['/p/home', '/portfolio/item?tab=work', '#bemutatkozas', 'https://artist.example.com/story', 'mailto:creator@example.com']) {
+    assert.equal(validatedLinkHref(href), href, `ordinary authored navigation remains valid: ${href}`);
+  }
 });
 
 test('D authored content types keep every declared Inspector field in the canonical contract', () => {
