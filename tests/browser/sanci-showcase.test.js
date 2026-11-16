@@ -57,9 +57,24 @@ const fixture=[
 ].join('');
 
 test('SANCI autograph, CTA symbols and countdown remain responsive and reduced-motion-safe',async t=>{
+ let mockLive=false;
+ const upcomingArt='75afc3a8-25c7-4354-ba2d-c6bf353440b2';
+ const liveArt='62d1dc2b-2f09-4d5f-97eb-a03dae142242';
+ const tinyPNG=Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Wl7ZAAAAABJRU5ErkJggg==','base64');
  const server=createServer(async(req,res)=>{
   if(req.url==='/'){res.writeHead(200,{'Content-Type':'text/html; charset=utf-8'}).end(fixture);return}
   const url=new URL(req.url,'http://localhost');
+  if(url.pathname==='/api/public/schedule'){
+   const live=mockLive&&url.searchParams.get('statuses')==='live';
+   const next=url.searchParams.get('mode')==='next';
+   const data=live?[{id:'fixture-live-home',title:'Fortnite élőben',platform:'Twitch',status:'live',startsAt:new Date(Date.now()-1800000).toISOString(),imageAssetId:liveArt}]:
+    next?[{id:'fixture-upcoming-home',title:'Fortnite',platform:'Twitch',status:'scheduled',startsAt:new Date(Date.now()+86400000).toISOString(),imageAssetId:upcomingArt}]:[];
+   res.writeHead(200,{'Content-Type':'application/json','Cache-Control':'no-store'}).end(JSON.stringify({ok:true,data}));return;
+  }
+  if(url.pathname.startsWith('/media/')){
+   if(![upcomingArt,liveArt].includes(url.pathname.slice(7))){res.writeHead(404).end();return}
+   res.writeHead(200,{'Content-Type':'image/png','Cache-Control':'no-store'}).end(tinyPNG);return;
+  }
   const file=resolve(root,'.'+url.pathname);
   if(!file.startsWith(root+'/')){res.writeHead(403).end();return}
   try{const data=await readFile(file);res.writeHead(200,{'Content-Type':extname(file)==='.css'?'text/css':'text/javascript'}).end(data)}
@@ -72,6 +87,7 @@ test('SANCI autograph, CTA symbols and countdown remain responsive and reduced-m
  t.after(async()=>{await browser.close();await new Promise(done=>server.close(done))});
  const origin='http://127.0.0.1:'+server.address().port;
  for(const width of [320,390,768,1440]){
+  mockLive=width===1440;
   const page=await browser.newPage({viewport:{width,height:850}});
   const errors=[];page.on('pageerror',e=>errors.push(e.message));
   await page.goto(origin+'/',{waitUntil:'load'});
@@ -79,6 +95,14 @@ test('SANCI autograph, CTA symbols and countdown remain responsive and reduced-m
   assert.equal(await page.locator('.sanci-cta-symbol').count(),2);
   assert.equal(await page.locator('[data-sanci-role="hero"]').count(),1);
   assert.equal(await page.locator('[data-sanci-role="next-stream"]').count(),1);
+  const homeStream=page.locator('[data-sanci-role="next-stream"]');
+  await page.waitForFunction(()=>document.querySelector('.sanci-home-stream-artwork')?.hidden===false,null,{timeout:4000});
+  assert.equal(await homeStream.locator('.sanci-home-stream-artwork img').getAttribute('src'),
+   '/media/'+(mockLive?liveArt:upcomingArt),'the homepage reuses canonical scheduled artwork');
+  assert.equal(await homeStream.locator('.sanci-home-stream-status').textContent(),
+   mockLive?'ÉLŐ ADÁS':'KÖVETKEZŐ STREAM');
+  assert.equal(await homeStream.evaluate(el=>el.classList.contains('is-streaming')),mockLive,
+   'only an active live schedule record triggers the pulse');
   const scheduleCard=page.locator('.sanci-week-event.is-live');
   assert.equal(await scheduleCard.count(),1,'the schedule component must render its authored live state');
   assert.equal(await scheduleCard.locator('.sanci-week-event-status').textContent(),'Élő');
@@ -140,7 +164,7 @@ test('SANCI autograph, CTA symbols and countdown remain responsive and reduced-m
    const light=page.locator('.sanci-hero-spotlight');
    assert.equal(await light.count(),1,'fine-pointer hero receives one decorative light layer');
    await page.waitForFunction(()=>document.querySelector('.sanci-hero-spotlight')?.classList.contains('is-active'),null,{timeout:2000});
-   await page.waitForTimeout(100);
+   await page.waitForFunction(()=>parseFloat(getComputedStyle(document.querySelector('.sanci-hero-spotlight')).opacity)>.25,null,{timeout:4000});
    const spotlightState=await light.evaluate(el=>({active:el.classList.contains('is-active'),opacity:getComputedStyle(el).opacity,display:getComputedStyle(el).display,media:matchMedia('(hover: hover) and (pointer: fine)').matches}));
    assert.ok(parseFloat(spotlightState.opacity)>.25,'fine-pointer light visibly fades in after pointer entry: '+JSON.stringify(spotlightState));
    await page.mouse.move(0,0);

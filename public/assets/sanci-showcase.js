@@ -1,7 +1,8 @@
+import {scheduleStartEpoch} from '../editor-v2/core/schedule-time.js';
 /* SANCI DARK DEPTH — public, editorial-only presentation.
  * DOM enhancements do not own or persist Editor content. Editing still
  * happens through the canonical Page Model and separate Save / Publish.
- * No third-party scripts, media, API calls or invented LIVE indicators.
+ * No third-party scripts or media. LIVE claims and covers use our public schedule API.
  */
 const GLYPHS={
   twitch:'<path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714Z"/>',
@@ -25,6 +26,100 @@ export function classifySanciDestination(href){
   if(/^\/p\/about(?:[?#]|$)/.test(href))return 'about';
   if(/^\/p\/contact(?:[?#]|$)/.test(href)||href.startsWith('mailto:'))return 'contact';
   return '';
+}
+
+const PUBLIC_ARTWORK_ID=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const publicArtworkId=value=>typeof value==='string'&&PUBLIC_ARTWORK_ID.test(value)?value.toLowerCase():null;
+
+// Both the homepage preview and the weekly calendar use the same public
+// schedule imageAssetId. The client never reads drafts or accepts image URLs.
+export function selectHomeScheduleSpotlight(liveItems,nextItems,now=Date.now()){
+  const upcoming=Array.isArray(nextItems)?nextItems.find(item=>
+    item?.status==='scheduled'&&scheduleStartEpoch(item.startsAt)>now):null;
+  const live=Array.isArray(liveItems)?liveItems.filter(item=>{
+    if(item?.status!=='live')return false;
+    const start=scheduleStartEpoch(item.startsAt);
+    const end=item.endsAt?scheduleStartEpoch(item.endsAt):null;
+    // A provider/manual status can go stale; never promote a future or
+    // long-expired slot into a homepage LIVE claim.
+    return start!==null&&start<=now&&now-start<24*3600000&&
+      (end===null||end>now);
+  }).sort((a,b)=>scheduleStartEpoch(b.startsAt)-scheduleStartEpoch(a.startsAt))[0]:null;
+  const selected=live||upcoming;
+  if(!selected)return null;
+  return {
+    live:Boolean(live),
+    title:typeof selected.title==='string'?selected.title.trim().slice(0,140):'',
+    platform:typeof selected.platform==='string'?selected.platform.trim().slice(0,40):'',
+    imageAssetId:publicArtworkId(live?.imageAssetId)||publicArtworkId(upcoming?.imageAssetId)
+  };
+}
+function enhanceHomeScheduleArtwork(host){
+  if(!host||typeof location==='undefined'||!['/','/index.html','/p/home'].includes(location.pathname)||
+    typeof fetch!=='function'||typeof document==='undefined'||
+    !host.querySelector?.('.visual-countdown-content[data-countdown-source="next-stream"]'))return null;
+  const figure=document.createElement('figure');
+  figure.className='sanci-home-stream-artwork';
+  figure.hidden=true;
+  const image=document.createElement('img');
+  image.alt='';image.loading='lazy';image.decoding='async';
+  const caption=document.createElement('figcaption');
+  const status=document.createElement('span');
+  status.className='sanci-home-stream-status';
+  const name=document.createElement('strong');
+  name.className='sanci-home-stream-title';
+  caption.append(status,name);figure.append(image,caption);host.append(figure);
+  let disposed=false,loading=false,appliedId='',brokenId='';
+  const hideImage=()=>{
+    brokenId=appliedId;
+    figure.hidden=true;host.classList.remove('has-stream-artwork');
+  };
+  image.addEventListener('error',hideImage);
+  const apply=selection=>{
+    host.classList.toggle('is-streaming',Boolean(selection?.live));
+    if(!selection?.imageAssetId){appliedId='';brokenId='';figure.hidden=true;host.classList.remove('has-stream-artwork');return}
+    if(selection.imageAssetId===brokenId)return;
+    status.textContent=selection.live?'ÉLŐ ADÁS':'KÖVETKEZŐ STREAM';
+    name.textContent=[selection.title,selection.platform].filter(Boolean).join(' · ');
+    figure.hidden=false;host.classList.add('has-stream-artwork');
+    if(appliedId!==selection.imageAssetId){
+      appliedId=selection.imageAssetId;
+      image.src='/media/'+selection.imageAssetId;
+    }
+  };
+  const query=async params=>{
+    const response=await fetch('/api/public/schedule?'+params,{
+      credentials:'same-origin',cache:'no-store',headers:{Accept:'application/json'}
+    });
+    if(!response.ok)throw new Error('schedule-unavailable');
+    const payload=await response.json();
+    if(payload?.ok!==true||!Array.isArray(payload.data))throw new Error('schedule-invalid');
+    return payload.data;
+  };
+  const refresh=async()=>{
+    if(disposed||loading||!host.isConnected)return;
+    loading=true;
+    try{
+      const [live,next]=await Promise.allSettled([
+        query('mode=all&statuses=live&order=desc&limit=10'),
+        query('mode=next&statuses=scheduled&limit=1')
+      ]);
+      if(disposed||!host.isConnected||[live,next].every(result=>result.status==='rejected'))return;
+      apply(selectHomeScheduleSpotlight(
+        live.status==='fulfilled'?live.value:[],
+        next.status==='fulfilled'?next.value:[],
+        Date.now()
+      ));
+    }finally{loading=false}
+  };
+  // Schedule changes, including artwork replacement, appear without reload.
+  const timer=setInterval(()=>{if(!host.isConnected){dispose();return}void refresh()},60000);
+  function dispose(){
+    disposed=true;clearInterval(timer);image.removeEventListener('error',hideImage);
+    figure.remove();host.classList.remove('has-stream-artwork','is-streaming');
+  }
+  void refresh();
+  return dispose;
 }
 const activeEnhancements=new WeakMap();
 function clearRevealState(canvas){
@@ -117,6 +212,8 @@ export function decorateSanciShowcase(canvas,page,{slug,enabled=false}={}){
   }
   const clocks=all.filter(n=>n.type==='countdown'&&n.props?.countdown?.source==='next-stream');
   for(const n of clocks)elements.get(n.id)?.setAttribute('data-sanci-role','next-stream');
+  const removeHomeArtwork=String(slug)==='home'&&clocks.length
+    ? enhanceHomeScheduleArtwork(elements.get(clocks[0].id)) : null;
   const main=hero?.parentId&&page.nodes[hero.parentId];
   const features=(main?.children||[]).filter(id=>id!==hero?.id).map(id=>elements.get(id)).filter(Boolean);
   for(const el of features)el.dataset.sanciRole='feature';
@@ -138,8 +235,10 @@ export function decorateSanciShowcase(canvas,page,{slug,enabled=false}={}){
       revealObserver=observer;
     }
   }
-  if(revealObserver||removeSpotlight){
-    activeEnhancements.set(canvas,{disconnect:()=>revealObserver?.disconnect(),cleanup:removeSpotlight||(()=>{})});
+  if(revealObserver||removeSpotlight||removeHomeArtwork){
+    activeEnhancements.set(canvas,{disconnect:()=>revealObserver?.disconnect(),cleanup:()=>{
+      removeSpotlight?.();removeHomeArtwork?.();
+    }});
   }
   return {active:true,slug:String(slug||''),hero:Boolean(heroElement),buttons,features:features.length,clocks:clocks.length,signatures:signatures.length};
 }

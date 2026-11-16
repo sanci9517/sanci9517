@@ -456,3 +456,70 @@ body.sanci-editorial-page[data-sanci-showcase="depth-v2"] [data-sanci-role="hero
   animation:none!important;
  }
 }
+
+
+/* Homepage-only, Editor-owned next-stream timer with schedule-owned cover art.
+ * The image is shared with the weekly schedule, not copied into page content. */
+body.sanci-editorial-page[data-sanci-showcase="depth-v2"] [data-sanci-role="next-stream"].has-stream-artwork{
+ display:grid;grid-template-columns:minmax(0,1fr) minmax(150px,29%);
+ align-items:center;gap:clamp(12px,2vw,22px);
+}
+body.sanci-editorial-page[data-sanci-showcase="depth-v2"] [data-sanci-role="next-stream"] .sanci-home-stream-artwork{
+ position:relative;min-width:0;margin:0;padding:8px;
+ border:1px solid rgba(221,224,245,.18);border-radius:13px;
+ background:linear-gradient(155deg,rgba(39,38,53,.92),rgba(10,12,22,.96));
+ box-shadow:0 12px 32px rgba(0,0,0,.24);isolation:isolate;
+}
+body.sanci-editorial-page[data-sanci-showcase="depth-v2"] [data-sanci-role="next-stream"] .sanci-home-stream-artwork[hidden]{display:none!important}
+body.sanci-editorial-page[data-sanci-showcase="depth-v2"] .sanci-home-stream-artwork img{
+ display:block;width:100%;max-height:190px;aspect-ratio:16/9;
+ object-fit:contain;border-radius:8px;background:rgba(0,0,0,.18);
+}
+body.sanci-editorial-page[data-sanci-showcase="depth-v2"] .sanci-home-stream-artwork figcaption{
+ display:grid;gap:5px;margin-top:9px;min-width:0;
+}
+body.sanci-editorial-page[data-sanci-showcase="depth-v2"] .sanci-home-stream-status{
+ display:inline-flex;align-items:center;gap:7px;
+ color:#e9b2bd;font-size:10px;font-weight:850;letter-spacing:.1em;
+}
+body.sanci-editorial-page[data-sanci-showcase="depth-v2"] .sanci-home-stream-title{
+ display:block;color:#f5f0f3;font-size:12px;line-height:1.4;
+ overflow-wrap:anywhere;
+}
+body.sanci-editorial-page[data-sanci-showcase="depth-v2"] [data-sanci-role="next-stream"].is-streaming{
+ border-color:rgba(248,90,115,.65);
+ box-shadow:0 12px 46px rgba(130,16,44,.3),inset 0 0 0 1px rgba(243,75,107,.12);
+}
+body.sanci-editorial-page[data-sanci-showcase="depth-v2"] [data-sanci-role="next-stream"].is-streaming .sanci-home-stream-status{
+ color:#ffc1cb;
+}
+body.sanci-editorial-page[data-sanci-showcase="depth-v2"] [data-sanci-role="next-stream"].is-streaming .sanci-home-stream-status::before{
+ content:"";width:7px;height:7px;border-radius:50%;
+ background:#ff647d;box-shadow:0 0 8px rgba(255,100,125,.75);
+}
+@keyframes sanci-home-stream-glow{
+ 0%,100%{box-shadow:0 12px 46px rgba(130,16,44,.20),inset 0 0 0 1px rgba(243,75,107,.12)}
+ 50%{box-shadow:0 12px 50px rgba(230,40,75,.40),inset 0 0 0 1px rgba(243,75,107,.24)}
+}
+@media(prefers-reduced-motion:no-preference){
+ body.sanci-editorial-page[data-sanci-showcase="depth-v2"] [data-sanci-role="next-stream"].is-streaming{
+  animation:sanci-home-stream-glow 3s ease-in-out infinite;
+ }
+ body.sanci-editorial-page[data-sanci-showcase="depth-v2"] [data-sanci-role="next-stream"].is-streaming .sanci-home-stream-status::before{
+  animation:sanci-live-indicator-pulse 2.4s ease-out infinite;
+ }
+}
+@media(max-width:700px){
+ body.sanci-editorial-page[data-sanci-showcase="depth-v2"] [data-sanci-role="next-stream"].has-stream-artwork{
+  grid-template-columns:minmax(0,1fr);gap:16px;
+ }
+ body.sanci-editorial-page[data-sanci-showcase="depth-v2"] .sanci-home-stream-artwork img{
+  max-height:180px;
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ body.sanci-editorial-page[data-sanci-showcase="depth-v2"] [data-sanci-role="next-stream"].is-streaming,
+ body.sanci-editorial-page[data-sanci-showcase="depth-v2"] [data-sanci-role="next-stream"].is-streaming .sanci-home-stream-status::before{
+  animation:none!important;
+ }
+}
