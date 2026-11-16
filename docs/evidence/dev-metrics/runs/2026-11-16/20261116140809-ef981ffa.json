@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261116140809-ef981ffa",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-16T14:08:09.722Z",
+  "finished_at": "2026-11-16T14:12:50.163Z",
+  "wall_seconds": 280,
+  "paused_seconds": 0,
+  "measured_seconds": 280,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "Added real-browser authored image loading Inspector-to-Publish lifecycle checks; D remains open, while the exact runtime-source CI completed successfully but excludes this test-only follow-up.",
+  "evidence": [
+    "docs/evidence/editor-d-image-loading-lifecycle-2026-11-16.json"
+  ],
+  "checks": "targeted Chromium 1/1 PASS; npm run test:editor 17/17 and subreaper 3/3 PASS; plan-contract 14/14 PASS; canonical master 13 files/396 mappings PASS; active cursor 77.44.7.D OPEN (146 PARTIAL_SOURCE, 250 UNVERIFIED); traceability 396/396 PASS; JS/JSON/diff checks PASS; runtime source Editor Core CI 43874863819 completed success (bd748a0); Cloudflare deployment 80986873 Worker 67b3ae5b at 100%; no redundant CI, D1 or R2 operations",
+  "started_revision": "24257fb1c2212e0103e6eba3653f408895a2fbed",
+  "finished_revision": "24257fb1c2212e0103e6eba3653f408895a2fbed",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

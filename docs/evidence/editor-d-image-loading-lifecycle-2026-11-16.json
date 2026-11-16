@@ -1,0 +1,69 @@
+{
+  "schema": "sanci.editor.d-image-loading-lifecycle.v1",
+  "captured_at_utc": "2026-11-16T14:10:47Z",
+  "plan_point": "77.44.7.D — element-specific content and media",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "branch_head_before_change": "24257fb1c2212e0103e6eba3653f408895a2fbed",
+    "runtime_source_sha": "bd748a061901474bbdc14b23c5ad6df4940caca2",
+    "canonical_plan_sha256_at_start": "369b762f668b74c6c5ba52b1fe93dbeed8161e53cd69e9a95d87fff430cac2b8"
+  },
+  "gap": "The image loading Inspector field was declared and legacy-normalization-tested, but the authored image's Inspector→Canvas→Save/reload→separate Publish lifecycle did not assert that the selected strategy survives and remains draft-only until Publish.",
+  "change": {
+    "file": "tests/browser/editor-content-system.test.js",
+    "behavior": [
+      "Selecting eager in the authored image Inspector updates the Canvas img.loading attribute.",
+      "Explicit Save stores loading=eager on the authored image without publishing it.",
+      "The public snapshot remains loading=lazy after Save and before Publish.",
+      "Editor reload restores loading=eager from the saved draft.",
+      "Separate Publish exposes loading=eager on the public image."
+    ],
+    "runtime_changed": false,
+    "dependency_changed": false
+  },
+  "checks": {
+    "targeted_real_chromium": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-content-system.test.js",
+      "result": "PASS",
+      "tests": 1,
+      "failures": 0,
+      "duration_ms": 31340,
+      "execution": "local Chromium fixture, loopback permission enabled; no external browser service"
+    },
+    "editor_unit": "PASS — npm run test:editor, 17/17 files; Linux subreaper guard 3/3",
+    "plan_contract": "PASS — 14/14",
+    "canonical_plan": "PASS — 13 master files and 396 feature mappings; acceptance remains NOT_CERTIFIED",
+    "active_cursor": "PASS — 77.44.7.D OPEN / NOT_CERTIFIED; 146 PARTIAL_SOURCE and 250 UNVERIFIED",
+    "feature_traceability": "PASS — 396/396",
+    "node_syntax_and_diff_check": "PASS",
+    "exact_runtime_source_editor_core_ci": {
+      "run_id": 43874863819,
+      "url": "https://github.com/sanci9517/sanci9517/actions/runs/43874863819",
+      "source_sha": "bd748a061901474bbdc14b23c5ad6df4940caca2",
+      "status": "completed",
+      "conclusion": "success",
+      "checked_at_utc": "2026-11-16T14:10:47Z",
+      "scope_note": "This CI run validates bd748a0, which predates this test-only loading assertion; it is not claimed as a remote result for the changed test."
+    },
+    "remote_ci_for_test_followup": "not started; this tests/evidence/plan-only follow-up uses [skip ci]"
+  },
+  "production": {
+    "cloudflare_deployment_id": "80986873-0dbe-4d5a-9d76-f89144297008",
+    "worker_version_id": "67b3ae5b-2909-44a7-82fc-c7ecf4ee492b",
+    "traffic_percent": 100,
+    "read_only_deployment_api_checked": true,
+    "worker_deploy_for_this_change": false,
+    "production_d1_migration_or_write": false,
+    "production_r2_operation": false,
+    "public_health_or_asset_probe_needed": false,
+    "reason": "Only a browser-test harness, evidence and canonical status note changed; the runtime source and public assets are unchanged."
+  },
+  "limitations": [
+    "This is one authored image loading-property subgate, not completion of D-01 through D-07 or the full 77.44.7.D capability/lifecycle matrix.",
+    "No per-breakpoint matrix or site-scoped production Media operation is claimed.",
+    "Full Visual Editor manual and physical-device acceptance remains deferred until the complete Editor gate.",
+    "Save remains separate from Publish."
+  ],
+  "cost_huf": 0
+}

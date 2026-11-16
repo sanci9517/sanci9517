@@ -336,6 +336,9 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   // Choose the library image explicitly again for the publication checks below.
   await editor.locator('[data-content-key="assetId"]').getByRole('button',{name:'Médiatár megnyitása'}).click();
   await editor.locator('[data-content-key="assetId"] .editor-media-choice').click();
+  const authoredImageLoading=editor.locator('[data-content-key="loading"] select');
+  await authoredImageLoading.selectOption('eager');
+  assert.equal(await node(editor,'image').locator('img').getAttribute('loading'),'eager','the authored image loading Inspector choice updates the Canvas element');
   await authoredImageAlt.fill('Mentés után is megőrzött leírás');
   await authoredImageDecorative.check();
   assert.equal(await authoredImageAlt.inputValue(),'Mentés után is megőrzött leírás','enabling decorative mode preserves alt metadata through the next Save');
@@ -540,6 +543,7 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.image].props.assetId,assetId,'Save persists the site asset reference but never publishes it');
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.image].props.decorative,true,'Save persists the explicit decorative choice');
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.image].props.alt,'','Save keeps the empty alt separate from the preserved description case');
+  assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.image].props.loading,'eager','Save persists the authored image loading strategy');
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.gallery].props.items[0].assetId,assetId);
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.gallery].props.items[1].alt,'  Második kép  ','rendering must not silently rewrite the saved draft');
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.gallery].props.items[1].caption,'  Második képaláírás  ');
@@ -566,6 +570,7 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
     'a newly named carousel is still draft-only after Save');
   assert.equal(await node(live,'button').evaluate(el=>getComputedStyle(el).backgroundImage),'none','draft background stays private before Publish');
   assert.equal(await node(live,'image').locator('img').evaluate(el=>getComputedStyle(el).objectPosition),'50% 50%','Save does not publish image crop');
+  assert.equal(await node(live,'image').locator('img').getAttribute('loading'),'lazy','draft Save does not publish the authored image loading strategy');
   await editor.reload();await select('table');
   assert.equal(await editor.locator('.content-schema-field[data-content-key="rows"] textarea').inputValue(),serializeTableTsv(expectedTableRows),
     'reload restores the complete long table before separate Publish');
@@ -577,6 +582,7 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   await select('image');
   assert.equal(await editor.getByLabel('Csak díszítő kép',{exact:true}).isChecked(),true,'Editor reload restores the authored decorative image mode');
   assert.equal(await editor.getByLabel('Kép szöveges leírása',{exact:true}).inputValue(),'','Editor reload preserves the intentionally empty alt value');
+  assert.equal(await editor.locator('[data-content-key="loading"] select').inputValue(),'eager','Editor reload restores the authored image loading strategy');
   await select('link');
   assert.equal(await editor.locator(`.plain-text-editor[data-text-node-id="${ids.link}"]`).inputValue(),authoredLinkText,'Editor reload restores the authored link text');
   assert.equal(await editor.locator('[data-content-key="href"] input').inputValue(),authoredLinkHref,'Editor reload restores the authored link destination');
@@ -607,6 +613,7 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   assert.equal(await node(live,'button').evaluate(el=>getComputedStyle(el).rotate),'3deg');
   await live.emulateMedia({reducedMotion:'reduce'});assert.equal(await node(live,'button').evaluate(el=>getComputedStyle(el).transitionDuration),'0s');
   assert.equal(await node(live,'image').locator('img').getAttribute('alt'),'','separate Publish exposes the explicit decorative image as empty alt');assert.equal(await node(live,'image').locator('img').getAttribute('role'),null,'native empty-alt semantics remain intact without an unnecessary role override');assert.equal(await node(live,'image').locator('img').evaluate(el=>getComputedStyle(el).objectPosition),'18% 82%');assert.equal(await node(live,'image').locator('figcaption').textContent(),'Képaláírás');
+  assert.equal(await node(live,'image').locator('img').getAttribute('loading'),'eager','separate Publish exposes the authored loading strategy');
   assert.equal(await node(live,'gallery').locator('img').first().evaluate(el=>getComputedStyle(el).objectPosition),'24% 68%','published gallery item retains its independent crop');
   assert.equal(await node(live,'gallery').locator('img').nth(1).getAttribute('alt'),'Második kép','Publish renders trimmed alt text from the preserved draft');
   assert.equal(await node(live,'gallery').locator('img').nth(1).locator('xpath=ancestor::figure').locator('figcaption').textContent(),'Második képaláírás');
