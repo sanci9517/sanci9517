@@ -1,0 +1,48 @@
+{
+  "schema": "sanci.editor.d07-malformed-page-revision-validation.v1",
+  "plan_point": "77.44.7.D",
+  "feature_scope": ["D-01", "D-05", "D-06", "D-07"],
+  "change": "Editor load now rejects primitive/array Page records before metadata or revision writes, and only copies the server revision into a cloned document after createEditorState performs deep Page Model validation. Expanded malformed persisted Page and Node regressions to null, false, true, 0, string and array records. Added a carousel Media Library alt lifecycle regression. Bumped the Editor application asset query version.",
+  "acceptance": {
+    "malformed_page_and_node_records": "The Editor fails closed with a controlled non-canonical/invalid-node message for null, false, true, zero, string and array records. It does not write, Save, Publish or mutate persisted recovery data.",
+    "revision_write_order": "Deep createEditorState validation completes before revision fields are written; revision metadata is written only to the cloned validated state.",
+    "carousel_media_description": "Selecting a Media Library image adopts its description only when the carousel item's authored alt is empty; Save, reload, then separate Publish preserve and expose it.",
+    "save_publish_boundary": "Save remains draft-only; public rendering changes only after explicit Publish.",
+    "scope": "This is a bounded Editor load-validation and gallery media-description slice, not complete D-01 through D-07 acceptance."
+  },
+  "verification": {
+    "local_editor_unit": {"command": "npm run test:editor", "result": "PASS", "tests": "17/17 files"},
+    "local_editor_core": {"command": "node --experimental-vm-modules public/editor-v2/tests/core.test.js", "result": "PASS", "tests": "85/85"},
+    "local_typescript": {"command": "npm run typecheck", "result": "PASS"},
+    "local_content_browser": {"command": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-content-system.test.js", "result": "PASS", "tests": "1/1"},
+    "local_malformed_browser": {"command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-malformed-public-text-links.test.js", "result": "PASS", "tests": "2/2"},
+    "local_editor_layout_suite": {"command": "CHROMIUM_PATH=/usr/bin/chromium npm run test:editor:layout", "result": "PARTIAL / NOT PASS", "completed_files": "21/54", "completed_assertions": 114, "interruption": "Stopped before the next unrelated long Inspector/browser file; no source assertion failure was reported in the 21 completed files. This broad suite is not claimed as passed.", "targeted_changed_browser_files": "Both changed browser files completed and passed separately."},
+    "plan_contract": {"command": "python3 -B tests/plan-contract.test.py", "result": "PASS", "tests": "14/14"},
+    "canonical_plan": {"command": "python3 -B scripts/check-canonical-plan.py", "result": "PASS", "result_summary": "13 master files, one current cursor, 396 mappings; functional acceptance not certified"},
+    "traceability": {"command": "python3 -B scripts/build-feature-traceability.py --check", "result": "PASS", "result_summary": "396/396 mappings; source fingerprint updated for app.js"},
+    "active_plan_point": {"command": "python3 -B scripts/audit-active-plan-point.py", "result": "PASS", "result_summary": "77.44.7.D OPEN; 146 PARTIAL_SOURCE, 250 UNVERIFIED"},
+    "syntax_and_diff": {"result": "PASS", "checks": ["node --check public/editor-v2/app.js", "node --check public/editor-v2/tests/core.test.js", "node --check tests/browser/editor-content-system.test.js", "node --check tests/browser/editor-malformed-public-text-links.test.js", "git diff --check"]},
+    "wrangler_dry_run": {"command": "XDG_CONFIG_HOME=/tmp/sanci-wrangler-config ./node_modules/.bin/wrangler deploy --dry-run", "result": "PASS", "wrangler_version": "4.130.0", "asset_files": 182, "total_upload": "385.78 KiB / gzip 98.83 KiB", "note": "First attempt emitted only an unavailable agent-home log-directory warning; the clean /tmp-configured dry-run succeeded."},
+    "production_d1_preflight": {"method": "Cloudflare D1 query API; SELECT-only SQL", "query": "SELECT COUNT(*) AS migration_count, MAX(name) AS latest_migration FROM d1_migrations", "result": {"migration_count": 35, "latest_migration": "0029_media_archive_unicode_additive.sql", "rows_written": 0, "changed_db": false}},
+    "github_ci": {"source_commit": "e4b543350ca101f38412bc4f1a9ec879240dab87", "runs": {"production_worker_source_smoke": {"id": 44046900984, "status": "success", "url": "https://github.com/sanci9517/sanci9517/actions/runs/44046900984"}, "editor_core": {"id": 44046901062, "status": "IN_PROGRESS", "url": "https://github.com/sanci9517/sanci9517/actions/runs/44046901062"}, "f0_baseline": {"id": 44046900998, "status": "success", "url": "https://github.com/sanci9517/sanci9517/actions/runs/44046900998"}, "canonical_plan": {"id": 44046900964, "status": "success", "url": "https://github.com/sanci9517/sanci9517/actions/runs/44046900964"}, "active_plan_audit": {"id": 44046901201, "status": "success", "url": "https://github.com/sanci9517/sanci9517/actions/runs/44046901201"}, "twitch_integration": {"id": 44046901021, "status": "success", "url": "https://github.com/sanci9517/sanci9517/actions/runs/44046901021"}}},
+    "production_source_smoke": {"run_id": 44046900984, "result": "PASS", "health": "HTTP 200", "source_commit": "e4b543350ca101f38412bc4f1a9ec879240dab87", "public_file_hashes": {"public/editor-v2/app.js": "b08d425aa8d1bb5d00bea5b8fadae1d3580b16537c36f9853140f38ffb263b2a", "public/editor-v2/index.html": "d67e5068638f5b1b2b7888f405d1a61d29fd35e09266abb34e7ed38ad98f0d9d"}}
+  },
+  "release": {
+    "branch": "v2/foundation",
+    "commit": "e4b543350ca101f38412bc4f1a9ec879240dab87",
+    "commit_url": "https://github.com/sanci9517/sanci9517/commit/e4b543350ca101f38412bc4f1a9ec879240dab87",
+    "worker_deployment": "36aa0236-fce1-453d-bab3-6d6bbb154f94",
+    "worker_version": "7838537b-410a-4b07-b425-4e0c96bd96f9",
+    "traffic_percent": 100,
+    "build_source": "GitHub Actions Cloudflare Worker Build triggered by verified branch push; exact public source readback succeeded",
+    "production_health": "PASS via exact-SHA GitHub production source smoke: /api/health HTTP 200",
+    "public_assets": "PASS: changed editor-v2/app.js and editor-v2/index.html SHA-256 matched the exact source commit in the smoke workflow"
+  },
+  "data_and_cost": {
+    "production_d1_migrations_or_writes": "none",
+    "production_r2_mutation_or_delete": "none",
+    "paid_service_or_dependency_added": "none",
+    "new_cost_huf": 0
+  },
+  "scope_limit": "Only the malformed persisted Page/Node load gate and carousel Media Library description lifecycle slices were verified here. The active 77.44.7.D requirement and full D-01 through D-07 Editor scope remain OPEN / NOT_CERTIFIED; the 396-feature traceability audit still reports 146 PARTIAL_SOURCE and 250 UNVERIFIED. Full-editor manual/physical acceptance remains DEFERRED. Save and Publish remain separate."
+}

@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261117075746-41a11e42",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-17T07:57:46.308Z",
+  "finished_at": "2026-11-17T08:31:33.415Z",
+  "wall_seconds": 2027,
+  "paused_seconds": 0,
+  "measured_seconds": 2027,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "D-07 primitive Page/Node record load guard fixed and deployed; focused browser/unit/type/plan checks passed, full local layout suite partial, Editor Core CI still in progress.",
+  "evidence": [
+    "docs/evidence/editor-d07-malformed-page-revision-validation-2026-11-17.json",
+    "https://github.com/sanci9517/sanci9517/commit/e4b543350ca101f38412bc4f1a9ec879240dab87"
+  ],
+  "checks": "npm run test:editor 17/17 PASS; npm run typecheck PASS; Editor core 85/85 PASS; changed browser 3/3 PASS; local layout 21/54 files and 114 assertions, interrupted; canonical plan/contract/traceability PASS; D1 SELECT-only read; Wrangler deploy --dry-run PASS; production smoke PASS.",
+  "started_revision": "f0d35692dac36f2bcb2480ef43f65324c3d32051",
+  "finished_revision": "e4b543350ca101f38412bc4f1a9ec879240dab87",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
