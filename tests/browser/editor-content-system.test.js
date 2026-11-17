@@ -242,7 +242,7 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   await editor.locator('#undo').click();assert.equal(await editor.locator('[data-content-key="href"] input').inputValue(),'/p/home','Undo restores the previous link');
   await editor.locator('#redo').click();assert.equal(await editor.locator('[data-content-key="href"] input').inputValue(),'/p/updated','Redo restores the selected link');
   await select('link');
-  const authoredLinkHref='https://artist.example.com/story?source=editor&mode=public';
+  let authoredLinkHref='https://artist.example.com/story?source=editor&mode=public';
   const authoredLinkText='Olvasd el az alkotó történetét';
   const authoredLinkLabel='Alkotói történet megnyitása';
   const linkHrefField=editor.locator('[data-content-key="href"] input');
@@ -548,6 +548,33 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
     await sourceField.fill(authoredMediaSources[type]);
     assert.equal(posts.length,1,`repairing the ${type} source still does not Save or Publish implicitly`);
   }
+  // A 1440x900 desktop at 200% zoom exposes this 720x450 effective viewport.
+  // Exercise a real authored Inspector field and its complete draft lifecycle
+  // at that size; the shell-only layout test cannot detect a clipped or
+  // unreachable content control.
+  await editor.setViewportSize({width:720,height:450});
+  assert.equal(await editor.evaluate(()=>[innerWidth,innerHeight].join('×')),'720×450','authored-field lifecycle runs at the planned 200% effective zoom / short viewport');
+  await select('link');
+  assert.equal(await editor.locator('#rightDock').getAttribute('aria-hidden'),'false','the Inspector is open at the short effective viewport');
+  assert.equal(await editor.locator('#inspectorBody > .inspector-search').evaluate(el=>getComputedStyle(el).position),'static',
+    'the sticky search header yields the short Inspector when it would otherwise cover its authored controls');
+  const shortViewportLinkHref=editor.locator('[data-content-key="href"] input');
+  await shortViewportLinkHref.scrollIntoViewIfNeeded();
+  authoredLinkHref='https://artist.example.com/story?source=editor&mode=public&viewport=720x450';
+  await shortViewportLinkHref.click();
+  assert.equal(await shortViewportLinkHref.evaluate(el=>document.activeElement===el),true,'the actual authored link control accepts a pointer click at 200% effective zoom');
+  await shortViewportLinkHref.fill(authoredLinkHref);
+  const shortViewportField=await shortViewportLinkHref.evaluate(el=>{
+    const r=el.getBoundingClientRect(),dock=el.closest('#rightDock .dock-content'),d=dock.getBoundingClientRect();
+    return {left:r.left,right:r.right,top:r.top,bottom:r.bottom,dockLeft:d.left,dockRight:d.right,dockTop:d.top,dockBottom:d.bottom,
+      horizontalOverflow:document.documentElement.scrollWidth>document.documentElement.clientWidth+1,
+      focused:document.activeElement===el};
+  });
+  assert.ok(shortViewportField.left>=0&&shortViewportField.right<=720&&shortViewportField.top>=shortViewportField.dockTop&&shortViewportField.bottom<=shortViewportField.dockBottom,
+    `the actual Inspector link field is not clipped at 200% effective zoom: ${JSON.stringify(shortViewportField)}`);
+  assert.equal(shortViewportField.horizontalOverflow,false,'the authored Inspector interaction adds no page-level horizontal overflow');
+  assert.equal(shortViewportField.focused,true,'the authored link control remains keyboard-focusable');
+  assert.equal(posts.length,1,'editing the authored field at short viewport remains draft-only before Save');
   await editor.locator('#save').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));assert.equal(posts.at(-1).publish,false);
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.link].props.href,authoredLinkHref,'Save stores the authored link destination in the draft');
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.link].props.target,'_blank','Save stores the authored link target in the draft');
@@ -616,12 +643,16 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   assert.equal(await editor.locator('[data-content-key="target"] select').inputValue(),'_blank','Editor reload restores the authored link target');
   assert.equal(await editor.locator('[data-content-key="ariaLabel"] input').inputValue(),authoredLinkLabel,'Editor reload restores the authored link accessible name');
   await select('heading');assert.equal(await editor.getByLabel('Címsor szemantikai szintje',{exact:true}).inputValue(),'3');
-  await editor.locator('#publish').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent==='Publikálva');await live.reload();
+  await editor.locator('#publish').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent==='Publikálva');
+  await live.setViewportSize({width:720,height:450});await live.reload();
   assert.equal(await node(live,'link').getAttribute('href'),authoredLinkHref,'separate Publish exposes the authored link destination');
   assert.equal(await node(live,'link').getAttribute('target'),'_blank');
   assert.equal(await node(live,'link').getAttribute('rel'),'noopener noreferrer');
   assert.equal(await node(live,'link').getAttribute('aria-label'),authoredLinkLabel);
   assert.equal(await node(live,'link').textContent(),authoredLinkText,'separate Publish exposes the authored link text');
+  // Continue the remaining rich-media regression at its original desktop
+  // viewport; the short-viewport Save/Publish assertions above are complete.
+  await editor.setViewportSize({width:1366,height:900});await live.setViewportSize({width:1366,height:900});
   assert.equal(await node(live,'icon').getAttribute('aria-label'),null,'Publish removes a whitespace-only icon name');
   assert.equal(await node(live,'icon').getAttribute('role'),null);
   assert.equal(await node(live,'icon').getAttribute('aria-hidden'),'true','published unnamed icon is decorative');

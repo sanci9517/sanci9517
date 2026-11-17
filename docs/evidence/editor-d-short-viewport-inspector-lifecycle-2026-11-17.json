@@ -1,0 +1,86 @@
+{
+  "schema": "sanci.editor.d.short-viewport-inspector-lifecycle.v1",
+  "captured_at_utc": "2026-11-17T03:37:10Z",
+  "plan_point": "77.44.7.D — element-specific content and media",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "base_commit": "ca0fd22c28714a0daf1c4a283edb1f3a59141d99",
+    "remote_head_verified_before_release": "ca0fd22c28714a0daf1c4a283edb1f3a59141d99",
+    "canonical_plan_sha256_unchanged": "68d94c1f33a27712a90f1470a0c98ee9b5d089cc8ab057113ed236d0298e83f8"
+  },
+  "verified_defect": {
+    "surface": "Visual Editor Inspector at short effective viewport / 200% zoom profile",
+    "observed_geometry_px": {
+      "right_dock_height": 209,
+      "inspector_body_height": 80,
+      "sticky_search_header_height": 106,
+      "authored_field_height": 45
+    },
+    "failure": "The sticky Inspector search header exceeded the short scrollable body and covered the authored link control, preventing pointer interaction.",
+    "fix": "At viewport heights <= 520px, the Inspector search header becomes static so it scrolls with the panel and does not cover authored controls."
+  },
+  "change": {
+    "runtime_file": "public/editor-v2/editor-refresh.css",
+    "runtime_sha256": "5eb5dacb1bb6b0fe46a8bd1d161a988931a91c5a151d613cd56074084380e1a3",
+    "regression_test": "tests/browser/editor-content-system.test.js",
+    "regression_sha256": "c26d370f73529e1b803497b7e74a809c69b47d4872553bab23047d748584dc1d",
+    "test_behavior": [
+      "Runs at 720x450 CSS pixels, the effective viewport of a 1440x900 display at 200% zoom.",
+      "Asserts the Inspector is open, the sticky header yields at the short viewport, and the real authored link field can receive pointer and keyboard input without horizontal overflow or clipping.",
+      "Asserts editing remains draft-only before Save.",
+      "Saves, reloads the Editor, then verifies separate Publish updates the public link at the same short viewport; restores desktop viewports for following fixture assertions."
+    ],
+    "canonical_plan_rewritten": false,
+    "plan_note": "The canonical plan's explicit large-file policy directs independent audit findings to docs/evidence/ rather than rewriting the oversized master for an evidence-only update."
+  },
+  "verification": {
+    "targeted_command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-content-system.test.js",
+    "targeted_result": "PASS; 1/1 test; 0 failures",
+    "editor_unit_command": "npm run test:editor",
+    "editor_unit_result": "PASS; 17/17 files; Linux subreaper 3/3",
+    "typecheck": "PASS",
+    "plan_contract": "PASS; 14/14",
+    "canonical_plan": "PASS; 13 master files / 396 feature IDs; NOT_CERTIFIED functional acceptance",
+    "active_point_audit": "PASS; 77.44.7.D OPEN / NOT_CERTIFIED; 146 PARTIAL_SOURCE / 250 UNVERIFIED",
+    "source_traceability": "PASS; rebuilt by scripts/build-feature-traceability.py; 396/396 rows",
+    "wrangler_dry_run": "PASS; Wrangler 4.130.0; 182 assets; 384.67 KiB total / 98.65 KiB gzip; no upload/deploy",
+    "production_d1_preflight": {
+      "method": "Cloudflare D1 query API; all statements SELECT-only",
+      "migration_rows": 35,
+      "latest_migration": "0029_media_archive_unicode_additive.sql",
+      "retention_request_rows": 0,
+      "queries_changed_db": false,
+      "rows_written": 0,
+      "changes": 0,
+      "production_migration_or_data_write": false
+    },
+    "full_editor_browser_suite": "PARTIAL; 8/54 files passed before the local run was stopped to avoid a redundant long run; not a suite PASS. Exact-SHA Editor Core CI will be the release gate after push.",
+    "hosted_ci": "NOT_YET_RUN; runtime source changed; required free public GitHub Actions runs will be triggered by the fast-forward push",
+    "git_diff_check": "PASS"
+  },
+  "release": {
+    "deployment_before_release": {
+      "deployment_id": "188c8d90-a3e3-4d86-877c-bc3b80b7a288",
+      "worker_version_id": "47456280-bc0c-4351-94d4-9d9e4800b48e",
+      "traffic_percent": 100,
+      "health_or_asset_hash_read_after_this_change": false
+    },
+    "push": "PENDING",
+    "exact_sha_ci": "PENDING",
+    "new_worker_deployment": "PENDING",
+    "post_release_health_get": "PENDING",
+    "post_release_public_asset_hash": "PENDING",
+    "production_d1_write": false,
+    "production_r2_operation": false,
+    "new_cost_huf": 0
+  },
+  "status": "SHORT_VIEWPORT_INSPECTOR_FIX_IMPLEMENTED; TARGETED_TEST_PASS; RELEASE_PENDING; FULL_77_44_7_D_OPEN_NOT_CERTIFIED",
+  "limitations": [
+    "This fix closes one verified short-viewport Inspector lifecycle gap; it does not complete all per-field invalid-input, breakpoint, renderer or site-scoped Media acceptance rows.",
+    "The 396-feature source crosswalk remains 146 PARTIAL_SOURCE / 250 UNVERIFIED and cannot certify functional acceptance.",
+    "Full D-01 through D-07 and 77.44.7.D remain OPEN / NOT_CERTIFIED until every contractual row and production acceptance criterion is evidenced.",
+    "Full Visual Editor manual and physical device acceptance remains deferred until the complete Editor scope is implemented.",
+    "Save and Publish remain distinct."
+  ]
+}

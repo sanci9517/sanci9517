@@ -178,6 +178,12 @@ button:focus-visible, summary:focus-visible, .rail-btn:focus-visible { outline: 
   .more-actions summary::after { content: none; }
   .top-actions #openInspector { width: 44px; }
 }
+/* At high page zoom with a short viewport, the Inspector tab panel may be
+   shorter than its sticky search header. Let the header scroll away so the
+   authored controls below it remain reachable instead of being covered. */
+@media (max-height: 520px) {
+  .right-dock .inspector-body > .inspector-search { position: static; }
+}
 @media (prefers-reduced-motion: reduce) { .mobile-backdrop, .dock { animation: none !important; transition: none !important; } }
 @media (max-width: 300px) {
   .top-actions { grid-template-columns: minmax(0,1fr) minmax(0,1fr); }
