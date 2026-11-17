@@ -1,6 +1,3 @@
-Warning: truncated output (original token count: 12506)
-Total output lines: 561
-
 import {exerciseComposition} from './helpers/composition.js';
 import assert from 'node:assert/strict';
 import test from 'node:test';
@@ -222,7 +219,121 @@ test('structured Inspector editing survives Save, Publish and public interaction
  }
  const expectFocus=async target=>{
   await target.waitFor();await editor.evaluate(()=>new Promise(resolve=>requestAnimationFrame(resolve)));
-  assert.equal(await target.evaluate(el=>el===document.activeElement),true,'keyboard structural action restores the intended Inspector control');…2506 tokens truncated…ousel={version:1,items:[{src,label:'Dia',content:'Tartalom',alt:'Privát fotó'}]};
+  assert.equal(await target.evaluate(el=>el===document.activeElement),true,'keyboard structural action restores the intended Inspector control');
+ };
+ const keyboard=async button=>{await button.focus();await button.press('Enter');};
+ for(const width of [390,1366])for(const type of Object.keys(expectedModels)){
+  await editor.setViewportSize({width,height:900});await select(ids[type]);const panel=editor.locator('.structured-inspector'),rows=panel.locator('.structured-item');
+  const cell=(row,col=0)=>rows.nth(row).locator('.structured-input input,.structured-input textarea').nth(col);
+  if(type==='table'){
+   await keyboard(panel.getByRole('button',{name:'＋ Oszlop',exact:true}));await expectFocus(cell(0,2));
+   await keyboard(panel.getByRole('button',{name:'− Utolsó oszlop',exact:true}));await expectFocus(cell(0,1));
+   await keyboard(panel.getByRole('button',{name:'＋ Sor',exact:true}));await expectFocus(cell(2));
+   await keyboard(rows.last().getByRole('button',{name:'Sor törlése',exact:true}));await expectFocus(cell(1));
+   await keyboard(rows.last().getByRole('button',{name:'Sor törlése',exact:true}));await expectFocus(cell(0));
+   await editor.keyboard.press('Control+z');assert.equal(await rows.count(),2,'the protected header survives deletion of the last data row');
+   const originalRow=await cell(1).inputValue();
+   await keyboard(rows.first().getByRole('button',{name:'＋ Sor alá',exact:true}));
+   await expectFocus(cell(1));assert.equal(await rows.count(),3,'table insert adds a data row under the header');
+   await cell(1).fill('Beszúrt próbasor');
+   assert.equal(await rows.nth(1).getByRole('button',{name:'↑ Sor fel',exact:true}).isDisabled(),true,
+    'the first data row cannot move ahead of the protected header');
+   await keyboard(rows.nth(1).getByRole('button',{name:'↓ Sor le',exact:true}));
+   await expectFocus(rows.nth(2).getByRole('button',{name:'↑ Sor fel',exact:true}));
+   assert.equal(await cell(2).inputValue(),'Beszúrt próbasor','moving down preserves the row cells');
+   await keyboard(rows.nth(2).getByRole('button',{name:'↑ Sor fel',exact:true}));
+   await expectFocus(rows.nth(1).getByRole('button',{name:'↓ Sor le',exact:true}));
+   assert.equal(await cell(1).inputValue(),'Beszúrt próbasor','moving up preserves the row cells');
+   await keyboard(rows.nth(1).getByRole('button',{name:'Sor törlése',exact:true}));
+   await expectFocus(cell(1));
+   assert.equal(await rows.count(),2,'deleting inserted data restores the original row count');
+   assert.equal(await cell(1).inputValue(),originalRow,'header and existing data must survive insert/reorder/delete');
+  }else{
+   const originalCount=expectedModels[type].items.length;
+   await keyboard(panel.getByRole('button',{name:'＋ Új elem',exact:true}));await expectFocus(cell(originalCount));
+   await keyboard(rows.last().getByRole('button',{name:'× Törlés',exact:true}));await expectFocus(cell(originalCount-1));
+   await keyboard(rows.first().getByRole('button',{name:'↓ Le',exact:true}));await expectFocus(rows.nth(1).getByRole('button',{name:originalCount===2?'↑ Fel':'↓ Le',exact:true}));
+   await keyboard(rows.nth(1).getByRole('button',{name:'↑ Fel',exact:true}));await expectFocus(rows.first().getByRole('button',{name:'↓ Le',exact:true}));
+   if(type==='list'){
+    await keyboard(rows.first().getByRole('button',{name:'↓ Le',exact:true}));await expectFocus(rows.nth(1).getByRole('button',{name:'↓ Le',exact:true}));
+    await keyboard(rows.nth(1).getByRole('button',{name:'↓ Le',exact:true}));await expectFocus(rows.last().getByRole('button',{name:'↑ Fel',exact:true}));
+    await keyboard(rows.last().getByRole('button',{name:'↑ Fel',exact:true}));await expectFocus(rows.nth(1).getByRole('button',{name:'↑ Fel',exact:true}));
+    await keyboard(rows.nth(1).getByRole('button',{name:'↑ Fel',exact:true}));await expectFocus(rows.first().getByRole('button',{name:'↓ Le',exact:true}));
+    for(const index of [1,0,2]){
+     await keyboard(rows.nth(index).getByRole('button',{name:'× Törlés',exact:true}));await expectFocus(cell(Math.min(index,1)));
+     await editor.keyboard.press('Control+z');assert.equal(await rows.count(),3,'Undo restores the full original list');
+    }
+    const ordered=panel.getByRole('checkbox',{name:'Számozott lista'});await ordered.check();await ordered.uncheck();
+   }
+  }
+ }
+ // Persist a genuine row insertion and reorder through the separate Save and
+ // Publish API calls, rather than undoing every structural change before Save.
+ await select(ids.table);
+ const tableInspector=editor.locator('.structured-inspector'),tableRows=tableInspector.locator('.structured-item');
+ await keyboard(tableRows.last().getByRole('button',{name:'＋ Sor alá',exact:true}));
+ assert.equal(await tableRows.count(),3,'insert below existing table data row');
+ await tableRows.nth(2).getByRole('textbox',{name:'Oszlop 1',exact:true}).fill('További játék');
+ await tableRows.nth(2).getByRole('textbox',{name:'Oszlop 2',exact:true}).fill('77');
+ await keyboard(tableRows.nth(2).getByRole('button',{name:'↑ Sor fel',exact:true}));
+ assert.equal(await tableRows.nth(1).getByRole('textbox',{name:'Oszlop 1',exact:true}).inputValue(),'További játék');
+ await editor.keyboard.press('Control+z');
+ assert.equal(await tableRows.nth(2).getByRole('textbox',{name:'Oszlop 1',exact:true}).inputValue(),'További játék',
+  'Undo restores the previous table row order');
+ await editor.keyboard.press('Control+Shift+z');
+ assert.equal(await tableRows.nth(1).getByRole('textbox',{name:'Oszlop 1',exact:true}).inputValue(),'További játék',
+  'Redo restores the moved table row without changing its values');
+ await keyboard(tableRows.nth(1).getByRole('button',{name:'↓ Sor le',exact:true}));
+ assert.equal(await tableRows.nth(2).getByRole('textbox',{name:'Oszlop 2',exact:true}).inputValue(),'77',
+  'reordered row keeps the second column on the moved record');
+ expectedModels.table.rows.push(['További játék','77']);
+ await select(ids.tabs);
+ const limited=editor.locator('.structured-item').first().getByRole('textbox',{name:'Fül neve',exact:true});
+ await limited.fill('x'.repeat(120));await limited.press('y');assert.equal(await limited.inputValue(),'x'.repeat(120),'native editing stops at the canonical boundary');
+ assert.equal(await editor.locator(`.node[data-node-id="${ids.tabs}"] [role="tab"]`).first().textContent(),'x'.repeat(120));
+ await editor.keyboard.press('Control+z');assert.equal(await limited.inputValue(),expectedModels.tabs.items[0].label);
+ await editor.locator('#save').click();
+ await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+ assert.equal(posts.at(-1).publish,false);
+ assert.equal(published.pages[pageId].nodes[ids.tabs].props.contentModel.items[0].label,'Első fül');
+ assert.equal(draft.pages[pageId].nodes[ids.tabs].props.contentModel.items[0].label,expectedModels.tabs.items[0].label);
+ for(const type of Object.keys(expectedModels)){assert.deepEqual(draft.pages[pageId].nodes[ids[type]].props.contentModel,expectedModels[type],'all fresh fields and untouched rows survive structural operations');assert.deepEqual(published.pages[pageId].nodes[ids[type]].props.contentModel,initialModels[type],'Save cannot alter any published structured model');}
+ assert.equal(draft.pages[pageId].nodes[ids.badge].props.text,finalBadge);
+ assert.equal(draft.pages[pageId].nodes[ids.quote].props.text,finalQuote);
+ assert.equal(draft.pages[pageId].nodes[ids.quote].props.attribution,finalAttribution);
+ assert.equal(draft.pages[pageId].nodes[ids.icon].props.label,finalIcon);
+ assert.equal(draft.pages[pageId].nodes[ids.icon].props.icon,'star');
+ await viewer.goto(base+'/p/test');
+ assert.equal(await viewer.locator('.visual-editor-node[data-node-id="'+ids.table+'"] tbody tr').count(),1,
+   'draft Save must not make the new table row public before a separate Publish');
+ assert.equal(await viewer.locator('.visual-badge[data-node-id="'+ids.badge+'"]').textContent(),'Címke','Save cannot expose the new badge');
+ assert.match(await viewer.locator('blockquote[data-node-id="'+ids.quote+'"]').textContent(),/Idézet első változat/);
+ assert.equal(await viewer.locator('.visual-icon[data-node-id="'+ids.icon+'"]').getAttribute('aria-label'),'Szív ikon');
+ await editor.reload();
+ for(const [type,label,value] of [['badge','Címke szövege',finalBadge],['quote','Idézet szövege',finalQuote],['quote','Forrás vagy szerző',finalAttribution],['icon','Ikon leírása',finalIcon]]){
+  await select(ids[type]);assert.equal(await editor.locator('.basic-content-inspector').getByRole('textbox',{name:label,exact:true}).inputValue(),value);
+ }
+ for(const [type,rowIndex,label,key] of structuredFields){
+  await select(ids[type]);const value=type==='table'?expectedModels.table.rows[rowIndex][key]:type==='list'?expectedModels.list.items[rowIndex]:expectedModels[type].items[rowIndex][key];
+  assert.equal(await editor.locator('.structured-item').nth(rowIndex).getByRole('textbox',{name:label,exact:true}).inputValue(),value,'saved structured fields survive editor reload');
+ }
+ await editor.locator('#publish').click();
+ await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
+ assert.equal(posts.at(-1).publish,true);
+ await viewer.goto(base+'/p/test');
+ const publishedSources=await viewer.evaluate(async()=>{
+  const {safeMediaUrl,safePublishedMediaUrl,validateElementContent,renderElementContent}=await import('/editor-v2/core/element-content.js');
+  const sources=[
+   '/api/%61dmin/media?id=00000000-0000-4000-8000-000000000123',
+   '/%2fapi%2fadmin%2fmedia?id=00000000-0000-4000-8000-000000000123',
+   '/%252fapi%252fadmin%252fmedia?id=00000000-0000-4000-8000-000000000123',
+   '/%255capi%255cadmin%255cmedia?id=00000000-0000-4000-8000-000000000123',
+   '/%2561pi%252fadmin%252fmedia?id=00000000-0000-4000-8000-000000000123',
+   '/%25252561pi%2525252fadmin%2525252fmedia?id=00000000-0000-4000-8000-000000000123'
+  ];
+  return sources.map(src=>{
+   const gallery={version:1,items:[{src,alt:'Privát fotó',caption:''}]};
+   const carousel={version:1,items:[{src,label:'Dia',content:'Tartalom',alt:'Privát fotó'}]};
    return {src,editorSource:safeMediaUrl(src),publicSource:safePublishedMediaUrl(src),
     galleryError:validateElementContent('gallery',gallery),carouselError:validateElementContent('carousel',carousel),
     galleryHtml:renderElementContent('gallery',gallery,'g-private'),carouselHtml:renderElementContent('carousel',carousel,'c-private')};

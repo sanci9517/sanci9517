@@ -4,6 +4,8 @@ import { CONTENT_FIELDS } from '../public/editor-v2/core/authored-content.js';
 import { validatedLinkHref } from '../public/editor-v2/core/richtext-links.js';
 import { isStructuredType } from '../public/editor-v2/core/element-content.js';
 import { defaultCardContent, normalizeCardContent } from '../public/editor-v2/core/card-content.js';
+import { createDocument, validateDocument } from '../public/editor-v2/core/schema.js';
+import { assertValidEditorDocument } from '../public/editor-v2/core/validation.js';
 import {
   getElementContentContract,
   getElementContentProfileMetadata,
@@ -100,4 +102,18 @@ test('D Inspector field controls and nested repeaters stay inside supported cont
       }
     }
   }
+});
+
+test('D persisted Page identity mismatch fails validation without coercion or mutation', () => {
+  const document = createDocument();
+  const pageId = document.activePageId;
+  assert.deepEqual(validateDocument(document), []);
+
+  document.pages[pageId].id = { toString: null };
+  const persisted = JSON.stringify(document);
+
+  assert.doesNotThrow(() => validateDocument(document));
+  assert.match(validateDocument(document).join('; '), /page id mismatch: \[invalid\] != .+/);
+  assert.throws(() => assertValidEditorDocument(document), /page id mismatch/);
+  assert.equal(JSON.stringify(document), persisted, 'validation does not rewrite malformed Page identity');
 });

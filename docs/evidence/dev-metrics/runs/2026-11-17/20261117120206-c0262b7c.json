@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "id": "20261117120206-c0262b7c",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-17T12:02:06.953Z",
+  "finished_at": "2026-11-17T12:07:14.719Z",
+  "wall_seconds": 308,
+  "paused_seconds": 0,
+  "measured_seconds": 308,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "Restored the complete structured-content browser regression after exact-SHA Editor Core CI exposed a truncated test upload; local editor and Chromium checks pass, remote rerun withheld because available free Actions quota is unverified, runtime remains deployed.",
+  "evidence": [
+    "docs/evidence/editor-d01-structured-media-double-encoding-2026-11-17.json",
+    "tests/browser/editor-structured-content.test.js",
+    "tests/editor-d-content-contract.test.js"
+  ],
+  "checks": "npm run test:editor=PASS 17/17;CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-structured-content.test.js=PASS 2/2;node --check=PASS;canonical plan/contract=PASS;source SHA 35aab4f deployed 100%;Editor Core CI 44074311246=FAIL due literal truncation warning;no rerun;0 HUF",
+  "started_revision": "71538ce19008f1f23c8b14e48bf6df97fe6b40be",
+  "finished_revision": "35aab4ffed470a07e4790a651e3c380154252c9e",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

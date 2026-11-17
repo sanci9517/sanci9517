@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "id": "20261117105552-a541ef58",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-17T10:55:52.641Z",
+  "abandoned_at": "2026-11-17T12:02:06.900Z",
+  "measured_seconds": null,
+  "status": "interrupted",
+  "reason": "Previous execution stopped while exact-source CI was pending; no further active work was performed in that run.",
+  "started_revision": "041dd592fb6fc6ce946ef1d68194aab1d295308d",
+  "measurement": "missing end time; excluded from elapsed time and ETA"
+}

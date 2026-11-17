@@ -2,7 +2,10 @@
   "schema": "sanci.editor.d01-structured-private-media-double-encoding.v1",
   "date": "2026-11-17",
   "plan_point": "77.44.7.D / D-01 structured gallery and carousel public media",
-  "scope": ["D-01", "D-05"],
+  "scope": [
+    "D-01",
+    "D-05"
+  ],
   "finding": {
     "status": "VERIFIED_DEFECT",
     "description": "The structured renderer's public media guard decoded a URL pathname once, while the authored renderer already decoded repeatedly. A multiply percent-encoded /api/admin/media route therefore remained renderable as public gallery/carousel media.",
@@ -44,7 +47,10 @@
     "canonical_plan": "PASS: one complete 13-part master, one current cursor, 396 source mappings; functional acceptance remains uncertified.",
     "traceability": "PASS: scripts/build-feature-traceability.py --check (396/396); source fingerprint regenerated for the seven runtime import-reference changes.",
     "wrangler_dry_run": "PASS: Wrangler 4.130.0 deploy --dry-run; 182 assets, 386.19 KiB total / 98.93 KiB gzip; no deployment performed.",
-    "git_diff_check": "PASS"
+    "git_diff_check": "PASS",
+    "editor_core_ci": "FAIL: GitHub run 44074311246 failed in tests/browser/editor-structured-content.test.js:1 with SyntaxError: Unexpected identifier output; job logs prove a literal truncation warning was inserted into the repository test file during blob transfer. The other 53 browser-suite files and prior checks completed successfully.",
+    "test_harness_repair": "PASS locally: restored complete source from the 50,021-byte worktree file (Git blob 33dfe76a1ada7fcd864ed601670a42fb0cfabe9e); node --check; npm run test:editor (17/17); CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-structured-content.test.js (2/2 with loopback permission); D-content Page identity unit regression included.",
+    "editor_core_ci_rerun": "NOT DISPATCHED: canonical plan states free Actions compute exhausted; available free balance could not be verified. No paid overage authorized. This test/docs follow-up uses [skip ci] and is not represented as a CI pass."
   },
   "production_preflight": {
     "method": "Cloudflare D1 Query API only; SELECT statements only, no Wrangler migration-list command, no writes.",
@@ -61,19 +67,60 @@
     "worker_version_id": "2b088d77-69b4-4f44-8ac4-50cff4a32458",
     "traffic_percent": 100,
     "health_http": 200,
-    "health_json": {"ok": true, "service": "sanci9517-streamer-brand", "version": "2.0.0", "server": "cloudflare-worker"},
+    "health_json": {
+      "ok": true,
+      "service": "sanci9517-streamer-brand",
+      "version": "2.0.0",
+      "server": "cloudflare-worker"
+    },
     "previous_public_element_content_sha256": "857238fe532e849fe2efaec632cab56f055d469151f45f74b334b4f25d977568"
   },
   "release": {
-    "status": "PENDING",
+    "status": "DEPLOYED_RUNTIME; EXACT_SHA_EDITOR_CORE_FAILED_TEST_FIX_TRANSFER",
     "branch": "v2/foundation",
     "source_commit": null,
-    "ci_runs": [],
+    "ci_runs": [
+      {
+        "name": "Editor Core Test",
+        "id": 44074311246,
+        "status": "failure"
+      },
+      {
+        "name": "F0 baseline checks",
+        "id": 44074311191,
+        "status": "success"
+      },
+      {
+        "name": "Production Worker source smoke",
+        "id": 44074311120,
+        "status": "success"
+      },
+      {
+        "name": "Canonical Creator Platform Plan",
+        "id": 44074311199,
+        "status": "success"
+      },
+      {
+        "name": "Twitch Integration Check",
+        "id": 44074311063,
+        "status": "success"
+      }
+    ],
     "worker_deployment_id": null,
     "worker_version_id": null,
     "traffic_percent": null,
     "post_release_health_http": null,
-    "post_release_element_content_sha256": null
+    "post_release_element_content_sha256": null,
+    "test_harness_follow_up": {
+      "status": "LOCAL_TESTS_PASS_REMOTE_COMMIT_PENDING",
+      "file": "tests/browser/editor-structured-content.test.js",
+      "bytes": 50021,
+      "git_blob_sha": "33dfe76a1ada7fcd864ed601670a42fb0cfabe9e",
+      "root_cause": "The remote blob contains an inserted API truncation warning and is syntactically invalid; the Worker build is unaffected because root tests/docs are excluded.",
+      "runtime_unchanged": true,
+      "worker_deploy_required": false,
+      "ci_rerun": "NOT RUN; 0 Ft quota not verifiable"
+    }
   },
   "scope_limit": "This fixes and tests one verified D-01 structured-public-media security gap. Full D-01 through D-07 capability, field, invalid-value, breakpoint, renderer, site-scoped Media acceptance and 77.44.7.D remain OPEN / NOT_CERTIFIED. Complete Visual Editor manual/physical acceptance remains DEFERRED. Save and Publish remain separate.",
   "cost_huf": 0
