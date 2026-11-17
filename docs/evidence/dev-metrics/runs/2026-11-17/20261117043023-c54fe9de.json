@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261117043023-c54fe9de",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-17T04:30:23.005Z",
+  "finished_at": "2026-11-17T04:37:17.832Z",
+  "wall_seconds": 415,
+  "paused_seconds": 0,
+  "measured_seconds": 415,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "Added real Chromium Inspector-to-Canvas-to-Save/reload/Publish coverage for authored image fit and ratio fields. Targeted browser and Editor checks pass; full D remains open.",
+  "evidence": [
+    "docs/evidence/editor-d-image-fit-ratio-lifecycle-2026-11-17.json",
+    "https://github.com/sanci9517/sanci9517/commit/5478eea4ea7bdb8fe3d004e496217062bb291fc8"
+  ],
+  "checks": "targeted-browser=1/1 pass;editor-unit=17/17+subreaper3/3 pass;typecheck=pass;plan-contract=14/14;canonical=13 parts+396 mappings;traceability=396/396;runtime-unchanged;D-open",
+  "started_revision": "33dbdd02be39d0694219db128ec9795a401da6c2",
+  "finished_revision": "5478eea4ea7bdb8fe3d004e496217062bb291fc8",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
