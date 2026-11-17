@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261117131606-7d0806e0",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-17T13:16:06.336Z",
+  "finished_at": "2026-11-17T13:20:06.521Z",
+  "wall_seconds": 240,
+  "paused_seconds": 0,
+  "measured_seconds": 240,
+  "status": "pass",
+  "kind": "test",
+  "summary": "Dropdown single-open valós Chromium lifecycle regression; Editor Core és D-terv szerződés ellenőrizve",
+  "evidence": [
+    "tests/browser/editor-content-system.test.js:PASS"
+  ],
+  "checks": "Chromium 1/1; test:editor 17/17 plus subreaper 3/3; plan-contract 14/14; canonical-plan 13 files/396 mappings; traceability 396/396; diff-check; node --check",
+  "started_revision": "35aab4ffed470a07e4790a651e3c380154252c9e",
+  "finished_revision": "35aab4ffed470a07e4790a651e3c380154252c9e",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

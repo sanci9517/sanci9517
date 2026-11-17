@@ -435,6 +435,18 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
     'native first-open state is visible immediately on the Canvas');
   assert.equal(await canvasDropdown.locator('details').last().getAttribute('name'),null,
     'multi-open default does not accidentally make separate dropdown items exclusive');
+  const dropdownSingleOpen=editor.getByLabel('Egyszerre csak egy nyitott rész',{exact:true});
+  await dropdownSingleOpen.check();
+  const canvasDropdownDetails=canvasDropdown.locator('details');
+  const dropdownGroupName=await canvasDropdownDetails.first().getAttribute('name');
+  assert.ok(dropdownGroupName,'single-open Dropdown assigns a native details group name');
+  assert.equal(await canvasDropdownDetails.last().getAttribute('name'),dropdownGroupName,
+    'single-open Dropdown shares one native details name across its sections');
+  assert.deepEqual(await canvasDropdownDetails.evaluateAll(items=>items.map(el=>el.open)),[true,false],
+    'single-open and initially-open options can be combined in the Dropdown Canvas');
+  await canvasDropdownDetails.last().locator('summary').click();
+  assert.deepEqual(await canvasDropdownDetails.evaluateAll(items=>items.map(el=>el.open)),[false,true],
+    'opening another Canvas Dropdown section closes the previously open section');
   await select('gallery');
   await editor.getByLabel('Képgaléria elnevezése',{exact:true}).fill('Műhelyem & képeim');
   const galleryColumns=editor.getByLabel('Oszlopok asztalon',{exact:true});
@@ -661,6 +673,10 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.image].props.fit,'cover','Save persists the authored image fit mode in the draft');
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.image].props.ratio,'16 / 9','Save persists the authored image ratio in the draft');
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.gallery].props.columns,'4','Save persists the authored desktop gallery column count in the draft');
+  assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.dropdown].props.singleOpen,true,
+    'Save persists the Dropdown single-open setting in the draft');
+  assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.dropdown].props.openFirst,true,
+    'Save persists the Dropdown initial-open setting separately in the draft');
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.gallery].props.items[0].fit,'contain','Save persists the selected gallery item fit in the draft');
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.gallery].props.items[0].assetId,assetId);
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.gallery].props.items[0].alt,'Márkajel',
@@ -701,6 +717,10 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
     'Accordion naming changes remain draft-only until Publish');
   assert.equal(await node(live,'dropdown').locator('details').first().evaluate(el=>el.open),false,
     'first-open setting remains private after Save');
+  assert.deepEqual(await node(live,'dropdown').locator('details').evaluateAll(items=>items.map(el=>el.getAttribute('name'))),[null,null],
+    'single-open remains private on the public page until the separate Publish action');
+  assert.deepEqual(await node(live,'dropdown').locator('details').evaluateAll(items=>items.map(el=>el.open)),[false,false],
+    'draft Save keeps the previous public Dropdown state unchanged');
   assert.equal(await node(live,'button').getAttribute('href'),'/p/home','Save keeps the prior published link live');
   assert.equal(await node(live,'carousel').locator('.creator-carousel').getAttribute('aria-label'),'Alkotói galéria',
     'a newly named carousel is still draft-only after Save');
@@ -730,6 +750,18 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   await select('gallery');
   assert.equal(await editor.getByLabel('Képgaléria elnevezése',{exact:true}).inputValue(),'Műhelyem & képeim',
     'Editor reload restores the authored gallery region name from the saved draft');
+  await select('dropdown');
+  assert.equal(await dropdownSingleOpen.isChecked(),true,'Editor reload restores the saved Dropdown single-open setting');
+  assert.equal(await editor.getByLabel('Első rész kezdetben nyitva',{exact:true}).isChecked(),true,
+    'Editor reload restores the saved Dropdown initial-open setting');
+  const reloadedDropdown=node(editor,'dropdown').getByRole('group',{name:'További lehetőségek'}).locator('details');
+  const reloadedDropdownName=await reloadedDropdown.first().getAttribute('name');
+  assert.ok(reloadedDropdownName,'reloaded Dropdown retains its native single-open group name');
+  assert.equal(await reloadedDropdown.last().getAttribute('name'),reloadedDropdownName,
+    'reloaded Dropdown keeps both sections in the same exclusive group');
+  assert.deepEqual(await reloadedDropdown.evaluateAll(items=>items.map(el=>el.open)),[true,false],
+    'Editor reload restores the initial-open Canvas state');
+  await select('gallery');
   assert.equal(await editor.getByLabel('Oszlopok asztalon',{exact:true}).inputValue(),'4','Editor reload restores the authored gallery column count');
   assert.equal(await galleryTracks(editor),4,'reloaded desktop Canvas retains the authored gallery column count');
   assert.equal(await editor.locator('.content-repeater fieldset').first().getByLabel('Kép illesztése',{exact:true}).inputValue(),'contain',
@@ -803,6 +835,11 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
     'Publish exposes the editable Accordion group name');
   assert.equal(await node(live,'dropdown').getByRole('group',{name:'További lehetőségek'}).count(),1,
     'Publish exposes the editable Dropdown group name');
+  const publishedDropdown=node(live,'dropdown').getByRole('group',{name:'További lehetőségek'}).locator('details');
+  const publishedDropdownName=await publishedDropdown.first().getAttribute('name');
+  assert.ok(publishedDropdownName,'separate Publish exposes the native Dropdown group');
+  assert.equal(await publishedDropdown.last().getAttribute('name'),publishedDropdownName,
+    'separate Publish groups the Dropdown sections under one native details name');
   assert.equal(await node(live,'carousel').getByRole('region',{name:'Képes történeteim & fotók'}).count(),1,
     'published carousel region inherits the exact accessible Inspector name');
   assert.equal(await node(live,'carousel').locator('img').nth(1).getAttribute('alt'),'Márkajel',
@@ -887,8 +924,11 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   assert.deepEqual(await dropdown.locator('details').evaluateAll(items=>items.map(el=>el.open)),[true,false],
     'published Dropdown honors initial first-open setting');
   await dropdown.locator('summary').last().press('Enter');
-  assert.deepEqual(await dropdown.locator('details').evaluateAll(items=>items.map(el=>el.open)),[true,true],
-    'Dropdown default allows multiple simultaneously open sections and keyboard access');
+  assert.deepEqual(await dropdown.locator('details').evaluateAll(items=>items.map(el=>el.open)),[false,true],
+    'published single-open Dropdown closes its first section when keyboard focus opens the second');
+  await dropdown.locator('summary').first().press('Enter');
+  assert.deepEqual(await dropdown.locator('details').evaluateAll(items=>items.map(el=>el.open)),[true,false],
+    'published single-open Dropdown restores the first section when it is reopened by keyboard');
   assert.deepEqual(await accordion.locator('details').evaluateAll(items=>items.map(el=>el.open)),[false,true],
     'interacting with a second details group cannot close the first group');
   await node(live,'carousel').getByRole('button',{name:'Következő kép',exact:true}).click();await live.waitForFunction(id=>document.querySelector(`[data-node-id="${id}"] .creator-carousel`).scrollLeft>0,ids.carousel);
@@ -929,6 +969,9 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
       'single-open Accordion starts with its first section open on every responsive viewport');
     assert.deepEqual(await node(live,'dropdown').locator('details').evaluateAll(items=>items.map(el=>el.open)),[true,false],
       'Dropdown starts with first section open on every responsive viewport');
+    assert.deepEqual(await node(live,'dropdown').locator('details').evaluateAll(items=>items.map(el=>el.getAttribute('name'))),
+      [publishedDropdownName,publishedDropdownName],
+      `published single-open Dropdown keeps its native group semantics at ${width}px`);
     const keyboardCarousel=node(live,'carousel').getByRole('region',{name:'Képes történeteim & fotók'});
     await keyboardCarousel.focus();
     await keyboardCarousel.press('ArrowRight');

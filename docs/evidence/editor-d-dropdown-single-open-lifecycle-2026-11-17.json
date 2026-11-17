@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "task": "77.44.7.D / D-05",
+  "title": "Authored Dropdown single-open Save/reload/Publish lifecycle",
+  "date": "2026-11-17",
+  "status": "PARTIAL_ACCEPTANCE_PASS",
+  "canonical_plan_status": "77.44.7.D and D-01–D-07 remain OPEN / NOT_CERTIFIED",
+  "summary": "The existing native details-name behavior was already implemented, but the Dropdown singleOpen control lacked a real-browser lifecycle assertion. The browser regression now verifies its accessible Inspector control, same-name native details group, immediate Canvas exclusivity, draft-only Save behavior, Editor reload restoration, separate Publish, keyboard toggling, responsive public rendering, and independence from the Accordion details group.",
+  "source_control": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "branch_head_at_start": "85e773ba9f4bb93c4844e156e60c4b12a7e6ba67",
+    "branch_update": "test/evidence/metrics-only; expected normal fast-forward; [skip ci]",
+    "runtime_source_changed": false
+  },
+  "files": [
+    "tests/browser/editor-content-system.test.js",
+    "docs/evidence/editor-d-dropdown-single-open-lifecycle-2026-11-17.json",
+    "docs/evidence/dev-metrics/runs/2026-11-17/20261117131606-7d0806e0.json"
+  ],
+  "checks": {
+    "chromium": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-content-system.test.js",
+      "result": "PASS",
+      "tests": "1/1",
+      "duration_ms": 37842,
+      "scope": "full existing authored-content Chromium lifecycle scenario with Dropdown single-open added"
+    },
+    "editor_core": {
+      "command": "npm run test:editor",
+      "result": "PASS",
+      "test_files": "17/17",
+      "linux_subreaper": "3/3"
+    },
+    "plan_contract": {
+      "command": "python3 tests/plan-contract.test.py",
+      "result": "PASS",
+      "tests": "14/14"
+    },
+    "canonical_plan": {
+      "command": "python3 scripts/check-canonical-plan.py",
+      "result": "PASS",
+      "master_files": 13,
+      "source_mappings": 396,
+      "acceptance_certified": false
+    },
+    "feature_traceability": {
+      "command": "python3 scripts/build-feature-traceability.py --check",
+      "result": "PASS",
+      "mappings": "396/396"
+    },
+    "syntax_and_diff": {
+      "commands": ["node --check tests/browser/editor-content-system.test.js", "git diff --check"],
+      "result": "PASS"
+    },
+    "hosted_ci": "NOT RUN; test/docs/metrics-only follow-up uses [skip ci], no CI PASS claimed"
+  },
+  "production": {
+    "worker": "sanci9517-streamer-brand",
+    "read_only_deployment_snapshot": {
+      "deployment_id": "760f3cac-7809-4054-a767-a0f8098fe619",
+      "version_id": "6a9df7a1-a638-4cd8-9ab1-65ac431161a0",
+      "traffic_percent": 100,
+      "observed_at_utc": "2026-11-17T13:16Z"
+    },
+    "deployed_source_sha": "UNVERIFIED by this test-only block",
+    "health_and_asset_hash_checks": "NOT RUN; runtime source unchanged, no new Worker deployment requested"
+  },
+  "cost_and_data_safety": {
+    "new_cost_huf": 0,
+    "production_d1_write_or_migration": false,
+    "production_r2_mutation": false,
+    "new_dependency": false
+  },
+  "product_guarantees": {
+    "save_and_publish_remain_separate": true,
+    "full_visual_editor_manual_and_physical_acceptance": "DEFERRED until the complete Editor reaches its planned acceptance gate",
+    "complete_d_point": "OPEN / NOT_CERTIFIED; this is one D-05 interaction slice only"
+  },
+  "measurement_run_id": "20261117131606-7d0806e0",
+  "test_harness_note": "An initial local browser run failed after the new Dropdown assertions because the test did not reselect the Gallery Inspector before querying its column control. The test navigation was corrected; the complete rerun passed 1/1. This was a test-harness sequencing error, not a runtime defect."
+}
