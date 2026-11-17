@@ -164,7 +164,7 @@
     "traffic_percent": 100,
     "note": "Read-only Cloudflare Deployments API snapshot before this candidate; not a verification of the candidate release."
   },
-  "ci": "For exact source 0095546c5a56fbba0f059f87e2b5bf673cf98556: F0 baseline run 44028114933, Canonical Creator Platform Plan run 44028115026, Active Point Audit run 44028115040, Twitch Integration run 44028114928, Cloudflare Workers Build check 133853559782, and Production Worker source smoke run 44028115102/job 133853247536 are completed/success. The Editor Core Test run 44028115069 remains in_progress at the full Editor browser layout regression step as of 2026-11-17; aggregate CI is not certified until it completes.",
+  "ci": "For exact source 0095546c5a56fbba0f059f87e2b5bf673cf98556, F0 baseline run 44028114933, Canonical Creator Platform Plan run 44028115026, Active Point Audit run 44028115040, Twitch Integration run 44028114928, Cloudflare Workers Build check 133853559782, Production Worker source smoke run 44028115102/job 133853247536, and Editor Core Test run 44028115069/job 133853246724 all completed/success. Editor Core ran typecheck, Editor unit, offline D1, private media API, Chromium install, showcase unit/browser, isolated Worker+D1/R2 media, the full Editor browser layout regression, WEB-013 Admin mobile browser, schedule, domain, Brand Kit and Admin Home checks. The conditional screenshot upload was skipped because no failure artifact was needed; all required checks passed.",
   "deployment": "Exact source 0095546c5a56fbba0f059f87e2b5bf673cf98556 deployed: Cloudflare deployment 41d5823d-42d5-437f-a429-d3d9f56de6, Worker version bcccf16b-b81d-4322-8c31-e30e28ad0b02 at 100% traffic. Cloudflare Workers Build d748fe5f-1a35-468a-86f1-8077d9cd6e9d completed successfully. Exact-SHA production source smoke passed HTTP 200 /api/health and SHA-256 for all 21 configured changed public source files; after three rollout-time index.html mismatches, attempt 4 passed. No additional deployment was made for this evidence update.",
   "cost": "0 Ft new paid service, production data mutation, D1 migration, R2 deletion, or dependency change. Temporary CLI/types were installed under /tmp only.",
   "overall_d_status": "OPEN / NOT_CERTIFIED; this is a single D-01/D-05 field-guidance subgate, not D-01–D-07 closure.",
@@ -172,7 +172,7 @@
   "metrics_run_id": "20261117052227-2e8480ab",
   "follow_up_commit": "0095546c5a56fbba0f059f87e2b5bf673cf98556",
   "follow_up_verification": {
-    "captured_at": "2026-11-17T06:20:00Z",
+    "captured_at": "2026-11-17T06:26:35Z",
     "source_commit": "0095546c5a56fbba0f059f87e2b5bf673cf98556",
     "branch_head_at_capture": "0095546c5a56fbba0f059f87e2b5bf673cf98556",
     "current_plan_point": "77.44.7.D",
@@ -210,8 +210,11 @@
       },
       "editor_core": {
         "run_id": 44028115069,
-        "status": "in_progress",
-        "active_step": "Run Editor browser layout regression"
+        "job_id": 133853246724,
+        "status": "completed",
+        "conclusion": "success",
+        "required_steps_passed": true,
+        "conditional_screenshot_upload": "skipped (no failure artifact)"
       },
       "cloudflare_build": {
         "check_run_id": 133853559782,
@@ -222,6 +225,8 @@
     "runtime_source_changed_by_followup": false,
     "evidence_commit_uses_skip_ci": true,
     "cost": "0 Ft new paid spend",
-    "d1": "Only the existing pre-release SELECT-only preflight is cited; this follow-up performs no production D1 query/write/migration or R2 operation."
+    "d1": "Only the existing pre-release SELECT-only preflight is cited; this follow-up performs no production D1 query/write/migration or R2 operation.",
+    "manual_editor_acceptance": "DEFERRED until complete Visual Editor scope",
+    "follow_up_commit": "0095546c5a56fbba0f059f87e2b5bf673cf98556"
   }
 }
