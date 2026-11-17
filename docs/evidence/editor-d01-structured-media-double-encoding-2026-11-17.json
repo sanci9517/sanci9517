@@ -50,7 +50,14 @@
     "git_diff_check": "PASS",
     "editor_core_ci": "FAIL: GitHub run 44074311246 failed in tests/browser/editor-structured-content.test.js:1 with SyntaxError: Unexpected identifier output; job logs prove a literal truncation warning was inserted into the repository test file during blob transfer. The other 53 browser-suite files and prior checks completed successfully.",
     "test_harness_repair": "PASS locally: restored complete source from the 50,021-byte worktree file (Git blob 33dfe76a1ada7fcd864ed601670a42fb0cfabe9e); node --check; npm run test:editor (17/17); CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-structured-content.test.js (2/2 with loopback permission); D-content Page identity unit regression included.",
-    "editor_core_ci_rerun": "NOT DISPATCHED: canonical plan states free Actions compute exhausted; available free balance could not be verified. No paid overage authorized. This test/docs follow-up uses [skip ci] and is not represented as a CI pass."
+    "editor_core_ci_rerun": "NOT DISPATCHED: canonical plan states free Actions compute exhausted; available free balance could not be verified. No paid overage authorized. This test/docs follow-up uses [skip ci] and is not represented as a CI pass.",
+    "targeted_unit_follow_up": "PASS: node --experimental-vm-modules public/editor-v2/tests/element-content.test.js, 31/31, including encoded leading slash/backslash and nested-encoding vectors.",
+    "current_session_browser": "PASS: CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-structured-content.test.js, 2/2; local loopback permission enabled for its route-mocked HTTP server.",
+    "current_session_typecheck": "PASS: npm run typecheck.",
+    "current_session_plan_and_traceability": "PASS: plan-contract 14/14; canonical master 13/396; traceability 396/396; both test files node --check; git diff --check.",
+    "current_session_wranger_dry_run": "PASS: npx wrangler deploy --dry-run, Wrangler 4.130.0, 182 assets, 386.19 KiB / 98.93 KiB gzip; no deploy.",
+    "current_session_unit": "PASS: node --experimental-vm-modules public/editor-v2/tests/element-content.test.js, 31/31; the encoded leading slash/backslash test vectors already present in v2/foundation were re-run.",
+    "current_session_direct_health": "UNVERIFIED: this execution runner could not reach its configured HTTPS proxy (curl exit 7); the exact-source production-smoke job below independently returned HTTP 200 and verified all 21 source hashes."
   },
   "production_preflight": {
     "method": "Cloudflare D1 Query API only; SELECT statements only, no Wrangler migration-list command, no writes.",
@@ -60,7 +67,14 @@
     "latest_migration": "0029_media_archive_unicode_additive.sql",
     "query_meta": "Both D1 responses reported changed_db=false and rows_written=0.",
     "d1_migration_or_data_write": false,
-    "production_r2_mutation": false
+    "production_r2_mutation": false,
+    "current_session_select_only_queries": [
+      "SELECT name FROM d1_migrations ORDER BY name DESC LIMIT 1",
+      "SELECT COUNT(*) AS migration_count FROM d1_migrations",
+      "SELECT name FROM sqlite_master WHERE type='trigger' AND name LIKE 'media_archive_%' ORDER BY name",
+      "SELECT COUNT(*) AS retention_requests FROM media_retention_requests"
+    ],
+    "current_session_result": "PASS: latest 0029_media_archive_unicode_additive.sql; 35 ledger rows; seven media archive triggers; zero retention requests; all four D1 query metadata objects reported changed_db=false, rows_written=0, changes=0."
   },
   "before_release_snapshot": {
     "deployment_id": "f75a979a-b1aa-4ef5-86c2-62e0a7d26823",
@@ -76,9 +90,9 @@
     "previous_public_element_content_sha256": "857238fe532e849fe2efaec632cab56f055d469151f45f74b334b4f25d977568"
   },
   "release": {
-    "status": "DEPLOYED_RUNTIME; EXACT_SHA_EDITOR_CORE_FAILED_TEST_FIX_TRANSFER",
+    "status": "RUNTIME_ALREADY_DEPLOYED_AND_EXACT_SOURCE_SMOKED; DOCS_EVIDENCE_FOLLOW_UP",
     "branch": "v2/foundation",
-    "source_commit": null,
+    "source_commit": "35aab4ffed470a07e4790a651e3c380154252c9e",
     "ci_runs": [
       {
         "name": "Editor Core Test",
@@ -106,11 +120,11 @@
         "status": "success"
       }
     ],
-    "worker_deployment_id": null,
-    "worker_version_id": null,
-    "traffic_percent": null,
-    "post_release_health_http": null,
-    "post_release_element_content_sha256": null,
+    "worker_deployment_id": "760f3cac-7809-4054-a767-a0f8098fe619",
+    "worker_version_id": "6a9df7a1-a638-4cd8-9ab1-65ac431161a0",
+    "traffic_percent": 100,
+    "post_release_health_http": 200,
+    "post_release_element_content_sha256": "67f771fc60d804e2fa5373e3c7e96d2749499f6ca2f0cbeedd0c2a1dc2f2cbeb",
     "test_harness_follow_up": {
       "status": "REMOTE_TEST_FILE_RESTORED_CI_SKIPPED",
       "file": "tests/browser/editor-structured-content.test.js",
@@ -122,7 +136,13 @@
       "ci_rerun": "NOT RUN by design: test/documentation-only follow-up, locally validated; exact CI failure was caused by transfer corruption and the repository rule requires [skip ci] when free quota is unverified.",
       "remote_commit_sha": "02145201da14422cba513defde446efc12d06344",
       "commit_message": "[skip ci] test(editor): restore structured content browser regression"
-    }
+    },
+    "cloudflare_build_uuid": "86b1b8ca-ba25-4504-a2f0-9de40d0198d1",
+    "cloudflare_build_outcome": "success",
+    "exact_source_smoke_run_id": 44074311120,
+    "exact_source_smoke_job_id": 134008275457,
+    "exact_source_smoke_result": "PASS: production health HTTP 200 and all 21 selected public source assets match source SHA-256 after bounded propagation retries.",
+    "current_session_note": "This follow-up re-ran checks against the already-committed encoded path vectors and corrected browser test; only evidence and development metrics are new. No runtime/public asset, D1 schema/data, or R2 object changed, so [skip ci] is used and no Worker deploy is required."
   },
   "scope_limit": "This fixes and tests one verified D-01 structured-public-media security gap. Full D-01 through D-07 capability, field, invalid-value, breakpoint, renderer, site-scoped Media acceptance and 77.44.7.D remain OPEN / NOT_CERTIFIED. Complete Visual Editor manual/physical acceptance remains DEFERRED. Save and Publish remain separate.",
   "cost_huf": 0
