@@ -13,8 +13,20 @@ export function safePublishedMediaUrl(value){
  const url=safeMediaUrl(value);
  if(!url||!url.startsWith('/'))return url;
  try{
-  const path=decodeURIComponent(new URL(url,'https://sanci.invalid').pathname);
-  return /^\/api\/admin(?:\/|$)/i.test(path)?'':url;
+  let path=new URL(url,'https://sanci.invalid').pathname;
+  for(let pass=0;pass<10;pass++){
+   // A decoded slash or backslash can expose the private Editor route only
+   // after several proxy/Worker normalization layers. Check before URL parses
+   // it as a network-path reference, then canonicalize dot segments and repeat.
+   const routePath=path.replace(/\\/g,'/');
+   if(/^\/+api\/admin(?:\/|$)/i.test(routePath))return '';
+   const decoded=decodeURIComponent(path);
+   if(decoded===path)return url;
+   path=new URL(decoded,'https://sanci.invalid').pathname;
+  }
+  // Fail closed if an unusually nested encoding exceeds the normalization
+  // bound; a valid public URL must not hide a private route behind more layers.
+  return '';
  }catch{return ''}
 }
 export function createElementContent(type){

@@ -26,7 +26,7 @@ import {captureStyleSnapshot,STYLE_SNAPSHOT_PROPERTIES} from './core/style-snaps
 import {LAYOUT_PRESETS,LAYOUT_TYPES,layoutMode,isManagedLayout,isLayoutPropertyRelevant,explicitGridColumnCount} from './core/layout-presets.js';
 import {resolveElementInsertion} from './core/element-insertion.js';
 import {TYPOGRAPHY_PRESETS,typographyPresetPatch} from './core/typography-presets.js';
-import {isStructuredType,createElementContent,normalizeElementContent,renderElementContent,activateStructuredContent} from './core/element-content.js?v=20261115-d04-tab-id-bound-v1';
+import {isStructuredType,createElementContent,normalizeElementContent,renderElementContent,activateStructuredContent} from './core/element-content.js?v=20261117-d01-private-media-double-decode-v1';
 import {legacyImageSource,legacyPlayableSource,legacyPlaybackSettings,legacyImagePresentation,legacyImageCaption} from './core/legacy-media-source.js';
 import {renderStructuredInspector} from './ui/structured-inspector.js?v=20261026-profile-route-contract';
 import {ICON_CHOICES,iconById} from './core/icon-options.js';

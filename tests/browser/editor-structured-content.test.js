@@ -321,19 +321,29 @@ test('structured Inspector editing survives Save, Publish and public interaction
  await viewer.goto(base+'/p/test');
  const publishedSources=await viewer.evaluate(async()=>{
   const {safeMediaUrl,safePublishedMediaUrl,validateElementContent,renderElementContent}=await import('/editor-v2/core/element-content.js');
-  const src='/api/%61dmin/media?id=00000000-0000-4000-8000-000000000123';
-  const gallery={version:1,items:[{src,alt:'Privát fotó',caption:''}]};
-  const carousel={version:1,items:[{src,label:'Dia',content:'Tartalom',alt:'Privát fotó'}]};
-  return {editorSource:safeMediaUrl(src),publicSource:safePublishedMediaUrl(src),
-   galleryError:validateElementContent('gallery',gallery),carouselError:validateElementContent('carousel',carousel),
-   galleryHtml:renderElementContent('gallery',gallery,'g-private'),carouselHtml:renderElementContent('carousel',carousel,'c-private')};
+  const sources=[
+   '/api/%61dmin/media?id=00000000-0000-4000-8000-000000000123',
+   '/%2561pi%252fadmin%252fmedia?id=00000000-0000-4000-8000-000000000123',
+   '/%25252561pi%2525252fadmin%2525252fmedia?id=00000000-0000-4000-8000-000000000123'
+  ];
+  return sources.map(src=>{
+   const gallery={version:1,items:[{src,alt:'Privát fotó',caption:''}]};
+   const carousel={version:1,items:[{src,label:'Dia',content:'Tartalom',alt:'Privát fotó'}]};
+   return {src,editorSource:safeMediaUrl(src),publicSource:safePublishedMediaUrl(src),
+    galleryError:validateElementContent('gallery',gallery),carouselError:validateElementContent('carousel',carousel),
+    galleryHtml:renderElementContent('gallery',gallery,'g-private'),carouselHtml:renderElementContent('carousel',carousel,'c-private')};
+  });
  });
- assert.equal(publishedSources.editorSource,'/api/%61dmin/media?id=00000000-0000-4000-8000-000000000123');
- assert.equal(publishedSources.publicSource,'');
- assert.equal(publishedSources.galleryError,'INVALID_GALLERY_IMAGE');
- assert.equal(publishedSources.carouselError,'INVALID_CAROUSEL_IMAGE');
- assert.doesNotMatch(publishedSources.galleryHtml,/<img[^>]*src=/);
- assert.doesNotMatch(publishedSources.carouselHtml,/<img[^>]*src=/);
+ for(const result of publishedSources){
+  assert.equal(result.editorSource,result.src,'the authenticated Editor can still inspect the legacy value');
+  assert.equal(result.publicSource,'','private preview route is never an accepted public media source');
+  assert.equal(result.galleryError,'INVALID_GALLERY_IMAGE');
+  assert.equal(result.carouselError,'INVALID_CAROUSEL_IMAGE');
+  assert.doesNotMatch(result.galleryHtml,/<img[^>]*src=/);
+  assert.doesNotMatch(result.carouselHtml,/<img[^>]*src=/);
+  assert.doesNotMatch(result.galleryHtml,/data-lightbox-src=/);
+  assert.doesNotMatch(result.carouselHtml,/data-lightbox-src=/);
+ }
  for(const [type,rowIndex,label,key,selector,attribute] of structuredFields){
   const value=type==='table'?expectedModels.table.rows[rowIndex][key]:type==='list'?expectedModels.list.items[rowIndex]:expectedModels[type].items[rowIndex][key];
   const target=viewer.locator(`.visual-editor-node[data-node-id="${ids[type]}"] `+selector);

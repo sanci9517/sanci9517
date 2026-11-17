@@ -1,0 +1,73 @@
+{
+  "schema": "sanci.editor.d01-structured-private-media-double-encoding.v1",
+  "date": "2026-11-17",
+  "plan_point": "77.44.7.D / D-01 structured gallery and carousel public media",
+  "scope": ["D-01", "D-05"],
+  "finding": {
+    "status": "VERIFIED_DEFECT",
+    "description": "The structured renderer's public media guard decoded a URL pathname once, while the authored renderer already decoded repeatedly. A multiply percent-encoded /api/admin/media route therefore remained renderable as public gallery/carousel media.",
+    "reproduction": "/%2561pi%252fadmin%252fmedia?id=asset",
+    "pre_fix_result": "The new regression assertion failed because safePublishedMediaUrl returned the encoded private route unchanged.",
+    "security_impact": "A persisted legacy URL could point published structured media at the authenticated Editor preview route instead of failing closed. This patch blocks the route at the public validator and renderer; it does not grant or change any media access permission."
+  },
+  "implementation": {
+    "files": [
+      "public/editor-v2/core/element-content.js",
+      "public/editor-v2/app.js",
+      "public/editor-v2/core/commands.js",
+      "public/editor-v2/core/content-profiles.js",
+      "public/editor-v2/core/legacy-media-source.js",
+      "public/editor-v2/core/validation.js",
+      "public/editor-v2/ui/legacy-media-inspector.js",
+      "public/editor-v2/ui/structured-inspector.js",
+      "public/editor-v2/tests/element-content.test.js",
+      "tests/browser/editor-structured-content.test.js",
+      "docs/evidence/feature-traceability.json"
+    ],
+    "behavior": "Repeatedly decode and URL-canonicalize same-origin paths (bounded at 10 passes), normalize decoded backslashes for route matching, reject malformed or over-nested paths, and block the private /api/admin route before public HTML is rendered. Keep the authenticated Editor's original source value intact. Cache-bust all runtime imports of the changed module."
+  },
+  "checks": {
+    "reproduction_before_fix": "FAIL as expected at the new regression assertion: double-encoded private route was returned unchanged.",
+    "targeted_unit": "PASS: node --experimental-vm-modules public/editor-v2/tests/element-content.test.js (31/31)",
+    "editor_core": "PASS: npm run test:editor (17/17 files; Linux subreaper 3/3)",
+    "editor_core_engine": "PASS: node --experimental-vm-modules public/editor-v2/tests/core.test.js (85/85)",
+    "browser": "PASS: CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-structured-content.test.js (2/2), with local-loopback permission; private URL checks cover one, two, and four encoding layers plus Save/reload/separate Publish/public rendering.",
+    "typecheck": "PASS: npm run typecheck",
+    "plan_contract": "PASS: python3 -B tests/plan-contract.test.py (14/14)",
+    "canonical_plan": "PASS: one complete 13-part master, one current cursor, 396 source mappings; functional acceptance remains uncertified.",
+    "traceability": "PASS: scripts/build-feature-traceability.py --check (396/396); source fingerprint regenerated for the seven runtime import-reference changes.",
+    "wrangler_dry_run": "PASS: Wrangler 4.130.0 deploy --dry-run; 182 assets, 386.04 KiB total / 98.88 KiB gzip; no deployment performed.",
+    "git_diff_check": "PASS"
+  },
+  "production_preflight": {
+    "method": "Cloudflare D1 Query API only; SELECT statements only, no Wrangler migration-list command, no writes.",
+    "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
+    "ledger_table_present": true,
+    "migration_count": 35,
+    "latest_migration": "0029_media_archive_unicode_additive.sql",
+    "query_meta": "Both D1 responses reported changed_db=false and rows_written=0.",
+    "d1_migration_or_data_write": false,
+    "production_r2_mutation": false
+  },
+  "before_release_snapshot": {
+    "deployment_id": "f75a979a-b1aa-4ef5-86c2-62e0a7d26823",
+    "worker_version_id": "2b088d77-69b4-4f44-8ac4-50cff4a32458",
+    "traffic_percent": 100,
+    "health_http": 200,
+    "health_json": {"ok": true, "service": "sanci9517-streamer-brand", "version": "2.0.0", "server": "cloudflare-worker"},
+    "previous_public_element_content_sha256": "857238fe532e849fe2efaec632cab56f055d469151f45f74b334b4f25d977568"
+  },
+  "release": {
+    "status": "PENDING",
+    "branch": "v2/foundation",
+    "source_commit": null,
+    "ci_runs": [],
+    "worker_deployment_id": null,
+    "worker_version_id": null,
+    "traffic_percent": null,
+    "post_release_health_http": null,
+    "post_release_element_content_sha256": null
+  },
+  "scope_limit": "This fixes and tests one verified D-01 structured-public-media security gap. Full D-01 through D-07 capability, field, invalid-value, breakpoint, renderer, site-scoped Media acceptance and 77.44.7.D remain OPEN / NOT_CERTIFIED. Complete Visual Editor manual/physical acceptance remains DEFERRED. Save and Publish remain separate.",
+  "cost_huf": 0
+}

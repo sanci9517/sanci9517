@@ -8,6 +8,7 @@ import {AUTHORED_TABLE_LIMITS,MAX_AUTHORED_TABLE_JSON_CHARS,MAX_AUTHORED_TABLE_T
 import {parseTableTsv,serializeTableTsv} from '../core/table-tsv.js';
 import {normalizeAccessibility,opaqueContrast} from '../core/accessibility.js';
 import {legacyImageSource,legacyPlayableSource,legacyPlaybackSettings,legacyImagePresentation,legacyImageCaption,legacyMediaInspectorValues} from '../core/legacy-media-source.js';
+import {safePublishedMediaUrl as safeStructuredPublishedMediaUrl} from '../core/element-content.js';
 
 test('typed content edits preserve unknown legacy data and undo restores the complete node',()=>{
   const state=createEditorState(createDocument());execute(state,{type:'element.add',payload:{type:'heading',props:{text:'Eredeti cím',legacy:{kept:true}},style:{width:'240px'}}});
@@ -199,6 +200,29 @@ test('Médiatár asset ID renders as a private canvas preview and a public route
     assert.match(authoredNodeHtml(collection),new RegExp(`data-lightbox-src="/media/${assetId}"`));
   }
   assert.throws(()=>normalizeElementContent(node,{assetId:'../private'}),/azonosító/);
+});
+
+test('structured public media rejects multiply encoded private Editor preview routes',()=>{
+  const privateUrls=[
+    '/api/admin/media?id=asset',
+    '/api/%61dmin/media?id=asset',
+    '/%2561pi%252fadmin%252fmedia?id=asset',
+    '/%25252561pi%2525252fadmin%2525252fmedia?id=asset',
+    '/public/%252e%252e/%2561pi/%61dmin/media?id=asset'
+  ];
+  for(const src of privateUrls){
+    assert.equal(safeStructuredPublishedMediaUrl(src),'',src);
+    for(const type of ['gallery','carousel']){
+      const content=type==='gallery'
+        ? {version:1,items:[{src,alt:'Privát kép',caption:''}]}
+        : {version:1,items:[{src,label:'Dia',content:'Leírás',alt:'Privát kép'}]};
+      const html=renderStructuredContent(type,content,'private-'+type);
+      assert.doesNotMatch(html,/<img[^>]*src=/,`${type} cannot render private media URL: ${src}`);
+      assert.doesNotMatch(html,/data-lightbox-src=/,`${type} cannot create a private lightbox URL: ${src}`);
+    }
+  }
+  assert.equal(safeStructuredPublishedMediaUrl('/media/00000000-0000-4000-8000-000000000123'),'/media/00000000-0000-4000-8000-000000000123');
+  assert.equal(safeStructuredPublishedMediaUrl('https://cdn.example.test/image.webp'),'https://cdn.example.test/image.webp');
 });
 
 test('accessibility IDs are unique within a page and invalid mutations roll back',()=>{

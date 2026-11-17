@@ -1,6 +1,6 @@
 import {createCompositionInputs} from './composition-inputs.js';
 /* Inspector-only controls for canonical static content. All edits call the command API. */
-import {createElementContent,normalizeElementContent,isStructuredType} from '../core/element-content.js?v=20261115-d04-tab-id-bound-v1';
+import {createElementContent,normalizeElementContent,isStructuredType} from '../core/element-content.js?v=20261117-d01-private-media-double-decode-v1';
 const focusRequests=new WeakMap();
 const typeLabels={list:'Lista',table:'Táblázat',tabs:'Fülek',accordion:'Lenyitható blokkok',gallery:'Galéria',carousel:'Tartalom-carousel'};
 export function renderStructuredInspector(node,update,{pending=()=>{}}={}){
