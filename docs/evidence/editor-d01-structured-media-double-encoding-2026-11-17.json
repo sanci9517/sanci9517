@@ -13,6 +13,7 @@
   "implementation": {
     "files": [
       "public/editor-v2/core/element-content.js",
+      "public/editor-v2/index.html",
       "public/editor-v2/app.js",
       "public/editor-v2/core/commands.js",
       "public/editor-v2/core/content-profiles.js",
@@ -24,7 +25,7 @@
       "tests/browser/editor-structured-content.test.js",
       "docs/evidence/feature-traceability.json"
     ],
-    "behavior": "Repeatedly decode and URL-canonicalize same-origin paths (bounded at 10 passes), normalize decoded backslashes for route matching, reject malformed or over-nested paths, and block the private /api/admin route before public HTML is rendered. Keep the authenticated Editor's original source value intact. Cache-bust all runtime imports of the changed module."
+    "behavior": "Repeatedly decode and URL-canonicalize same-origin paths (bounded at 10 passes), normalize decoded backslashes for route matching, reject malformed or over-nested paths, and block the private /api/admin route before public HTML is rendered. Keep the authenticated Editor's original source value intact. Cache-bust all runtime imports of the changed module and the Editor index entry script so clients do not retain the prior entry module."
   },
   "checks": {
     "reproduction_before_fix": "FAIL as expected at the new regression assertion: double-encoded private route was returned unchanged.",
@@ -32,6 +33,7 @@
     "editor_core": "PASS: npm run test:editor (17/17 files; Linux subreaper 3/3)",
     "editor_core_engine": "PASS: node --experimental-vm-modules public/editor-v2/tests/core.test.js (85/85)",
     "browser": "PASS: CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-structured-content.test.js (2/2), with local-loopback permission; private URL checks cover one, two, and four encoding layers plus Save/reload/separate Publish/public rendering.",
+    "browser_entry_cache": "PASS: the real Chromium browser loads the current versioned app.js entry URL, preventing a stale cached Editor entry from retaining the old module version.",
     "typecheck": "PASS: npm run typecheck",
     "plan_contract": "PASS: python3 -B tests/plan-contract.test.py (14/14)",
     "canonical_plan": "PASS: one complete 13-part master, one current cursor, 396 source mappings; functional acceptance remains uncertified.",

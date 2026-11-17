@@ -124,6 +124,8 @@ test('structured Inspector editing survives Save, Publish and public interaction
  editor.setDefaultTimeout(15000);viewer.setDefaultTimeout(15000);
  const errors=[];editor.on('pageerror',e=>errors.push('editor:'+e.message));viewer.on('pageerror',e=>errors.push('public:'+e.message));
  await editor.goto(base+'/editor-v2/index.html');
+ assert.match(await editor.locator('script[type="module"][src*="/editor-v2/app.js"]').getAttribute('src'),/20261117-d01-structured-private-media-double-decode-v1/,
+  'the Editor entry module is cache-busted so browsers load the updated public-media guard imports');
  const select=async id=>{
   await editor.locator('.node[data-node-id="'+id+'"]').evaluate(el=>el.click());
   if(await editor.locator('#rightDock').evaluate(el=>el.classList.contains('closed')))await editor.locator('#openInspector').click();
