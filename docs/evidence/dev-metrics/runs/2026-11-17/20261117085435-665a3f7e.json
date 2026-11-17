@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261117085435-665a3f7e",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-17T08:54:35.817Z",
+  "finished_at": "2026-11-17T08:55:07.415Z",
+  "wall_seconds": 32,
+  "paused_seconds": 0,
+  "measured_seconds": 32,
+  "status": "partial",
+  "kind": "docs",
+  "summary": "Updated release evidence with successful exact-SHA Editor Core CI; prior D-07 runtime source remains deployed. Full 77.44.7.D stays open.",
+  "evidence": [
+    "docs/evidence/editor-d07-malformed-page-revision-validation-2026-11-17.json",
+    "https://github.com/sanci9517/sanci9517/actions/runs/44046901062"
+  ],
+  "checks": "GitHub Editor Core run 44046901062 success; six release workflows for e4b54335 success; branch e4b54335 code then 29312dda docs; Worker version 7838537b at 100%; docs-only update targets [skip ci].",
+  "started_revision": "29312dda17963d2c66269693592a9304f7e96919",
+  "finished_revision": "29312dda17963d2c66269693592a9304f7e96919",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
