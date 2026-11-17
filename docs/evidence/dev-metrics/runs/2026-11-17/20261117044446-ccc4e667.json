@@ -14,7 +14,7 @@
   "evidence": [
     "docs/evidence/editor-d-gallery-columns-lifecycle-2026-11-17.json"
   ],
-  "checks": "NOT_RECORDED",
+  "checks": "targeted Chromium 1/1 PASS; editor unit 17/17 + subreaper 3/3 PASS; typecheck PASS; plan-contract 14/14 PASS; canonical plan 13 parts/396 mappings PASS; traceability 396/396 PASS; syntax+diff-check PASS; hosted CI not run [skip ci]; runtime unchanged; Worker API read-only 100% traffic; D remains OPEN",
   "started_revision": "c5dd5004ad00304620fc0ad5beb78fc780ebb567",
   "finished_revision": "0ce548764c07c2a04debbd20c053ed2154cc05bb",
   "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
