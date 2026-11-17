@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261117045020-ffb8cb15",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-17T04:50:20.707Z",
+  "finished_at": "2026-11-17T04:53:04.781Z",
+  "wall_seconds": 164,
+  "paused_seconds": 0,
+  "measured_seconds": 164,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "Extended D gallery acceptance with per-image fit through Inspector, Canvas, draft Save, reload, separate Publish and all responsive public breakpoints. Targeted Chromium 1/1, Editor unit 17/17, typecheck, plan-contract and traceability passed; full D remains open.",
+  "evidence": [
+    "docs/evidence/editor-d-gallery-item-fit-lifecycle-2026-11-17.json"
+  ],
+  "checks": "targeted Chromium 1/1 PASS; editor unit 17/17 plus runner 3/3 PASS; typecheck PASS; plan-contract 14/14 PASS; canonical plan 13 files/396 mappings PASS; traceability 396/396 PASS; syntax and diff-check PASS; Actions intentionally [skip ci]; production Worker read-only 100% unchanged; D OPEN",
+  "started_revision": "92f9cae1c165d8da2022a08f0ee30c028576c268",
+  "finished_revision": "b98fea68a6836ad4a9b98ba53e81ac83d426e2ae",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
