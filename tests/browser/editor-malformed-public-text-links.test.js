@@ -226,4 +226,20 @@ test('D-07 Editor rejects corrupt Page Model child lists safely without rewritin
     assert.equal(JSON.stringify(state.document),malformedPersisted,'malformed persisted pages remain unchanged for recovery');
     state.document.pages[pageId]=structuredClone(validPage);
   }
+
+  // These records are objects, so the Editor's shallow canonical-envelope
+  // check allows them through. The deep Page Model validator must still fail
+  // closed before state creation, revision assignment, or any write.
+  for(const malformed of [{},{id:pageId}]){
+    state.document.pages[pageId]=malformed;
+    const malformedPersisted=JSON.stringify(state.document);
+    await tab.reload();
+    await tab.waitForTimeout(300);
+    assert.match(await tab.locator('#saveStatus').textContent(),/Editor betöltési hiba:.*Invalid editor document:/i,
+      'object-shaped but incomplete saved pages produce controlled deep-validation feedback');
+    assert.deepEqual(errors,[],'incomplete page objects do not escape the Editor boot error boundary');
+    assert.deepEqual(writes,[],'incomplete page objects are never silently Saved or Published');
+    assert.equal(JSON.stringify(state.document),malformedPersisted,'incomplete persisted pages remain unchanged for recovery');
+    state.document.pages[pageId]=structuredClone(validPage);
+  }
 });
