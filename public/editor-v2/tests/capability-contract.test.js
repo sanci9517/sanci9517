@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import {NODE_TYPES} from '../core/schema.js';
 import {getElementCapability,getElementInspectorContract} from '../core/capability-matrix.js';
-import {getProperty,listProperties,registerProperty} from '../core/property-registry.js?v=20261117-edt040-motion-properties';
+import {getProperty,listProperties,registerProperty} from '../core/property-registry.js?v=20261117-edt043-motion-guidance';
 import {getInspectorValueContract,normalizeInspectorValue} from '../core/property-values.js';
 import {STYLE_MAP} from '../core/canvas-engine.js';
 

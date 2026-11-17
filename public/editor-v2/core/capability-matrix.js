@@ -1,6 +1,6 @@
 import {CONTENT_TYPES,STRUCTURAL_TYPES} from './authored-content.js?v=20261117-d03-invalid-media-id-guidance-v1';
 import { NODE_TYPES } from './schema.js';
-import { listProperties } from './property-registry.js?v=20261117-edt040-motion-properties';
+import { listProperties } from './property-registry.js?v=20261117-edt043-motion-guidance';
 import {getInspectorValueContract} from './property-values.js';
 
 // A palette entry is only complete when Inspector, canvas and public behavior

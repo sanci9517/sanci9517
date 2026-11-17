@@ -1,0 +1,80 @@
+{
+  "schema": "sanci.editor.ci-regressions.v1",
+  "recorded_at_utc": "2026-11-17T18:12:00Z",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "base_sha": "a0e90333cc021a0c98a169d9d474b531c0f79772",
+    "active_plan_cursor": "77.44 / WEB-011 -> 77.44.7.D",
+    "d_gate_status": "OPEN / NOT_CERTIFIED"
+  },
+  "finding": {
+    "workflow": "Editor Core Test",
+    "run_id": 44139142206,
+    "job_id": 134236793025,
+    "tested_commit": "022bab8a7418d2c97c312d941551e803cd5809e1",
+    "result": "FAIL",
+    "failures": [
+      {
+        "test": "tests/browser/editor-inspector-richtext-controls.test.js",
+        "cause": "The new EDT-040 motion.easing Inspector help was shorter than the existing 100-character detailed-guidance contract.",
+        "fix": "Expanded the Hungarian help to explain the finite timing choices, safe default and reduced-risk non-looping behavior."
+      },
+      {
+        "test": "tests/browser/editor-richtext-save-publish.test.js",
+        "cause": "The browser test expected a native alert, while the current guarded new-page flow correctly leaves the dialog closed and reports the unsaved-draft instruction in the Editor status area.",
+        "fix": "Assert the modal remains closed, the authored draft remains present, and the in-app status gives the save instruction."
+      },
+      {
+        "test": "tests/browser/editor-structured-content.test.js",
+        "cause": "A brittle assertion pinned the Editor cache key to an unrelated prior media patch.",
+        "fix": "Assert that the entry module has a nonempty cache-busting version."
+      }
+    ]
+  },
+  "runtime_change": {
+    "summary": "Expanded the motion-easing Inspector help and advanced the property-registry module cache key consistently across the Editor runtime modules and unit tests to avoid duplicate registry singletons.",
+    "save_publish": "unchanged; Save remains separate from explicit Publish.",
+    "production_deployment": "PENDING normal fast-forward push, exact-SHA automatic build, and post-deploy verification."
+  },
+  "local_checks": {
+    "focused_chromium": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test tests/browser/editor-inspector-richtext-controls.test.js tests/browser/editor-richtext-save-publish.test.js tests/browser/editor-structured-content.test.js",
+      "result": "PASS; 6/6 browser tests."
+    },
+    "editor_unit": {
+      "command": "npm run test:editor",
+      "result": "PASS; 22/22 files, runner subreaper 3/3."
+    },
+    "typecheck": "PASS; npm run typecheck.",
+    "migration_safety": "PASS; npm run test:web013:migration-gate; no D1 migration is auto-applied by deploy:safe.",
+    "plan_contract": "PASS; 14/14.",
+    "canonical_plan": "PASS; one 13-file master, 396 mappings.",
+    "traceability": "PASS; 396/396 source mappings refreshed, acceptance remains NOT_CERTIFIED.",
+    "active_point": "PASS audit; 77.44.7.D OPEN / NOT_CERTIFIED.",
+    "wrangler_dry_run": "PASS; Wrangler 4.130.0 read 194 public assets, 391.54 KiB (100.47 KiB gzip), no publish.",
+    "diff_and_syntax": "PASS."
+  },
+  "production_preflight": {
+    "d1_query": "SELECT name FROM d1_migrations ORDER BY name",
+    "rows_read": 35,
+    "latest_migration": "0029_media_archive_unicode_additive.sql",
+    "rows_written": 0,
+    "changes": 0,
+    "changed_db": false
+  },
+  "pre_release_worker_snapshot": {
+    "deployment_id": "e2b22dff-da74-4f6d-bd84-b04f5a79576b",
+    "version_id": "32572a35-78ea-43d5-ae5d-fcf96d03a1ca",
+    "traffic_percent": 100,
+    "created_on": "2026-11-17T17:40:47.735825Z"
+  },
+  "cost_and_scope": {
+    "new_paid_service_or_dependency": false,
+    "new_cost_huf": 0,
+    "production_d1_write_or_migration": false,
+    "production_r2_mutation_or_delete": false,
+    "complete_editor_acceptance": "DEFERRED until all Editor scope is implemented",
+    "full_d_acceptance": "OPEN / NOT_CERTIFIED"
+  }
+}

@@ -10,7 +10,7 @@ import { createDocument, createNode, NODE_TYPES, normalizeRichText } from '../co
 import { assertValidEditorDocument,findReachableNodeIds,validateEditorDocument,validateHierarchy } from '../core/validation.js';
 import { createEditorState, activePage } from '../core/state.js';
 import { beginTransaction, commitTransaction, execute, executeBatch, rollbackTransaction } from '../core/commands.js';
-import { getProperty, listProperties, listPropertyGroups, registerProperty } from '../core/property-registry.js?v=20261117-edt040-motion-properties';
+import { getProperty, listProperties, listPropertyGroups, registerProperty } from '../core/property-registry.js?v=20261117-edt043-motion-guidance';
 import { hasResponsiveOverride, resolveResponsiveValue, setResponsiveValue } from '../core/responsive.js';
 import {collectVisibleDescendants} from '../core/visibility.js';
 import {normalizeVisibility,isVisibleOnDevice,getNodeVisibilityState} from '../core/visibility.js';

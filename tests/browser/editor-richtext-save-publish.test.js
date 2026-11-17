@@ -229,11 +229,9 @@ test('actual Inspector keeps unsaved Rich Text through Ctrl+S, reload and separa
   assert.equal(await tab.locator('.richtext-editor-surface a').getAttribute('href'),'/p/mobile');
   assert.equal(await tab.locator('.richtext-editor-surface a').getAttribute('target'),'_self');
   assert.equal(published.pages[pageId].nodes[nodeId].props.richText.blocks[0].children.find(run=>run.link).link.href,'/p/home');
-  const [warning]=await Promise.all([
-    tab.waitForEvent('dialog').then(async dialog=>{const message=dialog.message();await dialog.dismiss();return message}),
-    tab.locator('#newPage').evaluate(el=>el.click())
-  ]);
-  assert.match(warning,/Először mentsd/);
+  await tab.locator('#newPage').evaluate(el=>el.click());
+  assert.equal(await tab.locator('#newPageDialog').evaluate(el=>el.open),false,'a new page cannot discard the in-memory Rich Text draft');
+  assert.match(await tab.locator('#saveStatus').textContent(),/Előbb mentsd/,'the in-app status explains how to keep the unsaved Rich Text draft');
   assert.equal(await tab.locator('.richtext-editor-surface a').getAttribute('href'),'/p/mobile');
 
   // Live Inspector input updates the canvas while focus and the caret stay put.

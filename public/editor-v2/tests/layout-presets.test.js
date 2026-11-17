@@ -5,7 +5,7 @@ import {createEditorState,activePage} from '../core/state.js';
 import {execute} from '../core/commands.js';
 import {LAYOUT_TYPES,LAYOUT_PRESETS,isManagedLayout,isLayoutPropertyRelevant,explicitGridColumnCount} from '../core/layout-presets.js';
 import {resolveNodeStyle} from '../core/canvas-engine.js';
-import {getProperty,listProperties} from '../core/property-registry.js?v=20261117-edt040-motion-properties';
+import {getProperty,listProperties} from '../core/property-registry.js?v=20261117-edt043-motion-guidance';
 import {normalizeInspectorValue} from '../core/property-values.js';
 
 function fixture(){
