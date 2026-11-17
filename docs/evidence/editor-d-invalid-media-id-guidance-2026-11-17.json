@@ -17,14 +17,20 @@
       "tests/editor-content-initial-publication-contract.test.js"
     ],
     "traceability_rebuilt": "docs/evidence/feature-traceability.json",
-    "manual_physical_acceptance": "DEFERRED until complete Visual Editor scope"
+    "manual_physical_acceptance": "DEFERRED until complete Visual Editor scope",
+    "follow_up_runtime_fix": "Desktop and mobile Publish actions begin disabled until an Editor page is loaded; the storage browser regression waits for the loaded unpublished draft state before clicking. This prevents silent no-op publication attempts during initialization."
   },
   "defect": {
     "before": "Publication guidance treated any non-empty assetId as a valid media source, while the shared Editor/server validator accepts only a canonical Media Library UUID. For malformed saved values, the Inspector could show no guidance although Publish rejected the page.",
     "after": "Asset IDs use the same UUID predicate as content validation; malformed IDs in image, video poster, gallery or carousel return actionable field guidance before source/alt checks. The server publication gate remains fail-closed."
   },
   "acceptance": {
-    "malformed_uuid_matrix": ["image.assetId", "video.posterAssetId", "gallery.items[].assetId", "carousel.items[].assetId"],
+    "malformed_uuid_matrix": [
+      "image.assetId",
+      "video.posterAssetId",
+      "gallery.items[].assetId",
+      "carousel.items[].assetId"
+    ],
     "publication_stays_blocked": "PASS: INCOMPLETE_EDITOR_CONTENT for all four invalid cases",
     "guidance_points_to_repair_field": "PASS: fieldKey assetId/posterAssetId/items",
     "input_document_not_mutated": "PASS",
@@ -32,35 +38,137 @@
     "save_and_publish_separate": "UNCHANGED"
   },
   "checks": [
-    {"command":"npm run test:editor", "result":"PASS", "files":17, "tests":217, "failed":0, "runner_guard_tests":3},
-    {"command":"node --input-type=module -e \"import('./tests/editor-content-initial-publication-contract.test.js')\"", "result":"PASS", "tests":12, "failed":0},
-    {"command":"CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-publication-guidance.test.js", "result":"PASS", "tests":1, "failed":0, "duration_ms":2947},
-    {"command":"npm run test:schedule", "result":"PASS", "tests":45, "failed":0},
-    {"command":"node /tmp/sanci-ts-types/node_modules/typescript/bin/tsc --noEmit --typeRoots /tmp/sanci-ts-types/node_modules", "result":"PASS", "typescript":"5.9.2", "workers_types":"5.20260908.1"},
-    {"command":"npm run test:web013:migration-gate", "result":"PASS"},
-    {"command":"python3 tests/plan-contract.test.py", "result":"PASS", "tests":14},
-    {"command":"python3 scripts/check-canonical-plan.py", "result":"PASS", "master_files":13, "feature_mappings":396},
-    {"command":"python3 scripts/build-feature-traceability.py --check", "result":"PASS", "feature_mappings":396},
-    {"command":"python3 scripts/audit-active-plan-point.py", "result":"PASS", "status":"OPEN / NOT_CERTIFIED", "partial_source":146, "unverified":250},
-    {"command":"Wrangler 4.130.0 deploy --dry-run", "result":"PASS", "assets_read":182, "deploy_created":false},
-    {"command":"node --check changed JavaScript files; git diff --check", "result":"PASS"}
+    {
+      "command": "npm run test:editor",
+      "result": "PASS",
+      "files": 17,
+      "tests": 217,
+      "failed": 0,
+      "runner_guard_tests": 3
+    },
+    {
+      "command": "node --input-type=module -e \"import('./tests/editor-content-initial-publication-contract.test.js')\"",
+      "result": "PASS",
+      "tests": 12,
+      "failed": 0
+    },
+    {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-publication-guidance.test.js",
+      "result": "PASS",
+      "tests": 1,
+      "failed": 0,
+      "duration_ms": 2947
+    },
+    {
+      "command": "npm run test:schedule",
+      "result": "PASS",
+      "tests": 45,
+      "failed": 0
+    },
+    {
+      "command": "node /tmp/sanci-ts-types/node_modules/typescript/bin/tsc --noEmit --typeRoots /tmp/sanci-ts-types/node_modules",
+      "result": "PASS",
+      "typescript": "5.9.2",
+      "workers_types": "5.20260908.1"
+    },
+    {
+      "command": "npm run test:web013:migration-gate",
+      "result": "PASS"
+    },
+    {
+      "command": "python3 tests/plan-contract.test.py",
+      "result": "PASS",
+      "tests": 14
+    },
+    {
+      "command": "python3 scripts/check-canonical-plan.py",
+      "result": "PASS",
+      "master_files": 13,
+      "feature_mappings": 396
+    },
+    {
+      "command": "python3 scripts/build-feature-traceability.py --check",
+      "result": "PASS",
+      "feature_mappings": 396
+    },
+    {
+      "command": "python3 scripts/audit-active-plan-point.py",
+      "result": "PASS",
+      "status": "OPEN / NOT_CERTIFIED",
+      "partial_source": 146,
+      "unverified": 250
+    },
+    {
+      "command": "Wrangler 4.130.0 deploy --dry-run",
+      "result": "PASS",
+      "assets_read": 182,
+      "deploy_created": false
+    },
+    {
+      "command": "node --check changed JavaScript files; git diff --check",
+      "result": "PASS"
+    },
+    {
+      "command": "npm run test:editor",
+      "result": "PASS",
+      "files": 17,
+      "failed": 0,
+      "runner_guard_tests": 3
+    },
+    {
+      "command": "node --experimental-loader ./tests/ts-extension-loader.mjs --test tests/editor-content-initial-publication-contract.test.js tests/web013-tenant-pages-editor.test.js",
+      "result": "PASS",
+      "files": 2,
+      "failed": 0
+    },
+    {
+      "command": "node --check tests/editor-content-initial-publication-contract.test.js tests/browser/media-worker-storage.test.mjs; git diff --check",
+      "result": "PASS"
+    },
+    {
+      "command": "Wrangler 4.130.0 deploy --dry-run",
+      "result": "PASS",
+      "assets_read": 182,
+      "bundle_bytes": 385770,
+      "gzip_bytes": 98830,
+      "deploy_created": false
+    },
+    {
+      "command": "npm run test:web013",
+      "result": "BLOCKED_IN_LOCAL_SANDBOX",
+      "reason": "The temporary dependency installation could not access the configured proxy; local miniflare package resolution did not complete. The targeted WEB-013 tenant editor test and CI source test results are recorded separately."
+    }
   ],
   "production_d1_preflight": {
-    "method":"Cloudflare D1 Query API; SELECT only",
-    "database_id":"5a4a5e96-fdad-421a-a33c-143daaf33e98",
-    "table_inventory_query":{"changed_db":false,"changes":0,"rows_written":0,"table_count":29},
-    "migration_ledger_query":{"migration_count":35,"latest_migration":"0029_media_archive_unicode_additive.sql","changed_db":false,"changes":0,"rows_written":0}
+    "method": "Cloudflare D1 Query API; SELECT only",
+    "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
+    "table_inventory_query": {
+      "changed_db": false,
+      "changes": 0,
+      "rows_written": 0,
+      "table_count": 29,
+      "rows_read": 213
+    },
+    "migration_ledger_query": {
+      "migration_count": 35,
+      "latest_migration": "0029_media_archive_unicode_additive.sql",
+      "changed_db": false,
+      "changes": 0,
+      "rows_written": 0,
+      "rows_read": 3
+    }
   },
   "production_before_release": {
-    "deployment_id":"8dc6dc5d-1857-4684-9b8b-38b721145793",
-    "worker_version_id":"0658af0d-b223-4054-b839-048941f87ce8",
-    "traffic_percent":100,
-    "note":"Read-only Cloudflare Deployments API snapshot before this candidate; not a verification of the candidate release."
+    "deployment_id": "8dc6dc5d-1857-4684-9b8b-38b721145793",
+    "worker_version_id": "0658af0d-b223-4054-b839-048941f87ce8",
+    "traffic_percent": 100,
+    "note": "Read-only Cloudflare Deployments API snapshot before this candidate; not a verification of the candidate release."
   },
-  "ci": "PENDING: runtime commit push should invoke exact-SHA Editor Core push workflow. No manual dispatch or rerun was sent.",
-  "deployment": "PENDING: candidate not pushed yet; no Worker deployment or production health/hash verification claimed.",
+  "ci": "Candidate f578370e92d1c7358875d0cc917445708b8e3664: F0 verify failed at test:web013 due to stale expected INVALID_EDITOR_CONTENT vs actual INCOMPLETE_EDITOR_CONTENT; the assertion is corrected and its targeted server regression passes. Editor Core passed typecheck, core tests, D1 ledger, media API and showcase checks but failed browser storage at the immediate Publish click (status remained Mentve); this follow-up disables Publish until the page loads and waits for the enabled Újrapublikálás state. Follow-up runtime-release CI pending; local full web013 suite is blocked by this sandbox’s missing/inaccessible miniflare dependencies.",
+  "deployment": "f578370e92d1c7358875d0cc917445708b8e3664 deployed: Cloudflare deployment b1c8db0f-bd93-44ed-9eb8-902b36d07c6d, Worker version 10f160c6-8498-4b51-be16-2803f811d8c8 at 100%; GitHub read-only production smoke passed HTTP 200 health and SHA-256 for its configured 11 source files. The workflow source list is expanded in this follow-up to cover every changed public Editor module; new candidate deployment/readback pending.",
   "cost": "0 Ft new paid service, production data mutation, D1 migration, R2 deletion, or dependency change. Temporary CLI/types were installed under /tmp only.",
   "overall_d_status": "OPEN / NOT_CERTIFIED; this is a single D-01/D-05 field-guidance subgate, not D-01–D-07 closure.",
   "manual_physical_editor_acceptance": "DEFERRED until complete Visual Editor scope.",
-  "metrics_run_id": "20261117052227-2e8480ab"
+  "metrics_run_id": "20261117052227-2e8480ab",
+  "follow_up_commit": "PENDING"
 }

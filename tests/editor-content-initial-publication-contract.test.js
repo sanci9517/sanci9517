@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
 import test from 'node:test';
 import {createDocument, createNode} from '../public/editor-v2/core/schema.js';
 import {createElementContent, validateElementContent as validateStructuredContent} from '../public/editor-v2/core/element-content.js';
@@ -7,6 +8,12 @@ import {getElementContentContract} from '../public/editor-v2/core/content-profil
 import {validatePublishDocument} from '../src/core/editor-validation.ts';
 import {createEditorState} from '../public/editor-v2/core/state.js';
 import {execute} from '../public/editor-v2/core/commands.js';
+
+test('Publish actions start disabled until a loaded page establishes publish eligibility',()=>{
+  const html=readFileSync(new URL('../public/editor-v2/index.html',import.meta.url),'utf8');
+  assert.match(html,/<button id="publish"[^>]*\sdisabled(?:\s|>)/,'desktop Publish must not silently accept clicks before Editor initialization');
+  assert.match(html,/<button id="mobilePublish"[^>]*\sdisabled(?:\s|>)/,'mobile Publish must use the same initialized-page guard');
+});
 
 // 77.44.7.A: regression evidence for real initial values versus publication gates.
 // Do not synthesize initial defaults from Inspector field metadata.

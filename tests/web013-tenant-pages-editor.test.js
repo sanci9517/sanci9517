@@ -208,7 +208,7 @@ test('media UUID rejects malformed authored source before Publish and accepts va
   const before=f.db.prepare('SELECT published_content_json FROM pages WHERE id=?').get('b').published_content_json;
   const rejected=await f.editor('editor','other','POST',{pageId:'b',expectedVersion:2,document,publish:true});
   assert.equal(rejected.status,409);
-  assert.equal((await rejected.json()).error.code,'INVALID_EDITOR_CONTENT','authored content rejects the malformed ID before the secondary media source gate');
+  assert.equal((await rejected.json()).error.code,'INCOMPLETE_EDITOR_CONTENT','the authored-content preflight rejects malformed media IDs before lower-level media validation');
   assert.equal(f.db.prepare('SELECT published_content_json FROM pages WHERE id=?').get('b').published_content_json,before);
   page.nodes.image.props.assetId=valid.toUpperCase();
   assert.equal((await f.editor('editor','other','POST',{pageId:'b',expectedVersion:2,document,publish:true})).status,200);

@@ -235,6 +235,7 @@ print(json.dumps(result))`],{cwd:root,encoding:'utf8'}));
  assert.equal(savedDraftRow.published_content_json,publicationBefore.published_content_json,'draft Save preserves the published snapshot');
  assert.equal(savedDraftRow.published_revision_id,publicationBefore.published_revision_id);
  await editor.reload();
+ await editor.waitForFunction(()=>{const button=document.querySelector('#publish');return button&&!button.disabled&&button.textContent?.trim()==='Újrapublikálás'});
  const malformedPublishCalls=calls.length;
  await editor.locator('#publish').click();
  await editor.waitForTimeout(250);
