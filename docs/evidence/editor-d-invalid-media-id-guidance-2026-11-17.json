@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "plan_item": "77.44.7.D / D-01, D-05 (D-07 malformed persisted content cross-check)",
+  "status": "partial",
+  "scope": "Fail-closed, field-level publication guidance for malformed non-empty Media Library UUIDs in authored image, video poster, gallery and carousel content; invalidate the published asset cache token so the fixed Inspector code is loaded.",
+  "base_commit": "ffd1621dee129ecc1caf3f79810dbd7294f8997d",
+  "remote_branch_at_start": "ffd1621dee129ecc1caf3f79810dbd7294f8997d",
+  "changes": {
+    "runtime": true,
+    "public_assets": true,
+    "production_d1": false,
+    "production_r2": false,
+    "dependencies_in_repository": false,
+    "test_files": [
+      "public/editor-v2/tests/core.test.js",
+      "tests/editor-accessible-icon-label.test.js",
+      "tests/editor-content-initial-publication-contract.test.js"
+    ],
+    "traceability_rebuilt": "docs/evidence/feature-traceability.json",
+    "manual_physical_acceptance": "DEFERRED until complete Visual Editor scope"
+  },
+  "defect": {
+    "before": "Publication guidance treated any non-empty assetId as a valid media source, while the shared Editor/server validator accepts only a canonical Media Library UUID. For malformed saved values, the Inspector could show no guidance although Publish rejected the page.",
+    "after": "Asset IDs use the same UUID predicate as content validation; malformed IDs in image, video poster, gallery or carousel return actionable field guidance before source/alt checks. The server publication gate remains fail-closed."
+  },
+  "acceptance": {
+    "malformed_uuid_matrix": ["image.assetId", "video.posterAssetId", "gallery.items[].assetId", "carousel.items[].assetId"],
+    "publication_stays_blocked": "PASS: INCOMPLETE_EDITOR_CONTENT for all four invalid cases",
+    "guidance_points_to_repair_field": "PASS: fieldKey assetId/posterAssetId/items",
+    "input_document_not_mutated": "PASS",
+    "cache_busting": "PASS: index/app and dependent Editor modules use new 20261117-d03-invalid-media-id-guidance-v1 token",
+    "save_and_publish_separate": "UNCHANGED"
+  },
+  "checks": [
+    {"command":"npm run test:editor", "result":"PASS", "files":17, "tests":217, "failed":0, "runner_guard_tests":3},
+    {"command":"node --input-type=module -e \"import('./tests/editor-content-initial-publication-contract.test.js')\"", "result":"PASS", "tests":12, "failed":0},
+    {"command":"CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-publication-guidance.test.js", "result":"PASS", "tests":1, "failed":0, "duration_ms":2947},
+    {"command":"npm run test:schedule", "result":"PASS", "tests":45, "failed":0},
+    {"command":"node /tmp/sanci-ts-types/node_modules/typescript/bin/tsc --noEmit --typeRoots /tmp/sanci-ts-types/node_modules", "result":"PASS", "typescript":"5.9.2", "workers_types":"5.20260908.1"},
+    {"command":"npm run test:web013:migration-gate", "result":"PASS"},
+    {"command":"python3 tests/plan-contract.test.py", "result":"PASS", "tests":14},
+    {"command":"python3 scripts/check-canonical-plan.py", "result":"PASS", "master_files":13, "feature_mappings":396},
+    {"command":"python3 scripts/build-feature-traceability.py --check", "result":"PASS", "feature_mappings":396},
+    {"command":"python3 scripts/audit-active-plan-point.py", "result":"PASS", "status":"OPEN / NOT_CERTIFIED", "partial_source":146, "unverified":250},
+    {"command":"Wrangler 4.130.0 deploy --dry-run", "result":"PASS", "assets_read":182, "deploy_created":false},
+    {"command":"node --check changed JavaScript files; git diff --check", "result":"PASS"}
+  ],
+  "production_d1_preflight": {
+    "method":"Cloudflare D1 Query API; SELECT only",
+    "database_id":"5a4a5e96-fdad-421a-a33c-143daaf33e98",
+    "table_inventory_query":{"changed_db":false,"changes":0,"rows_written":0,"table_count":29},
+    "migration_ledger_query":{"migration_count":35,"latest_migration":"0029_media_archive_unicode_additive.sql","changed_db":false,"changes":0,"rows_written":0}
+  },
+  "production_before_release": {
+    "deployment_id":"8dc6dc5d-1857-4684-9b8b-38b721145793",
+    "worker_version_id":"0658af0d-b223-4054-b839-048941f87ce8",
+    "traffic_percent":100,
+    "note":"Read-only Cloudflare Deployments API snapshot before this candidate; not a verification of the candidate release."
+  },
+  "ci": "PENDING: runtime commit push should invoke exact-SHA Editor Core push workflow. No manual dispatch or rerun was sent.",
+  "deployment": "PENDING: candidate not pushed yet; no Worker deployment or production health/hash verification claimed.",
+  "cost": "0 Ft new paid service, production data mutation, D1 migration, R2 deletion, or dependency change. Temporary CLI/types were installed under /tmp only.",
+  "overall_d_status": "OPEN / NOT_CERTIFIED; this is a single D-01/D-05 field-guidance subgate, not D-01–D-07 closure.",
+  "manual_physical_editor_acceptance": "DEFERRED until complete Visual Editor scope.",
+  "metrics_run_id": "20261117052227-2e8480ab"
+}

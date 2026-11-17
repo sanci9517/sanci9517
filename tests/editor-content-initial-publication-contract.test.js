@@ -200,6 +200,26 @@ test('publication guidance uses the same required-field rule as server publicati
 });
 
 
+test('publication guidance rejects malformed media-library IDs before source-validity guidance',()=>{
+ const badId='not-a-media-uuid';
+ const cases=[
+  ['image',{assetId:badId,src:'/image.png',alt:'Leírás'},'assetId'],
+  ['video',{src:'/video.webm',posterAssetId:badId},'posterAssetId'],
+  ['gallery',{items:[{assetId:badId,src:'/gallery.png',alt:'Leírás',caption:''}]},'items'],
+  ['carousel',{items:[{assetId:badId,src:'/carousel.png',alt:'Leírás',caption:'Felirat'}]},'items']
+ ];
+ for(const [type,props,fieldKey] of cases){
+  const {node,publish}=probe(type,{metadata:{contentVersion:1},props});
+  const before=structuredClone(node);
+  const guidance=getPublicationContentGuidance(node);
+  assert.ok(guidance,type);
+  assert.equal(guidance.fieldKey,fieldKey,type);
+  assert.match(guidance.message,/azonosító.*érvénytelen/,type);
+  assert.equal(publish(),'INCOMPLETE_EDITOR_CONTENT',type);
+  assert.deepEqual(node,before,type);
+ }
+});
+
 test('weekly Schedule remains an Editor-owned v1 document and passes server publish validation',()=>{
   const state=createEditorState();
   execute(state,{type:'element.add',payload:{type:'schedule',props:{schedule:{

@@ -1219,7 +1219,7 @@ test('Authored video uses site-scoped poster assets without exposing video uploa
  assert.match(authoredNodeHtml(activePage(state).nodes[videoId]),new RegExp('poster="/media/'+id+'"'));
  const invalid=structuredClone(state.document);
  invalid.pages[pageId].nodes[videoId].props.posterAssetId='invalid';
- assert.equal(validatePublishDocument(invalid,pageId),'INVALID_EDITOR_CONTENT');
+ assert.equal(validatePublishDocument(invalid,pageId),'INCOMPLETE_EDITOR_CONTENT');
 });
 
 test('new media remains editable as draft and publish requires a safe source and accessible image', () => {

@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261117052227-2e8480ab",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-17T05:22:27.146Z",
+  "finished_at": "2026-11-17T05:36:42.719Z",
+  "wall_seconds": 856,
+  "paused_seconds": 0,
+  "measured_seconds": 856,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "D-01/D-05: a hibás Médiatár-azonosítókkal mentett kép, videóbélyegkép, galéria és carousel most mezőszintű publikálási útmutatót mutat; editor tesztek/dry-run/SELECT-only előellenőrzés zöld, remote release még függő.",
+  "evidence": [
+    "docs/evidence/editor-d-invalid-media-id-guidance-2026-11-17.json"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "ffd1621dee129ecc1caf3f79810dbd7294f8997d",
+  "finished_revision": "ffd1621dee129ecc1caf3f79810dbd7294f8997d",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

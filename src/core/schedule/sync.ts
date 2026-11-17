@@ -1,4 +1,3 @@
-import type { D1Database } from "@cloudflare/workers-types";
 import { mapTwitchScheduleSegment } from "./mapper.ts";
 import { isTwitchScheduleResponseError } from "./twitch-errors.ts";
 import { normalizeScheduleSyncWindow, type ScheduleSyncStatus, type ScheduleSyncWindow, type TwitchScheduleSnapshot } from "./types.ts";

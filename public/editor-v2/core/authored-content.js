@@ -1,4 +1,4 @@
-import { validatedLinkHref } from './richtext-links.js?v=20261116-d02-private-media-link-guard-v1';
+import { validatedLinkHref } from './richtext-links.js?v=20261117-d03-invalid-media-id-guidance-v1';
 
 export const CONTENT_VERSION=1;
 // Shared by the editor picker and the server-side media upload/list contract.
@@ -145,17 +145,22 @@ export function getPublicationContentGuidance(node){
   const p=contentProperties(node);
   const hasText=value=>typeof value==='string'?Boolean(value.trim()):typeof value==='number'&&Number.isFinite(value);
   const hasMediaSource=value=>typeof value==='string'&&Boolean(value.trim())&&Boolean(safePublishedMediaUrl(value));
-  const hasAssetId=value=>typeof value==='string'&&Boolean(value.trim());
+  const hasAssetId=value=>typeof value==='string'&&MEDIA_ASSET_ID.test(value);
+  const hasInvalidAssetId=value=>value!==undefined&&value!==null&&value!==''&&!hasAssetId(value);
   const items=Array.isArray(p.items)?p.items:[];
   const rows=Array.isArray(p.rows)?p.rows:[];
   let missing=null;
   const requireField=(fieldKey,message)=>{missing={fieldKey,message}};
-  if(['image','video','audio'].includes(node.type)&&!hasMediaSource(p.src)&&!hasAssetId(p.assetId))requireField('src','Válassz Médiatár-fájlt vagy adj meg médiaforrást.');
-  if(node.type==='video'&&!hasAssetId(p.posterAssetId)&&isEditorOnlyMediaUrl(safeSrc(p.poster)||p.poster))requireField('poster','A szerkesztői előnézeti útvonal nem használható videó-borítóképként a publikált oldalon.');
+  if(['image','video','audio'].includes(node.type)&&hasInvalidAssetId(p.assetId))requireField('assetId','A Médiatár-azonosító érvénytelen. Válassz új fájlt, vagy töröld a Médiatár-választást.');
+  if(node.type==='video'&&hasInvalidAssetId(p.posterAssetId))requireField('posterAssetId','A borítókép Médiatár-azonosítója érvénytelen. Válassz új borítóképet, vagy töröld a választást.');
+  if(['image','video','audio'].includes(node.type)&&!missing&&!hasMediaSource(p.src)&&!hasAssetId(p.assetId))requireField('src','Válassz Médiatár-fájlt vagy adj meg médiaforrást.');
+  if(node.type==='video'&&!missing&&!hasAssetId(p.posterAssetId)&&isEditorOnlyMediaUrl(safeSrc(p.poster)||p.poster))requireField('poster','A szerkesztői előnézeti útvonal nem használható videó-borítóképként a publikált oldalon.');
   if(node.type==='image'&&(hasMediaSource(p.src)||hasAssetId(p.assetId))&&!p.decorative&&!hasText(p.alt))requireField('alt','Adj meg képleírást, vagy jelöld a képet díszítőnek.');
   if(['link','button'].includes(node.type)&&!safeHref(p.href))requireField('href','Adj meg hivatkozási célt. Művelet nélküli gomb nem publikálható.');
   if(node.type==='heading'&&!hasText(p.text))requireField('text','A címsor nem lehet üres.');
-  if(['gallery','carousel'].includes(node.type)&&(!items.length||items.some(item=>!item||typeof item!=='object'||Array.isArray(item)||(!hasMediaSource(item.src)&&!hasAssetId(item.assetId))||!(hasText(item.alt)||hasText(item.caption)))))requireField('items','A képekhez Médiatár-fájl vagy forrás, és leírás vagy képaláírás szükséges.');
+  if(['gallery','carousel'].includes(node.type)&&items.some(item=>item&&typeof item==='object'&&!Array.isArray(item)&&hasInvalidAssetId(item.assetId)))requireField('items','Egy kép Médiatár-azonosítója érvénytelen. Válassz új fájlt, vagy töröld az adott választást.');
+  const hasIncompleteMediaItem=item=>!item||typeof item!=='object'||Array.isArray(item)||(!hasMediaSource(item.src)&&!hasAssetId(item.assetId))||!(hasText(item.alt)||hasText(item.caption));
+  if(['gallery','carousel'].includes(node.type)&&!missing&&(!items.length||items.some(hasIncompleteMediaItem)))requireField('items','A képekhez Médiatár-fájl vagy forrás, és leírás vagy képaláírás szükséges.');
   if(['tabs','accordion','dropdown'].includes(node.type)&&(!items.length||items.some(item=>!item||typeof item!=='object'||Array.isArray(item)||!hasText(item.title))))requireField('items','Legalább egy elnevezett rész szükséges.');
   if(node.type==='table'&&(!rows.length||!rows.some(row=>Array.isArray(row)&&row.some(hasText))))requireField('rows','A táblázatnak legyen tartalma.');
   if(node.type==='list'&&(!items.length||items.some(item=>!item||typeof item!=='object'||Array.isArray(item)||!hasText(item.text))))requireField('items','Adj meg legalább egy nem üres listaelemet.');

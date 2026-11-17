@@ -1,4 +1,4 @@
-import {CONTENT_TYPES,STRUCTURAL_TYPES} from './authored-content.js?v=20261116-d02-private-media-link-guard-v1';
+import {CONTENT_TYPES,STRUCTURAL_TYPES} from './authored-content.js?v=20261117-d03-invalid-media-id-guidance-v1';
 import { NODE_TYPES } from './schema.js';
 import { listProperties } from './property-registry.js?v=20261030-inspector-layout-container-contract';
 import {getInspectorValueContract} from './property-values.js';

@@ -1,6 +1,6 @@
 import {createCompositionInputs} from './composition-inputs.js';
 import {normalizeAccessibility} from '../core/accessibility.js';
-import {contentAttributes} from '../core/authored-content.js?v=20261116-d02-private-media-link-guard-v1';
+import {contentAttributes} from '../core/authored-content.js?v=20261117-d03-invalid-media-id-guidance-v1';
 
 export function renderAccessibilityFields(node,apply,{nodes=()=>({}),pending=()=>{}}={}){
  const root=document.createElement('div');root.className='accessibility-fields';

@@ -110,8 +110,8 @@ test('malformed saved values produce publication guidance instead of crashing In
   assert.deepEqual(guidance('list',{items:[null]}),{fieldKey:'items',message:'Adj meg legalább egy nem üres listaelemet.'});
 
   assert.equal(guidance('heading',{text:'  Valós címsor  '}),null);
-  assert.equal(guidance('image',{assetId:'known-asset',decorative:true}),null);
-  assert.equal(guidance('gallery',{items:[{assetId:'known-asset',alt:'Tájkép'}]}),null);
+  assert.equal(guidance('image',{assetId:'00000000-0000-4000-8000-000000000001',decorative:true}),null);
+  assert.equal(guidance('gallery',{items:[{assetId:'00000000-0000-4000-8000-000000000002',alt:'Tájkép'}]}),null);
   assert.equal(guidance('tabs',{items:[{title:'Munkáim'}]}),null);
   assert.equal(guidance('table',{rows:[['Hónap'],['Június']]}),null);
   assert.equal(guidance('list',{items:[{text:'Első pont'}]}),null);

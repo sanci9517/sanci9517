@@ -1,4 +1,4 @@
-import { validatedLinkHref } from './richtext-links.js?v=20261116-d02-private-media-link-guard-v1';
+import { validatedLinkHref } from './richtext-links.js?v=20261117-d03-invalid-media-id-guidance-v1';
 import {parseTokenReference,compatibleTokens} from './design-tokens.js';
 import {MEDIA_ASSET_ID} from './background-asset.js?v=20261030-legacy-gradient';
 /*

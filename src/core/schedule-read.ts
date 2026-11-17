@@ -1,4 +1,3 @@
-import type { D1Database } from "@cloudflare/workers-types";
 import { DEFAULT_SITE_ID } from "./site-context.ts";
 import { SCHEDULE_ARTWORK_JOIN,SCHEDULE_ARTWORK_SELECT,validScheduleArtworkId } from "./schedule-artwork.ts";
 import { scheduleStartEpoch } from "../../public/editor-v2/core/schedule-time.js";
