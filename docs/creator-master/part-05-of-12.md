@@ -458,15 +458,15 @@
 - **Kanonikus owner / adatforrás:** EDITOR recovery UX; server errors és diagnostics source moduljukban maradnak.
 - **Séma / invariánsok:** stable error code, redacted context, local draft retention, recovery action and telemetry correlation.
 - **Jogosultság:** diagnosztika nem tartalmazhat secretet, tokeneket vagy szükségtelen PII-t.
-- **API/command:** conflict export/reload és diagnostics alap létezik; minden hibaállapot/telemetry contract nincs bizonyítva.
+- **API/command:** conflict export/reload és diagnostics alap létezik; EDT-042 részmunka a diagnosztikai bufferben redaktálja a hibaüzenetet, URL-kontextust és forráshelyet; minden hibaállapot/telemetry contract nincs bizonyítva.
 - **Függőségek:** EDT-027–033, SEC, OPS, QA.
 - **UI-állapotok:** validation/network/conflict/permission/renderer/malformed document/retry.
 - **Biztonság/adatvédelem:** redaction és safe logging kötelező; JSON draft export érzékenységét jelezni kell.
-- **Tesztcsomag:** conflict recovery source test van; malformed document és teljes error matrix hiányzik.
+- **Tesztcsomag:** stabil diagnosztikai kód, token/PII redaction, buffer-limit és verify unit teszt készült; conflict recovery source test van; malformed document és teljes error matrix hiányzik.
 - **Elfogadás:** szándékosan kiváltott hiba → diagnosztikai ID és biztonságos üzenet → retry/export/restore → nincs silent data loss.
-- **Bizonyíték:** app.js conflict functions, diagnostics module, core.test.js source test.
+- **Bizonyíték:** app.js conflict functions, redaktáló diagnostics module, diagnostics.test.js, core.test.js source test; release verification: `docs/evidence/editor-error-recovery-2026-11-17.json`.
 - **Visszaállítás:** export, reload latest, revision restore; recovery action auditálandó.
-- **Státusz / ismert probléma / következő lépés:** IN PROGRESS / UNVERIFIED; teljes error taxonomy és recovery E2E.
+- **Státusz / ismert probléma / következő lépés:** PARTIAL / IN PROGRESS / NOT CERTIFIED; a buffer nem tart raw Error objektumot, URL queryt vagy stack trace-t; editor-hiba utáni piszkozat-retenció, export/reload, renderer hibák és teljes recovery E2E továbbra is nyitott.
 
 #### EDT-043 — Rich Text editing
 - **Felhasználói eredmény:** formázott szöveg, listák, idézetek és linkek strukturált, biztonságos tartalomként szerkeszthetők.

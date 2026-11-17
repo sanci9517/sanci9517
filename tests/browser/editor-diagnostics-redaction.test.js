@@ -1,0 +1,69 @@
+import assert from 'node:assert/strict';
+import test from 'node:test';
+import { createServer } from 'node:http';
+import { readFile } from 'node:fs/promises';
+import { resolve, extname } from 'node:path';
+import { chromium } from 'playwright';
+import { createEditorState } from '../../public/editor-v2/core/state.js';
+import { createDocument, NODE_TYPES } from '../../public/editor-v2/core/schema.js';
+import { execute } from '../../public/editor-v2/core/commands.js';
+
+test('failed Editor save redacts diagnostics and preserves the local draft for retry', async t => {
+  const state = createEditorState(createDocument());
+  const pageId = state.document.activePageId;
+  execute(state, { type: 'element.add', payload: { type: NODE_TYPES.TEXT } });
+  const nodeId = state.selection.primaryId;
+  execute(state, { type: 'element.content.set', payload: { nodeId, content: 'Eredeti biztonságos szöveg' } });
+  const draft = structuredClone(state.document), posts = [];
+  let saveAttempts = 0;
+  const root = resolve(import.meta.dirname, '../../public');
+  const server = createServer(async (req, res) => {
+    const url = new URL(req.url, 'http://localhost');
+    const json = (data, status = 200) => { res.writeHead(status, { 'content-type': 'application/json' }); res.end(JSON.stringify(data)); };
+    if (url.pathname === '/api/admin/pages' && req.method === 'GET') return json({ ok: true, data: url.searchParams.get('archived') === '1' ? [] : [{ id: pageId, slug: 'home', title: 'Főoldal', revision: 1, isPublished: true, publishedRevisionVersion: 1 }] });
+    if (url.pathname === '/api/admin/editor' && req.method === 'GET') return json({ ok: true, data: { page: { id: pageId, document: draft, publishedRevisionId: 'published-1' }, revisions: [{ id: 'revision-1', version: 1 }] } });
+    if (url.pathname === '/api/admin/editor' && req.method === 'POST') {
+      let raw = ''; for await (const chunk of req) raw += chunk;
+      const body = JSON.parse(raw); posts.push(body); saveAttempts += 1;
+      if (saveAttempts === 1) return json({ ok: false, error: { code: 'UPSTREAM_FAILURE', message: 'Request failed token=private-token Bearer private-bearer user@example.com https://api.example.invalid/save?state=private-state' } }, 503);
+      Object.assign(draft, structuredClone(body.document));
+      return json({ ok: true, data: { pageId, version: 2, revisionId: 'revision-2' } });
+    }
+    if (url.pathname.startsWith('/api/')) return json({ ok: true, data: { items: [], tokens: {}, siteName: 'Teszt' } });
+    const file = resolve(root, `.${url.pathname}`);
+    if (!file.startsWith(`${root}/`)) return res.writeHead(403).end();
+    try { res.setHeader('content-type', { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css' }[extname(file)] || 'application/octet-stream'); res.end(await readFile(file)); }
+    catch { res.writeHead(404).end(); }
+  });
+  await new Promise(done => server.listen(0, '127.0.0.1', done));
+  const browser = await chromium.launch({ headless: true, executablePath: process.env.CHROMIUM_PATH || (process.env.CI ? undefined : '/usr/bin/chromium'), args: ['--no-sandbox'] });
+  t.after(async () => { await browser.close(); await new Promise(done => server.close(done)); });
+  const page = await browser.newPage();
+  const dialogs = [];
+  page.on('dialog', async dialog => { dialogs.push(dialog.message()); await dialog.accept(); });
+  page.setDefaultTimeout(10000);
+  await page.goto(`http://127.0.0.1:${server.address().port}/editor-v2/index.html`);
+  await page.waitForFunction(() => document.querySelector('#saveStatus')?.textContent === 'Mentve');
+  await page.locator(`.node[data-node-id="${nodeId}"]`).click();
+  if (!await page.locator('#inspectorBody').isVisible()) await page.locator('#openInspector').click();
+  await page.locator('.inspector-tabs button').nth(1).click();
+  const inspectorText = page.locator(`.plain-text-editor[data-text-node-id="${nodeId}"]`);
+  await inspectorText.fill('Nem veszhet el ez a helyi módosítás');
+  await page.locator('#save').click();
+  await page.waitForFunction(() => document.querySelector('#saveStatus')?.textContent === 'Mentési hiba');
+  assert.equal(posts.length, 1);
+  assert.equal(posts[0].publish, false);
+  assert.equal(await inspectorText.inputValue(), 'Nem veszhet el ez a helyi módosítás', 'the failed save leaves the edited field intact');
+  assert.match(await page.locator(`.node[data-node-id="${nodeId}"] > .node-content`).textContent(), /Nem veszhet el ez a helyi módosítás/, 'the current canvas retains the draft');
+  assert.equal(await page.locator('#diagnosticsBadge').textContent(), '🔴 1 hiba');
+  await page.locator('#diagnosticsBadge').click();
+  const diagnosticText = await page.locator('#diagnosticsPanel').innerText();
+  for (const secret of ['private-token', 'private-bearer', 'private-state', 'user@example.com']) assert.equal(diagnosticText.includes(secret), false, `diagnostics must not show ${secret}`);
+  assert.match(diagnosticText, /\[redacted\]/);
+  await page.locator('#save').click();
+  await page.waitForFunction(() => document.querySelector('#saveStatus')?.textContent?.startsWith('Mentve'));
+  assert.equal(posts.length, 2, 'retry submits the same local work');
+  assert.equal(posts[1].publish, false, 'retry remains a Save operation, not a Publish');
+  assert.equal(draft.pages[pageId].nodes[nodeId].props.text, 'Nem veszhet el ez a helyi módosítás');
+  assert.equal(dialogs.length, 1, 'only the failed Save emitted one recoverable alert');
+});

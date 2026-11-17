@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-17T17:17:50Z",
+  "plan_point": "EDT-042",
+  "status": "PARTIAL_IMPLEMENTATION_OPEN_NOT_CERTIFIED",
+  "scope": "Make transient Editor diagnostics safe to inspect and copy while retaining the current draft after failed saves.",
+  "implementation": {
+    "stable_codes": "Diagnostic codes are based on source and severity; random entry IDs distinguish occurrences without changing the code taxonomy.",
+    "redaction": "Messages, file locations, and context are normalized and length-bounded. Query values, bearer/auth values, common secret fields, email addresses, and phone-like values are redacted; file paths omit parent directories; raw Error objects and stacks are not retained.",
+    "api_deduplication": "HTTP response errors are marked at their source so one failed request is not added a second time as a transport error.",
+    "buffer": "Diagnostic history stays transient, capped at 100 entries, and is not a Page Model or persisted draft field.",
+    "recovery": "Failed Save leaves the edited field and canvas draft intact; the user can retry; the retry remains Save and does not Publish."
+  },
+  "checks": {
+    "diagnostics_unit": "PASS; redaction, stable codes, unique IDs, entry cap, unknown-source normalization, and verify context tested.",
+    "editor_diagnostics_browser": "PASS; failed save, single safe diagnostic, secret redaction, local field/canvas retention, and successful draft-only retry tested in Chromium.",
+    "npm_run_test_editor": "PASS; 22 tests passed, 0 failed, plus 3 process-runner self-tests passed.",
+    "npm_run_typecheck": "PASS; tsc --noEmit.",
+    "canonical_plan": "PASS; one complete 13-file master, one current cursor, 396 mappings; acceptance remains NOT certified.",
+    "traceability": "PASS; EDT-042 maps diagnostics source, unit and browser regression files, Editor entrypoint, and app integration.",
+    "production_source_smoke": "READY; exact Worker source smoke workflow includes the changed diagnostics module and entrypoint.",
+    "production_d1_preflight": "PASS; SELECT-only Cloudflare D1 capture completed 2026-11-17 17:16 UTC; all statement rows_written=0, FK check empty, quick_check ok, schema_objects 88, active membership/default-setting gaps 0, snapshot tables 0.",
+    "wrangler_dry_run": "PASS; Wrangler 4.130.0 read 194 public assets; total upload 391.56 KiB / gzip 100.44 KiB; DB, MEDIA, ASSETS and flags resolved; dry-run exited without deployment.",
+    "editor_core_ci": "PENDING; new runtime push will be validated by exact-SHA GitHub checks."
+  },
+  "release": {
+    "branch": "v2/foundation",
+    "source_control": "PENDING",
+    "ci": "PENDING",
+    "worker_build": "PENDING",
+    "worker_deployment": "PENDING",
+    "traffic": "PENDING",
+    "health": "PENDING",
+    "public_asset_hashes": "PENDING"
+  },
+  "cost": "0 Ft; no paid service or quota escalation used.",
+  "known_open_work": [
+    "Complete Editor diagnostic taxonomy and error-state coverage remain open.",
+    "Malformed-document recovery, permission/renderer errors, conflict export/reload integration, and recovery telemetry correlation remain open.",
+    "Unified manual/physical acceptance for the complete Editor remains deferred until all Editor points are complete."
+  ],
+  "production_mutations": false
+}

@@ -19,6 +19,7 @@ test('production source smoke hashes changed public Editor runtime modules befor
     'public/editor-v2/core/state-styles.js',
     'public/editor-v2/editor-motion.css',
     'public/editor-v2/editor-templates.css',
+    'public/editor-v2/diagnostics.js',
     'public/editor-v2/core/editor-templates.js',
     'public/editor-v2/core/design-system/template-catalog.js',
     'public/editor-v2/ui/page-interaction-controls.js',

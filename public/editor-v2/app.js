@@ -8,7 +8,7 @@ import {computeCanvasMinHeight} from './core/canvas-extent.js';
 import {measureCanvasWorkspace} from './core/canvas-workspace.js';
 import {hasResponsiveOverride,resolveResponsiveValue} from './core/responsive.js';
 import {getNodeVisibilityState,isVisibleOnDevice} from './core/visibility.js';
-import {diagnostics} from './diagnostics.js?v=20260918-2';
+import {diagnostics} from './diagnostics.js?v=20261117-edt042-redaction-v1';
 import {plainTextToRichText,renderRichTextEditor,richTextEditorToDocument,restoreSelectionOffsets,getSelectionOffsets,transformRichTextBlockTypes} from './core/richtext-engine.js?v=20261117-d03-invalid-media-id-guidance-v1';
 import {renderSchedulePreview} from './core/schedule-preview.js';
 import {normalizeScheduleConfig,SCHEDULE_MODES,SCHEDULE_ORDERS,SCHEDULE_STATUSES,SCHEDULE_EMPTY_TEXT_MAX,SCHEDULE_LIMIT_MAX} from './core/schedule-schema.js';
@@ -81,7 +81,7 @@ const groups=[
  ['Social / Web',[['Social Links',NODE_TYPES.SOCIAL],['Discord',NODE_TYPES.DISCORD],['Twitch',NODE_TYPES.TWITCH],['YouTube',NODE_TYPES.YOUTUBE],['TikTok',NODE_TYPES.TIKTOK]]],
  ['Sanci9517',[['Élő állapot',NODE_TYPES.LIVE],['Countdown',NODE_TYPES.COUNTDOWN],['Adásrend',NODE_TYPES.SCHEDULE],['Stream számláló',NODE_TYPES.STREAM_COUNT],['Követők',NODE_TYPES.FOLLOWERS],['Feliratkozók',NODE_TYPES.SUBS],['VOD',NODE_TYPES.VOD],['Támogatás',NODE_TYPES.SUPPORT],['Közösség',NODE_TYPES.COMMUNITY],['Játékkártya',NODE_TYPES.GAME_CARD],['Játéklista',NODE_TYPES.GAME_LIST],['Komponens',NODE_TYPES.COMPONENT],['Egyedi elem',NODE_TYPES.CUSTOM]]]
 ];
-const escapeHtml=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));const api=async(url,options={})=>{try{const response=await fetch(url,{credentials:'same-origin',headers:{'Content-Type':'application/json',...(options.headers||{})},...options});const data=await response.json().catch(()=>({}));if(!response.ok){const error=new Error(data?.error?.message||data?.message||`API hiba (${response.status})`);error.status=response.status;error.code=data?.error?.code||data?.code||null;error.apiUrl=url;diagnostics.add({source:'api',code:'SANCI-API-E001',message:error.message,context:url,error});throw error}return data}catch(e){if(!(e instanceof Error&&String(e.message).startsWith('API hiba')))diagnostics.add({source:'api',code:'SANCI-API-E002',message:e instanceof Error?e.message:String(e),context:url,error:e});throw e}};
+const escapeHtml=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));const api=async(url,options={})=>{try{const response=await fetch(url,{credentials:'same-origin',headers:{'Content-Type':'application/json',...(options.headers||{})},...options});const data=await response.json().catch(()=>({}));if(!response.ok){const error=new Error(data?.error?.message||data?.message||`API hiba (${response.status})`);error.status=response.status;error.code=data?.error?.code||data?.code||null;error.apiUrl=url;error.isApiError=true;diagnostics.add({source:'api',code:'SANCI-API-E001',message:error.message,context:url,error});throw error}return data}catch(e){if(!e?.isApiError)diagnostics.add({source:'api',code:'SANCI-API-E002',message:e instanceof Error?e.message:String(e),context:url,error:e});throw e}};
 const page=()=>state&&activePage(state);
 async function loadTwitchConnection(){
   const button=$('#twitchConnection');

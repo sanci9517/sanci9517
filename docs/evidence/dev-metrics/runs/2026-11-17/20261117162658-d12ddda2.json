@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261117162658-d12ddda2",
+  "task": "EDT-041",
+  "trigger": "manual",
+  "started_at": "2026-11-17T16:26:58.199Z",
+  "finished_at": "2026-11-17T17:08:46.591Z",
+  "wall_seconds": 2508,
+  "paused_seconds": 0,
+  "measured_seconds": 2508,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "EDT-041 safe template-start flow implemented, tested, pushed and live on Worker 119c05ae at 100%; source smoke passed, Editor Core broader browser suite still running.",
+  "evidence": [
+    "docs/evidence/editor-template-start-2026-11-17.json"
+  ],
+  "checks": "local unit/typecheck/targeted E2E PASS; source smoke PASS; Worker Build deploy:safe PASS; health/assets PASS; full Editor Core CI in progress",
+  "started_revision": "407eec932180927ac37d50cfd409842833f14e27",
+  "finished_revision": "7b3ec18684db6f17ea28338b5c53b5abccb0b3b3",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
