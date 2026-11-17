@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "id": "20261117041014-1f10fc3c",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-17T04:10:14.210Z",
+  "finished_at": "2026-11-17T04:20:42.833Z",
+  "wall_seconds": 629,
+  "paused_seconds": 0,
+  "measured_seconds": 629,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "Authored link invalid breakpoint-switch guard added and passed in Chromium; exact-SHA CI for prior runtime source verified, evidence updated; full D remains open.",
+  "evidence": [
+    "docs/evidence/editor-d-authored-link-invalid-breakpoint-guard-2026-11-17.json",
+    "docs/evidence/editor-d-short-viewport-inspector-lifecycle-2026-11-17.json",
+    "https://github.com/sanci9517/sanci9517/commit/3779dabf9257a7fec263c13e27198f7b89943824"
+  ],
+  "checks": "targeted-browser=1/1 pass;editor-unit=17/17+subreaper3/3 pass;plan-contract=14/14 pass;canonical=13 files+396 mappings pass;traceability=396/396 pass;source-runtime-unchanged;test-commit-[skip-ci]",
+  "started_revision": "da96c0ffbbc8441af560daaba4fbe496fecf2dbe",
+  "finished_revision": "3779dabf9257a7fec263c13e27198f7b89943824",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
