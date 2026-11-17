@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261117062800-dc21e27e",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-17T06:28:00.626Z",
+  "finished_at": "2026-11-17T06:29:11.510Z",
+  "wall_seconds": 71,
+  "paused_seconds": 0,
+  "measured_seconds": 71,
+  "status": "pass",
+  "kind": "docs",
+  "summary": "Recorded final exact-source Editor Core and production smoke verification in the D-01/D-05 release evidence; canonical D remains OPEN.",
+  "evidence": [
+    "https://github.com/sanci9517/sanci9517/commit/a16257c225bdbdbbfc8af2dcabc8b42f783566f0"
+  ],
+  "checks": "python3 -m json.tool on this metrics record: PASS; git diff --check on this metrics record: PASS; upstream exact-SHA release checks are linked in the recorded evidence commit.",
+  "started_revision": "4cd79c5cc8c3c0c74137e50c44763e4baf56892e",
+  "finished_revision": "4cd79c5cc8c3c0c74137e50c44763e4baf56892e",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not checked by this script"
+}
