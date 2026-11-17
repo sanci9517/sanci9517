@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261117051644-5b17cfbc",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-17T05:16:44.540Z",
+  "finished_at": "2026-11-17T05:18:55.611Z",
+  "wall_seconds": 131,
+  "paused_seconds": 0,
+  "measured_seconds": 131,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "D-01/D-05 galéria alt/caption mezők 200%-os effektív viewporton elérhetőek; draft Save/reload/külön Publish tesztelve",
+  "evidence": [
+    "docs/evidence/editor-d-gallery-fields-200zoom-2026-11-17.json"
+  ],
+  "checks": "Chromium content-system 1/1; plan-contract 14/14; canonical 13/396; traceability 396/396; node --check; diff-check",
+  "started_revision": "543133a7f849cc0aba2fd5ab41a8e173fa50d59d",
+  "finished_revision": "543133a7f849cc0aba2fd5ab41a8e173fa50d59d",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

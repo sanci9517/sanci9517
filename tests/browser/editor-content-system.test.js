@@ -620,6 +620,22 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
     `the actual Inspector link field is not clipped at 200% effective zoom: ${JSON.stringify(shortViewportField)}`);
   assert.equal(shortViewportField.horizontalOverflow,false,'the authored Inspector interaction adds no page-level horizontal overflow');
   assert.equal(shortViewportField.focused,true,'the authored link control remains keyboard-focusable');
+  await select('gallery');
+  const shortGalleryItem=editor.locator('.content-repeater fieldset').nth(1);
+  for(const [label,name] of [['Képleírás','gallery item alt'],['Képaláírás','gallery item caption']]){
+    const field=shortGalleryItem.getByLabel(label,{exact:true});
+    await field.scrollIntoViewIfNeeded();await field.click();
+    const bounds=await field.evaluate(el=>{
+      const r=el.getBoundingClientRect(),dock=el.closest('#rightDock .dock-content').getBoundingClientRect();
+      return {left:r.left,right:r.right,top:r.top,bottom:r.bottom,dockLeft:dock.left,dockRight:dock.right,dockTop:dock.top,dockBottom:dock.bottom,
+        overflow:document.documentElement.scrollWidth>document.documentElement.clientWidth+1,focused:document.activeElement===el};
+    });
+    assert.ok(bounds.left>=Math.max(0,bounds.dockLeft)&&bounds.right<=Math.min(720,bounds.dockRight)
+      &&bounds.top>=bounds.dockTop&&bounds.bottom<=bounds.dockBottom,
+      `${name} field is fully reachable in the 200% effective viewport: ${JSON.stringify(bounds)}`);
+    assert.equal(bounds.overflow,false,`${name} field adds no horizontal page overflow at 200% effective zoom`);
+    assert.equal(bounds.focused,true,`${name} field is pointer/keyboard focusable at 200% effective zoom`);
+  }
   assert.equal(posts.length,1,'editing the authored field at short viewport remains draft-only before Save');
   await editor.locator('#save').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));assert.equal(posts.at(-1).publish,false);
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.link].props.href,authoredLinkHref,'Save stores the authored link destination in the draft');
