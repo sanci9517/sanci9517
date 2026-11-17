@@ -242,4 +242,17 @@ test('D-07 Editor rejects corrupt Page Model child lists safely without rewritin
     assert.equal(JSON.stringify(state.document),malformedPersisted,'incomplete persisted pages remain unchanged for recovery');
     state.document.pages[pageId]=structuredClone(validPage);
   }
+
+  // A Page object under the active map key must retain that exact identity;
+  // otherwise Editor operations could target another page's API route.
+  state.document.pages[pageId]={...structuredClone(validPage),id:'foreign-page'};
+  const mismatchedPagePersisted=JSON.stringify(state.document);
+  await tab.reload();
+  await tab.waitForTimeout(300);
+  assert.match(await tab.locator('#saveStatus').textContent(),/Editor betöltési hiba:.*page id mismatch: foreign-page/i,
+    'mismatched persisted Page identities produce controlled validation feedback');
+  assert.deepEqual(errors,[],'mismatched Page identity does not escape the Editor boot error boundary');
+  assert.deepEqual(writes,[],'mismatched Page identity is never silently Saved or Published');
+  assert.equal(JSON.stringify(state.document),mismatchedPagePersisted,'mismatched persisted Page remains unchanged for recovery');
+  state.document.pages[pageId]=structuredClone(validPage);
 });

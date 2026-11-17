@@ -432,6 +432,9 @@ export function validateDocument(document) {
   }
 
   for (const [id, page] of Object.entries(pages ?? {})) {
+    if (page && typeof page === 'object' && !Array.isArray(page) && page.id !== id) {
+      errors.push(`page ${safeModelDiagnostic(page.id)}: page id mismatch: ${safeModelDiagnostic(page.id)} != ${safeModelDiagnostic(id)}`);
+    }
     errors.push(...validatePage(page).map((error) => `page ${safeModelDiagnostic(page?.id ?? id)}: ${error}`));
   }
 

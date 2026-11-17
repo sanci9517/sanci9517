@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import test from 'node:test';
-import {NODE_TYPES,getPage,getNode,getChildren,validatePage,validateDocument} from '../public/editor-v2/core/schema.js';
+import {NODE_TYPES,createDocument,getPage,getNode,getChildren,validatePage,validateDocument} from '../public/editor-v2/core/schema.js';
 import {getElementCapability} from '../public/editor-v2/core/capability-matrix.js';
 
 const source=readFileSync(new URL('../public/editor-v2/app.js',import.meta.url),'utf8');
@@ -70,6 +70,20 @@ test('D-07 imported inherited page/node identifiers cannot resolve through Objec
  assert.ok(errors.includes('activePageId must reference an existing page'));
  assert.ok(errors.includes('page missing: page must be an object'));
  assert.ok(validateDocument({...doc,pages:[]}).includes('document.pages must be an object'));
+});
+
+test('D-07 page identity must match its document map key',()=>{
+ const document=createDocument();
+ const pageId=document.activePageId;
+ assert.deepEqual(validateDocument(document),[],'valid generated Page identity remains accepted');
+
+ document.pages[pageId].id='foreign-page';
+ assert.ok(validateDocument(document).some(error=>error.includes('page id mismatch: foreign-page')),
+  'a valid Page object cannot claim a different page ID than its map key');
+
+ document.pages[pageId].id={toString:null};
+ assert.ok(validateDocument(document).some(error=>error.includes('page id mismatch: [invalid]')),
+  'untrusted Page identity diagnostics do not invoke authored coercion hooks');
 });
 
 test('D-07 unprintable authored Page Model values fail closed without diagnostic crashes',()=>{
