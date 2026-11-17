@@ -1,0 +1,56 @@
+{
+  "schema": "sanci.editor.d-gallery-columns-lifecycle.v1",
+  "captured_at_utc": "2026-11-17T04:45:58Z",
+  "plan_point": "77.44.7.D — authored gallery column field lifecycle",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "base_sha": "c5dd5004ad00304620fc0ad5beb78fc780ebb567",
+    "remote_head_at_start": "c5dd5004ad00304620fc0ad5beb78fc780ebb567",
+    "canonical_plan_sha256": "68d94c1f33a27712a90f1470a0c98ee9b5d089cc8ab057113ed236d0298e83f8",
+    "runtime_source_commit": "c45a7c4e27c1ad6d3d6f7e6b51117ebef45707f3"
+  },
+  "scope": {
+    "test_file": "tests/browser/editor-content-system.test.js",
+    "test_sha256": "a5de284cd9c15663777833e6ef838fdf059adf28c2f32dd5920f8b7645df28e0",
+    "field": "gallery.props.columns",
+    "behaviors": [
+      "Selecting four authored desktop columns updates the actual Editor Canvas immediately.",
+      "Tablet and mobile device previews retain their two- and one-column responsive overrides, and returning to desktop restores four columns.",
+      "Draft Save persists four authored desktop columns while the previously published public page remains at three columns.",
+      "Editor reload restores the authored four-column value and Canvas preview.",
+      "Explicit separate Publish changes the public desktop grid to four columns; tablet and mobile public grids remain two and one columns."
+    ],
+    "runtime_source_changed": false
+  },
+  "checks": {
+    "targeted_browser_command": "CHROMIUM_PATH=/usr/bin/chromium node --test tests/browser/editor-content-system.test.js",
+    "targeted_browser": "PASS; 1/1 local Chromium test after final gallery assertions; an identical retry passed after an unrelated pre-existing background-style assertion failed once.",
+    "editor_unit": "PASS; npm run test:editor: 17/17 files and Linux subreaper 3/3 in the current development session; no unit-source changed afterward.",
+    "typecheck": "PASS; npm run typecheck in the current development session; runtime source unchanged.",
+    "plan_contract": "PASS; 14/14 in the current development session.",
+    "canonical_plan": "PASS; 13 master files / 396 mappings in the current development session.",
+    "traceability": "PASS; 396/396 in the current development session.",
+    "syntax_and_diff": "PASS; node --check and git diff --check after the gallery test edit.",
+    "hosted_ci": "NOT RUN; test/evidence/plan-only follow-up will use [skip ci] and no separate dispatch/rerun."
+  },
+  "release": {
+    "latest_worker_deployment_id_at_start": "8dc6dc5d-1857-4684-9b8b-38b721145793",
+    "worker_version_id_at_start": "0658af0d-b223-4054-b839-048941f87ce8",
+    "traffic_percent_at_start": 100,
+    "runtime_changed": false,
+    "worker_deployed": false,
+    "health_get": "NOT RUN; no runtime or public asset changed.",
+    "asset_hashes": "NOT RUN; no public asset changed.",
+    "production_d1_write_or_migration": false,
+    "production_r2_operation": false,
+    "new_cost_huf": 0
+  },
+  "status": "AUTHORED_GALLERY_COLUMNS_SAVE_RELOAD_PUBLISH_PASS; D_OPEN_NOT_CERTIFIED",
+  "limitations": [
+    "This evidence closes only the authored gallery desktop-column lifecycle slice; it does not complete every D-01 through D-07 capability, field, validation, breakpoint, renderer, or site-scoped Media acceptance row.",
+    "Full 77.44.7.D remains OPEN / NOT_CERTIFIED.",
+    "Complete Visual Editor manual and physical acceptance remains deferred to the full Editor gate.",
+    "Save and Publish remain distinct operations."
+  ]
+}

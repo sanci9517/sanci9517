@@ -437,6 +437,17 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
     'multi-open default does not accidentally make separate dropdown items exclusive');
   await select('gallery');
   await editor.getByLabel('Képgaléria elnevezése',{exact:true}).fill('Műhelyem & képeim');
+  const galleryColumns=editor.getByLabel('Oszlopok asztalon',{exact:true});
+  await galleryColumns.selectOption('4');
+  const galleryTracks=tab=>tab.locator('.creator-gallery').evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').length);
+  assert.equal(await galleryTracks(editor),4,'the authored desktop gallery column count updates the Canvas immediately');
+  for(const [device,width,expected] of [['tablet',768,2],['mobile',390,1]]){
+    await editor.locator(`.canvas-device-btn[data-device="${device}"]`).click();
+    await editor.setViewportSize({width:1366,height:900});
+    assert.equal(await galleryTracks(editor),expected,`${device} keeps its responsive gallery column override`);
+  }
+  await editor.locator('.canvas-device-btn[data-device="desktop"]').click();
+  assert.equal(await galleryTracks(editor),4,'returning to desktop restores the authored gallery column count');
   assert.equal(await node(editor,'gallery').getByRole('region',{name:'Műhelyem & képeim'}).count(),1,
     'the real Canvas image grid is a named gallery region');
   assert.equal(await node(editor,'gallery').locator('img').nth(1).getAttribute('alt'),'Második kép',
@@ -611,11 +622,13 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.image].props.loading,'eager','Save persists the authored image loading strategy');
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.image].props.fit,'cover','Save persists the authored image fit mode in the draft');
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.image].props.ratio,'16 / 9','Save persists the authored image ratio in the draft');
+  assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.gallery].props.columns,'4','Save persists the authored desktop gallery column count in the draft');
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.gallery].props.items[0].assetId,assetId);
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.gallery].props.items[1].alt,'  Második kép  ','rendering must not silently rewrite the saved draft');
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.gallery].props.items[1].caption,'  Második képaláírás  ');
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.button].responsive.desktop.backgroundAssetId,assetId,'Save stores the background asset ID');
   await live.goto(base+'/p/test');assert.equal(await live.locator('h1[data-node-id]').textContent(),'Alkotói főcím');
+  assert.equal(await galleryTracks(live),3,'draft Save leaves the original published gallery column count unchanged');
   assert.equal(await node(live,'image').locator('.creator-image-frame').evaluate(el=>getComputedStyle(el).aspectRatio),'1 / 1',
     'the current published image keeps its original square ratio after draft Save');
   assert.equal(await node(live,'link').getAttribute('href'),'mailto:creator@example.com','draft Save does not publish the authored link destination');
@@ -663,6 +676,9 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   assert.equal(await editor.getByLabel('Képarány',{exact:true}).inputValue(),'16 / 9','Editor reload restores the authored image ratio');
   assert.equal(await editor.getByLabel('Kép szöveges leírása',{exact:true}).inputValue(),'','Editor reload preserves the intentionally empty alt value');
   assert.equal(await editor.locator('[data-content-key="loading"] select').inputValue(),'eager','Editor reload restores the authored image loading strategy');
+  await select('gallery');
+  assert.equal(await editor.getByLabel('Oszlopok asztalon',{exact:true}).inputValue(),'4','Editor reload restores the authored gallery column count');
+  assert.equal(await galleryTracks(editor),4,'reloaded desktop Canvas retains the authored gallery column count');
   await select('link');
   assert.equal(await editor.locator(`.plain-text-editor[data-text-node-id="${ids.link}"]`).inputValue(),authoredLinkText,'Editor reload restores the authored link text');
   assert.equal(await editor.locator('[data-content-key="href"] input').inputValue(),authoredLinkHref,'Editor reload restores the authored link destination');
@@ -703,6 +719,7 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   assert.equal(await node(live,'image').locator('.creator-image-frame').evaluate(el=>getComputedStyle(el).aspectRatio),'16 / 9','separate Publish exposes the authored image ratio on the public page');
   assert.equal(await node(live,'image').locator('img').evaluate(el=>getComputedStyle(el).objectFit),'cover','separate Publish exposes the authored image fit mode on the public page');
   assert.equal(await node(live,'image').locator('img').getAttribute('loading'),'eager','separate Publish exposes the authored loading strategy');
+  assert.equal(await galleryTracks(live),4,'separate Publish exposes the authored desktop gallery column count');
   assert.equal(await node(live,'gallery').locator('img').first().evaluate(el=>getComputedStyle(el).objectPosition),'24% 68%','published gallery item retains its independent crop');
   assert.equal(await node(live,'gallery').locator('img').nth(1).getAttribute('alt'),'Második kép','Publish renders trimmed alt text from the preserved draft');
   assert.equal(await node(live,'gallery').locator('img').nth(1).locator('xpath=ancestor::figure').locator('figcaption').textContent(),'Második képaláírás');
@@ -850,7 +867,7 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
     await live.waitForFunction(id=>document.querySelector(`[data-node-id="${id}"] .creator-carousel`).scrollLeft===0,ids.carousel);
     assert.equal(await keyboardCarousel.evaluate(el=>document.activeElement===el),true,
       `arrow and Home/End carousel controls preserve focused region at ${width}px`);
-    const expected=width<=700?1:width<=900?2:3;assert.equal((await node(live,'gallery').locator('.creator-gallery').evaluate(el=>getComputedStyle(el).gridTemplateColumns)).split(' ').length,expected);
+    const expected=width<=700?1:width<=900?2:4;assert.equal((await node(live,'gallery').locator('.creator-gallery').evaluate(el=>getComputedStyle(el).gridTemplateColumns)).split(' ').length,expected);
     for(const type of ['heading','text','button','image','quote']){
       await editor.locator(`.canvas-device-btn[data-device="${width<=700?'mobile':width<=900?'tablet':'desktop'}"]`).click();
       const metric=el=>{const css=getComputedStyle(el);return {fontSize:css.fontSize,lineHeight:css.lineHeight,color:css.color,padding:css.padding,borderRadius:css.borderRadius}};
