@@ -15,7 +15,7 @@
     "public/editor-v2/core/commands.js": "5860dc2c3c9d5ebb2fab26830ac8b9480568e50939d9816b92f09236b1f4152d",
     "public/editor-v2/core/content-profiles.js": "3517ab365633035d895d679e73e113d0bf2dc9888160c50218497f70f1338378",
     "public/editor-v2/core/creator-embed.js": "56d01f520e94a34ca2ab9ba875f95410f9e0bd5ff9211014eb0711e7946c3506",
-    "public/editor-v2/core/design-system/template-catalog.js": "5cb0776f369c1b849f69876a8374797de8820707e4c268326cc8265575ec9aa0",
+    "public/editor-v2/core/design-system/template-catalog.js": "e73888bfa43db4384e3e71b560db05b05ca0489d7c65f79915a3534dd4741351",
     "public/editor-v2/core/design-tokens.js": "917281d898f9d5c214124ea3e38a6f076ccd9ebfe48282aa4d73fc14610549d1",
     "public/editor-v2/core/editor-templates.js": "b70033e7f9b44a74115a7f05eb1a30d7c2100fa6305b843f8d3f3d1c9ded0620",
     "public/editor-v2/core/icon-options.js": "457e7721748b81e0c1b224375b4118c637113e941f3e53bd646b75be7699cd8e",

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "recorded_at_utc": "2026-11-17T16:57:47Z",
+  "recorded_at_utc": "2026-11-17T17:06:21Z",
   "plan_point": "EDT-041",
   "status": "PARTIAL_IMPLEMENTATION_OPEN_NOT_CERTIFIED",
   "scope": "Provide a safe, versioned template start for creating a new Editor draft page without changing existing drafts or public pages.",
@@ -33,12 +33,60 @@
   },
   "release": {
     "branch": "v2/foundation",
-    "source_control": "PENDING; runtime changes require normal fast-forward push.",
-    "ci": "PENDING; workflows will be checked on the pushed exact SHA.",
-    "worker_deployment": "PENDING; automatic Worker Build expected after verified push; use deploy:safe only if it does not start or succeed.",
-    "traffic": "PENDING; verify 100% to the newly deployed Worker version.",
-    "health": "PENDING; direct /api/health check.",
-    "public_asset_hashes": "PENDING; exact hashes for all changed public runtime assets."
+    "source_control": {
+      "status": "PUSHED_FAST_FORWARD",
+      "commit_sha": "71c07500101b7c7f881b8a2dcadc3d553601b59b",
+      "parent_sha": "407eec932180927ac37d50cfd409842833f14e27",
+      "message": "feat(editor): add safe template page start"
+    },
+    "ci": {
+      "source_smoke_run": {
+        "id": 44131784615,
+        "run_number": 163,
+        "status": "success",
+        "url": "https://github.com/sanci9517/sanci9517/actions/runs/44131784615"
+      },
+      "editor_core_run": {
+        "id": 44131784721,
+        "run_number": 3373,
+        "status": "in_progress",
+        "current_step": "Run Editor browser layout regression",
+        "url": "https://github.com/sanci9517/sanci9517/actions/runs/44131784721"
+      }
+    },
+    "worker_build": {
+      "build_uuid": "37d2f402-4d56-42e2-ab10-913bf68ac9ca",
+      "status": "success",
+      "source_commit_sha": "71c07500101b7c7f881b8a2dcadc3d553601b59b",
+      "build_command": "npm run typecheck",
+      "deploy_command": "npm run deploy:safe"
+    },
+    "worker_deployment": {
+      "id": "020555d7-352d-4e3d-a8d9-8816d52d2506",
+      "created_on": "2026-11-17T16:59:06.776160Z",
+      "version_id": "119c05ae-ac70-44ab-9c60-5c60114c9927"
+    },
+    "traffic": {
+      "version_id": "119c05ae-ac70-44ab-9c60-5c60114c9927",
+      "percentage": 100
+    },
+    "health": {
+      "url": "/api/health",
+      "http_status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "public_asset_hashes": {
+      "/editor-v2/": "088938bfb691fa95fbc7a172466e9ad66bee47833ab3553ef96e50d017b07f7b",
+      "/editor-v2/app.js": "348965145e7acd5f5e446b27d2a91a6befedca1aad7bf27490741043a0a5df39",
+      "/editor-v2/editor-templates.css": "cfe18fe3ee13f25778c35df8be72d94d574059b5e3e869af8476083cbab3d660",
+      "/editor-v2/core/editor-templates.js": "b70033e7f9b44a74115a7f05eb1a30d7c2100fa6305b843f8d3f3d1c9ded0620",
+      "/editor-v2/core/design-system/template-catalog.js": "e73888bfa43db4384e3e71b560db05b05ca0489d7c65f79915a3534dd4741351"
+    }
   },
   "cost": "0 Ft; no paid service or quota escalation used.",
   "known_open_work": [
