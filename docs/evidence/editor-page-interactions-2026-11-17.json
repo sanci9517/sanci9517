@@ -13,7 +13,11 @@
     "id": "EDT-039",
     "status": "PARTIAL IMPLEMENTATION / OPEN / NOT CERTIFIED",
     "scope": "Page Model-local, declarative button click actions",
-    "actions": ["scroll-to", "select-tab", "toggle-disclosure"],
+    "actions": [
+      "scroll-to",
+      "select-tab",
+      "toggle-disclosure"
+    ],
     "limits": [
       "one action per authored button",
       "same-page targets only",
@@ -42,18 +46,70 @@
     "layout_suite": {
       "command": "npm run test:editor:layout",
       "result": "INTERRUPTED BY OPERATOR AFTER 20 OF 55 FILES COMPLETED; 20 passed, 0 failed; stopped before file 21 due to measured suite runtime",
-      "scope_note": "This is not a full layout-suite PASS. The changed interaction browser test was separately run to completion and passed."
+      "scope_note": "This is not a full layout-suite PASS. The changed interaction browser test was separately run to completion and passed.",
+      "hosted_ci_result": "SKIPPED because the preceding public showcase unit assertion failed; local wide 55-file Chromium run remains interrupted after 20 files, not a complete pass."
     },
     "traceability": "PASS; 396/396 mappings, now 147 PARTIAL_SOURCE and 249 UNVERIFIED; acceptance remains NOT_RECERTIFIED",
     "plan_checks": "PASS; plan-contract 14/14, canonical-plan 13 master files/396 mappings, active plan point 77.44/WEB-011 -> 77.44.7.D OPEN",
     "migration_safety_gate": "PASS; deploy:safe gate confirms no automatic D1 migration application",
     "wrangler_dry_run": "PASS; Wrangler 4.130.0 read 185 public assets, 389.90 KiB (99.98 KiB gzip), exited via --dry-run without publishing",
     "diff_and_syntax": "PASS; modified JS syntax checks and git diff --check",
-    "production_checks_pending": [
-      "exact-SHA GitHub checks and automatic Worker build after push",
-      "verify exact source deployment/100% traffic, health and changed public asset hashes"
-    ],
-    "production_source_smoke_scope": "Updated workflow and regression guard include every public runtime file changed in this release."
+    "production_checks_pending": [],
+    "production_source_smoke_scope": "Updated workflow and regression guard include every public runtime file changed in this release.",
+    "production_checks": {
+      "workflow": "https://github.com/sanci9517/sanci9517/actions/runs/44114787376",
+      "result": "PASS; exact source checkout at 3e93ee0798f4a96484182e568621b7dd3f1e5f81; production /api/health HTTP 200; every configured exact public-source SHA-256 check matched on retry (initial CDN propagation mismatch recovered).",
+      "worker_deployment": {
+        "id": "ff74b36d-307e-4828-8a7b-b7a16c07427a",
+        "version_id": "7ce42897-07aa-4e31-be81-87070a8f638b",
+        "traffic_percent": 100,
+        "created_on": "2026-11-17T15:29:27.818294Z",
+        "source": "wrangler"
+      }
+    },
+    "exact_sha_ci": {
+      "workflow_runs": [
+        {
+          "name": "Canonical Creator Platform Plan",
+          "id": 44114787333,
+          "result": "PASS"
+        },
+        {
+          "name": "Canonical Plan Active Point Audit",
+          "id": 44114787335,
+          "result": "PASS"
+        },
+        {
+          "name": "F0 baseline checks",
+          "id": 44114787414,
+          "result": "PASS"
+        },
+        {
+          "name": "Twitch Integration Check",
+          "id": 44114787398,
+          "result": "PASS"
+        },
+        {
+          "name": "Production Worker source smoke",
+          "id": 44114787376,
+          "result": "PASS"
+        },
+        {
+          "name": "Editor Core Test",
+          "id": 44114787388,
+          "result": "FAIL before layout stage; showcase test pinned the renderer cache key to the unrelated showcase artwork version"
+        }
+      ],
+      "editor_core_failed_job": "https://github.com/sanci9517/sanci9517/actions/runs/44114787388",
+      "local_test_only_correction": {
+        "file": "tests/sanci-showcase.test.js",
+        "change": "Both renderer-shell assertions require a nonempty independent cache-busting version instead of equality with the showcase CSS version.",
+        "command": "npm run test:showcase",
+        "result": "PASS after correction; 1/1 Node test file; git diff --check PASS",
+        "remote_rerun": "Not started: test-only follow-up follows repository [skip ci] policy; do not claim a new remote CI pass."
+      }
+    },
+    "deployment": "PASS; exact-SHA production source smoke passed, Cloudflare deployment ff74b36d-307e-4828-8a7b-b7a16c07427a has Worker version 7ce42897-07aa-4e31-be81-87070a8f638b at 100% traffic."
   },
   "release_before_push": {
     "latest_read_only_snapshot": {
@@ -76,6 +132,7 @@
     "EDT-039 remains partial: hover/focus/submit/load/timer/state event families, complete form/URL boundary coverage, invalid/unsupported recovery and full security/performance acceptance are not complete.",
     "This does not close the full Editor, D-01 through D-07, or 77.44.7.D.",
     "Full Editor manual and physical acceptance remains deferred until all planned Editor functionality is complete.",
-    "Save and Publish remain separate operations."
+    "Save and Publish remain separate operations.",
+    "The Editor Core hosted workflow for 3e93ee0798f4a96484182e568621b7dd3f1e5f81 failed on a stale page-renderer cache-key assertion before the layout suite; both brittle assertions are corrected and npm run test:showcase passes locally. A test-only [skip ci] follow-up intentionally has no new hosted CI pass."
   ]
 }

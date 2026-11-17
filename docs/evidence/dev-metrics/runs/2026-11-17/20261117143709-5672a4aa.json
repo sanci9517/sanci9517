@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261117143709-5672a4aa",
+  "task": "EDT-039",
+  "trigger": "manual",
+  "started_at": "2026-11-17T14:37:09.869Z",
+  "finished_at": "2026-11-17T15:36:12.663Z",
+  "wall_seconds": 3543,
+  "paused_seconds": 0,
+  "measured_seconds": 3543,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "EDT-039 v1 shipped and production exact-source health/hash smoke verified. Fixed two stale showcase page-renderer cache-version assertions after exact-SHA Editor Core CI failed; local showcase test passes. Full Editor and full layout acceptance remain OPEN.",
+  "evidence": [
+    "docs/evidence/editor-page-interactions-2026-11-17.json"
+  ],
+  "checks": "PASS: npm run test:showcase (1/1); node --check tests/sanci-showcase.test.js; git diff --check; plan-contract (14/14); canonical plan (13 master files/396 mappings); active point audit (77.44.7.D OPEN); traceability (396/396). Exact-SHA Editor Core workflow failed on the stale cache-buster assertion before layout; follow-up is test-only and no remote rerun is claimed.",
+  "started_revision": "fcc5b167999069b8a179843a4ab74bf4908c8058",
+  "finished_revision": "3e93ee0798f4a96484182e568621b7dd3f1e5f81",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

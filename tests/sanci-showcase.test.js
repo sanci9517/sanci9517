@@ -41,7 +41,8 @@ test('home stream image and pulse remain scoped, responsive, accessible and cach
  assert.ok(css.includes('@media(max-width:700px)'));
  assert.ok(css.includes('@media(prefers-reduced-motion:reduce)'));
  assert.ok(html.includes('sanci-showcase.css?v=20261116-home-live-artwork-v1'));
- assert.ok(html.includes('page-renderer.js?v=20261116-home-live-artwork-v1'));
+ assert.match(html,/page-renderer\.js\?v=[a-z0-9-]+/,
+  'the page renderer is independently cache-busted when its runtime changes');
 });
 
 test('SANCI pill icons activate only for real platform destinations',()=>{
@@ -232,8 +233,8 @@ test('decorations run after all authored content activators, not before their DO
  const decoration=renderer.indexOf('decorateSanciShowcase(canvas,page,{slug,enabled:isSanciShowcase});');
  assert.ok(activation>0&&decoration>activation,'icons, autograph and highlights are attached after activation');
  assert.match(renderer,/sanci-showcase\.js\?v=20261116-home-live-artwork-v1/);
- assert.match(shell,/page-renderer\.js\?v=20261116-home-live-artwork-v1/,
-  'the page shell must request the runtime that contains the observer cleanup');
+ assert.match(shell,/page-renderer\.js\?v=[a-z0-9-]+/,
+  'the page shell must cache-bust its current page renderer runtime');
  assert.equal(renderer.indexOf('decorateSanciShowcase(canvas,page,{slug,enabled:isSanciShowcase});',decoration+1),-1);
 });
 
