@@ -6,7 +6,7 @@ const workflow = readFileSync(new URL('../.github/workflows/worker-production-so
 const sourceList = workflow.match(/^\s+source_files=\(([^\n]*)\)$/m)?.[1];
 const sources = sourceList?.match(/"([^"]+)"/g)?.map(value => value.slice(1, -1)) ?? [];
 
-test('production source smoke hashes every changed page-interaction and motion runtime module', () => {
+test('production source smoke hashes changed public Editor runtime modules before rollout', () => {
   assert.ok(sourceList, 'workflow declares its exact public source hash set');
   assert.equal(new Set(sources).size, sources.length, 'source list contains no duplicate paths');
   for (const path of [
@@ -18,6 +18,9 @@ test('production source smoke hashes every changed page-interaction and motion r
     'public/editor-v2/core/inspector-style-contract.js',
     'public/editor-v2/core/state-styles.js',
     'public/editor-v2/editor-motion.css',
+    'public/editor-v2/editor-templates.css',
+    'public/editor-v2/core/editor-templates.js',
+    'public/editor-v2/core/design-system/template-catalog.js',
     'public/editor-v2/ui/page-interaction-controls.js',
     'public/editor-v2/ui/element-content-controls.js',
     'public/editor-v2/ui/geometry-presets.js',

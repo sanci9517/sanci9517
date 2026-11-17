@@ -1,5 +1,6 @@
 import {hasContentProfile} from './core/content-profiles.js?v=20261025-inspector-lifecycle-contract';
-import {createDocument,createPage,getNode,getChildren,NODE_TYPES,canContain,normalizeRichText} from './core/schema.js?v=20261115-d07-safe-child-render';
+import {getNode,getChildren,NODE_TYPES,canContain,normalizeRichText} from './core/schema.js?v=20261115-d07-safe-child-render';
+import {instantiateEditorTemplate,listEditorTemplates} from './core/editor-templates.js?v=20261117-edt041-template-v1';
 import {createEditorState,activePage,selectedNodes,setSelection,markSaved} from './core/state.js?v=20261117-d03-invalid-media-id-guidance-v1';
 import {execute,executeCoalesced,executeBatch} from './core/commands.js?v=20261025-inspector-lifecycle-contract';
 import {applyNodeStyle,getNodeGeometry,resolveNodeStyle} from './core/canvas-engine.js?v=20261117-edt040-motion-style-route';
@@ -64,7 +65,7 @@ let pendingLayerRename=null;
 function flushLayerRename(){return pendingLayerRename?.()!==false}
 let inspectorCategory='all';let richTextSelectionCleanup=null;let richTextToolTab='character';
 
-let state=null;let pages=[];let archivedPages=[];let revisionHistory=[];let zoom=1;let inspectorTab=readSavedInspectorTab();let inspectorQuery='';let flushRichTextDraft=null;let inlineEditingId=null;let richTextBookmark=null;let copiedStyleSnapshot=null;let canvasDrag=null;let canvasResize=null;let mobileTouch={active:false,timer:null,downId:null,startX:0,startY:0,snapshot:[],snapshotPrimary:null,suppressClick:false,longPressTriggered:false};let hierarchyDrag={nodeId:null,overId:null};let mobileHierarchyDrag={active:false,timer:null,nodeId:null,overId:null,startX:0,startY:0,suppressClick:false};
+let state=null;let pages=[];let archivedPages=[];let revisionHistory=[];let zoom=1;let inspectorTab=readSavedInspectorTab();let inspectorQuery='';let flushRichTextDraft=null;let inlineEditingId=null;let richTextBookmark=null;let copiedStyleSnapshot=null;let canvasDrag=null;let canvasResize=null;let pageStartTemplate='blank-page';let pageCreateBusy=false;let mobileTouch={active:false,timer:null,downId:null,startX:0,startY:0,snapshot:[],snapshotPrimary:null,suppressClick:false,longPressTriggered:false};let hierarchyDrag={nodeId:null,overId:null};let mobileHierarchyDrag={active:false,timer:null,nodeId:null,overId:null,startX:0,startY:0,suppressClick:false};
 function readSavedInspectorTab(){try{const saved=JSON.parse(localStorage.getItem('sanci-editor-shell-v2')||'{}')?.inspectorTab;return ['design','content','advanced'].includes(saved)?saved:'design'}catch{return 'design'}}
 const $=s=>document.querySelector(s);const canvas=$('#canvas');const inspector=$('#inspectorBody');
 const sizes={desktop:1440,tablet:768,mobile:390};
@@ -1784,7 +1785,46 @@ async function loadPage(id,{discardConfirmed=false}={}){
   const loadingState=state,loadingSnapshot=JSON.stringify(state?.document??null);
   setStatus('Oldal betöltése…');const meta=pages.find(x=>x.id===id);if(!meta)throw new Error('Az oldal nem található.');const data=await api('/api/admin/editor?pageId='+encodeURIComponent(id));if(state!==loadingState||!flushLayerRename()||flushRichTextDraft?.()===false||JSON.stringify(state?.document??null)!==loadingSnapshot){renderPageList();render();setStatus('Az oldal betöltése megszakadt: közben helyi módosítás történt.');return}const document=data?.data?.page?.document||meta.content;const revisions=Array.isArray(data?.data?.revisions)?data.data.revisions:[];if(!canonical(document,id))throw new Error(`Az oldal (${meta.title||meta.slug}) nem canonical Editor v2 dokumentum.`);const rawRevision=revisions.length?Number(revisions[0]?.version):0;if(!Number.isInteger(rawRevision)||rawRevision<0)throw new Error('Hibás revision-válasz: a szerver revision-száma nem érvényes.');revisionHistory=revisions;const latestRevision=rawRevision;meta.revision=latestRevision;meta.publishedRevisionId=data?.data?.page?.publishedRevisionId??meta.publishedRevisionId??null;meta.publishedRevisionVersion=meta.publishedRevisionId?Number(revisions.find(rev=>rev.id===meta.publishedRevisionId)?.version||0):0;state=createEditorState(document,{allowInvalidAuthoredContent:true});state.document.revision=latestRevision;state.document.pages[id].revision=latestRevision;markSaved(state,latestRevision);rememberPageId(id);renderPageList();render();setStatus('Mentve')}
 async function rollbackToRevision(version){const hadPendingRename=Boolean(pendingLayerRename?.dirty?.());if(!flushLayerRename()||flushRichTextDraft?.()===false)return;if(hadPendingRename){setStatus('Előbb mentsd a rétegnév módosítását a visszaállításhoz.');return}const current=page();const meta=current&&pages.find(x=>x.id===current.id);const latest=Number(revisionHistory[0]?.version||meta?.revision||0);if(!current||!meta||!Number.isInteger(version)||version<1)return;if(version===latest){return}if(!confirm(`Biztosan visszaállítod a(z) v${version} revisiont?\n\nA jelenlegi draft nem vész el véglegesen: a visszaállítás új revisionként jön létre.`))return;const rollbackState=state,rollbackSnapshot=JSON.stringify(state.document);setStatus(`v${version} visszaállítása…`);try{await api('/api/admin/editor?pageId='+encodeURIComponent(current.id),{method:'PUT',body:JSON.stringify({pageId:current.id,version,expectedVersion:latest})});if(state!==rollbackState||!flushLayerRename()||flushRichTextDraft?.()===false||JSON.stringify(state.document)!==rollbackSnapshot){if(state===rollbackState){render();showRevisionConflict(new Error('A visszaállítás elkészült, de közben helyi módosítás keletkezett; a helyi változatot megőriztük.'),current.id)}return}await loadPage(current.id,{discardConfirmed:true});setStatus(`v${version} visszaállítva`)}catch(e){showError(e)}}
-async function createNew(){if(!flushLayerRename()||flushRichTextDraft?.()===false)return;if(state?.persistence?.dirty){alert('Először mentsd az aktuális módosításokat, majd hozz létre új oldalt.');return}const title=prompt('Új oldal neve','Új oldal');if(!title)return;const slug=prompt('Slug',title.toLowerCase().normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''));if(!slug)return;const p=createPage({name:title,slug});await api('/api/admin/pages',{method:'POST',body:JSON.stringify({id:p.id,title,slug,description:'',document:createDocument(p,{modern:true})})});await loadPages();await loadPage(p.id)}
+function pageSlugFromTitle(value){return String(value||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,80).replace(/-+$/g,'')}
+function renderPageStartTemplate(templateId=pageStartTemplate){
+  const template=listEditorTemplates().find(item=>item.id===templateId);if(!template)return false;
+  pageStartTemplate=template.id;
+  const cards=$('#newPageTemplates'),preview=$('#newPagePreviewContent'),title=$('#newPagePreviewTitle');if(!cards||!preview||!title)return false;
+  for(const card of cards.querySelectorAll('[data-template-id]')){const selected=card.dataset.templateId===template.id;card.setAttribute('aria-checked',String(selected));card.tabIndex=selected?0:-1}
+  title.textContent=template.label;preview.replaceChildren();for(const line of template.preview){const item=document.createElement('li');item.textContent=line;preview.append(item)}
+  $('#newPageTemplateStatus').textContent=`Kiválasztva: ${template.label}. A sablon ${template.version}. verziója kompatibilis az Editor ${template.schemaVersion}. sémájával.`;
+  return true;
+}
+function initializePageStartDialog(){
+  const cards=$('#newPageTemplates');if(!cards)return;
+  cards.replaceChildren();for(const template of listEditorTemplates()){
+    const card=document.createElement('button');card.type='button';card.className='new-page-template';card.dataset.templateId=template.id;card.setAttribute('role','radio');card.setAttribute('aria-checked','false');card.tabIndex=-1;
+    const name=document.createElement('strong');name.textContent=template.label;const description=document.createElement('span');description.textContent=template.description;const version=document.createElement('small');version.textContent=`Sablon ${template.version} · Editor séma ${template.schemaVersion}`;card.append(name,description,version);card.onclick=()=>renderPageStartTemplate(template.id);cards.append(card);
+  }
+  cards.onkeydown=event=>{if(!['ArrowRight','ArrowDown','ArrowLeft','ArrowUp'].includes(event.key))return;const items=[...cards.querySelectorAll('[role="radio"]')];if(!items.length)return;event.preventDefault();const current=Math.max(0,items.indexOf(document.activeElement)),step=['ArrowRight','ArrowDown'].includes(event.key)?1:-1,next=(current+step+items.length)%items.length;items[next].focus();items[next].click()};
+  renderPageStartTemplate('blank-page');
+  const title=$('#newPageName'),slug=$('#newPageSlug'),dialog=$('#newPageDialog'),form=$('#newPageForm');
+  title.oninput=()=>{if(slug.dataset.touched!=='true')slug.value=pageSlugFromTitle(title.value)};slug.oninput=()=>{slug.dataset.touched='true';slug.value=slug.value.toLowerCase()};
+  const close=()=>dialog?.close();$('#cancelNewPage')?.addEventListener('click',close);$('#cancelNewPageClose')?.addEventListener('click',close);
+  form?.addEventListener('submit',async event=>{
+    event.preventDefault();if(pageCreateBusy)return;
+    const cleanTitle=title.value.trim(),cleanSlug=slug.value.trim().toLowerCase(),error=$('#newPageError'),button=$('#createNewPage');error.hidden=true;error.textContent='';
+    if(!cleanTitle||cleanTitle.length>160){error.textContent='Az oldal neve 1–160 karakter legyen.';error.hidden=false;title.focus();return}
+    if(!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(cleanSlug)||cleanSlug.length>80){error.textContent='A slug kisbetűt, számot és egyes kötőjeleket tartalmazhat.';error.hidden=false;slug.focus();return}
+    if(!flushLayerRename()||flushRichTextDraft?.()===false){error.textContent='Előbb fejezd be a mező szerkesztését.';error.hidden=false;return}
+    if(state?.persistence?.saving){error.textContent='Várd meg az aktuális mentés végét.';error.hidden=false;return}
+    if(state?.persistence?.dirty){error.textContent='Előbb mentsd az aktuális módosításokat. A helyi változtatások megmaradnak.';error.hidden=false;return}
+    let createdId=null;pageCreateBusy=true;button.disabled=true;title.disabled=true;slug.disabled=true;cards.setAttribute('aria-busy','true');$('#newPageTemplateStatus').textContent='A sablon előkészítése…';
+    try{
+      const document=instantiateEditorTemplate(pageStartTemplate,{title:cleanTitle,slug:cleanSlug});const id=document.activePageId;
+      const result=await api('/api/admin/pages',{method:'POST',body:JSON.stringify({id,title:cleanTitle,slug:cleanSlug,description:'',document})});
+      if(result?.data?.id!==id||result?.data?.isPublished===true)throw new Error('A szerver nem igazolta vissza az új piszkozatot. Ellenőrizd az oldallistát, mielőtt újra próbálkozol.');
+      createdId=id;dialog.close();setStatus('Új oldal piszkozatként létrehozva');await loadPages();await loadPage(id);setStatus('Új piszkozat megnyitva — mentés és publikálás külön történik.');
+    }catch(e){if(createdId){setStatus('A piszkozat létrejött, de nem sikerült automatikusan megnyitni. Frissítsd az oldallistát.');try{await loadPages()}catch{}}else{error.textContent=e instanceof Error?e.message:String(e);error.hidden=false;$('#newPageTemplateStatus').textContent='A létrehozás nem sikerült. A kiválasztott sablon és az űrlap adatai megmaradtak.';}}
+    finally{pageCreateBusy=false;button.disabled=false;title.disabled=false;slug.disabled=false;cards.removeAttribute('aria-busy')}
+  });
+}
+async function createNew(){if(!flushLayerRename()||flushRichTextDraft?.()===false)return;if(state?.persistence?.saving){setStatus('Várd meg az aktuális mentés végét az új oldalhoz.');return}if(state?.persistence?.dirty){setStatus('Előbb mentsd az aktuális módosításokat; a helyi munka megmarad.');return}const dialog=$('#newPageDialog');if(!dialog)return;pageStartTemplate='blank-page';$('#newPageName').value='Új oldal';$('#newPageSlug').value='uj-oldal';$('#newPageSlug').dataset.touched='false';$('#newPageError').hidden=true;renderPageStartTemplate('blank-page');if(!dialog.open)dialog.showModal();$('#newPageName').focus()}
 function commitActiveInspectorControl(){
   const input=document.activeElement;if(!input||!inspector.contains(input)||!input.matches('input,textarea,select'))return true;
   if(typeof input.onchange==='function'&&input.dataset.focusValue!==String(input.type==='checkbox'?input.checked:input.value)){
@@ -1873,7 +1913,7 @@ document.addEventListener('DOMContentLoaded',()=>{
  window.__sanciEditorBoot?.started();
  $('#elementSearch').oninput=e=>renderPalette(e.target.value);
  $('#scheduleSelectNode').onclick=()=>focusScheduleNode();
- $('#newPage').onclick=()=>createNew().catch(showError);$('#newPagePanel').onclick=()=>createNew().catch(showError);
+ initializePageStartDialog();$('#newPage').onclick=()=>createNew().catch(showError);$('#newPagePanel').onclick=()=>createNew().catch(showError);
  $('#pageSelect').onchange=e=>loadPage(e.target.value).catch(showError);
  $('#exportConflictDraft').onclick=()=>exportConflictDraft();$('#reloadConflictPage').onclick=()=>reloadLatestAfterConflict();
  $('#save').onclick=()=>save(false);$('#publish').onclick=()=>save(true);$('#unpublish').onclick=()=>unpublishPage().catch(showError);$('#mobilePublish').onclick=()=>save(true);$('#mobileUnpublish').onclick=()=>unpublishPage().catch(showError);

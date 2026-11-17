@@ -11,7 +11,8 @@
   <link rel="stylesheet" href="/editor-v2/action-help.css?v=20261102-action-help-stateful">
   <link rel="stylesheet" href="/editor-v2/workspace-appearance.css?v=20261109-recursive-dock-activation">
   <link rel="stylesheet" href="/editor-v2/text-presentation.css?v=20261018-layout">
-<link rel="stylesheet" href="/editor-v2/element-content.css?v=20261114-next-stream-clock-v1"></head>
+<link rel="stylesheet" href="/editor-v2/element-content.css?v=20261114-next-stream-clock-v1">
+<link rel="stylesheet" href="/editor-v2/editor-templates.css?v=20261117-edt041-template-v1"></head>
 <body>
 <div id="app" class="editor-app">
   <header class="topbar">
@@ -20,6 +21,19 @@
     <div class="top-center" role="group" aria-label="Előnézet képernyőméret szerint"><button class="device-btn active" data-editor-action="deviceDesktop" data-icon-only="true" data-device="desktop" aria-pressed="true" type="button"></button><button class="device-btn" data-editor-action="deviceTablet" data-icon-only="true" data-device="tablet" aria-pressed="false" type="button"></button><button class="device-btn" data-editor-action="deviceMobile" data-icon-only="true" data-device="mobile" aria-pressed="false" type="button"></button></div>
     <div class="top-actions"><span id="saveStatus" class="save-state" role="status" aria-live="polite">Betöltés…</span><button id="undo" class="icon-btn" data-editor-action="undo" data-icon-only="true" type="button"></button><button id="redo" class="icon-btn" data-editor-action="redo" data-icon-only="true" type="button"></button><button id="preview" class="subtle-btn" data-editor-action="preview" type="button">Előnézet</button><button id="save" class="primary-btn" data-editor-action="saveDraft" type="button">Mentés</button><button id="publish" class="publish-btn" data-editor-action="publishDraft" type="button" disabled>Publikálás</button><details class="more-actions"><summary aria-label="További szerkesztőműveletek" data-editor-action="moreActions" data-icon-only="true"></summary><div class="more-actions-menu"><button id="openWorkspaceAppearance" class="subtle-btn" data-editor-action="workspaceAppearance" aria-haspopup="dialog" aria-expanded="false" type="button">Megjelenés és munkaterület</button><button id="unpublish" class="subtle-btn" data-editor-action="unpublishPage" type="button" hidden>Publikálás visszavonása</button><button id="twitchConnection" class="subtle-btn twitch-connection-btn" data-editor-action="twitchConnection" type="button">Twitch: ellenőrzés…</button></div></details><button id="openInspector" class="icon-btn" data-editor-action="openRightPanel" data-icon-only="true" aria-expanded="false" type="button"></button></div>
   </header>
+  <dialog id="newPageDialog" class="new-page-dialog" aria-labelledby="newPageTitle" aria-describedby="newPageHelp">
+    <form id="newPageForm" novalidate>
+      <header class="new-page-heading"><div><p class="new-page-eyebrow">ÚJ OLDAL · PISZKOLAT</p><h2 id="newPageTitle">Miből induljon az oldal?</h2></div><button id="cancelNewPageClose" class="new-page-close" type="button" aria-label="Új oldal létrehozásának bezárása">×</button></header>
+      <p id="newPageHelp" class="new-page-help">Válassz egy segített üres oldalt vagy a creator bemutatkozó mintát. Előnézet után bármikor visszaléphetsz.</p>
+      <p class="new-page-safety">Ez kizárólag új piszkozatot hoz létre. A meglévő oldalaid, mentéseid és az élő weboldal változatlanok maradnak. A Mentés és a Publikálás továbbra is külön művelet.</p>
+      <div id="newPageTemplates" class="new-page-templates" role="radiogroup" aria-label="Kezdősablon"></div>
+      <p id="newPageTemplateStatus" class="new-page-template-status" role="status" aria-live="polite"></p>
+      <section class="new-page-preview" aria-labelledby="newPagePreviewTitle"><div><p class="new-page-eyebrow">ELŐNÉZET</p><h3 id="newPagePreviewTitle">Üres oldal</h3></div><ul id="newPagePreviewContent"></ul></section>
+      <div class="new-page-fields"><label for="newPageName">Oldal neve<input id="newPageName" name="title" maxlength="160" autocomplete="off" required></label><label for="newPageSlug">Piszkozat URL-része<input id="newPageSlug" name="slug" maxlength="80" pattern="[a-z0-9]+(?:-[a-z0-9]+)*" autocomplete="off" required aria-describedby="newPageSlugHelp"><small id="newPageSlugHelp">Élő URL csak külön publikálás után jön létre.</small></label></div>
+      <p id="newPageError" class="new-page-error" role="alert" hidden></p>
+      <footer class="new-page-actions"><button id="cancelNewPage" class="subtle-btn" type="button">Mégse</button><button id="createNewPage" class="primary-btn" type="submit">Piszkozat létrehozása</button></footer>
+    </form>
+  </dialog>
   <dialog id="workspaceAppearanceDialog" class="workspace-appearance-dialog" aria-labelledby="workspaceAppearanceTitle" aria-describedby="workspaceAppearanceHelp">
     <header class="workspace-appearance-heading"><div><p class="workspace-appearance-eyebrow">SAJÁT MUNKATERÜLET</p><h2 id="workspaceAppearanceTitle">Megjelenés és elrendezés</h2></div><button id="closeWorkspaceAppearance" type="button" class="workspace-appearance-close">Bezárás</button></header>
     <p id="workspaceAppearanceHelp" class="workspace-appearance-help">Ezek a beállítások csak a szerkesztő felületét módosítják ezen az eszközön. Az oldal tartalma, mentése, publikálása és működése változatlan marad.</p>
@@ -57,7 +71,7 @@
   <footer class="statusbar"><span id="selection">Kijelölés: —</span><span id="revision">Mentés verziója: 0</span><span id="engine">Oldal szerkesztése</span><span class="status-hint">Ctrl+S Mentés · Ctrl+Z Visszavonás</span></footer>
 </div>
 <script src="/editor-v2/boot.js?v=20260917-1"></script>
-<script type="module" src="/editor-v2/app.js?v=20261117-edt039-page-action-registry-v1"></script>
+<script type="module" src="/editor-v2/app.js?v=20261117-edt041-template-v1"></script>
 <script type="module" src="/editor-v2/ui/shell.js?v=20261109-recursive-dock-activation"></script>
 <script type="module" src="/editor-v2/ui/canvas-pan.js?v=20260917-1"></script>
 <script type="module" src="/editor-v2/ui/inspector-groups.js?v=20261030-search-group-state"></script>

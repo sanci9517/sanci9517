@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-17T16:57:47Z",
+  "plan_point": "EDT-041",
+  "status": "PARTIAL_IMPLEMENTATION_OPEN_NOT_CERTIFIED",
+  "scope": "Provide a safe, versioned template start for creating a new Editor draft page without changing existing drafts or public pages.",
+  "implementation": {
+    "catalog_owner": "Design System catalog is isolated at public/editor-v2/core/design-system/template-catalog.js.",
+    "templates": [
+      "blank-page",
+      "creator-home"
+    ],
+    "compatibility": "Each catalog entry declares template version and Page Model schema version; apply rejects unknown, unsupported, or incompatible entries.",
+    "node_identity": "Every created instance uses crypto.randomUUID-backed IDs, reconstructs parent/child relationships from an allowlisted template graph, rejects orphan/duplicate references, and validates the resulting Editor document.",
+    "ui": "Accessible new-page dialog with keyboard-selectable templates, preview, title and slug fields, cancel, inline validation, busy and error states, and retry after a site-local slug conflict.",
+    "safety": "Only a new page draft is created through the existing site-scoped admin page API; no existing page replacement or publication path is called. The creator template uses generic sample text, no secret, no external URL, no custom code, and no assumed channel handle.",
+    "rollback": "Cancel before submit performs no write. A created new draft is reversible through the existing explicitly confirmed page-delete operation; the browser test checks the previous published page remains byte-for-byte unchanged.",
+    "save_publish_separation_changed": false,
+    "production_data_touched": false
+  },
+  "checks": {
+    "editor_template_unit": "PASS; 4 tests cover immutable metadata, compatibility, hierarchy validation, fresh IDs, blank draft, and invalid input.",
+    "editor_template_browser": "PASS; Chromium E2E covers accessible selection, preview, generated slug, cancel with no POST, slug-conflict retry, draft-only create, remapped node IDs, no Save/Publish call, and confirmed rollback preserving existing published bytes.",
+    "npm_run_test_editor": "PASS; 231 tests, 0 failed.",
+    "npm_run_typecheck": "PASS; tsc --noEmit.",
+    "npm_run_test_web013_migration_gate": "PASS; deploy:safe remains migration-gated and no D1 migration ran.",
+    "production_source_smoke": "PASS; exact public assets include app, template catalog, builder, CSS and Editor entrypoint.",
+    "canonical_plan": "PASS; one complete 13-file plan, current cursor retained, 396 mappings, acceptance not certified.",
+    "traceability": "PASS; EDT-041 maps to reviewed runtime and test sources; source inventory does not certify acceptance.",
+    "production_d1_preflight": "PASS; read-only Cloudflare D1 API queries returned rows_written=0 for every statement, foreign_key_check empty, quick_check ok; zero active-user membership gaps, zero default-setting gaps, and zero migration snapshot tables.",
+    "wrangler_dry_run": "PASS; Wrangler 4.130.0, 193 public assets, 391.56 KiB upload / 100.44 KiB gzip; D1/R2/assets bindings resolved; dry-run exited without deployment.",
+    "full_editor_browser_layout_suite": "NOT_COMPLETED; the broad 57-file local suite was started but stopped after several minutes because this feature's targeted browser acceptance and complete Editor unit suite had passed; no full-layout PASS is claimed."
+  },
+  "release": {
+    "branch": "v2/foundation",
+    "source_control": "PENDING; runtime changes require normal fast-forward push.",
+    "ci": "PENDING; workflows will be checked on the pushed exact SHA.",
+    "worker_deployment": "PENDING; automatic Worker Build expected after verified push; use deploy:safe only if it does not start or succeed.",
+    "traffic": "PENDING; verify 100% to the newly deployed Worker version.",
+    "health": "PENDING; direct /api/health check.",
+    "public_asset_hashes": "PENDING; exact hashes for all changed public runtime assets."
+  },
+  "cost": "0 Ft; no paid service or quota escalation used.",
+  "known_open_work": [
+    "The catalog intentionally contains only two safe starter templates; full design-system catalog and content/asset-ownership integration remain open.",
+    "No shared-template merge/overwrite workflow was implemented; the feature creates new pages only.",
+    "Unified manual/physical acceptance for the complete Editor is deferred until the Editor feature set is complete.",
+    "The active plan remains OPEN; this evidence is a partial slice, not a D-block or full-Editor certification."
+  ],
+  "production_mutations": false
+}

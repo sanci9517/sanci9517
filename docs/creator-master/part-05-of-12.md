@@ -442,15 +442,15 @@
 - **Kanonikus owner / adatforrás:** EDITOR onboarding UX; a template catalog a DESIGN SYSTEM domain tulajdona.
 - **Séma / invariánsok:** template version/compatibility, safe merge/replace policy és sample content cleanup.
 - **Jogosultság:** csak jogosult site editor; template install a scope-hoz kötött.
-- **API/command:** template-start UI és teljes template registry/apply API nem bizonyított.
+- **API/command:** az EDT-041 alapfolyamathoz a meglévő webhelyhatárolt, jogosultság-ellenőrzött `POST /api/admin/pages` végpontot használja új, revision 1-es piszkozat tranzakcióban; a két statikus minta verziózott Design System katalógusban van. Teljes template registry/szerveroldali apply API nincs bizonyítva.
 - **Függőségek:** EDT-001–005/015–020/027–034, DSN, SITE/SEC.
-- **UI-állapotok:** empty/new, template loading/preview, apply confirmation, incompatible template, failure.
+- **UI-állapotok:** empty/new, template preview/select, cancel, submit/busy, hibás mező, slug-conflict retry és kompatibilitási ellenőrzés.
 - **Biztonság/adatvédelem:** destructive overwrite előtt explicit confirm; sample secrets/private data tilos.
 - **Tesztcsomag:** teljes onboarding/template E2E nincs bizonyítva.
-- **Elfogadás:** template preview → new page apply → all node IDs remapped → undo/rollback → sample content removed.
-- **Bizonyíték:** template UI/registry teljes evidence nincs rögzítve.
-- **Visszaállítás:** transaction undo és page revision; destructive replace nélkül preview/confirm.
-- **Státusz / ismert probléma / következő lépés:** OPEN / UNVERIFIED; template owner/API és onboarding UX.
+- **Elfogadás:** a két verziózott sablon előnézete/megtekintése → új piszkozat létrehozása → minden node új azonosítót kap → ütköző slugnál az űrlap és a választott minta megmarad → új oldal törlése megerősítéssel → a korábbi publikált dokumentum byte-ra változatlan; a minta nem tartalmaz tokent, futtatható kódot vagy feltételezett csatorna-URL-t. Kézi/fizikai teljes Editor acceptance még nincs.
+- **Bizonyíték:** [EDT-041 sablonos új oldal indulás](../evidence/editor-template-start-2026-11-17.json).
+- **Visszaállítás:** megszakítás a létrehozás előtt nem ír; a létrehozott oldal új piszkozat, visszaállítása a meglévő, explicit megerősítést kérő és webhelyhatárolt oldaltörlési művelettel történik. Szerkesztési Save/Publish továbbra is külön; meglévő oldal felülírás nincs.
+- **Státusz / ismert probléma / következő lépés:** PARTIAL / IN PROGRESS / NOT CERTIFIED; a kezdeti safe template flow elkészült és céltesztelt, de a teljes template catalog, többféle valódi kezdősablon, asset-hozzárendelések, Site/Design System teljes regiszter-integráció és az Editor végi egyesített kézi/fizikai acceptance nyitott.
 
 #### EDT-042 — Editor error recovery és diagnostics
 - **Felhasználói eredmény:** hiba esetén a felhasználó érthető magyarázatot és adatvesztés nélküli következő lépést kap.
