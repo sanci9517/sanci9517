@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261117064350-b5a709a3",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-17T06:43:50.977Z",
+  "finished_at": "2026-11-17T06:48:45.984Z",
+  "wall_seconds": 295,
+  "paused_seconds": 0,
+  "measured_seconds": 295,
+  "status": "partial",
+  "kind": "docs",
+  "summary": "Verified current D status, exact-source CI and production rollout; the full D-01–D-07 acceptance matrix remains open, no runtime change.",
+  "evidence": [
+    "https://github.com/sanci9517/sanci9517/commit/4e96e632016c30faa3aa6edb5562fddba3830c23",
+    "https://github.com/sanci9517/sanci9517/actions/runs/44028115102"
+  ],
+  "checks": "PASS: scripts/audit-active-plan-point.py (77.44.7.D OPEN; 146 PARTIAL_SOURCE/250 UNVERIFIED); scripts/check-canonical-plan.py (13 master files/396 mapping); tests/plan-contract.test.py (14/14). GitHub ref verified at 4e96e632016c30faa3aa6edb5562fddba3830c23; docs-only metric commit status has no CI checks. Source 0095546c5a56fbba0f059f87e2b5bf673cf98556 CI has 6/6 successful workflows, including Editor Core, F0, Twitch, canonical plan, active point audit and production source smoke. Smoke job log verified production /api/health HTTP 200 and exact SHA-256 match for all 21 listed source files after cache propagation. Read-only Cloudflare API shows deployment 41d5823d-42d5-437f-a429-d3d9d5f56de6, Worker bcccf16b-b81d-4322-8c31-e30e28ad0b02 at 100% traffic. No code changes, D remains open.",
+  "started_revision": "4cd79c5cc8c3c0c74137e50c44763e4baf56892e",
+  "finished_revision": "4cd79c5cc8c3c0c74137e50c44763e4baf56892e",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
