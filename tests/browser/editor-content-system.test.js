@@ -85,6 +85,11 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
     return metadata;
   };
   await editor.goto(base+'/editor-v2/index.html');
+  await live.goto(base+'/p/test');
+  assert.equal(await node(live,'image').locator('img').evaluate(el=>getComputedStyle(el).objectFit),'contain',
+    'the existing published image keeps its original fit before the draft edit');
+  assert.equal(await node(live,'image').locator('.creator-image-frame').evaluate(el=>getComputedStyle(el).aspectRatio),'1 / 1',
+    'the existing published image keeps its original square ratio before the draft edit');
   // Tie every visible authored field to the command and Page Model path that
   // actually receives its edit, including repeater child and table cell paths.
   for(const type of Object.keys(definitions)){
@@ -306,6 +311,9 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   await select('image');await editor.getByLabel('Kép szöveges leírása',{exact:true}).fill('Új képleírás');
   assert.equal(await node(editor,'image').locator('img').getAttribute('alt'),'Új képleírás');
   await editor.getByLabel('Kép illesztése',{exact:true}).selectOption('cover');assert.equal(await node(editor,'image').locator('img').evaluate(el=>getComputedStyle(el).objectFit),'cover');
+  await editor.getByLabel('Képarány',{exact:true}).selectOption('16 / 9');
+  assert.equal(await node(editor,'image').locator('.creator-image-frame').evaluate(el=>getComputedStyle(el).aspectRatio),'16 / 9',
+    'the authored image ratio changes the real Canvas frame immediately');
   const setCrop=async(label,value,index=0)=>editor.getByLabel(label,{exact:true}).nth(index).evaluate((input,next)=>{input.value=String(next);input.dispatchEvent(new Event('input',{bubbles:true}))},value);
   await setCrop('Kivágás vízszintesen',18);await setCrop('Kivágás függőlegesen',82);
   assert.equal(await node(editor,'image').locator('img').evaluate(el=>getComputedStyle(el).objectPosition),'18% 82%');
@@ -601,11 +609,15 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.image].props.decorative,true,'Save persists the explicit decorative choice');
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.image].props.alt,'','Save keeps the empty alt separate from the preserved description case');
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.image].props.loading,'eager','Save persists the authored image loading strategy');
+  assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.image].props.fit,'cover','Save persists the authored image fit mode in the draft');
+  assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.image].props.ratio,'16 / 9','Save persists the authored image ratio in the draft');
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.gallery].props.items[0].assetId,assetId);
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.gallery].props.items[1].alt,'  Második kép  ','rendering must not silently rewrite the saved draft');
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.gallery].props.items[1].caption,'  Második képaláírás  ');
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.button].responsive.desktop.backgroundAssetId,assetId,'Save stores the background asset ID');
   await live.goto(base+'/p/test');assert.equal(await live.locator('h1[data-node-id]').textContent(),'Alkotói főcím');
+  assert.equal(await node(live,'image').locator('.creator-image-frame').evaluate(el=>getComputedStyle(el).aspectRatio),'1 / 1',
+    'the current published image keeps its original square ratio after draft Save');
   assert.equal(await node(live,'link').getAttribute('href'),'mailto:creator@example.com','draft Save does not publish the authored link destination');
   assert.equal(await node(live,'link').textContent(),'Kapcsolat','draft Save does not publish the authored link text');
   assert.equal(await node(live,'icon').getAttribute('aria-label'),'Kedvenc','Save keeps the previous published icon name live');
@@ -630,6 +642,8 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
     'a newly named carousel is still draft-only after Save');
   assert.equal(await node(live,'button').evaluate(el=>getComputedStyle(el).backgroundImage),'none','draft background stays private before Publish');
   assert.equal(await node(live,'image').locator('img').evaluate(el=>getComputedStyle(el).objectPosition),'50% 50%','Save does not publish image crop');
+  assert.equal(await node(live,'image').locator('.creator-image-frame').evaluate(el=>getComputedStyle(el).aspectRatio),'1 / 1','draft Save keeps the original published image ratio');
+  assert.equal(await node(live,'image').locator('img').evaluate(el=>getComputedStyle(el).objectFit),'contain','draft Save keeps the original published image fit');
   assert.equal(await node(live,'image').locator('img').getAttribute('loading'),'lazy','draft Save does not publish the authored image loading strategy');
   await editor.reload();await select('table');
   assert.equal(await editor.locator('.content-schema-field[data-content-key="rows"] textarea').inputValue(),serializeTableTsv(expectedTableRows),
@@ -644,7 +658,9 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   assert.equal(await autoplayField.isChecked(),true,'Editor reload restores the authored autoplay setting');
   assert.equal(await loopField.isChecked(),true,'Editor reload restores the authored loop setting');
   await select('image');
+  assert.equal(await editor.getByLabel('Kép illesztése',{exact:true}).inputValue(),'cover','Editor reload restores the authored image fit mode');
   assert.equal(await editor.getByLabel('Csak díszítő kép',{exact:true}).isChecked(),true,'Editor reload restores the authored decorative image mode');
+  assert.equal(await editor.getByLabel('Képarány',{exact:true}).inputValue(),'16 / 9','Editor reload restores the authored image ratio');
   assert.equal(await editor.getByLabel('Kép szöveges leírása',{exact:true}).inputValue(),'','Editor reload preserves the intentionally empty alt value');
   assert.equal(await editor.locator('[data-content-key="loading"] select').inputValue(),'eager','Editor reload restores the authored image loading strategy');
   await select('link');
@@ -684,6 +700,8 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   assert.equal(await node(live,'button').evaluate(el=>getComputedStyle(el).rotate),'3deg');
   await live.emulateMedia({reducedMotion:'reduce'});assert.equal(await node(live,'button').evaluate(el=>getComputedStyle(el).transitionDuration),'0s');
   assert.equal(await node(live,'image').locator('img').getAttribute('alt'),'','separate Publish exposes the explicit decorative image as empty alt');assert.equal(await node(live,'image').locator('img').getAttribute('role'),null,'native empty-alt semantics remain intact without an unnecessary role override');assert.equal(await node(live,'image').locator('img').evaluate(el=>getComputedStyle(el).objectPosition),'18% 82%');assert.equal(await node(live,'image').locator('figcaption').textContent(),'Képaláírás');
+  assert.equal(await node(live,'image').locator('.creator-image-frame').evaluate(el=>getComputedStyle(el).aspectRatio),'16 / 9','separate Publish exposes the authored image ratio on the public page');
+  assert.equal(await node(live,'image').locator('img').evaluate(el=>getComputedStyle(el).objectFit),'cover','separate Publish exposes the authored image fit mode on the public page');
   assert.equal(await node(live,'image').locator('img').getAttribute('loading'),'eager','separate Publish exposes the authored loading strategy');
   assert.equal(await node(live,'gallery').locator('img').first().evaluate(el=>getComputedStyle(el).objectPosition),'24% 68%','published gallery item retains its independent crop');
   assert.equal(await node(live,'gallery').locator('img').nth(1).getAttribute('alt'),'Második kép','Publish renders trimmed alt text from the preserved draft');

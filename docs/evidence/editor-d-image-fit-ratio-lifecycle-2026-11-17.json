@@ -1,0 +1,52 @@
+{
+  "schema": "sanci.editor.d-image-fit-ratio-lifecycle.v1",
+  "captured_at_utc": "2026-11-17T04:36:55Z",
+  "plan_point": "77.44.7.D — element-specific content and media",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "base_sha": "33dbdd02be39d0694219db128ec9795a401da6c2",
+    "remote_head_at_base": "33dbdd02be39d0694219db128ec9795a401da6c2",
+    "canonical_plan_sha256": "68d94c1f33a27712a90f1470a0c98ee9b5d089cc8ab057113ed236d0298e83f8",
+    "runtime_source_commit": "c45a7c4e27c1ad6d3d6f7e6b51117ebef45707f3"
+  },
+  "scope": {
+    "test_file": "tests/browser/editor-content-system.test.js",
+    "test_sha256": "1b6db3df44e1219f317122a8ad9022f168cde9b18e0029120eba982988ad4791",
+    "authored_image_fit": "Inspector changes contain to cover; Canvas previews cover; draft Save persists it; reload restores it; prior published contain remains through Save; separate Publish changes public output to cover.",
+    "authored_image_ratio": "Inspector changes 1 / 1 to 16 / 9; Canvas frame previews 16 / 9; draft Save persists it; reload restores it; prior published 1 / 1 remains through Save; separate Publish changes public output to 16 / 9.",
+    "runtime_source_changed": false
+  },
+  "checks": {
+    "targeted_browser_command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-content-system.test.js",
+    "targeted_browser": "PASS; 1/1 local Chromium test after all fit/ratio assertions",
+    "editor_unit": "PASS; npm run test:editor: 17/17 files and 3/3 Linux subreaper tests",
+    "typecheck": "PASS; npm run typecheck (runtime source unchanged)",
+    "plan_contract": "PASS; 14/14",
+    "canonical_plan": "PASS; 13 parts / 396 mappings; functional acceptance remains uncertified",
+    "traceability": "PASS; 396/396",
+    "syntax_and_diff": "PASS; node --check and git diff --check",
+    "hosted_ci_for_this_test_commit": "NOT RUN; test/evidence-only follow-up uses [skip ci]"
+  },
+  "test_attempt_notes": [
+    "The first expected public ratio baseline was corrected after the fixture proved the prior live value is 1 / 1.",
+    "The baseline assertion was moved after navigation to the live fixture page; this was a test placement correction, not a product failure."
+  ],
+  "release": {
+    "latest_worker_deployment_id": "8dc6dc5d-1857-4684-9b8b-38b721145793",
+    "worker_version_id": "0658af0d-b223-4054-b839-048941f87ce8",
+    "traffic_percent": 100,
+    "runtime_changed": false,
+    "worker_deployed": false,
+    "production_d1_write_or_migration": false,
+    "production_r2_operation": false,
+    "new_cost_huf": 0
+  },
+  "status": "AUTHORED_IMAGE_FIT_RATIO_SAVE_RELOAD_PUBLISH_PASS; D_OPEN_NOT_CERTIFIED",
+  "limitations": [
+    "This evidence closes the authored image fit/ratio lifecycle row only; it does not complete other content fields, breakpoints, renderers or site-scoped media cases.",
+    "Full 77.44.7.D and D-01 through D-07 remain OPEN / NOT_CERTIFIED.",
+    "Full Visual Editor manual and physical acceptance remains deferred to the complete Editor gate.",
+    "Save and Publish remain distinct."
+  ]
+}
