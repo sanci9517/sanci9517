@@ -282,7 +282,41 @@ export function authoredNodeHtml(node,{childrenHtml='',device='desktop',editor=f
 
 export function initContentInteractions(root){
   if(root.dataset.contentInteractions==='1')return;root.dataset.contentInteractions='1';
-  const activate=tab=>{const group=tab.closest('.creator-tabs');if(!group)return;for(const button of group.querySelectorAll('[role="tab"]')){const selected=button===tab;button.setAttribute('aria-selected',String(selected));button.tabIndex=selected?0:-1;const panel=group.querySelector('[id="'+button.getAttribute('aria-controls')+'"]');if(panel)panel.hidden=!selected}};
+  const view=root.ownerDocument?.defaultView,tabQueryKey='creator-tab',maxTabQueryEntries=40;
+  const editorCanvas=Boolean(root.closest?.('.node-content'));
+  const parseTabEntry=value=>{
+    if(typeof value!=='string'||value.length>128)return null;
+    const separator=value.lastIndexOf(':');if(separator<1)return null;
+    const targetId=value.slice(0,separator),indexText=value.slice(separator+1);
+    if(!/^[A-Za-z0-9_-]{1,120}$/.test(targetId)||!/^(0|[1-9]\d{0,2})$/.test(indexText))return null;
+    const index=Number(indexText);return Number.isSafeInteger(index)&&index<40?{targetId,index}:null;
+  };
+  const tabNode=tab=>tab?.closest?.('[data-page-node-id]');
+  const writeTabUrlState=tab=>{
+    if(editorCanvas||!view?.history?.pushState||!view.location)return;
+    const node=tabNode(tab),tabs=tab.closest('.creator-tabs')?.querySelectorAll('[role="tab"]');
+    const index=tabs?[...tabs].indexOf(tab):-1,targetId=node?.dataset?.pageNodeId;
+    if(typeof targetId!=='string'||!/^[A-Za-z0-9_-]{1,120}$/.test(targetId)||index<0||index>=40)return;
+    try{
+      const url=new URL(view.location.href),entries=url.searchParams.getAll(tabQueryKey).map(parseTabEntry).filter(Boolean).filter(entry=>entry.targetId!==targetId);
+      entries.push({targetId,index});url.searchParams.delete(tabQueryKey);
+      for(const entry of entries.slice(-maxTabQueryEntries))url.searchParams.append(tabQueryKey,`${entry.targetId}:${entry.index}`);
+      if(url.href!==view.location.href)view.history.pushState(view.history.state,'',url);
+    }catch{/* URL state is an enhancement; a tab action still works without history support. */}
+  };
+  const activate=(tab,{writeUrl=true}={})=>{const group=tab.closest('.creator-tabs');if(!group)return;for(const button of group.querySelectorAll('[role="tab"]')){const selected=button===tab;button.setAttribute('aria-selected',String(selected));button.tabIndex=selected?0:-1;const panel=group.querySelector('[id="'+button.getAttribute('aria-controls')+'"]');if(panel)panel.hidden=!selected}if(writeUrl)writeTabUrlState(tab)};
+  const applyTabUrlState=()=>{
+    if(!view?.location)return;
+    const entries=new Map();
+    for(const value of new URL(view.location.href).searchParams.getAll(tabQueryKey).slice(-maxTabQueryEntries)){
+      const entry=parseTabEntry(value);if(entry)entries.set(entry.targetId,entry.index);
+    }
+    for(const target of root.querySelectorAll('[data-page-node-id]')){
+      const tabs=target.querySelectorAll('.creator-tabs [role="tab"]');if(!tabs.length)continue;
+      const requested=entries.get(target.dataset.pageNodeId),index=Number.isInteger(requested)&&requested>=0&&requested<tabs.length?requested:0;
+      activate(tabs[index],{writeUrl:false});
+    }
+  };
   const runPageAction=source=>{
     const action=source?.dataset?.pageAction,targetId=source?.dataset?.pageActionTarget;
     if(!['scroll-to','select-tab','toggle-disclosure'].includes(action)||typeof targetId!=='string'||!targetId)return false;
@@ -375,4 +409,5 @@ export function initContentInteractions(root){
     scrollCarousel(track,event.key);
   });
   root.addEventListener('keydown',event=>{const tab=event.target.closest('[role="tab"]');if(!tab||!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;const tabs=[...tab.closest('[role="tablist"]').querySelectorAll('[role="tab"]')],index=tabs.indexOf(tab);const next=tabs[event.key==='Home'?0:event.key==='End'?tabs.length-1:(index+(event.key==='ArrowRight'?1:-1)+tabs.length)%tabs.length];event.preventDefault();activate(next);next.focus()});
+  if(view&&!editorCanvas){applyTabUrlState();view.addEventListener('popstate',applyTabUrlState)}
 }

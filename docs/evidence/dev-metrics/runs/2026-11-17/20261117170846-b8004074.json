@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261117170846-b8004074",
+  "task": "77.44.7.EDT-042",
+  "trigger": "manual",
+  "started_at": "2026-11-17T17:08:46.654Z",
+  "finished_at": "2026-11-17T17:27:04.243Z",
+  "wall_seconds": 1098,
+  "paused_seconds": 0,
+  "measured_seconds": 1098,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "EDT-042 deployed from exact fedd4f0 source; build/deploy, 100% traffic, direct health and asset hashes pass; exact-SHA Editor Core CI remains in progress.",
+  "evidence": [
+    "docs/evidence/editor-error-recovery-2026-11-17.json"
+  ],
+  "checks": "local-editor-diagnostics,editor-browser,editor-unit,typecheck,D1-select-preflight,wrangler-dry-run,github-f0-twitch-source-smoke,cloudflare-build-safe-deploy,direct-health,asset-hashes;Editor-Core-CI-pending",
+  "started_revision": "7b3ec18684db6f17ea28338b5c53b5abccb0b3b3",
+  "finished_revision": "fedd4f056bf5a6f0e8d16ccc718499998142e730",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

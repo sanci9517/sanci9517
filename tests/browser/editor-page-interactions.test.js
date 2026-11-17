@@ -55,6 +55,9 @@ test('EDT-039 page actions and EDT-040 motion save as draft, preview safely, and
   await actionControls.getByLabel('Művelet').selectOption('select-tab');
   await actionControls.getByLabel('Cél elem').selectOption(tabsId);
   await actionControls.getByLabel('Kiválasztott fül').selectOption('1');
+  await editorNode(tabsId).getByRole('tab').nth(1).click();
+  assert.equal(await editorNode(tabsId).getByRole('tab').nth(1).getAttribute('aria-selected'),'true','the Editor Canvas tab is interactive');
+  assert.equal(new URL(editor.url()).searchParams.has('creator-tab'),false,'Editor Canvas interactions never rewrite the top-level Editor URL');
   await editor.locator('#save').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
   await live.reload();assert.equal(await liveNode(buttonId).getAttribute('data-page-action'),null,'Save keeps the action draft-only');
   await editor.reload();await selectButton();
@@ -83,6 +86,22 @@ test('EDT-039 page actions and EDT-040 motion save as draft, preview safely, and
   await liveNode(buttonId).press('Enter');
   assert.equal(await liveNode(tabsId).getByRole('tab').nth(0).getAttribute('aria-selected'),'false');
   assert.equal(await liveNode(tabsId).getByRole('tab').nth(1).getAttribute('aria-selected'),'true','published action activates the configured tab with native tab semantics');
+  const tabHistory=await browser.newPage();tabHistory.setDefaultTimeout(5000);
+  const historyNode=id=>tabHistory.locator(`.creator-node[data-page-node-id="${id}"]`);
+  await tabHistory.goto(base+'/p/page-actions?campaign=creator-test');
+  await historyNode(buttonId).press('Enter');
+  assert.equal(new URL(tabHistory.url()).searchParams.get('campaign'),'creator-test','tab state preserves unrelated URL parameters');
+  assert.deepEqual(new URL(tabHistory.url()).searchParams.getAll('creator-tab'),[`${tabsId}:1`],'tab activation adds a namespaced deep-link value');
+  await tabHistory.goBack();
+  assert.equal(new URL(tabHistory.url()).searchParams.has('creator-tab'),false,'Back removes only the state created by tab activation');
+  assert.equal(await historyNode(tabsId).getByRole('tab').nth(0).getAttribute('aria-selected'),'true','Back restores the preceding tab selection');
+  await tabHistory.goForward();
+  assert.equal(await historyNode(tabsId).getByRole('tab').nth(1).getAttribute('aria-selected'),'true','Forward restores the deep-linked tab selection');
+  await tabHistory.goto(`${base}/p/page-actions?creator-tab=${encodeURIComponent(`${tabsId}:1`)}`);
+  assert.equal(await historyNode(tabsId).getByRole('tab').nth(1).getAttribute('aria-selected'),'true','a direct deep link restores the selected tab on page load');
+  await tabHistory.goto(`${base}/p/page-actions?creator-tab=${encodeURIComponent(`${tabsId}:999`)}`);
+  assert.equal(await historyNode(tabsId).getByRole('tab').nth(0).getAttribute('aria-selected'),'true','an out-of-range deep link is ignored safely');
+  await tabHistory.close();
 
   await actionControls.getByLabel('Művelet').selectOption('scroll-to');
   await actionControls.getByLabel('Cél elem').selectOption(headingId);

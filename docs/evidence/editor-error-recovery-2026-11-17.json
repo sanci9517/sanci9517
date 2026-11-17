@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "recorded_at_utc": "2026-11-17T17:17:50Z",
+  "recorded_at_utc": "2026-11-17T17:20:00Z",
   "plan_point": "EDT-042",
   "status": "PARTIAL_IMPLEMENTATION_OPEN_NOT_CERTIFIED",
   "scope": "Make transient Editor diagnostics safe to inspect and copy while retaining the current draft after failed saves.",
@@ -18,20 +18,107 @@
     "npm_run_typecheck": "PASS; tsc --noEmit.",
     "canonical_plan": "PASS; one complete 13-file master, one current cursor, 396 mappings; acceptance remains NOT certified.",
     "traceability": "PASS; EDT-042 maps diagnostics source, unit and browser regression files, Editor entrypoint, and app integration.",
-    "production_source_smoke": "READY; exact Worker source smoke workflow includes the changed diagnostics module and entrypoint.",
+    "production_source_smoke": "PASS; exact source checkout fedd4f056bf5a6f0e8d16ccc718499998142e730; run 44135511839 verified HTTP 200 health and all declared changed public source hashes.",
     "production_d1_preflight": "PASS; SELECT-only Cloudflare D1 capture completed 2026-11-17 17:16 UTC; all statement rows_written=0, FK check empty, quick_check ok, schema_objects 88, active membership/default-setting gaps 0, snapshot tables 0.",
     "wrangler_dry_run": "PASS; Wrangler 4.130.0 read 194 public assets; total upload 391.56 KiB / gzip 100.44 KiB; DB, MEDIA, ASSETS and flags resolved; dry-run exited without deployment.",
-    "editor_core_ci": "PENDING; new runtime push will be validated by exact-SHA GitHub checks."
+    "editor_core_ci": "PENDING at evidence capture; exact-SHA run 44135511770 still in_progress, not counted as pass.",
+    "direct_production_health": {
+      "status": "PASS",
+      "http": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "direct_public_asset_hashes": {
+      "public/editor-v2/index.html": {
+        "sha256": "69567d0e323899ad7701b0cad9985adb2371f9fe2d007f0f34c6d1f0ab849af8",
+        "http": 200,
+        "local_matches_live": true
+      },
+      "public/editor-v2/app.js": {
+        "sha256": "3791e1a1832019e62d6caedc18f07882f39af203dd0210da559fe5b57c54002b",
+        "http": 200,
+        "local_matches_live": true
+      },
+      "public/editor-v2/diagnostics.js": {
+        "sha256": "8a49a9ee09fe3f25c4a181d29d5fafc5c2c854bebe62d7326838ea672432beb1",
+        "http": 200,
+        "local_matches_live": true
+      },
+      "public/editor-v2/editor-templates.css": {
+        "sha256": "cfe18fe3ee13f25778c35df8be72d94d574059b5e3e869af8476083cbab3d660",
+        "http": 200,
+        "local_matches_live": true
+      },
+      "public/editor-v2/core/editor-templates.js": {
+        "sha256": "b70033e7f9b44a74115a7f05eb1a30d7c2100fa6305b843f8d3f3d1c9ded0620",
+        "http": 200,
+        "local_matches_live": true
+      },
+      "public/editor-v2/core/design-system/template-catalog.js": {
+        "sha256": "e73888bfa43db4384e3e71b560db05b05ca0489d7c65f79915a3534dd4741351",
+        "http": 200,
+        "local_matches_live": true
+      },
+      "public/editor-v2/core/page-interactions.js": {
+        "sha256": "6306bdca7b0c1c6104f560840284a4efe68df26b2c685b754b0a397001a7b92e",
+        "http": 200,
+        "local_matches_live": true
+      },
+      "public/editor-v2/core/state.js": {
+        "sha256": "8a5bfdb705acd02d65b980476532c6e02e6a718dbeda1420c4dea3f380a9dff6",
+        "http": 200,
+        "local_matches_live": true
+      },
+      "public/editor-v2/core/validation.js": {
+        "sha256": "6ec3a573552f4c57984ac5d95ec068c8b006cf5b504c63e4adfd41127d34e774",
+        "http": 200,
+        "local_matches_live": true
+      }
+    }
   },
   "release": {
     "branch": "v2/foundation",
-    "source_control": "PENDING",
-    "ci": "PENDING",
-    "worker_build": "PENDING",
-    "worker_deployment": "PENDING",
-    "traffic": "PENDING",
-    "health": "PENDING",
-    "public_asset_hashes": "PENDING"
+    "source_control": {
+      "status": "PASS",
+      "commit": "fedd4f056bf5a6f0e8d16ccc718499998142e730",
+      "url": "https://github.com/sanci9517/sanci9517/commit/fedd4f056bf5a6f0e8d16ccc718499998142e730"
+    },
+    "ci": {
+      "exact_sha": "fedd4f056bf5a6f0e8d16ccc718499998142e730",
+      "success_runs": [
+        44135514059,
+        44135511806,
+        44135511914,
+        44135511805,
+        44135511839
+      ],
+      "editor_core_run": 44135511770,
+      "editor_core_status": "in_progress"
+    },
+    "worker_build": {
+      "id": "38ddca00-e23b-452d-8559-eb56dfdd3544",
+      "outcome": "success",
+      "source_sha": "fedd4f056bf5a6f0e8d16ccc718499998142e730",
+      "build_command": "npm run typecheck",
+      "deploy_command": "npm run deploy:safe"
+    },
+    "worker_deployment": {
+      "id": "aaafca29-feae-48ef-8dac-54071e682803",
+      "version_id": "359999ab-facc-4dad-b722-7299c9a66aa1",
+      "version_number": 4110,
+      "traffic_percent": 100,
+      "created_on": "2026-11-17T17:19:14.204436Z"
+    },
+    "health": {
+      "status": "PASS",
+      "http": 200,
+      "route": "/api/health"
+    },
+    "public_asset_hashes": "PASS; nine directly re-fetched public URLs returned HTTP 200 and match the local source SHA-256; exact-SHA production source smoke additionally verified all configured changed public files."
   },
   "cost": "0 Ft; no paid service or quota escalation used.",
   "known_open_work": [

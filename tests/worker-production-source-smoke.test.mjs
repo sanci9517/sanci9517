@@ -11,6 +11,7 @@ test('production source smoke hashes changed public Editor runtime modules befor
   assert.equal(new Set(sources).size, sources.length, 'source list contains no duplicate paths');
   for (const path of [
     'public/editor-v2/core/page-interactions.js',
+    'public/editor-v2/core/authored-content.js',
     'public/editor-v2/core/schema.js',
     'public/editor-v2/core/canvas-engine.js',
     'public/editor-v2/core/motion-style.js',

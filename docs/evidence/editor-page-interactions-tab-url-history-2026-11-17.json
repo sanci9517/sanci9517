@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-17T17:38:00Z",
+  "plan_point": "77.44.7.D / EDT-039",
+  "status": "PARTIAL_IMPLEMENTATION_OPEN_NOT_CERTIFIED",
+  "feature": "Namespaced URL state and browser history synchronization for authored tab groups.",
+  "implementation": {
+    "url_contract": "Each selected same-page tab is represented as creator-tab=<validated node id>:<zero-based item index>; unrelated query parameters and up to 40 other valid tab states are retained.",
+    "restore": "Initial load and popstate restore all authored tab groups; groups absent from URL return to their first tab; malformed, out-of-range, unknown and oversized entries are ignored.",
+    "editor_isolation": "The Editor Canvas continues to activate tabs but does not rewrite the Editor top-level URL; the real Preview/public renderer may use tab URL state.",
+    "safety": "Only validated Page Model node IDs and bounded indexes are applied; no selector interpolation, script, navigation, external URL or data mutation is introduced.",
+    "save_publish": "Tab selection is view state only. The existing Page Model Save and separate Publish transaction remain independent."
+  },
+  "checks": {
+    "targeted_chromium": "PASS; 1/1, including Canvas isolation, query preservation, deep-link, Back/Forward, invalid index and separate Save/Publish flow.",
+    "editor_units": "PASS; 22/22 test files plus runner guard 3/3.",
+    "typecheck": "PASS; npm run typecheck.",
+    "syntax": "PASS; node --check public/editor-v2/core/authored-content.js, public/assets/page-renderer.js, and tests/browser/editor-page-interactions.test.js.",
+    "traceability_and_plan": "PASS; plan-contract 14/14, canonical plan 13 files/396 mappings, active cursor remains 77.44.7.D OPEN/NOT_CERTIFIED, traceability 396/396, git diff --check PASS.",
+    "production_d1_preflight": {
+      "status": "PASS",
+      "captured_at": "2026-11-17T17:34:27.956567+00:00",
+      "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
+      "latest_migration": "0029_media_archive_unicode_additive.sql",
+      "statements": 5,
+      "rows_written": 0,
+      "changes": 0,
+      "changed_db": false,
+      "schema_objects": 88,
+      "quick_check": "ok",
+      "foreign_key_violations": 0,
+      "default_domain_gaps": 0,
+      "membership_gaps": 0,
+      "settings_gaps": 0,
+      "snapshot_tables": 0
+    },
+    "wrangler_dry_run": {
+      "status": "PASS",
+      "wrangler": "4.130.0",
+      "public_files": 194,
+      "upload_bytes": 400957.44,
+      "gzip_kib": 100.44,
+      "bindings": [
+        "DB",
+        "MEDIA",
+        "ASSETS"
+      ],
+      "deployment_performed": false
+    },
+    "editor_unit_command": "npm run test:editor",
+    "editor_browser_command": "CHROMIUM_PATH=/usr/bin/chromium node --test tests/browser/editor-page-interactions.test.js",
+    "migration_safety_gate": "PASS; npm run test:web013:migration-gate.",
+    "showcase_regression": "PASS; npm run test:showcase 1/1."
+  },
+  "release": {
+    "branch": "v2/foundation",
+    "source_commit": "PENDING",
+    "exact_sha_ci": "PENDING",
+    "cloudflare_build": "PENDING",
+    "worker_deployment": "PENDING",
+    "traffic": "PENDING",
+    "health": "PENDING",
+    "asset_hashes": "PENDING"
+  },
+  "open_scope": [
+    "EDT-039 hover/focus/submit/load/timer/state triggers and complete action matrix remain open.",
+    "URL/form boundary, malformed/unsupported recovery, full security/performance and reduced-motion action acceptance remain open.",
+    "The complete Editor acceptance and full 77.44.7.D matrix remain OPEN / NOT_CERTIFIED; manual and physical acceptance is deferred until full Editor implementation."
+  ],
+  "production_mutations": false,
+  "cost": "0 Ft; no paid service or quota overage."
+}
