@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261117072117-88c53a5e",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-17T07:21:17.172Z",
+  "finished_at": "2026-11-17T07:26:03.295Z",
+  "wall_seconds": 286,
+  "paused_seconds": 0,
+  "measured_seconds": 286,
+  "status": "partial",
+  "kind": "test",
+  "summary": "Bővítettem a galéria Médiatárból örökölt alt mezőjének valós böngészős Save/reload/külön Publish lefedését; 1/1 Chromium PASS. A D pont teljes acceptance mátrixa nyitott.",
+  "evidence": [
+    "docs/evidence/editor-d-gallery-media-alt-metadata-lifecycle-2026-11-17.json"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "1ca3b63e49d9084d399ed4d4b7cb289aee8b0e28",
+  "finished_revision": "1ca3b63e49d9084d399ed4d4b7cb289aee8b0e28",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

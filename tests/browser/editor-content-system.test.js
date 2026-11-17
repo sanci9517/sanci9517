@@ -658,6 +658,8 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.gallery].props.columns,'4','Save persists the authored desktop gallery column count in the draft');
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.gallery].props.items[0].fit,'contain','Save persists the selected gallery item fit in the draft');
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.gallery].props.items[0].assetId,assetId);
+  assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.gallery].props.items[0].alt,'Márkajel',
+    'Save persists inherited Media Library alt metadata as the gallery item description');
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.gallery].props.items[1].alt,'  Frissített képleírás  ',
     'Save retains the authored gallery alt value exactly instead of normalizing source data');
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.gallery].props.items[1].caption,'  Frissített képaláírás  ',
@@ -725,6 +727,8 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   assert.equal(await galleryTracks(editor),4,'reloaded desktop Canvas retains the authored gallery column count');
   assert.equal(await editor.locator('.content-repeater fieldset').first().getByLabel('Kép illesztése',{exact:true}).inputValue(),'contain',
     'Editor reload restores the authored gallery item fit');
+  assert.equal(await editor.locator('.content-repeater fieldset').first().getByLabel('Képleírás',{exact:true}).inputValue(),'Márkajel',
+    'Editor reload restores the alt description inherited when the Media Library image was selected');
   assert.equal(await editor.locator('.content-repeater fieldset').nth(1).getByLabel('Képleírás',{exact:true}).inputValue(),
     '  Frissített képleírás  ','Editor reload restores the exact authored gallery alt value');
   assert.equal(await editor.locator('.content-repeater fieldset').nth(1).getByLabel('Képaláírás',{exact:true}).inputValue(),
@@ -773,6 +777,8 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   assert.equal(await node(live,'gallery').locator('img').first().evaluate(el=>getComputedStyle(el).objectFit),'contain',
     'separate Publish exposes the authored gallery item fit on the public page');
   assert.equal(await node(live,'gallery').locator('img').first().evaluate(el=>getComputedStyle(el).objectPosition),'24% 68%','published gallery item retains its independent crop');
+  assert.equal(await node(live,'gallery').locator('img').first().getAttribute('alt'),'Márkajel',
+    'separate Publish exposes the inherited Media Library alt on the public gallery image');
   assert.equal(await node(live,'gallery').locator('img').nth(1).getAttribute('alt'),'Frissített képleírás',
     'separate Publish renders the authored gallery alt after Save/reload');
   assert.equal(await node(live,'gallery').locator('img').nth(1).locator('xpath=ancestor::figure').locator('figcaption').textContent(),

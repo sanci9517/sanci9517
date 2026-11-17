@@ -1,0 +1,45 @@
+{
+  "schema": "sanci.editor.d-gallery-media-alt-metadata-lifecycle.v1",
+  "plan_point": "77.44.7.D",
+  "feature_scope": ["D-01", "D-05", "D-06"],
+  "field": "gallery.items[].alt inherited from selected Media Library asset metadata",
+  "change": "Extended the existing real Chromium authored-content lifecycle to assert that selecting a Media Library image with an empty authored gallery alt copies its accessible description into the saved draft, restores it in the Editor, and exposes it publicly only after separate Publish.",
+  "acceptance": {
+    "canvas": "Selecting the fixture image adopts the non-empty Media Library description when the gallery item's authored alt is empty.",
+    "save_boundary": "Save persists the selected asset ID and inherited alt in the draft; it does not update the published page.",
+    "reload": "Editor reload restores the inherited alt in the gallery item's Inspector field.",
+    "publish_boundary": "Only the explicit separate Publish makes the inherited alt public.",
+    "scope": "This checks editor/media metadata lifecycle only; no runtime implementation changed."
+  },
+  "verification": {
+    "command": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-content-system.test.js",
+    "result": "PASS",
+    "tests": "1/1",
+    "duration_seconds": 38.19,
+    "initial_attempt": "The sandbox denied the disposable fixture listener with EPERM on 127.0.0.1 before assertions. An escalated local-only loopback run then exposed a wrong test accessible-name locator; the locator was corrected from Képleírás (alt) to the actual gallery control Képleírás, and the final full browser regression passed.",
+    "node_check": "PASS",
+    "plan_contract": "PASS: 14/14",
+    "canonical_plan": "PASS: 13 master files, one cursor, 396 mappings; acceptance remains NOT_CERTIFIED",
+    "traceability": "PASS: 396/396 mappings",
+    "git_diff_check": "PASS"
+  },
+  "release": {
+    "branch": "v2/foundation",
+    "branch_head_before": "1ca3b63e49d9084d399ed4d4b7cb289aee8b0e28",
+    "runtime_changed": false,
+    "worker_deploy": "NOT NEEDED: browser-test and evidence only; runtime source unchanged",
+    "latest_worker_deployment": "41d5823d-42d5-437f-a429-d3d9d5f56de6",
+    "latest_worker_version": "bcccf16b-b81d-4322-8c31-e30e28ad0b02",
+    "traffic_percent": 100,
+    "production_health": "NOT REQUESTED: no runtime/public asset changed",
+    "public_asset_hash_comparison": "NOT APPLICABLE: no public asset changed",
+    "ci": "Not dispatched; test/evidence-only follow-up uses the repository [skip ci] convention. No CI PASS is claimed."
+  },
+  "data_and_cost": {
+    "production_d1": "not accessed or changed",
+    "production_r2": "not accessed or changed",
+    "paid_services_or_dependencies": "none",
+    "new_cost_huf": 0
+  },
+  "scope_limit": "This is one gallery media-description lifecycle sub-gate only. Full D-01 through D-07 capability, invalid-value, breakpoint, renderer and site-scoped lifecycle acceptance, and 77.44.7.D remain OPEN / NOT_CERTIFIED. Consolidated Visual Editor manual/physical acceptance remains DEFERRED. Save and Publish remain separate."
+}
