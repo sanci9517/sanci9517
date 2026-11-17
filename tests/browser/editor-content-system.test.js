@@ -719,6 +719,8 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   assert.equal(await editor.getByLabel('Kép szöveges leírása',{exact:true}).inputValue(),'','Editor reload preserves the intentionally empty alt value');
   assert.equal(await editor.locator('[data-content-key="loading"] select').inputValue(),'eager','Editor reload restores the authored image loading strategy');
   await select('gallery');
+  assert.equal(await editor.getByLabel('Képgaléria elnevezése',{exact:true}).inputValue(),'Műhelyem & képeim',
+    'Editor reload restores the authored gallery region name from the saved draft');
   assert.equal(await editor.getByLabel('Oszlopok asztalon',{exact:true}).inputValue(),'4','Editor reload restores the authored gallery column count');
   assert.equal(await galleryTracks(editor),4,'reloaded desktop Canvas retains the authored gallery column count');
   assert.equal(await editor.locator('.content-repeater fieldset').first().getByLabel('Kép illesztése',{exact:true}).inputValue(),'contain',

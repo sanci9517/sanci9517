@@ -1,0 +1,46 @@
+{
+  "schema": "sanci.editor.d-gallery-region-name-lifecycle.v1",
+  "plan_point": "77.44.7.D",
+  "feature_scope": ["D-01", "D-05"],
+  "field": "gallery.props.ariaLabel",
+  "change": "Added the missing authored gallery-region-name draft reload assertion to the existing real Chromium Inspector/Canvas/Save/reload/separate-Publish/public-renderer lifecycle.",
+  "acceptance": {
+    "inspector_canvas": "The authored name Műhelyem & képeim is exposed by the named Canvas gallery region.",
+    "save_boundary": "Save stores the draft without changing the previously published gallery region name.",
+    "reload": "Editor reload restores the authored gallery-region name from the saved draft.",
+    "publish_boundary": "Only the separate Publish changes the public named region to Műhelyem & képeim.",
+    "responsive": "The existing test continues to exercise public gallery rendering at desktop, tablet, and mobile widths."
+  },
+  "verification": {
+    "command": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-content-system.test.js",
+    "result": "PASS",
+    "tests": "1/1",
+    "duration_seconds": 35.57,
+    "runtime_asset_sha256": "53d7c817a3c1a5f08f63388f227d3ed1a8010039e05eccd70246623cf8e8759a",
+    "node_check": "PASS",
+    "git_diff_check": "PASS",
+    "canonical_plan": "PASS: 13 master files, 396 mappings; acceptance remains NOT_CERTIFIED",
+    "plan_contract": "PASS: 14/14",
+    "active_plan_audit": "PASS: 77.44.7.D OPEN; 146 PARTIAL_SOURCE, 250 UNVERIFIED",
+    "traceability": "PASS: 396/396 source mappings"
+  },
+  "release": {
+    "branch_head_at_review": "e19b909927cf88cd6c11c3e545a4c787b7b9e465",
+    "runtime_source": "0095546c5a56fbba0f059f87e2b5bf673cf98556",
+    "production_deployment": "41d5823d-42d5-437f-a429-d3d9d5f56de6",
+    "worker_version": "bcccf16b-b81d-4322-8c31-e30e28ad0b02",
+    "traffic_percent": 100,
+    "runtime_changed": false,
+    "worker_deploy": "NOT NEEDED: test and documentation only",
+    "production_health": "NOT REQUESTED in this test-only block; prior exact-source smoke evidence remains unchanged",
+    "public_asset_hash_comparison": "NOT APPLICABLE: no runtime/public asset changed",
+    "ci": "NOT RUN: test-only follow-up uses the repository [skip ci] policy after local validation"
+  },
+  "data_and_cost": {
+    "production_d1": "not queried or changed",
+    "production_r2": "not accessed or changed",
+    "paid_services_or_dependencies": "none",
+    "new_cost_huf": 0
+  },
+  "scope_limit": "This closes only the gallery accessible region-name Save/reload/separate-Publish regression slice. Full D-01 through D-07 capability, field, invalid-value, breakpoint, renderer and site-scoped media acceptance, the complete 77.44.7.D point, and consolidated Visual Editor manual/physical acceptance remain OPEN / NOT_CERTIFIED / DEFERRED."
+}

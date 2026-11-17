@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261117070319-2221e481",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-17T07:03:19.957Z",
+  "finished_at": "2026-11-17T07:13:05.536Z",
+  "wall_seconds": 586,
+  "paused_seconds": 0,
+  "measured_seconds": 586,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "Completed the gallery accessible-name Save/reload test gap; the full D point remains open.",
+  "evidence": [
+    "docs/evidence/editor-d-gallery-region-name-lifecycle-2026-11-17.json"
+  ],
+  "checks": "PASS: real Chromium 1/1; node --check; git diff --check; canonical-plan 13/13; plan-contract 14/14; active-point audit 77.44.7.D OPEN, 146 PARTIAL_SOURCE/250 UNVERIFIED; traceability 396/396. CI and Worker deployment not run: test/docs-only.",
+  "started_revision": "ec5babfc32740ca8892d26d6127a8a2a22e0f339",
+  "finished_revision": "ec5babfc32740ca8892d26d6127a8a2a22e0f339",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
