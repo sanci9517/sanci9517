@@ -1,0 +1,50 @@
+{
+  "schema": "sanci.editor.d.authored-link-invalid-breakpoint-guard.v1",
+  "captured_at_utc": "2026-11-17T04:18:54Z",
+  "plan_point": "77.44.7.D — element-specific content and media",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "tested_source_commit": "da96c0ffbbc8441af560daaba4fbe496fecf2dbe",
+    "remote_head_at_test": "da96c0ffbbc8441af560daaba4fbe496fecf2dbe",
+    "canonical_plan_sha256": "68d94c1f33a27712a90f1470a0c98ee9b5d089cc8ab057113ed236d0298e83f8",
+    "runtime_source_commit": "c45a7c4e27c1ad6d3d6f7e6b51117ebef45707f3"
+  },
+  "scope": {
+    "test_file": "tests/browser/editor-content-system.test.js",
+    "test_sha256": "293fd2f867ba158192e7ebb6df25d593858fbece090cd5b0a1ad71ea17e8d988",
+    "scenario": "An invalid authored javascript: link remains on the desktop breakpoint, stays aria-invalid, and blocks Save when the user attempts to switch to mobile.",
+    "expected_behavior": "Inspector keeps the current breakpoint and unsaved invalid field visible; no Save request is sent until correction.",
+    "runtime_source_changed": false
+  },
+  "checks": {
+    "targeted_browser_command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-content-system.test.js",
+    "targeted_browser": "PASS; 1/1 Chromium browser test, including new invalid-link breakpoint and Save assertions",
+    "npm_run_test:editor": "PASS; 17/17 Editor unit files and 3/3 Linux subreaper guard tests",
+    "node_check": "PASS; node --check tests/browser/editor-content-system.test.js",
+    "git_diff_check": "PASS",
+    "remote_ci_for_test_only_commit": "NOT RUN; test/evidence-only follow-up will use [skip ci]"
+  },
+  "environment": {
+    "playwright": "1.64.1 from existing lockfile-matched node_modules in the attached workspace via a temporary symlink; the attached workspace was not modified",
+    "first_attempt": "BLOCKED before assertions: sandbox local listen returned EPERM on 127.0.0.1",
+    "authorized_retry": "PASS with local loopback for the synthetic fixture only; no external service or production resource used"
+  },
+  "release": {
+    "latest_worker_deployment_id": "8dc6dc5d-1857-4684-9b8b-38b721145793",
+    "worker_version_id": "0658af0d-b223-4054-b839-048941f87ce8",
+    "traffic_percent": 100,
+    "runtime_changed": false,
+    "worker_deployed": false,
+    "production_d1_write_or_migration": false,
+    "production_r2_operation": false,
+    "new_cost_huf": 0
+  },
+  "status": "AUTHORED_LINK_INVALID_BREAKPOINT_SAVE_GUARD_PASS; D_OPEN_NOT_CERTIFIED",
+  "limitations": [
+    "This regression closes one invalid-link breakpoint-switch acceptance row only; it does not provide a complete per-field/per-breakpoint/public-renderer/media-site-scope matrix.",
+    "Full 77.44.7.D and D-01 through D-07 remain OPEN / NOT_CERTIFIED.",
+    "Full Visual Editor manual and physical-device acceptance remains deferred to the complete Editor gate.",
+    "Save and Publish remain distinct."
+  ]
+}

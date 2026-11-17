@@ -252,6 +252,16 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   const linkValidationId=await linkHrefField.getAttribute('aria-describedby');
   assert.match(await editor.locator(`#${linkValidationId}`).textContent(),/Csak biztonságos/,'the invalid link exposes an accessible validation explanation');
   assert.equal(posts.length,0,'an invalid authored link never reaches Save or Publish');
+  await editor.locator('.canvas-device-btn[data-device="mobile"]').click();
+  assert.equal(await editor.locator('.canvas-device-btn[data-device="desktop"]').getAttribute('aria-pressed'),'true',
+    'an invalid authored link keeps the current desktop breakpoint selected');
+  assert.equal(await editor.locator('.canvas-device-btn[data-device="mobile"]').getAttribute('aria-pressed'),'false',
+    'a rejected link cannot silently discard its draft when switching to mobile');
+  assert.equal(await linkHrefField.getAttribute('aria-invalid'),'true',
+    'the invalid link remains visibly associated with its Inspector validation after the blocked switch');
+  await editor.locator('#save').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent.includes('Javítsd a jelzett mezőt'));
+  assert.equal(posts.length,0,'the invalid authored link remains blocked from Save after a breakpoint-switch attempt');
   for(const privateHref of [
     '/api/admin/media?id='+assetId,
     '/api/%61dmin/media?id='+assetId,
