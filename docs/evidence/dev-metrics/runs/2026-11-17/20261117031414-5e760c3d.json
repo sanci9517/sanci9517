@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261117031414-5e760c3d",
+  "task": "77.44.7.D",
+  "trigger": "scheduled",
+  "started_at": "2026-11-17T03:14:14.168Z",
+  "finished_at": "2026-11-17T03:46:05.749Z",
+  "wall_seconds": 1912,
+  "paused_seconds": 126,
+  "measured_seconds": 1786,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "Javított és tesztelt rövid, 200%-os effektív nézetű Inspector mezőelérés; fast-forward release és éles Worker ellenőrizve; teljes D még nyitott, exact-SHA Editor Core CI fut.",
+  "evidence": [
+    "docs/evidence/editor-d-short-viewport-inspector-lifecycle-2026-11-17.json",
+    "https://github.com/sanci9517/sanci9517/commit/c45a7c4e27c1ad6d3d6f7e6b51117ebef45707f3"
+  ],
+  "checks": "targeted-browser=pass;editor-unit=pass;typecheck=pass;plan-checks=pass;D1-select-only=pass;wrangler-dry-run=pass;health+asset-smoke=pass;editor-core-ci=in_progress;full-D=open",
+  "started_revision": "ca0fd22c28714a0daf1c4a283edb1f3a59141d99",
+  "finished_revision": "c45a7c4e27c1ad6d3d6f7e6b51117ebef45707f3",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

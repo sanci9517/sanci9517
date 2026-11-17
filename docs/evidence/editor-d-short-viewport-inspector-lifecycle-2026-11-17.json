@@ -56,26 +56,57 @@
       "production_migration_or_data_write": false
     },
     "full_editor_browser_suite": "PARTIAL; 8/54 files passed before the local run was stopped to avoid a redundant long run; not a suite PASS. Exact-SHA Editor Core CI will be the release gate after push.",
-    "hosted_ci": "NOT_YET_RUN; runtime source changed; required free public GitHub Actions runs will be triggered by the fast-forward push",
+    "hosted_ci": {
+      "head_sha": "c45a7c4e27c1ad6d3d6f7e6b51117ebef45707f3",
+      "completed_success": [
+        {"name": "Canonical Plan Active Point Audit", "run_id": 44011669565},
+        {"name": "Twitch Integration Check", "run_id": 44011669594},
+        {"name": "Canonical Creator Platform Plan", "run_id": 44011669652},
+        {"name": "F0 baseline checks", "run_id": 44011669569},
+        {"name": "Production Worker source smoke", "run_id": 44011669579}
+      ],
+      "editor_core": {"run_id": 44011669622, "status": "in_progress", "current_step": "Run Editor browser layout regression"},
+      "all_required_ci_passed": false
+    },
     "git_diff_check": "PASS"
   },
   "release": {
-    "deployment_before_release": {
-      "deployment_id": "188c8d90-a3e3-4d86-877c-bc3b80b7a288",
-      "worker_version_id": "47456280-bc0c-4351-94d4-9d9e4800b48e",
-      "traffic_percent": 100,
-      "health_or_asset_hash_read_after_this_change": false
+    "release_commit": "c45a7c4e27c1ad6d3d6f7e6b51117ebef45707f3",
+    "remote_branch_head_verified": "c45a7c4e27c1ad6d3d6f7e6b51117ebef45707f3",
+    "cloudflare_build": {
+      "build_uuid": "16560455-230c-41b6-8c4e-35df1eadb652",
+      "outcome": "success",
+      "source_commit": "c45a7c4e27c1ad6d3d6f7e6b51117ebef45707f3",
+      "build_command": "npm run typecheck",
+      "deploy_command": "npm run deploy:safe"
     },
-    "push": "PENDING",
-    "exact_sha_ci": "PENDING",
-    "new_worker_deployment": "PENDING",
-    "post_release_health_get": "PENDING",
-    "post_release_public_asset_hash": "PENDING",
+    "deployment": {
+      "deployment_id": "8dc6dc5d-1857-4684-9b8b-38b721145793",
+      "worker_version_id": "0658af0d-b223-4054-b839-048941f87ce8",
+      "traffic_percent": 100,
+      "health_get_http": 200,
+      "public_asset": "public/editor-v2/editor-refresh.css",
+      "expected_and_live_sha256": "5eb5dacb1bb6b0fe46a8bd1d161a988931a91c5a151d613cd56074084380e1a3",
+      "byte_comparison": "PASS",
+      "source_smoke_workflow_run": 44011669579
+    },
+    "push": "PASS; normal fast-forward from ca0fd22c28714a0daf1c4a283edb1f3a59141d99",
+    "exact_sha_ci": "5 of 6 workflows PASS; Editor Core run 44011669622 in progress",
+    "new_worker_deployment": "PASS; exact source commit build and 100% traffic",
+    "post_release_health_get": "PASS; HTTP 200",
+    "post_release_public_asset_hash": "PASS; direct GET SHA-256 and byte match",
     "production_d1_write": false,
     "production_r2_operation": false,
     "new_cost_huf": 0
   },
-  "status": "SHORT_VIEWPORT_INSPECTOR_FIX_IMPLEMENTED; TARGETED_TEST_PASS; RELEASE_PENDING; FULL_77_44_7_D_OPEN_NOT_CERTIFIED",
+  "status": "SHORT_VIEWPORT_INSPECTOR_FIX_IMPLEMENTED; TARGETED_TEST_PASS; LIVE_ON_WORKER; EXACT_SHA_EDITOR_CORE_CI_IN_PROGRESS; FULL_77_44_7_D_OPEN_NOT_CERTIFIED",
+  "development_measurement": {
+    "id": "20261117031414-5e760c3d",
+    "status": "partial",
+    "measured_seconds": 1786,
+    "record": "docs/evidence/dev-metrics/runs/2026-11-17/20261117031414-5e760c3d.json",
+    "measurement_note": "Elapsed wall time excluding the explicit wait pause; not token or compute time."
+  },
   "limitations": [
     "This fix closes one verified short-viewport Inspector lifecycle gap; it does not complete all per-field invalid-input, breakpoint, renderer or site-scoped Media acceptance rows.",
     "The 396-feature source crosswalk remains 146 PARTIAL_SOURCE / 250 UNVERIFIED and cannot certify functional acceptance.",
