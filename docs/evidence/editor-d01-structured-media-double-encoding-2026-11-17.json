@@ -112,14 +112,16 @@
     "post_release_health_http": null,
     "post_release_element_content_sha256": null,
     "test_harness_follow_up": {
-      "status": "LOCAL_TESTS_PASS_REMOTE_COMMIT_PENDING",
+      "status": "REMOTE_TEST_FILE_RESTORED_CI_SKIPPED",
       "file": "tests/browser/editor-structured-content.test.js",
       "bytes": 50021,
       "git_blob_sha": "33dfe76a1ada7fcd864ed601670a42fb0cfabe9e",
       "root_cause": "The remote blob contains an inserted API truncation warning and is syntactically invalid; the Worker build is unaffected because root tests/docs are excluded.",
       "runtime_unchanged": true,
       "worker_deploy_required": false,
-      "ci_rerun": "NOT RUN; 0 Ft quota not verifiable"
+      "ci_rerun": "NOT RUN by design: test/documentation-only follow-up, locally validated; exact CI failure was caused by transfer corruption and the repository rule requires [skip ci] when free quota is unverified.",
+      "remote_commit_sha": "02145201da14422cba513defde446efc12d06344",
+      "commit_message": "[skip ci] test(editor): restore structured content browser regression"
     }
   },
   "scope_limit": "This fixes and tests one verified D-01 structured-public-media security gap. Full D-01 through D-07 capability, field, invalid-value, breakpoint, renderer, site-scoped Media acceptance and 77.44.7.D remain OPEN / NOT_CERTIFIED. Complete Visual Editor manual/physical acceptance remains DEFERRED. Save and Publish remain separate.",
