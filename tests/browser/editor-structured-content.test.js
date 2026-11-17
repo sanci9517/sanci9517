@@ -331,6 +331,9 @@ test('structured Inspector editing survives Save, Publish and public interaction
    '/%2561pi%252fadmin%252fmedia?id=00000000-0000-4000-8000-000000000123',
    '/%25252561pi%2525252fadmin%2525252fmedia?id=00000000-0000-4000-8000-000000000123'
   ];
+  let overNestedRoute='/api/admin/media?id=00000000-0000-4000-8000-000000000123';
+  for(let layer=0;layer<11;layer++)overNestedRoute='/'+overNestedRoute.slice(1).replace(/%/g,'%25').replace(/^a/i,'%61');
+  sources.push(overNestedRoute);
   return sources.map(src=>{
    const gallery={version:1,items:[{src,alt:'Privát fotó',caption:''}]};
    const carousel={version:1,items:[{src,label:'Dia',content:'Tartalom',alt:'Privát fotó'}]};

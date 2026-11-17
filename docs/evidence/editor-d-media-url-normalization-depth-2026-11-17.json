@@ -1,0 +1,94 @@
+{
+  "schema": "sanci.editor.d-media-url-normalization-depth.v1",
+  "plan_point": "77.44.7.D / D-01 structured public media URL acceptance",
+  "branch": "v2/foundation",
+  "branch_head_before_test_follow_up": "c1fcbf35ecefe361b2a4900def6831f051a79d15",
+  "runtime_source": "35aab4ffed470a07e4790a651e3c380154252c9e",
+  "finding": {
+    "status": "BOUNDED_SECURITY_REGRESSION_COVERAGE",
+    "description": "Adds an 11-layer percent-encoding case for a private /api/admin/media route. The public media guard has a bounded decode/canonicalization loop and must fail closed after its normalization budget; both the contract unit and real Chromium published-renderer scenario now assert that the deeply nested route never renders as gallery/carousel media."
+  },
+  "tests_changed": [
+    {
+      "path": "tests/editor-d-content-contract.test.js",
+      "git_blob_sha": "1a01a76a17ef8811df8ddb1dbd263ffdff049b5c",
+      "purpose": "Regression coverage only; no runtime or public asset file changed."
+    },
+    {
+      "path": "tests/browser/editor-structured-content.test.js",
+      "git_blob_sha": "d28ba6cfe66808c56e0baa8c7b2f65b931c10e27",
+      "purpose": "Regression coverage only; no runtime or public asset file changed."
+    }
+  ],
+  "acceptance": {
+    "eleven_layer_private_route_rejected_by_safe_published_media_url": "PASS",
+    "eleven_layer_private_route_not_rendered_as_gallery_or_carousel_media": "PASS",
+    "authenticated_editor_preview_access_unchanged": "PASS",
+    "save_and_publish_separation_unchanged": "PASS"
+  },
+  "checks": [
+    {
+      "command": "node --experimental-vm-modules --test tests/editor-d-content-contract.test.js",
+      "result": "PASS",
+      "tests": 1
+    },
+    {
+      "command": "npm run test:editor",
+      "result": "PASS",
+      "files": 17,
+      "subreaper_tests": 3
+    },
+    {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-structured-content.test.js",
+      "result": "PASS",
+      "tests": 2,
+      "note": "Real Chromium; loopback fixture permission; includes the new 11-layer private-route case."
+    },
+    {
+      "command": "npm run typecheck",
+      "result": "BLOCKED",
+      "exit_code": 127,
+      "reason": "tsc is not installed in this isolated checkout; no dependency installation was attempted."
+    },
+    {
+      "command": "python3 -B tests/plan-contract.test.py",
+      "result": "PASS",
+      "tests": 14
+    },
+    {
+      "command": "python3 scripts/check-canonical-plan.py",
+      "result": "PASS",
+      "master_files": 13,
+      "mappings": 396
+    },
+    {
+      "command": "python3 scripts/build-feature-traceability.py --check",
+      "result": "PASS",
+      "mappings": 396
+    },
+    {
+      "command": "node --check tests/editor-d-content-contract.test.js && node --check tests/browser/editor-structured-content.test.js",
+      "result": "PASS"
+    },
+    {
+      "command": "git diff --check",
+      "result": "PASS"
+    }
+  ],
+  "production": {
+    "runtime_changed": false,
+    "worker_deploy": "NOT NEEDED",
+    "production_d1": "not queried or changed",
+    "production_r2": "not accessed or changed",
+    "last_read_only_worker_deployment": "760f3cac-7809-4054-a767-a0f8098fe619",
+    "worker_version": "6a9df7a1-a638-4cd8-9ab1-65ac431161a0",
+    "traffic_percent": 100,
+    "exact_source_smoke_run": "44074311120",
+    "exact_source_health_http": 200,
+    "source_asset_hashes_verified": 21,
+    "current_runner_direct_health": "UNVERIFIED: configured proxy refused connection; prior exact-source smoke is separate evidence."
+  },
+  "ci": "NOT RUN: test/evidence-only change; pushed with [skip ci] per repository policy because free Actions quota is unverified.",
+  "cost_huf": 0,
+  "scope_limit": "This adds a regression for one bounded D-01 URL-normalization case. It does not close D-01, D-01–D-07, or 77.44.7.D. Full Visual Editor manual/physical acceptance stays deferred; Save and Publish remain separate."
+}

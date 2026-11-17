@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { CONTENT_FIELDS } from '../public/editor-v2/core/authored-content.js';
 import { validatedLinkHref } from '../public/editor-v2/core/richtext-links.js';
-import { isStructuredType } from '../public/editor-v2/core/element-content.js';
+import { isStructuredType, safePublishedMediaUrl } from '../public/editor-v2/core/element-content.js';
 import { defaultCardContent, normalizeCardContent } from '../public/editor-v2/core/card-content.js';
 import { createDocument, validateDocument } from '../public/editor-v2/core/schema.js';
 import { assertValidEditorDocument } from '../public/editor-v2/core/validation.js';
@@ -53,6 +53,15 @@ test('D authored CTA links reject private Editor media-preview routes after URL 
   for (const href of ['/p/home', '/portfolio/item?tab=work', '#bemutatkozas', 'https://artist.example.com/story', 'mailto:creator@example.com']) {
     assert.equal(validatedLinkHref(href), href, `ordinary authored navigation remains valid: ${href}`);
   }
+});
+
+test('D published media guard fails closed beyond its encoded-path normalization bound', () => {
+  let deeplyEncodedPrivateRoute = '/api/admin/media?id=asset';
+  for (let layer = 0; layer < 11; layer += 1) {
+    deeplyEncodedPrivateRoute = `/${deeplyEncodedPrivateRoute.slice(1).replace(/%/g, '%25').replace(/^a/i, '%61')}`;
+  }
+
+  assert.equal(safePublishedMediaUrl(deeplyEncodedPrivateRoute), '', 'unusually deep private URL encodings never pass the public-media guard');
 });
 
 test('D authored content types keep every declared Inspector field in the canonical contract', () => {
