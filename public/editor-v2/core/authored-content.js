@@ -1,4 +1,5 @@
 import { validatedLinkHref } from './richtext-links.js?v=20261117-d03-invalid-media-id-guidance-v1';
+import { pageInteractionAttributes, safePageInteraction } from './page-interactions.js?v=20261117-edt039-page-action-registry-v1';
 
 export const CONTENT_VERSION=1;
 // Shared by the editor picker and the server-side media upload/list contract.
@@ -140,7 +141,7 @@ export function validateElementContent(node){
 // read this without mutating a draft; the server uses the same decision.
 // One authoritative source for the authored-content publication message and
 // the Inspector target. Keep publication precedence identical to the server gate.
-export function getPublicationContentGuidance(node){
+export function getPublicationContentGuidance(node,{pageNodes=null}={}){
   if(!isAuthoredContent(node)||!CONTENT_FIELDS[node?.type])return null;
   const p=contentProperties(node);
   const hasText=value=>typeof value==='string'?Boolean(value.trim()):typeof value==='number'&&Number.isFinite(value);
@@ -156,7 +157,8 @@ export function getPublicationContentGuidance(node){
   if(['image','video','audio'].includes(node.type)&&!missing&&!hasMediaSource(p.src)&&!hasAssetId(p.assetId))requireField('src','Válassz Médiatár-fájlt vagy adj meg médiaforrást.');
   if(node.type==='video'&&!missing&&!hasAssetId(p.posterAssetId)&&isEditorOnlyMediaUrl(safeSrc(p.poster)||p.poster))requireField('poster','A szerkesztői előnézeti útvonal nem használható videó-borítóképként a publikált oldalon.');
   if(node.type==='image'&&(hasMediaSource(p.src)||hasAssetId(p.assetId))&&!p.decorative&&!hasText(p.alt))requireField('alt','Adj meg képleírást, vagy jelöld a képet díszítőnek.');
-  if(['link','button'].includes(node.type)&&!safeHref(p.href))requireField('href','Adj meg hivatkozási célt. Művelet nélküli gomb nem publikálható.');
+  if(node.type==='link'&&!safeHref(p.href))requireField('href','Adj meg hivatkozási célt.');
+  if(node.type==='button'&&!safeHref(p.href)&&!safePageInteraction(node,pageNodes))requireField('href','Adj meg hivatkozási célt. Művelet nélküli gomb nem publikálható.');
   if(node.type==='heading'&&!hasText(p.text))requireField('text','A címsor nem lehet üres.');
   if(['gallery','carousel'].includes(node.type)&&items.some(item=>item&&typeof item==='object'&&!Array.isArray(item)&&hasInvalidAssetId(item.assetId)))requireField('items','Egy kép Médiatár-azonosítója érvénytelen. Válassz új fájlt, vagy töröld az adott választást.');
   const hasIncompleteMediaItem=item=>!item||typeof item!=='object'||Array.isArray(item)||(!hasMediaSource(item.src)&&!hasAssetId(item.assetId))||!(hasText(item.alt)||hasText(item.caption));
@@ -169,8 +171,8 @@ export function getPublicationContentGuidance(node){
   if(node.type==='video'&&p.controls===false&&!(p.autoplay&&p.muted))requireField('controls','Vezérlők nélküli háttérvideó csak némítva, automatikusan indulhat.');
   return missing?Object.freeze(missing):null;
 }
-export function getPublicationContentIssue(node){
-  return getPublicationContentGuidance(node)?.message??null;
+export function getPublicationContentIssue(node,options){
+  return getPublicationContentGuidance(node,options)?.message??null;
 }
 
 export function validatePageForPublication(page){
@@ -178,7 +180,7 @@ export function validatePageForPublication(page){
   const visit=(id,visible)=>{if(seen.has(id))return;seen.add(id);const node=page.nodes?.[id];if(!node)return;
     const modes=['desktop','tablet','mobile'].map((device,index)=>visible[index]&&node.visibility!==false&&node.visibility?.[device]!==false),p=contentProperties(node);
     if(isAuthoredContent(node)&&modes.some(Boolean)){
-      const missing=getPublicationContentIssue(node);
+      const missing=getPublicationContentIssue(node,{pageNodes:page.nodes});
       if(missing){const error=new Error(`${node.name||node.type}: ${missing}`);error.nodeId=node.id;throw error}
     }
     for(const child of node.children||[])visit(child,modes);
@@ -217,7 +219,7 @@ const trimmedText=value=>typeof value==='string'?value.trim():'';
 const imageAlt=item=>item?.decorative?'':trimmedText(item?.alt);
 const imageCaption=item=>trimmedText(item?.caption);
 export function contentTag(node){const level=node.props?.level,number=typeof level==='string'||typeof level==='number'?Number(level):NaN;return node.type==='heading'?'h'+([1,2,3,4,5,6].includes(number)?number:2):['button','link'].includes(node.type)&&safeHref(node.props?.href)?'a':node.type==='button'?'button':node.type==='image'?'figure':node.type==='quote'?'blockquote':['footer','navbar','menu','sidebar'].includes(node.type)?{footer:'footer',navbar:'nav',menu:'nav',sidebar:'aside'}[node.type]:'div'}
-export function contentAttributes(node){
+export function contentAttributes(node,{pageNodes=null}={}){
   const p=node.props||{},a=node.accessibility||{},attributes={};
   const target=['_self','_blank'].includes(p.target)?p.target:'_self';
   if(['button','link'].includes(node.type)&&safeHref(p.href)){attributes.href=safeHref(p.href);attributes.target=target;if(target==='_blank')attributes.rel='noopener noreferrer'}
@@ -233,6 +235,7 @@ export function contentAttributes(node){
   else if(typeof a.id==='string'&&/^[A-Za-z][\w-]{0,79}$/.test(a.id))attributes.id=a.id;
   if(['en','hu','de','fr','es','it','pt','pl','ja','ko','zh'].includes(a.lang))attributes.lang=a.lang;
   if(a.decorative===true)attributes['aria-hidden']='true';
+  if(pageNodes)Object.assign(attributes,pageInteractionAttributes(node,pageNodes));
   return attributes;
 }
 export function authoredNodeHtml(node,{childrenHtml='',device='desktop',editor=false}={}){
@@ -280,6 +283,36 @@ export function authoredNodeHtml(node,{childrenHtml='',device='desktop',editor=f
 export function initContentInteractions(root){
   if(root.dataset.contentInteractions==='1')return;root.dataset.contentInteractions='1';
   const activate=tab=>{const group=tab.closest('.creator-tabs');if(!group)return;for(const button of group.querySelectorAll('[role="tab"]')){const selected=button===tab;button.setAttribute('aria-selected',String(selected));button.tabIndex=selected?0:-1;const panel=group.querySelector('[id="'+button.getAttribute('aria-controls')+'"]');if(panel)panel.hidden=!selected}};
+  const runPageAction=source=>{
+    const action=source?.dataset?.pageAction,targetId=source?.dataset?.pageActionTarget;
+    if(!['scroll-to','select-tab','toggle-disclosure'].includes(action)||typeof targetId!=='string'||!targetId)return false;
+    // Compare stable model IDs as data, never interpolate user-controlled IDs
+    // into a CSS selector. The lookup is scoped to this page/preview root.
+    const target=[...root.querySelectorAll('[data-page-node-id]')].find(node=>node.dataset.pageNodeId===targetId);
+    if(!target)return false;
+    if(action==='scroll-to'){
+      const behavior=matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth';
+      try{target.scrollIntoView({behavior,block:'start'})}catch{target.scrollIntoView()}
+      return true;
+    }
+    const index=Number(source.dataset.pageActionIndex);
+    if(!Number.isInteger(index)||index<0)return false;
+    if(action==='select-tab'){
+      const tab=target.querySelectorAll('.creator-tabs [role="tab"]')[index];
+      if(!tab)return false;
+      activate(tab);
+      return true;
+    }
+    const group=target.querySelector('.creator-accordion');
+    const details=group?.querySelectorAll('details')?.[index];
+    if(!details)return false;
+    const willOpen=!details.open;
+    if(willOpen&&details.hasAttribute('name')){
+      for(const item of group.querySelectorAll('details'))item.open=false;
+    }
+    details.open=willOpen;
+    return true;
+  };
   const scrollCarousel=(track,key)=>{
     if(!track)return;
     const behavior=matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth';
@@ -289,7 +322,7 @@ export function initContentInteractions(root){
       track.scrollBy({left:(key==='ArrowRight'?1:-1)*track.clientWidth,behavior});
     }
   };
-  root.addEventListener('click',event=>{const zoom=event.target.closest('[data-lightbox-src]');if(zoom&&root.contains(zoom)&&safeSrc(zoom.dataset.lightboxSrc)){
+  root.addEventListener('click',event=>{const actionSource=event.target.closest('[data-page-action]');if(actionSource&&root.contains(actionSource)&&runPageAction(actionSource))event.preventDefault();const zoom=event.target.closest('[data-lightbox-src]');if(zoom&&root.contains(zoom)&&safeSrc(zoom.dataset.lightboxSrc)){
     // The preview is scoped to its own gallery/carousel; nested galleries
     // elsewhere on the page never leak into this lightbox's navigation.
     const container=zoom.closest('.creator-gallery,.creator-carousel');

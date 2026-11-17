@@ -1,4 +1,4 @@
-import {CONTENT_FIELDS,IMAGE_MIMES,normalizeContentField,contentProperties,imageFocalPosition,getPublicationContentGuidance} from '../core/authored-content.js?v=20261117-d03-invalid-media-id-guidance-v1';
+import {CONTENT_FIELDS,IMAGE_MIMES,normalizeContentField,contentProperties,imageFocalPosition,getPublicationContentGuidance} from '../core/authored-content.js?v=20261117-edt039-page-action-registry-v1';
 import {parseTableTsv,serializeTableTsv} from '../core/table-tsv.js?v=20261115-d03-table-tsv-v2';
 import {getProperty} from '../core/property-registry.js?v=20261030-inspector-layout-container-contract';
 export {IMAGE_MIMES};
@@ -117,7 +117,7 @@ export function mediaAssetPicker(selectedId,onSelect,{disabled=false,mimes=[],se
   return root;
 }
 const selectedAlt=asset=>typeof asset?.altText==='string'?asset.altText.trim().slice(0,500):'';
-export function renderElementContentControls(node,{apply,pending,exclude=[],pages=[],resolveExternalField=null}){
+export function renderElementContentControls(node,{apply,pending,exclude=[],pages=[],pageNodes=null,resolveExternalField=null}){
   const root=document.createElement('section');root.className='element-content-controls';
   const fail=document.createElement('p');fail.className='property-validation';fail.setAttribute('role','status');fail.id='content-validation-'+crypto.randomUUID();
   // A successful command mutates the Editor model, but validation failure may
@@ -129,7 +129,7 @@ export function renderElementContentControls(node,{apply,pending,exclude=[],page
   const publicationNote=document.createElement('p');
   publicationNote.className='content-field-help editor-publication-warning';
   publicationNote.setAttribute('role','status');
-  const currentPublicationGuidance=()=>getPublicationContentGuidance({...node,props:working});
+  const currentPublicationGuidance=()=>getPublicationContentGuidance({...node,props:working},{pageNodes});
   const refreshPublicationNote=()=>{
     const guidance=currentPublicationGuidance();
     publicationNote.textContent=guidance?'Publikálás előtt: '+guidance.message:'';

@@ -1,4 +1,5 @@
 import { createDefaultScheduleConfig, normalizeScheduleConfig } from './schedule-schema.js';
+import { normalizePageInteractions } from './page-interactions.js?v=20261117-edt039-page-action-registry-v1';
 
 /*
  * Sanci9517 Visual Editor v2 — Page Model schema
@@ -403,6 +404,11 @@ export function validatePage(page) {
       } catch (error) {
         errors.push(`invalid schedule config: ${id}: ${safeModelDiagnostic(error instanceof Error ? error.message : error)}`);
       }
+    }
+    try {
+      normalizePageInteractions(node.interactions, node, nodes ?? {});
+    } catch (error) {
+      errors.push(`invalid page interaction: ${id}: ${safeModelDiagnostic(error instanceof Error ? error.message : error)}`);
     }
     if (!Array.isArray(node.children)) errors.push(`children must be an array: ${id}`);
 

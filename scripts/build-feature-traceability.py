@@ -29,7 +29,7 @@ SOURCES = {
 }
 PARTIAL = {
  'ADM': [1,3,7,8,9,10,11], 'WEB': list(range(1,15))+[16,28,30,31,32],
- 'EDT': list(range(1,39))+[40,41,42,43,44], 'DSN':[1,2,4,5,6,7],
+ 'EDT': list(range(1,40))+[40,41,42,43,44], 'DSN':[1,2,4,5,6,7],
  'RES':[1,2,3,4,5,7,8,9,10,11,15], 'INT':list(range(1,12))+[19,20],
  'SCH':[1,2,3,5,7,8,9,10,11], 'SEC':[1,2,3,4,5,6,8,10],
  'OPS':[1,2,4,5,6,7,9], 'QA':list(range(1,10)), 'SET':[1,2,3,4],
@@ -43,6 +43,7 @@ EXACT_SOURCES = {
  'EDT-022':['public/editor-v2/core/property-values.js','public/editor-v2/ui/property-controls.js','public/editor-v2/core/content-profiles.js','src/core/editor-validation.ts'],
  'EDT-024':['public/editor-v2/core/responsive.js','public/editor-v2/ui/responsive-group-reset.js'],
  'EDT-043':['public/editor-v2/core/richtext-engine.js','public/editor-v2/core/richtext-import.js','public/editor-v2/core/richtext-links.js','public/editor-v2/app.js'],
+ 'EDT-039':['public/editor-v2/core/page-interactions.js','public/editor-v2/core/authored-content.js','public/editor-v2/core/schema.js','public/editor-v2/ui/page-interaction-controls.js','public/editor-v2/app.js','public/assets/page-renderer.js'],
  'RES-011':['public/editor-v2/core/icon-options.js','public/editor-v2/ui/basic-content-inspector.js'],
  'DSN-007':['public/editor-v2/core/property-values.js','public/editor-v2/ui/property-controls.js'],
  'SEC-001':['src/routes/auth/login.ts','src/routes/auth/logout.ts','src/core/auth/session.ts'],

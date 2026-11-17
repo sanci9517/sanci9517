@@ -410,15 +410,15 @@
 - **Kanonikus owner / adatforrás:** EDITOR a page-local interaction schema tulajdonosa; AUT automation action registry külön domain.
 - **Séma / invariánsok:** allowlisted trigger/action schema, no arbitrary JS/eval, URL/form safety, explicit target scope.
 - **Jogosultság:** public runtime csak validált, publikált interactiont futtathat.
-- **API/command:** Property Registry group említése mellett teljes property/runtime nem bizonyított.
+- **API/command:** a 2026-11-17-i első részleges szelet a Page Model `interactions` mezőjét és a közös validátort használja; nem az AUT workflow-motor.
 - **Függőségek:** EDT-021/022/034/037/040, SEC, AUT külön adapterkapu.
 - **UI-állapotok:** configured/invalid/unsupported/preview/runtime failure.
 - **Biztonság/adatvédelem:** arbitrary code tiltott; CSP, safe URL, event abuse és permission boundary kötelező.
-- **Tesztcsomag:** interaction schema/runtime acceptance nincs bizonyítva.
-- **Elfogadás:** valid allowlisted action preview/publish/runtime; arbitrary script, invalid target és unsafe URL elutasítva.
-- **Bizonyíték:** jelenlegi registry group nem bizonyít működő runtime-ot; teljes implementation evidence nincs.
+- **Tesztcsomag:** `public/editor-v2/tests/page-interactions.test.js` ellenőrzi az allowlistet, hibás action/target mezőket, Page Model validációt és Publish-kaput; `tests/browser/editor-page-interactions.test.js` valós Chromiumban ellenőrzi a draft Save/reload/Editor Preview popup/külön Publish/public-runtime útvonalat. Ez csak kezdeti részleges lefedés.
+- **Elfogadás:** valid allowlisted action preview/publish/runtime; arbitrary script, invalid target és unsafe URL elutasítva. A v1 button+click rész az Inspectorban, a mentett Preview popupban és a publikus runtime-ban működik; a maradék esemény-/biztonsági mátrix nyitott.
+- **Bizonyíték:** `docs/evidence/editor-page-interactions-2026-11-17.json`; a teljes esemény/action, hibás/unsupported-helyreállítás, security és motion acceptance még nincs igazolva.
 - **Visszaállítás:** config undo/revision restore; runtime side effect csak idempotens/safe policy szerint.
-- **Státusz / ismert probléma / következő lépés:** OPEN / UNVERIFIED; interaction schema és runtime security contract.
+- **Státusz / ismert probléma / következő lépés:** PARTIAL IMPLEMENTATION / OPEN / NOT CERTIFIED; a jelenlegi v1 csak button+click és `scroll-to`/`select-tab`/`toggle-disclosure` same-page allowlistet ad. A hover/focus/submit/load/timer/state, teljes event matrix, form/URL boundary, reduced-motion motion controls, hibás/unsupported helyreállítás és teljes security/performance acceptance nyitva marad; ezek implementációja és bizonyítéka szükséges a lezáráshoz.
 
 #### EDT-040 — Motion és reduced-motion
 - **Felhasználói eredmény:** az animációk kontrollálhatók, és a csökkentett mozgást kérő felhasználók megfelelő élményt kapnak.

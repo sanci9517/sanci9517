@@ -49,9 +49,10 @@ import {createCompositionInputs} from './ui/composition-inputs.js';
 import {opaqueContrast} from './core/accessibility.js';
 import {STATE_PROPERTY_IDS,applyStateStyles} from './core/state-styles.js';
 import {defaultTokens,applyTokenVariables} from './core/design-tokens.js';
-import {CONTENT_TYPES,STRUCTURAL_TYPES,validatePageForPublication,isAuthoredContent,authoredNodeHtml,contentAttributes,initContentInteractions,contentTag} from './core/authored-content.js?v=20261117-d03-invalid-media-id-guidance-v1';
+import {CONTENT_TYPES,STRUCTURAL_TYPES,validatePageForPublication,isAuthoredContent,authoredNodeHtml,contentAttributes,initContentInteractions,contentTag} from './core/authored-content.js?v=20261117-edt039-page-action-registry-v1';
 import {captureCanvasInteractionState,restoreCanvasInteractionState} from './core/canvas-interaction-state.js';
 import {renderElementContentControls,pageLinkPicker} from './ui/element-content-controls.js?v=20261115-d03-table-tsv-v1';
+import {renderPageInteractionControls} from './ui/page-interaction-controls.js?v=20261117-edt039-page-action-registry-v1';
 
 let editorTokens=defaultTokens();
 function propertyInput(property,label,current,onChange,options={}){
@@ -1538,11 +1539,12 @@ function renderInspector(){
       else if(CONTENT_TYPES.includes(node.type))inspector.append(renderElementContentControls(node,{
         exclude:textTypes.has(node.type)?['text']:[],
         resolveExternalField:key=>key==='text'?inspector.querySelector(`.plain-text-editor[data-text-node-id="${CSS.escape(node.id)}"]`):null,
-        pages,pending:flush=>{flushRichTextDraft=flush},
+        pages,pageNodes:page()?.nodes,pending:flush=>{flushRichTextDraft=flush},
         apply:(patch,{typingGroup,render:fullRender=false}={})=>{const property=Object.hasOwn(patch,'href')?getProperty('content.href'):null;const saved=command(property?.command||'content.properties.set',{nodeId:node.id,patch},{render:fullRender,typingGroup});if(saved&&!fullRender){renderCanvas();setStatus('Nem mentett módosítás');syncPublishControls()}return saved}
       }));
       else if(STRUCTURAL_TYPES.includes(node.type))inspector.append(Object.assign(document.createElement('p'),{className:'content-field-help',textContent:'Ez a tároló a gyermekeit jeleníti meg. Tartalomhoz adj hozzá szöveget, képet vagy más elemet.'}));
       else if(!textTypes.has(node.type))inspector.append(Object.assign(document.createElement('p'),{className:'content-field-help',textContent:'Ehhez az elemhez a közös szolgáltatás és a részletes szerkesztő még hiányzik. A meglévő adatok megmaradnak.'}));
+      if(isAuthoredContent(node)&&node.type==='button')inspector.append(renderPageInteractionControls(node,page(),interactions=>command('element.update',{nodeId:node.id,patch:{interactions}}),effectivelyLocked));
     }
   }else{
     inspector.append(renderRegistryInspector(node,'advanced'));

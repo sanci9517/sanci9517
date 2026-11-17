@@ -1,0 +1,81 @@
+{
+  "schema": "sanci.editor.page-interactions.v1",
+  "captured_at_utc": "2026-11-17",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "base_sha": "fcc5b167999069b8a179843a4ab74bf4908c8058",
+    "active_plan_cursor": "77.44 / WEB-011",
+    "d_gate_status": "77.44.7.D OPEN / NOT_CERTIFIED",
+    "canonical_plan_sha256_after_entry": "277107b20a75ece1b8bda1d55235c8146989294830f6811ed3ef647907720932"
+  },
+  "feature": {
+    "id": "EDT-039",
+    "status": "PARTIAL IMPLEMENTATION / OPEN / NOT CERTIFIED",
+    "scope": "Page Model-local, declarative button click actions",
+    "actions": ["scroll-to", "select-tab", "toggle-disclosure"],
+    "limits": [
+      "one action per authored button",
+      "same-page targets only",
+      "no arbitrary JavaScript/eval",
+      "a navigation href and page interaction cannot coexist",
+      "tab/disclosure actions require a valid item index"
+    ]
+  },
+  "acceptance": {
+    "unit": "allowlist, malformed/unknown keys, unsupported actions, cross-page/missing/wrong-type targets, href boundary, schema validation and publication guidance",
+    "browser": [
+      "Inspector configures a same-page action and persists it in the Page Model draft.",
+      "Save does not alter the existing public snapshot; editor reload restores the saved action.",
+      "The Editor's real Preview popup renders the saved draft action before Publish and its keyboard activation selects the target tab.",
+      "Explicit Publish makes the action available to the public renderer and keyboard activation works there.",
+      "Subsequent Save still leaves published state unchanged; reduced-motion scroll uses instant behavior; the disclosure action opens native details."
+    ],
+    "save_publish_separation": "PASS in the targeted local Chromium fixture"
+  },
+  "verification": {
+    "targeted_browser_command": "node --test tests/browser/editor-page-interactions.test.js",
+    "targeted_browser_result": "PASS; 1/1 Chromium test, including Editor Preview popup",
+    "editor_unit_command": "npm run test:editor",
+    "editor_unit_result": "PASS; 19/19 test files, with Linux subreaper guard 3/3",
+    "typecheck": "PASS; npm run typecheck",
+    "layout_suite": {
+      "command": "npm run test:editor:layout",
+      "result": "INTERRUPTED BY OPERATOR AFTER 20 OF 55 FILES COMPLETED; 20 passed, 0 failed; stopped before file 21 due to measured suite runtime",
+      "scope_note": "This is not a full layout-suite PASS. The changed interaction browser test was separately run to completion and passed."
+    },
+    "traceability": "PASS; 396/396 mappings, now 147 PARTIAL_SOURCE and 249 UNVERIFIED; acceptance remains NOT_RECERTIFIED",
+    "plan_checks": "PASS; plan-contract 14/14, canonical-plan 13 master files/396 mappings, active plan point 77.44/WEB-011 -> 77.44.7.D OPEN",
+    "migration_safety_gate": "PASS; deploy:safe gate confirms no automatic D1 migration application",
+    "wrangler_dry_run": "PASS; Wrangler 4.130.0 read 185 public assets, 389.90 KiB (99.98 KiB gzip), exited via --dry-run without publishing",
+    "diff_and_syntax": "PASS; modified JS syntax checks and git diff --check",
+    "production_checks_pending": [
+      "exact-SHA GitHub checks and automatic Worker build after push",
+      "verify exact source deployment/100% traffic, health and changed public asset hashes"
+    ],
+    "production_source_smoke_scope": "Updated workflow and regression guard include every public runtime file changed in this release."
+  },
+  "release_before_push": {
+    "latest_read_only_snapshot": {
+      "deployment_id": "760f3cac-7809-4054-a767-a0f8098fe619",
+      "worker_version_id": "6a9df7a1-a638-4cd8-9ab1-65ac431161a0",
+      "traffic_percent": 100
+    },
+    "production_health": "not checked in this evidence yet",
+    "runtime_changed": true,
+    "deployment": "pending normal fast-forward push, exact-SHA automatic build, and production verification"
+  },
+  "data_and_cost": {
+    "production_d1_preflight": "Cloudflare D1 Query API, exact SQL SELECT name FROM d1_migrations ORDER BY name; returned 35 rows through 0029_media_archive_unicode_additive.sql; rows_read=35, rows_written=0, changes=0, changed_db=false, success=true.",
+    "production_d1_migration_or_write": false,
+    "production_r2_mutation_or_delete": false,
+    "new_paid_service_or_dependency": false,
+    "new_cost_huf": 0
+  },
+  "limitations": [
+    "EDT-039 remains partial: hover/focus/submit/load/timer/state event families, complete form/URL boundary coverage, invalid/unsupported recovery and full security/performance acceptance are not complete.",
+    "This does not close the full Editor, D-01 through D-07, or 77.44.7.D.",
+    "Full Editor manual and physical acceptance remains deferred until all planned Editor functionality is complete.",
+    "Save and Publish remain separate operations."
+  ]
+}
