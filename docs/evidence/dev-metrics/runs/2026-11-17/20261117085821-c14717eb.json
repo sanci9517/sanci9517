@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261117085821-c14717eb",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-17T08:58:21.118Z",
+  "finished_at": "2026-11-17T08:59:53.322Z",
+  "wall_seconds": 92,
+  "paused_seconds": 0,
+  "measured_seconds": 92,
+  "status": "pass",
+  "kind": "test",
+  "summary": "D-07 incomplete Page object boot validation regression",
+  "evidence": [
+    "tests/browser/editor-malformed-public-text-links.test.js:PASS"
+  ],
+  "checks": "Chromium 2/2 PASS; node --check PASS; git diff --check PASS",
+  "started_revision": "d116d47a9c98e6a0624814fa0c02d7c387096afe",
+  "finished_revision": "d116d47a9c98e6a0624814fa0c02d7c387096afe",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

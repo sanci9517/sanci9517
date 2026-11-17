@@ -1,0 +1,46 @@
+{
+  "schema": "sanci.editor.d07-incomplete-page-object-load.v1",
+  "plan_point": "77.44.7.D",
+  "feature_scope": ["D-07"],
+  "change": "Extended the real-browser malformed saved Page regression with object-shaped but incomplete Page records ({}, {id: activePageId}). These pass the shallow canonical-envelope check and therefore exercise the deeper Page Model validation guard before state/revision assignment.",
+  "acceptance": {
+    "incomplete_page_objects": "The Editor reports a controlled Invalid editor document error for both incomplete object records.",
+    "safe_failure": "No uncaught page error, Save/Publish request, or mutation of the persisted recovery document occurs.",
+    "scope": "Bounded malformed-page-record regression only; it does not certify full D-07 or the D-01 through D-07 matrix."
+  },
+  "verification": {
+    "browser": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-malformed-public-text-links.test.js",
+      "result": "PASS",
+      "tests": "2/2",
+      "notes": "Both the public malformed-text test and the D-07 Editor malformed Page Model test passed with the new incomplete-object cases."
+    },
+    "syntax": {
+      "command": "node --check tests/browser/editor-malformed-public-text-links.test.js",
+      "result": "PASS"
+    },
+    "diff": {
+      "command": "git diff --check",
+      "result": "PASS"
+    },
+    "github": {
+      "branch": "v2/foundation",
+      "test_commit": "f0f49070375a27d590459ecc3a41a5e2c4f35ceb",
+      "test_commit_url": "https://github.com/sanci9517/sanci9517/commit/f0f49070375a27d590459ecc3a41a5e2c4f35ceb",
+      "workflow": "Skipped intentionally: browser-test-harness-only change after its focused local browser gate; no runtime/public source changed."
+    },
+    "production_worker_read_only_snapshot": {
+      "deployment_id": "36aa0236-fce1-453d-bab3-6d6bbb154f94",
+      "version_id": "7838537b-410a-4b07-b425-4e0c96bd96f9",
+      "traffic_percent": 100,
+      "runtime_source_commit": "e4b543350ca101f38412bc4f1a9ec879240dab87",
+      "note": "Deployment state was read via Cloudflare GET. Runtime/public assets were unchanged, so no deployment, health GET, or asset hash check was required for this test-only commit."
+    }
+  },
+  "data_and_cost": {
+    "production_d1_or_r2_mutation": "none",
+    "new_dependency_or_paid_service": "none",
+    "new_cost_huf": 0
+  },
+  "scope_limit": "This D-07 malformed Page-record subgate passed. The complete 77.44.7.D requirement and D-01 through D-07 capability/lifecycle matrix remain OPEN / NOT_CERTIFIED. Full-editor manual and physical acceptance remains DEFERRED; Save and Publish remain separate."
+}
