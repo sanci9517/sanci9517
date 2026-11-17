@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261117090503-294a1b6c",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-17T09:05:03.172Z",
+  "finished_at": "2026-11-17T09:05:50.545Z",
+  "wall_seconds": 47,
+  "paused_seconds": 0,
+  "measured_seconds": 47,
+  "status": "partial",
+  "kind": "docs",
+  "summary": "Pushed and verified D-07 incomplete Page object regression evidence; runtime unchanged",
+  "evidence": [
+    "docs/evidence/editor-d07-incomplete-page-objects-2026-11-17.json"
+  ],
+  "checks": "GitHub branch head dbeb2253 verified; Actions runs 0 for docs commit; Cloudflare GET unchanged at 100% traffic",
+  "started_revision": "d116d47a9c98e6a0624814fa0c02d7c387096afe",
+  "finished_revision": "d116d47a9c98e6a0624814fa0c02d7c387096afe",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
