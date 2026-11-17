@@ -494,6 +494,11 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   await carouselItem.getByRole('button',{name:'Médiatár megnyitása'}).click();await carouselItem.locator('.editor-media-choice').click();
   assert.equal(await node(editor,'carousel').locator('.creator-image-zoom').first().getAttribute('data-lightbox-src'),'/api/admin/media?id='+assetId);
   assert.equal(await node(editor,'carousel').locator('img').first().getAttribute('alt'),'Első dia','a manually written carousel alt is preserved');
+  const carouselSecondItem=editor.locator('.content-repeater fieldset').nth(1);
+  await carouselSecondItem.getByLabel('Képleírás',{exact:true}).fill('');
+  await carouselSecondItem.getByRole('button',{name:'Médiatár megnyitása'}).click();await carouselSecondItem.locator('.editor-media-choice').click();
+  assert.equal(await node(editor,'carousel').locator('img').nth(1).getAttribute('alt'),'Márkajel',
+    'an empty carousel alt inherits Media Library metadata while a manual alt remains unchanged');
   await select('video');
   assert.equal(await node(editor,'video').locator('video').getAttribute('poster'),'/fixture.svg','existing cover URL remains unchanged until selection');
   const posterPicker=editor.locator('[data-content-key="posterAssetId"]');
@@ -664,6 +669,8 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
     'Save retains the authored gallery alt value exactly instead of normalizing source data');
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.gallery].props.items[1].caption,'  Frissített képaláírás  ',
     'Save retains the authored gallery caption exactly instead of normalizing source data');
+  assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.carousel].props.items[1].alt,'Márkajel',
+    'Save persists the inherited Media Library description on the carousel item');
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.button].responsive.desktop.backgroundAssetId,assetId,'Save stores the background asset ID');
   await live.goto(base+'/p/test');assert.equal(await live.locator('h1[data-node-id]').textContent(),'Alkotói főcím');
   assert.equal(await galleryTracks(live),3,'draft Save leaves the original published gallery column count unchanged');
@@ -733,6 +740,9 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
     '  Frissített képleírás  ','Editor reload restores the exact authored gallery alt value');
   assert.equal(await editor.locator('.content-repeater fieldset').nth(1).getByLabel('Képaláírás',{exact:true}).inputValue(),
     '  Frissített képaláírás  ','Editor reload restores the exact authored gallery caption');
+  await select('carousel');
+  assert.equal(await editor.locator('.content-repeater fieldset').nth(1).getByLabel('Képleírás',{exact:true}).inputValue(),'Márkajel',
+    'Editor reload restores inherited Media Library alt metadata on the carousel item');
   await select('link');
   assert.equal(await editor.locator(`.plain-text-editor[data-text-node-id="${ids.link}"]`).inputValue(),authoredLinkText,'Editor reload restores the authored link text');
   assert.equal(await editor.locator('[data-content-key="href"] input').inputValue(),authoredLinkHref,'Editor reload restores the authored link destination');
@@ -795,6 +805,8 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
     'Publish exposes the editable Dropdown group name');
   assert.equal(await node(live,'carousel').getByRole('region',{name:'Képes történeteim & fotók'}).count(),1,
     'published carousel region inherits the exact accessible Inspector name');
+  assert.equal(await node(live,'carousel').locator('img').nth(1).getAttribute('alt'),'Márkajel',
+    'separate Publish renders the inherited Media Library description on the public carousel slide');
   // Audio playback controls are part of the authored lifecycle, not merely a
   // renderer default: an incomplete draft may be saved, but must stay private
   // until the required native controls are restored and explicitly Published.

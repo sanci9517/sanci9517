@@ -201,7 +201,7 @@ test('D-07 Editor rejects corrupt Page Model child lists safely without rewritin
   assert.equal(JSON.stringify(state.document),duplicatePersisted,'duplicate references remain unmodified for recovery');
 
   page.nodes[rootId].children=[sectionId,headingId];
-  for(const malformed of [null,false]){
+  for(const malformed of [null,false,true,0,'bad',[]]){
     page.nodes[headingId]=malformed;
     const malformedPersisted=JSON.stringify(state.document);
     await tab.reload();
@@ -214,7 +214,7 @@ test('D-07 Editor rejects corrupt Page Model child lists safely without rewritin
     page.nodes[headingId]=structuredClone(validHeading);
   }
 
-  for(const malformed of [null,false]){
+  for(const malformed of [null,false,true,0,'bad',[]]){
     state.document.pages[pageId]=malformed;
     const malformedPersisted=JSON.stringify(state.document);
     await tab.reload();
