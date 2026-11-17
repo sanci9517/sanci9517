@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "task": "77.44.7.D / D-05",
+  "title": "Dropdown multi-open to single-open Canvas mode transition",
+  "date": "2026-11-17",
+  "status": "PARTIAL_ACCEPTANCE_PASS",
+  "canonical_plan_status": "77.44.7.D and D-01–D-07 remain OPEN / NOT_CERTIFIED",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "branch_head_at_start": "1a830175f477397f8282c34904514bd44d89012d"
+  },
+  "verified_gap": "The prior Dropdown single-open lifecycle regression proved native grouping and Save/reload/Publish, but it switched the mode while only the initial first item was open. It did not prove the Canvas transition from a genuinely multi-open state to the configured exclusive default.",
+  "regression": {
+    "test_file": "tests/browser/editor-content-system.test.js",
+    "checks": [
+      "With the default multi-open setting and openFirst enabled, opening the second Canvas details section leaves both sections open.",
+      "Enabling singleOpen assigns the same native details name to both sections and restores the configured initial state [true,false].",
+      "The previously verified lifecycle still checks draft Save does not alter the public page, Editor reload restores both properties, and separate Publish enables native keyboard exclusivity.",
+      "Accordion remains an independent details group; published dropdown remains exclusive across desktop/tablet/mobile widths."
+    ]
+  },
+  "checks": {
+    "chromium": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-content-system.test.js",
+      "result": "PASS",
+      "tests": "1/1",
+      "duration_ms": 38716
+    },
+    "syntax": {
+      "command": "node --check tests/browser/editor-content-system.test.js",
+      "result": "PASS"
+    },
+    "diff_check": {
+      "command": "git diff --check",
+      "result": "PASS"
+    },
+    "hosted_ci": "NOT RUN; the change is browser-test/evidence/metrics only and is to be pushed with [skip ci]; no hosted CI pass is claimed"
+  },
+  "runtime_and_release": {
+    "runtime_source_changed": false,
+    "public_asset_changed": false,
+    "worker_deploy": false,
+    "deployment_snapshot_at_start": {
+      "deployment_id": "760f3cac-7809-4054-a767-a0f8098fe619",
+      "worker_version_id": "6a9df7a1-a638-4cd8-9ab1-65ac431161a0",
+      "traffic_percent": 100,
+      "observed_at_utc": "2026-11-17T14:07Z"
+    },
+    "source_sha": "UNVERIFIED in this test-only block",
+    "health_and_asset_hash_checks": "NOT RUN because no runtime asset changed"
+  },
+  "safety_and_cost": {
+    "new_cost_huf": 0,
+    "production_d1_write_or_migration": false,
+    "production_r2_mutation": false,
+    "new_dependency": false,
+    "save_publish_separate": true,
+    "full_editor_manual_physical_acceptance": "DEFERRED until the complete Editor gate"
+  },
+  "measurement_run_id": "20261117140749-c91b43cb",
+  "complete_d_status": "OPEN / NOT_CERTIFIED; this is one D-05 transition acceptance slice"
+}

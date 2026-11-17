@@ -436,8 +436,11 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   assert.equal(await canvasDropdown.locator('details').last().getAttribute('name'),null,
     'multi-open default does not accidentally make separate dropdown items exclusive');
   const dropdownSingleOpen=editor.getByLabel('Egyszerre csak egy nyitott rész',{exact:true});
-  await dropdownSingleOpen.check();
   const canvasDropdownDetails=canvasDropdown.locator('details');
+  await canvasDropdownDetails.last().locator('summary').click();
+  assert.deepEqual(await canvasDropdownDetails.evaluateAll(items=>items.map(el=>el.open)),[true,true],
+    'the default multi-open Dropdown keeps the first section open when its second section opens');
+  await dropdownSingleOpen.check();
   const dropdownGroupName=await canvasDropdownDetails.first().getAttribute('name');
   assert.ok(dropdownGroupName,'single-open Dropdown assigns a native details group name');
   assert.equal(await canvasDropdownDetails.last().getAttribute('name'),dropdownGroupName,

@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261117140749-c91b43cb",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-17T14:07:49.821Z",
+  "finished_at": "2026-11-17T14:09:54.813Z",
+  "wall_seconds": 125,
+  "paused_seconds": 0,
+  "measured_seconds": 125,
+  "status": "pass",
+  "kind": "test",
+  "summary": "Dropdown multi-open to single-open Canvas transition verified in Chromium",
+  "evidence": [
+    "tests/browser/editor-content-system.test.js:PASS"
+  ],
+  "checks": "Chromium 1/1; node --check; git diff --check",
+  "started_revision": "35aab4ffed470a07e4790a651e3c380154252c9e",
+  "finished_revision": "35aab4ffed470a07e4790a651e3c380154252c9e",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
