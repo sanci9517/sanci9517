@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "kind": "editor-page-interaction-focus-trigger",
-  "recorded_at": "2026-11-17T19:38:48.946Z",
+  "recorded_at": "2026-11-17T19:46:30Z",
   "canonical_plan": "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
   "plan_point": "77.44.7.D / EDT-039",
   "status": "PARTIAL / OPEN / NOT_CERTIFIED",
@@ -25,7 +25,9 @@
     "diff_check": "PASS: git diff --check",
     "local_chromium": "BLOCKED before assertions: system Chromium exits SIGTRAP; Crashpad setsockopt Operation not permitted; hosted exact-SHA Chromium check required",
     "wrangler_dry_run": "PASS: Wrangler 4.130.0, 194 assets, 392.19 KiB / 100.49 KiB gzip; no publish",
-    "prior_exact_sha_ci": "PASS for commit 6440b2e46f7c932858b401f5ebeb99a4d77ca205 only: Editor Core workflow 44155111091; 58/58 layout tests and remaining workflow steps completed successfully; does not validate this change"
+    "prior_exact_sha_ci": "PASS for commit 6440b2e46f7c932858b401f5ebeb99a4d77ca205 only: Editor Core workflow 44155111091; 58/58 layout tests and remaining workflow steps completed successfully; does not validate this change",
+    "exact_source_ci": "PENDING: Editor Core run 44161311090 is running exact source commit b4456878f863e4a861bfac366c6e1853a39267af; typecheck, editor-core, D1 ledger/recovery, private R2 API, showcase browser and isolated media storage passed; Editor layout regression still in progress as of 2026-11-17T19:46Z.",
+    "production_source_smoke": "PASS: workflow 44161310987, exact SHA b4456878f863e4a861bfac366c6e1853a39267af; direct health and all 34 declared public source asset SHA-256 comparisons passed after deployment converged."
   },
   "d1_preflight": {
     "method": "Cloudflare D1 Query API, SELECT only",
@@ -37,13 +39,24 @@
     "changed_db": false
   },
   "release": {
-    "source_commit": null,
+    "source_commit": "b4456878f863e4a861bfac366c6e1853a39267af",
     "github_branch": "v2/foundation",
-    "github_ci": "PENDING exact-source run after commit",
-    "cloudflare_deployment": "PENDING",
-    "worker_traffic": "PENDING",
-    "production_health": "PENDING",
-    "production_asset_hashes": "PENDING"
+    "github_head": "b4456878f863e4a861bfac366c6e1853a39267af",
+    "github_ci": {
+      "editor_core_run": "https://github.com/sanci9517/sanci9517/actions/runs/44161311090 (in_progress; exact-SHA; browser layout currently running)",
+      "production_source_smoke_run": "https://github.com/sanci9517/sanci9517/actions/runs/44161310987 (success; exact-SHA; health and 34/34 public source hashes match)"
+    },
+    "cloudflare_deployment": "9e6a6492-dbfb-40a7-b515-40f6076bdb88 at 2026-11-17T19:42:32.827442Z",
+    "worker_version": "cc808ea6-b76b-4ad6-bfef-026f078667e3",
+    "worker_traffic": "100%",
+    "production_health": "PASS: direct GET https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health returned HTTP 200 and {\"ok\":true,\"service\":\"sanci9517-streamer-brand\",\"version\":\"2.0.0\",\"server\":\"cloudflare-worker\"}",
+    "production_asset_hashes": {
+      "public/editor-v2/core/authored-content.js": "578b49b7fa1b9f9f9d77bc5cac4016a571402ccda152b95f46ff1e34d2beb32c",
+      "public/editor-v2/core/page-interactions.js": "64cdb427cc288afebafcc2518f939d81f2fd8513da0d0e45bd3b1699cc659ab1",
+      "public/editor-v2/app.js": "4e79d47645d682da4fa4cb74283960452ee600ffe4b58616f010f0335cf86f32",
+      "public/editor-v2/ui/page-interaction-controls.js": "29c3f950013bed6223b58eb4edfe7154f0a9a6ee51be7e2ed53ff5114462782"
+    },
+    "wrangler_dry_run": "PASS before push; 194 assets; no publish"
   },
   "constraints": {
     "production_migrations": 0,
@@ -52,5 +65,6 @@
     "new_paid_cost_huf": 0,
     "save_publish_separate": true,
     "manual_physical_editor_acceptance": "DEFERRED until complete Editor"
-  }
+  },
+  "metrics_archive": "docs/evidence/dev-metrics/runs/2026-11-17/20261117192935-c1ffbcf8.json"
 }

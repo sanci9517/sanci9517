@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "id": "20261117192935-c1ffbcf8",
+  "task": "77.44.7.D-EDT-039-focus-trigger",
+  "trigger": "manual",
+  "started_at": "2026-11-17T19:29:35.438Z",
+  "finished_at": "2026-11-17T19:46:01.664Z",
+  "wall_seconds": 986,
+  "paused_seconds": 0,
+  "measured_seconds": 986,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "EDT-039 focus trigger implemented and deployed; exact-SHA production smoke and 34 public source hashes PASS; full Editor Core browser workflow remains in progress.",
+  "evidence": [
+    "docs/evidence/editor-page-focus-trigger-2026-11-17.json",
+    "https://github.com/sanci9517/sanci9517/actions/runs/44161311090",
+    "https://github.com/sanci9517/sanci9517/actions/runs/44161310987"
+  ],
+  "checks": "Local editor unit/typecheck/migration/plan/traceability PASS; local Chromium BLOCKED by sandbox Crashpad; GitHub plan/F0/source-smoke PASS; Editor Core layout CI IN_PROGRESS; Cloudflare 100 percent traffic, direct health and 4/4 changed JS hashes PASS; SELECT-only D1 35 rows, 0 writes; Wrangler dry-run PASS; cost 0 Ft.",
+  "started_revision": "95578de24c9095c620449b234850a049bf2501c3",
+  "finished_revision": "b4456878f863e4a861bfac366c6e1853a39267af",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
