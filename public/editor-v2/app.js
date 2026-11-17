@@ -2,7 +2,7 @@ import {hasContentProfile} from './core/content-profiles.js?v=20261025-inspector
 import {createDocument,createPage,getNode,getChildren,NODE_TYPES,canContain,normalizeRichText} from './core/schema.js?v=20261115-d07-safe-child-render';
 import {createEditorState,activePage,selectedNodes,setSelection,markSaved} from './core/state.js?v=20261117-d03-invalid-media-id-guidance-v1';
 import {execute,executeCoalesced,executeBatch} from './core/commands.js?v=20261025-inspector-lifecycle-contract';
-import {applyNodeStyle,getNodeGeometry,resolveNodeStyle} from './core/canvas-engine.js?v=20261030-legacy-background-compound';
+import {applyNodeStyle,getNodeGeometry,resolveNodeStyle} from './core/canvas-engine.js?v=20261117-edt040-motion-style-route';
 import {computeCanvasMinHeight} from './core/canvas-extent.js';
 import {measureCanvasWorkspace} from './core/canvas-workspace.js';
 import {hasResponsiveOverride,resolveResponsiveValue} from './core/responsive.js';
@@ -11,14 +11,14 @@ import {diagnostics} from './diagnostics.js?v=20260918-2';
 import {plainTextToRichText,renderRichTextEditor,richTextEditorToDocument,restoreSelectionOffsets,getSelectionOffsets,transformRichTextBlockTypes} from './core/richtext-engine.js?v=20261117-d03-invalid-media-id-guidance-v1';
 import {renderSchedulePreview} from './core/schedule-preview.js';
 import {normalizeScheduleConfig,SCHEDULE_MODES,SCHEDULE_ORDERS,SCHEDULE_STATUSES,SCHEDULE_EMPTY_TEXT_MAX,SCHEDULE_LIMIT_MAX} from './core/schedule-schema.js';
-import {listPropertyGroups,listProperties,getProperty} from './core/property-registry.js?v=20261030-inspector-layout-container-contract';
+import {listPropertyGroups,listProperties,getProperty} from './core/property-registry.js?v=20261117-edt040-motion-properties';
 import {renderPropertyInput} from './ui/property-controls.js?v=20261101-richtext-multiblock-links';
 import {getInspectorValueContract,normalizeInspectorValue} from './core/property-values.js';
 import {describeResponsiveOrigin} from './ui/responsive-origin.js';
 import {responsiveGroupResetActions} from './ui/responsive-group-reset.js';
 import {getRichTextBlockSelection,getRichTextFormattingSelection,getRichTextBlockTransformSelection,getRichTextActiveBlockIndex,restoreRichTextBlockSelection,restoreRichTextFormattingSelection,updateRichTextInlineLink,updateRichTextInlineMark,updateRichTextInlineStyle,updateRichTextBlockAlignment} from './core/richtext-links.js?v=20261117-d03-invalid-media-id-guidance-v1';
 import {initialPageId,rememberPageId,requestedPageId} from './core/page-url.js';
-import {getElementCapability} from './core/capability-matrix.js?v=20261030-inspector-layout-container-contract';
+import {getElementCapability} from './core/capability-matrix.js?v=20261117-edt040-motion-properties';
 import {renderGeometryPresets} from './ui/geometry-presets.js';
 import {importRichTextClipboard} from './core/richtext-import.js?v=20261117-d03-invalid-media-id-guidance-v1';
 import {pasteRichTextDocument} from './core/richtext-paste.js?v=20261117-d03-invalid-media-id-guidance-v1';
@@ -738,7 +738,7 @@ function renderRegistryInspector(node,mode='primary'){
       const key=property.key||property.id.split('.')[1];
       const resolved=property.responsive?resolveResponsiveValue(node.responsive,key,device):null;
       const effectiveStyle=property.responsive?resolveNodeStyle(node,device):null;
-      const current=resolved?.value??effectiveStyle?.[key]??(['flex','grid','layout'].includes(property.group)&&rendered?getComputedStyle(rendered)[key]:'')??'';
+      const current=resolved?.value??effectiveStyle?.[key]??property.defaultValue??(['flex','grid','layout'].includes(property.group)&&rendered?getComputedStyle(rendered)[key]:'')??'';
       const label=property.label;
       const apply=value=>{
         const typingGroup=`inspector:${node.id}:${device}:${key}`;

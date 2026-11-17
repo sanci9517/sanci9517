@@ -1,5 +1,6 @@
 /* Sanci9517 canonical public Page Model renderer — Editor v2 compatible. */
-import { resolveNodeStyle, STYLE_MAP, needsRelativeOffsetPosition, legacyBackgroundColor, safeCssText } from "../editor-v2/core/canvas-engine.js?v=20261112-safe-css-parity";
+import { resolveNodeStyle, STYLE_MAP, needsRelativeOffsetPosition, legacyBackgroundColor, safeCssText } from "../editor-v2/core/canvas-engine.js?v=20261117-edt040-motion-style-route";
+import { isAllowlistedMotionStyle } from "../editor-v2/core/motion-style.js?v=20261117-edt040-motion-allowlist";
 import { RICH_TEXT_FONT_FAMILIES } from "../editor-v2/core/schema.js?v=20261101-richtext-link-target";
 import { resolveRichTextLinkTarget } from "../editor-v2/core/richtext-links.js?v=20261101-richtext-link-target";
 import { LAYOUT_TYPES, isManagedLayout } from "../editor-v2/core/layout-presets.js";
@@ -17,7 +18,7 @@ import {defaultTokens,applyTokenVariables} from "../editor-v2/core/design-tokens
 import {isVisibleOnDevice,collectVisibleDescendants,safeNodeChildIds} from "../editor-v2/core/visibility.js?v=20261112-safe-node-children";
 import {applyStateStyles,hasStateStyles} from "../editor-v2/core/state-styles.js";
 import {currentBudapestMonday,shiftScheduleWeek,renderScheduleWeek} from "../editor-v2/core/schedule-week.js";
-import {backgroundImageValue,legacyBackgroundCompound,MEDIA_ASSET_ID} from "../editor-v2/core/background-asset.js?v=20261030-legacy-background-compound";
+import {backgroundImageValue,legacyBackgroundCompound,MEDIA_ASSET_ID} from "../editor-v2/core/background-asset.js?v=20261117-edt040-motion-style-route";
 import {decorateSanciShowcase} from "./sanci-showcase.js?v=20261116-home-live-artwork-v1";
 (()=>{
  // Draft preview may show authenticated assets without granting public access
@@ -40,6 +41,7 @@ import {decorateSanciShowcase} from "./sanci-showcase.js?v=20261116-home-live-ar
   if(border&&CSS.supports('border',border))out+=`border:${esc(border)};`;
   for(const [key,property] of Object.entries(STYLE_MAP)){
     if(['backgroundImage','backgroundSize','backgroundPosition','backgroundRepeat'].includes(key))continue;
+   if(!isAllowlistedMotionStyle(key,values[key]))continue;
    const cssProperty=property.replace(/[A-Z]/g,letter=>'-'+letter.toLowerCase());
    const value=values[key];if(value===undefined||value===null||value==='')continue;
    const text=safeCssText(value);if(!text||/[\u0000-\u001f\u007f;]/.test(text)||!CSS.supports(cssProperty,text))continue;

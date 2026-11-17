@@ -8,8 +8,9 @@
 
 import { resolveResponsiveValue } from './responsive.js';
 import { contentDefaults } from './authored-content.js?v=20261117-d03-invalid-media-id-guidance-v1';
-import { backgroundImageValue, legacyBackgroundColor, legacyBackgroundCompound, MEDIA_ASSET_ID } from './background-asset.js?v=20261030-legacy-background-compound';
-export {legacyBackgroundColor} from './background-asset.js?v=20261030-legacy-background-compound';
+import { backgroundImageValue, legacyBackgroundColor, legacyBackgroundCompound, MEDIA_ASSET_ID } from './background-asset.js?v=20261117-edt040-motion-style-route';
+import { isAllowlistedMotionStyle } from './motion-style.js';
+export {legacyBackgroundColor} from './background-asset.js?v=20261117-edt040-motion-style-route';
 
 export const STYLE_MAP = Object.freeze({
   width: 'width',
@@ -23,6 +24,9 @@ export const STYLE_MAP = Object.freeze({
   scale:'scale',
   filter:'filter',
   transition:'transition',
+  animationName:'animationName',
+  animationDuration:'animationDuration',
+  animationTimingFunction:'animationTimingFunction',
   display: 'display',
   flexDirection: 'flexDirection',
   justifyContent: 'justifyContent',
@@ -127,6 +131,7 @@ export function applyNodeStyle(element, node, device = 'desktop') {
   // The public renderer also emits declarations in STYLE_MAP order.
   for (const [property, cssProperty] of Object.entries(STYLE_MAP)) {
     if(property==='backgroundImage')continue;
+    if(!isAllowlistedMotionStyle(property,style[property]))continue;
     const value = safeCssText(style[property]);
     if (!cssProperty || value === '') continue;
     element.style[cssProperty] = value;

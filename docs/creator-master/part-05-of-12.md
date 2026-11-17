@@ -426,15 +426,15 @@
 - **Kanonikus owner / adatforrás:** EDITOR a page-local motion configot kezeli; public renderer a preference-aware viselkedést.
 - **Séma / invariánsok:** duration/easing/action allowlist, motion defaults és prefers-reduced-motion policy.
 - **Jogosultság:** motion config nem fér hozzá domain permissionökhöz.
-- **API/command:** registryben motion/accessibility csoport említett, konkrét property/runtime nem bizonyított.
+- **API/command:** responsive Property Registry `motion.entry`/`motion.duration`/`motion.easing`, Canvas `STYLE_MAP` és közösen ellenőrzött public renderer; nincs arbitrary CSS vagy script.
 - **Függőségek:** EDT-021/022/034/037/039, LOC, SEC.
 - **UI-állapotok:** default/reduced/disabled/unsupported.
 - **Biztonság/adatvédelem:** ne legyen autoplay/flashing vagy vestibularis kockázat; user preference legyen tiszteletben tartva.
-- **Tesztcsomag:** prefers-reduced-motion runtime teszt nincs bizonyítva.
-- **Elfogadás:** motion beállítása → normal/reduced preference mellett public render → animáció kikapcsolt vagy csökkentett, tartalom hozzáférhető.
-- **Bizonyíték:** property group említés; működő motion implementation evidence nincs.
+- **Tesztcsomag:** `public/editor-v2/tests/motion.test.js` validálja a duration/easing/name allowlistet és az egyszeri, véges, reduced-motion CSS policyt; `tests/browser/editor-page-interactions.test.js` Chromiumban ellenőrzi a default → beállítás → draft Save/reload → draft Preview → külön Publish → public render, majd `prefers-reduced-motion` és mozgás kikapcsolás útvonalat.
+- **Elfogadás:** motion beállítása → normal/reduced preference mellett public render → reduced módban nincs aktív animáció, opacity=1, transform=none, a tartalom olvasható; Save önmagában nem módosítja az élő oldalt.
+- **Bizonyíték:** [EDT-040 reduced-motion és Editor lifecycle](../evidence/editor-motion-2026-11-17.json); a teljes Editor és a későbbi egyesített kézi/fizikai acceptance még nincs kész.
 - **Visszaállítás:** motion config undo/revision restore.
-- **Státusz / ismert probléma / következő lépés:** OPEN / UNVERIFIED; reduced-motion policy és browser tests.
+- **Státusz / ismert probléma / következő lépés:** PARTIAL IMPLEMENTATION / OPEN / NOT CERTIFIED; az alapértelmezett nincs-mozgás, a három allowlistelt belépő, véges duration/easing, public/Canvas CSS parity és reduced-motion browser acceptance elkészült. A teljes Editor cross-browser/performance/accessibility acceptance és az EDT-039 teljes event/security mátrixa nyitott.
 
 #### EDT-041 — Editor onboarding és template start
 - **Felhasználói eredmény:** új oldal kész sablonból vagy segített üres állapotból indulhat, meglévő munka elvesztése nélkül.

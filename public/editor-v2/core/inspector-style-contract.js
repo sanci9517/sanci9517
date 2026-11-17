@@ -1,4 +1,4 @@
-import { listProperties } from './property-registry.js?v=20261030-inspector-layout-container-contract';
+import { listProperties } from './property-registry.js?v=20261117-edt040-motion-properties';
 import { normalizeInspectorValue } from './property-values.js';
 
 const SCOPES = new Set(['style', 'desktop', 'tablet', 'mobile']);

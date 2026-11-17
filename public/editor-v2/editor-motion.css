@@ -1,0 +1,28 @@
+/* EDT-040: finite, low-amplitude entry motion; no script or looping animation. */
+@keyframes sanci-entry-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes sanci-entry-rise {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes sanci-entry-scale {
+  from { opacity: 0; transform: scale(.98); }
+  to { opacity: 1; transform: none; }
+}
+.visual-editor-node[style*="sanci-entry-"],
+.node[style*="sanci-entry-"] {
+  animation-duration: 280ms;
+  animation-timing-function: ease-out;
+  animation-iteration-count: 1;
+  animation-fill-mode: both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .visual-editor-node[style*="sanci-entry-"],
+  .node[style*="sanci-entry-"] {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}

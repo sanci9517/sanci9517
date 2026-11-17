@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import {NODE_TYPES} from '../core/schema.js';
 import {getElementCapability,getElementInspectorContract} from '../core/capability-matrix.js';
-import {getProperty,listProperties,registerProperty} from '../core/property-registry.js?v=20261030-inspector-layout-container-contract';
+import {getProperty,listProperties,registerProperty} from '../core/property-registry.js?v=20261117-edt040-motion-properties';
 import {getInspectorValueContract,normalizeInspectorValue} from '../core/property-values.js';
 import {STYLE_MAP} from '../core/canvas-engine.js';
 
@@ -101,7 +101,7 @@ test('every responsive registry field has an explicit Inspector control and Canv
   backgroundAssetId:'background-image resolver'
  };
  const properties=listProperties().filter(property=>property.responsive);
- assert.equal(properties.length,65);
+ assert.equal(properties.length,68);
  for(const property of properties){
   assert.ok(controlTypes.has(property.type),`${property.id} has a renderer control`);
   assert.ok(property.command,`${property.id} dispatches through an Editor command`);

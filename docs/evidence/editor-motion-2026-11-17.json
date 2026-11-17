@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-17T16:13:15Z",
+  "plan_point": "EDT-040",
+  "status": "PARTIAL_IMPLEMENTATION_OPEN_NOT_CERTIFIED",
+  "scope": "Add finite allowlisted page-local entry motion to the editor Canvas and public renderer, with reduced-motion support and a distinct Save, Preview, and Publish lifecycle.",
+  "implementation": {
+    "controls": [
+      "Responsive Inspector selects for motion.entry, motion.duration, and motion.easing.",
+      "Default motion is none; supported entry presets, durations, and easing values are exact allowlists.",
+      "Canvas and public renderer share STYLE_MAP and reject motion values outside the allowlist.",
+      "Editor and public page include the same finite low-amplitude keyframes; prefers-reduced-motion removes active animation and restores opacity/transform."
+    ],
+    "lifecycle": "Browser acceptance verifies a motion change remains draft-only after Save and reload, appears in Editor Preview, reaches the public renderer only after Publish, and can be disabled in a new draft without mutating the live page until a second explicit Publish.",
+    "save_publish_separation_changed": false,
+    "production_data_touched": false
+  },
+  "checks": {
+    "motion_unit_contract": "PASS; 2/2 motion and capability contract test files.",
+    "source_hash_coverage": "PASS; production source smoke asserts changed public motion/renderer/editor files are in the exact deployed-source hash list.",
+    "editor_browser_flow": "PASS; Chromium test for EDT-039 page actions plus EDT-040 motion, draft Save/reload, Preview, separate Publish, reduced-motion safety, and disable-motion publish; 1/1.",
+    "npm_run_test:editor": "PASS; subreaper 3/3 and Editor Node suite 20/20.",
+    "npm_run_typecheck": "PASS; tsc --noEmit.",
+    "npm_run_test:web013:migration-gate": "PASS; no D1 migration applied.",
+    "plan_contract": "PASS; 14/14.",
+    "canonical_plan": "PASS; 13 source files and 396 source mappings; functional acceptance remains NOT_CERTIFIED.",
+    "feature_traceability": "PASS; regenerated and check-only verification passed for 396 mappings.",
+    "test:editor:layout_local": "NOT_COMPLETED; intentionally stopped during file 6/56 to avoid duplicating the complete GitHub Actions suite. The first five completed child files passed; this is not a full suite PASS.",
+    "production_d1_preflight": "PASS read-only; SELECT name FROM d1_migrations ORDER BY name; 35 rows read, 0 rows written, 0 changes, changed_db=false.",
+    "wrangler_dry_run": "PASS; wrangler 4.130.0, 188 public assets, 391.56 KiB / 100.44 KiB gzip; --dry-run exited 0. Wrangler could not create its configured log directory in the sandbox, but completed the dry-run without deployment.",
+    "free_cloudflare_build_minutes": "PASS read-only; has_reached_build_minutes_limit=false, refresh 2026-11-30T23:59:59.999Z.",
+    "deployment": "NOT_YET_RELEASED; post-push automatic Build and runtime verification still required.",
+    "d_point": "OPEN; final unified Editor manual/physical acceptance deferred until the Editor feature set is complete."
+  },
+  "known_open_work": [
+    "Full Editor cross-browser, performance, and accessibility acceptance is not complete.",
+    "EDT-039 complete event/security matrix is not complete.",
+    "D remains OPEN; this evidence certifies only the tested EDT-040 motion slice, not the entire Editor or plan."
+  ],
+  "production_mutations": false
+}
