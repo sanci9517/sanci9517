@@ -2,12 +2,14 @@ from __future__ import annotations
 
 import os
 import importlib.util
+import json
 import subprocess
 import sys
 import tempfile
 import textwrap
 import unittest
 from pathlib import Path
+import shlex
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -15,6 +17,19 @@ RUNNER = ROOT / "scripts" / "run-with-linux-subreaper.py"
 
 
 class BrowserSuiteRunnerTest(unittest.TestCase):
+    def test_editor_layout_manifest_only_names_existing_tests_and_keeps_motion_lifecycle_coverage(self):
+        package = json.loads((ROOT / "package.json").read_text())
+        command = shlex.split(package["scripts"]["test:editor:layout"])
+        browser_files = [Path(item) for item in command if item.startswith("tests/browser/") and item.endswith(".test.js")]
+        self.assertGreater(len(browser_files), 0)
+        self.assertEqual(len(browser_files), len(set(browser_files)), "layout manifest must not repeat browser suites")
+        missing = [str(path) for path in browser_files if not (ROOT / path).is_file()]
+        self.assertEqual(missing, [], "every layout manifest entry must resolve to a checked-in browser test")
+        self.assertIn(Path("tests/browser/editor-motion.test.js"), browser_files)
+        self.assertIn(Path("tests/browser/editor-page-interactions.test.js"), browser_files)
+        interactions = (ROOT / "tests/browser/editor-page-interactions.test.js").read_text()
+        self.assertIn("EDT-040 motion save as draft, preview safely, and publish separately", interactions)
+
     def test_split_test_files_keeps_node_options_and_each_file(self):
         spec = importlib.util.spec_from_file_location("runner", RUNNER)
         runner = importlib.util.module_from_spec(spec)
