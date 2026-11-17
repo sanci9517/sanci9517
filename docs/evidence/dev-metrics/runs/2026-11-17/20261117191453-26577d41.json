@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261117191453-26577d41",
+  "task": "77.44.7.D-EDT-040-followup",
+  "trigger": "manual",
+  "started_at": "2026-11-17T19:14:53.520Z",
+  "finished_at": "2026-11-17T19:17:41.359Z",
+  "wall_seconds": 168,
+  "paused_seconds": 0,
+  "measured_seconds": 168,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "Added EDT-040 real-browser motion regression and manifest guard; local checks pass. Exact-SHA Editor Core Actions remains in progress, so aggregate CI and Editor/D acceptance remain open.",
+  "evidence": [
+    "docs/evidence/editor-layout-manifest-ci-2026-11-17.json",
+    "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md"
+  ],
+  "checks": "targeted Chromium 1/1; editor 22/22 + runner 4/4; typecheck; migration gate; canonical plan; plan contract 14/14; active cursor; traceability; Wrangler dry-run; production health and 34/34 public hashes; exact-SHA CI pending",
+  "started_revision": "6440b2e46f7c932858b401f5ebeb99a4d77ca205",
+  "finished_revision": "6440b2e46f7c932858b401f5ebeb99a4d77ca205",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

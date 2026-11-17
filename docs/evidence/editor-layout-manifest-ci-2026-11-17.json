@@ -1,0 +1,129 @@
+{
+  "schema": 1,
+  "captured_at": "2026-11-17T19:17:48Z",
+  "plan_item": "77.44.7.D / EDT-040",
+  "status": "PARTIAL — exact-SHA Editor Core workflow still in progress",
+  "repository": {
+    "branch": "v2/foundation",
+    "github_head": "6440b2e46f7c932858b401f5ebeb99a4d77ca205",
+    "commit_url": "https://github.com/sanci9517/sanci9517/commit/6440b2e46f7c932858b401f5ebeb99a4d77ca205",
+    "parent": "d83ab0a3283fda4a7ac62991df40e7a7d1d4942b",
+    "runtime_source_commit": "ade24a72846fe5914f0becfa2bb13f1b1f190896",
+    "changeset_commit": "6440b2e46f7c932858b401f5ebeb99a4d77ca205"
+  },
+  "root_cause": {
+    "previous_editor_core_run": "44145916739",
+    "result": "FAIL",
+    "finding": "The layout command referenced tests/browser/editor-motion.test.js, but that checked-in browser regression did not exist. The layout job therefore failed at test-file discovery; the other 57 declared browser files had passed before the missing-file failure in that run.",
+    "fix": [
+      "Added a real Chromium Inspector regression for EDT-040 motion controls, allowlisted entry motion, duration/easing values and reduced-motion safety.",
+      "Added the browser file to the test:editor:layout manifest and kept the existing editor-page-interactions lifecycle test in the same manifest.",
+      "Added a runner contract assertion preventing missing/duplicate manifest paths and guarding both motion and Save/Preview/Publish lifecycle coverage."
+    ]
+  },
+  "local_checks": [
+    {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test tests/browser/editor-motion.test.js",
+      "result": "PASS 1/1"
+    },
+    {
+      "command": "npm run test:editor",
+      "result": "PASS 22/22 unit files; Python/Linux-subreaper checks 4/4"
+    },
+    {
+      "command": "npm run typecheck",
+      "result": "PASS"
+    },
+    {
+      "command": "npm run test:web013:migration-gate",
+      "result": "PASS; gate only, no production migration"
+    },
+    {
+      "command": "layout manifest contract",
+      "result": "PASS; 58 unique entries, all files exist, motion and lifecycle suites included"
+    },
+    {
+      "command": "node --check tests/browser/editor-motion.test.js",
+      "result": "PASS"
+    },
+    {
+      "command": "git diff --check",
+      "result": "PASS"
+    },
+    {
+      "command": "XDG_CONFIG_HOME=/tmp/sanci-wrangler-xdg npx wrangler deploy --dry-run",
+      "result": "PASS; 194 public assets read; no publish"
+    }
+  ],
+  "github_actions": {
+    "editor_core": {
+      "run_id": "44155111091",
+      "url": "https://github.com/sanci9517/sanci9517/actions/runs/44155111091",
+      "status_at_capture": "IN_PROGRESS",
+      "completed_steps": "typecheck, editor core, offline D1 bootstrap/reconciliation, private R2 media API, showcase unit+Chromium, isolated Worker/D1/R2 media upload all SUCCESS",
+      "active_step": "Editor browser layout regression",
+      "pending_steps": "WEB-013 admin mobile, canonical schedule, domain contract, Brand Kit, Admin home and finalization"
+    },
+    "f0": {
+      "run_id": "44155110984",
+      "result": "SUCCESS"
+    },
+    "twitch": {
+      "run_id": "44155111176",
+      "result": "SUCCESS"
+    },
+    "production_source_smoke": {
+      "run_id": "44155111185",
+      "result": "SUCCESS",
+      "details": "Exact SHA candidate health and all workflow-declared public source paths passed before the package-only build-triggered deployment; separate direct readback below was performed after the latest deployment."
+    }
+  },
+  "production": {
+    "latest_cloudflare_deployment_id": "d82da228-8e27-4098-96fa-4532c32be51a",
+    "latest_worker_version_id": "984e3677-69eb-4e6a-ab17-f6451f30a4a9",
+    "worker_version_number": 4114,
+    "traffic_percent": 100,
+    "source_metadata": "Cloudflare version metadata reports Wrangler as uploader; it does not expose a Git SHA. The package/test commit triggered a new deployment even though no public runtime file changed.",
+    "health": {
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+      "checked_at": "2026-11-17T19:12:48Z",
+      "http_status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "post_deployment_public_hash_readback": {
+      "checked_at": "2026-11-17T19:13:37Z",
+      "workflow_declared_paths": 34,
+      "matched": 34,
+      "failed": 0,
+      "method": "Direct no-cache HTTP GET from production for every public path declared in worker-production-source-smoke.yml, SHA-256 compared with the exact checkout."
+    },
+    "preflight": {
+      "production_d1": "SELECT-only SELECT name FROM d1_migrations ORDER BY name; returned 35 rows, latest 0029_media_archive_unicode_additive.sql; rows_written=0, changes=0, changed_db=false.",
+      "wrangler_dry_run": "194 public assets / 391.54 KiB / 100.47 KiB gzip; no deployment."
+    }
+  },
+  "data_and_cost": {
+    "production_d1_write_or_migration": false,
+    "production_r2_mutation_or_delete": false,
+    "new_paid_cost": "0 Ft",
+    "actions_quota": "Not independently confirmed; no new rerun/dispatch was started beyond push-triggered workflows."
+  },
+  "acceptance": {
+    "edt_040": "PARTIAL — exact-SHA full Editor Core gate still in progress at capture",
+    "full_editor": "OPEN; manual/physical acceptance deferred until all editor functionality is complete",
+    "77_44_7_D": "OPEN / NOT_CERTIFIED; this browser regression manifest repair does not close D",
+    "save_publish": "Kept separate"
+  },
+  "work_session": {
+    "id": "20261117191453-26577d41",
+    "status": "partial",
+    "measured_seconds": 168,
+    "artifact": "docs/evidence/dev-metrics/runs/2026-11-17/20261117191453-26577d41.json",
+    "previous_session": "20261117180015-f32a52e0 was abandoned because the work session crossed a handoff without a reliable finish time."
+  }
+}

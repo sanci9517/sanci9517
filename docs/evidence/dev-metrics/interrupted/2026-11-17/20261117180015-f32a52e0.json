@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "id": "20261117180015-f32a52e0",
+  "task": "77.44.7.D-EDT-039-followup",
+  "trigger": "manual",
+  "started_at": "2026-11-17T18:00:15.141Z",
+  "abandoned_at": "2026-11-17T19:14:53.456Z",
+  "measured_seconds": null,
+  "status": "interrupted",
+  "reason": "work session crossed an assistant handoff; reliable finish time unavailable",
+  "started_revision": "a0e90333cc021a0c98a169d9d474b531c0f79772",
+  "measurement": "missing end time; excluded from elapsed time and ETA"
+}
