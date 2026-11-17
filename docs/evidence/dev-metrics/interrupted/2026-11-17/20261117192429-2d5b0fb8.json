@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "id": "20261117192429-2d5b0fb8",
+  "task": "77.44.7.D-EDT-040-followup",
+  "trigger": "manual",
+  "started_at": "2026-11-17T19:24:29.397Z",
+  "abandoned_at": "2026-11-17T19:29:35.345Z",
+  "measured_seconds": null,
+  "status": "interrupted",
+  "reason": "A korábbi exact-SHA CI változatlanul fut; a következő kanonikus Editor blokk EDT-039 fókusz esemény, ezért külön mérési blokk indul.",
+  "started_revision": "95578de24c9095c620449b234850a049bf2501c3",
+  "measurement": "missing end time; excluded from elapsed time and ETA"
+}

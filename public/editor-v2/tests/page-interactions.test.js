@@ -21,6 +21,9 @@ test('Page Action registry normalizes only the supported same-page typed action 
   assert.deepEqual(normalizePageInteractions([{ schemaVersion: 1, event: 'click', action: 'select-tab', targetId: target.id, itemIndex: 1 }], source, page.nodes), [
     { schemaVersion: 1, event: 'click', action: 'select-tab', targetId: target.id, itemIndex: 1 }
   ]);
+  assert.deepEqual(normalizePageInteractions([{ schemaVersion: 1, event: 'focus', action: 'select-tab', targetId: target.id, itemIndex: 1 }], source, page.nodes), [
+    { schemaVersion: 1, event: 'focus', action: 'select-tab', targetId: target.id, itemIndex: 1 }
+  ], 'keyboard focus is a typed, same-page trigger for the same safe action allowlist');
   assert.deepEqual(normalizePageInteractions([{ schemaVersion: 1, event: 'click', action: 'toggle-disclosure', targetId: disclosure.id, itemIndex: 0 }], source, page.nodes), [
     { schemaVersion: 1, event: 'click', action: 'toggle-disclosure', targetId: disclosure.id, itemIndex: 0 }
   ]);
@@ -39,6 +42,7 @@ test('Page Action registry rejects scripts, selectors, foreign/missing nodes, ty
     action({ targetId: 'not_on_this_page' }),
     action({ targetId: source.id }),
     action({ selector: 'body' }),
+    action({ event: 'hover' }),
     action({ event: 'load' }),
     { schemaVersion: 1, event: 'click', action: 'select-tab', targetId: target.id, itemIndex: 2 },
     { schemaVersion: 1, event: 'click', action: 'toggle-disclosure', targetId: target.id, itemIndex: 0 }
@@ -58,7 +62,10 @@ test('invalid persisted page actions fail Page Model validation and are omitted 
   source.interactions = [{ schemaVersion: 1, event: 'click', action: 'select-tab', targetId: target.id, itemIndex: 0 }];
   assert.deepEqual(validateDocument(document), [], 'the Page Model accepts the declared same-page action');
   assert.equal(contentAttributes(source, { pageNodes: page.nodes })['data-page-action'], 'select-tab');
+  assert.equal(contentAttributes(source, { pageNodes: page.nodes })['data-page-action-event'], 'click');
   assert.equal(contentAttributes(source, { pageNodes: page.nodes })['data-page-action-target'], target.id);
+  source.interactions[0].event = 'focus';
+  assert.equal(pageInteractionAttributes(source, page.nodes)['data-page-action-event'], 'focus');
   source.props = { text: 'Tovább', href: '' };
   assert.equal(getPublicationContentGuidance(source, { pageNodes: page.nodes }), null, 'the declared action satisfies button publication guidance');
   assert.doesNotThrow(() => validatePageForPublication(page), 'an action button can publish without a fake destination URL');

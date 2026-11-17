@@ -6,6 +6,7 @@ export const PAGE_ACTIONS = Object.freeze({
   'select-tab': Object.freeze({ label: 'Fül kiválasztása', targetTypes: Object.freeze(['tabs']), indexKey: 'itemIndex' }),
   'toggle-disclosure': Object.freeze({ label: 'Lenyitható rész váltása', targetTypes: Object.freeze(['accordion', 'dropdown']), indexKey: 'itemIndex' })
 });
+export const PAGE_ACTION_EVENTS = Object.freeze(['click', 'focus']);
 export const PAGE_ACTION_MAX_PER_NODE = 1;
 const ID = /^[A-Za-z0-9_-]{1,120}$/;
 const isRecord = value => value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -27,7 +28,7 @@ export function normalizePageInteractions(value, sourceNode, nodes) {
   const record = interactions[0];
   if (!isRecord(record)) invalid('Az oldalinterakció formátuma érvénytelen.');
   const definition = PAGE_ACTIONS[record.action];
-  if (record.schemaVersion !== 1 || record.event !== 'click' || !definition) {
+  if (record.schemaVersion !== 1 || !PAGE_ACTION_EVENTS.includes(record.event) || !definition) {
     invalid('Az oldalinterakció nem támogatott.');
   }
   const targetId = record.targetId;
@@ -41,7 +42,7 @@ export function normalizePageInteractions(value, sourceNode, nodes) {
   if (definition.targetTypes && !definition.targetTypes.includes(target.type)) {
     invalid('A kiválasztott művelet nem használható ezen az elemen.');
   }
-  const normalized = { schemaVersion: 1, event: 'click', action: record.action, targetId };
+  const normalized = { schemaVersion: 1, event: record.event, action: record.action, targetId };
   if (definition.indexKey) {
     const index = record[definition.indexKey];
     if (!Number.isInteger(index) || index < 0 || index >= itemCount(target)) {
@@ -64,6 +65,7 @@ export function pageInteractionAttributes(node, nodes) {
   if (!action) return {};
   return {
     'data-page-action': action.action,
+    'data-page-action-event': action.event,
     'data-page-action-target': action.targetId,
     ...(Number.isInteger(action.itemIndex) ? { 'data-page-action-index': String(action.itemIndex) } : {})
   };

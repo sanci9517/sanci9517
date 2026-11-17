@@ -121,6 +121,26 @@ test('EDT-039 page actions and EDT-040 motion save as draft, preview safely, and
   await live.reload();await liveNode(buttonId).click();
   assert.equal(await liveNode(disclosureId).locator('.creator-accordion details').first().evaluate(el=>el.open),true,'published page action opens the configured native disclosure');
 
+  // EDT-039: a typed keyboard-focus trigger uses the same safe, page-scoped action path.
+  await selectButton();
+  const triggerControl=actionControls.getByLabel('Kiváltó esemény');
+  assert.equal(await triggerControl.inputValue(),'click','existing action records default to click');
+  await actionControls.getByLabel('Művelet').selectOption('select-tab');
+  await triggerControl.selectOption('focus');
+  await actionControls.getByLabel('Cél elem').selectOption(tabsId);
+  await actionControls.getByLabel('Kiválasztott fül').selectOption('0');
+  await editor.locator('#save').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+  assert.equal(await liveNode(buttonId).getAttribute('data-page-action-event'),'click','Save does not change the published event');
+  await editor.reload();await selectButton();
+  assert.equal(await editor.locator('.page-interaction-inspector').getByLabel('Kiváltó esemény').inputValue(),'focus','reload restores the typed focus trigger');
+  await editor.locator('#publish').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent==='Publikálva');
+  await live.goto(`${base}/p/page-actions?campaign=focus-test&creator-tab=${encodeURIComponent(`${tabsId}:1`)}`);
+  await liveNode(tabsId).getByRole('tab').nth(1).waitFor();
+  await liveNode(buttonId).focus();
+  assert.equal(await liveNode(tabsId).getByRole('tab').nth(0).getAttribute('aria-selected'),'true','keyboard focus triggers the configured public action');
+  assert.equal(new URL(live.url()).searchParams.get('campaign'),'focus-test','the focus action preserves unrelated URL state');
+  assert.equal(new URL(live.url()).searchParams.get('creator-tab'),`${tabsId}:0`,'focus-triggered tab selection updates the namespaced URL state');
+
   // EDT-040: motion is a typed responsive style, never authored CSS/JS.
   await editor.emulateMedia({reducedMotion:'no-preference'});
   await live.emulateMedia({reducedMotion:'no-preference'});

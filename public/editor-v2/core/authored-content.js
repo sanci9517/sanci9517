@@ -1,5 +1,5 @@
 import { validatedLinkHref } from './richtext-links.js?v=20261117-d03-invalid-media-id-guidance-v1';
-import { pageInteractionAttributes, safePageInteraction } from './page-interactions.js?v=20261117-edt039-page-action-registry-v1';
+import { pageInteractionAttributes, safePageInteraction } from './page-interactions.js?v=20261117-edt039-focus-trigger-v1';
 
 export const CONTENT_VERSION=1;
 // Shared by the editor picker and the server-side media upload/list contract.
@@ -356,7 +356,8 @@ export function initContentInteractions(root){
       track.scrollBy({left:(key==='ArrowRight'?1:-1)*track.clientWidth,behavior});
     }
   };
-  root.addEventListener('click',event=>{const actionSource=event.target.closest('[data-page-action]');if(actionSource&&root.contains(actionSource)&&runPageAction(actionSource))event.preventDefault();const zoom=event.target.closest('[data-lightbox-src]');if(zoom&&root.contains(zoom)&&safeSrc(zoom.dataset.lightboxSrc)){
+  root.addEventListener('focusin',event=>{const actionSource=event.target?.closest?.('[data-page-action]');if(actionSource&&root.contains(actionSource)&&actionSource.dataset.pageActionEvent==='focus')runPageAction(actionSource)});
+  root.addEventListener('click',event=>{const actionSource=event.target.closest('[data-page-action]');if(actionSource&&root.contains(actionSource)&&actionSource.dataset.pageActionEvent==='click'&&runPageAction(actionSource))event.preventDefault();const zoom=event.target.closest('[data-lightbox-src]');if(zoom&&root.contains(zoom)&&safeSrc(zoom.dataset.lightboxSrc)){
     // The preview is scoped to its own gallery/carousel; nested galleries
     // elsewhere on the page never leak into this lightbox's navigation.
     const container=zoom.closest('.creator-gallery,.creator-carousel');

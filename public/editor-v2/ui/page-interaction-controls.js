@@ -1,9 +1,13 @@
-import { PAGE_ACTIONS, normalizePageInteractions } from '../core/page-interactions.js?v=20261117-edt039-page-action-registry-v1';
+import { PAGE_ACTIONS, normalizePageInteractions } from '../core/page-interactions.js?v=20261117-edt039-focus-trigger-v1';
 
 const ACTION_OPTIONS = Object.freeze([
   ['scroll-to', 'Ugrás egy elemhez'],
   ['select-tab', 'Fül kiválasztása'],
   ['toggle-disclosure', 'Lenyitható rész váltása']
+]);
+const EVENT_OPTIONS = Object.freeze([
+  ['click', 'Kattintás'],
+  ['focus', 'Fókuszba kerülés']
 ]);
 const labelFor = node => `${String(node?.name || node?.type || 'Elem').slice(0, 80)} · ${node?.type || 'ismeretlen'}`;
 const itemLabel = (node, index) => {
@@ -39,7 +43,7 @@ export function renderPageInteractionControls(node, page, apply, disabled = fals
   heading.textContent = 'Oldalinterakció';
   const help = document.createElement('p');
   help.className = 'content-field-help';
-  help.textContent = 'Biztonságos, billentyűzettel is működő művelet. Nem futtat JavaScriptet, és nem navigál másik webhelyre.';
+  help.textContent = 'Biztonságos, kattintással vagy fókuszba kerüléssel működő művelet. Nem futtat JavaScriptet, és nem navigál másik webhelyre.';
   section.append(heading, help);
   if (typeof node.props?.href === 'string' && node.props.href.trim()) {
     const note = document.createElement('p');
@@ -57,7 +61,9 @@ export function renderPageInteractionControls(node, page, apply, disabled = fals
   catch { /* Preserve old/invalid data until the user explicitly replaces or clears it. */ }
   const actionSelect = select('Művelet', [['', 'Nincs beállítva'], ...ACTION_OPTIONS], currentValid?.action || '');
   actionSelect.wrap.dataset.pageInteractionField = 'action';
-  section.append(actionSelect.wrap);
+  const eventSelect = select('Kiváltó esemény', EVENT_OPTIONS, currentValid?.event || 'click');
+  eventSelect.wrap.dataset.pageInteractionField = 'event';
+  section.append(eventSelect.wrap, actionSelect.wrap);
 
   const addNote = text => {
     const note = document.createElement('p');
@@ -67,7 +73,7 @@ export function renderPageInteractionControls(node, page, apply, disabled = fals
     section.append(note);
   };
 
-  const refresh = () => {
+  const refresh = (preferredTargetId = currentValid?.targetId) => {
     section.querySelectorAll('[data-page-interaction-dynamic]').forEach(element => element.remove());
     const action = actionSelect.input.value;
     if (!action) {
@@ -90,13 +96,14 @@ export function renderPageInteractionControls(node, page, apply, disabled = fals
       addNote('Ehhez a művelethez még nincs megfelelő cél elem ezen az oldalon.');
       return;
     }
-    const targetId = targets.some(target => target.id === currentValid?.targetId) ? currentValid.targetId : targets[0].id;
+    const targetId = targets.some(target => target.id === preferredTargetId) ? preferredTargetId : targets[0].id;
     const targetField = select('Cél elem', targets.map(target => [target.id, labelFor(target)]), targetId);
     targetField.wrap.dataset.pageInteractionDynamic = '1';
     targetField.input.disabled = disabled;
     section.append(targetField.wrap);
     const target = targets.find(item => item.id === targetId);
     let index = 0;
+    let readSelectedIndex = () => 0;
     if (definition.indexKey) {
       const count = Math.min(Array.isArray(target?.props?.items) ? target.props.items.length : 0, 40);
       const max = Math.max(0, count - 1);
@@ -104,21 +111,24 @@ export function renderPageInteractionControls(node, page, apply, disabled = fals
         ? Math.min(currentValid[definition.indexKey], max) : 0;
       const itemField = select(action === 'select-tab' ? 'Kiválasztott fül' : 'Kiválasztott rész',
         Array.from({ length: count }, (_, itemIndex) => [String(itemIndex), itemLabel(target, itemIndex)]), String(index));
+      readSelectedIndex = () => Number(itemField.input.value);
       itemField.wrap.dataset.pageInteractionDynamic = '1';
       itemField.input.disabled = disabled || count === 0;
       section.append(itemField.wrap);
-      itemField.input.onchange = () => save(targetField.input.value, Number(itemField.input.value));
+      itemField.input.onchange = () => save(targetField.input.value, readSelectedIndex());
     }
     const save = (nextTargetId = targetId, nextIndex = index) => {
-      const record = { schemaVersion: 1, event: 'click', action, targetId: nextTargetId };
+      const record = { schemaVersion: 1, event: eventSelect.input.value, action, targetId: nextTargetId };
       if (definition.indexKey) record[definition.indexKey] = nextIndex;
       try { apply(normalizePageInteractions([record], node, nodes)); }
       catch (error) { addNote(error instanceof Error ? error.message : 'A művelet nem állítható be.'); }
     };
-    targetField.input.onchange = () => save(targetField.input.value, 0);
+    eventSelect.input.onchange = () => save(targetField.input.value, readSelectedIndex());
+    targetField.input.onchange = () => refresh(targetField.input.value);
     if (!currentValid || currentValid.action !== action || currentValid.targetId !== targetId) save(targetId, index);
   };
   actionSelect.input.disabled = disabled;
+  eventSelect.input.disabled = disabled;
   actionSelect.input.onchange = () => {
     if (!actionSelect.input.value) { apply([]); return; }
     refresh();

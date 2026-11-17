@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "kind": "editor-page-interaction-focus-trigger",
+  "recorded_at": "2026-11-17T19:38:48.946Z",
+  "canonical_plan": "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+  "plan_point": "77.44.7.D / EDT-039",
+  "status": "PARTIAL / OPEN / NOT_CERTIFIED",
+  "scope": "Allowlisted focus trigger for same-page click actions; does not complete EDT-039, Visual Editor, or D-01..D-07 acceptance.",
+  "files": {
+    "public/editor-v2/app.js": "4e79d47645d682da4fa4cb74283960452ee600ffe4b58616f010f0335cf86f32",
+    "public/editor-v2/core/authored-content.js": "578b49b7fa1b9f9f9d77bc5cac4016a571402ccda152b95f46ff1e34d2beb32c",
+    "public/editor-v2/core/page-interactions.js": "64cdb427cc288afebafcc2518f939d81f2fd8513da0d0e45bd3b1699cc659ab1",
+    "public/editor-v2/ui/page-interaction-controls.js": "29c3f950013bed6223b58eb4ed4fe7154f0a9a6ee51be7e2ed53ff5114462782"
+  },
+  "checks": {
+    "editor_unit": "PASS: npm run test:editor, 22/22 files; 4/4 Linux subreaper/manifest contracts",
+    "page_interaction_unit": "PASS: node --test public/editor-v2/tests/page-interactions.test.js, 1/1",
+    "typecheck": "PASS: npm run typecheck",
+    "migration_safety": "PASS: npm run test:web013:migration-gate; no migration applied",
+    "plan_contract": "PASS: python3 tests/plan-contract.test.py, 14/14",
+    "canonical_plan": "PASS: python3 scripts/check-canonical-plan.py, 13 parts / 396 feature catalog",
+    "active_cursor": "PASS: 77.44.7.D / 396 features; no certification",
+    "traceability": "PASS: python3 scripts/build-feature-traceability.py --check, 396/396 source mappings",
+    "javascript_syntax": "PASS: node --check on four changed runtime modules",
+    "diff_check": "PASS: git diff --check",
+    "local_chromium": "BLOCKED before assertions: system Chromium exits SIGTRAP; Crashpad setsockopt Operation not permitted; hosted exact-SHA Chromium check required",
+    "wrangler_dry_run": "PASS: Wrangler 4.130.0, 194 assets, 392.19 KiB / 100.49 KiB gzip; no publish",
+    "prior_exact_sha_ci": "PASS for commit 6440b2e46f7c932858b401f5ebeb99a4d77ca205 only: Editor Core workflow 44155111091; 58/58 layout tests and remaining workflow steps completed successfully; does not validate this change"
+  },
+  "d1_preflight": {
+    "method": "Cloudflare D1 Query API, SELECT only",
+    "sql": "SELECT name FROM d1_migrations ORDER BY name",
+    "rows_read": 35,
+    "latest": "0029_media_archive_unicode_additive.sql",
+    "rows_written": 0,
+    "changes": 0,
+    "changed_db": false
+  },
+  "release": {
+    "source_commit": null,
+    "github_branch": "v2/foundation",
+    "github_ci": "PENDING exact-source run after commit",
+    "cloudflare_deployment": "PENDING",
+    "worker_traffic": "PENDING",
+    "production_health": "PENDING",
+    "production_asset_hashes": "PENDING"
+  },
+  "constraints": {
+    "production_migrations": 0,
+    "production_data_writes": 0,
+    "r2_changes": 0,
+    "new_paid_cost_huf": 0,
+    "save_publish_separate": true,
+    "manual_physical_editor_acceptance": "DEFERRED until complete Editor"
+  }
+}

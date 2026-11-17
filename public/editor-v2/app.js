@@ -53,7 +53,7 @@ import {defaultTokens,applyTokenVariables} from './core/design-tokens.js';
 import {CONTENT_TYPES,STRUCTURAL_TYPES,validatePageForPublication,isAuthoredContent,authoredNodeHtml,contentAttributes,initContentInteractions,contentTag} from './core/authored-content.js?v=20261117-edt039-tab-url-v1';
 import {captureCanvasInteractionState,restoreCanvasInteractionState} from './core/canvas-interaction-state.js';
 import {renderElementContentControls,pageLinkPicker} from './ui/element-content-controls.js?v=20261115-d03-table-tsv-v1';
-import {renderPageInteractionControls} from './ui/page-interaction-controls.js?v=20261117-edt039-page-action-registry-v1';
+import {renderPageInteractionControls} from './ui/page-interaction-controls.js?v=20261117-edt039-focus-trigger-v1';
 
 let editorTokens=defaultTokens();
 function propertyInput(property,label,current,onChange,options={}){
