@@ -466,6 +466,15 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   assert.equal(await node(editor,'gallery').locator('img').first().evaluate(el=>getComputedStyle(el).objectFit),'contain',
     'a gallery item fit edit updates only the selected Canvas image immediately');
   assert.equal(posts.length,1,'gallery item fit remains draft-only before explicit Save');
+  const gallerySecondItem=editor.locator('.content-repeater fieldset').nth(1);
+  await gallerySecondItem.getByLabel('Képleírás',{exact:true}).fill('  Frissített képleírás  ');
+  await gallerySecondItem.getByLabel('Képaláírás',{exact:true}).fill('  Frissített képaláírás  ');
+  assert.equal(await node(editor,'gallery').locator('img').nth(1).getAttribute('alt'),'Frissített képleírás',
+    'gallery Canvas exposes trimmed authored alt text without changing the repeater value');
+  assert.equal(await node(editor,'gallery').locator('img').nth(1).locator('xpath=ancestor::figure').locator('figcaption').textContent(),
+    'Frissített képaláírás','gallery Canvas exposes the authored caption immediately');
+  assert.equal(await node(editor,'gallery').locator('.creator-image-zoom').nth(1).getAttribute('aria-label'),
+    'Kép nagyítása: Frissített képaláírás','the gallery lightbox control tracks its edited accessible name');
   await galleryItem.getByLabel('Képleírás',{exact:true}).fill('');
   await galleryItem.getByRole('button',{name:'Médiatár megnyitása'}).click();await galleryItem.locator('.editor-media-choice').click();
   assert.equal(await node(editor,'gallery').locator('img').first().getAttribute('alt'),'Márkajel','gallery item inherits metadata only when its own alt is empty');
@@ -574,7 +583,8 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
       assert.equal(await sourceField.getAttribute('aria-invalid'),'true',`${type} rejects authenticated Editor preview URL ${privatePreview} at the authored-content boundary`);
       assert.equal(await node(editor,type).locator(tag).getAttribute('src'),authoredMediaSources[type],`a private ${type} preview cannot replace the safe draft playback URL`);
       await editor.locator('#save').click();
-      await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent.includes('Javítsd a jelzett mezőt mentés vagy publikálás előtt'));
+      await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent.includes('Javítsd a jelzett mezőt mentés vagy publikálás előtt'))
+        .catch(async error=>{throw new Error(`${error.message}; status=${await editor.locator('#saveStatus').textContent()}`)});
       assert.equal(posts.length,1,`Save cannot send rejected private ${type} preview ${privatePreview}`);
       await editor.locator('#publish').click();
       await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent.includes('Javítsd a jelzett mezőt mentés vagy publikálás előtt'));
@@ -632,8 +642,10 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.gallery].props.columns,'4','Save persists the authored desktop gallery column count in the draft');
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.gallery].props.items[0].fit,'contain','Save persists the selected gallery item fit in the draft');
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.gallery].props.items[0].assetId,assetId);
-  assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.gallery].props.items[1].alt,'  Második kép  ','rendering must not silently rewrite the saved draft');
-  assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.gallery].props.items[1].caption,'  Második képaláírás  ');
+  assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.gallery].props.items[1].alt,'  Frissített képleírás  ',
+    'Save retains the authored gallery alt value exactly instead of normalizing source data');
+  assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.gallery].props.items[1].caption,'  Frissített képaláírás  ',
+    'Save retains the authored gallery caption exactly instead of normalizing source data');
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.button].responsive.desktop.backgroundAssetId,assetId,'Save stores the background asset ID');
   await live.goto(base+'/p/test');assert.equal(await live.locator('h1[data-node-id]').textContent(),'Alkotói főcím');
   assert.equal(await galleryTracks(live),3,'draft Save leaves the original published gallery column count unchanged');
@@ -652,6 +664,10 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   assert.equal(await node(live,'video').locator('video').getAttribute('loop'),null,'Save does not publish loop');
   assert.equal(await node(live,'audio').locator('audio').getAttribute('src'),'/fixture.mp3','audio source Save remains separate from the currently published page');
   assert.equal(await node(live,'gallery').locator('.creator-image-zoom').first().getAttribute('data-lightbox-src'),'/fixture.svg','Save does not publish the new gallery image');
+  assert.equal(await node(live,'gallery').locator('img').nth(1).getAttribute('alt'),'Második kép',
+    'draft Save leaves the prior public gallery description live');
+  assert.equal(await node(live,'gallery').locator('img').nth(1).locator('xpath=ancestor::figure').locator('figcaption').textContent(),
+    'Második képaláírás','draft Save leaves the prior public gallery caption live');
   assert.equal(await node(live,'gallery').getByRole('region',{name:'Eredeti képrács'}).count(),1,
     'gallery Inspector name stays draft-only after Save');
   assert.equal(await node(live,'tabs').getByRole('tablist',{name:'Eredeti fülek'}).count(),1,
@@ -691,6 +707,10 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   assert.equal(await galleryTracks(editor),4,'reloaded desktop Canvas retains the authored gallery column count');
   assert.equal(await editor.locator('.content-repeater fieldset').first().getByLabel('Kép illesztése',{exact:true}).inputValue(),'contain',
     'Editor reload restores the authored gallery item fit');
+  assert.equal(await editor.locator('.content-repeater fieldset').nth(1).getByLabel('Képleírás',{exact:true}).inputValue(),
+    '  Frissített képleírás  ','Editor reload restores the exact authored gallery alt value');
+  assert.equal(await editor.locator('.content-repeater fieldset').nth(1).getByLabel('Képaláírás',{exact:true}).inputValue(),
+    '  Frissített képaláírás  ','Editor reload restores the exact authored gallery caption');
   await select('link');
   assert.equal(await editor.locator(`.plain-text-editor[data-text-node-id="${ids.link}"]`).inputValue(),authoredLinkText,'Editor reload restores the authored link text');
   assert.equal(await editor.locator('[data-content-key="href"] input').inputValue(),authoredLinkHref,'Editor reload restores the authored link destination');
@@ -735,8 +755,12 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   assert.equal(await node(live,'gallery').locator('img').first().evaluate(el=>getComputedStyle(el).objectFit),'contain',
     'separate Publish exposes the authored gallery item fit on the public page');
   assert.equal(await node(live,'gallery').locator('img').first().evaluate(el=>getComputedStyle(el).objectPosition),'24% 68%','published gallery item retains its independent crop');
-  assert.equal(await node(live,'gallery').locator('img').nth(1).getAttribute('alt'),'Második kép','Publish renders trimmed alt text from the preserved draft');
-  assert.equal(await node(live,'gallery').locator('img').nth(1).locator('xpath=ancestor::figure').locator('figcaption').textContent(),'Második képaláírás');
+  assert.equal(await node(live,'gallery').locator('img').nth(1).getAttribute('alt'),'Frissített képleírás',
+    'separate Publish renders the authored gallery alt after Save/reload');
+  assert.equal(await node(live,'gallery').locator('img').nth(1).locator('xpath=ancestor::figure').locator('figcaption').textContent(),
+    'Frissített képaláírás','separate Publish renders the authored gallery caption after Save/reload');
+  assert.equal(await node(live,'gallery').locator('.creator-image-zoom').nth(1).getAttribute('aria-label'),
+    'Kép nagyítása: Frissített képaláírás','published gallery zoom control uses the authored accessible caption');
   assert.equal(await node(live,'gallery').getByRole('region',{name:'Műhelyem & képeim'}).count(),1,
     'Publish exposes the new image grid accessible name');
   assert.equal(await node(live,'tabs').getByRole('tablist',{name:'Bemutatkozás & videók'}).count(),1,
@@ -841,9 +865,9 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
     'lightbox renders the same published asset as its first thumbnail');
   assert.equal(await lightbox.locator('.creator-lightbox-nav [role=status]').textContent(),'1 / 2');
   await live.keyboard.press('ArrowRight');
-  assert.equal(await lightbox.locator('img').getAttribute('alt'),'Második kép',
+  assert.equal(await lightbox.locator('img').getAttribute('alt'),'Frissített képleírás',
     'arrow key navigates to the next image without closing the dialog');
-  assert.equal(await lightbox.locator('.creator-lightbox-caption').textContent(),'Második képaláírás');
+  assert.equal(await lightbox.locator('.creator-lightbox-caption').textContent(),'Frissített képaláírás');
   await live.keyboard.press('Home');
   assert.equal(await lightbox.locator('img').getAttribute('alt'),'Márkajel');
   await live.keyboard.press('End');
@@ -851,7 +875,7 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   await lightbox.getByRole('button',{name:'Előző kép'}).click();
   assert.equal(await lightbox.locator('img').getAttribute('alt'),'Márkajel');
   await lightbox.getByRole('button',{name:'Előző kép'}).click();
-  assert.equal(await lightbox.locator('img').getAttribute('alt'),'Második kép',
+  assert.equal(await lightbox.locator('img').getAttribute('alt'),'Frissített képleírás',
     'previous-image control wraps within only this gallery');
   await live.keyboard.press('Escape');
   await live.locator('dialog.creator-lightbox').waitFor({state:'detached'});
