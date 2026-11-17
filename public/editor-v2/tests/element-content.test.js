@@ -206,6 +206,9 @@ test('structured public media rejects multiply encoded private Editor preview ro
   const privateUrls=[
     '/api/admin/media?id=asset',
     '/api/%61dmin/media?id=asset',
+    '/%2fapi%2fadmin%2fmedia?id=asset',
+    '/%252fapi%252fadmin%252fmedia?id=asset',
+    '/%255capi%255cadmin%255cmedia?id=asset',
     '/%2561pi%252fadmin%252fmedia?id=asset',
     '/%25252561pi%2525252fadmin%2525252fmedia?id=asset',
     '/public/%252e%252e/%2561pi/%61dmin/media?id=asset'

@@ -14,14 +14,14 @@ export function safePublishedMediaUrl(value){
  if(!url||!url.startsWith('/'))return url;
  try{
   let path=new URL(url,'https://sanci.invalid').pathname;
+  const isEditorMediaPath=value=>/^\/api\/admin(?:\/|$)/i.test(value.replace(/\\/g,'/').replace(/\/+/g,'/'));
   for(let pass=0;pass<10;pass++){
-   // A decoded slash or backslash can expose the private Editor route only
-   // after several proxy/Worker normalization layers. Check before URL parses
-   // it as a network-path reference, then canonicalize dot segments and repeat.
-   const routePath=path.replace(/\\/g,'/');
-   if(/^\/+api\/admin(?:\/|$)/i.test(routePath))return '';
+   if(isEditorMediaPath(path))return '';
    const decoded=decodeURIComponent(path);
    if(decoded===path)return url;
+   // Inspect each decoded layer before URL treats a leading // as a new host.
+   // Collapse slash/backslash runs like the upstream URL normalizers do.
+   if(isEditorMediaPath(decoded))return '';
    path=new URL(decoded,'https://sanci.invalid').pathname;
   }
   // Fail closed if an unusually nested encoding exceeds the normalization

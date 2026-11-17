@@ -6,9 +6,14 @@
   "finding": {
     "status": "VERIFIED_DEFECT",
     "description": "The structured renderer's public media guard decoded a URL pathname once, while the authored renderer already decoded repeatedly. A multiply percent-encoded /api/admin/media route therefore remained renderable as public gallery/carousel media.",
-    "reproduction": "/%2561pi%252fadmin%252fmedia?id=asset",
-    "pre_fix_result": "The new regression assertion failed because safePublishedMediaUrl returned the encoded private route unchanged.",
-    "security_impact": "A persisted legacy URL could point published structured media at the authenticated Editor preview route instead of failing closed. This patch blocks the route at the public validator and renderer; it does not grant or change any media access permission."
+    "reproduction": [
+      "/%2561pi%252fadmin%252fmedia?id=asset",
+      "/%2fapi%2fadmin%2fmedia?id=asset",
+      "/%252fapi%252fadmin%252fmedia?id=asset",
+      "/%255capi%255cadmin%255cmedia?id=asset"
+    ],
+    "pre_fix_result": "The original multi-encoding regression failed because safePublishedMediaUrl returned an encoded private route unchanged. A follow-up review reproduced that percent-encoded leading slash/backslash layers could be parsed as a URL network-path reference before the private route was checked.",
+    "security_impact": "A persisted legacy URL could point published structured media at the authenticated Editor preview route instead of failing closed. The public validator now normalizes each decoded route before URL parsing and blocks slash/backslash variants; it does not grant or change any media access permission."
   },
   "implementation": {
     "files": [
@@ -25,20 +30,20 @@
       "tests/browser/editor-structured-content.test.js",
       "docs/evidence/feature-traceability.json"
     ],
-    "behavior": "Repeatedly decode and URL-canonicalize same-origin paths (bounded at 10 passes), normalize decoded backslashes for route matching, reject malformed or over-nested paths, and block the private /api/admin route before public HTML is rendered. Keep the authenticated Editor's original source value intact. Cache-bust all runtime imports of the changed module and the Editor index entry script so clients do not retain the prior entry module."
+    "behavior": "Repeatedly decode and URL-canonicalize same-origin paths (bounded at 10 passes), collapse slash/backslash variants and inspect each decoded layer before URL parsing can turn a leading // into a host, reject malformed or over-nested paths, and block the private /api/admin route before public HTML is rendered. Keep the authenticated Editor's original source value intact. Cache-bust all runtime imports of the changed module and the Editor index entry script so clients do not retain the prior entry module."
   },
   "checks": {
     "reproduction_before_fix": "FAIL as expected at the new regression assertion: double-encoded private route was returned unchanged.",
-    "targeted_unit": "PASS: node --experimental-vm-modules public/editor-v2/tests/element-content.test.js (31/31)",
+    "targeted_unit": "PASS: node --experimental-vm-modules public/editor-v2/tests/element-content.test.js (including percent-encoded leading slash/backslash variants)",
     "editor_core": "PASS: npm run test:editor (17/17 files; Linux subreaper 3/3)",
     "editor_core_engine": "PASS: node --experimental-vm-modules public/editor-v2/tests/core.test.js (85/85)",
-    "browser": "PASS: CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-structured-content.test.js (2/2), with local-loopback permission; private URL checks cover one, two, and four encoding layers plus Save/reload/separate Publish/public rendering.",
+    "browser": "PASS: CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-structured-content.test.js (2/2), with local-loopback permission; private URL checks cover percent-encoded slash/backslash, one, two, and four encoding layers plus Save/reload/separate Publish/public rendering.",
     "browser_entry_cache": "PASS: the real Chromium browser loads the current versioned app.js entry URL, preventing a stale cached Editor entry from retaining the old module version.",
     "typecheck": "PASS: npm run typecheck",
     "plan_contract": "PASS: python3 -B tests/plan-contract.test.py (14/14)",
     "canonical_plan": "PASS: one complete 13-part master, one current cursor, 396 source mappings; functional acceptance remains uncertified.",
     "traceability": "PASS: scripts/build-feature-traceability.py --check (396/396); source fingerprint regenerated for the seven runtime import-reference changes.",
-    "wrangler_dry_run": "PASS: Wrangler 4.130.0 deploy --dry-run; 182 assets, 386.04 KiB total / 98.88 KiB gzip; no deployment performed.",
+    "wrangler_dry_run": "PASS: Wrangler 4.130.0 deploy --dry-run; 182 assets, 386.19 KiB total / 98.93 KiB gzip; no deployment performed.",
     "git_diff_check": "PASS"
   },
   "production_preflight": {
