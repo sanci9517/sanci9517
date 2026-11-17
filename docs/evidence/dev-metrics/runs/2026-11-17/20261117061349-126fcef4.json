@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261117061349-126fcef4",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-17T06:13:49.654Z",
+  "finished_at": "2026-11-17T06:23:18.032Z",
+  "wall_seconds": 568,
+  "paused_seconds": 0,
+  "measured_seconds": 568,
+  "status": "partial",
+  "kind": "docs",
+  "summary": "Verified the v2/foundation 0095546 release, 100% Worker rollout, exact-SHA HTTP health and 21 public asset hashes; local canonical-plan and 396-row traceability gates pass. Exact-SHA Editor Core remains in the browser layout step.",
+  "evidence": [
+    "https://github.com/sanci9517/sanci9517/actions/runs/44028115102"
+  ],
+  "checks": "plan-contract 14/14 PASS; canonical plan PASS; active point 77.44.7.D OPEN; traceability 396/396 PASS; exact-SHA Editor Core IN_PROGRESS",
+  "started_revision": "4cd79c5cc8c3c0c74137e50c44763e4baf56892e",
+  "finished_revision": "4cd79c5cc8c3c0c74137e50c44763e4baf56892e",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
