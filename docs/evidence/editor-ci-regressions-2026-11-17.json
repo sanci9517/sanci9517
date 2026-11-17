@@ -1,6 +1,6 @@
 {
   "schema": "sanci.editor.ci-regressions.v1",
-  "recorded_at_utc": "2026-11-17T18:12:00Z",
+  "recorded_at_utc": "2026-11-17T18:19:11Z",
   "repository": {
     "name": "sanci9517/sanci9517",
     "branch": "v2/foundation",
@@ -35,7 +35,28 @@
   "runtime_change": {
     "summary": "Expanded the motion-easing Inspector help and advanced the property-registry module cache key consistently across the Editor runtime modules and unit tests to avoid duplicate registry singletons.",
     "save_publish": "unchanged; Save remains separate from explicit Publish.",
-    "production_deployment": "PENDING normal fast-forward push, exact-SHA automatic build, and post-deploy verification."
+    "production_deployment": {
+      "status": "DEPLOYED_AND_VERIFIED",
+      "deployment_id": "cff3fa66-046b-42b0-88e7-76d28071a16d",
+      "worker_version_id": "21e96967-15cc-47be-9a66-f4fc40c68b91",
+      "traffic_percent": 100,
+      "commit_sha": "ade24a72846fe5914f0becfa2bb13f1b1f190896",
+      "deployed_at_utc": "2026-11-17T18:17:10Z",
+      "deploy_command": "npm run deploy:safe",
+      "migration_gate": "PASS; no production migration was applied",
+      "health": {
+        "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+        "http_status": 200,
+        "body": {
+          "ok": true,
+          "service": "sanci9517-streamer-brand",
+          "version": "2.0.0",
+          "server": "cloudflare-worker"
+        }
+      },
+      "changed_public_assets_verified": 13,
+      "asset_hash_method": "SHA-256 of each exact public source file compared with a Cache-Control:no-cache GET from the production Worker using the commit SHA query parameter; all 13 matched byte-for-byte."
+    }
   },
   "local_checks": {
     "focused_chromium": {
@@ -61,7 +82,15 @@
     "latest_migration": "0029_media_archive_unicode_additive.sql",
     "rows_written": 0,
     "changes": 0,
-    "changed_db": false
+    "changed_db": false,
+    "observed_before_deploy": {
+      "query": "SELECT name FROM d1_migrations ORDER BY name",
+      "rows_read": 35,
+      "latest_migration": "0029_media_archive_unicode_additive.sql",
+      "rows_written": 0,
+      "changes": 0,
+      "changed_db": false
+    }
   },
   "pre_release_worker_snapshot": {
     "deployment_id": "e2b22dff-da74-4f6d-bd84-b04f5a79576b",
@@ -74,7 +103,70 @@
     "new_cost_huf": 0,
     "production_d1_write_or_migration": false,
     "production_r2_mutation_or_delete": false,
-    "complete_editor_acceptance": "DEFERRED until all Editor scope is implemented",
+    "complete_editor_acceptance": "DEFERRED; Editor Core browser layout and remaining acceptance checks have not completed.",
     "full_d_acceptance": "OPEN / NOT_CERTIFIED"
+  },
+  "exact_sha_github_actions": {
+    "editor_core": {
+      "run_id": 44145916739,
+      "url": "https://github.com/sanci9517/sanci9517/actions/runs/44145916739",
+      "status": "IN_PROGRESS",
+      "last_observed_step": "Run Editor browser layout regression",
+      "passed_steps": [
+        "TypeScript typecheck",
+        "Editor core tests",
+        "offline D1 ledger reconciliation and bootstrap",
+        "private R2 media API tests",
+        "SANCI public showcase unit regression",
+        "SANCI public showcase Chromium regression",
+        "real Worker media upload with isolated D1 and R2"
+      ],
+      "pending_steps": [
+        "WEB-013 Admin mobile browser regression",
+        "canonical schedule tests",
+        "domain contract tests",
+        "Brand Kit storage and access regression",
+        "Admin home contract tests",
+        "Editor layout screenshot upload"
+      ]
+    },
+    "production_source_smoke": {
+      "run_id": 44145916893,
+      "url": "https://github.com/sanci9517/sanci9517/actions/runs/44145916893",
+      "status": "SUCCESS",
+      "conclusion": "success",
+      "result": "live health HTTP 200 and all 35 declared public source SHA-256 checks match"
+    },
+    "canonical_plan": {
+      "run_id": 44145916740,
+      "status": "SUCCESS"
+    },
+    "active_point_audit": {
+      "run_id": 44145916734,
+      "status": "SUCCESS"
+    },
+    "f0_baseline": {
+      "run_id": 44145916795,
+      "status": "SUCCESS"
+    },
+    "twitch_integration": {
+      "run_id": 44145916794,
+      "status": "SUCCESS"
+    }
+  },
+  "production_asset_sha256": {
+    "public/editor-v2/app.js": "d4db28a4878c3ed2c3cf23c07d309b156d2d5ca93995e7baa52bdb65554ba6e7",
+    "public/editor-v2/core/capability-matrix.js": "1410a9f229833c7ada6bc4dfb3533665ba98ecd9195801d04753a58b19c634af",
+    "public/editor-v2/core/inspector-style-contract.js": "83e4d2b16cb05ba87eea1bad236ad7fdf93cf9525a916e52432278d2bbb498b2",
+    "public/editor-v2/core/property-registry.js": "011f9da51c58a38b1fc2c31f1e1616c0cd7b750d68c642aa95636b9d6c839be2",
+    "public/editor-v2/core/state-styles.js": "47ddf2977f654ac008d24199fb477fdb2aa3d9bbeead1b5ddf8b2d2956c909f9",
+    "public/editor-v2/tests/capability-contract.test.js": "4ad836f79fef2576be8273e29ee8996b39ea0b6108c18e964601c95c535f1412",
+    "public/editor-v2/tests/core.test.js": "db090d3d752ec995812823bd69f41544ef69d4bfaa0a8149d394ab290930e6e7",
+    "public/editor-v2/tests/inspector-richtext.test.js": "74cc7f59fcb99ea2d6011c19d5aa82efd59ea21c5ccc2aa5051ee35786c05c03",
+    "public/editor-v2/tests/layout-presets.test.js": "6688da22bd54c7a88892b6cfc4e16cfb3154cde832505879881442e9579e5dfd",
+    "public/editor-v2/tests/motion.test.js": "20bdd50c3d9cb66dd64f2b9cac67b916cd5e32ab14ba4682aa6b5ff23a907f4e",
+    "public/editor-v2/tests/state-tokens.test.js": "39e89d79f31c19e59e810c7074f213d11c345be1cf02a0d309757a7cecff8d32",
+    "public/editor-v2/ui/element-content-controls.js": "2256ae7932b20ef894af5f7528df7ee87448f25ba906f3241addbbaa48ca7eef",
+    "public/editor-v2/ui/geometry-presets.js": "40c20c4516f9cd0aa0d8bb058b9d506d19247f72731a0b46f595fed6cbc4ad0b"
   }
 }
