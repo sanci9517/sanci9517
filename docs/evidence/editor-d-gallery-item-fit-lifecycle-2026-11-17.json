@@ -1,0 +1,50 @@
+{
+  "schema": "sanci.editor.d-gallery-item-fit-lifecycle.v1",
+  "captured_at_utc": "2026-11-17T04:51:44Z",
+  "plan_point": "77.44.7.D — authored gallery item fit lifecycle",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "base_sha": "92f9cae1c165d8da2022a08f0ee30c028576c268",
+    "canonical_plan_sha256_before_entry": "c223e7e6f4d130a7788d8dee650a5f6d58ecb32b0dc966f02fc2404cf4de29cc",
+    "runtime_source_commit": "c45a7c4e27c1ad6d3d6f7e6b51117ebef45707f3",
+    "test_sha256": "ba29bc12df0767f9d12506039bb259d1ae93cbf3066cdb7dc6e545cefa6f1a52",
+    "canonical_plan_sha256_after_entry": "73b10789c58b0a3651c26e33190bd685bb4e7637eebc9c1254b04325125ed8a0"
+  },
+  "scope": {
+    "test_file": "tests/browser/editor-content-system.test.js",
+    "field": "gallery.props.items[].fit",
+    "behaviors": [
+      "Selecting contain for one gallery item updates only that Canvas image without issuing Save/Publish.",
+      "Save persists the selected gallery item fit while the current public page retains its previous cover fit.",
+      "Editor reload restores the per-item fit selection.",
+      "Explicit separate Publish exposes the selected fit publicly and preserves it at desktop/tablet/mobile widths."
+    ],
+    "runtime_source_changed": false
+  },
+  "checks": {
+    "targeted_browser_command": "CHROMIUM_PATH=/usr/bin/chromium node --test tests/browser/editor-content-system.test.js",
+    "targeted_browser": "PASS; 1/1 local Chromium test with gallery desktop columns and gallery item fit lifecycle assertions.",
+    "syntax": "PASS; node --check tests/browser/editor-content-system.test.js.",
+    "hosted_ci": "NOT RUN; test/evidence/plan-only follow-up uses [skip ci], no extra workflow dispatch/rerun."
+  },
+  "release": {
+    "latest_worker_deployment_id_at_verification": "8dc6dc5d-1857-4684-9b8b-38b721145793",
+    "worker_version_id_at_verification": "0658af0d-b223-4054-b839-048941f87ce8",
+    "traffic_percent": 100,
+    "runtime_changed": false,
+    "worker_deployed": false,
+    "health_get": "NOT RUN; runtime and public assets unchanged.",
+    "asset_hashes": "NOT RUN; no public asset changed.",
+    "production_d1_write_or_migration": false,
+    "production_r2_operation": false,
+    "new_cost_huf": 0
+  },
+  "status": "AUTHORED_GALLERY_ITEM_FIT_SAVE_RELOAD_PUBLISH_PASS; D_OPEN_NOT_CERTIFIED",
+  "limitations": [
+    "This evidence closes only the authored gallery per-item fit lifecycle slice; it does not complete the D-01 through D-07 capability, field, invalid-value, breakpoint, renderer, and site-scoped Media acceptance matrix.",
+    "Full 77.44.7.D remains OPEN / NOT_CERTIFIED.",
+    "Full Visual Editor manual and physical acceptance remains deferred to the complete Editor gate.",
+    "Save and Publish remain separate operations."
+  ]
+}
