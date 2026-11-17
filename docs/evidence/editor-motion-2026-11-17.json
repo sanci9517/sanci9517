@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "recorded_at_utc": "2026-11-17T16:13:15Z",
+  "recorded_at_utc": "2026-11-17T16:17:25Z",
   "plan_point": "EDT-040",
   "status": "PARTIAL_IMPLEMENTATION_OPEN_NOT_CERTIFIED",
   "scope": "Add finite allowlisted page-local entry motion to the editor Canvas and public renderer, with reduced-motion support and a distinct Save, Preview, and Publish lifecycle.",
@@ -29,7 +29,12 @@
     "production_d1_preflight": "PASS read-only; SELECT name FROM d1_migrations ORDER BY name; 35 rows read, 0 rows written, 0 changes, changed_db=false.",
     "wrangler_dry_run": "PASS; wrangler 4.130.0, 188 public assets, 391.56 KiB / 100.44 KiB gzip; --dry-run exited 0. Wrangler could not create its configured log directory in the sandbox, but completed the dry-run without deployment.",
     "free_cloudflare_build_minutes": "PASS read-only; has_reached_build_minutes_limit=false, refresh 2026-11-30T23:59:59.999Z.",
-    "deployment": "NOT_YET_RELEASED; post-push automatic Build and runtime verification still required.",
+    "github_ci_exact_sha": "PASS so far; 5/6 push workflows succeeded (Canonical Creator Platform Plan run 44123435947, Production Worker source smoke run 44123435919, Twitch Integration Check run 44123435866, Canonical Plan Active Point Audit run 44123435897, F0 baseline run 44123435958); Editor Core Test run 44123435948 remains IN_PROGRESS and its complete browser suite is not certified.",
+    "deployment": "PASS; automatic Worker Build deployed the exact pushed source at 2026-11-17T16:14:56.209Z. Deployment dac34347-3dbf-4f4f-989a-ff0b9a2312e5 routes 100% traffic to Worker version f9c40da1-a5d9-4dcc-8213-6e922fe41784.",
+    "post_release_health": "PASS direct GET; HTTP 200, body {\"ok\":true,\"service\":\"sanci9517-streamer-brand\",\"version\":\"2.0.0\",\"server\":\"cloudflare-worker\"}.",
+    "post_release_public_asset_hashes": "PASS; independently fetched all 13 changed public runtime assets from the live Worker with release=590ef795584fc10f8cdbd0d64d7713f37d31235d and matched their local SHA-256 values exactly. The exact-SHA Production Worker source smoke workflow also passed.",
+    "source_control": "PASS; commit 590ef795584fc10f8cdbd0d64d7713f37d31235d fast-forward pushed to sanci9517/sanci9517 v2/foundation from 5670539b42fa31595b3819849babc6f107b463bc.",
+    "cost": "0 Ft; GitHub repository is public, standard GitHub-hosted Actions are free for public repositories, and Cloudflare read-only build limits report the free build-minute allowance is not exhausted. No paid service was invoked.",
     "d_point": "OPEN; final unified Editor manual/physical acceptance deferred until the Editor feature set is complete."
   },
   "known_open_work": [

@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261117153735-de48293d",
+  "task": "EDT-040",
+  "trigger": "manual",
+  "started_at": "2026-11-17T15:37:35.381Z",
+  "finished_at": "2026-11-17T16:18:19.368Z",
+  "wall_seconds": 2444,
+  "paused_seconds": 0,
+  "measured_seconds": 2444,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "EDT-040 motion controls and reduced-motion path verified locally and live; full Editor CI still in progress and full D acceptance remains open.",
+  "evidence": [
+    "docs/evidence/editor-motion-2026-11-17.json",
+    "590ef795584fc10f8cdbd0d64d7713f37d31235d"
+  ],
+  "checks": "motion unit,Editor node suite,Chromium lifecycle,plan contracts,SELECT-only D1,Wrangler dry-run,live asset hashes pass; full Editor CI pending",
+  "started_revision": "5670539b42fa31595b3819849babc6f107b463bc",
+  "finished_revision": "590ef795584fc10f8cdbd0d64d7713f37d31235d",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
