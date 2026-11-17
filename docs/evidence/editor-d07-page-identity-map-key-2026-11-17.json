@@ -1,0 +1,97 @@
+{
+  "schema": "sanci.editor.d07-page-identity-map-key.v1",
+  "plan_point": "77.44.7.D",
+  "subpoint": "D-07",
+  "dev_metrics_run": "docs/evidence/dev-metrics/runs/2026-11-17/20261117093143-150543ec.json",
+  "status": "PARTIAL_SOURCE / VERIFIED_RUNTIME_SLICE",
+  "problem": "validateDocument validated each Page value but did not require the Page's id to match its key in document.pages. A mismatched id could route Save or Publish using a different identity from the map entry.",
+  "change": {
+    "commit": "53d8223e3a0e58410200d07cd7dbb71ae48255a2",
+    "branch": "v2/foundation",
+    "files": [
+      "public/editor-v2/core/schema.js",
+      "tests/editor-palette-capability.test.js",
+      "tests/browser/editor-malformed-public-text-links.test.js",
+      "docs/evidence/feature-traceability.json"
+    ],
+    "behavior": "Document validation now rejects a Page whose id differs from its pages map key and safely formats hostile identities in diagnostics. Unit and real-browser regressions verify valid generated documents still pass, mismatched identities fail in a controlled load boundary, and no Save/Publish write occurs."
+  },
+  "verification": {
+    "local": {
+      "node_check": "PASS for changed JS and test files",
+      "editor_unit": "PASS: 17/17 files; Linux subreaper: 3/3",
+      "publish_guard": "PASS: 19/19",
+      "targeted_chromium": "PASS: 2/2 malformed persisted-page scenarios",
+      "typecheck": "PASS",
+      "plan_contract": "PASS: 14/14",
+      "canonical_plan": "PASS: 13 master files, one current cursor, 396 mappings",
+      "active_point_audit": "PASS as an audit execution; D remains OPEN / NOT_CERTIFIED, 146 PARTIAL_SOURCE and 250 UNVERIFIED",
+      "traceability": "PASS: 396/396 mappings with updated source fingerprint",
+      "wrangler_dry_run": "PASS with Wrangler 4.130.0; 182 assets, 385.78 KiB (gzip 98.83 KiB), no upload"
+    },
+    "production_d1_preflight": {
+      "query": "SELECT COUNT(*) AS migration_count, MAX(name) AS latest_migration FROM d1_migrations",
+      "result": {
+        "migration_count": 35,
+        "latest_migration": "0029_media_archive_unicode_additive.sql",
+        "rows_written": 0,
+        "changed_db": false
+      }
+    },
+    "github_actions": {
+      "source_commit": "53d8223e3a0e58410200d07cd7dbb71ae48255a2",
+      "production_worker_source_smoke": {
+        "run_id": 44057717002,
+        "status": "success",
+        "url": "https://github.com/sanci9517/sanci9517/actions/runs/44057717002",
+        "limitation": "The workflow's public-file list does not include public/editor-v2/core/schema.js; its hash was therefore checked directly against the deployed Worker."
+      },
+      "f0_baseline": {
+        "run_id": 44057716824,
+        "status": "success",
+        "url": "https://github.com/sanci9517/sanci9517/actions/runs/44057716824"
+      },
+      "twitch_integration": {
+        "run_id": 44057716818,
+        "status": "success",
+        "url": "https://github.com/sanci9517/sanci9517/actions/runs/44057716818"
+      },
+      "canonical_plan": {
+        "run_id": 44057717005,
+        "status": "success",
+        "url": "https://github.com/sanci9517/sanci9517/actions/runs/44057717005"
+      },
+      "active_plan_audit": {
+        "run_id": 44057716833,
+        "status": "success",
+        "url": "https://github.com/sanci9517/sanci9517/actions/runs/44057716833"
+      },
+      "editor_core": {
+        "run_id": 44057717220,
+        "status": "in_progress_at_evidence_capture",
+        "url": "https://github.com/sanci9517/sanci9517/actions/runs/44057717220",
+        "last_observed_step": "Run Editor browser layout regression"
+      }
+    },
+    "production_worker": {
+      "deployment_id": "f75a979a-b1aa-4ef5-86c2-62e0a7d26823",
+      "version_id": "2b088d77-69b4-4f44-8ac4-50cff4a32458",
+      "version_number": 4103,
+      "traffic_percent": 100,
+      "health": "HTTP 200; {\"ok\":true,\"service\":\"sanci9517-streamer-brand\",\"version\":\"2.0.0\",\"server\":\"cloudflare-worker\"}",
+      "changed_asset": "public/editor-v2/core/schema.js",
+      "source_sha256": "1d05ff54524968f014dc18a955f7c773d42e77b2e493aede7a287df2cd0de5ae",
+      "production_sha256": "1d05ff54524968f014dc18a955f7c773d42e77b2e493aede7a287df2cd0de5ae",
+      "readback": "Direct GET of the deployed Worker's public asset after the deployment"
+    }
+  },
+  "scope_and_safety": {
+    "new_cost_huf": 0,
+    "production_d1_migration_or_write": "none",
+    "production_r2_mutation_or_delete": "none",
+    "save_and_publish": "remain separate",
+    "full_visual_editor_manual_or_physical_acceptance": "deferred until the complete Editor is ready",
+    "full_plan_d_point": "OPEN / NOT_CERTIFIED; this evidence closes only the Page-map identity validator slice"
+  },
+  "next_step": "Collect the exact-SHA Editor Core workflow's terminal result. Continue the remaining D-01 through D-07 feature and acceptance gaps; do not mark D complete based on this slice."
+}

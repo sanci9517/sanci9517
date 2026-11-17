@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261117093143-150543ec",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-17T09:31:43.496Z",
+  "finished_at": "2026-11-17T09:52:34.401Z",
+  "wall_seconds": 1251,
+  "paused_seconds": 110,
+  "measured_seconds": 1141,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "A D-07 Page map-key identity invariant fix was fast-forwarded and deployed. Unit, targeted Chromium, editor suite, typecheck, plan and dry-run checks passed; the exact-SHA Editor Core CI was still running at evidence capture, and the full D point remains open.",
+  "evidence": [
+    "docs/evidence/editor-d07-page-identity-map-key-2026-11-17.json"
+  ],
+  "checks": "targeted-chromium=2/2 PASS;editor-unit=17/17+subreaper3/3 PASS;publish-guard=19/19 PASS;typecheck=PASS;plan-contract=14/14 PASS;canonical-plan=13 files+396 mappings PASS;active-plan=396 mappings, D OPEN;traceability=396/396 PASS;D1 SELECT-only migration_count=35 no writes;Wrangler 4.130.0 dry-run PASS;Worker version 4103 100% traffic;health 200;schema asset SHA-256 matches deployed bytes;Editor Core exact-SHA CI in progress;0 HUF",
+  "started_revision": "d116d47a9c98e6a0624814fa0c02d7c387096afe",
+  "finished_revision": "d116d47a9c98e6a0624814fa0c02d7c387096afe",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
