@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261117172708-e1290391",
+  "task": "77.44.7.D-EDT-039-tab-url-history",
+  "trigger": "manual",
+  "started_at": "2026-11-17T17:27:08.893Z",
+  "finished_at": "2026-11-17T17:43:55.078Z",
+  "wall_seconds": 1006,
+  "paused_seconds": 272,
+  "measured_seconds": 734,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "EDT-039 authored tab URL history implementation, local browser/unit checks, exact-source deployment health/hash verification complete; broad exact-SHA Editor Core layout suite remains in progress.",
+  "evidence": [
+    "docs/evidence/editor-page-interactions-tab-url-history-2026-11-17.json"
+  ],
+  "checks": "targeted Chromium 1/1; editor units 22/22; typecheck PASS; Cloudflare source smoke exact SHA PASS; Editor Core broad suite IN_PROGRESS",
+  "started_revision": "fedd4f056bf5a6f0e8d16ccc718499998142e730",
+  "finished_revision": "022bab8a7418d2c97c312d941551e803cd5809e1",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

@@ -54,13 +54,48 @@
   },
   "release": {
     "branch": "v2/foundation",
-    "source_commit": "PENDING",
-    "exact_sha_ci": "PENDING",
-    "cloudflare_build": "PENDING",
-    "worker_deployment": "PENDING",
-    "traffic": "PENDING",
-    "health": "PENDING",
-    "asset_hashes": "PENDING"
+    "source_commit": "022bab8a7418d2c97c312d941551e803cd5809e1",
+    "exact_sha_ci": {
+      "status": "PARTIAL_PASS_EDITOR_CORE_IN_PROGRESS",
+      "passed_runs": {
+        "canonical_plan": "44139142028",
+        "active_point_audit": "44139142093",
+        "f0_baseline": "44139142175",
+        "twitch": "44139142104",
+        "production_worker_source_smoke": "44139142163"
+      },
+      "editor_core": {
+        "run": "44139142206",
+        "status": "IN_PROGRESS",
+        "current_step": "Run Editor browser layout regression"
+      }
+    },
+    "cloudflare_build": {
+      "id": "7cee3c05-a959-4f38-9e6a-278911e7295f",
+      "outcome": "success",
+      "commit_hash": "022bab8a7418d2c97c312d941551e803cd5809e1",
+      "branch": "v2/foundation",
+      "build_command": "npm run typecheck",
+      "deploy_command": "npm run deploy:safe"
+    },
+    "worker_deployment": {
+      "id": "e2b22dff-da74-4f6d-bd84-b04f5a79576b",
+      "version_id": "32572a35-78ea-43d5-ae5d-fcf96d03a1ca",
+      "version_number": 4111,
+      "created_on": "2026-11-17T17:40:47.735825Z"
+    },
+    "traffic": "PASS; current deployment serves 100% on Worker version 32572a35-78ea-43d5-ae5d-fcf96d03a1ca.",
+    "health": "PASS; exact-SHA GitHub source-smoke run 44139142163 fetched production /api/health and received HTTP 200.",
+    "asset_hashes": {
+      "status": "PASS",
+      "verified_assets": 35,
+      "verification_run": "44139142163",
+      "changed_assets": {
+        "public/assets/page-renderer.js": "a4d914a3b337c26c2be13408d5fe6b918ba2c5d6d70b4a00cc71ebe8b2c675e4",
+        "public/editor-v2/core/authored-content.js": "4adcd7e5ee352074bfe7a11cc920f246b91441b73a3cf617abc5df0bda89e8a8",
+        "public/editor-v2/app.js": "ce9911921ef862be233e59e68cf4e9a14d17ccfe7e1d83d01e3098a3a0df9afe"
+      }
+    }
   },
   "open_scope": [
     "EDT-039 hover/focus/submit/load/timer/state triggers and complete action matrix remain open.",
