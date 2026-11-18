@@ -1,0 +1,79 @@
+{
+  "schema": "sanci.editor.page-action-target-lookup.v1",
+  "recorded_at_utc": "2026-11-18T07:18:31Z",
+  "repository": "sanci9517/sanci9517",
+  "branch": "v2/foundation",
+  "plan_point": "77.44.7 / EDT-039 Page Actions",
+  "status": "RUNTIME_RELEASED_LOCAL_CHECKS_PASS_HOSTED_EDITOR_CORE_IN_PROGRESS",
+  "runtime_commit": "7208fcab5e117290e6e0a0288598fb37826c7079",
+  "parent_commit": "e45d70501b3da226db100131b1a7d8fe01cffef8",
+  "scope": {
+    "change": "Page Action target lookup validates the node ID against the Page Model allowlist and performs one exact, page-scoped querySelector lookup instead of allocating/scanning every [data-page-node-id] node on every trigger.",
+    "regression": "Browser regression instruments querySelector/querySelectorAll and asserts there is no whole-page node scan; selector-injection-shaped target IDs are rejected before a lookup.",
+    "changed_paths": [
+      "public/assets/page-renderer.js",
+      "public/editor-v2/core/authored-content.js",
+      "public/editor-v2/app.js",
+      "tests/browser/editor-page-interactions.test.js",
+      "docs/evidence/feature-traceability.json"
+    ],
+    "save_publish": "Unchanged; Page Action behavior remains separate from Save and Publish transactions."
+  },
+  "checks": {
+    "local_typecheck": "PASS; npm run typecheck -- --pretty false after installing existing lockfile dependencies.",
+    "editor_unit_suite": "PASS; npm run test:editor, 22/22 Editor unit files and 4/4 runner-contract checks.",
+    "migration_safety_gate": "PASS; npm run test:web013:migration-gate.",
+    "plan_contract": "PASS; python3 tests/plan-contract.test.py, 14/14.",
+    "canonical_plan_structure": "PASS; one complete 13-file master and 396 source mappings; functional acceptance remains uncertified.",
+    "feature_traceability": "PASS; python3 scripts/build-feature-traceability.py --check, 396/396.",
+    "syntax_and_diff": "PASS; node --check on changed JavaScript and git diff --check.",
+    "wrangler_dry_run": {
+      "status": "PASS",
+      "version": "4.130.0",
+      "asset_count": 194,
+      "total_kib": 392.52,
+      "gzip_kib": 100.53,
+      "publish_performed": false
+    },
+    "production_d1_preflight": {
+      "status": "PASS_READ_ONLY",
+      "query": "SELECT name FROM d1_migrations ORDER BY name DESC LIMIT 1",
+      "latest_migration": "0029_media_archive_unicode_additive.sql",
+      "rows_read": 1,
+      "rows_written": 0,
+      "changes": 0,
+      "changed_db": false
+    },
+    "targeted_local_browser_test": "NOT RUN in this work block. The managed shell's Chromium launch is previously known to fail before test assertions with setsockopt EPERM/SIGTRAP; exact-source hosted Editor Core browser layout regression is still running and has not been counted as PASS.",
+    "hosted_ci": {
+      "f0_baseline": {"run": "44256172882", "status": "PASS"},
+      "production_worker_source_smoke": {"run": "44256170427", "status": "PASS"},
+      "canonical_plan": {"run": "44256170423", "status": "PASS"},
+      "twitch_integration": {"run": "44256170479", "status": "PASS"},
+      "active_point_audit": {"run": "44256170559", "status": "PASS"},
+      "editor_core": {"run": "44256170433", "status": "IN_PROGRESS", "current_step": "Run Editor browser layout regression"}
+    }
+  },
+  "production": {
+    "cloudflare_worker": "sanci9517-streamer-brand",
+    "deployment_id": "0c89582c-f378-4012-87d8-67c217d38c0a",
+    "version_id": "f6e186ac-4d10-48cd-9697-7681e7b8daa2",
+    "traffic_percent": 100,
+    "health": "PASS; exact-SHA source-smoke run 44256170427 returned HTTP 200 for /api/health?release=7208fcab5e117290e6e0a0288598fb37826c7079.",
+    "source_smoke": "PASS; exact-SHA workflow verified all 34 configured public source-file SHA-256 checks. Initial cache mismatch retries occurred before the new deployment propagated; the final bounded attempt passed after deployment.",
+    "changed_public_asset_hashes": {
+      "public/assets/page-renderer.js": "a2ff0a1ae7cb45e1edee3344edb2b99a21e1eb472dcfb40c38c1eaa4455684b2",
+      "public/editor-v2/core/authored-content.js": "72f80c84e5fe6277b7eaa6ece8a4cb712d5d24d96a02a089c94011fc98d00670",
+      "public/editor-v2/app.js": "800ad4fa2a563d17c2e075de86811bb428fdf1db51894de3806ed2367c8023d6"
+    },
+    "direct_local_http_probe": "BLOCKED before HTTP; the managed environment proxy port 8080 refused the connection. This does not contradict the successful exact-SHA hosted source-smoke health and asset checks."
+  },
+  "limitations": [
+    "EDT-039 remains PARTIAL / OPEN: its complete trigger, URL/form, malformed-input, security, accessibility and performance acceptance matrix is not complete.",
+    "The exact-SHA Editor Core workflow is still in progress; its final browser and downstream checks must be evaluated before upgrading this evidence status.",
+    "The complete Visual Editor and 77.44.7.D remain OPEN / NOT_CERTIFIED; manual and physical acceptance remains deferred until the full Editor gate.",
+    "The avidisodd.hu host was not accessed or changed; it is only a visual reference and is not the SANCI9517 production host."
+  ],
+  "production_mutations": false,
+  "new_paid_cost": "0 Ft"
+}
