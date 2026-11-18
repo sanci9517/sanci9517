@@ -1,0 +1,100 @@
+{
+  "schema_version": 1,
+  "task": "77.44.7.D / EDT-039",
+  "title": "Keyboard focus cancels the pending Page Action timer",
+  "recorded_at_utc": "2026-11-18T13:36:49Z",
+  "status": "LOCAL_BROWSER_PASS_HOSTED_CI_UNVERIFIED_D_OPEN",
+  "source": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "source_head_before_change": "ea9d719dbb06fe3ce29e284aec1f5a419642b0a2",
+    "runtime_source_sha": "97dd82c23c5475d90ff1cec2113a074fbaf7f1d5"
+  },
+  "change": {
+    "file": "tests/browser/editor-page-interactions.test.js",
+    "scenario": "A published page has a pending 10 second tab-selection timer. Focusing the second tab by keyboard without activating it cancels the timer; after 10.3 seconds the first tab remains selected.",
+    "runtime_files_changed": false,
+    "production_data_changed": false,
+    "dependencies_changed": false
+  },
+  "checks": {
+    "focused_chromium": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-page-interactions.test.js",
+      "result": "PASS",
+      "tests_passed": 1,
+      "duration_ms": 112730,
+      "execution": "The default sandbox denied the Chromium process before test assertions; the same local test passed with approved local browser execution."
+    },
+    "editor_unit": {
+      "command": "npm run test:editor",
+      "result": "PASS",
+      "editor_test_files_passed": 22,
+      "runner_contract_tests_passed": 4
+    },
+    "typecheck": {
+      "command": "npm run typecheck",
+      "result": "PASS"
+    },
+    "test_syntax_and_diff": {
+      "commands": [
+        "node --check tests/browser/editor-page-interactions.test.js",
+        "git diff --check"
+      ],
+      "result": "PASS"
+    },
+    "plan_contract": {
+      "command": "python3 tests/plan-contract.test.py",
+      "result": "PASS",
+      "passed": 14
+    },
+    "canonical_plan": {
+      "command": "python3 scripts/check-canonical-plan.py",
+      "result": "PASS",
+      "master_files": 13,
+      "traceability_mappings": 396
+    },
+    "traceability": {
+      "command": "python3 scripts/build-feature-traceability.py --check",
+      "result": "PASS",
+      "mappings": 396
+    },
+    "active_point_audit": {
+      "command": "python3 scripts/audit-active-plan-point.py",
+      "result": "OPEN_NOT_CERTIFIED",
+      "cursor": "77.44 / WEB-011 -> 77.44.7.D",
+      "source_status_counts": {
+        "PARTIAL_SOURCE": 147,
+        "UNVERIFIED": 249
+      }
+    }
+  },
+  "hosted_ci": {
+    "prior_editor_core_run": {
+      "run_id": 44307061545,
+      "sha": "97dd82c23c5475d90ff1cec2113a074fbaf7f1d5",
+      "result": "FAILURE",
+      "failed_step": "Run Editor browser layout regression"
+    },
+    "followup_run": "NOT_STARTED",
+    "reason": "The repository policy requires known free Actions quota before dispatch/rerun. The authenticated GitHub connection rejected the repository Actions billing usage endpoint as unsupported, so available free quota cannot be verified."
+  },
+  "production": {
+    "latest_deployment_id": "9f82dfa7-fb94-4399-b639-9feeed555f35",
+    "worker_version": "e2d48c7f-09f7-4eaa-8c87-4a5528cf4860",
+    "traffic_percent": 100,
+    "runtime_source_sha": "97dd82c23c5475d90ff1cec2113a074fbaf7f1d5",
+    "runtime_changed_by_this_test": false,
+    "prior_exact_sha_smoke": "44307061430 passed earlier for runtime SHA 97dd82c (health HTTP 200, 34/34 configured public hashes); not rerun for this test-only change.",
+    "changed_public_assets": []
+  },
+  "acceptance": {
+    "edt_039": "PARTIAL / OPEN / NOT_CERTIFIED",
+    "full_d_01_to_d_07": "OPEN / NOT_CERTIFIED",
+    "full_visual_editor": "OPEN / NOT_CERTIFIED",
+    "manual_physical_acceptance": "DEFERRED_UNTIL_COMPLETE_EDITOR",
+    "save_separate_from_publish": true,
+    "production_d1_or_r2_mutation": false,
+    "new_cost_huf": 0
+  },
+  "metrics_id": "20261118132956-e639922e"
+}

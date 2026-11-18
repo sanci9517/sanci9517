@@ -283,6 +283,11 @@ test('EDT-039 page actions and EDT-040 motion save as draft, preview safely, and
   assert.equal(await liveNode(tabsId).getByRole('tab').nth(0).getAttribute('aria-selected'),'true','manual tab use cancels the pending timer instead of changing the user-selected state');
 
   await live.goto(`${base}/p/page-actions?campaign=timer-test`);
+  await liveNode(tabsId).getByRole('tab').nth(1).focus();
+  await live.waitForTimeout(10300);
+  assert.equal(await liveNode(tabsId).getByRole('tab').nth(0).getAttribute('aria-selected'),'true','keyboard focus entering the tab group cancels the pending timer without requiring activation');
+
+  await live.goto(`${base}/p/page-actions?campaign=timer-test`);
   await live.evaluate(()=>{
     Object.defineProperty(document,'hidden',{configurable:true,value:true});
     document.dispatchEvent(new Event('visibilitychange'));

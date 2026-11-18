@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261118132956-e639922e",
+  "task": "EDT-039",
+  "trigger": "manual",
+  "started_at": "2026-11-18T13:29:56.617Z",
+  "finished_at": "2026-11-18T13:36:25.895Z",
+  "wall_seconds": 389,
+  "paused_seconds": 0,
+  "measured_seconds": 389,
+  "status": "partial",
+  "kind": "test",
+  "summary": "Added and verified an EDT-039 keyboard-focus cancellation regression for pending tab timers; full D remains open.",
+  "evidence": [
+    "docs/evidence/editor-page-action-keyboard-focus-timer-cancel-2026-11-18.json"
+  ],
+  "checks": "focused Chromium 1/1 PASS; editor unit 22/22 + runner 4/4 PASS; typecheck PASS; plan contract 14/14 PASS; canonical 13 files/396 mappings PASS; hosted CI not run (free quota unavailable)",
+  "started_revision": "2f01a698c06e0de36ffaba66b661e0f9e3104854",
+  "finished_revision": "2f01a698c06e0de36ffaba66b661e0f9e3104854",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
