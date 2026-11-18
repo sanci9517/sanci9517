@@ -24,6 +24,7 @@ import { layoutPresetPatch, layoutMode, CHILD_LAYOUT_DEFAULTS } from './layout-p
 import {VISIBILITY_DEVICES,normalizeVisibility} from './visibility.js';
 import {trackInspectorStylePatch} from './inspector-style-contract.js';
 import {getElementContentProfileMetadata} from './content-profiles.js?v=20261025-inspector-lifecycle-contract';
+import {isNodeClipboardForPage} from './node-clipboard.js?v=20261118-edt038-node-clipboard-v1';
 
 function requirePage(state) {
   const page = activePage(state);
@@ -62,8 +63,9 @@ function record(state, before, action, selectionBefore) {
 function commit(state, action, mutate) {
   const before = snapshot(state);
   const selectionBefore = structuredClone(state.selection);
+  const persistenceBefore = structuredClone(state.persistence);
   try { mutate(state); assertValidEditorDocument(state.document); record(state, before, action, selectionBefore); return state; }
-  catch (error) { state.document = before; throw error; }
+  catch (error) { state.document = before; state.selection = selectionBefore; Object.assign(state.persistence,persistenceBefore); throw error; }
 }
 function collectDescendants(page, nodeId, result = new Set()) {
   if (result.has(nodeId)) return result;
@@ -137,6 +139,40 @@ if(authored&&CONTENT_TYPES.includes(type))Object.assign(nodeProps,normalizeAutho
   'element.visibility.set': (state, { nodeId, device = 'desktop', visible = true } = {}) => commit(state,{type:'element.visibility.set',payload:{nodeId,device,visible}},(draft)=>{const {page,node}=requireNode(draft,nodeId);if(!VISIBILITY_DEVICES.includes(device))throw new Error(`Invalid responsive device: ${device}`);if(node.id===page.rootId)throw new Error('Root visibility is not editable');node.visibility={...normalizeVisibility(node.visibility),[device]:Boolean(visible)};bumpRevision(draft.document)}),
   'element.lock.set': (state, { nodeId, locked = true } = {}) => commit(state,{type:'element.lock.set',payload:{nodeId,locked}},(draft)=>{const {node}=requireNode(draft,nodeId,{allowLocked:true});node.locked=Boolean(locked);bumpRevision(draft.document)}),
   'element.duplicate': (state, { nodeId, parentId, index } = {}) => commit(state,{type:'element.duplicate',payload:{nodeId,parentId,index}},(draft)=>{const page=requirePage(draft);const {node}=requireNode(draft,nodeId);const sourceIds=[...collectDescendants(page,nodeId)];const usedAnchors=new Set(Object.values(page.nodes).map(n=>n.accessibility?.anchorId).filter(Boolean));const idMap=new Map(sourceIds.map((id)=>[id,createNode('custom').id]));const newRootId=idMap.get(nodeId);const targetParent=getNode(page,parentId??node.parentId??page.rootId);if(!targetParent||!canContain(targetParent,node.type))throw new Error('Invalid duplicate target');if(targetParent.locked)throw new Error(`Cannot duplicate into locked node: ${targetParent.id}`);requireUnlockedAncestors(page,targetParent);for(const sourceId of sourceIds){const source=page.nodes[sourceId];const copy=structuredClone(source);copy.id=idMap.get(sourceId);copy.parentId=sourceId===nodeId?targetParent.id:idMap.get(source.parentId);copy.children=source.children.map((childId)=>idMap.get(childId));copy.name=`${source.name} másolat`;if(copy.accessibility?.anchorId){const base=String(copy.accessibility.anchorId).slice(0,48);let next=`${base}-copy`;let i=2;while(usedAnchors.has(next)){next=`${base}-copy-${i++}`};copy.accessibility={...copy.accessibility,anchorId:next};usedAnchors.add(next)}page.nodes[copy.id]=copy}remapDuplicateAnchors([...idMap.values()].map(id=>page.nodes[id]),page.nodes);insertChild(targetParent,newRootId,index);setSelection(draft,[newRootId],newRootId);bumpRevision(draft.document)}),
+  'element.paste': (state, { clipboard, parentId, index } = {}) => commit(state,{type:'element.paste',payload:{pageId:clipboard?.pageId,rootIds:[...(clipboard?.rootIds??[])]}},(draft)=>{
+    const page=requirePage(draft);
+    if(!isNodeClipboardForPage(clipboard,page.id))throw new Error('Az elemvágólap csak az eredeti oldalon használható.');
+    const roots=[...new Set(clipboard.rootIds)];
+    if(roots.length!==clipboard.rootIds.length)throw new Error('Az elemvágólap ismétlődő gyökereket tartalmaz.');
+    const source=clipboard.nodes,sourceIds=Object.keys(source),reachable=new Set(),visiting=new Set();
+    const visit=(id)=>{
+      if(visiting.has(id))throw new Error('Az elemvágólap körkörös hierarchiát tartalmaz.');
+      if(reachable.has(id))throw new Error('Az elemvágólap egy elemet többször hivatkozik.');
+      const node=source[id];
+      if(!node||node.id!==id||node.type==='root'||node.locked)throw new Error('Az elemvágólap érvénytelen vagy zárolt elemet tartalmaz.');
+      visiting.add(id);reachable.add(id);
+      for(const childId of node.children??[]){if(source[childId]?.parentId!==id)throw new Error('Az elemvágólap szülő-gyermek kapcsolata sérült.');visit(childId)}
+      visiting.delete(id);
+    };
+    for(const id of roots){if(!source[id])throw new Error('Az elemvágólap gyökere hiányzik.');visit(id)}
+    if(reachable.size!==sourceIds.length)throw new Error('Az elemvágólap árva elemet tartalmaz.');
+    const targetParent=getNode(page,parentId??page.rootId);
+    if(!targetParent||targetParent.locked)throw new Error('Érvénytelen vagy zárolt beillesztési hely.');
+    requireUnlockedAncestors(page,targetParent);
+    for(const id of roots)if(!canContain(targetParent,source[id].type))throw new Error('A kijelölt hely nem fogadja be a beillesztett elemeket.');
+    const idMap=new Map(sourceIds.map(id=>{let next;do{next=createNode(source[id].type).id}while(page.nodes[next]);return[id,next]}));
+    const copies=[];
+    for(const sourceId of sourceIds){
+      const original=source[sourceId],copy=structuredClone(original),root=roots.includes(sourceId);
+      copy.id=idMap.get(sourceId);copy.parentId=root?targetParent.id:idMap.get(original.parentId);
+      copy.children=(original.children??[]).map(id=>idMap.get(id));
+      if(root)copy.name=`${copy.name} másolat`;
+      page.nodes[copy.id]=copy;copies.push(copy);
+    }
+    for(let offset=0;offset<roots.length;offset++)insertChild(targetParent,idMap.get(roots[offset]),Number.isInteger(index)?index+offset:undefined);
+    remapDuplicateAnchors(copies,page.nodes);
+    const pastedRoots=roots.map(id=>idMap.get(id));setSelection(draft,pastedRoots,pastedRoots.at(-1));bumpRevision(draft.document);
+  }),
   'element.delete': (state, { nodeId } = {}) => commit(state,{type:'element.delete',payload:{nodeId}},(draft)=>{const page=requirePage(draft);const {node}=requireNode(draft,nodeId);if(node.id===page.rootId)throw new Error('Root cannot be deleted');if(node.parentId)requireUnlockedParent(page,node.parentId,'remove');const descendants=collectDescendants(page,nodeId);removeFromParent(page,nodeId);for(const id of descendants)delete page.nodes[id];draft.selection.ids=draft.selection.ids.filter((id)=>!descendants.has(id));if(descendants.has(draft.selection.primaryId))draft.selection.primaryId=draft.selection.ids.at(-1)??null;bumpRevision(draft.document)}),
   'hierarchy.group': (state, { nodeIds } = {}) => commit(state,{type:'hierarchy.group',payload:{nodeIds:[...(nodeIds??state.selection.ids)]}},(draft)=>{const page=requirePage(draft);const ids=[...new Set(Array.isArray(nodeIds)?nodeIds:draft.selection.ids)];if(ids.length<2)throw new Error('Group requires at least two nodes');const nodes=ids.map((id)=>{const node=getNode(page,id);if(!node)throw new Error(`Node not found: ${id}`);if(node.id===page.rootId)throw new Error('Root cannot be grouped');if(node.locked)throw new Error(`Node is locked: ${id}`);requireUnlockedAncestors(page,node);return node});const parentId=nodes[0].parentId;if(!parentId)throw new Error('Selected nodes must share a parent');const parent=getNode(page,parentId);if(!parent||!canContain(parent,'group'))throw new Error('Invalid group parent');if(parent.locked)throw new Error(`Cannot group children of locked node: ${parent.id}`);requireUnlockedAncestors(page,parent);if(nodes.some((node)=>node.parentId!==parentId))throw new Error('Selected nodes must share the same parent');const selected=new Set(ids);const orderedIds=parent.children.filter((id)=>selected.has(id));if(orderedIds.length!==ids.length)throw new Error('Invalid group selection');const firstIndex=parent.children.indexOf(orderedIds[0]);const group=createNode('group',{name:'Csoport',parentId:parent.id,children:[...orderedIds]});page.nodes[group.id]=group;parent.children=parent.children.filter((id)=>!selected.has(id));insertChild(parent,group.id,firstIndex);for(const nodeId of orderedIds)page.nodes[nodeId].parentId=group.id;setSelection(draft,[group.id],group.id);bumpRevision(draft.document)}),
   'hierarchy.ungroup': (state, { nodeId } = {}) => commit(state,{type:'hierarchy.ungroup',payload:{nodeId:nodeId??state.selection.primaryId}},(draft)=>{const page=requirePage(draft);const targetId=nodeId??draft.selection.primaryId;if(!targetId)throw new Error('Ungroup requires a selected group');const group=getNode(page,targetId);if(!group)throw new Error(`Node not found: ${targetId}`);if(group.type!=='group')throw new Error('Ungroup requires a GROUP node');if(group.locked)throw new Error(`Node is locked: ${targetId}`);if(!group.parentId)throw new Error('Group has no parent');const parent=requireUnlockedParent(page,group.parentId,'ungroup');const childIds=[...group.children];const children=childIds.map((childId)=>{const child=getNode(page,childId);if(!child)throw new Error(`Node not found: ${childId}`);if(child.locked)throw new Error(`Node is locked: ${childId}`);return child});const groupIndex=parent.children.indexOf(group.id);if(groupIndex<0)throw new Error('Group is not present in its parent');parent.children=parent.children.filter((id)=>id!==group.id);for(const child of children)child.parentId=parent.id;parent.children.splice(groupIndex,0,...childIds);delete page.nodes[group.id];setSelection(draft,childIds,childIds.at(-1)??null);bumpRevision(draft.document)}),

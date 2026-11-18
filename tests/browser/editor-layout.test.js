@@ -129,7 +129,7 @@ test('Editor shell has no inaccessible or overlapping controls across widths and
       await page.locator('#openInspector').click();
       if([1440,768,390].includes(width))await page.locator('#inspectorBody').evaluate(el=>{el.innerHTML='<div class="inspector-selection"><b>Rendkívül hosszú kijelölt elem neve</b></div><label class="field"><span>Hosszú magyar Inspector mezőfelirat</span><input aria-label="Inspector próba" value="Minta"></label><div class="inspector-actions"><button class="danger-action">Kijelölt elem törlése</button></div>'});
       await audit(page,`${width}px inspector`);
-      await page.locator('.more-actions summary').click();
+      await page.locator('.more-actions > summary').click();
       await page.waitForTimeout(30);
       await audit(page,`${width}px overflow menu`);
       if([1440,768,390].includes(width))await page.screenshot({path:`/tmp/editor-issue42-${width}.png`,fullPage:true});
@@ -201,7 +201,7 @@ test('Editor shell remains usable at an effective 200% zoom and short viewport',
   await audit(page,'200% effective zoom / layers drawer');
   await page.locator('#openInspector').click();
   await audit(page,'200% effective zoom / Inspector drawer');
-  await page.locator('.more-actions summary').click();
+  await page.locator('.more-actions > summary').click();
   await audit(page,'200% effective zoom / overflow actions');
   assert.equal(await page.locator('#save').count(),1,'the explicit Save action remains in the shell');
   assert.equal(await page.locator('#publish').count(),1,'the separate Publish action remains in the shell');

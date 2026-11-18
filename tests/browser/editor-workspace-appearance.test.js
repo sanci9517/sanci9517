@@ -710,7 +710,7 @@ test('manual panel and dock changes become a persistent custom layout without to
 test('the overflow menu stays in the responsive shell flow instead of covering Inspector tabs or mobile actions',async t=>{
   const desktop=await openEditor(t,{width:1920,height:1000});
   await desktop.page.locator('#openInspector').click();
-  await desktop.page.locator('.more-actions summary').click();
+  await desktop.page.locator('.more-actions > summary').click();
   const desktopGeometry=await desktop.page.evaluate(()=>{
     const top=document.querySelector('.topbar').getBoundingClientRect();
     const menu=document.querySelector('.more-actions-menu').getBoundingClientRect();
@@ -727,7 +727,7 @@ test('the overflow menu stays in the responsive shell flow instead of covering I
 
   const mobile=await openEditor(t,{width:390,height:850,isMobile:true,hasTouch:true});
   await mobile.page.locator('#openInspector').tap();
-  await mobile.page.locator('.more-actions summary').tap();
+  await mobile.page.locator('.more-actions > summary').tap();
   await mobile.page.locator('#rightDock').waitFor({state:'hidden'});
   assert.equal(await mobile.page.locator('#rightDock').isVisible(),false,'opening utility actions closes the mobile sheet first');
   assert.equal(await mobile.page.locator('#save').isVisible(),true);

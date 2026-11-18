@@ -10,6 +10,7 @@ import { createDocument, createNode, NODE_TYPES, normalizeRichText } from '../co
 import { assertValidEditorDocument,findReachableNodeIds,validateEditorDocument,validateHierarchy } from '../core/validation.js';
 import { createEditorState, activePage } from '../core/state.js';
 import { beginTransaction, commitTransaction, execute, executeBatch, rollbackTransaction } from '../core/commands.js';
+import { createNodeClipboard, isNodeClipboardForPage } from '../core/node-clipboard.js?v=20261118-edt038-node-clipboard-v1';
 import { getProperty, listProperties, listPropertyGroups, registerProperty } from '../core/property-registry.js?v=20261117-edt043-motion-guidance';
 import { hasResponsiveOverride, resolveResponsiveValue, setResponsiveValue } from '../core/responsive.js';
 import {collectVisibleDescendants} from '../core/visibility.js';
@@ -645,6 +646,88 @@ test('duplicate copies an entire subtree with new ids', () => {
   assert.notEqual(duplicate.children[0], text);
   assert.equal(page.nodes[duplicate.children[0]].parentId, duplicate.id);
   assertValidEditorDocument(state.document);
+});
+
+test('node clipboard snapshots selected subtree roots once and preserves copied values',()=>{
+ const state=createEditorState(),page=activePage(state);
+ execute(state,{type:'element.add',payload:{type:NODE_TYPES.SECTION}});const section=state.selection.primaryId;
+ execute(state,{type:'element.add',payload:{type:NODE_TYPES.TEXT,parentId:section,props:{text:'Original'},style:{color:'#fff'}}});const text=state.selection.primaryId;
+ execute(state,{type:'selection.set',payload:{ids:[section,text],primaryId:text}});
+ const clipboard=createNodeClipboard(page,state.selection.ids);
+ assert.deepEqual(clipboard.rootIds,[section],'a selected descendant is not copied twice');
+ assert.equal(Object.keys(clipboard.nodes).length,2);
+ execute(state,{type:'element.content.set',payload:{nodeId:text,content:'Changed after copy'}});
+ assert.equal(clipboard.nodes[text].props.text,'Original','clipboard is an immutable snapshot, not a live node reference');
+ assert.equal(isNodeClipboardForPage(clipboard,page.id),true);
+ assert.equal(isNodeClipboardForPage(clipboard,'another-page'),false);
+ assert.throws(()=>createNodeClipboard(page,[page.rootId]),/másolható elemet/);
+});
+
+test('node clipboard paste remaps nested IDs and anchors and is one undoable same-page operation',()=>{
+ const state=createEditorState(),page=activePage(state),root=page.rootId;
+ execute(state,{type:'element.add',payload:{type:NODE_TYPES.SECTION,parentId:root}});const section=state.selection.primaryId;
+ execute(state,{type:'element.add',payload:{type:NODE_TYPES.TEXT,parentId:section,props:{text:'Cím'}}});const heading=state.selection.primaryId;
+ execute(state,{type:'accessibility.set',payload:{nodeId:heading,patch:{id:'copy-target'}}});
+ execute(state,{type:'element.add',payload:{type:NODE_TYPES.LINK,parentId:section,props:{href:'#copy-target',text:'Ugrás'}}});const link=state.selection.primaryId;
+ execute(state,{type:'element.update',payload:{nodeId:link,patch:{props:{href:'#copy-target',text:'Ugrás',mediaAssetId:'asset-123'}}}});
+ const clipboard=createNodeClipboard(page,[section]);
+ execute(state,{type:'element.paste',payload:{clipboard,parentId:root}});
+ const pastedRoot=state.selection.primaryId,pasted=page.nodes[pastedRoot],pastedHeading=page.nodes[pasted.children[0]],pastedLink=page.nodes[pasted.children[1]];
+ assert.notEqual(pastedRoot,section);assert.notEqual(pastedHeading.id,heading);assert.notEqual(pastedLink.id,link);
+ assert.notEqual(pastedHeading.accessibility.id,'copy-target');
+ assert.equal(pastedLink.props.href,`#${pastedHeading.accessibility.id}`,'internal anchor links follow the copied node ID');
+ assert.equal(pastedLink.props.mediaAssetId,'asset-123','same-page asset references are preserved');
+ assert.equal(state.history.past.at(-1).action.type,'element.paste');
+ execute(state,{type:'history.undo'});assert.equal(activePage(state).nodes[pastedRoot],undefined);
+ execute(state,{type:'history.redo'});assert.ok(activePage(state).nodes[pastedRoot]);
+ assertValidEditorDocument(state.document);
+});
+
+test('node clipboard pastes multiple selected roots in canvas order as one history step',()=>{
+ const state=createEditorState(),page=activePage(state),root=page.rootId;
+ execute(state,{type:'element.add',payload:{type:NODE_TYPES.TEXT,parentId:root,props:{text:'Első'}}});const first=state.selection.primaryId;
+ execute(state,{type:'element.add',payload:{type:NODE_TYPES.TEXT,parentId:root,props:{text:'Második'}}});const second=state.selection.primaryId;
+ execute(state,{type:'element.add',payload:{type:NODE_TYPES.TEXT,parentId:root,props:{text:'Harmadik'}}});const third=state.selection.primaryId;
+ execute(state,{type:'selection.set',payload:{ids:[third,first],primaryId:first}});
+ const clipboard=createNodeClipboard(page,state.selection.ids);
+ assert.deepEqual(clipboard.rootIds,[first,third],'paste order follows the page tree instead of modifier-click order');
+ const beforeCount=page.nodes[root].children.length;
+ execute(state,{type:'element.paste',payload:{clipboard,parentId:root,index:1}});
+ const pastedIds=[...state.selection.ids];
+ assert.equal(pastedIds.length,2);
+ assert.deepEqual(page.nodes[root].children.slice(1,3),pastedIds);
+ assert.deepEqual(pastedIds.map(id=>page.nodes[id].props.text),['Első','Harmadik']);
+ assert.equal(page.nodes[root].children.length,beforeCount+2);
+ assert.equal(state.history.past.at(-1).action.type,'element.paste','multi-paste creates a single undo entry');
+ execute(state,{type:'history.undo'});assert.equal(activePage(state).nodes[activePage(state).rootId].children.length,beforeCount);
+ execute(state,{type:'history.redo'});assert.equal(activePage(state).nodes[activePage(state).rootId].children.length,beforeCount+2);
+ assert.notEqual(second,pastedIds[0]);
+});
+
+test('node clipboard rejects cross-page paste and locked destinations without mutating the document',()=>{
+ const state=createEditorState(),page=activePage(state),root=page.rootId;
+ execute(state,{type:'element.add',payload:{type:NODE_TYPES.SECTION,parentId:root}});const section=state.selection.primaryId;
+ const clipboard=createNodeClipboard(page,[section]);
+ const before=structuredClone(state.document);
+ assert.throws(()=>execute(state,{type:'element.paste',payload:{clipboard:{...clipboard,pageId:'another-page'},parentId:root}}),/eredeti oldalon/);
+ assert.deepEqual(state.document,before);
+ execute(state,{type:'element.lock.set',payload:{nodeId:root,locked:true}});
+ const lockedBefore=structuredClone(state.document);
+ assert.throws(()=>execute(state,{type:'element.paste',payload:{clipboard,parentId:root}}),/zárolt/);
+ assert.deepEqual(state.document,lockedBefore);
+});
+
+test('node clipboard rejects broken child links and unreachable payload nodes atomically',()=>{
+ const state=createEditorState(),page=activePage(state),root=page.rootId;
+ execute(state,{type:'element.add',payload:{type:NODE_TYPES.SECTION,parentId:root}});const section=state.selection.primaryId;
+ execute(state,{type:'element.add',payload:{type:NODE_TYPES.TEXT,parentId:section}});const child=state.selection.primaryId;
+ const clipboard=createNodeClipboard(page,[section]),before=structuredClone(state.document),historyBefore=state.history.past.length;
+ const brokenLink=structuredClone(clipboard);brokenLink.nodes[child].children.push('missing-node');
+ assert.throws(()=>execute(state,{type:'element.paste',payload:{clipboard:brokenLink,parentId:root}}),/szülő-gyermek kapcsolata sérült/);
+ assert.deepEqual(state.document,before);assert.equal(state.history.past.length,historyBefore);
+ const orphaned=structuredClone(clipboard),orphan=createNode(NODE_TYPES.TEXT,{parentId:section});orphaned.nodes[orphan.id]=orphan;
+ assert.throws(()=>execute(state,{type:'element.paste',payload:{clipboard:orphaned,parentId:root}}),/árva elemet/);
+ assert.deepEqual(state.document,before);assert.equal(state.history.past.length,historyBefore);
 });
 
 test('invalid reparent rolls back the mutation', () => {

@@ -2,7 +2,7 @@ import {hasContentProfile} from './core/content-profiles.js?v=20261025-inspector
 import {getNode,getChildren,NODE_TYPES,canContain,normalizeRichText} from './core/schema.js?v=20261115-d07-safe-child-render';
 import {instantiateEditorTemplate,listEditorTemplates} from './core/editor-templates.js?v=20261117-edt041-template-v1';
 import {createEditorState,activePage,selectedNodes,setSelection,markSaved} from './core/state.js?v=20261118-edt039-invalid-recovery-v1';
-import {execute,executeCoalesced,executeBatch} from './core/commands.js?v=20261025-inspector-lifecycle-contract';
+import {execute,executeCoalesced,executeBatch} from './core/commands.js?v=20261118-edt038-node-clipboard-v1';
 import {applyNodeStyle,getNodeGeometry,resolveNodeStyle} from './core/canvas-engine.js?v=20261117-edt040-motion-style-route';
 import {computeCanvasMinHeight} from './core/canvas-extent.js';
 import {measureCanvasWorkspace} from './core/canvas-workspace.js';
@@ -23,6 +23,7 @@ import {getElementCapability} from './core/capability-matrix.js?v=20261117-edt04
 import {renderGeometryPresets} from './ui/geometry-presets.js';
 import {importRichTextClipboard} from './core/richtext-import.js?v=20261117-d03-invalid-media-id-guidance-v1';
 import {pasteRichTextDocument} from './core/richtext-paste.js?v=20261117-d03-invalid-media-id-guidance-v1';
+import {createNodeClipboard,isNodeClipboardForPage} from './core/node-clipboard.js?v=20261118-edt038-node-clipboard-v1';
 import {captureStyleSnapshot,STYLE_SNAPSHOT_PROPERTIES} from './core/style-snapshot.js';
 import {LAYOUT_PRESETS,LAYOUT_TYPES,layoutMode,isManagedLayout,isLayoutPropertyRelevant,explicitGridColumnCount} from './core/layout-presets.js';
 import {resolveElementInsertion} from './core/element-insertion.js';
@@ -65,7 +66,7 @@ let pendingLayerRename=null;
 function flushLayerRename(){return pendingLayerRename?.()!==false}
 let inspectorCategory='all';let richTextSelectionCleanup=null;let richTextToolTab='character';
 
-let state=null;let pages=[];let archivedPages=[];let revisionHistory=[];let zoom=1;let inspectorTab=readSavedInspectorTab();let inspectorQuery='';let flushRichTextDraft=null;let inlineEditingId=null;let richTextBookmark=null;let copiedStyleSnapshot=null;let canvasDrag=null;let canvasResize=null;let pageStartTemplate='blank-page';let pageCreateBusy=false;let mobileTouch={active:false,timer:null,downId:null,startX:0,startY:0,snapshot:[],snapshotPrimary:null,suppressClick:false,longPressTriggered:false};let hierarchyDrag={nodeId:null,overId:null};let mobileHierarchyDrag={active:false,timer:null,nodeId:null,overId:null,startX:0,startY:0,suppressClick:false};
+let state=null;let pages=[];let archivedPages=[];let revisionHistory=[];let zoom=1;let inspectorTab=readSavedInspectorTab();let inspectorQuery='';let flushRichTextDraft=null;let inlineEditingId=null;let richTextBookmark=null;let copiedStyleSnapshot=null;let nodeClipboard=null;let canvasDrag=null;let canvasResize=null;let pageStartTemplate='blank-page';let pageCreateBusy=false;let mobileTouch={active:false,timer:null,downId:null,startX:0,startY:0,snapshot:[],snapshotPrimary:null,suppressClick:false,longPressTriggered:false};let hierarchyDrag={nodeId:null,overId:null};let mobileHierarchyDrag={active:false,timer:null,nodeId:null,overId:null,startX:0,startY:0,suppressClick:false};
 function readSavedInspectorTab(){try{const saved=JSON.parse(localStorage.getItem('sanci-editor-shell-v2')||'{}')?.inspectorTab;return ['design','content','advanced'].includes(saved)?saved:'design'}catch{return 'design'}}
 const $=s=>document.querySelector(s);const canvas=$('#canvas');const inspector=$('#inspectorBody');
 const sizes={desktop:1440,tablet:768,mobile:390};
@@ -129,6 +130,48 @@ function command(type,payload,{render:shouldRender=true,typingGroup=null}={}){tr
   if(!['richtext.content.set','element.content.set'].includes(type)&&flushRichTextDraft?.()===false)return false;
   if(typingGroup)executeCoalesced(state,{type,payload},typingGroup);else execute(state,{type,payload});if(shouldRender)render();if(shouldRender)verifyCommandResult(type,payload);if(type==='element.add'&&payload?.type===NODE_TYPES.RICHTEXT)beginRichTextEditing(state.selection.primaryId);return true
 }catch(e){diagnostics.add({source:'command',code:'SANCI-CMD-E001',message:e instanceof Error?e.message:String(e),context:type,error:e});if(state?.persistence)state.persistence.error=e instanceof Error?e.message:String(e);setStatus('Szerkesztési hiba');alert(state.persistence.error);return false}}
+function selectedClipboardRoots(current,ids){
+ const selected=new Set(ids||[]),roots=[];
+ for(const id of selected){let parent=current?.nodes?.[id]?.parentId,hasSelectedAncestor=false;while(parent){if(selected.has(parent)){hasSelectedAncestor=true;break}parent=current.nodes[parent]?.parentId??null}if(!hasSelectedAncestor)roots.push(id)}
+ return roots;
+}
+function clipboardPasteTarget(){
+ const current=page();if(!current||!isNodeClipboardForPage(nodeClipboard,current.id))return null;
+ const types=nodeClipboard.rootIds.map(id=>nodeClipboard.nodes[id]?.type).filter(Boolean);
+ const primary=state.selection.primaryId?getNode(current,state.selection.primaryId):null;
+ const preferred=primary?.parentId?getNode(current,primary.parentId):null;
+ const parent=preferred&&types.every(type=>canContain(preferred,type))?preferred:current.nodes[current.rootId];
+ if(!parent||parent.locked||isNodeEffectivelyLocked(current,parent)||!types.every(type=>canContain(parent,type)))return null;
+ const selectedRoots=selectedClipboardRoots(current,state.selection.ids).filter(id=>current.nodes[id]?.parentId===parent.id);
+ const selectedIndexes=selectedRoots.map(id=>parent.children.indexOf(id)).filter(index=>index>=0);
+ return {parent,index:selectedIndexes.length?Math.max(...selectedIndexes)+1:undefined};
+}
+function syncNodeClipboardActions(){
+ const current=page(),ids=state?.selection?.ids||[];
+ const canCopy=Boolean(current&&ids.length&&ids.every(id=>id!==current.rootId&&current.nodes[id]&&!isNodeEffectivelyLocked(current,current.nodes[id])));
+ const canPaste=Boolean(clipboardPasteTarget());
+ for(const id of ['copyNodes','mobileCopyNodes']){const button=$('#'+id);if(button)button.disabled=!canCopy}
+ for(const id of ['pasteNodes','mobilePasteNodes']){const button=$('#'+id);if(button)button.disabled=!canPaste}
+}
+function copySelectedNodes(){
+ if(!state||!flushLayerRename()||!commitActiveInspectorControl()||flushRichTextDraft?.()===false)return false;
+ try{nodeClipboard=createNodeClipboard(page(),state.selection.ids);setStatus(`${nodeClipboard.rootIds.length} elem másolva ezen az oldalon`);syncNodeClipboardActions();return true}
+ catch(error){setStatus(error instanceof Error?error.message:'A kijelölés nem másolható.');return false}
+}
+function pasteSelectedNodes(){
+ if(!state||!flushLayerRename()||!commitActiveInspectorControl()||flushRichTextDraft?.()===false)return false;
+ const target=clipboardPasteTarget();if(!target){setStatus('Ezen az oldalon nincs érvényes beillesztési hely.');return false}
+ const pasted=command('element.paste',{clipboard:nodeClipboard,parentId:target.parent.id,index:target.index});
+ if(pasted)setStatus(`${nodeClipboard.rootIds.length} elem beillesztve a piszkozatba`);
+ return pasted;
+}
+function isCanvasClipboardShortcut(event){
+ const target=event.target instanceof Element?event.target:null;
+ const active=document.activeElement instanceof Element?document.activeElement:null;
+ const editing='input,textarea,select,[contenteditable="true"],[role="textbox"],.rich-text-editor,.plain-text-editor';
+ if(target?.closest(editing)||active?.closest(editing))return false;
+ return Boolean(document.activeElement===document.body&&state?.selection?.ids?.length)||Boolean(document.activeElement?.closest?.('#canvas,#layersTree'));
+}
 function typeForElement(name){const map={'Badge/Tag':'badge','Quote':'quote','Panel':'panel','Overlay':'overlay','Absolute':'absolute','Sticky':'sticky','Tooltip':'tooltip','Shorts':'shorts','Sponsor':'sponsor','Business Contact':'business','About Me':'about','Sanci Button':'sanci-button'};if(map[name])return map[name];for(const items of groups)for(const [label,type] of items)if(label===name&&type)return type;return null}
 function addAuthoredElement(type,name,insertion){const authored=CONTENT_TYPES.includes(type)&&!['code','divider','spacer','heading','text','richtext','button','link'].includes(type);command('element.add',{type,name,...insertion,authored,props:type===NODE_TYPES.RICHTEXT?{}:{text:name}})}
 function renderPalette(filter=''){const root=$('#elementList');if(!root){diagnostics.add({source:'ui',code:'SANCI-UI-E002',message:'Az Elemek lista konténere nem található.'});return}root.replaceChildren();const q=String(filter||'').trim().toLowerCase();let groupIndex=0,descriptionIndex=0;for(const[group,items]of groups){const matches=items.filter(([name,type])=>{const resolvedType=type||typeForElement(name);return name.toLowerCase().includes(q)&&Boolean(resolvedType)});if(!matches.length)continue;const section=document.createElement('section');section.className='element-group collapsed';const title=document.createElement('button');title.type='button';title.className='element-group-title';title.innerHTML='<span>'+group+'</span><b>'+matches.length+'</b>';title.setAttribute('aria-expanded','false');const body=document.createElement('div');body.id='element-group-'+groupIndex++;title.setAttribute('aria-controls',body.id);for(const[name,type]of matches){const resolvedType=type||typeForElement(name);const row=document.createElement('div');row.className='element-row';const b=document.createElement('button');b.type='button';b.className='element';b.innerHTML='<i>◇</i><span>'+name+'</span>';const capability=getElementCapability(resolvedType);const badge=document.createElement('small');badge.className='element-capability';badge.textContent=capability.status==='PARTIAL'?'Részleges':'Tervezett';b.append(badge);if(capability.status==='PLANNED'){b.disabled=true;b.title='Később: ez az elem még nem használható.'}else b.onclick=()=>{const current=page();if(!current)return;const insertion=resolveElementInsertion(current,state.selection.primaryId,resolvedType);if(insertion)addAuthoredElement(resolvedType,name,insertion)};const info=document.createElement('button');info.type='button';info.className='element-info';info.textContent='i';info.title='Mi ez? '+name;info.setAttribute('aria-label','Mi ez? '+name);info.setAttribute('aria-expanded','false');const help=document.createElement('div');help.className='element-description';help.id='element-description-'+descriptionIndex++;help.textContent=(ELEMENT_DESCRIPTIONS[name]||name+' elem hozzáadására szolgál.')+' Inspector: '+capability.inspector+', publikus kimenet: '+capability.public+'.';help.hidden=true;info.setAttribute('aria-controls',help.id);info.onclick=e=>{e.stopPropagation();help.hidden=!help.hidden;info.setAttribute('aria-expanded',String(!help.hidden))};row.append(b,info,help);body.append(row)}title.onclick=()=>{const collapsed=section.classList.toggle('collapsed');title.setAttribute('aria-expanded',String(!collapsed))};section.append(title,body);root.append(section)}if(!root.children.length)diagnostics.add({source:'ui',code:'SANCI-UI-E003',message:'Az Elemek lista üres: egyetlen érvényes elem típus sem került a palettába.'})}
@@ -1748,7 +1791,7 @@ function focusScheduleNode(){
 function render(){
   if(!flushLayerRename()||flushRichTextDraft?.()===false)return false;
   if(inlineEditingId&&state?.selection?.primaryId!==inlineEditingId)inlineEditingId=null;
-  syncMobileMultiSelectUI();syncPublishControls();renderCanvas();renderInspector();renderLayers();renderRevisionPanel();
+  syncMobileMultiSelectUI();syncNodeClipboardActions();syncPublishControls();renderCanvas();renderInspector();renderLayers();renderRevisionPanel();
   if(state){$('#selection').textContent=`Kijelölés: ${state.selection.primaryId||'—'}`;$('#revision').textContent=`Mentés verziója: ${page()?.revision??0}`;setStatus(state.persistence.dirty?'Nem mentett módosítás':'Mentve')}
   const schedule=state?Object.values(page()?.nodes||{}).find(node=>node.type===NODE_TYPES.SCHEDULE):null;
   const scheduleStatus=$('#schedulePanelStatus');
@@ -1919,6 +1962,7 @@ document.addEventListener('DOMContentLoaded',()=>{
  $('#save').onclick=()=>save(false);$('#publish').onclick=()=>save(true);$('#unpublish').onclick=()=>unpublishPage().catch(showError);$('#mobilePublish').onclick=()=>save(true);$('#mobileUnpublish').onclick=()=>unpublishPage().catch(showError);
  $('#preview').onclick=()=>{const p=page();if(p)window.open(`/p/${encodeURIComponent(p.slug)}?preview=1`,'_blank','noopener,noreferrer')};
  $('#undo').onclick=()=>{if(state&&flushLayerRename()&&commitActiveInspectorControl()&&flushRichTextDraft?.()!==false){try{execute(state,{type:'history.undo'});render()}catch(e){showError(e)}}};$('#redo').onclick=()=>{if(state&&flushLayerRename()&&commitActiveInspectorControl()&&flushRichTextDraft?.()!==false){try{execute(state,{type:'history.redo'});render()}catch(e){showError(e)}}};
+ $('#copyNodes').onclick=copySelectedNodes;$('#pasteNodes').onclick=pasteSelectedNodes;$('#mobileCopyNodes').onclick=copySelectedNodes;$('#mobilePasteNodes').onclick=pasteSelectedNodes;
  $('#zoomIn').onclick=()=>changeCanvasZoom(Math.min(1.5,zoom+.1));$('#zoomOut').onclick=()=>changeCanvasZoom(Math.max(.35,zoom-.1));$('#fitCanvas').onclick=fitCanvasToViewport;
  $('#selectTool').onclick=()=>{syncCanvasToolButtons('select');canvas.style.cursor='default'};$('#groupSelection').onclick=()=>{if(!$('#groupSelection').disabled)command('hierarchy.group')};$('#ungroupSelection').onclick=()=>{if(!$('#ungroupSelection').disabled)command('hierarchy.ungroup')};$('#moveLayerUp').onclick=()=>{if(!$('#moveLayerUp').disabled)moveSelectedLayer('up')};$('#moveLayerDown').onclick=()=>{if(!$('#moveLayerDown').disabled)moveSelectedLayer('down')};$('#indentLayer').onclick=()=>{if(!$('#indentLayer').disabled)moveSelectedLayer('indent')};$('#outdentLayer').onclick=()=>{if(!$('#outdentLayer').disabled)moveSelectedLayer('outdent')};$('#mobileGroup').onclick=()=>{if(!$('#mobileGroup').disabled)command('hierarchy.group')};$('#mobileUngroup').onclick=()=>{if(!$('#mobileUngroup').disabled)command('hierarchy.ungroup')};$('#mobileMultiDone').onclick=()=>finishMobileMultiSelect();$('#mobileMultiCancel').onclick=()=>cancelMobileMultiSelect();$('#panTool').onclick=()=>{syncCanvasToolButtons('pan');canvas.style.cursor='grab'};
  document.querySelectorAll('[data-device]').forEach(b=>b.onclick=()=>setDevice(b.dataset.device));
@@ -1945,7 +1989,7 @@ document.addEventListener('DOMContentLoaded',()=>{
    event.preventDefault();
    activateInspectorTab(INSPECTOR_TABS[nextIndex],{focus:true});
  });
- document.addEventListener('keydown',e=>{if(e.key==='Escape'&&mobileTouch.active){e.preventDefault();cancelMobileMultiSelect();return}if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='s'){e.preventDefault();save(false)}if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();if(state&&flushLayerRename()&&commitActiveInspectorControl()&&flushRichTextDraft?.()!==false){execute(state,{type:e.shiftKey?'history.redo':'history.undo'});render()}}});
+ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&mobileTouch.active){e.preventDefault();cancelMobileMultiSelect();return}if((e.ctrlKey||e.metaKey)&&['c','v'].includes(e.key.toLowerCase())&&isCanvasClipboardShortcut(e)){e.preventDefault();if(e.key.toLowerCase()==='c')copySelectedNodes();else pasteSelectedNodes();return}if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='s'){e.preventDefault();save(false)}if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();if(state&&flushLayerRename()&&commitActiveInspectorControl()&&flushRichTextDraft?.()!==false){execute(state,{type:e.shiftKey?'history.redo':'history.undo'});render()}}});
  renderPalette();loadTwitchConnection();loadPages().then(()=>window.__sanciEditorBoot?.ready()).catch(showError);
 });
 

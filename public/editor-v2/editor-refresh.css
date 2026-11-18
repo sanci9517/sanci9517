@@ -46,6 +46,10 @@ button:focus-visible, summary:focus-visible, .rail-btn:focus-visible { outline: 
 .top-actions:has(.more-actions[open]) { align-items: flex-start; }
 .top-actions:has(.more-actions[open]) > * { align-self: flex-start; }
 .more-actions-menu button { width: 100%; text-align: left; white-space: normal; height: auto; }
+.node-clipboard-menu { min-width: 0; }
+.node-clipboard-menu > summary { display: flex; align-items: center; min-height: 44px; padding: 6px 10px; border: 1px solid var(--editor-line); border-radius: 8px; background: #1b2a3b; cursor: pointer; }
+.node-clipboard-menu:not([open]) > button { display: none; }
+.node-clipboard-menu[open] { display: grid; gap: 6px; }
 .mobile-backdrop, .mobile-bottom-bar { display: none; }
 .mobile-multiselect-bar[hidden] { display: none !important; }
 .workspace, .workspace.left-open, .workspace.right-open, .workspace.left-open.right-open { min-width: 0; grid-template-columns: 76px minmax(0,1fr) 0; }
@@ -177,6 +181,24 @@ button:focus-visible, summary:focus-visible, .rail-btn:focus-visible { outline: 
   .more-actions summary { font-size: 0; width: 44px; min-width: 44px; padding-inline: 0; justify-content: center; }
   .more-actions summary::after { content: none; }
   .top-actions #openInspector { width: 44px; }
+}
+@media (max-width: 1024px) {
+  .top-actions:has(.more-actions[open]) .more-actions-menu {
+    position: fixed;
+    inset: auto 8px calc(132px + env(safe-area-inset-bottom,0px));
+    width: min(320px,calc(100vw - 16px));
+    max-height: calc(100vh - 164px);
+    max-height: calc(100dvh - 164px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+}
+@media (max-width: 700px) {
+  .top-actions:has(.more-actions[open]) .more-actions-menu {
+    inset: 156px 8px auto;
+    max-height: calc(100vh - 288px);
+    max-height: calc(100dvh - 288px);
+  }
 }
 /* At high page zoom with a short viewport, the Inspector tab panel may be
    shorter than its sticky search header. Let the header scroll away so the
