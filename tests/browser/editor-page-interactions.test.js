@@ -204,10 +204,13 @@ test('EDT-039 page actions and EDT-040 motion save as draft, preview safely, and
   assert.equal(await liveNode(tabsId).getByRole('tab').nth(0).getAttribute('aria-selected'),'true','a hover-enhanced action remains operable by native keyboard button activation');
   assert.equal(new URL(live.url()).searchParams.get('creator-tab'),`${tabsId}:0`,'keyboard activation preserves the same deep-link behavior as pointer hover');
   await liveNode(tabsId).getByRole('tab').nth(1).click();
+  const lookupStatsBeforeInvalidTarget=await live.evaluate(()=>({...window.__pageActionLookupStats}));
   await liveNode(buttonId).evaluate(el=>el.dataset.pageActionTarget='tabs_one"] [data-page-node-id');
   await liveNode(buttonId).click();
   assert.equal(await liveNode(tabsId).getByRole('tab').nth(1).getAttribute('aria-selected'),'true','tampered target IDs are rejected instead of becoming CSS selector input');
-  assert.equal((await live.evaluate(()=>window.__pageActionLookupStats)).directTargetLookups,1,'invalid target IDs are rejected before querying the page');
+  const lookupStatsAfterInvalidTarget=await live.evaluate(()=>window.__pageActionLookupStats);
+  assert.equal(lookupStatsAfterInvalidTarget.directTargetLookups,lookupStatsBeforeInvalidTarget.directTargetLookups,'invalid target IDs are rejected before querying the page');
+  assert.equal(lookupStatsAfterInvalidTarget.wholePageScans,lookupStatsBeforeInvalidTarget.wholePageScans,'invalid target IDs are rejected without scanning the page');
 
   // EDT-040: motion is a typed responsive style, never authored CSS/JS.
   await editor.emulateMedia({reducedMotion:'no-preference'});

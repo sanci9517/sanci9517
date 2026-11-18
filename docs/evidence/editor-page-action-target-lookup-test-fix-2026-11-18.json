@@ -1,0 +1,40 @@
+{
+  "schema": "sanci.editor.page-action-target-lookup-test-fix.v1",
+  "recorded_at_utc": "2026-11-18T08:20:00Z",
+  "repository": "sanci9517/sanci9517",
+  "branch": "v2/foundation",
+  "plan_point": "77.44.7 / EDT-039 Page Actions",
+  "status": "TEST_ASSERTION_FIXED_LOCAL_BROWSER_PASS_HOSTED_CI_NOT_RERUN",
+  "runtime_source_commit": "7208fcab5e117290e6e0a0288598fb37826c7079",
+  "current_branch_head_before_followup": "60c33256f69c134b7cb24f0c542935bffcb89053",
+  "problem": {
+    "workflow_run": 44256170433,
+    "workflow": "Editor Core Test",
+    "conclusion": "failure",
+    "failed_step": "Run Editor browser layout regression",
+    "assertion": "tests/browser/editor-page-interactions.test.js expected directTargetLookups to equal 1 after prior valid keyboard activation; actual was 2.",
+    "diagnosis": "The product lookup allowlist behavior was intact. The test incorrectly assumed an absolute counter value despite earlier legitimate activations incrementing it."
+  },
+  "fix": {
+    "path": "tests/browser/editor-page-interactions.test.js",
+    "change": "Snapshot directTargetLookups and wholePageScans immediately before injecting an invalid target ID; assert both counters remain unchanged after the invalid action.",
+    "sha256": "ebb3c5f9f8e5d78974fd53e915eb0ddac34ab904e43d4a37557bb3290d765158",
+    "git_blob_sha": "55803171562aa366fbbbfd4b4ed5e88767781c32"
+  },
+  "checks": {
+    "node_check": "PASS",
+    "diff_check": "PASS",
+    "targeted_chromium": "PASS; node --test tests/browser/editor-page-interactions.test.js; 1/1 test, 14.1 seconds.",
+    "hosted_editor_core": "Historical runtime-source run 44256170433 remains FAILED on the previous test assertion; no rerun/dispatch was started. This test-only [skip ci] follow-up does not claim hosted CI PASS.",
+    "worker_deployment": "Not changed or redeployed; test/docs-only follow-up.",
+    "production_health_and_asset_hashes": "No new probe required for this test-only change; last exact-source smoke on runtime commit 7208fcab verified HTTP 200 and 34/34 configured public asset hashes.",
+    "current_read_only_cloudflare_deployment": "0c89582c-f378-4012-87d8-67c217d38c0a; Worker f6e186ac-4d10-48cd-9697-7681e7b8daa2; 100% traffic."
+  },
+  "limitations": [
+    "This fixes one Editor Core regression assertion and does not certify the entire Visual Editor or the complete EDT-039 acceptance matrix.",
+    "77.44.7.D remains OPEN / NOT_CERTIFIED; manual and physical Editor acceptance is deferred until the complete Editor.",
+    "Save and Publish remain distinct.",
+    "No production D1/R2 mutation, paid service, Worker deployment, or new cost."
+  ],
+  "new_paid_cost": "0 Ft"
+}
