@@ -1,6 +1,6 @@
 {
   "schema": "sanci.editor.page-action-timer-trigger.v1",
-  "recorded_at_utc": "2026-11-18T10:43:00Z",
+  "recorded_at_utc": "2026-11-18T10:49:00Z",
   "repository": "sanci9517/sanci9517",
   "branch": "v2/foundation",
   "verified_base_head": "ccb6fb451017141964bd2ba7219feb77881175f0",
@@ -191,5 +191,7 @@
   "production_release": "PASS_EXACT_SHA_HEALTH_AND_PUBLIC_ASSET_SMOKE; 100% traffic verified; Editor Core exact-SHA CI remains in progress; full Visual Editor/D stays open.",
   "metrics_id": "20261118103518-2634136f",
   "docs_followup_metrics_id": "20261118103518-2634136f",
-  "docs_followup_commit": "PENDING [skip ci] docs-only fast-forward."
+  "docs_followup_commit": "d3125656243a8e3058445eae03ab55f0c2c692f3",
+  "docs_evidence_correction_commit": "fb528fe357a3d2f0f69cee0f3e12da774dfdccf0",
+  "docs_evidence_correction_metrics_id": "20261118104852-65d2363d"
 }
