@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261118105957-7ccdb1ec",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-18T10:59:57.924Z",
+  "finished_at": "2026-11-18T11:08:35.546Z",
+  "wall_seconds": 518,
+  "paused_seconds": 0,
+  "measured_seconds": 518,
+  "status": "partial",
+  "kind": "test",
+  "summary": "Sikertelen Editor Core browser assertion okának ellenőrzése; publikus háttér route regresszió stabilizálva és célzott Chromiumban PASS, de hosted exact-SHA teljes kapu nem futott újra.",
+  "evidence": [
+    "tests/browser/editor-content-system.test.js:PASS",
+    "docs/evidence/editor-content-system-hover-regression-2026-11-18.json"
+  ],
+  "checks": "CHROMIUM_PATH=/usr/bin/chromium node tests/browser/editor-content-system.test.js PASS 1/1; git diff --check PASS; canonical plan structure PASS; traceability 396/396 PASS; hosted rerun NOT STARTED",
+  "started_revision": "2f01a698c06e0de36ffaba66b661e0f9e3104854",
+  "finished_revision": "2f01a698c06e0de36ffaba66b661e0f9e3104854",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

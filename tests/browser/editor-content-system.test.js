@@ -807,6 +807,11 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   assert.equal(await live.locator(`h3[data-node-id="${ids.heading}"]`).textContent(),'Módosított főcím');
   assert.equal(await node(live,'button').getAttribute('href'),'/p/updated');assert.equal(await node(live,'button').getAttribute('rel'),'noopener noreferrer');
   assert.equal(await node(live,'button').getAttribute('aria-label'),'Alkotói bemutatkozás megnyitása');
+  // The public hover state intentionally removes this image. Move the pointer
+  // outside the centered page before asserting its non-hover published style;
+  // Chromium can preserve pointer coordinates across reload and viewport resize.
+  await live.mouse.move(1350,890);
+  assert.equal(await node(live,'button').evaluate(el=>el.matches(':hover')),false,'published base background is checked outside the intentionally image-free hover state');
   assert.match(await node(live,'button').evaluate(el=>getComputedStyle(el).backgroundImage),/\/media\/6b1c2e65-e46e-4764-b234-123456789abc/,'Publish serves the background through the guarded public route');
   assert.match(await node(live,'button').evaluate(el=>getComputedStyle(el).backgroundPosition),/^50% 0%/);
   await node(live,'button').hover();await live.waitForFunction(id=>getComputedStyle(document.querySelector(`[data-node-id="${id}"]`)).backgroundColor==='rgb(220, 20, 60)',ids.button);

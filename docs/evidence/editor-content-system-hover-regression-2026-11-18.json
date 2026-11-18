@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-11-18T11:04:00Z",
+  "active_plan_point": {
+    "ids": ["77.44", "WEB-011", "77.44.7.D", "EDT-039"],
+    "status": "OPEN / NOT_CERTIFIED",
+    "full_editor_acceptance": "DEFERRED_UNTIL_COMPLETE_EDITOR",
+    "save_publish_separation": true
+  },
+  "ci_failure": {
+    "workflow": "Editor Core Test",
+    "run_id": 44286406695,
+    "run_url": "https://github.com/sanci9517/sanci9517/actions/runs/44286406695",
+    "source_sha": "6a38cb4242c83268280cf1749e940a230314e679",
+    "job_id": 134740102423,
+    "failed_step": "Run Editor browser layout regression",
+    "test": "tests/browser/editor-content-system.test.js",
+    "assertion": "Publish serves the background through the guarded public route",
+    "line": 810,
+    "actual": "",
+    "expected": "/media/6b1c2e65-e46e-4764-b234-123456789abc",
+    "other_layout_files": "57/58 passed; subsequent editor-page-interactions and remaining browser files passed"
+  },
+  "diagnosis_and_fix": {
+    "finding": "The fixture intentionally removes background-image in its hover state, but the base-style assertion did not explicitly move Chromium's pointer away after reload and viewport changes. The CI's empty computed value is consistent with a pointer-dependent hover state, so the assertion now establishes and checks a non-hover precondition before checking the published asset route.",
+    "files": ["tests/browser/editor-content-system.test.js"],
+    "runtime_source_changed": false,
+    "added_guard": "Move the live-page pointer to (1350,890), assert the button does not match :hover, then retain the strict guarded /media/<asset-id> assertion."
+  },
+  "local_verification": {
+    "command": "CHROMIUM_PATH=/usr/bin/chromium node tests/browser/editor-content-system.test.js",
+    "result": "PASS, 1/1 real Chromium test; 37.16 seconds",
+    "diff_check": "PASS"
+  },
+  "production": {
+    "cloudflare_deployment_id": "596e50f3-c830-4371-a1d7-e48f468659dc",
+    "worker_version_id": "68b853e6-afbb-4e45-b579-1735695dfc4d",
+    "traffic_percent": 100,
+    "read_only_control_plane_get": "PASS",
+    "runtime_change_in_this_fix": false,
+    "new_deployment_needed": false,
+    "public_health_in_this_block": "NOT_RUN"
+  },
+  "release_and_cost": {
+    "test_only_commit_policy": "[skip ci]; no Worker deployment",
+    "new_hosted_ci_rerun": "NOT_STARTED; GitHub Actions free quota is recorded exhausted in the canonical cost rules",
+    "new_cost_huf": 0,
+    "production_d1_writes_or_migrations": 0,
+    "r2_mutations_or_deletions": 0,
+    "dependencies_added": 0
+  },
+  "limitations": [
+    "The local regression is green after the test-only stabilization, but this result is not a hosted Editor Core PASS for the new test SHA.",
+    "The full Editor Core workflow remains unverified on the follow-up SHA; D-01 through D-07 and 77.44.7.D remain OPEN / NOT_CERTIFIED.",
+    "Full Visual Editor manual and physical acceptance remains deferred until the Editor is complete."
+  ]
+}
