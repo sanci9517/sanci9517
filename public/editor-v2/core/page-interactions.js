@@ -3,11 +3,12 @@
 // separate server-side automation/workflow engine.
 export const PAGE_ACTIONS = Object.freeze({
   'scroll-to': Object.freeze({ label: 'Ugrás egy elemhez', events: Object.freeze(['click', 'focus']), targetTypes: null, indexKey: null }),
-  'select-tab': Object.freeze({ label: 'Fül kiválasztása', events: Object.freeze(['click', 'focus', 'hover', 'load']), targetTypes: Object.freeze(['tabs']), indexKey: 'itemIndex' }),
+  'select-tab': Object.freeze({ label: 'Fül kiválasztása', events: Object.freeze(['click', 'focus', 'hover', 'load', 'timer']), targetTypes: Object.freeze(['tabs']), indexKey: 'itemIndex' }),
   'toggle-disclosure': Object.freeze({ label: 'Lenyitható rész váltása', events: Object.freeze(['click', 'focus']), targetTypes: Object.freeze(['accordion', 'dropdown']), indexKey: 'itemIndex' })
 });
-export const PAGE_ACTION_EVENTS = Object.freeze(['click', 'focus', 'hover', 'load']);
+export const PAGE_ACTION_EVENTS = Object.freeze(['click', 'focus', 'hover', 'load', 'timer']);
 export const PAGE_ACTION_MAX_PER_NODE = 1;
+export const PAGE_ACTION_TIMER_DELAYS_MS = Object.freeze([3000, 5000, 10000]);
 const ID = /^[A-Za-z0-9_-]{1,120}$/;
 const isRecord = value => value !== null && typeof value === 'object' && !Array.isArray(value);
 const itemCount = node => Array.isArray(node?.props?.items) ? Math.min(node.props.items.length, 40) : 0;
@@ -50,7 +51,11 @@ export function normalizePageInteractions(value, sourceNode, nodes) {
     }
     normalized[definition.indexKey] = index;
   }
-  const allowed = new Set(['schemaVersion', 'event', 'action', 'targetId', ...(definition.indexKey ? [definition.indexKey] : [])]);
+  if (record.event === 'timer') {
+    if (!PAGE_ACTION_TIMER_DELAYS_MS.includes(record.delayMs)) invalid('Az oldalinterakció időzítése nem támogatott.');
+    normalized.delayMs = record.delayMs;
+  }
+  const allowed = new Set(['schemaVersion', 'event', 'action', 'targetId', ...(definition.indexKey ? [definition.indexKey] : []), ...(record.event === 'timer' ? ['delayMs'] : [])]);
   if (Object.keys(record).some(key => !allowed.has(key))) invalid('Az oldalinterakció tiltott mezőt tartalmaz.');
   return [normalized];
 }
@@ -67,6 +72,7 @@ export function pageInteractionAttributes(node, nodes) {
     'data-page-action': action.action,
     'data-page-action-event': action.event,
     'data-page-action-target': action.targetId,
-    ...(Number.isInteger(action.itemIndex) ? { 'data-page-action-index': String(action.itemIndex) } : {})
+    ...(Number.isInteger(action.itemIndex) ? { 'data-page-action-index': String(action.itemIndex) } : {}),
+    ...(PAGE_ACTION_TIMER_DELAYS_MS.includes(action.delayMs) ? { 'data-page-action-delay-ms': String(action.delayMs) } : {})
   };
 }

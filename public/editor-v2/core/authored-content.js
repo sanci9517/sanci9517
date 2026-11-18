@@ -1,5 +1,5 @@
 import { validatedLinkHref } from './richtext-links.js?v=20261117-d03-invalid-media-id-guidance-v1';
-import { pageInteractionAttributes, safePageInteraction } from './page-interactions.js?v=20261118-edt039-load-tab-trigger-v1';
+import { PAGE_ACTION_TIMER_DELAYS_MS, pageInteractionAttributes, safePageInteraction } from './page-interactions.js?v=20261118-edt039-timer-trigger-v1';
 
 export const CONTENT_VERSION=1;
 // Shared by the editor picker and the server-side media upload/list contract.
@@ -284,6 +284,10 @@ export function initContentInteractions(root){
   if(root.dataset.contentInteractions==='1')return;root.dataset.contentInteractions='1';
   const view=root.ownerDocument?.defaultView,tabQueryKey='creator-tab',maxTabQueryEntries=40;
   const editorCanvas=Boolean(root.closest?.('.node-content'));
+  const pendingTimers=new Map();
+  const cancelTimer=targetId=>{const timer=pendingTimers.get(targetId);if(timer===undefined)return;view?.clearTimeout?.(timer);pendingTimers.delete(targetId)};
+  const cancelTimers=()=>{for(const targetId of pendingTimers.keys())cancelTimer(targetId)};
+  const cancelTimerForEvent=event=>{const target=event.target?.closest?.('[data-page-node-id]');if(target&&root.contains(target))cancelTimer(target.dataset.pageNodeId)};
   const parseTabEntry=value=>{
     if(typeof value!=='string'||value.length>128)return null;
     const separator=value.lastIndexOf(':');if(separator<1)return null;
@@ -360,7 +364,8 @@ export function initContentInteractions(root){
       track.scrollBy({left:(key==='ArrowRight'?1:-1)*track.clientWidth,behavior});
     }
   };
-  root.addEventListener('focusin',event=>{const actionSource=event.target?.closest?.('[data-page-action]');if(actionSource&&root.contains(actionSource)&&actionSource.dataset.pageActionEvent==='focus')runPageAction(actionSource)});
+  root.addEventListener('focusin',event=>{cancelTimerForEvent(event);const actionSource=event.target?.closest?.('[data-page-action]');if(actionSource&&root.contains(actionSource)&&actionSource.dataset.pageActionEvent==='focus')runPageAction(actionSource)});
+  root.addEventListener('pointerdown',cancelTimerForEvent);
   root.addEventListener('pointerover',event=>{
     if(event.pointerType!=='mouse'&&event.pointerType!=='pen')return;
     const actionSource=event.target?.closest?.('[data-page-action]');
@@ -370,7 +375,7 @@ export function initContentInteractions(root){
     if(event.relatedTarget&&actionSource.contains(event.relatedTarget))return;
     runPageAction(actionSource);
   });
-  root.addEventListener('click',event=>{const actionSource=event.target.closest('[data-page-action]'),actionEvent=actionSource?.dataset?.pageActionEvent;if(actionSource&&root.contains(actionSource)&&(actionEvent==='click'||actionEvent==='hover')&&runPageAction(actionSource))event.preventDefault();const zoom=event.target.closest('[data-lightbox-src]');if(zoom&&root.contains(zoom)&&safeSrc(zoom.dataset.lightboxSrc)){
+  root.addEventListener('click',event=>{const selectedTab=event.target.closest('[role="tab"]');if(selectedTab&&root.contains(selectedTab)){const target=selectedTab.closest('[data-page-node-id]');if(target)cancelTimer(target.dataset.pageNodeId)}const actionSource=event.target.closest('[data-page-action]'),actionEvent=actionSource?.dataset?.pageActionEvent;if(actionSource&&root.contains(actionSource)&&(actionEvent==='click'||actionEvent==='hover')&&runPageAction(actionSource))event.preventDefault();const zoom=event.target.closest('[data-lightbox-src]');if(zoom&&root.contains(zoom)&&safeSrc(zoom.dataset.lightboxSrc)){
     // The preview is scoped to its own gallery/carousel; nested galleries
     // elsewhere on the page never leak into this lightbox's navigation.
     const container=zoom.closest('.creator-gallery,.creator-carousel');
@@ -424,17 +429,31 @@ export function initContentInteractions(root){
   });
   root.addEventListener('keydown',event=>{const tab=event.target.closest('[role="tab"]');if(!tab||!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;const tabs=[...tab.closest('[role="tablist"]').querySelectorAll('[role="tab"]')],index=tabs.indexOf(tab);const next=tabs[event.key==='Home'?0:event.key==='End'?tabs.length-1:(index+(event.key==='ArrowRight'?1:-1)+tabs.length)%tabs.length];event.preventDefault();activate(next);next.focus()});
   if(view&&!editorCanvas){
-    const applyInitialPageState=()=>{
-      const urlState=readTabUrlState();
-      applyTabUrlState(urlState);
+    const applyLoadBaseline=urlState=>{
+      const claimedTargets=new Set(urlState.keys());
       const loadTargets=new Set();
       for(const source of root.querySelectorAll('[data-page-action-event="load"]')){
         const targetId=source.dataset.pageActionTarget;
-        if(typeof targetId!=='string'||urlState.has(targetId)||loadTargets.has(targetId))continue;
-        if(runPageAction(source,{writeUrl:false}))loadTargets.add(targetId);
+        if(typeof targetId!=='string'||claimedTargets.has(targetId)||loadTargets.has(targetId))continue;
+        if(runPageAction(source,{writeUrl:false})){loadTargets.add(targetId);claimedTargets.add(targetId)}
       }
+      return loadTargets;
     };
-    applyInitialPageState();
-    view.addEventListener('popstate',applyInitialPageState);
+    const urlState=readTabUrlState();
+    applyTabUrlState(urlState);
+    const loadTargets=applyLoadBaseline(urlState);
+    if(!view.document?.hidden){
+      for(const source of root.querySelectorAll('[data-page-action-event="timer"]')){
+        const targetId=source.dataset.pageActionTarget,delayMs=Number(source.dataset.pageActionDelayMs);
+        if(typeof targetId!=='string'||urlState.has(targetId)||loadTargets.has(targetId)||pendingTimers.has(targetId)||!PAGE_ACTION_TIMER_DELAYS_MS.includes(delayMs))continue;
+        const timer=view.setTimeout(()=>{
+          pendingTimers.delete(targetId);
+          if(root.isConnected&&!view.document?.hidden)runPageAction(source,{writeUrl:false});
+        },delayMs);
+        pendingTimers.set(targetId,timer);
+      }
+    }
+    view.addEventListener('popstate',()=>{cancelTimers();const nextState=readTabUrlState();applyTabUrlState(nextState);applyLoadBaseline(nextState)});
+    view.document?.addEventListener('visibilitychange',()=>{if(view.document.hidden)cancelTimers()});
   }
 }

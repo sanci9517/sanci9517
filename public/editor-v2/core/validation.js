@@ -8,7 +8,7 @@ import {validateAccessibility} from './accessibility.js';
 
 import { getNode, validateDocument, normalizeRichText } from './schema.js';
 import { validateElementContent as validateStructuredContent,isStructuredType } from './element-content.js?v=20261117-d01-private-media-double-decode-v1';
-import { validateElementContent as validateAuthoredContent } from './authored-content.js?v=20261117-d03-invalid-media-id-guidance-v1';
+import { validateElementContent as validateAuthoredContent } from './authored-content.js?v=20261118-edt039-timer-trigger-v1';
 import {validateStateStyles} from './state-styles.js';
 
 export function findReachableNodeIds(page) {

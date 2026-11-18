@@ -1,0 +1,103 @@
+{
+  "schema": "sanci.editor.page-action-timer-trigger.v1",
+  "recorded_at_utc": "2026-11-18T10:27:03Z",
+  "repository": "sanci9517/sanci9517",
+  "branch": "v2/foundation",
+  "verified_base_head": "ccb6fb451017141964bd2ba7219feb77881175f0",
+  "plan_point": "77.44.7 / EDT-039 Page Actions",
+  "status": "LOCAL_CHECKS_PASS_RELEASE_PENDING",
+  "scope": {
+    "feature": "Opt-in bounded timer trigger for same-page select-tab Page Actions.",
+    "allowlist": "timer is accepted only for select-tab; delayMs must be exactly 3000, 5000, or 10000; other actions, arbitrary delays, and unexpected fields are rejected.",
+    "behavior": "Public page and Preview schedule the tab action once at initialization; the Editor Canvas does not run it. An explicit URL tab state and successful load action win; user focus/pointer/tab use cancels the pending timer for that target; hidden-tab and popstate cancel timers; the timer does not write URL/history.",
+    "save_publish": "The browser lifecycle regression verifies Save leaves the published action unchanged, Preview reads the draft, and separate Publish enables the timer on the public route.",
+    "no_side_effects": "No arbitrary JavaScript, navigation, workflow execution, database write/migration, R2 mutation, dependency, or paid resource.",
+    "changed_runtime_paths": [
+      "public/assets/page-renderer.js",
+      "public/editor-v2/app.js",
+      "public/editor-v2/core/authored-content.js",
+      "public/editor-v2/core/canvas-engine.js",
+      "public/editor-v2/core/capability-matrix.js",
+      "public/editor-v2/core/commands.js",
+      "public/editor-v2/core/content-profiles.js",
+      "public/editor-v2/core/page-interactions.js",
+      "public/editor-v2/core/schema.js",
+      "public/editor-v2/core/validation.js",
+      "public/editor-v2/ui/accessibility-fields.js",
+      "public/editor-v2/ui/element-content-controls.js",
+      "public/editor-v2/ui/page-interaction-controls.js",
+      "public/visual-page.html"
+    ],
+    "changed_test_paths": [
+      "public/editor-v2/tests/page-interactions.test.js",
+      "tests/browser/editor-page-interactions.test.js"
+    ]
+  },
+  "checks": {
+    "page_action_unit": "PASS; included in npm run test:editor; 22/22 Editor unit test files.",
+    "editor_unit_suite": "PASS; npm run test:editor; 22/22 Editor files and 4/4 subreaper/manifest checks.",
+    "typecheck": "PASS; npm run typecheck -- --pretty false.",
+    "targeted_browser": "PASS; CHROMIUM_PATH=/usr/bin/chromium node --test tests/browser/editor-page-interactions.test.js; 1/1, 42.96 seconds.",
+    "syntax_and_diff": "PASS; node --check on changed JavaScript; git diff --check.",
+    "canonical_plan_structure": "PASS; python3 scripts/check-canonical-plan.py; single complete 13-part plan and 396 mappings; acceptance not certified.",
+    "plan_contract": "PASS; python3 tests/plan-contract.test.py; 14/14.",
+    "feature_traceability": "PASS; python3 scripts/build-feature-traceability.py --check; 396/396 current source mappings.",
+    "active_plan_point": "77.44 / WEB-011; next 77.44.7.D; full D remains OPEN / NOT_CERTIFIED.",
+    "migration_safety_gate": "PASS; node scripts/web013-migration-safety-gate.mjs.",
+    "wrangler_dry_run": {
+      "status": "PASS_NO_PUBLISH",
+      "version": "4.130.0",
+      "asset_count": 194,
+      "total_kib": 392.3,
+      "gzip_kib": 100.61
+    },
+    "production_d1_preflight": {
+      "status": "PASS_READ_ONLY",
+      "query": "SELECT name FROM d1_migrations ORDER BY name DESC LIMIT 1",
+      "latest_migration": "0029_media_archive_unicode_additive.sql",
+      "rows_read": 1,
+      "rows_written": 0,
+      "changes": 0,
+      "changed_db": false
+    },
+    "exact_sha_ci": "PENDING: will run automatically when the verified runtime commit is pushed; no manual dispatch/rerun.",
+    "production_release": "PENDING: existing baseline only; runtime source not yet pushed or deployed."
+  },
+  "pre_release_worker_snapshot": {
+    "deployment_id": "90ccebf0-44c9-44bf-b636-8369d2b54764",
+    "version_id": "c2f19f80-6666-45cb-a5e0-07d0667b6522",
+    "traffic_percent": 100,
+    "observed_at_utc": "2026-11-18T10:27:03Z",
+    "meaning": "Read-only pre-release baseline; does not prove the new timer code is deployed."
+  },
+  "release": {
+    "runtime_commit": null,
+    "expected_parent": "ccb6fb451017141964bd2ba7219feb77881175f0",
+    "branch": "v2/foundation",
+    "push": "PENDING expected-head normal fast-forward; no force push.",
+    "post_release_ci": "PENDING",
+    "post_release_cloudflare_deployment": "PENDING",
+    "changed_asset_sha256": {
+      "public/assets/page-renderer.js": "4f015e35547fca6c04b9c77d7e205d8695615811dc2f67ebf31319c4105cff76",
+      "public/editor-v2/app.js": "49f64500acaeba5b12f499bcbc0d43d6bbf39beb460a23725e9db050f0d15eed",
+      "public/editor-v2/core/authored-content.js": "fe3139d61068c295b7c45342d99551d299629c61590dfeccd3822c6da38595ae",
+      "public/editor-v2/core/canvas-engine.js": "7f18a6d964ab83d79ceeae4d0290a3b2400c9b9e8ee0c57602da522da181cb4b",
+      "public/editor-v2/core/capability-matrix.js": "34a209c7b41f42cf4211964ff7eb4ef5801edd1ab22e19d86459b3a28d49682a",
+      "public/editor-v2/core/commands.js": "9154d11c56b857f665279c9674a1153fd5b2e8ac8381f2eb218c91de20ffb836",
+      "public/editor-v2/core/content-profiles.js": "aa1d45b0feeeb397fa9d89fdc5c1522d93df76bd664d6e4dba519c675816ef83",
+      "public/editor-v2/core/page-interactions.js": "66f6dd32b0fa7abe202fcd8e7106c3dfc4931d24d106cd0b2bde5ac0db76a88d",
+      "public/editor-v2/core/schema.js": "17546cb647f53cbf3986f65aa4133fea61fc5a6a048199bc01091ebad05cc75e",
+      "public/editor-v2/core/validation.js": "1bfc71ead1b5a0a56e05be179a55603cf8b527296329ec06132db9dc9fc57235",
+      "public/editor-v2/ui/accessibility-fields.js": "7bd3f5331f4e97f33be131e336d64846d3b3a8b156120cfd9c0f6539ec360db9",
+      "public/editor-v2/ui/element-content-controls.js": "ebe213e065fda89b16ffe1c1934d49b79c65a32a50f70a38690fa345127c2e68",
+      "public/editor-v2/ui/page-interaction-controls.js": "2ae8bddd45a35d6939dccd0a0cfcffcd21661894bdfd24a15aa05dea48ce42ef",
+      "public/visual-page.html": "0c9cc10ad7258ed6cbc74e7ed618c861a122e76a6ab91dc62351f31e0f301fa8"
+    }
+  },
+  "new_paid_cost": "0 Ft",
+  "limitations": [
+    "EDT-039, its complete trigger/form/security/accessibility/performance acceptance, the full Editor and 77.44.7.D remain OPEN / NOT_CERTIFIED.",
+    "Complete Visual Editor manual/physical acceptance remains DEFERRED to its final gate.",
+    "No production D1 migration/write or R2 mutation/deletion was performed."
+  ]
+}

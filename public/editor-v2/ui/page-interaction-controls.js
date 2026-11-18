@@ -1,4 +1,4 @@
-import { PAGE_ACTIONS, normalizePageInteractions } from '../core/page-interactions.js?v=20261118-edt039-load-tab-trigger-v1';
+import { PAGE_ACTIONS, PAGE_ACTION_TIMER_DELAYS_MS, normalizePageInteractions } from '../core/page-interactions.js?v=20261118-edt039-timer-trigger-v1';
 
 const ACTION_OPTIONS = Object.freeze([
   ['scroll-to', 'Ugrás egy elemhez'],
@@ -9,8 +9,10 @@ const EVENT_OPTIONS = Object.freeze([
   ['click', 'Kattintás'],
   ['focus', 'Fókuszba kerülés'],
   ['hover', 'Egér/toll fölé lépés (billentyűzettel is aktiválható)'],
-  ['load', 'Oldal betöltése']
+  ['load', 'Oldal betöltése'],
+  ['timer', 'Időzítve']
 ]);
+const DELAY_OPTIONS = Object.freeze(PAGE_ACTION_TIMER_DELAYS_MS.map(value => [String(value), `${value / 1000} másodperc`]));
 const labelFor = node => `${String(node?.name || node?.type || 'Elem').slice(0, 80)} · ${node?.type || 'ismeretlen'}`;
 const itemLabel = (node, index) => {
   const item = node?.props?.items?.[index];
@@ -45,7 +47,7 @@ export function renderPageInteractionControls(node, page, apply, disabled = fals
   heading.textContent = 'Oldalinterakció';
   const help = document.createElement('p');
   help.className = 'content-field-help';
-  help.textContent = 'Biztonságos, beállított eseményre működő művelet. A fül oldalbetöltéskor kiválasztható; a megosztott URL-ben kért fül ezt felülírja. A hover beállítás egér/toll fölé lépésre vált, és gombaktiválásra (kattintásra, billentyűzetre vagy érintésre) is működik. Nem futtat JavaScriptet, és nem navigál másik webhelyre.';
+  help.textContent = 'Biztonságos, beállított eseményre működő művelet. A fül oldalbetöltéskor váltható; a megosztott URL-ben kért fül ezt felülírja. Az időzített fülváltás csak 3, 5 vagy 10 másodperc lehet, és a célfül használata megszakítja. A hover egér/toll fölé lépésre vált, és billentyűzettel vagy érintéssel is aktiválható. Nem futtat JavaScriptet, és nem navigál másik webhelyre.';
   section.append(heading, help);
   if (typeof node.props?.href === 'string' && node.props.href.trim()) {
     const note = document.createElement('p');
@@ -152,15 +154,27 @@ export function renderPageInteractionControls(node, page, apply, disabled = fals
       section.append(itemField.wrap);
       itemField.input.onchange = () => save(targetField.input.value, readSelectedIndex());
     }
-    const save = (nextTargetId = targetId, nextIndex = index) => {
+    let readSelectedDelay = () => null;
+    if (eventSelect.input.value === 'timer') {
+      const delay = currentValid?.action === action && currentValid.targetId === targetId && currentValid.event === 'timer' && PAGE_ACTION_TIMER_DELAYS_MS.includes(currentValid.delayMs)
+        ? currentValid.delayMs : 5000;
+      const delayField = select('Várakozás', DELAY_OPTIONS, String(delay));
+      delayField.wrap.dataset.pageInteractionDynamic = '1';
+      delayField.input.disabled = disabled;
+      readSelectedDelay = () => Number(delayField.input.value);
+      delayField.input.onchange = () => save(targetField.input.value, readSelectedIndex(), readSelectedDelay());
+      section.append(delayField.wrap);
+    }
+    const save = (nextTargetId = targetId, nextIndex = index, nextDelay = readSelectedDelay()) => {
       const record = { schemaVersion: 1, event: eventSelect.input.value, action, targetId: nextTargetId };
       if (definition.indexKey) record[definition.indexKey] = nextIndex;
+      if (record.event === 'timer') record.delayMs = nextDelay;
       try { apply(normalizePageInteractions([record], node, nodes)); }
       catch (error) { addNote(error instanceof Error ? error.message : 'A művelet nem állítható be.'); }
     };
-    eventSelect.input.onchange = () => save(targetField.input.value, readSelectedIndex());
+    eventSelect.input.onchange = () => refresh(targetField.input.value);
     targetField.input.onchange = () => refresh(targetField.input.value);
-    if (!currentValid || currentValid.action !== action || currentValid.targetId !== targetId) save(targetId, index);
+    if (!currentValid || currentValid.action !== action || currentValid.targetId !== targetId || currentValid.event !== eventSelect.input.value || (eventSelect.input.value === 'timer' && currentValid.delayMs !== readSelectedDelay())) save(targetId, index, readSelectedDelay());
   };
   actionSelect.input.disabled = disabled;
   eventSelect.input.disabled = disabled;

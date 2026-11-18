@@ -31,6 +31,9 @@ test('Page Action registry normalizes only the supported same-page typed action 
   assert.deepEqual(normalizePageInteractions([{ schemaVersion: 1, event: 'load', action: 'select-tab', targetId: target.id, itemIndex: 1 }], source, page.nodes), [
     { schemaVersion: 1, event: 'load', action: 'select-tab', targetId: target.id, itemIndex: 1 }
   ], 'page-load actions are limited to selecting one same-page tab');
+  assert.deepEqual(normalizePageInteractions([{ schemaVersion: 1, event: 'timer', action: 'select-tab', targetId: target.id, itemIndex: 1, delayMs: 5000 }], source, page.nodes), [
+    { schemaVersion: 1, event: 'timer', action: 'select-tab', targetId: target.id, itemIndex: 1, delayMs: 5000 }
+  ], 'timed actions use a finite delay and only select a same-page tab');
   assert.deepEqual(normalizePageInteractions([{ schemaVersion: 1, event: 'click', action: 'toggle-disclosure', targetId: disclosure.id, itemIndex: 0 }], source, page.nodes), [
     { schemaVersion: 1, event: 'click', action: 'toggle-disclosure', targetId: disclosure.id, itemIndex: 0 }
   ]);
@@ -52,6 +55,11 @@ test('Page Action registry rejects scripts, selectors, foreign/missing nodes, ty
     action({ event: 'hover' }),
     action({ event: 'load' }),
     { schemaVersion: 1, event: 'load', action: 'scroll-to', targetId: target.id },
+    { schemaVersion: 1, event: 'timer', action: 'select-tab', targetId: target.id, itemIndex: 1 },
+    { schemaVersion: 1, event: 'timer', action: 'select-tab', targetId: target.id, itemIndex: 1, delayMs: 1234 },
+    { schemaVersion: 1, event: 'timer', action: 'select-tab', targetId: target.id, itemIndex: 1, delayMs: 5000, code: 'alert(1)' },
+    { schemaVersion: 1, event: 'click', action: 'select-tab', targetId: target.id, itemIndex: 1, delayMs: 5000 },
+    { schemaVersion: 1, event: 'timer', action: 'scroll-to', targetId: target.id, delayMs: 5000 },
     { schemaVersion: 1, event: 'click', action: 'select-tab', targetId: target.id, itemIndex: 2 },
     { schemaVersion: 1, event: 'click', action: 'toggle-disclosure', targetId: target.id, itemIndex: 0 }
   ]) assert.throws(() => normalizePageInteractions([invalid], source, page.nodes));
@@ -76,7 +84,9 @@ test('invalid persisted page actions fail Page Model validation and are omitted 
   assert.equal(contentAttributes(source, { pageNodes: page.nodes })['data-page-action'], 'select-tab');
   assert.equal(contentAttributes(source, { pageNodes: page.nodes })['data-page-action-event'], 'click');
   assert.equal(contentAttributes(source, { pageNodes: page.nodes })['data-page-action-target'], target.id);
-  source.interactions[0].event = 'focus';
+  source.interactions[0] = { schemaVersion: 1, event: 'timer', action: 'select-tab', targetId: target.id, itemIndex: 1, delayMs: 5000 };
+  assert.equal(pageInteractionAttributes(source, page.nodes)['data-page-action-delay-ms'], '5000');
+  source.interactions[0] = { schemaVersion: 1, event: 'focus', action: 'select-tab', targetId: target.id, itemIndex: 1 };
   assert.equal(pageInteractionAttributes(source, page.nodes)['data-page-action-event'], 'focus');
   source.interactions[0] = { ...source.interactions[0], event: 'hover', action: 'select-tab', itemIndex: 1 };
   assert.equal(contentAttributes(source, { pageNodes: page.nodes })['data-page-action-event'], 'hover');

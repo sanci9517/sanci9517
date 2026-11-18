@@ -7,7 +7,7 @@
  */
 
 import { resolveResponsiveValue } from './responsive.js';
-import { contentDefaults } from './authored-content.js?v=20261117-d03-invalid-media-id-guidance-v1';
+import { contentDefaults } from './authored-content.js?v=20261118-edt039-timer-trigger-v1';
 import { backgroundImageValue, legacyBackgroundColor, legacyBackgroundCompound, MEDIA_ASSET_ID } from './background-asset.js?v=20261117-edt040-motion-style-route';
 import { isAllowlistedMotionStyle } from './motion-style.js';
 export {legacyBackgroundColor} from './background-asset.js?v=20261117-edt040-motion-style-route';

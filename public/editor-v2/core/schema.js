@@ -1,5 +1,5 @@
 import { createDefaultScheduleConfig, normalizeScheduleConfig } from './schedule-schema.js';
-import { normalizePageInteractions } from './page-interactions.js?v=20261118-edt039-load-tab-trigger-v1';
+import { normalizePageInteractions } from './page-interactions.js?v=20261118-edt039-timer-trigger-v1';
 
 /*
  * Sanci9517 Visual Editor v2 — Page Model schema
