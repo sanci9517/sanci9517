@@ -141,6 +141,29 @@ test('EDT-039 page actions and EDT-040 motion save as draft, preview safely, and
   assert.equal(new URL(live.url()).searchParams.get('campaign'),'focus-test','the focus action preserves unrelated URL state');
   assert.equal(new URL(live.url()).searchParams.get('creator-tab'),`${tabsId}:0`,'focus-triggered tab selection updates the namespaced URL state');
 
+  // EDT-039 hover is a narrowly supported pointer enhancement: tab selection
+  // only, mouse/pen only, draft until Publish, with touch kept inert.
+  await selectButton();
+  const hoverEventControl=actionControls.getByLabel('Kiváltó esemény');
+  await actionControls.getByLabel('Művelet').selectOption('select-tab');
+  await hoverEventControl.selectOption('hover');
+  await actionControls.getByLabel('Cél elem').selectOption(tabsId);
+  await actionControls.getByLabel('Kiválasztott fül').selectOption('0');
+  await editor.locator('#save').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+  assert.equal(await liveNode(buttonId).getAttribute('data-page-action-event'),'focus','Save keeps the previous published trigger');
+  await editor.locator('#publish').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent==='Publikálva');
+  await live.goto(`${base}/p/page-actions?campaign=hover-test&creator-tab=${encodeURIComponent(`${tabsId}:1`)}`);
+  assert.equal(await liveNode(buttonId).getAttribute('data-page-action-event'),'hover','Publish exposes the configured hover trigger');
+  await liveNode(buttonId).evaluate(el=>el.dispatchEvent(new PointerEvent('pointerover',{bubbles:true,pointerType:'touch',relatedTarget:null})));
+  assert.equal(await liveNode(tabsId).getByRole('tab').nth(1).getAttribute('aria-selected'),'true','touch-generated pointer events do not impersonate hover');
+  await liveNode(buttonId).hover();
+  assert.equal(await liveNode(tabsId).getByRole('tab').nth(0).getAttribute('aria-selected'),'true','mouse entry activates the configured tab');
+  assert.equal(new URL(live.url()).searchParams.get('campaign'),'hover-test','hover-triggered tab state preserves unrelated URL parameters');
+  assert.equal(new URL(live.url()).searchParams.get('creator-tab'),`${tabsId}:0`,'hover-triggered tab state remains deep-linkable');
+  await liveNode(tabsId).getByRole('tab').nth(0).focus();
+  await liveNode(tabsId).getByRole('tab').nth(0).press('ArrowRight');
+  assert.equal(await liveNode(tabsId).getByRole('tab').nth(1).getAttribute('aria-selected'),'true','hover does not replace the tabs keyboard interaction');
+
   // EDT-040: motion is a typed responsive style, never authored CSS/JS.
   await editor.emulateMedia({reducedMotion:'no-preference'});
   await live.emulateMedia({reducedMotion:'no-preference'});

@@ -2,11 +2,11 @@
 // saved with the Page Model; they are not JavaScript and cannot invoke the
 // separate server-side automation/workflow engine.
 export const PAGE_ACTIONS = Object.freeze({
-  'scroll-to': Object.freeze({ label: 'Ugrás egy elemhez', targetTypes: null, indexKey: null }),
-  'select-tab': Object.freeze({ label: 'Fül kiválasztása', targetTypes: Object.freeze(['tabs']), indexKey: 'itemIndex' }),
-  'toggle-disclosure': Object.freeze({ label: 'Lenyitható rész váltása', targetTypes: Object.freeze(['accordion', 'dropdown']), indexKey: 'itemIndex' })
+  'scroll-to': Object.freeze({ label: 'Ugrás egy elemhez', events: Object.freeze(['click', 'focus']), targetTypes: null, indexKey: null }),
+  'select-tab': Object.freeze({ label: 'Fül kiválasztása', events: Object.freeze(['click', 'focus', 'hover']), targetTypes: Object.freeze(['tabs']), indexKey: 'itemIndex' }),
+  'toggle-disclosure': Object.freeze({ label: 'Lenyitható rész váltása', events: Object.freeze(['click', 'focus']), targetTypes: Object.freeze(['accordion', 'dropdown']), indexKey: 'itemIndex' })
 });
-export const PAGE_ACTION_EVENTS = Object.freeze(['click', 'focus']);
+export const PAGE_ACTION_EVENTS = Object.freeze(['click', 'focus', 'hover']);
 export const PAGE_ACTION_MAX_PER_NODE = 1;
 const ID = /^[A-Za-z0-9_-]{1,120}$/;
 const isRecord = value => value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -28,7 +28,7 @@ export function normalizePageInteractions(value, sourceNode, nodes) {
   const record = interactions[0];
   if (!isRecord(record)) invalid('Az oldalinterakció formátuma érvénytelen.');
   const definition = PAGE_ACTIONS[record.action];
-  if (record.schemaVersion !== 1 || !PAGE_ACTION_EVENTS.includes(record.event) || !definition) {
+  if (record.schemaVersion !== 1 || !definition || !PAGE_ACTION_EVENTS.includes(record.event) || !definition.events.includes(record.event)) {
     invalid('Az oldalinterakció nem támogatott.');
   }
   const targetId = record.targetId;

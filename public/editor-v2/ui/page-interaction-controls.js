@@ -7,7 +7,8 @@ const ACTION_OPTIONS = Object.freeze([
 ]);
 const EVENT_OPTIONS = Object.freeze([
   ['click', 'Kattintás'],
-  ['focus', 'Fókuszba kerülés']
+  ['focus', 'Fókuszba kerülés'],
+  ['hover', 'Egérrel vagy tollal fölé lépés']
 ]);
 const labelFor = node => `${String(node?.name || node?.type || 'Elem').slice(0, 80)} · ${node?.type || 'ismeretlen'}`;
 const itemLabel = (node, index) => {
@@ -43,7 +44,7 @@ export function renderPageInteractionControls(node, page, apply, disabled = fals
   heading.textContent = 'Oldalinterakció';
   const help = document.createElement('p');
   help.className = 'content-field-help';
-  help.textContent = 'Biztonságos, kattintással vagy fókuszba kerüléssel működő művelet. Nem futtat JavaScriptet, és nem navigál másik webhelyre.';
+  help.textContent = 'Biztonságos, beállított eseményre működő művelet. Fülváltás egérrel vagy tollal fölé lépésre is beállítható; érintéshez kattintás kell. Nem futtat JavaScriptet, és nem navigál másik webhelyre.';
   section.append(heading, help);
   if (typeof node.props?.href === 'string' && node.props.href.trim()) {
     const note = document.createElement('p');
@@ -63,6 +64,18 @@ export function renderPageInteractionControls(node, page, apply, disabled = fals
   actionSelect.wrap.dataset.pageInteractionField = 'action';
   const eventSelect = select('Kiváltó esemény', EVENT_OPTIONS, currentValid?.event || 'click');
   eventSelect.wrap.dataset.pageInteractionField = 'event';
+  const syncEventsForAction = action => {
+    const allowed = PAGE_ACTIONS[action]?.events || ['click', 'focus'];
+    const previous = eventSelect.input.value;
+    eventSelect.input.replaceChildren(...allowed.map(value => {
+      const option = document.createElement('option');
+      option.value = value;
+      option.textContent = EVENT_OPTIONS.find(([candidate]) => candidate === value)?.[1] || value;
+      return option;
+    }));
+    eventSelect.input.value = allowed.includes(previous) ? previous : 'click';
+  };
+  syncEventsForAction(currentValid?.action || '');
   section.append(eventSelect.wrap, actionSelect.wrap);
 
   const addNote = text => {
@@ -76,6 +89,7 @@ export function renderPageInteractionControls(node, page, apply, disabled = fals
   const refresh = (preferredTargetId = currentValid?.targetId) => {
     section.querySelectorAll('[data-page-interaction-dynamic]').forEach(element => element.remove());
     const action = actionSelect.input.value;
+    syncEventsForAction(action);
     if (!action) {
       if (current && currentValid) {
         const clear = document.createElement('button');

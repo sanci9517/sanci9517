@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261118025021-fe9a6d21",
+  "task": "77.44.7.D-EDT-039-event-matrix",
+  "trigger": "manual",
+  "started_at": "2026-11-18T02:50:21.739Z",
+  "finished_at": "2026-11-18T03:01:17.161Z",
+  "wall_seconds": 655,
+  "paused_seconds": 0,
+  "measured_seconds": 655,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "EDT-039: restricted hover trigger for tab selection implemented; Editor unit, typecheck and Wrangler dry-run passed; local browser blocked by loopback EPERM, exact-SHA CI pending.",
+  "evidence": [
+    "docs/evidence/editor-page-hover-trigger-2026-11-18.json"
+  ],
+  "checks": "test:editor 22/22 plus Linux 4/4; page interactions 1/1; typecheck PASS; wrangler 4.130 dry-run PASS 194 assets; D1 SELECT-only read; browser local EPERM; exact-SHA remote CI pending",
+  "started_revision": "6aca0835389b5e9a8612b7e9b52ce6d4082d7b29",
+  "finished_revision": "6aca0835389b5e9a8612b7e9b52ce6d4082d7b29",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

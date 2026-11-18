@@ -1,5 +1,5 @@
 import { validatedLinkHref } from './richtext-links.js?v=20261117-d03-invalid-media-id-guidance-v1';
-import { pageInteractionAttributes, safePageInteraction } from './page-interactions.js?v=20261117-edt039-focus-trigger-v1';
+import { pageInteractionAttributes, safePageInteraction } from './page-interactions.js?v=20261118-edt039-hover-trigger-v1';
 
 export const CONTENT_VERSION=1;
 // Shared by the editor picker and the server-side media upload/list contract.
@@ -357,6 +357,15 @@ export function initContentInteractions(root){
     }
   };
   root.addEventListener('focusin',event=>{const actionSource=event.target?.closest?.('[data-page-action]');if(actionSource&&root.contains(actionSource)&&actionSource.dataset.pageActionEvent==='focus')runPageAction(actionSource)});
+  root.addEventListener('pointerover',event=>{
+    if(event.pointerType!=='mouse'&&event.pointerType!=='pen')return;
+    const actionSource=event.target?.closest?.('[data-page-action]');
+    if(!actionSource||!root.contains(actionSource)||actionSource.dataset.pageActionEvent!=='hover')return;
+    // pointerover bubbles across descendants; only enter the authored trigger
+    // once, and never turn a touch-generated pointer event into a hover action.
+    if(event.relatedTarget&&actionSource.contains(event.relatedTarget))return;
+    runPageAction(actionSource);
+  });
   root.addEventListener('click',event=>{const actionSource=event.target.closest('[data-page-action]');if(actionSource&&root.contains(actionSource)&&actionSource.dataset.pageActionEvent==='click'&&runPageAction(actionSource))event.preventDefault();const zoom=event.target.closest('[data-lightbox-src]');if(zoom&&root.contains(zoom)&&safeSrc(zoom.dataset.lightboxSrc)){
     // The preview is scoped to its own gallery/carousel; nested galleries
     // elsewhere on the page never leak into this lightbox's navigation.

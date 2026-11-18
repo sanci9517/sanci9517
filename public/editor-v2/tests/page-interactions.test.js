@@ -24,6 +24,9 @@ test('Page Action registry normalizes only the supported same-page typed action 
   assert.deepEqual(normalizePageInteractions([{ schemaVersion: 1, event: 'focus', action: 'select-tab', targetId: target.id, itemIndex: 1 }], source, page.nodes), [
     { schemaVersion: 1, event: 'focus', action: 'select-tab', targetId: target.id, itemIndex: 1 }
   ], 'keyboard focus is a typed, same-page trigger for the same safe action allowlist');
+  assert.deepEqual(normalizePageInteractions([{ schemaVersion: 1, event: 'hover', action: 'select-tab', targetId: target.id, itemIndex: 1 }], source, page.nodes), [
+    { schemaVersion: 1, event: 'hover', action: 'select-tab', targetId: target.id, itemIndex: 1 }
+  ], 'hover is limited to the reversible, same-page tab-selection action');
   assert.deepEqual(normalizePageInteractions([{ schemaVersion: 1, event: 'click', action: 'toggle-disclosure', targetId: disclosure.id, itemIndex: 0 }], source, page.nodes), [
     { schemaVersion: 1, event: 'click', action: 'toggle-disclosure', targetId: disclosure.id, itemIndex: 0 }
   ]);
@@ -47,6 +50,10 @@ test('Page Action registry rejects scripts, selectors, foreign/missing nodes, ty
     { schemaVersion: 1, event: 'click', action: 'select-tab', targetId: target.id, itemIndex: 2 },
     { schemaVersion: 1, event: 'click', action: 'toggle-disclosure', targetId: target.id, itemIndex: 0 }
   ]) assert.throws(() => normalizePageInteractions([invalid], source, page.nodes));
+  assert.throws(() => normalizePageInteractions([action({ event: 'hover', action: 'scroll-to' })], source, page.nodes), /nem támogatott/,
+    'hover cannot unexpectedly scroll the page while the pointer moves');
+  assert.throws(() => normalizePageInteractions([{ schemaVersion: 1, event: 'hover', action: 'toggle-disclosure', targetId: disclosure.id, itemIndex: 0 }], source, page.nodes), /nem támogatott/,
+    'hover cannot silently toggle a disclosure that would stay open after pointer exit');
   assert.throws(() => normalizePageInteractions([action(), action()], source, page.nodes));
   source.props.href = '/p/home';
   assert.throws(() => normalizePageInteractions([action()], source, page.nodes));
@@ -66,6 +73,11 @@ test('invalid persisted page actions fail Page Model validation and are omitted 
   assert.equal(contentAttributes(source, { pageNodes: page.nodes })['data-page-action-target'], target.id);
   source.interactions[0].event = 'focus';
   assert.equal(pageInteractionAttributes(source, page.nodes)['data-page-action-event'], 'focus');
+  source.interactions[0] = { ...source.interactions[0], event: 'hover', action: 'select-tab', itemIndex: 1 };
+  assert.equal(contentAttributes(source, { pageNodes: page.nodes })['data-page-action-event'], 'hover');
+  source.interactions[0].action = 'scroll-to';
+  assert.equal(safePageInteraction(source, page.nodes), null, 'an event/action mismatch is ignored even when persisted data is malformed');
+  source.interactions[0] = { schemaVersion: 1, event: 'click', action: 'select-tab', targetId: target.id, itemIndex: 0 };
   source.props = { text: 'Tovább', href: '' };
   assert.equal(getPublicationContentGuidance(source, { pageNodes: page.nodes }), null, 'the declared action satisfies button publication guidance');
   assert.doesNotThrow(() => validatePageForPublication(page), 'an action button can publish without a fake destination URL');
