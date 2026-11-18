@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "id": "20261115191122-04bdbce1",
+  "task": "77.44.7.D",
+  "trigger": "scheduled",
+  "started_at": "2026-11-15T19:11:22.306Z",
+  "abandoned_at": "2026-11-16T03:55:38.992Z",
+  "measured_seconds": null,
+  "status": "interrupted",
+  "reason": "A korábbi, megszakadt D-02 munkamenet lezárási ideje nem rekonstruálható; a teljes regresszió most folytatódik az aktuális v2/foundation HEAD-en.",
+  "started_revision": "4cd79c5cc8c3c0c74137e50c44763e4baf56892e",
+  "measurement": "missing end time; excluded from elapsed time and ETA"
+}

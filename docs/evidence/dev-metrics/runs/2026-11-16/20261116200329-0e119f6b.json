@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261116200329-0e119f6b",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-16T20:03:29.916Z",
+  "finished_at": "2026-11-16T20:37:25.262Z",
+  "wall_seconds": 2035,
+  "paused_seconds": 0,
+  "measured_seconds": 2035,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "D-02 malformed persisted CTA recovery verified by core, route and isolated Worker/Chromium tests; full D-02/D matrix remains open; broad Editor suite stopped early",
+  "evidence": [
+    "docs/evidence/editor-d02-malformed-cta-load-repair-2026-11-16.json",
+    "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md"
+  ],
+  "checks": "test:editor 16/16; publish-guard 18/18; media-storage 1/1; targeted Chromium 5; canonical plan/contracts 14/14; editor:layout 4/54 then deliberately stopped",
+  "started_revision": "4cd79c5cc8c3c0c74137e50c44763e4baf56892e",
+  "finished_revision": "4cd79c5cc8c3c0c74137e50c44763e4baf56892e",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

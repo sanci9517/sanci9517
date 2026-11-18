@@ -7,6 +7,7 @@ import { adminEditorRoute } from '../src/routes/admin/editor.ts';
 import { publicPagesRoute } from '../src/routes/public/pages.ts';
 import worker from '../src/index.ts';
 import { hashSessionToken } from '../src/core/auth/session.ts';
+import { defaultCardContent } from '../public/editor-v2/core/card-content.js';
 
 // Executes production route SQL against SQLite. The adapter models D1's atomic
 // batch contract; it does not claim to exercise the deployed Worker or D1.
@@ -144,6 +145,40 @@ test('malformed authored CTA drafts save separately but cannot replace the publi
   const liveAfter = await f.read();
   assert.equal(liveAfter.status,200);
   assert.deepEqual(await liveAfter.json(),liveBody,'public content remains identical to the valid pre-error publication');
+});
+
+test('malformed saved Card CTA remains a draft and cannot replace its published snapshot', async t => {
+  const f = await fixture(t), document = f.document('root-content');
+  const page = document.pages.p, root = page.nodes.root;
+  root.children = ['card'];
+  page.nodes.card = {
+    id:'card',type:'card',name:'Kártya CTA',parentId:'root',children:[],
+    props:{cardContent:{...defaultCardContent(),title:'Publikált kártya',actionLabel:'Megnyitás',actionHref:'/p/valid-target'}},style:{},
+    responsive:{desktop:{},tablet:{},mobile:{}},states:{},accessibility:{},
+    metadata:{cardContentVersion:1}
+  };
+  const initial = await f.edit({...f.publish('unused'),document,publish:true});
+  assert.equal(initial.status,200,'valid Card content establishes the public baseline');
+  const liveBefore = await f.read(), liveBody = await liveBefore.json();
+  const publishedSnapshot = f.db.prepare("SELECT published_content_json,published_revision_id FROM pages WHERE id='p'").get();
+
+  const invalidDraft = structuredClone(document);
+  invalidDraft.pages.p.nodes.card.props.cardContent.actionHref = {toString:null};
+  const saved = await f.edit({pageId:'p',document:invalidDraft,publish:false,expectedVersion:2});
+  assert.equal(saved.status,200,'Save preserves a malformed historical Card CTA only in the draft');
+  assert.equal((await saved.json()).data.published,false,'Card Save does not implicitly publish');
+  const stored = f.db.prepare("SELECT content_json,published_content_json,published_revision_id,is_published FROM pages WHERE id='p'").get();
+  assert.deepEqual(JSON.parse(stored.content_json).pages.p.nodes.card.props.cardContent.actionHref,{toString:null});
+  assert.equal(stored.published_content_json,publishedSnapshot.published_content_json,'draft Save preserves the published Card snapshot');
+  assert.equal(stored.published_revision_id,publishedSnapshot.published_revision_id);
+  assert.equal(stored.is_published,1);
+
+  const beforeRejectedPublish = f.state();
+  const rejected = await f.edit({pageId:'p',document:invalidDraft,publish:true,expectedVersion:3});
+  assert.equal(rejected.status,409,'Worker-side publication validation rejects malformed Card CTA objects');
+  assert.equal((await rejected.json()).error.code,'INVALID_CARD_CONTENT');
+  assert.deepEqual(f.state(),beforeRejectedPublish,'rejected Card Publish performs no revision or snapshot write');
+  assert.deepEqual(await (await f.read()).json(),liveBody,'the public Card remains identical to its pre-error snapshot');
 });
 
 test('D authored audio without native controls saves only as a draft and server rejects Publish', async t => {

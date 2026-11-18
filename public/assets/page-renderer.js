@@ -8,7 +8,7 @@ import {isStructuredType,renderElementContent,activateStructuredContent,safeMedi
 import {legacyImageSource,legacyPlayableSource,legacyPlaybackSettings,legacyImagePresentation,legacyImageCaption} from "../editor-v2/core/legacy-media-source.js";
 import {iconById} from "../editor-v2/core/icon-options.js";
 import {normalizeDividerStyle} from "../editor-v2/core/decorative-elements.js";
-import {normalizeCardContent,cardImageSrc} from "../editor-v2/core/card-content.js";
+import {normalizeCardContent,cardImageSrc} from "../editor-v2/core/card-content.js?v=20261118-d02-card-cta-recovery-v1";
 import {renderCountdownContent,activateCountdowns} from "../editor-v2/core/countdown-content.js?v=20261116-countdown-malformed-text-fallback-v1";
 import {renderSocialLinksHtml} from "../editor-v2/core/social-links.js";
 import {renderEmbedHtml,activateEmbeds} from "../editor-v2/core/creator-embed.js";

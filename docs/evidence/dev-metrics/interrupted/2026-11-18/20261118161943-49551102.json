@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "id": "20261118161943-49551102",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-18T16:19:43.076Z",
+  "abandoned_at": "2026-11-18T16:24:14.096Z",
+  "measured_seconds": null,
+  "status": "interrupted",
+  "reason": "A previous Codex block was interrupted before its verified outcome; no active work was performed in the gap.",
+  "started_revision": "4cd79c5cc8c3c0c74137e50c44763e4baf56892e",
+  "measurement": "missing end time; excluded from elapsed time and ETA"
+}

@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261117142356-e0f37ec2",
+  "task": "77.44.7.D-D02-release",
+  "trigger": "manual",
+  "started_at": "2026-11-17T14:23:56.495Z",
+  "finished_at": "2026-11-17T14:30:14.876Z",
+  "wall_seconds": 378,
+  "paused_seconds": 0,
+  "measured_seconds": 378,
+  "status": "partial",
+  "kind": "none",
+  "summary": "A távoli ág ellenőrzése megerősítette, hogy a D-02 hibás CTA-piszkozat betöltési/javítási szelete már a v2/foundation része; az exact-head hat workflow success. A teljes Editor elfogadás még OPEN, a távoli keresztlista 44 EDT rekordból 43 PARTIAL_SOURCE és 1 UNVERIFIED. Nincs új forrásmódosítás ebben az állapotfelmérő blokkban.",
+  "evidence": [
+    "docs/evidence/editor-d02-malformed-cta-load-repair-2026-11-16.json"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "4cd79c5cc8c3c0c74137e50c44763e4baf56892e",
+  "finished_revision": "4cd79c5cc8c3c0c74137e50c44763e4baf56892e",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

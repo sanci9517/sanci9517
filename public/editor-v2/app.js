@@ -32,7 +32,7 @@ import {legacyImageSource,legacyPlayableSource,legacyPlaybackSettings,legacyImag
 import {renderStructuredInspector} from './ui/structured-inspector.js?v=20261026-profile-route-contract';
 import {ICON_CHOICES,iconById} from './core/icon-options.js';
 import {DIVIDER_LINE_STYLES,normalizeDividerStyle} from './core/decorative-elements.js';
-import {defaultCardContent,cardImageSrc} from './core/card-content.js';
+import {defaultCardContent,cardImageSrc} from './core/card-content.js?v=20261118-d02-card-cta-recovery-v1';
 import {defaultCountdownContent,renderCountdownContent,activateCountdowns} from './core/countdown-content.js?v=20261114-next-stream-clock-v1';
 import {renderCountdownInspector} from './ui/countdown-inspector.js?v=20261026-route-contract';
 import {defaultSocialLinks,renderSocialLinksHtml} from './core/social-links.js';
@@ -40,7 +40,7 @@ import {renderSocialLinksInspector} from './ui/social-links-inspector.js?v=20261
 import {defaultEmbedContent,renderEmbedHtml} from './core/creator-embed.js';
 import {renderBasicContentInspector} from './ui/basic-content-inspector.js?v=20261026-profile-route-contract';
 import {renderLegacyMediaInspector} from './ui/legacy-media-inspector.js?v=20261101-richtext-multiblock-links';
-import {renderCardInspector} from './ui/card-content-inspector.js?v=20261101-richtext-multiblock-links';
+import {renderCardInspector} from './ui/card-content-inspector.js?v=20261118-d02-card-cta-recovery-v1';
 import {renderEmbedInspector} from './ui/creator-embed-inspector.js?v=20261026-profile-route-contract';
 import {defaultCodeSnippet,renderCodeSnippet,activateCodeBlocks} from './core/code-snippet.js';
 import {renderCodeSnippetInspector} from './ui/code-snippet-inspector.js?v=20261026-profile-route-contract';

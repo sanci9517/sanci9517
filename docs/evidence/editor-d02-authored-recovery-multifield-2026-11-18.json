@@ -1,0 +1,86 @@
+{
+  "schema": 1,
+  "captured_at": "2026-11-18T15:56:13Z",
+  "plan_point": "77.44.7.D / D-02 malformed persisted authored CTA multi-field recovery",
+  "status": "TARGETED_D02_LOCAL_REGRESSION_PASS; RELEASE_BLOCKED; FULL_D_OPEN_NOT_CERTIFIED",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "local_branch": "v2/foundation",
+    "local_head": "4cd79c5cc8c3c0c74137e50c44763e4baf56892e",
+    "remote_branch_head": "46e8a913caeda4493f6b429d2a7c2e8efd2d2790",
+    "remote_compare": {
+      "status": "ahead",
+      "ahead_by": 214,
+      "behind_by": 0,
+      "merge_base": "4cd79c5cc8c3c0c74137e50c44763e4baf56892e"
+    },
+    "runtime_candidate_not_pushed": [
+      "public/editor-v2/app.js",
+      "public/editor-v2/core/commands.js",
+      "public/editor-v2/core/state.js",
+      "public/editor-v2/core/validation.js",
+      "public/editor-v2/index.html",
+      "public/editor-v2/ui/basic-content-inspector.js"
+    ],
+    "local_sha256": {
+      "public/editor-v2/app.js": "18ff545f2c77808b0ef289985c8e6ee4cd0bf555d29d46a20a64cc3f0e97cdce",
+      "public/editor-v2/core/commands.js": "d6837e28e4091ee35d9e7924c5f308f46d6aaa1eb6232ce2f9fcedff4f871d0c",
+      "public/editor-v2/core/state.js": "0f11088a5a7c7f8e2c3ccd995f8e5ba0d2caae17ca4c9ae98eef678faeb137eb",
+      "public/editor-v2/core/validation.js": "f9c88f5a464e95df3f81cff11d2b265338b1e7703ebfae36cd090b803838f46a",
+      "public/editor-v2/index.html": "3e2e285478efc8f4e5fb64f49601a9cf13236f945883bd0fd022ffe2387eb5ae",
+      "public/editor-v2/ui/basic-content-inspector.js": "dc8d1f00ab4b8f596a0eaf7ef8ef1511367fae1789ce2d6bfbae2c4cc4f376aa",
+      "public/editor-v2/tests/core.test.js": "55b09493ba5ff57795ef6782f40625bce544fa1120bdfdcbfff5d9819e8683b1",
+      "tests/browser/editor-content-system.test.js": "4bfd22c3ee4e284fc766e461d2ba810cbf661ad1eecb596829c06ce10c8c4804"
+    },
+    "runtime_files_deployed": false
+  },
+  "regression": {
+    "root_cause": [
+      "Canvas and Inspector attempted native DOM string coercion on malformed persisted CTA text values, preventing repair UI initialization.",
+      "The repair-mode command allow-list omitted the Editor text surface command element.content.set; consequently the actual text textarea could not repair a malformed saved CTA."
+    ],
+    "fix": [
+      "The Canvas/Inspector renderers now display only strings and finite numbers for legacy authored text; malformed objects render blank rather than throwing.",
+      "Recovery is transient and only created for loaded malformed drafts. While active, authored repairs must target a node that itself fails authored-content validation. The UI text command is permitted only for malformed heading/text/button/link nodes with string input. Other commands, valid sibling edits and non-text targets remain blocked.",
+      "After the last invalid authored field is repaired, full strict document validation resumes. Save remains draft-only; Publish remains a separate strict gate."
+    ],
+    "scenario": [
+      "Open malformed persisted CTA with both href and text represented by non-string objects.",
+      "Repair href using the normal content property control, then repair text through the actual plain-text editor.",
+      "Save remains publish=false and preserves previous public snapshot.",
+      "Separate Publish exposes the repaired CTA.",
+      "Negative unit cases reject generic mutation, valid sibling mutation and content repair on a non-text node."
+    ],
+    "production_data": "None; browser fixture uses an isolated local HTTP test server and synthetic page data."
+  },
+  "checks": {
+    "npm run test:editor": "PASS 16/16 files",
+    "npm run test:editor:publish-guard": "PASS 18/18 cases",
+    "node --experimental-vm-modules tests/browser/editor-content-system.test.js": "PASS 1/1 Chromium scenario",
+    "npm run typecheck": "PASS",
+    "node --check changed JS files": "PASS",
+    "git diff --check": "PASS",
+    "python3 tests/plan-contract.test.py": "PASS 14/14",
+    "python3 scripts/build-feature-traceability.py --check": "PASS 396/396 source mappings",
+    "python3 scripts/check-canonical-plan.py": "PASS 13 masters / 396 mappings; functional acceptance NOT certified",
+    "python3 scripts/audit-active-plan-point.py": "PASS audit; cursor 77.44 / WEB-011; next 77.44.7.D OPEN; 146 PARTIAL_SOURCE / 250 UNVERIFIED",
+    "wrangler deploy --dry-run": "PASS Wrangler 4.130.0; 181 assets; 375.00 KiB / gzip 96.00 KiB; exited 0; no deployment"
+  },
+  "release": {
+    "git_push": "NOT DONE; local branch needs integration with the current remote head and exact-head validation.",
+    "ci": "NOT RUN; local patch is not present on GitHub, so no exact-SHA CI can represent it.",
+    "cloudflare_preflight": "NOT DONE; production D1 SELECT-only preflight and current Worker status were not independently verified in this run.",
+    "worker_deploy": "NOT DONE; no production deployment attempted.",
+    "production_d1_write_or_migration": false,
+    "production_r2_mutation_or_delete": false,
+    "cost": "0 Ft new paid-service spend; no CI dispatch or external writes.",
+    "blocker": "Current local checkout is 214 commits behind the verified remote branch. Cloudflare read/deployment connector access is blocked by its approval review error from earlier work; the review was not bypassed. AGENTS.md pre-deploy D1 read-only preflight therefore cannot be claimed.",
+    "verified_remote_tip_ci": {
+      "commit": "46e8a913caeda4493f6b429d2a7c2e8efd2d2790",
+      "combined_status_contexts": [],
+      "actions_runs_total_count": 0,
+      "meaning": "The remote tip has no CI runs, consistent with its latest [skip ci] documentation/test-only commit; this does not certify the local runtime candidate."
+    }
+  },
+  "scope_limit": "This is a targeted D-02 recovery slice, not completion of D-02, the D-01–D-07 feature/lifecycle matrix, or the complete Editor. Full manual/device acceptance remains deferred. Save and Publish remain separate."
+}

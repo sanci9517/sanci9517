@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261115182009-a19839fa",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-15T18:20:09.062Z",
+  "finished_at": "2026-11-15T18:49:23.665Z",
+  "wall_seconds": 1755,
+  "paused_seconds": 1027,
+  "measured_seconds": 728,
+  "status": "partial",
+  "kind": "code",
+  "summary": "D-03 quoted Excel TSV fix and local regression checks completed; PR #345 exact-SHA Editor Core CI remains in progress, so merge and production deploy are pending.",
+  "evidence": [
+    "docs/evidence/editor-d03-quoted-excel-tsv-2026-11-15.json"
+  ],
+  "checks": "Editor core, targeted Chromium, typecheck, WEB-013 migration gate, plan/traceability checks, Wrangler dry-run PASS; required PR Editor Core CI in progress",
+  "started_revision": "4cd79c5cc8c3c0c74137e50c44763e4baf56892e",
+  "finished_revision": "4cd79c5cc8c3c0c74137e50c44763e4baf56892e",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

@@ -1,13 +1,20 @@
-import {defaultCardContent,CARD_VARIANTS} from '../core/card-content.js';
+import {defaultCardContent,CARD_VARIANTS,cardActionValidationError} from '../core/card-content.js?v=20261118-d02-card-cta-recovery-v1';
 import {createCompositionInputs} from './composition-inputs.js';
 import {IMAGE_MIMES,mediaAssetPicker,setMediaAssetPickerSelection} from './element-content-controls.js?v=20261115-d03-table-tsv-v1';
 
 export function renderCardInspector(node,update,{pending=()=>{}}={}){
  const model={...defaultCardContent(),...(node.props?.cardContent||{})};
+ const invalidCtaValue=Boolean(cardActionValidationError(model));
  const composition=createCompositionInputs(pending);
  const section=document.createElement('section');section.className='card-content-inspector';
  const route=(control,key)=>{control.dataset.inspectorCommand='element.update';control.dataset.inspectorKey='props.cardContent.'+key;return control;};
  section.append(Object.assign(document.createElement('h3'),{textContent:'Kártya tartalma'}));
+ if(invalidCtaValue){
+  const warning=document.createElement('p');warning.className='property-validation card-content-inspector-error';warning.setAttribute('role','alert');
+  warning.textContent='A mentett kártyagomb tartalma hibás vagy nem támogatott. A javításig az eredeti adatot változatlanul őrizzük.';section.append(warning);
+  const repair=document.createElement('button');repair.type='button';repair.className='card-content-recovery';repair.dataset.cardAction='repair-invalid-cta';repair.textContent='A hibás kártyagomb eltávolítása és javítása';repair.disabled=Boolean(node.locked);
+  repair.onclick=()=>{if(!repair.disabled)save({actionLabel:'',actionHref:'',newWindow:false});};section.append(repair);
+ }
  let picker;
  const save=(patch,options)=>{
   const next={...model,...patch},previousAsset=model.imageAssetId;
@@ -22,7 +29,7 @@ export function renderCardInspector(node,update,{pending=()=>{}}={}){
  };
  const text=(label,key,{multiline=false,source=false,trim=false}={})=>{
   const wrap=route(document.createElement('label'),key);wrap.className='field';wrap.append(Object.assign(document.createElement('span'),{textContent:label}));
-  const input=document.createElement(multiline?'textarea':'input');input.value=model[key]??'';input.disabled=Boolean(node.locked);
+  const input=document.createElement(multiline?'textarea':'input');input.value=typeof model[key]==='string'?model[key]:'';input.disabled=Boolean(node.locked);
   input.setAttribute('aria-label',label);
   wrap.append(input,composition.attach(input,(value,options)=>save({[key]:trim?value.trim():value,...(source?{imageAssetId:''}:{})},options)));
   section.append(wrap);

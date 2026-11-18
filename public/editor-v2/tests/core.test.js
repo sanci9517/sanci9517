@@ -1548,7 +1548,7 @@ test('Card content model preserves nested elements and rejects unsafe links on P
 });
 
 test('Card shared Media IDs preserve legacy URLs and reject malformed unpublished IDs', async () => {
- const {normalizeCardContent,defaultCardContent,cardImageSrc}=await import('../core/card-content.js');
+ const {normalizeCardContent,defaultCardContent,cardImageSrc,cardActionValidationError}=await import('../core/card-content.js');
  const id='11111111-2222-4333-8444-555555555555';
  const original={...defaultCardContent(),imageSrc:'/images/legacy.jpg',imageAlt:'Kártya fénykép'};
  assert.equal(normalizeCardContent(original).imageAssetId,'','legacy URL cards need no migration');
@@ -1567,6 +1567,11 @@ test('Card shared Media IDs preserve legacy URLs and reject malformed unpublishe
  assert.throws(()=>normalizeCardContent(insecure),'an insecure Card image cannot enter an authored document');
  assert.equal(cardImageSrc({...original,imageSrc:'https://images.example.test/cover.jpg'}),'https://images.example.test/cover.jpg');
  assert.equal(normalizeCardContent({...original,actionLabel:'Open',actionHref:'http://example.test/page'}).actionHref,'http://example.test/page','the Card action URL retains its independent link policy');
+ assert.throws(()=>normalizeCardContent({...original,actionLabel:'Open',actionHref:{toString:null}}),/Érvénytelen kártyagomb-tartalom/,'malformed persisted Card CTA objects are rejected without coercion');
+ assert.match(cardActionValidationError({...original,actionLabel:'Open',actionHref:''}),/együtt add meg/,'the Inspector can expose recovery for an incomplete CTA pair');
+ assert.match(cardActionValidationError({...original,actionLabel:'Open',actionHref:'javascript:alert(1)'}),/Érvénytelen kártyagomb-hivatkozás/,'unsafe persisted CTA URLs expose the same explicit recovery');
+ assert.match(cardActionValidationError({...original,actionLabel:'Open',actionHref:'/p/about',newWindow:'false'}),/Érvénytelen újablak-beállítás/,'malformed CTA target flags expose the same explicit recovery');
+ assert.equal(cardActionValidationError({...original,actionLabel:'Open',actionHref:'/p/about',newWindow:false}),'','a valid authored CTA does not show recovery');
  const selected={...original,imageAssetId:id};
  assert.equal(cardImageSrc(selected,{editor:true}),'/api/admin/media?id='+id);
  assert.equal(cardImageSrc(selected),'/media/'+id);

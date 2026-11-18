@@ -216,6 +216,38 @@ for(const width of [390,1366])test(`Card Inspector IME, sources and Save/Publish
  }
  assert.ok(requests.every(req=>req.method==='GET'||(req.method==='POST'&&req.path==='/api/admin/editor')),'image removal never calls a file-delete or upload endpoint');
  if(width===390){
+  // A persisted malformed CTA must not crash Inspector construction or be
+  // silently rewritten by load/save. Only the explicit repair action may
+  // replace it, and draft Save remains separate from public Publish.
+  const savedCard=draft.pages[pageId].nodes[cardId].props.cardContent;
+  const publishedCard=published.pages[pageId].nodes[cardId].props.cardContent;
+  assert.equal(publishedCard.actionHref,'/p/about','the healthy Card CTA is already published before the corrupted draft is loaded');
+  const beforeMalformedLoad=posts.length;
+  savedCard.actionHref={toString:null};
+  await editor.reload();await inspectCard();
+  const damagedHref=field('Gomb hivatkozása');
+  assert.equal(await editor.locator('.card-content-inspector-error[role="alert"]').count(),1,
+   'a malformed saved Card CTA exposes an accessible recovery warning');
+  assert.equal(await damagedHref.inputValue(),'','the Inspector never coerces an arbitrary object into a native text value');
+  assert.equal(posts.length,beforeMalformedLoad,'opening the malformed Inspector never rewrites persisted or published data');
+  await editor.locator('#save').click();
+  assert.equal(posts.length,beforeMalformedLoad,'Save remains blocked until the invalid Card CTA is explicitly repaired');
+  await editor.getByRole('button',{name:'A hibás kártyagomb eltávolítása és javítása',exact:true}).click();
+  assert.equal(await editor.locator('.card-content-inspector-error').count(),0,'the explicit repair clears only the CTA error state');
+  assert.equal(await field('Gomb felirata (opcionális)').inputValue(),'','repair clears the coupled label together with the malformed URL');
+  assert.equal(await field('Gomb hivatkozása').inputValue(),'');
+  assert.equal(posts.length,beforeMalformedLoad,'repairing the Card is an editor change, not an implicit persistence request');
+  await saveDraft();
+  assert.equal(posts.at(-1).publish,false,'repair is saved as a draft only');
+  assert.equal(publishedCard.actionHref,'/p/about','Save leaves the previously published Card CTA intact');
+  await viewer.reload();
+  assert.equal(await publicCard.locator('.visual-card-action').getAttribute('href'),'/p/about','the live Card CTA is unchanged after draft repair');
+  await editor.reload();await inspectCard();
+  assert.equal(await editor.locator('.card-content-inspector-error').count(),0,'the repaired draft reloads as valid Card content');
+  await publishDraft();
+  assert.equal(posts.at(-1).publish,true,'only the separate Publish action updates the public Card');
+  await viewer.reload();
+  assert.equal(await publicCard.locator('.visual-card-action').count(),0,'the separately published repair removes the malformed Card CTA');
   const recovery=await editor.evaluate(async()=>{
    const {renderCardInspector}=await import('/editor-v2/ui/card-content-inspector.js');
    const {defaultCardContent}=await import('/editor-v2/core/card-content.js');

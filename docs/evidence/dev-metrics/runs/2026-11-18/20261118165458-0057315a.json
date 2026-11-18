@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261118165458-0057315a",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-18T16:54:58.834Z",
+  "finished_at": "2026-11-18T17:01:13.122Z",
+  "wall_seconds": 374,
+  "paused_seconds": 0,
+  "measured_seconds": 374,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "Restored prior missing text evidence without replaying stale source; verified current remote base, read-only D1 preflight, quota and plan/source integrity; preparing exact-SHA runtime release.",
+  "evidence": [
+    "docs/evidence/editor-d02-card-cta-recovery-2026-11-18.json"
+  ],
+  "checks": "plan contract 14/14; canonical 13 master/396; traceability 396; active cursor OPEN; migration safety gate; hash evidence matched; exact-SHA CI/deploy pending",
+  "started_revision": "46e8a913caeda4493f6b429d2a7c2e8efd2d2790",
+  "finished_revision": "46e8a913caeda4493f6b429d2a7c2e8efd2d2790",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

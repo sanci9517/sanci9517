@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261118162414-a3f2f462",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-18T16:24:14.143Z",
+  "finished_at": "2026-11-18T16:54:46.067Z",
+  "wall_seconds": 1832,
+  "paused_seconds": 0,
+  "measured_seconds": 1832,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "D-02 Card CTA recovery slice implemented and local regression checks passed; exact-SHA CI and production release not yet verified.",
+  "evidence": [
+    "docs/evidence/editor-d02-card-cta-recovery-2026-11-18.json"
+  ],
+  "checks": "Chromium 2/2; route publish guard 20/20; editor 22/22 plus 4/4; typecheck; plan contract 14/14; traceability 396/396; Wrangler dry-run; release pending",
+  "started_revision": "46e8a913caeda4493f6b429d2a7c2e8efd2d2790",
+  "finished_revision": "46e8a913caeda4493f6b429d2a7c2e8efd2d2790",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

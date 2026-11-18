@@ -1,0 +1,162 @@
+{
+  "schema": "sanci.editor.d02-card-cta-malformed-recovery.v1",
+  "recorded_at_utc": "2026-11-18T16:41:46Z",
+  "repository": "sanci9517/sanci9517",
+  "branch": "v2/foundation",
+  "base_head": "46e8a913caeda4493f6b429d2a7c2e8efd2d2790",
+  "plan_point": "77.44.7.D / D-02 Card authored CTA recovery",
+  "status": "LOCAL_ACCEPTANCE_PASS_RELEASE_PENDING",
+  "scope": {
+    "defect": "A malformed persisted Card CTA value such as actionHref={toString:null} could crash Card Inspector input construction or be implicitly string-coerced during normalization.",
+    "behavior": "Card CTA validation uses a shared non-coercing error helper. The Inspector safely renders malformed CTA values as blank, exposes an accessible warning and explicit repair action for malformed/incomplete CTA states, and preserves stored data until the user repairs it. Locked nodes cannot use the repair action.",
+    "save_publish": "Real Chromium verifies malformed saved draft load with no implicit writes, explicit repair, draft-only Save preserving the prior published CTA, repaired draft reload, and separate Publish. Actual Worker route code against isolated SQLite verifies malformed Card draft Save is retained without touching the published snapshot and Publish is rejected without revision or snapshot mutation.",
+    "changed_runtime_paths": [
+      "public/assets/page-renderer.js",
+      "public/editor-v2/app.js",
+      "public/editor-v2/core/card-content.js",
+      "public/editor-v2/core/commands.js",
+      "public/editor-v2/ui/card-content-inspector.js"
+    ],
+    "changed_test_paths": [
+      "public/editor-v2/tests/core.test.js",
+      "tests/browser/editor-card-content.test.js",
+      "tests/f0-3-route-integration.test.js"
+    ],
+    "other_changed_paths": [
+      "docs/evidence/feature-traceability.json"
+    ]
+  },
+  "checks": {
+    "targeted_browser": {
+      "status": "PASS",
+      "command": "node tests/browser/editor-card-content.test.js",
+      "result": "2/2 real Chromium viewport runs pass (390px and 1366px); 29.1 s."
+    },
+    "editor_unit_suite": {
+      "status": "PASS",
+      "command": "npm run test:editor",
+      "result": "22/22 Editor unit test files and 4/4 subreaper/manifest tests."
+    },
+    "typecheck": {
+      "status": "PASS",
+      "command": "npm run typecheck -- --pretty false"
+    },
+    "plan_contract": {
+      "status": "PASS",
+      "command": "python3 tests/plan-contract.test.py",
+      "result": "14/14"
+    },
+    "feature_traceability": {
+      "status": "PASS",
+      "command": "python3 scripts/build-feature-traceability.py --check",
+      "result": "396 source mappings current; acceptance remains NOT_CERTIFIED"
+    },
+    "active_plan_point": {
+      "status": "PASS",
+      "command": "python3 scripts/audit-active-plan-point.py",
+      "result": "77.44 / WEB-011; next 77.44.7.D; full D OPEN / NOT_CERTIFIED; 147 PARTIAL_SOURCE and 249 UNVERIFIED."
+    },
+    "canonical_plan": {
+      "status": "PASS",
+      "command": "python3 scripts/check-canonical-plan.py",
+      "result": "one complete 13-file master, 396 mappings; functional acceptance not certified"
+    },
+    "migration_safety_gate": {
+      "status": "PASS",
+      "command": "node scripts/web013-migration-safety-gate.mjs"
+    },
+    "wrangler_dry_run": {
+      "status": "PASS_NO_PUBLISH",
+      "version": "4.130.0",
+      "asset_count": 194,
+      "total_kib": 392.39,
+      "gzip_kib": 100.64
+    },
+    "syntax_and_diff": {
+      "status": "PASS",
+      "command": "node --check on five changed runtime JS files and browser test; git diff --check"
+    },
+    "production_d1_preflight": {
+      "status": "PASS_READ_ONLY",
+      "query": "SELECT name FROM d1_migrations ORDER BY name DESC LIMIT 1",
+      "latest_migration": "0029_media_archive_unicode_additive.sql",
+      "rows_read": 1,
+      "rows_written": 0,
+      "changes": 0,
+      "changed_db": false,
+      "checked_at_utc": "2026-11-18T16:58:30Z"
+    },
+    "production_baseline": {
+      "deployment_id": "9f82dfa7-fb94-4399-b639-9feeed555f35",
+      "worker_version_id": "e2d48c7f-09f7-4eaa-8c87-4a5528cf4860",
+      "traffic_percent": 100,
+      "health_http": 200,
+      "health_checked_at_utc": "2026-11-18T16:39:44Z",
+      "note": "Baseline only; this worktree change is not yet in production."
+    },
+    "github_baseline": {
+      "visibility": "public",
+      "base_commit_combined_statuses": [],
+      "exact_release_sha_workflows": "PENDING; no runtime push yet"
+    },
+    "worker_route_integration": {
+      "status": "PASS",
+      "command": "npm run test:editor:publish-guard",
+      "result": "20/20 isolated SQLite route integration tests; the new Card-specific Save/Publish regression passes."
+    },
+    "card_cta_unit": {
+      "status": "PASS",
+      "result": "Tests cover non-string coercion rejection, incomplete label/href pair, unsafe URL, malformed newWindow, and a valid CTA."
+    }
+  },
+  "local_sha256_before_release": {
+    "public/assets/page-renderer.js": "ac0b82b8ca7947eed60dafeb43df6b4123e60f232439bd9d830f28a490058a47",
+    "public/editor-v2/app.js": "ce2264c64d62c16d7d83403448b8c20f31e2b0e6ba81075800695242604afecf",
+    "public/editor-v2/core/card-content.js": "f9283cb81a37ae327319f0e5cf6d3e3d03da1981d613e2f9b981f7cc649ee1f1",
+    "public/editor-v2/core/commands.js": "0d95b0ce475cc613d051d5c78ac5371ae174a7deb2d38d34888a827c0128f2ad",
+    "public/editor-v2/ui/card-content-inspector.js": "3f437ab5e3de037fac201bbf212c905ebe1918c2f430fdfe4afbe2ffe214c535"
+  },
+  "production_release": "PENDING_EXACT_SHA_PUSH_CI_AND_DEPLOYMENT_VERIFICATION",
+  "limitations": [
+    "This is a Card CTA recovery slice only; full D-01..D-07 matrix and 77.44.7.D remain OPEN / NOT_CERTIFIED.",
+    "Full Editor manual/physical acceptance is DEFERRED until the complete Editor.",
+    "No production D1 migration or data write; no R2 change/delete.",
+    "No paid service or new cost; 0 Ft.",
+    "The existing preserved stash is based on older 4cd79c5 and contains historical/local snapshots that would revert newer 46e8a91 code; it is retained untouched for review and is not blindly reapplied.",
+    "This JSON is pre-release evidence; current-production health and traffic are the baseline only, not proof that this change is live."
+  ],
+  "release": {
+    "runtime_commit": null,
+    "pushed": false,
+    "exact_sha_ci": "PENDING; no runtime push yet",
+    "worker_deployed": false,
+    "post_deploy_health": "PENDING",
+    "changed_public_hashes": "PENDING"
+  },
+  "source_sha256_before_release": {
+    "public/assets/page-renderer.js": "ac0b82b8ca7947eed60dafeb43df6b4123e60f232439bd9d830f28a490058a47",
+    "public/editor-v2/app.js": "ce2264c64d62c16d7d83403448b8c20f31e2b0e6ba81075800695242604afecf",
+    "public/editor-v2/core/card-content.js": "f9283cb81a37ae327319f0e5cf6d3e3d03da1981d613e2f9b981f7cc649ee1f1",
+    "public/editor-v2/core/commands.js": "0d95b0ce475cc613d051d5c78ac5371ae174a7deb2d38d34888a827c0128f2ad",
+    "public/editor-v2/ui/card-content-inspector.js": "3f437ab5e3de037fac201bbf212c905ebe1918c2f430fdfe4afbe2ffe214c535",
+    "public/editor-v2/tests/core.test.js": "18e5ba7a5de739c205e6c6d101638459fb012a3e7f87deac61ab1a654748fbc0",
+    "tests/browser/editor-card-content.test.js": "c4421b33618fb86ed537ec639977d06b6df8eb4584604eebf672a49363d35dd1",
+    "tests/f0-3-route-integration.test.js": "c6f9dd7b1816ca7663b796daa485ae94f413c9746c5d5590d6bc30fc81d9fff6",
+    "docs/evidence/feature-traceability.json": "710268ed90c82df73b5962683f9d22a015346ec18824b8879975a97896bcbedc"
+  },
+  "preserved_work": {
+    "stash_ref": "stash@{0}",
+    "base_sha": "4cd79c5cc8c3c0c74137e50c44763e4baf56892e",
+    "handling": "Retained untouched. Its parent predates current v2/foundation 46e8a913; diff review shows replay would revert newer runtime and evidence, so it was not blindly reapplied.",
+    "restored_historical_artifacts": [
+      "docs/evidence/dev-metrics/interrupted/2026-11-15/20261115180545-6663e396.json",
+      "docs/evidence/dev-metrics/interrupted/2026-11-16/20261115191122-04bdbce1.json",
+      "docs/evidence/dev-metrics/runs/2026-11-15/20261115182009-a19839fa.json",
+      "docs/evidence/dev-metrics/runs/2026-11-16/20261116200329-0e119f6b.json",
+      "docs/evidence/dev-metrics/runs/2026-11-17/20261117142356-e0f37ec2.json",
+      "docs/evidence/dev-metrics/runs/2026-11-18/20261118152622-30f8e622.json",
+      "docs/evidence/editor-d02-authored-recovery-multifield-2026-11-18.json"
+    ],
+    "restoration_note": "These seven previously untracked text JSON records were restored byte-for-byte from the intact stash parent; historical claims remain unchanged and are not current release evidence. Generated Python bytecode was excluded. The stash ref remains untouched."
+  }
+}

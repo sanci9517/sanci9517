@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261118152622-30f8e622",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-18T15:26:22.839Z",
+  "finished_at": "2026-11-18T15:56:20.893Z",
+  "wall_seconds": 1798,
+  "paused_seconds": 0,
+  "measured_seconds": 1798,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "D-02 malformed CTA recovery now covers multiple fields and the actual text-command path; local browser/unit/route/dry-run checks passed. Release remains blocked pending safe integration on current GitHub ref and read-only Cloudflare D1 preflight.",
+  "evidence": [
+    "docs/evidence/editor-d02-authored-recovery-multifield-2026-11-18.json"
+  ],
+  "checks": "test:editor 16/16; publish-guard 18/18; Chromium 1/1; typecheck; plan contract 14/14; canonical 13/396; traceability 396/396; Wrangler dry-run 181 assets; no CI, push, D1 writes, R2 or deploy.",
+  "started_revision": "4cd79c5cc8c3c0c74137e50c44763e4baf56892e",
+  "finished_revision": "4cd79c5cc8c3c0c74137e50c44763e4baf56892e",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

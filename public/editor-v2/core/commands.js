@@ -11,7 +11,7 @@ import { activePage, clearSelection, setSelection } from './state.js';
 import { createDefaultScheduleConfig, normalizeScheduleConfig } from './schedule-schema.js';
 import {isStructuredType,createElementContent,normalizeElementContent} from './element-content.js?v=20261117-d01-private-media-double-decode-v1';
 import {defaultDividerStyle,normalizeDividerStyle} from './decorative-elements.js';
-import {defaultCardContent,normalizeCardContent} from './card-content.js';
+import {defaultCardContent,normalizeCardContent} from './card-content.js?v=20261118-d02-card-cta-recovery-v1';
 import {defaultCountdownContent} from './countdown-content.js';
 import {defaultSocialLinks} from './social-links.js';
 import {defaultEmbedContent} from './creator-embed.js';

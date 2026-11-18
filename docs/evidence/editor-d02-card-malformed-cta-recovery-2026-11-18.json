@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "task": "77.44.7.D / D-02 malformed persisted Card CTA recovery",
+  "recorded_at": "2026-11-18T16:46:45Z",
+  "branch": "v2/foundation",
+  "base_commit": "46e8a913caeda4493f6b429d2a7c2e8efd2d2790",
+  "remote_base_commit_verified": true,
+  "acceptance_status": "PARTIAL_SOURCE / OPEN / NOT_CERTIFIED",
+  "problem": "Persisted Card CTA values such as {\"toString\":null}, incomplete label/URL pairs, unsafe URLs, overlong labels, or invalid newWindow types could fail strict authored-content validation; the Inspector had no shared validation warning or explicit repair affordance.",
+  "implementation": [
+    "A shared Card CTA validation helper reports malformed values without coercing them; strict normalization continues to reject them.",
+    "Card Inspector uses that same helper to display an accessible warning for every CTA validation failure, safely renders text controls as strings, and provides an explicit repair button.",
+    "Repair clears the coupled CTA label, URL and newWindow value; it does not write immediately. Save is draft-only and separate Publish updates the public snapshot.",
+    "Runtime module URLs use a recovery-specific cache-busting token."
+  ],
+  "tests": {
+    "node tests/browser/editor-card-content.test.js": {
+      "status": "PASS",
+      "passed": 2,
+      "failed": 0,
+      "viewports": [
+        390,
+        1366
+      ]
+    },
+    "npm run typecheck -- --pretty false": {
+      "status": "PASS"
+    },
+    "npm run test:editor": {
+      "status": "PASS",
+      "unit_files_passed": 22,
+      "runner_contract_tests_passed": 4
+    },
+    "python3 tests/plan-contract.test.py": {
+      "status": "PASS",
+      "passed": 14
+    },
+    "python3 scripts/build-feature-traceability.py --check": {
+      "status": "PASS",
+      "mappings": 396
+    },
+    "python3 scripts/audit-active-plan-point.py": {
+      "status": "PASS",
+      "cursor": "77.44 / WEB-011",
+      "next": "77.44.7.D",
+      "functional_acceptance": "NOT_CERTIFIED",
+      "partial_source": 147,
+      "unverified": 249
+    },
+    "python3 scripts/check-canonical-plan.py": {
+      "status": "PASS",
+      "master_files": 13,
+      "mappings": 396,
+      "acceptance": "NOT_CERTIFIED"
+    },
+    "node scripts/web013-migration-safety-gate.mjs": {
+      "status": "PASS"
+    },
+    "git diff --check and node --check on changed JS": {
+      "status": "PASS"
+    },
+    "public/editor-v2/tests/core.test.js": {
+      "status": "PASS",
+      "cases": [
+        "malformed object URL rejection",
+        "incomplete CTA pair flagged",
+        "unsafe URL flagged",
+        "non-boolean newWindow flagged",
+        "valid CTA not flagged"
+      ]
+    }
+  },
+  "wrangler_dry_run": {
+    "status": "PASS",
+    "version": "4.130.0",
+    "asset_files": 194,
+    "published": false,
+    "upload_size": "392.39 KiB",
+    "gzip_size": "100.64 KiB"
+  },
+  "production_d1_preflight": {
+    "sql": "SELECT name FROM d1_migrations ORDER BY name DESC LIMIT 1",
+    "latest_migration": "0029_media_archive_unicode_additive.sql",
+    "rows_read": 1,
+    "rows_written": 0,
+    "changes": 0,
+    "changed_db": false,
+    "production_migration_or_write": false
+  },
+  "production_baseline": {
+    "worker": "sanci9517-streamer-brand",
+    "deployment_id": "9f82dfa7-fb94-4399-b639-9feeed555f35",
+    "version_id": "e2d48c7f-09f7-4eaa-8c87-4a5528cf4860",
+    "traffic_percent": 100,
+    "health_url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+    "health_http_status": 200,
+    "health_body": {
+      "ok": true,
+      "service": "sanci9517-streamer-brand",
+      "version": "2.0.0",
+      "server": "cloudflare-worker"
+    },
+    "observed_at": "2026-11-18T16:39:44Z"
+  },
+  "release": {
+    "runtime_commit": null,
+    "pushed": false,
+    "exact_sha_ci": "PENDING",
+    "worker_deployed": false,
+    "post_deploy_health": "PENDING",
+    "changed_public_hashes": "PENDING"
+  },
+  "cost_huf": 0,
+  "production_r2_mutation": false,
+  "save_publish_separate": true,
+  "editor_full_manual_physical_acceptance": "DEFERRED until the complete Editor is implemented",
+  "open_gaps": [
+    "Full D-01 through D-07 capability and lifecycle matrix",
+    "Full Visual Editor functional, manual and physical acceptance"
+  ],
+  "source_sha256": {
+    "public/assets/page-renderer.js": "ac0b82b8ca7947eed60dafeb43df6b4123e60f232439bd9d830f28a490058a47",
+    "public/editor-v2/app.js": "ce2264c64d62c16d7d83403448b8c20f31e2b0e6ba81075800695242604afecf",
+    "public/editor-v2/core/card-content.js": "f9283cb81a37ae327319f0e5cf6d3e3d03da1981d613e2f9b981f7cc649ee1f1",
+    "public/editor-v2/core/commands.js": "0d95b0ce475cc613d051d5c78ac5371ae174a7deb2d38d34888a827c0128f2ad",
+    "public/editor-v2/ui/card-content-inspector.js": "3f437ab5e3de037fac201bbf212c905ebe1918c2f430fdfe4afbe2ffe214c535",
+    "public/editor-v2/tests/core.test.js": "18e5ba7a5de739c205e6c6d101638459fb012a3e7f87deac61ab1a654748fbc0",
+    "tests/browser/editor-card-content.test.js": "c4421b33618fb86ed537ec639977d06b6df8eb4584604eebf672a49363d35dd1",
+    "docs/evidence/feature-traceability.json": "ed2d5d3617f1e68e11e7e1fb49749207d20666dacd67d1989d7388adcbf4ccb8"
+  }
+}
