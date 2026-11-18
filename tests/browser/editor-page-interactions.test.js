@@ -182,7 +182,16 @@ test('EDT-039 page actions and EDT-040 motion save as draft, preview safely, and
   assert.equal(await liveNode(buttonId).getAttribute('data-page-action-event'),'hover','Publish exposes the configured hover trigger');
   await liveNode(buttonId).evaluate(el=>el.dispatchEvent(new PointerEvent('pointerover',{bubbles:true,pointerType:'touch',relatedTarget:null})));
   assert.equal(await liveNode(tabsId).getByRole('tab').nth(1).getAttribute('aria-selected'),'true','touch-generated pointer events do not impersonate hover');
+  await live.evaluate(targetId=>{
+    const root=document.querySelector('#content-canvas'),queryAll=root.querySelectorAll.bind(root),query=root.querySelector.bind(root);
+    window.__pageActionLookupStats={wholePageScans:0,directTargetLookups:0};
+    root.querySelectorAll=(selector,...args)=>{if(selector==='[data-page-node-id]')window.__pageActionLookupStats.wholePageScans++;return queryAll(selector,...args)};
+    root.querySelector=(selector,...args)=>{if(selector===`[data-page-node-id="${targetId}"]`)window.__pageActionLookupStats.directTargetLookups++;return query(selector,...args)};
+  },tabsId);
   await liveNode(buttonId).hover();
+  const lookupStats=await live.evaluate(()=>window.__pageActionLookupStats);
+  assert.equal(lookupStats.wholePageScans,0,'a Page Action does not scan every page-node target on each pointer trigger');
+  assert.equal(lookupStats.directTargetLookups,1,'the Page Action resolves exactly its allowlisted same-page node ID');
   assert.equal(await liveNode(tabsId).getByRole('tab').nth(0).getAttribute('aria-selected'),'true','mouse entry activates the configured tab');
   assert.equal(new URL(live.url()).searchParams.get('campaign'),'hover-test','hover-triggered tab state preserves unrelated URL parameters');
   assert.equal(new URL(live.url()).searchParams.get('creator-tab'),`${tabsId}:0`,'hover-triggered tab state remains deep-linkable');
@@ -194,6 +203,11 @@ test('EDT-039 page actions and EDT-040 motion save as draft, preview safely, and
   await liveNode(buttonId).press('Enter');
   assert.equal(await liveNode(tabsId).getByRole('tab').nth(0).getAttribute('aria-selected'),'true','a hover-enhanced action remains operable by native keyboard button activation');
   assert.equal(new URL(live.url()).searchParams.get('creator-tab'),`${tabsId}:0`,'keyboard activation preserves the same deep-link behavior as pointer hover');
+  await liveNode(tabsId).getByRole('tab').nth(1).click();
+  await liveNode(buttonId).evaluate(el=>el.dataset.pageActionTarget='tabs_one"] [data-page-node-id');
+  await liveNode(buttonId).click();
+  assert.equal(await liveNode(tabsId).getByRole('tab').nth(1).getAttribute('aria-selected'),'true','tampered target IDs are rejected instead of becoming CSS selector input');
+  assert.equal((await live.evaluate(()=>window.__pageActionLookupStats)).directTargetLookups,1,'invalid target IDs are rejected before querying the page');
 
   // EDT-040: motion is a typed responsive style, never authored CSS/JS.
   await editor.emulateMedia({reducedMotion:'no-preference'});

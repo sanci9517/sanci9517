@@ -319,10 +319,10 @@ export function initContentInteractions(root){
   };
   const runPageAction=source=>{
     const action=source?.dataset?.pageAction,targetId=source?.dataset?.pageActionTarget;
-    if(!['scroll-to','select-tab','toggle-disclosure'].includes(action)||typeof targetId!=='string'||!targetId)return false;
-    // Compare stable model IDs as data, never interpolate user-controlled IDs
-    // into a CSS selector. The lookup is scoped to this page/preview root.
-    const target=[...root.querySelectorAll('[data-page-node-id]')].find(node=>node.dataset.pageNodeId===targetId);
+    if(!['scroll-to','select-tab','toggle-disclosure'].includes(action)||typeof targetId!=='string'||!/^[A-Za-z0-9_-]{1,120}$/.test(targetId))return false;
+    // Page Model IDs use this strict allowlist, so an exact same-page selector
+    // is safe and avoids allocating/scanning every page node per activation.
+    const target=root.querySelector(`[data-page-node-id="${targetId}"]`);
     if(!target)return false;
     if(action==='scroll-to'){
       const behavior=matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth';
