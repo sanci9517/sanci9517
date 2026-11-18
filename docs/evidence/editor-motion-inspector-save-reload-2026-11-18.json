@@ -1,0 +1,106 @@
+{
+  "schema_version": 1,
+  "task": "77.44.7.D / EDT-040",
+  "title": "Motion Inspector values survive Save and reload",
+  "recorded_at_utc": "2026-11-18T14:17:25Z",
+  "status": "LOCAL_BROWSER_PASS_HOSTED_CI_UNVERIFIED_D_OPEN",
+  "source": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "remote_head_before_test_evidence_commit": "6edc5da9ada4a03d73b711b35bdd9d2a7867c21b",
+    "runtime_source_sha": "97dd82c23c5475d90ff1cec2113a074fbaf7f1d5",
+    "canonical_plan_blob": "77b5f9bea2d18e773445043700245276b48d276e"
+  },
+  "change": {
+    "file": "tests/browser/editor-motion.test.js",
+    "scenario": "Author a finite allowlisted entry animation, duration, and easing; Save; reload the Editor; reselect the element; and assert all three Inspector controls restore the saved values.",
+    "runtime_files_changed": false,
+    "production_data_changed": false,
+    "dependencies_changed": false
+  },
+  "checks": {
+    "focused_chromium": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-motion.test.js",
+      "result": "PASS",
+      "tests_passed": 1,
+      "duration_ms": 3279,
+      "scope": "Inspector motion defaults, allowlist, Canvas CSS, reduced-motion behavior, and saved Inspector value restoration after reload"
+    },
+    "sandbox_attempt": {
+      "result": "BLOCKED_BEFORE_ASSERTIONS",
+      "detail": "Local test server listen on 127.0.0.1 failed with EPERM in the restricted process sandbox. The same command then passed with approved local execution; no public network or production mutation was used."
+    },
+    "editor_unit": {
+      "command": "npm run test:editor",
+      "result": "PASS",
+      "editor_test_files_passed": 22,
+      "runner_contract_tests_passed": 4
+    },
+    "typecheck": {
+      "command": "npm run typecheck -- --pretty false",
+      "result": "PASS"
+    },
+    "plan_contract": {
+      "command": "python3 tests/plan-contract.test.py",
+      "result": "PASS",
+      "passed": 14
+    },
+    "canonical_plan": {
+      "command": "python3 scripts/check-canonical-plan.py",
+      "result": "PASS",
+      "master_files": 13,
+      "traceability_mappings": 396
+    },
+    "traceability": {
+      "command": "python3 scripts/build-feature-traceability.py --check",
+      "result": "PASS",
+      "mappings": 396
+    },
+    "active_point_audit": {
+      "command": "python3 scripts/audit-active-plan-point.py",
+      "result": "OPEN_NOT_CERTIFIED",
+      "cursor": "77.44 / WEB-011 -> 77.44.7.D",
+      "source_status_counts": {
+        "PARTIAL_SOURCE": 147,
+        "UNVERIFIED": 249
+      }
+    },
+    "static_and_diff": {
+      "commands": [
+        "node --check tests/browser/editor-motion.test.js",
+        "git diff --check"
+      ],
+      "result": "PASS"
+    }
+  },
+  "hosted_ci": {
+    "new_workflow_dispatched": false,
+    "status": "NOT_RUN",
+    "reason": "Test-harness/evidence-only follow-up. Repository policy uses [skip ci] and disallows spending beyond the 0 Ft cap when free Actions quota is unverified."
+  },
+  "production": {
+    "latest_deployment_id": "9f82dfa7-fb94-4399-b639-9feeed555f35",
+    "worker_version": "e2d48c7f-09f7-4eaa-8c87-4a5528cf4860",
+    "traffic_percent": 100,
+    "runtime_source_sha": "97dd82c23c5475d90ff1cec2113a074fbaf7f1d5",
+    "source_smoke_run": {
+      "id": 44307061430,
+      "result": "SUCCESS",
+      "health_http": 200,
+      "configured_public_asset_hashes": "34/34 PASS"
+    },
+    "runtime_changed_by_this_test": false,
+    "changed_public_assets": [],
+    "production_d1_migration_or_write": false,
+    "production_r2_mutation_or_deletion": false
+  },
+  "acceptance": {
+    "edt_040": "PARTIAL / OPEN / NOT_CERTIFIED",
+    "full_d_01_to_d_07": "OPEN / NOT_CERTIFIED",
+    "full_visual_editor": "OPEN / NOT_CERTIFIED",
+    "manual_physical_acceptance": "DEFERRED_UNTIL_COMPLETE_EDITOR",
+    "save_separate_from_publish": true,
+    "new_cost_huf": 0
+  },
+  "metrics_id": "20261118141150-c9252f8b"
+}

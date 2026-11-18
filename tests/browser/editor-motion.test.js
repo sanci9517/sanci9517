@@ -81,5 +81,25 @@ test('EDT-040 motion controls are visible, typed, allowlisted and reduced-motion
     transform: getComputedStyle(el).transform,
     active: el.getAnimations().filter(animation => animation.animationName.startsWith('sanci-entry-')).length,
   })), { name: 'none', opacity: '1', transform: 'none', active: 0 }, 'reduced-motion never hides or displaces the authored content');
+
+  await page.locator('#save').click();
+  await page.waitForFunction(() => document.querySelector('#saveStatus')?.textContent.startsWith('Mentve'));
+  await page.reload();
+  const reloadedHeading = page.locator(`.node[data-node-id="${headingId}"]`);
+  await reloadedHeading.waitFor({ state: 'attached' });
+  await reloadedHeading.evaluate(el => el.click());
+  await page.waitForFunction(() => document.querySelector('[data-property-id="motion.entry"] select'));
+  assert.deepEqual(await page.evaluate(() => Object.fromEntries(['motion.entry', 'motion.duration', 'motion.easing'].map(id => [id, document.querySelector(`[data-property-id="${id}"] select`)?.value]))), {
+    'motion.entry': 'sanci-entry-rise',
+    'motion.duration': '420ms',
+    'motion.easing': 'cubic-bezier(0.22,1,0.36,1)',
+  }, 'Save/reload preserves the authored motion choices in the Inspector');
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  assert.deepEqual(await reloadedHeading.evaluate(el => ({
+    name: getComputedStyle(el).animationName,
+    opacity: getComputedStyle(el).opacity,
+    transform: getComputedStyle(el).transform,
+    active: el.getAnimations().filter(animation => animation.animationName.startsWith('sanci-entry-')).length,
+  })), { name: 'none', opacity: '1', transform: 'none', active: 0 }, 'saved motion remains disabled when the visitor requests reduced motion');
   assert.deepEqual(errors, [], 'motion Inspector interaction emits no runtime errors');
 });

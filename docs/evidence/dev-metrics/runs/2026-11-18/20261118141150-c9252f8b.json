@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261118141150-c9252f8b",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-18T14:11:50.393Z",
+  "finished_at": "2026-11-18T14:17:42.921Z",
+  "wall_seconds": 353,
+  "paused_seconds": 0,
+  "measured_seconds": 353,
+  "status": "partial",
+  "kind": "test",
+  "summary": "Added EDT-040 browser regression proving saved motion settings restore in the Inspector after reload; D remains open.",
+  "evidence": [
+    "docs/evidence/editor-motion-inspector-save-reload-2026-11-18.json"
+  ],
+  "checks": "focused Chromium 1/1 PASS; editor unit 22/22 plus runner 4/4 PASS; typecheck, plan contract 14/14, canonical 13/13, traceability 396/396 PASS; hosted CI NOT RUN",
+  "started_revision": "2f01a698c06e0de36ffaba66b661e0f9e3104854",
+  "finished_revision": "2f01a698c06e0de36ffaba66b661e0f9e3104854",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
