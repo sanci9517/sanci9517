@@ -1,8 +1,8 @@
 {
   "schema": 1,
   "task": "77.44.7.D / EDT-039 invalid and unsupported persisted Page Action recovery",
-  "captured_at": "2026-11-18T03:24:28Z",
-  "status": "READY_FOR_RELEASE_CHECKS",
+  "captured_at": "2026-11-18T04:27:32Z",
+  "status": "RUNTIME_RELEASE_VERIFIED_EDITOR_CORE_CI_IN_PROGRESS",
   "problem": "An unsupported persisted Page Model interaction caused createEditorState to reject the entire page before the Inspector recovery UI could render. When directly rendered in isolation, the Inspector also gave no warning or removal action for an invalid saved interaction.",
   "implementation": {
     "recovery_loading": "Added allowInvalidPageInteractions as an opt-in Editor-state loading policy. Only the Page Model invalid-interaction diagnostic is filtered in this recovery path; normal state creation, validation and command/save/publish paths remain strict.",
@@ -33,17 +33,17 @@
     "initial_browser_discovery": "A first Chromium attempt correctly failed because loadPage still rejected invalid actions; this exposed the recovery gap. After the opt-in loader fix, the targeted browser test passed.",
     "plan_and_traceability": "PASS after rebuilding fingerprints: python3 tests/plan-contract.test.py 14/14; python3 scripts/check-canonical-plan.py 13-part master/396 mappings, acceptance not certified; python3 scripts/build-feature-traceability.py --check 396/396.",
     "wrangler_dry_run": "PASS with pinned Wrangler 4.130.0: 194 public files, 392.64 KiB upload / 100.54 KiB gzip; no deployment.",
-    "exact_sha_github_ci": "PENDING runtime commit",
-    "production_post_release_health_asset_hashes": "PENDING",
+    "exact_sha_github_ci": "PARTIAL: on exact commit 0b3fb3f7a7a3811c4b0b1f69bea9fccb2c0a71c2, F0 #44236454953, Canonical Plan #44236454961, Active Point Audit #44236455001, Twitch #44236455005 and Worker source smoke #44236454959 PASS; Editor Core #44236454965 remains IN_PROGRESS (steps 1-13 success, browser layout step 14 running, later steps pending).",
+    "production_post_release_health_asset_hashes": "PASS: direct health HTTP 200; exact release-SHA cache-busted SHA-256 checks match all 7 changed public runtime assets; Worker source-smoke #44236454959 independently verifies 34/34 public source hashes.",
     "partial_types_browser": "PASS: CHROMIUM_PATH=/usr/bin/chromium timeout 600s python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-inspector-partial-types.test.js; Chromium 1/1, 44 PARTIAL types, 520.8 s.",
     "read_only_d1_preflight": "PASS via Cloudflare D1 query API SELECT-only SQL. Latest 0029_media_archive_unicode_additive.sql; rows_read=1, rows_written=0, changes=0, changed_db=false.",
     "prior_exact_source_editor_core_run": "FAIL: GitHub Editor Core 44227864336 on old runtime 80dd455; only failing suite was partial-types keyboard focus styling (section actual rgb(16,32,48), expected rgb(48,96,144)). Fixed first-render timing; both focused browser regressions now pass locally. Exact-SHA workflow for new commit remains required."
   },
   "pre_release_state": {
     "github_branch": "v2/foundation",
-    "github_head": "fdb53f7a5e382ae6ed19a3389878b8347d57157b",
-    "worker_deployment": "849a6cbf-3452-4cc1-9c8e-43fc73407e40",
-    "worker_version": "bf33cfc8-e232-4a56-86ee-0c520b3cf02f",
+    "github_head": "0b3fb3f7a7a3811c4b0b1f69bea9fccb2c0a71c2",
+    "worker_deployment": "f5c93211-f73d-4dcf-8785-09e4f17b174c",
+    "worker_version": "44ea3e4f-3600-4c00-8fe3-df5e2900aef8",
     "traffic": "100%",
     "read_only_d1_preflight": {
       "sql": "SELECT name FROM d1_migrations ORDER BY name DESC LIMIT 1",
@@ -62,16 +62,97 @@
     "new_paid_cost_huf": 0
   },
   "release": {
-    "runtime_commit": null,
-    "push": "PENDING",
-    "deployment": "PENDING; no production deploy before normal fast-forward push and source-smoke/automatic build",
-    "health": "PENDING",
-    "public_asset_hashes": "PENDING",
-    "exact_source_ci": "PENDING new runtime commit"
+    "runtime_commit": "0b3fb3f7a7a3811c4b0b1f69bea9fccb2c0a71c2",
+    "push": "PASS: normal fast-forward; verified v2/foundation remote HEAD equals runtime_commit",
+    "deployment": "PASS: Cloudflare deployment f5c93211-f73d-4dcf-8785-09e4f17b174c",
+    "worker_version": "44ea3e4f-3600-4c00-8fe3-df5e2900aef8",
+    "traffic": "100%",
+    "health": {
+      "http_status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "public_asset_hashes": "PASS: 7/7 changed runtime public assets directly fetched with ?release=0b3fb3f7a7a3811c4b0b1f69bea9fccb2c0a71c2 and SHA-256 matched; production source-smoke #44236454959 verified 34/34 files."
   },
   "metrics_id": "20261118032428-9c55119a",
   "limitations": [
-    "The remainder of EDT-039 submit/load/timer/state, expanded form/URL, security/accessibility/performance and the full event matrix remains open.",
+    "The exact-SHA Editor Core workflow 44236454965 remains in progress; layout and subsequent repository gates are not certified until it finishes.",
+    "EDT-039 submit/load/timer/state, expanded form/URL, security/accessibility/performance and the full event matrix remain open.",
     "The complete Visual Editor, D-01–D-07 matrix and 77.44.7.D are not certified or closed. Manual/physical Editor acceptance remains deferred until the complete Editor."
+  ],
+  "post_release_public_sha256": {
+    "public/visual-page.html": {
+      "local": "81b201d83b681800f0b328a80e554c8f2884dfd1df65174d423ae85d55d45913",
+      "production": "81b201d83b681800f0b328a80e554c8f2884dfd1df65174d423ae85d55d45913"
+    },
+    "public/assets/page-renderer.js": {
+      "local": "7e7f36611cf76d1f176555b096e1c776cbaa296bbbd5e09cb71e3cd48ffecea4",
+      "production": "7e7f36611cf76d1f176555b096e1c776cbaa296bbbd5e09cb71e3cd48ffecea4"
+    },
+    "public/editor-v2/app.js": {
+      "local": "62d9dd15f2128a814ec2368fb6656bd2751ff8450f995538d416403d92b657fb",
+      "production": "62d9dd15f2128a814ec2368fb6656bd2751ff8450f995538d416403d92b657fb"
+    },
+    "public/editor-v2/core/state.js": {
+      "local": "93ca5cdfedb5aefdd4e783fa968cede3789f20dd4331c4f7fd1ed93ee7a2d43d",
+      "production": "93ca5cdfedb5aefdd4e783fa968cede3789f20dd4331c4f7fd1ed93ee7a2d43d"
+    },
+    "public/editor-v2/core/validation.js": {
+      "local": "90a84e6e9fe6ea4afca622cdc41e2833f7e25d7d770a048ee97232ad60c73ddf",
+      "production": "90a84e6e9fe6ea4afca622cdc41e2833f7e25d7d770a048ee97232ad60c73ddf"
+    },
+    "public/editor-v2/index.html": {
+      "local": "9cf8bdf05ed35f094249aac88afdd7138e48a342dfad233f6690fe17205ee281",
+      "production": "9cf8bdf05ed35f094249aac88afdd7138e48a342dfad233f6690fe17205ee281"
+    },
+    "public/editor-v2/ui/page-interaction-controls.js": {
+      "local": "aef4a9da009ddb49e229d0d2546c29b20eb596e53ac29a0b333a2e7882a04c97",
+      "production": "aef4a9da009ddb49e229d0d2546c29b20eb596e53ac29a0b333a2e7882a04c97"
+    }
+  },
+  "release_workflows": [
+    {
+      "id": 44236454953,
+      "name": "F0 baseline checks",
+      "conclusion": "success"
+    },
+    {
+      "id": 44236454961,
+      "name": "Canonical Creator Platform Plan",
+      "conclusion": "success"
+    },
+    {
+      "id": 44236455001,
+      "name": "Canonical Plan Active Point Audit",
+      "conclusion": "success"
+    },
+    {
+      "id": 44236455005,
+      "name": "Twitch Integration Check",
+      "conclusion": "success"
+    },
+    {
+      "id": 44236454959,
+      "name": "Production Worker source smoke",
+      "conclusion": "success"
+    },
+    {
+      "id": 44236454965,
+      "name": "Editor Core Test",
+      "status": "in_progress",
+      "completed_steps": 13,
+      "current_step": "Run Editor browser layout regression",
+      "pending_steps": [
+        "WEB-013 Admin mobile",
+        "canonical schedule",
+        "domain contracts",
+        "Brand Kit",
+        "Admin home"
+      ]
+    }
   ]
 }

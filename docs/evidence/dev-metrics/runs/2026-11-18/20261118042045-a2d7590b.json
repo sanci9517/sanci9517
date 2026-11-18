@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261118042045-a2d7590b",
+  "task": "EDT-039",
+  "trigger": "manual",
+  "started_at": "2026-11-18T04:20:45.862Z",
+  "finished_at": "2026-11-18T04:27:43.071Z",
+  "wall_seconds": 417,
+  "paused_seconds": 0,
+  "measured_seconds": 417,
+  "status": "partial",
+  "kind": "docs",
+  "summary": "Verified release of EDT-039 invalid Page Action recovery: exact-SHA Production Worker source smoke passed; deployment 100% and health plus changed public hashes match. Editor Core exact-SHA workflow is still in progress, so Editor acceptance remains open; updated canonical release status/evidence.",
+  "evidence": [
+    "docs/evidence/editor-page-interactions-invalid-recovery-2026-11-18.json"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "0b3fb3f7a7a3811c4b0b1f69bea9fccb2c0a71c2",
+  "finished_revision": "0b3fb3f7a7a3811c4b0b1f69bea9fccb2c0a71c2",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
