@@ -1,0 +1,72 @@
+{
+  "schema": 1,
+  "plan_point": "77.44.7.D",
+  "feature": "EDT-039 Page Action target lifecycle",
+  "date": "2026-11-18",
+  "change": {
+    "files": [
+      "public/editor-v2/core/commands.js",
+      "public/editor-v2/app.js",
+      "public/editor-v2/tests/page-interactions.test.js",
+      "tests/browser/editor-page-interactions.test.js",
+      "docs/evidence/feature-traceability.json"
+    ],
+    "behavior": "Deleting a node or subtree removes Page Actions in surviving nodes that target any deleted node. Undo restores the target and action from the same snapshot; Redo repeats valid cleanup. A detached action-only button remains unpublishable until the owner supplies a valid link, preserving the existing publication guidance. Save stays draft-only and Publish remains explicit.",
+    "regression": "The unit test creates a nested tabs target, references it from a button, deletes the ancestor, verifies valid Page Model state and dependent-action cleanup, then verifies exact Undo/Redo restoration. The browser lifecycle test exercises Inspector delete, Undo/Redo, draft Save/reload, publication validation of the now-unlinked CTA, CTA repair, Save, and separate Publish."
+  },
+  "source_hashes": {
+    "public/editor-v2/app.js": "6b2e877fa1afd8cc67f43330e5a1e1db8e9d19fa2163255778e7ec27cc482bdf",
+    "public/editor-v2/core/commands.js": "bf71894a0f1cbbd63bc4ef5af1d28c083a48ceb93cc2f0353eff83e63908cd55"
+  },
+  "checks": {
+    "page_interactions_unit": "PASS 5/5",
+    "editor_unit_suite": "PASS 22/22 files; runner/manifest 4/4",
+    "editor_page_actions_chromium": "PASS 1/1, 114.66 seconds",
+    "typecheck": "PASS npm run typecheck",
+    "changed_js_syntax": "PASS node --check for app.js, commands.js and both changed test files",
+    "plan_contract": "PASS 15/15",
+    "active_plan_audit": "PASS; cursor 77.44 / WEB-011 -> 77.44.7.D remains OPEN / NOT_CERTIFIED",
+    "canonical_plan_and_traceability": "PASS 13 master files / 396 source mappings",
+    "web013_migration_safety_gate": "PASS",
+    "diff_check": "PASS",
+    "wrangler_dry_run": {
+      "status": "PASS",
+      "exit_code": 0,
+      "version": "4.130.0",
+      "public_assets": 195,
+      "upload": "392.87 KiB",
+      "gzip": "100.73 KiB",
+      "warning": "Wrangler could not write its debug log because /home/agent/.config/.wrangler/logs is on a read-only mount; asset enumeration, bundling, dry-run checks and exit code 0 completed."
+    },
+    "production_d1_preflight": {
+      "command": "npm run db:ownership:preflight",
+      "scope": "scripts/e4-3-7-preflight.sql (integrity checks and SELECTs only)",
+      "queries": 11,
+      "rows_read": 2692,
+      "rows_written": 0,
+      "changes": 0,
+      "changed_db": false,
+      "database_size_bytes": 3739648
+    }
+  },
+  "pre_release_baseline": {
+    "remote_branch_sha": "5558fb21263c0b293460bf83a714f25d6e60f8c7",
+    "worker_name": "sanci9517-streamer-brand",
+    "latest_deployment_id": "c7ccf408-28bd-4e10-9710-07df84096d40",
+    "latest_worker_version": "465b5070-66a2-4491-a1a2-5a60eb711611",
+    "traffic_percentage": 100,
+    "cloudflare_build_minutes_limit_reached": false,
+    "warning": "This pre-release baseline does not contain this change."
+  },
+  "release": {
+    "status": "PENDING_NOT_DEPLOYED",
+    "required_next_steps": [
+      "Fast-forward push the exact validated runtime commit to v2/foundation.",
+      "Verify GitHub checks for that exact SHA.",
+      "Run deploy:safe against that same SHA.",
+      "Verify deployed source SHA, 100% traffic, production health and exact hashes for changed public assets."
+    ],
+    "cost": "0 Ft; no paid service, build-limit overrun, migration or data write authorized."
+  },
+  "acceptance_boundary": "This is one verified EDT-039 lifecycle slice only. It does not certify the full EDT-039 capability matrix, D-01 through D-07, or the complete Visual Editor. Full manual/physical acceptance remains deferred; Save != Publish."
+}

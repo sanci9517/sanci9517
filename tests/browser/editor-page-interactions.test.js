@@ -314,6 +314,48 @@ test('EDT-039 page actions and EDT-040 motion save as draft, preview safely, and
   assert.equal(await liveNode(tabsId).getByRole('tab').nth(0).getAttribute('aria-selected'),'true','browser state navigation cancels the pending timer and restores the URL selection');
   assert.equal(new URL(live.url()).searchParams.get('campaign'),'timer-test','history navigation preserves unrelated query parameters');
 
+  // EDT-039 regression: removing an action target from the draft also detaches
+  // its dependants; Undo restores both, Save stays draft-only, and Publish is explicit.
+  await editorNode(tabsId).evaluate(el=>el.click());
+  const deleteTarget=editor.locator(`[data-inspector-command="element.delete"][data-inspector-node-id="${tabsId}"]`);
+  assert.equal(await deleteTarget.isEnabled(),true,'a normal target can be deleted from the Inspector');
+  await deleteTarget.click();
+  await editorNode(tabsId).waitFor({state:'detached'});
+  assert.equal(await editor.locator('.page-interaction-inspector').count(),0,'deletion removes the dangling Page Action instead of leaving a broken Inspector');
+  await editor.locator('#undo').click();
+  await editorNode(tabsId).waitFor({state:'attached'});
+  await editorNode(buttonId).evaluate(el=>el.click());
+  assert.equal(await editor.locator('.page-interaction-inspector [aria-label="Kiváltó esemény"]').inputValue(),'timer','Undo restores the action together with its target');
+  await editor.locator('#redo').click();
+  await editorNode(tabsId).waitFor({state:'detached'});
+  assert.equal(await editor.locator('.page-interaction-inspector').count(),0,'Redo re-applies a valid target deletion');
+  await editor.locator('#save').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+  assert.equal(posts.at(-1).publish,false,'deleting a target followed by Save does not publish');
+  assert.deepEqual(draft.pages[pageId].nodes[buttonId].interactions,[],'the saved draft contains no dangling target reference');
+  assert.ok(published.pages[pageId].nodes[tabsId],'Save preserves the previously published target');
+  await editor.reload();
+  await editorNode(buttonId).waitFor({state:'attached'});
+  await editorNode(tabsId).waitFor({state:'detached'});
+  assert.deepEqual(draft.pages[pageId].nodes[buttonId].interactions,[],'reloaded draft keeps the cleanup');
+  assert.ok(published.pages[pageId].nodes[tabsId],'reloading the draft still does not change the live publication');
+  assert.equal(await editor.locator('#publish').isEnabled(),true,'the saved draft remains eligible for explicit Publish');
+  await editor.locator('#publish').click();
+  assert.match(await editor.locator('#saveStatus').textContent(),/Művelet nélküli gomb nem publikálható/,'the Editor explains that an action-only button needs a destination after its target is deleted');
+  assert.equal(posts.at(-1).publish,false,'the required CTA repair is validated before any Publish request');
+  await editor.locator('[data-content-key="href"] input').fill('/p/page-actions');
+  await editor.locator('#save').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+  assert.equal(posts.at(-1).publish,false,'repairing the now ordinary link is still a draft-only Save');
+  assert.ok(published.pages[pageId].nodes[tabsId],'the previous public target is retained while the draft CTA is repaired');
+  await editor.reload();
+  await editorNode(buttonId).waitFor({state:'attached'});
+  await selectButton();
+  assert.equal(await editor.locator('[data-content-key="href"] input').inputValue(),'/p/page-actions','the repaired CTA destination survives reload');
+  await editor.locator('#publish').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent==='Publikálva');
+  await live.reload();
+  assert.equal(await liveNode(tabsId).count(),0,'the target disappears publicly only after Publish');
+  assert.equal(await liveNode(buttonId).getAttribute('data-page-action'),null,'Publish applies the target cleanup to the live button');
+  assert.equal(await liveNode(buttonId).getAttribute('href'),'/p/page-actions','the repaired public CTA has a safe destination');
+
   // EDT-040: motion is a typed responsive style, never authored CSS/JS.
   await editor.emulateMedia({reducedMotion:'no-preference'});
   await live.emulateMedia({reducedMotion:'no-preference'});

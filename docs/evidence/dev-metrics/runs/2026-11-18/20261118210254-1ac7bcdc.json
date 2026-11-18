@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261118210254-1ac7bcdc",
+  "task": "77.44.7.D-EDT-038-internal-page-target-remap",
+  "trigger": "manual",
+  "started_at": "2026-11-18T21:02:54.110Z",
+  "finished_at": "2026-11-18T21:34:28.750Z",
+  "wall_seconds": 1895,
+  "paused_seconds": 670,
+  "measured_seconds": 1225,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "EDT-038 copied Page Action target references now remap correctly and runtime is deployed; source smoke passed, exact-SHA Editor Core still running so aggregate CI remains pending.",
+  "evidence": [
+    "docs/evidence/editor-clipboard-action-target-remap-release-2026-11-18.json"
+  ],
+  "checks": "editor tests/typecheck/browser regression/dry-run/D1 SELECT preflight and production source smoke PASS; Editor Core run 44399789645 IN_PROGRESS",
+  "started_revision": "b736bd2a5f021d3f8fa7a8e060ff94fad75930c5",
+  "finished_revision": "5558fb21263c0b293460bf83a714f25d6e60f8c7",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

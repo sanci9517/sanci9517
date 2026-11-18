@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createDocument, validateDocument } from '../core/schema.js';
 import { createEditorState } from '../core/state.js';
+import { execute } from '../core/commands.js';
 import { normalizePageInteractions, pageInteractionAttributes, safePageInteraction } from '../core/page-interactions.js';
 import { contentAttributes, getPublicationContentGuidance, validatePageForPublication } from '../core/authored-content.js';
 
@@ -114,4 +115,37 @@ test('only the Editor recovery loader may open invalid persisted page actions', 
     'the recovery option does not bypass unrelated Page Model validation');
   assert.throws(() => normalizePageInteractions(source.interactions, source, document.pages[document.activePageId].nodes), /nem támogatott/,
     'the runtime schema continues to reject the legacy action');
+});
+
+test('deleting a page-action target subtree detaches dependent actions and Undo restores both', () => {
+  const state = createEditorState(createDocument());
+  const rootId = state.document.pages[state.document.activePageId].rootId;
+  const nodes = () => state.document.pages[state.document.activePageId].nodes;
+
+  execute(state, { type: 'element.add', payload: { type: 'button', parentId: rootId, name: 'Lap megnyitása' } });
+  const sourceId = state.selection.primaryId;
+  execute(state, { type: 'content.properties.set', payload: { nodeId: sourceId, patch: { text: 'Második lap', href: '' } } });
+  execute(state, { type: 'element.add', payload: { type: 'section', parentId: rootId, name: 'Törölhető szekció' } });
+  const sectionId = state.selection.primaryId;
+  execute(state, { type: 'element.add', payload: { type: 'tabs', parentId: sectionId, name: 'Célfülek' } });
+  const tabsId = state.selection.primaryId;
+  execute(state, { type: 'content.properties.set', payload: { nodeId: tabsId, patch: { items: [{ title: 'Első' }, { title: 'Második' }] } } });
+  execute(state, { type: 'element.update', payload: { nodeId: sourceId, patch: { interactions: [{ schemaVersion: 1, event: 'click', action: 'select-tab', targetId: tabsId, itemIndex: 1 }] } } });
+
+  execute(state, { type: 'element.delete', payload: { nodeId: sectionId } });
+  assert.equal(nodes()[sectionId], undefined);
+  assert.equal(nodes()[tabsId], undefined, 'deleting a parent removes its entire target subtree');
+  assert.deepEqual(nodes()[sourceId].interactions, [], 'surviving buttons no longer keep an invalid Page Action target');
+  assert.deepEqual(validateDocument(state.document), [], 'deletion leaves the persisted document valid');
+
+  execute(state, { type: 'history.undo' });
+  const restored = state.document.pages[state.document.activePageId].nodes;
+  assert.ok(restored[sectionId]);
+  assert.ok(restored[tabsId]);
+  assert.deepEqual(restored[sourceId].interactions, [{ schemaVersion: 1, event: 'click', action: 'select-tab', targetId: tabsId, itemIndex: 1 }], 'Undo restores the target and its action from one snapshot');
+
+  execute(state, { type: 'history.redo' });
+  const redone = state.document.pages[state.document.activePageId].nodes;
+  assert.equal(redone[tabsId], undefined);
+  assert.deepEqual(redone[sourceId].interactions, [], 'Redo repeats the valid deletion and dependent-action cleanup');
 });
