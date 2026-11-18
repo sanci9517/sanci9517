@@ -59,6 +59,22 @@ export function normalizeElementContent(type,value){
  if(type==='carousel')return {version:1,items:value.items.map(item=>({label:text(item?.label,120),content:text(item?.content,3000),src:text(item?.src,2048).trim(),alt:text(item?.alt,250)}))};
  return {version:1,items:value.items.map(item=>({label:text(item?.label,120),content:text(item?.content,3000)}))};
 }
+/** Return repeater indexes whose persisted row cannot be represented without
+ * coercing an object/array into empty strings. Keep this separate from the
+ * tolerant renderer normalizer so legacy content remains safely renderable,
+ * while the Inspector can require an explicit destructive repair first. */
+export function malformedElementContentRowIndexes(type,value){
+ if(!isStructuredType(type)||type==='table'||!Array.isArray(value?.items))return [];
+ const objectRowTypes=new Set(['tabs','accordion','gallery','carousel']);
+ return value.items.flatMap((item,index)=>{
+  if(type==='list')return item===null||typeof item==='object'?[index]:[];
+  if(!objectRowTypes.has(type))return [];
+  if(!item||typeof item!=='object'||Array.isArray(item))return [index];
+  const fields=type==='tabs'||type==='accordion'?['label','content']:
+   type==='gallery'?['src','alt','caption']:['label','content','src','alt'];
+  return fields.some(key=>item[key]!==undefined&&item[key]!==null&&typeof item[key]==='object')?[index]:[];
+ });
+}
 export function validateElementContent(type,value){
  let model;try{model=normalizeElementContent(type,value)}catch{return 'INVALID_STRUCTURED_CONTENT'}
  if(type==='gallery'){

@@ -5,7 +5,7 @@
   "branch": "v2/foundation",
   "base_head": "46e8a913caeda4493f6b429d2a7c2e8efd2d2790",
   "plan_point": "77.44.7.D / D-02 Card authored CTA recovery",
-  "status": "LOCAL_ACCEPTANCE_PASS_RELEASE_PENDING",
+  "status": "RUNTIME_RELEASED_EXACT_SHA; HOSTED_EDITOR_CORE_CI_PENDING",
   "scope": {
     "defect": "A malformed persisted Card CTA value such as actionHref={toString:null} could crash Card Inspector input construction or be implicitly string-coerced during normalization.",
     "behavior": "Card CTA validation uses a shared non-coercing error helper. The Inspector safely renders malformed CTA values as blank, exposes an accessible warning and explicit repair action for malformed/incomplete CTA states, and preserves stored data until the user repairs it. Locked nodes cannot use the repair action.",
@@ -116,22 +116,53 @@
     "public/editor-v2/core/commands.js": "0d95b0ce475cc613d051d5c78ac5371ae174a7deb2d38d34888a827c0128f2ad",
     "public/editor-v2/ui/card-content-inspector.js": "3f437ab5e3de037fac201bbf212c905ebe1918c2f430fdfe4afbe2ffe214c535"
   },
-  "production_release": "PENDING_EXACT_SHA_PUSH_CI_AND_DEPLOYMENT_VERIFICATION",
+  "production_release": "VERIFIED_EXACT_SHA_PUSH_CI_SOURCE_SMOKE_AND_100_PERCENT_DEPLOYMENT",
   "limitations": [
     "This is a Card CTA recovery slice only; full D-01..D-07 matrix and 77.44.7.D remain OPEN / NOT_CERTIFIED.",
     "Full Editor manual/physical acceptance is DEFERRED until the complete Editor.",
     "No production D1 migration or data write; no R2 change/delete.",
     "No paid service or new cost; 0 Ft.",
     "The existing preserved stash is based on older 4cd79c5 and contains historical/local snapshots that would revert newer 46e8a91 code; it is retained untouched for review and is not blindly reapplied.",
-    "This JSON is pre-release evidence; current-production health and traffic are the baseline only, not proof that this change is live."
+    "This JSON is pre-release evidence; current-production health and traffic are the baseline only, not proof that this change is live.",
+    "The D-02 exact source smoke and 100% deployment are verified; the required Editor Core workflow is still in progress, so hosted CI is not fully PASS.",
+    "This release is the Card CTA recovery slice only; full D-01..D-07 matrix, complete Visual Editor and 77.44.7.D remain OPEN / NOT_CERTIFIED."
   ],
   "release": {
-    "runtime_commit": null,
-    "pushed": false,
-    "exact_sha_ci": "PENDING; no runtime push yet",
-    "worker_deployed": false,
-    "post_deploy_health": "PENDING",
-    "changed_public_hashes": "PENDING"
+    "runtime_commit": "074bfef83c0f21fded19dc4ddc407feef63ccefa",
+    "pushed": true,
+    "exact_sha_ci": {
+      "status": "PARTIAL; REQUIRED_EDITOR_CORE_STILL_IN_PROGRESS",
+      "editor_core": {
+        "run_id": 44353969040,
+        "status": "in_progress",
+        "active_step": "Run Editor browser layout regression",
+        "url": "https://github.com/sanci9517/sanci9517/actions/runs/44353969040"
+      },
+      "passing_runs": [
+        44353969284,
+        44353968996,
+        44353969054,
+        44353969023,
+        44353969288
+      ]
+    },
+    "worker_deployed": true,
+    "deployment": {
+      "id": "2fa25c2b-6118-4f7f-801f-9e038808687e",
+      "version_id": "274c842f-b273-41a4-b92a-fe5f58fce0f3",
+      "version_number": 4123,
+      "traffic_percent": 100
+    },
+    "post_deploy_health": {
+      "status": "PASS",
+      "http": 200,
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health"
+    },
+    "changed_public_hashes": {
+      "status": "PASS",
+      "workflow_run_id": 44353969288,
+      "source_smoke": "PASS; exact source SHA; health HTTP 200; all 34 public source SHA-256 checks matched"
+    }
   },
   "source_sha256_before_release": {
     "public/assets/page-renderer.js": "ac0b82b8ca7947eed60dafeb43df6b4123e60f232439bd9d830f28a490058a47",

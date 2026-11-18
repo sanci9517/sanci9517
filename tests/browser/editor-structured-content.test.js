@@ -83,6 +83,10 @@ test('structured Inspector editing survives Save, Publish and public interaction
  }
  execute(model,{type:'element.update',payload:{nodeId:ids.heading,patch:{accessibility:{anchorId:'main-heading',ariaLabel:'Főcím'}}}});
  execute(model,{type:'element.update',payload:{nodeId:ids.link,patch:{states:{hover:{backgroundColor:'#123456',color:'#ffffff'},focus:{outlineColor:'#00ff00'}}}}});
+ execute(model,{type:'element.add',payload:{type:'list',parentId:root,name:'Régi lista'}});
+ ids.legacyList=model.selection.primaryId;
+ execute(model,{type:'element.update',payload:{nodeId:ids.legacyList,patch:{props:{...activePage(model).nodes[ids.legacyList].props,
+  contentModel:{version:1,ordered:false,items:['Megőrzendő első sor','Sérült sor helyőrzője','Megőrzendő harmadik sor']}}}}});
  const img=activePage(model).nodes[ids.gallery];
  execute(model,{type:'element.update',payload:{nodeId:img.id,patch:{props:{...img.props,contentModel:{version:1,items:[{src:'/media/example.jpg',alt:'Próbakép',caption:'Tesztkép'},{src:'/media/second.jpg',alt:'Második kép',caption:'Második kép leírása'}]}}}}});
  const carouselNode=activePage(model).nodes[ids.carousel];
@@ -560,5 +564,56 @@ test('structured Inspector editing survives Save, Publish and public interaction
   host.remove();outside.remove();return checks;
  });
  assert.deepEqual(focusGuards,{rejected:true,newerFocus:true,differentNode:true,sameNodeNewRender:true,closedPanel:true,programmatic:true,newestAction:true,disabled:true,tableRowLimit:true});
+ // Simulate an older persisted document with a row shape that the tolerant
+ // legacy renderer can display but the Inspector must not silently coerce.
+ // Exercise the real draft endpoint and keep Save distinct from Publish.
+ draft.pages[pageId].nodes[ids.legacyList].props.contentModel.items[1]=null;
+ await editor.reload();
+ const postsBeforeInspection=posts.length;
+ for(const width of [1366,390]){
+  await editor.setViewportSize({width,height:900});await select(ids.legacyList);
+  const inspector=editor.locator('.structured-inspector'),warning=inspector.getByRole('alert');
+  await warning.waitFor();
+  assert.match(await warning.textContent(),/2\. sora/);
+  assert.equal(await inspector.locator('.structured-input').count(),0,'malformed legacy rows do not expose lossy normal inputs at '+width+'px');
+  const repair=inspector.getByRole('button',{name:'Hibás sorok cseréje alapértékre'});
+  assert.equal(await repair.isEnabled(),true);
+  assert.equal(posts.length,postsBeforeInspection,'opening recovery never writes or publishes at '+width+'px');
+  assert.deepEqual(draft.pages[pageId].nodes[ids.legacyList].props.contentModel.items,
+   ['Megőrzendő első sor',null,'Megőrzendő harmadik sor'],'the malformed row remains persisted until explicit repair');
+ }
+ await select(ids.badge);
+ await editor.locator('.basic-content-inspector').getByRole('textbox',{name:'Címke szövege',exact:true}).fill('Nem kapcsolódó mentett módosítás');
+ await editor.locator('#save').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+ assert.equal(posts.at(-1).publish,false,'an unrelated Save remains draft-only');
+ assert.deepEqual(draft.pages[pageId].nodes[ids.legacyList].props.contentModel.items,
+  ['Megőrzendő első sor',null,'Megőrzendő harmadik sor'],'saving another node must preserve the untouched malformed row exactly');
+ await editor.reload();await select(ids.legacyList);
+ await editor.locator('.structured-inspector').getByRole('alert').waitFor();
+ const postsBeforeRepair=posts.length;
+ await editor.locator('.structured-inspector').getByRole('button',{name:'Hibás sorok cseréje alapértékre'}).click();
+ assert.equal(await editor.locator('.structured-inspector .structured-item textarea').nth(1).inputValue(),'');
+ assert.equal(posts.length,postsBeforeRepair,'explicit recovery is still a local draft edit');
+ await editor.keyboard.press('Control+z');
+ await editor.locator('.structured-inspector').getByRole('alert').waitFor();
+ assert.equal(posts.length,postsBeforeRepair,'Undo restores the malformed draft without persisting it');
+ await editor.keyboard.press('Control+Shift+z');
+ assert.equal(await editor.locator('.structured-inspector .structured-item textarea').nth(1).inputValue(),'','Redo restores only the explicit repair');
+ await editor.locator('#save').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+ assert.equal(posts.at(-1).publish,false,'recovered legacy content is saved as a draft first');
+ assert.deepEqual(draft.pages[pageId].nodes[ids.legacyList].props.contentModel.items,
+  ['Megőrzendő első sor','','Megőrzendő harmadik sor'],'only the malformed row is replaced');
+ await editor.reload();await select(ids.legacyList);
+ assert.deepEqual(await editor.locator('.structured-inspector .structured-item textarea').evaluateAll(fields=>fields.map(field=>field.value)),
+  ['Megőrzendő első sor','','Megőrzendő harmadik sor'],'explicit recovery survives draft reload');
+ await viewer.reload();
+ const publicLegacy=viewer.locator('.visual-editor-node[data-node-id="'+ids.legacyList+'"]');
+ assert.deepEqual(await publicLegacy.locator('li').allTextContents(),
+  ['Megőrzendő első sor','Sérült sor helyőrzője','Megőrzendő harmadik sor'],'Save alone leaves the previous published list intact');
+ await editor.locator('#publish').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
+ assert.equal(posts.at(-1).publish,true,'Publish is the separate publication operation');
+ await viewer.reload();
+ assert.deepEqual(await viewer.locator('.visual-editor-node[data-node-id="'+ids.legacyList+'"]').locator('li').allTextContents(),
+  ['Megőrzendő első sor','','Megőrzendő harmadik sor'],'the repaired model appears publicly only after Publish');
  assert.deepEqual(errors,[]);
 });

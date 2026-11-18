@@ -1,0 +1,137 @@
+{
+  "schema": "sanci.editor.d03-structured-row-recovery.v1",
+  "recorded_at_utc": "2026-11-18",
+  "repository": "sanci9517/sanci9517",
+  "branch": "v2/foundation",
+  "base_head": "074bfef83c0f21fded19dc4ddc407feef63ccefa",
+  "plan_point": "77.44.7.D / D-03 legacy structured repeater row recovery",
+  "status": "LOCAL_ACCEPTANCE_PASS_RELEASE_PENDING",
+  "scope": {
+    "defect": "Legacy structured repeaters tolerated null/object/array row values by coercing them to empty text in the Inspector, so an unrelated edit could silently replace the stored row.",
+    "behavior": "The Inspector detects unrepresentable legacy list, tabs, accordion, gallery, and carousel rows. It exposes an accessible warning and one explicit per-row repair action; ordinary fields remain locked until repair. Valid neighbor rows and allowed null text fields are retained. Locked nodes cannot repair. The real browser also edits and saves a separate element while the malformed row exists, proving that an unrelated draft Save preserves the exact legacy row; Undo and Redo cover the explicit repair.",
+    "history": "Real Chromium verifies explicit recovery supports Undo and Redo without implicit writes.",
+    "save_publish": "A real browser uses the Editor draft route: an invalid saved draft remains untouched on opening; explicit repair changes only invalid rows; Save persists the draft and reload restores it while the old published snapshot remains unchanged; separate Publish is required before the repaired row is rendered publicly.",
+    "viewports_px": [
+      1366,
+      390
+    ],
+    "changed_runtime_paths": [
+      "public/editor-v2/app.js",
+      "public/editor-v2/core/element-content.js",
+      "public/editor-v2/ui/structured-inspector.js"
+    ],
+    "changed_test_paths": [
+      "public/editor-v2/tests/structured-inspector-invalid-content.test.js",
+      "tests/browser/editor-structured-content.test.js"
+    ],
+    "other_changed_paths": [
+      "docs/evidence/editor-d02-card-cta-recovery-2026-11-18.json",
+      "docs/evidence/feature-traceability.json"
+    ]
+  },
+  "checks": {
+    "targeted_unit": {
+      "status": "PASS",
+      "command": "node --experimental-vm-modules --test public/editor-v2/tests/structured-inspector-invalid-content.test.js",
+      "result": "1 test file passed, including malformed list null/object/array and malformed row objects for tabs, accordion, gallery, and carousel."
+    },
+    "targeted_browser": {
+      "status": "PASS",
+      "command": "node --test tests/browser/editor-structured-content.test.js",
+      "result": "2/2 real Chromium tests passed; the structured Inspector lifecycle covers 1366px and 390px, unrelated draft Save preservation, explicit row repair, Undo/Redo, Save/reload, old public snapshot isolation, and separate Publish."
+    },
+    "editor_unit_suite": {
+      "status": "PASS",
+      "command": "npm run test:editor",
+      "result": "22/22 Editor unit test files and 4/4 subreaper/manifest tests."
+    },
+    "typecheck": {
+      "status": "PASS",
+      "command": "npm run typecheck -- --pretty false"
+    },
+    "plan_contract": {
+      "status": "PASS",
+      "command": "python3 tests/plan-contract.test.py",
+      "result": "14/14"
+    },
+    "feature_traceability": {
+      "status": "PASS",
+      "command": "python3 scripts/build-feature-traceability.py --check",
+      "result": "396 source mappings match current code; acceptance remains NOT_CERTIFIED."
+    },
+    "active_plan_point": {
+      "status": "PASS",
+      "command": "python3 scripts/audit-active-plan-point.py",
+      "result": "77.44 / WEB-011; next 77.44.7.D; full D OPEN / NOT_CERTIFIED; 147 PARTIAL_SOURCE / 249 UNVERIFIED."
+    },
+    "canonical_plan": {
+      "status": "PASS",
+      "command": "python3 scripts/check-canonical-plan.py",
+      "result": "One complete 13-file master and 396 mappings; functional acceptance NOT certified."
+    },
+    "migration_safety_gate": {
+      "status": "PASS",
+      "command": "npm run test:web013:migration-gate"
+    },
+    "syntax_and_diff": {
+      "status": "PASS",
+      "command": "node --check on changed runtime/test JS files; git diff --check"
+    },
+    "wrangler_dry_run": {
+      "status": "PASS_NO_PUBLISH",
+      "version": "4.130.0",
+      "asset_count": 194,
+      "total_kib": 392.87,
+      "gzip_kib": 100.73,
+      "note": "Wrangler emitted a sandbox log-directory warning but exited 0 and completed dry-run without publishing."
+    },
+    "production_d1_preflight": {
+      "status": "PASS_READ_ONLY",
+      "query": "SELECT name FROM d1_migrations ORDER BY name DESC LIMIT 1",
+      "latest_migration": "0029_media_archive_unicode_additive.sql",
+      "rows_read": 1,
+      "rows_written": 0,
+      "changes": 0,
+      "changed_db": false
+    },
+    "production_baseline": {
+      "status": "VERIFIED_BASELINE_ONLY",
+      "deployment_id": "2fa25c2b-6118-4f7f-801f-9e038808687e",
+      "worker_version_id": "274c842f-b273-41a4-b92a-fe5f58fce0f3",
+      "worker_version_number": 4123,
+      "traffic_percent": 100,
+      "health_url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+      "health_http": 200,
+      "note": "This is the production state before the D-03 commit; this slice is not yet in production."
+    },
+    "github_exact_sha_ci": {
+      "status": "NOT_STARTED_FOR_THIS_SLICE",
+      "prior_release_run": {
+        "id": 44353969040,
+        "sha": "074bfef83c0f21fded19dc4ddc407feef63ccefa",
+        "status": "IN_PROGRESS",
+        "url": "https://github.com/sanci9517/sanci9517/actions/runs/44353969040"
+      },
+      "note": "A new run for the D-03 source SHA has not started. No rerun or extra dispatch was issued."
+    }
+  },
+  "release": {
+    "runtime_commit": null,
+    "pushed": false,
+    "exact_sha_ci": "NOT_STARTED",
+    "worker_deployed": false,
+    "post_deploy_health": "NOT_RUN",
+    "changed_public_hashes": "NOT_RUN"
+  },
+  "limitations": [
+    "This implements and locally verifies one D-03 recovery slice only. It does not complete D-03's full capability/lifecycle matrix, D-01 through D-07, the Visual Editor, or 77.44.7.D.",
+    "Full Editor manual/physical acceptance remains DEFERRED until the complete Editor scope is implemented.",
+    "The malformed-row repair is explicit and replaces only the listed invalid rows with safe defaults; production D1 migrations/data writes and R2 changes/deletions were not performed.",
+    "No new paid service or cost was introduced (0 Ft)."
+  ],
+  "local_sha256_before_release": {
+    "public/editor-v2/app.js": "5232614e6654065bb84aab5b6d33653703d3fe48c6c8d001f405b5c38fcc16b9",
+    "public/editor-v2/core/element-content.js": "884065bac41cfdef056df9139f0187da4eddcd10bf3f192c021c0b9615fd5fb0",
+    "public/editor-v2/ui/structured-inspector.js": "551561485ff8589b253cc7ed079b7bcfe05348c5d65dd4b007543cf3959b5200"
+  }
+}
