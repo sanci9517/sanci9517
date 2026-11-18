@@ -1,0 +1,130 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-18T21:18:00Z",
+  "task": "77.44.7.D / EDT-038 internal action target remap",
+  "canonical_plan_point": {
+    "main": "77.44 / WEB-011",
+    "next": "77.44.7.D",
+    "status": "OPEN / NOT_CERTIFIED",
+    "functional_acceptance": "NOT_CERTIFIED"
+  },
+  "runtime_commit": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "sha": "f734405007245d158ac1bdc40b7a035a2a23ffdd",
+    "parent": "b736bd2a5f021d3f8fa7a8e060ff94fad75930c5",
+    "message": "fix(editor): remap copied internal page actions",
+    "url": "https://github.com/sanci9517/sanci9517/commit/f734405007245d158ac1bdc40b7a035a2a23ffdd"
+  },
+  "implementation": "Duplicating or pasting a subtree remaps same-page action targetIds only when their targets are inside the copied subtree. External targets continue to reference the original node. Regression covers duplicate and paste plus browser save/reload and distinct Publish.",
+  "local_public_asset_hashes": {
+    "public/editor-v2/app.js": "59d401e6acd9e01a89fe8fb9083ce2abcb6ecacdb9b931f57c2718dc35774317",
+    "public/editor-v2/core/commands.js": "6d78f146e91ff9ee964ee857a4eeeef09039f2d458b68a752d7fc010b52c4f23",
+    "public/editor-v2/tests/core.test.js": "9cd1ce8ee3fdbad070e0abae951f0f9d4a176f6bdaf14f8d1d957f7e490ed62b"
+  },
+  "checks": [
+    {
+      "command": "npm run test:editor",
+      "result": "PASS: 22/22 Editor test files; runner/manifest 4/4"
+    },
+    {
+      "command": "npm run typecheck -- --pretty false",
+      "result": "PASS"
+    },
+    {
+      "command": "python3 tests/plan-contract.test.py",
+      "result": "PASS: 15/15"
+    },
+    {
+      "command": "python3 scripts/build-feature-traceability.py --check",
+      "result": "PASS: 396/396; acceptance remains not certified"
+    },
+    {
+      "command": "python3 scripts/audit-active-plan-point.py",
+      "result": "PASS: next 77.44.7.D; 147 PARTIAL_SOURCE / 249 UNVERIFIED; functional acceptance NOT_CERTIFIED"
+    },
+    {
+      "command": "python3 scripts/check-canonical-plan.py",
+      "result": "PASS: complete 13-part canonical master; 396 mappings; acceptance remains not certified"
+    },
+    {
+      "command": "npm run test:web013:migration-gate",
+      "result": "PASS"
+    },
+    {
+      "command": "npm run test:editor:clipboard-browser",
+      "result": "PASS: Chromium 1/1; same-page copied target; Save≠Publish; subreaper reaped 4 children"
+    },
+    {
+      "command": "XDG_CONFIG_HOME=/tmp/sanci-wrangler-config WRANGLER_SEND_METRICS=false npx wrangler deploy --dry-run",
+      "result": "PASS: Wrangler 4.130.0, 195 assets, 392.87 KiB / 100.73 KiB gzip; no publish"
+    },
+    {
+      "command": "git diff --check and changed JS node --check",
+      "result": "PASS"
+    },
+    {
+      "command": "Editor Core exact-SHA CI run 44399789645",
+      "result": "IN_PROGRESS; exact commit; typecheck/unit/media checks passed; isolated Worker media upload step running"
+    },
+    {
+      "command": "Production Worker source smoke run 44399789730",
+      "result": "PASS exact SHA; health HTTP 200; all 35 allowlisted public source SHA-256 checks match after two bounded rollout/cache attempts"
+    },
+    {
+      "command": "Canonical Plan 44399789563 / Active Point Audit 44399789706 / F0 44399789588 / Twitch 44399789708",
+      "result": "PASS exact SHA"
+    }
+  ],
+  "production": {
+    "pre_release_baseline": {
+      "deployment_id": "1104f35f-53c9-4544-b89c-88a736a08281",
+      "worker_version": "537fbbef-e428-4932-aa52-d30d71706ac0",
+      "worker_version_number": 4125,
+      "traffic_percent": 100,
+      "source_commit_sha": "e884497189e664b6bb8779a3f1e76a8d37678811"
+    },
+    "new_build": {
+      "build_uuid": "ca58e322-d6ff-4fd8-8d38-f10ed45aa390",
+      "outcome": "success",
+      "status": "stopped",
+      "commit_sha": "f734405007245d158ac1bdc40b7a035a2a23ffdd",
+      "branch": "v2/foundation",
+      "deploy_command": "npm run deploy:safe"
+    },
+    "deployment_id": "c7ccf408-28bd-4e10-9710-07df84096d40",
+    "worker_version": "465b5070-66a2-4491-a1a2-5a60eb711611",
+    "traffic_percent": 100,
+    "deployment_time_utc": "2026-11-18T21:17:18.764495Z",
+    "source_commit_sha": "f734405007245d158ac1bdc40b7a035a2a23ffdd",
+    "source_smoke": {
+      "run_id": 44399789730,
+      "status": "success",
+      "health": "HTTP 200",
+      "assets": "all 35 allowlisted source SHA-256 checks match, including the modified public core.test.js harness",
+      "url": "https://github.com/sanci9517/sanci9517/actions/runs/44399789730"
+    },
+    "d1_preflight": {
+      "query": "SELECT name FROM d1_migrations ORDER BY name DESC LIMIT 1",
+      "last_migration": "0029_media_archive_unicode_additive.sql",
+      "rows_read": 1,
+      "rows_written": 0,
+      "changes": 0,
+      "changed_db": false
+    },
+    "r2_mutation": false,
+    "wrangler_dry_run": "PASS: 195 assets, no publish",
+    "worker_version_number": 4126
+  },
+  "editor_acceptance": {
+    "full_scope_complete": false,
+    "manual_physical": "DEFERRED until complete Editor implementation",
+    "d_point": "OPEN / NOT_CERTIFIED"
+  },
+  "cost": "0 Ft new authorized spend; no paid dependency or production data mutation",
+  "limitations": [
+    "The current commit exact-SHA Editor Core test is still running; do not mark this release block fully CI-certified until run 44399789645 completes successfully.",
+    "The local direct Worker health request is blocked by this workspace proxy; the exact-SHA production smoke workflow verified HTTP 200 health and all expected public hashes.",
+    "This is a scoped EDT-038 regression fix only, not completion of EDT-038 capability acceptance, the complete Visual Editor, or D-01 through D-07."
+  ]
+}
