@@ -1,8 +1,13 @@
 {
   "schema_version": 1,
-  "recorded_at": "2026-11-18T11:04:00Z",
+  "recorded_at": "2026-11-18T11:08:00Z",
   "active_plan_point": {
-    "ids": ["77.44", "WEB-011", "77.44.7.D", "EDT-039"],
+    "ids": [
+      "77.44",
+      "WEB-011",
+      "77.44.7.D",
+      "EDT-039"
+    ],
     "status": "OPEN / NOT_CERTIFIED",
     "full_editor_acceptance": "DEFERRED_UNTIL_COMPLETE_EDITOR",
     "save_publish_separation": true
@@ -23,7 +28,9 @@
   },
   "diagnosis_and_fix": {
     "finding": "The fixture intentionally removes background-image in its hover state, but the base-style assertion did not explicitly move Chromium's pointer away after reload and viewport changes. The CI's empty computed value is consistent with a pointer-dependent hover state, so the assertion now establishes and checks a non-hover precondition before checking the published asset route.",
-    "files": ["tests/browser/editor-content-system.test.js"],
+    "files": [
+      "tests/browser/editor-content-system.test.js"
+    ],
     "runtime_source_changed": false,
     "added_guard": "Move the live-page pointer to (1350,890), assert the button does not match :hover, then retain the strict guarded /media/<asset-id> assertion."
   },
@@ -53,5 +60,18 @@
     "The local regression is green after the test-only stabilization, but this result is not a hosted Editor Core PASS for the new test SHA.",
     "The full Editor Core workflow remains unverified on the follow-up SHA; D-01 through D-07 and 77.44.7.D remain OPEN / NOT_CERTIFIED.",
     "Full Visual Editor manual and physical acceptance remains deferred until the Editor is complete."
-  ]
+  ],
+  "follow_up_commit": {
+    "sha": "7b7d652e6609a634a2e898aea131c11d838e4192",
+    "message": "test(editor): stabilize published background route assertion [skip ci]",
+    "branch": "v2/foundation",
+    "runtime_deploy": "not_required_test_only"
+  },
+  "canonical_plan": {
+    "active_point": "77.44.7.D",
+    "status": "OPEN / NOT_CERTIFIED",
+    "verified_full_blob_sha": "77b5f9bea2d18e773445043700245276b48d276e",
+    "verified_bytes_before_evidence_update": 1704950,
+    "canonical_plan_write": "NOT_DONE; GitHub connector read of the >1 MiB source was truncated (returned 993000 characters versus 1610889 UTF-8 characters). The full checked-out master was preserved unchanged instead of writing partial content. This evidence is the additive status record."
+  }
 }
