@@ -8,7 +8,7 @@
     "public/assets/page-renderer.js": "4f015e35547fca6c04b9c77d7e205d8695615811dc2f67ebf31319c4105cff76",
     "public/editor-v2/action-help.css": "591c1a09dd8602196329d7a2f21d692091174a4b2c2ade2b734e65a7631f8602",
     "public/editor-v2/app.js": "49f64500acaeba5b12f499bcbc0d43d6bbf39beb460a23725e9db050f0d15eed",
-    "public/editor-v2/core/authored-content.js": "930675d0a1445237b39192c7bd5123b5f15b601bab34536f5bd78936f4f70b52",
+    "public/editor-v2/core/authored-content.js": "db2367e8ddf3e17688996e85070d2200b7a8fc46599706ae9b21a744bf099c34",
     "public/editor-v2/core/background-asset.js": "2dc149e8ab35bef1d7debefc44ac9f3a71f649ab49c1514434252e6e95008da1",
     "public/editor-v2/core/canvas-engine.js": "7f18a6d964ab83d79ceeae4d0290a3b2400c9b9e8ee0c57602da522da181cb4b",
     "public/editor-v2/core/capability-matrix.js": "34a209c7b41f42cf4211964ff7eb4ef5801edd1ab22e19d86459b3a28d49682a",

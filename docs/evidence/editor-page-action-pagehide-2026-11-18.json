@@ -2,8 +2,8 @@
   "schema_version": 1,
   "task": "77.44.7.D / EDT-039",
   "title": "Cancel deferred Page Action timers on pagehide",
-  "status": "LOCAL_REGRESSION_PASS_RELEASE_PENDING",
-  "recorded_at_utc": "2026-11-18T12:13:00Z",
+  "status": "PARTIAL_RELEASED_D_OPEN_NOT_CERTIFIED",
+  "recorded_at_utc": "2026-11-18T12:49:00Z",
   "base_branch": "v2/foundation",
   "base_commit": "f0258dfeb868df34e8ff3e297272d260be97fbc9",
   "change": {
@@ -58,7 +58,8 @@
       ],
       "result": "PASS",
       "source_mappings": 396,
-      "source_hash_updated": "public/editor-v2/core/authored-content.js"
+      "source_hash_updated": "public/editor-v2/core/authored-content.js",
+      "verified_hash": "db2367e8ddf3e17688996e85070d2200b7a8fc46599706ae9b21a744bf099c34"
     },
     "wrangler_dry_run": {
       "command": "npx wrangler deploy --dry-run",
@@ -81,12 +82,66 @@
     "result": "PASS_READ_ONLY"
   },
   "release": {
-    "source_commit": null,
-    "github_actions_exact_sha": "PENDING",
-    "cloudflare_build": "PENDING",
-    "deployment": "PENDING",
-    "worker_traffic": "PENDING",
-    "health_and_changed_asset_hashes": "PENDING"
+    "source_commit": "97dd82c23c5475d90ff1cec2113a074fbaf7f1d5",
+    "github_actions_exact_sha": "PARTIAL: Production Worker source smoke, F0 baseline, and Twitch Integration SUCCESS; Editor Core still IN_PROGRESS at capture. Canonical Plan and Active Point Audit FAILED before the follow-up because the crosswalk retained the prior source order hash; local checks pass after correcting it. This docs-only follow-up uses [skip ci] and does not claim hosted CI for the new evidence commit.",
+    "cloudflare_build": {
+      "build_uuid": "0d398b45-92d4-4e2b-87c9-1508936b5788",
+      "outcome": "success",
+      "source_sha": "97dd82c23c5475d90ff1cec2113a074fbaf7f1d5",
+      "deploy_command": "npm run deploy:safe",
+      "migration_safety_gate": "PASS; no D1 migrations applied",
+      "assets_uploaded": [
+        "/editor-v2/core/authored-content.js"
+      ]
+    },
+    "deployment": {
+      "id": "9f82dfa7-fb94-4399-b639-9feeed555f35",
+      "worker_version": "e2d48c7f-09f7-4eaa-8c87-4a5528cf4860",
+      "traffic_percent": 100
+    },
+    "worker_traffic": "PASS: read-only Cloudflare deployment GET reports e2d48c7f-09f7-4eaa-8c87-4a5528cf4860 at 100%",
+    "health_and_changed_asset_hashes": "PASS: exact-source Worker smoke workflow 44307061430 returned HTTP 200 /api/health and all expected public SHA-256 checks matched after automatic deployment; authored-content.js live SHA-256 db2367e8ddf3e17688996e85070d2200b7a8fc46599706ae9b21a744bf099c34.",
+    "failed_checks_root_cause": "The initial release tree mistakenly recorded SHA-256 930675d0... from the local insertion order instead of the exact pushed source order. Exact branch/deployed public authored-content.js SHA-256 is db2367e8ddf3e17688996e85070d2200b7a8fc46599706ae9b21a744bf099c34. The crosswalk now matches; local source audit, canonical check and 14 plan-contract tests passed after correction.",
+    "github_actions_runs": [
+      {
+        "name": "Production Worker source smoke",
+        "id": 44307061430,
+        "result": "SUCCESS",
+        "url": "https://github.com/sanci9517/sanci9517/actions/runs/44307061430"
+      },
+      {
+        "name": "F0 baseline checks",
+        "id": 44307061401,
+        "result": "SUCCESS",
+        "url": "https://github.com/sanci9517/sanci9517/actions/runs/44307061401"
+      },
+      {
+        "name": "Twitch Integration Check",
+        "id": 44307061327,
+        "result": "SUCCESS",
+        "url": "https://github.com/sanci9517/sanci9517/actions/runs/44307061327"
+      },
+      {
+        "name": "Editor Core Test",
+        "id": 44307061545,
+        "result": "IN_PROGRESS_AT_CAPTURE",
+        "url": "https://github.com/sanci9517/sanci9517/actions/runs/44307061545"
+      },
+      {
+        "name": "Canonical Plan Active Point Audit",
+        "id": 44307061465,
+        "result": "FAILURE_STALE_TRACEABILITY_FINGERPRINT",
+        "url": "https://github.com/sanci9517/sanci9517/actions/runs/44307061465"
+      },
+      {
+        "name": "Canonical Creator Platform Plan",
+        "id": 44307061305,
+        "result": "FAILURE_STALE_TRACEABILITY_FINGERPRINT",
+        "url": "https://github.com/sanci9517/sanci9517/actions/runs/44307061305"
+      }
+    ],
+    "doc_only_traceability_followup": "Prepared for a docs-only [skip ci] fast-forward that preserves the corrected crosswalk, exact-SHA workflow outcomes, release evidence and metrics. Worker source/deployment are unchanged.",
+    "canonical_master_status": "OPEN_NOT_CERTIFIED; one complete canonical plan is retained unchanged. Current cursor remains 77.44 / WEB-011, next 77.44.7.D; traceability shows 147 PARTIAL_SOURCE and 249 UNVERIFIED."
   },
   "safety": {
     "new_cost_huf": 0,
@@ -95,5 +150,6 @@
     "save_is_separate_from_publish": true,
     "full_visual_editor_and_d_point": "OPEN_NOT_CERTIFIED",
     "manual_physical_acceptance": "DEFERRED_UNTIL_COMPLETE_EDITOR"
-  }
+  },
+  "runtime_sha256": "db2367e8ddf3e17688996e85070d2200b7a8fc46599706ae9b21a744bf099c34"
 }

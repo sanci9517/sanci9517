@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261118120709-e8955f2d",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-18T12:07:09.984Z",
+  "finished_at": "2026-11-18T12:54:47.612Z",
+  "wall_seconds": 2858,
+  "paused_seconds": 0,
+  "measured_seconds": 2858,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "EDT-039 pagehide cancels pending timers; local regression, read-only preflight and production deploy passed, but D remains open and exact-SHA CI is incomplete.",
+  "evidence": [
+    "docs/evidence/editor-page-action-pagehide-2026-11-18.json",
+    "docs/evidence/feature-traceability.json"
+  ],
+  "checks": "Chromium 1/1; editor unit 22/22 + subreaper 4/4; typecheck; plan 14/14; mapping 396; D1 SELECT-only; Wrangler dry-run; source smoke PASS; exact Editor Core pending; plan/audit failed on corrected stale fingerprint",
+  "started_revision": "2f01a698c06e0de36ffaba66b661e0f9e3104854",
+  "finished_revision": "2f01a698c06e0de36ffaba66b661e0f9e3104854",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
