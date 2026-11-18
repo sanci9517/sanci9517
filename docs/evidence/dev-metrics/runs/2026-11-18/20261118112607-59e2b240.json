@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261118112607-59e2b240",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-18T11:26:07.539Z",
+  "finished_at": "2026-11-18T11:38:57.794Z",
+  "wall_seconds": 770,
+  "paused_seconds": 0,
+  "measured_seconds": 770,
+  "status": "partial",
+  "kind": "test",
+  "summary": "EDT-039 és a Save/Preview/Publish célzott Chromium-regresszió 2/2, Editor unit 22/22, typecheck és plan-contract/traceability PASS; a 58-fájlos soros layout-suite 4/58 fájl után megállítva, ezért D teljes kapu OPEN.",
+  "evidence": [
+    "docs/evidence/editor-d-page-interactions-local-regression-2026-11-18.json"
+  ],
+  "checks": "npm run test:editor PASS 22/22 + 4/4; typecheck PASS; plan-contract 14/14; canonical/traceability PASS; targeted Chromium 2/2; layout suite PARTIAL 4/58 files; no hosted CI.",
+  "started_revision": "2f01a698c06e0de36ffaba66b661e0f9e3104854",
+  "finished_revision": "2f01a698c06e0de36ffaba66b661e0f9e3104854",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

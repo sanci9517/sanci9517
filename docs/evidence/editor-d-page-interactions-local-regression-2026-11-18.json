@@ -1,0 +1,55 @@
+{
+  "schema": "sanci.editor.d-page-interaction-regression.v1",
+  "recorded_at_utc": "2026-11-18T11:38:26Z",
+  "repository": "sanci9517/sanci9517",
+  "branch": "v2/foundation",
+  "verified_remote_head": "7372dbab86335469bdade783535a38d0b6b4bdd7",
+  "active_plan_point": {
+    "ids": [
+      "77.44",
+      "WEB-011",
+      "77.44.7.D",
+      "EDT-039"
+    ],
+    "status": "OPEN / NOT_CERTIFIED",
+    "full_editor_acceptance": "DEFERRED_UNTIL_COMPLETE_EDITOR",
+    "save_publish_separate": true
+  },
+  "runtime_baseline": {
+    "runtime_commit": "6a38cb4242c83268280cf1749e940a230314e679",
+    "cloudflare_deployment_id": "596e50f3-c830-4371-a1d7-e48f468659dc",
+    "worker_version": "68b853e6-afbb-4e45-b579-1735695dfc4d",
+    "traffic_percent": 100,
+    "change_in_this_run": false,
+    "latest_exact_source_smoke": "44286406807; HTTP 200; 34/34 asset hashes; prior evidence; not repeated this run"
+  },
+  "checks": {
+    "editor_unit": "PASS: npm run test:editor; 22/22 Node test files and 4/4 subreaper checks.",
+    "typecheck": "PASS: npm run typecheck -- --pretty false.",
+    "canonical_plan": "PASS: python3 scripts/check-canonical-plan.py; complete 13-part master, current cursor, 396 mappings; functional acceptance NOT_CERTIFIED.",
+    "plan_contract": "PASS: python3 tests/plan-contract.test.py; 14/14.",
+    "active_plan_audit": "77.44 / WEB-011; next 77.44.7.D; 147 PARTIAL_SOURCE, 249 UNVERIFIED; functional acceptance NOT_CERTIFIED.",
+    "traceability": "PASS: 396/396 mappings match catalog/contracts/source paths.",
+    "targeted_real_chromium": "PASS: CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-content-system.test.js tests/browser/editor-page-interactions.test.js; 2/2 files, includes Save/Preview/Publish separation and EDT-039 actions/timer behavior.",
+    "layout_suite": "PARTIAL: CHROMIUM_PATH=/usr/bin/chromium npm run test:editor:layout. In the permitted loopback run, 4/58 files passed (93 assertions: action-help 2, workspace appearance 87, multi-validation 2, page paths 2); stopped before file 5 because the full serial suite is prohibitively long here. No test failure was observed; full suite is NOT PASS.",
+    "diff_check": "PASS: git diff --check."
+  },
+  "new_runtime_or_deployment": "none",
+  "production_mutations": {
+    "d1_writes_or_migrations": 0,
+    "r2_changes_or_deletions": 0
+  },
+  "hosted_ci": "NOT_STARTED; test/evidence-only follow-up; current known Actions free quota exhausted; not a CI PASS.",
+  "new_paid_cost_huf": 0,
+  "limitations": [
+    "This verifies the focused action and publication regression, not full EDT-039, the complete Visual Editor, all D-01..D-07 gates, or the full 58-file browser suite.",
+    "Manual and physical Editor acceptance remains deferred until the entire Visual Editor is complete."
+  ],
+  "evidence_source_shas": {
+    "public/editor-v2/core/page-interactions.js": "9e130837fb8687ad0e632c347632ae36265994ca",
+    "public/editor-v2/tests/page-interactions.test.js": "c55f735e6cf8129e32ee8834f09f15266fd07940",
+    "tests/browser/editor-page-interactions.test.js": "bd58077e9d168ae7631b03765b887605c00b5b7f",
+    "tests/browser/editor-content-system.test.js": "cf4025a90e17404db50d3113bc17f01bbb0d2862",
+    "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md": "77b5f9bea2d18e773445043700245276b48d276e"
+  }
+}
