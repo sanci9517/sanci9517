@@ -1,0 +1,123 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-18T19:42:00Z",
+  "task": "EDT-038",
+  "canonical_plan_point": {
+    "main": "77.44 / WEB-011",
+    "next": "77.44.7.D",
+    "status": "OPEN / NOT_CERTIFIED"
+  },
+  "runtime_commit": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "sha": "e884497189e664b6bb8779a3f1e76a8d37678811",
+    "parent": "88181f527b0965be4b43fea14e757dbeb0fe6779",
+    "message": "feat(editor): add node copy and paste (EDT-038)",
+    "url": "https://github.com/sanci9517/sanci9517/commit/e884497189e664b6bb8779a3f1e76a8d37678811"
+  },
+  "implementation": "Adds in-memory same-page node copy/paste with ancestor-root normalization, safe ID remap, command rollback, keyboard and desktop/mobile controls; does not merge Save and Publish.",
+  "local_public_asset_hashes": {
+    "public/editor-v2/app.js": "42d603639403d3f00138765b1615b1ae763d9e6d5ee4a6cd272adbae3c61cc54",
+    "public/editor-v2/core/commands.js": "8b8aa8b9e4fa11cfe8087d21854b8a213dfe332f9c30b0757993ebd3eea8c1bc",
+    "public/editor-v2/core/node-clipboard.js": "39bf265195c787dbec8d553cf805bdbb01293fa9c34d44b99c724b2b144cd1b7",
+    "public/editor-v2/editor-refresh.css": "2ef4f1725fe3af3a203ed9dba28a7699abe57c7cbc9f41a00c390cd81be031ac",
+    "public/editor-v2/index.html": "140fd83094a60a8bab852a1295cd02e2d89167c09cce404ffffaba279b44f547"
+  },
+  "public_test_harness_changed_not_in_production_smoke_allowlist": {
+    "public/editor-v2/tests/core.test.js": {
+      "local_sha256": "317e1c3e319fcbd1932a8d1b800929068ec2c9584db4ea461f5e1cf698163d40",
+      "production_hash": "NOT_VERIFIED",
+      "reason": "The changed test file is located beneath the public asset root but is not in the current exact-source smoke allowlist; direct worker URL fetch is blocked by this environment proxy."
+    }
+  },
+  "production": {
+    "cloudflare_build": {
+      "build_uuid": "4a849c1f-ef74-4dde-99d7-be829ccb4d21",
+      "outcome": "success",
+      "status": "stopped",
+      "commit_sha": "e884497189e664b6bb8779a3f1e76a8d37678811",
+      "branch": "v2/foundation",
+      "deploy_command": "npm run deploy:safe"
+    },
+    "deployment_id": "1104f35f-53c9-4544-b89c-88a736a08281",
+    "worker_version": "537fbbef-e428-4932-aa52-d30d71706ac0",
+    "worker_version_number": 4125,
+    "traffic_percent": 100,
+    "deployment_time_utc": "2026-11-18T19:29:38.131203Z",
+    "source_smoke": {
+      "run_id": 44381012021,
+      "status": "success",
+      "commit_sha": "e884497189e664b6bb8779a3f1e76a8d37678811",
+      "health": "HTTP 200",
+      "assets": "exact-source smoke passed all allowlisted SHA-256 checks after initial rollout/cache mismatches on attempt 1; success on bounded retry",
+      "url": "https://github.com/sanci9517/sanci9517/actions/runs/44381012021"
+    },
+    "d1_preflight": {
+      "query": "SELECT name FROM d1_migrations ORDER BY name DESC LIMIT 1",
+      "last_migration": "0029_media_archive_unicode_additive.sql",
+      "rows_read": 1,
+      "rows_written": 0,
+      "changes": 0,
+      "changed_db": false,
+      "production_data_writes": false
+    },
+    "r2_mutation": false,
+    "wrangler_dry_run": "PASS: 195 assets, 392.87 KiB upload / 100.73 KiB gzip; no publish"
+  },
+  "checks": [
+    {
+      "command": "npm run test:editor",
+      "result": "PASS: 22/22 files; subreaper/manifest 4/4"
+    },
+    {
+      "command": "npm run typecheck -- --pretty false",
+      "result": "PASS"
+    },
+    {
+      "command": "npm run test:web013:migration-gate",
+      "result": "PASS"
+    },
+    {
+      "command": "python3 tests/plan-contract.test.py",
+      "result": "PASS: 14/14 after feature traceability regeneration"
+    },
+    {
+      "command": "python3 scripts/build-feature-traceability.py --check",
+      "result": "PASS: 396/396 mappings; acceptance remains NOT certified"
+    },
+    {
+      "command": "python3 scripts/audit-active-plan-point.py",
+      "result": "PASS: next 77.44.7.D; functional acceptance NOT_CERTIFIED"
+    },
+    {
+      "command": "python3 scripts/check-canonical-plan.py",
+      "result": "PASS: 13 parts, 396 mappings; acceptance NOT_CERTIFIED"
+    },
+    {
+      "command": "node --test tests/browser/editor-node-clipboard.test.js",
+      "result": "PASS: 1/1 Chromium"
+    },
+    {
+      "command": "node --test tests/browser/editor-layout.test.js",
+      "result": "PASS: 3/3 Chromium"
+    },
+    {
+      "command": "npm run test:editor:layout",
+      "result": "INCOMPLETE: interrupted at 35/59 files; not a PASS"
+    },
+    {
+      "command": "Editor Core exact-SHA GitHub Actions 44381012651",
+      "result": "IN_PROGRESS at Run Editor browser layout regression; exact-SHA workflow URL: https://github.com/sanci9517/sanci9517/actions/runs/44381012651"
+    }
+  ],
+  "editor_acceptance": {
+    "full_scope_complete": false,
+    "manual_physical": "DEFERRED until complete editor implementation",
+    "d_point": "OPEN / NOT_CERTIFIED"
+  },
+  "cost": "0 Ft new authorized cost; no dependencies added",
+  "limitations": [
+    "Production hash of changed public test harness was not verified because direct public URL access is blocked by this workspace proxy.",
+    "Full Editor exact-SHA CI remained in progress when this snapshot was recorded."
+  ]
+}

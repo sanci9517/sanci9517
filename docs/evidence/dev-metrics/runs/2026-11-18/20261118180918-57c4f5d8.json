@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261118180918-57c4f5d8",
+  "task": "EDT-038",
+  "trigger": "manual",
+  "started_at": "2026-11-18T18:09:18.469Z",
+  "finished_at": "2026-11-18T19:42:29.132Z",
+  "wall_seconds": 5591,
+  "paused_seconds": 413,
+  "measured_seconds": 5178,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "EDT-038 implementation deployed from exact v2/foundation SHA and production source smoke passed; Editor Core exact-SHA browser/layout suite remains in progress. Full Editor/D acceptance remains open.",
+  "evidence": [
+    "docs/evidence/editor-node-clipboard-release-2026-11-18.json"
+  ],
+  "checks": "local editor/typecheck/migration/plan/traceability/targeted Chromium checks PASS; full local layout suite interrupted 35/59; Cloudflare build exact SHA success, 100% traffic and production smoke HTTP 200 plus allowlisted hashes PASS; hosted full editor suite pending; D OPEN/NOT_CERTIFIED",
+  "started_revision": "88181f527b0965be4b43fea14e757dbeb0fe6779",
+  "finished_revision": "e884497189e664b6bb8779a3f1e76a8d37678811",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
