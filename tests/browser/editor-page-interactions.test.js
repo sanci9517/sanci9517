@@ -244,14 +244,16 @@ test('EDT-039 page actions and EDT-040 motion save as draft, preview safely, and
   await timerEventControl.selectOption('timer');
   const timerDelayControl=editor.locator('.page-interaction-inspector [aria-label="Várakozás"]');
   assert.equal(await timerDelayControl.inputValue(),'5000','a new timer starts from a conservative finite default');
-  await timerDelayControl.selectOption('3000');
+  // Use the maximum allowed delay for browser lifecycle assertions so slow hosted
+  // browsers cannot consume the timer while navigating between states.
+  await timerDelayControl.selectOption('10000');
   await editor.locator('.page-interaction-inspector [aria-label="Kiválasztott fül"]').selectOption('1');
   await editor.locator('#save').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
   assert.equal(await liveNode(buttonId).getAttribute('data-page-action-event'),'load','Save keeps the previously published load behavior');
   await editor.reload();await selectButton();
   assert.equal(await editor.locator('.page-interaction-inspector [aria-label="Kiváltó esemény"]').inputValue(),'timer','the timer event survives Editor reload');
-  assert.equal(await editor.locator('.page-interaction-inspector [aria-label="Várakozás"]').inputValue(),'3000','the selected finite delay survives Editor reload');
-  await editor.waitForTimeout(3300);
+  assert.equal(await editor.locator('.page-interaction-inspector [aria-label="Várakozás"]').inputValue(),'10000','the selected finite delay survives Editor reload');
+  await editor.waitForTimeout(10300);
   assert.equal(await editorNode(tabsId).getByRole('tab').nth(0).getAttribute('aria-selected'),'true','the Editor Canvas does not execute published page timers while editing');
   const timerPreviewPopup=editor.waitForEvent('popup');
   await editor.locator('#preview').click();
@@ -259,47 +261,51 @@ test('EDT-039 page actions and EDT-040 motion save as draft, preview safely, and
   await timerPreview.waitForLoadState('domcontentloaded');
   const timerPreviewTabs=timerPreview.frameLocator('.preview-viewport').locator(`.creator-node[data-node-id="${tabsId}"] [role="tab"]`);
   await timerPreviewTabs.nth(1).waitFor({state:'visible'});
-  await timerPreview.waitForTimeout(3300);
+  await timerPreview.waitForTimeout(10300);
   assert.equal(await timerPreviewTabs.nth(1).getAttribute('aria-selected'),'true','Preview applies the saved timer only after its configured delay');
   assert.equal(new URL(timerPreview.url()).searchParams.has('creator-tab'),false,'timer selection never writes synthetic URL/history state');
   await timerPreview.close();
   await editor.locator('#publish').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent==='Publikálva');
   await live.goto(`${base}/p/page-actions?campaign=timer-test`);
   await liveNode(tabsId).getByRole('tab').nth(1).waitFor();
-  await live.waitForTimeout(3300);
+  await live.waitForTimeout(10300);
   assert.equal(await liveNode(tabsId).getByRole('tab').nth(1).getAttribute('aria-selected'),'true','Publish enables the delayed action on the public page');
   assert.equal(new URL(live.url()).searchParams.has('creator-tab'),false,'public timer selection does not mutate the browser URL');
 
   await live.goto(`${base}/p/page-actions?campaign=timer-test&creator-tab=${encodeURIComponent(`${tabsId}:0`)}`);
-  await live.waitForTimeout(3300);
+  await live.waitForTimeout(10300);
   assert.equal(await liveNode(tabsId).getByRole('tab').nth(0).getAttribute('aria-selected'),'true','an explicit deep link prevents the timer from overriding the requested tab');
   assert.equal(new URL(live.url()).searchParams.get('campaign'),'timer-test','the URL override preserves unrelated query parameters');
 
   await live.goto(`${base}/p/page-actions?campaign=timer-test`);
   await liveNode(tabsId).getByRole('tab').nth(0).click();
-  await live.waitForTimeout(2500);
+  await live.waitForTimeout(10300);
   assert.equal(await liveNode(tabsId).getByRole('tab').nth(0).getAttribute('aria-selected'),'true','manual tab use cancels the pending timer instead of changing the user-selected state');
 
   await live.goto(`${base}/p/page-actions?campaign=timer-test`);
   await live.evaluate(()=>{
     Object.defineProperty(document,'hidden',{configurable:true,value:true});
     document.dispatchEvent(new Event('visibilitychange'));
-    Object.defineProperty(document,'hidden',{configurable:true,value:false});
   });
-  await live.waitForTimeout(3300);
+  await live.waitForTimeout(200);
+  await live.evaluate(()=>{
+    Object.defineProperty(document,'hidden',{configurable:true,value:false});
+    document.dispatchEvent(new Event('visibilitychange'));
+  });
+  await live.waitForTimeout(10300);
   assert.equal(await liveNode(tabsId).getByRole('tab').nth(0).getAttribute('aria-selected'),'true','a backgrounded public page cancels its pending timer and does not restart it when visible');
 
   await live.goto(`${base}/p/page-actions?campaign=timer-test`);
   await liveNode(tabsId).getByRole('tab').nth(0).waitFor();
   await live.evaluate(()=>window.dispatchEvent(new PageTransitionEvent('pagehide')));
-  await live.waitForTimeout(3300);
+  await live.waitForTimeout(10300);
   assert.equal(await liveNode(tabsId).getByRole('tab').nth(0).getAttribute('aria-selected'),'true','pagehide cancels pending timer actions rather than applying stale page state after the document begins leaving');
 
   await live.goto(`${base}/p/page-actions?campaign=timer-test`);
   await live.evaluate(id=>{
     const url=new URL(location.href);url.searchParams.set('creator-tab',`${id}:0`);history.pushState(history.state,'',url);dispatchEvent(new PopStateEvent('popstate'));
   },tabsId);
-  await live.waitForTimeout(3300);
+  await live.waitForTimeout(10300);
   assert.equal(await liveNode(tabsId).getByRole('tab').nth(0).getAttribute('aria-selected'),'true','browser state navigation cancels the pending timer and restores the URL selection');
   assert.equal(new URL(live.url()).searchParams.get('campaign'),'timer-test','history navigation preserves unrelated query parameters');
 

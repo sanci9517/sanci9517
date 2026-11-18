@@ -1,0 +1,111 @@
+{
+  "schema_version": 1,
+  "task": "77.44.7.D / EDT-039",
+  "title": "Page Action visibility-cancellation CI follow-up",
+  "recorded_at_utc": "2026-11-18T13:23:20Z",
+  "status": "LOCAL_BROWSER_PASS_HOSTED_CI_UNVERIFIED_D_OPEN",
+  "source": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "runtime_sha": "97dd82c23c5475d90ff1cec2113a074fbaf7f1d5",
+    "github_branch_head_before_docs_test_followup": "7d1c35c275a4d74499e818dbf7724d846dbbf852"
+  },
+  "prior_hosted_failure": {
+    "workflow": "Editor Core Test",
+    "run_id": 44307061545,
+    "url": "https://github.com/sanci9517/sanci9517/actions/runs/44307061545",
+    "status": "completed/failure",
+    "failed_step": "Run Editor browser layout regression",
+    "browser_test": "tests/browser/editor-page-interactions.test.js",
+    "assertion": "a backgrounded public page cancels its pending timer and does not restart it when visible",
+    "observed": "expected first tab aria-selected=true, observed false after the configured timer interval",
+    "remaining_steps": "WEB-013 Admin mobile, canonical schedule, domain, Brand Kit, and Admin home were skipped after the layout step failed",
+    "root_cause": "Not proven. The assertion is consistent with timer expiry before or despite the synthetic visibility transition; the failing hosted run alone does not distinguish scheduling latency from a runtime cancellation defect."
+  },
+  "test_harness_followup": {
+    "changed_file": "tests/browser/editor-page-interactions.test.js",
+    "change": "Use the maximum allowed 10000 ms timer for browser lifecycle assertions and wait 10300 ms before asserting that Canvas, URL precedence, manual tab use, visibilitychange, pagehide, and popstate prevent the timer from changing the selected tab. Keep the visibility-hidden state across a short task interval, then dispatch the visible transition explicitly.",
+    "runtime_files_changed": false,
+    "production_data_changed": false,
+    "dependencies_changed": false
+  },
+  "checks": {
+    "focused_browser": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-page-interactions.test.js",
+      "result": "PASS",
+      "tests_passed": 1,
+      "duration_seconds": 102.24,
+      "scope": "EDT-039 Page Action draft/reload/Preview/Publish, timer cancellation lifecycle and EDT-040 motion assertions"
+    },
+    "editor_unit": {
+      "command": "npm run test:editor",
+      "result": "PASS",
+      "editor_test_files_passed": 22,
+      "runner_contract_tests_passed": 4
+    },
+    "typecheck": {
+      "command": "npm run typecheck",
+      "result": "PASS"
+    },
+    "migration_safety": {
+      "command": "npm run test:web013:migration-gate",
+      "result": "PASS"
+    },
+    "static_and_diff": {
+      "commands": [
+        "node --check public/editor-v2/app.js",
+        "node --check public/editor-v2/core/authored-content.js",
+        "node --check public/editor-v2/core/page-interactions.js",
+        "node --check public/editor-v2/ui/page-interaction-controls.js",
+        "node --check public/assets/page-renderer.js",
+        "git diff --check"
+      ],
+      "result": "PASS"
+    },
+    "canonical_plan": {
+      "commands": [
+        "python3 scripts/audit-active-plan-point.py",
+        "python3 scripts/check-canonical-plan.py",
+        "python3 tests/plan-contract.test.py"
+      ],
+      "result": "PASS",
+      "plan_contract_tests_passed": 14,
+      "master_files": 13,
+      "traceability_mappings": 396,
+      "cursor": "77.44 / WEB-011 -> 77.44.7.D",
+      "functional_acceptance": "NOT_CERTIFIED",
+      "source_status_counts": {
+        "PARTIAL_SOURCE": 147,
+        "UNVERIFIED": 249
+      }
+    },
+    "browser_under_default_sandbox": {
+      "result": "BLOCKED_BY_LOCAL_CHROMIUM_PROCESS_RESTRICTION",
+      "detail": "The default sandbox test process exited before assertions. The identical focused Chromium command was run successfully with the approved local-browser execution permission; no public network or production mutation was needed."
+    }
+  },
+  "production": {
+    "runtime_source_sha": "97dd82c23c5475d90ff1cec2113a074fbaf7f1d5",
+    "deployment_id": "9f82dfa7-fb94-4399-b639-9feeed555f35",
+    "worker_version": "e2d48c7f-09f7-4eaa-8c87-4a5528cf4860",
+    "traffic_percent": 100,
+    "health_and_asset_smoke": "Exact-source smoke workflow 44307061430 passed earlier for runtime SHA 97dd82c; HTTP 200 health and 34/34 public source hashes. This test-only follow-up does not alter that runtime or trigger another Worker deployment.",
+    "production_d1_migration_or_write": false,
+    "production_r2_mutation_or_deletion": false
+  },
+  "hosted_ci": {
+    "new_workflow_dispatched": false,
+    "reason": "This follow-up changes only test harness/evidence. The repository requires [skip ci] for such changes and the 0 Ft Actions free quota is not verified for additional runs.",
+    "failed_run_rerun": false,
+    "status_for_followup": "UNVERIFIED"
+  },
+  "acceptance": {
+    "full_edt_039": "OPEN / NOT_CERTIFIED",
+    "full_d_01_to_d_07": "OPEN / NOT_CERTIFIED",
+    "full_visual_editor": "OPEN / NOT_CERTIFIED",
+    "manual_physical_acceptance": "DEFERRED_UNTIL_COMPLETE_EDITOR",
+    "save_is_separate_from_publish": true,
+    "new_cost_huf": 0
+  },
+  "metrics_id": "20261118131140-d1a160a5"
+}

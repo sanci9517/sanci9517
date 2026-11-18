@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261118131140-d1a160a5",
+  "task": "EDT-039",
+  "trigger": "manual",
+  "started_at": "2026-11-18T13:11:40.156Z",
+  "finished_at": "2026-11-18T13:24:26.463Z",
+  "wall_seconds": 766,
+  "paused_seconds": 0,
+  "measured_seconds": 766,
+  "status": "partial",
+  "kind": "test",
+  "summary": "EDT-039 background-timer exact-SHA Editor Core failure reproduced in CI logs; made visibility lifecycle browser test timing deterministic at 10s and verified targeted Chromium PASS plus editor unit/typecheck/migration/canonical gates. Full D remains open.",
+  "evidence": [
+    "docs/evidence/editor-page-action-visibility-ci-followup-2026-11-18.json"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "2f01a698c06e0de36ffaba66b661e0f9e3104854",
+  "finished_revision": "2f01a698c06e0de36ffaba66b661e0f9e3104854",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
