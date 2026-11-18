@@ -1,11 +1,11 @@
 {
   "schema": "sanci.editor.page-action-timer-trigger.v1",
-  "recorded_at_utc": "2026-11-18T10:27:03Z",
+  "recorded_at_utc": "2026-11-18T10:36:00Z",
   "repository": "sanci9517/sanci9517",
   "branch": "v2/foundation",
   "verified_base_head": "ccb6fb451017141964bd2ba7219feb77881175f0",
   "plan_point": "77.44.7 / EDT-039 Page Actions",
-  "status": "LOCAL_CHECKS_PASS_RELEASE_PENDING",
+  "status": "PRODUCTION_RELEASE_VERIFIED_EDITOR_CORE_CI_PENDING",
   "scope": {
     "feature": "Opt-in bounded timer trigger for same-page select-tab Page Actions.",
     "allowlist": "timer is accepted only for select-tab; delayMs must be exactly 3000, 5000, or 10000; other actions, arbitrary delays, and unexpected fields are rejected.",
@@ -60,8 +60,49 @@
       "changes": 0,
       "changed_db": false
     },
-    "exact_sha_ci": "PENDING: will run automatically when the verified runtime commit is pushed; no manual dispatch/rerun.",
-    "production_release": "PENDING: existing baseline only; runtime source not yet pushed or deployed."
+    "exact_sha_ci": {
+      "source_smoke": {
+        "run_id": 44286406807,
+        "job_id": 134740103129,
+        "status": "completed/success",
+        "health": "HTTP 200",
+        "public_source_hashes": "34/34 exact SHA-256 matches; all changed runtime paths covered"
+      },
+      "canonical_plan": {
+        "run_id": 44286406828,
+        "status": "completed/success"
+      },
+      "active_point_audit": {
+        "run_id": 44286407005,
+        "status": "completed/success"
+      },
+      "f0_baseline": {
+        "run_id": 44286406868,
+        "status": "completed/success"
+      },
+      "twitch_integration": {
+        "run_id": 44286406750,
+        "status": "completed/success"
+      },
+      "editor_core": {
+        "run_id": 44286406695,
+        "job_id": 134740102423,
+        "status": "in_progress",
+        "current_step": "Run Editor browser layout regression",
+        "conclusion": null
+      }
+    },
+    "production_release": "PASS_EXACT_SHA_SOURCE_SMOKE_AND_AUTOMATIC_DEPLOY; Editor Core remains IN_PROGRESS; full D remains OPEN / NOT_CERTIFIED.",
+    "production_d1_postflight": {
+      "status": "PASS_READ_ONLY",
+      "query": "SELECT name FROM d1_migrations ORDER BY name DESC LIMIT 1",
+      "latest_migration": "0029_media_archive_unicode_additive.sql",
+      "rows_read": 1,
+      "rows_written": 0,
+      "changes": 0,
+      "changed_db": false,
+      "observed_at_utc": "2026-11-18T10:35Z"
+    }
   },
   "pre_release_worker_snapshot": {
     "deployment_id": "90ccebf0-44c9-44bf-b636-8369d2b54764",
@@ -71,10 +112,10 @@
     "meaning": "Read-only pre-release baseline; does not prove the new timer code is deployed."
   },
   "release": {
-    "runtime_commit": null,
+    "runtime_commit": "6a38cb4242c83268280cf1749e940a230314e679",
     "expected_parent": "ccb6fb451017141964bd2ba7219feb77881175f0",
     "branch": "v2/foundation",
-    "push": "PENDING expected-head normal fast-forward; no force push.",
+    "push": "Verified expected-head normal fast-forward; force=false.",
     "post_release_ci": "PENDING",
     "post_release_cloudflare_deployment": "PENDING",
     "changed_asset_sha256": {
@@ -92,12 +133,60 @@
       "public/editor-v2/ui/element-content-controls.js": "ebe213e065fda89b16ffe1c1934d49b79c65a32a50f70a38690fa345127c2e68",
       "public/editor-v2/ui/page-interaction-controls.js": "2ae8bddd45a35d6939dccd0a0cfcffcd21661894bdfd24a15aa05dea48ce42ef",
       "public/visual-page.html": "0c9cc10ad7258ed6cbc74e7ed618c861a122e76a6ab91dc62351f31e0f301fa8"
-    }
+    },
+    "parent_commit": "ccb6fb451017141964bd2ba7219feb77881175f0",
+    "remote_head_verified": "6a38cb4242c83268280cf1749e940a230314e679",
+    "cloudflare_deployment_id": "596e50f3-c830-4371-a1d7-e48f468659dc",
+    "worker_version_id": "68b853e6-afbb-4e45-b579-1735695dfc4d",
+    "worker_traffic_percent": 100,
+    "deployment_observed_at_utc": "2026-11-18T10:33:15Z",
+    "exact_sha_production_smoke": {
+      "run_id": 44286406807,
+      "job_id": 134740103129,
+      "status": "success",
+      "source_commit": "6a38cb4242c83268280cf1749e940a230314e679",
+      "health": "HTTP 200",
+      "public_source_hashes": "34/34 exact SHA-256 matches"
+    },
+    "editor_core_ci": {
+      "run_id": 44286406695,
+      "job_id": 134740102423,
+      "url": "https://github.com/sanci9517/sanci9517/actions/runs/44286406695",
+      "status": "in_progress",
+      "source_commit": "6a38cb4242c83268280cf1749e940a230314e679",
+      "current_step": "Run Editor browser layout regression"
+    },
+    "changed_asset_hashes": {
+      "public/assets/page-renderer.js": "4f015e35547fca6c04b9c77d7e205d8695615811dc2f67ebf31319c4105cff76",
+      "public/editor-v2/app.js": "49f64500acaeba5b12f499bcbc0d43d6bbf39beb460a23725e9db050f0d15eed",
+      "public/editor-v2/core/authored-content.js": "fe3139d61068c295b7c45342d99551d299629c61590dfeccd3822c6da38595ae",
+      "public/editor-v2/core/canvas-engine.js": "7f18a6d964ab83d79ceeae4d0290a3b2400c9b9e8ee0c57602da522da181cb4b",
+      "public/editor-v2/core/capability-matrix.js": "34a209c7b41f42cf4211964ff7eb4ef5801edd1ab22e19d86459b3a28d49682a",
+      "public/editor-v2/core/commands.js": "9154d11c56b857f665279c9674a1153fd5b2e8ac8381f2eb218c91de20ffb836",
+      "public/editor-v2/core/content-profiles.js": "aa1d45b0feeeb397fa9d89fdc5c1522d93df76bd664d6e4dba519c675816ef83",
+      "public/editor-v2/core/page-interactions.js": "66f6dd32b0fa7abe202fcd8e7106c3dfc4931d24d106cd0b2bde5ac0db76a88d",
+      "public/editor-v2/core/schema.js": "17546cb647f53cbf3986f65aa4133fea61fc5a6a048199bc01091ebad05cc75e",
+      "public/editor-v2/core/validation.js": "1bfc71ead1b5a0a56e05be179a55603cf8b527296329ec06132db9dc9fc57235",
+      "public/editor-v2/ui/accessibility-fields.js": "7bd3f5331f4e97f33be131e336d64846d3b3a8b156120cfd9c0f6539ec360db9",
+      "public/editor-v2/ui/element-content-controls.js": "ebe213e065fda89b16ffe1c1934d49b79c65a32a50f70a38690fa345127c2e68",
+      "public/editor-v2/ui/page-interaction-controls.js": "2ae8bddd45a35d6939dccd0a0cfcffcd21661894bdfd24a15aa05dea48ce42ef",
+      "public/visual-page.html": "0c9cc10ad7258ed6cbc74e7ed618c861a122e76a6ab91dc62351f31e0f301fa8"
+    },
+    "deployment_api_snapshot_at_2026-11-18T10:34Z": "deployment 596e50f3-c830-4371-a1d7-e48f468659dc; version 68b853e6-afbb-4e45-b579-1735695dfc4d; 100% traffic.",
+    "docs_only_followup": "Plan/evidence/metrics only; publish with [skip ci], no Worker redeploy.",
+    "docs_followup_base_head": "6a38cb4242c83268280cf1749e940a230314e679",
+    "production_release_status": "EXACT_SHA_HEALTH_AND_ASSET_SMOKE_PASS; EDITOR_CORE_CI_PENDING",
+    "production_source_sha256_verified_count": "34/34"
   },
   "new_paid_cost": "0 Ft",
   "limitations": [
-    "EDT-039, its complete trigger/form/security/accessibility/performance acceptance, the full Editor and 77.44.7.D remain OPEN / NOT_CERTIFIED.",
-    "Complete Visual Editor manual/physical acceptance remains DEFERRED to its final gate.",
+    "EDT-039 remains OPEN / NOT_CERTIFIED; submit depends on EDT-019 and remaining state/form/security/accessibility/performance acceptance is incomplete.",
+    "Exact-SHA Editor Core workflow 44286406695 was still running its browser layout regression at evidence capture; no Editor Core PASS is claimed.",
+    "Full D / 77.44.7.D remains OPEN / NOT_CERTIFIED. Complete Visual Editor manual/physical acceptance remains DEFERRED.",
     "No production D1 migration/write or R2 mutation/deletion was performed."
-  ]
+  ],
+  "production_release": "PASS_EXACT_SHA_HEALTH_AND_PUBLIC_ASSET_SMOKE; 100% traffic verified; Editor Core exact-SHA CI remains in progress; full Visual Editor/D stays open.",
+  "metrics_id": "20261118103518-2634136f",
+  "docs_followup_metrics_id": "20261118103518-2634136f",
+  "docs_followup_commit": "PENDING [skip ci] docs-only fast-forward."
 }
