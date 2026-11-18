@@ -1,0 +1,90 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-11-18T06:12:00Z",
+  "status": "RUNTIME_DEPLOYED_WORKER_SMOKE_PASS_EDITOR_CORE_BROWSER_IN_PROGRESS",
+  "scope": {
+    "active_plan": ["77.44", "WEB-011", "77.44.7.D", "EDT-039"],
+    "plan_status": "OPEN / NOT_CERTIFIED",
+    "manual_physical_acceptance": "DEFERRED_UNTIL_COMPLETE_EDITOR",
+    "save_publish_separation": true,
+    "reference_sites": "External creator sites are visual references only, not SANCI production hosts, DNS zones, or health endpoints; no requests or configuration changes were made for them."
+  },
+  "change": {
+    "behavior": "A Page Action configured for hover still responds to mouse/pen pointerover, while native button activation through touch/click or keyboard Enter can invoke the same reversible select-tab action.",
+    "safety": "No arbitrary script or cross-page action was introduced; Page Action schema and same-page action allowlist remain unchanged.",
+    "files": [
+      "public/editor-v2/core/authored-content.js",
+      "public/editor-v2/ui/page-interaction-controls.js",
+      "public/editor-v2/app.js",
+      "public/assets/page-renderer.js",
+      "public/visual-page.html",
+      "tests/browser/editor-page-interactions.test.js",
+      "docs/evidence/feature-traceability.json"
+    ]
+  },
+  "repository": {
+    "full_name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "commit": "87ff55fed099e7f3305bd41f51f7fd8e0dbbb37f",
+    "commit_url": "https://github.com/sanci9517/sanci9517/commit/87ff55fed099e7f3305bd41f51f7fd8e0dbbb37f",
+    "parent": "6333d6e1505f86fd84f4d1b18c30cb2d2e8e4405",
+    "update": "expected-head fast-forward; force=false"
+  },
+  "local_checks": {
+    "typecheck": "PASS",
+    "editor_unit_and_runner": "PASS; 22/22 editor test files and 4/4 runner contracts",
+    "plan_contract": "PASS; 14/14",
+    "canonical_plan": "PASS; one complete 13-file master and 396 mappings; acceptance remains uncertified",
+    "feature_traceability": "PASS; 396/396",
+    "migration_safety_gate": "PASS; no production migration applied",
+    "javascript_syntax_and_diff_check": "PASS",
+    "wrangler_dry_run": "PASS; Wrangler 4.130.0, 194 assets, 392.64 KiB total, 100.54 KiB gzip, no publish",
+    "targeted_local_chromium": "BLOCKED before assertions: sandbox Chromium exits SIGTRAP with setsockopt Operation not permitted; hosted exact-SHA browser workflow is the browser acceptance evidence"
+  },
+  "database_and_cost": {
+    "production_d1_preflight": {
+      "query": "SELECT name FROM d1_migrations ORDER BY name DESC LIMIT 1",
+      "latest": "0029_media_archive_unicode_additive.sql",
+      "rows_read": 1,
+      "rows_written": 0,
+      "changes": 0,
+      "changed_db": false
+    },
+    "production_migrations_or_writes": 0,
+    "r2_mutations_or_deletions": 0,
+    "new_dependencies": 0,
+    "new_cost_huf": 0
+  },
+  "production_release": {
+    "automatic_deploy_after_commit_push": true,
+    "deployment_id": "bbe534b8-7185-41fc-a3d1-b13b281508e8",
+    "version_id": "0d90583e-445f-4891-a488-bb3a4194f4a8",
+    "version_number": 4118,
+    "traffic_percent": 100,
+    "worker_origin": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev",
+    "source_smoke_run": "https://github.com/sanci9517/sanci9517/actions/runs/44249438298",
+    "source_smoke_head_sha": "87ff55fed099e7f3305bd41f51f7fd8e0dbbb37f",
+    "health": "HTTP 200",
+    "public_sources": "34/34 exact SHA-256 matches after bounded CDN propagation retries",
+    "changed_asset_sha256": {
+      "public/visual-page.html": "8c282178e83eeb052cc2766b02b11d8f4de175ecd9a4a60f163c5bd2f213d381",
+      "public/assets/page-renderer.js": "eeb02616bd1234665a7922c84e1e0460e41c436baa1765491ab3a25c58d47951",
+      "public/editor-v2/core/authored-content.js": "a9bc9e59d5fccdedabff56bdc4808fe1cf85bef86d961968bc251e799ab9cb57",
+      "public/editor-v2/app.js": "044e7042ed565b081c958b0bbfb126e4d54737750f1530701123da7e1cc3345e",
+      "public/editor-v2/ui/page-interaction-controls.js": "d23f85c531533b525051dae5d433ebbb0393d3f027381a3f6654cf7e008e3c66"
+    }
+  },
+  "exact_sha_actions": {
+    "production_worker_source_smoke": {"run_id": 44249438298, "status": "completed", "conclusion": "success"},
+    "canonical_creator_platform_plan": {"run_id": 44249438323, "status": "completed", "conclusion": "success"},
+    "f0_baseline": {"run_id": 44249438372, "status": "completed", "conclusion": "success"},
+    "twitch_integration": {"run_id": 44249438287, "status": "completed", "conclusion": "success"},
+    "canonical_plan_active_point_audit": {"run_id": 44249438241, "status": "completed", "conclusion": "success"},
+    "editor_core_test": {"run_id": 44249438218, "status": "in_progress_at_capture", "active_step": "Run Editor browser layout regression", "conclusion": null}
+  },
+  "limits": [
+    "This is one accessibility slice of EDT-039; its remaining event, security, URL/form, negative and performance coverage is still open.",
+    "This does not complete the Visual Editor or the full 77.44.7.D acceptance matrix.",
+    "The hosted Editor Core exact-SHA browser workflow had not finished when this evidence was first captured."
+  ]
+}
