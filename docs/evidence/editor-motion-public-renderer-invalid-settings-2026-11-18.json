@@ -1,0 +1,67 @@
+{
+  "schema": 1,
+  "date": "2026-11-18",
+  "task": "77.44.7.D / EDT-040",
+  "status": "PARTIAL / OPEN / NOT_CERTIFIED",
+  "active_cursor": {
+    "main": "77.44 / WEB-011",
+    "next": "77.44.7.D",
+    "feature_count": 396,
+    "acceptance": "NOT_CERTIFIED"
+  },
+  "change": {
+    "kind": "browser regression test only",
+    "file": "tests/browser/editor-motion.test.js",
+    "behavior": "A public Chromium page loads a persisted heading whose animationName attempts CSS declaration injection and whose duration/easing are outside the allowlist. The renderer omits the invalid motion declarations, leaves the heading visible/readable, and emits no page error.",
+    "production_source_changed": false,
+    "save_publish_contract_changed": false
+  },
+  "exact_source": {
+    "remote_branch_at_test": "v2/foundation",
+    "base_commit": "ab8a4e171284b0198cda312c8a5dce792d211f3e",
+    "verified_local_blob_matches": {
+      "public/assets/page-renderer.js": "f4aeeefec5ccdf12ed4774701e7255ecd35a1b8d",
+      "public/editor-v2/core/motion-style.js": "f3a543aff4c848050c99260750d1d18f7afcbdf3",
+      "public/editor-v2/core/canvas-engine.js": "18ac1126fd554c3ae88a3b44377f77bcd2435c94",
+      "public/editor-v2/core/schema.js": "3b0cda364b4bbfa3d6861cab961bbaa75fb18707",
+      "public/editor-v2/core/commands.js": "8e0233f547fdeedfef430cf1cf423212118a9aa9",
+      "public/editor-v2/core/state.js": "fd9e5005ee2c0c8b94cbe2778658cc9f4673283b",
+      "public/editor-v2/core/responsive.js": "317ae32c2a94535ed7851a023b54542161275487",
+      "public/editor-v2/editor-motion.css": "e83426a1a81c3377e2b587a708e5577cdfd6b510",
+      "public/visual-page.html": "b592e92cd022f21933e3399f7052892ae55c50dd"
+    }
+  },
+  "checks": {
+    "node --test tests/browser/editor-motion.test.js": "PASS, 2/2 real Chromium tests; includes the new malformed persisted motion public-renderer regression.",
+    "npm run test:editor": "PASS, 22/22 editor unit test files and 4/4 Linux subreaper/layout-manifest contracts.",
+    "npm run typecheck -- --pretty false": "PASS",
+    "python3 tests/plan-contract.test.py": "PASS, 14/14",
+    "python3 scripts/check-canonical-plan.py": "PASS, 13 master files and 396 feature mappings; acceptance intentionally not certified.",
+    "python3 scripts/build-feature-traceability.py --check": "PASS, 396/396 source mappings.",
+    "python3 scripts/audit-active-plan-point.py": "PASS as audit execution; reports 77.44.7.D OPEN / NOT_CERTIFIED, 147 PARTIAL_SOURCE and 249 UNVERIFIED.",
+    "node --check tests/browser/editor-motion.test.js and git diff --check": "PASS",
+    "hosted CI": "NOT RUN; free Actions quota was not verified, so no CI pass is claimed."
+  },
+  "production": {
+    "runtime_source_changed": false,
+    "worker_deploy_performed": false,
+    "latest_read_only_deployment_snapshot": {
+      "deployment_id": "9f82dfa7-fb94-4399-b639-9feeed555f35",
+      "version_id": "e2d48c7f-09f7-4eaa-8c87-4a5528cf4860",
+      "traffic_percent": 100,
+      "created_on": "2026-11-18T12:46:58.509371Z"
+    },
+    "health_this_block": "NOT RECHECKED; no runtime files changed, therefore no new health-pass claim is made."
+  },
+  "data_and_cost": {
+    "production_d1": "not queried or modified",
+    "r2": "not accessed",
+    "new_cost_huf": 0
+  },
+  "measurement": "docs/evidence/dev-metrics/runs/2026-11-18/20261118142737-69450abb.json",
+  "limitations": [
+    "This closes only a negative EDT-040 renderer regression slice.",
+    "The complete EDT-039/EDT-040 contracts, D-01 through D-07 acceptance matrix, and full Visual Editor acceptance remain open/deferred.",
+    "Save and Publish remain separate."
+  ]
+}
