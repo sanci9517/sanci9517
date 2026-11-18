@@ -366,7 +366,7 @@ export function initContentInteractions(root){
     if(event.relatedTarget&&actionSource.contains(event.relatedTarget))return;
     runPageAction(actionSource);
   });
-  root.addEventListener('click',event=>{const actionSource=event.target.closest('[data-page-action]');if(actionSource&&root.contains(actionSource)&&actionSource.dataset.pageActionEvent==='click'&&runPageAction(actionSource))event.preventDefault();const zoom=event.target.closest('[data-lightbox-src]');if(zoom&&root.contains(zoom)&&safeSrc(zoom.dataset.lightboxSrc)){
+  root.addEventListener('click',event=>{const actionSource=event.target.closest('[data-page-action]'),actionEvent=actionSource?.dataset?.pageActionEvent;if(actionSource&&root.contains(actionSource)&&(actionEvent==='click'||actionEvent==='hover')&&runPageAction(actionSource))event.preventDefault();const zoom=event.target.closest('[data-lightbox-src]');if(zoom&&root.contains(zoom)&&safeSrc(zoom.dataset.lightboxSrc)){
     // The preview is scoped to its own gallery/carousel; nested galleries
     // elsewhere on the page never leak into this lightbox's navigation.
     const container=zoom.closest('.creator-gallery,.creator-carousel');

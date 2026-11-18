@@ -172,6 +172,7 @@ test('EDT-039 page actions and EDT-040 motion save as draft, preview safely, and
   const hoverEventControl=actionControls.getByLabel('Kiváltó esemény');
   await actionControls.getByLabel('Művelet').selectOption('select-tab');
   await hoverEventControl.selectOption('hover');
+  assert.match(await hoverEventControl.locator('option[value="hover"]').textContent(),/billentyűzettel is aktiválható/i,'hover is described as a pointer enhancement with an accessible activation path');
   await actionControls.getByLabel('Cél elem').selectOption(tabsId);
   await actionControls.getByLabel('Kiválasztott fül').selectOption('0');
   await editor.locator('#save').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
@@ -188,6 +189,11 @@ test('EDT-039 page actions and EDT-040 motion save as draft, preview safely, and
   await liveNode(tabsId).getByRole('tab').nth(0).focus();
   await liveNode(tabsId).getByRole('tab').nth(0).press('ArrowRight');
   assert.equal(await liveNode(tabsId).getByRole('tab').nth(1).getAttribute('aria-selected'),'true','hover does not replace the tabs keyboard interaction');
+  await liveNode(tabsId).getByRole('tab').nth(1).click();
+  await liveNode(buttonId).focus();
+  await liveNode(buttonId).press('Enter');
+  assert.equal(await liveNode(tabsId).getByRole('tab').nth(0).getAttribute('aria-selected'),'true','a hover-enhanced action remains operable by native keyboard button activation');
+  assert.equal(new URL(live.url()).searchParams.get('creator-tab'),`${tabsId}:0`,'keyboard activation preserves the same deep-link behavior as pointer hover');
 
   // EDT-040: motion is a typed responsive style, never authored CSS/JS.
   await editor.emulateMedia({reducedMotion:'no-preference'});
