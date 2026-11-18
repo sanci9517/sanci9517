@@ -244,8 +244,8 @@ test('EDT-039 page actions and EDT-040 motion save as draft, preview safely, and
   await timerEventControl.selectOption('timer');
   const timerDelayControl=editor.locator('.page-interaction-inspector [aria-label="Várakozás"]');
   assert.equal(await timerDelayControl.inputValue(),'5000','a new timer starts from a conservative finite default');
-  // Use the maximum allowed delay for browser lifecycle assertions so slow hosted
-  // browsers cannot consume the timer while navigating between states.
+  // Use the maximum allowed delay for lifecycle assertions so slow hosted
+  // browsers cannot spend most of the test navigating while the timer runs.
   await timerDelayControl.selectOption('10000');
   await editor.locator('.page-interaction-inspector [aria-label="Kiválasztott fül"]').selectOption('1');
   await editor.locator('#save').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));

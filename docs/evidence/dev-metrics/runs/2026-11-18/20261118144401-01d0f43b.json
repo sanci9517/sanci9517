@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261118144401-01d0f43b",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-18T14:44:01.959Z",
+  "finished_at": "2026-11-18T14:49:13.306Z",
+  "wall_seconds": 311,
+  "paused_seconds": 0,
+  "measured_seconds": 311,
+  "status": "partial",
+  "kind": "test",
+  "summary": "EDT-039 Page Action timer save/preview/publish lifecycle browser regression",
+  "evidence": [
+    "docs/evidence/editor-page-actions-timer-browser-regression-2026-11-18.json"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "2f01a698c06e0de36ffaba66b661e0f9e3104854",
+  "finished_revision": "2f01a698c06e0de36ffaba66b661e0f9e3104854",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

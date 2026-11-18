@@ -1,0 +1,60 @@
+{
+  "recorded_at_utc": "2026-11-18T14:44:00Z",
+  "plan_point": "77.44.7.D / EDT-039",
+  "status": "OPEN / NOT_CERTIFIED",
+  "scope": "Test-only browser coverage for page-action save/reload, Preview, separate Publish, URL deep-links, hover/focus accessibility and bounded timer cancellation/lifecycle; no runtime behavior changed.",
+  "base_branch": "v2/foundation",
+  "base_sha": "f45f7b50b92ea5e5d0555ffa5782d0fe87052cda",
+  "changed_test": {
+    "path": "tests/browser/editor-page-interactions.test.js",
+    "previous_remote_git_blob": "492c631704b22341da5db06d829d3f47fc893054",
+    "local_git_blob_after_test": "535936ec49878ff16e32b229169928cb75b81367"
+  },
+  "runtime_source_remote_blob_matches": {
+    "public/assets/page-renderer.js": "f4aeeefec5ccdf12ed4774701e7255ecd35a1b8d",
+    "public/editor-v2/app.js": "1f84c312c42b464367af8dc1418e5fa8399710a9",
+    "public/editor-v2/core/authored-content.js": "b13394ce5beb55a8de86fa7fd6df993077b5dd5c",
+    "public/editor-v2/core/canvas-engine.js": "18ac1126fd554c3ae88a3b44377f77bcd2435c94",
+    "public/editor-v2/core/capability-matrix.js": "2b7c7d899fea3d750047b5d7c42bc879dff1e58c",
+    "public/editor-v2/core/commands.js": "8e0233f547fdeedfef430cf1cf423212118a9aa9",
+    "public/editor-v2/core/content-profiles.js": "b1c259f902160b79e6f87674ef50cd38656b2082",
+    "public/editor-v2/core/page-interactions.js": "9e130837fb8687ad0e632c347632ae36265994ca",
+    "public/editor-v2/core/schema.js": "3b0cda364b4bbfa3d6861cab961bbaa75fb18707",
+    "public/editor-v2/core/validation.js": "498785d614df10a0efed10f4d34065b6ad3656d5",
+    "public/editor-v2/ui/accessibility-fields.js": "37084d8981ea74d9c9edbe80bc8a298862f82933",
+    "public/editor-v2/ui/element-content-controls.js": "27877fa7389d5bfe7e72944f17d39bb8b2f61429",
+    "public/editor-v2/ui/page-interaction-controls.js": "820b293146b9c7da7ac46c8c56fbb6c01464f37b",
+    "public/visual-page.html": "b592e92cd022f21933e3399f7052892ae55c50dd"
+  },
+  "checks": [
+    {
+      "command": "node --experimental-vm-modules --test public/editor-v2/tests/page-interactions.test.js",
+      "result": "PASS",
+      "details": "1 test file passed."
+    },
+    {
+      "command": "node tests/browser/editor-page-interactions.test.js",
+      "result": "PASS",
+      "details": "Chromium 1/1; elapsed 113164.8 ms. The first sandboxed attempt failed before assertions with localhost listen EPERM; the same test passed after allowing only the local loopback server."
+    }
+  ],
+  "runtime_release": {
+    "changed": false,
+    "deployment_id": "9f82dfa7-fb94-4399-b639-9feeed555f35",
+    "worker_version": "e2d48c7f-09f7-4eaa-8c87-4a5528cf4860",
+    "traffic_percent": 100,
+    "health_checked_in_this_block": false,
+    "deploy_needed": false
+  },
+  "hosted_ci": "NOT_RUN: test-only commit uses [skip ci]; free Actions quota is not verified.",
+  "data_and_cost": {
+    "production_d1_mutation": false,
+    "r2_mutation": false,
+    "new_cost_huf": 0
+  },
+  "invariants": [
+    "Save remains separate from Publish.",
+    "Full Visual Editor manual/device acceptance remains deferred until the full Editor gate.",
+    "This bounded test slice does not certify EDT-039, the complete Editor, or plan point 77.44.7.D."
+  ]
+}
