@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261118064120-dc926500",
+  "task": "EDT-039",
+  "trigger": "manual",
+  "started_at": "2026-11-18T06:41:20.890Z",
+  "finished_at": "2026-11-18T06:43:01.557Z",
+  "wall_seconds": 101,
+  "paused_seconds": 0,
+  "measured_seconds": 101,
+  "status": "pass",
+  "kind": "test",
+  "summary": "Verified exact-SHA Editor Core completion and recorded the EDT-039 browser result; 58/58 browser files passed and the target Page Action lifecycle test was 1/1.",
+  "evidence": [
+    "docs/evidence/editor-hover-keyboard-ci-complete-2026-11-18.json"
+  ],
+  "checks": "Editor Core 44249438218 completed success; source smoke 44249438298 HTTP 200 and 34/34 hashes; Cloudflare deployment version at 100% traffic.",
+  "started_revision": "8aa32484a886470f00cc451be46aeda6c69a3def",
+  "finished_revision": "8aa32484a886470f00cc451be46aeda6c69a3def",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

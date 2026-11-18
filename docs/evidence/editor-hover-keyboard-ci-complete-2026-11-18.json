@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-11-18T06:42:00Z",
+  "status": "EDT039_SLICE_RELEASED_AND_EXACT_SHA_EDITOR_CORE_PASS",
+  "source_commit": "87ff55fed099e7f3305bd41f51f7fd8e0dbbb37f",
+  "docs_followup_commit": "4170c234d743e9eaee6ca614d9e711b51d7fa8f3",
+  "branch": "v2/foundation",
+  "plan_scope": {
+    "active_ids": ["77.44", "WEB-011", "77.44.7.D", "EDT-039"],
+    "EDT039": "OPEN / NOT_CERTIFIED; this commit addresses only hover action keyboard/touch accessibility",
+    "full_visual_editor": "OPEN; full manual/physical acceptance remains deferred",
+    "D_acceptance": "OPEN / NOT_CERTIFIED",
+    "save_publish_separate": true
+  },
+  "editor_core_workflow": {
+    "run_id": 44249438218,
+    "url": "https://github.com/sanci9517/sanci9517/actions/runs/44249438218",
+    "head_sha": "87ff55fed099e7f3305bd41f51f7fd8e0dbbb37f",
+    "status": "completed",
+    "conclusion": "success",
+    "job_id": 134616219918,
+    "job_conclusion": "success",
+    "steps": {
+      "typecheck": "success",
+      "editor_core_unit_tests": "success",
+      "offline_d1_reconciliation_and_restore": "success",
+      "private_r2_media_api": "success",
+      "chromium_install_and_launch": "success",
+      "public_showcase_unit": "success",
+      "public_showcase_chromium": "success",
+      "isolated_worker_d1_r2_upload": "success",
+      "editor_browser_layout": "success",
+      "web013_admin_mobile": "success",
+      "canonical_schedule": "success",
+      "domain_contracts": "success",
+      "brand_kit_access": "success",
+      "admin_home_contracts": "success",
+      "screenshot_artifact_upload": "skipped_no_failure_artifact_needed"
+    }
+  },
+  "browser_regression": {
+    "manifest_files": 58,
+    "manifest_completion": "58/58",
+    "page_interaction_test": "tests/browser/editor-page-interactions.test.js",
+    "test_name": "EDT-039 page actions and EDT-040 motion save as draft, preview safely, and publish separately",
+    "test_result": "1 pass, 0 fail",
+    "log_excerpt": "2026-11-18T06:31:58.9151940Z; subreaper browser suite 36/58"
+  },
+  "other_exact_sha_workflows": {
+    "production_worker_source_smoke": {"run_id": 44249438298, "conclusion": "success", "health": "HTTP 200", "public_sources": "34/34 exact SHA-256 matches"},
+    "canonical_creator_platform_plan": {"run_id": 44249438323, "conclusion": "success"},
+    "f0_baseline": {"run_id": 44249438372, "conclusion": "success"},
+    "twitch_integration": {"run_id": 44249438287, "conclusion": "success"},
+    "canonical_active_point_audit": {"run_id": 44249438241, "conclusion": "success"}
+  },
+  "production_worker": {
+    "origin": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev",
+    "deployment_id": "bbe534b8-7185-41fc-a3d1-b13b281508e8",
+    "version_id": "0d90583e-445f-4891-a488-bb3a4194f4a8",
+    "version_number": 4118,
+    "traffic_percent": 100,
+    "changed_public_sha256": {
+      "public/visual-page.html": "8c282178e83eeb052cc2766b02b11d8f4de175ecd9a4a60f163c5bd2f213d381",
+      "public/assets/page-renderer.js": "eeb02616bd1234665a7922c84e1e0460e41c436baa1765491ab3a25c58d47951",
+      "public/editor-v2/core/authored-content.js": "a9bc9e59d5fccdedabff56bdc4808fe1cf85bef86d961968bc251e799ab9cb57",
+      "public/editor-v2/app.js": "044e7042ed565b081c958b0bbfb126e4d54737750f1530701123da7e1cc3345e",
+      "public/editor-v2/ui/page-interaction-controls.js": "d23f85c531533b525051dae5d433ebbb0393d3f027381a3f6654cf7e008e3c66"
+    }
+  },
+  "cost_and_data": {
+    "new_cost_huf": 0,
+    "production_d1_write_or_migration": false,
+    "r2_mutation_or_delete": false,
+    "new_dependency": false
+  },
+  "reference_scope": "The previously supplied example site is visual reference only; it is not a SANCI host or deployment health endpoint. No request or configuration change was made for it."
+}
