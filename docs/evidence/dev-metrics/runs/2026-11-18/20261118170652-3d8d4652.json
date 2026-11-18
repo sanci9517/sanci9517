@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261118170652-3d8d4652",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-18T17:06:52.170Z",
+  "finished_at": "2026-11-18T17:45:31.917Z",
+  "wall_seconds": 2320,
+  "paused_seconds": 0,
+  "measured_seconds": 2320,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "Implemented and shipped the D-03 malformed repeater row recovery slice; full D and Editor acceptance remain open.",
+  "evidence": [
+    "docs/evidence/editor-d03-structured-row-recovery-2026-11-18.json",
+    "docs/evidence/editor-d02-card-cta-recovery-2026-11-18.json"
+  ],
+  "checks": "npm run test:editor PASS; targeted Chromium 2/2 PASS; typecheck PASS; plan contract 14/14; active cursor audit PASS; D1 SELECT-only preflight PASS; Wrangler dry-run PASS; GitHub source smoke exact SHA and all 34 public hashes PASS; Cloudflare 100% traffic and health 200 verified; Editor Core CI still in progress",
+  "started_revision": "074bfef83c0f21fded19dc4ddc407feef63ccefa",
+  "finished_revision": "e47b7035d7a196caf3818736d2610d4d78fb27d0",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
