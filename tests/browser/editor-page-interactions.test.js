@@ -290,6 +290,12 @@ test('EDT-039 page actions and EDT-040 motion save as draft, preview safely, and
   assert.equal(await liveNode(tabsId).getByRole('tab').nth(0).getAttribute('aria-selected'),'true','a backgrounded public page cancels its pending timer and does not restart it when visible');
 
   await live.goto(`${base}/p/page-actions?campaign=timer-test`);
+  await liveNode(tabsId).getByRole('tab').nth(0).waitFor();
+  await live.evaluate(()=>window.dispatchEvent(new PageTransitionEvent('pagehide')));
+  await live.waitForTimeout(3300);
+  assert.equal(await liveNode(tabsId).getByRole('tab').nth(0).getAttribute('aria-selected'),'true','pagehide cancels pending timer actions rather than applying stale page state after the document begins leaving');
+
+  await live.goto(`${base}/p/page-actions?campaign=timer-test`);
   await live.evaluate(id=>{
     const url=new URL(location.href);url.searchParams.set('creator-tab',`${id}:0`);history.pushState(history.state,'',url);dispatchEvent(new PopStateEvent('popstate'));
   },tabsId);

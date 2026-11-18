@@ -455,5 +455,6 @@ export function initContentInteractions(root){
     }
     view.addEventListener('popstate',()=>{cancelTimers();const nextState=readTabUrlState();applyTabUrlState(nextState);applyLoadBaseline(nextState)});
     view.document?.addEventListener('visibilitychange',()=>{if(view.document.hidden)cancelTimers()});
+    if(pendingTimers.size)view.addEventListener('pagehide',cancelTimers,{once:true});
   }
 }

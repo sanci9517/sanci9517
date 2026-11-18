@@ -1,0 +1,99 @@
+{
+  "schema_version": 1,
+  "task": "77.44.7.D / EDT-039",
+  "title": "Cancel deferred Page Action timers on pagehide",
+  "status": "LOCAL_REGRESSION_PASS_RELEASE_PENDING",
+  "recorded_at_utc": "2026-11-18T12:13:00Z",
+  "base_branch": "v2/foundation",
+  "base_commit": "f0258dfeb868df34e8ff3e297272d260be97fbc9",
+  "change": {
+    "runtime_file": "public/editor-v2/core/authored-content.js",
+    "test_file": "tests/browser/editor-page-interactions.test.js",
+    "behavior": "When public authored-content has pending allowlisted page-action timers, pagehide now clears them. This prevents a delayed tab selection from firing after the document begins leaving or is put into the back-forward cache.",
+    "scope": "One page lifecycle cancellation hook; Save and Publish semantics remain separate."
+  },
+  "local_checks": {
+    "browser": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-page-interactions.test.js",
+      "result": "PASS",
+      "tests": 1,
+      "assertions": "EDT-039 bounded timer persistence, editor isolation, preview, publication, URL precedence, interaction cancellation, visibility cancellation, pagehide cancellation, popstate cancellation; EDT-040 reduced-motion and publication lifecycle."
+    },
+    "editor_unit": {
+      "command": "npm run test:editor",
+      "result": "PASS",
+      "test_files": 22,
+      "subreaper_tests": 4
+    },
+    "page_interaction_unit": {
+      "command": "node --test public/editor-v2/tests/page-interactions.test.js",
+      "result": "PASS",
+      "test_files": 1
+    },
+    "typecheck": {
+      "command": "npm run typecheck -- --pretty false",
+      "result": "PASS"
+    },
+    "canonical_plan": {
+      "commands": [
+        "python3 scripts/check-canonical-plan.py",
+        "python3 tests/plan-contract.test.py"
+      ],
+      "result": "PASS",
+      "contract_tests": 14
+    },
+    "active_plan_audit": {
+      "command": "python3 scripts/audit-active-plan-point.py",
+      "result": "OPEN_NOT_CERTIFIED",
+      "cursor": "77.44 / WEB-011 -> 77.44.7.D",
+      "source_status": {
+        "PARTIAL_SOURCE": 147,
+        "UNVERIFIED": 249
+      }
+    },
+    "traceability": {
+      "commands": [
+        "python3 scripts/build-feature-traceability.py",
+        "python3 scripts/build-feature-traceability.py --check"
+      ],
+      "result": "PASS",
+      "source_mappings": 396,
+      "source_hash_updated": "public/editor-v2/core/authored-content.js"
+    },
+    "wrangler_dry_run": {
+      "command": "npx wrangler deploy --dry-run",
+      "result": "PASS",
+      "exit_code": 0,
+      "assets_read": 194,
+      "warning": "Wrangler could not create its optional log directory under /home/agent/.config, but completed the dry run and read all 194 public assets."
+    },
+    "diff_check": {
+      "command": "git diff --check",
+      "result": "PASS"
+    }
+  },
+  "production_d1_read_only_preflight": {
+    "query": "SELECT name FROM d1_migrations ORDER BY name",
+    "rows_read": 35,
+    "rows_written": 0,
+    "changed_db": false,
+    "latest_migration": "0029_media_archive_unicode_additive.sql",
+    "result": "PASS_READ_ONLY"
+  },
+  "release": {
+    "source_commit": null,
+    "github_actions_exact_sha": "PENDING",
+    "cloudflare_build": "PENDING",
+    "deployment": "PENDING",
+    "worker_traffic": "PENDING",
+    "health_and_changed_asset_hashes": "PENDING"
+  },
+  "safety": {
+    "new_cost_huf": 0,
+    "production_d1_migration_or_write": false,
+    "r2_mutation_or_deletion": false,
+    "save_is_separate_from_publish": true,
+    "full_visual_editor_and_d_point": "OPEN_NOT_CERTIFIED",
+    "manual_physical_acceptance": "DEFERRED_UNTIL_COMPLETE_EDITOR"
+  }
+}
