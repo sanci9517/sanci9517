@@ -1,16 +1,26 @@
 {
   "schema_version": 1,
   "kind": "editor-page-interaction-hover-trigger",
-  "recorded_at": "2026-11-18T03:05:00Z",
+  "recorded_at": "2026-11-18T03:11:16Z",
   "canonical_plan": "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
   "plan_point": "77.44.7.D / EDT-039",
   "status": "PARTIAL / OPEN / NOT_CERTIFIED",
   "scope": "Adds an allowlisted pointer-hover trigger only for same-page tab selection; this does not complete EDT-039, the Visual Editor, or D-01..D-07 acceptance.",
   "implementation": {
     "allowed_events_by_action": {
-      "scroll-to": ["click", "focus"],
-      "select-tab": ["click", "focus", "hover"],
-      "toggle-disclosure": ["click", "focus"]
+      "scroll-to": [
+        "click",
+        "focus"
+      ],
+      "select-tab": [
+        "click",
+        "focus",
+        "hover"
+      ],
+      "toggle-disclosure": [
+        "click",
+        "focus"
+      ]
     },
     "hover_runtime": "Delegated pointerover accepts mouse/pen only, ignores transitions within the action source, and never prevents the separate click/focus behavior.",
     "inspector": "The event selector filters events by selected action and returns to click when an action change makes hover unsupported.",
@@ -41,21 +51,33 @@
       "captured_changed_db": false,
       "additional_read_only_call": "A first concurrent preflight/deployment-status summary call executed the same SELECT but its wrapper failed while formatting the deployment result. A second SELECT-only call captured the result above. No D1 write or migration was issued."
     },
-    "github_exact_source_ci": "PENDING: must run against the runtime source commit after the normal fast-forward push; local browser cannot replace this check."
+    "github_exact_source_ci": "IN_PROGRESS: Editor Core workflow 44227864336; exact source SHA 80dd455b17b042362f352e69c16777333b0f3ab2. typecheck, editor unit, offline D1 reconciliation/bootstrap, private R2 API, public showcase unit+browser passed; isolated real Worker media test completed/remaining browser layout and domain acceptance steps are pending at evidence capture.",
+    "production_source_smoke": "PASS: workflow 44227864748 completed successfully for exact source SHA 80dd455b17b042362f352e69c16777333b0f3ab2.",
+    "plan_and_baseline_workflows": "PASS: canonical plan 44227864365, active point audit 44227864292, F0 baseline 44227864418 and Twitch integration 44227864535; all exact source SHA and completed successfully."
   },
   "release": {
     "base_commit": "6aca0835389b5e9a8612b7e9b52ce6d4082d7b29",
-    "runtime_source_commit": "PENDING",
+    "runtime_source_commit": "80dd455b17b042362f352e69c16777333b0f3ab2",
     "github_branch": "v2/foundation",
     "github_head_before_change": "6aca0835389b5e9a8612b7e9b52ce6d4082d7b29",
+    "github_head_after_push": "80dd455b17b042362f352e69c16777333b0f3ab2",
     "pre_change_worker_deployment": "9e6a6492-dbfb-40a7-b515-40f6076bdb88",
     "pre_change_worker_version": "cc808ea6-b76b-4ad6-bfef-026f078667e3",
     "pre_change_worker_traffic": "100%",
     "pre_change_health": "PASS via exact-source smoke workflow 44161310987 before hover source changes; the new source still requires post-release health verification.",
     "pre_change_public_asset_hashes": "Verified against the deployed focus-trigger source by workflow 44161310987 before hover source changes.",
-    "post_release_deployment": "PENDING",
-    "post_release_version_and_traffic": "PENDING",
-    "post_release_health_and_asset_hashes": "PENDING"
+    "post_release_deployment": "849a6cbf-3452-4cc1-9c8e-43fc73407e40 at 2026-11-18T03:05:37.682898Z; Workers Builds via normal branch push.",
+    "post_release_version_and_traffic": "bf33cfc8-e232-4a56-86ee-0c520b3cf02f at 100% traffic (read-only Cloudflare deployment API GET).",
+    "post_release_health_and_asset_hashes": {
+      "health": "Direct GET /api/health returned HTTP 200: {\"ok\":true,\"service\":\"sanci9517-streamer-brand\",\"version\":\"2.0.0\",\"server\":\"cloudflare-worker\"}.",
+      "direct_public_get_sha256": {
+        "public/editor-v2/app.js": "66b38a15fbd4736dddeaa7269f0947416646acd14680c0edb44df1901ba8e2e8",
+        "public/editor-v2/core/authored-content.js": "9ac6b12f541f24a68ab2cd5031fb5403f2eff1c1d61b62c8b5164d0a2967844c",
+        "public/editor-v2/core/page-interactions.js": "4a2a96431826e5d7a32070a5b330977b1ae06f438987842ad24ca120bcb458a5",
+        "public/editor-v2/ui/page-interaction-controls.js": "87dd4b8c3ff96f2caf275c0590f780e29232657ae518bd22561274413021a8c6"
+      },
+      "result": "All four direct HTTP GET asset hashes exactly match the local runtime source at 80dd455b17b042362f352e69c16777333b0f3ab2."
+    }
   },
   "constraints": {
     "production_migrations": 0,
