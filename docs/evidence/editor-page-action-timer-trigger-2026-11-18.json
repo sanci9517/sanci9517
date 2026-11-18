@@ -1,6 +1,6 @@
 {
   "schema": "sanci.editor.page-action-timer-trigger.v1",
-  "recorded_at_utc": "2026-11-18T10:36:00Z",
+  "recorded_at_utc": "2026-11-18T10:43:00Z",
   "repository": "sanci9517/sanci9517",
   "branch": "v2/foundation",
   "verified_base_head": "ccb6fb451017141964bd2ba7219feb77881175f0",
@@ -116,8 +116,8 @@
     "expected_parent": "ccb6fb451017141964bd2ba7219feb77881175f0",
     "branch": "v2/foundation",
     "push": "Verified expected-head normal fast-forward; force=false.",
-    "post_release_ci": "PENDING",
-    "post_release_cloudflare_deployment": "PENDING",
+    "post_release_ci": "PARTIAL: exact-SHA source smoke, Canonical Plan, Active Point Audit, F0 and Twitch checks succeeded; Editor Core run 44286406695 remains in_progress and is not an aggregate PASS.",
+    "post_release_cloudflare_deployment": "PASS: automatic deployment 596e50f3-c830-4371-a1d7-e48f468659dc, Worker version 68b853e6-afbb-4e45-b579-1735695dfc4d, 100% traffic verified.",
     "changed_asset_sha256": {
       "public/assets/page-renderer.js": "4f015e35547fca6c04b9c77d7e205d8695615811dc2f67ebf31319c4105cff76",
       "public/editor-v2/app.js": "49f64500acaeba5b12f499bcbc0d43d6bbf39beb460a23725e9db050f0d15eed",
@@ -176,7 +176,10 @@
     "docs_only_followup": "Plan/evidence/metrics only; publish with [skip ci], no Worker redeploy.",
     "docs_followup_base_head": "6a38cb4242c83268280cf1749e940a230314e679",
     "production_release_status": "EXACT_SHA_HEALTH_AND_ASSET_SMOKE_PASS; EDITOR_CORE_CI_PENDING",
-    "production_source_sha256_verified_count": "34/34"
+    "production_source_sha256_verified_count": "34/34",
+    "docs_followup_commit": "d3125656243a8e3058445eae03ab55f0c2c692f3",
+    "docs_followup_metrics_id": "20261118103518-2634136f",
+    "docs_evidence_correction_metrics_id": "20261118104205-7ee9f623"
   },
   "new_paid_cost": "0 Ft",
   "limitations": [
