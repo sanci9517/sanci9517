@@ -10,11 +10,11 @@
   "measured_seconds": 5178,
   "status": "partial",
   "kind": "mixed",
-  "summary": "EDT-038 implementation deployed from exact v2/foundation SHA and production source smoke passed; Editor Core exact-SHA browser/layout suite remains in progress. Full Editor/D acceptance remains open.",
+  "summary": "EDT-038 implementation deployed from exact v2/foundation SHA; production source smoke passed; exact-SHA Editor Core browser/layout suite subsequently completed successfully. Full Editor/D acceptance remains open.",
   "evidence": [
     "docs/evidence/editor-node-clipboard-release-2026-11-18.json"
   ],
-  "checks": "local editor/typecheck/migration/plan/traceability/targeted Chromium checks PASS; full local layout suite interrupted 35/59; Cloudflare build exact SHA success, 100% traffic and production smoke HTTP 200 plus allowlisted hashes PASS; hosted full editor suite pending; D OPEN/NOT_CERTIFIED",
+  "checks": "local editor/typecheck/migration/plan/traceability/targeted Chromium checks PASS; full local layout suite interrupted 35/59; exact-SHA Cloudflare build, 100% traffic, production smoke HTTP 200 plus allowlisted hashes PASS; hosted Editor Core 44381012651 completed/success exact SHA with all functional steps and full browser layout regression PASS; D OPEN/NOT_CERTIFIED",
   "started_revision": "88181f527b0965be4b43fea14e757dbeb0fe6779",
   "finished_revision": "e884497189e664b6bb8779a3f1e76a8d37678811",
   "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",

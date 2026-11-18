@@ -95,6 +95,15 @@ function markRootAppearance(page, node) {
     node.metadata = { ...(node.metadata ?? {}), rootStyleVersion: 1 };
   }
 }
+function remapInternalPageActionTargets(copies,idMap){
+  for(const copy of copies){
+    if(!Array.isArray(copy.interactions))continue;
+    copy.interactions=copy.interactions.map(interaction=>{
+      const targetId=idMap.get(interaction?.targetId);
+      return targetId?{...interaction,targetId}:interaction;
+    });
+  }
+}
 function bumpRevision(document) {
   document.revision = (document.revision ?? 0) + 1;
   const page = document.pages?.[document.activePageId];
@@ -138,7 +147,7 @@ if(authored&&CONTENT_TYPES.includes(type))Object.assign(nodeProps,normalizeAutho
   'responsive.set': (state, { nodeId, device = 'desktop', patch = {} } = {}) => commit(state,{type:'responsive.set',payload:{nodeId,device,patch:structuredClone(patch)}},(draft)=>{const {page,node}=requireNode(draft,nodeId);if(!['desktop','tablet','mobile'].includes(device))throw new Error(`Invalid responsive device: ${device}`);trackInspectorStylePatch(node,device,patch);const next={...(node.responsive[device]??{})};for(const [key,value] of Object.entries(patch)){if(value===undefined||value===null||value==='')delete next[key];else next[key]=structuredClone(value)}node.responsive[device]=next;markRootAppearance(page,node);bumpRevision(draft.document)}),
   'element.visibility.set': (state, { nodeId, device = 'desktop', visible = true } = {}) => commit(state,{type:'element.visibility.set',payload:{nodeId,device,visible}},(draft)=>{const {page,node}=requireNode(draft,nodeId);if(!VISIBILITY_DEVICES.includes(device))throw new Error(`Invalid responsive device: ${device}`);if(node.id===page.rootId)throw new Error('Root visibility is not editable');node.visibility={...normalizeVisibility(node.visibility),[device]:Boolean(visible)};bumpRevision(draft.document)}),
   'element.lock.set': (state, { nodeId, locked = true } = {}) => commit(state,{type:'element.lock.set',payload:{nodeId,locked}},(draft)=>{const {node}=requireNode(draft,nodeId,{allowLocked:true});node.locked=Boolean(locked);bumpRevision(draft.document)}),
-  'element.duplicate': (state, { nodeId, parentId, index } = {}) => commit(state,{type:'element.duplicate',payload:{nodeId,parentId,index}},(draft)=>{const page=requirePage(draft);const {node}=requireNode(draft,nodeId);const sourceIds=[...collectDescendants(page,nodeId)];const usedAnchors=new Set(Object.values(page.nodes).map(n=>n.accessibility?.anchorId).filter(Boolean));const idMap=new Map(sourceIds.map((id)=>[id,createNode('custom').id]));const newRootId=idMap.get(nodeId);const targetParent=getNode(page,parentId??node.parentId??page.rootId);if(!targetParent||!canContain(targetParent,node.type))throw new Error('Invalid duplicate target');if(targetParent.locked)throw new Error(`Cannot duplicate into locked node: ${targetParent.id}`);requireUnlockedAncestors(page,targetParent);for(const sourceId of sourceIds){const source=page.nodes[sourceId];const copy=structuredClone(source);copy.id=idMap.get(sourceId);copy.parentId=sourceId===nodeId?targetParent.id:idMap.get(source.parentId);copy.children=source.children.map((childId)=>idMap.get(childId));copy.name=`${source.name} másolat`;if(copy.accessibility?.anchorId){const base=String(copy.accessibility.anchorId).slice(0,48);let next=`${base}-copy`;let i=2;while(usedAnchors.has(next)){next=`${base}-copy-${i++}`};copy.accessibility={...copy.accessibility,anchorId:next};usedAnchors.add(next)}page.nodes[copy.id]=copy}remapDuplicateAnchors([...idMap.values()].map(id=>page.nodes[id]),page.nodes);insertChild(targetParent,newRootId,index);setSelection(draft,[newRootId],newRootId);bumpRevision(draft.document)}),
+  'element.duplicate': (state, { nodeId, parentId, index } = {}) => commit(state,{type:'element.duplicate',payload:{nodeId,parentId,index}},(draft)=>{const page=requirePage(draft);const {node}=requireNode(draft,nodeId);const sourceIds=[...collectDescendants(page,nodeId)];const usedAnchors=new Set(Object.values(page.nodes).map(n=>n.accessibility?.anchorId).filter(Boolean));const idMap=new Map(sourceIds.map((id)=>[id,createNode('custom').id]));const newRootId=idMap.get(nodeId);const targetParent=getNode(page,parentId??node.parentId??page.rootId);if(!targetParent||!canContain(targetParent,node.type))throw new Error('Invalid duplicate target');if(targetParent.locked)throw new Error(`Cannot duplicate into locked node: ${targetParent.id}`);requireUnlockedAncestors(page,targetParent);for(const sourceId of sourceIds){const source=page.nodes[sourceId];const copy=structuredClone(source);copy.id=idMap.get(sourceId);copy.parentId=sourceId===nodeId?targetParent.id:idMap.get(source.parentId);copy.children=source.children.map((childId)=>idMap.get(childId));copy.name=`${source.name} másolat`;if(copy.accessibility?.anchorId){const base=String(copy.accessibility.anchorId).slice(0,48);let next=`${base}-copy`;let i=2;while(usedAnchors.has(next)){next=`${base}-copy-${i++}`};copy.accessibility={...copy.accessibility,anchorId:next};usedAnchors.add(next)}page.nodes[copy.id]=copy}const copies=[...idMap.values()].map(id=>page.nodes[id]);remapInternalPageActionTargets(copies,idMap);remapDuplicateAnchors(copies,page.nodes);insertChild(targetParent,newRootId,index);setSelection(draft,[newRootId],newRootId);bumpRevision(draft.document)}),
   'element.paste': (state, { clipboard, parentId, index } = {}) => commit(state,{type:'element.paste',payload:{pageId:clipboard?.pageId,rootIds:[...(clipboard?.rootIds??[])]}},(draft)=>{
     const page=requirePage(draft);
     if(!isNodeClipboardForPage(clipboard,page.id))throw new Error('Az elemvágólap csak az eredeti oldalon használható.');
@@ -170,6 +179,7 @@ if(authored&&CONTENT_TYPES.includes(type))Object.assign(nodeProps,normalizeAutho
       page.nodes[copy.id]=copy;copies.push(copy);
     }
     for(let offset=0;offset<roots.length;offset++)insertChild(targetParent,idMap.get(roots[offset]),Number.isInteger(index)?index+offset:undefined);
+    remapInternalPageActionTargets(copies,idMap);
     remapDuplicateAnchors(copies,page.nodes);
     const pastedRoots=roots.map(id=>idMap.get(id));setSelection(draft,pastedRoots,pastedRoots.at(-1));bumpRevision(draft.document);
   }),

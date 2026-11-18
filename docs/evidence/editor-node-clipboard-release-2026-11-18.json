@@ -62,7 +62,15 @@
       "production_data_writes": false
     },
     "r2_mutation": false,
-    "wrangler_dry_run": "PASS: 195 assets, 392.87 KiB upload / 100.73 KiB gzip; no publish"
+    "wrangler_dry_run": "PASS: 195 assets, 392.87 KiB upload / 100.73 KiB gzip; no publish",
+    "editor_core_ci": {
+      "run_id": 44381012651,
+      "status": "completed",
+      "conclusion": "success",
+      "commit_sha": "e884497189e664b6bb8779a3f1e76a8d37678811",
+      "url": "https://github.com/sanci9517/sanci9517/actions/runs/44381012651",
+      "functional_steps": "19/19 successful; full browser layout regression successful"
+    }
   },
   "checks": [
     {
@@ -107,7 +115,7 @@
     },
     {
       "command": "Editor Core exact-SHA GitHub Actions 44381012651",
-      "result": "IN_PROGRESS at Run Editor browser layout regression; exact-SHA workflow URL: https://github.com/sanci9517/sanci9517/actions/runs/44381012651"
+      "result": "PASS: completed/success for e884497189e664b6bb8779a3f1e76a8d37678811; all 19 functional steps passed, including complete browser layout regression"
     }
   ],
   "editor_acceptance": {
@@ -118,6 +126,6 @@
   "cost": "0 Ft new authorized cost; no dependencies added",
   "limitations": [
     "Production hash of changed public test harness was not verified because direct public URL access is blocked by this workspace proxy.",
-    "Full Editor exact-SHA CI remained in progress when this snapshot was recorded."
+    "At the time of the e884497189e664b6bb8779a3f1e76a8d37678811 deployment, public test harness public/editor-v2/tests/core.test.js was not covered by the production source smoke allowlist. A follow-up adds it for verification of the current runtime fix; that follow-up is not yet deployed."
   ]
 }

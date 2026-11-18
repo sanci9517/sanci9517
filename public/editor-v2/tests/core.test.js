@@ -683,6 +683,38 @@ test('node clipboard paste remaps nested IDs and anchors and is one undoable sam
  assertValidEditorDocument(state.document);
 });
 
+test('duplicate and clipboard paste remap page-action targets inside copied trees only',()=>{
+ const state=createEditorState(),root=activePage(state).rootId;
+ execute(state,{type:'element.add',payload:{type:NODE_TYPES.SECTION,parentId:root}});const section=state.selection.primaryId;
+ execute(state,{type:'element.add',payload:{type:NODE_TYPES.TABS,parentId:section}});const tabs=state.selection.primaryId;
+ execute(state,{type:'element.update',payload:{nodeId:tabs,patch:{props:{...activePage(state).nodes[tabs].props,items:[{title:'Célfül'}]}}}});
+ execute(state,{type:'element.add',payload:{type:NODE_TYPES.BUTTON,parentId:section}});const internalButton=state.selection.primaryId;
+ execute(state,{type:'element.update',payload:{nodeId:internalButton,patch:{metadata:{...activePage(state).nodes[internalButton].metadata,contentVersion:1},props:{...activePage(state).nodes[internalButton].props,href:''},interactions:[{schemaVersion:1,event:'click',action:'select-tab',targetId:tabs,itemIndex:0}]}}});
+ execute(state,{type:'element.add',payload:{type:NODE_TYPES.BUTTON,parentId:section}});const externalButton=state.selection.primaryId;
+ execute(state,{type:'element.add',payload:{type:NODE_TYPES.TABS,parentId:root}});const externalTabs=state.selection.primaryId;
+ execute(state,{type:'element.update',payload:{nodeId:externalTabs,patch:{props:{...activePage(state).nodes[externalTabs].props,items:[{title:'Külső'}]}}}});
+ execute(state,{type:'element.update',payload:{nodeId:externalButton,patch:{metadata:{...activePage(state).nodes[externalButton].metadata,contentVersion:1},props:{...activePage(state).nodes[externalButton].props,href:''},interactions:[{schemaVersion:1,event:'click',action:'select-tab',targetId:externalTabs,itemIndex:0}]}}});
+ assertValidEditorDocument(state.document);
+
+ execute(state,{type:'element.duplicate',payload:{nodeId:section}});
+ const duplicate=activePage(state).nodes[state.selection.primaryId];
+ const duplicateTabs=activePage(state).nodes[duplicate.children[0]];
+ const duplicateInternalButton=activePage(state).nodes[duplicate.children[1]];
+ const duplicateExternalButton=activePage(state).nodes[duplicate.children[2]];
+ assert.equal(duplicateInternalButton.interactions[0].targetId,duplicateTabs.id,'duplicated page actions follow the duplicated target');
+ assert.equal(duplicateExternalButton.interactions[0].targetId,externalTabs,'targets outside the duplicated subtree remain on the original same-page element');
+
+ const sourcePage=activePage(state),clipboard=createNodeClipboard(sourcePage,[section]);
+ execute(state,{type:'element.paste',payload:{clipboard,parentId:root}});
+ const pasted=activePage(state).nodes[state.selection.primaryId];
+ const pastedTabs=activePage(state).nodes[pasted.children[0]];
+ const pastedInternalButton=activePage(state).nodes[pasted.children[1]];
+ const pastedExternalButton=activePage(state).nodes[pasted.children[2]];
+ assert.equal(pastedInternalButton.interactions[0].targetId,pastedTabs.id,'pasted page actions follow the pasted target');
+ assert.equal(pastedExternalButton.interactions[0].targetId,externalTabs,'targets outside the pasted subtree remain on the original same-page element');
+ assertValidEditorDocument(state.document);
+});
+
 test('node clipboard pastes multiple selected roots in canvas order as one history step',()=>{
  const state=createEditorState(),page=activePage(state),root=page.rootId;
  execute(state,{type:'element.add',payload:{type:NODE_TYPES.TEXT,parentId:root,props:{text:'Első'}}});const first=state.selection.primaryId;

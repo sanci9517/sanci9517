@@ -13,7 +13,11 @@ test('node clipboard keyboard flow duplicates nested nodes into the draft; Save 
   const initial=createDocument(),pageId=initial.activePageId,page=initial.pages[pageId];
   const section=createNode(NODE_TYPES.SECTION,{name:'Másolási próba',parentId:page.rootId});
   const copyText=createNode(NODE_TYPES.TEXT,{name:'Beágyazott szöveg',parentId:section.id,props:{text:'Másolatba kerül'}});
-  section.children.push(copyText.id);page.nodes[section.id]=section;page.nodes[copyText.id]=copyText;page.nodes[page.rootId].children.push(section.id);
+  const tabs=createNode(NODE_TYPES.TABS,{name:'Célfülek',parentId:section.id,props:{items:[{title:'Első fül'}]}});
+  const actionButton=createNode(NODE_TYPES.BUTTON,{name:'Belső oldalinterakció',parentId:section.id,props:{text:'Fülre ugrás',href:''},metadata:{contentVersion:1}});
+  actionButton.interactions=[{schemaVersion:1,event:'click',action:'select-tab',targetId:tabs.id,itemIndex:0}];
+  section.children.push(copyText.id,tabs.id,actionButton.id);
+  page.nodes[section.id]=section;page.nodes[copyText.id]=copyText;page.nodes[tabs.id]=tabs;page.nodes[actionButton.id]=actionButton;page.nodes[page.rootId].children.push(section.id);
   let draft=structuredClone(initial),published=null,revision=1;const posts=[];
   const server=createServer(async(req,res)=>{
     const url=new URL(req.url,'http://localhost');
@@ -76,6 +80,10 @@ test('node clipboard keyboard flow duplicates nested nodes into the draft; Save 
   assert.equal(posts.at(-1).publish,false);
   assert.equal(published,null,'Save does not publish pasted content');
   assert.ok(draft.pages[pageId].nodes[copiedId]);
+  const pastedChildren=draft.pages[pageId].nodes[copiedId].children;
+  const pastedTabs=draft.pages[pageId].nodes[pastedChildren[1]];
+  const pastedActionButton=draft.pages[pageId].nodes[pastedChildren[2]];
+  assert.equal(pastedActionButton.interactions[0].targetId,pastedTabs.id,'copied internal page actions target their copied component');
 
   await tab.reload();
   await tab.locator(`#canvas .node[data-node-id="${copiedId}"]`).waitFor();

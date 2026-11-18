@@ -57,6 +57,12 @@ class PlanContractTest(unittest.TestCase):
         self.assertEqual(report['feature_count'], 396)
         self.assertEqual(report['functional_acceptance'], 'NOT_CERTIFIED')
 
+    def test_edt038_traceability_names_node_clipboard_runtime_and_browser_regression(self):
+        feature = next(row for row in self.data()['features'] if row['id'] == 'EDT-038')
+        self.assertIn('public/editor-v2/core/node-clipboard.js', feature['implementation'])
+        self.assertIn('public/editor-v2/core/commands.js', feature['implementation'])
+        self.assertIn('tests/browser/editor-node-clipboard.test.js', feature['test_candidates'])
+
     def test_missing_split_chapter_fails(self):
         (self.root / 'docs/creator-master/part-12-of-12.md').unlink()
         with self.assertRaisesRegex(ValueError, 'Missing or empty'): validate(self.root)
