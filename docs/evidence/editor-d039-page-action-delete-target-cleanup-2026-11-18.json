@@ -59,14 +59,35 @@
     "warning": "This pre-release baseline does not contain this change."
   },
   "release": {
-    "status": "PENDING_NOT_DEPLOYED",
-    "required_next_steps": [
-      "Fast-forward push the exact validated runtime commit to v2/foundation.",
-      "Verify GitHub checks for that exact SHA.",
-      "Run deploy:safe against that same SHA.",
-      "Verify deployed source SHA, 100% traffic, production health and exact hashes for changed public assets."
-    ],
-    "cost": "0 Ft; no paid service, build-limit overrun, migration or data write authorized."
+    "status": "DEPLOYED_VERIFIED; EXACT_SHA_EDITOR_CORE_CI_PENDING",
+    "branch": "v2/foundation",
+    "source_sha": "d9ee822923e9dc4d83fc53cd5ee348ab75502671",
+    "push": "Normal fast-forward from 5558fb21263c0b293460bf83a714f25d6e60f8c7",
+    "deploy_command": "npm run deploy:safe",
+    "deploy_exit_code": 0,
+    "worker_deployment_id": "73e7cabb-b349-4bc0-be8b-9bbec299c0d1",
+    "worker_version_id": "ccc492e4-0937-4088-88f3-ccd1a48cfae7",
+    "worker_version_number": 4128,
+    "worker_traffic_percentage": 100,
+    "health": {
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health?release=d9ee822923e9dc4d83fc53cd5ee348ab75502671",
+      "http_status": 200,
+      "body": {"ok": true, "service": "sanci9517-streamer-brand", "version": "2.0.0", "server": "cloudflare-worker"}
+    },
+    "changed_public_assets": {
+      "/editor-v2/app.js": {"expected_sha256": "6b2e877fa1afd8cc67f43330e5a1e1db8e9d19fa2163255778e7ec27cc482bdf", "live_sha256": "6b2e877fa1afd8cc67f43330e5a1e1db8e9d19fa2163255778e7ec27cc482bdf", "matches": true},
+      "/editor-v2/core/commands.js": {"expected_sha256": "bf71894a0f1cbbd63bc4ef5af1d28c083a48ceb93cc2f0353eff83e63908cd55", "live_sha256": "bf71894a0f1cbbd63bc4ef5af1d28c083a48ceb93cc2f0353eff83e63908cd55", "matches": true}
+    },
+    "exact_sha_workflows": {
+      "editor_core": {"id": 44406544721, "status": "IN_PROGRESS", "url": "https://github.com/sanci9517/sanci9517/actions/runs/44406544721"},
+      "f0_baseline": {"id": 44406544850, "status": "SUCCESS", "url": "https://github.com/sanci9517/sanci9517/actions/runs/44406544850"},
+      "twitch": {"id": 44406544652, "status": "SUCCESS", "url": "https://github.com/sanci9517/sanci9517/actions/runs/44406544652"},
+      "canonical_plan": {"id": 44406544586, "status": "SUCCESS", "url": "https://github.com/sanci9517/sanci9517/actions/runs/44406544586"},
+      "active_plan_audit": {"id": 44406544671, "status": "SUCCESS", "url": "https://github.com/sanci9517/sanci9517/actions/runs/44406544671"},
+      "production_source_smoke": {"id": 44406544520, "status": "SUCCESS", "url": "https://github.com/sanci9517/sanci9517/actions/runs/44406544520"}
+    },
+    "worker_source_note": "Wrangler deployed the checked-out exact source SHA d9ee8229; the live source smoke workflow and direct cache-busted GET verified all its source hashes, including both changed public assets.",
+    "cost": "0 Ft; Cloudflare build-minute limit reported not reached. No paid service, D1 migration/write, or R2 mutation."
   },
   "acceptance_boundary": "This is one verified EDT-039 lifecycle slice only. It does not certify the full EDT-039 capability matrix, D-01 through D-07, or the complete Visual Editor. Full manual/physical acceptance remains deferred; Save != Publish."
 }
