@@ -84,8 +84,8 @@
         "source_commit": "cc8f5098452cf113622bec7eac602a67c79473e6",
         "started_at": "2026-11-18T08:53:51Z",
         "completed_at": "2026-11-18T09:28:08Z",
-        "required_steps": "19/19 passed; layout screenshot upload skipped as designed because there was no failure artifact.",
-        "browser_suite": "58/58 cases reached completion; tests/browser/editor-page-interactions.test.js passed in the exact-SHA job."
+        "required_steps": "Workflow steps 1-19 completed successfully; diagnostic screenshot upload skipped as designed because no failure artifact existed.",
+        "browser_suite": "58/58 browser test files completed; tests/browser/editor-page-interactions.test.js passed in the exact-SHA job."
       }
     },
     "production_release": "PASS_EXACT_SHA_PRODUCTION_SOURCE_SMOKE; Cloudflare deployment API confirms 100% traffic; Editor Core aggregate CI is still in progress."
@@ -141,8 +141,8 @@
       "url": "https://github.com/sanci9517/sanci9517/actions/runs/44270936468",
       "status": "success",
       "source_commit": "cc8f5098452cf113622bec7eac602a67c79473e6",
-      "required_steps": "19/19 passed",
-      "browser_suite": "58/58 completed"
+      "required_steps": "Workflow steps 1-19 completed successfully; post-job cleanup succeeded; diagnostic screenshot upload skipped as designed.",
+      "browser_suite": "58/58 browser test files completed."
     },
     "deployment_api_snapshot_at_2026-11-18T09:35Z": "deployment 90ccebf0-44c9-44bf-b636-8369d2b54764; version c2f19f80-6666-45cb-a5e0-07d0667b6522; 100% traffic (read-only Cloudflare API check).",
     "docs_only_followup": "Evidence and developer metrics only; publish with [skip ci], no Worker redeploy."
