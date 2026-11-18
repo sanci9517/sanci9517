@@ -1,11 +1,11 @@
 {
   "schema": "sanci.editor.page-action-load-tab.v1",
-  "recorded_at_utc": "2026-11-18T09:01:00Z",
+  "recorded_at_utc": "2026-11-18T09:35:26Z",
   "repository": "sanci9517/sanci9517",
   "branch": "v2/foundation",
   "verified_base_head": "c9ebdf432a9f3cff50421a6ff8cab2e559cbf681",
   "plan_point": "77.44.7 / EDT-039 Page Actions",
-  "status": "PRODUCTION_RELEASE_VERIFIED_EDITOR_CORE_CI_PENDING",
+  "status": "PRODUCTION_RELEASE_VERIFIED_EDITOR_CORE_CI_PASS",
   "scope": {
     "feature": "Allow the safe same-page select-tab Page Action on public/Preview page initialization.",
     "precedence": "A valid creator-tab query override is applied before the load action and wins for the matching tab target.",
@@ -77,17 +77,15 @@
       },
       "editor_core": {
         "run_id": 44270936468,
-        "status": "IN_PROGRESS",
-        "last_observed_step": "Run Editor browser layout regression",
-        "completed_steps_before_current": 13,
-        "pending_after_current": [
-          "WEB-013 Admin mobile browser regression",
-          "canonical schedule tests",
-          "domain contract tests",
-          "Brand Kit storage and access regression",
-          "Admin home contract tests",
-          "layout screenshots"
-        ]
+        "job_id": 134687078762,
+        "workflow": "Editor Core Test",
+        "status": "completed",
+        "conclusion": "success",
+        "source_commit": "cc8f5098452cf113622bec7eac602a67c79473e6",
+        "started_at": "2026-11-18T08:53:51Z",
+        "completed_at": "2026-11-18T09:28:08Z",
+        "required_steps": "19/19 passed; layout screenshot upload skipped as designed because there was no failure artifact.",
+        "browser_suite": "58/58 cases reached completion; tests/browser/editor-page-interactions.test.js passed in the exact-SHA job."
       }
     },
     "production_release": "PASS_EXACT_SHA_PRODUCTION_SOURCE_SMOKE; Cloudflare deployment API confirms 100% traffic; Editor Core aggregate CI is still in progress."
@@ -103,7 +101,8 @@
     "Manual and physical Visual Editor acceptance remains DEFERRED until the complete Editor gate.",
     "The current form/input schema types do not provide an implemented editable form; no submit trigger is claimed.",
     "No production D1 migration/data write, R2 mutation/deletion, paid service, or new paid cost.",
-    "Exact-SHA Editor Core workflow 44270936468 remains IN_PROGRESS; no aggregate Editor Core pass is claimed. Local direct-shell outbound health was blocked by the network sandbox, but GitHub exact-SHA source smoke verified HTTP 200 and 34/34 public source hashes."
+    "Editor Core exact-SHA CI run 44270936468 completed successfully (19/19 required job steps; 58/58 browser-suite cases). This does not certify all EDT-039 events, the full Visual Editor, or 77.44.7.D; final manual/physical acceptance remains deferred.",
+    "The Cloudflare connector blocks direct fetch to the Worker URL with HTTP 403 policy response; the exact-SHA production source-smoke workflow independently verified health HTTP 200 and all 34/34 public asset SHA-256 hashes."
   ],
   "new_paid_cost": "0 Ft",
   "release": {
@@ -134,6 +133,19 @@
       "public/visual-page.html": "23d6acfe84246dc0827eac8bca6823234d016adab272f36831fc925834e3d749"
     },
     "deployment_api_snapshot_at_2026-11-18T08:56Z": "deployment 90ccebf0-44c9-44bf-b636-8369d2b54764; version c2f19f80-6666-45cb-a5e0-07d0667b6522; 100% traffic",
-    "direct_local_shell_probe": "BLOCKED: outbound network denied with ECONNREFUSED/ENETUNREACH; the successful exact-SHA GitHub production smoke performed the health and asset verification."
-  }
+    "direct_local_shell_probe": "BLOCKED: outbound network denied with ECONNREFUSED/ENETUNREACH; the successful exact-SHA GitHub production smoke performed the health and asset verification.",
+    "docs_followup_base_head": "2f01a698c06e0de36ffaba66b661e0f9e3104854",
+    "editor_core_ci": {
+      "run_id": 44270936468,
+      "job_id": 134687078762,
+      "url": "https://github.com/sanci9517/sanci9517/actions/runs/44270936468",
+      "status": "success",
+      "source_commit": "cc8f5098452cf113622bec7eac602a67c79473e6",
+      "required_steps": "19/19 passed",
+      "browser_suite": "58/58 completed"
+    },
+    "deployment_api_snapshot_at_2026-11-18T09:35Z": "deployment 90ccebf0-44c9-44bf-b636-8369d2b54764; version c2f19f80-6666-45cb-a5e0-07d0667b6522; 100% traffic (read-only Cloudflare API check).",
+    "docs_only_followup": "Evidence and developer metrics only; publish with [skip ci], no Worker redeploy."
+  },
+  "production_release": "PASS_EXACT_SHA_PRODUCTION_SOURCE_SMOKE_AND_EDITOR_CORE_CI; Cloudflare deployment API confirms 100% traffic; full Editor / EDT-039 completion remains open."
 }
