@@ -5,7 +5,7 @@
   "branch": "v2/foundation",
   "base_head": "074bfef83c0f21fded19dc4ddc407feef63ccefa",
   "plan_point": "77.44.7.D / D-03 legacy structured repeater row recovery",
-  "status": "LOCAL_ACCEPTANCE_PASS_RELEASE_PENDING",
+  "status": "RUNTIME_RELEASED_EXACT_SHA; EDITOR_CORE_CI_PENDING",
   "scope": {
     "defect": "Legacy structured repeaters tolerated null/object/array row values by coercing them to empty text in the Inspector, so an unrelated edit could silently replace the stored row.",
     "behavior": "The Inspector detects unrepresentable legacy list, tabs, accordion, gallery, and carousel rows. It exposes an accessible warning and one explicit per-row repair action; ordinary fields remain locked until repair. Valid neighbor rows and allowed null text fields are retained. Locked nodes cannot repair. The real browser also edits and saves a separate element while the malformed row exists, proving that an unrelated draft Save preserves the exact legacy row; Undo and Redo cover the explicit repair.",
@@ -105,29 +105,64 @@
       "note": "This is the production state before the D-03 commit; this slice is not yet in production."
     },
     "github_exact_sha_ci": {
-      "status": "NOT_STARTED_FOR_THIS_SLICE",
-      "prior_release_run": {
-        "id": 44353969040,
-        "sha": "074bfef83c0f21fded19dc4ddc407feef63ccefa",
-        "status": "IN_PROGRESS",
-        "url": "https://github.com/sanci9517/sanci9517/actions/runs/44353969040"
+      "status": "PARTIAL; EDITOR_CORE_WORKFLOW_STILL_IN_PROGRESS",
+      "source_smoke": {
+        "run_id": 44361352528,
+        "status": "success",
+        "url": "https://github.com/sanci9517/sanci9517/actions/runs/44361352528",
+        "result": "PASS; live health HTTP 200 and exact SHA-256 for all 34 public source paths matched"
       },
-      "note": "A new run for the D-03 source SHA has not started. No rerun or extra dispatch was issued."
+      "editor_core": {
+        "run_id": 44361352977,
+        "status": "in_progress",
+        "active_step": "Run Editor browser layout regression",
+        "url": "https://github.com/sanci9517/sanci9517/actions/runs/44361352977"
+      },
+      "passing_runs": [
+        44361352714,
+        44361352662,
+        44361352637,
+        44361352680
+      ],
+      "note": "No extra rerun/dispatch was started. Local targeted real Chromium regression and all local gates passed."
     }
   },
   "release": {
-    "runtime_commit": null,
-    "pushed": false,
-    "exact_sha_ci": "NOT_STARTED",
-    "worker_deployed": false,
-    "post_deploy_health": "NOT_RUN",
-    "changed_public_hashes": "NOT_RUN"
+    "runtime_commit": "c01ef6e4f6a501437de1874c0b59075d030d4559",
+    "pushed": true,
+    "exact_sha_ci": "PARTIAL; exact-source production smoke and supporting workflows PASS, Editor Core workflow remains in progress",
+    "worker_deployed": true,
+    "deployment": {
+      "id": "de56e4b3-5c3b-48df-85c2-b14c17b37147",
+      "version_id": "729884c4-7719-4333-8143-827853f01fb3",
+      "version_number": 4124,
+      "traffic_percent": 100,
+      "verified_via": "Cloudflare Workers API GET deployment and GET version"
+    },
+    "post_deploy_health": {
+      "status": "PASS",
+      "http": 200,
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "changed_public_hashes": {
+      "status": "PASS",
+      "workflow_run_id": 44361352528,
+      "workflow_url": "https://github.com/sanci9517/sanci9517/actions/runs/44361352528",
+      "direct_readback": "PASS; app.js, core/element-content.js and ui/structured-inspector.js exact SHA-256 matched local c01ef6e4 source"
+    }
   },
   "limitations": [
-    "This implements and locally verifies one D-03 recovery slice only. It does not complete D-03's full capability/lifecycle matrix, D-01 through D-07, the Visual Editor, or 77.44.7.D.",
+    "This implements and verifies one D-03 recovery slice only. It does not complete D-03 full capability/lifecycle coverage, D-01 through D-07, the Visual Editor, or 77.44.7.D.",
     "Full Editor manual/physical acceptance remains DEFERRED until the complete Editor scope is implemented.",
-    "The malformed-row repair is explicit and replaces only the listed invalid rows with safe defaults; production D1 migrations/data writes and R2 changes/deletions were not performed.",
-    "No new paid service or cost was introduced (0 Ft)."
+    "The malformed-row repair is explicit and replaces only identified invalid rows with safe defaults; production D1 migrations/data writes and R2 changes/deletions were not performed.",
+    "No new paid service or cost was introduced (0 Ft).",
+    "Exact-source Editor Core hosted CI workflow 44361352977 was still in progress at final evidence update; it was not rerun or canceled."
   ],
   "local_sha256_before_release": {
     "public/editor-v2/app.js": "5232614e6654065bb84aab5b6d33653703d3fe48c6c8d001f405b5c38fcc16b9",
