@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-11-18T05:03:00Z",
+  "status": "EDITOR_CORE_CI_PASS_LIVE_PUBLIC_HEALTH_BLOCKED",
+  "active_plan_point": {
+    "ids": ["77.44", "WEB-011", "77.44.7.D", "EDT-039"],
+    "status": "OPEN / NOT_CERTIFIED",
+    "manual_physical_acceptance": "DEFERRED_UNTIL_COMPLETE_EDITOR",
+    "save_publish_separation": true
+  },
+  "repository": {
+    "full_name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "verified_branch_head": "8aa32484a886470f00cc451be46aeda6c69a3def",
+    "local_head": "8aa32484a886470f00cc451be46aeda6c69a3def",
+    "worktree_note": "Existing untracked scripts/__pycache__/ was preserved; no source edits were made in this verification block."
+  },
+  "runtime_release": {
+    "source_commit": "0b3fb3f7a7a3811c4b0b1f69bea9fccb2c0a71c2",
+    "deployment_id": "f5c93211-f73d-4dcf-8785-09e4f17b174c",
+    "worker_version": "44ea3e4f-3600-4c00-8fe3-df5e2900aef8",
+    "worker_version_traffic_percent": 100,
+    "deployment_api_read_only_check": "PASS"
+  },
+  "github_actions": {
+    "workflow": "Editor Core Test",
+    "run_id": 44236454965,
+    "run_url": "https://github.com/sanci9517/sanci9517/actions/runs/44236454965",
+    "head_sha": "0b3fb3f7a7a3811c4b0b1f69bea9fccb2c0a71c2",
+    "run_status": "completed",
+    "conclusion": "success",
+    "job_id": 134573656658,
+    "job_conclusion": "success",
+    "steps": {
+      "typecheck": "success",
+      "editor_core_tests": "success",
+      "offline_d1_ledger_bootstrap": "success",
+      "private_r2_media_api": "success",
+      "public_showcase_unit": "success",
+      "public_showcase_chromium": "success",
+      "isolated_worker_d1_r2_media_upload": "success",
+      "editor_browser_layout_regression": "success",
+      "web013_admin_mobile": "success",
+      "canonical_schedule": "success",
+      "domain_contracts": "success",
+      "brand_kit_storage_access": "success",
+      "admin_home_contracts": "success",
+      "layout_screenshot_upload": "skipped_no_failure_artifact_needed"
+    },
+    "additional_exact_sha_workflows": {
+      "f0": {"run_id": 44236454953, "conclusion": "success"},
+      "canonical_plan": {"run_id": 44236454961, "conclusion": "success"},
+      "active_point_audit": {"run_id": 44236455001, "conclusion": "success"},
+      "twitch": {"run_id": 44236455005, "conclusion": "success"},
+      "production_worker_source_smoke": {"run_id": 44236454959, "conclusion": "success"}
+    },
+    "aggregate_status_endpoint": "pending_with_no_commit_status_entries; Actions workflow conclusions above were inspected directly",
+    "additional_rerun_or_dispatch": "not_started"
+  },
+  "live_http_checks": {
+    "https://avidisodd.hu/api/health": {
+      "result": "HTTP 530",
+      "response_headers": {
+        "server": "envoy",
+        "x_vercel_cache": "MISS",
+        "x_vercel_id": "cle1::4nmpc-1794977985534-d7c57a6a36aa"
+      },
+      "interpretation": "Public host returned a Vercel-branded 530 page; this is not a Worker health PASS."
+    },
+    "https://api.avidisodd.hu/api/health": {
+      "result": "HTTP 530",
+      "body": "error code: 1033",
+      "interpretation": "Cloudflare 1033 Tunnel error. Cloudflare documentation says 1033 means the network cannot find a healthy cloudflared connector for the configured tunnel hostname. This does not prove the deployed Worker code itself failed."
+    },
+    "https://sanci9517-streamer-brand.sanci9517.workers.dev/api/health": {
+      "result": "NOT_VERIFIED",
+      "detail": "The execution proxy rejected the workers.dev CONNECT request with 403; this is not a Worker response."
+    }
+  },
+  "routing_inspection": {
+    "cloudflare_account_id": "64bbd6a12ac732ed2cac4ca25d8bfa7e",
+    "worker_settings_get": "PASS; production settings and bindings read without modification",
+    "worker_custom_domains_get": "empty result in the connected Cloudflare account",
+    "zone_list_for_avidisodd_hu": "empty result in the connected Cloudflare account",
+    "wrangler_config_routes": "no routes or custom_domain declared",
+    "changes_made": false,
+    "required_next_diagnostic": "Obtain read access to the Cloudflare account/zone that owns avidisodd.hu and its tunnel/DNS configuration, then verify hostname ownership and the intended API routing before changing it."
+  },
+  "data_and_cost": {
+    "production_d1_writes_or_migrations": 0,
+    "r2_mutations_or_deletions": 0,
+    "new_dependencies": 0,
+    "new_cost_huf": 0,
+    "reason_no_runtime_change": "EDT-039 remaining form submit behavior depends on the still-open EDT-019 and its canonical FORM API; unsupported form/timer/state semantics were not invented."
+  },
+  "verification_limits": [
+    "The exact-SHA Editor Core workflow completed successfully, but this certifies only that workflow, not the full Visual Editor or 77.44.7.D.",
+    "The public API endpoint did not pass health because it returned Cloudflare Error 1033.",
+    "The connected Cloudflare account did not expose the public zone or a Worker custom domain, so no DNS/tunnel route repair was attempted.",
+    "No CI was dispatched or rerun in this block."
+  ]
+}

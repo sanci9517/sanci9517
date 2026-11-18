@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261118045932-1e33ac6d",
+  "task": "EDT-039",
+  "trigger": "manual",
+  "started_at": "2026-11-18T04:59:32.615Z",
+  "finished_at": "2026-11-18T05:03:14.459Z",
+  "wall_seconds": 222,
+  "paused_seconds": 0,
+  "measured_seconds": 222,
+  "status": "partial",
+  "kind": "test",
+  "summary": "Exact-SHA Editor Core CI passed; live API health is blocked by Cloudflare 1033 and zone route is outside connected account.",
+  "evidence": [
+    "docs/evidence/editor-ci-live-health-2026-11-18.json"
+  ],
+  "checks": "Editor Core 44236454965 PASS; direct public health 530/1033 BLOCKED; no rerun or deployment started.",
+  "started_revision": "8aa32484a886470f00cc451be46aeda6c69a3def",
+  "finished_revision": "8aa32484a886470f00cc451be46aeda6c69a3def",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
