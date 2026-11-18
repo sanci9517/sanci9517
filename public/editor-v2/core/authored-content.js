@@ -1,5 +1,5 @@
 import { validatedLinkHref } from './richtext-links.js?v=20261117-d03-invalid-media-id-guidance-v1';
-import { pageInteractionAttributes, safePageInteraction } from './page-interactions.js?v=20261118-edt039-hover-trigger-v1';
+import { pageInteractionAttributes, safePageInteraction } from './page-interactions.js?v=20261118-edt039-load-tab-trigger-v1';
 
 export const CONTENT_VERSION=1;
 // Shared by the editor picker and the server-side media upload/list contract.
@@ -305,19 +305,23 @@ export function initContentInteractions(root){
     }catch{/* URL state is an enhancement; a tab action still works without history support. */}
   };
   const activate=(tab,{writeUrl=true}={})=>{const group=tab.closest('.creator-tabs');if(!group)return;for(const button of group.querySelectorAll('[role="tab"]')){const selected=button===tab;button.setAttribute('aria-selected',String(selected));button.tabIndex=selected?0:-1;const panel=group.querySelector('[id="'+button.getAttribute('aria-controls')+'"]');if(panel)panel.hidden=!selected}if(writeUrl)writeTabUrlState(tab)};
-  const applyTabUrlState=()=>{
-    if(!view?.location)return;
+  const readTabUrlState=()=>{
     const entries=new Map();
+    if(!view?.location)return entries;
     for(const value of new URL(view.location.href).searchParams.getAll(tabQueryKey).slice(-maxTabQueryEntries)){
       const entry=parseTabEntry(value);if(entry)entries.set(entry.targetId,entry.index);
     }
+    return entries;
+  };
+  const applyTabUrlState=(entries=readTabUrlState())=>{
+    if(!view?.location)return;
     for(const target of root.querySelectorAll('[data-page-node-id]')){
       const tabs=target.querySelectorAll('.creator-tabs [role="tab"]');if(!tabs.length)continue;
       const requested=entries.get(target.dataset.pageNodeId),index=Number.isInteger(requested)&&requested>=0&&requested<tabs.length?requested:0;
       activate(tabs[index],{writeUrl:false});
     }
   };
-  const runPageAction=source=>{
+  const runPageAction=(source,{writeUrl=true}={})=>{
     const action=source?.dataset?.pageAction,targetId=source?.dataset?.pageActionTarget;
     if(!['scroll-to','select-tab','toggle-disclosure'].includes(action)||typeof targetId!=='string'||!/^[A-Za-z0-9_-]{1,120}$/.test(targetId))return false;
     // Page Model IDs use this strict allowlist, so an exact same-page selector
@@ -334,7 +338,7 @@ export function initContentInteractions(root){
     if(action==='select-tab'){
       const tab=target.querySelectorAll('.creator-tabs [role="tab"]')[index];
       if(!tab)return false;
-      activate(tab);
+      activate(tab,{writeUrl});
       return true;
     }
     const group=target.querySelector('.creator-accordion');
@@ -419,5 +423,18 @@ export function initContentInteractions(root){
     scrollCarousel(track,event.key);
   });
   root.addEventListener('keydown',event=>{const tab=event.target.closest('[role="tab"]');if(!tab||!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;const tabs=[...tab.closest('[role="tablist"]').querySelectorAll('[role="tab"]')],index=tabs.indexOf(tab);const next=tabs[event.key==='Home'?0:event.key==='End'?tabs.length-1:(index+(event.key==='ArrowRight'?1:-1)+tabs.length)%tabs.length];event.preventDefault();activate(next);next.focus()});
-  if(view&&!editorCanvas){applyTabUrlState();view.addEventListener('popstate',applyTabUrlState)}
+  if(view&&!editorCanvas){
+    const applyInitialPageState=()=>{
+      const urlState=readTabUrlState();
+      applyTabUrlState(urlState);
+      const loadTargets=new Set();
+      for(const source of root.querySelectorAll('[data-page-action-event="load"]')){
+        const targetId=source.dataset.pageActionTarget;
+        if(typeof targetId!=='string'||urlState.has(targetId)||loadTargets.has(targetId))continue;
+        if(runPageAction(source,{writeUrl:false}))loadTargets.add(targetId);
+      }
+    };
+    applyInitialPageState();
+    view.addEventListener('popstate',applyInitialPageState);
+  }
 }

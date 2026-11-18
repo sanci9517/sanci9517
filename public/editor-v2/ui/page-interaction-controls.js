@@ -1,4 +1,4 @@
-import { PAGE_ACTIONS, normalizePageInteractions } from '../core/page-interactions.js?v=20261117-edt039-focus-trigger-v1';
+import { PAGE_ACTIONS, normalizePageInteractions } from '../core/page-interactions.js?v=20261118-edt039-load-tab-trigger-v1';
 
 const ACTION_OPTIONS = Object.freeze([
   ['scroll-to', 'Ugrás egy elemhez'],
@@ -8,7 +8,8 @@ const ACTION_OPTIONS = Object.freeze([
 const EVENT_OPTIONS = Object.freeze([
   ['click', 'Kattintás'],
   ['focus', 'Fókuszba kerülés'],
-  ['hover', 'Egér/toll fölé lépés (billentyűzettel is aktiválható)']
+  ['hover', 'Egér/toll fölé lépés (billentyűzettel is aktiválható)'],
+  ['load', 'Oldal betöltése']
 ]);
 const labelFor = node => `${String(node?.name || node?.type || 'Elem').slice(0, 80)} · ${node?.type || 'ismeretlen'}`;
 const itemLabel = (node, index) => {
@@ -44,7 +45,7 @@ export function renderPageInteractionControls(node, page, apply, disabled = fals
   heading.textContent = 'Oldalinterakció';
   const help = document.createElement('p');
   help.className = 'content-field-help';
-  help.textContent = 'Biztonságos, beállított eseményre működő művelet. A fül egérrel vagy tollal fölé lépésre is váltható; a hover beállítás gombaktiválásra (kattintásra vagy billentyűzetre) és érintésre is működik. Nem futtat JavaScriptet, és nem navigál másik webhelyre.';
+  help.textContent = 'Biztonságos, beállított eseményre működő művelet. A fül oldalbetöltéskor kiválasztható; a megosztott URL-ben kért fül ezt felülírja. A hover beállítás egér/toll fölé lépésre vált, és gombaktiválásra (kattintásra, billentyűzetre vagy érintésre) is működik. Nem futtat JavaScriptet, és nem navigál másik webhelyre.';
   section.append(heading, help);
   if (typeof node.props?.href === 'string' && node.props.href.trim()) {
     const note = document.createElement('p');

@@ -1,0 +1,73 @@
+{
+  "schema": "sanci.editor.page-action-load-tab.v1",
+  "recorded_at_utc": "2026-11-18T08:50:00Z",
+  "repository": "sanci9517/sanci9517",
+  "branch": "v2/foundation",
+  "verified_base_head": "c9ebdf432a9f3cff50421a6ff8cab2e559cbf681",
+  "plan_point": "77.44.7 / EDT-039 Page Actions",
+  "status": "IMPLEMENTED_LOCAL_GATES_PASS_RUNTIME_RELEASE_PENDING",
+  "scope": {
+    "feature": "Allow the safe same-page select-tab Page Action on public/Preview page initialization.",
+    "precedence": "A valid creator-tab query override is applied before the load action and wins for the matching tab target.",
+    "history": "The load action does not push or replace URL history; popstate reapplies valid URL overrides and the load baseline for targets without overrides.",
+    "determinism": "For multiple valid load actions targeting the same node, the first successful source in document order wins.",
+    "safety": "Only select-tab accepts load. Existing node ID, same-page target, tab index, href exclusion, allowlist, and Page Model validation remain enforced. No script, timer, cross-route navigation, D1/R2 change, or new dependency was introduced.",
+    "save_publish": "Unchanged: Save stores a draft; Preview reads the draft; only Publish changes the public snapshot.",
+    "changed_runtime_paths": [
+      "public/assets/page-renderer.js",
+      "public/editor-v2/app.js",
+      "public/editor-v2/core/authored-content.js",
+      "public/editor-v2/core/page-interactions.js",
+      "public/editor-v2/core/schema.js",
+      "public/editor-v2/index.html",
+      "public/editor-v2/ui/page-interaction-controls.js",
+      "public/visual-page.html"
+    ],
+    "changed_test_paths": [
+      "public/editor-v2/tests/page-interactions.test.js",
+      "tests/browser/editor-page-interactions.test.js"
+    ]
+  },
+  "checks": {
+    "page_action_unit": "PASS; node --test public/editor-v2/tests/page-interactions.test.js; 1/1.",
+    "editor_unit_suite": "PASS; npm run test:editor; 22/22 Editor unit files and 4/4 runner-contract checks.",
+    "typecheck": "PASS; npm run typecheck -- --pretty false.",
+    "migration_safety_gate": "PASS; npm run test:web013:migration-gate.",
+    "plan_contract": "PASS; python3 tests/plan-contract.test.py; 14/14.",
+    "canonical_plan_structure": "PASS; python3 scripts/check-canonical-plan.py; one full 13-part master, one cursor, 396 mappings; functional acceptance remains open.",
+    "feature_traceability": "PASS; python3 scripts/build-feature-traceability.py --check; 396/396 source mappings.",
+    "targeted_browser": "PASS; CHROMIUM_PATH=/usr/bin/chromium node --test tests/browser/editor-page-interactions.test.js; 1/1, 15.6 seconds.",
+    "syntax_and_diff": "PASS; node --check on changed JavaScript and git diff --check.",
+    "wrangler_dry_run": {
+      "status": "PASS_NO_PUBLISH",
+      "version": "4.130.0",
+      "asset_count": 194,
+      "total_kib": 391.82,
+      "gzip_kib": 100.52
+    },
+    "production_d1_preflight": {
+      "status": "PASS_READ_ONLY",
+      "query": "SELECT name FROM d1_migrations ORDER BY name DESC LIMIT 1",
+      "latest_migration": "0029_media_archive_unicode_additive.sql",
+      "rows_read": 1,
+      "rows_written": 0,
+      "changes": 0,
+      "changed_db": false
+    },
+    "exact_sha_actions": "PENDING normal v2/foundation runtime fast-forward; no CI result claimed yet.",
+    "production_release": "PENDING; existing deployment snapshot is pre-release and does not verify this change."
+  },
+  "pre_release_worker_snapshot": {
+    "deployment_id": "0c89582c-f378-4012-87d8-67c217d38c0a",
+    "version_id": "f6e186ac-4d10-48cd-9697-7681e7b8daa2",
+    "traffic_percent": 100,
+    "meaning": "Read-only baseline before this runtime release, not proof of the new code being live."
+  },
+  "limitations": [
+    "This implements only the load-trigger same-page select-tab slice; the rest of EDT-039, complete Visual Editor, and 77.44.7.D remain OPEN / NOT_CERTIFIED.",
+    "Manual and physical Visual Editor acceptance remains DEFERRED until the complete Editor gate.",
+    "The current form/input schema types do not provide an implemented editable form; no submit trigger is claimed.",
+    "No production D1 migration/data write, R2 mutation/deletion, paid service, or new paid cost."
+  ],
+  "new_paid_cost": "0 Ft"
+}

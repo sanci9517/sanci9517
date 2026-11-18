@@ -28,6 +28,9 @@ test('Page Action registry normalizes only the supported same-page typed action 
   assert.deepEqual(normalizePageInteractions([{ schemaVersion: 1, event: 'hover', action: 'select-tab', targetId: target.id, itemIndex: 1 }], source, page.nodes), [
     { schemaVersion: 1, event: 'hover', action: 'select-tab', targetId: target.id, itemIndex: 1 }
   ], 'hover is limited to the reversible, same-page tab-selection action');
+  assert.deepEqual(normalizePageInteractions([{ schemaVersion: 1, event: 'load', action: 'select-tab', targetId: target.id, itemIndex: 1 }], source, page.nodes), [
+    { schemaVersion: 1, event: 'load', action: 'select-tab', targetId: target.id, itemIndex: 1 }
+  ], 'page-load actions are limited to selecting one same-page tab');
   assert.deepEqual(normalizePageInteractions([{ schemaVersion: 1, event: 'click', action: 'toggle-disclosure', targetId: disclosure.id, itemIndex: 0 }], source, page.nodes), [
     { schemaVersion: 1, event: 'click', action: 'toggle-disclosure', targetId: disclosure.id, itemIndex: 0 }
   ]);
@@ -48,6 +51,7 @@ test('Page Action registry rejects scripts, selectors, foreign/missing nodes, ty
     action({ selector: 'body' }),
     action({ event: 'hover' }),
     action({ event: 'load' }),
+    { schemaVersion: 1, event: 'load', action: 'scroll-to', targetId: target.id },
     { schemaVersion: 1, event: 'click', action: 'select-tab', targetId: target.id, itemIndex: 2 },
     { schemaVersion: 1, event: 'click', action: 'toggle-disclosure', targetId: target.id, itemIndex: 0 }
   ]) assert.throws(() => normalizePageInteractions([invalid], source, page.nodes));

@@ -211,6 +211,29 @@ test('EDT-039 page actions and EDT-040 motion save as draft, preview safely, and
   const lookupStatsAfterInvalidTarget=await live.evaluate(()=>window.__pageActionLookupStats);
   assert.equal(lookupStatsAfterInvalidTarget.directTargetLookups,lookupStatsBeforeInvalidTarget.directTargetLookups,'invalid target IDs are rejected before querying the page');
   assert.equal(lookupStatsAfterInvalidTarget.wholePageScans,lookupStatsBeforeInvalidTarget.wholePageScans,'invalid target IDs are rejected without scanning the page');
+  await editorNode(buttonId).evaluate(el=>el.click());
+  await editor.locator('.page-interaction-inspector [aria-label="Kiváltó esemény"]').selectOption('load');
+  await editor.locator('.page-interaction-inspector [aria-label="Kiválasztott fül"]').selectOption('1');
+  await editor.locator('#save').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+  assert.equal(await liveNode(buttonId).getAttribute('data-page-action-event'),'hover','Save keeps the prior public action while the load trigger remains a draft');
+  await editor.reload();await selectButton();
+  assert.equal(await editor.locator('.page-interaction-inspector [aria-label="Kiváltó esemény"]').inputValue(),'load','the load trigger survives Editor reload');
+  const loadPreviewPopup=editor.waitForEvent('popup');
+  await editor.locator('#preview').click();
+  const loadPreview=await loadPreviewPopup;
+  await loadPreview.waitForLoadState('domcontentloaded');
+  const loadPreviewTabs=loadPreview.frameLocator('.preview-viewport').locator(`.creator-node[data-node-id="${tabsId}"] [role="tab"]`);
+  await loadPreviewTabs.nth(1).waitFor({state:'visible'});
+  assert.equal(await loadPreviewTabs.nth(1).getAttribute('aria-selected'),'true','Preview applies the saved load action before Publish');
+  assert.equal(new URL(loadPreview.url()).searchParams.has('creator-tab'),false,'load action does not rewrite the preview URL');
+  await loadPreview.close();
+  await editor.locator('#publish').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent==='Publikálva');
+  await live.goto(`${base}/p/page-actions?campaign=load-test&creator-tab=${encodeURIComponent(`${tabsId}:0`)}`);
+  assert.equal(await liveNode(tabsId).getByRole('tab').nth(0).getAttribute('aria-selected'),'true','an explicit deep-link overrides the configured load action');
+  assert.equal(new URL(live.url()).searchParams.get('campaign'),'load-test','load/deep-link state preserves unrelated query parameters');
+  await live.goto(`${base}/p/page-actions?campaign=load-test`);
+  assert.equal(await liveNode(tabsId).getByRole('tab').nth(1).getAttribute('aria-selected'),'true','the published load action selects its configured tab when no deep link is supplied');
+  assert.equal(new URL(live.url()).searchParams.has('creator-tab'),false,'the load action does not push synthetic tab state into browser history');
 
   // EDT-040: motion is a typed responsive style, never authored CSS/JS.
   await editor.emulateMedia({reducedMotion:'no-preference'});
