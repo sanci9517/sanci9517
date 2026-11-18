@@ -1,11 +1,11 @@
 {
   "schema": "sanci.editor.page-action-load-tab.v1",
-  "recorded_at_utc": "2026-11-18T08:50:00Z",
+  "recorded_at_utc": "2026-11-18T09:01:00Z",
   "repository": "sanci9517/sanci9517",
   "branch": "v2/foundation",
   "verified_base_head": "c9ebdf432a9f3cff50421a6ff8cab2e559cbf681",
   "plan_point": "77.44.7 / EDT-039 Page Actions",
-  "status": "IMPLEMENTED_LOCAL_GATES_PASS_RUNTIME_RELEASE_PENDING",
+  "status": "PRODUCTION_RELEASE_VERIFIED_EDITOR_CORE_CI_PENDING",
   "scope": {
     "feature": "Allow the safe same-page select-tab Page Action on public/Preview page initialization.",
     "precedence": "A valid creator-tab query override is applied before the load action and wins for the matching tab target.",
@@ -54,8 +54,43 @@
       "changes": 0,
       "changed_db": false
     },
-    "exact_sha_actions": "PENDING normal v2/foundation runtime fast-forward; no CI result claimed yet.",
-    "production_release": "PENDING; existing deployment snapshot is pre-release and does not verify this change."
+    "exact_sha_actions": {
+      "runtime_source_smoke": {
+        "run_id": 44270936361,
+        "status": "PASS"
+      },
+      "canonical_plan": {
+        "run_id": 44270936346,
+        "status": "PASS"
+      },
+      "active_point_audit": {
+        "run_id": 44270936354,
+        "status": "PASS"
+      },
+      "f0_baseline": {
+        "run_id": 44270936385,
+        "status": "PASS"
+      },
+      "twitch_integration": {
+        "run_id": 44270936375,
+        "status": "PASS"
+      },
+      "editor_core": {
+        "run_id": 44270936468,
+        "status": "IN_PROGRESS",
+        "last_observed_step": "Run Editor browser layout regression",
+        "completed_steps_before_current": 13,
+        "pending_after_current": [
+          "WEB-013 Admin mobile browser regression",
+          "canonical schedule tests",
+          "domain contract tests",
+          "Brand Kit storage and access regression",
+          "Admin home contract tests",
+          "layout screenshots"
+        ]
+      }
+    },
+    "production_release": "PASS_EXACT_SHA_PRODUCTION_SOURCE_SMOKE; Cloudflare deployment API confirms 100% traffic; Editor Core aggregate CI is still in progress."
   },
   "pre_release_worker_snapshot": {
     "deployment_id": "0c89582c-f378-4012-87d8-67c217d38c0a",
@@ -64,10 +99,41 @@
     "meaning": "Read-only baseline before this runtime release, not proof of the new code being live."
   },
   "limitations": [
-    "This implements only the load-trigger same-page select-tab slice; the rest of EDT-039, complete Visual Editor, and 77.44.7.D remain OPEN / NOT_CERTIFIED.",
+    "This implements only the load-trigger same-page select-tab Page Action slice; the rest of EDT-039, complete Visual Editor, and 77.44.7.D remain OPEN / NOT_CERTIFIED.",
     "Manual and physical Visual Editor acceptance remains DEFERRED until the complete Editor gate.",
     "The current form/input schema types do not provide an implemented editable form; no submit trigger is claimed.",
-    "No production D1 migration/data write, R2 mutation/deletion, paid service, or new paid cost."
+    "No production D1 migration/data write, R2 mutation/deletion, paid service, or new paid cost.",
+    "Exact-SHA Editor Core workflow 44270936468 remains IN_PROGRESS; no aggregate Editor Core pass is claimed. Local direct-shell outbound health was blocked by the network sandbox, but GitHub exact-SHA source smoke verified HTTP 200 and 34/34 public source hashes."
   ],
-  "new_paid_cost": "0 Ft"
+  "new_paid_cost": "0 Ft",
+  "release": {
+    "runtime_commit": "cc8f5098452cf113622bec7eac602a67c79473e6",
+    "parent_commit": "c9ebdf432a9f3cff50421a6ff8cab2e559cbf681",
+    "branch": "v2/foundation",
+    "push": "Verified expected-head update; normal fast-forward, force=false.",
+    "remote_head_verified": "cc8f5098452cf113622bec7eac602a67c79473e6",
+    "cloudflare_deployment_id": "90ccebf0-44c9-44bf-b636-8369d2b54764",
+    "worker_version_id": "c2f19f80-6666-45cb-a5e0-07d0667b6522",
+    "worker_traffic_percent": 100,
+    "exact_sha_production_smoke": {
+      "run_id": 44270936361,
+      "job_id": 134687071974,
+      "status": "success",
+      "source_commit": "cc8f5098452cf113622bec7eac602a67c79473e6",
+      "health": "HTTP 200",
+      "public_source_hashes": "34/34 exact SHA-256 matches"
+    },
+    "changed_asset_hashes": {
+      "public/assets/page-renderer.js": "74184d5ca05a0bbe508b8a80790d9358a3f108441b3b01338aa7ee3d0cc79b22",
+      "public/editor-v2/app.js": "10ecc99397c9868f5f11927978e5a69fef4a798821bc5e98c06b038538a25aac",
+      "public/editor-v2/core/authored-content.js": "63707403b5b42653fe8ae34f927137b15f106b9a04d038544d37d50e63b9bcbb",
+      "public/editor-v2/core/page-interactions.js": "b719801fc604d8fe8b20e1d741e4bfb7448d27ea988d55c641e11176a56bee90",
+      "public/editor-v2/core/schema.js": "89462b337f903c6fc83e89445a4a1b78bdb1f232d2623bfa70ced29da5e19e82",
+      "public/editor-v2/index.html": "44961ae8bb86776bbfb60b640222a24600bb16dc9bfea6757488b1601479cb30",
+      "public/editor-v2/ui/page-interaction-controls.js": "402ab137906a09636950e6d6c91bd363acd0e8653fcad0768853fac30117562f",
+      "public/visual-page.html": "23d6acfe84246dc0827eac8bca6823234d016adab272f36831fc925834e3d749"
+    },
+    "deployment_api_snapshot_at_2026-11-18T08:56Z": "deployment 90ccebf0-44c9-44bf-b636-8369d2b54764; version c2f19f80-6666-45cb-a5e0-07d0667b6522; 100% traffic",
+    "direct_local_shell_probe": "BLOCKED: outbound network denied with ECONNREFUSED/ENETUNREACH; the successful exact-SHA GitHub production smoke performed the health and asset verification."
+  }
 }
