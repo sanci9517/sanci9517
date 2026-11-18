@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261118044039-9a57ee51",
+  "task": "EDT-039",
+  "trigger": "manual",
+  "started_at": "2026-11-18T04:40:39.407Z",
+  "finished_at": "2026-11-18T04:41:39.562Z",
+  "wall_seconds": 60,
+  "paused_seconds": 0,
+  "measured_seconds": 60,
+  "status": "partial",
+  "kind": "docs",
+  "summary": "Revalidated exact-SHA production release, updated canonical active status; release/source smoke and 7/7 assets pass. Exact-SHA Editor Core full layout workflow remains in progress; Editor and D remain open.",
+  "evidence": [
+    "docs/evidence/editor-page-interactions-invalid-recovery-2026-11-18.json"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "6ab8bea3d3875dde5ad00fe8e5abcd63fd3ed0db",
+  "finished_revision": "6ab8bea3d3875dde5ad00fe8e5abcd63fd3ed0db",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
