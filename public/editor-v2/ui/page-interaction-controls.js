@@ -56,10 +56,13 @@ export function renderPageInteractionControls(node, page, apply, disabled = fals
 
   const nodes = page?.nodes && typeof page.nodes === 'object' ? page.nodes : {};
   const candidates = Object.values(nodes).filter(target => target?.id !== node.id && target?.type !== 'root' && target?.metadata?.contentVersion === 1);
-  const current = Array.isArray(node.interactions) ? node.interactions[0] : null;
+  const persisted = node.interactions;
+  const hasPersistedInteraction = persisted != null && (!Array.isArray(persisted) || persisted.length > 0);
+  const current = Array.isArray(persisted) ? persisted[0] : null;
   let currentValid = null;
-  try { currentValid = normalizePageInteractions(current ? [current] : [], node, nodes)[0] ?? null; }
-  catch { /* Preserve old/invalid data until the user explicitly replaces or clears it. */ }
+  let invalidPersistedInteraction = false;
+  try { currentValid = normalizePageInteractions(persisted, node, nodes)[0] ?? null; }
+  catch { invalidPersistedInteraction = true; /* Preserve old/invalid data until the user explicitly replaces or clears it. */ }
   const actionSelect = select('Művelet', [['', 'Nincs beállítva'], ...ACTION_OPTIONS], currentValid?.action || '');
   actionSelect.wrap.dataset.pageInteractionField = 'action';
   const eventSelect = select('Kiváltó esemény', EVENT_OPTIONS, currentValid?.event || 'click');
@@ -86,12 +89,29 @@ export function renderPageInteractionControls(node, page, apply, disabled = fals
     section.append(note);
   };
 
+  if (invalidPersistedInteraction) {
+    const warning = document.createElement('p');
+    warning.className = 'property-validation';
+    warning.dataset.pageInteractionRecovery = 'warning';
+    warning.setAttribute('role', 'alert');
+    warning.textContent = 'A mentett oldalinterakció hibás vagy nem támogatott, ezért a publikus oldalon nem fut le. Válassz új műveletet a javításhoz, vagy távolítsd el.';
+    section.append(warning);
+    const clear = document.createElement('button');
+    clear.type = 'button';
+    clear.className = 'secondary-action';
+    clear.dataset.pageInteractionRecovery = 'clear';
+    clear.textContent = 'Hibás interakció eltávolítása';
+    clear.disabled = disabled;
+    clear.onclick = () => apply([]);
+    section.append(clear);
+  }
+
   const refresh = (preferredTargetId = currentValid?.targetId) => {
     section.querySelectorAll('[data-page-interaction-dynamic]').forEach(element => element.remove());
     const action = actionSelect.input.value;
     syncEventsForAction(action);
     if (!action) {
-      if (current && currentValid) {
+      if (hasPersistedInteraction && currentValid) {
         const clear = document.createElement('button');
         clear.type = 'button';
         clear.className = 'secondary-action';

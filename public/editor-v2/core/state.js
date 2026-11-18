@@ -1,15 +1,15 @@
 /* Sanci9517 Visual Editor v2 — isolated editor state. */
 
 import { cloneDocument, createDocument, getPage } from './schema.js';
-import { assertValidEditorDocument } from './validation.js?v=20261116-recover-invalid-authored-drafts-v1';
+import { assertValidEditorDocument } from './validation.js?v=20261118-edt039-invalid-recovery-v1';
 
 export const HISTORY_LIMIT = 100;
 
-export function createEditorState(document = createDocument(),{allowInvalidAuthoredContent=false}={}) {
+export function createEditorState(document = createDocument(),{allowInvalidAuthoredContent=false,allowInvalidPageInteractions=false}={}) {
   // Persisted documents may predate the current authored-content rules. Let
   // the Editor load those drafts so the author can repair the affected field;
   // normal commands and publication continue to use strict validation.
-  assertValidEditorDocument(document,{allowInvalidAuthoredContent});
+  assertValidEditorDocument(document,{allowInvalidAuthoredContent,allowInvalidPageInteractions});
 
   return {
     document: cloneDocument(document),

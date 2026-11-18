@@ -1112,7 +1112,7 @@ test('Editor save/reload uses server revision and fails closed on incomplete sav
   const save = app.slice(app.indexOf('async function save('), app.indexOf('async function unpublishPage('));
 
   assert.match(loadPage, /const rawRevision=revisions\.length\?Number\(revisions\[0\]\?\.version\):0/);
-  assert.match(loadPage, /state=createEditorState\(document,\{allowInvalidAuthoredContent:true\}\);state\.document\.revision=latestRevision;state\.document\.pages\[id\]\.revision=latestRevision/);
+  assert.match(loadPage, /state=createEditorState\(document,\{allowInvalidAuthoredContent:true,allowInvalidPageInteractions:true\}\);state\.document\.revision=latestRevision;state\.document\.pages\[id\]\.revision=latestRevision/);
   assert.doesNotMatch(loadPage, /document\.revision=latestRevision;document\.pages\[id\]\.revision=latestRevision/);
   assert.doesNotMatch(loadPage, /revisions\[0\]\?\.version\|\|meta\.revision/);
   assert.match(save, /const submittedDocument=structuredClone\(stateAtStart\.document\)/);

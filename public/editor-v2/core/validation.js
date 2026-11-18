@@ -110,8 +110,14 @@ export function validateRichTextNode(node) {
   catch (error) { return [`invalid richtext node ${node.id}: ${error instanceof Error ? error.message : String(error)}`]; }
 }
 
-export function validateEditorDocument(document) {
-  const errors = validateDocument(document);
+export function validateEditorDocument(document,{allowInvalidPageInteractions=false}={}) {
+  const pageErrors = validateDocument(document);
+  // Persisted page actions can become unsupported after a schema/registry
+  // upgrade. The Editor may opt into loading them for recovery, but all
+  // commands, persistence and publication use the strict default.
+  const errors = allowInvalidPageInteractions
+    ? pageErrors.filter(error => !/: invalid page interaction: /.test(error))
+    : pageErrors;
   for (const [pageKey, page] of Object.entries(document?.pages ?? {})) {
     const pageId=typeof page?.id==='string'&&page.id?page.id:pageKey;
     errors.push(...validateHierarchy(page).map((error) => `page ${pageId}: ${error}`));
@@ -121,7 +127,7 @@ export function validateEditorDocument(document) {
   return [...new Set(errors)];
 }
 
-export function assertValidEditorDocument(document,{allowInvalidAuthoredContent=false}={}) {
+export function assertValidEditorDocument(document,{allowInvalidAuthoredContent=false,allowInvalidPageInteractions=false}={}) {
   for(const page of Object.values(document?.pages||{})){
     if(!page||typeof page!=='object'||Array.isArray(page))continue;
     validateAccessibility(page);
@@ -134,7 +140,7 @@ export function assertValidEditorDocument(document,{allowInvalidAuthoredContent=
       validateStateStyles(node);
     }
   }
-  const errors = validateEditorDocument(document);
+  const errors = validateEditorDocument(document,{allowInvalidPageInteractions});
   if (errors.length) {
     throw new Error(`Invalid editor document: ${errors.join('; ')}`);
   }

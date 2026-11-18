@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createDocument, validateDocument } from '../core/schema.js';
+import { createEditorState } from '../core/state.js';
 import { normalizePageInteractions, pageInteractionAttributes, safePageInteraction } from '../core/page-interactions.js';
 import { contentAttributes, getPublicationContentGuidance, validatePageForPublication } from '../core/authored-content.js';
 
@@ -84,4 +85,19 @@ test('invalid persisted page actions fail Page Model validation and are omitted 
   source.interactions[0].targetId = 'foreign_node';
   assert.match(getPublicationContentGuidance(source, { pageNodes: page.nodes }).message, /hivatkozási célt/,
     'an invalid action cannot bypass the required navigation/publication guard');
+});
+
+test('only the Editor recovery loader may open invalid persisted page actions', () => {
+  const { document, source, target } = fixture();
+  source.interactions = [{ schemaVersion: 9, event: 'load', action: 'run-code', targetId: target.id, code: 'alert(1)' }];
+  assert.throws(() => createEditorState(document), /invalid page interaction/, 'normal Editor state creation remains strict');
+  const recoveryState = createEditorState(document, { allowInvalidPageInteractions: true });
+  assert.deepEqual(recoveryState.document.pages[document.activePageId].nodes[source.id].interactions, source.interactions,
+    'recovery loading preserves the unsupported value rather than mutating the draft');
+  const malformedStructure = structuredClone(document);
+  malformedStructure.pages[document.activePageId].nodes[source.id].children = 'invalid';
+  assert.throws(() => createEditorState(malformedStructure, { allowInvalidPageInteractions: true }), /children must be an array/,
+    'the recovery option does not bypass unrelated Page Model validation');
+  assert.throws(() => normalizePageInteractions(source.interactions, source, document.pages[document.activePageId].nodes), /nem támogatott/,
+    'the runtime schema continues to reject the legacy action');
 });

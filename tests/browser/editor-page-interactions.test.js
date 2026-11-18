@@ -22,18 +22,24 @@ test('EDT-039 page actions and EDT-040 motion save as draft, preview safely, and
   execute(state,{type:'element.add',payload:{type:'accordion',parentId:rootId,name:'Részletek'}});
   const disclosureId=state.selection.primaryId;
   execute(state,{type:'content.properties.set',payload:{nodeId:disclosureId,patch:{ariaLabel:'Részletek',items:[{title:'További információ',text:'Részletes tartalom'}]}}});
-  let draft=structuredClone(state.document),published=structuredClone(state.document),revision=1;const posts=[];
+  execute(state,{type:'element.add',payload:{type:'section',parentId:rootId,name:'Billentyűzet fókusz próba'}});
+  const focusSectionId=state.selection.primaryId;
+  execute(state,{type:'responsive.set',payload:{nodeId:focusSectionId,device:'desktop',patch:{backgroundColor:'#102030'}}});
+  execute(state,{type:'states.set',payload:{nodeId:focusSectionId,state:'focus-visible',device:'desktop',patch:{backgroundColor:'#306090'}}});
+  const legacyInteraction={schemaVersion:9,event:'load',action:'run-code',targetId:tabsId,code:'alert(1)'};
+  state.document.pages[pageId].nodes[buttonId].interactions=[legacyInteraction];
+  let draft=structuredClone(state.document),published=structuredClone(state.document),revision=1,presentationDelayMs=0;const posts=[],interactionReads=[];
   const root=resolve(import.meta.dirname,'../../public');
   const server=createServer(async(req,res)=>{
     const url=new URL(req.url,'http://localhost'),json=data=>{res.setHeader('content-type','application/json');res.end(JSON.stringify(data))};
     if(url.pathname==='/api/admin/editor'){
-      if(req.method==='GET')return json({ok:true,data:{page:{id:pageId,document:draft,publishedRevisionId:'published'},revisions:[{id:'revision-'+revision,version:revision}]}});
+      if(req.method==='GET'){interactionReads.push(structuredClone(draft.pages[pageId].nodes[buttonId].interactions));return json({ok:true,data:{page:{id:pageId,document:draft,publishedRevisionId:'published'},revisions:[{id:'revision-'+revision,version:revision}]}})}
       let body='';for await(const chunk of req)body+=chunk;const payload=JSON.parse(body);posts.push(payload);draft=structuredClone(payload.document);revision++;if(payload.publish)published=structuredClone(draft);return json({ok:true,data:{pageId,version:revision,revisionId:'revision-'+revision}});
     }
     if(url.pathname==='/api/admin/pages')return json({ok:true,data:[{id:pageId,slug:'page-actions',title:'Page Actions',revision,isPublished:true}]});
     if(url.pathname==='/api/public/pages')return json({ok:true,data:{id:pageId,slug:url.searchParams.get('slug')||'page-actions',title:'Page Actions',content:url.searchParams.get('preview')==='1'?draft.pages[pageId]:published.pages[pageId]}});
     if(url.pathname==='/api/public/navigation')return json({ok:true,data:{items:[]}});
-    if(url.pathname==='/api/public/presentation')return json({ok:true,data:{tokens:{}}});
+    if(url.pathname==='/api/public/presentation'){if(presentationDelayMs)await new Promise(done=>setTimeout(done,presentationDelayMs));return json({ok:true,data:{tokens:{}}});}
     if(url.pathname.startsWith('/api/'))return json({ok:true,data:{siteName:'Test'}});
     const path=url.pathname.startsWith('/p/')?'/visual-page.html':url.pathname;
     const file=resolve(root,'.'+path);if(!file.startsWith(root+'/'))return res.writeHead(403).end();
@@ -47,11 +53,30 @@ test('EDT-039 page actions and EDT-040 motion save as draft, preview safely, and
   const editorNode=id=>editor.locator(`.node[data-node-id="${id}"]`),liveNode=id=>live.locator(`.creator-node[data-node-id="${id}"]`);
   const selectButton=async()=>{await editorNode(buttonId).waitFor({state:'attached'});await editorNode(buttonId).evaluate(el=>el.click());if(await editor.locator('#rightDock').evaluate(el=>el.classList.contains('closed')))await editor.locator('#openInspector').click();await editor.locator('.inspector-tabs button').nth(1).click()};
   editor.setDefaultTimeout(10000);live.setDefaultTimeout(10000);
-  await editor.goto(base+'/editor-v2/index.html');await live.goto(base+'/p/page-actions');
+  await editor.goto(base+'/editor-v2/index.html');presentationDelayMs=800;await live.goto(base+'/p/page-actions');
+  const focusSection=live.locator(`.visual-editor-node[data-node-id="${focusSectionId}"]`);
+  await focusSection.waitFor({state:'attached'});
+  const firstPaintFocus=await focusSection.evaluate(el=>{el.focus();return{css:document.querySelector('#content-canvas style[data-creator-states]')?.textContent||'',background:getComputedStyle(el).backgroundColor,focusVisible:el.matches(':focus-visible')}});
+  assert.match(firstPaintFocus.css,new RegExp(`${focusSectionId}.*background-color:#306090!important`),'published focus CSS is ready before the independent design-token request resolves');
+  assert.equal(firstPaintFocus.background,'rgb(48, 96, 144)','keyboard focus appearance is correct on the first public render');
+  assert.equal(firstPaintFocus.focusVisible,true,'the public section is keyboard-focusable with focus-visible styling');
+  presentationDelayMs=0;
   assert.equal(await liveNode(buttonId).getAttribute('data-page-action'),null,'unconfigured trigger has no action');
   await selectButton();
   const actionControls=editor.locator('.page-interaction-inspector');
   assert.equal(await actionControls.count(),1,'the authored button exposes the Page Action registry');
+  assert.match(await actionControls.getByRole('alert').textContent(),/hibás vagy nem támogatott/,'the Inspector announces that corrupt legacy data is ignored publicly');
+  const recovery=actionControls.getByRole('button',{name:'Hibás interakció eltávolítása'});
+  assert.equal(await recovery.count(),1,'the Inspector offers an explicit repair action');
+  assert.deepEqual(await editorNode(buttonId).getAttribute('data-page-action'),null,'invalid persisted actions are omitted from the Editor Canvas');
+  assert.deepEqual(interactionReads.at(-1),[legacyInteraction],'the recovery UI leaves malformed persisted data untouched during render');
+  await recovery.click();
+  await editor.locator('#save').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+  assert.deepEqual(posts.at(-1).document.pages[pageId].nodes[buttonId].interactions,[],'explicit recovery clears only the invalid interaction from the draft');
+  assert.equal(posts.at(-1).publish,false,'repair Save does not publish');
+  await live.reload();assert.equal(await liveNode(buttonId).getAttribute('data-page-action'),null,'repair Save leaves the public version unchanged');
+  await editor.reload();await selectButton();
+  assert.equal(await editor.locator('.page-interaction-inspector [data-page-interaction-recovery="clear"]').count(),0,'a repaired draft no longer shows the invalid-data warning');
   await actionControls.getByLabel('Művelet').selectOption('select-tab');
   await actionControls.getByLabel('Cél elem').selectOption(tabsId);
   await actionControls.getByLabel('Kiválasztott fül').selectOption('1');
