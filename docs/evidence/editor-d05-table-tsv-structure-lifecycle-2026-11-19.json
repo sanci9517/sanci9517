@@ -40,8 +40,9 @@
   },
   "release_state_at_capture": {
     "remote_branch_head_before_followup": "GitHub branch endpoint GET confirmed v2/foundation at 5aabb023afe9c739dd3f056ea9df1f0db39de2db before this follow-up; direct git ls-remote was blocked by the environment proxy.",
-    "normal_fast_forward_push": "Pending final validation and push of this test/evidence-only change.",
-    "combined_status_for_test_commit": "Not available until push; no hosted CI is claimed.",
+    "test_and_evidence_commit_sha": "f47e4acadcd3d969bbb7d59dde9c4ed86212bedb",
+    "normal_fast_forward_push": "git push origin HEAD:refs/heads/v2/foundation succeeded; GitHub branch endpoint GET confirmed exact SHA f47e4acadcd3d969bbb7d59dde9c4ed86212bedb.",
+    "combined_status_for_test_commit": "GitHub combined status returned an empty statuses array. The commit carries [skip ci]; no hosted CI PASS is claimed.",
     "worker_latest_deployment_id": "c4b9526a-c54b-4fe3-9218-d889c1e011e9",
     "worker_latest_version_id": "9870e814-359c-4871-a25c-289d9dfe7c2c",
     "worker_traffic_percent": 100,
