@@ -1,0 +1,46 @@
+{
+  "schema": 1,
+  "plan_point": "77.44.7.D / D-03",
+  "status": "SCOPED_REGRESSION_PASS; full D-03 and 77.44.7.D remain OPEN / NOT_CERTIFIED",
+  "source_before_test_only_change": {
+    "branch": "v2/foundation",
+    "commit": "c42438cc3e9d3e683b72c1cb77e50aa22bf520d9",
+    "remote_head_at_check": "c42438cc3e9d3e683b72c1cb77e50aa22bf520d9"
+  },
+  "finding": "The real Chromium authored-table lifecycle covered turning the first-row header off but not turning it back on after a separate Publish.",
+  "change": {
+    "files": [
+      "tests/browser/editor-content-system.test.js",
+      "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md"
+    ],
+    "runtime_changed": false,
+    "test": "Re-enable both first-row header cells; Save leaves the already-published header-off table unchanged; reload restores the checked draft and Canvas semantics; only separate Publish restores two th[scope=col] cells while later rows remain td and text/order remain unchanged.",
+    "renderer_contract": "Legacy authored tables render rows under one tbody, with first-row th cells when enabled. The test was aligned to this existing production markup rather than requiring a thead."
+  },
+  "checks": {
+    "targeted_chromium": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-content-system.test.js — PASS (1/1). Initial attempt exposed a test selector assumption (thead); corrected to the implemented tbody markup, then passed.",
+    "editor_unit_suite": "npm run test:editor — PASS (22/22 test files, 4/4 runner guards).",
+    "typecheck": "npm run typecheck -- --pretty false — PASS.",
+    "plan_contract": "python3 tests/plan-contract.test.py — PASS (15/15).",
+    "canonical_plan": "python3 scripts/check-canonical-plan.py — PASS (13 master files, 396 mappings, acceptance not certified).",
+    "active_point": "python3 scripts/audit-active-plan-point.py — PASS; cursor 77.44.7.D OPEN / NOT_CERTIFIED; 147 PARTIAL_SOURCE, 249 UNVERIFIED.",
+    "traceability": "python3 scripts/build-feature-traceability.py --check — PASS (396/396).",
+    "syntax_and_diff": "node --check tests/browser/editor-content-system.test.js and git diff --check — PASS."
+  },
+  "production": {
+    "runtime_source_sha": "83fb764b4060d8d4bbc513e7d0865dd1f700214a",
+    "source_smoke_workflow": "44520036720 completed/success; read-only health and exact public-source hash verification passed for that source.",
+    "latest_worker_deployment": "c4b9526a-c54b-4fe3-9218-d889c1e011e9",
+    "latest_worker_version": "9870e814-359c-4871-a25c-289d9dfe7c2c",
+    "traffic": "100%",
+    "editor_core_workflow": "44520036804 was in_progress when checked; no PASS claimed for its remaining browser and downstream gates.",
+    "d1_r2": "No production D1 or R2 operation in this test-only block.",
+    "deploy": "No runtime changes; no Worker deployment required or performed."
+  },
+  "cost_huf": 0,
+  "limitations": [
+    "This closes only the reverse table-header regression slice; full D-03 and the D-01..D-07 matrix remain OPEN / NOT_CERTIFIED.",
+    "The exact-SHA Editor Core run on the preceding runtime source was still in progress at evidence time; this test-only change was not represented as hosted CI.",
+    "Full Visual Editor manual and physical acceptance remains deferred until the entire Editor is complete."
+  ]
+}

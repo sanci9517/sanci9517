@@ -926,6 +926,58 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   assert.equal(await node(live,'table').locator('tbody tr').count(),expectedTableRows.length,'Publish preserves all supported rows');
   assert.equal(await node(live,'table').locator('tbody tr').last().locator('td').last().textContent(),expectedTableRows.at(-1)[1],
     'separate Publish exposes the final long cell without truncation');
+  // Prove the reverse header transition is a separate draft/public lifecycle too.
+  await select('table');
+  const tableHeader=editor.getByLabel('Az első sor fejléc',{exact:true});
+  await tableHeader.check();
+  assert.equal(await node(editor,'table').locator('th[scope=col]').count(),2,
+    'turning the authored header back on converts both first-row cells to column headings');
+  assert.equal(await node(editor,'table').locator('tbody tr').first().locator('th[scope=col]').first().textContent(),tableRows[0][0],
+    're-enabling the header preserves the original first cell text and order');
+  assert.equal(await node(editor,'table').locator('tbody tr').count(),expectedTableRows.length,
+    're-enabling the header changes only the first row semantics');
+  assert.equal(await node(editor,'table').locator('tbody tr').last().locator('td').last().textContent(),expectedTableRows.at(-1)[1],
+    're-enabling the header preserves the final edited long data cell');
+  const beforeHeaderSave=posts.length;
+  assert.equal(beforeHeaderSave>0,true,'the initial header-off Publish has already completed');
+  await editor.locator('#save').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+  assert.equal(posts.length,beforeHeaderSave+1,'re-enabling the table header requires an explicit Save');
+  assert.equal(posts.at(-1).publish,false,'the reverse header transition remains a draft-only Save');
+  assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.table].props.header,true,
+    'Save persists the restored header setting in the draft');
+  await live.reload();
+  assert.equal(await node(live,'table').locator('th[scope=col]').count(),0,
+    'draft Save keeps the previously published header-off table unchanged');
+  assert.equal(await node(live,'table').locator('tbody tr').count(),expectedTableRows.length,
+    'draft Save keeps every previously published first-row data cell');
+  assert.equal(await node(live,'table').locator('tbody tr').first().locator('td').first().textContent(),tableRows[0][0],
+    'draft Save keeps the first cell text in the previously published data row');
+  await editor.reload();await select('table');
+  assert.equal(await editor.getByLabel('Az első sor fejléc',{exact:true}).isChecked(),true,
+    'Editor reload restores the reverse header transition from the saved draft');
+  assert.equal(await node(editor,'table').locator('th[scope=col]').count(),2,
+    'reloaded Canvas restores both heading cells before the separate Publish');
+  const beforeHeaderPublish=posts.length;
+  await editor.locator('#publish').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent==='Publikálva');
+  assert.equal(posts.length,beforeHeaderPublish+1,'restoring the public header requires a separate Publish');
+  assert.equal(posts.at(-1).publish,true,'the reverse transition reaches Publish only after draft Save');
+  await live.reload();
+  assert.equal(await node(live,'table').locator('th[scope=col]').count(),2,
+    'separate Publish restores both accessible column headers on the public page');
+  assert.equal(await node(live,'table').locator('tbody tr').first().locator('th[scope=col]').count(),2,
+    'the restored public heading applies only to the first row');
+  assert.equal(await node(live,'table').locator('tbody tr').first().locator('td').count(),0,
+    'the first row is no longer duplicated as ordinary public data');
+  assert.equal(await node(live,'table').locator('tbody tr').nth(1).locator('td').count(),2,
+    'rows after the heading keep their data-cell semantics');
+  assert.equal(await node(live,'table').locator('tbody tr').first().locator('th[scope=col]').first().textContent(),tableRows[0][0],
+    'published column headings preserve first-row text and order');
+  assert.equal(await node(live,'table').locator('tbody tr').count(),expectedTableRows.length,
+    'published header semantics do not duplicate the first row as data');
+  assert.equal(await node(live,'table').locator('tbody tr').last().locator('td').last().textContent(),expectedTableRows.at(-1)[1],
+    'separate Publish retains the last authored long table value');
   assert.equal(await node(live,'video').locator('video[controls]').count(),1);assert.equal(await node(live,'audio').locator('audio[controls]').count(),1);
   for(const type of ['video','audio']){const playback=await node(live,type).locator(type).evaluate(async media=>{if(media.readyState<1)await new Promise((resolve,reject)=>{media.addEventListener('loadedmetadata',resolve,{once:true});media.addEventListener('error',reject,{once:true})});media.muted=true;await media.play();const result={playing:!media.paused,duration:media.duration,readyState:media.readyState};media.pause();return result});assert.equal(playback.playing,true);assert.ok(playback.duration>0);assert.ok(playback.readyState>=2)}
   assert.equal(await node(live,'code').locator('script').count(),0);assert.match(await node(live,'code').locator('code').textContent(),/<script>/);

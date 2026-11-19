@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261119120759-42d6c09c",
+  "task": "77.44.7.D-D03-table-header-toggle-lifecycle",
+  "trigger": "manual",
+  "started_at": "2026-11-19T12:07:59.119Z",
+  "finished_at": "2026-11-19T12:16:49.467Z",
+  "wall_seconds": 530,
+  "paused_seconds": 0,
+  "measured_seconds": 530,
+  "status": "pass",
+  "kind": "test",
+  "summary": "D-03 authored table header reverse lifecycle verified in Chromium; full D remains open",
+  "evidence": [
+    "tests/browser/editor-content-system.test.js:PASS",
+    "docs/evidence/editor-d03-table-header-reverse-lifecycle-2026-11-19.json"
+  ],
+  "checks": "Chromium 1/1; editor unit 22/22; typecheck; canonical plan, contract 15/15, active point, traceability 396/396",
+  "started_revision": "c42438cc3e9d3e683b72c1cb77e50aa22bf520d9",
+  "finished_revision": "c42438cc3e9d3e683b72c1cb77e50aa22bf520d9",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
