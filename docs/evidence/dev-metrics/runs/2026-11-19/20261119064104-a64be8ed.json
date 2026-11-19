@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261119064104-a64be8ed",
+  "task": "EDT-042",
+  "trigger": "manual",
+  "started_at": "2026-11-19T06:41:04.989Z",
+  "finished_at": "2026-11-19T06:48:02.322Z",
+  "wall_seconds": 417,
+  "paused_seconds": 0,
+  "measured_seconds": 417,
+  "status": "partial",
+  "kind": "test",
+  "summary": "D-01 background-image 44-type responsive media browser matrix passed; full D remains open",
+  "evidence": [
+    "tests/browser/editor-inspector-background-image-partial-types.test.js:PASS"
+  ],
+  "checks": "Chromium 2/2 PASS; exact-SHA hosted Editor Core still pending",
+  "started_revision": "a9fce528b43a349b7465086780c75fb645e9e127",
+  "finished_revision": "a9fce528b43a349b7465086780c75fb645e9e127",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

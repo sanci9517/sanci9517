@@ -1,0 +1,68 @@
+{
+  "schema": "sanci.editor.d01-background-media-matrix.v1",
+  "captured_at_utc": "2026-11-19T06:47:31Z",
+  "repository": "sanci9517/sanci9517",
+  "branch": "v2/foundation",
+  "source_sha": "12b81256306bc02b7349dc969af0a9eee2a8aea7",
+  "branch_head_sha_at_capture": "a9fce528b43a349b7465086780c75fb645e9e127",
+  "canonical_plan_sha256": "5cd2a5094b18fa272db6059a0854ed4e50f1eefa1c321a8fcd0e985e9c2c4be1",
+  "plan_point": "77.44.7.D / D-01 image, gallery, video and background media",
+  "scope": "The existing Inspector-to-Canvas-to-draft-to-Publish media lifecycle for responsive background images across every current Inspector-compatible PARTIAL element type.",
+  "checks": {
+    "command": "node --test --test-reporter=spec tests/browser/editor-inspector-background-image-partial-types.test.js",
+    "result": "PASS",
+    "passed_tests": 2,
+    "failed_tests": 0,
+    "skipped_tests": 0,
+    "duration_ms": 195297.8,
+    "browser": "Chromium headless, installed project Playwright, loopback test server",
+    "coverage": [
+      "45 fixture nodes: root plus 44 editable PARTIAL types; all 45 register background.image",
+      "Inspector command/key metadata and shared Media Library image selection for desktop, tablet and mobile",
+      "Canvas preview, draft-only Save, Editor reload, explicit Publish, and public /media/{id} delivery",
+      "Undo/Redo, responsive inheritance, explicit none removal, reset-to-inherit and post-save draft/public separation",
+      "corrupt stored background asset IDs do not abort public page rendering"
+    ],
+    "sandbox_note": "The default sandbox denied the test's 127.0.0.1 listener (EPERM); the same exact test command was rerun with the approved local loopback capability and passed."
+  },
+  "exact_sha_ci": {
+    "editor_core_run_id": 44473102939,
+    "url": "https://github.com/sanci9517/sanci9517/actions/runs/44473102939",
+    "head_sha": "12b81256306bc02b7349dc969af0a9eee2a8aea7",
+    "status_at_capture": "IN_PROGRESS",
+    "current_step_at_capture": "Run Editor browser layout regression",
+    "interpretation": "Not a PASS. Previous steps, including typecheck, Editor unit suite, isolated D1 ledger/bootstrap, private R2 media API and real Worker media upload tests, had completed successfully."
+  },
+  "production_state_read_only": {
+    "deployment_id": "58bfe948-fa25-4912-8dca-2bcb8274b00d",
+    "worker_version_id": "bf68eb8c-f608-4478-9969-65b9fa710eba",
+    "traffic_percent": 100,
+    "source_smoke_run_id": 44473103064,
+    "source_smoke_result": "SUCCESS",
+    "source_smoke_url": "https://github.com/sanci9517/sanci9517/actions/runs/44473103064",
+    "health_http": 200,
+    "health_body": {
+      "ok": true,
+      "service": "sanci9517-streamer-brand",
+      "version": "2.0.0",
+      "server": "cloudflare-worker"
+    },
+    "public_asset_hashes": "The exact-SHA production source smoke completed successfully; this work block did not change runtime files or public assets."
+  },
+  "result": {
+    "status": "D01_TARGETED_BROWSER_MATRIX_PASS; FULL_D_OPEN_NOT_CERTIFIED",
+    "runtime_change": false,
+    "public_asset_change": false,
+    "deployment": false,
+    "production_d1_write_or_migration": false,
+    "production_r2_operation": false,
+    "save_publish_separate": true,
+    "manual_physical_editor_acceptance": "DEFERRED until full Editor scope"
+  },
+  "remaining": [
+    "This only verifies the responsive background-image property slice, including the current PARTIAL type matrix.",
+    "The complete D capability/lifecycle matrix, site-scoped production Media Library/R2 lifecycle, cross-tenant checks, and complete Editor acceptance remain open.",
+    "Do not mark D-01 or the full D point complete from this isolated background-media result."
+  ],
+  "cost_huf": 0
+}
