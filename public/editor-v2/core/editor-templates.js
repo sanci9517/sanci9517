@@ -1,6 +1,6 @@
 import { SCHEMA_VERSION, createDocument, createNode, createPage, NODE_TYPES } from './schema.js';
-import { assertValidEditorDocument } from './validation.js?v=20261117-edt041-template-v1';
-import { EDITOR_TEMPLATE_CATALOG as TEMPLATES } from './design-system/template-catalog.js?v=20261117-edt041-template-v1';
+import { assertValidEditorDocument } from './validation.js?v=20261119-edt041-stream-schedule-v1';
+import { EDITOR_TEMPLATE_CATALOG as TEMPLATES } from './design-system/template-catalog.js?v=20261119-edt041-stream-schedule-v1';
 
 const TEMPLATE_BY_ID = new Map(TEMPLATES.map(template => [template.id, template]));
 const TEMPLATE_NODE_TYPES = new Set([NODE_TYPES.SECTION, NODE_TYPES.CONTAINER, NODE_TYPES.HEADING, NODE_TYPES.TEXT, NODE_TYPES.BUTTON]);

@@ -1,6 +1,6 @@
 import {hasContentProfile} from './core/content-profiles.js?v=20261025-inspector-lifecycle-contract';
 import {getNode,getChildren,NODE_TYPES,canContain,normalizeRichText} from './core/schema.js?v=20261115-d07-safe-child-render';
-import {instantiateEditorTemplate,listEditorTemplates} from './core/editor-templates.js?v=20261117-edt041-template-v1';
+import {instantiateEditorTemplate,listEditorTemplates} from './core/editor-templates.js?v=20261119-edt041-stream-schedule-v1';
 import {createEditorState,activePage,selectedNodes,setSelection,markSaved} from './core/state.js?v=20261118-edt039-invalid-recovery-v1';
 import {execute,executeCoalesced,executeBatch} from './core/commands.js?v=20261118-edt039-page-action-delete-target-cleanup-v1';
 import {applyNodeStyle,getNodeGeometry,resolveNodeStyle} from './core/canvas-engine.js?v=20261117-edt040-motion-style-route';
