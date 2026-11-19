@@ -661,5 +661,79 @@ test('structured Inspector editing survives Save, Publish and public interaction
  await viewer.reload();
  assert.deepEqual(await viewer.locator('.visual-editor-node[data-node-id="'+ids.legacyList+'"]').locator('li').allTextContents(),
   ['Megőrzendő első sor','','Megőrzendő harmadik sor'],'the repaired model appears publicly only after Publish');
+ // A malformed structured table needs the same end-to-end recovery guarantees
+ // as the legacy list: opening and unrelated edits cannot coerce stored rows.
+ const malformedTable={version:1,rows:[['Fejléc','Megmaradó adat'],['Rövid sor']]};
+ const previousPublishedTable=structuredClone(published.pages[pageId].nodes[ids.table].props.contentModel);
+ draft.pages[pageId].nodes[ids.table].props.contentModel=structuredClone(malformedTable);
+ await editor.reload();
+ const postsBeforeTableInspection=posts.length;
+ for(const width of [1366,390]){
+  await editor.setViewportSize({width,height:900});await select(ids.table);
+  const inspector=editor.locator('.structured-inspector'),warning=inspector.getByRole('alert');
+  await warning.waitFor();
+  assert.match(await warning.textContent(),/hibás|nem támogatott formátum/i,
+   'the malformed table warns instead of silently normalizing at '+width+'px');
+  assert.equal(await inspector.locator('.structured-input').count(),0,
+   'ragged table cells stay read-only until an explicit repair at '+width+'px');
+  assert.deepEqual(draft.pages[pageId].nodes[ids.table].props.contentModel,malformedTable,
+   'opening the table Inspector preserves the exact persisted ragged rows at '+width+'px');
+  assert.equal(posts.length,postsBeforeTableInspection,
+   'opening table recovery never Saves or Publishes at '+width+'px');
+ }
+ await select(ids.badge);
+ await editor.locator('.basic-content-inspector').getByRole('textbox',{name:'Címke szövege',exact:true}).fill('Táblázat-helyreállítási izolációs mentés');
+ const postsBeforeTableUnrelatedSave=posts.length;
+ await editor.locator('#save').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+ assert.equal(posts.length,postsBeforeTableUnrelatedSave+1);
+ assert.equal(posts.at(-1).publish,false,'an unrelated Save remains draft-only during table recovery');
+ assert.deepEqual(draft.pages[pageId].nodes[ids.table].props.contentModel,malformedTable,
+  'saving another element preserves the malformed table exactly');
+ assert.deepEqual(published.pages[pageId].nodes[ids.table].props.contentModel,previousPublishedTable,
+  'an unrelated Save leaves the previously published table untouched');
+ await editor.reload();await select(ids.table);
+ const recoveryTableInspector=editor.locator('.structured-inspector');
+ await recoveryTableInspector.getByRole('alert').waitFor();
+ const postsBeforeTableRepair=posts.length;
+ await recoveryTableInspector.getByRole('button',{name:'Alapértelmezett tartalom visszaállítása'}).click();
+ const repairedTable={version:1,rows:[['Oszlop 1','Oszlop 2'],['Adat 1','Adat 2']]};
+ const editorTable=editor.locator('.node[data-node-id="'+ids.table+'"]');
+ assert.equal(await editorTable.locator('thead th[scope="col"]').count(),2,
+  'explicit recovery restores a valid two-column header on the Canvas');
+ assert.deepEqual(draft.pages[pageId].nodes[ids.table].props.contentModel,malformedTable,
+  'explicit recovery remains local until Save');
+ assert.equal(posts.length,postsBeforeTableRepair,'repair never autosaves or publishes the table');
+ await editor.keyboard.press('Control+z');await recoveryTableInspector.getByRole('alert').waitFor();
+ assert.deepEqual(draft.pages[pageId].nodes[ids.table].props.contentModel,malformedTable,
+  'Undo restores the malformed local table without changing the server draft');
+ assert.equal(posts.length,postsBeforeTableRepair,'Undo and recovery remain local');
+ await editor.keyboard.press('Control+Shift+z');
+ assert.equal(await editorTable.locator('thead th[scope="col"]').count(),2,
+  'Redo restores the explicit table repair');
+ await editor.locator('#save').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+ assert.equal(posts.at(-1).publish,false,'the repaired table is first persisted by Save');
+ assert.deepEqual(posts.at(-1).document.pages[pageId].nodes[ids.table].props.contentModel,repairedTable,
+  'Save stores only the explicit two-by-two default table repair');
+ assert.deepEqual(published.pages[pageId].nodes[ids.table].props.contentModel,previousPublishedTable,
+  'draft Save keeps the previous public table snapshot intact');
+ await editor.reload();await select(ids.table);
+ assert.deepEqual(await editor.locator('.structured-item').evaluateAll(rows=>rows.map(row=>Array.from(row.querySelectorAll('.structured-input input,.structured-input textarea'),field=>field.value))),
+  repairedTable.rows,'table recovery survives a full Editor reload');
+ await viewer.reload();
+ const unchangedPublicTable=viewer.locator('.visual-editor-node[data-node-id="'+ids.table+'"] .visual-structured-table');
+ assert.deepEqual(await unchangedPublicTable.locator('thead th').allTextContents(),previousPublishedTable.rows[0],
+  'draft Save keeps the original public table headings');
+ assert.deepEqual(await unchangedPublicTable.locator('tbody tr').evaluateAll(rows=>rows.map(row=>Array.from(row.querySelectorAll('td'),cell=>cell.textContent))),
+  previousPublishedTable.rows.slice(1),'draft Save keeps every previous public table data row');
+ const postsBeforeTablePublish=posts.length;
+ await editor.locator('#publish').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
+ assert.equal(posts.length,postsBeforeTablePublish+1);
+ assert.equal(posts.at(-1).publish,true,'only explicit Publish exposes the recovered table');
+ await viewer.reload();
+ const publicRepairedTable=viewer.locator('.visual-editor-node[data-node-id="'+ids.table+'"] .visual-structured-table');
+ assert.deepEqual(await publicRepairedTable.locator('thead th[scope="col"]').allTextContents(),repairedTable.rows[0],
+  'separate Publish exposes exactly the recovered accessible headings');
+ assert.deepEqual(await publicRepairedTable.locator('tbody tr').evaluateAll(rows=>rows.map(row=>Array.from(row.querySelectorAll('td'),cell=>cell.textContent))),
+  repairedTable.rows.slice(1),'separate Publish exposes repaired data cells in order');
  assert.deepEqual(errors,[]);
 });

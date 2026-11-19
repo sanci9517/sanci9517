@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "id": "20261119121837-15a266ce",
+  "task": "77.44.7.D-D06-draft-only-archive-guard",
+  "trigger": "scheduled",
+  "started_at": "2026-11-19T12:18:37.264Z",
+  "abandoned_at": "2026-11-19T12:20:18.342Z",
+  "measured_seconds": null,
+  "status": "interrupted",
+  "reason": "The candidate gap was already covered by the existing real Worker media storage browser test and its exact-SHA CI step 13; selecting the remaining uncovered malformed-table recovery lifecycle instead.",
+  "started_revision": "ab5d232521c18d4026e066c3507ff4bdd3524b22",
+  "measurement": "missing end time; excluded from elapsed time and ETA"
+}

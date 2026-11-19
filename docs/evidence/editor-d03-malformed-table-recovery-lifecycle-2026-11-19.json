@@ -1,0 +1,53 @@
+{
+  "schema": 1,
+  "plan_point": "77.44.7.D / D-03",
+  "status": "SCOPED_REGRESSION_PASS; full D-03 and 77.44.7.D remain OPEN / NOT_CERTIFIED",
+  "source_before_test_only_change": {
+    "branch": "v2/foundation",
+    "commit": "ab5d232521c18d4026e066c3507ff4bdd3524b22",
+    "remote_head_at_check": "ab5d232521c18d4026e066c3507ff4bdd3524b22"
+  },
+  "finding": "Malformed structured-table recovery had unit/direct invalid-content checks but lacked a complete browser lifecycle proving the saved ragged row stays intact until explicit recovery and Save remains separate from Publish.",
+  "change": {
+    "files": [
+      "tests/browser/editor-structured-content.test.js",
+      "docs/evidence/editor-d03-malformed-table-recovery-lifecycle-2026-11-19.json"
+    ],
+    "runtime_changed": false,
+    "test": "A ragged two-column table warns and remains read-only on desktop/mobile without coercion or writes. An unrelated Save preserves the malformed table and the prior public snapshot. Explicit default-content recovery is undoable/redoable, then Save/reload persists the repaired draft while public headings/data remain unchanged; only a separate Publish exposes the recovered accessible headers and ordered cell values.",
+    "data_contract": "The malformed saved server draft is not silently repaired on inspection or unrelated Save; repair is an explicit user action. Save does not publish."
+  },
+  "checks": {
+    "targeted_chromium": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-name-pattern='structured Inspector editing' tests/browser/editor-structured-content.test.js — PASS (1/1, real Chromium, desktop and 390px mobile).",
+    "editor_unit_suite": "npm run test:editor — PASS (22/22 test files and 4/4 runner guards).",
+    "typecheck": "npm run typecheck -- --pretty false — PASS.",
+    "migration_gate": "npm run test:web013:migration-gate — PASS.",
+    "plan_contract": "python3 tests/plan-contract.test.py — PASS (15/15).",
+    "canonical_plan": "python3 scripts/check-canonical-plan.py — PASS (one canonical master, 13 source files, 396 mappings; acceptance not certified).",
+    "active_point": "python3 scripts/audit-active-plan-point.py — PASS; cursor 77.44.7.D OPEN / NOT_CERTIFIED; 147 PARTIAL_SOURCE and 249 UNVERIFIED.",
+    "traceability": "python3 scripts/build-feature-traceability.py --check — PASS (396/396).",
+    "syntax_and_diff": "node --check tests/browser/editor-structured-content.test.js and git diff --check — PASS."
+  },
+  "github": {
+    "remote_branch_before_followup": "v2/foundation at ab5d232521c18d4026e066c3507ff4bdd3524b22 (GitHub Git Ref API verified).",
+    "test_only_ci": "No CI run is expected for this [skip ci] test/evidence-only follow-up; no hosted result is claimed for its new test. The preceding runtime exact-SHA Editor Core run 44520036804 completed SUCCESS on 83fb764b4060d8d4bbc513e7d0865dd1f700214a, and the source smoke run 44520036720 completed SUCCESS on the same runtime SHA.",
+    "followup_commit": "PENDING at evidence creation; this file will be updated after commit/push verification."
+  },
+  "production": {
+    "runtime_source_sha": "83fb764b4060d8d4bbc513e7d0865dd1f700214a; unchanged by this test-only change.",
+    "source_smoke_workflow": "44520036720 completed/success on the runtime source; health and configured public-source hashes were checked by that workflow.",
+    "latest_worker_deployment": "c4b9526a-c54b-4fe3-9218-d889c1e011e9",
+    "latest_worker_version": "9870e814-359c-4871-a25c-289d9dfe7c2c",
+    "traffic": "100% (Cloudflare read-only deployment API).",
+    "direct_health_check": "Not rechecked in this environment: outbound curl failed before connecting (proxy 127.0.0.1:8080 refused). The runtime-source workflow health check above is the available verified result.",
+    "asset_hashes": "No asset changed; no new asset-hash check or Worker deployment is needed for this test-only commit.",
+    "d1_r2": "No production D1 or R2 operation in this block.",
+    "deploy": "No runtime changes; no Worker deployment required or performed."
+  },
+  "cost_huf": 0,
+  "limitations": [
+    "This closes one malformed-table recovery lifecycle regression only; it does not certify the complete D-03 or D-01..D-07 matrix.",
+    "The 147 PARTIAL_SOURCE / 249 UNVERIFIED audit counts remain; overall D remains OPEN / NOT_CERTIFIED.",
+    "Full Visual Editor manual and physical acceptance remains deferred until the complete Editor is implemented."
+  ]
+}
