@@ -65,13 +65,24 @@ function render(){
 }
 function open(){const panel=document.querySelector('#diagnosticsPanel');if(panel)panel.hidden=false}
 function close(){const panel=document.querySelector('#diagnosticsPanel');if(panel)panel.hidden=true}
-function copy(){
+async function copy(){
+  const status=document.querySelector('#diagnosticsCopyStatus');
+  if(!status)return false;
   const text=entries.map(item=>'['+item.code+'] '+item.message+(item.file?' — '+item.file+':'+item.line+':'+item.column:'')).join('\n');
-  navigator.clipboard?.writeText(text);
+  if(!text){status.textContent='Nincs másolható diagnosztikai adat.';return false}
+  try{
+    if(typeof navigator==='undefined'||typeof navigator.clipboard?.writeText!=='function')throw new Error('clipboard unavailable');
+    await navigator.clipboard.writeText(text);
+    status.textContent='A biztonságos diagnosztika a vágólapra másolva.';
+    return true;
+  }catch{
+    status.textContent='A vágólap nem érhető el. Engedélyezd a hozzáférést, vagy másold ki kézzel a diagnosztikai bejegyzéseket.';
+    return false;
+  }
 }
 function init(){
   const root=document.createElement('div');
-  root.innerHTML='<button id="diagnosticsBadge" class="diagnostics-badge" type="button" title="Editor hibakereső">✓ 0 hiba</button><aside id="diagnosticsPanel" class="diagnostics-panel" hidden><header><div><strong>Editor hibakereső</strong><small>Automatikus hibajelentés</small></div><div class="diagnostics-actions">'+''+'<button id="diagnosticsCopy" type="button">Másolás</button><button id="diagnosticsClear" type="button">Törlés</button><button id="diagnosticsClose" type="button" aria-label="Bezárás">×</button></div></header><div id="diagnosticsList" class="diagnostics-list"></div></aside>';
+  root.innerHTML='<button id="diagnosticsBadge" class="diagnostics-badge" type="button" title="Editor hibakereső">✓ 0 hiba</button><aside id="diagnosticsPanel" class="diagnostics-panel" hidden><header><div><strong>Editor hibakereső</strong><small>Automatikus hibajelentés</small></div><div class="diagnostics-actions"><button id="diagnosticsCopy" type="button">Másolás</button><button id="diagnosticsClear" type="button">Törlés</button><button id="diagnosticsClose" type="button" aria-label="Bezárás">×</button></div></header><p id="diagnosticsCopyStatus" class="diagnostics-copy-status" role="status" aria-live="polite"></p><div id="diagnosticsList" class="diagnostics-list"></div></aside>';
   document.body.append(...root.children);
   document.querySelector('#diagnosticsBadge').onclick=open;
   document.querySelector('#diagnosticsClose').onclick=close;

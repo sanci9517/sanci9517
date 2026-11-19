@@ -462,11 +462,11 @@
 - **Függőségek:** EDT-027–033, SEC, OPS, QA.
 - **UI-állapotok:** validation/network/conflict/permission/renderer/malformed document/retry.
 - **Biztonság/adatvédelem:** redaction és safe logging kötelező; JSON draft export érzékenységét jelezni kell.
-- **Tesztcsomag:** stabil diagnosztikai kód, token/PII redaction, buffer-limit és verify unit teszt készült; conflict recovery source test van; malformed document és teljes error matrix hiányzik.
+- **Tesztcsomag:** stabil diagnosztikai kód, token/PII redaction, buffer-limit és verify unit teszt készült; a vágólap-másolás elutasított böngészőengedélyét és a képernyőolvasóval közölt visszajelzést Chromium-regresszió ellenőrzi; conflict recovery source test van; malformed document és teljes error matrix hiányzik.
 - **Elfogadás:** szándékosan kiváltott hiba → diagnosztikai ID és biztonságos üzenet → retry/export/restore → nincs silent data loss.
-- **Bizonyíték:** app.js conflict functions, redaktáló diagnostics module, diagnostics.test.js, core.test.js source test; release verification: `docs/evidence/editor-error-recovery-2026-11-17.json`.
+- **Bizonyíték:** app.js conflict functions, redaktáló diagnostics module, diagnostics.test.js, core.test.js source test; rész-bizonyíték: `docs/evidence/editor-error-recovery-2026-11-17.json`, valamint a vágólap visszajelzés tesztje és release-e: `docs/evidence/editor-042-diagnostic-copy-recovery-2026-11-19.json`.
 - **Visszaállítás:** export, reload latest, revision restore; recovery action auditálandó.
-- **Státusz / ismert probléma / következő lépés:** PARTIAL / IN PROGRESS / NOT CERTIFIED; a buffer nem tart raw Error objektumot, URL queryt vagy stack trace-t; editor-hiba utáni piszkozat-retenció, export/reload, renderer hibák és teljes recovery E2E továbbra is nyitott.
+- **Státusz / ismert probléma / következő lépés:** PARTIAL / IN PROGRESS / NOT CERTIFIED; a biztonságos diagnosztika másolása immár kifejezetten jelzi a sikeres vagy blokkolt vágólap-hozzáférést, és a blokkolt engedély nem hagy kezeletlen Promise hibát; az Editor mentési hibáinak piszkozat-retenciója és Save-only újrapróbálása külön tesztelt. A buffer nem tart raw Error objektumot, URL queryt vagy stack trace-t; malformed-document, permission/renderer hibaállapot, export/reload integráció, telemetriai korreláció és teljes recovery E2E továbbra is nyitott.
 
 #### EDT-043 — Rich Text editing
 - **Felhasználói eredmény:** formázott szöveg, listák, idézetek és linkek strukturált, biztonságos tartalomként szerkeszthetők.

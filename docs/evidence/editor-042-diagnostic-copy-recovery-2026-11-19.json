@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-19T04:56:00Z",
+  "plan_point": "77.44.7.D",
+  "feature": "EDT-042 safe diagnostic clipboard recovery",
+  "status": "IMPLEMENTED_TESTED_RELEASE_PENDING",
+  "scope": "Give an accessible success/failure result when the user copies the redacted transient Editor diagnostics; a browser clipboard denial must not create an unhandled rejection.",
+  "implementation": {
+    "copy_safety": "Copy includes only the existing normalized, redacted diagnostic code/message/path fields; raw Error, stack, query values and unfiltered context remain excluded.",
+    "permission_recovery": "Clipboard access is awaited inside a try/catch. Success and denied/unavailable outcomes are shown in an aria-live status region; blocked access offers a manual-copy next step and does not recurse into diagnostics.",
+    "draft_invariants": "This change does not alter Page Model state, Save, Publish, API requests, D1 or R2."
+  },
+  "checks": {
+    "targeted_diagnostics_unit": "PASS; node --experimental-vm-modules --test public/editor-v2/tests/diagnostics.test.js",
+    "targeted_chromium_recovery": "PASS; tests/browser/editor-diagnostics-redaction.test.js; denied clipboard permission, safe copied text, no unhandled page error, failed Save draft retention, Save-only retry; 4 orphaned test descendants reaped by runner.",
+    "editor_unit_suite": "PASS; npm run test:editor; 22/22 tests passed, no failures; Linux process runner 4/4.",
+    "typecheck": "PASS; npm run typecheck -- --pretty false.",
+    "plan_contract": "PASS; python3 tests/plan-contract.test.py; 15/15.",
+    "canonical_plan": "PASS; python3 scripts/check-canonical-plan.py; one complete 13-file master, 396 source mappings, acceptance not certified.",
+    "active_plan_point": "PASS; cursor 77.44 / WEB-011 -> 77.44.7.D remains OPEN / NOT_CERTIFIED.",
+    "traceability": "PASS; regenerated and checked 396/396 mappings, including EDT-042 stylesheet, app entrypoint, diagnostics module, and unit/browser tests.",
+    "migration_safety": "PASS; npm run test:web013:migration-gate; deploy:safe cannot apply D1 migrations.",
+    "wrangler_dry_run": {
+      "status": "PASS",
+      "command": "XDG_CONFIG_HOME=/tmp/sanci9517-wrangler-config npx wrangler deploy --dry-run",
+      "version": "4.130.0",
+      "assets": 195,
+      "upload": "393.29 KiB",
+      "gzip": "100.77 KiB",
+      "published": false
+    },
+    "production_d1_preflight": {
+      "status": "PASS",
+      "access": "Cloudflare D1 query API; three SELECT-only statements",
+      "rows_written": 0,
+      "changes": 0,
+      "changed_db": false,
+      "last_migration": "0029_media_archive_unicode_additive.sql",
+      "migration_count": 35,
+      "checks": {
+        "default_domain": 1,
+        "active_default_users_without_membership": 0,
+        "default_settings_missing_or_different": 0,
+        "snapshot_tables": 0
+      }
+    }
+  },
+  "changed_public_asset_sha256": {
+    "public/editor-v2/index.html": "7ba84d8138bfada991fd79baf9b211772aaba4e53c58c0b9f4ca1b8e468f374b",
+    "public/editor-v2/app.js": "90610cc90925ea274bb66765151205f607388296aadbadb16fc8b2f546299268",
+    "public/editor-v2/diagnostics.js": "21e5bf1e355ae1f8454dd5b2a4d5784267754f4ee8579b2ce934bd54a3fb2689",
+    "public/editor-v2/editor.css": "fdfddfa214e75040450d5c087416a3ab26d28015b8ec3e8696322cc0debb5527"
+  },
+  "release": {
+    "status": "PENDING",
+    "branch": "v2/foundation",
+    "source_sha": null,
+    "ci": "The previous source SHA Editor Core workflow 44459443236 is still in progress; its completed typecheck, 22 editor core tests, D1 ledger, private R2 API, showcase unit/browser and isolated Worker media upload steps are successful. Its Chromium Editor layout and following jobs are pending. Current source must trigger its own exact-SHA checks after push.",
+    "worker_build": null,
+    "deployment": null,
+    "health": null,
+    "direct_live_asset_hashes": null
+  },
+  "acceptance_boundary": "This proves only one EDT-042 diagnostic-copy recovery slice. EDT-042 remains partial: malformed-document recovery, permission/renderer state, export/reload integration, telemetry correlation and full recovery E2E remain open. The complete Editor and its consolidated manual/physical acceptance remain open. Plan point 77.44.7.D remains OPEN / NOT_CERTIFIED. Save and Publish remain separate.",
+  "production_mutations": false,
+  "cost": "0 Ft; no paid service and no CI rerun/dispatch was manually started."
+}

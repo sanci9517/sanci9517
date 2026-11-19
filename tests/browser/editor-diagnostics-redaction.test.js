@@ -40,6 +40,9 @@ test('failed Editor save redacts diagnostics and preserves the local draft for r
   t.after(async () => { await browser.close(); await new Promise(done => server.close(done)); });
   const page = await browser.newPage();
   const dialogs = [];
+  const pageErrors = [];
+  await page.addInitScript(() => Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText: text => { window.__copiedDiagnostics = text; return Promise.reject(new DOMException('clipboard denied', 'NotAllowedError')); } } }));
+  page.on('pageerror', error => pageErrors.push(error.message));
   page.on('dialog', async dialog => { dialogs.push(dialog.message()); await dialog.accept(); });
   page.setDefaultTimeout(10000);
   await page.goto(`http://127.0.0.1:${server.address().port}/editor-v2/index.html`);
@@ -60,6 +63,11 @@ test('failed Editor save redacts diagnostics and preserves the local draft for r
   const diagnosticText = await page.locator('#diagnosticsPanel').innerText();
   for (const secret of ['private-token', 'private-bearer', 'private-state', 'user@example.com']) assert.equal(diagnosticText.includes(secret), false, `diagnostics must not show ${secret}`);
   assert.match(diagnosticText, /\[redacted\]/);
+  await page.locator('#diagnosticsCopy').click();
+  await page.waitForFunction(() => document.querySelector('#diagnosticsCopyStatus')?.textContent?.includes('vágólap nem érhető el'));
+  const copiedDiagnostics = await page.evaluate(() => window.__copiedDiagnostics);
+  for (const secret of ['private-token', 'private-bearer', 'private-state', 'user@example.com']) assert.equal(copiedDiagnostics.includes(secret), false, `copied report must not include ${secret}`);
+  assert.deepEqual(pageErrors, [], 'clipboard denial is recovered locally and does not become an unhandled browser error');
   await page.locator('#save').click();
   await page.waitForFunction(() => document.querySelector('#saveStatus')?.textContent?.startsWith('Mentve'));
   assert.equal(posts.length, 2, 'retry submits the same local work');

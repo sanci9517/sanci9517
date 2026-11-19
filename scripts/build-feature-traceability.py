@@ -47,7 +47,7 @@ EXACT_SOURCES = {
  'EDT-039':['public/editor-v2/core/page-interactions.js','public/editor-v2/core/authored-content.js','public/editor-v2/core/schema.js','public/editor-v2/ui/page-interaction-controls.js','public/editor-v2/app.js','public/assets/page-renderer.js'],
  'EDT-040':['public/editor-v2/core/motion-style.js','public/editor-v2/core/property-registry.js','public/editor-v2/core/canvas-engine.js','public/editor-v2/core/capability-matrix.js','public/editor-v2/core/inspector-style-contract.js','public/editor-v2/core/state-styles.js','public/editor-v2/editor-motion.css','public/editor-v2/index.html','public/editor-v2/app.js','public/assets/page-renderer.js','public/visual-page.html'],
  'EDT-041':['public/editor-v2/core/design-system/template-catalog.js','public/editor-v2/core/editor-templates.js','public/editor-v2/tests/editor-templates.test.js','public/editor-v2/editor-templates.css','public/editor-v2/index.html','public/editor-v2/app.js','tests/browser/editor-template-start.test.js'],
- 'EDT-042':['public/editor-v2/diagnostics.js','public/editor-v2/tests/diagnostics.test.js','public/editor-v2/app.js','public/editor-v2/index.html','tests/browser/editor-diagnostics-redaction.test.js'],
+ 'EDT-042':['public/editor-v2/diagnostics.js','public/editor-v2/editor.css','public/editor-v2/tests/diagnostics.test.js','public/editor-v2/app.js','public/editor-v2/index.html','tests/browser/editor-diagnostics-redaction.test.js'],
  'RES-011':['public/editor-v2/core/icon-options.js','public/editor-v2/ui/basic-content-inspector.js'],
  'DSN-007':['public/editor-v2/core/property-values.js','public/editor-v2/ui/property-controls.js'],
  'SEC-001':['src/routes/auth/login.ts','src/routes/auth/logout.ts','src/core/auth/session.ts'],
