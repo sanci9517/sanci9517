@@ -1,0 +1,47 @@
+{
+  "schema": 1,
+  "captured_at": "2026-11-19T09:33:09Z",
+  "plan_item": "77.44.7.D",
+  "status": "OPEN / NOT_CERTIFIED",
+  "scope": "D-07 regression: tenant Editor Publish authorization is rechecked after site membership is revoked.",
+  "plan_sha256": "22cb263e9a43a4424d8bdb72e4b5daee215fdb45a48b7db3c2b80817821d9b3a",
+  "base_commit": "a67dcec4436916a4f7ddadf6f13b5fbc3e6f5f4d",
+  "changes": {
+    "runtime": "none",
+    "test": [
+      "Extended the existing revoked-membership route regression to request publish:true after revocation.",
+      "Asserted HTTP 403 and unchanged draft/public page snapshots, page revision count, and audit count."
+    ]
+  },
+  "checks": [
+    {
+      "command": "node --experimental-loader ./tests/ts-extension-loader.mjs --test tests/web013-tenant-pages-editor.test.js",
+      "result": "PASS 1/1"
+    },
+    {
+      "command": "node --check tests/web013-tenant-pages-editor.test.js",
+      "result": "PASS"
+    },
+    {
+      "command": "git diff --check",
+      "result": "PASS"
+    }
+  ],
+  "release": {
+    "push": "pending; test/evidence-only commit intended for normal fast-forward with [skip ci]",
+    "ci": "not dispatched; no hosted CI execution is claimed",
+    "worker": "no runtime code changed; no deployment performed",
+    "verified_baseline": {
+      "deployment_id": "a8cb33a3-5179-4fc9-8844-e002a1e1a9e3",
+      "version_id": "31b605b7-fd0d-4cfa-8ddf-849c51eadef2",
+      "traffic_percent": 100,
+      "runtime_source_sha": "fad2043d96f3bf890005c62c0e34d0084b387f05"
+    }
+  },
+  "production_data_and_cost": {
+    "production_d1_mutations_or_migrations": "none",
+    "r2_operations": "none",
+    "new_paid_services_or_spend": "none"
+  },
+  "acceptance_boundary": "This closes only the revoked-membership Publish regression. The complete D block and full Editor acceptance remain open; no full feature completion or physical acceptance is claimed."
+}

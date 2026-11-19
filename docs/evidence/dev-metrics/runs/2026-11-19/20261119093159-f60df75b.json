@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261119093159-f60df75b",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-19T09:31:59.224Z",
+  "finished_at": "2026-11-19T09:32:41.895Z",
+  "wall_seconds": 43,
+  "paused_seconds": 0,
+  "measured_seconds": 43,
+  "status": "pass",
+  "kind": "test",
+  "summary": "Revoked tenant editor Publish regression asserts 403 and unchanged draft/public page, revision, and audit state",
+  "evidence": [
+    "tests/web013-tenant-pages-editor.test.js:PASS"
+  ],
+  "checks": "node --experimental-loader ./tests/ts-extension-loader.mjs --test tests/web013-tenant-pages-editor.test.js PASS 1/1; node --check PASS; git diff --check PASS",
+  "started_revision": "a67dcec4436916a4f7ddadf6f13b5fbc3e6f5f4d",
+  "finished_revision": "a67dcec4436916a4f7ddadf6f13b5fbc3e6f5f4d",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

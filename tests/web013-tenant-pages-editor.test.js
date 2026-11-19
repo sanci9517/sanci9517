@@ -88,6 +88,22 @@ test('site editor saves, publishes and rolls back only own page; revocation fail
   assert.equal(f.db.prepare('SELECT COUNT(*) AS n FROM editor_revisions WHERE page_id=?').get('a').n,1);
   f.db.prepare("UPDATE site_memberships SET status='revoked' WHERE user_id='editor' AND site_id='other'").run();
   assert.equal((await f.editor('editor','other','POST',{pageId:'b',expectedVersion:4,document:f.document('b'),publish:false})).status,403);
+  const beforeUnauthorizedPublish={
+    page:f.db.prepare(`SELECT content_json,published_content_json,published_revision_id,is_published
+      FROM pages WHERE id='b'`).get(),
+    revisionCount:f.db.prepare("SELECT COUNT(*) AS n FROM editor_revisions WHERE page_id='b'").get().n,
+    auditCount:f.db.prepare("SELECT COUNT(*) AS n FROM audit_log").get().n
+  };
+  const unauthorizedPublish=await f.editor('editor','other','POST',{
+    pageId:'b',expectedVersion:4,document:f.document('b','Unauthorized publication'),publish:true
+  });
+  assert.equal(unauthorizedPublish.status,403,'revoked site membership blocks Publish just like draft Save');
+  assert.deepEqual(f.db.prepare(`SELECT content_json,published_content_json,published_revision_id,is_published
+    FROM pages WHERE id='b'`).get(),beforeUnauthorizedPublish.page,'a rejected Publish cannot change draft or public state');
+  assert.equal(f.db.prepare("SELECT COUNT(*) AS n FROM editor_revisions WHERE page_id='b'").get().n,
+    beforeUnauthorizedPublish.revisionCount,'a rejected Publish creates no revision');
+  assert.equal(f.db.prepare("SELECT COUNT(*) AS n FROM audit_log").get().n,
+    beforeUnauthorizedPublish.auditCount,'a rejected Publish creates no audit record');
   assert.equal((await f.pages('editor','other','DELETE',{id:'b'})).status,403);
 });
 
