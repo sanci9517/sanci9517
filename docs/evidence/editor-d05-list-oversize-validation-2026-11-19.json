@@ -40,7 +40,10 @@
     "worker_traffic_percent": 100,
     "runtime_source_sha": "NOT REVALIDATED; no runtime or public asset source changed.",
     "runtime_deployment_needed": false,
-    "direct_health_this_followup": "NOT RUN; test/evidence-only change. No new health result is claimed."
+    "direct_health_this_followup": "NOT RUN; test/evidence-only change. No new health result is claimed.",
+    "test_and_evidence_commit_sha": "ea69419c33fe0b1f5ce218bbc555afef8b12c27c",
+    "normal_fast_forward_push": "git push origin HEAD:refs/heads/v2/foundation succeeded; GitHub branch endpoint GET confirmed the exact SHA ea69419c33fe0b1f5ce218bbc555afef8b12c27c.",
+    "combined_status_for_test_commit": "GitHub GET returned state pending with zero status contexts. The commit carries [skip ci]; no hosted CI PASS is claimed."
   },
   "scope_limits": {
     "d05_status": "This verifies only the authored List repeater oversized-text validation slice; it does not certify all D-05 fields, responsive/accessibility behavior, media/API/security paths, or full Editor parity.",
