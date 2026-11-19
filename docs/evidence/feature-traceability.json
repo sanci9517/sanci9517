@@ -39,7 +39,7 @@
     "public/editor-v2/editor-templates.css": "cfe18fe3ee13f25778c35df8be72d94d574059b5e3e869af8476083cbab3d660",
     "public/editor-v2/editor.css": "fdfddfa214e75040450d5c087416a3ab26d28015b8ec3e8696322cc0debb5527",
     "public/editor-v2/index.html": "7ba84d8138bfada991fd79baf9b211772aaba4e53c58c0b9f4ca1b8e468f374b",
-    "public/editor-v2/tests/diagnostics.test.js": "d7cf20145d4acab88c7c510c4c8e3e9c2e941cb336b041417c9b1714d939d31e",
+    "public/editor-v2/tests/diagnostics.test.js": "9ad259f2d0f71da9b9dec9b860adfebc3cc95ac669f32670789ba99df43d068c",
     "public/editor-v2/tests/editor-templates.test.js": "4a16d9072f7cabead544ebf96302d174b147e28a333f8b1946c94e7bc8d0328a",
     "public/editor-v2/ui/action-catalog.js": "0129625060fdca606e7cce0fa60434e00bb83967eede4eec5922ca3e6f2beea0",
     "public/editor-v2/ui/action-help.js": "72bb4e78420798f4aa99e000a77a8ad19dad217c0896c97dc523d6e5feab5294",
