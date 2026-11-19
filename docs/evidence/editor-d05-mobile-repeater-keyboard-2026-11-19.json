@@ -1,0 +1,54 @@
+{
+  "schema": "sanci.editor.d05-mobile-repeater-keyboard.v1",
+  "captured_at_utc": "2026-11-19T14:48:24Z",
+  "plan_point": "77.44.7.D / D-05 — narrow mobile repeater keyboard lifecycle",
+  "repository": "sanci9517/sanci9517",
+  "branch": "v2/foundation",
+  "branch_head_before_followup": "87eeb38a2730f7c4fc7e6ebb8551526bda947672",
+  "development_metric": {
+    "run_id": "20261119144609-f29b7670",
+    "status": "partial",
+    "kind": "test",
+    "archive": "docs/evidence/dev-metrics/runs/2026-11-19/20261119144609-f29b7670.json"
+  },
+  "runtime_source_changed": false,
+  "change": {
+    "files": [
+      "tests/browser/editor-content-system.test.js",
+      "docs/evidence/editor-d05-mobile-repeater-keyboard-2026-11-19.json",
+      "docs/evidence/dev-metrics/runs/2026-11-19/20261119144609-f29b7670.json"
+    ],
+    "summary": "The real-browser List repeater lifecycle now repeats keyboard Add, reorder and Delete actions at a 390px mobile viewport. It verifies the action buttons remain visible, Add focuses the new row field, reorder focuses the corresponding action on the moved row, Delete focuses the surviving row field, the original valid Canvas order is restored, and no Save or Publish request occurs.",
+    "save_publish": "Mobile structure edits remain draft-only. Existing explicit Save/reload and separate Publish assertions continue later in the same test; no implicit write was observed."
+  },
+  "checks": {
+    "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-content-system.test.js": "PASS; 1/1 real Chromium end-to-end test, including the 390px mobile keyboard repeater Add/reorder/Delete focus lifecycle.",
+    "npm run test:editor": "PASS; 22/22 Editor unit test files and 4/4 subreaper/manifest guards.",
+    "npm run typecheck -- --pretty false": "PASS.",
+    "python3 tests/plan-contract.test.py": "PASS; 15/15.",
+    "python3 scripts/check-canonical-plan.py": "PASS; one complete 13-file canonical master / 396 mappings; functional acceptance remains uncertified.",
+    "python3 scripts/build-feature-traceability.py --check": "PASS; 396/396 source mappings.",
+    "python3 scripts/audit-active-plan-point.py": "PASS; active cursor 77.44.7.D remains OPEN / NOT_CERTIFIED; 147 PARTIAL_SOURCE and 249 UNVERIFIED.",
+    "node --check tests/browser/editor-content-system.test.js": "PASS.",
+    "git diff --check": "PASS.",
+    "hosted_ci": "NOT RUN; test/evidence-only change will use [skip ci]; the Actions free quota remains unverified."
+  },
+  "release_state_at_capture": {
+    "remote_branch_head_before_followup": "GitHub GET verified v2/foundation at 87eeb38a2730f7c4fc7e6ebb8551526bda947672.",
+    "worker_latest_deployment_id": "c4b9526a-c54b-4fe3-9218-d889c1e011e9",
+    "worker_latest_version_id": "9870e814-359c-4871-a25c-289d9dfe7c2c",
+    "worker_traffic_percent": 100,
+    "runtime_source_sha": "NOT REVALIDATED; no runtime or public asset source changed.",
+    "runtime_deployment_needed": false,
+    "direct_health_this_followup": "NOT RUN; test/evidence-only change. No new health result is claimed."
+  },
+  "scope_limits": {
+    "d05_status": "This verifies the 390px mobile keyboard interaction slice for authored List repeater controls only; it does not certify all repeaters, responsive layouts, accessibility criteria, malformed values, media/API/security paths, or full Editor parity.",
+    "d_status": "77.44.7.D remains OPEN / NOT_CERTIFIED; source audit remains 147 PARTIAL_SOURCE and 249 UNVERIFIED.",
+    "manual_physical_editor_acceptance": "DEFERRED until the complete Visual Editor is implemented.",
+    "production_d1_migration_or_write": false,
+    "production_r2_mutation_or_delete": false,
+    "paid_services_or_dependencies": false,
+    "new_cost_huf": 0
+  }
+}

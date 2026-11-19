@@ -710,6 +710,32 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
     ['Második elem','Új listapont'],'deleting a different row preserves the newly added item and its order');
   assert.equal(await node(editor,'list').locator('ol li').nth(1).getByRole('link',{name:'Új listapont'}).getAttribute('href'),'/p/home');
   assert.equal(posts.length,postsBeforeListStructure,'list Add, edit, reorder, and Delete stay draft-only without implicit Save or Publish');
+  // Repeater keyboard actions also need to remain usable in the narrow phone
+  // Inspector, with focus restored to the surviving row after each rerender.
+  await editor.setViewportSize({width:390,height:800});
+  await select('list');
+  assert.equal(await editor.evaluate(()=>innerWidth),390,'the repeater keyboard path uses a real narrow mobile viewport');
+  for(const name of ['Listaelemek hozzáadása','2. elem: Fel','2. elem: Eltávolítás']){
+    assert.equal(await listRepeater.getByRole('button',{name,exact:true}).isVisible(),true,`mobile Inspector exposes ${name}`);
+  }
+  await listRepeater.getByRole('button',{name:'Listaelemek hozzáadása',exact:true}).press('Enter');
+  await editor.waitForFunction(()=>document.activeElement?.closest('fieldset')?.querySelector('legend')?.textContent==='3. elem');
+  assert.equal(await editor.evaluate(()=>document.activeElement?.getAttribute('aria-label')),'Szöveg',
+    'mobile Add restores keyboard focus to the new row text field');
+  const mobileAddedRow=listRepeater.locator(':scope > fieldset').nth(2);
+  await mobileAddedRow.getByLabel('Szöveg',{exact:true}).fill('Mobil listaelem');
+  await listRepeater.getByRole('button',{name:'3. elem: Fel',exact:true}).press('Enter');
+  await editor.waitForFunction(()=>document.activeElement?.getAttribute('aria-label')==='2. elem: Le');
+  assert.deepEqual(await node(editor,'list').locator('ol li').evaluateAll(items=>items.map(item=>item.textContent)),
+    ['Második elem','Mobil listaelem','Új listapont'],'mobile keyboard reorder moves the complete row and preserves list content');
+  await listRepeater.getByRole('button',{name:'2. elem: Eltávolítás',exact:true}).press('Enter');
+  await editor.waitForFunction(()=>document.activeElement?.closest('fieldset')?.querySelector('legend')?.textContent==='2. elem');
+  assert.equal(await editor.evaluate(()=>document.activeElement?.getAttribute('aria-label')),'Szöveg',
+    'mobile Delete restores focus to the surviving row text field');
+  assert.deepEqual(await node(editor,'list').locator('ol li').evaluateAll(items=>items.map(item=>item.textContent)),
+    ['Második elem','Új listapont'],'mobile Delete restores the original valid list order');
+  assert.equal(posts.length,postsBeforeListStructure,'mobile Add/reorder/Delete stays draft-only without implicit Save or Publish');
+  await editor.setViewportSize({width:1366,height:900});
   const authoredMediaSources={video:'/fixture.webm?source=creator&v=2',audio:'/fixture.mp3?source=creator&v=2'};
   for(const [type,tag,originalSource] of [['video','video','/fixture.webm'],['audio','audio','/fixture.mp3']]){
     await select(type);

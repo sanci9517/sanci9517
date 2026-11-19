@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261119144609-f29b7670",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-19T14:46:09.733Z",
+  "finished_at": "2026-11-19T14:48:55.178Z",
+  "wall_seconds": 165,
+  "paused_seconds": 0,
+  "measured_seconds": 165,
+  "status": "partial",
+  "kind": "test",
+  "summary": "D-05 List repeater now has real Chromium 390px keyboard Add/reorder/Delete focus restoration and draft-only coverage; full D audit remains open.",
+  "evidence": [
+    "tests/browser/editor-content-system.test.js:PASS",
+    "docs/evidence/editor-d05-mobile-repeater-keyboard-2026-11-19.json"
+  ],
+  "checks": "Chromium 1/1; Editor 22/22 + 4/4; typecheck; canonical/plan/traceability; audit OPEN",
+  "started_revision": "87eeb38a2730f7c4fc7e6ebb8551526bda947672",
+  "finished_revision": "87eeb38a2730f7c4fc7e6ebb8551526bda947672",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
