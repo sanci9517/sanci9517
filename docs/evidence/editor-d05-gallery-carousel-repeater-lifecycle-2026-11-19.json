@@ -1,6 +1,6 @@
 {
   "schema": "sanci.editor.d05-gallery-carousel-repeater-lifecycle.v1",
-  "captured_at_utc": "2026-11-19T13:16:30Z",
+  "captured_at_utc": "2026-11-19T13:21:27Z",
   "plan_point": "77.44.7.D / D-05 — Gallery and Carousel repeater lifecycle",
   "repository": "sanci9517/sanci9517",
   "branch": "v2/foundation",
@@ -38,7 +38,9 @@
   },
   "release_state_at_capture": {
     "remote_branch_head_before_followup": "GitHub branch-ref GET confirmed v2/foundation at 3ae7deac69a88105e474b7c46e411e99070b80d2 before this follow-up.",
-    "normal_fast_forward_push": "Pending final validation/commit in this work block.",
+    "test_and_evidence_commit_sha": "88585e229ceede87eadc9258d8bcdad7a87b352a",
+    "normal_fast_forward_push": "git push origin HEAD:refs/heads/v2/foundation succeeded; GitHub branch-ref GET confirmed exact SHA 88585e229ceede87eadc9258d8bcdad7a87b352a.",
+    "combined_status_for_test_commit": "GitHub combined status returned an empty statuses array. The commit carries [skip ci]; no hosted CI PASS is claimed.",
     "worker_latest_deployment_id": "c4b9526a-c54b-4fe3-9218-d889c1e011e9",
     "worker_latest_version_id": "9870e814-359c-4871-a25c-289d9dfe7c2c",
     "worker_traffic_percent": 100,
