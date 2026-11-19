@@ -1,15 +1,15 @@
 {
   "schema": "sanci.editor.d06-legacy-audio-media-save-publish.v1",
-  "captured_at_utc": "2026-11-19T09:10:39Z",
+  "captured_at_utc": "2026-11-19T09:20:30Z",
   "plan_point": "77.44.7.D / D-06 — legacy audio Media Library source replacement lifecycle",
   "repository": "sanci9517/sanci9517",
   "branch": "v2/foundation",
   "base_commit": "4c7b39f600ab8f753daad4e855860b61745dc068",
   "canonical_plan_sha256": "22cb263e9a43a4424d8bdb72e4b5daee215fdb45a48b7db3c2b80817821d9b3a",
-  "test_source_sha256": "c31dd8e5baa633e6b936fea2e28c50549f6e73117d1e6b262e686c50219558f7",
+  "test_source_sha256": "3fac18ffa01d2e04bb671997a5ea249ebd2492d2673902a5cf07ede8829d31ea",
   "change": {
     "file": "tests/browser/editor-legacy-media-parity.test.js",
-    "summary": "Extends the existing legacy media browser fixture with the missing Audio Media Library replacement path: selecting an audio asset clears the URL, uses the authenticated editor preview, draft Save stores the asset ID without changing published audio, reload restores the selection, and explicit Publish exposes the /media/<id> URL. The fixture now serves the exact audio asset on its authenticated and public routes. The fixture also asserts the public audio route MIME type and serves audio/wav rather than the image placeholder.",
+    "summary": "Extends the existing legacy media browser fixture with the missing Audio Media Library replacement path: selecting an audio asset clears the URL, uses the authenticated editor preview, draft Save stores the asset ID without changing published audio, reload restores the selection, and explicit Publish exposes the /media/<id> URL. The fixture now serves the exact audio asset on its authenticated and public routes. The fixture also asserts the public audio route MIME type and serves audio/wav rather than the image placeholder. Follow-up coverage now also proves that a library-backed video poster restores as an image-kind selection after Editor reload, and that audio Media Library-to-manual-URL switching clears the old asset ID, remains draft-only through Save/reload, and becomes public only after Publish.",
     "runtime_change": false,
     "production_data_change": false,
     "save_publish": "Explicit Save and Publish remain separate; pre-Publish public audio remains unchanged."
@@ -23,7 +23,7 @@
     "canonical_plan": "PASS; complete 13-file master and 396 mappings; acceptance remains NOT_CERTIFIED.",
     "syntax_diff": "PASS; node --check and git diff --check.",
     "workflow_manifest": "The modified test remains in the existing Editor Core browser layout workflow; no workflow file changes.",
-    "targeted_chromium_followup": "PASS; reran the D-06 browser regression after correcting the fixture response for /media/<audio-id>; 1/1 passed, including an assertion that the public route returns audio/wav."
+    "targeted_chromium_followup": "PASS; reran tests/browser/editor-legacy-media-parity.test.js after adding the public audio MIME assertion, persisted video-poster restoration in the Inspector, and audio library-to-manual source replacement through Save/reload/separate Publish; Chromium browser scenario passed 1/1."
   },
   "production_snapshot": {
     "checked_in_this_run": true,

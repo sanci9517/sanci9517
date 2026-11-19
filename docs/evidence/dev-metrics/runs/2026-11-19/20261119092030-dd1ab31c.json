@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261119092030-dd1ab31c",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-19T09:20:30.141Z",
+  "finished_at": "2026-11-19T09:23:17.285Z",
+  "wall_seconds": 167,
+  "paused_seconds": 0,
+  "measured_seconds": 167,
+  "status": "pass",
+  "kind": "test",
+  "summary": "Extended D-06 media lifecycle browser regression for persisted video posters and audio library/manual URL switching; targeted Chromium passed.",
+  "evidence": [
+    "docs/evidence/editor-d06-legacy-audio-media-save-publish-2026-11-19.json"
+  ],
+  "checks": "targeted Chromium browser scenario 1/1; node --check; git diff --check",
+  "started_revision": "4c7b39f600ab8f753daad4e855860b61745dc068",
+  "finished_revision": "4c7b39f600ab8f753daad4e855860b61745dc068",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
