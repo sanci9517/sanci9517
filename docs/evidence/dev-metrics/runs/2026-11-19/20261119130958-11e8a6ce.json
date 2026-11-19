@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261119130958-11e8a6ce",
+  "task": "77.44.7.D-D05-gallery-carousel-repeater-lifecycle",
+  "trigger": "manual",
+  "started_at": "2026-11-19T13:09:58.210Z",
+  "finished_at": "2026-11-19T13:15:13.143Z",
+  "wall_seconds": 315,
+  "paused_seconds": 0,
+  "measured_seconds": 315,
+  "status": "partial",
+  "kind": "test",
+  "summary": "D-05 Gallery and Carousel repeaters now have real Chromium Add/edit/reorder/Delete plus draft-only Save/reload/separate Publish coverage; relevant local editor, type, plan, traceability and migration checks pass; D remains open.",
+  "evidence": [
+    "docs/evidence/editor-d05-gallery-carousel-repeater-lifecycle-2026-11-19.json"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "3ae7deac69a88105e474b7c46e411e99070b80d2",
+  "finished_revision": "3ae7deac69a88105e474b7c46e411e99070b80d2",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

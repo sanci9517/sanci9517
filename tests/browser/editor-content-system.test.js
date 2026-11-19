@@ -500,6 +500,29 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   assert.equal(posts.length,countBeforeStructuralEdit,
     'Dropdown Add/edit/reorder/Delete stays draft-only without implicit Save or Publish');
   await select('gallery');
+  const galleryRepeater=editor.locator('.content-repeater[data-content-key="items"]');
+  await galleryRepeater.getByRole('button',{name:'Képek hozzáadása',exact:true}).press('Enter');
+  await editor.waitForFunction(()=>document.activeElement?.getAttribute('aria-label')==='Külső média címe'&&
+    document.activeElement?.closest('fieldset')?.querySelector('legend')?.textContent==='3. elem');
+  const addedGalleryItem=galleryRepeater.locator(':scope > fieldset').nth(2);
+  await addedGalleryItem.getByLabel('Külső média címe',{exact:true}).fill('/fixture.svg');
+  await addedGalleryItem.getByLabel('Képleírás',{exact:true}).fill('Új képgaléria-kép');
+  await addedGalleryItem.getByLabel('Képaláírás',{exact:true}).fill('Új képaláírás');
+  assert.deepEqual(await node(editor,'gallery').locator('img').evaluateAll(items=>items.map(item=>item.getAttribute('alt'))),
+    ['Első kép','Második kép','Új képgaléria-kép'],'Gallery Add creates an editable image and Canvas item');
+  await galleryRepeater.getByRole('button',{name:'3. elem: Fel',exact:true}).press('Enter');
+  assert.deepEqual(await node(editor,'gallery').locator('img').evaluateAll(items=>items.map(item=>item.getAttribute('alt'))),
+    ['Első kép','Új képgaléria-kép','Második kép'],'Gallery reorder moves the selected image with its authored data');
+  await galleryRepeater.getByRole('button',{name:'3. elem: Eltávolítás',exact:true}).press('Enter');
+  await editor.waitForFunction(()=>document.activeElement?.getAttribute('aria-label')==='Külső média címe'&&
+    document.activeElement?.closest('fieldset')?.querySelector('legend')?.textContent==='2. elem');
+  assert.equal(await galleryRepeater.locator(':scope > fieldset').count(),2,'Gallery Delete removes only the selected image row');
+  assert.deepEqual(await node(editor,'gallery').locator('img').evaluateAll(items=>items.map(item=>item.getAttribute('alt'))),
+    ['Első kép','Új képgaléria-kép'],'Gallery Delete removes the original row without deleting the reordered new image');
+  const survivingGalleryItem=galleryRepeater.locator(':scope > fieldset').nth(1);
+  await survivingGalleryItem.getByLabel('Képleírás',{exact:true}).fill('Második kép');
+  await survivingGalleryItem.getByLabel('Képaláírás',{exact:true}).fill('Második képaláírás');
+  assert.equal(posts.length,countBeforeStructuralEdit,'Gallery Add/edit/reorder/Delete stays draft-only');
   await editor.getByLabel('Képgaléria elnevezése',{exact:true}).fill('Műhelyem & képeim');
   const galleryColumns=editor.getByLabel('Oszlopok asztalon',{exact:true});
   await galleryColumns.selectOption('4');
@@ -544,6 +567,26 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   assert.equal(await node(editor,'gallery').locator('img').first().getAttribute('alt'),'Márkajel','gallery item inherits metadata only when its own alt is empty');
   assert.equal(await node(editor,'gallery').locator('.creator-image-zoom').first().getAttribute('data-lightbox-src'),'/api/admin/media?id='+assetId,'canvas zoom uses the selected private asset');
   await select('carousel');
+  const carouselRepeater=editor.locator('.content-repeater[data-content-key="items"]');
+  await carouselRepeater.getByRole('button',{name:'Lapozható képek hozzáadása',exact:true}).press('Enter');
+  await editor.waitForFunction(()=>document.activeElement?.getAttribute('aria-label')==='Külső média címe'&&
+    document.activeElement?.closest('fieldset')?.querySelector('legend')?.textContent==='3. elem');
+  const addedCarouselItem=carouselRepeater.locator(':scope > fieldset').nth(2);
+  await addedCarouselItem.getByLabel('Külső média címe',{exact:true}).fill('/fixture.svg');
+  await addedCarouselItem.getByLabel('Képleírás',{exact:true}).fill('Új dia');
+  assert.deepEqual(await node(editor,'carousel').locator('img').evaluateAll(items=>items.map(item=>item.getAttribute('alt'))),
+    ['Első dia','Második dia','Új dia'],'Carousel Add immediately creates an editable slide');
+  await carouselRepeater.getByRole('button',{name:'3. elem: Fel',exact:true}).press('Enter');
+  assert.deepEqual(await node(editor,'carousel').locator('img').evaluateAll(items=>items.map(item=>item.getAttribute('alt'))),
+    ['Első dia','Új dia','Második dia'],'Carousel reorder moves the complete authored slide');
+  await carouselRepeater.getByRole('button',{name:'3. elem: Eltávolítás',exact:true}).press('Enter');
+  await editor.waitForFunction(()=>document.activeElement?.getAttribute('aria-label')==='Külső média címe'&&
+    document.activeElement?.closest('fieldset')?.querySelector('legend')?.textContent==='2. elem');
+  assert.equal(await carouselRepeater.locator(':scope > fieldset').count(),2,'Carousel Delete removes only the selected slide row');
+  assert.deepEqual(await node(editor,'carousel').locator('img').evaluateAll(items=>items.map(item=>item.getAttribute('alt'))),
+    ['Első dia','Új dia'],'Carousel Delete removes the original slide rather than the moved new one');
+  await carouselRepeater.locator(':scope > fieldset').nth(1).getByLabel('Képleírás',{exact:true}).fill('Második dia');
+  assert.equal(posts.length,countBeforeStructuralEdit,'Carousel Add/edit/reorder/Delete stays draft-only');
   await editor.emulateMedia({reducedMotion:'reduce'});
   await node(editor,'carousel').getByRole('button',{name:'Következő kép',exact:true}).click();
   await editor.waitForFunction(id=>document.querySelector(`[data-node-id="${id}"] .creator-carousel`)?.scrollLeft>0,ids.carousel);
@@ -738,6 +781,14 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   assert.deepEqual(posts.at(-1).document.pages[pageId].nodes[ids.dropdown].props.items,
     [{title:'További részletek',text:'Kiegészítés'},{title:'Új rész',text:'Új információ'}],
     'explicit Save persists the Dropdown Add/reorder/Delete result as exact Page Model rows');
+  assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.gallery].props.items.length,2,
+    'explicit Save retains exactly the two surviving Gallery rows after Add/reorder/Delete');
+  assert.deepEqual(posts.at(-1).document.pages[pageId].nodes[ids.gallery].props.items.map(item=>item.alt),
+    ['Márkajel','  Frissített képleírás  '],'Save preserves Gallery row order and exact authored description values');
+  assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.carousel].props.items.length,2,
+    'explicit Save retains exactly the two surviving Carousel slides after Add/reorder/Delete');
+  assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.carousel].props.items[1].alt,'Márkajel',
+    'Save preserves the selected Carousel row and its inherited Media Library alt');
   assert.deepEqual(posts.at(-1).document.pages[pageId].nodes[ids.table].props.rows,expectedTableRows,
     'Save retains every long table cell and its final edit in the draft');
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.table].props.caption,'Frissített eredmények',
@@ -800,6 +851,9 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
     'Második képaláírás','draft Save leaves the prior public gallery caption live');
   assert.equal(await node(live,'gallery').getByRole('region',{name:'Eredeti képrács'}).count(),1,
     'gallery Inspector name stays draft-only after Save');
+  assert.equal(await node(live,'gallery').locator('img').count(),2,'draft Save does not expose the authored Gallery structure');
+  assert.deepEqual(await node(live,'gallery').locator('img').evaluateAll(items=>items.map(item=>item.getAttribute('alt'))),
+    ['Első kép','Második kép'],'draft Save leaves the old public Gallery slides unchanged');
   assert.equal(await node(live,'tabs').getByRole('tablist',{name:'Eredeti fülek'}).count(),1,
     'tablist Inspector name stays draft-only after Save');
   assert.equal(await node(live,'accordion').getByRole('group',{name:'Harmonika'}).count(),1,
@@ -813,6 +867,9 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
     ['További részletek','Másik rész'],'draft Save leaves the public Dropdown items unchanged');
   assert.equal(await node(live,'dropdown').locator('details').first().evaluate(el=>el.open),false,
     'first-open setting remains private after Save');
+  assert.equal(await node(live,'carousel').locator('img').count(),2,'draft Save does not expose the authored Carousel structure');
+  assert.deepEqual(await node(live,'carousel').locator('img').evaluateAll(items=>items.map(item=>item.getAttribute('alt'))),
+    ['Első dia','Második dia'],'draft Save leaves the old public Carousel slides unchanged');
   assert.deepEqual(await node(live,'dropdown').locator('details').evaluateAll(items=>items.map(el=>el.getAttribute('name'))),[null,null],
     'single-open remains private on the public page until the separate Publish action');
   assert.deepEqual(await node(live,'dropdown').locator('details').evaluateAll(items=>items.map(el=>el.open)),[false,false],
@@ -864,6 +921,9 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   assert.equal(await editor.getByLabel('Kép szöveges leírása',{exact:true}).inputValue(),'','Editor reload preserves the intentionally empty alt value');
   assert.equal(await editor.locator('[data-content-key="loading"] select').inputValue(),'eager','Editor reload restores the authored image loading strategy');
   await select('gallery');
+  assert.equal(await galleryRepeater.locator(':scope > fieldset').count(),2,'Editor reload restores the exact saved Gallery row count');
+  assert.deepEqual(await node(editor,'gallery').locator('img').evaluateAll(items=>items.map(item=>item.getAttribute('alt'))),
+    ['Márkajel','Frissített képleírás'],'Editor reload restores the saved Gallery item order and normalized Canvas descriptions');
   assert.equal(await editor.getByLabel('Képgaléria elnevezése',{exact:true}).inputValue(),'Műhelyem & képeim',
     'Editor reload restores the authored gallery region name from the saved draft');
   await select('dropdown');
@@ -895,6 +955,9 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   assert.equal(await editor.locator('.content-repeater fieldset').nth(1).getByLabel('Képaláírás',{exact:true}).inputValue(),
     '  Frissített képaláírás  ','Editor reload restores the exact authored gallery caption');
   await select('carousel');
+  assert.equal(await carouselRepeater.locator(':scope > fieldset').count(),2,'Editor reload restores the exact saved Carousel row count');
+  assert.deepEqual(await node(editor,'carousel').locator('img').evaluateAll(items=>items.map(item=>item.getAttribute('alt'))),
+    ['Első dia','Márkajel'],'Editor reload restores the saved Carousel slide order and inherited media metadata');
   assert.equal(await editor.locator('.content-repeater fieldset').nth(1).getByLabel('Képleírás',{exact:true}).inputValue(),'Márkajel',
     'Editor reload restores inherited Media Library alt metadata on the carousel item');
   await select('link');
@@ -976,6 +1039,12 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   assert.deepEqual(await node(live,'dropdown').locator('details').evaluateAll(items=>items.map(item=>item.textContent.trim())),
     ['További részletekKiegészítés','Új részÚj információ'],
     'separate Publish exposes the saved Dropdown content');
+  assert.equal(await node(live,'gallery').locator('img').count(),2,'separate Publish exposes only the two saved Gallery rows');
+  assert.deepEqual(await node(live,'gallery').locator('img').evaluateAll(items=>items.map(item=>item.getAttribute('alt'))),
+    ['Márkajel','Frissített képleírás'],'separate Publish exposes the saved Gallery row order and descriptions');
+  assert.equal(await node(live,'carousel').locator('img').count(),2,'separate Publish exposes only the two saved Carousel slides');
+  assert.deepEqual(await node(live,'carousel').locator('img').evaluateAll(items=>items.map(item=>item.getAttribute('alt'))),
+    ['Első dia','Márkajel'],'separate Publish exposes the saved Carousel row order and media metadata');
   const publishedDropdown=node(live,'dropdown').getByRole('group',{name:'További lehetőségek'}).locator('details');
   const publishedDropdownName=await publishedDropdown.first().getAttribute('name');
   assert.ok(publishedDropdownName,'separate Publish exposes the native Dropdown group');
