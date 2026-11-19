@@ -68,8 +68,9 @@ test('legacy image video audio share guarded media URLs in Inspector Canvas and 
       return json({ok:true,data:{assets:[asset],nextCursor:null}});
     }
     if((url.pathname==='/api/admin/media'&&(url.searchParams.get('id')===mediaId||url.searchParams.get('id')===videoMediaId||url.searchParams.get('id')===audioMediaId))||url.pathname==='/media/'+mediaId||url.pathname==='/media/'+videoMediaId||url.pathname==='/media/'+audioMediaId){
-      res.setHeader('content-type',url.searchParams.get('id')===audioMediaId?'audio/wav':'image/svg+xml');
-      return res.end(url.searchParams.get('id')===audioMediaId?Buffer.alloc(16):'<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"><rect width="20" height="20" fill="#56f"/></svg>');
+      const isAudio=url.searchParams.get('id')===audioMediaId||url.pathname==='/media/'+audioMediaId;
+      res.setHeader('content-type',isAudio?'audio/wav':'image/svg+xml');
+      return res.end(isAudio?Buffer.alloc(16):'<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"><rect width="20" height="20" fill="#56f"/></svg>');
     }
     if(url.pathname==='/api/public/pages')return json({ok:true,data:{id:pageId,slug:'test',title:'Test',description:'',content:published.pages[pageId]}});
     if(url.pathname==='/api/public/navigation')return json({ok:true,data:{items:[]}});
@@ -404,6 +405,7 @@ test('legacy image video audio share guarded media URLs in Inspector Canvas and 
   assert.equal(await publishedSound.getAttribute('controls'),null);
   assert.equal(await publishedSound.getAttribute('loop'),'');
   assert.equal(await publishedSound.evaluate(el=>new URL(el.getAttribute('src'),location.href).pathname),'/media/'+audioMediaId,'only the separate Publish exposes the selected audio asset on the public page');
+  assert.equal(await viewer.evaluate(async id=>(await fetch('/media/'+id)).headers.get('content-type'),audioMediaId),'audio/wav','the public media route serves the selected audio asset with its audio MIME type');
   await viewer.setViewportSize({width:390,height:820});
   assert.equal(await publishedMovie.getAttribute('poster')!==null,true,'mobile public poster is preserved');
   assert.equal(await publishedSound.getAttribute('loop'),'','mobile audio still loops');

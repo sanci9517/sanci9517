@@ -1,15 +1,15 @@
 {
   "schema": "sanci.editor.d06-legacy-audio-media-save-publish.v1",
-  "captured_at_utc": "2026-11-19T09:03:00Z",
+  "captured_at_utc": "2026-11-19T09:10:39Z",
   "plan_point": "77.44.7.D / D-06 — legacy audio Media Library source replacement lifecycle",
   "repository": "sanci9517/sanci9517",
   "branch": "v2/foundation",
   "base_commit": "4c7b39f600ab8f753daad4e855860b61745dc068",
   "canonical_plan_sha256": "22cb263e9a43a4424d8bdb72e4b5daee215fdb45a48b7db3c2b80817821d9b3a",
-  "test_source_sha256": "56b104f81a1337cefac711d4f1e589f515eed56e270bfebed44f6eb852fb506e",
+  "test_source_sha256": "c31dd8e5baa633e6b936fea2e28c50549f6e73117d1e6b262e686c50219558f7",
   "change": {
     "file": "tests/browser/editor-legacy-media-parity.test.js",
-    "summary": "Extends the existing legacy media browser fixture with the missing Audio Media Library replacement path: selecting an audio asset clears the URL, uses the authenticated editor preview, draft Save stores the asset ID without changing published audio, reload restores the selection, and explicit Publish exposes the /media/<id> URL. The fixture now serves the exact audio asset on its authenticated and public routes.",
+    "summary": "Extends the existing legacy media browser fixture with the missing Audio Media Library replacement path: selecting an audio asset clears the URL, uses the authenticated editor preview, draft Save stores the asset ID without changing published audio, reload restores the selection, and explicit Publish exposes the /media/<id> URL. The fixture now serves the exact audio asset on its authenticated and public routes. The fixture also asserts the public audio route MIME type and serves audio/wav rather than the image placeholder.",
     "runtime_change": false,
     "production_data_change": false,
     "save_publish": "Explicit Save and Publish remain separate; pre-Publish public audio remains unchanged."
@@ -22,7 +22,8 @@
     "active_plan_audit": "PASS; 77.44.7.D remains OPEN / NOT_CERTIFIED, 147 PARTIAL_SOURCE / 249 UNVERIFIED.",
     "canonical_plan": "PASS; complete 13-file master and 396 mappings; acceptance remains NOT_CERTIFIED.",
     "syntax_diff": "PASS; node --check and git diff --check.",
-    "workflow_manifest": "The modified test remains in the existing Editor Core browser layout workflow; no workflow file changes."
+    "workflow_manifest": "The modified test remains in the existing Editor Core browser layout workflow; no workflow file changes.",
+    "targeted_chromium_followup": "PASS; reran the D-06 browser regression after correcting the fixture response for /media/<audio-id>; 1/1 passed, including an assertion that the public route returns audio/wav."
   },
   "production_snapshot": {
     "checked_in_this_run": true,

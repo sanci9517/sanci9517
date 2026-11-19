@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261119091039-e7ab34e5",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-19T09:10:39.125Z",
+  "finished_at": "2026-11-19T09:11:09.910Z",
+  "wall_seconds": 31,
+  "paused_seconds": 0,
+  "measured_seconds": 31,
+  "status": "pass",
+  "kind": "test",
+  "summary": "Corrected D-06 public audio fixture MIME and asserted audio/wav; targeted Chromium regression and syntax checks passed.",
+  "evidence": [
+    "docs/evidence/editor-d06-legacy-audio-media-save-publish-2026-11-19.json"
+  ],
+  "checks": "targeted D-06 Chromium 1/1; node --check; git diff --check",
+  "started_revision": "4c7b39f600ab8f753daad4e855860b61745dc068",
+  "finished_revision": "4c7b39f600ab8f753daad4e855860b61745dc068",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
