@@ -32,6 +32,9 @@
   "release_state_at_capture": {
     "remote_branch_head_before_followup": "2f5fee2f392db2d3afde9d2dec281a2625e5989b",
     "remote_branch_readback": "GitHub Branch API GET confirmed v2/foundation at 2f5fee2f392db2d3afde9d2dec281a2625e5989b before this follow-up.",
+    "test_evidence_commit_sha": "2e99b74b0033ec4836473177f61ce58bb2d6f844",
+    "normal_fast_forward_push": "git push origin HEAD:refs/heads/v2/foundation succeeded; remote branch API readback confirmed exact SHA 2e99b74b0033ec4836473177f61ce58bb2d6f844.",
+    "combined_status_for_test_commit": "GitHub combined status returned an empty statuses array; the commit is test/evidence/plan documentation only, carries [skip ci], and no workflow PASS is claimed.",
     "cloudflare_deployment_id": "c4b9526a-c54b-4fe3-9218-d889c1e011e9",
     "worker_version_id": "9870e814-359c-4871-a25c-289d9dfe7c2c",
     "worker_traffic_percent": 100,
