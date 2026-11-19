@@ -40,7 +40,10 @@
     "worker_traffic_percent": 100,
     "runtime_source_sha": "NOT REVALIDATED; no runtime or public asset source changed.",
     "runtime_deployment_needed": false,
-    "direct_health_this_followup": "NOT RUN; test/evidence-only change. No new health result is claimed."
+    "direct_health_this_followup": "NOT RUN; test/evidence-only change. No new health result is claimed.",
+    "test_and_evidence_commit_sha": "d2fabcb8092b02b1d90fdfa0cde4a3f2b3bfce09",
+    "normal_fast_forward_push": "GitHub GET verified refs/heads/v2/foundation at d2fabcb8092b02b1d90fdfa0cde4a3f2b3bfce09 after normal fast-forward push.",
+    "combined_status_for_test_commit": "GitHub GET returned zero status contexts for the [skip ci] commit; hosted CI was not run and no CI PASS is claimed."
   },
   "scope_limits": {
     "d05_status": "This verifies mobile final-row Delete focus recovery and Add focus for six repeater types. It does not certify all D-05 data, all responsive breakpoints, malformed/API/media/security cases, or full Editor parity.",
