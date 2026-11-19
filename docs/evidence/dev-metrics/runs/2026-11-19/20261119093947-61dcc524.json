@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261119093947-61dcc524",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-19T09:39:47.765Z",
+  "finished_at": "2026-11-19T09:42:52.549Z",
+  "wall_seconds": 185,
+  "paused_seconds": 0,
+  "measured_seconds": 185,
+  "status": "pass",
+  "kind": "test",
+  "summary": "Browser regression proves a 403 Save retains local edits and leaves draft/public snapshots unchanged; a later Save still does not Publish",
+  "evidence": [
+    "tests/browser/editor-media-source-switch.test.js:PASS"
+  ],
+  "checks": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-media-source-switch.test.js PASS 4/4; node --check PASS; git diff --check PASS",
+  "started_revision": "9170b27729c4c84a3f416371a4afb6384244b97a",
+  "finished_revision": "9170b27729c4c84a3f416371a4afb6384244b97a",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

@@ -21,16 +21,18 @@ async function fixture(t,width){
   const props=type==='image'?first:type==='video'?{src:'/fixture.webm',poster:'/fixture-old.svg',posterAssetId:assetId,controls:true,muted:true}:{items:[first,second]};
   execute(state,{type:'content.properties.set',payload:{nodeId:ids[type],patch:structuredClone(props)}});
  }
- let draft=structuredClone(state.document),published=structuredClone(draft),version=1;
- const original=structuredClone(draft),posts=[],requests=[],errors=[],root=resolve(import.meta.dirname,'../../public');
+ let draft=structuredClone(state.document),published=structuredClone(draft),version=1,rejectNextSave=false;
+ const original=structuredClone(draft),posts=[],writeAttempts=[],requests=[],errors=[],root=resolve(import.meta.dirname,'../../public');
  const video=await readFile(new URL('../fixtures/editor-sample.webm',import.meta.url));
  const server=createServer(async(req,res)=>{
   const url=new URL(req.url,'http://localhost');requests.push({path:url.pathname,method:req.method});
-  const json=body=>{res.writeHead(200,{'content-type':'application/json'});res.end(JSON.stringify(body));};
+  const json=(body,status=200)=>{res.writeHead(status,{'content-type':'application/json'});res.end(JSON.stringify(body));};
   if(url.pathname==='/api/admin/pages')return json({ok:true,data:url.searchParams.has('archived')?[]:[{id:pageId,slug:'test',title:'Test',content:draft,revision:version,isPublished:true}]});
   if(url.pathname==='/api/admin/editor'){
    if(req.method==='GET')return json({ok:true,data:{page:{id:pageId,document:draft,publishedRevisionId:'published'},revisions:[{id:'revision-'+version,version}]}});
-   let body='';for await(const chunk of req)body+=chunk;const saved=JSON.parse(body);posts.push(saved);draft=structuredClone(saved.document);version++;
+   let body='';for await(const chunk of req)body+=chunk;const saved=JSON.parse(body);writeAttempts.push(saved);
+   if(rejectNextSave){rejectNextSave=false;return json({ok:false,error:{message:'A szerkesztői hozzáférést visszavonták.'}},403);}
+   posts.push(saved);draft=structuredClone(saved.document);version++;
    if(saved.publish)published=structuredClone(draft);
    return json({ok:true,data:{pageId,version,revisionId:'revision-'+version,published:Boolean(saved.publish)}});
   }
@@ -62,7 +64,7 @@ async function fixture(t,width){
  const picker=type=>scope(type).locator(`[data-content-key="${keys(type)[1]}"]`);
  const choose=async type=>{await picker(type).getByRole('button',{name:'Médiatár megnyitása'}).click();await picker(type).getByRole('button',{name:'Közös kép.png kiválasztása'}).click();};
  const save=async publish=>{await editor.locator(publish?'#publish':'#save').click();try{await editor.waitForFunction(pub=>document.querySelector('#saveStatus').textContent.startsWith(pub?'Publikálva':'Mentve'),publish);}catch(error){throw new Error(await editor.locator('#saveStatus').textContent(),{cause:error});}};
- return {editor,live,source,select,field,picker,choose,save,node,media,scope,errors,posts,requests,original,ids,pageId,draft:()=>draft};
+ return {editor,live,source,select,field,picker,choose,save,node,media,scope,errors,posts,writeAttempts,requests,original,ids,pageId,draft:()=>draft,rejectNextSave:()=>{rejectNextSave=true}};
 }
 
 for(const width of [390,1366])test(`authored image/gallery/carousel/poster source changes preserve editing and Save/Publish at ${width}px`,async t=>{
@@ -154,4 +156,22 @@ test('failed source commits preserve companion controls and the next edit starts
   assert.deepEqual(result.patchKeys,['gallery','carousel'].includes(result.type)?['items']:[result.type==='video'?'poster':'src',result.type==='video'?'posterAssetId':'assetId']);
  }
  assert.equal(f.posts.length,0);assert.deepEqual(f.errors,[]);
+});
+
+test('a revoked editor Save keeps the local draft dirty and never changes the published page',async t=>{
+ const f=await fixture(t,390);
+ await f.select('image');
+ const imageField=f.field('image');await imageField.fill('/revoked-membership-draft.svg');
+ const previousDraft=structuredClone(f.draft()),previousPublished=await f.source(f.live,'image');
+ f.rejectNextSave();await f.editor.locator('#save').click();
+ await f.editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent==='Mentési hiba');
+ assert.equal(f.writeAttempts.length,1);assert.equal(f.writeAttempts[0].publish,false,'the rejected request is a Save, never a Publish');
+ assert.equal(await imageField.inputValue(),'/revoked-membership-draft.svg','the unsaved local edit remains in the open Inspector');
+ assert.deepEqual(f.draft(),previousDraft,'a denied Save leaves the server-side draft untouched');
+ await f.live.reload();assert.equal(await f.source(f.live,'image'),previousPublished,'a denied Save cannot change public content');
+ await f.save(false);
+ assert.equal(f.posts.length,1,'the retained dirty document can be saved after access is restored');
+ assert.equal(target(f.posts[0].document,f.pageId,f.ids,'image').src,'/revoked-membership-draft.svg');
+ await f.live.reload();assert.equal(await f.source(f.live,'image'),previousPublished,'a successful Save still does not Publish');
+ assert.deepEqual(f.errors,[]);
 });

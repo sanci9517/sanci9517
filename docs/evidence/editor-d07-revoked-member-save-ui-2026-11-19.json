@@ -1,0 +1,48 @@
+{
+  "schema": 1,
+  "captured_at": "2026-11-19T09:43:05Z",
+  "plan_item": "77.44.7.D",
+  "status": "OPEN / NOT_CERTIFIED",
+  "scope": "D-07 browser regression: a 403 Save after tenant membership revocation preserves local Editor work and leaves the public snapshot unchanged.",
+  "plan_sha256": "22cb263e9a43a4424d8bdb72e4b5daee215fdb45a48b7db3c2b80817821d9b3a",
+  "base_commit": "9170b27729c4c84a3f416371a4afb6384244b97a",
+  "test_sha256": "fe4b71ba069c15b953d044bd0d358a6b1febf85c93d20fe8c1cc82643f390e46",
+  "changes": {
+    "runtime": "none",
+    "test": [
+      "The browser fixture rejects the next Editor Save with HTTP 403 without mutating its draft or public document.",
+      "The test verifies the local Inspector edit remains, the UI says Mentési hiba, no runtime page error occurs, and public output remains unchanged.",
+      "A subsequent successful Save contains the retained local edit while the public page remains unchanged, preserving the Save/Publish separation."
+    ]
+  },
+  "checks": [
+    {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-media-source-switch.test.js",
+      "result": "PASS 4/4; two viewport source-switch tests, rejected local commit test, and revoked-membership Save UI regression"
+    },
+    {
+      "command": "node --check tests/browser/editor-media-source-switch.test.js",
+      "result": "PASS"
+    },
+    {
+      "command": "git diff --check",
+      "result": "PASS"
+    }
+  ],
+  "release": {
+    "ci": "not dispatched; docs/test-only change, no hosted CI result claimed",
+    "worker": "runtime code unchanged; no deploy performed",
+    "verified_baseline": {
+      "deployment_id": "a8cb33a3-5179-4fc9-8844-e002a1e1a9e3",
+      "version_id": "31b605b7-fd0d-4cfa-8ddf-849c51eadef2",
+      "traffic_percent": 100,
+      "runtime_source_sha": "fad2043d96f3bf890005c62c0e34d0084b387f05"
+    }
+  },
+  "production_data_and_cost": {
+    "production_d1_mutations_or_migrations": "none",
+    "r2_operations": "none",
+    "new_paid_services_or_spend": "none"
+  },
+  "acceptance_boundary": "This closes only the revoked-membership Save UI regression. The full Editor and complete D block remain open; full feature or physical acceptance is not claimed."
+}
