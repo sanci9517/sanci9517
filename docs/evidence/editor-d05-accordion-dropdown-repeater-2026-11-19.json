@@ -38,7 +38,9 @@
   },
   "release_state_at_capture": {
     "remote_branch_head_before_followup": "GitHub branch-ref GET confirmed v2/foundation at 64aa76ace2b40140252bb381264223f19775f751 before this follow-up.",
-    "normal_fast_forward_push": "Pending validation/commit in this work block.",
+    "test_and_evidence_commit_sha": "bf709c7bca5d1fd403666150a8b4a4c1c414f6db",
+    "normal_fast_forward_push": "git push origin HEAD:refs/heads/v2/foundation succeeded; GitHub branch-ref GET confirmed exact SHA bf709c7bca5d1fd403666150a8b4a4c1c414f6db.",
+    "combined_status_for_test_commit": "GitHub combined status returned an empty statuses array. The commit carries [skip ci]; no hosted CI PASS is claimed.",
     "worker_latest_deployment_read_only_get": "c4b9526a-c54b-4fe3-9218-d889c1e011e9",
     "worker_latest_version_read_only_get": "9870e814-359c-4871-a25c-289d9dfe7c2c",
     "worker_traffic_percent": 100,
