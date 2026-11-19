@@ -89,4 +89,12 @@ test('failed Editor save redacts diagnostics and preserves the local draft for r
   assert.equal(posts[1].publish, false, 'retry remains a Save operation, not a Publish');
   assert.equal(draft.pages[pageId].nodes[nodeId].props.text, 'Nem veszhet el ez a helyi módosítás');
   assert.equal(dialogs.length, 1, 'only the failed Save emitted one recoverable alert');
+  const previousDiagnosticCount = await page.evaluate(() => window.__sanciEditorDiagnostics.entries.length);
+  await page.evaluate(() => {
+    const reason = { [Symbol.toPrimitive]() { throw new Error('diagnostic coercion secret'); } };
+    window.dispatchEvent(new PromiseRejectionEvent('unhandledrejection', { reason, promise: Promise.resolve() }));
+  });
+  assert.equal(await page.evaluate(() => window.__sanciEditorDiagnostics.entries.length), previousDiagnosticCount + 1);
+  assert.match(await page.locator('#diagnosticsList').innerText(), /hibaüzenet nem olvasható/i);
+  assert.deepEqual(pageErrors, [], 'a malformed rejection value cannot make the diagnostics listener throw');
 });
