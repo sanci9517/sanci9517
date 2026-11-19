@@ -1414,6 +1414,7 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   ];
   await live.goto(base+'/p/test');
   for(const item of emptyRepeaterCases){
+    await editor.setViewportSize({width:390,height:800});
     await select(item.type);
     const repeater=editor.locator('.content-repeater[data-content-key="items"]');
     while(await repeater.locator(':scope > fieldset').count()){
@@ -1421,6 +1422,9 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
       await repeater.getByRole('button',{name:`${count}. elem: Eltávolítás`,exact:true}).press('Enter');
       await repeater.locator(':scope > fieldset').nth(count-1).waitFor({state:'detached'});
     }
+    await editor.waitForFunction(label=>document.activeElement?.textContent.trim()===label,item.add);
+    assert.equal(await repeater.getByRole('button',{name:item.add,exact:true}).isVisible(),true,
+      `${item.type} mobile final-row Delete restores focus to its visible Add control`);
     assert.equal(await node(editor,item.type).locator(item.canvas).count(),0,
       `${item.type} supports an intentionally empty repeater without leaving stale Canvas items`);
     assert.equal(await repeater.getByRole('button',{name:item.add,exact:true}).isEnabled(),true,
@@ -1436,6 +1440,7 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
       `${item.type} Add recovers the empty Canvas and exposes its authored row`);
     assert.equal(posts.length,beforeAdd,`${item.type} final-row Delete and Add remain draft-only`);
   }
+  await editor.setViewportSize({width:1366,height:900});
   const beforeEmptyRepeaterSave=posts.length;
   await editor.locator('#save').click();
   await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));

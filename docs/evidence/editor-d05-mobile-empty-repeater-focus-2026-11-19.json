@@ -1,0 +1,54 @@
+{
+  "schema": "sanci.editor.d05-mobile-empty-repeater-focus.v1",
+  "captured_at_utc": "2026-11-19T19:02:46Z",
+  "plan_point": "77.44.7.D / D-05 — mobile empty-repeater focus recovery",
+  "repository": "sanci9517/sanci9517",
+  "branch": "v2/foundation",
+  "branch_head_before_followup": "0456e36b956e5164ddcd327e1ede5383cb879fb2",
+  "development_metric": {
+    "run_id": "20261119190132-612679a3",
+    "status": "partial",
+    "kind": "test",
+    "archive": "docs/evidence/dev-metrics/runs/2026-11-19/20261119190132-612679a3.json"
+  },
+  "runtime_source_changed": false,
+  "change": {
+    "files": [
+      "tests/browser/editor-content-system.test.js",
+      "docs/evidence/editor-d05-mobile-empty-repeater-focus-2026-11-19.json",
+      "docs/evidence/dev-metrics/runs/2026-11-19/20261119190132-612679a3.json"
+    ],
+    "summary": "The real Chromium empty-state recovery lifecycle now runs at a 390px mobile viewport for List, Tabs, Accordion, Dropdown, Gallery, and Carousel. After keyboard deleting the final row, each test verifies focus returns to that repeater's visible Add action; keyboard Add then focuses the appropriate new field. All six controls remain draft-only, and the same regression continues through explicit Save, reload, and separate Publish.",
+    "save_publish": "Delete and Add remain local draft edits; a later separate explicit Save persists the recovered rows and only the distinct Publish updates the public fixture."
+  },
+  "checks": {
+    "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-content-system.test.js": "PASS; 1/1 real Chromium test, including six repeaters at 390px, final-row Delete focus recovery, keyboard Add focus, explicit Save/reload, and separate Publish.",
+    "npm run test:editor": "PASS; 22/22 Editor unit test files and 4/4 subreaper/manifest guards.",
+    "npm run typecheck -- --pretty false": "PASS.",
+    "python3 tests/plan-contract.test.py": "PASS; 15/15.",
+    "python3 scripts/check-canonical-plan.py": "PASS; one complete 13-file canonical master / 396 mappings; functional acceptance remains uncertified.",
+    "python3 scripts/build-feature-traceability.py --check": "PASS; 396/396 source mappings.",
+    "python3 scripts/audit-active-plan-point.py": "PASS; active cursor 77.44.7.D remains OPEN / NOT_CERTIFIED; 147 PARTIAL_SOURCE and 249 UNVERIFIED.",
+    "node --check tests/browser/editor-content-system.test.js": "PASS.",
+    "git diff --check": "PASS.",
+    "hosted_ci": "NOT RUN; test/evidence-only change will use [skip ci]; the Actions free quota remains unverified."
+  },
+  "release_state_at_capture": {
+    "remote_branch_head_before_followup": "GitHub GET verified v2/foundation at 0456e36b956e5164ddcd327e1ede5383cb879fb2.",
+    "worker_latest_deployment_id": "c4b9526a-c54b-4fe3-9218-d889c1e011e9",
+    "worker_latest_version_id": "9870e814-359c-4871-a25c-289d9dfe7c2c",
+    "worker_traffic_percent": 100,
+    "runtime_source_sha": "NOT REVALIDATED; no runtime or public asset source changed.",
+    "runtime_deployment_needed": false,
+    "direct_health_this_followup": "NOT RUN; test/evidence-only change. No new health result is claimed."
+  },
+  "scope_limits": {
+    "d05_status": "This verifies mobile final-row Delete focus recovery and Add focus for six repeater types. It does not certify all D-05 data, all responsive breakpoints, malformed/API/media/security cases, or full Editor parity.",
+    "d_status": "77.44.7.D remains OPEN / NOT_CERTIFIED; source audit remains 147 PARTIAL_SOURCE and 249 UNVERIFIED.",
+    "manual_physical_editor_acceptance": "DEFERRED until the complete Visual Editor is implemented.",
+    "production_d1_migration_or_write": false,
+    "production_r2_mutation_or_delete": false,
+    "paid_services_or_dependencies": false,
+    "new_cost_huf": 0
+  }
+}

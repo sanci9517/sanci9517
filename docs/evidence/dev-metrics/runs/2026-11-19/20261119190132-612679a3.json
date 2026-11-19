@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261119190132-612679a3",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-19T19:01:32.580Z",
+  "finished_at": "2026-11-19T19:03:18.927Z",
+  "wall_seconds": 106,
+  "paused_seconds": 0,
+  "measured_seconds": 106,
+  "status": "partial",
+  "kind": "test",
+  "summary": "D-05 mobile empty-repeater recovery now verifies final-row Delete returns keyboard focus to Add for all six repeaters; full D audit remains open.",
+  "evidence": [
+    "tests/browser/editor-content-system.test.js:PASS",
+    "docs/evidence/editor-d05-mobile-empty-repeater-focus-2026-11-19.json"
+  ],
+  "checks": "Chromium 1/1; Editor 22/22 + 4/4; typecheck; plan 15/15; traceability 396/396; audit OPEN",
+  "started_revision": "0456e36b956e5164ddcd327e1ede5383cb879fb2",
+  "finished_revision": "0456e36b956e5164ddcd327e1ede5383cb879fb2",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
