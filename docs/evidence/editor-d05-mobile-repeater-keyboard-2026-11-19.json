@@ -40,7 +40,10 @@
     "worker_traffic_percent": 100,
     "runtime_source_sha": "NOT REVALIDATED; no runtime or public asset source changed.",
     "runtime_deployment_needed": false,
-    "direct_health_this_followup": "NOT RUN; test/evidence-only change. No new health result is claimed."
+    "direct_health_this_followup": "NOT RUN; test/evidence-only change. No new health result is claimed.",
+    "test_and_evidence_commit_sha": "def11815c686559cb7b63ac7e91ab1baa538a9c0",
+    "normal_fast_forward_push": "git push origin HEAD:refs/heads/v2/foundation succeeded; GitHub branch endpoint GET confirmed exact SHA def11815c686559cb7b63ac7e91ab1baa538a9c0.",
+    "combined_status_for_test_commit": "GitHub GET returned state pending with zero status contexts. The commit carries [skip ci]; no hosted CI PASS is claimed."
   },
   "scope_limits": {
     "d05_status": "This verifies the 390px mobile keyboard interaction slice for authored List repeater controls only; it does not certify all repeaters, responsive layouts, accessibility criteria, malformed values, media/API/security paths, or full Editor parity.",
