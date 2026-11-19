@@ -1,11 +1,11 @@
 {
   "schema": "sanci.editor.edt042-preboot-diagnostic-redaction.v1",
-  "recorded_at_utc": "2026-11-19T06:24:24Z",
+  "recorded_at_utc": "2026-11-19T06:28:39Z",
   "repository": "sanci9517/sanci9517",
   "branch": "v2/foundation",
   "base_head_after_preserving_remote_evidence": "021ff85cba893722a826895a47fd09f5f12b30e2",
   "plan_point": "77.44 / WEB-011 -> 77.44.7.D / EDT-042 adjacent diagnostics security regression",
-  "status": "LOCAL_VALIDATION_PASS_RELEASE_PENDING",
+  "status": "PRODUCTION_RELEASE_VERIFIED_EXACT_SHA_EDITOR_CORE_CI_PENDING",
   "defect": "Preboot ErrorEvent handling stored and logged untrusted raw messages, source URL queries and raw Error objects before the diagnostics module initialized, allowing credentials, private URL parameters and personal data into early diagnostics.",
   "implementation": {
     "redaction": "Preboot text is bounded and redacts bearer/token-like values, query secrets, email, phone and control characters; source URLs retain only a bounded path and redact the query.",
@@ -109,18 +109,90 @@
     "meaning": "Baseline only; the preboot redaction changes in this record are not yet live."
   },
   "release": {
-    "status": "PENDING_RUNTIME_COMMIT_PUSH_EXACT_SHA_CI_AND_PRODUCTION_VERIFICATION",
-    "expected_push_mode": "Normal fast-forward only, after merging the independently advanced remote commits; force push prohibited.",
-    "remote_head_before_change": "7f7aad01bfda0ad73fe052843204885721070c92",
-    "prior_exact_sha_editor_core_ci": {
-      "run_id": 44467579436,
-      "source_sha": "ecbd4188a32554da1d9d4434abec32f73d6ca108",
-      "status": "IN_PROGRESS",
-      "meaning": "This is the previous runtime SHA; it cannot certify this source change."
+    "status": "EXACT_SHA_PUSHED_AUTOMATIC_BUILD_DEPLOY_HEALTH_AND_ASSET_HASHES_VERIFIED; EDITOR_CORE_CI_PENDING",
+    "branch": "v2/foundation",
+    "source_sha": "872c0caf003242e3894b80efc9cc7a38da2017c2",
+    "push": "Normal fast-forward push, force=false; remote ref independently verified with git ls-remote.",
+    "remote_ref_verified": "872c0caf003242e3894b80efc9cc7a38da2017c2",
+    "merge_commit_preserved_remote_and_local_work": "021ff85cba893722a826895a47fd09f5f12b30e2",
+    "cloudflare_worker_build": {
+      "build_uuid": "c1cf1826-91f9-4ffe-ad9c-71e51b7a3a34",
+      "trigger_source": "push_event",
+      "commit_sha": "872c0caf003242e3894b80efc9cc7a38da2017c2",
+      "status": "stopped",
+      "outcome": "success",
+      "build_command": "npm run typecheck",
+      "deploy_command": "npm run deploy:safe",
+      "created_on": "2026-11-19T06:25:47.077Z",
+      "stopped_on": "2026-11-19T06:26:32.427Z"
     },
-    "new_exact_sha_ci": "Will be populated only after GitHub Actions automatically starts for the pushed runtime commit; no manual dispatch/rerun."
+    "deployment": {
+      "id": "546d67bc-bde9-49ec-a9b1-7c3ac30a3e78",
+      "version_id": "c144d397-0669-41b5-839a-1fdc6cc4b8b3",
+      "traffic_percent": 100,
+      "created_on": "2026-11-19T06:26:26.766Z",
+      "verified_at_utc": "2026-11-19T06:27Z"
+    },
+    "production_health": {
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health?release=872c0caf003242e3894b80efc9cc7a38da2017c2-direct",
+      "http": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      },
+      "verified_at_utc": "2026-11-19T06:27Z"
+    },
+    "direct_live_public_hashes": {
+      "public/editor-v2/boot.js": {
+        "sha256": "6b01a16f6ca9ce687d3be203a3b081827c26d252fee0d41c8a19be7ab0b9f083",
+        "http": 200,
+        "local_matches_live": true
+      },
+      "public/editor-v2/index.html": {
+        "sha256": "cd8b34e66d89a1d35396d800a00e73270ce8a76252f35c80870ae7ab15628e28",
+        "http": 200,
+        "local_matches_live": true
+      }
+    },
+    "exact_sha_workflows": {
+      "canonical_plan": {
+        "run_id": 44472095715,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      "active_point_audit": {
+        "run_id": 44472095674,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      "twitch_integration": {
+        "run_id": 44472095747,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      "f0_baseline": {
+        "run_id": 44472095698,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      "production_worker_source_smoke": {
+        "run_id": 44472095732,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      "editor_core": {
+        "run_id": 44472095699,
+        "status": "in_progress",
+        "conclusion": null,
+        "url": "https://github.com/sanci9517/sanci9517/actions/runs/44472095699",
+        "current_step": "Run Editor browser layout regression"
+      }
+    },
+    "exact_sha_ci": "PARTIAL; five exact-SHA workflows succeeded; required Editor Core layout and follow-on checks still running. No CI PASS claimed for the aggregate."
   },
-  "acceptance_boundary": "This is one EDT-042 preboot diagnostics security slice, not full EDT-042, not the D-01..D-07 capability/lifecycle matrix, not complete Editor acceptance. The full 77.44.7.D remains OPEN / NOT_CERTIFIED; manual/physical Editor acceptance stays DEFERRED until the complete Editor. Save and Publish remain separate.",
+  "acceptance_boundary": "This production release proves the EDT-042 preboot diagnostic redaction slice only. Full EDT-042 and the complete D-01..D-07 capability/lifecycle matrix remain OPEN / NOT_CERTIFIED. The full 77.44.7.D remains OPEN / NOT_CERTIFIED; the complete Editor manual/physical acceptance remains DEFERRED. Save and Publish remain separate.",
   "production_mutations": false,
-  "cost": "0 Ft; no paid service, no production D1 migration/data write, no R2 mutation/deletion, and no manual Actions dispatch/rerun."
+  "cost": "0 Ft; public GitHub standard runners; no new paid service, no production D1 write/migration, no R2 mutation/deletion, no manual dispatch/rerun."
 }

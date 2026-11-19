@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261119060631-43a47ea8",
+  "task": "EDT-042",
+  "trigger": "manual",
+  "started_at": "2026-11-19T06:06:31.637Z",
+  "finished_at": "2026-11-19T06:29:16.346Z",
+  "wall_seconds": 1365,
+  "paused_seconds": 0,
+  "measured_seconds": 1365,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "EDT-042 preboot diagnostics redaction implemented, targeted Chromium and Editor tests pass, runtime fast-forward released and health/assets verified; exact-SHA Editor Core CI remains pending and full D stays OPEN.",
+  "evidence": [
+    "docs/evidence/editor-042-preboot-diagnostic-redaction-2026-11-19.json"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "eeed56dda36eb5ef9f011eb9ba463ab15a53b139",
+  "finished_revision": "872c0caf003242e3894b80efc9cc7a38da2017c2",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
