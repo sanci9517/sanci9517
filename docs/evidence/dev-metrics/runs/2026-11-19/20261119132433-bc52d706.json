@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261119132433-bc52d706",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-19T13:24:33.705Z",
+  "finished_at": "2026-11-19T13:29:45.388Z",
+  "wall_seconds": 312,
+  "paused_seconds": 0,
+  "measured_seconds": 312,
+  "status": "partial",
+  "kind": "test",
+  "summary": "D-05 table TSV browser regression: add a row and column, explicit Save, unchanged published snapshot, reload, separate Publish; local editor/plan gates pass.",
+  "evidence": [
+    "docs/evidence/editor-d05-table-tsv-structure-lifecycle-2026-11-19.json"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "5aabb023afe9c739dd3f056ea9df1f0db39de2db",
+  "finished_revision": "5aabb023afe9c739dd3f056ea9df1f0db39de2db",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

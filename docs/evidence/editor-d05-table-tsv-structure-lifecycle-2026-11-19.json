@@ -1,0 +1,61 @@
+{
+  "schema": "sanci.editor.d05-table-tsv-structure-lifecycle.v1",
+  "captured_at_utc": "2026-11-19T13:29:47Z",
+  "plan_point": "77.44.7.D / D-05 — authored table TSV structure lifecycle",
+  "repository": "sanci9517/sanci9517",
+  "branch": "v2/foundation",
+  "branch_head_before_followup": "5aabb023afe9c739dd3f056ea9df1f0db39de2db",
+  "development_metric": {
+    "run_id": "20261119132433-bc52d706",
+    "status": "partial",
+    "kind": "test",
+    "measured_active_seconds": 312,
+    "archive": "docs/evidence/dev-metrics/runs/2026-11-19/20261119132433-bc52d706.json"
+  },
+  "runtime_source_changed": false,
+  "change": {
+    "files": [
+      "tests/browser/editor-content-system.test.js",
+      "docs/evidence/editor-d05-table-tsv-structure-lifecycle-2026-11-19.json",
+      "docs/evidence/dev-metrics/runs/2026-11-19/20261119132433-bc52d706.json"
+    ],
+    "summary": "The real Chromium regression extends the existing authored-table fixture: it adds one TSV row and a third column, proves the draft Canvas and accessible header update without implicit Save/Publish, explicitly Saves the exact Page Model rows, confirms the public snapshot remains unchanged, reloads the Editor draft without truncation, then separately Publishes and checks the new public row, column, and cell order.",
+    "runtime_or_public_assets_changed": false,
+    "save_publish": "Verified separately: TSV edit is draft-only, explicit Save updates only the draft, reload restores the saved structure, and a later distinct Publish updates the public table."
+  },
+  "checks": {
+    "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-content-system.test.js": "PASS; 1/1 real Chromium Editor lifecycle including TSV row/column addition, draft Save, public snapshot isolation, Editor reload, and separate Publish.",
+    "npm run test:editor": "PASS; 22/22 Editor unit files plus 4/4 subreaper/manifest checks.",
+    "npm run typecheck -- --pretty false": "PASS.",
+    "python3 tests/plan-contract.test.py": "PASS; 15/15.",
+    "python3 scripts/check-canonical-plan.py": "PASS; complete 13-file canonical master / 396 mappings; functional acceptance remains uncertified.",
+    "python3 scripts/build-feature-traceability.py --check": "PASS; 396/396.",
+    "python3 scripts/audit-active-plan-point.py": "PASS; cursor 77.44.7.D remains OPEN / NOT_CERTIFIED; 147 PARTIAL_SOURCE and 249 UNVERIFIED.",
+    "npm run test:web013:migration-gate": "PASS; deploy:safe migration gate remains non-migrating.",
+    "node --check tests/browser/editor-content-system.test.js": "PASS.",
+    "git diff --check": "PASS.",
+    "hosted_ci": "NOT RUN; test/evidence-only change will use [skip ci]; free Actions quota is unverified.",
+    "first_browser_attempt": "FAIL before browser assertions: the test used strict equality for two arrays; changed to deep equality and reran the complete real Chromium file successfully.",
+    "sandbox_browser_attempt": "BLOCKED before test execution: Chromium crashpad socket is denied by the sandbox; the same required test passed when rerun with the authorized elevated execution boundary."
+  },
+  "release_state_at_capture": {
+    "remote_branch_head_before_followup": "GitHub branch endpoint GET confirmed v2/foundation at 5aabb023afe9c739dd3f056ea9df1f0db39de2db before this follow-up; direct git ls-remote was blocked by the environment proxy.",
+    "normal_fast_forward_push": "Pending final validation and push of this test/evidence-only change.",
+    "combined_status_for_test_commit": "Not available until push; no hosted CI is claimed.",
+    "worker_latest_deployment_id": "c4b9526a-c54b-4fe3-9218-d889c1e011e9",
+    "worker_latest_version_id": "9870e814-359c-4871-a25c-289d9dfe7c2c",
+    "worker_traffic_percent": 100,
+    "runtime_source_sha": "NOT REVALIDATED; no runtime or public asset source changed.",
+    "runtime_deployment_needed": false,
+    "direct_health_this_followup": "NOT RUN; no runtime source change. No new health result is claimed."
+  },
+  "scope_limits": {
+    "d05_status": "This completes one automated authored-table TSV row/column lifecycle slice only. It does not certify all D-05 content fields, malformed value recovery, accessibility, media/API/security paths, responsive behavior, or full feature parity.",
+    "d_status": "77.44.7.D remains OPEN / NOT_CERTIFIED; source audit remains 147 PARTIAL_SOURCE and 249 UNVERIFIED.",
+    "manual_physical_editor_acceptance": "DEFERRED until the complete Visual Editor is implemented.",
+    "production_d1_migration_or_write": false,
+    "production_r2_mutation_or_delete": false,
+    "paid_services_or_dependencies": false,
+    "new_cost_huf": 0
+  }
+}

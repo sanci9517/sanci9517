@@ -1306,6 +1306,57 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   assert.doesNotMatch(await node(live,'button').evaluate(el=>getComputedStyle(el).backgroundImage),/\/media\//,'Publish removes the background reference without removing the gradient');
   await live.setViewportSize({width:1366,height:900});await live.reload();
   assert.match(await node(live,'button').evaluate(el=>getComputedStyle(el).backgroundImage),/\/media\/6b1c2e65-e46e-4764-b234-123456789abc/,'desktop retains its image after mobile-only removal');
+  // The authored table uses one lossless TSV field for structural edits. Keep
+  // this final lifecycle separate from the large-table boundary assertions
+  // above: add one row and one column, Save/reload the draft, then Publish.
+  await select('table');
+  const structuralRowsField=editor.locator('.content-schema-field[data-content-key="rows"] textarea');
+  const expandedTableRows=expectedTableRows.map((row,index)=>[...row,`Új oszlop ${index+1}`]);
+  expandedTableRows.push(['Új táblázatsor','Új cella','Új harmadik cella']);
+  const postsBeforeTableStructure=posts.length;
+  await structuralRowsField.fill(serializeTableTsv(expandedTableRows));
+  assert.equal(await structuralRowsField.getAttribute('aria-invalid'),null,
+    'adding a table row and column through valid TSV remains within the Page Model contract');
+  assert.equal(await node(editor,'table').locator('tbody tr').count(),expandedTableRows.length,
+    'the Canvas renders the added TSV row immediately');
+  assert.equal(await node(editor,'table').locator('tbody tr').last().locator('td').count(),3,
+    'the Canvas renders the added TSV column on the new row');
+  assert.equal(await node(editor,'table').locator('tbody tr').first().locator('th[scope=col]').count(),3,
+    'the new column is included in the accessible table header');
+  assert.deepEqual(await node(editor,'table').locator('tbody tr').last().locator('td').evaluateAll(cells=>cells.map(cell=>cell.textContent)),
+    expandedTableRows.at(-1),'TSV structural edits preserve row and cell order in the Canvas');
+  assert.equal(posts.length,postsBeforeTableStructure,'adding a table row and column does not implicitly Save or Publish');
+  await editor.locator('#save').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+  assert.equal(posts.length,postsBeforeTableStructure+1,'the structural table draft requires explicit Save');
+  assert.equal(posts.at(-1).publish,false,'table structure Save remains separate from Publish');
+  assert.deepEqual(posts.at(-1).document.pages[pageId].nodes[ids.table].props.rows,expandedTableRows,
+    'Save persists the exact expanded TSV row and column structure');
+  await live.goto(base+'/p/test');
+  assert.equal(await node(live,'table').locator('tbody tr').count(),expectedTableRows.length,
+    'draft Save leaves the previously published table row count unchanged');
+  assert.equal(await node(live,'table').locator('tbody tr').first().locator('th[scope=col]').count(),2,
+    'draft Save leaves the previously published table column count unchanged');
+  await editor.reload();
+  await select('table');
+  assert.equal(await structuralRowsField.inputValue(),serializeTableTsv(expandedTableRows),
+    'Editor reload restores the complete expanded TSV draft without truncation');
+  assert.equal(await node(editor,'table').locator('tbody tr').count(),expandedTableRows.length);
+  assert.equal(await node(editor,'table').locator('tbody tr').first().locator('th[scope=col]').count(),3);
+  const postsBeforeStructuralPublish=posts.length;
+  await editor.locator('#publish').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent==='Publikálva');
+  assert.equal(posts.length,postsBeforeStructuralPublish+1,'the expanded table requires a separate Publish');
+  assert.equal(posts.at(-1).publish,true,'the structural table Publish follows the saved draft');
+  assert.deepEqual(posts.at(-1).document.pages[pageId].nodes[ids.table].props.rows,expandedTableRows,
+    'Publish sends the same row and column structure that Save persisted');
+  await live.reload();
+  assert.equal(await node(live,'table').locator('tbody tr').count(),expandedTableRows.length,
+    'separate Publish exposes the added table row');
+  assert.equal(await node(live,'table').locator('tbody tr').first().locator('th[scope=col]').count(),3,
+    'separate Publish exposes the added table column in the accessible header');
+  assert.deepEqual(await node(live,'table').locator('tbody tr').last().locator('td').evaluateAll(cells=>cells.map(cell=>cell.textContent)),
+    expandedTableRows.at(-1),'the public table preserves every newly added TSV cell in order');
   await editor.setViewportSize({width:390,height:800});await select('image');await editor.screenshot({path:'/tmp/creator-ux-p0-content-mobile.png'});
   assert.deepEqual(errors,[]);
 });
