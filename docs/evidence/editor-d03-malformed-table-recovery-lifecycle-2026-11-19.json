@@ -30,8 +30,8 @@
   },
   "github": {
     "remote_branch_before_followup": "v2/foundation at ab5d232521c18d4026e066c3507ff4bdd3524b22 (GitHub Git Ref API verified).",
-    "test_only_ci": "No CI run is expected for this [skip ci] test/evidence-only follow-up; no hosted result is claimed for its new test. The preceding runtime exact-SHA Editor Core run 44520036804 completed SUCCESS on 83fb764b4060d8d4bbc513e7d0865dd1f700214a, and the source smoke run 44520036720 completed SUCCESS on the same runtime SHA.",
-    "followup_commit": "PENDING at evidence creation; this file will be updated after commit/push verification."
+    "test_only_ci": "No CI run is expected for this [skip ci] test/evidence-only follow-up; GitHub combined status for the follow-up commit was empty. The preceding runtime exact-SHA Editor Core run 44520036804 completed SUCCESS on 83fb764b4060d8d4bbc513e7d0865dd1f700214a, and source smoke run 44520036720 completed SUCCESS on that same runtime SHA.",
+    "followup_commit": "b362361f6ee4a290c825201532571cb6458e2cd6; pushed by normal fast-forward, then GitHub Git Ref API confirmed v2/foundation at this SHA."
   },
   "production": {
     "runtime_source_sha": "83fb764b4060d8d4bbc513e7d0865dd1f700214a; unchanged by this test-only change.",
@@ -39,7 +39,7 @@
     "latest_worker_deployment": "c4b9526a-c54b-4fe3-9218-d889c1e011e9",
     "latest_worker_version": "9870e814-359c-4871-a25c-289d9dfe7c2c",
     "traffic": "100% (Cloudflare read-only deployment API).",
-    "direct_health_check": "Not rechecked in this environment: outbound curl failed before connecting (proxy 127.0.0.1:8080 refused). The runtime-source workflow health check above is the available verified result.",
+    "direct_health_check": "A fresh curl to https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health could not connect because this environment proxy at 127.0.0.1:8080 refused the connection. No current direct health PASS is claimed; verified runtime-source workflow 44520036720 tested health on SHA 83fb764b4060d8d4bbc513e7d0865dd1f700214a.",
     "asset_hashes": "No asset changed; no new asset-hash check or Worker deployment is needed for this test-only commit.",
     "d1_r2": "No production D1 or R2 operation in this block.",
     "deploy": "No runtime changes; no Worker deployment required or performed."
