@@ -438,6 +438,25 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   assert.equal(await canvasAccordion.locator('details').first().getAttribute('name'),
     await canvasAccordion.locator('details').last().getAttribute('name'),
     'single-open uses the same native details name within this accordion');
+  const accordionRepeater=editor.locator('.content-repeater[data-content-key="items"]');
+  await accordionRepeater.getByRole('button',{name:'Lenyitható részek hozzáadása',exact:true}).press('Enter');
+  await editor.waitForFunction(()=>document.activeElement?.getAttribute('aria-label')==='Rész címe'&&
+    document.activeElement?.closest('fieldset')?.querySelector('legend')?.textContent==='3. elem');
+  const addedAccordionItem=accordionRepeater.locator(':scope > fieldset').nth(2);
+  await addedAccordionItem.getByLabel('Rész címe',{exact:true}).fill('Új kérdés');
+  await addedAccordionItem.getByLabel('Szöveg',{exact:true}).fill('Új válasz');
+  assert.deepEqual(await node(editor,'accordion').locator('summary').allTextContents(),
+    ['Hogyan készült?','Hol találom?','Új kérdés'],'Accordion Add immediately creates an authored Canvas section');
+  await accordionRepeater.getByRole('button',{name:'3. elem: Fel',exact:true}).press('Enter');
+  assert.deepEqual(await node(editor,'accordion').locator('summary').allTextContents(),
+    ['Hogyan készült?','Új kérdés','Hol találom?'],'Accordion reorder moves its complete authored row');
+  await accordionRepeater.getByRole('button',{name:'3. elem: Eltávolítás',exact:true}).press('Enter');
+  await editor.waitForFunction(()=>document.activeElement?.getAttribute('aria-label')==='Rész címe'&&
+    document.activeElement?.closest('fieldset')?.querySelector('legend')?.textContent==='2. elem');
+  assert.deepEqual(await node(editor,'accordion').locator('summary').allTextContents(),
+    ['Hogyan készült?','Új kérdés'],'Accordion Delete removes only the selected section');
+  assert.equal(posts.length,countBeforeStructuralEdit,
+    'Accordion Add/edit/reorder/Delete stays draft-only without implicit Save or Publish');
   await select('dropdown');
   await editor.getByLabel('Lenyitható csoport elnevezése',{exact:true}).fill('További lehetőségek');
   await editor.getByLabel('Első rész kezdetben nyitva',{exact:true}).check();
@@ -461,6 +480,25 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   await canvasDropdownDetails.last().locator('summary').click();
   assert.deepEqual(await canvasDropdownDetails.evaluateAll(items=>items.map(el=>el.open)),[false,true],
     'opening another Canvas Dropdown section closes the previously open section');
+  const dropdownRepeater=editor.locator('.content-repeater[data-content-key="items"]');
+  await dropdownRepeater.getByRole('button',{name:'Lenyitható részek hozzáadása',exact:true}).press('Enter');
+  await editor.waitForFunction(()=>document.activeElement?.getAttribute('aria-label')==='Rész címe'&&
+    document.activeElement?.closest('fieldset')?.querySelector('legend')?.textContent==='3. elem');
+  const addedDropdownItem=dropdownRepeater.locator(':scope > fieldset').nth(2);
+  await addedDropdownItem.getByLabel('Rész címe',{exact:true}).fill('Új rész');
+  await addedDropdownItem.getByLabel('Szöveg',{exact:true}).fill('Új információ');
+  assert.deepEqual(await node(editor,'dropdown').locator('summary').allTextContents(),
+    ['További részletek','Másik rész','Új rész'],'Dropdown Add immediately creates an authored Canvas section');
+  await dropdownRepeater.getByRole('button',{name:'3. elem: Fel',exact:true}).press('Enter');
+  assert.deepEqual(await node(editor,'dropdown').locator('summary').allTextContents(),
+    ['További részletek','Új rész','Másik rész'],'Dropdown reorder moves its complete authored row');
+  await dropdownRepeater.getByRole('button',{name:'3. elem: Eltávolítás',exact:true}).press('Enter');
+  await editor.waitForFunction(()=>document.activeElement?.getAttribute('aria-label')==='Rész címe'&&
+    document.activeElement?.closest('fieldset')?.querySelector('legend')?.textContent==='2. elem');
+  assert.deepEqual(await node(editor,'dropdown').locator('summary').allTextContents(),
+    ['További részletek','Új rész'],'Dropdown Delete removes only the selected section');
+  assert.equal(posts.length,countBeforeStructuralEdit,
+    'Dropdown Add/edit/reorder/Delete stays draft-only without implicit Save or Publish');
   await select('gallery');
   await editor.getByLabel('Képgaléria elnevezése',{exact:true}).fill('Műhelyem & képeim');
   const galleryColumns=editor.getByLabel('Oszlopok asztalon',{exact:true});
@@ -694,6 +732,12 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   assert.deepEqual(posts.at(-1).document.pages[pageId].nodes[ids.list].props.items,
     [{text:'Második elem'},{text:'Új listapont',href:'/p/home'}],
     'explicit Save persists the list Add/reorder/Delete result and its internal link');
+  assert.deepEqual(posts.at(-1).document.pages[pageId].nodes[ids.accordion].props.items,
+    [{title:'Hogyan készült?',text:'A kulisszák mögött.'},{title:'Új kérdés',text:'Új válasz'}],
+    'explicit Save persists the Accordion Add/reorder/Delete result as exact Page Model rows');
+  assert.deepEqual(posts.at(-1).document.pages[pageId].nodes[ids.dropdown].props.items,
+    [{title:'További részletek',text:'Kiegészítés'},{title:'Új rész',text:'Új információ'}],
+    'explicit Save persists the Dropdown Add/reorder/Delete result as exact Page Model rows');
   assert.deepEqual(posts.at(-1).document.pages[pageId].nodes[ids.table].props.rows,expectedTableRows,
     'Save retains every long table cell and its final edit in the draft');
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.table].props.caption,'Frissített eredmények',
@@ -760,6 +804,13 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
     'tablist Inspector name stays draft-only after Save');
   assert.equal(await node(live,'accordion').getByRole('group',{name:'Harmonika'}).count(),1,
     'Accordion naming changes remain draft-only until Publish');
+  assert.deepEqual(await node(live,'accordion').locator('summary').allTextContents(),
+    ['Hogyan készült?','Hol találom?'],'draft Save leaves the public Accordion items unchanged');
+  assert.deepEqual(await node(live,'accordion').locator('details').evaluateAll(items=>items.map(item=>item.textContent.trim())),
+    ['Hogyan készült?A kulisszák mögött.','Hol találom?A szerkesztőben.'],
+    'draft Save leaves the original public Accordion answers unchanged');
+  assert.deepEqual(await node(live,'dropdown').locator('summary').allTextContents(),
+    ['További részletek','Másik rész'],'draft Save leaves the public Dropdown items unchanged');
   assert.equal(await node(live,'dropdown').locator('details').first().evaluate(el=>el.open),false,
     'first-open setting remains private after Save');
   assert.deepEqual(await node(live,'dropdown').locator('details').evaluateAll(items=>items.map(el=>el.getAttribute('name'))),[null,null],
@@ -780,6 +831,13 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
     ['Második elem','Új listapont'],'Editor reload restores the saved list order before separate Publish');
   assert.equal(await listRepeater.locator(':scope > fieldset').count(),2,'Editor reload restores the exact saved list row count');
   assert.equal(await listRepeater.locator(':scope > fieldset').nth(1).getByLabel('Hivatkozás',{exact:true}).inputValue(),'/p/home');
+  await select('accordion');
+  assert.deepEqual(await accordionRepeater.locator(':scope > fieldset').evaluateAll(rows=>rows.map(row=>[
+    row.querySelector('input')?.value,row.querySelector('textarea')?.value
+  ])),[['Hogyan készült?','A kulisszák mögött.'],['Új kérdés','Új válasz']],
+  'Editor reload restores the saved Accordion row order and content before separate Publish');
+  assert.deepEqual(await node(editor,'accordion').locator('summary').allTextContents(),
+    ['Hogyan készült?','Új kérdés'],'the reloaded Accordion Canvas matches the saved repeater order');
   await select('table');
   assert.equal(await editor.locator('.content-schema-field[data-content-key="rows"] textarea').inputValue(),serializeTableTsv(expectedTableRows),
     'reload restores the complete long table before separate Publish');
@@ -809,6 +867,12 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   assert.equal(await editor.getByLabel('Képgaléria elnevezése',{exact:true}).inputValue(),'Műhelyem & képeim',
     'Editor reload restores the authored gallery region name from the saved draft');
   await select('dropdown');
+  assert.deepEqual(await dropdownRepeater.locator(':scope > fieldset').evaluateAll(rows=>rows.map(row=>[
+    row.querySelector('input')?.value,row.querySelector('textarea')?.value
+  ])),[['További részletek','Kiegészítés'],['Új rész','Új információ']],
+  'Editor reload restores the saved Dropdown row order and content before separate Publish');
+  assert.deepEqual(await node(editor,'dropdown').locator('summary').allTextContents(),
+    ['További részletek','Új rész'],'the reloaded Dropdown Canvas matches the saved repeater order');
   assert.equal(await dropdownSingleOpen.isChecked(),true,'Editor reload restores the saved Dropdown single-open setting');
   assert.equal(await editor.getByLabel('Első rész kezdetben nyitva',{exact:true}).isChecked(),true,
     'Editor reload restores the saved Dropdown initial-open setting');
@@ -902,6 +966,16 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
     'Publish exposes the editable Accordion group name');
   assert.equal(await node(live,'dropdown').getByRole('group',{name:'További lehetőségek'}).count(),1,
     'Publish exposes the editable Dropdown group name');
+  assert.deepEqual(await node(live,'accordion').locator('summary').allTextContents(),
+    ['Hogyan készült?','Új kérdés'],'separate Publish exposes the saved Accordion row order');
+  assert.deepEqual(await node(live,'accordion').locator('details').evaluateAll(items=>items.map(item=>item.textContent.trim())),
+    ['Hogyan készült?A kulisszák mögött.','Új kérdésÚj válasz'],
+    'separate Publish exposes the saved Accordion answers');
+  assert.deepEqual(await node(live,'dropdown').locator('summary').allTextContents(),
+    ['További részletek','Új rész'],'separate Publish exposes the saved Dropdown row order');
+  assert.deepEqual(await node(live,'dropdown').locator('details').evaluateAll(items=>items.map(item=>item.textContent.trim())),
+    ['További részletekKiegészítés','Új részÚj információ'],
+    'separate Publish exposes the saved Dropdown content');
   const publishedDropdown=node(live,'dropdown').getByRole('group',{name:'További lehetőségek'}).locator('details');
   const publishedDropdownName=await publishedDropdown.first().getAttribute('name');
   assert.ok(publishedDropdownName,'separate Publish exposes the native Dropdown group');

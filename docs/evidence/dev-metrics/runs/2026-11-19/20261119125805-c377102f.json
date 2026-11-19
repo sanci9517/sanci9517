@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261119125805-c377102f",
+  "task": "77.44.7.D-D05-accordion-dropdown-repeater-lifecycle",
+  "trigger": "manual",
+  "started_at": "2026-11-19T12:58:05.391Z",
+  "finished_at": "2026-11-19T13:05:11.541Z",
+  "wall_seconds": 426,
+  "paused_seconds": 0,
+  "measured_seconds": 426,
+  "status": "partial",
+  "kind": "test",
+  "summary": "D-05 Accordion and Dropdown repeater Add/edit/reorder/Delete lifecycle now has real Chromium coverage; local editor, type, plan, traceability, migration-gate, and syntax checks pass; D remains open.",
+  "evidence": [
+    "docs/evidence/editor-d05-accordion-dropdown-repeater-2026-11-19.json"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "64aa76ace2b40140252bb381264223f19775f751",
+  "finished_revision": "64aa76ace2b40140252bb381264223f19775f751",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
