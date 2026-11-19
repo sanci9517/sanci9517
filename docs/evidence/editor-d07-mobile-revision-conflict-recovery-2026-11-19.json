@@ -72,17 +72,17 @@
     "changed_db": false
   },
   "live_baseline": {
-    "read_only_cloudflare_deployment": "a8cb33a3-5179-4fc9-8844-e002a1e1a9e3",
-    "worker_version": "31b605b7-fd0d-4cfa-8ddf-849c51eadef2",
+    "read_only_cloudflare_deployment": "0add5fdb-fbdd-42a3-b2f7-8089e98c0ebe",
+    "worker_version": "9130eb09-666f-45b6-8bf3-5c324ac0b35b",
     "traffic_percent": 100,
-    "public_health": "UNVERIFIED; workers.dev connection was refused before HTTP in this execution environment.",
-    "changed_asset_hashes": "PENDING exact-SHA release smoke"
+    "public_health": "PASS in exact-SHA production source-smoke run 44504037016; /api/health HTTP 200.",
+    "changed_asset_hashes": "PASS in exact-SHA production source-smoke run 44504037016; all 36 configured public paths matched, including the two changed assets."
   },
   "release": {
-    "commit": "PENDING",
-    "remote_push": "PENDING normal fast-forward to v2/foundation",
-    "cloudflare_deployment": "PENDING",
-    "github_ci": "PENDING exact-SHA runtime checks; no dispatch or rerun was started"
+    "commit": "e2d0405ee817cd3d5ff6cd6fb7f3bcf751680f5b",
+    "remote_push": "PASS: normal fast-forward; origin/v2/foundation verified at e2d0405ee817cd3d5ff6cd6fb7f3bcf751680f5b.",
+    "cloudflare_deployment": "PASS: deployment 0add5fdb-fbdd-42a3-b2f7-8089e98c0ebe; Worker version 9130eb09-666f-45b6-8bf3-5c324ac0b35b receives 100% traffic.",
+    "github_ci": "Exact-SHA source smoke run 44504037016 PASS; F0 44504036893, Twitch 44504037008, canonical-plan 44504036928, and active-point audit 44504036974 PASS. Editor Core run 44504037161 remains IN_PROGRESS in the Editor browser layout regression; downstream steps are pending. No extra dispatch or rerun started."
   },
   "limits": {
     "new_cost_huf": 0,

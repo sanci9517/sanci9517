@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "id": "20261119102546-d920383d",
+  "task": "77.44.7.D-D03-table-edit-save-publish-browser-regression",
+  "trigger": "manual",
+  "started_at": "2026-11-19T10:25:46.418Z",
+  "abandoned_at": "2026-11-19T10:27:31.991Z",
+  "measured_seconds": null,
+  "status": "interrupted",
+  "reason": "Audit found the proposed table lifecycle slice already covered comprehensively in tests/browser/editor-structured-content.test.js; avoiding redundant regression code before CI result.",
+  "started_revision": "e2d0405ee817cd3d5ff6cd6fb7f3bcf751680f5b",
+  "measurement": "missing end time; excluded from elapsed time and ETA"
+}

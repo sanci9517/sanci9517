@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261119102732-fd2f1ff4",
+  "task": "77.44.7.D-D07-release-evidence-followup",
+  "trigger": "manual",
+  "started_at": "2026-11-19T10:27:32.070Z",
+  "finished_at": "2026-11-19T10:28:48.032Z",
+  "wall_seconds": 76,
+  "paused_seconds": 0,
+  "measured_seconds": 76,
+  "status": "pass",
+  "kind": "docs",
+  "summary": "Recorded exact-SHA live release evidence for D-07: normal remote fast-forward, 100% Cloudflare version traffic, health and 36 configured public source hashes PASS. Editor Core remains in progress; full D and Editor acceptance remain open.",
+  "evidence": [
+    "docs/evidence/editor-d07-mobile-revision-conflict-recovery-2026-11-19.json",
+    "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "e2d0405ee817cd3d5ff6cd6fb7f3bcf751680f5b",
+  "finished_revision": "e2d0405ee817cd3d5ff6cd6fb7f3bcf751680f5b",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
