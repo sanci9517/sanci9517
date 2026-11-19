@@ -41,6 +41,7 @@ For the SANCI9517 Creator Platform, defer user-facing manual acceptance and phys
 
 - Prefer free, already-approved, reliable tools and open-source components when they meet the product requirements. Do not add paid infrastructure or incur avoidable cost; if a necessary solution would have a material cost, explain the tradeoff and ask the owner before adopting it.
 - Parallelize only independent work whose results can be checked separately. Keep dependent edits, migrations, deployments, merges, and stateful external operations sequential.
+- The owner's standing preference is parallel development where tasks are genuinely independent, plus reuse of suitable existing project code and free, compatible open-source components. Apply it by default without weakening review, tests, data-safety, or release gates; keep dependent work sequential.
 - Optimize for correctness and repeatability, not elapsed time. Do not weaken checks, reduce meaningful coverage, or introduce flaky concurrency to make a task appear faster.
 - Reuse existing project dependencies and platform capabilities before adding a new dependency. Evaluate maintenance, security, license, accessibility, and compatibility before adopting third-party code.
 - Fix verified defects within the authorized scope, then run checks proportional to the change and record what was and was not verified.

@@ -1,0 +1,52 @@
+{
+  "schema": "sanci.editor.d03-table-column-lifecycle.v1",
+  "captured_at_utc": "2026-11-19T08:08:55Z",
+  "plan_point": "77.44.7.D / D-03 — structured table column lifecycle",
+  "repository": "sanci9517/sanci9517",
+  "branch": "v2/foundation",
+  "branch_head_at_capture": "5d3c58fbd6add4eb47fb42c6d80f798027e203a0",
+  "runtime_source_sha": "fad2043d96f3bf890005c62c0e34d0084b387f05",
+  "test_harness_change": {
+    "file": "tests/browser/editor-structured-content.test.js",
+    "scope": [
+      "Add a third table column and fill its header and data cells without changing existing values.",
+      "Save the draft and reload the Editor; verify each new cell survives.",
+      "Verify public output keeps the old two-column snapshot until explicit Publish.",
+      "Publish and verify the new column and cell values in public HTML.",
+      "Remove the last column; verify earlier cells survive, Save does not alter the public snapshot, reload retains the removal, and only a second explicit Publish updates the public table."
+    ],
+    "runtime_changed": false
+  },
+  "verification": {
+    "command": "node --check tests/browser/editor-structured-content.test.js && git diff --check && CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-structured-content.test.js",
+    "result": "PASS; 2/2 real Chromium tests, including add/remove through Save, reload, separate Publish and rendered public output.",
+    "initial_local_failure": "The first attempt exposed an assertion that ignored a header edit already performed by the shared fixture; the expectation was corrected to use the actual model. A later harness typo was corrected. The final targeted run passed.",
+    "hosted_editor_core_workflow": {
+      "id": 44482902361,
+      "url": "https://github.com/sanci9517/sanci9517/actions/runs/44482902361",
+      "head_sha": "fad2043d96f3bf890005c62c0e34d0084b387f05",
+      "status_at_capture": "IN_PROGRESS",
+      "note": "This run was triggered by the runtime commit before this test-only change; it does not verify the expanded test. No duplicate workflow was dispatched."
+    }
+  },
+  "production_snapshot": {
+    "deployment_id": "a8cb33a3-5179-4fc9-8844-e002a1e1a9e3",
+    "worker_version_id": "31b605b7-fd0d-4cfa-8ddf-849c51eadef2",
+    "traffic_percent": 100,
+    "source_commit": "fad2043d96f3bf890005c62c0e34d0084b387f05",
+    "read_only_cloudflare_deployment_api_checked_at_utc": "2026-11-19T08:03:14Z",
+    "health": "Previously verified HTTP 200 for the unchanged runtime; no runtime changes in this slice.",
+    "asset_hashes_rechecked": false
+  },
+  "operating_principle": "The owner reaffirmed parallel development and reuse of suitable code. AGENTS.md now records it explicitly: parallelize only independent, separately verifiable work; reuse project code and compatible free components after review; keep dependent changes sequential and preserve all quality and release gates.",
+  "limits": {
+    "production_d1_migration_or_write": false,
+    "production_r2_mutation_or_delete": false,
+    "worker_deployment": false,
+    "new_cost_huf": 0,
+    "plan_point_status": "OPEN / NOT_CERTIFIED",
+    "full_editor_acceptance": "DEFERRED until complete Editor scope",
+    "save_publish": "separate"
+  },
+  "next_step": "Continue the next uncovered Visual Editor capability and maintain the full D-01–D-07 lifecycle matrix; do not certify the full D point from this slice."
+}

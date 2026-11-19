@@ -291,6 +291,16 @@ test('structured Inspector editing survives Save, Publish and public interaction
  assert.equal(await tableRows.nth(2).getByRole('textbox',{name:'Oszlop 2',exact:true}).inputValue(),'77',
   'reordered row keeps the second column on the moved record');
  expectedModels.table.rows.push(['További játék','77']);
+ await keyboard(tableInspector.getByRole('button',{name:'＋ Oszlop',exact:true}));
+ assert.equal(await tableRows.nth(0).locator('.structured-input').count(),3,'adding a column gives the header a third cell');
+ const thirdColumnValues=['Platform','PC','Konzol'];
+ const rowCount=await tableRows.count();
+ for(let row=0;row<rowCount;row++){
+  const third=tableRows.nth(row).getByRole('textbox',{name:'Oszlop 3',exact:true});
+  assert.equal(await third.inputValue(),'','new table cells start empty without shifting existing cells');
+  await third.fill(thirdColumnValues[row]);
+  expectedModels.table.rows[row].push(thirdColumnValues[row]);
+ }
  await select(ids.tabs);
  const limited=editor.locator('.structured-item').first().getByRole('textbox',{name:'Fül neve',exact:true});
  await limited.fill('x'.repeat(120));await limited.press('y');assert.equal(await limited.inputValue(),'x'.repeat(120),'native editing stops at the canonical boundary');
@@ -310,6 +320,8 @@ test('structured Inspector editing survives Save, Publish and public interaction
  await viewer.goto(base+'/p/test');
  assert.equal(await viewer.locator('.visual-editor-node[data-node-id="'+ids.table+'"] tbody tr').count(),1,
    'draft Save must not make the new table row public before a separate Publish');
+ assert.equal(await viewer.locator('.visual-editor-node[data-node-id="'+ids.table+'"] th').count(),2,
+  'draft Save must not expose a new table column before a separate Publish');
  assert.equal(await viewer.locator('.visual-badge[data-node-id="'+ids.badge+'"]').textContent(),'Címke','Save cannot expose the new badge');
  assert.match(await viewer.locator('blockquote[data-node-id="'+ids.quote+'"]').textContent(),/Idézet első változat/);
  assert.equal(await viewer.locator('.visual-icon[data-node-id="'+ids.icon+'"]').getAttribute('aria-label'),'Szív ikon');
@@ -321,6 +333,11 @@ test('structured Inspector editing survives Save, Publish and public interaction
   await select(ids[type]);const value=type==='table'?expectedModels.table.rows[rowIndex][key]:type==='list'?expectedModels.list.items[rowIndex]:expectedModels[type].items[rowIndex][key];
   assert.equal(await editor.locator('.structured-item').nth(rowIndex).getByRole('textbox',{name:label,exact:true}).inputValue(),value,'saved structured fields survive editor reload');
  }
+ await select(ids.table);
+ assert.deepEqual(await editor.locator('.structured-item').evaluateAll(rows=>rows.map(row=>row.querySelectorAll('.structured-input').length)),[3,3,3],
+  'the added table column and every row cell survive Save and a fresh Editor load');
+ assert.deepEqual(await editor.locator('.structured-item').evaluateAll(rows=>rows.map(row=>row.querySelectorAll('.structured-input')[2].querySelector('input,textarea').value)),
+  thirdColumnValues,'the new column header and data remain attached to their rows after reload');
  await editor.locator('#publish').click();
  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
  assert.equal(posts.at(-1).publish,true);
@@ -447,10 +464,39 @@ test('structured Inspector editing survives Save, Publish and public interaction
   const list=viewer.locator('.visual-editor-node[data-node-id="'+ids.list+'"]');
  assert.equal(await list.locator('li').count(),3);
  const table=viewer.locator('.visual-editor-node[data-node-id="'+ids.table+'"]');
- assert.equal(await table.locator('th').count(),2);
+ assert.equal(await table.locator('th').count(),3,'separate Publish exposes the explicitly saved third header');
+ assert.deepEqual(await table.locator('thead th').allTextContents(),[expectedModels.table.rows[0][0],expectedModels.table.rows[0][1],'Platform']);
  assert.equal(await table.locator('tbody tr').count(),2,'published table includes inserted and reordered data');
  assert.deepEqual(await table.locator('tbody tr').last().locator('td').allTextContents(),
-  ['További játék','77'],'row order and both cells survive Save, reload and separate Publish');
+  ['További játék','77','Konzol'],'row order and all cells survive Save, reload and separate Publish');
+ await select(ids.table);
+ await keyboard(tableInspector.getByRole('button',{name:'− Utolsó oszlop',exact:true}));
+ assert.deepEqual(await editor.locator('.structured-item').evaluateAll(rows=>rows.map(row=>row.querySelectorAll('.structured-input').length)),[2,2,2],
+  'removing the final column keeps every earlier column in place');
+ assert.deepEqual(await editor.locator('.structured-item').evaluateAll(rows=>rows.flatMap(row=>Array.from(row.querySelectorAll('.structured-input input,.structured-input textarea'),input=>input.value))),
+  [expectedModels.table.rows[0][0],expectedModels.table.rows[0][1],expectedModels.table.rows[1][0],expectedModels.table.rows[1][1],
+   expectedModels.table.rows[2][0],expectedModels.table.rows[2][1]],'removing the final column preserves all retained cells');
+ await editor.locator('#save').click();
+ await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+ assert.equal(posts.at(-1).publish,false,'removing a column persists through Save without implicit Publish');
+ assert.deepEqual(draft.pages[pageId].nodes[ids.table].props.contentModel.rows,expectedModels.table.rows.map(row=>row.slice(0,2)));
+ assert.deepEqual(published.pages[pageId].nodes[ids.table].props.contentModel.rows,expectedModels.table.rows,
+  'the public snapshot keeps the published third column until the separate Publish action');
+ await viewer.goto(base+'/p/test');
+ assert.equal(await viewer.locator('.visual-editor-node[data-node-id="'+ids.table+'"] th').count(),3,
+  'Save of the column removal does not alter the live public table');
+ await editor.reload();
+ await select(ids.table);
+ assert.deepEqual(await editor.locator('.structured-item').evaluateAll(rows=>rows.map(row=>row.querySelectorAll('.structured-input').length)),[2,2,2],
+  'the removed column stays removed after Save and a fresh Editor load');
+ await editor.locator('#publish').click();
+ await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
+ assert.equal(posts.at(-1).publish,true,'column removal reaches the public snapshot only on explicit Publish');
+ await viewer.goto(base+'/p/test');
+ const finalTable=viewer.locator('.visual-editor-node[data-node-id="'+ids.table+'"]');
+ assert.deepEqual(await finalTable.locator('thead th').allTextContents(),expectedModels.table.rows[0].slice(0,2));
+ assert.deepEqual(await finalTable.locator('tbody tr').last().locator('td').allTextContents(),['További játék','77'],
+  'the separately published removal preserves earlier headers, row order, and values');
  await editor.screenshot({path:'/tmp/creator-ux-p0-structured-desktop.png'});
  await viewer.screenshot({path:'/tmp/creator-ux-p0-public-content.png'});
  await editor.setViewportSize({width:390,height:800});

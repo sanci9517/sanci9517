@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261119080314-c581b7c3",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-19T08:03:14.628Z",
+  "finished_at": "2026-11-19T08:10:09.158Z",
+  "wall_seconds": 415,
+  "paused_seconds": 0,
+  "measured_seconds": 415,
+  "status": "pass",
+  "kind": "test",
+  "summary": "D-03 structured table column add/remove verified through Save, reload, separate Publish, and public render; standing parallel/reuse principle clarified in AGENTS",
+  "evidence": [
+    "tests/browser/editor-structured-content.test.js:PASS"
+  ],
+  "checks": "Chromium 2/2; plan-contract 15/15; canonical 13 files/396 mappings; traceability 396/396; active point remains OPEN",
+  "started_revision": "5d3c58fbd6add4eb47fb42c6d80f798027e203a0",
+  "finished_revision": "5d3c58fbd6add4eb47fb42c6d80f798027e203a0",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
