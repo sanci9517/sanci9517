@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261119043101-3b258ab2",
+  "task": "77.44.7.D-04-EDT-041-creator-schedule-template",
+  "trigger": "manual",
+  "started_at": "2026-11-19T04:31:01.182Z",
+  "finished_at": "2026-11-19T04:39:04.760Z",
+  "wall_seconds": 484,
+  "paused_seconds": 0,
+  "measured_seconds": 484,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "EDT-041 safe streamer schedule starter added and deployed with direct production hash verification; aggregate Editor Core CI still running.",
+  "evidence": [
+    "docs/evidence/editor-041-stream-schedule-template-2026-11-19.json"
+  ],
+  "checks": "unit=PASS 22/22;browser=PASS 1/1;typecheck=PASS;plan=PASS 15/15;dry-run=PASS;D1=SELECT-only;Worker=100%;source-smoke=PASS;Editor-Core=IN_PROGRESS",
+  "started_revision": "3463811d744e9a61ee6e9a8df6b9f46078acb1ef",
+  "finished_revision": "b8fd8e93692d2c860199b008a566af1a64e128fa",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

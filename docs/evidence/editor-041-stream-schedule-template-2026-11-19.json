@@ -1,0 +1,96 @@
+{
+  "schema": 1,
+  "plan_point": "77.44.7.D",
+  "feature": "EDT-041 versioned creator stream-schedule starter",
+  "date": "2026-11-19",
+  "change": {
+    "files": [
+      "public/editor-v2/core/design-system/template-catalog.js",
+      "public/editor-v2/core/editor-templates.js",
+      "public/editor-v2/app.js",
+      "public/editor-v2/tests/editor-templates.test.js",
+      "tests/browser/editor-template-start.test.js",
+      "docs/creator-master/part-05-of-12.md",
+      "docs/evidence/feature-traceability.json"
+    ],
+    "behavior": "Expanded the static, versioned Editor start catalog from blank and creator-introduction to include a streamer schedule page with three editable time-slot cards. The prompt contains no invented dates, channel/community URLs, media IDs/assets, secrets, or executable content. Creating it still uses the existing site-scoped revision-1 draft flow; no existing page is overwritten and Save and Publish stay separate.",
+    "regression": "Unit tests verify safe metadata, valid generated Page Model, draft-only state, three editable slots, safe placeholder data and disjoint remapped IDs across instances. Real Chromium verifies catalog preview and selection, cancel with no writes, collision retry retaining the selected schedule and form state, draft creation, no Save/Publish request, confirmation-gated rollback and byte-for-byte preservation of an existing published page."
+  },
+  "source_hashes": {
+    "public/editor-v2/app.js": "f3bb087aac469c7ef8a1c7a29b2621dc1b38965b2a3ebdb6f3268925199ff15e",
+    "public/editor-v2/core/editor-templates.js": "3fd7c6858639562a261890425e4dea8e4e2a10a03456df79cbe2413afc55fec8",
+    "public/editor-v2/core/design-system/template-catalog.js": "f49cb5b89ce21e1e41bf5d88edd4c69116199af517cfe2bdf84a97762d10cc3a"
+  },
+  "checks": {
+    "editor_unit_suite": "PASS npm run test:editor; 22/22 test files and 4/4 Linux subreaper/manifest tests",
+    "template_unit": "PASS public/editor-v2/tests/editor-templates.test.js included in editor unit suite",
+    "template_chromium": "PASS tests/browser/editor-template-start.test.js 1/1 in real Chromium; four orphaned test descendants reaped",
+    "typecheck": "PASS npm run typecheck -- --pretty false",
+    "plan_contract": "PASS python3 tests/plan-contract.test.py; 15/15",
+    "canonical_plan": "PASS python3 scripts/check-canonical-plan.py; one complete 13-file master / 396 mappings",
+    "active_point": "PASS cursor 77.44 / WEB-011 -> 77.44.7.D; remains OPEN / NOT_CERTIFIED",
+    "traceability": "PASS python3 scripts/build-feature-traceability.py --check; 396/396",
+    "migration_safety": "PASS node scripts/web013-migration-safety-gate.mjs",
+    "syntax_diff": "PASS node --check for changed JavaScript/test files; git diff --check",
+    "wrangler_dry_run": {
+      "status": "PASS",
+      "exit_code": 0,
+      "version": "4.130.0",
+      "public_assets": 195,
+      "upload": "393.29 KiB",
+      "gzip": "100.77 KiB",
+      "publish": false
+    },
+    "production_d1_preflight": {
+      "access": "Cloudflare D1 query API; SELECT-only",
+      "queries": 2,
+      "last_migration": "0029_media_archive_unicode_additive.sql",
+      "migration_count": 35,
+      "rows_written": 0,
+      "changes": 0,
+      "changed_db": false
+    }
+  },
+  "release": {
+    "status": "DEPLOYED_VERIFIED; EDITOR_CORE_CI_PENDING",
+    "branch": "v2/foundation",
+    "source_sha": "b8fd8e93692d2c860199b008a566af1a64e128fa",
+    "push": "normal fast-forward from 3463811d744e9a61ee6e9a8df6b9f46078acb1ef; branch API confirmed exact SHA",
+    "cloudflare_build": {
+      "build_uuid": "f0a41900-6094-42f7-bc9c-4a7b8d0b3b31",
+      "build_outcome": "success",
+      "commit_hash": "b8fd8e93692d2c860199b008a566af1a64e128fa",
+      "build_command": "npm run typecheck",
+      "deploy_command": "npm run deploy:safe"
+    },
+    "worker_deployment_id": "aa6247a4-9fd5-4c2c-bc83-2775b03b0fe9",
+    "worker_version_id": "157173ad-c973-4e3f-86c8-eb6a78a4b873",
+    "worker_traffic_percentage": 100,
+    "production_health": {
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health?release=b8fd8e93692d2c860199b008a566af1a64e128fa",
+      "http_status": 200,
+      "body": {"ok": true, "service": "sanci9517-streamer-brand", "version": "2.0.0", "server": "cloudflare-worker"}
+    },
+    "production_source_workflow": {
+      "id": 44459443469,
+      "status": "SUCCESS",
+      "configured_source_files": "36 source files verified by the exact-SHA workflow",
+      "direct_additional_checks": "The new editor-templates.js and design-system/template-catalog.js assets were additionally fetched cache-busted from production; both SHA-256 values exactly matched the local source."
+    },
+    "exact_sha_workflows": {
+      "editor_core": {
+        "id": 44459443236,
+        "status": "IN_PROGRESS",
+        "pending_step": "Test real Worker media upload with isolated D1 and R2",
+        "completed_prior_steps": "Typecheck, Editor tests, offline D1 ledger/bootstrap tests, private R2 media API tests, showcase unit/browser tests passed."
+      },
+      "f0_baseline": {"id": 44459443419, "status": "SUCCESS"},
+      "active_plan_audit": {"id": 44459443364, "status": "SUCCESS"},
+      "canonical_plan": {"id": 44459443345, "status": "SUCCESS"},
+      "twitch": {"id": 44459443285, "status": "SUCCESS"},
+      "production_source_smoke": {"id": 44459443469, "status": "SUCCESS"}
+    },
+    "cost_and_data": "Cloudflare Workers build-minute limit reports not reached; no new paid service/cost reported. Production D1 was queried only; no migration/data write. No R2 mutation."
+  },
+  "acceptance_boundary": "This is one EDT-041 starter-template slice. The full template catalog, additional real starting templates, asset assignment, complete Site/Design System registry integration and final Editor-wide acceptance remain open. Plan point 77.44.7.D is OPEN / NOT_CERTIFIED; D-01 through D-07 and the complete Visual Editor are not complete. Consolidated manual/physical acceptance is deferred until full Editor implementation. Save != Publish."
+}
