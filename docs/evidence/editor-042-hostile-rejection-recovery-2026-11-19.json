@@ -3,7 +3,7 @@
   "recorded_at_utc": "2026-11-19T05:45:00Z",
   "plan_point": "77.44.7.D / EDT-042",
   "feature": "Hostile rejection-reason recovery in Editor diagnostics",
-  "status": "TESTED_RELEASE_PENDING",
+  "status": "DEPLOYED_EXACT_SOURCE_EDITOR_CORE_PENDING",
   "defect": "Both the standalone boot handler and the initialized diagnostics handler used implicit string coercion for untrusted rejection values. A value with a throwing Symbol.toPrimitive could throw in the event listeners, while the boot handler also duplicated events after the main diagnostics owner had initialized.",
   "implementation": {
     "diagnostics_normalization": "Reads untrusted error fields defensively, catches failing string coercion, and uses a safe generic fallback without retaining Error objects.",
@@ -48,11 +48,90 @@
     }
   },
   "release": {
-    "status": "PENDING_RUNTIME_COMMIT_AND_EXACT_SHA_CI",
+    "status": "DEPLOYED_AND_PRODUCTION_SOURCE_VERIFIED",
     "branch": "v2/foundation",
-    "previous_remote_head": "646b5c0f9401656cf8f3ec38f73594b7685db0fe"
+    "runtime_commit": "ecbd4188a32554da1d9d4434abec32f73d6ca108",
+    "branch_head_verified": "ecbd4188a32554da1d9d4434abec32f73d6ca108",
+    "parent_commit": "646b5c0f9401656cf8f3ec38f73594b7685db0fe",
+    "github_commit_url": "https://github.com/sanci9517/sanci9517/commit/ecbd4188a32554da1d9d4434abec32f73d6ca108",
+    "cloudflare_build": {
+      "build_uuid": "13f68907-ee2c-4268-912e-a058d564c779",
+      "status": "stopped",
+      "outcome": "success",
+      "trigger_source": "push_event",
+      "commit_hash": "ecbd4188a32554da1d9d4434abec32f73d6ca108",
+      "build_command": "npm run typecheck",
+      "deploy_command": "npm run deploy:safe",
+      "created_on": "2026-11-19T05:47:32.564Z",
+      "stopped_on": "2026-11-19T05:48:07.534Z"
+    },
+    "cloudflare_deployment": {
+      "deployment_id": "941706a7-0bcc-4824-8a0a-435fb24e7ee8",
+      "version_id": "95254938-314f-4b8c-8d4d-3974976a1de7",
+      "version_number": 4134,
+      "traffic_percent": 100,
+      "created_on": "2026-11-19T05:48:03.420161Z"
+    },
+    "github_exact_sha_workflows": {
+      "production_source_smoke": {
+        "run_id": 44467579433,
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/sanci9517/sanci9517/actions/runs/44467579433",
+        "job_id": 135368961852
+      },
+      "f0_baseline": {
+        "run_id": 44467579394,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      "twitch_integration": {
+        "run_id": 44467579403,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      "active_point_audit": {
+        "run_id": 44467579415,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      "canonical_plan": {
+        "run_id": 44467579637,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      "editor_core": {
+        "run_id": 44467579436,
+        "status": "in_progress",
+        "conclusion": null,
+        "url": "https://github.com/sanci9517/sanci9517/actions/runs/44467579436",
+        "last_observed_at_utc": "2026-11-19T05:53:25Z",
+        "pending_step": "Run Editor browser layout regression; follow-on editor checks remain pending"
+      }
+    },
+    "production_health": {
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health?release=ecbd4188a32554da1d9d4434abec32f73d6ca108-direct",
+      "http_status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      },
+      "verified_at_utc": "2026-11-19T05:53:25Z"
+    },
+    "direct_public_asset_sha256": {
+      "public/editor-v2/app.js": "fe3138620915cc5112db013ea384b36369b1749863131c7209ec8e824224439a",
+      "public/editor-v2/boot.js": "7ba19c61dd7504c3638223083b4f1de51ae9a08c574b525d741891082d0a97a7",
+      "public/editor-v2/diagnostics.js": "1acc11bcd0e3286c5b81527a9b6f71f1eb9b7c356eb4ad0546b53c3578ce2539",
+      "public/editor-v2/index.html": "7c89ab9de39bfa966b6a05f3d2cc85d87f85527386ddfa0c8629075c18d2375e",
+      "public/editor-v2/tests/core.test.js": "9f5ee1c6f878e46765e895cf3bfa9639fd4f9d2f1bc28638dba6d18956c3dd8d",
+      "public/editor-v2/tests/diagnostics.test.js": "31df07d172bfc61973f0932b447f7004ba09ef004fea97efceeccbdc10a455c5"
+    },
+    "source_smoke_note": "The exact-SHA hosted smoke passed after expected propagation mismatches on attempts 1 and 2; local direct production GETs with a browser User-Agent then matched all six changed public files exactly."
   },
   "acceptance_boundary": "This resolves one EDT-042 error-handling slice only. Malformed-document recovery, full permission/renderer matrix, export/reload integration, server-side telemetry correlation and full recovery E2E remain open. D point 77.44.7.D remains OPEN / NOT_CERTIFIED; complete Editor manual/physical acceptance is DEFERRED. Save and Publish remain separate.",
   "production_mutations": false,
-  "cost": "0 Ft; no paid service, production D1 write/migration, R2 mutation/deletion, or manually dispatched/re-run workflow."
+  "cost": "0 Ft; no paid service, production D1 write/migration, R2 mutation/deletion, or manually dispatched/re-run workflow.",
+  "release_verified_at_utc": "2026-11-19T05:53:25Z"
 }

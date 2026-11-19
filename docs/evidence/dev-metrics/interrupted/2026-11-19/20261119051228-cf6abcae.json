@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "id": "20261119051228-cf6abcae",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-19T05:12:28.493Z",
+  "abandoned_at": "2026-11-19T05:31:47.829Z",
+  "measured_seconds": null,
+  "status": "interrupted",
+  "reason": "A munkablokk forráscommitja és éles kiadása már rögzített, de az aktív munkavégzés befejezése a sessionváltás előtt nem lett feljegyezve; valós befejezési idő nem állapítható meg.",
+  "started_revision": "2d81f040d4132b74a054dab43b83efb966bc1ec4",
+  "measurement": "missing end time; excluded from elapsed time and ETA"
+}

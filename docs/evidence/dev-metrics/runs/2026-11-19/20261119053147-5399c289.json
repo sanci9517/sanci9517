@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261119053147-5399c289",
+  "task": "EDT-042",
+  "trigger": "manual",
+  "started_at": "2026-11-19T05:31:47.889Z",
+  "finished_at": "2026-11-19T05:54:46.827Z",
+  "wall_seconds": 1379,
+  "paused_seconds": 0,
+  "measured_seconds": 1379,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "EDT-042 hostile rejection recovery fast-forward shipped; exact-SHA smoke, Cloudflare build/deploy, 100% traffic, live health and six public hashes verified. Editor Core layout suite remains in progress, so the Editor and D point stay open.",
+  "evidence": [
+    "docs/evidence/editor-042-hostile-rejection-recovery-2026-11-19.json"
+  ],
+  "checks": "local focused tests PASS; exact-SHA F0/Twitch/canonical/active-audit/source-smoke PASS; Editor Core IN_PROGRESS; Worker 100%, health 200, 6/6 public hashes match",
+  "started_revision": "50963cf9fe80cad84ef6eab04a6ace2fce340c07",
+  "finished_revision": "eeed56dda36eb5ef9f011eb9ba463ab15a53b139",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
