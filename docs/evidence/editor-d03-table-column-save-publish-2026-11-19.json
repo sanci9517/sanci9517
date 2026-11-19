@@ -34,7 +34,7 @@
     "worker_version_id": "31b605b7-fd0d-4cfa-8ddf-849c51eadef2",
     "traffic_percent": 100,
     "source_commit": "fad2043d96f3bf890005c62c0e34d0084b387f05",
-    "read_only_cloudflare_deployment_api_checked_at_utc": "2026-11-19T08:03:14Z",
+    "read_only_cloudflare_deployment_api_checked_in_this_run": true,
     "health": "Previously verified HTTP 200 for the unchanged runtime; no runtime changes in this slice.",
     "asset_hashes_rechecked": false
   },
