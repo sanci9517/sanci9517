@@ -31,6 +31,17 @@ test('diagnostics redact secrets, URL queries and common identifiers before reta
   assert.match(entry.message, /\[redacted\]/);
   assert.match(entry.message, /\[redacted-email\]/);
   assert.match(entry.message, /\[redacted-phone\]/);
+
+  const payload = diagnostics.exportPayload();
+  assert.equal(payload.format, 'sanci9517-editor-diagnostics');
+  assert.equal(payload.schemaVersion, 1);
+  assert.equal(payload.entries[0].id, entry.id, 'the safe entry ID is retained as a support correlation identifier');
+  assert.deepEqual(Object.keys(payload.entries[0]).sort(), ['code','column','context','file','id','line','message','severity','source','timestamp'].sort());
+  const exportJson = JSON.stringify(payload);
+  for (const secret of ['oauth-code', 'oauth-state', 'opaque', 'bearer-secret', 'private-site', 'private-token', 'private-key', 'response-secret', 'person@example.com', '+36 30 123 4567']) {
+    assert.equal(exportJson.includes(secret), false, `diagnostics export must not include ${secret}`);
+  }
+  assert.equal(Object.hasOwn(payload.entries[0], 'error'), false, 'the export has no raw Error field');
 });
 
 test('diagnostic codes stay stable while entry IDs remain unique and the buffer is bounded', () => {

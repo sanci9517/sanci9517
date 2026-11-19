@@ -45,6 +45,39 @@ function add(input={}){
 function clear(){entries.length=0;render();notify()}
 function verify(condition,{code,message,context=''}={}){if(condition)return true;add({source:'verify',...(code?{code}:{}),message:message||'A művelet elvárt eredménye nem jött létre.',context});return false}
 function esc(value){return String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]))}
+function exportPayload(){
+  return {
+    format:'sanci9517-editor-diagnostics',
+    schemaVersion:1,
+    exportedAt:new Date().toISOString(),
+    entries:entries.map(({id,code,severity,source,message,file,line,column,context,timestamp})=>({id,code,severity,source,message,file,line,column,context,timestamp}))
+  };
+}
+function download(){
+  const status=document.querySelector('#diagnosticsCopyStatus');
+  if(!status)return false;
+  if(!entries.length){status.textContent='Nincs letölthető diagnosztikai adat.';return false}
+  let objectUrl='';
+  try{
+    const payload=exportPayload();
+    const blob=new Blob([JSON.stringify(payload,null,2)+'\n'],{type:'application/json'});
+    objectUrl=URL.createObjectURL(blob);
+    const link=document.createElement('a');
+    link.href=objectUrl;
+    link.download='sanci9517-editor-diagnostics-'+new Date().toISOString().replace(/[:.]/g,'-')+'.json';
+    link.hidden=true;
+    document.body.append(link);
+    link.click();
+    link.remove();
+    setTimeout(()=>URL.revokeObjectURL(objectUrl),1000);
+    status.textContent='Biztonságos diagnosztikai JSON letöltése elindult. A fájl a rögzített, redaktált hibákat tartalmazza.';
+    return true;
+  }catch{
+    if(objectUrl){try{URL.revokeObjectURL(objectUrl)}catch{}}
+    status.textContent='A diagnosztikai export nem tölthető le ebben a böngészőben. A hibaüzeneteket a panelen továbbra is megtekintheted.';
+    return false;
+  }
+}
 function render(){
   if(typeof document==='undefined')return;
   const badge=document.querySelector('#diagnosticsBadge');
@@ -82,12 +115,13 @@ async function copy(){
 }
 function init(){
   const root=document.createElement('div');
-  root.innerHTML='<button id="diagnosticsBadge" class="diagnostics-badge" type="button" title="Editor hibakereső">✓ 0 hiba</button><aside id="diagnosticsPanel" class="diagnostics-panel" hidden><header><div><strong>Editor hibakereső</strong><small>Automatikus hibajelentés</small></div><div class="diagnostics-actions"><button id="diagnosticsCopy" type="button">Másolás</button><button id="diagnosticsClear" type="button">Törlés</button><button id="diagnosticsClose" type="button" aria-label="Bezárás">×</button></div></header><p id="diagnosticsCopyStatus" class="diagnostics-copy-status" role="status" aria-live="polite"></p><div id="diagnosticsList" class="diagnostics-list"></div></aside>';
+  root.innerHTML='<button id="diagnosticsBadge" class="diagnostics-badge" type="button" title="Editor hibakereső">✓ 0 hiba</button><aside id="diagnosticsPanel" class="diagnostics-panel" hidden><header><div><strong>Editor hibakereső</strong><small>Automatikus hibajelentés</small></div><div class="diagnostics-actions"><button id="diagnosticsCopy" type="button">Másolás</button><button id="diagnosticsExport" type="button">JSON letöltése</button><button id="diagnosticsClear" type="button">Törlés</button><button id="diagnosticsClose" type="button" aria-label="Bezárás">×</button></div></header><p class="diagnostics-export-notice">A letöltés csak redaktált hibakódot, üzenetet és technikai útvonalat tartalmaz; tokeneket, teljes URL-paramétereket vagy nyers stack trace-t nem.</p><p id="diagnosticsCopyStatus" class="diagnostics-copy-status" role="status" aria-live="polite"></p><div id="diagnosticsList" class="diagnostics-list"></div></aside>';
   document.body.append(...root.children);
   document.querySelector('#diagnosticsBadge').onclick=open;
   document.querySelector('#diagnosticsClose').onclick=close;
   document.querySelector('#diagnosticsClear').onclick=clear;
   document.querySelector('#diagnosticsCopy').onclick=copy;
+  document.querySelector('#diagnosticsExport').onclick=download;
   const early=window.__sanciEditorEarlyErrors||[];
   delete window.__sanciEditorEarlyErrors;
   for(const item of early)add(item);
@@ -100,4 +134,4 @@ function init(){
   });
   render();
 }
-export const diagnostics=Object.freeze({init,add,clear,verify,open,close,subscribe(listener){listeners.add(listener);return()=>listeners.delete(listener)},get entries(){return entries.slice()}});
+export const diagnostics=Object.freeze({init,add,clear,verify,open,close,exportPayload,download,subscribe(listener){listeners.add(listener);return()=>listeners.delete(listener)},get entries(){return entries.slice()}});
