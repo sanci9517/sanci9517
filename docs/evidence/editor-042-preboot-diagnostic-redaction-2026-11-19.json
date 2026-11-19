@@ -1,0 +1,126 @@
+{
+  "schema": "sanci.editor.edt042-preboot-diagnostic-redaction.v1",
+  "recorded_at_utc": "2026-11-19T06:24:24Z",
+  "repository": "sanci9517/sanci9517",
+  "branch": "v2/foundation",
+  "base_head_after_preserving_remote_evidence": "021ff85cba893722a826895a47fd09f5f12b30e2",
+  "plan_point": "77.44 / WEB-011 -> 77.44.7.D / EDT-042 adjacent diagnostics security regression",
+  "status": "LOCAL_VALIDATION_PASS_RELEASE_PENDING",
+  "defect": "Preboot ErrorEvent handling stored and logged untrusted raw messages, source URL queries and raw Error objects before the diagnostics module initialized, allowing credentials, private URL parameters and personal data into early diagnostics.",
+  "implementation": {
+    "redaction": "Preboot text is bounded and redacts bearer/token-like values, query secrets, email, phone and control characters; source URLs retain only a bounded path and redact the query.",
+    "raw_error_retention": "The early queue stores only normalized source/code/message/file/line/column fields. Raw Error objects and target objects are not retained or logged.",
+    "bounded_queue": "At most 100 early errors are retained; each message is capped at 320 characters.",
+    "hostile_values": "Error field reads and string conversion are guarded so hostile getters/coercions cannot interrupt recovery.",
+    "save_publish": "No changes to page data, Save, Publish, preview, API, D1 or R2 behavior. Save remains separate from Publish."
+  },
+  "changed_runtime_paths": [
+    "public/editor-v2/boot.js",
+    "public/editor-v2/index.html"
+  ],
+  "changed_test_paths": [
+    "tests/browser/editor-diagnostics-redaction.test.js"
+  ],
+  "changed_evidence_paths": [
+    "docs/evidence/feature-traceability.json",
+    "docs/evidence/editor-042-preboot-diagnostic-redaction-2026-11-19.json"
+  ],
+  "checks": {
+    "targeted_browser": {
+      "status": "PASS",
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-diagnostics-redaction.test.js",
+      "result": "3/3 real Chromium tests: preboot message/source/query/Error redaction, bounded queue and text, failed Save draft retention/retry; 6.2 seconds.",
+      "environment": "passed with sandbox-approved local loopback; the same command without loopback permission stopped before assertions and is not a product failure."
+    },
+    "editor_unit_suite": {
+      "status": "PASS",
+      "command": "npm run test:editor",
+      "result": "22/22 Editor test files and 4/4 subreaper/manifest checks."
+    },
+    "typecheck": {
+      "status": "PASS",
+      "command": "npm run typecheck -- --pretty false"
+    },
+    "traceability": {
+      "status": "PASS",
+      "command": "python3 scripts/build-feature-traceability.py --check",
+      "result": "396/396 source mappings current; functional acceptance is not certified."
+    },
+    "canonical_plan": {
+      "status": "PASS",
+      "command": "python3 scripts/check-canonical-plan.py",
+      "result": "One complete 13-part master, 396 source mappings; this is structural validation only."
+    },
+    "plan_contract": {
+      "status": "PASS",
+      "command": "python3 tests/plan-contract.test.py",
+      "result": "15/15."
+    },
+    "active_point_audit": {
+      "status": "PASS_OPEN",
+      "command": "python3 scripts/audit-active-plan-point.py",
+      "result": "77.44 / WEB-011 -> 77.44.7.D; full D OPEN / NOT_CERTIFIED; 147 PARTIAL_SOURCE, 249 UNVERIFIED."
+    },
+    "migration_safety": {
+      "status": "PASS",
+      "command": "npm run test:web013:migration-gate",
+      "result": "deploy:safe does not apply production migrations."
+    },
+    "javascript_and_diff": {
+      "status": "PASS",
+      "command": "node --check public/editor-v2/boot.js; node --check tests/browser/editor-diagnostics-redaction.test.js; git diff --check"
+    },
+    "wrangler_dry_run": {
+      "status": "PASS_NO_PUBLISH",
+      "version": "4.130.0",
+      "assets": 195,
+      "upload": "393.29 KiB",
+      "gzip": "100.77 KiB",
+      "published": false
+    },
+    "production_d1_preflight": {
+      "status": "PASS_READ_ONLY",
+      "database": "sanci9517-db",
+      "queries": [
+        "SELECT COUNT(*) AS migration_count, MAX(name) AS latest_migration FROM d1_migrations",
+        "PRAGMA quick_check",
+        "PRAGMA foreign_key_check"
+      ],
+      "migration_count": 35,
+      "latest_migration": "0029_media_archive_unicode_additive.sql",
+      "quick_check": "ok",
+      "foreign_key_violations": 0,
+      "rows_written": 0,
+      "changes": 0,
+      "changed_db": false
+    },
+    "full_editor_layout": {
+      "status": "INTERRUPTED_PENDING_EXACT_SHA_CI",
+      "command": "npm run test:editor:layout",
+      "result": "Local duplicate was intentionally stopped after 20/59 browser files passed; no full-suite PASS is claimed. The exact-release-SHA GitHub Editor Core workflow is required and will be checked after the push."
+    }
+  },
+  "pre_release_production_baseline": {
+    "deployment_id": "941706a7-0bcc-4824-8a0a-435fb24e7ee8",
+    "worker_version_id": "95254938-314f-4b8c-8d4d-3974976a1de7",
+    "traffic_percent": 100,
+    "source_sha": "ecbd4188a32554da1d9d4434abec32f73d6ca108",
+    "health": "HTTP 200 in the exact-source smoke for ecbd4188a32554da1d9d4434abec32f73d6ca108",
+    "meaning": "Baseline only; the preboot redaction changes in this record are not yet live."
+  },
+  "release": {
+    "status": "PENDING_RUNTIME_COMMIT_PUSH_EXACT_SHA_CI_AND_PRODUCTION_VERIFICATION",
+    "expected_push_mode": "Normal fast-forward only, after merging the independently advanced remote commits; force push prohibited.",
+    "remote_head_before_change": "7f7aad01bfda0ad73fe052843204885721070c92",
+    "prior_exact_sha_editor_core_ci": {
+      "run_id": 44467579436,
+      "source_sha": "ecbd4188a32554da1d9d4434abec32f73d6ca108",
+      "status": "IN_PROGRESS",
+      "meaning": "This is the previous runtime SHA; it cannot certify this source change."
+    },
+    "new_exact_sha_ci": "Will be populated only after GitHub Actions automatically starts for the pushed runtime commit; no manual dispatch/rerun."
+  },
+  "acceptance_boundary": "This is one EDT-042 preboot diagnostics security slice, not full EDT-042, not the D-01..D-07 capability/lifecycle matrix, not complete Editor acceptance. The full 77.44.7.D remains OPEN / NOT_CERTIFIED; manual/physical Editor acceptance stays DEFERRED until the complete Editor. Save and Publish remain separate.",
+  "production_mutations": false,
+  "cost": "0 Ft; no paid service, no production D1 migration/data write, no R2 mutation/deletion, and no manual Actions dispatch/rerun."
+}

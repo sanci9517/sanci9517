@@ -38,7 +38,7 @@
     "public/editor-v2/editor-refresh.css": "2ef4f1725fe3af3a203ed9dba28a7699abe57c7cbc9f41a00c390cd81be031ac",
     "public/editor-v2/editor-templates.css": "cfe18fe3ee13f25778c35df8be72d94d574059b5e3e869af8476083cbab3d660",
     "public/editor-v2/editor.css": "e9fe8c9c96c60a80864e0dc78d4af5a0d8e33cec0d4fa2e8c2c099efbd914cb7",
-    "public/editor-v2/index.html": "7c89ab9de39bfa966b6a05f3d2cc85d87f85527386ddfa0c8629075c18d2375e",
+    "public/editor-v2/index.html": "cd8b34e66d89a1d35396d800a00e73270ce8a76252f35c80870ae7ab15628e28",
     "public/editor-v2/tests/diagnostics.test.js": "31df07d172bfc61973f0932b447f7004ba09ef004fea97efceeccbdc10a455c5",
     "public/editor-v2/tests/editor-templates.test.js": "4a16d9072f7cabead544ebf96302d174b147e28a333f8b1946c94e7bc8d0328a",
     "public/editor-v2/ui/action-catalog.js": "0129625060fdca606e7cce0fa60434e00bb83967eede4eec5922ca3e6f2beea0",
@@ -90,7 +90,7 @@
     "src/routes/integrations/twitch.ts": "ae6e4b4e9db5a6f495089f3d3e55c7010a36bdf38a86ff4219a9ced2ce436841",
     "src/routes/public/pages.ts": "4eae3fc245dd45b4befaf891b7950898e52010064cf0a1bb79a4e431c79253e5",
     "src/routes/public/seo.ts": "fa73a6c252df558862136e85e9a6594d84a19d2fffb130ac5dd38656074be60f",
-    "tests/browser/editor-diagnostics-redaction.test.js": "2111b2848cc48b97611d2098a7c654ff0f4148274df147b5d6922dd2d5147ffb",
+    "tests/browser/editor-diagnostics-redaction.test.js": "5ba6f7b36756296633322a8c8930dd6380e05fae1d168fe378c32eb6c9efa027",
     "tests/browser/editor-template-start.test.js": "4924f607f90163e38053c117a37f30b50ee78b492cf31abe963f2b4669c5ecf0",
     "tests/f0-3-route-integration.test.js": "c6f9dd7b1816ca7663b796daa485ae94f413c9746c5d5590d6bc30fc81d9fff6"
   },
