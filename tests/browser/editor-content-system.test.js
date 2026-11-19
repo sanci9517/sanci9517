@@ -177,6 +177,17 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
           `the corrected table Canvas content remains intact at the ${device} breakpoint`);
         assert.equal(posts.length,0,`valid responsive table checks remain draft-only at the ${device} breakpoint`);
       }
+      const tableCaption=editor.getByLabel('Táblázat címe',{exact:true});
+      await tableCaption.fill('Frissített eredmények');
+      const tableHeader=editor.getByLabel('Az első sor fejléc',{exact:true});
+      await tableHeader.uncheck();
+      assert.equal(await node(editor,'table').locator('caption').textContent(),'Frissített eredmények',
+        'the authored table caption changes immediately in the Canvas');
+      assert.equal(await node(editor,'table').locator('th[scope=col]').count(),0,
+        'turning off the authored header converts the first row to ordinary data cells');
+      assert.equal(await node(editor,'table').locator('tbody tr').first().locator('td').count(),2,
+        'the header toggle preserves every first-row table cell');
+      assert.equal(posts.length,0,'authored table caption and header edits remain local until explicit Save');
     }
     const repeater=editor.locator('.content-repeater');
     if(await repeater.count()){
@@ -663,6 +674,10 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.link].props.ariaLabel,authoredLinkLabel,'Save stores the authored link accessible name in the draft');
   assert.deepEqual(posts.at(-1).document.pages[pageId].nodes[ids.table].props.rows,expectedTableRows,
     'Save retains every long table cell and its final edit in the draft');
+  assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.table].props.caption,'Frissített eredmények',
+    'Save persists the authored table caption without publishing it');
+  assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.table].props.header,false,
+    'Save persists the authored first-row header setting in the draft');
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.video].props.posterAssetId,assetId,'Save retains poster ID as draft only');
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.video].props.src,authoredMediaSources.video,'Save stores the validated video playback URL in the draft');
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.video].props.muted,true,'Save persists the required mute state with autoplay');
@@ -699,6 +714,8 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
     'the current published image keeps its original square ratio after draft Save');
   assert.equal(await node(live,'link').getAttribute('href'),'mailto:creator@example.com','draft Save does not publish the authored link destination');
   assert.equal(await node(live,'link').textContent(),'Kapcsolat','draft Save does not publish the authored link text');
+  assert.equal(await node(live,'table').locator('caption').textContent(),'Eredmények','draft Save leaves the previous public table caption unchanged');
+  assert.equal(await node(live,'table').locator('th[scope=col]').count(),2,'draft Save leaves the previous public table header unchanged');
   assert.equal(await node(live,'icon').getAttribute('aria-label'),'Kedvenc','Save keeps the previous published icon name live');
   assert.equal(await node(live,'icon').getAttribute('role'),'img');
   assert.equal(await node(live,'video').locator('video').getAttribute('poster'),'/fixture.svg','Save never publishes the newly chosen poster');
@@ -735,6 +752,13 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   await editor.reload();await select('table');
   assert.equal(await editor.locator('.content-schema-field[data-content-key="rows"] textarea').inputValue(),serializeTableTsv(expectedTableRows),
     'reload restores the complete long table before separate Publish');
+  assert.equal(await editor.getByLabel('Táblázat címe',{exact:true}).inputValue(),'Frissített eredmények',
+    'reload restores the authored table caption from the saved draft');
+  assert.equal(await editor.getByLabel('Az első sor fejléc',{exact:true}).isChecked(),false,
+    'reload restores the authored first-row header setting from the saved draft');
+  assert.equal(await node(editor,'table').locator('caption').textContent(),'Frissített eredmények');
+  assert.equal(await node(editor,'table').locator('th[scope=col]').count(),0,
+    'the reloaded Canvas preserves the authored data-row semantics');
   for(const type of ['video','audio']){
     await select(type);
     assert.equal(await editor.locator('.content-schema-field[data-content-key="src"] input').inputValue(),authoredMediaSources[type],
@@ -893,7 +917,12 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   await live.reload();
   assert.equal(await node(live,'audio').locator('audio').getAttribute('controls'),'', 'Publish exposes accessible native audio controls');
   assert.equal(await node(live,'audio').locator('audio').getAttribute('loop'),'', 'Publish exposes the authored audio loop setting');
-  assert.equal(await node(live,'table').locator('th[scope=col]').count(),2);
+  assert.equal(await node(live,'table').locator('caption').textContent(),'Frissített eredmények',
+    'separate Publish exposes the authored table caption and accessible region name');
+  assert.equal(await node(live,'table').locator('.creator-table-scroll').getAttribute('aria-label'),'Frissített eredmények');
+  assert.equal(await node(live,'table').locator('th[scope=col]').count(),0,
+    'separate Publish renders the first row as data cells when the authored header is disabled');
+  assert.equal(await node(live,'table').locator('tbody tr').first().locator('td').count(),2);
   assert.equal(await node(live,'table').locator('tbody tr').count(),expectedTableRows.length,'Publish preserves all supported rows');
   assert.equal(await node(live,'table').locator('tbody tr').last().locator('td').last().textContent(),expectedTableRows.at(-1)[1],
     'separate Publish exposes the final long cell without truncation');

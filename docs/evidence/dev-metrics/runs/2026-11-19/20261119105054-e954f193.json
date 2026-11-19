@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261119105054-e954f193",
+  "task": "77.44.7.D-D06-draft-only-media-archive-real-worker-guard",
+  "trigger": "manual",
+  "started_at": "2026-11-19T10:50:54.006Z",
+  "finished_at": "2026-11-19T11:03:02.000Z",
+  "wall_seconds": 728,
+  "paused_seconds": 0,
+  "measured_seconds": 728,
+  "status": "pass",
+  "kind": "test",
+  "summary": "D-03 authored table caption/header Save-reload-Publish and D-06 draft-only media archive real Worker regressions passed; evidence recorded; no production mutation.",
+  "evidence": [
+    "docs/evidence/editor-d03-d06-authored-lifecycle-2026-11-19.json"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "51491d81771572a9e93ee123c83979479ff608dd",
+  "finished_revision": "51491d81771572a9e93ee123c83979479ff608dd",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

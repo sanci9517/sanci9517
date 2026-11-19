@@ -1,0 +1,70 @@
+{
+  "schema": "sanci.editor.d03-d06-authored-lifecycle.v1",
+  "captured_at_utc": "2026-11-19T11:02:20Z",
+  "plan_point": "77.44.7.D — element-specific content and media",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "base_sha": "51491d81771572a9e93ee123c83979479ff608dd",
+    "github_branch_head_at_review": "51491d81771572a9e93ee123c83979479ff608dd"
+  },
+  "implemented_test_slices": [
+    {
+      "requirement": "D-03 authored table caption and header semantics through Inspector, Canvas, draft Save/reload, separate Publish, and public rendering",
+      "file": "tests/browser/editor-content-system.test.js",
+      "assertions": [
+        "editing caption and disabling the first-row header immediately updates the Editor Canvas without saving",
+        "Save stores props.caption and props.header=false as draft-only fields while the public caption and header stay unchanged",
+        "Editor reload restores the authored caption, disabled header control, and data-cell semantics",
+        "separate Publish exposes the caption as public region name and renders the first row as ordinary cells"
+      ]
+    },
+    {
+      "requirement": "D-06 do not archive site media referenced only by the current saved draft",
+      "file": "tests/browser/media-worker-storage.test.mjs",
+      "fixture": "real Worker + Miniflare local D1/R2 + browser; synthetic data only",
+      "assertions": [
+        "the Worker usage report identifies the saved-but-unpublished media reference as draft",
+        "the Media Library archive confirmation reaches the real Worker and receives HTTP 409 MEDIA_ASSET_IN_USE",
+        "the denied archive leaves the media row, retention ledger, exact R2 bytes, saved Page Model draft, and published snapshot unchanged",
+        "the existing Save/reload/Publish/public delivery flow continues after the denial"
+      ]
+    }
+  ],
+  "checks": {
+    "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-content-system.test.js": "PASS; 1/1 real Chromium browser test",
+    "CHROMIUM_PATH=/usr/bin/chromium npm run test:media:storage": "PASS; 1/1 real Worker/Miniflare browser test",
+    "node --check tests/browser/media-worker-storage.test.mjs": "PASS",
+    "node --check tests/browser/editor-content-system.test.js": "PASS",
+    "git diff --check": "PASS",
+    "python3 tests/plan-contract.test.py": "PASS; 15/15",
+    "python3 scripts/check-canonical-plan.py": "PASS; 13 master files and 396 mappings; acceptance not certified",
+    "python3 scripts/build-feature-traceability.py --check": "PASS; 396/396",
+    "python3 scripts/audit-active-plan-point.py": "PASS; 77.44.7.D remains OPEN / NOT_CERTIFIED; 147 PARTIAL_SOURCE / 249 UNVERIFIED"
+  },
+  "test_diagnostics": {
+    "first_worker_browser_attempt": "FAIL at an existing assertion that required a second usage request after archive denial; the new preceding draft-only case had already loaded and exposed the same usage report, making the second assertion dependent on a cache refresh.",
+    "harness_correction": "The later history-denial assertion now verifies that the Media Library loaded the usage report at least once. The new draft-only case separately verifies its own request and response path.",
+    "final_worker_browser_attempt": "PASS; all assertions complete. The first attempt touched only the isolated Miniflare fixture."
+  },
+  "release_state": {
+    "runtime_or_public_asset_changed": false,
+    "production_source_sha_unchanged": "e2d0405ee817cd3d5ff6cd6fb7f3bcf751680f5b",
+    "current_read_only_cloudflare_deployment": "0add5fdb-fbdd-42a3-b2f7-8089e98c0ebe",
+    "current_worker_version": "9130eb09-666f-45b6-8bf3-5c324ac0b35b",
+    "current_traffic_percent": 100,
+    "exact_source_smoke_run": "44504037016 SUCCESS; HTTP 200 /api/health and exact hashes for the 36 configured public source paths",
+    "worker_deployment_from_this_test_only_change": false,
+    "production_d1_operation": "none",
+    "production_r2_operation": "none",
+    "hosted_ci_for_test_evidence_commit": "not run; test/evidence-only follow-up uses [skip ci]",
+    "new_cost_huf": 0
+  },
+  "status": "D03_AUTHORED_TABLE_FIELD_LIFECYCLE_TEST_PASS_AND_D06_DRAFT_ONLY_ARCHIVE_REAL_WORKER_TEST_PASS; FULL_77_44_7_D_OPEN_NOT_CERTIFIED",
+  "limitations": [
+    "These are two targeted regression slices, not complete D-03 or D-06 acceptance.",
+    "D-01 through D-07 and 77.44.7.D remain OPEN / NOT_CERTIFIED; source-status counts are not acceptance results.",
+    "Full Editor manual and physical acceptance remains deferred until the complete Editor gate.",
+    "Save and Publish remain separate."
+  ]
+}

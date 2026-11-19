@@ -140,6 +140,31 @@ print(json.dumps(result))`],{cwd:root,encoding:'utf8'}));
  const stored=(await DB.prepare('SELECT content_json FROM pages WHERE id=?').bind(pageId).first()).content_json;
  assert.equal(JSON.parse(stored).pages[pageId].nodes[targetNode.id].responsive.desktop.backgroundAssetId,row.id,'draft Save persists the asset ID through the real Editor route');
  assert.equal((await context.request.get(base+'/media/'+row.id)).status(),404,'an asset referenced only by a draft is not public');
+ const draftUsage=await get('?usage='+row.id);
+ assert.ok(draftUsage.references.some(ref=>ref.source==='draft'&&ref.path==='responsive.desktop.backgroundAssetId'),
+  'the real Worker usage index identifies the saved-but-unpublished background as a draft reference');
+ const beforeDraftArchive=await snapshot();
+ const pageBeforeDraftArchive=await DB.prepare('SELECT content_json,published_content_json,published_revision_id,is_published FROM pages WHERE id=?').bind(pageId).first();
+ const draftArchiveTile=page.locator('.tile').filter({hasText:'isolated-acceptance.png'});
+ await draftArchiveTile.waitFor();
+ const draftArchiveButton=draftArchiveTile.getByRole('button',{name:'Médiafájl archiválása',exact:true});
+ const draftArchiveCallIndex=calls.length;
+ await draftArchiveButton.click();
+ assert.equal(calls.length,draftArchiveCallIndex,'the first draft-only archive click only arms confirmation');
+ const draftArchiveResponse=page.waitForResponse(response=>{
+  const url=new URL(response.url());
+  return url.pathname==='/api/admin/media'&&url.searchParams.get('id')===row.id&&response.request().method()==='PATCH';
+ });
+ await draftArchiveTile.getByRole('button',{name:'Archiválás megerősítése',exact:true}).click();
+ const rejectedDraftArchive=await draftArchiveResponse;
+ assert.equal(rejectedDraftArchive.status(),409,'the real Worker refuses to archive an asset referenced only by the current saved draft');
+ assert.equal((await rejectedDraftArchive.json()).error.code,'MEDIA_ASSET_IN_USE');
+ await draftArchiveTile.getByText(/A médiafájlra oldal vagy korábbi verzió hivatkozik/).waitFor();
+ assert.deepEqual(await snapshot(),beforeDraftArchive,'a draft-only archive rejection preserves the D1 media row, retention ledger and exact R2 bytes');
+ assert.deepEqual(await DB.prepare('SELECT content_json,published_content_json,published_revision_id,is_published FROM pages WHERE id=?').bind(pageId).first(),
+  pageBeforeDraftArchive,'a denied archive leaves both the saved draft and its published snapshot unchanged');
+ assert.ok(calls.slice(draftArchiveCallIndex).some(call=>call.method==='GET'&&call.query.includes('usage='+row.id)),
+  'the Media Library refreshes site-scoped usage after the Worker refuses the draft-only archive');
  await editor.reload();await canvasNode.click();
  assert.ok((await canvasBackground()).includes(`/api/admin/media?id=${row.id}`),'the draft asset remains after a real Editor reload');
  await save(true);
@@ -219,8 +244,8 @@ print(json.dumps(result))`],{cwd:root,encoding:'utf8'}));
  await page.waitForFunction(()=>document.querySelector('.tile .media-usage')?.hidden===false,
   null,{timeout:10000});
  assert.deepEqual(await snapshot(),beforeArchive,'the real Media Library archive denial leaves D1 rows and R2 bytes unchanged');
- assert.ok(calls.slice(archiveCallIndex).some(call=>call.method==='GET'&&call.query.includes('usage='+row.id)),
-  'the real Media Library reveals the historical usage report after the Worker rejects archival');
+ assert.ok(calls.some(call=>call.method==='GET'&&call.query.includes('usage='+row.id)),
+  'the real Media Library has loaded the site-scoped usage report while the Worker refuses current-draft and historical archive attempts');
  // A malformed persisted/API draft must remain repairable without bypassing the server Publish guard.
  const publicationBefore=await DB.prepare('SELECT content_json,published_content_json,published_revision_id,is_published FROM pages WHERE id=?').bind(pageId).first();
  assert.equal(publicationBefore.is_published,1);
