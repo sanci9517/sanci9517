@@ -73,6 +73,28 @@ test('Pages and Editor enforce tenant membership before reads and writes',async 
   assert.equal(f.db.prepare('SELECT COUNT(*) AS n FROM audit_log').get().n,before);
 });
 
+test('an already-open tenant Editor cannot Publish after its active role is downgraded',async t=>{
+  const f=await fixture(t);
+  assert.equal((await f.editor('editor','other')).status,200,'the editor opens while membership grants edit access');
+  const before={
+    page:f.db.prepare(`SELECT content_json,published_content_json,published_revision_id,is_published
+      FROM pages WHERE id='b'`).get(),
+    revisionCount:f.db.prepare("SELECT COUNT(*) AS n FROM editor_revisions WHERE page_id='b'").get().n,
+    auditCount:f.db.prepare("SELECT COUNT(*) AS n FROM audit_log").get().n
+  };
+  f.db.prepare("UPDATE site_memberships SET role='viewer',status='active' WHERE user_id='editor' AND site_id='other'").run();
+  const denied=await f.editor('editor','other','POST',{
+    pageId:'b',expectedVersion:1,document:f.document('b','Unauthorized after role downgrade'),publish:true
+  });
+  assert.equal(denied.status,403,'Publish rechecks the current editor grant on every request');
+  assert.deepEqual(f.db.prepare(`SELECT content_json,published_content_json,published_revision_id,is_published
+    FROM pages WHERE id='b'`).get(),before.page,'a denied Publish preserves draft and public snapshots');
+  assert.equal(f.db.prepare("SELECT COUNT(*) AS n FROM editor_revisions WHERE page_id='b'").get().n,
+    before.revisionCount,'a denied Publish creates no revision');
+  assert.equal(f.db.prepare("SELECT COUNT(*) AS n FROM audit_log").get().n,
+    before.auditCount,'a denied Publish creates no audit event');
+});
+
 test('site editor saves, publishes and rolls back only own page; revocation fails closed',async t=>{
   const f=await fixture(t);
   const draft=await f.editor('editor','other','POST',{pageId:'b',expectedVersion:1,document:f.document('b','Draft'),publish:false});

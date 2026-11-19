@@ -1,0 +1,57 @@
+{
+  "schema": 1,
+  "captured_at": "2026-11-19T09:55:23Z",
+  "plan_item": "77.44.7.D",
+  "status": "OPEN / NOT_CERTIFIED",
+  "scope": "D-07 route regression: an Editor session cannot Publish after an active site editor role is downgraded to viewer.",
+  "plan_sha256": "22cb263e9a43a4424d8bdb72e4b5daee215fdb45a48b7db3c2b80817821d9b3a",
+  "base_commit": "f44621a6868e3fd961e024ef8242d53a084ed53f",
+  "test_sha256": "e8f5b605886a1143ef05ac3e9d0e6c046b97574feaba4c1dea8ca8e584f2c943",
+  "changes": {
+    "runtime": "none; adminEditorRoute checks the current editor grant on each request.",
+    "test": [
+      "Opens tenant page b while the membership has the editor role, then downgrades the still-active membership to viewer before the Publish request.",
+      "Verifies Publish returns 403 and leaves draft/public page snapshots, revision count, and audit count unchanged."
+    ]
+  },
+  "checks": [
+    {
+      "command": "node --experimental-loader ./tests/ts-extension-loader.mjs --test tests/web013-tenant-pages-editor.test.js",
+      "result": "PASS 1/1"
+    },
+    {
+      "command": "npm run test:site-access",
+      "result": "PASS 2/2"
+    },
+    {
+      "command": "node --check tests/web013-tenant-pages-editor.test.js",
+      "result": "PASS"
+    },
+    {
+      "command": "git diff --check",
+      "result": "PASS"
+    }
+  ],
+  "release": {
+    "ci": "not dispatched; test/evidence-only change, no hosted CI result claimed",
+    "worker": "runtime code unchanged; no deployment performed",
+    "health_get": {
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+      "http_status": 200,
+      "body": {"ok": true, "service": "sanci9517-streamer-brand", "version": "2.0.0", "server": "cloudflare-worker"},
+      "checked_at": "2026-11-19T09:55:08Z"
+    },
+    "deployment_baseline": {
+      "deployment_id": "a8cb33a3-5179-4fc9-8844-e002a1e1a9e3",
+      "version_id": "31b605b7-fd0d-4cfa-8ddf-849c51eadef2",
+      "traffic_percent": 100,
+      "runtime_source_sha": "fad2043d96f3bf890005c62c0e34d0084b387f05"
+    }
+  },
+  "production_data_and_cost": {
+    "production_d1_mutations_or_migrations": "none",
+    "r2_operations": "none",
+    "new_paid_services_or_spend": "none"
+  },
+  "acceptance_boundary": "This closes only the role-downgrade Publish route regression. The Editor functional scope, complete D matrix, and full physical/manual acceptance remain open/deferred."
+}

@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261119095429-f7849deb",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-19T09:54:29.479Z",
+  "finished_at": "2026-11-19T09:55:23.312Z",
+  "wall_seconds": 54,
+  "paused_seconds": 0,
+  "measured_seconds": 54,
+  "status": "pass",
+  "kind": "test",
+  "summary": "Editor Publish is denied immediately after an active tenant editor membership is downgraded to viewer; page, revision, and audit snapshots remain unchanged",
+  "evidence": [
+    "tests/web013-tenant-pages-editor.test.js:PASS"
+  ],
+  "checks": "node --experimental-loader ./tests/ts-extension-loader.mjs --test tests/web013-tenant-pages-editor.test.js PASS 1/1; npm run test:site-access PASS 2/2; node --check PASS; git diff --check PASS; live Worker health HTTP 200 and 100% traffic unchanged",
+  "started_revision": "f44621a6868e3fd961e024ef8242d53a084ed53f",
+  "finished_revision": "f44621a6868e3fd961e024ef8242d53a084ed53f",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
