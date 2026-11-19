@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261119104322-6eafbbf0",
+  "task": "77.44.7.D-D07-record-exact-sha-editor-core-success",
+  "trigger": "manual",
+  "started_at": "2026-11-19T10:43:22.050Z",
+  "finished_at": "2026-11-19T10:44:20.103Z",
+  "wall_seconds": 58,
+  "paused_seconds": 0,
+  "measured_seconds": 58,
+  "status": "pass",
+  "kind": "docs",
+  "summary": "Recorded the exact-SHA Editor Core CI completion for runtime e2d0405e: full layout, WEB-013 mobile, schedule/domain, Brand Kit and Admin-home all pass. Full D remains open.",
+  "evidence": [
+    "docs/evidence/editor-d07-mobile-revision-conflict-recovery-2026-11-19.json",
+    "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "adb51b166af95f0241eb21c76dd860abb51381a4",
+  "finished_revision": "adb51b166af95f0241eb21c76dd860abb51381a4",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

@@ -82,7 +82,7 @@
     "commit": "e2d0405ee817cd3d5ff6cd6fb7f3bcf751680f5b",
     "remote_push": "PASS: normal fast-forward; origin/v2/foundation verified at e2d0405ee817cd3d5ff6cd6fb7f3bcf751680f5b.",
     "cloudflare_deployment": "PASS: deployment 0add5fdb-fbdd-42a3-b2f7-8089e98c0ebe; Worker version 9130eb09-666f-45b6-8bf3-5c324ac0b35b receives 100% traffic.",
-    "github_ci": "Exact-SHA source smoke run 44504037016 PASS; F0 44504036893, Twitch 44504037008, canonical-plan 44504036928, and active-point audit 44504036974 PASS. Editor Core run 44504037161 remains IN_PROGRESS in the Editor browser layout regression; downstream steps are pending. No extra dispatch or rerun started."
+    "github_ci": "All six exact-SHA workflows for e2d0405ee817cd3d5ff6cd6fb7f3bcf751680f5b completed SUCCESS: source smoke 44504037016 (health + all 36 public hashes), F0 44504036893, Twitch 44504037008, canonical-plan 44504036928, active-point audit 44504036974, and Editor Core 44504037161. Editor Core passed the full configured layout regression and every downstream WEB-013/schedule/domain/Brand Kit/Admin-home step. The later test-only follow-up adb51b16 was pushed with [skip ci] and did not trigger another CI run. No dispatch or rerun."
   },
   "limits": {
     "new_cost_huf": 0,
@@ -96,5 +96,19 @@
     "measured_seconds": 811,
     "status": "pass",
     "kind": "mixed"
-  }
+  },
+  "documentation_followups": [
+    {
+      "id": "20261119102732-fd2f1ff4",
+      "measured_seconds": 76,
+      "status": "pass",
+      "evidence": "Exact-SHA deployment, source smoke, and Editor Core CI result recorded."
+    },
+    {
+      "id": "20261119104322-6eafbbf0",
+      "measured_seconds": 58,
+      "status": "pass",
+      "evidence": "Exact-SHA Editor Core completed successfully; full D remains open."
+    }
+  ]
 }
