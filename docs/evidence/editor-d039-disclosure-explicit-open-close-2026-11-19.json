@@ -1,0 +1,90 @@
+{
+  "schema": 1,
+  "plan_point": "77.44.7.D",
+  "feature": "EDT-039 Page Action explicit disclosure open and close",
+  "date": "2026-11-19",
+  "change": {
+    "files": [
+      "public/assets/page-renderer.js",
+      "public/editor-v2/core/authored-content.js",
+      "public/editor-v2/core/page-interactions.js",
+      "public/editor-v2/core/schema.js",
+      "public/editor-v2/tests/page-interactions.test.js",
+      "public/editor-v2/ui/page-interaction-controls.js",
+      "tests/browser/editor-page-interactions.test.js",
+      "docs/creator-master/part-05-of-12.md",
+      "docs/evidence/feature-traceability.json"
+    ],
+    "behavior": "Added allowlisted open-disclosure and close-disclosure same-page actions for native details elements. They are distinct from toggle-disclosure, accept click/focus only, are idempotent, and preserve native same-name disclosure exclusivity when opening. Editor controls explain the explicit behavior. Save remains draft-only and Publish remains a separate operation.",
+    "regression": "Unit coverage checks allowlisted actions, rejected unsupported trigger/target combinations, and action attributes. Chromium lifecycle coverage saves and reloads a draft without changing public output, applies the change in Preview, and verifies public output changes only after separate Publish; repeated explicit open/close operations do not invert one another."
+  },
+  "source_hashes": {
+    "public/assets/page-renderer.js": "78e6eb82c0891825ec9603daefd0b127e9329f18ab7b3b89a38eb38e09b0a3c4",
+    "public/editor-v2/core/authored-content.js": "721cbe36bde05723fc656b3dce39274862b587a69ccc3e0df443bfe28f11abd2",
+    "public/editor-v2/core/page-interactions.js": "0028925b5add5bdb261c61db299fe8e1e6e23a9104dd57f520c4c833fe2fee66",
+    "public/editor-v2/core/schema.js": "ac2588368e49719e50279570589e0b99b98d846507c449ce8fde4614ed06a36b",
+    "public/editor-v2/ui/page-interaction-controls.js": "bc3cfa18939d2ae5b3a07d5bc9881878cbfed70cec6ac87f46ac43bf0252d281"
+  },
+  "checks": {
+    "page_interactions_unit": "PASS 5/5",
+    "editor_unit_suite": "PASS 22/22 test files; runner/manifest 4/4",
+    "editor_page_actions_chromium": "PASS 1/1; real Chromium browser lifecycle; Linux subreaper cleaned up four orphan descendants",
+    "typecheck": "PASS npm run typecheck -- --pretty false",
+    "plan_contract": "PASS 15/15",
+    "active_plan_audit": "PASS; cursor 77.44 / WEB-011 -> 77.44.7.D remains OPEN / NOT_CERTIFIED",
+    "canonical_plan_and_traceability": "PASS 13 master files / 396 feature mappings",
+    "feature_traceability_check": "PASS 396/396",
+    "web013_migration_safety_gate": "PASS",
+    "changed_js_syntax_and_diff_check": "PASS node --check for changed JavaScript and tests; git diff --check",
+    "wrangler_dry_run": {
+      "status": "PASS",
+      "exit_code": 0,
+      "version": "4.130.0",
+      "public_assets": 195,
+      "upload": "393.29 KiB",
+      "gzip": "100.77 KiB",
+      "publish": false
+    },
+    "production_d1_preflight": {
+      "access": "Cloudflare D1 query API; SELECT-only",
+      "queries": 2,
+      "last_migration": "0029_media_archive_unicode_additive.sql",
+      "migration_count": 35,
+      "rows_written": 0,
+      "changes": 0,
+      "changed_db": false
+    }
+  },
+  "release": {
+    "status": "DEPLOYED_VERIFIED; EDITOR_CORE_CI_PENDING",
+    "branch": "v2/foundation",
+    "source_sha": "3c29d8f32e35e34f71d4c7928de764f8dec22efe",
+    "push": "normal fast-forward from 88ef6830c92039c23b8b0400b5fac15772fefd43; GitHub branch API confirms exact source SHA",
+    "cloudflare_build": {
+      "build_uuid": "bb5313ad-dfc0-44d9-8d8d-f619dc888e11",
+      "build_outcome": "success",
+      "commit_hash": "3c29d8f32e35e34f71d4c7928de764f8dec22efe",
+      "build_command": "npm run typecheck",
+      "deploy_command": "npm run deploy:safe"
+    },
+    "worker_deployment_id": "e2c6d106-15aa-492f-8581-0b4a2d8aeb3e",
+    "worker_version_id": "95b6aeb7-ebf0-46ab-ae4a-f17f222bc75d",
+    "worker_traffic_percentage": 100,
+    "production_health_and_asset_hashes": "PASS via exact-SHA GitHub workflow 44451642192 (job 135316775187): health HTTP 200 and all 36 configured public source files byte-for-byte SHA-256 match; all five changed runtime assets are included in that verification.",
+    "exact_sha_workflows": {
+      "editor_core": {
+        "id": 44451642222,
+        "status": "IN_PROGRESS",
+        "pending_step": "Run Editor browser layout regression",
+        "completed_prior_steps": "Typecheck, Editor core tests, D1 offline ledger/bootstrap, R2 media API, showcase unit/browser, and isolated D1/R2 storage tests passed."
+      },
+      "f0_baseline": {"id": 44451642166, "status": "SUCCESS"},
+      "active_plan_audit": {"id": 44451642134, "status": "SUCCESS"},
+      "canonical_plan": {"id": 44451642188, "status": "SUCCESS"},
+      "twitch": {"id": 44451642113, "status": "SUCCESS"},
+      "production_source_smoke": {"id": 44451642192, "status": "SUCCESS"}
+    },
+    "cost_and_data": "0 Ft additional cost reported; no production D1 migration/write or R2 mutation. Cloudflare build used npm run deploy:safe."
+  },
+  "acceptance_boundary": "This is a delivered EDT-039 disclosure interaction slice only. It does not certify the full EDT-039 action/event/security/accessibility/performance matrix, D-01 through D-07, or the complete Visual Editor. Plan point 77.44.7.D remains OPEN / NOT_CERTIFIED. Full manual/physical Editor acceptance remains deferred until the complete Editor is implemented. Save != Publish."
+}

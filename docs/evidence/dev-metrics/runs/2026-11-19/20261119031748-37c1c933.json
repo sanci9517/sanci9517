@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261119031748-37c1c933",
+  "task": "77.44.7.D-02-Page-Action-recovery",
+  "trigger": "manual",
+  "started_at": "2026-11-19T03:17:48.667Z",
+  "finished_at": "2026-11-19T03:32:21.639Z",
+  "wall_seconds": 873,
+  "paused_seconds": 0,
+  "measured_seconds": 873,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "EDT-039 disclosure open/close slice implemented, locally and in Chromium verified, exact-SHA Worker deployed; broad Editor CI layout regression still running.",
+  "evidence": [
+    "docs/evidence/editor-d039-disclosure-explicit-open-close-2026-11-19.json"
+  ],
+  "checks": "unit=PASS;browser=PASS;typecheck=PASS;dry-run=PASS;source-smoke=PASS;editor-core-ci=PENDING",
+  "started_revision": "88ef6830c92039c23b8b0400b5fac15772fefd43",
+  "finished_revision": "3c29d8f32e35e34f71d4c7928de764f8dec22efe",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
