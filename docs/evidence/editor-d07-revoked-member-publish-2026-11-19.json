@@ -28,7 +28,7 @@
     }
   ],
   "release": {
-    "push": "pending; test/evidence-only commit intended for normal fast-forward with [skip ci]",
+    "push": "PASS; normal fast-forward commit 69c857b971f4fe1515baa34be577f45b8b81feb6, parent a67dcec4436916a4f7ddadf6f13b5fbc3e6f5f4d; verified by GitHub branch ref API at 2026-11-19T09:34:59Z",
     "ci": "not dispatched; no hosted CI execution is claimed",
     "worker": "no runtime code changed; no deployment performed",
     "verified_baseline": {
