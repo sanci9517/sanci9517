@@ -63,3 +63,19 @@ test('verify reports a stable safe diagnostic without a stack trace', () => {
   assert.equal(entry.context, '/api/admin/editor?[redacted]');
   assert.equal(JSON.stringify(entry).includes('stack'), false);
 });
+
+test('malformed error objects cannot make diagnostic normalization throw', () => {
+  diagnostics.clear();
+  const unprintable = { [Symbol.toPrimitive]() { throw new Error('coercion secret'); } };
+  const unreadableError = Object.defineProperty({}, 'message', { get() { throw new Error('getter secret'); } });
+
+  assert.doesNotThrow(() => diagnostics.add({ source: 'api', message: unprintable }));
+  assert.doesNotThrow(() => diagnostics.add({ source: 'api', error: unreadableError }));
+  const entries = diagnostics.entries;
+  assert.match(entries[0].message, /nem olvasható/);
+  assert.match(entries[1].message, /nem olvasható/);
+  assert.equal(JSON.stringify(entries).includes('coercion secret'), false);
+  assert.equal(JSON.stringify(entries).includes('getter secret'), false);
+  assert.equal(Object.hasOwn(entries[0], 'error'), false);
+  assert.equal(Object.hasOwn(entries[1], 'error'), false);
+});

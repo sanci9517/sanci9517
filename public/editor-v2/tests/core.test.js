@@ -1220,6 +1220,15 @@ test('Editor save conflict exposes recoverable local-draft export and explicit r
   assert.match(html, /id="reloadConflictPage"/);
 });
 
+test('boot diagnostics defer to the initialized diagnostics owner and safely normalize preboot rejection reasons', () => {
+  const boot = readFileSync(new URL('../boot.js', import.meta.url), 'utf8');
+  assert.match(boot, /function safeReason\(reason\)/);
+  assert.match(boot, /if \(window\.__sanciEditorDiagnostics\) return;/);
+  assert.match(boot, /fail\(`Nem kezelt Promise hiba: \$\{safeReason\(event\.reason\)\}`\)/);
+  assert.doesNotMatch(boot, /String\(event\.reason\)/);
+  assert.match(boot, /Bearer \[redacted\]/);
+});
+
 
 test('Editor save/reload uses server revision and fails closed on incomplete save responses', () => {
   const app = readFileSync(new URL('../app.js', import.meta.url), 'utf8');

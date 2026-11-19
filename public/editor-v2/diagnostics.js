@@ -14,8 +14,12 @@ function codeFor(source,severity='error'){
   return 'SANCI-'+prefix+'-'+letter+'001';
 }
 function safeText(value,max=320){
-  return String(value??'').replace(/[\u0000-\u001f\u007f-\u009f]+/g,' ').replace(/\bBearer\s+[A-Za-z0-9._~+/-]+=*/gi,'Bearer [redacted]').replace(/\b((?:access|refresh|id)?[_-]?(?:token|secret|password|authorization|cookie|csrf|api[_-]?key|client[_-]?secret))\b\s*[:=]\s*["']?[^&\s"'<>]+/gi,'$1=[redacted]').replace(/([?&](?:code|state|token|secret|key|email|password|signature|sig)=)[^&#\s]+/gi,'$1[redacted]').replace(/\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/gi,'[redacted-email]').replace(/\b(?:\+?\d[\d .()/-]{7,}\d)\b/g,'[redacted-phone]').slice(0,max);
+  let text='A hibaüzenet nem olvasható.';
+  try{text=String(value??'')}catch{}
+  return text.replace(/[\u0000-\u001f\u007f-\u009f]+/g,' ').replace(/\bBearer\s+[A-Za-z0-9._~+/-]+=*/gi,'Bearer [redacted]').replace(/\b((?:access|refresh|id)?[_-]?(?:token|secret|password|authorization|cookie|csrf|api[_-]?key|client[_-]?secret))\b\s*[:=]\s*["']?[^&\s"'<>]+/gi,'$1=[redacted]').replace(/([?&](?:code|state|token|secret|key|email|password|signature|sig)=)[^&#\s]+/gi,'$1[redacted]').replace(/\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/gi,'[redacted-email]').replace(/\b(?:\+?\d[\d .()/-]{7,}\d)\b/g,'[redacted-phone]').slice(0,max);
 }
+function readField(value,key){try{return value?.[key]}catch{return undefined}}
+function safeErrorMessage(value){const message=readField(value,'message');if(typeof message==='string'&&message)return message;if(value==null)return 'Ismeretlen hiba';if(['string','number','boolean','bigint','symbol'].includes(typeof value))return safeText(value);return 'A hibaüzenet nem olvasható.'}
 function safeLocation(value){
   const text=safeText(value,500);if(!text)return '';
   const absoluteUrl=/^[a-z][a-z\d+.-]*:\/\//i.test(text);
@@ -27,11 +31,14 @@ function safeContext(value){
 }
 function normalize(input){
   if(!input||typeof input!=='object'||Array.isArray(input))input={};
-  const source=Object.hasOwn(SOURCES,input.source)?input.source:'runtime';
-  const severity=input.severity==='warning'?'warning':'error';
-  const message=safeText(input.message||input.error?.message||'Ismeretlen hiba');
-  const suppliedCode=typeof input.code==='string'&&/^SANCI-[A-Z0-9-]{1,56}$/.test(input.code)?input.code:'';
-  return {id:globalThis.crypto?.randomUUID?.()||String(Date.now())+'-'+String(Math.random()),code:suppliedCode||codeFor(source,severity),severity,source,message,file:safeLocation(input.file),line:Number.isInteger(input.line)&&input.line>0?Math.min(input.line,10000000):0,column:Number.isInteger(input.column)&&input.column>0?Math.min(input.column,10000000):0,context:safeContext(input.context),timestamp:new Date().toISOString()};
+  const candidateSource=readField(input,'source');
+  const source=typeof candidateSource==='string'&&Object.hasOwn(SOURCES,candidateSource)?candidateSource:'runtime';
+  const severity=readField(input,'severity')==='warning'?'warning':'error';
+  const message=safeText(readField(input,'message')||safeErrorMessage(readField(input,'error'))||'Ismeretlen hiba');
+  const candidateCode=readField(input,'code');
+  const suppliedCode=typeof candidateCode==='string'&&/^SANCI-[A-Z0-9-]{1,56}$/.test(candidateCode)?candidateCode:'';
+  const file=readField(input,'file'),line=readField(input,'line'),column=readField(input,'column'),context=readField(input,'context');
+  return {id:globalThis.crypto?.randomUUID?.()||String(Date.now())+'-'+String(Math.random()),code:suppliedCode||codeFor(source,severity),severity,source,message,file:safeLocation(file),line:Number.isInteger(line)&&line>0?Math.min(line,10000000):0,column:Number.isInteger(column)&&column>0?Math.min(column,10000000):0,context:safeContext(context),timestamp:new Date().toISOString()};
 }
 function notify(){for(const listener of listeners){try{listener(entries.slice())}catch{}}}
 function add(input={}){
@@ -130,7 +137,8 @@ function init(){
     add({source:'runtime',message:event.message||'Ismeretlen JavaScript hiba',file:event.filename,line:event.lineno,column:event.colno,error:event.error});
   });
   window.addEventListener('unhandledrejection',event=>{
-    add({source:'runtime',message:'Nem kezelt Promise hiba: '+(event.reason instanceof Error?event.reason.message:String(event.reason)),error:event.reason});
+    const reason=readField(event,'reason');
+    add({source:'runtime',message:'Nem kezelt Promise hiba: '+safeErrorMessage(reason),error:reason});
   });
   render();
 }

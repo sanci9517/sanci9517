@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-19T05:45:00Z",
+  "plan_point": "77.44.7.D / EDT-042",
+  "feature": "Hostile rejection-reason recovery in Editor diagnostics",
+  "status": "TESTED_RELEASE_PENDING",
+  "defect": "Both the standalone boot handler and the initialized diagnostics handler used implicit string coercion for untrusted rejection values. A value with a throwing Symbol.toPrimitive could throw in the event listeners, while the boot handler also duplicated events after the main diagnostics owner had initialized.",
+  "implementation": {
+    "diagnostics_normalization": "Reads untrusted error fields defensively, catches failing string coercion, and uses a safe generic fallback without retaining Error objects.",
+    "boot_listener_ownership": "Boot-only listeners run only before the diagnostics module is available; initialized runtime errors are recorded by one diagnostics owner.",
+    "redaction": "The preboot rejection fallback redacts bearer credentials, token-like values, URL query secrets, email, phone, and control characters.",
+    "invariants": "No change to document state, Save, Publish, API, D1 or R2."
+  },
+  "checks": {
+    "diagnostics_and_core_units": "PASS: node --experimental-vm-modules --test public/editor-v2/tests/diagnostics.test.js public/editor-v2/tests/core.test.js (2/2 files).",
+    "browser_regression": "PASS: tests/browser/editor-diagnostics-redaction.test.js in Chromium; local loopback fixture; one malformed rejection creates one redacted recovery entry and no pageerror; failed Save retains the local draft and retry stays Save-only.",
+    "editor_unit_suite": "PASS: npm run test:editor (22/22 test files; 4/4 linux-subreaper runner checks).",
+    "typecheck": "PASS: npm run typecheck -- --pretty false.",
+    "plan_contract": "PASS: python3 tests/plan-contract.test.py (15/15).",
+    "canonical_plan": "PASS: python3 scripts/check-canonical-plan.py (13 master files, 396 mappings; functional acceptance NOT_CERTIFIED).",
+    "active_point": "PASS: 77.44.7.D remains OPEN / NOT_CERTIFIED; 147 PARTIAL_SOURCE and 249 UNVERIFIED.",
+    "feature_traceability": "PASS: regenerated and checked 396/396 source mappings.",
+    "migration_safety": "PASS: npm run test:web013:migration-gate; safe deploy does not apply migrations.",
+    "javascript_syntax_and_diff": "PASS: changed JS node --check and git diff --check.",
+    "wrangler_dry_run": {
+      "status": "PASS",
+      "command": "XDG_CONFIG_HOME=/tmp/sanci9517-wrangler-config npx wrangler deploy --dry-run",
+      "version": "4.130.0",
+      "assets": 195,
+      "upload": "393.29 KiB",
+      "gzip": "100.77 KiB",
+      "published": false
+    },
+    "production_d1_preflight": {
+      "status": "PASS",
+      "access": "Cloudflare D1 API, SELECT-only",
+      "queries": 2,
+      "migration_count": 35,
+      "last_migration": "0029_media_archive_unicode_additive.sql",
+      "rows_written": 0,
+      "changes": 0,
+      "changed_db": false
+    },
+    "free_worker_build_limit": {
+      "status": "PASS",
+      "has_reached_build_minutes_limit": false,
+      "refresh_on": "2026-11-30T23:59:59.999Z"
+    }
+  },
+  "release": {
+    "status": "PENDING_RUNTIME_COMMIT_AND_EXACT_SHA_CI",
+    "branch": "v2/foundation",
+    "previous_remote_head": "646b5c0f9401656cf8f3ec38f73594b7685db0fe"
+  },
+  "acceptance_boundary": "This resolves one EDT-042 error-handling slice only. Malformed-document recovery, full permission/renderer matrix, export/reload integration, server-side telemetry correlation and full recovery E2E remain open. D point 77.44.7.D remains OPEN / NOT_CERTIFIED; complete Editor manual/physical acceptance is DEFERRED. Save and Publish remain separate.",
+  "production_mutations": false,
+  "cost": "0 Ft; no paid service, production D1 write/migration, R2 mutation/deletion, or manually dispatched/re-run workflow."
+}
