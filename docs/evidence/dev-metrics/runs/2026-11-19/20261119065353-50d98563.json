@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261119065353-50d98563",
+  "task": "EDT-043",
+  "trigger": "manual",
+  "started_at": "2026-11-19T06:53:53.189Z",
+  "finished_at": "2026-11-19T07:01:42.470Z",
+  "wall_seconds": 469,
+  "paused_seconds": 0,
+  "measured_seconds": 469,
+  "status": "pass",
+  "kind": "mixed",
+  "summary": "Added and verified D structured repeater Publish-boundary regression contract; full D remains open",
+  "evidence": [
+    "tests/editor-d-content-contract.test.js",
+    "docs/evidence/editor-d-structured-repeater-publish-gates-2026-11-19.json"
+  ],
+  "checks": "editor 22/22+runner 4/4; plan 15/15; canonical 13/396; traceability 396/396; active point D OPEN",
+  "started_revision": "e625be505fa61c75a51106af6cd8e02a47e9e9ac",
+  "finished_revision": "e625be505fa61c75a51106af6cd8e02a47e9e9ac",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

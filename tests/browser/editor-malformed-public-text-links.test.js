@@ -183,7 +183,8 @@ test('D-07 Editor rejects corrupt Page Model child lists safely without rewritin
   tab.on('pageerror',error=>errors.push(error.message));
   await tab.goto('http://127.0.0.1:'+server.address().port+'/editor-v2/index.html');
   await tab.waitForTimeout(1000);
-  assert.match(await tab.locator('#saveStatus').textContent(),/Invalid editor document:.*invalid child id/i,'the Editor reports a controlled model validation error instead of an iteration failure');
+  assert.match(await tab.locator('#saveStatus').textContent(),/Invalid editor document:.*missing child \[invalid\].*missing child missing-node/i,
+    'the Editor reports bounded safe diagnostics for both the corrupt child value and missing reference instead of coercing or iterating them');
   assert.deepEqual(errors,[],'corrupt persisted children are handled by the Editor boot error boundary');
   assert.deepEqual(writes,[],'loading invalid data never Saves or Publishes it');
   assert.equal(JSON.stringify(state.document),persisted,'the fixture’s persisted Page Model remains byte-for-byte unchanged');
@@ -191,6 +192,7 @@ test('D-07 Editor rejects corrupt Page Model child lists safely without rewritin
   // A duplicate valid child ID passes the string/reference checks but makes
   // the saved page non-tree-shaped; the editor must fail closed rather than
   // render the same node twice or silently normalize the imported snapshot.
+  page.nodes[sectionId].children=[];
   page.nodes[rootId].children=[sectionId,headingId,headingId];
   const duplicatePersisted=JSON.stringify(state.document);
   await tab.reload();
@@ -206,7 +208,7 @@ test('D-07 Editor rejects corrupt Page Model child lists safely without rewritin
     const malformedPersisted=JSON.stringify(state.document);
     await tab.reload();
     await tab.waitForTimeout(300);
-    assert.match(await tab.locator('#saveStatus').textContent(),/Invalid editor document:.*invalid node record/i,
+    assert.match(await tab.locator('#saveStatus').textContent(),/Invalid editor document:.*invalid node:/i,
       'malformed saved node records produce controlled validation feedback');
     assert.deepEqual(errors,[],'malformed node records do not escape the Editor boot error boundary');
     assert.deepEqual(writes,[],'malformed node records are never silently Saved or Published');

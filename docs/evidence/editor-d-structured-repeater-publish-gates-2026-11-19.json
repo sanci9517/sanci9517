@@ -1,0 +1,49 @@
+{
+  "schema": "sanci.editor.d-structured-repeater-publish-gates.v1",
+  "captured_at_utc": "2026-11-19T07:04:23Z",
+  "plan_point": "77.44.7.D — structured authored content and media repeaters",
+  "repository": "sanci9517/sanci9517",
+  "branch": "v2/foundation",
+  "branch_head_before_docs_test_followup": "e625be505fa61c75a51106af6cd8e02a47e9e9ac",
+  "runtime_source_sha": "12b81256306bc02b7349dc969af0a9eee2a8aea7",
+  "canonical_plan_sha256": "5cd2a5094b18fa272db6059a0854ed4e50f1eefa1c321a8fcd0e985e9c2c4be1",
+  "change": {
+    "files": [
+      "tests/editor-d-content-contract.test.js",
+      "docs/evidence/editor-d-structured-repeater-publish-gates-2026-11-19.json",
+      "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md"
+    ],
+    "summary": "Added a table-driven D regression contract for minimum content in list, tabs, accordion, dropdown, gallery, and carousel repeaters. It checks the same invalid state is surfaced by Inspector publication guidance and rejected by the server-side Publish validator, then checks valid replacement content passes both boundaries. Unsafe repeated image sources are also required to fail closed.",
+    "runtime_change": false,
+    "save_publish": "The test covers validation boundaries only; the existing Save and Publish operations remain separate and unchanged."
+  },
+  "checks": {
+    "node --experimental-vm-modules --test public/editor-v2/tests/element-content.test.js tests/editor-d-content-contract.test.js": "PASS; 2/2 files, including the new structured repeater matrix.",
+    "npm run test:editor": "PASS; 22/22 unit files and 4/4 Linux subreaper/manifest tests.",
+    "python3 tests/plan-contract.test.py": "PASS; 15/15.",
+    "python3 scripts/check-canonical-plan.py": "PASS; complete 13-file master / 396 source mappings; acceptance remains uncertified.",
+    "python3 scripts/build-feature-traceability.py --check": "PASS; 396/396.",
+    "python3 scripts/audit-active-plan-point.py": "PASS; next point 77.44.7.D; OPEN / NOT_CERTIFIED; 147 PARTIAL_SOURCE / 249 UNVERIFIED.",
+    "git diff --check": "PASS."
+  },
+  "release_state_at_capture": {
+    "exact_source_smoke_run": 44473103064,
+    "exact_source_smoke_status": "SUCCESS; source SHA 12b81256306bc02b7349dc969af0a9eee2a8aea7; health HTTP 200 and exact public-source hashes are verified by that hosted check.",
+    "editor_core_run": 44473102939,
+    "editor_core_status": "COMPLETED / FAILURE on exact runtime source 12b81256306bc02b7349dc969af0a9eee2a8aea7. The Editor browser suite reached test 59/59 and failed in the existing D-07 malformed Page Model browser test because its diagnostic regex was stale; the first mismatch expected 'invalid child id' but the safe validator returned 'missing child [invalid]'. Subsequent jobs were skipped. Targeted local correction and rerun is recorded in editor-d07-test-expectations-fix-2026-11-19.json. No hosted rerun was started.",
+    "cloudflare_deployment_id": "58bfe948-fa25-4912-8dca-2bcb8274b00d",
+    "worker_version_id": "bf68eb8c-f608-4478-9969-65b9fa710eba",
+    "worker_traffic_percent": 100,
+    "production_change": false,
+    "deployment_needed_for_this_change": false
+  },
+  "scope_limits": {
+    "d_status": "OPEN / NOT_CERTIFIED. This closes one automated validation contract for structured repeaters; it does not certify full D-01–D-07 field, renderer, responsive, media/tenant, production, or physical acceptance.",
+    "manual_physical_editor_acceptance": "DEFERRED until the complete Visual Editor is implemented.",
+    "production_d1_migration_or_write": false,
+    "production_r2_mutation_or_delete": false,
+    "paid_services_or_dependencies": false,
+    "new_cost_huf": 0,
+    "ci_policy": "Existing exact-source runtime Core CI was observed only; no duplicate run was dispatched. This test/evidence-only follow-up is intended for normal fast-forward push with [skip ci]; no Worker deployment is required."
+  }
+}

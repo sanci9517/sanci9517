@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261119070431-bab1223e",
+  "task": "EDT-044",
+  "trigger": "manual",
+  "started_at": "2026-11-19T07:04:31.567Z",
+  "finished_at": "2026-11-19T07:06:18.651Z",
+  "wall_seconds": 107,
+  "paused_seconds": 0,
+  "measured_seconds": 107,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "Fixed exact-SHA Editor Core D-07 browser test stale assertions and contaminated fixture; local Chromium regression passes, hosted rerun not sent",
+  "evidence": [
+    "tests/browser/editor-malformed-public-text-links.test.js",
+    "docs/evidence/editor-d07-test-expectations-fix-2026-11-19.json"
+  ],
+  "checks": "Chromium 2/2; plan 15/15; canonical 13/396; trace 396/396; D remains open; exact-source Core CI failed on earlier test source; no rerun",
+  "started_revision": "e625be505fa61c75a51106af6cd8e02a47e9e9ac",
+  "finished_revision": "e625be505fa61c75a51106af6cd8e02a47e9e9ac",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

@@ -1,0 +1,44 @@
+{
+  "schema": "sanci.editor.d07-test-expectations-fix.v1",
+  "captured_at_utc": "2026-11-19T07:04:23Z",
+  "plan_point": "77.44.7.D / D-07 — malformed persisted Page Model regression test",
+  "repository": "sanci9517/sanci9517",
+  "branch": "v2/foundation",
+  "runtime_source_sha": "12b81256306bc02b7349dc969af0a9eee2a8aea7",
+  "hosted_run": {
+    "id": 44473102939,
+    "url": "https://github.com/sanci9517/sanci9517/actions/runs/44473102939",
+    "status": "COMPLETED / FAILURE",
+    "failure": "The Editor browser suite's 59th file contained stale assertions in tests/browser/editor-malformed-public-text-links.test.js. For a non-string child, the current bounded validator correctly reported 'missing child [invalid]' and the test expected the obsolete phrase 'invalid child id'. Once that assertion was aligned, the test exposed fixture contamination: the previous case left a malformed Section children collection, so the next duplicate-child scenario reported that earlier error first. The fixture now resets the Section children before testing duplicate references. A third assertion expected 'invalid node record' where the validator reports 'invalid node:'."
+  },
+  "fix": {
+    "file": "tests/browser/editor-malformed-public-text-links.test.js",
+    "changes": [
+      "Assert the safe [invalid] placeholder and missing reference instead of an obsolete validation phrase.",
+      "Restore the section child list before the duplicate-child scenario so each case tests only its intended invariant.",
+      "Match the actual bounded 'invalid node:' diagnostic for malformed persisted node records."
+    ],
+    "production_code_changed": false
+  },
+  "verification": {
+    "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-malformed-public-text-links.test.js",
+    "result": "PASS; 2/2 real Chromium tests, including D-07 malformed Page Model recovery, no pageerror, no Save/Publish writes, and persistence unchanged.",
+    "hosted_rerun": "Not started: no duplicate CI run was dispatched; the canonical release policy requires evidence of remaining free quota before rerun. The local test fix is narrower than redeploying unchanged runtime code.",
+    "runtime_smoke_run": 44473103064,
+    "runtime_smoke_status": "SUCCESS on source SHA 12b81256306bc02b7349dc969af0a9eee2a8aea7; health HTTP 200 and source hashes verified."
+  },
+  "production": {
+    "deployment_id": "58bfe948-fa25-4912-8dca-2bcb8274b00d",
+    "worker_version_id": "bf68eb8c-f608-4478-9969-65b9fa710eba",
+    "traffic_percent": 100,
+    "changed_public_assets": false,
+    "d1_migration_or_write": false,
+    "r2_mutation_or_delete": false,
+    "new_cost_huf": 0
+  },
+  "limits": {
+    "d_status": "OPEN / NOT_CERTIFIED; one D-07 test-only CI mismatch and fixture contamination were corrected locally, but the hosted Core run remains failed on its original SHA and later CI jobs were skipped.",
+    "manual_physical_editor_acceptance": "DEFERRED until the complete Editor is implemented.",
+    "save_publish": "separate"
+  }
+}

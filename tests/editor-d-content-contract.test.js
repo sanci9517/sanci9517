@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { CONTENT_FIELDS } from '../public/editor-v2/core/authored-content.js';
+import { CONTENT_FIELDS, getPublicationContentGuidance, validatePageForPublication } from '../public/editor-v2/core/authored-content.js';
 import { validatedLinkHref } from '../public/editor-v2/core/richtext-links.js';
 import { isStructuredType, safePublishedMediaUrl } from '../public/editor-v2/core/element-content.js';
 import { defaultCardContent, normalizeCardContent } from '../public/editor-v2/core/card-content.js';
@@ -97,6 +97,50 @@ test('D structured repeaters and media types retain their versioned validation p
   assert.equal(card.metadata.cardContentVersion, 1, 'Card content is versioned independently from authored props');
   assert.equal(hasContentProfile(card, 'card-v1'), true, 'Card retains its own validation gate');
   assert.ok(getElementContentContract(card).profiles.some(profile => profile.id === 'card-v1'));
+});
+
+test('D structured content repeaters share the same minimum-content contract in Inspector guidance and Publish', () => {
+  const cases = [
+    { type: 'list', props: { items: [] }, validProps: { items: [{ text: 'Első listaelem' }] } },
+    { type: 'tabs', props: { items: [] }, validProps: { items: [{ title: 'Bemutatkozás', text: 'Történet' }] } },
+    { type: 'accordion', props: { items: [] }, validProps: { items: [{ title: 'Kérdés', text: 'Válasz' }] } },
+    { type: 'dropdown', props: { items: [{ title: '  ', text: 'Tartalom' }] }, validProps: { items: [{ title: 'Részletek', text: 'Tartalom' }] } },
+    { type: 'gallery', props: { items: [] }, validProps: { items: [{ src: '/media/image.png', alt: 'Alkotói kép' }] } },
+    { type: 'carousel', props: { items: [{ src: '/media/image.png', alt: '  ' }] }, validProps: { items: [{ src: '/media/image.png', caption: 'Első dia' }] } }
+  ];
+
+  const publicationError = node => {
+    const pageNode = { ...node, children: [] };
+    assert.throws(() => validatePageForPublication({
+      rootId: 'root',
+      nodes: {
+        root: { id: 'root', type: 'root', children: [pageNode.id] },
+        [pageNode.id]: pageNode
+      }
+    }), new RegExp(pageNode.type === 'list' ? 'Adj meg legalább egy nem üres listaelemet' :
+      pageNode.type === 'gallery' || pageNode.type === 'carousel' ? 'A képekhez Médiatár-fájl' : 'Legalább egy elnevezett rész'));
+  };
+
+  for (const [index, item] of cases.entries()) {
+    const invalid = { id: `d-repeater-invalid-${index}`, type: item.type, metadata: { contentVersion: 1 }, props: item.props };
+    const guidance = getPublicationContentGuidance(invalid);
+    assert.ok(guidance, `${item.type} shows an Inspector publication warning for incomplete repeaters`);
+    assert.equal(guidance.fieldKey, 'items', `${item.type} guidance points to the repeater that needs correction`);
+    publicationError(invalid);
+
+    const valid = { ...invalid, props: item.validProps };
+    assert.equal(getPublicationContentGuidance(valid), null, `${item.type} clears its guidance after its minimum valid content is restored`);
+    assert.doesNotThrow(() => validatePageForPublication({
+      rootId: 'root',
+      nodes: { root: { id: 'root', type: 'root', children: [valid.id] }, [valid.id]: { ...valid, children: [] } }
+    }), `${item.type} Publish gate accepts the same content the Inspector reports as ready`);
+  }
+
+  for (const type of ['gallery', 'carousel']) {
+    const node = { id: `d-repeater-invalid-${type}`, type, metadata: { contentVersion: 1 }, props: { items: [{ src: 'javascript:alert(1)', alt: 'Kép' }] } };
+    assert.equal(getPublicationContentGuidance(node)?.fieldKey, 'items', `${type} rejects an unsafe source in a repeated media row`);
+    publicationError(node);
+  }
 });
 
 test('D Inspector field controls and nested repeaters stay inside supported contracts', () => {
