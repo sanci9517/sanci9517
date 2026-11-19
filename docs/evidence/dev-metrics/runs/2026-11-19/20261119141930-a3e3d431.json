@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261119141930-a3e3d431",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-19T14:19:30.381Z",
+  "finished_at": "2026-11-19T14:24:50.837Z",
+  "wall_seconds": 320,
+  "paused_seconds": 0,
+  "measured_seconds": 320,
+  "status": "partial",
+  "kind": "test",
+  "summary": "D-05 List repeater now covers oversized text rejection, last-valid Canvas preservation, blocked Save/Publish, and draft-only repair in real Chromium; broader D audit remains open.",
+  "evidence": [
+    "tests/browser/editor-content-system.test.js:PASS",
+    "docs/evidence/editor-d05-list-oversize-validation-2026-11-19.json"
+  ],
+  "checks": "Chromium 1/1; Editor 22/22 + 4/4; typecheck; plan/traceability 15/15 and 396/396; active audit OPEN",
+  "started_revision": "a408736ae0e15244f01eb23c01fa4fa09462b0c9",
+  "finished_revision": "a408736ae0e15244f01eb23c01fa4fa09462b0c9",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

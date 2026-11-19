@@ -679,6 +679,27 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   await addedListItem.getByLabel('Hivatkozás',{exact:true}).fill('/p/home');
   assert.equal(await node(editor,'list').locator('ol li').nth(2).getByRole('link',{name:'Új listapont'}).getAttribute('href'),'/p/home',
     'the added list item keeps its safe internal link in the Canvas');
+  const addedListText=addedListItem.getByLabel('Szöveg',{exact:true});
+  const listCanvasBeforeOversize=await node(editor,'list').locator('ol li').evaluateAll(items=>items.map(item=>item.textContent));
+  await addedListText.evaluate(input=>{
+    input.value='X'.repeat(20001);
+    input.dispatchEvent(new InputEvent('input',{bubbles:true,isComposing:false,inputType:'insertText',data:null}));
+  });
+  assert.equal(await addedListText.getAttribute('aria-invalid'),'true','the List repeater rejects text above its 20,000-character authored-content contract');
+  assert.deepEqual(await node(editor,'list').locator('ol li').evaluateAll(items=>items.map(item=>item.textContent)),listCanvasBeforeOversize,
+    'a rejected oversized List edit preserves the last-valid Canvas content and order');
+  const postsBeforeInvalidListSave=posts.length;
+  await editor.locator('#save').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent.includes('Javítsd a jelzett mezőt mentés vagy publikálás előtt'));
+  assert.equal(posts.length,postsBeforeInvalidListSave,'Save cannot persist an oversized List repeater text value');
+  await editor.locator('#publish').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent.includes('Javítsd a jelzett mezőt mentés vagy publikálás előtt'));
+  assert.equal(posts.length,postsBeforeInvalidListSave,'Publish cannot bypass an invalid List repeater text value');
+  assert.equal(published.pages[pageId].nodes[ids.list].props.items[0].text,'Első hivatkozás',
+    'invalid List text leaves the existing published Page Model untouched');
+  await addedListText.fill('Új listapont');
+  assert.equal(await addedListText.getAttribute('aria-invalid'),null,'repairing oversized List text clears the inline validation error');
+  assert.equal(posts.length,postsBeforeInvalidListSave,'repairing the List field remains draft-only until explicit Save');
   await listRepeater.getByRole('button',{name:'3. elem: Fel',exact:true}).press('Enter');
   assert.deepEqual(await node(editor,'list').locator('ol li').evaluateAll(items=>items.map(item=>item.textContent)),
     ['Második elem','Új listapont','Átírt listaelem'],'List reorder moves the complete text/link item one position up');

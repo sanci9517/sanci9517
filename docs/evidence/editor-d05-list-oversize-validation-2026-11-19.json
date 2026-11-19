@@ -1,0 +1,54 @@
+{
+  "schema": "sanci.editor.d05-list-oversize-validation.v1",
+  "captured_at_utc": "2026-11-19T14:25:00Z",
+  "plan_point": "77.44.7.D / D-05 — authored List repeater field validation",
+  "repository": "sanci9517/sanci9517",
+  "branch": "v2/foundation",
+  "branch_head_before_followup": "a408736ae0e15244f01eb23c01fa4fa09462b0c9",
+  "development_metric": {
+    "run_id": "20261119141930-a3e3d431",
+    "status": "partial",
+    "kind": "test",
+    "archive": "docs/evidence/dev-metrics/runs/2026-11-19/20261119141930-a3e3d431.json"
+  },
+  "runtime_source_changed": false,
+  "change": {
+    "files": [
+      "tests/browser/editor-content-system.test.js",
+      "docs/evidence/editor-d05-list-oversize-validation-2026-11-19.json",
+      "docs/evidence/dev-metrics/runs/2026-11-19/20261119141930-a3e3d431.json"
+    ],
+    "summary": "The real Chromium authored List flow now injects a 20,001-character repeater value against the 20,000-character schema limit. The Inspector marks it invalid, the Canvas retains the previous committed item and order, Save and Publish are both rejected without a request, and the existing public Page Model remains unchanged. Correcting the text clears the validation state without an implicit Save.",
+    "save_publish": "The invalid local field stays out of both Save and Publish. Its repair remains a local draft until the already separate explicit Save; later public changes still require separate Publish."
+  },
+  "checks": {
+    "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-content-system.test.js": "PASS; 1/1 real Chromium end-to-end test, including 20,001-character invalid List text, last-valid Canvas preservation, blocked Save/Publish, and draft-only repair.",
+    "npm run test:editor": "PASS; 22/22 Editor unit test files and 4/4 subreaper/manifest guards.",
+    "npm run typecheck -- --pretty false": "PASS.",
+    "python3 tests/plan-contract.test.py": "PASS; 15/15.",
+    "python3 scripts/check-canonical-plan.py": "PASS; one complete 13-file canonical master / 396 mappings; functional acceptance remains uncertified.",
+    "python3 scripts/build-feature-traceability.py --check": "PASS; 396/396 source mappings.",
+    "python3 scripts/audit-active-plan-point.py": "PASS; active cursor 77.44.7.D remains OPEN / NOT_CERTIFIED; 147 PARTIAL_SOURCE and 249 UNVERIFIED.",
+    "node --check tests/browser/editor-content-system.test.js": "PASS.",
+    "git diff --check": "PASS.",
+    "hosted_ci": "NOT RUN; this is test/evidence-only and the Actions free quota is unverified. No hosted CI PASS is claimed."
+  },
+  "release_state_at_capture": {
+    "remote_branch_head_before_followup": "GitHub GET verified v2/foundation at a408736ae0e15244f01eb23c01fa4fa09462b0c9.",
+    "worker_latest_deployment_id": "c4b9526a-c54b-4fe3-9218-d889c1e011e9",
+    "worker_latest_version_id": "9870e814-359c-4871-a25c-289d9dfe7c2c",
+    "worker_traffic_percent": 100,
+    "runtime_source_sha": "NOT REVALIDATED; no runtime or public asset source changed.",
+    "runtime_deployment_needed": false,
+    "direct_health_this_followup": "NOT RUN; test/evidence-only change. No new health result is claimed."
+  },
+  "scope_limits": {
+    "d05_status": "This verifies only the authored List repeater oversized-text validation slice; it does not certify all D-05 fields, responsive/accessibility behavior, media/API/security paths, or full Editor parity.",
+    "d_status": "77.44.7.D remains OPEN / NOT_CERTIFIED; source audit remains 147 PARTIAL_SOURCE and 249 UNVERIFIED.",
+    "manual_physical_editor_acceptance": "DEFERRED until the complete Visual Editor is implemented.",
+    "production_d1_migration_or_write": false,
+    "production_r2_mutation_or_delete": false,
+    "paid_services_or_dependencies": false,
+    "new_cost_huf": 0
+  }
+}
