@@ -1,0 +1,60 @@
+{
+  "schema": "sanci.editor.d01.unavailable-selected-media-release-followup.v1",
+  "captured_at_utc": "2026-11-19T11:23:20Z",
+  "plan_point": "77.44.7.D / D-01 — selected-media Inspector recovery",
+  "source_commit": "e43edc239b1aef44d1df1584286cdebf56c0261d",
+  "branch": "v2/foundation",
+  "remote_head_verified": true,
+  "production": {
+    "worker_script": "sanci9517-streamer-brand",
+    "deployment_id": "4a3d07d8-dba9-4591-8b2e-23f4482ae71e",
+    "worker_version_id": "dcd3f2fd-fd51-47ba-8639-68fe4ce565a2",
+    "traffic_percent": 100,
+    "deployment_created_at_utc": "2026-11-19T11:18:01.763393Z",
+    "deployment_verified_by": "read-only Cloudflare deployments API",
+    "source_commit_metadata_exposed_by_cloudflare": false,
+    "source_verification": {
+      "workflow": "Production Worker source smoke",
+      "run_id": 44513436160,
+      "run_url": "https://github.com/sanci9517/sanci9517/actions/runs/44513436160",
+      "head_sha": "e43edc239b1aef44d1df1584286cdebf56c0261d",
+      "conclusion": "success",
+      "health": "GET /api/health returned HTTP 200",
+      "public_source_paths_checked": 36,
+      "public_source_hashes": "all 36 configured public source paths matched exact source SHA-256 after bounded deployment propagation retries"
+    },
+    "changed_public_asset_sha256": {
+      "public/editor-v2/app.js": "cd165d39f728f7243015daa0a8edd2ece725365973ec41a67836f9a0c8db246b",
+      "public/editor-v2/ui/card-content-inspector.js": "35d5f6b3ecbd3bc50a383beb6a7bcf8ad68cd8b049f85835afa9e08e9e758edd",
+      "public/editor-v2/ui/element-content-controls.js": "e68d1c16f04e3ec9363192f658c90904e8b8739ecd3f7ca2dc7e6e28b42d0fac",
+      "public/editor-v2/ui/legacy-media-inspector.js": "d87697ba1b5a2af4bb1fad5bd3c230c0631fc660ed43c085b6500278b2881e22",
+      "public/editor-v2/ui/property-controls.js": "8ba47c3f4f13c6996511eaca21a45c5be76c0e79633ac8a6ebd1fe325be20bdd"
+    }
+  },
+  "github_checks_for_source_commit": {
+    "editor_core_test": {
+      "run_id": 44513436339,
+      "url": "https://github.com/sanci9517/sanci9517/actions/runs/44513436339",
+      "head_sha": "e43edc239b1aef44d1df1584286cdebf56c0261d",
+      "status_at_capture": "in_progress",
+      "completed_steps": "typecheck, editor unit tests, offline D1 ledger/bootstrap, private R2 API, showcase unit and Chromium, and isolated Worker media upload all succeeded; 58-file Editor browser-layout regression was running; subsequent gates pending"
+    },
+    "production_worker_source_smoke": "44513436160 success",
+    "canonical_plan_active_point_audit": "44513436268 success",
+    "canonical_creator_platform_plan": "44513436344 success",
+    "twitch_integration_check": "44513436193 success",
+    "f0_baseline_checks": "44513436377 success"
+  },
+  "scope_and_safety": {
+    "runtime_change_released": true,
+    "production_d1_preflight": "SELECT-only preflight is recorded in the source-commit evidence file; no production D1 mutation or migration was performed",
+    "production_r2_mutation": false,
+    "new_cost_huf": 0,
+    "new_dependencies": false,
+    "full_editor_layout_local_suite": "INCOMPLETE / NOT PASS; stopped at suite 5/59 due disproportionate run time",
+    "full_d01_d07_matrix": "OPEN / NOT_CERTIFIED",
+    "full_plan_point_77_44_7_d": "OPEN / NOT_CERTIFIED",
+    "full_editor_manual_physical_acceptance": "DEFERRED until the complete Editor scope is implemented",
+    "save_publish_separation": "preserved"
+  }
+}
