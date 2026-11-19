@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "captured_at": "2026-11-19T07:51:07Z",
+  "captured_at": "2026-11-19T07:53:30Z",
   "plan_item": "77.44.7.D",
   "status": "OPEN / NOT_CERTIFIED",
   "scope": "Bound persisted Editor hierarchy depth before recursive UI consumers; prove that structured table Save and Publish remain distinct and fail closed.",
@@ -87,17 +87,96 @@
     "status": "READ_ONLY_PREFLIGHT_PASS"
   },
   "release": {
-    "source_commit": "PENDING",
-    "push": "PENDING",
-    "github_actions_free_quota": "UNVERIFIED; no manual dispatch or rerun started",
-    "worker_build_and_rollout": "PENDING",
-    "worker_traffic": "PENDING",
-    "health": "PENDING",
-    "changed_public_asset_hashes": "PENDING",
-    "pre_push_remote_head": "3f39f3a44d01bdd57975b5e095171acc2544517f (verified equal to local HEAD via GitHub REST ref; fast-forward target confirmed)"
+    "source_commit": "fad2043d96f3bf890005c62c0e34d0084b387f05",
+    "push": "PASS; normal fast-forward on v2/foundation from 3f39f3a44d01bdd57975b5e095171acc2544517f",
+    "push_verified_at": "2026-11-19T07:51:58Z via GitHub REST branch ref",
+    "github_actions_free_quota": "UNVERIFIED in billing API; no manual dispatch or rerun; only repository-default push-triggered workflows started. Repository visibility is public.",
+    "github_actions_exact_sha": [
+      {
+        "name": "Canonical Creator Platform Plan",
+        "run_id": 44482902265,
+        "result": "success"
+      },
+      {
+        "name": "Canonical Plan Active Point Audit",
+        "run_id": 44482902300,
+        "result": "success"
+      },
+      {
+        "name": "Production Worker source smoke",
+        "run_id": 44482902337,
+        "result": "success"
+      },
+      {
+        "name": "F0 baseline checks",
+        "run_id": 44482902812,
+        "result": "success"
+      },
+      {
+        "name": "Twitch Integration Check",
+        "run_id": 44482902410,
+        "result": "success"
+      },
+      {
+        "name": "Editor Core Test",
+        "run_id": 44482902361,
+        "result": "in_progress at evidence capture"
+      }
+    ],
+    "cloudflare_build": {
+      "build_uuid": "9b0b2f6a-358c-4293-a370-f10b4b648aba",
+      "source_commit": "fad2043d96f3bf890005c62c0e34d0084b387f05",
+      "branch": "v2/foundation",
+      "build_command": "npm run typecheck",
+      "deploy_command": "npm run deploy:safe",
+      "outcome": "success",
+      "deploy_source": "Cloudflare Worker Builds exact-SHA automatic push build"
+    },
+    "deployment": {
+      "deployment_id": "a8cb33a3-5179-4fc9-8844-e002a1e1a9e3",
+      "worker_version_id": "31b605b7-fd0d-4cfa-8ddf-849c51eadef2",
+      "worker_version_number": 4137,
+      "traffic_percent": 100,
+      "deployed_at": "2026-11-19T07:52:24.598921Z"
+    },
+    "production_health": {
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+      "http_status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      },
+      "checked_at": "2026-11-19T07:53:30Z"
+    },
+    "public_asset_hashes": [
+      {
+        "path": "/editor-v2/core/validation.js?v=20261119-d07-bounded-hierarchy-v1",
+        "http_status": 200,
+        "live_sha256": "905025c54d856b1d2eff66622d798e7bfa8b47d089283ee456c681845721e17d",
+        "local_sha256": "905025c54d856b1d2eff66622d798e7bfa8b47d089283ee456c681845721e17d",
+        "match": true
+      },
+      {
+        "path": "/editor-v2/core/authored-content.js?v=20261119-d07-bounded-hierarchy-v1",
+        "http_status": 200,
+        "live_sha256": "6d14bcbca76972de2431b2aad627d0496d224c08418a0f74d86127b4547c0b59",
+        "local_sha256": "6d14bcbca76972de2431b2aad627d0496d224c08418a0f74d86127b4547c0b59",
+        "match": true
+      },
+      {
+        "path": "/editor-v2/core/hierarchy-limits.js?v=20261119-d07-bounded-hierarchy-v1",
+        "http_status": 200,
+        "live_sha256": "60b2a93ffe190ca8e4512f432bad8f853b1036e48a20e6d022cb76dfa163ea8c",
+        "local_sha256": "60b2a93ffe190ca8e4512f432bad8f853b1036e48a20e6d022cb76dfa163ea8c",
+        "match": true
+      }
+    ],
+    "runtime_source_unchanged_after_release": "The recorded deployment is the runtime commit listed above; no code change was made afterward."
   },
   "production_data_and_cost": {
-    "production_d1_mutations_or_migrations": "none",
+    "production_d1_mutations_or_migrations": "none; SELECT-only preflight rows_written=0, changed_db=false",
     "r2_operations": "none",
     "new_paid_services_or_spend": "none"
   },

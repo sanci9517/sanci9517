@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261119072705-bc1cc8fe",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-19T07:27:05.463Z",
+  "finished_at": "2026-11-19T07:55:30.583Z",
+  "wall_seconds": 1705,
+  "paused_seconds": 0,
+  "measured_seconds": 1705,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "D-07 deep hierarchy and D-03 table Save/Publish regressions shipped exact SHA; Worker healthy, asset hashes match; Editor Core CI still in progress and D remains open.",
+  "evidence": [
+    "docs/evidence/visual-editor-hierarchy-depth-d03-2026-11-19.json"
+  ],
+  "checks": "editor=22/22; browser=2/2; route=1/1; typecheck=pass; plan=15/15; trace=396/396; D1 SELECT-only; dry-run pass; Worker 100%; health/assets pass; web013 aggregate incomplete; Editor Core CI in progress",
+  "started_revision": "3f39f3a44d01bdd57975b5e095171acc2544517f",
+  "finished_revision": "fad2043d96f3bf890005c62c0e34d0084b387f05",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
