@@ -53,7 +53,7 @@ import {STATE_PROPERTY_IDS,applyStateStyles} from './core/state-styles.js';
 import {defaultTokens,applyTokenVariables} from './core/design-tokens.js';
 import {CONTENT_TYPES,STRUCTURAL_TYPES,validatePageForPublication,isAuthoredContent,authoredNodeHtml,contentAttributes,initContentInteractions,contentTag} from './core/authored-content.js?v=20261119-d07-bounded-hierarchy-v1';
 import {captureCanvasInteractionState,restoreCanvasInteractionState} from './core/canvas-interaction-state.js';
-import {renderElementContentControls,pageLinkPicker} from './ui/element-content-controls.js?v=20261119-d01-missing-selected-media-recovery-v1';
+import {renderElementContentControls,pageLinkPicker} from './ui/element-content-controls.js?v=20261119-d01-missing-selected-media-recovery-v2';
 import {renderPageInteractionControls} from './ui/page-interaction-controls.js?v=20261119-edt039-page-action-safe-labels-v1';
 
 let editorTokens=defaultTokens();

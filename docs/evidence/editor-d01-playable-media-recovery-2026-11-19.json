@@ -1,0 +1,88 @@
+{
+  "schema": "sanci.editor.d01.playable-media-recovery.v1",
+  "captured_at_utc": "2026-11-19T12:00:00Z",
+  "plan_point": "77.44.7.D / D-01 — restored playable-media selection recovery",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "base_sha": "0d81d0319a8c39d5994c853a49ae8180b29e80dc",
+    "source_commit": null,
+    "source_commit_note": "Set in the exact-SHA release follow-up after committing and pushing the runtime source."
+  },
+  "gap_and_change": {
+    "observed_gap": "A saved video/audio Media Library ID restored into an Inspector had only a static selected label, so the Editor could not tell whether the selected object had been deleted, archived, or was inaccessible. The metadata probe also needed to exclude archived rows, matching active Media Library and GET semantics.",
+    "api": "Authenticated HEAD /api/admin/media?id=<uuid> performs a site-scoped D1 lookup for an active (archived_at IS NULL), supported media row and R2 head metadata lookup only. It returns no body, never calls R2 get, uses private no-store and Vary: Cookie, and gives 404 for absent, archived, or missing objects and 503 for R2 metadata failures.",
+    "ui": "Restored playable selections now probe HEAD with same-origin credentials and announce unavailable/network-unknown state. A selection revision guard ignores stale responses; replacing or clearing the selection clears the former warning. Recovery remains an explicit remove/reselect action and does not invoke Save or Publish by itself.",
+    "cache": "The four Editor importers of element-content-controls.js use cache version 20261119-d01-missing-selected-media-recovery-v2.",
+    "save_publish": "No change to the Save/Publish boundary. The status probe performs no mutation; explicit replacement/removal continues through existing callbacks."
+  },
+  "checks": {
+    "media_route": {
+      "command": "npm run test:media",
+      "result": "PASS; 5 files, including real route fixture checks for video/audio HEAD headers and empty body, site grant denial, unknown id, missing R2 object, archived-row 404 without an R2 head, R2 error 503, and zero R2 body reads."
+    },
+    "editor_browser": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-media-picker-pagination.test.js",
+      "result": "PASS; 1 Chromium test across 390px and 1366px. Missing video/audio announce the recovery state without mutating selection; explicit clear and replacement work; the warning clears after a valid replacement."
+    },
+    "editor_unit_manifest": {
+      "command": "npm run test:editor",
+      "result": "PASS; 22/22 unit files and 4/4 runner/manifest checks."
+    },
+    "typecheck": {
+      "command": "npm run typecheck",
+      "result": "PASS after the API route implementation; subsequent changes were JavaScript UI/test changes and passed syntax plus Chromium checks."
+    },
+    "plan_integrity": {
+      "commands": [
+        "python3 scripts/check-canonical-plan.py",
+        "python3 tests/plan-contract.test.py",
+        "python3 scripts/build-feature-traceability.py --check",
+        "python3 scripts/audit-active-plan-point.py"
+      ],
+      "result": "PASS; canonical master remains the single complete 13-file plan, plan contracts 15/15, traceability 396/396. Active cursor is 77.44.7.D / OPEN / NOT_CERTIFIED; 147 PARTIAL_SOURCE and 249 UNVERIFIED."
+    },
+    "migration_safety": {
+      "command": "npm run test:web013:migration-gate",
+      "result": "PASS; safe deploy gate does not apply migrations."
+    },
+    "wrangler_dry_run": {
+      "command": "npx wrangler deploy --dry-run",
+      "result": "PASS; Wrangler 4.130.0 read 197 public assets (395.07 KiB / 100.96 KiB gzip), exit 0, no publish. The read-only home emitted a non-fatal EROFS debug-log warning."
+    },
+    "production_preflight": {
+      "method": "Cloudflare D1 Query API; one SELECT-only query",
+      "sql": "SELECT (SELECT name FROM d1_migrations ORDER BY name DESC LIMIT 1) AS latest_migration, (SELECT COUNT(*) FROM d1_migrations) AS migration_count;",
+      "latest_migration": "0029_media_archive_unicode_additive.sql",
+      "migration_count": 35,
+      "rows_read": 36,
+      "rows_written": 0,
+      "changes": 0,
+      "changed_db": false
+    },
+    "static": {
+      "command": "node --check public/editor-v2/ui/element-content-controls.js && node --check tests/browser/editor-media-picker-pagination.test.js && git diff --check",
+      "result": "PASS"
+    }
+  },
+  "release_before_push": {
+    "remote_head_verified": "0d81d0319a8c39d5994c853a49ae8180b29e80dc",
+    "runtime_release": "PENDING exact source commit and normal fast-forward push",
+    "exact_sha_ci": "PENDING; required runtime workflows must be checked after push",
+    "worker_deployment": "PENDING; verify automatic build, or use deploy:safe only if automatic release does not start or succeed",
+    "live_baseline": {
+      "deployment_id": "4a3d07d8-dba9-4591-8b2e-23f4482ae71e",
+      "worker_version_id": "dcd3f2fd-fd51-47ba-8639-68fe4ce565a2",
+      "traffic_percent": 100,
+      "health": "GET /api/health returned HTTP 200 at 2026-11-19T11:59:49Z; version 2.0.0. This is the pre-change baseline, not evidence of the new route being deployed."
+    }
+  },
+  "cost_and_scope": {
+    "new_cost_huf": 0,
+    "new_dependencies": false,
+    "production_d1_migration_or_write": false,
+    "production_r2_mutation": false,
+    "quota_note": "Repository is public and its runtime workflows use standard ubuntu-24.04 hosted runners. A read-only Cloudflare Builds snapshot from this work block found one Worker and 374 conservative November build-minutes versus the public 3,000-minute free-plan allowance; account subscription API access is unavailable, so final cost must remain within included plan usage and no limit change or paid use is authorized.",
+    "limits": "This is one D-01 restored-video/audio recovery slice, not complete D-01, D-01–D-07, 77.44.7.D, or complete Editor acceptance. Full manual/physical acceptance remains deferred until the complete Editor; Save and Publish remain separate."
+  }
+}

@@ -40,8 +40,17 @@ export function mediaAssetPicker(selectedId,onSelect,{disabled=false,mimes=[],se
   const status=document.createElement('p');status.className='content-field-help';status.setAttribute('role','status');
   const current=document.createElement('div');current.className='editor-media-current';current.id='media-choices-'+crypto.randomUUID();current.setAttribute('role','region');current.setAttribute('aria-label','Médiatár találatok');
   const selection=document.createElement('div');selection.className='editor-media-selection';
+  let selectionRevision=0;
+  const unavailable=(preview,revision,message='A kiválasztott médiafájl nem érhető el. Válassz új fájlt, vagy távolítsd el a kapcsolatot.')=>{
+    if(revision!==selectionRevision||selection.firstElementChild!==preview)return;
+    selection.classList.add('is-unavailable');
+    if(preview.tagName==='IMG')preview.alt='A kiválasztott kép nem érhető el.';
+    else preview.setAttribute('aria-label','A kiválasztott médiafájl nem érhető el.');
+    status.textContent=message;
+  };
   const renderSelected=(id,asset=null)=>{
-    selection.replaceChildren();selection.classList.remove('is-unavailable');if(!id)return;
+    const revision=++selectionRevision;
+    selection.replaceChildren();selection.classList.remove('is-unavailable');status.textContent='';if(!id)return;
     const mediaKind=asset?.mimeType?.split('/')[0]||selectedKind;
     const isImage=mediaKind==='image';
     const kindLabel=mediaKind==='video'?'videó':mediaKind==='audio'?'hang':mediaKind==='image'?'kép':'médiafájl';
@@ -51,14 +60,19 @@ export function mediaAssetPicker(selectedId,onSelect,{disabled=false,mimes=[],se
       // A draft can outlive an archived, deleted, or otherwise inaccessible
       // asset. Keep its recoverable ID visible, but explain why the preview is
       // empty and leave the explicit clear/reselect controls available.
-      preview.addEventListener('error',()=>{
-        if(selection.firstElementChild!==preview)return;
-        selection.classList.add('is-unavailable');
-        preview.alt='A kiválasztott kép nem érhető el.';
-        status.textContent='A kiválasztott médiafájl nem érhető el. Válassz új fájlt, vagy távolítsd el a kapcsolatot.';
-      },{once:true});
+      preview.addEventListener('error',()=>unavailable(preview,revision),{once:true});
     }
-    else{preview.textContent=(mediaKind==='video'?'🎬 ':mediaKind==='audio'?'🔊 ':'📎 ')+`Kiválasztott ${kindLabel}`;preview.setAttribute('aria-label',`Kiválasztott ${kindLabel}`)}
+    else{
+      preview.textContent=(mediaKind==='video'?'🎬 ':mediaKind==='audio'?'🔊 ':'📎 ')+`Kiválasztott ${kindLabel}`;
+      preview.setAttribute('aria-label',`Kiválasztott ${kindLabel}`);
+      // Restored playable IDs do not create a media element in the Inspector.
+      // Probe only authenticated object metadata so unavailable drafts get the
+      // same repair affordance as image drafts without transferring the asset.
+      const url='/api/admin/media?id='+encodeURIComponent(id);
+      void fetch(url,{method:'HEAD',credentials:'same-origin'}).then(response=>{
+        if(!response.ok)unavailable(preview,revision);
+      }).catch(()=>unavailable(preview,revision,'A kiválasztott médiafájl állapota most nem ellenőrizhető. Válassz új fájlt, vagy próbáld újra később.'));
+    }
     const clear=associateDescription(document.createElement('button'));clear.type='button';clear.textContent=kindLabel==='médiafájl'?'Médiafájl eltávolítása':kindLabel[0].toLocaleUpperCase('hu-HU')+kindLabel.slice(1)+' eltávolítása';clear.disabled=disabled;
     clear.onclick=()=>{if(onSelect('')===false)return;renderSelected('');status.textContent='A kiválasztott médiafájl eltávolítva.';if(root.isConnected)open.focus({preventScroll:true})};
     selection.append(preview,clear);

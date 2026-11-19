@@ -493,6 +493,31 @@ export async function adminMediaRoute(request: Request, env: Env, siteId: string
       return ok({id:requestId,state:"cancelled",changed:true,permanentDeletionAuthorized:false});
     } catch { return error("RETENTION_MIGRATION_NOT_ACTIVE",503); }
   }
+  // The Editor restores Media Library IDs from saved drafts. For playable
+  // assets, the picker has no image load event to detect a missing object, so
+  // allow an authenticated metadata-only probe. Never fetch or stream the R2
+  // object body for this check.
+  if (request.method === "HEAD") {
+    const id = url.searchParams.get("id") || "";
+    if (!MEDIA_ASSET_ID.test(id)) return new Response(null,{status:404,headers:{"Cache-Control":"private, no-store","Vary":"Cookie","X-Content-Type-Options":"nosniff"}});
+    const row = await env.DB.prepare(
+      "SELECT id,site_id,object_key,original_name,mime_type,size_bytes,alt_text,created_at,archived_at FROM media WHERE id=? AND site_id=? AND archived_at IS NULL LIMIT 1"
+    ).bind(id,siteId).first<MediaRow>();
+    if (!row || !(MEDIA_MIMES as readonly string[]).includes(row.mime_type))
+      return new Response(null,{status:404,headers:{"Cache-Control":"private, no-store","Vary":"Cookie","X-Content-Type-Options":"nosniff"}});
+    let metadata: Awaited<ReturnType<typeof env.MEDIA.head>>;
+    try { metadata = await env.MEDIA.head(row.object_key); }
+    catch { return new Response(null,{status:503,headers:{"Cache-Control":"private, no-store","Vary":"Cookie","X-Content-Type-Options":"nosniff"}}); }
+    if (!metadata) return new Response(null,{status:404,headers:{"Cache-Control":"private, no-store","Vary":"Cookie","X-Content-Type-Options":"nosniff"}});
+    return new Response(null,{status:200,headers:{
+      "Content-Type":row.mime_type,
+      "Content-Length":String(metadata.size),
+      "Cache-Control":"private, no-store",
+      "Vary":"Cookie",
+      "X-Content-Type-Options":"nosniff",
+      "Content-Disposition":"inline"
+    }});
+  }
   if (request.method === "GET") {
     const id = url.searchParams.get("id");
     if (retentionStatusFlag[0] === "1") {

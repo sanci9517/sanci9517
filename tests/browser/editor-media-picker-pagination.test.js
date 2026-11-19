@@ -11,7 +11,7 @@ test('Inspector Media picker reaches older images and keeps filtered pages disti
   const id=index=>`00000000-0000-4000-8000-${String(index).padStart(12,'0')}`;
   const all=Array.from({length:120},(_,i)=>({id:id(119-i),name:`asset-${119-i}.png`,altText:`Picture ${119-i}`,
     mimeType:'image/png',createdAt:'2026-10-21 10:00:00',previewUrl:'/api/admin/media?id='+id(119-i)}));
-  const requests=[];let failAudioPage=true,failTemporarySearch=true;
+  const requests=[],metadataRequests=[];let failAudioPage=true,failTemporarySearch=true;
   const server=createServer(async(req,res)=>{
     const url=new URL(req.url,'http://localhost');
     if(url.pathname==='/'){
@@ -50,6 +50,11 @@ test('Inspector Media picker reaches older images and keeps filtered pages disti
       res.end(JSON.stringify({ok:true,data:{assets:page,nextCursor}}));return;
     }
     if(url.pathname==='/api/admin/media'&&url.searchParams.has('id')){
+      if(req.method==='HEAD'){
+        const id=url.searchParams.get('id');metadataRequests.push(id);
+        const missing=['missing-video','missing-audio'].includes(id);
+        res.writeHead(missing?404:200,{'Cache-Control':'private, no-store','Vary':'Cookie','X-Content-Type-Options':'nosniff'});res.end();return;
+      }
       if(url.searchParams.get('id')==='missing-selected'){
         res.writeHead(404,{'Content-Type':'application/json'});res.end(JSON.stringify({ok:false,error:{code:'MEDIA_NOT_FOUND'}}));return;
       }
@@ -195,9 +200,49 @@ test('Inspector Media picker reaches older images and keeps filtered pages disti
     await stalePicker.getByRole('button',{name:'asset-119.png kiválasztása'}).click();
     assert.equal(await stalePicker.locator('.editor-media-selection.is-unavailable').count(),0,
       'choosing a replacement asset clears stale preview state');
+    await page.evaluate(async()=>{
+      const {mediaAssetPicker}=await import('/editor-v2/ui/element-content-controls.js');
+      window.__recoveredVideo=[];window.__recoveredAudio=[];
+      document.getElementById('fixture').append(
+        mediaAssetPicker('missing-video',assetId=>{window.__recoveredVideo.push(assetId);return true},{selectedKind:'video',mimes:['video/webm']}),
+        mediaAssetPicker('missing-audio',assetId=>{window.__recoveredAudio.push(assetId);return true},{selectedKind:'audio',mimes:['audio/mpeg']})
+      );
+    });
+    const videoStale=page.locator('.editor-media-picker').nth(4),audioStale=page.locator('.editor-media-picker').nth(5);
+    const unavailableMessage='A kiválasztott médiafájl nem érhető el. Válassz új fájlt, vagy távolítsd el a kapcsolatot.';
+    await videoStale.getByText(unavailableMessage).waitFor();
+    await audioStale.getByText(unavailableMessage).waitFor();
+    assert.equal(await videoStale.locator('.editor-media-selected').getAttribute('aria-label'),'A kiválasztott médiafájl nem érhető el.');
+    assert.equal(await audioStale.locator('.editor-media-selected').getAttribute('aria-label'),'A kiválasztott médiafájl nem érhető el.');
+    assert.deepEqual(await page.evaluate(()=>[window.__recoveredVideo,window.__recoveredAudio]),[[],[]],
+      'metadata discovery never changes a draft selection');
+    await videoStale.getByRole('button',{name:'Videó eltávolítása'}).click();
+    assert.equal(await videoStale.locator('.editor-media-selection.is-unavailable').count(),0);
+    assert.deepEqual(await page.evaluate(()=>window.__recoveredVideo),[''],
+      'a missing video can be removed explicitly');
+    await videoStale.getByRole('button',{name:'Médiatár megnyitása'}).click();
+    await videoStale.getByRole('button',{name:'További médiafájl betöltése'}).click();
+    await videoStale.getByRole('button',{name:'supported.webm kiválasztása'}).click();
+    assert.equal(await videoStale.locator('.editor-media-selection.is-unavailable').count(),0,
+      'an active video replaces the stale video without retaining its warning');
+    assert.equal(await videoStale.getByText(unavailableMessage,{exact:true}).count(),0,
+      'the stale unavailable message is cleared after video recovery');
+    await audioStale.getByRole('button',{name:'Hang eltávolítása'}).click();
+    assert.equal(await audioStale.locator('.editor-media-selection.is-unavailable').count(),0);
+    assert.deepEqual(await page.evaluate(()=>window.__recoveredAudio),[''],
+      'a missing audio can be removed explicitly');
+    await audioStale.getByRole('button',{name:'Médiatár megnyitása'}).click();
+    await audioStale.getByRole('button',{name:'first.mp3 kiválasztása'}).click();
+    assert.equal(await audioStale.locator('.editor-media-selection.is-unavailable').count(),0,
+      'an active audio replaces the stale audio without retaining its warning');
+    assert.equal(await audioStale.getByText(unavailableMessage,{exact:true}).count(),0,
+      'the stale unavailable message is cleared after audio recovery');
     assert.deepEqual(errors,[],`no uncaught picker error at ${width}px`);
     await page.close();
   }
   assert.equal(requests.filter(x=>x.before!==null&&x.mime===null).length,4,'every image page 2 and 3 uses a cursor rather than repeating page 1');
   assert.ok(requests.every(x=>x.method==='GET'),'asset browsing never sends a Save, Publish or upload request');
+  assert.deepEqual(metadataRequests.filter(id=>['missing-video','missing-audio'].includes(id)),
+    ['missing-video','missing-audio','missing-video','missing-audio'],
+    'restored playable IDs are checked once per picker at each responsive viewport');
 });

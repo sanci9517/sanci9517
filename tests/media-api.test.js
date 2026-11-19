@@ -110,6 +110,49 @@ test("authenticated image upload produces private asset and site-scoped listing"
   assert.equal((await f.call("GET","editor",null,{id:asset.id,site:"other"})).status,403);
 });
 
+test("private media HEAD verifies site-scoped R2 metadata without reading asset bodies",async t=>{
+  const f=await fixture(t);
+  const videoUpload=await f.call("POST","editor",webm,{name:"head-probe.webm",contentType:"video/webm"});
+  assert.equal(videoUpload.status,201);
+  const video=(await videoUpload.json()).data;
+  const audioUpload=await f.call("POST","editor",wav,{name:"head-probe.wav",contentType:"audio/wav"});
+  assert.equal(audioUpload.status,201);
+  const audio=(await audioUpload.json()).data;
+  const before={...f.mediaReads};
+  for(const [asset,mime] of [[video,"video/webm"],[audio,"audio/wav"]]){
+    const response=await f.call("HEAD","editor",null,{id:asset.id});
+    assert.equal(response.status,200);
+    assert.equal(response.body,null,"HEAD never streams private media bytes");
+    assert.equal(response.headers.get("Content-Type"),mime);
+    assert.equal(response.headers.get("Content-Length"),String(asset.sizeBytes));
+    assert.equal(response.headers.get("Cache-Control"),"private, no-store");
+    assert.equal(response.headers.get("Vary"),"Cookie");
+    assert.equal(response.headers.get("X-Content-Type-Options"),"nosniff");
+  }
+  assert.equal((await f.call("HEAD","editor",null,{id:video.id,site:"other"})).status,403,
+    "metadata probes retain the editor's site grant");
+  assert.equal((await f.call("HEAD","editor",null,{id:"00000000-0000-4000-8000-000000000099"})).status,404,
+    "unknown private media remains indistinguishable from inaccessible objects");
+  const row=f.db.prepare("SELECT object_key FROM media WHERE id=?").get(video.id);
+  f.files.delete(row.object_key);
+  assert.equal((await f.call("HEAD","editor",null,{id:video.id})).status,404,
+    "an extant D1 row with a missing R2 object is unavailable");
+  assert.equal(f.mediaReads.count,before.count,"metadata checks never call R2 get");
+  f.files.set(row.object_key,webm);
+  f.db.prepare("UPDATE media SET archived_at='2026-11-19T12:00:00Z' WHERE id=?").run(video.id);
+  const headsBeforeArchived=f.mediaReads.headCount;
+  assert.equal((await f.call("HEAD","editor",null,{id:video.id})).status,404,
+    "archived media is not considered recoverable while its object still exists");
+  assert.equal(f.mediaReads.headCount,headsBeforeArchived,
+    "archived rows are rejected before querying R2 metadata");
+  f.env.MEDIA.head=async()=>{throw new Error("storage unavailable")};
+  assert.equal((await f.call("HEAD","editor",null,{id:audio.id})).status,503,
+    "storage outages are not misreported as a valid selection");
+  assert.equal(f.mediaReads.headCount,before.headCount+3,
+    "only active registered assets reach R2 head");
+  assert.equal(f.mediaReads.count,before.count,"storage error paths still do not read R2 bodies");
+});
+
 test("authenticated playable media remains site-scoped and becomes public only through its matching rendered node",async t=>{
   const f=await fixture(t);
   const pngUpload=await f.call("POST","editor",png,{name:"cover.png"});
