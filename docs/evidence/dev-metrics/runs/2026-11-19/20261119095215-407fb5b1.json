@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261119095215-407fb5b1",
+  "task": "63.50.32",
+  "trigger": "manual",
+  "started_at": "2026-11-19T09:52:15.088Z",
+  "finished_at": "2026-11-19T09:53:11.620Z",
+  "wall_seconds": 57,
+  "paused_seconds": 0,
+  "measured_seconds": 57,
+  "status": "pass",
+  "kind": "test",
+  "summary": "Editor draft Save followed by page metadata PATCH preserves the old public snapshot and metadata until explicit Publish",
+  "evidence": [
+    "tests/web013-tenant-pages-editor.test.js:PASS"
+  ],
+  "checks": "node --experimental-loader ./tests/ts-extension-loader.mjs --test tests/web013-tenant-pages-editor.test.js PASS 1/1; node --check PASS; git diff --check PASS",
+  "started_revision": "12fd706a659eba52828b92c3f1d28687afcf63d4",
+  "finished_revision": "12fd706a659eba52828b92c3f1d28687afcf63d4",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

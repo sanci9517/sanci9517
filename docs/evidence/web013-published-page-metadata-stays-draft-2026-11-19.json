@@ -1,0 +1,48 @@
+{
+  "schema": 1,
+  "captured_at": "2026-11-19T09:53:11Z",
+  "plan_item": "63.50.32 / 63.50.33",
+  "status": "AUTOMATED REGRESSION PASS; broader feature and route matrix remains OPEN / NOT_CERTIFIED",
+  "scope": "A draft Save followed by a page metadata PATCH must not publish draft content or draft slug/title/description; only the Editor Publish action may update the live snapshot.",
+  "plan_sha256": "22cb263e9a43a4424d8bdb72e4b5daee215fdb45a48b7db3c2b80817821d9b3a",
+  "base_commit": "12fd706a659eba52828b92c3f1d28687afcf63d4",
+  "test_sha256": "f369f655677a5bac335342ec5a5a3d77558bfac243e04b11b70af01c44875fa6",
+  "changes": {
+    "runtime": "none; the source route already keeps published_content_json, published_revision_id, and published metadata separate from a page metadata PATCH.",
+    "test": [
+      "The route regression publishes page B's initial state A, Saves draft state B, then PATCHes draft title, description, and slug.",
+      "It asserts the public content snapshot, published revision ID, published slug/title/description remain A while the draft metadata becomes B.",
+      "A separate explicit Editor Publish then updates the public metadata/content and creates the old-slug redirect for that site's page."
+    ]
+  },
+  "checks": [
+    {
+      "command": "node --experimental-loader ./tests/ts-extension-loader.mjs --test tests/web013-tenant-pages-editor.test.js",
+      "result": "PASS 1/1"
+    },
+    {
+      "command": "node --check tests/web013-tenant-pages-editor.test.js",
+      "result": "PASS"
+    },
+    {
+      "command": "git diff --check",
+      "result": "PASS"
+    }
+  ],
+  "release": {
+    "ci": "not dispatched; test/evidence-only change, no hosted CI result claimed",
+    "worker": "no runtime code changed; no deployment performed",
+    "verified_baseline": {
+      "deployment_id": "a8cb33a3-5179-4fc9-8844-e002a1e1a9e3",
+      "version_id": "31b605b7-fd0d-4cfa-8ddf-849c51eadef2",
+      "traffic_percent": 100,
+      "runtime_source_sha": "fad2043d96f3bf890005c62c0e34d0084b387f05"
+    }
+  },
+  "production_data_and_cost": {
+    "production_d1_mutations_or_migrations": "none",
+    "r2_operations": "none",
+    "new_paid_services_or_spend": "none"
+  },
+  "acceptance_boundary": "This evidence closes only the draft content versus metadata PATCH versus explicit Publish regression. Full WEB-013 metadata/slug lifecycle, the Editor scope, and 77.44.7.D remain open; no full Editor or physical acceptance is claimed."
+}

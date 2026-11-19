@@ -510,6 +510,43 @@ test('tenant metadata and publish URL history never modify the other site',async
   assert.equal(f.db.prepare('SELECT published_slug FROM pages WHERE id=?').get('a').published_slug,'a');
 });
 
+test('draft Save and metadata PATCH cannot Publish until the explicit Editor Publish action',async t=>{
+  const f=await fixture(t),before=f.db.prepare(`SELECT published_content_json,published_revision_id,
+    published_slug,published_title,published_description FROM pages WHERE id='b'`).get();
+  const saved=await f.editor('editor','other','POST',{pageId:'b',expectedVersion:1,
+    document:f.document('b','Draft B'),publish:false});
+  assert.equal(saved.status,200,'a changed Editor draft remains saveable');
+  assert.equal(f.db.prepare(`SELECT published_content_json FROM pages WHERE id='b'`).get().published_content_json,
+    before.published_content_json,'draft Save leaves published content A intact');
+
+  const metadata=await f.pages('editor','other','PATCH',{id:'b',expectedVersion:2,
+    slug:'draft-b',title:'Draft B title',description:'Draft B description'});
+  assert.equal(metadata.status,200,'metadata can be saved on the changed draft');
+  const afterMetadata=f.db.prepare(`SELECT content_json,published_content_json,published_revision_id,
+    is_published,slug,title,description,published_slug,published_title,published_description
+    FROM pages WHERE id='b'`).get();
+  assert.notEqual(afterMetadata.content_json,before.published_content_json,'the draft contains the saved B state');
+  assert.equal(afterMetadata.is_published,1,'the existing public page stays published');
+  assert.equal(afterMetadata.published_content_json,before.published_content_json,'metadata PATCH cannot publish draft B');
+  assert.equal(afterMetadata.published_revision_id,before.published_revision_id,'metadata PATCH preserves public revision A');
+  assert.deepEqual([afterMetadata.slug,afterMetadata.title,afterMetadata.description],
+    ['draft-b','Draft B title','Draft B description'],'admin metadata reflects draft B');
+  assert.deepEqual([afterMetadata.published_slug,afterMetadata.published_title,afterMetadata.published_description],
+    [before.published_slug,before.published_title,before.published_description],'public metadata remains A');
+
+  const published=await f.editor('editor','other','POST',{pageId:'b',expectedVersion:3,
+    document:f.document('b','Explicitly published B'),publish:true});
+  assert.equal(published.status,200,'the separate explicit Publish action applies B');
+  const afterPublish=f.db.prepare(`SELECT published_content_json,published_revision_id,published_slug,
+    published_title,published_description FROM pages WHERE id='b'`).get();
+  assert.notEqual(afterPublish.published_content_json,before.published_content_json);
+  assert.notEqual(afterPublish.published_revision_id,before.published_revision_id);
+  assert.deepEqual([afterPublish.published_slug,afterPublish.published_title,afterPublish.published_description],
+    ['draft-b','Draft B title','Draft B description']);
+  assert.deepEqual({...f.db.prepare(`SELECT site_id,from_slug,page_id FROM page_slug_redirects WHERE page_id='b'`).get()},
+    {site_id:'other',from_slug:'b',page_id:'b'},'the old public URL is redirected only on explicit Publish');
+});
+
 test('tenant copy, hierarchy and revision conflicts stay within the authorized site',async t=>{
   const f=await fixture(t);
   assert.equal((await f.pages('editor','other','POST',{sourcePageId:'a',slug:'stolen',title:'Stolen'})).status,404);
