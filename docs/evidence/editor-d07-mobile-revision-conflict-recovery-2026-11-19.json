@@ -1,0 +1,100 @@
+{
+  "date_utc": "2026-11-19",
+  "plan_point": "77.44.7.D / D-07",
+  "status": "PARTIAL_REGRESSION_PASS; FULL_D_OPEN_NOT_CERTIFIED",
+  "scope": "Keep the Editor draft recoverable after a stale-version Save conflict on a narrow viewport.",
+  "base_commit": "2064acf568c378b7f32befd6bb9b1e871d4866ef",
+  "runtime_changes": [
+    "public/editor-v2/app.js",
+    "public/editor-v2/editor-refresh.css"
+  ],
+  "test_changes": [
+    "tests/browser/editor-media-source-switch.test.js"
+  ],
+  "behavior": {
+    "reproduction": "At 390px, the viewport-fixed mobile toolbar intercepted both revision-conflict recovery buttons because the conflict section stretched into the workspace grid row.",
+    "fix": "The conflict state adds a narrow-screen grid template with a natural-height recovery row; the state class is removed after explicit latest-version reload or successful Save.",
+    "save_publish": "A rejected stale Save leaves the public snapshot unchanged. The local JSON export preserves the edited document. Replacing it with the latest server draft still requires the existing explicit confirmation."
+  },
+  "checks": {
+    "focused_browser": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-name-pattern='a revision conflict' tests/browser/editor-media-source-switch.test.js",
+      "result": "PASS 1/1"
+    },
+    "browser_file": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-media-source-switch.test.js",
+      "result": "PASS 5/5"
+    },
+    "editor_unit": {
+      "command": "npm run test:editor",
+      "result": "PASS 22/22 unit files; 4/4 subreaper/manifest checks"
+    },
+    "typecheck": {
+      "command": "npm run typecheck -- --pretty false",
+      "result": "PASS"
+    },
+    "plan_contract": {
+      "command": "python3 tests/plan-contract.test.py",
+      "result": "PASS 15/15"
+    },
+    "canonical_plan": {
+      "command": "python3 scripts/check-canonical-plan.py",
+      "result": "PASS 13/13 plan files; 396 catalog mappings"
+    },
+    "active_point": {
+      "command": "python3 scripts/audit-active-plan-point.py",
+      "result": "OPEN / NOT_CERTIFIED; 147 PARTIAL_SOURCE / 249 UNVERIFIED"
+    },
+    "traceability": {
+      "command": "python3 scripts/build-feature-traceability.py --check",
+      "result": "PASS 396/396 mappings"
+    },
+    "migration_safety": {
+      "command": "npm run test:web013:migration-gate",
+      "result": "PASS; deploy:safe path applies no D1 migrations"
+    },
+    "static": {
+      "command": "node --check public/editor-v2/app.js && node --check tests/browser/editor-media-source-switch.test.js && git diff --check",
+      "result": "PASS"
+    },
+    "wrangler_dry_run": {
+      "command": "npx wrangler deploy --dry-run",
+      "result": "PASS; Wrangler 4.130.0 read 197 public assets; 393.65 KiB, 100.85 KiB gzip; no publish. Wrangler log destination was read-only but dry-run exited 0."
+    }
+  },
+  "production_d1_preflight": {
+    "method": "Cloudflare D1 Query API",
+    "sql": "SELECT name FROM d1_migrations ORDER BY name DESC LIMIT 1",
+    "result": "0029_media_archive_unicode_additive.sql",
+    "rows_read": 1,
+    "rows_written": 0,
+    "changes": 0,
+    "changed_db": false
+  },
+  "live_baseline": {
+    "read_only_cloudflare_deployment": "a8cb33a3-5179-4fc9-8844-e002a1e1a9e3",
+    "worker_version": "31b605b7-fd0d-4cfa-8ddf-849c51eadef2",
+    "traffic_percent": 100,
+    "public_health": "UNVERIFIED; workers.dev connection was refused before HTTP in this execution environment.",
+    "changed_asset_hashes": "PENDING exact-SHA release smoke"
+  },
+  "release": {
+    "commit": "PENDING",
+    "remote_push": "PENDING normal fast-forward to v2/foundation",
+    "cloudflare_deployment": "PENDING",
+    "github_ci": "PENDING exact-SHA runtime checks; no dispatch or rerun was started"
+  },
+  "limits": {
+    "new_cost_huf": 0,
+    "production_d1_mutation": false,
+    "production_r2_mutation": false,
+    "manual_physical_editor_acceptance": "DEFERRED until full Editor scope",
+    "full_plan_point": "OPEN / NOT_CERTIFIED"
+  },
+  "developer_run": {
+    "id": "20261119100128-9d76abe0",
+    "measured_seconds": 811,
+    "status": "pass",
+    "kind": "mixed"
+  }
+}

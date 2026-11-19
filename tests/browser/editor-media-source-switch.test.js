@@ -21,7 +21,7 @@ async function fixture(t,width){
   const props=type==='image'?first:type==='video'?{src:'/fixture.webm',poster:'/fixture-old.svg',posterAssetId:assetId,controls:true,muted:true}:{items:[first,second]};
   execute(state,{type:'content.properties.set',payload:{nodeId:ids[type],patch:structuredClone(props)}});
  }
- let draft=structuredClone(state.document),published=structuredClone(draft),version=1,rejectNextSave=false;
+ let draft=structuredClone(state.document),published=structuredClone(draft),version=1,rejectNextSave=null;
  const original=structuredClone(draft),posts=[],writeAttempts=[],requests=[],errors=[],root=resolve(import.meta.dirname,'../../public');
  const video=await readFile(new URL('../fixtures/editor-sample.webm',import.meta.url));
  const server=createServer(async(req,res)=>{
@@ -31,7 +31,7 @@ async function fixture(t,width){
   if(url.pathname==='/api/admin/editor'){
    if(req.method==='GET')return json({ok:true,data:{page:{id:pageId,document:draft,publishedRevisionId:'published'},revisions:[{id:'revision-'+version,version}]}});
    let body='';for await(const chunk of req)body+=chunk;const saved=JSON.parse(body);writeAttempts.push(saved);
-   if(rejectNextSave){rejectNextSave=false;return json({ok:false,error:{message:'A szerkesztői hozzáférést visszavonták.'}},403);}
+   if(rejectNextSave){const rejection=rejectNextSave;rejectNextSave=null;return json({ok:false,error:{message:rejection.message,code:rejection.code}},rejection.status);}
    posts.push(saved);draft=structuredClone(saved.document);version++;
    if(saved.publish)published=structuredClone(draft);
    return json({ok:true,data:{pageId,version,revisionId:'revision-'+version,published:Boolean(saved.publish)}});
@@ -64,7 +64,7 @@ async function fixture(t,width){
  const picker=type=>scope(type).locator(`[data-content-key="${keys(type)[1]}"]`);
  const choose=async type=>{await picker(type).getByRole('button',{name:'Médiatár megnyitása'}).click();await picker(type).getByRole('button',{name:'Közös kép.png kiválasztása'}).click();};
  const save=async publish=>{await editor.locator(publish?'#publish':'#save').click();try{await editor.waitForFunction(pub=>document.querySelector('#saveStatus').textContent.startsWith(pub?'Publikálva':'Mentve'),publish);}catch(error){throw new Error(await editor.locator('#saveStatus').textContent(),{cause:error});}};
- return {editor,live,source,select,field,picker,choose,save,node,media,scope,errors,posts,writeAttempts,requests,original,ids,pageId,draft:()=>draft,rejectNextSave:()=>{rejectNextSave=true}};
+ return {editor,live,source,select,field,picker,choose,save,node,media,scope,errors,posts,writeAttempts,requests,original,ids,pageId,draft:()=>draft,rejectNextSave:(status=403,code=null,message='A szerkesztői hozzáférést visszavonták.')=>{rejectNextSave={status,code,message}}};
 }
 
 for(const width of [390,1366])test(`authored image/gallery/carousel/poster source changes preserve editing and Save/Publish at ${width}px`,async t=>{
@@ -173,5 +173,49 @@ test('a revoked editor Save keeps the local draft dirty and never changes the pu
  assert.equal(f.posts.length,1,'the retained dirty document can be saved after access is restored');
  assert.equal(target(f.posts[0].document,f.pageId,f.ids,'image').src,'/revoked-membership-draft.svg');
  await f.live.reload();assert.equal(await f.source(f.live,'image'),previousPublished,'a successful Save still does not Publish');
+ assert.deepEqual(f.errors,[]);
+});
+
+test('a revision conflict offers an export before explicitly discarding the dirty local draft',async t=>{
+ const f=await fixture(t,390);
+ await f.select('image');
+ const imageField=f.field('image');await imageField.fill('/revision-conflict-local-draft.svg');
+ const previousDraft=structuredClone(f.draft()),previousPublished=await f.source(f.live,'image');
+ f.rejectNextSave(409,'REVISION_CONFLICT','A szerveren újabb oldalverzió található.');
+ await f.editor.locator('#save').click();
+ await f.editor.locator('#revisionConflict').waitFor({state:'visible'});
+ assert.match(await f.editor.locator('#saveStatus').textContent(),/Verzióütközés.*helyi változat megőrizve/);
+ assert.match(await f.editor.locator('#revisionConflictMessage').textContent(),/helyi módosításaid megmaradtak.*Exportáld/);
+ assert.equal(await imageField.inputValue(),'/revision-conflict-local-draft.svg','the conflicted local Inspector value remains visible');
+ assert.deepEqual(f.draft(),previousDraft,'a conflict response does not replace the server draft');
+ assert.equal(f.posts.length,0,'the rejected stale write is not recorded as a successful save');
+ await f.live.reload();assert.equal(await f.source(f.live,'image'),previousPublished,'a conflict cannot publish local content');
+
+ await f.editor.evaluate(()=>{
+  const originalClick=HTMLAnchorElement.prototype.click;
+  window.__editorConflictExport=null;
+  HTMLAnchorElement.prototype.click=function(){
+   if(this.download?.includes('-draft-conflict-')){
+    const filename=this.download,href=this.href;
+    void fetch(href).then(response=>response.text()).then(text=>{window.__editorConflictExport={filename,text}});
+    return;
+   }
+   return originalClick.call(this);
+  };
+ });
+ await f.editor.getByRole('button',{name:'Helyi változat letöltése'}).click();
+ await f.editor.waitForFunction(()=>Boolean(window.__editorConflictExport));
+ const captured=await f.editor.evaluate(()=>window.__editorConflictExport);
+ assert.match(captured.filename,/^sanci9517-[a-z0-9-]+-draft-conflict-.*\.json$/,'conflict export uses a safe, recognizable recovery filename');
+ const exported=JSON.parse(captured.text);
+ assert.equal(exported.format,'sanci9517-editor-conflict-draft');
+ assert.equal(exported.pageId,f.pageId);
+ assert.equal(exported.document.pages[f.pageId].nodes[f.ids.image].props.src,'/revision-conflict-local-draft.svg');
+
+ f.editor.once('dialog',dialog=>dialog.accept());
+ await f.editor.getByRole('button',{name:'Friss szerververzió betöltése'}).click();
+ await f.editor.waitForFunction(()=>document.querySelector('#revisionConflict')?.hidden===true);
+ await f.select('image');
+ assert.equal(await f.field('image').inputValue(),'/fixture-old.svg','only explicit confirmation replaces the local draft with the latest server copy');
  assert.deepEqual(f.errors,[]);
 });
