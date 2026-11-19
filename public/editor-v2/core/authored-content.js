@@ -1,5 +1,5 @@
 import { validatedLinkHref } from './richtext-links.js?v=20261117-d03-invalid-media-id-guidance-v1';
-import { PAGE_ACTION_TIMER_DELAYS_MS, pageInteractionAttributes, safePageInteraction } from './page-interactions.js?v=20261118-edt039-timer-trigger-v1';
+import { PAGE_ACTION_TIMER_DELAYS_MS, pageInteractionAttributes, safePageInteraction } from './page-interactions.js?v=20261119-edt039-explicit-disclosure-actions-v1';
 
 export const CONTENT_VERSION=1;
 // Shared by the editor picker and the server-side media upload/list contract.
@@ -327,7 +327,7 @@ export function initContentInteractions(root){
   };
   const runPageAction=(source,{writeUrl=true}={})=>{
     const action=source?.dataset?.pageAction,targetId=source?.dataset?.pageActionTarget;
-    if(!['scroll-to','select-tab','toggle-disclosure'].includes(action)||typeof targetId!=='string'||!/^[A-Za-z0-9_-]{1,120}$/.test(targetId))return false;
+    if(!['scroll-to','select-tab','open-disclosure','close-disclosure','toggle-disclosure'].includes(action)||typeof targetId!=='string'||!/^[A-Za-z0-9_-]{1,120}$/.test(targetId))return false;
     // Page Model IDs use this strict allowlist, so an exact same-page selector
     // is safe and avoids allocating/scanning every page node per activation.
     const target=root.querySelector(`[data-page-node-id="${targetId}"]`);
@@ -348,7 +348,7 @@ export function initContentInteractions(root){
     const group=target.querySelector('.creator-accordion');
     const details=group?.querySelectorAll('details')?.[index];
     if(!details)return false;
-    const willOpen=!details.open;
+    const willOpen=action==='open-disclosure'?true:action==='close-disclosure'?false:!details.open;
     if(willOpen&&details.hasAttribute('name')){
       for(const item of group.querySelectorAll('details'))item.open=false;
     }

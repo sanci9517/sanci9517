@@ -159,6 +159,53 @@ test('EDT-039 page actions and EDT-040 motion save as draft, preview safely, and
   await live.reload();await liveNode(buttonId).click();
   assert.equal(await liveNode(disclosureId).locator('.creator-accordion details').first().evaluate(el=>el.open),true,'published page action opens the configured native disclosure');
 
+  // EDT-039: explicit disclosure commands are predictable/idempotent, unlike
+  // a toggle, and remain draft-only until the user publishes them.
+  await selectButton();
+  await actionControls.getByLabel('Művelet').selectOption('open-disclosure');
+  await actionControls.getByLabel('Cél elem').selectOption(disclosureId);
+  await actionControls.getByLabel('Kiválasztott rész').selectOption('0');
+  await editor.locator('#save').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+  assert.equal(await liveNode(buttonId).getAttribute('data-page-action'),'toggle-disclosure','Save does not replace the published toggle with the draft open action');
+  await editor.reload();await selectButton();
+  assert.equal(await actionControls.getByLabel('Művelet').inputValue(),'open-disclosure','the explicit open action survives Editor reload');
+  const openPreviewPopup=editor.waitForEvent('popup');
+  await editor.locator('#preview').click();
+  const openPreview=await openPreviewPopup;
+  await openPreview.waitForLoadState('domcontentloaded');
+  const previewButton=openPreview.frameLocator('.preview-viewport').locator(`.creator-node[data-node-id="${buttonId}"]`);
+  const previewDisclosure=openPreview.frameLocator('.preview-viewport').locator(`.creator-node[data-node-id="${disclosureId}"] details`).first();
+  await previewDisclosure.waitFor({state:'attached'});
+  assert.equal(await previewDisclosure.evaluate(el=>el.open),false,'Preview does not run an explicit click action before activation');
+  await previewButton.press('Enter');
+  assert.equal(await previewDisclosure.evaluate(el=>el.open),true,'Preview applies the draft open action to the native disclosure');
+  await previewButton.press('Enter');
+  assert.equal(await previewDisclosure.evaluate(el=>el.open),true,'repeating open remains open instead of toggling closed');
+  await openPreview.close();
+  await editor.locator('#publish').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent==='Publikálva');
+  await live.reload();
+  await liveNode(buttonId).click();
+  const liveDisclosure=liveNode(disclosureId).locator('.creator-accordion details').first();
+  assert.equal(await liveDisclosure.evaluate(el=>el.open),true,'explicit open activates the public native disclosure');
+  await liveNode(buttonId).click();
+  assert.equal(await liveDisclosure.evaluate(el=>el.open),true,'repeated public open is idempotent');
+
+  await selectButton();
+  await actionControls.getByLabel('Művelet').selectOption('close-disclosure');
+  await actionControls.getByLabel('Cél elem').selectOption(disclosureId);
+  await actionControls.getByLabel('Kiválasztott rész').selectOption('0');
+  await editor.locator('#save').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+  assert.equal(await liveNode(buttonId).getAttribute('data-page-action'),'open-disclosure','close remains a draft until Publish');
+  await editor.locator('#publish').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent==='Publikálva');
+  await live.reload();
+  const closeDisclosure=liveNode(disclosureId).locator('.creator-accordion details').first();
+  await closeDisclosure.locator('summary').click();
+  assert.equal(await closeDisclosure.evaluate(el=>el.open),true,'the native disclosure can be open before the explicit close action');
+  await liveNode(buttonId).click();
+  assert.equal(await closeDisclosure.evaluate(el=>el.open),false,'explicit close closes the native disclosure');
+  await liveNode(buttonId).click();
+  assert.equal(await closeDisclosure.evaluate(el=>el.open),false,'repeated close remains closed instead of reopening');
+
   // EDT-039: a typed keyboard-focus trigger uses the same safe, page-scoped action path.
   await selectButton();
   const triggerControl=actionControls.getByLabel('Kiváltó esemény');

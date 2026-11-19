@@ -38,6 +38,12 @@ test('Page Action registry normalizes only the supported same-page typed action 
   assert.deepEqual(normalizePageInteractions([{ schemaVersion: 1, event: 'click', action: 'toggle-disclosure', targetId: disclosure.id, itemIndex: 0 }], source, page.nodes), [
     { schemaVersion: 1, event: 'click', action: 'toggle-disclosure', targetId: disclosure.id, itemIndex: 0 }
   ]);
+  assert.deepEqual(normalizePageInteractions([{ schemaVersion: 1, event: 'click', action: 'open-disclosure', targetId: disclosure.id, itemIndex: 0 }], source, page.nodes), [
+    { schemaVersion: 1, event: 'click', action: 'open-disclosure', targetId: disclosure.id, itemIndex: 0 }
+  ], 'open is an explicit, idempotent same-page action for native disclosures');
+  assert.deepEqual(normalizePageInteractions([{ schemaVersion: 1, event: 'focus', action: 'close-disclosure', targetId: disclosure.id, itemIndex: 0 }], source, page.nodes), [
+    { schemaVersion: 1, event: 'focus', action: 'close-disclosure', targetId: disclosure.id, itemIndex: 0 }
+  ], 'close is an explicit, keyboard-operable same-page action for native disclosures');
   assert.deepEqual(normalizePageInteractions([{ schemaVersion: 1, event: 'click', action: 'scroll-to', targetId: target.id }], source, page.nodes), [
     { schemaVersion: 1, event: 'click', action: 'scroll-to', targetId: target.id }
   ]);
@@ -62,7 +68,9 @@ test('Page Action registry rejects scripts, selectors, foreign/missing nodes, ty
     { schemaVersion: 1, event: 'click', action: 'select-tab', targetId: target.id, itemIndex: 1, delayMs: 5000 },
     { schemaVersion: 1, event: 'timer', action: 'scroll-to', targetId: target.id, delayMs: 5000 },
     { schemaVersion: 1, event: 'click', action: 'select-tab', targetId: target.id, itemIndex: 2 },
-    { schemaVersion: 1, event: 'click', action: 'toggle-disclosure', targetId: target.id, itemIndex: 0 }
+    { schemaVersion: 1, event: 'click', action: 'toggle-disclosure', targetId: target.id, itemIndex: 0 },
+    { schemaVersion: 1, event: 'hover', action: 'open-disclosure', targetId: disclosure.id, itemIndex: 0 },
+    { schemaVersion: 1, event: 'load', action: 'close-disclosure', targetId: disclosure.id, itemIndex: 0 }
   ]) assert.throws(() => normalizePageInteractions([invalid], source, page.nodes));
   assert.throws(() => normalizePageInteractions([action({ event: 'hover', action: 'scroll-to' })], source, page.nodes), /nem támogatott/,
     'hover cannot unexpectedly scroll the page while the pointer moves');
@@ -74,7 +82,7 @@ test('Page Action registry rejects scripts, selectors, foreign/missing nodes, ty
 });
 
 test('invalid persisted page actions fail Page Model validation and are omitted from rendered attributes', () => {
-  const { document, page, source, target } = fixture();
+  const { document, page, source, target, disclosure } = fixture();
   source.interactions = [{ schemaVersion: 1, event: 'click', action: 'run-code', targetId: target.id, code: '<script>bad()</script>' }];
   assert.match(validateDocument(document).join('\n'), /invalid page interaction/);
   assert.equal(safePageInteraction(source, page.nodes), null);
@@ -93,6 +101,12 @@ test('invalid persisted page actions fail Page Model validation and are omitted 
   assert.equal(contentAttributes(source, { pageNodes: page.nodes })['data-page-action-event'], 'hover');
   source.interactions[0].action = 'scroll-to';
   assert.equal(safePageInteraction(source, page.nodes), null, 'an event/action mismatch is ignored even when persisted data is malformed');
+  source.interactions[0] = { schemaVersion: 1, event: 'click', action: 'open-disclosure', targetId: disclosure.id, itemIndex: 0 };
+  assert.equal(pageInteractionAttributes(source, page.nodes)['data-page-action'], 'open-disclosure');
+  source.interactions[0] = { schemaVersion: 1, event: 'focus', action: 'close-disclosure', targetId: disclosure.id, itemIndex: 0 };
+  assert.equal(pageInteractionAttributes(source, page.nodes)['data-page-action-event'], 'focus');
+  source.interactions[0] = { ...source.interactions[0], targetId: target.id };
+  assert.equal(safePageInteraction(source, page.nodes), null, 'explicit disclosure actions reject a target of the wrong type');
   source.interactions[0] = { schemaVersion: 1, event: 'click', action: 'select-tab', targetId: target.id, itemIndex: 0 };
   source.props = { text: 'Tovább', href: '' };
   assert.equal(getPublicationContentGuidance(source, { pageNodes: page.nodes }), null, 'the declared action satisfies button publication guidance');

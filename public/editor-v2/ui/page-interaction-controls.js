@@ -1,8 +1,10 @@
-import { PAGE_ACTIONS, PAGE_ACTION_TIMER_DELAYS_MS, normalizePageInteractions } from '../core/page-interactions.js?v=20261118-edt039-timer-trigger-v1';
+import { PAGE_ACTIONS, PAGE_ACTION_TIMER_DELAYS_MS, normalizePageInteractions } from '../core/page-interactions.js?v=20261119-edt039-explicit-disclosure-actions-v1';
 
 const ACTION_OPTIONS = Object.freeze([
   ['scroll-to', 'Ugrás egy elemhez'],
   ['select-tab', 'Fül kiválasztása'],
+  ['open-disclosure', 'Lenyitható rész megnyitása'],
+  ['close-disclosure', 'Lenyitható rész bezárása'],
   ['toggle-disclosure', 'Lenyitható rész váltása']
 ]);
 const EVENT_OPTIONS = Object.freeze([
@@ -51,7 +53,7 @@ export function renderPageInteractionControls(node, page, apply, disabled = fals
   heading.textContent = 'Oldalinterakció';
   const help = document.createElement('p');
   help.className = 'content-field-help';
-  help.textContent = 'Biztonságos, beállított eseményre működő művelet. A fül oldalbetöltéskor váltható; a megosztott URL-ben kért fül ezt felülírja. Az időzített fülváltás csak 3, 5 vagy 10 másodperc lehet, és a célfül használata megszakítja. A hover egér/toll fölé lépésre vált, és billentyűzettel vagy érintéssel is aktiválható. Nem futtat JavaScriptet, és nem navigál másik webhelyre.';
+  help.textContent = 'Biztonságos, beállított eseményre működő művelet. A fül oldalbetöltéskor váltható; a megosztott URL-ben kért fül ezt felülírja. Az időzített fülváltás csak 3, 5 vagy 10 másodperc lehet, és a célfül használata megszakítja. A lenyitható rész külön megnyitható, bezárható vagy váltható. A hover egér/toll fölé lépésre vált, és billentyűzettel vagy érintéssel is aktiválható. Nem futtat JavaScriptet, és nem navigál másik webhelyre.';
   section.append(heading, help);
   if (typeof node.props?.href === 'string' && node.props.href.trim()) {
     const note = document.createElement('p');

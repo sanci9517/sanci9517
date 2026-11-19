@@ -4,6 +4,8 @@
 export const PAGE_ACTIONS = Object.freeze({
   'scroll-to': Object.freeze({ label: 'Ugrás egy elemhez', events: Object.freeze(['click', 'focus']), targetTypes: null, indexKey: null }),
   'select-tab': Object.freeze({ label: 'Fül kiválasztása', events: Object.freeze(['click', 'focus', 'hover', 'load', 'timer']), targetTypes: Object.freeze(['tabs']), indexKey: 'itemIndex' }),
+  'open-disclosure': Object.freeze({ label: 'Lenyitható rész megnyitása', events: Object.freeze(['click', 'focus']), targetTypes: Object.freeze(['accordion', 'dropdown']), indexKey: 'itemIndex' }),
+  'close-disclosure': Object.freeze({ label: 'Lenyitható rész bezárása', events: Object.freeze(['click', 'focus']), targetTypes: Object.freeze(['accordion', 'dropdown']), indexKey: 'itemIndex' }),
   'toggle-disclosure': Object.freeze({ label: 'Lenyitható rész váltása', events: Object.freeze(['click', 'focus']), targetTypes: Object.freeze(['accordion', 'dropdown']), indexKey: 'itemIndex' })
 });
 export const PAGE_ACTION_EVENTS = Object.freeze(['click', 'focus', 'hover', 'load', 'timer']);
