@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "id": "20261119103030-dcc508f7",
+  "task": "77.44.7.D-D07-role-downgrade-save-error-recovery",
+  "trigger": "manual",
+  "started_at": "2026-11-19T10:30:30.093Z",
+  "abandoned_at": "2026-11-19T10:32:17.783Z",
+  "measured_seconds": null,
+  "status": "interrupted",
+  "reason": "The proposed revoked-role Save recovery test already exists and passed 5/5 in tests/browser/editor-media-source-switch.test.js; no redundant code or test changes.",
+  "started_revision": "cb56ecbb291b8cf62b03495942186319fdcb5370",
+  "measurement": "missing end time; excluded from elapsed time and ETA"
+}
