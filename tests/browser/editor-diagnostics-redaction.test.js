@@ -67,6 +67,21 @@ test('failed Editor save redacts diagnostics and preserves the local draft for r
   await page.waitForFunction(() => document.querySelector('#diagnosticsCopyStatus')?.textContent?.includes('vágólap nem érhető el'));
   const copiedDiagnostics = await page.evaluate(() => window.__copiedDiagnostics);
   for (const secret of ['private-token', 'private-bearer', 'private-state', 'user@example.com']) assert.equal(copiedDiagnostics.includes(secret), false, `copied report must not include ${secret}`);
+  const [diagnosticsDownload] = await Promise.all([
+    page.waitForEvent('download'),
+    page.locator('#diagnosticsExport').click()
+  ]);
+  assert.match(diagnosticsDownload.suggestedFilename(), /^sanci9517-editor-diagnostics-.*\.json$/);
+  const exportPath = await diagnosticsDownload.path();
+  const exportedDiagnostics = JSON.parse(await readFile(exportPath, 'utf8'));
+  assert.equal(exportedDiagnostics.format, 'sanci9517-editor-diagnostics');
+  assert.equal(exportedDiagnostics.schemaVersion, 1);
+  assert.equal(exportedDiagnostics.entries.length, 1);
+  assert.match(exportedDiagnostics.entries[0].id, /^[0-9a-f-]{36}$/i, 'the export retains the safe correlation ID');
+  assert.equal(exportedDiagnostics.entries[0].code, 'SANCI-API-E001');
+  assert.equal(exportedDiagnostics.entries[0].context, '/api/admin/editor?[redacted]');
+  for (const secret of ['private-token', 'private-bearer', 'private-state', 'user@example.com', 'pageId=']) assert.equal(JSON.stringify(exportedDiagnostics).includes(secret), false, `downloaded report must not include ${secret}`);
+  assert.match(await page.locator('#diagnosticsCopyStatus').textContent(), /Biztonságos diagnosztikai JSON letöltése/);
   assert.deepEqual(pageErrors, [], 'clipboard denial is recovered locally and does not become an unhandled browser error');
   await page.locator('#save').click();
   await page.waitForFunction(() => document.querySelector('#saveStatus')?.textContent?.startsWith('Mentve'));
