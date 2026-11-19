@@ -1,7 +1,7 @@
 import {legacyMediaInspectorValues,legacyImagePresentation,legacyImageCaption} from '../core/legacy-media-source.js';
 import {safeMediaUrl} from '../core/element-content.js?v=20261117-d01-private-media-double-decode-v1';
 import {createCompositionInputs} from './composition-inputs.js';
-import {IMAGE_MIMES,mediaAssetPicker,setMediaAssetPickerSelection} from './element-content-controls.js?v=20261115-d03-table-tsv-v1';
+import {IMAGE_MIMES,mediaAssetPicker,setMediaAssetPickerSelection} from './element-content-controls.js?v=20261119-d01-missing-selected-media-recovery-v1';
 
 export function renderLegacyMediaInspector(node,apply,{pending=()=>{}}={}){
  const model={...(node.props||{})},composition=createCompositionInputs(pending);

@@ -41,12 +41,23 @@ export function mediaAssetPicker(selectedId,onSelect,{disabled=false,mimes=[],se
   const current=document.createElement('div');current.className='editor-media-current';current.id='media-choices-'+crypto.randomUUID();current.setAttribute('role','region');current.setAttribute('aria-label','Médiatár találatok');
   const selection=document.createElement('div');selection.className='editor-media-selection';
   const renderSelected=(id,asset=null)=>{
-    selection.replaceChildren();if(!id)return;
+    selection.replaceChildren();selection.classList.remove('is-unavailable');if(!id)return;
     const mediaKind=asset?.mimeType?.split('/')[0]||selectedKind;
     const isImage=mediaKind==='image';
     const kindLabel=mediaKind==='video'?'videó':mediaKind==='audio'?'hang':mediaKind==='image'?'kép':'médiafájl';
     const preview=document.createElement(isImage?'img':'span');preview.className='editor-media-selected';
-    if(isImage){preview.src='/api/admin/media?id='+encodeURIComponent(id);preview.alt='Kiválasztott kép'}
+    if(isImage){
+      preview.src='/api/admin/media?id='+encodeURIComponent(id);preview.alt='Kiválasztott kép';
+      // A draft can outlive an archived, deleted, or otherwise inaccessible
+      // asset. Keep its recoverable ID visible, but explain why the preview is
+      // empty and leave the explicit clear/reselect controls available.
+      preview.addEventListener('error',()=>{
+        if(selection.firstElementChild!==preview)return;
+        selection.classList.add('is-unavailable');
+        preview.alt='A kiválasztott kép nem érhető el.';
+        status.textContent='A kiválasztott médiafájl nem érhető el. Válassz új fájlt, vagy távolítsd el a kapcsolatot.';
+      },{once:true});
+    }
     else{preview.textContent=(mediaKind==='video'?'🎬 ':mediaKind==='audio'?'🔊 ':'📎 ')+`Kiválasztott ${kindLabel}`;preview.setAttribute('aria-label',`Kiválasztott ${kindLabel}`)}
     const clear=associateDescription(document.createElement('button'));clear.type='button';clear.textContent=kindLabel==='médiafájl'?'Médiafájl eltávolítása':kindLabel[0].toLocaleUpperCase('hu-HU')+kindLabel.slice(1)+' eltávolítása';clear.disabled=disabled;
     clear.onclick=()=>{if(onSelect('')===false)return;renderSelected('');status.textContent='A kiválasztott médiafájl eltávolítva.';if(root.isConnected)open.focus({preventScroll:true})};

@@ -2,7 +2,7 @@ import {
   normalizeInspectorValue, getInspectorValueContract, INSPECTOR_FONTS, INSPECTOR_SHADOWS
 } from '../core/property-values.js';
 import {TOKEN_SPECS,compatibleTokens,parseTokenReference,tokenReference,tokenValue,defaultTokens} from '../core/design-tokens.js';
-import {IMAGE_MIMES,mediaAssetPicker} from './element-content-controls.js?v=20261115-d03-table-tsv-v1';
+import {IMAGE_MIMES,mediaAssetPicker} from './element-content-controls.js?v=20261119-d01-missing-selected-media-recovery-v1';
 
 /** One property input. All changes go through the central command callback. */
 export function renderPropertyInput(property, label, current, onChange, {

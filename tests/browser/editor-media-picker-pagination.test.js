@@ -50,6 +50,9 @@ test('Inspector Media picker reaches older images and keeps filtered pages disti
       res.end(JSON.stringify({ok:true,data:{assets:page,nextCursor}}));return;
     }
     if(url.pathname==='/api/admin/media'&&url.searchParams.has('id')){
+      if(url.searchParams.get('id')==='missing-selected'){
+        res.writeHead(404,{'Content-Type':'application/json'});res.end(JSON.stringify({ok:false,error:{code:'MEDIA_NOT_FOUND'}}));return;
+      }
       res.setHeader('Content-Type','image/svg+xml');
       res.end('<svg xmlns="http://www.w3.org/2000/svg" width="4" height="4"><rect width="4" height="4" fill="purple"/></svg>');return;
     }
@@ -172,6 +175,26 @@ test('Inspector Media picker reaches older images and keeps filtered pages disti
     assert.equal(await audioPicker.getByRole('button',{name:'További médiafájl betöltése'}).isVisible(),false);
     await audioPicker.getByRole('button',{name:'older.mp3 kiválasztása'}).click();
     assert.deepEqual(await page.evaluate(()=>window.__audioChoices),['older-audio']);
+    await page.evaluate(async()=>{
+      const {mediaAssetPicker}=await import('/editor-v2/ui/element-content-controls.js');
+      window.__recoveredSelection=[];
+      document.getElementById('fixture').append(mediaAssetPicker('missing-selected',assetId=>{window.__recoveredSelection.push(assetId);return true}));
+    });
+    const stalePicker=page.locator('.editor-media-picker').nth(3),stalePreview=stalePicker.locator('.editor-media-selected');
+    await stalePicker.getByText('A kiválasztott médiafájl nem érhető el. Válassz új fájlt, vagy távolítsd el a kapcsolatot.').waitFor();
+    assert.equal(await stalePicker.locator('.editor-media-selection').getAttribute('class'),'editor-media-selection is-unavailable',
+      'an inaccessible saved asset is announced without dropping its repair controls');
+    assert.equal(await stalePreview.getAttribute('alt'),'A kiválasztott kép nem érhető el.');
+    const staleClear=stalePicker.getByRole('button',{name:'Kép eltávolítása'});
+    assert.equal(await staleClear.isEnabled(),true,'a stale media reference remains explicitly removable');
+    await staleClear.click();
+    assert.equal(await page.locator('.editor-media-selection.is-unavailable').count(),0,
+      'clearing a stale selection removes its unavailable state');
+    assert.deepEqual(await page.evaluate(()=>window.__recoveredSelection),['']);
+    await stalePicker.getByRole('button',{name:'Médiatár megnyitása'}).click();
+    await stalePicker.getByRole('button',{name:'asset-119.png kiválasztása'}).click();
+    assert.equal(await stalePicker.locator('.editor-media-selection.is-unavailable').count(),0,
+      'choosing a replacement asset clears stale preview state');
     assert.deepEqual(errors,[],`no uncaught picker error at ${width}px`);
     await page.close();
   }

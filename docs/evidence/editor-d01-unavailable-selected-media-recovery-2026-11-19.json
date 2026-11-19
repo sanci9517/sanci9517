@@ -1,0 +1,90 @@
+{
+  "schema": "sanci.editor.d01.unavailable-selected-media-recovery.v1",
+  "captured_at_utc": "2026-11-19T11:17:00Z",
+  "plan_point": "77.44.7.D / D-01 — selected-media Inspector recovery",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "base_sha": "ae78f76f770ecc69be33cba3f8b45b2f8f0e9e6e",
+    "base_branch_head_verified_before_change": "ae78f76f770ecc69be33cba3f8b45b2f8f0e9e6e"
+  },
+  "gap_and_change": {
+    "observed_gap": "A persisted Inspector media selection whose preview route later returns 404 stayed as an unexplained broken image; the asset ID could still be removed, but the repair state was not announced.",
+    "behavior": "The selected image preview now announces an unavailable-media status and an explanatory alt. It keeps the saved ID and the existing explicit remove/reselect paths, and clears unavailable state after a replacement is selected.",
+    "cache": "All four Editor importers use a new version query for element-content-controls.js so the changed picker code is fetched after a production release.",
+    "save_publish": "No new Save or Publish request is introduced. Clearing/reselecting continues to use the existing explicit Page Model command path; Save and Publish remain distinct."
+  },
+  "checks": {
+    "focused_browser": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-media-picker-pagination.test.js",
+      "result": "PASS; 1/1 Chromium test on 390px and 1366px, including HTTP 404, accessible recovery message, explicit clear, and replacement selection"
+    },
+    "editor_unit": {
+      "command": "npm run test:editor",
+      "result": "PASS; 22/22 test files and 4/4 subreaper/manifest checks"
+    },
+    "typecheck": {
+      "command": "npm run typecheck -- --pretty false",
+      "result": "PASS"
+    },
+    "plan_contract": {
+      "command": "python3 tests/plan-contract.test.py",
+      "result": "PASS; 15/15"
+    },
+    "canonical_plan": {
+      "command": "python3 scripts/check-canonical-plan.py",
+      "result": "PASS; one complete 13-file master and 396 catalog mappings; functional acceptance is not certified"
+    },
+    "traceability": {
+      "command": "python3 scripts/build-feature-traceability.py --check",
+      "result": "PASS; 396/396 mappings match current source"
+    },
+    "active_point": {
+      "command": "python3 scripts/audit-active-plan-point.py",
+      "result": "77.44.7.D remains OPEN / NOT_CERTIFIED; 147 PARTIAL_SOURCE / 249 UNVERIFIED"
+    },
+    "migration_safety": {
+      "command": "npm run test:web013:migration-gate",
+      "result": "PASS; deploy:safe does not apply D1 migrations"
+    },
+    "wrangler_dry_run": {
+      "command": "npx wrangler deploy --dry-run",
+      "result": "PASS; Wrangler 4.130.0 read 197 public assets, 393.65 KiB / 100.85 KiB gzip; no publish. The read-only home caused a non-fatal Wrangler log EROFS warning."
+    },
+    "static": {
+      "command": "git diff --check; node --check on every changed JavaScript file",
+      "result": "PASS"
+    },
+    "full_editor_layout": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium npm run test:editor:layout",
+      "result": "INCOMPLETE / NOT PASS; deliberately stopped at suite 5/59 after the first four files completed (2, 87, 2, 2 tests); suite 5 editor-layout was interrupted before assertions completed because the full run was disproportionately long."
+    }
+  },
+  "production_preflight": {
+    "method": "Cloudflare D1 Query API; SQL was SELECT-only",
+    "sql": "SELECT name FROM d1_migrations ORDER BY name DESC LIMIT 1",
+    "result": "0029_media_archive_unicode_additive.sql",
+    "rows_read": 1,
+    "rows_written": 0,
+    "changes": 0,
+    "changed_db": false
+  },
+  "release_state_before_push": {
+    "runtime_assets_changed": true,
+    "read_only_production_deployment": "0add5fdb-fbdd-42a3-b2f7-8089e98c0ebe",
+    "worker_version": "9130eb09-666f-45b6-8bf3-5c324ac0b35b",
+    "traffic_percent": 100,
+    "exact_source_smoke_for_this_commit": "PENDING; must verify after the release commit reaches v2/foundation",
+    "github_runtime_ci": "PENDING; do not claim success until exact-SHA workflow results are checked",
+    "worker_deployment_from_this_commit": "PENDING; expected from authorized v2/foundation runtime release workflow"
+  },
+  "limits": {
+    "scope": "One selected-image 404 recovery slice; not a complete D-01 acceptance or the complete D-01–D-07 matrix.",
+    "full_plan_point": "OPEN / NOT_CERTIFIED",
+    "full_editor_manual_physical_acceptance": "DEFERRED until complete Editor scope",
+    "production_d1_mutation": false,
+    "production_r2_mutation": false,
+    "new_cost_huf": 0,
+    "new_dependencies": false
+  }
+}

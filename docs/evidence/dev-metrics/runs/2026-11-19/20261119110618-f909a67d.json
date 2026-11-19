@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261119110618-f909a67d",
+  "task": "77.44.7.D-D01-missing-selected-media-recovery",
+  "trigger": "manual",
+  "started_at": "2026-11-19T11:06:18.016Z",
+  "finished_at": "2026-11-19T11:16:32.127Z",
+  "wall_seconds": 614,
+  "paused_seconds": 0,
+  "measured_seconds": 614,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "D-01 selected-image 404 recovery implemented; focused Chromium, Editor unit, typecheck, plan and migration checks pass. Full 59-file layout suite intentionally stopped at 5/59; release verification remains pending.",
+  "evidence": [
+    "docs/evidence/editor-d01-unavailable-selected-media-recovery-2026-11-19.json"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "ae78f76f770ecc69be33cba3f8b45b2f8f0e9e6e",
+  "finished_revision": "ae78f76f770ecc69be33cba3f8b45b2f8f0e9e6e",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
