@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "recorded_at_utc": "2026-11-19T04:56:00Z",
+  "recorded_at_utc": "2026-11-19T05:03:00Z",
   "plan_point": "77.44.7.D",
   "feature": "EDT-042 safe diagnostic clipboard recovery",
   "status": "IMPLEMENTED_TESTED_RELEASE_PENDING",
@@ -52,14 +52,51 @@
     "public/editor-v2/editor.css": "fdfddfa214e75040450d5c087416a3ab26d28015b8ec3e8696322cc0debb5527"
   },
   "release": {
-    "status": "PENDING",
+    "status": "DEPLOYED_AND_DIRECTLY_VERIFIED; EDITOR_CORE_CI_IN_PROGRESS; GOVERNANCE_CI_SOURCE_HASH_FAILURE_CORRECTED_LOCALLY",
     "branch": "v2/foundation",
-    "source_sha": null,
-    "ci": "The previous source SHA Editor Core workflow 44459443236 is still in progress; its completed typecheck, 22 editor core tests, D1 ledger, private R2 API, showcase unit/browser and isolated Worker media upload steps are successful. Its Chromium Editor layout and following jobs are pending. Current source must trigger its own exact-SHA checks after push.",
-    "worker_build": null,
-    "deployment": null,
-    "health": null,
-    "direct_live_asset_hashes": null
+    "source_sha": "d3cd002f04740bec1ab74037f4c1e16b867f559d",
+    "push": "Normal fast-forward from 12c00ea2b0994f18cbb01d9e8b26ffac47bb0532; remote branch API confirmed exact SHA d3cd002f04740bec1ab74037f4c1e16b867f559d.",
+    "ci": {
+      "exact_sha": "d3cd002f04740bec1ab74037f4c1e16b867f559d",
+      "passed": [
+        {"id": 44461784183, "name": "F0 baseline checks", "status": "success"},
+        {"id": 44461784430, "name": "Twitch Integration Check", "status": "success"},
+        {"id": 44461784314, "name": "Production Worker source smoke", "status": "success"}
+      ],
+      "governance_failures": [
+        {"id": 44461784181, "name": "Canonical Plan Active Point Audit", "status": "failure", "reason": "The generated feature traceability SHA-256 for public/editor-v2/tests/diagnostics.test.js was stale after a final whitespace cleanup."},
+        {"id": 44461784209, "name": "Canonical Creator Platform Plan", "status": "failure", "reason": "Same stale feature traceability SHA-256; this made three plan-contract assertions fail before their intended assertions."}
+      ],
+      "local_recovery": "Regenerated docs/evidence/feature-traceability.json from the final source and reran python3 scripts/audit-active-plan-point.py, python3 tests/plan-contract.test.py (15/15), python3 scripts/check-canonical-plan.py, and the traceability --check successfully. The corrected docs-only follow-up is pushed with [skip ci]; no extra CI rerun was started.",
+      "editor_core": {"id": 44461784201, "status": "in_progress", "pending_at_evidence_capture": "real Worker media upload against isolated D1/R2; Chromium layout and later jobs not yet complete"}
+    },
+    "worker_build": {
+      "build_uuid": "e62cce74-075a-4e7f-b910-a890baff0c50",
+      "outcome": "success",
+      "source_sha": "d3cd002f04740bec1ab74037f4c1e16b867f559d",
+      "branch": "v2/foundation",
+      "build_command": "npm run typecheck",
+      "deploy_command": "npm run deploy:safe"
+    },
+    "deployment": {
+      "deployment_id": "88193a8b-3e3e-443c-97e2-03be27779721",
+      "version_id": "4ea2d5fe-8d7f-4f48-ab1e-4215e04689a8",
+      "traffic_percent": 100,
+      "created_on": "2026-11-19T04:57:44.127569Z"
+    },
+    "health": {
+      "status": "PASS",
+      "http": 200,
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health?release=d3cd002f04740bec1ab74037f4c1e16b867f559d",
+      "body": {"ok": true, "service": "sanci9517-streamer-brand", "version": "2.0.0", "server": "cloudflare-worker"}
+    },
+    "direct_live_asset_hashes": {
+      "verification": "Cache-busted GETs returned HTTP 200 after following the Editor index's 307 canonical redirect to /editor-v2/; all SHA-256 hashes match the d3cd002f source.",
+      "public/editor-v2/index.html": {"sha256": "7ba84d8138bfada991fd79baf9b211772aaba4e53c58c0b9f4ca1b8e468f374b", "http": 200, "local_matches_live": true},
+      "public/editor-v2/app.js": {"sha256": "90610cc90925ea274bb66765151205f607388296aadbadb16fc8b2f546299268", "http": 200, "local_matches_live": true},
+      "public/editor-v2/diagnostics.js": {"sha256": "21e5bf1e355ae1f8454dd5b2a4d5784267754f4ee8579b2ce934bd54a3fb2689", "http": 200, "local_matches_live": true},
+      "public/editor-v2/editor.css": {"sha256": "fdfddfa214e75040450d5c087416a3ab26d28015b8ec3e8696322cc0debb5527", "http": 200, "local_matches_live": true}
+    }
   },
   "acceptance_boundary": "This proves only one EDT-042 diagnostic-copy recovery slice. EDT-042 remains partial: malformed-document recovery, permission/renderer state, export/reload integration, telemetry correlation and full recovery E2E remain open. The complete Editor and its consolidated manual/physical acceptance remain open. Plan point 77.44.7.D remains OPEN / NOT_CERTIFIED. Save and Publish remain separate.",
   "production_mutations": false,

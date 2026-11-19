@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261119045037-bfbacd45",
+  "task": "EDT-042",
+  "trigger": "manual",
+  "started_at": "2026-11-19T04:50:37.093Z",
+  "finished_at": "2026-11-19T05:03:03.708Z",
+  "wall_seconds": 747,
+  "paused_seconds": 0,
+  "measured_seconds": 747,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "EDT-042: safe diagnostics copy now reports success or clipboard denial accessibly; denied clipboard is caught, redacted copy and draft-safe Save retry tested in Chromium and full Editor unit suite. Runtime deployed and directly verified; exact-SHA Editor Core CI remains in progress and stale-traceability CI failures were corrected in a docs follow-up.",
+  "evidence": [
+    "docs/evidence/editor-042-diagnostic-copy-recovery-2026-11-19.json",
+    "tests/browser/editor-diagnostics-redaction.test.js:PASS"
+  ],
+  "checks": "targeted Chromium PASS; npm run test:editor 22/22; typecheck PASS; D1 SELECT-only 0 writes; migration safety PASS; Wrangler dry-run PASS; production deploy 100%, health 200, changed asset hashes match; Editor Core CI pending",
+  "started_revision": "12c00ea2b0994f18cbb01d9e8b26ffac47bb0532",
+  "finished_revision": "d3cd002f04740bec1ab74037f4c1e16b867f559d",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
