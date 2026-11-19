@@ -1,0 +1,59 @@
+{
+  "schema": "sanci.editor.d05-empty-repeater-recovery.v1",
+  "captured_at_utc": "2026-11-19T14:15:16Z",
+  "plan_point": "77.44.7.D / D-05 — authored repeater empty-state recovery",
+  "repository": "sanci9517/sanci9517",
+  "branch": "v2/foundation",
+  "branch_head_before_followup": "8abbcb3d81a85ca08f69975d3d8ce858953e60cc",
+  "development_metric": {
+    "run_id": "20261119141128-fec0b8a2",
+    "status": "partial",
+    "kind": "test",
+    "measured_active_seconds": 234,
+    "archive": "docs/evidence/dev-metrics/runs/2026-11-19/20261119141128-fec0b8a2.json"
+  },
+  "runtime_source_changed": false,
+  "change": {
+    "files": [
+      "tests/browser/editor-content-system.test.js",
+      "docs/evidence/editor-d05-empty-repeater-recovery-2026-11-19.json",
+      "docs/evidence/dev-metrics/runs/2026-11-19/20261119141128-fec0b8a2.json"
+    ],
+    "summary": "Real Chromium now deletes every remaining row from each authored List, Tabs, Accordion, Dropdown, Gallery, and Carousel repeater, verifies the Canvas reaches the empty state, uses the still-available Add control to restore one editable item, and confirms the edits stay draft-only. It explicitly Saves the recovered Page Model, confirms the previously published two-row collections remain public, reloads the Editor draft, then separately Publishes and verifies each public collection contains the restored item.",
+    "save_publish": "For all six repeaters, final-row deletion and Add never issue a request; explicit Save changes only the draft; reload restores one saved item; only the later explicit Publish updates public content."
+  },
+  "checks": {
+    "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-content-system.test.js": "PASS; 1/1 real Chromium end-to-end test covering empty-state deletion and Add recovery for six repeater types, Save/public isolation/reload/separate Publish.",
+    "npm run test:editor": "PASS; 22/22 Editor unit files plus 4/4 subreaper/manifest checks.",
+    "npm run typecheck -- --pretty false": "PASS.",
+    "python3 tests/plan-contract.test.py": "PASS; 15/15.",
+    "python3 scripts/check-canonical-plan.py": "PASS; complete 13-file canonical master / 396 mappings; functional acceptance remains uncertified.",
+    "python3 scripts/build-feature-traceability.py --check": "PASS; 396/396.",
+    "python3 scripts/audit-active-plan-point.py": "PASS; 77.44.7.D remains OPEN / NOT_CERTIFIED; 147 PARTIAL_SOURCE and 249 UNVERIFIED.",
+    "npm run test:web013:migration-gate": "PASS; safe release migration gate remains non-migrating.",
+    "node --check tests/browser/editor-content-system.test.js": "PASS.",
+    "git diff --check": "PASS.",
+    "hosted_ci": "NOT RUN; test/evidence-only change will use [skip ci]; free Actions quota remains unverified.",
+    "browser_sandbox": "The sandboxed Chromium execution cannot create the crashpad socket; the test ran through the authorized elevated boundary and the complete browser test passed."
+  },
+  "release_state_at_capture": {
+    "remote_branch_head_before_followup": "GitHub branch endpoint GET confirmed v2/foundation at 8abbcb3d81a85ca08f69975d3d8ce858953e60cc before this follow-up.",
+    "normal_fast_forward_push": "Pending final validation and push of this test/evidence-only change.",
+    "combined_status_for_test_commit": "Not available until push; no hosted CI PASS is claimed.",
+    "worker_latest_deployment_id": "c4b9526a-c54b-4fe3-9218-d889c1e011e9",
+    "worker_latest_version_id": "9870e814-359c-4871-a25c-289d9dfe7c2c",
+    "worker_traffic_percent": 100,
+    "runtime_source_sha": "NOT REVALIDATED; no runtime or public asset source changed.",
+    "runtime_deployment_needed": false,
+    "direct_health_this_followup": "NOT RUN; no runtime source change. No new health result is claimed."
+  },
+  "scope_limits": {
+    "d05_status": "This completes the automated empty-state recovery slice for the six authored repeaters only. It does not certify all D-05 fields, responsive and accessibility requirements, malformed-value paths, media/API/security behavior, or full editor parity.",
+    "d_status": "77.44.7.D remains OPEN / NOT_CERTIFIED; source audit remains 147 PARTIAL_SOURCE and 249 UNVERIFIED.",
+    "manual_physical_editor_acceptance": "DEFERRED until the complete Visual Editor is implemented.",
+    "production_d1_migration_or_write": false,
+    "production_r2_mutation_or_delete": false,
+    "paid_services_or_dependencies": false,
+    "new_cost_huf": 0
+  }
+}

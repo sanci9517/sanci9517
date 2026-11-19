@@ -1357,6 +1357,71 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
     'separate Publish exposes the added table column in the accessible header');
   assert.deepEqual(await node(live,'table').locator('tbody tr').last().locator('td').evaluateAll(cells=>cells.map(cell=>cell.textContent)),
     expandedTableRows.at(-1),'the public table preserves every newly added TSV cell in order');
+  const emptyRepeaterCases=[
+    {type:'list',add:'Listaelemek hozzáadása',field:'Szöveg',value:'Visszaállított listaelem',canvas:'ol li'},
+    {type:'tabs',add:'Fülek hozzáadása',field:'Fül címe',value:'Visszaállított fül',canvas:'[role="tab"]',textField:'Szöveg',textValue:'Visszaállított tartalom'},
+    {type:'accordion',add:'Lenyitható részek hozzáadása',field:'Rész címe',value:'Visszaállított harmonika',canvas:'details > summary',textField:'Szöveg',textValue:'Visszaállított válasz'},
+    {type:'dropdown',add:'Lenyitható részek hozzáadása',field:'Rész címe',value:'Visszaállított lenyíló elem',canvas:'details > summary',textField:'Szöveg',textValue:'Visszaállított leírás'},
+    {type:'gallery',add:'Képek hozzáadása',field:'Külső média címe',value:'/fixture.svg',canvas:'img',mediaAlt:'Képleírás',altValue:'Visszaállított galériakép'},
+    {type:'carousel',add:'Lapozható képek hozzáadása',field:'Külső média címe',value:'/fixture.svg',canvas:'img',mediaAlt:'Képleírás',altValue:'Visszaállított diasor'}
+  ];
+  await live.goto(base+'/p/test');
+  for(const item of emptyRepeaterCases){
+    await select(item.type);
+    const repeater=editor.locator('.content-repeater[data-content-key="items"]');
+    while(await repeater.locator(':scope > fieldset').count()){
+      const count=await repeater.locator(':scope > fieldset').count();
+      await repeater.getByRole('button',{name:`${count}. elem: Eltávolítás`,exact:true}).press('Enter');
+      await repeater.locator(':scope > fieldset').nth(count-1).waitFor({state:'detached'});
+    }
+    assert.equal(await node(editor,item.type).locator(item.canvas).count(),0,
+      `${item.type} supports an intentionally empty repeater without leaving stale Canvas items`);
+    assert.equal(await repeater.getByRole('button',{name:item.add,exact:true}).isEnabled(),true,
+      `${item.type} keeps its Add action available after deleting the final row`);
+    const beforeAdd=posts.length;
+    await repeater.getByRole('button',{name:item.add,exact:true}).press('Enter');
+    await editor.waitForFunction(label=>document.activeElement?.getAttribute('aria-label')===label,item.field);
+    const restoredRow=repeater.locator(':scope > fieldset').first();
+    await restoredRow.getByLabel(item.field,{exact:true}).fill(item.value);
+    if(item.textField)await restoredRow.getByLabel(item.textField,{exact:true}).fill(item.textValue);
+    if(item.mediaAlt)await restoredRow.getByLabel(item.mediaAlt,{exact:true}).fill(item.altValue);
+    assert.equal(await node(editor,item.type).locator(item.canvas).count(),1,
+      `${item.type} Add recovers the empty Canvas and exposes its authored row`);
+    assert.equal(posts.length,beforeAdd,`${item.type} final-row Delete and Add remain draft-only`);
+  }
+  const beforeEmptyRepeaterSave=posts.length;
+  await editor.locator('#save').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+  assert.equal(posts.length,beforeEmptyRepeaterSave+1,'recovered repeaters are persisted only by explicit Save');
+  assert.equal(posts.at(-1).publish,false,'recovered repeater Save does not Publish');
+  const savedPage=posts.at(-1).document.pages[pageId];
+  for(const item of emptyRepeaterCases){
+    const items=savedPage.nodes[ids[item.type]].props.items;
+    assert.equal(items.length,1,`Save persists one recovered ${item.type} item`);
+    assert.equal(items[0][item.field==='Szöveg'?'text':item.field==='Fül címe'?'title':item.field==='Rész címe'?'title':'src'],item.value,
+      `Save preserves the recovered ${item.type} primary field`);
+  }
+  await live.reload();
+  for(const item of emptyRepeaterCases)assert.equal(await node(live,item.type).locator(item.canvas).count(),2,
+    `draft Save leaves the previously published ${item.type} repeater unchanged`);
+  await editor.reload();
+  for(const item of emptyRepeaterCases){
+    await select(item.type);
+    const repeater=editor.locator('.content-repeater[data-content-key="items"]');
+    assert.equal(await repeater.locator(':scope > fieldset').count(),1,`Editor reload restores one saved ${item.type} row`);
+    assert.equal(await node(editor,item.type).locator(item.canvas).count(),1,`Editor reload restores the ${item.type} Canvas row`);
+  }
+  const beforeRecoveredRepeaterPublish=posts.length;
+  await editor.locator('#publish').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent==='Publikálva');
+  assert.equal(posts.length,beforeRecoveredRepeaterPublish+1,'recovered repeater publication requires a separate Publish');
+  assert.equal(posts.at(-1).publish,true,'recovered repeater content reaches the public snapshot only via Publish');
+  await live.reload();
+  for(const item of emptyRepeaterCases){
+    assert.equal(await node(live,item.type).locator(item.canvas).count(),1,`Publish exposes one recovered ${item.type} row`);
+    if(item.mediaAlt)assert.equal(await node(live,item.type).locator('img').getAttribute('alt'),item.altValue,
+      `Publish retains the recovered ${item.type} media description`);
+  }
   await editor.setViewportSize({width:390,height:800});await select('image');await editor.screenshot({path:'/tmp/creator-ux-p0-content-mobile.png'});
   assert.deepEqual(errors,[]);
 });

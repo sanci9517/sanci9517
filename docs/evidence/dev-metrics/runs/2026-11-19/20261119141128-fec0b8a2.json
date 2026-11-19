@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261119141128-fec0b8a2",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-19T14:11:28.846Z",
+  "finished_at": "2026-11-19T14:15:22.593Z",
+  "wall_seconds": 234,
+  "paused_seconds": 0,
+  "measured_seconds": 234,
+  "status": "partial",
+  "kind": "test",
+  "summary": "D-05 real-browser repeater recovery: delete the final List/Tabs/Accordion/Dropdown/Gallery/Carousel row, recover through Add, explicit Save, verify public isolation, reload, then separately Publish.",
+  "evidence": [
+    "docs/evidence/editor-d05-empty-repeater-recovery-2026-11-19.json"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "8abbcb3d81a85ca08f69975d3d8ce858953e60cc",
+  "finished_revision": "8abbcb3d81a85ca08f69975d3d8ce858953e60cc",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
