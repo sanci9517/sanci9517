@@ -1,0 +1,88 @@
+{
+  "date": "2026-11-19",
+  "plan_item": "77.44.7.D / D-02 — safe persisted labels in Page Action Inspector",
+  "status": "RUNTIME_DEPLOYED_EXACT_SHA_EDITOR_CORE_CI_PENDING",
+  "repository": "sanci9517/sanci9517",
+  "branch": "v2/foundation",
+  "runtime_commit": "0c144c7bb47f60571b308774d60cd9808bb2e990",
+  "change": {
+    "files": [
+      "public/editor-v2/ui/page-interaction-controls.js",
+      "public/editor-v2/app.js",
+      "tests/browser/editor-page-interactions.test.js",
+      "docs/evidence/feature-traceability.json"
+    ],
+    "summary": "Inspector choice labels now accept only trimmed strings or finite numbers before formatting. Malformed persisted node/tab labels receive bounded safe fallback text and cannot invoke arbitrary toString coercion while rendering a valid Page Action target.",
+    "regression": "Real Chromium reloads the saved editor draft with a tab title {toString:null}, reopens the Page Action inspector, selects the valid same-page target, checks fallback labels and no pageerror, then repairs the text through the existing content editor before exercising the rest of the Save/Preview/Publish lifecycle.",
+    "save_publish": "Save remains draft-only; Preview reads the draft; Publish remains a separate action. The existing browser lifecycle test asserts this distinction."
+  },
+  "checks": {
+    "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-page-interactions.test.js": "PASS; 1/1, 116.96 seconds; 4 orphan descendants reaped.",
+    "npm run test:editor": "PASS; 22/22 editor unit files; Linux subreaper runner 4/4.",
+    "npm run typecheck -- --pretty false": "PASS.",
+    "python3 tests/plan-contract.test.py": "PASS; 15/15.",
+    "python3 scripts/check-canonical-plan.py": "PASS; one complete 13-file master and 396 mappings; acceptance remains uncertified.",
+    "python3 scripts/build-feature-traceability.py --check": "PASS; 396/396 mappings.",
+    "python3 scripts/audit-active-plan-point.py": "PASS; 77.44.7.D OPEN / NOT_CERTIFIED; 147 PARTIAL_SOURCE / 249 UNVERIFIED.",
+    "node scripts/web013-migration-safety-gate.mjs": "PASS; deploy:safe is guarded and never applies production D1 migrations.",
+    "node --check public/editor-v2/ui/page-interaction-controls.js && node --check public/editor-v2/app.js && node --check tests/browser/editor-page-interactions.test.js": "PASS.",
+    "git diff --check": "PASS.",
+    "npx wrangler deploy --dry-run": "PASS; Wrangler 4.130.0 read 195 public assets; 392.87 KiB / 100.73 KiB gzip; did not publish. Wrangler log-file write emitted a non-fatal EROFS warning because the tool config mount is read-only.",
+    "Production D1 SELECT-only preflight": "PASS via Cloudflare D1 Query API. SELECT latest migration => 0029_media_archive_unicode_additive.sql; SELECT COUNT(*) => 35. Both query results report rows_written=0, changes=0, changed_db=false. No migration, data write, or R2 operation."
+  },
+  "github": {
+    "push": "Normal fast-forward push; GitHub branch API confirmed exact HEAD 0c144c7bb47f60571b308774d60cd9808bb2e990.",
+    "workflow_runs": {
+      "Editor Core Test": {
+        "id": 44449466308,
+        "url": "https://github.com/sanci9517/sanci9517/actions/runs/44449466308",
+        "status": "IN_PROGRESS; typecheck, Editor unit tests, offline D1/R2 tests, public showcase unit and Chromium tests, and isolated real Worker media upload steps succeeded; the long Editor browser-layout regression was running at last check."
+      },
+      "Production Worker source smoke": {
+        "id": 44449466409,
+        "url": "https://github.com/sanci9517/sanci9517/actions/runs/44449466409",
+        "status": "SUCCESS; its hosted runner observed /api/health HTTP 200 and all exact source SHA-256 checks matched after the automatic rollout."
+      },
+      "Twitch Integration Check": { "id": 44449466299, "status": "SUCCESS" },
+      "Canonical Plan Active Point Audit": { "id": 44449466368, "status": "SUCCESS" },
+      "F0 baseline checks": { "id": 44449466364, "status": "SUCCESS" },
+      "Canonical Creator Platform Plan": { "id": 44449466407, "status": "SUCCESS" }
+    }
+  },
+  "production": {
+    "pre_release_deployment": "73e7cabb-b349-4bc0-be8b-9bbec299c0d1",
+    "pre_release_worker_version": "ccc492e4-0937-4088-88f3-ccd1a48cfae7",
+    "deployment_path": "The verified Cloudflare Worker Build push trigger ran automatically; build and deployment were read through Cloudflare API. No redundant npm run deploy:safe was needed.",
+    "cloudflare_build": {
+      "id": "5809982d-791c-4d12-a17c-343518e71e82",
+      "commit": "0c144c7bb47f60571b308774d60cd9808bb2e990",
+      "branch": "v2/foundation",
+      "build_command": "npm run typecheck",
+      "deploy_command": "npm run deploy:safe",
+      "outcome": "SUCCESS"
+    },
+    "deployment": "4ab48458-6543-4a98-a741-ec0e16c63227",
+    "worker_version": "affbd723-efad-4097-9db5-bcddb9231007",
+    "worker_version_number": 4129,
+    "traffic_percent": 100,
+    "live_health": "GitHub exact-SHA Production Worker source smoke read /api/health HTTP 200. Direct shell curl was blocked before origin by this environment's proxy HTTP 403; the hosted exact-SHA verification succeeded.",
+    "changed_public_assets": {
+      "editor-v2/app.js": {
+        "sha256": "dda8f16dd252c178af22e5e96a1f043fc2817da7e517035d4f8f00e6b66a2a01",
+        "live_exact_sha_match": true
+      },
+      "editor-v2/ui/page-interaction-controls.js": {
+        "sha256": "c39ab8f740cffdd2db12a4d6ddf33634f248d813d0eb24371671df35ed364f98",
+        "live_exact_sha_match": true
+      }
+    }
+  },
+  "scope_and_limits": {
+    "d_status": "OPEN / NOT_CERTIFIED. This is one D-02 corrupted-label guard, not the complete D-02 feature/lifecycle matrix or D-01–D-07 acceptance.",
+    "editor_manual_acceptance": "DEFERRED until the complete Visual Editor scope is implemented.",
+    "production_d1_migrations_or_data_writes": false,
+    "r2_mutations_or_deletions": false,
+    "new_paid_dependencies_or_cost": "none; 0 Ft. CI ran only through repository push triggers.",
+    "unrelated_preexisting_untracked": "scripts/__pycache__/ left untouched."
+  }
+}

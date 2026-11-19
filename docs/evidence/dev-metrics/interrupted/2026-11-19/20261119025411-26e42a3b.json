@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "id": "20261119025411-26e42a3b",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-19T02:54:11.648Z",
+  "abandoned_at": "2026-11-19T03:04:09.068Z",
+  "measured_seconds": null,
+  "status": "interrupted",
+  "reason": "Előző kör munkája ezen a friss worktree-ben nem zárult; a run JSON hiányzik a naplókönyvtárból, ezért null idővel elhagyva.",
+  "started_revision": "e0c99fd80cdf5798c59b521bc48226af7cfa014a",
+  "measurement": "missing end time; excluded from elapsed time and ETA"
+}
