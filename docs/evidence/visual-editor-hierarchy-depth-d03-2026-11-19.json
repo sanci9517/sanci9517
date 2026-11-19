@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "captured_at": "2026-11-19T07:53:30Z",
+  "captured_at": "2026-11-19T07:58:16Z",
   "plan_item": "77.44.7.D",
   "status": "OPEN / NOT_CERTIFIED",
   "scope": "Bound persisted Editor hierarchy depth before recursive UI consumers; prove that structured table Save and Publish remain distinct and fail closed.",
@@ -69,6 +69,10 @@
     {
       "command": "XDG_CONFIG_HOME=/tmp/sanci-wrangler-xdg npx wrangler deploy --dry-run",
       "result": "PASS; Wrangler 4.130.0 read 197 public assets, 393.65 KiB upload / 100.85 KiB gzip; no deployment"
+    },
+    {
+      "command": "node --experimental-vm-modules --test public/editor-v2/tests/core.test.js",
+      "result": "PASS 1/1 after exact 128-accepted / 129-rejected client+server boundary assertions were added; git diff --check and node --check PASS"
     }
   ],
   "production_preflight": {
@@ -120,7 +124,7 @@
       {
         "name": "Editor Core Test",
         "run_id": 44482902361,
-        "result": "in_progress at evidence capture"
+        "result": "in_progress at 2026-11-19T07:58:16Z; full browser layout step"
       }
     ],
     "cloudflare_build": {
@@ -180,5 +184,6 @@
     "r2_operations": "none",
     "new_paid_services_or_spend": "none"
   },
-  "acceptance_boundary": "This closes only the concrete bounded-hierarchy and D-03 route-regression slice. D remains OPEN / NOT_CERTIFIED; the full Editor functional, complete automated acceptance and physical acceptance are not claimed."
+  "acceptance_boundary": "This closes only the concrete bounded-hierarchy and D-03 route-regression slice. D remains OPEN / NOT_CERTIFIED; the full Editor functional, complete automated acceptance and physical acceptance are not claimed.",
+  "quality_review": "Independent read-only parallel review of fad2043d found no blocker; it recommended an exact 128/129 boundary regression, which was added and passed locally."
 }

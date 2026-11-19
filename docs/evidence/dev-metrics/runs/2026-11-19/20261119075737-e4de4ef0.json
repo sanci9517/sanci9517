@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261119075737-e4de4ef0",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-19T07:57:37.955Z",
+  "finished_at": "2026-11-19T07:59:05.467Z",
+  "wall_seconds": 88,
+  "paused_seconds": 0,
+  "measured_seconds": 88,
+  "status": "partial",
+  "kind": "test",
+  "summary": "Added and passed explicit maximum hierarchy boundary assertions: client and Publish accept depth 128 and reject 129; D-07 remains open.",
+  "evidence": [
+    "public/editor-v2/tests/core.test.js",
+    "docs/evidence/visual-editor-hierarchy-depth-d03-2026-11-19.json"
+  ],
+  "checks": "core.test.js=PASS; git diff --check=PASS; node --check=PASS; runtime source unchanged and already live at 100%; exact-SHA Editor Core CI still in progress",
+  "started_revision": "5050e19a480a62316fbc67839ce9c91b978e047f",
+  "finished_revision": "5050e19a480a62316fbc67839ce9c91b978e047f",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

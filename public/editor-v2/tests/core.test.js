@@ -266,6 +266,28 @@ test('hierarchy validation reports malformed child data without iterating or coe
 });
 
 test('hierarchy validation bounds very deep persisted trees without overflowing the call stack', () => {
+  const boundaryDocument=createDocument();
+  const boundaryPage=boundaryDocument.pages[boundaryDocument.activePageId];
+  let boundaryParent=boundaryPage.nodes[boundaryPage.rootId];
+  for(let index=0;index<128;index++){
+    const child=createNode(NODE_TYPES.SECTION,{parentId:boundaryParent.id});
+    boundaryParent.children.push(child.id);
+    boundaryPage.nodes[child.id]=child;
+    boundaryParent=child;
+  }
+  assert.deepEqual(validateHierarchy(boundaryPage),[],'depth 128 remains within the documented limit');
+  assert.doesNotThrow(()=>assertValidEditorDocument(boundaryDocument),'the Editor accepts a tree at the maximum supported depth');
+  assert.equal(validatePublishDocument(boundaryDocument,boundaryDocument.activePageId),null,
+    'server Publish accepts a valid tree at the maximum supported depth');
+
+  const boundaryChild=createNode(NODE_TYPES.SECTION,{parentId:boundaryParent.id});
+  boundaryParent.children.push(boundaryChild.id);
+  boundaryPage.nodes[boundaryChild.id]=boundaryChild;
+  assert.match(validateHierarchy(boundaryPage).join('; '),/maximum hierarchy depth exceeded \(128\)/,
+    'depth 129 is rejected by the Editor validator');
+  assert.equal(validatePublishDocument(boundaryDocument,boundaryDocument.activePageId),'INVALID_HIERARCHY',
+    'server Publish rejects depth 129 with the established hierarchy contract');
+
   const document=createDocument();
   const page=document.pages[document.activePageId];
   let parent=page.nodes[page.rootId];
