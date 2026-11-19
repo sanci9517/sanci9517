@@ -41,7 +41,7 @@
   "release": {
     "change_kind": "test-only",
     "new_cost_huf": 0,
-    "ci": "not dispatched; [skip ci] follow-up per repository policy",
+    "ci": "not dispatched; [skip ci] test/evidence-only changes per repository policy",
     "worker_deployment": "not required; runtime unchanged"
   },
   "limits": {
@@ -50,5 +50,11 @@
     "d01_d07_matrix": "incomplete",
     "save_publish": "separate"
   },
-  "next_step": "Continue remaining plan-listed Editor feature slices and D-01–D-07 lifecycle matrix; do not certify full D from this audio test."
+  "next_step": "Continue remaining plan-listed Editor feature slices and D-01–D-07 lifecycle matrix; do not certify full D from this audio test.",
+  "github_commit": {
+    "sha": "e39cbd9d076023bf602852e256a00ab162d618e4",
+    "url": "https://github.com/sanci9517/sanci9517/commit/e39cbd9d076023bf602852e256a00ab162d618e4",
+    "branch": "v2/foundation",
+    "verified_as_remote_head": true
+  }
 }

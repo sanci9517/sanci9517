@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261119092505-8e2b374e",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-19T09:25:05.810Z",
+  "finished_at": "2026-11-19T09:25:22.295Z",
+  "wall_seconds": 16,
+  "paused_seconds": 0,
+  "measured_seconds": 16,
+  "status": "pass",
+  "kind": "docs",
+  "summary": "Added exact GitHub commit and branch link to verified D-06 evidence; remote source commit was independently fetched.",
+  "evidence": [
+    "docs/evidence/editor-d06-legacy-audio-media-save-publish-2026-11-19.json"
+  ],
+  "checks": "GitHub branch head equals evidence commit; commit file list verified",
+  "started_revision": "4c7b39f600ab8f753daad4e855860b61745dc068",
+  "finished_revision": "4c7b39f600ab8f753daad4e855860b61745dc068",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
