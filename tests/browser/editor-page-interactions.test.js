@@ -77,6 +77,19 @@ test('EDT-039 page actions and EDT-040 motion save as draft, preview safely, and
   await live.reload();assert.equal(await liveNode(buttonId).getAttribute('data-page-action'),null,'repair Save leaves the public version unchanged');
   await editor.reload();await selectButton();
   assert.equal(await editor.locator('.page-interaction-inspector [data-page-interaction-recovery="clear"]').count(),0,'a repaired draft no longer shows the invalid-data warning');
+  // Saved Page Models are JSON data and can contain stale, non-text authored
+  // labels even when the target node/children structure is valid. Opening a
+  // Page Action Inspector must not coerce those values into arbitrary code.
+  draft.pages[pageId].nodes[tabsId].props.items[0].title={toString:null};
+  await editor.reload();await selectButton();
+  await actionControls.getByLabel('Művelet').selectOption('select-tab');
+  assert.equal(await actionControls.getByLabel('Cél elem').inputValue(),tabsId,'the malformed label does not prevent choosing its valid same-page tab target');
+  const recoveredItemLabels=await actionControls.getByLabel('Kiválasztott fül').locator('option').allTextContents();
+  assert.deepEqual(recoveredItemLabels,['Fül 1','Második'],'a malformed tab title receives a safe fallback rather than invoking object coercion');
+  assert.deepEqual(errors,[],'opening the Page Action control does not throw while formatting malformed persisted labels');
+  await editorNode(tabsId).evaluate(el=>el.click());await editor.locator('.inspector-tabs button').nth(1).click();
+  await editor.locator('.content-repeater[data-content-key="items"]').getByLabel('Fül címe',{exact:true}).first().fill('Első');
+  await selectButton();
   await actionControls.getByLabel('Művelet').selectOption('select-tab');
   await actionControls.getByLabel('Cél elem').selectOption(tabsId);
   await actionControls.getByLabel('Kiválasztott fül').selectOption('1');

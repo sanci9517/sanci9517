@@ -13,10 +13,14 @@ const EVENT_OPTIONS = Object.freeze([
   ['timer', 'Időzítve']
 ]);
 const DELAY_OPTIONS = Object.freeze(PAGE_ACTION_TIMER_DELAYS_MS.map(value => [String(value), `${value / 1000} másodperc`]));
-const labelFor = node => `${String(node?.name || node?.type || 'Elem').slice(0, 80)} · ${node?.type || 'ismeretlen'}`;
+const plainLabel = value => typeof value === 'string' ? value.trim() : typeof value === 'number' && Number.isFinite(value) ? String(value) : '';
+const labelFor = node => {
+  const type = plainLabel(node?.type) || 'ismeretlen';
+  return `${(plainLabel(node?.name) || type).slice(0, 80)} · ${type}`;
+};
 const itemLabel = (node, index) => {
   const item = node?.props?.items?.[index];
-  return String(item?.title || `${node.type === 'tabs' ? 'Fül' : 'Rész'} ${index + 1}`).slice(0, 100);
+  return (plainLabel(item?.title) || `${node?.type === 'tabs' ? 'Fül' : 'Rész'} ${index + 1}`).slice(0, 100);
 };
 
 function select(label, options, value) {
