@@ -8,26 +8,32 @@ import {validateAccessibility} from './accessibility.js';
 
 import { getNode, validateDocument, normalizeRichText } from './schema.js';
 import { validateElementContent as validateStructuredContent,isStructuredType } from './element-content.js?v=20261117-d01-private-media-double-decode-v1';
-import { validateElementContent as validateAuthoredContent } from './authored-content.js?v=20261118-edt039-timer-trigger-v1';
+import { validateElementContent as validateAuthoredContent } from './authored-content.js?v=20261119-d07-bounded-hierarchy-v1';
 import {validateStateStyles} from './state-styles.js';
+import {MAX_PAGE_HIERARCHY_DEPTH} from './hierarchy-limits.js?v=20261119-d07-bounded-hierarchy-v1';
 
 export function findReachableNodeIds(page) {
   const reachable = new Set();
   if (typeof page?.rootId !== 'string' || !getNode(page, page.rootId)) return reachable;
-
-  const visit = (nodeId) => {
-    if (typeof nodeId !== 'string' || !nodeId) return;
-    if (!getNode(page, nodeId)) return;
-    if (reachable.has(nodeId)) return;
+  // Persisted Page Models are untrusted input. Keep the walk iterative so an
+  // unusually deep but otherwise readable tree cannot exhaust the JS stack.
+  const pending = [page.rootId];
+  while (pending.length) {
+    const nodeId = pending.pop();
+    if (typeof nodeId !== 'string' || !nodeId || reachable.has(nodeId)) continue;
+    const node = getNode(page, nodeId);
+    if (!node) continue;
     reachable.add(nodeId);
-    const children = getNode(page, nodeId)?.children;
-    if (Array.isArray(children)) for (const childId of children) visit(childId);
-  };
-
-  visit(page.rootId);
+    const children = Array.isArray(node.children) ? node.children : [];
+    // Reverse-push to preserve the recursive walk's insertion order.
+    for (let index = children.length - 1; index >= 0; index--) pending.push(children[index]);
+  }
   return reachable;
 }
 
+// The Editor's layer tree and mutation helpers are intentionally recursive.
+// Reject persisted trees before they reach those consumers while allowing
+// comfortably more nesting than real page layouts need.
 export function validateHierarchy(page) {
   const errors = [];
   if (!page) return ['page is required'];
@@ -35,55 +41,76 @@ export function validateHierarchy(page) {
   const visiting = new Set();
   const visited = new Set();
 
-  const walk = (nodeId) => {
-    if (typeof nodeId !== 'string' || !nodeId) {
-      errors.push('invalid node id in hierarchy');
-      return;
-    }
+  let depthErrorReported = false;
+  const stack = [{ nodeId: page.rootId, depth: 0, entered: false }];
+  while (stack.length) {
+    const frame = stack[stack.length - 1];
+    const { nodeId } = frame;
 
-    if (visiting.has(nodeId)) {
-      errors.push(`cycle detected at node: ${nodeId}`);
-      return;
-    }
-    if (visited.has(nodeId)) return;
-
-    const node = getNode(page, nodeId);
-    if (!node) {
-      errors.push(`missing node: ${nodeId}`);
-      return;
-    }
-
-    visiting.add(nodeId);
-    if (!Array.isArray(node.children)) {
-      errors.push(`invalid children collection at node: ${nodeId}`);
-    }
-    const siblingIds = new Set();
-    for (const childId of Array.isArray(node.children) ? node.children : []) {
-      if (typeof childId !== 'string' || !childId) {
-        errors.push(`invalid child id at node: ${nodeId}`);
+    if (!frame.entered) {
+      if (typeof nodeId !== 'string' || !nodeId) {
+        errors.push('invalid node id in hierarchy');
+        stack.pop();
         continue;
       }
-      if (siblingIds.has(childId)) {
-        errors.push(`duplicate child id at node: ${nodeId}`);
+      if (visiting.has(nodeId)) {
+        errors.push(`cycle detected at node: ${nodeId}`);
+        stack.pop();
         continue;
       }
-      siblingIds.add(childId);
-      const child = getNode(page, childId);
-      if (!child) {
-        errors.push(`missing child ${childId} referenced by ${nodeId}`);
+      if (visited.has(nodeId)) {
+        stack.pop();
         continue;
       }
-      if (child.parentId !== nodeId) {
-        const declaredParent = typeof child.parentId === 'string' ? child.parentId : '[invalid parent id]';
-        errors.push(`parent mismatch: ${childId} declares ${declaredParent}, expected ${nodeId}`);
-      }
-      walk(childId);
-    }
-    visiting.delete(nodeId);
-    visited.add(nodeId);
-  };
 
-  walk(page.rootId);
+      const node = getNode(page, nodeId);
+      if (!node) {
+        errors.push(`missing node: ${nodeId}`);
+        stack.pop();
+        continue;
+      }
+
+      frame.entered = true;
+      frame.children = Array.isArray(node.children) ? node.children : [];
+      frame.childIndex = 0;
+      frame.siblingIds = new Set();
+      visiting.add(nodeId);
+      if (frame.depth > MAX_PAGE_HIERARCHY_DEPTH && !depthErrorReported) {
+        errors.push(`maximum hierarchy depth exceeded (${MAX_PAGE_HIERARCHY_DEPTH})`);
+        depthErrorReported = true;
+      }
+      if (!Array.isArray(node.children)) errors.push(`invalid children collection at node: ${nodeId}`);
+      continue;
+    }
+
+    if (frame.childIndex >= frame.children.length) {
+      visiting.delete(nodeId);
+      visited.add(nodeId);
+      stack.pop();
+      continue;
+    }
+
+    const childId = frame.children[frame.childIndex++];
+    if (typeof childId !== 'string' || !childId) {
+      errors.push(`invalid child id at node: ${nodeId}`);
+      continue;
+    }
+    if (frame.siblingIds.has(childId)) {
+      errors.push(`duplicate child id at node: ${nodeId}`);
+      continue;
+    }
+    frame.siblingIds.add(childId);
+    const child = getNode(page, childId);
+    if (!child) {
+      errors.push(`missing child ${childId} referenced by ${nodeId}`);
+      continue;
+    }
+    if (child.parentId !== nodeId) {
+      const declaredParent = typeof child.parentId === 'string' ? child.parentId : '[invalid parent id]';
+      errors.push(`parent mismatch: ${childId} declares ${declaredParent}, expected ${nodeId}`);
+    }
+    stack.push({ nodeId: childId, depth: frame.depth + 1, entered: false });
+  }
 
   for (const [nodeId, node] of Object.entries(page.nodes ?? {})) {
     if (!node || typeof node !== 'object' || Array.isArray(node)) {

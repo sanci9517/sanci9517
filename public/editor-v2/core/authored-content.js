@@ -177,15 +177,20 @@ export function getPublicationContentIssue(node,options){
 
 export function validatePageForPublication(page){
   const seen=new Set();
-  const visit=(id,visible)=>{if(seen.has(id))return;seen.add(id);const node=page.nodes?.[id];if(!node)return;
-    const modes=['desktop','tablet','mobile'].map((device,index)=>visible[index]&&node.visibility!==false&&node.visibility?.[device]!==false),p=contentProperties(node);
+  const pending=[{id:page.rootId,visible:[true,true,true]}];
+  while(pending.length){
+    const {id,visible}=pending.pop();
+    if(seen.has(id))continue;
+    seen.add(id);
+    const node=page.nodes?.[id];if(!node)continue;
+    const modes=['desktop','tablet','mobile'].map((device,index)=>visible[index]&&node.visibility!==false&&node.visibility?.[device]!==false);
     if(isAuthoredContent(node)&&modes.some(Boolean)){
       const missing=getPublicationContentIssue(node,{pageNodes:page.nodes});
       if(missing){const error=new Error(`${node.name||node.type}: ${missing}`);error.nodeId=node.id;throw error}
     }
-    for(const child of node.children||[])visit(child,modes);
-  };
-  visit(page.rootId,[true,true,true]);
+    const children=Array.isArray(node.children)?node.children:[];
+    for(let index=children.length-1;index>=0;index--)pending.push({id:children[index],visible:modes});
+  }
 }
 export function contentDefaults(node,device='desktop'){
   if(node?.type==='root'&&node.metadata?.editorRootVersion===1)return {display:'block',backgroundColor:'#ffffff',color:'#182335',fontFamily:'system-ui',fontSize:'16px',lineHeight:'1.6'};

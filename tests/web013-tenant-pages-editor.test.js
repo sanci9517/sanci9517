@@ -157,6 +157,51 @@ for(const specimen of [
   });
 }
 
+test('D-03 structured table drafts stay private until a valid explicit Publish',async t=>{
+  const cases=[
+    {name:'ragged row',rows:[['Név','Leírás'],['Egy mező']],error:'INVALID_STRUCTURED_CONTENT'},
+    {name:'empty row',rows:[['Név','Leírás'],['','']],error:'EMPTY_TABLE_ROW'},
+    {name:'empty table',rows:[['',''],['','']],error:'EMPTY_TABLE_ROW'}
+  ];
+  for(const specimen of cases){
+    const f=await fixture(t),document=f.document('b');
+    document.pages.b.nodes.root.children=['table'];
+    document.pages.b.nodes.table={id:'table',name:'Tartalmi tábla',type:'table',parentId:'root',children:[],
+      metadata:{structuredContentVersion:1},props:{contentModel:{version:1,rows:structuredClone(specimen.rows)}}};
+    const originalPublished=f.db.prepare('SELECT published_content_json,published_revision_id FROM pages WHERE id=?').get('b');
+    const beforeSaveAudit=f.db.prepare('SELECT COUNT(*) AS n FROM audit_log').get().n;
+
+    const saved=await f.editor('editor','other','POST',{pageId:'b',expectedVersion:1,document,publish:false});
+    assert.equal(saved.status,200,`${specimen.name}: Save keeps a repairable table draft`);
+    assert.equal(f.db.prepare('SELECT published_content_json FROM pages WHERE id=?').get('b').published_content_json,
+      originalPublished.published_content_json,`${specimen.name}: Save does not change the public snapshot`);
+    const savedRevisionCount=f.db.prepare('SELECT COUNT(*) AS n FROM editor_revisions WHERE page_id=?').get('b').n;
+    const savedAuditCount=f.db.prepare('SELECT COUNT(*) AS n FROM audit_log').get().n;
+    assert.equal(savedAuditCount,beforeSaveAudit,'draft Save does not claim a publication audit event');
+
+    const rejected=await f.editor('editor','other','POST',{pageId:'b',expectedVersion:2,document,publish:true});
+    assert.equal(rejected.status,409,`${specimen.name}: Worker Publish is fail-closed`);
+    assert.equal((await rejected.json()).error.code,specimen.error,`${specimen.name}: Worker returns its established error contract`);
+    assert.equal(f.db.prepare('SELECT published_content_json FROM pages WHERE id=?').get('b').published_content_json,
+      originalPublished.published_content_json,`${specimen.name}: rejected Publish preserves the live snapshot`);
+    assert.equal(f.db.prepare('SELECT published_revision_id FROM pages WHERE id=?').get('b').published_revision_id,
+      originalPublished.published_revision_id,`${specimen.name}: rejected Publish preserves the live revision`);
+    assert.equal(f.db.prepare('SELECT COUNT(*) AS n FROM editor_revisions WHERE page_id=?').get('b').n,
+      savedRevisionCount,`${specimen.name}: rejected Publish creates no revision`);
+    assert.equal(f.db.prepare('SELECT COUNT(*) AS n FROM audit_log').get().n,
+      savedAuditCount,`${specimen.name}: rejected Publish emits no success audit`);
+
+    const repaired=structuredClone(document);
+    repaired.pages.b.nodes.table.props.contentModel.rows=[['Név','Leírás'],['Stream','Közösség']];
+    const published=await f.editor('editor','other','POST',{pageId:'b',expectedVersion:2,document:repaired,publish:true});
+    assert.equal(published.status,200,`${specimen.name}: explicit repair is publishable`);
+    const live=JSON.parse(f.db.prepare('SELECT published_content_json FROM pages WHERE id=?').get('b').published_content_json);
+    assert.deepEqual(live.pages.b.nodes.table.props.contentModel.rows,repaired.pages.b.nodes.table.props.contentModel.rows);
+    assert.equal(f.db.prepare('SELECT COUNT(*) AS n FROM editor_revisions WHERE page_id=?').get('b').n,savedRevisionCount+1);
+    assert.equal(f.db.prepare('SELECT COUNT(*) AS n FROM audit_log').get().n,savedAuditCount+1);
+  }
+});
+
 
 test('background media UUID parity: draft Save stays private; invalid style/responsive IDs cannot Publish',async t=>{
   const f=await fixture(t),valid='6b1c2e65-e46e-4764-b234-123456789abc',malformed='------------------------------------';

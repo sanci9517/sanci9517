@@ -265,6 +265,30 @@ test('hierarchy validation reports malformed child data without iterating or coe
   assert.throws(()=>assertValidEditorDocument(document),/invalid child id/);
 });
 
+test('hierarchy validation bounds very deep persisted trees without overflowing the call stack', () => {
+  const document=createDocument();
+  const page=document.pages[document.activePageId];
+  let parent=page.nodes[page.rootId];
+  const depth=12000;
+  for(let index=0;index<depth;index++){
+    const child=createNode(NODE_TYPES.SECTION,{parentId:parent.id});
+    parent.children.push(child.id);
+    page.nodes[child.id]=child;
+    parent=child;
+  }
+  const before=JSON.stringify(page);
+
+  let errors;
+  assert.doesNotThrow(()=>{errors=validateHierarchy(page);},'deep persisted input returns bounded diagnostics instead of RangeError');
+  assert.match(errors.join('; '),/maximum hierarchy depth exceeded \(128\)/);
+  assert.equal(findReachableNodeIds(page).size,depth+1,'reachable-node lookup also stays iterative for deep input');
+  assert.equal(JSON.stringify(page),before,'validation and reachability never rewrite persisted input');
+  assert.throws(()=>assertValidEditorDocument(document),/maximum hierarchy depth exceeded \(128\)/,
+    'the invalid depth is rejected before recursive Editor consumers render it');
+  assert.equal(validatePublishDocument(document,document.activePageId),'INVALID_HIERARCHY',
+    'the server Publish validator rejects the same deep tree without recursion overflow');
+});
+
 test('hierarchy validation rejects duplicate sibling references without changing the Page Model', () => {
   const document=createDocument();
   const page=document.pages[document.activePageId],root=page.nodes[page.rootId];

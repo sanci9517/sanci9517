@@ -6,7 +6,7 @@
  */
 
 import { canContain, cloneDocument, createEmptyRichText, createNode, getNode, normalizeRichText } from './schema.js';
-import { assertValidEditorDocument } from './validation.js?v=20261115-d07-malformed-node-records-v2';
+import { assertValidEditorDocument } from './validation.js?v=20261119-d07-bounded-hierarchy-v1';
 import { activePage, clearSelection, setSelection } from './state.js';
 import { createDefaultScheduleConfig, normalizeScheduleConfig } from './schedule-schema.js';
 import {isStructuredType,createElementContent,normalizeElementContent} from './element-content.js?v=20261117-d01-private-media-double-decode-v1';
@@ -16,7 +16,7 @@ import {defaultCountdownContent} from './countdown-content.js';
 import {defaultSocialLinks} from './social-links.js';
 import {defaultEmbedContent} from './creator-embed.js';
 import {defaultCodeSnippet} from './code-snippet.js';
-import { normalizeElementContent as normalizeAuthoredElementContent, CONTENT_TYPES } from './authored-content.js?v=20261118-edt039-timer-trigger-v1';
+import { normalizeElementContent as normalizeAuthoredElementContent, CONTENT_TYPES } from './authored-content.js?v=20261119-d07-bounded-hierarchy-v1';
 import {normalizeAccessibility,remapDuplicateAnchors} from './accessibility.js';
 import {normalizeStatePatch} from './state-styles.js';
 import { applyStyleSnapshot } from './style-snapshot.js';

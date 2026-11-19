@@ -1,7 +1,7 @@
 /* Sanci9517 Visual Editor v2 — isolated editor state. */
 
 import { cloneDocument, createDocument, getPage } from './schema.js';
-import { assertValidEditorDocument } from './validation.js?v=20261118-edt039-invalid-recovery-v1';
+import { assertValidEditorDocument } from './validation.js?v=20261119-d07-bounded-hierarchy-v1';
 
 export const HISTORY_LIMIT = 100;
 

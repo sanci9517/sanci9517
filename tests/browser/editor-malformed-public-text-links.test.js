@@ -5,7 +5,7 @@ import {readFile} from 'node:fs/promises';
 import {existsSync} from 'node:fs';
 import {resolve,extname} from 'node:path';
 import {chromium} from 'playwright';
-import {createDocument,NODE_TYPES} from '../../public/editor-v2/core/schema.js';
+import {createDocument,createNode,NODE_TYPES} from '../../public/editor-v2/core/schema.js';
 import {createEditorState} from '../../public/editor-v2/core/state.js';
 import {execute} from '../../public/editor-v2/core/commands.js';
 
@@ -257,4 +257,24 @@ test('D-07 Editor rejects corrupt Page Model child lists safely without rewritin
   assert.deepEqual(writes,[],'mismatched Page identity is never silently Saved or Published');
   assert.equal(JSON.stringify(state.document),mismatchedPagePersisted,'mismatched persisted Page remains unchanged for recovery');
   state.document.pages[pageId]=structuredClone(validPage);
+
+  // Recursive layer-tree consumers need a generous but explicit nesting
+  // boundary. A hostile/legacy deep draft must stop at the boot guard instead
+  // of escaping as a browser RangeError before the user can recover it.
+  const deepPage=state.document.pages[pageId];
+  let parent=deepPage.nodes[deepPage.rootId];
+  for(let index=0;index<256;index++){
+    const child=createNode(NODE_TYPES.SECTION,{parentId:parent.id});
+    parent.children.push(child.id);
+    deepPage.nodes[child.id]=child;
+    parent=child;
+  }
+  const deepPersisted=JSON.stringify(state.document);
+  await tab.reload();
+  await tab.waitForTimeout(300);
+  assert.match(await tab.locator('#saveStatus').textContent(),/Invalid editor document:.*maximum hierarchy depth exceeded \(128\)/i,
+    'over-deep persisted models receive the controlled hierarchy-depth diagnostic');
+  assert.deepEqual(errors,[],'over-deep persisted models cannot escape as unhandled RangeError');
+  assert.deepEqual(writes,[],'the Editor never Saves or Publishes an over-deep persisted model');
+  assert.equal(JSON.stringify(state.document),deepPersisted,'the saved model remains intact for explicit recovery');
 });

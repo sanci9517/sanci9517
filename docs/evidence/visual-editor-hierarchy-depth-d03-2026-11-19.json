@@ -1,0 +1,105 @@
+{
+  "schema": 1,
+  "captured_at": "2026-11-19T07:51:07Z",
+  "plan_item": "77.44.7.D",
+  "status": "OPEN / NOT_CERTIFIED",
+  "scope": "Bound persisted Editor hierarchy depth before recursive UI consumers; prove that structured table Save and Publish remain distinct and fail closed.",
+  "principles": {
+    "parallel_work_and_safe_reuse": "Already recorded in AGENTS.md Efficient and reliable execution: parallelize only independent work; reuse project dependencies and review compatible maintained open-source solutions before reimplementing. No extra principle edit was needed.",
+    "single_canonical_plan": "No oversized master rewrite. The 13-part master remains unchanged; evidence is stored independently as instructed by AGENTS.md."
+  },
+  "changes": {
+    "runtime": [
+      "Made findReachableNodeIds, validateHierarchy, publish hierarchy validation, and authored-content publication traversal iterative to avoid call-stack exhaustion on deeply nested Page Models.",
+      "Added shared MAX_PAGE_HIERARCHY_DEPTH=128; Editor load returns a controlled validation error and server Publish returns INVALID_HIERARCHY above the limit.",
+      "Bumped browser module cache keys for the changed authored-content/validation dependency graph."
+    ],
+    "tests": [
+      "Added 12,000-level unit coverage for iterative reachability/validation and controlled rejection without Page Model mutation.",
+      "Added a real Chromium persisted-draft test at 256 levels: controlled boot error, zero pageerror, zero Save/Publish writes, and unchanged source object.",
+      "Added route-level structured-table coverage: ragged, partially empty, and wholly empty rows are Saveable drafts, rejected Publish leaves snapshot/revision/audit unchanged, and repaired content is explicitly Publishable."
+    ],
+    "generated_evidence": "Regenerated docs/evidence/feature-traceability.json after source changes."
+  },
+  "checks": [
+    {
+      "command": "npm run test:editor",
+      "result": "PASS 22/22 Node Editor test files and subreaper 4/4"
+    },
+    {
+      "command": "node --experimental-loader ./tests/ts-extension-loader.mjs --test tests/web013-tenant-pages-editor.test.js",
+      "result": "PASS 1/1; includes the new D-03 Save/Publish route regression"
+    },
+    {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-malformed-public-text-links.test.js",
+      "result": "PASS 2/2; includes persisted 256-level draft; local-only loopback server"
+    },
+    {
+      "command": "npm run typecheck -- --pretty false",
+      "result": "PASS"
+    },
+    {
+      "command": "npm run test:web013:migration-gate",
+      "result": "PASS; no production migration was applied"
+    },
+    {
+      "command": "python3 tests/plan-contract.test.py",
+      "result": "PASS 15/15 after traceability regeneration"
+    },
+    {
+      "command": "python3 scripts/build-feature-traceability.py --check",
+      "result": "PASS 396/396 mappings"
+    },
+    {
+      "command": "python3 scripts/check-canonical-plan.py",
+      "result": "PASS one complete 13-file master, 396 mappings; acceptance not certified"
+    },
+    {
+      "command": "python3 scripts/audit-active-plan-point.py",
+      "result": "PASS cursor 77.44 / WEB-011, next 77.44.7.D remains OPEN / NOT_CERTIFIED"
+    },
+    {
+      "command": "git diff --check and node --check on modified JavaScript",
+      "result": "PASS"
+    },
+    {
+      "command": "npm run test:web013",
+      "result": "INCOMPLETE: two redundant full-suite test processes were stopped after the runner remained pending in tests/web013-html-anchor-extractor.test.js for 114 seconds. One other file passed before termination; remaining suite results are unverified. The changed tenant-pages route test passed separately."
+    },
+    {
+      "command": "XDG_CONFIG_HOME=/tmp/sanci-wrangler-xdg npx wrangler deploy --dry-run",
+      "result": "PASS; Wrangler 4.130.0 read 197 public assets, 393.65 KiB upload / 100.85 KiB gzip; no deployment"
+    }
+  ],
+  "production_preflight": {
+    "method": "Cloudflare D1 query API POST containing only SELECT against sqlite_schema; no schema/data mutation statement.",
+    "statement": "SELECT name FROM sqlite_schema WHERE type = 'table' AND name IN ('pages','editor_revisions','audit_log','media') ORDER BY name",
+    "result": [
+      "audit_log",
+      "editor_revisions",
+      "media",
+      "pages"
+    ],
+    "success": true,
+    "changed_db": false,
+    "rows_written": 0,
+    "region": "EEUR",
+    "status": "READ_ONLY_PREFLIGHT_PASS"
+  },
+  "release": {
+    "source_commit": "PENDING",
+    "push": "PENDING",
+    "github_actions_free_quota": "UNVERIFIED; no manual dispatch or rerun started",
+    "worker_build_and_rollout": "PENDING",
+    "worker_traffic": "PENDING",
+    "health": "PENDING",
+    "changed_public_asset_hashes": "PENDING",
+    "pre_push_remote_head": "3f39f3a44d01bdd57975b5e095171acc2544517f (verified equal to local HEAD via GitHub REST ref; fast-forward target confirmed)"
+  },
+  "production_data_and_cost": {
+    "production_d1_mutations_or_migrations": "none",
+    "r2_operations": "none",
+    "new_paid_services_or_spend": "none"
+  },
+  "acceptance_boundary": "This closes only the concrete bounded-hierarchy and D-03 route-regression slice. D remains OPEN / NOT_CERTIFIED; the full Editor functional, complete automated acceptance and physical acceptance are not claimed."
+}

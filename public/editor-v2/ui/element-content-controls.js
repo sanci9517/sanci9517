@@ -1,4 +1,4 @@
-import {CONTENT_FIELDS,IMAGE_MIMES,normalizeContentField,contentProperties,imageFocalPosition,getPublicationContentGuidance} from '../core/authored-content.js?v=20261118-edt039-timer-trigger-v1';
+import {CONTENT_FIELDS,IMAGE_MIMES,normalizeContentField,contentProperties,imageFocalPosition,getPublicationContentGuidance} from '../core/authored-content.js?v=20261119-d07-bounded-hierarchy-v1';
 import {parseTableTsv,serializeTableTsv} from '../core/table-tsv.js?v=20261115-d03-table-tsv-v2';
 import {getProperty} from '../core/property-registry.js?v=20261117-edt043-motion-guidance';
 export {IMAGE_MIMES};
