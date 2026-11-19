@@ -6,8 +6,8 @@
     "name": "sanci9517/sanci9517",
     "branch": "v2/foundation",
     "base_sha": "0d81d0319a8c39d5994c853a49ae8180b29e80dc",
-    "source_commit": null,
-    "source_commit_note": "Set in the exact-SHA release follow-up after committing and pushing the runtime source."
+    "source_commit": "83fb764b4060d8d4bbc513e7d0865dd1f700214a",
+    "source_commit_url": "https://github.com/sanci9517/sanci9517/commit/83fb764b4060d8d4bbc513e7d0865dd1f700214a"
   },
   "gap_and_change": {
     "observed_gap": "A saved video/audio Media Library ID restored into an Inspector had only a static selected label, so the Editor could not tell whether the selected object had been deleted, archived, or was inaccessible. The metadata probe also needed to exclude archived rows, matching active Media Library and GET semantics.",
@@ -65,16 +65,41 @@
       "result": "PASS"
     }
   },
-  "release_before_push": {
-    "remote_head_verified": "0d81d0319a8c39d5994c853a49ae8180b29e80dc",
-    "runtime_release": "PENDING exact source commit and normal fast-forward push",
-    "exact_sha_ci": "PENDING; required runtime workflows must be checked after push",
-    "worker_deployment": "PENDING; verify automatic build, or use deploy:safe only if automatic release does not start or succeed",
-    "live_baseline": {
-      "deployment_id": "4a3d07d8-dba9-4591-8b2e-23f4482ae71e",
-      "worker_version_id": "dcd3f2fd-fd51-47ba-8639-68fe4ce565a2",
+  "release": {
+    "normal_fast_forward_push": "verified; 0d81d031..83fb764b on v2/foundation",
+    "branch_head_exact_sha_verified": true,
+    "cloudflare_deployment": {
+      "worker_script": "sanci9517-streamer-brand",
+      "deployment_id": "c4b9526a-c54b-4fe3-9218-d889c1e011e9",
+      "worker_version_id": "9870e814-359c-4871-a25c-289d9dfe7c2c",
       "traffic_percent": 100,
-      "health": "GET /api/health returned HTTP 200 at 2026-11-19T11:59:49Z; version 2.0.0. This is the pre-change baseline, not evidence of the new route being deployed."
+      "created_at_utc": "2026-11-19T12:02:07.868034Z",
+      "verified_by": "read-only Cloudflare deployments API"
+    },
+    "exact_sha_production_smoke": {
+      "run_id": 44520036720,
+      "url": "https://github.com/sanci9517/sanci9517/actions/runs/44520036720",
+      "head_sha": "83fb764b4060d8d4bbc513e7d0865dd1f700214a",
+      "conclusion": "success",
+      "health": "GET /api/health HTTP 200; direct follow-up at 2026-11-19T12:02 UTC returned ok=true, service=sanci9517-streamer-brand, version=2.0.0",
+      "configured_public_source_paths": 36,
+      "hash_result": "all 36 configured paths matched exact source SHA-256"
+    },
+    "modified_public_asset_sha256": {
+      "public/editor-v2/app.js": "dc746df04b7ce1fa45a2dca10bc12bdb94240dec281d58a6f4221768ca48eb18",
+      "public/editor-v2/ui/card-content-inspector.js": "affc9fd252fd1b567ecc943bcf24cbe5d28700d7d4b55a4c2f2d2f042016f0c3",
+      "public/editor-v2/ui/element-content-controls.js": "9a7569f5a68d6b9040b4d8164bd1c8c23e336f441334a8ede5f23553215d5b9d",
+      "public/editor-v2/ui/legacy-media-inspector.js": "efe7cfbf5b691674a77962fbc33144433c7076805f2205cde2bf8a103fc08ccc",
+      "public/editor-v2/ui/property-controls.js": "72180b4c37545d183d82493cab4c9393fc16a760b3b198ec71f49d2c6597882e"
+    },
+    "direct_live_hash_check": "All five modified public assets were fetched with release=83fb764b4060d8d4bbc513e7d0865dd1f700214a and compared byte-for-byte by SHA-256; all matched.",
+    "exact_sha_github_workflows": {
+      "production_worker_source_smoke": "SUCCESS",
+      "f0_baseline_checks": "SUCCESS",
+      "twitch_integration_check": "SUCCESS",
+      "canonical_creator_platform_plan": "SUCCESS",
+      "canonical_plan_active_point_audit": "SUCCESS",
+      "editor_core_test": "IN_PROGRESS; real Worker media storage, layout/browser and later regression steps not complete at capture"
     }
   },
   "cost_and_scope": {

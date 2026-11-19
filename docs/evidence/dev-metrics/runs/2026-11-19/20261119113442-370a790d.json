@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261119113442-370a790d",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-19T11:34:42.196Z",
+  "finished_at": "2026-11-19T12:06:46.186Z",
+  "wall_seconds": 1924,
+  "paused_seconds": 0,
+  "measured_seconds": 1924,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "Released D-01 playable-media recovery: site-scoped metadata-only HEAD, archived media fails closed, explicit repair and 100% live Worker/hash/smoke verified; exact-SHA Editor Core still running.",
+  "evidence": [
+    "docs/evidence/editor-d01-playable-media-recovery-2026-11-19.json"
+  ],
+  "checks": "media 5/5, browser 1/1, editor unit 22/22, typecheck, plan 15/15, traceability 396/396, D1 read-only, Wrangler dry-run PASS; hosted Editor Core pending",
+  "started_revision": "0d81d0319a8c39d5994c853a49ae8180b29e80dc",
+  "finished_revision": "83fb764b4060d8d4bbc513e7d0865dd1f700214a",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
