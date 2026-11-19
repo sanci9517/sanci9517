@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261119063132-156b7754",
+  "task": "EDT-042",
+  "trigger": "manual",
+  "started_at": "2026-11-19T06:31:32.004Z",
+  "finished_at": "2026-11-19T06:35:53.016Z",
+  "wall_seconds": 261,
+  "paused_seconds": 0,
+  "measured_seconds": 261,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "EDT-042 non-HTTP diagnostic source redaction fixed, browser/unit/typecheck/plan/migration/dry-run checks pass, exact commit is live with health and asset hashes matching; full Editor Core CI and D remain open.",
+  "evidence": [
+    "docs/evidence/editor-042-non-http-source-redaction-2026-11-19.json"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "d9a680511561c09891c80aebcb1b8367e5fa688f",
+  "finished_revision": "12b81256306bc02b7349dc969af0a9eee2a8aea7",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

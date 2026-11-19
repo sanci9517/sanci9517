@@ -1,11 +1,11 @@
 {
   "schema": "sanci.editor.edt042-non-http-source-redaction.v1",
-  "recorded_at_utc": "2026-11-19T06:33:11Z",
+  "recorded_at_utc": "2026-11-19T06:35:18Z",
   "repository": "sanci9517/sanci9517",
   "branch": "v2/foundation",
   "base_head": "d9a680511561c09891c80aebcb1b8367e5fa688f",
   "plan_point": "77.44 / WEB-011 -> 77.44.7.D / EDT-042 adjacent diagnostics security regression",
-  "status": "LOCAL_VERIFIED_RUNTIME_PATCH_RELEASE_PENDING",
+  "status": "PRODUCTION_RELEASE_VERIFIED_EDITOR_CORE_CI_PENDING",
   "defect": "The previous preboot source sanitizer stripped origins/queries for HTTP URLs but parsed non-HTTP schemes as paths. A data: filename can contain arbitrary inline source text; a blob: filename can reveal its embedded location. Both could therefore expose payload data in early diagnostics.",
   "implementation": {
     "scheme_policy": "Only HTTP and HTTPS source locations retain a bounded path. All other explicit URI schemes are reduced to <scheme>:[redacted], before URL parsing.",
@@ -105,11 +105,90 @@
     "meaning": "The preceding v2 preboot redaction code is live; this follow-up patch has not yet been released."
   },
   "release": {
-    "status": "PENDING_RUNTIME_COMMIT_PUSH_EXACT_SHA_CI_AUTOMATIC_BUILD_AND_LIVE_VERIFICATION",
-    "expected_push_mode": "Normal fast-forward only; remote v2/foundation is the current local HEAD ancestor; no force push.",
-    "no_manual_ci_dispatch": true
+    "status": "EXACT_SHA_PUSHED_AUTOMATIC_BUILD_DEPLOY_HEALTH_AND_CHANGED_ASSETS_VERIFIED; EDITOR_CORE_CI_PENDING",
+    "branch": "v2/foundation",
+    "runtime_commit": "12b81256306bc02b7349dc969af0a9eee2a8aea7",
+    "remote_ref_verified": "12b81256306bc02b7349dc969af0a9eee2a8aea7",
+    "push": "Normal fast-forward; force=false. Exact branch ref read back after push.",
+    "cloudflare_build": {
+      "build_uuid": "8898d30f-4e0e-4e6e-9945-74eadd8d8c8a",
+      "source_sha": "12b81256306bc02b7349dc969af0a9eee2a8aea7",
+      "status": "stopped",
+      "outcome": "success",
+      "trigger_source": "push_event",
+      "build_command": "npm run typecheck",
+      "deploy_command": "npm run deploy:safe",
+      "created_on": "2026-11-19T06:34:04.445Z",
+      "stopped_on": "2026-11-19T06:34:33.524Z"
+    },
+    "cloudflare_deployment": {
+      "deployment_id": "58bfe948-fa25-4912-8dca-2bcb8274b00d",
+      "version_id": "bf68eb8c-f608-4478-9969-65b9fa710eba",
+      "traffic_percent": 100,
+      "created_on": "2026-11-19T06:34:30.44158Z",
+      "verified_at_utc": "2026-11-19T06:35Z"
+    },
+    "production_health": {
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health?release=12b81256306bc02b7349dc969af0a9eee2a8aea7-direct",
+      "http": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      },
+      "verified_at_utc": "2026-11-19T06:35Z"
+    },
+    "direct_live_public_hashes": {
+      "public/editor-v2/boot.js": {
+        "sha256": "ca43041dd8dfd0ce2ac4815194a6c7a391d8bdef0b589057bbf69282ddfb34ac",
+        "http": 200,
+        "local_matches_live": true
+      },
+      "public/editor-v2/index.html": {
+        "sha256": "4ca727c1e4991f4ca409ba25f82de9ed442a00a43bb2cb234e4f4877c1a8f9bc",
+        "http": 200,
+        "local_matches_live": true
+      }
+    },
+    "exact_sha_workflows": {
+      "active_point_audit": {
+        "run_id": 44473102884,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      "f0_baseline": {
+        "run_id": 44473103031,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      "twitch_integration": {
+        "run_id": 44473102955,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      "canonical_plan": {
+        "run_id": 44473102941,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      "production_source_smoke": {
+        "run_id": 44473103064,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      "editor_core": {
+        "run_id": 44473102939,
+        "status": "in_progress",
+        "conclusion": null,
+        "url": "https://github.com/sanci9517/sanci9517/actions/runs/44473102939",
+        "current_step": "Test real Worker media upload with isolated D1 and R2"
+      }
+    },
+    "aggregate_ci": "PARTIAL; five exact-SHA workflows pass, Editor Core is still in progress. No aggregate PASS is claimed.",
+    "metrics_id": "20261119063132-156b7754"
   },
-  "acceptance_boundary": "This is a non-HTTP source-location redaction sub-slice within EDT-042, not full EDT-042, not the complete D-01..D-07 capability/lifecycle matrix, and not full Editor acceptance. 77.44.7.D remains OPEN / NOT_CERTIFIED; full Editor manual/physical acceptance is DEFERRED. Save and Publish remain separate.",
+  "acceptance_boundary": "This is only an EDT-042 non-HTTP source location redaction sub-slice. Full EDT-042, the complete D-01..D-07 capability/lifecycle matrix, and 77.44.7.D remain OPEN / NOT_CERTIFIED. Full Editor manual/physical acceptance remains DEFERRED until the complete Editor. Save and Publish remain separate.",
   "production_mutations": false,
   "cost": "0 Ft; public-repository standard GitHub CI only, no paid service, no D1 write/migration and no R2 mutation/deletion."
 }
