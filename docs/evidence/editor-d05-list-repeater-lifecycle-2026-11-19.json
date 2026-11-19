@@ -1,0 +1,51 @@
+{
+  "schema": "sanci.editor.d05-list-repeater-lifecycle.v1",
+  "captured_at_utc": "2026-11-19T12:48:01Z",
+  "plan_point": "77.44.7.D / D-05 — authored List repeater lifecycle",
+  "repository": "sanci9517/sanci9517",
+  "branch": "v2/foundation",
+  "branch_head_before_followup": "2f5fee2f392db2d3afde9d2dec281a2625e5989b",
+  "runtime_source_sha": "83fb764b4060d8d4bbc513e7d0865dd1f700214a",
+  "runtime_source_changed": false,
+  "change": {
+    "files": [
+      "tests/browser/editor-content-system.test.js",
+      "docs/evidence/editor-d05-list-repeater-lifecycle-2026-11-19.json",
+      "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md"
+    ],
+    "summary": "A real-browser regression now adds an authored List row, edits its text and safe internal link, moves the whole row one position, deletes a different row, and verifies the Canvas and zero implicit Save/Publish requests. Explicit Save persists the two remaining rows; the draft reload restores their order and link, while the published page stays unchanged until the separate Publish. The final public page then exposes the saved order and link.",
+    "runtime_or_public_assets_changed": false,
+    "save_publish": "Verified separately; edits remain draft-only until explicit Save, and only the later explicit Publish changes the public page."
+  },
+  "checks": {
+    "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-content-system.test.js": "PASS; 1/1 real Chromium test, including Add/edit/move/Delete, draft-only behavior, Save/reload, and separate public Publish.",
+    "npm run test:editor": "PASS; 22/22 Editor unit files plus 4/4 subreaper/manifest guards.",
+    "npm run typecheck -- --pretty false": "PASS.",
+    "python3 tests/plan-contract.test.py": "PASS; 15/15.",
+    "python3 scripts/check-canonical-plan.py": "PASS; complete 13-file canonical master / 396 mappings; functional acceptance remains uncertified.",
+    "python3 scripts/build-feature-traceability.py --check": "PASS; 396/396.",
+    "python3 scripts/audit-active-plan-point.py": "PASS; 77.44.7.D remains OPEN / NOT_CERTIFIED; 147 PARTIAL_SOURCE / 249 UNVERIFIED.",
+    "npm run test:web013:migration-gate": "PASS; safe release gate remains non-migrating.",
+    "node --check tests/browser/editor-content-system.test.js": "PASS.",
+    "git diff --check": "PASS."
+  },
+  "release_state_at_capture": {
+    "remote_branch_head_before_followup": "2f5fee2f392db2d3afde9d2dec281a2625e5989b",
+    "remote_branch_readback": "GitHub Branch API GET confirmed v2/foundation at 2f5fee2f392db2d3afde9d2dec281a2625e5989b before this follow-up.",
+    "cloudflare_deployment_id": "c4b9526a-c54b-4fe3-9218-d889c1e011e9",
+    "worker_version_id": "9870e814-359c-4871-a25c-289d9dfe7c2c",
+    "worker_traffic_percent": 100,
+    "runtime_deployment_needed": false,
+    "direct_health_this_followup": "NOT RUN; test/docs-only source did not change runtime. No new health result is claimed.",
+    "hosted_ci_for_followup": "NOT RUN / NOT CLAIMED; test/evidence-only follow-up will use the required [skip ci] policy."
+  },
+  "scope_limits": {
+    "d05_status": "This closes one automated List repeater lifecycle slice only. It does not certify all D-05 fields/types/breakpoints or the complete D matrix.",
+    "d_status": "77.44.7.D remains OPEN / NOT_CERTIFIED; 147 PARTIAL_SOURCE and 249 UNVERIFIED source mappings remain in the audit.",
+    "manual_physical_editor_acceptance": "DEFERRED until the complete Visual Editor is implemented.",
+    "production_d1_migration_or_write": false,
+    "production_r2_mutation_or_delete": false,
+    "paid_services_or_dependencies": false,
+    "new_cost_huf": 0
+  }
+}

@@ -588,7 +588,26 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   await editor.setViewportSize({width:1366,height:900});
   await select('list');const texts=editor.locator('.content-repeater textarea');await texts.first().fill('Átírt listaelem');
   await editor.getByRole('button',{name:'1. elem: Le',exact:true}).click();assert.match(await node(editor,'list').locator('ol').textContent(),/^Második elem/);
-  assert.equal(posts.length,1);
+  const listRepeater=editor.locator('.content-repeater[data-content-key="items"]');
+  const postsBeforeListStructure=posts.length;
+  await listRepeater.getByRole('button',{name:'Listaelemek hozzáadása',exact:true}).press('Enter');
+  await editor.waitForFunction(()=>document.activeElement?.closest('fieldset')?.querySelector('legend')?.textContent==='3. elem');
+  assert.equal(await listRepeater.locator(':scope > fieldset').count(),3,'the List Add control creates a third editable row');
+  const addedListItem=listRepeater.locator(':scope > fieldset').nth(2);
+  await addedListItem.getByLabel('Szöveg',{exact:true}).fill('Új listapont');
+  await addedListItem.getByLabel('Hivatkozás',{exact:true}).fill('/p/home');
+  assert.equal(await node(editor,'list').locator('ol li').nth(2).getByRole('link',{name:'Új listapont'}).getAttribute('href'),'/p/home',
+    'the added list item keeps its safe internal link in the Canvas');
+  await listRepeater.getByRole('button',{name:'3. elem: Fel',exact:true}).press('Enter');
+  assert.deepEqual(await node(editor,'list').locator('ol li').evaluateAll(items=>items.map(item=>item.textContent)),
+    ['Második elem','Új listapont','Átírt listaelem'],'List reorder moves the complete text/link item one position up');
+  await listRepeater.getByRole('button',{name:'3. elem: Eltávolítás',exact:true}).press('Enter');
+  await editor.waitForFunction(()=>document.activeElement?.closest('fieldset')?.querySelector('legend')?.textContent==='2. elem');
+  assert.equal(await listRepeater.locator(':scope > fieldset').count(),2,'Delete removes only the selected list row');
+  assert.deepEqual(await node(editor,'list').locator('ol li').evaluateAll(items=>items.map(item=>item.textContent)),
+    ['Második elem','Új listapont'],'deleting a different row preserves the newly added item and its order');
+  assert.equal(await node(editor,'list').locator('ol li').nth(1).getByRole('link',{name:'Új listapont'}).getAttribute('href'),'/p/home');
+  assert.equal(posts.length,postsBeforeListStructure,'list Add, edit, reorder, and Delete stay draft-only without implicit Save or Publish');
   const authoredMediaSources={video:'/fixture.webm?source=creator&v=2',audio:'/fixture.mp3?source=creator&v=2'};
   for(const [type,tag,originalSource] of [['video','video','/fixture.webm'],['audio','audio','/fixture.mp3']]){
     await select(type);
@@ -672,6 +691,9 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.link].props.href,authoredLinkHref,'Save stores the authored link destination in the draft');
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.link].props.target,'_blank','Save stores the authored link target in the draft');
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.link].props.ariaLabel,authoredLinkLabel,'Save stores the authored link accessible name in the draft');
+  assert.deepEqual(posts.at(-1).document.pages[pageId].nodes[ids.list].props.items,
+    [{text:'Második elem'},{text:'Új listapont',href:'/p/home'}],
+    'explicit Save persists the list Add/reorder/Delete result and its internal link');
   assert.deepEqual(posts.at(-1).document.pages[pageId].nodes[ids.table].props.rows,expectedTableRows,
     'Save retains every long table cell and its final edit in the draft');
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.table].props.caption,'Frissített eredmények',
@@ -714,6 +736,9 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
     'the current published image keeps its original square ratio after draft Save');
   assert.equal(await node(live,'link').getAttribute('href'),'mailto:creator@example.com','draft Save does not publish the authored link destination');
   assert.equal(await node(live,'link').textContent(),'Kapcsolat','draft Save does not publish the authored link text');
+  assert.deepEqual(await node(live,'list').locator('ol li').evaluateAll(items=>items.map(item=>item.textContent)),
+    ['Első hivatkozás','Második elem'],'draft Save leaves the original public List unchanged');
+  assert.equal(await node(live,'list').locator('ol li').first().getByRole('link',{name:'Első hivatkozás'}).getAttribute('href'),'/p/home');
   assert.equal(await node(live,'table').locator('caption').textContent(),'Eredmények','draft Save leaves the previous public table caption unchanged');
   assert.equal(await node(live,'table').locator('th[scope=col]').count(),2,'draft Save leaves the previous public table header unchanged');
   assert.equal(await node(live,'icon').getAttribute('aria-label'),'Kedvenc','Save keeps the previous published icon name live');
@@ -750,6 +775,12 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   assert.equal(await node(live,'image').locator('img').evaluate(el=>getComputedStyle(el).objectFit),'contain','draft Save keeps the original published image fit');
   assert.equal(await node(live,'image').locator('img').getAttribute('loading'),'lazy','draft Save does not publish the authored image loading strategy');
   await editor.reload();await select('table');
+  await select('list');
+  assert.deepEqual(await node(editor,'list').locator('ol li').evaluateAll(items=>items.map(item=>item.textContent)),
+    ['Második elem','Új listapont'],'Editor reload restores the saved list order before separate Publish');
+  assert.equal(await listRepeater.locator(':scope > fieldset').count(),2,'Editor reload restores the exact saved list row count');
+  assert.equal(await listRepeater.locator(':scope > fieldset').nth(1).getByLabel('Hivatkozás',{exact:true}).inputValue(),'/p/home');
+  await select('table');
   assert.equal(await editor.locator('.content-schema-field[data-content-key="rows"] textarea').inputValue(),serializeTableTsv(expectedTableRows),
     'reload restores the complete long table before separate Publish');
   assert.equal(await editor.getByLabel('Táblázat címe',{exact:true}).inputValue(),'Frissített eredmények',
@@ -810,6 +841,10 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   await select('heading');assert.equal(await editor.getByLabel('Címsor szemantikai szintje',{exact:true}).inputValue(),'3');
   await editor.locator('#publish').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent==='Publikálva');
   await live.setViewportSize({width:720,height:450});await live.reload();
+  assert.deepEqual(await node(live,'list').locator('ol li').evaluateAll(items=>items.map(item=>item.textContent)),
+    ['Második elem','Új listapont'],'separate Publish exposes the saved List order on the public page');
+  assert.equal(await node(live,'list').locator('ol li').nth(1).getByRole('link',{name:'Új listapont'}).getAttribute('href'),'/p/home',
+    'separate Publish exposes the saved safe internal list link');
   assert.equal(await node(live,'link').getAttribute('href'),authoredLinkHref,'separate Publish exposes the authored link destination');
   assert.equal(await node(live,'link').getAttribute('target'),'_blank');
   assert.equal(await node(live,'link').getAttribute('rel'),'noopener noreferrer');

@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261119123431-8d27e0e7",
+  "task": "77.44.7.D-D01-archived-media-head-guard",
+  "trigger": "manual",
+  "started_at": "2026-11-19T12:34:31.950Z",
+  "finished_at": "2026-11-19T12:35:22.603Z",
+  "wall_seconds": 51,
+  "paused_seconds": 0,
+  "measured_seconds": 51,
+  "status": "partial",
+  "kind": "test",
+  "summary": "Earlier archived-media HEAD finding was already fixed on current HEAD; relevant media suite passed after confirming archived rows are excluded before R2 head.",
+  "evidence": [
+    "tests/media-api.test.js"
+  ],
+  "checks": "D01 guard present at src/routes/admin/media.ts; npm run test:media 5/5; direct node command omitted required TS extension loader and failed only from invocation form; no source changed, D remains OPEN",
+  "started_revision": "2f5fee2f392db2d3afde9d2dec281a2625e5989b",
+  "finished_revision": "2f5fee2f392db2d3afde9d2dec281a2625e5989b",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
