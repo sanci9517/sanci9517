@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261119082553-711e11b6",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-19T08:25:53.487Z",
+  "finished_at": "2026-11-19T08:31:20.528Z",
+  "wall_seconds": 327,
+  "paused_seconds": 0,
+  "measured_seconds": 327,
+  "status": "pass",
+  "kind": "test",
+  "summary": "Reproduced Editor Core accessibility IME CI assertion locally, confirmed no runtime defect, made input-event regression deterministic, and reran browser plus existing structured-table route gate",
+  "evidence": [
+    "tests/browser/editor-accessibility-ime.test.js:PASS"
+  ],
+  "checks": "Chromium 2/2; route test 1/1; static/evidence validation PASS; hosted runtime-source CI failure remains recorded, no rerun",
+  "started_revision": "194a0c78ffd3ce54b79309d174bfe9bd6aeb35b5",
+  "finished_revision": "194a0c78ffd3ce54b79309d174bfe9bd6aeb35b5",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

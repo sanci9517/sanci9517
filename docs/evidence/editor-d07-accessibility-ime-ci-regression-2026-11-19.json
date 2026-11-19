@@ -1,0 +1,47 @@
+{
+  "schema": "sanci.editor.d07-accessibility-ime-ci-regression.v1",
+  "captured_at_utc": "2026-11-19T08:30:33Z",
+  "plan_point": "77.44.7.D / D-07 — accessibility invalid-language synchronous input regression",
+  "repository": "sanci9517/sanci9517",
+  "branch": "v2/foundation",
+  "runtime_source_sha": "fad2043d96f3bf890005c62c0e34d0084b387f05",
+  "hosted_failure": {
+    "workflow_id": 44482902361,
+    "url": "https://github.com/sanci9517/sanci9517/actions/runs/44482902361",
+    "head_sha": "fad2043d96f3bf890005c62c0e34d0084b387f05",
+    "status": "COMPLETED / FAILURE",
+    "failed_test": "tests/browser/editor-accessibility-ime.test.js — 390px only; immediate aria-invalid expectation received null instead of true",
+    "other_viewport": "1366px PASS",
+    "other_job_steps": "The preceding typecheck, Editor unit, D1 ledger fixture, R2 media, public showcase and Worker media test steps succeeded. Later jobs were skipped after the browser-layout job failed."
+  },
+  "diagnosis": {
+    "runtime_change": false,
+    "confirmed_runtime_defect": false,
+    "source_contract": "normalizeAccessibility synchronously rejects unsupported lang='h'; createCompositionInputs catches the rejection and sets aria-invalid=true.",
+    "evidence": "The 390px case passed three consecutive local runs before the test-only adjustment; the full two-viewport browser test passed 2/2 after the deterministic event adjustment.",
+    "test_change": "Replace locator.fill('h') at the synchronous-event assertion with setting the selected input value and synchronously dispatching a bubbling non-composing InputEvent; immediately assert both the value and aria-invalid state."
+  },
+  "verification": {
+    "command": "node --check tests/browser/editor-accessibility-ime.test.js && git diff --check && CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-accessibility-ime.test.js",
+    "result": "PASS; 2/2 real Chromium viewport tests, 390px and 1366px.",
+    "pre_fix_reproduction": "The original CI failure was not reproduced in three consecutive local 390px runs.",
+    "hosted_rerun": "NOT STARTED: test-only follow-up uses [skip ci]; no duplicate dispatch was sent and free quota was not independently verified."
+  },
+  "production_snapshot": {
+    "runtime_source_unchanged": true,
+    "deployment_id": "a8cb33a3-5179-4fc9-8844-e002a1e1a9e3",
+    "worker_version_id": "31b605b7-fd0d-4cfa-8ddf-849c51eadef2",
+    "traffic_percent": 100,
+    "deployment_checked_in_this_run": true,
+    "new_deployment": false,
+    "d1_migration_or_write": false,
+    "r2_mutation_or_delete": false,
+    "new_cost_huf": 0
+  },
+  "limits": {
+    "plan_point_status": "OPEN / NOT_CERTIFIED",
+    "full_editor_acceptance": "DEFERRED until complete Editor scope",
+    "save_publish": "separate"
+  },
+  "next_step": "Continue the remaining Editor capabilities and the complete D-01–D-07 lifecycle matrix. The failure evidence applies to the original runtime-source CI run; this test-only correction has local browser evidence but no hosted rerun."
+}
