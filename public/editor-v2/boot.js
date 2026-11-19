@@ -38,6 +38,8 @@
   function safeLocation(value) {
     const text = safeText(value, 512);
     if (!text) return '';
+    const scheme = text.match(/^([a-z][a-z\d+.-]*):/i)?.[1]?.toLowerCase();
+    if (scheme && scheme !== 'http' && scheme !== 'https') return `${scheme}:[redacted]`;
     const absoluteUrl = /^[a-z][a-z\d+.-]*:\/\//i.test(text);
     try {
       const url = new URL(text, globalThis.location?.origin || 'https://editor.invalid');

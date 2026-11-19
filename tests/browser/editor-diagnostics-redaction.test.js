@@ -8,7 +8,7 @@ import { createEditorState } from '../../public/editor-v2/core/state.js';
 import { createDocument, NODE_TYPES } from '../../public/editor-v2/core/schema.js';
 import { execute } from '../../public/editor-v2/core/commands.js';
 
-test('preboot errors redact messages, source URLs and raw Error details before storage or logging', async t => {
+test('preboot errors redact messages, source URLs, raw Error details and embedded source payloads', async t => {
   const browser = await chromium.launch({ headless: true, executablePath: process.env.CHROMIUM_PATH || (process.env.CI ? undefined : '/usr/bin/chromium'), args: ['--no-sandbox'] });
   t.after(() => browser.close());
   const page = await browser.newPage();
@@ -29,6 +29,14 @@ test('preboot errors redact messages, source URLs and raw Error details before s
       colno: 12,
       error
     }));
+    window.dispatchEvent(new ErrorEvent('error', {
+      message: 'Inline script failed',
+      filename: 'data:text/javascript,raw-data-source-secret'
+    }));
+    window.dispatchEvent(new ErrorEvent('error', {
+      message: 'Blob script failed',
+      filename: 'blob:https://cdn.example.invalid/raw-blob-source-secret'
+    }));
   });
 
   const result = await page.evaluate(() => ({
@@ -37,10 +45,10 @@ test('preboot errors redact messages, source URLs and raw Error details before s
     bootState: document.documentElement.dataset.editorBoot
   }));
   const serialized = JSON.stringify({ records: result.records, status: result.status, consoleArgs });
-  for (const secret of ['raw-bearer', 'raw-token', 'raw-state', 'query-secret', 'file-secret', 'private-site', 'user@example.com', 'raw-object-secret']) {
+  for (const secret of ['raw-bearer', 'raw-token', 'raw-state', 'query-secret', 'file-secret', 'private-site', 'user@example.com', 'raw-object-secret', 'raw-data-source-secret', 'raw-blob-source-secret']) {
     assert.equal(serialized.includes(secret), false, `preboot diagnostics must not retain or log ${secret}`);
   }
-  assert.equal(result.records.length, 1);
+  assert.equal(result.records.length, 3);
   assert.equal(result.records[0].code, 'SANCI-BOOT-E001');
   assert.match(result.records[0].message, /\[redacted\]/);
   assert.equal(result.records[0].file, 'editor/chunk.js');
@@ -49,6 +57,8 @@ test('preboot errors redact messages, source URLs and raw Error details before s
   assert.equal(result.records[0].column, 12);
   assert.equal(Object.hasOwn(result.records[0], 'error'), false, 'raw Error instances are never queued for later diagnostics initialization');
   assert.ok(result.records[0].message.length <= 320);
+  assert.equal(result.records[1].file, 'data:[redacted]');
+  assert.equal(result.records[2].file, 'blob:[redacted]');
   assert.equal(result.bootState, 'error');
   assert.match(result.status, /^Editor betöltési hiba:/);
 });

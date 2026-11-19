@@ -1,0 +1,115 @@
+{
+  "schema": "sanci.editor.edt042-non-http-source-redaction.v1",
+  "recorded_at_utc": "2026-11-19T06:33:11Z",
+  "repository": "sanci9517/sanci9517",
+  "branch": "v2/foundation",
+  "base_head": "d9a680511561c09891c80aebcb1b8367e5fa688f",
+  "plan_point": "77.44 / WEB-011 -> 77.44.7.D / EDT-042 adjacent diagnostics security regression",
+  "status": "LOCAL_VERIFIED_RUNTIME_PATCH_RELEASE_PENDING",
+  "defect": "The previous preboot source sanitizer stripped origins/queries for HTTP URLs but parsed non-HTTP schemes as paths. A data: filename can contain arbitrary inline source text; a blob: filename can reveal its embedded location. Both could therefore expose payload data in early diagnostics.",
+  "implementation": {
+    "scheme_policy": "Only HTTP and HTTPS source locations retain a bounded path. All other explicit URI schemes are reduced to <scheme>:[redacted], before URL parsing.",
+    "regression": "Real Chromium emits data:text/javascript,raw-data-source-secret and blob:https://cdn.example.invalid/raw-blob-source-secret filenames and verifies neither payload reaches stored diagnostics or console output.",
+    "bounds": "Retains at most 100 early events, 320 characters per message, and no raw Error or target object.",
+    "invariants": "No change to page model, Save, Publish, API, production D1 or R2 behavior."
+  },
+  "changed_runtime_paths": [
+    "public/editor-v2/boot.js",
+    "public/editor-v2/index.html"
+  ],
+  "changed_test_paths": [
+    "tests/browser/editor-diagnostics-redaction.test.js"
+  ],
+  "changed_evidence_paths": [
+    "docs/evidence/feature-traceability.json",
+    "docs/evidence/editor-042-non-http-source-redaction-2026-11-19.json"
+  ],
+  "source_sha256": {
+    "public/editor-v2/boot.js": "ca43041dd8dfd0ce2ac4815194a6c7a391d8bdef0b589057bbf69282ddfb34ac",
+    "public/editor-v2/index.html": "4ca727c1e4991f4ca409ba25f82de9ed442a00a43bb2cb234e4f4877c1a8f9bc",
+    "tests/browser/editor-diagnostics-redaction.test.js": "c534abc0d1f89cf51b929b870017a14c4f039383226137c705f4dd2c1eed1842"
+  },
+  "checks": {
+    "targeted_browser": {
+      "status": "PASS",
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-diagnostics-redaction.test.js",
+      "result": "3/3 real Chromium tests passed; includes HTTP/query/raw Error redaction, data:/blob: source-payload redaction, queue/message bounds, and failed Save draft preservation/retry."
+    },
+    "editor_unit_suite": {
+      "status": "PASS",
+      "command": "npm run test:editor",
+      "result": "22/22 test files; 4/4 subreaper/manifest checks."
+    },
+    "typecheck": {
+      "status": "PASS",
+      "command": "npm run typecheck -- --pretty false"
+    },
+    "traceability": {
+      "status": "PASS",
+      "command": "python3 scripts/build-feature-traceability.py --check",
+      "result": "396/396."
+    },
+    "canonical_plan": {
+      "status": "PASS",
+      "command": "python3 scripts/check-canonical-plan.py",
+      "result": "One 13-part master; 396 mappings; acceptance NOT_CERTIFIED."
+    },
+    "plan_contract": {
+      "status": "PASS",
+      "command": "python3 tests/plan-contract.test.py",
+      "result": "15/15."
+    },
+    "active_point_audit": {
+      "status": "PASS_OPEN",
+      "command": "python3 scripts/audit-active-plan-point.py",
+      "result": "77.44.7.D OPEN / NOT_CERTIFIED; 147 PARTIAL_SOURCE; 249 UNVERIFIED."
+    },
+    "migration_safety": {
+      "status": "PASS",
+      "command": "npm run test:web013:migration-gate"
+    },
+    "syntax_and_diff": {
+      "status": "PASS",
+      "command": "node --check public/editor-v2/boot.js; node --check tests/browser/editor-diagnostics-redaction.test.js; git diff --check"
+    },
+    "wrangler_dry_run": {
+      "status": "PASS_NO_PUBLISH",
+      "version": "4.130.0",
+      "assets": 195,
+      "upload_kib": 393.29,
+      "gzip_kib": 100.77,
+      "published": false
+    },
+    "production_d1_preflight": {
+      "status": "PASS_READ_ONLY",
+      "observed_at_utc": "2026-11-19T06:32Z",
+      "queries": [
+        "SELECT COUNT(*) AS migration_count, MAX(name) AS latest_migration FROM d1_migrations",
+        "PRAGMA quick_check",
+        "PRAGMA foreign_key_check"
+      ],
+      "migration_count": 35,
+      "latest_migration": "0029_media_archive_unicode_additive.sql",
+      "quick_check": "ok",
+      "foreign_key_violations": 0,
+      "rows_written": 0,
+      "changes": 0,
+      "changed_db": false
+    }
+  },
+  "pre_release_worker_snapshot": {
+    "deployment_id": "546d67bc-bde9-49ec-a9b1-7c3ac30a3e78",
+    "version_id": "c144d397-0669-41b5-839a-1fdc6cc4b8b3",
+    "traffic_percent": 100,
+    "source_sha": "872c0caf003242e3894b80efc9cc7a38da2017c2",
+    "meaning": "The preceding v2 preboot redaction code is live; this follow-up patch has not yet been released."
+  },
+  "release": {
+    "status": "PENDING_RUNTIME_COMMIT_PUSH_EXACT_SHA_CI_AUTOMATIC_BUILD_AND_LIVE_VERIFICATION",
+    "expected_push_mode": "Normal fast-forward only; remote v2/foundation is the current local HEAD ancestor; no force push.",
+    "no_manual_ci_dispatch": true
+  },
+  "acceptance_boundary": "This is a non-HTTP source-location redaction sub-slice within EDT-042, not full EDT-042, not the complete D-01..D-07 capability/lifecycle matrix, and not full Editor acceptance. 77.44.7.D remains OPEN / NOT_CERTIFIED; full Editor manual/physical acceptance is DEFERRED. Save and Publish remain separate.",
+  "production_mutations": false,
+  "cost": "0 Ft; public-repository standard GitHub CI only, no paid service, no D1 write/migration and no R2 mutation/deletion."
+}
