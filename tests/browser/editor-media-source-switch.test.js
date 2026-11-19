@@ -163,7 +163,7 @@ test('a revoked editor Save keeps the local draft dirty and never changes the pu
  await f.select('image');
  const imageField=f.field('image');await imageField.fill('/revoked-membership-draft.svg');
  const previousDraft=structuredClone(f.draft()),previousPublished=await f.source(f.live,'image');
- f.rejectNextSave();await f.editor.locator('#save').click();
+ f.rejectNextSave(403,'SITE_ACCESS_DENIED','Nincs megfelelő jogosultság ezen a webhelyen.');await f.editor.locator('#save').click();
  await f.editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent==='Mentési hiba');
  assert.equal(f.writeAttempts.length,1);assert.equal(f.writeAttempts[0].publish,false,'the rejected request is a Save, never a Publish');
  assert.equal(await imageField.inputValue(),'/revoked-membership-draft.svg','the unsaved local edit remains in the open Inspector');

@@ -1,0 +1,51 @@
+{
+  "date_utc": "2026-11-19",
+  "plan_point": "77.44.7.D / D-07",
+  "status": "TARGETED_REGRESSION_PASS; FULL_D_OPEN_NOT_CERTIFIED",
+  "scope": "Deny draft Save and Publish after an already-open tenant Editor loses editor membership, without discarding local work or changing stored/public content.",
+  "test_changes": [
+    "tests/web013-tenant-pages-editor.test.js",
+    "tests/browser/editor-media-source-switch.test.js"
+  ],
+  "behavior": {
+    "route": "The Editor GET succeeds with editor membership. After the active membership is downgraded to viewer, both Save (publish=false) and Publish return 403; content_json, published_content_json, published_revision_id, is_published, editor revision count, and audit count remain unchanged.",
+    "browser": "An exact SITE_ACCESS_DENIED 403 during Save leaves the unsaved field visible and dirty, leaves server draft and public content unchanged, and permits a later Save after access is restored without implicitly publishing.",
+    "save_publish": "Save and Publish remain distinct operations."
+  },
+  "checks": {
+    "route_regression": {
+      "command": "node --experimental-loader ./tests/ts-extension-loader.mjs --test tests/web013-tenant-pages-editor.test.js",
+      "result": "PASS 25/25"
+    },
+    "browser_regression": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-media-source-switch.test.js",
+      "result": "PASS 5/5; includes 390px and 1366px"
+    },
+    "static": {
+      "command": "node --check tests/browser/editor-media-source-switch.test.js && git diff --check",
+      "result": "PASS"
+    },
+    "active_point": {
+      "command": "python3 scripts/audit-active-plan-point.py",
+      "result": "OPEN / NOT_CERTIFIED; 147 PARTIAL_SOURCE / 249 UNVERIFIED"
+    }
+  },
+  "runtime": {
+    "changed": false,
+    "deployment": "No deployment for this test-only slice. Current Worker remains deployment 0add5fdb-fbdd-42a3-b2f7-8089e98c0ebe / version 9130eb09-666f-45b6-8bf3-5c324ac0b35b at 100% traffic.",
+    "production_d1_preflight": "Not required for a test-only change; no production D1 query or mutation performed.",
+    "production_r2": "No production R2 operation."
+  },
+  "ci": "No separate CI dispatch/rerun; test-only changes follow the repository [skip ci] policy.",
+  "limits": {
+    "new_cost_huf": 0,
+    "full_plan_point": "OPEN / NOT_CERTIFIED",
+    "manual_physical_editor_acceptance": "DEFERRED until the complete Editor scope"
+  },
+  "developer_run": {
+    "id": "20261119103816-856f17ce",
+    "measured_seconds": 235,
+    "status": "pass",
+    "kind": "test"
+  }
+}
