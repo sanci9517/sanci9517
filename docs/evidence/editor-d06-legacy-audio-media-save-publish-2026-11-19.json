@@ -1,0 +1,53 @@
+{
+  "schema": "sanci.editor.d06-legacy-audio-media-save-publish.v1",
+  "captured_at_utc": "2026-11-19T09:03:00Z",
+  "plan_point": "77.44.7.D / D-06 — legacy audio Media Library source replacement lifecycle",
+  "repository": "sanci9517/sanci9517",
+  "branch": "v2/foundation",
+  "base_commit": "4c7b39f600ab8f753daad4e855860b61745dc068",
+  "canonical_plan_sha256": "22cb263e9a43a4424d8bdb72e4b5daee215fdb45a48b7db3c2b80817821d9b3a",
+  "test_source_sha256": "56b104f81a1337cefac711d4f1e589f515eed56e270bfebed44f6eb852fb506e",
+  "change": {
+    "file": "tests/browser/editor-legacy-media-parity.test.js",
+    "summary": "Extends the existing legacy media browser fixture with the missing Audio Media Library replacement path: selecting an audio asset clears the URL, uses the authenticated editor preview, draft Save stores the asset ID without changing published audio, reload restores the selection, and explicit Publish exposes the /media/<id> URL. The fixture now serves the exact audio asset on its authenticated and public routes.",
+    "runtime_change": false,
+    "production_data_change": false,
+    "save_publish": "Explicit Save and Publish remain separate; pre-Publish public audio remains unchanged."
+  },
+  "verification": {
+    "targeted_chromium": "PASS; tests/browser/editor-legacy-media-parity.test.js and its imported D-06 regression: 2/2, Chromium, serial, Linux subreaper. First sandbox attempt blocked before assertions by loopback listen EPERM; authorized local-loopback run passed. Two interim failures were expectation mismatches (relative URL properties resolve to origin-qualified values); assertions now compare URL pathnames.",
+    "editor_unit": "PASS; npm run test:editor, 22/22 test files and 4/4 runner/manifest tests.",
+    "plan_contract": "PASS; python3 tests/plan-contract.test.py, 15/15.",
+    "traceability": "PASS; 396/396 mapping.",
+    "active_plan_audit": "PASS; 77.44.7.D remains OPEN / NOT_CERTIFIED, 147 PARTIAL_SOURCE / 249 UNVERIFIED.",
+    "canonical_plan": "PASS; complete 13-file master and 396 mappings; acceptance remains NOT_CERTIFIED.",
+    "syntax_diff": "PASS; node --check and git diff --check.",
+    "workflow_manifest": "The modified test remains in the existing Editor Core browser layout workflow; no workflow file changes."
+  },
+  "production_snapshot": {
+    "checked_in_this_run": true,
+    "worker": "sanci9517-streamer-brand",
+    "deployment_id": "a8cb33a3-5179-4fc9-8844-e002a1e1a9e3",
+    "worker_version_id": "31b605b7-fd0d-4cfa-8ddf-849c51eadef2",
+    "traffic_percent": 100,
+    "runtime_source_sha": "fad2043d96f3bf890005c62c0e34d0084b387f05",
+    "runtime_unchanged_by_this_test_change": true,
+    "new_deployment": false,
+    "health_or_asset_hash_smoke_required": false,
+    "production_d1_migration_or_write": false,
+    "production_r2_mutation_or_delete": false
+  },
+  "release": {
+    "change_kind": "test-only",
+    "new_cost_huf": 0,
+    "ci": "not dispatched; [skip ci] follow-up per repository policy",
+    "worker_deployment": "not required; runtime unchanged"
+  },
+  "limits": {
+    "plan_point_status": "OPEN / NOT_CERTIFIED",
+    "full_editor_manual_physical_acceptance": "DEFERRED until complete Editor scope",
+    "d01_d07_matrix": "incomplete",
+    "save_publish": "separate"
+  },
+  "next_step": "Continue remaining plan-listed Editor feature slices and D-01–D-07 lifecycle matrix; do not certify full D from this audio test."
+}

@@ -67,7 +67,7 @@ test('legacy image video audio share guarded media URLs in Inspector Canvas and 
       const asset=playable==='video'?{id:videoMediaId,name:'bemutatkozas.webm',mimeType:'video/webm',altText:'Bemutatkozó videó',previewUrl:'/api/admin/media?id='+videoMediaId}:playable==='audio'?{id:audioMediaId,name:'hangminta.wav',mimeType:'audio/wav',altText:'',previewUrl:'/api/admin/media?id='+audioMediaId}:{id:mediaId,name:'saját-kép.png',mimeType:'image/png',altText:'Médiatárból választott kép',previewUrl:'/api/admin/media?id='+mediaId};
       return json({ok:true,data:{assets:[asset],nextCursor:null}});
     }
-    if((url.pathname==='/api/admin/media'&&(url.searchParams.get('id')===mediaId||url.searchParams.get('id')===videoMediaId))||url.pathname==='/media/'+mediaId||url.pathname==='/media/'+videoMediaId){
+    if((url.pathname==='/api/admin/media'&&(url.searchParams.get('id')===mediaId||url.searchParams.get('id')===videoMediaId||url.searchParams.get('id')===audioMediaId))||url.pathname==='/media/'+mediaId||url.pathname==='/media/'+videoMediaId||url.pathname==='/media/'+audioMediaId){
       res.setHeader('content-type',url.searchParams.get('id')===audioMediaId?'audio/wav':'image/svg+xml');
       return res.end(url.searchParams.get('id')===audioMediaId?Buffer.alloc(16):'<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"><rect width="20" height="20" fill="#56f"/></svg>');
     }
@@ -371,13 +371,26 @@ test('legacy image video audio share guarded media URLs in Inspector Canvas and 
   const soundPreview=canvasNode(ids.goodAudio).locator('audio');
   assert.equal(await soundPreview.evaluate(el=>el.controls),false);
   assert.equal(await soundPreview.evaluate(el=>el.loop),true);
+  const audioPicker=audioInspector.getByRole('button',{name:'Médiatár megnyitása'});
+  await audioPicker.click();
+  await audioInspector.getByRole('button',{name:'hangminta.wav kiválasztása'}).click();
+  assert.equal(await audioInspector.getByRole('textbox',{name:'Hang URL'}).inputValue(),'','selecting an audio asset clears the previous URL source');
+  assert.equal(await soundPreview.getAttribute('src'),'/api/admin/media?id='+audioMediaId,'audio selection previews through the authenticated media route');
+  assert.equal(await publishedNode(ids.goodAudio).evaluate(el=>new URL(el.getAttribute('src'),location.href).pathname),'/fixture.webm','audio media selection remains draft-only before Save');
 
   await editor.locator('#save').click();
   await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
   assert.equal(posts.at(-1).publish,false,'playback controls do not auto-publish');
+  assert.equal(draft.pages[pageId].nodes[ids.goodAudio].props.assetId,audioMediaId,'Save persists the selected audio asset ID');
+  assert.equal(draft.pages[pageId].nodes[ids.goodAudio].props.src,'','Save clears the superseded audio URL');
   await viewer.reload();
   assert.equal(await publishedNode(ids.goodVideo).getAttribute('poster'),null,'Save keeps old public video');
+  assert.equal(await publishedNode(ids.goodAudio).evaluate(el=>new URL(el.getAttribute('src'),location.href).pathname),'/fixture.webm','Save does not expose a private audio asset');
   assert.equal(await publishedNode(ids.goodAudio).evaluate(el=>el.controls),true,'Save keeps old public audio');
+  await editor.reload();
+  await canvasNode(ids.goodAudio).evaluate(el=>el.click());
+  assert.equal(await editor.locator('.legacy-media-inspector').getByRole('textbox',{name:'Hang URL'}).inputValue(),'','the audio asset ID and empty companion URL survive Editor reload');
+  assert.equal(await editor.locator('.legacy-media-inspector').locator('.editor-media-selected').getAttribute('aria-label'),'Kiválasztott hang','the audio picker restores its selected media kind after reload');
   await editor.locator('#publish').click();
   await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
   assert.equal(posts.at(-1).publish,true);
@@ -390,6 +403,7 @@ test('legacy image video audio share guarded media URLs in Inspector Canvas and 
   assert.match(await publishedMovie.getAttribute('poster'),/\/media\/00000000-0000-4000-8000-000000000123$/);
   assert.equal(await publishedSound.getAttribute('controls'),null);
   assert.equal(await publishedSound.getAttribute('loop'),'');
+  assert.equal(await publishedSound.evaluate(el=>new URL(el.getAttribute('src'),location.href).pathname),'/media/'+audioMediaId,'only the separate Publish exposes the selected audio asset on the public page');
   await viewer.setViewportSize({width:390,height:820});
   assert.equal(await publishedMovie.getAttribute('poster')!==null,true,'mobile public poster is preserved');
   assert.equal(await publishedSound.getAttribute('loop'),'','mobile audio still loops');
