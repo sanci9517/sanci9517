@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261120105330-2a95a147",
+  "task": "77.44.7.D-D06-followup",
+  "trigger": "manual",
+  "started_at": "2026-11-20T10:53:30.470Z",
+  "finished_at": "2026-11-20T11:17:10.978Z",
+  "wall_seconds": 1421,
+  "paused_seconds": 0,
+  "measured_seconds": 1421,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "Fixed Unicode-escaped malformed schedule artwork reference handling; production safe deployment verified. One media storage Chromium integration remains blocked by pending-promise/event-loop harness behavior; full D point remains open.",
+  "evidence": [
+    "docs/evidence/editor-d06-malformed-sidecar-release-2026-11-20.json",
+    "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md"
+  ],
+  "checks": "media 5/5; schedule 4/4+2/2; typecheck; source smoke; plan contract 15/15; traceability 396/396; safe deploy; live Worker 100%; health 200; bundle hash exact",
+  "started_revision": "8b2b5fbc9d65664c1cccce4183cf51f225e4fd4f",
+  "finished_revision": "06267dbbaca4e20b4a8d494be2f3c94be5234ccd",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

@@ -1,0 +1,101 @@
+{
+  "schema_version": 1,
+  "kind": "editor-acceptance-slice",
+  "recorded_at_utc": "2026-11-20T11:14:30Z",
+  "plan_point": "77.44.7.D / D-06 — site-scoped media usage and lifecycle",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "source_sha": "06267dbbaca4e20b4a8d494be2f3c94be5234ccd",
+    "remote_head": "06267dbbaca4e20b4a8d494be2f3c94be5234ccd"
+  },
+  "gap": "Malformed schedule-artwork JSON could encode a media UUID using JSON Unicode escapes. A raw substring search then missed the retained reference, incorrectly reported usage completeness, and could allow archival of an asset while a same-site schedule item's intended target was ambiguous.",
+  "change": {
+    "runtime": true,
+    "files": [
+      "src/core/schedule-artwork.ts",
+      "src/routes/admin/media.ts"
+    ],
+    "tests": [
+      "tests/media-api.test.js"
+    ],
+    "behavior": [
+      "Any malformed artwork sidecar attached to a same-site schedule item makes media usage incomplete; no exact relationship is invented from invalid JSON.",
+      "Malformed artwork JSON does not grant public media access.",
+      "The atomic archive guard blocks assets while malformed same-site schedule sidecars exist, including a sidecar inserted after the advisory usage query.",
+      "A regression fixture confirms a Unicode-escaped UUID is absent from the raw text substring search but the usage report remains incomplete and archival remains denied.",
+      "The conservative guard may retain an unrelated same-site asset until the malformed sidecar is repaired; it does not expose the asset."
+    ],
+    "dependencies_added": []
+  },
+  "checks": {
+    "targeted_malformed_schedule_sidecar_regression": "PASS — 1/1 test after the test first demonstrated the raw UUID search gap.",
+    "npm_run_test_media": "PASS — 5/5 files.",
+    "npm_run_test_schedule": "PASS — 4/4 schedule unit files and 2/2 schedule site/access suites.",
+    "npm_run_typecheck": "PASS — tsc --noEmit.",
+    "plan_contract": "PASS — 15/15 after regenerating the source fingerprint crosswalk.",
+    "canonical_plan_integrity": "PASS — one complete 13-file canonical master and one active cursor; acceptance remains NOT_CERTIFIED.",
+    "feature_traceability": "PASS — 396/396 mappings after regenerating the changed source fingerprint.",
+    "active_plan_cursor": "PASS for bookkeeping — 77.44.7.D remains OPEN / NOT_CERTIFIED; 147 PARTIAL_SOURCE / 249 UNVERIFIED.",
+    "migration_safety_gate": "PASS — deploy:safe only; no production migration or data write.",
+    "worker_production_source_smoke": "PASS — 1/1.",
+    "git_diff_check": "PASS.",
+    "media_worker_storage_browser_test": "BLOCKED — `npm run test:media:storage` and serial Chromium/subreaper retry both ended with `Promise resolution is still pending but the event loop has already resolved`; see `docs/evidence/dev-metrics/runs/2026-11-20/20261120105330-2a95a147.json` for the captured work session. This is not reported as a pass.",
+    "cloudflare_automatic_worker_build": "FAIL — build bfc78862-7ec9-4981-81a1-2b9e092338eb was triggered by the exact pushed SHA; typecheck and migration-safety gate passed, but npm clean-install received a truncated/corrupt @cloudflare/workerd-linux-64@1.20260908.1 tarball and the deployment step could not import the missing workerd binary. No deployment resulted from this failed build.",
+    "wrangler_deploy_dry_run": "PASS — Wrangler 4.130.0, 197 assets, exact production bindings; dry-run output bundle index.js is 405045 bytes with SHA-256 6468b137e254fc46a49933d0cd362f9dca58d646e42d38115c21f07544b209ac.",
+    "manual_safe_deploy": "PASS — `npm run deploy:safe` exited 0 after the guarded migration-safety gate; it uploaded no changed public assets and created the Worker version below."
+  },
+  "release": {
+    "state": "RELEASED_AND_VERIFIED",
+    "source_sha": "06267dbbaca4e20b4a8d494be2f3c94be5234ccd",
+    "push": "PASS — normal fast-forward from 8b2b5fbc to 06267dbb on v2/foundation; GitHub compare confirmed exact branch HEAD with no divergence.",
+    "failed_automatic_build": {
+      "build_uuid": "bfc78862-7ec9-4981-81a1-2b9e092338eb",
+      "source_sha": "06267dbbaca4e20b4a8d494be2f3c94be5234ccd",
+      "outcome": "failed_before_deployment",
+      "cause": "Truncated npm registry tarball for @cloudflare/workerd-linux-64@1.20260908.1 left the workerd binary unavailable in the build container."
+    },
+    "deployment": "a0fdd47c-cdb8-4eaa-a3a8-fe55c7e4b61a",
+    "worker_version": "d2fdb885-2ba7-4291-9ab9-54fb2acbf471",
+    "traffic_percent": 100,
+    "deployment_created_on": "2026-11-20T11:12:07.284428Z",
+    "production_health": {
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+      "method": "GET",
+      "http_status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "public_asset_hashes": "No public asset source changed; Wrangler reported no updated public asset files to upload.",
+    "worker_bundle_hash": {
+      "local_dry_run_index_js_sha256": "6468b137e254fc46a49933d0cd362f9dca58d646e42d38115c21f07544b209ac",
+      "deployed_index_js_sha256": "6468b137e254fc46a49933d0cd362f9dca58d646e42d38115c21f07544b209ac",
+      "bytes": 405045,
+      "verification": "Cloudflare Worker Script Content API multipart index.js part was hashed without exposing its source; exact SHA-256 and byte length match the Wrangler dry-run bundle."
+    },
+    "d1_preflight": {
+      "mode": "Cloudflare D1 Query API SELECT-only batch immediately before manual safe deployment",
+      "migration_count": 35,
+      "latest_migration": "0029_media_archive_unicode_additive.sql",
+      "malformed_schedule_artwork_sidecars": 0,
+      "media_asset_rows": 27,
+      "rows_written": 0,
+      "changes": 0,
+      "changed_db": false
+    },
+    "production_d1_write_or_migration": false,
+    "production_r2_operation": false,
+    "new_cost_huf": 0
+  },
+  "limitations": [
+    "The media-worker-storage browser integration remains blocked by a pending-promise/event-loop issue; it was not counted as a pass.",
+    "This proves one D-06 malformed-sidecar fail-closed slice, not full D-06, D-01–D-07, or full Editor acceptance.",
+    "Full Visual Editor manual/physical acceptance remains deferred until the planned Editor scope is implemented.",
+    "Save and Publish remain separate."
+  ],
+  "released_at_utc": "2026-11-20T11:12:07Z"
+}
