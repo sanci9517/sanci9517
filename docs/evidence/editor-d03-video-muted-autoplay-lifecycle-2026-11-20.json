@@ -1,0 +1,99 @@
+{
+  "schema_version": 1,
+  "kind": "editor-d03-real-worker-video-lifecycle-slice",
+  "date": "2026-11-20",
+  "development_measurement": "20261120162051-17a140e0",
+  "active_plan_point": {
+    "cursor": "77.44.7.D",
+    "subarea": "D-03 authored media Inspector and public renderer parity",
+    "status": "OPEN / NOT_CERTIFIED",
+    "source_audit_counts": {
+      "partial_source": 147,
+      "unverified": 249,
+      "total": 396
+    }
+  },
+  "scope": {
+    "verified_slice": "Authored video muted-autoplay and controls-free lifecycle through the real Editor Inspector, Save, reload, separate Publish, and public playback.",
+    "not_certified": [
+      "full D-03",
+      "full D-01 through D-07",
+      "77.44.7.D",
+      "complete Visual Editor scope",
+      "manual or physical device acceptance"
+    ]
+  },
+  "behavior": [
+    "The actual Inspector permits controls=false for video only when autoplay=true and muted=true.",
+    "The Editor Canvas remains muted and controls-free but suppresses autoplay while editing.",
+    "Save persists the exact authored settings and media IDs to the draft; it does not make the video or poster public.",
+    "Editor reload restores the autoplay, muted, controls, source, and poster state.",
+    "Only the separate Publish grants public routes and renders autoplay=true, muted=true, controls=false.",
+    "The published video enters playback automatically in Chromium; its source and image poster bytes/MIME are checked against isolated D1/R2 fixtures.",
+    "The media usage API reports the poster as draft-only before Publish and published after Publish."
+  ],
+  "reuse_review": {
+    "used": "Existing SANCI authored-content Inspector, Page Model, Worker upload/publication routes, Miniflare D1/R2 fixtures, Playwright, and native HTMLVideoElement muted-autoplay behavior.",
+    "license_or_dependency_change": "No external source copied and no dependency added; existing project-owned implementation and test stack reused."
+  },
+  "checks": {
+    "browser_integration": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --experimental-loader ./tests/ts-extension-loader.mjs --test --test-concurrency=1 tests/browser/media-worker-storage.test.mjs",
+      "result": "PASS",
+      "tests": 1,
+      "duration_ms": 156766,
+      "environment": "Local Worker + synthetic Miniflare D1/R2 + Chromium. The test bound only to loopback; the default restricted sandbox returned listen EPERM, so the verified pass used a loopback-capable sandbox. No production service was contacted by the test."
+    },
+    "editor_unit_and_contract": {
+      "command": "npm run test:editor",
+      "result": "PASS",
+      "tests": "22/22 Node test files and 4/4 Linux subreaper runner checks"
+    },
+    "media_api_regressions": {
+      "command": "npm run test:media",
+      "result": "PASS",
+      "tests": "5/5 test files"
+    },
+    "typecheck": {
+      "command": "npm run typecheck",
+      "result": "PASS"
+    },
+    "plan_and_hygiene": {
+      "commands": [
+        "python3 tests/plan-contract.test.py",
+        "python3 scripts/check-canonical-plan.py",
+        "python3 scripts/build-feature-traceability.py --check",
+        "python3 scripts/audit-active-plan-point.py",
+        "node --check tests/browser/media-worker-storage.test.mjs",
+        "git diff --check"
+      ],
+      "result": "PASS",
+      "results": "15 plan contract tests; one 13-file canonical master with 396 mappings; 396/396 traceability mappings; active cursor remains 77.44.7.D OPEN / NOT_CERTIFIED, source status 147 PARTIAL_SOURCE and 249 UNVERIFIED."
+    }
+  },
+  "source_release": {
+    "test_commit": "783df3db2212a56e53cfd16fc09c7f1dd0ec0358",
+    "test_commit_message": "[skip ci] test(editor): cover muted autoplay video lifecycle",
+    "branch": "v2/foundation",
+    "branch_head_verified": "783df3db2212a56e53cfd16fc09c7f1dd0ec0358",
+    "test_blob": "67f86ac43df0e8deeaac8080342fe3657e35d33d",
+    "worker_runtime_source_changed": false,
+    "worker_deployment_required": false,
+    "hosted_ci": "NOT RUN; test-only [skip ci] change, Actions quota remains unverified per the 0-cost plan"
+  },
+  "live_worker_read_only_snapshot": {
+    "deployment_id": "5543b768-ff27-4f3b-8609-9b8b981a006e",
+    "version_id": "db5de010-ab32-4bbd-b1c0-e34b798bbab0",
+    "traffic_percent": 100,
+    "observed_by": "Cloudflare Workers Deployments API GET",
+    "health_http_get": "UNVERIFIED: direct request failed because the environment proxy at port 8080 refused the connection; this test-only commit did not need a production health check"
+  },
+  "production_data_and_cost": {
+    "production_d1_queries_or_writes": "NONE",
+    "production_d1_migration": "NONE",
+    "production_r2_operations": "NONE",
+    "new_dependency": "NONE",
+    "new_cost_huf": 0
+  },
+  "acceptance_boundary": "This evidence certifies only the automated muted-autoplay authored video slice. Save remains separate from Publish. Full D-03, D-01–D-07, the complete Visual Editor, and the consolidated manual/physical acceptance remain OPEN/DEFERRED."
+}

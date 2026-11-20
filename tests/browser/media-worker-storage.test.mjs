@@ -22,6 +22,7 @@ wav.writeUInt16LE(2,32);wav.writeUInt16LE(16,34);wav.write('data',36);wav.writeU
 // Reuse the repository's tiny, procedurally generated, known-playable VP9 fixture.
 const webm=readFileSync(resolve(import.meta.dirname,'../fixtures/editor-sample.webm'));
 const digest=bytes=>createHash('sha256').update(Buffer.from(bytes)).digest('hex');
+
 test('real Worker Media Library upload and Editor image/audio/video Save-reload-Publish lifecycle with local D1/R2', {timeout:240000},async t=>{
  const cleanups=[];
  // Node test-context after hooks run in registration order, so keep dependent

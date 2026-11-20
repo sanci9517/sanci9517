@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261120162051-17a140e0",
+  "task": "77.44.7.D-D03-authored-muted-autoplay-control-free-video-lifecycle",
+  "trigger": "manual",
+  "started_at": "2026-11-20T16:20:51.557Z",
+  "finished_at": "2026-11-20T16:47:57.862Z",
+  "wall_seconds": 1626,
+  "paused_seconds": 0,
+  "measured_seconds": 1626,
+  "status": "pass",
+  "kind": "test",
+  "summary": "D-03 authored muted-autoplay video lifecycle slice verified in real Worker/Chromium; full D remains OPEN.",
+  "evidence": [
+    "docs/evidence/editor-d03-video-muted-autoplay-lifecycle-2026-11-20.json",
+    "commit:783df3db2212a56e53cfd16fc09c7f1dd0ec0358"
+  ],
+  "checks": "media-worker-storage 1/1 Chromium; test:editor 22/22; test:media 5/5; typecheck; plan-contract 15; canonical master 13/396; traceability 396/396; active-point audit OPEN as expected; syntax/diff check.",
+  "started_revision": "ba5501809611d98ca67b48c75f5a998a148ffd2b",
+  "finished_revision": "ba5501809611d98ca67b48c75f5a998a148ffd2b",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
