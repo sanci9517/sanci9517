@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "kind": "editor-acceptance-slice",
+  "recorded_at_utc": "2026-11-20T08:57:52Z",
+  "plan_point": "77.44.7.D / D-06 — site-scoped media usage and lifecycle",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "source_sha_before_change": "acc66a15b99059f78eae6b25336b5703b8c2b432",
+    "remote_head_before_change": "acc66a15b99059f78eae6b25336b5703b8c2b432"
+  },
+  "gap": "A malformed schedule-artwork sidecar that retained the media UUID was not detected by either the exact usage index or the atomic media archive predicate. This allowed the usage report to claim completeness and could permit archival while an ambiguous same-site schedule reference remained.",
+  "change": {
+    "runtime": true,
+    "files": [
+      "src/core/schedule-artwork.ts",
+      "src/routes/admin/media.ts"
+    ],
+    "tests": ["tests/media-api.test.js"],
+    "behavior": [
+      "A malformed sidecar containing the asset ID marks usage analysis incomplete without inventing an exact relationship.",
+      "Malformed sidecars never grant public media delivery.",
+      "The atomic archive predicate conservatively blocks a malformed reference, including one introduced after the advisory usage query.",
+      "False-positive substring matches can retain an asset but cannot expose it; the exact decoded-JSON match remains required for public delivery."
+    ],
+    "third_party_code": "None added; existing D1, media, and schedule code reused.",
+    "dependencies_added": []
+  },
+  "checks": {
+    "red_green_regression": "PASS — the new test failed before the fix at the usage-complete assertion; after the fix the media suite passed.",
+    "npm_run_test_media": "PASS — all 5 media test files, 0 failed.",
+    "npm_run_test_schedule": "PASS — schedule source/week/artwork/countdown tests 4/4 and schedule site/access suites 2/2.",
+    "npm_run_typecheck": "PASS — tsc --noEmit.",
+    "npm_run_test_web013_migration_gate": "PASS — deploy:safe runs only the guarded migration-safety gate before deploy.",
+    "wrangler_deploy_dry_run": "PASS — local Wrangler 4.130.0; 197 public asset files; 395.71 KiB total / 101.08 KiB gzip; DB and MEDIA bindings resolved; dry-run exited 0 without publishing.",
+    "plan_contract": "PASS — 15/15 after regenerating the expected source fingerprint.",
+    "canonical_plan_integrity": "PASS — complete 13-file canonical master; functional acceptance remains NOT_CERTIFIED.",
+    "feature_traceability": "PASS — 396/396 mappings after the project generator refreshed the changed source fingerprint.",
+    "active_plan_cursor": "PASS — 77.44.7.D remains OPEN / NOT_CERTIFIED; 147 PARTIAL_SOURCE and 249 UNVERIFIED.",
+    "git_diff_check": "PASS."
+  },
+  "release": {
+    "state": "PENDING",
+    "source_sha": null,
+    "push": "NOT_YET_PERFORMED",
+    "automatic_worker_build": "PENDING",
+    "deployment": null,
+    "worker_version": null,
+    "traffic_percent": null,
+    "production_health": "NOT_YET_CHECKED",
+    "public_asset_hashes": "UNCHANGED — no public assets changed",
+    "d1_preflight": {
+      "mode": "Cloudflare D1 Query API; SELECT-only batch",
+      "migration_count": 35,
+      "latest_migration": "0029_media_archive_unicode_additive.sql",
+      "core_tables_present": ["editor_revisions", "media", "pages", "schedule_items", "site_settings"],
+      "changes": 0,
+      "rows_written": 0,
+      "changed_db": false
+    },
+    "production_d1_write_or_migration": false,
+    "production_r2_operation": false,
+    "new_cost_huf": 0
+  },
+  "limitations": [
+    "This proves one D-06 malformed-sidecar safety slice, not full D-06, D-01–D-07, or full Editor acceptance.",
+    "Full Visual Editor manual/physical acceptance remains deferred until the planned Editor scope is implemented.",
+    "Save and Publish remain separate."
+  ]
+}

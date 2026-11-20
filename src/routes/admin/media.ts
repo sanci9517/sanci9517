@@ -10,7 +10,7 @@ import { isStructuredType, normalizeElementContent } from "../../../public/edito
 import { prepareRetentionRequest, prepareRetentionCancellation } from "../../core/media-retention-request.js";
 import { retentionQueries } from "../../core/media-retention-queries.js";
 import { mediaReferenceSql } from "../../core/media-reference-sql.js";
-import { SCHEDULE_ARTWORK_ARCHIVE_GUARD,SCHEDULE_ARTWORK_ASSET_MATCH } from "../../core/schedule-artwork.ts";
+import { SCHEDULE_ARTWORK_ARCHIVE_GUARD,SCHEDULE_ARTWORK_ASSET_MATCH,SCHEDULE_ARTWORK_MALFORMED_ASSET_MATCH } from "../../core/schedule-artwork.ts";
 
 // Keep playable uploads inside the existing low-cost, application-level cap.
 // This is not a provider billing ceiling and deliberately excludes large video.
@@ -421,6 +421,12 @@ async function mediaUsage(request: Request, env: Env, siteId: string, assetId: s
      INNER JOIN site_settings artwork ON artwork.key=('schedule-artwork:' || e.site_id || ':' || e.id)
      WHERE e.site_id=? AND ${SCHEDULE_ARTWORK_ASSET_MATCH} ORDER BY e.id LIMIT ${MAX_USAGE_REFERENCES + 1}`
   ).bind(siteId, assetId).all<{ id: string; title: string }>();
+  const malformedScheduleImages = await env.DB.prepare(
+    `SELECT 1 FROM schedule_items e
+     INNER JOIN site_settings artwork ON artwork.key=('schedule-artwork:' || e.site_id || ':' || e.id)
+     WHERE e.site_id=? AND ${SCHEDULE_ARTWORK_MALFORMED_ASSET_MATCH} LIMIT 1`
+  ).bind(siteId, assetId).all<{ 1: number }>();
+  if(malformedScheduleImages.results.length)complete=false;
   if(scheduleImages.results.length>MAX_USAGE_REFERENCES)complete=false;
   for(const item of scheduleImages.results.slice(0,MAX_USAGE_REFERENCES)){
     if(references.length>=MAX_USAGE_REFERENCES){complete=false;break}

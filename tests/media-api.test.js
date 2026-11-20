@@ -1838,3 +1838,59 @@ test("schedule cover JSON representations stay identical in usage index, public 
   assert.equal((await publishedMediaRoute(new Request("https://example.test/media/"+asset.id),f.env,"site-default",asset.id)).status,404,
     "a malformed schedule sidecar grants no public access");
 });
+
+test("malformed schedule sidecars that retain a media ID fail closed for usage and archive",async t=>{
+  const f=await fixture(t);
+  const upload=await f.call("POST","editor",png,{name:"malformed-schedule-reference.png"});
+  assert.equal(upload.status,201);
+  const asset=(await upload.json()).data;
+  const eventId="3f7a0000-0000-4000-8000-000000000015";
+  const key="schedule-artwork:site-default:"+eventId;
+  f.db.prepare("INSERT INTO schedule_items(id,site_id,title) VALUES (?,?,?)")
+    .run(eventId,"site-default","Sérült borítóhivatkozás");
+  // Keep the exact asset ID in a syntactically invalid sidecar. Public delivery
+  // must reject it, while lifecycle checks cannot claim the asset is unused.
+  f.db.prepare("INSERT INTO site_settings(key,value_json) VALUES (?,?)")
+    .run(key,'{"assetId":"'+asset.id+'",');
+
+  const report=await f.call("GET","editor",null,{usage:asset.id});
+  assert.equal(report.status,200);
+  const usage=(await report.json()).data;
+  assert.equal(usage.complete,false,"a recognizable reference in malformed sidecar data makes the usage index incomplete");
+  assert.deepEqual(usage.references,[],"malformed data must not be presented as a verified exact relationship");
+  assert.equal((await publishedMediaRoute(new Request("https://example.test/media/"+asset.id),f.env,"site-default",asset.id)).status,404,
+    "malformed sidecar data never grants public delivery");
+  assert.equal((await f.call("PATCH","editor",JSON.stringify({archived:true}),{id:asset.id})).status,409,
+    "a recognizable malformed reference blocks archival");
+  assert.equal(f.db.prepare("SELECT archived_at FROM media WHERE id=?").get(asset.id).archived_at,null);
+  assert.equal(f.files.size,1,"the safety guard is read-only and retains the R2 object");
+
+  // Also prove the atomic SQL predicate catches a malformed link introduced
+  // after the usage scan, as can happen under concurrent editor requests.
+  f.db.prepare("DELETE FROM site_settings WHERE key=?").run(key);
+  const baseDb=f.env.DB;
+  let injected=false;
+  f.env.DB={...baseDb,prepare(sql){
+    const statement=baseDb.prepare(sql);
+    return {
+      bind(...values){statement.bind(...values);return this;},
+      async first(){return statement.first();},
+      async all(){
+        const result=await statement.all();
+        if(!injected&&sql.includes("NOT json_valid(artwork.value_json)")){
+          injected=true;
+          f.db.prepare("INSERT INTO site_settings(key,value_json) VALUES (?,?)")
+            .run(key,'{"assetId":"'+asset.id+'",');
+        }
+        return result;
+      },
+      async run(){return statement.run();}
+    };
+  }};
+  const raced=await f.call("PATCH","editor",JSON.stringify({archived:true}),{id:asset.id});
+  assert.equal(injected,true,"the malformed sidecar was added after the advisory usage read");
+  assert.equal(raced.status,409,"the atomic archive predicate rejects a raced malformed reference");
+  assert.equal((await raced.json()).error.code,"MEDIA_ASSET_IN_USE");
+  assert.equal(f.db.prepare("SELECT archived_at FROM media WHERE id=?").get(asset.id).archived_at,null);
+  assert.equal(f.files.size,1,"the raced link keeps its binary unchanged");
+});
