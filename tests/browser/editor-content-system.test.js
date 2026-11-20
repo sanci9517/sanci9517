@@ -1153,6 +1153,99 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   await live.reload();
   assert.equal(await node(live,'audio').locator('audio').getAttribute('controls'),'', 'Publish exposes accessible native audio controls');
   assert.equal(await node(live,'audio').locator('audio').getAttribute('loop'),'', 'Publish exposes the authored audio loop setting');
+  // Exercise the complete authored background-video contract. Hiding video
+  // controls is allowed only when muted autoplay is also enabled; an
+  // incomplete combination can be saved privately, then repaired and
+  // published as a distinct operation.
+  await select('video');
+  const videoControlsField=editor.locator('.content-schema-field[data-content-key="controls"] input');
+  const videoMutedField=editor.locator('.content-schema-field[data-content-key="muted"] input');
+  const videoAutoplayField=editor.locator('.content-schema-field[data-content-key="autoplay"] input');
+  assert.equal(await videoControlsField.isChecked(),true,'video starts with accessible playback controls');
+  assert.equal(await videoMutedField.isChecked(),true,'video starts with the previously authored mute setting');
+  assert.equal(await videoAutoplayField.isChecked(),true,'video starts with the previously authored autoplay setting');
+  // Disable autoplay before unmuting so every intermediate command still
+  // satisfies the Editor's invariant that autoplay video is muted.
+  await videoAutoplayField.uncheck();await videoMutedField.uncheck();await videoControlsField.uncheck();
+  assert.equal(await node(editor,'video').locator('video').getAttribute('controls'),null,
+    'the Canvas immediately reflects the controls-free video draft');
+  assert.equal(await node(editor,'video').locator('video').getAttribute('autoplay'),null,
+    'the Editor never starts the invalid unmuted video automatically');
+  assert.match(await editor.locator('.editor-publication-warning').textContent(),
+    /háttérvideó csak némítva, automatikusan indulhat/,
+    'the Inspector explains the complete muted-autoplay requirement for a background video');
+  const beforeInvalidVideoSave=posts.length;
+  await editor.locator('#save').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent.startsWith('Mentve'));
+  assert.equal(posts.length,beforeInvalidVideoSave+1,'the incomplete video state requires an explicit draft Save');
+  assert.equal(posts.at(-1).publish,false,'the incomplete video state is saved without implicit Publish');
+  assert.deepEqual(
+    (({controls,muted,autoplay})=>({controls,muted,autoplay}))(posts.at(-1).document.pages[pageId].nodes[ids.video].props),
+    {controls:false,muted:false,autoplay:false},'Save retains the exact incomplete video flags in the private draft');
+  await live.reload();
+  assert.equal(await node(live,'video').locator('video').getAttribute('controls'),'',
+    'draft Save leaves the previously published video controls unchanged');
+  assert.equal(await node(live,'video').locator('video').getAttribute('autoplay'),'',
+    'draft Save leaves the previously published autoplay behavior unchanged');
+  assert.equal(await node(live,'video').locator('video').getAttribute('muted'),'',
+    'draft Save leaves the previously published mute behavior unchanged');
+  await editor.reload();await select('video');
+  const videoControlsAfterReload=editor.locator('.content-schema-field[data-content-key="controls"] input');
+  const videoMutedAfterReload=editor.locator('.content-schema-field[data-content-key="muted"] input');
+  const videoAutoplayAfterReload=editor.locator('.content-schema-field[data-content-key="autoplay"] input');
+  assert.equal(await videoControlsAfterReload.isChecked(),false,'Editor reload restores the intentionally controls-free draft');
+  assert.equal(await videoMutedAfterReload.isChecked(),false,'Editor reload restores the incomplete unmuted draft');
+  assert.equal(await videoAutoplayAfterReload.isChecked(),false,'Editor reload restores the incomplete non-autoplay draft');
+  await videoMutedAfterReload.check();await videoAutoplayAfterReload.check();
+  assert.equal(await editor.locator('.editor-publication-warning').textContent(),'',
+    'muted autoplay clears the only blocker for a controls-free background video');
+  assert.equal(await node(editor,'video').locator('video').getAttribute('controls'),null,
+    'the valid background video preview keeps controls hidden');
+  assert.equal(await node(editor,'video').locator('video').getAttribute('autoplay'),null,
+    'the editor Canvas never autoplays even for the valid background-video configuration');
+  assert.equal(await node(editor,'video').locator('video').getAttribute('muted'),'',
+    'the repaired video preview remains muted');
+  const beforeBackgroundVideoSave=posts.length;
+  await editor.locator('#save').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent.startsWith('Mentve'));
+  assert.equal(posts.length,beforeBackgroundVideoSave+1);
+  assert.equal(posts.at(-1).publish,false,'repairing background-video flags still saves only a draft');
+  assert.deepEqual(
+    (({controls,muted,autoplay})=>({controls,muted,autoplay}))(posts.at(-1).document.pages[pageId].nodes[ids.video].props),
+    {controls:false,muted:true,autoplay:true},'Save persists the complete valid background-video configuration');
+  await live.reload();
+  assert.equal(await node(live,'video').locator('video').getAttribute('controls'),'',
+    'a valid but draft-only background video does not alter the public player');
+  assert.equal(await node(live,'video').locator('video').getAttribute('autoplay'),'',
+    'a draft Save does not publish muted autoplay');
+  await editor.reload();await select('video');
+  assert.equal(await editor.locator('.content-schema-field[data-content-key="controls"] input').isChecked(),false,
+    'Editor reload restores the saved controls-free mode');
+  assert.equal(await editor.locator('.content-schema-field[data-content-key="muted"] input').isChecked(),true,
+    'Editor reload restores the saved mute mode');
+  assert.equal(await editor.locator('.content-schema-field[data-content-key="autoplay"] input').isChecked(),true,
+    'Editor reload restores the saved autoplay mode');
+  const beforeBackgroundVideoPublish=posts.length;
+  await editor.locator('#publish').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent==='Publikálva');
+  assert.equal(posts.length,beforeBackgroundVideoPublish+1);
+  assert.equal(posts.at(-1).publish,true,'controls-free background video becomes public only through Publish');
+  await live.reload();
+  assert.equal(await node(live,'video').locator('video').getAttribute('controls'),null,
+    'separate Publish exposes the controls-free background-video mode');
+  assert.equal(await node(live,'video').locator('video').getAttribute('muted'),'',
+    'separate Publish exposes the required muted mode');
+  assert.equal(await node(live,'video').locator('video').getAttribute('autoplay'),'',
+    'separate Publish exposes autoplay only with the required mute state');
+  assert.equal(await node(live,'video').locator('video').getAttribute('loop'),'',
+    'separate Publish preserves the independently authored loop flag');
+  await editor.reload();await select('video');
+  assert.equal(await editor.locator('.content-schema-field[data-content-key="controls"] input').isChecked(),false,
+    'a subsequent Editor reload keeps controls hidden in the published revision');
+  assert.equal(await editor.locator('.content-schema-field[data-content-key="muted"] input').isChecked(),true,
+    'a subsequent Editor reload keeps the published revision muted');
+  assert.equal(await editor.locator('.content-schema-field[data-content-key="autoplay"] input').isChecked(),true,
+    'a subsequent Editor reload keeps the published revision set to autoplay');
   assert.equal(await node(live,'table').locator('caption').textContent(),'Frissített eredmények',
     'separate Publish exposes the authored table caption and accessible region name');
   assert.equal(await node(live,'table').locator('.creator-table-scroll').getAttribute('aria-label'),'Frissített eredmények');
@@ -1214,7 +1307,7 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
     'published header semantics do not duplicate the first row as data');
   assert.equal(await node(live,'table').locator('tbody tr').last().locator('td').last().textContent(),expectedTableRows.at(-1)[1],
     'separate Publish retains the last authored long table value');
-  assert.equal(await node(live,'video').locator('video[controls]').count(),1);assert.equal(await node(live,'audio').locator('audio[controls]').count(),1);
+  assert.equal(await node(live,'video').locator('video[controls]').count(),0);assert.equal(await node(live,'audio').locator('audio[controls]').count(),1);
   for(const type of ['video','audio']){const playback=await node(live,type).locator(type).evaluate(async media=>{if(media.readyState<1)await new Promise((resolve,reject)=>{media.addEventListener('loadedmetadata',resolve,{once:true});media.addEventListener('error',reject,{once:true})});media.muted=true;await media.play();const result={playing:!media.paused,duration:media.duration,readyState:media.readyState};media.pause();return result});assert.equal(playback.playing,true);assert.ok(playback.duration>0);assert.ok(playback.readyState>=2)}
   assert.equal(await node(live,'code').locator('script').count(),0);assert.match(await node(live,'code').locator('code').textContent(),/<script>/);
   const liveTabs=node(live,'tabs'),publicTablist=liveTabs.getByRole('tablist',{name:'Bemutatkozás & videók'});
@@ -1232,13 +1325,30 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
     assert.equal(tabIds[index].controls,panelIds[index].id,'selected tab controls its corresponding panel');
     assert.equal(panelIds[index].labelledby,tabIds[index].id,'selected panel is labelled by its corresponding tab');
     assert.equal(panelIds[index].text,content,'keyboard selection displays the matching published content');
-    assert.equal(await publicTabs.nth(index).evaluate(tab=>document.activeElement===tab),true,'keyboard selection moves focus to the selected tab');
+    await live.waitForFunction(id=>document.activeElement?.id===id,tabIds[index].id);
+    const focusState=await publicTabs.nth(index).evaluate(tab=>({selected:document.activeElement===tab,activeId:document.activeElement?.id,activeText:document.activeElement?.textContent?.trim()}));
+    assert.equal(focusState.selected,true,'keyboard selection moves focus to the selected tab; '+JSON.stringify(focusState));
   };
   await publicTabs.nth(1).click();await assertPublicTabState(1,'Személyes történet');
   await publicTabs.nth(1).press('ArrowRight');await assertPublicTabState(0,'Videólista');
   await publicTabs.nth(0).press('ArrowLeft');await assertPublicTabState(1,'Személyes történet');
   await publicTabs.nth(1).press('Home');await assertPublicTabState(0,'Videólista');
   await publicTabs.nth(0).press('End');await assertPublicTabState(1,'Személyes történet');
+  // Other fixture pages are open (Editor and touch preview); explicitly
+  // activate the published page before exercising real keyboard focus.
+  await live.bringToFront();await live.setViewportSize({width:390,height:640});
+  await publicTabs.nth(1).focus();await publicTabs.nth(1).press('ArrowRight');
+  await assertPublicTabState(0,'Videólista');
+  const mobileTabsLayout=await live.evaluate(()=>({
+    viewport:innerWidth,document:document.scrollingElement.scrollWidth,
+    tablist:document.querySelector('[role="tablist"]')?.getBoundingClientRect().toJSON()
+  }));
+  assert.ok(mobileTabsLayout.document<=mobileTabsLayout.viewport,
+    'published keyboard tabs at 390px do not introduce document-level horizontal scrolling');
+  assert.ok(mobileTabsLayout.tablist.left>=0&&mobileTabsLayout.tablist.right<=mobileTabsLayout.viewport,
+    'published tablist remains inside the narrow mobile viewport');
+  assert.equal(await publicTabs.nth(0).evaluate(tab=>tab.getBoundingClientRect().width>=44),true,
+    'the focused mobile tab keeps the minimum 44px touch target');
   const accordion=node(live,'accordion').getByRole('group',{name:'Kérdések & válaszok'});
   assert.deepEqual(await accordion.locator('details').evaluateAll(items=>items.map(el=>el.open)),[true,false],
     'Accordion opens its first section initially after Publish');

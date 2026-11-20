@@ -1,0 +1,49 @@
+{
+  "schema": 1,
+  "plan_point": "77.44.7.D / D-03 + D-04",
+  "status": "SCOPED_REGRESSION_PASS; full D-03, full D-04, and 77.44.7.D remain OPEN / NOT_CERTIFIED",
+  "source_before_test_only_change": {
+    "branch": "v2/foundation",
+    "commit": "db15bb91948e1a5efc60ab1539f851a52331e7f7",
+    "remote_head_at_check": "db15bb91948e1a5efc60ab1539f851a52331e7f7",
+    "remote_check": "GitHub compare API compared db15bb9 to v2/foundation and returned identical / ahead_by=0 / behind_by=0."
+  },
+  "finding": "The real browser content-system regression did not follow the controls-free background-video rules through invalid draft Save, reload, repair, separate Publish, and reload. Its published structured-tab keyboard assertions also ran only at desktop width; a mobile viewport case was missing.",
+  "change": {
+    "files": [
+      "tests/browser/editor-content-system.test.js",
+      "docs/evidence/editor-d03-d04-video-mobile-tabs-2026-11-20.json"
+    ],
+    "runtime_changed": false,
+    "d03_video_test": "The Chromium test now turns autoplay off before unmuting, hides controls, checks the shared publication guidance, explicitly Saves the invalid combination privately, reloads both public and Editor views, restores muted autoplay, Saves again without changing the published player, then explicitly Publishes and verifies controls remain hidden while muted/autoplay/loop flags appear publicly and return after another Editor reload.",
+    "d04_mobile_tabs_test": "The public structured-tabs keyboard test now re-activates the published page at 390x640, selects the other tab with ArrowRight, checks the selected tab and single visible panel with focus restored, asserts document-level horizontal overflow is absent, keeps the tablist inside the viewport, and checks a 44px minimum tab target. The test explicitly brings the public page to front because the same browser fixture has multiple pages open."
+  },
+  "checks": {
+    "targeted_chromium": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-content-system.test.js — PASS (1/1 real Chromium test; final run after bringing the public fixture to front). Earlier test attempts exposed an invalid intermediate edit ordering and focus setup; both were corrected before this final pass.",
+    "editor_unit_suite": "npm run test:editor — PASS (22/22 unit test files and 4/4 subreaper/manifest guards).",
+    "typecheck": "npm run typecheck -- --pretty false — PASS.",
+    "migration_safety": "npm run test:web013:migration-gate — PASS; this block did not apply migrations.",
+    "plan_contract": "python3 tests/plan-contract.test.py — PASS (15/15).",
+    "canonical_plan": "python3 scripts/check-canonical-plan.py — PASS (13 canonical master files, 396 mappings; acceptance remains NOT_CERTIFIED).",
+    "traceability": "python3 scripts/build-feature-traceability.py --check — PASS (396/396 mappings).",
+    "active_point": "python3 scripts/audit-active-plan-point.py — PASS for cursor/source bookkeeping only; cursor remains 77.44.7.D OPEN / NOT_CERTIFIED, 147 PARTIAL_SOURCE and 249 UNVERIFIED.",
+    "syntax_and_diff": "node --check tests/browser/editor-content-system.test.js and git diff --check — PASS."
+  },
+  "production": {
+    "runtime_source_sha": "83fb764b4060d8d4bbc513e7d0865dd1f700214a",
+    "latest_worker_deployment": "c4b9526a-c54b-4fe3-9218-d889c1e011e9",
+    "latest_worker_version": "9870e814-359c-4871-a25c-289d9dfe7c2c",
+    "traffic": "100%",
+    "verification": "Read-only Cloudflare deployment list GET during this block showed the deployment/version and 100% traffic. No production health check was run because no runtime source or public asset changed.",
+    "d1_r2": "No production D1 or R2 operation in this test-only block.",
+    "deploy": "No runtime changes; no Worker deployment required or performed."
+  },
+  "hosted_ci": "NOT_RUN: this is test/evidence-only; AGENTS.md requires [skip ci] to avoid redundant Worker builds, and the available Actions quota is not verified.",
+  "development_metric_id": "20261120044328-e72f7ad8",
+  "cost_huf": 0,
+  "limitations": [
+    "This closes only one automated video lifecycle slice under D-03 and one 390px mobile keyboard-tabs slice under D-04; it does not close either entire subpoint or the complete D-01..D-07 matrix.",
+    "The active canonical cursor remains 77.44.7.D OPEN / NOT_CERTIFIED; full feature acceptance is not inferred from source traceability.",
+    "The complete Visual Editor manual and physical acceptance remains deferred until the full planned Editor scope is implemented."
+  ]
+}
