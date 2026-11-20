@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261120074901-ab3b9792",
+  "task": "77.44.7.D-next-editor-slice",
+  "trigger": "manual",
+  "started_at": "2026-11-20T07:49:01.040Z",
+  "finished_at": "2026-11-20T08:01:39.649Z",
+  "wall_seconds": 759,
+  "paused_seconds": 0,
+  "measured_seconds": 759,
+  "status": "pass",
+  "kind": "test",
+  "summary": "D-05 mobile repeater focus recovery regression verified in real Chromium.",
+  "evidence": [
+    "tests/browser/editor-content-system.test.js:PASS"
+  ],
+  "checks": "targeted Chromium 1/1; npm run test:editor 22/22+4/4; typecheck; plan-contract 15/15; canonical plan 13/396; traceability 396/396; migration gate; syntax; diff-check",
+  "started_revision": "a497e196e991f36bc1f394185dfc8d8bfeedbd46",
+  "finished_revision": "a497e196e991f36bc1f394185dfc8d8bfeedbd46",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

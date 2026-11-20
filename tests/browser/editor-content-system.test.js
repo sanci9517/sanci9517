@@ -1317,7 +1317,7 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
       await live.waitForFunction(({id,selectedIndex})=>{
         const tabs=[...document.querySelectorAll(`.visual-editor-node[data-node-id="${id}"] [role="tab"]`)];
         return tabs.length===2&&tabs.every((tab,i)=>tab.getAttribute('aria-selected')===String(i===selectedIndex));
-      },{id:ids.tabs,selectedIndex:index},{timeout:5000});
+      },{id:ids.tabs,selectedIndex:index},{timeout:15000});
     }catch(error){
       const state=await live.evaluate(id=>({tabs:[...document.querySelectorAll(`.visual-editor-node[data-node-id="${id}"] [role="tab"]`)].map(tab=>({selected:tab.getAttribute('aria-selected'),tabindex:tab.tabIndex,id:tab.id})),active:document.activeElement?.id,hash:location.hash,search:location.search}),ids.tabs);
       error.message+=`; tab state did not settle: ${JSON.stringify(state)}`;throw error;
@@ -1576,6 +1576,13 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
       await touchEditor.waitForFunction(expected=>document.querySelectorAll('.content-repeater[data-content-key="items"] > fieldset').length===expected,initialRows-1);
       assert.equal(await repeater.locator(':scope > fieldset').count(),initialRows-1,
         `${item.type} touch Delete removes only the selected repeater row`);
+      await touchEditor.waitForFunction(()=>{
+        const active=document.activeElement;
+        return Boolean(active?.closest('.content-repeater[data-content-key="items"] > fieldset')&&
+          active.matches('.content-schema-field input:not([disabled]),.content-schema-field textarea:not([disabled]),.content-schema-field select:not([disabled])'));
+      });
+      assert.equal(await touchEditor.evaluate(()=>document.activeElement?.closest('fieldset')?.querySelector('legend')?.textContent),'1. elem',
+        `${item.type} touch Delete restores focus to the nearest surviving editable row`);
       assert.equal(posts.length,beforeDelete,
         `${item.type} touch row deletion stays draft-only`);
     }
@@ -1583,6 +1590,7 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
       const count=await repeater.locator(':scope > fieldset').count();
       await repeater.getByRole('button',{name:`${count}. elem: Eltávolítás`,exact:true}).tap();
       await touchEditor.waitForFunction(expected=>document.querySelectorAll('.content-repeater[data-content-key="items"] > fieldset').length===expected,count-1);
+      if(count===1)await touchEditor.waitForFunction(expected=>document.activeElement?.textContent===expected,item.add);
     }
     assert.equal(await repeater.getByRole('button',{name:item.add,exact:true}).isVisible(),true,
       `${item.type} touch final-row Delete leaves its Add action visible`);
@@ -1593,6 +1601,13 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
     const beforeAdd=posts.length;
     await repeater.getByRole('button',{name:item.add,exact:true}).tap();
     await repeater.locator(':scope > fieldset').first().waitFor({state:'visible'});
+    await touchEditor.waitForFunction(()=>{
+      const active=document.activeElement;
+      return Boolean(active?.closest('.content-repeater[data-content-key="items"] > fieldset')&&
+        active.matches('.content-schema-field input:not([disabled]),.content-schema-field textarea:not([disabled]),.content-schema-field select:not([disabled])'));
+    });
+    assert.equal(await touchEditor.evaluate(()=>document.activeElement?.closest('fieldset')?.querySelector('legend')?.textContent),'1. elem',
+      `${item.type} touch Add places focus in the newly created row`);
     const restoredRow=repeater.locator(':scope > fieldset').first();
     await restoredRow.getByLabel(item.field,{exact:true}).fill(item.value);
     if(item.textField)await restoredRow.getByLabel(item.textField,{exact:true}).fill(item.textValue);

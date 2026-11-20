@@ -1,0 +1,73 @@
+{
+  "schema": "sanci.editor.d05.mobile-repeater-focus.v1",
+  "captured_at_utc": "2026-11-20T08:02:52Z",
+  "plan_point": "77.44.7.D / D-05 — mobile repeater focus recovery",
+  "repository": "sanci9517/sanci9517",
+  "branch": "v2/foundation",
+  "source_commit_before_change": "a497e196e991f36bc1f394185dfc8d8bfeedbd46",
+  "remote_head_before_change": {
+    "method": "GitHub compare API",
+    "base": "a497e196e991f36bc1f394185dfc8d8bfeedbd46",
+    "head": "v2/foundation",
+    "status": "identical",
+    "ahead_by": 0,
+    "behind_by": 0
+  },
+  "finding": "The real touch repeater lifecycle already tested Add/Delete and separate Save/Publish across six component types, but did not assert that focus returns to a surviving field after Delete, to the visible Add action after deleting the final row, or into the new row after Add.",
+  "change": {
+    "files": [
+      "tests/browser/editor-content-system.test.js"
+    ],
+    "runtime_changed": false,
+    "public_assets_changed": false,
+    "coverage": [
+      "On a 390x800 mobile, coarse-pointer Chromium context, touch Delete restores focus to the nearest surviving editable repeater field for list, tabs, accordion, dropdown, gallery and carousel.",
+      "Deleting the final repeater row returns focus to that type's visible Add button.",
+      "Touch Add puts focus inside the newly-created first row before authoring continues.",
+      "Existing assertions still prove repeater actions do not Save/Publish implicitly; explicit Save persists a draft, Editor reload restores it, and only separate Publish changes the public view."
+    ],
+    "test_stability": "Raised the existing published mobile-tab state wait from 5 to 15 seconds after an unrelated slow-fixture timeout at 5 seconds; its state assertion remains strict."
+  },
+  "checks": {
+    "targeted_chromium_final": "PASS — CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-content-system.test.js; 1/1 real Chromium test.",
+    "superseded_attempts": [
+      "First new run timed out on the test's incorrect expectation that the visible Add button had an aria-label; corrected it to assert the button's visible text accessible name.",
+      "Second run timed out in the pre-existing 720x450 public-tab wait at its former 5-second harness limit; raised only that wait to 15 seconds and retained the selected-tab assertion.",
+      "The final run completed the full file, including all new focus assertions, and passed 1/1."
+    ],
+    "editor_unit_suite": "PASS — npm run test:editor; 22/22 test files and 4/4 subreaper/manifest guards.",
+    "typecheck": "PASS — npm run typecheck.",
+    "plan_contract": "PASS — 15/15.",
+    "canonical_plan": "PASS — python3 scripts/check-canonical-plan.py; complete 13-file canonical master and 396 source mappings; acceptance remains NOT_CERTIFIED.",
+    "traceability": "PASS — python3 scripts/build-feature-traceability.py --check; 396/396.",
+    "active_point": "PASS for bookkeeping only — 77.44.7.D remains OPEN / NOT_CERTIFIED; 147 PARTIAL_SOURCE and 249 UNVERIFIED.",
+    "migration_safety": "PASS — npm run test:web013:migration-gate; no migrations applied.",
+    "syntax_diff": "PASS — node --check tests/browser/editor-content-system.test.js and git diff --check."
+  },
+  "production": {
+    "runtime_or_public_asset_changed": false,
+    "worker_deploy_required": false,
+    "worker_deploy_performed": false,
+    "latest_prior_verified_runtime_release": {
+      "source_commit": "a469be7f1fdf5e7c63790088abf3f9187b3baad9",
+      "deployment_id": "c01cfe92-34cb-42f1-b141-728c1d0c84f9",
+      "worker_version_id": "3d74ac40-4c6f-41d2-9ee7-440a20f18282",
+      "traffic_percent": 100,
+      "health_http": 200,
+      "verified_at_utc": "2026-11-20T07:25:54Z",
+      "source": "docs/evidence/editor-d03-tooltip-viewport-bounds-2026-11-20.json"
+    },
+    "this_test_only_change_production_health": "NOT_RUN; no runtime or public asset changed.",
+    "d1_operation": false,
+    "r2_operation": false
+  },
+  "hosted_ci": "NOT_RUN; test/evidence/plan follow-up uses [skip ci] under repository release policy; no duplicate CI was dispatched.",
+  "development_metric_id": "20261120074901-ab3b9792",
+  "development_measured_seconds": 759,
+  "cost_huf": 0,
+  "limitations": [
+    "This verifies one D-05 mobile focus-recovery regression slice, not the full D-05 matrix, D-01–D-07, or 77.44.7.D.",
+    "Full Visual Editor manual/physical acceptance remains deferred until the complete planned Editor scope is implemented.",
+    "Save and Publish remain separate operations."
+  ]
+}
