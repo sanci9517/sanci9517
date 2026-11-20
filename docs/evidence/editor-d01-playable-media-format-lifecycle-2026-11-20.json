@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "kind": "editor-acceptance-slice",
+  "recorded_at_utc": "2026-11-20T19:08:00Z",
+  "plan_point": "77.44.7.D / D-01 — supported playable media format lifecycle",
+  "development_metric": {
+    "id": "20261120190149-a4e382d9",
+    "status": "pass",
+    "kind": "test",
+    "measured_seconds": 702
+  },
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "github_head_at_block_start": "94759351bf16ca2fcb9b617c854cfb9e897bdbfa",
+    "test_base_blob": "94759351bf16ca2fcb9b617c854cfb9e897bdbfa"
+  },
+  "gap": "The Editor's real Worker + Chromium media lifecycle exercised WAV and WebM, while src/routes/admin/media.ts also advertises audio/mpeg and audio/ogg. Those additional formats had no integrated upload-to-public-playback regression.",
+  "change": {
+    "runtime": false,
+    "files": [
+      "tests/browser/media-worker-storage.test.mjs",
+      "tests/fixtures/editor-sample.mp3",
+      "tests/fixtures/editor-sample.ogg",
+      "docs/evidence/editor-d01-playable-media-format-lifecycle-2026-11-20.json",
+      "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md"
+    ],
+    "behavior": [
+      "Added two small synthetic sine-wave fixtures generated locally with FFmpeg (MP3 at 440 Hz and Vorbis/Ogg at 660 Hz); no third-party/copyrighted media or runtime dependency was added.",
+      "The real Worker + Chromium lifecycle now checks all advertised playable MIME types: audio/wav, audio/mpeg, audio/ogg and video/webm. Each upload is validated for MIME, site-owned D1 metadata, isolated Miniflare R2 object bytes/hash, authenticated private preview, and denial from the public route until the authored page is separately published.",
+      "Each format is assigned to its own real Editor node, selected through the site-scoped media picker, saved, reloaded, and separately published. The public renderer must serve the exact bytes with the validated MIME and the browser must decode and play the resulting audio/video element. Audio loop remains an explicit, persisted control and does not imply autoplay."
+    ],
+    "production_data_used": false,
+    "production_d1_write_or_migration": false,
+    "production_r2_operation": false,
+    "dependencies_added": []
+  },
+  "checks": {
+    "real_worker_chromium": {
+      "command": "node --experimental-loader ./tests/ts-extension-loader.mjs --test tests/browser/media-worker-storage.test.mjs",
+      "result": "PASS — 1/1 real Worker + Chromium integration test; final run 184422.8 ms; synthetic Miniflare D1/R2 only. All four playable MIME formats completed upload, private preview, Editor picker, Save, reload, separate Publish and real browser playback."
+    },
+    "media_api_and_retention": {
+      "command": "npm run test:media",
+      "result": "PASS — 5/5 media API/retention test files."
+    },
+    "plan_contract": "PASS — python3 tests/plan-contract.test.py: 15/15.",
+    "canonical_master": "PASS — python3 scripts/check-canonical-plan.py: complete 13-file master, one cursor, 396 mappings; functional acceptance remains NOT CERTIFIED.",
+    "feature_traceability": "PASS — python3 scripts/build-feature-traceability.py --check: 396/396.",
+    "active_point_audit": "PASS for bookkeeping only — cursor 77.44.7.D remains OPEN / NOT_CERTIFIED; 147 PARTIAL_SOURCE / 249 UNVERIFIED.",
+    "diff_check": "PASS — git diff --check.",
+    "hosted_ci": "NOT RUN — test/evidence/plan-only update follows the [skip ci] convention; no workflow PASS is claimed."
+  },
+  "production_state": {
+    "read_only_deployments_api": "GET /accounts/64bbd6a12ac732ed2cac4ca25d8bfa7e/workers/scripts/sanci9517-streamer-brand/deployments",
+    "deployment_id": "5543b768-ff27-4f3b-8609-9b8b981a006e",
+    "worker_version": "db5de010-ab32-4bbd-b1c0-e34b798bbab0",
+    "traffic_percent": 100,
+    "health_check": "PASS — direct GET https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health returned {ok:true, service:sanci9517-streamer-brand, version:2.0.0}.",
+    "runtime_source_changed": false,
+    "public_asset_hashes": "UNCHANGED — no runtime source or public asset was modified.",
+    "new_cost_huf": 0
+  },
+  "limitations": [
+    "This certifies only the automated playable-format lifecycle slice of D-01. It does not certify all media formats, malformed/archived/private source combinations, responsive/public parity, D-01–D-07, or the full 77.44.7.D scope.",
+    "The integration uses synthetic local Miniflare D1/R2 and a browser viewport; it is not production-data testing or physical-device acceptance.",
+    "Full manual and physical Editor acceptance remains deferred until the complete planned Editor scope is implemented.",
+    "Save and Publish remain separate."
+  ]
+}

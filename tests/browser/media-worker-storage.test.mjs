@@ -19,6 +19,9 @@ const wav=Buffer.alloc(44+4000);
 wav.write('RIFF',0);wav.writeUInt32LE(wav.length-8,4);wav.write('WAVEfmt ',8);wav.writeUInt32LE(16,16);
 wav.writeUInt16LE(1,20);wav.writeUInt16LE(1,22);wav.writeUInt32LE(8000,24);wav.writeUInt32LE(16000,28);
 wav.writeUInt16LE(2,32);wav.writeUInt16LE(16,34);wav.write('data',36);wav.writeUInt32LE(wav.length-44,40);
+// These tiny MP3/Vorbis samples are synthesized test tones (not third-party media).
+const mp3=readFileSync(resolve(import.meta.dirname,'../fixtures/editor-sample.mp3'));
+const ogg=readFileSync(resolve(import.meta.dirname,'../fixtures/editor-sample.ogg'));
 // Reuse the repository's tiny, procedurally generated, known-playable VP9 fixture.
 const webm=readFileSync(resolve(import.meta.dirname,'../fixtures/editor-sample.webm'));
 const digest=bytes=>createHash('sha256').update(Buffer.from(bytes)).digest('hex');
@@ -491,6 +494,8 @@ print(json.dumps(result))`],{cwd:root,encoding:'utf8'}));
  const playableAssets=[];
  for(const fixture of [
   {name:'isolated-audio.wav',mimeType:'audio/wav',bytes:wav,icon:'🔊',label:'Hangfájl',type:NODE_TYPES.AUDIO},
+  {name:'isolated-audio.mp3',mimeType:'audio/mpeg',bytes:mp3,icon:'🔊',label:'Hangfájl',type:NODE_TYPES.AUDIO},
+  {name:'isolated-audio.ogg',mimeType:'audio/ogg',bytes:ogg,icon:'🔊',label:'Hangfájl',type:NODE_TYPES.AUDIO},
   {name:'isolated-video.webm',mimeType:'video/webm',bytes:webm,icon:'🎬',label:'Videófájl',type:NODE_TYPES.VIDEO}
  ]){
   await page.locator('#imageInput').setInputFiles({name:fixture.name,mimeType:fixture.mimeType,buffer:fixture.bytes});
@@ -544,7 +549,7 @@ print(json.dumps(result))`],{cwd:root,encoding:'utf8'}));
    :{src:'',assetId:'',controls:true,loop:false};
   const node=createNode(fixture.type,{name:fixture.type===NODE_TYPES.VIDEO?'Publikált videó':'Publikált hang',parentId:playablePage.rootId,
    props,metadata:{contentVersion:1},style:{width:'320px',height:fixture.type===NODE_TYPES.VIDEO?'240px':'80px'}});
-  playablePage.nodes[node.id]=node;playablePage.nodes[playablePage.rootId].children.push(node.id);playableNodes.set(fixture.type,node);
+  playablePage.nodes[node.id]=node;playablePage.nodes[playablePage.rootId].children.push(node.id);playableNodes.set(fixture.mimeType,node);
  }
  const playableDocument=createDocument(playablePage,{modern:true});
  const playableCreated=await context.request.post(base+'/api/admin/pages',{data:{id:playablePageId,title:playablePage.name,slug:playablePage.slug,description:'',document:playableDocument}});
@@ -580,7 +585,7 @@ print(json.dumps(result))`],{cwd:root,encoding:'utf8'}));
   await playableEditor.locator('.inspector-tabs button').nth(1).click();
  };
  for(const fixture of playableAssets){
-  const node=playableNodes.get(fixture.type),canvas=playableEditor.locator(`.node[data-node-id="${node.id}"]`);
+  const node=playableNodes.get(fixture.mimeType),canvas=playableEditor.locator(`.node[data-node-id="${node.id}"]`);
   await selectPlayable(node);
   const sourceField=playableEditor.locator('#inspectorBody [data-content-key="assetId"]');
   const picker=sourceField.locator('.editor-media-picker');
@@ -647,20 +652,20 @@ print(json.dumps(result))`],{cwd:root,encoding:'utf8'}));
  };
  await savePlayable(false);
  for(const fixture of playableAssets){
-  const node=playableNodes.get(fixture.type),saved=(await DB.prepare('SELECT content_json FROM pages WHERE id=?').bind(playablePageId).first()).content_json;
+  const node=playableNodes.get(fixture.mimeType),saved=(await DB.prepare('SELECT content_json FROM pages WHERE id=?').bind(playablePageId).first()).content_json;
   assert.equal(JSON.parse(saved).pages[playablePageId].nodes[node.id].props.assetId,fixture.id,
    'draft Save persists the exact site-scoped playable media ID');
   assert.equal((await context.request.get(base+'/media/'+fixture.id)).status(),404,
    'draft Save does not publish a playable media object');
  }
  const savedVideoDraft=JSON.parse((await DB.prepare('SELECT content_json FROM pages WHERE id=?').bind(playablePageId).first()).content_json)
-  .pages[playablePageId].nodes[playableNodes.get(NODE_TYPES.VIDEO).id].props;
+  .pages[playablePageId].nodes[playableNodes.get('video/webm').id].props;
  assert.equal(savedVideoDraft.posterAssetId,posterId,'draft Save persists the independent site-scoped poster image ID');
  assert.equal(savedVideoDraft.controls,false,'draft Save persists the controls-free video mode');
  assert.equal(savedVideoDraft.muted,true,'draft Save persists the required muted autoplay state');
  assert.equal(savedVideoDraft.autoplay,true,'draft Save persists the authored autoplay state');
  const savedAudioDraft=JSON.parse((await DB.prepare('SELECT content_json FROM pages WHERE id=?').bind(playablePageId).first()).content_json)
-  .pages[playablePageId].nodes[playableNodes.get(NODE_TYPES.AUDIO).id].props;
+  .pages[playablePageId].nodes[playableNodes.get('audio/wav').id].props;
  assert.equal(savedAudioDraft.loop,true,'draft Save persists the authored audio repeat setting');
  assert.equal(savedAudioDraft.controls,true,'draft Save preserves accessible native audio controls');
  assert.ok((await get('?usage='+posterId)).references.some(ref=>ref.source==='draft'&&ref.path.includes('posterAssetId')),
@@ -669,7 +674,7 @@ print(json.dumps(result))`],{cwd:root,encoding:'utf8'}));
   'saving a video poster reference does not publish its image');
  await playableEditor.reload();
  for(const fixture of playableAssets){
-  const node=playableNodes.get(fixture.type),canvas=playableEditor.locator(`.node[data-node-id="${node.id}"]`);
+  const node=playableNodes.get(fixture.mimeType),canvas=playableEditor.locator(`.node[data-node-id="${node.id}"]`);
   await selectPlayable(node);
   const picker=playableEditor.locator('#inspectorBody [data-content-key="assetId"] .editor-media-picker');
   try{await picker.locator('.editor-media-selected').waitFor({timeout:4000})}
@@ -713,7 +718,7 @@ print(json.dumps(result))`],{cwd:root,encoding:'utf8'}));
  await savePlayable(true);
  await playableLive.goto(base+'/p/'+playableSlug);
  for(const fixture of playableAssets){
-  const node=playableNodes.get(fixture.type),publicMedia=await context.request.get(base+'/media/'+fixture.id);
+  const node=playableNodes.get(fixture.mimeType),publicMedia=await context.request.get(base+'/media/'+fixture.id);
   assert.equal(publicMedia.status(),200,'only the explicit separate Publish activates public delivery');
   assert.equal(publicMedia.headers()['content-type'],fixture.mimeType,'published playable media keeps its validated MIME type');
   assert.equal(digest(await publicMedia.body()),digest(fixture.bytes),'published R2 delivery preserves the exact uploaded playable bytes');

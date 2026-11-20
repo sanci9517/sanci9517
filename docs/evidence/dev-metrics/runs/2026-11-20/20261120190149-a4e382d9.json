@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261120190149-a4e382d9",
+  "task": "77.44.7.D-D01-media-format-coverage",
+  "trigger": "manual",
+  "started_at": "2026-11-20T19:01:49.913Z",
+  "finished_at": "2026-11-20T19:13:31.851Z",
+  "wall_seconds": 702,
+  "paused_seconds": 0,
+  "measured_seconds": 702,
+  "status": "pass",
+  "kind": "test",
+  "summary": "D-01: all four advertised playable MIME formats pass real Worker+Chromium upload, private preview, site-scoped Editor picker, Save/reload, separate Publish and browser playback; tests/evidence/plan updated.",
+  "evidence": [
+    "docs/evidence/editor-d01-playable-media-format-lifecycle-2026-11-20.json",
+    "tests/browser/media-worker-storage.test.mjs"
+  ],
+  "checks": "media-worker-storage:1/1;test:media:5/5;plan-contract:15/15;canonical:PASS;traceability:396/396;active-audit:OPEN;health:200",
+  "started_revision": "94759351bf16ca2fcb9b617c854cfb9e897bdbfa",
+  "finished_revision": "94759351bf16ca2fcb9b617c854cfb9e897bdbfa",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
