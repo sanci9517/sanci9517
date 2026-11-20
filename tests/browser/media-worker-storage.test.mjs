@@ -66,7 +66,10 @@ print(json.dumps(result))`],{cwd:root,encoding:'utf8'}));
    res.writeHead(response.status,Object.fromEntries(response.headers));res.end(Buffer.from(await response.arrayBuffer()));
   }catch{res.writeHead(500);res.end('Fixture request failed')}
  });
- await new Promise(done=>server.listen(0,'127.0.0.1',done));
+ await new Promise((resolve,reject)=>{
+  server.once('error',reject);
+  server.listen(0,'127.0.0.1',resolve);
+ });
  cleanups.push(async()=>{await new Promise((resolve,reject)=>server.close(error=>error?reject(error):resolve()));await Promise.all(pending)});
  const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||(existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined),args:['--no-sandbox']});
  cleanups.push(()=>browser.close());

@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "kind": "editor-acceptance-slice",
+  "recorded_at_utc": "2026-11-20T11:27:22Z",
+  "plan_point": "77.44.7.D / D-06 — site-scoped media usage and lifecycle",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "source_sha": "5fa81ac1aada2456ee9663f455b7cbaf8c5c1623",
+    "remote_head": "5fa81ac1aada2456ee9663f455b7cbaf8c5c1623"
+  },
+  "gap": "The media storage browser fixture awaited only the Node HTTP server listen callback. In a sandbox where loopback bind is denied with EPERM, the unhandled server error left the test's Promise pending and Node reported an event-loop/pending-promise error instead of the real cause.",
+  "change": {
+    "runtime": false,
+    "files": [
+      "tests/browser/media-worker-storage.test.mjs"
+    ],
+    "behavior": [
+      "The fixture now rejects its setup Promise on the server error event and resolves only after successful loopback listen.",
+      "No application behavior, production Worker source, public asset, or dependency changed."
+    ],
+    "third_party_code": "None added.",
+    "dependencies_added": []
+  },
+  "checks": {
+    "loopback_denial_reproduction": "PASS — plain Node listen without local-network permission returned EPERM immediately, confirming the fixture's missing rejection path.",
+    "media_worker_storage_browser_test": "PASS — 1/1 using local Chromium, Miniflare with synthetic D1/R2 fixtures, and explicitly enabled local loopback; duration 85.9 seconds.",
+    "production_data_safety": "PASS — the test uses isolated in-memory Miniflare D1/R2 fixtures only; no production binding or data was used.",
+    "git_diff_check": "PASS.",
+    "canonical_plan_integrity": "PASS before the append — exact working-tree blob and committed blob matched, size 1746883 bytes.",
+    "runtime_deploy": "NOT REQUIRED — this is a test-harness-only change; runtime source is unchanged."
+  },
+  "release": {
+    "state": "TEST_HARNESS_VERIFIED",
+    "push": "PENDING at evidence creation; docs/test follow-up must use a normal fast-forward [skip ci] commit.",
+    "production_deployment_at_test_start": {
+      "deployment_id": "a0fdd47c-cdb8-4eaa-a3a8-fe55c7e4b61a",
+      "worker_version": "d2fdb885-2ba7-4291-9ab9-54fb2acbf471",
+      "traffic_percent": 100,
+      "health_http_status": 200,
+      "runtime_source_changed": false
+    },
+    "production_d1_write_or_migration": false,
+    "production_r2_operation": false,
+    "new_cost_huf": 0
+  },
+  "limitations": [
+    "This verifies the local media storage browser integration harness in this run; hosted CI was not run for this test-only follow-up.",
+    "This does not certify full D-06, D-01–D-07, or full Visual Editor acceptance.",
+    "Full manual/physical Editor acceptance remains deferred until the planned Editor scope is implemented.",
+    "Save and Publish remain separate."
+  ]
+}

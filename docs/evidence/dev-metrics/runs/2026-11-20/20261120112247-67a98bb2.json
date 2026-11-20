@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261120112247-67a98bb2",
+  "task": "77.44.7.D-D06-storage-integration",
+  "trigger": "manual",
+  "started_at": "2026-11-20T11:22:47.397Z",
+  "finished_at": "2026-11-20T11:28:21.260Z",
+  "wall_seconds": 334,
+  "paused_seconds": 0,
+  "measured_seconds": 334,
+  "status": "pass",
+  "kind": "test",
+  "summary": "Fixed media storage Chromium fixture to reject loopback listen errors; confirmed sandbox EPERM diagnosis and reran the complete real Worker/D1/R2/Chromium fixture successfully with local loopback enabled.",
+  "evidence": [
+    "docs/evidence/editor-d06-media-storage-loopback-harness-2026-11-20.json",
+    "tests/browser/media-worker-storage.test.mjs"
+  ],
+  "checks": "media-worker-storage browser integration 1/1; canonical 13-file plan PASS; active cursor audit PASS bookkeeping only; feature traceability 396/396; plan contract 15/15; node syntax; JSON; diff check",
+  "started_revision": "5fa81ac1aada2456ee9663f455b7cbaf8c5c1623",
+  "finished_revision": "5fa81ac1aada2456ee9663f455b7cbaf8c5c1623",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
