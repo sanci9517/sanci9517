@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261120172949-51a852ff",
+  "task": "77.44.7.D-D06-playable-audio-loop-lifecycle",
+  "trigger": "manual",
+  "started_at": "2026-11-20T17:29:49.589Z",
+  "finished_at": "2026-11-20T17:43:34.880Z",
+  "wall_seconds": 825,
+  "paused_seconds": 0,
+  "measured_seconds": 825,
+  "status": "pass",
+  "kind": "test",
+  "summary": "D-06 real Worker/Chromium audio loop Save/reload/Publish slice verified; full D remains OPEN.",
+  "evidence": [
+    "docs/evidence/editor-d06-playable-audio-loop-lifecycle-2026-11-20.json"
+  ],
+  "checks": "media Worker/Chromium 1/1 PASS; test:editor 22/22+4/4; test:media 5/5; typecheck; plan 15; canonical master 13/396; traceability 396/396; migration safety; syntax/diff PASS; no production changes.",
+  "started_revision": "ba5501809611d98ca67b48c75f5a998a148ffd2b",
+  "finished_revision": "ba5501809611d98ca67b48c75f5a998a148ffd2b",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

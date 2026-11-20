@@ -526,6 +526,15 @@ print(json.dumps(result))`],{cwd:root,encoding:'utf8'}));
  assert.equal(playableCreated.status(),200,'the actual Worker accepts a fresh playable-media Editor draft');
  const playableEditor=await context.newPage(),playableLive=await context.newPage();
  for(const browserPage of [playableEditor,playableLive])browserPage.setDefaultTimeout(10000);
+ await playableLive.addInitScript(()=>{
+  window.__mutedVideoAutoplayObserved=false;
+  // The synthetic VP9 is intentionally short. Record its real autoplay `play`
+  // event before navigation rather than racing its 800 ms completion below.
+  document.addEventListener('play',event=>{
+   const video=event.target;
+   if(video instanceof HTMLVideoElement&&video.autoplay&&video.muted)window.__mutedVideoAutoplayObserved=true;
+  },true);
+ });
  playableEditor.on('pageerror',e=>errors.push(e.message));playableLive.on('pageerror',e=>errors.push(e.message));
  await playableEditor.setViewportSize({width:1280,height:900});
  await playableEditor.goto(base+'/admin/editor?pageId='+encodeURIComponent(playablePageId));
@@ -577,6 +586,14 @@ print(json.dumps(result))`],{cwd:root,encoding:'utf8'}));
    assert.equal(await media.getAttribute('muted'),'','the Editor Canvas preserves the muted preview contract');
    assert.equal(await media.getAttribute('controls'),null,'the Editor Canvas reflects the authored controls-free mode');
    assert.equal(await media.getAttribute('autoplay'),null,'the Editor Canvas never starts authored autoplay inside the Editor');
+  }else{
+   const loop=playableEditor.locator('#inspectorBody [data-content-key="loop"] input[type="checkbox"]');
+   await loop.check();
+   assert.equal(await loop.isChecked(),true,'the real audio Inspector enables repeat playback');
+   assert.equal(await media.getAttribute('loop'),'','audio repeat updates the Canvas immediately');
+   assert.equal(JSON.parse((await DB.prepare('SELECT content_json FROM pages WHERE id=?').bind(playablePageId).first()).content_json)
+    .pages[playablePageId].nodes[node.id].props.loop,false,
+    'audio loop remains a private Editor edit until the explicit draft Save');
   }
   assert.equal(JSON.parse((await DB.prepare('SELECT content_json FROM pages WHERE id=?').bind(playablePageId).first()).content_json)
    .pages[playablePageId].nodes[node.id].props.assetId,'',
@@ -600,6 +617,10 @@ print(json.dumps(result))`],{cwd:root,encoding:'utf8'}));
  assert.equal(savedVideoDraft.controls,false,'draft Save persists the controls-free video mode');
  assert.equal(savedVideoDraft.muted,true,'draft Save persists the required muted autoplay state');
  assert.equal(savedVideoDraft.autoplay,true,'draft Save persists the authored autoplay state');
+ const savedAudioDraft=JSON.parse((await DB.prepare('SELECT content_json FROM pages WHERE id=?').bind(playablePageId).first()).content_json)
+  .pages[playablePageId].nodes[playableNodes.get(NODE_TYPES.AUDIO).id].props;
+ assert.equal(savedAudioDraft.loop,true,'draft Save persists the authored audio repeat setting');
+ assert.equal(savedAudioDraft.controls,true,'draft Save preserves accessible native audio controls');
  assert.ok((await get('?usage='+posterId)).references.some(ref=>ref.source==='draft'&&ref.path.includes('posterAssetId')),
   'the Worker usage index identifies the video poster as a draft-only image reference');
  assert.equal((await context.request.get(base+'/media/'+posterId)).status(),404,
@@ -621,6 +642,12 @@ print(json.dumps(result))`],{cwd:root,encoding:'utf8'}));
    'Editor reload restores an accessible playable-asset selection');
   assert.equal(await canvas.locator(fixture.type===NODE_TYPES.VIDEO?'video':'audio').getAttribute('src'),
    '/api/admin/media?id='+fixture.id,'Editor reload restores the private preview source');
+  if(fixture.type===NODE_TYPES.AUDIO){
+   assert.equal(await playableEditor.locator('#inspectorBody [data-content-key="loop"] input[type="checkbox"]').isChecked(),true,
+    'Editor reload restores the authored audio repeat setting');
+   assert.equal(await canvas.locator('audio').getAttribute('loop'),'',
+    'Editor reload preserves repeat playback in the private Canvas preview');
+  }
   if(fixture.type===NODE_TYPES.VIDEO){
    const posterPicker=playableEditor.locator('#inspectorBody [data-content-key="posterAssetId"] .editor-media-picker');
    await posterPicker.locator('.editor-media-selected').waitFor();
@@ -660,22 +687,29 @@ print(json.dumps(result))`],{cwd:root,encoding:'utf8'}));
    assert.equal(await media.getAttribute('autoplay'),'','the separate Publish renders the authored autoplay attribute publicly');
    assert.equal(await media.getAttribute('muted'),'','public autoplay is muted');
    assert.equal(await media.getAttribute('controls'),null,'the published background video remains controls-free');
-   await playableLive.waitForFunction(nodeId=>{
-    const video=document.querySelector(`[data-node-id="${nodeId}"] video`);
-    return Boolean(video&&video.autoplay&&video.muted&&!video.paused);
-   },node.id,{timeout:8000});
-   const autoplayState=await media.evaluate(element=>({autoplay:element.autoplay,muted:element.muted,controls:element.controls,paused:element.paused}));
-   assert.deepEqual(autoplayState,{autoplay:true,muted:true,controls:false,paused:false},
-    'the published muted video actually begins playback automatically without visible player controls');
+   await playableLive.waitForFunction(()=>window.__mutedVideoAutoplayObserved===true,null,{timeout:8000});
+   const autoplayState=await media.evaluate(element=>({autoplay:element.autoplay,muted:element.muted,controls:element.controls}));
+   assert.deepEqual(autoplayState,{autoplay:true,muted:true,controls:false},
+    'the published muted video has the expected background attributes');
    assert.ok((await get('?usage='+posterId)).references.some(ref=>ref.source==='published'&&ref.path.includes('posterAssetId')),
     'the Worker usage index identifies the published video poster reference');
+  }else{
+   assert.equal(await media.getAttribute('controls'),'','the published audio keeps native playback controls');
+   assert.equal(await media.getAttribute('loop'),'','the separate Publish exposes the authored repeat setting');
+   assert.equal(await media.getAttribute('autoplay'),null,'the audio repeat setting does not implicitly enable autoplay');
   }
   const playback=await media.evaluate(async element=>{
    if(element.readyState<1)await new Promise((resolve,reject)=>{element.addEventListener('loadedmetadata',resolve,{once:true});element.addEventListener('error',reject,{once:true})});
-   element.muted=true;await element.play();const result={playing:!element.paused,duration:element.duration,readyState:element.readyState};element.pause();return result;
+   element.muted=true;await element.play();
+   if(element instanceof HTMLAudioElement&&element.loop)await new Promise(resolve=>setTimeout(resolve,Math.min(600,Math.max(300,element.duration*2500))));
+   const result={playing:!element.paused,duration:element.duration,readyState:element.readyState,loop:element.loop,ended:element.ended};element.pause();return result;
   });
   assert.equal(playback.playing,true,`${fixture.mimeType} remains playable after publication`);
   assert.ok(playback.duration>0);assert.ok(playback.readyState>=2);
+  if(fixture.type===NODE_TYPES.AUDIO){
+   assert.equal(playback.loop,true,'public audio retains the authored loop property');
+   assert.equal(playback.ended,false,'the published audio continues playing after more than one track duration');
+  }
  }
  assert.deepEqual((await DB.prepare('PRAGMA foreign_key_check').all()).results,[]);
  assert.equal(await DB.prepare('PRAGMA quick_check').first('quick_check'),'ok');

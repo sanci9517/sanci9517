@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "kind": "editor-acceptance-slice",
+  "recorded_at_utc": "2026-11-20T17:41:14Z",
+  "plan_point": "77.44.7.D / D-06 — site-scoped playable-media lifecycle",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "github_head_at_block_start": "31068530542682f329e28329f682345f0d18617f",
+    "test_base_blob": "5b1a069f3e6a67cb8a8cc2ab73cf2a175b97fafd"
+  },
+  "gap": "The real Worker/Chromium media lifecycle exercised uploaded audio and video selection, draft persistence, reload, and Publish. Audio loop existed in the Editor contract but was not yet connected to this isolated D1/R2 end-to-end lifecycle.",
+  "change": {
+    "runtime": false,
+    "files": [
+      "tests/browser/media-worker-storage.test.mjs",
+      "docs/evidence/editor-d06-playable-audio-loop-lifecycle-2026-11-20.json",
+      "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md"
+    ],
+    "behavior": [
+      "The actual audio Inspector enables loop and updates the authenticated Editor Canvas without implicitly saving the page.",
+      "Explicit Save persists loop=true and controls=true for the authored audio; reloading the Editor restores both the Inspector toggle and Canvas attribute while the uploaded audio remains private until Publish.",
+      "The separate Publish exposes the audio through its site-scoped public route, keeps native controls, omits autoplay, and retains loop=true. Chromium plays the short synthetic WAV for over two track durations and confirms it has not ended.",
+      "The existing video checks still verify a real muted-autoplay play event, private poster preview, exact uploaded bytes, and Save/reload/Publish separation. The event listener is installed before page navigation so the 800 ms fixture cannot finish before the assertion observes autoplay."
+    ],
+    "production_data_used": false,
+    "production_d1_write_or_migration": false,
+    "production_r2_operation": false,
+    "dependencies_added": []
+  },
+  "checks": {
+    "real_worker_chromium": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --experimental-loader ./tests/ts-extension-loader.mjs --test --test-concurrency=1 tests/browser/media-worker-storage.test.mjs",
+      "result": "PASS — 1/1 real Chromium + repository Worker integration; synthetic Miniflare D1/R2 only; final run 159.7 seconds.",
+      "diagnostic": "Two prior attempts in this block exposed test defects (an omitted Page Model nodes lookup level, then a race against the 800 ms video fixture ending). The final run passed after correcting the lookup and recording the autoplay play event from document initialization."
+    },
+    "editor_unit_tests": "PASS — npm run test:editor: 22/22 files and 4/4 runner/manifest contracts.",
+    "media_api_tests": "PASS — npm run test:media: 5/5 files.",
+    "typecheck": "PASS — npm run typecheck.",
+    "plan_contract": "PASS — tests/plan-contract.test.py: 15/15.",
+    "canonical_master": "PASS — 13 canonical master files and 396 source mappings; acceptance not certified.",
+    "feature_traceability": "PASS — 396/396.",
+    "migration_safety": "PASS — npm run test:web013:migration-gate; no migration executed.",
+    "syntax_and_diff": "PASS — node --check tests/browser/media-worker-storage.test.mjs; git diff --check.",
+    "hosted_ci": "NOT RUN — test/evidence/plan-only follow-up; no redundant CI dispatch; Actions free quota not verified."
+  },
+  "production_state": {
+    "read_only_deployments_api": "GET /accounts/{account_id}/workers/scripts/sanci9517-streamer-brand/deployments",
+    "deployment_id": "5543b768-ff27-4f3b-8609-9b8b981a006e",
+    "worker_version": "db5de010-ab32-4bbd-b1c0-e34b798bbab0",
+    "traffic_percent": 100,
+    "runtime_source_changed": false,
+    "health_check": "NOT RUN — no runtime change; no external health request was required for this test-only update.",
+    "public_asset_hashes": "UNCHANGED — no public asset was modified.",
+    "new_cost_huf": 0
+  },
+  "limitations": [
+    "This adds one D-06 real-browser audio loop lifecycle slice. It does not certify the full D-06 capability matrix, D-01–D-07, or the complete Visual Editor.",
+    "Full manual and physical Editor acceptance remains deferred until the complete planned Editor scope is implemented.",
+    "Save and Publish remain separate."
+  ]
+}
