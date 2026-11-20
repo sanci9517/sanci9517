@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261120084844-3328cfbd",
+  "task": "77.44.7.D-D06-media-isolation-slice",
+  "trigger": "manual",
+  "started_at": "2026-11-20T08:48:44.638Z",
+  "finished_at": "2026-11-20T09:04:18.452Z",
+  "wall_seconds": 934,
+  "paused_seconds": 0,
+  "measured_seconds": 934,
+  "status": "pass",
+  "kind": "mixed",
+  "summary": "D-06 malformed schedule-media sidecar fails closed locally and in the exact-source production Worker; full D remains open.",
+  "evidence": [
+    "docs/evidence/editor-d06-malformed-schedule-sidecar-2026-11-20.json",
+    "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md"
+  ],
+  "checks": "media+schedule+typecheck+migration gate+Wrangler dry-run; plan contract 15/15; exact-source Cloudflare build/deploy, health 200, bundle hash match; D1 SELECT-only pre/post",
+  "started_revision": "acc66a15b99059f78eae6b25336b5703b8c2b432",
+  "finished_revision": "9fe8057a3f8624113816b10b5d25316b069fc952",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

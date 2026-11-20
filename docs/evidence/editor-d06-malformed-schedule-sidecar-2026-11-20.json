@@ -16,7 +16,9 @@
       "src/core/schedule-artwork.ts",
       "src/routes/admin/media.ts"
     ],
-    "tests": ["tests/media-api.test.js"],
+    "tests": [
+      "tests/media-api.test.js"
+    ],
     "behavior": [
       "A malformed sidecar containing the asset ID marks usage analysis incomplete without inventing an exact relationship.",
       "Malformed sidecars never grant public media delivery.",
@@ -37,25 +39,69 @@
     "canonical_plan_integrity": "PASS — complete 13-file canonical master; functional acceptance remains NOT_CERTIFIED.",
     "feature_traceability": "PASS — 396/396 mappings after the project generator refreshed the changed source fingerprint.",
     "active_plan_cursor": "PASS — 77.44.7.D remains OPEN / NOT_CERTIFIED; 147 PARTIAL_SOURCE and 249 UNVERIFIED.",
-    "git_diff_check": "PASS."
+    "git_diff_check": "PASS.",
+    "cloudflare_automatic_worker_build": "PASS — exact source SHA 9fe8057a; build typecheck + deploy:safe succeeded.",
+    "production_rollout": "PASS — Cloudflare API deployment 1adfc427; Worker version 4343c788 receives 100% traffic.",
+    "production_health": "PASS — direct GET /api/health HTTP 200, expected service/version JSON.",
+    "deployed_worker_bundle_hash": "PASS — deployed index.js SHA-256 matches local Wrangler dry-run bundle."
   },
   "release": {
-    "state": "PENDING",
-    "source_sha": null,
-    "push": "NOT_YET_PERFORMED",
-    "automatic_worker_build": "PENDING",
-    "deployment": null,
-    "worker_version": null,
-    "traffic_percent": null,
-    "production_health": "NOT_YET_CHECKED",
-    "public_asset_hashes": "UNCHANGED — no public assets changed",
+    "state": "RELEASED_AND_VERIFIED",
+    "source_sha": "9fe8057a3f8624113816b10b5d25316b069fc952",
+    "push": "PASS — normal fast-forward acc66a15..9fe8057a on v2/foundation; GitHub compare confirms exact HEAD.",
+    "automatic_worker_build": {
+      "build_uuid": "92029176-3a4b-4dd6-a0f5-0d1ab8d6f8d6",
+      "outcome": "success",
+      "started_on": "2026-11-20T08:58:37.553Z",
+      "stopped_on": "2026-11-20T08:59:13.692Z",
+      "commit_hash": "9fe8057a3f8624113816b10b5d25316b069fc952",
+      "branch": "v2/foundation",
+      "build_command": "npm run typecheck",
+      "deploy_command": "npm run deploy:safe"
+    },
+    "deployment": "1adfc427-76fc-4c7a-a236-3ad9199dc3d9",
+    "worker_version": "4343c788-1b3d-48ff-b693-7527000f966f",
+    "traffic_percent": 100,
+    "deployment_created_on": "2026-11-20T08:59:10.60936Z",
+    "production_health": {
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+      "method": "GET",
+      "http_status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "public_asset_hashes": "No public asset source changed in this slice, so no public asset hash delta exists to compare.",
+    "worker_bundle_hash": {
+      "local_dry_run_sha256": "62928434ebcfef172b2ae77728c50babd6551ff154d48a66d8a94b5c3013299a",
+      "cloudflare_deployed_index_js_sha256": "62928434ebcfef172b2ae77728c50babd6551ff154d48a66d8a94b5c3013299a",
+      "bytes": 405203,
+      "verified_source_behavior": "malformed schedule sidecar fail-closed SQL is present in the deployed Worker bundle"
+    },
     "d1_preflight": {
-      "mode": "Cloudflare D1 Query API; SELECT-only batch",
+      "mode": "Cloudflare D1 Query API; SELECT-only batch before push/deployment",
       "migration_count": 35,
       "latest_migration": "0029_media_archive_unicode_additive.sql",
-      "core_tables_present": ["editor_revisions", "media", "pages", "schedule_items", "site_settings"],
-      "changes": 0,
+      "core_tables_present": [
+        "editor_revisions",
+        "media",
+        "pages",
+        "schedule_items",
+        "site_settings"
+      ],
       "rows_written": 0,
+      "changes": 0,
+      "changed_db": false
+    },
+    "d1_postflight": {
+      "mode": "Cloudflare D1 Query API; SELECT-only batch after deployment",
+      "migration_count": 35,
+      "latest_migration": "0029_media_archive_unicode_additive.sql",
+      "rows_written": 0,
+      "changes": 0,
       "changed_db": false
     },
     "production_d1_write_or_migration": false,
@@ -66,5 +112,6 @@
     "This proves one D-06 malformed-sidecar safety slice, not full D-06, D-01–D-07, or full Editor acceptance.",
     "Full Visual Editor manual/physical acceptance remains deferred until the planned Editor scope is implemented.",
     "Save and Publish remain separate."
-  ]
+  ],
+  "released_at_utc": "2026-11-20T09:03:35Z"
 }
