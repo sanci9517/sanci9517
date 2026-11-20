@@ -36,17 +36,18 @@ export const SCHEDULE_ARTWORK_SELECT =
 export const SCHEDULE_ARTWORK_ASSET_MATCH =
   "lower(CASE WHEN json_valid(artwork.value_json) THEN json_extract(artwork.value_json,'$.assetId') ELSE NULL END)=lower(?)";
 
-// A broken sidecar is never a valid reference or public grant, but if it still
-// contains a media UUID the usage index must report incomplete and archival
-// must fail closed. False-positive substring hits are intentionally safe here:
-// this predicate retains data conservatively and never authorizes public access.
-export const SCHEDULE_ARTWORK_MALFORMED_ASSET_MATCH =
-  "NOT json_valid(artwork.value_json) AND instr(lower(COALESCE(artwork.value_json,'')),lower(?))>0";
+// A broken sidecar is never a valid reference or public grant. Because invalid
+// JSON cannot be decoded reliably (a UUID may itself be Unicode-escaped), its
+// intended asset is unknowable: mark every same-site media usage scan incomplete
+// and retain assets until the sidecar is repaired. This is deliberately broader
+// than a raw substring match, which can miss escaped IDs and falsely prove safety.
+export const SCHEDULE_ARTWORK_MALFORMED_PRESENT =
+  "NOT json_valid(artwork.value_json)";
 
 // The archive preflight is advisory. This predicate is evaluated atomically
 // with UPDATE media, so a freshly linked schedule cover can never be archived
-// between the preflight and commit. Malformed legacy JSON containing the ID
-// also blocks archival but never grants public delivery.
+// between the preflight and commit. Any malformed same-site sidecar blocks
+// archival because its intended media reference cannot be proven from invalid JSON.
 export const SCHEDULE_ARTWORK_ARCHIVE_GUARD =
   ` AND NOT EXISTS (
     SELECT 1 FROM schedule_items e
@@ -54,8 +55,7 @@ export const SCHEDULE_ARTWORK_ARCHIVE_GUARD =
     WHERE e.site_id=media.site_id
       AND (lower(CASE WHEN json_valid(artwork.value_json)
           THEN json_extract(artwork.value_json,'$.assetId') ELSE NULL END)=lower(media.id)
-        OR (NOT json_valid(artwork.value_json)
-          AND instr(lower(COALESCE(artwork.value_json,'')),lower(media.id))>0))
+        OR NOT json_valid(artwork.value_json))
   )`;
 
 // In the same D1 batch as the conditional artwork UPSERT, audit success only
