@@ -1,0 +1,106 @@
+{
+  "schema_version": 1,
+  "kind": "editor-acceptance-slice",
+  "recorded_at_utc": "2026-11-20T13:08:58Z",
+  "plan_point": "77.44.7.D / D-06 — authored audio/video Media Library selection and lifecycle",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "base_sha": "cdf68badd0603bd0ffda1619f736b6cb6c057585",
+    "canonical_plan_bytes": 1750513,
+    "canonical_plan_sha256": "bc17593e483848e9e8fe901d42b210868c781d714f43f3454e84e366d902f46e",
+    "canonical_plan_git_blob": "d41d893683b16e2fcb4f043c0649a5ce84e085cc"
+  },
+  "gap": "Authored contentVersion=1 audio and video nodes had no Media Library assetId field in their Inspector. Legacy media nodes could select image/audio/video, but those controls did not expose the authored-node fields. The public renderer and server publication validator already supported site-scoped audio/video asset IDs, so this blocked the planned end-to-end media lifecycle for authored audio/video.",
+  "change": {
+    "runtime": true,
+    "files": [
+      "public/editor-v2/core/authored-content.js",
+      "public/editor-v2/ui/element-content-controls.js",
+      "public/editor-v2/app.js",
+      "public/editor-v2/core/canvas-engine.js",
+      "public/editor-v2/core/capability-matrix.js",
+      "public/editor-v2/core/commands.js",
+      "public/editor-v2/core/content-profiles.js",
+      "public/editor-v2/core/validation.js",
+      "public/editor-v2/index.html",
+      "public/editor-v2/ui/accessibility-fields.js",
+      "public/editor-v2/ui/card-content-inspector.js",
+      "public/editor-v2/ui/legacy-media-inspector.js",
+      "public/editor-v2/ui/property-controls.js",
+      "public/assets/page-renderer.js",
+      "public/editor-v2/tests/element-content.test.js",
+      "tests/editor-d-content-contract.test.js",
+      "tests/browser/media-worker-storage.test.mjs",
+      "docs/evidence/feature-traceability.json"
+    ],
+    "behavior": [
+      "Authored video has a site-scoped Media Library picker restricted to video/webm; authored audio has one restricted to audio/mpeg, audio/ogg, and audio/wav.",
+      "The shared picker honors each authored field's MIME allowlist and kind while preserving existing image picker defaults, validation, and save/undo behavior.",
+      "Private draft preview, explicit Save, reload-restored selection, separate Publish, and public media delivery are tested against the actual Worker and Chromium with synthetic Miniflare D1/R2 only.",
+      "Muted Chromium playback checks prove decoded published WebM and WAV are playable; the test also verifies exact uploaded/published bytes and MIME.",
+      "No Page Model schema, D1 schema, R2 key, authorization, Save/Publish boundary, or dependency changes. No third-party source copied; existing project picker and Worker contract reused."
+    ],
+    "production_data_used": false,
+    "production_d1_mutation": false,
+    "production_r2_operation": false,
+    "dependencies_added": []
+  },
+  "checks": {
+    "real_worker_chromium_media_lifecycle": {
+      "command": "npm run test:media:storage",
+      "result": "PASS — 1/1 real Chromium + real local Worker integration; local Miniflare D1/R2 only; 122.3 seconds. Covers Media Library audio/video upload and private preview, authored Inspector picker, Save, saved asset IDs, private GET 404, reload-restored selection and preview, explicit Publish, exact public bytes/MIME/route, decoded playback, foreign key and quick checks."
+    },
+    "editor_unit_and_contract_suite": {
+      "command": "npm run test:editor",
+      "result": "PASS — Linux subreaper 4/4; Editor unit 22/22, 0 failures."
+    },
+    "media_api_tests": {
+      "command": "npm run test:media",
+      "result": "PASS — 5/5 files."
+    },
+    "typecheck": { "command": "npm run typecheck", "result": "PASS — tsc --noEmit." },
+    "plan_contract": { "command": "python3 tests/plan-contract.test.py", "result": "PASS — 15/15." },
+    "traceability": { "command": "python3 scripts/build-feature-traceability.py --check", "result": "PASS — 396/396 source mappings; acceptance remains NOT_CERTIFIED." },
+    "canonical_plan": { "command": "python3 scripts/check-canonical-plan.py", "result": "PASS — one complete 13-file master and 396 mappings; acceptance remains NOT_CERTIFIED." },
+    "active_point_audit": {
+      "command": "python3 scripts/audit-active-plan-point.py",
+      "result": "PASS as bookkeeping only — cursor main 77.44/WEB-011, next 77.44.7.D; 147 PARTIAL_SOURCE, 249 UNVERIFIED; functional acceptance NOT_CERTIFIED."
+    },
+    "migration_safety_gate": {
+      "command": "npm run test:web013:migration-gate",
+      "result": "PASS — deploy:safe does not apply D1 migrations; manual SQL stays manual-only."
+    },
+    "wrangler_dry_run": {
+      "command": "XDG_CONFIG_HOME=/tmp/sanci-wrangler-config WRANGLER_SEND_METRICS=false npx --no-install wrangler deploy --dry-run --outdir /tmp/sanci-d06-dry-run-verified",
+      "result": "PASS — exit 0, Wrangler 4.130.0; 197 public files, upload 396.87 KiB (gzip 101.41 KiB); DB/R2/ASSETS bindings resolved. No deployment."
+    },
+    "production_d1_read_only_preflight": {
+      "method": "Cloudflare D1 Query API, one SELECT statement against sqlite_master",
+      "result": "PASS — success true, rows_written 0, changed_db false, rows_read 226. No DDL or migration command."
+    },
+    "production_health_before_release": {
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+      "result": "PASS — HTTP 200; {ok:true, service:sanci9517-streamer-brand, version:2.0.0, server:cloudflare-worker}. Baseline runtime only."
+    },
+    "diff_and_syntax": { "command": "git diff --check; node --check tests/browser/media-worker-storage.test.mjs", "result": "PASS." },
+    "hosted_ci": "PENDING — runtime commit must use the normal release path; no manual dispatch or rerun."
+  },
+  "release": {
+    "state": "TESTED_RELEASE_PENDING",
+    "base_branch_head_before_push": "cdf68badd0603bd0ffda1619f736b6cb6c057585",
+    "runtime_commit_sha": "PENDING",
+    "github_branch_sha_after_push": "PENDING",
+    "required_cloudflare_auto_build": "PENDING",
+    "deployment_id": "PENDING",
+    "worker_version_id": "PENDING",
+    "traffic_percent": "PENDING",
+    "production_health_after_release": "PENDING",
+    "changed_public_asset_hashes": "PENDING"
+  },
+  "scope_limitations": [
+    "This completes one authored playable-media UI/lifecycle regression slice only. It does not certify all D-06 retention/restore/backup/recovery/capability requirements, D-01–D-07, or 77.44.7.D.",
+    "The active point and full Visual Editor remain OPEN / NOT_CERTIFIED; manual and physical Editor acceptance remains deferred until the complete planned Editor scope is implemented.",
+    "Save and Publish remain separate. No production D1 migration, data mutation, production R2 operation, or new cost occurred."
+  ]
+}

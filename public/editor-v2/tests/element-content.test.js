@@ -202,6 +202,28 @@ test('Médiatár asset ID renders as a private canvas preview and a public route
   assert.throws(()=>normalizeElementContent(node,{assetId:'../private'}),/azonosító/);
 });
 
+test('authored audio and video expose only their playable Media Library formats',()=>{
+  const assetId='6b1c2e65-e46e-4764-b234-123456789abc';
+  for(const {type,kind,label,mimes} of [
+    {type:'audio',kind:'audio',label:'Hang a Médiatárból',mimes:['audio/mpeg','audio/ogg','audio/wav']},
+    {type:'video',kind:'video',label:'Videó a Médiatárból',mimes:['video/webm']}
+  ]){
+    const definition=CONTENT_FIELDS[type].find(field=>field.key==='assetId');
+    assert.ok(definition,`${type} has a typed Media Library source field`);
+    assert.equal(definition.label,label);
+    assert.equal(definition.type,'asset');
+    assert.equal(definition.selectedKind,kind);
+    assert.deepEqual(definition.mimes,mimes);
+    const props={src:'',assetId,controls:true,loop:false,muted:true,autoplay:false,poster:'',posterAssetId:''};
+    const node={id:'authored-'+type,type,metadata:{contentVersion:1},props};
+    assert.equal(normalizeElementContent(node,{assetId}).assetId,assetId);
+    validateElementContent(node);
+    assert.match(authoredNodeHtml(node,{editor:true}),new RegExp(`/api/admin/media\\?id=${assetId}`));
+    assert.match(authoredNodeHtml(node),new RegExp(`/media/${assetId}`));
+    assert.throws(()=>normalizeElementContent(node,{assetId:'../untrusted'}),/azonosító/);
+  }
+});
+
 test('structured public media rejects multiply encoded private Editor preview routes',()=>{
   const privateUrls=[
     '/api/admin/media?id=asset',

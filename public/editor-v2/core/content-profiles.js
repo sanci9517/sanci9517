@@ -1,4 +1,4 @@
-import {isAuthoredContent,CONTENT_FIELDS,CONTENT_TYPES,STRUCTURAL_TYPES} from './authored-content.js?v=20261120-d03-tooltip-viewport-bounds-v1';
+import {isAuthoredContent,CONTENT_FIELDS,CONTENT_TYPES,STRUCTURAL_TYPES} from './authored-content.js?v=20261120-d06-authored-playable-asset-picker-v1';
 import {isStructuredType} from './element-content.js?v=20261117-d01-private-media-double-decode-v1';
 
 // These describe existing version gates, not a new content schema or validator.

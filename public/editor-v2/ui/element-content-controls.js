@@ -1,4 +1,4 @@
-import {CONTENT_FIELDS,IMAGE_MIMES,normalizeContentField,contentProperties,imageFocalPosition,getPublicationContentGuidance} from '../core/authored-content.js?v=20261120-d03-tooltip-viewport-bounds-v1';
+import {CONTENT_FIELDS,IMAGE_MIMES,normalizeContentField,contentProperties,imageFocalPosition,getPublicationContentGuidance} from '../core/authored-content.js?v=20261120-d06-authored-playable-asset-picker-v1';
 import {parseTableTsv,serializeTableTsv} from '../core/table-tsv.js?v=20261115-d03-table-tsv-v2';
 import {getProperty} from '../core/property-registry.js?v=20261117-edt043-motion-guidance';
 export {IMAGE_MIMES};
@@ -238,7 +238,7 @@ export function renderElementContentControls(node,{apply,pending,exclude=[],page
     else {input=document.createElement(definition.type==='textarea'?'textarea':'input');if(input.tagName==='INPUT'){input.type=definition.type==='range'?'range':'text';if(definition.type==='range'){input.min=String(definition.min??0);input.max=String(definition.max??100);input.step=String(definition.step??1)}}input.value=inspectorText(value);if(definition.type!=='range')input.maxLength=definition.max||2048}
     if(definition.type==='asset'){
       label.id='content-media-label-'+crypto.randomUUID();
-      const picker=mediaAssetPicker(typeof value==='string'?value:'',(id,asset)=>{try{save(id,undefined,asset);fail.textContent='';return true}catch(error){fail.textContent=error.message;return false}},{disabled:Boolean(node.locked),mimes:IMAGE_MIMES,ariaLabelledBy:label.id,ariaDescribedBy:fail.id});
+      const picker=mediaAssetPicker(typeof value==='string'?value:'',(id,asset)=>{try{save(id,undefined,asset);fail.textContent='';return true}catch(error){fail.textContent=error.message;return false}},{disabled:Boolean(node.locked),mimes:definition.mimes||IMAGE_MIMES,selectedKind:definition.selectedKind||'image',ariaLabelledBy:label.id,ariaDescribedBy:fail.id});
       register(next=>setMediaAssetPickerSelection(picker,next));wrap.append(picker);
       if(definition.help){const help=document.createElement('small');help.className='content-field-help';help.textContent=definition.help;wrap.append(help)}return wrap;
     }

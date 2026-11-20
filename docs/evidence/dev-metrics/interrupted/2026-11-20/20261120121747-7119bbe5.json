@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "id": "20261120121747-7119bbe5",
+  "task": "77.44.7.D-D06-playable-media-end-to-end",
+  "trigger": "manual",
+  "started_at": "2026-11-20T12:17:47.309Z",
+  "abandoned_at": "2026-11-20T12:45:27.294Z",
+  "measured_seconds": null,
+  "status": "interrupted",
+  "reason": "Interrupted after the real Worker browser test exposed a missing Media Library asset picker for authored audio/video nodes.",
+  "started_revision": "cdf68badd0603bd0ffda1619f736b6cb6c057585",
+  "measurement": "missing end time; excluded from elapsed time and ETA"
+}

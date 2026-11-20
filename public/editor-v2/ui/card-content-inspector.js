@@ -1,6 +1,6 @@
 import {defaultCardContent,CARD_VARIANTS,cardActionValidationError} from '../core/card-content.js?v=20261118-d02-card-cta-recovery-v1';
 import {createCompositionInputs} from './composition-inputs.js';
-import {IMAGE_MIMES,mediaAssetPicker,setMediaAssetPickerSelection} from './element-content-controls.js?v=20261119-d01-missing-selected-media-recovery-v2';
+import {IMAGE_MIMES,mediaAssetPicker,setMediaAssetPickerSelection} from './element-content-controls.js?v=20261120-d06-authored-playable-asset-picker-v1';
 
 export function renderCardInspector(node,update,{pending=()=>{}}={}){
  const model={...defaultCardContent(),...(node.props?.cardContent||{})};
