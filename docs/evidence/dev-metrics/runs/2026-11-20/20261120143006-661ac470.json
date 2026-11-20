@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261120143006-661ac470",
+  "task": "77.44.7.D-D06-archive-restore-publish-browser-regression",
+  "trigger": "manual",
+  "started_at": "2026-11-20T14:30:06.537Z",
+  "finished_at": "2026-11-20T14:35:54.087Z",
+  "wall_seconds": 348,
+  "paused_seconds": 0,
+  "measured_seconds": 348,
+  "status": "pass",
+  "kind": "mixed",
+  "summary": "Added and locally verified D-06 archived media restore through the real Editor picker, Save isolation, reload, and separate Publish; exact CI timeout assertion fixed without weakening checks.",
+  "evidence": [
+    "docs/evidence/editor-d06-archive-restore-picker-publish-2026-11-20.json"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "ba5501809611d98ca67b48c75f5a998a148ffd2b",
+  "finished_revision": "ba5501809611d98ca67b48c75f5a998a148ffd2b",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

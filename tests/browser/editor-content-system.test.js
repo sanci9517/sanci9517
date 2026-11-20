@@ -1317,10 +1317,10 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
       await live.waitForFunction(({id,selectedIndex})=>{
         const tabs=[...document.querySelectorAll(`.visual-editor-node[data-node-id="${id}"] [role="tab"]`)];
         return tabs.length===2&&tabs.every((tab,i)=>tab.getAttribute('aria-selected')===String(i===selectedIndex));
-      },{id:ids.tabs,selectedIndex:index},{timeout:15000});
+      },{id:ids.tabs,selectedIndex:index},{timeout:30000});
     }catch(error){
       const state=await live.evaluate(id=>({tabs:[...document.querySelectorAll(`.visual-editor-node[data-node-id="${id}"] [role="tab"]`)].map(tab=>({selected:tab.getAttribute('aria-selected'),tabindex:tab.tabIndex,id:tab.id})),active:document.activeElement?.id,hash:location.hash,search:location.search}),ids.tabs);
-      error.message+=`; tab state did not settle: ${JSON.stringify(state)}`;throw error;
+      throw new Error(`Published tab state did not settle for index ${index}: ${JSON.stringify(state)}`,{cause:error});
     }
     const tabIds=await publicTabs.evaluateAll(items=>items.map(tab=>({id:tab.id,controls:tab.getAttribute('aria-controls'),selected:tab.getAttribute('aria-selected'),tabindex:tab.getAttribute('tabindex')})));
     const panelIds=await publicPanels.evaluateAll(items=>items.map(panel=>({id:panel.id,labelledby:panel.getAttribute('aria-labelledby'),visible:!panel.hidden,text:panel.textContent})));

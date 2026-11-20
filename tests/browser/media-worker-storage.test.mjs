@@ -301,6 +301,17 @@ print(json.dumps(result))`],{cwd:root,encoding:'utf8'}));
  assert.equal(archivedPreview.status(),200,'the site admin can still verify retained bytes through the private preview while archived');
  assert.equal(digest(await archivedPreview.body()),restoreBytesDigest,'the archived private preview serves the exact retained bytes');
  assert.equal((await context.request.get(base+'/media/'+restoreId)).status(),404,'archiving does not publish an unreferenced image');
+ const restoredPickerNode=editor.locator(`.node[data-node-id="${targetNode.id}"]`);
+ await restoredPickerNode.evaluate(element=>element.click());
+ if(await editor.locator('#rightDock').evaluate(el=>el.classList.contains('closed')))await editor.locator('#openInspector').click();
+ await editor.locator('.inspector-tabs button').first().click();
+ if(await backgroundGroup.getAttribute('aria-expanded')==='false')await backgroundGroup.click();
+ const restorePicker=editor.locator('.typed-inspector-field[data-property-id="background.image"] .editor-media-picker');
+ await restorePicker.getByRole('button',{name:'Médiatár megnyitása'}).click();
+ await restorePicker.getByRole('region',{name:'Médiatár találatok'}).waitFor();
+ await editor.waitForFunction(()=>document.querySelector('.editor-media-current')?.getAttribute('aria-busy')==='false');
+ assert.equal(await restorePicker.getByRole('button',{name:'archive-restore-acceptance.png kiválasztása'}).count(),0,
+  'the real Inspector picker excludes a D1-archived asset even while the Admin Media Library lists archived rows');
  await page.locator('#mediaState').selectOption('archived');await restoreTile.waitFor();
  const restoreButton=restoreTile.getByRole('button',{name:'Médiafájl visszaállítása',exact:true});
  // R2 can become unavailable after an item was safely archived. Exercise the
@@ -341,11 +352,65 @@ print(json.dumps(result))`],{cwd:root,encoding:'utf8'}));
  assert.ok(restoredObject,'restore leaves the retained image object available');
  assert.equal(digest(await restoredObject.arrayBuffer()),restoreBytesDigest,'restore preserves the exact image bytes');
  await page.locator('#mediaState').selectOption('active');await restoreTile.waitFor();
+ await restorePicker.getByRole('button',{name:'Médiatár bezárása'}).click();
+ await restorePicker.getByRole('button',{name:'Médiatár megnyitása'}).click();
+ await editor.waitForFunction(()=>document.querySelector('.editor-media-current')?.getAttribute('aria-busy')==='false');
+ const restoredChoice=restorePicker.getByRole('button',{name:'archive-restore-acceptance.png kiválasztása',exact:true});
+ await restoredChoice.waitFor();
+ const editorContentBeforeRestoreSelection=(await DB.prepare('SELECT content_json,published_content_json,published_revision_id FROM pages WHERE id=?').bind(pageId).first());
+ const publishedBackgroundBeforeRestore=await live.locator(`[data-node-id="${targetNode.id}"]`).evaluate(el=>getComputedStyle(el).backgroundImage);
+ assert.equal(publishedBackgroundBeforeRestore,'none','the prior explicit Publish removed the original image before this restore lifecycle');
+ await restoredChoice.click();
+ assert.ok((await restoredPickerNode.evaluate(el=>getComputedStyle(el).backgroundImage)).includes('/api/admin/media?id='+restoreId),
+  'the same restored media ID is selectable in the real Editor and previews privately on its Canvas');
+ const editorContentAfterRestoreSelection=await DB.prepare('SELECT content_json,published_content_json,published_revision_id FROM pages WHERE id=?').bind(pageId).first();
+ assert.deepEqual(editorContentAfterRestoreSelection,editorContentBeforeRestoreSelection,
+  'selecting the restored media remains local until the user explicitly saves the draft');
+ await save(false);
+ const restoredDraft=await DB.prepare('SELECT content_json,published_content_json,published_revision_id,is_published FROM pages WHERE id=?').bind(pageId).first();
+ assert.equal(JSON.parse(restoredDraft.content_json).pages[pageId].nodes[targetNode.id].responsive.desktop.backgroundAssetId,restoreId,
+  'explicit Save persists the restored asset ID in the draft');
+ assert.equal(restoredDraft.is_published,1,'draft Save keeps the existing page published');
+ assert.equal(restoredDraft.published_content_json,editorContentBeforeRestoreSelection.published_content_json,
+  'Save keeps the published snapshot separate from the restored asset draft');
+ assert.equal(JSON.parse(restoredDraft.published_content_json).pages[pageId].nodes[targetNode.id].responsive.desktop.backgroundAssetId,'none',
+  'the unchanged published snapshot still reflects the prior explicit image removal');
+ assert.equal((await context.request.get(base+'/media/'+restoreId)).status(),404,
+  'Save does not publish the restored asset');
+ await live.reload();
+ try{
+  await live.waitForFunction(nodeId=>{
+   const node=document.querySelector(`[data-node-id="${nodeId}"]`);
+   return Boolean(node&&getComputedStyle(node).backgroundImage==='none');
+  },targetNode.id,{timeout:15000});
+ }catch(error){
+  const state=await live.evaluate(nodeId=>{
+   const node=document.querySelector(`[data-node-id="${nodeId}"]`);
+   return {url:location.href,node:node?.outerHTML.slice(0,1000),background:node?getComputedStyle(node).backgroundImage:null};
+  },targetNode.id);
+  const publicResponse=await context.request.get(base+'/api/public/pages?slug=fixture'),publicPayload=await publicResponse.json();
+  throw new Error(`Public Save isolation changed the previous no-background snapshot: ${JSON.stringify({state,publicStatus:publicResponse.status(),publishedAssetId:publicPayload.data?.content?.nodes?.[targetNode.id]?.responsive?.desktop?.backgroundAssetId})}`,{cause:error});
+ }
+ assert.equal(await live.locator(`[data-node-id="${targetNode.id}"]`).evaluate(el=>getComputedStyle(el).backgroundImage),'none',
+  'the public page remains on its previous no-background snapshot after Save');
+ await editor.reload();await restoredPickerNode.click();
+ assert.ok((await restoredPickerNode.evaluate(el=>getComputedStyle(el).backgroundImage)).includes('/api/admin/media?id='+restoreId),
+  'Editor reload restores the same saved restored-asset selection');
  const restoredPreview=await context.request.get(base+'/api/admin/media?id='+restoreId);
  assert.equal(restoredPreview.status(),200,'the restored image is available again through its authenticated private preview');
  assert.equal(digest(await restoredPreview.body()),restoreBytesDigest);
  assert.equal((await context.request.get(base+'/media/'+restoreId)).status(),404,
   'restore does not publish the image; public delivery still needs an explicit page Publish');
+ await save(true);
+ const restoredPublication=await DB.prepare('SELECT published_content_json,published_revision_id FROM pages WHERE id=?').bind(pageId).first();
+ assert.equal(JSON.parse(restoredPublication.published_content_json).pages[pageId].nodes[targetNode.id].responsive.desktop.backgroundAssetId,restoreId,
+  'the separate Publish moves the restored asset ID into the live snapshot');
+ const restoredPublicResponse=await context.request.get(base+'/media/'+restoreId);
+ assert.equal(restoredPublicResponse.status(),200,'the separate Publish grants public delivery to the restored asset');
+ assert.equal(digest(await restoredPublicResponse.body()),restoreBytesDigest,'the published restored asset serves the exact retained bytes');
+ await live.reload();
+ assert.ok((await live.locator(`[data-node-id="${targetNode.id}"]`).evaluate(el=>getComputedStyle(el).backgroundImage)).includes('/media/'+restoreId),
+  'the public page displays the restored asset only after the separate Publish');
  // A malformed persisted/API draft must remain repairable without bypassing the server Publish guard.
  const publicationBefore=await DB.prepare('SELECT content_json,published_content_json,published_revision_id,is_published FROM pages WHERE id=?').bind(pageId).first();
  assert.equal(publicationBefore.is_published,1);

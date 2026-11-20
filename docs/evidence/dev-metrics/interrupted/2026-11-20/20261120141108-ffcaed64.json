@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "id": "20261120141108-ffcaed64",
+  "task": "77.44.7.D-D06-editor-core-ci-failure",
+  "trigger": "manual",
+  "started_at": "2026-11-20T14:11:08.554Z",
+  "abandoned_at": "2026-11-20T14:28:57.467Z",
+  "measured_seconds": null,
+  "status": "interrupted",
+  "reason": "Session resumed from summarized run; unresolved D-06 browser assertion; final work continuing in current measured block",
+  "started_revision": "ba5501809611d98ca67b48c75f5a998a148ffd2b",
+  "measurement": "missing end time; excluded from elapsed time and ETA"
+}

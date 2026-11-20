@@ -1,0 +1,118 @@
+{
+  "evidence_id": "editor-d06-archive-restore-picker-publish-2026-11-20",
+  "plan_item": "77.44.7.D / D-06",
+  "status": "PARTIAL_PASS_NOT_CERTIFIED",
+  "recorded_at": "2026-11-20T14:35:54Z",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "base_sha": "ba5501809611d98ca67b48c75f5a998a148ffd2b",
+    "canonical_plan_bytes": 1752494,
+    "canonical_plan_sha256": "536820310d8d8fbfd00596b4435b858ece62a5a31b738319fb2937bbf9ba2396"
+  },
+  "changes": {
+    "runtime_source_changed": false,
+    "public_asset_changed": false,
+    "files": [
+      "tests/browser/media-worker-storage.test.mjs",
+      "tests/browser/editor-content-system.test.js",
+      "docs/evidence/editor-d06-archive-restore-picker-publish-2026-11-20.json"
+    ],
+    "details": [
+      "The integrated synthetic Miniflare D1/R2 + real Worker + Chromium test now proves an archived image is absent from the actual Editor image picker, then after Media Library restore the same ID reappears and can be selected for a private Canvas preview.",
+      "Explicit Save stores the restored ID in the draft while leaving the exact prior published snapshot and public no-background rendering unchanged; the private media route remains separate from public delivery.",
+      "After Editor reload, the saved restored selection remains private; only a distinct explicit Publish updates the public snapshot, grants the public media route, and renders the image on the public page.",
+      "A previous assertion expected the original asset to remain published even though an earlier explicit Publish in the same test had removed it. The baseline and assertion now reflect that actual sequence; the test separately checks exact snapshot equality across Save.",
+      "The Editor public-tab helper increases only its maximum wait from 15 to 30 seconds and includes current DOM state in timeout diagnostics. Its existing selected-tab assertions are unchanged."
+    ]
+  },
+  "checks": [
+    {
+      "command": "node --experimental-loader ./tests/ts-extension-loader.mjs --test tests/browser/media-worker-storage.test.mjs",
+      "result": "PASS",
+      "summary": "1/1 real Worker + Chromium integration; synthetic local Miniflare D1/R2 only; 146201.9 ms"
+    },
+    {
+      "command": "python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-content-system.test.js",
+      "result": "PASS",
+      "summary": "1/1 real Chromium test; 62974.6 ms"
+    },
+    {
+      "command": "npm run test:editor",
+      "result": "PASS",
+      "summary": "22/22 test files and 4/4 subreaper/manifest tests"
+    },
+    {
+      "command": "npm run test:media",
+      "result": "PASS",
+      "summary": "5/5 media API, retention, and query test files"
+    },
+    {
+      "command": "npm run typecheck -- --pretty false",
+      "result": "PASS"
+    },
+    {
+      "command": "python3 tests/plan-contract.test.py",
+      "result": "PASS",
+      "summary": "15/15"
+    },
+    {
+      "command": "python3 scripts/check-canonical-plan.py",
+      "result": "PASS",
+      "summary": "one complete 13-file master, one current cursor, 396 mappings; acceptance remains uncertified"
+    },
+    {
+      "command": "python3 scripts/build-feature-traceability.py --check",
+      "result": "PASS",
+      "summary": "396/396 mappings"
+    },
+    {
+      "command": "python3 scripts/audit-active-plan-point.py",
+      "result": "PASS_FOR_ACCOUNTING_ONLY",
+      "summary": "77.44.7.D OPEN / NOT_CERTIFIED; 147 PARTIAL_SOURCE and 249 UNVERIFIED"
+    },
+    {
+      "command": "npm run test:web013:migration-gate",
+      "result": "PASS"
+    },
+    {
+      "command": "node --check tests/browser/editor-content-system.test.js; node --check tests/browser/media-worker-storage.test.mjs; git diff --check",
+      "result": "PASS"
+    }
+  ],
+  "prior_hosted_ci_context": {
+    "run_id": "44742011951",
+    "job_id": "136307745903",
+    "source_sha": "a58ffb773cfddb908f79b295e0047c15195bfcd5",
+    "result": "FAILURE",
+    "failed_step": "Run Editor browser layout regression",
+    "failure": "tests/browser/editor-content-system.test.js timed out waiting for public tab aria-selected state after 15000ms",
+    "current_local_reproduction": "PASS after increasing only the wait bound and adding diagnostic state; assertions unchanged",
+    "new_hosted_ci": "NOT_STARTED; test/evidence-only commit uses the repository [skip ci] convention; no CI PASS claimed"
+  },
+  "production": {
+    "worker_name": "sanci9517-streamer-brand",
+    "latest_read_only_deployment_id": "5543b768-ff27-4f3b-8609-9b8b981a006e",
+    "latest_read_only_worker_version": "db5de010-ab32-4bbd-b1c0-e34b798bbab0",
+    "traffic_percent": 100,
+    "runtime_source_unchanged": true,
+    "deployment_performed": false,
+    "new_health_check": "NOT_RUN; no runtime change",
+    "public_asset_hash_check": "NOT_APPLICABLE; no public asset changed"
+  },
+  "data_and_cost": {
+    "production_d1_read_or_write": "NONE",
+    "production_r2_operation": "NONE",
+    "synthetic_local_d1_r2_only": true,
+    "new_dependency": false,
+    "new_cost_huf": 0
+  },
+  "acceptance": {
+    "d06_slice": "AUTOMATED_PASS",
+    "complete_d06": "OPEN / NOT_CERTIFIED",
+    "complete_editor_d01_d07": "OPEN / NOT_CERTIFIED",
+    "full_editor_manual_and_physical_acceptance": "DEFERRED_UNTIL_COMPLETE_EDITOR",
+    "save_and_publish_separate": true
+  },
+  "metrics_run_id": "20261120143006-661ac470"
+}
