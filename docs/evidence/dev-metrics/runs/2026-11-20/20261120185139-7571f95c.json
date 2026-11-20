@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261120185139-7571f95c",
+  "task": "77.44.7.D-D06-video-poster-picker-lifecycle",
+  "trigger": "manual",
+  "started_at": "2026-11-20T18:51:39.313Z",
+  "finished_at": "2026-11-20T18:59:24.111Z",
+  "wall_seconds": 465,
+  "paused_seconds": 0,
+  "measured_seconds": 465,
+  "status": "pass",
+  "kind": "test",
+  "summary": "D-06 real Worker/Chromium playable-media lifecycle now verified at the 720x450 effective 200% viewport; full D remains OPEN.",
+  "evidence": [
+    "docs/evidence/editor-d06-media-picker-compact-viewport-2026-11-20.json"
+  ],
+  "checks": "media Worker/Chromium 1/1 PASS; test:editor 22/22+4/4; test:media 5/5; typecheck; plan 15; canonical 13/396; traceability 396/396; audit 147 PARTIAL_SOURCE/249 UNVERIFIED; migration gate, syntax/diff PASS; runtime unchanged.",
+  "started_revision": "0c91d52928939ee4e7fb2a34d80fd075215ca50b",
+  "finished_revision": "0c91d52928939ee4e7fb2a34d80fd075215ca50b",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

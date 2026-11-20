@@ -561,8 +561,16 @@ print(json.dumps(result))`],{cwd:root,encoding:'utf8'}));
   },true);
  });
  playableEditor.on('pageerror',e=>errors.push(e.message));playableLive.on('pageerror',e=>errors.push(e.message));
- await playableEditor.setViewportSize({width:1280,height:900});
+ // A 720×450 CSS-pixel viewport is the repository's established effective
+ // 200% zoom / short-desktop scenario (1440×900 physical baseline). Keep the
+ // real authored media picker, poster, Save, reload, and Publish lifecycle in
+ // this compact shell instead of testing ownership only at a roomy desktop.
+ await playableEditor.setViewportSize({width:720,height:450});
  await playableEditor.goto(base+'/admin/editor?pageId='+encodeURIComponent(playablePageId));
+ assert.equal(await playableEditor.evaluate(()=>[innerWidth,innerHeight].join('×')),'720×450',
+  'the real media lifecycle runs at the established effective 200% zoom / short viewport');
+ assert.ok(await playableEditor.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),
+  'the real Editor shell and Inspector do not introduce horizontal page overflow at the compact viewport');
  const selectPlayable=async node=>{
   // Use the same delegated node-selection event as the existing Chromium
   // Editor tests; native media controls and canvas overlays can intercept a
@@ -576,7 +584,11 @@ print(json.dumps(result))`],{cwd:root,encoding:'utf8'}));
   await selectPlayable(node);
   const sourceField=playableEditor.locator('#inspectorBody [data-content-key="assetId"]');
   const picker=sourceField.locator('.editor-media-picker');
-  await picker.getByRole('button',{name:'Médiatár megnyitása'}).click();
+  const openPicker=picker.getByRole('button',{name:'Médiatár megnyitása'});
+  const pickerButtonBox=await openPicker.boundingBox();
+  assert.ok(pickerButtonBox?.height>=44,
+   'the real authored-media picker retains the minimum touch target at the compact viewport');
+  await openPicker.click();
   const choices=picker.getByRole('region',{name:'Médiatár találatok'});
   const foreign=foreignPlayableAssets.find(asset=>asset.type===fixture.type);
   assert.ok(foreign,'the fixture includes a same-type foreign playable asset for each Editor picker check');

@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "kind": "editor-acceptance-slice",
+  "recorded_at_utc": "2026-11-20T18:58:26Z",
+  "plan_point": "77.44.7.D / D-06 — site-scoped playable-media lifecycle at compact viewport",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "github_head_at_block_start": "0c91d52928939ee4e7fb2a34d80fd075215ca50b",
+    "test_base_blob": "d78a93babe9ec22750c3ba3b45d0f8e4d008695d"
+  },
+  "gap": "The integrated real Worker/Chromium media lifecycle covered site ownership and playable media, but its authored Editor viewport was still roomy desktop. The D acceptance notes specifically call out a 200%-effective short viewport check for media and field interaction.",
+  "change": {
+    "runtime": false,
+    "files": [
+      "tests/browser/media-worker-storage.test.mjs",
+      "docs/evidence/editor-d06-media-picker-compact-viewport-2026-11-20.json",
+      "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md"
+    ],
+    "behavior": [
+      "The real Worker media picker, image poster selection, audio loop and video muted-autoplay configuration lifecycle now execute in a 720x450 CSS-pixel Editor viewport, the repository's established 200%-effective zoom/short-viewport scenario relative to a 1440x900 desktop baseline.",
+      "The integrated real Editor has no document horizontal overflow in that viewport, and its authored media picker opener meets the measured 44 CSS-pixel minimum touch target.",
+      "Existing same-type cross-site picker exclusions, private media behavior, explicit Save, Editor reload, and separate Publish assertions continue to run in that same responsive viewport."
+    ],
+    "production_data_used": false,
+    "production_d1_write_or_migration": false,
+    "production_r2_operation": false,
+    "dependencies_added": []
+  },
+  "checks": {
+    "real_worker_chromium": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --experimental-loader ./tests/ts-extension-loader.mjs --test --test-concurrency=1 tests/browser/media-worker-storage.test.mjs",
+      "result": "PASS — 1/1 real Worker + Chromium integration test; synthetic Miniflare D1/R2 only; final run 163.4 seconds.",
+      "diagnostic": "A first command mistakenly invoked the .js-only subreaper splitter with a .mjs file and failed before the test started; the exact browser test then ran directly and passed. No product or test assertion failed."
+    },
+    "editor_unit_tests": "PASS — npm run test:editor: 22/22 files and 4/4 runner/manifest contracts.",
+    "media_api_tests": "PASS — npm run test:media: 5/5 files.",
+    "typecheck": "PASS — npm run typecheck.",
+    "plan_contract": "PASS — 15/15.",
+    "canonical_master": "PASS — 13 master files and 396 source mappings; acceptance not certified.",
+    "feature_traceability": "PASS — 396/396.",
+    "active_point_audit": "PASS for bookkeeping only — 77.44.7.D remains OPEN / NOT_CERTIFIED; 147 PARTIAL_SOURCE / 249 UNVERIFIED.",
+    "migration_safety": "PASS — npm run test:web013:migration-gate; no migration executed.",
+    "syntax_and_diff": "PASS — node --check tests/browser/media-worker-storage.test.mjs; git diff --check.",
+    "hosted_ci": "NOT RUN — test/evidence/plan-only follow-up; no redundant CI dispatch."
+  },
+  "production_state": {
+    "read_only_deployments_api": "GET /accounts/64bbd6a12ac732ed2cac4ca25d8bfa7e/workers/scripts/sanci9517-streamer-brand/deployments",
+    "deployment_id": "5543b768-ff27-4f3b-8609-9b8b981a006e",
+    "worker_version": "db5de010-ab32-4bbd-b1c0-e34b798bbab0",
+    "traffic_percent": 100,
+    "runtime_source_changed": false,
+    "health_check": "NOT RUN — no runtime source change.",
+    "public_asset_hashes": "UNCHANGED — no public asset was modified.",
+    "new_cost_huf": 0
+  },
+  "limitations": [
+    "This is one D-06 automated compact-viewport lifecycle slice. It does not certify the complete media or property matrix, D-01–D-07, or the full Editor.",
+    "The viewport test uses a 720x450 CSS-pixel effective-zoom scenario; it is not a physical-device test.",
+    "Full manual and physical Editor acceptance remains deferred until the planned Editor scope is implemented.",
+    "Save and Publish remain separate."
+  ]
+}
