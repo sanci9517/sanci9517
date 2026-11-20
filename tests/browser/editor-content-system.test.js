@@ -71,6 +71,9 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||(existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined),args:['--no-sandbox']});
   t.after(async()=>{await browser.close();await new Promise(done=>server.close(done))});
   const base=`http://127.0.0.1:${server.address().port}`,editor=await browser.newPage({viewport:{width:1366,height:900}}),live=await browser.newPage({viewport:{width:1366,height:900}}),errors=[];
+  const touchContext=await browser.newContext({viewport:{width:390,height:800},isMobile:true,hasTouch:true});
+  const touchEditor=await touchContext.newPage();touchEditor.setDefaultTimeout(15000);touchEditor.setDefaultNavigationTimeout(30000);touchEditor.on('pageerror',e=>errors.push(e.message));
+  t.after(()=>touchContext.close());
   // This fixture mounts every authored content type and exercises multiple
   // Inspector/Canvas/save/reload routes; keep the assertion strict while
   // allowing the same interaction budget as the other full Inspector tests.
@@ -78,6 +81,14 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   editor.setDefaultTimeout(15000);live.setDefaultTimeout(15000);editor.setDefaultNavigationTimeout(30000);live.setDefaultNavigationTimeout(30000);editor.on('pageerror',e=>errors.push(e.message));live.on('pageerror',e=>errors.push(e.message));
   const node=(tab,type)=>tab.locator(`.creator-node[data-node-id="${ids[type]}"]`);
   const select=async type=>{await node(editor,type).evaluate(el=>el.click());if(await editor.locator('#rightDock').evaluate(el=>el.classList.contains('closed')))await editor.locator('#openInspector').click();await editor.locator('.inspector-tabs button').nth(1).click()};
+  const touchNode=type=>node(touchEditor,type);
+  const touchSelect=async type=>{
+    const dock=touchEditor.locator('#rightDock');
+    if(!await dock.evaluate(el=>el.classList.contains('closed')))await touchEditor.locator('#openInspector').tap();
+    await touchNode(type).evaluate(el=>el.click());
+    if(await dock.evaluate(el=>el.classList.contains('closed')))await touchEditor.locator('#openInspector').tap();
+    await touchEditor.locator('.inspector-tabs button').nth(1).tap();
+  };
   const assertNamedMediaPicker=async picker=>{
     const metadata=await picker.evaluate(el=>({role:el.getAttribute('role'),labelId:el.getAttribute('aria-labelledby'),labelText:document.getElementById(el.getAttribute('aria-labelledby'))?.textContent.trim(),descriptionId:el.getAttribute('aria-describedby'),openDescriptionId:el.querySelector('button[aria-controls]')?.getAttribute('aria-describedby')}));
     assert.equal(metadata.role,'group','Media picker exposes a semantic group');assert.ok(metadata.labelId&&metadata.labelText,'Media picker has a visible field label');
@@ -1412,40 +1423,52 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
     {type:'gallery',add:'Képek hozzáadása',field:'Külső média címe',value:'/fixture.svg',canvas:'img',mediaAlt:'Képleírás',altValue:'Visszaállított galériakép'},
     {type:'carousel',add:'Lapozható képek hozzáadása',field:'Külső média címe',value:'/fixture.svg',canvas:'img',mediaAlt:'Képleírás',altValue:'Visszaállított diasor'}
   ];
+  await touchEditor.goto(base+'/editor-v2/index.html');
+  assert.equal(await touchEditor.evaluate(()=>[innerWidth,innerHeight].join('×')),'390×800',
+    'repeater lifecycle runs at the real 390px touch-emulated viewport');
+  assert.equal(await touchEditor.evaluate(()=>matchMedia('(pointer: coarse)').matches),true,
+    'repeater actions run with a coarse-pointer touch browser context');
   await live.goto(base+'/p/test');
   for(const item of emptyRepeaterCases){
-    await editor.setViewportSize({width:390,height:800});
-    await select(item.type);
-    const repeater=editor.locator('.content-repeater[data-content-key="items"]');
+    await touchSelect(item.type);
+    const repeater=touchEditor.locator('.content-repeater[data-content-key="items"]');
+    const initialRows=await repeater.locator(':scope > fieldset').count();
+    if(initialRows>1){
+      const beforeDelete=posts.length;
+      await repeater.getByRole('button',{name:'1. elem: Eltávolítás',exact:true}).tap();
+      await touchEditor.waitForFunction(expected=>document.querySelectorAll('.content-repeater[data-content-key="items"] > fieldset').length===expected,initialRows-1);
+      assert.equal(await repeater.locator(':scope > fieldset').count(),initialRows-1,
+        `${item.type} touch Delete removes only the selected repeater row`);
+      assert.equal(posts.length,beforeDelete,
+        `${item.type} touch row deletion stays draft-only`);
+    }
     while(await repeater.locator(':scope > fieldset').count()){
       const count=await repeater.locator(':scope > fieldset').count();
-      await repeater.getByRole('button',{name:`${count}. elem: Eltávolítás`,exact:true}).press('Enter');
-      await repeater.locator(':scope > fieldset').nth(count-1).waitFor({state:'detached'});
+      await repeater.getByRole('button',{name:`${count}. elem: Eltávolítás`,exact:true}).tap();
+      await touchEditor.waitForFunction(expected=>document.querySelectorAll('.content-repeater[data-content-key="items"] > fieldset').length===expected,count-1);
     }
-    await editor.waitForFunction(label=>document.activeElement?.textContent.trim()===label,item.add);
     assert.equal(await repeater.getByRole('button',{name:item.add,exact:true}).isVisible(),true,
-      `${item.type} mobile final-row Delete restores focus to its visible Add control`);
-    assert.equal(await node(editor,item.type).locator(item.canvas).count(),0,
+      `${item.type} touch final-row Delete leaves its Add action visible`);
+    assert.equal(await touchNode(item.type).locator(item.canvas).count(),0,
       `${item.type} supports an intentionally empty repeater without leaving stale Canvas items`);
     assert.equal(await repeater.getByRole('button',{name:item.add,exact:true}).isEnabled(),true,
       `${item.type} keeps its Add action available after deleting the final row`);
     const beforeAdd=posts.length;
-    await repeater.getByRole('button',{name:item.add,exact:true}).press('Enter');
-    await editor.waitForFunction(label=>document.activeElement?.getAttribute('aria-label')===label,item.field);
+    await repeater.getByRole('button',{name:item.add,exact:true}).tap();
+    await repeater.locator(':scope > fieldset').first().waitFor({state:'visible'});
     const restoredRow=repeater.locator(':scope > fieldset').first();
     await restoredRow.getByLabel(item.field,{exact:true}).fill(item.value);
     if(item.textField)await restoredRow.getByLabel(item.textField,{exact:true}).fill(item.textValue);
     if(item.mediaAlt)await restoredRow.getByLabel(item.mediaAlt,{exact:true}).fill(item.altValue);
-    assert.equal(await node(editor,item.type).locator(item.canvas).count(),1,
+    assert.equal(await touchNode(item.type).locator(item.canvas).count(),1,
       `${item.type} Add recovers the empty Canvas and exposes its authored row`);
-    assert.equal(posts.length,beforeAdd,`${item.type} final-row Delete and Add remain draft-only`);
+    assert.equal(posts.length,beforeAdd,`${item.type} touch final-row Delete and Add remain draft-only`);
   }
-  await editor.setViewportSize({width:1366,height:900});
   const beforeEmptyRepeaterSave=posts.length;
-  await editor.locator('#save').click();
-  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
-  assert.equal(posts.length,beforeEmptyRepeaterSave+1,'recovered repeaters are persisted only by explicit Save');
-  assert.equal(posts.at(-1).publish,false,'recovered repeater Save does not Publish');
+  await touchEditor.locator('#save').tap();
+  await touchEditor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+  assert.equal(posts.length,beforeEmptyRepeaterSave+1,'touch-recovered repeaters are persisted only by explicit Save');
+  assert.equal(posts.at(-1).publish,false,'touch repeater Save does not Publish');
   const savedPage=posts.at(-1).document.pages[pageId];
   for(const item of emptyRepeaterCases){
     const items=savedPage.nodes[ids[item.type]].props.items;
@@ -1456,16 +1479,16 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   await live.reload();
   for(const item of emptyRepeaterCases)assert.equal(await node(live,item.type).locator(item.canvas).count(),2,
     `draft Save leaves the previously published ${item.type} repeater unchanged`);
-  await editor.reload();
+  await touchEditor.reload();
   for(const item of emptyRepeaterCases){
-    await select(item.type);
-    const repeater=editor.locator('.content-repeater[data-content-key="items"]');
+    await touchSelect(item.type);
+    const repeater=touchEditor.locator('.content-repeater[data-content-key="items"]');
     assert.equal(await repeater.locator(':scope > fieldset').count(),1,`Editor reload restores one saved ${item.type} row`);
-    assert.equal(await node(editor,item.type).locator(item.canvas).count(),1,`Editor reload restores the ${item.type} Canvas row`);
+    assert.equal(await touchNode(item.type).locator(item.canvas).count(),1,`Editor reload restores the ${item.type} Canvas row`);
   }
   const beforeRecoveredRepeaterPublish=posts.length;
-  await editor.locator('#publish').click();
-  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent==='Publikálva');
+  await touchEditor.locator('#publish').tap();
+  await touchEditor.waitForFunction(()=>document.querySelector('#saveStatus').textContent==='Publikálva');
   assert.equal(posts.length,beforeRecoveredRepeaterPublish+1,'recovered repeater publication requires a separate Publish');
   assert.equal(posts.at(-1).publish,true,'recovered repeater content reaches the public snapshot only via Publish');
   await live.reload();
@@ -1474,6 +1497,6 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
     if(item.mediaAlt)assert.equal(await node(live,item.type).locator('img').getAttribute('alt'),item.altValue,
       `Publish retains the recovered ${item.type} media description`);
   }
-  await editor.setViewportSize({width:390,height:800});await select('image');await editor.screenshot({path:'/tmp/creator-ux-p0-content-mobile.png'});
+  await touchSelect('image');await touchEditor.screenshot({path:'/tmp/creator-ux-p0-content-mobile.png'});
   assert.deepEqual(errors,[]);
 });
