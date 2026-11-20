@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261120044328-e72f7ad8",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-20T04:43:28.538Z",
+  "finished_at": "2026-11-20T04:59:31.969Z",
+  "wall_seconds": 963,
+  "paused_seconds": 0,
+  "measured_seconds": 963,
+  "status": "pass",
+  "kind": "test",
+  "summary": "Added real-Chromium D-03 controls-free background-video draft/save/reload/Publish lifecycle and D-04 mobile keyboard-tab viewport coverage; browser, editor-unit, typecheck, migration and plan gates passed; no runtime or production data changes.",
+  "evidence": [
+    "docs/evidence/editor-d03-d04-video-mobile-tabs-2026-11-20.json"
+  ],
+  "checks": "Chromium 1/1; editor suite 22/22 + runner 4/4; typecheck; migration gate; plan contract 15/15; canonical 13 files/396; traceability 396/396; active-point audit; syntax/diff",
+  "started_revision": "db15bb91948e1a5efc60ab1539f851a52331e7f7",
+  "finished_revision": "7820c12251865a4d48cd5ab753f82bcafb029947",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
