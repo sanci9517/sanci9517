@@ -1,0 +1,103 @@
+{
+  "evidence_id": "editor-d06-video-poster-media-lifecycle-2026-11-20",
+  "plan_item": "77.44.7.D / D-06 — Editor media library and authored video poster asset lifecycle",
+  "status": "PARTIAL_PASS_NOT_CERTIFIED",
+  "recorded_at": "2026-11-20T15:27:24Z",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "verified_remote_base_sha": "8ef07cfe5420cf837e0e6aff2d065f9a2ac224c6",
+    "local_checkout_head": "ba5501809611d98ca67b48c75f5a998a148ffd2b",
+    "canonical_plan_bytes": 1752494,
+    "canonical_plan_sha256": "536820310d8d8fbfd00596b4435b858ece62a5a31b738319fb2937bbf9ba2396"
+  },
+  "changes": {
+    "runtime_source_changed": false,
+    "public_asset_changed": false,
+    "new_dependency": false,
+    "files": [
+      "tests/browser/media-worker-storage.test.mjs",
+      "docs/evidence/editor-d06-video-poster-media-lifecycle-2026-11-20.json",
+      "docs/evidence/dev-metrics/runs/2026-11-20/20261120150315-165bafd8.json"
+    ],
+    "details": [
+      "Extended the integrated test with an independent, active synthetic PNG media row and in-memory R2 object. This avoids reusing an image fixture whose object was deliberately removed by the preceding missing-object audit scenario.",
+      "Exercised the actual Inspector's video poster image picker; checked that video media is excluded; selecting a poster only changes local editor state and previews from the authenticated private Worker route.",
+      "Checked that Save persists posterAssetId and draft usage while the public route remains 404; Editor reload restores the exact private image bytes, accessible selected-image label, and private poster URL.",
+      "Checked that only the separate Publish makes the image route public, preserves image/png and exact bytes, switches the public video poster to /media/{id}, and records published usage. Audio/video playback regression checks continue to pass in the same end-to-end case.",
+      "Two earlier focused runs exposed test setup issues (an incorrect selected-image attribute expectation and reuse of the intentionally missing R2 fixture). Both were corrected; the final complete run passed. These were test-fixture problems, not production data or runtime failures."
+    ]
+  },
+  "checks": [
+    {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --experimental-loader ./tests/ts-extension-loader.mjs --test --test-concurrency=1 tests/browser/media-worker-storage.test.mjs",
+      "result": "PASS",
+      "summary": "1/1 real Worker + Chromium integration; Miniflare synthetic local D1/R2 only; test duration 150104.1 ms; process duration 151535.8 ms"
+    },
+    {
+      "command": "node --check tests/browser/media-worker-storage.test.mjs",
+      "result": "PASS"
+    },
+    {
+      "command": "git diff --check",
+      "result": "PASS"
+    },
+    {
+      "command": "python3 tests/plan-contract.test.py",
+      "result": "PASS",
+      "summary": "15/15"
+    },
+    {
+      "command": "python3 scripts/check-canonical-plan.py",
+      "result": "PASS",
+      "summary": "one complete 13-file master, one current cursor, 396 source mappings; functional acceptance not certified"
+    },
+    {
+      "command": "python3 scripts/build-feature-traceability.py --check",
+      "result": "PASS",
+      "summary": "396 source mappings"
+    },
+    {
+      "command": "python3 scripts/audit-active-plan-point.py",
+      "result": "PASS_FOR_ACCOUNTING_ONLY",
+      "summary": "77.44.7.D OPEN / NOT_CERTIFIED; 147 PARTIAL_SOURCE and 249 UNVERIFIED"
+    }
+  ],
+  "delivery": {
+    "test_commit_sha": "b9235554d5f639bf7686c6d22626c8826e54bff2",
+    "test_commit_url": "https://github.com/sanci9517/sanci9517/commit/b9235554d5f639bf7686c6d22626c8826e54bff2",
+    "test_commit_message": "[skip ci] test: cover authored video poster asset lifecycle",
+    "evidence_commit_message": "[skip ci] docs: record video poster lifecycle verification",
+    "ci": "NOT_STARTED by design for test/evidence-only changes; no CI pass claimed",
+    "worker_deployment": "NOT_PERFORMED; runtime source unchanged"
+  },
+  "production": {
+    "worker_name": "sanci9517-streamer-brand",
+    "last_verified_deployment_id": "5543b768-ff27-4f3b-8609-9b8b981a006e",
+    "last_verified_worker_version": "db5de010-ab32-4bbd-b1c0-e34b798bbab0",
+    "traffic_percent": 100,
+    "runtime_source_changed": false,
+    "deployment_performed": false,
+    "health_check": "NOT_RUN because runtime source is unchanged",
+    "public_asset_hashes": "NOT_APPLICABLE because no public asset changed"
+  },
+  "data_and_cost": {
+    "production_d1_read_or_write": "NONE",
+    "production_r2_operation": "NONE",
+    "test_storage": "synthetic local Miniflare D1 and R2 only",
+    "new_cost_huf": 0
+  },
+  "acceptance": {
+    "video_poster_slice": "AUTOMATED_PASS",
+    "complete_d06": "OPEN / NOT_CERTIFIED",
+    "complete_editor_d01_d07": "OPEN / NOT_CERTIFIED",
+    "full_editor_manual_and_physical_acceptance": "DEFERRED_UNTIL_COMPLETE_EDITOR",
+    "save_and_publish_separate": true
+  },
+  "metrics_run_id": "20261120150315-165bafd8",
+  "limitations": [
+    "No full Visual Editor acceptance is claimed.",
+    "No hosted GitHub Actions run was started; free Actions quota is not independently known in this block.",
+    "No production health or asset check was repeated because runtime and public assets were unchanged."
+  ]
+}
