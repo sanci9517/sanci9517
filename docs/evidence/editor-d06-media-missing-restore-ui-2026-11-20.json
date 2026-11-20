@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "kind": "editor-acceptance-slice",
+  "recorded_at_utc": "2026-11-20T11:53:48Z",
+  "plan_point": "77.44.7.D / D-06 — site-scoped media usage and lifecycle",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "source_sha": "e389b8a0907264073c27bd334a7eb89b5134075d",
+    "remote_head": "e389b8a0907264073c27bd334a7eb89b5134075d"
+  },
+  "gap": "The real Media Library browser lifecycle covered successful archive and restore, and route unit tests covered MEDIA_OBJECT_MISSING, but no integrated UI regression proved that an archived item remains repairable when its backing object disappears before restore.",
+  "change": {
+    "runtime": false,
+    "files": [
+      "tests/browser/media-worker-storage.test.mjs",
+      "docs/evidence/editor-d06-media-missing-restore-ui-2026-11-20.json"
+    ],
+    "behavior": [
+      "The real Worker + Chromium fixture removes only a synthetic Miniflare R2 object after archive and observes the restore request return HTTP 409 with MEDIA_OBJECT_MISSING.",
+      "The UI renders the localized missing-object error while retaining the archived tile; the original D1 row remains archived, no retention request is created, and public media remains HTTP 404.",
+      "After re-adding the synthetic object, the existing restore flow succeeds and continues to verify exact bytes and the separate Publish gate."
+    ],
+    "production_data_used": false,
+    "dependencies_added": []
+  },
+  "checks": {
+    "media_worker_storage_browser_test": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --experimental-loader ./tests/ts-extension-loader.mjs --test --test-concurrency=1 --test-reporter=spec tests/browser/media-worker-storage.test.mjs",
+      "result": "PASS — 1/1 real Chromium/Worker integration test; 89.4 seconds; synthetic Miniflare D1/R2 only."
+    },
+    "media_unit_tests": {
+      "command": "npm run test:media",
+      "result": "PASS — 5/5 test files."
+    },
+    "canonical_master": "PASS — 13 master files, 396 source mappings, functional acceptance not certified.",
+    "active_point_audit": "PASS as source bookkeeping only — 77.44.7.D remains OPEN / NOT_CERTIFIED; 147 PARTIAL_SOURCE and 249 UNVERIFIED.",
+    "plan_contract": "PASS — 15/15.",
+    "feature_traceability": "PASS — 396/396.",
+    "javascript_syntax": "PASS — node --check tests/browser/media-worker-storage.test.mjs.",
+    "git_diff_check": "PASS.",
+    "hosted_ci": "NOT RUN — test/evidence-only update; free Actions quota not verified; no CI dispatch or rerun."
+  },
+  "release": {
+    "state": "TEST_HARNESS_VERIFIED",
+    "push": "PENDING — use normal fast-forward with [skip ci] after final checks.",
+    "production_deployment_at_test_start": {
+      "deployment_id": "a0fdd47c-cdb8-4eaa-a3a8-fe55c7e4b61a",
+      "worker_version": "d2fdb885-2ba7-4291-9ab9-54fb2acbf471",
+      "traffic_percent": 100,
+      "runtime_source_changed": false,
+      "health_check": "NOT RUN for this test/evidence-only slice."
+    },
+    "production_d1_write_or_migration": false,
+    "production_r2_operation": false,
+    "new_cost_huf": 0
+  },
+  "limitations": [
+    "This certifies one automated D-06 UI regression slice only; it does not certify complete D-06, D-01–D-07, or the full Visual Editor.",
+    "Full manual and physical Editor acceptance remains deferred until the planned Editor scope is implemented.",
+    "Save and Publish remain separate."
+  ]
+}

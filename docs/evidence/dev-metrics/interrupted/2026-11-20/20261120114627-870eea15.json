@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "id": "20261120114627-870eea15",
+  "task": "77.44.7.D-D01-video-poster-repair",
+  "trigger": "manual",
+  "started_at": "2026-11-20T11:46:27.761Z",
+  "abandoned_at": "2026-11-20T11:51:31.732Z",
+  "measured_seconds": null,
+  "status": "interrupted",
+  "reason": "Interrupted block metadata named D-01 but current slice is D-06; exact boundary cannot be attributed safely.",
+  "started_revision": "e389b8a0907264073c27bd334a7eb89b5134075d",
+  "measurement": "missing end time; excluded from elapsed time and ETA"
+}

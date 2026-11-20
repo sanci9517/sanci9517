@@ -297,6 +297,29 @@ print(json.dumps(result))`],{cwd:root,encoding:'utf8'}));
  assert.equal((await context.request.get(base+'/media/'+restoreId)).status(),404,'archiving does not publish an unreferenced image');
  await page.locator('#mediaState').selectOption('archived');await restoreTile.waitFor();
  const restoreButton=restoreTile.getByRole('button',{name:'Médiafájl visszaállítása',exact:true});
+ // R2 can become unavailable after an item was safely archived. Exercise the
+ // real UI failure path using only the synthetic in-memory Miniflare object:
+ // the failed restore must keep the same D1 row archived and leave the tile
+ // repairable instead of optimistically removing it from the list.
+ await MEDIA.delete(restoreKey);
+ const missingRestoreResponse=page.waitForResponse(response=>{
+  const url=new URL(response.url());
+  return url.pathname==='/api/admin/media'&&url.searchParams.get('id')===restoreId&&response.request().method()==='PATCH';
+ });
+ await restoreButton.click();
+ const missingRestore=await missingRestoreResponse;
+ assert.equal(missingRestore.status(),409,'the UI surfaces the Worker refusal when an archived media object is missing');
+ assert.equal((await missingRestore.json()).error.code,'MEDIA_OBJECT_MISSING');
+ await restoreTile.waitFor({state:'attached'});
+ await restoreTile.getByText('A tárolt médiafájl hiányzik. Nem lehet visszaállítani.',{exact:true}).waitFor();
+ const stillArchived=await DB.prepare('SELECT * FROM media WHERE id=?').bind(restoreId).first();
+ assert.ok(stillArchived.archived_at,'a failed UI restore cannot clear D1 archive state');
+ assert.equal(await MEDIA.get(restoreKey),null,'the synthetic missing object remains absent after the failed restore');
+ assert.equal((await DB.prepare('SELECT COUNT(*) n FROM media_retention_requests WHERE asset_id=?').bind(restoreId).first()).n,0,
+  'a missing-object restore failure does not create a destructive retention request');
+ assert.equal((await context.request.get(base+'/media/'+restoreId)).status(),404,
+  'a failed restore never grants public access');
+ await MEDIA.put(restoreKey,png,{httpMetadata:{contentType:'image/png'}});
  const restoreResponse=page.waitForResponse(response=>{
   const url=new URL(response.url());
   return url.pathname==='/api/admin/media'&&url.searchParams.get('id')===restoreId&&response.request().method()==='PATCH';

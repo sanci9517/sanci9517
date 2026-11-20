@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261120115134-10879e11",
+  "task": "77.44.7.D-D06-media-restore-missing-object-ui",
+  "trigger": "manual",
+  "started_at": "2026-11-20T11:51:34.814Z",
+  "finished_at": "2026-11-20T11:54:36.716Z",
+  "wall_seconds": 182,
+  "paused_seconds": 0,
+  "measured_seconds": 182,
+  "status": "pass",
+  "kind": "test",
+  "summary": "D-06 real-browser negative restore: missing object stays archived and repairable; media route suite PASS.",
+  "evidence": [
+    "docs/evidence/editor-d06-media-missing-restore-ui-2026-11-20.json"
+  ],
+  "checks": "Chromium media-worker-storage 1/1; media 5/5; plan contract 15/15; traceability 396/396",
+  "started_revision": "e389b8a0907264073c27bd334a7eb89b5134075d",
+  "finished_revision": "e389b8a0907264073c27bd334a7eb89b5134075d",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
