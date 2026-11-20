@@ -62,6 +62,51 @@ async function audit(page,label){
   assert.deepEqual(issues,[],label+': '+issues.join('; ')+(diagnostics.length?` | geometry ${JSON.stringify(diagnostics)}`:''));
 }
 
+test('D-035 mobile toolbar and drawer CSS keeps bottom spacing coupled to the safe-area inset',async()=>{
+  // Chromium cannot synthesize a non-zero iOS safe-area inset. Keep the
+  // production CSS contract here and leave physical-device confirmation to
+  // the consolidated full-Editor acceptance pass.
+  const css=await readFile(resolve(root,'editor-v2/editor-refresh.css'),'utf8');
+  assert.match(css,/\.mobile-bottom-bar\s*\{[^}]*bottom:\s*calc\(8px\s*\+\s*env\(safe-area-inset-bottom,\s*0px\)\)/s,
+    'the fixed action bar reserves the OS bottom safe area');
+  assert.match(css,/\.left-dock:not\(\.closed\),\s*\.right-dock:not\(\.closed\)\s*\{[^}]*bottom:\s*calc\(124px\s*\+\s*env\(safe-area-inset-bottom,\s*0px\)\)/s,
+    'the mobile drawer and inspector stop above the action bar and safe area');
+  assert.match(css,/\.mobile-backdrop\s*\{[^}]*inset:\s*0\s+0\s+calc\(124px\s*\+\s*env\(safe-area-inset-bottom,\s*0px\)\)/s,
+    'the modal scrim stops at the same safe-area boundary as the drawer');
+  assert.match(css,/@media\s*\(max-width:\s*360px\)[\s\S]*?\.left-dock:not\(\.closed\),\s*\.right-dock:not\(\.closed\)\s*\{[^}]*bottom:\s*calc\(158px\s*\+\s*env\(safe-area-inset-bottom,\s*0px\)\)/s,
+    'the extra-narrow drawer reflow retains the safe-area offset');
+});
+
+test('D-035 mobile touch viewports keep toolbar, Inspector, and scrim controls reachable',async t=>{
+  const http=server();await new Promise(r=>http.listen(0,'127.0.0.1',r));
+  const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||(existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined),args:['--no-sandbox']});
+  t.after(async()=>{await browser.close();await new Promise(r=>http.close(r))});
+  const base=`http://127.0.0.1:${http.address().port}/editor-v2/index.html`;
+  for(const viewport of [{width:390,height:844},{width:320,height:568}]){
+    const context=await browser.newContext({viewport,isMobile:true,hasTouch:true});
+    const page=await context.newPage();
+    try{
+      await page.goto(base,{waitUntil:'domcontentloaded'});await page.waitForSelector('#editorMenu');
+      assert.equal(await page.evaluate(()=>matchMedia('(pointer: coarse)').matches),true,
+        `${viewport.width}×${viewport.height} runs as a touch device`);
+      await audit(page,`${viewport.width}×${viewport.height} touch / closed`);
+      await page.locator('#openInspector').tap();
+      const geometry=await page.evaluate(()=>{
+        const rect=selector=>{const r=document.querySelector(selector).getBoundingClientRect();return {top:r.top,bottom:r.bottom}};
+        return {dock:rect('#rightDock'),bar:rect('.mobile-bottom-bar'),scrim:rect('.mobile-backdrop')};
+      });
+      assert.ok(geometry.dock.bottom<=geometry.bar.top,
+        `${viewport.width}×${viewport.height} Inspector ends above the fixed toolbar: ${JSON.stringify(geometry)}`);
+      assert.ok(geometry.scrim.bottom<=geometry.bar.top,
+        `${viewport.width}×${viewport.height} modal scrim ends above the fixed toolbar: ${JSON.stringify(geometry)}`);
+      await audit(page,`${viewport.width}×${viewport.height} touch / Inspector sheet`);
+      await page.locator('.more-actions > summary').tap();
+      await page.waitForFunction(()=>document.querySelector('#rightDock')?.classList.contains('closed'));
+      await audit(page,`${viewport.width}×${viewport.height} touch / overflow menu`);
+    }finally{await context.close()}
+  }
+});
+
 test('Editor shell has no inaccessible or overlapping controls across widths and effective zoom',async t=>{
   const http=server();await new Promise(r=>http.listen(0,'127.0.0.1',r));
   const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||(existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined),args:['--no-sandbox']});
