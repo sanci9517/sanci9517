@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "kind": "editor-acceptance-slice",
-  "recorded_at_utc": "2026-11-20T13:18:54Z",
+  "recorded_at_utc": "2026-11-20T13:21:00Z",
   "plan_point": "77.44.7.D / D-06 — authored audio/video Media Library selection and lifecycle",
   "repository": {
     "name": "sanci9517/sanci9517",
@@ -103,7 +103,7 @@
     },
     "hosted_ci": {
       "source_sha": "a58ffb773cfddb908f79b295e0047c15195bfcd5",
-      "state": "PENDING — exact-SHA Editor Core Test (run 44742011951) was still executing its Editor browser layout regression at evidence finalization; all other listed exact-SHA workflows succeeded. No CI rerun or dispatch started.",
+      "state": "PENDING — exact-SHA Editor Core Test run 44742011951 remained inside Editor browser layout regression at evidence finalization; the other five recorded exact-SHA runs succeeded. No CI rerun/dispatch started.",
       "runs": [
         {
           "name": "Canonical Plan Active Point Audit",
@@ -146,7 +146,7 @@
     }
   },
   "release": {
-    "state": "LIVE_EXACT_SHA; REQUIRED_EDITOR_CORE_CI_PENDING",
+    "state": "LIVE_EXACT_SHA; EXACT_SHA_EDITOR_CORE_CI_PENDING",
     "base_branch_head_before_push": "cdf68badd0603bd0ffda1619f736b6cb6c057585",
     "runtime_commit_sha": "a58ffb773cfddb908f79b295e0047c15195bfcd5",
     "github_branch_sha_after_push": "a58ffb773cfddb908f79b295e0047c15195bfcd5",
@@ -194,11 +194,33 @@
     "commit_url": "https://github.com/sanci9517/sanci9517/commit/a58ffb773cfddb908f79b295e0047c15195bfcd5",
     "all_changed_asset_responses_http_200": true,
     "all_changed_asset_hashes_match_worktree": true,
-    "dev_metrics_run": "docs/evidence/dev-metrics/runs/2026-11-20/20261120124527-cd398aac.json (partial; CI wait excluded)"
+    "dev_metrics_run": "docs/evidence/dev-metrics/runs/2026-11-20/20261120124527-cd398aac.json (partial; CI wait excluded)",
+    "documentation_follow_up": "Canonical plan/evidence update to be pushed with [skip ci]; no runtime change and no redundant Worker deployment."
   },
   "scope_limitations": [
     "This completes one authored playable-media UI/lifecycle regression slice only. It does not certify all D-06 retention/restore/backup/recovery/capability requirements, D-01–D-07, or 77.44.7.D.",
     "The active point and full Visual Editor remain OPEN / NOT_CERTIFIED; manual and physical Editor acceptance remains deferred until the complete planned Editor scope is implemented.",
     "Save and Publish remain separate. No production D1 migration, data mutation, production R2 operation, or new cost occurred."
-  ]
+  ],
+  "planning_master_update": {
+    "target": "Existing D-06 media entry at the canonical 77.44.7.D plan point; no new roadmap/cursor/item created.",
+    "change": "Recorded the authored audio/video Inspector assetId gap, shipped fix, exact-SHA release, and evidence link while retaining full D-06/77.44 acceptance OPEN.",
+    "before": {
+      "bytes": 1750513,
+      "sha256": "bc17593e483848e9e8fe901d42b210868c781d714f43f3454e84e366d902f46e",
+      "git_blob": "d41d893683b16e2fcb4f043c0649a5ce84e085cc"
+    },
+    "after": {
+      "bytes": 1752494,
+      "sha256": "536820310d8d8fbfd00596b4435b858ece62a5a31b738319fb2937bbf9ba2396",
+      "git_blob": "1fd04a9396a7c68854ba1a903d80ef54042efbd2"
+    },
+    "preservation": "The only master change is one inserted D-06 evidence paragraph; removing the inserted bytes reproduces all original bytes exactly.",
+    "checks_after_edit": {
+      "plan_contract": "PASS — 15/15",
+      "canonical_plan": "PASS — one intact 13-file master, 396 mappings",
+      "traceability": "PASS — 396/396",
+      "active_point": "77.44/WEB-011, next 77.44.7.D; functional acceptance NOT_CERTIFIED"
+    }
+  }
 }
