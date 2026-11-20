@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261120050931-9978586c",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-20T05:09:31.283Z",
+  "finished_at": "2026-11-20T05:13:19.172Z",
+  "wall_seconds": 228,
+  "paused_seconds": 0,
+  "measured_seconds": 228,
+  "status": "pass",
+  "kind": "test",
+  "summary": "D-04 public tabs keyboard coverage passed at 390x640 mobile and 720x450 effective 200% zoom; scoped regression only.",
+  "evidence": [
+    "docs/evidence/editor-d04-tabs-200zoom-2026-11-20.json",
+    "tests/browser/editor-content-system.test.js"
+  ],
+  "checks": "targeted Chromium 1/1; editor unit 22/22; typecheck; migration gate; plan contract 15/15; canonical plan 396 mappings; traceability 396/396; active cursor remains OPEN; diff check",
+  "started_revision": "286fa5d7c40a4c686f4ccef1d4dcbbf068f312e0",
+  "finished_revision": "286fa5d7c40a4c686f4ccef1d4dcbbf068f312e0",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

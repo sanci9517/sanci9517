@@ -1,0 +1,49 @@
+{
+  "schema": 1,
+  "plan_point": "77.44.7.D / D-04 structured tabs",
+  "status": "SCOPED_REGRESSION_PASS; complete D-04 and 77.44.7.D remain OPEN / NOT_CERTIFIED",
+  "source_before_change": {
+    "branch": "v2/foundation",
+    "commit": "286fa5d7c40a4c686f4ccef1d4dcbbf068f312e0",
+    "remote_check": "GitHub compare API returned v2/foundation identical to the checked base commit (ahead_by=0, behind_by=0)."
+  },
+  "change": {
+    "files": [
+      "tests/browser/editor-content-system.test.js",
+      "docs/evidence/editor-d04-tabs-200zoom-2026-11-20.json"
+    ],
+    "runtime_changed": false,
+    "behavior": "The public structured-tabs real-browser regression now checks keyboard selection, visible panel, restored focus, horizontal overflow, tablist viewport bounds and 44px target at 720x450, the repository's planned 200%-effective-zoom viewport. The existing 390x640 mobile keyboard case remains in the same regression."
+  },
+  "checks": {
+    "targeted_chromium": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-content-system.test.js — PASS (1/1; 63.1 seconds; desktop lifecycle, 390x640 mobile tabs, and 720x450 effective-200%-zoom tabs).",
+    "editor_unit_suite": "npm run test:editor — PASS (22/22 unit files; 4/4 runner guards).",
+    "typecheck": "npm run typecheck -- --pretty false — PASS.",
+    "migration_safety": "npm run test:web013:migration-gate — PASS; no migrations applied.",
+    "plan_contract": "python3 tests/plan-contract.test.py — PASS (15/15).",
+    "canonical_plan": "python3 scripts/check-canonical-plan.py — PASS (13 canonical master files; 396 source mappings; functional acceptance remains NOT_CERTIFIED).",
+    "traceability": "python3 scripts/build-feature-traceability.py --check — PASS (396/396).",
+    "active_point": "python3 scripts/audit-active-plan-point.py — PASS for cursor/source bookkeeping; 77.44.7.D remains OPEN / NOT_CERTIFIED, with 147 PARTIAL_SOURCE and 249 UNVERIFIED.",
+    "syntax_diff": "node --check tests/browser/editor-content-system.test.js and git diff --check — PASS."
+  },
+  "production": {
+    "runtime_source_changed": false,
+    "deployment": "No Worker deployment required or performed for this test/evidence-only change.",
+    "latest_preexisting_readonly_snapshot": {
+      "deployment": "c4b9526a-c54b-4fe3-9218-d889c1e011e9",
+      "worker_version": "9870e814-359c-4871-a25c-289d9dfe7c2c",
+      "traffic": "100%",
+      "source_sha": "83fb764b4060d8d4bbc513e7d0865dd1f700214a"
+    },
+    "verification_scope": "The deployment snapshot was read-only and predates this test-only commit; runtime source/assets were not changed, so no new production health or asset-hash smoke was applicable."
+  },
+  "hosted_ci": "NOT_RUN: test/evidence-only change uses [skip ci] to avoid a redundant Worker build; available Actions quota is not verified.",
+  "development_metric_id": "20261120050931-9978586c",
+  "cost_huf": 0,
+  "data_safety": "No production D1 or R2 operation.",
+  "limitations": [
+    "This closes one D-04 keyboard-tabs viewport regression slice only; it does not close the full D-04 or D matrix.",
+    "The canonical cursor remains 77.44.7.D OPEN / NOT_CERTIFIED; 147 source-partial and 249 unverified rows remain.",
+    "Complete Visual Editor manual/physical acceptance remains deferred until the full planned Editor scope is implemented."
+  ]
+}

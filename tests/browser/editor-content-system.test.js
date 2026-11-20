@@ -1349,6 +1349,24 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
     'published tablist remains inside the narrow mobile viewport');
   assert.equal(await publicTabs.nth(0).evaluate(tab=>tab.getBoundingClientRect().width>=44),true,
     'the focused mobile tab keeps the minimum 44px touch target');
+  // A 1440x900 browser at 200% effective zoom exposes 720x450. Exercise the
+  // published tabs at that exact short viewport as well as on a phone: the
+  // keyboard path must remain reachable without clipping the tablist.
+  await live.bringToFront();await live.setViewportSize({width:720,height:450});
+  assert.equal(await live.evaluate(()=>[innerWidth,innerHeight].join('×')),'720×450',
+    'published keyboard tabs use the planned 200% effective zoom viewport');
+  await publicTabs.nth(0).focus();await publicTabs.nth(0).press('End');
+  await assertPublicTabState(1,'Személyes történet');
+  const zoomTabsLayout=await live.evaluate(()=>({
+    viewport:innerWidth,document:document.scrollingElement.scrollWidth,
+    tablist:document.querySelector('[role="tablist"]')?.getBoundingClientRect().toJSON()
+  }));
+  assert.ok(zoomTabsLayout.document<=zoomTabsLayout.viewport,
+    'published tabs at 200% effective zoom do not introduce document-level horizontal scrolling');
+  assert.ok(zoomTabsLayout.tablist.left>=0&&zoomTabsLayout.tablist.right<=zoomTabsLayout.viewport,
+    'published tablist remains inside the 200% effective zoom viewport');
+  assert.equal(await publicTabs.nth(1).evaluate(tab=>tab.getBoundingClientRect().height>=44),true,
+    'the keyboard-focused tab keeps a minimum 44px target at 200% effective zoom');
   const accordion=node(live,'accordion').getByRole('group',{name:'Kérdések & válaszok'});
   assert.deepEqual(await accordion.locator('details').evaluateAll(items=>items.map(el=>el.open)),[true,false],
     'Accordion opens its first section initially after Publish');
