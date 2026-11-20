@@ -1,0 +1,50 @@
+{
+  "schema": "sanci.editor.edt035-mobile-safe-area.v1",
+  "captured_at_utc": "2026-11-20T03:40:36Z",
+  "plan_point": "77.44.7.D / EDT-035 — mobile Editor action bar and safe-area acceptance slice",
+  "repository": "sanci9517/sanci9517",
+  "branch": "v2/foundation",
+  "development_metric": {
+    "run_id": "20261120033714-b5ad72d4",
+    "archive": "docs/evidence/dev-metrics/runs/2026-11-20/20261120033714-b5ad72d4.json"
+  },
+  "change": {
+    "file": "tests/browser/editor-layout.test.js",
+    "summary": "Added a safe-area stylesheet contract for the loaded editor-refresh.css and real Chromium mobile touch geometry checks at 390x844 and 320x568. The test checks the touch pointer mode, toolbar/action target geometry, Inspector sheet and scrim ending above the fixed action bar, and the temporary overflow menu closing the active mobile drawer before exposing controls.",
+    "limits": "Chromium cannot synthesize a non-zero physical iOS safe-area inset; assertions verify the production CSS env(safe-area-inset-bottom) contract and zero-inset geometry only. Physical-device validation remains deferred."
+  },
+  "checks": {
+    "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 --test-name-pattern='D-035' tests/browser/editor-layout.test.js": "PASS; 2/2 targeted tests over two actual touch-emulated viewports.",
+    "npm run test:editor": "PASS; 22/22 Editor unit files and 4/4 runner/manifest checks.",
+    "npm run typecheck -- --pretty false": "PASS.",
+    "python3 tests/plan-contract.test.py": "PASS; 15/15.",
+    "python3 scripts/check-canonical-plan.py": "PASS; 13 canonical master files / 396 mappings; acceptance NOT_CERTIFIED.",
+    "python3 scripts/build-feature-traceability.py --check": "PASS; 396/396 mappings.",
+    "python3 scripts/audit-active-plan-point.py": "PASS; 77.44.7.D OPEN / NOT_CERTIFIED; 147 PARTIAL_SOURCE / 249 UNVERIFIED.",
+    "node --check tests/browser/editor-layout.test.js": "PASS.",
+    "git diff --check": "PASS.",
+    "exploratory_run": "First browser attempt audited the drawer before the native details toggle event completed; awaiting the existing drawer-close state resolved the test race. No runtime fix was indicated."
+  },
+  "release": {
+    "runtime_source_changed": false,
+    "worker_deployment_needed": false,
+    "latest_read_only_worker_deployment": "c4b9526a-c54b-4fe3-9218-d889c1e011e9",
+    "latest_worker_version": "9870e814-359c-4871-a25c-289d9dfe7c2c",
+    "traffic_percent": 100,
+    "production_health": "NOT RUN; test-only change.",
+    "changed_asset_hashes": "NOT APPLICABLE; no public runtime asset changed.",
+    "hosted_ci": "NOT RUN; test/evidence-only commits use [skip ci]; no hosted PASS is claimed.",
+    "production_d1_mutation": false,
+    "production_r2_mutation": false,
+    "new_cost_huf": 0,
+    "github_branch_head_after_test_push": "GitHub GET verified refs/heads/v2/foundation at ca4586366719f00e0496d086ee9030c3a86d214c.",
+    "combined_status_after_test_push": "GitHub combined-status GET returned zero status contexts; hosted CI was not run and no hosted PASS is claimed."
+  },
+  "status": {
+    "edt035_slice": "AUTOMATED_SLICE_PASS; safe-area physical device check deferred.",
+    "d_point": "OPEN / NOT_CERTIFIED; this does not complete D-01 through D-07.",
+    "manual_physical_editor_acceptance": "DEFERRED until the full Visual Editor is implemented.",
+    "save_publish": "SEPARATE."
+  },
+  "test_commit_sha": "ca4586366719f00e0496d086ee9030c3a86d214c"
+}
