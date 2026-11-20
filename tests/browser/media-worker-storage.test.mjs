@@ -15,6 +15,8 @@ import {createDocument,createNode,createPage,NODE_TYPES} from '../../public/edit
 
 const root=resolve(import.meta.dirname,'../..');
 const png=Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/l5sAAAAASUVORK5CYII=','base64');
+const wav=Buffer.from([0x52,0x49,0x46,0x46,0,0,0,0,0x57,0x41,0x56,0x45,0x66,0x6d,0x74,0x20]);
+const webm=Buffer.from([0x1a,0x45,0xdf,0xa3,0x93,0x42,0x82,0x84]);
 const digest=bytes=>createHash('sha256').update(Buffer.from(bytes)).digest('hex');
 
 test('real Worker login, image upload, duplicate, Editor background asset lifecycle and non-empty diagnostics with local D1/R2', {timeout:180000},async t=>{
@@ -389,6 +391,44 @@ print(json.dumps(result))`],{cwd:root,encoding:'utf8'}));
  assert.equal((await refresh).status(),200);
  await page.waitForFunction(()=>document.querySelector('#mediaRetentionPanel').dataset.state==='empty');
  assert.ok(calls.slice(requestIndex).every(x=>x.method==='GET'),'status refresh has no write requests');
+ // D-06 plan coverage: the actual Media Library UI must persist supported
+ // audio and video files to the same site-scoped D1/R2 pipeline. Before a
+ // page explicitly publishes a reference, both stay private to the admin.
+ for(const fixture of [
+  {name:'isolated-audio.wav',mimeType:'audio/wav',bytes:wav,icon:'🔊',label:'Hangfájl'},
+  {name:'isolated-video.webm',mimeType:'video/webm',bytes:webm,icon:'🎬',label:'Videófájl'}
+ ]){
+  await page.locator('#imageInput').setInputFiles({name:fixture.name,mimeType:fixture.mimeType,buffer:fixture.bytes});
+  const uploadResponse=page.waitForResponse(response=>{
+   const url=new URL(response.url());
+   return url.pathname==='/api/admin/media'&&response.request().method()==='POST';
+  });
+  await page.getByRole('button',{name:'Feltöltés a médiatárba',exact:true}).click();
+  const uploadedResponse=await uploadResponse;
+  assert.equal(uploadedResponse.status(),201,`${fixture.mimeType} upload reaches the real Worker from the Media Library UI`);
+  const uploaded=(await uploadedResponse.json()).data;
+  assert.equal(uploaded.mimeType,fixture.mimeType);
+  const tile=page.locator('.tile').filter({hasText:fixture.name});
+  await tile.waitFor();
+  const mediaLink=tile.locator('a');
+  assert.equal(await mediaLink.locator('img').count(),0,'playable files use a semantic media icon instead of an image preview');
+  await mediaLink.getByLabel(fixture.label,{exact:true}).waitFor();
+  assert.equal((await mediaLink.textContent()).trim(),fixture.icon);
+  const row=await DB.prepare('SELECT * FROM media WHERE id=?').bind(uploaded.id).first();
+  assert.equal(row.site_id,'site-default');assert.equal(row.mime_type,fixture.mimeType);
+  assert.equal(row.size_bytes,fixture.bytes.length);
+  assert.match(row.object_key,new RegExp('^sites/site-default/media/'));
+  assert.equal(row.archived_at,null);
+  const stored=await MEDIA.get(row.object_key);
+  assert.ok(stored,'the accepted playable media object is present in the isolated R2 bucket');
+  assert.equal(digest(await stored.arrayBuffer()),digest(fixture.bytes),'the R2 object retains the exact upload bytes');
+  const privatePreview=await context.request.get(base+'/api/admin/media?id='+uploaded.id);
+  assert.equal(privatePreview.status(),200,'site admin can preview the playable media privately');
+  assert.equal(privatePreview.headers()['content-type'],fixture.mimeType);
+  assert.equal(digest(await privatePreview.body()),digest(fixture.bytes));
+  assert.equal((await context.request.get(base+'/media/'+uploaded.id)).status(),404,
+   'uploaded audio/video remains private until a separate published page reference exists');
+ }
  assert.deepEqual((await DB.prepare('PRAGMA foreign_key_check').all()).results,[]);
  assert.equal(await DB.prepare('PRAGMA quick_check').first('quick_check'),'ok');
  assert.deepEqual(errors,[]);

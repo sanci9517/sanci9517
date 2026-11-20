@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "kind": "editor-acceptance-slice",
+  "recorded_at_utc": "2026-11-20T12:11:21Z",
+  "plan_point": "77.44.7.D / D-06 — site-scoped media usage and lifecycle",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "source_sha_at_test_start": "8dbfb43453cd01f21142efae25d763bd42a4c0bc",
+    "github_head_at_test_start": "8dbfb43453cd01f21142efae25d763bd42a4c0bc"
+  },
+  "gap": "Media API tests verified audio/video MIME signatures and the storage route, while the integrated Media Library browser test covered only images. The plan explicitly leaves playable-media R2 lifecycle acceptance open.",
+  "change": {
+    "runtime": false,
+    "files": [
+      "tests/browser/media-worker-storage.test.mjs",
+      "docs/evidence/editor-d06-playable-media-library-upload-2026-11-20.json",
+      "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md"
+    ],
+    "behavior": [
+      "The real Media Library UI uploads synthetic WAV and WebM fixtures through the repository Worker into isolated Miniflare D1/R2 bindings.",
+      "The test verifies site ownership, MIME type, stored length, exact R2 bytes, audio/video-specific accessible tile icon, and authenticated private preview response headers and bytes.",
+      "Neither uploaded playable asset is available from the public media route before an explicit published page reference; each returns HTTP 404."
+    ],
+    "production_data_used": false,
+    "production_d1_write_or_migration": false,
+    "production_r2_operation": false,
+    "dependencies_added": []
+  },
+  "checks": {
+    "media_worker_storage_browser_test": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --experimental-loader ./tests/ts-extension-loader.mjs --test --test-concurrency=1 --test-reporter=spec tests/browser/media-worker-storage.test.mjs",
+      "result": "PASS — 1/1 real Chromium/Worker integration test; 93.4 seconds; isolated Miniflare D1/R2."
+    },
+    "media_unit_tests": {
+      "command": "npm run test:media",
+      "result": "PASS — 5/5 test files."
+    },
+    "javascript_syntax": "PASS — node --check tests/browser/media-worker-storage.test.mjs.",
+    "canonical_master": "PASS — 13 master files, 396 source mappings, functional acceptance not certified.",
+    "plan_contract": "PASS — 15/15.",
+    "feature_traceability": "PASS — 396/396.",
+    "git_diff_check": "PASS.",
+    "hosted_ci": "NOT RUN — test/evidence/documentation-only update; no dispatch or rerun; the Actions free-quota state is not verified."
+  },
+  "production_state": {
+    "deployment_id": "a0fdd47c-cdb8-4eaa-a3a8-fe55c7e4b61a",
+    "worker_version": "d2fdb885-2ba7-4291-9ab9-54fb2acbf471",
+    "traffic_percent": 100,
+    "health": {
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+      "http_status": 200,
+      "body": { "ok": true, "service": "sanci9517-streamer-brand", "version": "2.0.0", "server": "cloudflare-worker" }
+    },
+    "runtime_source_changed": false,
+    "new_cost_huf": 0
+  },
+  "limitations": [
+    "This verifies an integrated D-06 playable-media storage and privacy slice, not the complete video/audio editing, Save/reload/Publish lifecycle, D-06, D-01–D-07, or the full Visual Editor.",
+    "Full manual and physical Editor acceptance remains deferred until the complete planned Editor scope is implemented.",
+    "Save and Publish remain separate."
+  ]
+}
