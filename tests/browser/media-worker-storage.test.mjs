@@ -22,7 +22,6 @@ wav.writeUInt16LE(2,32);wav.writeUInt16LE(16,34);wav.write('data',36);wav.writeU
 // Reuse the repository's tiny, procedurally generated, known-playable VP9 fixture.
 const webm=readFileSync(resolve(import.meta.dirname,'../fixtures/editor-sample.webm'));
 const digest=bytes=>createHash('sha256').update(Buffer.from(bytes)).digest('hex');
-
 test('real Worker Media Library upload and Editor image/audio/video Save-reload-Publish lifecycle with local D1/R2', {timeout:240000},async t=>{
  const cleanups=[];
  // Node test-context after hooks run in registration order, so keep dependent
@@ -563,6 +562,20 @@ print(json.dumps(result))`],{cwd:root,encoding:'utf8'}));
    assert.equal(unsaved.posterAssetId,'','choosing its image poster also remains local until Save');
    assert.equal((await context.request.get(base+'/media/'+posterId)).status(),404,
     'the private poster preview does not grant public delivery before Publish');
+   // Controls-free video is only valid as a muted autoplay background. Configure
+   // that real authored-content Inspector state, while keeping the Canvas
+   // preview non-autoplaying until the separate public renderer is reached.
+   const autoplay=playableEditor.locator('#inspectorBody [data-content-key="autoplay"] input[type="checkbox"]');
+   const muted=playableEditor.locator('#inspectorBody [data-content-key="muted"] input[type="checkbox"]');
+   const controls=playableEditor.locator('#inspectorBody [data-content-key="controls"] input[type="checkbox"]');
+   await autoplay.check();
+   await controls.uncheck();
+   assert.equal(await autoplay.isChecked(),true,'the authored video Inspector keeps the explicit autoplay choice');
+   assert.equal(await muted.isChecked(),true,'controls-free video remains explicitly muted');
+   assert.equal(await controls.isChecked(),false,'the authored video can hide controls only in its muted-autoplay mode');
+   assert.equal(await media.getAttribute('muted'),'','the Editor Canvas preserves the muted preview contract');
+   assert.equal(await media.getAttribute('controls'),null,'the Editor Canvas reflects the authored controls-free mode');
+   assert.equal(await media.getAttribute('autoplay'),null,'the Editor Canvas never starts authored autoplay inside the Editor');
   }
   assert.equal(JSON.parse((await DB.prepare('SELECT content_json FROM pages WHERE id=?').bind(playablePageId).first()).content_json)
    .pages[playablePageId].nodes[node.id].props.assetId,'',
@@ -583,6 +596,9 @@ print(json.dumps(result))`],{cwd:root,encoding:'utf8'}));
  const savedVideoDraft=JSON.parse((await DB.prepare('SELECT content_json FROM pages WHERE id=?').bind(playablePageId).first()).content_json)
   .pages[playablePageId].nodes[playableNodes.get(NODE_TYPES.VIDEO).id].props;
  assert.equal(savedVideoDraft.posterAssetId,posterId,'draft Save persists the independent site-scoped poster image ID');
+ assert.equal(savedVideoDraft.controls,false,'draft Save persists the controls-free video mode');
+ assert.equal(savedVideoDraft.muted,true,'draft Save persists the required muted autoplay state');
+ assert.equal(savedVideoDraft.autoplay,true,'draft Save persists the authored autoplay state');
  assert.ok((await get('?usage='+posterId)).references.some(ref=>ref.source==='draft'&&ref.path.includes('posterAssetId')),
   'the Worker usage index identifies the video poster as a draft-only image reference');
  assert.equal((await context.request.get(base+'/media/'+posterId)).status(),404,
@@ -612,8 +628,16 @@ print(json.dumps(result))`],{cwd:root,encoding:'utf8'}));
    assert.equal(digest(await posterPreview.body()),digest(png),'the reloaded private poster preview preserves the exact uploaded image bytes');
    assert.equal(await posterPicker.locator('.editor-media-selected').getAttribute('alt'),'Kiválasztott kép',
     'Editor reload restores the selected site-owned poster image');
+   assert.equal(await playableEditor.locator('#inspectorBody [data-content-key="autoplay"] input[type="checkbox"]').isChecked(),true,
+    'Editor reload restores the authored autoplay setting');
+   assert.equal(await playableEditor.locator('#inspectorBody [data-content-key="muted"] input[type="checkbox"]').isChecked(),true,
+    'Editor reload restores the required muted state');
+   assert.equal(await playableEditor.locator('#inspectorBody [data-content-key="controls"] input[type="checkbox"]').isChecked(),false,
+    'Editor reload restores the controls-free mode');
    assert.equal(await canvas.locator('video').getAttribute('poster'),'/api/admin/media?id='+posterId,
     'Editor reload keeps the poster on the authenticated private preview route');
+   assert.equal(await canvas.locator('video').getAttribute('autoplay'),null,
+    'a reloaded Editor draft still does not autoplay inside the design surface');
   }
  }
  await savePlayable(true);
@@ -632,6 +656,16 @@ print(json.dumps(result))`],{cwd:root,encoding:'utf8'}));
    assert.equal(posterResponse.headers()['content-type'],'image/png','the published poster preserves its validated image MIME type');
    assert.equal(digest(await posterResponse.body()),digest(png),'published poster delivery preserves the exact uploaded D1/R2-linked image bytes');
    assert.equal(await media.getAttribute('poster'),'/media/'+posterId,'the public video uses the published poster route, not the private Admin preview');
+   assert.equal(await media.getAttribute('autoplay'),'','the separate Publish renders the authored autoplay attribute publicly');
+   assert.equal(await media.getAttribute('muted'),'','public autoplay is muted');
+   assert.equal(await media.getAttribute('controls'),null,'the published background video remains controls-free');
+   await playableLive.waitForFunction(nodeId=>{
+    const video=document.querySelector(`[data-node-id="${nodeId}"] video`);
+    return Boolean(video&&video.autoplay&&video.muted&&!video.paused);
+   },node.id,{timeout:8000});
+   const autoplayState=await media.evaluate(element=>({autoplay:element.autoplay,muted:element.muted,controls:element.controls,paused:element.paused}));
+   assert.deepEqual(autoplayState,{autoplay:true,muted:true,controls:false,paused:false},
+    'the published muted video actually begins playback automatically without visible player controls');
    assert.ok((await get('?usage='+posterId)).references.some(ref=>ref.source==='published'&&ref.path.includes('posterAssetId')),
     'the Worker usage index identifies the published video poster reference');
   }
