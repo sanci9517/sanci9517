@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261120181810-68d7c64d",
+  "task": "77.44.7.D-D06-cross-site-playable-picker-isolation",
+  "trigger": "manual",
+  "started_at": "2026-11-20T18:18:10.036Z",
+  "finished_at": "2026-11-20T18:30:15.709Z",
+  "wall_seconds": 726,
+  "paused_seconds": 0,
+  "measured_seconds": 726,
+  "status": "pass",
+  "kind": "test",
+  "summary": "D-06 real Worker/Chromium cross-site playable-media library and picker isolation slice verified; full D remains OPEN.",
+  "evidence": [
+    "docs/evidence/editor-d06-cross-site-playable-picker-2026-11-20.json"
+  ],
+  "checks": "media Worker/Chromium 1/1 PASS; test:editor 22/22+4/4; test:media 5/5; typecheck; plan contract 15/15; canonical 13/396; traceability 396/396; audit 147 PARTIAL_SOURCE/249 UNVERIFIED; syntax/diff PASS; no production changes.",
+  "started_revision": "33be8bb2b34e396597f300da680a5529ba631dfd",
+  "finished_revision": "33be8bb2b34e396597f300da680a5529ba631dfd",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "kind": "editor-acceptance-slice",
+  "recorded_at_utc": "2026-11-20T18:29:23Z",
+  "plan_point": "77.44.7.D / D-06 — verified-site playable-media isolation",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "github_head_at_block_start": "33be8bb2b34e396597f300da680a5529ba631dfd",
+    "test_base_blob": "77f64e7bd1efc7fd7896af8ee662fd0b5b7c516c"
+  },
+  "gap": "The real Worker plus Chromium media integration already covered playable uploads and Save/reload/Publish but did not seed same-type playable rows owned by a second verified site and prove that the primary site's Media Library and Editor picker excluded them.",
+  "change": {
+    "runtime": false,
+    "files": [
+      "tests/browser/media-worker-storage.test.mjs",
+      "docs/evidence/editor-d06-cross-site-playable-picker-2026-11-20.json",
+      "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md"
+    ],
+    "behavior": [
+      "The isolated synthetic D1/R2 fixture seeds valid WAV and WebM objects and rows for a second verified site.",
+      "Authenticated primary-site admin reads of the foreign media IDs and their unreferenced public URLs both return 404.",
+      "The actual primary-site Media Library does not show the foreign WAV or WebM filenames.",
+      "For both audio and video Inspector fields, the real asset picker omits the same-type file belonging to the second site while allowing selection of the primary site's matching asset.",
+      "The existing playable upload and editor lifecycle checks continue to pass; no Save/Publish behavior or product runtime was changed."
+    ],
+    "production_data_used": false,
+    "production_d1_write_or_migration": false,
+    "production_r2_operation": false,
+    "dependencies_added": []
+  },
+  "checks": {
+    "real_worker_chromium": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --experimental-loader ./tests/ts-extension-loader.mjs --test --test-concurrency=1 tests/browser/media-worker-storage.test.mjs",
+      "result": "PASS — 1/1 real Worker + Chromium integration test; synthetic Miniflare D1/R2 only; final run 156.7 seconds.",
+      "diagnostic": "The first run caught a stale test assertion that assumed only two media rows globally. The test now scopes counts per site; final run passes, including direct route denial, Media Library filtering, and same-type audio/video picker filtering."
+    },
+    "editor_unit_tests": "PASS — npm run test:editor: 22/22 files and 4/4 runner/manifest contracts.",
+    "media_api_tests": "PASS — npm run test:media: 5/5 files.",
+    "typecheck": "PASS — npm run typecheck.",
+    "plan_contract": "PASS — plan contract: 15/15.",
+    "canonical_master": "PASS — 13 canonical master files and 396 source mappings; acceptance not certified.",
+    "feature_traceability": "PASS — 396/396.",
+    "active_point_audit": "PASS for bookkeeping only — 77.44.7.D remains OPEN / NOT_CERTIFIED; 147 PARTIAL_SOURCE / 249 UNVERIFIED.",
+    "syntax_and_diff": "PASS — node --check tests/browser/media-worker-storage.test.mjs; git diff --check.",
+    "hosted_ci": "NOT RUN — docs/test/evidence follow-up is pushed with [skip ci]; no redundant workflow dispatch."
+  },
+  "production_state": {
+    "read_only_deployments_api": "GET /accounts/64bbd6a12ac732ed2cac4ca25d8bfa7e/workers/scripts/sanci9517-streamer-brand/deployments",
+    "deployment_id": "5543b768-ff27-4f3b-8609-9b8b981a006e",
+    "worker_version": "db5de010-ab32-4bbd-b1c0-e34b798bbab0",
+    "traffic_percent": 100,
+    "runtime_source_changed": false,
+    "health_check": "NOT RUN — this test/evidence-only change does not affect the deployed Worker.",
+    "public_asset_hashes": "UNCHANGED — no public asset was modified.",
+    "new_cost_huf": 0
+  },
+  "limitations": [
+    "This verifies one cross-site playable-media picker and library isolation slice using synthetic local fixtures. It does not certify the full D-06 matrix or D-01–D-07.",
+    "Full manual and physical Editor acceptance remains deferred until the planned Editor scope is complete.",
+    "Save and Publish remain separate."
+  ]
+}

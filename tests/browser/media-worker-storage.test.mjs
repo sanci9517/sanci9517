@@ -112,6 +112,28 @@ print(json.dumps(result))`],{cwd:root,encoding:'utf8'}));
  await page.getByRole('button',{name:'Feltöltés a médiatárba',exact:true}).click();
  const duplicate=await(await duplicateResponse).json();assert.equal(duplicate.data.duplicate,true);assert.equal(duplicate.data.id,row.id);
  assert.deepEqual(await snapshot(),before,'duplicate upload must reuse one D1 row and one R2 object');
+ // A verified second site owns real playable D1/R2 rows in this fixture. Its
+ // files must not leak into either the primary Media Library or its Editor
+ // asset picker, even though both requests share the same authenticated cookie.
+ const foreignPlayableAssets=[];
+ for(const fixture of [
+  {name:'secondary-private-audio.wav',mimeType:'audio/wav',bytes:wav,type:NODE_TYPES.AUDIO},
+  {name:'secondary-private-video.webm',mimeType:'video/webm',bytes:webm,type:NODE_TYPES.VIDEO}
+ ]){
+  const id=crypto.randomUUID(),extension=fixture.mimeType==='audio/wav'?'wav':'webm';
+  const key=`sites/site-secondary/media/${id}.${extension}`;
+  await MEDIA.put(key,fixture.bytes,{httpMetadata:{contentType:fixture.mimeType}});
+  await DB.prepare('INSERT INTO media(id,site_id,object_key,original_name,mime_type,size_bytes,alt_text) VALUES(?,?,?,?,?,?,?)')
+   .bind(id,'site-secondary',key,fixture.name,fixture.mimeType,fixture.bytes.length,'secondary-site private fixture').run();
+  foreignPlayableAssets.push({...fixture,id});
+  assert.equal((await context.request.get(base+'/api/admin/media?id='+id)).status(),404,
+   'the primary site admin cannot privately fetch another site playable asset');
+  assert.equal((await context.request.get(base+'/media/'+id)).status(),404,
+   'another site playable asset remains unpublished and inaccessible');
+ }
+ await page.reload();
+ for(const foreign of foreignPlayableAssets)assert.equal(await page.locator('.tile').filter({hasText:foreign.name}).count(),0,
+  'the real Media Library excludes playable files owned by the verified secondary site');
  // Reuse the uploaded R2 object in the real Editor over the same Worker,
  // authenticated session, isolated D1 and isolated R2 bindings.
  const pageId=crypto.randomUUID(),fixturePage=createPage({id:pageId,name:'Háttérkép lifecycle',slug:'background-asset-fixture'});
@@ -451,7 +473,10 @@ print(json.dumps(result))`],{cwd:root,encoding:'utf8'}));
  await MEDIA.delete(row.object_key);
  const missingPanel=await scan('missing','findings',2);assert.match(await missingPanel.textContent(),/isolated-acceptance\.png/);
  const missing=await get('?missingAudit=1');assert.equal(missing.missing[0].id,row.id);assert.equal(missing.missing[0].archived,false);assert.equal(missing.repairAuthorized,false);
- assert.equal((await DB.prepare('SELECT COUNT(*) n FROM media').first()).n,2,'diagnostics never remove either media registry entry');
+ assert.equal((await DB.prepare('SELECT COUNT(*) n FROM media WHERE site_id=?').bind('site-default').first()).n,2,
+  'diagnostics never remove either primary-site media registry entry');
+ assert.equal((await DB.prepare('SELECT COUNT(*) n FROM media WHERE site_id=?').bind('site-secondary').first()).n,2,
+  'primary-site diagnostics neither remove nor absorb the verified secondary-site media rows');
  assert.ok(await MEDIA.head(orphanKey),'diagnostics never delete the unregistered candidate');
  assert.equal((await DB.prepare('SELECT COUNT(*) n FROM media_retention_requests').first()).n,0);
  const requestIndex=calls.length;
@@ -552,7 +577,12 @@ print(json.dumps(result))`],{cwd:root,encoding:'utf8'}));
   const sourceField=playableEditor.locator('#inspectorBody [data-content-key="assetId"]');
   const picker=sourceField.locator('.editor-media-picker');
   await picker.getByRole('button',{name:'Médiatár megnyitása'}).click();
-  await picker.getByRole('region',{name:'Médiatár találatok'}).getByRole('button',{name:fixture.name+' kiválasztása'}).click();
+  const choices=picker.getByRole('region',{name:'Médiatár találatok'});
+  const foreign=foreignPlayableAssets.find(asset=>asset.type===fixture.type);
+  assert.ok(foreign,'the fixture includes a same-type foreign playable asset for each Editor picker check');
+  assert.equal(await choices.getByRole('button',{name:foreign.name+' kiválasztása',exact:true}).count(),0,
+   'the real Editor asset picker excludes a same-type playable asset owned by another site');
+  await choices.getByRole('button',{name:fixture.name+' kiválasztása'}).click();
   const media=canvas.locator(fixture.type===NODE_TYPES.VIDEO?'video':'audio');
   assert.equal(await media.getAttribute('src'),'/api/admin/media?id='+fixture.id,
    `${fixture.mimeType} selection changes the authored Canvas to the authenticated private asset URL`);
