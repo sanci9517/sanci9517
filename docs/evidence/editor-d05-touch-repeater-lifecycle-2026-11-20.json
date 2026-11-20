@@ -1,0 +1,57 @@
+{
+  "schema": "sanci.editor.d05-touch-repeater-lifecycle.v1",
+  "captured_at_utc": "2026-11-20T03:33:53Z",
+  "plan_point": "77.44.7.D / D-05 — touch Add/Delete and Save/Publish lifecycle",
+  "repository": "sanci9517/sanci9517",
+  "branch": "v2/foundation",
+  "test_commit_sha": "618d9f432d0f93e36a4a8f98021a98fb5b10eff0",
+  "development_metric": {
+    "run_id": "20261120032357-44d5a6fe",
+    "archive": "docs/evidence/dev-metrics/runs/2026-11-20/20261120032357-44d5a6fe.json"
+  },
+  "change": {
+    "file": "tests/browser/editor-content-system.test.js",
+    "summary": "The six authored repeaters now run their Delete/Add/save lifecycle in a real Chromium mobile context (390x800, isMobile=true, hasTouch=true, coarse pointer). Inspector selection is fixture setup; Add, Delete, Save, and Publish are actual Playwright taps. Tests retain the row-count, Canvas, draft-only, reload, and separate-publication assertions.",
+    "covered_types": [
+      "list",
+      "tabs",
+      "accordion",
+      "dropdown",
+      "gallery",
+      "carousel"
+    ],
+    "save_publish": "Tap-based repeater changes do not create editor writes; one explicit Save persists the recovered draft; reload restores it; only a separate Publish changes the public view."
+  },
+  "checks": {
+    "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-content-system.test.js": "PASS; 1/1 real Chromium test, including all six repeaters under touch emulation.",
+    "npm run test:editor": "PASS; 22/22 Editor unit files and 4/4 runner/manifest checks.",
+    "npm run typecheck -- --pretty false": "PASS.",
+    "python3 tests/plan-contract.test.py": "PASS; 15/15.",
+    "python3 scripts/check-canonical-plan.py": "PASS; canonical master exact size 1,739,495 bytes, 13 master files / 396 mappings; acceptance remains uncertified.",
+    "python3 scripts/build-feature-traceability.py --check": "PASS; 396/396 mappings.",
+    "python3 scripts/audit-active-plan-point.py": "PASS; 77.44.7.D OPEN / NOT_CERTIFIED; 147 PARTIAL_SOURCE and 249 UNVERIFIED.",
+    "node --check tests/browser/editor-content-system.test.js": "PASS.",
+    "git diff --check": "PASS.",
+    "exploratory_runs": "Two initial touch-selector attempts failed before repeater assertions (mobile toolbar intercepted canvas tap; then image preview dialog intercepted panel tap). The fixture setup was narrowed to programmatic node selection; repeaters and Save/Publish remain actual touch taps. The final run passed.",
+    "hosted_ci": "NOT RUN; [skip ci] test-only commit; combined status GET returned no contexts; no hosted CI pass is claimed."
+  },
+  "release_state_at_capture": {
+    "github_branch_ref_get": "Verified refs/heads/v2/foundation = 618d9f432d0f93e36a4a8f98021a98fb5b10eff0.",
+    "worker_latest_deployment_id": "c4b9526a-c54b-4fe3-9218-d889c1e011e9",
+    "worker_latest_version_id": "9870e814-359c-4871-a25c-289d9dfe7c2c",
+    "worker_traffic_percent": 100,
+    "runtime_source_changed": false,
+    "runtime_deployment_needed": false,
+    "direct_health": "NOT RUN; no runtime/public asset change.",
+    "asset_hash_comparison": "NOT APPLICABLE; no public asset changed."
+  },
+  "scope_limits": {
+    "d05_status": "Automated touch lifecycle slice only; not full D-05 or D-01–D-07 acceptance.",
+    "d_status": "77.44.7.D remains OPEN / NOT_CERTIFIED; trace audit has 147 partial source mappings and 249 unverified mappings.",
+    "manual_physical_editor_acceptance": "DEFERRED until the complete Visual Editor scope is implemented.",
+    "production_d1_write_or_migration": false,
+    "production_r2_mutation_or_delete": false,
+    "paid_services_or_dependencies": false,
+    "new_cost_huf": 0
+  }
+}
