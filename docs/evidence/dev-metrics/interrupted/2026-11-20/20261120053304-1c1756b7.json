@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "id": "20261120053304-1c1756b7",
+  "task": "77.44.7.D-D03-tooltip-viewport-bounds",
+  "trigger": "manual",
+  "started_at": "2026-11-20T05:33:04.808Z",
+  "abandoned_at": "2026-11-20T06:46:00.146Z",
+  "measured_seconds": null,
+  "status": "interrupted",
+  "reason": "A korábbi mérési blokk megszakadt; a lezárás időpontja nem igazolható, ezért null mért idővel elhagyva. A 2026-11-20-i D-03 release-utóellenőrzés külön futásként folytatódik.",
+  "started_revision": "576903c62cfd63562c43e1a34aeaa3ab8141732c",
+  "measurement": "missing end time; excluded from elapsed time and ETA"
+}

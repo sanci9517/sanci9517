@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "plan_point": "77.44.7.D / D-03 authored Tooltip viewport positioning",
-  "status": "SCOPED_REGRESSION_PASS; runtime code is implemented and locally verified; production release is pending; complete D-03, D-01–D-07 and 77.44.7.D remain OPEN / NOT_CERTIFIED",
+  "status": "SCOPED_REGRESSION_PASS; D-03 Tooltip viewport slice is deployed and verified; complete D-03, D-01–D-07 and 77.44.7.D remain OPEN / NOT_CERTIFIED",
   "source_before_change": {
     "branch": "v2/foundation",
     "commit": "576903c62cfd63562c43e1a34aeaa3ab8141732c",
@@ -39,7 +39,7 @@
     "targeted_chromium": "PASS — CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-decorative-elements.test.js (1/1; verifies keyboard flip below and mouse-hover shift inward at opposite 320x240 viewport corners).",
     "editor_unit_suite": "PASS — npm run test:editor (22/22 files; runner guard 4/4).",
     "typecheck": "PASS — npm run typecheck.",
-    "editor_layout_suite": "NOT_PASS — the full 59-file Chromium suite completed with one D-04 720x450 selected-tab failure at tests/browser/editor-content-system.test.js:1359; the changed Tooltip browser test passed in the aggregate. The tab failure reproduced inconsistently in isolated runs. Its test helper now waits for the requested aria-selected state and uses page.keyboard.press for the post-resize End key; the final isolated rerun passed 1/1. The aggregate suite was not rerun after this test-only stabilization, so no full-suite PASS is claimed.",
+    "editor_layout_suite": "PASS — CHROMIUM_PATH=/usr/bin/chromium npm run test:editor:layout; the complete serial 59-file Chromium suite completed with all files passing, including the previously intermittent D-04 editor-content-system.test.js and the changed Tooltip regression.",
     "layout_failure_rerun": "PASS — the failed tests/browser/editor-content-system.test.js was immediately rerun alone with the same Chromium command and passed 1/1. The aggregate run remains NOT_PASS due to the first failure; classify as a likely timing flake, not a full-suite PASS.",
     "migration_safety": "PASS — npm run test:web013:migration-gate; no migrations applied.",
     "wrangler_dry_run": "PASS — local Wrangler 4.130.0 read 197 public assets (395.08 KiB total, 100.96 KiB gzip), printed --dry-run: exiting now, and exited 0. Wrangler also emitted an EROFS warning while attempting to write its optional log under /home/agent/.config; deployment/package validation still completed.",
@@ -48,7 +48,8 @@
     "traceability": "PASS — python3 scripts/build-feature-traceability.py --check (396/396).",
     "active_point": "PASS for bookkeeping only — python3 scripts/audit-active-plan-point.py; 77.44.7.D remains OPEN / NOT_CERTIFIED with 147 PARTIAL_SOURCE and 249 UNVERIFIED.",
     "syntax_diff": "PASS — node --check on changed JS entry modules and git diff --check.",
-    "layout_failure_reruns": "The pre-stabilization targeted rerun passed once, failed twice while waiting for the state to change, then the test helper was stabilized and the final targeted run passed 1/1. This remains a known D-04 keyboard timing risk pending the required exact-SHA CI run."
+    "layout_failure_reruns": "PASS — after stabilizing the D-04 tab test wait/keyboard input, the isolated file passed and the complete 59-file browser suite passed; the first earlier aggregate failure is superseded by this successful complete run.",
+    "browser_environment": "The suite requires local loopback fixture servers; default sandbox execution returned EPERM. The same exact suite was rerun with the reviewer-authorized local loopback permission and passed 59/59."
   },
   "production_preflight": {
     "method": "Cloudflare D1 query API, SELECT-only.",
@@ -57,22 +58,83 @@
     "r2": "No R2 operation or deletion."
   },
   "production": {
-    "this_runtime_change_deployed": false,
-    "current_cloudflare_deployment_get": "Read-only Cloudflare API GET returned current deployment c4b9526a-c54b-4fe3-9218-d889c1e011e9 with version 9870e814-359c-4871-a25c-289d9dfe7c2c at 100% traffic. Its exact source SHA is not exposed by that deployment/version response; last previously recorded source SHA is 83fb764b4060d8d4bbc513e7d0865dd1f700214a, which predates these changes.",
-    "health_and_assets": "No post-release health or changed-asset hash verification is claimed because this runtime change is not yet pushed/deployed.",
-    "push_blocker": "Local git remote request failed: unable to connect to proxy port 8080. GitHub API independently confirmed the branch was still exactly the checked base before changes. No push/deploy is claimed."
+    "this_runtime_change_deployed": true,
+    "source_commit": "a469be7f1fdf5e7c63790088abf3f9187b3baad9",
+    "source_branch": "v2/foundation",
+    "github_compare": {
+      "base": "576903c62cfd63562c43e1a34aeaa3ab8141732c",
+      "head": "v2/foundation",
+      "ahead_by": 1,
+      "behind_by": 0
+    },
+    "cloudflare_build": {
+      "id": "976dde99-fa44-430a-b165-47eef737d6aa",
+      "status": "stopped",
+      "outcome": "success",
+      "trigger": "push_event",
+      "commit": "a469be7f1fdf5e7c63790088abf3f9187b3baad9",
+      "branch": "v2/foundation",
+      "checks": "npm run typecheck PASS; npm run deploy:safe PASS; migration safety gate PASS; deployed sanci9517-streamer-brand"
+    },
+    "deployment": {
+      "id": "c01cfe92-34cb-42f1-b141-728c1d0c84f9",
+      "version": "3d74ac40-4c6f-41d2-9ee7-440a20f18282",
+      "traffic_percent": 100,
+      "created_on": "2026-11-20T06:38:59.475236Z"
+    },
+    "health": {
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+      "method": "GET",
+      "status": 200,
+      "response": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "changed_public_asset_hashes": {
+      "method": "Sequential cache-busted HTTP GETs from the public workers.dev origin; SHA-256 of exact response body compared to the committed local file.",
+      "count": 15,
+      "http_200_count": 15,
+      "matching_count": 15,
+      "mismatch_count": 0,
+      "assets": {
+        "public/assets/page-renderer.js": "d3746e0d17c7ade155b77d13eec2b05c7db79d3ace4d4b73f2280548b85af839",
+        "public/editor-v2/app.js": "cb8c3f8b919f171eb82633f06ef995b3cdc453d4affcad0f28e556fd39a6382e",
+        "public/editor-v2/core/authored-content.js": "352b9d61ee45bbfea7c57243dbe60d9ab8f63719028141454dd0d69a0c348e28",
+        "public/editor-v2/core/canvas-engine.js": "037760606ae2dc409b33ac9632f59d26fd91abbfbbc1b0b83ceadbecbf65ea0f",
+        "public/editor-v2/core/capability-matrix.js": "7351f9fbab6c482d957a14d9a890e5cd451991b5d41c5b8a563e3fc4ee000b18",
+        "public/editor-v2/core/commands.js": "553e047c2cada8ac6cdf92c125d46fa2065aa32c7c5b59059a4aade9e763e612",
+        "public/editor-v2/core/content-profiles.js": "e304a37d643673a0b39659e6b3c7904d010b0db1bd92d9a528513e48999e0cca",
+        "public/editor-v2/core/editor-templates.js": "8c6eb361e29018b0616b0c98c09e19a82d65be13a52106a7913203cd1d9c8d94",
+        "public/editor-v2/core/state.js": "24a51845631d69855fc790c66fde8dd9840019243af0911db15c22d85e1ad836",
+        "public/editor-v2/core/validation.js": "16928c018d0b10f3502d09b684c8071b26664bb3cff914f625b6767ae6c4d637",
+        "public/editor-v2/element-content.css": "da62968d2ec8e6f911b729e6dada25cde87e18febb11302c6b08d86ebadfc100",
+        "public/editor-v2/index.html": "3152dba108c4df5bccd86fcae06cd2d0e2900fe0cfa19c0c1543e25746edd371",
+        "public/editor-v2/ui/accessibility-fields.js": "9c84679610686ff9938ca3de0267877e195c438606db71bce52a0ed56f14f643",
+        "public/editor-v2/ui/element-content-controls.js": "8ae4e5ac6ad87f868f7921345e4d1dea45919701f3051c31f77de5a4e2ba2082",
+        "public/visual-page.html": "3f0d4d34d5ff03349e02b35ce21a6a961b6e0aafdd803c0c13ea959780575907"
+      }
+    },
+    "verification_timestamp_utc": "2026-11-20T07:25:54Z",
+    "worker_custom_domains_read_only_get": {
+      "count": 0,
+      "note": "workers.dev hostname is the directly verified public Worker origin; no custom Worker domain attachment is configured."
+    }
   },
   "hosted_ci_and_cost": {
     "github_repository_visibility": "public; normal GitHub-hosted Actions runners are free for public repositories.",
-    "cloudflare_build_minutes": "Read-only Cloudflare account limits GET reports has_reached_build_minutes_limit=false; refresh 2026-11-30T23:59:59.999Z.",
+    "cloudflare_build_minutes": "Read-only account limits GET reported has_reached_build_minutes_limit=false; refresh 2026-11-30T23:59:59.999Z.",
     "new_paid_cost_huf": 0,
     "new_dependencies": 0
   },
   "limitations": [
-    "This closes one D-03 Tooltip viewport regression slice only; it does not certify all D-03 or the D-01–D-07 capability/lifecycle matrix.",
-    "Runtime release is NOT DONE until a safe fast-forward push, required exact-source CI/automatic Worker build, 100% traffic verification, production health, and changed public asset hash checks are confirmed.",
-    "The aggregate layout suite had one intermittent D-04 tab-state failure; the test was stabilized and the isolated rerun passed, but the full aggregate was not repeated after that test-only change.",
+    "This closes one D-03 Tooltip viewport regression slice and verifies its production release only; it does not certify all D-03 or the D-01–D-07 capability/lifecycle matrix.",
+    "GitHub combined commit-status endpoint returned an empty status list; Cloudflare automatic build/deploy succeeded, but no separate GitHub Actions hosted workflow PASS is claimed for this commit.",
     "Full Visual Editor manual/physical acceptance remains deferred until its complete planned scope is implemented."
   ],
-  "development_metric_id": "20261120053304-1c1756b7"
+  "development_metric_id": "20261120064600-8dfe7472",
+  "verification_timestamp_utc": "2026-11-20T07:25:54Z",
+  "interrupted_development_metric_id": "20261120053304-1c1756b7"
 }
