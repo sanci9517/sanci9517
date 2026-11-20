@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261120150315-165bafd8",
+  "task": "77.44.7.D-D06-editor-media-next-gap-review-and-implementation",
+  "trigger": "manual",
+  "started_at": "2026-11-20T15:03:15.926Z",
+  "finished_at": "2026-11-20T15:27:23.878Z",
+  "wall_seconds": 1448,
+  "paused_seconds": 0,
+  "measured_seconds": 1448,
+  "status": "pass",
+  "kind": "test",
+  "summary": "D-06 real Worker/D1/R2 + Chromium video poster lifecycle passed; source runtime unchanged.",
+  "evidence": [
+    "docs/evidence/editor-d06-video-poster-media-lifecycle-2026-11-20.json"
+  ],
+  "checks": "CHROMIUM_PATH=/usr/bin/chromium node --experimental-loader ./tests/ts-extension-loader.mjs --test --test-concurrency=1 tests/browser/media-worker-storage.test.mjs (PASS); node --check tests/browser/media-worker-storage.test.mjs (PASS); git diff --check (PASS)",
+  "started_revision": "ba5501809611d98ca67b48c75f5a998a148ffd2b",
+  "finished_revision": "ba5501809611d98ca67b48c75f5a998a148ffd2b",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

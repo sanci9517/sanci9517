@@ -500,6 +500,13 @@ print(json.dumps(result))`],{cwd:root,encoding:'utf8'}));
    'uploaded audio/video remains private until a separate published page reference exists');
   playableAssets.push({...fixture,id:uploaded.id});
  }
+ // The original image object was intentionally removed above to test missing
+ // object diagnostics. Give the poster lifecycle its own active, private image
+ // fixture so that an earlier negative storage test cannot poison this one.
+ const posterId=crypto.randomUUID(),posterKey=`sites/site-default/media/${posterId}.png`;
+ await MEDIA.put(posterKey,png,{httpMetadata:{contentType:'image/png'}});
+ await DB.prepare('INSERT INTO media(id,site_id,object_key,original_name,mime_type,size_bytes,alt_text) VALUES(?,?,?,?,?,?,?)')
+  .bind(posterId,'site-default',posterKey,'isolated-video-poster.png','image/png',png.length,'isolated video poster fixture').run();
  // Connect real uploads to the actual authored-content Inspector, then verify
  // draft persistence/reload independently from public publication. The image
  // background fixture above keeps its existing archive/history assertions.
@@ -540,6 +547,23 @@ print(json.dumps(result))`],{cwd:root,encoding:'utf8'}));
   const media=canvas.locator(fixture.type===NODE_TYPES.VIDEO?'video':'audio');
   assert.equal(await media.getAttribute('src'),'/api/admin/media?id='+fixture.id,
    `${fixture.mimeType} selection changes the authored Canvas to the authenticated private asset URL`);
+  if(fixture.type===NODE_TYPES.VIDEO){
+   const posterField=playableEditor.locator('#inspectorBody [data-content-key="posterAssetId"]');
+   const posterPicker=posterField.locator('.editor-media-picker');
+   await posterPicker.getByRole('button',{name:'Médiatár megnyitása'}).click();
+   const posterChoices=posterPicker.getByRole('region',{name:'Médiatár találatok'});
+   await posterChoices.getByRole('button',{name:'isolated-video-poster.png kiválasztása',exact:true}).click();
+   assert.equal(await posterPicker.getByRole('button',{name:'isolated-video.webm kiválasztása',exact:true}).count(),0,
+    'the video poster picker excludes playable video uploads and offers only image assets');
+   assert.equal(await media.getAttribute('poster'),'/api/admin/media?id='+posterId,
+    'a site-owned image selection previews privately as the authored video poster');
+   const unsaved=JSON.parse((await DB.prepare('SELECT content_json FROM pages WHERE id=?').bind(playablePageId).first()).content_json)
+    .pages[playablePageId].nodes[node.id].props;
+   assert.equal(unsaved.assetId,'','choosing a video source remains a local Editor edit until Save');
+   assert.equal(unsaved.posterAssetId,'','choosing its image poster also remains local until Save');
+   assert.equal((await context.request.get(base+'/media/'+posterId)).status(),404,
+    'the private poster preview does not grant public delivery before Publish');
+  }
   assert.equal(JSON.parse((await DB.prepare('SELECT content_json FROM pages WHERE id=?').bind(playablePageId).first()).content_json)
    .pages[playablePageId].nodes[node.id].props.assetId,'',
    'choosing a playable asset remains local until the user explicitly saves the draft');
@@ -556,6 +580,13 @@ print(json.dumps(result))`],{cwd:root,encoding:'utf8'}));
   assert.equal((await context.request.get(base+'/media/'+fixture.id)).status(),404,
    'draft Save does not publish a playable media object');
  }
+ const savedVideoDraft=JSON.parse((await DB.prepare('SELECT content_json FROM pages WHERE id=?').bind(playablePageId).first()).content_json)
+  .pages[playablePageId].nodes[playableNodes.get(NODE_TYPES.VIDEO).id].props;
+ assert.equal(savedVideoDraft.posterAssetId,posterId,'draft Save persists the independent site-scoped poster image ID');
+ assert.ok((await get('?usage='+posterId)).references.some(ref=>ref.source==='draft'&&ref.path.includes('posterAssetId')),
+  'the Worker usage index identifies the video poster as a draft-only image reference');
+ assert.equal((await context.request.get(base+'/media/'+posterId)).status(),404,
+  'saving a video poster reference does not publish its image');
  await playableEditor.reload();
  for(const fixture of playableAssets){
   const node=playableNodes.get(fixture.type),canvas=playableEditor.locator(`.node[data-node-id="${node.id}"]`);
@@ -573,6 +604,17 @@ print(json.dumps(result))`],{cwd:root,encoding:'utf8'}));
    'Editor reload restores an accessible playable-asset selection');
   assert.equal(await canvas.locator(fixture.type===NODE_TYPES.VIDEO?'video':'audio').getAttribute('src'),
    '/api/admin/media?id='+fixture.id,'Editor reload restores the private preview source');
+  if(fixture.type===NODE_TYPES.VIDEO){
+   const posterPicker=playableEditor.locator('#inspectorBody [data-content-key="posterAssetId"] .editor-media-picker');
+   await posterPicker.locator('.editor-media-selected').waitFor();
+   const posterPreview=await context.request.get(base+'/api/admin/media?id='+posterId);
+   assert.equal(posterPreview.status(),200,'the saved site-owned poster remains privately readable after Editor reload');
+   assert.equal(digest(await posterPreview.body()),digest(png),'the reloaded private poster preview preserves the exact uploaded image bytes');
+   assert.equal(await posterPicker.locator('.editor-media-selected').getAttribute('alt'),'Kiválasztott kép',
+    'Editor reload restores the selected site-owned poster image');
+   assert.equal(await canvas.locator('video').getAttribute('poster'),'/api/admin/media?id='+posterId,
+    'Editor reload keeps the poster on the authenticated private preview route');
+  }
  }
  await savePlayable(true);
  await playableLive.goto(base+'/p/'+playableSlug);
@@ -584,6 +626,15 @@ print(json.dumps(result))`],{cwd:root,encoding:'utf8'}));
   const media=playableLive.locator(`[data-node-id="${node.id}"]`).locator(fixture.type===NODE_TYPES.VIDEO?'video':'audio');
   await media.waitFor();
   assert.equal(await media.getAttribute('src'),'/media/'+fixture.id,'the public renderer uses only the public media route');
+  if(fixture.type===NODE_TYPES.VIDEO){
+   const posterResponse=await context.request.get(base+'/media/'+posterId);
+   assert.equal(posterResponse.status(),200,'the separate Publish grants public delivery to the referenced video poster');
+   assert.equal(posterResponse.headers()['content-type'],'image/png','the published poster preserves its validated image MIME type');
+   assert.equal(digest(await posterResponse.body()),digest(png),'published poster delivery preserves the exact uploaded D1/R2-linked image bytes');
+   assert.equal(await media.getAttribute('poster'),'/media/'+posterId,'the public video uses the published poster route, not the private Admin preview');
+   assert.ok((await get('?usage='+posterId)).references.some(ref=>ref.source==='published'&&ref.path.includes('posterAssetId')),
+    'the Worker usage index identifies the published video poster reference');
+  }
   const playback=await media.evaluate(async element=>{
    if(element.readyState<1)await new Promise((resolve,reject)=>{element.addEventListener('loadedmetadata',resolve,{once:true});element.addEventListener('error',reject,{once:true})});
    element.muted=true;await element.play();const result={playing:!element.paused,duration:element.duration,readyState:element.readyState};element.pause();return result;
