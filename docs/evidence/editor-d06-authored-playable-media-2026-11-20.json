@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "kind": "editor-acceptance-slice",
-  "recorded_at_utc": "2026-11-20T13:08:58Z",
+  "recorded_at_utc": "2026-11-20T13:18:54Z",
   "plan_point": "77.44.7.D / D-06 — authored audio/video Media Library selection and lifecycle",
   "repository": {
     "name": "sanci9517/sanci9517",
@@ -9,7 +9,9 @@
     "base_sha": "cdf68badd0603bd0ffda1619f736b6cb6c057585",
     "canonical_plan_bytes": 1750513,
     "canonical_plan_sha256": "bc17593e483848e9e8fe901d42b210868c781d714f43f3454e84e366d902f46e",
-    "canonical_plan_git_blob": "d41d893683b16e2fcb4f043c0649a5ce84e085cc"
+    "canonical_plan_git_blob": "d41d893683b16e2fcb4f043c0649a5ce84e085cc",
+    "source_sha": "a58ffb773cfddb908f79b295e0047c15195bfcd5",
+    "remote_head_after_push": "a58ffb773cfddb908f79b295e0047c15195bfcd5"
   },
   "gap": "Authored contentVersion=1 audio and video nodes had no Media Library assetId field in their Inspector. Legacy media nodes could select image/audio/video, but those controls did not expose the authored-node fields. The public renderer and server publication validator already supported site-scoped audio/video asset IDs, so this blocked the planned end-to-end media lifecycle for authored audio/video.",
   "change": {
@@ -59,10 +61,22 @@
       "command": "npm run test:media",
       "result": "PASS — 5/5 files."
     },
-    "typecheck": { "command": "npm run typecheck", "result": "PASS — tsc --noEmit." },
-    "plan_contract": { "command": "python3 tests/plan-contract.test.py", "result": "PASS — 15/15." },
-    "traceability": { "command": "python3 scripts/build-feature-traceability.py --check", "result": "PASS — 396/396 source mappings; acceptance remains NOT_CERTIFIED." },
-    "canonical_plan": { "command": "python3 scripts/check-canonical-plan.py", "result": "PASS — one complete 13-file master and 396 mappings; acceptance remains NOT_CERTIFIED." },
+    "typecheck": {
+      "command": "npm run typecheck",
+      "result": "PASS — tsc --noEmit."
+    },
+    "plan_contract": {
+      "command": "python3 tests/plan-contract.test.py",
+      "result": "PASS — 15/15."
+    },
+    "traceability": {
+      "command": "python3 scripts/build-feature-traceability.py --check",
+      "result": "PASS — 396/396 source mappings; acceptance remains NOT_CERTIFIED."
+    },
+    "canonical_plan": {
+      "command": "python3 scripts/check-canonical-plan.py",
+      "result": "PASS — one complete 13-file master and 396 mappings; acceptance remains NOT_CERTIFIED."
+    },
     "active_point_audit": {
       "command": "python3 scripts/audit-active-plan-point.py",
       "result": "PASS as bookkeeping only — cursor main 77.44/WEB-011, next 77.44.7.D; 147 PARTIAL_SOURCE, 249 UNVERIFIED; functional acceptance NOT_CERTIFIED."
@@ -83,20 +97,104 @@
       "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
       "result": "PASS — HTTP 200; {ok:true, service:sanci9517-streamer-brand, version:2.0.0, server:cloudflare-worker}. Baseline runtime only."
     },
-    "diff_and_syntax": { "command": "git diff --check; node --check tests/browser/media-worker-storage.test.mjs", "result": "PASS." },
-    "hosted_ci": "PENDING — runtime commit must use the normal release path; no manual dispatch or rerun."
+    "diff_and_syntax": {
+      "command": "git diff --check; node --check tests/browser/media-worker-storage.test.mjs",
+      "result": "PASS."
+    },
+    "hosted_ci": {
+      "source_sha": "a58ffb773cfddb908f79b295e0047c15195bfcd5",
+      "state": "PENDING — exact-SHA Editor Core Test (run 44742011951) was still executing its Editor browser layout regression at evidence finalization; all other listed exact-SHA workflows succeeded. No CI rerun or dispatch started.",
+      "runs": [
+        {
+          "name": "Canonical Plan Active Point Audit",
+          "run_id": 44742011936,
+          "state": "success",
+          "url": "https://github.com/sanci9517/sanci9517/actions/runs/44742011936"
+        },
+        {
+          "name": "Editor Core Test",
+          "run_id": 44742011951,
+          "state": "in_progress",
+          "url": "https://github.com/sanci9517/sanci9517/actions/runs/44742011951"
+        },
+        {
+          "name": "Canonical Creator Platform Plan",
+          "run_id": 44742012244,
+          "state": "success",
+          "url": "https://github.com/sanci9517/sanci9517/actions/runs/44742012244"
+        },
+        {
+          "name": "Twitch Integration Check",
+          "run_id": 44742011878,
+          "state": "success",
+          "url": "https://github.com/sanci9517/sanci9517/actions/runs/44742011878"
+        },
+        {
+          "name": "Production Worker source smoke",
+          "run_id": 44742011869,
+          "state": "success",
+          "url": "https://github.com/sanci9517/sanci9517/actions/runs/44742011869"
+        },
+        {
+          "name": "F0 baseline checks",
+          "run_id": 44742012009,
+          "state": "success",
+          "url": "https://github.com/sanci9517/sanci9517/actions/runs/44742012009"
+        }
+      ],
+      "source_smoke_exact_sha": "success"
+    }
   },
   "release": {
-    "state": "TESTED_RELEASE_PENDING",
+    "state": "LIVE_EXACT_SHA; REQUIRED_EDITOR_CORE_CI_PENDING",
     "base_branch_head_before_push": "cdf68badd0603bd0ffda1619f736b6cb6c057585",
-    "runtime_commit_sha": "PENDING",
-    "github_branch_sha_after_push": "PENDING",
-    "required_cloudflare_auto_build": "PENDING",
-    "deployment_id": "PENDING",
-    "worker_version_id": "PENDING",
-    "traffic_percent": "PENDING",
-    "production_health_after_release": "PENDING",
-    "changed_public_asset_hashes": "PENDING"
+    "runtime_commit_sha": "a58ffb773cfddb908f79b295e0047c15195bfcd5",
+    "github_branch_sha_after_push": "a58ffb773cfddb908f79b295e0047c15195bfcd5",
+    "required_cloudflare_auto_build": {
+      "build_uuid": "3c66299e-6e18-400f-b42f-68e899387b2d",
+      "version_id": "db5de010-ab32-4bbd-b1c0-e34b798bbab0",
+      "commit_hash": "a58ffb773cfddb908f79b295e0047c15195bfcd5",
+      "status": "stopped",
+      "outcome": "success",
+      "build_command": "npm run typecheck",
+      "deploy_command": "npm run deploy:safe",
+      "started_on": "2026-11-20T13:10:52Z",
+      "stopped_on": "2026-11-20T13:11:16Z",
+      "build_minute_limit_reached": false
+    },
+    "deployment_id": "5543b768-ff27-4f3b-8609-9b8b981a006e",
+    "worker_version_id": "db5de010-ab32-4bbd-b1c0-e34b798bbab0",
+    "traffic_percent": 100,
+    "production_health_after_release": {
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+      "http_status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "changed_public_asset_hashes": {
+      "/assets/page-renderer.js": "56aa68e120252d751ba800047c98170a068a59026ef196439081cf145314bbde",
+      "/editor-v2/app.js": "8d338eb6ddb15a0a6580c839056cc9a8757379363da1879c7330440fec6e0ae4",
+      "/editor-v2/core/authored-content.js": "1bfef132337daf9ba9ebb1f964714e24b310762debccaeec26f45218a5fdefe4",
+      "/editor-v2/core/canvas-engine.js": "660c46c5f25ee3b16b27f29a18a321e88296b4658f5e3bd76e75f9eab304135b",
+      "/editor-v2/core/capability-matrix.js": "181a22232c1f8405ae7025772db75d6673729a223c11b0c0b92b385c96a1d8ae",
+      "/editor-v2/core/commands.js": "bbd543564aa2fc70e7ddc31220ac39c40a99bf0a0fa35f6252ec2252454b2cc3",
+      "/editor-v2/core/content-profiles.js": "badf3875c68f6593ce40f15f762e0b65d4ef3702133683dba792e9b0570c2694",
+      "/editor-v2/core/validation.js": "8d6fa3fe1f4dee53b27dcd2c8c52e310f6f8278929ecdda053258ab4462dd66e",
+      "/editor-v2/index.html": "6e96f65d0b61d008a7165d50864e1681ad6c845da50e9295f672d34f843051ea",
+      "/editor-v2/ui/accessibility-fields.js": "092a7406d51fd424bbae2253cefafafc3ede29b805fbdc940fc12a6a6a8fa3d0",
+      "/editor-v2/ui/card-content-inspector.js": "758183a85a11a5c16c16d14ecbd06f3ec62fef77298e65e9e6f65d69ec15cb9e",
+      "/editor-v2/ui/element-content-controls.js": "67e0e36c9bfd1a9aa22908905a9e105b2c82d4acedbb44b8ac340dd8ae149f72",
+      "/editor-v2/ui/legacy-media-inspector.js": "55372a7c0f7437e8988bda100ef6373c773739cca356a5c2a767404cd5d1e45c",
+      "/editor-v2/ui/property-controls.js": "7ebc5f0711edcc8568f7398a3d816278c1649432d55a9ab54792c65a643e5a40"
+    },
+    "commit_url": "https://github.com/sanci9517/sanci9517/commit/a58ffb773cfddb908f79b295e0047c15195bfcd5",
+    "all_changed_asset_responses_http_200": true,
+    "all_changed_asset_hashes_match_worktree": true,
+    "dev_metrics_run": "docs/evidence/dev-metrics/runs/2026-11-20/20261120124527-cd398aac.json (partial; CI wait excluded)"
   },
   "scope_limitations": [
     "This completes one authored playable-media UI/lifecycle regression slice only. It does not certify all D-06 retention/restore/backup/recovery/capability requirements, D-01–D-07, or 77.44.7.D.",

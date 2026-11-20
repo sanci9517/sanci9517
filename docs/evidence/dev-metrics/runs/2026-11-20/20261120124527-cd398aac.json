@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261120124527-cd398aac",
+  "task": "77.44.7.D-D06-authored-playable-media-picker",
+  "trigger": "manual",
+  "started_at": "2026-11-20T12:45:27.338Z",
+  "finished_at": "2026-11-20T13:18:47.738Z",
+  "wall_seconds": 2000,
+  "paused_seconds": 66,
+  "measured_seconds": 1934,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "Authored audio/video Media Library picker implemented, locally and in production verified; exact-SHA Editor Core CI browser layout job remained in progress at block end.",
+  "evidence": [
+    "docs/evidence/editor-d06-authored-playable-media-2026-11-20.json",
+    "https://github.com/sanci9517/sanci9517/commit/a58ffb773cfddb908f79b295e0047c15195bfcd5"
+  ],
+  "checks": "local required checks PASS; Cloudflare exact-SHA build/deploy PASS; health and 14 asset hashes PASS; Editor Core CI PENDING",
+  "started_revision": "cdf68badd0603bd0ffda1619f736b6cb6c057585",
+  "finished_revision": "a58ffb773cfddb908f79b295e0047c15195bfcd5",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
