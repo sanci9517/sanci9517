@@ -43,13 +43,23 @@
   },
   "release": {
     "state": "TEST_HARNESS_VERIFIED",
-    "push": "PENDING — use normal fast-forward with [skip ci] after final checks.",
+    "push": {
+      "state": "VERIFIED — normal fast-forward, [skip ci]",
+      "commit_sha": "8c362eed7864bf30b9c31acab3fa4b7a41120257",
+      "github_branch_ref_sha": "8c362eed7864bf30b9c31acab3fa4b7a41120257",
+      "commit_url": "https://github.com/sanci9517/sanci9517/commit/8c362eed7864bf30b9c31acab3fa4b7a41120257"
+    },
     "production_deployment_at_test_start": {
       "deployment_id": "a0fdd47c-cdb8-4eaa-a3a8-fe55c7e4b61a",
       "worker_version": "d2fdb885-2ba7-4291-9ab9-54fb2acbf471",
       "traffic_percent": 100,
       "runtime_source_changed": false,
-      "health_check": "NOT RUN for this test/evidence-only slice."
+      "health_check": {
+        "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+        "http_status": 200,
+        "body": { "ok": true, "service": "sanci9517-streamer-brand", "version": "2.0.0", "server": "cloudflare-worker" },
+        "runtime_source_changed": false
+      }
     },
     "production_d1_write_or_migration": false,
     "production_r2_operation": false,
