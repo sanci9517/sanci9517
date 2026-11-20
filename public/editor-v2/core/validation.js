@@ -8,9 +8,9 @@ import {validateAccessibility} from './accessibility.js';
 
 import { getNode, validateDocument, normalizeRichText } from './schema.js';
 import { validateElementContent as validateStructuredContent,isStructuredType } from './element-content.js?v=20261117-d01-private-media-double-decode-v1';
-import { validateElementContent as validateAuthoredContent } from './authored-content.js?v=20261119-d07-bounded-hierarchy-v1';
+import { validateElementContent as validateAuthoredContent } from './authored-content.js?v=20261120-d03-tooltip-viewport-bounds-v1';
 import {validateStateStyles} from './state-styles.js';
-import {MAX_PAGE_HIERARCHY_DEPTH} from './hierarchy-limits.js?v=20261119-d07-bounded-hierarchy-v1';
+import {MAX_PAGE_HIERARCHY_DEPTH} from './hierarchy-limits.js?v=20261120-d03-tooltip-viewport-bounds-v1';
 
 export function findReachableNodeIds(page) {
   const reachable = new Set();

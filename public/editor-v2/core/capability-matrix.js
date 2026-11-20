@@ -1,4 +1,4 @@
-import {CONTENT_TYPES,STRUCTURAL_TYPES} from './authored-content.js?v=20261119-d07-bounded-hierarchy-v1';
+import {CONTENT_TYPES,STRUCTURAL_TYPES} from './authored-content.js?v=20261120-d03-tooltip-viewport-bounds-v1';
 import { NODE_TYPES } from './schema.js';
 import { listProperties } from './property-registry.js?v=20261117-edt043-motion-guidance';
 import {getInspectorValueContract} from './property-values.js';

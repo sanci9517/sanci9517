@@ -1313,6 +1313,15 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   const liveTabs=node(live,'tabs'),publicTablist=liveTabs.getByRole('tablist',{name:'Bemutatkozás & videók'});
   const publicTabs=publicTablist.getByRole('tab'),publicPanels=liveTabs.locator('[role="tabpanel"]');
   const assertPublicTabState=async(index,content)=>{
+    try{
+      await live.waitForFunction(({id,selectedIndex})=>{
+        const tabs=[...document.querySelectorAll(`.visual-editor-node[data-node-id="${id}"] [role="tab"]`)];
+        return tabs.length===2&&tabs.every((tab,i)=>tab.getAttribute('aria-selected')===String(i===selectedIndex));
+      },{id:ids.tabs,selectedIndex:index},{timeout:5000});
+    }catch(error){
+      const state=await live.evaluate(id=>({tabs:[...document.querySelectorAll(`.visual-editor-node[data-node-id="${id}"] [role="tab"]`)].map(tab=>({selected:tab.getAttribute('aria-selected'),tabindex:tab.tabIndex,id:tab.id})),active:document.activeElement?.id,hash:location.hash,search:location.search}),ids.tabs);
+      error.message+=`; tab state did not settle: ${JSON.stringify(state)}`;throw error;
+    }
     const tabIds=await publicTabs.evaluateAll(items=>items.map(tab=>({id:tab.id,controls:tab.getAttribute('aria-controls'),selected:tab.getAttribute('aria-selected'),tabindex:tab.getAttribute('tabindex')})));
     const panelIds=await publicPanels.evaluateAll(items=>items.map(panel=>({id:panel.id,labelledby:panel.getAttribute('aria-labelledby'),visible:!panel.hidden,text:panel.textContent})));
     assert.equal(tabIds.length,2,'published tabs expose every tab exactly once');
@@ -1355,7 +1364,7 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   await live.bringToFront();await live.setViewportSize({width:720,height:450});
   assert.equal(await live.evaluate(()=>[innerWidth,innerHeight].join('×')),'720×450',
     'published keyboard tabs use the planned 200% effective zoom viewport');
-  await publicTabs.nth(0).focus();await publicTabs.nth(0).press('End');
+  await publicTabs.nth(0).focus();await live.keyboard.press('End');
   await assertPublicTabState(1,'Személyes történet');
   const zoomTabsLayout=await live.evaluate(()=>({
     viewport:innerWidth,document:document.scrollingElement.scrollWidth,

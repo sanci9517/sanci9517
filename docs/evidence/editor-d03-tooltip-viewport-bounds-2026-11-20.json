@@ -1,0 +1,78 @@
+{
+  "schema": 1,
+  "plan_point": "77.44.7.D / D-03 authored Tooltip viewport positioning",
+  "status": "SCOPED_REGRESSION_PASS; runtime code is implemented and locally verified; production release is pending; complete D-03, D-01–D-07 and 77.44.7.D remain OPEN / NOT_CERTIFIED",
+  "source_before_change": {
+    "branch": "v2/foundation",
+    "commit": "576903c62cfd63562c43e1a34aeaa3ab8141732c",
+    "remote_check": "GitHub compare API confirmed v2/foundation identical to this base at the pre-change check (ahead_by=0, behind_by=0). Local git transport later failed at proxy port 8080, so no push is claimed."
+  },
+  "gap": "Authored Tooltip output was visible above its trigger but had no viewport collision handling. The focused public fixture reproduced clipping at a 320x240 viewport's top-right corner (before fix: left 247.47, right 503.47, top -60, bottom 4 for a 320x240 viewport).",
+  "change": {
+    "runtime_files": [
+      "public/editor-v2/core/authored-content.js",
+      "public/editor-v2/element-content.css",
+      "public/editor-v2/app.js",
+      "public/editor-v2/core/canvas-engine.js",
+      "public/editor-v2/core/capability-matrix.js",
+      "public/editor-v2/core/commands.js",
+      "public/editor-v2/core/content-profiles.js",
+      "public/editor-v2/core/editor-templates.js",
+      "public/editor-v2/core/state.js",
+      "public/editor-v2/core/validation.js",
+      "public/editor-v2/ui/accessibility-fields.js",
+      "public/editor-v2/ui/element-content-controls.js",
+      "public/editor-v2/index.html",
+      "public/assets/page-renderer.js",
+      "public/visual-page.html"
+    ],
+    "test_files": [
+      "tests/browser/editor-decorative-elements.test.js",
+      "tests/browser/editor-content-system.test.js"
+    ],
+    "traceability": "docs/evidence/feature-traceability.json refreshed from the current runtime source fingerprint.",
+    "behavior": "The existing native Tooltip is placed above by default, flips below when top placement would clip and there is more room below, and is translated within an 8px viewport inset. Dimensions are bounded and oversized descriptions scroll. Keyboard focus and mouse/pen hover are both handled; public-root viewport resize/scroll recalculates placement. Editor canvas roots do not add window listeners. CSS/module cache keys were advanced for the affected public routes.",
+    "reuse": "Kept the implementation in the existing vanilla authored-content renderer and CSS. Reviewed Floating UI's MIT-licensed flip/shift algorithms for fit; did not copy third-party code or add dependencies because this narrow Tooltip fix needs only the existing DOM geometry APIs.",
+    "save_publish": "No Save/Publish handler or Page Model behavior changed; the existing separate Save and Publish flow remains covered by the full browser suite."
+  },
+  "checks": {
+    "targeted_chromium": "PASS — CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-decorative-elements.test.js (1/1; verifies keyboard flip below and mouse-hover shift inward at opposite 320x240 viewport corners).",
+    "editor_unit_suite": "PASS — npm run test:editor (22/22 files; runner guard 4/4).",
+    "typecheck": "PASS — npm run typecheck.",
+    "editor_layout_suite": "NOT_PASS — the full 59-file Chromium suite completed with one D-04 720x450 selected-tab failure at tests/browser/editor-content-system.test.js:1359; the changed Tooltip browser test passed in the aggregate. The tab failure reproduced inconsistently in isolated runs. Its test helper now waits for the requested aria-selected state and uses page.keyboard.press for the post-resize End key; the final isolated rerun passed 1/1. The aggregate suite was not rerun after this test-only stabilization, so no full-suite PASS is claimed.",
+    "layout_failure_rerun": "PASS — the failed tests/browser/editor-content-system.test.js was immediately rerun alone with the same Chromium command and passed 1/1. The aggregate run remains NOT_PASS due to the first failure; classify as a likely timing flake, not a full-suite PASS.",
+    "migration_safety": "PASS — npm run test:web013:migration-gate; no migrations applied.",
+    "wrangler_dry_run": "PASS — local Wrangler 4.130.0 read 197 public assets (395.08 KiB total, 100.96 KiB gzip), printed --dry-run: exiting now, and exited 0. Wrangler also emitted an EROFS warning while attempting to write its optional log under /home/agent/.config; deployment/package validation still completed.",
+    "canonical_plan": "PASS — python3 scripts/check-canonical-plan.py (single complete 13-file master, 396 source mappings; functional acceptance remains NOT_CERTIFIED).",
+    "plan_contract": "PASS — python3 tests/plan-contract.test.py (15/15).",
+    "traceability": "PASS — python3 scripts/build-feature-traceability.py --check (396/396).",
+    "active_point": "PASS for bookkeeping only — python3 scripts/audit-active-plan-point.py; 77.44.7.D remains OPEN / NOT_CERTIFIED with 147 PARTIAL_SOURCE and 249 UNVERIFIED.",
+    "syntax_diff": "PASS — node --check on changed JS entry modules and git diff --check.",
+    "layout_failure_reruns": "The pre-stabilization targeted rerun passed once, failed twice while waiting for the state to change, then the test helper was stabilized and the final targeted run passed 1/1. This remains a known D-04 keyboard timing risk pending the required exact-SHA CI run."
+  },
+  "production_preflight": {
+    "method": "Cloudflare D1 query API, SELECT-only.",
+    "query": "SELECT count(*) AS applied_migrations, max(name) AS latest_migration FROM d1_migrations;",
+    "result": "35 applied migrations; latest 0029_media_archive_unicode_additive.sql; rows_written=0; changed_db=false; changes=0.",
+    "r2": "No R2 operation or deletion."
+  },
+  "production": {
+    "this_runtime_change_deployed": false,
+    "current_cloudflare_deployment_get": "Read-only Cloudflare API GET returned current deployment c4b9526a-c54b-4fe3-9218-d889c1e011e9 with version 9870e814-359c-4871-a25c-289d9dfe7c2c at 100% traffic. Its exact source SHA is not exposed by that deployment/version response; last previously recorded source SHA is 83fb764b4060d8d4bbc513e7d0865dd1f700214a, which predates these changes.",
+    "health_and_assets": "No post-release health or changed-asset hash verification is claimed because this runtime change is not yet pushed/deployed.",
+    "push_blocker": "Local git remote request failed: unable to connect to proxy port 8080. GitHub API independently confirmed the branch was still exactly the checked base before changes. No push/deploy is claimed."
+  },
+  "hosted_ci_and_cost": {
+    "github_repository_visibility": "public; normal GitHub-hosted Actions runners are free for public repositories.",
+    "cloudflare_build_minutes": "Read-only Cloudflare account limits GET reports has_reached_build_minutes_limit=false; refresh 2026-11-30T23:59:59.999Z.",
+    "new_paid_cost_huf": 0,
+    "new_dependencies": 0
+  },
+  "limitations": [
+    "This closes one D-03 Tooltip viewport regression slice only; it does not certify all D-03 or the D-01–D-07 capability/lifecycle matrix.",
+    "Runtime release is NOT DONE until a safe fast-forward push, required exact-source CI/automatic Worker build, 100% traffic verification, production health, and changed public asset hash checks are confirmed.",
+    "The aggregate layout suite had one intermittent D-04 tab-state failure; the test was stabilized and the isolated rerun passed, but the full aggregate was not repeated after that test-only change.",
+    "Full Visual Editor manual/physical acceptance remains deferred until its complete planned scope is implemented."
+  ],
+  "development_metric_id": "20261120053304-1c1756b7"
+}

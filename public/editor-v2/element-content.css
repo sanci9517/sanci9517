@@ -32,7 +32,8 @@
 .creator-node pre { padding:16px; background:#101827; color:#e0e8f5; overflow:auto; white-space:pre; font:14px/1.6 monospace; }
 .creator-node .creator-code-wrap { white-space:pre-wrap; overflow-wrap:anywhere; }
 .creator-tooltip { position:relative; display:inline-block; }
-.creator-tooltip [role=tooltip] { display:none; position:absolute; z-index:10; bottom:100%; left:0; width:max-content; max-width:min(280px,80vw); padding:10px; background:#101827; color:#fff; border-radius:8px; white-space:pre-wrap; }
+.creator-tooltip [role=tooltip] { display:none; position:absolute; z-index:10; bottom:100%; left:0; box-sizing:border-box; width:max-content; max-width:min(280px,calc(100vw - 16px)); max-height:calc(100vh - 16px); overflow:auto; padding:10px; background:#101827; color:#fff; border-radius:8px; white-space:pre-wrap; transform:translate(var(--creator-tooltip-shift-x,0px),var(--creator-tooltip-shift-y,0px)); }
+.creator-tooltip[data-tooltip-placement="below"] [role=tooltip] { top:100%; bottom:auto; }
 .creator-tooltip:is(:hover,:focus-within) [role=tooltip] { display:block; }
 .creator-node :focus-visible { outline:3px solid #9475fa; outline-offset:3px; }
 .creator-node[data-content-type=quote] { border-inline-start:3px solid currentColor; padding-inline-start:20px; }

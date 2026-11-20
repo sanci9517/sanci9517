@@ -228,6 +228,45 @@ test('partial palette types and Divider/Spacer Inspector edits become public onl
  assert.equal(await publicNode(spacerId).evaluate(el=>getComputedStyle(el).height),'120px');
  await publicNode(tooltipId).locator('button').focus();
  assert.equal(await publicNode(tooltipId).getByRole('tooltip').textContent(),'További információ erről az elemről.','tooltip content and its required description reach the public page');
+ await viewer.bringToFront();
+ await viewer.setViewportSize({width:320,height:240});
+ const publicTooltipBounds=await viewer.evaluate(async id=>{
+  // Reuse the actual public renderer output, then isolate it at the viewport
+  // edge so long page layout cannot hide a collision in the tooltip itself.
+  const source=document.querySelector(`.visual-editor-node[data-node-id="${id}"] .creator-tooltip`);
+  const stage=document.createElement('div');stage.id='d03-tooltip-viewport-stage';stage.style.cssText='position:fixed;top:4px;right:4px;width:calc(100vw - 8px);text-align:right;z-index:2147483647';
+  const wrapper=source.cloneNode(true);stage.append(wrapper);document.body.append(stage);
+  const {initContentInteractions}=await import('/editor-v2/core/authored-content.js');initContentInteractions(stage);
+  const button=wrapper.querySelector('button');button.focus();
+  await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+  const tooltip=wrapper.querySelector('[role="tooltip"]'),r=tooltip.getBoundingClientRect();
+  return{left:r.left,right:r.right,top:r.top,bottom:r.bottom,width:innerWidth,height:innerHeight,
+    display:getComputedStyle(tooltip).display,placement:wrapper.dataset.tooltipPlacement,
+    focused:document.activeElement===button};
+ },tooltipId);
+ assert.equal(publicTooltipBounds.display,'block','the isolated public Tooltip is visible after keyboard focus');
+ assert.equal(publicTooltipBounds.focused,true,'the public Tooltip trigger remains focused');
+ assert.equal(publicTooltipBounds.placement,'below','a focused Tooltip flips below when its preferred top placement would clip');
+ assert.ok(publicTooltipBounds.left>=8&&publicTooltipBounds.right<=publicTooltipBounds.width-8
+  &&publicTooltipBounds.top>=8&&publicTooltipBounds.bottom<=publicTooltipBounds.height-8,
+  `focused public tooltip stays visible at a narrow viewport corner: ${JSON.stringify(publicTooltipBounds)}`);
+ await viewer.locator('#d03-tooltip-viewport-stage button').evaluate(button=>button.blur());
+ await viewer.locator('#d03-tooltip-viewport-stage').evaluate(stage=>{
+  stage.style.top='auto';stage.style.right='auto';stage.style.bottom='4px';stage.style.left='4px';stage.style.textAlign='left';
+ });
+ const tooltipTrigger=await viewer.locator('#d03-tooltip-viewport-stage button').boundingBox();
+ await viewer.mouse.move(tooltipTrigger.x+tooltipTrigger.width/2,tooltipTrigger.y+tooltipTrigger.height/2);
+ const mouseTooltipBounds=await viewer.waitForFunction(()=>{
+  const wrapper=document.querySelector('#d03-tooltip-viewport-stage .creator-tooltip');
+  const tooltip=wrapper?.querySelector('[role="tooltip"]');
+  if(!wrapper?.matches(':hover')||wrapper.dataset.tooltipPlacement!=='above')return false;
+  const shiftX=parseFloat(wrapper.style.getPropertyValue('--creator-tooltip-shift-x'))||0;
+  const r=tooltip.getBoundingClientRect();
+  return shiftX>0?{left:r.left,right:r.right,top:r.top,bottom:r.bottom,width:innerWidth,height:innerHeight,shiftX}:false;
+ },null,{timeout:2000}).then(handle=>handle.jsonValue());
+ assert.ok(mouseTooltipBounds.left>=8&&mouseTooltipBounds.right<=mouseTooltipBounds.width-8
+  &&mouseTooltipBounds.top>=8&&mouseTooltipBounds.bottom<=mouseTooltipBounds.height-8,
+  `mouse-hovered public tooltip shifts inward at the opposite viewport corner: ${JSON.stringify(mouseTooltipBounds)}`);
  await viewer.setViewportSize({width:390,height:800});await viewer.reload({waitUntil:'domcontentloaded'});
  assert.equal(await publicNode(spacerId).evaluate(el=>getComputedStyle(el).height),'40px','mobile spacer keeps its own height');
 

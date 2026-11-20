@@ -7,7 +7,7 @@
  */
 
 import { resolveResponsiveValue } from './responsive.js';
-import { contentDefaults } from './authored-content.js?v=20261119-d07-bounded-hierarchy-v1';
+import { contentDefaults } from './authored-content.js?v=20261120-d03-tooltip-viewport-bounds-v1';
 import { backgroundImageValue, legacyBackgroundColor, legacyBackgroundCompound, MEDIA_ASSET_ID } from './background-asset.js?v=20261117-edt040-motion-style-route';
 import { isAllowlistedMotionStyle } from './motion-style.js';
 export {legacyBackgroundColor} from './background-asset.js?v=20261117-edt040-motion-style-route';

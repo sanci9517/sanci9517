@@ -293,6 +293,45 @@ export function initContentInteractions(root){
   const cancelTimer=targetId=>{const timer=pendingTimers.get(targetId);if(timer===undefined)return;view?.clearTimeout?.(timer);pendingTimers.delete(targetId)};
   const cancelTimers=()=>{for(const targetId of pendingTimers.keys())cancelTimer(targetId)};
   const cancelTimerForEvent=event=>{const target=event.target?.closest?.('[data-page-node-id]');if(target&&root.contains(target))cancelTimer(target.dataset.pageNodeId)};
+  const scheduleTooltipPosition=wrapper=>{
+    if(!view||!wrapper)return;
+    const request=view.requestAnimationFrame?.bind(view)||((callback)=>view.setTimeout(callback,0));
+    request(()=>{
+      if(!wrapper.isConnected)return;
+      if(!wrapper.matches(':hover,:focus-within')){
+        wrapper.removeAttribute('data-tooltip-placement');
+        wrapper.style.removeProperty('--creator-tooltip-shift-x');
+        wrapper.style.removeProperty('--creator-tooltip-shift-y');
+        return;
+      }
+      const tooltip=wrapper.querySelector('[role="tooltip"]'),trigger=wrapper.querySelector('button');
+      if(!tooltip||!trigger)return;
+      const viewport=view.visualViewport,padding=8;
+      const left=viewport?.offsetLeft||0,top=viewport?.offsetTop||0;
+      const right=left+(viewport?.width||view.innerWidth)-padding;
+      const bottom=top+(viewport?.height||view.innerHeight)-padding;
+      const triggerRect=trigger.getBoundingClientRect();
+      wrapper.dataset.tooltipPlacement='above';
+      wrapper.style.setProperty('--creator-tooltip-shift-x','0px');
+      wrapper.style.setProperty('--creator-tooltip-shift-y','0px');
+      let rect=tooltip.getBoundingClientRect();
+      const spaceAbove=triggerRect.top-top-padding,spaceBelow=bottom-triggerRect.bottom;
+      if(rect.top<top+padding&&spaceBelow>spaceAbove){
+        wrapper.dataset.tooltipPlacement='below';
+        rect=tooltip.getBoundingClientRect();
+      }
+      let shiftX=0,shiftY=0;
+      if(rect.left+shiftX<left+padding)shiftX=left+padding-rect.left;
+      if(rect.right+shiftX>right)shiftX+=right-(rect.right+shiftX);
+      if(rect.top+shiftY<top+padding)shiftY=top+padding-rect.top;
+      if(rect.bottom+shiftY>bottom)shiftY+=bottom-(rect.bottom+shiftY);
+      wrapper.style.setProperty('--creator-tooltip-shift-x',`${shiftX}px`);
+      wrapper.style.setProperty('--creator-tooltip-shift-y',`${shiftY}px`);
+    });
+  };
+  const refreshVisibleTooltips=()=>{
+    for(const wrapper of root.querySelectorAll('.creator-tooltip'))if(wrapper.matches(':hover,:focus-within'))scheduleTooltipPosition(wrapper);
+  };
   const parseTabEntry=value=>{
     if(typeof value!=='string'||value.length>128)return null;
     const separator=value.lastIndexOf(':');if(separator<1)return null;
@@ -369,9 +408,16 @@ export function initContentInteractions(root){
       track.scrollBy({left:(key==='ArrowRight'?1:-1)*track.clientWidth,behavior});
     }
   };
-  root.addEventListener('focusin',event=>{cancelTimerForEvent(event);const actionSource=event.target?.closest?.('[data-page-action]');if(actionSource&&root.contains(actionSource)&&actionSource.dataset.pageActionEvent==='focus')runPageAction(actionSource)});
+  root.addEventListener('focusin',event=>{
+    scheduleTooltipPosition(event.target?.closest?.('.creator-tooltip'));
+    cancelTimerForEvent(event);const actionSource=event.target?.closest?.('[data-page-action]');
+    if(actionSource&&root.contains(actionSource)&&actionSource.dataset.pageActionEvent==='focus')runPageAction(actionSource);
+  });
+  root.addEventListener('focusout',event=>scheduleTooltipPosition(event.target?.closest?.('.creator-tooltip')));
   root.addEventListener('pointerdown',cancelTimerForEvent);
   root.addEventListener('pointerover',event=>{
+    const tooltip=event.target?.closest?.('.creator-tooltip');
+    if(tooltip&&root.contains(tooltip)&&(event.pointerType==='mouse'||event.pointerType==='pen')&&(!event.relatedTarget||!tooltip.contains(event.relatedTarget)))scheduleTooltipPosition(tooltip);
     if(event.pointerType!=='mouse'&&event.pointerType!=='pen')return;
     const actionSource=event.target?.closest?.('[data-page-action]');
     if(!actionSource||!root.contains(actionSource)||actionSource.dataset.pageActionEvent!=='hover')return;
@@ -379,6 +425,10 @@ export function initContentInteractions(root){
     // once, and never turn a touch-generated pointer event into a hover action.
     if(event.relatedTarget&&actionSource.contains(event.relatedTarget))return;
     runPageAction(actionSource);
+  });
+  root.addEventListener('pointerout',event=>{
+    const tooltip=event.target?.closest?.('.creator-tooltip');
+    if(tooltip&&root.contains(tooltip)&&(!event.relatedTarget||!tooltip.contains(event.relatedTarget)))scheduleTooltipPosition(tooltip);
   });
   root.addEventListener('click',event=>{const selectedTab=event.target.closest('[role="tab"]');if(selectedTab&&root.contains(selectedTab)){const target=selectedTab.closest('[data-page-node-id]');if(target)cancelTimer(target.dataset.pageNodeId)}const actionSource=event.target.closest('[data-page-action]'),actionEvent=actionSource?.dataset?.pageActionEvent;if(actionSource&&root.contains(actionSource)&&(actionEvent==='click'||actionEvent==='hover')&&runPageAction(actionSource))event.preventDefault();const zoom=event.target.closest('[data-lightbox-src]');if(zoom&&root.contains(zoom)&&safeSrc(zoom.dataset.lightboxSrc)){
     // The preview is scoped to its own gallery/carousel; nested galleries
@@ -434,6 +484,10 @@ export function initContentInteractions(root){
   });
   root.addEventListener('keydown',event=>{const tab=event.target.closest('[role="tab"]');if(!tab||!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;const tabs=[...tab.closest('[role="tablist"]').querySelectorAll('[role="tab"]')],index=tabs.indexOf(tab);const next=tabs[event.key==='Home'?0:event.key==='End'?tabs.length-1:(index+(event.key==='ArrowRight'?1:-1)+tabs.length)%tabs.length];event.preventDefault();activate(next);next.focus()});
   if(view&&!editorCanvas){
+    view.addEventListener('resize',refreshVisibleTooltips);
+    view.addEventListener('scroll',refreshVisibleTooltips,true);
+    view.visualViewport?.addEventListener('resize',refreshVisibleTooltips);
+    view.visualViewport?.addEventListener('scroll',refreshVisibleTooltips);
     const applyLoadBaseline=urlState=>{
       const claimedTargets=new Set(urlState.keys());
       const loadTargets=new Set();
