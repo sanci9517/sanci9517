@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "kind": "editor-acceptance-slice",
+  "plan_point": "77.44.7.D / D-06 — Media Library archive and restore lifecycle",
+  "recorded_at": "2026-11-20",
+  "measurement_id": "20261120042536-bfc22c9d",
+  "status": "PARTIAL / OPEN / NOT_CERTIFIED",
+  "scope": "Local real-Worker/Miniflare integration regression for restoring a site-owned media asset after archive.",
+  "changes": {
+    "runtime": false,
+    "tests": [
+      "tests/browser/media-worker-storage.test.mjs: uploads an isolated local Miniflare image fixture, archives it through the Media Library UI, verifies retained D1 row and byte-identical local R2 object/private preview with public 404, restores the same ID/key, and verifies private availability/public 404 remains until explicit page Publish"
+    ],
+    "evidence": "This file"
+  },
+  "checks": {
+    "targeted_worker_storage_browser": {
+      "command": "npm run test:media:storage",
+      "result": "PASS",
+      "passed": 1,
+      "failed": 0,
+      "duration_seconds": 84.4,
+      "environment": "isolated local Miniflare Worker + ephemeral D1/R2"
+    },
+    "diff_check": {
+      "command": "git diff --check",
+      "result": "PASS"
+    }
+  },
+  "release": {
+    "test_only": true,
+    "ci": "NOT_RUN: test-harness-only follow-up uses [skip ci] under AGENTS.md; free hosted quota was not verified",
+    "worker_deploy": "NOT_DONE: no runtime source changed",
+    "observed_worker_deployment": "c4b9526a-c54b-4fe3-9218-d889c1e011e9",
+    "observed_worker_version": "9870e814-359c-4871-a25c-289d9dfe7c2c",
+    "observed_traffic_percent": 100,
+    "production_d1": "NO_OPERATION_IN_THIS_SLICE",
+    "production_r2": "NO_OPERATION_IN_THIS_SLICE",
+    "new_cost_huf": 0
+  },
+  "limitations": [
+    "All writes and object operations in the test are confined to ephemeral local Miniflare D1/R2; this does not change or certify production data state.",
+    "This proves one D-06 archive/restore flow, not the full D-06 or D-01–D-07 capability matrix.",
+    "The full Visual Editor manual and physical acceptance remains deferred until the full Editor scope is implemented.",
+    "Save and Publish remain separate operations."
+  ]
+}

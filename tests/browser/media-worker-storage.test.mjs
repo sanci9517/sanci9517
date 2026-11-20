@@ -246,6 +246,74 @@ print(json.dumps(result))`],{cwd:root,encoding:'utf8'}));
  assert.deepEqual(await snapshot(),beforeArchive,'the real Media Library archive denial leaves D1 rows and R2 bytes unchanged');
  assert.ok(calls.some(call=>call.method==='GET'&&call.query.includes('usage='+row.id)),
   'the real Media Library has loaded the site-scoped usage report while the Worker refuses current-draft and historical archive attempts');
+ // An image with no draft, published, revision, or schedule references can
+ // complete the positive archive/restore path through the real Media Library.
+ // Seed only this synthetic site-owned fixture row/object in Miniflare so the
+ // existing Editor asset remains covered by the historical-reference guard.
+ const restoreId=crypto.randomUUID(),restoreKey=`sites/site-default/media/${restoreId}.png`;
+ await MEDIA.put(restoreKey,png,{httpMetadata:{contentType:'image/png'}});
+ await DB.prepare('INSERT INTO media(id,site_id,object_key,original_name,mime_type,size_bytes,alt_text) VALUES(?,?,?,?,?,?,?)')
+  .bind(restoreId,'site-default',restoreKey,'archive-restore-acceptance.png','image/png',png.length,'site-owned archive fixture').run();
+ const restoreRowBefore=await DB.prepare('SELECT * FROM media WHERE id=?').bind(restoreId).first();
+ const restoreObjectBefore=await MEDIA.get(restoreKey);
+ assert.ok(restoreRowBefore&&restoreObjectBefore,'the isolated site-owned image fixture exists before archive');
+ assert.equal(restoreRowBefore.site_id,'site-default');
+ const restoreBytesDigest=digest(await restoreObjectBefore.arrayBuffer());
+ assert.equal(restoreBytesDigest,digest(png));
+ const restoreTile=page.locator('.tile').filter({hasText:'archive-restore-acceptance.png'});
+ await page.locator('#mediaState').selectOption('active');await restoreTile.waitFor();
+ const unusedUsage=await get('?usage='+restoreId);
+ assert.equal(unusedUsage.complete,true,'the real Worker completes the site-scoped usage scan before positive archive');
+ assert.deepEqual(unusedUsage.references,[],'the fixture image has no draft, published, revision, or schedule references');
+ const restorePublicBefore=await context.request.get(base+'/media/'+restoreId);
+ assert.equal(restorePublicBefore.status(),404,'an unreferenced site-owned image is not publicly served');
+ const restoreArchiveButton=restoreTile.getByRole('button',{name:'Médiafájl archiválása',exact:true});
+ const callsBeforeArming=calls.length;
+ await restoreArchiveButton.click();
+ assert.ok(calls.slice(callsBeforeArming).every(call=>call.method!=='PATCH'||!call.query.includes('id='+restoreId)),
+  'the first archive click only arms confirmation; it does not mutate this media row');
+ const restoreArchiveResponse=page.waitForResponse(response=>{
+  const url=new URL(response.url());
+  return url.pathname==='/api/admin/media'&&url.searchParams.get('id')===restoreId&&response.request().method()==='PATCH';
+ });
+ await restoreTile.getByRole('button',{name:'Archiválás megerősítése',exact:true}).click();
+ assert.equal((await restoreArchiveResponse).status(),200,'the actual Worker archives a confirmed, unused site-owned image');
+ await restoreTile.waitFor({state:'detached'});
+ const archivedRow=await DB.prepare('SELECT * FROM media WHERE id=?').bind(restoreId).first();
+ const archivedObject=await MEDIA.get(restoreKey);
+ assert.equal(archivedRow.id,restoreId,'archive retains the original D1 media row and asset ID');
+ assert.equal(archivedRow.site_id,'site-default');assert.ok(archivedRow.archived_at,'the same row records its archived state');
+ assert.equal(archivedRow.object_key,restoreRowBefore.object_key);
+ assert.ok(archivedObject,'archive retains the site-owned object in R2');
+ assert.equal(digest(await archivedObject.arrayBuffer()),restoreBytesDigest,'archive retains the exact R2 image bytes');
+ assert.equal((await DB.prepare('SELECT COUNT(*) n FROM media_retention_requests WHERE asset_id=?').bind(restoreId).first()).n,0,
+  'archive does not create a destructive retention request');
+ const archivedPreview=await context.request.get(base+'/api/admin/media?id='+restoreId);
+ assert.equal(archivedPreview.status(),200,'the site admin can still verify retained bytes through the private preview while archived');
+ assert.equal(digest(await archivedPreview.body()),restoreBytesDigest,'the archived private preview serves the exact retained bytes');
+ assert.equal((await context.request.get(base+'/media/'+restoreId)).status(),404,'archiving does not publish an unreferenced image');
+ await page.locator('#mediaState').selectOption('archived');await restoreTile.waitFor();
+ const restoreButton=restoreTile.getByRole('button',{name:'Médiafájl visszaállítása',exact:true});
+ const restoreResponse=page.waitForResponse(response=>{
+  const url=new URL(response.url());
+  return url.pathname==='/api/admin/media'&&url.searchParams.get('id')===restoreId&&response.request().method()==='PATCH';
+ });
+ await restoreButton.click();
+ assert.equal((await restoreResponse).status(),200,'the actual Worker restores the archived image after checking R2');
+ await restoreTile.waitFor({state:'detached'});
+ const restoredRow=await DB.prepare('SELECT * FROM media WHERE id=?').bind(restoreId).first();
+ const restoredObject=await MEDIA.get(restoreKey);
+ assert.equal(restoredRow.id,restoreId,'restore keeps the same media ID');
+ assert.equal(restoredRow.site_id,'site-default');assert.equal(restoredRow.archived_at,null,'restore clears archive state on the existing row');
+ assert.equal(restoredRow.object_key,restoreRowBefore.object_key,'restore preserves the original R2 key');
+ assert.ok(restoredObject,'restore leaves the retained image object available');
+ assert.equal(digest(await restoredObject.arrayBuffer()),restoreBytesDigest,'restore preserves the exact image bytes');
+ await page.locator('#mediaState').selectOption('active');await restoreTile.waitFor();
+ const restoredPreview=await context.request.get(base+'/api/admin/media?id='+restoreId);
+ assert.equal(restoredPreview.status(),200,'the restored image is available again through its authenticated private preview');
+ assert.equal(digest(await restoredPreview.body()),restoreBytesDigest);
+ assert.equal((await context.request.get(base+'/media/'+restoreId)).status(),404,
+  'restore does not publish the image; public delivery still needs an explicit page Publish');
  // A malformed persisted/API draft must remain repairable without bypassing the server Publish guard.
  const publicationBefore=await DB.prepare('SELECT content_json,published_content_json,published_revision_id,is_published FROM pages WHERE id=?').bind(pageId).first();
  assert.equal(publicationBefore.is_published,1);
@@ -278,15 +346,15 @@ print(json.dumps(result))`],{cwd:root,encoding:'utf8'}));
  const unchangedLiveCta=live.locator(`[data-node-id="${ctaNode.id}"]`);await unchangedLiveCta.waitFor();
  assert.equal(await unchangedLiveCta.getAttribute('href'),'/p/fixture-target','the valid prior CTA remains live');
  assert.deepEqual(errors,[],'malformed persisted CTA content does not crash the Editor or public renderer');
- await scan('missing','empty',1);assert.equal(digest(await(await MEDIA.get(row.object_key)).arrayBuffer()),digest(png),'archive preserves object bytes');
+ await scan('missing','empty',2);assert.equal(digest(await(await MEDIA.get(row.object_key)).arrayBuffer()),digest(png),'archive preserves object bytes');
  const orphanKey='sites/site-default/media/isolated-orphan-fixture.png';await MEDIA.put(orphanKey,png);
- const orphanPanel=await scan('orphan','findings',2);assert.match(await orphanPanel.textContent(),/isolated-orphan-fixture/);
+ const orphanPanel=await scan('orphan','findings',3);assert.match(await orphanPanel.textContent(),/isolated-orphan-fixture/);
  const orphan=await get('?orphanAudit=1');assert.deepEqual(orphan.unregisteredCandidates,[orphanKey]);assert.equal(orphan.deletionAuthorized,false);
  // Remove only this in-memory fixture object, never a remote/production object.
  await MEDIA.delete(row.object_key);
- const missingPanel=await scan('missing','findings',1);assert.match(await missingPanel.textContent(),/isolated-acceptance\.png/);
+ const missingPanel=await scan('missing','findings',2);assert.match(await missingPanel.textContent(),/isolated-acceptance\.png/);
  const missing=await get('?missingAudit=1');assert.equal(missing.missing[0].id,row.id);assert.equal(missing.missing[0].archived,false);assert.equal(missing.repairAuthorized,false);
- assert.equal((await DB.prepare('SELECT COUNT(*) n FROM media').first()).n,1,'diagnostics never remove the registry entry');
+ assert.equal((await DB.prepare('SELECT COUNT(*) n FROM media').first()).n,2,'diagnostics never remove either media registry entry');
  assert.ok(await MEDIA.head(orphanKey),'diagnostics never delete the unregistered candidate');
  assert.equal((await DB.prepare('SELECT COUNT(*) n FROM media_retention_requests').first()).n,0);
  const requestIndex=calls.length;

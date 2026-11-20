@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261120042536-bfc22c9d",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-20T04:25:36.611Z",
+  "finished_at": "2026-11-20T04:34:16.112Z",
+  "wall_seconds": 520,
+  "paused_seconds": 0,
+  "measured_seconds": 520,
+  "status": "pass",
+  "kind": "test",
+  "summary": "Parallel D-01 stale video-poster recovery and D-06 local Media Library archive/restore acceptance slices; targeted Chromium/Miniflare, editor unit, typecheck, plan and migration gates passed; no runtime or production data changes.",
+  "evidence": [
+    "docs/evidence/editor-d01-video-poster-recovery-2026-11-20.json",
+    "docs/evidence/editor-d06-media-archive-restore-local-2026-11-20.json"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "836830cbc7bf85b35de2582c08e7f30538e8fadd",
+  "finished_revision": "836830cbc7bf85b35de2582c08e7f30538e8fadd",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

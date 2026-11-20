@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "kind": "editor-acceptance-slice",
+  "plan_point": "77.44.7.D / D-01 — stale authored video poster recovery",
+  "recorded_at": "2026-11-20",
+  "measurement_id": "20261120042536-bfc22c9d",
+  "status": "PARTIAL / OPEN / NOT_CERTIFIED",
+  "scope": "Automated browser regression for an inaccessible Media Library video poster recovered through the real legacy Inspector callback.",
+  "changes": {
+    "runtime": false,
+    "tests": [
+      "tests/browser/editor-legacy-media-parity.test.js: unavailable poster status, explicit clear, preservation of playable source/native controls, draft Save without public change, Editor reload, and separate Publish removing the stale public poster"
+    ],
+    "evidence": "This file"
+  },
+  "checks": {
+    "targeted_browser": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-legacy-media-parity.test.js",
+      "result": "PASS",
+      "passed": 2,
+      "failed": 0
+    },
+    "editor_unit_suite": {
+      "command": "npm run test:editor",
+      "result": "PASS",
+      "passed": 22,
+      "failed": 0
+    },
+    "typecheck": {
+      "command": "npm run typecheck -- --pretty false",
+      "result": "PASS"
+    },
+    "plan_and_traceability": {
+      "command": "python3 tests/plan-contract.test.py && python3 scripts/check-canonical-plan.py && python3 scripts/build-feature-traceability.py --check",
+      "result": "PASS",
+      "plan_contract_passed": 15,
+      "canonical_master_files": 13,
+      "feature_mappings": 396,
+      "functional_acceptance": "NOT_CERTIFIED"
+    },
+    "syntax_and_diff": {
+      "command": "node --check tests/browser/editor-legacy-media-parity.test.js && git diff --check",
+      "result": "PASS"
+    }
+  },
+  "release": {
+    "test_only": true,
+    "ci": "NOT_RUN: AGENTS.md requires [skip ci] for test-harness-only follow-up when no acceptance/release gate requires hosted CI; available free quota was not verified",
+    "worker_deploy": "NOT_DONE: runtime source unchanged",
+    "observed_worker_deployment": "c4b9526a-c54b-4fe3-9218-d889c1e011e9",
+    "observed_worker_version": "9870e814-359c-4871-a25c-289d9dfe7c2c",
+    "observed_traffic_percent": 100,
+    "health_check": "NOT_RUN: no runtime change",
+    "production_d1": "NO_READ_OR_WRITE_IN_THIS_SLICE",
+    "production_r2": "NO_OPERATION_IN_THIS_SLICE",
+    "new_cost_huf": 0
+  },
+  "limitations": [
+    "This proves one D-01 recovery lifecycle in a local Chromium fixture; it does not certify the complete D-01/D-02/D-03/D-04/D-05/D-06/D-07 capability matrix.",
+    "The complete Visual Editor manual and physical acceptance remains deferred until the full Editor scope is implemented.",
+    "Save and Publish remain separate operations."
+  ]
+}

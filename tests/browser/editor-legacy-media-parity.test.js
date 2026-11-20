@@ -37,9 +37,11 @@ test('legacy image video audio share guarded media URLs in Inspector Canvas and 
   execute(model,{type:'element.add',payload:{type:'image',parentId:rootId,props:{src:'',alt:''}}});
   ids.libraryImage=model.selection.primaryId;
   const mediaId='00000000-0000-4000-8000-000000000123',videoMediaId='00000000-0000-4000-8000-000000000124';
-  const audioMediaId='00000000-0000-4000-8000-000000000125';
+  const audioMediaId='00000000-0000-4000-8000-000000000125',unavailablePosterId='00000000-0000-4000-8000-000000000126';
   execute(model,{type:'element.add',payload:{type:'video',parentId:rootId,props:{src:'',assetId:videoMediaId}}});
   ids.libraryVideo=model.selection.primaryId;
+  execute(model,{type:'element.add',payload:{type:'video',parentId:rootId,props:{src:'/fixture.webm',poster:'/fixture.svg',posterAssetId:unavailablePosterId,controls:true,muted:false,autoplay:false,loop:false}}});
+  ids.unavailablePoster=model.selection.primaryId;
   execute(model,{type:'element.add',payload:{type:'audio',parentId:rootId,props:{src:'',assetId:audioMediaId}}});
   ids.libraryAudio=model.selection.primaryId;
   assert.equal(safeMediaUrl('//untrusted.invalid/track.png'),'');
@@ -67,6 +69,7 @@ test('legacy image video audio share guarded media URLs in Inspector Canvas and 
       const asset=playable==='video'?{id:videoMediaId,name:'bemutatkozas.webm',mimeType:'video/webm',altText:'Bemutatkozó videó',previewUrl:'/api/admin/media?id='+videoMediaId}:playable==='audio'?{id:audioMediaId,name:'hangminta.wav',mimeType:'audio/wav',altText:'',previewUrl:'/api/admin/media?id='+audioMediaId}:{id:mediaId,name:'saját-kép.png',mimeType:'image/png',altText:'Médiatárból választott kép',previewUrl:'/api/admin/media?id='+mediaId};
       return json({ok:true,data:{assets:[asset],nextCursor:null}});
     }
+    if(url.pathname==='/api/admin/media'&&url.searchParams.get('id')===unavailablePosterId){res.statusCode=404;return json({ok:false,error:{message:'Media asset is unavailable'}})}
     if((url.pathname==='/api/admin/media'&&(url.searchParams.get('id')===mediaId||url.searchParams.get('id')===videoMediaId||url.searchParams.get('id')===audioMediaId))||url.pathname==='/media/'+mediaId||url.pathname==='/media/'+videoMediaId||url.pathname==='/media/'+audioMediaId){
       const isAudio=url.searchParams.get('id')===audioMediaId||url.pathname==='/media/'+audioMediaId;
       res.setHeader('content-type',isAudio?'audio/wav':'image/svg+xml');
@@ -289,6 +292,49 @@ test('legacy image video audio share guarded media URLs in Inspector Canvas and 
   const publishedPoster=publishedNode(ids.badPoster);
   assert.equal(await publishedPoster.evaluate(el=>el.tagName.toLowerCase()),'video');
   assert.equal(await publishedPoster.evaluate(el=>new URL(el.getAttribute('poster'),location.href).pathname),'/fixture.svg','the repaired legacy poster is published only with the explicit Publish action');
+
+  // A draft may keep a poster asset reference after that image has been
+  // archived or removed. Recovery must clear only poster fields, preserve the
+  // playable video settings, and still honor the separate Save/Publish edge.
+  const stalePosterNode=canvasNode(ids.unavailablePoster),publishedStalePoster=publishedNode(ids.unavailablePoster);
+  const publicBeforePosterRecovery=await publishedStalePoster.evaluate(el=>({tag:el.tagName.toLowerCase(),src:el.matches('video')?el.getAttribute('src'):el.querySelector('video')?.getAttribute('src')??null,poster:el.matches('video')?el.getAttribute('poster'):el.querySelector('video')?.getAttribute('poster')??null}));
+  await stalePosterNode.evaluate(el=>el.click());
+  await editor.getByRole('tab',{name:'Tartalom és szöveg'}).click();
+  const stalePosterPicker=inspector.locator('.editor-media-picker').nth(1);
+  await stalePosterPicker.locator('.editor-media-selection.is-unavailable').waitFor();
+  assert.match(await stalePosterPicker.locator('[role="status"]').textContent(),/nem érhető el/,
+    'an archived or deleted video poster is announced as unavailable');
+  const beforePosterRecovery=posts.length;
+  await stalePosterPicker.getByRole('button',{name:'Kép eltávolítása'}).click();
+  assert.equal(posts.length,beforePosterRecovery,'clearing an unavailable poster never auto-saves or publishes');
+  const recoveredCanvasVideo=stalePosterNode.locator('.media-preview video');
+  assert.equal(await recoveredCanvasVideo.getAttribute('poster'),null,'explicit poster clear removes the stale private preview');
+  assert.equal(await recoveredCanvasVideo.getAttribute('src'),'/fixture.webm','poster repair preserves the independent playable video source');
+  await editor.locator('#save').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+  assert.equal(posts.at(-1).publish,false,'poster recovery persists as a draft before the separate Publish');
+  const savedPosterVideo=posts.at(-1).document.pages[pageId].nodes[ids.unavailablePoster].props;
+  assert.deepEqual({poster:savedPosterVideo.poster,posterAssetId:savedPosterVideo.posterAssetId,src:savedPosterVideo.src,assetId:savedPosterVideo.assetId??'',controls:savedPosterVideo.controls},
+    {poster:'',posterAssetId:'',src:'/fixture.webm',assetId:'',controls:true},'Save clears only the unavailable poster fields and preserves video source/control settings');
+  await viewer.reload();
+  assert.deepEqual(await publishedStalePoster.evaluate(el=>({tag:el.tagName.toLowerCase(),src:el.matches('video')?el.getAttribute('src'):el.querySelector('video')?.getAttribute('src')??null,poster:el.matches('video')?el.getAttribute('poster'):el.querySelector('video')?.getAttribute('poster')??null})),
+    publicBeforePosterRecovery,'draft Save leaves the previous published poster state unchanged');
+  await editor.reload();
+  await stalePosterNode.evaluate(el=>el.click());
+  await editor.getByRole('tab',{name:'Tartalom és szöveg'}).click();
+  const restoredPosterInspector=editor.locator('.legacy-media-inspector'),restoredPosterPicker=restoredPosterInspector.locator('.editor-media-picker').nth(1);
+  assert.equal(await restoredPosterPicker.locator('.editor-media-selected').count(),0,'Editor reload restores the cleared poster asset reference');
+  assert.equal(await restoredPosterInspector.getByRole('textbox',{name:'Videó URL'}).inputValue(),'/fixture.webm','poster recovery reload retains the independent video source');
+  assert.equal(await restoredPosterInspector.getByRole('checkbox',{name:'Lejátszóvezérlők megjelenítése'}).isChecked(),true,'poster recovery reload retains native controls');
+  assert.equal(await posts.length,beforePosterRecovery+1,'only explicit Save has run before poster Publish');
+  await editor.locator('#publish').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
+  assert.equal(posts.at(-1).publish,true,'only the separate Publish removes the archived poster from public output');
+  await viewer.reload();
+  const recoveredPublicMarkup=await publishedStalePoster.evaluate(el=>el.outerHTML);
+  assert.equal(await publishedStalePoster.evaluate(el=>el.matches('video')||el.querySelector('video')!==null),true,`poster recovery keeps a playable public video: ${recoveredPublicMarkup}`);
+  assert.equal(await publishedStalePoster.getAttribute('poster'),null,'the explicitly published poster recovery removes the unavailable public poster');
+  assert.equal(await publishedStalePoster.evaluate(el=>new URL(el.getAttribute('src'),location.href).pathname),'/fixture.webm','published poster recovery preserves the playable public video');
 
   // The existing R2 image picker must also work for legacy image nodes.
   // Library selection updates only the draft and uses the private Admin route
