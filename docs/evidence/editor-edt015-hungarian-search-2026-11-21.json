@@ -10,9 +10,9 @@
     "push": "PASS; runtime commit 0ffd1c0d normal FF, evidence-only follow-up 10c2b8d9 normal FF with [skip ci]; no redundant Worker deployment",
     "commit": "0ffd1c0de80bb97fe9f5dc2d7e0ac3498d762254",
     "github_head_at_last_read": "0ffd1c0de80bb97fe9f5dc2d7e0ac3498d762254",
-    "github_head_after_docs_followup": "10c2b8d95c49d44e8a441957f04a6a7ada53185b",
     "runtime_commit": "0ffd1c0de80bb97fe9f5dc2d7e0ac3498d762254",
-    "docs_evidence_commit": "10c2b8d95c49d44e8a441957f04a6a7ada53185b"
+    "status_followup_commit_before_this_edit": "14b257af26237459ef741864e6031f3e124003b7 ([skip ci], documentation only)",
+    "note": "Runtime source commit remains 0ffd1c0de80bb97fe9f5dc2d7e0ac3498d762254; documentation follow-ups are distinct and do not change deployed Worker source."
   },
   "implementation": {
     "files": [
@@ -86,8 +86,7 @@
       "expected_sha256": "a55b5507378b5b06a3ad2be15f2d681bc0f7098539f06d9d5b40bcbe5935cbbe",
       "deployed_sha256": "a55b5507378b5b06a3ad2be15f2d681bc0f7098539f06d9d5b40bcbe5935cbbe",
       "match": true
-    },
-    "source_branch_head_after_followup": "10c2b8d95c49d44e8a441957f04a6a7ada53185b (docs-only; runtime source unchanged)"
+    }
   },
   "limitations": [
     "This is one EDT-015 interaction regression, not completion of EDT-015 feature scope or D-01 through D-07.",
