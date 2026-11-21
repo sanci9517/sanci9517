@@ -116,6 +116,13 @@ test('palette items are inserted beside the selected item in canvas flow and sav
   assert.equal(await pagesTab.getAttribute('aria-selected'),'true');
   await tab.waitForFunction(()=>document.activeElement?.id==='leftTabPages');
   await tab.locator('.rail-btn[data-tab="elements"]').click();
+  const paletteSearch=tab.locator('#elementSearch');
+  await paletteSearch.fill('szoveg');
+  const matchingTextGroup=tab.locator('.element-group-title').filter({hasText:'Szöveg'});
+  assert.equal(await matchingTextGroup.getAttribute('aria-expanded'),'true','search should expand the group containing matches');
+  assert.equal(await tab.locator('#elementList .element').filter({hasText:'Szöveg'}).count(),1,'unaccented Hungarian query should find Szöveg');
+  assert.equal(await tab.locator('#elementList .element').filter({hasText:'Heading'}).count(),0,'search should hide non-matching elements');
+  await paletteSearch.fill('');
   const textGroup=tab.locator('.element-group-title').filter({hasText:'Szöveg'});
   const groupBodyId=await textGroup.getAttribute('aria-controls');
   assert.ok(groupBodyId,'palette group disclosure should identify its controlled list');
