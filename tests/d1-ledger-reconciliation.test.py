@@ -6,8 +6,9 @@ m=importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
 
 class Reconciliation(unittest.TestCase):
  def setUp(self):
-  self.e=json.loads(m.EVIDENCE.read_text()); self.db=sqlite3.connect(':memory:')
-  # Exact production sqlite_master SQL; synthetic rows, no production user data.
+  self.e=json.loads((root/'docs/evidence/d1-ledger-preflight.json').read_text())
+  self.current=json.loads(m.EVIDENCE.read_text()); self.db=sqlite3.connect(':memory:')
+  # Exact pre-reconciliation production sqlite_master SQL; synthetic rows, no production user data.
   objects=self.e['result'][0]['results']
   for kind in ('table','index','trigger','view'):
    for o in objects:
@@ -22,10 +23,12 @@ class Reconciliation(unittest.TestCase):
  def snapshot(self):
   return {r[0]:self.db.execute('SELECT * FROM "'+r[0]+'" ORDER BY 1').fetchall() for r in self.db.execute("SELECT name FROM sqlite_master WHERE type='table' AND name NOT IN ('d1_migrations','sqlite_sequence')")}
  def run_sql(self):
-  try: self.db.executescript('BEGIN;\n'+m.reconciliation_sql(self.e)+'COMMIT;')
+  try: self.db.executescript('BEGIN;\n'+m.reconciliation_sql(self.e, m.PRE_0029_MANUAL_NAMES)+'COMMIT;')
   except Exception:
    self.db.rollback(); raise
- def test_schema_seed_evidence(self): self.assertEqual(m.check_evidence(self.e),40)
+ def test_schema_seed_evidence(self):
+  self.assertEqual(m.check_evidence(self.e, m.PRE_0029_MANUAL_NAMES),40)
+  self.assertEqual(m.check_evidence(self.current),55)
  def test_idempotent_preserves_data_and_ledger_history(self):
   before=self.snapshot(); ledger=self.db.execute('SELECT * FROM d1_migrations').fetchall()
   self.run_sql(); first=self.db.execute('SELECT * FROM d1_migrations').fetchall()
@@ -45,7 +48,7 @@ class Reconciliation(unittest.TestCase):
   with self.assertRaises(sqlite3.IntegrityError): self.run_sql()
  def test_fresh_bootstrap_matches_production_structure_and_reserved_names(self):
   fresh=sqlite3.connect(':memory:'); m.bootstrap(fresh)
-  self.assertEqual(m.relevant(m.schema(fresh)),m.relevant(self.e['result'][0]['results']))
+  self.assertEqual(m.relevant(m.schema(fresh)),m.relevant(self.current['result'][0]['results']))
   files={p.name for p in (root/'migrations').glob('*.sql')}|{e['name'] for e in m.manifest()}
   self.assertEqual({r[0] for r in fresh.execute('SELECT name FROM d1_migrations')},files)
   self.assertEqual(fresh.execute('PRAGMA foreign_key_check').fetchall(),[])
@@ -55,18 +58,18 @@ class Reconciliation(unittest.TestCase):
  def test_bootstrap_sql_with_foreign_keys_enabled(self):
   fresh=sqlite3.connect(':memory:'); fresh.execute('PRAGMA foreign_keys=ON')
   fresh.executescript('BEGIN;'+m.bootstrap_sql()+'COMMIT;')
-  self.assertEqual(m.relevant(m.schema(fresh)),m.relevant(self.e['result'][0]['results']))
+  self.assertEqual(m.relevant(m.schema(fresh)),m.relevant(self.current['result'][0]['results']))
   self.assertEqual(fresh.execute('PRAGMA foreign_key_check').fetchall(),[])
   fresh.close()
  def test_future_migration_follows_manual_chain_and_reserved_numbers_fail(self):
   original=m.ROOT
   with tempfile.TemporaryDirectory() as folder:
-   target=Path(folder); shutil.copytree(root/'migrations',target/'migrations'); shutil.copytree(root/'scripts/pending',target/'scripts/pending')
+   target=Path(folder); shutil.copytree(root/'migrations',target/'migrations'); shutil.copytree(root/'scripts/pending',target/'scripts/pending'); shutil.copytree(root/'tests/fixtures',target/'tests/fixtures')
    try:
     m.ROOT=target
-    (target/'migrations/0029_future_probe.sql').write_text('CREATE TABLE future_probe AS SELECT archived_at FROM media;')
+    (target/'migrations/0031_future_probe.sql').write_text('CREATE TABLE future_probe AS SELECT archived_at FROM media;')
     fresh=sqlite3.connect(':memory:'); m.bootstrap(fresh)
-    self.assertEqual(fresh.execute('SELECT name FROM d1_migrations ORDER BY id DESC LIMIT 1').fetchone()[0],'0029_future_probe.sql')
+    self.assertEqual(fresh.execute('SELECT name FROM d1_migrations ORDER BY id DESC LIMIT 1').fetchone()[0],'0031_future_probe.sql')
     fresh.close()
     (target/'migrations/0025_alternate.sql').write_text('SELECT 1;')
     with self.assertRaises(AssertionError): m.manifest()
@@ -77,10 +80,10 @@ class Reconciliation(unittest.TestCase):
   fresh.rollback(); self.assertEqual(fresh.execute("SELECT name FROM sqlite_master").fetchall(),[('existing',)])
   fresh.close()
  def test_generated_sql_is_reviewed_artifact(self):
-  self.assertEqual(m.reconciliation_sql(self.e),(root/'scripts/d1/reconcile-0025-0028.sql').read_text())
+  self.assertEqual(m.reconciliation_sql(self.e, m.PRE_0029_MANUAL_NAMES),(root/'scripts/d1/reconcile-0025-0028.sql').read_text())
  def test_evidence_drift_and_bad_seed_fail_closed(self):
   for mutate in [lambda e:e['result'][0]['results'].pop(),lambda e:e['result'][2]['results'][0].update(n=0)]:
    e=copy.deepcopy(self.e); mutate(e)
-   with self.assertRaises(AssertionError): m.check_evidence(e)
+   with self.assertRaises(AssertionError): m.check_evidence(e, m.PRE_0029_MANUAL_NAMES)
 
 if __name__=='__main__': unittest.main()

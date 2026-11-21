@@ -1,12 +1,12 @@
 # Production D1 ledger-rendezés — végrehajtási javaslat
 
-Állapot: **előkészítve; production ledgerírás NEM történt; külön jóváhagyás szükséges**.
+Állapot: **történeti 0025–0028 ledger-rendezés végrehajtva 2026-10-23-án; ez a dokumentum annak eredeti preflight-, SQL- és utóellenőrzési bizonyítékát őrzi**. A későbbi 0029/0030 sémaváltozás külön manuális release volt; a 2026-11-21-i jelenlegi állapotot a [külön, friss read-only D1 postflight](evidence/d1-ledger-postflight-2026-11-21.json) rögzíti.
 Alap: `v2/foundation` / `caf91bf91ca4937805c7bbf527de944893c11f78`.
 Account: `64bbd6a12ac732ed2cac4ca25d8bfa7e`; DB: `sanci9517-db` / `5a4a5e96-fdad-421a-a33c-143daaf33e98`.
 
 ## Rögzített bizonyíték
 
-A [read-only API-snapshot](evidence/d1-ledger-preflight.json) ideje 2026-10-23 11:36:40 Europe/Budapest (09:36:40 UTC).
+A [történeti, 0025–0028 ledger-rendezés előtti read-only API-snapshot](evidence/d1-ledger-preflight.json) ideje 2026-10-23 11:36:40 Europe/Budapest (09:36:40 UTC). A fájl változatlanul megmarad a 2026-10-23-i forrásintegritás-bizonyítékhoz; nem a jelenlegi 0030 utáni sémát írja le.
 Nem tartalmaz felhasználói rekordokat, credentialt vagy HTTP-fejléceket: kizárólag DDL, ledger, aggregált seed-ellenőrzések és D1 metadatok.
 Minden lekérdezés `rows_written=0`, `changed_db=false`.
 

@@ -28,5 +28,5 @@ test("manual schema migrations stay out of the auto-applied folder and secrets d
     const text = read("../scripts/pending/" + file);
     assert.match(text, /CREATE TABLE site_/);
   }
-  assert.match(read("../scripts/web013-migration-safety-gate.mjs"), /migration 0025 is already applied manually/);
+  assert.match(read("../scripts/web013-migration-safety-gate.mjs"), /Production received 0025-0030 through the reviewed manual release chain/);
 });

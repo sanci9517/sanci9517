@@ -1,22 +1,22 @@
 {
   "schema": 1,
-  "captured_at": "2026-11-21T10:02:24Z",
-  "plan_point": "77.44.7.D / EDT-039; scoped feature RES-006, within D-06 media lifecycle/asset library",
-  "status": "PARTIAL_IMPLEMENTATION_PRODUCTION_0030_APPLIED; RES006_RUNTIME_RELEASE_PENDING; FULL_D_OPEN_NOT_CERTIFIED",
+  "captured_at": "2026-11-21T10:15:00Z",
+  "plan_point": "77.44.7.D / D-06 and WEB-013 test/release contracts; RES-006 media organization follow-up",
+  "status": "RES006_RUNTIME_DEPLOYED; TWO_PRIOR_HOSTED_CI_FAILURES_REPAIRED_AND_LOCAL_REGRESSIONS_PASS; TEST_EVIDENCE_FOLLOWUP_PENDING_PUSH; FULL_D_OPEN_NOT_CERTIFIED",
   "repository": {
     "name": "sanci9517/sanci9517",
     "branch": "v2/foundation",
-    "github_head_at_inspection": "9ad43c78586652a9578d766a3c37503864207faf",
-    "local_head": "9081aa79e61807418ab573893508c35a02e1f2f6",
-    "commit": "RES-006 runtime commit not yet created; current worktree changes are preserved",
-    "push": "EDT-039 9081aa79e61807418ab573893508c35a02e1f2f6 is pushed; RES-006 source is not yet pushed",
+    "github_head_at_inspection": "f6a1bd3a5a35a3648ed0d9174079fb1e69ce7cd3",
+    "local_head": "f6a1bd3a5a35a3648ed0d9174079fb1e69ce7cd3",
+    "commit": "f6a1bd3a5a35a3648ed0d9174079fb1e69ce7cd3 (RES-006 runtime); current work is test/evidence/plan-only and pending a separate [skip ci] commit",
+    "push": "f6a1bd3a5a35a3648ed0d9174079fb1e69ce7cd3 is pushed and deployed; test/evidence follow-up pending fast-forward push",
     "preexisting_work": "Preserved in stash c146439540b2983e5460f6b4c4952afc3bd6f076; stash not modified or dropped"
   },
   "implementation": {
     "feature": "Site-scoped media folders, tags and collections: list/create/rename/confirmed delete; assign folder/tags/collections to asset; filter media list; preserve R2 objects on group delete.",
     "security": "Existing editor/site membership gate; same-origin and cross-site checks; normalized site-unique names; composite tenant foreign keys and folder tenant guard; atomic D1 batch replacement of tag/collection metadata; bounded ID sets. Duplicate folder/tag/collection filter parameters fail closed; tag deletion removes only the relation rows and preserves the object.",
-    "database_candidate": "scripts/pending/0030_media_library_organization.sql",
-    "migration_class": "Manual additive candidate, registered with 0025-0029, never included in automatic migrations. Not applied to production.",
+    "database_candidate": "scripts/pending/0030_media_library_organization.sql (applied to production on 2026-11-21)",
+    "migration_class": "Manual additive schema migration, registered in the 0025-0030 manual chain and applied to production after SELECT-only preflight; never included in automatic migrations.",
     "save_publish_separate": true
   },
   "read_only_production_preflight": {
@@ -40,14 +40,14 @@
   },
   "production_worker": {
     "worker": "sanci9517-streamer-brand",
-    "deployment_id": "dc489b3a-5af2-4ae3-b895-8e7fa14f3089",
-    "version_id": "24235630-a41f-4f0c-94fe-dcfcf573c1c7",
+    "deployment_id": "62d80cfb-a836-49ab-b2d1-2fdb2e3886d4",
+    "version_id": "0fadfd79-06de-44f7-a7a5-96e65e8592da",
     "traffic_percent": 100,
-    "deployment_created_on": "2026-11-21T09:46:51.26306Z",
-    "source_commit": "9081aa79e61807418ab573893508c35a02e1f2f6",
-    "source_sha_evidence": "GitHub worker-production-source-smoke run 44891138881 succeeded against exact HEAD; its logs show /api/health HTTP 200 and all exact source SHA-256 checks, including editor-v2/core/page-interactions.js, match after 3 rollout retries.",
-    "health": "HTTP 200; source-smoke exact-SHA health check succeeded",
-    "current_RES006_runtime_source_deployed": false
+    "deployment_created_on": "2026-11-21T10:06:20.820311Z",
+    "source_commit": "f6a1bd3a5a35a3648ed0d9174079fb1e69ce7cd3",
+    "source_sha_evidence": "GitHub Worker Production Source Smoke run 44892647881, job 136811586289: exact GITHUB_SHA f6a1bd3a5a35a3648ed0d9174079fb1e69ce7cd3; production /api/health HTTP 200 and all exact changed public source SHA-256 checks match.",
+    "health": "HTTP 200; exact source smoke verified all checked hashes",
+    "current_RES006_runtime_source_deployed": true
   },
   "local_checks": {
     "npm run test:media": "PASS 111/111",
@@ -61,7 +61,7 @@
     "python3 tests/plan-contract.test.py": "PASS 15/15",
     "python3 scripts/audit-active-plan-point.py": "PASS for bookkeeping only: cursor 77.44 / WEB-011, next 77.44.7.D; 148 PARTIAL_SOURCE / 248 UNVERIFIED; acceptance NOT_CERTIFIED",
     "node --check public/assets/admin-media.js && node --check public/assets/admin-media-organization.js": "PASS",
-    "git diff --check": "PASS",
+    "git diff --check": "PASS after the evidence and plan updates.",
     "npm run test:media (follow-up)": "PASS; 5/5 test files; repeated folderId/tagId/collectionId filters fail closed and tag delete clears metadata only",
     "npm run typecheck (follow-up)": "PASS",
     "node scripts/web013-migration-safety-gate.mjs (follow-up)": "PASS; manual-only 0030 still excluded from automatic deployment",
@@ -74,7 +74,16 @@
     "node --test --test-concurrency=1 tests/browser/editor-page-interactions.test.js (EDT-039 follow-up)": "PASS 1/1 real Chromium lifecycle; 116.1s; draft Save/reload/preview remains separate from Publish; malformed action recovery and keyboard/navigation path covered",
     "npm run test:editor (EDT-039 regression follow-up)": "PASS; 22/22 test files, including duplicate automatic load/timer target rejection and explicit click action acceptance",
     "npm run test:editor:layout (broad local Chromium suite)": "INCOMPLETE; 4/60 files completed (editor-action-help 2/2, editor-workspace-appearance 87/87, editor-multi-validation 2/2, editor-page-paths 2/2); file 5 began and was intentionally interrupted after 4 passing subtests because the first two files took >5 minutes; exit 130; no full-suite PASS",
-    "node --test public/editor-v2/tests/motion.test.js (EDT-040 review)": "PASS 1/1 test file; allowlisted motion and prefers-reduced-motion behavior; no code change indicated"
+    "node --test public/editor-v2/tests/motion.test.js (EDT-040 review)": "PASS 1/1 test file; allowlisted motion and prefers-reduced-motion behavior; no code change indicated",
+    "python3 scripts/d1/ledger-reconciliation.py check": "PASS: current postflight snapshot; 55 relevant schema objects, 36 ledger entries, aggregate seeds valid, FK check empty, quick_check ok; five SELECT/PRAGMA statements, 0 rows written/0 changes.",
+    "python3 tests/d1-ledger-reconciliation.test.py (repair follow-up)": "PASS 11/11; historical pre-0025-0028 reconciliation fixture retained separately from current post-0030 schema evidence; 0031 future automatic migration ordering validated.",
+    "npm run test:web013 (repair follow-up)": "PASS 78/78; includes migration gate, Manual 0025-0030 chain, deployment contract and tenant API checks. First restricted attempt hung at loopback Miniflare; same command passed with the already-authorized loopback-only escalation.",
+    "npm run test:editor (repair follow-up)": "PASS 250/250 Node tests plus 4/4 subsupervisor runner tests.",
+    "npm run typecheck (repair follow-up)": "PASS",
+    "git diff --check (repair follow-up)": "PASS",
+    "npm run test:media:storage (repair follow-up)": "PASS 1/1; real Worker and Chromium with local synthetic D1/R2; 187.5 seconds.",
+    "python3 scripts/audit-active-plan-point.py (repair follow-up)": "PASS for bookkeeping only: cursor 77.44 / WEB-011, next 77.44.7.D; 148 PARTIAL_SOURCE / 248 UNVERIFIED; acceptance NOT_CERTIFIED.",
+    "npm run test:media (repair follow-up)": "PASS 111/111 assertions."
   },
   "release": {
     "wrangler_dry_run": "PASS for current RES-006 working tree before D1 migration: Wrangler 4.130.0 packaged 198 assets (411.30 KiB / 104.50 KiB gzip); production bindings resolved; no deploy occurred.",
@@ -93,9 +102,32 @@
       "completed_steps": 13,
       "next_step": "Run Editor browser layout regression"
     },
-    "RES006_runtime_commit": "NOT CREATED",
-    "RES006_push": "NOT DONE",
-    "RES006_worker_deploy": "PENDING until commit, exact-SHA required CI/release gates, and deploy-safe verification"
+    "RES006_runtime_commit": "f6a1bd3a5a35a3648ed0d9174079fb1e69ce7cd3",
+    "RES006_push": "PASS; exact branch head f6a1bd3a5a35a3648ed0d9174079fb1e69ce7cd3",
+    "RES006_worker_deploy": "PASS; deployment 62d80cfb-a836-49ab-b2d1-2fdb2e3886d4, version 0fadfd79-06de-44f7-a7a5-96e65e8592da, 100% traffic",
+    "RES006_source_smoke": {
+      "run_id": 44892647881,
+      "job_id": 136811586289,
+      "status": "completed",
+      "conclusion": "success",
+      "verified": "HTTP 200 health and exact public SHA-256 source checks for f6a1bd3a5a35a3648ed0d9174079fb1e69ce7cd3"
+    },
+    "RES006_preceding_CI_failures": [
+      {
+        "workflow": "Editor Core Test",
+        "run_id": 44892647932,
+        "job_id": 136811586235,
+        "failed_check": "D1 ledger reconciliation; checked-in preflight schema evidence predated additive 0029 and 0030 objects."
+      },
+      {
+        "workflow": "F0 baseline",
+        "run_id": 44892647880,
+        "job_id": 136811585927,
+        "failed_check": "WEB-013 migration safety contract expected obsolete 0025-only wording after the gate was updated to reserve 0025-0030."
+      }
+    ],
+    "CI_repair_commit": "NOT CREATED; local regression checks pass; follow-up is test/evidence/plan only and will use [skip ci] to avoid a redundant Worker deployment.",
+    "CI_repair_followup": "PENDING normal fast-forward push; no hosted workflow PASS is claimed for this follow-up."
   },
   "traceability": {
     "feature_count": 396,
@@ -119,20 +151,27 @@
     "public/assets/admin-media-organization.js": "27b89f81fb7a84cfe6dd2dd7e15000a79de84730dad041664921808a848c73cd",
     "scripts/pending/0030_media_library_organization.sql": "af036c90edda1bd4685e2ed09707c167d02a2b43afec859a28ed9eb90a5eaa92",
     "scripts/d1/manual-migrations.json": "9ee4eae84936eed898a8426364418fa99971331d0bc8878b77d7188c8b4371df",
-    "scripts/web013-migration-safety-gate.mjs": "41413507312fa002d7026a39cce4a902a01a183e3389025a71e40f97e43ce6b8",
-    "scripts/d1/ledger-reconciliation.py": "35f92e5606e7dc67e63d2c4a0a1b7bdbe5d7a47d0924e9ba0be2ef619081e335",
+    "scripts/web013-migration-safety-gate.mjs": "33ae4725d5c4bd1016323cc9a3297d84ab68111ed177fffee07c0591165c5141",
+    "scripts/d1/ledger-reconciliation.py": "861ba94d016198d2b1f196d2bb05145f6382f91da67c1bb05660c7ddfce868f5",
     "scripts/build-feature-traceability.py": "f4274d53d9a8bc964006bcd11857d426a426b1115b5340be4cac184dd4dd7935",
     "tests/media-api.test.js": "7d32f13eee5cdb5ea3da0e61a47bcf0ce49ad8750d016c0864168e025887097b",
     "tests/browser/admin-media-organization.test.js": "c8be2bd093487861c2fc8dbdeaaac4b22f2aae7a8104e2a4311ffeee167f0850",
     "tests/web013-manual-migration-chain.test.js": "7dcee017be432e6190841b1c441acf218cb7ba1a349b1ab541eb4c7e4047f161",
     "package.json": "f3f96ce5afc6ab4b74d2cdc4ef94260d58a3956daed9dfa935612af66c689f1a",
-    "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md": "PENDING plan update",
-    "docs/evidence/feature-traceability.json": "1d90cbda249f2676d202e3575fdd3a6e2660b6da1b42acef61f70c1d0d3e6b8e",
+    "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md": "941bd2e789a749486267daf75ed558b56268d64906ee5206a69b84948d3d8793",
+    "docs/evidence/feature-traceability.json": "4b01e0e88363d2809795249ded62a582de699b102ce2d14ef9fbcdd66fefad01",
     "public/editor-v2/core/page-interactions.js": "4ef5dda7a33f11cd34949fa241b5247957e8aeca2c4d95fb36fa6f6097ffb448",
     "public/editor-v2/core/authored-content.js": "e8fcb7b806e5633b0153904239e3a76be3042918e33175882159c82f5b9de1bd",
     "public/editor-v2/core/schema.js": "bbfa4924d1a35c74d1430068a82ce5547232ff90f3ae6b3aec4009132270dfac",
     "public/editor-v2/ui/page-interaction-controls.js": "aca7088c7670b0f9129e22d4c699261d311e45ad19d271f617cdc2eb35bef2ee",
-    "public/editor-v2/tests/page-interactions.test.js": "fe6d8b0bdf88194f23ed48c4a8190bfae2211b34f82809a875c2cc40273b0af2"
+    "public/editor-v2/tests/page-interactions.test.js": "fe6d8b0bdf88194f23ed48c4a8190bfae2211b34f82809a875c2cc40273b0af2",
+    "docs/evidence/d1-ledger-postflight-2026-11-21.json": "1972ee5ac880fc38dd439de5b456e4cf42f0de1fcb50da653b91c37d0fa6f9d0",
+    "docs/evidence/d1-ledger-preflight.json": "214b9b5e7a908e1bef6f6d49f256050e1c8b5032d1612a7cd67a16c493848858",
+    "tests/d1-ledger-reconciliation.test.py": "b871ee0308e1834d89195cb7c627e87e240662c0bc84c39059d21aa14e7166ab",
+    "tests/web013-live-activation-contract.test.js": "fdab6aeb65a3c9e980c9ca08aaabebd06a64d67173a0753928c977ebf2a3c306",
+    "tests/browser/media-worker-storage.test.mjs": "a509531427d645a205d327bdbbd4f0b8d185926d2affd94f0442d86052b90490",
+    "docs/D1-LEDGER-RECONCILIATION.md": "6c6991f282a81b6c2a71d36253066895b8fcdba74f2ab3ebbdd2ce7b7ef4d946",
+    "docs/evidence/dev-metrics/runs/2026-11-21/20261121100756-8899d1c0.json": "34719e3e48d7cf02895f7a335e7b5616a6a7c25bdf16e912cfad90d5c5590912"
   },
   "production_migration": {
     "migration": "0030_media_library_organization.sql",
@@ -178,5 +217,33 @@
     "rows_written_total": 0,
     "changes_total": 0,
     "all_changed_db_false": true
+  },
+  "read_only_production_postflight": {
+    "captured_at": "2026-11-21T10:11:10.117Z",
+    "evidence": "docs/evidence/d1-ledger-postflight-2026-11-21.json",
+    "query_count": 5,
+    "rows_read_total": 2859,
+    "rows_written_total": 0,
+    "changes_total": 0,
+    "all_changed_db_false": true,
+    "schema_objects": 99,
+    "relevant_schema_objects": 55,
+    "ledger_rows": 36,
+    "latest_marker": "0030_media_library_organization.sql (id 36)",
+    "seed_checks": {
+      "domain": 1,
+      "active_default_users_without_membership": 0,
+      "default_settings_missing_or_different": 0,
+      "snapshot_tables": 0
+    },
+    "foreign_key_check_rows": 0,
+    "quick_check": "ok",
+    "production_business_row_content_read": false
+  },
+  "developer_metrics": {
+    "id": "20261121100756-8899d1c0",
+    "status": "partial",
+    "measured_seconds": 1547,
+    "evidence": "docs/evidence/dev-metrics/runs/2026-11-21/20261121100756-8899d1c0.json"
   }
 }

@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261121100756-8899d1c0",
+  "task": "WEB-013",
+  "trigger": "manual",
+  "started_at": "2026-11-21T10:07:56.468Z",
+  "finished_at": "2026-11-21T10:33:43.853Z",
+  "wall_seconds": 1547,
+  "paused_seconds": 0,
+  "measured_seconds": 1547,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "RES-006 utókövetés: friss, SELECT-only D1 bizonyítékra átállítottam a tesztfixture-t és a stale WEB-013 migration contractot javítottam; helyi regressziók PASS, a teljes D pont OPEN.",
+  "evidence": [
+    "docs/evidence/res006-media-library-organization-2026-11-21.json"
+  ],
+  "checks": "D1 reconciliation 55 objects PASS; ledger tests 11/11; WEB-013 78/78; Editor 250/250 plus 4/4 runner PASS (prior run on same sources); media 111/111; Worker Media storage 1/1 real Chromium; typecheck PASS; canonical plan 13/13 and traceability 396/396; active audit OPEN/NOT_CERTIFIED; no remote CI rerun for test/evidence-only followup per [skip ci].",
+  "started_revision": "f6a1bd3a5a35a3648ed0d9174079fb1e69ce7cd3",
+  "finished_revision": "f6a1bd3a5a35a3648ed0d9174079fb1e69ce7cd3",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

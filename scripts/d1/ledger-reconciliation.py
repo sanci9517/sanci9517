@@ -6,8 +6,15 @@ if not __debug__:
     raise RuntimeError('Do not run safety checks with Python -O')
 ROOT = Path(__file__).resolve().parents[2]
 MANIFEST = ROOT / 'scripts/d1/manual-migrations.json'
-EVIDENCE = ROOT / 'docs/evidence/d1-ledger-preflight.json'
+EVIDENCE = ROOT / 'docs/evidence/d1-ledger-postflight-2026-11-21.json'
 RELEVANT = {'pages','editor_revisions','page_slug_redirects','site_domains','site_memberships','site_scoped_settings','media','media_folders','media_tags','media_collections','media_asset_tags','media_collection_assets'}
+PRE_0029_RELEVANT = {'pages','editor_revisions','page_slug_redirects','site_domains','site_memberships','site_scoped_settings','media'}
+PRE_0029_MANUAL_NAMES = {
+    '0025_site_domains_and_site_slug.sql',
+    '0026_site_memberships.sql',
+    '0027_site_scoped_settings.sql',
+    '0028_media_archive.sql',
+}
 
 def manifest():
     entries = json.loads(MANIFEST.read_text())
@@ -23,15 +30,16 @@ def schema(db):
 def normalize(sql):
     return re.sub(r'\s+', '', sql.replace('"','').replace('`','')).rstrip(';').lower()
 
-def relevant(objects):
-    return {o['name']:(o['type'],o['tbl_name'],normalize(o['sql'])) for o in objects if o['tbl_name'] in RELEVANT}
+def relevant(objects, tables=RELEVANT):
+    return {o['name']:(o['type'],o['tbl_name'],normalize(o['sql'])) for o in objects if o['tbl_name'] in tables}
 
-def bootstrap(db):
+def bootstrap(db, manual_names=None):
     assert not db.execute("SELECT 1 FROM sqlite_master WHERE name NOT LIKE 'sqlite_%'").fetchone(), 'Bootstrap requires an empty database'
     db.execute('PRAGMA foreign_keys=ON')
     db.execute('CREATE TABLE d1_migrations(id INTEGER PRIMARY KEY AUTOINCREMENT,name TEXT UNIQUE,applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL)')
     automatic = sorted((ROOT/'migrations').glob('*.sql'))
-    files = [p for p in automatic if p.name[:4] <= '0024'] + [ROOT/e['path'] for e in manifest()] + [p for p in automatic if p.name[:4] > '0030']
+    manual = [e for e in manifest() if manual_names is None or e['name'] in manual_names]
+    files = [p for p in automatic if p.name[:4] <= '0024'] + [ROOT/e['path'] for e in manual] + [p for p in automatic if p.name[:4] > '0030']
     for p in files:
         escaped=p.name.replace("'","''")
         try:
@@ -54,16 +62,17 @@ def bootstrap_sql():
            "INSERT INTO __bootstrap_empty_guard SELECT CASE WHEN EXISTS(SELECT 1 FROM sqlite_master WHERE name NOT LIKE 'sqlite_%' AND name NOT GLOB '_cf_*' AND name<>'__bootstrap_empty_guard') THEN 0 ELSE 1 END;"]
     return '\n'.join(['PRAGMA defer_foreign_keys=ON;']+guard+tables+data+['DELETE FROM sqlite_sequence;']+sequence+other+['DROP TABLE __bootstrap_empty_guard;'])+'\n'
 
-def expected_schema():
-    db=sqlite3.connect(':memory:'); bootstrap(db)
+def expected_schema(manual_names=None):
+    db=sqlite3.connect(':memory:'); bootstrap(db, manual_names)
     result=schema(db); db.close(); return result
 
-def check_evidence(evidence):
+def check_evidence(evidence, manual_names=None):
     assert evidence['account_id']=='64bbd6a12ac732ed2cac4ca25d8bfa7e'
     assert evidence['database_id']=='5a4a5e96-fdad-421a-a33c-143daaf33e98'
     results=evidence['result']
     assert evidence['success'] and all(r['success'] and r['meta']['rows_written']==0 and not r['meta']['changed_db'] for r in results)
-    actual=relevant(results[0]['results']); expected=relevant(expected_schema())
+    tables=PRE_0029_RELEVANT if manual_names == PRE_0029_MANUAL_NAMES else RELEVANT
+    actual=relevant(results[0]['results'], tables); expected=relevant(expected_schema(manual_names), tables)
     differences=sorted(k for k in actual.keys()|expected.keys() if actual.get(k)!=expected.get(k))
     assert not differences, 'Schema mismatch: '+', '.join(differences)
     checks={x['check_name']:x['n'] for x in results[2]['results']}
@@ -77,19 +86,20 @@ def check_evidence(evidence):
     assert set(names)<=allowed, 'Unknown ledger names; review required'
     return len(expected)
 
-def reconciliation_sql(evidence):
-    check_evidence(evidence)
+def reconciliation_sql(evidence, manual_names=None):
+    check_evidence(evidence, manual_names)
     # Only the ledger changes. A CHECK-guard inside one D1 transaction rejects
     # changed schema/ledger since the snapshot, including conflicting names.
     objects=evidence['result'][0]['results']
+    tables=PRE_0029_RELEVANT if manual_names == PRE_0029_MANUAL_NAMES else RELEVANT
     guard=[]
     for o in objects:
-        if o['tbl_name'] in RELEVANT or o['name']=='d1_migrations':
+        if o['tbl_name'] in tables or o['name']=='d1_migrations':
             q=lambda s: "'"+s.replace("'","''")+"'"
             guard.append(f"EXISTS(SELECT 1 FROM sqlite_master WHERE type={q(o['type'])} AND name={q(o['name'])} AND tbl_name={q(o['tbl_name'])} AND sql={q(o['sql'])})")
-    count=sum(o['tbl_name'] in RELEVANT or o['name']=='d1_migrations' for o in objects)
-    tables=','.join("'"+t+"'" for t in sorted(RELEVANT|{'d1_migrations'}))
-    guard.append(f"(SELECT COUNT(*) FROM sqlite_master WHERE sql IS NOT NULL AND name NOT LIKE 'sqlite_%' AND tbl_name IN ({tables}))={count}")
+    count=sum(o['tbl_name'] in tables or o['name']=='d1_migrations' for o in objects)
+    table_sql=','.join("'"+t+"'" for t in sorted(tables|{'d1_migrations'}))
+    guard.append(f"(SELECT COUNT(*) FROM sqlite_master WHERE sql IS NOT NULL AND name NOT LIKE 'sqlite_%' AND tbl_name IN ({table_sql}))={count}")
     guard.append('NOT EXISTS(SELECT 1 FROM pragma_foreign_key_check)')
     guard.append("EXISTS(SELECT 1 FROM site_domains WHERE hostname='sanci9517-streamer-brand.sandor-bogadi95.workers.dev' AND site_id='site-default' AND status='verified' AND verification_method='cloudflare-worker-route' AND verified_at IS NOT NULL)")
     guard.append("NOT EXISTS(SELECT 1 FROM users u WHERE u.is_active=1 AND NOT EXISTS(SELECT 1 FROM site_memberships m WHERE m.site_id='site-default' AND m.user_id=u.id AND m.status='active' AND m.role=u.role))")
@@ -99,13 +109,14 @@ def reconciliation_sql(evidence):
     for name in names:
         if name not in {e['name'] for e in manifest()}:
             guard.append("EXISTS(SELECT 1 FROM d1_migrations WHERE name='"+name+"')")
-    allowed=sorted(set(names)|{e['name'] for e in manifest()})
+    manual = [e for e in manifest() if manual_names is None or e['name'] in manual_names]
+    allowed=sorted(set(names)|{e['name'] for e in manual})
     guard.append("NOT EXISTS(SELECT 1 FROM d1_migrations WHERE name IS NULL OR name NOT IN ("+','.join("'"+n+"'" for n in allowed)+"))")
     sql=['-- REVIEW ONLY. Execute as ONE D1 query transaction after approval and fresh preflight.',
          '-- applied_at records reconciliation time, not historical installation time.',
          'CREATE TABLE __ledger_reconcile_guard(ok INTEGER NOT NULL CHECK(ok=1));',
          'INSERT INTO __ledger_reconcile_guard(ok) SELECT CASE WHEN '+ '\n AND '.join(guard)+' THEN 1 ELSE 0 END;']
-    for e in manifest():
+    for e in manual:
         sql.append(f"INSERT INTO d1_migrations(name) SELECT '{e['name']}' WHERE NOT EXISTS(SELECT 1 FROM d1_migrations WHERE name='{e['name']}');")
     sql.append('DROP TABLE __ledger_reconcile_guard;')
     return '\n'.join(sql)+'\n'

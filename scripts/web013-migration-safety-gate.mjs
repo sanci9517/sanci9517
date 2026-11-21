@@ -1,7 +1,7 @@
 /**
  * WEB-013 migration safety gate.
  *
- * Production received 0025-0029 through the reviewed manual release chain.
+ * Production received 0025-0030 through the reviewed manual release chain.
  * The 0025 SQL is a one-shot table rebuild. No part of this manual chain
  * may be copied into automatic migrations unchanged.
  *

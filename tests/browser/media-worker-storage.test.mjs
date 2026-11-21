@@ -39,7 +39,7 @@ test('real Worker Media Library upload and Editor image/audio/video Save-reload-
  cleanups.push(()=>mf.dispose());
  const DB=await mf.getD1Database('DB'), MEDIA=await mf.getR2Bucket('MEDIA');
  // This committed evidence contains DDL only, not production business rows.
- const schema=JSON.parse(readFileSync(resolve(root,'docs/evidence/d1-ledger-preflight.json'),'utf8')).result[0].results;
+ const schema=JSON.parse(readFileSync(resolve(root,'docs/evidence/d1-ledger-postflight-2026-11-21.json'),'utf8')).result[0].results;
  for(const kind of ['table','index','trigger','view'])for(const row of schema.filter(x=>x.type===kind&&!x.name.startsWith('_cf_')))await DB.prepare(row.sql).run();
  const retention=JSON.parse(execFileSync('python3',['-c',`import sqlite3,json
 from pathlib import Path
