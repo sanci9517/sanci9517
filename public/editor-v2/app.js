@@ -17,6 +17,7 @@ import {renderPropertyInput} from './ui/property-controls.js?v=20261101-richtext
 import {getInspectorValueContract,normalizeInspectorValue} from './core/property-values.js';
 import {describeResponsiveOrigin} from './ui/responsive-origin.js';
 import {responsiveGroupResetActions} from './ui/responsive-group-reset.js';
+import {readPaletteFavoriteTypes,togglePaletteFavoriteType} from './ui/palette-preferences.js?v=20261121-edt044-user-favorites-v1';
 import {getRichTextBlockSelection,getRichTextFormattingSelection,getRichTextBlockTransformSelection,getRichTextActiveBlockIndex,restoreRichTextBlockSelection,restoreRichTextFormattingSelection,updateRichTextInlineLink,updateRichTextInlineMark,updateRichTextInlineStyle,updateRichTextBlockAlignment} from './core/richtext-links.js?v=20261117-d03-invalid-media-id-guidance-v1';
 import {initialPageId,rememberPageId,requestedPageId} from './core/page-url.js';
 import {getElementCapability} from './core/capability-matrix.js?v=20261117-edt043-motion-guidance';
@@ -67,6 +68,7 @@ function flushLayerRename(){return pendingLayerRename?.()!==false}
 let inspectorCategory='all';let richTextSelectionCleanup=null;let richTextToolTab='character';
 
 let state=null;let pages=[];let archivedPages=[];let revisionHistory=[];let zoom=1;let inspectorTab=readSavedInspectorTab();let inspectorQuery='';let flushRichTextDraft=null;let inlineEditingId=null;let richTextBookmark=null;let copiedStyleSnapshot=null;let nodeClipboard=null;let canvasDrag=null;let canvasResize=null;let pageStartTemplate='blank-page';let pageCreateBusy=false;let mobileTouch={active:false,timer:null,downId:null,startX:0,startY:0,snapshot:[],snapshotPrimary:null,suppressClick:false,longPressTriggered:false};let hierarchyDrag={nodeId:null,overId:null};let mobileHierarchyDrag={active:false,timer:null,nodeId:null,overId:null,startX:0,startY:0,suppressClick:false};
+let paletteFavoritesUserId=null;let paletteFavoriteTypes=[];let paletteFavoritesReady=false;
 function readSavedInspectorTab(){try{const saved=JSON.parse(localStorage.getItem('sanci-editor-shell-v2')||'{}')?.inspectorTab;return ['design','content','advanced'].includes(saved)?saved:'design'}catch{return 'design'}}
 const $=s=>document.querySelector(s);const canvas=$('#canvas');const inspector=$('#inspectorBody');
 const sizes={desktop:1440,tablet:768,mobile:390};
@@ -175,7 +177,61 @@ function isCanvasClipboardShortcut(event){
 function typeForElement(name){const map={'Badge/Tag':'badge','Quote':'quote','Panel':'panel','Overlay':'overlay','Absolute':'absolute','Sticky':'sticky','Tooltip':'tooltip','Shorts':'shorts','Sponsor':'sponsor','Business Contact':'business','About Me':'about','Sanci Button':'sanci-button'};if(map[name])return map[name];for(const items of groups)for(const [label,type] of items)if(label===name&&type)return type;return null}
 function addAuthoredElement(type,name,insertion){const authored=CONTENT_TYPES.includes(type)&&!['code','divider','spacer','heading','text','richtext','button','link'].includes(type);command('element.add',{type,name,...insertion,authored,props:type===NODE_TYPES.RICHTEXT?{}:{text:name}})}
 function normalizePaletteSearch(value){return String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim().toLowerCase()}
-function renderPalette(filter=''){const root=$('#elementList');if(!root){diagnostics.add({source:'ui',code:'SANCI-UI-E002',message:'Az Elemek lista konténere nem található.'});return}root.replaceChildren();const q=normalizePaletteSearch(filter),searching=Boolean(q);let groupIndex=0,descriptionIndex=0;for(const[group,items]of groups){const matches=items.filter(([name,type])=>{const resolvedType=type||typeForElement(name);return normalizePaletteSearch(name).includes(q)&&Boolean(resolvedType)});if(!matches.length)continue;const section=document.createElement('section');section.className='element-group'+(searching?'':' collapsed');const title=document.createElement('button');title.type='button';title.className='element-group-title';title.innerHTML='<span>'+group+'</span><b>'+matches.length+'</b>';title.setAttribute('aria-expanded',String(searching));const body=document.createElement('div');body.id='element-group-'+groupIndex++;title.setAttribute('aria-controls',body.id);for(const[name,type]of matches){const resolvedType=type||typeForElement(name);const row=document.createElement('div');row.className='element-row';const b=document.createElement('button');b.type='button';b.className='element';b.innerHTML='<i>◇</i><span>'+name+'</span>';const capability=getElementCapability(resolvedType);const badge=document.createElement('small');badge.className='element-capability';badge.textContent=capability.status==='PARTIAL'?'Részleges':'Tervezett';b.append(badge);if(capability.status==='PLANNED'){b.disabled=true;b.title='Később: ez az elem még nem használható.'}else b.onclick=()=>{const current=page();if(!current)return;const insertion=resolveElementInsertion(current,state.selection.primaryId,resolvedType);if(insertion)addAuthoredElement(resolvedType,name,insertion)};const info=document.createElement('button');info.type='button';info.className='element-info';info.textContent='i';info.title='Mi ez? '+name;info.setAttribute('aria-label','Mi ez? '+name);info.setAttribute('aria-expanded','false');const help=document.createElement('div');help.className='element-description';help.id='element-description-'+descriptionIndex++;help.textContent=(ELEMENT_DESCRIPTIONS[name]||name+' elem hozzáadására szolgál.')+' Inspector: '+capability.inspector+', publikus kimenet: '+capability.public+'.';help.hidden=true;info.setAttribute('aria-controls',help.id);info.onclick=e=>{e.stopPropagation();help.hidden=!help.hidden;info.setAttribute('aria-expanded',String(!help.hidden))};row.append(b,info,help);body.append(row)}title.onclick=()=>{const collapsed=section.classList.toggle('collapsed');title.setAttribute('aria-expanded',String(!collapsed))};section.append(title,body);root.append(section)}if(!root.children.length&&searching){const empty=document.createElement('p');empty.className='element-search-empty';empty.setAttribute('role','status');empty.textContent='Nincs találat a megadott keresésre.';root.append(empty)}else if(!root.children.length)diagnostics.add({source:'ui',code:'SANCI-UI-E003',message:'Az Elemek lista üres: egyetlen érvényes elem típus sem került a palettába.'})}
+function paletteEntries(){return groups.flatMap(([group,items])=>items.map(([name,type])=>({group,name,type:type||typeForElement(name)})).filter(entry=>entry.type))}
+function insertPaletteEntry(name,type){const current=page();if(!current)return;const insertion=resolveElementInsertion(current,state.selection.primaryId,type);if(insertion)addAuthoredElement(type,name,insertion)}
+function updatePaletteFavorite(type,name,filter){
+ const result=togglePaletteFavoriteType(paletteFavoritesUserId,type,paletteFavoriteTypes);
+ paletteFavoriteTypes=result.types;
+ const status=$('#elementPaletteStatus');
+ if(status)status.textContent=result.saved?(paletteFavoriteTypes.includes(type)?`${name} hozzáadva a személyes kedvenceidhez.`:`${name} eltávolítva a személyes kedvenceid közül.`):'A kedvenc csak ebben a munkamenetben él; a böngésző tárhelye nem engedte a mentést.';
+ renderPalette(filter);
+ const focusTarget=$(`#elementList .element-favorite-toggle[data-element-type="${type}"]`);
+ focusTarget?.focus();
+}
+function createPaletteFavoriteToggle(type,name,filter){
+ const button=document.createElement('button');button.type='button';button.className='element-favorite-toggle';button.dataset.elementType=type;
+ const selected=paletteFavoriteTypes.includes(type);button.setAttribute('aria-pressed',String(selected));button.setAttribute('aria-label',`${selected?'Eltávolítás a kedvencekből':'Hozzáadás a kedvencekhez'}: ${name}`);button.title=selected?'Eltávolítás a kedvencekből':'Hozzáadás a kedvencekhez';button.textContent=selected?'★':'☆';
+ const capability=getElementCapability(type);button.disabled=!paletteFavoritesReady||!paletteFavoritesUserId||capability.status==='PLANNED';if(capability.status==='PLANNED')button.title='A még nem elérhető elem nem vehető fel a kedvencek közé.';button.onclick=()=>updatePaletteFavorite(type,name,filter);
+ return button;
+}
+function createPaletteElementButton(name,type,{shortcut=false,filter=''}={}){
+ const button=document.createElement('button');button.type='button';button.className=shortcut?'element-favorite-shortcut':'element';
+ if(shortcut){button.textContent=name;button.setAttribute('aria-label',`Vászonra helyezés: ${name}`)}
+ else{const icon=document.createElement('i');icon.textContent='◇';const label=document.createElement('span');label.textContent=name;button.append(icon,label)}
+ const capability=getElementCapability(type);const badge=document.createElement('small');badge.className='element-capability';badge.textContent=capability.status==='PARTIAL'?'Részleges':'Tervezett';button.append(badge);
+ button.disabled=capability.status==='PLANNED';if(button.disabled)button.title='Később: ez az elem még nem használható.';else button.onclick=()=>insertPaletteEntry(name,type);
+ return button;
+}
+function renderPalette(filter=''){
+ const root=$('#elementList');if(!root){diagnostics.add({source:'ui',code:'SANCI-UI-E002',message:'Az Elemek lista konténere nem található.'});return}
+ root.replaceChildren();const q=normalizePaletteSearch(filter),searching=Boolean(q);let groupIndex=0,descriptionIndex=0;
+ const entries=paletteEntries(),entryByType=new Map(entries.map(entry=>[entry.type,entry]));
+ if(!searching&&paletteFavoriteTypes.length){
+  const favorites=paletteFavoriteTypes.map(type=>entryByType.get(type)).filter(entry=>entry&&getElementCapability(entry.type).status!=='PLANNED');
+  if(favorites.length){
+   const section=document.createElement('section');section.className='element-group element-favorites';section.setAttribute('aria-label','Személyes kedvencek');
+   const heading=document.createElement('div');heading.className='element-favorites-heading';const label=document.createElement('strong');label.textContent='Kedvencek';const count=document.createElement('span');count.textContent=String(favorites.length);heading.append(label,count);section.append(heading);
+   for(const entry of favorites){const row=document.createElement('div');row.className='element-favorite-row';row.append(createPaletteElementButton(entry.name,entry.type,{shortcut:true,filter}),createPaletteFavoriteToggle(entry.type,entry.name,filter));section.append(row)}
+   root.append(section);
+  }
+ }
+ for(const[group,items]of groups){
+  const matches=items.filter(([name,type])=>{const resolvedType=type||typeForElement(name);return normalizePaletteSearch(name).includes(q)&&Boolean(resolvedType)});if(!matches.length)continue;
+  const section=document.createElement('section');section.className='element-group'+(searching?'':' collapsed');const title=document.createElement('button');title.type='button';title.className='element-group-title';const groupLabel=document.createElement('span');groupLabel.textContent=group;const groupCount=document.createElement('b');groupCount.textContent=String(matches.length);title.append(groupLabel,groupCount);title.setAttribute('aria-expanded',String(searching));
+  const body=document.createElement('div');body.id='element-group-'+groupIndex++;title.setAttribute('aria-controls',body.id);
+  for(const[name,type]of matches){
+   const resolvedType=type||typeForElement(name),row=document.createElement('div');row.className='element-row';const element=createPaletteElementButton(name,resolvedType,{filter});const capability=getElementCapability(resolvedType);const favorite=createPaletteFavoriteToggle(resolvedType,name,filter);const info=document.createElement('button');info.type='button';info.className='element-info';info.textContent='i';info.title='Mi ez? '+name;info.setAttribute('aria-label','Mi ez? '+name);info.setAttribute('aria-expanded','false');
+   const help=document.createElement('div');help.className='element-description';help.id='element-description-'+descriptionIndex++;help.textContent=(ELEMENT_DESCRIPTIONS[name]||name+' elem hozzáadására szolgál.')+' Inspector: '+capability.inspector+', publikus kimenet: '+capability.public+'.';help.hidden=true;info.setAttribute('aria-controls',help.id);info.onclick=e=>{e.stopPropagation();help.hidden=!help.hidden;info.setAttribute('aria-expanded',String(!help.hidden))};row.append(element,favorite,info,help);body.append(row);
+  }
+  title.onclick=()=>{const collapsed=section.classList.toggle('collapsed');title.setAttribute('aria-expanded',String(!collapsed))};section.append(title,body);root.append(section);
+ }
+ if(!root.children.length&&searching){const empty=document.createElement('p');empty.className='element-search-empty';empty.setAttribute('role','status');empty.textContent='Nincs találat a megadott keresésre.';root.append(empty)}else if(!root.children.length)diagnostics.add({source:'ui',code:'SANCI-UI-E003',message:'Az Elemek lista üres: egyetlen érvényes elem típus sem került a palettába.'});
+}
+async function loadPaletteFavorites(){
+ const status=$('#elementPaletteStatus');
+ try{const result=await api('/api/auth/session'),user=result?.data?.user;if(result?.data?.authenticated===true&&typeof user?.id==='string'){paletteFavoritesUserId=user.id;paletteFavoriteTypes=readPaletteFavoriteTypes(user.id);if(status)status.textContent='A kedvencek ehhez a fiókhoz kötve, ebben a böngészőben mentődnek.'}else if(status)status.textContent='A kedvencek használatához jelentkezz be.'}catch{paletteFavoritesUserId=null;paletteFavoriteTypes=[];if(status)status.textContent='A kedvencek betöltése most nem érhető el.'}
+ paletteFavoritesReady=true;renderPalette($('#elementSearch')?.value||'');
+}
 function syncHierarchyActions(){const current=page();const ids=state?.selection?.ids||[];const nodes=current?ids.map(id=>getNode(current,id)).filter(Boolean):[];const sameParent=nodes.length>=2&&nodes.every(node=>node.parentId===nodes[0].parentId);const groupLocked=nodes.some(node=>node.locked||isLockedParent(current,node));const groupButton=$('#groupSelection');if(groupButton){groupButton.disabled=!sameParent||groupLocked||nodes.some(node=>node.id===current?.rootId)}const primary=current&&state?.selection?.primaryId?getNode(current,state.selection.primaryId):null;const ungroupButton=$('#ungroupSelection');if(ungroupButton)ungroupButton.disabled=!(primary?.type===NODE_TYPES.GROUP&&!primary.locked&&!isLockedParent(current,primary));const mobileGroup=$('#mobileGroup');if(mobileGroup)mobileGroup.disabled=!sameParent||groupLocked||nodes.some(node=>node.id===current?.rootId);const mobileUngroup=$('#mobileUngroup');if(mobileUngroup)mobileUngroup.disabled=!(primary?.type===NODE_TYPES.GROUP&&!primary.locked&&!isLockedParent(current,primary));for(const [id,kind] of [['moveLayerUp','up'],['moveLayerDown','down'],['indentLayer','indent'],['outdentLayer','outdent']]){const button=$('#'+id);if(button)button.disabled=ids.length!==1||!primary||!getLayerMoveAction(current,primary.id,kind)}}
 function syncMobileMultiSelectUI(){const bar=$('#mobileMultiSelectBar');if(!bar)return;bar.hidden=!mobileTouch.active;const count=$('#mobileSelectionCount');if(count)count.textContent=`${state?.selection?.ids?.length||0} elem kijelölve`;syncHierarchyActions()}
 function enterMobileMultiSelect(id){if(!state||!flushLayerRename())return;const current=page();const target=current?getNode(current,id):null;if(!target||target.id===current?.rootId)return;mobileTouch.active=true;mobileTouch.snapshot=[...(state.selection.ids||[])];mobileTouch.snapshotPrimary=state.selection.primaryId;setSelection(state,[id],id);render()}
@@ -1991,7 +2047,7 @@ document.addEventListener('DOMContentLoaded',()=>{
    activateInspectorTab(INSPECTOR_TABS[nextIndex],{focus:true});
  });
  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&mobileTouch.active){e.preventDefault();cancelMobileMultiSelect();return}if((e.ctrlKey||e.metaKey)&&['c','v'].includes(e.key.toLowerCase())&&isCanvasClipboardShortcut(e)){e.preventDefault();if(e.key.toLowerCase()==='c')copySelectedNodes();else pasteSelectedNodes();return}if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='s'){e.preventDefault();save(false)}if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();if(state&&flushLayerRename()&&commitActiveInspectorControl()&&flushRichTextDraft?.()!==false){execute(state,{type:e.shiftKey?'history.redo':'history.undo'});render()}}});
- renderPalette();loadTwitchConnection();loadPages().then(()=>window.__sanciEditorBoot?.ready()).catch(showError);
+ renderPalette();loadTwitchConnection();Promise.all([loadPages(),loadPaletteFavorites()]).then(()=>window.__sanciEditorBoot?.ready()).catch(showError);
 });
 
 loadEditorTokens();window.addEventListener('focus',()=>loadEditorTokens());

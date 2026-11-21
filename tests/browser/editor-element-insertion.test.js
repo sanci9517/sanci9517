@@ -68,6 +68,7 @@ test('palette items are inserted beside the selected item in canvas flow and sav
   const server=createServer(async(req,res)=>{
     const url=new URL(req.url,'http://localhost');
     const json=data=>{res.setHeader('content-type','application/json');res.end(JSON.stringify(data))};
+    if(url.pathname==='/api/auth/session')return json({ok:true,data:{authenticated:true,user:{id:'palette-test-user',email:'editor@example.test',displayName:'Editor',role:'admin'}}});
     if(url.pathname==='/api/admin/pages')return json({ok:true,data:url.searchParams.get('archived')==='1'?[]:[{id:pageId,slug:'test',title:'Test',content:draft,revision:version,isPublished:Boolean(published)}]});
     if(url.pathname==='/api/admin/editor'){
       if(req.method==='GET')return json({ok:true,data:{page:{id:pageId,document:draft,publishedRevisionId:published?'published':null},revisions:[{id:'revision-'+version,version}]}});
@@ -92,6 +93,7 @@ test('palette items are inserted beside the selected item in canvas flow and sav
   const errors=[];tab.on('pageerror',error=>errors.push(error.message));
   await tab.goto(`http://127.0.0.1:${server.address().port}/editor-v2/index.html`);
   await tab.locator('.node[data-node-id="'+rootId+'"] > .node-head').waitFor();
+  await tab.waitForFunction(()=>document.querySelector('#elementList .element-favorite-toggle')?.disabled===false,'palette preferences bind to the signed-in user before editing');
   const rail=tab.locator('.tool-rail');
   assert.equal(await rail.getAttribute('role'),'tablist');
   for(const [key,panel] of [['pages','leftPanelPages'],['elements','leftPanelElements'],['layers','leftPanelLayers'],['schedule','leftPanelSchedule'],['navigation','leftPanelNavigation']]){
@@ -127,6 +129,30 @@ test('palette items are inserted beside the selected item in canvas flow and sav
   assert.equal(await tab.locator('#elementList [role="status"]').textContent(),'Nincs találat a megadott keresésre.','an empty search result has a clear accessible status');
   await paletteSearch.fill('szoveg');
   assert.equal(await tab.locator('#elementList [role="status"]').count(),0,'a matching search removes the empty result status');
+  await paletteSearch.fill('divider');
+  const dividerRow=tab.locator('.element-row').filter({has:tab.locator('.element').filter({hasText:'Divider'})});
+  const dividerFavorite=dividerRow.locator('.element-favorite-toggle');
+  assert.equal(await dividerFavorite.getAttribute('aria-pressed'),'false');
+  await dividerFavorite.click();
+  const selectedDividerFavorite=tab.locator('.element-row').filter({has:tab.locator('.element').filter({hasText:'Divider'})}).locator('.element-favorite-toggle');
+  assert.equal(await selectedDividerFavorite.getAttribute('aria-pressed'),'true');
+  assert.equal(await selectedDividerFavorite.getAttribute('aria-label'),'Eltávolítás a kedvencekből: Divider');
+  await paletteSearch.fill('');
+  assert.equal(await tab.locator('.element-favorites-heading strong').textContent(),'Kedvencek');
+  assert.equal(await tab.locator('.element-favorites .element-favorite-shortcut').getAttribute('aria-label'),'Vászonra helyezés: Divider');
+  const favoriteStorage=await tab.evaluate(()=>JSON.parse(localStorage.getItem('sanci-editor-palette-favorites-v1:palette-test-user')));
+  assert.deepEqual(favoriteStorage,{version:1,userId:'palette-test-user',types:['divider']},'favorites are stored under the authenticated user and outside the site Page Model');
+  assert.equal(posts.length,0,'changing a workspace favorite does not Save or Publish site content');
+  await tab.reload();
+  await tab.locator('.node[data-node-id="'+rootId+'"] > .node-head').waitFor();
+  await tab.waitForFunction(()=>document.querySelector('#elementList .element-favorite-toggle')?.disabled===false);
+  assert.equal(await tab.locator('.element-favorites .element-favorite-shortcut').count(),1,'the signed-in user’s favorites survive Editor reload');
+  assert.match(await tab.locator('#elementPaletteStatus').textContent(),/ebben a böngészőben mentődnek/,'the UI does not imply that browser-local preferences sync across devices');
+  await tab.locator('.rail-btn[data-tab="elements"]').click();
+  await paletteSearch.fill('szoveg');
+  assert.equal(await tab.locator('.element-favorites').count(),0,'search results do not duplicate favorite shortcuts');
+  assert.equal(await tab.locator('#elementList .element').filter({hasText:'Szöveg'}).count(),1);
+  assert.equal(posts.length,0);
   await paletteSearch.fill('');
   const textGroup=tab.locator('.element-group-title').filter({hasText:'Szöveg'});
   const groupBodyId=await textGroup.getAttribute('aria-controls');
@@ -158,9 +184,11 @@ test('palette items are inserted beside the selected item in canvas flow and sav
   await first.click();
   await palette.filter({has:tab.locator('span').getByText('Link',{exact:true})}).click();
   const link=await findChild('link');const linkId=await link.getAttribute('data-node-id');
+  await tab.locator('.element-favorites .element-favorite-shortcut').filter({hasText:'Divider'}).click();
+  const divider=await findChild('divider');const dividerId=await divider.getAttribute('data-node-id');
   const canvasState=await tab.locator('.page-canvas .node[data-node-id="'+rootId+'"]').evaluate(el=>[...el.children].filter(child=>child.matches('.node')).map(child=>({id:child.dataset.nodeId,top:child.getBoundingClientRect().top,bottom:child.getBoundingClientRect().bottom})));
-  assert.deepEqual(canvasState.map(item=>item.id),[firstId,linkId,headingId],'new node should be inserted immediately after the selected canvas item');
-  assert.ok(canvasState[0].bottom<=canvasState[1].top+1&&canvasState[1].bottom<=canvasState[2].top+1,'normal-flow elements should not overlap on the canvas');
+  assert.deepEqual(canvasState.map(item=>item.id),[firstId,linkId,dividerId,headingId],'favorite shortcuts insert beside the selected canvas item without changing the other nodes’ order');
+  assert.ok(canvasState.every((item,index)=>index===0||canvasState[index-1].bottom<=item.top+1),'normal-flow elements should not overlap on the canvas');
   const assertDeviceSelection=async selected=>{
     for(const device of ['desktop','tablet','mobile']){
       const expected=String(device===selected);
@@ -187,12 +215,12 @@ test('palette items are inserted beside the selected item in canvas flow and sav
   await tab.locator('.canvas-device-btn[data-device="mobile"]').click();
   await assertDeviceSelection('mobile');
   const mobileState=await rootNode.evaluate(el=>[...el.children].filter(child=>child.matches('.node')).map(child=>({id:child.dataset.nodeId,top:child.getBoundingClientRect().top,bottom:child.getBoundingClientRect().bottom})));
-  assert.deepEqual(mobileState.map(item=>item.id),[firstId,linkId,headingId]);
-  assert.ok(mobileState[0].bottom<=mobileState[1].top+1&&mobileState[1].bottom<=mobileState[2].top+1,'normal-flow elements should not overlap in the mobile canvas');
+  assert.deepEqual(mobileState.map(item=>item.id),[firstId,linkId,dividerId,headingId]);
+  assert.ok(mobileState.every((item,index)=>index===0||mobileState[index-1].bottom<=item.top+1),'normal-flow elements should not overlap in the mobile canvas');
   await tab.locator('#save').click();
   await tab.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent?.startsWith('Mentve'));
   assert.equal(posts.at(-1)?.publish,false,'Save keeps publishing separate');
-  assert.deepEqual(draft.pages[pageId].nodes[rootId].children,[firstId,linkId,headingId]);
+  assert.deepEqual(draft.pages[pageId].nodes[rootId].children,[firstId,linkId,dividerId,headingId]);
   assert.equal(published,null);
   assert.deepEqual(errors,[]);
 });

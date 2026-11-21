@@ -2,7 +2,7 @@
   "schema": 1,
   "captured_at": "2026-11-21T13:05:00Z",
   "plan_point": "77.44.7.D / EDT-015–017 keyboard interaction regression follow-up",
-  "status": "LOCAL_CHROMIUM_PASS; TEST_FIX_PUSHED; FOLLOW_UP_EDITOR_CORE_CI_IN_PROGRESS; D_OPEN_NOT_CERTIFIED",
+  "status": "LOCAL_CHROMIUM_PASS; TEST_FIX_PUSHED; FOLLOW_UP_EDITOR_CORE_CI_PASS; D_OPEN_NOT_CERTIFIED",
   "repository": {
     "name": "sanci9517/sanci9517",
     "branch": "v2/foundation",
@@ -11,7 +11,8 @@
     "test_fix_commit": "a783078f70a457532ebb139c60f2af914ab113f1",
     "github_head_after_test_fix_push": "a783078f70a457532ebb139c60f2af914ab113f1",
     "docs_evidence_commit": "114f09adffc1c0541c276b2e866044055a3d870f",
-    "hosted_follow_up_run_head": "114f09adffc1c0541c276b2e866044055a3d870f"
+    "hosted_follow_up_run_head": "114f09adffc1c0541c276b2e866044055a3d870f",
+    "latest_evidence_follow_up_commit": "776b7c2ddb72206e3d43d513cf60be8a1b88fb65"
   },
   "finding": {
     "workflow": "Editor Core Test",
@@ -32,13 +33,14 @@
   "checks": {
     "node --test --test-concurrency=1 tests/browser/editor-content-system.test.js before test adjustment": "PASS 1/1 locally in real Chromium; this did not reproduce the hosted flake",
     "node --test --test-concurrency=1 tests/browser/editor-content-system.test.js after test adjustment": "PASS 1/1 locally in real Chromium",
-    "hosted Editor Core run 44906958324 for source 114f09adffc1c0541c276b2e866044055a3d870f": "IN_PROGRESS; manually dispatched because the earlier exact-source hosted gate failed and the owner confirmed free CI capacity",
+    "hosted Editor Core run 44906958324 for source 114f09adffc1c0541c276b2e866044055a3d870f": "PASS; completed 2026-11-21 13:33:23Z, all 19 substantive steps succeeded (typecheck, editor unit/core, D1 ledger/bootstrap, private R2, public showcase unit/browser, isolated Worker media, full Editor browser layout, WEB-013 browser, schedule/domain/design/admin); failure-only screenshot upload skipped",
     "prior hosted Editor Core run 44901529042": "FAIL; exact failure recorded above, not represented as a pass",
-    "production Worker": "unchanged by this test-only follow-up; prior runtime source 3ace1ce8 remained deployed at 100% traffic",
+    "production Worker": "unchanged by this test-only follow-up; deployment 6be712e2-2d1e-4e1f-81af-6623a471ddbc serves Worker version 4a2e0a31-7fa2-433f-96e6-c3ce41074fae at 100% traffic",
+    "production source smoke run 44901529053": "PASS for runtime source 3ace1ce8affcfe8164add92ffda4f005e2ead17e; health HTTP 200 and configured public asset hashes verified",
     "full D acceptance": "OPEN / NOT_CERTIFIED"
   },
   "limitations": [
-    "The hosted timeout was not reproduced locally; direct target-locator key dispatch is test hardening, not proof of a runtime fix. The prior failed hosted run remains failed until the follow-up run completes.",
+    "The hosted timeout was not reproduced locally; direct target-locator key dispatch is test hardening, not proof of a runtime fix. The earlier run remains a historical failure; the follow-up Editor Core run passed on the test-adjusted source SHA.",
     "This follow-up does not certify the complete Editor, the remaining Editor Core steps, or D-01 through D-07."
   ]
 }
