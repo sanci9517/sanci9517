@@ -4,7 +4,7 @@ import { DatabaseSync } from 'node:sqlite';
 import { editorPreferencesRoute } from '../src/routes/admin/editor-preferences.ts';
 import { hashSessionToken } from '../src/core/auth/session.ts';
 
-async function fixture(t) {
+async function fixture(t, { barrierConcurrentPreferenceReads = false } = {}) {
   const db = new DatabaseSync(':memory:');
   t.after(() => db.close());
   db.exec(`
@@ -17,6 +17,9 @@ async function fixture(t) {
       updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE);
   `);
   const tokens = new Map();
+  let preferenceReadCount = 0;
+  let releasePreferenceReads;
+  const preferenceReadBarrier = new Promise(resolve => { releasePreferenceReads = resolve; });
   for (const [id, role, legacyRole] of [['user-a', 'editor', 'admin'], ['user-b', 'editor', 'editor'], ['viewer', 'viewer', 'viewer']]) {
     const token = `session-${id}`;
     tokens.set(id, token);
@@ -33,7 +36,15 @@ async function fixture(t) {
         let values = [];
         return {
           bind(...args) { values = args; return this; },
-          async first() { return statement.get(...values) ?? null; },
+          async first() {
+            const row = statement.get(...values) ?? null;
+            if (barrierConcurrentPreferenceReads && sql.includes('SELECT preferences_json FROM editor_preferences') && preferenceReadCount < 2) {
+              preferenceReadCount += 1;
+              if (preferenceReadCount === 2) releasePreferenceReads();
+              await preferenceReadBarrier;
+            }
+            return row;
+          },
           async run() { return { meta: { changes: Number(statement.run(...values).changes) } }; }
         };
       }
@@ -111,6 +122,38 @@ test('account workspace settings round-trip independently from page content and 
   assert.equal(f.db.prepare('SELECT COUNT(*) AS n FROM editor_preferences').get().n, 1);
 });
 
+test('concurrent account preference writes preserve independent workspace and palette updates', async t => {
+  const f = await fixture(t, { barrierConcurrentPreferenceReads: true });
+  f.db.prepare('INSERT INTO editor_preferences(user_id, preferences_json) VALUES (?, ?)').run('user-a', JSON.stringify({
+    version: 1,
+    paletteFavoriteTypes: ['divider'],
+    workspace: {
+      version: 1,
+      appearance: { version: 2, layout: 'canvas', theme: 'graphite' },
+      dock: { leftOpen: false, rightOpen: false, leftTab: 'pages' },
+      viewport: { device: 'desktop', zoom: 1 }
+    }
+  }));
+  const workspace = {
+    version: 1,
+    appearance: { theme: 'aurora', layout: 'canvas' },
+    dock: { leftOpen: true, leftTab: 'layers' },
+    viewport: { device: 'desktop', zoom: 1 }
+  };
+  const [workspaceResponse, favoritesResponse] = await Promise.all([
+    f.call('PUT', 'user-a', { workspace }),
+    f.call('PUT', 'user-a', { paletteFavoriteTypes: ['heading', 'text'] })
+  ]);
+  assert.equal(workspaceResponse.status, 200);
+  assert.equal(favoritesResponse.status, 200);
+  const stored = (await (await f.call('GET', 'user-a')).json()).data;
+  assert.deepEqual(stored.workspace.appearance, {
+    layout: 'canvas', theme: 'aurora', density: 'comfortable', accent: '#5b8cff', dockOrder: 'left-canvas-right',
+    panelMode: 'separate', panelSide: 'right', floatingPosition: { left: { x: 0, y: 0 }, right: { x: 0, y: 0 } }
+  });
+  assert.deepEqual(stored.paletteFavoriteTypes, ['heading', 'text']);
+});
+
 test('workspace account preference payload rejects unsafe or malformed state without mutation', async t => {
   const f = await fixture(t);
   const valid = { version: 1, appearance: {}, dock: {}, viewport: {} };
@@ -147,6 +190,15 @@ test('preference route denies anonymous and viewer access and returns safe defau
   assert.equal((await f.call('PUT', 'viewer', { paletteFavoriteTypes: ['heading'] })).status, 403);
   f.db.prepare('INSERT INTO editor_preferences(user_id,preferences_json) VALUES (?,?)').run('user-a', '{bad json');
   assert.deepEqual((await (await f.call('GET')).json()).data.paletteFavoriteTypes, []);
+  const repaired = await f.call('PUT', 'user-a', { paletteFavoriteTypes: ['heading'] });
+  assert.equal(repaired.status, 200, 'a valid preference update repairs malformed legacy JSON safely');
+  assert.deepEqual((await (await f.call('GET')).json()).data, {
+    version: 1,
+    paletteFavoriteTypes: ['heading'],
+    workspace: null,
+    updatedAt: f.db.prepare('SELECT updated_at FROM editor_preferences WHERE user_id = ?').get('user-a').updated_at
+  });
+  assert.doesNotThrow(() => JSON.parse(f.db.prepare('SELECT preferences_json FROM editor_preferences WHERE user_id = ?').get('user-a').preferences_json));
   assert.equal((await f.call('DELETE')).status, 405);
 });
 

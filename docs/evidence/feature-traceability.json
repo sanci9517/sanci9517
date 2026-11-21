@@ -80,7 +80,7 @@
     "src/core/twitch-oauth.ts": "da36e187e6ec0e8ffa6a9e43aa3e0a91709323ea0fe717009d82c304c17605fc",
     "src/core/twitch-site-ownership.ts": "096f63a1cf168c4dc9ad0be019987ddd077cb64ee86f3a364a68cf31f6b433d2",
     "src/index.ts": "c04f8c4c13f472e918ef8a12d5ed24e0b3ff1ac8aa286ba96c8a47c943931ce3",
-    "src/routes/admin/editor-preferences.ts": "14ef7243de6deda025d5e892370f41c6fdb3c4563022cc6dde7ee8c0fdbee6a9",
+    "src/routes/admin/editor-preferences.ts": "7c041759ecdd023e343e8c1ee35fc410e6e1a5db2f7e5fdb168c410cd43b2db3",
     "src/routes/admin/editor.ts": "36517ffd7a905b0410879804b34a0d301eb1719fcbec1f2b381011449fd27022",
     "src/routes/admin/link-report.ts": "6e46a65b6996e8c0b595b64c9dc55463f6dc2e31ad55fc90e2f5116113fcfcbe",
     "src/routes/admin/media.ts": "d582b3abfbd32ec53201bab4c98c88200d617d7def3da9f4d1c4341da0387dc2",
@@ -101,7 +101,7 @@
     "tests/browser/editor-element-insertion.test.js": "f5e6fb0da397ae25c2ffae037e361ac2e2822616418d92fd067f629dd6aac4be",
     "tests/browser/editor-template-start.test.js": "4924f607f90163e38053c117a37f30b50ee78b492cf31abe963f2b4669c5ecf0",
     "tests/editor-palette-preferences.test.js": "0cb5936206853a59ebaaebd681dc28d8c959049eadb89d5c15844250aaedbf4e",
-    "tests/editor-preferences-route.test.js": "6e1d5bebafa6b0daf2c5d67151897d16db22235bf964fabb78fac77f6852ac56",
+    "tests/editor-preferences-route.test.js": "d271660c1fdea96487cdc97ce3545d1b928a01b45d2d6743fe72ee5ec5457d34",
     "tests/f0-3-route-integration.test.js": "c6f9dd7b1816ca7663b796daa485ae94f413c9746c5d5590d6bc30fc81d9fff6",
     "tests/media-api.test.js": "7d32f13eee5cdb5ea3da0e61a47bcf0ce49ad8750d016c0864168e025887097b"
   },

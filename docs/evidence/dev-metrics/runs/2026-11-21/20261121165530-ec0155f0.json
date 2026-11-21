@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "id": "20261121165530-ec0155f0",
+  "task": "EDT-044",
+  "trigger": "manual",
+  "started_at": "2026-11-21T16:55:30.157Z",
+  "finished_at": "2026-11-21T17:08:46.422Z",
+  "wall_seconds": 796,
+  "paused_seconds": 0,
+  "measured_seconds": 796,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "EDT-044 concurrent independent account preference writes now merge atomically; local regression suite, typecheck, plan and safety gates pass. Exact-SHA remote CI and production deployment remain pending.",
+  "evidence": [
+    "src/routes/admin/editor-preferences.ts",
+    "tests/editor-preferences-route.test.js",
+    "docs/evidence/editor-edt044-atomic-preference-merge-2026-11-21.json"
+  ],
+  "checks": "npm run test:editor (24/24 + 4/4); npm run typecheck -- --pretty false; plan-contract 15/15; canonical/traceability 396/396; migration gate; git diff --check; Wrangler dry-run 199 assets; D1 SELECT-only preflight",
+  "started_revision": "ca997e5bc0520f9de451a3085efbfbd11c7baea8",
+  "finished_revision": "ca997e5bc0520f9de451a3085efbfbd11c7baea8",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

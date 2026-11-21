@@ -254,28 +254,36 @@ export async function editorPreferencesRoute(request: Request, env: Env, siteId 
   if ("workspace" in record && !validWorkspaceInput(record.workspace)) return error("INVALID_PREFERENCES", 400, "A munkaterület beállítása érvénytelen.");
 
   try {
-    const current = await env.DB.prepare(
-      "SELECT preferences_json FROM editor_preferences WHERE user_id = ? LIMIT 1"
-    ).bind(user.id).first<{ preferences_json: string }>();
-    let existing: Record<string, unknown> = {};
-    try {
-      const parsed: unknown = current ? JSON.parse(current.preferences_json) as unknown : null;
-      if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) existing = parsed as Record<string, unknown>;
-    } catch { /* replace malformed legacy JSON with the supported versioned record */ }
-    const preferences = normalizeStored(existing);
-    if (Array.isArray(record.paletteFavoriteTypes)) preferences.paletteFavoriteTypes = normalizeFavoriteTypes(record.paletteFavoriteTypes);
-    if ("workspace" in record) preferences.workspace = normalizeWorkspace(record.workspace);
-    const serialized = JSON.stringify(preferences);
-    if (new TextEncoder().encode(serialized).byteLength > MAX_BODY_BYTES) return error("PREFERENCES_TOO_LARGE", 413);
+    // Keep the upsert atomic at the top-level preference-field boundary. A
+    // read/merge/write sequence can lose a concurrent workspace update when
+    // another device saves palette favorites (or vice versa) between the
+    // SELECT and UPSERT. The patch contains only fields in this request.
+    const patch: Partial<StoredPreferences> = { version: 1 };
+    if (Array.isArray(record.paletteFavoriteTypes)) patch.paletteFavoriteTypes = normalizeFavoriteTypes(record.paletteFavoriteTypes);
+    if ("workspace" in record) patch.workspace = normalizeWorkspace(record.workspace);
+    const serializedPatch = JSON.stringify(patch);
+    const serializedDefaults = JSON.stringify(defaults());
+    if (new TextEncoder().encode(serializedPatch).byteLength > MAX_BODY_BYTES) return error("PREFERENCES_TOO_LARGE", 413);
     await env.DB.prepare(`
       INSERT INTO editor_preferences (user_id, preferences_json, updated_at)
-      VALUES (?, ?, CURRENT_TIMESTAMP)
+      VALUES (?, json_patch(?, ?), CURRENT_TIMESTAMP)
       ON CONFLICT(user_id) DO UPDATE SET
-        preferences_json = excluded.preferences_json,
+        preferences_json = json_patch(
+          CASE
+            WHEN json_valid(editor_preferences.preferences_json)
+              AND json_extract(editor_preferences.preferences_json, '$.version') = 1
+            THEN editor_preferences.preferences_json
+            ELSE ?
+          END,
+          ?
+        ),
         updated_at = CURRENT_TIMESTAMP
-    `).bind(user.id, serialized).run();
-    const row = await env.DB.prepare("SELECT updated_at FROM editor_preferences WHERE user_id = ? LIMIT 1")
-      .bind(user.id).first<{ updated_at: string }>();
+    `).bind(user.id, serializedDefaults, serializedPatch, serializedDefaults, serializedPatch).run();
+    const row = await env.DB.prepare("SELECT preferences_json, updated_at FROM editor_preferences WHERE user_id = ? LIMIT 1")
+      .bind(user.id).first<PreferenceRow>();
+    let saved: unknown = null;
+    try { saved = row ? JSON.parse(row.preferences_json) as unknown : null; } catch { /* fail closed to safe defaults */ }
+    const preferences = normalizeStored(saved);
     return ok({ ...preferences, updatedAt: row?.updated_at ?? null });
   } catch {
     return error("PREFERENCES_UNAVAILABLE", 503, "A szerkesztői beállításokat most nem lehet menteni.");

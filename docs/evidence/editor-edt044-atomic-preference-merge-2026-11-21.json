@@ -1,0 +1,71 @@
+{
+  "date_utc": "2026-11-21",
+  "plan_point": "77.44.7.D / EDT-044 per-user editor workspace preferences",
+  "change": "Replace the preference route read-merge-upsert sequence with an atomic, allowlisted SQLite JSON Merge Patch UPSERT so concurrent writes to independent account-preference fields are preserved; re-read and normalize the stored result. Malformed or unsupported legacy JSON falls back to safe defaults.",
+  "race_reproduction": {
+    "scenario": "Two authenticated account preference PUT requests are synchronized after both read the same old row; workspace and palette favorites are updated concurrently.",
+    "before_fix": "FAIL: the last full-row upsert lost the other request's independent field.",
+    "after_fix": "PASS: both workspace and palette favorite changes remain after the atomic JSON patch upsert."
+  },
+  "checks": {
+    "npm run test:editor:preferences": "PASS 7/7",
+    "npm run test:editor": "PASS 24/24 Node test files + 4/4 runner/manifest checks",
+    "npm run typecheck -- --pretty false": "PASS",
+    "python3 tests/plan-contract.test.py": "PASS 15/15",
+    "python3 scripts/check-canonical-plan.py": "PASS 13 master files / 396 mappings",
+    "python3 scripts/build-feature-traceability.py --check": "PASS 396/396",
+    "python3 scripts/audit-active-plan-point.py": "PASS bookkeeping only; D OPEN / NOT_CERTIFIED; 148 PARTIAL_SOURCE / 248 UNVERIFIED",
+    "node scripts/web013-migration-safety-gate.mjs": "PASS",
+    "git diff --check": "PASS",
+    "wrangler 4.130.0 deploy --dry-run": "PASS; 199 assets read; 426.68 KiB / 108.23 KiB gzip; sandbox log-directory warning, command exit 0"
+  },
+  "production_preflight": {
+    "method": "Cloudflare D1 Query API; one SELECT statement only",
+    "sql": "SELECT (SELECT COUNT(*) FROM d1_migrations) AS migration_markers, (SELECT name FROM d1_migrations ORDER BY id DESC LIMIT 1) AS latest_migration, (SELECT COUNT(*) FROM editor_preferences) AS preference_rows",
+    "migration_markers": 36,
+    "latest_migration": "0030_media_library_organization.sql",
+    "preference_rows": 0,
+    "rows_read": 37,
+    "rows_written": 0,
+    "changes": 0,
+    "changed_db": false,
+    "size_after": 3825664
+  },
+  "release": {
+    "commit_sha": "PENDING",
+    "branch": "v2/foundation",
+    "push": "PENDING",
+    "exact_sha_editor_core_ci": "PENDING",
+    "exact_sha_production_source_smoke": "PENDING",
+    "cloudflare_deployment": "PENDING",
+    "production_health": "PENDING",
+    "public_asset_hashes": "PENDING"
+  },
+  "previous_exact_source_editor_core_run": {
+    "run_id": 44926680406,
+    "commit_sha": "ca997e5bc0520f9de451a3085efbfbd11c7baea8",
+    "observed": "in_progress at editor browser layout; not a pass for this change"
+  },
+  "guardrails": {
+    "same_workspace_field_concurrent_updates": "LAST_WRITE_WINS; not claimed as conflict resolution",
+    "page_model_changed": false,
+    "save_publish_separate": true,
+    "production_migration_or_data_write": false,
+    "r2_write_or_delete": false,
+    "new_dependencies": false,
+    "new_paid_cost_ft": 0,
+    "full_D_point": "OPEN / NOT_CERTIFIED",
+    "manual_physical_acceptance": "DEFERRED until complete Visual Editor scope"
+  },
+  "source_sha256": {
+    "src/routes/admin/editor-preferences.ts": "7c041759ecdd023e343e8c1ee35fc410e6e1a5db2f7e5fdb168c410cd43b2db3",
+    "tests/editor-preferences-route.test.js": "d271660c1fdea96487cdc97ce3545d1b928a01b45d2d6743fe72ee5ec5457d34",
+    "docs/evidence/feature-traceability.json": "51ca804b48d567f22e5ae90a9210faaa96fc3b3afcbd0b23c1b7d6c58ae36a13",
+    "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md": "09f1e4e1fc6b4c81af979e21a20405176bdeeda1adf158d8c4cb25619aef218d"
+  },
+  "canonical_plan_after": {
+    "bytes": 1788043,
+    "sha256": "09f1e4e1fc6b4c81af979e21a20405176bdeeda1adf158d8c4cb25619aef218d",
+    "git_blob": "0128cf35cfee18daa0062e37448800184c377b33"
+  }
+}
