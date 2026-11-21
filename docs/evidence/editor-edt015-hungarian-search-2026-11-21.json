@@ -1,0 +1,94 @@
+{
+  "schema": 1,
+  "captured_at": "2026-11-21T11:02:00Z",
+  "plan_point": "77.44.7.D / EDT-015 element palette search",
+  "status": "RUNTIME_DEPLOYED_EXACT_SHA_AND_PUBLIC_HASH_PASS; FULL_D_OPEN_NOT_CERTIFIED; EDITOR_CORE_CI_IN_PROGRESS",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "base_commit": "ddb8ed5f532efcff8cafca06ea7abd6ac1ac4a68",
+    "push": "PASS; normal fast-forward to origin/v2/foundation",
+    "commit": "0ffd1c0de80bb97fe9f5dc2d7e0ac3498d762254",
+    "github_head_at_last_read": "0ffd1c0de80bb97fe9f5dc2d7e0ac3498d762254"
+  },
+  "implementation": {
+    "files": [
+      "public/editor-v2/app.js",
+      "tests/browser/editor-element-insertion.test.js",
+      "docs/evidence/feature-traceability.json",
+      "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md"
+    ],
+    "behavior": "Palette search applies Unicode NFD diacritic folding so an unaccented Hungarian query finds accented item labels. Matching groups open during search; clearing the query restores collapsed browsing groups.",
+    "save_publish_separate": true
+  },
+  "checks": {
+    "node --test --test-concurrency=1 tests/browser/editor-element-insertion.test.js": "PASS 8/8 real Chromium tests",
+    "npm run test:editor": "PASS 22/22 test files plus 4/4 test-runner tests",
+    "npm run typecheck": "PASS",
+    "node scripts/web013-migration-safety-gate.mjs": "PASS; no migration applied",
+    "python3 scripts/check-canonical-plan.py": "PASS; one 13-part master and 396 mappings, acceptance NOT CERTIFIED",
+    "python3 tests/plan-contract.test.py": "PASS 15/15",
+    "python3 scripts/build-feature-traceability.py --check": "PASS 396/396",
+    "python3 scripts/audit-active-plan-point.py": "PASS for bookkeeping only; D OPEN / NOT_CERTIFIED; 148 PARTIAL_SOURCE / 248 UNVERIFIED",
+    "git diff --check": "PASS",
+    "GitHub Actions run 44896906792 Canonical Creator Platform Plan": "PASS for exact runtime commit",
+    "GitHub Actions run 44896906805 Canonical Plan Active Point Audit": "PASS for bookkeeping only; D remains OPEN / NOT_CERTIFIED",
+    "GitHub Actions run 44896906822 F0 baseline checks": "PASS for exact runtime commit",
+    "GitHub Actions run 44896906803 Twitch Integration Check": "PASS for exact runtime commit",
+    "GitHub Actions run 44896906835 Production Worker source smoke": "PASS for exact runtime commit; production health and asset source checks",
+    "GitHub Actions run 44896906807 Editor Core Test": "IN_PROGRESS at 2026-11-21T11:02:00Z; no PASS asserted"
+  },
+  "read_only_d1_preflight": {
+    "account_id": "64bbd6a12ac732ed2cac4ca25d8bfa7e",
+    "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
+    "api": "Cloudflare D1 query API",
+    "statements": [
+      "SELECT name FROM d1_migrations ORDER BY id DESC LIMIT 1",
+      "SELECT name FROM sqlite_master WHERE type='table' AND name LIKE 'media_%' ORDER BY name",
+      "SELECT COUNT(*) AS migration_markers FROM d1_migrations"
+    ],
+    "latest_marker": "0030_media_library_organization.sql",
+    "migration_markers": 36,
+    "media_tables_present": [
+      "media_asset_tags",
+      "media_collection_assets",
+      "media_collections",
+      "media_folders",
+      "media_retention_requests",
+      "media_tags"
+    ],
+    "rows_written": 0,
+    "changes": 0,
+    "changed_db": false,
+    "application_data_read": false
+  },
+  "wrangler_dry_run": {
+    "version": "4.130.0",
+    "assets": 198,
+    "total_upload": "411.30 KiB",
+    "gzip": "104.50 KiB",
+    "deployed": false
+  },
+  "production_release": {
+    "status": "PASS_EXACT_SOURCE_AND_HEALTH",
+    "commit_sha": "0ffd1c0de80bb97fe9f5dc2d7e0ac3498d762254",
+    "deployment_id": "fbe383ac-11da-429a-97c3-2bc97fcab5b9",
+    "version_id": "95ff96d6-91d7-449e-87cc-6170889b9dac",
+    "traffic_percent": 100,
+    "deployed_with": "npm run deploy:safe after normal FF push; migration safety gate passed; no D1 migration applied",
+    "worker_source_smoke_run": "44896906835 completed/success for exact commit",
+    "direct_health": "GET /api/health returned HTTP 200 and {\"ok\":true,\"service\":\"sanci9517-streamer-brand\",\"version\":\"2.0.0\",\"server\":\"cloudflare-worker\"}",
+    "asset_hash": {
+      "path": "/editor-v2/app.js",
+      "expected_sha256": "a55b5507378b5b06a3ad2be15f2d681bc0f7098539f06d9d5b40bcbe5935cbbe",
+      "deployed_sha256": "a55b5507378b5b06a3ad2be15f2d681bc0f7098539f06d9d5b40bcbe5935cbbe",
+      "match": true
+    }
+  },
+  "limitations": [
+    "This is one EDT-015 interaction regression, not completion of EDT-015 feature scope or D-01 through D-07.",
+    "Full D functional acceptance remains OPEN / NOT_CERTIFIED; Editor Core hosted CI was still running at the last read.",
+    "No production migration, data mutation, or R2 operation performed.",
+    "No new paid service or cost."
+  ]
+}

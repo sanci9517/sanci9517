@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261121104849-3d1904ac",
+  "task": "WEB-011",
+  "trigger": "manual",
+  "started_at": "2026-11-21T10:48:49.452Z",
+  "finished_at": "2026-11-21T11:03:46.598Z",
+  "wall_seconds": 897,
+  "paused_seconds": 0,
+  "measured_seconds": 897,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "EDT-015 Hungarian palette search shipped and verified exact-SHA; full D remains open and Editor Core CI in progress at last read.",
+  "evidence": [
+    "docs/evidence/editor-edt015-hungarian-search-2026-11-21.json"
+  ],
+  "checks": "Chromium 8/8; Editor 22/22+4 runner; typecheck; canonical 13/396; plan 15/15; migration safety; SELECT-only D1; Wrangler dry-run; production smoke; 100% traffic; health/hash PASS.",
+  "started_revision": "ddb8ed5f532efcff8cafca06ea7abd6ac1ac4a68",
+  "finished_revision": "0ffd1c0de80bb97fe9f5dc2d7e0ac3498d762254",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
