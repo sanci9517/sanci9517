@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261121185707-626b8e93",
+  "task": "77.44.7.D",
+  "trigger": "scheduled",
+  "started_at": "2026-11-21T18:57:07.042Z",
+  "finished_at": "2026-11-21T19:10:19.391Z",
+  "wall_seconds": 792,
+  "paused_seconds": 0,
+  "measured_seconds": 792,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "D-06 mounted media picker model-sync browser regression and regenerated stale traceability; D remains open.",
+  "evidence": [
+    "docs/evidence/editor-d06-media-picker-model-sync-2026-11-21.json",
+    "docs/evidence/feature-traceability.json"
+  ],
+  "checks": "Chromium 1/1; editor 24+4; media 5; typecheck; plan-contract 15; canonical 13/396; traceability 396; migration gate; audit D OPEN",
+  "started_revision": "a57fda99247627fe89053b2e241abac4f041bf03",
+  "finished_revision": "a57fda99247627fe89053b2e241abac4f041bf03",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

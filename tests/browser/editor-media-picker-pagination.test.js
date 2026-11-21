@@ -237,6 +237,29 @@ test('Inspector Media picker reaches older images and keeps filtered pages disti
       'an active audio replaces the stale audio without retaining its warning');
     assert.equal(await audioStale.getByText(unavailableMessage,{exact:true}).count(),0,
       'the stale unavailable message is cleared after audio recovery');
+    await page.evaluate(async({firstId,secondId})=>{
+      const {mediaAssetPicker,setMediaAssetPickerSelection}=await import('/editor-v2/ui/element-content-controls.js');
+      window.__externalSelectionCalls=[];
+      const picker=mediaAssetPicker(firstId,id=>{window.__externalSelectionCalls.push(id);return true});
+      document.getElementById('fixture').append(picker);
+      window.__syncMediaSelection=id=>setMediaAssetPickerSelection(picker,id);
+      window.__mediaSelectionIds={firstId,secondId};
+    },{firstId:id(119),secondId:id(118)});
+    const synchronizedPicker=page.locator('.editor-media-picker').nth(6);
+    await synchronizedPicker.getByRole('button',{name:'Médiatár megnyitása'}).click();
+    await page.waitForFunction(()=>document.querySelectorAll('.editor-media-picker')[6]?.querySelector('[role="region"]')?.getAttribute('aria-busy')==='false');
+    await page.evaluate(()=>window.__syncMediaSelection(window.__mediaSelectionIds.secondId));
+    assert.equal(await synchronizedPicker.locator('.editor-media-current').isHidden(),true,
+      'external Page Model changes close the picker after model synchronization');
+    assert.equal(await synchronizedPicker.locator('.editor-media-selected').getAttribute('src'),
+      '/api/admin/media?id='+id(118),'the mounted preview follows the current Page Model asset');
+    assert.deepEqual(await page.evaluate(()=>window.__externalSelectionCalls),[],
+      'external Page Model synchronization updates the view without emitting an authoring command');
+    await page.evaluate(()=>window.__syncMediaSelection(''));
+    assert.equal(await synchronizedPicker.locator('.editor-media-selected').count(),0,
+      'external Page Model clearing removes the stale selection preview');
+    assert.deepEqual(await page.evaluate(()=>window.__externalSelectionCalls),[],
+      'external clearing remains a view update and never emits a media-selection callback');
     assert.deepEqual(errors,[],`no uncaught picker error at ${width}px`);
     await page.close();
   }

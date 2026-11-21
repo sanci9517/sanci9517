@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "kind": "editor-acceptance-slice",
+  "recorded_at_utc": "2026-11-21T19:08:00Z",
+  "plan_point": "77.44.7.D / D-06 — mounted media picker synchronization with external Page Model state",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "github_head_at_block_start": "a57fda99247627fe89053b2e241abac4f041bf03",
+    "test_base_blob": "09618ea11f9fd9047980fc2a4ddd63615a400f48",
+    "measured_session": "20261121185707-626b8e93",
+    "measured_seconds": 792
+  },
+  "gap": "The media picker already exposed a selection-view synchronization hook used by mounted Inspector subscriptions, but the real browser picker lifecycle did not assert that an external model update refreshes and closes the mounted view without emitting another user-selection callback.",
+  "change": {
+    "runtime": false,
+    "files": [
+      "tests/browser/editor-media-picker-pagination.test.js",
+      "docs/evidence/editor-d06-media-picker-model-sync-2026-11-21.json",
+      "docs/evidence/feature-traceability.json",
+      "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md"
+    ],
+    "behavior": [
+      "In the real Chromium media-picker fixture at mobile and desktop widths, an external Page Model selection update closes the open picker and changes its selected-image preview.",
+      "Clearing the external Page Model selection removes the stale selected preview.",
+      "Neither synchronization nor clearing emits the picker onSelect callback, keeping model-to-view synchronization separate from user authoring commands."
+    ],
+    "scope_note": "The browser test invokes the exported synchronization hook directly; it validates the mounted-view contract used by Inspector subscriptions, not a full end-to-end Undo/Redo gesture or a Save/Publish network lifecycle.",
+    "production_data_used": false,
+    "production_d1_write_or_migration": false,
+    "production_r2_operation": false,
+    "dependencies_added": []
+  },
+  "checks": {
+    "real_chromium_browser": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-media-picker-pagination.test.js",
+      "result": "PASS — 1/1 real Chromium browser test; mobile and desktop scenarios included.",
+      "diagnostic": "An initial rerun without the sandbox loopback allowance failed before assertions with an uninformative test-loader failure. Rerunning the same command with local-network permission passed; no external service was contacted."
+    },
+    "editor_unit_tests": "PASS — npm run test:editor: 24/24 Node test files and 4/4 runner/manifest contract tests.",
+    "media_api_tests": "PASS — npm run test:media: 5/5 files.",
+    "typecheck": "PASS — npm run typecheck -- --pretty false.",
+    "plan_contract": "PASS — tests/plan-contract.test.py: 15/15.",
+    "canonical_master": "PASS — scripts/check-canonical-plan.py: 13 master files and 396 source mappings; functional acceptance not certified.",
+    "feature_traceability": "PASS — build-feature-traceability.py --check: 396 mappings current.",
+    "active_point_audit": "PASS for bookkeeping only — 77.44.7.D remains OPEN / NOT_CERTIFIED; 148 PARTIAL_SOURCE / 248 UNVERIFIED.",
+    "migration_safety": "PASS — npm run test:web013:migration-gate; no migration executed.",
+    "syntax_and_diff": "PASS — node --check tests/browser/editor-media-picker-pagination.test.js and git diff --check.",
+    "hosted_ci": "NOT RUN — test/evidence/plan-only follow-up; no workflow dispatch or quota use."
+  },
+  "traceability_repair": {
+    "finding": "The checked-in feature crosswalk fingerprints were stale for several already committed source files, including public/editor-v2/app.js; the file at HEAD matched its current local bytes.",
+    "action": "Regenerated docs/evidence/feature-traceability.json from the reviewed source map and current repository files.",
+    "acceptance_effect": "None — source fingerprints do not establish feature completeness or acceptance."
+  },
+  "production_state": {
+    "read_only_deployments_api": "GET /accounts/64bbd6a12ac732ed2cac4ca25d8bfa7e/workers/scripts/sanci9517-streamer-brand/deployments",
+    "deployment_id": "44007b29-952e-4788-851e-26378a0040c9",
+    "worker_version": "2ee694b2-6a3a-472b-9d02-28e821269619",
+    "traffic_percent": 100,
+    "runtime_source_changed": false,
+    "health_check": "NOT RUN — no runtime source change.",
+    "public_asset_hashes": "UNCHANGED — no public asset was modified.",
+    "new_cost_huf": 0
+  },
+  "limitations": [
+    "This is one automated D-06 mounted media-picker state-synchronization slice; it does not close the complete media matrix, D-01–D-07, or 77.44.7.D.",
+    "This test does not directly perform an Undo or Redo gesture; it verifies the external model-to-view synchronization hook contract.",
+    "Full manual and physical Editor acceptance remains deferred until the planned Editor scope is complete.",
+    "Save and Publish remain separate."
+  ]
+}
