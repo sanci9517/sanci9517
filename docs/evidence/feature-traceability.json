@@ -40,7 +40,7 @@
     "public/editor-v2/editor-refresh.css": "531fa444924b34a63eda59edc23e265da07a33e2e58464ee669ff7c4b7823318",
     "public/editor-v2/editor-templates.css": "cfe18fe3ee13f25778c35df8be72d94d574059b5e3e869af8476083cbab3d660",
     "public/editor-v2/editor.css": "e9fe8c9c96c60a80864e0dc78d4af5a0d8e33cec0d4fa2e8c2c099efbd914cb7",
-    "public/editor-v2/index.html": "db1578a54778251677e0dcf4d4d6f79fe218eabbdb3844d49b03d4ab292e8566",
+    "public/editor-v2/index.html": "65a188b252d8fc53985baa2d539b3f10ae14686a02aa787ca5c9c652a60e04c2",
     "public/editor-v2/tests/diagnostics.test.js": "31df07d172bfc61973f0932b447f7004ba09ef004fea97efceeccbdc10a455c5",
     "public/editor-v2/tests/editor-templates.test.js": "4a16d9072f7cabead544ebf96302d174b147e28a333f8b1946c94e7bc8d0328a",
     "public/editor-v2/ui/action-catalog.js": "0129625060fdca606e7cce0fa60434e00bb83967eede4eec5922ca3e6f2beea0",
@@ -1696,6 +1696,7 @@
         "tests/editor-multi-validation.test.js",
         "tests/editor-palette-capability.test.js",
         "tests/editor-palette-preferences.test.js",
+        "tests/editor-public-asset-cache-bust.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/editor-workspace-appearance.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -1844,6 +1845,7 @@
         "tests/editor-multi-validation.test.js",
         "tests/editor-palette-capability.test.js",
         "tests/editor-palette-preferences.test.js",
+        "tests/editor-public-asset-cache-bust.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/editor-workspace-appearance.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -1992,6 +1994,7 @@
         "tests/editor-multi-validation.test.js",
         "tests/editor-palette-capability.test.js",
         "tests/editor-palette-preferences.test.js",
+        "tests/editor-public-asset-cache-bust.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/editor-workspace-appearance.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -2140,6 +2143,7 @@
         "tests/editor-multi-validation.test.js",
         "tests/editor-palette-capability.test.js",
         "tests/editor-palette-preferences.test.js",
+        "tests/editor-public-asset-cache-bust.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/editor-workspace-appearance.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -2288,6 +2292,7 @@
         "tests/editor-multi-validation.test.js",
         "tests/editor-palette-capability.test.js",
         "tests/editor-palette-preferences.test.js",
+        "tests/editor-public-asset-cache-bust.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/editor-workspace-appearance.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -2436,6 +2441,7 @@
         "tests/editor-multi-validation.test.js",
         "tests/editor-palette-capability.test.js",
         "tests/editor-palette-preferences.test.js",
+        "tests/editor-public-asset-cache-bust.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/editor-workspace-appearance.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -2584,6 +2590,7 @@
         "tests/editor-multi-validation.test.js",
         "tests/editor-palette-capability.test.js",
         "tests/editor-palette-preferences.test.js",
+        "tests/editor-public-asset-cache-bust.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/editor-workspace-appearance.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -2732,6 +2739,7 @@
         "tests/editor-multi-validation.test.js",
         "tests/editor-palette-capability.test.js",
         "tests/editor-palette-preferences.test.js",
+        "tests/editor-public-asset-cache-bust.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/editor-workspace-appearance.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -2880,6 +2888,7 @@
         "tests/editor-multi-validation.test.js",
         "tests/editor-palette-capability.test.js",
         "tests/editor-palette-preferences.test.js",
+        "tests/editor-public-asset-cache-bust.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/editor-workspace-appearance.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -3028,6 +3037,7 @@
         "tests/editor-multi-validation.test.js",
         "tests/editor-palette-capability.test.js",
         "tests/editor-palette-preferences.test.js",
+        "tests/editor-public-asset-cache-bust.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/editor-workspace-appearance.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -3176,6 +3186,7 @@
         "tests/editor-multi-validation.test.js",
         "tests/editor-palette-capability.test.js",
         "tests/editor-palette-preferences.test.js",
+        "tests/editor-public-asset-cache-bust.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/editor-workspace-appearance.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -3324,6 +3335,7 @@
         "tests/editor-multi-validation.test.js",
         "tests/editor-palette-capability.test.js",
         "tests/editor-palette-preferences.test.js",
+        "tests/editor-public-asset-cache-bust.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/editor-workspace-appearance.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -3472,6 +3484,7 @@
         "tests/editor-multi-validation.test.js",
         "tests/editor-palette-capability.test.js",
         "tests/editor-palette-preferences.test.js",
+        "tests/editor-public-asset-cache-bust.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/editor-workspace-appearance.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -3620,6 +3633,7 @@
         "tests/editor-multi-validation.test.js",
         "tests/editor-palette-capability.test.js",
         "tests/editor-palette-preferences.test.js",
+        "tests/editor-public-asset-cache-bust.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/editor-workspace-appearance.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -3751,6 +3765,7 @@
         "tests/editor-multi-validation.test.js",
         "tests/editor-palette-capability.test.js",
         "tests/editor-palette-preferences.test.js",
+        "tests/editor-public-asset-cache-bust.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/editor-workspace-appearance.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -3899,6 +3914,7 @@
         "tests/editor-multi-validation.test.js",
         "tests/editor-palette-capability.test.js",
         "tests/editor-palette-preferences.test.js",
+        "tests/editor-public-asset-cache-bust.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/editor-workspace-appearance.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -4047,6 +4063,7 @@
         "tests/editor-multi-validation.test.js",
         "tests/editor-palette-capability.test.js",
         "tests/editor-palette-preferences.test.js",
+        "tests/editor-public-asset-cache-bust.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/editor-workspace-appearance.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -4195,6 +4212,7 @@
         "tests/editor-multi-validation.test.js",
         "tests/editor-palette-capability.test.js",
         "tests/editor-palette-preferences.test.js",
+        "tests/editor-public-asset-cache-bust.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/editor-workspace-appearance.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -4343,6 +4361,7 @@
         "tests/editor-multi-validation.test.js",
         "tests/editor-palette-capability.test.js",
         "tests/editor-palette-preferences.test.js",
+        "tests/editor-public-asset-cache-bust.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/editor-workspace-appearance.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -4491,6 +4510,7 @@
         "tests/editor-multi-validation.test.js",
         "tests/editor-palette-capability.test.js",
         "tests/editor-palette-preferences.test.js",
+        "tests/editor-public-asset-cache-bust.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/editor-workspace-appearance.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -4620,6 +4640,7 @@
         "tests/editor-multi-validation.test.js",
         "tests/editor-palette-capability.test.js",
         "tests/editor-palette-preferences.test.js",
+        "tests/editor-public-asset-cache-bust.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/editor-workspace-appearance.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -4751,6 +4772,7 @@
         "tests/editor-multi-validation.test.js",
         "tests/editor-palette-capability.test.js",
         "tests/editor-palette-preferences.test.js",
+        "tests/editor-public-asset-cache-bust.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/editor-workspace-appearance.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -4899,6 +4921,7 @@
         "tests/editor-multi-validation.test.js",
         "tests/editor-palette-capability.test.js",
         "tests/editor-palette-preferences.test.js",
+        "tests/editor-public-asset-cache-bust.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/editor-workspace-appearance.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -5028,6 +5051,7 @@
         "tests/editor-multi-validation.test.js",
         "tests/editor-palette-capability.test.js",
         "tests/editor-palette-preferences.test.js",
+        "tests/editor-public-asset-cache-bust.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/editor-workspace-appearance.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -5176,6 +5200,7 @@
         "tests/editor-multi-validation.test.js",
         "tests/editor-palette-capability.test.js",
         "tests/editor-palette-preferences.test.js",
+        "tests/editor-public-asset-cache-bust.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/editor-workspace-appearance.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -5324,6 +5349,7 @@
         "tests/editor-multi-validation.test.js",
         "tests/editor-palette-capability.test.js",
         "tests/editor-palette-preferences.test.js",
+        "tests/editor-public-asset-cache-bust.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/editor-workspace-appearance.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -5472,6 +5498,7 @@
         "tests/editor-multi-validation.test.js",
         "tests/editor-palette-capability.test.js",
         "tests/editor-palette-preferences.test.js",
+        "tests/editor-public-asset-cache-bust.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/editor-workspace-appearance.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -5620,6 +5647,7 @@
         "tests/editor-multi-validation.test.js",
         "tests/editor-palette-capability.test.js",
         "tests/editor-palette-preferences.test.js",
+        "tests/editor-public-asset-cache-bust.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/editor-workspace-appearance.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -5768,6 +5796,7 @@
         "tests/editor-multi-validation.test.js",
         "tests/editor-palette-capability.test.js",
         "tests/editor-palette-preferences.test.js",
+        "tests/editor-public-asset-cache-bust.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/editor-workspace-appearance.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -5916,6 +5945,7 @@
         "tests/editor-multi-validation.test.js",
         "tests/editor-palette-capability.test.js",
         "tests/editor-palette-preferences.test.js",
+        "tests/editor-public-asset-cache-bust.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/editor-workspace-appearance.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -6064,6 +6094,7 @@
         "tests/editor-multi-validation.test.js",
         "tests/editor-palette-capability.test.js",
         "tests/editor-palette-preferences.test.js",
+        "tests/editor-public-asset-cache-bust.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/editor-workspace-appearance.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -6212,6 +6243,7 @@
         "tests/editor-multi-validation.test.js",
         "tests/editor-palette-capability.test.js",
         "tests/editor-palette-preferences.test.js",
+        "tests/editor-public-asset-cache-bust.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/editor-workspace-appearance.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -6360,6 +6392,7 @@
         "tests/editor-multi-validation.test.js",
         "tests/editor-palette-capability.test.js",
         "tests/editor-palette-preferences.test.js",
+        "tests/editor-public-asset-cache-bust.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/editor-workspace-appearance.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -6490,6 +6523,7 @@
         "tests/editor-multi-validation.test.js",
         "tests/editor-palette-capability.test.js",
         "tests/editor-palette-preferences.test.js",
+        "tests/editor-public-asset-cache-bust.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/editor-workspace-appearance.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -6638,6 +6672,7 @@
         "tests/editor-multi-validation.test.js",
         "tests/editor-palette-capability.test.js",
         "tests/editor-palette-preferences.test.js",
+        "tests/editor-public-asset-cache-bust.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/editor-workspace-appearance.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -6786,6 +6821,7 @@
         "tests/editor-multi-validation.test.js",
         "tests/editor-palette-capability.test.js",
         "tests/editor-palette-preferences.test.js",
+        "tests/editor-public-asset-cache-bust.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/editor-workspace-appearance.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -6934,6 +6970,7 @@
         "tests/editor-multi-validation.test.js",
         "tests/editor-palette-capability.test.js",
         "tests/editor-palette-preferences.test.js",
+        "tests/editor-public-asset-cache-bust.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/editor-workspace-appearance.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -7066,6 +7103,7 @@
         "tests/editor-multi-validation.test.js",
         "tests/editor-palette-capability.test.js",
         "tests/editor-palette-preferences.test.js",
+        "tests/editor-public-asset-cache-bust.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/editor-workspace-appearance.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -7199,6 +7237,7 @@
         "tests/editor-multi-validation.test.js",
         "tests/editor-palette-capability.test.js",
         "tests/editor-palette-preferences.test.js",
+        "tests/editor-public-asset-cache-bust.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/editor-workspace-appearance.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -7337,6 +7376,7 @@
         "tests/editor-multi-validation.test.js",
         "tests/editor-palette-capability.test.js",
         "tests/editor-palette-preferences.test.js",
+        "tests/editor-public-asset-cache-bust.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/editor-workspace-appearance.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -7471,6 +7511,7 @@
         "tests/editor-multi-validation.test.js",
         "tests/editor-palette-capability.test.js",
         "tests/editor-palette-preferences.test.js",
+        "tests/editor-public-asset-cache-bust.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/editor-workspace-appearance.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -7604,6 +7645,7 @@
         "tests/editor-multi-validation.test.js",
         "tests/editor-palette-capability.test.js",
         "tests/editor-palette-preferences.test.js",
+        "tests/editor-public-asset-cache-bust.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/editor-workspace-appearance.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -7735,6 +7777,7 @@
         "tests/editor-multi-validation.test.js",
         "tests/editor-palette-capability.test.js",
         "tests/editor-palette-preferences.test.js",
+        "tests/editor-public-asset-cache-bust.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/editor-workspace-appearance.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -7883,6 +7926,7 @@
         "tests/editor-multi-validation.test.js",
         "tests/editor-palette-capability.test.js",
         "tests/editor-palette-preferences.test.js",
+        "tests/editor-public-asset-cache-bust.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/editor-workspace-appearance.test.js",
         "tests/f0-3-route-integration.test.js"
