@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "id": "20261121135604-263a54ab",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-21T13:56:04.515Z",
+  "abandoned_at": "2026-11-21T14:32:54.459Z",
+  "measured_seconds": null,
+  "status": "interrupted",
+  "reason": "A kontextusátadásig a paletta-favorit funkció kiadása már megtörtént, de a session folytatási ideje nem mérhető megbízhatóan; időt nem számítunk.",
+  "started_revision": "776b7c2ddb72206e3d43d513cf60be8a1b88fb65",
+  "measurement": "missing end time; excluded from elapsed time and ETA"
+}

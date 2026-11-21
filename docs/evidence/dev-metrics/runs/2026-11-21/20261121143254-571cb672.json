@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261121143254-571cb672",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-21T14:32:54.513Z",
+  "finished_at": "2026-11-21T14:42:25.866Z",
+  "wall_seconds": 571,
+  "paused_seconds": 0,
+  "measured_seconds": 571,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "Fixed the live EDT-044 stylesheet cache key, added regression, deployed through deploy:safe, and verified health/assets; exact-SHA Editor Core CI remains pending and Cloudflare automatic build failed.",
+  "evidence": [
+    "docs/evidence/editor-edt044-palette-css-cache-bust-2026-11-21.json",
+    "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md"
+  ],
+  "checks": "npm run test:editor 24/24+runner 4/4;cache-bust 1/1;typecheck;plan-contract 15/15;canonical 13/396;traceability 396/396;D1 SELECT-only 3 statements 0 writes;wrangler dry-run;deploy:safe;health 200;asset SHA exact;Editor Core pending;Cloudflare Build failed",
+  "started_revision": "9ae1c1d5cecb7d7b9ce65757d81eb2bb1bce2333",
+  "finished_revision": "8a434ad9f9ddeaa27a9d612d3dbafd620cf7ce09",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

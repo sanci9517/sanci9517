@@ -1,0 +1,101 @@
+{
+  "schema": 1,
+  "captured_at": "2026-11-21T14:40:28Z",
+  "plan_point": "77.44.7.D / EDT-044 palette favorites",
+  "status": "CACHE_BUST_RUNTIME_FIX_DEPLOYED_AND_HASH_VERIFIED; FULL_D_OPEN_NOT_CERTIFIED; EDITOR_CORE_CI_PENDING",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "parent_commit": "9ae1c1d5cecb7d7b9ce65757d81eb2bb1bce2333",
+    "runtime_commit": "8a434ad9f9ddeaa27a9d612d3dbafd620cf7ce09",
+    "github_head": "8a434ad9f9ddeaa27a9d612d3dbafd620cf7ce09",
+    "push": "PASS; normal fast-forward; GitHub branch ref verified exact SHA"
+  },
+  "implementation": {
+    "issue": "The deployed palette favorites CSS had been changed, but public/editor-v2/index.html still referenced the old editor-refresh.css cache-bust token, so clients could retain stale CSS.",
+    "files": [
+      "public/editor-v2/index.html",
+      "tests/editor-public-asset-cache-bust.test.js",
+      "package.json",
+      "docs/evidence/feature-traceability.json"
+    ],
+    "old_css_reference": "/editor-v2/editor-refresh.css?v=20261118-edt038-mobile-menu-v2",
+    "new_css_reference": "/editor-v2/editor-refresh.css?v=20261121-edt044-palette-favorites-v1",
+    "save_publish_separate": true
+  },
+  "checks": {
+    "node --test tests/editor-public-asset-cache-bust.test.js": "PASS 1/1",
+    "npm run test:editor": "PASS 24/24 Node test files and 4/4 subreaper/manifest tests",
+    "npm run typecheck": "PASS",
+    "python3 tests/plan-contract.test.py": "PASS 15/15 after regenerating source traceability; the first run correctly rejected the changed index.html fingerprint",
+    "python3 scripts/check-canonical-plan.py": "PASS before the final evidence append; one 13-part master and 396 mappings, acceptance NOT CERTIFIED",
+    "python3 scripts/build-feature-traceability.py --check": "PASS 396/396",
+    "python3 scripts/audit-active-plan-point.py": "PASS for bookkeeping only; cursor 77.44.7.D OPEN / NOT_CERTIFIED; 148 PARTIAL_SOURCE / 248 UNVERIFIED",
+    "node scripts/web013-migration-safety-gate.mjs": "PASS; no migration applied",
+    "XDG_CONFIG_HOME=/tmp/sanci9517-wrangler-config npx wrangler deploy --dry-run": "PASS; Wrangler 4.130.0; 199 assets; 411.30 KiB / 104.50 KiB gzip",
+    "git diff --check": "PASS",
+    "GitHub source smoke 44914766068": "PASS for exact SHA; health and all configured public source hashes matched after deploy:safe rollout",
+    "GitHub Workers Build fde0c669-4b7c-4afe-a5ff-ebe1c177f911": "FAIL; its build-log detail was not available through the connected API; deploy:safe was run locally after the gate and successfully released the exact SHA",
+    "GitHub Editor Core 44914766049": "IN_PROGRESS at evidence capture; not reported as PASS",
+    "other exact-SHA checks": "canonical-plan, verify, source-audit and twitch-integration SUCCESS"
+  },
+  "read_only_d1_preflight": {
+    "database": "sanci9517-db",
+    "statements": [
+      "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name",
+      "SELECT name FROM d1_migrations ORDER BY id DESC LIMIT 1",
+      "SELECT name FROM sqlite_master WHERE type='table' AND name IN ('media_asset_tags','media_collection_assets','media_collections','media_folders','media_retention_requests','media_tags') ORDER BY name"
+    ],
+    "latest_marker": "0030_media_library_organization.sql",
+    "media_organization_tables_present": true,
+    "rows_written": 0,
+    "changes": 0,
+    "changed_db": false
+  },
+  "production_release": {
+    "method": "XDG_CONFIG_HOME=/tmp/sanci9517-wrangler-config npm run deploy:safe",
+    "status": "PASS",
+    "migration_safety_gate": "PASS; deploy:safe does not apply D1 migrations",
+    "deployment_id": "ac66f54d-feb0-4bae-9513-28968fa503b9",
+    "worker_version_id": "3f764797-dd81-4865-9b19-36b275509164",
+    "traffic_percent": 100,
+    "health": {
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "public_assets": [
+      {
+        "path": "/editor-v2/",
+        "status": 200,
+        "sha256_local": "65a188b252d8fc53985baa2d539b3f10ae14686a02aa787ca5c9c652a60e04c2",
+        "sha256_production": "65a188b252d8fc53985baa2d539b3f10ae14686a02aa787ca5c9c652a60e04c2",
+        "contains_css_reference": "/editor-v2/editor-refresh.css?v=20261121-edt044-palette-favorites-v1"
+      },
+      {
+        "path": "/editor-v2/editor-refresh.css?v=20261121-edt044-palette-favorites-v1",
+        "status": 200,
+        "sha256_local": "531fa444924b34a63eda59edc23e265da07a33e2e58464ee669ff7c4b7823318",
+        "sha256_production": "531fa444924b34a63eda59edc23e265da07a33e2e58464ee669ff7c4b7823318"
+      },
+      {
+        "path": "/editor-v2/app.js?v=20261121-edt044-palette-favorites-v1",
+        "status": 200,
+        "sha256_local": "1fd65021931fc3085a88e95481d4ba7108fdd969c6fa9b2f53b73bc3181e0a8a",
+        "sha256_production": "1fd65021931fc3085a88e95481d4ba7108fdd969c6fa9b2f53b73bc3181e0a8a"
+      }
+    ]
+  },
+  "limitations": [
+    "This fixes the deployed CSS cache key for the EDT-044 palette favorites slice; it is not completion of the palette/Editor feature set.",
+    "77.44.7.D and the complete Visual Editor remain OPEN / NOT_CERTIFIED; full manual/physical acceptance is deferred until the planned Editor scope is complete.",
+    "Hosted Editor Core is pending, and the Cloudflare Build API reported failure even though the repository-prescribed deploy:safe succeeded; do not claim the aggregate CI is fully green.",
+    "No production D1 migration/data write, R2 operation, paid service or new dependency occurred. No additional workflow dispatch or rerun was issued."
+  ],
+  "cost": "0 Ft new paid cost; free Actions remaining quota was not independently visible."
+}
