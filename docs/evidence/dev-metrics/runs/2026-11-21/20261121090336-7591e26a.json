@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261121090336-7591e26a",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-21T09:03:36.886Z",
+  "finished_at": "2026-11-21T09:19:15.913Z",
+  "wall_seconds": 939,
+  "paused_seconds": 0,
+  "measured_seconds": 939,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "RES-006 regressions and EDT-039 auto-action conflict fix verified; EDT-040 audit clean. Editor unit/media/typecheck/migration gate and dry-run pass. 60-file browser suite interrupted at file 5; full D open. No migration/CI/push/deploy due quota unverified.",
+  "evidence": [
+    "docs/evidence/res006-media-library-organization-2026-11-21.json"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "9ad43c78586652a9578d766a3c37503864207faf",
+  "finished_revision": "9ad43c78586652a9578d766a3c37503864207faf",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

@@ -7,14 +7,14 @@ if not __debug__:
 ROOT = Path(__file__).resolve().parents[2]
 MANIFEST = ROOT / 'scripts/d1/manual-migrations.json'
 EVIDENCE = ROOT / 'docs/evidence/d1-ledger-preflight.json'
-RELEVANT = {'pages','editor_revisions','page_slug_redirects','site_domains','site_memberships','site_scoped_settings','media'}
+RELEVANT = {'pages','editor_revisions','page_slug_redirects','site_domains','site_memberships','site_scoped_settings','media','media_folders','media_tags','media_collections','media_asset_tags','media_collection_assets'}
 
 def manifest():
     entries = json.loads(MANIFEST.read_text())
     for e in entries:
         assert hashlib.sha256((ROOT/e['path']).read_bytes()).hexdigest() == e['sha256'], 'Manual migration hash mismatch: '+e['name']
         assert not (ROOT/'migrations'/e['name']).exists(), 'Unsafe automatic replay: '+e['name']
-    assert not any(re.match(r'002[5-8][_-]', p.name) for p in (ROOT/'migrations').glob('*.sql')), 'Reserved migration number collision'
+    assert not any(re.match(r'(?:002[5-9]|0030)[_-]', p.name) for p in (ROOT/'migrations').glob('*.sql')), 'Reserved migration number collision'
     return entries
 
 def schema(db):
@@ -31,7 +31,7 @@ def bootstrap(db):
     db.execute('PRAGMA foreign_keys=ON')
     db.execute('CREATE TABLE d1_migrations(id INTEGER PRIMARY KEY AUTOINCREMENT,name TEXT UNIQUE,applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL)')
     automatic = sorted((ROOT/'migrations').glob('*.sql'))
-    files = [p for p in automatic if p.name[:4] <= '0024'] + [ROOT/e['path'] for e in manifest()] + [p for p in automatic if p.name[:4] > '0028']
+    files = [p for p in automatic if p.name[:4] <= '0024'] + [ROOT/e['path'] for e in manifest()] + [p for p in automatic if p.name[:4] > '0030']
     for p in files:
         escaped=p.name.replace("'","''")
         try:
@@ -118,7 +118,7 @@ def main():
         assert a.output, '--output required'; a.output.write_text(bootstrap_sql()); print('PASS: empty-database-only bootstrap SQL generated'); return
     if a.action=='bootstrap':
         assert a.output and not a.output.exists(), 'Use a new local database path'
-        db=sqlite3.connect(a.output); bootstrap(db); db.close(); print('PASS: fresh local bootstrap through 0028'); return
+        db=sqlite3.connect(a.output); bootstrap(db); db.close(); print('PASS: fresh local bootstrap through the registered manual 0030 candidate'); return
     e=json.loads(a.evidence.read_text()); n=check_evidence(e)
     if a.action=='sql':
         assert a.output, '--output required'; a.output.write_text(reconciliation_sql(e))

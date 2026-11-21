@@ -18,5 +18,15 @@
     "name": "0028_media_archive.sql",
     "path": "scripts/pending/0028_media_archive.sql",
     "sha256": "23c6297c592ef28f685e9dc0895102a6c12ac3489c1d816c405b2c5b892b57fd"
+  },
+  {
+    "name": "0029_media_archive_unicode_additive.sql",
+    "path": "tests/fixtures/0029_media_archive_unicode_additive.sql",
+    "sha256": "911df535238d48bcdda3db2702bbe716c3c8e6c62c841334a0ebd143394c9ac8"
+  },
+  {
+    "name": "0030_media_library_organization.sql",
+    "path": "scripts/pending/0030_media_library_organization.sql",
+    "sha256": "af036c90edda1bd4685e2ed09707c167d02a2b43afec859a28ed9eb90a5eaa92"
   }
 ]

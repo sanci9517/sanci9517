@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261121084923-fc8a7400",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-21T08:49:23.418Z",
+  "finished_at": "2026-11-21T08:57:00.489Z",
+  "wall_seconds": 457,
+  "paused_seconds": 0,
+  "measured_seconds": 457,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "RES-006 duplicate filter and tag-delete regressions fixed; media integration/type/migration tests and real Chromium media plus EDT-039 lifecycle pass. D-06 remains open; 0030 production D1 migration requires specific approval; no commit, push, CI or deploy.",
+  "evidence": [
+    "docs/evidence/res006-media-library-organization-2026-11-21.json"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "9ad43c78586652a9578d766a3c37503864207faf",
+  "finished_revision": "9ad43c78586652a9578d766a3c37503864207faf",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

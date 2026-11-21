@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261121070041-ac6e6187",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-21T07:00:41.528Z",
+  "finished_at": "2026-11-21T07:38:04.520Z",
+  "wall_seconds": 2243,
+  "paused_seconds": 0,
+  "measured_seconds": 2243,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "RES-006 site-scoped media organization API/UI with integration and browser regressions; production D1 0030 remains unapplied pending specific approval; no push or deploy.",
+  "evidence": [
+    "docs/evidence/res006-media-library-organization-2026-11-21.json"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "ba5501809611d98ca67b48c75f5a998a148ffd2b",
+  "finished_revision": "9ad43c78586652a9578d766a3c37503864207faf",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

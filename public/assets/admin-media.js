@@ -1,7 +1,14 @@
 import { mountRetentionStatus } from "./admin-media-retention.js";
 import { mountRetentionRequest } from "./admin-media-retention-actions.js";
 import { mountMediaIntegrity } from "./admin-media-integrity.js";
+import { appendAssetOrganization, mountMediaOrganization } from "./admin-media-organization.js";
 let retentionStatus;
+let mediaOrganization;
+function refreshIfFiltered() {
+  const filters = mediaOrganization?.filters();
+  if (filters && Object.values(filters).some(Boolean)) return refresh(search.value.trim());
+}
+function refreshMediaList() { return refresh(search.value.trim()); }
 
 const form = document.getElementById("uploadForm");
 const input = document.getElementById("imageInput");
@@ -91,7 +98,13 @@ function explain(code) {
     ASSET_NOT_ARCHIVED: "A fájl már nincs archiválva. Frissítsd a médiatárat.",
     USAGE_INCOMPLETE: "A használati helyek ellenőrzése nem teljes. Új ellenőrzés szükséges.",
     OBJECT_UNAVAILABLE: "A tárolt fájl nem érhető el.",
-    INVALID_MEDIA_STATE: "Érvénytelen Médiatár nézet."
+    INVALID_MEDIA_STATE: "Érvénytelen Médiatár nézet.",
+    INVALID_MEDIA_ORGANIZATION: "Ellenőrizd a mappa, címke vagy gyűjtemény adatait.",
+    MEDIA_ORGANIZATION_NOT_FOUND: "A rendezési elem már nem érhető el ezen a webhelyen.",
+    MEDIA_ORGANIZATION_DUPLICATE: "Ezen a webhelyen már van ilyen nevű rendezési elem.",
+    MEDIA_ORGANIZATION_UNAVAILABLE: "A rendezési adatok mentése átmenetileg nem sikerült.",
+    INVALID_JSON: "A kérés adatai nem olvashatók. Frissítsd az oldalt.",
+    INVALID_MEDIA_FILTER: "A kiválasztott szűrő már nem érhető el."
   };
   return messages[code] || "A kérés sikertelen. Próbáld újra.";
 }
@@ -125,6 +138,7 @@ async function refresh(query = "", append = false) {
   try {
     const url = new URL("/api/admin/media", location.origin); if (query) url.searchParams.set("q", query);
     url.searchParams.set("state",mediaState.value);
+    for (const [key,value] of Object.entries(mediaOrganization?.filters() || {})) if (value) url.searchParams.set(key,value);
     url.searchParams.set("limit", "50");
     if (before) url.searchParams.set("before", before);
     const data = await api(url.toString());
@@ -215,6 +229,7 @@ async function refresh(query = "", append = false) {
         api, onChanged: () => retentionStatus?.refresh(),
         setLifecycleBusy: busy => { lifecycle.disabled = busy; }
       });
+      if (mediaOrganization) appendAssetOrganization(details, asset, mediaOrganization.state, api, refreshIfFiltered);
       card.append(link,details);return card;
     });
     if (append) gallery.append(...tiles);
@@ -357,4 +372,6 @@ if (retentionPanel) retentionStatus = mountRetentionStatus(retentionPanel, () =>
 });
 const integrityPanel = document.getElementById("mediaIntegrityPanel");
 if (integrityPanel) mountMediaIntegrity(integrityPanel);
+mediaOrganization = mountMediaOrganization({ api, onChanged: refreshMediaList });
+try { await mediaOrganization.reload({ preserveFilters: false }); } catch {}
 await refresh();

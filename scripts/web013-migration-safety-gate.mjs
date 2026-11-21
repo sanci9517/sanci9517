@@ -1,7 +1,7 @@
 /**
  * WEB-013 migration safety gate.
  *
- * Production already received 0025, 0026 and 0027 manually on 2026-10-17.
+ * Production received 0025-0029 through the reviewed manual release chain.
  * The 0025 SQL is a one-shot table rebuild. No part of this manual chain
  * may be copied into automatic migrations unchanged.
  *
@@ -24,21 +24,24 @@ const pending = readFileSync(resolve(root, "scripts/pending/0025_site_domains_an
 const memberships = readFileSync(resolve(root, "scripts/pending/0026_site_memberships.sql"), "utf8");
 const settings = readFileSync(resolve(root, "scripts/pending/0027_site_scoped_settings.sql"), "utf8");
 const mediaArchive = readFileSync(resolve(root,"scripts/pending/0028_media_archive.sql"),"utf8");
+const mediaArchiveUnicode = readFileSync(resolve(root,"tests/fixtures/0029_media_archive_unicode_additive.sql"),"utf8");
+const mediaOrganization = readFileSync(resolve(root,"scripts/pending/0030_media_library_organization.sql"),"utf8");
 const manualManifest = JSON.parse(readFileSync(resolve(root, "scripts/d1/manual-migrations.json"), "utf8"));
-const expectedNames = ["0025_site_domains_and_site_slug.sql", "0026_site_memberships.sql", "0027_site_scoped_settings.sql", "0028_media_archive.sql"];
+const expectedNames = ["0025_site_domains_and_site_slug.sql", "0026_site_memberships.sql", "0027_site_scoped_settings.sql", "0028_media_archive.sql", "0029_media_archive_unicode_additive.sql", "0030_media_library_organization.sql"];
+const expectedPaths = new Map(expectedNames.map((name,index)=>[name,index===4?"tests/fixtures/"+name:"scripts/pending/"+name]));
 if (JSON.stringify(manualManifest.map(entry => entry.name)) !== JSON.stringify(expectedNames)) {
-  throw new Error("Manual migration registry must reserve exactly 0025-0028");
+  throw new Error("Manual migration registry must reserve exactly the reviewed 0025-0030 chain");
 }
 for (const entry of manualManifest) {
-  if (entry.path !== `scripts/pending/${entry.name}` ||
+  if (entry.path !== expectedPaths.get(entry.name) ||
       createHash("sha256").update(readFileSync(resolve(root, entry.path))).digest("hex") !== entry.sha256) {
     throw new Error(`Manual migration hash/path mismatch: ${entry.name}`);
   }
 }
 const retention = readFileSync(resolve(root,"scripts/pending/media_retention_requests.sql"),"utf8");
 
-if (migrations.some((name) => /^002[5678][_-]/.test(name))) {
-  console.error("BLOCK: migration 0025 is already applied manually in production; 0026 and 0027 are also manually installed, and 0028 requires controlled rollout. Do not auto-replay these SQL files. Reconcile the migration ledger and new-database bootstrap first.");
+if (migrations.some((name) => /^(?:002[5-9]|0030)[_-]/.test(name))) {
+  console.error("BLOCK: migrations 0025-0030 are reserved for manually reviewed rollout; never auto-replay them from deploy:safe.");
   process.exit(1);
 }
 if (!retention.includes("CREATE TABLE IF NOT EXISTS media_retention_requests") ||
@@ -59,4 +62,14 @@ if (!pending.includes("CREATE UNIQUE INDEX idx_pages_site_slug ON pages(site_id,
   console.error("BLOCK: pending 0025/0026/0027 migrations no longer match the verified production schema contract.");
   process.exit(1);
 }
-console.log("PASS: deploy:safe runs the repository migration gate and never applies D1 migrations; immutable 0025-0028 registry reserved; manual SQL cannot auto-replay. Use the reviewed ledger reconciliation and fresh bootstrap runbook. Retention stays manual-only.");
+const unicodeBody=mediaArchiveUnicode.split("\n").filter(line=>!line.trimStart().startsWith("--")).join("\n");
+const organizationBody=mediaOrganization.split("\n").filter(line=>!line.trimStart().startsWith("--")).join("\n");
+if (!unicodeBody.includes("CREATE TRIGGER media_archive_pages_insert_unicode_guard") ||
+    !organizationBody.includes("CREATE TABLE media_folders") || !organizationBody.includes("CREATE TABLE media_tags") ||
+    !organizationBody.includes("CREATE TABLE media_collections") || !organizationBody.includes("ALTER TABLE media ADD COLUMN folder_id") ||
+    !organizationBody.includes("FOREIGN KEY(site_id,asset_id) REFERENCES media(site_id,id)") ||
+    /\b(?:DROP\s+(?:TABLE|TRIGGER|INDEX)|DELETE\s+FROM|INSERT\s+INTO|UPDATE\s+[a-z_]+\s+SET)\b/i.test(organizationBody)) {
+  console.error("BLOCK: staged 0029/0030 manual SQL must remain exact, additive-only and outside automatic migrations.");
+  process.exit(1);
+}
+console.log("PASS: deploy:safe runs the repository migration gate and never applies D1 migrations; immutable manual 0025-0030 SQL remains outside automatic migrations. Use reviewed ledger reconciliation and a fresh bootstrap/preflight. Retention stays manual-only.");

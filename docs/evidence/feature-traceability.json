@@ -3,8 +3,10 @@
     ".github/workflows/editor-core-test.yml": "10c9e59173b173c71b78c970900eeb2012b833eaa21f19fe9c394fddd96e68ba",
     ".github/workflows/f0-baseline.yml": "f2a1d78d5fd46ad208c8579bbd5e2d6de766321a93ddac888fc97e8714e502a5",
     "public/admin-home.html": "fd899e3deff1bfbfee166ada61027426d5c069a8749abf902147c771db95d3a6",
+    "public/admin-media.html": "925b0347b25584500cf0a9ecf196adf4b4f80252830cd8975cc5ce0b72742655",
     "public/assets/admin-design.js": "1ff8c7a8cfee87cd673b736771e3f55999af9a78248afb2ca9ac7a3a26017103",
-    "public/assets/admin-media.js": "1d9eb86d004c84a054b8c7f92be36d78e34e8510146b8588825db486f615bad6",
+    "public/assets/admin-media-organization.js": "27b89f81fb7a84cfe6dd2dd7e15000a79de84730dad041664921808a848c73cd",
+    "public/assets/admin-media.js": "3056f50f93da633490e04daf7cba9a0a063d38007c6eb1f784e7a515bcee8df3",
     "public/assets/page-renderer.js": "56aa68e120252d751ba800047c98170a068a59026ef196439081cf145314bbde",
     "public/editor-v2/action-help.css": "591c1a09dd8602196329d7a2f21d692091174a4b2c2ade2b734e65a7631f8602",
     "public/editor-v2/app.js": "8d338eb6ddb15a0a6580c839056cc9a8757379363da1879c7330440fec6e0ae4",
@@ -55,8 +57,9 @@
     "public/editor-v2/ui/workspace-dock-tree.js": "00877096cd6dcfc91ab424c2e7fe66c1f66e84c75ea3b4b226a10b88f51c5575",
     "public/editor-v2/workspace-appearance.css": "179612b4faca385e012290c48f6f9b06121b50e47fb82c7ae02a18cb5e7c6e8f",
     "public/visual-page.html": "3f0d4d34d5ff03349e02b35ce21a6a961b6e0aafdd803c0c13ea959780575907",
-    "scripts/d1/ledger-reconciliation.py": "44d19ed415b40473c73c248d49980e16eaaa0e96a8a4412b7016213e0ee7ffcb",
-    "scripts/web013-migration-safety-gate.mjs": "47c11202dfe94f389e458fbef133cc221dcfb88436649fca83d3849f38ccda68",
+    "scripts/d1/ledger-reconciliation.py": "35f92e5606e7dc67e63d2c4a0a1b7bdbe5d7a47d0924e9ba0be2ef619081e335",
+    "scripts/pending/0030_media_library_organization.sql": "af036c90edda1bd4685e2ed09707c167d02a2b43afec859a28ed9eb90a5eaa92",
+    "scripts/web013-migration-safety-gate.mjs": "41413507312fa002d7026a39cce4a902a01a183e3389025a71e40f97e43ce6b8",
     "src/core/audit.ts": "9321698ebcdc7bc0227df3d12e8a7485703011235836df936ce7b837bb4b67ba",
     "src/core/auth/admin-tenant-gate.ts": "26e56e9d04e16950eb434f0f89842abda23f5349f361d00e2096310091ea01a8",
     "src/core/auth/require-auth.ts": "7933ad739fe34dd47234a2ab66a3e54a06daee75c8b96de60f1007cec246788e",
@@ -77,7 +80,7 @@
     "src/index.ts": "1bb2be11cf297b18e792734cf8155ea8054aacd8db659e599d1ac23e3bb2d576",
     "src/routes/admin/editor.ts": "36517ffd7a905b0410879804b34a0d301eb1719fcbec1f2b381011449fd27022",
     "src/routes/admin/link-report.ts": "6e46a65b6996e8c0b595b64c9dc55463f6dc2e31ad55fc90e2f5116113fcfcbe",
-    "src/routes/admin/media.ts": "dd21ba63470b8ecbffd2e1314ab1c77f4863861d09981ca3e699604bc935786d",
+    "src/routes/admin/media.ts": "d582b3abfbd32ec53201bab4c98c88200d617d7def3da9f4d1c4341da0387dc2",
     "src/routes/admin/navigation.ts": "6ff3caa6307d24c1ae135ab98a3f948865e6b8561ccfcf4acfc940db3bc894d9",
     "src/routes/admin/pages.ts": "2a63044eb9dac2b597fb1c5dafdbf9c9b9214ae99e09ac401b20d773c73fc97a",
     "src/routes/admin/presentation.ts": "7a496ae2dce84584e3ca7221a4e976b685344cc50be149df0bd0c02b21e0b002",
@@ -90,9 +93,11 @@
     "src/routes/integrations/twitch.ts": "ae6e4b4e9db5a6f495089f3d3e55c7010a36bdf38a86ff4219a9ced2ce436841",
     "src/routes/public/pages.ts": "4eae3fc245dd45b4befaf891b7950898e52010064cf0a1bb79a4e431c79253e5",
     "src/routes/public/seo.ts": "fa73a6c252df558862136e85e9a6594d84a19d2fffb130ac5dd38656074be60f",
+    "tests/browser/admin-media-organization.test.js": "c8be2bd093487861c2fc8dbdeaaac4b22f2aae7a8104e2a4311ffeee167f0850",
     "tests/browser/editor-diagnostics-redaction.test.js": "c534abc0d1f89cf51b929b870017a14c4f039383226137c705f4dd2c1eed1842",
     "tests/browser/editor-template-start.test.js": "4924f607f90163e38053c117a37f30b50ee78b492cf31abe963f2b4669c5ecf0",
-    "tests/f0-3-route-integration.test.js": "c6f9dd7b1816ca7663b796daa485ae94f413c9746c5d5590d6bc30fc81d9fff6"
+    "tests/f0-3-route-integration.test.js": "c6f9dd7b1816ca7663b796daa485ae94f413c9746c5d5590d6bc30fc81d9fff6",
+    "tests/media-api.test.js": "7d32f13eee5cdb5ea3da0e61a47bcf0ce49ad8750d016c0864168e025887097b"
   },
   "schema_version": 1,
   "kind": "source-traceability-not-acceptance",
@@ -8286,13 +8291,16 @@
       "source_status": "PARTIAL_SOURCE",
       "implementation": [
         "src/routes/admin/media.ts",
+        "public/admin-media.html",
         "public/assets/admin-media.js",
+        "public/assets/admin-media-organization.js",
         "public/editor-v2/ui/element-content-controls.js",
         "src/core/media-retention-policy.js"
       ],
       "test_candidates": [
         "tests/browser/admin-media-integrity.test.js",
         "tests/browser/admin-media-library.test.js",
+        "tests/browser/admin-media-organization.test.js",
         "tests/browser/admin-media-pagination.test.js",
         "tests/browser/admin-media-retention.test.js",
         "tests/browser/editor-media-picker-pagination.test.js",
@@ -8329,13 +8337,16 @@
       "source_status": "PARTIAL_SOURCE",
       "implementation": [
         "src/routes/admin/media.ts",
+        "public/admin-media.html",
         "public/assets/admin-media.js",
+        "public/assets/admin-media-organization.js",
         "public/editor-v2/ui/element-content-controls.js",
         "src/core/media-retention-policy.js"
       ],
       "test_candidates": [
         "tests/browser/admin-media-integrity.test.js",
         "tests/browser/admin-media-library.test.js",
+        "tests/browser/admin-media-organization.test.js",
         "tests/browser/admin-media-pagination.test.js",
         "tests/browser/admin-media-retention.test.js",
         "tests/browser/editor-media-picker-pagination.test.js",
@@ -8372,13 +8383,16 @@
       "source_status": "PARTIAL_SOURCE",
       "implementation": [
         "src/routes/admin/media.ts",
+        "public/admin-media.html",
         "public/assets/admin-media.js",
+        "public/assets/admin-media-organization.js",
         "public/editor-v2/ui/element-content-controls.js",
         "src/core/media-retention-policy.js"
       ],
       "test_candidates": [
         "tests/browser/admin-media-integrity.test.js",
         "tests/browser/admin-media-library.test.js",
+        "tests/browser/admin-media-organization.test.js",
         "tests/browser/admin-media-pagination.test.js",
         "tests/browser/admin-media-retention.test.js",
         "tests/browser/editor-media-picker-pagination.test.js",
@@ -8415,13 +8429,16 @@
       "source_status": "PARTIAL_SOURCE",
       "implementation": [
         "src/routes/admin/media.ts",
+        "public/admin-media.html",
         "public/assets/admin-media.js",
+        "public/assets/admin-media-organization.js",
         "public/editor-v2/ui/element-content-controls.js",
         "src/core/media-retention-policy.js"
       ],
       "test_candidates": [
         "tests/browser/admin-media-integrity.test.js",
         "tests/browser/admin-media-library.test.js",
+        "tests/browser/admin-media-organization.test.js",
         "tests/browser/admin-media-pagination.test.js",
         "tests/browser/admin-media-retention.test.js",
         "tests/browser/editor-media-picker-pagination.test.js",
@@ -8458,13 +8475,16 @@
       "source_status": "PARTIAL_SOURCE",
       "implementation": [
         "src/routes/admin/media.ts",
+        "public/admin-media.html",
         "public/assets/admin-media.js",
+        "public/assets/admin-media-organization.js",
         "public/editor-v2/ui/element-content-controls.js",
         "src/core/media-retention-policy.js"
       ],
       "test_candidates": [
         "tests/browser/admin-media-integrity.test.js",
         "tests/browser/admin-media-library.test.js",
+        "tests/browser/admin-media-organization.test.js",
         "tests/browser/admin-media-pagination.test.js",
         "tests/browser/admin-media-retention.test.js",
         "tests/browser/editor-media-picker-pagination.test.js",
@@ -8498,11 +8518,35 @@
         "path": "docs/creator-master/part-03-of-12.md",
         "line": 166
       },
-      "source_status": "UNVERIFIED",
-      "implementation": [],
-      "test_candidates": [],
+      "source_status": "PARTIAL_SOURCE",
+      "implementation": [
+        "src/routes/admin/media.ts",
+        "public/admin-media.html",
+        "public/assets/admin-media.js",
+        "public/assets/admin-media-organization.js",
+        "scripts/pending/0030_media_library_organization.sql",
+        "tests/media-api.test.js",
+        "tests/browser/admin-media-organization.test.js"
+      ],
+      "test_candidates": [
+        "tests/browser/admin-media-integrity.test.js",
+        "tests/browser/admin-media-library.test.js",
+        "tests/browser/admin-media-organization.test.js",
+        "tests/browser/admin-media-pagination.test.js",
+        "tests/browser/admin-media-retention.test.js",
+        "tests/browser/editor-media-picker-pagination.test.js",
+        "tests/browser/editor-media-source-switch.test.js",
+        "tests/media-api.test.js",
+        "tests/media-archive-additive-unicode.test.js",
+        "tests/media-archive-trigger-casefold.test.js",
+        "tests/media-reference-sql.test.js",
+        "tests/media-retention-migration.test.js",
+        "tests/media-retention-policy.test.js",
+        "tests/media-retention-queries.test.js",
+        "tests/media-retention-request.test.js"
+      ],
       "acceptance": "NOT_RECERTIFIED",
-      "gap": "No ID-specific complete implementation established in this review; keep the requirement and verify before implementation.",
+      "gap": "Module source exists; complete ID-specific contract, negative/lifecycle tests and live acceptance remain unverified.",
       "scope_note": "References identify reviewed module boundaries and candidate tests, not proof that every clause of this feature is implemented or tested."
     },
     {
@@ -8524,13 +8568,16 @@
       "source_status": "PARTIAL_SOURCE",
       "implementation": [
         "src/routes/admin/media.ts",
+        "public/admin-media.html",
         "public/assets/admin-media.js",
+        "public/assets/admin-media-organization.js",
         "public/editor-v2/ui/element-content-controls.js",
         "src/core/media-retention-policy.js"
       ],
       "test_candidates": [
         "tests/browser/admin-media-integrity.test.js",
         "tests/browser/admin-media-library.test.js",
+        "tests/browser/admin-media-organization.test.js",
         "tests/browser/admin-media-pagination.test.js",
         "tests/browser/admin-media-retention.test.js",
         "tests/browser/editor-media-picker-pagination.test.js",
@@ -8567,13 +8614,16 @@
       "source_status": "PARTIAL_SOURCE",
       "implementation": [
         "src/routes/admin/media.ts",
+        "public/admin-media.html",
         "public/assets/admin-media.js",
+        "public/assets/admin-media-organization.js",
         "public/editor-v2/ui/element-content-controls.js",
         "src/core/media-retention-policy.js"
       ],
       "test_candidates": [
         "tests/browser/admin-media-integrity.test.js",
         "tests/browser/admin-media-library.test.js",
+        "tests/browser/admin-media-organization.test.js",
         "tests/browser/admin-media-pagination.test.js",
         "tests/browser/admin-media-retention.test.js",
         "tests/browser/editor-media-picker-pagination.test.js",
@@ -8610,13 +8660,16 @@
       "source_status": "PARTIAL_SOURCE",
       "implementation": [
         "src/routes/admin/media.ts",
+        "public/admin-media.html",
         "public/assets/admin-media.js",
+        "public/assets/admin-media-organization.js",
         "public/editor-v2/ui/element-content-controls.js",
         "src/core/media-retention-policy.js"
       ],
       "test_candidates": [
         "tests/browser/admin-media-integrity.test.js",
         "tests/browser/admin-media-library.test.js",
+        "tests/browser/admin-media-organization.test.js",
         "tests/browser/admin-media-pagination.test.js",
         "tests/browser/admin-media-retention.test.js",
         "tests/browser/editor-media-picker-pagination.test.js",
@@ -8653,13 +8706,16 @@
       "source_status": "PARTIAL_SOURCE",
       "implementation": [
         "src/routes/admin/media.ts",
+        "public/admin-media.html",
         "public/assets/admin-media.js",
+        "public/assets/admin-media-organization.js",
         "public/editor-v2/ui/element-content-controls.js",
         "src/core/media-retention-policy.js"
       ],
       "test_candidates": [
         "tests/browser/admin-media-integrity.test.js",
         "tests/browser/admin-media-library.test.js",
+        "tests/browser/admin-media-organization.test.js",
         "tests/browser/admin-media-pagination.test.js",
         "tests/browser/admin-media-retention.test.js",
         "tests/browser/editor-media-picker-pagination.test.js",
@@ -8701,6 +8757,7 @@
       "test_candidates": [
         "tests/browser/admin-media-integrity.test.js",
         "tests/browser/admin-media-library.test.js",
+        "tests/browser/admin-media-organization.test.js",
         "tests/browser/admin-media-pagination.test.js",
         "tests/browser/admin-media-retention.test.js",
         "tests/browser/editor-media-picker-pagination.test.js",
@@ -8806,13 +8863,16 @@
       "source_status": "PARTIAL_SOURCE",
       "implementation": [
         "src/routes/admin/media.ts",
+        "public/admin-media.html",
         "public/assets/admin-media.js",
+        "public/assets/admin-media-organization.js",
         "public/editor-v2/ui/element-content-controls.js",
         "src/core/media-retention-policy.js"
       ],
       "test_candidates": [
         "tests/browser/admin-media-integrity.test.js",
         "tests/browser/admin-media-library.test.js",
+        "tests/browser/admin-media-organization.test.js",
         "tests/browser/admin-media-pagination.test.js",
         "tests/browser/admin-media-retention.test.js",
         "tests/browser/editor-media-picker-pagination.test.js",

@@ -15,7 +15,7 @@ SOURCES = {
  'WEB': ['src/routes/admin/pages.ts','src/routes/admin/editor.ts','src/core/editor-publication.ts','src/routes/admin/navigation.ts','src/routes/public/pages.ts','src/core/page-redirects.ts','src/index.ts'],
  'EDT': ['public/editor-v2/index.html','public/editor-v2/editor-refresh.css','public/editor-v2/action-help.css','public/editor-v2/workspace-appearance.css','public/editor-v2/app.js','public/editor-v2/ui/action-icons.js','public/editor-v2/ui/action-catalog.js','public/editor-v2/ui/action-help.js','public/editor-v2/ui/workspace-appearance.js','public/editor-v2/ui/workspace-dock-tree.js','public/editor-v2/ui/workspace-dock-renderer.js','public/editor-v2/ui/shell.js','public/editor-v2/core/schema.js','public/editor-v2/core/validation.js','public/editor-v2/core/commands.js','public/editor-v2/core/property-registry.js','public/editor-v2/ui/property-controls.js','public/assets/page-renderer.js','src/core/editor-validation.ts','src/core/editor-publication.ts'],
  'DSN': ['src/core/site-presentation.ts','src/routes/admin/presentation.ts','public/assets/admin-design.js','public/editor-v2/core/design-tokens.js'],
- 'RES': ['src/routes/admin/media.ts','public/assets/admin-media.js','public/editor-v2/ui/element-content-controls.js','src/core/media-retention-policy.js'],
+ 'RES': ['src/routes/admin/media.ts','public/admin-media.html','public/assets/admin-media.js','public/assets/admin-media-organization.js','public/editor-v2/ui/element-content-controls.js','src/core/media-retention-policy.js'],
  'INT': ['src/routes/integrations/twitch.ts','src/core/twitch-oauth.ts','src/core/twitch-site-ownership.ts','src/core/schedule/twitch-adapter.ts'],
  'SCH': ['src/routes/admin/schedule.ts','src/core/schedule-read.ts','src/core/schedule/twitch-sync.ts','public/editor-v2/core/schedule-schema.js'],
  'SEC': ['src/core/auth/require-auth.ts','src/core/auth/site-access.ts','src/core/auth/admin-tenant-gate.ts','src/core/twitch-oauth.ts','src/core/audit.ts'],
@@ -30,7 +30,7 @@ SOURCES = {
 PARTIAL = {
  'ADM': [1,3,7,8,9,10,11], 'WEB': list(range(1,15))+[16,28,30,31,32],
  'EDT': list(range(1,40))+[40,41,42,43,44], 'DSN':[1,2,4,5,6,7],
- 'RES':[1,2,3,4,5,7,8,9,10,11,15], 'INT':list(range(1,12))+[19,20],
+ 'RES':[1,2,3,4,5,6,7,8,9,10,11,15], 'INT':list(range(1,12))+[19,20],
  'SCH':[1,2,3,5,7,8,9,10,11], 'SEC':[1,2,3,4,5,6,8,10],
  'OPS':[1,2,4,5,6,7,9], 'QA':list(range(1,10)), 'SET':[1,2,3,4],
  'SEO':[1,2,4,5], 'DYN':[5,6,7], 'HELP':[1], 'TEAM':[3,5],
@@ -38,6 +38,7 @@ PARTIAL = {
 # Narrow references for requirements whose evidence is outside their module shell.
 EXACT_SOURCES = {
  'EDT-038':['public/editor-v2/core/node-clipboard.js','public/editor-v2/core/commands.js','public/editor-v2/app.js','public/editor-v2/index.html','public/editor-v2/editor-refresh.css'],
+ 'RES-006':['src/routes/admin/media.ts','public/admin-media.html','public/assets/admin-media.js','public/assets/admin-media-organization.js','scripts/pending/0030_media_library_organization.sql','tests/media-api.test.js','tests/browser/admin-media-organization.test.js'],
  'EDT-034':['public/editor-v2/core/canvas-engine.js','public/editor-v2/core/background-asset.js','public/assets/page-renderer.js'],
  'EDT-015':['public/editor-v2/core/capability-matrix.js','public/editor-v2/core/schema.js','public/editor-v2/app.js'],
  'EDT-021':['public/editor-v2/core/property-registry.js','public/editor-v2/core/capability-matrix.js'],

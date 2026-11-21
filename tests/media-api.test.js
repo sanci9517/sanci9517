@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { DatabaseSync } from "node:sqlite";
+import { readFileSync } from "node:fs";
 import { adminMediaRoute, publishedMediaRoute } from "../src/routes/admin/media.ts";
 import { hasAbsoluteMediaLibraryUrl, validatePublicationAssets } from "../src/core/editor-publication.ts";
 import { authoredNodeHtml } from "../public/editor-v2/core/authored-content.js";
@@ -13,6 +14,7 @@ const webm = Uint8Array.from([0x1a,0x45,0xdf,0xa3,0x93,0x42,0x82,0x84]);
 
 async function fixture(t) {
   const db = new DatabaseSync(":memory:");
+  db.exec("PRAGMA foreign_keys=ON;");
   t.after(() => db.close());
   db.exec([
     "CREATE TABLE sites(id TEXT PRIMARY KEY,status TEXT NOT NULL);",
@@ -35,6 +37,7 @@ async function fixture(t) {
     "CREATE TRIGGER media_archive_pages_update_guard BEFORE UPDATE OF content_json,published_content_json ON pages WHEN EXISTS (SELECT 1 FROM media m WHERE m.site_id=NEW.site_id AND m.archived_at IS NOT NULL AND (instr(COALESCE(NEW.content_json,''),m.id)>0 OR instr(COALESCE(NEW.published_content_json,''),m.id)>0)) BEGIN SELECT RAISE(ABORT,'ARCHIVED_MEDIA_REFERENCE'); END;",
     "CREATE TRIGGER media_archive_revisions_insert_guard BEFORE INSERT ON editor_revisions WHEN EXISTS (SELECT 1 FROM media m JOIN pages p ON p.site_id=m.site_id WHERE p.id=NEW.page_id AND m.archived_at IS NOT NULL AND instr(NEW.document_json,m.id)>0) BEGIN SELECT RAISE(ABORT,'ARCHIVED_MEDIA_REFERENCE'); END;"
   ].join("\n"));
+  db.exec(readFileSync(new URL("../scripts/pending/0030_media_library_organization.sql",import.meta.url),"utf8"));
   db.exec("CREATE TABLE media_retention_requests(id TEXT PRIMARY KEY,site_id TEXT NOT NULL,asset_id TEXT NOT NULL,object_key TEXT NOT NULL,state TEXT NOT NULL,requested_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,not_before TEXT NOT NULL,updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,attempt_count INTEGER NOT NULL DEFAULT 0,last_error TEXT,UNIQUE(site_id,asset_id));");
   for (const role of ["editor","viewer"]) {
     db.prepare("INSERT INTO users VALUES (?,?,?,?,1)").run(role,role+"@test.local",role,role);
@@ -65,6 +68,15 @@ async function fixture(t) {
         async all() { return { results:stmt.all(...args) }; },
         async run() { return {meta:{changes:stmt.run(...args).changes}}; }
       };
+    },
+    async batch(statements) {
+      db.exec("SAVEPOINT test_d1_batch");
+      try {
+        const results=[];
+        for(const statement of statements)results.push(await statement.run());
+        db.exec("RELEASE test_d1_batch");
+        return results;
+      } catch(error) { db.exec("ROLLBACK TO test_d1_batch; RELEASE test_d1_batch"); throw error; }
     }
   }};
   const call = (method,role="editor",body=null,opts={}) => {
@@ -83,11 +95,16 @@ async function fixture(t) {
     if(opts.deletePreflight)url.searchParams.set("deletePreflight","1");
     if(opts.retentionRequest)url.searchParams.set("retentionRequest","1");
     if(opts.retentionStatus)url.searchParams.set("retentionStatus","1");
+    if(opts.organization)url.searchParams.set("organization","1");
+    if(opts.collectionId)url.searchParams.set("collectionId",opts.collectionId);
+    if(opts.folderId!==undefined)url.searchParams.set("folderId",opts.folderId);
+    if(opts.tagId)url.searchParams.set("tagId",opts.tagId);
+    if(opts.kind)url.searchParams.set("kind",opts.kind);
     if(opts.cursor!==undefined)url.searchParams.set("cursor",opts.cursor);
     const headers = new Headers();
     if(role)headers.set("Cookie","sanci9517_session="+role);
-    if(method==="POST"||method==="PATCH"||method==="DELETE") { headers.set("Origin",opts.origin||url.origin);headers.set("Content-Type",opts.contentType||(method==="PATCH"?"application/json":"image/png")); }
-    return adminMediaRoute(new Request(url,{method,headers,...(body?{body}: {})}),env,opts.site||"site-default");
+    if(method==="POST"||method==="PATCH"||method==="DELETE") { headers.set("Origin",opts.origin||url.origin);headers.set("Content-Type",opts.contentType||(method==="PATCH"||method==="DELETE"||opts.organization||opts.collectionId?"application/json":"image/png")); }
+    return adminMediaRoute(new Request(url,{method,headers,...(body!==null?{body:typeof body==="string"?body:body instanceof Uint8Array?body:JSON.stringify(body)}: {})}),env,opts.site||"site-default");
   };
   return {db,env,files,mediaReads,call};
 }
@@ -108,6 +125,82 @@ test("authenticated image upload produces private asset and site-scoped listing"
   assert.equal(blob.headers.get("Cache-Control"),"private, no-store");
   assert.deepEqual(new Uint8Array(await blob.arrayBuffer()),png);
   assert.equal((await f.call("GET","editor",null,{id:asset.id,site:"other"})).status,403);
+});
+
+test("RES-006 organization APIs persist site-scoped folders, tags and collections with safe delete behavior",async t=>{
+  const f=await fixture(t);
+  const create=async(kind,name,site)=>{
+    const response=await f.call("POST","editor",{kind,name},{organization:true,site});
+    const payload=await response.json();
+    return {response,payload};
+  };
+  const folder=(await create("folder","Stream borítók","site-default")).payload.data;
+  const tag=(await create("tag","Esemény","site-default")).payload.data;
+  const collection=(await create("collection","Közösségi válogatás","site-default")).payload.data;
+  assert.equal((await f.call("POST","editor","{bad json}",{organization:true})).status,400,
+    "malformed organization JSON is a client error, not a schema outage");
+  assert.equal((await f.call("POST","editor",{kind:"tag",name:"JSON nélkül"},{organization:true,contentType:"text/plain"})).status,415);
+  f.db.prepare("INSERT INTO site_memberships VALUES ('other','editor','editor','active')").run();
+  assert.equal((await create("folder","stream borítók","site-default")).response.status,409,
+    "organization names are unique within a site after Unicode normalization and lowercase mapping");
+  const firstUpload=await f.call("POST","editor",png,{name:"cover.png"});
+  const first=(await firstUpload.json()).data;
+  const otherUpload=await f.call("POST","editor",gif,{name:"other.gif",site:"other",contentType:"image/gif"});
+  assert.equal(otherUpload.status,201);
+  const other=(await otherUpload.json()).data;
+  assert.equal((await f.call("GET","editor",null,{organization:true,site:"other"})).status,200);
+  assert.equal((await f.call("PATCH","editor",{folderId:folder.id},{id:other.id,site:"other"})).status,404,
+    "known identifiers from another site do not permit cross-site folder assignment");
+  assert.equal((await f.call("PATCH","editor",{folderId:folder.id},{id:other.id,site:"other",origin:"https://attacker.test"})).status,403,
+    "cross-origin organization writes remain blocked");
+
+  const folderAssign=await f.call("PATCH","editor",{folderId:folder.id},{id:first.id});
+  assert.equal(folderAssign.status,200);
+  const tagAssign=await f.call("PATCH","editor",{tagIds:[tag.id]},{id:first.id});
+  assert.equal(tagAssign.status,200);
+  const collectionAssign=await f.call("PATCH","editor",{collectionIds:[collection.id]},{id:first.id});
+  assert.equal(collectionAssign.status,200);
+  const organization=(await (await f.call("GET","editor",null,{organization:true})).json()).data;
+  assert.deepEqual(organization.folders.map(item=>({id:item.id,count:item.asset_count})),[{id:folder.id,count:1}]);
+  assert.deepEqual(organization.tags.map(item=>({id:item.id,count:item.asset_count})),[{id:tag.id,count:1}]);
+  assert.deepEqual(organization.collections.map(item=>({id:item.id,count:item.asset_count})),[{id:collection.id,count:1}]);
+  const filtered=(await (await f.call("GET","editor",null,{folderId:folder.id,tagId:tag.id,collectionId:collection.id})).json()).data.assets;
+  assert.equal(filtered.length,1);
+  assert.equal(filtered[0].folderId,folder.id);
+  assert.deepEqual(filtered[0].tagIds,[tag.id]);
+  assert.deepEqual(filtered[0].collectionIds,[collection.id]);
+  const rootBeforeDelete=(await (await f.call("GET","editor",null,{folderId:"root"})).json()).data.assets;
+  assert.equal(rootBeforeDelete.length,0);
+  assert.equal((await f.call("GET","editor",null,{folderId:folder.id,site:"other"})).status,400,
+    "a foreign site's organization identifier cannot be used as a filter");
+  assert.equal((await f.call("GET","editor",null,{rawQuery:"organization=1&organization=1"})).status,400,
+    "ambiguous organization flags fail closed");
+  for(const key of ["folderId","tagId","collectionId"]){
+    assert.equal((await f.call("GET","editor",null,{rawQuery:`${key}=${folder.id}&${key}=${folder.id}`})).status,400,
+      `repeated ${key} filters fail closed rather than silently selecting an arbitrary value`);
+  }
+
+  const invalidTags=await f.call("PATCH","editor",{tagIds:[tag.id,"not-an-id"]},{id:first.id});
+  assert.equal(invalidTags.status,400,"the full tag set is validated before any replacement");
+  assert.equal(f.db.prepare("SELECT COUNT(*) AS n FROM media_asset_tags WHERE asset_id=?").get(first.id).n,1,
+    "invalid metadata leaves the previously saved tag set intact");
+  const rename=await f.call("PATCH","editor",{kind:"tag",id:tag.id,name:"Promóció"},{organization:true});
+  assert.equal(rename.status,200);
+  const deleteTag=await f.call("DELETE","editor",null,{organization:true,kind:"tag",id:tag.id});
+  assert.equal(deleteTag.status,200);
+  assert.equal(f.db.prepare("SELECT COUNT(*) AS n FROM media_asset_tags WHERE asset_id=?").get(first.id).n,0,
+    "deleting a tag clears membership metadata without deleting asset files");
+  const deleteFolder=await f.call("DELETE","editor",null,{organization:true,kind:"folder",id:folder.id});
+  assert.equal(deleteFolder.status,200);
+  assert.equal(f.db.prepare("SELECT folder_id FROM media WHERE id=?").get(first.id).folder_id,null,
+    "deleting a folder returns its assets to the implicit root without deleting files");
+  const deleteCollection=await f.call("DELETE","editor",null,{organization:true,kind:"collection",id:collection.id});
+  assert.equal(deleteCollection.status,200);
+  assert.equal(f.db.prepare("SELECT COUNT(*) AS n FROM media_collection_assets WHERE asset_id=?").get(first.id).n,0,
+    "deleting a collection clears membership metadata only");
+  const rootAfterDelete=(await (await f.call("GET","editor",null,{folderId:"root"})).json()).data.assets;
+  assert.equal(rootAfterDelete.length,1,"deleted-folder assets reappear at the root filter");
+  assert.equal(f.files.size,2,"organization operations never delete or copy R2 objects");
 });
 
 test("private media HEAD verifies site-scoped R2 metadata without reading asset bodies",async t=>{

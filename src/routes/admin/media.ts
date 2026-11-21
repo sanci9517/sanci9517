@@ -24,6 +24,7 @@ const MAX_PUBLIC_MEDIA_SNAPSHOTS = 100;
 type MediaRow = {
   id: string; site_id: string; object_key: string; original_name: string;
   mime_type: string; size_bytes: number; alt_text: string; created_at: string; archived_at: string | null;
+  folder_id?: string | null; tag_ids_json?: string; collection_ids_json?: string;
 };
 
 const PLAYABLE_MIMES = ["audio/mpeg", "audio/ogg", "audio/wav", "video/webm"] as const;
@@ -99,9 +100,102 @@ function dto(row: MediaRow) {
   return {
     id: row.id, name: row.original_name, mimeType: row.mime_type,
     sizeBytes: row.size_bytes, altText: row.alt_text, createdAt: row.created_at,
-    archivedAt: row.archived_at,
+    archivedAt: row.archived_at, folderId: row.folder_id ?? null,
+    tagIds: parseIdArray(row.tag_ids_json), collectionIds: parseIdArray(row.collection_ids_json),
     previewUrl: "/api/admin/media?id=" + encodeURIComponent(row.id)
   };
+}
+
+function parseIdArray(value: string | undefined): string[] {
+  if (!value) return [];
+  try {
+    const parsed: unknown = JSON.parse(value);
+    return Array.isArray(parsed) ? parsed.filter((id): id is string => typeof id === "string") : [];
+  } catch { return []; }
+}
+
+const ORGANIZATION_KINDS = {
+  folder: "media_folders",
+  tag: "media_tags",
+  collection: "media_collections"
+} as const;
+type OrganizationKind = keyof typeof ORGANIZATION_KINDS;
+
+function organizationName(value: unknown): { name: string; key: string } | null {
+  if (typeof value !== "string") return null;
+  const name = value.normalize("NFC").trim();
+  const length = Array.from(name).length;
+  if (!length || length > 80 || /[\x00-\x1f\x7f]/.test(name)) return null;
+  return { name, key: name.toLowerCase() };
+}
+
+function organizationKind(value: unknown): OrganizationKind | null {
+  return value === "folder" || value === "tag" || value === "collection" ? value : null;
+}
+
+function mediaIds(value: unknown): string[] | null {
+  if (!Array.isArray(value) || value.length > 50) return null;
+  const ids: string[] = [];
+  const seen = new Set<string>();
+  for (const item of value) {
+    if (typeof item !== "string" || !MEDIA_ASSET_ID.test(item)) return null;
+    const id = item.toLowerCase();
+    if (seen.has(id)) return null;
+    seen.add(id);
+    ids.push(id);
+  }
+  return ids;
+}
+
+async function mediaOrganization(request: Request, env: Env, siteId: string, url: URL): Promise<Response> {
+  const flag = url.searchParams.getAll("organization");
+  if (flag.length !== 1 || flag[0] !== "1") return error("INVALID_MEDIA_ORGANIZATION", 400);
+  if (request.method !== "GET" && (request.headers.get("Origin") !== url.origin || request.headers.get("Sec-Fetch-Site") === "cross-site")) return error("INVALID_ORIGIN", 403);
+  try {
+    if (request.method === "GET") {
+      const [folders, tags, collections] = await Promise.all([
+        env.DB.prepare("SELECT f.id,f.name,f.created_at,COUNT(m.id) AS asset_count FROM media_folders f LEFT JOIN media m ON m.site_id=f.site_id AND m.folder_id=f.id WHERE f.site_id=? GROUP BY f.id ORDER BY f.name_key,f.id").bind(siteId).all<{id:string;name:string;created_at:string;asset_count:number}>(),
+        env.DB.prepare("SELECT t.id,t.name,t.created_at,COUNT(at.asset_id) AS asset_count FROM media_tags t LEFT JOIN media_asset_tags at ON at.site_id=t.site_id AND at.tag_id=t.id WHERE t.site_id=? GROUP BY t.id ORDER BY t.name_key,t.id").bind(siteId).all<{id:string;name:string;created_at:string;asset_count:number}>(),
+        env.DB.prepare("SELECT c.id,c.name,c.created_at,COUNT(ca.asset_id) AS asset_count FROM media_collections c LEFT JOIN media_collection_assets ca ON ca.site_id=c.site_id AND ca.collection_id=c.id WHERE c.site_id=? GROUP BY c.id ORDER BY c.name_key,c.id").bind(siteId).all<{id:string;name:string;created_at:string;asset_count:number}>()
+      ]);
+      return ok({folders:folders.results,tags:tags.results,collections:collections.results});
+    }
+    if (request.method === "POST") {
+      if (!/^application\/json(?:\s*;|$)/i.test(request.headers.get("Content-Type") || "")) return error("INVALID_MEDIA_ORGANIZATION",415);
+      let body: unknown; try { body = await request.json(); } catch { return error("INVALID_JSON",400); }
+      if (!body || typeof body !== "object" || Array.isArray(body) || Object.keys(body).length !== 2) return error("INVALID_MEDIA_ORGANIZATION",400);
+      const record = body as Record<string,unknown>;
+      const kind = organizationKind(record.kind), normalized = organizationName(record.name);
+      if (!kind || !normalized) return error("INVALID_MEDIA_ORGANIZATION",400);
+      const id = crypto.randomUUID();
+      await env.DB.prepare(`INSERT INTO ${ORGANIZATION_KINDS[kind]}(id,site_id,name,name_key) VALUES(?,?,?,?)`)
+        .bind(id,siteId,normalized.name,normalized.key).run();
+      return Response.json({ok:true,data:{id,kind,name:normalized.name,assetCount:0}},{status:201,headers:{"Cache-Control":"no-store"}});
+    }
+    if (request.method === "PATCH") {
+      if (!/^application\/json(?:\s*;|$)/i.test(request.headers.get("Content-Type") || "")) return error("INVALID_MEDIA_ORGANIZATION",415);
+      let body: unknown; try { body = await request.json(); } catch { return error("INVALID_JSON",400); }
+      if (!body || typeof body !== "object" || Array.isArray(body) || Object.keys(body).length !== 3) return error("INVALID_MEDIA_ORGANIZATION",400);
+      const record = body as Record<string,unknown>;
+      const kind = organizationKind(record.kind), normalized = organizationName(record.name);
+      if (!kind || typeof record.id !== "string" || !MEDIA_ASSET_ID.test(record.id) || !normalized) return error("INVALID_MEDIA_ORGANIZATION",400);
+      const result = await env.DB.prepare(`UPDATE ${ORGANIZATION_KINDS[kind]} SET name=?,name_key=?,updated_at=CURRENT_TIMESTAMP WHERE id=? AND site_id=?`)
+        .bind(normalized.name,normalized.key,record.id.toLowerCase(),siteId).run();
+      if (Number(result.meta?.changes ?? 0) !== 1) return error("MEDIA_ORGANIZATION_NOT_FOUND",404);
+      return ok({id:record.id.toLowerCase(),kind,name:normalized.name});
+    }
+    if (request.method === "DELETE") {
+      const kind = organizationKind(url.searchParams.get("kind")), id = url.searchParams.get("id") || "";
+      if (!kind || !MEDIA_ASSET_ID.test(id)) return error("INVALID_MEDIA_ORGANIZATION",400);
+      const result = await env.DB.prepare(`DELETE FROM ${ORGANIZATION_KINDS[kind]} WHERE id=? AND site_id=?`).bind(id.toLowerCase(),siteId).run();
+      if (Number(result.meta?.changes ?? 0) !== 1) return error("MEDIA_ORGANIZATION_NOT_FOUND",404);
+      return ok({id:id.toLowerCase(),kind,deleted:true});
+    }
+    return error("METHOD_NOT_ALLOWED",405);
+  } catch (cause) {
+    if (String(cause).includes("UNIQUE constraint failed")) return error("MEDIA_ORGANIZATION_DUPLICATE",409);
+    return error("MEDIA_ORGANIZATION_UNAVAILABLE",503);
+  }
 }
 
 function escapeLike(value: string): string { return value.replace(/[\^%_]/g, "^$&"); }
@@ -459,6 +553,7 @@ export async function adminMediaRoute(request: Request, env: Env, siteId: string
   if (denied) return denied;
   if (!env.MEDIA) return error("MEDIA_STORAGE_UNAVAILABLE", 503);
   const url = new URL(request.url);
+  if (url.searchParams.has("organization")) return mediaOrganization(request,env,siteId,url);
   const retentionFlag = url.searchParams.getAll("retentionRequest");
   const retentionStatusFlag = url.searchParams.getAll("retentionStatus");
   if (retentionFlag.length && (retentionFlag.length !== 1 || retentionFlag[0] !== "1")) return error("INVALID_RETENTION_REQUEST",400);
@@ -657,6 +752,13 @@ export async function adminMediaRoute(request: Request, env: Env, siteId: string
       return mediaUsage(request, env, siteId, usageId);
     }
     if (!id) {
+      for(const key of ["collectionId","folderId","tagId"]){
+        if(url.searchParams.getAll(key).length>1)return error("INVALID_MEDIA_FILTER",400);
+      }
+      const collectionId=url.searchParams.get("collectionId"),folderId=url.searchParams.get("folderId"),tagId=url.searchParams.get("tagId");
+      if(collectionId!==null&&(!MEDIA_ASSET_ID.test(collectionId)||!await env.DB.prepare("SELECT id FROM media_collections WHERE id=? AND site_id=? LIMIT 1").bind(collectionId.toLowerCase(),siteId).first()))return error("INVALID_MEDIA_FILTER",400);
+      if(tagId!==null&&(!MEDIA_ASSET_ID.test(tagId)||!await env.DB.prepare("SELECT id FROM media_tags WHERE id=? AND site_id=? LIMIT 1").bind(tagId.toLowerCase(),siteId).first()))return error("INVALID_MEDIA_FILTER",400);
+      if(folderId!==null&&folderId!=="root"&&(!MEDIA_ASSET_ID.test(folderId)||!await env.DB.prepare("SELECT id FROM media_folders WHERE id=? AND site_id=? LIMIT 1").bind(folderId.toLowerCase(),siteId).first()))return error("INVALID_MEDIA_FILTER",400);
       const query = (url.searchParams.get("q") || "").trim().slice(0, 100);
       const mime = url.searchParams.get("mime") || "";
       const allowedMime = ["", ...MEDIA_MIMES, "image", "audio", "video"];
@@ -670,6 +772,12 @@ export async function adminMediaRoute(request: Request, env: Env, siteId: string
       if (before !== null && !/^[0-9a-f-]{36}$/.test(before)) return error('INVALID_MEDIA_CURSOR',400);
       const clauses = ['site_id=?', state === 'archived' ? 'archived_at IS NOT NULL' : 'archived_at IS NULL'];
       const binds: (string | number)[] = [siteId];
+      if(folderId!==null){
+        if(folderId==="root")clauses.push("folder_id IS NULL");
+        else {clauses.push("folder_id=?");binds.push(folderId.toLowerCase());}
+      }
+      if(tagId!==null){clauses.push("EXISTS(SELECT 1 FROM media_asset_tags at WHERE at.site_id=media.site_id AND at.asset_id=media.id AND at.tag_id=?)");binds.push(tagId.toLowerCase());}
+      if(collectionId!==null){clauses.push("EXISTS(SELECT 1 FROM media_collection_assets ca WHERE ca.site_id=media.site_id AND ca.asset_id=media.id AND ca.collection_id=?)");binds.push(collectionId.toLowerCase());}
       if (query) { clauses.push("(original_name LIKE ? ESCAPE '^' OR alt_text LIKE ? ESCAPE '^')"); const pattern = `%${escapeLike(query)}%`; binds.push(pattern, pattern); }
       if (mime === "image") { clauses.push(`mime_type IN (${IMAGE_MIMES.map(() => "?").join(",")})`); binds.push(...IMAGE_MIMES); }
       else if (mime === "audio") clauses.push("mime_type LIKE 'audio/%'");
@@ -689,7 +797,10 @@ export async function adminMediaRoute(request: Request, env: Env, siteId: string
       // Fetch one extra record to distinguish the final page from a full page
       // without exposing quota details or making a separate count query.
       const rows = await env.DB.prepare(
-        `SELECT id,site_id,object_key,original_name,mime_type,size_bytes,alt_text,created_at,archived_at FROM media WHERE ${clauses.join(" AND ")} ORDER BY created_at DESC,id DESC LIMIT ${limit + 1}`
+        `SELECT media.id,media.site_id,media.object_key,media.original_name,media.mime_type,media.size_bytes,media.alt_text,media.created_at,media.archived_at,media.folder_id,`+
+        `COALESCE((SELECT json_group_array(tag_id) FROM (SELECT at.tag_id FROM media_asset_tags at WHERE at.site_id=media.site_id AND at.asset_id=media.id ORDER BY at.tag_id)),'[]') AS tag_ids_json,`+
+        `COALESCE((SELECT json_group_array(collection_id) FROM (SELECT ca.collection_id FROM media_collection_assets ca WHERE ca.site_id=media.site_id AND ca.asset_id=media.id ORDER BY ca.collection_id)),'[]') AS collection_ids_json `+
+        `FROM media WHERE ${clauses.join(" AND ")} ORDER BY created_at DESC,id DESC LIMIT ${limit + 1}`
       ).bind(...binds).all<MediaRow>();
       // All stored objects count against the application quota, including archived
       // assets. This is D1 metadata usage, not provider-side R2 billing.
@@ -736,6 +847,34 @@ export async function adminMediaRoute(request: Request, env: Env, siteId: string
     if (!/^[0-9a-f-]{36}$/.test(id)) return error("MEDIA_NOT_FOUND", 404);
     let body: unknown; try { body = await request.json(); } catch { return error("INVALID_JSON", 400); }
     if (!body || typeof body !== "object" || Array.isArray(body) || Object.keys(body as object).length !== 1) return error("INVALID_MEDIA_METADATA",400);
+    if (Object.prototype.hasOwnProperty.call(body,"folderId")) {
+      const folderId=(body as {folderId?:unknown}).folderId;
+      if(folderId!==null&&(typeof folderId!=="string"||!MEDIA_ASSET_ID.test(folderId)))return error("INVALID_MEDIA_ORGANIZATION",400);
+      const normalizedId=id.toLowerCase();
+      if(!await env.DB.prepare("SELECT id FROM media WHERE id=? AND site_id=? LIMIT 1").bind(normalizedId,siteId).first())return error("MEDIA_NOT_FOUND",404);
+      const normalizedFolder=folderId===null?null:(folderId as string).toLowerCase();
+      if(normalizedFolder!==null&&!await env.DB.prepare("SELECT id FROM media_folders WHERE id=? AND site_id=? LIMIT 1").bind(normalizedFolder,siteId).first())return error("MEDIA_ORGANIZATION_NOT_FOUND",404);
+      try{
+        await env.DB.prepare("UPDATE media SET folder_id=? WHERE id=? AND site_id=?").bind(normalizedFolder,normalizedId,siteId).run();
+        return ok({id:normalizedId,folderId:normalizedFolder});
+      }catch{return error("MEDIA_ORGANIZATION_UNAVAILABLE",503);}
+    }
+    if(Object.prototype.hasOwnProperty.call(body,"tagIds")||Object.prototype.hasOwnProperty.call(body,"collectionIds")){
+      const record=body as Record<string,unknown>,key=Object.keys(record)[0],kind=key==="tagIds"?"tag":"collection",ids=mediaIds(record[key]);
+      if(!ids)return error("INVALID_MEDIA_ORGANIZATION",400);
+      const normalizedId=id.toLowerCase();
+      if(!await env.DB.prepare("SELECT id FROM media WHERE id=? AND site_id=? LIMIT 1").bind(normalizedId,siteId).first())return error("MEDIA_NOT_FOUND",404);
+      const joinTable=kind==="tag"?"media_asset_tags":"media_collection_assets",targetTable=kind==="tag"?"media_tags":"media_collections";
+      const matches=ids.length?await env.DB.prepare(`SELECT id FROM ${targetTable} WHERE site_id=? AND id IN (${ids.map(()=>"?").join(",")})`).bind(siteId,...ids).all<{id:string}>():{results:[]};
+      if(matches.results.length!==ids.length)return error("MEDIA_ORGANIZATION_NOT_FOUND",404);
+      try{
+        const statements=[env.DB.prepare(`DELETE FROM ${joinTable} WHERE site_id=? AND asset_id=?`).bind(siteId,normalizedId),...ids.map((groupId,index)=>kind==="tag"
+          ?env.DB.prepare("INSERT INTO media_asset_tags(site_id,asset_id,tag_id) VALUES(?,?,?)").bind(siteId,normalizedId,groupId)
+          :env.DB.prepare("INSERT INTO media_collection_assets(site_id,collection_id,asset_id,position) VALUES(?,?,?,?)").bind(siteId,groupId,normalizedId,index))];
+        await env.DB.batch(statements);
+        return ok({id:normalizedId,[key]:ids});
+      }catch{return error("MEDIA_ORGANIZATION_UNAVAILABLE",503);}
+    }
     if (Object.prototype.hasOwnProperty.call(body,'archived')) {
       const archived=(body as {archived?:unknown}).archived;
       if (typeof archived !== 'boolean') return error('INVALID_MEDIA_METADATA',400);
@@ -776,6 +915,29 @@ export async function adminMediaRoute(request: Request, env: Env, siteId: string
     const result = await env.DB.prepare("UPDATE media SET alt_text=? WHERE id=? AND site_id=?").bind(altText.trim(), id, siteId).run();
     if (Number(result.meta?.changes ?? 0) !== 1) return error("MEDIA_NOT_FOUND", 404);
     return ok({ id, altText: altText.trim() });
+  }
+  if(request.method==="POST"&&url.searchParams.has("collectionId")){
+    if(request.headers.get("Origin")!==url.origin||request.headers.get("Sec-Fetch-Site")==="cross-site")return error("INVALID_ORIGIN",403);
+    if(url.searchParams.getAll("collectionId").length!==1||!/^application\/json(?:\s*;|$)/i.test(request.headers.get("Content-Type")||""))return error("INVALID_MEDIA_ORGANIZATION",400);
+    const collectionId=url.searchParams.get("collectionId")||"";
+    if(!MEDIA_ASSET_ID.test(collectionId))return error("INVALID_MEDIA_ORGANIZATION",400);
+    let body:unknown;try{body=await request.json();}catch{return error("INVALID_JSON",400);}
+    if(!body||typeof body!=="object"||Array.isArray(body)||Object.keys(body).length!==2)return error("INVALID_MEDIA_ORGANIZATION",400);
+    const record=body as Record<string,unknown>,assetId=record.assetId;
+    if(typeof assetId!=="string"||!MEDIA_ASSET_ID.test(assetId)||typeof record.included!=="boolean")return error("INVALID_MEDIA_ORGANIZATION",400);
+    const normalizedCollection=collectionId.toLowerCase(),normalizedAsset=assetId.toLowerCase();
+    const [collection,asset]=await Promise.all([
+      env.DB.prepare("SELECT id FROM media_collections WHERE id=? AND site_id=? LIMIT 1").bind(normalizedCollection,siteId).first(),
+      env.DB.prepare("SELECT id FROM media WHERE id=? AND site_id=? LIMIT 1").bind(normalizedAsset,siteId).first()
+    ]);
+    if(!collection||!asset)return error("MEDIA_ORGANIZATION_NOT_FOUND",404);
+    try{
+      if(record.included){
+        await env.DB.prepare("INSERT INTO media_collection_assets(site_id,collection_id,asset_id,position) SELECT ?,?,?,COALESCE(MAX(position)+1,0) FROM media_collection_assets WHERE site_id=? AND collection_id=? ON CONFLICT(site_id,collection_id,asset_id) DO NOTHING")
+          .bind(siteId,normalizedCollection,normalizedAsset,siteId,normalizedCollection).run();
+      }else await env.DB.prepare("DELETE FROM media_collection_assets WHERE site_id=? AND collection_id=? AND asset_id=?").bind(siteId,normalizedCollection,normalizedAsset).run();
+      return ok({collectionId:normalizedCollection,assetId:normalizedAsset,included:record.included});
+    }catch{return error("MEDIA_ORGANIZATION_UNAVAILABLE",503);}
   }
   if (request.method !== "POST") return error("METHOD_NOT_ALLOWED", 405);
   if (request.headers.get("Origin") !== url.origin ||

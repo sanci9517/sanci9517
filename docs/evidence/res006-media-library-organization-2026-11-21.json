@@ -1,0 +1,182 @@
+{
+  "schema": 1,
+  "captured_at": "2026-11-21T10:02:24Z",
+  "plan_point": "77.44.7.D / EDT-039; scoped feature RES-006, within D-06 media lifecycle/asset library",
+  "status": "PARTIAL_IMPLEMENTATION_PRODUCTION_0030_APPLIED; RES006_RUNTIME_RELEASE_PENDING; FULL_D_OPEN_NOT_CERTIFIED",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "github_head_at_inspection": "9ad43c78586652a9578d766a3c37503864207faf",
+    "local_head": "9081aa79e61807418ab573893508c35a02e1f2f6",
+    "commit": "RES-006 runtime commit not yet created; current worktree changes are preserved",
+    "push": "EDT-039 9081aa79e61807418ab573893508c35a02e1f2f6 is pushed; RES-006 source is not yet pushed",
+    "preexisting_work": "Preserved in stash c146439540b2983e5460f6b4c4952afc3bd6f076; stash not modified or dropped"
+  },
+  "implementation": {
+    "feature": "Site-scoped media folders, tags and collections: list/create/rename/confirmed delete; assign folder/tags/collections to asset; filter media list; preserve R2 objects on group delete.",
+    "security": "Existing editor/site membership gate; same-origin and cross-site checks; normalized site-unique names; composite tenant foreign keys and folder tenant guard; atomic D1 batch replacement of tag/collection metadata; bounded ID sets. Duplicate folder/tag/collection filter parameters fail closed; tag deletion removes only the relation rows and preserves the object.",
+    "database_candidate": "scripts/pending/0030_media_library_organization.sql",
+    "migration_class": "Manual additive candidate, registered with 0025-0029, never included in automatic migrations. Not applied to production.",
+    "save_publish_separate": true
+  },
+  "read_only_production_preflight": {
+    "performed": "2026-11-21 via authenticated Cloudflare D1 query API; one batch of 4 SELECT/PRAGMA statements immediately before migration",
+    "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
+    "latest_migrations_before": [
+      "0029_media_archive_unicode_additive.sql",
+      "0028_media_archive.sql",
+      "0027_site_scoped_settings.sql"
+    ],
+    "marker_0030_before": 0,
+    "organization_schema_objects_before": 0,
+    "foreign_key_check_rows": 0,
+    "quick_check": "ok",
+    "queries_successful": 4,
+    "rows_read_total": 2521,
+    "rows_written_total": 0,
+    "changes_total": 0,
+    "all_changed_db_false": true,
+    "application_row_content_read": false
+  },
+  "production_worker": {
+    "worker": "sanci9517-streamer-brand",
+    "deployment_id": "dc489b3a-5af2-4ae3-b895-8e7fa14f3089",
+    "version_id": "24235630-a41f-4f0c-94fe-dcfcf573c1c7",
+    "traffic_percent": 100,
+    "deployment_created_on": "2026-11-21T09:46:51.26306Z",
+    "source_commit": "9081aa79e61807418ab573893508c35a02e1f2f6",
+    "source_sha_evidence": "GitHub worker-production-source-smoke run 44891138881 succeeded against exact HEAD; its logs show /api/health HTTP 200 and all exact source SHA-256 checks, including editor-v2/core/page-interactions.js, match after 3 rollout retries.",
+    "health": "HTTP 200; source-smoke exact-SHA health check succeeded",
+    "current_RES006_runtime_source_deployed": false
+  },
+  "local_checks": {
+    "npm run test:media": "PASS 111/111",
+    "node --test tests/browser/admin-media-library.test.js tests/browser/admin-media-organization.test.js": "PASS 4/4, real local Chromium desktop/mobile widths",
+    "node --test tests/web013-manual-migration-chain.test.js tests/d1-0029-release-batch.test.js tests/media-archive-additive-unicode.test.js": "PASS 15/15",
+    "npm run typecheck": "PASS",
+    "node scripts/web013-migration-safety-gate.mjs": "PASS; deploy:safe remains non-migrating and 0025-0030 cannot auto-replay",
+    "python3 scripts/d1/ledger-reconciliation.py bootstrap --output <fresh /tmp path>": "PASS; offline fresh bootstrap through registered 0030 candidate",
+    "python3 scripts/build-feature-traceability.py --check": "PASS 396/396 source mappings",
+    "python3 scripts/check-canonical-plan.py": "PASS one 13-part master/current cursor/396 contracts; acceptance not certified",
+    "python3 tests/plan-contract.test.py": "PASS 15/15",
+    "python3 scripts/audit-active-plan-point.py": "PASS for bookkeeping only: cursor 77.44 / WEB-011, next 77.44.7.D; 148 PARTIAL_SOURCE / 248 UNVERIFIED; acceptance NOT_CERTIFIED",
+    "node --check public/assets/admin-media.js && node --check public/assets/admin-media-organization.js": "PASS",
+    "git diff --check": "PASS",
+    "npm run test:media (follow-up)": "PASS; 5/5 test files; repeated folderId/tagId/collectionId filters fail closed and tag delete clears metadata only",
+    "npm run typecheck (follow-up)": "PASS",
+    "node scripts/web013-migration-safety-gate.mjs (follow-up)": "PASS; manual-only 0030 still excluded from automatic deployment",
+    "git diff --check (follow-up)": "PASS",
+    "npm run test:media:organization:browser (follow-up)": "PASS 1/1 real Chromium, 390px and 1366px; the restricted sandbox first failed localhost bind, then the same test passed with approved loopback-only escalation",
+    "python3 scripts/build-feature-traceability.py --check (follow-up)": "PASS 396/396, including updated route source hash",
+    "python3 scripts/check-canonical-plan.py (follow-up)": "PASS; one 13-part master, current cursor and 396 mappings; functional acceptance not certified",
+    "python3 tests/plan-contract.test.py (follow-up)": "PASS 15/15",
+    "python3 scripts/audit-active-plan-point.py (follow-up)": "PASS for bookkeeping only: 77.44.7.D remains OPEN / NOT_CERTIFIED; 148 PARTIAL_SOURCE / 248 UNVERIFIED",
+    "node --test --test-concurrency=1 tests/browser/editor-page-interactions.test.js (EDT-039 follow-up)": "PASS 1/1 real Chromium lifecycle; 116.1s; draft Save/reload/preview remains separate from Publish; malformed action recovery and keyboard/navigation path covered",
+    "npm run test:editor (EDT-039 regression follow-up)": "PASS; 22/22 test files, including duplicate automatic load/timer target rejection and explicit click action acceptance",
+    "npm run test:editor:layout (broad local Chromium suite)": "INCOMPLETE; 4/60 files completed (editor-action-help 2/2, editor-workspace-appearance 87/87, editor-multi-validation 2/2, editor-page-paths 2/2); file 5 began and was intentionally interrupted after 4 passing subtests because the first two files took >5 minutes; exit 130; no full-suite PASS",
+    "node --test public/editor-v2/tests/motion.test.js (EDT-040 review)": "PASS 1/1 test file; allowlisted motion and prefers-reduced-motion behavior; no code change indicated"
+  },
+  "release": {
+    "wrangler_dry_run": "PASS for current RES-006 working tree before D1 migration: Wrangler 4.130.0 packaged 198 assets (411.30 KiB / 104.50 KiB gzip); production bindings resolved; no deploy occurred.",
+    "edt039_runtime_commit": "9081aa79e61807418ab573893508c35a02e1f2f6",
+    "edt039_exact_sha_source_smoke": {
+      "run_id": 44891138881,
+      "status": "completed",
+      "conclusion": "success",
+      "worker_deployment_id": "dc489b3a-5af2-4ae3-b895-8e7fa14f3089",
+      "worker_version_id": "24235630-a41f-4f0c-94fe-dcfcf573c1c7",
+      "traffic_percent": 100
+    },
+    "edt039_editor_core_ci": {
+      "run_id": 44891138936,
+      "status": "in_progress",
+      "completed_steps": 13,
+      "next_step": "Run Editor browser layout regression"
+    },
+    "RES006_runtime_commit": "NOT CREATED",
+    "RES006_push": "NOT DONE",
+    "RES006_worker_deploy": "PENDING until commit, exact-SHA required CI/release gates, and deploy-safe verification"
+  },
+  "traceability": {
+    "feature_count": 396,
+    "partial_source": 148,
+    "unverified": 248,
+    "warning": "147/249 are source-traceability counts, not 147 and 249 feature tasks and not acceptance results. RES-006 moved from unverified to partial source only; its runtime acceptance remains pending."
+  },
+  "cost": {
+    "new_paid_service": false,
+    "new_paid_cost_huf": "No paid service was introduced; exact external billing not available in the API. User-provided CI capacity and Cloudflare build-minute endpoint reported limit not reached.",
+    "d1_migration_rows_written": 85,
+    "d1_migration_application_rows_written": 0,
+    "d1_preflight_and_postflight_rows_written": 0,
+    "r2_read_or_write": false,
+    "quota_overage_observed": "No build-minute limit reached; account billing totals are not exposed by the authorized API session."
+  },
+  "source_sha256": {
+    "src/routes/admin/media.ts": "d582b3abfbd32ec53201bab4c98c88200d617d7def3da9f4d1c4341da0387dc2",
+    "public/admin-media.html": "925b0347b25584500cf0a9ecf196adf4b4f80252830cd8975cc5ce0b72742655",
+    "public/assets/admin-media.js": "3056f50f93da633490e04daf7cba9a0a063d38007c6eb1f784e7a515bcee8df3",
+    "public/assets/admin-media-organization.js": "27b89f81fb7a84cfe6dd2dd7e15000a79de84730dad041664921808a848c73cd",
+    "scripts/pending/0030_media_library_organization.sql": "af036c90edda1bd4685e2ed09707c167d02a2b43afec859a28ed9eb90a5eaa92",
+    "scripts/d1/manual-migrations.json": "9ee4eae84936eed898a8426364418fa99971331d0bc8878b77d7188c8b4371df",
+    "scripts/web013-migration-safety-gate.mjs": "41413507312fa002d7026a39cce4a902a01a183e3389025a71e40f97e43ce6b8",
+    "scripts/d1/ledger-reconciliation.py": "35f92e5606e7dc67e63d2c4a0a1b7bdbe5d7a47d0924e9ba0be2ef619081e335",
+    "scripts/build-feature-traceability.py": "f4274d53d9a8bc964006bcd11857d426a426b1115b5340be4cac184dd4dd7935",
+    "tests/media-api.test.js": "7d32f13eee5cdb5ea3da0e61a47bcf0ce49ad8750d016c0864168e025887097b",
+    "tests/browser/admin-media-organization.test.js": "c8be2bd093487861c2fc8dbdeaaac4b22f2aae7a8104e2a4311ffeee167f0850",
+    "tests/web013-manual-migration-chain.test.js": "7dcee017be432e6190841b1c441acf218cb7ba1a349b1ab541eb4c7e4047f161",
+    "package.json": "f3f96ce5afc6ab4b74d2cdc4ef94260d58a3956daed9dfa935612af66c689f1a",
+    "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md": "PENDING plan update",
+    "docs/evidence/feature-traceability.json": "1d90cbda249f2676d202e3575fdd3a6e2660b6da1b42acef61f70c1d0d3e6b8e",
+    "public/editor-v2/core/page-interactions.js": "4ef5dda7a33f11cd34949fa241b5247957e8aeca2c4d95fb36fa6f6097ffb448",
+    "public/editor-v2/core/authored-content.js": "e8fcb7b806e5633b0153904239e3a76be3042918e33175882159c82f5b9de1bd",
+    "public/editor-v2/core/schema.js": "bbfa4924d1a35c74d1430068a82ce5547232ff90f3ae6b3aec4009132270dfac",
+    "public/editor-v2/ui/page-interaction-controls.js": "aca7088c7670b0f9129e22d4c699261d311e45ad19d271f617cdc2eb35bef2ee",
+    "public/editor-v2/tests/page-interactions.test.js": "fe6d8b0bdf88194f23ed48c4a8190bfae2211b34f82809a875c2cc40273b0af2"
+  },
+  "production_migration": {
+    "migration": "0030_media_library_organization.sql",
+    "candidate_sha256": "af036c90edda1bd4685e2ed09707c167d02a2b43afec859a28ed9eb90a5eaa92",
+    "approval": "Owner gave standing explicit authorization to complete the full D block and release required production work at no new paid cost; this additive schema-only operation used a fresh SELECT-only preflight.",
+    "execution": "Single authenticated Cloudflare D1 REST query batch against database 5a4a5e96-fdad-421a-a33c-143daaf33e98: 12 additive DDL statements plus one d1_migrations marker insert; all 13 statements returned success.",
+    "objects_created": [
+      "media_folders",
+      "media_tags",
+      "media_collections",
+      "media_asset_tags",
+      "media_collection_assets",
+      "idx_media_site_id_unique",
+      "idx_media_site_folder_created",
+      "idx_media_asset_tags_tag",
+      "idx_media_collection_assets_asset",
+      "media_folder_site_insert_guard",
+      "media_folder_site_update_guard"
+    ],
+    "rows_written": 85,
+    "changes": 1,
+    "database_size_before_bytes": 3739648,
+    "database_size_after_bytes": 3825664,
+    "application_rows_written": 0,
+    "existing_media_metadata_changed": false,
+    "r2_operation": false,
+    "applied_marker_id": 36
+  },
+  "postflight": {
+    "performed": "Fresh Cloudflare D1 REST query batch; SELECT/PRAGMA only",
+    "queries_successful": 6,
+    "migration_marker": "id 36; 0030_media_library_organization.sql",
+    "latest_migrations": [
+      "0030_media_library_organization.sql",
+      "0029_media_archive_unicode_additive.sql",
+      "0028_media_archive.sql"
+    ],
+    "schema_objects_present": 11,
+    "media_folder_id_present": true,
+    "foreign_key_check_rows": 0,
+    "quick_check": "ok",
+    "rows_read_total": 2587,
+    "rows_written_total": 0,
+    "changes_total": 0,
+    "all_changed_db_false": true
+  }
+}
