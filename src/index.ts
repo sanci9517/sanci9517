@@ -14,6 +14,7 @@ import { adminScheduleMediaRoute } from "./routes/admin/schedule-media";
 import { adminTwitchScheduleSyncRoute } from "./routes/admin/twitch-schedule-sync";
 import { adminPagesRoute } from "./routes/admin/pages";
 import { adminEditorRoute } from "./routes/admin/editor";
+import { editorPreferencesRoute } from "./routes/admin/editor-preferences";
 import { adminMediaRoute, publishedMediaRoute } from "./routes/admin/media";
 import { publicSiteSettingsRoute } from "./routes/public/site-settings";
 import { publicScheduleRoute } from "./routes/public/schedule";
@@ -67,6 +68,7 @@ export default {
     if (pathname === "/api/admin/link-report") return adminLinkReportRoute(request, env);
     if (pathname === "/api/admin/pages") return adminPagesRoute(request, env, siteId);
     if (pathname === "/api/admin/navigation") return adminNavigationRoute(request, env, siteId);
+    if (pathname === "/api/admin/editor/preferences") return editorPreferencesRoute(request, env, siteId);
     if (pathname === "/api/admin/editor") return adminEditorRoute(request, env, siteId);
     if (pathname === "/api/admin/media") return adminMediaRoute(request, env, siteId);
     if (pathname.startsWith("/media/")) return publishedMediaRoute(request, env, siteId, pathname.slice("/media/".length));

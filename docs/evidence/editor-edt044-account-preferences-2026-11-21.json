@@ -1,0 +1,66 @@
+{
+  "date_utc": "2026-11-21",
+  "plan_point": "77.44 / WEB-011 -> 77.44.7.D / EDT-044",
+  "feature": "Authenticated account-backed palette favorites only; viewport, panel layout, grid syncing and full Editor acceptance remain open.",
+  "branch": "v2/foundation",
+  "base_commit": "a8b84072277554afd8c72e06cd8c5d965eb7b538",
+  "production_preflight": {
+    "method": "Cloudflare D1 query API; read-only SELECT batch; no migration or data write",
+    "queries": [
+      "SELECT name, sql FROM sqlite_master WHERE type='table' AND name IN ('editor_preferences','users','site_memberships') ORDER BY name",
+      "SELECT id, name, applied_at FROM d1_migrations ORDER BY id",
+      "SELECT COUNT(*) AS preference_rows FROM editor_preferences"
+    ],
+    "editor_preferences_table_present": true,
+    "membership_auth_tables_present": true,
+    "migration_markers": 36,
+    "latest_migration": "0030_media_library_organization.sql",
+    "preference_rows_before_release": 0,
+    "all_rows_written": 0,
+    "all_changes": 0,
+    "all_changed_db": false
+  },
+  "wrangler_dry_run": {
+    "version": "4.130.0",
+    "assets_read": 199,
+    "total_upload": "417.09 KiB",
+    "gzip": "105.81 KiB",
+    "d1_binding": "sanci9517-db"
+  },
+  "checks": {
+    "tests/editor-preferences-route.test.js": "PASS 4/4",
+    "npm run test:site-access": "PASS 2/2",
+    "npm run test:editor": "PASS 24/24 Node tests + 4/4 runner tests",
+    "tests/browser/editor-element-insertion.test.js": "PASS 8/8 Chromium",
+    "npm run typecheck -- --pretty false": "PASS",
+    "npm run test:web013:migration-gate": "PASS",
+    "python3 tests/plan-contract.test.py": "PASS 15/15",
+    "python3 scripts/check-canonical-plan.py": "PASS; 13 master files / 396 mappings; acceptance not certified",
+    "python3 scripts/audit-active-plan-point.py": "PASS; 77.44.7.D; full functional acceptance NOT_CERTIFIED",
+    "python3 scripts/build-feature-traceability.py --check": "PASS; 396 IDs, acceptance not certified",
+    "git diff --check": "PASS",
+    "wrangler deploy --dry-run": "PASS"
+  },
+  "release": {
+    "github_push": "NOT YET DONE",
+    "hosted_ci": "NOT YET RUN",
+    "cloudflare_deploy": "NOT YET DONE",
+    "production_health_and_asset_hashes": "NOT YET VERIFIED"
+  },
+  "guardrails": {
+    "save_publish_separate": true,
+    "production_migration_or_data_write_performed": false,
+    "r2_write_or_delete_performed": false,
+    "new_paid_cost_ft": 0,
+    "full_D_point": "OPEN / NOT_CERTIFIED",
+    "manual_physical_acceptance": "DEFERRED until complete Editor scope"
+  },
+  "source_sha256": {
+    "src/routes/admin/editor-preferences.ts": "284a952eaef6062c30d0fb605718a933c01d8e59e5618f5a905cb85c92d72816",
+    "src/index.ts": "c04f8c4c13f472e918ef8a12d5ed24e0b3ff1ac8aa286ba96c8a47c943931ce3",
+    "public/editor-v2/app.js": "f2babab2c9de4774008c817c87f61869976eae37a02ad82ba9c6d14803a8389d",
+    "public/editor-v2/index.html": "9d79f9fe207d2217b22700c61a7c26759c5537ad7545da7a56dbbc1c03a3b315",
+    "tests/editor-preferences-route.test.js": "2b16ee2be5ec76cd8b5f025b1f5a72fed7248019a2671fd0888e13890a4bd70d",
+    "tests/browser/editor-element-insertion.test.js": "f5e6fb0da397ae25c2ffae037e361ac2e2822616418d92fd067f629dd6aac4be"
+  }
+}

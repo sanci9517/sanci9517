@@ -17,7 +17,7 @@ import {renderPropertyInput} from './ui/property-controls.js?v=20261101-richtext
 import {getInspectorValueContract,normalizeInspectorValue} from './core/property-values.js';
 import {describeResponsiveOrigin} from './ui/responsive-origin.js';
 import {responsiveGroupResetActions} from './ui/responsive-group-reset.js';
-import {readPaletteFavoriteTypes,togglePaletteFavoriteType} from './ui/palette-preferences.js?v=20261121-edt044-user-favorites-v1';
+import {normalizePaletteFavoriteTypes,readPaletteFavoriteTypes,togglePaletteFavoriteType,writePaletteFavoriteTypes} from './ui/palette-preferences.js?v=20261121-edt044-account-preferences-v1';
 import {getRichTextBlockSelection,getRichTextFormattingSelection,getRichTextBlockTransformSelection,getRichTextActiveBlockIndex,restoreRichTextBlockSelection,restoreRichTextFormattingSelection,updateRichTextInlineLink,updateRichTextInlineMark,updateRichTextInlineStyle,updateRichTextBlockAlignment} from './core/richtext-links.js?v=20261117-d03-invalid-media-id-guidance-v1';
 import {initialPageId,rememberPageId,requestedPageId} from './core/page-url.js';
 import {getElementCapability} from './core/capability-matrix.js?v=20261117-edt043-motion-guidance';
@@ -68,7 +68,7 @@ function flushLayerRename(){return pendingLayerRename?.()!==false}
 let inspectorCategory='all';let richTextSelectionCleanup=null;let richTextToolTab='character';
 
 let state=null;let pages=[];let archivedPages=[];let revisionHistory=[];let zoom=1;let inspectorTab=readSavedInspectorTab();let inspectorQuery='';let flushRichTextDraft=null;let inlineEditingId=null;let richTextBookmark=null;let copiedStyleSnapshot=null;let nodeClipboard=null;let canvasDrag=null;let canvasResize=null;let pageStartTemplate='blank-page';let pageCreateBusy=false;let mobileTouch={active:false,timer:null,downId:null,startX:0,startY:0,snapshot:[],snapshotPrimary:null,suppressClick:false,longPressTriggered:false};let hierarchyDrag={nodeId:null,overId:null};let mobileHierarchyDrag={active:false,timer:null,nodeId:null,overId:null,startX:0,startY:0,suppressClick:false};
-let paletteFavoritesUserId=null;let paletteFavoriteTypes=[];let paletteFavoritesReady=false;
+let paletteFavoritesUserId=null;let paletteFavoriteTypes=[];let paletteFavoritesReady=false;let palettePreferenceWrite=Promise.resolve();
 function readSavedInspectorTab(){try{const saved=JSON.parse(localStorage.getItem('sanci-editor-shell-v2')||'{}')?.inspectorTab;return ['design','content','advanced'].includes(saved)?saved:'design'}catch{return 'design'}}
 const $=s=>document.querySelector(s);const canvas=$('#canvas');const inspector=$('#inspectorBody');
 const sizes={desktop:1440,tablet:768,mobile:390};
@@ -180,13 +180,25 @@ function normalizePaletteSearch(value){return String(value||'').normalize('NFD')
 function paletteEntries(){return groups.flatMap(([group,items])=>items.map(([name,type])=>({group,name,type:type||typeForElement(name)})).filter(entry=>entry.type))}
 function insertPaletteEntry(name,type){const current=page();if(!current)return;const insertion=resolveElementInsertion(current,state.selection.primaryId,type);if(insertion)addAuthoredElement(type,name,insertion)}
 function updatePaletteFavorite(type,name,filter){
+ const userId=paletteFavoritesUserId;
  const result=togglePaletteFavoriteType(paletteFavoritesUserId,type,paletteFavoriteTypes);
  paletteFavoriteTypes=result.types;
  const status=$('#elementPaletteStatus');
- if(status)status.textContent=result.saved?(paletteFavoriteTypes.includes(type)?`${name} hozzáadva a személyes kedvenceidhez.`:`${name} eltávolítva a személyes kedvenceid közül.`):'A kedvenc csak ebben a munkamenetben él; a böngésző tárhelye nem engedte a mentést.';
+ if(status)status.textContent=result.saved?'Kedvencek mentése a fiókodhoz…':'Kedvenc módosítva; fiókszinkronizálás folyamatban…';
  renderPalette(filter);
  const focusTarget=$(`#elementList .element-favorite-toggle[data-element-type="${type}"]`);
  focusTarget?.focus();
+ const types=[...paletteFavoriteTypes];
+ palettePreferenceWrite=palettePreferenceWrite.catch(()=>{}).then(async()=>{
+  const saved=await api('/api/admin/editor/preferences',{method:'PUT',body:JSON.stringify({paletteFavoriteTypes:types})});
+  if(paletteFavoritesUserId===userId&&paletteFavoriteTypes.join('\0')===types.join('\0')){
+   writePaletteFavoriteTypes(userId,types);
+   if(status)status.textContent=saved?.data?.paletteFavoriteTypes?'Kedvencek elmentve a fiókodhoz; más eszközön is visszatöltődnek.':'A kedvencek frissültek.';
+  }
+ }).catch(()=>{
+  if(paletteFavoritesUserId===userId&&status)status.textContent=result.saved?'A kedvencek most csak ebben a böngészőben mentődtek; a fiókszinkron később újrapróbálható.':'A kedvencek csak ebben a munkamenetben érhetők el; a mentés nem sikerült.';
+ });
+ return palettePreferenceWrite;
 }
 function createPaletteFavoriteToggle(type,name,filter){
  const button=document.createElement('button');button.type='button';button.className='element-favorite-toggle';button.dataset.elementType=type;
@@ -229,7 +241,21 @@ function renderPalette(filter=''){
 }
 async function loadPaletteFavorites(){
  const status=$('#elementPaletteStatus');
- try{const result=await api('/api/auth/session'),user=result?.data?.user;if(result?.data?.authenticated===true&&typeof user?.id==='string'){paletteFavoritesUserId=user.id;paletteFavoriteTypes=readPaletteFavoriteTypes(user.id);if(status)status.textContent='A kedvencek ehhez a fiókhoz kötve, ebben a böngészőben mentődnek.'}else if(status)status.textContent='A kedvencek használatához jelentkezz be.'}catch{paletteFavoritesUserId=null;paletteFavoriteTypes=[];if(status)status.textContent='A kedvencek betöltése most nem érhető el.'}
+ try{
+  const result=await api('/api/auth/session'),user=result?.data?.user;
+  if(result?.data?.authenticated===true&&typeof user?.id==='string'){
+   paletteFavoritesUserId=user.id;
+   paletteFavoriteTypes=readPaletteFavoriteTypes(user.id);
+   try{
+    const preferences=await api('/api/admin/editor/preferences');
+    if(Array.isArray(preferences?.data?.paletteFavoriteTypes)){
+     paletteFavoriteTypes=normalizePaletteFavoriteTypes(preferences.data.paletteFavoriteTypes);
+     writePaletteFavoriteTypes(user.id,paletteFavoriteTypes);
+     if(status)status.textContent='Személyes kedvencek fiókodhoz mentve, ezen az eszközön is visszatöltve.';
+    }else if(status)status.textContent='A fiókbeállítás válasza nem érvényes; csak a helyi gyorsítótár látható.';
+   }catch{if(status)status.textContent='A fiókbeállítás nem érhető el; a helyi kedvencek láthatók, a módosítások nem szinkronizálhatók.'}
+  }else if(status)status.textContent='A kedvencek használatához jelentkezz be.'
+ }catch{paletteFavoritesUserId=null;paletteFavoriteTypes=[];if(status)status.textContent='A kedvencek betöltése most nem érhető el.'}
  paletteFavoritesReady=true;renderPalette($('#elementSearch')?.value||'');
 }
 function syncHierarchyActions(){const current=page();const ids=state?.selection?.ids||[];const nodes=current?ids.map(id=>getNode(current,id)).filter(Boolean):[];const sameParent=nodes.length>=2&&nodes.every(node=>node.parentId===nodes[0].parentId);const groupLocked=nodes.some(node=>node.locked||isLockedParent(current,node));const groupButton=$('#groupSelection');if(groupButton){groupButton.disabled=!sameParent||groupLocked||nodes.some(node=>node.id===current?.rootId)}const primary=current&&state?.selection?.primaryId?getNode(current,state.selection.primaryId):null;const ungroupButton=$('#ungroupSelection');if(ungroupButton)ungroupButton.disabled=!(primary?.type===NODE_TYPES.GROUP&&!primary.locked&&!isLockedParent(current,primary));const mobileGroup=$('#mobileGroup');if(mobileGroup)mobileGroup.disabled=!sameParent||groupLocked||nodes.some(node=>node.id===current?.rootId);const mobileUngroup=$('#mobileUngroup');if(mobileUngroup)mobileUngroup.disabled=!(primary?.type===NODE_TYPES.GROUP&&!primary.locked&&!isLockedParent(current,primary));for(const [id,kind] of [['moveLayerUp','up'],['moveLayerDown','down'],['indentLayer','indent'],['outdentLayer','outdent']]){const button=$('#'+id);if(button)button.disabled=ids.length!==1||!primary||!getLayerMoveAction(current,primary.id,kind)}}

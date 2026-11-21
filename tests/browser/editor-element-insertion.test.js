@@ -64,11 +64,17 @@ test('palette click diagnostics are failure-only and preserve the original inter
 test('palette items are inserted beside the selected item in canvas flow and saved in that order',async t=>{
   const document=createDocument(),pageId=document.activePageId,rootId=document.pages[pageId].rootId;
   let draft=structuredClone(document),published=null,version=1;
-  const posts=[],root=resolve(import.meta.dirname,'../../public');
+  const posts=[],preferences=new Map(),root=resolve(import.meta.dirname,'../../public');
   const server=createServer(async(req,res)=>{
     const url=new URL(req.url,'http://localhost');
     const json=data=>{res.setHeader('content-type','application/json');res.end(JSON.stringify(data))};
     if(url.pathname==='/api/auth/session')return json({ok:true,data:{authenticated:true,user:{id:'palette-test-user',email:'editor@example.test',displayName:'Editor',role:'admin'}}});
+    if(url.pathname==='/api/admin/editor/preferences'){
+      if(req.method==='GET')return json({ok:true,data:{version:1,paletteFavoriteTypes:preferences.get('palette-test-user')||[]}});
+      let body='';for await(const chunk of req)body+=chunk;
+      const request=JSON.parse(body);preferences.set('palette-test-user',request.paletteFavoriteTypes);
+      return json({ok:true,data:{version:1,paletteFavoriteTypes:request.paletteFavoriteTypes}});
+    }
     if(url.pathname==='/api/admin/pages')return json({ok:true,data:url.searchParams.get('archived')==='1'?[]:[{id:pageId,slug:'test',title:'Test',content:draft,revision:version,isPublished:Boolean(published)}]});
     if(url.pathname==='/api/admin/editor'){
       if(req.method==='GET')return json({ok:true,data:{page:{id:pageId,document:draft,publishedRevisionId:published?'published':null},revisions:[{id:'revision-'+version,version}]}});
@@ -133,7 +139,10 @@ test('palette items are inserted beside the selected item in canvas flow and sav
   const dividerRow=tab.locator('.element-row').filter({has:tab.locator('.element').filter({hasText:'Divider'})});
   const dividerFavorite=dividerRow.locator('.element-favorite-toggle');
   assert.equal(await dividerFavorite.getAttribute('aria-pressed'),'false');
+  const accountPreferenceSave=tab.waitForResponse(response=>response.url().includes('/api/admin/editor/preferences')&&response.request().method()==='PUT');
   await dividerFavorite.click();
+  const accountPreferenceResponse=await accountPreferenceSave;
+  assert.equal(accountPreferenceResponse.status(),200,'favorite changes are persisted through the authenticated account endpoint');
   const selectedDividerFavorite=tab.locator('.element-row').filter({has:tab.locator('.element').filter({hasText:'Divider'})}).locator('.element-favorite-toggle');
   assert.equal(await selectedDividerFavorite.getAttribute('aria-pressed'),'true');
   assert.equal(await selectedDividerFavorite.getAttribute('aria-label'),'Eltávolítás a kedvencekből: Divider');
@@ -143,11 +152,13 @@ test('palette items are inserted beside the selected item in canvas flow and sav
   const favoriteStorage=await tab.evaluate(()=>JSON.parse(localStorage.getItem('sanci-editor-palette-favorites-v1:palette-test-user')));
   assert.deepEqual(favoriteStorage,{version:1,userId:'palette-test-user',types:['divider']},'favorites are stored under the authenticated user and outside the site Page Model');
   assert.equal(posts.length,0,'changing a workspace favorite does not Save or Publish site content');
+  assert.deepEqual(preferences.get('palette-test-user'),['divider'],'the account preferences endpoint receives the update');
+  await tab.evaluate(()=>localStorage.removeItem('sanci-editor-palette-favorites-v1:palette-test-user'));
   await tab.reload();
   await tab.locator('.node[data-node-id="'+rootId+'"] > .node-head').waitFor();
   await tab.waitForFunction(()=>document.querySelector('#elementList .element-favorite-toggle')?.disabled===false);
   assert.equal(await tab.locator('.element-favorites .element-favorite-shortcut').count(),1,'the signed-in user’s favorites survive Editor reload');
-  assert.match(await tab.locator('#elementPaletteStatus').textContent(),/ebben a böngészőben mentődnek/,'the UI does not imply that browser-local preferences sync across devices');
+  assert.match(await tab.locator('#elementPaletteStatus').textContent(),/fiókodhoz mentve/,'the UI identifies account-backed preferences');
   await tab.locator('.rail-btn[data-tab="elements"]').click();
   await paletteSearch.fill('szoveg');
   assert.equal(await tab.locator('.element-favorites').count(),0,'search results do not duplicate favorite shortcuts');

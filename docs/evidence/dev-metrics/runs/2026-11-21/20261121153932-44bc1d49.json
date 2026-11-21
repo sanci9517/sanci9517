@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261121153932-44bc1d49",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-21T15:39:32.517Z",
+  "finished_at": "2026-11-21T15:50:17.632Z",
+  "wall_seconds": 645,
+  "paused_seconds": 0,
+  "measured_seconds": 645,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "EDT-044 fiókhoz kötött palettakedvencek implementálása és regressziós ellenőrzése; teljes EDT-044 és D blokk nyitva, kiadás ezen a futáson még nincs igazolva.",
+  "evidence": [
+    "tests/editor-preferences-route.test.js; tests/browser/editor-element-insertion.test.js; docs/evidence/edt044-account-preferences-2026-11-21.json"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "a8b84072277554afd8c72e06cd8c5d965eb7b538",
+  "finished_revision": "a8b84072277554afd8c72e06cd8c5d965eb7b538",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
