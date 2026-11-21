@@ -1,15 +1,18 @@
 {
   "schema": 1,
-  "captured_at": "2026-11-21T11:02:00Z",
+  "captured_at": "2026-11-21T11:04:00Z",
   "plan_point": "77.44.7.D / EDT-015 element palette search",
   "status": "RUNTIME_DEPLOYED_EXACT_SHA_AND_PUBLIC_HASH_PASS; FULL_D_OPEN_NOT_CERTIFIED; EDITOR_CORE_CI_IN_PROGRESS",
   "repository": {
     "name": "sanci9517/sanci9517",
     "branch": "v2/foundation",
     "base_commit": "ddb8ed5f532efcff8cafca06ea7abd6ac1ac4a68",
-    "push": "PASS; normal fast-forward to origin/v2/foundation",
+    "push": "PASS; runtime commit 0ffd1c0d normal FF, evidence-only follow-up 10c2b8d9 normal FF with [skip ci]; no redundant Worker deployment",
     "commit": "0ffd1c0de80bb97fe9f5dc2d7e0ac3498d762254",
-    "github_head_at_last_read": "0ffd1c0de80bb97fe9f5dc2d7e0ac3498d762254"
+    "github_head_at_last_read": "0ffd1c0de80bb97fe9f5dc2d7e0ac3498d762254",
+    "github_head_after_docs_followup": "10c2b8d95c49d44e8a441957f04a6a7ada53185b",
+    "runtime_commit": "0ffd1c0de80bb97fe9f5dc2d7e0ac3498d762254",
+    "docs_evidence_commit": "10c2b8d95c49d44e8a441957f04a6a7ada53185b"
   },
   "implementation": {
     "files": [
@@ -83,7 +86,8 @@
       "expected_sha256": "a55b5507378b5b06a3ad2be15f2d681bc0f7098539f06d9d5b40bcbe5935cbbe",
       "deployed_sha256": "a55b5507378b5b06a3ad2be15f2d681bc0f7098539f06d9d5b40bcbe5935cbbe",
       "match": true
-    }
+    },
+    "source_branch_head_after_followup": "10c2b8d95c49d44e8a441957f04a6a7ada53185b (docs-only; runtime source unchanged)"
   },
   "limitations": [
     "This is one EDT-015 interaction regression, not completion of EDT-015 feature scope or D-01 through D-07.",
