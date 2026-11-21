@@ -71,6 +71,61 @@ test('editor favorites persist only under the authenticated user account and rou
   assert.deepEqual(f.db.prepare('SELECT user_id FROM editor_preferences ORDER BY user_id').all().map(row => row.user_id), ['user-a', 'user-b']);
 });
 
+test('account workspace settings round-trip independently from page content and palette favorites', async t => {
+  const f = await fixture(t);
+  const workspace = {
+    version: 1,
+    appearance: {
+      version: 2, layout: 'custom', theme: 'aurora', density: 'compact', accent: '#8fa7ff',
+      dockOrder: 'canvas-right-left', panelMode: 'tabbed', panelSide: 'left',
+      floatingPosition: { left: { x: 24, y: 41 }, right: { x: 999, y: -8 } },
+      dockTree: { id: 'root', kind: 'split', axis: 'horizontal', ratio: 0.38, children: [
+        { id: 'left', kind: 'panel', side: 'left' },
+        { id: 'right-split', kind: 'split', axis: 'horizontal', ratio: 0.72, children: [
+          { id: 'canvas', kind: 'canvas' }, { id: 'right', kind: 'panel', side: 'right' }
+        ] }
+      ] },
+      profiles: [{ name: 'Local-only profile must not sync' }]
+    },
+    dock: { leftOpen: true, rightOpen: true, leftTab: 'layers', leftTabOrder: ['navigation', 'pages'], inspectorTab: 'content', panelActive: 'right', leftWidth: 444.4, rightWidth: 281 },
+    viewport: { device: 'tablet', zoom: 0.82 }
+  };
+  const saved = await f.call('PUT', 'user-a', { workspace });
+  assert.equal(saved.status, 200);
+  const savedBody = (await saved.json()).data;
+  assert.deepEqual(savedBody.workspace.viewport, { device: 'tablet', zoom: 0.82 });
+  assert.deepEqual(savedBody.workspace.dock.leftTabOrder, ['navigation', 'pages', 'elements', 'layers', 'schedule']);
+  assert.equal(savedBody.workspace.dock.leftWidth, 444);
+  assert.deepEqual(savedBody.workspace.appearance.floatingPosition, { left: { x: 24, y: 41 }, right: { x: 600, y: 0 } });
+  assert.equal('profiles' in savedBody.workspace.appearance, false, 'personal profile names stay local to the device');
+  assert.deepEqual((await (await f.call('GET', 'user-a')).json()).data.workspace, savedBody.workspace);
+
+  await f.call('PUT', 'user-a', { paletteFavoriteTypes: ['heading'] });
+  const merged = (await (await f.call('GET', 'user-a')).json()).data;
+  assert.deepEqual(merged.paletteFavoriteTypes, ['heading']);
+  assert.deepEqual(merged.workspace, savedBody.workspace, 'patching favorites does not erase workspace state');
+
+  const other = (await (await f.call('GET', 'user-b')).json()).data;
+  assert.equal(other.workspace, null, 'workspace preferences are scoped to the authenticated account');
+  assert.deepEqual(other.paletteFavoriteTypes, []);
+  assert.equal(f.db.prepare('SELECT COUNT(*) AS n FROM editor_preferences').get().n, 1);
+});
+
+test('workspace account preference payload rejects unsafe or malformed state without mutation', async t => {
+  const f = await fixture(t);
+  const valid = { version: 1, appearance: {}, dock: {}, viewport: {} };
+  const invalid = [
+    { workspace: { ...valid, pageModel: { overwrite: true } } },
+    { workspace: { ...valid, viewport: { zoom: 99 } } },
+    { workspace: { ...valid, dock: { inspectorTab: 'script' } } },
+    { workspace: { ...valid, appearance: { theme: 'url(javascript:alert(1))' } } },
+    { workspace: { ...valid, appearance: { dockTree: { id: 'canvas', kind: 'canvas' } } } },
+    { workspace: { ...valid, appearance: { floatingPosition: { left: { x: 'url(1)' } } } } }
+  ];
+  for (const body of invalid) assert.equal((await f.call('PUT', 'user-a', body)).status, 400);
+  assert.equal(f.db.prepare('SELECT COUNT(*) AS n FROM editor_preferences').get().n, 0);
+});
+
 test('preference writes reject identity injection, invalid fields, unsafe IDs and oversized payloads without mutation', async t => {
   const f = await fixture(t);
   for (const body of [

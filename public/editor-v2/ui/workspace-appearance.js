@@ -168,7 +168,7 @@ export function applyWorkspacePreferences(root,preferences){
   root.style.setProperty('--accent',value.accent);
   return value;
 }
-export function mountWorkspaceAppearance({documentRef=globalThis.document,root=documentRef?.querySelector('.editor-app'),onLayoutChange=()=>{},onReset=()=>{},readDockState=()=>({}),applyDockState=()=>{},moveDockTab=()=>false,onExternalChange=()=>{},onDockTreeChange=()=>{},canPersistDockState=()=>true}={}){
+export function mountWorkspaceAppearance({documentRef=globalThis.document,root=documentRef?.querySelector('.editor-app'),onLayoutChange=()=>{},onReset=()=>{},readDockState=()=>({}),applyDockState=()=>{},moveDockTab=()=>false,onExternalChange=()=>{},onDockTreeChange=()=>{},onPreferencesChange=()=>{},canPersistDockState=()=>true}={}){
   if(!documentRef||!root)throw new Error('A document and editor root are required');
   const dialog=documentRef.querySelector('#workspaceAppearanceDialog');
   const openButton=documentRef.querySelector('#openWorkspaceAppearance');
@@ -210,8 +210,9 @@ export function mountWorkspaceAppearance({documentRef=globalThis.document,root=d
   try{storage?.getItem(WORKSPACE_PREFERENCES_KEY)}catch{storageReadable=false}
   let value=readWorkspacePreferences(storage);
   let undoStack=[],redoStack=[],idSequence=0;
-  const persist=()=>{try{if(!storage||!storageReadable)return false;const serialized=JSON.stringify(value);storage.setItem(WORKSPACE_PREFERENCES_KEY,serialized);return storage.getItem(WORKSPACE_PREFERENCES_KEY)===serialized}catch{return false}};
   const currentDock=()=>{try{return normalizeDockState(readDockState())}catch{return normalizeDockState({})}};
+  const notifyPreferencesChange=()=>{try{onPreferencesChange({appearance:normalizeWorkspacePreferences(value),dock:currentDock()})}catch{}};
+  const persist=({notify=true}={})=>{try{if(!storage||!storageReadable)return false;const serialized=JSON.stringify(value);storage.setItem(WORKSPACE_PREFERENCES_KEY,serialized);const saved=storage.getItem(WORKSPACE_PREFERENCES_KEY)===serialized;if(saved&&notify)notifyPreferencesChange();return saved}catch{return false}};
   const renderLeftToolOrder=()=>{
     const field=fields.leftTool;if(!field)return;
     const names={pages:'Oldalak',elements:'Elemek',layers:'Rétegek',schedule:'Adásrend',navigation:'Navigáció'};
@@ -507,6 +508,15 @@ export function mountWorkspaceAppearance({documentRef=globalThis.document,root=d
       ?'Egy másik szerkesztőlapon alaphelyzetbe állították a munkaterületet. A régi visszavonási előzményt töröltük. Az oldal tartalma nem változott.'
       :'Egy másik szerkesztőlapon megváltozott a panelek állapota. A friss munkaterületet megjelenítettük, a korábbi visszavonási előzményt töröltük. Az oldal tartalma nem változott.';
   };
+  const applyAccountPreferences=(preferences,{saveLocal=true}={})=>{
+    if(!isRecord(preferences))return false;
+    const normalized=normalizeWorkspacePreferences(preferences);
+    value={...normalized,profiles:value.profiles};undoStack=[];redoStack=[];
+    syncSelectedProfileName();paint();
+    if(saveLocal)persist({notify:false});
+    try{onLayoutChange(value.layout,{save:false})}catch{}
+    return true;
+  };
   const reportDockStorageUnavailable=()=>{
     if(status)status.textContent='A munkaterület beállításai csak ebben a munkamenetben érvényesek, mert a panelállapot tárhelyes mentése nem ellenőrizhető. Az oldal tartalma változatlan.';
   };
@@ -514,5 +524,5 @@ export function mountWorkspaceAppearance({documentRef=globalThis.document,root=d
   undoButton?.addEventListener('click',undo);redoButton?.addEventListener('click',redo);
   resetButton?.addEventListener('click',reset);
   paint();
-  return {get value(){return normalizeWorkspacePreferences(value)},setLayout,setDockOrder,setDockLayout,setPanelGrouping,setDockTree,enableDockTree,setFloatingPosition,open,close,remember,undo,redo,saveProfile,renameProfile,loadProfile,deleteProfile,importProfile,exportProfile,reset,syncDockControls:renderLeftToolOrder,clearExternalDockHistory,reportDockStorageUnavailable,destroy(){documentRef.defaultView?.removeEventListener?.('storage',syncExternalPreferences)}};
+  return {get value(){return normalizeWorkspacePreferences(value)},setLayout,setDockOrder,setDockLayout,setPanelGrouping,setDockTree,enableDockTree,setFloatingPosition,open,close,remember,undo,redo,saveProfile,renameProfile,loadProfile,deleteProfile,importProfile,exportProfile,reset,applyAccountPreferences,syncDockControls:renderLeftToolOrder,clearExternalDockHistory,reportDockStorageUnavailable,destroy(){documentRef.defaultView?.removeEventListener?.('storage',syncExternalPreferences)}};
 }

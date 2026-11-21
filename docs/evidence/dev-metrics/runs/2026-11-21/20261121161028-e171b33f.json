@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261121161028-e171b33f",
+  "task": "EDT-044",
+  "trigger": "manual",
+  "started_at": "2026-11-21T16:10:28.336Z",
+  "finished_at": "2026-11-21T16:49:11.881Z",
+  "wall_seconds": 2324,
+  "paused_seconds": 0,
+  "measured_seconds": 2324,
+  "status": "pass",
+  "kind": "mixed",
+  "summary": "EDT-044 account workspace preferences implementation and local acceptance; runtime release follow-up still pending",
+  "evidence": [
+    "docs/evidence/editor-edt044-account-workspace-sync-2026-11-21.json"
+  ],
+  "checks": "npm run test:editor PASS 24/24+4/4; workspace Chromium PASS 88/88; mobile published-tab Chromium PASS 1/1; typecheck and canonical gates PASS; D1 SELECT-only; Wrangler dry-run PASS",
+  "started_revision": "8dc81d38f38233194e899578925be131cd186862",
+  "finished_revision": "8dc81d38f38233194e899578925be131cd186862",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

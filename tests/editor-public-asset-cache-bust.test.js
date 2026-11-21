@@ -14,6 +14,6 @@ test('the palette-favorites stylesheet release token invalidates the previous CS
     'the deployed HTML must request the stylesheet version containing palette-favorites styles');
   assert.match(css,/\.element-favorite-toggle\s*\{/,
     'the stylesheet referenced by the versioned link must include the palette-favorites UI');
-  assert.match(html,/src="\/editor-v2\/app\.js\?v=20261121-edt044-account-preferences-v1"/,
-    'the deployed entry page must request the Editor script containing account-synced preferences');
+  assert.match(html,/src="\/editor-v2\/app\.js\?v=20261121-edt044-account-workspace-v1"/,
+    'the deployed entry page must request the Editor script containing account-synced workspace preferences');
 });

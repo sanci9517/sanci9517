@@ -68,7 +68,7 @@ function flushLayerRename(){return pendingLayerRename?.()!==false}
 let inspectorCategory='all';let richTextSelectionCleanup=null;let richTextToolTab='character';
 
 let state=null;let pages=[];let archivedPages=[];let revisionHistory=[];let zoom=1;let inspectorTab=readSavedInspectorTab();let inspectorQuery='';let flushRichTextDraft=null;let inlineEditingId=null;let richTextBookmark=null;let copiedStyleSnapshot=null;let nodeClipboard=null;let canvasDrag=null;let canvasResize=null;let pageStartTemplate='blank-page';let pageCreateBusy=false;let mobileTouch={active:false,timer:null,downId:null,startX:0,startY:0,snapshot:[],snapshotPrimary:null,suppressClick:false,longPressTriggered:false};let hierarchyDrag={nodeId:null,overId:null};let mobileHierarchyDrag={active:false,timer:null,nodeId:null,overId:null,startX:0,startY:0,suppressClick:false};
-let paletteFavoritesUserId=null;let paletteFavoriteTypes=[];let paletteFavoritesReady=false;let palettePreferenceWrite=Promise.resolve();
+let paletteFavoritesUserId=null;let paletteFavoriteTypes=[];let paletteFavoritesReady=false;let accountWorkspaceReady=false;let accountWorkspaceTimer=null;let accountPreferenceWrite=Promise.resolve();let pendingAccountViewport=null;
 function readSavedInspectorTab(){try{const saved=JSON.parse(localStorage.getItem('sanci-editor-shell-v2')||'{}')?.inspectorTab;return ['design','content','advanced'].includes(saved)?saved:'design'}catch{return 'design'}}
 const $=s=>document.querySelector(s);const canvas=$('#canvas');const inspector=$('#inspectorBody');
 const sizes={desktop:1440,tablet:768,mobile:390};
@@ -189,7 +189,7 @@ function updatePaletteFavorite(type,name,filter){
  const focusTarget=$(`#elementList .element-favorite-toggle[data-element-type="${type}"]`);
  focusTarget?.focus();
  const types=[...paletteFavoriteTypes];
- palettePreferenceWrite=palettePreferenceWrite.catch(()=>{}).then(async()=>{
+ accountPreferenceWrite=accountPreferenceWrite.catch(()=>{}).then(async()=>{
   const saved=await api('/api/admin/editor/preferences',{method:'PUT',body:JSON.stringify({paletteFavoriteTypes:types})});
   if(paletteFavoritesUserId===userId&&paletteFavoriteTypes.join('\0')===types.join('\0')){
    writePaletteFavoriteTypes(userId,types);
@@ -198,7 +198,7 @@ function updatePaletteFavorite(type,name,filter){
  }).catch(()=>{
   if(paletteFavoritesUserId===userId&&status)status.textContent=result.saved?'A kedvencek most csak ebben a böngészőben mentődtek; a fiókszinkron később újrapróbálható.':'A kedvencek csak ebben a munkamenetben érhetők el; a mentés nem sikerült.';
  });
- return palettePreferenceWrite;
+ return accountPreferenceWrite;
 }
 function createPaletteFavoriteToggle(type,name,filter){
  const button=document.createElement('button');button.type='button';button.className='element-favorite-toggle';button.dataset.elementType=type;
@@ -213,6 +213,37 @@ function createPaletteElementButton(name,type,{shortcut=false,filter=''}={}){
  const capability=getElementCapability(type);const badge=document.createElement('small');badge.className='element-capability';badge.textContent=capability.status==='PARTIAL'?'Részleges':'Tervezett';button.append(badge);
  button.disabled=capability.status==='PLANNED';if(button.disabled)button.title='Később: ez az elem még nem használható.';else button.onclick=()=>insertPaletteEntry(name,type);
  return button;
+}
+function accountWorkspaceSnapshot(){
+ const snapshot=window.sanciEditor?.workspacePreferenceSnapshot?.();
+ if(!snapshot?.appearance||!snapshot?.dock||!snapshot?.viewport)return null;
+ return {version:1,appearance:snapshot.appearance,dock:snapshot.dock,viewport:{device:state?.viewport?.device||snapshot.viewport.device,zoom:Number.isFinite(zoom)?zoom:snapshot.viewport.zoom}};
+}
+function applyAccountViewport(viewport){
+ if(!viewport||typeof viewport!=='object')return false;
+ const next={device:['desktop','tablet','mobile'].includes(viewport.device)?viewport.device:'desktop',zoom:Number.isFinite(Number(viewport.zoom))?Math.max(.35,Math.min(1.5,Number(viewport.zoom))):1};
+ pendingAccountViewport=next;
+ if(!state)return true;
+ const previous={device:state.viewport.device,zoom};state.viewport.device=next.device;zoom=next.zoom;
+ if(render()===false){state.viewport.device=previous.device;zoom=previous.zoom;return false}
+ pendingAccountViewport=null;window.sanciEditor?.setViewportPreference?.(next,{notify:false});return true;
+}
+function applyAccountWorkspace(workspace){
+ if(!workspace||typeof workspace!=='object')return false;
+ const applied=window.sanciEditor?.applyAccountWorkspacePreferences?.(workspace)===true;
+ return applied&&applyAccountViewport(workspace.viewport);
+}
+function queueAccountWorkspaceWrite(){
+ if(!accountWorkspaceReady||!paletteFavoritesUserId)return;
+ clearTimeout(accountWorkspaceTimer);
+ accountWorkspaceTimer=setTimeout(()=>{
+  const workspace=accountWorkspaceSnapshot();if(!workspace)return;
+  accountPreferenceWrite=accountPreferenceWrite.catch(()=>{}).then(()=>api('/api/admin/editor/preferences',{method:'PUT',body:JSON.stringify({workspace})})).then(()=>{
+   const status=$('#elementPaletteStatus');if(status)status.textContent='A munkaterület beállításai a fiókodhoz szinkronizálva.';
+  }).catch(()=>{
+   const status=$('#elementPaletteStatus');if(status)status.textContent='A munkaterület helyben elmentve; a fiókszinkron most nem érhető el.';
+  });
+ },250);
 }
 function renderPalette(filter=''){
  const root=$('#elementList');if(!root){diagnostics.add({source:'ui',code:'SANCI-UI-E002',message:'Az Elemek lista konténere nem található.'});return}
@@ -253,6 +284,12 @@ async function loadPaletteFavorites(){
      writePaletteFavoriteTypes(user.id,paletteFavoriteTypes);
      if(status)status.textContent='Személyes kedvencek fiókodhoz mentve, ezen az eszközön is visszatöltve.';
     }else if(status)status.textContent='A fiókbeállítás válasza nem érvényes; csak a helyi gyorsítótár látható.';
+    const hasWorkspace=Boolean(preferences?.data?.workspace);
+    if(hasWorkspace){
+     if(!applyAccountWorkspace(preferences.data.workspace)&&status)status.textContent='A fiók munkaterület-beállítása nem érvényes; a jelenlegi helyi nézet maradt aktív.';
+    }
+    accountWorkspaceReady=true;
+    if(!hasWorkspace)queueAccountWorkspaceWrite();
    }catch{if(status)status.textContent='A fiókbeállítás nem érhető el; a helyi kedvencek láthatók, a módosítások nem szinkronizálhatók.'}
   }else if(status)status.textContent='A kedvencek használatához jelentkezz be.'
  }catch{paletteFavoritesUserId=null;paletteFavoriteTypes=[];if(status)status.textContent='A kedvencek betöltése most nem érhető el.'}
@@ -648,8 +685,8 @@ function renderNode(currentPage,id,managed=false){const node=getNode(currentPage
   for(const child of getChildren(currentPage,id)){const x=renderNode(currentPage,child.id,managed);if(x)el.append(x)}if(state.selection.primaryId===id&&id!==currentPage.rootId&&!isNodeEffectivelyLocked(currentPage,node)){const handle=document.createElement('button');handle.type='button';handle.className='canvas-resize-handle';handle.setAttribute('aria-label','Elem átméretezése');handle.title='Átméretezés';handle.onpointerdown=e=>beginCanvasResize(id,e,el);handle.onpointermove=e=>moveCanvasResize(id,e);handle.onpointerup=e=>finishCanvasResize(id,e);handle.onpointercancel=e=>finishCanvasResize(id,e,true);el.append(handle)}el.onpointerdown=e=>{if(inlineEditingId===id)return;if(e.pointerType==='touch'){e.stopPropagation();handleMobilePointerDown(id,e);return}beginCanvasDrag(id,e,el)};el.onpointermove=e=>{if(canvasResize?.nodeId===id){moveCanvasResize(id,e);return}if(e.pointerType==='touch')handleMobilePointerMove(e);else moveCanvasDrag(id,e)};el.onpointerup=e=>{if(canvasResize?.nodeId===id){finishCanvasResize(id,e);return}if(e.pointerType==='touch'){e.stopPropagation();handleMobilePointerUp(id,e);return}finishCanvasDrag(id,e)};el.onpointercancel=e=>{if(canvasResize?.nodeId===id){finishCanvasResize(id,e,true);return}if(e.pointerType==='touch')handleMobilePointerCancel(e);else finishCanvasDrag(id,e,true)};el.onclick=e=>{e.stopPropagation();if(isAuthoredContent(node)&&e.target.closest('.creator-content-host')&&e.target.closest('button,summary,video,audio'))return;if(inlineEditingId===id)return;if(mobileTouch.active&&mobileTouch.suppressClick){mobileTouch.suppressClick=false;return}selectNodeInteraction(id,e)};return el}
 function updateCanvasExtent(target=canvas.querySelector('.page-canvas')){if(!target)return;let pageRect=target.getBoundingClientRect();const bottoms=[...target.querySelectorAll('.node')].map(node=>node.getBoundingClientRect().bottom-pageRect.top);target.style.minHeight=`${computeCanvasMinHeight(bottoms,zoom,844,80)}px`;pageRect=target.getBoundingClientRect();const nodes=[...target.querySelectorAll('.node')];const extents=measureCanvasWorkspace(nodes.map(node=>{const rect=node.getBoundingClientRect();return {left:rect.left-pageRect.left,right:rect.right-pageRect.left,top:rect.top-pageRect.top,bottom:rect.bottom-pageRect.top}}),target.offsetWidth,target.offsetHeight,zoom);target.style.left=`${extents.left}px`;target.style.top=`${extents.top}px`;pageRect=target.getBoundingClientRect();for(const node of nodes){const rect=node.getBoundingClientRect();node.classList.toggle('outside-artboard',rect.left<pageRect.left-1||rect.right>pageRect.right+1||rect.top<pageRect.top-1||rect.bottom>pageRect.bottom+1)}const frame=target.parentElement;if(frame?.classList.contains('page-canvas-frame')){frame.style.width=`${(target.offsetWidth+extents.left+extents.right)*zoom}px`;frame.style.height=`${(target.offsetHeight+extents.top+extents.bottom)*zoom}px`}}
 function renderCanvas(){const current=page();const previous=canvas.querySelector('.page-canvas');const preserved=previous?.dataset.pageId===current?.id?captureCanvasInteractionState(previous):null;canvas.querySelectorAll('.page-canvas-frame').forEach(x=>x.remove());const device=state?.viewport?.device||'desktop';const deviceLabel={desktop:'Asztali',tablet:'Tablet',mobile:'Telefon'}[device]||'Asztali';const width=sizes[device];const frame=document.createElement('div');frame.className='page-canvas-frame';const pc=document.createElement('div');pc.className='page-canvas';pc.dataset.device=device;pc.dataset.pageId=current?.id||'';pc.style.width=`${width}px`;applyTokenVariables(pc,editorTokens);pc.style.transform=`scale(${zoom})`;if(current){pc.append(renderNode(current,current.rootId));applyStateStyles(pc,current,device);activateCodeBlocks(pc)}frame.append(pc);canvas.append(frame);updateCanvasExtent(pc);restoreCanvasInteractionState(pc,preserved);$('#canvasEmpty').hidden=Boolean(current);$('#canvasMode').textContent=`${deviceLabel} · ${width}px`;$('#zoom').textContent=`${Math.round(zoom*100)}%`;syncDeviceButtons(device)}
-function fitCanvasToViewport(){const device=state?.viewport?.device||'desktop';zoom=Math.max(.35,Math.min(1.2,(canvas.clientWidth-48)/sizes[device]));render();canvas.scrollTo({left:0,top:0,behavior:'instant'})}
-function changeCanvasZoom(next){const frame=canvas.querySelector('.page-canvas-frame');const centerX=canvas.scrollLeft+canvas.clientWidth/2,centerY=canvas.scrollTop+canvas.clientHeight/2;const pointX=frame?(centerX-frame.offsetLeft)/zoom:0,pointY=frame?(centerY-frame.offsetTop)/zoom:0;zoom=next;render();requestAnimationFrame(()=>{const updated=canvas.querySelector('.page-canvas-frame');if(!updated)return;canvas.scrollTo({left:Math.max(0,updated.offsetLeft+pointX*zoom-canvas.clientWidth/2),top:Math.max(0,updated.offsetTop+pointY*zoom-canvas.clientHeight/2),behavior:'instant'})})}
+function fitCanvasToViewport(){const device=state?.viewport?.device||'desktop';zoom=Math.max(.35,Math.min(1.2,(canvas.clientWidth-48)/sizes[device]));render();window.sanciEditor?.setViewportPreference?.({device,zoom});canvas.scrollTo({left:0,top:0,behavior:'instant'})}
+function changeCanvasZoom(next){const frame=canvas.querySelector('.page-canvas-frame');const centerX=canvas.scrollLeft+canvas.clientWidth/2,centerY=canvas.scrollTop+canvas.clientHeight/2;const pointX=frame?(centerX-frame.offsetLeft)/zoom:0,pointY=frame?(centerY-frame.offsetTop)/zoom:0;zoom=next;render();window.sanciEditor?.setViewportPreference?.({device:state?.viewport?.device||'desktop',zoom});requestAnimationFrame(()=>{const updated=canvas.querySelector('.page-canvas-frame');if(!updated)return;canvas.scrollTo({left:Math.max(0,updated.offsetLeft+pointX*zoom-canvas.clientWidth/2),top:Math.max(0,updated.offsetTop+pointY*zoom-canvas.clientHeight/2),behavior:'instant'})})}
 function syncDeviceButtons(device){document.querySelectorAll('[data-device]').forEach(b=>{const selected=b.dataset.device===device;b.classList.toggle('active',selected);b.setAttribute('aria-pressed',String(selected))})}
 function syncCanvasToolButtons(tool){for(const [id,value] of [['selectTool','select'],['panTool','pan']]){const button=$('#'+id);const selected=value===tool;button?.classList.toggle('active',selected);button?.setAttribute('aria-pressed',String(selected))}}
 function field(label,value,onChange,readOnly=false,multiline=false,composition=null,property=null){
@@ -2030,6 +2067,7 @@ function setDevice(device){
    setStatus('A nézetváltás nem sikerült. A módosítások megmaradtak.');
    return false;
  }
+ window.sanciEditor?.setViewportPreference?.({device,zoom});
  canvas.scrollTo({left:0,top:0,behavior:'instant'});
  return true;
 }
@@ -2054,6 +2092,7 @@ document.addEventListener('DOMContentLoaded',()=>{
    if(state) { command('selection.clear'); }
  });
  const inspectorTablist=$('.inspector-tabs');
+ window.sanciEditor?.on?.('workspace:preferences-change',queueAccountWorkspaceWrite);
  window.sanciEditor?.on?.('panel:inspector-tab',({tab}={})=>activateInspectorTab(tab,{persist:false}));
  inspectorTablist?.addEventListener('click',event=>{
    const button=event.target.closest('[role="tab"]');
@@ -2073,7 +2112,7 @@ document.addEventListener('DOMContentLoaded',()=>{
    activateInspectorTab(INSPECTOR_TABS[nextIndex],{focus:true});
  });
  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&mobileTouch.active){e.preventDefault();cancelMobileMultiSelect();return}if((e.ctrlKey||e.metaKey)&&['c','v'].includes(e.key.toLowerCase())&&isCanvasClipboardShortcut(e)){e.preventDefault();if(e.key.toLowerCase()==='c')copySelectedNodes();else pasteSelectedNodes();return}if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='s'){e.preventDefault();save(false)}if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();if(state&&flushLayerRename()&&commitActiveInspectorControl()&&flushRichTextDraft?.()!==false){execute(state,{type:e.shiftKey?'history.redo':'history.undo'});render()}}});
- renderPalette();loadTwitchConnection();Promise.all([loadPages(),loadPaletteFavorites()]).then(()=>window.__sanciEditorBoot?.ready()).catch(showError);
+ renderPalette();loadTwitchConnection();Promise.all([loadPages(),loadPaletteFavorites()]).then(()=>{if(pendingAccountViewport)applyAccountViewport(pendingAccountViewport);return accountPreferenceWrite}).then(()=>window.__sanciEditorBoot?.ready()).catch(showError);
 });
 
 loadEditorTokens();window.addEventListener('focus',()=>loadEditorTokens());

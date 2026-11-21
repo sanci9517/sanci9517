@@ -2,7 +2,7 @@ import {createEventBus} from './events.js';
 import {panelRegistry,featureRegistry} from './registry.js';
 import {EDITOR_ACTIONS} from './action-catalog.js?v=20261103-canvas-focus-mode';
 import {enhanceEditorActionControls} from './action-help.js?v=20261103-canvas-focus-mode';
-import {DEFAULT_LEFT_TAB_ORDER,applyWorkspacePreferences,mountWorkspaceAppearance,normalizeLeftTabOrder,readWorkspacePreferences} from './workspace-appearance.js?v=20261109-recursive-dock-activation';
+import {DEFAULT_LEFT_TAB_ORDER,applyWorkspacePreferences,mountWorkspaceAppearance,normalizeLeftTabOrder,readWorkspacePreferences} from './workspace-appearance.js?v=20261121-account-workspace-sync-v1';
 import {moveWorkspaceDockTreeLeaf,workspaceDockTreeSignature} from './workspace-dock-tree.js';
 import {mountWorkspaceDockTree} from './workspace-dock-renderer.js?v=20261109-recursive-dock-renderer';
 
@@ -40,8 +40,12 @@ function readPersisted(){
     return {...defaults,...value};
   }catch{dockStorageDurable=false;return {...defaults}}
 }
-
-let persisted=normalizeStoredDockState(readPersisted(),{normalizeMobile:false});
+const storedShellState=readPersisted();
+let viewportPreference={
+  device:['desktop','tablet','mobile'].includes(storedShellState.viewport?.device)?storedShellState.viewport.device:'desktop',
+  zoom:Number.isFinite(Number(storedShellState.viewport?.zoom))?Math.max(.35,Math.min(1.5,Number(storedShellState.viewport.zoom))):1,
+};
+let persisted=normalizeStoredDockState(storedShellState,{normalizeMobile:false});
 if(initialAppearance.layout!=='custom'){
   // Keep the preference's desktop intent even when the current mobile shell
   // presents that layout as canvas-first until the user explicitly opens a dock.
@@ -62,12 +66,16 @@ function renderLeftTabOrder(){
   }
 }
 renderLeftTabOrder();
-function persist(){
-  const serialized=JSON.stringify(persisted);
+function workspacePreferenceSnapshot(){
+  return {version:1,appearance:workspaceAppearance?.value||initialAppearance,dock:{...persisted},viewport:{...viewportPreference}};
+}
+function persist({notify=true}={}){
+  const serialized=JSON.stringify({...persisted,viewport:viewportPreference});
   try{
     localStorage.setItem(STORAGE_KEY,serialized);
     if(localStorage.getItem(STORAGE_KEY)!==serialized)throw new Error('Workspace storage did not return the saved dock state');
     dockStorageDurable=true;
+    if(notify)emit('workspace:preferences-change',workspacePreferenceSnapshot());
     return true;
   }catch{
     dockStorageDurable=false;
@@ -708,7 +716,7 @@ workspaceAppearance=mountWorkspaceAppearance({documentRef:document,root:editorRo
   if(!mobileQuery.matches){
     for(const side of allDockSides(tree))if(panels[side]?.classList.contains('closed'))setPanel(side,true,{save:true,customize:false});
   }
-},onExternalChange:({reset=false}={})=>{
+},onPreferencesChange:preferences=>emit('workspace:preferences-change',{...workspacePreferenceSnapshot(),...preferences}),onExternalChange:({reset=false}={})=>{
   desktopDockSnapshot=null;
   cancelDockResize({announcement:reset?'A másik szerkesztőlapon alaphelyzetbe állították a munkaterületet, ezért a panel átméretezése megszakadt.':'A másik szerkesztőlapon változott a munkaterület, ezért a panel átméretezése megszakadt.'});
   cancelWorkspaceDrag({announcement:reset?'A másik szerkesztőlapon alaphelyzetbe állították a munkaterületet, ezért az átrendezés megszakadt.':'A másik szerkesztőlapon történt változás miatt az átrendezés megszakadt.'});
@@ -871,7 +879,24 @@ document.querySelectorAll('.rail-btn').forEach(b=>{
   });
 });
 setupResizers();
-window.sanciEditor={version:9,bus,panels:panelRegistry,features:featureRegistry,on:bus.on,emit,openPanel:s=>setPanel(s,true),closePanel:s=>setPanel(s,false),showLeftTab,setInspectorTab,resizeDock};
+function applyAccountWorkspacePreferences(value){
+  if(!value||typeof value!=='object'||Array.isArray(value))return false;
+  const appearance=value.appearance&&typeof value.appearance==='object'&&!Array.isArray(value.appearance)?value.appearance:null;
+  const dock=value.dock&&typeof value.dock==='object'&&!Array.isArray(value.dock)?value.dock:null;
+  const viewport=value.viewport&&typeof value.viewport==='object'&&!Array.isArray(value.viewport)?value.viewport:null;
+  if(!appearance||!dock||!viewport)return false;
+  workspaceAppearance?.applyAccountPreferences(appearance,{saveLocal:true});
+  applyDockState(dock,{save:false});
+  viewportPreference={device:['desktop','tablet','mobile'].includes(viewport.device)?viewport.device:'desktop',zoom:Number.isFinite(Number(viewport.zoom))?Math.max(.35,Math.min(1.5,Number(viewport.zoom))):1};
+  persist({notify:false});
+  return true;
+}
+function setViewportPreference(value,{notify=true}={}){
+  if(!value||typeof value!=='object'||Array.isArray(value))return false;
+  viewportPreference={device:['desktop','tablet','mobile'].includes(value.device)?value.device:viewportPreference.device,zoom:Number.isFinite(Number(value.zoom))?Math.max(.35,Math.min(1.5,Number(value.zoom))):viewportPreference.zoom};
+  return persist({notify});
+}
+window.sanciEditor={version:10,bus,panels:panelRegistry,features:featureRegistry,on:bus.on,emit,openPanel:s=>setPanel(s,true),closePanel:s=>setPanel(s,false),showLeftTab,setInspectorTab,resizeDock,workspacePreferenceSnapshot,applyAccountWorkspacePreferences,setViewportPreference};
 featureRegistry.register('shell-runtime',{version:9,persistence:'localStorage',mobileShell:'bottom-sheet'});
 syncMobileBackdrop();
 emit('shell:ready',{version:8});

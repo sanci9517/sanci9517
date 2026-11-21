@@ -1,0 +1,79 @@
+{
+  "date_utc": "2026-11-21",
+  "plan_point": "77.44 / WEB-011 -> 77.44.7.D / EDT-044 account workspace preferences",
+  "feature": "Versioned, validated, authenticated account-sync for Editor appearance, panels/docks, and preview viewport; device-only profile names; Page Model Save and Publish remain separate.",
+  "branch": "v2/foundation",
+  "base_commit": "8dc81d38f38233194e899578925be131cd186862",
+  "canonical_plan_before": {
+    "bytes": 1782210,
+    "sha256": "7acefec21a6f3a3da893706ee29348694a547d1f0a3ffae4a716a36f5311d131",
+    "git_blob": "fd42125789cf580c3e907421535985e71ebc51da"
+  },
+  "production_preflight": {
+    "method": "Cloudflare D1 Query API; SELECT only; no migration or data write",
+    "query": "SELECT (SELECT COUNT(*) FROM d1_migrations) AS migration_markers, (SELECT name FROM d1_migrations ORDER BY id DESC LIMIT 1) AS latest_migration, (SELECT COUNT(*) FROM editor_preferences) AS preference_rows",
+    "migration_markers": 36,
+    "latest_migration": "0030_media_library_organization.sql",
+    "editor_preferences_table_present": true,
+    "preference_rows": 0,
+    "rows_written": 0,
+    "changes": 0,
+    "changed_db": false,
+    "size_after": 3825664
+  },
+  "wrangler_dry_run": {
+    "version": "4.130.0",
+    "assets_read": 199,
+    "total_upload": "426.51 KiB",
+    "gzip": "108.17 KiB",
+    "bindings_unchanged": true,
+    "deployed": false
+  },
+  "checks": {
+    "npm run test:editor": "PASS 24/24 Node test files + 4/4 runner tests",
+    "tests/browser/editor-workspace-appearance.test.js": "PASS 88/88 real Chromium cases (serial; full file)",
+    "account workspace cross-device regression": "PASS 1/1 real Chromium case",
+    "tests/browser/editor-content-system.test.js mobile published keyboard tabs": "PASS 1/1 real Chromium case (historical hosted failure targeted)",
+    "npm run typecheck": "PASS",
+    "python3 tests/plan-contract.test.py": "PASS 15/15",
+    "python3 scripts/check-canonical-plan.py": "PASS 13 master files / 396 mappings",
+    "python3 scripts/build-feature-traceability.py --check": "PASS 396/396",
+    "python3 scripts/audit-active-plan-point.py": "PASS audit; full D acceptance NOT_CERTIFIED; 148 PARTIAL_SOURCE / 248 UNVERIFIED",
+    "node scripts/web013-migration-safety-gate.mjs": "PASS; deploy:safe never applies migrations",
+    "git diff --check": "PASS",
+    "wrangler deploy --dry-run": "PASS 199 public assets"
+  },
+  "release": {
+    "new_runtime_source": "PENDING_COMMIT_AND_PUSH",
+    "hosted_editor_core": "PENDING_NEW_EXACT_SHA_RUN; prior run 44921673211 failed on prior 79d6 source; current targeted fixed-sequence test passed locally",
+    "production_source_smoke": "PENDING_NEW_EXACT_SHA_RUN",
+    "cloudflare_deployment": "PENDING",
+    "current_production_before_new_release": {
+      "deployment_id": "d2e4645e-d99c-4c9f-8805-0d1eda59dd65",
+      "worker_version": "3d5c5410-f9e0-47b4-b3da-f9a96b7e1106",
+      "traffic_percent": 100
+    },
+    "current_branch_before_release": "8dc81d38f38233194e899578925be131cd186862",
+    "new_runtime_is_live": false
+  },
+  "guardrails": {
+    "save_publish_separate": true,
+    "production_migration_or_data_write_performed": false,
+    "r2_write_or_delete_performed": false,
+    "new_paid_cost_ft": 0,
+    "full_D_point": "OPEN / NOT_CERTIFIED",
+    "manual_physical_acceptance": "DEFERRED until complete Editor scope"
+  },
+  "source_sha256": {
+    "public/editor-v2/app.js": "3c44bda9f7aa15d68fb8f012d015ed155222e6411dc0986069df725a9457fbef",
+    "public/editor-v2/index.html": "97ce67548df3dcf6eb617db2481db06fdea31657fad43a7cfa9fed83b4b927b0",
+    "public/editor-v2/ui/shell.js": "7b0fd69a48575100e8c1b0c241bd95f0e126a5a5ee85e150b6156c1a0860aa05",
+    "public/editor-v2/ui/workspace-appearance.js": "ae72cd47ea47fc3437180e34be28cdaefbfa5647d3fc49f26dee2343de72a875",
+    "src/routes/admin/editor-preferences.ts": "14ef7243de6deda025d5e892370f41c6fdb3c4563022cc6dde7ee8c0fdbee6a9",
+    "tests/editor-preferences-route.test.js": "6e1d5bebafa6b0daf2c5d67151897d16db22235bf964fabb78fac77f6852ac56",
+    "tests/browser/editor-workspace-appearance.test.js": "11720b330d19b60a312d30a05e35d01078c799feee1122a711ba147ba5affa20",
+    "tests/editor-public-asset-cache-bust.test.js": "f6ee9cb94e69464ed22efee10c028031cc444105a3e1991ff631dd94dfd3f394",
+    ".github/workflows/worker-production-source-smoke.yml": "832f01c027903b6d52b9532b5f22bd40cd170a303943953c69e408a44362494c",
+    "docs/evidence/feature-traceability.json": "96d9b39b7ec070044b3ee0768a079322025b04c08aec642e5748d22357e4fc89"
+  }
+}

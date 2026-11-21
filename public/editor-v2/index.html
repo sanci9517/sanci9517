@@ -36,7 +36,7 @@
   </dialog>
   <dialog id="workspaceAppearanceDialog" class="workspace-appearance-dialog" aria-labelledby="workspaceAppearanceTitle" aria-describedby="workspaceAppearanceHelp">
     <header class="workspace-appearance-heading"><div><p class="workspace-appearance-eyebrow">SAJÁT MUNKATERÜLET</p><h2 id="workspaceAppearanceTitle">Megjelenés és elrendezés</h2></div><button id="closeWorkspaceAppearance" type="button" class="workspace-appearance-close">Bezárás</button></header>
-    <p id="workspaceAppearanceHelp" class="workspace-appearance-help">Ezek a beállítások csak a szerkesztő felületét módosítják ezen az eszközön. Az oldal tartalma, mentése, publikálása és működése változatlan marad.</p>
+    <p id="workspaceAppearanceHelp" class="workspace-appearance-help">A megjelenés, panel-elrendezés és előnézeti méret fiókodhoz szinkronizálódik. A névvel mentett és importált profilok ezen az eszközön maradnak. Az oldal tartalma, mentése és külön publikálása változatlan.</p>
     <div class="workspace-appearance-fields">
       <label for="workspaceLayout">Munkaterület elrendezése<select id="workspaceLayout"><option value="balanced">Kiegyensúlyozott — oldalak és beállítások</option><option value="canvas">Vászonközpontú — több hely az oldalnak</option><option value="inspector">Beállításközpontú — jobb oldali panel</option><option value="custom">Saját — kézzel beállított panelek</option></select><small>A panel szélén lévő elválasztót húzhatod. Billentyűzettel a nyilak 16, Shift+nyíl 48 képponttal állít; a Home és End a két szélességhatárt választja.</small></label>
       <label for="workspaceDockOrder">Panelek sorrendje asztali nézetben<select id="workspaceDockOrder"><option value="left-canvas-right">Panelek a vászon két oldalán</option><option value="canvas-left-right">Vászon elöl, mindkét panel jobbra</option><option value="left-right-canvas">Panelek együtt, vászon utánuk</option><option value="right-left-canvas">Beállítások, oldalak, majd vászon</option><option value="right-canvas-left">Beállítások balra, oldalak jobbra</option><option value="canvas-right-left">Vászon, beállítások, oldalak</option></select><small>A listát billentyűzettel és érintéssel is használhatod. Asztali nézetben a panel fejléceit vagy a vászon eszköztárát is húzhatod. Telefonon a biztonságos, egy paneles fiók marad.</small></label>
@@ -71,8 +71,8 @@
   <footer class="statusbar"><span id="selection">Kijelölés: —</span><span id="revision">Mentés verziója: 0</span><span id="engine">Oldal szerkesztése</span><span class="status-hint">Ctrl+S Mentés · Ctrl+Z Visszavonás</span></footer>
 </div>
 <script src="/editor-v2/boot.js?v=20261119-edt042-preboot-redaction-v3"></script>
-<script type="module" src="/editor-v2/app.js?v=20261121-edt044-account-preferences-v1"></script>
-<script type="module" src="/editor-v2/ui/shell.js?v=20261109-recursive-dock-activation"></script>
+<script type="module" src="/editor-v2/app.js?v=20261121-edt044-account-workspace-v1"></script>
+<script type="module" src="/editor-v2/ui/shell.js?v=20261121-edt044-account-workspace-v1"></script>
 <script type="module" src="/editor-v2/ui/canvas-pan.js?v=20260917-1"></script>
 <script type="module" src="/editor-v2/ui/inspector-groups.js?v=20261030-search-group-state"></script>
 <script type="module" src="/editor-v2/ui/navigation-editor.js?v=20261016-1"></script>

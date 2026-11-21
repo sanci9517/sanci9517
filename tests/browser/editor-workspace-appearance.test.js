@@ -18,11 +18,17 @@ function getBrowser(){
 after(async()=>{
   if(browserPromise)await (await browserPromise).close();
 });
-function fixtureServer(){
-  const document=createDocument();const pageId=document.activePageId;const draft=structuredClone(document);const writes=[];
+function fixtureServer({accountUser=null}={}){
+  const document=createDocument();const pageId=document.activePageId;const draft=structuredClone(document);const writes=[];const accountPreferences={version:1,paletteFavoriteTypes:[],workspace:null};
   const server=createServer(async(req,res)=>{
     const url=new URL(req.url,'http://localhost');
     const json=value=>{res.setHeader('content-type','application/json; charset=utf-8');res.end(JSON.stringify(value))};
+    if(url.pathname==='/api/auth/session')return json({ok:true,data:{authenticated:Boolean(accountUser),user:accountUser?{id:accountUser}:null}});
+    if(url.pathname==='/api/admin/editor/preferences'){
+      if(!accountUser){res.statusCode=401;return json({ok:false,error:{code:'UNAUTHORIZED'}})}
+      if(req.method==='GET')return json({ok:true,data:{...accountPreferences}});
+      if(req.method==='PUT'){let body='';for await(const chunk of req)body+=chunk;const patch=JSON.parse(body);if(patch.workspace?.appearance)delete patch.workspace.appearance.profiles;Object.assign(accountPreferences,patch);return json({ok:true,data:{...accountPreferences}})}
+    }
     if(url.pathname==='/api/admin/pages')return json({ok:true,data:[{id:pageId,slug:'proba',title:'Próba',content:draft,revision:1,isPublished:false}]});
     if(url.pathname==='/api/admin/editor'){
       if(req.method==='GET')return json({ok:true,data:{page:{id:pageId,document:draft,publishedRevisionId:null},revisions:[]}});
@@ -37,10 +43,10 @@ function fixtureServer(){
     try{res.setHeader('content-type',mime[extname(file)]||'application/octet-stream');res.end(await readFile(file))}
     catch{res.writeHead(404).end()}
   });
-  return {server,writes};
+  return {server,writes,accountPreferences};
 }
-async function openEditor(t,{width=1366,height=900,isMobile=false,hasTouch=false,blockWorkspaceStorageReads=false,blockShellStorageReads=false,ignoreWorkspacePreferenceWrites=false,initialDockState=null,initialAppearance=null,initialLegacyAppearance=null}={}){
-  const fixture=fixtureServer();await new Promise(done=>fixture.server.listen(0,'127.0.0.1',done));
+async function openEditor(t,{width=1366,height=900,isMobile=false,hasTouch=false,blockWorkspaceStorageReads=false,blockShellStorageReads=false,ignoreWorkspacePreferenceWrites=false,initialDockState=null,initialAppearance=null,initialLegacyAppearance=null,accountUser=null}={}){
+  const fixture=fixtureServer({accountUser});await new Promise(done=>fixture.server.listen(0,'127.0.0.1',done));
   t.after(()=>new Promise(done=>fixture.server.close(done)));
   const browser=await getBrowser();
   const context=await browser.newContext({viewport:{width,height},isMobile,hasTouch});t.after(()=>context.close());
@@ -3188,7 +3194,7 @@ test('responsive dock resize keeps the focused panel and honors an explicit mobi
   await page.waitForFunction(()=>document.querySelector('#rightDock')?.classList.contains('closed')===false&&document.querySelector('#leftDock')?.classList.contains('closed')===true);
   assert.equal(await page.locator('#leftDock').evaluate(element=>element.classList.contains('closed')),true,'a deliberate mobile choice replaces the temporary desktop snapshot (the desktop navigation rail itself remains visible)');
   assert.equal(await page.locator('#rightDock').isVisible(),true);
-  assert.deepEqual(await page.evaluate(()=>JSON.parse(localStorage.getItem('sanci-editor-shell-v2'))),{leftOpen:false,rightOpen:true,leftTab:'layers',leftTabOrder:['pages','elements','layers','schedule','navigation'],inspectorTab:'design',panelActive:'right',leftWidth:310,rightWidth:352});
+  assert.deepEqual(await page.evaluate(()=>JSON.parse(localStorage.getItem('sanci-editor-shell-v2'))),{leftOpen:false,rightOpen:true,leftTab:'layers',leftTabOrder:['pages','elements','layers','schedule','navigation'],inspectorTab:'design',panelActive:'right',leftWidth:310,rightWidth:352,viewport:{device:'desktop',zoom:1}});
   assert.deepEqual(writes,[],'responsive panel changes never issue page Save or Publish requests');
   assert.deepEqual(errors,[]);
 });
@@ -3586,7 +3592,7 @@ test('a cross-tab desktop profile keeps its complete dock state when applied fro
     inspectorTab:JSON.parse(localStorage.getItem('sanci-editor-shell-v2'))?.inspectorTab,
     stored:JSON.parse(localStorage.getItem('sanci-editor-shell-v2'))
   }));
-  assert.deepEqual(restored,{leftOpen:true,rightOpen:true,inspectorTab:'advanced',stored:dock},'returning to desktop restores the full profile state rather than the one-drawer mobile normalization');
+  assert.deepEqual(restored,{leftOpen:true,rightOpen:true,inspectorTab:'advanced',stored:{...dock,viewport:{device:'desktop',zoom:1}}},'returning to desktop restores the full profile state and its device-scoped viewport rather than the one-drawer mobile normalization');
   assert.deepEqual(writes,[],'cross-tab profile application never invokes Page Model Save or Publish');
   assert.deepEqual(errors,[]);
 });
@@ -4185,4 +4191,31 @@ test('floating windows clamp to their own lane at the 1025px boundary and both p
   }
   assert.deepEqual(writes,[],'viewport changes and moving either floating dock never write page content');
   assert.deepEqual(errors,[]);
+});
+
+test('account workspace preferences hydrate across clean devices and keep viewport changes separate from page Save/Publish',async t=>{
+  const profile={id:'profile-local-1',name:'Csak ezen az eszközön',createdAt:1,appearance:{theme:'graphite'},dock:{leftOpen:false,rightOpen:false}};
+  const first=await openEditor(t,{accountUser:'shared-editor',initialAppearance:{version:2,layout:'custom',theme:'aurora',density:'compact',accent:'#8fa7ff',dockOrder:'canvas-right-left',panelMode:'separate',panelSide:'right',profiles:[profile]},initialDockState:{leftOpen:true,rightOpen:false,leftTab:'layers',leftTabOrder:['layers','pages','elements','schedule','navigation'],inspectorTab:'content',panelActive:'left',leftWidth:372,rightWidth:352}});
+  await first.page.waitForFunction(()=>document.querySelector('#elementPaletteStatus')?.textContent.includes('szinkronizálva'));
+  assert.equal(first.accountPreferences.workspace.appearance.theme,'aurora','the first signed-in device migrates its established workspace preferences to the account');
+  assert.equal(first.accountPreferences.workspace.appearance.profiles,undefined,'named device profiles are excluded from account sync');
+  assert.equal(first.writes.length,0,'migrating UI preferences never writes the Page Model');
+
+  const browser=await getBrowser();const secondContext=await browser.newContext({viewport:{width:1366,height:900}});t.after(()=>secondContext.close());
+  const secondPage=await secondContext.newPage();secondPage.setDefaultTimeout(8000);
+  await secondPage.goto(`http://127.0.0.1:${first.server.address().port}/editor-v2/index.html`,{waitUntil:'load'});
+  await secondPage.locator('.page-canvas .node').first().waitFor();
+  await secondPage.waitForFunction(()=>document.querySelector('.editor-app')?.dataset.workspaceTheme==='aurora'&&document.querySelector('.workspace.left-open')&&document.querySelector('#leftTabLayers')?.getAttribute('aria-selected')==='true');
+  assert.equal(await secondPage.locator('.page-canvas').getAttribute('data-device'),'desktop','the server preference includes a normalized viewport and starts with its saved value');
+  assert.equal(await secondPage.locator('#workspaceAppearanceHelp').textContent().then(text=>text.includes('fiókodhoz szinkronizálódik')),true);
+
+  await secondPage.locator('.canvas-device-btn[data-device="mobile"]').click();
+  await secondPage.waitForFunction(()=>document.querySelector('.page-canvas')?.dataset.device==='mobile');
+  await secondPage.waitForFunction(()=>document.querySelector('#elementPaletteStatus')?.textContent.includes('szinkronizálva'));
+  assert.equal(first.accountPreferences.workspace.viewport.device,'mobile','the new device selection is debounced to the account preference record');
+  await first.page.reload({waitUntil:'load'});
+  await first.page.locator('.page-canvas .node').first().waitFor();
+  await first.page.waitForFunction(()=>document.querySelector('.page-canvas')?.dataset.device==='mobile');
+  assert.deepEqual(first.writes,[],'cross-device preference hydration changes neither explicit Save nor the separate Publish lifecycle');
+  assert.deepEqual(first.errors,[]);
 });
