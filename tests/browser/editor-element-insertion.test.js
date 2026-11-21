@@ -122,6 +122,11 @@ test('palette items are inserted beside the selected item in canvas flow and sav
   assert.equal(await matchingTextGroup.getAttribute('aria-expanded'),'true','search should expand the group containing matches');
   assert.equal(await tab.locator('#elementList .element').filter({hasText:'Szöveg'}).count(),1,'unaccented Hungarian query should find Szöveg');
   assert.equal(await tab.locator('#elementList .element').filter({hasText:'Heading'}).count(),0,'search should hide non-matching elements');
+  await paletteSearch.fill('nincs-ilyen-oldalelem');
+  assert.equal(await tab.locator('#elementList .element').count(),0,'a non-matching search shows no palette entries');
+  assert.equal(await tab.locator('#elementList [role="status"]').textContent(),'Nincs találat a megadott keresésre.','an empty search result has a clear accessible status');
+  await paletteSearch.fill('szoveg');
+  assert.equal(await tab.locator('#elementList [role="status"]').count(),0,'a matching search removes the empty result status');
   await paletteSearch.fill('');
   const textGroup=tab.locator('.element-group-title').filter({hasText:'Szöveg'});
   const groupBodyId=await textGroup.getAttribute('aria-controls');

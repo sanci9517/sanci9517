@@ -20,6 +20,9 @@ test('Admin Media lists all active and archived assets, with keyboard paging and
     if(url.pathname==='/api/admin/media' && req.method==='GET' && url.searchParams.has('usage')){
       return send({ok:true,data:{complete:true,references:[{pageId:'page-1',source:'published',nodeName:'Kép',path:'props.assetId',pageTitle:'Rólam'}]}});
     }
+    if(url.pathname==='/api/admin/media' && req.method==='GET' && url.searchParams.get('organization')==='1'){
+      return send({ok:true,data:{folders:[],tags:[],collections:[]}});
+    }
     if(url.pathname==='/api/admin/media' && req.method==='GET' && url.searchParams.has('id')){
       res.setHeader('content-type','image/svg+xml');return res.end('<svg xmlns="http://www.w3.org/2000/svg" width="4" height="4"><rect width="4" height="4" fill="purple"/></svg>');
     }

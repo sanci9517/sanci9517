@@ -1330,7 +1330,8 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
     assert.equal(new Set(panelIds.map(panel=>panel.id)).size,panelIds.length,'published panel IDs are unique');
     assert.deepEqual(tabIds.map(tab=>tab.selected),tabIds.map((_,i)=>String(i===index)),'exactly the requested published tab is selected');
     assert.deepEqual(tabIds.map(tab=>tab.tabindex),tabIds.map((_,i)=>i===index?'0':'-1'),'published tabs keep one roving keyboard tab stop');
-    assert.deepEqual(panelIds.map(panel=>panel.visible),panelIds.map((_,i)=>i===index),'only the selected published panel is visible');
+    assert.deepEqual(panelIds.map(panel=>panel.visible),panelIds.map((_,i)=>i===index),
+      'only the selected published panel is visible: '+JSON.stringify({index,tabIds,panelIds}));
     assert.equal(tabIds[index].controls,panelIds[index].id,'selected tab controls its corresponding panel');
     assert.equal(panelIds[index].labelledby,tabIds[index].id,'selected panel is labelled by its corresponding tab');
     assert.equal(panelIds[index].text,content,'keyboard selection displays the matching published content');
@@ -1364,7 +1365,10 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   await live.bringToFront();await live.setViewportSize({width:720,height:450});
   assert.equal(await live.evaluate(()=>[innerWidth,innerHeight].join('×')),'720×450',
     'published keyboard tabs use the planned 200% effective zoom viewport');
-  await publicTabs.nth(0).focus();await live.keyboard.press('End');
+  // Send the key through the target locator so a browser focus transition
+  // caused by resizing the page cannot redirect the accessibility check to
+  // the document body.
+  await publicTabs.nth(0).press('End');
   await assertPublicTabState(1,'Személyes történet');
   const zoomTabsLayout=await live.evaluate(()=>({
     viewport:innerWidth,document:document.scrollingElement.scrollWidth,

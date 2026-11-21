@@ -87,6 +87,7 @@ button:focus-visible, summary:focus-visible, .rail-btn:focus-visible { outline: 
 .element-group-title, .element, .layer-row { min-height: 44px; height: auto; font-size: 14px; }
 .element-group-title { padding: 10px 12px; }
 .element { padding: 10px 12px; }
+.element-search-empty { margin: 8px; padding: 12px; border: 1px solid var(--editor-line); border-radius: 8px; background: var(--editor-surface); color: #bdc9d8; font-size: 13px; line-height: 1.45; }
 .layers-tools { grid-template-columns: minmax(0,1fr); }
 .hierarchy-actions { grid-template-columns: repeat(2,minmax(0,1fr)); }
 .hierarchy-actions button, .page-order { min-height: 44px; height: auto; font-size: 13px; }
