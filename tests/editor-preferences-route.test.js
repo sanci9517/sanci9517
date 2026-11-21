@@ -68,15 +68,16 @@ test('editor favorites persist only under the authenticated user account and rou
   assert.equal(first.status, 200);
   assert.match(first.headers.get('Cache-Control'), /no-store/u);
   assert.deepEqual((await first.json()).data.paletteFavoriteTypes, []);
+  assert.deepEqual((await (await f.call('GET')).json()).data.revisions, { paletteFavoriteTypes: 0, workspace: 0 });
 
-  const saved = await f.call('PUT', 'user-a', { paletteFavoriteTypes: ['heading', 'text', 'heading'] });
+  const saved = await f.call('PUT', 'user-a', { paletteFavoriteTypes: ['heading', 'text', 'heading'], baseRevisions: { paletteFavoriteTypes: 0 } });
   assert.equal(saved.status, 200);
   assert.deepEqual((await saved.json()).data.paletteFavoriteTypes, ['heading', 'text']);
   assert.deepEqual((await (await f.call('GET')).json()).data.paletteFavoriteTypes, ['heading', 'text']);
   assert.deepEqual((await (await f.call('GET', 'user-b')).json()).data.paletteFavoriteTypes, [],
     'a second authorized account cannot read the first account preferences');
 
-  await f.call('PUT', 'user-b', { paletteFavoriteTypes: ['divider'] });
+  await f.call('PUT', 'user-b', { paletteFavoriteTypes: ['divider'], baseRevisions: { paletteFavoriteTypes: 0 } });
   assert.deepEqual((await (await f.call('GET')).json()).data.paletteFavoriteTypes, ['heading', 'text']);
   assert.deepEqual((await (await f.call('GET', 'user-b')).json()).data.paletteFavoriteTypes, ['divider']);
   assert.deepEqual(f.db.prepare('SELECT user_id FROM editor_preferences ORDER BY user_id').all().map(row => row.user_id), ['user-a', 'user-b']);
@@ -101,7 +102,7 @@ test('account workspace settings round-trip independently from page content and 
     dock: { leftOpen: true, rightOpen: true, leftTab: 'layers', leftTabOrder: ['navigation', 'pages'], inspectorTab: 'content', panelActive: 'right', leftWidth: 444.4, rightWidth: 281 },
     viewport: { device: 'tablet', zoom: 0.82 }
   };
-  const saved = await f.call('PUT', 'user-a', { workspace });
+  const saved = await f.call('PUT', 'user-a', { workspace, baseRevisions: { workspace: 0 } });
   assert.equal(saved.status, 200);
   const savedBody = (await saved.json()).data;
   assert.deepEqual(savedBody.workspace.viewport, { device: 'tablet', zoom: 0.82 });
@@ -111,7 +112,7 @@ test('account workspace settings round-trip independently from page content and 
   assert.equal('profiles' in savedBody.workspace.appearance, false, 'personal profile names stay local to the device');
   assert.deepEqual((await (await f.call('GET', 'user-a')).json()).data.workspace, savedBody.workspace);
 
-  await f.call('PUT', 'user-a', { paletteFavoriteTypes: ['heading'] });
+  await f.call('PUT', 'user-a', { paletteFavoriteTypes: ['heading'], baseRevisions: { paletteFavoriteTypes: 0 } });
   const merged = (await (await f.call('GET', 'user-a')).json()).data;
   assert.deepEqual(merged.paletteFavoriteTypes, ['heading']);
   assert.deepEqual(merged.workspace, savedBody.workspace, 'patching favorites does not erase workspace state');
@@ -141,8 +142,8 @@ test('concurrent account preference writes preserve independent workspace and pa
     viewport: { device: 'desktop', zoom: 1 }
   };
   const [workspaceResponse, favoritesResponse] = await Promise.all([
-    f.call('PUT', 'user-a', { workspace }),
-    f.call('PUT', 'user-a', { paletteFavoriteTypes: ['heading', 'text'] })
+    f.call('PUT', 'user-a', { workspace, baseRevisions: { workspace: 0 } }),
+    f.call('PUT', 'user-a', { paletteFavoriteTypes: ['heading', 'text'], baseRevisions: { paletteFavoriteTypes: 0 } })
   ]);
   assert.equal(workspaceResponse.status, 200);
   assert.equal(favoritesResponse.status, 200);
@@ -152,6 +153,45 @@ test('concurrent account preference writes preserve independent workspace and pa
     panelMode: 'separate', panelSide: 'right', floatingPosition: { left: { x: 0, y: 0 }, right: { x: 0, y: 0 } }
   });
   assert.deepEqual(stored.paletteFavoriteTypes, ['heading', 'text']);
+  assert.deepEqual(stored.revisions, { paletteFavoriteTypes: 1, workspace: 1 });
+});
+
+test('same-field stale workspace writes return a conflict and preserve the first committed value', async t => {
+  const f = await fixture(t);
+  const workspace = theme => ({ version: 1, appearance: { theme }, dock: {}, viewport: {} });
+  const [first, stale] = await Promise.all([
+    f.call('PUT', 'user-a', { workspace: workspace('aurora'), baseRevisions: { workspace: 0 } }),
+    f.call('PUT', 'user-a', { workspace: workspace('ocean'), baseRevisions: { workspace: 0 } })
+  ]);
+  assert.deepEqual([first.status, stale.status].sort(), [200, 409]);
+  const conflict = first.status === 409 ? await first.json() : await stale.json();
+  assert.equal(conflict.error.code, 'PREFERENCES_CONFLICT');
+  assert.equal(conflict.data.revisions.workspace, 1);
+  const stored = (await (await f.call('GET')).json()).data;
+  assert.equal(stored.revisions.workspace, 1);
+  assert.equal(['aurora', 'ocean'].includes(stored.workspace.appearance.theme), true);
+  assert.equal(stored.workspace.appearance.theme, conflict.data.workspace.appearance.theme,
+    'the conflict payload and stored state identify the winner without silently accepting the stale update');
+});
+
+test('same-field stale palette favorite writes return a conflict rather than replacing a newer list', async t => {
+  const f = await fixture(t);
+  const first = await f.call('PUT', 'user-a', { paletteFavoriteTypes: ['heading'], baseRevisions: { paletteFavoriteTypes: 0 } });
+  const stale = await f.call('PUT', 'user-a', { paletteFavoriteTypes: ['divider'], baseRevisions: { paletteFavoriteTypes: 0 } });
+  assert.equal(first.status, 200);
+  assert.equal(stale.status, 409);
+  assert.equal((await stale.json()).data.revisions.paletteFavoriteTypes, 1);
+  const stored = (await (await f.call('GET')).json()).data;
+  assert.deepEqual(stored.paletteFavoriteTypes, ['heading']);
+  assert.equal(stored.revisions.paletteFavoriteTypes, 1);
+});
+
+test('a write without its field revision is rejected before storage changes', async t => {
+  const f = await fixture(t);
+  const response = await f.call('PUT', 'user-a', { workspace: { version: 1, appearance: {}, dock: {}, viewport: {} } });
+  assert.equal(response.status, 428);
+  assert.equal((await response.json()).error.code, 'PREFERENCES_REVISION_REQUIRED');
+  assert.equal(f.db.prepare('SELECT COUNT(*) AS n FROM editor_preferences').get().n, 0);
 });
 
 test('workspace account preference payload rejects unsafe or malformed state without mutation', async t => {
@@ -190,12 +230,13 @@ test('preference route denies anonymous and viewer access and returns safe defau
   assert.equal((await f.call('PUT', 'viewer', { paletteFavoriteTypes: ['heading'] })).status, 403);
   f.db.prepare('INSERT INTO editor_preferences(user_id,preferences_json) VALUES (?,?)').run('user-a', '{bad json');
   assert.deepEqual((await (await f.call('GET')).json()).data.paletteFavoriteTypes, []);
-  const repaired = await f.call('PUT', 'user-a', { paletteFavoriteTypes: ['heading'] });
+  const repaired = await f.call('PUT', 'user-a', { paletteFavoriteTypes: ['heading'], baseRevisions: { paletteFavoriteTypes: 0 } });
   assert.equal(repaired.status, 200, 'a valid preference update repairs malformed legacy JSON safely');
   assert.deepEqual((await (await f.call('GET')).json()).data, {
     version: 1,
     paletteFavoriteTypes: ['heading'],
     workspace: null,
+    revisions: { paletteFavoriteTypes: 1, workspace: 0 },
     updatedAt: f.db.prepare('SELECT updated_at FROM editor_preferences WHERE user_id = ?').get('user-a').updated_at
   });
   assert.doesNotThrow(() => JSON.parse(f.db.prepare('SELECT preferences_json FROM editor_preferences WHERE user_id = ?').get('user-a').preferences_json));
@@ -206,5 +247,5 @@ test('preference storage errors fail closed with a no-store unavailable response
   const f = await fixture(t);
   f.db.exec('DROP TABLE editor_preferences');
   assert.equal((await f.call('GET')).status, 503);
-  assert.equal((await f.call('PUT', 'user-a', { paletteFavoriteTypes: ['heading'] })).status, 503);
+  assert.equal((await f.call('PUT', 'user-a', { paletteFavoriteTypes: ['heading'], baseRevisions: { paletteFavoriteTypes: 0 } })).status, 503);
 });

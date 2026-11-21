@@ -19,7 +19,7 @@ after(async()=>{
   if(browserPromise)await (await browserPromise).close();
 });
 function fixtureServer({accountUser=null}={}){
-  const document=createDocument();const pageId=document.activePageId;const draft=structuredClone(document);const writes=[];const accountPreferences={version:1,paletteFavoriteTypes:[],workspace:null};
+  const document=createDocument();const pageId=document.activePageId;const draft=structuredClone(document);const writes=[];const accountPreferences={version:1,paletteFavoriteTypes:[],workspace:null,revisions:{paletteFavoriteTypes:0,workspace:0}};
   const server=createServer(async(req,res)=>{
     const url=new URL(req.url,'http://localhost');
     const json=value=>{res.setHeader('content-type','application/json; charset=utf-8');res.end(JSON.stringify(value))};
@@ -27,7 +27,14 @@ function fixtureServer({accountUser=null}={}){
     if(url.pathname==='/api/admin/editor/preferences'){
       if(!accountUser){res.statusCode=401;return json({ok:false,error:{code:'UNAUTHORIZED'}})}
       if(req.method==='GET')return json({ok:true,data:{...accountPreferences}});
-      if(req.method==='PUT'){let body='';for await(const chunk of req)body+=chunk;const patch=JSON.parse(body);if(patch.workspace?.appearance)delete patch.workspace.appearance.profiles;Object.assign(accountPreferences,patch);return json({ok:true,data:{...accountPreferences}})}
+      if(req.method==='PUT'){
+        let body='';for await(const chunk of req)body+=chunk;const patch=JSON.parse(body);
+        const fields=['paletteFavoriteTypes','workspace'].filter(field=>Object.hasOwn(patch,field));
+        if(fields.some(field=>patch.baseRevisions?.[field]!==accountPreferences.revisions[field])){res.statusCode=409;return json({ok:false,error:{code:'PREFERENCES_CONFLICT'},data:structuredClone(accountPreferences)})}
+        if(patch.workspace?.appearance)delete patch.workspace.appearance.profiles;
+        for(const field of fields){accountPreferences[field]=structuredClone(patch[field]);accountPreferences.revisions[field]+=1}
+        return json({ok:true,data:structuredClone(accountPreferences)})
+      }
     }
     if(url.pathname==='/api/admin/pages')return json({ok:true,data:[{id:pageId,slug:'proba',title:'Próba',content:draft,revision:1,isPublished:false}]});
     if(url.pathname==='/api/admin/editor'){
@@ -4217,5 +4224,74 @@ test('account workspace preferences hydrate across clean devices and keep viewpo
   await first.page.locator('.page-canvas .node').first().waitFor();
   await first.page.waitForFunction(()=>document.querySelector('.page-canvas')?.dataset.device==='mobile');
   assert.deepEqual(first.writes,[],'cross-device preference hydration changes neither explicit Save nor the separate Publish lifecycle');
+  assert.deepEqual(first.errors,[]);
+});
+
+test('stale account workspace edits stay local and surface a conflict instead of replacing the newer device state',async t=>{
+  const first=await openEditor(t,{accountUser:'shared-editor'});
+  await openPreferences(first.page);
+  await first.page.waitForFunction(()=>document.querySelector('#elementPaletteStatus')?.textContent.includes('szinkronizálva'));
+  assert.equal(first.accountPreferences.revisions.workspace,1,'the first device has a server revision before another device opens');
+
+  const browser=await getBrowser();
+  const secondContext=await browser.newContext({viewport:{width:1366,height:900}});t.after(()=>secondContext.close());
+  const secondPage=await secondContext.newPage();secondPage.setDefaultTimeout(8000);
+  await secondPage.goto(`http://127.0.0.1:${first.server.address().port}/editor-v2/index.html`,{waitUntil:'load'});
+  await secondPage.locator('.page-canvas .node').first().waitFor();
+  await openPreferences(secondPage);
+  await secondPage.waitForFunction(()=>document.querySelector('#elementPaletteStatus')?.textContent.includes('fiókodhoz mentve'));
+  assert.equal(await secondPage.locator('#workspaceTheme').inputValue(),'graphite');
+
+  await first.page.locator('#workspaceTheme').selectOption('aurora');
+  await first.page.waitForFunction(async()=>{
+    const response=await fetch('/api/admin/editor/preferences',{cache:'no-store'});const result=await response.json();
+    return result.data?.workspace?.appearance?.theme==='aurora';
+  });
+  await secondPage.locator('#workspaceTheme').selectOption('ocean');
+  await secondPage.waitForFunction(()=>document.querySelector('#elementPaletteStatus')?.textContent.includes('másik munkamenet közben módosította'));
+
+  const serverState=await secondPage.evaluate(async()=>{
+    const response=await fetch('/api/admin/editor/preferences',{cache:'no-store'});return (await response.json()).data;
+  });
+  assert.equal(serverState.workspace.appearance.theme,'aurora','the newer account value remains authoritative');
+  assert.equal(serverState.revisions.workspace,2);
+  assert.equal(await secondPage.locator('.editor-app').getAttribute('data-workspace-theme'),'ocean','the current device keeps its un-synced local edit visible');
+  assert.deepEqual(first.writes,[],'preference conflicts never Save or Publish page content');
+  assert.deepEqual(first.errors,[]);
+});
+
+test('stale account palette favorites stay local and surface a conflict instead of replacing the newer device list',async t=>{
+  const first=await openEditor(t,{accountUser:'shared-editor'});
+  await first.page.waitForFunction(()=>document.querySelector('#elementPaletteStatus')?.textContent.includes('szinkronizálva'));
+  await first.page.locator('.rail-btn[data-tab="elements"]').click();
+  await first.page.locator('#elementSearch').fill('Section');
+
+  const browser=await getBrowser();
+  const secondContext=await browser.newContext({viewport:{width:1366,height:900}});t.after(()=>secondContext.close());
+  const secondPage=await secondContext.newPage();secondPage.setDefaultTimeout(8000);
+  await secondPage.goto(`http://127.0.0.1:${first.server.address().port}/editor-v2/index.html`,{waitUntil:'load'});
+  await secondPage.locator('.page-canvas .node').first().waitFor();
+  await secondPage.waitForFunction(()=>document.querySelector('#elementPaletteStatus')?.textContent.includes('fiókodhoz mentve'));
+  await secondPage.locator('.rail-btn[data-tab="elements"]').click();
+  await secondPage.locator('#elementSearch').fill('Divider');
+
+  const firstToggle=first.page.locator('.element-row').filter({has:first.page.locator('.element').filter({hasText:'Section'})}).locator('.element-favorite-toggle');
+  const secondToggle=secondPage.locator('.element-row').filter({has:secondPage.locator('.element').filter({hasText:'Divider'})}).locator('.element-favorite-toggle');
+  const firstType=await firstToggle.getAttribute('data-element-type');
+  const secondType=await secondToggle.getAttribute('data-element-type');
+  assert.notEqual(firstType,secondType);
+  await firstToggle.click();
+  await first.page.waitForFunction(type=>window.__sanciEditorBoot?.ready&&document.querySelector('#elementPaletteStatus')?.textContent.includes('elmentve'),firstType);
+  await secondToggle.click();
+  await secondPage.waitForFunction(()=>document.querySelector('#elementPaletteStatus')?.textContent.includes('másik munkamenet módosította'));
+
+  const serverState=await secondPage.evaluate(async()=>{
+    const response=await fetch('/api/admin/editor/preferences',{cache:'no-store'});return (await response.json()).data;
+  });
+  assert.deepEqual(serverState.paletteFavoriteTypes,[firstType],'the first device remains authoritative for this field');
+  assert.equal(serverState.revisions.paletteFavoriteTypes,1);
+  assert.equal(await secondPage.locator(`.element-row .element-favorite-toggle[data-element-type="${secondType}"]`).getAttribute('aria-pressed'),'true',
+    'the second device keeps its conflicting favorite visible locally');
+  assert.deepEqual(first.writes,[],'preference conflicts never Save or Publish page content');
   assert.deepEqual(first.errors,[]);
 });

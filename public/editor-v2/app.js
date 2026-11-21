@@ -68,7 +68,7 @@ function flushLayerRename(){return pendingLayerRename?.()!==false}
 let inspectorCategory='all';let richTextSelectionCleanup=null;let richTextToolTab='character';
 
 let state=null;let pages=[];let archivedPages=[];let revisionHistory=[];let zoom=1;let inspectorTab=readSavedInspectorTab();let inspectorQuery='';let flushRichTextDraft=null;let inlineEditingId=null;let richTextBookmark=null;let copiedStyleSnapshot=null;let nodeClipboard=null;let canvasDrag=null;let canvasResize=null;let pageStartTemplate='blank-page';let pageCreateBusy=false;let mobileTouch={active:false,timer:null,downId:null,startX:0,startY:0,snapshot:[],snapshotPrimary:null,suppressClick:false,longPressTriggered:false};let hierarchyDrag={nodeId:null,overId:null};let mobileHierarchyDrag={active:false,timer:null,nodeId:null,overId:null,startX:0,startY:0,suppressClick:false};
-let paletteFavoritesUserId=null;let paletteFavoriteTypes=[];let paletteFavoritesReady=false;let accountWorkspaceReady=false;let accountWorkspaceTimer=null;let accountPreferenceWrite=Promise.resolve();let pendingAccountViewport=null;
+let paletteFavoritesUserId=null;let paletteFavoriteTypes=[];let paletteFavoritesReady=false;let accountWorkspaceReady=false;let accountWorkspaceTimer=null;let accountPreferenceWrite=Promise.resolve();let pendingAccountViewport=null;let accountPreferenceRevisions={paletteFavoriteTypes:0,workspace:0};let accountPreferenceConflicts=new Set();
 function readSavedInspectorTab(){try{const saved=JSON.parse(localStorage.getItem('sanci-editor-shell-v2')||'{}')?.inspectorTab;return ['design','content','advanced'].includes(saved)?saved:'design'}catch{return 'design'}}
 const $=s=>document.querySelector(s);const canvas=$('#canvas');const inspector=$('#inspectorBody');
 const sizes={desktop:1440,tablet:768,mobile:390};
@@ -189,13 +189,24 @@ function updatePaletteFavorite(type,name,filter){
  const focusTarget=$(`#elementList .element-favorite-toggle[data-element-type="${type}"]`);
  focusTarget?.focus();
  const types=[...paletteFavoriteTypes];
+ if(accountPreferenceConflicts.has('paletteFavoriteTypes')){
+  announceAccountPreferenceConflict('Egy másik munkamenet módosította a fiókkedvenceket. A mostani lista ezen az eszközön megmaradt; frissítsd az oldalt a fiók legújabb állapotához.');
+  return Promise.resolve();
+ }
  accountPreferenceWrite=accountPreferenceWrite.catch(()=>{}).then(async()=>{
-  const saved=await api('/api/admin/editor/preferences',{method:'PUT',body:JSON.stringify({paletteFavoriteTypes:types})});
+  if(accountPreferenceConflicts.has('paletteFavoriteTypes'))return;
+  const saved=await api('/api/admin/editor/preferences',{method:'PUT',body:JSON.stringify({paletteFavoriteTypes:types,baseRevisions:{paletteFavoriteTypes:accountPreferenceRevisions.paletteFavoriteTypes}})});
+  if(Number.isSafeInteger(saved?.data?.revisions?.paletteFavoriteTypes))accountPreferenceRevisions.paletteFavoriteTypes=saved.data.revisions.paletteFavoriteTypes;
   if(paletteFavoritesUserId===userId&&paletteFavoriteTypes.join('\0')===types.join('\0')){
    writePaletteFavoriteTypes(userId,types);
    if(status)status.textContent=saved?.data?.paletteFavoriteTypes?'Kedvencek elmentve a fiókodhoz; más eszközön is visszatöltődnek.':'A kedvencek frissültek.';
   }
- }).catch(()=>{
+ }).catch(error=>{
+  if(error?.code==='PREFERENCES_CONFLICT'){
+   accountPreferenceConflicts.add('paletteFavoriteTypes');
+   if(paletteFavoritesUserId===userId)announceAccountPreferenceConflict('Egy másik munkamenet módosította a fiókkedvenceket. A mostani lista ezen az eszközön megmaradt; frissítsd az oldalt a fiók legújabb állapotához.');
+   return;
+  }
   if(paletteFavoritesUserId===userId&&status)status.textContent=result.saved?'A kedvencek most csak ebben a böngészőben mentődtek; a fiókszinkron később újrapróbálható.':'A kedvencek csak ebben a munkamenetben érhetők el; a mentés nem sikerült.';
  });
  return accountPreferenceWrite;
@@ -219,6 +230,11 @@ function accountWorkspaceSnapshot(){
  if(!snapshot?.appearance||!snapshot?.dock||!snapshot?.viewport)return null;
  return {version:1,appearance:snapshot.appearance,dock:snapshot.dock,viewport:{device:state?.viewport?.device||snapshot.viewport.device,zoom:Number.isFinite(zoom)?zoom:snapshot.viewport.zoom}};
 }
+function announceAccountPreferenceConflict(message){
+ for(const selector of ['#elementPaletteStatus','#workspaceAppearanceStatus','#workspaceDockStatus']){
+  const status=$(selector);if(status)status.textContent=message;
+ }
+}
 function applyAccountViewport(viewport){
  if(!viewport||typeof viewport!=='object')return false;
  const next={device:['desktop','tablet','mobile'].includes(viewport.device)?viewport.device:'desktop',zoom:Number.isFinite(Number(viewport.zoom))?Math.max(.35,Math.min(1.5,Number(viewport.zoom))):1};
@@ -234,13 +250,21 @@ function applyAccountWorkspace(workspace){
  return applied&&applyAccountViewport(workspace.viewport);
 }
 function queueAccountWorkspaceWrite(){
- if(!accountWorkspaceReady||!paletteFavoritesUserId)return;
+ if(!accountWorkspaceReady||!paletteFavoritesUserId||accountPreferenceConflicts.has('workspace'))return;
  clearTimeout(accountWorkspaceTimer);
  accountWorkspaceTimer=setTimeout(()=>{
   const workspace=accountWorkspaceSnapshot();if(!workspace)return;
-  accountPreferenceWrite=accountPreferenceWrite.catch(()=>{}).then(()=>api('/api/admin/editor/preferences',{method:'PUT',body:JSON.stringify({workspace})})).then(()=>{
+  accountPreferenceWrite=accountPreferenceWrite.catch(()=>{}).then(async()=>{
+   if(accountPreferenceConflicts.has('workspace'))return;
+   const saved=await api('/api/admin/editor/preferences',{method:'PUT',body:JSON.stringify({workspace,baseRevisions:{workspace:accountPreferenceRevisions.workspace}})});
+   if(Number.isSafeInteger(saved?.data?.revisions?.workspace))accountPreferenceRevisions.workspace=saved.data.revisions.workspace;
    const status=$('#elementPaletteStatus');if(status)status.textContent='A munkaterület beállításai a fiókodhoz szinkronizálva.';
-  }).catch(()=>{
+  }).catch(error=>{
+   if(error?.code==='PREFERENCES_CONFLICT'){
+    accountPreferenceConflicts.add('workspace');
+    announceAccountPreferenceConflict('Egy másik munkamenet közben módosította a munkaterületet. A helyi nézet ezen az eszközön megmaradt; frissítsd az oldalt a fiók legújabb állapotához.');
+    return;
+   }
    const status=$('#elementPaletteStatus');if(status)status.textContent='A munkaterület helyben elmentve; a fiókszinkron most nem érhető el.';
   });
  },250);
@@ -279,6 +303,11 @@ async function loadPaletteFavorites(){
    paletteFavoriteTypes=readPaletteFavoriteTypes(user.id);
    try{
     const preferences=await api('/api/admin/editor/preferences');
+    const revisions=preferences?.data?.revisions;
+    accountPreferenceRevisions={
+     paletteFavoriteTypes:Number.isSafeInteger(revisions?.paletteFavoriteTypes)&&revisions.paletteFavoriteTypes>=0?revisions.paletteFavoriteTypes:0,
+     workspace:Number.isSafeInteger(revisions?.workspace)&&revisions.workspace>=0?revisions.workspace:0
+    };
     if(Array.isArray(preferences?.data?.paletteFavoriteTypes)){
      paletteFavoriteTypes=normalizePaletteFavoriteTypes(preferences.data.paletteFavoriteTypes);
      writePaletteFavoriteTypes(user.id,paletteFavoriteTypes);

@@ -1,4 +1,4 @@
-import { error, ok } from "../../core/response";
+import { error, json, ok } from "../../core/response";
 import { getAuthenticatedUser, hasRole, type AuthUser } from "../../core/auth/require-auth";
 import { requireSiteGrant } from "../../core/auth/site-access";
 import { DEFAULT_SITE_ID } from "../../core/site-context";
@@ -17,21 +17,31 @@ const HEX_COLOR = /^#[0-9a-f]{6}$/iu;
 const DOCK_TREE_ID = /^[a-z][a-z\d-]{0,63}$/iu;
 
 type WorkspacePreferences = { version: 1; appearance: Record<string, unknown>; dock: Record<string, unknown>; viewport: Record<string, unknown> };
-type StoredPreferences = { version: 1; paletteFavoriteTypes: string[]; workspace: WorkspacePreferences | null };
+type PreferenceField = "paletteFavoriteTypes" | "workspace";
+type StoredPreferences = {
+  version: 1;
+  paletteFavoriteTypes: string[];
+  workspace: WorkspacePreferences | null;
+  revisions: Record<PreferenceField, number>;
+};
 type PreferenceRow = { preferences_json: string; updated_at: string };
 
 function defaults(): StoredPreferences {
-  return { version: 1, paletteFavoriteTypes: [], workspace: null };
+  return { version: 1, paletteFavoriteTypes: [], workspace: null, revisions: { paletteFavoriteTypes: 0, workspace: 0 } };
 }
 
 function normalizeStored(value: unknown): StoredPreferences {
   if (!value || typeof value !== "object" || Array.isArray(value)) return defaults();
   const record = value as Record<string, unknown>;
   if (record.version !== 1) return defaults();
+  const revisions = isRecord(record.revisions) ? record.revisions : {};
+  const revision = (field: PreferenceField) => Number.isSafeInteger(revisions[field]) && Number(revisions[field]) >= 0
+    ? Number(revisions[field]) : 0;
   return {
     version: 1,
     paletteFavoriteTypes: Array.isArray(record.paletteFavoriteTypes) ? normalizeFavoriteTypes(record.paletteFavoriteTypes) : [],
-    workspace: normalizeWorkspace(record.workspace)
+    workspace: normalizeWorkspace(record.workspace),
+    revisions: { paletteFavoriteTypes: revision("paletteFavoriteTypes"), workspace: revision("workspace") }
   };
 }
 
@@ -243,7 +253,7 @@ export async function editorPreferencesRoute(request: Request, env: Env, siteId 
   if (!body || typeof body !== "object" || Array.isArray(body)) return error("INVALID_PREFERENCES", 400);
   const record = body as Record<string, unknown>;
   const keys = Object.keys(record);
-  if (!keys.length || keys.some(key => key !== "paletteFavoriteTypes" && key !== "workspace") ||
+  if (!keys.length || keys.some(key => key !== "paletteFavoriteTypes" && key !== "workspace" && key !== "baseRevisions") ||
       ("paletteFavoriteTypes" in record && !Array.isArray(record.paletteFavoriteTypes))) {
     return error("INVALID_PREFERENCES", 400, "Csak a támogatott szerkesztői beállításokat lehet menteni.");
   }
@@ -253,22 +263,43 @@ export async function editorPreferencesRoute(request: Request, env: Env, siteId 
   }
   if ("workspace" in record && !validWorkspaceInput(record.workspace)) return error("INVALID_PREFERENCES", 400, "A munkaterület beállítása érvénytelen.");
 
+  const changedFields = (["paletteFavoriteTypes", "workspace"] as const).filter(field => field in record);
+  if (!changedFields.length || !isRecord(record.baseRevisions) ||
+      Object.keys(record.baseRevisions).some(field => !changedFields.includes(field as PreferenceField)) ||
+      changedFields.some(field => !Object.hasOwn(record.baseRevisions as object, field) ||
+        !Number.isSafeInteger((record.baseRevisions as Record<string, unknown>)[field]) ||
+        Number((record.baseRevisions as Record<string, unknown>)[field]) < 0)) {
+    return error("PREFERENCES_REVISION_REQUIRED", 428, "A fiókbeállítás verziója hiányzik vagy érvénytelen. Frissítsd a szerkesztőt, majd próbáld újra.");
+  }
+  const baseRevisions = record.baseRevisions as Record<PreferenceField, number>;
+
   try {
-    // Keep the upsert atomic at the top-level preference-field boundary. A
-    // read/merge/write sequence can lose a concurrent workspace update when
-    // another device saves palette favorites (or vice versa) between the
-    // SELECT and UPSERT. The patch contains only fields in this request.
+    // Merge only fields in this request, but compare a per-field revision in
+    // the same SQLite statement. Independent fields commute; a stale write to
+    // the same field is rejected instead of silently replacing newer state.
     const patch: Partial<StoredPreferences> = { version: 1 };
     if (Array.isArray(record.paletteFavoriteTypes)) patch.paletteFavoriteTypes = normalizeFavoriteTypes(record.paletteFavoriteTypes);
     if ("workspace" in record) patch.workspace = normalizeWorkspace(record.workspace);
     const serializedPatch = JSON.stringify(patch);
     const serializedDefaults = JSON.stringify(defaults());
     if (new TextEncoder().encode(serializedPatch).byteLength > MAX_BODY_BYTES) return error("PREFERENCES_TOO_LARGE", 413);
-    await env.DB.prepare(`
+    const revisionExpression = (field: PreferenceField) => `CASE
+      WHEN json_valid(editor_preferences.preferences_json)
+        AND json_extract(editor_preferences.preferences_json, '$.version') = 1
+      THEN COALESCE(CAST(json_extract(editor_preferences.preferences_json, '$.revisions.${field}') AS INTEGER), 0)
+      ELSE 0
+    END`;
+    const initial = defaults();
+    for (const field of changedFields) initial.revisions[field] = baseRevisions[field] + 1;
+    const setRevisionSql = changedFields.map(field => `'$.revisions.${field}', ${revisionExpression(field)} + 1`).join(", ");
+    const whereRevisionSql = changedFields.map(field => `${revisionExpression(field)} = ?`).join(" AND ");
+    const insertRevisionSql = changedFields.map(() => "? = 0").join(" AND ");
+    const result = await env.DB.prepare(`
       INSERT INTO editor_preferences (user_id, preferences_json, updated_at)
-      VALUES (?, json_patch(?, ?), CURRENT_TIMESTAMP)
+      SELECT ?, ?, CURRENT_TIMESTAMP
+      WHERE ${insertRevisionSql}
       ON CONFLICT(user_id) DO UPDATE SET
-        preferences_json = json_patch(
+        preferences_json = json_set(json_patch(
           CASE
             WHEN json_valid(editor_preferences.preferences_json)
               AND json_extract(editor_preferences.preferences_json, '$.version') = 1
@@ -276,14 +307,21 @@ export async function editorPreferencesRoute(request: Request, env: Env, siteId 
             ELSE ?
           END,
           ?
-        ),
+        ), ${setRevisionSql}),
         updated_at = CURRENT_TIMESTAMP
-    `).bind(user.id, serializedDefaults, serializedPatch, serializedDefaults, serializedPatch).run();
+      WHERE ${whereRevisionSql}
+    `).bind(user.id, JSON.stringify({ ...initial, ...patch, revisions: initial.revisions }),
+      ...changedFields.map(field => baseRevisions[field]), serializedDefaults, serializedPatch,
+      ...changedFields.map(field => baseRevisions[field])).run();
     const row = await env.DB.prepare("SELECT preferences_json, updated_at FROM editor_preferences WHERE user_id = ? LIMIT 1")
       .bind(user.id).first<PreferenceRow>();
     let saved: unknown = null;
     try { saved = row ? JSON.parse(row.preferences_json) as unknown : null; } catch { /* fail closed to safe defaults */ }
     const preferences = normalizeStored(saved);
+    if (Number(result.meta?.changes ?? 0) === 0) {
+      return json({ ok: false, error: { code: "PREFERENCES_CONFLICT", message: "Ezt a beállítást közben egy másik munkamenet módosította." },
+        data: { ...preferences, updatedAt: row?.updated_at ?? null } }, 409);
+    }
     return ok({ ...preferences, updatedAt: row?.updated_at ?? null });
   } catch {
     return error("PREFERENCES_UNAVAILABLE", 503, "A szerkesztői beállításokat most nem lehet menteni.");
