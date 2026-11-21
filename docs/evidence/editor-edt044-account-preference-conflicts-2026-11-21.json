@@ -100,6 +100,17 @@
       }
     }
   },
+  "post_docs_push_verification": {
+    "docs_test_push_sha": "f3b7f50e7a9eec9adac70f369a369eaee1618dab",
+    "github_branch_head_at_check": "f3b7f50e7a9eec9adac70f369a369eaee1618dab",
+    "latest_worker_deployment_unchanged": "44007b29-952e-4788-851e-26378a0040c9",
+    "latest_worker_version_unchanged": "2ee694b2-6a3a-472b-9d02-28e821269619",
+    "traffic_percentage": 100,
+    "health_http": 200,
+    "live_app_sha256": "5d86f0b8fb063277cc1ef8c7bc3229725ff9b11bbb934d7ff13c49bac1d56008",
+    "live_index_sha256": "9e305263a7a3769f52f4e88545cc5ca972af61c17a37168f1739240ff5126a78",
+    "result": "PASS; docs/test push did not trigger a redundant Worker deployment"
+  },
   "safety_and_cost": {
     "production_d1_write_or_migration": false,
     "production_r2_mutation_or_deletion": false,
