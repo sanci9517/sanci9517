@@ -42,10 +42,37 @@
     "wrangler deploy --dry-run": "PASS"
   },
   "release": {
-    "github_push": "NOT YET DONE",
-    "hosted_ci": "NOT YET RUN",
-    "cloudflare_deploy": "NOT YET DONE",
-    "production_health_and_asset_hashes": "NOT YET VERIFIED"
+    "github_push": {
+      "status": "PASS",
+      "branch": "v2/foundation",
+      "commit": "79d6de3436107ad5218ff59e55800443ef177e87",
+      "method": "normal non-force fast-forward; previous head a8b84072277554afd8c72e06cd8c5d965eb7b538"
+    },
+    "hosted_ci": {
+      "F0 baseline checks 44921673374": "PASS",
+      "canonical plan 44921673199": "PASS",
+      "active plan audit 44921673174": "PASS",
+      "Twitch integration 44921673177": "PASS",
+      "production source smoke 44921673185": "PASS",
+      "Editor Core 44921673211": "IN_PROGRESS at evidence update"
+    },
+    "cloudflare_build": {
+      "build_uuid": "75c1c1d2-0246-462a-a2d9-43a74ba4eedb",
+      "outcome": "success",
+      "commit": "79d6de3436107ad5218ff59e55800443ef177e87",
+      "branch": "v2/foundation",
+      "deploy_command": "npm run deploy:safe"
+    },
+    "cloudflare_deploy": {
+      "deployment_id": "d2e4645e-d99c-4c9f-8805-0d1eda59dd65",
+      "worker_version": "3d5c5410-f9e0-47b4-b3da-f9a96b7e1106",
+      "traffic_percent": 100
+    },
+    "production_smoke": {
+      "workflow_run": "44921673185",
+      "health_http_status": 200,
+      "exact_public_source_hashes": "36/36 match deployed source; includes updated app.js and index.html"
+    }
   },
   "guardrails": {
     "save_publish_separate": true,
@@ -62,5 +89,9 @@
     "public/editor-v2/index.html": "9d79f9fe207d2217b22700c61a7c26759c5537ad7545da7a56dbbc1c03a3b315",
     "tests/editor-preferences-route.test.js": "2b16ee2be5ec76cd8b5f025b1f5a72fed7248019a2671fd0888e13890a4bd70d",
     "tests/browser/editor-element-insertion.test.js": "f5e6fb0da397ae25c2ffae037e361ac2e2822616418d92fd067f629dd6aac4be"
+  },
+  "production_asset_hashes": {
+    "/editor-v2/index.html": "9d79f9fe207d2217b22700c61a7c26759c5537ad7545da7a56dbbc1c03a3b315",
+    "/editor-v2/app.js": "f2babab2c9de4774008c817c87f61869976eae37a02ad82ba9c6d14803a8389d"
   }
 }
