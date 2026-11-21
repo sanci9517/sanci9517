@@ -12,11 +12,11 @@
 - **Függőségek:** EDT-001–003/006/016–020/021–022.
 - **UI-állapotok:** loading, kategória zárt/nyitott, keresési találat/nincs találat, unsupported capability, add error.
 - **Biztonság/adatvédelem:** a palette leírás és label biztonságos textként jelenjen meg; unsupported elem ne hozzon létre hibás node-ot.
-- **Tesztcsomag:** core.test.js browser module parse és schema alap; minden palette entry/type coverage nincs bizonyítva.
+- **Tesztcsomag:** core.test.js browser module parse és schema alap; a palette keresés, találati csoportok és akadálymentes nincs-találat állapot a `tests/browser/editor-element-insertion.test.js` Chromium regresszióval igazolt; minden palette entry/type coverage nincs bizonyítva.
 - **Elfogadás:** minden palettaelem hozzáadása → valid Page Model node → save/reload → preview/public renderer támogatás vagy egyértelmű unsupported jelzés.
-- **Bizonyíték:** app.js renderPalette/typeForElement, schema.js NODE_TYPES, core.test.js; teljes coverage riport nincs rögzítve.
+- **Bizonyíték:** app.js renderPalette/typeForElement, editor-refresh.css paletta üresállapot, schema.js NODE_TYPES, `tests/browser/editor-element-insertion.test.js`; teljes coverage riport nincs rögzítve.
 - **Visszaállítás:** element.add undo; hozzáadási hiba nem hagyhat részleges node-ot.
-- **Státusz / ismert probléma / következő lépés:** IN PROGRESS / UNVERIFIED; teljes type↔palette↔Inspector↔renderer registry összevetés, keresés/favorite döntés.
+- **Státusz / ismert probléma / következő lépés:** IN PROGRESS / UNVERIFIED; a keresés találat/nincs találat állapota és kategória-kibontása Chromiumban igazolt; teljes type↔palette↔Inspector↔renderer acceptance, a favorites döntés és a teljes paletta acceptance nyitott; aktuális release és CI-eredmény az [EDT-015 production evidence](../evidence/editor-edt015-empty-results-production-2026-11-21.json) fájlban.
 
 #### EDT-016 — Layout/container nodes
 - **Felhasználói eredmény:** szekciók, konténerek, sorok, oszlopok, grid és csoportok segítségével rendezett oldal építhető.

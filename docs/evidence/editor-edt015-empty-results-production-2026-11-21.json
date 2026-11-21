@@ -1,0 +1,89 @@
+{
+  "schema": 1,
+  "captured_at": "2026-11-21T12:06:21Z",
+  "plan_point": "77.44.7.D / EDT-015 element palette",
+  "status": "RUNTIME_DEPLOYED_EXACT_SHA_AND_PRODUCTION_SMOKE_PASS; EDITOR_CORE_CI_IN_PROGRESS; FULL_D_OPEN_NOT_CERTIFIED",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "commit": "3ace1ce8affcfe8164add92ffda4f005e2ead17e",
+    "remote_head_at_verification": "3ace1ce8affcfe8164add92ffda4f005e2ead17e",
+    "push": "PASS; normal fast-forward",
+    "previous_exact_source": "0ffd1c0de80bb97fe9f5dc2d7e0ac3498d762254"
+  },
+  "implementation": {
+    "runtime_files": [
+      "public/editor-v2/app.js",
+      "public/editor-v2/editor-refresh.css"
+    ],
+    "test_files": [
+      "tests/browser/editor-element-insertion.test.js",
+      "tests/browser/editor-content-system.test.js",
+      "tests/browser/admin-media-pagination.test.js"
+    ],
+    "behavior": "The node palette now gives an accessible status message when a non-empty search has no result. Clearing the search restores normal collapsed category browsing. The regression also covers accent-insensitive Hungarian search and automatic expansion of matching groups.",
+    "test_harness_repairs": [
+      "The mobile keyboard navigation check sends End to the visible tab locator so viewport resizing does not leave it dependent on global focus.",
+      "The media pagination mock now serves the organization-filter query separately from paginated list queries, preventing a valid organization lookup from invalidating the page-size assertion."
+    ],
+    "save_publish_separation": true,
+    "palette_type_audit": {
+      "declared_node_types": 79,
+      "direct_group_references": 73,
+      "existing_alias_mappings": 5,
+      "root_excluded_by_design": true,
+      "method": "Targeted source comparison between schema NODE_TYPES, app.js group references, and typeForElement aliases; this is a source audit, not the full type-to-Inspector-to-renderer acceptance test."
+    }
+  },
+  "checks": {
+    "node tests/browser/editor-element-insertion.test.js": "PASS 8/8 real Chromium tests",
+    "node tests/browser/editor-content-system.test.js": "PASS 1/1 real Chromium test after keyboard focus test harness repair",
+    "node tests/browser/admin-media-pagination.test.js": "PASS 1/1 real Chromium test after organization-query fixture repair",
+    "npm run typecheck": "PASS",
+    "npm run test:editor": "PASS 22/22 test files and 4/4 Linux runner tests",
+    "node scripts/web013-migration-safety-gate.mjs": "PASS; no migration applied",
+    "python3 scripts/check-canonical-plan.py": "PASS; one 13-part master, 396 mappings, acceptance not certified",
+    "python3 tests/plan-contract.test.py": "PASS 15/15",
+    "python3 scripts/build-feature-traceability.py --check": "PASS 396/396",
+    "git diff --check": "PASS before documentation-only follow-up",
+    "wrangler deploy --dry-run": "PASS with Wrangler 4.130.0; 198 assets; 411.30 KiB total and 104.50 KiB gzip; no deployment performed by dry run",
+    "read_only_remote_d1_preflight": "PASS; Cloudflare D1 Query API SELECT-only, latest marker 0030_media_library_organization.sql, 36 markers, expected media tables present, rows_written=0, changes=0, changed_db=false",
+    "palette_source_coverage_audit": "PASS as a bounded static audit: 73 direct type references + 5 existing aliases cover 78/79 NODE_TYPES; root is intentionally excluded. Full registry/Inspector/renderer acceptance remains open.",
+    "GitHub Actions 44901529032 F0 baseline": "PASS exact source commit",
+    "GitHub Actions 44901529043 canonical active-point audit": "PASS bookkeeping only; D remains open",
+    "GitHub Actions 44901529125 canonical Creator Platform Plan": "PASS exact source commit",
+    "GitHub Actions 44901529050 Twitch Integration Check": "PASS exact source commit",
+    "GitHub Actions 44901529053 Production Worker source smoke": "PASS exact source commit; HTTP 200 health and exact SHA-256 match for all 37 configured public source files",
+    "GitHub Actions 44901529042 Editor Core Test": "IN_PROGRESS at evidence capture; browser layout and remaining editor regressions not yet complete"
+  },
+  "production_release": {
+    "automatic_deploy": true,
+    "deployment_id": "6be712e2-2d1e-4e1f-81af-6623a471ddbc",
+    "worker_version_id": "4a2e0a31-7fa2-433f-96e6-c3ce41074fae",
+    "traffic_percent": 100,
+    "deployment_source_commit": "3ace1ce8affcfe8164add92ffda4f005e2ead17e",
+    "control_plane_verification": "Cloudflare Worker deployments read-only API; latest deployment lists this version at 100% traffic.",
+    "source_smoke_run": "44901529053 completed/success",
+    "changed_asset_hashes": {
+      "public/editor-v2/app.js": {
+        "local_sha256": "e368eca50d57f7c81e5d2c2bb533617bdc92d719a595d53733d7cab79e5d4d2c",
+        "production_sha256": "e368eca50d57f7c81e5d2c2bb533617bdc92d719a595d53733d7cab79e5d4d2c",
+        "match": true
+      },
+      "public/editor-v2/editor-refresh.css": {
+        "local_sha256": "ddf2510d0c50efe75959dd9795e2ec694284713090161c992e287a05d95f2f44",
+        "production_sha256": "ddf2510d0c50efe75959dd9795e2ec694284713090161c992e287a05d95f2f44",
+        "match": true
+      }
+    },
+    "environment_note": "This workspace's direct curl attempt was blocked by its unavailable outbound proxy. The successful GitHub production source smoke independently performed the direct health GET and public-byte hash checks against the Worker."
+  },
+  "limitations": [
+    "The Editor Core hosted workflow 44901529042 was still running at capture time; no CI PASS is claimed until it finishes.",
+    "EDT-015 favorites decision, full registry/Inspector/renderer mapping, and complete add-save-reload-public-renderer acceptance remain open.",
+    "The full Visual Editor manual and physical-device acceptance is deferred until the complete Editor scope is implemented.",
+    "Full D-01 through D-07 and plan point 77.44.7.D remain OPEN / NOT_CERTIFIED.",
+    "No production D1 migration, production data mutation, or R2 delete was performed.",
+    "No paid services or new cost; 0 Ft."
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "id": "20261121114013-ce8334c0",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-21T11:40:13.309Z",
+  "abandoned_at": "2026-11-21T12:03:44.183Z",
+  "measured_seconds": null,
+  "status": "interrupted",
+  "reason": "Previous turn boundary; continuing same task in a new measured block.",
+  "started_revision": "d7be3eb1ea303bbb114838b04e1df378929214f5",
+  "measurement": "missing end time; excluded from elapsed time and ETA"
+}
