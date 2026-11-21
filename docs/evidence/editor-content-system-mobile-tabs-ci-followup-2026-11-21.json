@@ -1,15 +1,17 @@
 {
   "schema": 1,
-  "captured_at": "2026-11-21T12:59:14Z",
+  "captured_at": "2026-11-21T13:05:00Z",
   "plan_point": "77.44.7.D / EDT-015–017 keyboard interaction regression follow-up",
-  "status": "LOCAL_CHROMIUM_PASS; PRIOR_HOSTED_EDITOR_CORE_RUN_FAILED_ON_PREVIOUS_TEST_SEQUENCE; D_OPEN_NOT_CERTIFIED",
+  "status": "LOCAL_CHROMIUM_PASS; TEST_FIX_PUSHED; FOLLOW_UP_EDITOR_CORE_CI_IN_PROGRESS; D_OPEN_NOT_CERTIFIED",
   "repository": {
     "name": "sanci9517/sanci9517",
     "branch": "v2/foundation",
     "diagnosed_runtime_commit": "3ace1ce8affcfe8164add92ffda4f005e2ead17e",
     "diagnosed_branch_head": "b7dc9e41c4f7e7133d446db6026e37cc885591d3",
     "test_fix_commit": "a783078f70a457532ebb139c60f2af914ab113f1",
-    "github_head_after_test_fix_push": "a783078f70a457532ebb139c60f2af914ab113f1"
+    "github_head_after_test_fix_push": "a783078f70a457532ebb139c60f2af914ab113f1",
+    "docs_evidence_commit": "114f09adffc1c0541c276b2e866044055a3d870f",
+    "hosted_follow_up_run_head": "114f09adffc1c0541c276b2e866044055a3d870f"
   },
   "finding": {
     "workflow": "Editor Core Test",
@@ -30,13 +32,13 @@
   "checks": {
     "node --test --test-concurrency=1 tests/browser/editor-content-system.test.js before test adjustment": "PASS 1/1 locally in real Chromium; this did not reproduce the hosted flake",
     "node --test --test-concurrency=1 tests/browser/editor-content-system.test.js after test adjustment": "PASS 1/1 locally in real Chromium",
-    "hosted CI for the follow-up source a783078f70a457532ebb139c60f2af914ab113f1": "NOT RUN; test-harness-only change uses the repository [skip ci] rule",
+    "hosted Editor Core run 44906958324 for source 114f09adffc1c0541c276b2e866044055a3d870f": "IN_PROGRESS; manually dispatched because the earlier exact-source hosted gate failed and the owner confirmed free CI capacity",
     "prior hosted Editor Core run 44901529042": "FAIL; exact failure recorded above, not represented as a pass",
     "production Worker": "unchanged by this test-only follow-up; prior runtime source 3ace1ce8 remained deployed at 100% traffic",
     "full D acceptance": "OPEN / NOT_CERTIFIED"
   },
   "limitations": [
-    "The hosted timeout was not reproduced locally; direct target-locator key dispatch reduces a test focus race but the old failed hosted run remains failed.",
+    "The hosted timeout was not reproduced locally; direct target-locator key dispatch is test hardening, not proof of a runtime fix. The prior failed hosted run remains failed until the follow-up run completes.",
     "This follow-up does not certify the complete Editor, the remaining Editor Core steps, or D-01 through D-07."
   ]
 }
