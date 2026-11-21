@@ -1347,7 +1347,9 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   // Other fixture pages are open (Editor and touch preview); explicitly
   // activate the published page before exercising real keyboard focus.
   await live.bringToFront();await live.setViewportSize({width:390,height:640});
-  await publicTabs.nth(1).focus();await publicTabs.nth(1).press('ArrowRight');
+  // Send the key through the target locator so Playwright performs the focus
+  // transition and keyboard event as one interaction after the viewport resize.
+  await publicTabs.nth(1).press('ArrowRight');
   await assertPublicTabState(0,'Videólista');
   const mobileTabsLayout=await live.evaluate(()=>({
     viewport:innerWidth,document:document.scrollingElement.scrollWidth,
