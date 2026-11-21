@@ -1,5 +1,5 @@
 import { createDefaultScheduleConfig, normalizeScheduleConfig } from './schedule-schema.js';
-import { normalizePageInteractions } from './page-interactions.js?v=20261119-edt039-explicit-disclosure-actions-v1';
+import { normalizePageInteractions } from './page-interactions.js?v=20261121-edt039-single-auto-action-v1';
 
 /*
  * Sanci9517 Visual Editor v2 — Page Model schema

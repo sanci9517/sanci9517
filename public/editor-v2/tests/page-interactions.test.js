@@ -81,6 +81,21 @@ test('Page Action registry rejects scripts, selectors, foreign/missing nodes, ty
   assert.throws(() => normalizePageInteractions([action()], source, page.nodes));
 });
 
+test('a target cannot receive competing automatic load/timer defaults from multiple buttons', () => {
+  const { document, page, source, target } = fixture();
+  const second = { id: 'button_two', type: 'button', parentId: page.rootId, children: [], props: {}, metadata: { contentVersion: 1 }, interactions: [] };
+  page.nodes[second.id] = second;
+  page.nodes[page.rootId].children.push(second.id);
+
+  source.interactions = [{ schemaVersion: 1, event: 'timer', action: 'select-tab', targetId: target.id, itemIndex: 1, delayMs: 5000 }];
+  second.interactions = [{ schemaVersion: 1, event: 'load', action: 'select-tab', targetId: target.id, itemIndex: 0 }];
+  assert.match(validateDocument(document).join('\n'), /invalid page interaction.*automatikus oldalinterakció/,
+    'two valid but conflicting page defaults must not be silently resolved by DOM order');
+
+  second.interactions = [{ schemaVersion: 1, event: 'click', action: 'select-tab', targetId: target.id, itemIndex: 0 }];
+  assert.deepEqual(validateDocument(document), [], 'explicit user actions may still share a target with one automatic default');
+});
+
 test('invalid persisted page actions fail Page Model validation and are omitted from rendered attributes', () => {
   const { document, page, source, target, disclosure } = fixture();
   source.interactions = [{ schemaVersion: 1, event: 'click', action: 'run-code', targetId: target.id, code: '<script>bad()</script>' }];

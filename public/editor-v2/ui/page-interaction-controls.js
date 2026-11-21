@@ -1,4 +1,4 @@
-import { PAGE_ACTIONS, PAGE_ACTION_TIMER_DELAYS_MS, normalizePageInteractions } from '../core/page-interactions.js?v=20261119-edt039-explicit-disclosure-actions-v1';
+import { PAGE_ACTIONS, PAGE_ACTION_TIMER_DELAYS_MS, normalizePageInteractions } from '../core/page-interactions.js?v=20261121-edt039-single-auto-action-v1';
 
 const ACTION_OPTIONS = Object.freeze([
   ['scroll-to', 'Ugrás egy elemhez'],

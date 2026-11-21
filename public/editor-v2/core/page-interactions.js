@@ -57,6 +57,26 @@ export function normalizePageInteractions(value, sourceNode, nodes) {
     if (!PAGE_ACTION_TIMER_DELAYS_MS.includes(record.delayMs)) invalid('Az oldalinterakció időzítése nem támogatott.');
     normalized.delayMs = record.delayMs;
   }
+  // Load and timer actions are page-level defaults for one target. The runtime
+  // intentionally gives a deep link / load baseline precedence and keeps only
+  // one timer per target; accepting competing defaults here would make which
+  // button wins depend on document order. Reject that ambiguous model early.
+  if (record.event === 'load' || record.event === 'timer') {
+    const competingDefault = Object.values(nodes ?? {}).some(other => {
+      if (!isRecord(other) || other.id === sourceNode.id || !Array.isArray(other.interactions) || other.interactions.length !== 1) return false;
+      if (other.type !== 'button' || other.metadata?.contentVersion !== 1 || (typeof other.props?.href === 'string' && other.props.href.trim())) return false;
+      const peer = other.interactions[0];
+      const peerDefinition = isRecord(peer) ? PAGE_ACTIONS[peer.action] : null;
+      if (!isRecord(peer) || peer.schemaVersion !== 1 || peer.targetId !== targetId ||
+          (peer.event !== 'load' && peer.event !== 'timer') || !peerDefinition?.events.includes(peer.event) ||
+          (peerDefinition.targetTypes && !peerDefinition.targetTypes.includes(target.type))) return false;
+      if (peerDefinition.indexKey && (!Number.isInteger(peer[peerDefinition.indexKey]) || peer[peerDefinition.indexKey] < 0 || peer[peerDefinition.indexKey] >= itemCount(target))) return false;
+      if (peer.event === 'timer' && !PAGE_ACTION_TIMER_DELAYS_MS.includes(peer.delayMs)) return false;
+      const peerAllowed = new Set(['schemaVersion', 'event', 'action', 'targetId', ...(peerDefinition.indexKey ? [peerDefinition.indexKey] : []), ...(peer.event === 'timer' ? ['delayMs'] : [])]);
+      return Object.keys(peer).every(key => peerAllowed.has(key));
+    });
+    if (competingDefault) invalid('Egy cél elemhez csak egy automatikus oldalinterakció állítható be.');
+  }
   const allowed = new Set(['schemaVersion', 'event', 'action', 'targetId', ...(definition.indexKey ? [definition.indexKey] : []), ...(record.event === 'timer' ? ['delayMs'] : [])]);
   if (Object.keys(record).some(key => !allowed.has(key))) invalid('Az oldalinterakció tiltott mezőt tartalmaz.');
   return [normalized];
