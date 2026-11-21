@@ -1,0 +1,107 @@
+{
+  "schema": 1,
+  "date": "2026-11-21",
+  "plan": {
+    "active_item": "77.44.7.D",
+    "work_slice": "EDT-044 account preference conflict handling",
+    "item_status": "PARTIAL",
+    "full_d_block_status": "OPEN / NOT_CERTIFIED",
+    "full_editor_manual_physical_acceptance": "DEFERRED until the complete Editor reaches its final acceptance gate",
+    "traceability_at_start": {
+      "total": 396,
+      "partial_source": 148,
+      "unverified": 248
+    },
+    "canonical_plan_sha256_at_start": "27a144a9a8af48746ea095f00d87aceac562ce0196e22b00015842989c7433a"
+  },
+  "runtime_change": {
+    "commit": "1c7e8e8c147f2a036b9443c5d19e0715a3f8b543",
+    "message": "fix(editor): reject stale account preference writes",
+    "parent": "f1efdb9acbbf263015fda97cec95a76306de9f0d",
+    "branch": "v2/foundation",
+    "push": "normal fast-forward push succeeded",
+    "summary": [
+      "Account workspace and favorite-palette preferences carry independent revisions.",
+      "Changed fields use an atomic SQLite JSON1 UPSERT compare-and-swap; stale values return 409 with normalized current state, and missing revisions return 428.",
+      "The Editor updates its revision after successful Save and preserves local edits while surfacing conflicts; it does not silently retry the conflicting field.",
+      "No database schema migration was introduced; Save and Publish remain separate operations."
+    ]
+  },
+  "verification": {
+    "local_before_runtime_push": {
+      "npm_run_test_editor_preferences": "PASS, 10/10",
+      "npm_run_test_editor": "PASS, 24/24; 4/4 Linux subreaper runner checks",
+      "typecheck": "PASS",
+      "node_check_public_editor_v2_app_js": "PASS",
+      "git_diff_check": "PASS",
+      "browser_workspace_conflict": "PASS",
+      "browser_palette_conflict": "PASS after fixture opened the Elements rail and selected Section/Divider",
+      "editor_public_asset_cache_bust_test": "PASS",
+      "full_editor_workspace_appearance_browser_suite": "PASS, 89/89 before the additional targeted palette conflict case"
+    },
+    "test_harness_regression_followup": {
+      "file": "tests/browser/media-worker-storage.test.mjs",
+      "root_cause": "The real Worker media lifecycle test reloaded the Editor then immediately clicked an inspector tab while #rightDock was closed, so Playwright found the tab but could not click it.",
+      "fix": "After reload, open #openInspector only when #rightDock has the closed class, before asserting the saved image and continuing the lifecycle.",
+      "npm_run_test_media_storage": "PASS, 1/1 real Worker Media Library upload and Editor image/audio/video Save-reload-Publish lifecycle; 0 failed"
+    },
+    "production_d1_read_only_preflight": {
+      "result": "PASS; SELECT-only Cloudflare D1 Query API",
+      "schema_objects": 221,
+      "migration_markers": 36,
+      "latest_marker": "0030_media_library_organization.sql",
+      "malformed_preference_rows": 0,
+      "rows_written": 0,
+      "changes": 0,
+      "changed_db": false,
+      "note": "An initial SELECT referencing a nonexistent table name failed without writing; the query was corrected to editor_preferences and then passed."
+    },
+    "migration_safety_gate": "npm run test:web013:migration-gate PASS; deploy:safe does not apply migrations",
+    "wrangler_dry_run": "PASS with WRANGLER_LOG_PATH=/tmp/sanci-wrangler.log; Wrangler 4.130.0, 199 public assets, 429.16 KiB (108.78 KiB gzip), bindings resolved, no deployment",
+    "exact_source_github_actions": {
+      "source_sha": "1c7e8e8c147f2a036b9443c5d19e0715a3f8b543",
+      "production_worker_source_smoke": "44932724387 completed success; production health and exact public source checks passed",
+      "f0_baseline": "44932724335 completed success",
+      "editor_core": "44932724385 failed before the harness-only correction, at tests/browser/media-worker-storage.test.mjs:244:57 because the closed inspector dock was not opened after reload",
+      "followup_ci": "Not dispatched for the test-only correction; AGENTS release rule requires [skip ci] and avoids a redundant deployment. The corrected targeted test passed locally."
+    }
+  },
+  "production_postflight": {
+    "worker_name": "sanci9517-streamer-brand",
+    "latest_deployment_id": "44007b29-952e-4788-851e-26378a0040c9",
+    "latest_version_id": "2ee694b2-6a3a-472b-9d02-28e821269619",
+    "latest_version_number": 4155,
+    "traffic_percentage": 100,
+    "source_build": {
+      "build_id": "3d812c0d-a34c-4431-b9d0-0599495c5b36",
+      "source_sha": "1c7e8e8c147f2a036b9443c5d19e0715a3f8b543",
+      "status": "stopped",
+      "build_outcome": "success",
+      "created_on": "2026-11-21T17:56:03Z",
+      "stopped_on": "2026-11-21T17:56:51Z"
+    },
+    "health": "HTTP 200; {ok:true,service:'sanci9517-streamer-brand',version:'2.0.0',server:'cloudflare-worker'}",
+    "public_asset_hashes": {
+      "/editor-v2/app.js": {
+        "live_sha256": "5d86f0b8fb063277cc1ef8c7bc3229725ff9b11bbb934d7ff13c49bac1d56008",
+        "matches_runtime_commit": true
+      },
+      "/editor-v2/": {
+        "live_sha256": "9e305263a7a3769f52f4e88545cc5ca972af61c17a37168f1739240ff5126a78",
+        "matches_runtime_commit": true
+      }
+    }
+  },
+  "safety_and_cost": {
+    "production_d1_write_or_migration": false,
+    "production_r2_mutation_or_deletion": false,
+    "paid_service_or_new_cost": false,
+    "additional_ci_dispatch": false,
+    "docs_and_test_followup_deploy": false
+  },
+  "remaining": [
+    "The full Editor still has planned functionality and acceptance work; this slice does not certify the D point.",
+    "The hosted Editor Core failure is not erased by this local test fix; the test-only follow-up is intentionally not redeployed or separately dispatched to CI.",
+    "Continue from the next open item under 77.44.7.D after preserving this evidence."
+  ]
+}

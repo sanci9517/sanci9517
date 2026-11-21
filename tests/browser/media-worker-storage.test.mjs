@@ -200,6 +200,7 @@ print(json.dumps(result))`],{cwd:root,encoding:'utf8'}));
  assert.ok(calls.slice(draftArchiveCallIndex).some(call=>call.method==='GET'&&call.query.includes('usage='+row.id)),
   'the Media Library refreshes site-scoped usage after the Worker refuses the draft-only archive');
  await editor.reload();await canvasNode.click();
+ if(await editor.locator('#rightDock').evaluate(el=>el.classList.contains('closed')))await editor.locator('#openInspector').click();
  assert.ok((await canvasBackground()).includes(`/api/admin/media?id=${row.id}`),'the draft asset remains after a real Editor reload');
  await save(true);
  const publicResponse=await context.request.get(base+'/media/'+row.id);
