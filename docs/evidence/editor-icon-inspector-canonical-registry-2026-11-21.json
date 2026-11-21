@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "kind": "editor-runtime-regression-slice",
+  "recorded_at_utc": "2026-11-21T19:35:26Z",
+  "plan_point": "77.44.7.D — basic icon Inspector canonical registry and legacy-value recovery",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "head_at_start": "a547d4a1e0d9b05a3363a19c3a7318bfcccbac74",
+    "dirty_preexisting_path_preserved": "scripts/__pycache__/"
+  },
+  "gap": {
+    "finding": "The basic Icon Inspector maintained a second hard-coded list. It offered unsupported identifiers (arrow, camera, music, globe, mail) and omitted supported identifiers (sparkles, video, calendar, chat, link). Renderer fallback could silently show the star glyph for a different saved identifier, and unsupported values could fail publish validation.",
+    "red_test": "The new real-browser regression failed before the implementation: actual Inspector IDs were star,heart,play,check,arrow,bolt,camera,music,globe,mail; expected canonical registry IDs were star,heart,check,bolt,play,sparkles,video,calendar,chat,link."
+  },
+  "change": {
+    "runtime": true,
+    "files": [
+      "public/editor-v2/ui/basic-content-inspector.js",
+      "public/editor-v2/app.js",
+      "public/editor-v2/index.html",
+      "tests/browser/editor-structured-content.test.js",
+      "tests/editor-public-asset-cache-bust.test.js",
+      "docs/evidence/feature-traceability.json",
+      "docs/evidence/editor-icon-inspector-canonical-registry-2026-11-21.json",
+      "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md"
+    ],
+    "behavior": [
+      "Icon choices now come from the shared ICON_CHOICES registry used by rendering and validation.",
+      "Unsupported legacy IDs stay visible as disabled selected options with a status warning; opening the Inspector does not write the Page Model. Explicit selection of a supported value repairs only the icon while preserving its accessible label.",
+      "Desktop and mobile real-browser coverage selects every canonical icon, checks its canvas glyph, and verifies draft Save/reload and separate Publish behavior."
+    ],
+    "new_dependencies": [],
+    "production_data_mutation": false,
+    "production_r2_operation": false,
+    "save_publish_separate": true
+  },
+  "checks": {
+    "real_browser_regression": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-name-pattern='structured Inspector editing' tests/browser/editor-structured-content.test.js",
+      "result": "PASS 1/1 real Chromium browser test, desktop and mobile; includes all canonical icon IDs, invalid-legacy recovery, Save/reload, separate Publish, and public render."
+    },
+    "editor_unit_suite": "PASS — npm run test:editor; 24/24 Node files and 4/4 runner/manifest checks.",
+    "typecheck": "PASS — npm run typecheck -- --pretty false.",
+    "asset_cache_contract": "PASS — node --test tests/editor-public-asset-cache-bust.test.js, 1/1.",
+    "plan_contract": "PASS — python3 tests/plan-contract.test.py, 15/15.",
+    "canonical_plan": "PASS — one complete 13-file canonical master and 396 source mappings; functional acceptance NOT CERTIFIED.",
+    "traceability": "PASS — python3 scripts/build-feature-traceability.py --check, 396/396 current mappings.",
+    "active_point_audit": "PASS for bookkeeping only — cursor 77.44.7.D; 148 PARTIAL_SOURCE and 248 UNVERIFIED; functional acceptance NOT_CERTIFIED.",
+    "migration_safety_gate": "PASS — npm run test:web013:migration-gate; no migration ran.",
+    "syntax_and_diff": "PASS — node --check on changed JavaScript files and git diff --check.",
+    "wrangler_dry_run": "PASS — Wrangler 4.130.0 read 199 public assets; 429.16 KiB / 108.78 KiB gzip; --dry-run exited normally and did not deploy."
+  },
+  "production_d1_preflight": {
+    "method": "Authenticated Cloudflare D1 Query API; one SELECT-only statement.",
+    "sql": "SELECT name FROM d1_migrations ORDER BY name",
+    "rows_read": 36,
+    "latest_migration": "0030_media_library_organization.sql",
+    "rows_written": 0,
+    "changes": 0,
+    "changed_db": false
+  },
+  "production_state_before_release": {
+    "deployment_id": "44007b29-952e-4788-851e-26378a0040c9",
+    "worker_version": "2ee694b2-6a3a-472b-9d02-28e821269619",
+    "traffic_percent": 100,
+    "health_body": "{\"ok\":true,\"service\":\"sanci9517-streamer-brand\",\"version\":\"2.0.0\",\"server\":\"cloudflare-worker\"}"
+  },
+  "release": {
+    "commit_sha": null,
+    "push": "PENDING",
+    "exact_sha_build": "PENDING",
+    "deployment": "PENDING",
+    "post_deployment_health_and_asset_hashes": "PENDING"
+  },
+  "scope_limits": {
+    "full_D_point": "OPEN / NOT_CERTIFIED",
+    "full_editor_manual_physical_acceptance": "DEFERRED until the complete Visual Editor scope is implemented",
+    "open_feature_counts": "148 PARTIAL_SOURCE / 248 UNVERIFIED",
+    "cost_ft": 0
+  }
+}

@@ -9,7 +9,7 @@ import {chromium} from 'playwright';
 import {createDocument} from '../../public/editor-v2/core/schema.js';
 import {createEditorState,activePage} from '../../public/editor-v2/core/state.js';
 import {execute} from '../../public/editor-v2/core/commands.js';
-import {iconById} from '../../public/editor-v2/core/icon-options.js';
+import {ICON_CHOICES,iconById} from '../../public/editor-v2/core/icon-options.js';
 import {renderElementContent} from '../../public/editor-v2/core/element-content.js';
 
 test('structured tab ARIA references stay unique across sanitization-colliding node IDs',async t=>{
@@ -165,10 +165,21 @@ test('structured Inspector editing survives Save, Publish and public interaction
  await select(ids.icon);
  const iconPicker=editor.locator('.basic-content-inspector').getByRole('combobox',{name:'Ikon',exact:true});
  assert.deepEqual(await iconPicker.evaluate(el=>{const route=el.closest('[data-inspector-command]');return {command:route?.dataset.inspectorCommand,key:route?.dataset.inspectorKey}}),{command:'element.update',key:'props.icon'});
- await iconPicker.selectOption('star');
+ for(const width of [390,1366]){
+  await editor.setViewportSize({width,height:900});
+  assert.deepEqual(await iconPicker.locator('option').evaluateAll(options=>options.map(option=>({id:option.value,label:option.textContent}))),
+   ICON_CHOICES.map(({id,label})=>({id,label})),
+   'the Icon Inspector exposes exactly the canonical, server-validated icon registry');
+  for(const choice of ICON_CHOICES){
+   await iconPicker.selectOption(choice.id);
+   assert.equal(await editor.locator('.node[data-node-id="'+ids.icon+'"] .visual-icon').textContent(),choice.glyph,
+    `selecting ${choice.id} renders the same registered glyph on the canvas at ${width}px`);
+  }
+ }
+ const lastIcon=ICON_CHOICES.at(-1),previousIcon=ICON_CHOICES.at(-2);
  assert.equal(await editor.locator('.basic-content-inspector').getByRole('textbox',{name:'Ikon leírása'}).inputValue(),finalIcon,'glyph selection preserves the freshly edited accessible label');
- await editor.keyboard.press('Control+z');assert.equal(await iconPicker.inputValue(),'heart');
- await editor.keyboard.press('Control+Shift+z');assert.equal(await iconPicker.inputValue(),'star');
+ await editor.keyboard.press('Control+z');assert.equal(await iconPicker.inputValue(),previousIcon.id);
+ await editor.keyboard.press('Control+Shift+z');assert.equal(await iconPicker.inputValue(),lastIcon.id);
   await select(ids.tabs);
  assert.equal(await editor.locator('.structured-inspector h3').textContent(),'Fülek');
  const first=editor.locator('.structured-item').first();
@@ -316,7 +327,7 @@ test('structured Inspector editing survives Save, Publish and public interaction
  assert.equal(draft.pages[pageId].nodes[ids.quote].props.text,finalQuote);
  assert.equal(draft.pages[pageId].nodes[ids.quote].props.attribution,finalAttribution);
  assert.equal(draft.pages[pageId].nodes[ids.icon].props.label,finalIcon);
- assert.equal(draft.pages[pageId].nodes[ids.icon].props.icon,'star');
+ assert.equal(draft.pages[pageId].nodes[ids.icon].props.icon,lastIcon.id);
  await viewer.goto(base+'/p/test');
  assert.equal(await viewer.locator('.visual-editor-node[data-node-id="'+ids.table+'"] tbody tr').count(),1,
    'draft Save must not make the new table row public before a separate Publish');
@@ -329,6 +340,8 @@ test('structured Inspector editing survives Save, Publish and public interaction
  for(const [type,label,value] of [['badge','Címke szövege',finalBadge],['quote','Idézet szövege',finalQuote],['quote','Forrás vagy szerző',finalAttribution],['icon','Ikon leírása',finalIcon]]){
   await select(ids[type]);assert.equal(await editor.locator('.basic-content-inspector').getByRole('textbox',{name:label,exact:true}).inputValue(),value);
  }
+ assert.equal(await editor.locator('.basic-content-inspector').getByRole('combobox',{name:'Ikon',exact:true}).inputValue(),lastIcon.id,
+  'the last canonical registry choice survives draft Save and Editor reload');
  for(const [type,rowIndex,label,key] of structuredFields){
   await select(ids[type]);const value=type==='table'?expectedModels.table.rows[rowIndex][key]:type==='list'?expectedModels.list.items[rowIndex]:expectedModels[type].items[rowIndex][key];
   assert.equal(await editor.locator('.structured-item').nth(rowIndex).getByRole('textbox',{name:label,exact:true}).inputValue(),value,'saved structured fields survive editor reload');
@@ -385,7 +398,7 @@ test('structured Inspector editing survives Save, Publish and public interaction
  assert.equal(await viewer.locator('span.visual-icon[data-node-id="'+ids.icon+'"]').getAttribute('aria-label'),finalIcon);
  const publicBadge=viewer.locator('span.visual-badge[data-node-id="'+ids.badge+'"]'),publicIcon=viewer.locator('span.visual-icon[data-node-id="'+ids.icon+'"]');
  assert.equal(await publicBadge.textContent(),finalBadge);assert.equal(await publicBadge.locator('img,script').count(),0);
- assert.equal(await publicIcon.getAttribute('onload'),null);assert.equal(await publicIcon.textContent(),iconById('star').glyph);
+ assert.equal(await publicIcon.getAttribute('onload'),null);assert.equal(await publicIcon.textContent(),iconById(lastIcon.id).glyph);
  assert.equal(await quote.locator('p').textContent(),finalQuote,'multiline quote is preserved through Save/reload/Publish');
   const mediaImage=viewer.locator('.visual-editor-node[data-node-id="'+ids.image+'"]');
  assert.equal(await mediaImage.getAttribute('alt'),'Kezdőlap borítókép');
@@ -530,6 +543,22 @@ test('structured Inspector editing survives Save, Publish and public interaction
   }return results;
  });
  for(const result of recovery)for(const key of ['rejected','escaped','fresh','unchanged','lockedSafe'])assert.equal(result[key],true,JSON.stringify(result));
+ const legacyIconRecovery=await editor.evaluate(async()=>{
+  const {renderBasicContentInspector}=await import('/editor-v2/ui/basic-content-inspector.js');
+  const original={icon:'camera',label:'Megőrzendő képleírás'},node={id:'legacy-icon',type:'icon',props:{...original}};
+  let calls=0,accepted;
+  const panel=renderBasicContentInspector(node,next=>{calls++;accepted=structuredClone(next);return true;});
+  const picker=panel.querySelector('select'),notice=panel.querySelector('[role="status"]');
+  const opened={selected:picker.value,notice:notice?.textContent,noticeHidden:notice?.hidden,calls,original:structuredClone(node.props)};
+  picker.value='sparkles';picker.dispatchEvent(new Event('change',{bubbles:true}));
+  return {opened,values:[...picker.options].map(option=>option.value),calls,accepted,noticeHidden:notice.hidden,original:node.props};
+ });
+ assert.deepEqual(legacyIconRecovery.opened,{selected:'camera',notice:'A korábban mentett ikonazonosító nem támogatott. Válassz egy elérhető ikont a javításhoz; a megnyitás nem módosítja a piszkozatot.',noticeHidden:false,calls:0,original:{icon:'camera',label:'Megőrzendő képleírás'}});
+ assert.deepEqual(legacyIconRecovery.values,['camera',...ICON_CHOICES.map(({id})=>id)]);
+ assert.equal(legacyIconRecovery.calls,1,'an explicit supported replacement is the only recovery write');
+ assert.deepEqual(legacyIconRecovery.accepted,{icon:'sparkles',label:'Megőrzendő képleírás'},'unsupported icon repair preserves the accessible label');
+ assert.equal(legacyIconRecovery.noticeHidden,true,'the recovery warning clears only after a valid choice');
+ assert.deepEqual(legacyIconRecovery.original,{icon:'camera',label:'Megőrzendő képleírás'},'opening the Inspector never mutates the legacy Page Model');
  const structuredRecovery=await editor.evaluate(async()=>{
   const {renderStructuredInspector}=await import('/editor-v2/ui/structured-inspector.js');
   const {createElementContent}=await import('/editor-v2/core/element-content.js');const results=[];

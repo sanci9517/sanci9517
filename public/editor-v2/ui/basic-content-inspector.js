@@ -1,4 +1,5 @@
 import {createCompositionInputs} from './composition-inputs.js';
+import {ICON_CHOICES,isSupportedIcon} from '../core/icon-options.js';
 
 export function renderBasicContentInspector(node,apply,{pending=()=>{}}={}){
  const model={...(node.props||{})},composition=createCompositionInputs(pending);
@@ -19,10 +20,25 @@ export function renderBasicContentInspector(node,apply,{pending=()=>{}}={}){
   text('Idézet szövege','text',true);text('Forrás vagy szerző','attribution');
  }else{
   const select=route(document.createElement('select'),'icon');select.setAttribute('aria-label','Ikon');select.disabled=Boolean(node.locked);
-  for(const [value,label] of [['star','Csillag'],['heart','Szív'],['play','Lejátszás'],['check','Pipa'],['arrow','Nyíl'],['bolt','Villám'],['camera','Kamera'],['music','Zene'],['globe','Web'],['mail','Levél']]){
-   select.append(Object.assign(document.createElement('option'),{value,textContent:label}));
+  const currentIcon=typeof model.icon==='string'&&model.icon?model.icon:'star';
+  const hasUnsupportedIcon=!isSupportedIcon(currentIcon);
+  if(hasUnsupportedIcon){
+   const legacy=document.createElement('option');legacy.value=currentIcon;legacy.disabled=true;
+   legacy.textContent=`Nem támogatott ikon (${currentIcon.slice(0,80)})`;select.append(legacy);
   }
-  select.value=model.icon||'star';select.onchange=()=>{if(save({icon:select.value})===false)select.value=model.icon||'star';};
+  for(const {id,label} of ICON_CHOICES)select.append(Object.assign(document.createElement('option'),{value:id,textContent:label}));
+  select.value=currentIcon;
+  let unsupportedNotice;
+  if(hasUnsupportedIcon){
+   unsupportedNotice=document.createElement('p');unsupportedNotice.className='property-validation';
+   unsupportedNotice.setAttribute('role','status');
+   unsupportedNotice.textContent='A korábban mentett ikonazonosító nem támogatott. Válassz egy elérhető ikont a javításhoz; a megnyitás nem módosítja a piszkozatot.';
+   section.append(unsupportedNotice);
+  }
+  select.onchange=()=>{
+   if(save({icon:select.value})===false)select.value=model.icon||'star';
+   else if(unsupportedNotice)unsupportedNotice.hidden=isSupportedIcon(model.icon);
+  };
   text('Ikon leírása','label');section.append(select);
  }
  return section;

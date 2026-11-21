@@ -40,7 +40,7 @@ import {renderCountdownInspector} from './ui/countdown-inspector.js?v=20261026-r
 import {defaultSocialLinks,renderSocialLinksHtml} from './core/social-links.js';
 import {renderSocialLinksInspector} from './ui/social-links-inspector.js?v=20261026-profile-route-contract';
 import {defaultEmbedContent,renderEmbedHtml} from './core/creator-embed.js';
-import {renderBasicContentInspector} from './ui/basic-content-inspector.js?v=20261026-profile-route-contract';
+import {renderBasicContentInspector} from './ui/basic-content-inspector.js?v=20261121-d06-canonical-icon-registry-v1';
 import {renderLegacyMediaInspector} from './ui/legacy-media-inspector.js?v=20261101-richtext-multiblock-links';
 import {renderCardInspector} from './ui/card-content-inspector.js?v=20261118-d02-card-cta-recovery-v1';
 import {renderEmbedInspector} from './ui/creator-embed-inspector.js?v=20261026-profile-route-contract';
