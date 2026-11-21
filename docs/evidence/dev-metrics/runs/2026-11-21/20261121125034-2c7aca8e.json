@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261121125034-2c7aca8e",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-21T12:50:34.882Z",
+  "finished_at": "2026-11-21T12:58:04.071Z",
+  "wall_seconds": 449,
+  "paused_seconds": 0,
+  "measured_seconds": 449,
+  "status": "partial",
+  "kind": "test",
+  "summary": "EDT-015 browser regression CI failure diagnosed; mobile resized tab interaction now uses direct locator keyboard event; targeted Chromium test passes locally.",
+  "evidence": [
+    "tests/browser/editor-content-system.test.js; /tmp/editor-content-test-after.log; GitHub Editor Core run 44901529042 failed at mobile focus assertion on prior SHA"
+  ],
+  "checks": "node --test --test-concurrency=1 tests/browser/editor-content-system.test.js:PASS (1/1 real Chromium)",
+  "started_revision": "b7dc9e41c4f7e7133d446db6026e37cc885591d3",
+  "finished_revision": "b7dc9e41c4f7e7133d446db6026e37cc885591d3",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

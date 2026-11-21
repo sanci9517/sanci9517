@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261121130111-c2c05c16",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-21T13:01:11.805Z",
+  "finished_at": "2026-11-21T13:02:09.397Z",
+  "wall_seconds": 58,
+  "paused_seconds": 0,
+  "measured_seconds": 58,
+  "status": "partial",
+  "kind": "docs",
+  "summary": "Recorded the EDT-015 hosted mobile-tab focus timeout and the locally verified test-only interaction adjustment; full D remains open.",
+  "evidence": [
+    "docs/evidence/editor-content-system-mobile-tabs-ci-followup-2026-11-21.json; canonical plan appended after exact blob and byte verification"
+  ],
+  "checks": "python3 scripts/check-canonical-plan.py:PASS; python3 tests/plan-contract.test.py:15/15 PASS; python3 scripts/build-feature-traceability.py --check:PASS 396/396; git diff --check:PASS",
+  "started_revision": "a783078f70a457532ebb139c60f2af914ab113f1",
+  "finished_revision": "a783078f70a457532ebb139c60f2af914ab113f1",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
