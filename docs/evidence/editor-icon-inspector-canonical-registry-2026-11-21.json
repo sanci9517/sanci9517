@@ -67,16 +67,116 @@
     "health_body": "{\"ok\":true,\"service\":\"sanci9517-streamer-brand\",\"version\":\"2.0.0\",\"server\":\"cloudflare-worker\"}"
   },
   "release": {
-    "commit_sha": null,
-    "push": "PENDING",
-    "exact_sha_build": "PENDING",
-    "deployment": "PENDING",
-    "post_deployment_health_and_asset_hashes": "PENDING"
+    "commit_sha": "002091066623349f2b6f686e8fba8ea1e763d4b8",
+    "push": {
+      "status": "PASS",
+      "method": "normal non-force fast-forward",
+      "previous_head": "a547d4a1e0d9b05a3363a19c3a7318bfcccbac74",
+      "remote_head": "002091066623349f2b6f686e8fba8ea1e763d4b8"
+    },
+    "github_workflows": {
+      "f0_baseline": {
+        "run_id": 44942017739,
+        "status": "success",
+        "head_sha": "002091066623349f2b6f686e8fba8ea1e763d4b8"
+      },
+      "canonical_plan": {
+        "run_id": 44942017701,
+        "status": "success",
+        "head_sha": "002091066623349f2b6f686e8fba8ea1e763d4b8"
+      },
+      "active_point_audit": {
+        "run_id": 44942017708,
+        "status": "success",
+        "head_sha": "002091066623349f2b6f686e8fba8ea1e763d4b8"
+      },
+      "twitch_integration": {
+        "run_id": 44942017733,
+        "status": "success",
+        "head_sha": "002091066623349f2b6f686e8fba8ea1e763d4b8"
+      },
+      "production_worker_source_smoke": {
+        "run_id": 44942017741,
+        "status": "success",
+        "head_sha": "002091066623349f2b6f686e8fba8ea1e763d4b8",
+        "checks": "health + exact changed public source hashes"
+      },
+      "editor_core": {
+        "run_id": 44942017774,
+        "status": "in_progress",
+        "head_sha": "002091066623349f2b6f686e8fba8ea1e763d4b8",
+        "current_step": "Test real Worker media upload with isolated D1 and R2"
+      }
+    },
+    "cloudflare_build": {
+      "build_uuid": "8aff1dde-0881-429f-b477-2461065b58d4",
+      "status": "stopped",
+      "outcome": "success",
+      "branch": "v2/foundation",
+      "commit_sha": "002091066623349f2b6f686e8fba8ea1e763d4b8",
+      "build_command": "npm run typecheck",
+      "deploy_command": "npm run deploy:safe",
+      "migration_gate": "PASS; no D1 migration applied"
+    },
+    "cloudflare_deployment": {
+      "deployment_id": "34d24376-849b-4b54-bcc8-92806f368067",
+      "worker_version": "57e63653-5636-4c41-a7e3-59c0c4ba41a4",
+      "traffic_percent": 100,
+      "created_on": "2026-11-21T19:39:07.704934Z"
+    },
+    "production_post_deployment": {
+      "health_url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+      "health_http_status": 200,
+      "health_json": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      },
+      "asset_urls": {
+        "/editor-v2/index.html": "HTTP 307 → /editor-v2/ HTTP 200",
+        "/editor-v2/app.js": "HTTP 200",
+        "/editor-v2/ui/basic-content-inspector.js": "HTTP 200"
+      },
+      "asset_sha256": {
+        "/editor-v2/index.html": "9ec9e0a471afa9c5bfb241dffcbc4cddd04a1bdf3f08a1d1c165e9ea1746c682",
+        "/editor-v2/app.js": "20c690d615bf825ca529de3e04837c80ad9f3a39ac61c2e697ef6b4e0d9c3e70",
+        "/editor-v2/ui/basic-content-inspector.js": "25c8acb801d1b8c7d899d6bea3298d3b9aa0804fde08fa3a0c24981d4e5deb2b"
+      },
+      "source_byte_comparison": "PASS; all 3 production asset bodies cmp byte-for-byte with local source after redirect following"
+    }
   },
   "scope_limits": {
     "full_D_point": "OPEN / NOT_CERTIFIED",
     "full_editor_manual_physical_acceptance": "DEFERRED until the complete Visual Editor scope is implemented",
     "open_feature_counts": "148 PARTIAL_SOURCE / 248 UNVERIFIED",
     "cost_ft": 0
+  },
+  "cost": {
+    "new_paid_service": false,
+    "new_dependency": false,
+    "new_cost_ft": 0,
+    "cloudflare_build_minutes_limit_reached": false,
+    "quota_refresh": "2026-11-30T23:59:59.999Z",
+    "github_actions_usage": "automatic push workflows only; no dispatch or rerun"
+  },
+  "source_sha256": {
+    "public/editor-v2/index.html": "9ec9e0a471afa9c5bfb241dffcbc4cddd04a1bdf3f08a1d1c165e9ea1746c682",
+    "public/editor-v2/app.js": "20c690d615bf825ca529de3e04837c80ad9f3a39ac61c2e697ef6b4e0d9c3e70",
+    "public/editor-v2/ui/basic-content-inspector.js": "25c8acb801d1b8c7d899d6bea3298d3b9aa0804fde08fa3a0c24981d4e5deb2b",
+    "tests/browser/editor-structured-content.test.js": "33f84ba80dd2b49bd56f022629a6e450b306db68fb44491060ff39462d5e1fa3",
+    "docs/evidence/feature-traceability.json": "826f2fcda389b357f63f6ff5e78a962973d5fe570170ca04f36f4486f154b207"
+  },
+  "measured_session": {
+    "id": "20261121192417-85774d96",
+    "measured_seconds": 1208,
+    "status": "partial",
+    "record": "docs/evidence/dev-metrics/runs/2026-11-21/20261121192417-85774d96.json"
+  },
+  "canonical_plan_after": {
+    "bytes": 1796243,
+    "sha256": "def1d1bb26532df1a0c0a3b2584f374d80f7ec754430dfff11da81cd1b7154fc",
+    "git_blob": "1a895370afcf162ec6f3ae9f69ef605eb947d665",
+    "prefix_preserved_from": "a5e795bb1be6fc9d031fc11e75924753148c12ab"
   }
 }

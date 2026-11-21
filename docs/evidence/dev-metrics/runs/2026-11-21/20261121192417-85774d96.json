@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "id": "20261121192417-85774d96",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-21T19:24:17.580Z",
+  "finished_at": "2026-11-21T19:44:25.661Z",
+  "wall_seconds": 1208,
+  "paused_seconds": 0,
+  "measured_seconds": 1208,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "Canonical icon registry fix shipped and exact-SHA health/assets verified; D open, Editor Core CI still in progress.",
+  "evidence": [
+    "https://github.com/sanci9517/sanci9517/commit/002091066623349f2b6f686e8fba8ea1e763d4b8",
+    "https://github.com/sanci9517/sanci9517/actions/runs/44942017774",
+    "docs/evidence/editor-icon-inspector-canonical-registry-2026-11-21.json"
+  ],
+  "checks": "Browser/editor/typecheck/plan pass; runtime exact SHA deployed; Editor Core pending.",
+  "started_revision": "a547d4a1e0d9b05a3363a19c3a7318bfcccbac74",
+  "finished_revision": "002091066623349f2b6f686e8fba8ea1e763d4b8",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
