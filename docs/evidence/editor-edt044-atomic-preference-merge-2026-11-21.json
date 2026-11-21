@@ -32,14 +32,82 @@
     "size_after": 3825664
   },
   "release": {
-    "commit_sha": "PENDING",
+    "commit_sha": "f2be5ce65754d69f73d56cedac2f2464af129862",
     "branch": "v2/foundation",
-    "push": "PENDING",
-    "exact_sha_editor_core_ci": "PENDING",
-    "exact_sha_production_source_smoke": "PENDING",
-    "cloudflare_deployment": "PENDING",
-    "production_health": "PENDING",
-    "public_asset_hashes": "PENDING"
+    "push": {
+      "status": "PASS",
+      "method": "normal non-force fast-forward",
+      "previous_head": "ca997e5bc0520f9de451a3085efbfbd11c7baea8",
+      "remote_head": "f2be5ce65754d69f73d56cedac2f2464af129862"
+    },
+    "github_ci": {
+      "canonical_active_point_audit": {
+        "run_id": 44928464356,
+        "status": "success",
+        "head_sha": "f2be5ce65754d69f73d56cedac2f2464af129862"
+      },
+      "canonical_plan": {
+        "run_id": 44928464402,
+        "status": "success",
+        "head_sha": "f2be5ce65754d69f73d56cedac2f2464af129862"
+      },
+      "production_worker_source_smoke": {
+        "run_id": 44928464416,
+        "status": "success",
+        "head_sha": "f2be5ce65754d69f73d56cedac2f2464af129862",
+        "public_hashes": "36/36 match; workflow finished before new deployment, so post-deployment health/assets verified separately"
+      },
+      "f0_baseline": {
+        "run_id": 44928464429,
+        "status": "success",
+        "head_sha": "f2be5ce65754d69f73d56cedac2f2464af129862"
+      },
+      "twitch_integration": {
+        "run_id": 44928464461,
+        "status": "success",
+        "head_sha": "f2be5ce65754d69f73d56cedac2f2464af129862"
+      },
+      "editor_core": {
+        "run_id": 44928464405,
+        "status": "in_progress",
+        "head_sha": "f2be5ce65754d69f73d56cedac2f2464af129862",
+        "observed_passed_steps": 13,
+        "active_step": "Run Editor browser layout regression"
+      }
+    },
+    "cloudflare_build": {
+      "build_uuid": "14aa0c59-6118-4a84-9572-e0436bae2c52",
+      "status": "stopped",
+      "outcome": "success",
+      "branch": "v2/foundation",
+      "commit_sha": "f2be5ce65754d69f73d56cedac2f2464af129862",
+      "build_command": "npm run typecheck",
+      "deploy_command": "npm run deploy:safe",
+      "migration_safety_gate": "PASS; no migration-apply command ran",
+      "deploy_log": "Success; no updated asset files to upload",
+      "observed_npm_audit_warning": "4 high severity dependency vulnerabilities reported during existing lockfile install; no dependency added and not triaged in this block"
+    },
+    "cloudflare_deployment": {
+      "deployment_id": "cad2ab63-872e-4356-8f60-ee3874f9d277",
+      "worker_version": "a70df68c-4b94-43c2-9932-950f6bc87e23",
+      "version_number": 4154,
+      "traffic_percent": 100,
+      "created_on": "2026-11-21T17:09:49.512239Z"
+    },
+    "production_post_deployment": {
+      "health_http_status": 200,
+      "health_json": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      },
+      "direct_asset_hashes": {
+        "/editor-v2/index.html": "97ce67548df3dcf6eb617db2481db06fdea31657fad43a7cfa9fed83b4b927b0",
+        "/editor-v2/app.js": "3c44bda9f7aa15d68fb8f012d015ed155222e6411dc0986069df725a9457fbef"
+      },
+      "changed_public_assets": []
+    }
   },
   "previous_exact_source_editor_core_run": {
     "run_id": 44926680406,
@@ -64,8 +132,8 @@
     "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md": "09f1e4e1fc6b4c81af979e21a20405176bdeeda1adf158d8c4cb25619aef218d"
   },
   "canonical_plan_after": {
-    "bytes": 1788043,
-    "sha256": "09f1e4e1fc6b4c81af979e21a20405176bdeeda1adf158d8c4cb25619aef218d",
-    "git_blob": "0128cf35cfee18daa0062e37448800184c377b33"
+    "bytes": 1789093,
+    "sha256": "27a144a9a8af48746ea095f00d87aceac562ce0196e22b00015842989c7433a2",
+    "git_blob": "65e7c1aca73941295fcec65252dc3456030c6f69"
   }
 }
