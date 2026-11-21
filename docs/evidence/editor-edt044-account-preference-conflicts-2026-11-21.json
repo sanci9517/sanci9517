@@ -27,6 +27,14 @@
       "No database schema migration was introduced; Save and Publish remain separate operations."
     ]
   },
+  "test_only_followup": {
+    "commit": "8b46acfffdda8dcad2b724960defd7127581afb5",
+    "message": "test(editor): reopen inspector after media reload [skip ci]",
+    "parent": "1c7e8e8c147f2a036b9443c5d19e0715a3f8b543",
+    "push": "normal fast-forward push succeeded after confirming the remote v2/foundation ref was still the parent SHA",
+    "runtime_source_changed": false,
+    "worker_redeploy": false
+  },
   "verification": {
     "local_before_runtime_push": {
       "npm_run_test_editor_preferences": "PASS, 10/10",

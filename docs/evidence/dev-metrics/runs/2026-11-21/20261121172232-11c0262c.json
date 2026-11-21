@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261121172232-11c0262c",
+  "task": "EDT-044",
+  "trigger": "manual",
+  "started_at": "2026-11-21T17:22:32.033Z",
+  "finished_at": "2026-11-21T18:07:44.266Z",
+  "wall_seconds": 2712,
+  "paused_seconds": 0,
+  "measured_seconds": 2712,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "EDT-044 revision conflict handling shipped and production verified; media lifecycle test fixture race fixed and passed locally. D point remains open; hosted Editor Core run failed before test-only correction.",
+  "evidence": [
+    "docs/evidence/editor-edt044-account-preference-conflicts-2026-11-21.json"
+  ],
+  "checks": "editor-preferences 10/10; editor 24/24; media storage lifecycle 1/1; typecheck; D1 read-only preflight; migration gate; Wrangler dry-run; production build/source smoke; health and asset hashes",
+  "started_revision": "f1efdb9acbbf263015fda97cec95a76306de9f0d",
+  "finished_revision": "8b46acfffdda8dcad2b724960defd7127581afb5",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
