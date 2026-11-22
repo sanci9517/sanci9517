@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261122170746-0849decc",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-22T17:07:46.352Z",
+  "finished_at": "2026-11-22T17:28:34.264Z",
+  "wall_seconds": 1248,
+  "paused_seconds": 0,
+  "measured_seconds": 1248,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "D-06 malformed escaped JSON archive-guard isolated and covered by additive review-only 0031; local checks pass; production mutation not performed.",
+  "evidence": [
+    "docs/evidence/editor-d06-malformed-archive-json-guard-2026-11-22.json",
+    "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md"
+  ],
+  "checks": "0031 batch 3/3; media 7/7; migration gate; D1 ledger 11/11; restore 7/7; live contract 2/2; plan 15/15; canonical plan; traceability 396/396; syntax and diff check",
+  "started_revision": "ad57590f4d0872706489354e037748bc72311745",
+  "finished_revision": "ad57590f4d0872706489354e037748bc72311745",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

@@ -21,7 +21,7 @@ def manifest():
     for e in entries:
         assert hashlib.sha256((ROOT/e['path']).read_bytes()).hexdigest() == e['sha256'], 'Manual migration hash mismatch: '+e['name']
         assert not (ROOT/'migrations'/e['name']).exists(), 'Unsafe automatic replay: '+e['name']
-    assert not any(re.match(r'(?:002[5-9]|0030)[_-]', p.name) for p in (ROOT/'migrations').glob('*.sql')), 'Reserved migration number collision'
+    assert not any(re.match(r'(?:002[5-9]|003[01])[_-]', p.name) for p in (ROOT/'migrations').glob('*.sql')), 'Reserved migration number collision'
     return entries
 
 def schema(db):

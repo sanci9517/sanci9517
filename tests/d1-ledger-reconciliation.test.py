@@ -67,9 +67,9 @@ class Reconciliation(unittest.TestCase):
    target=Path(folder); shutil.copytree(root/'migrations',target/'migrations'); shutil.copytree(root/'scripts/pending',target/'scripts/pending'); shutil.copytree(root/'tests/fixtures',target/'tests/fixtures')
    try:
     m.ROOT=target
-    (target/'migrations/0031_future_probe.sql').write_text('CREATE TABLE future_probe AS SELECT archived_at FROM media;')
+    (target/'migrations/0032_future_probe.sql').write_text('CREATE TABLE future_probe AS SELECT archived_at FROM media;')
     fresh=sqlite3.connect(':memory:'); m.bootstrap(fresh)
-    self.assertEqual(fresh.execute('SELECT name FROM d1_migrations ORDER BY id DESC LIMIT 1').fetchone()[0],'0031_future_probe.sql')
+    self.assertEqual(fresh.execute('SELECT name FROM d1_migrations ORDER BY id DESC LIMIT 1').fetchone()[0],'0032_future_probe.sql')
     fresh.close()
     (target/'migrations/0025_alternate.sql').write_text('SELECT 1;')
     with self.assertRaises(AssertionError): m.manifest()

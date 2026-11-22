@@ -29,4 +29,6 @@ test("manual schema migrations stay out of the auto-applied folder and secrets d
     assert.match(text, /CREATE TABLE site_/);
   }
   assert.match(read("../scripts/web013-migration-safety-gate.mjs"), /Production received 0025-0030 through the reviewed manual release chain/);
+  assert.match(read("../scripts/web013-migration-safety-gate.mjs"), /Review-only candidates \(currently 0031\)/);
+  assert.equal(JSON.parse(read("../scripts/d1/review-only-candidates.json"))[0].status, "REVIEW_ONLY_NOT_APPLIED");
 });

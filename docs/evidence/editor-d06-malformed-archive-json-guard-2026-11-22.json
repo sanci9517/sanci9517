@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "captured_at_utc": "2026-11-22T17:28:27Z",
+  "plan_item": "77.44.7.D / D-06",
+  "status": "PARTIAL / NOT CERTIFIED",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "head_at_start": "ad57590f4d0872706489354e037748bc72311745",
+    "remote_head_at_start": "ad57590f4d0872706489354e037748bc72311745",
+    "preexisting_untracked_preserved": [
+      "scripts/__pycache__/",
+      "scripts/d1/__pycache__/"
+    ]
+  },
+  "finding": {
+    "failure": "0029 archive triggers pass malformed JSON with a Unicode escape through json_tree(CASE json_valid THEN document ELSE 'null' END), so a referenced archived same-site asset can escape the SQL guard.",
+    "reproduction": "Confirmed against an ephemeral SQLite database only; no production query or mutation was made in this run.",
+    "fix_candidate": "tests/fixtures/0031_media_archive_malformed_json_guard.sql",
+    "fix_candidate_sha256": "0af93a5212c9ff87eed55e192d143c0f31c416f658404b40030f60b111ec559b",
+    "new_triggers": [
+      "media_archive_pages_insert_malformed_guard",
+      "media_archive_pages_update_malformed_guard",
+      "media_archive_revisions_insert_malformed_guard",
+      "media_archive_revisions_update_malformed_guard"
+    ],
+    "guardrails": "Candidate stays outside migrations/ and scripts/pending applied chain; absent from scripts/d1/manual-migrations.json. Generated one-shot batch has no network/D1 capability and checks baseline marker count 36, final marker 0030, seven existing archive triggers, no existing 0031 triggers and foreign_key_check before adding anything."
+  },
+  "checks": {
+    "candidate_batch_test": "PASS 3/3",
+    "original_archive_unicode_tests": "PASS 7/7; existing 0028/0029 fixtures unchanged",
+    "media_suite": "PASS 7/7 test files, includes candidate and original manual chain",
+    "migration_safety_gate": "PASS",
+    "d1_ledger_reconciliation": "PASS 11/11",
+    "d1_restore_order": "PASS 7/7",
+    "live_activation_contract": "PASS 2/2",
+    "plan_contract": "PASS 15/15",
+    "canonical_plan": "PASS 13 master files / 396 mappings",
+    "active_plan_point": "PASS accounting; 77.44.7.D remains OPEN / NOT CERTIFIED; 148 PARTIAL_SOURCE / 248 UNVERIFIED",
+    "feature_traceability": "PASS 396/396 source mappings; not acceptance",
+    "syntax_and_diff": "PASS node --check and git diff --check"
+  },
+  "editor_core_ci": {
+    "run_id": 45039622380,
+    "url": "https://github.com/sanci9517/sanci9517/actions/runs/45039622380",
+    "source_sha": "dd2b935c076a3c3a648621b0f750ba6d8738751a",
+    "result": "completed / success",
+    "job_id": 137260929096,
+    "all_test_steps": "success",
+    "screenshot_artifact_step": "skipped"
+  },
+  "runtime": {
+    "changed_in_this_run": false,
+    "latest_read_only_verified_deployment": "914fa622-1bdf-4687-b719-8b7f51fccb1e",
+    "worker_version_id": "f134a569-b3d6-4291-9834-40b59a546cd0",
+    "worker_version_number": 4160,
+    "traffic_percent": 100,
+    "health_and_asset_hashes": "Previously verified for this exact deployment and dd2b935 source in editor-d03-d06-malformed-data-fail-closed-2026-11-22.json; not re-fetched because this run changed no runtime/public asset."
+  },
+  "production_operations": {
+    "d1_preflight_this_run": "NOT RUN",
+    "d1_migration_applied": false,
+    "d1_data_written": false,
+    "r2_operation": false,
+    "worker_deployment": false,
+    "ci_rerun_or_dispatch": false,
+    "new_dependencies": false,
+    "new_paid_cost": "0 Ft"
+  },
+  "scope_boundary": {
+    "traceability": "148 PARTIAL_SOURCE / 248 UNVERIFIED; not acceptance evidence",
+    "d_06": "OPEN / NOT CERTIFIED; candidate implementation requires fresh read-only production preflight and separately approved operation before application",
+    "d_01_to_d_07": "OPEN / NOT CERTIFIED",
+    "full_editor": "OPEN / NOT CERTIFIED",
+    "manual_physical_acceptance": "DEFERRED until the complete Editor is implemented",
+    "save_publish_separate": true
+  },
+  "development_metrics": {
+    "run_id": "20261122170746-0849decc",
+    "status": "partial",
+    "measured_seconds": 1248,
+    "measurement": "elapsed wall time, not verified active compute time"
+  }
+}
