@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261122192021-b8373603",
+  "task": "77.44.7.D",
+  "trigger": "scheduled",
+  "started_at": "2026-11-22T19:20:21.258Z",
+  "finished_at": "2026-11-22T19:23:10.730Z",
+  "wall_seconds": 169,
+  "paused_seconds": 0,
+  "measured_seconds": 169,
+  "status": "partial",
+  "kind": "docs",
+  "summary": "Updated D-06 release evidence and canonical plan after checking exact GitHub ref, 100% Cloudflare Worker deployment, hosted Editor CI progress, and all plan bookkeeping checks; health recheck was blocked by outbound proxy.",
+  "evidence": [
+    "docs/evidence/editor-d06-missing-audit-site-cursor-2026-11-22.json"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "69d4a2d54a3d6d59f0eec596622e09f3bdb3c6f4",
+  "finished_revision": "5a32cb4b53ab666be333625563c42f7e46796901",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
