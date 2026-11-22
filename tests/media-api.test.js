@@ -1876,6 +1876,52 @@ test("Unicode-escaped IDs across media usage, public delivery, atomic archive an
  assert.equal((await archive()).status,200,"irrelevant Unicode escapes do not block safe archive");
 });
 
+test("malformed Unicode-escaped page and revision media references keep usage incomplete and block archival",async t=>{
+ const f=await fixture(t);
+ const hiddenMalformedReference=asset=>{
+  // Escape two ASCII UUID characters and truncate the surrounding JSON. The
+  // decoded target is unknowable, so every same-site asset must remain
+  // protected until the malformed document is repaired.
+  const hiddenPrefix=Array.from(asset.id.slice(0,2),character=>"\\u"+character.charCodeAt(0).toString(16).padStart(4,"0")).join("");
+  const malformed='{"assetId":"'+hiddenPrefix+asset.id.slice(2)+',';
+  assert.equal(malformed.includes(asset.id),false,"the malformed JSON does not expose the raw UUID to SQL substring matching");
+  assert.throws(()=>JSON.parse(malformed),"the escaped reference fixture must be invalid JSON");
+  return malformed;
+ };
+ const cases=[
+  {source:"draft",pageId:"escaped-draft",page:{content_json:null,published_content_json:"{}",is_published:0}},
+  {source:"published",pageId:"escaped-published",page:{content_json:"{}",published_content_json:null,is_published:1}},
+  {source:"revision",pageId:"escaped-revision",page:{content_json:"{}",published_content_json:"{}",is_published:0}}
+ ];
+ for(const [index,entry] of cases.entries()){
+  const upload=await f.call("POST","editor",Uint8Array.from([...png,index+1]),{name:`malformed-${entry.source}.png`});
+  assert.equal(upload.status,201);
+  const asset=(await upload.json()).data;
+  const malformed=hiddenMalformedReference(asset);
+  const content=entry.source==="draft"?malformed:entry.page.content_json;
+  const published=entry.source==="published"?malformed:entry.page.published_content_json;
+  f.db.prepare("INSERT INTO pages(id,site_id,archived_at,is_published,published_content_json,content_json,title,slug) VALUES(?,?,?,?,?,?,?,?)")
+   .run(entry.pageId,"site-default",null,entry.page.is_published,published,content,entry.pageId,entry.pageId);
+  if(entry.source==="revision"){
+   f.db.prepare("INSERT INTO editor_revisions(id,page_id,version,document_json) VALUES(?,?,?,?)")
+    .run("escaped-revision-1",entry.pageId,1,malformed);
+  }
+  const usage=await f.call("GET","editor",null,{usage:asset.id});
+  assert.equal(usage.status,200,`${entry.source}: usage inspection remains available`);
+  const report=(await usage.json()).data;
+  assert.equal(report.complete,false,`${entry.source}: the unknown target of malformed escaped JSON keeps the usage index incomplete`);
+  assert.deepEqual(report.references,[],`${entry.source}: malformed data is not misreported as a verified relationship`);
+  if(entry.source==="published")assert.equal(
+   (await publishedMediaRoute(new Request(`https://example.test/media/${asset.id}`),f.env,"site-default",asset.id)).status,
+   404,"an invalid published snapshot never grants public media delivery");
+  const archive=await f.call("PATCH","editor",JSON.stringify({archived:true}),{id:asset.id});
+  assert.equal(archive.status,409,`${entry.source}: an unknown malformed reference must block archival`);
+  assert.equal((await archive.json()).error.code,"MEDIA_USAGE_INCOMPLETE");
+  assert.equal(f.db.prepare("SELECT archived_at FROM media WHERE id=?").get(asset.id).archived_at,null,
+   `${entry.source}: the media metadata remains unchanged`);
+ }
+});
+
 test("schedule cover image is reported as site-scoped media usage and protects it from archival",async t=>{
   const f=await fixture(t);
   const response=await f.call("POST","editor",png,{name:"calendar-cover.png"});

@@ -47,6 +47,9 @@ test('malformed saved repeater rows remain read-only until an explicit default r
  assert.deepEqual(malformedElementContentRowIndexes('accordion',{version:1,items:[{label:'Kérdés',content:[]},{label:null,content:'Megengedett üres érték'}]}),[0]);
  assert.deepEqual(malformedElementContentRowIndexes('gallery',{version:1,items:[{src:'/kep.jpg',alt:{}}]}),[0]);
  assert.deepEqual(malformedElementContentRowIndexes('carousel',{version:1,items:[{label:'Dia',content:'Tartalom',src:'/kep.jpg',alt:[]}]}),[0]);
+ assert.deepEqual(malformedElementContentRowIndexes('table',{version:1,rows:[['Fejléc','Megmarad'],[{rich:'nem szöveg'},'Második']]}),[1]);
+ assert.deepEqual(malformedElementContentRowIndexes('table',{version:1,rows:[['Fejléc','Megmarad'],[['tömb'],'Második']]}),[1]);
+ assert.deepEqual(malformedElementContentRowIndexes('table',{version:1,rows:[['Fejléc','Megmarad'],[null,undefined]]}),[],'intentional blank cells remain valid');
  assert.deepEqual(malformedElementContentRowIndexes('gallery',{version:1,items:[{src:'',alt:'Üres, de érvényes',caption:''}]}),[]);
  const previous=globalThis.document;
  globalThis.document={createElement:tag=>new ElementStub(tag)};
@@ -75,6 +78,16 @@ test('malformed saved repeater rows remain read-only until an explicit default r
   assert.equal(lockedRepair.disabled,true);
   lockedRepair.click();
   assert.equal(lockedCalls,0,'locked content cannot use the recovery action');
+
+  const brokenTable={version:1,rows:[['Fejléc','Megmarad'],[{legacy:{value:'nem menthető cella'}},'További adat']]};
+  let tableRepair;
+  const tablePanel=renderStructuredInspector({id:'broken-table',type:'table',props:{contentModel:brokenTable}},value=>{tableRepair=value;return true;});
+  const tableAction=tablePanel.children.find(child=>child.dataset?.structuredAction==='repair-invalid-rows');
+  assert.match(tablePanel.children.find(child=>child.attributes?.role==='alert').textContent,/2\. sora.*nem támogatott/);
+  assert.deepEqual({command:tableAction.dataset.inspectorCommand,key:tableAction.dataset.inspectorKey},{command:'element.update',key:'props.contentModel.rows'},'table recovery addresses the rows collection');
+  assert.deepEqual(brokenTable.rows[1][0],{legacy:{value:'nem menthető cella'}},'opening recovery does not mutate the original non-text value');
+  tableAction.click();
+  assert.deepEqual(tableRepair,{version:1,rows:[['Fejléc','Megmarad'],['Oszlop 1','Oszlop 2']]},'explicit repair replaces only the malformed table row');
  }finally{
   if(previous===undefined)delete globalThis.document;else globalThis.document=previous;
  }

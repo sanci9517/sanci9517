@@ -13,5 +13,12 @@ export function mediaReferenceSql(column,assetExpression){
  const raw=`instr(lower(COALESCE(${column},'')),lower(${assetExpression}))>0`;
  const decoded=`EXISTS (SELECT 1 FROM json_tree(CASE WHEN json_valid(${column}) THEN ${column} ELSE 'null' END) AS media_ref_json
    WHERE media_ref_json.type='text' AND instr(lower(media_ref_json.value),lower(${assetExpression}))>0)`;
- return `(${raw} OR (instr(COALESCE(${column},''),char(92)||'u')>0 AND ${decoded}))`;
+ const escaped=`instr(COALESCE(${column},''),char(92)||'u')>0`;
+ // A malformed JSON document cannot be decoded to determine whether its
+ // escaped text refers to an asset. Return it as a candidate for every asset
+ // in the owning site: usage scanning then marks the inventory incomplete,
+ // and archive/retention predicates fail closed. Valid JSON keeps the exact
+ // decoded-reference match, while malformed documents without escapes retain
+ // the legacy raw-ID behavior.
+ return `(${raw} OR (${escaped} AND (NOT json_valid(${column}) OR ${decoded})))`;
 }

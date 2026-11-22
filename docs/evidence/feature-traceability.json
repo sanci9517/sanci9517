@@ -107,7 +107,7 @@
     "tests/editor-preferences-route.test.js": "6e0151f799049a500dce6d2167b1f022a3ec3011210c830ff77199d64ade3cd0",
     "tests/editor-public-asset-cache-bust.test.js": "ad3cac444c844bee1b4938cb097b4f10165eb22ff4cd8859cc427683af311916",
     "tests/f0-3-route-integration.test.js": "c6f9dd7b1816ca7663b796daa485ae94f413c9746c5d5590d6bc30fc81d9fff6",
-    "tests/media-api.test.js": "7d32f13eee5cdb5ea3da0e61a47bcf0ce49ad8750d016c0864168e025887097b"
+    "tests/media-api.test.js": "8482dcac5488415ad89148f6e61a185f64723d094b83d511b8cc94874a988dbf"
   },
   "schema_version": 1,
   "kind": "source-traceability-not-acceptance",

@@ -64,7 +64,12 @@ export function normalizeElementContent(type,value){
  * tolerant renderer normalizer so legacy content remains safely renderable,
  * while the Inspector can require an explicit destructive repair first. */
 export function malformedElementContentRowIndexes(type,value){
- if(!isStructuredType(type)||type==='table'||!Array.isArray(value?.items))return [];
+ if(!isStructuredType(type))return [];
+ if(type==='table'){
+  if(!Array.isArray(value?.rows))return [];
+  return value.rows.flatMap((row,index)=>!Array.isArray(row)||row.some(cell=>cell!==null&&cell!==undefined&&typeof cell==='object')?[index]:[]);
+ }
+ if(!Array.isArray(value?.items))return [];
  const objectRowTypes=new Set(['tabs','accordion','gallery','carousel']);
  return value.items.flatMap((item,index)=>{
   if(type==='list')return item===null||typeof item==='object'?[index]:[];

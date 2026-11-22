@@ -1,6 +1,6 @@
 import {createCompositionInputs} from './composition-inputs.js';
 /* Inspector-only controls for canonical static content. All edits call the command API. */
-import {createElementContent,normalizeElementContent,isStructuredType,malformedElementContentRowIndexes} from '../core/element-content.js?v=20261118-d03-repeater-recovery-v1';
+import {createElementContent,normalizeElementContent,isStructuredType,malformedElementContentRowIndexes} from '../core/element-content.js?v=20261122-d03-table-object-cell-recovery-v1';
 const focusRequests=new WeakMap();
 const typeLabels={list:'Lista',table:'Táblázat',tabs:'Fülek',accordion:'Lenyitható blokkok',gallery:'Galéria',carousel:'Tartalom-carousel'};
 export function renderStructuredInspector(node,update,{pending=()=>{}}={}){
@@ -16,12 +16,13 @@ export function renderStructuredInspector(node,update,{pending=()=>{}}={}){
    const title=document.createElement('h3');title.textContent=typeLabels[node.type];section.append(title);
    const warning=document.createElement('p');warning.className='property-validation structured-inspector-error';warning.setAttribute('role','alert');
    warning.textContent=`A mentett ismétlődő tartalom ${malformedRows.map(index=>index+1).join(', ')}. sora nem támogatott adatformátumú. Javítás előtt a többi mező is zárolva marad, hogy egy mentés se törölje csendben ezeket az adatokat.`;section.append(warning);
-   const repair=document.createElement('button');repair.type='button';repair.className='structured-action';repair.dataset.structuredAction='repair-invalid-rows';repair.dataset.inspectorCommand='element.update';repair.dataset.inspectorKey='props.contentModel.items';repair.textContent='Hibás sorok cseréje alapértékre';repair.disabled=Boolean(node.locked);
+   const collectionKey=node.type==='table'?'rows':'items';
+   const repair=document.createElement('button');repair.type='button';repair.className='structured-action';repair.dataset.structuredAction='repair-invalid-rows';repair.dataset.inspectorCommand='element.update';repair.dataset.inspectorKey=`props.contentModel.${collectionKey}`;repair.textContent='Hibás sorok cseréje alapértékre';repair.disabled=Boolean(node.locked);
    repair.onclick=()=>{
     if(repair.disabled)return;
-    const defaults={list:()=>'',tabs:()=>({label:'Új fül',content:'Írd ide a tartalmat'}),accordion:()=>({label:'Új kérdés',content:'Írd ide a választ'}),gallery:()=>({src:'',alt:'',caption:''}),carousel:()=>({label:'Új dia',content:'Írd ide a tartalmat',src:'',alt:''})};
-    const bad=new Set(malformedRows),items=normalized.items.map((item,index)=>bad.has(index)?defaults[node.type]():item);
-    update(normalizeElementContent(node.type,{...normalized,items}));
+    const defaults={list:()=>'',table:()=>['Oszlop 1','Oszlop 2'],tabs:()=>({label:'Új fül',content:'Írd ide a tartalmat'}),accordion:()=>({label:'Új kérdés',content:'Írd ide a választ'}),gallery:()=>({src:'',alt:'',caption:''}),carousel:()=>({label:'Új dia',content:'Írd ide a tartalmat',src:'',alt:''})};
+    const bad=new Set(malformedRows),rows=normalized[collectionKey].map((item,index)=>bad.has(index)?defaults[node.type]():item);
+    update(normalizeElementContent(node.type,{...normalized,[collectionKey]:rows}));
    };
    section.append(repair);return section;
   }

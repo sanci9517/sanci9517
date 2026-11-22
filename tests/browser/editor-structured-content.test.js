@@ -692,7 +692,7 @@ test('structured Inspector editing survives Save, Publish and public interaction
   ['Megőrzendő első sor','','Megőrzendő harmadik sor'],'the repaired model appears publicly only after Publish');
  // A malformed structured table needs the same end-to-end recovery guarantees
  // as the legacy list: opening and unrelated edits cannot coerce stored rows.
- const malformedTable={version:1,rows:[['Fejléc','Megmaradó adat'],['Rövid sor']]};
+ const malformedTable={version:1,rows:[['Fejléc','Megmaradó adat'],[{legacy:{value:'nem szöveg cella'}},'Második sor']]};
  const previousPublishedTable=structuredClone(published.pages[pageId].nodes[ids.table].props.contentModel);
  draft.pages[pageId].nodes[ids.table].props.contentModel=structuredClone(malformedTable);
  await editor.reload();
@@ -701,12 +701,12 @@ test('structured Inspector editing survives Save, Publish and public interaction
   await editor.setViewportSize({width,height:900});await select(ids.table);
   const inspector=editor.locator('.structured-inspector'),warning=inspector.getByRole('alert');
   await warning.waitFor();
-  assert.match(await warning.textContent(),/hibás|nem támogatott formátum/i,
+  assert.match(await warning.textContent(),/hibás|nem támogatott.*formátum/i,
    'the malformed table warns instead of silently normalizing at '+width+'px');
   assert.equal(await inspector.locator('.structured-input').count(),0,
-   'ragged table cells stay read-only until an explicit repair at '+width+'px');
+   'object-valued table cells stay read-only until an explicit repair at '+width+'px');
   assert.deepEqual(draft.pages[pageId].nodes[ids.table].props.contentModel,malformedTable,
-   'opening the table Inspector preserves the exact persisted ragged rows at '+width+'px');
+   'opening the table Inspector preserves the exact persisted object-valued cells at '+width+'px');
   assert.equal(posts.length,postsBeforeTableInspection,
    'opening table recovery never Saves or Publishes at '+width+'px');
  }
@@ -724,8 +724,8 @@ test('structured Inspector editing survives Save, Publish and public interaction
  const recoveryTableInspector=editor.locator('.structured-inspector');
  await recoveryTableInspector.getByRole('alert').waitFor();
  const postsBeforeTableRepair=posts.length;
- await recoveryTableInspector.getByRole('button',{name:'Alapértelmezett tartalom visszaállítása'}).click();
- const repairedTable={version:1,rows:[['Oszlop 1','Oszlop 2'],['Adat 1','Adat 2']]};
+ await recoveryTableInspector.getByRole('button',{name:'Hibás sorok cseréje alapértékre'}).click();
+ const repairedTable={version:1,rows:[['Fejléc','Megmaradó adat'],['Oszlop 1','Oszlop 2']]};
  const editorTable=editor.locator('.node[data-node-id="'+ids.table+'"]');
  assert.equal(await editorTable.locator('thead th[scope="col"]').count(),2,
   'explicit recovery restores a valid two-column header on the Canvas');
@@ -742,7 +742,7 @@ test('structured Inspector editing survives Save, Publish and public interaction
  await editor.locator('#save').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
  assert.equal(posts.at(-1).publish,false,'the repaired table is first persisted by Save');
  assert.deepEqual(posts.at(-1).document.pages[pageId].nodes[ids.table].props.contentModel,repairedTable,
-  'Save stores only the explicit two-by-two default table repair');
+  'Save stores only the explicit malformed-row replacement and preserves valid table rows');
  assert.deepEqual(published.pages[pageId].nodes[ids.table].props.contentModel,previousPublishedTable,
   'draft Save keeps the previous public table snapshot intact');
  await editor.reload();await select(ids.table);
