@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "captured_at_utc": "2026-11-22T18:14:46Z",
+  "captured_at_utc": "2026-11-22T18:17:00Z",
   "plan_item": "77.44.7.D / D-06",
   "status": "PARTIAL / NOT CERTIFIED",
   "repository": {
@@ -95,10 +95,16 @@
     "save_publish_separate": true
   },
   "release": {
-    "method": "Documentation/test-only normal fast-forward with [skip ci]; no redundant Worker deployment.",
-    "commit": "PENDING",
-    "remote_ref": "PENDING",
-    "cloudflare_build": "EXPECTED SKIPPED BY [skip ci]; not reported PASS."
+    "method": "Documentation/test-only normal fast-forward; [skip ci]; no redundant Worker deployment.",
+    "commit": "553f7aed336546f96f1dc7401c53b736e4adfe08",
+    "message": "fix(media): make D-06 review migration resumable [skip ci]",
+    "parent": "42fd2220d1cb969d36c1b8900237d4f00a6a0cc8",
+    "remote_ref_after_push": "GitHub branch API exact match: 553f7aed336546f96f1dc7401c53b736e4adfe08",
+    "cloudflare_build_check": {
+      "id": 137305536170,
+      "result": "completed / skipped",
+      "reason": "[skip ci]; not reported PASS"
+    }
   },
   "development_metrics": {
     "run_id": "20261122180359-2c542bab",
