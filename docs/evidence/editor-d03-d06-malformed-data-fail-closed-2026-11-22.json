@@ -1,0 +1,103 @@
+{
+  "schema": 1,
+  "captured_at": "2026-11-22T15:42:50Z",
+  "plan_item": "77.44.7.D",
+  "status": "OPEN / NOT_CERTIFIED",
+  "scope": "Bounded D-03/D-06 regression slice: malformed table-cell recovery, malformed Unicode-escaped media references, safe cache invalidation, and Save/Publish separation.",
+  "principles": {
+    "parallel_work_and_safe_reuse": "Independent read-only review ran alongside verification. Existing Wrangler, D1 and R2 resources and repository dependencies were reused; no new dependencies were added.",
+    "single_canonical_plan": "The 13-file master plan was not rewritten. This evidence remains independently versioned under docs/evidence/ as required.",
+    "preserve_data": "Malformed persisted content remains read-only until the explicit row-repair action. Unknown media references prevent archival; no production data was changed."
+  },
+  "changes": {
+    "runtime": [
+      "Media-reference candidate SQL now treats malformed JSON containing Unicode escapes as an unknown same-site reference candidate. Usage inventories become incomplete and archive is rejected instead of missing an escaped ID that is absent from the raw JSON bytes.",
+      "Structured table Inspector now identifies object/array cells and invalid row shapes before the legacy normalizer can coerce those values to empty strings. The panel remains read-only until an explicit repair; that action replaces only malformed rows and preserves valid rows and headers.",
+      "The structured Inspector module and the Editor app/index entry URLs use the new 20261122-d03-table-object-cell-recovery-v1 cache key after the independent review found that the first release still referenced the prior Inspector URL."
+    ],
+    "tests": [
+      "Added malformed Unicode-escaped JSON cases across draft page content, published snapshots and editor revisions; each leaves usage incomplete, blocks archival, and preserves media metadata. Invalid published content is not served publicly.",
+      "Added object/array table-cell unit coverage, intentional blank-cell compatibility, read-only Inspector behavior and explicit row-only recovery.",
+      "Expanded the real Chromium structured-content flow to cover object-valued cells at desktop and mobile widths, Save/reload, unchanged published snapshot, explicit repair, and separate Publish."
+    ],
+    "generated_evidence": "Regenerated docs/evidence/feature-traceability.json after source/test changes. It remains source traceability only and does not assert semantic feature acceptance."
+  },
+  "checks": {
+    "npm run test:editor": "PASS; 10 preference route tests, 4 subreaper runner tests and 24 Editor Node test files.",
+    "node --test --test-concurrency=1 tests/browser/editor-structured-content.test.js": "PASS 2/2 with Chromium after the cache-key fix; Save and Publish are exercised separately.",
+    "node --test tests/editor-public-asset-cache-bust.test.js": "PASS 1/1; the deployed HTML and app entry request the current structured Inspector cache token.",
+    "npm run test:media": "PASS 5/5 tests.",
+    "npm run test:media:storage": "PASS 1/1 real local Worker + isolated Miniflare D1/R2 + Chromium media lifecycle; synthetic data only.",
+    "npm run typecheck -- --pretty false": "PASS.",
+    "python3 tests/plan-contract.test.py": "PASS 15/15.",
+    "python3 scripts/check-canonical-plan.py": "PASS one complete 13-file master and 396 mappings; functional acceptance is not certified.",
+    "python3 scripts/audit-active-plan-point.py": "PASS; cursor 77.44 / WEB-011, next 77.44.7.D remains OPEN / NOT_CERTIFIED.",
+    "python3 scripts/build-feature-traceability.py --check": "PASS 396/396 source mappings after regeneration.",
+    "npm run test:web013:migration-gate": "PASS; no production migration applied.",
+    "git diff --check; node --check on changed JavaScript": "PASS.",
+    "npx wrangler deploy --dry-run": "PASS with Wrangler 4.130.0; read 199 public assets; upload 429.35 KiB / 108.86 KiB gzip; no deployment performed by dry-run."
+  },
+  "production_preflight": {
+    "method": "Cloudflare D1 Query API, read-only SELECT only.",
+    "statement": "SELECT name FROM d1_migrations ORDER BY name",
+    "migration_markers": 36,
+    "latest_marker": "0030_media_library_organization.sql",
+    "rows_read": 36,
+    "rows_written": 0,
+    "changes": 0,
+    "changed_db": false,
+    "status": "READ_ONLY_PREFLIGHT_PASS"
+  },
+  "release": {
+    "runtime_commits": [
+      "18e0e35c8ff93fa8ada3c34a927738835d3c5f4f — D-03/D-06 correctness fixes.",
+      "dd2b935c076a3c3a648621b0f750ba6d8738751a — cache-key follow-up required by independent review."
+    ],
+    "push": "PASS; both commits pushed by normal fast-forward to v2/foundation; GitHub branch GET matched dd2b935c076a3c3a648621b0f750ba6d8738751a.",
+    "github_actions_exact_sha": {
+      "source_commit": "dd2b935c076a3c3a648621b0f750ba6d8738751a",
+      "canonical_plan": {"run_id": 45039622388, "result": "success"},
+      "active_point_audit": {"run_id": 45039622390, "result": "success"},
+      "twitch_integration": {"run_id": 45039622416, "result": "success"},
+      "f0_baseline": {"run_id": 45039622447, "result": "success"},
+      "production_source_smoke": {"run_id": 45039622402, "result": "success"},
+      "editor_core": {"run_id": 45039622380, "result": "in_progress at evidence capture; do not report full Editor CI as PASS"}
+    },
+    "cloudflare_build": {
+      "build_uuid": "94e73d09-58e1-437f-a917-9c8714d1b3f0",
+      "source_commit": "dd2b935c076a3c3a648621b0f750ba6d8738751a",
+      "branch": "v2/foundation",
+      "build_command": "npm run typecheck",
+      "deploy_command": "npm run deploy:safe",
+      "outcome": "success"
+    },
+    "deployment": {
+      "deployment_id": "914fa622-1bdf-4687-b719-8b7f51fccb1e",
+      "worker_version_id": "f134a569-b3d6-4291-9834-40b59a546cd0",
+      "worker_version_number": 4160,
+      "traffic_percent": 100,
+      "deployed_at": "2026-11-22T15:41:17.217621Z",
+      "d1_binding": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
+      "r2_binding": "sanci9517-media"
+    },
+    "production_health": {
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+      "http_status": 200,
+      "body": {"ok": true, "service": "sanci9517-streamer-brand", "version": "2.0.0", "server": "cloudflare-worker"}
+    },
+    "public_asset_hashes": [
+      {"path": "/editor-v2/", "http_status": 200, "local_sha256": "efa52b450600a61ece3e14402e1f78846bb2b3f70ac859fa0c4ff5f01c186a6a", "live_sha256": "efa52b450600a61ece3e14402e1f78846bb2b3f70ac859fa0c4ff5f01c186a6a", "match": true, "cache_key": "app.js?v=20261122-d03-table-object-cell-recovery-v1"},
+      {"path": "/editor-v2/app.js?v=20261122-d03-table-object-cell-recovery-v1", "http_status": 200, "local_sha256": "b718903ed0dcb8e579dbdec660fcb851e295a69ff5a39788fefc1caeca552ebf", "live_sha256": "b718903ed0dcb8e579dbdec660fcb851e295a69ff5a39788fefc1caeca552ebf", "match": true},
+      {"path": "/editor-v2/ui/structured-inspector.js?v=20261122-d03-table-object-cell-recovery-v1", "http_status": 200, "local_sha256": "80001fb0e4da6ba623dbbfb5179f1cf8e85277c43e016ba4a8d14b35caf8bb60", "live_sha256": "80001fb0e4da6ba623dbbfb5179f1cf8e85277c43e016ba4a8d14b35caf8bb60", "match": true},
+      {"path": "/editor-v2/core/element-content.js?v=20261122-d03-table-object-cell-recovery-v1", "http_status": 200, "local_sha256": "c96fad798f0d4129c28236d1b4bcf540e7dbc399d1dbceefaa184480b1ec4316", "live_sha256": "c96fad798f0d4129c28236d1b4bcf540e7dbc399d1dbceefaa184480b1ec4316", "match": true}
+    ],
+    "runtime_source_smoke_workflow": "PASS on the exact deployed source commit; direct GET health and changed public assets also matched."
+  },
+  "production_data_and_cost": {
+    "production_d1_mutations_or_migrations": "none; read-only preflight recorded 0 rows written and changed_db=false.",
+    "r2_operations": "none in production; the browser lifecycle test used a synthetic isolated Miniflare R2 bucket.",
+    "new_paid_services_or_spend": "none intentionally added; normal repo CI and Workers Builds ran. Service quota/billing API was not queried, so no billing guarantee is asserted."
+  },
+  "acceptance_boundary": "This verifies only the targeted malformed-data and cache-bust correction slice. D-01 through D-07 and the full Editor remain OPEN / NOT_CERTIFIED. Full manual/physical Visual Editor acceptance is deferred until the complete Editor exists. Traceability counts are bookkeeping, not feature acceptance.",
+  "quality_review": "Independent read-only review found the stale app.js import cache key after the first release; the follow-up bumped both the app entry URL and Inspector import URL, added a regression check, and verified live bytes after the second exact-SHA deployment."
+}
