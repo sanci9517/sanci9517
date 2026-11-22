@@ -80,5 +80,13 @@
     "status": "partial",
     "measured_seconds": 1248,
     "measurement": "elapsed wall time, not verified active compute time"
+  },
+  "release": {
+    "commit": "da9254896a649c54ee4a6be2ea4d47aa22d97a7f",
+    "message": "fix(media): stage malformed archive guard review [skip ci]",
+    "parent": "ad57590f4d0872706489354e037748bc72311745",
+    "push": "normal git push; GitHub v2/foundation branch API confirmed exact da9254896a649c54ee4a6be2ea4d47aa22d97a7f",
+    "exact_sha_cloudflare_build": "skipped due [skip ci]; no runtime deploy expected",
+    "github_commit_statuses": "none; check-runs contains only Cloudflare Workers Build skipped"
   }
 }
