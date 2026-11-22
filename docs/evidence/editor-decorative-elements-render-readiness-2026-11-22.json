@@ -1,0 +1,87 @@
+{
+  "schema_version": 1,
+  "kind": "editor-browser-test-render-readiness-followup",
+  "recorded_at_utc": "2026-11-22T07:09:42Z",
+  "plan_point": "77.44.7.D — Editor Core decorative-elements public renderer readiness regression",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "head_at_start": "6a81d41836eb31f69f1ca0b7079b731ab8cbbc5c",
+    "preexisting_untracked_preserved": [
+      "scripts/__pycache__/"
+    ]
+  },
+  "finding": {
+    "workflow_run_id": 44942017774,
+    "workflow_head_sha": "002091066623349f2b6f686e8fba8ea1e763d4b8",
+    "job_id": 136961082246,
+    "failed_step": "Run Editor browser layout regression",
+    "failed_test": "tests/browser/editor-decorative-elements.test.js:13",
+    "assertion": "tests/browser/editor-decorative-elements.test.js:222 — palette-created divider appears publicly only after Publish; expected 1, actual 0",
+    "other_editor_core_steps": "success",
+    "diagnosis": "The browser test reloaded the public page with waitUntil=domcontentloaded, then immediately counted an element rendered only after the asynchronous /api/public/pages fetch. The production renderer starts loadPage() from the page script and awaits that request; DOMContentLoaded does not guarantee the public Page Model is rendered. This is test synchronization, not evidence of a deployed runtime failure."
+  },
+  "change": {
+    "runtime_changed": false,
+    "files": [
+      "tests/browser/editor-decorative-elements.test.js",
+      "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+      "docs/evidence/editor-decorative-elements-render-readiness-2026-11-22.json"
+    ],
+    "behavior": "After the Save reload the browser waits for the already-published baseline divider before asserting that draft-only nodes are absent. After explicit Publish and reload it waits for the newly published divider before asserting all eight new palette nodes and their visual styles.",
+    "save_publish_separate": true,
+    "new_dependencies": []
+  },
+  "checks": {
+    "pre_fix_local": "Target browser was initially blocked with listen EPERM on 127.0.0.1; it was rerun with permitted local-loopback access and passed 1/1 before the synchronization change.",
+    "post_fix_browser": "PASS — two consecutive full Chromium runs of tests/browser/editor-decorative-elements.test.js (1/1 each).",
+    "syntax": "PASS — node --check tests/browser/editor-decorative-elements.test.js.",
+    "diff_check": "PASS — git diff --check after source, plan and evidence updates.",
+    "plan_contract": "PASS — python3 tests/plan-contract.test.py; 15/15.",
+    "canonical_plan": "PASS — python3 scripts/check-canonical-plan.py; 13 master files and 396 mappings; acceptance NOT_CERTIFIED.",
+    "traceability": "PASS — python3 scripts/build-feature-traceability.py --check; 396/396.",
+    "typecheck": "Not run; only a JavaScript browser test and plan/evidence changed.",
+    "full_editor_suite": "Not run; exact affected browser test and required plan integrity checks are the relevant scope.",
+    "new_ci_dispatch_or_rerun": "Not run; test/evidence-only changes use [skip ci] and no known free GitHub Actions budget was asserted.",
+    "active_point_audit": "PASS as bookkeeping only — 77.44.7.D OPEN / NOT_CERTIFIED; 148 PARTIAL_SOURCE / 248 UNVERIFIED."
+  },
+  "failed_run_artifact": {
+    "id": 14722914316,
+    "name": "editor-layout-screenshots",
+    "bytes": 3274868,
+    "sha256": "e105731eb3209d5abb513940e079855073b9d27b90ede4d7de9a4220b994b38e",
+    "retention": "original seven-day retention; preserved; not deleted"
+  },
+  "production": {
+    "runtime_source_unchanged": true,
+    "latest_read_only_control_plane": "deployment 34d24376-849b-4b54-bcc8-92806f368067; Worker version 57e63653-5636-4c41-a7e3-59c0c4ba41a4; traffic 100%.",
+    "last_health_and_asset_check": "2026-11-21 production release evidence for source 002091066623349f2b6f686e8fba8ea1e763d4b8: /api/health HTTP 200; then-changed assets matched byte-for-byte.",
+    "this_run_smoke": "Not run; no runtime/source change. Shell HTTPS probe cannot reach its configured proxy (connection refused); no fresh HTTP result is claimed.",
+    "d1_or_r2": "No production D1/R2 operation."
+  },
+  "release": {
+    "commit_sha": "Pending local checks completed; no commit or push yet.",
+    "workflow": "No new CI is triggered for this test/documentation-only follow-up.",
+    "worker_deploy": "Not applicable; runtime unchanged."
+  },
+  "scope": {
+    "77.44.7.D": "OPEN / NOT_CERTIFIED",
+    "editor_acceptance": "DEFERRED until full Editor scope and final manual/physical gate",
+    "traceability": "148 PARTIAL_SOURCE / 248 UNVERIFIED (last recorded audit)",
+    "cost_ft": 0
+  },
+  "plan": {
+    "source_sha256": "def1d1bb26532df1a0c0a3b2584f374d80f7ec754430dfff11da81cd1b7154fc",
+    "after_sha256": "45a65c4cf11f334bf40b70053f584c2dcc81a9df5b269cd7cfd85d716f53b41f",
+    "after_bytes": 1798749
+  },
+  "source_sha256": {
+    "tests/browser/editor-decorative-elements.test.js": "84a11f903e8ee79d22064278310f74c1f5bfc276cdc895700210a08b687e953a"
+  },
+  "measured_session": {
+    "id": "20261122070355-e124b100",
+    "measured_seconds": 397,
+    "status": "pass",
+    "record": "docs/evidence/dev-metrics/runs/2026-11-22/20261122070355-e124b100.json"
+  }
+}

@@ -112,6 +112,7 @@ test('partial palette types and Divider/Spacer Inspector edits become public onl
  assert.equal(await editor.locator(`.node[data-node-id="${paletteAddedNodeId}"]`).count(),1,'the newly created node is visible on Canvas');
  const canvasNode=id=>editor.locator('.node[data-node-id="'+id+'"]');
  const publicNode=id=>viewer.locator('.visual-editor-node[data-node-id="'+id+'"]');
+ const waitForPublicNode=id=>viewer.waitForFunction(nodeId=>Boolean(document.querySelector(`.visual-editor-node[data-node-id="${CSS.escape(nodeId)}"]`)),id);
  const paletteAddedNodeIds={divider:paletteAddedNodeId};
  for(const [type,groupName,label] of [
   ['panel','Layout','Panel'],['overlay','Layout','Overlay'],['absolute','Layout','Absolute'],['sticky','Layout','Sticky'],
@@ -209,6 +210,9 @@ test('partial palette types and Divider/Spacer Inspector edits become public onl
   assert.equal(published.pages[pageId].nodes[nodeId],undefined,`draft Save leaves palette-created ${type} unpublished`);
  }
  await viewer.reload({waitUntil:'domcontentloaded'});
+ // The public renderer fetches the published page asynchronously after DOMContentLoaded.
+ // Wait for the already-published baseline before asserting that a draft-only node is absent.
+ await waitForPublicNode(dividerId);
  for(const [type,nodeId] of Object.entries(paletteAddedNodeIds))assert.equal(await publicNode(nodeId).count(),0,`palette-created ${type} stays private after Save`);
  assert.equal(await publicNode(dividerId).evaluate(el=>getComputedStyle(el).borderTopWidth),'2px','Save does not change live divider');
  assert.equal(await publicNode(spacerId).evaluate(el=>getComputedStyle(el).height),'64px','Save does not change live spacer');
@@ -218,6 +222,10 @@ test('partial palette types and Divider/Spacer Inspector edits become public onl
  assert.equal(posts.at(-1).publish,true);
  for(const [type,nodeId] of Object.entries(paletteAddedNodeIds))assert.equal(published.pages[pageId].nodes[nodeId].type,type,`explicit Publish copies palette-created ${type} to the live snapshot`);
  await viewer.reload({waitUntil:'domcontentloaded'});
+ // Do not mistake the interval between DOMContentLoaded and the public API response for a
+ // missing published node. Waiting for the newly published divider keeps the assertion about
+ // Save/Publish semantics while making the browser check deterministic on slower CI runners.
+ await waitForPublicNode(paletteAddedNodeIds.divider);
  for(const [type,nodeId] of Object.entries(paletteAddedNodeIds)){
   assert.equal(await publicNode(nodeId).count(),1,`palette-created ${type} appears publicly only after Publish`);
   assert.equal(await publicNode(nodeId).evaluate(el=>getComputedStyle(el).backgroundColor),asRgb(paletteColors[type]),`published ${type} preserves Inspector background color`);

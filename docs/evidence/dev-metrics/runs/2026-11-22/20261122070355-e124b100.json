@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261122070355-e124b100",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-22T07:03:55.268Z",
+  "finished_at": "2026-11-22T07:10:31.851Z",
+  "wall_seconds": 397,
+  "paused_seconds": 0,
+  "measured_seconds": 397,
+  "status": "pass",
+  "kind": "mixed",
+  "summary": "Fix asynchronous public-render readiness wait in the Editor decorative-elements browser regression; update D status/evidence. Full D remains open.",
+  "evidence": [
+    "docs/evidence/editor-decorative-elements-render-readiness-2026-11-22.json"
+  ],
+  "checks": "Chromium 1/1 twice; plan-contract 15/15; canonical 13/396; traceability 396/396; active audit D OPEN; node syntax; diff check",
+  "started_revision": "6a81d41836eb31f69f1ca0b7079b731ab8cbbc5c",
+  "finished_revision": "6a81d41836eb31f69f1ca0b7079b731ab8cbbc5c",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
