@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "captured_at_utc": "2026-11-22T19:13:51Z",
+  "captured_at_utc": "2026-11-22T19:21:11Z",
   "plan_item": "77.44.7.D / D-06 — media missing-audit cursor scope",
-  "status": "IMPLEMENTED / LOCAL CHECKS PASS / RELEASE PENDING",
+  "status": "RUNTIME RELEASED / EXACT-SHA HOSTED EDITOR CI IN PROGRESS",
   "repository": {
     "name": "sanci9517/sanci9517",
     "branch": "v2/foundation",
@@ -36,20 +36,61 @@
     "npm run test:web013:migration-gate": "PASS; 0031 remains unapplied and manual-only",
     "XDG_CONFIG_HOME=/tmp/sanci-wrangler-config npx wrangler deploy --dry-run": "PASS; Wrangler 4.130.0, 199 assets, 429.61 KiB / 108.89 KiB gzip, no deployment",
     "git diff --check": "PASS",
-    "production D1 preflight": "PASS read-only: three standalone SELECT queries; ledger 36 rows through 0030, seven archive triggers, media and d1_migrations tables; rows_written=0, changes=0, changed_db=false for all queries"
+    "production D1 preflight": "PASS read-only: three standalone SELECT queries; ledger 36 rows through 0030, seven archive triggers, media and d1_migrations tables; rows_written=0, changes=0, changed_db=false for all queries",
+    "GitHub exact-source runtime release workflows": "F0, active-plan audit, source-smoke, canonical-plan, Twitch and Cloudflare Workers Builds PASS; Editor Core run 45059636658 remains IN_PROGRESS after steps 1-12; no overall Editor CI PASS claimed.",
+    "post-release production health": "PASS HTTP 200; healthy sanci9517-streamer-brand 2.0.0",
+    "Editor Core latest status": "IN_PROGRESS; GitHub jobs API confirms steps 1-13 success and step 14 browser layout in progress.",
+    "health recheck this session": "NOT AVAILABLE; proxy connection failed and Cloudflare outbound fetch denied; prior recorded post-release HTTP 200 remains the last direct health result."
   },
   "release": {
     "runtime_changed": true,
-    "source_commit": null,
-    "push": "PENDING",
+    "source_commit": "69d4a2d54a3d6d59f0eec596622e09f3bdb3c6f4",
+    "push": "PASS; Git normal fast-forward a38dc95e..69d4a2d5; GitHub branch GET confirmed exact full SHA",
     "required_ci": "PENDING; public GitHub repository; runtime-required workflows must complete and remain free",
     "automatic_deployment": "PENDING",
     "latest_pre_change_deployment": "914fa622-1bdf-4687-b719-8b7f51fccb1e",
     "latest_pre_change_worker_version": "f134a569-b3d6-4291-9834-40b59a546cd0",
     "latest_pre_change_worker_version_number": 4160,
     "pre_change_traffic_percent": 100,
-    "post_release_health": "PENDING",
-    "changed_public_assets": []
+    "post_release_health": {
+      "status": "PASS",
+      "http_status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "changed_public_assets": [],
+    "cloudflare_workers_build": "PASS; exact-SHA check Workers Builds: sanci9517-streamer-brand, check run 137322696063",
+    "deployment_id": "0cb10f04-5f03-4b11-84e9-100ff0c81e9c",
+    "worker_version_id": "d8735bf0-3adc-46de-8d66-8fd8118a0874",
+    "worker_version_number": "not exposed by deployment list API",
+    "traffic_percent": 100,
+    "deployment_created_on": "2026-11-22T19:15:23.931567Z",
+    "public_asset_hashes": "No public/ files changed in the exact commit; no changed asset SHA comparison required.",
+    "github_exact_sha_workflows": {
+      "F0 baseline checks 45059636591": "SUCCESS",
+      "Canonical Plan Active Point Audit 45059636590": "SUCCESS",
+      "Production Worker source smoke 45059636594": "SUCCESS; live health and exact changed public source checks passed (none changed)",
+      "Canonical Plan 45059636635": "SUCCESS",
+      "Twitch integration 45059636687": "SUCCESS",
+      "Editor Core Test 45059636658": "IN_PROGRESS; steps 1-13 passed; step 14 Editor browser layout regression running; WEB-013 mobile and subsequent contract checks pending; no overall pass claimed."
+    },
+    "github_branch_recheck": {
+      "branch": "v2/foundation",
+      "sha": "69d4a2d54a3d6d59f0eec596622e09f3bdb3c6f4",
+      "verified_by": "GitHub refs API",
+      "status": "PASS"
+    },
+    "cloudflare_deployment_recheck": {
+      "deployment_id": "0cb10f04-5f03-4b11-84e9-100ff0c81e9c",
+      "worker_version_id": "d8735bf0-3adc-46de-8d66-8fd8118a0874",
+      "traffic_percent": 100,
+      "status": "PASS"
+    },
+    "health_recheck_this_session": "UNAVAILABLE: local outbound curl could not connect to configured proxy; Cloudflare tool outbound fetch was denied. Previous direct post-deploy HTTP 200 check remains recorded above."
   },
   "safety": {
     "production_d1_migration_or_data_write": "NOT RUN",
@@ -57,6 +98,7 @@
     "new_dependencies": false,
     "new_cost_huf": 0,
     "save_publish_separation_preserved": true,
-    "full_editor_acceptance": "DEFERRED; D-06 and 77.44.7.D remain OPEN / NOT CERTIFIED"
+    "full_editor_acceptance": "DEFERRED; D-06 and 77.44.7.D remain OPEN / NOT CERTIFIED",
+    "cost_note": "Public GitHub standard-runner workflows are free; no paid service or deployment plan/billing setting changed. Cloudflare API reported usage_model=standard; billing usage query was unavailable (tool returned a parser error), so aggregate account quota is not asserted."
   }
 }
