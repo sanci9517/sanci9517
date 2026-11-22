@@ -14,9 +14,11 @@ test('the Editor release tokens bust the stylesheet, app, and responsive resolve
     'the deployed HTML must request the stylesheet version containing palette-favorites styles');
   assert.match(css,/\.element-favorite-toggle\s*\{/,
     'the stylesheet referenced by the versioned link must include the palette-favorites UI');
-  assert.match(html,/src="\/editor-v2\/app\.js\?v=20261122-edt024-responsive-prototype-safety-v1"/,
-    'the deployed entry page must request the Editor script containing the responsive property-safety fix');
+  assert.match(html,/src="\/editor-v2\/app\.js\?v=20261122-d03-table-object-cell-recovery-v1"/,
+    'the deployed entry page must request the Editor script containing the malformed table-cell recovery fix');
   const app=await readFile(resolve(root,'app.js'),'utf8');
   assert.match(app,/core\/responsive\.js\?v=20261122-edt024-responsive-prototype-safety-v1/,
     'the versioned entry script must request the responsive resolver cache key');
+  assert.match(app,/ui\/structured-inspector\.js\?v=20261122-d03-table-object-cell-recovery-v1/,
+    'the versioned entry script must request the structured Inspector containing explicit table-row recovery');
 });
