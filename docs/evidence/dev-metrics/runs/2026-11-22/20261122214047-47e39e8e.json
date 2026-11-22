@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261122214047-47e39e8e",
+  "task": "77.44.7.D",
+  "trigger": "scheduled",
+  "started_at": "2026-11-22T21:40:47.231Z",
+  "finished_at": "2026-11-22T21:42:15.226Z",
+  "wall_seconds": 88,
+  "paused_seconds": 0,
+  "measured_seconds": 88,
+  "status": "partial",
+  "kind": "docs",
+  "summary": "Rechecked the prior runtime release and recorded the completed exact-SHA Editor Core hosted CI result; canonical plan contracts passed. Full D acceptance remains open.",
+  "evidence": [
+    "docs/evidence/editor-d06-missing-audit-site-cursor-2026-11-22.json"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "d81f7f9eaa163990bb6444cc46c03fc9a8604d3a",
+  "finished_revision": "d81f7f9eaa163990bb6444cc46c03fc9a8604d3a",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "captured_at_utc": "2026-11-22T19:21:11Z",
+  "captured_at_utc": "2026-11-22T21:42:01Z",
   "plan_item": "77.44.7.D / D-06 — media missing-audit cursor scope",
-  "status": "RUNTIME RELEASED / EXACT-SHA HOSTED EDITOR CI IN PROGRESS",
+  "status": "RUNTIME RELEASED / EXACT-SHA EDITOR CORE CI PASS",
   "repository": {
     "name": "sanci9517/sanci9517",
     "branch": "v2/foundation",
@@ -40,7 +40,8 @@
     "GitHub exact-source runtime release workflows": "F0, active-plan audit, source-smoke, canonical-plan, Twitch and Cloudflare Workers Builds PASS; Editor Core run 45059636658 remains IN_PROGRESS after steps 1-12; no overall Editor CI PASS claimed.",
     "post-release production health": "PASS HTTP 200; healthy sanci9517-streamer-brand 2.0.0",
     "Editor Core latest status": "IN_PROGRESS; GitHub jobs API confirms steps 1-13 success and step 14 browser layout in progress.",
-    "health recheck this session": "NOT AVAILABLE; proxy connection failed and Cloudflare outbound fetch denied; prior recorded post-release HTTP 200 remains the last direct health result."
+    "health recheck this session": "NOT AVAILABLE; proxy connection failed and Cloudflare outbound fetch denied; prior recorded post-release HTTP 200 remains the last direct health result.",
+    "Editor Core exact-source CI": "PASS; run 45059636658 completed SUCCESS for runtime commit 69d4a2d54a3d6d59f0eec596622e09f3bdb3c6f4 at 2026-11-22T19:48:39Z; steps 1-19 passed, screenshot upload skipped by workflow."
   },
   "release": {
     "runtime_changed": true,
@@ -76,7 +77,7 @@
       "Production Worker source smoke 45059636594": "SUCCESS; live health and exact changed public source checks passed (none changed)",
       "Canonical Plan 45059636635": "SUCCESS",
       "Twitch integration 45059636687": "SUCCESS",
-      "Editor Core Test 45059636658": "IN_PROGRESS; steps 1-13 passed; step 14 Editor browser layout regression running; WEB-013 mobile and subsequent contract checks pending; no overall pass claimed."
+      "Editor Core Test 45059636658": "SUCCESS; run completed for exact runtime SHA 69d4a2d54a3d6d59f0eec596622e09f3bdb3c6f4; steps 1-19 passed and screenshot upload was skipped."
     },
     "github_branch_recheck": {
       "branch": "v2/foundation",
@@ -90,7 +91,15 @@
       "traffic_percent": 100,
       "status": "PASS"
     },
-    "health_recheck_this_session": "UNAVAILABLE: local outbound curl could not connect to configured proxy; Cloudflare tool outbound fetch was denied. Previous direct post-deploy HTTP 200 check remains recorded above."
+    "health_recheck_this_session": "UNAVAILABLE: local outbound curl could not connect to configured proxy; Cloudflare tool outbound fetch was denied. Previous direct post-deploy HTTP 200 check remains recorded above.",
+    "documentation_followups": {
+      "commits": [
+        "5a32cb4b53ab666be333625563c42f7e46796901",
+        "d81f7f9eaa163990bb6444cc46c03fc9a8604d3a"
+      ],
+      "branch_ref_verified_at_head": "d81f7f9eaa163990bb6444cc46c03fc9a8604d3a",
+      "ci": "No new workflow run appeared for either [skip ci] documentation/evidence commit; the exact runtime-SHA CI result above remains the release gate."
+    }
   },
   "safety": {
     "production_d1_migration_or_data_write": "NOT RUN",
