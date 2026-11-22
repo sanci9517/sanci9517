@@ -1627,6 +1627,20 @@ test("D1-to-R2 missing audit paginates 101 assets without mutating records",asyn
   assert.equal(f.db.prepare("SELECT COUNT(*) n FROM media").get().n,101);
   assert.equal(f.files.size,51);
 });
+test("missing audit rejects foreign-site and unknown UUID cursors before scanning",async t=>{
+  const f=await fixture(t);
+  const foreignId="00000000-0000-4000-8000-000000000099";
+  f.db.prepare("INSERT INTO media(id,object_key,original_name,mime_type,size_bytes,alt_text,site_id) VALUES(?,?,?,?,?,?,?)")
+    .run(foreignId,"sites/other/media/foreign","foreign.png","image/png",png.length,"","other");
+  const before=f.mediaReads.headCount;
+  for(const cursor of [foreignId,"00000000-0000-4000-8000-000000000098"]){
+    const response=await f.call("GET","editor",null,{missingAudit:true,before:cursor});
+    assert.equal(response.status,400);
+    assert.equal((await response.json()).error.code,"INVALID_MEDIA_CURSOR");
+  }
+  assert.equal(f.mediaReads.headCount,before,"invalid cursors must fail before touching object storage");
+  assert.equal(f.db.prepare("SELECT COUNT(*) n FROM media").get().n,1,"audit remains read-only");
+});
 test("D1-to-R2 missing audit fails closed on storage outage",async t=>{
   const f=await fixture(t);
   await f.call("POST","editor",png,{name:"media.png"});

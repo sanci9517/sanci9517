@@ -686,11 +686,20 @@ export async function adminMediaRoute(request: Request, env: Env, siteId: string
     if (url.searchParams.get("missingAudit") === "1") {
       if (id !== null || usageId !== null || url.searchParams.has("orphanAudit")) return error("INVALID_MEDIA_AUDIT", 400);
       const before = url.searchParams.get("before");
-      if (before !== null && !/^[0-9a-f-]{36}$/.test(before)) return error("INVALID_MEDIA_CURSOR", 400);
+      if (before !== null) {
+        if (!MEDIA_ASSET_ID.test(before)) return error("INVALID_MEDIA_CURSOR", 400);
+        // A keyset cursor must identify a row in this site's media registry.
+        // Otherwise a well-formed but arbitrary UUID could skip earlier rows
+        // while the response incorrectly reports the remaining scan complete.
+        const cursor = await env.DB.prepare(
+          "SELECT id FROM media WHERE id=? AND site_id=? LIMIT 1"
+        ).bind(before.toLowerCase(), siteId).first<{ id: string }>();
+        if (!cursor) return error("INVALID_MEDIA_CURSOR", 400);
+      }
       const rows = await env.DB.prepare(
         "SELECT id,object_key,original_name,archived_at FROM media WHERE site_id=? " +
         (before ? "AND id > ? " : "") + "ORDER BY id ASC LIMIT 101"
-      ).bind(...(before ? [siteId,before] : [siteId])).all<Pick<MediaRow,"id"|"object_key"|"original_name"|"archived_at">>();
+      ).bind(...(before !== null ? [siteId,before.toLowerCase()] : [siteId])).all<Pick<MediaRow,"id"|"object_key"|"original_name"|"archived_at">>();
       const batch = rows.results.slice(0,100);
       const missing: { id:string; name:string; archived:boolean }[]=[];
       for (const row of batch) {

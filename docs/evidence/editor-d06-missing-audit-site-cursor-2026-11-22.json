@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "captured_at_utc": "2026-11-22T19:13:51Z",
+  "plan_item": "77.44.7.D / D-06 — media missing-audit cursor scope",
+  "status": "IMPLEMENTED / LOCAL CHECKS PASS / RELEASE PENDING",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "head_at_start": "a38dc95e51ac83d46601b108f090933221b71fbb",
+    "remote_head_at_start": "a38dc95e51ac83d46601b108f090933221b71fbb",
+    "worktree_untracked_preserved": [
+      "scripts/__pycache__/",
+      "scripts/d1/__pycache__/"
+    ],
+    "canonical_plan_source_sha256_before_append": "5521b7ba1185e9f902f7322bd606c103dd7f320883a636dc4a61c91432b0b7e4"
+  },
+  "finding": "The read-only missing-media audit accepted any UUID-shaped before cursor. A foreign-site or nonexistent UUID could seek past rows, then incorrectly report the remaining page as complete.",
+  "implementation": {
+    "file": "src/routes/admin/media.ts",
+    "change": "Require a strict media asset UUID and verify the cursor identifies a media row in the authorized site before scanning; normalize the ID before keyset comparison. Invalid cursors return INVALID_MEDIA_CURSOR before any R2 HEAD checks.",
+    "production_data_mutation": false
+  },
+  "regression": {
+    "file": "tests/media-api.test.js",
+    "case": "Foreign-site and unknown UUID cursors both fail with 400 before storage access; the media registry remains unchanged."
+  },
+  "checks": {
+    "npm run test:media": "PASS; all 7 test files",
+    "python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/admin-media-integrity.test.js": "PASS 10/10 in Chromium with loopback network permission",
+    "direct browser invocation without network permission": "BLOCKED by sandbox EPERM binding 127.0.0.1; rerun with explicit loopback network permission passed",
+    "npm run typecheck -- --pretty false": "PASS",
+    "python3 tests/plan-contract.test.py": "PASS 15/15 after source traceability refresh",
+    "python3 scripts/check-canonical-plan.py": "PASS; one 13-file canonical master, 396 source mappings, acceptance not certified",
+    "python3 scripts/build-feature-traceability.py --check": "PASS 396/396",
+    "python3 scripts/audit-active-plan-point.py": "PASS bookkeeping only; 77.44 / WEB-011 next 77.44.7.D; 148 PARTIAL_SOURCE / 248 UNVERIFIED; functional acceptance NOT_CERTIFIED",
+    "npm run test:web013:migration-gate": "PASS; 0031 remains unapplied and manual-only",
+    "XDG_CONFIG_HOME=/tmp/sanci-wrangler-config npx wrangler deploy --dry-run": "PASS; Wrangler 4.130.0, 199 assets, 429.61 KiB / 108.89 KiB gzip, no deployment",
+    "git diff --check": "PASS",
+    "production D1 preflight": "PASS read-only: three standalone SELECT queries; ledger 36 rows through 0030, seven archive triggers, media and d1_migrations tables; rows_written=0, changes=0, changed_db=false for all queries"
+  },
+  "release": {
+    "runtime_changed": true,
+    "source_commit": null,
+    "push": "PENDING",
+    "required_ci": "PENDING; public GitHub repository; runtime-required workflows must complete and remain free",
+    "automatic_deployment": "PENDING",
+    "latest_pre_change_deployment": "914fa622-1bdf-4687-b719-8b7f51fccb1e",
+    "latest_pre_change_worker_version": "f134a569-b3d6-4291-9834-40b59a546cd0",
+    "latest_pre_change_worker_version_number": 4160,
+    "pre_change_traffic_percent": 100,
+    "post_release_health": "PENDING",
+    "changed_public_assets": []
+  },
+  "safety": {
+    "production_d1_migration_or_data_write": "NOT RUN",
+    "r2_mutation": "NOT RUN",
+    "new_dependencies": false,
+    "new_cost_huf": 0,
+    "save_publish_separation_preserved": true,
+    "full_editor_acceptance": "DEFERRED; D-06 and 77.44.7.D remain OPEN / NOT CERTIFIED"
+  }
+}

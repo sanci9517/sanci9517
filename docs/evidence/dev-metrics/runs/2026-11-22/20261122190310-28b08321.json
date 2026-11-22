@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261122190310-28b08321",
+  "task": "77.44.7.D",
+  "trigger": "scheduled",
+  "started_at": "2026-11-22T19:03:10.144Z",
+  "finished_at": "2026-11-22T19:14:10.335Z",
+  "wall_seconds": 660,
+  "paused_seconds": 0,
+  "measured_seconds": 660,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "D-06 audit cursor now enforces strict UUID and authorized-site row; API and Chromium regressions pass, release pending exact-source automation and health verification.",
+  "evidence": [
+    "docs/evidence/editor-d06-missing-audit-site-cursor-2026-11-22.json"
+  ],
+  "checks": "test:media 7/7; Chromium integrity 10/10; typecheck; plan 15/15; traceability 396; migration gate; Wrangler dry-run; release pending",
+  "started_revision": "a38dc95e51ac83d46601b108f090933221b71fbb",
+  "finished_revision": "a38dc95e51ac83d46601b108f090933221b71fbb",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
