@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261122180359-2c542bab",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-22T18:03:59.672Z",
+  "finished_at": "2026-11-22T18:14:32.689Z",
+  "wall_seconds": 633,
+  "paused_seconds": 0,
+  "measured_seconds": 633,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "D-06 0031 candidate changed to sequential idempotent installation; fresh SELECT-only preflight and local regression gates passed; production D1 migration remains unapplied.",
+  "evidence": [
+    "docs/evidence/editor-d06-0031-resumable-preflight-2026-11-22.json",
+    "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md"
+  ],
+  "checks": "npm run test:media 7/7; ledger 11/11; restore 7/7; live contract 1/1; plan contract 15/15; canonical 13/396; migration gate PASS",
+  "started_revision": "42fd2220d1cb969d36c1b8900237d4f00a6a0cc8",
+  "finished_revision": "42fd2220d1cb969d36c1b8900237d4f00a6a0cc8",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

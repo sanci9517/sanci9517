@@ -1,0 +1,109 @@
+{
+  "schema_version": 1,
+  "captured_at_utc": "2026-11-22T18:14:46Z",
+  "plan_item": "77.44.7.D / D-06",
+  "status": "PARTIAL / NOT CERTIFIED",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "head_at_start": "42fd2220d1cb969d36c1b8900237d4f00a6a0cc8",
+    "remote_head_at_start": "42fd2220d1cb969d36c1b8900237d4f00a6a0cc8",
+    "worktree_untracked_preserved": [
+      "scripts/__pycache__/",
+      "scripts/d1/__pycache__/"
+    ],
+    "plan_source_sha256_before_append": "8b4a2668cfdfe27b8132f02b5acfd600dd03d48663808df98bfd2eac456f473f"
+  },
+  "change": {
+    "finding": "The prior review-only 0031 generator described a multi-statement REST query as one atomic operation, although that API request's transaction semantics had not been established.",
+    "implementation": "Replaced the multi-statement REST request with four individually rerunnable CREATE TRIGGER IF NOT EXISTS statements plus a fifth guarded marker insert. Each trigger stays dormant until the marker exists. The final statement requires the exact 36-marker baseline through 0030, 11 archive triggers, and exact stored SQL for each of the four definitions (not just matching names), plus a clean foreign-key check.",
+    "safety_gate": "Updated the repository migration gate to require the idempotent trigger declarations and the dormant-until-marker contract. The candidate remains outside migrations/ and scripts/pending/ and is absent from scripts/d1/manual-migrations.json.",
+    "candidate_sha256": "6b3b00f50c1c2e4cb1f1d5fdb1f25aef6436a14f61fa96fd4cb80d5203847f64"
+  },
+  "production_read_only_preflight": {
+    "method": "Cloudflare D1 Query API; three individual SELECT-only requests; no writes.",
+    "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
+    "account_id": "64bbd6a12ac732ed2cac4ca25d8bfa7e",
+    "queries": [
+      {
+        "sql": "SELECT id,name FROM d1_migrations ORDER BY id",
+        "rows_read": 36,
+        "rows_written": 0,
+        "changes": 0,
+        "changed_db": false,
+        "last_marker": "0030_media_library_organization.sql"
+      },
+      {
+        "sql": "SELECT name FROM sqlite_master WHERE type='trigger' AND name LIKE 'media_archive_%' ORDER BY name",
+        "rows_read": 154,
+        "rows_written": 0,
+        "changes": 0,
+        "changed_db": false,
+        "archive_trigger_count": 7
+      },
+      {
+        "sql": "SELECT name FROM sqlite_master WHERE type='table' AND name IN ('pages','editor_revisions','media','d1_migrations') ORDER BY name",
+        "rows_read": 151,
+        "rows_written": 0,
+        "changes": 0,
+        "changed_db": false,
+        "tables": [
+          "d1_migrations",
+          "editor_revisions",
+          "media",
+          "pages"
+        ]
+      }
+    ],
+    "result": "READ_ONLY_PREFLIGHT_PASS"
+  },
+  "checks": {
+    "node --experimental-sqlite tests/d1-0031-release-batch.test.js": "PASS 3/3, including interrupted install/replay, exact-definition collision rejection, activation barrier, malformed-data paths, tenant isolation, replay idempotency and integrity checks.",
+    "npm run test:media": "PASS 7/7 test files.",
+    "python3 tests/d1-ledger-reconciliation.test.py": "PASS 11/11.",
+    "python3 tests/d1-restore-order.test.py": "PASS 7/7.",
+    "node --experimental-loader ./tests/ts-extension-loader.mjs --test tests/web013-live-activation-contract.test.js": "PASS 1/1.",
+    "python3 tests/plan-contract.test.py": "PASS 15/15 after refreshing the generated source traceability file.",
+    "python3 scripts/check-canonical-plan.py": "PASS; one 13-file canonical master, 396 mappings; acceptance not certified.",
+    "python3 scripts/build-feature-traceability.py --check": "PASS 396/396.",
+    "python3 scripts/audit-active-plan-point.py": "PASS accounting only; cursor 77.44 / WEB-011, next 77.44.7.D; 148 PARTIAL_SOURCE / 248 UNVERIFIED.",
+    "npm run test:web013:migration-gate": "PASS.",
+    "node --check changed JavaScript and git diff --check": "PASS.",
+    "production D1 migration or mutation": "NOT RUN."
+  },
+  "runtime": {
+    "changed": false,
+    "latest_read_only_deployment": "914fa622-1bdf-4687-b719-8b7f51fccb1e",
+    "worker_version_id": "f134a569-b3d6-4291-9834-40b59a546cd0",
+    "worker_version_number": 4160,
+    "traffic_percent": 100,
+    "production_health_or_asset_rechecks": "Not repeated because runtime and public assets are unchanged; the previous exact-source health and asset checks remain in editor-d03-d06-malformed-data-fail-closed-2026-11-22.json."
+  },
+  "operations": {
+    "production_d1_write": false,
+    "production_r2_operation": false,
+    "worker_deployment": false,
+    "hosted_ci_dispatch_or_rerun": false,
+    "new_dependencies": false,
+    "new_cost": "0 Ft; billing/quota remaining balance was not queried and no quota guarantee is asserted."
+  },
+  "scope": {
+    "d_06": "OPEN / NOT CERTIFIED; review-only candidate not applied.",
+    "d_01_to_d_07": "OPEN / NOT CERTIFIED.",
+    "full_editor": "OPEN / NOT CERTIFIED.",
+    "manual_physical_acceptance": "DEFERRED until the complete Editor is implemented.",
+    "save_publish_separate": true
+  },
+  "release": {
+    "method": "Documentation/test-only normal fast-forward with [skip ci]; no redundant Worker deployment.",
+    "commit": "PENDING",
+    "remote_ref": "PENDING",
+    "cloudflare_build": "EXPECTED SKIPPED BY [skip ci]; not reported PASS."
+  },
+  "development_metrics": {
+    "run_id": "20261122180359-2c542bab",
+    "status": "partial",
+    "measurement": "Elapsed wall time, not verified active compute time.",
+    "measured_seconds": 633
+  }
+}

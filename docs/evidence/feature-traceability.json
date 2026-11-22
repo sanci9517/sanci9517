@@ -63,7 +63,7 @@
     "public/visual-page.html": "3f0d4d34d5ff03349e02b35ce21a6a961b6e0aafdd803c0c13ea959780575907",
     "scripts/d1/ledger-reconciliation.py": "b1868110d3520bc308e77c4734a40a35f31ddd2a640940636dbcdee6559f3ac7",
     "scripts/pending/0030_media_library_organization.sql": "af036c90edda1bd4685e2ed09707c167d02a2b43afec859a28ed9eb90a5eaa92",
-    "scripts/web013-migration-safety-gate.mjs": "007b8ed6685e3ea3562e698754d4b0222ed6443acf457dbe8f04b8decb4b9363",
+    "scripts/web013-migration-safety-gate.mjs": "1088004df9988733ed0b519a4fd02783e79d82a1d21f6408b387ce4bddee4027",
     "src/core/audit.ts": "9321698ebcdc7bc0227df3d12e8a7485703011235836df936ce7b837bb4b67ba",
     "src/core/auth/admin-tenant-gate.ts": "26e56e9d04e16950eb434f0f89842abda23f5349f361d00e2096310091ea01a8",
     "src/core/auth/require-auth.ts": "7933ad739fe34dd47234a2ab66a3e54a06daee75c8b96de60f1007cec246788e",

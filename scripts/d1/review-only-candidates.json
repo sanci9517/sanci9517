@@ -2,7 +2,7 @@
   {
     "name": "0031_media_archive_malformed_json_guard.sql",
     "path": "tests/fixtures/0031_media_archive_malformed_json_guard.sql",
-    "sha256": "0af93a5212c9ff87eed55e192d143c0f31c416f658404b40030f60b111ec559b",
+    "sha256": "6b3b00f50c1c2e4cb1f1d5fdb1f25aef6436a14f61fa96fd4cb80d5203847f64",
     "status": "REVIEW_ONLY_NOT_APPLIED",
     "requires": "fresh SELECT-only production preflight and explicit approval for the D1 migration operation"
   }

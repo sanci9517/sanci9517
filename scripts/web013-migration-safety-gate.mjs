@@ -80,10 +80,11 @@ if (!unicodeBody.includes("CREATE TRIGGER media_archive_pages_insert_unicode_gua
     !organizationBody.includes("CREATE TABLE media_collections") || !organizationBody.includes("ALTER TABLE media ADD COLUMN folder_id") ||
     !organizationBody.includes("FOREIGN KEY(site_id,asset_id) REFERENCES media(site_id,id)") ||
     /\b(?:DROP\s+(?:TABLE|TRIGGER|INDEX)|DELETE\s+FROM|INSERT\s+INTO|UPDATE\s+[a-z_]+\s+SET)\b/i.test(organizationBody) ||
-    !malformedBody.includes("CREATE TRIGGER media_archive_pages_insert_malformed_guard") ||
-    !malformedBody.includes("CREATE TRIGGER media_archive_pages_update_malformed_guard") ||
-    !malformedBody.includes("CREATE TRIGGER media_archive_revisions_insert_malformed_guard") ||
-    !malformedBody.includes("CREATE TRIGGER media_archive_revisions_update_malformed_guard") ||
+    !malformedBody.includes("CREATE TRIGGER IF NOT EXISTS media_archive_pages_insert_malformed_guard") ||
+    !malformedBody.includes("CREATE TRIGGER IF NOT EXISTS media_archive_pages_update_malformed_guard") ||
+    !malformedBody.includes("CREATE TRIGGER IF NOT EXISTS media_archive_revisions_insert_malformed_guard") ||
+    !malformedBody.includes("CREATE TRIGGER IF NOT EXISTS media_archive_revisions_update_malformed_guard") ||
+    !malformedBody.includes("WHEN EXISTS (SELECT 1 FROM d1_migrations WHERE name='0031_media_archive_malformed_json_guard.sql')") ||
     /\b(?:DROP\s+(?:TABLE|TRIGGER|INDEX)|DELETE\s+FROM|ALTER\s+TABLE)\b/i.test(malformedBody)) {
   console.error("BLOCK: staged 0029-0031 manual SQL must remain exact, additive-only and outside automatic migrations.");
   process.exit(1);
