@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261122120833-dada59e6",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-22T12:08:33.926Z",
+  "finished_at": "2026-11-22T12:29:53.265Z",
+  "wall_seconds": 1279,
+  "paused_seconds": 0,
+  "measured_seconds": 1279,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "EDT-024 responsive property safety tested, fast-forwarded and deployed; broader D remains OPEN",
+  "evidence": [
+    "docs/evidence/editor-edt024-responsive-prototype-safety-2026-11-22.json"
+  ],
+  "checks": "editor 24/24+4/4; typecheck; Chromium 1/1; plan 15/15; canonical 13/396; traceability 396/396; D1 SELECT only; Wrangler dry-run; deploy:safe; Worker 100%; health 200; 8 asset hashes match; Editor Core IN_PROGRESS",
+  "started_revision": "cf69db9bf64b67d7bdbb016cf67ff8b0d91c8949",
+  "finished_revision": "1690e402999d8dc6a4fc1073a25351a102b557e8",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

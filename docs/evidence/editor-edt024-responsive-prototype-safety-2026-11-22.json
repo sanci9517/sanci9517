@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "kind": "editor-responsive-property-prototype-safety",
-  "recorded_at_utc": "2026-11-22T12:18:59Z",
+  "recorded_at_utc": "2026-11-22T12:27:30Z",
   "plan_point": "77.44.7.D / EDT-024 — Responsive override/inheritance/reset safety",
   "repository": {
     "name": "sanci9517/sanci9517",
@@ -63,14 +63,56 @@
     "deployment": "34d24376-849b-4b54-bcc8-92806f368067",
     "worker_version": "57e63653-5636-4c41-a7e3-59c0c4ba41a4",
     "traffic_percent": 100,
-    "changed_asset_smoke": "PENDING release"
+    "changed_asset_smoke": "PASS after deployment: 8/8 changed assets HTTP 200 and source SHA-256 equal"
   },
   "release": {
-    "status": "PENDING",
-    "commit_sha": null,
-    "automatic_worker_build": "PENDING",
-    "post_deploy_health": "PENDING",
-    "post_deploy_asset_hashes": "PENDING"
+    "status": "deployed_and_smoke_verified",
+    "commit_sha": "1690e402999d8dc6a4fc1073a25351a102b557e8",
+    "remote_branch_sha": "1690e402999d8dc6a4fc1073a25351a102b557e8",
+    "automatic_worker_build": "NOT_STARTED; verified exact-SHA runtime release used npm run deploy:safe after read-only D1 preflight and Wrangler dry-run",
+    "deploy_safe": "PASS — deployed from checked-out release commit; no migrations applied",
+    "deployment_id": "52914ec2-76b9-403b-ad6a-e6e286386602",
+    "worker_version_id": "6dc72ef4-65df-4378-b6ee-e423e3901ade",
+    "worker_version_number": 4158,
+    "traffic_percent": 100,
+    "deployment_created_on": "2026-11-22T12:24:28.204043Z",
+    "post_deploy_health": {
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+      "http_status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "post_deploy_asset_hashes": {
+      "verification": "direct HTTPS GET; all HTTP 200; SHA-256 equals current release source",
+      "assets": {
+        "/editor-v2/index.html": "196b72f167652ef51546571aa10d75a00e96b8f83ddc9a94a10ed3d2127c33b8",
+        "/editor-v2/app.js": "2c51dc55138490f63ebdcc171bbbd4fbcc0960ca25c09a6d45b60467a979611a",
+        "/editor-v2/core/responsive.js": "de454843959e67940ee4e7455e14aba47f9a97653658b237b8c77d0ce3974d88",
+        "/editor-v2/core/commands.js": "da56268bddd7cf1d497966c50cb27dcf736cc4b5d4b3e844463b9a5831d401e9",
+        "/editor-v2/core/canvas-engine.js": "0b12dbfbe21d9cf84670f25423248ce61c326fd4d5319526b90aaaf6232c95c9",
+        "/editor-v2/core/state-styles.js": "1294c40bbbe33ea7263ff5e075d9e8843e6d5cdffbc72c39bd18c3c8e8c1a928",
+        "/editor-v2/ui/responsive-origin.js": "027d5aee289f055ca63e15a7c758bd2227714826dafbdff86d4a151c9df5ef3c",
+        "/editor-v2/ui/responsive-group-reset.js": "0b8d4025034d2e5237ea3f0f6362f7786ad247ba310661beb510f2bbf9846c09"
+      }
+    },
+    "exact_sha_actions": {
+      "total": 6,
+      "success": [
+        "Twitch Integration Check:45022044309",
+        "Canonical Creator Platform Plan:45022044278",
+        "Canonical Plan Active Point Audit:45022044304",
+        "F0 baseline checks:45022044306",
+        "Production Worker source smoke:45022044317"
+      ],
+      "in_progress": [
+        "Editor Core Test:45022044256"
+      ],
+      "failed": []
+    }
   },
   "scope": {
     "EDT-024": "PARTIAL implementation slice",
@@ -83,8 +125,10 @@
   "canonical_plan": {
     "source_sha256": "cbe769fc1596d140d446f00c9c4aa158837cd6f9cc7fc58a4850ebe5daf796f4",
     "source_bytes": 1798949,
-    "after_sha256": "99b50b470bb44f2fed4c41a16c5419fccd8c930bb5e12ca46be7c15233a2a89a",
-    "after_bytes": 1802096
+    "after_sha256": "bb41fe80fb752c7381e9729c0ce615206007cf3943a13d6afb862a5ea3940c19",
+    "after_bytes": 1803705,
+    "previous_sha256": "99b50b470bb44f2fed4c41a16c5419fccd8c930bb5e12ca46be7c15233a2a89a",
+    "previous_bytes": 1802096
   },
   "source_sha256": {
     "public/editor-v2/app.js": "2c51dc55138490f63ebdcc171bbbd4fbcc0960ca25c09a6d45b60467a979611a",
@@ -98,5 +142,12 @@
     "public/editor-v2/ui/responsive-origin.js": "027d5aee289f055ca63e15a7c758bd2227714826dafbdff86d4a151c9df5ef3c",
     "tests/editor-public-asset-cache-bust.test.js": "ad3cac444c844bee1b4938cb097b4f10165eb22ff4cd8859cc427683af311916",
     "scripts/build-feature-traceability.py": "c77516f18f54d2fe93fb95f79f2eab82df4686cc6b82317636787825d2b54d2b"
+  },
+  "development_metrics": {
+    "run_id": "20261122120833-dada59e6",
+    "status": "partial",
+    "measured_seconds": 1279,
+    "file": "docs/evidence/dev-metrics/runs/2026-11-22/20261122120833-dada59e6.json",
+    "note": "Wall-clock metric excludes explicit pauses, not Codex compute time; partial reflects broader D/Editor scope remaining open."
   }
 }
