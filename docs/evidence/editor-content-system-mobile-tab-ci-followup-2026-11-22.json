@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "kind": "editor-core-mobile-tabs-test-harness-followup",
+  "recorded_at_utc": "2026-11-22T13:15:00Z",
+  "plan_point": "77.44.7.D / EDT-015 — published tabs after mobile viewport resize",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "head_at_start": "8f684e733da44985795351d5af78effd93bb707e",
+    "remote_head_verified_by_github_branch_api": "8f684e733da44985795351d5af78effd93bb707e",
+    "worktree_preexisting_untracked_preserved": [
+      "scripts/__pycache__/"
+    ]
+  },
+  "finding": {
+    "hosted_run": 45022044256,
+    "job": 137206891028,
+    "step": "Run Editor browser layout regression",
+    "test_file": "tests/browser/editor-content-system.test.js",
+    "failure": "At 390x640 after the live page viewport changed, the keyboard test did not move the selected public tab; the full CI log shows a waitForFunction timeout at the assertion following ArrowRight.",
+    "diagnosis": "A minimal real-Chromium fixture with two open pages reproduces the tab runtime correctly at both 390x640 and 720x450 when the target page is brought forward, the tab is focused, and the key is pressed through that tab locator. The failure belongs to focus orchestration in the larger multi-page browser test, not a demonstrated public runtime defect.",
+    "fix": "The browser helper now brings the published page to the foreground, restores DOM focus to the target tab, waits for that focus, and sends the real key through the focused tab locator after each viewport change. ARIA, roving tabindex, panel content, focus, and geometry checks remain intact."
+  },
+  "checks": {
+    "isolated_real_chromium_repro": "PASS — two page targets; ArrowRight at 390x640 and End at 720x450 each selected/focused the expected tab.",
+    "targeted_real_chromium": "PASS — node --test --test-concurrency=1 tests/browser/editor-content-system.test.js; 1/1, 54.6s.",
+    "editor_unit_core": "PASS — npm run test:editor; 24/24 Node files and 4/4 runner/manifest tests.",
+    "typecheck": "PASS — npm run typecheck -- --pretty false.",
+    "plan_contract": "PASS — tests/plan-contract.test.py; 15/15.",
+    "canonical_plan": "PASS — one complete 13-file master, 396 source mappings; functional acceptance NOT certified.",
+    "traceability": "PASS — 396/396 mappings.",
+    "migration_safety": "PASS — node scripts/web013-migration-safety-gate.mjs.",
+    "syntax_and_diff": "PASS — node --check tests/browser/editor-content-system.test.js; git diff --check.",
+    "hosted_followup": "NOT RUN — this is a test/evidence-only follow-up, so the required [skip ci] convention avoids a redundant workflow; the earlier failed run remains a historical failure and is not reclassified."
+  },
+  "runtime": {
+    "changed": false,
+    "current_deployment": "52914ec2-76b9-403b-ad6a-e6e286386602",
+    "worker_version": "6dc72ef4-65df-4378-b6ee-e423e3901ade",
+    "traffic_percent": 100,
+    "deployment_source": "1690e402999d8dc6a4fc1073a25351a102b557e8",
+    "direct_health": {
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+      "http_status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "worker_deployment": "NOT REDEPLOYED — the test harness does not alter Worker runtime or public assets."
+  },
+  "scope": {
+    "77.44.7.D": "OPEN / NOT_CERTIFIED",
+    "D-01-D-07": "OPEN / NOT_CERTIFIED",
+    "feature_traceability": "148 PARTIAL_SOURCE / 248 UNVERIFIED; source-audit status only, not acceptance.",
+    "full_editor_manual_and_physical_acceptance": "DEFERRED until the complete Visual Editor scope is implemented.",
+    "save_publish_separate": true,
+    "production_d1_write_or_migration": false,
+    "production_r2_operation": false,
+    "new_paid_service_or_cost": "none; 0 Ft"
+  },
+  "canonical_plan_before_followup": {
+    "sha256": "bb41fe80fb752c7381e9729c0ce615206007cf3943a13d6afb862a5ea3940c19",
+    "git_blob_sha": "e226df8715b6825d6765e54ebd2efd51f8072a22",
+    "bytes": 1803705
+  },
+  "development_metrics": {
+    "run_id": "20261122125818-ed4e78a8",
+    "status": "partial",
+    "evidence": "docs/evidence/dev-metrics/runs/2026-11-22/20261122125818-ed4e78a8.json",
+    "note": "Elapsed wall time, not verified active Codex compute time."
+  },
+  "canonical_plan_after_followup": {
+    "sha256": "7e5bfa3813462c7fa3120c98d08091b05aa887372c7ed4dcfe46e48ada3e5ebd",
+    "git_blob_sha": "30a479ceeee68a04187c592a4138a878ceccd480",
+    "bytes": 1806021
+  }
+}

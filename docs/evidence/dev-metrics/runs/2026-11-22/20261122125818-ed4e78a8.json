@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261122125818-ed4e78a8",
+  "task": "77.44.7.D",
+  "trigger": "scheduled",
+  "started_at": "2026-11-22T12:58:18.597Z",
+  "finished_at": "2026-11-22T13:16:09.764Z",
+  "wall_seconds": 1071,
+  "paused_seconds": 0,
+  "measured_seconds": 1071,
+  "status": "partial",
+  "kind": "test",
+  "summary": "fixed multi-page Chromium focus orchestration after responsive resize; targeted Editor browser and core suite pass; full D remains open",
+  "evidence": [
+    "docs/evidence/editor-content-system-mobile-tab-ci-followup-2026-11-22.json"
+  ],
+  "checks": "focused Chromium 1/1 PASS; npm run test:editor 24/24+4/4 PASS; typecheck; plan contract 15/15; canonical 13/396; traceability 396/396; migration gate; direct health 200, Worker traffic 100%; hosted exact-SHA run 45022044256 historical FAIL, no rerun for [skip ci] test-only follow-up",
+  "started_revision": "8f684e733da44985795351d5af78effd93bb707e",
+  "finished_revision": "8f684e733da44985795351d5af78effd93bb707e",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

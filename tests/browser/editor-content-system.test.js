@@ -1339,6 +1339,12 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
     const focusState=await publicTabs.nth(index).evaluate(tab=>({selected:document.activeElement===tab,activeId:document.activeElement?.id,activeText:document.activeElement?.textContent?.trim()}));
     assert.equal(focusState.selected,true,'keyboard selection moves focus to the selected tab; '+JSON.stringify(focusState));
   };
+  const focusPublicTab=async index=>{
+    const tab=publicTabs.nth(index),id=await tab.getAttribute('id');
+    await live.bringToFront();await tab.focus();
+    await live.waitForFunction(expectedId=>document.activeElement?.id===expectedId,id);
+    return tab;
+  };
   await publicTabs.nth(1).click();await assertPublicTabState(1,'Személyes történet');
   await publicTabs.nth(1).press('ArrowRight');await assertPublicTabState(0,'Videólista');
   await publicTabs.nth(0).press('ArrowLeft');await assertPublicTabState(1,'Személyes történet');
@@ -1347,9 +1353,10 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   // Other fixture pages are open (Editor and touch preview); explicitly
   // activate the published page before exercising real keyboard focus.
   await live.bringToFront();await live.setViewportSize({width:390,height:640});
-  // Send the key through the target locator so Playwright performs the focus
-  // transition and keyboard event as one interaction after the viewport resize.
-  await publicTabs.nth(1).press('ArrowRight');
+  // Resizing can legitimately return browser focus to the document body. Move
+  // focus back into the tablist as a keyboard user would, then send the key at
+  // page level so the test proves the widget's roving-focus behavior itself.
+  await (await focusPublicTab(1)).press('ArrowRight');
   await assertPublicTabState(0,'Videólista');
   const mobileTabsLayout=await live.evaluate(()=>({
     viewport:innerWidth,document:document.scrollingElement.scrollWidth,
@@ -1367,10 +1374,9 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   await live.bringToFront();await live.setViewportSize({width:720,height:450});
   assert.equal(await live.evaluate(()=>[innerWidth,innerHeight].join('×')),'720×450',
     'published keyboard tabs use the planned 200% effective zoom viewport');
-  // Send the key through the target locator so a browser focus transition
-  // caused by resizing the page cannot redirect the accessibility check to
-  // the document body.
-  await publicTabs.nth(0).press('End');
+  // Restore keyboard focus after the second viewport change before exercising
+  // End; viewport resizing alone does not promise to preserve DOM focus.
+  await (await focusPublicTab(0)).press('End');
   await assertPublicTabState(1,'Személyes történet');
   const zoomTabsLayout=await live.evaluate(()=>({
     viewport:innerWidth,document:document.scrollingElement.scrollWidth,
