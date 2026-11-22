@@ -54,15 +54,25 @@
   },
   "production": {
     "runtime_source_unchanged": true,
-    "latest_read_only_control_plane": "deployment 34d24376-849b-4b54-bcc8-92806f368067; Worker version 57e63653-5636-4c41-a7e3-59c0c4ba41a4; traffic 100%.",
+    "latest_read_only_control_plane": "Post-push GET: deployment 34d24376-849b-4b54-bcc8-92806f368067; Worker version 57e63653-5636-4c41-a7e3-59c0c4ba41a4; traffic 100%.",
     "last_health_and_asset_check": "2026-11-21 production release evidence for source 002091066623349f2b6f686e8fba8ea1e763d4b8: /api/health HTTP 200; then-changed assets matched byte-for-byte.",
     "this_run_smoke": "Not run; no runtime/source change. Shell HTTPS probe cannot reach its configured proxy (connection refused); no fresh HTTP result is claimed.",
     "d1_or_r2": "No production D1/R2 operation."
   },
   "release": {
-    "commit_sha": "Pending local checks completed; no commit or push yet.",
-    "workflow": "No new CI is triggered for this test/documentation-only follow-up.",
-    "worker_deploy": "Not applicable; runtime unchanged."
+    "commit_sha": "9c3d35bcccd23bbb14b0e79d3543d04a01e8af94",
+    "push": {
+      "status": "PASS",
+      "method": "normal non-force fast-forward",
+      "previous_head": "6a81d41836eb31f69f1ca0b7079b731ab8cbbc5c",
+      "remote_head": "9c3d35bcccd23bbb14b0e79d3543d04a01e8af94",
+      "verified_by": "GitHub branch GET; exact SHA match"
+    },
+    "github_workflows": {
+      "exact_commit_run_count": 0,
+      "verification": "GitHub Actions runs GET with head_sha=9c3d35bc returned total_count 0; [skip ci] was honored"
+    },
+    "worker_deploy": "NOT DONE / NOT NEEDED; runtime source unchanged."
   },
   "scope": {
     "77.44.7.D": "OPEN / NOT_CERTIFIED",
@@ -72,8 +82,8 @@
   },
   "plan": {
     "source_sha256": "def1d1bb26532df1a0c0a3b2584f374d80f7ec754430dfff11da81cd1b7154fc",
-    "after_sha256": "45a65c4cf11f334bf40b70053f584c2dcc81a9df5b269cd7cfd85d716f53b41f",
-    "after_bytes": 1798749
+    "after_sha256": "cbe769fc1596d140d446f00c9c4aa158837cd6f9cc7fc58a4850ebe5daf796f4",
+    "after_bytes": 1798949
   },
   "source_sha256": {
     "tests/browser/editor-decorative-elements.test.js": "84a11f903e8ee79d22064278310f74c1f5bfc276cdc895700210a08b687e953a"
