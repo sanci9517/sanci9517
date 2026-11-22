@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261122151810-c5e6c14f",
+  "task": "77.44.7.D",
+  "trigger": "scheduled",
+  "started_at": "2026-11-22T15:18:10.758Z",
+  "finished_at": "2026-11-22T15:47:36.151Z",
+  "wall_seconds": 1765,
+  "paused_seconds": 164,
+  "measured_seconds": 1601,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "D-03/D-06 malformed-content fixes and cache-bust hotfix were built, tested, fast-forwarded, auto-deployed and live-verified; full D remains open and exact-SHA Editor Core CI is still running.",
+  "evidence": [
+    "docs/evidence/editor-d03-d06-malformed-data-fail-closed-2026-11-22.json",
+    "https://github.com/sanci9517/sanci9517/commit/dd2b935c076a3c3a648621b0f750ba6d8738751a"
+  ],
+  "checks": "typecheck,media/editor/browser tests,canonical plan,traceability,migration gate,Wrangler dry-run,production health/hash smoke PASS; Editor Core CI in progress",
+  "started_revision": "d7fc107752b687ea3c27532fe370774fa1195b23",
+  "finished_revision": "b5e968dcd2d66eaee262444ce01aec2fa958df38",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
