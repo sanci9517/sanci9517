@@ -76,5 +76,13 @@
     "sha256": "7e5bfa3813462c7fa3120c98d08091b05aa887372c7ed4dcfe46e48ada3e5ebd",
     "git_blob_sha": "30a479ceeee68a04187c592a4138a878ceccd480",
     "bytes": 1806021
+  },
+  "followup_commit": {
+    "sha": "982387e74114900a978b1b262aec46883cde3902",
+    "message": "test: stabilize editor tab focus after resize [skip ci]",
+    "push": "normal fast-forward; GitHub v2/foundation branch API confirms exact SHA",
+    "exact_commit_workflows": "0; expected for [skip ci] test/evidence-only commit",
+    "combined_statuses": [],
+    "runtime_deployment": "none; last verified deployment/version remains 52914ec2-76b9-403b-ad6a-e6e286386602 / 6dc72ef4-65df-4378-b6ee-e423e3901ade at 100%"
   }
 }
