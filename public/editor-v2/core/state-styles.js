@@ -1,6 +1,6 @@
 import {getProperty,listProperties} from './property-registry.js?v=20261117-edt043-motion-guidance';
 import {normalizeInspectorValue} from './property-values.js';
-import {resolveResponsiveValue,normalizeResponsive} from './responsive.js';
+import {resolveResponsiveValue,normalizeResponsive} from './responsive.js?v=20261122-edt024-responsive-prototype-safety-v1';
 
 export const STATE_PROPERTY_IDS=Object.freeze(['typography.color','background.color','background.gradient','border.color','shadow.box','opacity.value','typography.textDecoration','typography.fontWeight','transform.rotate','transform.scale']);
 export const GRADIENTS=Object.freeze(['none','linear-gradient(135deg, #7047eb 0%, #17b8a6 100%)','linear-gradient(135deg, #111827 0%, #475569 100%)','linear-gradient(135deg, #fb7185 0%, #fbbf24 100%)','linear-gradient(180deg, #ffffff 0%, #e0e7ff 100%)']);

@@ -6,7 +6,7 @@ import {execute,executeCoalesced,executeBatch} from './core/commands.js?v=202611
 import {applyNodeStyle,getNodeGeometry,resolveNodeStyle} from './core/canvas-engine.js?v=20261117-edt040-motion-style-route';
 import {computeCanvasMinHeight} from './core/canvas-extent.js';
 import {measureCanvasWorkspace} from './core/canvas-workspace.js';
-import {hasResponsiveOverride,resolveResponsiveValue} from './core/responsive.js';
+import {hasResponsiveOverride,resolveResponsiveValue} from './core/responsive.js?v=20261122-edt024-responsive-prototype-safety-v1';
 import {getNodeVisibilityState,isVisibleOnDevice} from './core/visibility.js';
 import {diagnostics} from './diagnostics.js?v=20261119-edt042-safe-export-v2';
 import {plainTextToRichText,renderRichTextEditor,richTextEditorToDocument,restoreSelectionOffsets,getSelectionOffsets,transformRichTextBlockTypes} from './core/richtext-engine.js?v=20261117-d03-invalid-media-id-guidance-v1';

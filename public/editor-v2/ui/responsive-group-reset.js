@@ -1,4 +1,4 @@
-import {hasResponsiveOverride,VIEWPORTS} from '../core/responsive.js';
+import {hasResponsiveOverride,VIEWPORTS} from '../core/responsive.js?v=20261122-edt024-responsive-prototype-safety-v1';
 
 /**
  * Reset just this Inspector group for the current breakpoint.

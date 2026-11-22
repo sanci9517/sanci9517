@@ -1,4 +1,4 @@
-import {VIEWPORTS,resolveResponsiveValue,hasResponsiveOverride} from '../core/responsive.js';
+import {VIEWPORTS,resolveResponsiveValue,hasResponsiveOverride} from '../core/responsive.js?v=20261122-edt024-responsive-prototype-safety-v1';
 
 /**
  * Present the origin of a responsive Inspector value without creating a

@@ -494,6 +494,26 @@ test('responsive values inherit from wider viewports and can be overridden/reset
   assert.deepEqual(resolveResponsiveValue(responsive, 'width', 'mobile'), { value: '90%', source: 'tablet', inherited: true });
 });
 
+test('responsive values ignore prototype properties and reject prototype mutation keys', () => {
+  assert.deepEqual(resolveResponsiveValue({}, 'toString'), { value: undefined, source: null, inherited: false });
+  assert.deepEqual(resolveResponsiveValue({desktop:{toString:'unexpected'}}, 'toString'), { value: undefined, source: null, inherited: false });
+  assert.deepEqual(resolveResponsiveValue({desktop:{width:'50%'}}, 'width', 'phone'), { value: undefined, source: null, inherited: false });
+  assert.equal(hasResponsiveOverride({desktop:{toString:'unexpected'}},'toString','desktop'),false);
+  assert.equal(hasResponsiveOverride({desktop:{width:'50%'}},'width','phone'),false);
+  assert.throws(()=>setResponsiveValue({},'__proto__','desktop',{width:'999px'}),/Érvénytelen responsive tulajdonság/);
+  assert.throws(()=>setResponsiveValue({},'constructor','desktop','unexpected'),/Érvénytelen responsive tulajdonság/);
+
+  const state=createEditorState();
+  execute(state,{type:'element.add',payload:{type:'text',parentId:activePage(state).rootId}});
+  const nodeId=state.selection.primaryId;
+  const maliciousPatch=JSON.parse('{"__proto__":{"width":"999px"}}');
+  assert.throws(()=>execute(state,{type:'responsive.set',payload:{nodeId,device:'desktop',patch:maliciousPatch}}),/Invalid responsive property key/);
+  const savedNode=activePage(state).nodes[nodeId];
+  assert.equal(Object.getPrototypeOf(savedNode.responsive.desktop),Object.prototype);
+  assert.equal(Object.hasOwn(savedNode.responsive.desktop,'__proto__'),false);
+  assert.equal(savedNode.responsive.desktop.width,undefined);
+});
+
 test('element add creates a real parent-child relationship', () => {
   const state = createEditorState();
   const page = activePage(state);
