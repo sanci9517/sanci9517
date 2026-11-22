@@ -30,8 +30,8 @@ export const retentionQueries = Object.freeze({
            SELECT 1 FROM schedule_items e
            JOIN site_settings artwork ON artwork.key=('schedule-artwork:' || e.site_id || ':' || e.id)
            WHERE e.site_id=m.site_id
-             AND lower(CASE WHEN json_valid(artwork.value_json)
-               THEN json_extract(artwork.value_json,'$.assetId') ELSE NULL END)=lower(m.id)
+             AND (NOT json_valid(artwork.value_json)
+               OR lower(json_extract(artwork.value_json,'$.assetId'))=lower(m.id))
          )`,
   cancel: `UPDATE media_retention_requests SET state='cancelled',updated_at=CURRENT_TIMESTAMP
        WHERE id=? AND site_id=? AND state IN ('requested','quarantined','revalidated','blocked')`

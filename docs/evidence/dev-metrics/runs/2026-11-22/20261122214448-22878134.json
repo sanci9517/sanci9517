@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261122214448-22878134",
+  "task": "77.44.7.D",
+  "trigger": "scheduled",
+  "started_at": "2026-11-22T21:44:48.795Z",
+  "finished_at": "2026-11-22T21:56:43.828Z",
+  "wall_seconds": 715,
+  "paused_seconds": 0,
+  "measured_seconds": 715,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "D-06 malformed same-site Schedule artwork retention guard implemented and regression/plan gates pass; production runtime release is blocked to preserve the 0 Ft limit because the canonical plan records Actions quota exhausted and no live free-quota evidence was available; no push, CI, deployment, D1 write or R2 action.",
+  "evidence": [
+    "docs/evidence/editor-d06-malformed-schedule-retention-2026-11-22.json"
+  ],
+  "checks": "node tests/media-retention-queries.test.js 20/20; plan contract 15/15; canonical plan 13/396; traceability 396/396; active audit OPEN/NOT_CERTIFIED; migration gate PASS; worker health pre-release HTTP 200",
+  "started_revision": "2cd923df21cbbfb6ab38cce948a4d636bf77e175",
+  "finished_revision": "2cd923df21cbbfb6ab38cce948a4d636bf77e175",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

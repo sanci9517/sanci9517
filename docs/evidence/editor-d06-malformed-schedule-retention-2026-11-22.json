@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "captured_at_utc": "2026-11-22T21:49:51Z",
+  "plan_item": "77.44.7.D / D-06 — malformed Schedule artwork retention guard",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "base_commit": "2cd923df21cbbfb6ab38cce948a4d636bf77e175"
+  },
+  "finding": {
+    "source": "src/core/media-retention-queries.js",
+    "test": "tests/media-retention-queries.test.js",
+    "summary": "Retention enqueue failed open on malformed same-site schedule-artwork JSON after the advisory scan; unknown reference could be queued between preflight and SQL commit.",
+    "behavior": "Malformed same-site sidecar blocks retention enqueue for all candidate assets of that site; foreign-site sidecars do not block.",
+    "tdd": "The old assertion failed before the SQL correction (actual one row, expected zero)."
+  },
+  "verification": {
+    "node tests/media-retention-queries.test.js": "PASS 20/20",
+    "npm run test:media": "PASS 7/7 files",
+    "npm run test:editor": "PASS 24/24 unit tests; 4/4 runner/manifest checks",
+    "npm run test:editor:preferences": "PASS 10/10",
+    "npm run typecheck -- --pretty false": "PASS",
+    "npm run test:web013:migration-gate": "PASS; 0031 remains manual-only",
+    "plan_and_traceability": "PASS: plan contract 15/15; canonical plan 13 master files / 396 mappings; traceability 396/396; active-point audit remains OPEN / NOT CERTIFIED.",
+    "git diff --check": "PASS",
+    "wrangler_dry_run": "PASS Wrangler 4.130.0; 199 assets; 429.59 KiB / 108.88 KiB gzip; no deploy"
+  },
+  "production_d1_preflight": {
+    "mode": "three standalone SELECT-only Cloudflare D1 Query API requests",
+    "ledger": "36 migration markers; latest 0030_media_library_organization.sql",
+    "schema": "media, pages, editor_revisions, schedule_items, site_settings, d1_migrations and media_retention_requests present; seven relevant media archive triggers",
+    "schedule": "5 schedule rows; 2 schedule artwork sidecars; 0 malformed sidecars",
+    "write_counters": "All three: rows_written=0, changes=0, changed_db=false",
+    "migration_or_data_write": "NOT RUN"
+  },
+  "release": {
+    "runtime_changed": true,
+    "source_commit": "PENDING local checkpoint commit",
+    "push": "BLOCKED / NOT RUN: canonical zero-cost plan records GitHub Actions free compute exhausted; live free quota/billing could not be verified; no workflow-triggering push attempted",
+    "hosted_ci": "NOT RUN: exact-SHA required CI not started to avoid possible paid usage",
+    "deployment": "NOT RUN: runtime source is not pushed; existing deployment remains active",
+    "pre_release_deployment": "0cb10f04-5f03-4b11-84e9-100ff0c81e9c",
+    "pre_release_worker_version": "d8735bf0-3adc-46de-8d66-8fd8118a0874",
+    "pre_release_traffic_percent": 100,
+    "changed_public_assets": [],
+    "current_worker_health": {
+      "checked_at_utc": "2026-11-22T21:54:55Z",
+      "http_status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "quota_blocker": "No live free Actions quota/billing evidence available; canonical plan states Actions free compute is exhausted. No paid usage authorized."
+  },
+  "safety": {
+    "production_d1_mutation": "NOT RUN",
+    "r2_operation": "NOT RUN",
+    "new_dependencies": false,
+    "new_cost_huf": 0,
+    "save_publish_separation_preserved": true,
+    "full_editor_acceptance": "DEFERRED; D-06 and 77.44.7.D remain OPEN / NOT CERTIFIED"
+  }
+}

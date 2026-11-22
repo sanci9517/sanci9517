@@ -97,6 +97,9 @@ test("retention cannot queue archived Schedule cover assets when their same-site
   const key="schedule-artwork:site-a:"+event;
   db.prepare("INSERT INTO media VALUES(?,?,?,?)")
     .run(asset,"site-a","sites/site-a/media/legacy-cover","2026-11-14");
+  const otherAsset="bbbbbbbb-0000-4000-8000-123456789abc";
+  db.prepare("INSERT INTO media VALUES(?,?,?,?)")
+    .run(otherAsset,"site-a","sites/site-a/media/other-cover","2026-11-14");
   db.prepare("INSERT INTO schedule_items VALUES (?,?)").run(event,"site-a");
   const sidecar=db.prepare("INSERT INTO site_settings(key,value_json) VALUES (?,?) ON CONFLICT(key) DO UPDATE SET value_json=excluded.value_json");
   const request=db.prepare(retentionQueries.request);
@@ -112,13 +115,20 @@ test("retention cannot queue archived Schedule cover assets when their same-site
     assert.equal(request.run(...args).changes,0,"live schedule reference must block retention even on legacy archived media");
   }
   sidecar.run(key,'{"assetId":');
-  assert.equal(request.run(...args).changes,1,"unrecognizable malformed JSON is not a valid reference");
-  assert.equal(db.prepare(retentionQueries.cancel).run("request-schedule","site-a").changes,1);
+  assert.equal(request.run(...args).changes,0,"same-site malformed JSON makes the intended asset unknowable and blocks retention");
+  db.prepare("DELETE FROM media_retention_requests").run();
+  sidecar.run(key,'{"assetId":"'+escaped+'"');
+  assert.equal(request.run(...args).changes,0,"malformed Unicode-escaped IDs fail closed even when JSON decoding is impossible");
+  assert.equal(request.run("request-other-same-site","2026-12-14",otherAsset,"site-a").changes,0,
+    "unknown malformed sidecars conservatively retain every candidate from their own site");
   db.prepare("DELETE FROM media_retention_requests").run();
   db.prepare("DELETE FROM site_settings WHERE key=?").run(key);
   const foreign="3f7a0000-0000-4000-8000-000000000002";
   db.prepare("INSERT INTO schedule_items VALUES (?,?)").run(foreign,"site-b");
   sidecar.run("schedule-artwork:site-b:"+foreign,JSON.stringify({assetId:asset}));
   assert.equal(request.run(...args).changes,1,"a different tenant's schedule event cannot lock this site's retention");
+  db.prepare("DELETE FROM media_retention_requests").run();
+  sidecar.run("schedule-artwork:site-b:"+foreign,'{"assetId":');
+  assert.equal(request.run(...args).changes,1,"a malformed sidecar only blocks retention within its own site");
  }finally{db.close();}
 });
