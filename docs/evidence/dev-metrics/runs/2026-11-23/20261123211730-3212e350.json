@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261123211730-3212e350",
+  "task": "77.44.7.D-D06-next-uncovered-feature",
+  "trigger": "manual",
+  "started_at": "2026-11-23T21:17:30.580Z",
+  "finished_at": "2026-11-23T21:57:55.907Z",
+  "wall_seconds": 2425,
+  "paused_seconds": 0,
+  "measured_seconds": 2425,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "Released the responsive in-view motion trigger to the exact-source Worker; local browser/unit/type/plan checks and production smoke pass, but exact-SHA hosted Editor Core remains in progress and full D stays open.",
+  "evidence": [
+    "docs/evidence/editor-motion-in-view-trigger-2026-11-23.json"
+  ],
+  "checks": "Chromium 3/3; editor unit 24/24 + runner 4/4; typecheck, migration safety, canonical 13-file plan, traceability 396 and contracts 16 PASS; Wrangler dry-run PASS; D1 SELECT/PRAGMA-only 0 writes; Cloudflare build/source smoke PASS; hosted Editor Core IN_PROGRESS.",
+  "started_revision": "99e76332899800938ff6d9aedf156e003ce04dd9",
+  "finished_revision": "302abb00dcfae8ddabb255f2ecf067742895a57f",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

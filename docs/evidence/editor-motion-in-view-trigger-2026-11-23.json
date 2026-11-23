@@ -1,0 +1,196 @@
+{
+  "schema_version": 1,
+  "task": "77.44.7.D / EDT-040",
+  "title": "Responsive scroll-triggered entrance motion",
+  "recorded_at_utc": "2026-11-23T21:52:00Z",
+  "status": "RUNTIME_RELEASED_EDITOR_CORE_IN_PROGRESS_FULL_SCOPE_OPEN",
+  "source": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "base_commit": "99e76332899800938ff6d9aedf156e003ce04dd9",
+    "runtime_commit": "302abb00dcfae8ddabb255f2ecf067742895a57f",
+    "remote_branch_sha_verified": "302abb00dcfae8ddabb255f2ecf067742895a57f"
+  },
+  "change": {
+    "plan_feature": "EDT-040 Motion Studio; responsive entrance trigger",
+    "behavior": "Adds a responsive Betöltéskor/Láthatóvá váláskor Inspector control. A finite allowlisted entrance animation may use the native CSS view timeline; unsupported browsers retain the existing on-load behavior. Canvas and the published Page Model renderer share the same allowlisted metadata helper.",
+    "accessibility_and_safety": [
+      "prefers-reduced-motion continues to disable motion and keep content visible",
+      "no user CSS, JavaScript, third-party dependency, or unbounded animation was introduced",
+      "malformed or legacy trigger values do not hide content or select arbitrary CSS"
+    ],
+    "files": [
+      "public/assets/page-renderer.js",
+      "public/editor-v2/app.js",
+      "public/editor-v2/core/capability-matrix.js",
+      "public/editor-v2/core/inspector-style-contract.js",
+      "public/editor-v2/core/motion-style.js",
+      "public/editor-v2/core/property-registry.js",
+      "public/editor-v2/core/state-styles.js",
+      "public/editor-v2/editor-motion.css",
+      "public/editor-v2/index.html",
+      "public/editor-v2/tests/capability-contract.test.js",
+      "public/editor-v2/tests/core.test.js",
+      "public/editor-v2/tests/inspector-richtext.test.js",
+      "public/editor-v2/tests/layout-presets.test.js",
+      "public/editor-v2/tests/motion.test.js",
+      "public/editor-v2/tests/state-tokens.test.js",
+      "public/editor-v2/ui/element-content-controls.js",
+      "public/editor-v2/ui/geometry-presets.js",
+      "public/visual-page.html",
+      "tests/browser/editor-motion.test.js",
+      "tests/editor-public-asset-cache-bust.test.js"
+    ],
+    "dependencies_changed": false,
+    "save_separate_from_publish": true,
+    "production_d1_migration_or_write": false,
+    "production_r2_mutation_or_deletion": false
+  },
+  "checks": {
+    "focused_browser": {
+      "command": "node --test tests/browser/editor-motion.test.js",
+      "result": "PASS",
+      "tests_passed": 3,
+      "scope": "Editor trigger selection, reduced-motion, Save/reload restoration, malformed public motion, and real Chromium scroll into view"
+    },
+    "editor_unit": {
+      "command": "npm run test:editor",
+      "result": "PASS",
+      "editor_test_files_passed": 24,
+      "runner_contract_tests_passed": 4
+    },
+    "motion_unit": {
+      "command": "node public/editor-v2/tests/motion.test.js",
+      "result": "PASS",
+      "tests_passed": 2
+    },
+    "capability_contract": {
+      "command": "node public/editor-v2/tests/capability-contract.test.js",
+      "result": "PASS",
+      "tests_passed": 12
+    },
+    "public_asset_cache_contract": {
+      "command": "node tests/editor-public-asset-cache-bust.test.js",
+      "result": "PASS",
+      "tests_passed": 3
+    },
+    "typecheck": {
+      "command": "npm run typecheck",
+      "result": "PASS"
+    },
+    "migration_safety_gate": {
+      "command": "npm run test:web013:migration-gate",
+      "result": "PASS"
+    },
+    "plan_and_traceability": {
+      "commands": [
+        "python3 scripts/check-canonical-plan.py",
+        "python3 scripts/build-feature-traceability.py --check",
+        "python3 tests/plan-contract.test.py"
+      ],
+      "result": "PASS",
+      "canonical_master_files": 13,
+      "traceability_mappings": 396,
+      "plan_contracts_passed": 16,
+      "acceptance_claimed": false
+    },
+    "wrangler_dry_run": {
+      "command": "WRANGLER_LOG_PATH=/tmp/sanci-wrangler-dry-run.log WRANGLER_SEND_METRICS=false WRANGLER_SEND_ERROR_REPORTS=false ./node_modules/.bin/wrangler deploy --dry-run",
+      "result": "PASS_NO_PUBLISH",
+      "wrangler_version": "4.130.0",
+      "asset_files": 200,
+      "bundle_kib": 431.23,
+      "gzip_kib": 109.26
+    },
+    "read_only_production_d1_preflight": {
+      "queries": [
+        "SELECT name FROM d1_migrations ORDER BY name",
+        "SELECT COUNT(*) AS migration_count, MAX(name) AS latest_migration FROM d1_migrations",
+        "PRAGMA foreign_key_check",
+        "PRAGMA quick_check"
+      ],
+      "migration_count": 36,
+      "latest_migration": "0030_media_library_organization.sql",
+      "foreign_key_errors": 0,
+      "quick_check": "ok",
+      "rows_written": 0,
+      "changes": 0,
+      "changed_db": false
+    },
+    "github_actions": {
+      "exact_sha": "302abb00dcfae8ddabb255f2ecf067742895a57f",
+      "successful_runs": {
+        "f0_baseline": 45273279554,
+        "twitch_integration": 45273279625,
+        "canonical_plan": 45273279674,
+        "active_point_audit": 45273279702,
+        "production_source_smoke": 45273279691
+      },
+      "editor_core": {
+        "run_id": 45273279705,
+        "url": "https://github.com/sanci9517/sanci9517/actions/runs/45273279705",
+        "status_at_recording": "IN_PROGRESS",
+        "completed_steps": "typecheck, editor unit, offline D1 ledger, private R2 API, public showcase unit/browser, isolated Worker media storage",
+        "active_step": "Editor browser layout regression"
+      }
+    },
+    "diff_check": "PASS"
+  },
+  "production": {
+    "cloudflare_build": {
+      "build_uuid": "0941de34-1bda-4b6e-98e4-492d10294fa2",
+      "result": "SUCCESS",
+      "source_commit": "302abb00dcfae8ddabb255f2ecf067742895a57f",
+      "branch": "v2/foundation",
+      "build_command": "npm run typecheck",
+      "deploy_command": "npm run deploy:safe"
+    },
+    "deployment_id": "119fe0ba-b19d-4194-bcdb-4400f7284ac9",
+    "worker_version_id": "8250eb2a-8928-4c61-951e-100cae7c7223",
+    "worker_version_number": 4176,
+    "traffic_percent": 100,
+    "health": {
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+      "http_status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "direct_public_asset_sha256": {
+      "public/assets/page-renderer.js": "bd0431d6caad3d377ede6fef1a62f8e3efe2c00a68fd209e7877ba38276587f7",
+      "public/editor-v2/app.js": "94f7083bdf98beb0792b63a39d9453f2ec2eaee02bbcd298c8d9133ddbdbb537",
+      "public/editor-v2/core/capability-matrix.js": "be78bb8e9e105f4ce3777445fc6f7b75190bf6688d1b36e6d523f55a64df1073",
+      "public/editor-v2/core/inspector-style-contract.js": "31597ddb54d3541ed53c4d2a52adef798e84d103c18bb0370520ef92bf5cc31e",
+      "public/editor-v2/core/motion-style.js": "d5d0e9dc7c91e227e81e6a96dbd95457bf1e8c36022d07df53e39d35173db480",
+      "public/editor-v2/core/property-registry.js": "e1094209b13fe40bab842f3284d854769300d2cef3bd37605fb379846dac41ff",
+      "public/editor-v2/core/state-styles.js": "c91c0c3c6c221c1b7e25af516b8c3c7703188b9011bd393023877dbb630d3cc4",
+      "public/editor-v2/editor-motion.css": "3ab07b634dbdf6da8ea57821dacb06b3ccc09844a3eae68d4e98cc2b2a08eadb",
+      "public/editor-v2/index.html": "1acee6cbcc7524af87f459ccee3bd11b52674a342aee9c77b08e9d751e93ee8b",
+      "public/editor-v2/tests/capability-contract.test.js": "af77581cc4747216f1a18f3f3f7b419d4d2b943baf5f06ad6984328bdaf8c8cc",
+      "public/editor-v2/tests/core.test.js": "d1bc2aa899b015378f73952576a9b1caa10081c5d1ee5158aa14c6c9fdc99744",
+      "public/editor-v2/tests/inspector-richtext.test.js": "be432b3871d1adef33a289c9ac3f5acca32346b3ccb74b39ed7a02c8d05a8c43",
+      "public/editor-v2/tests/layout-presets.test.js": "7d0c419cf3392c04166ab6c8f280c9223533904cc7e1d879ff4b3b5d86bcddbd",
+      "public/editor-v2/tests/motion.test.js": "d26f993c4b11a2f314a969aba3c2e4a4482a40fb1a3a36be4a4d5770287f9a87",
+      "public/editor-v2/tests/state-tokens.test.js": "05285daa6fe8ecb3cc64c61b104302d71ed903fe7459b18731cc4271eba1d88f",
+      "public/editor-v2/ui/element-content-controls.js": "5b9947f901ad6e8d4c7f1e27b8dbb71998c066a1a8ce0ee2e4eba0b4b45630e3",
+      "public/editor-v2/ui/geometry-presets.js": "3eb351a458b7587f4975a331740d2fb960e454429b408218a56ab89bf01b812a",
+      "public/visual-page.html": "079b62da8ee1cbfb490eebf6bcfdda0b08a0efa093c36873d660410ca2038878"
+    },
+    "asset_hashes_matched": "18/18",
+    "asset_hash_route_note": "The retired /editor-v2/index.html route intentionally returns 410; its bytes were verified at /editor-v2/. The /visual-page.html extension redirect was followed before comparing the resulting asset bytes.",
+    "new_cost_huf": 0,
+    "production_d1_migration_or_write": false,
+    "production_r2_mutation_or_deletion": false
+  },
+  "acceptance": {
+    "edt_040": "PARTIAL / OPEN / NOT_CERTIFIED",
+    "full_d_01_to_d_07": "OPEN / NOT_CERTIFIED",
+    "full_visual_editor": "OPEN / NOT_CERTIFIED",
+    "manual_physical_acceptance": "DEFERRED_UNTIL_COMPLETE_EDITOR",
+    "save_separate_from_publish": true
+  },
+  "metrics_id": "20261123211730-3212e350"
+}
