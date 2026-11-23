@@ -98,7 +98,7 @@ test('incomplete first hundred is labelled as partial',async t=>{
  assert.ok(f.calls.every(c=>c.method==='GET'));
 });
 
-test('retention pages append once, preserve rows on retry, and refresh returns to the first page',async t=>{
+for(const width of [390,1366])test(`retention pages append once, preserve rows on retry, and refresh returns to the first page at ${width}px`,async t=>{
  const ordered=Array.from({length:201},(_,i)=>request('requested',201-i));
  const f=await fixture(t,(req,res,n)=>{
   const cursor=new URL(req.url,'http://localhost').searchParams.get('cursor');
@@ -107,7 +107,7 @@ test('retention pages append once, preserve rows on retry, and refresh returns t
   if(cursor===id(102))return json(res,{ok:true,data:data(ordered.slice(100,200),false,id(2))});
   if(cursor===id(2))return json(res,{ok:true,data:data(ordered.slice(200),true,null)});
   return json(res,{ok:false,error:{code:'INVALID_RETENTION_CURSOR'}},400);
- });
+ },width);
  await f.state('ready');
  const next=f.panel.getByRole('button',{name:'További 100 kérelem betöltése'});
  await next.focus();await next.press('Enter');await f.state('error');

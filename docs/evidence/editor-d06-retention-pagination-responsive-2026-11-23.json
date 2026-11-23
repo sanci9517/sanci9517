@@ -1,0 +1,62 @@
+{
+  "schema": "sanci.editor.d06-retention-pagination-responsive.v1",
+  "captured_at_utc": "2026-11-23T13:25:34Z",
+  "plan_point": "77.44.7.D / D-06 — retention-status pagination acceptance across mobile and desktop",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "base_sha": "4568963a7ddfcd567a5190e6a31aff21b94c4971",
+    "canonical_plan_sha256": "9fc78edb31b59fd50a4d536c13b1dc3bd52777f2c2f7fa7e56e4dd18cb41b438",
+    "test_sha256": "7268a6a01266a18e28370582bacb96379413064c1d6c668f3e80c11fe884bf41"
+  },
+  "scope": {
+    "kind": "test-only responsive regression coverage",
+    "test_file": "tests/browser/admin-media-retention.test.js",
+    "viewports_css_px": [390, 1366],
+    "covered_behaviors": [
+      "Keyboard activation of the next-page control",
+      "A failed page request retains verified rows and enables an explicit retry",
+      "Retry appends only the requested stable-order page",
+      "The third page completes the list without duplicates",
+      "Refresh returns to the first page and issues read-only requests"
+    ],
+    "runtime_source_changed": false,
+    "save_and_publish_remain_separate": true
+  },
+  "checks": {
+    "targeted_browser_command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/admin-media-retention.test.js",
+    "targeted_browser_result": "PASS — 20/20 tests; the same pagination/retry/refresh/keyboard scenario passes at 390px and 1366px.",
+    "syntax": "PASS — node --check tests/browser/admin-media-retention.test.js",
+    "diff": "PASS — git diff --check",
+    "canonical_plan": "PASS — python3 scripts/check-canonical-plan.py; one complete 13-file master and 396 mappings; functional acceptance remains NOT CERTIFIED.",
+    "plan_contract": "PASS — python3 tests/plan-contract.test.py, 15/15.",
+    "traceability": "PASS — python3 scripts/build-feature-traceability.py --check, 396/396.",
+    "active_plan_audit": "77.44.7.D OPEN / NOT_CERTIFIED; 148 PARTIAL_SOURCE and 248 UNVERIFIED feature mappings.",
+    "hosted_ci": "NOT RUN — test-harness-only commit follows the repository [skip ci] convention; no hosted result is claimed."
+  },
+  "production": {
+    "worker": "sanci9517-streamer-brand",
+    "latest_deployment_id": "83ca4e1f-e8f6-461a-ba22-a52a200a7f27",
+    "worker_version_id": "e505e056-e1af-4545-a95a-2a4725589912",
+    "traffic_percent": 100,
+    "deployment_state_source": "Cloudflare deployments API GET during this run.",
+    "health": "NOT VERIFIED in this run: direct HTTPS request failed before reaching the Worker because the environment could not connect to its configured proxy. Previous same-day direct health PASS is in docs/evidence/editor-d06-retention-cancel-later-page-2026-11-23.json; it is not represented as a fresh health check here.",
+    "runtime_changed": false,
+    "worker_deployment_needed": false,
+    "public_asset_hash_check": "NOT APPLICABLE — tests/evidence only; no public asset changed."
+  },
+  "safety_and_status": {
+    "production_d1_write_or_migration": false,
+    "production_r2_write_or_delete": false,
+    "new_dependency_or_paid_service": false,
+    "new_cost_huf": 0,
+    "full_d06": "OPEN / NOT CERTIFIED",
+    "full_editor_acceptance": "OPEN / NOT CERTIFIED",
+    "manual_physical_acceptance": "DEFERRED until the complete Editor gate."
+  },
+  "status": "D06_RESPONSIVE_PAGINATION_SUBGATE_PASS; FULL_D_OPEN_NOT_CERTIFIED",
+  "limitations": [
+    "This only adds desktop coverage to the existing retention pagination/retry/refresh/keyboard scenario; it does not complete the full D-06 or D acceptance matrix.",
+    "The current environment proxy prevented a fresh direct production health check; no deployment was needed for this test-only change."
+  ]
+}
