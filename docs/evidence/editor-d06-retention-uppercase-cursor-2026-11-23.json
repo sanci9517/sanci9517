@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "captured_at_utc": "2026-11-23T12:00:00Z",
+  "captured_at_utc": "2026-11-23T12:31:30Z",
   "plan_item": "77.44.7.D / D-06 — normalize case-insensitive retention UUID cursors before SQLite lookup",
   "repository": {
     "name": "sanci9517/sanci9517",
@@ -50,7 +50,7 @@
     "r2_operation": false
   },
   "release": {
-    "status": "RELEASED AND DIRECTLY POST-DEPLOY HEALTH-VERIFIED; exact-SHA Editor Core hosted workflow remains IN_PROGRESS (not a full Editor acceptance pass)",
+    "status": "RELEASED; EXACT-SHA EDITOR CORE CI SUCCESS; SLICE NOT FULL D / EDITOR ACCEPTANCE",
     "runtime_commit": "8e8df1d45377df220985e518cb2c892178aff774",
     "fast_forward_parent": "6fece531c72f42a3c5d9bdf404e180e3071cd7ef",
     "github_branch_get": "PASS: v2/foundation exact SHA 8e8df1d45377df220985e518cb2c892178aff774",
@@ -70,7 +70,7 @@
       "deployment_time": "2026-11-23T11:56:40.107104Z"
     },
     "direct_post_deploy_health": {
-      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health?release=8e8df1d45377df220985e518cb2c892178aff774",
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health?verify=45169571253",
       "http_status": 200,
       "body": {
         "ok": true,
@@ -78,7 +78,7 @@
         "version": "2.0.0",
         "server": "cloudflare-worker"
       },
-      "captured_at_utc": "2026-11-23T11:58:10Z"
+      "captured_at_utc": "2026-11-23T12:30:56Z"
     },
     "public_assets": {
       "changed_files": [],
@@ -87,9 +87,14 @@
     "exact_sha_github_actions": {
       "editor_core": {
         "run_id": 45169571253,
-        "status": "IN_PROGRESS",
-        "active_step": "Test real Worker media upload with isolated D1 and R2",
-        "observed_at_utc": "2026-11-23T12:00:00Z"
+        "job_id": 137675253321,
+        "workflow": "Editor Core Test",
+        "exact_source_sha": "8e8df1d45377df220985e518cb2c892178aff774",
+        "status": "COMPLETED",
+        "conclusion": "SUCCESS",
+        "steps": "Required steps 1-19 completed successfully; optional screenshot upload step 20 skipped; job completed successfully.",
+        "observed_at_utc": "2026-11-23T12:24:57Z",
+        "url": "https://github.com/sanci9517/sanci9517/actions/runs/45169571253"
       },
       "canonical_active_point_audit": {
         "run_id": 45169571254,
@@ -131,7 +136,7 @@
     "full_editor": "OPEN / NOT CERTIFIED",
     "manual_physical_acceptance": "DEFERRED until complete Visual Editor",
     "save_publish_separate": true,
-    "exact_sha_editor_core": "IN_PROGRESS; do not treat this as full Editor acceptance or full D-point PASS."
+    "exact_sha_editor_core": "PASS for runtime SHA 8e8df1d45377df220985e518cb2c892178aff774; full D / Visual Editor acceptance remains OPEN / NOT CERTIFIED."
   },
   "cost": {
     "new_paid_service": false,

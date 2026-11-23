@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261123122813-8e95a152",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-23T12:28:13.210Z",
+  "finished_at": "2026-11-23T12:31:25.402Z",
+  "wall_seconds": 192,
+  "paused_seconds": 0,
+  "measured_seconds": 192,
+  "status": "pass",
+  "kind": "docs",
+  "summary": "Rögzítettem az exact runtime SHA Editor Core CI sikerét, a 100%-os Worker rollout állapotot és a friss közvetlen HTTP 200 health bizonyítékot; a D és Editor teljes elfogadása továbbra nyitott.",
+  "evidence": [
+    "docs/evidence/editor-d06-retention-uppercase-cursor-2026-11-23.json"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "54d047f16a9c9db8c6f299368da77f4f56bbc83a",
+  "finished_revision": "54d047f16a9c9db8c6f299368da77f4f56bbc83a",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
