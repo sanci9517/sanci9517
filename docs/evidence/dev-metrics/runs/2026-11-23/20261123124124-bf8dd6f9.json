@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261123124124-bf8dd6f9",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-23T12:41:24.711Z",
+  "finished_at": "2026-11-23T12:46:42.691Z",
+  "wall_seconds": 318,
+  "paused_seconds": 0,
+  "measured_seconds": 318,
+  "status": "pass",
+  "kind": "mixed",
+  "summary": "A D-06 háttérkép útvonal célzott Chromium és media API regressziói PASS; a forrásaudit nem talált igazolt hibát. Az audit- és health-bizonyítékot dokumentáltam, a teljes D/editor OPEN marad.",
+  "evidence": [
+    "docs/evidence/editor-d06-background-image-reference-audit-2026-11-23.json"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "c2e26c37bbeb0a57adad8c0ecc8220438949de0e",
+  "finished_revision": "c2e26c37bbeb0a57adad8c0ecc8220438949de0e",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
