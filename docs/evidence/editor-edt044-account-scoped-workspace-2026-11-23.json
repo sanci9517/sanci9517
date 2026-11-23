@@ -87,14 +87,36 @@
     "node --test tests/editor-public-asset-cache-bust.test.js tests/editor-d-content-contract.test.js": "PASS 2/2"
   },
   "release": {
-    "runtime_commit": "PENDING",
-    "push": "PENDING",
-    "exact_sha_ci": "PENDING",
-    "cloudflare_build": "PENDING",
-    "deployment": "PENDING",
-    "traffic_100_percent": "PENDING",
-    "production_health_after": "PENDING",
-    "changed_public_asset_hashes_after": "PENDING",
+    "runtime_commit": "54e4567e55d2da4a12b96134c7c695fbf3ef950f",
+    "push": "PASS normal fast-forward to origin/v2/foundation; base 073bacb964306788ec807a3c233869910d266e13",
+    "exact_sha_ci": "IN_PROGRESS Editor Core Test; Canonical Plan Active Point Audit, F0 baseline checks, Twitch Integration Check, Canonical Creator Platform Plan, and Production Worker source smoke all succeeded for 54e4567e55d2da4a12b96134c7c695fbf3ef950f",
+    "cloudflare_build": {
+      "build_uuid": "41913c9b-7e86-4609-8dbc-8cc92964c626",
+      "source_sha": "54e4567e55d2da4a12b96134c7c695fbf3ef950f",
+      "branch": "v2/foundation",
+      "build_outcome": "success",
+      "build_command": "npm run typecheck",
+      "deploy_command": "npm run deploy:safe",
+      "stopped_on": "2026-11-23T09:59:54.783Z"
+    },
+    "deployment": {
+      "deployment_id": "0a993e8d-747e-435a-8d09-559d29703746",
+      "created_on": "2026-11-23T09:59:48.915404Z",
+      "worker_version": "e7de609d-f59a-4220-863f-72855c60e03b",
+      "source": "wrangler"
+    },
+    "traffic_100_percent": "PASS: version e7de609d-f59a-4220-863f-72855c60e03b received 100% on latest deployment",
+    "production_health_after": {
+      "url": "/api/health?codex_check=edt044-postrelease",
+      "http_status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "changed_public_asset_hashes_after": "PASS exact local SHA-256 matches for five assets; index canonical /editor-v2/ route returns 28,854 bytes after redirect from /editor-v2/index.html",
     "dry_run": "PASS; no production mutation",
     "wrangler_version": "4.130.0",
     "upload_assets": 200,
@@ -117,5 +139,26 @@
     "tests/browser/editor-workspace-appearance.test.js": "723282670919ec21000c29d13f9bb418e516c55095d630e4e1b90f1f874419a4",
     "tests/editor-public-asset-cache-bust.test.js": "6f771a85efca7c308f0f139a84d4a1b7cc05c70046f7d49018c7582d08434ac4",
     "docs/evidence/feature-traceability.json": "0468865fa17f638567591c4128bfe9ab042b56389521cac519d92660742f9465"
+  },
+  "post_release_production": {
+    "worker": "sanci9517-streamer-brand",
+    "deployment_id": "0a993e8d-747e-435a-8d09-559d29703746",
+    "created_on": "2026-11-23T09:59:48.915404Z",
+    "version": "e7de609d-f59a-4220-863f-72855c60e03b",
+    "traffic_percent": 100,
+    "health_http_status": 200,
+    "health_body": {
+      "ok": true,
+      "service": "sanci9517-streamer-brand",
+      "version": "2.0.0",
+      "server": "cloudflare-worker"
+    },
+    "asset_hashes": {
+      "public/editor-v2/index.html": "e7d8064a52519e4649586f44c1b3357abc27a967dd38f3755c4e12aca56e0903",
+      "public/editor-v2/app.js": "d13ee9f399a311d1fdc383b75f8aa88cef27b32f67245d32602b1f0ea4f9ef25",
+      "public/editor-v2/ui/shell.js": "be48db2b7b277054351f811b2eda0d5b38d37c19fd24a9b7ab31b82a74b59f26",
+      "public/editor-v2/ui/workspace-appearance.js": "b7e9d894992832efd5f13fb74aae7210e5bd7beefc1b2c1f22e09c4352766116",
+      "public/editor-v2/ui/workspace-preference-storage.js": "ea104ee15909201fb55ffeecc695c75c53126616b4b80a3c6aa86b1be4263825"
+    }
   }
 }

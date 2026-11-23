@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261123090420-7d64214e",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-23T09:04:20.457Z",
+  "finished_at": "2026-11-23T10:02:02.869Z",
+  "wall_seconds": 3462,
+  "paused_seconds": 0,
+  "measured_seconds": 3462,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "EDT-044 account-scoped cache fix deployed and verified; overall D-06 acceptance remains open; exact-SHA Editor Core CI still running; docs evidence only",
+  "evidence": [
+    "docs/evidence/editor-edt044-account-scoped-workspace-2026-11-23.json"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "073bacb964306788ec807a3c233869910d266e13",
+  "finished_revision": "54e4567e55d2da4a12b96134c7c695fbf3ef950f",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
