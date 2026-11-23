@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "captured_at_utc": "2026-11-23T08:33:47Z",
+  "plan_item": "77.44.7.D / D-06 — retention request UI integration regression",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "runtime_commit": "8dc453a45925ec53eeb23cc203d65f59b51463ce",
+    "test_only_followup_commit": "same commit as this evidence record; confirmed by GitHub after push"
+  },
+  "hosted_ci": {
+    "workflow": "Editor Core Test",
+    "run_id": "45134328786",
+    "job_id": "137556865265",
+    "source_sha": "8dc453a45925ec53eeb23cc203d65f59b51463ce",
+    "conclusion": "failure",
+    "failed_step": "Run Editor browser layout regression (step 14)",
+    "failed_test": "tests/browser/admin-media-integrity.test.js:43 — two viewport cases at 390px and 1366px",
+    "cause": "The admin-media-integrity fixture returned a complete retention-status response without the contract-required nextCursor:null. The production UI correctly rejected the incomplete fixture response; this did not reproduce an application/API regression.",
+    "other_browser_files": "The runner reached all 60/60 browser files; the other 58 files passed. In the failing file the remaining 8/10 tests passed. Later workflow steps were skipped after the browser step failed.",
+    "diagnostic_artifact": {
+      "id": "14800552266",
+      "name": "editor-layout-screenshots",
+      "size_bytes": 3127477,
+      "retention_days": 7,
+      "sha256_zip": "501d1386fb6d36b8329315ca9b175ad5fd7b99aabb608a4dbcf10d99ec67dc78",
+      "action": "Preserved as current exact-SHA diagnostic evidence; no deletion."
+    }
+  },
+  "fix": {
+    "kind": "test fixture only",
+    "file": "tests/browser/admin-media-integrity.test.js",
+    "change": "Added nextCursor:null to the complete empty retention-status mock response, matching the current API contract.",
+    "runtime_source_changed": false,
+    "verification": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/admin-media-integrity.test.js — PASS, 10/10 tests, including the former mobile and desktop failures.",
+    "ci_policy": "No rerun/dispatch: repository policy requires [skip ci] for test-only changes. The original hosted failure remains recorded; no hosted pass is claimed for the fixture follow-up."
+  },
+  "production": {
+    "worker_runtime_commit": "8dc453a45925ec53eeb23cc203d65f59b51463ce",
+    "deployment_id_at_last_check": "16391242-5382-4de9-8c3b-4f4670122f39",
+    "version_id_at_last_check": "347966c4-a743-4b37-9fcb-5839c330a422",
+    "traffic_percent_at_last_check": 100,
+    "new_deployment_for_test_only_change": false,
+    "production_d1_or_r2_operation": "NONE",
+    "new_cost_huf": 0
+  },
+  "acceptance": {
+    "D06_and_full_D_point": "OPEN / NOT_CERTIFIED",
+    "full_editor_manual_physical_acceptance": "DEFERRED until full Editor completion",
+    "save_publish_separation": "PRESERVED"
+  }
+}

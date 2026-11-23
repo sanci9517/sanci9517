@@ -18,7 +18,7 @@ async function fixture(t,handler,width=390){
   const url=new URL(req.url,'http://localhost');
   if(url.pathname==='/api/admin/media'){
    calls.push({method:req.method,query:url.search,cache:req.headers['cache-control']});
-   if(url.searchParams.has('retentionStatus'))return json(res,{ok:true,data:{migrationActive:true,requests:[],complete:true,permanentDeletionAuthorized:false}});
+   if(url.searchParams.has('retentionStatus'))return json(res,{ok:true,data:{migrationActive:true,requests:[],complete:true,nextCursor:null,permanentDeletionAuthorized:false}});
    if(url.searchParams.has('missingAudit')||url.searchParams.has('orphanAudit'))return handler(req,res,url);
    if(url.searchParams.has('id')){res.writeHead(200,{'content-type':'image/png'});return res.end(Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/l5sAAAAASUVORK5CYII=','base64'));}
    return json(res,{ok:true,data:{assets:[{id:id(999),name:'Médiatár fixture.png',mimeType:'image/png',sizeBytes:10,altText:''}]}});
