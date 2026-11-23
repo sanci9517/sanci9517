@@ -123,6 +123,35 @@ test('retention pages append once, preserve rows on retry, and refresh returns t
  assert.ok(f.calls.every(call=>call.method==='GET'),'paging, retry and refresh only read status');assert.deepEqual(f.pageErrors,[]);
 });
 
+test('a repeated row at a page boundary fails closed and can be retried without duplicate append',async t=>{
+ const first=Array.from({length:100},(_,i)=>request('requested',i+1));
+ const retried=Array.from({length:100},(_,i)=>request('requested',i+101));
+ const f=await fixture(t,(req,res,n)=>{
+  const cursor=new URL(req.url,'http://localhost').searchParams.get('cursor');
+  if(!cursor)return json(res,{ok:true,data:data(first,false,id(100))});
+  if(n===2){
+   const repeated=[first.at(-1),...retried.slice(0,99)];
+   return json(res,{ok:true,data:data(repeated,false,id(199))});
+  }
+  if(n===3)return json(res,{ok:true,data:data(retried,true,null)});
+  return json(res,{ok:false,error:{code:'UNEXPECTED_EXTRA_STATUS_READ'}},500);
+ });
+ await f.state('ready');
+ const next=f.panel.getByRole('button',{name:'További 100 kérelem betöltése'});
+ await next.click();await f.state('error');
+ assert.equal(await f.panel.locator('.retention-card').count(),100,'an overlapping page cannot append or discard previously verified rows');
+ assert.equal(await next.isEnabled(),true,'the unchanged cursor remains explicitly retryable');
+ assert.match(await f.panel.getByRole('status').textContent(),/nem ellenőrizhetők/);
+ await next.click();await f.state('ready');
+ const ids=await f.panel.locator('.retention-card').evaluateAll(cards=>cards.map(card=>card.dataset.requestId));
+ assert.equal(ids.length,200);
+ assert.equal(new Set(ids).size,200,'retried pages must not duplicate a row across the cursor boundary');
+ assert.deepEqual(ids,[...first,...retried].map(row=>row.id));
+ assert.equal(f.statusCount(),3,'overlap is a single failed read followed by one user-requested retry');
+ assert.ok(f.calls.every(call=>call.method==='GET'),'duplicate response validation remains read-only');
+ assert.deepEqual(f.pageErrors,[]);
+});
+
 test('refresh invalidates the old page cursor until the first page resolves',async t=>{
  let finishNext,finishRefresh;
  const rows=Array.from({length:100},(_,i)=>request('requested',i+1));

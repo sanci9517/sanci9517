@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "captured_at_utc": "2026-11-23T11:37:04Z",
+  "plan_item": "77.44.7.D / D-06 — retention pagination rejects duplicate IDs across a page boundary",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "runtime_commit": "ac9d7023acd42755f25fee407719a4d86888dc94"
+  },
+  "coverage_gap": "The controller already rejects a next page containing an ID from a previously displayed page, but the existing 201-row three-page browser test only used disjoint page IDs and did not exercise the boundary-overlap guard.",
+  "regression": {
+    "test": "tests/browser/admin-media-retention.test.js — a repeated row at a page boundary fails closed and can be retried without duplicate append",
+    "scenario": "Page one displays 100 verified rows. Page two repeats the last first-page ID and includes new IDs. The controller refuses the overlapping response, preserves the original 100 rows, keeps the cursor available for explicit retry, then appends a valid retry exactly once.",
+    "production_code_changed": false,
+    "expected_behavior_changed": false
+  },
+  "checks": {
+    "focused_chromium": "PASS, 1/1 using CHROMIUM_PATH=/usr/bin/chromium and the granted localhost test bind; includes duplicate-overlap rejection, preservation, explicit retry, 200 unique ordered rows, and GET-only reads.",
+    "plan_contract": "PASS 15/15",
+    "canonical_plan": "PASS one complete 13-file master, 396 mappings; functional acceptance NOT CERTIFIED",
+    "traceability": "PASS 396/396 source mappings match current paths and hashes",
+    "diff_check": "PASS",
+    "editor_core_exact_runtime_sha": {
+      "run_id": 45164940200,
+      "status_at_capture": "IN_PROGRESS",
+      "last_reported_step": "Run Editor browser layout regression",
+      "this_test_only_followup_is_not_in_that_run": true
+    }
+  },
+  "production": {
+    "runtime_changed": false,
+    "worker_deployment_id": "94bb20c0-49e8-4698-b793-f87c87d6b450",
+    "worker_version_id": "4df5ac04-5f74-4e4f-8dbf-5055d68b64a5",
+    "worker_version_number": 4165,
+    "traffic_percent": 100,
+    "deployment_action": "NONE; test and evidence only",
+    "d1": "NONE",
+    "r2": "NONE"
+  },
+  "source_sha256": {
+    "tests/browser/admin-media-retention.test.js": "d6e8e0af8320e367e47eae586e1ed5a1adfe7188825bcd8115f8c43bb02f5fca"
+  },
+  "acceptance": {
+    "this_slice": "PASS: the cross-page duplicate rejection branch is now covered in real Chromium.",
+    "d06_and_full_d_point": "OPEN / NOT CERTIFIED",
+    "full_editor": "OPEN / NOT CERTIFIED",
+    "manual_physical_acceptance": "DEFERRED until complete Visual Editor",
+    "save_publish_separate": true
+  },
+  "cost": {
+    "new_paid_service": false,
+    "new_paid_cost_huf": 0
+  }
+}

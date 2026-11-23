@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261123113550-da165d12",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-23T11:35:50.094Z",
+  "finished_at": "2026-11-23T11:37:46.473Z",
+  "wall_seconds": 116,
+  "paused_seconds": 0,
+  "measured_seconds": 116,
+  "status": "partial",
+  "kind": "test",
+  "summary": "Added focused real-Chromium regression for duplicate retention IDs across a cursor page boundary; existing controller rejects overlap, preserves verified page-one rows and permits explicit clean retry. No runtime behavior changed. Exact runtime Editor Core workflow remains in progress; no duplicate CI/deploy.",
+  "evidence": [
+    "docs/evidence/editor-d06-retention-page-boundary-duplicate-2026-11-23.json"
+  ],
+  "checks": "1/1 focused Chromium; 15/15 plan contract; canonical 13-file/396 mapping check; traceability 396/396; diff check; runtime CI exact SHA still in progress",
+  "started_revision": "41287c5a0b82391b46f41ac2858e092f726bb3dc",
+  "finished_revision": "41287c5a0b82391b46f41ac2858e092f726bb3dc",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
