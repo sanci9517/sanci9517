@@ -297,7 +297,7 @@ test('cancellation needs confirmation, locks controls and handles idempotent suc
  assert.equal(mutations(f).length,1);assert.deepEqual(f.pageErrors,[]);
 });
 
-test('confirmed cancellation from a later retention page refreshes to page one and keeps a fresh cursor',async t=>{
+for(const width of [390,1366])test(`confirmed cancellation from a later retention page refreshes to page one and keeps a fresh cursor at ${width}px`,async t=>{
  const rows=Array.from({length:201},(_,i)=>request('requested',201-i));
  const f=await fixture(t,(req,res)=>{
   const cursor=new URL(req.url,'http://localhost').searchParams.get('cursor');
@@ -305,7 +305,7 @@ test('confirmed cancellation from a later retention page refreshes to page one a
   if(cursor===id(102))return json(res,{ok:true,data:data(rows.slice(100,200),false,id(2))});
   if(cursor===id(2))return json(res,{ok:true,data:data(rows.slice(200),true,null)});
   return json(res,{ok:false,error:{code:'INVALID_RETENTION_CURSOR'}},400);
- },390,{onMedia:(req,res,url)=>{
+ },width,{onMedia:(req,res,url)=>{
   const requestId=url.searchParams.get('requestId');
   const index=rows.findIndex(row=>row.id===requestId);
   if(req.method!=='DELETE'||index<0)return json(res,{ok:false,error:{code:'RETENTION_STATE_CONFLICT'}},409);

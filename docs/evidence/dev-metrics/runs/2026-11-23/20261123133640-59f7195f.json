@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261123133640-59f7195f",
+  "task": "77.44.7.D",
+  "trigger": "scheduled",
+  "started_at": "2026-11-23T13:36:40.212Z",
+  "finished_at": "2026-11-23T13:38:17.504Z",
+  "wall_seconds": 97,
+  "paused_seconds": 0,
+  "measured_seconds": 97,
+  "status": "pass",
+  "kind": "test",
+  "summary": "Added desktop coverage for the confirmed page-two retention cancellation refresh and fresh-cursor flow; 21/21 Chromium admin-retention tests passed at mobile and desktop widths.",
+  "evidence": [
+    "docs/evidence/editor-d06-retention-cancel-responsive-2026-11-23.json"
+  ],
+  "checks": "chromium-mobile,chromium-desktop,health-200,plan-contract,canonical-plan,traceability,active-point-audit",
+  "started_revision": "0732c5a8798699eb9fa91ee16d7d53e63c6d065d",
+  "finished_revision": "0732c5a8798699eb9fa91ee16d7d53e63c6d065d",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

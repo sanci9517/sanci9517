@@ -1,0 +1,71 @@
+{
+  "schema": "sanci.editor.d06-retention-cancel-responsive.v1",
+  "captured_at_utc": "2026-11-23T13:37:19Z",
+  "plan_point": "77.44.7.D / D-06 — confirmed retention cancellation from a later page across mobile and desktop",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "base_sha": "0732c5a8798699eb9fa91ee16d7d53e63c6d065d",
+    "canonical_plan_sha256": "9fc78edb31b59fd50a4d536c13b1dc3bd52777f2c2f7fa7e56e4dd18cb41b438",
+    "test_sha256": "6e4a7b65350bd614c1af60ccb4f6527ce616f0003f321fb079e73908d97364cf"
+  },
+  "scope": {
+    "kind": "test-only responsive regression",
+    "test_file": "tests/browser/admin-media-retention.test.js",
+    "viewports_css_px": [390, 1366],
+    "scenario": "Load page two of 201 retention requests, confirm cancellation of a page-two request, verify the list returns to page one, and then verify a fresh cursor returns the canceled row with no duplicates.",
+    "assertions": [
+      "The success status is announced after confirmed cancellation.",
+      "The refreshed list is exactly the first 100 rows.",
+      "The first-page cursor is available again.",
+      "A fresh second-page read shows the canceled state.",
+      "The visible rows have unique IDs.",
+      "Only one cancellation mutation is sent and no browser error occurs."
+    ],
+    "runtime_source_changed": false,
+    "save_and_publish_remain_separate": true
+  },
+  "checks": {
+    "targeted_browser_command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/admin-media-retention.test.js",
+    "targeted_browser_result": "PASS — 21/21 tests, including the confirmed-cancellation scenario at 390px and 1366px.",
+    "syntax_and_diff": "PASS — node --check tests/browser/admin-media-retention.test.js; git diff --check.",
+    "plan_contract": "PASS — python3 tests/plan-contract.test.py, 15/15.",
+    "canonical_plan": "PASS — python3 scripts/check-canonical-plan.py, complete 13-file master / 396 mappings; acceptance remains NOT CERTIFIED.",
+    "traceability": "PASS — python3 scripts/build-feature-traceability.py --check, 396/396.",
+    "active_point": "77.44.7.D OPEN / NOT_CERTIFIED; 148 PARTIAL_SOURCE and 248 UNVERIFIED mappings.",
+    "hosted_ci": "NOT RUN — test-harness-only change follows [skip ci]; no hosted result claimed."
+  },
+  "production": {
+    "worker": "sanci9517-streamer-brand",
+    "latest_deployment_id": "83ca4e1f-e8f6-461a-ba22-a52a200a7f27",
+    "worker_version_id": "e505e056-e1af-4545-a95a-2a4725589912",
+    "traffic_percent": 100,
+    "deployment_api_check": "PASS — Cloudflare deployments API GET in this run.",
+    "direct_health": {
+      "http_status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      },
+      "captured_at_utc": "2026-11-23T13:37:19Z"
+    },
+    "runtime_changed": false,
+    "worker_deployment_needed": false,
+    "public_asset_hash_check": "NOT APPLICABLE — only test harness/evidence changed."
+  },
+  "safety_and_status": {
+    "production_d1_write_or_migration": false,
+    "production_r2_write_or_delete": false,
+    "new_dependency_or_paid_service": false,
+    "new_cost_huf": 0,
+    "d06_and_full_d": "OPEN / NOT CERTIFIED",
+    "full_editor_manual_physical_acceptance": "DEFERRED until complete Editor."
+  },
+  "status": "D06_CONFIRMED_CANCELLATION_RESPONSIVE_SUBGATE_PASS; FULL_D_OPEN_NOT_CERTIFIED",
+  "limitations": [
+    "This closes only viewport coverage for confirmed page-two cancellation; the complete D-06 capability and field matrix and the full D block remain open.",
+    "No public/runtime asset was modified and no production deployment was required."
+  ]
+}
