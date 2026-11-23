@@ -76,13 +76,47 @@
     "tests/editor-public-asset-cache-bust.test.js": "504535f7e649cadccc7297f322e63e9d95b87621793e599a316282ec95392517"
   },
   "release": {
-    "status": "PENDING_RUNTIME_COMMIT_PUSH_BUILD_ROLLOUT_HEALTH_AND_ASSET_HASH_VERIFICATION",
-    "runtime_commit": null,
-    "worker_deployment_id": null,
-    "worker_version_id": null,
-    "traffic_percent": null,
-    "post_deploy_health": null,
-    "post_deploy_asset_hashes": null
+    "status": "DEPLOYED; EXACT_SHA_EDITOR_CORE_CI_IN_PROGRESS; DIRECT_CHANGED_ASSET_HASH_READBACK_BLOCKED",
+    "verified_at_utc": "2026-11-23T11:31:09Z",
+    "runtime_commit": "ac9d7023acd42755f25fee407719a4d86888dc94",
+    "github_branch_head": "ac9d7023acd42755f25fee407719a4d86888dc94",
+    "push": "normal fast-forward from 66436ee3ac1f6142dd1acb1d50e723211bb24759; GitHub branch API and exact-SHA workflow records identify ac9d7023acd42755f25fee407719a4d86888dc94",
+    "cloudflare_build": {
+      "build_uuid": "542a89ac-62a3-43b3-a898-bf88b3db2b61",
+      "version_id": "4df5ac04-5f74-4e4f-8dbf-5055d68b64a5",
+      "build_outcome": "success",
+      "source_commit": "ac9d7023acd42755f25fee407719a4d86888dc94",
+      "build_command": "npm run typecheck",
+      "deploy_command": "npm run deploy:safe",
+      "uploaded_changed_assets": ["/assets/admin-media-retention.js", "/admin-media.html", "/assets/admin-media.js"]
+    },
+    "worker_deployment_id": "94bb20c0-49e8-4698-b793-f87c87d6b450",
+    "worker_version_id": "4df5ac04-5f74-4e4f-8dbf-5055d68b64a5",
+    "worker_version_number": 4165,
+    "traffic_percent": 100,
+    "post_deploy_health": {
+      "status": "PASS via exact-SHA Production Worker source smoke run 45164940231; /api/health HTTP 200",
+      "direct_local_request": "UNVERIFIED: local curl could not connect to the managed proxy on port 8080 (HTTP 000); no local-origin response is claimed"
+    },
+    "post_deploy_asset_hashes": {
+      "expected_source_sha256": {
+        "public/admin-media.html": "c2d0285d053361317f04e0202affb1ef93fb34ac5048980080802f9a69d29636",
+        "public/assets/admin-media.js": "386b30dcbbfbbc9cd8fa552c324e388e218511f324b4c3d845318d0d84b879a0",
+        "public/assets/admin-media-retention.js": "f4a0572565fbfc102a59577bcb1b1b8527fe803460ab250f4fb4005f9bc7f7f9"
+      },
+      "direct_live_hash_match": "UNVERIFIED: workers.dev requests could not connect through the managed proxy (curl exit 7, HTTP 000). The exact-SHA Cloudflare build log confirms all three paths were uploaded, but does not expose their remote SHA-256 values."
+    },
+    "github_actions": {
+      "passed_exact_sha": [
+        {"name": "Twitch Integration Check", "run_id": 45164940176},
+        {"name": "Production Worker source smoke", "run_id": 45164940231},
+        {"name": "Canonical Creator Platform Plan", "run_id": 45164940194},
+        {"name": "Canonical Plan Active Point Audit", "run_id": 45164940166},
+        {"name": "F0 baseline checks", "run_id": 45164940351}
+      ],
+      "in_progress_exact_sha": {"name": "Editor Core Test", "run_id": 45164940200, "current_step": "Run Editor browser layout regression"},
+      "failed_exact_sha": []
+    }
   },
   "acceptance": {
     "D06_and_full_D_point": "OPEN / NOT_CERTIFIED",

@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261123111601-c1e2fc69",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-23T11:16:01.578Z",
+  "finished_at": "2026-11-23T11:31:56.801Z",
+  "wall_seconds": 955,
+  "paused_seconds": 0,
+  "measured_seconds": 955,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "A D-06 refresh-vs-pagination race fix was validated locally, pushed and deployed to 100% Cloudflare traffic from exact SHA; exact-SHA production smoke passed. Editor Core CI remains in progress and direct changed-asset SHA readback is blocked by managed proxy egress, so the D-06 slice is released but not fully certified.",
+  "evidence": [
+    "docs/evidence/editor-d06-retention-refresh-cursor-race-2026-11-23.json"
+  ],
+  "checks": "17/17 Chromium; npm run test:media 120/120; exact-SHA Cloudflare Build success; Worker 4165 at 100%; production source smoke health 200; changed-asset hashes direct readback UNVERIFIED; Editor Core CI in progress",
+  "started_revision": "66436ee3ac1f6142dd1acb1d50e723211bb24759",
+  "finished_revision": "ac9d7023acd42755f25fee407719a4d86888dc94",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
