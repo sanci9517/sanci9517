@@ -6,7 +6,7 @@
     "name": "sanci9517/sanci9517",
     "branch": "v2/foundation",
     "runtime_commit": "8dc453a45925ec53eeb23cc203d65f59b51463ce",
-    "test_only_followup_commit": "same commit as this evidence record; confirmed by GitHub after push"
+    "test_only_followup_commit": "69f1d8c0b69fbde25945ae466176b6b11790d670"
   },
   "hosted_ci": {
     "workflow": "Editor Core Test",

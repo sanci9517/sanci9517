@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261123083035-3ad073e7",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-23T08:30:35.226Z",
+  "finished_at": "2026-11-23T08:35:45.676Z",
+  "wall_seconds": 310,
+  "paused_seconds": 0,
+  "measured_seconds": 310,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "Diagnosed and fixed the hosted Editor Core test fixture contract mismatch; targeted Chromium passes; exact-SHA hosted rerun intentionally skipped by test-only policy.",
+  "evidence": [
+    "docs/evidence/editor-d06-retention-contract-fixture-ci-2026-11-23.json"
+  ],
+  "checks": "Editor Core hosted run 45134328786 failure diagnosed from logs; Chromium target 10/10 PASS; plan contract 15/15; canonical plan 13/396 PASS; traceability 396/396 PASS; diff-check PASS; [skip ci] push; no runtime deploy",
+  "started_revision": "4975bec76b7ac8428cbe3eb21618d4117923367c",
+  "finished_revision": "69f1d8c0b69fbde25945ae466176b6b11790d670",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
