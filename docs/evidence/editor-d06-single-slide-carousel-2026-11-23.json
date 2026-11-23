@@ -1,6 +1,6 @@
 {
   "date": "2026-11-23",
-  "observed_at": "2026-11-23T18:35:00Z",
+  "observed_at": "2026-11-23T18:41:00Z",
   "plan_point": "77.44.7.D / D-06 single-slide carousel navigation",
   "scope": "One bounded runtime/accessibility defect only; not D-06/full Editor completion.",
   "plan": {
@@ -11,9 +11,9 @@
       "sha256": "c55bce2f7ca135273d22a601180d96bb5862dd3a595f67ccd18ddb2f213543b1"
     },
     "after_release_note": {
-      "git_blob": "0acc79457dbb71df307282f8e71dc14d43212e76",
-      "bytes": 1846389,
-      "sha256": "133ab8be18d3183842f4b72a77d883255ee4511c27014f58532fb6cb967f9993"
+      "git_blob": "84c69ff9f495c12deaf6f9ee632d3284f716ee26",
+      "bytes": 1846422,
+      "sha256": "f839551f281d1d6edc90885e53a041c9bd67bffc4b515df0750c4cd4a938da2d"
     },
     "active_point": "77.44.7.D",
     "status": "OPEN / NOT_CERTIFIED",
