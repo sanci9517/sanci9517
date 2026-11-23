@@ -36,3 +36,11 @@ test('production source smoke hashes changed public Editor runtime modules befor
     assert.doesNotThrow(() => readFileSync(new URL(`../${path}`, import.meta.url)));
   }
 });
+
+test('production source smoke checks Editor index through its routed public URL', () => {
+  assert.match(
+    workflow,
+    /if \[\[ "\$file" == "public\/editor-v2\/index\.html" \]\]; then\s+relative_path="editor-v2\/"\s+fi/,
+    'the Worker serves the Editor index at /editor-v2/; the literal /editor-v2/index.html path returns 410'
+  );
+});

@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261123160021-21bd9f4f",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-23T16:00:21.372Z",
+  "finished_at": "2026-11-23T16:31:07.385Z",
+  "wall_seconds": 1846,
+  "paused_seconds": 35,
+  "measured_seconds": 1811,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "Fixed production source-smoke route mapping for the Editor index; regression and canonical-plan checks pass. Original exact-SHA smoke remains failed, and Editor Core hosted run was still in progress; runtime deployment unchanged.",
+  "evidence": [
+    "docs/evidence/editor-d06-retention-cancel-focus-2026-11-23.json"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "6d1c15787aa62e29d9244b2f0e7dcfc1ef5ec054",
+  "finished_revision": "1646c81866fe128e06bd559f4d557a119ba4a047",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

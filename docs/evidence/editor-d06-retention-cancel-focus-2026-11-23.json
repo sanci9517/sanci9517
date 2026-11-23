@@ -7,7 +7,10 @@
     "active_point": "77.44.7.D",
     "status": "OPEN / NOT_CERTIFIED",
     "feature_count": 396,
-    "source_status_counts": {"PARTIAL_SOURCE": 148, "UNVERIFIED": 248}
+    "source_status_counts": {
+      "PARTIAL_SOURCE": 148,
+      "UNVERIFIED": 248
+    }
   },
   "change": {
     "runtime_file": "public/assets/admin-media-retention.js",
@@ -35,8 +38,20 @@
   "production_preflight": {
     "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
     "queries": [
-      {"sql": "SELECT name FROM d1_migrations ORDER BY name DESC LIMIT 5", "top_marker": "0030_media_library_organization.sql", "rows_written": 0, "changes": 0, "changed_db": false},
-      {"sql": "SELECT count(*) AS request_count FROM media_retention_requests", "request_count": 0, "rows_written": 0, "changes": 0, "changed_db": false}
+      {
+        "sql": "SELECT name FROM d1_migrations ORDER BY name DESC LIMIT 5",
+        "top_marker": "0030_media_library_organization.sql",
+        "rows_written": 0,
+        "changes": 0,
+        "changed_db": false
+      },
+      {
+        "sql": "SELECT count(*) AS request_count FROM media_retention_requests",
+        "request_count": 0,
+        "rows_written": 0,
+        "changes": 0,
+        "changed_db": false
+      }
     ],
     "writes_migrations_or_r2": "None"
   },
@@ -44,23 +59,75 @@
     "branch": "v2/foundation",
     "parent_commit": "6d1c15787aa62e29d9244b2f0e7dcfc1ef5ec054",
     "runtime_commit": "16125251f2524990f63e39c996fc93685428b2fa",
-    "cloudflare_build": {"id": "d0de3ca3-bb18-4e13-abb6-68fe25b3a1f5", "trigger_commit_sha": "16125251f2524990f63e39c996fc93685428b2fa", "status": "stopped", "outcome": "success", "build_command": "npm run typecheck", "deploy_command": "npm run deploy:safe"},
+    "cloudflare_build": {
+      "id": "d0de3ca3-bb18-4e13-abb6-68fe25b3a1f5",
+      "trigger_commit_sha": "16125251f2524990f63e39c996fc93685428b2fa",
+      "status": "stopped",
+      "outcome": "success",
+      "build_command": "npm run typecheck",
+      "deploy_command": "npm run deploy:safe"
+    },
     "deployment_id": "07d5a18e-e54c-4246-8792-0b3002696fe7",
     "worker_version_id": "e96b5a57-9f6a-40ab-a258-67df3c26663e",
     "worker_version_number": 4170,
     "traffic_percentage": 100,
-    "health": {"url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health", "http_status": 200, "body": {"ok": true, "service": "sanci9517-streamer-brand", "version": "2.0.0", "server": "cloudflare-worker"}},
-    "changed_asset": {"url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/assets/admin-media-retention.js", "http_status": 200, "source_sha256": "df0e1f2ca9f72ff57814415e26a24f0bcc7294eacd746245d8ad59f7793a9b09", "deployed_sha256": "df0e1f2ca9f72ff57814415e26a24f0bcc7294eacd746245d8ad59f7793a9b09", "hashes_match": true},
+    "health": {
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+      "http_status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "changed_asset": {
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/assets/admin-media-retention.js",
+      "http_status": 200,
+      "source_sha256": "df0e1f2ca9f72ff57814415e26a24f0bcc7294eacd746245d8ad59f7793a9b09",
+      "deployed_sha256": "df0e1f2ca9f72ff57814415e26a24f0bcc7294eacd746245d8ad59f7793a9b09",
+      "hashes_match": true
+    },
     "cloudflare_free_build_limit_reached_before_release": false,
     "github_actions": {
       "exact_sha": "16125251f2524990f63e39c996fc93685428b2fa",
       "runs": [
-        {"id": 45213007910, "name": "Canonical Creator Platform Plan", "status": "completed", "conclusion": "success"},
-        {"id": 45213007883, "name": "Canonical Plan Active Point Audit", "status": "completed", "conclusion": "success"},
-        {"id": 45213008031, "name": "Twitch Integration Check", "status": "completed", "conclusion": "success"},
-        {"id": 45213008075, "name": "F0 baseline checks", "status": "completed", "conclusion": "success"},
-        {"id": 45213008083, "name": "Editor Core Test", "status": "in_progress", "current_step": "Run Editor browser layout regression"},
-        {"id": 45213007939, "name": "Production Worker source smoke", "status": "in_progress", "current_step": "Verify live health and exact changed public source bytes"}
+        {
+          "id": 45213007910,
+          "name": "Canonical Creator Platform Plan",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45213007883,
+          "name": "Canonical Plan Active Point Audit",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45213008031,
+          "name": "Twitch Integration Check",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45213008075,
+          "name": "F0 baseline checks",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45213008083,
+          "name": "Editor Core Test",
+          "status": "in_progress",
+          "current_step": "Run Editor browser layout regression"
+        },
+        {
+          "id": 45213007939,
+          "name": "Production Worker source smoke",
+          "status": "in_progress",
+          "current_step": "Verify live health and exact changed public source bytes"
+        }
       ],
       "dispatch_or_rerun": "None"
     }
@@ -71,5 +138,94 @@
     "visual_editor_complete": false,
     "manual_physical_acceptance": "Deferred until the complete Visual Editor scope is implemented."
   },
-  "cost": "0 Ft new cost; no paid service, new dependency, production write, migration, or R2 operation."
+  "cost": "0 Ft new cost; no paid service, new dependency, production write, migration, or R2 operation.",
+  "post_release_followup": {
+    "observed_at": "2026-11-23T16:25Z",
+    "runtime_source_sha": "16125251f2524990f63e39c996fc93685428b2fa",
+    "production_source_smoke": {
+      "run_id": 45213007939,
+      "status": "completed",
+      "conclusion": "failure",
+      "job_id": 137826538127,
+      "failure": "All 35 retries could not fetch public/editor-v2/index.html. The Worker returns HTTP 410 for /editor-v2/index.html; this is the wrong URL for the served index, not a source-byte mismatch.",
+      "other_source_files": "The job log contains no SHA mismatch or fetch-failure lines for the other 37 listed source files.",
+      "correct_route": {
+        "path": "/editor-v2/",
+        "http_status": 200,
+        "source_sha256": "e7d8064a52519e4649586f44c1b3357abc27a967dd38f3755c4e12aca56e0903",
+        "live_sha256": "e7d8064a52519e4649586f44c1b3357abc27a967dd38f3755c4e12aca56e0903",
+        "matches": true
+      },
+      "invalid_literal_path": {
+        "path": "/editor-v2/index.html",
+        "http_status": 410
+      }
+    },
+    "editor_core": {
+      "run_id": 45213008083,
+      "job_id": 137826537154,
+      "status": "in_progress",
+      "current_step": "Run Editor browser layout regression",
+      "previous_completed_steps": "TypeScript, Editor unit, offline D1 ledger/bootstrap, private R2 API, public showcase unit and Chromium, and isolated Worker media upload tests all completed successfully."
+    },
+    "workflow_fix": {
+      "files": [
+        ".github/workflows/worker-production-source-smoke.yml",
+        "tests/worker-production-source-smoke.test.mjs"
+      ],
+      "change": "Resolve the public/editor-v2/index.html source through its actual public route /editor-v2/ while preserving exact source SHA-256 comparison. Add a contract regression for that mapping.",
+      "test": "node tests/worker-production-source-smoke.test.mjs",
+      "result": "PASS, 2/2; git diff --check PASS",
+      "reproduced_before_workflow_fix": "The new contract test failed before adding the route mapping, then passed after the fix.",
+      "workflow_sha256": "50998a4ae6913936f0ff74bf5a9498e03c77621d947bbe5794730a3815a51102",
+      "test_sha256": "bb01a9d801c688f904e387b9c3cf2d5326b98907ea5f38f6cee99646131c6493"
+    },
+    "deployment": "No new runtime code in this follow-up; Worker remains deployment 07d5a18e-e54c-4246-8792-0b3002696fe7, version e96b5a57-9f6a-40ab-a258-67df3c26663e, 100% traffic; direct health 200 and changed retention asset hash still matches.",
+    "followup_status": "The failed run remains FAIL for runtime commit 16125251... . The workflow correction is test-harness-only and does not retroactively change that result. A future exact-SHA runtime push will exercise the corrected route mapping.",
+    "cloudflare_build_filter": {
+      "account_id": "64bbd6a12ac732ed2cac4ca25d8bfa7e",
+      "script": "sanci9517-streamer-brand",
+      "script_tag": "d93d4c0d419349c8a08c315d95b4a0db",
+      "before": {
+        "branch": "v2/foundation",
+        "build_command": "npm run typecheck",
+        "deploy_command": "npm run deploy:safe",
+        "path_includes": [
+          "*"
+        ],
+        "path_excludes": [
+          "docs/**",
+          "tests/**",
+          "AGENTS.md"
+        ],
+        "previews_enabled": false
+      },
+      "operation": "Appended only .github/workflows/** to production_settings.path_excludes with the Cloudflare Builds API; no preview settings or commands changed.",
+      "after_get_verified": {
+        "branch": "v2/foundation",
+        "build_command": "npm run typecheck",
+        "deploy_command": "npm run deploy:safe",
+        "path_includes": [
+          "*"
+        ],
+        "path_excludes": [
+          "docs/**",
+          "tests/**",
+          "AGENTS.md",
+          ".github/workflows/**"
+        ],
+        "previews_enabled": false,
+        "auto_build_enabled": true
+      },
+      "purpose": "Prevent workflow-only/test-harness corrections from creating redundant Worker builds/deploys; runtime source paths remain included.",
+      "worker_deployment_triggered": "No; configuration update does not deploy Worker code."
+    },
+    "cloudflare_latest_deployment_readback": {
+      "deployment_id": "07d5a18e-e54c-4246-8792-0b3002696fe7",
+      "worker_version_id": "e96b5a57-9f6a-40ab-a258-67df3c26663e",
+      "traffic_percentage": 100,
+      "verified_after_build_filter_update": true,
+      "no_redundant_deployment_after_filter_update": true
+    }
+  }
 }
