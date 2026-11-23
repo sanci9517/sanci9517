@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "captured_at_utc": "2026-11-23T11:37:04Z",
+  "captured_at_utc": "2026-11-23T11:48:05Z",
   "plan_item": "77.44.7.D / D-06 — retention pagination rejects duplicate IDs across a page boundary",
   "repository": {
     "name": "sanci9517/sanci9517",
@@ -16,13 +16,14 @@
   },
   "checks": {
     "focused_chromium": "PASS, 1/1 using CHROMIUM_PATH=/usr/bin/chromium and the granted localhost test bind; includes duplicate-overlap rejection, preservation, explicit retry, 200 unique ordered rows, and GET-only reads.",
+    "full_retention_chromium": "PASS, tests/browser/admin-media-retention.test.js 18/18 using CHROMIUM_PATH=/usr/bin/chromium; includes mobile and desktop rendering, complete pagination/retry/refresh/cancellation lifecycle, the stale-refresh cursor race, and cross-page duplicate rejection.",
     "plan_contract": "PASS 15/15",
     "canonical_plan": "PASS one complete 13-file master, 396 mappings; functional acceptance NOT CERTIFIED",
     "traceability": "PASS 396/396 source mappings match current paths and hashes",
     "diff_check": "PASS",
     "editor_core_exact_runtime_sha": {
       "run_id": 45164940200,
-      "status_at_capture": "IN_PROGRESS",
+      "status_at_capture": "IN_PROGRESS at 2026-11-23T11:48:05Z",
       "last_reported_step": "Run Editor browser layout regression",
       "this_test_only_followup_is_not_in_that_run": true
     }

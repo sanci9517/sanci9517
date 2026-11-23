@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261123114705-d499de7f",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-23T11:47:05.027Z",
+  "finished_at": "2026-11-23T11:48:28.534Z",
+  "wall_seconds": 84,
+  "paused_seconds": 0,
+  "measured_seconds": 84,
+  "status": "pass",
+  "kind": "test",
+  "summary": "Full retention-status browser regression passed 18/18 in real Chromium, including mobile/desktop, three-page ordering, retry, refresh race, cancellation and the new cross-page duplicate rejection case. The slice is verified, while overall D-06 remains OPEN/NOT CERTIFIED.",
+  "evidence": [
+    "docs/evidence/editor-d06-retention-page-boundary-duplicate-2026-11-23.json"
+  ],
+  "checks": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/admin-media-retention.test.js 18/18; traceability 396/396; active cursor 77.44.7.D OPEN; exact runtime Editor Core CI still in progress",
+  "started_revision": "3a5a80efee7720e67a77af753e88effda1a78c8a",
+  "finished_revision": "3a5a80efee7720e67a77af753e88effda1a78c8a",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
