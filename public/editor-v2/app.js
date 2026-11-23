@@ -29,9 +29,9 @@ import {captureStyleSnapshot,STYLE_SNAPSHOT_PROPERTIES} from './core/style-snaps
 import {LAYOUT_PRESETS,LAYOUT_TYPES,layoutMode,isManagedLayout,isLayoutPropertyRelevant,explicitGridColumnCount} from './core/layout-presets.js';
 import {resolveElementInsertion} from './core/element-insertion.js';
 import {TYPOGRAPHY_PRESETS,typographyPresetPatch} from './core/typography-presets.js';
-import {isStructuredType,createElementContent,normalizeElementContent,renderElementContent,activateStructuredContent} from './core/element-content.js?v=20261123-d06-structured-accessible-region-v1';
+import {isStructuredType,createElementContent,normalizeElementContent,renderElementContent,activateStructuredContent} from './core/element-content.js?v=20261123-d06-structured-region-names-v2';
 import {legacyImageSource,legacyPlayableSource,legacyPlaybackSettings,legacyImagePresentation,legacyImageCaption} from './core/legacy-media-source.js';
-import {renderStructuredInspector} from './ui/structured-inspector.js?v=20261123-d06-structured-accessible-name-v1';
+import {renderStructuredInspector} from './ui/structured-inspector.js?v=20261123-d06-structured-region-names-v2';
 import {ICON_CHOICES,iconById} from './core/icon-options.js';
 import {DIVIDER_LINE_STYLES,normalizeDividerStyle} from './core/decorative-elements.js';
 import {defaultCardContent,cardImageSrc} from './core/card-content.js?v=20261118-d02-card-cta-recovery-v1';

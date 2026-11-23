@@ -43,13 +43,14 @@ test('malformed saved structured content is read-only until explicit recovery',(
  }
 });
 
-test('structured gallery and carousel expose an independently persisted accessible name field',()=>{
+test('structured table, tabs, gallery and carousel expose an independently persisted accessible name field',()=>{
  const previous=globalThis.document;
  globalThis.document={createElement:tag=>new ElementStub(tag),createTextNode:text=>({textContent:String(text)})};
  try{
-  for(const [type,initial] of [['gallery','Képek a műhelyből'],['carousel','Kiemelt pillanatok']]){
-   const node={id:type,type,props:{ariaLabel:initial,contentModel:{version:1,items:type==='gallery'?
-    [{src:'/image.jpg',alt:'Kép',caption:''}]:[{label:'Első',content:'Tartalom',src:'',alt:''}]}}};
+  const models={table:{version:1,rows:[['Fejléc'],['Adat']]},tabs:{version:1,items:[{label:'Első',content:'Tartalom'}]},
+   gallery:{version:1,items:[{src:'/image.jpg',alt:'Kép',caption:''}]},carousel:{version:1,items:[{label:'Első',content:'Tartalom',src:'',alt:''}]}};
+  for(const [type,initial] of [['table','Táblázat a műhelyből'],['tabs','Műhely témái'],['gallery','Képek a műhelyből'],['carousel','Kiemelt pillanatok']]){
+   const node={id:type,type,props:{ariaLabel:initial,contentModel:models[type]}};
    let changed;const panel=renderStructuredInspector(node,()=>true,{updateProperties:patch=>{changed=patch;return true}});
    const field=panel.children.find(child=>child.dataset?.inspectorKey==='props.ariaLabel');
    assert.ok(field,`${type} exposes the independent accessible name control`);

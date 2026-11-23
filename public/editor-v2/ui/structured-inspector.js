@@ -1,6 +1,6 @@
 import {createCompositionInputs} from './composition-inputs.js';
 /* Inspector-only controls for canonical static content. All edits call the command API. */
-import {createElementContent,normalizeElementContent,isStructuredType,malformedElementContentRowIndexes} from '../core/element-content.js?v=20261123-d06-structured-accessible-region-v1';
+import {createElementContent,normalizeElementContent,isStructuredType,malformedElementContentRowIndexes} from '../core/element-content.js?v=20261123-d06-structured-region-names-v2';
 const focusRequests=new WeakMap();
 const typeLabels={list:'Lista',table:'Táblázat',tabs:'Fülek',accordion:'Lenyitható blokkok',gallery:'Galéria',carousel:'Tartalom-carousel'};
 function recoverAndRestoreFocus(section,nodeId,button,update){
@@ -97,7 +97,7 @@ export function renderStructuredInspector(node,update,{pending=()=>{},updateProp
   const editor=document.createElement(multi?'textarea':'input');editor.value=value??'';editor.disabled=Boolean(node.locked);editor.maxLength=maxLength;editor.setAttribute('aria-label',name);
   label.append(caption,editor,composition.attach(editor,onChange));return label;
  };
- if(['gallery','carousel'].includes(node.type)){
+ if(['table','tabs','gallery','carousel'].includes(node.type)){
   const accessibleName=input('ariaLabel','Akadálymentes elnevezés',typeof node.props?.ariaLabel==='string'?node.props.ariaLabel:'',(value,options)=>updateProperties({ariaLabel:value},options),false,160);
   accessibleName.dataset.inspectorKey='props.ariaLabel';
   section.append(accessibleName);
