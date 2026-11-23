@@ -1,0 +1,207 @@
+{
+  "date": "2026-11-23",
+  "observed_at": "2026-11-23T18:35:00Z",
+  "plan_point": "77.44.7.D / D-06 single-slide carousel navigation",
+  "scope": "One bounded runtime/accessibility defect only; not D-06/full Editor completion.",
+  "plan": {
+    "canonical_path": "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+    "before_release_note": {
+      "git_blob": "2ddccb568b020ffc58080a51c1b62674903756d5",
+      "bytes": 1843033,
+      "sha256": "c55bce2f7ca135273d22a601180d96bb5862dd3a595f67ccd18ddb2f213543b1"
+    },
+    "after_release_note": {
+      "git_blob": "0acc79457dbb71df307282f8e71dc14d43212e76",
+      "bytes": 1846389,
+      "sha256": "133ab8be18d3183842f4b72a77d883255ee4511c27014f58532fb6cb967f9993"
+    },
+    "active_point": "77.44.7.D",
+    "status": "OPEN / NOT_CERTIFIED",
+    "feature_count": 396,
+    "source_status_counts": {
+      "PARTIAL_SOURCE": 148,
+      "UNVERIFIED": 248
+    }
+  },
+  "change": {
+    "commit": "2eb535e5acc5c786855b00a403017cee6cae2f27",
+    "parent": "55873f63c226fbe0ebc5d258080f023b4fe82c0a",
+    "message": "fix(editor): disable single-slide carousel controls",
+    "runtime_file": "public/editor-v2/core/element-content.js",
+    "behavior": "One-slide carousel previous/next controls are native disabled buttons; no keydown navigation handler is registered for zero/one slide. Two-or-more slide controls remain unchanged.",
+    "regression_test_files": [
+      "public/editor-v2/tests/element-content.test.js",
+      "tests/browser/editor-structured-content.test.js"
+    ],
+    "save_publish": "No change; Save and Publish remain separate."
+  },
+  "verification": {
+    "before_fix": "New unit regression failed against prior behavior (33 passed, 1 failed).",
+    "after_fix": {
+      "unit": "PASS 34/34: node public/editor-v2/tests/element-content.test.js",
+      "browser": "PASS 2/2: node --test tests/browser/editor-structured-content.test.js (real Chromium, mobile/desktop paths)",
+      "editor_suite": "PASS 260/260 node tests: npm run test:editor",
+      "preferences": "PASS 10/10: npm run test:editor:preferences",
+      "runner": "PASS 4/4: tests/run-with-linux-subreaper.test.py",
+      "typecheck": "PASS: npm run typecheck",
+      "cache_bust": "PASS 2/2: node tests/editor-public-asset-cache-bust.test.js",
+      "d_content_contract": "PASS 7/7: node tests/editor-d-content-contract.test.js",
+      "plan_contract": "PASS 15/15: python3 tests/plan-contract.test.py",
+      "canonical_plan": "PASS one complete 13-file master and 396 mappings: python3 scripts/check-canonical-plan.py",
+      "traceability": "PASS 396/396: python3 scripts/build-feature-traceability.py --check",
+      "active_point": "PASS plan cursor is 77.44.7.D; counts PARTIAL_SOURCE=148, UNVERIFIED=248; acceptance NOT_CERTIFIED",
+      "migration_safety": "PASS: node scripts/web013-migration-safety-gate.mjs",
+      "wrangler_dry_run": "PASS before rollout: npx wrangler deploy --dry-run, Wrangler 4.130.0, 200 public assets, exit 0",
+      "diff_check": "PASS before evidence follow-up: git diff --check"
+    },
+    "github_actions_exact_sha": [
+      {
+        "id": 45238664408,
+        "name": "Canonical Creator Platform Plan",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 45238664443,
+        "name": "Editor Core Test",
+        "status": "in_progress",
+        "conclusion": null
+      },
+      {
+        "id": 45238664354,
+        "name": "Twitch Integration Check",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 45238664484,
+        "name": "F0 baseline checks",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 45238664403,
+        "name": "Canonical Plan Active Point Audit",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 45238664424,
+        "name": "Production Worker source smoke",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ],
+    "overall_exact_sha_ci": "IN_PROGRESS; no aggregate PASS claimed."
+  },
+  "production_preflight": {
+    "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
+    "sql": [
+      "SELECT COUNT(*) FROM sqlite_master WHERE type IN ('table','index','trigger','view')",
+      "SELECT name FROM sqlite_master WHERE type='table' AND name='d1_migrations'",
+      "SELECT name FROM d1_migrations ORDER BY id DESC LIMIT 1"
+    ],
+    "results": {
+      "schema_objects": 147,
+      "d1_migrations_table": "present",
+      "latest_marker": "0030_media_library_organization.sql",
+      "rows_written": 0,
+      "changes": 0,
+      "changed_db": false
+    },
+    "production_mutations": "none; no migration/data write/R2 operation"
+  },
+  "release": {
+    "branch": "v2/foundation",
+    "github_branch_head": "2eb535e5acc5c786855b00a403017cee6cae2f27",
+    "deployment_id": "9ce05e60-0718-49af-8541-3c2de637245b",
+    "deployment_source": "wrangler",
+    "worker_version_id": "40121529-876c-4f32-b968-878e5f1b4385",
+    "worker_version_number": 4173,
+    "traffic_percent": 100,
+    "health": {
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+      "http_status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "public_source_smoke": "PASS on exact commit SHA; direct readback with cache-busting release query matched changed public assets byte-for-byte",
+    "changed_assets": [
+      {
+        "source": "public/assets/page-renderer.js",
+        "route": "assets/page-renderer.js",
+        "http_status": 200,
+        "source_sha256": "7797f55ba61cbea80ae067e99e28bf66a4509559e967dcd3f21b495bc818014b",
+        "live_sha256": "7797f55ba61cbea80ae067e99e28bf66a4509559e967dcd3f21b495bc818014b",
+        "matches": true
+      },
+      {
+        "source": "public/editor-v2/app.js",
+        "route": "editor-v2/app.js",
+        "http_status": 200,
+        "source_sha256": "b467b3f4137b82ff88d95478e6bc24463e89cec12d7d28d18778831ba78daf2d",
+        "live_sha256": "b467b3f4137b82ff88d95478e6bc24463e89cec12d7d28d18778831ba78daf2d",
+        "matches": true
+      },
+      {
+        "source": "public/editor-v2/core/element-content.js",
+        "route": "editor-v2/core/element-content.js",
+        "http_status": 200,
+        "source_sha256": "590feaac6a3c6fecb066a6a97214dae5fd71e218e41bc03483ebf1ecc4526728",
+        "live_sha256": "590feaac6a3c6fecb066a6a97214dae5fd71e218e41bc03483ebf1ecc4526728",
+        "matches": true
+      },
+      {
+        "source": "public/editor-v2/index.html",
+        "route": "editor-v2/",
+        "http_status": 200,
+        "source_sha256": "bbba39360bbe39b19e749c4480ca22cd2f375b6b5826b70e1bec756ca3f7b6ef",
+        "live_sha256": "bbba39360bbe39b19e749c4480ca22cd2f375b6b5826b70e1bec756ca3f7b6ef",
+        "matches": true
+      },
+      {
+        "source": "public/editor-v2/tests/element-content.test.js",
+        "route": "editor-v2/tests/element-content.test.js",
+        "http_status": 200,
+        "source_sha256": "a289b7a104e7aa9f835a948ebebb89dc2663413b76f42cd2d0fa5b3017930b3d",
+        "live_sha256": "a289b7a104e7aa9f835a948ebebb89dc2663413b76f42cd2d0fa5b3017930b3d",
+        "matches": true
+      },
+      {
+        "source": "public/editor-v2/ui/structured-inspector.js",
+        "route": "editor-v2/ui/structured-inspector.js",
+        "http_status": 200,
+        "source_sha256": "fcfa30d7b6be352121d480533a84510495b57f3e8a4919d99ab15017e66cdcf2",
+        "live_sha256": "fcfa30d7b6be352121d480533a84510495b57f3e8a4919d99ab15017e66cdcf2",
+        "matches": true
+      },
+      {
+        "source": "public/visual-page.html",
+        "route": "visual-page.html",
+        "http_status": 200,
+        "source_sha256": "b35425c02cb5dbead26d0243eb801ce76491180e784feb60379e898a70d76779",
+        "live_sha256": "b35425c02cb5dbead26d0243eb801ce76491180e784feb60379e898a70d76779",
+        "matches": true
+      }
+    ],
+    "cloudflare_build_minutes_limit_reached": false,
+    "cloudflare_build_minutes_limit_readback": {
+      "has_reached_build_minutes_limit": false,
+      "refresh_on": "2026-11-30T23:59:59.999Z"
+    }
+  },
+  "cost": {
+    "new_authorized_cost_ft": 0,
+    "paid_services_or_quota_overage": false
+  },
+  "limitations": [
+    "Editor Core exact-SHA GitHub workflow remains in progress; no aggregate CI green claim.",
+    "This evidence closes one D-06 carousel edge case only; D-06, D-01–D-07 and full Editor remain OPEN / NOT CERTIFIED.",
+    "Manual/physical Editor acceptance is deferred until full Editor scope is implemented."
+  ],
+  "metrics_session_id": "20261123183202-96e91c15"
+}

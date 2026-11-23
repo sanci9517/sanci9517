@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261123183202-96e91c15",
+  "task": "77.44.7.D-D06-release-verification",
+  "trigger": "manual",
+  "started_at": "2026-11-23T18:32:02.694Z",
+  "finished_at": "2026-11-23T18:38:24.774Z",
+  "wall_seconds": 382,
+  "paused_seconds": 0,
+  "measured_seconds": 382,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "Released one D-06 single-slide carousel keyboard/accessibility fix; local tests and live asset hashes verified, exact-SHA Editor Core CI still running, full Editor remains open.",
+  "evidence": [
+    "docs/evidence/editor-d06-single-slide-carousel-2026-11-23.json"
+  ],
+  "checks": "editor 260/260, browser 2/2, typecheck, plan 15/15, canonical 13 files, traceability 396/396, Worker 100%, health 200, 7 asset hashes",
+  "started_revision": "2eb535e5acc5c786855b00a403017cee6cae2f27",
+  "finished_revision": "2eb535e5acc5c786855b00a403017cee6cae2f27",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
