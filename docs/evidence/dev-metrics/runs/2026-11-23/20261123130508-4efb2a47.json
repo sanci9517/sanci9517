@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261123130508-4efb2a47",
+  "task": "77.44.7.D",
+  "trigger": "scheduled",
+  "started_at": "2026-11-23T13:05:08.372Z",
+  "finished_at": "2026-11-23T13:11:36.809Z",
+  "wall_seconds": 388,
+  "paused_seconds": 0,
+  "measured_seconds": 388,
+  "status": "pass",
+  "kind": "test",
+  "summary": "D-06 retention cancellation from page two returns to page one and preserves fresh cursor pagination; targeted Chromium 19/19 and editor-plan checks passed.",
+  "evidence": [
+    "docs/evidence/editor-d06-retention-cancel-later-page-2026-11-23.json"
+  ],
+  "checks": "targeted-browser,media-suite,typecheck,plan-contract,canonical-plan,feature-traceability,active-plan-audit,migration-gate",
+  "started_revision": "6a0ac7678e8cc921af793a0dd10a413f0c2126b8",
+  "finished_revision": "6a0ac7678e8cc921af793a0dd10a413f0c2126b8",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

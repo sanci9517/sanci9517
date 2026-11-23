@@ -297,6 +297,43 @@ test('cancellation needs confirmation, locks controls and handles idempotent suc
  assert.equal(mutations(f).length,1);assert.deepEqual(f.pageErrors,[]);
 });
 
+test('confirmed cancellation from a later retention page refreshes to page one and keeps a fresh cursor',async t=>{
+ const rows=Array.from({length:201},(_,i)=>request('requested',201-i));
+ const f=await fixture(t,(req,res)=>{
+  const cursor=new URL(req.url,'http://localhost').searchParams.get('cursor');
+  if(!cursor)return json(res,{ok:true,data:data(rows.slice(0,100),false,id(102))});
+  if(cursor===id(102))return json(res,{ok:true,data:data(rows.slice(100,200),false,id(2))});
+  if(cursor===id(2))return json(res,{ok:true,data:data(rows.slice(200),true,null)});
+  return json(res,{ok:false,error:{code:'INVALID_RETENTION_CURSOR'}},400);
+ },390,{onMedia:(req,res,url)=>{
+  const requestId=url.searchParams.get('requestId');
+  const index=rows.findIndex(row=>row.id===requestId);
+  if(req.method!=='DELETE'||index<0)return json(res,{ok:false,error:{code:'RETENTION_STATE_CONFLICT'}},409);
+  rows[index]={...rows[index],state:'cancelled'};
+  return json(res,{ok:true,data:{id:requestId,state:'cancelled',changed:true,permanentDeletionAuthorized:false}});
+ }});
+ await f.state('ready');
+ const next=f.panel.getByRole('button',{name:'További 100 kérelem betöltése'});
+ await next.click();await f.state('ready');
+ assert.equal(await f.panel.locator('.retention-card').count(),200);
+ const target=f.panel.locator(`.retention-card[data-request-id="${id(101)}"]`);
+ await target.getByRole('button',{name:'Kérelem visszavonása'}).click();
+ await f.panel.getByRole('button',{name:'Visszavonás megerősítése'}).click();
+ await f.panel.getByRole('status').filter({hasText:'A kérelem visszavonva.'}).waitFor();
+ await f.state('ready');
+ assert.equal(await f.panel.locator('.retention-card').count(),100,'confirmed cancellation reloads the first page instead of retaining page two');
+ assert.deepEqual(await f.panel.locator('.retention-card').evaluateAll(cards=>cards.map(card=>card.dataset.requestId)),rows.slice(0,100).map(row=>row.id));
+ assert.equal(await next.isVisible(),true,'the refreshed first-page cursor is available again');
+ await next.click();await f.state('ready');
+ assert.equal(await f.panel.locator('.retention-card').count(),200);
+ assert.equal(await f.panel.locator(`.retention-card[data-request-id="${id(101)}"] strong`).textContent(),'Visszavonva');
+ const ids=await f.panel.locator('.retention-card').evaluateAll(cards=>cards.map(card=>card.dataset.requestId));
+ assert.equal(new Set(ids).size,200,'fresh pagination remains duplicate-free after cancellation');
+ assert.equal(f.statusCount(),4,'initial page, second page, cancellation refresh, and fresh second page only');
+ assert.equal(mutations(f).length,1,'status reads do not introduce additional mutations');
+ assert.deepEqual(f.pageErrors,[]);
+});
+
 test('lost cancellation response refreshes status once without retrying the mutation',async t=>{
  let rows=[request()];
  const f=await fixture(t,(_req,res)=>json(res,{ok:true,data:data(rows)}),390,{onMedia:(_req,res)=>{rows=[request('cancelled')];loseResponse(res);}});

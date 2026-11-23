@@ -1,0 +1,81 @@
+{
+  "schema": "sanci.editor.d06-retention-cancel-later-page.v1",
+  "captured_at_utc": "2026-11-23T13:10:46Z",
+  "plan_point": "77.44.7.D / D-06 — confirmed cancellation from a later retention page refreshes pagination",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "base_sha": "6a0ac7678e8cc921af793a0dd10a413f0c2126b8",
+    "remote_branch_sha_before_commit": "6a0ac7678e8cc921af793a0dd10a413f0c2126b8",
+    "canonical_plan_sha256": "9fc78edb31b59fd50a4d536c13b1dc3bd52777f2c2f7fa7e56e4dd18cb41b438",
+    "test_sha256": "51a0835621a2805c6a9b5341506033ec637c0761bb798e7a0a791bd912a26394"
+  },
+  "scope": {
+    "kind": "test-only regression coverage",
+    "test_file": "tests/browser/admin-media-retention.test.js",
+    "scenario": "Create 201 ordered retention requests, paginate from 100 to 200 rows, confirm cancellation on page two, verify the view resets to the first page, then fetch page two again using the fresh cursor.",
+    "assertions": [
+      "Cancellation success message is shown.",
+      "The refreshed page contains exactly the first 100 ordered requests.",
+      "A fresh next-page cursor is available after cancellation.",
+      "Fetching the next page again shows the cancelled row with the cancelled status.",
+      "The two-page result has no duplicate request IDs.",
+      "No browser page errors or extra mutations occur."
+    ],
+    "runtime_source_changed": false,
+    "save_and_publish_remain_separate": true
+  },
+  "checks": {
+    "initial_focused_attempt": "FAIL — the new test incorrectly expected the page-two row to remain visible after cancellation; product behavior had correctly returned to page one. Corrected the test expectation to assert the success status, first-page reset, and subsequent fresh page-two result.",
+    "targeted_browser": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/admin-media-retention.test.js",
+      "result": "PASS",
+      "tests": "19/19"
+    },
+    "media_suite": {
+      "command": "npm run test:media",
+      "result": "PASS",
+      "tests": "7/7 test groups"
+    },
+    "typecheck": "PASS — npm run typecheck -- --pretty false",
+    "syntax_and_diff": "PASS — node --check tests/browser/admin-media-retention.test.js; git diff --check",
+    "plan_contract": "PASS — python3 tests/plan-contract.test.py, 15/15",
+    "canonical_plan": "PASS — python3 scripts/check-canonical-plan.py, complete 13-file master and 396 mappings",
+    "feature_traceability": "PASS — python3 scripts/build-feature-traceability.py --check, 396/396",
+    "active_plan_audit": "PASS — bookkeeping audit; 77.44.7.D remains OPEN / NOT_CERTIFIED, with 148 PARTIAL_SOURCE and 248 UNVERIFIED mappings",
+    "migration_gate": "PASS — npm run test:web013:migration-gate; no production migration was applied"
+  },
+  "production_baseline": {
+    "worker": "sanci9517-streamer-brand",
+    "deployment_id": "83ca4e1f-e8f6-461a-ba22-a52a200a7f27",
+    "worker_version_id": "e505e056-e1af-4545-a95a-2a4725589912",
+    "traffic_percent": 100,
+    "health": {
+      "http_status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "runtime_changed": false,
+    "worker_deployment_needed": false,
+    "public_asset_hash_check": "NOT APPLICABLE — test-only change; no public asset changed"
+  },
+  "release_and_safety": {
+    "production_d1_write_or_migration": false,
+    "production_r2_write_or_delete": false,
+    "new_paid_service_or_dependency": false,
+    "new_cost_huf": 0,
+    "hosted_ci": "NOT RUN — test/evidence-only commit uses [skip ci]; local relevant checks passed",
+    "full_editor_acceptance": "DEFERRED",
+    "full_d06_and_d_acceptance": "OPEN / NOT_CERTIFIED"
+  },
+  "status": "D06_PAGED_CANCELLATION_REGRESSION_PASS; FULL_D_OPEN_NOT_CERTIFIED",
+  "limitations": [
+    "This closes only the later-page cancellation/pagination regression slice; it does not complete the D-01 through D-07 lifecycle, capability, field, breakpoint, renderer, or site-scoped Media acceptance matrix.",
+    "The full D-06 and 77.44.7.D acceptance remain OPEN / NOT_CERTIFIED.",
+    "Full Visual Editor manual and physical acceptance remains deferred to the complete Editor gate."
+  ]
+}
