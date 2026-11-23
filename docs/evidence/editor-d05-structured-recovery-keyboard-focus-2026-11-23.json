@@ -97,5 +97,6 @@
     "d05_complete": false,
     "visual_editor_complete": false,
     "manual_device_acceptance": "Deferred until the complete Editor is ready, as required by the plan."
-  }
+  },
+  "development_metrics_run": "20261123144929-01435ce3 (1336 measured active seconds; partial; archived in docs/evidence/dev-metrics/runs/2026-11-23/20261123144929-01435ce3.json)."
 }

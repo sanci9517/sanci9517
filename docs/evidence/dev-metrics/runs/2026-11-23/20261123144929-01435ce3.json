@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261123144929-01435ce3",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-23T14:49:29.792Z",
+  "finished_at": "2026-11-23T15:11:46.060Z",
+  "wall_seconds": 1336,
+  "paused_seconds": 0,
+  "measured_seconds": 1336,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "D-05 structured recovery keyboard focus regression fixed; editor suite, Chromium, typecheck, traceability and Wrangler dry-run passed; automatic production release verified at 100%, direct health and public asset HTTP checks blocked by proxy 403.",
+  "evidence": [
+    "docs/evidence/editor-d05-structured-recovery-keyboard-focus-2026-11-23.json"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "719a65130b4e400dd49360a7ea0bb4c122f7c848",
+  "finished_revision": "fb32230643c8d1df2721eab23438dabda63b9a4a",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

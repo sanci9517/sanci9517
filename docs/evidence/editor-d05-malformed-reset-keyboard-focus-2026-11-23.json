@@ -1,0 +1,51 @@
+{
+  "date": "2026-11-23",
+  "feature": "D-05 keyboard focus after full structured-content reset",
+  "scope": "Test-only follow-up to the deployed D-05 focus restoration helper; not full D-05 or complete Visual Editor acceptance.",
+  "plan": {
+    "canonical_path": "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+    "canonical_sha256": "9fc78edb31b59fd50a4d536c13b1dc3bd52777f2c2f7fa7e56e4dd18cb41b438",
+    "active_point": "77.44.7.D",
+    "status": "OPEN / NOT_CERTIFIED",
+    "source_status_counts": {
+      "PARTIAL_SOURCE": 148,
+      "UNVERIFIED": 248,
+      "total": 396
+    }
+  },
+  "change": {
+    "file": "tests/browser/editor-structured-content.test.js",
+    "scenario": "Inject a malformed gallery model into the isolated browser fixture; focus and activate the explicit reset button with Enter; assert focus returns to the first default Inspector field, no request/autosave occurs, and the separately published gallery remains unchanged.",
+    "runtime_source_changed": false,
+    "save_publish": "Draft reset remains a local edit; the published snapshot is asserted unchanged."
+  },
+  "verification": {
+    "browser": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-name-pattern='structured Inspector editing survives Save, Publish and public interaction' tests/browser/editor-structured-content.test.js",
+      "result": "PASS, 1/1 in real Chromium; existing desktop/mobile Save, reload and Publish checks plus full-model reset focus assertion.",
+      "duration_ms": 49384
+    },
+    "editor_suite": "npm run test:editor — PASS, 24/24 Node test files and 4/4 Linux subreaper/manifest checks.",
+    "typecheck": "npm run typecheck -- --pretty false — PASS.",
+    "syntax_and_diff": "node --check tests/browser/editor-structured-content.test.js and git diff --check — PASS.",
+    "plan_audits": "scripts/audit-active-plan-point.py and scripts/check-canonical-plan.py — PASS; current point remains OPEN / NOT_CERTIFIED, 396 mappings."
+  },
+  "release_state": {
+    "branch": "v2/foundation",
+    "runtime_commit": "103d4df5ef5a3b8cfff8e1112dfaf52078827420",
+    "test_commit": "6cd1cfff; pushed by normal fast-forward with [skip ci].",
+    "worker_deployment_at_check": "12e5a45f-d4be-4873-af4e-b2d07a816f1a",
+    "worker_version_at_check": "cbb9cd06-dfbd-4269-a3aa-60e786267cb7",
+    "traffic_percentage": 100,
+    "runtime_redeploy_needed": false,
+    "direct_health_or_asset_fetch": "Not repeated for this test-only change; previous runtime evidence records the network-proxy HTTP 403 blocker.",
+    "development_metrics_run": "20261123151146-afde0bdf (236 measured active seconds; pass; archived in docs/evidence/dev-metrics/runs/2026-11-23/20261123151146-afde0bdf.json).",
+    "cost": "0 Ft; no paid service or additional hosted workflow invoked."
+  },
+  "acceptance": {
+    "d05_complete": false,
+    "d_point_complete": false,
+    "visual_editor_complete": false,
+    "manual_physical_acceptance": "Deferred until the complete Visual Editor scope is implemented, per repository instructions."
+  }
+}

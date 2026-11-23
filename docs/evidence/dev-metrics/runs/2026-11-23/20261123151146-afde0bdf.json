@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261123151146-afde0bdf",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-23T15:11:46.109Z",
+  "finished_at": "2026-11-23T15:15:41.631Z",
+  "wall_seconds": 236,
+  "paused_seconds": 0,
+  "measured_seconds": 236,
+  "status": "pass",
+  "kind": "test",
+  "summary": "Added and verified real Chromium keyboard-focus coverage for the full malformed structured Inspector reset; test:editor, typecheck, canonical plan and active-point audits pass.",
+  "evidence": [
+    "docs/evidence/editor-d05-malformed-reset-keyboard-focus-2026-11-23.json"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "fb32230643c8d1df2721eab23438dabda63b9a4a",
+  "finished_revision": "fb32230643c8d1df2721eab23438dabda63b9a4a",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
