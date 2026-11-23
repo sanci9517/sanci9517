@@ -1783,6 +1783,27 @@ test("retention status pages all rows in stable order and rejects a foreign-site
  assert.equal(f.db.prepare("SELECT COUNT(*) AS n FROM media_retention_requests").get().n,202,"paging is read-only");
  assert.equal(f.files.size,0,"status paging never reads or deletes R2 objects");
 });
+
+test("retention status normalizes an uppercase UUID cursor before its site-scoped lookup",async t=>{
+ const f=await fixture(t);
+ const insert=f.db.prepare("INSERT INTO media_retention_requests(id,site_id,asset_id,object_key,state,not_before,requested_at) VALUES(?,?,?,?,'requested','2026-12-01 00:00:00',?)");
+ const requestId=n=>`a0000000-0000-4000-8000-${String(n).padStart(12,"0")}`;
+ for(let n=1;n<=101;n++)insert.run(requestId(n),"site-default",mediaId(2000+n),`site-default/uppercase-cursor/${n}`,"2026-10-23 10:00:00");
+ const page=async cursor=>{
+  const response=await f.call("GET","editor",null,{retentionStatus:true,...(cursor?{cursor}:{})});
+  return {response,data:(await response.json()).data};
+ };
+ const first=await page();
+ assert.equal(first.data.requests.length,100);
+ const expected=first.data.nextCursor;
+ const {response,data:second}=await page(expected.toUpperCase());
+ assert.equal(response.status,200,"the case-insensitive UUID validator must agree with the database cursor lookup");
+ assert.equal(second.requests.length,1);
+ assert.equal(second.requests[0].id,requestId(1));
+ assert.equal(second.complete,true);
+ assert.equal(second.nextCursor,null);
+ assert.equal(f.db.prepare("SELECT COUNT(*) AS n FROM media_retention_requests").get().n,101,"cursor reads remain read-only");
+});
 test("deletion preflight rejects incomplete usage and never grants deletion",async t=>{
   const f=await fixture(t);
   const asset=(await (await f.call("POST","editor",png,{name:"incomplete.png"})).json()).data;

@@ -626,7 +626,10 @@ export async function adminMediaRoute(request: Request, env: Env, siteId: string
       try {
         const cursors=url.searchParams.getAll("cursor");
         if(cursors.length>1 || (cursors.length===1 && !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(cursors[0]))) return error("INVALID_RETENTION_CURSOR",400);
-        const cursor=cursors[0];
+        // UUID syntax is accepted case-insensitively above. Normalize before
+        // both the ownership lookup and the keyset comparison because SQLite
+        // TEXT equality/order uses the stored byte case by default.
+        const cursor=cursors[0]?.toLowerCase();
         const after=cursor ? await env.DB.prepare("SELECT requested_at FROM media_retention_requests WHERE id=? AND site_id=? LIMIT 1").bind(cursor,siteId).first<{requested_at:string}>() : null;
         if(cursor && !after) return error("INVALID_RETENTION_CURSOR",400);
         const rows=cursor
