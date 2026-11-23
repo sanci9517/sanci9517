@@ -65,6 +65,12 @@ test('structured Inspector editing survives Save, Publish and public interaction
   {label:'Külön csoport első',content:'Külön csoport első tartalma'},
   {label:'Külön csoport második',content:'Külön csoport második tartalma'}
  ]}}}}});
+ execute(model,{type:'element.add',payload:{type:'tabs',parentId:root,name:'single-tab'}});
+ ids.singleTabs=model.selection.primaryId;
+ const singleTabsNode=activePage(model).nodes[ids.singleTabs];
+ execute(model,{type:'element.update',payload:{nodeId:ids.singleTabs,patch:{props:{...singleTabsNode.props,contentModel:{version:1,items:[
+  {label:'Egyetlen fül',content:'Egyetlen fül tartalma'}
+ ]}}}}});
  for(const type of ['badge','quote','icon']){
   execute(model,{type:'element.add',payload:{type,parentId:root}});
   ids[type]=model.selection.primaryId;
@@ -474,6 +480,18 @@ test('structured Inspector editing survives Save, Publish and public interaction
  assert.equal(await isolatedTabs.locator('[role="tabpanel"]').first().textContent(),'Külön csoport első tartalma');
  assert.equal(await isolatedTabs.getByRole('tab').first().evaluate(el=>document.activeElement===el),true,
   'pointer selection leaves focus on its selected tab');
+ const singleTablist=viewer.locator('.visual-editor-node[data-node-id="'+ids.singleTabs+'"]');
+ const singleTab=singleTablist.getByRole('tab');
+ assert.equal(await singleTab.count(),1,'the authored one-item tab collection remains a valid tablist');
+ await singleTab.focus();
+ const beforeSingleTabNavigation=await viewer.evaluate(()=>({href:location.href,historyLength:history.length}));
+ for(const key of ['ArrowLeft','ArrowRight','Home','End']){
+  await viewer.keyboard.press(key);
+  assert.equal(await singleTab.getAttribute('aria-selected'),'true',`${key} keeps the only tab selected`);
+  assert.equal(await singleTab.evaluate(el=>document.activeElement===el),true,`${key} keeps focus on the only tab`);
+ }
+ assert.deepEqual(await viewer.evaluate(()=>({href:location.href,historyLength:history.length})),beforeSingleTabNavigation,
+  'no-op navigation in a one-tab list does not add redundant URL state or browser history');
  assert.equal(await tabs.getByRole('tab').nth(1).getAttribute('aria-selected'),'true',
   'pointer navigation in the second widget does not change the first widget');
  await tabs.getByRole('tab').first().click();

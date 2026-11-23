@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "plan_point": "77.44.7.D / D-06",
+  "date": "2026-11-23",
+  "status": "partial_test_coverage",
+  "summary": "Extended the real-browser structured-content lifecycle regression to cover a valid authored tab list with exactly one item. ArrowLeft, ArrowRight, Home and End keep the sole tab selected and focused without changing the public URL or adding browser history. This test-only slice does not claim a runtime defect or close the plan item.",
+  "branch": "v2/foundation",
+  "base_commit": "d9d5ededb733aeddc5ab7eb1dfa0f1fdd15049b2",
+  "runtime_commit": "818c73ed52a0b7a932b3ca48767450ed9a1e936c",
+  "changed_files": [
+    "tests/browser/editor-structured-content.test.js",
+    "docs/evidence/editor-d06-single-tab-url-history-2026-11-23.json"
+  ],
+  "behavior_verified": {
+    "single_tab_supported": true,
+    "keys": ["ArrowLeft", "ArrowRight", "Home", "End"],
+    "selection_remains_on_only_tab": true,
+    "focus_remains_on_only_tab": true,
+    "url_unchanged": true,
+    "history_length_unchanged": true,
+    "save_publish": "Existing browser lifecycle remains separate; this addition is a public-view interaction assertion and does not modify the Page Model runtime."
+  },
+  "local_checks": [
+    {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-reporter=spec tests/browser/editor-structured-content.test.js",
+      "result": "PASS",
+      "summary": "2/2 real Chromium tests; the existing public structured-content lifecycle and the one-tab URL/history invariant passed. Loopback permission was granted for the local test server."
+    },
+    {
+      "command": "npm run test:editor",
+      "result": "PASS",
+      "summary": "24/24 Editor unit files, 10/10 preference route tests and 4/4 Linux subreaper/manifest tests."
+    },
+    {"command": "npm run typecheck", "result": "PASS"},
+    {"command": "node --check tests/browser/editor-structured-content.test.js", "result": "PASS"},
+    {"command": "python3 tests/plan-contract.test.py", "result": "PASS", "summary": "15/15"},
+    {"command": "python3 scripts/check-canonical-plan.py", "result": "PASS", "summary": "one 13-file canonical master, 396 mappings; functional acceptance not certified"},
+    {"command": "python3 scripts/build-feature-traceability.py --check", "result": "PASS", "summary": "396/396 mappings"},
+    {"command": "git diff --check", "result": "PASS"}
+  ],
+  "runtime_and_release": {
+    "runtime_source_changed": false,
+    "public_assets_changed": false,
+    "worker_deployment_required": false,
+    "latest_read_only_cloudflare_deployment": "1f910bc9-2b7f-467f-82b0-4b78fa09499f",
+    "worker_version_id": "3f075752-e1ed-43d5-be82-d47d4468af3f",
+    "traffic_percentage": 100,
+    "health": "NOT_RECHECKED: this was a test/evidence-only change; the direct fetch bridge refused the configured host with HTTP 403 before reaching the application. No endpoint health result is claimed.",
+    "production_d1_preflight": "NOT_REQUIRED for this test/evidence-only change; no D1 query or mutation was performed.",
+    "production_r2_operation": false
+  },
+  "ci": {
+    "policy": "[skip ci] for test-harness/evidence-only follow-up; no duplicate dispatch or rerun started.",
+    "existing_editor_core_run_id": 45251326608,
+    "last_observed": "IN_PROGRESS at browser layout step 14; no Editor Core PASS claimed."
+  },
+  "cost_and_acceptance": {
+    "new_cost_ft": 0,
+    "new_dependencies": 0,
+    "D06": "OPEN / NOT CERTIFIED",
+    "D01_D07": "OPEN / NOT CERTIFIED",
+    "77_44_7_D": "OPEN / NOT CERTIFIED",
+    "visual_editor": "OPEN / NOT CERTIFIED",
+    "manual_physical_acceptance": "DEFERRED until the complete Editor scope is implemented",
+    "save_publish": "Separate"
+  }
+}
