@@ -51,7 +51,7 @@ test('malformed authored group labels use safe names and valid labels are normal
   const padded=authoredNodeHtml({id:'good-label',type:'tabs',props:{ariaLabel:'  Projektek  ',items:[]}});
   assert.match(padded,/role="tablist" aria-label="Projektek"/);
   assert.equal(authoredNodeHtml({id:'bad-caption',type:'table',props:{caption:malformed,rows:[]}}),
-    '<div class="creator-table-scroll" role="region" aria-label="Táblázat" tabindex="0"><table><tbody></tbody></table></div>');
+    '<div class="creator-table-scroll" role="region" aria-label="Táblázat" tabindex="0"><table aria-label="Táblázat"><tbody></tbody></table></div>');
   const caption=authoredNodeHtml({id:'good-caption',type:'table',props:{caption:'  Bevétel  ',rows:[]}});
   assert.match(caption,/role="region" aria-label="Bevétel"/);
   assert.match(caption,/<caption>Bevétel<\/caption>/);

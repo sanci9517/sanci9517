@@ -136,7 +136,13 @@ test('authored markup escapes text, preserves link security and uses native acce
   assert.match(authoredNodeHtml(node),/&lt;img/);assert.doesNotMatch(authoredNodeHtml(node),/<img/);
   assert.match(authoredNodeHtml({...node,type:'tabs',props:{items:[{title:'Első',text:'<script>test</script>'},{title:'Második',text:'Második tartalom'}]}}),/role="tabpanel"/);
   assert.match(authoredNodeHtml({...node,type:'accordion',props:{items:[{title:'Kérdés',text:'Válasz'}]}}),/<details><summary>Kérdés/);
-  assert.match(authoredNodeHtml({...node,type:'table',props:{header:true,rows:[['Név','Érték'],['Teszt','42']]}}),/<th scope="col">/);
+  const authoredTable=authoredNodeHtml({...node,type:'table',props:{caption:'Eredmények',header:true,rows:[['Név','Érték'],['Teszt','42']]}});
+  assert.match(authoredTable,/<div class="creator-table-scroll" role="region" aria-label="Eredmények" tabindex="0"><table aria-label="Eredmények"><caption>Eredmények<\/caption>/);
+  assert.match(authoredTable,/<th scope="col">/);
+  const unnamedTable=authoredNodeHtml({...node,type:'table',props:{header:false,rows:[['Név'],['Teszt']]}});
+  assert.match(unnamedTable,/<table aria-label="Táblázat">/,'the native public table role has a name even when the optional caption is blank');
+  const escapedTable=authoredNodeHtml({...node,type:'table',props:{caption:'Éves <eredmények>',rows:[['Név'],['Teszt']]}});
+  assert.match(escapedTable,/<table aria-label="Éves &lt;eredmények&gt;"><caption>Éves &lt;eredmények&gt;<\/caption>/,'caption text is escaped in both visible and accessible names');
   assert.match(authoredNodeHtml({...node,type:'image',props:{src:'/image.svg',alt:'Illusztráció',ratio:'1 / 1',fit:'contain'}}),/alt="Illusztráció"/);
 });
 

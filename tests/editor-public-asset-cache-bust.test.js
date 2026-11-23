@@ -28,8 +28,8 @@ test('the Editor and public renderer release tokens bust the structured accessib
     'the deployed HTML must request the stylesheet version containing palette-favorites styles');
   assert.match(css,/\.element-favorite-toggle\s*\{/,
     'the stylesheet referenced by the versioned link must include the palette-favorites UI');
-  assert.match(html,/src="\/editor-v2\/app\.js\?v=20261123-d06-single-slide-gallery-v1"/,
-    'the deployed entry page must request the Editor source containing named structured table, tablist, gallery, and carousel elements');
+  assert.match(html,/src="\/editor-v2\/app\.js\?v=20261123-d06-authored-table-label-v1"/,
+    'the deployed entry page must request the authored-content renderer with a named native table');
   assert.match(html,/src="\/editor-v2\/ui\/shell\.js\?v=20261123-edt044-account-scoped-preferences-v2"/,
     'the deployed entry page must request the account-scoped shell module');
   const app=await readFile(resolve(root,'app.js'),'utf8');
@@ -37,8 +37,8 @@ test('the Editor and public renderer release tokens bust the structured accessib
     'the versioned entry script must request the responsive resolver cache key');
   assert.match(app,/ui\/structured-inspector\.js\?v=20261123-d06-single-slide-carousel-v1/,
     'the versioned entry script must request the structured Inspector accessible-name controls');
-  assert.match(publicHtml,/page-renderer\.js\?v=20261123-d06-single-slide-gallery-v1/,
-    'published pages must request the renderer version containing named structured regions');
-  assert.match(publicRenderer,/element-content\.js\?v=20261123-d06-single-slide-gallery-v1/,
-    'the public renderer must request the module emitting authored accessible names for structured regions');
+  assert.match(publicHtml,/page-renderer\.js\?v=20261123-d06-authored-table-label-v1/,
+    'published pages must request the renderer version containing the authored table accessible name');
+  assert.match(publicRenderer,/authored-content\.js\?v=20261123-d06-authored-table-label-v1/,
+    'the public renderer must request the module emitting the direct native table name');
 });

@@ -1294,6 +1294,8 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   assert.equal(posts.length,beforeHeaderPublish+1,'restoring the public header requires a separate Publish');
   assert.equal(posts.at(-1).publish,true,'the reverse transition reaches Publish only after draft Save');
   await live.reload();
+  assert.equal(await live.getByRole('table',{name:'Frissített eredmények',exact:true}).count(),1,
+    'the published authored-content table has a direct accessible name as well as its scroll-region label');
   assert.equal(await node(live,'table').locator('th[scope=col]').count(),2,
     'separate Publish restores both accessible column headers on the public page');
   assert.equal(await node(live,'table').locator('tbody tr').first().locator('th[scope=col]').count(),2,
