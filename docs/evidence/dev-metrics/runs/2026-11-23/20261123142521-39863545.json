@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261123142521-39863545",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-23T14:25:21.630Z",
+  "finished_at": "2026-11-23T14:28:23.615Z",
+  "wall_seconds": 182,
+  "paused_seconds": 0,
+  "measured_seconds": 182,
+  "status": "partial",
+  "kind": "test",
+  "summary": "Diagnosed the web013 suite stall as sandbox loopback EPERM; with authorized loopback permission the complete 79/79 suite passes. Production health still blocked by outbound proxy.",
+  "evidence": [
+    "docs/evidence/admin-static-asset-routing-77-44-7-d06-2026-11-23.json",
+    "docs/evidence/dev-metrics/runs/2026-11-23/20261123142521-39863545.json"
+  ],
+  "checks": "npm run test:web013 PASS 79/79 with loopback permission; live health UNVERIFIED due proxy 403",
+  "started_revision": "4c22cf84144aa1bdfbfd84179ed28571f0de48cc",
+  "finished_revision": "4c22cf84144aa1bdfbfd84179ed28571f0de48cc",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
