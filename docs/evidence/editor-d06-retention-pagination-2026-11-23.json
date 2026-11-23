@@ -1,12 +1,12 @@
 {
   "schema_version": 1,
-  "captured_at_utc": "2026-11-23T07:51:58Z",
+  "captured_at_utc": "2026-11-23T07:56:36Z",
   "plan_item": "77.44.7.D / D-06 — retention status keyset pagination",
   "repository": {
     "name": "sanci9517/sanci9517",
     "branch": "v2/foundation",
     "baseline_commit": "b43b0692752aab550e7aa76c97ccb0765c1cd5ec",
-    "runtime_commit": "PENDING_NORMAL_FAST_FORWARD"
+    "runtime_commit": "8dc453a45925ec53eeb23cc203d65f59b51463ce"
   },
   "change": {
     "kind": "runtime and public admin UI pagination; tests; scoped canonical plan acceptance and evidence",
@@ -48,11 +48,67 @@
     }
   },
   "release": {
-    "status": "PENDING",
+    "status": "RUNTIME_RELEASE_VERIFIED; EXACT_SHA_EDITOR_CORE_HOSTED_TEST_PENDING",
     "github_actions_free_quota": "Owner reports CI capacity; no paid usage is authorized. Do not skip exact-source required release checks.",
     "cloudflare_build_limit": "Live GET reports has_reached_build_minutes_limit=false; refresh 2026-11-30T23:59:59.999Z.",
-    "post_deploy_health": "NOT RUN",
-    "post_deploy_asset_hashes": "NOT RUN"
+    "github_branch_head": "8dc453a45925ec53eeb23cc203d65f59b51463ce (verified by git ls-remote after normal fast-forward push)",
+    "github_actions": {
+      "Canonical Plan Active Point Audit": {
+        "run": "45134328860",
+        "status": "success"
+      },
+      "Canonical Creator Platform Plan": {
+        "run": "45134328759",
+        "status": "success"
+      },
+      "Twitch Integration Check": {
+        "run": "45134328844",
+        "status": "success"
+      },
+      "Production Worker source smoke": {
+        "run": "45134328827",
+        "status": "success"
+      },
+      "F0 baseline checks": {
+        "run": "45134328750",
+        "status": "success"
+      },
+      "Editor Core Test": {
+        "run": "45134328786",
+        "status": "in_progress at 2026-11-23T07:56:36Z; exact-SHA hosted suite is not yet fully green"
+      }
+    },
+    "cloudflare_build": {
+      "build_uuid": "fa0b5883-051e-4f58-b4fc-7e0ab6834c2e",
+      "build_outcome": "success",
+      "source_sha": "8dc453a45925ec53eeb23cc203d65f59b51463ce",
+      "build_command": "npm run typecheck",
+      "deploy_command": "npm run deploy:safe"
+    },
+    "worker_deployment_id": "16391242-5382-4de9-8c3b-4f4670122f39",
+    "worker_version_id": "347966c4-a743-4b37-9fcb-5839c330a422",
+    "worker_version_number": 4163,
+    "worker_traffic_percent": 100,
+    "post_deploy_health": "Direct GET 2026-11-23T07:56:36Z HTTP 200; {ok:true, service:sanci9517-streamer-brand, version:2.0.0, server:cloudflare-worker}.",
+    "post_deploy_asset_hashes": {
+      "public/assets/admin-media-retention.js": {
+        "http": 200,
+        "sha256": "8b145b587d1a926b56f6419f74409ec090f785985c4ae544b9a5c69a02e18996",
+        "matches_source": true
+      },
+      "public/assets/admin-media.js": {
+        "http": 200,
+        "sha256": "39b2809534973748008d62018647049bab6f73c750260ffcea3396cf2e306fa0",
+        "matches_source": true
+      },
+      "public/admin-media.html": {
+        "http": 307,
+        "redirect": "/admin-media",
+        "sha256": null,
+        "note": "Admin route redirects to the authenticated route without a session; page content/hash was intentionally not fetched or bypassed."
+      }
+    },
+    "post_deploy_asset_hashes_note": "All changed public JavaScript assets were fetched directly and match source. The HTML route is access protected; its redirect is the expected unauthenticated behavior, not a failed release check."
   },
   "safety": {
     "production_d1_migration_or_write": "NOT RUN",
