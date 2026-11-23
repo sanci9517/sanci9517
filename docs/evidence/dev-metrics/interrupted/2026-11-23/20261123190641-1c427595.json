@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "id": "20261123190641-1c427595",
+  "task": "77.44.7.D-D06-next-feature-audit",
+  "trigger": "manual",
+  "started_at": "2026-11-23T19:06:41.268Z",
+  "abandoned_at": "2026-11-23T19:10:18.998Z",
+  "measured_seconds": null,
+  "status": "interrupted",
+  "reason": "Automation-triggered run was mistakenly labeled manual; this interruption record is null-duration and a correctly labeled scheduled session is started.",
+  "started_revision": "7e715dd6c715044b5f4e58cdbe7451bafe9d3f2e",
+  "measurement": "missing end time; excluded from elapsed time and ETA"
+}

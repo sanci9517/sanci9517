@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261123191019-2ba8bd8d",
+  "task": "77.44.7.D-D06-gallery-and-table-accessibility",
+  "trigger": "scheduled",
+  "started_at": "2026-11-23T19:10:19.042Z",
+  "finished_at": "2026-11-23T19:28:27.445Z",
+  "wall_seconds": 1088,
+  "paused_seconds": 294,
+  "measured_seconds": 794,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "Implemented and released two D-06 accessibility fixes with local Chromium, unit, typecheck, plan, D1 read-only and exact-source production verification; full D-06/editor remain open and Editor Core hosted CI is still running.",
+  "evidence": [
+    "docs/evidence/editor-d06-gallery-table-accessibility-2026-11-23.json",
+    "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md"
+  ],
+  "checks": "Editor unit 24/24; real Chromium 2/2; element-content 34/34; cache 2/2; D content 7/7; typecheck; plan 15/15; traceability/canonical/active-point PASS; Cloudflare build/source smoke PASS; Editor Core CI in progress",
+  "started_revision": "7e715dd6c715044b5f4e58cdbe7451bafe9d3f2e",
+  "finished_revision": "0d9c83993ff87f085c5ee197b55dd390b4b90a3e",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

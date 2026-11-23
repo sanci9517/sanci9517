@@ -1,0 +1,178 @@
+{
+  "schema_version": 1,
+  "task": "77.44.7.D-D06",
+  "date": "2026-11-23",
+  "status": "partial_feature_slice_released",
+  "summary": "D-06 fixes: one-image structured galleries no longer consume arrow keys for impossible navigation, and native tables receive the authored accessible name in addition to the scroll region.",
+  "branch": "v2/foundation",
+  "runtime_commit": "0d9c83993ff87f085c5ee197b55dd390b4b90a3e",
+  "runtime_parent": "7e715dd6c715044b5f4e58cdbe7451bafe9d3f2e",
+  "runtime_commit_url": "https://github.com/sanci9517/sanci9517/commit/0d9c83993ff87f085c5ee197b55dd390b4b90a3e",
+  "changed_files": [
+    "public/assets/page-renderer.js",
+    "public/editor-v2/app.js",
+    "public/editor-v2/core/element-content.js",
+    "public/editor-v2/index.html",
+    "public/visual-page.html",
+    "tests/browser/editor-structured-content.test.js",
+    "tests/editor-public-asset-cache-bust.test.js"
+  ],
+  "behavior": {
+    "single_image_gallery": "ArrowLeft/ArrowRight handlers are installed only when at least two images exist; the single-image dialog retains Escape closure and focus restoration.",
+    "table_accessible_name": "The authored table aria-label is applied to the native table while preserving the scroll region label; browser coverage queries the named table role after separate Save and Publish operations.",
+    "save_publish": "Unchanged and separate.",
+    "dependency_or_open_source_reuse": "No new dependency or third-party code added."
+  },
+  "local_checks": [
+    {
+      "command": "npm run test:editor",
+      "result": "PASS",
+      "summary": "24/24 Editor suite files passed, including editor preferences and runner safeguards."
+    },
+    {
+      "command": "node --test tests/browser/editor-structured-content.test.js",
+      "result": "PASS",
+      "summary": "2/2 real Chromium browser tests passed; Save/Publish and public table semantics, one-image keyboard behavior, Escape and focus restoration covered."
+    },
+    {
+      "command": "npm run typecheck",
+      "result": "PASS"
+    },
+    {
+      "command": "node public/editor-v2/tests/element-content.test.js",
+      "result": "PASS",
+      "summary": "34/34 passed."
+    },
+    {
+      "command": "node tests/editor-public-asset-cache-bust.test.js",
+      "result": "PASS",
+      "summary": "2/2 passed."
+    },
+    {
+      "command": "node tests/editor-d-content-contract.test.js",
+      "result": "PASS",
+      "summary": "7/7 passed."
+    },
+    {
+      "command": "git diff --check",
+      "result": "PASS"
+    },
+    {
+      "command": "python3 tests/plan-contract.test.py",
+      "result": "PASS",
+      "summary": "15 tests passed after the append-only canonical plan update."
+    },
+    {
+      "command": "python3 scripts/build-feature-traceability.py --check",
+      "result": "PASS",
+      "summary": "396 source mappings current; functional acceptance remains not certified."
+    },
+    {
+      "command": "python3 scripts/check-canonical-plan.py",
+      "result": "PASS",
+      "summary": "one 13-file master and one current cursor; 396 mappings."
+    },
+    {
+      "command": "python3 scripts/audit-active-plan-point.py",
+      "result": "PASS",
+      "summary": "current cursor 77.44 / WEB-011; next 77.44.7.D; 148 PARTIAL_SOURCE and 248 UNVERIFIED; functional acceptance NOT_CERTIFIED."
+    }
+  ],
+  "production_d1_preflight": {
+    "method": "Cloudflare D1 Query API, SELECT-only; no migration or data write.",
+    "select_statements": [
+      "SELECT name FROM sqlite_schema WHERE type IN ('table','view','index','trigger') ORDER BY type,name",
+      "SELECT name FROM d1_migrations ORDER BY id DESC LIMIT 1"
+    ],
+    "schema_object_count": 147,
+    "latest_migration_marker": "0030_media_library_organization.sql",
+    "query_count": 2,
+    "rows_written": 0,
+    "changes": 0,
+    "changed_db": false
+  },
+  "wrangler_dry_run": {
+    "command": "npx wrangler deploy --dry-run",
+    "wrangler_version": "4.130.0",
+    "exit_code": 0,
+    "assets_read": 200,
+    "total_upload": "430.67 KiB / gzip 109.11 KiB",
+    "deployment_performed": false,
+    "note": "Wrangler reported a read-only EROFS warning for its shared log directory, printed the would-have-written log location, then completed the dry-run successfully."
+  },
+  "cloudflare_build": {
+    "build_uuid": "a1533cf2-7360-49b2-a1b3-d7b5f09e0dd8",
+    "result": "success",
+    "build_command": "npm run typecheck",
+    "deploy_command": "npm run deploy:safe",
+    "source_branch": "v2/foundation",
+    "source_commit": "0d9c83993ff87f085c5ee197b55dd390b4b90a3e",
+    "free_build_limit_reached": false
+  },
+  "production_deployment": {
+    "deployment_id": "5ada01ba-6c18-4638-b9a1-9a1f1dcf32ee",
+    "worker_version_id": "6462892e-6bb5-459a-8ca8-ccaac3ab0bd3",
+    "worker_version_number": 4174,
+    "traffic_percentage": 100,
+    "verification": "Cloudflare deployments API reported the version at 100%; the Workers Builds API tied that version to the exact source commit and successful deploy:safe build."
+  },
+  "production_smoke": {
+    "github_workflow": "Production Worker source smoke",
+    "github_run_id": 45247618460,
+    "github_run_url": "https://github.com/sanci9517/sanci9517/actions/runs/45247618460",
+    "status": "success",
+    "result": "The job directly fetched live /api/health and the exact public source files with release=<commit SHA>; it ended with PASS for HTTP 200 health and all SHA-256 checks matching.",
+    "changed_public_asset_sha256": {
+      "public/visual-page.html": "7c33f85d1d987e3a5648e4bc19497b2375236046b6b55bd34262df3ee8d6f400",
+      "public/assets/page-renderer.js": "595877f5bcf999a3aafc2e743afb54d9476919dc8b69aeea4b9b2e7ddf225d9f",
+      "public/editor-v2/core/element-content.js": "55d0eb05522b81a6f6d0c7d2a23369da36fbe4fc3b97ab9f0d8eb6cae4a8bca5",
+      "public/editor-v2/index.html": "bca33c21334a52ed076d5568653c7cbc81ca393389e3c18b4ea9abf3b9fc3028",
+      "public/editor-v2/app.js": "8a40a98155bb618f550cb3009aff1c468998d0bdf1f4a2aa9221b2373056f30c"
+    },
+    "local_network_readback": "Direct local curl was blocked by the managed proxy/network. The exact-SHA GitHub production smoke workflow performed the public HTTP health and byte-for-byte asset checks successfully."
+  },
+  "github_actions_at_snapshot": {
+    "runtime_sha": "0d9c83993ff87f085c5ee197b55dd390b4b90a3e",
+    "aggregate_status": "partial: one required Editor Core run remains in progress",
+    "run_ids": {
+      "Twitch Integration Check": 45247618454,
+      "Production Worker source smoke": 45247618460,
+      "F0 baseline checks": 45247618497,
+      "Editor Core Test": 45247618524
+    },
+    "completed_success": [
+      "Twitch Integration Check",
+      "Production Worker source smoke",
+      "F0 baseline checks"
+    ],
+    "pending": {
+      "workflow": "Editor Core Test",
+      "run_id": 45247618524,
+      "active_step": "Run Editor browser layout regression"
+    },
+    "pending_note": "No dispatch or rerun was started. The exact-SHA run is left in progress and is not reported as PASS."
+  },
+  "canonical_plan_before_append": {
+    "git_blob_sha": "84c69ff9f495c12deaf6f9ee632d3284f716ee26",
+    "byte_size": 1846422
+  },
+  "canonical_plan_after_append": {
+    "git_blob_sha": "289a3ee2597074b234e2637254d30ad54d1c1be9",
+    "byte_size": 1849437,
+    "change_method": "Verified the exact prior blob and size, then appended one D-06 evidence section without rewriting existing plan content."
+  },
+  "development_metrics_session_id": "20261123191019-2ba8bd8d",
+  "cost": {
+    "new_authorized_cost_ft": 0,
+    "production_d1_writes": 0,
+    "production_r2_operations": 0,
+    "new_dependencies": 0
+  },
+  "plan_status": {
+    "D06": "OPEN / NOT CERTIFIED",
+    "D01_D07": "OPEN / NOT CERTIFIED",
+    "77_44_7_D": "OPEN / NOT CERTIFIED",
+    "visual_editor": "OPEN / NOT CERTIFIED",
+    "manual_physical_acceptance": "DEFERRED until the full Editor is implemented"
+  }
+}
