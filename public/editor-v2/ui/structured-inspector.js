@@ -1,6 +1,6 @@
 import {createCompositionInputs} from './composition-inputs.js';
 /* Inspector-only controls for canonical static content. All edits call the command API. */
-import {createElementContent,normalizeElementContent,isStructuredType,malformedElementContentRowIndexes} from '../core/element-content.js?v=20261123-d06-structured-region-names-v2';
+import {createElementContent,normalizeElementContent,isStructuredType,malformedElementContentRowIndexes} from '../core/element-content.js?v=20261123-d06-single-slide-carousel-v1';
 const focusRequests=new WeakMap();
 const typeLabels={list:'Lista',table:'Táblázat',tabs:'Fülek',accordion:'Lenyitható blokkok',gallery:'Galéria',carousel:'Tartalom-carousel'};
 function recoverAndRestoreFocus(section,nodeId,button,update){

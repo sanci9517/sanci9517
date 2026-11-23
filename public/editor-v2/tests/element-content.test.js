@@ -531,3 +531,13 @@ test('structured tables, tabs, gallery and carousel render escaped, bounded acce
  assert.match(renderStructuredContent('tabs',tabs,'tabs',{ariaLabel:'x'.repeat(200)}),new RegExp(`aria-label="${'x'.repeat(160)}"`),
   'tablist labels stay within the authored field limit');
 });
+
+test('a single-slide carousel does not render active no-op navigation controls',()=>{
+ const html=renderStructuredContent('carousel',{version:1,items:[{label:'Egy dia',content:'Egyetlen tartalom',src:'',alt:''}]},'one-slide');
+ assert.match(html,/<button type="button" class="visual-carousel-prev" aria-label="Előző dia" disabled>/,
+  'previous navigation is natively disabled when there is no other slide');
+ assert.match(html,/<span class="visual-carousel-count" aria-live="polite">1 \/ 1<\/span>/,
+  'the live counter remains visible for a one-slide carousel');
+ assert.match(html,/<button type="button" class="visual-carousel-next" aria-label="Következő dia" disabled>/,
+  'next navigation is natively disabled when there is no other slide');
+});

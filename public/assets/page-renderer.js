@@ -4,7 +4,7 @@ import { isAllowlistedMotionStyle } from "../editor-v2/core/motion-style.js?v=20
 import { RICH_TEXT_FONT_FAMILIES } from "../editor-v2/core/schema.js?v=20261101-richtext-link-target";
 import { resolveRichTextLinkTarget } from "../editor-v2/core/richtext-links.js?v=20261101-richtext-link-target";
 import { LAYOUT_TYPES, isManagedLayout } from "../editor-v2/core/layout-presets.js";
-import {isStructuredType,renderElementContent,activateStructuredContent,safeMediaUrl} from "../editor-v2/core/element-content.js?v=20261123-d06-structured-region-names-v2";
+import {isStructuredType,renderElementContent,activateStructuredContent,safeMediaUrl} from "../editor-v2/core/element-content.js?v=20261123-d06-single-slide-carousel-v1";
 import {legacyImageSource,legacyPlayableSource,legacyPlaybackSettings,legacyImagePresentation,legacyImageCaption} from "../editor-v2/core/legacy-media-source.js";
 import {iconById} from "../editor-v2/core/icon-options.js";
 import {normalizeDividerStyle} from "../editor-v2/core/decorative-elements.js";

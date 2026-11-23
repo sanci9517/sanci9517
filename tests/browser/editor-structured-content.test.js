@@ -500,6 +500,26 @@ test('structured Inspector editing survives Save, Publish and public interaction
  await carousel.locator('.visual-carousel-next').click();
  assert.equal(await carousel.locator('.visual-carousel-count').textContent(),'2 / 2');
  assert.equal(await carousel.locator('.visual-carousel-slide:visible h3').textContent(),'Második dia');
+ const singleSlideMarkup=renderElementContent('carousel',{version:1,items:[{label:'Egy dia',content:'Egyetlen tartalom',src:'',alt:''}]},'one-slide-public-probe');
+ await viewer.evaluate(markup=>{const wrapper=document.createElement('div');wrapper.id='one-slide-public-probe';wrapper.innerHTML=markup;document.body.append(wrapper)},singleSlideMarkup);
+ await viewer.evaluate(async()=>{
+  const {activateStructuredContent}=await import('/editor-v2/core/element-content.js?v=20261123-d06-single-slide-carousel-v1');
+  activateStructuredContent(document.querySelector('#one-slide-public-probe'));
+ });
+ const singleSlide=viewer.locator('#one-slide-public-probe [data-structured-carousel]');
+ const singlePrev=singleSlide.getByRole('button',{name:'Előző dia'}),singleNext=singleSlide.getByRole('button',{name:'Következő dia'});
+ assert.equal(await singlePrev.isDisabled(),true,'the public previous control is disabled with one slide');
+ assert.equal(await singleNext.isDisabled(),true,'the public next control is disabled with one slide');
+ await singleNext.focus();
+ assert.notEqual(await singleNext.evaluate(el=>document.activeElement===el),true,'a disabled no-op control is not a keyboard focus stop');
+ for(const key of ['ArrowLeft','ArrowRight']){
+  const prevented=await singleSlide.evaluate((host,key)=>{
+   const event=new KeyboardEvent('keydown',{key,bubbles:true,cancelable:true});host.dispatchEvent(event);return event.defaultPrevented;
+  },key);
+  assert.equal(prevented,false,`${key} remains available to the surrounding page when only one slide exists`);
+ }
+ assert.equal(await singleSlide.locator('.visual-carousel-count').textContent(),'1 / 1');
+ assert.equal(await singleSlide.locator('.visual-carousel-slide:visible h3').textContent(),'Egy dia');
   assert.equal(await viewer.locator('.visual-editor-node[data-node-id="'+ids.list+'"]').evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(17, 34, 51)');
   const list=viewer.locator('.visual-editor-node[data-node-id="'+ids.list+'"]');
  assert.equal(await list.locator('li').count(),3);
