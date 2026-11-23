@@ -75,6 +75,7 @@ test('legacy image video audio share guarded media URLs in Inspector Canvas and 
       res.setHeader('content-type',isAudio?'audio/wav':'image/svg+xml');
       return res.end(isAudio?Buffer.alloc(16):'<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"><rect width="20" height="20" fill="#56f"/></svg>');
     }
+    if(url.pathname==='/api/auth/session')return json({ok:true,data:{authenticated:false,user:null}});
     if(url.pathname==='/api/public/pages')return json({ok:true,data:{id:pageId,slug:'test',title:'Test',description:'',content:published.pages[pageId]}});
     if(url.pathname==='/api/public/navigation')return json({ok:true,data:{items:[]}});
     if(url.pathname==='/api/integrations/twitch/connection')return json({ok:true,data:{connected:false}});

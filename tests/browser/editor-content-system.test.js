@@ -60,6 +60,7 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
       if(req.method==='GET')return json({ok:true,data:{page:{id:pageId,document:draft,publishedRevisionId:'published'},revisions:[{id:'revision-'+version,version}]}});
       let body='';for await(const chunk of req)body+=chunk;const request=JSON.parse(body);posts.push(request);draft=structuredClone(request.document);version++;if(request.publish)published=structuredClone(draft);return json({ok:true,data:{pageId,version,revisionId:'revision-'+version}});
     }
+    if(url.pathname==='/api/auth/session')return json({ok:true,data:{authenticated:false,user:null}});
     if(url.pathname==='/api/public/pages')return json({ok:true,data:{id:pageId,slug:'test',title:'Test',content:published.pages[pageId]}});
     if(url.pathname==='/api/public/navigation')return json({ok:true,data:{items:[]}});
     if(url.pathname==='/api/integrations/twitch/connection')return json({ok:true,data:{connected:false}});
