@@ -3,6 +3,23 @@ import {createCompositionInputs} from './composition-inputs.js';
 import {createElementContent,normalizeElementContent,isStructuredType,malformedElementContentRowIndexes} from '../core/element-content.js?v=20261122-d03-table-object-cell-recovery-v1';
 const focusRequests=new WeakMap();
 const typeLabels={list:'Lista',table:'Táblázat',tabs:'Fülek',accordion:'Lenyitható blokkok',gallery:'Galéria',carousel:'Tartalom-carousel'};
+function recoverAndRestoreFocus(section,nodeId,button,update){
+ const doc=section.ownerDocument;
+ if(!doc)return update();
+ const ownedFocus=doc.activeElement===button;
+ const request=ownedFocus?{}:null;
+ if(request)focusRequests.set(doc,request);
+ const result=update();
+ const schedule=doc.defaultView?.requestAnimationFrame?.bind(doc.defaultView);
+ if(result===false||!request||section.isConnected||!schedule)return result;
+ schedule(()=>{
+  if(focusRequests.get(doc)!==request||doc.activeElement!==doc.body)return;
+  const current=[...doc.querySelectorAll('#inspectorBody .structured-inspector')].find(view=>view.dataset.nodeId===nodeId);
+  const target=current?.querySelector('.structured-input input:not(:disabled),.structured-input textarea:not(:disabled)');
+  if(target?.getClientRects().length)target.focus({preventScroll:true});
+ });
+ return result;
+}
 export function renderStructuredInspector(node,update,{pending=()=>{}}={}){
  const composition=createCompositionInputs(pending);
  if(!isStructuredType(node.type))return null;
@@ -22,7 +39,7 @@ export function renderStructuredInspector(node,update,{pending=()=>{}}={}){
     if(repair.disabled)return;
     const defaults={list:()=>'',table:()=>['Oszlop 1','Oszlop 2'],tabs:()=>({label:'Új fül',content:'Írd ide a tartalmat'}),accordion:()=>({label:'Új kérdés',content:'Írd ide a választ'}),gallery:()=>({src:'',alt:'',caption:''}),carousel:()=>({label:'Új dia',content:'Írd ide a tartalmat',src:'',alt:''})};
     const bad=new Set(malformedRows),rows=normalized[collectionKey].map((item,index)=>bad.has(index)?defaults[node.type]():item);
-    update(normalizeElementContent(node.type,{...normalized,[collectionKey]:rows}));
+    recoverAndRestoreFocus(section,node.id,repair,()=>update(normalizeElementContent(node.type,{...normalized,[collectionKey]:rows})));
    };
    section.append(repair);return section;
   }
@@ -37,7 +54,7 @@ export function renderStructuredInspector(node,update,{pending=()=>{}}={}){
   const warning=document.createElement('p');warning.className='property-validation structured-inspector-error';warning.setAttribute('role','alert');
   warning.textContent='A mentett tartalom hibás vagy nem támogatott formátumú. Az adatvesztés elkerülésére a mezők zárolva vannak.';section.append(warning);
   const reset=document.createElement('button');reset.type='button';reset.className='structured-action';reset.dataset.structuredAction='reset-invalid';reset.textContent='Alapértelmezett tartalom visszaállítása';reset.disabled=Boolean(node.locked);
-  reset.onclick=()=>{if(!reset.disabled)update(createElementContent(node.type));};section.append(reset);
+  reset.onclick=()=>{if(!reset.disabled)recoverAndRestoreFocus(section,node.id,reset,()=>update(createElementContent(node.type)));};section.append(reset);
   return section;
  }
  const section=document.createElement('section');section.className='structured-inspector';section.dataset.nodeId=node.id;

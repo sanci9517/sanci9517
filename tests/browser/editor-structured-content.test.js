@@ -724,7 +724,12 @@ test('structured Inspector editing survives Save, Publish and public interaction
  const recoveryTableInspector=editor.locator('.structured-inspector');
  await recoveryTableInspector.getByRole('alert').waitFor();
  const postsBeforeTableRepair=posts.length;
- await recoveryTableInspector.getByRole('button',{name:'Hibás sorok cseréje alapértékre'}).click();
+ const repairTableButton=recoveryTableInspector.getByRole('button',{name:'Hibás sorok cseréje alapértékre'});
+ await repairTableButton.focus();
+ await editor.keyboard.press('Enter');
+ await editor.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>resolve())));
+ assert.equal(await editor.evaluate(()=>document.activeElement?.getAttribute('aria-label')),'Oszlop 1',
+  'keyboard recovery moves focus to the first repaired table cell instead of losing the active Inspector position');
  const repairedTable={version:1,rows:[['Fejléc','Megmaradó adat'],['Oszlop 1','Oszlop 2']]};
  const editorTable=editor.locator('.node[data-node-id="'+ids.table+'"]');
  assert.equal(await editorTable.locator('thead th[scope="col"]').count(),2,
