@@ -624,9 +624,17 @@ export async function adminMediaRoute(request: Request, env: Env, siteId: string
     if (retentionStatusFlag[0] === "1") {
       if (id !== null || url.searchParams.has("deletePreflight") || url.searchParams.has("usage")) return error("INVALID_RETENTION_STATUS",400);
       try {
-        const rows=await env.DB.prepare(retentionQueries.list).bind(siteId).all<{id:string;asset_id:string;state:string;requested_at:string;not_before:string;updated_at:string;attempt_count:number}>();
+        const cursors=url.searchParams.getAll("cursor");
+        if(cursors.length>1 || (cursors.length===1 && !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(cursors[0]))) return error("INVALID_RETENTION_CURSOR",400);
+        const cursor=cursors[0];
+        const after=cursor ? await env.DB.prepare("SELECT requested_at FROM media_retention_requests WHERE id=? AND site_id=? LIMIT 1").bind(cursor,siteId).first<{requested_at:string}>() : null;
+        if(cursor && !after) return error("INVALID_RETENTION_CURSOR",400);
+        const rows=cursor
+          ? await env.DB.prepare(retentionQueries.listAfter).bind(siteId,after!.requested_at,after!.requested_at,cursor).all<{id:string;asset_id:string;state:string;requested_at:string;not_before:string;updated_at:string;attempt_count:number}>()
+          : await env.DB.prepare(retentionQueries.list).bind(siteId).all<{id:string;asset_id:string;state:string;requested_at:string;not_before:string;updated_at:string;attempt_count:number}>();
         const requests=rows.results.slice(0,100).map(row=>({id:row.id,assetId:row.asset_id,state:row.state,requestedAt:row.requested_at,notBefore:row.not_before,updatedAt:row.updated_at,attemptCount:row.attempt_count,permanentDeletionAuthorized:false}));
-        return ok({migrationActive:true,requests,complete:rows.results.length<=100,permanentDeletionAuthorized:false});
+        const complete=rows.results.length<=100;
+        return ok({migrationActive:true,requests,complete,nextCursor:complete?null:requests.at(-1)?.id ?? null,permanentDeletionAuthorized:false});
       } catch { return error("RETENTION_MIGRATION_NOT_ACTIVE",503); }
     }
     const preflightFlags = url.searchParams.getAll("deletePreflight");

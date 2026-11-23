@@ -11,6 +11,10 @@ export const retentionQueries = Object.freeze({
        FROM media_retention_requests WHERE asset_id=? AND site_id=? LIMIT 1`,
   list: `SELECT id,asset_id,state,requested_at,not_before,updated_at,attempt_count
        FROM media_retention_requests WHERE site_id=? ORDER BY requested_at DESC,id DESC LIMIT 101`,
+  listAfter: `SELECT id,asset_id,state,requested_at,not_before,updated_at,attempt_count
+       FROM media_retention_requests
+       WHERE site_id=? AND (requested_at < ? OR (requested_at = ? AND id < ?))
+       ORDER BY requested_at DESC,id DESC LIMIT 101`,
   request: `INSERT INTO media_retention_requests
        (id,site_id,asset_id,object_key,state,not_before)
        SELECT ?,m.site_id,m.id,m.object_key,'requested',?

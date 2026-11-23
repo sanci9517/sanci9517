@@ -2,12 +2,18 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { readFileSync } from "node:fs";
 import { DatabaseSync } from "node:sqlite";
+import { retentionQueries } from "../src/core/media-retention-queries.js";
 
 test("retention state migration is additive, inert and keeps one request per site asset", () => {
  const db=new DatabaseSync(":memory:");
  try {
   db.exec("PRAGMA foreign_keys=ON; CREATE TABLE media(id TEXT PRIMARY KEY); INSERT INTO media VALUES('asset-a');");
   db.exec(readFileSync(new URL("../scripts/pending/media_retention_requests.sql",import.meta.url),"utf8"));
+  assert.equal(db.prepare("SELECT COUNT(*) n FROM sqlite_master WHERE type='index' AND name='idx_media_retention_status_page'").get().n,1,
+   "the manual-only schema includes the site-scoped keyset pagination index");
+  const cursorPlan=db.prepare("EXPLAIN QUERY PLAN "+retentionQueries.listAfter).all("site-default","2026-10-23 10:00:00","2026-10-23 10:00:00","req-a");
+  assert.ok(cursorPlan.some(row=>String(row.detail).includes("idx_media_retention_status_page")),
+   "keyset pages use the proposed composite index instead of sorting every site request");
   const insert=db.prepare("INSERT INTO media_retention_requests(id,site_id,asset_id,object_key,not_before) VALUES(?,?,?,?,?)");
   insert.run("req-a","site-default","asset-a","sites/site-default/media/a","2026-11-30 00:00:00");
   const row=db.prepare("SELECT state,attempt_count,not_before FROM media_retention_requests").get();

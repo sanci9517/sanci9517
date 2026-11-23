@@ -367,7 +367,7 @@ form.addEventListener("submit", event => {
   if (!activeUpload) startUpload(input.files?.[0]);
 });
 const retentionPanel = document.getElementById("mediaRetentionPanel");
-if (retentionPanel) retentionStatus = mountRetentionStatus(retentionPanel, () => api("/api/admin/media?retentionStatus=1"), {
+if (retentionPanel) retentionStatus = mountRetentionStatus(retentionPanel, cursor => api("/api/admin/media?retentionStatus=1" + (cursor ? "&cursor=" + encodeURIComponent(cursor) : "")), {
   cancelRequest: id => api("/api/admin/media?retentionRequest=1&requestId=" + encodeURIComponent(id), { method: "DELETE" })
 });
 const integrityPanel = document.getElementById("mediaIntegrityPanel");

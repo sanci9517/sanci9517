@@ -18,3 +18,4 @@ CREATE TABLE IF NOT EXISTS media_retention_requests (
  UNIQUE(site_id,asset_id)
 );
 CREATE INDEX IF NOT EXISTS idx_media_retention_due ON media_retention_requests(site_id,state,not_before);
+CREATE INDEX IF NOT EXISTS idx_media_retention_status_page ON media_retention_requests(site_id,requested_at DESC,id DESC);

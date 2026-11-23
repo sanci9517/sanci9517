@@ -11,6 +11,7 @@ const png = Uint8Array.from([137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0
 const gif = new TextEncoder().encode("GIF89aTEST");
 const wav = Uint8Array.from([82,73,70,70,0,0,0,0,87,65,86,69,102,109,116,32]);
 const webm = Uint8Array.from([0x1a,0x45,0xdf,0xa3,0x93,0x42,0x82,0x84]);
+const mediaId = n => `00000000-0000-4000-8000-${String(n).padStart(12,"0")}`;
 
 async function fixture(t) {
   const db = new DatabaseSync(":memory:");
@@ -38,7 +39,7 @@ async function fixture(t) {
     "CREATE TRIGGER media_archive_revisions_insert_guard BEFORE INSERT ON editor_revisions WHEN EXISTS (SELECT 1 FROM media m JOIN pages p ON p.site_id=m.site_id WHERE p.id=NEW.page_id AND m.archived_at IS NOT NULL AND instr(NEW.document_json,m.id)>0) BEGIN SELECT RAISE(ABORT,'ARCHIVED_MEDIA_REFERENCE'); END;"
   ].join("\n"));
   db.exec(readFileSync(new URL("../scripts/pending/0030_media_library_organization.sql",import.meta.url),"utf8"));
-  db.exec("CREATE TABLE media_retention_requests(id TEXT PRIMARY KEY,site_id TEXT NOT NULL,asset_id TEXT NOT NULL,object_key TEXT NOT NULL,state TEXT NOT NULL,requested_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,not_before TEXT NOT NULL,updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,attempt_count INTEGER NOT NULL DEFAULT 0,last_error TEXT,UNIQUE(site_id,asset_id));");
+  db.exec("CREATE TABLE media_retention_requests(id TEXT PRIMARY KEY,site_id TEXT NOT NULL,asset_id TEXT NOT NULL,object_key TEXT NOT NULL,state TEXT NOT NULL,requested_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,not_before TEXT NOT NULL,updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,attempt_count INTEGER NOT NULL DEFAULT 0,last_error TEXT,UNIQUE(site_id,asset_id)); CREATE INDEX idx_media_retention_status_page ON media_retention_requests(site_id,requested_at DESC,id DESC);");
   for (const role of ["editor","viewer"]) {
     db.prepare("INSERT INTO users VALUES (?,?,?,?,1)").run(role,role+"@test.local",role,role);
     db.prepare("INSERT INTO site_memberships VALUES (?,?,?,'active')").run("site-default",role,role);
@@ -1759,7 +1760,28 @@ test("retention status is read-only, site-scoped and signals an active schema",a
  assert.equal(data.migrationActive,true); assert.equal(data.requests.length,1); assert.equal(data.requests[0].assetId,asset.id); assert.equal(data.requests[0].permanentDeletionAuthorized,false);
  assert.equal((await f.call("GET","viewer",null,{retentionStatus:true})).status,403);
  assert.equal((await f.call("GET","editor",null,{retentionStatus:true,site:"other"})).status,403);
+ assert.equal((await f.call("GET","editor",null,{retentionStatus:true,cursor:"not-a-uuid"})).status,400);
+ assert.equal((await f.call("GET","editor",null,{retentionStatus:true,rawQuery:`cursor=${mediaId(1)}&cursor=${mediaId(1)}`})).status,400);
+ assert.equal((await f.call("GET","editor",null,{retentionStatus:true,cursor:mediaId(900)})).status,400,"foreign or missing cursors fail closed");
  assert.equal(f.files.size,1);
+});
+
+test("retention status pages all rows in stable order and rejects a foreign-site cursor",async t=>{
+ const f=await fixture(t);
+ const insert=f.db.prepare("INSERT INTO media_retention_requests(id,site_id,asset_id,object_key,state,not_before,requested_at) VALUES(?,?,?,?,'requested','2026-12-01 00:00:00',?)");
+ for(let n=1;n<=201;n++)insert.run(mediaId(n),"site-default",mediaId(1000+n),`site-default/${n}`,"2026-10-23 10:00:00");
+ insert.run(mediaId(900),"other",mediaId(1900),"other/foreign","2026-10-23 10:00:00");
+ const page=async cursor=>{const response=await f.call("GET","editor",null,{retentionStatus:true,...(cursor?{cursor}:{})});assert.equal(response.status,200);return (await response.json()).data;};
+ const first=await page();
+ assert.equal(first.requests.length,100);assert.equal(first.complete,false);assert.equal(first.nextCursor,mediaId(102));
+ const second=await page(first.nextCursor);
+ assert.equal(second.requests.length,100);assert.equal(second.complete,false);assert.equal(second.nextCursor,mediaId(2));
+ const third=await page(second.nextCursor);
+ assert.equal(third.requests.length,1);assert.equal(third.requests[0].id,mediaId(1));assert.equal(third.complete,true);assert.equal(third.nextCursor,null);
+ const ids=[...first.requests,...second.requests,...third.requests].map(row=>row.id);
+ assert.equal(new Set(ids).size,201);assert.deepEqual(ids,Array.from({length:201},(_,i)=>mediaId(201-i)));
+ assert.equal(f.db.prepare("SELECT COUNT(*) AS n FROM media_retention_requests").get().n,202,"paging is read-only");
+ assert.equal(f.files.size,0,"status paging never reads or deletes R2 objects");
 });
 test("deletion preflight rejects incomplete usage and never grants deletion",async t=>{
   const f=await fixture(t);

@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "captured_at_utc": "2026-11-23T07:51:58Z",
+  "plan_item": "77.44.7.D / D-06 — retention status keyset pagination",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "baseline_commit": "b43b0692752aab550e7aa76c97ccb0765c1cd5ec",
+    "runtime_commit": "PENDING_NORMAL_FAST_FORWARD"
+  },
+  "change": {
+    "kind": "runtime and public admin UI pagination; tests; scoped canonical plan acceptance and evidence",
+    "behavior": "The editor can traverse every site-scoped retention request beyond the prior 100-row cap. The API uses a keyset cursor on requested_at DESC/id DESC, rejects malformed, repeated, missing and foreign-site cursors before listing, and returns a next cursor only when more rows exist. The accessible control appends pages without duplicates, preserves confirmed rows on page errors, permits explicit retry, refreshes to page one, and restores keyboard focus when the final page hides the control.",
+    "data_safety": "All new reads are SELECT-only. No D1 migration/write or R2 read/write/delete. Cancellation remains an explicit separate action and never authorizes deletion. Save and Publish stay distinct.",
+    "database_index": "Added idx_media_retention_status_page to the existing manual-only schema proposal and checked its use in SQLite EXPLAIN QUERY PLAN. It is not applied to production. Production preflight found the retention table but not this index; the query remains functionally valid without schema changes, though the proposed index should be present before growth makes site-list sorting material."
+  },
+  "verification": {
+    "npm run test:media": "PASS, 7/7 test files",
+    "node --test --test-concurrency=1 tests/browser/admin-media-retention.test.js": "PASS, 16/16 Chromium tests at mobile and desktop widths; includes 201 requests over three pages, ordering/no duplicates, retry, refresh, keyboard and focus restoration",
+    "npm run typecheck": "PASS",
+    "python3 tests/plan-contract.test.py": "PASS, 15/15",
+    "python3 scripts/check-canonical-plan.py": "PASS, 13 master files / 396 mappings; acceptance NOT CERTIFIED",
+    "python3 scripts/build-feature-traceability.py --check": "PASS, 396/396",
+    "python3 scripts/audit-active-plan-point.py": "PASS for bookkeeping only; 77.44.7.D OPEN / NOT_CERTIFIED, 148 PARTIAL_SOURCE / 248 UNVERIFIED",
+    "npm run test:web013:migration-gate": "PASS; no D1 migration is applied by deploy:safe",
+    "npx wrangler deploy --dry-run": "PASS / exit 0; Wrangler 4.130.0 read 199 public assets (430.57 KiB / 109.08 KiB gzip), showed the expected D1/R2/Assets bindings, and did not deploy. The sandbox emitted a non-fatal EROFS warning while Wrangler attempted to write its log under /home/agent/.config/.wrangler/logs.",
+    "git diff --check": "PASS"
+  },
+  "production_preflight": {
+    "api": "Cloudflare D1 query API, database sanci9517-db (5a4a5e96-fdad-421a-a33c-143daaf33e98)",
+    "queries": [
+      "SELECT name, sql FROM sqlite_master WHERE type IN ('table','index') AND name IN ('d1_migrations','media_retention_requests','idx_media_retention_status_page') ORDER BY name",
+      "SELECT name FROM d1_migrations ORDER BY name",
+      "SELECT COUNT(*) AS total_requests, COUNT(DISTINCT site_id) AS sites, MAX(requested_at) AS newest_request FROM media_retention_requests"
+    ],
+    "results": "Ledger has 36 entries through 0030_media_library_organization.sql. The retention table exists with 0 requests; the pagination index is absent. All three calls report rows_written=0, changes=0 and changed_db=false. No migration was applied."
+  },
+  "pre_release": {
+    "worker_deployment_id": "114e9747-6f38-4faa-9872-5681487163ac",
+    "worker_version_id": "1e17b65e-00da-4edb-9316-acda40919a8e",
+    "worker_traffic_percent": 100,
+    "runtime_source": "7c21236a564d762a9178a34e9dade543da81b217",
+    "health": "Prior health probe in existing evidence was HTTP 200 before this new release; post-release health remains pending.",
+    "public_asset_source_sha256": {
+      "public/admin-media.html": "a3aec6e1d15d0ca83b396e7773b067a5b75eab4692d380758cba9a1c966358de",
+      "public/assets/admin-media-retention.js": "8b145b587d1a926b56f6419f74409ec090f785985c4ae544b9a5c69a02e18996",
+      "public/assets/admin-media.js": "39b2809534973748008d62018647049bab6f73c750260ffcea3396cf2e306fa0"
+    }
+  },
+  "release": {
+    "status": "PENDING",
+    "github_actions_free_quota": "Owner reports CI capacity; no paid usage is authorized. Do not skip exact-source required release checks.",
+    "cloudflare_build_limit": "Live GET reports has_reached_build_minutes_limit=false; refresh 2026-11-30T23:59:59.999Z.",
+    "post_deploy_health": "NOT RUN",
+    "post_deploy_asset_hashes": "NOT RUN"
+  },
+  "safety": {
+    "production_d1_migration_or_write": "NOT RUN",
+    "production_r2_operation": "NOT RUN",
+    "new_dependencies": false,
+    "new_cost_huf": 0,
+    "d06_and_full_editor_acceptance": "OPEN / NOT_CERTIFIED; manual/physical acceptance deferred",
+    "save_publish_separation_preserved": true
+  }
+}

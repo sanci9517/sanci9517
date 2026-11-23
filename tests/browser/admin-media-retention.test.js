@@ -8,7 +8,7 @@ import { chromium } from 'playwright';
 
 const id=n=>`00000000-0000-4000-8000-${String(n).padStart(12,'0')}`;
 const request=(state='requested',n=1)=>({id:id(n),assetId:id(1000+n),state,requestedAt:'2026-10-23 10:00:00',notBefore:'2026-11-23T10:00:00.000Z',updatedAt:'2026-10-23T12:00:00+02:00',attemptCount:0,permanentDeletionAuthorized:false});
-const data=(requests=[],complete=true)=>({migrationActive:true,requests,complete,permanentDeletionAuthorized:false});
+const data=(requests=[],complete=true,nextCursor=null)=>({migrationActive:true,requests,complete,nextCursor,permanentDeletionAuthorized:false});
 function loseResponse(res){
  // Deliver headers and a partial body first: a pre-response socket close lets Chromium
  // transparently retry a transport request before fetch observes a response.
@@ -90,11 +90,37 @@ test('refresh failures remove stale results, keep library usable, and require ex
 });
 
 test('incomplete first hundred is labelled as partial',async t=>{
- const f=await fixture(t,(_req,res)=>json(res,{ok:true,data:data(Array.from({length:100},(_,i)=>request('requested',i+1)),false)}));
+ const f=await fixture(t,(_req,res)=>json(res,{ok:true,data:data(Array.from({length:100},(_,i)=>request('requested',i+1)),false,id(100))}));
  await f.state('ready');assert.equal(await f.panel.locator('.retention-card').count(),100);
- assert.equal(await f.panel.locator('.retention-notice').textContent(),'Az első 100 kérelem látható; a lista nem teljes.');
+ assert.equal(await f.panel.locator('.retention-notice').textContent(),'További kérelmek is vannak. A következő 100 betöltésével folytathatod.');
+ assert.equal(await f.panel.getByRole('button',{name:'További 100 kérelem betöltése'}).isVisible(),true);
  assert.equal(await f.panel.locator('.retention-notice').isVisible(),true);
  assert.ok(f.calls.every(c=>c.method==='GET'));
+});
+
+test('retention pages append once, preserve rows on retry, and refresh returns to the first page',async t=>{
+ const ordered=Array.from({length:201},(_,i)=>request('requested',201-i));
+ const f=await fixture(t,(req,res,n)=>{
+  const cursor=new URL(req.url,'http://localhost').searchParams.get('cursor');
+  if(!cursor)return json(res,{ok:true,data:data(ordered.slice(0,100),false,id(102))});
+  if(cursor===id(102)&&n===2)return json(res,{ok:false,error:{code:'TEMPORARY'}},503);
+  if(cursor===id(102))return json(res,{ok:true,data:data(ordered.slice(100,200),false,id(2))});
+  if(cursor===id(2))return json(res,{ok:true,data:data(ordered.slice(200),true,null)});
+  return json(res,{ok:false,error:{code:'INVALID_RETENTION_CURSOR'}},400);
+ });
+ await f.state('ready');
+ const next=f.panel.getByRole('button',{name:'További 100 kérelem betöltése'});
+ await next.focus();await next.press('Enter');await f.state('error');
+ assert.equal(await f.panel.locator('.retention-card').count(),100,'failed next-page read preserves verified cards');
+ assert.equal(await next.isEnabled(),true,'failed next-page read allows an explicit retry');
+ await next.click();await f.state('ready');assert.equal(await f.panel.locator('.retention-card').count(),200);
+ assert.deepEqual(await f.panel.locator('.retention-card').evaluateAll(cards=>cards.map(card=>card.dataset.requestId)),ordered.slice(0,200).map(row=>row.id));
+ await next.click();await f.state('ready');assert.equal(await f.panel.locator('.retention-card').count(),201);
+ assert.equal(await next.isVisible(),false);assert.equal(await f.panel.locator('.retention-notice').textContent(),'Az összes kérelem betöltve.');
+ assert.equal(await f.refresh.evaluate(el=>el===document.activeElement),true,'keyboard focus returns to the refresh control when paging ends');
+ assert.deepEqual(await f.panel.locator('.retention-card').evaluateAll(cards=>cards.map(card=>card.dataset.requestId)),ordered.map(row=>row.id));
+ await f.refresh.click();await f.state('ready');assert.equal(await f.panel.locator('.retention-card').count(),100);assert.equal(await next.isVisible(),true);
+ assert.ok(f.calls.every(call=>call.method==='GET'),'paging, retry and refresh only read status');assert.deepEqual(f.pageErrors,[]);
 });
 
 test('invalid, dangerous or inconsistent responses fail closed without stale rows or HTML injection',async t=>{
