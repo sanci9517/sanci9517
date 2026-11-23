@@ -1,6 +1,6 @@
 {
   "date": "2026-11-23",
-  "observed_at": "2026-11-23T22:31:43Z",
+  "observed_at": "2026-11-23T22:34:55Z",
   "plan_point": "77.44 / WEB-011 / 77.44.7.D / D-06 authored interactive content DOM identity",
   "scope": "One collision-safe DOM identity fix for authored accordion groups; D-06 and full Editor remain open.",
   "plan": {
@@ -80,9 +80,9 @@
       "wrangler_version": "4.130.0",
       "exit_code": 0,
       "assets_read": 200,
-      "total_upload_bytes": 431210,
       "gzip_bytes": 109250,
-      "deployed": false
+      "deployed": false,
+      "displayed_upload": "431.21 KiB / 109.25 KiB gzip"
     },
     "production_d1_preflight": {
       "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
@@ -109,21 +109,74 @@
     "cloudflare_free_build_limit": {
       "has_reached_build_minutes_limit": false,
       "refresh_on": "2026-11-30T23:59:59.999Z"
-    }
+    },
+    "github_actions_exact_sha": [
+      {
+        "run_id": 45280818890,
+        "name": "Canonical Plan Active Point Audit",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "run_id": 45280818722,
+        "name": "Canonical Creator Platform Plan",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "run_id": 45280818632,
+        "name": "F0 baseline checks",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "run_id": 45280818673,
+        "name": "Twitch Integration Check",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "run_id": 45280818670,
+        "name": "Production Worker source smoke",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "run_id": 45280818766,
+        "name": "Editor Core Test",
+        "status": "in_progress",
+        "conclusion": null,
+        "active_step": "Run Editor browser layout regression",
+        "completed_before_active_step": "typecheck, editor core tests, D1 ledger, private R2 API, Chromium install, public showcase unit/browser, isolated Worker media upload"
+      }
+    ],
+    "overall_exact_sha_ci": "IN_PROGRESS: all checks except Editor Core are successful; Editor Core remains in the browser layout regression. No extra dispatch or rerun was started."
   },
   "release": {
     "branch": "v2/foundation",
     "base_sha": "0d77c3391041c70c2acc2e6b9639f78083371a16",
-    "push": "PENDING",
-    "exact_sha_ci": "PENDING",
-    "deployment": "PENDING",
-    "health": "PENDING",
-    "changed_asset_hashes": "PENDING"
+    "commit": "66a53bb61b2b58812046c9d8eea88b34f6c4e82f",
+    "commit_url": "https://github.com/sanci9517/sanci9517/commit/66a53bb61b2b58812046c9d8eea88b34f6c4e82f",
+    "normal_fast_forward": "PASS; GitHub branch readback exact SHA",
+    "deployment_id": "42feeec0-8a65-4a22-8fcf-d6d2acf9cf53",
+    "deployment_created_on": "2026-11-23T22:34:31.734739Z",
+    "deployment_source": "wrangler",
+    "worker_version_id": "d52c8bae-32e2-4fdc-a628-7295b3c5f34d",
+    "worker_version_number": 4177,
+    "traffic_percent": 100,
+    "health_and_source_smoke": "PASS: exact-SHA GitHub smoke run 45280818670"
   },
   "acceptance": {
     "D06": "OPEN / NOT_CERTIFIED",
     "D01_D07": "OPEN / NOT_CERTIFIED",
     "full_editor": "OPEN / NOT_CERTIFIED",
     "manual_physical": "DEFERRED"
+  },
+  "production_smoke": {
+    "run_id": 45280818670,
+    "job_id": 138064486807,
+    "result": "PASS exact source SHA; direct production /api/health HTTP 200; all exact public source SHA-256 checks matched",
+    "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+    "transient_rollout": "51 logged source-hash mismatches during edge propagation before the deployed bytes converged; the bounded retry completed successfully at 2026-11-23T22:34:54.964Z. The transient mismatch is retained here, not relabeled as immediate success."
   }
 }

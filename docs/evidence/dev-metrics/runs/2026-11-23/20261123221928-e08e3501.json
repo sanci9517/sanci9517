@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261123221928-e08e3501",
+  "task": "77.44.7.D-D06-next-uncovered-feature",
+  "trigger": "manual",
+  "started_at": "2026-11-23T22:19:28.603Z",
+  "finished_at": "2026-11-23T22:45:44.477Z",
+  "wall_seconds": 1576,
+  "paused_seconds": 341,
+  "measured_seconds": 1235,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "D-06 authored accordion ID collision fixed and deployed; focused and local Editor checks pass; broad exact-SHA Editor Core browser-layout CI still running.",
+  "evidence": [
+    "docs/evidence/editor-d06-authored-accordion-dom-id-2026-11-23.json",
+    "66a53bb61b2b58812046c9d8eea88b34f6c4e82f"
+  ],
+  "checks": "Local test:editor, typecheck, Chromium, D contract, plan/traceability, migration gate, Wrangler dry-run, D1 SELECT preflight, Worker smoke PASS; Editor Core CI IN_PROGRESS",
+  "started_revision": "0d77c3391041c70c2acc2e6b9639f78083371a16",
+  "finished_revision": "66a53bb61b2b58812046c9d8eea88b34f6c4e82f",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
