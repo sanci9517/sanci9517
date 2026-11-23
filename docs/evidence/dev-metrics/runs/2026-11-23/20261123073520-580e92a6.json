@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261123073520-580e92a6",
+  "task": "77.44.7.D",
+  "trigger": "scheduled",
+  "started_at": "2026-11-23T07:35:20.904Z",
+  "finished_at": "2026-11-23T07:59:44.089Z",
+  "wall_seconds": 1463,
+  "paused_seconds": 0,
+  "measured_seconds": 1463,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "D-06 retention pagination implemented, tested and live-verified; release complete, exact-SHA Editor Core CI still running.",
+  "evidence": [
+    "docs/evidence/editor-d06-retention-pagination-2026-11-23.json"
+  ],
+  "checks": "media tests 7/7; Chromium 16/16; typecheck; plan contract 15/15; canonical plan and traceability 396/396; dry-run; D1 preflight select-only; Worker build/deploy/health/assets verified; Editor Core hosted pending",
+  "started_revision": "b43b0692752aab550e7aa76c97ccb0765c1cd5ec",
+  "finished_revision": "3af3f593d5119957842836a4ab5240e9a23e186f",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
