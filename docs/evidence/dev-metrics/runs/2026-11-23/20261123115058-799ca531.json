@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261123115058-799ca531",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-23T11:50:58.786Z",
+  "finished_at": "2026-11-23T11:59:26.894Z",
+  "wall_seconds": 508,
+  "paused_seconds": 0,
+  "measured_seconds": 508,
+  "status": "pass",
+  "kind": "mixed",
+  "summary": "D-06 valid uppercase retention UUID cursor normalized; route regression 67/67 media suite, plan contracts and exact-SHA production release/health verified; full D remains open.",
+  "evidence": [
+    "docs/evidence/editor-d06-retention-uppercase-cursor-2026-11-23.json"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "6fece531c72f42a3c5d9bdf404e180e3071cd7ef",
+  "finished_revision": "8e8df1d45377df220985e518cb2c892178aff774",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
