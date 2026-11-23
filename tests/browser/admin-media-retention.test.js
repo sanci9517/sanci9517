@@ -317,6 +317,24 @@ test('cancellation needs confirmation, locks controls and handles idempotent suc
  assert.equal(mutations(f).length,1);assert.deepEqual(f.pageErrors,[]);
 });
 
+test('cancellation completion does not steal focus moved by the user while pending',async t=>{
+ let rows=[request()],finish;
+ const f=await fixture(t,(_req,res)=>json(res,{ok:true,data:data(rows)}),390,{onMedia:(_req,res)=>{
+  finish=()=>{rows=[request('cancelled')];json(res,{ok:true,data:{id:id(1),state:'cancelled',changed:true,permanentDeletionAuthorized:false}});};
+ }});
+ await f.state('ready');
+ await f.panel.getByRole('button',{name:'Kérelem visszavonása',exact:true}).click();
+ await f.panel.getByRole('button',{name:'Visszavonás megerősítése'}).click();
+ await f.panel.getByRole('status').filter({hasText:'Kérelem visszavonása…'}).waitFor();
+ const search=f.page.getByRole('searchbox',{name:'Keresés a médiafájlok között'});
+ await search.focus();assert.equal(await search.evaluate(el=>el===document.activeElement),true);
+ finish();
+ await f.panel.getByRole('status').filter({hasText:'A kérelem visszavonva.'}).waitFor();
+ assert.equal(await search.evaluate(el=>el===document.activeElement),true,'async cancellation and its status refresh must preserve deliberate focus movement');
+ assert.equal(await f.panel.locator('.retention-card strong').textContent(),'Visszavonva');
+ assert.equal(mutations(f).length,1);assert.deepEqual(f.pageErrors,[]);
+});
+
 for(const width of [390,1366])test(`confirmed cancellation from a later retention page refreshes to page one and keeps a fresh cursor at ${width}px`,async t=>{
  const rows=Array.from({length:201},(_,i)=>request('requested',201-i));
  const f=await fixture(t,(req,res)=>{

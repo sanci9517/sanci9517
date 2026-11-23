@@ -71,6 +71,7 @@ export function mountRetentionStatus(panel, loadStatus, { cancelRequest } = {}) 
   let nextCursor = null;
   async function cancel(row) {
     if (mutation || !panel.isConnected) return;
+    const hadFocus = panel.contains(document.activeElement);
     mutation = true;
     ++request; // Invalidate an older status read before changing metadata.
     panel.dataset.state = "updating";
@@ -88,7 +89,12 @@ export function mountRetentionStatus(panel, loadStatus, { cancelRequest } = {}) 
       mutation = false;
       await refresh();
       status.textContent = outcome + " " + status.textContent;
-      button.focus({ preventScroll: true });
+      // Cancelling disables the focused confirmation controls and moves
+      // Chromium focus to <body>. Restore the list control only if the user
+      // has not deliberately moved focus while the mutation was pending.
+      if (hadFocus && panel.isConnected && document.activeElement === document.body) {
+        button.focus({ preventScroll: true });
+      }
     }
   }
   async function refresh() {

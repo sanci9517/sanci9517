@@ -1,0 +1,63 @@
+{
+  "date": "2026-11-23",
+  "plan_point": "77.44.7.D / D-06 retention cancellation focus continuity",
+  "scope": "One bounded browser accessibility defect; not full D-06 or complete Editor acceptance.",
+  "plan": {
+    "canonical_sha256": "6d537e984e9a01d05e60ba1f705499be99b975882fb3390f97b7fd9488b03198",
+    "active_point": "77.44.7.D",
+    "status": "OPEN / NOT_CERTIFIED",
+    "feature_count": 396,
+    "source_status_counts": {"PARTIAL_SOURCE": 148, "UNVERIFIED": 248}
+  },
+  "change": {
+    "runtime_file": "public/assets/admin-media-retention.js",
+    "runtime_sha256": "df0e1f2ca9f72ff57814415e26a24f0bcc7294eacd746245d8ad59f7793a9b09",
+    "test_file": "tests/browser/admin-media-retention.test.js",
+    "test_sha256": "6a999e244bff0a2bc5ce3df8eca2adcef7b0bbfeabbf8eb69d216dad5b4239e5",
+    "behavior": "After cancellation and the required read-only refresh, restore focus only when focus began inside the retention panel and the user has not moved it away from document.body. A user-selected control outside the panel keeps focus.",
+    "save_publish": "Cancellation remains explicit and separate from Save and Publish; no Page Model change."
+  },
+  "verification": {
+    "regression_before_fix": "FAIL in real Chromium: after confirming cancellation, move focus to the media search field while the DELETE is pending; old unconditional focus restoration stole it after the status refresh.",
+    "targeted_after_fix": "PASS, 1/1 real Chromium regression.",
+    "retention_browser": "PASS, node --test tests/browser/admin-media-retention.test.js, 23/23 real Chromium tests.",
+    "media_regressions": "PASS, npm run test:media, 7/7 files.",
+    "typecheck": "PASS, npm run typecheck -- --pretty false.",
+    "editor_preferences": "PASS, npm run test:editor:preferences, 10/10.",
+    "plan_contract": "PASS, python3 scripts/plan_contract.py.",
+    "canonical_plan": "PASS, python3 scripts/check-canonical-plan.py; one complete 13-file master and 396 mappings.",
+    "traceability": "PASS, python3 scripts/build-feature-traceability.py --check; 396/396.",
+    "active_point": "PASS, python3 scripts/audit-active-plan-point.py; 77.44 / WEB-011 -> 77.44.7.D; acceptance NOT_CERTIFIED.",
+    "migration_gate": "PASS, npm run test:web013:migration-gate; deploy:safe does not apply D1 migrations.",
+    "wrangler_dry_run": "PASS, Wrangler 4.130.0, exit 0; 200 public assets, 430.67 KiB / 109.11 KiB gzip. Known EROFS warning writing shared read-only Wrangler log path did not change exit status.",
+    "git_diff_check": "PASS"
+  },
+  "production_preflight": {
+    "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
+    "queries": [
+      {"sql": "SELECT name FROM d1_migrations ORDER BY name DESC LIMIT 5", "top_marker": "0030_media_library_organization.sql", "rows_written": 0, "changes": 0, "changed_db": false},
+      {"sql": "SELECT count(*) AS request_count FROM media_retention_requests", "request_count": 0, "rows_written": 0, "changes": 0, "changed_db": false}
+    ],
+    "writes_migrations_or_r2": "None"
+  },
+  "release": {
+    "branch": "v2/foundation",
+    "parent_commit": "6d1c15787aa62e29d9244b2f0e7dcfc1ef5ec054",
+    "runtime_commit": "PENDING",
+    "cloudflare_build": "PENDING",
+    "deployment_id": "PENDING",
+    "worker_version_id": "PENDING",
+    "traffic_percentage": "PENDING",
+    "health": "PENDING",
+    "changed_asset_deployed_sha256": "PENDING",
+    "cloudflare_free_build_limit_reached_before_release": false,
+    "github_actions": "Push workflows are configured on the public repository. Only naturally triggered exact-SHA runs will be checked; no separate dispatch or rerun was requested."
+  },
+  "acceptance": {
+    "d06_complete": false,
+    "d_point_complete": false,
+    "visual_editor_complete": false,
+    "manual_physical_acceptance": "Deferred until the complete Visual Editor scope is implemented."
+  },
+  "cost": "0 Ft new cost; no paid service, new dependency, production write, migration, or R2 operation."
+}
