@@ -113,7 +113,7 @@ export default {
       return env.ASSETS.fetch(assetRequest("/editor-v2/index.html", request));
     }
     // Retired entry points must not expose the backing HTML assets directly.
-    if (["/admin-media.html", "/admin-schedule.html", "/admin-design.html", "/admin-login.html", "/admin-home.html", "/admin.html", "/admin/home", "/editor-v2", "/editor-v2/index.html", "/about.html", "/community.html", "/contact.html", "/schedule.html", "/tiktok.html", "/twitch.html", "/vod.html", "/youtube.html"].includes(pathname)) {
+    if (["/admin-media", "/admin-schedule", "/admin-design", "/admin-login", "/admin-home", "/admin-media.html", "/admin-schedule.html", "/admin-design.html", "/admin-login.html", "/admin-home.html", "/admin.html", "/admin/home", "/editor-v2", "/editor-v2/index.html", "/about.html", "/community.html", "/contact.html", "/schedule.html", "/tiktok.html", "/twitch.html", "/vod.html", "/youtube.html"].includes(pathname)) {
       return new Response("Gone", { status: 410 });
     }
     // Legacy SANCI-only sections were consolidated into single-purpose pages.

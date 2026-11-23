@@ -163,6 +163,26 @@ test('published HTML exposes only published SEO metadata, escaped for HTML', asy
   assert.doesNotMatch(html, /Draft secret|youtube-draft|source=test/);
 });
 
+test('legacy Admin and Editor HTML entrypoints fail closed before the asset binding', async t => {
+  const { env, fetch } = await fixture(t);
+  const assetRequests = [];
+  env.ASSETS.fetch = async request => {
+    assetRequests.push(new URL(request.url).pathname);
+    return new Response(shell, { headers: { 'Content-Type': 'text/html' } });
+  };
+  const retired = [
+    '/admin-media', '/admin-schedule', '/admin-design', '/admin-login', '/admin-home',
+    '/admin-media.html', '/admin-schedule.html', '/admin-design.html', '/admin-login.html', '/admin-home.html',
+    '/admin.html', '/admin/home', '/editor-v2', '/editor-v2/index.html'
+  ];
+  for (const path of retired) {
+    const response = await fetch(path);
+    assert.equal(response.status, 410, `${path} must not expose a backing asset`);
+    assert.equal(await response.text(), 'Gone');
+  }
+  assert.deepEqual(assetRequests, [], 'retired aliases must be denied before ASSETS.fetch');
+});
+
 test('preview and error HTML are noindex without canonical or social URL', async t => {
   const { fetch } = await fixture(t);
   const preview = await fetch('/p/youtube-draft?preview=1', 'editor');
