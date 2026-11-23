@@ -769,5 +769,17 @@ test('structured Inspector editing survives Save, Publish and public interaction
   'separate Publish exposes exactly the recovered accessible headings');
  assert.deepEqual(await publicRepairedTable.locator('tbody tr').evaluateAll(rows=>rows.map(row=>Array.from(row.querySelectorAll('td'),cell=>cell.textContent))),
   repairedTable.rows.slice(1),'separate Publish exposes repaired data cells in order');
+ const postsBeforeMalformedReset=posts.length,publishedGallery=structuredClone(published.pages[pageId].nodes[ids.gallery].props.contentModel);
+ draft.pages[pageId].nodes[ids.gallery].props.contentModel={version:1,items:'invalid'};
+ await editor.reload();await select(ids.gallery);
+ const resetInspector=editor.locator('.structured-inspector');await resetInspector.getByRole('alert').waitFor();
+ const resetButton=resetInspector.getByRole('button',{name:'Alapértelmezett tartalom visszaállítása'});
+ await resetButton.focus();await editor.keyboard.press('Enter');
+ await editor.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>resolve())));
+ assert.equal(await editor.evaluate(()=>document.activeElement?.getAttribute('aria-label')),'Kép URL',
+  'keyboard reset of a wholly malformed model returns focus to the first default field');
+ assert.equal(posts.length,postsBeforeMalformedReset,'malformed-content reset remains a local draft edit');
+ assert.deepEqual(published.pages[pageId].nodes[ids.gallery].props.contentModel,publishedGallery,
+  'local reset never changes the separately published gallery');
  assert.deepEqual(errors,[]);
 });
