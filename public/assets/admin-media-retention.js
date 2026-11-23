@@ -154,7 +154,6 @@ export function mountRetentionStatus(panel, loadStatus, { cancelRequest } = {}) 
       status.textContent = `${list.childElementCount} adatmegőrzési kérelem látható.`;
       notice.textContent = data.complete ? "Az összes kérelem betöltve." : "További kérelmek is vannak. A következő 100 betöltésével folytathatod.";
       notice.hidden = false;
-      if (hadFocus && nextButton.hidden) button.focus({ preventScroll: true });
     } catch (error) {
       if (current !== request) return;
       panel.dataset.state = "error";
@@ -163,6 +162,13 @@ export function mountRetentionStatus(panel, loadStatus, { cancelRequest } = {}) 
       if (current === request) {
         panel.setAttribute("aria-busy", "false");
         nextButton.disabled = false;
+        // Disabling the focused pagination button moves focus to <body> in
+        // Chromium. Restore it only when the user has not moved elsewhere
+        // while the request was pending; completed pagination returns focus
+        // to the refresh control, while a remaining cursor stays reachable.
+        if (hadFocus && panel.isConnected && document.activeElement === document.body) {
+          (nextButton.hidden ? button : nextButton).focus({ preventScroll: true });
+        }
       }
     }
   }

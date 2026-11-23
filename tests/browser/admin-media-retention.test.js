@@ -113,7 +113,9 @@ for(const width of [390,1366])test(`retention pages append once, preserve rows o
  await next.focus();await next.press('Enter');await f.state('error');
  assert.equal(await f.panel.locator('.retention-card').count(),100,'failed next-page read preserves verified cards');
  assert.equal(await next.isEnabled(),true,'failed next-page read allows an explicit retry');
+ assert.equal(await next.evaluate(el=>el===document.activeElement),true,'failed next-page reads restore keyboard focus for an explicit retry');
  await next.click();await f.state('ready');assert.equal(await f.panel.locator('.retention-card').count(),200);
+ assert.equal(await next.evaluate(el=>el===document.activeElement),true,'keyboard focus stays on the next-page control after a successful intermediate page');
  assert.deepEqual(await f.panel.locator('.retention-card').evaluateAll(cards=>cards.map(card=>card.dataset.requestId)),ordered.slice(0,200).map(row=>row.id));
  await next.click();await f.state('ready');assert.equal(await f.panel.locator('.retention-card').count(),201);
  assert.equal(await next.isVisible(),false);assert.equal(await f.panel.locator('.retention-notice').textContent(),'Az összes kérelem betöltve.');
@@ -121,6 +123,24 @@ for(const width of [390,1366])test(`retention pages append once, preserve rows o
  assert.deepEqual(await f.panel.locator('.retention-card').evaluateAll(cards=>cards.map(card=>card.dataset.requestId)),ordered.map(row=>row.id));
  await f.refresh.click();await f.state('ready');assert.equal(await f.panel.locator('.retention-card').count(),100);assert.equal(await next.isVisible(),true);
  assert.ok(f.calls.every(call=>call.method==='GET'),'paging, retry and refresh only read status');assert.deepEqual(f.pageErrors,[]);
+});
+
+test('a completed page read does not steal focus moved by the user while loading',async t=>{
+ let finishNext;
+ const f=await fixture(t,(_req,res,n)=>{
+  if(n===1)return json(res,{ok:true,data:data(Array.from({length:100},(_,i)=>request('requested',201-i)),false,id(102))});
+  finishNext=()=>json(res,{ok:true,data:data([request('requested',101)],true,null)});
+ });
+ await f.state('ready');
+ const next=f.panel.getByRole('button',{name:'További 100 kérelem betöltése'});
+ await next.focus();await next.press('Enter');
+ await f.page.waitForFunction(()=>document.querySelector('#mediaRetentionPanel').dataset.state==='loading-more');
+ const search=f.page.getByRole('searchbox',{name:'Keresés a médiafájlok között'});
+ await search.focus();assert.equal(await search.evaluate(el=>el===document.activeElement),true);
+ finishNext();await f.state('ready');
+ assert.equal(await f.panel.locator('.retention-card').count(),101);
+ assert.equal(await search.evaluate(el=>el===document.activeElement),true,'async completion leaves deliberate focus movement untouched');
+ assert.deepEqual(f.pageErrors,[]);
 });
 
 test('a repeated row at a page boundary fails closed and can be retried without duplicate append',async t=>{
