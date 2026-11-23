@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261123070311-ad0715af",
+  "task": "77.44.7.D",
+  "trigger": "scheduled",
+  "started_at": "2026-11-23T07:03:11.253Z",
+  "finished_at": "2026-11-23T07:17:27.995Z",
+  "wall_seconds": 857,
+  "paused_seconds": 0,
+  "measured_seconds": 857,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "Published D-06 retention SQL guard verified on v2/foundation; Cloudflare exact-SHA build and 100% Worker health confirmed; Editor Core hosted layout CI still in progress.",
+  "evidence": [
+    "docs/evidence/editor-d06-malformed-schedule-retention-2026-11-22.json",
+    "7c21236a564d762a9178a34e9dade543da81b217"
+  ],
+  "checks": "Local media/editor/typecheck/plan/migration gates PASS; hosted exact-SHA six checks PASS and editor-core IN_PROGRESS; Worker Build success, deployment 100%, health HTTP 200",
+  "started_revision": "7c21236a564d762a9178a34e9dade543da81b217",
+  "finished_revision": "7c21236a564d762a9178a34e9dade543da81b217",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
