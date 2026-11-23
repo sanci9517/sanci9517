@@ -500,3 +500,20 @@ test('legacy structured content ignores malformed JSON object values without los
   assert.match(validEscaped,/&lt;script&gt;/);
   assert.doesNotMatch(validEscaped,/<script>/);
 });
+
+test('structured gallery and carousel render escaped, bounded accessible region names',()=>{
+ const gallery={version:1,items:[{src:'/image.jpg',alt:'Egy kép',caption:''}]};
+ const carousel={version:1,items:[{label:'Dia',content:'Szöveg',src:'',alt:''}]};
+ const namedGallery=renderStructuredContent('gallery',gallery,'gallery',{ariaLabel:' Műhely & <képek> '});
+ const namedCarousel=renderStructuredContent('carousel',carousel,'carousel',{ariaLabel:'Kiemelt <stream>'});
+ assert.match(namedGallery,/<div class="visual-structured-gallery"[^>]*role="region"[^>]*aria-label="Műhely &amp; &lt;képek&gt;"/,
+  'the gallery has a named region and the label is HTML-escaped');
+ assert.match(namedCarousel,/<section class="visual-structured-carousel"[^>]*aria-label="Kiemelt &lt;stream&gt;"/,
+  'the carousel region is named and the label is HTML-escaped');
+ assert.match(renderStructuredContent('gallery',gallery,'gallery'),/role="region"[^>]*aria-label="Képgaléria"/,
+  'older structured documents retain an accessible Hungarian fallback name');
+ assert.match(renderStructuredContent('carousel',carousel,'carousel',{ariaLabel:{toString(){throw Error('must not coerce objects')}}}),/aria-label="Képkörhinta"/,
+  'invalid object-valued labels are not coerced into public markup');
+ assert.match(renderStructuredContent('gallery',gallery,'gallery',{ariaLabel:'x'.repeat(200)}),new RegExp(`aria-label="${'x'.repeat(160)}"`),
+  'public region names stay within the authored field limit');
+});

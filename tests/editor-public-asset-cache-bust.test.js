@@ -17,22 +17,28 @@ test('the authenticated media admin entry and retention module request the refre
     'the cache-keyed entry must request the fixed retention-pagination controller');
 });
 
-test('the Editor release tokens bust the stylesheet, account-scoped app and shell caches',async()=>{
-  const [html,css]=await Promise.all([
+test('the Editor and public renderer release tokens bust the structured accessibility assets',async()=>{
+  const [html,css,publicHtml,publicRenderer]=await Promise.all([
     readFile(resolve(root,'index.html'),'utf8'),
-    readFile(resolve(root,'editor-refresh.css'),'utf8')
+    readFile(resolve(root,'editor-refresh.css'),'utf8'),
+    readFile(resolve(import.meta.dirname,'../public/visual-page.html'),'utf8'),
+    readFile(resolve(import.meta.dirname,'../public/assets/page-renderer.js'),'utf8')
   ]);
   assert.match(html,/href="\/editor-v2\/editor-refresh\.css\?v=20261121-edt044-palette-favorites-v1"/,
     'the deployed HTML must request the stylesheet version containing palette-favorites styles');
   assert.match(css,/\.element-favorite-toggle\s*\{/,
     'the stylesheet referenced by the versioned link must include the palette-favorites UI');
-  assert.match(html,/src="\/editor-v2\/app\.js\?v=20261123-edt044-account-scoped-preferences-v2"/,
-    'the deployed entry page must request the account-scoped Editor entry script');
+  assert.match(html,/src="\/editor-v2\/app\.js\?v=20261123-d06-structured-accessible-region-v1"/,
+    'the deployed entry page must request the Editor source containing structured accessible regions');
   assert.match(html,/src="\/editor-v2\/ui\/shell\.js\?v=20261123-edt044-account-scoped-preferences-v2"/,
     'the deployed entry page must request the account-scoped shell module');
   const app=await readFile(resolve(root,'app.js'),'utf8');
   assert.match(app,/core\/responsive\.js\?v=20261122-edt024-responsive-prototype-safety-v1/,
     'the versioned entry script must request the responsive resolver cache key');
-  assert.match(app,/ui\/structured-inspector\.js\?v=20261122-d03-table-object-cell-recovery-v1/,
-    'the versioned entry script must request the structured Inspector containing explicit table-row recovery');
+  assert.match(app,/ui\/structured-inspector\.js\?v=20261123-d06-structured-accessible-name-v1/,
+    'the versioned entry script must request the structured Inspector accessible-name controls');
+  assert.match(publicHtml,/page-renderer\.js\?v=20261123-d06-structured-accessible-region-v1/,
+    'published pages must request the renderer version containing named structured regions');
+  assert.match(publicRenderer,/element-content\.js\?v=20261123-d06-structured-accessible-region-v1/,
+    'the public renderer must request the module emitting named, escaped gallery and carousel landmarks');
 });

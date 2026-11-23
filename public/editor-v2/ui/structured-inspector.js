@@ -1,6 +1,6 @@
 import {createCompositionInputs} from './composition-inputs.js';
 /* Inspector-only controls for canonical static content. All edits call the command API. */
-import {createElementContent,normalizeElementContent,isStructuredType,malformedElementContentRowIndexes} from '../core/element-content.js?v=20261122-d03-table-object-cell-recovery-v1';
+import {createElementContent,normalizeElementContent,isStructuredType,malformedElementContentRowIndexes} from '../core/element-content.js?v=20261123-d06-structured-accessible-region-v1';
 const focusRequests=new WeakMap();
 const typeLabels={list:'Lista',table:'Táblázat',tabs:'Fülek',accordion:'Lenyitható blokkok',gallery:'Galéria',carousel:'Tartalom-carousel'};
 function recoverAndRestoreFocus(section,nodeId,button,update){
@@ -15,12 +15,12 @@ function recoverAndRestoreFocus(section,nodeId,button,update){
  schedule(()=>{
   if(focusRequests.get(doc)!==request||doc.activeElement!==doc.body)return;
   const current=[...doc.querySelectorAll('#inspectorBody .structured-inspector')].find(view=>view.dataset.nodeId===nodeId);
-  const target=current?.querySelector('.structured-input input:not(:disabled),.structured-input textarea:not(:disabled)');
+  const target=current?.querySelector('.structured-item .structured-input input:not(:disabled),.structured-item .structured-input textarea:not(:disabled)');
   if(target?.getClientRects().length)target.focus({preventScroll:true});
  });
  return result;
 }
-export function renderStructuredInspector(node,update,{pending=()=>{}}={}){
+export function renderStructuredInspector(node,update,{pending=()=>{},updateProperties=()=>false}={}){
  const composition=createCompositionInputs(pending);
  if(!isStructuredType(node.type))return null;
  const hasSavedContent=Object.hasOwn(node.props||{},'contentModel');
@@ -97,6 +97,11 @@ export function renderStructuredInspector(node,update,{pending=()=>{}}={}){
   const editor=document.createElement(multi?'textarea':'input');editor.value=value??'';editor.disabled=Boolean(node.locked);editor.maxLength=maxLength;editor.setAttribute('aria-label',name);
   label.append(caption,editor,composition.attach(editor,onChange));return label;
  };
+ if(['gallery','carousel'].includes(node.type)){
+  const accessibleName=input('ariaLabel','Akadálymentes elnevezés',typeof node.props?.ariaLabel==='string'?node.props.ariaLabel:'',(value,options)=>updateProperties({ariaLabel:value},options),false,160);
+  accessibleName.dataset.inspectorKey='props.ariaLabel';
+  section.append(accessibleName);
+ }
  const tools=document.createElement('div');tools.className='structured-actions';
  if(node.type==='list'){
   const ordered=route(document.createElement('label'),'ordered');ordered.className='inspector-toggle';

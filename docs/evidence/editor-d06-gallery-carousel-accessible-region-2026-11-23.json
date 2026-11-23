@@ -1,0 +1,94 @@
+{
+  "date": "2026-11-23",
+  "plan_point": "77.44.7.D / D-06 structured gallery and carousel accessibility",
+  "scope": "Bounded structured gallery/carousel landmark-name improvement; not full D-06 or full Editor acceptance.",
+  "plan": {
+    "canonical_source_sha256_before_change": "2bd110dd0efd384be9780f0a923aecd5511317955b20f56749b78929996eb081",
+    "canonical_source_blob_before_change": "f95a9d1e56125727a7c47a4d685c108c2f868c3d",
+    "active_point": "77.44.7.D",
+    "status": "OPEN / NOT_CERTIFIED",
+    "feature_count": 396,
+    "source_status_counts": {
+      "PARTIAL_SOURCE": 148,
+      "UNVERIFIED": 248
+    },
+    "canonical_source_sha256_after_current_summary": "4cdad7d04c9714c9eb8dc003ac7fb0414c73c0f7a65e5d019617eb58872ff43b",
+    "canonical_source_size_after_current_summary": 1840006
+  },
+  "change": {
+    "behavior": "Structured galleries and carousels now render as named ARIA regions in the Editor canvas and published renderer. A separate Inspector field stores an optional bounded ariaLabel on node props, outside contentModel. The renderer escapes authored labels, bounds them to 160 characters, rejects non-string legacy values without coercion, and preserves Hungarian fallback labels for older pages. Save and Publish remain separate.",
+    "runtime_files": [
+      "public/editor-v2/core/element-content.js",
+      "public/editor-v2/ui/structured-inspector.js",
+      "public/editor-v2/app.js",
+      "public/editor-v2/index.html",
+      "public/assets/page-renderer.js",
+      "public/visual-page.html"
+    ],
+    "reused_project_code": "The existing structured renderer normalization/escaping and existing Inspector Page Model updateProperties command route; no second content model, renderer or update path.",
+    "open_source_review": "No external package/code was needed: the existing project renderer, sanitizer and command contract fit this narrow change. No dependency added; no copied external source or license obligations introduced.",
+    "save_publish": "The new label is a draft node property; Save persists it without publishing, reload restores the draft, and only a separate Publish changes the public renderer."
+  },
+  "verification": {
+    "targeted_unit": {
+      "command": "node public/editor-v2/tests/structured-inspector-invalid-content.test.js",
+      "result": "PASS 3/3"
+    },
+    "structured_content_unit": {
+      "command": "node public/editor-v2/tests/element-content.test.js",
+      "result": "PASS 33/33"
+    },
+    "public_asset_cache_contract": {
+      "command": "node tests/editor-public-asset-cache-bust.test.js",
+      "result": "PASS 2/2"
+    },
+    "browser_save_publish": {
+      "command": "node --test tests/browser/editor-structured-content.test.js",
+      "result": "PASS 2/2 real Chromium tests at desktop/mobile sizes; local loopback execution required the approved elevated sandbox capability."
+    },
+    "editor_unit_suite": {
+      "command": "npm run test:editor",
+      "result": "PASS: 24/24 Node test files; preference route 10/10; Linux subreaper 4/4."
+    },
+    "typecheck": "PASS: npm run typecheck",
+    "plan_contract": "PASS: python3 tests/plan-contract.test.py, 15/15",
+    "canonical_plan": "PASS: python3 scripts/check-canonical-plan.py; one complete 13-file canonical set and 396 mappings",
+    "traceability": "PASS: python3 scripts/build-feature-traceability.py --check; 396/396 source mappings",
+    "active_point": "PASS: python3 scripts/audit-active-plan-point.py; 77.44 / WEB-011 -> 77.44.7.D; acceptance remains NOT_CERTIFIED",
+    "migration_safety": "PASS: node scripts/web013-migration-safety-gate.mjs; deploy:safe does not apply D1 migrations",
+    "wrangler_dry_run": {
+      "command": "XDG_CONFIG_HOME=/tmp/sanci9517-wrangler-config npx wrangler deploy --dry-run",
+      "result": "PASS, exit 0; Wrangler 4.130.0 read 200 public assets; 430.67 KiB / 109.11 KiB gzip; no deployment performed by dry-run."
+    },
+    "diff_check": "PASS: git diff --check",
+    "production_health_before_release": {
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health?preflight=d06-accessible-region",
+      "http_status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "release": "PENDING: source not yet pushed; no post-release deployment/health/asset hash is claimed here.",
+    "hosted_github_ci": "NOT YET OBSERVED; no separate CI dispatch or rerun was started."
+  },
+  "production_d1_preflight": {
+    "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
+    "sql": "SELECT name FROM d1_migrations ORDER BY name",
+    "migration_markers": 36,
+    "latest_marker": "0030_media_library_organization.sql",
+    "rows_written": 0,
+    "changes": 0,
+    "changed_db": false,
+    "production_migration_or_business_data_write": "None"
+  },
+  "acceptance": {
+    "d06_complete": false,
+    "d_point_complete": false,
+    "visual_editor_complete": false,
+    "manual_physical_acceptance": "Deferred until the complete Visual Editor scope is implemented."
+  },
+  "cost": "0 Ft; no paid service, new dependency, production D1 write, migration or R2 operation."
+}

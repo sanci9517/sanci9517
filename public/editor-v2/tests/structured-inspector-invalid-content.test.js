@@ -7,6 +7,9 @@ class ElementStub {
  constructor(tagName){this.tagName=tagName.toUpperCase();this.dataset={};this.children=[];this.attributes={};this.disabled=false;}
  append(...children){this.children.push(...children);}
  setAttribute(name,value){this.attributes[name]=String(value);}
+ getAttribute(name){return this.attributes[name]??null;}
+ removeAttribute(name){delete this.attributes[name];}
+ addEventListener(){}
  click(){if(!this.disabled)this.onclick?.();}
 }
 
@@ -35,6 +38,36 @@ test('malformed saved structured content is read-only until explicit recovery',(
   assert.equal(lockedReset.disabled,true);
   lockedReset.click();
   assert.equal(lockedCalls,0,'locked content cannot be reset');
+ }finally{
+  if(previous===undefined)delete globalThis.document;else globalThis.document=previous;
+ }
+});
+
+test('structured gallery and carousel expose an independently persisted accessible name field',()=>{
+ const previous=globalThis.document;
+ globalThis.document={createElement:tag=>new ElementStub(tag),createTextNode:text=>({textContent:String(text)})};
+ try{
+  for(const [type,initial] of [['gallery','Képek a műhelyből'],['carousel','Kiemelt pillanatok']]){
+   const node={id:type,type,props:{ariaLabel:initial,contentModel:{version:1,items:type==='gallery'?
+    [{src:'/image.jpg',alt:'Kép',caption:''}]:[{label:'Első',content:'Tartalom',src:'',alt:''}]}}};
+   let changed;const panel=renderStructuredInspector(node,()=>true,{updateProperties:patch=>{changed=patch;return true}});
+   const field=panel.children.find(child=>child.dataset?.inspectorKey==='props.ariaLabel');
+   assert.ok(field,`${type} exposes the independent accessible name control`);
+   assert.deepEqual({command:field.dataset.inspectorCommand,key:field.dataset.inspectorKey},{command:'element.update',key:'props.ariaLabel'});
+   const editor=field.children.find(child=>child.tagName==='INPUT');
+   assert.equal(editor.attributes['aria-label'],'Akadálymentes elnevezés');assert.equal(editor.maxLength,160);assert.equal(editor.value,initial);
+   editor.value='Új elnevezés';editor.oninput({isComposing:false});
+   assert.deepEqual(changed,{ariaLabel:'Új elnevezés'},`${type} persists the name as node props, outside the structured content model`);
+   let lockedWrite=false;const locked=renderStructuredInspector({...node,locked:true},()=>true,{updateProperties:()=>{lockedWrite=true;return true}});
+   const lockedInput=locked.children.find(child=>child.dataset?.inspectorKey==='props.ariaLabel').children.find(child=>child.tagName==='INPUT');
+   assert.equal(lockedInput.disabled,true);lockedInput.oninput?.({isComposing:false});assert.equal(lockedWrite,false,'locked nodes cannot change the accessible name');
+  }
+  const malformed={toString(){throw Error('must not coerce saved object values')}},node={id:'malformed-name',type:'gallery',props:{ariaLabel:malformed,contentModel:{version:1,items:[{src:'/image.jpg',alt:'Kép',caption:''}]}}};
+  let writes=0;const panel=renderStructuredInspector(node,()=>true,{updateProperties:()=>{writes++;return true}});
+  const editor=panel.children.find(child=>child.dataset?.inspectorKey==='props.ariaLabel').children.find(child=>child.tagName==='INPUT');
+  assert.equal(editor.value,'','malformed persisted name data is displayed safely as an empty field');
+  assert.equal(node.props.ariaLabel,malformed,'displaying a malformed name does not mutate the persisted node');
+  assert.equal(writes,0,'a render alone cannot repair or write malformed names');
  }finally{
   if(previous===undefined)delete globalThis.document;else globalThis.document=previous;
  }

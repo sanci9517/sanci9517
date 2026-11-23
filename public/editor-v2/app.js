@@ -29,9 +29,9 @@ import {captureStyleSnapshot,STYLE_SNAPSHOT_PROPERTIES} from './core/style-snaps
 import {LAYOUT_PRESETS,LAYOUT_TYPES,layoutMode,isManagedLayout,isLayoutPropertyRelevant,explicitGridColumnCount} from './core/layout-presets.js';
 import {resolveElementInsertion} from './core/element-insertion.js';
 import {TYPOGRAPHY_PRESETS,typographyPresetPatch} from './core/typography-presets.js';
-import {isStructuredType,createElementContent,normalizeElementContent,renderElementContent,activateStructuredContent} from './core/element-content.js?v=20261117-d01-private-media-double-decode-v1';
+import {isStructuredType,createElementContent,normalizeElementContent,renderElementContent,activateStructuredContent} from './core/element-content.js?v=20261123-d06-structured-accessible-region-v1';
 import {legacyImageSource,legacyPlayableSource,legacyPlaybackSettings,legacyImagePresentation,legacyImageCaption} from './core/legacy-media-source.js';
-import {renderStructuredInspector} from './ui/structured-inspector.js?v=20261122-d03-table-object-cell-recovery-v1';
+import {renderStructuredInspector} from './ui/structured-inspector.js?v=20261123-d06-structured-accessible-name-v1';
 import {ICON_CHOICES,iconById} from './core/icon-options.js';
 import {DIVIDER_LINE_STYLES,normalizeDividerStyle} from './core/decorative-elements.js';
 import {defaultCardContent,cardImageSrc} from './core/card-content.js?v=20261118-d02-card-cta-recovery-v1';
@@ -681,7 +681,7 @@ function renderNode(currentPage,id,managed=false){const node=getNode(currentPage
     el.append(c);
    }else if(isStructuredType(node.type)&&!isAuthoredContent(node)){
     const c=document.createElement('div');c.className='node-content structured-preview';
-    c.innerHTML=renderElementContent(node.type,node.props?.contentModel??createElementContent(node.type),node.id);
+    c.innerHTML=renderElementContent(node.type,node.props?.contentModel??createElementContent(node.type),node.id,{ariaLabel:node.props?.ariaLabel});
     for(const eventName of ['pointerdown','click','dblclick'])c.addEventListener(eventName,event=>{if(event.target.closest('button,summary,dialog'))event.stopPropagation()});
     el.append(c);activateStructuredContent(c);
   }else if([NODE_TYPES.HEADING,NODE_TYPES.TEXT,NODE_TYPES.BUTTON,NODE_TYPES.LINK].includes(node.type)){
@@ -1268,7 +1268,7 @@ function renderExistingContentInspector(node){
     section.append(thickness,color,style);inspector.append(section);return true;
   }
   if(hasContentProfile(node,'spacer-v1')){const section=document.createElement('section');section.className='decorative-inspector';section.append(Object.assign(document.createElement('h3'),{textContent:'Üres térköz'}));const device=state.viewport.device,current=resolveResponsiveValue(node.responsive,'height',device).value??node.style?.height??'64px';section.append(renderPropertyInput(getProperty('size.height'),'Térköz magassága',current,value=>command('responsive.set',{nodeId:node.id,device,patch:{height:value}})));inspector.append(section);return true}
-  if(!isAuthoredContent(node)&&hasContentProfile(node,'structured-v1')){inspector.append(renderStructuredInspector(node,(model,options)=>updateModel('contentModel',model,options),{pending:flush=>{flushRichTextDraft=flush}}));return true}
+  if(!isAuthoredContent(node)&&hasContentProfile(node,'structured-v1')){inspector.append(renderStructuredInspector(node,(model,options)=>updateModel('contentModel',model,options),{pending:flush=>{flushRichTextDraft=flush},updateProperties:(props,options)=>updateProps(props,options)}));return true}
   return false;
 }
 const INSPECTOR_TABS=Object.freeze(['design','content','advanced']);

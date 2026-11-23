@@ -91,6 +91,10 @@ test('structured Inspector editing survives Save, Publish and public interaction
  execute(model,{type:'element.update',payload:{nodeId:img.id,patch:{props:{...img.props,contentModel:{version:1,items:[{src:'/media/example.jpg',alt:'Próbakép',caption:'Tesztkép'},{src:'/media/second.jpg',alt:'Második kép',caption:'Második kép leírása'}]}}}}});
  const carouselNode=activePage(model).nodes[ids.carousel];
  execute(model,{type:'element.update',payload:{nodeId:carouselNode.id,patch:{props:{...carouselNode.props,contentModel:{...carouselNode.props.contentModel,items:carouselNode.props.contentModel.items.map((item,index)=>index===0?{...item,src:'/media/carousel.jpg',alt:'Kezdő dia'}:item)}}}}});
+ for(const [type,label] of [['gallery','Korábbi képtár'],['carousel','Korábbi lapozó']]){
+  const node=activePage(model).nodes[ids[type]];
+  execute(model,{type:'element.update',payload:{nodeId:node.id,patch:{props:{...node.props,ariaLabel:label}}}});
+ }
  const expectedModels=Object.fromEntries(['list','table','tabs','accordion','gallery','carousel'].map(type=>[type,structuredClone(activePage(model).nodes[ids[type]].props.contentModel)]));
  expectedModels.secondaryTabs=structuredClone(activePage(model).nodes[ids.secondaryTabs].props.contentModel);
  const initialModels=structuredClone(expectedModels);
@@ -161,6 +165,19 @@ test('structured Inspector editing survives Save, Publish and public interaction
    assert.deepEqual(basicRoute,{command:'element.update',key:basicKey},`${type}.${label} exposes its exact basic content route`);
    await exerciseComposition({page:editor,input,selector:`.node[data-node-id="${ids[type]}"] `+part,attribute,before,final,posts,restart:true,attemptBlocked:type==='icon'?async()=>{const picker=basic.getByRole('combobox',{name:'Ikon',exact:true});await picker.selectOption('star');assert.equal(await picker.inputValue(),'heart','a glyph change cannot discard a composing label');}:undefined,otherInput:type==='quote'?basic.getByRole('textbox',{name:label==='Idézet szövege'?'Forrás vagy szerző':'Idézet szövege',exact:true}):undefined}).catch(error=>{assert.equal(posts.length,0,'unfinished basic content composition cannot reach the Editor API');throw error;});
   }
+ }
+ const finalAccessibleNames={gallery:'Műhelyem & képei <nyilvános>',carousel:'Kiemelt stream-pillanatok'};
+ for(const [type,previous] of [['gallery','Korábbi képtár'],['carousel','Korábbi lapozó']]){
+  await select(ids[type]);
+  const panel=editor.locator('.structured-inspector'),label=panel.getByRole('textbox',{name:'Akadálymentes elnevezés',exact:true});
+  const route=await label.evaluate(el=>{const owner=el.closest('[data-inspector-command]');return {command:owner?.dataset.inspectorCommand,key:owner?.dataset.inspectorKey}});
+  assert.deepEqual(route,{command:'element.update',key:'props.ariaLabel'},`${type} accessible name uses the normal Page Model update route`);
+  assert.equal(await label.inputValue(),previous,'existing accessible names remain editable without being moved into contentModel');
+  const final=finalAccessibleNames[type];await label.fill(final);await label.press('Tab');
+  const canvasRoot=editor.locator(`.node[data-node-id="${ids[type]}"]`),canvas=canvasRoot.locator('[role="region"]');
+  assert.equal(await canvas.count(),1,`the canvas renders a named structured region; canvas=${await canvasRoot.innerHTML()}`);
+  assert.equal(await canvas.getAttribute('aria-label'),final,'the editor canvas exposes the authored accessible name immediately');
+  assert.equal(posts.length,0,'accessible-name edits remain a local draft until explicit Save');
  }
  await select(ids.icon);
  const iconPicker=editor.locator('.basic-content-inspector').getByRole('combobox',{name:'Ikon',exact:true});
@@ -328,6 +345,8 @@ test('structured Inspector editing survives Save, Publish and public interaction
  assert.equal(draft.pages[pageId].nodes[ids.quote].props.attribution,finalAttribution);
  assert.equal(draft.pages[pageId].nodes[ids.icon].props.label,finalIcon);
  assert.equal(draft.pages[pageId].nodes[ids.icon].props.icon,lastIcon.id);
+ for(const [type,label] of Object.entries(finalAccessibleNames))assert.equal(draft.pages[pageId].nodes[ids[type]].props.ariaLabel,label,`${type} accessible name is stored in draft props`);
+ for(const [type,label] of [['gallery','Korábbi képtár'],['carousel','Korábbi lapozó']])assert.equal(published.pages[pageId].nodes[ids[type]].props.ariaLabel,label,`Save must preserve the previously published ${type} accessible name`);
  await viewer.goto(base+'/p/test');
  assert.equal(await viewer.locator('.visual-editor-node[data-node-id="'+ids.table+'"] tbody tr').count(),1,
    'draft Save must not make the new table row public before a separate Publish');
@@ -336,6 +355,8 @@ test('structured Inspector editing survives Save, Publish and public interaction
  assert.equal(await viewer.locator('.visual-badge[data-node-id="'+ids.badge+'"]').textContent(),'Címke','Save cannot expose the new badge');
  assert.match(await viewer.locator('blockquote[data-node-id="'+ids.quote+'"]').textContent(),/Idézet első változat/);
  assert.equal(await viewer.locator('.visual-icon[data-node-id="'+ids.icon+'"]').getAttribute('aria-label'),'Szív ikon');
+ for(const [type,previous] of [['gallery','Korábbi képtár'],['carousel','Korábbi lapozó']])
+  assert.equal(await viewer.locator(`.visual-editor-node[data-node-id="${ids[type]}"] [role="region"]`).getAttribute('aria-label'),previous,`Save alone must not publish the ${type} accessible name`);
  await editor.reload();
  for(const [type,label,value] of [['badge','Címke szövege',finalBadge],['quote','Idézet szövege',finalQuote],['quote','Forrás vagy szerző',finalAttribution],['icon','Ikon leírása',finalIcon]]){
   await select(ids[type]);assert.equal(await editor.locator('.basic-content-inspector').getByRole('textbox',{name:label,exact:true}).inputValue(),value);
@@ -346,6 +367,7 @@ test('structured Inspector editing survives Save, Publish and public interaction
   await select(ids[type]);const value=type==='table'?expectedModels.table.rows[rowIndex][key]:type==='list'?expectedModels.list.items[rowIndex]:expectedModels[type].items[rowIndex][key];
   assert.equal(await editor.locator('.structured-item').nth(rowIndex).getByRole('textbox',{name:label,exact:true}).inputValue(),value,'saved structured fields survive editor reload');
  }
+ for(const [type,label] of Object.entries(finalAccessibleNames)){await select(ids[type]);assert.equal(await editor.locator('.structured-inspector').getByRole('textbox',{name:'Akadálymentes elnevezés',exact:true}).inputValue(),label,`${type} accessible name survives a draft reload`)}
  await select(ids.table);
  assert.deepEqual(await editor.locator('.structured-item').evaluateAll(rows=>rows.map(row=>row.querySelectorAll('.structured-input').length)),[3,3,3],
   'the added table column and every row cell survive Save and a fresh Editor load');
@@ -355,6 +377,7 @@ test('structured Inspector editing survives Save, Publish and public interaction
  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
  assert.equal(posts.at(-1).publish,true);
  await viewer.goto(base+'/p/test');
+ for(const [type,label] of Object.entries(finalAccessibleNames))assert.equal(await viewer.locator(`.visual-editor-node[data-node-id="${ids[type]}"] [role="region"]`).getAttribute('aria-label'),label,`separate Publish exposes the ${type} accessible name to the public renderer`);
  const publishedSources=await viewer.evaluate(async()=>{
   const {safeMediaUrl,safePublishedMediaUrl,validateElementContent,renderElementContent}=await import('/editor-v2/core/element-content.js');
   const sources=[
@@ -567,7 +590,7 @@ test('structured Inspector editing survives Save, Publish and public interaction
    const before=JSON.stringify(node.props);let allow=false,accepted,guard;
    const root=renderStructuredInspector(node,next=>{if(!allow){if(mode==='throw')throw Error('Fixture rejection');return false;}accepted=structuredClone(next);return true;},{pending:fn=>{guard=fn;}});
    document.querySelector('#inspectorBody').append(root);
-   const fields=root.querySelectorAll('.structured-input input,.structured-input textarea'),first=fields[0],second=fields[1],original=first.value;
+   const fields=root.querySelectorAll('.structured-item .structured-input input,.structured-item .structured-input textarea'),first=fields[0],second=fields[1],original=first.value;
    first.focus();first.value='Elutasított';first.dispatchEvent(new InputEvent('input',{bubbles:true}));
    const rejected=first.hasAttribute('aria-invalid')&&!guard()&&!accepted;
    first.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true}));const escaped=first.value===original&&guard();
