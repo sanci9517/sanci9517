@@ -84,12 +84,13 @@
     "syntax-and-diff-check": "PASS",
     "full workspace Chromium regression": "PASS 91/91 cases (CHROMIUM_PATH=/usr/bin/chromium; serial; final source; 344.1 s)",
     "Wrangler dry-run after final edits": "PASS: Wrangler 4.130.0; 200 public assets; 430.57 KiB (109.08 KiB gzip); dry-run exited 0. Wrangler telemetry informational only; no deploy performed.",
-    "node --test tests/editor-public-asset-cache-bust.test.js tests/editor-d-content-contract.test.js": "PASS 2/2"
+    "node --test tests/editor-public-asset-cache-bust.test.js tests/editor-d-content-contract.test.js": "PASS 2/2",
+    "traceability source-boundary follow-up": "PASS: EDT-044 mapping now names the scoped-key utility, shell, appearance module, app, HTML and account-isolation browser suite; regenerated traceability remains 396/396."
   },
   "release": {
     "runtime_commit": "54e4567e55d2da4a12b96134c7c695fbf3ef950f",
     "push": "PASS normal fast-forward to origin/v2/foundation; base 073bacb964306788ec807a3c233869910d266e13",
-    "exact_sha_ci": "IN_PROGRESS Editor Core Test; Canonical Plan Active Point Audit, F0 baseline checks, Twitch Integration Check, Canonical Creator Platform Plan, and Production Worker source smoke all succeeded for 54e4567e55d2da4a12b96134c7c695fbf3ef950f",
+    "exact_sha_ci": "PASS: five of six automatic checks succeeded for runtime commit 54e4567e55d2da4a12b96134c7c695fbf3ef950f; Editor Core Test remains in progress at Editor browser layout regression. No rerun/dispatch.",
     "cloudflare_build": {
       "build_uuid": "41913c9b-7e86-4609-8dbc-8cc92964c626",
       "source_sha": "54e4567e55d2da4a12b96134c7c695fbf3ef950f",
@@ -138,7 +139,8 @@
     "public/editor-v2/ui/workspace-preference-storage.js": "ea104ee15909201fb55ffeecc695c75c53126616b4b80a3c6aa86b1be4263825",
     "tests/browser/editor-workspace-appearance.test.js": "723282670919ec21000c29d13f9bb418e516c55095d630e4e1b90f1f874419a4",
     "tests/editor-public-asset-cache-bust.test.js": "6f771a85efca7c308f0f139a84d4a1b7cc05c70046f7d49018c7582d08434ac4",
-    "docs/evidence/feature-traceability.json": "0468865fa17f638567591c4128bfe9ab042b56389521cac519d92660742f9465"
+    "docs/evidence/feature-traceability.json": "91ef3ba5a15e16b993cb0cf19bafd09215e93ba0b7dffd5cc26887aabe35db19",
+    "scripts/build-feature-traceability.py": "dcbca84b496d148fbede7f6d3bdd5fd8e7272e93b3351647a47585db4d76cf96"
   },
   "post_release_production": {
     "worker": "sanci9517-streamer-brand",
