@@ -1,0 +1,121 @@
+{
+  "date_utc": "2026-11-23",
+  "plan_reference": {
+    "canonical_plan": "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+    "related_scope": "EDT-044 account workspace preferences; the current D cursor remains 77.44.7.D / D-06",
+    "overall_status": "OPEN / NOT CERTIFIED; this is a bounded regression fix, not full EDT-044 or D-point completion"
+  },
+  "change": {
+    "title": "Prevent cross-account adoption of unowned Editor workspace cache",
+    "root_cause": [
+      "When an authenticated user's server workspace was absent, startup copied the browser's unscoped workspace cache into that account's saved preferences.",
+      "The Inspector tab was initialized from the same unscoped dock key before identity resolution.",
+      "Account-specific workspace updates did not consistently restore appearance and mobile desktop-intent when the owner key changed."
+    ],
+    "implementation": [
+      "Namespace appearance and shell/dock preferences under the authenticated user ID, rejecting empty, malformed, non-ASCII, and path-like identifiers.",
+      "Do not synchronize an unowned global cache as a new account's initial server workspace; only an existing owner-scoped cache may be adopted.",
+      "Resolve Inspector selection from the active account's workspace after owner/server hydration; preserve the anonymous local workspace path.",
+      "Preserve legacy appearance recovery and the desktop dock intent while maintaining canvas-first mobile rendering.",
+      "Bump app and shell asset query versions for immediate production cache invalidation."
+    ],
+    "data_safety": {
+      "save_publish_separate": true,
+      "page_model_save_or_publish_performed": false,
+      "production_d1_migration_or_write_performed": false,
+      "r2_operation_performed": false,
+      "new_dependency": false
+    }
+  },
+  "base": {
+    "branch": "v2/foundation",
+    "commit": "073bacb964306788ec807a3c233869910d266e13",
+    "worktree_preexisting_untracked": [
+      "scripts/__pycache__/",
+      "scripts/d1/__pycache__/"
+    ],
+    "canonical_plan_sha256_at_start": "36507917db0e683f22533633fa332b39ef8de53eee61095f78716ff002ad8681",
+    "canonical_plan_bytes_at_start": 1827876
+  },
+  "production_preflight": {
+    "method": "Cloudflare D1 Query API using SELECT-only SQL",
+    "sql": "SELECT COUNT(*) AS count FROM d1_migrations; SELECT COUNT(*) AS count FROM editor_preferences;",
+    "migration_marker_count": 36,
+    "editor_preferences_row_count": 0,
+    "first_select_rows_read": 36,
+    "second_select_rows_read": 0,
+    "rows_written": 0,
+    "changes": 0,
+    "changed_db": false,
+    "r2_operation": false
+  },
+  "pre_release_production": {
+    "worker": "sanci9517-streamer-brand",
+    "origin": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev",
+    "deployment_id": "16391242-5382-4de9-8c3b-4f4670122f39",
+    "worker_version": "347966c4-a743-4b37-9fcb-5839c330a422",
+    "traffic_percent": 100,
+    "health": {
+      "url": "/api/health?codex_check=edt044-preflight",
+      "http_status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    }
+  },
+  "free_build_capacity": {
+    "cloudflare_limit_reached": false,
+    "refreshes_on": "2026-11-30T23:59:59.999Z",
+    "manual_dispatch_or_rerun_started": false
+  },
+  "checks": {
+    "targeted_real_chromium_regressions": "PASS 3/3: legacy appearance recovery, canvas-first mobile restore, account-cache isolation/switch",
+    "npm run test:editor": "PASS 24/24 Node test files, 4/4 subreaper tests, 10/10 account preference route tests",
+    "npm run typecheck -- --pretty false": "PASS",
+    "npm run test:web013:migration-gate": "PASS; deploy:safe migration safety gate; no migration applied",
+    "python3 tests/plan-contract.test.py": "PASS 15/15",
+    "python3 scripts/check-canonical-plan.py": "PASS 13 master files / 396 mappings; functional acceptance NOT CERTIFIED",
+    "python3 scripts/build-feature-traceability.py --check": "PASS 396/396 source mappings",
+    "python3 scripts/audit-active-plan-point.py": "PASS; 77.44.7.D / D-06 remains OPEN / NOT CERTIFIED; 148 PARTIAL_SOURCE / 248 UNVERIFIED",
+    "asset-cache-and-D-contract-tests": "PASS 2/2",
+    "syntax-and-diff-check": "PASS",
+    "full workspace Chromium regression": "PASS 91/91 cases (CHROMIUM_PATH=/usr/bin/chromium; serial; final source; 344.1 s)",
+    "Wrangler dry-run after final edits": "PASS: Wrangler 4.130.0; 200 public assets; 430.57 KiB (109.08 KiB gzip); dry-run exited 0. Wrangler telemetry informational only; no deploy performed.",
+    "node --test tests/editor-public-asset-cache-bust.test.js tests/editor-d-content-contract.test.js": "PASS 2/2"
+  },
+  "release": {
+    "runtime_commit": "PENDING",
+    "push": "PENDING",
+    "exact_sha_ci": "PENDING",
+    "cloudflare_build": "PENDING",
+    "deployment": "PENDING",
+    "traffic_100_percent": "PENDING",
+    "production_health_after": "PENDING",
+    "changed_public_asset_hashes_after": "PENDING",
+    "dry_run": "PASS; no production mutation",
+    "wrangler_version": "4.130.0",
+    "upload_assets": 200,
+    "upload_size": "430.57 KiB / 109.08 KiB gzip"
+  },
+  "scope_boundary": {
+    "edt044_full_acceptance": "OPEN",
+    "D01_D07": "OPEN / NOT CERTIFIED",
+    "active_D_cursor": "77.44.7.D / D-06 OPEN",
+    "full_visual_editor": "NOT COMPLETE",
+    "manual_physical_acceptance": "DEFERRED until the complete Editor scope",
+    "new_cost_ft": 0
+  },
+  "source_sha256": {
+    "public/editor-v2/app.js": "d13ee9f399a311d1fdc383b75f8aa88cef27b32f67245d32602b1f0ea4f9ef25",
+    "public/editor-v2/index.html": "e7d8064a52519e4649586f44c1b3357abc27a967dd38f3755c4e12aca56e0903",
+    "public/editor-v2/ui/shell.js": "be48db2b7b277054351f811b2eda0d5b38d37c19fd24a9b7ab31b82a74b59f26",
+    "public/editor-v2/ui/workspace-appearance.js": "b7e9d894992832efd5f13fb74aae7210e5bd7beefc1b2c1f22e09c4352766116",
+    "public/editor-v2/ui/workspace-preference-storage.js": "ea104ee15909201fb55ffeecc695c75c53126616b4b80a3c6aa86b1be4263825",
+    "tests/browser/editor-workspace-appearance.test.js": "723282670919ec21000c29d13f9bb418e516c55095d630e4e1b90f1f874419a4",
+    "tests/editor-public-asset-cache-bust.test.js": "6f771a85efca7c308f0f139a84d4a1b7cc05c70046f7d49018c7582d08434ac4",
+    "docs/evidence/feature-traceability.json": "0468865fa17f638567591c4128bfe9ab042b56389521cac519d92660742f9465"
+  }
+}

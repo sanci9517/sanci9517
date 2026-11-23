@@ -7,6 +7,7 @@ import {after,test} from 'node:test';
 import {chromium} from 'playwright';
 import {createDocument} from '../../public/editor-v2/core/schema.js';
 import {LEGACY_WORKSPACE_PREFERENCES_KEY,WORKSPACE_PREFERENCES_KEY} from '../../public/editor-v2/ui/workspace-appearance.js';
+import {workspacePreferenceStorageKey} from '../../public/editor-v2/ui/workspace-preference-storage.js';
 
 const root=resolve(import.meta.dirname,'../../public');
 const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.svg':'image/svg+xml'};
@@ -18,14 +19,16 @@ function getBrowser(){
 after(async()=>{
   if(browserPromise)await (await browserPromise).close();
 });
-function fixtureServer({accountUser=null}={}){
-  const document=createDocument();const pageId=document.activePageId;const draft=structuredClone(document);const writes=[];const accountPreferences={version:1,paletteFavoriteTypes:[],workspace:null,revisions:{paletteFavoriteTypes:0,workspace:0}};
+function fixtureServer({accountUser=null,sessionDelayMs=0}={}){
+  const document=createDocument();const pageId=document.activePageId;const draft=structuredClone(document);const writes=[];let activeAccountUser=accountUser;const accountPreferencesByUser=new Map();const emptyPreferences=()=>({version:1,paletteFavoriteTypes:[],workspace:null,revisions:{paletteFavoriteTypes:0,workspace:0}});const preferencesForUser=()=>{if(!activeAccountUser)return emptyPreferences();if(!accountPreferencesByUser.has(activeAccountUser))accountPreferencesByUser.set(activeAccountUser,emptyPreferences());return accountPreferencesByUser.get(activeAccountUser)};
   const server=createServer(async(req,res)=>{
     const url=new URL(req.url,'http://localhost');
     const json=value=>{res.setHeader('content-type','application/json; charset=utf-8');res.end(JSON.stringify(value))};
-    if(url.pathname==='/api/auth/session')return json({ok:true,data:{authenticated:Boolean(accountUser),user:accountUser?{id:accountUser}:null}});
+    if(url.pathname==='/__test/switch-account'&&req.method==='POST'){let body='';for await(const chunk of req)body+=chunk;activeAccountUser=JSON.parse(body).userId||null;return json({ok:true})}
+    if(url.pathname==='/api/auth/session'){if(sessionDelayMs)await new Promise(resolve=>setTimeout(resolve,sessionDelayMs));return json({ok:true,data:{authenticated:Boolean(activeAccountUser),user:activeAccountUser?{id:activeAccountUser}:null}})}
     if(url.pathname==='/api/admin/editor/preferences'){
-      if(!accountUser){res.statusCode=401;return json({ok:false,error:{code:'UNAUTHORIZED'}})}
+      if(!activeAccountUser){res.statusCode=401;return json({ok:false,error:{code:'UNAUTHORIZED'}})}
+      const accountPreferences=preferencesForUser();
       if(req.method==='GET')return json({ok:true,data:{...accountPreferences}});
       if(req.method==='PUT'){
         let body='';for await(const chunk of req)body+=chunk;const patch=JSON.parse(body);
@@ -50,10 +53,10 @@ function fixtureServer({accountUser=null}={}){
     try{res.setHeader('content-type',mime[extname(file)]||'application/octet-stream');res.end(await readFile(file))}
     catch{res.writeHead(404).end()}
   });
-  return {server,writes,accountPreferences};
+  return {server,writes,accountPreferencesByUser,get accountPreferences(){return preferencesForUser()},switchAccountUser(userId){activeAccountUser=userId}};
 }
-async function openEditor(t,{width=1366,height=900,isMobile=false,hasTouch=false,blockWorkspaceStorageReads=false,blockShellStorageReads=false,ignoreWorkspacePreferenceWrites=false,initialDockState=null,initialAppearance=null,initialLegacyAppearance=null,accountUser=null}={}){
-  const fixture=fixtureServer({accountUser});await new Promise(done=>fixture.server.listen(0,'127.0.0.1',done));
+async function openEditor(t,{width=1366,height=900,isMobile=false,hasTouch=false,blockWorkspaceStorageReads=false,blockShellStorageReads=false,ignoreWorkspacePreferenceWrites=false,initialDockState=null,initialAppearance=null,initialLegacyAppearance=null,unownedDockState=null,unownedAppearance=null,accountUser=null,sessionDelayMs=0}={}){
+  const fixture=fixtureServer({accountUser,sessionDelayMs});await new Promise(done=>fixture.server.listen(0,'127.0.0.1',done));
   t.after(()=>new Promise(done=>fixture.server.close(done)));
   const browser=await getBrowser();
   const context=await browser.newContext({viewport:{width,height},isMobile,hasTouch});t.after(()=>context.close());
@@ -61,19 +64,21 @@ async function openEditor(t,{width=1366,height=900,isMobile=false,hasTouch=false
     const getItem=Storage.prototype.getItem;
     const setItem=Storage.prototype.setItem;
     Storage.prototype.getItem=function(key){
-      if((blockWorkspaceStorageReads&&(key==='sanci-editor-shell-v2'||key==='sanci-editor-workspace-preferences-v2'||key==='sanci-editor-workspace-preferences-v1'))||(blockShellStorageReads&&key==='sanci-editor-shell-v2'))throw new DOMException('Storage is disabled','SecurityError');
+      if((blockWorkspaceStorageReads&&(key?.startsWith('sanci-editor-shell-v2')||key?.startsWith('sanci-editor-workspace-preferences-v2')||key?.startsWith('sanci-editor-workspace-preferences-v1')))||(blockShellStorageReads&&key?.startsWith('sanci-editor-shell-v2')))throw new DOMException('Storage is disabled','SecurityError');
       return getItem.call(this,key);
     };
     Storage.prototype.setItem=function(key,value){
-      if(ignoreWorkspacePreferenceWrites&&key==='sanci-editor-workspace-preferences-v2')return;
+      if(ignoreWorkspacePreferenceWrites&&key?.startsWith('sanci-editor-workspace-preferences-v2'))return;
       return setItem.call(this,key,value);
     };
   },{blockWorkspaceStorageReads,blockShellStorageReads,ignoreWorkspacePreferenceWrites});
-  if(initialDockState||initialAppearance||initialLegacyAppearance)await context.addInitScript(({dock,appearance,legacyAppearance})=>{
-    if(dock)localStorage.setItem('sanci-editor-shell-v2',JSON.stringify(dock));
-    if(appearance)localStorage.setItem('sanci-editor-workspace-preferences-v2',typeof appearance==='string'?appearance:JSON.stringify(appearance));
-    if(legacyAppearance)localStorage.setItem('sanci-editor-workspace-preferences-v1',JSON.stringify(legacyAppearance));
-  },{dock:initialDockState,appearance:initialAppearance,legacyAppearance:initialLegacyAppearance});
+  if(initialDockState||initialAppearance||initialLegacyAppearance||unownedDockState||unownedAppearance)await context.addInitScript(({dock,appearance,legacyAppearance,unownedDock,unowned,owner})=>{
+    if(dock)localStorage.setItem(owner?`sanci-editor-shell-v2:user:${encodeURIComponent(owner)}`:'sanci-editor-shell-v2',JSON.stringify(dock));
+    if(appearance)localStorage.setItem(owner?`sanci-editor-workspace-preferences-v2:user:${encodeURIComponent(owner)}`:'sanci-editor-workspace-preferences-v2',typeof appearance==='string'?appearance:JSON.stringify(appearance));
+    if(legacyAppearance)localStorage.setItem(owner?`sanci-editor-workspace-preferences-v1:user:${encodeURIComponent(owner)}`:'sanci-editor-workspace-preferences-v1',JSON.stringify(legacyAppearance));
+    if(unownedDock)localStorage.setItem('sanci-editor-shell-v2',JSON.stringify(unownedDock));
+    if(unowned)localStorage.setItem('sanci-editor-workspace-preferences-v2',JSON.stringify(unowned));
+  },{dock:initialDockState,appearance:initialAppearance,legacyAppearance:initialLegacyAppearance,unownedDock:unownedDockState,unowned:unownedAppearance,owner:accountUser});
   const page=await context.newPage();page.setDefaultTimeout(8000);page.setDefaultNavigationTimeout(20_000);
   const errors=[];page.on('pageerror',error=>errors.push(error.message));
   await page.goto(`http://127.0.0.1:${fixture.server.address().port}/editor-v2/index.html`,{waitUntil:'load'});
@@ -4227,8 +4232,72 @@ test('account workspace preferences hydrate across clean devices and keep viewpo
   assert.deepEqual(first.errors,[]);
 });
 
+test('a signed-in account does not adopt or sync unowned workspace data and isolates a same-browser account switch',async t=>{
+  const inheritedProfile={id:'profile-a',name:'A saját nézete',createdAt:1,appearance:{theme:'aurora'},dock:{leftOpen:true,rightOpen:false}};
+  const unownedAppearance={version:2,layout:'inspector',theme:'aurora',density:'compact',accent:'#8fa7ff',dockOrder:'canvas-right-left',panelMode:'tabbed',panelSide:'left',profiles:[inheritedProfile]};
+  const unownedDockState={leftOpen:true,rightOpen:true,leftTab:'layers',leftTabOrder:['layers','pages','elements','schedule','navigation'],inspectorTab:'advanced',panelActive:'right',leftWidth:444,rightWidth:420,viewport:{device:'mobile',zoom:0.7}};
+  const fixture=await openEditor(t,{accountUser:'account-a',unownedAppearance,unownedDockState,sessionDelayMs:1200});
+  assert.equal(workspacePreferenceStorageKey(WORKSPACE_PREFERENCES_KEY,'account/../b'),null,'path-like owner IDs cannot create ambiguous account keys');
+  assert.equal(workspacePreferenceStorageKey(WORKSPACE_PREFERENCES_KEY,'K'),null,'owner keys accept only ASCII account identifiers');
+  assert.equal(await fixture.page.evaluate(()=>window.sanciEditor.setWorkspacePreferenceOwner('')),false,'an empty authenticated user ID cannot fall back to the shared anonymous key');
+  const provisional=await fixture.page.evaluate(()=>document.querySelector('.editor-app')?.dataset.workspaceTheme);
+  assert.equal(provisional,'aurora','the anonymous local preview remains visible until session ownership is known');
+  assert.equal(fixture.accountPreferences.workspace,null,'the unowned cache is not sent to any account before identity is established');
+  await fixture.page.waitForFunction(()=>document.documentElement.dataset.editorBoot==='ready');
+  const visible=await fixture.page.evaluate(()=>({
+    theme:document.querySelector('.editor-app')?.dataset.workspaceTheme,
+    density:document.querySelector('.editor-app')?.dataset.workspaceDensity,
+    layout:document.querySelector('#workspaceLayout')?.value,
+    profileCount:document.querySelector('#workspaceProfile')?.options.length,
+    inspector:document.querySelector('#inspectorTabDesign')?.getAttribute('aria-selected'),
+    leftOpen:document.querySelector('.workspace')?.classList.contains('left-open'),
+    rightOpen:document.querySelector('.workspace')?.classList.contains('right-open'),
+    device:document.querySelector('.page-canvas')?.dataset.device,
+    ownedKey:localStorage.getItem('sanci-editor-workspace-preferences-v2:user:account-a'),
+    accountKey:localStorage.getItem('sanci-editor-workspace-preferences-v2:user:account-b'),
+    unownedTheme:JSON.parse(localStorage.getItem('sanci-editor-workspace-preferences-v2'))?.theme,
+    unownedDock:JSON.parse(localStorage.getItem('sanci-editor-shell-v2'))?.leftTab,
+  }));
+  assert.deepEqual(visible,{theme:'graphite',density:'comfortable',layout:'canvas',profileCount:1,inspector:'true',leftOpen:false,rightOpen:false,device:'desktop',ownedKey:null,accountKey:null,unownedTheme:'aurora',unownedDock:'layers'});
+  assert.equal(fixture.accountPreferences.workspace,null,'account A does not automatically inherit an unowned device cache');
+  await openPreferences(fixture.page);
+  await fixture.page.locator('#workspaceTheme').selectOption('aurora');
+  await fixture.page.locator('#closeWorkspaceAppearance').click();
+  await fixture.page.evaluate(()=>window.sanciEditor.openPanel('right'));
+  await fixture.page.locator('#inspectorTabAdvanced').click();
+  await fixture.page.waitForFunction(async()=>{
+    const result=await fetch('/api/admin/editor/preferences',{cache:'no-store'}).then(response=>response.json());
+    return result.data?.workspace?.appearance?.theme==='aurora'&&result.data?.workspace?.dock?.inspectorTab==='advanced';
+  });
+  const accountAState=await fixture.page.evaluate(()=>({
+    appearance:JSON.parse(localStorage.getItem('sanci-editor-workspace-preferences-v2:user:account-a')),
+    dock:JSON.parse(localStorage.getItem('sanci-editor-shell-v2:user:account-a')),
+  }));
+  assert.equal(accountAState.appearance.theme,'aurora','explicit account A changes are persisted in A-only storage');
+  assert.equal(workspacePreferenceStorageKey(WORKSPACE_PREFERENCES_KEY,'account-a'),'sanci-editor-workspace-preferences-v2:user:account-a');
+  assert.equal(workspacePreferenceStorageKey(WORKSPACE_PREFERENCES_KEY,'../account-b'),null,'malformed owner IDs cannot escape their account namespace');
+  assert.equal(accountAState.dock.inspectorTab,'advanced','the Inspector tab is included in account A-only dock state');
+  fixture.switchAccountUser('account-b');
+  await fixture.page.reload({waitUntil:'load'});
+  await fixture.page.waitForFunction(()=>document.documentElement.dataset.editorBoot==='ready');
+  const switched=await fixture.page.evaluate(()=>({
+    theme:document.querySelector('.editor-app')?.dataset.workspaceTheme,
+    density:document.querySelector('.editor-app')?.dataset.workspaceDensity,
+    inspector:document.querySelector('#inspectorTabDesign')?.getAttribute('aria-selected'),
+    profileCount:document.querySelector('#workspaceProfile')?.options.length,
+    accountATheme:JSON.parse(localStorage.getItem('sanci-editor-workspace-preferences-v2:user:account-a'))?.theme,
+    accountADock:JSON.parse(localStorage.getItem('sanci-editor-shell-v2:user:account-a'))?.inspectorTab,
+    accountBTheme:localStorage.getItem('sanci-editor-workspace-preferences-v2:user:account-b'),
+    unownedTheme:JSON.parse(localStorage.getItem('sanci-editor-workspace-preferences-v2'))?.theme,
+  }));
+  assert.deepEqual(switched,{theme:'graphite',density:'comfortable',inspector:'true',profileCount:1,accountATheme:'aurora',accountADock:'advanced',accountBTheme:null,unownedTheme:'aurora'});
+  assert.equal(fixture.accountPreferences.workspace,null,'account B does not inherit or persist account A’s device cache on initial load');
+  assert.deepEqual(fixture.writes,[],'account preference isolation never saves or publishes Page Model content');
+  assert.deepEqual(fixture.errors,[]);
+});
+
 test('stale account workspace edits stay local and surface a conflict instead of replacing the newer device state',async t=>{
-  const first=await openEditor(t,{accountUser:'shared-editor'});
+  const first=await openEditor(t,{accountUser:'shared-editor',initialAppearance:{version:2,layout:'canvas',theme:'graphite',density:'comfortable',accent:'#5b8cff',dockOrder:'left-canvas-right',panelMode:'separate',panelSide:'right',profiles:[]}});
   await openPreferences(first.page);
   await first.page.waitForFunction(()=>document.querySelector('#elementPaletteStatus')?.textContent.includes('szinkronizálva'));
   assert.equal(first.accountPreferences.revisions.workspace,1,'the first device has a server revision before another device opens');
@@ -4262,7 +4331,7 @@ test('stale account workspace edits stay local and surface a conflict instead of
 
 test('stale account palette favorites stay local and surface a conflict instead of replacing the newer device list',async t=>{
   const first=await openEditor(t,{accountUser:'shared-editor'});
-  await first.page.waitForFunction(()=>document.querySelector('#elementPaletteStatus')?.textContent.includes('szinkronizálva'));
+  await first.page.waitForFunction(()=>document.querySelector('#elementPaletteStatus')?.textContent.includes('fiókodhoz mentve'));
   await first.page.locator('.rail-btn[data-tab="elements"]').click();
   await first.page.locator('#elementSearch').fill('Section');
 

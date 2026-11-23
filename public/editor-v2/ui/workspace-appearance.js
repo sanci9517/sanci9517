@@ -1,4 +1,5 @@
 import {createWorkspaceDockTree,normalizeWorkspaceDockTree} from './workspace-dock-tree.js';
+import {workspacePreferenceStorageKey} from './workspace-preference-storage.js';
 export const WORKSPACE_PREFERENCES_KEY='sanci-editor-workspace-preferences-v2';
 export const LEGACY_WORKSPACE_PREFERENCES_KEY='sanci-editor-workspace-preferences-v1';
 export const WORKSPACE_PREFERENCE_DEFAULTS=Object.freeze({version:2,layout:'canvas',theme:'graphite',density:'comfortable',accent:'#5b8cff',dockOrder:'left-canvas-right',panelMode:'separate',panelSide:'right',floatingPosition:{left:{x:0,y:0},right:{x:0,y:0}},profiles:[]});
@@ -133,15 +134,15 @@ export function normalizeWorkspacePreferences(value){
   const input=isRecord(value)?value:{};
   return {version:2,...normalizeVisualPreferences(input),profiles:normalizeProfiles(input.profiles)};
 }
-export function readWorkspacePreferences(storage){
+export function readWorkspacePreferences(storage,currentKey=WORKSPACE_PREFERENCES_KEY,legacyKey=LEGACY_WORKSPACE_PREFERENCES_KEY){
   let source;
   try{source=storage===undefined?globalThis.localStorage:storage}catch{return {...WORKSPACE_PREFERENCE_DEFAULTS,profiles:[]}}
-  for(const key of [WORKSPACE_PREFERENCES_KEY,LEGACY_WORKSPACE_PREFERENCES_KEY]){
+  for(const key of [currentKey,legacyKey]){
     try{
       const saved=source?.getItem(key);
       if(!saved)continue;
       const parsed=JSON.parse(saved);
-      const expectedVersion=key===WORKSPACE_PREFERENCES_KEY?2:1;
+      const expectedVersion=key===currentKey?2:1;
       if(isRecord(parsed)&&parsed.version===expectedVersion)return normalizeWorkspacePreferences(parsed);
     }catch{}
   }
@@ -206,13 +207,29 @@ export function mountWorkspaceAppearance({documentRef=globalThis.document,root=d
   const moveLeftToolDownButton=documentRef.querySelector('#moveWorkspaceLeftToolDown');
   let storage=null;
   try{storage=documentRef.defaultView?.localStorage}catch{}
+  let currentStorageKey=WORKSPACE_PREFERENCES_KEY;
+  let legacyStorageKey=LEGACY_WORKSPACE_PREFERENCES_KEY;
+  let preferenceCachePresent=false;
   let storageReadable=Boolean(storage);
-  try{storage?.getItem(WORKSPACE_PREFERENCES_KEY)}catch{storageReadable=false}
-  let value=readWorkspacePreferences(storage);
+  try{if(currentStorageKey)storage?.getItem(currentStorageKey)}catch{storageReadable=false}
+  let value=readWorkspacePreferences(storage,currentStorageKey,legacyStorageKey);
   let undoStack=[],redoStack=[],idSequence=0;
   const currentDock=()=>{try{return normalizeDockState(readDockState())}catch{return normalizeDockState({})}};
   const notifyPreferencesChange=()=>{try{onPreferencesChange({appearance:normalizeWorkspacePreferences(value),dock:currentDock()})}catch{}};
-  const persist=({notify=true}={})=>{try{if(!storage||!storageReadable)return false;const serialized=JSON.stringify(value);storage.setItem(WORKSPACE_PREFERENCES_KEY,serialized);const saved=storage.getItem(WORKSPACE_PREFERENCES_KEY)===serialized;if(saved&&notify)notifyPreferencesChange();return saved}catch{return false}};
+  const persist=({notify=true}={})=>{try{if(!storage||!storageReadable||!currentStorageKey)return false;const serialized=JSON.stringify(value);storage.setItem(currentStorageKey,serialized);const saved=storage.getItem(currentStorageKey)===serialized;if(saved&&notify)notifyPreferencesChange();return saved}catch{return false}};
+  const setPreferenceOwner=userId=>{
+    const hasOwner=userId!==null&&userId!==undefined;
+    const nextKey=hasOwner?workspacePreferenceStorageKey(WORKSPACE_PREFERENCES_KEY,userId):WORKSPACE_PREFERENCES_KEY;
+    const nextLegacyKey=hasOwner?workspacePreferenceStorageKey(LEGACY_WORKSPACE_PREFERENCES_KEY,userId):LEGACY_WORKSPACE_PREFERENCES_KEY;
+    if(!nextKey||!nextLegacyKey)return false;
+    currentStorageKey=nextKey;legacyStorageKey=nextLegacyKey;storageReadable=Boolean(storage);
+    try{storage?.getItem(currentStorageKey);preferenceCachePresent=Boolean(storage?.getItem(currentStorageKey)||storage?.getItem(legacyStorageKey))}catch{storageReadable=false;preferenceCachePresent=false}
+    value=readWorkspacePreferences(storage,currentStorageKey,legacyStorageKey);
+    applyWorkspacePreferences(root,value);
+    undoStack=[];redoStack=[];syncSelectedProfileName();syncHistory();paint();
+    try{onLayoutChange(value.layout,{save:false})}catch{}
+    return true;
+  };
   const renderLeftToolOrder=()=>{
     const field=fields.leftTool;if(!field)return;
     const names={pages:'Oldalak',elements:'Elemek',layers:'Rétegek',schedule:'Adásrend',navigation:'Navigáció'};
@@ -479,18 +496,18 @@ export function mountWorkspaceAppearance({documentRef=globalThis.document,root=d
   moveLeftToolDownButton?.addEventListener('click',()=>moveLeftTool(1));
   const syncExternalPreferences=event=>{
     if(event.storageArea&&storage&&event.storageArea!==storage)return;
-    if(event.key!==null&&event.key!==WORKSPACE_PREFERENCES_KEY&&event.key!==LEGACY_WORKSPACE_PREFERENCES_KEY)return;
+    if(event.key!==null&&event.key!==currentStorageKey&&event.key!==legacyStorageKey)return;
     // A late v1 write must never overwrite a profile-aware v2 workspace.
-    if(event.key===LEGACY_WORKSPACE_PREFERENCES_KEY){
+    if(event.key===legacyStorageKey){
       try{
-        const current=JSON.parse(storage?.getItem(WORKSPACE_PREFERENCES_KEY)||'null');
+        const current=JSON.parse(storage?.getItem(currentStorageKey)||'null');
         if(isRecord(current)&&current.version===2)return;
       }catch{}
     }
     const selectedId=fields.profile?.value;
     const previousSelectedName=value.profiles.find(profile=>profile.id===selectedId)?.name||'';
     let next;
-    try{next=event.key===null?normalizeWorkspacePreferences({}):readWorkspacePreferences(storage)}catch{next=normalizeWorkspacePreferences({})}
+    try{next=event.key===null?normalizeWorkspacePreferences({}):readWorkspacePreferences(storage,currentStorageKey,legacyStorageKey)}catch{next=normalizeWorkspacePreferences({})}
     if(JSON.stringify(next)===JSON.stringify(value))return;
     try{onExternalChange({source:'storage',area:'appearance',reset:event.key===null})}catch{}
     // History from this tab is based on an older shared workspace. Keeping it
@@ -524,5 +541,5 @@ export function mountWorkspaceAppearance({documentRef=globalThis.document,root=d
   undoButton?.addEventListener('click',undo);redoButton?.addEventListener('click',redo);
   resetButton?.addEventListener('click',reset);
   paint();
-  return {get value(){return normalizeWorkspacePreferences(value)},setLayout,setDockOrder,setDockLayout,setPanelGrouping,setDockTree,enableDockTree,setFloatingPosition,open,close,remember,undo,redo,saveProfile,renameProfile,loadProfile,deleteProfile,importProfile,exportProfile,reset,applyAccountPreferences,syncDockControls:renderLeftToolOrder,clearExternalDockHistory,reportDockStorageUnavailable,destroy(){documentRef.defaultView?.removeEventListener?.('storage',syncExternalPreferences)}};
+  return {get value(){return normalizeWorkspacePreferences(value)},setLayout,setDockOrder,setDockLayout,setPanelGrouping,setDockTree,enableDockTree,setFloatingPosition,open,close,remember,undo,redo,saveProfile,renameProfile,loadProfile,deleteProfile,importProfile,exportProfile,reset,applyAccountPreferences,setPreferenceOwner,hasPreferenceCache:()=>preferenceCachePresent,syncDockControls:renderLeftToolOrder,clearExternalDockHistory,reportDockStorageUnavailable,destroy(){documentRef.defaultView?.removeEventListener?.('storage',syncExternalPreferences)}};
 }

@@ -2,9 +2,10 @@ import {createEventBus} from './events.js';
 import {panelRegistry,featureRegistry} from './registry.js';
 import {EDITOR_ACTIONS} from './action-catalog.js?v=20261103-canvas-focus-mode';
 import {enhanceEditorActionControls} from './action-help.js?v=20261103-canvas-focus-mode';
-import {DEFAULT_LEFT_TAB_ORDER,applyWorkspacePreferences,mountWorkspaceAppearance,normalizeLeftTabOrder,readWorkspacePreferences} from './workspace-appearance.js?v=20261121-account-workspace-sync-v1';
+import {DEFAULT_LEFT_TAB_ORDER,applyWorkspacePreferences,mountWorkspaceAppearance,normalizeLeftTabOrder,readWorkspacePreferences} from './workspace-appearance.js?v=20261123-account-scoped-preferences-v2';
 import {moveWorkspaceDockTreeLeaf,workspaceDockTreeSignature} from './workspace-dock-tree.js';
 import {mountWorkspaceDockTree} from './workspace-dock-renderer.js?v=20261109-recursive-dock-renderer';
+import {workspacePreferenceStorageKey} from './workspace-preference-storage.js';
 
 const bus=createEventBus();
 const workspace=document.querySelector('.workspace');
@@ -15,6 +16,7 @@ const actionControls=enhanceEditorActionControls(document);
 const LEFT_TABS=['pages','elements','layers','schedule','navigation'];
 const resizeLimits={left:{min:250,max:460},right:{min:260,max:440}};
 const STORAGE_KEY='sanci-editor-shell-v2';
+let activeStorageKey=STORAGE_KEY;
 const INSPECTOR_TABS=['design','content','advanced'];
 const defaults={leftOpen:false,rightOpen:false,leftTab:'pages',leftTabOrder:DEFAULT_LEFT_TAB_ORDER,inspectorTab:'design',panelActive:'left',leftWidth:310,rightWidth:352};
 const mobileQuery=window.matchMedia('(max-width: 1024px)');
@@ -32,9 +34,9 @@ let canvasFocus=false;
 let desktopDockSnapshot=null;
 let initializingDocks=true;
 
-function readPersisted(){
+function readPersisted(key=activeStorageKey){
   try{
-    const raw=localStorage.getItem(STORAGE_KEY);
+    const raw=localStorage.getItem(key);
     if(!raw)return {...defaults};
     const value=JSON.parse(raw);
     return {...defaults,...value};
@@ -72,8 +74,8 @@ function workspacePreferenceSnapshot(){
 function persist({notify=true}={}){
   const serialized=JSON.stringify({...persisted,viewport:viewportPreference});
   try{
-    localStorage.setItem(STORAGE_KEY,serialized);
-    if(localStorage.getItem(STORAGE_KEY)!==serialized)throw new Error('Workspace storage did not return the saved dock state');
+    localStorage.setItem(activeStorageKey,serialized);
+    if(localStorage.getItem(activeStorageKey)!==serialized)throw new Error('Workspace storage did not return the saved dock state');
     dockStorageDurable=true;
     if(notify)emit('workspace:preferences-change',workspacePreferenceSnapshot());
     return true;
@@ -758,7 +760,7 @@ function applyDockState(state,{save=true}={}){
   if(save)persist();
 }
 window.addEventListener('storage',event=>{
-  if(event.key!==null&&event.key!==STORAGE_KEY)return;
+  if(event.key!==null&&event.key!==activeStorageKey)return;
   try{if(event.storageArea&&event.storageArea!==window.localStorage)return}catch{return}
   // A shared dock update is the new desktop intent, even if this tab is
   // currently mobile. Keep that full snapshot for the next desktop return;
@@ -891,12 +893,40 @@ function applyAccountWorkspacePreferences(value){
   persist({notify:false});
   return true;
 }
+function setWorkspacePreferenceOwner(userId){
+  const hasOwner=userId!==null&&userId!==undefined;
+  const nextKey=hasOwner?workspacePreferenceStorageKey(STORAGE_KEY,userId):STORAGE_KEY;
+  if(!nextKey)return false;
+  activeStorageKey=nextKey;
+  if(!workspaceAppearance?.setPreferenceOwner?.(hasOwner?userId:null))return false;
+  dockStorageDurable=true;
+  let nextStored;
+  try{nextStored=readPersisted(activeStorageKey)}catch{nextStored={...defaults}}
+  persisted=normalizeStoredDockState(nextStored,{normalizeMobile:false});
+  if(workspaceAppearance?.value?.layout&&workspaceAppearance.value.layout!=='custom'){
+    const initialLayout=resolveWorkspaceLayout(workspaceAppearance.value.layout,false);
+    persisted.leftOpen=initialLayout.left;persisted.rightOpen=initialLayout.right;
+  }
+  viewportPreference={device:['desktop','tablet','mobile'].includes(nextStored.viewport?.device)?nextStored.viewport.device:'desktop',zoom:Number.isFinite(Number(nextStored.viewport?.zoom))?Math.max(.35,Math.min(1.5,Number(nextStored.viewport.zoom))):1};
+  desktopDockSnapshot=null;canvasFocus=false;workspace?.classList.remove('canvas-focus');
+  renderLeftTabOrder();root.style.setProperty('--left-dock-width',`${persisted.leftWidth}px`);root.style.setProperty('--right-dock-width',`${persisted.rightWidth}px`);
+  updateResizeHandle('left',persisted.leftWidth);updateResizeHandle('right',persisted.rightWidth);
+  const desktopIntent={leftOpen:persisted.leftOpen,rightOpen:persisted.rightOpen};
+  applyDockState(mobileQuery.matches?{...persisted,leftOpen:false,rightOpen:false}:persisted,{save:false});
+  if(mobileQuery.matches){persisted.leftOpen=desktopIntent.leftOpen;persisted.rightOpen=desktopIntent.rightOpen}
+  setInspectorTab(persisted.inspectorTab,{save:false});
+  return true;
+}
+function hasWorkspacePreferenceCache(){
+  if(workspaceAppearance?.hasPreferenceCache?.())return true;
+  try{return Boolean(localStorage.getItem(activeStorageKey))}catch{return false}
+}
 function setViewportPreference(value,{notify=true}={}){
   if(!value||typeof value!=='object'||Array.isArray(value))return false;
   viewportPreference={device:['desktop','tablet','mobile'].includes(value.device)?value.device:viewportPreference.device,zoom:Number.isFinite(Number(value.zoom))?Math.max(.35,Math.min(1.5,Number(value.zoom))):viewportPreference.zoom};
   return persist({notify});
 }
-window.sanciEditor={version:10,bus,panels:panelRegistry,features:featureRegistry,on:bus.on,emit,openPanel:s=>setPanel(s,true),closePanel:s=>setPanel(s,false),showLeftTab,setInspectorTab,resizeDock,workspacePreferenceSnapshot,applyAccountWorkspacePreferences,setViewportPreference};
+window.sanciEditor={version:10,bus,panels:panelRegistry,features:featureRegistry,on:bus.on,emit,openPanel:s=>setPanel(s,true),closePanel:s=>setPanel(s,false),showLeftTab,setInspectorTab,resizeDock,workspacePreferenceSnapshot,applyAccountWorkspacePreferences,setWorkspacePreferenceOwner,hasWorkspacePreferenceCache,setViewportPreference};
 featureRegistry.register('shell-runtime',{version:9,persistence:'localStorage',mobileShell:'bottom-sheet'});
 syncMobileBackdrop();
 emit('shell:ready',{version:8});

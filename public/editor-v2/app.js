@@ -67,9 +67,8 @@ let pendingLayerRename=null;
 function flushLayerRename(){return pendingLayerRename?.()!==false}
 let inspectorCategory='all';let richTextSelectionCleanup=null;let richTextToolTab='character';
 
-let state=null;let pages=[];let archivedPages=[];let revisionHistory=[];let zoom=1;let inspectorTab=readSavedInspectorTab();let inspectorQuery='';let flushRichTextDraft=null;let inlineEditingId=null;let richTextBookmark=null;let copiedStyleSnapshot=null;let nodeClipboard=null;let canvasDrag=null;let canvasResize=null;let pageStartTemplate='blank-page';let pageCreateBusy=false;let mobileTouch={active:false,timer:null,downId:null,startX:0,startY:0,snapshot:[],snapshotPrimary:null,suppressClick:false,longPressTriggered:false};let hierarchyDrag={nodeId:null,overId:null};let mobileHierarchyDrag={active:false,timer:null,nodeId:null,overId:null,startX:0,startY:0,suppressClick:false};
-let paletteFavoritesUserId=null;let paletteFavoriteTypes=[];let paletteFavoritesReady=false;let accountWorkspaceReady=false;let accountWorkspaceTimer=null;let accountPreferenceWrite=Promise.resolve();let pendingAccountViewport=null;let accountPreferenceRevisions={paletteFavoriteTypes:0,workspace:0};let accountPreferenceConflicts=new Set();
-function readSavedInspectorTab(){try{const saved=JSON.parse(localStorage.getItem('sanci-editor-shell-v2')||'{}')?.inspectorTab;return ['design','content','advanced'].includes(saved)?saved:'design'}catch{return 'design'}}
+let state=null;let pages=[];let archivedPages=[];let revisionHistory=[];let zoom=1;let inspectorTab='design';let inspectorQuery='';let flushRichTextDraft=null;let inlineEditingId=null;let richTextBookmark=null;let copiedStyleSnapshot=null;let nodeClipboard=null;let canvasDrag=null;let canvasResize=null;let pageStartTemplate='blank-page';let pageCreateBusy=false;let mobileTouch={active:false,timer:null,downId:null,startX:0,startY:0,snapshot:[],snapshotPrimary:null,suppressClick:false,longPressTriggered:false};let hierarchyDrag={nodeId:null,overId:null};let mobileHierarchyDrag={active:false,timer:null,nodeId:null,overId:null,startX:0,startY:0,suppressClick:false};
+let paletteFavoritesUserId=null;let paletteFavoriteTypes=[];let paletteFavoritesReady=false;let accountWorkspaceReady=false;let accountWorkspaceCachePresent=false;let accountWorkspaceTimer=null;let accountPreferenceWrite=Promise.resolve();let pendingAccountViewport=null;let accountPreferenceRevisions={paletteFavoriteTypes:0,workspace:0};let accountPreferenceConflicts=new Set();
 const $=s=>document.querySelector(s);const canvas=$('#canvas');const inspector=$('#inspectorBody');
 const sizes={desktop:1440,tablet:768,mobile:390};
 const validHexColor=value=>typeof value==='string'&&/^#(?:[a-f0-9]{3}|[a-f0-9]{6})$/i.test(value);
@@ -247,6 +246,8 @@ function applyAccountViewport(viewport){
 function applyAccountWorkspace(workspace){
  if(!workspace||typeof workspace!=='object')return false;
  const applied=window.sanciEditor?.applyAccountWorkspacePreferences?.(workspace)===true;
+ const nextInspectorTab=workspace?.dock?.inspectorTab;
+ if(applied&&['design','content','advanced'].includes(nextInspectorTab))inspectorTab=nextInspectorTab;
  return applied&&applyAccountViewport(workspace.viewport);
 }
 function queueAccountWorkspaceWrite(){
@@ -298,7 +299,12 @@ async function loadPaletteFavorites(){
  const status=$('#elementPaletteStatus');
  try{
   const result=await api('/api/auth/session'),user=result?.data?.user;
-  if(result?.data?.authenticated===true&&typeof user?.id==='string'){
+  if(result?.data?.authenticated===true){
+   if(typeof user?.id!=='string')throw new Error('A bejelentkezett fiók azonosítója érvénytelen.');
+   if(window.sanciEditor?.setWorkspacePreferenceOwner?.(user.id)===false)throw new Error('A fiókhoz tartozó munkaterület-tárhely nem állítható be.');
+   const ownedDock=window.sanciEditor?.workspacePreferenceSnapshot?.()?.dock;
+   if(['design','content','advanced'].includes(ownedDock?.inspectorTab)){inspectorTab=ownedDock.inspectorTab;if(state)renderInspector()}
+   accountWorkspaceCachePresent=window.sanciEditor?.hasWorkspacePreferenceCache?.()===true;
    paletteFavoritesUserId=user.id;
    paletteFavoriteTypes=readPaletteFavoriteTypes(user.id);
    try{
@@ -318,9 +324,14 @@ async function loadPaletteFavorites(){
      if(!applyAccountWorkspace(preferences.data.workspace)&&status)status.textContent='A fiók munkaterület-beállítása nem érvényes; a jelenlegi helyi nézet maradt aktív.';
     }
     accountWorkspaceReady=true;
-    if(!hasWorkspace)queueAccountWorkspaceWrite();
+    if(!hasWorkspace&&accountWorkspaceCachePresent)queueAccountWorkspaceWrite();
    }catch{if(status)status.textContent='A fiókbeállítás nem érhető el; a helyi kedvencek láthatók, a módosítások nem szinkronizálhatók.'}
-  }else if(status)status.textContent='A kedvencek használatához jelentkezz be.'
+  }else if(result?.data?.authenticated===false){
+   if(window.sanciEditor?.setWorkspacePreferenceOwner?.(null)===false)throw new Error('A helyi munkaterület-tárhely nem állítható be.');
+   const localDock=window.sanciEditor?.workspacePreferenceSnapshot?.()?.dock;
+   if(['design','content','advanced'].includes(localDock?.inspectorTab)){inspectorTab=localDock.inspectorTab;if(state)renderInspector()}
+   if(status)status.textContent='A kedvencek használatához jelentkezz be.'
+  }else if(status)status.textContent='A munkaterület és a kedvencek betöltése most nem érhető el.'
  }catch{paletteFavoritesUserId=null;paletteFavoriteTypes=[];if(status)status.textContent='A kedvencek betöltése most nem érhető el.'}
  paletteFavoritesReady=true;renderPalette($('#elementSearch')?.value||'');
 }
