@@ -1,0 +1,168 @@
+{
+  "date": "2026-11-23",
+  "plan_point": "77.44.7.D / D-06 structured regions",
+  "scope": "Bounded accessibility improvement for structured tables and tablists, completing editable naming parity with gallery and carousel; not full D-06 or Editor acceptance.",
+  "plan_state": {
+    "active_point": "77.44.7.D",
+    "feature_mappings": 396,
+    "partial_source": 148,
+    "unverified": 248,
+    "d06": "OPEN / NOT_CERTIFIED",
+    "full_editor_acceptance": "OPEN / NOT_CERTIFIED",
+    "canonical_source_sha256_after_current_summary": "c55bce2f7ca135273d22a601180d96bb5862dd3a595f67ccd18ddb2f213543b1",
+    "canonical_source_size_after_current_summary": 1843033
+  },
+  "implementation": {
+    "behavior": "Inspector now exposes the optional ariaLabel field for table, tabs, gallery, and carousel nodes. The shared Canvas/public renderer applies the bounded escaped name to table regions and tablists while retaining Hungarian defaults for blank or malformed legacy values. Save persists draft props; only separate Publish updates public output.",
+    "source_commit": "1ad67d82bae8fca597f8e21649ef191569d355fb",
+    "branch": "v2/foundation",
+    "parent_commit": "76b1b3fa1e8fcda9158b972cbcc39c1952ec22c9",
+    "reused_project_code": "Existing structured content renderer sanitizer/escaping, Inspector composition-aware input, and normal element.update/Page Model path. No new dependency or copied third-party source.",
+    "save_publish": "Save leaves published ariaLabel unchanged across all four types; reload restores the draft; explicit Publish exposes the new name."
+  },
+  "verification": {
+    "structured_inspector_invalid_content": "PASS 3/3",
+    "element_content": "PASS 33/33",
+    "editor_public_asset_cache_bust": "PASS 2/2",
+    "browser_structured_content": "PASS 2/2 real Chromium (desktop/mobile); composition, undo/redo, draft persistence, reload, public parity, Save/Publish separation.",
+    "editor_unit": "PASS 24/24 Node test files; preference route 10/10; runner 4/4.",
+    "typecheck": "PASS npm run typecheck",
+    "plan_contract": "PASS 15/15",
+    "canonical_plan": "PASS one complete canonical plan, 13 master files, 396 mappings",
+    "traceability": "PASS 396/396",
+    "active_point_audit": "PASS bookkeeping; active point remains 77.44.7.D OPEN / NOT CERTIFIED",
+    "migration_safety": "PASS node scripts/web013-migration-safety-gate.mjs; no migration apply",
+    "wrangler_dry_run": "PASS Wrangler 4.130.0, 200 public assets, 430.67 KiB / 109.11 KiB gzip; no deployment during dry run",
+    "git_diff_check": "PASS",
+    "production_postflight": "PASS: read-only SELECT/PRAGMA; 99 schema objects, 36 migration markers, latest 0030_media_library_organization.sql, FK check empty, quick_check=ok, all five result sets rows_written=0 / changes=0 / changed_db=false."
+  },
+  "production_d1_preflight": {
+    "method": "Cloudflare D1 Query API, SELECT and read-only PRAGMA checks only; no migration or data write",
+    "evidence_file_sha256": "09d6a407d2fab6aa2b63292ea5afcc415942b6809de5b477dd9eda3aa3b70218",
+    "schema_objects": 99,
+    "migration_markers": 36,
+    "latest_migration": "0030_media_library_organization.sql",
+    "active_default_users_without_membership": 0,
+    "default_settings_missing_or_different": 0,
+    "snapshot_tables": 0,
+    "foreign_key_check": "empty",
+    "quick_check": "ok",
+    "rows_written": 0,
+    "changes": 0,
+    "changed_db": false,
+    "r2_operation": "none",
+    "postflight_evidence_file_sha256": "28a8be750b92ca544c404b5a5ff518628a3d737e882c30dcfd37ce3cf8851056"
+  },
+  "release": {
+    "push": "PASS normal fast-forward push to origin/v2/foundation; exact source commit verified at GitHub branch head",
+    "source_sha": "1ad67d82bae8fca597f8e21649ef191569d355fb",
+    "cloudflare_build": {
+      "build_uuid": "006e52db-ad2a-428a-8fec-0ea242b6052d",
+      "source_sha": "1ad67d82bae8fca597f8e21649ef191569d355fb",
+      "branch": "v2/foundation",
+      "build_outcome": "success",
+      "status": "stopped",
+      "build_command": "npm run typecheck",
+      "deploy_command": "npm run deploy:safe"
+    },
+    "deployment": {
+      "deployment_id": "6dc9fb89-6139-4303-bdf9-36bb99511c7b",
+      "worker_version_id": "02000f79-850b-497f-922d-fd67abd5979e",
+      "worker_version_number": 4172,
+      "traffic_percent": 100,
+      "created_on": "2026-11-23T18:02:26.50102Z"
+    },
+    "post_release_health": {
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health?release=structured-region-names-v2",
+      "http_status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "asset_hash_check": "All six modified public assets fetched successfully and matched source bytes; /visual-page.html followed to /visual-page and the final response SHA-256 also matched the source.",
+    "hosted_workflows": {
+      "canonical_creator_platform_plan": {
+        "run_id": 45233986346,
+        "result": "SUCCESS"
+      },
+      "canonical_plan_active_point_audit": {
+        "run_id": 45233986259,
+        "result": "SUCCESS"
+      },
+      "F0_baseline_checks": {
+        "run_id": 45233986288,
+        "result": "SUCCESS"
+      },
+      "Twitch_Integration_Check": {
+        "run_id": 45233986363,
+        "result": "SUCCESS"
+      },
+      "Production_Worker_source_smoke": {
+        "run_id": 45233986281,
+        "result": "SUCCESS"
+      },
+      "Editor_Core_Test": {
+        "run_id": 45233986276,
+        "result": "IN_PROGRESS when last queried; full hosted Editor CI not yet PASS"
+      }
+    },
+    "github_branch_head_after_push": "1ad67d82bae8fca597f8e21649ef191569d355fb (exact branch API check)"
+  },
+  "public_source_sha256": {
+    "public/assets/page-renderer.js": "9b7faf452daeb92a6ecbf00df50c1833c9a8d21ac37a452b9305ff3f6b91892a",
+    "public/editor-v2/app.js": "0af4580dbab2fb1eff34d282112e2add8764f7a1c7058b52610bee81fffa80b4",
+    "public/editor-v2/core/element-content.js": "6fde1cd24670fa951612766f59eb781549d18472a0f65c177365d1e144538816",
+    "public/editor-v2/index.html": "9d947d29eb5f9047f5299a9443118ed0f65132b23896069aa848762820363db6",
+    "public/editor-v2/ui/structured-inspector.js": "1793dc3be8f1432f7cda2fd9ed715bf6b4a66a93f848187add094546ca4f15c0",
+    "public/visual-page.html": "682f5e1cbb65c3c3021860c24c3c006c295aa2f2361690271c2076cf5b37ff7e"
+  },
+  "limitations": {
+    "hosted_editor_core": "IN_PROGRESS at verification time; overall hosted Editor acceptance is not yet PASS",
+    "visual_page_template_hash": "The /visual-page.html request follows to /visual-page; the final public response returned HTTP 200 and its SHA-256 matched the source file exactly.",
+    "manual_physical_acceptance": "DEFERRED until the complete Visual Editor is implemented and reaches its consolidated acceptance gate"
+  },
+  "cost": "0 Ft new paid service or quota overage",
+  "public_hash_verification": {
+    "method": "Direct HTTPS GET with explicit User-Agent; SHA-256 calculated on response bytes (redirects followed)",
+    "paths": {
+      "/assets/page-renderer.js": {
+        "status": 200,
+        "sha256": "9b7faf452daeb92a6ecbf00df50c1833c9a8d21ac37a452b9305ff3f6b91892a",
+        "matches_source": true
+      },
+      "/editor-v2/app.js": {
+        "status": 200,
+        "sha256": "0af4580dbab2fb1eff34d282112e2add8764f7a1c7058b52610bee81fffa80b4",
+        "matches_source": true
+      },
+      "/editor-v2/core/element-content.js": {
+        "status": 200,
+        "sha256": "6fde1cd24670fa951612766f59eb781549d18472a0f65c177365d1e144538816",
+        "matches_source": true
+      },
+      "/editor-v2/ (public/editor-v2/index.html)": {
+        "status": 200,
+        "sha256": "9d947d29eb5f9047f5299a9443118ed0f65132b23896069aa848762820363db6",
+        "matches_source": true
+      },
+      "/editor-v2/ui/structured-inspector.js": {
+        "status": 200,
+        "sha256": "1793dc3be8f1432f7cda2fd9ed715bf6b4a66a93f848187add094546ca4f15c0",
+        "matches_source": true
+      },
+      "/visual-page.html -> /visual-page": {
+        "final_status": 200,
+        "sha256": "682f5e1cbb65c3c3021860c24c3c006c295aa2f2361690271c2076cf5b37ff7e",
+        "matches_source": true
+      }
+    }
+  },
+  "development_metrics": {
+    "session_id": "20261123174852-57bf5f6d",
+    "status": "partial",
+    "path": "docs/evidence/dev-metrics/runs/2026-11-23/20261123174852-57bf5f6d.json"
+  }
+}

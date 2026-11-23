@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261123174852-57bf5f6d",
+  "task": "77.44.7.D-D06-followup",
+  "trigger": "manual",
+  "started_at": "2026-11-23T17:48:52.712Z",
+  "finished_at": "2026-11-23T18:11:19.122Z",
+  "wall_seconds": 1346,
+  "paused_seconds": 0,
+  "measured_seconds": 1346,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "D-06 structured table/tablist accessible names implemented and released at 100%; exact-source smoke, health, asset hashes and read-only D1 postflight verified. Hosted Editor Core remains in progress; overall D-06/Editor not certified.",
+  "evidence": [
+    "docs/evidence/editor-d06-structured-region-names-2026-11-23.json",
+    "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md"
+  ],
+  "checks": "Chromium 2/2; editor unit 24 files; typecheck; plan 15/15; traceability 396; dry-run; read-only D1 pre/post; exact-source build/smoke; 100% Worker and live asset hashes",
+  "started_revision": "76b1b3fa1e8fcda9158b972cbcc39c1952ec22c9",
+  "finished_revision": "1ad67d82bae8fca597f8e21649ef191569d355fb",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
