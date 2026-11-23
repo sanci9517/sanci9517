@@ -52,7 +52,8 @@
   "ci": {
     "policy": "[skip ci] for test-harness/evidence-only follow-up; no duplicate dispatch or rerun started.",
     "existing_editor_core_run_id": 45251326608,
-    "last_observed": "IN_PROGRESS at browser layout step 14; no Editor Core PASS claimed."
+    "last_observed": "2026-11-23T20:08Z: run 45251326608 still IN_PROGRESS at browser layout step 14; this follow-up commit was not dispatched due test/evidence-only [skip ci] policy.",
+    "test_commit_status": "No GitHub status contexts returned for the [skip ci] test commit; no hosted test PASS is claimed."
   },
   "cost_and_acceptance": {
     "new_cost_ft": 0,
@@ -63,5 +64,17 @@
     "visual_editor": "OPEN / NOT CERTIFIED",
     "manual_physical_acceptance": "DEFERRED until the complete Editor scope is implemented",
     "save_publish": "Separate"
+  },
+  "publication": {
+    "test_commit": "6b6237c45165b1b798417c3b3741b689b7d358e7",
+    "test_commit_message": "[skip ci] test(editor): cover single-tab URL history behavior",
+    "fast_forward_push": "VERIFIED",
+    "remote_branch_head_at_2026_11_23T20_08Z": "6b6237c45165b1b798417c3b3741b689b7d358e7",
+    "worker_redeployment": "NOT_TRIGGERED; latest deployment remains unchanged after the tests/docs-only push",
+    "latest_cloudflare_deployment_read_at_2026_11_23T20_08Z": {
+      "deployment_id": "1f910bc9-2b7f-467f-82b0-4b78fa09499f",
+      "version_id": "3f075752-e1ed-43d5-be82-d47d4468af3f",
+      "traffic_percentage": 100
+    }
   }
 }
