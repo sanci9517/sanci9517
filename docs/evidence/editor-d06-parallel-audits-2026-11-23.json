@@ -1,0 +1,95 @@
+{
+  "schema_version": 1,
+  "plan_point": "77.44.7.D / D-06",
+  "date": "2026-11-23",
+  "status": "read_only_audit_no_patch",
+  "summary": "Parallel, bounded audits reviewed structured accordion behavior and authored media-reference parity. No reproducible defect or missing acceptance invariant was demonstrated, so no speculative runtime patch was made. The D-06 item remains open.",
+  "branch": "v2/foundation",
+  "source_commit": "891c9266bc0687479bbb2ca4c491f191a0be6f90",
+  "remote_ref_verified": true,
+  "audits": [
+    {
+      "scope": "Accordion authored-content behavior",
+      "paths": [
+        "public/editor-v2/core/authored-content.js",
+        "public/editor-v2/core/canvas-interaction-state.js",
+        "tests/browser/editor-content-system.test.js"
+      ],
+      "finding": "Native details semantics and per-node group naming are implemented; existing browser coverage exercises open state across edits/reorder, keyboard use, draft Save, separate Publish, and responsive output.",
+      "reproducible_defect": false
+    },
+    {
+      "scope": "Editor asset values vs usage scanner, retention guard, and public media renderer",
+      "paths": [
+        "src/core/editor-publication.ts",
+        "src/routes/admin/media.ts",
+        "public/editor-v2/core/authored-content.js",
+        "src/index.ts"
+      ],
+      "finding": "Supported asset-ID and URL sources for authored media, cards, gallery/carousel, video posters, and responsive backgrounds align across publication, usage scanning, and public delivery. Encoded private-route and noncanonical media paths fail closed in the inspected paths.",
+      "reproducible_defect": false
+    },
+    {
+      "scope": "Single-tab structured tablist and Save/Publish lifecycle",
+      "paths": [
+        "public/editor-v2/core/element-content.js",
+        "tests/browser/editor-structured-content.test.js",
+        "tests/browser/editor-page-interactions.test.js"
+      ],
+      "finding": "Related audits and the preceding single-tab browser regression cover focused selection, no-op navigation, URL/history invariance, and draft-versus-published snapshots. No additional defect was demonstrated in this block.",
+      "reproducible_defect": false,
+      "related_test_commit": "6b6237c45165b1b798417c3b3741b689b7d358e7"
+    }
+  ],
+  "checks_this_block": [
+    {
+      "command": "python3 tests/plan-contract.test.py",
+      "result": "PASS",
+      "summary": "15/15"
+    },
+    {
+      "command": "python3 scripts/check-canonical-plan.py",
+      "result": "PASS",
+      "summary": "single 13-file canonical master, 396 mappings; functional acceptance not certified"
+    },
+    {
+      "command": "python3 scripts/build-feature-traceability.py --check",
+      "result": "PASS",
+      "summary": "396/396"
+    },
+    {
+      "command": "python3 scripts/audit-active-plan-point.py",
+      "result": "PASS",
+      "summary": "cursor 77.44 / WEB-011 -> 77.44.7.D; 148 PARTIAL_SOURCE / 248 UNVERIFIED; acceptance NOT_CERTIFIED"
+    },
+    {
+      "command": "git diff --check",
+      "result": "PASS"
+    }
+  ],
+  "runtime_and_release": {
+    "runtime_source_changed": false,
+    "public_assets_changed": false,
+    "worker_deployment_required": false,
+    "latest_deployment_id": "1f910bc9-2b7f-467f-82b0-4b78fa09499f",
+    "latest_worker_version_id": "3f075752-e1ed-43d5-be82-d47d4468af3f",
+    "traffic_percentage": 100,
+    "health_rechecked": false,
+    "production_d1_or_r2_operation": false
+  },
+  "ci": {
+    "editor_core_run_id": 45251326608,
+    "status_at_2026_11_23T20_13Z": "IN_PROGRESS at browser-layout step 14; later steps pending",
+    "new_dispatch_or_rerun": false,
+    "status_for_test_evidence_commit": "No contexts returned; no hosted PASS claimed for [skip ci] changes"
+  },
+  "cost_and_acceptance": {
+    "new_cost_ft": 0,
+    "new_dependencies": 0,
+    "d06": "OPEN / NOT CERTIFIED",
+    "d01_d07": "OPEN / NOT CERTIFIED",
+    "visual_editor": "OPEN / NOT CERTIFIED",
+    "manual_physical_acceptance": "DEFERRED until complete Editor implementation",
+    "save_publish": "Separate"
+  }
+}
