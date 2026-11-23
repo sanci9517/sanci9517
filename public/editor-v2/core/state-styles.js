@@ -1,4 +1,4 @@
-import {getProperty,listProperties} from './property-registry.js?v=20261117-edt043-motion-guidance';
+import {getProperty,listProperties} from './property-registry.js?v=20261123-edt040-in-view-motion-v1';
 import {normalizeInspectorValue} from './property-values.js';
 import {resolveResponsiveValue,normalizeResponsive} from './responsive.js?v=20261122-edt024-responsive-prototype-safety-v1';
 

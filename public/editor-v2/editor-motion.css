@@ -18,6 +18,15 @@
   animation-iteration-count: 1;
   animation-fill-mode: both;
 }
+/* Modern browsers can bind the existing finite keyframes to the nearest
+   scrollport. Unsupported browsers keep the safe on-load behavior. */
+@supports (animation-timeline: view()) and (animation-range: entry 0% entry 100%) {
+  .visual-editor-node[data-motion-trigger="in-view"][style*="sanci-entry-"],
+  .node[data-motion-trigger="in-view"][style*="sanci-entry-"] {
+    animation-timeline: view();
+    animation-range: entry 0% entry 100%;
+  }
+}
 @media (prefers-reduced-motion: reduce) {
   .visual-editor-node[style*="sanci-entry-"],
   .node[style*="sanci-entry-"] {

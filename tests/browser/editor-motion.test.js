@@ -60,19 +60,28 @@ test('EDT-040 motion controls are visible, typed, allowlisted and reduced-motion
   const entry = page.locator('[data-property-id="motion.entry"] select');
   const duration = page.locator('[data-property-id="motion.duration"] select');
   const easing = page.locator('[data-property-id="motion.easing"] select');
+  const trigger = page.locator('[data-property-id="motion.trigger"] select');
   assert.equal(await entry.inputValue(), 'none', 'motion defaults to disabled');
   assert.equal(await duration.inputValue(), '280ms', 'duration is bounded to the safe default');
   assert.equal(await easing.inputValue(), 'ease-out', 'easing defaults to a supported timing function');
+  assert.equal(await trigger.inputValue(), 'on-load', 'the default keeps the existing load behavior');
   assert.equal(await entry.isVisible(), true, 'the control remains reachable in the Inspector');
 
   await entry.selectOption('sanci-entry-rise');
+  await trigger.selectOption('in-view');
   await duration.selectOption('420ms');
   await easing.selectOption('cubic-bezier(0.22,1,0.36,1)');
   assert.deepEqual(await heading.evaluate(el => ({
     name: getComputedStyle(el).animationName,
     duration: getComputedStyle(el).animationDuration,
     easing: getComputedStyle(el).animationTimingFunction,
-  })), { name: 'sanci-entry-rise', duration: '0.42s', easing: 'cubic-bezier(0.22, 1, 0.36, 1)' });
+    trigger: el.dataset.motionTrigger,
+    timeline: getComputedStyle(el).animationTimeline,
+    range: getComputedStyle(el).animationRange,
+  })), {
+    name: 'sanci-entry-rise', duration: '0.42s', easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+    trigger: 'in-view', timeline: 'view()', range: 'entry'
+  }, 'the Canvas applies the same scroll-triggered timing that the public renderer will use');
 
   await page.emulateMedia({ reducedMotion: 'reduce' });
   assert.deepEqual(await heading.evaluate(el => ({
@@ -89,10 +98,11 @@ test('EDT-040 motion controls are visible, typed, allowlisted and reduced-motion
   await reloadedHeading.waitFor({ state: 'attached' });
   await reloadedHeading.evaluate(el => el.click());
   await page.waitForFunction(() => document.querySelector('[data-property-id="motion.entry"] select'));
-  assert.deepEqual(await page.evaluate(() => Object.fromEntries(['motion.entry', 'motion.duration', 'motion.easing'].map(id => [id, document.querySelector(`[data-property-id="${id}"] select`)?.value]))), {
+  assert.deepEqual(await page.evaluate(() => Object.fromEntries(['motion.entry', 'motion.duration', 'motion.easing', 'motion.trigger'].map(id => [id, document.querySelector(`[data-property-id="${id}"] select`)?.value]))), {
     'motion.entry': 'sanci-entry-rise',
     'motion.duration': '420ms',
     'motion.easing': 'cubic-bezier(0.22,1,0.36,1)',
+    'motion.trigger': 'in-view',
   }, 'Save/reload preserves the authored motion choices in the Inspector');
   await page.emulateMedia({ reducedMotion: 'reduce' });
   assert.deepEqual(await reloadedHeading.evaluate(el => ({
@@ -155,4 +165,64 @@ test('EDT-040 public renderer ignores malformed persisted motion without hiding 
   assert.equal(output.animationName, 'none', 'an unsupported saved animation does not execute');
   assert.notEqual(output.display, 'none', 'an unsupported saved animation cannot hide the element');
   assert.deepEqual(errors, [], 'malformed persisted motion does not throw during public rendering');
+});
+
+test('EDT-040 published in-view motion follows the document scroll timeline', async t => {
+  const state = createEditorState(createDocument());
+  const pageId = state.document.activePageId;
+  const pageModel = activePage(state);
+  execute(state, { type: 'element.add', payload: { type: 'heading', parentId: pageModel.rootId, name: 'In-view motion' } });
+  const headingId = state.selection.primaryId;
+  execute(state, { type: 'content.properties.set', payload: { nodeId: headingId, patch: { text: 'Readable content enters the viewport', level: '2' } } });
+  const published = structuredClone(activePage(state));
+  Object.assign(published.nodes[headingId].responsive.desktop, {
+    animationName: 'sanci-entry-rise',
+    animationDuration: '180ms',
+    animationTimingFunction: 'ease-out',
+    motionTrigger: 'in-view',
+    margin: '960px 0 0',
+  });
+
+  const root = resolve(import.meta.dirname, '../../public');
+  const server = createServer(async (req, res) => {
+    const url = new URL(req.url, 'http://localhost');
+    const json = data => { res.setHeader('content-type', 'application/json'); res.end(JSON.stringify(data)); };
+    if (url.pathname === '/api/public/pages') return json({ ok: true, data: { id: pageId, slug: 'motion-scroll', title: 'Motion scroll', content: published } });
+    if (url.pathname === '/api/public/presentation') return json({ ok: true, data: { tokens: {} } });
+    if (url.pathname.startsWith('/api/')) return json({ ok: true, data: {} });
+    const path = url.pathname.startsWith('/p/') ? '/visual-page.html' : url.pathname;
+    const file = resolve(root, `.${path}`);
+    if (!file.startsWith(root + '/')) return res.writeHead(403).end();
+    try {
+      res.setHeader('content-type', { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css' }[extname(file)] || 'application/octet-stream');
+      res.end(await readFile(file));
+    } catch { res.writeHead(404).end(); }
+  });
+  await new Promise(done => server.listen(0, '127.0.0.1', done));
+  const browser = await chromium.launch({ headless: true, executablePath: process.env.CHROMIUM_PATH || (process.env.CI ? undefined : '/usr/bin/chromium'), args: ['--no-sandbox'] });
+  t.after(async () => { await browser.close(); await new Promise(done => server.close(done)); });
+
+  const pageView = await browser.newPage({ viewport: { width: 1280, height: 640 } });
+  pageView.setDefaultTimeout(10000);
+  const errors = [];
+  pageView.on('pageerror', error => errors.push(error.message));
+  await pageView.goto(`http://127.0.0.1:${server.address().port}/p/motion-scroll`);
+  const heading = pageView.locator(`.creator-node[data-node-id="${headingId}"]`);
+  await heading.waitFor({ state: 'attached' });
+  assert.equal(await pageView.evaluate(() => CSS.supports('animation-timeline', 'view()') && CSS.supports('animation-range', 'entry 0% entry 100%')), true,
+    'the browser used for this acceptance check supports the progressive scroll timeline');
+  assert.equal(await heading.getAttribute('data-motion-trigger'), 'in-view');
+  assert.deepEqual(await heading.evaluate(el => ({
+    timeline: getComputedStyle(el).animationTimeline,
+    range: getComputedStyle(el).animationRange,
+    text: el.textContent,
+    belowFold: el.getBoundingClientRect().top > innerHeight,
+  })), { timeline: 'view()', range: 'entry', text: 'Readable content enters the viewport', belowFold: true },
+  'the published Page Model keeps the authored content below the fold and binds its finite entrance to view progress');
+  await pageView.evaluate(() => window.scrollTo(0, 1200));
+  await pageView.waitForFunction(id => {
+    const node = document.querySelector(`[data-node-id="${CSS.escape(id)}"]`);
+    return node && node.getBoundingClientRect().top < innerHeight && getComputedStyle(node).opacity === '1';
+  }, headingId);
+  assert.deepEqual(errors, [], 'scroll-triggered public motion produces no runtime error');
 });

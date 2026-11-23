@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import {NODE_TYPES} from '../core/schema.js';
 import {getElementCapability,getElementInspectorContract} from '../core/capability-matrix.js';
-import {getProperty,listProperties,registerProperty} from '../core/property-registry.js?v=20261117-edt043-motion-guidance';
+import {getProperty,listProperties,registerProperty} from '../core/property-registry.js?v=20261123-edt040-in-view-motion-v1';
 import {getInspectorValueContract,normalizeInspectorValue} from '../core/property-values.js';
 import {STYLE_MAP} from '../core/canvas-engine.js';
 
@@ -98,10 +98,12 @@ test('every responsive registry field has an explicit Inspector control and Canv
   // Offsets are adapted to CSS left/top and static nodes become relative.
   x:'canvas-engine offset adapter',y:'canvas-engine offset adapter',
   // Background media is resolved to a safe CSS image by background-asset.js.
-  backgroundAssetId:'background-image resolver'
+  backgroundAssetId:'background-image resolver',
+  // Motion trigger is validated metadata which selects the progressive CSS scroll timeline.
+  motionTrigger:'allowlisted motion metadata → editor-motion.css'
  };
  const properties=listProperties().filter(property=>property.responsive);
- assert.equal(properties.length,68);
+ assert.equal(properties.length,69);
  for(const property of properties){
   assert.ok(controlTypes.has(property.type),`${property.id} has a renderer control`);
   assert.ok(property.command,`${property.id} dispatches through an Editor command`);
@@ -110,7 +112,7 @@ test('every responsive registry field has an explicit Inspector control and Canv
   if(property.type==='select')assert.ok(property.options?.length,`${property.id} declares selectable values`);
   if(property.type==='dimension')assert.ok(property.units?.length,`${property.id} declares supported units`);
  }
- assert.equal(Object.keys(explicitRoutes).length,3,'all non-standard adapters are listed explicitly');
+ assert.equal(Object.keys(explicitRoutes).length,4,'all non-standard adapters are listed explicitly');
 });
 test('type restrictions and new property registration flow through the single registry',()=>{
  assert.ok(getElementInspectorContract('text').fields.some(p=>p.id==='content.text'));

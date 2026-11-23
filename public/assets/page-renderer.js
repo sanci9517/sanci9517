@@ -1,6 +1,6 @@
 /* Sanci9517 canonical public Page Model renderer — Editor v2 compatible. */
-import { resolveNodeStyle, STYLE_MAP, needsRelativeOffsetPosition, legacyBackgroundColor, safeCssText } from "../editor-v2/core/canvas-engine.js?v=20261117-edt040-motion-style-route";
-import { isAllowlistedMotionStyle } from "../editor-v2/core/motion-style.js?v=20261117-edt040-motion-allowlist";
+import { resolveNodeStyle, STYLE_MAP, needsRelativeOffsetPosition, legacyBackgroundColor, safeCssText } from "../editor-v2/core/canvas-engine.js?v=20261123-edt040-in-view-motion-v1";
+import { isAllowlistedMotionStyle, motionTriggerForStyle } from "../editor-v2/core/motion-style.js?v=20261123-edt040-in-view-motion-v1";
 import { RICH_TEXT_FONT_FAMILIES } from "../editor-v2/core/schema.js?v=20261101-richtext-link-target";
 import { resolveRichTextLinkTarget } from "../editor-v2/core/richtext-links.js?v=20261101-richtext-link-target";
 import { LAYOUT_TYPES, isManagedLayout } from "../editor-v2/core/layout-presets.js";
@@ -164,6 +164,8 @@ if(n.type==='card'&&n.metadata?.cardContentVersion===1){
   seen.add(id);
   managed=managed||isManagedLayout(node)||isAuthoredContent(node);
   let html=renderNodeHtml(page,id,managed,seen);if(!html)return html;
+  const motionTrigger=motionTriggerForStyle(resolveNodeStyle(node,currentDevice));
+  if(motionTrigger)html=html.replace(/^<([a-z0-9]+)(?=[ >])/,`<$1 data-motion-trigger="${motionTrigger}"`);
   html=html.replace(/^<([a-z0-9]+)(?=[ >])/,`<$1 data-node-id="${esc(id)}"`);
   if(node.metadata?.stateVersion===1)html=html.replace('class="','class="creator-state-enabled ');
   const opening=html.match(/^<([a-z0-9]+)\b([^>]*)>/i),tag=opening?.[1]?.toLowerCase(),attrs=opening?.[2]||'';

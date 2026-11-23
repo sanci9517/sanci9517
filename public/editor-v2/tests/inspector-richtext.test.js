@@ -6,7 +6,7 @@ import {responsiveGroupResetActions} from '../ui/responsive-group-reset.js';
 import { createEditorState, activePage } from '../core/state.js';
 import { execute, executeCoalesced, executeBatch } from '../core/commands.js';
 import { resolveNodeStyle } from '../core/canvas-engine.js';
-import { getProperty, listProperties } from '../core/property-registry.js?v=20261117-edt043-motion-guidance';
+import { getProperty, listProperties } from '../core/property-registry.js?v=20261123-edt040-in-view-motion-v1';
 import { STYLE_MAP } from '../core/canvas-engine.js';
 import { normalizeInspectorValue, getInspectorValueContract, INSPECTOR_FONTS, INSPECTOR_SHADOWS } from '../core/property-values.js';
 import { updateRichTextInlineLink, updateRichTextInlineMark, readRichTextLinkTarget, readRichTextLinkHref, validatedLinkHref } from '../core/richtext-links.js';

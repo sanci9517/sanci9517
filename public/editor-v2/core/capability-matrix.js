@@ -1,6 +1,6 @@
 import {CONTENT_TYPES,STRUCTURAL_TYPES} from './authored-content.js?v=20261120-d06-authored-playable-asset-picker-v1';
 import { NODE_TYPES } from './schema.js';
-import { listProperties } from './property-registry.js?v=20261117-edt043-motion-guidance';
+import { listProperties } from './property-registry.js?v=20261123-edt040-in-view-motion-v1';
 import {getInspectorValueContract} from './property-values.js';
 
 // A palette entry is only complete when Inspector, canvas and public behavior

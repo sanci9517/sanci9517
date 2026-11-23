@@ -11,7 +11,7 @@ import { assertValidEditorDocument,findReachableNodeIds,validateEditorDocument,v
 import { createEditorState, activePage } from '../core/state.js';
 import { beginTransaction, commitTransaction, execute, executeBatch, rollbackTransaction } from '../core/commands.js';
 import { createNodeClipboard, isNodeClipboardForPage } from '../core/node-clipboard.js?v=20261118-edt038-node-clipboard-v1';
-import { getProperty, listProperties, listPropertyGroups, registerProperty } from '../core/property-registry.js?v=20261117-edt043-motion-guidance';
+import { getProperty, listProperties, listPropertyGroups, registerProperty } from '../core/property-registry.js?v=20261123-edt040-in-view-motion-v1';
 import { hasResponsiveOverride, resolveResponsiveValue, setResponsiveValue } from '../core/responsive.js';
 import {collectVisibleDescendants} from '../core/visibility.js';
 import {normalizeVisibility,isVisibleOnDevice,getNodeVisibilityState} from '../core/visibility.js';

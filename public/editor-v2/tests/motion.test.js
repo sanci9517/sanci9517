@@ -1,10 +1,10 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {getElementInspectorContract} from '../core/capability-matrix.js';
-import {getProperty} from '../core/property-registry.js?v=20261117-edt043-motion-guidance';
+import {getProperty} from '../core/property-registry.js?v=20261123-edt040-in-view-motion-v1';
 import {normalizeInspectorValue} from '../core/property-values.js';
 import {STYLE_MAP} from '../core/canvas-engine.js';
-import {isAllowlistedMotionStyle} from '../core/motion-style.js';
+import {isAllowlistedMotionStyle,MOTION_TRIGGER_OPTIONS,motionTriggerForStyle} from '../core/motion-style.js';
 import {readFileSync} from 'node:fs';
 
 test('EDT-040 motion Inspector is allowlisted, responsive, and mapped to real CSS properties',()=>{
@@ -31,6 +31,22 @@ test('EDT-040 motion Inspector is allowlisted, responsive, and mapped to real CS
       if(!options.includes(unsafe))assert.throws(()=>normalizeInspectorValue(property,unsafe),undefined,`${id} rejects ${unsafe}`);
     }
   }
+  const trigger=getProperty('motion.trigger');
+  assert.ok(trigger);
+  assert.equal(trigger.key,'motionTrigger');
+  assert.equal(trigger.group,'animation');
+  assert.equal(trigger.responsive,true);
+  assert.equal(trigger.command,'responsive.set');
+  assert.equal(trigger.defaultValue,'on-load');
+  assert.deepEqual(trigger.options,MOTION_TRIGGER_OPTIONS);
+  assert.deepEqual(trigger.optionLabels,{'on-load':'Betöltéskor','in-view':'Láthatóvá váláskor'});
+  assert.ok(getElementInspectorContract('heading').fields.some(field=>field.id==='motion.trigger'));
+  assert.equal(normalizeInspectorValue(trigger,'in-view'),'in-view');
+  assert.throws(()=>normalizeInspectorValue(trigger,'in-view;display:none'));
+  assert.equal(motionTriggerForStyle({motionTrigger:'on-load',animationName:'sanci-entry-rise'}),'');
+  assert.equal(motionTriggerForStyle({motionTrigger:'in-view',animationName:'none'}),'');
+  assert.equal(motionTriggerForStyle({motionTrigger:'in-view',animationName:'sanci-entry-rise'}),'in-view');
+  assert.equal(motionTriggerForStyle({motionTrigger:'in-view',animationName:'sanci-entry-rise;display:none'}),'');
 });
 
 test('EDT-040 public and Editor motion CSS is finite and reduced-motion safe',()=>{
@@ -40,6 +56,8 @@ test('EDT-040 public and Editor motion CSS is finite and reduced-motion safe',()
   assert.match(css,/animation-fill-mode:\s*both/);
   assert.match(css,/animation-duration:\s*280ms/);
   assert.match(css,/animation-timing-function:\s*ease-out/);
+  assert.match(css,/@supports\s*\(animation-timeline:\s*view\(\)\)\s*and\s*\(animation-range:\s*entry 0% entry 100%\)/);
+  assert.match(css,/data-motion-trigger="in-view"[^\{]*\{\s*animation-timeline:\s*view\(\);\s*animation-range:\s*entry 0% entry 100%;/);
   assert.match(css,/@media\s*\(prefers-reduced-motion:\s*reduce\)/);
   assert.match(css,/animation:\s*none\s*!important/);
   assert.match(css,/opacity:\s*1\s*!important/);

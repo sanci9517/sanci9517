@@ -3,7 +3,8 @@ import {getNode,getChildren,NODE_TYPES,canContain,normalizeRichText} from './cor
 import {instantiateEditorTemplate,listEditorTemplates} from './core/editor-templates.js?v=20261119-edt041-stream-schedule-v1';
 import {createEditorState,activePage,selectedNodes,setSelection,markSaved} from './core/state.js?v=20261118-edt039-invalid-recovery-v1';
 import {execute,executeCoalesced,executeBatch} from './core/commands.js?v=20261118-edt039-page-action-delete-target-cleanup-v1';
-import {applyNodeStyle,getNodeGeometry,resolveNodeStyle} from './core/canvas-engine.js?v=20261117-edt040-motion-style-route';
+import {applyNodeStyle,getNodeGeometry,resolveNodeStyle} from './core/canvas-engine.js?v=20261123-edt040-in-view-motion-v1';
+import {motionTriggerForStyle} from './core/motion-style.js?v=20261123-edt040-in-view-motion-v1';
 import {computeCanvasMinHeight} from './core/canvas-extent.js';
 import {measureCanvasWorkspace} from './core/canvas-workspace.js';
 import {hasResponsiveOverride,resolveResponsiveValue} from './core/responsive.js?v=20261122-edt024-responsive-prototype-safety-v1';
@@ -12,7 +13,7 @@ import {diagnostics} from './diagnostics.js?v=20261119-edt042-safe-export-v2';
 import {plainTextToRichText,renderRichTextEditor,richTextEditorToDocument,restoreSelectionOffsets,getSelectionOffsets,transformRichTextBlockTypes} from './core/richtext-engine.js?v=20261117-d03-invalid-media-id-guidance-v1';
 import {renderSchedulePreview} from './core/schedule-preview.js';
 import {normalizeScheduleConfig,SCHEDULE_MODES,SCHEDULE_ORDERS,SCHEDULE_STATUSES,SCHEDULE_EMPTY_TEXT_MAX,SCHEDULE_LIMIT_MAX} from './core/schedule-schema.js';
-import {listPropertyGroups,listProperties,getProperty} from './core/property-registry.js?v=20261117-edt043-motion-guidance';
+import {listPropertyGroups,listProperties,getProperty} from './core/property-registry.js?v=20261123-edt040-in-view-motion-v1';
 import {renderPropertyInput} from './ui/property-controls.js?v=20261101-richtext-multiblock-links';
 import {getInspectorValueContract,normalizeInspectorValue} from './core/property-values.js';
 import {describeResponsiveOrigin} from './ui/responsive-origin.js';
@@ -20,7 +21,7 @@ import {responsiveGroupResetActions} from './ui/responsive-group-reset.js';
 import {normalizePaletteFavoriteTypes,readPaletteFavoriteTypes,togglePaletteFavoriteType,writePaletteFavoriteTypes} from './ui/palette-preferences.js?v=20261121-edt044-account-preferences-v1';
 import {getRichTextBlockSelection,getRichTextFormattingSelection,getRichTextBlockTransformSelection,getRichTextActiveBlockIndex,restoreRichTextBlockSelection,restoreRichTextFormattingSelection,updateRichTextInlineLink,updateRichTextInlineMark,updateRichTextInlineStyle,updateRichTextBlockAlignment} from './core/richtext-links.js?v=20261117-d03-invalid-media-id-guidance-v1';
 import {initialPageId,rememberPageId,requestedPageId} from './core/page-url.js';
-import {getElementCapability} from './core/capability-matrix.js?v=20261117-edt043-motion-guidance';
+import {getElementCapability} from './core/capability-matrix.js?v=20261123-edt040-in-view-motion-v1';
 import {renderGeometryPresets} from './ui/geometry-presets.js';
 import {importRichTextClipboard} from './core/richtext-import.js?v=20261117-d03-invalid-media-id-guidance-v1';
 import {pasteRichTextDocument} from './core/richtext-paste.js?v=20261117-d03-invalid-media-id-guidance-v1';
@@ -516,7 +517,7 @@ function openRichTextFormatting(id,{focusLink=false}={}){
     if(focusLink)editor.closest('.richtext-editor')?.querySelector('.richtext-link-controls input')?.focus({preventScroll:true});
   });
 }
-function renderNode(currentPage,id,managed=false){const node=getNode(currentPage,id);if(!node)return null;managed=managed||isManagedLayout(node)||isAuthoredContent(node);const el=document.createElement('div');el.className=`node ${state.selection.ids.includes(id)?'selected':''}`;el.classList.toggle('managed-layout',managed);el.dataset.nodeId=id;el.dataset.device=state.viewport.device;const visibility=getNodeVisibilityState(currentPage,id,state.viewport.device);if(node.type!=='root'&&!visibility.effectiveVisible){el.classList.add(visibility.ownVisible?'visibility-hidden-parent':'visibility-hidden-own');el.dataset.visibility='hidden';}if(isAuthoredContent(node)){el.classList.add('creator-node');el.dataset.contentType=node.type;if(['accordion','dropdown'].includes(node.type)){const props=node.props||{};el.dataset.detailsBehavior=`${props.singleOpen===true?'exclusive':'multiple'}:${props.openFirst===true?'open':'closed'}`}}if(node.metadata?.stateVersion===1){el.classList.add('creator-state-enabled');if(state.selection.primaryId===id&&statePreview!=='none')el.dataset.editorState=statePreview;el.tabIndex=0}for(const [key,value] of Object.entries(contentAttributes(node)))if(!['href','target','rel','type'].includes(key))el.setAttribute(key,value);applyNodeStyle(el,node,state.viewport.device);
+function renderNode(currentPage,id,managed=false){const node=getNode(currentPage,id);if(!node)return null;managed=managed||isManagedLayout(node)||isAuthoredContent(node);const el=document.createElement('div');el.className=`node ${state.selection.ids.includes(id)?'selected':''}`;el.classList.toggle('managed-layout',managed);el.dataset.nodeId=id;el.dataset.device=state.viewport.device;const visibility=getNodeVisibilityState(currentPage,id,state.viewport.device);if(node.type!=='root'&&!visibility.effectiveVisible){el.classList.add(visibility.ownVisible?'visibility-hidden-parent':'visibility-hidden-own');el.dataset.visibility='hidden';}if(isAuthoredContent(node)){el.classList.add('creator-node');el.dataset.contentType=node.type;if(['accordion','dropdown'].includes(node.type)){const props=node.props||{};el.dataset.detailsBehavior=`${props.singleOpen===true?'exclusive':'multiple'}:${props.openFirst===true?'open':'closed'}`}}if(node.metadata?.stateVersion===1){el.classList.add('creator-state-enabled');if(state.selection.primaryId===id&&statePreview!=='none')el.dataset.editorState=statePreview;el.tabIndex=0}for(const [key,value] of Object.entries(contentAttributes(node)))if(!['href','target','rel','type'].includes(key))el.setAttribute(key,value);const resolvedStyle=applyNodeStyle(el,node,state.viewport.device);const motionTrigger=motionTriggerForStyle(resolvedStyle);if(motionTrigger)el.dataset.motionTrigger=motionTrigger;
  const validHex=value=>typeof value==='string'&&/^#(?:[a-f0-9]{3}|[a-f0-9]{6})$/i.test(value)?value:'';
  for(const [value,klass,variable] of [
   [node.states?.hover?.backgroundColor,'visual-hover-bg','--sanci-hover-bg'],

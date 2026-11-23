@@ -1,4 +1,4 @@
-import { listProperties } from './property-registry.js?v=20261117-edt043-motion-guidance';
+import { listProperties } from './property-registry.js?v=20261123-edt040-in-view-motion-v1';
 import { normalizeInspectorValue } from './property-values.js';
 
 const SCOPES = new Set(['style', 'desktop', 'tablet', 'mobile']);

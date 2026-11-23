@@ -1,4 +1,4 @@
-import { getProperty } from '../core/property-registry.js?v=20261117-edt043-motion-guidance';
+import { getProperty } from '../core/property-registry.js?v=20261123-edt040-in-view-motion-v1';
 import { normalizeInspectorValue } from '../core/property-values.js';
 
 // Geometry options come from the same registry as each Inspector field.
