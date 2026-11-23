@@ -1,4 +1,4 @@
-import {CONTENT_FIELDS,IMAGE_MIMES,normalizeContentField,contentProperties,imageFocalPosition,getPublicationContentGuidance} from '../core/authored-content.js?v=20261120-d06-authored-playable-asset-picker-v1';
+import {CONTENT_FIELDS,IMAGE_MIMES,normalizeContentField,contentProperties,imageFocalPosition,getPublicationContentGuidance} from '../core/authored-content.js?v=20261124-d06-safe-content-dom-id-v1';
 import {parseTableTsv,serializeTableTsv} from '../core/table-tsv.js?v=20261115-d03-table-tsv-v2';
 import {getProperty} from '../core/property-registry.js?v=20261123-edt040-in-view-motion-v1';
 export {IMAGE_MIMES};

@@ -102,7 +102,7 @@ export function validateElementContent(type,value){
  return null;
 }
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const idSafe=v=>{
+export const safeContentDomId=v=>{
  const id=typeof v==='string'?v:'node';
  // Sanitizing/truncating arbitrary Page Model IDs is not injective: e.g. "a/b"
  // and "a?b" both become "a-b". Keep safe IDs readable and encode unsafe IDs
@@ -130,7 +130,7 @@ export function renderElementContent(type,value,nodeId,{ariaLabel:rawAriaLabel}=
  if(type==='carousel')return `<section class="visual-structured-carousel" data-structured-carousel role="region" aria-roledescription="carousel" aria-label="${esc(regionLabel||'Képkörhinta')}"><div class="visual-carousel-track">${m.items.map((item,i)=>{const src=safePublishedMediaUrl(item.src);return `<article class="visual-carousel-slide" role="group" aria-roledescription="dia" aria-label="${i+1}. / ${m.items.length}. dia"${i===0?'':' hidden'}>${src?`<img src="${esc(src)}" alt="${esc(item.alt)}" loading="lazy">`:''}<h3>${esc(item.label)}</h3><p>${esc(item.content)}</p></article>`}).join('')}</div><div class="visual-carousel-controls"><button type="button" class="visual-carousel-prev" aria-label="Előző dia"${m.items.length===1?' disabled':''}>‹</button><span class="visual-carousel-count" aria-live="polite">1 / ${m.items.length}</span><button type="button" class="visual-carousel-next" aria-label="Következő dia"${m.items.length===1?' disabled':''}>›</button></div></section>`;
  if(type==='accordion')return `<div class="visual-structured-accordion">${m.items.map((item,i)=>`<details${i===0?' open':''}><summary>${esc(item.label)}</summary><div class="visual-structured-panel">${esc(item.content)}</div></details>`).join('')}</div>`;
  if(type==='tabs'){
-  const prefix='tab-'+idSafe(nodeId);
+  const prefix='tab-'+safeContentDomId(nodeId);
   return `<div class="visual-structured-tabs" data-structured-tabs><div role="tablist" aria-label="${esc(regionLabel||'Tartalomfülek')}">${m.items.map((item,i)=>`<button type="button" role="tab" id="${prefix}-t${i}" aria-controls="${prefix}-p${i}" aria-selected="${i===0}" tabindex="${i===0?0:-1}">${esc(item.label)}</button>`).join('')}</div>${m.items.map((item,i)=>`<div role="tabpanel" id="${prefix}-p${i}" aria-labelledby="${prefix}-t${i}" tabindex="0"${i===0?'':' hidden'} class="visual-structured-panel">${esc(item.content)}</div>`).join('')}</div>`;
  }
  return `<div class="visual-structured-gallery" data-structured-gallery role="region" aria-label="${esc(regionLabel||'Képgaléria')}">${m.items.map((item,i)=>{const url=safePublishedMediaUrl(item.src);return url?`<button type="button" class="visual-gallery-thumb" data-gallery-index="${i}" aria-label="Kép megnyitása: ${esc(item.alt)}"><img src="${esc(url)}" alt="${esc(item.alt)}" loading="lazy">${item.caption?`<span>${esc(item.caption)}</span>`:''}</button>`:`<div class="visual-gallery-empty">Kép URL megadása szükséges</div>`}).join('')}<dialog class="visual-gallery-dialog" aria-label="Galéria nagyított képe"><button type="button" class="visual-gallery-close" aria-label="Bezárás">×</button><button type="button" class="visual-gallery-prev" aria-label="Előző kép">‹</button><img alt=""><button type="button" class="visual-gallery-next" aria-label="Következő kép">›</button><p></p></dialog></div>`;

@@ -1,6 +1,6 @@
 import {createCompositionInputs} from './composition-inputs.js';
 import {normalizeAccessibility} from '../core/accessibility.js';
-import {contentAttributes} from '../core/authored-content.js?v=20261120-d06-authored-playable-asset-picker-v1';
+import {contentAttributes} from '../core/authored-content.js?v=20261124-d06-safe-content-dom-id-v1';
 
 export function renderAccessibilityFields(node,apply,{nodes=()=>({}),pending=()=>{}}={}){
  const root=document.createElement('div');root.className='accessibility-fields';

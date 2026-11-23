@@ -1,5 +1,5 @@
 import {ICON_CHOICES,iconById,isSupportedIcon} from '../core/icon-options.js';
-import {createElementContent,normalizeElementContent,validateElementContent,renderElementContent,safeMediaUrl,safePublishedMediaUrl} from '../core/element-content.js';
+import {createElementContent,normalizeElementContent,validateElementContent,renderElementContent,safeMediaUrl,safePublishedMediaUrl,safeContentDomId} from '../core/element-content.js';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -1534,6 +1534,14 @@ test('structured tabs keep accessible control IDs unique when node IDs normalize
    assert.equal(panels[index][2],tabs[index][1],'panel labels its matching tab');
   }
  }
+});
+
+test('shared content DOM ids keep ordinary and normalization-colliding identifiers distinct and bounded',()=>{
+ assert.equal(safeContentDomId('node_1'),'safe-node_1');
+ const encoded=[safeContentDomId('a/b'),safeContentDomId('a?b'),safeContentDomId(`node/${'x'.repeat(5000)}a`)];
+ assert.equal(new Set(encoded).size,encoded.length);
+ assert.ok(encoded.every(id=>id.length<=80));
+ assert.ok(encoded.every(id=>/^[a-zA-Z0-9_-]+$/.test(id)));
 });
 test('structured models sanitize content and strictly validate dimensions',()=>{
  assert.equal(safeMediaUrl('javascript:alert(1)'),'');

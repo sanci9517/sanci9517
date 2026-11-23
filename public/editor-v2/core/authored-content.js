@@ -1,5 +1,6 @@
 import { validatedLinkHref } from './richtext-links.js?v=20261117-d03-invalid-media-id-guidance-v1';
 import { PAGE_ACTION_TIMER_DELAYS_MS, pageInteractionAttributes, safePageInteraction } from './page-interactions.js?v=20261121-edt039-single-auto-action-v1';
+import { safeContentDomId } from './element-content.js?v=20261124-d06-safe-content-dom-id-v1';
 
 export const CONTENT_VERSION=1;
 // Shared by the editor picker and the server-side media upload/list contract.
@@ -246,7 +247,7 @@ export function contentAttributes(node,{pageNodes=null}={}){
   return attributes;
 }
 export function authoredNodeHtml(node,{childrenHtml='',device='desktop',editor=false}={}){
-  const p=contentProperties(node),text=esc(p.text??p.content??node.name??''),id='creator-'+(typeof node.id==='string'?node.id:'').replace(/[^\w-]/g,'-');
+  const p=contentProperties(node),text=esc(p.text??p.content??node.name??''),id='creator-'+safeContentDomId(node.id);
   const imageSource=item=>typeof item.assetId==='string'&&MEDIA_ASSET_ID.test(item.assetId)?`/${editor?'api/admin/media?id=':'media/'}${encodeURIComponent(item.assetId)}`:editor?safeSrc(item.src):safePublishedMediaUrl(item.src);
   const image=item=>{const src=imageSource(item),{focalX:x,focalY:y}=imageFocalPosition(item);return src?`<img src="${esc(src)}" alt="${esc(imageAlt(item))}" loading="${item.loading==='eager'?'eager':'lazy'}" decoding="async" style="object-fit:${['cover','contain','fill','none','scale-down'].includes(item.fit)?item.fit:'cover'};object-position:${x}% ${y}%">`:`<span class="creator-media-empty">${editor?'Válassz képet a Médiatárból vagy adj meg képcímet.':'A kép nem érhető el.'}</span>`};
   const items=Array.isArray(p.items)?p.items.slice(0,40).map(item=>item&&typeof item==='object'&&!Array.isArray(item)?item:{}):[];

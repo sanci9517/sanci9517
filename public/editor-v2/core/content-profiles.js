@@ -1,5 +1,5 @@
-import {isAuthoredContent,CONTENT_FIELDS,CONTENT_TYPES,STRUCTURAL_TYPES} from './authored-content.js?v=20261120-d06-authored-playable-asset-picker-v1';
-import {isStructuredType} from './element-content.js?v=20261117-d01-private-media-double-decode-v1';
+import {isAuthoredContent,CONTENT_FIELDS,CONTENT_TYPES,STRUCTURAL_TYPES} from './authored-content.js?v=20261124-d06-safe-content-dom-id-v1';
+import {isStructuredType} from './element-content.js?v=20261124-d06-safe-content-dom-id-v1';
 
 // These describe existing version gates, not a new content schema or validator.
 // More than one gate may apply: publication must not skip a legacy gate merely

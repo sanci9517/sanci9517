@@ -11,6 +11,29 @@ import {createEditorState,activePage} from '../../public/editor-v2/core/state.js
 import {execute} from '../../public/editor-v2/core/commands.js';
 import {ICON_CHOICES,iconById} from '../../public/editor-v2/core/icon-options.js';
 import {renderElementContent} from '../../public/editor-v2/core/element-content.js';
+import {authoredNodeHtml} from '../../public/editor-v2/core/authored-content.js';
+
+test('single-open authored accordion DOM groups stay isolated for sanitization-colliding node IDs',async t=>{
+ const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||(existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined),args:['--no-sandbox']});
+ t.after(()=>browser.close());
+ const page=await browser.newPage();
+ const html=id=>authoredNodeHtml({id,type:'accordion',metadata:{contentVersion:1},props:{singleOpen:true,openFirst:true,items:[
+  {title:'Első',text:'Első tartalom'},{title:'Második',text:'Második tartalom'}
+ ]}});
+ await page.setContent(`<main>${html('a/b')}${html('a?b')}</main>`);
+ const groups=page.locator('.creator-accordion'),first=groups.nth(0),second=groups.nth(1);
+ const names=await page.locator('.creator-accordion details').evaluateAll(nodes=>nodes.map(node=>node.getAttribute('name')));
+ assert.equal(names.length,4);assert.ok(names.every(Boolean));
+ assert.equal(names[0],names[1],'details in one authored widget share a native exclusive group');
+ assert.equal(names[2],names[3],'details in the other widget share a native exclusive group');
+ assert.notEqual(names[0],names[2],'sanitization-colliding node IDs must map to different native groups');
+ await first.locator('summary').nth(1).click();
+ assert.equal(await first.locator('details[open]').count(),1,'the first widget enforces its own single-open setting');
+ assert.ok(await second.locator('details').first().evaluate(node=>node.open),'opening another widget does not close this widget');
+ await second.locator('summary').nth(1).click();
+ assert.equal(await second.locator('details[open]').count(),1,'the second widget also enforces its own single-open setting');
+ assert.ok(await first.locator('details').nth(1).evaluate(node=>node.open),'opening the second widget does not close the first widget');
+});
 
 test('structured tab ARIA references stay unique across sanitization-colliding node IDs',async t=>{
  const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||(existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined),args:['--no-sandbox']});
@@ -520,7 +543,7 @@ test('structured Inspector editing survives Save, Publish and public interaction
  const singleGalleryMarkup=renderElementContent('gallery',{version:1,items:[{src:'/media/only.jpg',alt:'Egyetlen kép',caption:'Egyetlen képaláírás'}]},'single-gallery-public-probe');
  await viewer.evaluate(markup=>{const wrapper=document.createElement('div');wrapper.id='single-gallery-public-probe';wrapper.innerHTML=markup;document.body.append(wrapper)},singleGalleryMarkup);
  await viewer.evaluate(async()=>{
-  const {activateStructuredContent}=await import('/editor-v2/core/element-content.js?v=20261123-d06-single-slide-gallery-v1');
+  const {activateStructuredContent}=await import('/editor-v2/core/element-content.js?v=20261124-d06-safe-content-dom-id-v1');
   activateStructuredContent(document.querySelector('#single-gallery-public-probe'));
  });
  const singleGallery=viewer.locator('#single-gallery-public-probe'),singleThumb=singleGallery.locator('.visual-gallery-thumb');
@@ -549,7 +572,7 @@ test('structured Inspector editing survives Save, Publish and public interaction
  const singleSlideMarkup=renderElementContent('carousel',{version:1,items:[{label:'Egy dia',content:'Egyetlen tartalom',src:'',alt:''}]},'one-slide-public-probe');
  await viewer.evaluate(markup=>{const wrapper=document.createElement('div');wrapper.id='one-slide-public-probe';wrapper.innerHTML=markup;document.body.append(wrapper)},singleSlideMarkup);
  await viewer.evaluate(async()=>{
-  const {activateStructuredContent}=await import('/editor-v2/core/element-content.js?v=20261123-d06-single-slide-gallery-v1');
+  const {activateStructuredContent}=await import('/editor-v2/core/element-content.js?v=20261124-d06-safe-content-dom-id-v1');
   activateStructuredContent(document.querySelector('#one-slide-public-probe'));
  });
  const singleSlide=viewer.locator('#one-slide-public-probe [data-structured-carousel]');

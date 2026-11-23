@@ -1,0 +1,129 @@
+{
+  "date": "2026-11-23",
+  "observed_at": "2026-11-23T22:31:43Z",
+  "plan_point": "77.44 / WEB-011 / 77.44.7.D / D-06 authored interactive content DOM identity",
+  "scope": "One collision-safe DOM identity fix for authored accordion groups; D-06 and full Editor remain open.",
+  "plan": {
+    "canonical_path": "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+    "blob_at_base": "f1be822e4ee7b44dfc8afff4ad7f02f59b9b178c",
+    "bytes_at_base": 1853597,
+    "sha256_at_base": "86dc3e0a0388eda563ded4b170e305ecf381d5bd4558e6cac39159f995a2bfec",
+    "cursor": "77.44.7.D",
+    "status": "OPEN / NOT_CERTIFIED",
+    "feature_count": 396,
+    "source_status_counts": {
+      "PARTIAL_SOURCE": 148,
+      "UNVERIFIED": 248
+    }
+  },
+  "finding": {
+    "old_behavior": "authoredNodeHtml replaced every non-word character with a hyphen. Distinct persisted node IDs a/b and a?b both became creator-a-b, colliding in HTML details[name] single-open groups and potentially causing one accordion to close another.",
+    "fix": "Reuse the existing bounded collision-resistant safeContentDomId helper from the structured-content renderer for authored-content IDs; keep safe readable IDs and hash unsafe IDs. This is a targeted shared-helper change, no new dependency.",
+    "save_publish": "Unchanged; Save and Publish remain separate."
+  },
+  "change": {
+    "files": [
+      "public/assets/page-renderer.js",
+      "public/editor-v2/app.js",
+      "public/editor-v2/core/authored-content.js",
+      "public/editor-v2/core/canvas-engine.js",
+      "public/editor-v2/core/capability-matrix.js",
+      "public/editor-v2/core/commands.js",
+      "public/editor-v2/core/content-profiles.js",
+      "public/editor-v2/core/element-content.js",
+      "public/editor-v2/core/legacy-media-source.js",
+      "public/editor-v2/core/validation.js",
+      "public/editor-v2/index.html",
+      "public/editor-v2/tests/core.test.js",
+      "public/editor-v2/ui/accessibility-fields.js",
+      "public/editor-v2/ui/element-content-controls.js",
+      "public/editor-v2/ui/legacy-media-inspector.js",
+      "public/editor-v2/ui/structured-inspector.js",
+      "public/visual-page.html"
+    ],
+    "expected_public_asset_sha256": {
+      "public/assets/page-renderer.js": "df570262d99bc31455195af42f3c431143fc54a670abe42ae8b08085d976c656",
+      "public/editor-v2/app.js": "8d6239c7e169cd3213ba0ed9e154a8bd9c58c27323c409e095ef76101b15d3b4",
+      "public/editor-v2/core/authored-content.js": "a54329a0ea1318de5db03bedbc63e449f1b09b4dbdad0f1f3a2d6c38bd46648e",
+      "public/editor-v2/core/canvas-engine.js": "77c3d079299bd7ef85dcbf42665fbb7fe1ad0ddbd0c9fdcd2c13bd5d481eadb2",
+      "public/editor-v2/core/capability-matrix.js": "7e59f9560513e2936301026bf93c6322e3e41b897298bf6690190add175e4c04",
+      "public/editor-v2/core/commands.js": "39f6e24bb1faf7d49d6a87dc4ab9d8f2c8c53377b7d9bca3373d1fd849fee415",
+      "public/editor-v2/core/content-profiles.js": "4fc8d0df5ac19039b54fafefd6ac83eaf2d7e59e118d8cfae5747f6620ea6b3b",
+      "public/editor-v2/core/element-content.js": "2829df92bb08127641a8ffe5e626cf7bfa383373168de26673d9f866d40104c4",
+      "public/editor-v2/core/legacy-media-source.js": "8cd58a7bb4667729a2d9bad3bff158202dc84a08ff2a4095cb2611629276afab",
+      "public/editor-v2/core/validation.js": "5020ae00b50e8916b1ffb5cddc845384ddaf945475704f5191e29610e033c505",
+      "public/editor-v2/index.html": "6224f1d2dff38f8534289d0de7e544499a64a5095031eaf59d3c965188549e8f",
+      "public/editor-v2/tests/core.test.js": "be69f02b52cebfc43c6be04a61fc604b2a46a8bb4697c27ec56cf4778d5e1899",
+      "public/editor-v2/ui/accessibility-fields.js": "7a81654f534a8183346ad64c6335afa878ba89db407aaf2362477bd429a27680",
+      "public/editor-v2/ui/element-content-controls.js": "f8fd22c5eb781fd0e42fc01addc68f31d05bc31254ed681136a9e1c7ead03f6b",
+      "public/editor-v2/ui/legacy-media-inspector.js": "4224f6ebf9fc4982844bbadfbf2d44bf9665dfdaaecd8d98bbf6952f329fa718",
+      "public/editor-v2/ui/structured-inspector.js": "62985690c6a15062bcd5fda8e75dd160baaca46ea7bcbffafcdf4f85f30a3ed1",
+      "public/visual-page.html": "428784ecc1811f1034d07f29844fb02cf08bf9e9b1d31469ac63623d46f6dc77"
+    }
+  },
+  "verification": {
+    "local": {
+      "editor_core": "PASS: npm run test:editor (24/24 test files; 4/4 runner checks; 10/10 preference tests)",
+      "typecheck": "PASS: npm run typecheck",
+      "chromium": "PASS: node --test tests/browser/editor-structured-content.test.js (3/3, including colliding authored IDs; real Chromium)",
+      "plan_contract": "PASS: python3 tests/plan-contract.test.py (16/16)",
+      "canonical_plan": "PASS: python3 scripts/check-canonical-plan.py (13 master files, 396 mappings; acceptance NOT_CERTIFIED)",
+      "traceability": "PASS: python3 scripts/build-feature-traceability.py --check (396/396)",
+      "active_point": "PASS bookkeeping: 77.44.7.D, acceptance NOT_CERTIFIED",
+      "d_content_contract": "PASS: node tests/editor-d-content-contract.test.js (7/7)",
+      "asset_cache_bust": "PASS: node tests/editor-public-asset-cache-bust.test.js (3/3)",
+      "migration_safety": "PASS: node scripts/web013-migration-safety-gate.mjs",
+      "diff_check": "PASS: git diff --check"
+    },
+    "wrangler_dry_run": {
+      "command": "XDG_CONFIG_HOME=/tmp/sanci-wrangler-config npx wrangler deploy --dry-run",
+      "wrangler_version": "4.130.0",
+      "exit_code": 0,
+      "assets_read": 200,
+      "total_upload_bytes": 431210,
+      "gzip_bytes": 109250,
+      "deployed": false
+    },
+    "production_d1_preflight": {
+      "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
+      "method": "Cloudflare D1 query API; two separate SELECT-only requests",
+      "queries": [
+        "SELECT name FROM d1_migrations ORDER BY name DESC LIMIT 1",
+        "SELECT name, type FROM sqlite_master WHERE name IN ('d1_migrations','media') ORDER BY name"
+      ],
+      "latest_marker": "0030_media_library_organization.sql",
+      "tables_present": [
+        "d1_migrations",
+        "media"
+      ],
+      "rows_written": 0,
+      "changes": 0,
+      "changed_db": false,
+      "mutation": "none"
+    },
+    "prior_exact_sha_editor_core": {
+      "run_id": 45273279705,
+      "status": "completed",
+      "conclusion": "success"
+    },
+    "cloudflare_free_build_limit": {
+      "has_reached_build_minutes_limit": false,
+      "refresh_on": "2026-11-30T23:59:59.999Z"
+    }
+  },
+  "release": {
+    "branch": "v2/foundation",
+    "base_sha": "0d77c3391041c70c2acc2e6b9639f78083371a16",
+    "push": "PENDING",
+    "exact_sha_ci": "PENDING",
+    "deployment": "PENDING",
+    "health": "PENDING",
+    "changed_asset_hashes": "PENDING"
+  },
+  "acceptance": {
+    "D06": "OPEN / NOT_CERTIFIED",
+    "D01_D07": "OPEN / NOT_CERTIFIED",
+    "full_editor": "OPEN / NOT_CERTIFIED",
+    "manual_physical": "DEFERRED"
+  }
+}

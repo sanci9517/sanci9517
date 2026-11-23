@@ -28,7 +28,7 @@ test('the Editor and public renderer release tokens bust the structured accessib
     'the deployed HTML must request the stylesheet version containing palette-favorites styles');
   assert.match(css,/\.element-favorite-toggle\s*\{/,
     'the stylesheet referenced by the versioned link must include the palette-favorites UI');
-  assert.match(html,/src="\/editor-v2\/app\.js\?v=20261123-edt040-in-view-motion-v1"/,
+  assert.match(html,/src="\/editor-v2\/app\.js\?v=20261124-d06-safe-content-dom-id-v1"/,
     'the deployed entry page must request the Inspector update for the in-view motion trigger');
   assert.match(html,/src="\/editor-v2\/ui\/shell\.js\?v=20261123-edt044-account-scoped-preferences-v2"/,
     'the deployed entry page must request the account-scoped shell module');
@@ -37,10 +37,12 @@ test('the Editor and public renderer release tokens bust the structured accessib
     'the versioned entry script must request the responsive resolver cache key');
   assert.match(app,/ui\/structured-inspector\.js\?v=20261123-d06-single-slide-carousel-v1/,
     'the versioned entry script must request the structured Inspector accessible-name controls');
-  assert.match(publicHtml,/page-renderer\.js\?v=20261123-edt040-in-view-motion-v1/,
+  assert.match(publicHtml,/page-renderer\.js\?v=20261124-d06-safe-content-dom-id-v1/,
     'published pages must request the renderer version containing the in-view motion behavior');
-  assert.match(publicRenderer,/authored-content\.js\?v=20261123-d06-authored-table-label-v1/,
-    'the public renderer must request the module emitting the direct native table name');
+  assert.match(publicRenderer,/authored-content\.js\?v=20261124-d06-safe-content-dom-id-v1/,
+    'the public renderer must request the cache-busted authored content and detail-group IDs');
+  assert.match(publicRenderer,/element-content\.js\?v=20261124-d06-safe-content-dom-id-v1/,
+    'the public renderer must request the shared collision-resistant content DOM ID helper');
 });
 
 test('the EDT-040 in-view trigger refreshes both renderers and the shared motion registry',async()=>{
@@ -53,17 +55,18 @@ test('the EDT-040 in-view trigger refreshes both renderers and the shared motion
     readFile(resolve(import.meta.dirname,'../public/assets/page-renderer.js'),'utf8'),
     readFile(resolve(root,'editor-motion.css'),'utf8')
   ]);
-  const version='20261123-edt040-in-view-motion-v1';
-  assert.match(editorHtml,new RegExp(`editor-motion\\.css\\?v=${version}`));
-  assert.match(editorHtml,new RegExp(`app\\.js\\?v=${version}`));
-  assert.match(editor,new RegExp(`core/property-registry\\.js\\?v=${version}`));
-  assert.match(editor,new RegExp(`core/motion-style\\.js\\?v=${version}`));
+  const motionVersion='20261123-edt040-in-view-motion-v1';
+  const domIdVersion='20261124-d06-safe-content-dom-id-v1';
+  assert.match(editorHtml,new RegExp(`editor-motion\\.css\\?v=${motionVersion}`));
+  assert.match(editorHtml,new RegExp(`app\\.js\\?v=${domIdVersion}`));
+  assert.match(editor,new RegExp(`core/property-registry\\.js\\?v=${motionVersion}`));
+  assert.match(editor,new RegExp(`core/motion-style\\.js\\?v=${motionVersion}`));
   assert.match(editor,/dataset\.motionTrigger=motionTrigger/);
   assert.match(canvasEngine,/motion-style\.js/);
   assert.match(motionStyle,/MOTION_TRIGGER_OPTIONS/);
-  assert.match(publicHtml,new RegExp(`editor-motion\\.css\\?v=${version}`));
-  assert.match(publicHtml,new RegExp(`page-renderer\\.js\\?v=${version}`));
-  assert.match(publicRenderer,new RegExp(`motion-style\\.js\\?v=${version}`));
+  assert.match(publicHtml,new RegExp(`editor-motion\\.css\\?v=${motionVersion}`));
+  assert.match(publicHtml,new RegExp(`page-renderer\\.js\\?v=${domIdVersion}`));
+  assert.match(publicRenderer,new RegExp(`motion-style\\.js\\?v=${motionVersion}`));
   assert.match(publicRenderer,/data-motion-trigger="\$\{motionTrigger\}"/);
   assert.match(css,/animation-timeline:\s*view\(\)/);
   assert.match(css,/animation-range:\s*entry 0% entry 100%/);
