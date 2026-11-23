@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "plan_point": "77.44.7.D / D-01..D-07 batch execution",
+  "date": "2026-11-23",
+  "change_kind": "canonical_plan_and_plan_contract_test_only",
+  "status": "verified_local_documentation_process_improvement",
+  "summary": "Updated the single canonical master with a no-repeat, hash-bound evidence reconciliation protocol for D batches. Added a regression contract so grouped work reuses unchanged evidence, parallelizes only disjoint file sets, preserves sequential release/acceptance gates, and does not promote partial work to full D acceptance.",
+  "source": {
+    "branch": "v2/foundation",
+    "base_commit": "fc4ed8c5055d181887470927ea68ae0f6aba0a9e",
+    "remote_head_read_before_change": "fc4ed8c5055d181887470927ea68ae0f6aba0a9e",
+    "plan_blob_before": "9efb836ef845591615db2fc6afc8b79a44b95ab4",
+    "plan_bytes_before": 1852411,
+    "plan_blob_after": "f1be822e4ee7b44dfc8afff4ad7f02f59b9b178c",
+    "plan_sha256_after": "86dc3e0a0388eda563ded4b170e305ecf381d5bd4558e6cac39159f995a2bfec"
+  },
+  "acceptance": {
+    "stable_feature_ids_preserved": true,
+    "single_canonical_master_preserved": true,
+    "D_sequence_changed": false,
+    "save_publish_separation_changed": false,
+    "partial_batches_may_close_full_D": false,
+    "reuse_prior_evidence_only_when_source_hash_and_criterion_unchanged": true,
+    "parallel_changes_require_disjoint_file_sets": true,
+    "release_and_acceptance_operations_remain_sequential": true
+  },
+  "checks": [
+    {
+      "command": "python3 tests/plan-contract.test.py",
+      "result": "PASS",
+      "summary": "16/16 including new no-repeat D-batch policy regression"
+    },
+    {
+      "command": "python3 scripts/check-canonical-plan.py",
+      "result": "PASS",
+      "summary": "one complete 13-file master, current cursor preserved, 396 source mappings"
+    },
+    {
+      "command": "python3 scripts/build-feature-traceability.py --check",
+      "result": "PASS",
+      "summary": "396/396; acceptance not certified"
+    },
+    {
+      "command": "python3 scripts/audit-active-plan-point.py",
+      "result": "PASS",
+      "summary": "77.44 / WEB-011 -> 77.44.7.D; functional acceptance NOT_CERTIFIED; 148 PARTIAL_SOURCE / 248 UNVERIFIED"
+    },
+    {
+      "command": "git diff --check",
+      "result": "PASS"
+    }
+  ],
+  "remote_and_runtime": {
+    "github_remote_head_before_edit": "fc4ed8c5055d181887470927ea68ae0f6aba0a9e",
+    "latest_editor_core_run": {
+      "id": 45251326608,
+      "source_sha": "818c73ed52a0b7a932b3ca48767450ed9a1e936c",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    "current_worker_deployment_id": "1f910bc9-2b7f-467f-82b0-4b78fa09499f",
+    "current_worker_version_id": "3f075752-e1ed-43d5-be82-d47d4468af3f",
+    "current_worker_traffic_percent": 100,
+    "runtime_changed": false,
+    "public_assets_changed": false,
+    "new_worker_deploy_required": false,
+    "health_rechecked_this_block": false,
+    "health_note": "No runtime changed; browser-based direct health read was unavailable in this session and is not claimed.",
+    "production_d1_or_r2_operation": false
+  },
+  "cost": {
+    "new_cost_ft": 0,
+    "new_dependency": false,
+    "github_actions_dispatched": false,
+    "cloudflare_build_limit_reached": false,
+    "github_actions_free_quota": "unknown; docs/test-only [skip ci] path used"
+  },
+  "acceptance_status": {
+    "d06": "OPEN / NOT CERTIFIED",
+    "d01_d07": "OPEN / NOT CERTIFIED",
+    "77_44_7_D": "OPEN / NOT CERTIFIED",
+    "visual_editor": "OPEN / NOT CERTIFIED",
+    "manual_physical": "DEFERRED until complete Editor"
+  },
+  "next_step": "Use the traceability rows and exact-source evidence to select the next actually uncovered, dependency-ready D acceptance criterion; do not repeat audits for unchanged hashes."
+}

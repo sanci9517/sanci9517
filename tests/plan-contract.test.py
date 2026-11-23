@@ -52,6 +52,17 @@ class PlanContractTest(unittest.TestCase):
         self.assertIn('creator-master/part-12-of-12.md', text)
         self.assertIn('77.44.7.D', text)
 
+    def test_d_batches_reuse_hash_bound_evidence_before_repeating_audits(self):
+        text = (self.root / MASTER).read_text(encoding='utf-8')
+        marker = '**77.44.7.D ismétlésmentes batch-végrehajtása (2026-11-23):**'
+        self.assertEqual(text.count(marker), 1)
+        section = text.split(marker, 1)[1].split('\n- **Következő aktív munka:**', 1)[0]
+        self.assertIn('feature-traceability.json', section)
+        self.assertIn('hashével', section)
+        self.assertIn('nem ismétlünk', section)
+        self.assertIn('nem átfedő fájlmódosítási területeken', section)
+        self.assertIn('nem öröklődik belőle', section)
+
     def test_valid_contract_does_not_certify_functionality(self):
         report = validate(self.root)
         self.assertEqual(report['feature_count'], 396)

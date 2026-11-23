@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261123205548-77caf3e6",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-23T20:55:48.110Z",
+  "finished_at": "2026-11-23T21:00:38.322Z",
+  "wall_seconds": 290,
+  "paused_seconds": 0,
+  "measured_seconds": 290,
+  "status": "pass",
+  "kind": "mixed",
+  "summary": "Added a canonical D-batch no-repeat protocol and regression contract; all plan/traceability gates passed, D remains open.",
+  "evidence": [
+    "docs/evidence/d-plan-batch-reuse-2026-11-23.json"
+  ],
+  "checks": "plan-contract 16/16; canonical plan 13 files/396 mappings; traceability 396/396; active point remains 77.44.7.D OPEN; git diff --check PASS",
+  "started_revision": "fc4ed8c5055d181887470927ea68ae0f6aba0a9e",
+  "finished_revision": "fc4ed8c5055d181887470927ea68ae0f6aba0a9e",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
