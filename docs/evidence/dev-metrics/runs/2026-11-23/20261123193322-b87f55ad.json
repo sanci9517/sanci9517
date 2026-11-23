@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261123193322-b87f55ad",
+  "task": "77.44.7.D-D06-authored-table-accessible-name",
+  "trigger": "scheduled",
+  "started_at": "2026-11-23T19:33:22.152Z",
+  "finished_at": "2026-11-23T19:48:43.258Z",
+  "wall_seconds": 921,
+  "paused_seconds": 0,
+  "measured_seconds": 921,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "Released authored public table accessible-name fix; exact-SHA Cloudflare build, 100% traffic, health and asset hashes verified; Editor Core hosted layout run still active, full D-06 remains open.",
+  "evidence": [
+    "docs/evidence/editor-d06-authored-table-name-2026-11-23.json",
+    "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md"
+  ],
+  "checks": "editor 24/24; Chromium 1/1; element 34/34; typecheck; plan 15/15; traceability 396; Wrangler dry-run; SELECT-only D1; exact-SHA build/smoke; 100% traffic; health 200; hashes; Editor Core IN_PROGRESS",
+  "started_revision": "21ecb360e4dd41728bf0cde96d00409469e2a513",
+  "finished_revision": "818c73ed52a0b7a932b3ca48767450ed9a1e936c",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

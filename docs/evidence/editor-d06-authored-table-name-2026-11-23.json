@@ -1,0 +1,167 @@
+{
+  "schema_version": 1,
+  "task": "77.44.7.D / D-06",
+  "date": "2026-11-23",
+  "status": "partial_feature_slice_released",
+  "summary": "The authored-content public renderer now gives native tables an accessible name from the caption or a safe Hungarian fallback. This improves public assistive-technology behavior; the full Editor and D-06 remain open.",
+  "branch": "v2/foundation",
+  "runtime_commit": "818c73ed52a0b7a932b3ca48767450ed9a1e936c",
+  "runtime_commit_url": "https://github.com/sanci9517/sanci9517/commit/818c73ed52a0b7a932b3ca48767450ed9a1e936c",
+  "runtime_parent": "21ecb360e4dd41728bf0cde96d00409469e2a513",
+  "changed_runtime_files": [
+    "public/editor-v2/core/authored-content.js",
+    "public/editor-v2/app.js",
+    "public/editor-v2/index.html",
+    "public/assets/page-renderer.js",
+    "public/visual-page.html"
+  ],
+  "behavior": {
+    "public_table_name": "The table renderer uses the trimmed caption as aria-label; if the caption is empty/malformed it uses the escaped fallback Táblázat. The scrollable region retains its own name. Visible caption and accessible name escape authored text.",
+    "save_publish": "The browser test verifies the saved draft and the separately published table; Save and Publish remain separate.",
+    "reuse": "Existing renderer and test fixture reused; no new dependency or third-party source added."
+  },
+  "local_checks": [
+    {
+      "command": "node public/editor-v2/tests/element-content.test.js",
+      "result": "PASS",
+      "summary": "34/34 including caption label, empty fallback and escaped caption."
+    },
+    {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/editor-content-system.test.js",
+      "result": "PASS",
+      "summary": "1/1 real Chromium lifecycle test, including Save/reload/separate Publish and a role query for the named native table."
+    },
+    {
+      "command": "node tests/editor-public-asset-cache-bust.test.js",
+      "result": "PASS",
+      "summary": "2/2 cache-key contract tests."
+    },
+    {
+      "command": "npm run test:editor",
+      "result": "PASS",
+      "summary": "24/24 Editor suite files and 4/4 Linux subreaper/manifest checks; Editor preferences 10/10."
+    },
+    {
+      "command": "npm run typecheck",
+      "result": "PASS"
+    },
+    {
+      "command": "node tests/editor-d-content-contract.test.js",
+      "result": "PASS",
+      "summary": "7/7."
+    },
+    {
+      "command": "git diff --check",
+      "result": "PASS"
+    },
+    {
+      "command": "python3 tests/plan-contract.test.py",
+      "result": "PASS",
+      "summary": "15/15 after the append-only canonical plan update."
+    },
+    {
+      "command": "python3 scripts/build-feature-traceability.py --check",
+      "result": "PASS",
+      "summary": "396 mappings current; acceptance remains not certified."
+    },
+    {
+      "command": "python3 scripts/check-canonical-plan.py",
+      "result": "PASS",
+      "summary": "One canonical 13-file master and 396 mappings."
+    },
+    {
+      "command": "python3 scripts/audit-active-plan-point.py",
+      "result": "PASS",
+      "summary": "Bookkeeping only: active cursor 77.44 / WEB-011, next 77.44.7.D; full Editor and functional acceptance remain OPEN / NOT_CERTIFIED."
+    }
+  ],
+  "production_d1_preflight": {
+    "timing": "Before runtime release; read-only Cloudflare D1 Query API.",
+    "statements": [
+      "SELECT name FROM sqlite_schema WHERE type IN ('table','view','index','trigger') ORDER BY type,name",
+      "SELECT name FROM d1_migrations ORDER BY id DESC LIMIT 1"
+    ],
+    "schema_object_count": 147,
+    "latest_migration_marker": "0030_media_library_organization.sql",
+    "rows_written": 0,
+    "changes": 0,
+    "changed_db": false,
+    "production_migration_or_business_write": false,
+    "production_r2_operation": false
+  },
+  "wrangler_dry_run": {
+    "command": "npx wrangler deploy --dry-run",
+    "wrangler_version": "4.130.0",
+    "exit_code": 0,
+    "assets_read": 200,
+    "deployment_performed": false,
+    "note": "Wrangler emitted a read-only shared-log EROFS warning, then exited successfully after the full dry run."
+  },
+  "cloudflare_build": {
+    "build_uuid": "c411a5d7-b933-4a21-bad2-5f2ce6f3e552",
+    "outcome": "success",
+    "source_branch": "v2/foundation",
+    "source_commit": "818c73ed52a0b7a932b3ca48767450ed9a1e936c",
+    "build_command": "npm run typecheck",
+    "deploy_command": "npm run deploy:safe"
+  },
+  "production_deployment": {
+    "deployment_id": "1f910bc9-2b7f-467f-82b0-4b78fa09499f",
+    "worker_version_id": "3f075752-e1ed-43d5-be82-d47d4468af3f",
+    "traffic_percentage": 100,
+    "verified_by": "Cloudflare deployments API and exact version -> build API readback."
+  },
+  "production_smoke": {
+    "workflow": "Production Worker source smoke",
+    "run_id": 45251326439,
+    "job_id": 137961440666,
+    "result": "PASS: direct live /api/health HTTP 200 and all 38 public source hashes match the exact source commit. The five changed assets initially returned previous-deployment bytes on retries 1-3 during rollout; the bounded retry then confirmed every source SHA-256 and health check. No mismatch remained at pass.",
+    "changed_asset_sha256": {
+      "public/visual-page.html": "7250cd8d5b24acbecb6beabd14e2d027914be83618df0d6004a35f78346275db",
+      "public/assets/page-renderer.js": "52fb3b8699af166eea3064711ad05dee99346036c489fbfb025e3889b61d06ed",
+      "public/editor-v2/core/authored-content.js": "e6c38e4afcd9be99f88fcce69f0189e26abbcd73d6f3a34ede7879a386f2e678",
+      "public/editor-v2/index.html": "d4fe796d06e52dd18cc4c97e915cf1e71b436935fd6dd11d0efa47393bc6f8a2",
+      "public/editor-v2/app.js": "63e916f0f4988a5f41faed093b7f5af75b8263b989f1bdfdb1fe7ceea1af5622"
+    },
+    "local_public_network": "Not relied on; direct live checks are from the exact-source GitHub smoke job."
+  },
+  "exact_sha_actions": {
+    "runtime_sha": "818c73ed52a0b7a932b3ca48767450ed9a1e936c",
+    "successful_run_ids": {
+      "F0 baseline checks": 45251326582,
+      "Canonical Creator Platform Plan": 45251326920,
+      "Canonical Plan Active Point Audit": 45251326537,
+      "Twitch Integration Check": 45251326503,
+      "Production Worker source smoke": 45251326439
+    },
+    "editor_core_test": {
+      "run_id": 45251326608,
+      "last_observed_status": "in_progress",
+      "last_observed_step": "Run Editor browser layout regression",
+      "note": "All prior listed steps passed, including typecheck, Editor unit, isolated D1 ledger/R2 Worker integration, and public showcase unit/Chromium. No rerun or dispatch started; no Editor Core PASS is claimed."
+    },
+    "aggregate": "Partial: required Editor Core hosted run not yet complete at evidence snapshot."
+  },
+  "canonical_plan": {
+    "preappend_git_blob_sha": "289a3ee2597074b234e2637254d30ad54d1c1be9",
+    "preappend_bytes": 1849437,
+    "postappend_git_blob_sha": "9efb836ef845591615db2fc6afc8b79a44b95ab4",
+    "postappend_bytes": 1852411,
+    "method": "Verified the exact current Git blob and byte size before appending a short evidence section; no existing plan bytes were replaced."
+  },
+  "development_metrics_session_id": "20261123193322-b87f55ad",
+  "cost_and_mutation": {
+    "new_cost_ft": 0,
+    "new_dependencies": 0,
+    "production_d1_writes": 0,
+    "production_migrations": 0,
+    "production_r2_operations": 0
+  },
+  "acceptance": {
+    "D06": "OPEN / NOT CERTIFIED",
+    "D01_D07": "OPEN / NOT CERTIFIED",
+    "77_44_7_D": "OPEN / NOT CERTIFIED",
+    "visual_editor": "OPEN / NOT CERTIFIED",
+    "manual_physical": "DEFERRED until full Editor scope is implemented"
+  }
+}
