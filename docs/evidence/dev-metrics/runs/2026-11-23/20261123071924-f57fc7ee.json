@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261123071924-f57fc7ee",
+  "task": "77.44.7.D",
+  "trigger": "scheduled",
+  "started_at": "2026-11-23T07:19:24.479Z",
+  "finished_at": "2026-11-23T07:21:32.777Z",
+  "wall_seconds": 128,
+  "paused_seconds": 0,
+  "measured_seconds": 128,
+  "status": "pass",
+  "kind": "test",
+  "summary": "Added route-level D-06 regression for malformed Schedule sidecar race; media suite and canonical crosswalk checks pass, runtime unchanged.",
+  "evidence": [
+    "tests/media-api.test.js:PASS",
+    "docs/evidence/editor-d06-retention-endpoint-race-2026-11-23.json"
+  ],
+  "checks": "npm run test:media PASS 7/7; plan contract 15/15; canonical plan 13/396; traceability 396/396; active point 77.44.7.D OPEN / NOT_CERTIFIED",
+  "started_revision": "64e6196ad7f26d095ff613d413ba74b0608658ce",
+  "finished_revision": "64e6196ad7f26d095ff613d413ba74b0608658ce",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

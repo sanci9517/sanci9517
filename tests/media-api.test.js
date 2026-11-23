@@ -2063,3 +2063,52 @@ test("malformed schedule sidecars with escaped or unknowable media IDs fail clos
   assert.equal(f.db.prepare("SELECT archived_at FROM media WHERE id=?").get(asset.id).archived_at,null);
   assert.equal(f.files.size,2,"the raced link keeps both binaries unchanged");
 });
+
+test("retention endpoint rejects malformed Schedule artwork inserted after preflight",async t=>{
+  const f=await fixture(t);
+  const upload=await f.call("POST","editor",png,{name:"retention-raced-schedule.png"});
+  assert.equal(upload.status,201);
+  const asset=(await upload.json()).data;
+  const eventId="3f7a0000-0000-4000-8000-000000000016";
+  const key="schedule-artwork:site-default:"+eventId;
+  f.db.prepare("INSERT INTO schedule_items(id,site_id,title) VALUES (?,?,?)")
+    .run(eventId,"site-default","Verseny borítója");
+  assert.equal((await f.call("PATCH","editor",JSON.stringify({archived:true}),{id:asset.id})).status,200);
+
+  const hiddenPrefix=Array.from(asset.id.slice(0,2),character=>"\\u"+character.charCodeAt(0).toString(16).padStart(4,"0")).join("");
+  const malformedValue='{"assetId":"'+hiddenPrefix+asset.id.slice(2)+',';
+  assert.equal(malformedValue.includes(asset.id),false,"the malformed Unicode-escaped ID bypasses a raw substring guard");
+  const filesBefore=new Map([...f.files].map(([fileKey,bytes])=>[fileKey,Uint8Array.from(bytes)]));
+  let injected=false,deleteCalls=0;
+  const baseDb=f.env.DB;
+  const originalDelete=f.env.MEDIA.delete.bind(f.env.MEDIA);
+  f.env.MEDIA.delete=async objectKey=>{deleteCalls++;return originalDelete(objectKey);};
+  f.env.DB={...baseDb,prepare(sql){
+    const statement=baseDb.prepare(sql);
+    return {
+      bind(...values){statement.bind(...values);return this;},
+      async first(){
+        const result=await statement.first();
+        if(!injected&&sql.includes("FROM media_retention_requests WHERE asset_id=?")){
+          injected=true;
+          f.db.prepare("INSERT INTO site_settings(key,value_json) VALUES (?,?)").run(key,malformedValue);
+        }
+        return result;
+      },
+      async all(){return statement.all();},
+      async run(){return statement.run();}
+    };
+  }};
+
+  const response=await f.call("POST","editor",null,{id:asset.id,retentionRequest:true});
+  assert.equal(injected,true,"the invalid Schedule sidecar was introduced after usage preflight");
+  assert.equal(response.status,409);
+  assert.equal((await response.json()).error.code,"RETENTION_PRECONDITION_CHANGED");
+  assert.equal(f.db.prepare("SELECT COUNT(*) n FROM media_retention_requests").get().n,0,
+    "the API route must not persist a request after the atomic malformed-sidecar guard rejects it");
+  assert.notEqual(f.db.prepare("SELECT archived_at FROM media WHERE id=?").get(asset.id).archived_at,null,
+    "the rejected retention request leaves the existing archive metadata intact");
+  assert.equal(deleteCalls,0,"the retention route never deletes the R2 object");
+  assert.deepEqual([...f.files].map(([fileKey,bytes])=>[fileKey,[...bytes]]),
+    [...filesBefore].map(([fileKey,bytes])=>[fileKey,[...bytes]]),"all stored R2 bytes remain unchanged");
+});

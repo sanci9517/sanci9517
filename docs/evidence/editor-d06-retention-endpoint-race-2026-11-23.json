@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "captured_at_utc": "2026-11-23T07:20:56Z",
+  "plan_item": "77.44.7.D / D-06 — retention endpoint malformed Schedule sidecar race regression",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "runtime_source_commit": "7c21236a564d762a9178a34e9dade543da81b217"
+  },
+  "change": {
+    "kind": "test-only route-level regression; no runtime source change",
+    "file": "tests/media-api.test.js",
+    "behavior": "The actual admin media POST retention endpoint receives a malformed same-site Schedule artwork sidecar injected after usage preflight and retention lookup but before the atomic INSERT. It returns RETENTION_PRECONDITION_CHANGED, creates no request, preserves archive metadata and all synthetic R2 bytes, and makes zero R2 delete calls.",
+    "fixture": "In-memory SQLite and synthetic Map-backed R2 fixture; production D1/R2 not accessed."
+  },
+  "verification": {
+    "node --experimental-loader ./tests/ts-extension-loader.mjs --test tests/media-api.test.js": "PASS",
+    "npm run test:media": "PASS 7/7 files",
+    "git diff --check": "PASS",
+    "plan_contract_and_traceability": "PASS: 15 plan contracts; canonical plan 13 master files / 396 mappings; traceability 396/396; active point remains OPEN / NOT_CERTIFIED (148 PARTIAL_SOURCE, 248 UNVERIFIED)."
+  },
+  "release": {
+    "runtime_commit": "7c21236a564d762a9178a34e9dade543da81b217",
+    "runtime_deployment_id": "114e9747-6f38-4faa-9872-5681487163ac",
+    "worker_version_id": "1e17b65e-00da-4edb-9316-acda40919a8e",
+    "worker_traffic_percent": 100,
+    "runtime_changed_by_this_slice": false,
+    "ci": "No workflow triggered for this test-only/docs follow-up; [skip ci] used by policy.",
+    "pending_runtime_sha_editor_core_run": "45128896227 (IN_PROGRESS at browser layout step when last checked)",
+    "production_health": "Previously rechecked HTTP 200 at 2026-11-23 07:18:28 UTC; runtime source unchanged.",
+    "public_assets_changed": []
+  },
+  "safety": {
+    "production_d1_migration_or_write": "NOT RUN",
+    "production_r2_operation": "NOT RUN",
+    "new_dependencies": false,
+    "new_cost_huf": 0,
+    "save_publish_separation_preserved": true,
+    "D06_and_full_editor_acceptance": "OPEN / NOT_CERTIFIED; manual/physical acceptance deferred"
+  }
+}
