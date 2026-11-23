@@ -12,8 +12,8 @@
       "PARTIAL_SOURCE": 148,
       "UNVERIFIED": 248
     },
-    "canonical_source_sha256_after_current_summary": "4cdad7d04c9714c9eb8dc003ac7fb0414c73c0f7a65e5d019617eb58872ff43b",
-    "canonical_source_size_after_current_summary": 1840006
+    "canonical_source_sha256_after_current_summary": "1015ee66a1f4c3508294512ca5fe796b98184c4448fb54089bc395be9d2d927d",
+    "canonical_source_size_after_current_summary": 1840991
   },
   "change": {
     "behavior": "Structured galleries and carousels now render as named ARIA regions in the Editor canvas and published renderer. A separate Inspector field stores an optional bounded ariaLabel on node props, outside contentModel. The renderer escapes authored labels, bounds them to 160 characters, rejects non-string legacy values without coercion, and preserves Hungarian fallback labels for older pages. Save and Publish remain separate.",
@@ -88,7 +88,112 @@
     "d06_complete": false,
     "d_point_complete": false,
     "visual_editor_complete": false,
-    "manual_physical_acceptance": "Deferred until the complete Visual Editor scope is implemented."
+    "manual_physical_acceptance": "Deferred until the complete Visual Editor scope is implemented.",
+    "hosted_editor_core_complete": false,
+    "hosted_editor_core_last_observed": "IN_PROGRESS; real Chromium layout regression not complete at last GitHub API poll."
   },
-  "cost": "0 Ft; no paid service, new dependency, production D1 write, migration or R2 operation."
+  "cost": "0 Ft; no paid service, no production D1 mutation/migration and no R2 operation.",
+  "source_commit": {
+    "sha": "b30670f7ce5e0d94f01244f77a51994e2660715f",
+    "parent": "e653c33c23d6eab242efb4ba55a5bfa1ba007e11",
+    "branch": "v2/foundation",
+    "pushed": "PASS; GitHub branch exact source SHA was verified before release."
+  },
+  "release": {
+    "status": "DEPLOYED_AND_POSTFLIGHT_VERIFIED",
+    "automatic_cloudflare_build": {
+      "id": "ca0bb85c-a333-424c-94b8-6615c4e53064",
+      "result": "FAILED_BEFORE_DEPLOY",
+      "reason": "npm run deploy:safe failed because optional package @cloudflare/workerd-linux-64 was unavailable after npm clean-install tarball-corruption warnings.",
+      "followup": "Used the repository-prescribed npm run deploy:safe fallback after the build failure; it completed successfully."
+    },
+    "fallback_deploy": {
+      "command": "npm run deploy:safe",
+      "result": "PASS",
+      "migration_safety_gate": "PASS; no migration applied",
+      "worker_version_id": "ef4d0373-662d-43fa-8b42-0007997eb5a4",
+      "version_number": 4171,
+      "deployment_id": "dd65ee65-c0e4-4c03-bc6d-12cdfaf1d2ac",
+      "traffic_percent": 100,
+      "source_sha": "b30670f7ce5e0d94f01244f77a51994e2660715f"
+    },
+    "github_actions_exact_source_sha": [
+      {
+        "run_id": 45229072981,
+        "name": "Canonical Plan Active Point Audit",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "run_id": 45229072527,
+        "name": "Canonical Creator Platform Plan",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "run_id": 45229072707,
+        "name": "Twitch Integration Check",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "run_id": 45229072652,
+        "name": "F0 baseline checks",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "run_id": 45229073715,
+        "name": "Editor Core Test",
+        "status": "in_progress",
+        "conclusion": null,
+        "note": "Typecheck, Editor unit tests, offline migration reconciliation/bootstrap, private R2 API tests, SANCI showcase unit/Chromium, and isolated Worker media upload steps passed; real Chromium layout regression remained in progress at last poll."
+      },
+      {
+        "run_id": 45229072761,
+        "name": "Production Worker source smoke",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ],
+    "deployment_api": "PASS; deployment record reports 100% traffic for the new version."
+  },
+  "production_health_after_release": {
+    "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health?release=d06-accessible-region",
+    "http_status": 200,
+    "body": {
+      "ok": true,
+      "service": "sanci9517-streamer-brand",
+      "version": "2.0.0",
+      "server": "cloudflare-worker"
+    }
+  },
+  "public_asset_verification": {
+    "byte_exact_direct_assets": "7/7 HTTP 200 and SHA-256 matched local source",
+    "assets": {
+      "/editor-v2/ui/structured-inspector.js": "aa3dced793ab249b1ccb840650d5a0c7b88ceaa481b49ac1a4b97582576a9b7c",
+      "/assets/page-renderer.js": "b553ee11a0710ee1a0f07055b93420d41aa3729ca73f8d21f5af20e750993caa",
+      "/editor-v2/tests/structured-inspector-invalid-content.test.js": "e88c27e5a28bbb6720e6434c209cf54ec7e3d85d5cb56397a2f9e47c15b47057",
+      "/editor-v2/": "4207cfeb07c9db570d3ef9b666cc0875e5174464908224dbf0550b6f64d3a7fa",
+      "/editor-v2/app.js": "5c437125d0ac51a14692b254d0a632a98596f1024551ebbcc249ce08957a8a51",
+      "/editor-v2/core/element-content.js": "252f92ca1bb7ef2ba93df9a212604c1358b3e30b94a5da5bff805b37ba1e06f5",
+      "/editor-v2/tests/element-content.test.js": "26c175c6c483ae07dbe7c48921965c22b075633141bf0fe4355e572b894fd5bd"
+    },
+    "transformed_template": {
+      "source": "public/visual-page.html",
+      "deployed_asset": "PASS; included among the 8 uploaded static assets",
+      "public_route_behavior": "/visual-page.html redirects HTTP 307 to canonical /visual-page, which returns HTTP 200 and injects canonical metadata/brand values.",
+      "module_cache_buster": "page-renderer.js?v=20261123-d06-structured-accessible-region-v1",
+      "raw_source_hash_directly_fetchable": "false",
+      "limitation": "The transformed canonical route was smoke-checked, but its response bytes are not identical to the raw template; no raw-byte hash PASS is claimed for this route."
+    }
+  },
+  "production_d1_postflight": {
+    "sql": "SELECT name FROM d1_migrations ORDER BY name",
+    "migration_markers": 36,
+    "latest_marker": "0030_media_library_organization.sql",
+    "rows_written": 0,
+    "changes": 0,
+    "changed_db": false
+  }
 }

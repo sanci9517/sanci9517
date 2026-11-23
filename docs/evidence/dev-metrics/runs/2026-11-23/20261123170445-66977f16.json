@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261123170445-66977f16",
+  "task": "77.44.7.D-D-06",
+  "trigger": "manual",
+  "started_at": "2026-11-23T17:04:45.692Z",
+  "finished_at": "2026-11-23T17:43:25.908Z",
+  "wall_seconds": 2320,
+  "paused_seconds": 0,
+  "measured_seconds": 2320,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "A D-06 gallery/carousel accessibility slice was pushed and verified in production. Local checks pass; automatic Cloudflare build failed before deploy, and deploy:safe fallback passed. Full Editor/D-06 remains open; Editor Core Chromium layout workflow was still running at last poll.",
+  "evidence": [
+    "docs/evidence/editor-d06-gallery-carousel-accessible-region-2026-11-23.json"
+  ],
+  "checks": "15/15 plan-contract; canonical plan; 396/396 traceability; active cursor audit; 7 direct asset hashes exact; health 200; source smoke success; Cloudflare fallback deploy 100% traffic",
+  "started_revision": "e653c33c23d6eab242efb4ba55a5bfa1ba007e11",
+  "finished_revision": "b30670f7ce5e0d94f01244f77a51994e2660715f",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
