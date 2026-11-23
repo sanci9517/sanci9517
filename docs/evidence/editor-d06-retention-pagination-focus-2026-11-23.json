@@ -1,0 +1,91 @@
+{
+  "date": "2026-11-23",
+  "plan_point": "77.44.7.D / D-06 media retention pagination accessibility",
+  "scope": "Bounded keyboard-focus continuity fix for the authenticated retention-status list; not full D-06 or complete Visual Editor acceptance.",
+  "plan": {
+    "canonical_sha256": "9fc78edb31b59fd50a4d536c13b1dc3bd52777f2c2f7fa7e56e4dd18cb41b438",
+    "active_point": "77.44.7.D",
+    "status": "OPEN / NOT_CERTIFIED",
+    "source_status_counts": {
+      "PARTIAL_SOURCE": 148,
+      "UNVERIFIED": 248,
+      "total": 396
+    }
+  },
+  "change": {
+    "runtime_file": "public/assets/admin-media-retention.js",
+    "test_file": "tests/browser/admin-media-retention.test.js",
+    "behavior": "When loading the next retention page disables the focused pagination control, restore focus after completion only if focus is still on body. Keep focus on the next-page control for retry/more pages, move to refresh when the list is complete, and do not steal focus if the user moved elsewhere.",
+    "save_publish": "Read-only pagination remains separate from Save and Publish; no page model changes."
+  },
+  "verification": {
+    "reproduction_before_fix": "Real Chromium failed at 390px and 1366px: focus was not on the next-page control after a successful intermediate page.",
+    "targeted_browser": "PASS, 3/3 selected Chromium tests: retry/success focus at 390px and 1366px; deliberate focus movement during pending page load is preserved.",
+    "full_retention_browser": "PASS, tests/browser/admin-media-retention.test.js, 22/22 in real Chromium.",
+    "media_regressions": "npm run test:media — PASS, 7/7 test files, including route, migration-policy, request and query contracts.",
+    "typecheck": "npm run typecheck -- --pretty false — PASS.",
+    "plan_checks": "plan_contract.py, check-canonical-plan.py, build-feature-traceability.py --check, and audit-active-plan-point.py — PASS; 396 mappings, acceptance remains NOT_CERTIFIED.",
+    "migration_gate": "npm run test:web013:migration-gate — PASS; deploy:safe does not apply production D1 migrations.",
+    "wrangler_dry_run": "Wrangler 4.130.0 deploy --dry-run exit 0; read 200 public assets, 430.67 KiB / 109.11 KiB gzip. It printed the known EROFS warning for the shared read-only Wrangler log path; dry-run completed and no deployment was performed by that command.",
+    "git_diff_check": "PASS"
+  },
+  "production_preflight": {
+    "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
+    "queries": [
+      {
+        "sql": "SELECT name FROM d1_migrations ORDER BY name DESC LIMIT 5",
+        "top_marker": "0030_media_library_organization.sql",
+        "rows_written": 0,
+        "changes": 0,
+        "changed_db": false
+      },
+      {
+        "sql": "SELECT count(*) AS request_count FROM media_retention_requests",
+        "request_count": 0,
+        "rows_written": 0,
+        "changes": 0,
+        "changed_db": false
+      }
+    ],
+    "writes_migrations_or_r2": "None"
+  },
+  "release": {
+    "branch": "v2/foundation",
+    "runtime_commit": "c7cb7677afa93ce0e50c2f5858135026a9bb12ec",
+    "cloudflare_build": "55414f83-a685-4f96-892f-d5c7bd92bcad",
+    "build_outcome": "success",
+    "build_trigger_source_sha": "c7cb7677afa93ce0e50c2f5858135026a9bb12ec",
+    "build_deploy_command": "npm run deploy:safe",
+    "deployment_id": "87d3ea18-9edc-4ab2-a75a-0410e0e5e372",
+    "worker_version_id": "09712c1f-54c5-454c-8b61-479d01bb6413",
+    "worker_version_number": 4169,
+    "traffic_percentage": 100,
+    "health": {
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+      "http_status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "changed_asset": {
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/assets/admin-media-retention.js",
+      "http_status": 200,
+      "source_sha256": "7836374159c726eb004629109ec39d90ce8dfbe847654ff6c5f405213ba1b7dc",
+      "deployed_sha256": "7836374159c726eb004629109ec39d90ce8dfbe847654ff6c5f405213ba1b7dc",
+      "hashes_match": true
+    },
+    "github_combined_statuses": [],
+    "github_pr_workflow_runs": [],
+    "hosted_ci_claim": "No GitHub Actions status/run was returned for this direct branch push. Cloudflare Workers Build succeeded for the exact source SHA; no separate CI dispatch/rerun was started."
+  },
+  "acceptance": {
+    "d06_complete": false,
+    "d_point_complete": false,
+    "visual_editor_complete": false,
+    "manual_physical_acceptance": "Deferred until the complete Visual Editor scope is implemented."
+  },
+  "cost": "0 Ft; no paid service, new dependency, production write, migration, or R2 operation."
+}

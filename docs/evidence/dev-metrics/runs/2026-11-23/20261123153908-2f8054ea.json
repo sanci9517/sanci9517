@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261123153908-2f8054ea",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-23T15:39:08.309Z",
+  "finished_at": "2026-11-23T15:50:43.399Z",
+  "wall_seconds": 695,
+  "paused_seconds": 0,
+  "measured_seconds": 695,
+  "status": "pass",
+  "kind": "mixed",
+  "summary": "Fixed and released D-06 retention pagination keyboard focus; reproduced before fix, full 390/1366px browser and media/API checks passed, exact-SHA Cloudflare deploy at 100%, health and asset hash verified.",
+  "evidence": [
+    "docs/evidence/editor-d06-retention-pagination-focus-2026-11-23.json"
+  ],
+  "checks": "retention browser 22/22; media API 7/7; typecheck; plan contract/canonical/traceability/active point; SELECT-only production preflight; deploy safety gate; Wrangler dry-run; Cloudflare exact-SHA build/deploy 100%; health 200; asset SHA match",
+  "started_revision": "f6845c66a71c7a78335dec74da81ea2cf7208208",
+  "finished_revision": "c7cb7677afa93ce0e50c2f5858135026a9bb12ec",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
