@@ -1,0 +1,101 @@
+{
+  "date": "2026-11-23",
+  "feature": "D-05 structured inspector malformed-content recovery keyboard focus",
+  "scope": "Narrow accessibility/regression slice only; full D-05 and full Visual Editor acceptance remain open.",
+  "plan": {
+    "canonical_path": "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+    "canonical_sha256": "9fc78edb31b59fd50a4d536c13b1dc3bd52777f2c2f7fa7e56e4dd18cb41b438",
+    "active_point": "77.44.7.D",
+    "active_point_status": "OPEN",
+    "functional_acceptance": "NOT_CERTIFIED",
+    "source_crosswalk": "148 PARTIAL_SOURCE, 248 UNVERIFIED, 396 total mappings"
+  },
+  "change": {
+    "files": [
+      "public/editor-v2/ui/structured-inspector.js",
+      "tests/browser/editor-structured-content.test.js"
+    ],
+    "behavior": "When malformed structured content is repaired or reset from a keyboard-focused recovery action, restore focus to the first usable field in the rerendered Inspector. A newer focus request invalidates the pending restoration; updates that do not replace the section retain normal behavior.",
+    "save_publish": "The existing Save and Publish flow was exercised separately by the browser scenario; no coupling was introduced."
+  },
+  "regression": {
+    "before_fix": "The new Enter-key regression failed: after recovery, document.activeElement had no aria-label (focus was lost during Inspector rerender).",
+    "after_fix_browser": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-name-pattern='structured Inspector editing survives Save, Publish and public interaction' tests/browser/editor-structured-content.test.js",
+      "result": "PASS, 1/1; Chromium exercised desktop and mobile editor layouts, including the keyboard recovery and focus assertion.",
+      "duration_ms": 52291
+    },
+    "after_fix_editor_suite": {
+      "command": "npm run test:editor",
+      "result": "PASS, 24/24 Node test files; Linux subreaper runner checks 4/4."
+    },
+    "focused_unit": {
+      "command": "node --experimental-vm-modules --test public/editor-v2/tests/structured-inspector-invalid-content.test.js",
+      "result": "PASS, 1/1."
+    },
+    "typecheck": "npm run typecheck -- --pretty false — PASS.",
+    "repository_gates": [
+      "git diff --check — PASS.",
+      "python3 scripts/build-feature-traceability.py --check — PASS, 396/396 source mappings.",
+      "python3 scripts/plan_contract.py — PASS.",
+      "python3 scripts/audit-active-plan-point.py — PASS; 77.44.7.D remains OPEN and NOT_CERTIFIED.",
+      "python3 scripts/check-canonical-plan.py — PASS; canonical master unchanged."
+    ],
+    "wrangler_dry_run": "XDG_CONFIG_HOME=/tmp/sanci-wrangler-xdg npx wrangler deploy --dry-run — PASS; packaged 200 public files, 430.67 KiB total (109.11 KiB gzip); production bindings reported."
+  },
+  "production_preflight": {
+    "target": "sanci9517-db",
+    "operation": "SELECT name FROM d1_migrations ORDER BY id DESC LIMIT 5",
+    "rows_read": 5,
+    "rows_written": 0,
+    "changes": 0,
+    "changed_db": false,
+    "latest_migrations": [
+      "0030_media_library_organization.sql",
+      "0029_media_archive_unicode_additive.sql",
+      "0028_media_archive.sql",
+      "0027_site_scoped_settings.sql",
+      "0026_site_memberships.sql"
+    ],
+    "r2": "No R2 operation performed."
+  },
+  "release": {
+    "branch": "v2/foundation",
+    "commit": "103d4df5ef5a3b8cfff8e1112dfaf52078827420",
+    "remote_branch_matches_commit": true,
+    "cloudflare_build": {
+      "build_uuid": "9035aaf8-77c3-40e4-9862-dd3777cfb69f",
+      "outcome": "success",
+      "source_commit": "103d4df5ef5a3b8cfff8e1112dfaf52078827420",
+      "branch": "v2/foundation",
+      "build_command": "npm run typecheck",
+      "deploy_command": "npm run deploy:safe"
+    },
+    "deployment": "12e5a45f-d4be-4873-af4e-b2d07a816f1a",
+    "worker_version": "cbb9cd06-dfbd-4269-a3aa-60e786267cb7",
+    "worker_version_number": 4168,
+    "traffic_percentage": 100,
+    "worker_version_script_etag": "45303b169a81c89b1bf7d270e4f5ebdaedcb6d7067de3306a75ea98873f5ce02",
+    "worker_version_contains_routes": [
+      "/admin",
+      "/admin/*",
+      "/admin-*",
+      "/admin.html",
+      "/editor-v2",
+      "/editor-v2/index.html"
+    ],
+    "cost": "No paid service requested or invoked; Workers Build account limit API reported has_reached_build_minutes_limit=false, refresh 2026-11-30T23:59:59.999Z."
+  },
+  "direct_production_verification": {
+    "health": "BLOCKED_BY_NETWORK_PROXY",
+    "asset_url": "https://sanci9517.sanci9517.workers.dev/editor-v2/ui/structured-inspector.js?v=103d4df5",
+    "asset_local_sha256": "587f7d0e87e49f47cae9c309124f69cf18a3eb43cf33c6f84566981bc0a1dc70",
+    "asset_downloaded_sha256": null,
+    "result": "Direct curl to workers.dev failed with HTTP 403: CONNECT tunnel failed, response 403. The downloaded production asset hash and direct health response therefore remain unverified; deployment status is verified separately through the Cloudflare API."
+  },
+  "acceptance": {
+    "d05_complete": false,
+    "visual_editor_complete": false,
+    "manual_device_acceptance": "Deferred until the complete Editor is ready, as required by the plan."
+  }
+}
