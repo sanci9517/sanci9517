@@ -83,5 +83,14 @@
   "test_environment": {
     "initial_restricted_run": "Miniflare loopback listener failed with EPERM; node test reported a pending promise and the run was cancelled. This was environment policy, not an application assertion failure.",
     "permission_enabled_recheck": "The isolated anchor extractor and complete npm run test:web013 suite completed successfully; no test code change was needed."
+  },
+  "browser_health_probe": {
+    "status": "UNVERIFIED",
+    "observations": [
+      "Cloud desktop capability was unavailable in this execution environment.",
+      "The web open tool could not access the Worker URL.",
+      "The outbound proxy returned HTTP 403 Forbidden for the direct request."
+    ],
+    "conclusion": "No live health PASS is claimed; repeat from a network path allowed to reach the Workers domain."
   }
 }
