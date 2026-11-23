@@ -3,7 +3,7 @@
   "plan_point": "77.44.7.D / D-06 retention cancellation focus continuity",
   "scope": "One bounded browser accessibility defect; not full D-06 or complete Editor acceptance.",
   "plan": {
-    "canonical_sha256": "6d537e984e9a01d05e60ba1f705499be99b975882fb3390f97b7fd9488b03198",
+    "canonical_sha256": "bcbbbece9e23980b639606e5b2ab4f99561f169075abab7ff8900defde48418e",
     "active_point": "77.44.7.D",
     "status": "OPEN / NOT_CERTIFIED",
     "feature_count": 396,
@@ -43,15 +43,27 @@
   "release": {
     "branch": "v2/foundation",
     "parent_commit": "6d1c15787aa62e29d9244b2f0e7dcfc1ef5ec054",
-    "runtime_commit": "PENDING",
-    "cloudflare_build": "PENDING",
-    "deployment_id": "PENDING",
-    "worker_version_id": "PENDING",
-    "traffic_percentage": "PENDING",
-    "health": "PENDING",
-    "changed_asset_deployed_sha256": "PENDING",
+    "runtime_commit": "16125251f2524990f63e39c996fc93685428b2fa",
+    "cloudflare_build": {"id": "d0de3ca3-bb18-4e13-abb6-68fe25b3a1f5", "trigger_commit_sha": "16125251f2524990f63e39c996fc93685428b2fa", "status": "stopped", "outcome": "success", "build_command": "npm run typecheck", "deploy_command": "npm run deploy:safe"},
+    "deployment_id": "07d5a18e-e54c-4246-8792-0b3002696fe7",
+    "worker_version_id": "e96b5a57-9f6a-40ab-a258-67df3c26663e",
+    "worker_version_number": 4170,
+    "traffic_percentage": 100,
+    "health": {"url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health", "http_status": 200, "body": {"ok": true, "service": "sanci9517-streamer-brand", "version": "2.0.0", "server": "cloudflare-worker"}},
+    "changed_asset": {"url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/assets/admin-media-retention.js", "http_status": 200, "source_sha256": "df0e1f2ca9f72ff57814415e26a24f0bcc7294eacd746245d8ad59f7793a9b09", "deployed_sha256": "df0e1f2ca9f72ff57814415e26a24f0bcc7294eacd746245d8ad59f7793a9b09", "hashes_match": true},
     "cloudflare_free_build_limit_reached_before_release": false,
-    "github_actions": "Push workflows are configured on the public repository. Only naturally triggered exact-SHA runs will be checked; no separate dispatch or rerun was requested."
+    "github_actions": {
+      "exact_sha": "16125251f2524990f63e39c996fc93685428b2fa",
+      "runs": [
+        {"id": 45213007910, "name": "Canonical Creator Platform Plan", "status": "completed", "conclusion": "success"},
+        {"id": 45213007883, "name": "Canonical Plan Active Point Audit", "status": "completed", "conclusion": "success"},
+        {"id": 45213008031, "name": "Twitch Integration Check", "status": "completed", "conclusion": "success"},
+        {"id": 45213008075, "name": "F0 baseline checks", "status": "completed", "conclusion": "success"},
+        {"id": 45213008083, "name": "Editor Core Test", "status": "in_progress", "current_step": "Run Editor browser layout regression"},
+        {"id": 45213007939, "name": "Production Worker source smoke", "status": "in_progress", "current_step": "Verify live health and exact changed public source bytes"}
+      ],
+      "dispatch_or_rerun": "None"
+    }
   },
   "acceptance": {
     "d06_complete": false,
