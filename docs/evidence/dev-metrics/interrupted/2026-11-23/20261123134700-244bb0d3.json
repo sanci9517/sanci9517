@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "id": "20261123134700-244bb0d3",
+  "task": "77.44.7.D",
+  "trigger": "scheduled",
+  "started_at": "2026-11-23T13:47:00.895Z",
+  "abandoned_at": "2026-11-23T14:06:28.641Z",
+  "measured_seconds": null,
+  "status": "interrupted",
+  "reason": "Previous automated block was left open across an uncertain idle interval; active work time cannot be established reliably.",
+  "started_revision": "549633d0e4e8fcfdfd5e185b4714fde4e573c74b",
+  "measurement": "missing end time; excluded from elapsed time and ETA"
+}

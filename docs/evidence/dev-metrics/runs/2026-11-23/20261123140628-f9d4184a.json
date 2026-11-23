@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261123140628-f9d4184a",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-23T14:06:28.703Z",
+  "finished_at": "2026-11-23T14:07:32.491Z",
+  "wall_seconds": 64,
+  "paused_seconds": 0,
+  "measured_seconds": 64,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "Admin static entrypoint routing protection deployed from the exact branch SHA; targeted tests pass, full suite stalled and live health probe blocked by outbound proxy; D-06 remains open.",
+  "evidence": [
+    "docs/evidence/admin-static-asset-routing-77-44-7-d06-2026-11-23.json",
+    "docs/evidence/dev-metrics/runs/2026-11-23/20261123140628-f9d4184a.json"
+  ],
+  "checks": "targeted tests and dry-run PASS; full web013 INCOMPLETE; live health UNVERIFIED",
+  "started_revision": "e7b83f2d9ec772aa340b856a6322baa9ddfe26ef",
+  "finished_revision": "e7b83f2d9ec772aa340b856a6322baa9ddfe26ef",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

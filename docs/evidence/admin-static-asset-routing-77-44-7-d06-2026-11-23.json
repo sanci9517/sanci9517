@@ -1,0 +1,82 @@
+{
+  "schema": 1,
+  "recorded_at": "2026-11-23T14:07:10Z",
+  "scope": "Route requests for retired administrative static entrypoints through the Worker security router",
+  "canonical_plan": "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+  "plan_item": "77.44.7.D / D-06",
+  "plan_status": "OPEN / NOT_CERTIFIED; this patch closes only the static admin-entrypoint routing subtask, not the full Visual Editor or D-point acceptance",
+  "finding": "Cloudflare Workers Static Assets serves matching files before the Worker unless run_worker_first selects the routes. The Worker already returned Gone for retired admin HTML routes, but the asset routing configuration did not ensure those requests reached the Worker, and extensionless legacy aliases were not all covered.",
+  "implementation": {
+    "branch": "v2/foundation",
+    "commit": "e7b83f2d9ec772aa340b856a6322baa9ddfe26ef",
+    "parent": "549633d0e4e8fcfdfd5e185b4714fde4e573c74b",
+    "changes": [
+      "Added Worker-first routing for /admin, /admin/*, /admin-*, /admin.html, /editor-v2, and /editor-v2/index.html while leaving editor JS/CSS asset requests directly served.",
+      "Added extensionless retired /admin-media, /admin-schedule, /admin-design, /admin-login, and /admin-home aliases to the Worker Gone route policy.",
+      "Added configuration-contract and Worker route regression tests; regenerated feature traceability fingerprints."
+    ],
+    "public_asset_changes": [],
+    "save_publish": "No content Save/Publish operation, production D1 write/migration, or R2 operation was performed."
+  },
+  "checks": {
+    "npm run typecheck": "PASS",
+    "npm run test:web013:migration-gate": "PASS",
+    "python3 tests/plan-contract.test.py": "PASS, 15/15",
+    "python3 scripts/check-canonical-plan.py": "PASS, one canonical 13-part plan and 396 mappings; acceptance remains NOT CERTIFIED",
+    "python3 scripts/build-feature-traceability.py --check": "PASS, 396 mappings",
+    "python3 scripts/audit-active-plan-point.py": "PASS; cursor 77.44 / WEB-011, next point 77.44.7.D; D-point remains OPEN",
+    "node tests/admin-asset-access-contract.test.js": "PASS, 3/3",
+    "node --experimental-loader ./tests/ts-extension-loader.mjs tests/web013-runtime.test.js": "PASS, 8/8",
+    "node --test tests/worker-production-source-smoke.test.mjs": "PASS, 1/1",
+    "git diff --check": "PASS",
+    "npx wrangler deploy --dry-run": "PASS, Wrangler 4.130.0; no deployment performed by the dry run",
+    "npm run test:web013": "INCOMPLETE / NOT PASS; the full suite remained pending in tests/web013-html-anchor-extractor.test.js for about two minutes and was stopped; targeted changed-route tests passed separately"
+  },
+  "read_only_production_preflight": {
+    "method": "Cloudflare D1 Query API, SELECT-only",
+    "statement": "SELECT name FROM d1_migrations ORDER BY name DESC LIMIT 5",
+    "rows_read": 5,
+    "rows_written": 0,
+    "changes": 0,
+    "changed_db": false,
+    "migration_or_data_write_performed": false
+  },
+  "github": {
+    "branch_head": "e7b83f2d9ec772aa340b856a6322baa9ddfe26ef",
+    "push": "normal fast-forward push verified",
+    "combined_status": "No GitHub status checks were returned for this commit; none are claimed as passing"
+  },
+  "cloudflare": {
+    "build_id": "725f7683-e894-4f4d-997b-788a1240ec1d",
+    "build_outcome": "success",
+    "build_source_branch": "v2/foundation",
+    "build_source_commit": "e7b83f2d9ec772aa340b856a6322baa9ddfe26ef",
+    "configured_build_command": "npm run typecheck",
+    "configured_deploy_command": "npm run deploy:safe",
+    "deployment_id": "b298cdb9-116e-4bcf-85ac-0de893d275b2",
+    "worker_version_id": "fa87211f-7eb0-4ceb-891c-6fc6fdd5cd1c",
+    "worker_version_number": 4167,
+    "traffic_percentage": 100,
+    "asset_run_worker_first_observed_on_deployed_version": [
+      "/admin",
+      "/admin/*",
+      "/admin-*",
+      "/admin.html",
+      "/editor-v2",
+      "/editor-v2/index.html"
+    ],
+    "production_health": {
+      "status": "UNVERIFIED",
+      "attempted_endpoint": "https://sanci9517.sanci9517.workers.dev/api/health",
+      "blocker": "The environment outbound proxy returned HTTP 403 Forbidden: requests to sanci9517.sanci9517.workers.dev are not allowed. Cloudflare API metadata confirmed deployment, but this is not a substitute for the live health response."
+    },
+    "public_asset_hash_comparison": "NOT APPLICABLE: this patch changed no files under public/"
+  },
+  "cloudflare_static_assets_reference": "https://developers.cloudflare.com/workers/static-assets/routing/worker-script/",
+  "cost": "0 Ft new paid service usage; production D1 writes and R2 deletion not performed",
+  "remaining_acceptance": [
+    "D-06 and the wider D point remain OPEN / NOT_CERTIFIED.",
+    "Full Visual Editor manual and physical-device acceptance remains deferred until the Editor feature set is complete.",
+    "A production health probe must be run from an allowed network path."
+  ]
+}
