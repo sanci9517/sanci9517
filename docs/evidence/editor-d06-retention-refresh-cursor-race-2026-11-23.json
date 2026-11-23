@@ -1,0 +1,100 @@
+{
+  "schema_version": 1,
+  "captured_at_utc": "2026-11-23T11:22:25Z",
+  "plan_item": "77.44.7.D / D-06 — retention status refresh invalidates an in-flight page cursor",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "baseline_commit": "66436ee3ac1f6142dd1acb1d50e723211bb24759"
+  },
+  "finding": {
+    "reproduction": "With page 1 loaded, an older page request is left in flight and the user explicitly refreshes page 1. Before the first-page response arrives, the old next-page control remained visible/enabled with its previous cursor. A second next-page request could supersede the refresh token and append page 2 to the cleared list, omitting the first page.",
+    "regression_before_fix": "The new Chromium case failed before the runtime fix: expected the stale next-page control to be hidden, but it was visible.",
+    "impact": "Editor/admin could display an incomplete retention-request list while reporting the newly fetched page as the visible list."
+  },
+  "fix": {
+    "kind": "runtime UI correctness + regression test + asset cache versioning",
+    "files": [
+      "public/assets/admin-media-retention.js",
+      "public/assets/admin-media.js",
+      "public/admin-media.html",
+      "tests/browser/admin-media-retention.test.js",
+      "tests/editor-public-asset-cache-bust.test.js",
+      "docs/evidence/feature-traceability.json"
+    ],
+    "behavior": "Starting an explicit refresh clears the old cursor and hides/disables the next-page control. Only a valid first-page response exposes the new cursor; a superseded page response cannot append. The authenticated page and nested retention module use a versioned cache key.",
+    "data_model": "No Page Model, Save, Publish, database, storage or authorization behavior changed.",
+    "open_source_review": "The implementation reuses the existing native DOM controller, request-generation token and Playwright suite; no external package/code was needed or added."
+  },
+  "checks": {
+    "pre_fix_target": "PASS as a reproducer of the bug: the expected hidden-control assertion failed on the old implementation.",
+    "focused_post_fix": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 --test-name-pattern=\"refresh invalidates the old page cursor\" tests/browser/admin-media-retention.test.js — PASS 1/1.",
+    "full_chromium": "CHROMIUM_PATH=/usr/bin/chromium node --test --test-concurrency=1 tests/browser/admin-media-retention.test.js — PASS 17/17 at mobile and desktop widths.",
+    "media_regression": "npm run test:media — PASS 120/120.",
+    "cache_version_contract": "node --test tests/editor-public-asset-cache-bust.test.js — PASS 2/2.",
+    "typecheck": "npm run typecheck -- --pretty false — PASS.",
+    "plan_contract": "python3 tests/plan-contract.test.py — PASS 15/15.",
+    "canonical_plan": "python3 scripts/check-canonical-plan.py — PASS 13 master files / 396 mappings; acceptance NOT CERTIFIED.",
+    "traceability": "python3 scripts/build-feature-traceability.py --check — PASS 396/396; refreshed only fingerprints for changed mapped sources.",
+    "active_plan_audit": "python3 scripts/audit-active-plan-point.py — bookkeeping PASS; 77.44.7.D OPEN / NOT_CERTIFIED; 148 PARTIAL_SOURCE / 248 UNVERIFIED.",
+    "migration_safety": "npm run test:web013:migration-gate — PASS; production migrations remain manual-only.",
+    "diff_check": "git diff --check — PASS.",
+    "wrangler": "npx wrangler deploy --dry-run — exit 0, Wrangler 4.130.0, 200 assets, 430.57 KiB / 109.08 KiB gzip; no deployment. The sandbox emitted a non-fatal EROFS warning while Wrangler attempted its read-only-home log path."
+  },
+  "production_preflight": {
+    "method": "Authenticated Cloudflare D1 Query API; every statement was SELECT-only.",
+    "queries": [
+      "SELECT COUNT(*) AS migration_markers FROM d1_migrations",
+      "SELECT name FROM d1_migrations ORDER BY id DESC LIMIT 1",
+      "SELECT name, sql FROM sqlite_master WHERE type='index' AND name='idx_media_retention_status_page'",
+      "SELECT COUNT(*) AS retention_requests FROM media_retention_requests"
+    ],
+    "results": {
+      "migration_markers": 36,
+      "latest_migration": "0030_media_library_organization.sql",
+      "pagination_index_present": false,
+      "retention_requests": 0,
+      "rows_written": 0,
+      "changes": 0,
+      "changed_db": false
+    },
+    "production_mutations": "NONE; no migration, D1 write, or R2 operation."
+  },
+  "pre_release": {
+    "github_branch_head": "66436ee3ac1f6142dd1acb1d50e723211bb24759 (GitHub branch API exact match before changes)",
+    "cloudflare_latest_deployment": "0a993e8d-747e-435a-8d09-559d29703746",
+    "worker_version_id": "e7de609d-f59a-4220-863f-72855c60e03b",
+    "traffic_percent": 100,
+    "build_minutes_limit_reached": false,
+    "build_minutes_refresh": "2026-11-30T23:59:59.999Z"
+  },
+  "source_sha256": {
+    "public/admin-media.html": "c2d0285d053361317f04e0202affb1ef93fb34ac5048980080802f9a69d29636",
+    "public/assets/admin-media.js": "386b30dcbbfbbc9cd8fa552c324e388e218511f324b4c3d845318d0d84b879a0",
+    "public/assets/admin-media-retention.js": "f4a0572565fbfc102a59577bcb1b1b8527fe803460ab250f4fb4005f9bc7f7f9",
+    "tests/browser/admin-media-retention.test.js": "d2db0c30634382db93408c8bb83146dd9160ee8b770b61015fc103cc97dc088b",
+    "tests/editor-public-asset-cache-bust.test.js": "504535f7e649cadccc7297f322e63e9d95b87621793e599a316282ec95392517"
+  },
+  "release": {
+    "status": "PENDING_RUNTIME_COMMIT_PUSH_BUILD_ROLLOUT_HEALTH_AND_ASSET_HASH_VERIFICATION",
+    "runtime_commit": null,
+    "worker_deployment_id": null,
+    "worker_version_id": null,
+    "traffic_percent": null,
+    "post_deploy_health": null,
+    "post_deploy_asset_hashes": null
+  },
+  "acceptance": {
+    "D06_and_full_D_point": "OPEN / NOT_CERTIFIED",
+    "source_status_counts": {
+      "PARTIAL_SOURCE": 148,
+      "UNVERIFIED": 248
+    },
+    "manual_physical_acceptance": "DEFERRED until complete Visual Editor",
+    "save_publish_separate": true
+  },
+  "cost": {
+    "new_paid_service": false,
+    "new_paid_cost_huf": 0
+  }
+}

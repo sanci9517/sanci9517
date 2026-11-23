@@ -5,6 +5,18 @@ import {resolve} from 'node:path';
 
 const root=resolve(import.meta.dirname,'../public/editor-v2');
 
+test('the authenticated media admin entry and retention module request the refreshed cursor behavior',async()=>{
+  const [html,entry]=await Promise.all([
+    readFile(resolve(import.meta.dirname,'../public/admin-media.html'),'utf8'),
+    readFile(resolve(import.meta.dirname,'../public/assets/admin-media.js'),'utf8')
+  ]);
+  const version='20261123-d06-retention-refresh-cursor-v1';
+  assert.match(html,new RegExp(`<script type="module" src="/assets/admin-media\\.js\\?v=${version}"></script>`),
+    'the protected media-admin HTML must request the cache-keyed entry');
+  assert.match(entry,new RegExp(`from "\\./admin-media-retention\\.js\\?v=${version}"`),
+    'the cache-keyed entry must request the fixed retention-pagination controller');
+});
+
 test('the Editor release tokens bust the stylesheet, account-scoped app and shell caches',async()=>{
   const [html,css]=await Promise.all([
     readFile(resolve(root,'index.html'),'utf8'),

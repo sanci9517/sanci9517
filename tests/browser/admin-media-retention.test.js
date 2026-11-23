@@ -123,6 +123,33 @@ test('retention pages append once, preserve rows on retry, and refresh returns t
  assert.ok(f.calls.every(call=>call.method==='GET'),'paging, retry and refresh only read status');assert.deepEqual(f.pageErrors,[]);
 });
 
+test('refresh invalidates the old page cursor until the first page resolves',async t=>{
+ let finishNext,finishRefresh;
+ const rows=Array.from({length:100},(_,i)=>request('requested',i+1));
+ const f=await fixture(t,(_req,res,n)=>{
+  if(n===1)return json(res,{ok:true,data:data(rows,false,id(100))});
+  if(n===2){finishNext=()=>json(res,{ok:true,data:data(rows.map((row,i)=>({...row,id:id(i+101)})),false,id(200))});return;}
+  if(n===3){finishRefresh=()=>json(res,{ok:true,data:data(rows,false,id(100))});return;}
+  return json(res,{ok:false,error:{code:'UNEXPECTED_EXTRA_STATUS_READ'}},500);
+ });
+ await f.state('ready');
+ const next=f.panel.getByRole('button',{name:'További 100 kérelem betöltése'});
+ await next.click();
+ await f.page.waitForFunction(()=>document.querySelector('#mediaRetentionPanel').dataset.state==='loading-more');
+ await f.refresh.click();
+ await f.page.waitForFunction(()=>document.querySelector('#mediaRetentionPanel').dataset.state==='loading');
+ assert.equal(await f.panel.locator('.retention-next').isHidden(),true,'a stale cursor is unavailable while refreshing page one');
+ assert.equal(await f.panel.locator('.retention-next').evaluate(el=>el.disabled),true,'refresh cannot re-enable an older page request');
+ finishNext();
+ finishRefresh();
+ await f.state('ready');
+ assert.equal(await f.panel.locator('.retention-card').count(),100,'page two must not append to an empty page-one list');
+ assert.deepEqual(await f.panel.locator('.retention-card').evaluateAll(cards=>cards.map(card=>card.dataset.requestId)),rows.map(row=>row.id));
+ assert.equal(await next.isVisible(),true,'the new page-one cursor becomes available after refresh');
+ assert.equal(f.statusCount(),3,'the stale page request must not trigger another read');
+ assert.deepEqual(f.pageErrors,[]);
+});
+
 test('invalid, dangerous or inconsistent responses fail closed without stale rows or HTML injection',async t=>{
  let payload=data([request()]);
  const f=await fixture(t,(_req,res)=>json(res,{ok:true,data:payload}));await f.state('ready');

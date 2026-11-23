@@ -96,7 +96,9 @@ export function mountRetentionStatus(panel, loadStatus, { cancelRequest } = {}) 
     const current = ++request;
     const hadFocus = document.activeElement === button;
     button.disabled = true;
-    nextButton.disabled = false;
+    nextCursor = null;
+    nextButton.disabled = true;
+    nextButton.hidden = true;
     panel.setAttribute("aria-busy", "true");
     panel.dataset.state = "loading";
     status.textContent = "Adatmegőrzési kérelmek betöltése…";
@@ -124,6 +126,7 @@ export function mountRetentionStatus(panel, loadStatus, { cancelRequest } = {}) 
     } finally {
       if (current === request) {
         panel.setAttribute("aria-busy", "false"); button.disabled = false;
+        nextButton.disabled = nextCursor === null;
         if (hadFocus && document.activeElement === document.body) button.focus({ preventScroll: true });
       }
     }
