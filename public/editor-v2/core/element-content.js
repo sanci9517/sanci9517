@@ -126,7 +126,7 @@ export function renderElementContent(type,value,nodeId,{ariaLabel:rawAriaLabel}=
  if(type==='list'){
   const tag=m.ordered?'ol':'ul';return `<${tag} class="visual-structured-list">${m.items.map(i=>`<li>${esc(i)}</li>`).join('')}</${tag}>`;
  }
- if(type==='table')return `<div class="visual-structured-table-scroll" tabindex="0" role="region" aria-label="${esc(regionLabel||'Táblázat')}"><table class="visual-structured-table"><thead><tr>${m.rows[0].map(v=>`<th scope="col">${esc(v)}</th>`).join('')}</tr></thead><tbody>${m.rows.slice(1).map(row=>`<tr>${row.map(v=>`<td>${esc(v)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+ if(type==='table')return `<div class="visual-structured-table-scroll" tabindex="0" role="region" aria-label="${esc(regionLabel||'Táblázat')}"><table class="visual-structured-table" aria-label="${esc(regionLabel||'Táblázat')}"><thead><tr>${m.rows[0].map(v=>`<th scope="col">${esc(v)}</th>`).join('')}</tr></thead><tbody>${m.rows.slice(1).map(row=>`<tr>${row.map(v=>`<td>${esc(v)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
  if(type==='carousel')return `<section class="visual-structured-carousel" data-structured-carousel role="region" aria-roledescription="carousel" aria-label="${esc(regionLabel||'Képkörhinta')}"><div class="visual-carousel-track">${m.items.map((item,i)=>{const src=safePublishedMediaUrl(item.src);return `<article class="visual-carousel-slide" role="group" aria-roledescription="dia" aria-label="${i+1}. / ${m.items.length}. dia"${i===0?'':' hidden'}>${src?`<img src="${esc(src)}" alt="${esc(item.alt)}" loading="lazy">`:''}<h3>${esc(item.label)}</h3><p>${esc(item.content)}</p></article>`}).join('')}</div><div class="visual-carousel-controls"><button type="button" class="visual-carousel-prev" aria-label="Előző dia"${m.items.length===1?' disabled':''}>‹</button><span class="visual-carousel-count" aria-live="polite">1 / ${m.items.length}</span><button type="button" class="visual-carousel-next" aria-label="Következő dia"${m.items.length===1?' disabled':''}>›</button></div></section>`;
  if(type==='accordion')return `<div class="visual-structured-accordion">${m.items.map((item,i)=>`<details${i===0?' open':''}><summary>${esc(item.label)}</summary><div class="visual-structured-panel">${esc(item.content)}</div></details>`).join('')}</div>`;
  if(type==='tabs'){
@@ -174,13 +174,15 @@ export function activateStructuredContent(root){
   images.forEach((button,index)=>button.addEventListener('click',()=>{
    lastButton=button;show(index);dialog.showModal();close.focus();
   }));
-  prev.addEventListener('click',()=>show(selected-1));
-  next.addEventListener('click',()=>show(selected+1));
-  dialog.addEventListener('keydown',e=>{
-   if(e.key==='ArrowLeft'||e.key==='ArrowRight'){
-    e.preventDefault();show(selected+(e.key==='ArrowRight'?1:-1));
-   }
-  });
+  if(images.length>1){
+   prev.addEventListener('click',()=>show(selected-1));
+   next.addEventListener('click',()=>show(selected+1));
+   dialog.addEventListener('keydown',e=>{
+    if(e.key==='ArrowLeft'||e.key==='ArrowRight'){
+     e.preventDefault();show(selected+(e.key==='ArrowRight'?1:-1));
+    }
+   });
+  }
   close.addEventListener('click',()=>dialog.close());
   dialog.addEventListener('click',e=>{if(e.target===dialog)dialog.close()});
   dialog.addEventListener('close',()=>{big.removeAttribute('src');lastButton?.focus()});

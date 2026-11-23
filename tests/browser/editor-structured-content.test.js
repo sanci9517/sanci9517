@@ -382,6 +382,10 @@ test('structured Inspector editing survives Save, Publish and public interaction
  assert.equal(posts.at(-1).publish,true);
  await viewer.goto(base+'/p/test');
  for(const [type,label] of Object.entries(finalAccessibleNames))assert.equal(await viewer.locator(`.visual-editor-node[data-node-id="${ids[type]}"] ${accessibleSelectors[type]}`).getAttribute('aria-label'),label,`separate Publish exposes the ${type} accessible name to the public renderer`);
+ assert.equal(await viewer.locator(`.visual-editor-node[data-node-id="${ids.table}"] .visual-structured-table`).getAttribute('aria-label'),finalAccessibleNames.table,
+  'the authored table itself has an accessible name in addition to its scroll region');
+ assert.equal(await viewer.getByRole('table',{name:finalAccessibleNames.table,exact:true}).count(),1,
+  'assistive technology can identify the table by its authored name');
  const publishedSources=await viewer.evaluate(async()=>{
   const {safeMediaUrl,safePublishedMediaUrl,validateElementContent,renderElementContent}=await import('/editor-v2/core/element-content.js');
   const sources=[
@@ -495,6 +499,30 @@ test('structured Inspector editing survives Save, Publish and public interaction
  assert.equal(await gallery.locator('dialog img').getAttribute('alt'),expectedModels.gallery.items[0].alt);
  await viewer.keyboard.press('Escape');
  assert.ok(!(await gallery.locator('dialog').evaluate(el=>el.open)));
+ const singleGalleryMarkup=renderElementContent('gallery',{version:1,items:[{src:'/media/only.jpg',alt:'Egyetlen kép',caption:'Egyetlen képaláírás'}]},'single-gallery-public-probe');
+ await viewer.evaluate(markup=>{const wrapper=document.createElement('div');wrapper.id='single-gallery-public-probe';wrapper.innerHTML=markup;document.body.append(wrapper)},singleGalleryMarkup);
+ await viewer.evaluate(async()=>{
+  const {activateStructuredContent}=await import('/editor-v2/core/element-content.js?v=20261123-d06-single-slide-gallery-v1');
+  activateStructuredContent(document.querySelector('#single-gallery-public-probe'));
+ });
+ const singleGallery=viewer.locator('#single-gallery-public-probe'),singleThumb=singleGallery.locator('.visual-gallery-thumb');
+ await singleThumb.click();
+ const singleDialog=singleGallery.locator('dialog');
+ assert.ok(await singleDialog.evaluate(el=>el.open));
+ assert.equal(await singleDialog.locator('img').getAttribute('alt'),'Egyetlen kép');
+ assert.equal(await singleDialog.locator('p').textContent(),'Egyetlen képaláírás');
+ for(const key of ['ArrowLeft','ArrowRight']){
+  const prevented=await singleDialog.evaluate((dialog,key)=>{
+   const event=new KeyboardEvent('keydown',{key,bubbles:true,cancelable:true});dialog.dispatchEvent(event);return event.defaultPrevented;
+  },key);
+  assert.equal(prevented,false,`${key} remains available when a gallery contains one image`);
+  await viewer.keyboard.press(key);
+  assert.equal(await singleDialog.locator('img').getAttribute('alt'),'Egyetlen kép');
+  assert.equal(await singleDialog.locator('p').textContent(),'Egyetlen képaláírás');
+ }
+ await viewer.keyboard.press('Escape');
+ assert.ok(!(await singleDialog.evaluate(el=>el.open)),'the single-image dialog still closes with Escape');
+ assert.equal(await singleThumb.evaluate(el=>document.activeElement===el),true,'closing the dialog restores focus to its thumbnail');
  const carousel=viewer.locator('.visual-editor-node[data-node-id="'+ids.carousel+'"]');
  assert.equal(await carousel.locator('.visual-carousel-slide:visible').count(),1);
  await carousel.locator('.visual-carousel-next').click();
@@ -503,7 +531,7 @@ test('structured Inspector editing survives Save, Publish and public interaction
  const singleSlideMarkup=renderElementContent('carousel',{version:1,items:[{label:'Egy dia',content:'Egyetlen tartalom',src:'',alt:''}]},'one-slide-public-probe');
  await viewer.evaluate(markup=>{const wrapper=document.createElement('div');wrapper.id='one-slide-public-probe';wrapper.innerHTML=markup;document.body.append(wrapper)},singleSlideMarkup);
  await viewer.evaluate(async()=>{
-  const {activateStructuredContent}=await import('/editor-v2/core/element-content.js?v=20261123-d06-single-slide-carousel-v1');
+  const {activateStructuredContent}=await import('/editor-v2/core/element-content.js?v=20261123-d06-single-slide-gallery-v1');
   activateStructuredContent(document.querySelector('#one-slide-public-probe'));
  });
  const singleSlide=viewer.locator('#one-slide-public-probe [data-structured-carousel]');
