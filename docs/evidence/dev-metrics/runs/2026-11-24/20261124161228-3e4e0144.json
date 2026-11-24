@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261124161228-3e4e0144",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-24T16:12:28.800Z",
+  "finished_at": "2026-11-24T16:31:41.190Z",
+  "wall_seconds": 1152,
+  "paused_seconds": 0,
+  "measured_seconds": 1152,
+  "status": "pass",
+  "kind": "mixed",
+  "summary": "Rich Text import aggregate safety limits verified locally, safely deployed and smoke-tested; overall D-06 remains open.",
+  "evidence": [
+    "docs/evidence/editor-d06-richtext-import-budget-2026-11-24.json",
+    "commit:0fe33e4b7bad5883f434466be97efa1d4cdb8b0d"
+  ],
+  "checks": "Editor unit 24/24; Chromium regressions; typecheck; plan/traceability; D1 SELECT preflight; Wrangler dry-run; safe deploy; exact-source smoke",
+  "started_revision": "01998aac4f38cd5e2896d9246164033ec688b47e",
+  "finished_revision": "01998aac4f38cd5e2896d9246164033ec688b47e",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

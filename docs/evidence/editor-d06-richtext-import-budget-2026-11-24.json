@@ -1,0 +1,104 @@
+{
+  "schema_version": 1,
+  "captured_at_utc": "2026-11-24T16:34:00Z",
+  "plan_item": "77.44.7.D / D-06 — bounded Rich Text clipboard import work",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "runtime_commit": "0fe33e4b7bad5883f434466be97efa1d4cdb8b0d",
+    "runtime_commit_url": "https://github.com/sanci9517/sanci9517/commit/0fe33e4b7bad5883f434466be97efa1d4cdb8b0d",
+    "remote_branch_readback": "0fe33e4b7bad5883f434466be97efa1d4cdb8b0d",
+    "canonical_plan_blob": "316500f6baf97d32b4ddfbf2398d75ff7304872d",
+    "canonical_plan_bytes": 1865612,
+    "canonical_plan_changed_for_this_evidence": false
+  },
+  "implementation": {
+    "runtime_changed": true,
+    "summary": "Rich Text import now shares aggregate budgets across parsed blocks, nested/list items, and inline text runs; plain text also rejects excessive line counts. The existing character and table-dimension limits remain. Parsing continues through inert DOMParser with the project's allowlist. No third-party dependency was added and Save remains distinct from Publish.",
+    "limits": {
+      "aggregate_blocks": 5000,
+      "aggregate_list_items": 5000,
+      "aggregate_inline_runs": 5000,
+      "plain_text_lines": 5000
+    },
+    "changed_public_assets": {
+      "public/editor-v2/core/richtext-import.js": "d886cf5f6deefe47ba13fa20ad995981e21bdf196a4d83622eaa4ba2eb2421a2",
+      "public/editor-v2/index.html": "5dded30826de55dd91eb21443d0e82c751e479dff195981465663ed6e92a26e5",
+      "public/editor-v2/app.js": "551d6a7024a015d91c51dd6072bd17fc474730c84a79ac0fafc9a5c83818eef5"
+    }
+  },
+  "checks": {
+    "local": {
+      "npm run test:editor": "PASS; 24/24 files, preference route 10/10, Linux subreaper runner 4/4",
+      "node tests/browser/editor-inspector-richtext-controls.test.js": "PASS 2/2 in Chromium; block/list/run overflow rejects and ordinary formatted paste remains accepted",
+      "node tests/browser/editor-node-clipboard.test.js": "PASS 1/1 in Chromium",
+      "node tests/browser/editor-page-interactions.test.js": "PASS 1/1 in Chromium after waiting for asynchronous deep-link hydration",
+      "node tests/browser/editor-publish-unsupported-recovery.test.js": "PASS 1/1 in Chromium",
+      "npm run typecheck": "PASS",
+      "python3 tests/plan-contract.test.py": "PASS 16/16",
+      "python3 scripts/check-canonical-plan.py": "PASS; one canonical master, 13 checked plan files, 396 mappings",
+      "python3 scripts/build-feature-traceability.py --check": "PASS 396/396",
+      "python3 scripts/audit-active-plan-point.py": "PASS; cursor remains OPEN / NOT CERTIFIED",
+      "npm run test:web013:migration-gate": "PASS",
+      "npx wrangler deploy --dry-run": "PASS exit 0; 202 assets, 434.30 KiB (110.07 KiB gzip); EROFS was limited to shared Wrangler log output"
+    },
+    "production_d1_preflight": {
+      "method": "Cloudflare D1 Query API, SELECT-only SQL",
+      "latest_marker": "0030_media_library_organization.sql",
+      "schema_rows_read": 269,
+      "rows_written": 0,
+      "changes": 0,
+      "changed_db": false,
+      "migration_applied": false
+    },
+    "hosted_github": {
+      "Canonical Creator Platform Plan": "SUCCESS; run 45435911295",
+      "Canonical Plan Active Point Audit": "SUCCESS; run 45435911937",
+      "Twitch Integration Check": "SUCCESS; run 45435911981",
+      "F0 baseline checks": "SUCCESS; run 45435911164",
+      "Production Worker source smoke": "SUCCESS; run 45435911637; exact-SHA live health and source-byte checks",
+      "Editor Core Test": "IN_PROGRESS at the last readback; run 45435911565; browser layout regression step; aggregate run is not claimed as PASS"
+    }
+  },
+  "cloudflare_build_and_release": {
+    "automatic_build": {
+      "build_uuid": "bf43844c-7649-4730-a665-29a381797d54",
+      "status": "FAILED",
+      "cause": "The build restored a corrupted @cloudflare/workerd-linux-64 npm tarball; npm reported unexpected end of file and Wrangler could not find the optional package. TypeScript and the migration safety gate had completed successfully.",
+      "recovery": "Ran the repository-approved npm run deploy:safe from the exact pushed runtime source after fresh read-only D1 preflight and Wrangler dry-run. No npm audit fix, D1 migration, or data write was run."
+    },
+    "safe_deploy_command": "npm run deploy:safe",
+    "safe_deploy_result": "PASS; migration safety gate passed and Wrangler uploaded the three changed assets",
+    "deployment_id": "8fd0b1da-73dc-4f3f-97e3-5377bdccc1a6",
+    "worker_version_id": "be80eb5f-92bd-42ee-b178-70f2352b379e",
+    "worker_version_number": 4184,
+    "traffic_percent": 100,
+    "direct_health": {
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+      "http_status": 200,
+      "body": {"ok": true, "service": "sanci9517-streamer-brand", "version": "2.0.0", "server": "cloudflare-worker"}
+    },
+    "deployed_asset_sha256": {
+      "/editor-v2/core/richtext-import.js": "d886cf5f6deefe47ba13fa20ad995981e21bdf196a4d83622eaa4ba2eb2421a2",
+      "/editor-v2/ (source public/editor-v2/index.html)": "5dded30826de55dd91eb21443d0e82c751e479dff195981465663ed6e92a26e5",
+      "/editor-v2/app.js": "551d6a7024a015d91c51dd6072bd17fc474730c84a79ac0fafc9a5c83818eef5"
+    }
+  },
+  "cost_and_data_safety": {
+    "new_cost_huf": 0,
+    "paid_service": false,
+    "new_dependency": false,
+    "production_d1_mutation_or_migration": false,
+    "production_r2_operation": false,
+    "manual_ci_dispatch_or_rerun": false,
+    "cloudflare_build_minutes_last_verified_not_exhausted": true
+  },
+  "acceptance": {
+    "rich_text_import_budget_slice": "IMPLEMENTED / LOCAL CHECKS PASS / DEPLOYED / EXACT-SOURCE SMOKE PASS",
+    "d06": "OPEN / NOT CERTIFIED",
+    "full_d_block": "OPEN / NOT CERTIFIED",
+    "complete_visual_editor": "OPEN / NOT CERTIFIED",
+    "manual_physical_acceptance": "DEFERRED until complete Editor scope is implemented",
+    "save_is_publish": false
+  }
+}
