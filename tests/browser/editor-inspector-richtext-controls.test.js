@@ -228,6 +228,14 @@ test('typed Inspector controls and link selection work with real browser DOM at 
       const tooManyDocumentListItems=rejectionFor(Array.from({length:10},()=>'<ul>'+ '<li></li>'.repeat(501) +'</ul>').join(''));
       const excessiveInlineRuns=rejectionFor('<p>'+Array.from({length:5001},(_,index)=>index%2?'<em>x</em>':'<strong>x</strong>').join('')+'</p>');
       let tooManyPlainTextBlocksRejected=false;try{importRichTextClipboard({text:'x\n'.repeat(5000)})}catch(error){tooManyPlainTextBlocksRejected=/legfeljebb 5000 szövegblokk/.test(error.message)}
+      // Pin both sides of the guard: the advertised maximum stays usable, and
+      // only the first item beyond it is rejected. These are intentionally
+      // aggregate counts so future refactors cannot quietly turn a safety cap
+      // into a lower, user-visible content limit.
+      const atBudgetBlocks=importRichTextClipboard({html:'<p>x</p>'.repeat(5000)}).blocks.length;
+      const atBudgetListItems=importRichTextClipboard({html:'<ul>'+ '<li>x</li>'.repeat(5000) +'</ul>'}).blocks[0].items.length;
+      const atBudgetInlineRuns=importRichTextClipboard({html:'<p>'+Array.from({length:5000},(_,index)=>index%2?'<em>x</em>':'<strong>x</strong>').join('')+'</p>'}).blocks[0].children.length;
+      const atBudgetPlainTextBlocks=importRichTextClipboard({text:'x\n'.repeat(4999)+'x'}).blocks.length;
       const ordinaryFormattedPaste=importRichTextClipboard({html:'<p><strong>Jól formázott</strong> szöveg</p>'});
       const model={
         schemaVersion:1,type:'richtext-document',
@@ -271,7 +279,8 @@ test('typed Inspector controls and link selection work with real browser DOM at 
         importedLinks:importedRoundTrip.blocks[1].children.filter(run=>run.link).length,importedTable:importedRoundTrip.blocks[3].rows.map(row=>row.cells.map(cell=>cell.children.map(run=>run.text).join(''))),officeStyles:officeStyles.blocks[0],tableCell:importedRoundTrip.blocks[3].rows[2].cells[1],
         tsvType:importedTsv.blocks[0].type,tsvShape:[importedTsv.blocks[0].rows.length,importedTsv.blocks[0].rows[0].cells.length],
         quotedTsvRows:quotedTsv.blocks[0].rows.map(row=>row.cells.map(cell=>cell.children.map(run=>run.text).join(''))),oversizedPasteRejected,
-        tooManyBlocks,tooManyListItems,tooManyDocumentListItems,excessiveInlineRuns,tooManyPlainTextBlocksRejected,ordinaryFormattedPaste,
+        tooManyBlocks,tooManyListItems,tooManyDocumentListItems,excessiveInlineRuns,tooManyPlainTextBlocksRejected,
+        atBudgetBlocks,atBudgetListItems,atBudgetInlineRuns,atBudgetPlainTextBlocks,ordinaryFormattedPaste,
         pasteAttack:window.__pasteAttack,
         markedRun:aligned.blocks[0].children.find(x=>x.text==='world'),alignment:aligned.blocks[0].align,
         multiSelection,multiBlocks:multiAligned.blocks,
@@ -349,6 +358,10 @@ test('typed Inspector controls and link selection work with real browser DOM at 
     assert.match(data.tooManyDocumentListItems,/legfeljebb 5000 elemet/,'the item budget applies across multiple lists in one clipboard import');
     assert.match(data.excessiveInlineRuns,/legfeljebb 5000 formázott szövegrészt/,'large formatting-fragment floods are rejected before model normalization');
     assert.equal(data.tooManyPlainTextBlocksRejected,true,'plain-text pastes enforce the same document block budget as HTML');
+    assert.equal(data.atBudgetBlocks,5000,'HTML at the documented aggregate block limit remains importable');
+    assert.equal(data.atBudgetListItems,5000,'a list at the documented item limit remains importable');
+    assert.equal(data.atBudgetInlineRuns,5000,'formatted text at the documented run limit remains importable');
+    assert.equal(data.atBudgetPlainTextBlocks,5000,'plain text at the documented block limit remains importable');
     assert.deepEqual(data.ordinaryFormattedPaste.blocks[0].children.map(run=>run.text),['Jól formázott',' szöveg'],'ordinary formatted clipboard imports remain supported');
     assert.equal(data.pasteAttack,undefined,'Office markup must be parsed as inert content');
     await page.close();
@@ -422,3 +435,4 @@ test('shared Inspector color controls synchronize RGB, short HEX, alpha, transpa
     await page.close();
   }
 });
+
