@@ -17,7 +17,10 @@ test('node clipboard keyboard flow duplicates nested nodes into the draft; Save 
   const actionButton=createNode(NODE_TYPES.BUTTON,{name:'Belső oldalinterakció',parentId:section.id,props:{text:'Fülre ugrás',href:''},metadata:{contentVersion:1}});
   actionButton.interactions=[{schemaVersion:1,event:'click',action:'select-tab',targetId:tabs.id,itemIndex:0}];
   section.children.push(copyText.id,tabs.id,actionButton.id);
-  page.nodes[section.id]=section;page.nodes[copyText.id]=copyText;page.nodes[tabs.id]=tabs;page.nodes[actionButton.id]=actionButton;page.nodes[page.rootId].children.push(section.id);
+  const first=createNode(NODE_TYPES.TEXT,{name:'Első kijelölhető',parentId:page.rootId,props:{text:'Első kijelölhető'}});
+  const last=createNode(NODE_TYPES.TEXT,{name:'Utolsó kijelölhető',parentId:page.rootId,props:{text:'Utolsó kijelölhető'}});
+  page.nodes[section.id]=section;page.nodes[copyText.id]=copyText;page.nodes[tabs.id]=tabs;page.nodes[actionButton.id]=actionButton;
+  page.nodes[first.id]=first;page.nodes[last.id]=last;page.nodes[page.rootId].children.push(first.id,section.id,last.id);
   let draft=structuredClone(initial),published=null,revision=1;const posts=[];
   const server=createServer(async(req,res)=>{
     const url=new URL(req.url,'http://localhost');
@@ -48,6 +51,7 @@ test('node clipboard keyboard flow duplicates nested nodes into the draft; Save 
   const errors=[];tab.on('pageerror',error=>errors.push(error.message));
   await tab.goto(`http://127.0.0.1:${server.address().port}/editor-v2/index.html`);
   await tab.locator('.rail-btn[data-tab="layers"]').click();
+
   await tab.locator(`#layersTree .layer-row[data-node-id="${section.id}"]`).click();
   assert.equal(await tab.locator('#selection').textContent(),`Kijelölés: ${section.id}`,'layer selection focuses the source before keyboard copy');
   await tab.locator('.more-actions > summary').click();
@@ -55,6 +59,32 @@ test('node clipboard keyboard flow duplicates nested nodes into the draft; Save 
   assert.equal(await tab.locator('#copyNodes').isEnabled(),true,'the pointer copy action is available for a valid selection');
   assert.equal(await tab.locator('#pasteNodes').isEnabled(),false,'paste remains disabled until a same-page clipboard snapshot exists');
   await tab.locator('.more-actions > summary').click();
+
+  // The multi-selection contract is driven through the actual Layers UI. Select
+  // in reverse canvas order to prove clipboard order is deterministic, and
+  // ensure one Undo/Redo treats both pasted roots as a single operation.
+  await tab.locator(`#layersTree .layer-row[data-node-id="${last.id}"]`).click();
+  await tab.locator(`#layersTree .layer-row[data-node-id="${first.id}"]`).click({modifiers:['Control']});
+  await tab.keyboard.press('Control+c');
+  await tab.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent?.includes('2 elem másolva'));
+  await tab.keyboard.press('Control+v');
+  await tab.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent?.includes('2 elem beillesztve'));
+  const copiedFirst=tab.locator('#canvas .page-canvas > .node > .node').filter({hasText:'Első kijelölhető'}).last();
+  const copiedLast=tab.locator('#canvas .page-canvas > .node > .node').filter({hasText:'Utolsó kijelölhető'}).last();
+  const copiedFirstId=await copiedFirst.getAttribute('data-node-id');
+  const copiedLastId=await copiedLast.getAttribute('data-node-id');
+  assert.notEqual(copiedFirstId,first.id);
+  assert.notEqual(copiedLastId,last.id);
+  const directChildIds=await tab.locator('#canvas .page-canvas > .node > .node').evaluateAll(nodes=>nodes.map(node=>node.dataset.nodeId));
+  assert.ok(directChildIds.indexOf(copiedFirstId)<directChildIds.indexOf(copiedLastId),'multi-paste follows canvas order, not modifier-click order');
+  assert.equal(posts.length,0,'multi-copy/paste remains a local draft change before Save');
+  await tab.keyboard.press('Control+z');
+  assert.equal(await tab.locator(`#canvas .node[data-node-id="${copiedFirstId}"],#canvas .node[data-node-id="${copiedLastId}"]`).count(),0,
+    'one Undo removes every root from the multi-paste batch');
+  await tab.keyboard.press('Control+Shift+z');
+  await tab.locator(`#canvas .node[data-node-id="${copiedFirstId}"]`).waitFor();
+  await tab.locator(`#canvas .node[data-node-id="${copiedLastId}"]`).waitFor();
+
   await tab.locator(`#layersTree .layer-row[data-node-id="${section.id}"]`).click();
   await tab.keyboard.press('Control+c');
   await tab.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent?.includes('másolva'));
@@ -64,7 +94,7 @@ test('node clipboard keyboard flow duplicates nested nodes into the draft; Save 
   await tab.locator('.more-actions > summary').click();
   await tab.locator(`#layersTree .layer-row[data-node-id="${section.id}"]`).click();
   await tab.keyboard.press('Control+v');
-  const copiedRoot=tab.locator('#canvas .page-canvas > .node > .node').last();
+  const copiedRoot=tab.locator('#canvas .page-canvas > .node > .node').filter({hasText:/Másolatba kerül/}).last();
   await copiedRoot.waitFor();
   const copiedId=await copiedRoot.getAttribute('data-node-id');
   assert.notEqual(copiedId,section.id);
