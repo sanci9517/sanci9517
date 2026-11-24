@@ -28,7 +28,7 @@ test('the Editor and public renderer release tokens bust the structured accessib
     'the deployed HTML must request the stylesheet version containing palette-favorites styles');
   assert.match(css,/\.element-favorite-toggle\s*\{/,
     'the stylesheet referenced by the versioned link must include the palette-favorites UI');
-  const recoveryVersion='20261124-edt042-publish-recovery-single-alert-v1';
+  const recoveryVersion='20261124-edt042-publish-recovery-safe-label-v1';
   assert.match(html,new RegExp(`src="/editor-v2/app\\.js\\?v=${recoveryVersion}"`),
     'the deployed entry page must request the unsupported-Publish recovery handler');
   assert.match(html,/src="\/editor-v2\/ui\/shell\.js\?v=20261123-edt044-account-scoped-preferences-v2"/,
@@ -60,7 +60,7 @@ test('the EDT-040 in-view trigger refreshes both renderers and the shared motion
   ]);
   const motionVersion='20261123-edt040-in-view-motion-v1';
   const domIdVersion='20261124-d06-safe-content-dom-id-v1';
-  const editorEntryVersion='20261124-edt042-publish-recovery-single-alert-v1';
+  const editorEntryVersion='20261124-edt042-publish-recovery-safe-label-v1';
   assert.match(editorHtml,new RegExp(`editor-motion\\.css\\?v=${motionVersion}`));
   assert.match(editorHtml,new RegExp(`app\\.js\\?v=${editorEntryVersion}`));
   assert.match(editor,new RegExp(`core/property-registry\\.js\\?v=${motionVersion}`));

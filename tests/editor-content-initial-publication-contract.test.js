@@ -90,6 +90,17 @@ test('unsupported Publish recovery points to the first planned/unknown child wit
   assert.equal(firstUnsupportedPublicationNode({}),null);
 });
 
+test('unsupported Publish guidance never invokes malformed saved name/type conversions',()=>{
+  assert.match(unsupportedPublicationMessage({name:{toString:null},type:'form'}),/„form” elem típusa még nem publikálható/,
+    'a malformed name falls back to the known safe node type');
+  assert.match(unsupportedPublicationMessage({name:'',type:{toString:null}}),/„ismeretlen elem” elem típusa még nem publikálható/,
+    'an unknown non-string type is never interpolated as an object');
+  const long=unsupportedPublicationMessage({name:`  ${'A'.repeat(400)}\n  B  `,type:'form'});
+  const short=unsupportedPublicationMessage({name:'A',type:'form'});
+  assert.ok(long.length<=short.length+120,'the recovery label is capped at 120 code points even when imported data contains a huge name');
+  assert.doesNotMatch(long,/\n|\u0000/,'recovery copy collapses controls and whitespace');
+});
+
 test('real content defaults are view-only and are not persisted into empty nodes',()=>{
   const node=createNode('image',{metadata:{contentVersion:1}});
   const snapshot=structuredClone(node);

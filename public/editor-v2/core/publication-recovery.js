@@ -17,7 +17,14 @@ export function firstUnsupportedPublicationNode(page){
   return null;
 }
 
+function safeLabel(value){
+  if(typeof value!=='string')return '';
+  const normalized=value.replace(/[\u0000-\u001f\u007f]/g,' ').replace(/\s+/g,' ').trim();
+  const characters=Array.from(normalized);
+  return characters.length>120?`${characters.slice(0,119).join('')}…`:normalized;
+}
+
 export function unsupportedPublicationMessage(node){
-  const label=node?.name?.trim()||node?.type||'ismeretlen elem';
+  const label=safeLabel(node?.name)||safeLabel(node?.type)||'ismeretlen elem';
   return `A „${label}” elem típusa még nem publikálható. A mentett piszkozat, az élő oldal és a verzió változatlan maradt. A Rétegek panelen jelöld ki, majd töröld vagy cseréld le az elemet; utána külön publikálj.`;
 }

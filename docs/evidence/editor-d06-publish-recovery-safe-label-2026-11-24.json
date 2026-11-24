@@ -1,0 +1,93 @@
+{
+  "schema": "sanci.editor.d06.publish-recovery-safe-label.v1",
+  "recorded_at_utc": "2026-11-24T11:44:00Z",
+  "repository": "sanci9517/sanci9517",
+  "branch": "v2/foundation",
+  "base_commit": "ffdfefe213ce1af056e42f95be8a3afbb71c3ce3",
+  "plan_cursor": "77.44 / WEB-011 -> 77.44.7.D",
+  "issue": {
+    "scope": "Bounded defensive hardening for the shared unsupported-Publish recovery label formatter.",
+    "behavior": "Accept only string names/types, collapse control/whitespace, and cap the user-facing label to 120 Unicode code points. Unsupported node types remain unsupported; server publish validation is unchanged.",
+    "acceptance": "PARTIAL_SOURCE / NOT_RECERTIFIED"
+  },
+  "changed_files": {
+    "runtime": [
+      "public/editor-v2/app.js",
+      "public/editor-v2/index.html",
+      "public/editor-v2/core/publication-recovery.js"
+    ],
+    "tests": [
+      "tests/editor-content-initial-publication-contract.test.js",
+      "tests/editor-public-asset-cache-bust.test.js"
+    ],
+    "generated": [
+      "docs/evidence/feature-traceability.json"
+    ],
+    "plan": [
+      "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md"
+    ]
+  },
+  "sha256": {
+    "public/editor-v2/app.js": "3fbffcda190e1a9b30f0977417db28eaaffeceab0e0225f31c23b788bd6b9bd8",
+    "public/editor-v2/index.html": "f41f539a3cfadc4e9864e82ee32c563b48f97aecf827f386f506eda0041346d9",
+    "public/editor-v2/core/publication-recovery.js": "c8c91cc3ec64e3433cd39e399efe1835b3aec239a67e8fb1cfd61b4b1924eaae",
+    "tests/editor-content-initial-publication-contract.test.js": "4d6af981a53c5741de5392d744e3ee20ecc60f5c3b154828eb3dde9f1391db58",
+    "tests/editor-public-asset-cache-bust.test.js": "f3aad465d0b270d5574989525c85c9de4fc7eb2fb74e4b3e92fa10fd5190c87b"
+  },
+  "local_checks": {
+    "targeted_publication_unit": "PASS 16/16: node --experimental-loader ./tests/ts-extension-loader.mjs tests/editor-content-initial-publication-contract.test.js",
+    "cache_bust_contract": "PASS 3/3: node tests/editor-public-asset-cache-bust.test.js",
+    "browser": "PASS 1/1 real Chromium: tests/browser/editor-publish-unsupported-recovery.test.js (additional network permission used only for local loopback browser fixture)",
+    "editor_unit": "PASS: npm run test:editor; 24/24 node files, preferences 10/10, linux subreaper 4/4",
+    "publish_route": "PASS 21/21: npm run test:editor:publish-guard",
+    "typecheck": "PASS: npm run typecheck",
+    "plan_contract": "PASS 16/16: python3 tests/plan-contract.test.py",
+    "canonical_plan": "PASS: python3 scripts/check-canonical-plan.py; 13 master files",
+    "traceability": "PASS: python3 scripts/build-feature-traceability.py --check; 396 mappings, 148 PARTIAL_SOURCE, 248 UNVERIFIED; acceptance NOT_CERTIFIED",
+    "active_point": "PASS bookkeeping only: python3 scripts/audit-active-plan-point.py; next 77.44.7.D; acceptance NOT_CERTIFIED",
+    "migration_safety": "PASS: npm run test:web013:migration-gate; no migrations applied",
+    "dry_run": "PASS exit 0: XDG_CONFIG_HOME=/tmp/sanci-wrangler-config npx wrangler deploy --dry-run; Wrangler 4.130.0; 202 assets; 434.30 KiB / 110.07 KiB gzip; no deployment"
+  },
+  "production_d1_preflight": {
+    "method": "Cloudflare D1 Query API, three SELECT-only statements; no PRAGMA, migration, DML, R2 request, or data mutation.",
+    "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
+    "queries": [
+      "SELECT type,name FROM sqlite_schema WHERE type IN ('table','view','index','trigger') ORDER BY type,name",
+      "SELECT COUNT(*) AS marker_count FROM d1_migrations",
+      "SELECT id,name FROM d1_migrations ORDER BY id DESC LIMIT 1"
+    ],
+    "schema_object_count": 147,
+    "migration_marker_count": 36,
+    "latest_migration_id": 36,
+    "latest_migration": "0030_media_library_organization.sql",
+    "all_results_rows_written": 0,
+    "all_results_changes": 0,
+    "all_results_changed_db": false
+  },
+  "live_before_release": {
+    "deployment_id": "a97315d9-848d-49ea-9270-75b6aa53958a",
+    "worker_version_id": "fdfa0630-b39c-43d2-baa6-10ea815d748d",
+    "traffic_percent": 100,
+    "created_on": "2026-11-24T10:38:11.434781Z",
+    "note": "Read back via Cloudflare API. This is before the safe-label source update."
+  },
+  "release": {
+    "status": "PENDING",
+    "source_commit": null,
+    "github_exact_sha_checks": "PENDING",
+    "cloudflare_build": "PENDING",
+    "deployment": "PENDING",
+    "production_health": "PENDING",
+    "changed_public_asset_live_hashes": "PENDING"
+  },
+  "acceptance": {
+    "D06": "OPEN / NOT_CERTIFIED",
+    "D01_D07": "OPEN / NOT_CERTIFIED",
+    "full_editor": "OPEN / NOT_CERTIFIED",
+    "manual_physical_acceptance": "DEFERRED_UNTIL_COMPLETE_EDITOR",
+    "save_publish": "SEPARATE",
+    "new_cost_huf": 0,
+    "d1_mutations": 0,
+    "r2_operations": 0
+  }
+}
