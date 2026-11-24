@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261124154415-a1055770",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-24T15:44:15.011Z",
+  "finished_at": "2026-11-24T15:45:39.759Z",
+  "wall_seconds": 85,
+  "paused_seconds": 0,
+  "measured_seconds": 85,
+  "status": "pass",
+  "kind": "test",
+  "summary": "D-06 EDT-038: valós Chromium teszt igazolta a többgyökerű Layers clipboard sorrendet és egy-lépéses undo/redo-t.",
+  "evidence": [
+    "tests/browser/editor-node-clipboard.test.js:PASS 1/1"
+  ],
+  "checks": "Core PASS; [skip ci] test/evidence commits verified on v2/foundation; Worker unchanged",
+  "started_revision": "01998aac4f38cd5e2896d9246164033ec688b47e",
+  "finished_revision": "01998aac4f38cd5e2896d9246164033ec688b47e",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
