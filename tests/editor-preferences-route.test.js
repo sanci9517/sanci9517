@@ -123,6 +123,19 @@ test('account workspace settings round-trip independently from page content and 
   assert.equal(f.db.prepare('SELECT COUNT(*) AS n FROM editor_preferences').get().n, 1);
 });
 
+test('preference writes reject a stale editor owner after the authenticated account changes', async t => {
+  const f = await fixture(t);
+  const response = await f.call('PUT', 'user-b', {
+    ownerUserId: 'user-a',
+    workspace: { version: 1, appearance: { theme: 'aurora' }, dock: {}, viewport: { device: 'desktop', zoom: 1 } },
+    baseRevisions: { workspace: 0 }
+  });
+  assert.equal(response.status, 409);
+  assert.equal((await response.json()).error.code, 'PREFERENCES_OWNER_CHANGED');
+  assert.equal(f.db.prepare('SELECT COUNT(*) AS n FROM editor_preferences').get().n, 0,
+    'an editor loaded for one account cannot store its stale workspace under a different account session');
+});
+
 test('concurrent account preference writes preserve independent workspace and palette updates', async t => {
   const f = await fixture(t, { barrierConcurrentPreferenceReads: true });
   f.db.prepare('INSERT INTO editor_preferences(user_id, preferences_json) VALUES (?, ?)').run('user-a', JSON.stringify({

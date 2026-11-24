@@ -196,13 +196,18 @@ function updatePaletteFavorite(type,name,filter){
  }
  accountPreferenceWrite=accountPreferenceWrite.catch(()=>{}).then(async()=>{
   if(accountPreferenceConflicts.has('paletteFavoriteTypes'))return;
-  const saved=await api('/api/admin/editor/preferences',{method:'PUT',body:JSON.stringify({paletteFavoriteTypes:types,baseRevisions:{paletteFavoriteTypes:accountPreferenceRevisions.paletteFavoriteTypes}})});
+  const saved=await api('/api/admin/editor/preferences',{method:'PUT',body:JSON.stringify({ownerUserId:userId,paletteFavoriteTypes:types,baseRevisions:{paletteFavoriteTypes:accountPreferenceRevisions.paletteFavoriteTypes}})});
   if(Number.isSafeInteger(saved?.data?.revisions?.paletteFavoriteTypes))accountPreferenceRevisions.paletteFavoriteTypes=saved.data.revisions.paletteFavoriteTypes;
   if(paletteFavoritesUserId===userId&&paletteFavoriteTypes.join('\0')===types.join('\0')){
    writePaletteFavoriteTypes(userId,types);
    if(status)status.textContent=saved?.data?.paletteFavoriteTypes?'Kedvencek elmentve a fiókodhoz; más eszközön is visszatöltődnek.':'A kedvencek frissültek.';
   }
  }).catch(error=>{
+  if(error?.code==='PREFERENCES_OWNER_CHANGED'){
+   accountPreferenceConflicts.add('paletteFavoriteTypes');
+   if(paletteFavoritesUserId===userId)announceAccountPreferenceConflict('A bejelentkezett fiók megváltozott. A helyi kedvencek megmaradtak, de nem kerültek át másik fiókba; töltsd újra a szerkesztőt.');
+   return;
+  }
   if(error?.code==='PREFERENCES_CONFLICT'){
    accountPreferenceConflicts.add('paletteFavoriteTypes');
    if(paletteFavoritesUserId===userId)announceAccountPreferenceConflict('Egy másik munkamenet módosította a fiókkedvenceket. A mostani lista ezen az eszközön megmaradt; frissítsd az oldalt a fiók legújabb állapotához.');
@@ -256,13 +261,18 @@ function queueAccountWorkspaceWrite(){
  if(!accountWorkspaceReady||!paletteFavoritesUserId||accountPreferenceConflicts.has('workspace'))return;
  clearTimeout(accountWorkspaceTimer);
  accountWorkspaceTimer=setTimeout(()=>{
-  const workspace=accountWorkspaceSnapshot();if(!workspace)return;
+  const workspace=accountWorkspaceSnapshot(),ownerUserId=paletteFavoritesUserId;if(!workspace||!ownerUserId)return;
   accountPreferenceWrite=accountPreferenceWrite.catch(()=>{}).then(async()=>{
    if(accountPreferenceConflicts.has('workspace'))return;
-   const saved=await api('/api/admin/editor/preferences',{method:'PUT',body:JSON.stringify({workspace,baseRevisions:{workspace:accountPreferenceRevisions.workspace}})});
+   const saved=await api('/api/admin/editor/preferences',{method:'PUT',body:JSON.stringify({ownerUserId,workspace,baseRevisions:{workspace:accountPreferenceRevisions.workspace}})});
    if(Number.isSafeInteger(saved?.data?.revisions?.workspace))accountPreferenceRevisions.workspace=saved.data.revisions.workspace;
    const status=$('#elementPaletteStatus');if(status)status.textContent='A munkaterület beállításai a fiókodhoz szinkronizálva.';
   }).catch(error=>{
+   if(error?.code==='PREFERENCES_OWNER_CHANGED'){
+    accountPreferenceConflicts.add('workspace');
+    announceAccountPreferenceConflict('A bejelentkezett fiók megváltozott. A munkaterület helyi nézete megmaradt, de nem került át másik fiókba; töltsd újra a szerkesztőt.');
+    return;
+   }
    if(error?.code==='PREFERENCES_CONFLICT'){
     accountPreferenceConflicts.add('workspace');
     announceAccountPreferenceConflict('Egy másik munkamenet közben módosította a munkaterületet. A helyi nézet ezen az eszközön megmaradt; frissítsd az oldalt a fiók legújabb állapotához.');

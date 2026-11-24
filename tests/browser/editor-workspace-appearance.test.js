@@ -32,6 +32,7 @@ function fixtureServer({accountUser=null,sessionDelayMs=0}={}){
       if(req.method==='GET')return json({ok:true,data:{...accountPreferences}});
       if(req.method==='PUT'){
         let body='';for await(const chunk of req)body+=chunk;const patch=JSON.parse(body);
+        if(patch.ownerUserId&&patch.ownerUserId!==activeAccountUser){res.statusCode=409;return json({ok:false,error:{code:'PREFERENCES_OWNER_CHANGED'},data:structuredClone(accountPreferences)})}
         const fields=['paletteFavoriteTypes','workspace'].filter(field=>Object.hasOwn(patch,field));
         if(fields.some(field=>patch.baseRevisions?.[field]!==accountPreferences.revisions[field])){res.statusCode=409;return json({ok:false,error:{code:'PREFERENCES_CONFLICT'},data:structuredClone(accountPreferences)})}
         if(patch.workspace?.appearance)delete patch.workspace.appearance.profiles;
@@ -4327,6 +4328,28 @@ test('stale account workspace edits stay local and surface a conflict instead of
   assert.equal(await secondPage.locator('.editor-app').getAttribute('data-workspace-theme'),'ocean','the current device keeps its un-synced local edit visible');
   assert.deepEqual(first.writes,[],'preference conflicts never Save or Publish page content');
   assert.deepEqual(first.errors,[]);
+});
+
+test('a stale Editor session cannot write workspace or favorites into a different account after a cross-tab login switch',async t=>{
+  const editor=await openEditor(t,{accountUser:'account-a'});
+  await editor.page.waitForFunction(()=>document.querySelector('#elementPaletteStatus')?.textContent.includes('fiókodhoz mentve'));
+  editor.switchAccountUser('account-b');
+
+  await openPreferences(editor.page);
+  await editor.page.locator('#workspaceTheme').selectOption('aurora');
+  await editor.page.waitForFunction(()=>document.querySelector('#workspaceAppearanceStatus')?.textContent.includes('fiók megváltozott'));
+  assert.equal(await editor.page.locator('.editor-app').getAttribute('data-workspace-theme'),'aurora','the current device keeps its unsynced local workspace edit');
+  assert.equal(editor.accountPreferences.workspace,null,'the server rejects stale account A workspace state under account B');
+
+  await editor.page.locator('#closeWorkspaceAppearance').click();
+  await editor.page.locator('.rail-btn[data-tab="elements"]').click();
+  await editor.page.locator('#elementSearch').fill('Divider');
+  const favorite=editor.page.locator('.element-row').filter({has:editor.page.locator('.element').filter({hasText:'Divider'})}).locator('.element-favorite-toggle');
+  await favorite.click();
+  await editor.page.waitForFunction(()=>document.querySelector('#elementPaletteStatus')?.textContent.includes('fiók megváltozott'));
+  assert.deepEqual(editor.accountPreferences.paletteFavoriteTypes,[],'the server rejects stale account A favorites under account B');
+  assert.deepEqual(editor.writes,[],'a preference owner change does not invoke Page Model Save or Publish');
+  assert.deepEqual(editor.errors,[]);
 });
 
 test('stale account palette favorites stay local and surface a conflict instead of replacing the newer device list',async t=>{
