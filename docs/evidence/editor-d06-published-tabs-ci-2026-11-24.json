@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "captured_at_utc": "2026-11-24T21:09:06Z",
+  "plan_item": "77.44.7.D / D-06 — Published Tabs fixture exact-source CI follow-up",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "test_source_sha": "5750d0a79b783c5b6e46d55f9881c0fe25367139",
+    "branch_head_before_docs_followup": "01801054f2b1b6a5a9ad272a4450a4a5cde2ab0e",
+    "branch_head_is_descendant_of_test_source": true,
+    "canonical_plan_before_blob": "3878cc24461a3d8d43207498d598e4f05fbab286",
+    "canonical_plan_before_bytes": 1871304,
+    "canonical_plan_after_blob": "ace1f96d45092eb4cdabdc69ea414f6b36c898d2",
+    "canonical_plan_after_bytes": 1873164,
+    "plan_append_only": true
+  },
+  "hosted_ci": {
+    "editor_core": {
+      "run_id": 45480140059,
+      "url": "https://github.com/sanci9517/sanci9517/actions/runs/45480140059",
+      "head_sha": "5750d0a79b783c5b6e46d55f9881c0fe25367139",
+      "status": "completed",
+      "conclusion": "success",
+      "completed_at_utc": "2026-11-24T20:52:55Z",
+      "browser_layout_step": "success",
+      "executed_steps": "all executed steps succeeded; success-only screenshot upload was skipped by workflow condition"
+    },
+    "f0": {
+      "run_id": 45480140211,
+      "url": "https://github.com/sanci9517/sanci9517/actions/runs/45480140211",
+      "head_sha": "5750d0a79b783c5b6e46d55f9881c0fe25367139",
+      "conclusion": "success"
+    },
+    "twitch": {
+      "run_id": 45480140017,
+      "url": "https://github.com/sanci9517/sanci9517/actions/runs/45480140017",
+      "head_sha": "5750d0a79b783c5b6e46d55f9881c0fe25367139",
+      "conclusion": "success"
+    },
+    "previous_failed_editor_core_run_preserved": {
+      "run_id": 45417672997,
+      "conclusion": "failure",
+      "historical_failure_not_relabelled": true
+    }
+  },
+  "cloudflare": {
+    "read_only_deployment_readback_at_utc": "2026-11-24T21:09:01Z",
+    "deployment_id": "5215751b-bb54-4785-bbde-d4398cac503d",
+    "worker_version_id": "ad5e371e-8465-4c8a-9317-35ce0dc4e794",
+    "worker_version_number": 4187,
+    "traffic_percent": 100,
+    "runtime_changed_in_this_followup": false,
+    "health_requested_in_this_followup": false,
+    "asset_hash_checks_needed": false
+  },
+  "safety": {
+    "production_d1_migration_or_write": false,
+    "r2_mutation": false,
+    "worker_deployment": false,
+    "paid_service": false,
+    "new_cost_huf": 0,
+    "save_and_publish_remain_separate": true
+  },
+  "limitations": [
+    "This closes the exact-SHA Editor Core CI follow-up only. D-06, D-01–D-07, 77.44.7.D, and full Editor acceptance remain OPEN / NOT CERTIFIED. Manual/physical acceptance is deferred until the full Editor scope."
+  ]
+}
