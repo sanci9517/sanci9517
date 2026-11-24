@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "id": "20261124085854-d3273209",
+  "task": "77.44.7.D-D06-next-verified-gap",
+  "trigger": "scheduled",
+  "started_at": "2026-11-24T08:58:54.810Z",
+  "abandoned_at": "2026-11-24T09:58:57.803Z",
+  "measured_seconds": null,
+  "status": "interrupted",
+  "reason": "Context/session crossed several user handoffs; exact active work and finish time cannot be measured reliably, so duration is excluded.",
+  "started_revision": "82debe09b26c062ee17a78d106b2fca5ddaca973",
+  "measurement": "missing end time; excluded from elapsed time and ETA"
+}

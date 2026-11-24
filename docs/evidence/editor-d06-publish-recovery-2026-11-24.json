@@ -1,15 +1,15 @@
 {
   "schema": "sanci.visual-editor.d06-publish-recovery.v1",
-  "recorded_at_utc": "2026-11-24T09:53:37Z",
+  "recorded_at_utc": "2026-11-24T10:00:00Z",
   "repository": "sanci9517/sanci9517",
   "branch": "v2/foundation",
   "base_commit": "82debe09b26c062ee17a78d106b2fca5ddaca973",
   "canonical_plan": {
     "path": "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
-    "bytes": 1858997,
-    "sha256": "dcd9322aa92a68802b2d9e0ee5cc8eeccbaed81023c2798dfabdb7c4ca9809e0",
+    "bytes": 1859203,
+    "sha256": "db981dfc22d844011265c6d22b4d1302630b923648179e96e31734e938372a28",
     "cursor": "77.44 / WEB-011 → 77.44.7.D",
-    "status": "OPEN / NOT_CERTIFIED"
+    "status": "OPEN / NOT_CERTIFIED; exact runtime release verified, Editor Core hosted CI in progress"
   },
   "issue": {
     "feature_id": "EDT-019",
@@ -72,13 +72,84 @@
     "note": "This is the live deployment before the new recovery source SHA is pushed; it does not contain this change."
   },
   "release": {
-    "source_commit": "PENDING_PUSH",
-    "github_branch_head": "82debe09b26c062ee17a78d106b2fca5ddaca973 before release commit",
-    "exact_sha_actions": "PENDING",
-    "cloudflare_build": "PENDING",
-    "deployment": "PENDING",
-    "production_health": "PENDING",
-    "live_asset_hashes": "PENDING"
+    "source_commit": "66e85631287016e4d5423758c3eebbea3ad97900",
+    "github_branch_head": "66e85631287016e4d5423758c3eebbea3ad97900; direct ls-remote matched",
+    "push": "PASS; normal fast-forward from 82debe09b26c062ee17a78d106b2fca5ddaca973 to origin/v2/foundation",
+    "exact_sha_actions": {
+      "source_audit": {
+        "run_id": 45369753525,
+        "status": "SUCCESS"
+      },
+      "canonical_plan": {
+        "run_id": 45369753540,
+        "status": "SUCCESS"
+      },
+      "verify": {
+        "run_id": 45369753529,
+        "status": "SUCCESS"
+      },
+      "twitch_integration": {
+        "run_id": 45369753527,
+        "status": "SUCCESS"
+      },
+      "editor_core": {
+        "run_id": 45369753551,
+        "status": "IN_PROGRESS",
+        "active_step": "Run Editor browser layout regression",
+        "url": "https://github.com/sanci9517/sanci9517/actions/runs/45369753551"
+      },
+      "aggregate_ci": "IN_PROGRESS; not claimed as PASS"
+    },
+    "cloudflare_build": {
+      "build_uuid": "e4177c44-c33a-4766-b6b7-3f892e532231",
+      "status": "stopped",
+      "build_outcome": "success",
+      "branch": "v2/foundation",
+      "commit": "66e85631287016e4d5423758c3eebbea3ad97900",
+      "trigger": "push_event",
+      "build_command": "npm run typecheck",
+      "deploy_command": "npm run deploy:safe",
+      "initializing_on": "2026-11-24T09:55:20.895Z",
+      "stopped_on": "2026-11-24T09:55:48.682Z"
+    },
+    "deployment": {
+      "deployment_id": "808ef894-77eb-4da1-8183-715cd79607da",
+      "worker_version_id": "58e91ee0-0ec9-4111-a7b8-8220dc825247",
+      "worker_version_number": 4179,
+      "traffic_percent": 100,
+      "created_on": "2026-11-24T09:55:45.793083Z",
+      "source_sha_verified_through_cloudflare_build": "66e85631287016e4d5423758c3eebbea3ad97900"
+    },
+    "production_health": {
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+      "http_status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "changed_public_assets": [
+      {
+        "path": "/editor-v2/",
+        "local_sha256": "7e5d5ee859f107302531b5d550f7ef2174985d04c17f4928335d7a39f31e916b",
+        "live_sha256": "7e5d5ee859f107302531b5d550f7ef2174985d04c17f4928335d7a39f31e916b",
+        "byte_match": true
+      },
+      {
+        "path": "/editor-v2/app.js?v=20261124-edt042-publish-recovery-v1",
+        "local_sha256": "63313ae1e17af354d4a3b94f802988aa5a5983b54c5a283d4030f6cbf2da26e4",
+        "live_sha256": "63313ae1e17af354d4a3b94f802988aa5a5983b54c5a283d4030f6cbf2da26e4",
+        "byte_match": true
+      },
+      {
+        "path": "/editor-v2/core/publication-recovery.js",
+        "local_sha256": "cc2beeb2f3874b8aba9cbb622b550236b78748b3f6aa271a5c59687894ad1771",
+        "live_sha256": "cc2beeb2f3874b8aba9cbb622b550236b78748b3f6aa271a5c59687894ad1771",
+        "byte_match": true
+      }
+    ]
   },
   "acceptance": {
     "EDT-019": "PARTIAL_SOURCE / NOT_RECERTIFIED",

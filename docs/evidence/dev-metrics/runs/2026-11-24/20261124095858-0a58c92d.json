@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261124095858-0a58c92d",
+  "task": "77.44.7.D-D06-publish-recovery",
+  "trigger": "manual",
+  "started_at": "2026-11-24T09:58:58.011Z",
+  "finished_at": "2026-11-24T10:00:18.001Z",
+  "wall_seconds": 80,
+  "paused_seconds": 0,
+  "measured_seconds": 80,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "EDT-042 targeted Publish recovery shipped to v2/foundation and Cloudflare 100%; exact Editor Core browser CI still running, full D remains open.",
+  "evidence": [
+    "docs/evidence/editor-d06-publish-recovery-2026-11-24.json"
+  ],
+  "checks": "npm run test:editor 24/24 + preferences 10/10 + runner 4/4; targeted Chromium 1/1; typecheck; plan 16/16; canonical 13/396; traceability; migration gate; Wrangler dry-run; D1 SELECT-only; Cloudflare exact-SHA Build/deploy/health/assets PASS; Editor Core IN_PROGRESS; local 61-suite stopped at suite 32",
+  "started_revision": "66e85631287016e4d5423758c3eebbea3ad97900",
+  "finished_revision": "66e85631287016e4d5423758c3eebbea3ad97900",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
