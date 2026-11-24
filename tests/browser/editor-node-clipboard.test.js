@@ -124,5 +124,33 @@ test('node clipboard keyboard flow duplicates nested nodes into the draft; Save 
   const publicTab=await browser.newPage({viewport:{width:390,height:844}});
   await publicTab.goto(`http://127.0.0.1:${server.address().port}/p/clipboard`);
   await publicTab.getByText('Másolatba kerül',{exact:true}).last().waitFor();
+
+  // Exercise the mobile long-press selection path and mobile action bar with
+  // touch PointerEvents in Chromium. This is automated browser coverage, not
+  // the full Editor's deferred physical-device acceptance.
+  const postsBeforeMobile=posts.length;
+  const mobile=await browser.newPage({viewport:{width:390,height:844},isMobile:true,hasTouch:true});
+  const touch={pointerId:7,pointerType:'touch',isPrimary:true,button:0,buttons:1,clientX:20,clientY:20};
+  await mobile.goto(`http://127.0.0.1:${server.address().port}/editor-v2/index.html`);
+  const firstTouch=mobile.locator(`#canvas .node[data-node-id="${first.id}"]`);
+  await firstTouch.dispatchEvent('pointerdown',touch);
+  await mobile.waitForTimeout(500);
+  await mobile.locator('#mobileMultiSelectBar:not([hidden])').waitFor();
+  await firstTouch.dispatchEvent('pointerup',{...touch,buttons:0});
+  const lastTouch=mobile.locator(`#canvas .node[data-node-id="${last.id}"]`);
+  await lastTouch.dispatchEvent('pointerdown',touch);
+  await lastTouch.dispatchEvent('pointerup',{...touch,buttons:0});
+  await mobile.waitForFunction(()=>document.querySelector('#mobileSelectionCount')?.textContent==='2 elem kijelölve');
+  assert.equal(await mobile.locator('#mobileCopyNodes').isEnabled(),true,'mobile multi-select exposes its copy action');
+  await mobile.locator('#mobileCopyNodes').click();
+  await mobile.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent?.includes('2 elem másolva'));
+  assert.equal(await mobile.locator('#mobilePasteNodes').isEnabled(),true,'copy enables the mobile paste action');
+  await mobile.locator('#mobilePasteNodes').click();
+  await mobile.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent?.includes('2 elem beillesztve'));
+  const mobileClones=mobile.locator('#canvas .page-canvas > .node > .node').filter({hasText:/Első kijelölhető|Utolsó kijelölhető/});
+  assert.equal(await mobileClones.count(),6,'mobile paste appends two cloned roots alongside the original and saved desktop copies');
+  assert.equal(posts.length,postsBeforeMobile,'mobile copy/paste adds no server write before an explicit Save');
+  await mobile.locator('#mobileUndo').click();
+  assert.equal(await mobileClones.count(),4,'one mobile Undo removes both pasted roots and keeps the original/saved copies');
   assert.deepEqual(errors,[]);
 });
