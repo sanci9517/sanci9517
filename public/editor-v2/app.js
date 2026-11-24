@@ -1945,6 +1945,9 @@ function showUnsupportedPublishRecovery(){
     render();
     const layers=$('#leftPanelLayers'),tree=$('#layersTree');
     if(layers&&tree){
+      // A retry can encounter another unsupported node. Keep one current
+      // recovery announcement instead of accumulating stale aria-alerts.
+      layers.querySelectorAll('[data-recovery-kind="unsupported-node"]').forEach(note=>note.remove());
       const note=document.createElement('p');note.className='property-validation';note.dataset.validationKind='publication';note.dataset.recoveryKind='unsupported-node';note.setAttribute('role','alert');note.textContent=message;layers.insertBefore(note,tree);
       if(unsupported){const row=tree.querySelector(`.layer-row[data-node-id="${CSS.escape(unsupported.id)}"]`);requestAnimationFrame(()=>{if(row?.isConnected){row.focus({preventScroll:true});row.scrollIntoView({block:'nearest',behavior:'smooth'})}})}
     }

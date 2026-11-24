@@ -23,7 +23,7 @@ test('server-rejected unsupported Publish selects the node, gives recovery guida
       if(req.method==='GET'){editorGets++;return json({ok:true,data:{page:{id:pageId,document:draft,publishedRevisionId:'revision-1'},revisions:[{id:'revision-'+version,version},{id:'revision-1',version:1}]}})}
       let body='';for await(const chunk of req)body+=chunk;
       const request=JSON.parse(body);posts.push(request);
-      if(rejectUnsupportedPublish&&request.publish){res.statusCode=409;return json({ok:false,error:{code:'UNSUPPORTED_EDITOR_NODE_TYPE',message:'A form elem típusa még nem publikálható.'}})}
+      if(rejectUnsupportedPublish&&request.publish){await new Promise(done=>setTimeout(done,75));res.statusCode=409;return json({ok:false,error:{code:'UNSUPPORTED_EDITOR_NODE_TYPE',message:'A form elem típusa még nem publikálható.'}})}
       return json({ok:true,data:{pageId,version,revisionId:'revision-'+version}});
     }
     if(url.pathname==='/api/auth/session')return json({ok:true,data:{authenticated:false,user:null}});
@@ -63,12 +63,23 @@ test('server-rejected unsupported Publish selects the node, gives recovery guida
   assert.deepEqual(dialogs,[],'the targeted recovery avoids a blocking generic alert');
   assert.equal(editorGets,pageGetsBefore,'Publish failure does not issue an automatic draft reload');
 
+  assert.equal(await editor.locator('#publish').isEnabled(),true,'a page with unpublished changes may retry Publish');
+  await editor.locator('#publish').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent==='Publikálás…');
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent.includes('még nem publikálható'));
+  assert.equal(posts.length,2,'the explicit retry reaches the same server rejection');
+  assert.equal(await editor.locator('#leftPanelLayers [data-recovery-kind="unsupported-node"]').count(),1,
+    'repeated server rejection replaces the prior recovery alert instead of stacking duplicate announcements');
+  assert.equal(await editor.locator('#leftPanelLayers [data-recovery-kind="unsupported-node"]').textContent(),await guidance.textContent(),
+    'the single recovery alert continues to match the live status region');
+  assert.deepEqual(dialogs,[],'retrying recovery still avoids a blocking alert');
+
   const beforeReload=editorGets;
   await editor.locator('#leftTabPages').click();
   await editor.locator('.page-row-select').click();
   await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent==='Mentve');
   assert.equal(editorGets,beforeReload+1,'the clean saved draft can be reloaded without a false dirty-state confirmation');
   assert.deepEqual(dialogs,[],'reloading after the rejected Publish never prompts to discard nonexistent edits');
-  assert.equal(posts.length,1,'neither recovery feedback nor the clean reload silently Saves or Publishes');
+  assert.equal(posts.length,2,'neither recovery feedback nor the clean reload silently Saves or Publishes');
   assert.deepEqual(errors,[],'the unsupported legacy node is rendered and recoverable without browser errors');
 });

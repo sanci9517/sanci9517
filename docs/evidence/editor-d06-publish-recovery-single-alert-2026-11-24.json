@@ -1,0 +1,64 @@
+{
+  "schema": "sanci.visual-editor.d06-publish-recovery-single-alert.v1",
+  "recorded_at_utc": "2026-11-24T10:29:00Z",
+  "repository": "sanci9517/sanci9517",
+  "branch": "v2/foundation",
+  "base_commit": "2e680b877d3d65d76227dd9b334192f3397f37de",
+  "plan_cursor": "77.44 / WEB-011 → 77.44.7.D",
+  "status": "SOURCE_READY_FOR_RELEASE; full D-06 and Editor acceptance remain OPEN / NOT_CERTIFIED",
+  "scope": {
+    "feature_id": "EDT-042 / D-06",
+    "gap": "A retry after the server rejects Publish for UNSUPPORTED_EDITOR_NODE_TYPE appended another role=alert announcement to the Layers panel, leaving duplicate stale guidance.",
+    "change": "Before inserting the current recovery note, remove prior notes with data-recovery-kind=unsupported-node. Keep the single current Hungarian recovery message, status-region announcement, Layers focus, and Save/Publish separation.",
+    "not_in_scope": ["form submission functionality", "D-01 through D-07 completion", "manual or physical Editor acceptance"]
+  },
+  "changed_sources": [
+    {"path":"public/editor-v2/app.js","sha256":"b1237dfd3579d2adab1dcd2fb1596a41eefb17776874b65a04362bf210106c08"},
+    {"path":"tests/browser/editor-publish-unsupported-recovery.test.js","sha256":"63c63d5d6d40669c3c19342a730533ad0b66aa6b69d60f250a084aee7dca216a"}
+  ],
+  "local_verification": {
+    "targeted_chromium": "PASS: node --test tests/browser/editor-publish-unsupported-recovery.test.js; verifies a real retry and exactly one current Layers role=alert.",
+    "editor_unit": "PASS: npm run test:editor; 24/24 Node tests, preferences 10/10, Linux subreaper 4/4.",
+    "publication_contract": "PASS: node tests/editor-content-initial-publication-contract.test.js; 15/15.",
+    "migration_safety": "PASS: npm run test:web013:migration-gate; no migration apply.",
+    "typecheck": "PASS: npm run typecheck.",
+    "git_diff_check": "PASS: git diff --check.",
+    "wrangler_dry_run": "PASS: npx wrangler deploy --dry-run; Wrangler 4.130.0, 202 assets, 434.30 KiB / 110.07 KiB gzip; dry run only, no deploy. The environment reported a non-fatal EROFS while writing the Wrangler debug log.",
+    "attempt_blocked": "The first local browser-test attempt was blocked by sandbox EPERM binding 127.0.0.1; rerun with approved local-network access passed 1/1."
+  },
+  "production_d1_preflight": {
+    "method": "Cloudflare D1 Query API, read-only SQL/PRAGMA calls only",
+    "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
+    "queries": [
+      "SELECT type,name FROM sqlite_schema WHERE type IN ('table','view','index','trigger') ORDER BY type,name",
+      "SELECT id,name FROM d1_migrations ORDER BY id DESC LIMIT 1",
+      "PRAGMA foreign_key_check",
+      "PRAGMA quick_check"
+    ],
+    "schema_objects": 147,
+    "latest_migration": "0030_media_library_organization.sql (ledger id 36)",
+    "foreign_key_check": "empty",
+    "quick_check": "ok",
+    "rows_written": 0,
+    "changes": 0,
+    "changed_db": false,
+    "production_mutations": 0,
+    "r2_operations": 0
+  },
+  "release": {
+    "source_commit": "PENDING",
+    "github_fast_forward": "PENDING",
+    "required_exact_sha_actions": "PENDING",
+    "cloudflare_build_and_safe_deploy": "PENDING",
+    "live_traffic_health_asset_hashes": "PENDING",
+    "pre_release_deployment": {
+      "deployment_id": "808ef894-77eb-4da1-8183-715cd79607da",
+      "version_id": "58e91ee0-0ec9-4111-a7b8-8220dc825247",
+      "traffic_percent": 100,
+      "source_sha": "66e85631287016e4d5423758c3eebbea3ad97900"
+    },
+    "network_note": "Cloudflare API reports deployment state, but this environment blocks direct fetch to the production Worker host; exact live health and asset checks remain pending the required source-SHA production smoke."
+  },
+  "cost_huf": 0,
+  "data_safety": "No production D1 mutation, migration, R2 operation, paid service, or new dependency. Save remains separate from Publish."
+}
