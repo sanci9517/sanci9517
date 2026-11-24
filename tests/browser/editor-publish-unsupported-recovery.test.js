@@ -13,7 +13,9 @@ test('server-rejected unsupported Publish selects the node, gives recovery guida
   page.nodes[form.id]=form;page.nodes[page.rootId].children.push(form.id);
   document.revision=2;page.revision=2;
   const draft=structuredClone(document),published=createDocument();
-  let version=2,editorGets=0;const posts=[];let rejectUnsupportedPublish=true;
+  let version=2,editorGets=0;const posts=[];let rejectUnsupportedPublish=true,releaseStalePublish,resolveThirdPublish;
+  const thirdPublishReceived=new Promise(resolve=>{resolveThirdPublish=resolve});
+  const stalePublishResponse=new Promise(resolve=>{releaseStalePublish=resolve});
   const publicRoot=resolve(import.meta.dirname,'../../public');
   const server=createServer(async(req,res)=>{
     const url=new URL(req.url,'http://localhost');
@@ -23,7 +25,8 @@ test('server-rejected unsupported Publish selects the node, gives recovery guida
       if(req.method==='GET'){editorGets++;return json({ok:true,data:{page:{id:pageId,document:draft,publishedRevisionId:'revision-1'},revisions:[{id:'revision-'+version,version},{id:'revision-1',version:1}]}})}
       let body='';for await(const chunk of req)body+=chunk;
       const request=JSON.parse(body);posts.push(request);
-      if(rejectUnsupportedPublish&&request.publish){await new Promise(done=>setTimeout(done,75));res.statusCode=409;return json({ok:false,error:{code:'UNSUPPORTED_EDITOR_NODE_TYPE',message:'A form elem típusa még nem publikálható.'}})}
+      if(posts.length===3)resolveThirdPublish();
+      if(rejectUnsupportedPublish&&request.publish){if(posts.length>=3)await stalePublishResponse;else await new Promise(done=>setTimeout(done,75));res.statusCode=409;return json({ok:false,error:{code:'UNSUPPORTED_EDITOR_NODE_TYPE',message:'A form elem típusa még nem publikálható.'}})}
       return json({ok:true,data:{pageId,version,revisionId:'revision-'+version}});
     }
     if(url.pathname==='/api/auth/session')return json({ok:true,data:{authenticated:false,user:null}});
@@ -82,4 +85,25 @@ test('server-rejected unsupported Publish selects the node, gives recovery guida
   assert.deepEqual(dialogs,[],'reloading after the rejected Publish never prompts to discard nonexistent edits');
   assert.equal(posts.length,2,'neither recovery feedback nor the clean reload silently Saves or Publishes');
   assert.deepEqual(errors,[],'the unsupported legacy node is rendered and recoverable without browser errors');
+
+  // The 409 describes the snapshot sent before the user repaired the draft.
+  // A late rejection must not announce an unsupported node that was already
+  // removed from the current Page Model.
+  await editor.locator('#publish').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent==='Publikálás…');
+  await thirdPublishReceived;
+  await editor.locator('#leftTabLayers').click();
+  await editor.locator(`#layersTree .layer-row[data-node-id="${form.id}"]`).click();
+  await editor.evaluate(()=>window.sanciEditor.openPanel('right'));
+  const deleteAction=editor.locator('#inspectorBody .danger-action');
+  await deleteAction.waitFor();
+  await deleteAction.click();
+  await editor.waitForFunction(id=>!document.querySelector(`#layersTree .layer-row[data-node-id="${CSS.escape(id)}"]`),form.id);
+  releaseStalePublish();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent.includes('piszkozat a publikálási kérés óta módosult'));
+  assert.equal(await editor.locator('#leftPanelLayers [data-recovery-kind="unsupported-node"]').count(),0,
+    'a stale server rejection must not point to an unsupported node removed after the request was submitted');
+  assert.match(await editor.locator('#saveStatus').textContent(),/ellenőrizd a mostani piszkozatot, majd külön próbáld újra/);
+  assert.equal(await editor.locator('#publish').isEnabled(),true,'the edited draft remains explicitly publishable after stale rejection feedback');
+  assert.deepEqual(dialogs,[],'stale Publish feedback is non-blocking');
 });
