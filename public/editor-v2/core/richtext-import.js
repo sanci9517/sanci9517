@@ -5,6 +5,9 @@ import { parseTableTsv } from './table-tsv.js';
 const MAX_CLIPBOARD_CHARS = 250_000;
 const MAX_TABLE_ROWS = 100;
 const MAX_TABLE_COLUMNS = 24;
+const MAX_IMPORTED_BLOCKS = 5_000;
+const MAX_LIST_ITEMS = 5_000;
+const MAX_INLINE_RUNS = 5_000;
 const MARK_ORDER = ['bold', 'italic', 'underline', 'strikethrough', 'subscript', 'superscript', 'code'];
 
 function normalizeColor(value) {
@@ -79,13 +82,20 @@ function safeLink(anchor) {
   } catch { return null; }
 }
 
-function readInlineNodes(root, inherited = {marks: [], styles: {}}, inheritedLink = null) {
+function readInlineNodes(root, inherited = {marks: [], styles: {}}, inheritedLink = null, budget) {
   const result = [];
+  const append = run => {
+    if (budget.inlineRuns >= MAX_INLINE_RUNS) {
+      throw new Error(`A beillesztett tartalom legfeljebb ${MAX_INLINE_RUNS} formázott szövegrészt tartalmazhat.`);
+    }
+    budget.inlineRuns++;
+    result.push(run);
+  };
   const visit = (node, context, link) => {
     if (node.nodeType === Node.TEXT_NODE) {
       if (!node.nodeValue) return;
       const styles = Object.fromEntries(Object.entries(context.styles).filter(([, value]) => value));
-      result.push({type: 'text', text: node.nodeValue, marks: [...context.marks], ...(Object.keys(styles).length ? {styles} : {}), ...(link ? {link} : {})});
+      append({type: 'text', text: node.nodeValue, marks: [...context.marks], ...(Object.keys(styles).length ? {styles} : {}), ...(link ? {link} : {})});
       return;
     }
     if (node.nodeType !== Node.ELEMENT_NODE) return;
@@ -95,7 +105,7 @@ function readInlineNodes(root, inherited = {marks: [], styles: {}}, inheritedLin
       // Preserve in-paragraph/LI/TD hard breaks as canonical inline newlines.
       // A single placeholder <br> in an otherwise empty block is not content.
       if (!(root.querySelectorAll?.('br').length === 1 && root.textContent === '')) {
-        result.push({type:'text',text:'\n',marks:[...context.marks],
+        append({type:'text',text:'\n',marks:[...context.marks],
           ...(Object.keys(context.styles).length?{styles:{...context.styles}}:{}),
           ...(link?{link}:{})});
       }
@@ -130,10 +140,10 @@ function directRows(table) {
   return [...table.querySelectorAll('tr')].filter(row => row.closest('table') === table);
 }
 
-function htmlTable(table) {
+function htmlTable(table, budget) {
   const rows = directRows(table).slice(0, MAX_TABLE_ROWS).map(row => ({
     cells: [...row.children].filter(cell => ['TD', 'TH'].includes(cell.tagName)).slice(0, MAX_TABLE_COLUMNS).map(cell => ({
-      header: cell.tagName === 'TH', ...(blockAlign(cell) ? {align:blockAlign(cell)} : {}), children: readInlineNodes(cell)
+      header: cell.tagName === 'TH', ...(blockAlign(cell) ? {align:blockAlign(cell)} : {}), children: readInlineNodes(cell, undefined, null, budget)
     }))
   })).filter(row => row.cells.length);
   if (!rows.length) return null;
@@ -142,22 +152,34 @@ function htmlTable(table) {
   return {type: 'table', rows};
 }
 
-function listBlock(list) {
-  const items = [...list.children].filter(child => child.tagName === 'LI').map(item => ({children: readInlineNodes(item)}));
+function listBlock(list, budget) {
+  const listItems = [...list.children].filter(child => child.tagName === 'LI');
+  if (budget.listItems + listItems.length > MAX_LIST_ITEMS) {
+    throw new Error(`A beillesztett lista legfeljebb ${MAX_LIST_ITEMS} elemet tartalmazhat.`);
+  }
+  budget.listItems += listItems.length;
+  const items = listItems.map(item => ({children: readInlineNodes(item, undefined, null, budget)}));
   return {type: list.tagName === 'OL' ? 'numbered-list' : 'bulleted-list', items: items.length ? items : [{children: [{type: 'text', text: '', marks: []}]}]};
 }
 
-function parseHtmlBlocks(root) {
+function parseHtmlBlocks(root, budget) {
   const blocks = [];
+  const append = block => {
+    if (budget.blocks >= MAX_IMPORTED_BLOCKS) {
+      throw new Error(`A beillesztett tartalom legfeljebb ${MAX_IMPORTED_BLOCKS} szövegblokkot tartalmazhat.`);
+    }
+    budget.blocks++;
+    blocks.push(block);
+  };
   const appendParagraph = element => {
-    const children = readInlineNodes(element);
+    const children = readInlineNodes(element, undefined, null, budget);
     const align = blockAlign(element);
-    blocks.push({type: 'paragraph', ...(align ? {align} : {}), children});
+    append({type: 'paragraph', ...(align ? {align} : {}), children});
   };
   const walk = element => {
     for (const child of element.childNodes) {
       if (child.nodeType === Node.TEXT_NODE) {
-        if (child.nodeValue?.trim()) blocks.push({type: 'paragraph', children: mergeRuns([{type: 'text', text: child.nodeValue.trim(), marks: []}])});
+        if (child.nodeValue?.trim()) append({type: 'paragraph', children: mergeRuns([{type: 'text', text: child.nodeValue.trim(), marks: []}])});
         continue;
       }
       if (child.nodeType !== Node.ELEMENT_NODE) continue;
@@ -165,15 +187,15 @@ function parseHtmlBlocks(root) {
       if (['SCRIPT', 'STYLE', 'SVG', 'IFRAME', 'OBJECT', 'EMBED', 'FORM'].includes(tag)) continue;
       if (/^H[1-6]$/.test(tag)) {
         const align = blockAlign(child);
-        blocks.push({type: 'heading', level: Number(tag.slice(1)), ...(align ? {align} : {}), children: readInlineNodes(child)});
+        append({type: 'heading', level: Number(tag.slice(1)), ...(align ? {align} : {}), children: readInlineNodes(child, undefined, null, budget)});
       } else if (tag === 'P') appendParagraph(child);
-      else if (tag === 'BLOCKQUOTE') { const align = blockAlign(child); blocks.push({type: 'quote', ...(align ? {align} : {}), children: readInlineNodes(child)}); }
-      else if (tag === 'PRE') blocks.push({type: 'code', children: readInlineNodes(child)});
-      else if (tag === 'UL' || tag === 'OL') blocks.push(listBlock(child));
+      else if (tag === 'BLOCKQUOTE') { const align = blockAlign(child); append({type: 'quote', ...(align ? {align} : {}), children: readInlineNodes(child, undefined, null, budget)}); }
+      else if (tag === 'PRE') append({type: 'code', children: readInlineNodes(child, undefined, null, budget)});
+      else if (tag === 'UL' || tag === 'OL') append(listBlock(child, budget));
       else if (tag === 'TABLE') {
-        const parsed = htmlTable(child);
-        if (parsed) blocks.push(parsed);
-      } else if (['BR', 'HR'].includes(tag)) blocks.push({type: 'paragraph', children: [{type: 'text', text: '', marks: []}]});
+        const parsed = htmlTable(child, budget);
+        if (parsed) append(parsed);
+      } else if (['BR', 'HR'].includes(tag)) append({type: 'paragraph', children: [{type: 'text', text: '', marks: []}]});
       else if ([...child.children].some(item => ['P', 'DIV', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'UL', 'OL', 'TABLE', 'BLOCKQUOTE', 'PRE'].includes(item.tagName))) walk(child);
       else appendParagraph(child);
     }
@@ -208,6 +230,9 @@ function fromPlainText(text) {
       }]
     };
   }
+  if (lines.length > MAX_IMPORTED_BLOCKS) {
+    throw new Error(`A beillesztett tartalom legfeljebb ${MAX_IMPORTED_BLOCKS} szövegblokkot tartalmazhat.`);
+  }
   return {schemaVersion: 1, type: 'richtext-document', blocks: lines.map(line => ({
     type: 'paragraph', children: [{type: 'text', text: line, marks: []}]
   }))};
@@ -221,7 +246,7 @@ export function importRichTextClipboard({html = '', text = ''} = {}) {
   }
   if (sourceHtml.trim()) {
     const parsed = new DOMParser().parseFromString(sourceHtml, 'text/html');
-    const blocks = parseHtmlBlocks(parsed.body);
+    const blocks = parseHtmlBlocks(parsed.body, {blocks: 0, listItems: 0, inlineRuns: 0});
     const hasUsableContent = blocks.some(block=>
       block.type === 'table' || block.type === 'bulleted-list' || block.type === 'numbered-list' ||
       block.children?.some(run=>String(run.text??'').length>0));

@@ -222,6 +222,13 @@ test('typed Inspector controls and link selection work with real browser DOM at 
       const importedTsv=normalizeRichText(importRichTextClipboard({text:'Name\tValue\nRevenue\t100'}));
       const quotedTsv=normalizeRichText(importRichTextClipboard({text:'Név\tMegjegyzés\r\n"Bevétel\tQ4"\t"Első sor\r\nMásodik sor"\r\n"Azt mondta ""igen"""\t2026\r\n'}));
       let oversizedPasteRejected=false;try{importRichTextClipboard({text:'x'.repeat(250001)})}catch{oversizedPasteRejected=true}
+      const rejectionFor=html=>{try{importRichTextClipboard({html,text:'fallback'});return null}catch(error){return error.message}};
+      const tooManyBlocks=rejectionFor('<p></p>'.repeat(5001));
+      const tooManyListItems=rejectionFor('<ul>'+ '<li>x</li>'.repeat(5001) +'</ul>');
+      const tooManyDocumentListItems=rejectionFor(Array.from({length:10},()=>'<ul>'+ '<li></li>'.repeat(501) +'</ul>').join(''));
+      const excessiveInlineRuns=rejectionFor('<p>'+Array.from({length:5001},(_,index)=>index%2?'<em>x</em>':'<strong>x</strong>').join('')+'</p>');
+      let tooManyPlainTextBlocksRejected=false;try{importRichTextClipboard({text:'x\n'.repeat(5000)})}catch(error){tooManyPlainTextBlocksRejected=/legfeljebb 5000 szövegblokk/.test(error.message)}
+      const ordinaryFormattedPaste=importRichTextClipboard({html:'<p><strong>Jól formázott</strong> szöveg</p>'});
       const model={
         schemaVersion:1,type:'richtext-document',
         blocks:[{type:'paragraph',children:[{type:'text',text:'Hello world',marks:[]}]}]
@@ -264,6 +271,7 @@ test('typed Inspector controls and link selection work with real browser DOM at 
         importedLinks:importedRoundTrip.blocks[1].children.filter(run=>run.link).length,importedTable:importedRoundTrip.blocks[3].rows.map(row=>row.cells.map(cell=>cell.children.map(run=>run.text).join(''))),officeStyles:officeStyles.blocks[0],tableCell:importedRoundTrip.blocks[3].rows[2].cells[1],
         tsvType:importedTsv.blocks[0].type,tsvShape:[importedTsv.blocks[0].rows.length,importedTsv.blocks[0].rows[0].cells.length],
         quotedTsvRows:quotedTsv.blocks[0].rows.map(row=>row.cells.map(cell=>cell.children.map(run=>run.text).join(''))),oversizedPasteRejected,
+        tooManyBlocks,tooManyListItems,tooManyDocumentListItems,excessiveInlineRuns,tooManyPlainTextBlocksRejected,ordinaryFormattedPaste,
         pasteAttack:window.__pasteAttack,
         markedRun:aligned.blocks[0].children.find(x=>x.text==='world'),alignment:aligned.blocks[0].align,
         multiSelection,multiBlocks:multiAligned.blocks,
@@ -336,6 +344,12 @@ test('typed Inspector controls and link selection work with real browser DOM at 
     assert.equal(data.officeStyles.align,'right');assert.deepEqual(data.officeStyles.children[0].styles,{color:'#112233',fontSize:'24px',fontFamily:'Calibri'});
     assert.equal(data.tableCell.align,'right');assert.equal(data.tableCell.children[0].styles.fontSize,'16px');
     assert.equal(data.tsvType,'table');assert.deepEqual(data.tsvShape,[2,2]);assert.equal(data.oversizedPasteRejected,true);
+    assert.match(data.tooManyBlocks,/legfeljebb 5000 szövegblokk/,'large HTML cannot expand into an unbounded number of Page Model blocks');
+    assert.match(data.tooManyListItems,/legfeljebb 5000 elemet/,'large pasted lists are rejected before mapping every item into the document');
+    assert.match(data.tooManyDocumentListItems,/legfeljebb 5000 elemet/,'the item budget applies across multiple lists in one clipboard import');
+    assert.match(data.excessiveInlineRuns,/legfeljebb 5000 formázott szövegrészt/,'large formatting-fragment floods are rejected before model normalization');
+    assert.equal(data.tooManyPlainTextBlocksRejected,true,'plain-text pastes enforce the same document block budget as HTML');
+    assert.deepEqual(data.ordinaryFormattedPaste.blocks[0].children.map(run=>run.text),['Jól formázott',' szöveg'],'ordinary formatted clipboard imports remain supported');
     assert.equal(data.pasteAttack,undefined,'Office markup must be parsed as inert content');
     await page.close();
   }

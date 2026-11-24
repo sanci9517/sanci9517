@@ -1,6 +1,3 @@
-Warning: truncated output (original token count: 11736)
-Total output lines: 499
-
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
@@ -206,7 +203,79 @@ test('EDT-039 page actions and EDT-040 motion save as draft, preview safely, and
   await actionControls.getByLabel('Cél elem').selectOption(disclosureId);
   await actionControls.getByLabel('Kiválasztott rész').selectOption('0');
   await editor.locator('#save').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
-  assert.equal(await liveNode(buttonId).getAttribute('data-page-action'),…1736 tokens truncated…ctor input');
+  assert.equal(await liveNode(buttonId).getAttribute('data-page-action'),'open-disclosure','close remains a draft until Publish');
+  await editor.locator('#publish').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent==='Publikálva');
+  await live.reload();
+  const closeDisclosure=liveNode(disclosureId).locator('.creator-accordion details').first();
+  await closeDisclosure.locator('summary').click();
+  assert.equal(await closeDisclosure.evaluate(el=>el.open),true,'the native disclosure can be open before the explicit close action');
+  await liveNode(buttonId).click();
+  assert.equal(await closeDisclosure.evaluate(el=>el.open),false,'explicit close closes the native disclosure');
+  await liveNode(buttonId).click();
+  assert.equal(await closeDisclosure.evaluate(el=>el.open),false,'repeated close remains closed instead of reopening');
+
+  // EDT-039: a typed keyboard-focus trigger uses the same safe, page-scoped action path.
+  await selectButton();
+  const triggerControl=actionControls.getByLabel('Kiváltó esemény');
+  assert.equal(await triggerControl.inputValue(),'click','existing action records default to click');
+  await actionControls.getByLabel('Művelet').selectOption('select-tab');
+  await triggerControl.selectOption('focus');
+  await actionControls.getByLabel('Cél elem').selectOption(tabsId);
+  await actionControls.getByLabel('Kiválasztott fül').selectOption('0');
+  await editor.locator('#save').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+  assert.equal(await liveNode(buttonId).getAttribute('data-page-action-event'),'click','Save does not change the published event');
+  await editor.reload();await selectButton();
+  assert.equal(await editor.locator('.page-interaction-inspector').getByLabel('Kiváltó esemény').inputValue(),'focus','reload restores the typed focus trigger');
+  await editor.locator('#publish').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent==='Publikálva');
+  await live.goto(`${base}/p/page-actions?campaign=focus-test&creator-tab=${encodeURIComponent(`${tabsId}:1`)}`);
+  await liveNode(tabsId).getByRole('tab').nth(1).waitFor();
+  await liveNode(buttonId).focus();
+  assert.equal(await liveNode(tabsId).getByRole('tab').nth(0).getAttribute('aria-selected'),'true','keyboard focus triggers the configured public action');
+  assert.equal(new URL(live.url()).searchParams.get('campaign'),'focus-test','the focus action preserves unrelated URL state');
+  assert.equal(new URL(live.url()).searchParams.get('creator-tab'),`${tabsId}:0`,'focus-triggered tab selection updates the namespaced URL state');
+
+  // EDT-039 hover is a narrowly supported pointer enhancement: tab selection
+  // only, mouse/pen only, draft until Publish, with touch kept inert.
+  await selectButton();
+  const hoverEventControl=actionControls.getByLabel('Kiváltó esemény');
+  await actionControls.getByLabel('Művelet').selectOption('select-tab');
+  await hoverEventControl.selectOption('hover');
+  assert.match(await hoverEventControl.locator('option[value="hover"]').textContent(),/billentyűzettel is aktiválható/i,'hover is described as a pointer enhancement with an accessible activation path');
+  await actionControls.getByLabel('Cél elem').selectOption(tabsId);
+  await actionControls.getByLabel('Kiválasztott fül').selectOption('0');
+  await editor.locator('#save').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+  assert.equal(await liveNode(buttonId).getAttribute('data-page-action-event'),'focus','Save keeps the previous published trigger');
+  await editor.locator('#publish').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent==='Publikálva');
+  await live.goto(`${base}/p/page-actions?campaign=hover-test&creator-tab=${encodeURIComponent(`${tabsId}:1`)}`);
+  assert.equal(await liveNode(buttonId).getAttribute('data-page-action-event'),'hover','Publish exposes the configured hover trigger');
+  await liveNode(buttonId).evaluate(el=>el.dispatchEvent(new PointerEvent('pointerover',{bubbles:true,pointerType:'touch',relatedTarget:null})));
+  assert.equal(await liveNode(tabsId).getByRole('tab').nth(1).getAttribute('aria-selected'),'true','touch-generated pointer events do not impersonate hover');
+  await live.evaluate(targetId=>{
+    const root=document.querySelector('#content-canvas'),queryAll=root.querySelectorAll.bind(root),query=root.querySelector.bind(root);
+    window.__pageActionLookupStats={wholePageScans:0,directTargetLookups:0};
+    root.querySelectorAll=(selector,...args)=>{if(selector==='[data-page-node-id]')window.__pageActionLookupStats.wholePageScans++;return queryAll(selector,...args)};
+    root.querySelector=(selector,...args)=>{if(selector===`[data-page-node-id="${targetId}"]`)window.__pageActionLookupStats.directTargetLookups++;return query(selector,...args)};
+  },tabsId);
+  await liveNode(buttonId).hover();
+  const lookupStats=await live.evaluate(()=>window.__pageActionLookupStats);
+  assert.equal(lookupStats.wholePageScans,0,'a Page Action does not scan every page-node target on each pointer trigger');
+  assert.equal(lookupStats.directTargetLookups,1,'the Page Action resolves exactly its allowlisted same-page node ID');
+  assert.equal(await liveNode(tabsId).getByRole('tab').nth(0).getAttribute('aria-selected'),'true','mouse entry activates the configured tab');
+  assert.equal(new URL(live.url()).searchParams.get('campaign'),'hover-test','hover-triggered tab state preserves unrelated URL parameters');
+  assert.equal(new URL(live.url()).searchParams.get('creator-tab'),`${tabsId}:0`,'hover-triggered tab state remains deep-linkable');
+  await liveNode(tabsId).getByRole('tab').nth(0).focus();
+  await liveNode(tabsId).getByRole('tab').nth(0).press('ArrowRight');
+  assert.equal(await liveNode(tabsId).getByRole('tab').nth(1).getAttribute('aria-selected'),'true','hover does not replace the tabs keyboard interaction');
+  await liveNode(tabsId).getByRole('tab').nth(1).click();
+  await liveNode(buttonId).focus();
+  await liveNode(buttonId).press('Enter');
+  assert.equal(await liveNode(tabsId).getByRole('tab').nth(0).getAttribute('aria-selected'),'true','a hover-enhanced action remains operable by native keyboard button activation');
+  assert.equal(new URL(live.url()).searchParams.get('creator-tab'),`${tabsId}:0`,'keyboard activation preserves the same deep-link behavior as pointer hover');
+  await liveNode(tabsId).getByRole('tab').nth(1).click();
+  const lookupStatsBeforeInvalidTarget=await live.evaluate(()=>({...window.__pageActionLookupStats}));
+  await liveNode(buttonId).evaluate(el=>el.dataset.pageActionTarget='tabs_one"] [data-page-node-id');
+  await liveNode(buttonId).click();
+  assert.equal(await liveNode(tabsId).getByRole('tab').nth(1).getAttribute('aria-selected'),'true','tampered target IDs are rejected instead of becoming CSS selector input');
   const lookupStatsAfterInvalidTarget=await live.evaluate(()=>window.__pageActionLookupStats);
   assert.equal(lookupStatsAfterInvalidTarget.directTargetLookups,lookupStatsBeforeInvalidTarget.directTargetLookups,'invalid target IDs are rejected before querying the page');
   assert.equal(lookupStatsAfterInvalidTarget.wholePageScans,lookupStatsBeforeInvalidTarget.wholePageScans,'invalid target IDs are rejected without scanning the page');

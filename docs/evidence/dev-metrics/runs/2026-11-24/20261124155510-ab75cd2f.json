@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261124155510-ab75cd2f",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-24T15:55:10.032Z",
+  "finished_at": "2026-11-24T16:05:23.910Z",
+  "wall_seconds": 614,
+  "paused_seconds": 0,
+  "measured_seconds": 614,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "Rich Text clipboard complexity limits implemented and locally validated; pending pre-release D1 read-only check, Wrangler dry-run, remote release and production verification.",
+  "evidence": [
+    "docs/evidence/editor-d06-richtext-import-budget-2026-11-24.json"
+  ],
+  "checks": "node --test tests/browser/editor-inspector-richtext-controls.test.js; npm run test:editor; npm run typecheck; python3 tests/plan-contract.test.py; python3 scripts/check-canonical-plan.py; python3 scripts/build-feature-traceability.py --check; python3 scripts/audit-active-plan-point.py; npm run test:web013:migration-gate",
+  "started_revision": "01998aac4f38cd5e2896d9246164033ec688b47e",
+  "finished_revision": "01998aac4f38cd5e2896d9246164033ec688b47e",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
