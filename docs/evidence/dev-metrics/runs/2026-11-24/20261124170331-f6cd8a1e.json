@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261124170331-f6cd8a1e",
+  "task": "77.44.7.D-D06-next-gap",
+  "trigger": "manual",
+  "started_at": "2026-11-24T17:03:31.524Z",
+  "finished_at": "2026-11-24T17:14:43.832Z",
+  "wall_seconds": 672,
+  "paused_seconds": 0,
+  "measured_seconds": 672,
+  "status": "pass",
+  "kind": "test",
+  "summary": "Rich Text import limites: pontos de 5 000 elem mellett a HTML-blokk, listaelem, formázott futam és sima szövegsor elfogadása is regresszióval rögzítve; exact-source Editor Core CI külön ellenőrizve zöld.",
+  "evidence": [
+    "tests/browser/editor-inspector-richtext-controls.test.js",
+    "docs/evidence/editor-d06-richtext-import-budget-post-ci-2026-11-24.json"
+  ],
+  "checks": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test tests/browser/editor-inspector-richtext-controls.test.js: PASS 2/2; plan-contract 16/16 PASS; canonical 13 files/396 map PASS; traceability 396/396 PASS; active point OPEN/NOT_CERTIFIED; diff-check PASS; exact-SHA Editor Core 45435911565 COMPLETED/SUCCESS; Cloudflare deployment 8fd0b1da... Worker be80eb5f... 100%; health HTTP 200.",
+  "started_revision": "01998aac4f38cd5e2896d9246164033ec688b47e",
+  "finished_revision": "01998aac4f38cd5e2896d9246164033ec688b47e",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
