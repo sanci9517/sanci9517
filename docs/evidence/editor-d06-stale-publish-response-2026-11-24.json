@@ -1,0 +1,179 @@
+{
+  "schema_version": 1,
+  "task": "77.44.7.D / D-06",
+  "date": "2026-11-24",
+  "status": "partial_feature_slice_released",
+  "summary": "A late UNSUPPORTED_EDITOR_NODE_TYPE Publish response no longer points to a blocker that the user removed while the immutable Publish snapshot was in flight. Current draft edits remain dirty and can be separately saved or explicitly published. D-06, the full D point, and full Editor acceptance remain open.",
+  "branch": "v2/foundation",
+  "base_commit": "01998aac4f38cd5e2896d9246164033ec688b47e",
+  "runtime_commit": "886b387d01a461a6483d796519629008a5cbdf75",
+  "runtime_commit_url": "https://github.com/sanci9517/sanci9517/commit/886b387d01a461a6483d796519629008a5cbdf75",
+  "changed_runtime_files": [
+    "public/editor-v2/app.js",
+    "public/editor-v2/index.html"
+  ],
+  "changed_test_and_traceability_files": [
+    "tests/browser/editor-publish-unsupported-recovery.test.js",
+    "tests/editor-public-asset-cache-bust.test.js",
+    "docs/evidence/feature-traceability.json"
+  ],
+  "behavior": {
+    "race": "Publish submits a cloned Page Model snapshot. If the same live Editor state is changed while the server validates that snapshot and the server returns UNSUPPORTED_EDITOR_NODE_TYPE, the error cannot be attributed to the current draft.",
+    "recovery": "When the current Page Model still equals the submitted snapshot, the existing targeted unsupported-node recovery remains. When it differs, stale unsupported-node alerts are removed and a non-modal Hungarian status tells the owner that the earlier snapshot failed and the current draft must be reviewed before a separate Publish retry.",
+    "save_publish": "The browser regression holds the third server rejection until after the user removes the rejected form node. It asserts the deleted node is not announced as a current blocker, no blocking dialog appears, the current draft stays separately publishable, and the existing Save/Publish route and state contracts remain covered.",
+    "reuse_and_dependencies": "Used the existing Page Model, publish recovery UI, browser fixture, project scripts and Cloudflare/GitHub release pipelines. No third-party source or dependency was added."
+  },
+  "local_checks": [
+    {
+      "command": "node --test tests/browser/editor-publish-unsupported-recovery.test.js",
+      "result": "PASS",
+      "summary": "1/1 Playwright regression; a deterministic held server response confirms the node is deleted before the stale 409 is returned."
+    },
+    {
+      "command": "node tests/editor-public-asset-cache-bust.test.js",
+      "result": "PASS",
+      "summary": "3/3; the changed Editor app.js entry has a refreshed cache token while the unchanged recovery module retains its own prior token."
+    },
+    {
+      "command": "node --experimental-loader ./tests/ts-extension-loader.mjs tests/editor-content-initial-publication-contract.test.js",
+      "result": "PASS",
+      "summary": "16/16 publication contract cases."
+    },
+    {
+      "command": "npm run test:editor",
+      "result": "PASS",
+      "summary": "Editor unit suite 24/24, Editor preference route suite 10/10, and Linux browser subreaper/manifest checks 4/4."
+    },
+    {
+      "command": "npm run test:editor:publish-guard",
+      "result": "PASS",
+      "summary": "21/21 draft-versus-live API integration cases."
+    },
+    {
+      "command": "npm run typecheck",
+      "result": "PASS"
+    },
+    {
+      "command": "node tests/editor-d-content-contract.test.js",
+      "result": "PASS",
+      "summary": "7/7 D content contracts."
+    },
+    {
+      "command": "python3 scripts/build-feature-traceability.py --check",
+      "result": "PASS",
+      "summary": "396 feature mappings match current source hashes; acceptance is explicitly NOT certified."
+    },
+    {
+      "command": "python3 scripts/check-canonical-plan.py",
+      "result": "PASS",
+      "summary": "Single complete canonical 13-part plan; 396 mappings; functional acceptance NOT CERTIFIED."
+    },
+    {
+      "command": "python3 tests/plan-contract.test.py",
+      "result": "PASS",
+      "summary": "16/16."
+    },
+    {
+      "command": "python3 scripts/audit-active-plan-point.py",
+      "result": "PASS",
+      "summary": "Cursor 77.44 / WEB-011 -> 77.44.7.D; 148 PARTIAL_SOURCE / 248 UNVERIFIED; full Editor acceptance NOT CERTIFIED."
+    },
+    {
+      "command": "npm run test:web013:migration-gate",
+      "result": "PASS",
+      "summary": "deploy:safe uses the safety gate and does not apply migrations; production migration SQL remains outside the automatic chain."
+    },
+    {
+      "command": "npx wrangler deploy --dry-run",
+      "result": "PASS_WITH_READ_ONLY_LOG_WARNING",
+      "summary": "Wrangler 4.130.0 packaged 202 public assets and exited 0 without deploying. It reported EROFS only because the sandbox log destination under /home/agent/.config/.wrangler is read-only."
+    },
+    {
+      "command": "git diff --check",
+      "result": "PASS"
+    },
+    {
+      "command": "npm run test:editor:layout",
+      "result": "INCOMPLETE_NOT_PASS",
+      "summary": "The 61-file real-browser suite was attempted with local loopback permission. It passed the first 31 files; the process was stopped while file 32 produced no output for several minutes. No full-suite pass is claimed. Exact-source Editor Core CI remains the release/acceptance gate."
+    }
+  ],
+  "production_d1_preflight": {
+    "method": "Cloudflare D1 Query API POST with SELECT-only SQL; no Wrangler remote migration command used.",
+    "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
+    "statements": [
+      "SELECT name FROM sqlite_schema WHERE type IN ('table','view','index','trigger') ORDER BY type,name",
+      "SELECT COUNT(*) AS schema_object_count FROM sqlite_schema WHERE type IN ('table','view','index','trigger')",
+      "SELECT name FROM d1_migrations ORDER BY id DESC LIMIT 1"
+    ],
+    "schema_object_count": 147,
+    "latest_migration_marker": "0030_media_library_organization.sql",
+    "rows_written": 0,
+    "changes": 0,
+    "changed_db": false,
+    "production_migration_or_business_write": false,
+    "production_r2_operation": false
+  },
+  "cloudflare_build": {
+    "build_uuid": "c818856c-a8ee-496e-8c87-1cbb8112c278",
+    "outcome": "success",
+    "source_branch": "v2/foundation",
+    "source_commit": "886b387d01a461a6483d796519629008a5cbdf75",
+    "build_command": "npm run typecheck",
+    "deploy_command": "npm run deploy:safe",
+    "build_minutes_limit_reached": false
+  },
+  "production_deployment": {
+    "deployment_id": "5aeaf17a-881a-4cdc-a2e7-42da24974e3c",
+    "worker_version_id": "80b5a884-326f-409b-93ba-93b0b6ca110c",
+    "traffic_percentage": 100,
+    "version_number": 4183,
+    "source_commit": "886b387d01a461a6483d796519629008a5cbdf75"
+  },
+  "production_smoke": {
+    "workflow": "Production Worker source smoke",
+    "run_id": 45417673233,
+    "job_id": 138528241674,
+    "result": "PASS: direct production GET /api/health returned HTTP 200 and all 39 checked public source SHA-256 values matched exact commit 886b387d01a461a6483d796519629008a5cbdf75. Attempts 1-4 observed the preceding app.js/index.html bytes during propagation; attempt 5 matched all assets. No mismatch remained at pass.",
+    "worker_origin": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev",
+    "changed_asset_sha256": {
+      "public/editor-v2/app.js": "56db4da3e19e61b20c7d3fe7843d689d2b00b38b5a0b696c4b6cf1228e9788ce",
+      "public/editor-v2/index.html": "bf4866d4029e28ccb1594f31c102999f4450c3cbf758154fbaa7aca0e6aea5b3"
+    }
+  },
+  "exact_sha_actions": {
+    "runtime_sha": "886b387d01a461a6483d796519629008a5cbdf75",
+    "successful_run_ids": {
+      "Canonical Creator Platform Plan": 45417673212,
+      "Canonical Plan Active Point Audit": 45417673247,
+      "F0 baseline checks": 45417673046,
+      "Production Worker source smoke": 45417673233,
+      "Twitch Integration Check": 45417673128
+    },
+    "editor_core_test": {
+      "run_id": 45417672997,
+      "last_observed_status": "in_progress",
+      "last_observed_steps": "TypeScript, Editor core, isolated D1 ledger/bootstrap, private R2 tests and public showcase checks passed; isolated R2 media upload test was running, Editor browser layout and remaining Editor acceptance jobs were pending.",
+      "note": "No exact-SHA Editor Core PASS is claimed while this run remains in progress. No rerun or dispatch was started."
+    }
+  },
+  "canonical_plan": {
+    "file": "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+    "method": "No rewrite of the oversized canonical plan; independent slice evidence is recorded here and source traceability regenerated.",
+    "active_cursor": "77.44 / WEB-011 -> 77.44.7.D",
+    "D06": "OPEN / NOT CERTIFIED",
+    "D01_D07": "OPEN / NOT CERTIFIED",
+    "77_44_7_D": "OPEN / NOT CERTIFIED",
+    "visual_editor": "OPEN / NOT CERTIFIED",
+    "manual_physical_acceptance": "DEFERRED until the full Editor scope is implemented"
+  },
+  "cost_and_mutation": {
+    "new_cost_ft": 0,
+    "new_dependencies": 0,
+    "production_d1_writes": 0,
+    "production_migrations": 0,
+    "production_r2_operations": 0,
+    "ci_action": "One normal runtime commit started the required automatic exact-SHA GitHub workflows; no manual rerun/dispatch was added."
+  },
+  "development_metrics_session_id": "20261124123502-0f457287"
+}

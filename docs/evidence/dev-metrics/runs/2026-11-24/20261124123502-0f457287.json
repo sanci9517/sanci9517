@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261124123502-0f457287",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-24T12:35:02.376Z",
+  "finished_at": "2026-11-24T14:50:21.469Z",
+  "wall_seconds": 8119,
+  "paused_seconds": 0,
+  "measured_seconds": 8119,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "Stale Publish response guard deployed; focused browser, unit, route, typecheck, plan and production smoke checks pass; full browser suite incomplete and Editor Core CI still in progress.",
+  "evidence": [
+    "docs/evidence/editor-d06-stale-publish-response-2026-11-24.json"
+  ],
+  "checks": "targeted-browser:PASS;test:editor:PASS;publish-guard:PASS;typecheck:PASS;plan:PASS;production-smoke:PASS;editor-layout:INCOMPLETE;editor-core-ci:IN_PROGRESS",
+  "started_revision": "01998aac4f38cd5e2896d9246164033ec688b47e",
+  "finished_revision": "01998aac4f38cd5e2896d9246164033ec688b47e",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
