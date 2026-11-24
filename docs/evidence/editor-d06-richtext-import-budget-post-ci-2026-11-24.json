@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "captured_at_utc": "2026-11-24T17:15:00Z",
+  "plan_item": "77.44.7.D / D-06 — Rich Text import limit boundaries and hosted Editor Core follow-up",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "runtime_commit": "0fe33e4b7bad5883f434466be97efa1d4cdb8b0d",
+    "remote_test_file_before_followup_blob": "f96cd4ae6802bcec47e4759bf7b590f06baf1140",
+    "canonical_plan_blob": "316500f6baf97d32b4ddfbf2398d75ff7304872d",
+    "canonical_plan_bytes": 1865612,
+    "canonical_plan_rewritten": false
+  },
+  "change": {
+    "kind": "test-only",
+    "file": "tests/browser/editor-inspector-richtext-controls.test.js",
+    "summary": "Pin the exact accepted boundary of 5000 aggregate HTML blocks, list items, formatted inline runs, and plain-text lines, alongside existing 5001-item rejection regressions. The tests exercise the deployed importer and ensure the abuse guard does not become a lower user-facing content cap.",
+    "runtime_source_changed": false,
+    "save_publish_contract_changed": false
+  },
+  "checks": {
+    "initial_sandbox_attempt": "BLOCKED: local browser fixture listener received listen EPERM on 127.0.0.1; this was an execution sandbox restriction, not a product assertion failure.",
+    "browser_regression": "PASS 2/2 via CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test tests/browser/editor-inspector-richtext-controls.test.js; actual local loopback only; eight orphaned test descendants reaped.",
+    "plan_contract": "PASS 16/16",
+    "canonical_plan": "PASS: one full canonical master, 13 checked files, 396 mappings",
+    "traceability": "PASS 396/396",
+    "active_point_audit": "PASS bookkeeping; cursor 77.44 / WEB-011 -> 77.44.7.D remains OPEN / NOT_CERTIFIED",
+    "git_diff_check": "PASS",
+    "hosted_editor_core": {
+      "run_id": 45435911565,
+      "job_id": 138593535978,
+      "status": "COMPLETED",
+      "conclusion": "SUCCESS",
+      "source_runtime_commit": "0fe33e4b7bad5883f434466be97efa1d4cdb8b0d",
+      "url": "https://github.com/sanci9517/sanci9517/actions/runs/45435911565",
+      "steps": "All executed Editor Core steps succeeded, including typecheck, editor core, D1 ledger/bootstrap, private R2 media API, Chromium showcase/layout, WEB-013, real Worker media storage, schedule/domain, Brand Kit/Admin contracts and canonical schedule/domain/contract tests. Diagnostic screenshots were skipped on success by workflow policy."
+    }
+  },
+  "production": {
+    "deployment_id": "8fd0b1da-73dc-4f3f-97e3-5377bdccc1a6",
+    "worker_version_id": "be80eb5f-92bd-42ee-b178-70f2352b379e",
+    "traffic_percent": 100,
+    "health": {
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+      "http_status": 200,
+      "body": {"ok": true, "service": "sanci9517-streamer-brand", "version": "2.0.0", "server": "cloudflare-worker"}
+    },
+    "runtime_changed_by_this_slice": false,
+    "new_deployment_required": false,
+    "asset_hashes_changed": false
+  },
+  "safety_and_acceptance": {
+    "new_cost_huf": 0,
+    "new_dependency": false,
+    "production_d1_mutation_or_migration": false,
+    "production_r2_mutation": false,
+    "manual_ci_dispatch_or_rerun": false,
+    "save_distinct_from_publish": true,
+    "d06": "OPEN / NOT CERTIFIED",
+    "full_d_block": "OPEN / NOT CERTIFIED",
+    "complete_visual_editor": "OPEN / NOT CERTIFIED",
+    "manual_physical_acceptance": "DEFERRED until the complete Editor scope is implemented"
+  }
+}
