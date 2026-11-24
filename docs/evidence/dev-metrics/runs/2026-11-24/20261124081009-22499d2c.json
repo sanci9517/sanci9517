@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261124081009-22499d2c",
+  "task": "77.44.7.D-D06-next-verified-gap",
+  "trigger": "scheduled",
+  "started_at": "2026-11-24T08:10:09.527Z",
+  "finished_at": "2026-11-24T08:35:05.170Z",
+  "wall_seconds": 1496,
+  "paused_seconds": 0,
+  "measured_seconds": 1496,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "Implemented and released D-06 fail-closed publish capability guard; exact-SHA Cloudflare build/deploy and health verified; GitHub Editor Core exact-SHA browser suite still in progress, D remains OPEN.",
+  "evidence": [
+    "docs/evidence/editor-d06-publish-capability-guard-2026-11-24.json",
+    "https://github.com/sanci9517/sanci9517/actions/runs/45356435086"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "e5e7e26db522623a2a695877939c776e6a08db2c",
+  "finished_revision": "546bbb5f7a51895a3392272869047ba57aa6b004",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

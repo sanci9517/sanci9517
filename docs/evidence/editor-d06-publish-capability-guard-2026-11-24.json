@@ -1,12 +1,12 @@
 {
   "schema": "sanci.visual-editor.d06-publish-capability-guard.v1",
-  "recorded_at_utc": "2026-11-24T08:24:51Z",
+  "recorded_at_utc": "2026-11-24T08:33:12Z",
   "repository": "sanci9517/sanci9517",
   "branch": "v2/foundation",
   "canonical_plan": {
     "path": "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
-    "bytes": 1855554,
-    "sha256": "441de45940a0a5af999aa71edab4726d6a39547de794713ff6d9322c99cfa496",
+    "bytes": 1856599,
+    "sha256": "268435acf73fe2ae28066c0e60d05dc057013c137329e4edcab39e6940c85aff",
     "cursor": "77.44 / WEB-011 → 77.44.7.D",
     "status": "OPEN / NOT_CERTIFIED"
   },
@@ -70,15 +70,48 @@
       "attempt_2": "COMPLETED / SUCCESS",
       "attempt_2_url": "https://github.com/sanci9517/sanci9517/actions/runs/45280818766/attempts/2",
       "scope_note": "New capability-guard source SHA must still be pushed and hosted-tested."
+    },
+    "current_exact_sha_ci": {
+      "commit": "546bbb5f7a51895a3392272869047ba57aa6b004",
+      "workflow_run_id": 45356435086,
+      "workflow_url": "https://github.com/sanci9517/sanci9517/actions/runs/45356435086",
+      "status": "IN_PROGRESS",
+      "current_step": "Run Editor browser layout regression",
+      "completed_before_current_step": "13 steps PASS, including TypeScript, Editor core, D1 ledger, isolated R2 media, showcase unit and Chromium checks",
+      "not_claimed_as_pass": true
     }
   },
   "production": {
-    "last_readback_deployment_id": "42feeec0-8a65-4a22-8fcf-d6d2acf9cf53",
-    "last_readback_worker_version_id": "d52c8bae-32e2-4fdc-a628-7295b3c5f34d",
-    "last_readback_traffic_percent": 100,
-    "new_deployment": "PENDING: runtime source has not yet been pushed",
-    "health": "PENDING exact-SHA rollout",
-    "changed_public_assets": []
+    "build_uuid": "04560555-e870-400f-82f5-9357839e4716",
+    "build_outcome": "SUCCESS",
+    "build_branch": "v2/foundation",
+    "build_commit": "546bbb5f7a51895a3392272869047ba57aa6b004",
+    "build_command": "npm run typecheck",
+    "deploy_command": "npm run deploy:safe",
+    "deployment_id": "4baf24bb-cdd6-42e4-8307-c5958777e0eb",
+    "worker_version_id": "0fc18474-f7bc-4c0b-99b0-a9e1e165cf43",
+    "worker_version_number": 4178,
+    "worker_traffic_percent": 100,
+    "live_bundle_contains_publish_guard": true,
+    "health": {
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "changed_public_assets": [
+      {
+        "path": "/editor-v2/core/capability-matrix.d.ts",
+        "local_sha256": "c1a37e81fd3b6846bb4d37076c9858f91371e8d19b8ba40fecfc1e97f17e4f03",
+        "live_sha256": "c1a37e81fd3b6846bb4d37076c9858f91371e8d19b8ba40fecfc1e97f17e4f03",
+        "byte_match": true,
+        "note": "Static type declaration asset; not application code and contains no secret."
+      }
+    ]
   },
   "safety": {
     "production_d1_mutations": 0,
