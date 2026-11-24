@@ -46,7 +46,7 @@
     }
   ],
   "release": {
-    "status": "RUNTIME DEPLOYED AND PRODUCTION SOURCE SMOKE PASS; exact-source Editor Core hosted acceptance remains IN PROGRESS.",
+    "status": "RUNTIME DEPLOYED AND PRODUCTION SOURCE SMOKE PASS; test-only browser-focus follow-up pushed; exact-SHA Editor Core acceptance IN PROGRESS.",
     "select_only_production_d1_preflight": {
       "endpoint": "Cloudflare D1 Query API (POST query endpoint)",
       "database": "sanci9517-db",
@@ -117,7 +117,7 @@
         {
           "name": "Editor Core Test",
           "id": 45468370010,
-          "result": "IN_PROGRESS at 2026-11-24; Editor browser layout regression step"
+          "result": "FAILURE at Editor browser layout regression; historical failure, not relabeled."
         }
       ],
       "followup_workflow_commit": "b6c2ba652d0b14ada0dd76a0f307b7cba6e02fe5",
@@ -140,10 +140,41 @@
         {
           "name": "Editor Core Test",
           "id": 45469690909,
-          "result": "IN_PROGRESS at 2026-11-24; isolated real Worker media upload tests"
+          "result": "FAILURE at Editor browser layout regression; same Published Tabs focus timeout, historical failure, not relabeled."
         }
       ],
-      "note": "No manual dispatch/rerun. Follow-up is workflow-only and does not change Worker runtime."
+      "note": "No manual dispatch/rerun. Follow-up is workflow-only and does not change Worker runtime.",
+      "test_harness_followup": {
+        "commit": "5750d0a79b783c5b6e46d55f9881c0fe25367139",
+        "changed_paths": [
+          "tests/browser/editor-content-system.test.js"
+        ],
+        "change": "Wait for page focus and active-tab focus after viewport changes; dispatch keyboard input through Page.keyboard; include document.hasFocus in failure diagnostics.",
+        "previous_exact_sha_failures": [
+          45468370010,
+          45469690909
+        ],
+        "local_real_chromium": "PASS 1/1 on targeted typed authored-elements / Published Tabs lifecycle; npm run test:editor 24/24; npm run typecheck PASS; plan-contract 16/16; source traceability 396/396; canonical plan one-master/one-cursor PASS.",
+        "github_run": {
+          "id": 45480140059,
+          "status": "IN_PROGRESS",
+          "step": "Run Editor browser layout regression"
+        },
+        "related_github_runs": [
+          {
+            "name": "F0 baseline checks",
+            "id": 45480140211,
+            "result": "SUCCESS"
+          },
+          {
+            "name": "Twitch Integration Check",
+            "id": 45480140017,
+            "result": "SUCCESS"
+          }
+        ],
+        "runtime": "UNCHANGED; no deployment; production Worker remains version ad5e371e-8465-4c8a-9317-35ce0dc4e794 at 100% traffic.",
+        "production_health": "No new HTTP request for test-only change. Latest verified exact-runtime source smoke run 45469690929 reported /api/health HTTP 200 and changed public hashes."
+      }
     },
     "cloudflare_deployment": {
       "build_uuid": "f7273123-6fb7-4433-af82-4f1a62d0f019",
@@ -185,13 +216,14 @@
     }
   },
   "limitations": [
-    "The exact-source Editor Core workflow is still running on runtime commit 7e6236e0bf0f2cc326d5df76267cbca9c0d056f6 (run 45468370010) and a workflow-only follow-up commit (run 45469690909); do not report either as PASS until completed.",
+    "Exact-SHA Editor Core run 45480140059 remains in progress at the full Editor browser layout step; do not call the updated CI acceptance PASS until it completes.",
+    "Prior Editor Core runs 45468370010 and 45469690909 remain historical failures; current test-only repair is locally validated and awaiting hosted confirmation.",
     "No owner-facing manual or physical-device acceptance; defer until complete Editor scope.",
-    "This is a bounded renderer/accessibility repair; EDT-019, D-06, D-01–D-07, 77.44.7.D and full Editor acceptance remain OPEN / NOT_CERTIFIED."
+    "This is a bounded CI fixture stabilization, not a capability completion or product acceptance: EDT-019, D-06, D-01–D-07, 77.44.7.D and full Editor acceptance remain OPEN / NOT_CERTIFIED."
   ],
   "development_metrics": {
-    "id": "20261124190926-f44a5f4a",
-    "run_file": "docs/evidence/dev-metrics/runs/2026-11-24/20261124190926-f44a5f4a.json",
-    "note": "Finished as partial at revision b6c2ba652d0b14ada0dd76a0f307b7cba6e02fe5 because both exact-source Editor Core hosted runs were still in progress; the bounded production release and its smoke checks passed."
+    "id": "20261124201157-3e02e587",
+    "run_file": "docs/evidence/dev-metrics/runs/2026-11-24/20261124201157-3e02e587.json",
+    "note": "Finished as partial: local test fix and checks passed; exact-SHA Editor Core run 45480140059 remained in progress at the browser layout step."
   }
 }

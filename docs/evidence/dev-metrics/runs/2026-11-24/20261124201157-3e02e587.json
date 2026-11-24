@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "id": "20261124201157-3e02e587",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-24T20:11:57.701Z",
+  "finished_at": "2026-11-24T20:37:38.153Z",
+  "wall_seconds": 1540,
+  "paused_seconds": 102,
+  "measured_seconds": 1438,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "A Published Tabs browser-test focus bug was corrected; local Chromium and editor/unit/plan checks pass. Exact-SHA Editor Core browser suite remains in progress.",
+  "evidence": [
+    "tests/browser/editor-content-system.test.js",
+    "5750d0a79b783c5b6e46d55f9881c0fe25367139",
+    "45480140059"
+  ],
+  "checks": "targeted Chromium 1/1 PASS; npm run test:editor 24/24 PASS; typecheck PASS; plan-contract 16/16 PASS; traceability 396/396 PASS; canonical-plan and active-point audits PASS; Editor Core 45480140059 IN_PROGRESS",
+  "started_revision": "20b40549b200d381e59b630a64590a316072747a",
+  "finished_revision": "5750d0a79b783c5b6e46d55f9881c0fe25367139",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
