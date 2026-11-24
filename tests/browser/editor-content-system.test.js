@@ -1338,7 +1338,21 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
     assert.equal(tabIds[index].controls,panelIds[index].id,'selected tab controls its corresponding panel');
     assert.equal(panelIds[index].labelledby,tabIds[index].id,'selected panel is labelled by its corresponding tab');
     assert.equal(panelIds[index].text,content,'keyboard selection displays the matching published content');
-    await live.waitForFunction(id=>document.activeElement?.id===id,tabIds[index].id);
+    try{
+      // This file runs late in the serial 61-file Chromium suite. On a busy
+      // hosted runner the tab state can settle before the browser focus query;
+      // keep the same accessibility assertion but give focus its own bounded
+      // window and capture the exact DOM state if it still does not settle.
+      await live.waitForFunction(id=>document.activeElement?.id===id,tabIds[index].id,{timeout:30000});
+    }catch(error){
+      const focusState=await live.evaluate(({id,nodeId})=>({
+        expected:id,hasFocus:document.hasFocus(),activeId:document.activeElement?.id,
+        activeRole:document.activeElement?.getAttribute('role'),
+        tabs:[...document.querySelectorAll(`.visual-editor-node[data-node-id="${nodeId}"] [role="tab"]`)]
+          .map(tab=>({id:tab.id,selected:tab.getAttribute('aria-selected'),tabindex:tab.tabIndex,focused:document.activeElement===tab}))
+      }),{id:tabIds[index].id,nodeId:ids.tabs});
+      throw new Error(`Published keyboard tab focus did not settle: ${JSON.stringify(focusState)}`,{cause:error});
+    }
     const focusState=await publicTabs.nth(index).evaluate(tab=>({selected:document.activeElement===tab,activeId:document.activeElement?.id,activeText:document.activeElement?.textContent?.trim()}));
     assert.equal(focusState.selected,true,'keyboard selection moves focus to the selected tab; '+JSON.stringify(focusState));
   };
@@ -1349,6 +1363,30 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
     await tab.focus();
     await live.waitForFunction(expectedId=>document.hasFocus()&&document.activeElement?.id===expectedId,id);
   };
+  const resizePublishedPageAndWait=async(width,height)=>{
+    await live.setViewportSize({width,height});
+    // Reinitialize the published renderer at the exact viewport. A resize
+    // breakpoint change starts an asynchronous full-page render; waiting on
+    // a detached node can stall indefinitely when the browser coalesces the
+    // resize event with a preceding navigation. Reloading makes the tested
+    // viewport and the renderer's device bucket deterministic.
+    await live.reload();
+    try{
+      await live.waitForFunction(nodeId=>{
+        const host=document.querySelector(`.visual-editor-node[data-node-id="${nodeId}"]`);
+        return host?.querySelectorAll('.creator-tabs [role="tab"]').length===2&&
+          document.querySelector('#content-canvas')?.dataset.contentInteractions==='1';
+      },ids.tabs,{timeout:30000});
+    }catch(error){
+      const state=await live.evaluate(nodeId=>({
+        url:location.href,viewport:[innerWidth,innerHeight],title:document.title,
+        canvas:document.querySelector('#content-canvas')?.innerHTML.slice(0,600),
+        candidates:[...document.querySelectorAll(`[data-node-id="${nodeId}"]`)].map(item=>({tag:item.tagName,classes:item.className,contentType:item.dataset.contentType,tabs:item.querySelectorAll('.creator-tabs [role="tab"]').length})),
+        contentInteractions:document.querySelector('#content-canvas')?.dataset.contentInteractions
+      }),ids.tabs);
+      throw new Error(`Published Tabs did not initialize after ${width}x${height} reload: ${JSON.stringify(state)}`,{cause:error});
+    }
+  };
   await publicTabs.nth(1).click();await assertPublicTabState(1,'Személyes történet');
   await publicTabs.nth(1).press('ArrowRight');await assertPublicTabState(0,'Videólista');
   await publicTabs.nth(0).press('ArrowLeft');await assertPublicTabState(1,'Személyes történet');
@@ -1356,7 +1394,7 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   await publicTabs.nth(0).press('End');await assertPublicTabState(1,'Személyes történet');
   // Other fixture pages are open (Editor and touch preview); explicitly
   // activate the published page before exercising real keyboard focus.
-  await live.bringToFront();await live.setViewportSize({width:390,height:640});
+  await live.bringToFront();await resizePublishedPageAndWait(390,640);
   // Resizing can legitimately return browser focus to the document body. Move
   // focus back into the tablist as a keyboard user would, then send the key at
   // page level so the test proves the widget's roving-focus behavior itself.
@@ -1376,7 +1414,7 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   // A 1440x900 browser at 200% effective zoom exposes 720x450. Exercise the
   // published tabs at that exact short viewport as well as on a phone: the
   // keyboard path must remain reachable without clipping the tablist.
-  await live.bringToFront();await live.setViewportSize({width:720,height:450});
+  await live.bringToFront();await resizePublishedPageAndWait(720,450);
   assert.equal(await live.evaluate(()=>[innerWidth,innerHeight].join('×')),'720×450',
     'published keyboard tabs use the planned 200% effective zoom viewport');
   // Restore keyboard focus after the second viewport change before exercising

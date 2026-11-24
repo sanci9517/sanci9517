@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261124221422-3b925a6c",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-24T22:14:22.887Z",
+  "finished_at": "2026-11-24T22:36:53.197Z",
+  "wall_seconds": 1350,
+  "paused_seconds": 0,
+  "measured_seconds": 1350,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "A D-06 publikus Tabs breakpoint tesztet a tényleges authored Tabs rendererre szinkronizáltam; célzott Chromium és editor/unit/plan ellenőrzések PASS, de az exact-source hosted Editor Core run korábbi FAIL marad, ingyenes Actions rerun-kapacitás nem igazolt.",
+  "evidence": [
+    "tests/browser/editor-content-system.test.js:targeted Chromium PASS 1/1; docs/evidence/editor-d06-published-tabs-breakpoint-sync-2026-11-24.json"
+  ],
+  "checks": "Chromium 1/1; npm run test:editor 12/12+4/4+24/24; typecheck; plan-contract 16/16; canonical plan; active point; traceability 396/396; syntax; diff check",
+  "started_revision": "0a516c2be49eee629585a210f42154f6a8470611",
+  "finished_revision": "0a516c2be49eee629585a210f42154f6a8470611",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

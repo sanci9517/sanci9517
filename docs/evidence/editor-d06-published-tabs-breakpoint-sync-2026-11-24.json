@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "captured_at_utc": "2026-11-24T22:35:52Z",
+  "plan_item": "77.44.7.D / D-06 — Published Tabs breakpoint reinitialization regression",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "parent_commit": "0a516c2be49eee629585a210f42154f6a8470611",
+    "plan_blob_before": "ca8f4de17f9dc41636bd22cd6b4fbfa517a83499",
+    "plan_bytes_before": 1876479,
+    "plan_append_only": true
+  },
+  "change": {
+    "file": "tests/browser/editor-content-system.test.js",
+    "kind": "test harness only; no production/runtime source changed",
+    "root_cause": "The responsive browser assertion waited for the legacy [data-structured-tabs] marker, but authored Editor Tabs render as .creator-tabs and bind through initContentInteractions. The viewport change also triggered an asynchronous page rerender; the test could inspect/reuse the DOM before that lifecycle had settled.",
+    "fix": "Reload the published fixture at the target mobile/tablet viewport and wait for the authored .creator-tabs tab controls plus #content-canvas[data-content-interactions=1] before keyboard assertions. Preserve keyboard focus, tab/panel semantics, responsive bounds, Save/Publish separation, and all existing authored-content assertions.",
+    "runtime_files_changed": false
+  },
+  "local_checks": {
+    "focused_chromium": "PASS — CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 --test-name-pattern=typed authored elements survive Inspector edits tests/browser/editor-content-system.test.js (1/1, 52.7s)",
+    "npm run test:editor": "PASS — preference route 12/12; subreaper 4/4; editor unit suite 24/24",
+    "npm run typecheck": "PASS",
+    "python3 tests/plan-contract.test.py": "PASS — 16/16",
+    "python3 scripts/check-canonical-plan.py": "PASS — 13-part master / one cursor",
+    "python3 scripts/audit-active-plan-point.py": "PASS — 77.44 / WEB-011 → 77.44.7.D; 396 feature records; 148 PARTIAL_SOURCE, 248 UNVERIFIED; acceptance NOT_CERTIFIED",
+    "python3 scripts/build-feature-traceability.py --check": "PASS — 396/396 mappings",
+    "node --check tests/browser/editor-content-system.test.js": "PASS",
+    "git diff --check": "PASS"
+  },
+  "hosted_ci": {
+    "run_id": 45491292265,
+    "url": "https://github.com/sanci9517/sanci9517/actions/runs/45491292265",
+    "source_sha": "ee7b2d8ba9f660844920a6469cb89da40069d075",
+    "workflow": "Editor Core Test",
+    "conclusion": "failure",
+    "failed_step": "Run Editor browser layout regression (step 14); downstream steps skipped",
+    "rerun": "NOT STARTED — repository policy states Actions free quota exhausted/unknown; no paid use authorized."
+  },
+  "cloudflare": {
+    "latest_deployment": "e191679e-ef45-40f2-8f33-8b07b6c57e49",
+    "worker_version": "97b3a023-8133-45fe-83cd-b32da1f199de",
+    "traffic_percent": 100,
+    "source_unchanged": true,
+    "deployment_created_for_test_change": false,
+    "health_current_block": "UNVERIFIED — Cloudflare execution fetch returned a proxy Forbidden body; no new health PASS claimed.",
+    "changed_public_assets": []
+  },
+  "safety": {
+    "production_d1_mutation": false,
+    "r2_mutation": false,
+    "new_paid_service": false,
+    "new_cost_huf": 0,
+    "save_and_publish_remain_separate": true
+  },
+  "status": {
+    "d06": "OPEN / NOT CERTIFIED",
+    "full_editor": "OPEN / NOT CERTIFIED",
+    "manual_physical_acceptance": "DEFERRED until complete Editor scope",
+    "next_action": "Resolve known free hosted Actions quota before required Editor Core workflow rerun; do not mark the D-06 or full Editor gate complete from local tests alone."
+  }
+}
