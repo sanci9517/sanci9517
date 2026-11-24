@@ -1322,7 +1322,7 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
         return tabs.length===2&&tabs.every((tab,i)=>tab.getAttribute('aria-selected')===String(i===selectedIndex));
       },{id:ids.tabs,selectedIndex:index},{timeout:30000});
     }catch(error){
-      const state=await live.evaluate(id=>({tabs:[...document.querySelectorAll(`.visual-editor-node[data-node-id="${id}"] [role="tab"]`)].map(tab=>({selected:tab.getAttribute('aria-selected'),tabindex:tab.tabIndex,id:tab.id})),active:document.activeElement?.id,hash:location.hash,search:location.search}),ids.tabs);
+      const state=await live.evaluate(id=>({hasFocus:document.hasFocus(),tabs:[...document.querySelectorAll(`.visual-editor-node[data-node-id="${id}"] [role="tab"]`)].map(tab=>({selected:tab.getAttribute('aria-selected'),tabindex:tab.tabIndex,id:tab.id})),active:document.activeElement?.id,hash:location.hash,search:location.search}),ids.tabs);
       throw new Error(`Published tab state did not settle for index ${index}: ${JSON.stringify(state)}`,{cause:error});
     }
     const tabIds=await publicTabs.evaluateAll(items=>items.map(tab=>({id:tab.id,controls:tab.getAttribute('aria-controls'),selected:tab.getAttribute('aria-selected'),tabindex:tab.getAttribute('tabindex')})));
@@ -1344,9 +1344,10 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   };
   const focusPublicTab=async index=>{
     const tab=publicTabs.nth(index),id=await tab.getAttribute('id');
-    await live.bringToFront();await tab.focus();
-    await live.waitForFunction(expectedId=>document.activeElement?.id===expectedId,id);
-    return tab;
+    await live.bringToFront();
+    await live.waitForFunction(()=>document.hasFocus());
+    await tab.focus();
+    await live.waitForFunction(expectedId=>document.hasFocus()&&document.activeElement?.id===expectedId,id);
   };
   await publicTabs.nth(1).click();await assertPublicTabState(1,'Személyes történet');
   await publicTabs.nth(1).press('ArrowRight');await assertPublicTabState(0,'Videólista');
@@ -1359,7 +1360,8 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   // Resizing can legitimately return browser focus to the document body. Move
   // focus back into the tablist as a keyboard user would, then send the key at
   // page level so the test proves the widget's roving-focus behavior itself.
-  await (await focusPublicTab(1)).press('ArrowRight');
+  await focusPublicTab(1);
+  await live.keyboard.press('ArrowRight');
   await assertPublicTabState(0,'Videólista');
   const mobileTabsLayout=await live.evaluate(()=>({
     viewport:innerWidth,document:document.scrollingElement.scrollWidth,
@@ -1379,7 +1381,8 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
     'published keyboard tabs use the planned 200% effective zoom viewport');
   // Restore keyboard focus after the second viewport change before exercising
   // End; viewport resizing alone does not promise to preserve DOM focus.
-  await (await focusPublicTab(0)).press('End');
+  await focusPublicTab(0);
+  await live.keyboard.press('End');
   await assertPublicTabState(1,'Személyes történet');
   const zoomTabsLayout=await live.evaluate(()=>({
     viewport:innerWidth,document:document.scrollingElement.scrollWidth,
