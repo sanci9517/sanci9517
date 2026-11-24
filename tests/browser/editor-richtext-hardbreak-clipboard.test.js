@@ -91,6 +91,15 @@ test('Rich Text preserves HTML and native hard breaks, rejects empty clipboard a
     await clip('table td',2,2,'<p>C<br>D</p>','C\nD');
     assert.equal(await inspector.locator('table td').textContent(),'CeC\nDll');
 
+    const deepMarkup='<p>'+ '<span>'.repeat(128) +'X'+ '</span>'.repeat(128) +'</p>';
+    const beforeDeepPaste=await inspector.locator('p:first-child').innerHTML();
+    assert.equal((await clip('p:first-child',0,4,deepMarkup,'X')).unchanged,true,
+      'an over-depth clipboard payload must not replace the current Rich Text selection');
+    assert.equal(await inspector.locator('p:first-child').innerHTML(),beforeDeepPaste,
+      'a rejected deep paste leaves the edited document unchanged');
+    assert.match(await page.locator('.richtext-format-feedback').textContent(),/legfeljebb 64 szint mélységű/,
+      'the Editor announces why a deeply nested paste was rejected');
+
     // Native Shift+Enter is represented as a BR element by browsers, so
     // save it as a canonical newline (without a phantom extra paragraph).
     await inspector.evaluate(el=>{
@@ -136,7 +145,7 @@ test('Rich Text preserves HTML and native hard breaks, rejects empty clipboard a
     assert.equal(direct.unchanged,true);
     assert.match(direct.error,/nincs beilleszthető szöveg/);
     assert.equal(direct.emptyParagraph,'','placeholder BR in an empty paragraph is not a hard break');
-    assert.equal(posts.length,0,'no clipboard operation triggers automatic server save');
+    assert.equal(posts.length,0,'clipboard operations do not trigger automatic server save');
 
     if(width===1366){
       await page.locator('#save').click();

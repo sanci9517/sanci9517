@@ -227,6 +227,10 @@ test('typed Inspector controls and link selection work with real browser DOM at 
       const tooManyListItems=rejectionFor('<ul>'+ '<li>x</li>'.repeat(5001) +'</ul>');
       const tooManyDocumentListItems=rejectionFor(Array.from({length:10},()=>'<ul>'+ '<li></li>'.repeat(501) +'</ul>').join(''));
       const excessiveInlineRuns=rejectionFor('<p>'+Array.from({length:5001},(_,index)=>index%2?'<em>x</em>':'<strong>x</strong>').join('')+'</p>');
+      const tooDeepHtml='<p>'+ '<span>'.repeat(128) +'x'+ '</span>'.repeat(128) +'</p>';
+      const excessiveDomNodes=rejectionFor('<p>'+ '<i></i>'.repeat(20001) +'</p>');
+      const tooDeepImport=rejectionFor(tooDeepHtml);
+      const safeDepthImport=importRichTextClipboard({html:'<p>'+ '<span>'.repeat(61) +'<strong>safe</strong>'+ '</span>'.repeat(61) +'</p>'});
       let tooManyPlainTextBlocksRejected=false;try{importRichTextClipboard({text:'x\n'.repeat(5000)})}catch(error){tooManyPlainTextBlocksRejected=/legfeljebb 5000 szövegblokk/.test(error.message)}
       // Pin both sides of the guard: the advertised maximum stays usable, and
       // only the first item beyond it is rejected. These are intentionally
@@ -280,6 +284,7 @@ test('typed Inspector controls and link selection work with real browser DOM at 
         tsvType:importedTsv.blocks[0].type,tsvShape:[importedTsv.blocks[0].rows.length,importedTsv.blocks[0].rows[0].cells.length],
         quotedTsvRows:quotedTsv.blocks[0].rows.map(row=>row.cells.map(cell=>cell.children.map(run=>run.text).join(''))),oversizedPasteRejected,
         tooManyBlocks,tooManyListItems,tooManyDocumentListItems,excessiveInlineRuns,tooManyPlainTextBlocksRejected,
+        tooDeepImport,excessiveDomNodes,safeDepthImport,
         atBudgetBlocks,atBudgetListItems,atBudgetInlineRuns,atBudgetPlainTextBlocks,ordinaryFormattedPaste,
         pasteAttack:window.__pasteAttack,
         markedRun:aligned.blocks[0].children.find(x=>x.text==='world'),alignment:aligned.blocks[0].align,
@@ -357,6 +362,10 @@ test('typed Inspector controls and link selection work with real browser DOM at 
     assert.match(data.tooManyListItems,/legfeljebb 5000 elemet/,'large pasted lists are rejected before mapping every item into the document');
     assert.match(data.tooManyDocumentListItems,/legfeljebb 5000 elemet/,'the item budget applies across multiple lists in one clipboard import');
     assert.match(data.excessiveInlineRuns,/legfeljebb 5000 formázott szövegrészt/,'large formatting-fragment floods are rejected before model normalization');
+    assert.match(data.tooDeepImport,/legfeljebb 64 szint mélységű/,'deep clipboard markup is rejected before recursive parsing can exhaust the stack');
+    assert.match(data.excessiveDomNodes,/legfeljebb 20000 DOM-elemet/,'wide clipboard trees are rejected even when their output would contain almost no text');
+    assert.deepEqual(data.safeDepthImport.blocks[0].children.map(run=>[run.text,run.marks]),[['safe',['bold']]],
+      'valid deeply nested formatting at the configured safe boundary retains its content and mark');
     assert.equal(data.tooManyPlainTextBlocksRejected,true,'plain-text pastes enforce the same document block budget as HTML');
     assert.equal(data.atBudgetBlocks,5000,'HTML at the documented aggregate block limit remains importable');
     assert.equal(data.atBudgetListItems,5000,'a list at the documented item limit remains importable');
@@ -435,4 +444,3 @@ test('shared Inspector color controls synchronize RGB, short HEX, alpha, transpa
     await page.close();
   }
 });
-

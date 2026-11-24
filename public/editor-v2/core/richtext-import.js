@@ -3,6 +3,8 @@ import { RICH_TEXT_FONT_FAMILIES } from './schema.js?v=20261101-richtext-multibl
 import { parseTableTsv } from './table-tsv.js';
 
 const MAX_CLIPBOARD_CHARS = 250_000;
+const MAX_IMPORT_DOM_NODES = 20_000;
+const MAX_IMPORT_DOM_DEPTH = 64;
 const MAX_TABLE_ROWS = 100;
 const MAX_TABLE_COLUMNS = 24;
 const MAX_IMPORTED_BLOCKS = 5_000;
@@ -140,6 +142,24 @@ function directRows(table) {
   return [...table.querySelectorAll('tr')].filter(row => row.closest('table') === table);
 }
 
+function assertClipboardTreeBudget(root) {
+  const pending = [{node: root, depth: 0}];
+  let visited = 0;
+  while (pending.length) {
+    const {node, depth} = pending.pop();
+    visited++;
+    if (visited > MAX_IMPORT_DOM_NODES) {
+      throw new Error(`A beillesztett HTML legfeljebb ${MAX_IMPORT_DOM_NODES} DOM-elemet tartalmazhat.`);
+    }
+    if (depth > MAX_IMPORT_DOM_DEPTH) {
+      throw new Error(`A beillesztett HTML legfeljebb ${MAX_IMPORT_DOM_DEPTH} szint mélységű lehet.`);
+    }
+    for (let index = node.childNodes.length - 1; index >= 0; index--) {
+      pending.push({node: node.childNodes[index], depth: depth + 1});
+    }
+  }
+}
+
 function htmlTable(table, budget) {
   const rows = directRows(table).slice(0, MAX_TABLE_ROWS).map(row => ({
     cells: [...row.children].filter(cell => ['TD', 'TH'].includes(cell.tagName)).slice(0, MAX_TABLE_COLUMNS).map(cell => ({
@@ -246,6 +266,7 @@ export function importRichTextClipboard({html = '', text = ''} = {}) {
   }
   if (sourceHtml.trim()) {
     const parsed = new DOMParser().parseFromString(sourceHtml, 'text/html');
+    assertClipboardTreeBudget(parsed.body);
     const blocks = parseHtmlBlocks(parsed.body, {blocks: 0, listItems: 0, inlineRuns: 0});
     const hasUsableContent = blocks.some(block=>
       block.type === 'table' || block.type === 'bulleted-list' || block.type === 'numbered-list' ||
