@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "id": "20261124113145-49713348",
+  "task": "77.44.7.D-D06",
+  "trigger": "manual",
+  "started_at": "2026-11-24T11:31:45.002Z",
+  "finished_at": "2026-11-24T11:53:39.415Z",
+  "wall_seconds": 1314,
+  "paused_seconds": 0,
+  "measured_seconds": 1314,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "D-06 recovery-label hardening tested, fast-forwarded and deployed; exact-source Editor Core browser CI is still running, so the slice and full D remain OPEN.",
+  "evidence": [
+    "docs/evidence/editor-d06-publish-recovery-safe-label-2026-11-24.json",
+    "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+    "fdd4836c1797ae780ddde6dce94c99ca4327614c",
+    "https://github.com/sanci9517/sanci9517/actions/runs/45387394067"
+  ],
+  "checks": "Targeted unit 16/16; editor 24/24 + prefs 10/10 + runner 4/4; publish route 21/21; browser 1/1; typecheck; plan 16/16; canonical 13/396; migration gate; Wrangler dry-run; D1 SELECT-only; Cloudflare exact-SHA build/deploy/health/asset hashes PASS; Editor Core IN_PROGRESS.",
+  "started_revision": "ffdfefe213ce1af056e42f95be8a3afbb71c3ce3",
+  "finished_revision": "fdd4836c1797ae780ddde6dce94c99ca4327614c",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

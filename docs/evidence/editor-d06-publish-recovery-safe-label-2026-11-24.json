@@ -1,6 +1,6 @@
 {
   "schema": "sanci.editor.d06.publish-recovery-safe-label.v1",
-  "recorded_at_utc": "2026-11-24T11:44:00Z",
+  "recorded_at_utc": "2026-11-24T11:52:00Z",
   "repository": "sanci9517/sanci9517",
   "branch": "v2/foundation",
   "base_commit": "ffdfefe213ce1af056e42f95be8a3afbb71c3ce3",
@@ -72,13 +72,104 @@
     "note": "Read back via Cloudflare API. This is before the safe-label source update."
   },
   "release": {
-    "status": "PENDING",
-    "source_commit": null,
-    "github_exact_sha_checks": "PENDING",
-    "cloudflare_build": "PENDING",
-    "deployment": "PENDING",
-    "production_health": "PENDING",
-    "changed_public_asset_live_hashes": "PENDING"
+    "status": "Cloudflare exact-source deployment verified; GitHub Editor Core exact-source workflow still in progress.",
+    "source_commit": "fdd4836c1797ae780ddde6dce94c99ca4327614c",
+    "push": {
+      "result": "PASS normal fast-forward",
+      "from": "ffdfefe213ce1af056e42f95be8a3afbb71c3ce3",
+      "to": "fdd4836c1797ae780ddde6dce94c99ca4327614c",
+      "verified_ref": "git ls-remote origin refs/heads/v2/foundation matched source commit"
+    },
+    "github_exact_sha_checks": {
+      "canonical_plan": {
+        "run_id": 45387394040,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      "active_point_audit": {
+        "run_id": 45387394060,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      "f0_baseline": {
+        "run_id": 45387394066,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      "twitch_integration": {
+        "run_id": 45387394012,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      "production_worker_source_smoke": {
+        "run_id": 45387394055,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      "editor_core": {
+        "run_id": 45387394067,
+        "job_id": 138421802619,
+        "status": "in_progress",
+        "active_step": "Test real Worker media upload with isolated D1 and R2",
+        "all_prior_steps": "success",
+        "url": "https://github.com/sanci9517/sanci9517/actions/runs/45387394067"
+      },
+      "aggregate": "IN_PROGRESS; not claimed as PASS"
+    },
+    "cloudflare_build": {
+      "build_uuid": "ad009969-c406-4617-be46-8ec07c198914",
+      "status": "stopped",
+      "outcome": "success",
+      "trigger": "push_event",
+      "branch": "v2/foundation",
+      "commit": "fdd4836c1797ae780ddde6dce94c99ca4327614c",
+      "build_command": "npm run typecheck",
+      "deploy_command": "npm run deploy:safe",
+      "build_minutes_limit_reached": false,
+      "refresh_on": "2026-11-30T23:59:59.999Z"
+    },
+    "deployment": {
+      "deployment_id": "f09d784d-c972-4683-837b-1637adaafad3",
+      "worker_version_id": "385e80ed-6a02-48df-bfb7-9a035a6d806c",
+      "traffic_percent": 100,
+      "created_on": "2026-11-24T11:48:17.343627Z"
+    },
+    "production_health": {
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+      "http_status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "changed_public_assets": [
+      {
+        "path": "/editor-v2/",
+        "source_path": "public/editor-v2/index.html",
+        "local_sha256": "f41f539a3cfadc4e9864e82ee32c563b48f97aecf827f386f506eda0041346d9",
+        "live_sha256": "f41f539a3cfadc4e9864e82ee32c563b48f97aecf827f386f506eda0041346d9",
+        "http_status": 200,
+        "byte_match": true
+      },
+      {
+        "path": "/editor-v2/app.js?v=20261124-edt042-publish-recovery-safe-label-v1",
+        "source_path": "public/editor-v2/app.js",
+        "local_sha256": "3fbffcda190e1a9b30f0977417db28eaaffeceab0e0225f31c23b788bd6b9bd8",
+        "live_sha256": "3fbffcda190e1a9b30f0977417db28eaaffeceab0e0225f31c23b788bd6b9bd8",
+        "http_status": 200,
+        "byte_match": true
+      },
+      {
+        "path": "/editor-v2/core/publication-recovery.js?v=20261124-edt042-publish-recovery-safe-label-v1",
+        "source_path": "public/editor-v2/core/publication-recovery.js",
+        "local_sha256": "c8c91cc3ec64e3433cd39e399efe1835b3aec239a67e8fb1cfd61b4b1924eaae",
+        "live_sha256": "c8c91cc3ec64e3433cd39e399efe1835b3aec239a67e8fb1cfd61b4b1924eaae",
+        "http_status": 200,
+        "byte_match": true
+      }
+    ]
   },
   "acceptance": {
     "D06": "OPEN / NOT_CERTIFIED",
