@@ -538,6 +538,19 @@ test('structured tables, tabs, gallery and carousel render escaped, bounded acce
   'tablist labels stay within the authored field limit');
 });
 
+test('structured accordions expose their Inspector name as an escaped accessible group',()=>{
+ const accordion={version:1,items:[{label:'GYIK',content:'Válasz'}]};
+ const named=renderStructuredContent('accordion',accordion,'faq',{ariaLabel:'  Közösségi & <GYIK>  '});
+ assert.match(named,/<div class="visual-structured-accordion" role="group" aria-label="Közösségi &amp; &lt;GYIK&gt;">/,
+  'the Accordion name set in the Inspector is exposed safely in the public DOM');
+ assert.match(renderStructuredContent('accordion',accordion,'faq'),/role="group" aria-label="Részletek"/,
+  'older structured Accordions keep a useful accessible fallback name');
+ assert.match(renderStructuredContent('accordion',accordion,'faq',{ariaLabel:{toString(){throw Error('must not coerce objects')}}}),/role="group" aria-label="Részletek"/,
+  'malformed legacy names fall back without object coercion');
+ assert.match(renderStructuredContent('accordion',accordion,'faq',{ariaLabel:'x'.repeat(200)}),new RegExp(`aria-label="${'x'.repeat(160)}"`),
+  'public Accordion names stay within the existing 160-character field contract');
+});
+
 test('a single-slide carousel does not render active no-op navigation controls',()=>{
  const html=renderStructuredContent('carousel',{version:1,items:[{label:'Egy dia',content:'Egyetlen tartalom',src:'',alt:''}]},'one-slide');
  assert.match(html,/<button type="button" class="visual-carousel-prev" aria-label="Előző dia" disabled>/,

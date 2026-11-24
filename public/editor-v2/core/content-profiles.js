@@ -1,5 +1,5 @@
-import {isAuthoredContent,CONTENT_FIELDS,CONTENT_TYPES,STRUCTURAL_TYPES} from './authored-content.js?v=20261124-d06-safe-content-dom-id-v1';
-import {isStructuredType} from './element-content.js?v=20261124-d06-safe-content-dom-id-v1';
+import {isAuthoredContent,CONTENT_FIELDS,CONTENT_TYPES,STRUCTURAL_TYPES} from './authored-content.js?v=20261124-d06-accordion-accessible-group-v1';
+import {isStructuredType} from './element-content.js?v=20261124-d06-accordion-accessible-group-v1';
 
 // These describe existing version gates, not a new content schema or validator.
 // More than one gate may apply: publication must not skip a legacy gate merely

@@ -35,6 +35,28 @@ test('single-open authored accordion DOM groups stay isolated for sanitization-c
  assert.ok(await first.locator('details').nth(1).evaluate(node=>node.open),'opening the second widget does not close the first widget');
 });
 
+test('structured accordion exposes its Inspector name as a public accessible group',async t=>{
+ const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||(existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined),args:['--no-sandbox']});
+ t.after(()=>browser.close());
+ const page=await browser.newPage();
+ const model={version:1,items:[{label:'Kérdés',content:'Válasz'}]};
+ const named=renderElementContent('accordion',model,'faq',{ariaLabel:'Közösségi & <GYIK>'});
+ const fallback=renderElementContent('accordion',model,'faq');
+ await page.setContent(`<main>${named}${fallback}</main>`);
+ assert.equal(await page.getByRole('group',{name:'Közösségi & <GYIK>'}).count(),1,
+  'the actual DOM exposes the escaped Inspector label through the accessible group name');
+ assert.equal(await page.getByRole('group',{name:'Részletek'}).count(),1,
+  'legacy content has a useful accessible name when its optional label is absent');
+ const disclosure=page.getByRole('group',{name:'Közösségi & <GYIK>'});
+ const summary=disclosure.locator('summary');
+ assert.equal(await summary.count(),1,'the accessible accordion group contains its authored disclosure');
+ assert.equal(await disclosure.locator('details[open]').count(),1,'the first valid disclosure keeps its existing initial-open behavior');
+ await summary.press('Enter');
+ assert.equal(await disclosure.locator('details[open]').count(),0,'the native summary keyboard interaction closes the disclosure');
+ await summary.press('Space');
+ assert.equal(await disclosure.locator('details[open]').count(),1,'the native summary keyboard interaction reopens the disclosure');
+});
+
 test('structured tab ARIA references stay unique across sanitization-colliding node IDs',async t=>{
  const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||(existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined),args:['--no-sandbox']});
  t.after(()=>browser.close());
@@ -543,7 +565,7 @@ test('structured Inspector editing survives Save, Publish and public interaction
  const singleGalleryMarkup=renderElementContent('gallery',{version:1,items:[{src:'/media/only.jpg',alt:'Egyetlen kép',caption:'Egyetlen képaláírás'}]},'single-gallery-public-probe');
  await viewer.evaluate(markup=>{const wrapper=document.createElement('div');wrapper.id='single-gallery-public-probe';wrapper.innerHTML=markup;document.body.append(wrapper)},singleGalleryMarkup);
  await viewer.evaluate(async()=>{
-  const {activateStructuredContent}=await import('/editor-v2/core/element-content.js?v=20261124-d06-safe-content-dom-id-v1');
+  const {activateStructuredContent}=await import('/editor-v2/core/element-content.js?v=20261124-d06-accordion-accessible-group-v1');
   activateStructuredContent(document.querySelector('#single-gallery-public-probe'));
  });
  const singleGallery=viewer.locator('#single-gallery-public-probe'),singleThumb=singleGallery.locator('.visual-gallery-thumb');
@@ -572,7 +594,7 @@ test('structured Inspector editing survives Save, Publish and public interaction
  const singleSlideMarkup=renderElementContent('carousel',{version:1,items:[{label:'Egy dia',content:'Egyetlen tartalom',src:'',alt:''}]},'one-slide-public-probe');
  await viewer.evaluate(markup=>{const wrapper=document.createElement('div');wrapper.id='one-slide-public-probe';wrapper.innerHTML=markup;document.body.append(wrapper)},singleSlideMarkup);
  await viewer.evaluate(async()=>{
-  const {activateStructuredContent}=await import('/editor-v2/core/element-content.js?v=20261124-d06-safe-content-dom-id-v1');
+  const {activateStructuredContent}=await import('/editor-v2/core/element-content.js?v=20261124-d06-accordion-accessible-group-v1');
   activateStructuredContent(document.querySelector('#one-slide-public-probe'));
  });
  const singleSlide=viewer.locator('#one-slide-public-probe [data-structured-carousel]');

@@ -1,0 +1,117 @@
+{
+  "schema_version": 1,
+  "plan_point": "77.44.7.D / D-06 / EDT-019",
+  "title": "Structured Accordion accessible group name",
+  "date_utc": "2026-11-24",
+  "base_commit": "ea40a76c94a452328ffbcf0d3260d95c36e16fbe",
+  "change": {
+    "bug": "Structured Accordion renderer ignored the already-editable props.ariaLabel and emitted an unnamed wrapper.",
+    "fix": "Render role=group with a trimmed, escaped, 160-codepoint-bounded aria-label and Hungarian fallback Részletek.",
+    "preserved": "Native details/summary, default-open behavior, content schema, Page Model, Save and Publish behavior.",
+    "traceability": "EDT-019 source map now references the renderer and targeted unit/browser regressions.",
+    "dependencies_added": [],
+    "production_data_mutations": {
+      "d1": false,
+      "r2": false
+    }
+  },
+  "regression": {
+    "before_fix": "New assertion failed because renderer returned <div class=\"visual-structured-accordion\"> without role or aria-label.",
+    "after_fix": "PASS: HTML output has safe label/fallback/length boundary; browser exposes named group and keyboard-operable summary."
+  },
+  "checks": [
+    {
+      "command": "node --experimental-vm-modules -e \"import('./public/editor-v2/tests/element-content.test.js')\"",
+      "result": "PASS",
+      "summary": "35/35"
+    },
+    {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test tests/browser/editor-structured-content.test.js",
+      "result": "PASS",
+      "summary": "4/4; desktop/mobile Save and Publish interaction included"
+    },
+    {
+      "command": "npm run test:editor",
+      "result": "PASS",
+      "summary": "24/24 files; preferences 10/10; Linux subreaper 4/4"
+    },
+    {
+      "command": "npm run typecheck",
+      "result": "PASS"
+    },
+    {
+      "command": "node tests/editor-public-asset-cache-bust.test.js",
+      "result": "PASS",
+      "summary": "3/3"
+    }
+  ],
+  "release": {
+    "status": "READY FOR NORMAL FAST-FORWARD PUSH; EXACT-SHA POSTFLIGHT PENDING",
+    "select_only_production_d1_preflight": {
+      "endpoint": "Cloudflare D1 Query API (POST query endpoint)",
+      "database": "sanci9517-db",
+      "sql": [
+        "SELECT COUNT(*) AS schema_objects FROM sqlite_schema WHERE name NOT LIKE 'sqlite_%'",
+        "SELECT COUNT(*) AS tables_count FROM sqlite_schema WHERE type='table' AND name NOT LIKE 'sqlite_%'",
+        "SELECT name FROM d1_migrations ORDER BY name DESC LIMIT 1",
+        "SELECT COUNT(*) AS migration_markers FROM d1_migrations"
+      ],
+      "results": {
+        "schema_objects": 99,
+        "tables": 33,
+        "latest_marker": "0030_media_library_organization.sql",
+        "migration_markers": 36
+      },
+      "per_query_meta": "rows_written=0, changes=0, changed_db=false, size_after=3825664 bytes",
+      "mutations": false
+    },
+    "wrangler_dry_run": {
+      "version": "4.130.0",
+      "result": "PASS",
+      "assets": 202,
+      "total_upload_kib": 434.44,
+      "gzip_kib": 110.08,
+      "exit_code": 0,
+      "sandbox_log_note": "Wrangler could not write its default debug log under /home/agent/.config (EROFS); dry-run continued and exited 0."
+    },
+    "github_cost_preflight": {
+      "repository_visibility": "public",
+      "triggered_runners": "standard GitHub-hosted ubuntu-latest/ubuntu-24.04",
+      "public_standard_runner_cost": "free",
+      "extra_dispatch_or_rerun": false,
+      "artifact_note": "Only existing active-plan audit text artifact (30 days) and failed-only browser diagnostics are configured."
+    },
+    "cloudflare_build_minutes": {
+      "has_reached_build_minutes_limit": false,
+      "refresh_on": "2026-11-30T23:59:59.999Z"
+    },
+    "git_push": "PENDING",
+    "exact_sha_github_ci": "PENDING",
+    "cloudflare_deployment": "PENDING",
+    "traffic_100_percent": "PENDING",
+    "health": "PENDING",
+    "changed_public_asset_sha256": {
+      "public/assets/page-renderer.js": "1ecfc569022a72a37c6b26c90657caa2da4e02c2a915f1efde32b357ef42d04c",
+      "public/editor-v2/app.js": "6ee3dddcd32fa0dbb168ff15698de700931ffb261773e8aa5f2e07a68ff89a0a",
+      "public/editor-v2/core/authored-content.js": "2dbac532e9ef8c8ab5b49260f2ca04049049dc4409c51c398cdfaa04df5cd9ed",
+      "public/editor-v2/core/canvas-engine.js": "b4472eea16526780215680d50e78507ed9c472d39af4c1bd2eb7fe2befd372d9",
+      "public/editor-v2/core/capability-matrix.js": "84cdeab8668cd86a2b5b26fe26b9dcda6d2d248cb04ce5d9f1a89411e86b07b9",
+      "public/editor-v2/core/commands.js": "f60670d950c818d7c8a7d3310263b502bf0c9ac687ba29cbb43e7661891bb648",
+      "public/editor-v2/core/content-profiles.js": "0d0e4c94c09b00968b9032d18e29bba439e97a084d90f52393f011fae2b8eeb2",
+      "public/editor-v2/core/element-content.js": "61ac4cad2e8bedc1a666308b85fdd41aa07ef31307d35633d21a8bd0f702ad49",
+      "public/editor-v2/core/legacy-media-source.js": "f363dac3943a77f318c8090911c92863e9f61a9934105784694b97bc105b741b",
+      "public/editor-v2/core/validation.js": "5cbe168f389d295fe0b1633de71669b12709ad83276db484f1b6a74dfbd5ffbb",
+      "public/editor-v2/tests/element-content.test.js": "a0c22d1902174bf93177a0b8f8c06d9bae7222465dd561f4c76b1763bd382517",
+      "public/editor-v2/ui/accessibility-fields.js": "dcac9207f63fca6378639fd7919bc893ec0a15818f138fe14bbe655407baa8c7",
+      "public/editor-v2/ui/element-content-controls.js": "81170cf9fb7135c89c4ab4a5e74bf3f5193b957841c6652494de398885b9703e",
+      "public/editor-v2/ui/legacy-media-inspector.js": "26c9865c6b61116c420e82acdd393f1890bc86a21bd720985fa3673f6002a2ad",
+      "public/editor-v2/ui/structured-inspector.js": "74787116f20e4c0b1201fe7f245c1ab383d75a159ae2c00179781efa6ff7aa74",
+      "public/visual-page.html": "faa45f0ad6981e6cb907dd10acffdc676a32893f8abae0c0fd1171f3711c2d6b"
+    },
+    "cost": "0 Ft; no paid service, quota purchase, new dependency, D1 write/migration, or R2 operation."
+  },
+  "limitations": [
+    "No owner-facing manual or physical-device acceptance; defer until complete Editor scope.",
+    "The feature remains a bounded renderer/accessibility repair; D-06 and EDT-019 are not accepted by this evidence."
+  ]
+}

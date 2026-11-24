@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "id": "20261124190049-fae2a8b6",
+  "task": "77.44.7.D",
+  "trigger": "scheduled",
+  "started_at": "2026-11-24T19:00:49.472Z",
+  "abandoned_at": "2026-11-24T19:09:19.657Z",
+  "measured_seconds": null,
+  "status": "interrupted",
+  "reason": "Previous context reported a start, but this run record was not present in the checked-in evidence directory; the metrics tool archived it with null measured time before the current timed block started.",
+  "started_revision": "ea40a76c94a452328ffbcf0d3260d95c36e16fbe",
+  "measurement": "missing end time; excluded from elapsed time and ETA"
+}

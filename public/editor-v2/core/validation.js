@@ -7,8 +7,8 @@ import {validateAccessibility} from './accessibility.js';
  */
 
 import { getNode, validateDocument, normalizeRichText } from './schema.js';
-import { validateElementContent as validateStructuredContent,isStructuredType } from './element-content.js?v=20261124-d06-safe-content-dom-id-v1';
-import { validateElementContent as validateAuthoredContent } from './authored-content.js?v=20261124-d06-safe-content-dom-id-v1';
+import { validateElementContent as validateStructuredContent,isStructuredType } from './element-content.js?v=20261124-d06-accordion-accessible-group-v1';
+import { validateElementContent as validateAuthoredContent } from './authored-content.js?v=20261124-d06-accordion-accessible-group-v1';
 import {validateStateStyles} from './state-styles.js';
 import {MAX_PAGE_HIERARCHY_DEPTH} from './hierarchy-limits.js?v=20261120-d03-tooltip-viewport-bounds-v1';
 

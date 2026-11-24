@@ -4,7 +4,7 @@ import { isAllowlistedMotionStyle, motionTriggerForStyle } from "../editor-v2/co
 import { RICH_TEXT_FONT_FAMILIES } from "../editor-v2/core/schema.js?v=20261101-richtext-link-target";
 import { resolveRichTextLinkTarget } from "../editor-v2/core/richtext-links.js?v=20261101-richtext-link-target";
 import { LAYOUT_TYPES, isManagedLayout } from "../editor-v2/core/layout-presets.js";
-import {isStructuredType,renderElementContent,activateStructuredContent,safeMediaUrl} from "../editor-v2/core/element-content.js?v=20261124-d06-safe-content-dom-id-v1";
+import {isStructuredType,renderElementContent,activateStructuredContent,safeMediaUrl} from "../editor-v2/core/element-content.js?v=20261124-d06-accordion-accessible-group-v1";
 import {legacyImageSource,legacyPlayableSource,legacyPlaybackSettings,legacyImagePresentation,legacyImageCaption} from "../editor-v2/core/legacy-media-source.js";
 import {iconById} from "../editor-v2/core/icon-options.js";
 import {normalizeDividerStyle} from "../editor-v2/core/decorative-elements.js";
@@ -13,7 +13,7 @@ import {renderCountdownContent,activateCountdowns} from "../editor-v2/core/count
 import {renderSocialLinksHtml} from "../editor-v2/core/social-links.js";
 import {renderEmbedHtml,activateEmbeds} from "../editor-v2/core/creator-embed.js";
 import {renderCodeSnippet,activateCodeBlocks} from "../editor-v2/core/code-snippet.js";
-import {isAuthoredContent,CONTENT_TYPES,contentTag,contentAttributes,authoredNodeHtml,initContentInteractions} from "../editor-v2/core/authored-content.js?v=20261124-d06-safe-content-dom-id-v1";
+import {isAuthoredContent,CONTENT_TYPES,contentTag,contentAttributes,authoredNodeHtml,initContentInteractions} from "../editor-v2/core/authored-content.js?v=20261124-d06-accordion-accessible-group-v1";
 import {defaultTokens,applyTokenVariables} from "../editor-v2/core/design-tokens.js";
 import {isVisibleOnDevice,collectVisibleDescendants,safeNodeChildIds} from "../editor-v2/core/visibility.js?v=20261112-safe-node-children";
 import {applyStateStyles,hasStateStyles} from "../editor-v2/core/state-styles.js";

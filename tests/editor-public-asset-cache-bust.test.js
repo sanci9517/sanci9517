@@ -43,11 +43,11 @@ test('the Editor and public renderer release tokens bust the structured accessib
     'the versioned entry script must request the responsive resolver cache key');
   assert.match(app,/ui\/structured-inspector\.js\?v=20261123-d06-single-slide-carousel-v1/,
     'the versioned entry script must request the structured Inspector accessible-name controls');
-  assert.match(publicHtml,/page-renderer\.js\?v=20261124-d06-safe-content-dom-id-v1/,
+  assert.match(publicHtml,/page-renderer\.js\?v=20261124-d06-accordion-accessible-group-v1/,
     'published pages must request the renderer version containing the in-view motion behavior');
-  assert.match(publicRenderer,/authored-content\.js\?v=20261124-d06-safe-content-dom-id-v1/,
+  assert.match(publicRenderer,/authored-content\.js\?v=20261124-d06-accordion-accessible-group-v1/,
     'the public renderer must request the cache-busted authored content and detail-group IDs');
-  assert.match(publicRenderer,/element-content\.js\?v=20261124-d06-safe-content-dom-id-v1/,
+  assert.match(publicRenderer,/element-content\.js\?v=20261124-d06-accordion-accessible-group-v1/,
     'the public renderer must request the shared collision-resistant content DOM ID helper');
 });
 
@@ -62,7 +62,7 @@ test('the EDT-040 in-view trigger refreshes both renderers and the shared motion
     readFile(resolve(root,'editor-motion.css'),'utf8')
   ]);
   const motionVersion='20261123-edt040-in-view-motion-v1';
-  const domIdVersion='20261124-d06-safe-content-dom-id-v1';
+  const domIdVersion='20261124-d06-accordion-accessible-group-v1';
   const editorEntryVersion='20261124-edt044-import-tree-budget-v2';
   assert.match(editorHtml,new RegExp(`editor-motion\\.css\\?v=${motionVersion}`));
   assert.match(editorHtml,new RegExp(`app\\.js\\?v=${editorEntryVersion}`));

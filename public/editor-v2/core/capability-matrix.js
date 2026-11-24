@@ -1,4 +1,4 @@
-import {CONTENT_TYPES,STRUCTURAL_TYPES} from './authored-content.js?v=20261124-d06-safe-content-dom-id-v1';
+import {CONTENT_TYPES,STRUCTURAL_TYPES} from './authored-content.js?v=20261124-d06-accordion-accessible-group-v1';
 import { NODE_TYPES } from './schema.js';
 import { listProperties } from './property-registry.js?v=20261123-edt040-in-view-motion-v1';
 import {getInspectorValueContract} from './property-values.js';

@@ -1,6 +1,6 @@
 import { validatedLinkHref } from './richtext-links.js?v=20261117-d03-invalid-media-id-guidance-v1';
 import { PAGE_ACTION_TIMER_DELAYS_MS, pageInteractionAttributes, safePageInteraction } from './page-interactions.js?v=20261121-edt039-single-auto-action-v1';
-import { safeContentDomId } from './element-content.js?v=20261124-d06-safe-content-dom-id-v1';
+import { safeContentDomId } from './element-content.js?v=20261124-d06-accordion-accessible-group-v1';
 
 export const CONTENT_VERSION=1;
 // Shared by the editor picker and the server-side media upload/list contract.
