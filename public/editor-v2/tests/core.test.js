@@ -1367,9 +1367,14 @@ test('Editor failed save retains dirty state and does not mark changes saved', (
   const app = readFileSync(new URL('../app.js', import.meta.url), 'utf8');
   const save = app.slice(app.indexOf('async function save('), app.indexOf('async function unpublishPage('));
   const failure = save.slice(save.indexOf('}catch(e){'));
-  assert.match(failure, /stateAtStart\.persistence\.saving=false;stateAtStart\.persistence\.dirty=true/);
+  assert.match(failure, /stateAtStart\.persistence\.saving=false;stateAtStart\.persistence\.error=/);
+  const recovery = failure.indexOf("e?.code==='UNSUPPORTED_EDITOR_NODE_TYPE'");
+  const dirtyWrite = failure.indexOf('stateAtStart.persistence.dirty=true;');
+  assert.ok(recovery >= 0 && dirtyWrite > recovery,
+    'only the exact unsupported Publish rejection preserves the already-clean saved draft');
+  assert.match(failure.slice(dirtyWrite), /stateAtStart\.persistence\.dirty=true/,
+    'other Save and Publish errors must continue to preserve local dirty edits');
   assert.doesNotMatch(failure, /markSaved\(/);
-  assert.match(failure, /stateAtStart\.persistence\.error=/);
 });
 
 test('Editor preserves edits made while a save request is in flight', () => {

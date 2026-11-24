@@ -8,6 +8,7 @@ import {getElementContentContract} from '../public/editor-v2/core/content-profil
 import {validatePublishDocument} from '../src/core/editor-validation.ts';
 import {createEditorState} from '../public/editor-v2/core/state.js';
 import {execute} from '../public/editor-v2/core/commands.js';
+import {firstUnsupportedPublicationNode,unsupportedPublicationMessage} from '../public/editor-v2/core/publication-recovery.js';
 
 test('Publish actions start disabled until a loaded page establishes publish eligibility',()=>{
   const html=readFileSync(new URL('../public/editor-v2/index.html',import.meta.url),'utf8');
@@ -70,6 +71,23 @@ test('server publication rejects planned and unknown node types even when a clie
   }
   assert.equal(probe('text',{metadata:{contentVersion:1},props:{text:'Szerkeszthető szöveg'}}).publish(),null,
     'a currently supported node still reaches the existing content-specific publication gates');
+});
+
+test('unsupported Publish recovery points to the first planned/unknown child without looping on malformed cycles',()=>{
+  const {document}=probe('text',{metadata:{contentVersion:1},props:{text:'Kész szöveg'}});
+  const page=document.pages[document.activePageId],supported=page.nodes[page.rootId].children[0];
+  const form=createNode('form',{id:'planned_form',name:'Feliratkozási űrlap',parentId:supported});
+  page.nodes[form.id]=form;page.nodes[supported].children.push(form.id);
+  const unknown=createNode('container',{id:'legacy_unknown',name:'Régi elem'});
+  unknown.type='legacy-widget';unknown.parentId=page.rootId;page.nodes[unknown.id]=unknown;page.nodes[page.rootId].children.push(unknown.id);
+  assert.deepEqual(firstUnsupportedPublicationNode(page),{id:'planned_form',type:'form',name:'Feliratkozási űrlap'},
+    'recovery follows layer order and identifies the earliest server-rejected item');
+  page.nodes[form.id].children.push(supported);
+  assert.deepEqual(firstUnsupportedPublicationNode(page),{id:'planned_form',type:'form',name:'Feliratkozási űrlap'},
+    'cycle protection does not lose the unsupported node or loop forever');
+  assert.match(unsupportedPublicationMessage(firstUnsupportedPublicationNode(page)),/még nem publikálható/);
+  assert.match(unsupportedPublicationMessage(firstUnsupportedPublicationNode(page)),/Rétegek panelen/);
+  assert.equal(firstUnsupportedPublicationNode({}),null);
 });
 
 test('real content defaults are view-only and are not persisted into empty nodes',()=>{

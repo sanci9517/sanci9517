@@ -1,0 +1,74 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {createServer} from 'node:http';
+import {readFile} from 'node:fs/promises';
+import {existsSync} from 'node:fs';
+import {resolve,extname} from 'node:path';
+import {chromium} from 'playwright';
+import {createDocument,createNode} from '../../public/editor-v2/core/schema.js';
+
+test('server-rejected unsupported Publish selects the node, gives recovery guidance, and keeps the saved draft clean',async t=>{
+  const document=createDocument(),pageId=document.activePageId,page=document.pages[pageId];
+  const form=createNode('form',{id:'planned-publish-form',name:'Feliratkozási űrlap',parentId:page.rootId});
+  page.nodes[form.id]=form;page.nodes[page.rootId].children.push(form.id);
+  document.revision=2;page.revision=2;
+  const draft=structuredClone(document),published=createDocument();
+  let version=2,editorGets=0;const posts=[];let rejectUnsupportedPublish=true;
+  const publicRoot=resolve(import.meta.dirname,'../../public');
+  const server=createServer(async(req,res)=>{
+    const url=new URL(req.url,'http://localhost');
+    const json=data=>{res.setHeader('content-type','application/json');res.end(JSON.stringify(data))};
+    if(url.pathname==='/api/admin/pages')return json({ok:true,data:url.searchParams.get('archived')==='1'?[]:[{id:pageId,slug:'test',title:'Test',content:draft,revision:version,isPublished:true,hasUnpublishedChanges:true,publishedRevisionId:'revision-1'}]});
+    if(url.pathname==='/api/admin/editor'){
+      if(req.method==='GET'){editorGets++;return json({ok:true,data:{page:{id:pageId,document:draft,publishedRevisionId:'revision-1'},revisions:[{id:'revision-'+version,version},{id:'revision-1',version:1}]}})}
+      let body='';for await(const chunk of req)body+=chunk;
+      const request=JSON.parse(body);posts.push(request);
+      if(rejectUnsupportedPublish&&request.publish){res.statusCode=409;return json({ok:false,error:{code:'UNSUPPORTED_EDITOR_NODE_TYPE',message:'A form elem típusa még nem publikálható.'}})}
+      return json({ok:true,data:{pageId,version,revisionId:'revision-'+version}});
+    }
+    if(url.pathname==='/api/auth/session')return json({ok:true,data:{authenticated:false,user:null}});
+    if(url.pathname==='/api/integrations/twitch/connection')return json({ok:true,data:{connected:false}});
+    if(url.pathname==='/api/public/pages')return json({ok:true,data:{id:pageId,slug:'test',title:'Test',content:published.pages[pageId]}});
+    if(url.pathname.startsWith('/api/'))return json({ok:true,data:{siteName:'Test'}});
+    const path=url.pathname==='/p/test'?'/visual-page.html':url.pathname,file=resolve(publicRoot,'.'+path);
+    if(!file.startsWith(publicRoot+'/'))return res.writeHead(403).end();
+    try{res.setHeader('content-type',{'.html':'text/html','.js':'text/javascript','.css':'text/css'}[extname(file)]||'application/octet-stream');res.end(await readFile(file))}
+    catch{return res.writeHead(404).end()}
+  });
+  await new Promise(done=>server.listen(0,'127.0.0.1',done));
+  const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||(existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined),args:['--no-sandbox']});
+  t.after(async()=>{await browser.close();await new Promise(done=>server.close(done))});
+  const editor=await browser.newPage({viewport:{width:1366,height:900}}),errors=[],dialogs=[];
+  editor.on('pageerror',error=>errors.push(error.message));
+  editor.on('dialog',async dialog=>{dialogs.push(dialog.type);await dialog.dismiss()});
+  await editor.goto(`http://127.0.0.1:${server.address().port}/editor-v2/index.html`);
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent==='Mentve');
+  assert.equal(await editor.locator('#publish').isEnabled(),true,'a persisted but unpublished draft remains eligible for a server-side Publish attempt');
+  const pageGetsBefore=editorGets,draftBeforePublish=structuredClone(draft),publishedBeforePublish=structuredClone(published),versionBeforePublish=version;
+  await editor.locator('#publish').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent.includes('még nem publikálható'));
+  assert.equal(posts.length,1);assert.equal(posts[0].publish,true,'the recovery is exercised by the explicit Publish action');
+  assert.equal(version,versionBeforePublish,'the server rejection does not advance the saved revision');
+  assert.deepEqual(draft,draftBeforePublish,'the rejected request leaves the saved Page Model unchanged');
+  assert.deepEqual(published,publishedBeforePublish,'the rejected request leaves the published snapshot unchanged');
+  assert.equal(await editor.locator('#leftTabLayers').getAttribute('aria-selected'),'true','the editor opens the Layers recovery path');
+  const layer=editor.locator(`#layersTree .layer-row[data-node-id="${form.id}"]`);
+  await layer.waitFor();await editor.waitForFunction(id=>document.activeElement?.dataset.nodeId===id,form.id);
+  assert.match(await layer.getAttribute('class'),/active/,'the unsupported node is selected and focused for correction');
+  const guidance=editor.locator('#leftPanelLayers [data-recovery-kind="unsupported-node"]');
+  assert.equal(await guidance.getAttribute('role'),'alert');
+  assert.match(await guidance.textContent(),/A mentett piszkozat, az élő oldal és a verzió változatlan maradt/);
+  assert.match(await guidance.textContent(),/Rétegek panelen jelöld ki, majd töröld vagy cseréld le/);
+  assert.equal(await editor.locator('#saveStatus').textContent(),await guidance.textContent(),'the live status region announces the same actionable guidance');
+  assert.deepEqual(dialogs,[],'the targeted recovery avoids a blocking generic alert');
+  assert.equal(editorGets,pageGetsBefore,'Publish failure does not issue an automatic draft reload');
+
+  const beforeReload=editorGets;
+  await editor.locator('#leftTabPages').click();
+  await editor.locator('.page-row-select').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent==='Mentve');
+  assert.equal(editorGets,beforeReload+1,'the clean saved draft can be reloaded without a false dirty-state confirmation');
+  assert.deepEqual(dialogs,[],'reloading after the rejected Publish never prompts to discard nonexistent edits');
+  assert.equal(posts.length,1,'neither recovery feedback nor the clean reload silently Saves or Publishes');
+  assert.deepEqual(errors,[],'the unsupported legacy node is rendered and recoverable without browser errors');
+});

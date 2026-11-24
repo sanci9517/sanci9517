@@ -1,0 +1,91 @@
+{
+  "schema": "sanci.visual-editor.d06-publish-recovery.v1",
+  "recorded_at_utc": "2026-11-24T09:53:37Z",
+  "repository": "sanci9517/sanci9517",
+  "branch": "v2/foundation",
+  "base_commit": "82debe09b26c062ee17a78d106b2fca5ddaca973",
+  "canonical_plan": {
+    "path": "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+    "bytes": 1858997,
+    "sha256": "dcd9322aa92a68802b2d9e0ee5cc8eeccbaed81023c2798dfabdb7c4ca9809e0",
+    "cursor": "77.44 / WEB-011 → 77.44.7.D",
+    "status": "OPEN / NOT_CERTIFIED"
+  },
+  "issue": {
+    "feature_id": "EDT-019",
+    "acceptance": "NOT_RECERTIFIED",
+    "server_error": "409 / UNSUPPORTED_EDITOR_NODE_TYPE",
+    "gap": "An explicit Publish rejected by the server marked an already-saved draft dirty and used a blocking alert, despite the server leaving saved and published data unchanged.",
+    "scope": "Recovery guidance for an unsupported node; does not implement or claim form functionality."
+  },
+  "change": {
+    "behavior": "Only the exact current-page Publish request rejected with HTTP 409 and UNSUPPORTED_EDITOR_NODE_TYPE keeps the clean draft clean. The editor traverses the Page Model in layer order, selects and focuses the first unsupported node, opens Layers, and announces an actionable non-blocking Hungarian recovery message. Other errors keep the normal dirty-state behavior.",
+    "save_publish": "Save and Publish remain separate. This response does not Save, Publish, reload, advance revision, alter the draft snapshot, or alter the published snapshot.",
+    "new_dependencies": 0,
+    "changed_public_sources": [
+      "public/editor-v2/app.js",
+      "public/editor-v2/index.html",
+      "public/editor-v2/core/publication-recovery.js"
+    ]
+  },
+  "local_verification": {
+    "editor_unit": "PASS: npm run test:editor; 24/24 Node test files, account preferences 10/10, Linux subreaper 4/4.",
+    "publication_contract": "PASS: tests/editor-content-initial-publication-contract.test.js, 15/15 assertions including layer order, unsupported node and malformed cycle coverage.",
+    "targeted_real_chromium": "PASS 1/1 using tests/browser/editor-publish-unsupported-recovery.test.js; exact 409, unchanged revision/draft/public snapshot, Layers selection/focus, actionable alert region, clean reload and no implicit Save/Publish verified.",
+    "full_editor_browser_layout": "INCOMPLETE: local serial npm run test:editor:layout was stopped during suite 32/61 after earlier desktop-workspace suites were exceptionally slow; no aggregate pass claimed. Exact-SHA hosted Editor Core workflow is the required full layout gate.",
+    "typecheck": "PASS: npm run typecheck.",
+    "canonical_contracts": "PASS: plan-contract 16/16; complete 13-file canonical master; active cursor 77.44.7.D; functional acceptance NOT_CERTIFIED.",
+    "traceability": "PASS: 396 mappings; PARTIAL_SOURCE 148; UNVERIFIED 248; acceptance NOT_CERTIFIED.",
+    "migration_safety": "PASS: npm run test:web013:migration-gate; no migration apply.",
+    "git_diff_check": "PASS.",
+    "wrangler_dry_run": "PASS (no deployment); Wrangler 4.130.0, 201 public assets, bundle 434.30 KiB / gzip 110.07 KiB; sandbox Wrangler log path emitted non-fatal EROFS.",
+    "local_source_sha256": {
+      "public/editor-v2/app.js": "63313ae1e17af354d4a3b94f802988aa5a5983b54c5a283d4030f6cbf2da26e4",
+      "public/editor-v2/index.html": "7e5d5ee859f107302531b5d550f7ef2174985d04c17f4928335d7a39f31e916b",
+      "public/editor-v2/core/publication-recovery.js": "cc2beeb2f3874b8aba9cbb622b550236b78748b3f6aa271a5c59687894ad1771"
+    }
+  },
+  "production_d1_preflight": {
+    "method": "Cloudflare D1 Query API; SELECT-only schema/ledger queries plus read-only PRAGMA integrity checks.",
+    "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
+    "queries": [
+      "SELECT type,name FROM sqlite_schema WHERE type IN ('table','view','index','trigger') ORDER BY type,name",
+      "SELECT id,name FROM d1_migrations ORDER BY id DESC LIMIT 1",
+      "PRAGMA foreign_key_check",
+      "PRAGMA quick_check"
+    ],
+    "schema_objects": 147,
+    "latest_migration_id": 36,
+    "latest_migration_marker": "0030_media_library_organization.sql",
+    "foreign_key_check": "empty",
+    "quick_check": "ok",
+    "all_query_rows_written": 0,
+    "all_query_changes": 0,
+    "all_query_changed_db": false,
+    "production_mutations": 0,
+    "r2_operations": 0
+  },
+  "pre_release_live_state": {
+    "deployment_id": "4baf24bb-cdd6-42e4-8307-c5958777e0eb",
+    "worker_version_id": "0fc18474-f7bc-4c0b-99b0-a9e1e165cf43",
+    "traffic_percent": 100,
+    "note": "This is the live deployment before the new recovery source SHA is pushed; it does not contain this change."
+  },
+  "release": {
+    "source_commit": "PENDING_PUSH",
+    "github_branch_head": "82debe09b26c062ee17a78d106b2fca5ddaca973 before release commit",
+    "exact_sha_actions": "PENDING",
+    "cloudflare_build": "PENDING",
+    "deployment": "PENDING",
+    "production_health": "PENDING",
+    "live_asset_hashes": "PENDING"
+  },
+  "acceptance": {
+    "EDT-019": "PARTIAL_SOURCE / NOT_RECERTIFIED",
+    "D06": "OPEN / NOT_CERTIFIED",
+    "D01_D07": "OPEN / NOT_CERTIFIED",
+    "full_editor": "OPEN / NOT_CERTIFIED",
+    "manual_physical_acceptance": "DEFERRED_UNTIL_COMPLETE_EDITOR",
+    "new_cost_huf": 0
+  }
+}
