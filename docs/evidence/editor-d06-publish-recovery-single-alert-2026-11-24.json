@@ -1,40 +1,65 @@
 {
   "schema": "sanci.visual-editor.d06-publish-recovery-single-alert.v1",
-  "recorded_at_utc": "2026-11-24T10:29:00Z",
+  "recorded_at_utc": "2026-11-24T10:42:00Z",
   "repository": "sanci9517/sanci9517",
   "branch": "v2/foundation",
   "base_commit": "2e680b877d3d65d76227dd9b334192f3397f37de",
   "plan_cursor": "77.44 / WEB-011 → 77.44.7.D",
-  "status": "SOURCE_READY_FOR_RELEASE; full D-06 and Editor acceptance remain OPEN / NOT_CERTIFIED",
+  "status": "RUNTIME_RELEASED; this bounded D-06 slice is verified; full D-06 and Editor acceptance remain OPEN / NOT_CERTIFIED",
   "scope": {
     "feature_id": "EDT-042 / D-06",
     "gap": "A retry after the server rejects Publish for UNSUPPORTED_EDITOR_NODE_TYPE appended another role=alert announcement to the Layers panel, leaving duplicate stale guidance.",
     "change": "Before inserting the current recovery note, remove prior notes with data-recovery-kind=unsupported-node. Keep the single current Hungarian recovery message, status-region announcement, Layers focus, and Save/Publish separation.",
-    "not_in_scope": ["form submission functionality", "D-01 through D-07 completion", "manual or physical Editor acceptance"]
+    "not_in_scope": [
+      "form submission functionality",
+      "D-01 through D-07 completion",
+      "manual or physical Editor acceptance"
+    ]
   },
   "changed_sources": [
-    {"path":"public/editor-v2/app.js","sha256":"b1237dfd3579d2adab1dcd2fb1596a41eefb17776874b65a04362bf210106c08"},
-    {"path":"tests/browser/editor-publish-unsupported-recovery.test.js","sha256":"63c63d5d6d40669c3c19342a730533ad0b66aa6b69d60f250a084aee7dca216a"}
+    {
+      "path": "public/editor-v2/app.js",
+      "sha256": "54a6b4005e96ff3e6e910243b8b385d1a34916ba29206ed9bc2745c208082008"
+    },
+    {
+      "path": "public/editor-v2/index.html",
+      "sha256": "1b2527ffb066de7d7a3407b785f976a0543b6b165efeb02c31b84d6886775e82"
+    },
+    {
+      "path": "public/editor-v2/core/publication-recovery.js",
+      "sha256": "cc2beeb2f3874b8aba9cbb622b550236b78748b3f6aa271a5c59687894ad1771"
+    },
+    {
+      "path": "tests/browser/editor-publish-unsupported-recovery.test.js",
+      "sha256": "63c63d5d6d40669c3c19342a730533ad0b66aa6b69d60f250a084aee7dca216a"
+    },
+    {
+      "path": "tests/editor-public-asset-cache-bust.test.js",
+      "sha256": "86ede2670434fc675a9c66157776327518c80b626b39396f19408346a3093d98"
+    },
+    {
+      "path": "docs/evidence/feature-traceability.json",
+      "sha256": "b356b9311a5de53860416044cf8daaec62870b22e161bbfe9fe6a3ece4c2b92b"
+    }
   ],
   "local_verification": {
-    "targeted_chromium": "PASS: node --test tests/browser/editor-publish-unsupported-recovery.test.js; verifies a real retry and exactly one current Layers role=alert.",
-    "editor_unit": "PASS: npm run test:editor; 24/24 Node tests, preferences 10/10, Linux subreaper 4/4.",
-    "publication_contract": "PASS: node tests/editor-content-initial-publication-contract.test.js; 15/15.",
+    "targeted_chromium": "PASS: node --experimental-vm-modules --test tests/browser/editor-publish-unsupported-recovery.test.js; 1/1. Real browser retries a server-rejected unsupported Publish and confirms exactly one current Layers role=alert; saved draft remains unchanged.",
+    "editor_unit": "PASS: npm run test:editor; 24/24 Node suites, preferences 10/10, Linux subreaper 4/4.",
+    "publication_contract": "PASS: node tests/editor-content-initial-publication-contract.test.js; 15/15 (run before the cache-token-only follow-up).",
     "migration_safety": "PASS: npm run test:web013:migration-gate; no migration apply.",
     "typecheck": "PASS: npm run typecheck.",
-    "git_diff_check": "PASS: git diff --check.",
-    "wrangler_dry_run": "PASS: npx wrangler deploy --dry-run; Wrangler 4.130.0, 202 assets, 434.30 KiB / 110.07 KiB gzip; dry run only, no deploy. The environment reported a non-fatal EROFS while writing the Wrangler debug log.",
-    "attempt_blocked": "The first local browser-test attempt was blocked by sandbox EPERM binding 127.0.0.1; rerun with approved local-network access passed 1/1."
+    "plan_contract": "PASS: python3 tests/plan-contract.test.py; 16/16.",
+    "canonical_plan": "PASS: python3 scripts/check-canonical-plan.py; one master, 13 structural files, 396 mappings; functionality NOT certified.",
+    "traceability": "PASS: python3 scripts/build-feature-traceability.py --check; 396 current source mappings, acceptance NOT certified.",
+    "active_point_audit": "77.44 / WEB-011 -> 77.44.7.D; D-06 and full D remain OPEN / NOT_CERTIFIED.",
+    "git_diff_check": "PASS: git diff --check before runtime commit.",
+    "wrangler_dry_run": "PASS, exit 0: Wrangler 4.130.0 read 202 public assets; 434.30 KiB / 110.07 KiB gzip. Shared read-only log directory emitted non-fatal EROFS; --dry-run exited without deployment.",
+    "local_traceability_repair": "After initial exact-SHA canonical-plan CI detected stale public/editor-v2/app.js fingerprint, ran python3 scripts/build-feature-traceability.py, then all 16 plan contracts, canonical plan check and traceability --check passed.",
+    "known_nonblocking_attempt": "A first dry-run browser invocation hit sandbox EPERM binding loopback; rerun with allowed network passed 1/1. No production mutation resulted."
   },
   "production_d1_preflight": {
-    "method": "Cloudflare D1 Query API, read-only SQL/PRAGMA calls only",
+    "method": "Cloudflare D1 Query API; SELECT-only SQL and read-only PRAGMA preflight immediately before final release.",
     "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
-    "queries": [
-      "SELECT type,name FROM sqlite_schema WHERE type IN ('table','view','index','trigger') ORDER BY type,name",
-      "SELECT id,name FROM d1_migrations ORDER BY id DESC LIMIT 1",
-      "PRAGMA foreign_key_check",
-      "PRAGMA quick_check"
-    ],
     "schema_objects": 147,
     "latest_migration": "0030_media_library_organization.sql (ledger id 36)",
     "foreign_key_check": "empty",
@@ -46,19 +71,45 @@
     "r2_operations": 0
   },
   "release": {
-    "source_commit": "PENDING",
-    "github_fast_forward": "PENDING",
-    "required_exact_sha_actions": "PENDING",
-    "cloudflare_build_and_safe_deploy": "PENDING",
-    "live_traffic_health_asset_hashes": "PENDING",
-    "pre_release_deployment": {
-      "deployment_id": "808ef894-77eb-4da1-8183-715cd79607da",
-      "version_id": "58e91ee0-0ec9-4111-a7b8-8220dc825247",
-      "traffic_percent": 100,
-      "source_sha": "66e85631287016e4d5423758c3eebbea3ad97900"
+    "source_commit": "6fab0be6822ad778c30faaf20ecc2d29ff410ac8",
+    "github_fast_forward": "Verified git push origin v2/foundation; remote refs/heads/v2/foundation exact SHA 6fab0be6822ad778c30faaf20ecc2d29ff410ac8.",
+    "required_exact_sha_actions": {
+      "source_audit": "SUCCESS",
+      "canonical_plan": "SUCCESS on final SHA; first attempt on prior runtime commit a7345204 failed correctly on stale fingerprint and was fixed/regenerated before this release.",
+      "verify": "SUCCESS",
+      "twitch_integration": "SUCCESS",
+      "workers_builds": "SUCCESS; exact source build 375d7adc-c2e6-4b09-afcc-7fe6d8c64b8e; typecheck and deploy:safe both verified in build logs.",
+      "production_source_smoke": "SUCCESS; workflow 45376585199, job 138384377827, exact source SHA and live health/assets.",
+      "editor_core": "IN_PROGRESS at last check; full GitHub aggregate CI is not yet claimed PASS."
     },
-    "network_note": "Cloudflare API reports deployment state, but this environment blocks direct fetch to the production Worker host; exact live health and asset checks remain pending the required source-SHA production smoke."
+    "cloudflare_build_and_safe_deploy": {
+      "build_id": "375d7adc-c2e6-4b09-afcc-7fe6d8c64b8e",
+      "outcome": "success",
+      "source_sha": "6fab0be6822ad778c30faaf20ecc2d29ff410ac8",
+      "build_command": "npm run typecheck",
+      "deploy_command": "npm run deploy:safe",
+      "deployment_id": "a97315d9-848d-49ea-9270-75b6aa53958a",
+      "version_id": "fdfa0630-b39c-43d2-baa6-10ea815d748d",
+      "version_number": 4181,
+      "traffic_percent": 100
+    },
+    "live_traffic_health_asset_hashes": {
+      "source_sha": "6fab0be6822ad778c30faaf20ecc2d29ff410ac8",
+      "health": "Direct production GET /api/health?release=<source SHA> returned HTTP 200 and {\"ok\":true,\"service\":\"sanci9517-streamer-brand\",\"version\":\"2.0.0\",\"server\":\"cloudflare-worker\"}.",
+      "assets": {
+        "/editor-v2/": "SHA-256 1b2527ffb066de7d7a3407b785f976a0543b6b165efeb02c31b84d6886775e82, exact local match.",
+        "/editor-v2/app.js?v=20261124-edt042-publish-recovery-single-alert-v1": "SHA-256 54a6b4005e96ff3e6e910243b8b385d1a34916ba29206ed9bc2745c208082008, exact local match.",
+        "/editor-v2/core/publication-recovery.js?v=20261124-edt042-publish-recovery-single-alert-v1": "SHA-256 cc2beeb2f3874b8aba9cbb622b550236b78748b3f6aa271a5c59687894ad1771, exact local match."
+      }
+    }
   },
   "cost_huf": 0,
-  "data_safety": "No production D1 mutation, migration, R2 operation, paid service, or new dependency. Save remains separate from Publish."
+  "data_safety": "No production D1 migration/data write, R2 operation, paid service, or new dependency. Save remains separate from Publish. Full D-06/D and manual/physical acceptance remain open/deferred.",
+  "previous_runtime_release_followup": {
+    "source_commit": "a73452043544d9cf0f97c12984b25b3f699adf63",
+    "cloudflare_build": "6dac4613-4d77-48b3-b706-b51ad3cb6e51 SUCCESS",
+    "deployment_id": "9cf925fd-745d-4434-9e80-0b45da319f49",
+    "version_id": "888def30-3dcd-4fca-8822-4aa497af9025",
+    "followup_reason": "Exact-SHA canonical-plan CI exposed stale feature-traceability fingerprints; additional review found the app import and entry URL also needed the new recovery cache-bust token. Corrected in final commit 6fab0be and re-released."
+  }
 }
