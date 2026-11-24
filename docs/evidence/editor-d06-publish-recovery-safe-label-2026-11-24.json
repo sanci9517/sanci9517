@@ -1,6 +1,6 @@
 {
   "schema": "sanci.editor.d06.publish-recovery-safe-label.v1",
-  "recorded_at_utc": "2026-11-24T11:52:00Z",
+  "recorded_at_utc": "2026-11-24T12:30:00Z",
   "repository": "sanci9517/sanci9517",
   "branch": "v2/foundation",
   "base_commit": "ffdfefe213ce1af056e42f95be8a3afbb71c3ce3",
@@ -72,7 +72,7 @@
     "note": "Read back via Cloudflare API. This is before the safe-label source update."
   },
   "release": {
-    "status": "Cloudflare exact-source deployment verified; GitHub Editor Core exact-source workflow still in progress.",
+    "status": "Cloudflare exact-source deployment and hosted Editor Core exact-source workflow verified successful.",
     "source_commit": "fdd4836c1797ae780ddde6dce94c99ca4327614c",
     "push": {
       "result": "PASS normal fast-forward",
@@ -109,12 +109,14 @@
       "editor_core": {
         "run_id": 45387394067,
         "job_id": 138421802619,
-        "status": "in_progress",
-        "active_step": "Test real Worker media upload with isolated D1 and R2",
-        "all_prior_steps": "success",
+        "status": "completed",
+        "conclusion": "success",
+        "step_count": 41,
+        "all_required_steps": "success",
+        "diagnostic_screenshot_upload": "skipped by workflow policy after successful checks",
         "url": "https://github.com/sanci9517/sanci9517/actions/runs/45387394067"
       },
-      "aggregate": "IN_PROGRESS; not claimed as PASS"
+      "aggregate": "Exact-source Editor Core, F0 baseline, Twitch, Canonical Plan, Active Point Audit, Production Worker source smoke and Cloudflare Build all SUCCESS; editor_core screenshot upload skipped as designed."
     },
     "cloudflare_build": {
       "build_uuid": "ad009969-c406-4617-be46-8ec07c198914",
