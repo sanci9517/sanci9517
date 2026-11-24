@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261124154632-58c6a172",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-24T15:46:32.713Z",
+  "finished_at": "2026-11-24T15:49:54.445Z",
+  "wall_seconds": 202,
+  "paused_seconds": 0,
+  "measured_seconds": 202,
+  "status": "pass",
+  "kind": "test",
+  "summary": "D-06 EDT-038 mobil: a touch hosszú nyomás és multi-select action bar clipboard/paste útjának Chromium regressziója zöld.",
+  "evidence": [
+    "tests/browser/editor-node-clipboard.test.js:PASS 1/1 desktop+mobile"
+  ],
+  "checks": "Core PASS; [skip ci] test/evidence commits verified on v2/foundation; Worker unchanged",
+  "started_revision": "01998aac4f38cd5e2896d9246164033ec688b47e",
+  "finished_revision": "01998aac4f38cd5e2896d9246164033ec688b47e",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
