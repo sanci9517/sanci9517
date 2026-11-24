@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "captured_at_utc": "2026-11-24T18:10:00Z",
+  "captured_at_utc": "2026-11-24T18:09:49Z",
   "plan_item": "77.44.7.D / D-06 — linear Rich Text hard-break scan",
   "repository": {
     "name": "sanci9517/sanci9517",
@@ -39,19 +39,39 @@
     "active_point": "python3 scripts/audit-active-plan-point.py PASS bookkeeping; cursor 77.44 / WEB-011 -> 77.44.7.D remains OPEN / NOT_CERTIFIED",
     "migration_safety": "node scripts/web013-migration-safety-gate.mjs PASS",
     "wrangler_dry_run": "WRANGLER_LOG_PATH=/tmp/sanci9517-wrangler-dry-run-20261124.log npx wrangler deploy --dry-run PASS, exit 0; 202 public assets read; no deploy",
-    "diff_check": "git diff --check PASS"
+    "diff_check": "git diff --check PASS",
+    "hosted_ci_status": "5 exact-SHA checks SUCCESS; Editor Core still IN_PROGRESS when evidence was updated; full hosted CI not yet green/certified."
   },
   "production_preflight": {
     "method": "Cloudflare D1 Query API; SELECT only",
     "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
     "tables": 34,
     "latest_migration_marker": "0030_media_library_organization.sql",
-    "queries": ["SELECT name FROM sqlite_master WHERE type = 'table' ORDER BY name", "SELECT name FROM d1_migrations ORDER BY name DESC LIMIT 5"],
+    "queries": [
+      "SELECT name FROM sqlite_master WHERE type = 'table' ORDER BY name",
+      "SELECT name FROM d1_migrations ORDER BY name DESC LIMIT 5"
+    ],
     "rows_written": 0,
     "changes": 0,
     "changed_db": false,
     "migration_or_business_data_write": false,
     "r2_operation": false
+  },
+  "free_usage": {
+    "cloudflare_build_minutes_limit_reached": false,
+    "refresh_date": "2026-11-30T23:59:59.999Z",
+    "github_hosted_actions_remaining_quota": "not independently verified; no paid use or manual dispatch/rerun",
+    "new_cost_huf": 0,
+    "github_actions_public_repo": "Exact-source workflow jobs are running on the public repository; no manual dispatch or rerun was used; no paid use requested."
+  },
+  "acceptance": {
+    "slice": "IMPLEMENTED / LOCAL CHECKS PASS / PUSHED / AUTOMATICALLY DEPLOYED / HEALTH AND ASSET HASHES PASS / EDITOR CORE CI IN PROGRESS",
+    "d06": "OPEN / NOT CERTIFIED",
+    "d01_to_d07": "OPEN / NOT CERTIFIED",
+    "full_d_block": "OPEN / NOT CERTIFIED",
+    "complete_visual_editor": "OPEN / NOT CERTIFIED",
+    "manual_physical_acceptance": "DEFERRED until the complete Editor is implemented",
+    "save_distinct_from_publish": true
   },
   "live_before_release": {
     "deployment_id": "f839e982-f079-480e-9008-c5bdd5f26130",
@@ -60,7 +80,12 @@
     "traffic_percent": 100,
     "health_url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
     "health_http_status": 200,
-    "health_body": {"ok": true, "service": "sanci9517-streamer-brand", "version": "2.0.0", "server": "cloudflare-worker"},
+    "health_body": {
+      "ok": true,
+      "service": "sanci9517-streamer-brand",
+      "version": "2.0.0",
+      "server": "cloudflare-worker"
+    },
     "deployed_assets_match_current_branch_head": {
       "/editor-v2/": "6e75f03baedec6bd044572683fb90bc13ad43836a5c84fc5d5c99e74d7921c4d",
       "/editor-v2/app.js": "f04356b20b0968836f8021c7a46448d8a339bc173584a5cdc8803e50112fd067",
@@ -68,19 +93,40 @@
     },
     "source_change_in_this_record_not_deployed_yet": true
   },
-  "free_usage": {
-    "cloudflare_build_minutes_limit_reached": false,
-    "refresh_date": "2026-11-30T23:59:59.999Z",
-    "github_hosted_actions_remaining_quota": "not independently verified; no paid use or manual dispatch/rerun",
-    "new_cost_huf": 0
-  },
-  "acceptance": {
-    "slice": "IMPLEMENTED / LOCAL CHECKS PASS / RELEASE PENDING",
-    "d06": "OPEN / NOT CERTIFIED",
-    "d01_to_d07": "OPEN / NOT CERTIFIED",
-    "full_d_block": "OPEN / NOT CERTIFIED",
-    "complete_visual_editor": "OPEN / NOT CERTIFIED",
-    "manual_physical_acceptance": "DEFERRED until the complete Editor is implemented",
-    "save_distinct_from_publish": true
+  "release": {
+    "normal_fast_forward_commit": "9f856ebf103dc9e681584a771f6569e155310dbb",
+    "commit_url": "https://github.com/sanci9517/sanci9517/commit/9f856ebf103dc9e681584a771f6569e155310dbb",
+    "parent": "b91168963c0ab1914e98a371bd877a8f37e240f3",
+    "branch_readback": "v2/foundation points to 9f856ebf103dc9e681584a771f6569e155310dbb",
+    "exact_source_ci": {
+      "Canonical Creator Platform Plan": "SUCCESS run 45455854771",
+      "Canonical Plan Active Point Audit": "SUCCESS run 45455854963",
+      "Twitch Integration Check": "SUCCESS run 45455854711",
+      "F0 baseline checks": "SUCCESS run 45455854820",
+      "Production Worker source smoke": "SUCCESS run 45455854897",
+      "Editor Core Test": "IN_PROGRESS run 45455854848; isolated real Worker media upload step; remaining browser and contract checks pending"
+    },
+    "cloudflare_automatic_deployment": {
+      "deployment_id": "0ab8ea5c-a946-42fe-a312-da4f88cc5669",
+      "worker_version_id": "29b8b072-4f62-42aa-be08-8651bfc8cf96",
+      "worker_version_number": 4186,
+      "traffic_percent": 100,
+      "trigger": "automatic build/deploy after branch fast-forward"
+    },
+    "exact_source_smoke_url": "https://github.com/sanci9517/sanci9517/actions/runs/45455854897",
+    "exact_source_smoke": "SUCCESS; live health and exact changed public source byte SHA-256 checks",
+    "direct_health_http_status": 200,
+    "direct_health_body": {
+      "ok": true,
+      "service": "sanci9517-streamer-brand",
+      "version": "2.0.0",
+      "server": "cloudflare-worker"
+    },
+    "deployed_asset_sha256": {
+      "/editor-v2/": "01b9021a8aea50324f04c6c148d61e260cc64159f7742b49020e901514454c21",
+      "/editor-v2/app.js": "dcb9d8219ca701c55c299112a0c704885b99bbfaeae14f9934e04b5379358680",
+      "/editor-v2/core/richtext-import.js": "76241f49ba508a964c9de1747a1202d7b3a35df08559021b8dfbdf71f62c8232"
+    },
+    "local_live_hashes_match": true
   }
 }
