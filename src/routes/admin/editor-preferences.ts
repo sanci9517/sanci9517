@@ -260,8 +260,8 @@ export async function editorPreferencesRoute(request: Request, env: Env, siteId 
   // A long-lived editor can outlive an account switch in another tab. Bind
   // preference writes to the identity the UI loaded so an old workspace is
   // never silently saved into the newly authenticated user's account.
-  if ("ownerUserId" in record && (typeof record.ownerUserId !== "string" || record.ownerUserId !== user.id)) {
-    return error("PREFERENCES_OWNER_CHANGED", 409, "A bejelentkezett fiók megváltozott. Töltsd újra a szerkesztőt, mielőtt mentenéd a munkaterületet.");
+  if (typeof record.ownerUserId !== "string" || record.ownerUserId !== user.id) {
+    return error("PREFERENCES_OWNER_CHANGED", 409, "A bejelentkezett fiók megváltozott, vagy a megnyitott Editor már régi. Töltsd újra a szerkesztőt mentés előtt.");
   }
   if (Array.isArray(record.paletteFavoriteTypes) && (record.paletteFavoriteTypes.length > MAX_FAVORITES ||
       record.paletteFavoriteTypes.some(item => typeof item !== "string" || !VALID_ELEMENT_TYPE.test(item)))) {

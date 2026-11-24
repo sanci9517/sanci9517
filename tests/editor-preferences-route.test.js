@@ -58,8 +58,12 @@ async function fixture(t, { barrierConcurrentPreferenceReads = false } = {}) {
     },
     ...(body === undefined ? {} : { body: typeof body === 'string' ? body : JSON.stringify(body) })
   });
-  const call = (method = 'GET', userId = 'user-a', body) => editorPreferencesRoute(request(method, userId, body), env, 'site-default');
-  return { db, env, call };
+  const call = (method = 'GET', userId = 'user-a', body) => {
+    const payload = method === 'PUT' && body && typeof body === 'object' && !Array.isArray(body) && !Object.hasOwn(body, 'ownerUserId')
+      ? { ownerUserId: userId, ...body } : body;
+    return editorPreferencesRoute(request(method, userId, payload), env, 'site-default');
+  };
+  return { db, env, request, call };
 }
 
 test('editor favorites persist only under the authenticated user account and round-trip through D1', async t => {
@@ -134,6 +138,17 @@ test('preference writes reject a stale editor owner after the authenticated acco
   assert.equal((await response.json()).error.code, 'PREFERENCES_OWNER_CHANGED');
   assert.equal(f.db.prepare('SELECT COUNT(*) AS n FROM editor_preferences').get().n, 0,
     'an editor loaded for one account cannot store its stale workspace under a different account session');
+});
+
+test('preference writes from an older client without an owner identity fail closed', async t => {
+  const f = await fixture(t);
+  const response = await editorPreferencesRoute(f.request('PUT', 'user-a', {
+    paletteFavoriteTypes: ['heading'], baseRevisions: { paletteFavoriteTypes: 0 }
+  }), f.env, 'site-default');
+  assert.equal(response.status, 409);
+  assert.equal((await response.json()).error.code, 'PREFERENCES_OWNER_CHANGED');
+  assert.equal(f.db.prepare('SELECT COUNT(*) AS n FROM editor_preferences').get().n, 0,
+    'legacy open tabs without the owner binding cannot write preferences to whichever account is currently signed in');
 });
 
 test('concurrent account preference writes preserve independent workspace and palette updates', async t => {

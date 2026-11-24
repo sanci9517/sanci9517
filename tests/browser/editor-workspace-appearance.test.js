@@ -32,7 +32,7 @@ function fixtureServer({accountUser=null,sessionDelayMs=0}={}){
       if(req.method==='GET')return json({ok:true,data:{...accountPreferences}});
       if(req.method==='PUT'){
         let body='';for await(const chunk of req)body+=chunk;const patch=JSON.parse(body);
-        if(patch.ownerUserId&&patch.ownerUserId!==activeAccountUser){res.statusCode=409;return json({ok:false,error:{code:'PREFERENCES_OWNER_CHANGED'},data:structuredClone(accountPreferences)})}
+        if(patch.ownerUserId!==activeAccountUser){res.statusCode=409;return json({ok:false,error:{code:'PREFERENCES_OWNER_CHANGED'},data:structuredClone(accountPreferences)})}
         const fields=['paletteFavoriteTypes','workspace'].filter(field=>Object.hasOwn(patch,field));
         if(fields.some(field=>patch.baseRevisions?.[field]!==accountPreferences.revisions[field])){res.statusCode=409;return json({ok:false,error:{code:'PREFERENCES_CONFLICT'},data:structuredClone(accountPreferences)})}
         if(patch.workspace?.appearance)delete patch.workspace.appearance.profiles;
