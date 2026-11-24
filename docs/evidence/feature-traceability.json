@@ -71,7 +71,7 @@
     "src/core/auth/session.ts": "39289ef8bffad7b09a6ec6476b7d280e8bf664635d0bc5327ce216edfde7866b",
     "src/core/auth/site-access.ts": "1651ea7a2437ebd9b86700ee87fb6ec7fc5944e84c13869dc957e889e78b47ff",
     "src/core/editor-publication.ts": "3f39566a3bcaea76eced708e9a60dfe2992df666f49ceefcd89cbbe3f8517ca6",
-    "src/core/editor-validation.ts": "c04d4fae9c06650a0d7a13333cfa9b85ed5e1cfff1bfd0284144ec5afe82d6cd",
+    "src/core/editor-validation.ts": "f33d0a40f4af00e5624ac2b38a10204f5771ec54bc7e3dd90241d73777ae9ea2",
     "src/core/media-retention-policy.js": "0bb1a1bb04acc1105372c04aeab1ff55c364945aad1e97e500ab5fd2563ecfe7",
     "src/core/page-redirects.ts": "5e4cab4b3ab9d01f3072058c93ec8b91b35aa41e139f459c66aa85b887e5f06f",
     "src/core/schedule-read.ts": "d0a442d83f9348a46a45446bf26c7b89e3ae4b61b3496ca276e1856d947a7823",
@@ -108,7 +108,7 @@
     "tests/editor-palette-preferences.test.js": "0cb5936206853a59ebaaebd681dc28d8c959049eadb89d5c15844250aaedbf4e",
     "tests/editor-preferences-route.test.js": "6e0151f799049a500dce6d2167b1f022a3ec3011210c830ff77199d64ade3cd0",
     "tests/editor-public-asset-cache-bust.test.js": "6106cc4c928fa34f0a816bbf5a841d5fb82583a31125928218e766fbc54e93d5",
-    "tests/f0-3-route-integration.test.js": "c6f9dd7b1816ca7663b796daa485ae94f413c9746c5d5590d6bc30fc81d9fff6",
+    "tests/f0-3-route-integration.test.js": "ef9f0a3208f90067de1f634379d3ccf2236305742b363f0b7778d92775bf409f",
     "tests/media-api.test.js": "0d96e3835336394d6cc18cf075abc0da6926cc42ebc9b985f5b581076796cedb"
   },
   "schema_version": 1,

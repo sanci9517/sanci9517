@@ -1,12 +1,12 @@
 {
   "schema": "sanci.visual-editor.editor-core-ci-triage.v1",
-  "recorded_at_utc": "2026-11-24T07:18:50Z",
+  "recorded_at_utc": "2026-11-24T08:24:51Z",
   "repository": "sanci9517/sanci9517",
   "branch": "v2/foundation",
   "plan": {
     "canonical_path": "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
-    "bytes": 1853597,
-    "sha256": "86dc3e0a0388eda563ded4b170e305ecf381d5bd4558e6cac39159f995a2bfec",
+    "bytes": 1855554,
+    "sha256": "441de45940a0a5af999aa71edab4726d6a39547de794713ff6d9322c99cfa496",
     "cursor": "77.44 / WEB-011 / 77.44.7.D",
     "status": "OPEN / NOT_CERTIFIED",
     "source_status_counts": {
@@ -30,7 +30,7 @@
     },
     "targeted_local_reproduction": {
       "command": "node tests/browser/editor-content-system.test.js",
-      "result": "PASS",
+      "result": "PASS (1/1 real Chromium; attempt 1 remote failure was not reproduced)",
       "tests": "1/1 real Chromium",
       "note": "The default sandbox attempt could not bind the test's temporary 127.0.0.1 HTTP server (EPERM); the exact targeted test was rerun with permitted loopback access and passed in 51.1 seconds."
     },
@@ -38,10 +38,15 @@
       "run_id": 45280818766,
       "attempt": 2,
       "job_id": 138279329693,
-      "status_at_recording": "in_progress",
-      "completed_steps": 13,
-      "active_step": "Run Editor browser layout regression",
-      "conclusion": null
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "66a53bb61b2b58812046c9d8eea88b34f6c4e82f",
+      "completed_steps": 23,
+      "successful_browser_step": "Run Editor browser layout regression",
+      "run_url": "https://github.com/sanci9517/sanci9517/actions/runs/45280818766/attempts/2",
+      "verified_at_utc": "2026-11-24T07:38:16Z",
+      "note": "Attempt 1 remains a historical FAIL. Only the previously failed Editor Core job was rerun; attempt 2 completed green on the same exact runtime/test SHA.",
+      "total_steps": 23
     },
     "local_targeted_file_sha_matches_source_commit": true
   },
@@ -53,7 +58,8 @@
     "traffic_percentage": 100,
     "deployment_readback": "Live Cloudflare deployments GET in this session.",
     "new_deployment": false,
-    "production_health_retest": "NOT RUN; no runtime change in this triage block. The prior exact-source smoke is recorded in editor-d06-authored-accordion-dom-id-2026-11-23.json."
+    "production_health_retest": "NOT RUN; no runtime change in this triage block. The prior exact-source smoke is recorded in editor-d06-authored-accordion-dom-id-2026-11-23.json.",
+    "readback_note": "Current read-only Cloudflare deployments GET confirms the prior deployment/version remains active at 100%; no runtime in this triage-only follow-up."
   },
   "safety": {
     "production_d1_writes_or_migrations": 0,

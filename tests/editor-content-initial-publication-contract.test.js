@@ -24,7 +24,7 @@ function probe(type, {metadata={}, props={}, visibility}={}) {
     ...(visibility===undefined?{}:{visibility})});
   page.nodes[node.id]=node;
   page.nodes[page.rootId].children.push(node.id);
-  return {node, publish:()=>validatePublishDocument(document,page.id)};
+  return {document,node, publish:()=>validatePublishDocument(document,page.id)};
 }
 
 test('initial schema values do not invent authored content or field-level defaults',()=>{
@@ -59,6 +59,17 @@ test('server publication gates for visible explicitly authored elements are pres
     const {publish}=probe(type,{metadata:{contentVersion:1},props});
     assert.equal(publish(),expected,type);
   }
+});
+
+test('server publication rejects planned and unknown node types even when a client bypasses the disabled palette',()=>{
+  for(const type of ['form','input','__proto__','unknown-block']){
+    const {document,publish}=probe(type);
+    const before=structuredClone(document);
+    assert.equal(publish(),'UNSUPPORTED_EDITOR_NODE_TYPE',type);
+    assert.deepEqual(document,before,`${type}: rejected Publish must leave the draft Page Model untouched`);
+  }
+  assert.equal(probe('text',{metadata:{contentVersion:1},props:{text:'Szerkeszthető szöveg'}}).publish(),null,
+    'a currently supported node still reaches the existing content-specific publication gates');
 });
 
 test('real content defaults are view-only and are not persisted into empty nodes',()=>{

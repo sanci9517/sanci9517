@@ -1,0 +1,97 @@
+{
+  "schema": "sanci.visual-editor.d06-publish-capability-guard.v1",
+  "recorded_at_utc": "2026-11-24T08:24:51Z",
+  "repository": "sanci9517/sanci9517",
+  "branch": "v2/foundation",
+  "canonical_plan": {
+    "path": "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+    "bytes": 1855554,
+    "sha256": "441de45940a0a5af999aa71edab4726d6a39547de794713ff6d9322c99cfa496",
+    "cursor": "77.44 / WEB-011 → 77.44.7.D",
+    "status": "OPEN / NOT_CERTIFIED"
+  },
+  "issue": {
+    "feature_id": "EDT-019",
+    "acceptance": "NOT_RECERTIFIED",
+    "gap": "Palette buttons disable PLANNED elements, but validatePublishDocument did not consult ELEMENT_CAPABILITIES.public; direct Page Model input could publish a planned form or unknown node type.",
+    "reproduction": "Added regression first; old code returned null for form (expected UNSUPPORTED_EDITOR_NODE_TYPE)."
+  },
+  "change": {
+    "files": [
+      "src/core/editor-validation.ts",
+      "public/editor-v2/core/capability-matrix.d.ts",
+      "tests/editor-content-initial-publication-contract.test.js",
+      "docs/evidence/feature-traceability.json",
+      "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md"
+    ],
+    "behavior": "Server publication now requires getElementCapability(node.type).public === PARTIAL for every node. PLANNED/unknown types fail closed with UNSUPPORTED_EDITOR_NODE_TYPE. Save behavior, draft snapshots, existing valid publication flow, and Save/Publish separation are unchanged.",
+    "scope": "No form builder/submission capability is claimed; this only closes the server-side bypass until the planned form contract and its dependencies are implemented."
+  },
+  "checks": {
+    "pre_fix_regression": "FAIL as expected: form returned null; confirms former publication bypass.",
+    "post_fix": {
+      "editor-content-initial-publication-contract": "14/14 PASS",
+      "editor-d-content-contract": "7/7 PASS",
+      "npm_run_test_editor": "24/24 files PASS; preferences 10/10; runner 4/4",
+      "publish_route_integration": "21/21 PASS; direct malicious Publish of form and unknown type returns 409 and leaves page/revision/audit rows unchanged",
+      "typecheck": "PASS",
+      "plan_contract": "16/16 PASS",
+      "active_point": "77.44.7.D; 396 feature rows; functional acceptance NOT_CERTIFIED",
+      "traceability": "396 mappings PASS; 148 PARTIAL_SOURCE / 248 UNVERIFIED",
+      "migration_safety_gate": "PASS; no migrations applied",
+      "git_diff_check": "PASS"
+    },
+    "wrangler_dry_run": {
+      "command": "npx wrangler deploy --dry-run",
+      "wrangler": "4.130.0",
+      "result": "PASS / exit 0",
+      "public_assets_read": 201,
+      "bundle": "434.30 KiB / gzip 110.07 KiB",
+      "warning": "sandbox read-only Wrangler log path emitted EROFS; dry-run exited 0 and did not deploy"
+    },
+    "production_d1_preflight": {
+      "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
+      "query_api": "Cloudflare D1 Query API",
+      "statements": [
+        "SELECT name FROM sqlite_schema WHERE type IN ('table','view','index','trigger') ORDER BY type,name",
+        "SELECT name FROM d1_migrations ORDER BY id DESC LIMIT 1"
+      ],
+      "schema_objects": 147,
+      "latest_migration_marker": "0030_media_library_organization.sql",
+      "rows_written": 0,
+      "changes": 0,
+      "changed_db": false
+    },
+    "prior_exact_sha_ci": {
+      "commit": "66a53bb61b2b58812046c9d8eea88b34f6c4e82f",
+      "workflow_run_id": 45280818766,
+      "attempt_1": "FAIL (historical browser-layout focus timeout)",
+      "attempt_2_job_id": 138279329693,
+      "attempt_2": "COMPLETED / SUCCESS",
+      "attempt_2_url": "https://github.com/sanci9517/sanci9517/actions/runs/45280818766/attempts/2",
+      "scope_note": "New capability-guard source SHA must still be pushed and hosted-tested."
+    }
+  },
+  "production": {
+    "last_readback_deployment_id": "42feeec0-8a65-4a22-8fcf-d6d2acf9cf53",
+    "last_readback_worker_version_id": "d52c8bae-32e2-4fdc-a628-7295b3c5f34d",
+    "last_readback_traffic_percent": 100,
+    "new_deployment": "PENDING: runtime source has not yet been pushed",
+    "health": "PENDING exact-SHA rollout",
+    "changed_public_assets": []
+  },
+  "safety": {
+    "production_d1_mutations": 0,
+    "production_r2_mutations_or_deletions": 0,
+    "new_dependencies": 0,
+    "new_cost_huf": 0,
+    "save_publish_separate": true,
+    "manual_physical_acceptance": "DEFERRED_UNTIL_COMPLETE_EDITOR"
+  },
+  "acceptance": {
+    "EDT-019": "PARTIAL_SOURCE / NOT_RECERTIFIED",
+    "D06": "OPEN / NOT_CERTIFIED",
+    "D01_D07": "OPEN / NOT_CERTIFIED",
+    "full_editor": "OPEN / NOT_CERTIFIED"
+  }
+}

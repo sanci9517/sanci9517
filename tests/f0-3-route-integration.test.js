@@ -109,6 +109,23 @@ test('save isolates draft, publish exposes it, rollback remains draft until repu
   assert.match(JSON.stringify(await (await f.read()).json()), /original/);
 });
 
+test('direct Publish rejects planned and unknown block types without changing the saved or published revision', async t => {
+  const f = await fixture(t);
+  for (const type of ['form', 'unknown-block']) {
+    const document = f.document('root-content');
+    const page = document.pages.p;
+    page.nodes.root.children = ['unsupported'];
+    page.nodes.unsupported = {
+      id:'unsupported', type, name:'Unsupported block', parentId:'root', children:[],
+      props:{}, style:{}, responsive:{desktop:{},tablet:{},mobile:{}}, states:{}, accessibility:{}, metadata:{}
+    };
+    const before = f.state();
+    const response = await f.edit({pageId:'p', expectedVersion:1, document, publish:true});
+    assert.equal(response.status,409,`${type} is rejected at the server Publish boundary`);
+    assert.deepEqual(f.state(),before,`${type} rejection must not write a draft, revision, audit, or published snapshot`);
+  }
+});
+
 test('malformed authored CTA drafts save separately but cannot replace the published snapshot', async t => {
   const f = await fixture(t), document = f.document('root-content');
   const page = document.pages.p, root = page.nodes.root;
