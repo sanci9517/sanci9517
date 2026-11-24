@@ -1,0 +1,53 @@
+{
+  "schema": "sanci.editor.d06.multi-root-clipboard.v1",
+  "recorded_at_utc": "2026-11-24T15:46:00Z",
+  "repository": "sanci9517/sanci9517",
+  "branch": "v2/foundation",
+  "plan": {
+    "cursor": "77.44 / WEB-011 -> 77.44.7.D",
+    "feature": "EDT-038",
+    "status": "partial verification; complete Editor/D acceptance remains OPEN / NOT_CERTIFIED"
+  },
+  "scope": "Browser-level multi-selection through the Layers UI, deterministic canvas-order clipboard paste, one-step undo/redo, no persistence before Save, and the existing separate Save/Publish lifecycle.",
+  "change": {
+    "kind": "test-only",
+    "path": "tests/browser/editor-node-clipboard.test.js",
+    "runtime_source_changed": false,
+    "assertions_added": [
+      "Ctrl-click two separate Layers rows in reverse canvas order and copy both roots",
+      "Paste produces two distinct IDs in canvas order",
+      "Copy/paste creates no API post before Save",
+      "one Undo removes the complete multi-root paste and one Redo restores it"
+    ],
+    "existing_single-subtree_save_reload_publish_coverage_retained": true,
+    "commit": "49a6fc20a785cbae1974d050994ad7c54fe5b0e6",
+    "commit_url": "https://github.com/sanci9517/sanci9517/commit/49a6fc20a785cbae1974d050994ad7c54fe5b0e6",
+    "branch_readback": "v2/foundation compared identical to commit 49a6fc20a785cbae1974d050994ad7c54fe5b0e6"
+  },
+  "checks": {
+    "node --test tests/browser/editor-node-clipboard.test.js": "PASS 1/1 in Chromium",
+    "node --experimental-vm-modules --test public/editor-v2/tests/core.test.js": "PASS 1/1 test file",
+    "git diff --check -- tests/browser/editor-node-clipboard.test.js": "PASS",
+    "hosted_ci": "NOT RUN: test-only commit uses the repository-required [skip ci] path; no redundant rerun was dispatched"
+  },
+  "production": {
+    "runtime_source_changed": false,
+    "deployment_id": "5aeaf17a-881a-4cdc-a2e7-42da24974e3c",
+    "worker_version_id": "80b5a884-326f-409b-93ba-93b0b6ca110c",
+    "traffic_percent": 100,
+    "readback_at_utc": "2026-11-24T15:45:00Z",
+    "health_or_asset_checks": "Not repeated: the commit changes only browser tests/evidence; no runtime asset changed."
+  },
+  "safety": {
+    "d1_migration_or_data_write": false,
+    "r2_operation": false,
+    "new_dependency": false,
+    "paid_service_or_new_cost": false,
+    "new_cost_frt": 0,
+    "save_publish_remain_separate": true
+  },
+  "limitations": [
+    "This verifies the multi-root EDT-038 browser slice; the complete Editor, EDT-038 contract, D-06, D-01–D-07 and 77.44.7.D are not certified by this evidence.",
+    "Full manual and physical Editor acceptance remains deferred until the Editor scope is complete."
+  ]
+}
