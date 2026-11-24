@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "task": "77.44.7.D / D-06",
+  "date": "2026-11-24",
+  "status": "partial_browser_verification",
+  "summary": "The existing exhaustive Chromium test was run directly and passed for all declared PARTIAL Editor node types. A prior read-only gap audit had proposed this media lifecycle as missing; source inspection showed it is already covered by the existing isolated real-Worker media storage test, so no duplicate implementation or test was added.",
+  "branch": "v2/foundation",
+  "tested_runtime_commit": "886b387d01a461a6483d796519629008a5cbdf75",
+  "branch_readback_commit": "7cf96a42552d7c442b41b5ad540607669420121e",
+  "test_source": {
+    "path": "tests/browser/editor-inspector-partial-types.test.js",
+    "git_blob_sha": "02edc510a5ed7b218fb0500cb6e16b9ad5ba1a22",
+    "command": "node --test tests/browser/editor-inspector-partial-types.test.js",
+    "result": "PASS",
+    "tests": 1,
+    "duration_ms": 547870.562513,
+    "scope": "44 declared PARTIAL node types plus root; Inspector route and registry parity, explicit Save and reload round-trip, separate Publish, responsive, visibility, hover and keyboard-focus state."
+  },
+  "source_readback": {
+    "method": "GitHub v2/foundation file readback SHA compared with local working-file Git blob SHA",
+    "paths": {
+      "tests/browser/editor-inspector-partial-types.test.js": "02edc510a5ed7b218fb0500cb6e16b9ad5ba1a22",
+      "public/editor-v2/app.js": "f8c594ff0edae8e44180ae0e0e91301840ae101f",
+      "public/editor-v2/index.html": "c4ec0d9a8ebcff3b01a1d829789c76efb2107115"
+    }
+  },
+  "related_existing_coverage": {
+    "path": "tests/browser/media-worker-storage.test.mjs",
+    "coverage": "Existing real Worker + isolated D1/R2 lifecycle uploads WAV, MP3, OGG and WebM; verifies private preview and unpublished 404; authors audio/video nodes through the real Inspector picker; verifies site isolation, Save/reload without publication, then separate Publish and exact bytes/MIME/public player behavior.",
+    "duplicate_test_added": false
+  },
+  "hosted_ci": {
+    "workflow": "Editor Core Test",
+    "run_id": 45417672997,
+    "url": "https://github.com/sanci9517/sanci9517/actions/runs/45417672997",
+    "status_at_readback": "FAILURE",
+    "active_step": "Run Editor browser layout regression",
+    "completed_steps_before_active_step": 13,
+    "completed_steps_conclusion": "success",
+    "failure": {
+      "file": "tests/browser/editor-page-interactions.test.js",
+      "test": "EDT-039 page actions and EDT-040 motion save as draft, preview safely, and publish separately",
+      "line": 139,
+      "assertion": "a direct deep link restores the selected tab on page load",
+      "actual": "false",
+      "expected": "true",
+      "diagnosis": "The browser test read aria-selected immediately after the public target node was attached; it did not wait for the asynchronous public page interaction initialization that applies the URL state. The runtime URL-state implementation applies the requested tab during that initialization."
+    },
+    "overall_ci_pass_claimed": false
+  },
+  "follow_up_regression": {
+    "path": "tests/browser/editor-page-interactions.test.js",
+    "baseline_git_blob_sha": "7204af1ed2cd37bebee6362936807fbd7b49db9d",
+    "updated_git_blob_sha": "9d3e0355689c40e18063d243df779928ab73a4a0",
+    "change": "Wait for the expected tab selection before asserting direct deep-link, browser Back/Forward and invalid-index outcomes, removing the hydration timing race without weakening URL-state expectations.",
+    "runtime_changed": false,
+    "local_command": "node --test tests/browser/editor-page-interactions.test.js",
+    "result": "PASS",
+    "tests": 1,
+    "duration_ms": 118227.652052,
+    "cost_huf": 0
+  },
+  "production_readback": {
+    "deployment_id": "5aeaf17a-881a-4cdc-a2e7-42da24974e3c",
+    "worker_version_id": "80b5a884-326f-409b-93ba-93b0b6ca110c",
+    "traffic_percent": 100,
+    "exact_source_smoke": "Existing evidence for runtime commit 886b387d01a461a6483d796519629008a5cbdf75 records /api/health HTTP 200 and exact public asset hashes. This turn's direct curl health read was blocked because the sandbox proxy at localhost:8080 was unavailable; no new health PASS is claimed.",
+    "new_deployment_performed": false
+  },
+  "cost_and_safety": {
+    "new_cost_huf": 0,
+    "production_d1_mutation": false,
+    "production_r2_operation": false,
+    "new_dependency": false,
+    "ci_dispatch_or_rerun": false
+  },
+  "acceptance": {
+    "d06": "OPEN / NOT CERTIFIED",
+    "full_d_block": "OPEN / NOT CERTIFIED",
+    "full_visual_editor": "OPEN / NOT CERTIFIED",
+    "manual_physical_acceptance": "DEFERRED until full Editor completion",
+    "save_is_publish": false
+  }
+}

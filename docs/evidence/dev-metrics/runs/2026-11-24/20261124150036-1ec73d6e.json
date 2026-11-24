@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261124150036-1ec73d6e",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-24T15:00:36.790Z",
+  "finished_at": "2026-11-24T15:13:06.205Z",
+  "wall_seconds": 749,
+  "paused_seconds": 0,
+  "measured_seconds": 749,
+  "status": "partial",
+  "kind": "test",
+  "summary": "D-06 check: exhaustive Inspector PARTIAL-type browser test passed locally; exact-SHA hosted Editor Core is still running at browser layout; direct Worker health curl blocked by sandbox proxy.",
+  "evidence": [
+    "docs/evidence/editor-d06-stale-publish-response-2026-11-24.json"
+  ],
+  "checks": "node --test tests/browser/editor-inspector-partial-types.test.js PASS 1/1; remote Editor Core 45417672997 IN_PROGRESS; Cloudflare deployment 5aeaf17a... at 100%; direct health curl BLOCKED proxy",
+  "started_revision": "01998aac4f38cd5e2896d9246164033ec688b47e",
+  "finished_revision": "01998aac4f38cd5e2896d9246164033ec688b47e",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

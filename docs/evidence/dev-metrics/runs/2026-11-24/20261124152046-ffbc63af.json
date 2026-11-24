@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261124152046-ffbc63af",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-24T15:20:46.922Z",
+  "finished_at": "2026-11-24T15:25:35.465Z",
+  "wall_seconds": 289,
+  "paused_seconds": 0,
+  "measured_seconds": 289,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "Javítottam a hosted Editor Core exact-SHA futásban talált deeplink timing race tesztet; célzott Chromium és unit ellenőrzés PASS, D-06 és teljes CI továbbra nyitott.",
+  "evidence": [
+    "docs/evidence/editor-d06-partial-inspector-types-2026-11-24.json"
+  ],
+  "checks": "browser page interactions PASS 1/1; page interactions unit PASS 1/1; plan-contract PASS 16/16; canonical plan PASS 13 files and 396 mappings; traceability PASS 396/396; exact hosted run 45417672997 FAILURE at one timing assertion; production Worker remains 100% on prior version; no runtime deployment",
+  "started_revision": "01998aac4f38cd5e2896d9246164033ec688b47e",
+  "finished_revision": "01998aac4f38cd5e2896d9246164033ec688b47e",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
