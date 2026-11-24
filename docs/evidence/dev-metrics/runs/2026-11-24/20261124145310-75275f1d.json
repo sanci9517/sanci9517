@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261124145310-75275f1d",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-24T14:53:10.507Z",
+  "finished_at": "2026-11-24T14:57:09.999Z",
+  "wall_seconds": 239,
+  "paused_seconds": 0,
+  "measured_seconds": 239,
+  "status": "partial",
+  "kind": "docs",
+  "summary": "A deploy-olt D-06 Publish-versenyjavítás és a gépi bizonyíték/mérési napló ellenőrizve és GitHubra mentve; exact-SHA Editor Core böngészős CI továbbra fut.",
+  "evidence": [
+    "docs/evidence/editor-d06-stale-publish-response-2026-11-24.json"
+  ],
+  "checks": "active-point:OPEN",
+  "started_revision": "01998aac4f38cd5e2896d9246164033ec688b47e",
+  "finished_revision": "01998aac4f38cd5e2896d9246164033ec688b47e",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
