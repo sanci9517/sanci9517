@@ -86,6 +86,10 @@ function safeLink(anchor) {
 
 function readInlineNodes(root, inherited = {marks: [], styles: {}}, inheritedLink = null, budget) {
   const result = [];
+  // Read the empty-block placeholder rule once per inline root. Querying for
+  // every <br> made a large but valid pasted paragraph quadratic in its break
+  // count, despite the aggregate DOM and inline-run limits below.
+  const isSingleEmptyPlaceholderBreak = root?.querySelectorAll?.('br').length === 1 && root.textContent === '';
   const append = run => {
     if (budget.inlineRuns >= MAX_INLINE_RUNS) {
       throw new Error(`A beillesztett tartalom legfeljebb ${MAX_INLINE_RUNS} formázott szövegrészt tartalmazhat.`);
@@ -106,7 +110,7 @@ function readInlineNodes(root, inherited = {marks: [], styles: {}}, inheritedLin
     if (tag === 'BR') {
       // Preserve in-paragraph/LI/TD hard breaks as canonical inline newlines.
       // A single placeholder <br> in an otherwise empty block is not content.
-      if (!(root.querySelectorAll?.('br').length === 1 && root.textContent === '')) {
+      if (!isSingleEmptyPlaceholderBreak) {
         append({type:'text',text:'\n',marks:[...context.marks],
           ...(Object.keys(context.styles).length?{styles:{...context.styles}}:{}),
           ...(link?{link}:{})});

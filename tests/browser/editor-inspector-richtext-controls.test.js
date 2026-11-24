@@ -231,6 +231,15 @@ test('typed Inspector controls and link selection work with real browser DOM at 
       const excessiveDomNodes=rejectionFor('<p>'+ '<i></i>'.repeat(20001) +'</p>');
       const tooDeepImport=rejectionFor(tooDeepHtml);
       const safeDepthImport=importRichTextClipboard({html:'<p>'+ '<span>'.repeat(61) +'<strong>safe</strong>'+ '</span>'.repeat(61) +'</p>'});
+      const originalQuerySelectorAll=Element.prototype.querySelectorAll;
+      let breakSelectorQueries=0;
+      Element.prototype.querySelectorAll=function(selector,...args){
+        if(selector==='br')breakSelectorQueries++;
+        return originalQuerySelectorAll.call(this,selector,...args);
+      };
+      let repeatedBreakImport;
+      try { repeatedBreakImport=importRichTextClipboard({html:'<p>'+ '<br>'.repeat(256) +'</p>'}); }
+      finally { Element.prototype.querySelectorAll=originalQuerySelectorAll; }
       let tooManyPlainTextBlocksRejected=false;try{importRichTextClipboard({text:'x\n'.repeat(5000)})}catch(error){tooManyPlainTextBlocksRejected=/legfeljebb 5000 szövegblokk/.test(error.message)}
       // Pin both sides of the guard: the advertised maximum stays usable, and
       // only the first item beyond it is rejected. These are intentionally
@@ -286,6 +295,7 @@ test('typed Inspector controls and link selection work with real browser DOM at 
         tooManyBlocks,tooManyListItems,tooManyDocumentListItems,excessiveInlineRuns,tooManyPlainTextBlocksRejected,
         tooDeepImport,excessiveDomNodes,safeDepthImport,
         atBudgetBlocks,atBudgetListItems,atBudgetInlineRuns,atBudgetPlainTextBlocks,ordinaryFormattedPaste,
+        breakSelectorQueries,repeatedBreakText:repeatedBreakImport.blocks[0].children.map(run=>run.text).join(''),
         pasteAttack:window.__pasteAttack,
         markedRun:aligned.blocks[0].children.find(x=>x.text==='world'),alignment:aligned.blocks[0].align,
         multiSelection,multiBlocks:multiAligned.blocks,
@@ -371,6 +381,8 @@ test('typed Inspector controls and link selection work with real browser DOM at 
     assert.equal(data.atBudgetListItems,5000,'a list at the documented item limit remains importable');
     assert.equal(data.atBudgetInlineRuns,5000,'formatted text at the documented run limit remains importable');
     assert.equal(data.atBudgetPlainTextBlocks,5000,'plain text at the documented block limit remains importable');
+    assert.equal(data.breakSelectorQueries,1,'large hard-break pastes scan the inline root once instead of querying the whole subtree for every break');
+    assert.equal(data.repeatedBreakText,'\n'.repeat(256),'hard-break count and order are preserved by the bounded import path');
     assert.deepEqual(data.ordinaryFormattedPaste.blocks[0].children.map(run=>run.text),['Jól formázott',' szöveg'],'ordinary formatted clipboard imports remain supported');
     assert.equal(data.pasteAttack,undefined,'Office markup must be parsed as inert content');
     await page.close();

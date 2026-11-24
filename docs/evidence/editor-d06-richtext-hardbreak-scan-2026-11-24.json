@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "captured_at_utc": "2026-11-24T18:10:00Z",
+  "plan_item": "77.44.7.D / D-06 — linear Rich Text hard-break scan",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "base_commit": "b91168963c0ab1914e98a371bd877a8f37e240f3",
+    "runtime_source_parent": "bfd2d242272fb32c306c4ff9c492837de5377ee4",
+    "canonical_plan_bytes": 1865612,
+    "canonical_plan_changed": false
+  },
+  "change": {
+    "runtime_changed": true,
+    "file": "public/editor-v2/core/richtext-import.js",
+    "summary": "Cache the empty-placeholder BR predicate once for each inline root rather than querying the entire root for each hard break. Large valid pasted paragraphs therefore avoid a repeated subtree scan while retaining all newline characters and empty-placeholder behavior.",
+    "cache_token": "20261124-edt044-import-tree-budget-v2",
+    "regression": "tests/browser/editor-inspector-richtext-controls.test.js instruments querySelectorAll for a 256-BR paste and asserts one BR query and all 256 imported newlines.",
+    "save_publish_contract_changed": false,
+    "new_dependency": false
+  },
+  "checks": {
+    "pre_fix_regression": "PASS as a defect reproducer: assertion failed with 256 BR queries where the intended limit is 1; the same test passes after the implementation change.",
+    "real_chromium": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test tests/browser/editor-inspector-richtext-controls.test.js",
+      "result": "PASS",
+      "tests": 2,
+      "duration_ms": 6710.636,
+      "hard_breaks_preserved": 256,
+      "BR_subtree_queries": 1,
+      "orphans_reaped": 8
+    },
+    "node_tests": "node tests/editor-public-asset-cache-bust.test.js PASS 3/3",
+    "editor_suite": "npm run test:editor PASS: Editor tests 24/24, account-preferences routes 10/10, Linux runner tests 4/4",
+    "typecheck": "npm run typecheck -- --pretty false PASS",
+    "canonical_plan": "python3 scripts/check-canonical-plan.py PASS; one canonical master, 13 plan files, 396 mappings",
+    "plan_contract": "python3 scripts/plan_contract.py PASS",
+    "feature_traceability": "python3 scripts/build-feature-traceability.py --check PASS; 396/396",
+    "active_point": "python3 scripts/audit-active-plan-point.py PASS bookkeeping; cursor 77.44 / WEB-011 -> 77.44.7.D remains OPEN / NOT_CERTIFIED",
+    "migration_safety": "node scripts/web013-migration-safety-gate.mjs PASS",
+    "wrangler_dry_run": "WRANGLER_LOG_PATH=/tmp/sanci9517-wrangler-dry-run-20261124.log npx wrangler deploy --dry-run PASS, exit 0; 202 public assets read; no deploy",
+    "diff_check": "git diff --check PASS"
+  },
+  "production_preflight": {
+    "method": "Cloudflare D1 Query API; SELECT only",
+    "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
+    "tables": 34,
+    "latest_migration_marker": "0030_media_library_organization.sql",
+    "queries": ["SELECT name FROM sqlite_master WHERE type = 'table' ORDER BY name", "SELECT name FROM d1_migrations ORDER BY name DESC LIMIT 5"],
+    "rows_written": 0,
+    "changes": 0,
+    "changed_db": false,
+    "migration_or_business_data_write": false,
+    "r2_operation": false
+  },
+  "live_before_release": {
+    "deployment_id": "f839e982-f079-480e-9008-c5bdd5f26130",
+    "worker_version_id": "6bc8a71d-37f1-47d1-ab4d-4315e8bac6bd",
+    "worker_version_number": 4185,
+    "traffic_percent": 100,
+    "health_url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+    "health_http_status": 200,
+    "health_body": {"ok": true, "service": "sanci9517-streamer-brand", "version": "2.0.0", "server": "cloudflare-worker"},
+    "deployed_assets_match_current_branch_head": {
+      "/editor-v2/": "6e75f03baedec6bd044572683fb90bc13ad43836a5c84fc5d5c99e74d7921c4d",
+      "/editor-v2/app.js": "f04356b20b0968836f8021c7a46448d8a339bc173584a5cdc8803e50112fd067",
+      "/editor-v2/core/richtext-import.js": "f0bc444630a320d5e83a08434a579667515dd306349859537354c70c4b37f4de"
+    },
+    "source_change_in_this_record_not_deployed_yet": true
+  },
+  "free_usage": {
+    "cloudflare_build_minutes_limit_reached": false,
+    "refresh_date": "2026-11-30T23:59:59.999Z",
+    "github_hosted_actions_remaining_quota": "not independently verified; no paid use or manual dispatch/rerun",
+    "new_cost_huf": 0
+  },
+  "acceptance": {
+    "slice": "IMPLEMENTED / LOCAL CHECKS PASS / RELEASE PENDING",
+    "d06": "OPEN / NOT CERTIFIED",
+    "d01_to_d07": "OPEN / NOT CERTIFIED",
+    "full_d_block": "OPEN / NOT CERTIFIED",
+    "complete_visual_editor": "OPEN / NOT CERTIFIED",
+    "manual_physical_acceptance": "DEFERRED until the complete Editor is implemented",
+    "save_distinct_from_publish": true
+  }
+}
