@@ -1,6 +1,6 @@
 {
   "schema": "sanci.editor.d06.multi-root-clipboard.v1",
-  "recorded_at_utc": "2026-11-24T15:46:00Z",
+  "recorded_at_utc": "2026-11-24T15:49:00Z",
   "repository": "sanci9517/sanci9517",
   "branch": "v2/foundation",
   "plan": {
@@ -8,7 +8,7 @@
     "feature": "EDT-038",
     "status": "partial verification; complete Editor/D acceptance remains OPEN / NOT_CERTIFIED"
   },
-  "scope": "Browser-level multi-selection through the Layers UI, deterministic canvas-order clipboard paste, one-step undo/redo, no persistence before Save, and the existing separate Save/Publish lifecycle.",
+  "scope": "Desktop keyboard multi-selection and mobile long-press multi-selection via the Editor Layers/Canvas UI; deterministic canvas-order clipboard paste, one-step undo/redo, no persistence before Save, and the existing separate Save/Publish lifecycle.",
   "change": {
     "kind": "test-only",
     "path": "tests/browser/editor-node-clipboard.test.js",
@@ -17,15 +17,18 @@
       "Ctrl-click two separate Layers rows in reverse canvas order and copy both roots",
       "Paste produces two distinct IDs in canvas order",
       "Copy/paste creates no API post before Save",
-      "one Undo removes the complete multi-root paste and one Redo restores it"
+      "one Undo removes the complete multi-root paste and one Redo restores it",
+      "On a 390x844 Chromium mobile context, a long-press starts multi-select and a second touch toggles another root into the mobile selection bar",
+      "Mobile copy and paste controls are enabled only after selection/copy and append both roots without an API write",
+      "The mobile Undo action removes both newly pasted roots while retaining prior saved content"
     ],
     "existing_single-subtree_save_reload_publish_coverage_retained": true,
-    "commit": "49a6fc20a785cbae1974d050994ad7c54fe5b0e6",
-    "commit_url": "https://github.com/sanci9517/sanci9517/commit/49a6fc20a785cbae1974d050994ad7c54fe5b0e6",
-    "branch_readback": "v2/foundation compared identical to commit 49a6fc20a785cbae1974d050994ad7c54fe5b0e6"
+    "commit": "d118cb603e5112a7141c070cad200d81ef915164",
+    "commit_url": "https://github.com/sanci9517/sanci9517/commit/d118cb603e5112a7141c070cad200d81ef915164",
+    "branch_readback": "v2/foundation compared identical to commit d118cb603e5112a7141c070cad200d81ef915164"
   },
   "checks": {
-    "node --test tests/browser/editor-node-clipboard.test.js": "PASS 1/1 in Chromium",
+    "node --test tests/browser/editor-node-clipboard.test.js": "PASS 1/1 in Chromium; desktop and mobile touch PointerEvent flows",
     "node --experimental-vm-modules --test public/editor-v2/tests/core.test.js": "PASS 1/1 test file",
     "git diff --check -- tests/browser/editor-node-clipboard.test.js": "PASS",
     "hosted_ci": "NOT RUN: test-only commit uses the repository-required [skip ci] path; no redundant rerun was dispatched"
