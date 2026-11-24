@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261124110432-57a23f30",
+  "task": "77.44.7.D-D06-remote-sync-and-next-gap",
+  "trigger": "manual",
+  "started_at": "2026-11-24T11:04:32.720Z",
+  "finished_at": "2026-11-24T11:13:07.027Z",
+  "wall_seconds": 514,
+  "paused_seconds": 0,
+  "measured_seconds": 514,
+  "status": "pass",
+  "kind": "docs",
+  "summary": "A korábbi runtime release exact-SHA Editor Core CI kapuját lezártam; frissítettem a tervet/evidence-t, a teljes D változatlanul OPEN.",
+  "evidence": [
+    "docs/evidence/editor-d06-publish-recovery-single-alert-post-ci-2026-11-24.json",
+    "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md"
+  ],
+  "checks": "plan-contract 16/16 PASS; canonical-plan 13-file/396-map PASS; traceability 396/396 PASS; active cursor D OPEN; diff/json PASS; exact-SHA Editor Core 45376585213 SUCCESS; CF deployment GET 100%; direct public GET blocked; 0 Ft",
+  "started_revision": "d9cc671b0931b066fb06b55b771c8b2b3dce9bc5",
+  "finished_revision": "d9cc671b0931b066fb06b55b771c8b2b3dce9bc5",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

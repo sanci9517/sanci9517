@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "id": "20261124101016-80c29580",
+  "task": "EDT-019",
+  "trigger": "manual",
+  "started_at": "2026-11-24T10:10:16.604Z",
+  "abandoned_at": "2026-11-24T10:13:17.673Z",
+  "measured_seconds": null,
+  "status": "interrupted",
+  "reason": "No EDT-019 implementation was started; re-scoped to the canonical active point 77.44.7.D / D-06 after rereading the current plan.",
+  "started_revision": "2e680b877d3d65d76227dd9b334192f3397f37de",
+  "measurement": "missing end time; excluded from elapsed time and ETA"
+}

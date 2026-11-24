@@ -1,0 +1,55 @@
+{
+  "schema": "sanci.editor.d06.exact-source-editor-core-ci-followup.v1",
+  "recorded_at_utc": "2026-11-24T11:11:45Z",
+  "repository": "sanci9517/sanci9517",
+  "branch": "v2/foundation",
+  "plan_cursor": "77.44 / WEB-011 -> 77.44.7.D",
+  "source_commit": "6fab0be6822ad778c30faaf20ecc2d29ff410ac8",
+  "branch_sync": {
+    "remote_head": "d9cc671b0931b066fb06b55b771c8b2b3dce9bc5",
+    "local_head": "d9cc671b0931b066fb06b55b771c8b2b3dce9bc5",
+    "verification": "git ls-remote origin refs/heads/v2/foundation returned the exact remote SHA; git fetch updated origin/v2/foundation to the same SHA. No force push or branch change."
+  },
+  "github_editor_core": {
+    "run_id": 45376585213,
+    "job_id": 138384376808,
+    "status": "completed",
+    "conclusion": "success",
+    "step_count": 41,
+    "all_steps_completed": true,
+    "completed_success_steps": [
+      "Run TypeScript typecheck",
+      "Run editor core tests",
+      "Test offline D1 ledger reconciliation and bootstrap",
+      "Run private R2 media API tests",
+      "Run SANCI public showcase unit regression",
+      "Run SANCI public showcase Chromium regression",
+      "Test real Worker media upload with isolated D1 and R2",
+      "Run Editor browser layout regression",
+      "Run WEB-013 Admin mobile browser regression",
+      "Run canonical schedule tests",
+      "Run domain contract tests",
+      "Run Brand Kit storage and access regression",
+      "Run Admin home contract tests",
+      "Complete job"
+    ],
+    "diagnostic_screenshot_upload": "skipped by workflow policy because checks succeeded",
+    "scope_note": "This closes the exact-source Editor Core hosted gate for the 6fab0be runtime release. It does not certify full Editor acceptance or all D-01 through D-07 requirements."
+  },
+  "worker": {
+    "readback": "Cloudflare GET /workers/scripts/sanci9517-streamer-brand/deployments returned the current deployment",
+    "deployment_id": "a97315d9-848d-49ea-9270-75b6aa53958a",
+    "version_id": "fdfa0630-b39c-43d2-baa6-10ea815d748d",
+    "traffic_percent": 100,
+    "source_commit": "6fab0be6822ad778c30faaf20ecc2d29ff410ac8",
+    "health_and_assets": "Prior exact-source release evidence remains the recorded direct health/hash proof. A new direct public GET from this session was NOT VERIFIED: environment network returned ECONNREFUSED/ENETUNREACH. No runtime source changed in this follow-up."
+  },
+  "checks": {
+    "local_tests": "NOT_RERUN: no code or test sources changed; exact-source Editor Core hosted suite is now complete/success.",
+    "canonical_plan_checks": "run after this docs-only update; results recorded in metric entry.",
+    "production_d1": "not queried in this docs-only follow-up; no D1 write/migration.",
+    "r2": "no operation"
+  },
+  "cost_huf": 0,
+  "status": "Exact-source Editor Core CI PASS; full Visual Editor and D-06/D remain OPEN / NOT_CERTIFIED; Save != Publish; manual/physical acceptance deferred."
+}

@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "id": "20261124105748-ab99d294",
+  "task": "77.44.7.D-D06",
+  "trigger": "manual",
+  "started_at": "2026-11-24T10:57:48.720Z",
+  "abandoned_at": "2026-11-24T11:04:32.641Z",
+  "measured_seconds": null,
+  "status": "interrupted",
+  "reason": "Előző Codex futás közben megszakadt; csak állapotellenőrzés történt, pontos lezárási idő hiányában nem számolunk munkát.",
+  "started_revision": "d9cc671b0931b066fb06b55b771c8b2b3dce9bc5",
+  "measurement": "missing end time; excluded from elapsed time and ETA"
+}
