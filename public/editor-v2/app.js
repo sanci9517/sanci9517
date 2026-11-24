@@ -22,7 +22,7 @@ import {normalizePaletteFavoriteTypes,readPaletteFavoriteTypes,togglePaletteFavo
 import {getRichTextBlockSelection,getRichTextFormattingSelection,getRichTextBlockTransformSelection,getRichTextActiveBlockIndex,restoreRichTextBlockSelection,restoreRichTextFormattingSelection,updateRichTextInlineLink,updateRichTextInlineMark,updateRichTextInlineStyle,updateRichTextBlockAlignment} from './core/richtext-links.js?v=20261117-d03-invalid-media-id-guidance-v1';
 import {initialPageId,rememberPageId,requestedPageId} from './core/page-url.js';
 import {getElementCapability} from './core/capability-matrix.js?v=20261123-edt040-in-view-motion-v1';
-import {firstUnsupportedPublicationNode,unsupportedPublicationMessage} from './core/publication-recovery.js?v=20261124-edt042-publish-recovery-v1';
+import {firstUnsupportedPublicationNode,unsupportedPublicationMessage} from './core/publication-recovery.js?v=20261124-edt042-publish-recovery-single-alert-v1';
 import {renderGeometryPresets} from './ui/geometry-presets.js';
 import {importRichTextClipboard} from './core/richtext-import.js?v=20261117-d03-invalid-media-id-guidance-v1';
 import {pasteRichTextDocument} from './core/richtext-paste.js?v=20261117-d03-invalid-media-id-guidance-v1';
