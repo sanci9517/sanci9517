@@ -7,6 +7,10 @@
     "branch": "v2/foundation",
     "runtime_commit": "0fe33e4b7bad5883f434466be97efa1d4cdb8b0d",
     "remote_test_file_before_followup_blob": "f96cd4ae6802bcec47e4759bf7b590f06baf1140",
+    "test_followup_commit": "883e73716e15bdd00d839dac6ca3f313c6c4b5f2",
+    "test_followup_blob": "151bd9e52149a06df192f520a02b5c0139dc9b15",
+    "initial_evidence_commit": "d67ff476577460af5fa27218e4e64f4091420dc2",
+    "metrics_commit": "2ba7ff66068bf9572391b6eb27499a7f49a35fe2",
     "canonical_plan_blob": "316500f6baf97d32b4ddfbf2398d75ff7304872d",
     "canonical_plan_bytes": 1865612,
     "canonical_plan_rewritten": false
