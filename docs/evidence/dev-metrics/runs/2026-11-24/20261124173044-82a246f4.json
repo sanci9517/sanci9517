@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261124173044-82a246f4",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-24T17:30:44.837Z",
+  "finished_at": "2026-11-24T17:35:37.309Z",
+  "wall_seconds": 292,
+  "paused_seconds": 0,
+  "measured_seconds": 292,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "Bounded rich-text HTML traversal with D-06 regression tests and production release; exact-source Editor Core Actions remains in progress.",
+  "evidence": [
+    "docs/evidence/editor-d06-richtext-import-traversal-guard-2026-11-24.json"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "01998aac4f38cd5e2896d9246164033ec688b47e",
+  "finished_revision": "01998aac4f38cd5e2896d9246164033ec688b47e",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

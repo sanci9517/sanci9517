@@ -1,0 +1,87 @@
+{
+  "schema_version": 1,
+  "captured_at_utc": "2026-11-24T17:34:21Z",
+  "plan_item": "77.44.7.D / D-06 — Bound Rich Text HTML clipboard traversal",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "previous_remote_head": "916dc7d1672aa2ee5314687969d4143748adab3a",
+    "runtime_commit": "bfd2d242272fb32c306c4ff9c492837de5377ee4",
+    "remote_head_verified": true,
+    "canonical_plan_blob": "316500f6baf97d32b4ddfbf2398d75ff7304872d",
+    "canonical_plan_rewritten": false
+  },
+  "change": {
+    "kind": "runtime_and_regression_tests",
+    "files": [
+      "public/editor-v2/core/richtext-import.js",
+      "public/editor-v2/app.js",
+      "public/editor-v2/index.html",
+      "tests/browser/editor-inspector-richtext-controls.test.js",
+      "tests/browser/editor-richtext-hardbreak-clipboard.test.js",
+      "tests/editor-public-asset-cache-bust.test.js",
+      "docs/evidence/feature-traceability.json"
+    ],
+    "summary": "After DOMParser, a bounded iterative check now rejects clipboard trees with more than 20000 DOM nodes or more than 64 levels before the existing recursive rich-text conversion runs. The content-size and aggregate output budgets remain unchanged. Tests cover over-depth and over-wide payloads, accepted safely deep formatted input at the configured boundary, user-facing rejection without editor-content replacement, and preservation of separate Save and Publish behavior. The Editor entry/module cache-bust token was advanced.",
+    "runtime_source_changed": true,
+    "save_publish_contract_changed": false,
+    "new_dependency": false
+  },
+  "checks": {
+    "reproduction_before_fix": "FAIL as expected: the newly added real-browser importer regression accepted a 128-level nested span payload instead of returning a bounded-depth error.",
+    "browser_import_and_inspector": "PASS: tests/browser/editor-inspector-richtext-controls.test.js, 2/2",
+    "browser_paste_lifecycle": "PASS: tests/browser/editor-richtext-hardbreak-clipboard.test.js, 1/1; over-depth paste left the selected content unchanged, announced the reason, and did not auto-save; later Save remained separate from Publish.",
+    "public_cache_bust": "PASS: tests/editor-public-asset-cache-bust.test.js, 3/3",
+    "typecheck": "PASS: npm run typecheck -- --pretty false",
+    "editor_unit_suite": "PASS: npm run test:editor; 24/24 Node tests, 10/10 preference route tests, and 4/4 runner tests",
+    "plan_contract": "PASS: 16/16",
+    "canonical_plan": "PASS: one 13-file master and 396 source mappings; plan unchanged",
+    "traceability": "PASS: 396/396 generated mappings current",
+    "active_point_audit": "PASS bookkeeping only; cursor 77.44 / WEB-011 -> 77.44.7.D; 148 PARTIAL_SOURCE / 248 UNVERIFIED; NOT_CERTIFIED",
+    "migration_safety_gate": "PASS: deploy:safe gate; no D1 migrations applied",
+    "d1_preflight": {
+      "sql": "SELECT name FROM d1_migrations ORDER BY name DESC LIMIT 1",
+      "latest_marker": "0030_media_library_organization.sql",
+      "rows_written": 0,
+      "changes": 0,
+      "changed_db": false
+    },
+    "wrangler_dry_run": "PASS exit 0: Wrangler 4.130.0 read 202 public assets; 434.30 KiB / 110.07 KiB gzip; --dry-run exited without upload.",
+    "git_diff_check": "PASS"
+  },
+  "github_actions": {
+    "f0_baseline": {"run_id": 45449733839, "status": "COMPLETED", "conclusion": "SUCCESS"},
+    "canonical_plan_active_point": {"run_id": 45449733807, "status": "COMPLETED", "conclusion": "SUCCESS"},
+    "canonical_plan": {"run_id": 45449733818, "status": "COMPLETED", "conclusion": "SUCCESS"},
+    "twitch_integration": {"run_id": 45449733747, "status": "COMPLETED", "conclusion": "SUCCESS"},
+    "production_source_smoke": {"run_id": 45449733719, "status": "COMPLETED", "conclusion": "SUCCESS"},
+    "editor_core": {"run_id": 45449733712, "status": "IN_PROGRESS", "conclusion": null},
+    "manual_ci_dispatch_or_rerun": false
+  },
+  "production": {
+    "deployment_id": "f839e982-f079-480e-9008-c5bdd5f26130",
+    "worker_version_id": "6bc8a71d-37f1-47d1-ab4d-4315e8bac6bd",
+    "traffic_percent": 100,
+    "health": {
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+      "http_status": 200,
+      "body": {"ok": true, "service": "sanci9517-streamer-brand", "version": "2.0.0", "server": "cloudflare-worker"}
+    },
+    "public_asset_sha256": {
+      "public/editor-v2/index.html": "6e75f03baedec6bd044572683fb90bc13ad43836a5c84fc5d5c99e74d7921c4d",
+      "public/editor-v2/app.js": "f04356b20b0968836f8021c7a46448d8a339bc173584a5cdc8803e50112fd067",
+      "public/editor-v2/core/richtext-import.js": "f0bc444630a320d5e83a08434a579667515dd306349859537354c70c4b37f4de"
+    },
+    "production_d1_mutation_or_migration": false,
+    "production_r2_mutation": false
+  },
+  "safety_and_acceptance": {
+    "new_cost_huf": 0,
+    "paid_service_or_quota_overage": false,
+    "d06": "OPEN / NOT CERTIFIED",
+    "full_d_block": "OPEN / NOT CERTIFIED",
+    "complete_visual_editor": "OPEN / NOT CERTIFIED",
+    "manual_physical_acceptance": "DEFERRED until the complete Editor scope is implemented",
+    "save_distinct_from_publish": true
+  }
+}
