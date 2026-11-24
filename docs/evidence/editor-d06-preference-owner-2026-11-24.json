@@ -1,0 +1,110 @@
+{
+  "schema_version": 1,
+  "captured_at_utc": "2026-11-24T21:32:12Z",
+  "plan_item": "77.44.7.D / D-06 — stale Editor preference owner guard",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "runtime_commit": "ee7b2d8ba9f660844920a6469cb89da40069d075",
+    "previous_runtime_commit": "0206498e79bf937d2cd3350e46a56e34987e0826",
+    "canonical_plan_bytes_before": 1873164,
+    "canonical_plan_blob_before": "ace1f96d45092eb4cdabdc69ea414f6b36c898d2",
+    "append_only": true
+  },
+  "change": {
+    "route": "src/routes/admin/editor-preferences.ts",
+    "client": "public/editor-v2/app.js (owner binding shipped in parent runtime commit)",
+    "behavior": "All preference PUTs require ownerUserId equal to authenticated user id; absent or mismatched identities return 409 PREFERENCES_OWNER_CHANGED before storage mutation.",
+    "regression": [
+      "legacy client missing owner id fails closed",
+      "cross-tab account A→B cannot write stale workspace or palette favorites",
+      "local preference state remains distinct from content Save/Publish"
+    ]
+  },
+  "local_checks": {
+    "npm run test:editor": "PASS — 263/263",
+    "npm run typecheck -- --pretty false": "PASS",
+    "targeted real Chromium cross-tab regression": "PASS — 1/1",
+    "python3 tests/plan-contract.test.py": "PASS — 16/16",
+    "python3 scripts/check-canonical-plan.py": "PASS — one 13-part canonical master",
+    "python3 scripts/audit-active-plan-point.py": "PASS — 77.44 / WEB-011 → 77.44.7.D; 396 features; 148 PARTIAL_SOURCE; 248 UNVERIFIED; acceptance NOT_CERTIFIED",
+    "python3 scripts/build-feature-traceability.py --check": "PASS — 396/396",
+    "git diff --check": "PASS",
+    "wrangler deploy --dry-run": "PASS exit 0 — 202 assets, 434.74 KiB / gzip 110.16 KiB; read-only Wrangler log EROFS warning"
+  },
+  "hosted_ci": {
+    "f0": {
+      "run_id": 45491292096,
+      "conclusion": "success"
+    },
+    "twitch": {
+      "run_id": 45491292107,
+      "conclusion": "success"
+    },
+    "production_worker_source_smoke": {
+      "run_id": 45491292152,
+      "conclusion": "success"
+    },
+    "canonical_plan": {
+      "run_id": 45491292208,
+      "conclusion": "success"
+    },
+    "active_point_audit": {
+      "run_id": 45491292143,
+      "conclusion": "success"
+    },
+    "editor_core": {
+      "run_id": 45491292265,
+      "status": "in_progress",
+      "conclusion": null,
+      "url": "https://github.com/sanci9517/sanci9517/actions/runs/45491292265"
+    }
+  },
+  "cloudflare": {
+    "build_id": "f02570c5-7106-4dee-b149-723a9a46d4bf",
+    "build_outcome": "success",
+    "build_commit_sha": "ee7b2d8ba9f660844920a6469cb89da40069d075",
+    "build_command": "npm run typecheck",
+    "deploy_command": "npm run deploy:safe",
+    "deployment_id": "e191679e-ef45-40f2-8f33-8b07b6c57e49",
+    "worker_version_id": "97b3a023-8133-45fe-83cd-b32da1f199de",
+    "worker_version_number": 4190,
+    "traffic_percent": 100,
+    "health_http": 200,
+    "health_body": {
+      "ok": true,
+      "service": "sanci9517-streamer-brand",
+      "version": "2.0.0",
+      "server": "cloudflare-worker"
+    },
+    "changed_public_asset": "/editor-v2/app.js",
+    "asset_http": 200,
+    "asset_sha256_source_and_live": "3f6ca27a25212ebb9c66f3a8f525516d1e7246b29b7c981b6c0607cda2718e33",
+    "asset_bytes": 229714
+  },
+  "production_d1_read_only_preflight": {
+    "database": "sanci9517-db",
+    "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
+    "queries": [
+      "SELECT name FROM d1_migrations ORDER BY name DESC LIMIT 1",
+      "SELECT name FROM sqlite_master WHERE type='table' AND name='editor_preferences'"
+    ],
+    "latest_migration": "0030_media_library_organization.sql",
+    "table_present": true,
+    "rows_written": 0,
+    "changes": 0,
+    "changed_db": false
+  },
+  "safety": {
+    "production_d1_migration_or_business_data_write": false,
+    "r2_mutation": false,
+    "worker_deployment": true,
+    "paid_service": false,
+    "new_cost_huf": 0,
+    "save_and_publish_remain_separate": true
+  },
+  "limitations": [
+    "Editor Core hosted run 45491292265 was in progress at evidence capture; no PASS claimed.",
+    "This is one stale-client identity D-06 fix only. D-06, D-01–D-07, 77.44.7.D, full Visual Editor and functional acceptance remain OPEN / NOT CERTIFIED; full manual/physical acceptance is deferred until complete Editor scope."
+  ]
+}

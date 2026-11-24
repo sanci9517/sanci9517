@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "id": "20261124211400-a9a7cf13",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-24T21:14:00.891Z",
+  "finished_at": "2026-11-24T21:33:41.619Z",
+  "wall_seconds": 1181,
+  "paused_seconds": 0,
+  "measured_seconds": 1181,
+  "status": "pass",
+  "kind": "mixed",
+  "summary": "EDT-044 stale account preference write blocked and deployed; targeted Browser + Editor suite pass. Editor Core hosted run remains in progress.",
+  "evidence": [
+    "docs/evidence/editor-d06-preference-owner-2026-11-24.json",
+    "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+    "ee7b2d8ba9f660844920a6469cb89da40069d075"
+  ],
+  "checks": "npm run test:editor 263/263; typecheck PASS; Chromium cross-tab 1/1; plan 16/16; traceability 396/396; D1 SELECT-only; Wrangler dry-run; Cloudflare Build/deploy/health/assets PASS; hosted Editor Core IN_PROGRESS",
+  "started_revision": "1603a5295e2a2a1f7b1a6a51a0e690907958e418",
+  "finished_revision": "ee7b2d8ba9f660844920a6469cb89da40069d075",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
