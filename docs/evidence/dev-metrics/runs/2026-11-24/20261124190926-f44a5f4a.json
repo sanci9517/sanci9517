@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "id": "20261124190926-f44a5f4a",
+  "task": "77.44.7.D",
+  "trigger": "scheduled",
+  "started_at": "2026-11-24T19:09:26.105Z",
+  "finished_at": "2026-11-24T19:28:03.973Z",
+  "wall_seconds": 1118,
+  "paused_seconds": 0,
+  "measured_seconds": 1118,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "Structured Accordion accessible name fix is pushed and deployed; expanded exact-source smoke verified HTTP 200 and hashes for all 16 changed public files. Exact-SHA Editor Core CI remains in progress.",
+  "evidence": [
+    "docs/evidence/editor-d06-accordion-accessible-group-2026-11-24.json",
+    "https://github.com/sanci9517/sanci9517/actions/runs/45468370010",
+    "https://github.com/sanci9517/sanci9517/actions/runs/45469690929"
+  ],
+  "checks": "unit 35/35; browser 4/4; editor 24/24; preferences 10/10; subreaper 4/4; typecheck; asset cache 3/3; plan contract 16/16; canonical/traceability/active-point checks; D1 SELECT-only; Wrangler dry-run; exact SHA Cloudflare build and 100% traffic; production health/hash smoke PASS; Editor Core CI pending.",
+  "started_revision": "ea40a76c94a452328ffbcf0d3260d95c36e16fbe",
+  "finished_revision": "b6c2ba652d0b14ada0dd76a0f307b7cba6e02fe5",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
