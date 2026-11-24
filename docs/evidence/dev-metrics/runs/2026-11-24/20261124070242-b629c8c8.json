@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261124070242-b629c8c8",
+  "task": "77.44.7.D-D06-editor-core-ci-triage",
+  "trigger": "scheduled",
+  "started_at": "2026-11-24T07:02:42.996Z",
+  "finished_at": "2026-11-24T07:19:17.251Z",
+  "wall_seconds": 994,
+  "paused_seconds": 427,
+  "measured_seconds": 567,
+  "status": "partial",
+  "kind": "test",
+  "summary": "Investigated exact-SHA Editor Core layout failure; isolated Chromium regression passes locally; reran only the failed hosted job, which is still running at the browser layout suite.",
+  "evidence": [
+    "docs/evidence/editor-core-layout-regression-triage-2026-11-24.json"
+  ],
+  "checks": "node tests/browser/editor-content-system.test.js: PASS 1/1 real Chromium; scripts/audit-active-plan-point.py: PASS bookkeeping (77.44.7.D OPEN); git diff --check: PASS; GitHub Editor Core rerun attempt 2: IN_PROGRESS, no hosted PASS claimed",
+  "started_revision": "777b9709919e21f628769a4c61ed15678c94977f",
+  "finished_revision": "777b9709919e21f628769a4c61ed15678c94977f",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

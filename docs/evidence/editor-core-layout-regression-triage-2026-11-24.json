@@ -1,0 +1,71 @@
+{
+  "schema": "sanci.visual-editor.editor-core-ci-triage.v1",
+  "recorded_at_utc": "2026-11-24T07:18:50Z",
+  "repository": "sanci9517/sanci9517",
+  "branch": "v2/foundation",
+  "plan": {
+    "canonical_path": "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+    "bytes": 1853597,
+    "sha256": "86dc3e0a0388eda563ded4b170e305ecf381d5bd4558e6cac39159f995a2bfec",
+    "cursor": "77.44 / WEB-011 / 77.44.7.D",
+    "status": "OPEN / NOT_CERTIFIED",
+    "source_status_counts": {
+      "PARTIAL_SOURCE": 148,
+      "UNVERIFIED": 248
+    }
+  },
+  "triage": {
+    "source_commit": "66a53bb61b2b58812046c9d8eea88b34f6c4e82f",
+    "source_test_file": "tests/browser/editor-content-system.test.js",
+    "source_test_sha256": "a58ac90fb1c3becac667a5e7523a642d103a51435c1668fe1d23e73bfc58bacb",
+    "initial_run": {
+      "run_id": 45280818766,
+      "attempt": 1,
+      "job_id": 138064486258,
+      "conclusion": "failure",
+      "failed_step": "Run Editor browser layout regression",
+      "test": "typed authored elements survive Inspector edits, reload and separate Publish with real accessible content and interactions",
+      "location": "tests/browser/editor-content-system.test.js:1348",
+      "error": "page.waitForFunction: Timeout 15000ms exceeded while focusPublicTab waited for document.activeElement.id to match the selected public tab after the 390x640 viewport change."
+    },
+    "targeted_local_reproduction": {
+      "command": "node tests/browser/editor-content-system.test.js",
+      "result": "PASS",
+      "tests": "1/1 real Chromium",
+      "note": "The default sandbox attempt could not bind the test's temporary 127.0.0.1 HTTP server (EPERM); the exact targeted test was rerun with permitted loopback access and passed in 51.1 seconds."
+    },
+    "retry": {
+      "run_id": 45280818766,
+      "attempt": 2,
+      "job_id": 138279329693,
+      "status_at_recording": "in_progress",
+      "completed_steps": 13,
+      "active_step": "Run Editor browser layout regression",
+      "conclusion": null
+    },
+    "local_targeted_file_sha_matches_source_commit": true
+  },
+  "source_change": "none; runtime and test source are unchanged from the exact-SHA hosted run.",
+  "production": {
+    "deployment_id": "42feeec0-8a65-4a22-8fcf-d6d2acf9cf53",
+    "worker_version_id": "d52c8bae-32e2-4fdc-a628-7295b3c5f34d",
+    "version_number": 4177,
+    "traffic_percentage": 100,
+    "deployment_readback": "Live Cloudflare deployments GET in this session.",
+    "new_deployment": false,
+    "production_health_retest": "NOT RUN; no runtime change in this triage block. The prior exact-source smoke is recorded in editor-d06-authored-accordion-dom-id-2026-11-23.json."
+  },
+  "safety": {
+    "production_d1_writes_or_migrations": 0,
+    "production_r2_mutations_or_deletions": 0,
+    "save_publish_separate": true,
+    "manual_physical_acceptance": "DEFERRED_UNTIL_COMPLETE_EDITOR",
+    "new_cost_huf": 0,
+    "ci_action": "One owner-authorized rerun of the failed Editor Core job only; no paid services or unrelated workflow dispatches."
+  },
+  "acceptance": {
+    "D06": "OPEN / NOT_CERTIFIED",
+    "D01_D07": "OPEN / NOT_CERTIFIED",
+    "full_editor": "OPEN / NOT_CERTIFIED"
+  }
+}
