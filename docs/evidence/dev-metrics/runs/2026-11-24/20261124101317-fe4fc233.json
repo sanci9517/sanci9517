@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "id": "20261124101317-fe4fc233",
+  "task": "77.44.7.D-D06",
+  "trigger": "manual",
+  "started_at": "2026-11-24T10:13:17.771Z",
+  "finished_at": "2026-11-24T10:44:01.806Z",
+  "wall_seconds": 1844,
+  "paused_seconds": 0,
+  "measured_seconds": 1844,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "EDT-042 D-06 slice fixed, tested and released; exact-SHA smoke/build PASS, Editor Core workflow still in progress; full D remains OPEN.",
+  "evidence": [
+    "docs/evidence/editor-d06-publish-recovery-single-alert-2026-11-24.json",
+    "6fab0be6822ad778c30faaf20ecc2d29ff410ac8",
+    "933023dfdd16ca614657f1e0ccfedbbe3b91eeac"
+  ],
+  "checks": "test:editor 24/24; browser 1/1; typecheck PASS; plan 16/16; traceability PASS; migration gate PASS; Wrangler dry-run exit 0; exact-SHA smoke/build PASS; editor-core IN_PROGRESS",
+  "started_revision": "2e680b877d3d65d76227dd9b334192f3397f37de",
+  "finished_revision": "933023dfdd16ca614657f1e0ccfedbbe3b91eeac",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
