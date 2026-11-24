@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "captured_at_utc": "2026-11-24T22:35:52Z",
+  "captured_at_utc": "2026-11-24T22:38:00Z",
   "plan_item": "77.44.7.D / D-06 — Published Tabs breakpoint reinitialization regression",
   "repository": {
     "name": "sanci9517/sanci9517",
@@ -43,8 +43,16 @@
     "traffic_percent": 100,
     "source_unchanged": true,
     "deployment_created_for_test_change": false,
-    "health_current_block": "UNVERIFIED — Cloudflare execution fetch returned a proxy Forbidden body; no new health PASS claimed.",
-    "changed_public_assets": []
+    "health_current_block": "Initial Cloudflare execution fetch was blocked by a proxy Forbidden body; a later direct read-only curl GET to /api/health at 2026-11-24T22:38:00Z succeeded with HTTP 200.",
+    "changed_public_assets": [],
+    "health_http": 200,
+    "health_body": {
+      "ok": true,
+      "service": "sanci9517-streamer-brand",
+      "version": "2.0.0",
+      "server": "cloudflare-worker"
+    },
+    "health_verified_at_utc": "2026-11-24T22:38:00Z"
   },
   "safety": {
     "production_d1_mutation": false,
