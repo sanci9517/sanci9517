@@ -1,0 +1,120 @@
+{
+  "schema_version": 1,
+  "evidence_id": "editor-d06-structured-accordion-accessible-name-2026-11-25",
+  "plan_point": "77.44.7.D / D-06 — structured Accordion accessible-name Inspector field",
+  "status": "PARTIAL — fix deployed and exact-source smoke passed; exact-SHA Editor Core is still running",
+  "scope": "Exposes the already-rendered accessible name for structured-v1 Accordion nodes in the Inspector. This does not close D-06, the D-block, or full Editor acceptance.",
+  "branch": "v2/foundation",
+  "base_sha": "974da6bbce7601bb2690171fef84c263f3f3e9b4",
+  "runtime_commit": "e2ffa4954cc5738134f36c27063d6e13a414919e",
+  "change": {
+    "summary": "Added Accordion to the structured Inspector accessible-name field allowlist; the control persists only props.ariaLabel, remains disabled for locked nodes, and is cache-busted from app.js.",
+    "files": [
+      "public/editor-v2/ui/structured-inspector.js",
+      "public/editor-v2/app.js",
+      "public/editor-v2/tests/structured-inspector-invalid-content.test.js",
+      "tests/editor-public-asset-cache-bust.test.js",
+      "docs/evidence/feature-traceability.json"
+    ],
+    "public_asset_sha256": {
+      "public/editor-v2/app.js": "2902917a5831ccd290cf1f6e04111b89ae3f072a9128081a9895188fa2b58a7f",
+      "public/editor-v2/ui/structured-inspector.js": "8bf2acefc1649b0dce4cf5bea6dd2bca1b2ce4b0b6e6b7516e072acfff8ef754"
+    },
+    "new_dependency": false,
+    "production_d1_mutation": false,
+    "r2_operation": false
+  },
+  "checks": [
+    {
+      "command": "node --experimental-vm-modules public/editor-v2/tests/structured-inspector-invalid-content.test.js",
+      "result": "PASS",
+      "summary": "3/3; structured Accordion exposes the same independent props.ariaLabel field and update route as other structured content types."
+    },
+    {
+      "command": "node --experimental-vm-modules public/editor-v2/tests/element-content.test.js",
+      "result": "PASS",
+      "summary": "38/38; Accordion accessible names are escaped, bounded, and have a safe fallback."
+    },
+    {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-structured-content.test.js",
+      "result": "PASS",
+      "summary": "6/6 real Chromium lifecycle cases, including structured Accordion Inspector edit, Save, Publish, and public rendering. Required additional network permission because default sandbox denied localhost listen with EPERM and Chromium exited SIGTRAP."
+    },
+    {
+      "command": "npm run test:editor",
+      "result": "PASS",
+      "summary": "24/24 Editor unit files; preferences 12/12 and Linux subreaper runner 4/4."
+    },
+    {
+      "command": "node tests/editor-public-asset-cache-bust.test.js && node tests/worker-production-source-smoke.test.mjs",
+      "result": "PASS",
+      "summary": "3/3 cache-key and 2/2 changed-public-asset source-smoke checks."
+    },
+    {
+      "command": "npm run typecheck -- --pretty false; node scripts/web013-migration-safety-gate.mjs; python3 tests/plan-contract.test.py; python3 scripts/check-canonical-plan.py; python3 scripts/build-feature-traceability.py --check; python3 scripts/audit-active-plan-point.py",
+      "result": "PASS",
+      "summary": "Typecheck, safe-deploy migration guard, 16/16 plan-contract, 13-file canonical plan integrity, 396-item source crosswalk, active cursor 77.44 / WEB-011 -> 77.44.7.D."
+    },
+    {
+      "command": "npx wrangler deploy --dry-run",
+      "result": "PASS",
+      "summary": "Wrangler 4.130.0 read 202 assets (442.19 KiB / 111.25 KiB gzip); exit 0. The read-only sandbox emitted an EROFS debug-log warning, but the dry-run completed successfully."
+    }
+  ],
+  "production_preflight": {
+    "method": "Cloudflare D1 Query API, SELECT-only",
+    "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
+    "queries": [
+      "SELECT count(*) AS migration_count FROM d1_migrations",
+      "SELECT name FROM d1_migrations ORDER BY name DESC LIMIT 1",
+      "SELECT count(*) AS schema_objects FROM sqlite_master WHERE type IN ('table','index','view','trigger')"
+    ],
+    "migration_count": 36,
+    "latest_migration": "0030_media_library_organization.sql",
+    "schema_objects": 147,
+    "rows_written": 0,
+    "changes": 0,
+    "changed_db": false
+  },
+  "release": {
+    "source_push": "normal fast-forward to origin/v2/foundation; remote ref verified at runtime_commit",
+    "github_checks": {
+      "exact_sha": "e2ffa4954cc5738134f36c27063d6e13a414919e",
+      "passed": [
+        "Workers Builds: sanci9517-streamer-brand",
+        "Verify live health and exact changed public source bytes",
+        "twitch-integration",
+        "verify",
+        "canonical-plan",
+        "source-audit"
+      ],
+      "editor_core": "IN_PROGRESS — Run Editor browser layout regression is running"
+    },
+    "cloudflare_build": {
+      "build_uuid": "b7a304c7-72e8-4ee4-8135-fd0a2e0cca5e",
+      "outcome": "success",
+      "commit_hash": "e2ffa4954cc5738134f36c27063d6e13a414919e",
+      "branch": "v2/foundation",
+      "build_command": "npm run typecheck",
+      "deploy_command": "npm run deploy:safe"
+    },
+    "deployment_id": "9e322974-f13d-4217-9483-5f0535cea9d8",
+    "traffic_version_id": "13254928-f459-4320-831f-cc2a5c0607e6",
+    "traffic_percentage": 100,
+    "production_source_smoke": {
+      "status": "PASS",
+      "run": "45695431463",
+      "health_status": 200,
+      "changed_asset_hashes": "Exact-source hashes for both changed public assets matched after bounded retries while global rollout propagation completed."
+    },
+    "direct_shell_get_limiter": "The separate local shell request received HTTP 403 from the sandbox network proxy; the exact-SHA production smoke workflow independently passed health and changed-asset SHA verification."
+  },
+  "acceptance": {
+    "d06": "OPEN / NOT_CERTIFIED",
+    "d01_d07": "OPEN / NOT_CERTIFIED",
+    "complete_visual_editor": "OPEN / NOT_CERTIFIED",
+    "manual_physical_acceptance": "DEFERRED until the full Editor scope is complete",
+    "save_publish_separation": "UNCHANGED"
+  },
+  "cost_huf": 0
+}

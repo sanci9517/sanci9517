@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261125202539-bc11cb64",
+  "task": "structured-accordion-accessible-name",
+  "trigger": "manual",
+  "started_at": "2026-11-25T20:25:39.512Z",
+  "finished_at": "2026-11-25T20:37:27.705Z",
+  "wall_seconds": 708,
+  "paused_seconds": 0,
+  "measured_seconds": 708,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "Shipped structured Accordion accessible-name Inspector fix and verified exact-source Worker release; full D-06 and Editor remain open, Editor Core CI still running.",
+  "evidence": [
+    "docs/evidence/editor-d06-structured-accordion-accessible-name-2026-11-25.json",
+    "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md"
+  ],
+  "checks": "Local editor unit and Chromium lifecycle PASS; exact SHA release smoke PASS; Editor Core CI IN_PROGRESS",
+  "started_revision": "974da6bbce7601bb2690171fef84c263f3f3e9b4",
+  "finished_revision": "e2ffa4954cc5738134f36c27063d6e13a414919e",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
