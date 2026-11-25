@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261125135506-7fde8c60",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-25T13:55:06.084Z",
+  "finished_at": "2026-11-25T13:56:05.421Z",
+  "wall_seconds": 59,
+  "paused_seconds": 0,
+  "measured_seconds": 59,
+  "status": "pass",
+  "kind": "docs",
+  "summary": "Recorded exact-SHA GitHub runs, successful Cloudflare Build/100% deployment, direct health response, D1 SELECT-only preflight and all changed public asset hash matches after the runtime push. D-06/full Editor remain OPEN.",
+  "evidence": [
+    "docs/evidence/editor-d06-reduced-motion-video-playback-2026-11-25.json"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "aa25218a3e5f1052749244cdd64af60d80d2230f",
+  "finished_revision": "aa25218a3e5f1052749244cdd64af60d80d2230f",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
