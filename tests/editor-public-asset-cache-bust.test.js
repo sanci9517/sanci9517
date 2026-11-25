@@ -51,8 +51,8 @@ test('the Editor and public renderer release tokens bust the structured accessib
   for(const path of ['core/state.js','core/commands.js','core/editor-templates.js']){const source=await readFile(resolve(root,path),'utf8');assert.match(source,new RegExp(`validation\\.js\\?v=${editorEntryVersion}`),`${path} must load the refreshed validator`)}
   assert.match(app,/core\/responsive\.js\?v=20261122-edt024-responsive-prototype-safety-v1/,
     'the versioned entry script must request the responsive resolver cache key');
-  assert.match(app,/ui\/structured-inspector\.js\?v=20261123-d06-single-slide-carousel-v1/,
-    'the versioned entry script must request the structured Inspector accessible-name controls');
+  assert.match(app,/ui\/structured-inspector\.js\?v=20261125-d06-accordion-accessible-name-v1/,
+    'the versioned entry script must request the structured Inspector accessible-name controls, including Accordion');
   assert.match(publicHtml,new RegExp(`page-renderer\\.js\\?v=${mediaPlaybackVersion}`),
     'published pages must request the renderer version containing reduced-motion playback behavior');
   assert.match(publicRenderer,new RegExp(`authored-content\\.js\\?v=${mediaPlaybackVersion}`),

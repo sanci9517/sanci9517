@@ -33,7 +33,7 @@ import {resolveElementInsertion} from './core/element-insertion.js';
 import {TYPOGRAPHY_PRESETS,typographyPresetPatch} from './core/typography-presets.js';
 import {isStructuredType,createElementContent,normalizeElementContent,renderElementContent,activateStructuredContent} from './core/element-content.js?v=20261125-d06-authored-carousel-slide-semantics-v1';
 import {legacyImageSource,legacyPlayableSource,legacyPlaybackSettings,legacyImagePresentation,legacyImageCaption,applyReducedMotionVideoPlayback} from './core/legacy-media-source.js?v=20261125-d06-authored-carousel-slide-semantics-v1';
-import {renderStructuredInspector} from './ui/structured-inspector.js?v=20261123-d06-single-slide-carousel-v1';
+import {renderStructuredInspector} from './ui/structured-inspector.js?v=20261125-d06-accordion-accessible-name-v1';
 import {ICON_CHOICES,iconById} from './core/icon-options.js';
 import {DIVIDER_LINE_STYLES,normalizeDividerStyle} from './core/decorative-elements.js';
 import {defaultCardContent,cardImageSrc} from './core/card-content.js?v=20261118-d02-card-cta-recovery-v1';

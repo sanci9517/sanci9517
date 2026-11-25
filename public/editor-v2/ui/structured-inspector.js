@@ -97,7 +97,7 @@ export function renderStructuredInspector(node,update,{pending=()=>{},updateProp
   const editor=document.createElement(multi?'textarea':'input');editor.value=value??'';editor.disabled=Boolean(node.locked);editor.maxLength=maxLength;editor.setAttribute('aria-label',name);
   label.append(caption,editor,composition.attach(editor,onChange));return label;
  };
- if(['table','tabs','gallery','carousel'].includes(node.type)){
+ if(['table','tabs','accordion','gallery','carousel'].includes(node.type)){
   const accessibleName=input('ariaLabel','Akadálymentes elnevezés',typeof node.props?.ariaLabel==='string'?node.props.ariaLabel:'',(value,options)=>updateProperties({ariaLabel:value},options),false,160);
   accessibleName.dataset.inspectorKey='props.ariaLabel';
   section.append(accessibleName);
