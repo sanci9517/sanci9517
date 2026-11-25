@@ -5,6 +5,7 @@ import {getElementCapability,getElementInspectorContract} from '../core/capabili
 import {getProperty,listProperties,registerProperty} from '../core/property-registry.js?v=20261123-edt040-in-view-motion-v1';
 import {getInspectorValueContract,normalizeInspectorValue} from '../core/property-values.js';
 import {STYLE_MAP} from '../core/canvas-engine.js';
+import {CONTENT_FIELDS} from '../core/authored-content.js';
 
 test('every declared type exposes its actual registry fields without certifying readiness',()=>{
  const covered=new Set();
@@ -87,10 +88,12 @@ test('Inspector value contracts match required, trimming, and literal content-te
  assert.equal(normalizeInspectorValue(getProperty('typography.fontSize'),' 24px '),'24px');
  assert.equal(normalizeInspectorValue(getProperty('advanced.nodeName'),' hello '),'hello');
 });
-test('unknown, inherited object keys and planned form types never advertise working controls',()=>{
- for(const type of [null,undefined,{},'constructor','toString','__proto__','unknown','form','input']){
+test('unknown and unimplemented field types stay planned while the Forms container is honestly partial',()=>{
+ for(const type of [null,undefined,{},'constructor','toString','__proto__','unknown','input']){
   assert.equal(getElementCapability(type).status,'PLANNED');assert.deepEqual(getElementInspectorContract(type).fields,[]);
  }
+ assert.equal(getElementCapability('form').status,'PARTIAL','the form container has a real Inspector, renderer, and first-party service slice');
+ assert.deepEqual(CONTENT_FIELDS.form,[],'form definitions are not represented as arbitrary element props');
 });
 test('every responsive registry field has an explicit Inspector control and Canvas/public style route',()=>{
  const controlTypes=new Set(['asset','box','color','dimension','font','number','select','shadow','text','url']);
@@ -122,7 +125,8 @@ test('type restrictions and new property registration flow through the single re
  registerProperty({id,group:'typography',label:'Test',type:'number',command:'responsive.set',responsive:true,key:'testContract',appliesTo:['text']});
  assert.equal(getElementInspectorContract('text').fields.find(p=>p.id===id).key,'testContract');
  assert.equal(getElementInspectorContract('image').fields.some(p=>p.id===id),false);
- assert.equal(getElementInspectorContract('form').fields.length,0);
+ assert.ok(getElementInspectorContract('form').fields.length>0,'global safe visual controls may style the form container');
+ assert.equal(CONTENT_FIELDS.form.length,0,'form fields remain versioned in the separate Forms service rather than the generic property registry');
 });
 test('registered defaults and presets use the shared Inspector validator before becoming contract metadata',()=>{
  const numberDefault=registerProperty({id:'test.contract.default.number',group:'typography',label:'Default number',type:'number',command:'responsive.set',responsive:true,key:'testDefaultNumber',defaultValue:0.85,presets:[{label:'  Subtle  ',value:' 0.90 '}],appliesTo:['text']});

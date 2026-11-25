@@ -1,0 +1,158 @@
+{
+  "date": "2026-11-25",
+  "plan": {
+    "master": "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+    "active_cursor": "77.44.7.D",
+    "scope": "77.44.4.5 Forms integrated with the Visual Editor content Inspector",
+    "status": "OPEN_PARTIAL_NOT_CERTIFIED",
+    "acceptance": "Full Visual Editor manual and physical acceptance deferred until the complete Editor scope."
+  },
+  "git": {
+    "branch": "v2/foundation",
+    "base_sha": "ea117725f3d2a92f6c6dc49d8a0ccec6ff748729",
+    "remote_head_before_work": "ea117725f3d2a92f6c6dc49d8a0ccec6ff748729",
+    "runtime_commit": "PENDING",
+    "runtime_changes_pushed": false,
+    "exact_sha_ci": "PENDING",
+    "deployment": "PENDING"
+  },
+  "implementation": {
+    "forms_editor": [
+      "Field allowlist supports text/email/textarea/select/checkbox with required/help/length/options, explicit consent wording/version and HTTPS privacy URL, success message and bounded retention days.",
+      "Form draft Save and form Publish are separate conditional-version operations; both remain independent from page Save/Publish.",
+      "Published page rendering reads first-party published definitions only; preview forms are inert. Public submissions are same-origin and bind the published page revision and published form revision.",
+      "Submissions are normalized against per-field allowlists, require affirmative privacy consent, are limited by a honeypot and HMAC-keyed client digest, and never store raw IP or honeypot value.",
+      "Admin inbox is site-scoped with bounded search/pagination and status workflow; deletion is admin-only and audited after a successful conditional mutation.",
+      "Expired records are hidden from the inbox and scheduled bounded cleanup (10x100 batches per daily run) resumes on later cron events.",
+      "Oversized streamed JSON bodies are cancelled and rejected even without Content-Length; invalid UTF-8 and malformed/unknown payloads fail closed."
+    ],
+    "production_schema": {
+      "migrations": [
+        "0031_media_archive_malformed_json_guard.sql",
+        "0032_forms_service.sql"
+      ],
+      "ledger_after": {
+        "0031": 37,
+        "0032": 38,
+        "latest": "0032_forms_service.sql"
+      },
+      "new_archive_triggers": 4,
+      "forms_objects": [
+        "forms",
+        "form_revisions",
+        "form_submissions",
+        "form_submission_rate_limits",
+        "idx_forms_site_status_updated",
+        "idx_form_submissions_inbox",
+        "idx_form_submissions_expiry",
+        "idx_form_rate_limit_expiry"
+      ],
+      "forms_rows_after_apply": {
+        "forms": 0,
+        "form_revisions": 0,
+        "form_submissions": 0,
+        "form_submission_rate_limits": 0
+      }
+    },
+    "public_assets_sha256": {
+      "public/assets/page-renderer.js": "3489ce1f5944f67acbdc5c2d97400dd15cc70c5370667c2d26a93b2387b1a437",
+      "public/editor-v2/app.js": "409845c88a6fa37422aa583e7f0c1996f9000db1111a372041d5fc96ef637e78",
+      "public/editor-v2/core/authored-content.js": "cfd0858a39167bdb0fb1a1add43174ce5ad8d74c342003e04cf6bdd91ccd6cfa",
+      "public/editor-v2/core/canvas-engine.js": "73171a3e69255f4e9dad5ca82760095f55e115abbb0abb82866fd038de150b13",
+      "public/editor-v2/core/capability-matrix.js": "2c7858097e04359f274ed086b9ba02c9dce0542c9e7d5cce37b6805005956fe0",
+      "public/editor-v2/core/commands.js": "e6224617a6a8b87f2751a3c7cdd88a6979973844b6c64dbc68f918593417bcdc",
+      "public/editor-v2/core/content-profiles.js": "6d0189672a952aaf2708d1b7b16272b417c68e53a17e8876f55c1eeba5a288b9",
+      "public/editor-v2/core/legacy-media-source.js": "e216e38abd48f72cc72524bdaa73fccc3460de3332238e10233fa90753820a4c",
+      "public/editor-v2/core/validation.js": "32ad4f5abca259ae061db63a3ac008c3d05ec3cde81fe508205dfceb96d85e94",
+      "public/editor-v2/editor-refresh.css": "8c6d14bfaa0f8846552e07c9f774cc7d05b20a48f5f57ef2afc73f74416908f4",
+      "public/editor-v2/index.html": "1334d548a30671429a3a8cde6e81e39df520c203f87bee01fc5ccc82565e4412",
+      "public/editor-v2/ui/accessibility-fields.js": "7dfe95d9b405a07c57e1efbc28035f5207111b584216336e972f36565ca88f86",
+      "public/editor-v2/ui/element-content-controls.js": "c3970b6a00d6472f2583804e2acca529037474e8ed8ce216e265030f40c530af",
+      "public/editor-v2/ui/forms-inspector.js": "2640cf63178488c01a8cb77cce2f1d642f1d13c50b23bd379347f22a46f27809",
+      "public/editor-v2/ui/legacy-media-inspector.js": "6f49e7beedff52a7eeb55ca8c7ed45af748a983e4c70f13bbaf3e460806743fb",
+      "public/visual-page.html": "da4499acb74e1b19c8254d85a8bb7ae80e5db540059b054f3009c2ad7c4f363a"
+    }
+  },
+  "verification": {
+    "pass": [
+      "npm run test:forms: 5 files / 24 assertions",
+      "npm run test:forms:browser with loopback permission: 3 real Chromium tests",
+      "npm run test:editor: 24 suite files, preferences 12/12, subreaper 4/4",
+      "npm run test:web013 with loopback permission: 81/81 tests; HTMLRewriter isolation 1/1",
+      "npm run test:media: 7 suite files",
+      "npm run typecheck -- --pretty false",
+      "node scripts/web013-migration-safety-gate.mjs",
+      "node --test tests/worker-production-source-smoke.test.mjs",
+      "python3 scripts/plan_contract.py --check",
+      "python3 scripts/check-canonical-plan.py: 13 master parts / one cursor / 396 mappings",
+      "python3 scripts/build-feature-traceability.py --check: 396/396",
+      "python3 scripts/audit-active-plan-point.py: 77.44.7.D; acceptance NOT_CERTIFIED",
+      "git diff --check",
+      "npx wrangler deploy --dry-run: exit 0, 203 public assets, 476.54 KiB / 118.24 KiB gzip",
+      "SELECT-only D1 postflight: ledger 38 / latest 0032; 8 Forms objects; all Forms tables empty; FK check empty; quick_check=ok; all 7 reads changed_db=false and rows_written=0"
+    ],
+    "pending": [
+      "Runtime commit fast-forward push to v2/foundation",
+      "Exact-SHA GitHub Actions and Cloudflare Build/deploy",
+      "Post-release production health and SHA-256 smoke for all 16 changed public runtime files"
+    ],
+    "known_local_browser_restriction": "Initial Chromium invocation failed because sandbox networking denied localhost. Rerunning with local loopback permission passed 3/3; no product assertion failed."
+  },
+  "production_d1": {
+    "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
+    "preflight_method": "Cloudflare D1 Query API; 6 standalone SELECT-only queries immediately before the migration sequence",
+    "preflight_ledger": {
+      "count": 36,
+      "latest": "0030_media_library_organization.sql"
+    },
+    "forms_objects_before": 0,
+    "archive_triggers_before": 7,
+    "malformed_archived_media_references": {
+      "pages": 0,
+      "revisions": 0
+    },
+    "foreign_key_violations_before": 0,
+    "quick_check_before": "ok",
+    "preflight_metadata": {
+      "rows_written": 0,
+      "changes": 0,
+      "changed_db": false
+    },
+    "approved_operation": "Owner approved production changes in the current turn; applied only the reviewed, additive 0031 then 0032 standalone idempotent statements through Cloudflare D1 Query API.",
+    "postflight": {
+      "ledger_count": 38,
+      "latest": "0032_forms_service.sql",
+      "archive_triggers": 11,
+      "forms_schema_objects": 8,
+      "forms_rows": {
+        "forms": 0,
+        "form_revisions": 0,
+        "form_submissions": 0,
+        "form_submission_rate_limits": 0
+      },
+      "foreign_key_violations": 0,
+      "quick_check": "ok",
+      "all_postflight_queries_select_only": true,
+      "all_postflight_queries": {
+        "rows_written": 0,
+        "changes": 0,
+        "changed_db": false
+      }
+    },
+    "existing_business_rows_changed": false,
+    "r2_operation": "NONE"
+  },
+  "live_worker_before_release": {
+    "deployment_id": "11b28ace-2ee3-47e5-ac38-34555bd04cab",
+    "version_id": "8ec1079f-0008-4637-af99-413eeec5cdba",
+    "traffic_percent": 100,
+    "source_smoke_for_new_sha": "PENDING"
+  },
+  "cost_and_limits": {
+    "new_paid_service_or_dependency": false,
+    "cloudflare_build_minutes_limit_reached": false,
+    "new_cost": "0 Ft",
+    "github_actions_dispatch_started": false
+  },
+  "next_gate": "Publish the validated runtime commit by normal fast-forward to v2/foundation, observe exact-SHA Actions and Cloudflare deploy, then confirm traffic is 100%, health is HTTP 200 and all 16 changed public runtime hashes match. Do not certify the full Editor or D point."
+}

@@ -28,5 +28,15 @@
     "name": "0030_media_library_organization.sql",
     "path": "scripts/pending/0030_media_library_organization.sql",
     "sha256": "af036c90edda1bd4685e2ed09707c167d02a2b43afec859a28ed9eb90a5eaa92"
+  },
+  {
+    "name": "0031_media_archive_malformed_json_guard.sql",
+    "path": "tests/fixtures/0031_media_archive_malformed_json_guard.sql",
+    "sha256": "6b3b00f50c1c2e4cb1f1d5fdb1f25aef6436a14f61fa96fd4cb80d5203847f64"
+  },
+  {
+    "name": "0032_forms_service.sql",
+    "path": "scripts/pending/0032_forms_service.sql",
+    "sha256": "92023857b2518db65976f5a19a5684b79eb44de42bba38da652db8350e908f5f"
   }
 ]

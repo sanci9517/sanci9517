@@ -17,6 +17,9 @@ import { adminEditorRoute } from "./routes/admin/editor";
 import { editorPreferencesRoute } from "./routes/admin/editor-preferences";
 import { adminMediaRoute, publishedMediaRoute } from "./routes/admin/media";
 import { publicSiteSettingsRoute } from "./routes/public/site-settings";
+import { adminFormsRoute } from "./routes/admin/forms";
+import { publicFormRoute } from "./routes/public/forms";
+import { purgeExpiredFormData } from "./core/forms-retention";
 import { publicScheduleRoute } from "./routes/public/schedule";
 import {
   twitchConfigDiagnosticRoute,
@@ -37,6 +40,13 @@ import { enforceAdminTenantGate } from "./core/auth/admin-tenant-gate";
 import type { Env } from "./types/env";
 
 export default {
+  async scheduled(_controller: ScheduledController, env: Env, ctx: ExecutionContext): Promise<void> {
+    ctx.waitUntil(purgeExpiredFormData(env).then((summary) => {
+      console.log("Forms retention purge completed", JSON.stringify(summary));
+    }).catch((cause: unknown) => {
+      console.error("Forms retention purge failed", cause instanceof Error ? cause.message : "unknown error");
+    }));
+  },
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
     const pathname = url.pathname.replace(/\/+$/, "") || "/";
@@ -62,6 +72,7 @@ export default {
     if (pathname === "/api/public/presentation") return publicPresentationRoute(request, env, siteId);
     if (pathname === "/admin/design") { const user=await presentationAccess(request,env,siteId);if(user instanceof Response)return user.status===401?Response.redirect(new URL("/admin/login",request.url).toString(),302):user;return env.ASSETS.fetch(assetRequest("/admin-design.html",request)); }
     if (pathname === "/api/admin/settings") return adminSettingsRoute(request, env, siteId, site.siteName);
+    if (pathname === "/api/admin/forms") return adminFormsRoute(request, env, siteId);
     if (pathname === "/api/admin/schedule") return adminScheduleRoute(request, env);
     if (pathname === "/api/admin/schedule/media") return adminScheduleMediaRoute(request, env);
     if (pathname === "/api/admin/twitch/schedule-sync") return adminTwitchScheduleSyncRoute(request, env);
@@ -73,6 +84,7 @@ export default {
     if (pathname === "/api/admin/media") return adminMediaRoute(request, env, siteId);
     if (pathname.startsWith("/media/")) return publishedMediaRoute(request, env, siteId, pathname.slice("/media/".length));
     if (pathname === "/api/public/site-settings") return publicSiteSettingsRoute(env, siteId, site.siteName);
+    if (pathname === "/api/public/forms") return publicFormRoute(request, env, siteId);
     if (pathname === "/api/public/schedule") return publicScheduleRoute(request, env, siteId);
     if (pathname === "/api/integrations/twitch/diagnostic") return twitchConfigDiagnosticRoute(request, env);
     if (pathname === "/api/integrations/twitch/connect") return twitchConnectRoute(request, env);

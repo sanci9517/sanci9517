@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261125211103-1efee1b3",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-25T21:11:03.754Z",
+  "finished_at": "2026-11-25T22:05:38.906Z",
+  "wall_seconds": 3275,
+  "paused_seconds": 0,
+  "measured_seconds": 3275,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "Forms Inspector és szerveres beküldési/inbox szelet implementálva; unit, böngésző, Editor, típus és tervkapuk zöldek. Prod D1-séma hiányzik; kiadás és cleanup még blokkolt.",
+  "evidence": [
+    "docs/evidence/editor-forms-service-slice-2026-11-25.json",
+    "tests/forms-routes.test.js"
+  ],
+  "checks": "test:forms 3 fájl PASS; test:editor 24/24; typecheck PASS; forms Chromium 2/2; plan/canonical/traceability/active-point PASS; migration gate PASS; Wrangler dry-run PASS; prod D1 SELECT rows_written=0; current health 200; not pushed/deployed",
+  "started_revision": "ea117725f3d2a92f6c6dc49d8a0ccec6ff748729",
+  "finished_revision": "ea117725f3d2a92f6c6dc49d8a0ccec6ff748729",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

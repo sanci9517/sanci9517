@@ -1,6 +1,6 @@
 import { validatedLinkHref } from './richtext-links.js?v=20261117-d03-invalid-media-id-guidance-v1';
 import { PAGE_ACTION_TIMER_DELAYS_MS, pageInteractionAttributes, safePageInteraction } from './page-interactions.js?v=20261121-edt039-single-auto-action-v1';
-import { safeContentDomId } from './element-content.js?v=20261125-d06-authored-carousel-slide-semantics-v1';
+import { safeContentDomId } from './element-content.js?v=20261125-forms-service-v1';
 
 export const CONTENT_VERSION=1;
 // Shared by the editor picker and the server-side media upload/list contract.
@@ -29,7 +29,7 @@ export const CONTENT_FIELDS=Object.freeze({
   heading:[text,field('level','Címsor szemantikai szintje','select',{options:{1:'H1 – főcím',2:'H2 – szakaszcím',3:'H3',4:'H4',5:'H5',6:'H6'}})],
   text:[text],button:[text,...linkFields],link:[text,...linkFields],quote:[text,field('citation','Forrás / szerző')],badge:[text],icon:[field('icon','Ikon','select',{options:{star:'Csillag',heart:'Szív',play:'Lejátszás',check:'Pipa',arrow:'Nyíl',bolt:'Villám',camera:'Kamera',music:'Zene',globe:'Web',mail:'Levél'}}),field('ariaLabel','Ikon leírása','text',{max:160})],
   image:imageFields,video:[...externalMedia,playableAsset('video','Videó a Médiatárból'),field('poster','Külső borítókép címe','media-url',{help:'Meglévő HTTPS vagy belső kép-URL. A Médiatárból választott borítókép elsőbbséget kap.'}),field('posterAssetId','Borítókép a Médiatárból','asset',{help:'A videó továbbra is URL-ből játszódik le; csak a borítókép kerül a privát kép-Médiatárból az oldalra.'}),field('controls','Lejátszó vezérlők','boolean'),field('muted','Némítás','boolean'),field('loop','Ismétlés','boolean'),field('autoplay','Automatikus indítás némítva','boolean')],audio:[...externalMedia,playableAsset('audio','Hang a Médiatárból'),field('controls','Lejátszó vezérlők','boolean'),field('loop','Ismétlés','boolean')],
-  list:[field('ordered','Számozott lista','boolean'),field('items','Listaelemek','repeater',{itemFields:[text,href]})],
+  form:[],list:[field('ordered','Számozott lista','boolean'),field('items','Listaelemek','repeater',{itemFields:[text,href]})],
   table:[field('caption','Táblázat címe'),field('header','Az első sor fejléc','boolean'),field('rows','Táblázat sorai','table',{max:MAX_AUTHORED_TABLE_TSV_CHARS,help:'A menthető táblázattartalom legfeljebb 120 000 karakteres; ennél nagyobb adatnál csökkentsd a cellák vagy sorok tartalmát.'})],
   tabs:[field('ariaLabel','Fülcsoport elnevezése','text',{max:160}),field('items','Fülek','repeater',{itemFields:[field('title','Fül címe'),text]})],accordion:[field('ariaLabel','Harmonikacsoport elnevezése','text',{max:160}),field('singleOpen','Egyszerre csak egy nyitott rész','boolean'),field('openFirst','Első rész kezdetben nyitva','boolean'),field('items','Lenyitható részek','repeater',{itemFields:[field('title','Rész címe'),text]})],dropdown:[field('ariaLabel','Lenyitható csoport elnevezése','text',{max:160}),field('singleOpen','Egyszerre csak egy nyitott rész','boolean'),field('openFirst','Első rész kezdetben nyitva','boolean'),field('items','Lenyitható részek','repeater',{itemFields:[field('title','Rész címe'),text]})],
   gallery:[field('ariaLabel','Képgaléria elnevezése','text',{max:160}),field('columns','Oszlopok asztalon','select',{options:{2:'2 oszlop',3:'3 oszlop',4:'4 oszlop'}}),field('items','Képek','repeater',{itemFields:[...media,field('alt','Képleírás'),field('caption','Képaláírás'),field('fit','Kép illesztése','select',{options:{cover:'Kitöltés, vágással',contain:'Teljes kép'}}),...focalFields]})],
@@ -168,6 +168,7 @@ export function getPublicationContentGuidance(node,{pageNodes=null}={}){
   if(['gallery','carousel'].includes(node.type)&&!missing&&(!items.length||items.some(hasIncompleteMediaItem)))requireField('items','A képekhez Médiatár-fájl vagy forrás, és leírás vagy képaláírás szükséges.');
   if(['tabs','accordion','dropdown'].includes(node.type)&&(!items.length||items.some(item=>!item||typeof item!=='object'||Array.isArray(item)||!hasText(item.title))))requireField('items','Legalább egy elnevezett rész szükséges.');
   if(node.type==='table'&&(!rows.length||!rows.some(row=>Array.isArray(row)&&row.some(hasText))))requireField('rows','A táblázatnak legyen tartalma.');
+  if(node.type==='form'&&(!/^[0-9a-f-]{36}$/i.test(String(p.formId||''))||p.formBindingVersion!==1))requireField('formId','Válassz egy mentett és publikált űrlapot.');
   if(node.type==='list'&&(!items.length||items.some(item=>!item||typeof item!=='object'||Array.isArray(item)||!hasText(item.text))))requireField('items','Adj meg legalább egy nem üres listaelemet.');
   if(node.type==='tooltip'&&(!hasText(p.text)||!hasText(p.description)))requireField(!hasText(p.text)?'text':'description','Felirat és magyarázat is szükséges.');
   if(node.type==='audio'&&p.controls===false)requireField('controls','A hanglejátszó vezérlőit nem rejtheted el.');
@@ -246,7 +247,7 @@ export function contentAttributes(node,{pageNodes=null}={}){
   if(pageNodes)Object.assign(attributes,pageInteractionAttributes(node,pageNodes));
   return attributes;
 }
-export function authoredNodeHtml(node,{childrenHtml='',device='desktop',editor=false,reducedMotion=false}={}){
+export function authoredNodeHtml(node,{childrenHtml='',device='desktop',editor=false,reducedMotion=false,pageId=''}={}){
   const p=contentProperties(node),text=esc(p.text??p.content??node.name??''),id='creator-'+safeContentDomId(node.id);
   const imageSource=item=>typeof item.assetId==='string'&&MEDIA_ASSET_ID.test(item.assetId)?`/${editor?'api/admin/media?id=':'media/'}${encodeURIComponent(item.assetId)}`:editor?safeSrc(item.src):safePublishedMediaUrl(item.src);
   const image=item=>{const src=imageSource(item),{focalX:x,focalY:y}=imageFocalPosition(item);return src?`<img src="${esc(src)}" alt="${esc(imageAlt(item))}" loading="${item.loading==='eager'?'eager':'lazy'}" decoding="async" style="object-fit:${['cover','contain','fill','none','scale-down'].includes(item.fit)?item.fit:'cover'};object-position:${x}% ${y}%">`:`<span class="creator-media-empty">${editor?'Válassz képet a Médiatárból vagy adj meg képcímet.':'A kép nem érhető el.'}</span>`};
@@ -256,6 +257,12 @@ export function authoredNodeHtml(node,{childrenHtml='',device='desktop',editor=f
   const galleryName=authoredLabel||'Képek';
   const tablistName=authoredLabel||'Fülek';
   if(['heading','text','button','link','badge'].includes(node.type))return text;
+  if(node.type==='form'){
+    const label=displayText(p.ariaLabel)||displayText(node.name)||'Kapcsolatfelvételi űrlap';
+    if(editor||!/^([0-9a-f-]{36})$/i.test(String(p.formId||''))||!/^([0-9a-f-]{36})$/i.test(String(pageId||'')))
+      return `<div class="creator-form-preview" role="group" aria-label="${esc(label)}"><strong>${esc(label)}</strong><p>${p.formId?'A beküldési űrlap a publikált verziót használja.':'Válassz vagy hozz létre űrlapot a Tartalom panelen.'}</p></div>`;
+    return `<div class="creator-public-form" data-public-form-id="${esc(p.formId)}" data-public-page-id="${esc(pageId)}" role="region" aria-label="${esc(label)}"><p role="status" aria-live="polite">Űrlap betöltése…</p></div>`;
+  }
   if(node.type==='quote'){const citation=displayText(p.citation);return `<div>${text}</div>${citation?`<cite>${esc(citation)}</cite>`:''}`}
   if(node.type==='icon'){const icon=typeof p.icon==='string'?p.icon:'';return `<span aria-hidden="true">${({star:'★',heart:'♥',play:'▶',check:'✓',arrow:'➜',bolt:'ϟ',camera:'📷',music:'♫',globe:'◎',mail:'✉'})[icon]||'★'}</span>`}
   if(node.type==='image')return `<div class="creator-image-frame"${['16 / 9','4 / 3','1 / 1','3 / 4'].includes(p.ratio)?` style="aspect-ratio:${p.ratio}"`:''}>${image(p)}</div>${imageCaption(p)?`<figcaption>${esc(imageCaption(p))}</figcaption>`:''}`;

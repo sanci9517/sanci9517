@@ -28,7 +28,7 @@ test("manual schema migrations stay out of the auto-applied folder and secrets d
     const text = read("../scripts/pending/" + file);
     assert.match(text, /CREATE TABLE site_/);
   }
-  assert.match(read("../scripts/web013-migration-safety-gate.mjs"), /Production received 0025-0030 through the reviewed manual release chain/);
-  assert.match(read("../scripts/web013-migration-safety-gate.mjs"), /Review-only candidates \(currently 0031\)/);
-  assert.equal(JSON.parse(read("../scripts/d1/review-only-candidates.json"))[0].status, "REVIEW_ONLY_NOT_APPLIED");
+  assert.match(read("../scripts/web013-migration-safety-gate.mjs"), /Production received 0025-0032 through the reviewed manual release chain/);
+  assert.equal(JSON.parse(read("../scripts/d1/review-only-candidates.json")).length, 0);
+  assert.ok(JSON.parse(read("../scripts/d1/manual-migrations.json")).some(entry => entry.name === "0032_forms_service.sql"));
 });

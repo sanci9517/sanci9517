@@ -33,6 +33,12 @@ jobs:
       - name: Run editor core tests
         run: npm run test:editor
 
+      - name: Run Forms schema and route regressions
+        run: npm run test:forms
+
+      - name: Run Forms Inspector and public-page Chromium regressions
+        run: npm run test:forms:browser
+
       - name: Test offline D1 ledger reconciliation and bootstrap
         run: |
           python3 tests/d1-ledger-reconciliation.test.py

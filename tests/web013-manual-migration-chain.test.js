@@ -2,6 +2,8 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { readFileSync, readdirSync } from "node:fs";
 import { DatabaseSync } from "node:sqlite";
+import { build0031ReleaseStatements } from "./review/prepare-0031-release.mjs";
+import { build0032ReleaseStatements } from "./review/prepare-0032-release.mjs";
 
 const migrations = new URL("../migrations/", import.meta.url);
 const pendingNames = [
@@ -10,11 +12,26 @@ const pendingNames = [
   "0027_site_scoped_settings.sql",
   "0028_media_archive.sql",
   "0029_media_archive_unicode_additive.sql",
-  "0030_media_library_organization.sql"
+  "0030_media_library_organization.sql",
+  "0031_media_archive_malformed_json_guard.sql",
+  "0032_forms_service.sql"
 ];
-const pending = pendingNames.map(name =>
+const pending = pendingNames.slice(0, 6).map(name =>
   readFileSync(new URL(name.startsWith("0029_") ? "../tests/fixtures/" + name : "../scripts/pending/" + name, import.meta.url), "utf8")
 );
+
+function applyFullManualChain(db) {
+  db.exec("CREATE TABLE d1_migrations(id INTEGER PRIMARY KEY, name TEXT NOT NULL UNIQUE, applied_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP);");
+  const addMarker = db.prepare("INSERT INTO d1_migrations(id,name) VALUES(?,?)");
+  for (let id = 1; id <= 30; id++) addMarker.run(id, `historical-${id}.sql`);
+  for (let index = 0; index < pending.length; index++) {
+    const sql = pending[index];
+    db.exec("BEGIN;" + sql + ";COMMIT;");
+    addMarker.run(31 + index, pendingNames[index]);
+  }
+  for (const sql of build0031ReleaseStatements()) db.exec("BEGIN;" + sql + ";COMMIT;");
+  for (const sql of build0032ReleaseStatements()) db.exec("BEGIN;" + sql + ";COMMIT;");
+}
 
 function freshDatabase(t) {
   const db = new DatabaseSync(":memory:");
@@ -34,7 +51,7 @@ function count(db, name) {
   return db.prepare("SELECT COUNT(*) AS n FROM " + name).get().n;
 }
 
-test("fresh 0024 DB upgrades through manually staged 0025-0030 without data loss", t => {
+test("fresh 0024 DB upgrades through manually staged 0025-0032 without data loss", t => {
   const db = freshDatabase(t);
   db.prepare("INSERT INTO users(id,email,display_name,role,is_active) VALUES (?,?,?,?,?)")
     .run("owner-1", "owner@example.test", "Owner", "admin", 1);
@@ -61,13 +78,17 @@ test("fresh 0024 DB upgrades through manually staged 0025-0030 without data loss
   );
   assert.match(db.prepare("SELECT sql FROM sqlite_master WHERE name='pages'").get().sql, /slug TEXT NOT NULL UNIQUE/);
 
-  for (const sql of pending) db.exec("BEGIN;" + sql + ";COMMIT;");
+  applyFullManualChain(db);
 
   for (const [name, expected] of Object.entries(originals)) {
     assert.deepEqual(rows(db, name), expected, name + " was modified");
   }
   assert.doesNotMatch(db.prepare("SELECT sql FROM sqlite_master WHERE name='pages'").get().sql, /slug TEXT NOT NULL UNIQUE/);
   assert.equal(count(db, "site_domains"), 1);
+  assert.equal(count(db, "forms"), 0);
+  assert.equal(count(db, "form_submissions"), 0);
+  assert.equal(count(db, "d1_migrations"), 38);
+  assert.equal(db.prepare("SELECT name FROM d1_migrations ORDER BY id DESC LIMIT 1").get().name, "0032_forms_service.sql");
   assert.ok(db.prepare('PRAGMA table_info(media)').all().some(col=>col.name==='archived_at'));
   assert.ok(db.prepare("SELECT name FROM sqlite_master WHERE name='media_archive_pages_update_guard'").get());
   assert.deepEqual(db.prepare("SELECT id,site_id,folder_id FROM media").all().map(row=>({...row})),[{id:"asset-1",site_id:"site-default",folder_id:null}],
@@ -107,7 +128,7 @@ test("fresh 0024 DB upgrades through manually staged 0025-0030 without data loss
 
 test("replaying the manual chain is rejected before the original data can be rebuilt", t => {
   const db = freshDatabase(t);
-  for (const sql of pending) db.exec("BEGIN;" + sql + ";COMMIT;");
+  applyFullManualChain(db);
   const original = rows(db, "pages");
   assert.throws(() => db.exec("BEGIN;" + pending[0] + ";COMMIT;"), /already exists/);
   if (db.inTransaction) db.exec("ROLLBACK");

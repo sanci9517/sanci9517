@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261125222132-9bb9fd2f",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-25T22:21:32.789Z",
+  "finished_at": "2026-11-25T22:56:26.040Z",
+  "wall_seconds": 2093,
+  "paused_seconds": 0,
+  "measured_seconds": 2093,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "Forms service and related Editor changes pass local regressions and dry-run; source commit, hosted CI, production rollout and live source smoke still pending.",
+  "evidence": [
+    "docs/evidence/editor-forms-service-slice-2026-11-25.json"
+  ],
+  "checks": "Forms 24/24; Forms Chromium 3/3; Editor 24 files, preferences 12/12, subreaper 4/4; WEB-013 81/81; media 7/7; typecheck; source smoke; D1 SELECT-only postflight; Wrangler dry-run; plan and traceability",
+  "started_revision": "ea117725f3d2a92f6c6dc49d8a0ccec6ff748729",
+  "finished_revision": "ea117725f3d2a92f6c6dc49d8a0ccec6ff748729",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

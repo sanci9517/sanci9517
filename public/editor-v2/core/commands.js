@@ -9,14 +9,14 @@ import { canContain, cloneDocument, createEmptyRichText, createNode, getNode, no
 import { assertValidEditorDocument } from './validation.js?v=20261125-edt016-child-reference-limit-v1';
 import { activePage, clearSelection, setSelection } from './state.js';
 import { createDefaultScheduleConfig, normalizeScheduleConfig } from './schedule-schema.js';
-import {isStructuredType,createElementContent,normalizeElementContent} from './element-content.js?v=20261125-d06-authored-carousel-slide-semantics-v1';
+import {isStructuredType,createElementContent,normalizeElementContent} from './element-content.js?v=20261125-forms-service-v1';
 import {defaultDividerStyle,normalizeDividerStyle} from './decorative-elements.js';
 import {defaultCardContent,normalizeCardContent} from './card-content.js?v=20261118-d02-card-cta-recovery-v1';
 import {defaultCountdownContent} from './countdown-content.js';
 import {defaultSocialLinks} from './social-links.js';
 import {defaultEmbedContent} from './creator-embed.js';
 import {defaultCodeSnippet} from './code-snippet.js';
-import { normalizeElementContent as normalizeAuthoredElementContent, CONTENT_TYPES } from './authored-content.js?v=20261125-d06-authored-carousel-slide-semantics-v1';
+import { normalizeElementContent as normalizeAuthoredElementContent, CONTENT_TYPES } from './authored-content.js?v=20261125-forms-service-v1';
 import {normalizeAccessibility,remapDuplicateAnchors} from './accessibility.js';
 import {normalizeStatePatch} from './state-styles.js';
 import { applyStyleSnapshot } from './style-snapshot.js';

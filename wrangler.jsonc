@@ -3,6 +3,9 @@
   "name": "sanci9517-streamer-brand",
   "main": "src/index.ts",
   "compatibility_date": "2026-09-08",
+  "triggers": {
+    "crons": ["17 3 * * *"]
+  },
   "observability": {
     "enabled": true,
     "head_sampling_rate": 1,

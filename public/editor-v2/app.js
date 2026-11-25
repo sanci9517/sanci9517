@@ -22,6 +22,7 @@ import {normalizePaletteFavoriteTypes,readPaletteFavoriteTypes,togglePaletteFavo
 import {getRichTextBlockSelection,getRichTextFormattingSelection,getRichTextBlockTransformSelection,getRichTextActiveBlockIndex,restoreRichTextBlockSelection,restoreRichTextFormattingSelection,updateRichTextInlineLink,updateRichTextInlineMark,updateRichTextInlineStyle,updateRichTextBlockAlignment} from './core/richtext-links.js?v=20261117-d03-invalid-media-id-guidance-v1';
 import {initialPageId,rememberPageId,requestedPageId} from './core/page-url.js';
 import {getElementCapability} from './core/capability-matrix.js?v=20261123-edt040-in-view-motion-v1';
+import {renderFormsInspector} from './ui/forms-inspector.js?v=20261125-form-inspector-v1';
 import {firstUnsupportedPublicationNode,unsupportedPublicationMessage} from './core/publication-recovery.js?v=20261124-edt042-publish-recovery-safe-label-v1';
 import {renderGeometryPresets} from './ui/geometry-presets.js';
 import {importRichTextClipboard} from './core/richtext-import.js?v=20261125-edt016-child-reference-limit-v1';
@@ -32,7 +33,7 @@ import {LAYOUT_PRESETS,LAYOUT_TYPES,layoutMode,isManagedLayout,isLayoutPropertyR
 import {resolveElementInsertion} from './core/element-insertion.js';
 import {TYPOGRAPHY_PRESETS,typographyPresetPatch} from './core/typography-presets.js';
 import {isStructuredType,createElementContent,normalizeElementContent,renderElementContent,activateStructuredContent} from './core/element-content.js?v=20261125-d06-structured-accordion-behavior-v1';
-import {legacyImageSource,legacyPlayableSource,legacyPlaybackSettings,legacyImagePresentation,legacyImageCaption,applyReducedMotionVideoPlayback} from './core/legacy-media-source.js?v=20261125-d06-authored-carousel-slide-semantics-v1';
+import {legacyImageSource,legacyPlayableSource,legacyPlaybackSettings,legacyImagePresentation,legacyImageCaption,applyReducedMotionVideoPlayback} from './core/legacy-media-source.js?v=20261125-forms-service-v1';
 import {renderStructuredInspector} from './ui/structured-inspector.js?v=20261125-d06-structured-accordion-behavior-v1';
 import {ICON_CHOICES,iconById} from './core/icon-options.js';
 import {DIVIDER_LINE_STYLES,normalizeDividerStyle} from './core/decorative-elements.js';
@@ -54,7 +55,7 @@ import {createCompositionInputs} from './ui/composition-inputs.js';
 import {opaqueContrast} from './core/accessibility.js';
 import {STATE_PROPERTY_IDS,applyStateStyles} from './core/state-styles.js';
 import {defaultTokens,applyTokenVariables} from './core/design-tokens.js';
-import {CONTENT_TYPES,STRUCTURAL_TYPES,validatePageForPublication,isAuthoredContent,authoredNodeHtml,contentAttributes,initContentInteractions,contentTag} from './core/authored-content.js?v=20261125-d06-authored-carousel-slide-semantics-v1';
+import {CONTENT_TYPES,STRUCTURAL_TYPES,validatePageForPublication,isAuthoredContent,authoredNodeHtml,contentAttributes,initContentInteractions,contentTag} from './core/authored-content.js?v=20261125-forms-service-v1';
 import {captureCanvasInteractionState,restoreCanvasInteractionState} from './core/canvas-interaction-state.js';
 import {renderElementContentControls,pageLinkPicker} from './ui/element-content-controls.js?v=20261120-d06-authored-playable-asset-picker-v1';
 import {renderPageInteractionControls} from './ui/page-interaction-controls.js?v=20261119-edt039-page-action-safe-labels-v1';
@@ -178,7 +179,7 @@ function isCanvasClipboardShortcut(event){
  return Boolean(document.activeElement===document.body&&state?.selection?.ids?.length)||Boolean(document.activeElement?.closest?.('#canvas,#layersTree'));
 }
 function typeForElement(name){const map={'Badge/Tag':'badge','Quote':'quote','Panel':'panel','Overlay':'overlay','Absolute':'absolute','Sticky':'sticky','Tooltip':'tooltip','Shorts':'shorts','Sponsor':'sponsor','Business Contact':'business','About Me':'about','Sanci Button':'sanci-button'};if(map[name])return map[name];for(const items of groups)for(const [label,type] of items)if(label===name&&type)return type;return null}
-function addAuthoredElement(type,name,insertion){const authored=CONTENT_TYPES.includes(type)&&!['code','divider','spacer','heading','text','richtext','button','link'].includes(type);command('element.add',{type,name,...insertion,authored,props:type===NODE_TYPES.RICHTEXT?{}:{text:name}})}
+function addAuthoredElement(type,name,insertion){const authored=CONTENT_TYPES.includes(type)&&!['code','divider','spacer','heading','text','richtext','button','link'].includes(type);command('element.add',{type,name,...insertion,authored,props:[NODE_TYPES.RICHTEXT,NODE_TYPES.FORM].includes(type)?{}:{text:name}})}
 function normalizePaletteSearch(value){return String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim().toLowerCase()}
 function paletteEntries(){return groups.flatMap(([group,items])=>items.map(([name,type])=>({group,name,type:type||typeForElement(name)})).filter(entry=>entry.type))}
 function insertPaletteEntry(name,type){const current=page();if(!current)return;const insertion=resolveElementInsertion(current,state.selection.primaryId,type);if(insertion)addAuthoredElement(type,name,insertion)}
@@ -1248,6 +1249,12 @@ function renderExistingContentInspector(node){
     return saved;
   };
   const updateModel=(key,value,options)=>updateProps({[key]:value},options);
+  if(node.type===NODE_TYPES.FORM&&isAuthoredContent(node)){
+    inspector.append(renderFormsInspector(node,{onSelect:id=>{
+      if(node.props?.formId===id&&node.props?.formBindingVersion===1)return;
+      updateProps({formId:id,formBindingVersion:1});
+    }}));return true;
+  }
   if(!isAuthoredContent(node)&&['image','video','audio'].includes(node.type)){
     inspector.append(renderLegacyMediaInspector(node,updateProps,{pending:flush=>{flushRichTextDraft=flush}}));return true;
   }

@@ -7,8 +7,8 @@ import {validateAccessibility} from './accessibility.js';
  */
 
 import { getNode, validateDocument, normalizeRichText } from './schema.js';
-import { validateElementContent as validateStructuredContent,isStructuredType } from './element-content.js?v=20261125-d06-authored-carousel-slide-semantics-v1';
-import { validateElementContent as validateAuthoredContent } from './authored-content.js?v=20261125-d06-authored-carousel-slide-semantics-v1';
+import { validateElementContent as validateStructuredContent,isStructuredType } from './element-content.js?v=20261125-forms-service-v1';
+import { validateElementContent as validateAuthoredContent } from './authored-content.js?v=20261125-forms-service-v1';
 import {validateStateStyles} from './state-styles.js';
 import {MAX_PAGE_HIERARCHY_DEPTH,MAX_PAGE_NODE_COUNT,MAX_PAGE_CHILD_REFERENCE_COUNT,hasExcessPageNodes,hasExcessPageChildReferences} from './hierarchy-limits.js?v=20261125-edt016-child-reference-limit-v1';
 
