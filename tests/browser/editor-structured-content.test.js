@@ -15,12 +15,17 @@ import {authoredNodeHtml} from '../../public/editor-v2/core/authored-content.js'
 
 test('a one-slide authored carousel exposes no-op-free controls and leaves arrow keys to the page',async t=>{
  const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||(existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined),args:['--no-sandbox']});
- t.after(()=>browser.close());
+ let server,page;
+ t.after(async()=>{
+  if(server?.listening)server.closeAllConnections();
+  await browser.close().catch(()=>{});
+  if(server?.listening)await new Promise(done=>server.close(done));
+ });
  const markup=authoredNodeHtml({id:'authored-one-slide',type:'carousel',metadata:{contentVersion:1},props:{ariaLabel:'Bevezető kép',items:[
   {src:'/one-slide.jpg',alt:'Egyetlen kép',caption:'Egy kép'}
  ]}});
  const publicRoot=resolve(import.meta.dirname,'../../public');
- const server=createServer(async(req,res)=>{
+ server=createServer(async(req,res)=>{
   const url=new URL(req.url,'http://localhost');
   if(url.pathname==='/harness.html'){
    res.setHeader('content-type','text/html; charset=utf-8');
@@ -36,8 +41,7 @@ test('a one-slide authored carousel exposes no-op-free controls and leaves arrow
   catch{return res.writeHead(404).end()}
  });
  await new Promise(done=>server.listen(0,'127.0.0.1',done));
- t.after(()=>new Promise(done=>server.close(done)));
- const page=await browser.newPage({viewport:{width:390,height:844}});t.after(()=>page.close());
+ page=await browser.newPage({viewport:{width:390,height:844}});
  await page.goto(`http://127.0.0.1:${server.address().port}/harness.html`);
  const region=page.locator('.creator-carousel[role="region"]');
  await region.waitFor();
@@ -52,6 +56,58 @@ test('a one-slide authored carousel exposes no-op-free controls and leaves arrow
  await region.focus();await region.press('ArrowRight');
  assert.equal(await page.evaluate(()=>window.__singleSlideArrowDefaultPrevented),false,
   'a one-slide Carousel does not consume a page-level arrow key for an impossible move');
+});
+
+test('a multi-slide authored carousel keeps button and keyboard navigation active',async t=>{
+ const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||(existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined),args:['--no-sandbox']});
+ let server,page;
+ t.after(async()=>{
+  if(server?.listening)server.closeAllConnections();
+  await browser.close().catch(()=>{});
+  if(server?.listening)await new Promise(done=>server.close(done));
+ });
+ const markup=authoredNodeHtml({id:'authored-two-slides',type:'carousel',metadata:{contentVersion:1},props:{ariaLabel:'Kiemelt képek',items:[
+  {src:'/first.jpg',alt:'Első kép'},{src:'/second.jpg',alt:'Második kép'}
+ ]}});
+ const publicRoot=resolve(import.meta.dirname,'../../public');
+ server=createServer(async(req,res)=>{
+  const url=new URL(req.url,'http://localhost');
+  if(url.pathname==='/harness.html'){
+   res.setHeader('content-type','text/html; charset=utf-8');
+   return res.end(`<!doctype html><style>.creator-carousel{display:flex;overflow-x:auto;width:300px;scroll-behavior:auto}.creator-carousel figure{box-sizing:border-box;flex:0 0 100%;width:100%;margin:0}.creator-carousel img{display:block;width:100%;height:100px}</style><main id="page-content">${markup}</main><script type="module" src="/harness.js"></script>`);
+  }
+  if(url.pathname==='/harness.js'){
+   res.setHeader('content-type','text/javascript');
+   return res.end("import {initContentInteractions} from '/editor-v2/core/authored-content.js';initContentInteractions(document.querySelector('#page-content'));");
+  }
+  const file=resolve(publicRoot,'.'+url.pathname);
+  if(!file.startsWith(publicRoot+'/'))return res.writeHead(403).end();
+  try{res.setHeader('content-type',extname(file)==='.js'?'text/javascript':'application/octet-stream');res.end(await readFile(file))}
+  catch{return res.writeHead(404).end()}
+ });
+ await new Promise(done=>server.listen(0,'127.0.0.1',done));
+ page=await browser.newPage({viewport:{width:390,height:844}});
+ await page.emulateMedia({reducedMotion:'reduce'});
+ await page.goto(`http://127.0.0.1:${server.address().port}/harness.html`);
+ const region=page.locator('.creator-carousel[role="region"]');
+ await region.waitFor();
+ assert.equal(await region.getAttribute('aria-label'),'Kiemelt képek');
+ assert.equal(await region.locator('figure').count(),2);
+ const previous=page.locator('.creator-carousel-controls [data-carousel-step="-1"]');
+ const next=page.locator('.creator-carousel-controls [data-carousel-step="1"]');
+ assert.equal(await previous.isDisabled(),false,'a multi-slide Carousel keeps previous available');
+ assert.equal(await next.isDisabled(),false,'a multi-slide Carousel keeps next available');
+ const readLeft=()=>region.evaluate(track=>track.scrollLeft);
+ await region.focus();await region.press('ArrowRight');
+ assert.ok(await readLeft()>0,'ArrowRight advances the authored carousel');
+ await region.press('Home');
+ assert.equal(await readLeft(),0,'Home returns to the first authored slide');
+ await region.press('End');
+ assert.ok(await readLeft()>0,'End advances to the last authored slide');
+ await previous.click();
+ assert.equal(await readLeft(),0,'the previous button returns to the first authored slide');
+ await next.click();
+ assert.ok(await readLeft()>0,'the next button advances to the second authored slide');
 });
 
 test('single-open authored accordion DOM groups stay isolated for sanitization-colliding node IDs',async t=>{

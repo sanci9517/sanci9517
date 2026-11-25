@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "id": "20261125103534-f1776a91",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-25T10:35:34.495Z",
+  "finished_at": "2026-11-25T10:36:56.815Z",
+  "wall_seconds": 82,
+  "paused_seconds": 0,
+  "measured_seconds": 82,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "Authored carousel többdiás, gomb- és Arrow/Home/End regresszió hozzáadva; célzott Chromium 6/6, D-contract 8/8 és terv/traceability kapuk PASS. Kiegészítő teszt-only follow-up; teljes D-06 tovább nyitott.",
+  "evidence": [
+    "docs/evidence/editor-d06-authored-single-slide-carousel-2026-11-25.json",
+    "docs/evidence/feature-traceability.json",
+    "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md"
+  ],
+  "checks": "Focused Chromium 6/6; D contract 8/8; plan contract 16/16; canonical 13-file master; traceability 396/396; active point audit; syntax and diff check.",
+  "started_revision": "34c931f92ae506a74a10b6ad9b30957d5bafc1e7",
+  "finished_revision": "34c931f92ae506a74a10b6ad9b30957d5bafc1e7",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

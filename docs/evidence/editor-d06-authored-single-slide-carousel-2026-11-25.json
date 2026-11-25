@@ -28,7 +28,9 @@
     "active_point": "python3 scripts/audit-active-plan-point.py — PASS: 77.44 → WEB-011; next 77.44.7.D; 396 features; 148 PARTIAL_SOURCE, 248 UNVERIFIED; acceptance NOT_CERTIFIED.",
     "traceability": "python3 scripts/build-feature-traceability.py --check — PASS 396/396 after refreshing the source fingerprint.",
     "migration_gate": "npm run test:web013:migration-gate — PASS; no production migration was run.",
-    "wrangler_dry_run": "Wrangler 4.130.0 deploy --dry-run — PASS; reads 202 public assets, 434.74 KiB / 110.17 KiB gzip."
+    "wrangler_dry_run": "Wrangler 4.130.0 deploy --dry-run — PASS; reads 202 public assets, 434.74 KiB / 110.17 KiB gzip.",
+    "authored_carousel_multislide_browser_followup": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-structured-content.test.js — PASS 6/6; two-slide previous/next and Arrow/Home/End navigation; D-authored negative and Save/Publish lifecycle retained.",
+    "github_core_workflow": "Editor Core Test run 45590847311 — SUCCESS for exact runtime SHA 48b4c9047700e79cf7b6626d4c793f5379c469f3; the later two-slide test-only addition was not part of that workflow."
   },
   "production_d1_read_only_preflight": {
     "method": "Cloudflare D1 query API; SELECT-only batch; no migration, INSERT/UPDATE/DELETE, or D1 data write.",
@@ -55,8 +57,8 @@
     "workflows": {
       "Editor Core Test": {
         "run_id": 45590847311,
-        "status": "in_progress",
-        "observed_at": "2026-11-25T10:09:12Z",
+        "status": "success",
+        "observed_at": "2026-11-25T10:35:46Z",
         "current_step": "Run Editor browser layout regression",
         "completed_steps_before_current": 13,
         "remaining_steps": [
@@ -66,6 +68,16 @@
           "Run Brand Kit storage and access regression",
           "Run Admin home contract tests",
           "Upload Editor layout screenshots"
+        ],
+        "conclusion": "success",
+        "completed_at": "2026-11-25T10:30:04Z",
+        "successful_steps": [
+          "Editor browser layout regression",
+          "WEB-013 Admin mobile browser regression",
+          "canonical schedule tests",
+          "domain contract tests",
+          "Brand Kit storage and access regression",
+          "Admin home contract tests"
         ]
       },
       "Production Worker source smoke": {
@@ -145,6 +157,21 @@
     "status": "partial",
     "archive": "docs/evidence/dev-metrics/runs/2026-11-25/20261125094107-0396f3bc.json",
     "measured_wall_seconds": 1718,
+    "caveat": "elapsed wall measurement, not verified active agent time"
+  },
+  "post_release_test_only_followup": {
+    "file": "tests/browser/editor-structured-content.test.js",
+    "scope": "Verify multi-slide authored Carousel navigation still works after the deployed one-slide no-op guard.",
+    "result": "PASS 6/6 focused Chromium tests; includes one-slide case, new two-slide case, accordion/tab cases and desktop/mobile Save/Publish lifecycle.",
+    "runtime_change": false,
+    "new_ci_run": false,
+    "reason": "No extra full Editor run; the exact runtime SHA workflow succeeded and the follow-up commit will use [skip ci]."
+  },
+  "development_metrics_followup": {
+    "session": "20261125103534-f1776a91",
+    "status": "partial",
+    "archive": "docs/evidence/dev-metrics/runs/2026-11-25/20261125103534-f1776a91.json",
+    "measured_wall_seconds": 82,
     "caveat": "elapsed wall measurement, not verified active agent time"
   }
 }

@@ -106,7 +106,7 @@
     "tests/browser/editor-diagnostics-redaction.test.js": "c534abc0d1f89cf51b929b870017a14c4f039383226137c705f4dd2c1eed1842",
     "tests/browser/editor-element-insertion.test.js": "f5e6fb0da397ae25c2ffae037e361ac2e2822616418d92fd067f629dd6aac4be",
     "tests/browser/editor-inspector-breakpoint-lifecycle.test.js": "fb756c7f6fe6e807affa6aa1b8447ae5690a84ebc076bdaaa496abf9c24fa0b9",
-    "tests/browser/editor-structured-content.test.js": "09daeadf293206c1a576a3a70ec7043f05aa31c47a6f5c3a04fb2bd71b1ae412",
+    "tests/browser/editor-structured-content.test.js": "66e0d765e204babc503e5bb2854294eac5c9056bceb109cfe016e297b2009dce",
     "tests/browser/editor-template-start.test.js": "4924f607f90163e38053c117a37f30b50ee78b492cf31abe963f2b4669c5ecf0",
     "tests/browser/editor-workspace-appearance.test.js": "cd1f24b4f93720840f2f6635e4974e9378a81748b24acf1950ae203a219d8a17",
     "tests/editor-palette-preferences.test.js": "0cb5936206853a59ebaaebd681dc28d8c959049eadb89d5c15844250aaedbf4e",
