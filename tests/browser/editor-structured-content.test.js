@@ -175,6 +175,30 @@ test('structured accordion exposes its Inspector name as a public accessible gro
  assert.equal(await disclosure.locator('details[open]').count(),1,'the native summary keyboard interaction reopens the disclosure');
 });
 
+test('structured Accordion native disclosure behavior stays unique per Page Model node',async t=>{
+ const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||(existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined),args:['--no-sandbox']});
+ t.after(()=>browser.close());
+ const page=await browser.newPage(),model={version:1,items:[{label:'Első',content:'Első válasz'},{label:'Második',content:'Második válasz'}]};
+ const one=renderElementContent('accordion',model,'a/b',{singleOpen:true,openFirst:true});
+ const two=renderElementContent('accordion',model,'a?b',{singleOpen:true,openFirst:true});
+ const closed=renderElementContent('accordion',model,'closed',{singleOpen:true,openFirst:false});
+ await page.setContent(`<main><section id="one">${one}</section><section id="two">${two}</section><section id="closed">${closed}</section></main>`);
+ const first=page.locator('#one .visual-structured-accordion'),second=page.locator('#two .visual-structured-accordion'),none=page.locator('#closed .visual-structured-accordion');
+ const names=await page.locator('details').evaluateAll(nodes=>nodes.map(node=>node.getAttribute('name')));
+ assert.equal(names.length,6);assert.ok(names.every(Boolean),'single-open controls use native, accessible disclosure grouping');
+ assert.equal(names[0],names[1]);assert.equal(names[2],names[3]);assert.equal(names[4],names[5]);
+ assert.notEqual(names[0],names[2],'punctuation-colliding Page Model IDs cannot cross-close another Accordion');
+ assert.equal(await first.locator('details[open]').count(),1);assert.equal(await second.locator('details[open]').count(),1);
+ assert.equal(await none.locator('details[open]').count(),0,'openFirst=false leaves all disclosures closed');
+ await first.locator('summary').nth(1).click();
+ assert.equal(await first.locator('details[open]').count(),1,'native single-open keeps exactly the selected disclosure open');
+ assert.ok(await first.locator('details').nth(1).evaluate(node=>node.open));
+ assert.ok(await second.locator('details').first().evaluate(node=>node.open),'opening one node does not close another node');
+ await second.locator('summary').nth(1).click();
+ assert.equal(await second.locator('details[open]').count(),1);
+ assert.ok(await first.locator('details').nth(1).evaluate(node=>node.open),'the other node remains independent');
+});
+
 test('structured tab ARIA references stay unique across sanitization-colliding node IDs',async t=>{
  const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||(existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined),args:['--no-sandbox']});
  t.after(()=>browser.close());
@@ -352,6 +376,21 @@ test('structured Inspector editing survives Save, Publish and public interaction
   assert.equal(await canvas.getAttribute('aria-label'),final,'the editor canvas exposes the authored accessible name immediately');
   assert.equal(posts.length,0,'accessible-name edits remain a local draft until explicit Save');
  }
+ await select(ids.accordion);
+ const accordionInspector=editor.locator('.structured-inspector'),singleOpen=accordionInspector.getByRole('checkbox',{name:'Egyszerre csak egy nyitott rész',exact:true}),openFirst=accordionInspector.getByRole('checkbox',{name:'Első rész kezdetben nyitva',exact:true});
+ const inspectorRoute=async control=>control.evaluate(el=>{const owner=el.closest('[data-inspector-command]');return {command:owner?.dataset.inspectorCommand,key:owner?.dataset.inspectorKey}});
+ assert.deepEqual(await inspectorRoute(singleOpen),{command:'element.update',key:'props.singleOpen'});
+ assert.deepEqual(await inspectorRoute(openFirst),{command:'element.update',key:'props.openFirst'});
+ assert.equal(await singleOpen.isChecked(),false,'single-open stays opt-in on legacy structured nodes');
+ assert.equal(await openFirst.isChecked(),true,'the prior first-open default remains visible in the Inspector');
+ await singleOpen.check();await openFirst.uncheck();
+ assert.equal(await editor.locator(`.node[data-node-id="${ids.accordion}"] .visual-structured-accordion details[open]`).count(),0,
+  'disabling first-open immediately closes all disclosures in the Editor Canvas');
+ await openFirst.check();
+ const editorAccordion=editor.locator(`.node[data-node-id="${ids.accordion}"] .visual-structured-accordion`);
+ assert.equal(await editorAccordion.locator('details[open]').count(),1,'re-enabling first-open updates the Canvas without a reload');
+ assert.equal(posts.length,0,'Accordion behavior stays a local draft until Save');
+ assert.equal(draft.pages[pageId].nodes[ids.accordion].props.singleOpen,undefined,'local toggle does not write to the API draft before Save');
  await select(ids.icon);
  const iconPicker=editor.locator('.basic-content-inspector').getByRole('combobox',{name:'Ikon',exact:true});
  assert.deepEqual(await iconPicker.evaluate(el=>{const route=el.closest('[data-inspector-command]');return {command:route?.dataset.inspectorCommand,key:route?.dataset.inspectorKey}}),{command:'element.update',key:'props.icon'});
@@ -510,6 +549,9 @@ test('structured Inspector editing survives Save, Publish and public interaction
  await editor.locator('#save').click();
  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
  assert.equal(posts.at(-1).publish,false);
+ assert.equal(draft.pages[pageId].nodes[ids.accordion].props.singleOpen,true,'Save persists the native single-open behavior');
+ assert.equal(draft.pages[pageId].nodes[ids.accordion].props.openFirst,true,'Save persists the explicit initial disclosure behavior');
+ assert.equal(published.pages[pageId].nodes[ids.accordion].props.singleOpen,undefined,'Save keeps the previous published Accordion intact');
  assert.equal(published.pages[pageId].nodes[ids.tabs].props.contentModel.items[0].label,'Első fül');
  assert.equal(draft.pages[pageId].nodes[ids.tabs].props.contentModel.items[0].label,expectedModels.tabs.items[0].label);
  for(const type of Object.keys(expectedModels)){assert.deepEqual(draft.pages[pageId].nodes[ids[type]].props.contentModel,expectedModels[type],'all fresh fields and untouched rows survive structural operations');assert.deepEqual(published.pages[pageId].nodes[ids[type]].props.contentModel,initialModels[type],'Save cannot alter any published structured model');}
@@ -669,7 +711,11 @@ test('structured Inspector editing survives Save, Publish and public interaction
   'changing the first published tab widget leaves the second widget selection isolated');
  const accordion=viewer.locator('.visual-editor-node[data-node-id="'+ids.accordion+'"]');
  assert.equal(await accordion.locator('details').count(),2);
+ assert.equal(await accordion.locator('details[open]').count(),1,'Publish applies the saved first-open state');
+ const accordionNames=await accordion.locator('details').evaluateAll(nodes=>nodes.map(node=>node.getAttribute('name')));
+ assert.ok(accordionNames.every(Boolean)&&accordionNames[0]===accordionNames[1],'Publish applies one node-scoped exclusive disclosure group');
  await accordion.locator('summary').nth(1).click();
+ assert.equal(await accordion.locator('details[open]').count(),1,'the published structured Accordion enforces single-open interaction');
  assert.ok(await accordion.locator('details').nth(1).evaluate(el=>el.open));
  const gallery=viewer.locator('.visual-editor-node[data-node-id="'+ids.gallery+'"]');
  await gallery.locator('.visual-gallery-thumb').first().click();
@@ -683,7 +729,7 @@ test('structured Inspector editing survives Save, Publish and public interaction
  const singleGalleryMarkup=renderElementContent('gallery',{version:1,items:[{src:'/media/only.jpg',alt:'Egyetlen kép',caption:'Egyetlen képaláírás'}]},'single-gallery-public-probe');
  await viewer.evaluate(markup=>{const wrapper=document.createElement('div');wrapper.id='single-gallery-public-probe';wrapper.innerHTML=markup;document.body.append(wrapper)},singleGalleryMarkup);
  await viewer.evaluate(async()=>{
-  const {activateStructuredContent}=await import('/editor-v2/core/element-content.js?v=20261125-d06-authored-carousel-slide-semantics-v1');
+  const {activateStructuredContent}=await import('/editor-v2/core/element-content.js?v=20261125-d06-structured-accordion-behavior-v1');
   activateStructuredContent(document.querySelector('#single-gallery-public-probe'));
  });
  const singleGallery=viewer.locator('#single-gallery-public-probe'),singleThumb=singleGallery.locator('.visual-gallery-thumb');
@@ -718,7 +764,7 @@ test('structured Inspector editing survives Save, Publish and public interaction
  const singleSlideMarkup=renderElementContent('carousel',{version:1,items:[{label:'Egy dia',content:'Egyetlen tartalom',src:'',alt:''}]},'one-slide-public-probe');
  await viewer.evaluate(markup=>{const wrapper=document.createElement('div');wrapper.id='one-slide-public-probe';wrapper.innerHTML=markup;document.body.append(wrapper)},singleSlideMarkup);
  await viewer.evaluate(async()=>{
-  const {activateStructuredContent}=await import('/editor-v2/core/element-content.js?v=20261125-d06-authored-carousel-slide-semantics-v1');
+  const {activateStructuredContent}=await import('/editor-v2/core/element-content.js?v=20261125-d06-structured-accordion-behavior-v1');
   activateStructuredContent(document.querySelector('#one-slide-public-probe'));
  });
  const singleSlide=viewer.locator('#one-slide-public-probe [data-structured-carousel]');

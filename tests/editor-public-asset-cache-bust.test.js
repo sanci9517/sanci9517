@@ -30,8 +30,10 @@ test('the Editor and public renderer release tokens bust the structured accessib
     'the stylesheet referenced by the versioned link must include the palette-favorites UI');
   const recoveryVersion='20261124-edt042-publish-recovery-safe-label-v1';
   const editorEntryVersion='20261125-edt016-child-reference-limit-v1';
+  const editorScriptVersion='20261125-d06-structured-accordion-behavior-v1';
   const mediaPlaybackVersion='20261125-d06-authored-carousel-slide-semantics-v1';
-  assert.match(html,new RegExp(`src="/editor-v2/app\\.js\\?v=${editorEntryVersion}"`),
+  const structuredContentVersion='20261125-d06-structured-accordion-behavior-v1';
+  assert.match(html,new RegExp(`src="/editor-v2/app\\.js\\?v=${editorScriptVersion}"`),
     'the deployed entry page must request the unsupported-Publish recovery handler');
   assert.match(html,/src="\/editor-v2\/ui\/shell\.js\?v=20261123-edt044-account-scoped-preferences-v2"/,
     'the deployed entry page must request the account-scoped shell module');
@@ -51,9 +53,9 @@ test('the Editor and public renderer release tokens bust the structured accessib
   for(const path of ['core/state.js','core/commands.js','core/editor-templates.js']){const source=await readFile(resolve(root,path),'utf8');assert.match(source,new RegExp(`validation\\.js\\?v=${editorEntryVersion}`),`${path} must load the refreshed validator`)}
   assert.match(app,/core\/responsive\.js\?v=20261122-edt024-responsive-prototype-safety-v1/,
     'the versioned entry script must request the responsive resolver cache key');
-  assert.match(app,/ui\/structured-inspector\.js\?v=20261125-d06-accordion-accessible-name-v1/,
+  assert.match(app,/ui\/structured-inspector\.js\?v=20261125-d06-structured-accordion-behavior-v1/,
     'the versioned entry script must request the structured Inspector accessible-name controls, including Accordion');
-  assert.match(publicHtml,new RegExp(`page-renderer\\.js\\?v=${mediaPlaybackVersion}`),
+  assert.match(publicHtml,new RegExp(`page-renderer\\.js\\?v=${structuredContentVersion}`),
     'published pages must request the renderer version containing reduced-motion playback behavior');
   assert.match(publicRenderer,new RegExp(`authored-content\\.js\\?v=${mediaPlaybackVersion}`),
     'the public renderer must request the cache-busted authored content playback behavior');
@@ -67,7 +69,7 @@ test('the Editor and public renderer release tokens bust the structured accessib
     'a changed operating-system preference updates only public video controls without replacing interactive page content');
   assert.match(app,/applyReducedMotionVideoPlayback\(canvas,\{reducedMotion:prefersReducedMotion\(\),editor:true\}\)/,
     'a changed operating-system preference updates only Editor Canvas video controls without rerendering the active workspace');
-  assert.match(publicRenderer,/element-content\.js\?v=20261125-d06-authored-carousel-slide-semantics-v1/,
+  assert.match(publicRenderer,/element-content\.js\?v=20261125-d06-structured-accordion-behavior-v1/,
     'the public renderer must request the shared collision-resistant content DOM ID helper');
 });
 
@@ -84,16 +86,18 @@ test('the EDT-040 in-view trigger refreshes both renderers and the shared motion
   const motionVersion='20261123-edt040-in-view-motion-v1';
   const domIdVersion='20261125-d06-authored-carousel-slide-semantics-v1';
   const editorEntryVersion='20261125-edt016-child-reference-limit-v1';
+  const editorScriptVersion='20261125-d06-structured-accordion-behavior-v1';
   const mediaPlaybackVersion='20261125-d06-authored-carousel-slide-semantics-v1';
+  const structuredContentVersion='20261125-d06-structured-accordion-behavior-v1';
   assert.match(editorHtml,new RegExp(`editor-motion\\.css\\?v=${motionVersion}`));
-  assert.match(editorHtml,new RegExp(`app\\.js\\?v=${editorEntryVersion}`));
+  assert.match(editorHtml,new RegExp(`app\\.js\\?v=${editorScriptVersion}`));
   assert.match(editor,new RegExp(`core/property-registry\\.js\\?v=${motionVersion}`));
   assert.match(editor,new RegExp(`core/motion-style\\.js\\?v=${motionVersion}`));
   assert.match(editor,/dataset\.motionTrigger=motionTrigger/);
   assert.match(canvasEngine,/motion-style\.js/);
   assert.match(motionStyle,/MOTION_TRIGGER_OPTIONS/);
   assert.match(publicHtml,new RegExp(`editor-motion\\.css\\?v=${motionVersion}`));
-  assert.match(publicHtml,new RegExp(`page-renderer\\.js\\?v=${mediaPlaybackVersion}`));
+  assert.match(publicHtml,new RegExp(`page-renderer\\.js\\?v=${structuredContentVersion}`));
   assert.match(publicRenderer,new RegExp(`motion-style\\.js\\?v=${motionVersion}`));
   assert.match(publicRenderer,/data-motion-trigger="\$\{motionTrigger\}"/);
   assert.match(css,/animation-timeline:\s*view\(\)/);

@@ -594,6 +594,29 @@ test('structured accordions expose their Inspector name as an escaped accessible
   'public Accordion names stay within the existing 160-character field contract');
 });
 
+test('structured Accordion defaults remain compatible while explicit disclosure behavior is strict and node-scoped',()=>{
+ const model={version:1,items:[{label:'Első',content:'Válasz'},{label:'Második',content:'Másik válasz'}]};
+ const legacy=renderStructuredContent('accordion',model,'legacy');
+ assert.match(legacy,/<details open><summary>Első<\/summary>/,'older nodes keep the first disclosure open');
+ assert.doesNotMatch(legacy,/<details name=/,'single-open stays opt-in for existing pages');
+ const closed=renderStructuredContent('accordion',model,'closed',{openFirst:false});
+ assert.equal((closed.match(/<details(?: |>)/g)||[]).length,2);
+ assert.doesNotMatch(closed,/<details[^>]* open(?: |>)/,'explicit false starts every item closed');
+ assert.doesNotMatch(renderStructuredContent('accordion',model,'strict',{openFirst:'false'}),/<details[^>]* open(?: |>)/,
+  'the renderer enables first-open only for its documented strict boolean or the absent default');
+ const single=renderStructuredContent('accordion',model,'a/b',{singleOpen:true,openFirst:true});
+ const details=[...single.matchAll(/<details([^>]*)>/g)].map(([,attrs])=>attrs);
+ assert.equal(details.length,2);assert.ok(details.every(attrs=>/name="structured-accordion-encoded-/.test(attrs)),
+  'single-open is represented by native details groups without custom event state');
+ assert.equal(details[0].match(/name="([^"]+)"/)?.[1],details[1].match(/name="([^"]+)"/)?.[1]);
+ assert.notEqual(
+  renderStructuredContent('accordion',model,'a/b',{singleOpen:true}).match(/name="([^"]+)"/)?.[1],
+  renderStructuredContent('accordion',model,'a?b',{singleOpen:true}).match(/name="([^"]+)"/)?.[1],
+  'node IDs that collide after naive punctuation replacement remain in distinct disclosure groups');
+ assert.doesNotMatch(renderStructuredContent('accordion',model,'strict',{singleOpen:1}),/<details name=/,
+  'single-open accepts only the explicit boolean value');
+});
+
 test('a single-slide carousel does not render active no-op navigation controls',()=>{
  const html=renderStructuredContent('carousel',{version:1,items:[{label:'Egy dia',content:'Egyetlen tartalom',src:'',alt:''}]},'one-slide');
  assert.match(html,/<button type="button" class="visual-carousel-prev" aria-controls="carousel-safe-one-slide" aria-label="Előző dia" disabled>/,

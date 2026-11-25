@@ -1,6 +1,6 @@
 import {createCompositionInputs} from './composition-inputs.js';
 /* Inspector-only controls for canonical static content. All edits call the command API. */
-import {createElementContent,normalizeElementContent,isStructuredType,malformedElementContentRowIndexes} from '../core/element-content.js?v=20261125-d06-authored-carousel-slide-semantics-v1';
+import {createElementContent,normalizeElementContent,isStructuredType,malformedElementContentRowIndexes} from '../core/element-content.js?v=20261125-d06-structured-accordion-behavior-v1';
 const focusRequests=new WeakMap();
 const typeLabels={list:'Lista',table:'Táblázat',tabs:'Fülek',accordion:'Lenyitható blokkok',gallery:'Galéria',carousel:'Tartalom-carousel'};
 function recoverAndRestoreFocus(section,nodeId,button,update){
@@ -101,6 +101,17 @@ export function renderStructuredInspector(node,update,{pending=()=>{},updateProp
   const accessibleName=input('ariaLabel','Akadálymentes elnevezés',typeof node.props?.ariaLabel==='string'?node.props.ariaLabel:'',(value,options)=>updateProperties({ariaLabel:value},options),false,160);
   accessibleName.dataset.inspectorKey='props.ariaLabel';
   section.append(accessibleName);
+ }
+ if(node.type==='accordion'){
+  for(const [key,name,checked] of [
+   ['singleOpen','Egyszerre csak egy nyitott rész',node.props?.singleOpen===true],
+   ['openFirst','Első rész kezdetben nyitva',node.props?.openFirst===undefined||node.props.openFirst===true]
+  ]){
+   const field=document.createElement('label');field.dataset.inspectorCommand='element.update';field.dataset.inspectorKey=`props.${key}`;field.className='inspector-toggle';
+   const checkbox=document.createElement('input');checkbox.type='checkbox';checkbox.checked=checked;checkbox.disabled=Boolean(node.locked);checkbox.setAttribute('aria-label',name);
+   checkbox.onchange=()=>{if(checkbox.disabled||updateProperties({[key]:checkbox.checked})===false)checkbox.checked=checked;};
+   field.append(checkbox,document.createTextNode(name));section.append(field);
+  }
  }
  const tools=document.createElement('div');tools.className='structured-actions';
  if(node.type==='list'){

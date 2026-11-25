@@ -75,6 +75,44 @@ test('structured table, tabs, accordion, gallery and carousel expose an independ
  }
 });
 
+test('structured Accordion behavior controls persist only explicit Page Model properties and respect locks',()=>{
+ const previous=globalThis.document;
+ globalThis.document={createElement:tag=>new ElementStub(tag),createTextNode:text=>({textContent:String(text)})};
+ try{
+  const node={id:'behavior',type:'accordion',props:{contentModel:{version:1,items:[{label:'Első',content:'Válasz'}]}}};
+  const original=structuredClone(node.props);let writes=[];
+  const panel=renderStructuredInspector(node,()=>true,{updateProperties:(props,options)=>{writes.push({props,options});return true}});
+  const field=key=>panel.children.find(child=>child.dataset?.inspectorKey===`props.${key}`);
+  const single=field('singleOpen'),openFirst=field('openFirst');
+  assert.ok(single&&openFirst,'the Accordion Inspector exposes both documented behavior controls');
+  assert.deepEqual([single.dataset.inspectorCommand,single.dataset.inspectorKey],['element.update','props.singleOpen']);
+  assert.deepEqual([openFirst.dataset.inspectorCommand,openFirst.dataset.inspectorKey],['element.update','props.openFirst']);
+  const checkbox=control=>control.children.find(child=>child.tagName==='INPUT');
+  assert.equal(checkbox(single).checked,false,'single-open defaults off');
+  assert.equal(checkbox(openFirst).checked,true,'the legacy first-open default stays enabled');
+  assert.deepEqual(writes,[],'opening the Inspector is read-only');
+  checkbox(single).checked=true;checkbox(single).onchange();
+  checkbox(openFirst).checked=false;checkbox(openFirst).onchange();
+  assert.deepEqual(writes,[{props:{singleOpen:true},options:undefined},{props:{openFirst:false},options:undefined}],
+   'each toggle updates its own node property rather than the content model');
+  assert.deepEqual(node.props,original,'editing controls do not mutate the input snapshot');
+
+  const locked=renderStructuredInspector({...node,locked:true},()=>true,{updateProperties:()=>{throw Error('locked write')}});
+  for(const key of ['singleOpen','openFirst']){
+   const input=checkbox(locked.children.find(child=>child.dataset?.inspectorKey===`props.${key}`));
+   assert.equal(input.disabled,true,`${key} is disabled for a locked node`);
+   input.checked=!input.checked;input.onchange();
+  }
+  const rejected=renderStructuredInspector(node,()=>true,{updateProperties:()=>false});
+  for(const [key,expected] of [['singleOpen',false],['openFirst',true]]){
+   const input=checkbox(rejected.children.find(child=>child.dataset?.inspectorKey===`props.${key}`));
+   input.checked=!expected;input.onchange();assert.equal(input.checked,expected,`${key} restores its prior value when the command rejects`);
+  }
+ }finally{
+  if(previous===undefined)delete globalThis.document;else globalThis.document=previous;
+ }
+});
+
 test('malformed saved repeater rows remain read-only until an explicit default replacement',()=>{
  assert.deepEqual(malformedElementContentRowIndexes('list',{version:1,items:['Megtartott sor',null,'Másik sor']}),[1]);
  assert.deepEqual(malformedElementContentRowIndexes('list',{version:1,items:[null,{},['tömb']]}),[0,1,2]);

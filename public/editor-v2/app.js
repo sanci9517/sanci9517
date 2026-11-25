@@ -31,9 +31,9 @@ import {captureStyleSnapshot,STYLE_SNAPSHOT_PROPERTIES} from './core/style-snaps
 import {LAYOUT_PRESETS,LAYOUT_TYPES,layoutMode,isManagedLayout,isLayoutPropertyRelevant,explicitGridColumnCount} from './core/layout-presets.js';
 import {resolveElementInsertion} from './core/element-insertion.js';
 import {TYPOGRAPHY_PRESETS,typographyPresetPatch} from './core/typography-presets.js';
-import {isStructuredType,createElementContent,normalizeElementContent,renderElementContent,activateStructuredContent} from './core/element-content.js?v=20261125-d06-authored-carousel-slide-semantics-v1';
+import {isStructuredType,createElementContent,normalizeElementContent,renderElementContent,activateStructuredContent} from './core/element-content.js?v=20261125-d06-structured-accordion-behavior-v1';
 import {legacyImageSource,legacyPlayableSource,legacyPlaybackSettings,legacyImagePresentation,legacyImageCaption,applyReducedMotionVideoPlayback} from './core/legacy-media-source.js?v=20261125-d06-authored-carousel-slide-semantics-v1';
-import {renderStructuredInspector} from './ui/structured-inspector.js?v=20261125-d06-accordion-accessible-name-v1';
+import {renderStructuredInspector} from './ui/structured-inspector.js?v=20261125-d06-structured-accordion-behavior-v1';
 import {ICON_CHOICES,iconById} from './core/icon-options.js';
 import {DIVIDER_LINE_STYLES,normalizeDividerStyle} from './core/decorative-elements.js';
 import {defaultCardContent,cardImageSrc} from './core/card-content.js?v=20261118-d02-card-cta-recovery-v1';
@@ -696,7 +696,7 @@ function renderNode(currentPage,id,managed=false){const node=getNode(currentPage
     el.append(c);
    }else if(isStructuredType(node.type)&&!isAuthoredContent(node)){
     const c=document.createElement('div');c.className='node-content structured-preview';
-    c.innerHTML=renderElementContent(node.type,node.props?.contentModel??createElementContent(node.type),node.id,{ariaLabel:node.props?.ariaLabel});
+    c.innerHTML=renderElementContent(node.type,node.props?.contentModel??createElementContent(node.type),node.id,{ariaLabel:node.props?.ariaLabel,singleOpen:node.props?.singleOpen,openFirst:node.props?.openFirst});
     for(const eventName of ['pointerdown','click','dblclick'])c.addEventListener(eventName,event=>{if(event.target.closest('button,summary,dialog'))event.stopPropagation()});
     el.append(c);activateStructuredContent(c);
   }else if([NODE_TYPES.HEADING,NODE_TYPES.TEXT,NODE_TYPES.BUTTON,NODE_TYPES.LINK].includes(node.type)){

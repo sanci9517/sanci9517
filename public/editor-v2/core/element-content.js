@@ -120,7 +120,7 @@ export const safeContentDomId=v=>{
  const suffix=`${(left>>>0).toString(36)}-${(right>>>0).toString(36)}`;
  return `encoded-${prefix}-${suffix}`;
 };
-export function renderElementContent(type,value,nodeId,{ariaLabel:rawAriaLabel}={}){
+export function renderElementContent(type,value,nodeId,{ariaLabel:rawAriaLabel,singleOpen:rawSingleOpen,openFirst:rawOpenFirst}={}){
  let m;try{m=normalizeElementContent(type,value)}catch{return '<div class="visual-structured-error">A tartalom hiányos</div>'}
  const regionLabel=text(rawAriaLabel,160).trim();
  if(type==='list'){
@@ -128,7 +128,12 @@ export function renderElementContent(type,value,nodeId,{ariaLabel:rawAriaLabel}=
  }
  if(type==='table')return `<div class="visual-structured-table-scroll" tabindex="0" role="region" aria-label="${esc(regionLabel||'Táblázat')}"><table class="visual-structured-table" aria-label="${esc(regionLabel||'Táblázat')}"><thead><tr>${m.rows[0].map(v=>`<th scope="col">${esc(v)}</th>`).join('')}</tr></thead><tbody>${m.rows.slice(1).map(row=>`<tr>${row.map(v=>`<td>${esc(v)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
  if(type==='carousel'){const carouselId=`carousel-${safeContentDomId(nodeId)}`;return `<section class="visual-structured-carousel" id="${carouselId}" data-structured-carousel role="region" aria-roledescription="carousel" aria-label="${esc(regionLabel||'Képkörhinta')}"><div class="visual-carousel-track">${m.items.map((item,i)=>{const src=safePublishedMediaUrl(item.src);return `<article class="visual-carousel-slide" role="group" aria-roledescription="dia" aria-label="${i+1}. / ${m.items.length}. dia"${i===0?'':' hidden'}>${src?`<img src="${esc(src)}" alt="${esc(item.alt)}" loading="lazy">`:''}<h3>${esc(item.label)}</h3><p>${esc(item.content)}</p></article>`}).join('')}</div><div class="visual-carousel-controls"><button type="button" class="visual-carousel-prev" aria-controls="${carouselId}" aria-label="Előző dia"${m.items.length===1?' disabled':''}>‹</button><span class="visual-carousel-count" aria-live="polite">1 / ${m.items.length}</span><button type="button" class="visual-carousel-next" aria-controls="${carouselId}" aria-label="Következő dia"${m.items.length===1?' disabled':''}>›</button></div></section>`}
- if(type==='accordion')return `<div class="visual-structured-accordion" role="group" aria-label="${esc(regionLabel||'Részletek')}">${m.items.map((item,i)=>`<details${i===0?' open':''}><summary>${esc(item.label)}</summary><div class="visual-structured-panel">${esc(item.content)}</div></details>`).join('')}</div>`;
+ if(type==='accordion'){
+  const singleOpen=rawSingleOpen===true;
+  const openFirst=rawOpenFirst===undefined||rawOpenFirst===true;
+  const name=singleOpen?` name="structured-accordion-${safeContentDomId(nodeId)}"`:'';
+  return `<div class="visual-structured-accordion" role="group" aria-label="${esc(regionLabel||'Részletek')}">${m.items.map((item,i)=>`<details${name}${openFirst&&i===0?' open':''}><summary>${esc(item.label)}</summary><div class="visual-structured-panel">${esc(item.content)}</div></details>`).join('')}</div>`;
+ }
  if(type==='tabs'){
   const prefix='tab-'+safeContentDomId(nodeId);
   return `<div class="visual-structured-tabs" data-structured-tabs><div role="tablist" aria-label="${esc(regionLabel||'Tartalomfülek')}">${m.items.map((item,i)=>`<button type="button" role="tab" id="${prefix}-t${i}" aria-controls="${prefix}-p${i}" aria-selected="${i===0}" tabindex="${i===0?0:-1}">${esc(item.label)}</button>`).join('')}</div>${m.items.map((item,i)=>`<div role="tabpanel" id="${prefix}-p${i}" aria-labelledby="${prefix}-t${i}" tabindex="0"${i===0?'':' hidden'} class="visual-structured-panel">${esc(item.content)}</div>`).join('')}</div>`;
