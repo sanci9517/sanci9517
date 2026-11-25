@@ -16,7 +16,7 @@ import {defaultCountdownContent} from './countdown-content.js';
 import {defaultSocialLinks} from './social-links.js';
 import {defaultEmbedContent} from './creator-embed.js';
 import {defaultCodeSnippet} from './code-snippet.js';
-import { normalizeElementContent as normalizeAuthoredElementContent, CONTENT_TYPES } from './authored-content.js?v=20261124-d06-accordion-accessible-group-v1';
+import { normalizeElementContent as normalizeAuthoredElementContent, CONTENT_TYPES } from './authored-content.js?v=20261125-d06-authored-carousel-one-slide-v1';
 import {normalizeAccessibility,remapDuplicateAnchors} from './accessibility.js';
 import {normalizeStatePatch} from './state-styles.js';
 import { applyStyleSnapshot } from './style-snapshot.js';

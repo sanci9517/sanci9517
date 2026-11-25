@@ -279,7 +279,8 @@ export function authoredNodeHtml(node,{childrenHtml='',device='desktop',editor=f
       ?` role="region" aria-label="${esc(galleryName)}" style="grid-template-columns:repeat(${device==='mobile'?1:device==='tablet'?2:[2,3,4].includes(columns)?columns:3},minmax(0,1fr))"`
       :` tabindex="0" role="region" aria-roledescription="képgaléria" aria-label="${esc(carouselName)}"`;
     const figures=items.map(item=>{const alt=imageAlt(item),caption=imageCaption(item),accessibleName=caption||alt||'kép';return `<figure><button type="button" class="creator-image-zoom" data-lightbox-src="${esc(imageSource(item))}" data-lightbox-alt="${esc(alt||caption)}" data-lightbox-caption="${esc(caption)}" aria-haspopup="dialog" aria-label="${esc('Kép nagyítása: '+accessibleName)}">${image(item)}</button>${caption?`<figcaption>${esc(caption)}</figcaption>`:''}</figure>`}).join('');
-    const controls=node.type==='carousel'?'<div class="creator-carousel-controls"><button type="button" data-carousel-step="-1" aria-label="Előző kép">←</button><button type="button" data-carousel-step="1" aria-label="Következő kép">→</button></div>':'';
+    const singleSlide=items.length<=1;
+    const controls=node.type==='carousel'?`<div class="creator-carousel-controls"><button type="button" data-carousel-step="-1" aria-label="Előző kép"${singleSlide?' disabled':''}>←</button><button type="button" data-carousel-step="1" aria-label="Következő kép"${singleSlide?' disabled':''}>→</button></div>`:'';
     return `<div class="creator-${node.type}"${layout}>${figures}</div>${controls}`;
   }
   if(node.type==='code')return `<pre${p.wrap?' class="creator-code-wrap"':''}><code>${esc(p.code)}</code></pre>`;
@@ -475,13 +476,13 @@ export function initContentInteractions(root){
       if(restore&&zoom.isConnected)zoom.focus();
     };
     dialog.showModal();close.focus();
-  }const tab=event.target.closest('[role="tab"]');if(tab&&root.contains(tab))activate(tab);const step=event.target.closest('[data-carousel-step]');if(step&&root.contains(step)){const track=step.parentElement.previousElementSibling;scrollCarousel(track,Number(step.dataset.carouselStep)>0?'ArrowRight':'ArrowLeft')}});
+  }const tab=event.target.closest('[role="tab"]');if(tab&&root.contains(tab))activate(tab);const step=event.target.closest('[data-carousel-step]');if(step&&root.contains(step)){const track=step.parentElement.previousElementSibling;if(track?.querySelectorAll('figure').length>1)scrollCarousel(track,Number(step.dataset.carouselStep)>0?'ArrowRight':'ArrowLeft')}});
   // The carousel region is intentionally keyboard-focusable. Arrow keys and
   // Home/End must operate the same viewport used by its visible buttons;
   // do not hijack keys while a nested image/lightbox button is focused.
   root.addEventListener('keydown',event=>{
     const track=event.target.closest('.creator-carousel[role="region"]');
-    if(!track||!root.contains(track)||event.target!==track||!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;
+    if(!track||!root.contains(track)||event.target!==track||track.querySelectorAll('figure').length<2||!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;
     event.preventDefault();
     scrollCarousel(track,event.key);
   });

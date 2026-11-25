@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { CONTENT_FIELDS, getPublicationContentGuidance, validatePageForPublication } from '../public/editor-v2/core/authored-content.js';
+import { CONTENT_FIELDS, authoredNodeHtml, getPublicationContentGuidance, validatePageForPublication } from '../public/editor-v2/core/authored-content.js';
 import { validatedLinkHref } from '../public/editor-v2/core/richtext-links.js';
 import { isStructuredType, safePublishedMediaUrl } from '../public/editor-v2/core/element-content.js';
 import { defaultCardContent, normalizeCardContent } from '../public/editor-v2/core/card-content.js';
@@ -97,6 +97,20 @@ test('D structured repeaters and media types retain their versioned validation p
   assert.equal(card.metadata.cardContentVersion, 1, 'Card content is versioned independently from authored props');
   assert.equal(hasContentProfile(card, 'card-v1'), true, 'Card retains its own validation gate');
   assert.ok(getElementContentContract(card).profiles.some(profile => profile.id === 'card-v1'));
+});
+
+test('D authored one-slide carousel disables both impossible navigation actions', () => {
+  const html = authoredNodeHtml({
+    id: 'one-slide',
+    type: 'carousel',
+    metadata: { contentVersion: 1 },
+    props: { ariaLabel: 'Bevezető kép', items: [{ src: '/one.jpg', alt: 'Egyetlen kép' }] }
+  });
+  assert.match(html, /aria-label="Bevezető kép"/);
+  assert.match(html, /data-carousel-step="-1"[^>]* disabled>/,
+    'authored previous navigation is natively disabled when no other slide exists');
+  assert.match(html, /data-carousel-step="1"[^>]* disabled>/,
+    'authored next navigation is natively disabled when no other slide exists');
 });
 
 test('D structured content repeaters share the same minimum-content contract in Inspector guidance and Publish', () => {

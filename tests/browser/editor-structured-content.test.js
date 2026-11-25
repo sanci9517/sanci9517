@@ -13,6 +13,47 @@ import {ICON_CHOICES,iconById} from '../../public/editor-v2/core/icon-options.js
 import {renderElementContent} from '../../public/editor-v2/core/element-content.js';
 import {authoredNodeHtml} from '../../public/editor-v2/core/authored-content.js';
 
+test('a one-slide authored carousel exposes no-op-free controls and leaves arrow keys to the page',async t=>{
+ const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||(existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined),args:['--no-sandbox']});
+ t.after(()=>browser.close());
+ const markup=authoredNodeHtml({id:'authored-one-slide',type:'carousel',metadata:{contentVersion:1},props:{ariaLabel:'Bevezető kép',items:[
+  {src:'/one-slide.jpg',alt:'Egyetlen kép',caption:'Egy kép'}
+ ]}});
+ const publicRoot=resolve(import.meta.dirname,'../../public');
+ const server=createServer(async(req,res)=>{
+  const url=new URL(req.url,'http://localhost');
+  if(url.pathname==='/harness.html'){
+   res.setHeader('content-type','text/html; charset=utf-8');
+   return res.end(`<!doctype html><main id="page-content">${markup}</main><script type="module" src="/harness.js"></script>`);
+  }
+  if(url.pathname==='/harness.js'){
+   res.setHeader('content-type','text/javascript');
+   return res.end("import {initContentInteractions} from '/editor-v2/core/authored-content.js';initContentInteractions(document.querySelector('#page-content'));");
+  }
+  const file=resolve(publicRoot,'.'+url.pathname);
+  if(!file.startsWith(publicRoot+'/'))return res.writeHead(403).end();
+  try{res.setHeader('content-type',extname(file)==='.js'?'text/javascript':'application/octet-stream');res.end(await readFile(file))}
+  catch{return res.writeHead(404).end()}
+ });
+ await new Promise(done=>server.listen(0,'127.0.0.1',done));
+ t.after(()=>new Promise(done=>server.close(done)));
+ const page=await browser.newPage({viewport:{width:390,height:844}});t.after(()=>page.close());
+ await page.goto(`http://127.0.0.1:${server.address().port}/harness.html`);
+ const region=page.locator('.creator-carousel[role="region"]');
+ await region.waitFor();
+ assert.equal(await region.getAttribute('aria-label'),'Bevezető kép','the single-slide region retains the Inspector-authored name');
+ const previous=page.locator('.creator-carousel-controls [data-carousel-step="-1"]');
+ const next=page.locator('.creator-carousel-controls [data-carousel-step="1"]');
+ assert.equal(await previous.isDisabled(),true,'a one-slide Carousel has no active previous action');
+ assert.equal(await next.isDisabled(),true,'a one-slide Carousel has no active next action');
+ await page.evaluate(()=>document.addEventListener('keydown',event=>{
+  if(event.key==='ArrowRight')window.__singleSlideArrowDefaultPrevented=event.defaultPrevented;
+ }));
+ await region.focus();await region.press('ArrowRight');
+ assert.equal(await page.evaluate(()=>window.__singleSlideArrowDefaultPrevented),false,
+  'a one-slide Carousel does not consume a page-level arrow key for an impossible move');
+});
+
 test('single-open authored accordion DOM groups stay isolated for sanitization-colliding node IDs',async t=>{
  const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||(existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined),args:['--no-sandbox']});
  t.after(()=>browser.close());
