@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261125182950-fbfd7bf6",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-25T18:29:50.804Z",
+  "finished_at": "2026-11-25T18:44:03.981Z",
+  "wall_seconds": 853,
+  "paused_seconds": 0,
+  "measured_seconds": 853,
+  "status": "pass",
+  "kind": "docs",
+  "summary": "Corrected stale Media Picker capability summary; current browser/unit tests, plan contracts, traceability and live Worker state verified. Full Editor/D acceptance remains open.",
+  "evidence": [
+    "docs/evidence/editor-d06-plan-picker-status-reconciliation-2026-11-25.json"
+  ],
+  "checks": "Chromium 2/2+1/1+1/1; editor unit 24/24; prefs 12/12; runner 4/4; typecheck; plan contract 16/16; canonical 13 parts; traceability 396/396; active point 77.44.7.D; health 200; Worker 100%; diff check.",
+  "started_revision": "130f5709c90e274b96deec5c1f0ec78f4b55fa56",
+  "finished_revision": "130f5709c90e274b96deec5c1f0ec78f4b55fa56",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

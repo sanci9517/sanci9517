@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "captured_at_utc": "2026-11-25T18:42:13Z",
+  "plan_item": "77.44.7.D / D-06 — reconcile Media Library picker capability summary",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "head_at_audit": "130f5709c90e274b96deec5c1f0ec78f4b55fa56",
+    "github_branch_head_at_audit": "130f5709c90e274b96deec5c1f0ec78f4b55fa56",
+    "canonical_plan_sha256": "981c84b7c3c940437c71e91f3d09facc673d324a26f2f5739bde1b7d5870820b",
+    "canonical_plan_bytes": 1893526
+  },
+  "finding": {
+    "result": "STALE SECONDARY SUMMARY CORRECTED; NO PICKER REIMPLEMENTATION NEEDED",
+    "stale_claim": "The historical part-12 media capability matrix said video, audio, and background.image pickers were unsupported/open.",
+    "verified_source": [
+      "public/editor-v2/ui/legacy-media-inspector.js",
+      "public/editor-v2/ui/element-content-controls.js",
+      "public/editor-v2/core/background-asset.js",
+      "public/assets/page-renderer.js"
+    ],
+    "verified_existing_regression_tests": [
+      "tests/browser/editor-inspector-background-image-partial-types.test.js",
+      "tests/browser/editor-legacy-media-parity.test.js",
+      "tests/browser/editor-media-picker-pagination.test.js"
+    ],
+    "correction": "image/gallery/carousel/responsive background.image and legacy typed video/audio Media Library selectors already exist. Their local automated coverage includes responsive background type matrix, Save/reload, explicit Publish, site-scoped public media URL, video/webm and audio/mpeg|audio/ogg|audio/wav MIME filtering, and pagination.",
+    "scope_limit": "This reconciles already implemented code and tests only; it does not certify production R2 upload acceptance, all Media Library lifecycle behavior, full Editor acceptance, or D-06 closure."
+  },
+  "checks": {
+    "background_image_browser": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-inspector-background-image-partial-types.test.js",
+      "result": "PASS 2/2; responsive background.image compatibility matrix, draft Save/reload, separate Publish, renderer references, reset/inheritance and malformed UUID fail-safe.",
+      "sandbox_note": "Initial default sandbox run failed before assertions when the local fixture bind returned EPERM. The same suite passed when run with authorized loopback access."
+    },
+    "legacy_media_browser": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-legacy-media-parity.test.js",
+      "result": "PASS 1/1; image/video/audio Inspector, authenticated preview, Save/reload and explicit Publish desktop/mobile parity."
+    },
+    "picker_browser": {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-media-picker-pagination.test.js",
+      "result": "PASS 1/1; picker pagination, stale selection recovery and video/audio MIME filtering."
+    },
+    "editor_unit": "PASS — npm run test:editor, 24/24 Node test files; preferences route 12/12; runner/manifest 4/4.",
+    "typecheck": "PASS — npm run typecheck.",
+    "plan_contract": "PASS — python3 tests/plan-contract.test.py, 16/16.",
+    "canonical_structure": "PASS — python3 scripts/check-canonical-plan.py; one 13-part master and one current cursor.",
+    "feature_traceability": "PASS — python3 scripts/build-feature-traceability.py --check; 396/396 source mappings; acceptance remains NOT_CERTIFIED.",
+    "active_point": "PASS — 77.44 / WEB-011 -> 77.44.7.D; 396 features, 148 PARTIAL_SOURCE, 248 UNVERIFIED; functional acceptance NOT_CERTIFIED.",
+    "diff_check": "PASS — git diff --check.",
+    "production_health": "PASS — read-only direct GET /api/health returned HTTP 200 at 2026-11-25T18:41:56Z with {ok:true,service:sanci9517-streamer-brand,version:2.0.0}.",
+    "worker_deployment_readback": "PASS — Cloudflare read-only deployment GET returned deployment 03a8d284-8c16-46a1-a153-70f772b8602a and Worker version 9b07c2a1-d089-48e4-b4ac-e1c483a47a2c at 100% traffic.",
+    "ci": "NOT RUN — this documentation/test-status reconciliation does not require hosted CI; the GitHub combined status currently has no checks for the unchanged local HEAD. No CI PASS is claimed."
+  },
+  "release": {
+    "runtime_changed": false,
+    "public_assets_changed": [],
+    "worker_redeploy": false,
+    "production_d1_query_or_write": false,
+    "production_r2_operation": false,
+    "dependency_added": false,
+    "additional_cost_huf": 0,
+    "save_publish": "Separate; no authored page was saved or published by this documentation-only reconciliation.",
+    "acceptance": "D-06, D-01–D-07, 77.44.7.D and complete Visual Editor remain OPEN / NOT_CERTIFIED. Manual/physical Editor acceptance remains deferred until the full Editor scope is implemented."
+  }
+}

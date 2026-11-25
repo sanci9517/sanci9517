@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261125182558-fb8bd78d",
+  "task": "77.44.6.1.C",
+  "trigger": "manual",
+  "started_at": "2026-11-25T18:25:58.301Z",
+  "finished_at": "2026-11-25T18:29:50.754Z",
+  "wall_seconds": 232,
+  "paused_seconds": 0,
+  "measured_seconds": 232,
+  "status": "partial",
+  "kind": "none",
+  "summary": "Session inspection only; corrected task mapping before implementation, no code or release claimed.",
+  "evidence": [
+    "AGENTS.md"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "130f5709c90e274b96deec5c1f0ec78f4b55fa56",
+  "finished_revision": "130f5709c90e274b96deec5c1f0ec78f4b55fa56",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
