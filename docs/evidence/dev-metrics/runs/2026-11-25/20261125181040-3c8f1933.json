@@ -14,9 +14,29 @@
   "evidence": [
     "GitHub workflow 45667665134; Cloudflare deployment 03a8d284-8c16-46a1-a153-70f772b8602a; remote docs commit 1f40b78bbc07fb61a99fbd386b0a68dd28eff47b"
   ],
-  "checks": "Exact-SHA Editor Core workflow 45667665134: steps 1–13 success; browser layout step 14 in progress, subsequent steps pending. Job logs endpoint returned HTTP 404 BlobNotFound while active. Live Cloudflare deployment API: deployment 03a8d284-8c16-46a1-a153-70f772b8602a, version 9b07c2a1-d089-48e4-b4ac-e1c483a47a2c, 100% traffic. Direct worker health GET blocked by proxy port 8080; git fetch likewise blocked. GitHub compare: local ef84d86899f73ce67e76df342f48788f3011f510 is one docs-only commit behind remote v2/foundation.",
+  "checks": "Exact-SHA Editor Core workflow 45667665134: steps 1–13 success; browser layout step 14 in progress, subsequent steps pending. Job logs endpoint returned HTTP 404 BlobNotFound while active. Live Cloudflare deployment API: deployment 03a8d284-8c16-46a1-a153-70f772b8602a, version 9b07c2a1-d089-48e4-b4ac-e1c483a47a2c, 100% traffic. Direct worker health GET blocked by proxy port 8080; git fetch likewise blocked. GitHub compare: local ef84d86899f73ce67e76df342f48788f3011f510 is one docs-only commit behind remote v2/foundation. Follow-up 2026-11-25T18:13:32Z: direct production /api/health returned HTTP 200 ok=true; local checkout safely fast-forwarded to remote 3bdbf3c6 with clean worktree.",
   "started_revision": "ef84d86899f73ce67e76df342f48788f3011f510",
   "finished_revision": "ef84d86899f73ce67e76df342f48788f3011f510",
   "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
-  "verification": "agent-reported; references are not independently checked by this script"
+  "verification": "agent-reported; references are not independently checked by this script",
+  "follow_up_checks": [
+    {
+      "checked_at": "2026-11-25T18:13:32Z",
+      "production_health": {
+        "method": "direct HTTPS GET",
+        "status": 200,
+        "body": {
+          "ok": true,
+          "service": "sanci9517-streamer-brand",
+          "version": "2.0.0",
+          "server": "cloudflare-worker"
+        }
+      },
+      "local_sync": {
+        "status": "fast-forwarded",
+        "head": "3bdbf3c616c8ad3dff1fe21141d944f4502c79f0",
+        "worktree": "clean"
+      }
+    }
+  ]
 }
