@@ -2,7 +2,7 @@
   "schema_version": 1,
   "evidence_id": "editor-d06-html-table-no-silent-truncation-2026-11-25",
   "plan_point": "77.44.7.D / D-06 — rich-text HTML table clipboard import bounds",
-  "status": "OPEN — local source and regression checks pass; release and exact-SHA hosted workflow pending",
+  "status": "OPEN — deployed source and all exact-SHA required checks verified; the complete D-06 and Editor remain uncertified.",
   "scope": "A narrow Editor clipboard import defect fix. This is not full D-06, full Editor acceptance, or D-point certification.",
   "branch_policy": "v2/foundation is the single authorized development and production release branch; no feature branch or branch switch was used.",
   "base": {
@@ -132,17 +132,22 @@
     "runtime_commit": "5613514095ee63d61922514c4ccab4344899d84a",
     "runtime_commit_url": "https://github.com/sanci9517/sanci9517/commit/5613514095ee63d61922514c4ccab4344899d84a",
     "github_ci": {
-      "status": "PARTIAL — 5/6 required checks passed; Editor Core still in progress at the last exact-SHA readback.",
+      "status": "SUCCESS — all six required exact-SHA workflows passed; Editor Core finished successfully.",
       "exact_sha": "5613514095ee63d61922514c4ccab4344899d84a",
       "passed_runs": {
         "production_source_smoke": "45667665098",
         "canonical_active_point_audit": "45667665105",
         "twitch_integration": "45667665024",
         "canonical_plan": "45667665168",
-        "f0_baseline": "45667665066"
-      },
-      "in_progress_runs": {
+        "f0_baseline": "45667665066",
         "editor_core": "45667665134"
+      },
+      "editor_core_job": {
+        "job_id": "139394113018",
+        "conclusion": "success",
+        "completed_steps": 41,
+        "screenshot_upload": "skipped by workflow policy",
+        "exact_sha": "5613514095ee63d61922514c4ccab4344899d84a"
       }
     },
     "cloudflare_build": {
