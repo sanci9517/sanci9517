@@ -1,9 +1,9 @@
 {
   "schema": 1,
-  "captured_at": "2026-11-25T19:12:13Z",
+  "captured_at": "2026-11-25T19:24:00Z",
   "plan_item": "EDT-016",
   "active_plan_cursor": "77.44 / WEB-011 -> 77.44.7.D",
-  "status": "LOCAL_VERIFIED_AWAITING_RELEASE",
+  "status": "RUNTIME_RELEASED_AWAITING_EDITOR_CORE_CI",
   "scope": "Implement EDT-016's existing depth/node-count security requirement as a shared 1000-node-per-page admission boundary; reject malformed/oversized persisted input before UI traversal and before route mutations.",
   "plan_review": {
     "canonical_master": "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
@@ -59,35 +59,169 @@
     "status": "READ_ONLY_PREFLIGHT_PASS"
   },
   "checks": [
-    {"command": "npm run test:editor", "result": "PASS; 24 Node suites (24/24), preferences (12/12), subreaper runner (4/4); zero skips/failures."},
-    {"command": "npm run test:editor:publish-guard", "result": "PASS; 24 route integration tests including oversized Save/Publish/rollback/create/duplicate/load/list/PATCH boundaries."},
-    {"command": "npm run typecheck", "result": "PASS; tsc --noEmit."},
-    {"command": "python3 tests/plan-contract.test.py", "result": "PASS 16/16 after source crosswalk regeneration."},
-    {"command": "python3 scripts/check-canonical-plan.py", "result": "PASS; one complete 13-file master; functional acceptance remains NOT certified."},
-    {"command": "python3 scripts/build-feature-traceability.py --check", "result": "PASS; 396 source mappings; acceptance NOT certified."},
-    {"command": "python3 scripts/audit-active-plan-point.py", "result": "PASS; 77.44 / WEB-011; next 77.44.7.D; D remains OPEN / NOT_CERTIFIED."},
-    {"command": "npm run test:web013:migration-gate", "result": "PASS; deploy:safe has no automatic D1 migration; no migration was applied."},
-    {"command": "XDG_CONFIG_HOME=/tmp/sanci-wrangler-xdg npx wrangler deploy --dry-run", "result": "PASS; Wrangler 4.130.0 read 202 assets; 437.04 KiB / 110.57 KiB gzip; no deploy."},
-    {"command": "node --check on changed JavaScript entry/test files and git diff --check", "result": "PASS."}
+    {
+      "command": "npm run test:editor",
+      "result": "PASS; 24 Node suites (24/24), preferences (12/12), subreaper runner (4/4); zero skips/failures."
+    },
+    {
+      "command": "npm run test:editor:publish-guard",
+      "result": "PASS; 24 route integration tests including oversized Save/Publish/rollback/create/duplicate/load/list/PATCH boundaries."
+    },
+    {
+      "command": "npm run typecheck",
+      "result": "PASS; tsc --noEmit."
+    },
+    {
+      "command": "python3 tests/plan-contract.test.py",
+      "result": "PASS 16/16 after source crosswalk regeneration."
+    },
+    {
+      "command": "python3 scripts/check-canonical-plan.py",
+      "result": "PASS; one complete 13-file master; functional acceptance remains NOT certified."
+    },
+    {
+      "command": "python3 scripts/build-feature-traceability.py --check",
+      "result": "PASS; 396 source mappings; acceptance NOT certified."
+    },
+    {
+      "command": "python3 scripts/audit-active-plan-point.py",
+      "result": "PASS; 77.44 / WEB-011; next 77.44.7.D; D remains OPEN / NOT_CERTIFIED."
+    },
+    {
+      "command": "npm run test:web013:migration-gate",
+      "result": "PASS; deploy:safe has no automatic D1 migration; no migration was applied."
+    },
+    {
+      "command": "XDG_CONFIG_HOME=/tmp/sanci-wrangler-xdg npx wrangler deploy --dry-run",
+      "result": "PASS; Wrangler 4.130.0 read 202 assets; 437.04 KiB / 110.57 KiB gzip; no deploy."
+    },
+    {
+      "command": "node --check on changed JavaScript entry/test files and git diff --check",
+      "result": "PASS."
+    }
   ],
   "release": {
     "pre_change_branch_head": "60cce27cf149a8d91637d675bfd07ae88f418ac2",
     "github_pre_change_branch_head": "60cce27cf149a8d91637d675bfd07ae88f418ac2",
     "github_public_repository": true,
-    "github_actions": "Default push-triggered public repository checks only; no manual dispatch/rerun.",
-    "cloudflare_build_minutes_limit_reached": false,
-    "worker_before": {
-      "deployment_id": "03a8d284-8c16-46a1-a153-70f772b8602a",
-      "version_id": "9b07c2a1-d089-48e4-b4ac-e1c483a47a2c",
-      "traffic_percent": 100,
-      "created_on": "2026-11-25T17:44:25.648053Z"
+    "runtime_commit": "79f6dd6da8cf9abf2862bab6f2160f5f69d01a74",
+    "remote_branch": "v2/foundation",
+    "remote_branch_head": "79f6dd6da8cf9abf2862bab6f2160f5f69d01a74",
+    "push": "normal fast-forward verified via GitHub Git Ref GET",
+    "github_actions_exact_sha": {
+      "editor_core": {
+        "run_id": 45683249811,
+        "status": "in_progress",
+        "current_step": "Run Editor browser layout regression"
+      },
+      "f0_baseline": {
+        "run_id": 45683249837,
+        "status": "success"
+      },
+      "production_worker_source_smoke": {
+        "run_id": 45683249918,
+        "status": "success"
+      },
+      "canonical_plan_active_point_audit": {
+        "run_id": 45683249830,
+        "status": "success"
+      },
+      "canonical_creator_platform_plan": {
+        "run_id": 45683249862,
+        "status": "success"
+      },
+      "twitch_integration": {
+        "run_id": 45683249816,
+        "status": "success"
+      },
+      "aggregate": "IN_PROGRESS; Editor Core is not a PASS yet"
     },
-    "runtime_commit": "PENDING",
-    "github_actions_exact_sha": "PENDING",
-    "cloudflare_build_exact_sha": "PENDING",
-    "production_deployment": "PENDING",
-    "health": "PENDING",
-    "public_asset_hashes": "PENDING"
+    "cloudflare_build": {
+      "build_uuid": "ae236ac7-3238-4997-b807-01848ae08d3f",
+      "status": "stopped",
+      "outcome": "success",
+      "branch": "v2/foundation",
+      "commit_sha": "79f6dd6da8cf9abf2862bab6f2160f5f69d01a74",
+      "build_command": "npm run typecheck",
+      "deploy_command": "npm run deploy:safe",
+      "migration_safety_gate": "PASS; no D1 migration was applied",
+      "build_limit_reached": false
+    },
+    "production_deployment": {
+      "deployment_id": "ecba2787-c39b-407d-b21f-d62f14a2174f",
+      "worker_version_id": "34d464f4-6060-4c82-99d3-5d92699f73df",
+      "worker_version_number": 4197,
+      "traffic_percent": 100,
+      "created_on": "2026-11-25T19:16:38.992262Z",
+      "source_sha": "79f6dd6da8cf9abf2862bab6f2160f5f69d01a74"
+    },
+    "health": {
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+      "http_status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      },
+      "checked_at": "2026-11-25T19:20:58Z"
+    },
+    "public_asset_hashes": {
+      "result": "12/12 changed public asset GETs returned HTTP 200 and SHA-256 matched the source at 79f6dd6da8cf9abf2862bab6f2160f5f69d01a74",
+      "assets": [
+        {
+          "path": "public/editor-v2/app.js",
+          "sha256": "b8e8d9555351062f3161ae95452a4c362af73b781d0227f23e61d54101fd442c"
+        },
+        {
+          "path": "public/editor-v2/core/commands.js",
+          "sha256": "31142ad6210fdbe142454466ff51fd5a44355cc487755874af639e8495d1f6a5"
+        },
+        {
+          "path": "public/editor-v2/core/design-system/template-catalog.js",
+          "sha256": "e8de77a21a7453ed92ac13daac1f0728c5a30107b206b091bbfdf50de0d6d5a1"
+        },
+        {
+          "path": "public/editor-v2/core/editor-templates.js",
+          "sha256": "dcf029240088d7b490e87abf0f576e6e1ee91d0a72478604ef1cadd1a465a636"
+        },
+        {
+          "path": "public/editor-v2/core/hierarchy-limits.d.ts",
+          "sha256": "06918eab30f8bfd080e1f550fe56a9bc5767ed568eef2ca8ec37a215c6ff77f7"
+        },
+        {
+          "path": "public/editor-v2/core/hierarchy-limits.js",
+          "sha256": "21a06a8222277b85855f7d02fcfb106f5d58949f3310f0122b1436e923b691d5"
+        },
+        {
+          "path": "public/editor-v2/core/richtext-engine.js",
+          "sha256": "2af6b8e50f03171ab727ad7eed52db36f526f66a57f11c26d4088e616bc79912"
+        },
+        {
+          "path": "public/editor-v2/core/richtext-import.js",
+          "sha256": "754bb40bf1e7043ad6f0dad987e6d65b8b132b49c4ba976b6c75bdc71a31ad75"
+        },
+        {
+          "path": "public/editor-v2/core/schema.js",
+          "sha256": "4ca7d9c75c0b97ab2f0e9b1ca10268a2941368c4d9a5509661c1e6ab304eb4c7"
+        },
+        {
+          "path": "public/editor-v2/core/state.js",
+          "sha256": "d55394fcb8f907a555aa193c82ba10e8b2d4bb3490fb329fa67497918df68384"
+        },
+        {
+          "path": "public/editor-v2/core/validation.js",
+          "sha256": "09c0a01f6d6531861a7f1eda617552cd5670bf9d383e3811545f763f2adf4f44"
+        },
+        {
+          "path": "public/editor-v2/index.html",
+          "sha256": "4b7620dfe23caf4e755e921f880b846a68c868cf0e6613f72191b0f7bd5d11a2"
+        }
+      ]
+    },
+    "production_d1": "Pre-release SELECT-only preflight described above; zero writes; no migration apply.",
+    "r2_operations": "none",
+    "cost": "0 Ft; no paid service, paid CI rerun, or quota increase."
   },
   "production_data_and_cost": {
     "d1_writes_or_migrations": "none",

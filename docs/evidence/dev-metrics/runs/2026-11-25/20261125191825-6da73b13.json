@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261125191825-6da73b13",
+  "task": "77.44.7.D",
+  "trigger": "scheduled",
+  "started_at": "2026-11-25T19:18:25.831Z",
+  "finished_at": "2026-11-25T19:24:50.385Z",
+  "wall_seconds": 385,
+  "paused_seconds": 0,
+  "measured_seconds": 385,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "EDT-016 node-count guard is fast-forwarded and deployed at exact source SHA; health and 12/12 changed public asset hashes verified. Exact-SHA Editor Core GitHub workflow remains in progress, so release acceptance is partial.",
+  "evidence": [
+    "docs/evidence/editor-edt016-node-count-boundary-2026-11-25.json"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "79f6dd6da8cf9abf2862bab6f2160f5f69d01a74",
+  "finished_revision": "79f6dd6da8cf9abf2862bab6f2160f5f69d01a74",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
