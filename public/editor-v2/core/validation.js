@@ -10,7 +10,7 @@ import { getNode, validateDocument, normalizeRichText } from './schema.js';
 import { validateElementContent as validateStructuredContent,isStructuredType } from './element-content.js?v=20261125-d06-authored-carousel-slide-semantics-v1';
 import { validateElementContent as validateAuthoredContent } from './authored-content.js?v=20261125-d06-authored-carousel-slide-semantics-v1';
 import {validateStateStyles} from './state-styles.js';
-import {MAX_PAGE_HIERARCHY_DEPTH} from './hierarchy-limits.js?v=20261120-d03-tooltip-viewport-bounds-v1';
+import {MAX_PAGE_HIERARCHY_DEPTH,MAX_PAGE_NODE_COUNT,hasExcessPageNodes} from './hierarchy-limits.js?v=20261125-edt016-node-count-limit-v1';
 
 export function findReachableNodeIds(page) {
   const reachable = new Set();
@@ -37,6 +37,7 @@ export function findReachableNodeIds(page) {
 export function validateHierarchy(page) {
   const errors = [];
   if (!page) return ['page is required'];
+  if (hasExcessPageNodes(page.nodes)) return [`maximum page node count exceeded (${MAX_PAGE_NODE_COUNT})`];
 
   const visiting = new Set();
   const visited = new Set();
@@ -147,6 +148,10 @@ export function validateEditorDocument(document,{allowInvalidPageInteractions=fa
     : pageErrors;
   for (const [pageKey, page] of Object.entries(document?.pages ?? {})) {
     const pageId=typeof page?.id==='string'&&page.id?page.id:pageKey;
+    if (hasExcessPageNodes(page?.nodes)) {
+      errors.push(`page ${pageId}: maximum page node count exceeded (${MAX_PAGE_NODE_COUNT})`);
+      continue;
+    }
     errors.push(...validateHierarchy(page).map((error) => `page ${pageId}: ${error}`));
     if(!page||typeof page!=='object'||Array.isArray(page))continue;
     for (const node of Object.values(page.nodes ?? {})) errors.push(...validateRichTextNode(node).map((error) => `page ${pageId}: ${error}`));
@@ -157,6 +162,7 @@ export function validateEditorDocument(document,{allowInvalidPageInteractions=fa
 export function assertValidEditorDocument(document,{allowInvalidAuthoredContent=false,allowInvalidPageInteractions=false}={}) {
   for(const page of Object.values(document?.pages||{})){
     if(!page||typeof page!=='object'||Array.isArray(page))continue;
+    if(hasExcessPageNodes(page.nodes))throw new Error(`Invalid editor document: maximum page node count exceeded (${MAX_PAGE_NODE_COUNT})`);
     validateAccessibility(page);
     for(const node of Object.values(page.nodes||{})){
       // Let validateEditorDocument report malformed persisted records through

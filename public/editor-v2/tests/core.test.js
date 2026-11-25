@@ -25,6 +25,32 @@ import { needsRelativeOffsetPosition,legacyBackgroundColor,applyNodeStyle } from
 import {legacyBackgroundGradient,legacyBackgroundCompound} from '../core/background-asset.js';
 import {tokenReference} from '../core/design-tokens.js';
 import { validatePublishDocument } from '../../../src/core/editor-validation.ts';
+import { MAX_PAGE_NODE_COUNT } from '../core/hierarchy-limits.js?v=20261125-edt016-node-count-limit-v1';
+
+test('page node-count limit accepts its exact boundary and rejects overflow before tree/content traversal',()=>{
+  const document=createDocument();
+  const page=document.pages[document.activePageId];
+  const root=page.nodes[page.rootId];
+  for(let index=1;index<MAX_PAGE_NODE_COUNT;index++){
+    const node=createNode(NODE_TYPES.SECTION,{parentId:root.id});
+    page.nodes[node.id]=node;
+    root.children.push(node.id);
+  }
+  assert.equal(Object.keys(page.nodes).length,MAX_PAGE_NODE_COUNT);
+  assert.deepEqual(validateHierarchy(page),[],'the maximum supported node count remains valid');
+  assert.deepEqual(validateEditorDocument(document),[],'the Editor validates a complete document at the boundary');
+  assert.equal(validatePublishDocument(document,document.activePageId),null,'Publish accepts a valid boundary-sized page');
+
+  const overflow=structuredClone(document);
+  const overflowPage=overflow.pages[overflow.activePageId];
+  overflowPage.nodes['overflow-orphan']={id:'overflow-orphan'};
+  const before=JSON.stringify(overflow);
+  assert.deepEqual(validateHierarchy(overflowPage),[`maximum page node count exceeded (${MAX_PAGE_NODE_COUNT})`]);
+  assert.match(validateEditorDocument(overflow).join('; '),/maximum page node count exceeded \(1000\)/);
+  assert.throws(()=>assertValidEditorDocument(overflow),/maximum page node count exceeded \(1000\)/);
+  assert.equal(validatePublishDocument(overflow,overflow.activePageId),'EDITOR_NODE_LIMIT_EXCEEDED');
+  assert.equal(JSON.stringify(overflow),before,'rejection does not mutate the persisted page model');
+});
 
 test('Excel TSV clipboard import decodes quoted tabs, newlines, doubled quotes, and trailing CRLF',()=>{
   const document=importRichTextClipboard({text:'Név\tMegjegyzés\r\n"Bevétel\tQ4"\t"Első sor\r\nMásodik sor"\r\n"Azt mondta ""igen"""\t2026\r\n'});
@@ -302,13 +328,14 @@ test('hierarchy validation bounds very deep persisted trees without overflowing 
 
   let errors;
   assert.doesNotThrow(()=>{errors=validateHierarchy(page);},'deep persisted input returns bounded diagnostics instead of RangeError');
-  assert.match(errors.join('; '),/maximum hierarchy depth exceeded \(128\)/);
+  assert.deepEqual(errors,[`maximum page node count exceeded (${MAX_PAGE_NODE_COUNT})`],
+    'a deep tree beyond the node budget is rejected at the cheaper admission guard');
   assert.equal(findReachableNodeIds(page).size,depth+1,'reachable-node lookup also stays iterative for deep input');
   assert.equal(JSON.stringify(page),before,'validation and reachability never rewrite persisted input');
-  assert.throws(()=>assertValidEditorDocument(document),/maximum hierarchy depth exceeded \(128\)/,
-    'the invalid depth is rejected before recursive Editor consumers render it');
-  assert.equal(validatePublishDocument(document,document.activePageId),'INVALID_HIERARCHY',
-    'the server Publish validator rejects the same deep tree without recursion overflow');
+  assert.throws(()=>assertValidEditorDocument(document),/maximum page node count exceeded \(1000\)/,
+    'oversized persisted input is rejected before recursive Editor consumers render it');
+  assert.equal(validatePublishDocument(document,document.activePageId),'EDITOR_NODE_LIMIT_EXCEEDED',
+    'the server Publish validator rejects the oversized tree before traversing it');
 });
 
 test('hierarchy validation rejects duplicate sibling references without changing the Page Model', () => {

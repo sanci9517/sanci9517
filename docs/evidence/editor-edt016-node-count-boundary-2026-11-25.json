@@ -1,0 +1,99 @@
+{
+  "schema": 1,
+  "captured_at": "2026-11-25T19:12:13Z",
+  "plan_item": "EDT-016",
+  "active_plan_cursor": "77.44 / WEB-011 -> 77.44.7.D",
+  "status": "LOCAL_VERIFIED_AWAITING_RELEASE",
+  "scope": "Implement EDT-016's existing depth/node-count security requirement as a shared 1000-node-per-page admission boundary; reject malformed/oversized persisted input before UI traversal and before route mutations.",
+  "plan_review": {
+    "canonical_master": "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+    "canonical_master_changed": false,
+    "reason": "The EDT-016 contract already requires depth/node-count limits and malformed nesting rejection. No plan defect was found; 1000 is the implementation's documented finite boundary, not a feature-completion claim.",
+    "single_canonical_plan_preserved": true
+  },
+  "limit_decision": {
+    "max_page_node_count": 1000,
+    "counting": "own enumerable keys of the canonical plain-object node map; stop at limit + 1 without allocating Object.keys",
+    "why": "A finite admission cap bounds tree, layer, schema, validation and renderer work while leaving substantial headroom over the production database's measured largest page (26 draft / 20 published).",
+    "over_limit_behavior": "HTTP 413 EDITOR_NODE_LIMIT_EXCEEDED for Editor/page create/save/publish/rollback/duplicate/metadata mutation; oversized page-list records omit the content object and carry editorNodeLimitExceeded=true; client validation fails before walking nodes.",
+    "save_and_publish_remain_separate": true
+  },
+  "changes": {
+    "runtime": [
+      "Added shared MAX_PAGE_NODE_COUNT and hasExcessPageNodes in public/editor-v2/core/hierarchy-limits.js and its declaration.",
+      "Applied the guard before schema Object.entries, editor hierarchy/rich-text/accessibility walks, server Publish validation, Editor GET/POST/rollback, Pages list normalization, Pages metadata update, page creation and duplication allocation.",
+      "Rejected array-valued node maps as non-canonical on server routes and the direct Publish validator.",
+      "Versioned the affected browser module import graph with 20261125-edt016-node-count-limit-v1."
+    ],
+    "tests": [
+      "Exact 1000-node page remains valid through client hierarchy/document validation and server Publish validation.",
+      "1001-node input is rejected before traversal and does not mutate the model.",
+      "Route regressions prove oversized persisted input is refused on Editor load, page list, metadata edit, Save, Publish, rollback, page creation and duplication; D1 fixture rows/revisions/audit stay unchanged on rejected writes.",
+      "Save and Publish separation regression remains in the same route suite."
+    ],
+    "traceability": "Added an EDT-016-specific exact source mapping and regenerated docs/evidence/feature-traceability.json; acceptance remains NOT_RECERTIFIED."
+  },
+  "production_preflight": {
+    "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
+    "method": "Cloudflare D1 API, SELECT-only statements; no migration/write/R2 operation.",
+    "valid_json_summary": {
+      "total_pages": 11,
+      "valid_drafts": 11,
+      "valid_published_snapshots": 8,
+      "rows_read": 11,
+      "rows_written": 0,
+      "changed_db": false
+    },
+    "page_node_counts": {
+      "draft_pages_checked": 11,
+      "max_draft_nodes": 26,
+      "draft_pages_over_1000": 0,
+      "published_pages_checked": 8,
+      "max_published_nodes": 20,
+      "published_pages_over_1000": 0,
+      "rows_read": 642,
+      "rows_written": 0,
+      "changed_db": false,
+      "region": "EEUR"
+    },
+    "status": "READ_ONLY_PREFLIGHT_PASS"
+  },
+  "checks": [
+    {"command": "npm run test:editor", "result": "PASS; 24 Node suites (24/24), preferences (12/12), subreaper runner (4/4); zero skips/failures."},
+    {"command": "npm run test:editor:publish-guard", "result": "PASS; 24 route integration tests including oversized Save/Publish/rollback/create/duplicate/load/list/PATCH boundaries."},
+    {"command": "npm run typecheck", "result": "PASS; tsc --noEmit."},
+    {"command": "python3 tests/plan-contract.test.py", "result": "PASS 16/16 after source crosswalk regeneration."},
+    {"command": "python3 scripts/check-canonical-plan.py", "result": "PASS; one complete 13-file master; functional acceptance remains NOT certified."},
+    {"command": "python3 scripts/build-feature-traceability.py --check", "result": "PASS; 396 source mappings; acceptance NOT certified."},
+    {"command": "python3 scripts/audit-active-plan-point.py", "result": "PASS; 77.44 / WEB-011; next 77.44.7.D; D remains OPEN / NOT_CERTIFIED."},
+    {"command": "npm run test:web013:migration-gate", "result": "PASS; deploy:safe has no automatic D1 migration; no migration was applied."},
+    {"command": "XDG_CONFIG_HOME=/tmp/sanci-wrangler-xdg npx wrangler deploy --dry-run", "result": "PASS; Wrangler 4.130.0 read 202 assets; 437.04 KiB / 110.57 KiB gzip; no deploy."},
+    {"command": "node --check on changed JavaScript entry/test files and git diff --check", "result": "PASS."}
+  ],
+  "release": {
+    "pre_change_branch_head": "60cce27cf149a8d91637d675bfd07ae88f418ac2",
+    "github_pre_change_branch_head": "60cce27cf149a8d91637d675bfd07ae88f418ac2",
+    "github_public_repository": true,
+    "github_actions": "Default push-triggered public repository checks only; no manual dispatch/rerun.",
+    "cloudflare_build_minutes_limit_reached": false,
+    "worker_before": {
+      "deployment_id": "03a8d284-8c16-46a1-a153-70f772b8602a",
+      "version_id": "9b07c2a1-d089-48e4-b4ac-e1c483a47a2c",
+      "traffic_percent": 100,
+      "created_on": "2026-11-25T17:44:25.648053Z"
+    },
+    "runtime_commit": "PENDING",
+    "github_actions_exact_sha": "PENDING",
+    "cloudflare_build_exact_sha": "PENDING",
+    "production_deployment": "PENDING",
+    "health": "PENDING",
+    "public_asset_hashes": "PENDING"
+  },
+  "production_data_and_cost": {
+    "d1_writes_or_migrations": "none",
+    "r2_operations": "none",
+    "paid_services_or_quota_increase": "none",
+    "quota_check": "Cloudflare reports the account build-minute limit is not reached. The public GitHub repository's default push CI is the only CI trigger planned."
+  },
+  "acceptance_boundary": "This closes only EDT-016's node-count admission slice. EDT-016 layout semantics/parity and all full Editor manual/device acceptance remain OPEN / NOT_CERTIFIED; D-01 through D-07, including D-06, remain OPEN / NOT_CERTIFIED."
+}

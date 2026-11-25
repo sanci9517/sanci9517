@@ -37,6 +37,7 @@ PARTIAL = {
 }
 # Narrow references for requirements whose evidence is outside their module shell.
 EXACT_SOURCES = {
+ 'EDT-016':['public/editor-v2/core/hierarchy-limits.js','public/editor-v2/core/hierarchy-limits.d.ts','public/editor-v2/core/schema.js','public/editor-v2/core/validation.js','public/editor-v2/app.js','public/editor-v2/core/state.js','public/editor-v2/core/commands.js','public/editor-v2/core/editor-templates.js','public/editor-v2/core/design-system/template-catalog.js','src/core/editor-validation.ts','src/routes/admin/editor.ts','src/routes/admin/pages.ts','public/editor-v2/tests/core.test.js','tests/f0-3-route-integration.test.js','tests/editor-public-asset-cache-bust.test.js'],
  'EDT-038':['public/editor-v2/core/node-clipboard.js','public/editor-v2/core/commands.js','public/editor-v2/app.js','public/editor-v2/index.html','public/editor-v2/editor-refresh.css'],
  'RES-006':['src/routes/admin/media.ts','public/admin-media.html','public/assets/admin-media.js','public/assets/admin-media-organization.js','scripts/pending/0030_media_library_organization.sql','tests/media-api.test.js','tests/browser/admin-media-organization.test.js'],
  'EDT-034':['public/editor-v2/core/canvas-engine.js','public/editor-v2/core/background-asset.js','public/assets/page-renderer.js'],

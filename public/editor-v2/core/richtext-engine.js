@@ -1,7 +1,7 @@
 /* Sanci9517 Visual Editor v2 — structured Rich Text DOM bridge. */
 import { resolveRichTextLinkTarget, validatedLinkHref } from './richtext-links.js?v=20261117-d03-invalid-media-id-guidance-v1';
 import { textOffsetWithin, isRichTextHardBreak } from './richtext-selection-offset.js';
-import { RICH_TEXT_FONT_FAMILIES } from './schema.js?v=20261101-richtext-multiblock-links';
+import { RICH_TEXT_FONT_FAMILIES } from './schema.js?v=20261125-edt016-node-count-limit-v1';
 
 export function plainTextToRichText(text=''){
   const value=String(text??'');

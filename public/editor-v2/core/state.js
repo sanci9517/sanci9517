@@ -1,7 +1,7 @@
 /* Sanci9517 Visual Editor v2 — isolated editor state. */
 
 import { cloneDocument, createDocument, getPage } from './schema.js';
-import { assertValidEditorDocument } from './validation.js?v=20261120-d03-tooltip-viewport-bounds-v1';
+import { assertValidEditorDocument } from './validation.js?v=20261125-edt016-node-count-limit-v1';
 
 export const HISTORY_LIMIT = 100;
 

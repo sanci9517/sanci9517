@@ -1,5 +1,6 @@
 import { createDefaultScheduleConfig, normalizeScheduleConfig } from './schedule-schema.js';
 import { normalizePageInteractions } from './page-interactions.js?v=20261121-edt039-single-auto-action-v1';
+import { MAX_PAGE_NODE_COUNT, hasExcessPageNodes } from './hierarchy-limits.js?v=20261125-edt016-node-count-limit-v1';
 
 /*
  * Sanci9517 Visual Editor v2 — Page Model schema
@@ -387,6 +388,12 @@ export function validatePage(page) {
   if (!page.id || !page.rootId) errors.push('page.id and page.rootId are required');
   const nodes = page.nodes && typeof page.nodes === 'object' && !Array.isArray(page.nodes) ? page.nodes : null;
   if (!nodes) errors.push('page.nodes must be an object');
+  const nodeLimitExceeded = Boolean(nodes && hasExcessPageNodes(nodes));
+  if (nodeLimitExceeded) errors.push(`maximum page node count exceeded (${MAX_PAGE_NODE_COUNT})`);
+
+  // Do not perform type-specific work on oversized input. The node-count guard
+  // is an admission check, not a best-effort diagnostic pass.
+  if (nodeLimitExceeded) return errors;
 
   for (const [id, node] of Object.entries(nodes ?? {})) {
     if (seen.has(id)) errors.push(`duplicate node id: ${id}`);

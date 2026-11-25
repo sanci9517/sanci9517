@@ -29,14 +29,14 @@ test('the Editor and public renderer release tokens bust the structured accessib
   assert.match(css,/\.element-favorite-toggle\s*\{/,
     'the stylesheet referenced by the versioned link must include the palette-favorites UI');
   const recoveryVersion='20261124-edt042-publish-recovery-safe-label-v1';
-  const editorEntryVersion='20261125-d06-html-table-dimension-guard-v1';
+  const editorEntryVersion='20261125-edt016-node-count-limit-v1';
   const mediaPlaybackVersion='20261125-d06-authored-carousel-slide-semantics-v1';
   assert.match(html,new RegExp(`src="/editor-v2/app\\.js\\?v=${editorEntryVersion}"`),
     'the deployed entry page must request the unsupported-Publish recovery handler');
   assert.match(html,/src="\/editor-v2\/ui\/shell\.js\?v=20261123-edt044-account-scoped-preferences-v2"/,
     'the deployed entry page must request the account-scoped shell module');
   const app=await readFile(resolve(root,'app.js'),'utf8');
-  assert.match(app,/core\/richtext-import\.js\?v=20261125-d06-html-table-dimension-guard-v1/,
+  assert.match(app,/core\/richtext-import\.js\?v=20261125-edt016-node-count-limit-v1/,
     'the cache-keyed Editor entry must request the HTML-table no-silent-truncation guard');
   assert.match(app,new RegExp(`core/publication-recovery\\.js\\?v=${recoveryVersion}`),
     'the cache-keyed entry must request the targeted recovery module');
@@ -44,6 +44,11 @@ test('the Editor and public renderer release tokens bust the structured accessib
     'the Editor Canvas must honor reduced motion for legacy media');
   assert.match(app,/authoredNodeHtml\(node,\{device:state\.viewport\.device,editor:true,reducedMotion:prefersReducedMotion\(\)\}\)/,
     'the Editor Canvas must honor reduced motion for authored media');
+  assert.match(app,new RegExp(`core/schema\\.js\\?v=${editorEntryVersion}`),'the Editor entry must request the cache-busted shared Page Model validator');
+  assert.match(app,new RegExp(`core/state\\.js\\?v=${editorEntryVersion}`),'the Editor entry must request state validation using the node-count contract');
+  assert.match(app,new RegExp(`core/commands\\.js\\?v=${editorEntryVersion}`),'commands must request the node-count admission guard');
+  assert.match(app,new RegExp(`core/editor-templates\\.js\\?v=${editorEntryVersion}`),'templates must use the node-count validation contract');
+  for(const path of ['core/state.js','core/commands.js','core/editor-templates.js']){const source=await readFile(resolve(root,path),'utf8');assert.match(source,new RegExp(`validation\\.js\\?v=${editorEntryVersion}`),`${path} must load the refreshed validator`)}
   assert.match(app,/core\/responsive\.js\?v=20261122-edt024-responsive-prototype-safety-v1/,
     'the versioned entry script must request the responsive resolver cache key');
   assert.match(app,/ui\/structured-inspector\.js\?v=20261123-d06-single-slide-carousel-v1/,
@@ -78,7 +83,7 @@ test('the EDT-040 in-view trigger refreshes both renderers and the shared motion
   ]);
   const motionVersion='20261123-edt040-in-view-motion-v1';
   const domIdVersion='20261125-d06-authored-carousel-slide-semantics-v1';
-  const editorEntryVersion='20261125-d06-html-table-dimension-guard-v1';
+  const editorEntryVersion='20261125-edt016-node-count-limit-v1';
   const mediaPlaybackVersion='20261125-d06-authored-carousel-slide-semantics-v1';
   assert.match(editorHtml,new RegExp(`editor-motion\\.css\\?v=${motionVersion}`));
   assert.match(editorHtml,new RegExp(`app\\.js\\?v=${editorEntryVersion}`));

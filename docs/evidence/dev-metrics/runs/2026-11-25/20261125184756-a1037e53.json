@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261125184756-a1037e53",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-25T18:47:56.397Z",
+  "finished_at": "2026-11-25T19:13:04.912Z",
+  "wall_seconds": 1509,
+  "paused_seconds": 0,
+  "measured_seconds": 1509,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "EDT-016 1000-node limit, route/client regressions, preflight and local release gates verified; final production proof pending.",
+  "evidence": [
+    "docs/evidence/editor-edt016-node-count-boundary-2026-11-25.json",
+    "docs/evidence/feature-traceability.json"
+  ],
+  "checks": "editor-suite,typecheck,route-suite,D1-readonly,wrangler-dry-run,plan-contract",
+  "started_revision": "60cce27cf149a8d91637d675bfd07ae88f418ac2",
+  "finished_revision": "60cce27cf149a8d91637d675bfd07ae88f418ac2",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

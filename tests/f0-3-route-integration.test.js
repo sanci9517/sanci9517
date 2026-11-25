@@ -109,6 +109,56 @@ test('save isolates draft, publish exposes it, rollback remains draft until repu
   assert.match(JSON.stringify(await (await f.read()).json()), /original/);
 });
 
+test('oversized Editor pages are rejected before saves, publishes, rollback, or duplication mutate state',async t=>{
+ const f=await fixture(t),document=f.document('bounded');
+ const nodes=document.pages.p.nodes;
+ for(let index=0;index<1000;index++)nodes[`excess-${index}`]={id:`excess-${index}`,type:'section',parentId:'root',children:[]};
+ assert.equal(Object.keys(nodes).length,1001);
+ f.db.prepare("UPDATE pages SET content_json=? WHERE id='p'").run(JSON.stringify(document));
+ const readBefore=f.state();
+ const editorRead=await adminEditorRoute(new Request('https://example.test/api/admin/editor?pageId=p',{method:'GET',headers:{Cookie:'sanci9517_session=editor'}}),f.env);
+ assert.equal(editorRead.status,413);
+ assert.equal((await editorRead.json()).error.code,'EDITOR_NODE_LIMIT_EXCEEDED');
+ assert.deepEqual(f.state(),readBefore,'Editor boot refuses oversized persisted input before normalization');
+ const pageList=await adminPagesRoute(new Request('https://example.test/api/admin/pages',{method:'GET',headers:{Cookie:'sanci9517_session=editor'}}),f.env);
+ const oversizedRow=(await pageList.json()).data.find(row=>row.id==='p');
+ assert.equal(oversizedRow.editorNodeLimitExceeded,true);
+ assert.equal(Object.hasOwn(oversizedRow,'content'),false,'list responses must not ship an oversized Page Model');
+ assert.deepEqual(f.state(),readBefore,'oversized list handling is read-only');
+ const metadataPatch=await adminPagesRoute(new Request('https://example.test/api/admin/pages',{method:'PATCH',headers:{Cookie:'sanci9517_session=editor'},body:JSON.stringify({id:'p',title:'Changed title',expectedVersion:1})}),f.env);
+ assert.equal(metadataPatch.status,413);
+ assert.equal((await metadataPatch.json()).error.code,'EDITOR_NODE_LIMIT_EXCEEDED');
+ assert.deepEqual(f.state(),readBefore,'metadata writes must not reserialize oversized Page Models');
+ for(const publish of [false,true]){
+  const response=await f.edit({pageId:'p',expectedVersion:1,document,publish});
+  assert.equal(response.status,413);
+  assert.equal((await response.json()).error.code,'EDITOR_NODE_LIMIT_EXCEEDED');
+  assert.deepEqual(f.state(),readBefore,'oversized data must not add a draft revision, change the page, or publish');
+ }
+ const oversizedCreate=f.document('large','oversized-next');
+ for(let index=0;index<1000;index++)oversizedCreate.pages['oversized-next'].nodes[`excess-${index}`]={id:`excess-${index}`,type:'section',parentId:'root',children:[]};
+ const createRejected=await adminPagesRoute(new Request('https://example.test/api/admin/pages',{method:'POST',headers:{Cookie:'sanci9517_session=editor'},body:JSON.stringify({id:'oversized-next',title:'Oversized next',slug:'oversized-next',description:'',document:oversizedCreate})}),f.env);
+ assert.equal(createRejected.status,413);
+ assert.equal((await createRejected.json()).error.code,'EDITOR_NODE_LIMIT_EXCEEDED');
+ assert.deepEqual(f.state(),readBefore,'page creation must reject oversized content before inserting its page or revision');
+ const oversizedRevision=f.document('restored');
+ for(let index=0;index<1000;index++)oversizedRevision.pages.p.nodes[`excess-${index}`]={id:`excess-${index}`,type:'section',parentId:'root',children:[]};
+ f.db.prepare('INSERT INTO editor_revisions(id,page_id,version,document_json,created_by,note) VALUES(?,?,?,?,?,?)').run('oversized-revision','p',2,JSON.stringify(oversizedRevision),'editor','fixture');
+ const rollbackBefore=f.state();
+ const rollback=await f.edit({pageId:'p',version:2,expectedVersion:2},'PUT');
+ assert.equal(rollback.status,413);
+ assert.equal((await rollback.json()).error.code,'EDITOR_NODE_LIMIT_EXCEEDED');
+ assert.deepEqual(f.state(),rollbackBefore,'oversized archived content must not be restored over the current draft');
+ const oversizedSource=f.document('source');
+ for(let index=0;index<1000;index++)oversizedSource.pages.p.nodes[`excess-${index}`]={id:`excess-${index}`,type:'section',parentId:'root',children:[]};
+ f.db.prepare("UPDATE pages SET content_json=? WHERE id='p'").run(JSON.stringify(oversizedSource));
+ const duplicateBefore=f.state();
+ const duplicate=await adminPagesRoute(new Request('https://example.test/api/admin/pages',{method:'POST',headers:{Cookie:'sanci9517_session=editor'},body:JSON.stringify({sourcePageId:'p',title:'Duplicate oversized',slug:'duplicate-oversized'})}),f.env);
+ assert.equal(duplicate.status,413);
+ assert.equal((await duplicate.json()).error.code,'EDITOR_NODE_LIMIT_EXCEEDED');
+ assert.deepEqual(f.state(),duplicateBefore,'oversized source duplication must stop before allocating a cloned node map or writing rows');
+});
+
 test('direct Publish rejects planned and unknown block types without changing the saved or published revision', async t => {
   const f = await fixture(t);
   for (const type of ['form', 'unknown-block']) {
