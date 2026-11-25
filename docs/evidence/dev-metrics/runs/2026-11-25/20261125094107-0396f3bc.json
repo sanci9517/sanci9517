@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261125094107-0396f3bc",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-25T09:41:07.432Z",
+  "finished_at": "2026-11-25T10:09:45.722Z",
+  "wall_seconds": 1718,
+  "paused_seconds": 0,
+  "measured_seconds": 1718,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "D-06 egydiás authored-carousel regresszió javítva, célzott Chromium és Editor ellenőrzések PASS; exact-source Cloudflare kiadva, teljes Editor/D-06 acceptance továbbra nyitott. Hosted Editor Core layout regression még fut.",
+  "evidence": [
+    "docs/evidence/editor-d06-authored-single-slide-carousel-2026-11-25.json",
+    "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md"
+  ],
+  "checks": "Focused Chromium 5/5; Editor unit 24/24; typecheck; plan contract 16/16; canonical + traceability; Wrangler dry-run; D1 read-only preflight; Worker 100% + health 200.",
+  "started_revision": "8a24889d04cf13938b2d255fd3947b8f3d120433",
+  "finished_revision": "48b4c9047700e79cf7b6626d4c793f5379c469f3",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
