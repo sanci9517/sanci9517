@@ -12,6 +12,7 @@ import {getElementCapability} from '../../public/editor-v2/core/capability-matri
 import {plainTextToRichText} from '../../public/editor-v2/core/richtext-engine.js';
 
 const publicDir=resolve(import.meta.dirname,'../../public');
+const editablePartialTypeCount=Object.values(NODE_TYPES).filter(type=>type!==NODE_TYPES.ROOT&&getElementCapability(type).status==='PARTIAL').length;
 
 test('all PARTIAL types preserve three-breakpoint visual effects across Save, Publish, reset, and Undo/Redo',async t=>{
   const model=createEditorState(createDocument());
@@ -48,7 +49,7 @@ test('all PARTIAL types preserve three-breakpoint visual effects across Save, Pu
     try{res.setHeader('content-type',{'.html':'text/html','.js':'text/javascript','.css':'text/css'}[extname(file)]||'application/octet-stream');res.end(await readFile(file))}
     catch{res.writeHead(404).end()}
   });
-  assert.equal(nodes.length,45,'fixture includes every declared PARTIAL type, including root');
+  assert.equal(nodes.length,1+editablePartialTypeCount,'fixture includes every declared PARTIAL type, including root');
   await new Promise(done=>server.listen(0,'127.0.0.1',done));
   const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||(existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined),args:['--no-sandbox']});
   t.after(async()=>{await browser.close();await new Promise(done=>server.close(done))});
@@ -62,7 +63,7 @@ test('all PARTIAL types preserve three-breakpoint visual effects across Save, Pu
   if(await editor.locator('#rightDock').evaluate(el=>el.classList.contains('closed')))await editor.locator('#openInspector').click();
   const inspector=editor.locator('#inspectorBody');
   const editableNodes=nodes.slice(1);
-  assert.equal(editableNodes.length,44,'all editable PARTIAL types are covered');
+  assert.equal(editableNodes.length,editablePartialTypeCount,'all editable PARTIAL types are covered');
   const publicNode=id=>viewer.locator(`.visual-editor-node[data-node-id="${id}"]`);
 
   // The remaining shared visual-effect fields have distinct CSS keys and

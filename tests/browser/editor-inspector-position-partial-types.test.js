@@ -12,6 +12,7 @@ import {getElementCapability} from '../../public/editor-v2/core/capability-matri
 import {plainTextToRichText} from '../../public/editor-v2/core/richtext-engine.js';
 
 const publicDir=resolve(import.meta.dirname,'../../public');
+const editablePartialTypeCount=Object.values(NODE_TYPES).filter(type=>type!==NODE_TYPES.ROOT&&getElementCapability(type).status==='PARTIAL').length;
 const properties=[
   {id:'position.position',key:'position',type:'select',desktop:'relative',tablet:'absolute',mobile:'relative'},
   {id:'position.x',key:'x',type:'dimension',desktop:'4px',tablet:'12px',mobile:'20px'},
@@ -33,7 +34,7 @@ test('all editable PARTIAL types preserve responsive position fields through Ins
     if(type==='button'||type==='link')execute(model,{type:'content.properties.set',payload:{nodeId:id,patch:{href:'https://example.com'}}});
     nodes.push({type,id});
   }
-  assert.equal(nodes.length,45,'fixture contains root plus every editable PARTIAL type');
+  assert.equal(nodes.length,1+editablePartialTypeCount,'fixture contains root plus every editable PARTIAL type');
   const editableNodes=nodes.filter(node=>node.type!==NODE_TYPES.ROOT);
   let draft=structuredClone(model.document),published=structuredClone(draft),version=1;
   const editorErrors=[];

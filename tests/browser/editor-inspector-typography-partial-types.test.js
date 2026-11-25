@@ -12,6 +12,7 @@ import {getElementCapability} from '../../public/editor-v2/core/capability-matri
 import {plainTextToRichText} from '../../public/editor-v2/core/richtext-engine.js';
 
 const publicDir=resolve(import.meta.dirname,'../../public');
+const editablePartialTypeCount=Object.values(NODE_TYPES).filter(type=>type!==NODE_TYPES.ROOT&&getElementCapability(type).status==='PARTIAL').length;
 const properties=[
   {id:'typography.fontFamily',key:'fontFamily',type:'select',css:'fontFamily',desktop:{value:'Georgia',expected:'Georgia'},tablet:{value:'Arial',expected:'Arial'},mobile:{value:'Verdana',expected:'Verdana'}},
   {id:'typography.fontSize',key:'fontSize',type:'dimension',css:'fontSize',desktop:{value:'24px',expected:'24px'},tablet:{value:'26px',expected:'26px'},mobile:{value:'20px',expected:'20px'}},
@@ -42,7 +43,7 @@ test('all editable PARTIAL types preserve typed typography fields through Inspec
     if(type==='button'||type==='link')execute(model,{type:'content.properties.set',payload:{nodeId:id,patch:{href:'https://example.com'}}});
     nodes.push({type,id});
   }
-  assert.equal(nodes.length,45,'fixture contains root plus every editable PARTIAL type');
+  assert.equal(nodes.length,1+editablePartialTypeCount,'fixture contains root plus every editable PARTIAL type');
   const editableNodes=nodes.filter(node=>node.type!==NODE_TYPES.ROOT);
   let draft=structuredClone(model.document),published=structuredClone(draft),revision=1;
   const requests=[],editorErrors=[];

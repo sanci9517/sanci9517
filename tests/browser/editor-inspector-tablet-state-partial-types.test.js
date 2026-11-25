@@ -12,6 +12,7 @@ import {getElementCapability} from '../../public/editor-v2/core/capability-matri
 import {plainTextToRichText} from '../../public/editor-v2/core/richtext-engine.js';
 
 const publicDir=resolve(import.meta.dirname,'../../public');
+const editablePartialTypeCount=Object.values(NODE_TYPES).filter(type=>type!==NODE_TYPES.ROOT&&getElementCapability(type).status==='PARTIAL').length;
 const desktopColor='#16a34a';
 const tabletColor='#c026d3';
 const desktopFocusColor='#1d4ed8';
@@ -76,7 +77,7 @@ test('editable PARTIAL types preserve responsive hover/focus visual and typograp
     if(type==='button'||type==='link')execute(model,{type:'content.properties.set',payload:{nodeId:id,patch:{href:'https://example.com'}}});
     nodes.push({type,id});
   }
-  assert.equal(nodes.length,45,'fixture contains root plus every editable PARTIAL type');
+  assert.equal(nodes.length,1+editablePartialTypeCount,'fixture contains root plus every editable PARTIAL type');
   const editableNodes=nodes.filter(node=>node.type!==NODE_TYPES.ROOT);
   let draft=structuredClone(model.document),published=structuredClone(draft),revision=1;
   const posts=[],editorErrors=[];

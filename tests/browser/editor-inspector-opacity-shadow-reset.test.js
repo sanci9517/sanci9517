@@ -11,6 +11,7 @@ import {execute} from '../../public/editor-v2/core/commands.js';
 import {getElementCapability} from '../../public/editor-v2/core/capability-matrix.js';
 
 const publicDir=resolve(import.meta.dirname,'../../public');
+const editablePartialTypeCount=Object.values(NODE_TYPES).filter(type=>type!==NODE_TYPES.ROOT&&getElementCapability(type).status==='PARTIAL').length;
 const initialMobileShadow='0 12px 32px #0008';
 
 test('all PARTIAL types reset mobile opacity and shadow through the Inspector without merging Save and Publish',async t=>{
@@ -29,7 +30,7 @@ test('all PARTIAL types reset mobile opacity and shadow through the Inspector wi
     nodes.push({type,id});
   }
   const editableNodes=nodes.slice(1);
-  assert.equal(editableNodes.length,44,'all editable PARTIAL types are covered');
+  assert.equal(editableNodes.length,editablePartialTypeCount,'all editable PARTIAL types are covered');
   let draft=structuredClone(model.document),published=structuredClone(draft),revision=1;
   const server=createServer(async(req,res)=>{
     const url=new URL(req.url,'http://localhost');

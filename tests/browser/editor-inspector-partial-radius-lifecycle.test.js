@@ -12,6 +12,7 @@ import {getElementCapability} from '../../public/editor-v2/core/capability-matri
 import {plainTextToRichText} from '../../public/editor-v2/core/richtext-engine.js';
 
 const publicDir=resolve(import.meta.dirname,'../../public');
+const editablePartialTypeCount=Object.values(NODE_TYPES).filter(type=>type!==NODE_TYPES.ROOT&&getElementCapability(type).status==='PARTIAL').length;
 
 test('all PARTIAL types preserve mobile all-corner radius through Save, Publish and inheritance reset',async t=>{
   const model=createEditorState(createDocument());
@@ -29,7 +30,7 @@ test('all PARTIAL types preserve mobile all-corner radius through Save, Publish 
   }
   let draft=structuredClone(model.document),published=structuredClone(draft),version=1;
   const editableNodes=nodes.filter(({type})=>type!=='root');
-  assert.equal(editableNodes.length,44,'fixture includes all editable non-root PARTIAL types');
+  assert.equal(editableNodes.length,editablePartialTypeCount,'fixture includes all editable non-root PARTIAL types');
   const server=createServer(async(req,res)=>{
     const url=new URL(req.url,'http://localhost');
     const json=data=>{res.setHeader('content-type','application/json');res.end(JSON.stringify(data))};

@@ -12,6 +12,7 @@ import {getElementCapability} from '../../public/editor-v2/core/capability-matri
 import {plainTextToRichText} from '../../public/editor-v2/core/richtext-engine.js';
 
 const publicDir=resolve(import.meta.dirname,'../../public');
+const editablePartialTypeCount=Object.values(NODE_TYPES).filter(type=>type!==NODE_TYPES.ROOT&&getElementCapability(type).status==='PARTIAL').length;
 const properties=[
   {id:'border.style',key:'borderStyle',type:'select',css:'borderStyle',devices:{desktop:{value:'solid',expected:'solid'},tablet:{value:'dashed',expected:'dashed'},mobile:{value:'dotted',expected:'dotted'}}},
   {id:'border.width',key:'borderWidth',type:'dimension',css:'borderWidth',devices:{desktop:{value:'2px',expected:'2px'},tablet:{value:'5px',expected:'5px'},mobile:{value:'3px',expected:'3px'}}},
@@ -31,7 +32,7 @@ test('all editable PARTIAL types preserve responsive border fields through Inspe
     if(type==='button'||type==='link')execute(model,{type:'content.properties.set',payload:{nodeId:id,patch:{href:'https://example.com'}}});
     nodes.push({type,id});
   }
-  assert.equal(nodes.length,45,'fixture includes root plus every editable PARTIAL type');
+  assert.equal(nodes.length,1+editablePartialTypeCount,'fixture includes root plus every editable PARTIAL type');
   const editableNodes=nodes.filter(node=>node.type!==NODE_TYPES.ROOT);
   let draft=structuredClone(model.document),published=structuredClone(draft),revision=1;
   const requests=[],errors=[];

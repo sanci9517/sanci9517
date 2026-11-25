@@ -12,6 +12,7 @@ import {getElementCapability} from '../../public/editor-v2/core/capability-matri
 import {plainTextToRichText} from '../../public/editor-v2/core/richtext-engine.js';
 
 const publicDir=resolve(import.meta.dirname,'../../public');
+const editablePartialTypeCount=Object.values(NODE_TYPES).filter(type=>type!==NODE_TYPES.ROOT&&getElementCapability(type).status==='PARTIAL').length;
 const widths={desktop:1366,tablet:768,mobile:390};
 const shadows=['0 2px 8px #0003','0 8px 24px #0005','0 16px 48px #0007'];
 const opacityValue=value=>String(Number(value.toFixed(2)));
@@ -33,7 +34,7 @@ test('opacity and box shadow preserve tablet Inspector lifecycle across all edit
     if(type==='button'||type==='link')execute(model,{type:'content.properties.set',payload:{nodeId:id,patch:{href:'https://example.com'}}});
     nodes.push({type,id});
   }
-  assert.equal(nodes.length,45,'fixture includes root and all 44 editable PARTIAL types');
+  assert.equal(nodes.length,1+editablePartialTypeCount,'fixture includes root and all editable PARTIAL types');
   const editableNodes=nodes.filter(node=>node.type!==NODE_TYPES.ROOT);
   let draft=structuredClone(model.document),published=structuredClone(draft),version=1;
   const errors=[],server=createServer(async(req,res)=>{

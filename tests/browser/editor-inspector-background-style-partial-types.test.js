@@ -12,6 +12,7 @@ import {getElementCapability} from '../../public/editor-v2/core/capability-matri
 import {plainTextToRichText} from '../../public/editor-v2/core/richtext-engine.js';
 
 const publicDir=resolve(import.meta.dirname,'../../public');
+const editablePartialTypeCount=Object.values(NODE_TYPES).filter(type=>type!==NODE_TYPES.ROOT&&getElementCapability(type).status==='PARTIAL').length;
 const properties=[
   {id:'background.gradient',key:'backgroundImage',value:{desktop:'linear-gradient(135deg, #fb7185 0%, #fbbf24 100%)',tablet:'linear-gradient(180deg, #ffffff 0%, #e0e7ff 100%)',mobile:'linear-gradient(135deg, #111827 0%, #475569 100%)'}},
   {id:'background.size',key:'backgroundSize',value:{desktop:'cover',tablet:'auto',mobile:'contain'}},
@@ -34,7 +35,7 @@ test('all editable PARTIAL types preserve responsive background style through In
     if(type==='button'||type==='link')execute(model,{type:'content.properties.set',payload:{nodeId:id,patch:{href:'https://example.com'}}});
     nodes.push({type,id});
   }
-  assert.equal(nodes.length,45,'fixture contains root plus every editable PARTIAL type');
+  assert.equal(nodes.length,1+editablePartialTypeCount,'fixture contains root plus every editable PARTIAL type');
   const editableNodes=nodes.filter(node=>node.type!==NODE_TYPES.ROOT);
   let draft=structuredClone(model.document),published=structuredClone(draft),version=1;
   const editorErrors=[];

@@ -13,6 +13,7 @@ import {listProperties} from '../../public/editor-v2/core/property-registry.js';
 import {plainTextToRichText} from '../../public/editor-v2/core/richtext-engine.js';
 
 const publicDir=resolve(import.meta.dirname,'../../public');
+const editablePartialTypeCount=Object.values(NODE_TYPES).filter(type=>type!==NODE_TYPES.ROOT&&getElementCapability(type).status==='PARTIAL').length;
 const backgroundAssets={
   desktop:{id:'a44f0ce3-6273-4a8f-991e-572c4a89cdd4',name:'Inspector-mátrix asztali háttér.png',color:'#16a34a'},
   tablet:{id:'a44f0ce3-6273-4a8f-991e-572c4a89cdd5',name:'Inspector-mátrix tablet háttér.png',color:'#2563eb'},
@@ -34,8 +35,8 @@ test('background image media picker reaches Canvas, draft and public renderer fo
     nodes.push({type,id});
   }
   const applicable=nodes.filter(({type})=>listProperties({nodeType:type}).some(property=>property.id==='background.image'));
-  assert.equal(nodes.length,45,'fixture contains root and all 44 editable PARTIAL types');
-  assert.equal(applicable.length,45,'all current PARTIAL types register the background image field');
+  assert.equal(nodes.length,1+editablePartialTypeCount,'fixture contains root and all editable PARTIAL types');
+  assert.equal(applicable.length,1+editablePartialTypeCount,'root and all current PARTIAL types register the background image field');
 
   let draft=structuredClone(model.document),published=structuredClone(draft),version=1;
   const server=createServer(async(req,res)=>{

@@ -12,6 +12,7 @@ import {getElementCapability} from '../../public/editor-v2/core/capability-matri
 import {plainTextToRichText} from '../../public/editor-v2/core/richtext-engine.js';
 
 const publicDir=resolve(import.meta.dirname,'../../public');
+const editablePartialTypeCount=Object.values(NODE_TYPES).filter(type=>type!==NODE_TYPES.ROOT&&getElementCapability(type).status==='PARTIAL').length;
 const widths={desktop:1366,tablet:768,mobile:390};
 const values={
   desktop:index=>`#${((0x183858+index*0x030507)&0xffffff).toString(16).padStart(6,'0')}`,
@@ -33,7 +34,7 @@ test('all editable PARTIAL types preserve responsive text color through tablet S
     if(type==='button'||type==='link')execute(model,{type:'content.properties.set',payload:{nodeId:id,patch:{href:'https://example.com'}}});
     nodes.push({type,id});
   }
-  assert.equal(nodes.length,45,'fixture includes root and every editable PARTIAL type');
+  assert.equal(nodes.length,1+editablePartialTypeCount,'fixture includes root and every editable PARTIAL type');
   const editableNodes=nodes.filter(node=>node.type!==NODE_TYPES.ROOT);
   let draft=structuredClone(model.document),published=structuredClone(draft),version=1;
   const errors=[],server=createServer(async(req,res)=>{
