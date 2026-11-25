@@ -1,0 +1,148 @@
+{
+  "schema_version": 1,
+  "evidence_id": "editor-d06-html-table-no-silent-truncation-2026-11-25",
+  "plan_point": "77.44.7.D / D-06 — rich-text HTML table clipboard import bounds",
+  "status": "OPEN — local source and regression checks pass; release and exact-SHA hosted workflow pending",
+  "scope": "A narrow Editor clipboard import defect fix. This is not full D-06, full Editor acceptance, or D-point certification.",
+  "branch_policy": "v2/foundation is the single authorized development and production release branch; no feature branch or branch switch was used.",
+  "base": {
+    "branch": "v2/foundation",
+    "verified_head": "b75faec3c9108723035698f7314699dc1c483472",
+    "canonical_plan_sha256": "3c21e538486f94f3ce557a9944b969eb162fb3b9cb3f126a07d87ad107f45ce5"
+  },
+  "change": {
+    "summary": "HTML table clipboard import previously sliced rows and cells at supported limits, silently discarding trailing content. It now rejects over-limit input with actionable Hungarian messages and keeps content exactly at both limits.",
+    "limits": {
+      "max_rows": 100,
+      "max_columns": 24
+    },
+    "files": [
+      "public/editor-v2/core/richtext-import.js",
+      "public/editor-v2/app.js",
+      "public/editor-v2/index.html",
+      "tests/browser/editor-inspector-richtext-controls.test.js",
+      "tests/editor-public-asset-cache-bust.test.js"
+    ],
+    "public_asset_sha256": {
+      "public/editor-v2/core/richtext-import.js": "b0ee431e2dbb8124ac56bf3d43f28835ef7a8753c2fad269c28e9497d7e6dd59",
+      "public/editor-v2/app.js": "435a99a411b0dec0416a2c0d7409e9bea8887021d76ff83755e5a3d737deb6bd",
+      "public/editor-v2/index.html": "205602b0954d4fe337789761a2597fd83f950c6ce7deec071d79dbb122af1e0a"
+    },
+    "production_data_mutation": false,
+    "new_dependencies": 0
+  },
+  "checks": [
+    {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-inspector-richtext-controls.test.js",
+      "result": "PASS",
+      "summary": "2/2 real Chromium cases at mobile and desktop widths; over-limit rows and columns reject; exact 100 x 24 limit preserves final row and cell."
+    },
+    {
+      "command": "npm run test:editor",
+      "result": "PASS",
+      "summary": "24/24 Editor unit test files, 12/12 preference route assertions, 4/4 Linux subreaper checks."
+    },
+    {
+      "command": "node tests/editor-public-asset-cache-bust.test.js",
+      "result": "PASS",
+      "summary": "3/3."
+    },
+    {
+      "command": "node --experimental-loader ./tests/ts-extension-loader.mjs --test tests/editor-d-content-contract.test.js",
+      "result": "PASS",
+      "summary": "1/1."
+    },
+    {
+      "command": "node tests/worker-production-source-smoke.test.mjs",
+      "result": "PASS",
+      "summary": "2/2; changed public Editor assets are in the live source smoke list."
+    },
+    {
+      "command": "npm run typecheck -- --pretty false",
+      "result": "PASS"
+    },
+    {
+      "command": "python3 tests/plan-contract.test.py",
+      "result": "PASS",
+      "summary": "16/16."
+    },
+    {
+      "command": "python3 scripts/check-canonical-plan.py; python3 scripts/build-feature-traceability.py --check; python3 scripts/audit-active-plan-point.py",
+      "result": "PASS",
+      "summary": "Single complete 13-part master; 396 source mappings; current cursor 77.44 / WEB-011 -> 77.44.7.D; functional acceptance remains NOT_CERTIFIED."
+    },
+    {
+      "command": "node scripts/web013-migration-safety-gate.mjs",
+      "result": "PASS"
+    },
+    {
+      "command": "npx wrangler deploy --dry-run",
+      "result": "PASS",
+      "summary": "Wrangler 4.130.0; 202 public assets; 435.00 KiB / 110.22 KiB gzip; exit 0. Wrangler emitted a sandbox-only EROFS debug-log warning but completed the dry run successfully."
+    },
+    {
+      "command": "git diff --check; node --check public/editor-v2/core/richtext-import.js; node --check public/editor-v2/app.js",
+      "result": "PASS"
+    }
+  ],
+  "production_preflight": {
+    "method": "Cloudflare D1 query API; SELECT statements only.",
+    "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
+    "checks": [
+      {
+        "query": "SELECT count(*) AS migration_count FROM d1_migrations",
+        "result": 36,
+        "rows_written": 0,
+        "changes": 0,
+        "changed_db": false
+      },
+      {
+        "query": "SELECT name FROM d1_migrations ORDER BY name DESC LIMIT 1",
+        "result": "0030_media_library_organization.sql",
+        "rows_written": 0,
+        "changes": 0,
+        "changed_db": false
+      },
+      {
+        "query": "SELECT count(*) AS schema_objects FROM sqlite_master WHERE type IN ('table','index','view','trigger')",
+        "result": 147,
+        "rows_written": 0,
+        "changes": 0,
+        "changed_db": false
+      }
+    ],
+    "d1_mutation": false,
+    "r2_operation": false
+  },
+  "production_before_release": {
+    "worker": "sanci9517-streamer-brand",
+    "latest_deployment_id": "e596af1a-66fe-49ba-ac61-83b900ebf28f",
+    "traffic_version_id": "6419a77b-f6b1-4412-9df4-9688c47b21cd",
+    "traffic_percentage": 100,
+    "health_url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+    "health_status": 200,
+    "health_body": {
+      "ok": true,
+      "service": "sanci9517-streamer-brand",
+      "version": "2.0.0",
+      "server": "cloudflare-worker"
+    }
+  },
+  "release": {
+    "runtime_commit": null,
+    "github_ci": "PENDING",
+    "cloudflare_build": "PENDING",
+    "post_release_worker_version": null,
+    "post_release_traffic_percentage": null,
+    "post_release_health": "PENDING",
+    "post_release_changed_asset_hashes": "PENDING"
+  },
+  "acceptance": {
+    "feature_acceptance": "NOT_RECERTIFIED",
+    "d06": "OPEN / NOT_CERTIFIED",
+    "complete_editor": "OPEN / NOT_CERTIFIED",
+    "manual_and_physical_acceptance": "DEFERRED until the full Editor scope is implemented",
+    "save_publish_separation": "UNCHANGED"
+  },
+  "cost_huf": 0
+}

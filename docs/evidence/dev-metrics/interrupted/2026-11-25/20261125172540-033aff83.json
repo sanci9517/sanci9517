@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "id": "20261125172540-033aff83",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-25T17:25:40.713Z",
+  "abandoned_at": "2026-11-25T17:38:35.015Z",
+  "measured_seconds": null,
+  "status": "interrupted",
+  "reason": "Prior run was interrupted during handoff; no reliable completion time.",
+  "started_revision": "01998aac4f38cd5e2896d9246164033ec688b47e",
+  "measurement": "missing end time; excluded from elapsed time and ETA"
+}

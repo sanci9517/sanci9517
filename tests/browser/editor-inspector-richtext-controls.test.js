@@ -249,6 +249,9 @@ test('typed Inspector controls and link selection work with real browser DOM at 
       const atBudgetListItems=importRichTextClipboard({html:'<ul>'+ '<li>x</li>'.repeat(5000) +'</ul>'}).blocks[0].items.length;
       const atBudgetInlineRuns=importRichTextClipboard({html:'<p>'+Array.from({length:5000},(_,index)=>index%2?'<em>x</em>':'<strong>x</strong>').join('')+'</p>'}).blocks[0].children.length;
       const atBudgetPlainTextBlocks=importRichTextClipboard({text:'x\n'.repeat(4999)+'x'}).blocks.length;
+      const tooManyHtmlRows=rejectionFor('<table><tbody>'+Array.from({length:101},(_,row)=>`<tr><td>${row}</td></tr>`).join('')+'</tbody></table>');
+      const tooManyHtmlColumns=rejectionFor('<table><tbody><tr>'+ '<td>x</td>'.repeat(25) +'</tr></tbody></table>');
+      const maximumHtmlTable=importRichTextClipboard({html:'<table><tbody>'+Array.from({length:100},(_,row)=>'<tr>'+Array.from({length:24},(_,column)=>`<td>${row}:${column}</td>`).join('')+'</tr>').join('')+'</tbody></table>'});
       const ordinaryFormattedPaste=importRichTextClipboard({html:'<p><strong>Jól formázott</strong> szöveg</p>'});
       const model={
         schemaVersion:1,type:'richtext-document',
@@ -295,6 +298,7 @@ test('typed Inspector controls and link selection work with real browser DOM at 
         tooManyBlocks,tooManyListItems,tooManyDocumentListItems,excessiveInlineRuns,tooManyPlainTextBlocksRejected,
         tooDeepImport,excessiveDomNodes,safeDepthImport,
         atBudgetBlocks,atBudgetListItems,atBudgetInlineRuns,atBudgetPlainTextBlocks,ordinaryFormattedPaste,
+        tooManyHtmlRows,tooManyHtmlColumns,maximumHtmlTable:[maximumHtmlTable.blocks[0].rows.length,maximumHtmlTable.blocks[0].rows[0].cells.length,maximumHtmlTable.blocks[0].rows[99].cells[23].children[0].text],
         breakSelectorQueries,repeatedBreakText:repeatedBreakImport.blocks[0].children.map(run=>run.text).join(''),
         pasteAttack:window.__pasteAttack,
         markedRun:aligned.blocks[0].children.find(x=>x.text==='world'),alignment:aligned.blocks[0].align,
@@ -381,6 +385,9 @@ test('typed Inspector controls and link selection work with real browser DOM at 
     assert.equal(data.atBudgetListItems,5000,'a list at the documented item limit remains importable');
     assert.equal(data.atBudgetInlineRuns,5000,'formatted text at the documented run limit remains importable');
     assert.equal(data.atBudgetPlainTextBlocks,5000,'plain text at the documented block limit remains importable');
+    assert.match(data.tooManyHtmlRows,/legfeljebb 100 sort/,'HTML tables above the row limit fail clearly instead of silently losing trailing rows');
+    assert.match(data.tooManyHtmlColumns,/legfeljebb 24 oszlopot/,'HTML tables above the column limit fail clearly instead of silently losing trailing cells');
+    assert.deepEqual(data.maximumHtmlTable,[100,24,'99:23'],'HTML tables exactly at both supported dimensions retain the final row and cell');
     assert.equal(data.breakSelectorQueries,1,'large hard-break pastes scan the inline root once instead of querying the whole subtree for every break');
     assert.equal(data.repeatedBreakText,'\n'.repeat(256),'hard-break count and order are preserved by the bounded import path');
     assert.deepEqual(data.ordinaryFormattedPaste.blocks[0].children.map(run=>run.text),['Jól formázott',' szöveg'],'ordinary formatted clipboard imports remain supported');

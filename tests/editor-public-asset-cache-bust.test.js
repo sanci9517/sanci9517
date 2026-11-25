@@ -29,15 +29,15 @@ test('the Editor and public renderer release tokens bust the structured accessib
   assert.match(css,/\.element-favorite-toggle\s*\{/,
     'the stylesheet referenced by the versioned link must include the palette-favorites UI');
   const recoveryVersion='20261124-edt042-publish-recovery-safe-label-v1';
-  const editorEntryVersion='20261125-d06-authored-carousel-slide-semantics-v1';
+  const editorEntryVersion='20261125-d06-html-table-dimension-guard-v1';
   const mediaPlaybackVersion='20261125-d06-authored-carousel-slide-semantics-v1';
   assert.match(html,new RegExp(`src="/editor-v2/app\\.js\\?v=${editorEntryVersion}"`),
     'the deployed entry page must request the unsupported-Publish recovery handler');
   assert.match(html,/src="\/editor-v2\/ui\/shell\.js\?v=20261123-edt044-account-scoped-preferences-v2"/,
     'the deployed entry page must request the account-scoped shell module');
   const app=await readFile(resolve(root,'app.js'),'utf8');
-  assert.match(app,/core\/richtext-import\.js\?v=20261124-edt044-import-tree-budget-v2/,
-    'the cache-keyed Editor entry must request the linear hard-break traversal implementation');
+  assert.match(app,/core\/richtext-import\.js\?v=20261125-d06-html-table-dimension-guard-v1/,
+    'the cache-keyed Editor entry must request the HTML-table no-silent-truncation guard');
   assert.match(app,new RegExp(`core/publication-recovery\\.js\\?v=${recoveryVersion}`),
     'the cache-keyed entry must request the targeted recovery module');
   assert.match(app,/legacyPlaybackSettings\(node\.props,\{video:node\.type===NODE_TYPES\.VIDEO,editor:true,reducedMotion:prefersReducedMotion\(\)\}\)/,
@@ -78,7 +78,7 @@ test('the EDT-040 in-view trigger refreshes both renderers and the shared motion
   ]);
   const motionVersion='20261123-edt040-in-view-motion-v1';
   const domIdVersion='20261125-d06-authored-carousel-slide-semantics-v1';
-  const editorEntryVersion='20261125-d06-authored-carousel-slide-semantics-v1';
+  const editorEntryVersion='20261125-d06-html-table-dimension-guard-v1';
   const mediaPlaybackVersion='20261125-d06-authored-carousel-slide-semantics-v1';
   assert.match(editorHtml,new RegExp(`editor-motion\\.css\\?v=${motionVersion}`));
   assert.match(editorHtml,new RegExp(`app\\.js\\?v=${editorEntryVersion}`));

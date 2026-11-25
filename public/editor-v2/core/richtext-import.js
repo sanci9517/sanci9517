@@ -165,11 +165,19 @@ function assertClipboardTreeBudget(root) {
 }
 
 function htmlTable(table, budget) {
-  const rows = directRows(table).slice(0, MAX_TABLE_ROWS).map(row => ({
-    cells: [...row.children].filter(cell => ['TD', 'TH'].includes(cell.tagName)).slice(0, MAX_TABLE_COLUMNS).map(cell => ({
+  const sourceRows = directRows(table);
+  if (sourceRows.length > MAX_TABLE_ROWS) {
+    throw new Error(`A beillesztett táblázat legfeljebb ${MAX_TABLE_ROWS} sort tartalmazhat.`);
+  }
+  const rows = sourceRows.map(row => {
+    const sourceCells = [...row.children].filter(cell => ['TD', 'TH'].includes(cell.tagName));
+    if (sourceCells.length > MAX_TABLE_COLUMNS) {
+      throw new Error(`A beillesztett táblázat legfeljebb ${MAX_TABLE_COLUMNS} oszlopot tartalmazhat.`);
+    }
+    return {cells: sourceCells.map(cell => ({
       header: cell.tagName === 'TH', ...(blockAlign(cell) ? {align:blockAlign(cell)} : {}), children: readInlineNodes(cell, undefined, null, budget)
-    }))
-  })).filter(row => row.cells.length);
+    }))};
+  }).filter(row => row.cells.length);
   if (!rows.length) return null;
   const width = Math.max(...rows.map(row => row.cells.length));
   for (const row of rows) while (row.cells.length < width) row.cells.push({header: false, children: [{type: 'text', text: '', marks: []}]});

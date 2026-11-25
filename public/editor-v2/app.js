@@ -24,7 +24,7 @@ import {initialPageId,rememberPageId,requestedPageId} from './core/page-url.js';
 import {getElementCapability} from './core/capability-matrix.js?v=20261123-edt040-in-view-motion-v1';
 import {firstUnsupportedPublicationNode,unsupportedPublicationMessage} from './core/publication-recovery.js?v=20261124-edt042-publish-recovery-safe-label-v1';
 import {renderGeometryPresets} from './ui/geometry-presets.js';
-import {importRichTextClipboard} from './core/richtext-import.js?v=20261124-edt044-import-tree-budget-v2';
+import {importRichTextClipboard} from './core/richtext-import.js?v=20261125-d06-html-table-dimension-guard-v1';
 import {pasteRichTextDocument} from './core/richtext-paste.js?v=20261117-d03-invalid-media-id-guidance-v1';
 import {createNodeClipboard,isNodeClipboardForPage} from './core/node-clipboard.js?v=20261118-edt038-node-clipboard-v1';
 import {captureStyleSnapshot,STYLE_SNAPSHOT_PROPERTIES} from './core/style-snapshot.js';
