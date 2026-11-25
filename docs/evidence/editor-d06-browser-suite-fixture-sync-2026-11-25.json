@@ -6,6 +6,10 @@
     "name": "sanci9517/sanci9517",
     "branch": "v2/foundation",
     "parent_commit": "0a90dcdc17c887a41bdfa7e62d421c0f996f90cc",
+    "test_change_commit": "94455da5598c9f2579885e5b11be8a892e6f5ab3",
+    "test_change_commit_url": "https://github.com/sanci9517/sanci9517/commit/94455da5598c9f2579885e5b11be8a892e6f5ab3",
+    "test_change_push": "verified normal fast-forward; exact v2/foundation head after push",
+    "github_workflow_runs_for_test_change_sha": 0,
     "plan_blob_before": "50bb647a34d6351119115a73c220974e8b74ee6d",
     "plan_bytes_before": 1879438,
     "plan_append_only": true
@@ -60,6 +64,12 @@
     "new_paid_service": false,
     "new_cost_huf": 0,
     "save_and_publish_remain_separate": true
+  },
+  "development_metrics": {
+    "run_id": "20261125070237-7045214c",
+    "status": "partial",
+    "measured_elapsed_seconds": 2612,
+    "archive": "docs/evidence/dev-metrics/runs/2026-11-25/20261125070237-7045214c.json"
   },
   "status": {
     "d06": "OPEN / NOT CERTIFIED",
