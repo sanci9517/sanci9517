@@ -14,6 +14,7 @@ import {isLayoutPropertyRelevant} from '../../public/editor-v2/core/layout-prese
 import {plainTextToRichText} from '../../public/editor-v2/core/richtext-engine.js';
 
 const publicDir=resolve(import.meta.dirname,'../../public');
+const editablePartialTypeCount=Object.values(NODE_TYPES).filter(type=>type!==NODE_TYPES.ROOT&&getElementCapability(type).status==='PARTIAL').length;
 const primaryGroups=new Set(['layout','size','spacing','flex','grid','position','typography','background','border','radius','shadow','opacity','transform','filter','animation']);
 const duplicatePrimaryIds=new Set(['content.text','content.href','advanced.nodeName']);
 
@@ -32,7 +33,7 @@ test('every PARTIAL type renders Inspector routes and preserves Save versus Publ
     nodes.push({type,id});
   }
   let draft=structuredClone(model.document),published=structuredClone(draft),version=1;
-  assert.equal(nodes.length,45,'fixture includes every declared PARTIAL type, including root');
+  assert.equal(nodes.length,1+editablePartialTypeCount,'fixture includes every declared PARTIAL type, including root');
   let editorErrors=[];
   const server=createServer(async(req,res)=>{
     const url=new URL(req.url,'http://localhost');
@@ -113,7 +114,7 @@ test('every PARTIAL type renders Inspector routes and preserves Save versus Publ
   }
 
   // The canonical name route is rendered for every type above. Exercise the
-  // same CSS-token-looking literal through all 44 editable PARTIAL types in
+  // same CSS-token-looking literal through all editable PARTIAL types in
   // one draft Save/reload and one separate Publish. The name is metadata
   // shown by the Inspector and Layers tree, not CSS, even for text controls.
   const nameTarget=nodes.find(({type})=>type==='text');
