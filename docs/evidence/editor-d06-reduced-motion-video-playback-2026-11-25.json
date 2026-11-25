@@ -4,9 +4,9 @@
   "date": "2026-11-25",
   "canonical_plan": {
     "path": "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
-    "sha256": "2935915cdcc23ccba621e0c2d302c4811909f8e5e395869fd075ec926b4b45c5",
+    "sha256": "52ee4b99bd64162ab80e2d1e75153e443b931271bdd30a5f24314f451f8d8407",
     "active_point": "77.44.7.D",
-    "status": "OPEN / NOT_CERTIFIED",
+    "status": "D-06 partial feature released; full D-06 / D-01-D-07 / Visual Editor OPEN / NOT_CERTIFIED",
     "audit": {
       "features": 396,
       "partial_source": 148,
@@ -147,6 +147,11 @@
       "command": "Cloudflare Workers Builds GET by version 08857a2f-b6a7-4985-a480-ebec7fa43cfb",
       "result": "PASS",
       "summary": "Build 9c7725dd-8635-4e75-84bf-c237d4fb6fe9 for exact source aa25218a3e5f1052749244cdd64af60d80d2230f has build_outcome=success; npm run typecheck and npm run deploy:safe."
+    },
+    {
+      "command": "Canonical plan append and contract check",
+      "result": "PASS",
+      "summary": "Appended exact D-06 reduced-motion behavior and release evidence; canonical plan and 13-file master check, plan-contract 16/16, and active-point audit pass; cursor intentionally unchanged."
     }
   ],
   "git_release": {
@@ -160,7 +165,8 @@
     "pushed_at_utc": "2026-11-25T13:50Z",
     "source_commit": "aa25218a3e5f1052749244cdd64af60d80d2230f",
     "release_path": "normal fast-forward git push; no force; docs follow-up is separated with [skip ci]",
-    "actions_quota_basis": "Owner confirmed free CI capacity; repository metadata is public. No paid usage requested."
+    "actions_quota_basis": "Owner confirmed free CI capacity; repository metadata is public. No paid usage requested.",
+    "documentation_followup": "Plan/evidence update uses docs-only [skip ci] commit; Worker build is excluded for docs/**."
   },
   "production": {
     "latest_deployment_id": "7847048f-5bc2-4acc-af74-d99ab8d43b15",
@@ -226,8 +232,8 @@
   },
   "metrics_run_id": "20261125133828-fda44865",
   "metrics": {
-    "run_id": "20261125135506-7fde8c60",
-    "measured_active_seconds": 59,
-    "status": "pass"
+    "run_id": "20261125135840-db4dc6ec",
+    "status": "pass",
+    "measured_active_seconds": 45
   }
 }

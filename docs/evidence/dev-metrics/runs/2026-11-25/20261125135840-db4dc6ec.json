@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261125135840-db4dc6ec",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-25T13:58:40.964Z",
+  "finished_at": "2026-11-25T13:59:25.653Z",
+  "wall_seconds": 45,
+  "paused_seconds": 0,
+  "measured_seconds": 45,
+  "status": "pass",
+  "kind": "docs",
+  "summary": "Recorded the released reduced-motion D-06 feature in the canonical plan and refreshed evidence SHA after contract/master/audit checks; D-06 and full Editor remain OPEN.",
+  "evidence": [
+    "docs/evidence/editor-d06-reduced-motion-video-playback-2026-11-25.json"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "ed0bcaaa2edd60f50515330592abaf803c5b49c1",
+  "finished_revision": "ed0bcaaa2edd60f50515330592abaf803c5b49c1",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
