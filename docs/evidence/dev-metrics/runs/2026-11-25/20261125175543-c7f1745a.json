@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "id": "20261125175543-c7f1745a",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-25T17:55:43.528Z",
+  "finished_at": "2026-11-25T17:58:49.761Z",
+  "wall_seconds": 186,
+  "paused_seconds": 0,
+  "measured_seconds": 186,
+  "status": "partial",
+  "kind": "none",
+  "summary": "Verified exact-SHA Editor Core CI remains in progress at browser layout; checked live Worker deployment metadata and compared both preserved stash snapshots against current HEAD; stale snapshots were intentionally left untouched. No source/runtime changes or new deployment.",
+  "evidence": [
+    "ef84d86899f73ce67e76df342f48788f3011f510",
+    "GitHub run 45667665134",
+    "Cloudflare deployment 03a8d284-8c16-46a1-a153-70f772b8602a"
+  ],
+  "checks": "GitHub Editor Core run 45667665134: steps 1–13 successful; browser layout step 14 in progress; subsequent suite steps pending. Cloudflare read-only deployment API: deployment 03a8d284-8c16-46a1-a153-70f772b8602a, version 9b07c2a1-d089-48e4-b4ac-e1c483a47a2c, 100% traffic. GitHub compare confirms local HEAD ef84d86899f73ce67e76df342f48788f3011f510 equals v2/foundation.",
+  "started_revision": "ef84d86899f73ce67e76df342f48788f3011f510",
+  "finished_revision": "ef84d86899f73ce67e76df342f48788f3011f510",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
