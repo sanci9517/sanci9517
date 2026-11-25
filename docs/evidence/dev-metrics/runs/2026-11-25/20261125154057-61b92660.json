@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261125154057-61b92660",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-25T15:40:57.957Z",
+  "finished_at": "2026-11-25T15:44:30.998Z",
+  "wall_seconds": 213,
+  "paused_seconds": 0,
+  "measured_seconds": 213,
+  "status": "pass",
+  "kind": "docs",
+  "summary": "D-06 reduced-motion plan wording was clarified append-only to match verified in-place media updates; canonical plan, 16 plan contracts, 396-entry traceability and active-point audit pass. Full D-06 remains open.",
+  "evidence": [
+    "docs/evidence/editor-d06-reduced-motion-live-update-2026-11-25.json"
+  ],
+  "checks": "python3 scripts/check-canonical-plan.py; python3 tests/plan-contract.test.py; python3 scripts/build-feature-traceability.py --check; python3 scripts/audit-active-plan-point.py; git diff --check",
+  "started_revision": "3c46bc1176e10de9edbb27da4a50f48ae477319e",
+  "finished_revision": "3c46bc1176e10de9edbb27da4a50f48ae477319e",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

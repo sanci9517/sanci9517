@@ -6,7 +6,9 @@
     "path": "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
     "pre_change_sha256": "52ee4b99bd64162ab80e2d1e75153e443b931271bdd30a5f24314f451f8d8407",
     "active_point": "77.44.7.D",
-    "status": "D-06 partial implementation; full D-06/D-01–D-07/Visual Editor OPEN / NOT_CERTIFIED"
+    "status": "D-06 partial implementation; full D-06/D-01–D-07/Visual Editor OPEN / NOT_CERTIFIED",
+    "post_clarification_sha256": "3c21e538486f94f3ce557a9944b969eb162fb3b9cb3f126a07d87ad107f45ce5",
+    "post_clarification_bytes": 1892074
   },
   "change": {
     "summary": "Reduced-motion preference changes now update eligible muted autoplay video elements in place in the public renderer and Editor Canvas. This avoids a full page/canvas rerender that could replace active interaction nodes and event handlers. Editor keeps manual controls while it suppresses automatic playback. The normal public preference restores the configured public autoplay/controls. Saved document data and Save/Publish paths are unchanged.",
@@ -170,5 +172,18 @@
     "editor_core_ci": "Run 45642906927 is a real FAIL due to the stale test assertion recorded above; subsequent steps were skipped. It must not be represented as a green full-suite CI run.",
     "browser_sandbox": "A separate normal-sandbox Editor Chromium rerun was blocked by Chromium crashpad setsockopt EPERM; the actual media lifecycle suite passed when run with the required local execution permission.",
     "acceptance": "D-06 remains OPEN / NOT_CERTIFIED because this is one verified implementation slice, not the full D-06 plan item or full Editor acceptance."
+  },
+  "documentation_follow_up": {
+    "change": "Append-only clarification corrects the prior wording: reduced-motion toggles update eligible video nodes in place and do not rerender the page or canvas.",
+    "checks": [
+      "python3 scripts/check-canonical-plan.py",
+      "python3 tests/plan-contract.test.py",
+      "python3 scripts/build-feature-traceability.py --check",
+      "python3 scripts/audit-active-plan-point.py",
+      "git diff --check"
+    ],
+    "runtime_changed": false,
+    "worker_redeploy": false,
+    "full_d06_acceptance": "OPEN / NOT_CERTIFIED"
   }
 }
