@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "20261125200001-a0f248f0",
+  "task": "77.44.7.D-next-open-editor-capability",
+  "trigger": "manual",
+  "started_at": "2026-11-25T20:00:01.053Z",
+  "finished_at": "2026-11-25T20:19:53.558Z",
+  "wall_seconds": 1193,
+  "paused_seconds": 0,
+  "measured_seconds": 1193,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "Closed public Page Model normalization boundary follow-up; exact-source Cloudflare deploy verified. Full D and Editor remain open; broad WEB-013 suite hung in Miniflare.",
+  "evidence": [
+    "docs/evidence/editor-d07-public-page-model-admission-2026-11-25.json",
+    "docs/evidence/feature-traceability.json"
+  ],
+  "checks": "typecheck,editor-24,save-publish-25,public-runtime,plan,traceability,migration-gate,wrangler-dry-run,production-health,traffic-100,asset-hash",
+  "started_revision": "83e3239e65a1086257f524dba840784e7c77676e",
+  "finished_revision": "d32a4f12cdbf39d141c471fc24c5d30cc5e819ce",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

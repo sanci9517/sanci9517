@@ -1,0 +1,96 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-11-25T20:20:00Z",
+  "planCursor": {
+    "main": "77.44 / WEB-011",
+    "next": "77.44.7.D",
+    "slice": "D-07 follow-up: bound canonical and legacy Page Models at shared public normalization",
+    "sliceStatus": "released_and_production_verified",
+    "fullDStatus": "OPEN_NOT_CERTIFIED",
+    "fullEditorStatus": "OPEN_NOT_CERTIFIED",
+    "manualPhysicalAcceptance": "DEFERRED until the full Editor feature set is complete"
+  },
+  "source": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "commit": "d32a4f12cdbf39d141c471fc24c5d30cc5e819ce",
+    "parent": "83e3239e65a1086257f524dba840784e7c77676e",
+    "message": "fix(editor): bound public Page Model reads",
+    "remoteRefVerified": true,
+    "canonicalPlanSha256Unchanged": "981c84b7c3c940437c71e91f3d09facc673d324a26f2f5739bde1b7d5870820b"
+  },
+  "implementation": {
+    "problem": "The previous Editor admission guard covered Save, Publish and administrative paths, but public page serialization shared the Page Model normalizer without a node, aggregate child-reference or hierarchy-depth budget. Legacy nested pages were recursively converted before an equivalent preflight.",
+    "policy": {
+      "maxPageNodeCount": 1000,
+      "maxAggregateChildReferences": 999,
+      "maxPageHierarchyDepth": 128,
+      "saveAndPublishRemainSeparate": true
+    },
+    "behavior": [
+      "Canonical models with oversized node maps, aggregate child arrays, or hierarchy depth fail closed in the shared normalizer used by public published-page and authenticated preview responses.",
+      "Legacy nested page trees are iteratively budgeted for aggregate child references and depth before recursive conversion.",
+      "Rollback checks the persisted revision's node and child-reference budgets before normalization so it preserves the API's explicit 413 limit responses and performs no writes.",
+      "Public slug lookup returns PAGE_NOT_CANONICAL for malformed content; public lists omit it; preview does not expose it.",
+      "Boundaries are covered: hierarchy depth 128 is accepted and 129 is rejected for canonical and legacy trees; a 100000-reference canonical fixture and 1000-child legacy fixture are rejected."
+    ],
+    "regressions": [
+      "tests/web013-runtime.test.js covers public slug/list/preview handling and canonical/legacy child-reference and depth boundaries.",
+      "tests/f0-3-route-integration.test.js confirms oversized stored revisions preserve the 413 error contract and do not mutate page, revision, publication or audit state."
+    ]
+  },
+  "checks": {
+    "publicPageModelRuntimeRegression": "PASS",
+    "editorCore": "PASS: 24/24 suites, no skips",
+    "editorSavePublishRouteIntegration": "PASS: 25/25 cases, no skips",
+    "typecheck": "PASS locally and in exact-source Cloudflare Build",
+    "canonicalPlan": "PASS: complete master and cursor; functional acceptance NOT certified",
+    "featureTraceability": "PASS: 396/396 mappings after regenerating the source crosswalk",
+    "migrationSafetyGate": "PASS: deploy:safe does not apply production D1 migrations",
+    "wranglerDeployDryRun": "PASS: Wrangler 4.130.0; 202 assets; dry-run only",
+    "gitDiffCheck": "PASS",
+    "broadWeb013Suite": "BLOCKED: npm run test:web013 produced no terminal result after more than two minutes; stopped without a test failure report. Targeted changed-path tests passed.",
+    "fullEditorAcceptance": "NOT_RUN: deferred until feature implementation is complete"
+  },
+  "productionPreflight": {
+    "kind": "read-only Cloudflare D1 query API preflight",
+    "databaseId": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
+    "sql": "SELECT id, content_json, published_content_json, archived_at FROM pages",
+    "rowsInspected": 11,
+    "badJson": 0,
+    "badOrOverLimitModels": 0,
+    "maxNodes": 26,
+    "maxChildReferences": 25,
+    "maxDepth": 5,
+    "rowsWritten": 0,
+    "changedDb": false
+  },
+  "cloudflareRelease": {
+    "buildId": "237ba41e-b232-4878-a6c1-a7c296883e31",
+    "buildSourceSha": "d32a4f12cdbf39d141c471fc24c5d30cc5e819ce",
+    "buildOutcome": "success",
+    "buildCommand": "npm run typecheck",
+    "deployCommand": "npm run deploy:safe",
+    "deploymentId": "ae72b31e-7d54-4315-8fec-acfe325456e3",
+    "workerVersionId": "fe66d754-df2d-44f6-aec7-9fbe41aad4af",
+    "workerVersionNumber": 4199,
+    "trafficPercent": 100
+  },
+  "productionVerification": {
+    "healthUrl": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+    "healthHttpStatus": 200,
+    "healthResponse": { "ok": true, "service": "sanci9517-streamer-brand", "version": "2.0.0", "server": "cloudflare-worker" },
+    "publicHomeApiHttpStatus": 200,
+    "publicHomeApiPageId": "page-home",
+    "publicAsset": "public/editor-v2/core/hierarchy-limits.js",
+    "publicAssetLocalSha256": "7b361e19c65d335d4c7a560b123f633ba5ce33eb3cfa7eb116a7de6ba5f7b43f",
+    "publicAssetLiveSha256": "7b361e19c65d335d4c7a560b123f633ba5ce33eb3cfa7eb116a7de6ba5f7b43f",
+    "publicAssetHashesMatch": true
+  },
+  "cost": {
+    "incrementalCharge": "0",
+    "productionD1Writes": 0,
+    "r2Deletes": 0,
+    "separateCiDispatches": 0
+  }
+}

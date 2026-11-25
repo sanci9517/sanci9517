@@ -92,7 +92,7 @@
     "src/core/twitch-site-ownership.ts": "096f63a1cf168c4dc9ad0be019987ddd077cb64ee86f3a364a68cf31f6b433d2",
     "src/index.ts": "a4505a8f26efaad8443f419089e3491d4e886dc7f62337e20b78db54e68642f4",
     "src/routes/admin/editor-preferences.ts": "0c32521d44902d8f9f5c756bbbc8aaee0fab714594f623d1b089782e93b9aee1",
-    "src/routes/admin/editor.ts": "705b78f7fa0ac5133356b6473ebee55870f401fa1a6a240e62aed6d90843db1b",
+    "src/routes/admin/editor.ts": "8ab53755529772eda60f4e3a86ff57b8331c2caca20c43390b5300988298641c",
     "src/routes/admin/link-report.ts": "6e46a65b6996e8c0b595b64c9dc55463f6dc2e31ad55fc90e2f5116113fcfcbe",
     "src/routes/admin/media.ts": "48df87808ef2f69aa08a582a83507f459415d30b825bb4ec9658b6ba8364d9cc",
     "src/routes/admin/navigation.ts": "6ff3caa6307d24c1ae135ab98a3f948865e6b8561ccfcf4acfc940db3bc894d9",
