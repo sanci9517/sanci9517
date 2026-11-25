@@ -632,7 +632,7 @@ print(json.dumps(result))`],{cwd:root,encoding:'utf8'}));
    assert.equal(await muted.isChecked(),true,'controls-free video remains explicitly muted');
    assert.equal(await controls.isChecked(),false,'the authored video can hide controls only in its muted-autoplay mode');
    assert.equal(await media.getAttribute('muted'),'','the Editor Canvas preserves the muted preview contract');
-   assert.equal(await media.getAttribute('controls'),null,'the Editor Canvas reflects the authored controls-free mode');
+   assert.equal(await media.getAttribute('controls'),'','the Editor Canvas keeps native controls available while the published background mode remains controls-free');
    assert.equal(await media.getAttribute('autoplay'),null,'the Editor Canvas never starts authored autoplay inside the Editor');
   }else{
    const loop=playableEditor.locator('#inspectorBody [data-content-key="loop"] input[type="checkbox"]');

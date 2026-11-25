@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261125143324-2e8ace0a",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-25T14:33:24.258Z",
+  "finished_at": "2026-11-25T15:31:17.918Z",
+  "wall_seconds": 3474,
+  "paused_seconds": 0,
+  "measured_seconds": 3474,
+  "status": "pass",
+  "kind": "mixed",
+  "summary": "D-06 in-place reduced-motion source and regression coverage; corrected the stale media preview test contract and passed the isolated local D1/R2 Media Library lifecycle, authored-content unit test, typecheck, and exact-source production smoke; full D-06 acceptance remains open.",
+  "evidence": [
+    "docs/evidence/editor-d06-reduced-motion-live-update-2026-11-25.json"
+  ],
+  "checks": "npm run test:media:storage; node --experimental-vm-modules --test public/editor-v2/tests/element-content.test.js; npm run typecheck; exact-SHA production smoke 45642906788",
+  "started_revision": "3c46bc1176e10de9edbb27da4a50f48ae477319e",
+  "finished_revision": "3c46bc1176e10de9edbb27da4a50f48ae477319e",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

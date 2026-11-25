@@ -113,19 +113,51 @@
     {
       "command": "git diff --check and node --check changed JavaScript",
       "result": "PASS"
+    },
+    {
+      "command": "GitHub Actions Editor Core Test run 45642906927 (exact source commit 79d3ea74e2bd0d8aa639015785d23a98e43d3d87)",
+      "result": "FAIL — stale test expectation, corrected in test-only follow-up",
+      "summary": "The run passed typecheck, editor core tests, offline D1 reconciliation/bootstrap, private R2 media API, public showcase unit and Chromium tests. The real isolated media lifecycle then failed at tests/browser/media-worker-storage.test.mjs:635 because the test expected no controls in the Editor preview. The implementation intentionally keeps manual native controls visible in Editor; only the published controls-free muted-autoplay video hides them."
+    },
+    {
+      "command": "npm run test:media:storage (post-fix local, isolated Miniflare D1/R2)",
+      "result": "PASS",
+      "summary": "After changing only the stale Editor preview assertion to expect visible native controls, the full local Media Library upload and image/audio/video Save-reload-Publish lifecycle passed (1/1; 188114 ms). No production D1 or R2 data was touched."
+    },
+    {
+      "command": "node --experimental-vm-modules --test public/editor-v2/tests/element-content.test.js",
+      "result": "PASS",
+      "summary": "1/1 module passed, including rendered reduced-motion/editor video control behavior."
+    },
+    {
+      "command": "npm run typecheck (post-fix)",
+      "result": "PASS"
+    },
+    {
+      "command": "GitHub Actions production source smoke 45642906788 (exact source commit 79d3ea74e2bd0d8aa639015785d23a98e43d3d87)",
+      "result": "PASS",
+      "summary": "Read-only production check received HTTP 200 from /api/health and verified exact SHA-256 bytes for every changed public source asset."
     }
   ],
   "release": {
-    "status": "NOT_YET_RELEASED",
+    "status": "DEPLOYED_SOURCE_VERIFIED; test-only assertion follow-up pending push",
     "branch": "v2/foundation",
     "verified_pre_change_head": "3c46bc1176e10de9edbb27da4a50f48ae477319e",
-    "required_next": "Fast-forward verified source commit; wait for exact-SHA checks and Cloudflare build/deployment; verify 100% Worker traffic, health and public asset hashes before post-release evidence update."
+    "required_next": "Fast-forward verified source commit; wait for exact-SHA checks and Cloudflare build/deployment; verify 100% Worker traffic, health and public asset hashes before post-release evidence update.",
+    "source_commit": "79d3ea74e2bd0d8aa639015785d23a98e43d3d87",
+    "deployment_id": "a409dc6c-7b35-45e1-84a2-af94a6c37f9f",
+    "worker_version_id": "5656cdde-0603-40e5-99d8-609de8e72d07",
+    "worker_traffic_percentage": 100,
+    "production_health": "PASS — exact-source read-only smoke HTTP 200",
+    "changed_public_asset_hashes": "PASS — exact-source read-only smoke SHA-256 comparison",
+    "follow_up": "Fix the stale Editor preview assertion in tests/browser/media-worker-storage.test.mjs. This is test-only; do not redeploy Worker. The full local isolated media lifecycle now passes. Push the test/evidence/metrics follow-up with [skip ci]; prior Actions run failed only at the obsolete assertion, so the complete remote workflow result remains a recorded failure rather than a pass."
   },
   "cost": {
     "new_cost_huf": 0,
     "production_d1_writes": 0,
     "r2_operations": 0,
-    "new_dependencies": 0
+    "new_dependencies": 0,
+    "ci_compute": "No additional Actions rerun/dispatch was launched. Existing push workflow and local validation only; no paid service used."
   },
   "acceptance": {
     "D_06": "OPEN / NOT_CERTIFIED",
@@ -133,5 +165,10 @@
     "full_visual_editor": "OPEN / NOT_CERTIFIED",
     "manual_physical": "DEFERRED until full Editor scope",
     "save_publish": "SEPARATE"
+  },
+  "limitations": {
+    "editor_core_ci": "Run 45642906927 is a real FAIL due to the stale test assertion recorded above; subsequent steps were skipped. It must not be represented as a green full-suite CI run.",
+    "browser_sandbox": "A separate normal-sandbox Editor Chromium rerun was blocked by Chromium crashpad setsockopt EPERM; the actual media lifecycle suite passed when run with the required local execution permission.",
+    "acceptance": "D-06 remains OPEN / NOT_CERTIFIED because this is one verified implementation slice, not the full D-06 plan item or full Editor acceptance."
   }
 }
