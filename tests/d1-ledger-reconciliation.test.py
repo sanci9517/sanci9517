@@ -28,7 +28,7 @@ class Reconciliation(unittest.TestCase):
    self.db.rollback(); raise
  def test_schema_seed_evidence(self):
   self.assertEqual(m.check_evidence(self.e, m.PRE_0029_MANUAL_NAMES),40)
-  self.assertEqual(m.check_evidence(self.current),55)
+  self.assertEqual(m.check_evidence(self.current),59)
  def test_idempotent_preserves_data_and_ledger_history(self):
   before=self.snapshot(); ledger=self.db.execute('SELECT * FROM d1_migrations').fetchall()
   self.run_sql(); first=self.db.execute('SELECT * FROM d1_migrations').fetchall()

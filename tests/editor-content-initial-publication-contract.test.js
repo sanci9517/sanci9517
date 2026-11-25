@@ -62,8 +62,8 @@ test('server publication gates for visible explicitly authored elements are pres
   }
 });
 
-test('server publication rejects planned and unknown node types even when a client bypasses the disabled palette',()=>{
-  for(const type of ['form','input','__proto__','unknown-block']){
+test('server publication rejects unknown node types even when a client bypasses the disabled palette',()=>{
+  for(const type of ['input','__proto__','unknown-block']){
     const {document,publish}=probe(type);
     const before=structuredClone(document);
     assert.equal(publish(),'UNSUPPORTED_EDITOR_NODE_TYPE',type);
@@ -71,6 +71,8 @@ test('server publication rejects planned and unknown node types even when a clie
   }
   assert.equal(probe('text',{metadata:{contentVersion:1},props:{text:'Szerkeszthető szöveg'}}).publish(),null,
     'a currently supported node still reaches the existing content-specific publication gates');
+  assert.equal(probe('form').publish(),null,
+    'the shipped first-party Form is a supported Page Model node and its empty configuration is publishable');
 });
 
 test('server publication bounds child references before authored-content traversal and preserves the draft',()=>{
@@ -82,18 +84,18 @@ test('server publication bounds child references before authored-content travers
   assert.equal(JSON.stringify(document),before,'oversized imported child arrays stay unchanged and are never publishable');
 });
 
-test('unsupported Publish recovery points to the first planned/unknown child without looping on malformed cycles',()=>{
+test('unsupported Publish recovery skips supported Forms and finds the first unknown child without looping on malformed cycles',()=>{
   const {document}=probe('text',{metadata:{contentVersion:1},props:{text:'Kész szöveg'}});
   const page=document.pages[document.activePageId],supported=page.nodes[page.rootId].children[0];
   const form=createNode('form',{id:'planned_form',name:'Feliratkozási űrlap',parentId:supported});
   page.nodes[form.id]=form;page.nodes[supported].children.push(form.id);
   const unknown=createNode('container',{id:'legacy_unknown',name:'Régi elem'});
   unknown.type='legacy-widget';unknown.parentId=page.rootId;page.nodes[unknown.id]=unknown;page.nodes[page.rootId].children.push(unknown.id);
-  assert.deepEqual(firstUnsupportedPublicationNode(page),{id:'planned_form',type:'form',name:'Feliratkozási űrlap'},
-    'recovery follows layer order and identifies the earliest server-rejected item');
+  assert.deepEqual(firstUnsupportedPublicationNode(page),{id:'legacy_unknown',type:'legacy-widget',name:'Régi elem'},
+    'recovery skips the supported Form and identifies the first server-rejected item');
   page.nodes[form.id].children.push(supported);
-  assert.deepEqual(firstUnsupportedPublicationNode(page),{id:'planned_form',type:'form',name:'Feliratkozási űrlap'},
-    'cycle protection does not lose the unsupported node or loop forever');
+  assert.deepEqual(firstUnsupportedPublicationNode(page),{id:'legacy_unknown',type:'legacy-widget',name:'Régi elem'},
+    'cycle protection does not lose the unknown node or loop forever');
   assert.match(unsupportedPublicationMessage(firstUnsupportedPublicationNode(page)),/még nem publikálható/);
   assert.match(unsupportedPublicationMessage(firstUnsupportedPublicationNode(page)),/Rétegek panelen/);
   assert.equal(firstUnsupportedPublicationNode({}),null);

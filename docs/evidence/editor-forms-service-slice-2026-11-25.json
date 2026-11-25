@@ -11,10 +11,11 @@
     "branch": "v2/foundation",
     "base_sha": "ea117725f3d2a92f6c6dc49d8a0ccec6ff748729",
     "remote_head_before_work": "ea117725f3d2a92f6c6dc49d8a0ccec6ff748729",
-    "runtime_commit": "PENDING",
-    "runtime_changes_pushed": false,
-    "exact_sha_ci": "PENDING",
-    "deployment": "PENDING"
+    "runtime_commit": "8ee7a093baf57eea99d7e81c414e4dbd736994b2",
+    "runtime_changes_pushed": true,
+    "exact_sha_ci": "PARTIAL: 4 workflows success, F0 baseline and Editor Core failed on stale Form-unsupported expectation and stale D1 schema snapshot; both corrected in this follow-up, exact-SHA rerun pending",
+    "deployment": "a23afc72-a38b-4f95-aa40-fcbfea709e41",
+    "remote_head_after_runtime_push": "8ee7a093baf57eea99d7e81c414e4dbd736994b2"
   },
   "implementation": {
     "forms_editor": [
@@ -89,14 +90,36 @@
       "python3 scripts/audit-active-plan-point.py: 77.44.7.D; acceptance NOT_CERTIFIED",
       "git diff --check",
       "npx wrangler deploy --dry-run: exit 0, 203 public assets, 476.54 KiB / 118.24 KiB gzip",
-      "SELECT-only D1 postflight: ledger 38 / latest 0032; 8 Forms objects; all Forms tables empty; FK check empty; quick_check=ok; all 7 reads changed_db=false and rows_written=0"
+      "SELECT-only D1 postflight: ledger 38 / latest 0032; 8 Forms objects; all Forms tables empty; FK check empty; quick_check=ok; all 7 reads changed_db=false and rows_written=0",
+      "Post-release GitHub Production Worker source smoke run 45717484546 on exact SHA 8ee7a093baf57eea99d7e81c414e4dbd736994b2: PASS; read-only /api/health and changed public source SHA-256 checks",
+      "Cloudflare Workers Build e78e9812-b368-4b53-beaa-8dafe8c6c03e: exact SHA, build_outcome=success, npm run typecheck and npm run deploy:safe; deployment a23afc72-a38b-4f95-aa40-fcbfea709e41, version 243b2295-07b5-409d-893d-f29fdbad5053 at 100%",
+      "Follow-up repaired tests: editor-content-initial-publication-contract.test.js PASS; tests/d1-ledger-reconciliation.test.py 11/11 PASS",
+      "Follow-up npm run test:editor 24/24 files; npm run test:forms 5/5 files; npm run test:media 7/7 files; npm run typecheck -- --pretty false PASS",
+      "Fresh production D1 SELECT-only snapshot: 5 queries/PRAGMAs, 111 schema objects, 38 ledger rows ending 0032_forms_service.sql, 8 Forms objects, foreign_key_check empty, quick_check ok; every query rows_written=0, changes=0, changed_db=false",
+      "Follow-up plan-contract, canonical plan, traceability 396/396, and active-point audit PASS; D point remains NOT_CERTIFIED"
     ],
     "pending": [
-      "Runtime commit fast-forward push to v2/foundation",
-      "Exact-SHA GitHub Actions and Cloudflare Build/deploy",
-      "Post-release production health and SHA-256 smoke for all 16 changed public runtime files"
+      "Exact-SHA GitHub Actions after the follow-up test/evidence commit; user-authorized and free public-repository standard runner usage, if verified by the ensuing run",
+      "Full Visual Editor acceptance; D-06 and D-01–D-07 remain OPEN / NOT CERTIFIED"
     ],
-    "known_local_browser_restriction": "Initial Chromium invocation failed because sandbox networking denied localhost. Rerunning with local loopback permission passed 3/3; no product assertion failed."
+    "known_local_browser_restriction": "Initial Chromium invocation failed because sandbox networking denied localhost. Rerunning with local loopback permission passed 3/3; no product assertion failed.",
+    "known_ci_failures": {
+      "source_sha": "8ee7a093baf57eea99d7e81c414e4dbd736994b2",
+      "f0_baseline_run": {
+        "id": 45717484567,
+        "url": "https://github.com/sanci9517/sanci9517/actions/runs/45717484567",
+        "failed_step": "tests/editor-content-initial-publication-contract.test.js",
+        "cause": "Test still treated the newly implemented Form node as unsupported; test updated to assert Forms publish while unknown node types remain rejected."
+      },
+      "editor_core_run": {
+        "id": 45717484856,
+        "url": "https://github.com/sanci9517/sanci9517/actions/runs/45717484856",
+        "failed_step": "python3 tests/d1-ledger-reconciliation.test.py",
+        "cause": "Stale 2026-11-21 schema snapshot missed four 0031 malformed-JSON archive guard triggers; refreshed SELECT-only evidence and expected count."
+      },
+      "other_exact_sha_workflows": "Canonical plan, active point audit, Production Worker source smoke, and Twitch Integration Check succeeded."
+    },
+    "follow_up_local_timestamp": "2026-11-25T23:06:40Z"
   },
   "production_d1": {
     "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
@@ -143,16 +166,23 @@
     "r2_operation": "NONE"
   },
   "live_worker_before_release": {
-    "deployment_id": "11b28ace-2ee3-47e5-ac38-34555bd04cab",
-    "version_id": "8ec1079f-0008-4637-af99-413eeec5cdba",
+    "deployment_id": "a23afc72-a38b-4f95-aa40-fcbfea709e41",
+    "version_id": "243b2295-07b5-409d-893d-f29fdbad5053",
     "traffic_percent": 100,
-    "source_smoke_for_new_sha": "PENDING"
+    "source_sha": "8ee7a093baf57eea99d7e81c414e4dbd736994b2",
+    "exact_sha_production_smoke_run": 45717484546,
+    "health": "HTTP 200; smoke workflow passed",
+    "changed_public_asset_hashes": "PASS in exact-SHA production source smoke workflow"
   },
   "cost_and_limits": {
     "new_paid_service_or_dependency": false,
     "cloudflare_build_minutes_limit_reached": false,
     "new_cost": "0 Ft",
-    "github_actions_dispatch_started": false
+    "github_actions_dispatch_started": false,
+    "github_repository_visibility": "public",
+    "github_actions_policy": "No paid usage authorized; exact-SHA follow-up CI is user-authorized. Public repository standard runners are free.",
+    "github_actions_follow_up_rerun": "PENDING until follow-up test/evidence commit is pushed",
+    "cloudflare_test_only_build": "not expected: current verified build path_excludes docs/** and tests/**"
   },
-  "next_gate": "Publish the validated runtime commit by normal fast-forward to v2/foundation, observe exact-SHA Actions and Cloudflare deploy, then confirm traffic is 100%, health is HTTP 200 and all 16 changed public runtime hashes match. Do not certify the full Editor or D point."
+  "next_gate": "Push the tested test/evidence-only follow-up on v2/foundation with the authorized CI trigger; verify exact-SHA F0 and Editor Core checks and confirm no redundant Cloudflare Worker build. Runtime Forms release is already on 100% traffic with exact-SHA health/hash smoke PASS. Do not certify the full Editor or D point."
 }
