@@ -13,9 +13,11 @@
     "remote_head_before_work": "ea117725f3d2a92f6c6dc49d8a0ccec6ff748729",
     "runtime_commit": "8ee7a093baf57eea99d7e81c414e4dbd736994b2",
     "runtime_changes_pushed": true,
-    "exact_sha_ci": "PARTIAL: 4 workflows success, F0 baseline and Editor Core failed on stale Form-unsupported expectation and stale D1 schema snapshot; both corrected in this follow-up, exact-SHA rerun pending",
+    "exact_sha_ci": "PARTIAL / IN_PROGRESS: F0, active point audit, and Twitch checks passed on 9fd06ed; Editor Core run 45719856181 remains active at browser layout step 16/24; previous two stale-fixture failures are fixed and corresponding local + D1 CI step checks pass.",
     "deployment": "a23afc72-a38b-4f95-aa40-fcbfea709e41",
-    "remote_head_after_runtime_push": "8ee7a093baf57eea99d7e81c414e4dbd736994b2"
+    "remote_head_after_runtime_push": "8ee7a093baf57eea99d7e81c414e4dbd736994b2",
+    "test_evidence_follow_up_commit": "9fd06ed99eb706b980f4ca7bfc0fc4a3b0790ceb",
+    "remote_head_after_test_evidence_follow_up": "9fd06ed99eb706b980f4ca7bfc0fc4a3b0790ceb"
   },
   "implementation": {
     "forms_editor": [
@@ -96,10 +98,13 @@
       "Follow-up repaired tests: editor-content-initial-publication-contract.test.js PASS; tests/d1-ledger-reconciliation.test.py 11/11 PASS",
       "Follow-up npm run test:editor 24/24 files; npm run test:forms 5/5 files; npm run test:media 7/7 files; npm run typecheck -- --pretty false PASS",
       "Fresh production D1 SELECT-only snapshot: 5 queries/PRAGMAs, 111 schema objects, 38 ledger rows ending 0032_forms_service.sql, 8 Forms objects, foreign_key_check empty, quick_check ok; every query rows_written=0, changes=0, changed_db=false",
-      "Follow-up plan-contract, canonical plan, traceability 396/396, and active-point audit PASS; D point remains NOT_CERTIFIED"
+      "Follow-up plan-contract, canonical plan, traceability 396/396, and active-point audit PASS; D point remains NOT_CERTIFIED",
+      "Exact follow-up SHA 9fd06ed99eb706b980f4ca7bfc0fc4a3b0790ceb: F0 baseline checks run 45719856135 SUCCESS",
+      "Exact follow-up SHA 9fd06ed99eb706b980f4ca7bfc0fc4a3b0790ceb: Canonical Plan Active Point Audit run 45719856150 SUCCESS; Twitch Integration Check run 45719856372 SUCCESS",
+      "Exact-SHA Editor Core run 45719856181: offline D1 ledger reconciliation/bootstrap step SUCCESS after evidence refresh; Forms schema/routes and public-page Chromium steps SUCCESS"
     ],
     "pending": [
-      "Exact-SHA GitHub Actions after the follow-up test/evidence commit; user-authorized and free public-repository standard runner usage, if verified by the ensuing run",
+      "Completion of exact-SHA Editor Core run 45719856181, currently IN_PROGRESS at browser-layout regression; do not treat as PASS until completed",
       "Full Visual Editor acceptance; D-06 and D-01–D-07 remain OPEN / NOT CERTIFIED"
     ],
     "known_local_browser_restriction": "Initial Chromium invocation failed because sandbox networking denied localhost. Rerunning with local loopback permission passed 3/3; no product assertion failed.",
@@ -119,7 +124,16 @@
       },
       "other_exact_sha_workflows": "Canonical plan, active point audit, Production Worker source smoke, and Twitch Integration Check succeeded."
     },
-    "follow_up_local_timestamp": "2026-11-25T23:06:40Z"
+    "follow_up_local_timestamp": "2026-11-25T23:06:40Z",
+    "in_progress": {
+      "run_id": 45719856181,
+      "url": "https://github.com/sanci9517/sanci9517/actions/runs/45719856181",
+      "sha": "9fd06ed99eb706b980f4ca7bfc0fc4a3b0790ceb",
+      "step": "Run Editor browser layout regression (step 16/24)",
+      "last_observed": "2026-11-25T23:34Z",
+      "conclusion": null,
+      "other_editor_core_steps_after_browser_layout": "WEB-013, schedule, domain, design system, Admin home are pending"
+    }
   },
   "production_d1": {
     "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
@@ -181,8 +195,8 @@
     "github_actions_dispatch_started": false,
     "github_repository_visibility": "public",
     "github_actions_policy": "No paid usage authorized; exact-SHA follow-up CI is user-authorized. Public repository standard runners are free.",
-    "github_actions_follow_up_rerun": "PENDING until follow-up test/evidence commit is pushed",
-    "cloudflare_test_only_build": "not expected: current verified build path_excludes docs/** and tests/**"
+    "github_actions_follow_up_rerun": "Triggered by test/evidence follow-up commit 9fd06ed; F0, plan audit and Twitch SUCCESS, Editor Core IN_PROGRESS; public repo standard runners only, no paid use",
+    "cloudflare_test_only_build": "No redeploy: tests/docs excluded by verified path_excludes; latest deployment readback remains a23afc72-a38b-4f95-aa40-fcbfea709e41 with 243b2295-07b5-409d-893d-f29fdbad5053 at 100%"
   },
-  "next_gate": "Push the tested test/evidence-only follow-up on v2/foundation with the authorized CI trigger; verify exact-SHA F0 and Editor Core checks and confirm no redundant Cloudflare Worker build. Runtime Forms release is already on 100% traffic with exact-SHA health/hash smoke PASS. Do not certify the full Editor or D point."
+  "next_gate": "Observe the already-running Editor Core run 45719856181 through completion and verify every remaining browser/schedule/domain/design/admin step. Do not start another CI job, deploy, or certify the full Editor/D point from an in-progress run."
 }
