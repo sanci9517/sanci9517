@@ -1,1 +1,591 @@
-YªçŠx-®éÜj×¢ëiºÚ+Š§j[h‘éÜ¢éí×úñ:-jZ.¶›­–)Ş³V–×÷'B¶6÷VçFF÷vä•4õFôÆö6ÂÆ6÷VçFF÷väÆö6ÅFô•4÷Òg&öÒrââö6÷&Rö6÷VçFF÷vâÖÆö6Â×F–ÖRæ§2s°¦–×÷'BFW7Bg&öÒvæöFS§FW7Bs°¦–×÷'B76W'Bg&öÒvæöFS¦76W'B÷7G&–7Bs°¦–×÷'B¶7&VFTFö7VÖVçGÒg&öÒrââö6÷&R÷66†VÖæ§2s°¦–×÷'B¶7&VFTVF—F÷%7FFRÆ7F—fUvWÒg&öÒrââö6÷&R÷7FFRæ§2s°¦–×÷'B¶W†V7WFWÒg&öÒrââö6÷&Rö6öÖÖæG2æ§2s°¦–×÷'B´UD„õ$TEõD$ÄUôÄ”Ô•E2ÄÔ…ôUD„õ$TEõD$ÄUô¥4ôåô4„%2ÄÔ…ôUD„õ$TEõD$ÄUõE5eô4„%2ÆWF†÷&VDæöFT‡FÖÂÆ6öçFVçDGG&–'WFW2Æ6öçFVçEFrÆæ÷&ÖÆ—¦TVÆVÖVçD6öçFVçBÆæ÷&ÖÆ—¦T6öçFVçDf–VÆBÄ4ôåDTåEôd”TÄE2ÇfÆ–FFTVÆVÖVçD6öçFVçBÇfÆ–FFUvTf÷%V&Æ–6F–öâÆ6öçFVçE&÷W'F–W2Æ–ÖvTfö6Å÷6—F–öçÒg&öÒrââö6÷&RöWF†÷&VBÖ6öçFVçBæ§2s°¦–×÷'B·'6UF&ÆUG7bÇ6W&–Æ—¦UF&ÆUG7gÒg&öÒrââö6÷&R÷F&ÆR×G7bæ§2s°¦–×÷'B¶æ÷&ÖÆ—¦T66W76–&–Æ—G’Æ÷VT6öçG&7GÒg&öÒrââö6÷&Rö66W76–&–Æ—G’æ§2s°¦–×÷'B¶ÆVv7”–ÖvU6÷W&6RÆÆVv7•Æ–&ÆU6÷W&6RÆÆVv7•Æ–&6µ6WGF–æw2ÆÆVv7”–ÖvU&W6VçFF–öâÆÆVv7”–ÖvT6F–öâÆÆVv7”ÖVF––ç7V7F÷%fÇVW2ÆÇ•&VGV6VDÖ÷F–öåf–FVõÆ–&6·Òg&öÒrââö6÷&RöÆVv7’ÖÖVF–×6÷W&6Ræ§2s°¦–×÷'B·6fUV&Æ—6†VDÖVF–W&Â26fU7G'V7GW&VEV&Æ—6†VDÖVF–W&ÇÒg&öÒrââö6÷&RöVÆVÖVçBÖ6öçFVçBæ§2s° §FW7B‚wG—VB6öçFVçBVF—G2&W6W'fRVæ¶æ÷vâÆVv7’FFæBVæFò&W7F÷&W2F†R6ö×ÆWFRæöFRrÂ‚“Óç°¢6öç7B7FFSÖ7&VFTVF—F÷%7FFR†7&VFTFö7VÖVçB‚’“¶W†V7WFR‡7FFRÇ·G—S¢vVÆVÖVçBæFBrÇ–ÆöC§·G—S¢v†VF–ærrÇ&÷3§·FW‡C¢tW&VFWF’<:ÖÒrÆÆVv7“§¶¶WC§G'VW×ÒÇ7G–ÆS§·v–GFƒ¢s#C‚w××Ò“°¢6öç7B–C×7FFRç6VÆV7F–öâç&–Ö'”–BÆ&Vf÷&S×7G'V7GW&VD6ÆöæR†7F—fUvR‡7FFR’ææöFW5¶–EÒ“°¢W†V7WFR‡7FFRÇ·G—S¢v6öçFVçBç&÷W'F–W2ç6WBrÇ–ÆöC§¶æöFT–C¦–BÇF6ƒ§¶ÆWfVÃ¢sw××Ò“°¢ÆWBæöFSÖ7F—fUvR‡7FFR’ææöFW5¶–EÓ¶76W'BæWVÂ†6öçFVçEFr†æöFR’Âvƒr“¶76W'BæWVÂ†æöFRç&÷2çFW‡BÂtW&VFWF’<:ÖÒr“¶76W'BæFVWWVÂ†æöFRç&÷2æÆVv7’Ç¶¶WC§G'VWÒ“¶76W'BæFVWWVÂ†æöFRç7G–ÆRÆ&Vf÷&Rç7G–ÆR“°¢W†V7WFR‡7FFRÇ·G—S¢v†—7F÷'’çVæFòwÒ“¶76W'BæFVWWVÂ†7F—fUvR‡7FFR’ææöFW5¶–EÒÆ&Vf÷&R“°¢W†V7WFR‡7FFRÇ·G—S¢v†—7F÷'’ç&VFòwÒ“¶76W'BæWVÂ†6öçFVçEFr†7F—fUvR‡7FFR’ææöFW5¶–EÒ’Âvƒr“°¢76W'BçF‡&÷w2‚‚“ÓæW†V7WFR‡7FFRÇ·G—S¢v6öçFVçBç&÷W'F–W2ç6WBrÇ–ÆöC§¶æöFT–C¦–BÇF6ƒ§¶ÆWfVÃ¢srw××Ò’Â÷l:Æ7§L:2ò“°¢76W'BæWVÂ†6öçFVçEFr†7F—fUvR‡7FFR’ææöFW5¶–EÒ’Âvƒr“°¢W†V7WFR‡7FFRÇ·G—S¢vVÆVÖVçBæÆö6²ç6WBrÇ–ÆöC§¶æöFT–C¦–BÆÆö6¶VC§G'VW×Ò“°¢76W'BçF‡&÷w2‚‚“ÓæW†V7WFR‡7FFRÇ·G—S¢v6öçFVçBç&÷W'F–W2ç6WBrÇ–ÆöC§¶æöFT–C¦–BÇF6ƒ§¶ÆWfVÃ¢s"w××Ò’ÂöÆö6¶VBò“°§Ò“° §FW7B‚vÆ–æ·2ÂÖVF–Â&WVFW'2æBF&ÆR6öçFVçG2&V¦V7BVç6fR÷"–çfÆ–BfÇVW2rÂ‚“Óç°¢6öç7BæöFS×G—SÓâ‡¶–C¢w6fRrÇG—RÆÖWFFF§¶6öçFVçEfW'6–öã£ÒÇ&÷3§·×Ò“°¢f÷"†6öç7B‡&Vböb²v¦f67&—C¦ÆW'Bƒ’rÂvFF§FW‡Bö‡FÖÂÆ†’rÂròöWf–ÂçFW7BrÂv‡GG3¢ò÷W6W#§74Wf–ÂçFW7BrÂr÷öõÆæ²uÒ–76W'BçF‡&÷w2‚‚“Óææ÷&ÖÆ—¦TVÆVÖVçD6öçFVçB†æöFR‚vÆ–æ²r’Ç¶‡&VgÒ’ÇVæFVf–æVBÆ‡&Vb“°¢f÷"†6öç7B7&2öb²v‡GG¢òöW†×ÆRæ6öÒöçærrÂvFF¦–ÖvR÷7fr·†ÖÂÆ†’rÂv¦f67&—C¦ÆW'Bƒ’rÂvÖ–ÇFó§„W†×ÆRæ6öÒuÒ–76W'BçF‡&÷w2‚‚“Óææ÷&ÖÆ—¦TVÆVÖVçD6öçFVçB†æöFR‚v–ÖvRr’Ç·7&7Ò’“°¢76W'BæWVÂ†æ÷&ÖÆ—¦TVÆVÖVçD6öçFVçB†æöFR‚v–ÖvRr’Ç·7&3¢rö76WG2öçærwÒ’ç7&2Ârö76WG2öçærr“°¢76W'BçF‡&÷w2‚‚“Óææ÷&ÖÆ—¦TVÆVÖVçD6öçFVçB†æöFR‚wf–FVòr’Ç¶WF÷Æ“§G'VRÆ×WFVC¦fÇ6WÒ’Âöì:–Ü:×Gfò“°¢76W'BçF‡&÷w2‚‚“Óææ÷&ÖÆ—¦TVÆVÖVçD6öçFVçB†æöFR‚vÆ—7Br’Ç¶—FV×3¥··FW‡C¢t†VÆÆòrÆ‡&Vc¢v¦f67&—C¦Wf–Â‚’wÕ×Ò’“°¢76W'BçF‡&÷w2‚‚“Óææ÷&ÖÆ—¦TVÆVÖVçD6öçFVçB†æöFR‚wF&ÆRr’Ç·&÷w3¥¶æWr'&’ƒr’æf–ÆÂ‚w‚r•×Ò’“°¢76W'BçF‡&÷w2‚‚“Óææ÷&ÖÆ—¦TVÆVÖVçD6öçFVçB†æöFR‚wF&ÆRr’Ç·&÷w3¥µ²tfV¦Ì:–2rÂ|8—'L:–²uÒÅ²t76²Vw’6VÆÆuÕ×Ò’Âö÷7¦Æ÷ò“°¢76W'BçF‡&÷w2‚‚“Óææ÷&ÖÆ—¦TVÆVÖVçD6öçFVçB†æöFR‚wF&ÆRr’Ç·&÷w3¥µµÕ×Ò’Âö÷7¦Æ÷ò“°¢76W'BçF‡&÷w2‚‚“ÓçfÆ–FFTVÆVÖVçD6öçFVçB‡²ââææöFR‚wF&ÆRr’Ç&÷3§·&÷w3¥µ²tfV¦Ì:–2rÂ|8—'L:–²uÒÅ²t†œ:ç–÷2uÕ×ÒÒ’Âö÷7¦Æ÷ò“°¢76W'BçF‡&÷w2‚‚“Óææ÷&ÖÆ—¦TVÆVÖVçD6öçFVçB†æöFR‚vvÆÆW'’r’Ç¶—FV×3¦æWr'&’ƒC’æf–ÆÂ‡·7&3¢röçærwÒ—Ò’“°¢76W'BæWVÂ†6öçFVçE&÷W'F–W2†æöFR‚wf–FVòr’’æ6öçG&öÇ2ÇG'VR“°¢76W'BæWVÂ†6öçFVçE&÷W'F–W2†æöFR‚v†VF–ærr’’æÆWfVÂÂs"r“°¢76W'BçF‡&÷w2‚‚“ÓçfÆ–FFTVÆVÖVçD6öçFVçB‡²ââææöFR‚v†VF–ærr’Ç&÷3§¶ÆWfVÃ¢s‚w×Ò’“°§Ò“° §FW7B‚vWF†÷&VB×WFVBWF÷Æ’&V6öÖW2ÖçVÆÇ’6öçG&öÆÆ&ÆRf÷"&VGV6VBÖÖ÷F–öâf—6—F÷'2rÂ‚“Óç°¢6öç7Bf–FVó×¶–C¢vÖ÷F–öâÖv&R×f–FVòrÇG—S¢wf–FVòrÆÖWFFF§¶6öçFVçEfW'6–öã£ÒÇ&÷3§·7&3¢r÷f–FVòçvV&ÒrÆ6öçG&öÇ3¦fÇ6RÆ×WFVC§G'VRÆWF÷Æ“§G'VRÆÆö÷§G'VW×Ó°¢6öç7B7FæF&CÖWF†÷&VDæöFT‡FÖÂ‡f–FVò“°¢76W'BæÖF6‚‡7FæF&BÂóÇf–FVõµãåÒ¢×WFVBWF÷Æ•µãåÒ£âòÂw7FæF&BÖ÷F–öâ&VfW&Væ6R&WF–ç2F†RW‡Æ–6—FÇ’WF†÷&VB×WFVB&6¶w&÷VæBÖöFRr“°¢76W'BæÖF6‚‡7FæF&BÂöFF×&VGV6VBÖÖ÷F–öâÖWF÷Æ“Ò'G'VR"FF×&VGV6VBÖÖ÷F–öâÖ6öçG&öÇ3Ò&fÇ6R"òÂwF†R&VæFW&W"&V6÷&G2öæÇ’F†R6fRÆ–&6²&VfW&Væ6RæVVFVBf÷"â–â×Æ6RWFFRr“°¢76W'BæFöW4æ÷DÖF6‚‡7FæF&BÂóÇf–FVõµãåÒ¢6öçG&öÇ2ò“°¢6öç7B&VGV6VCÖWF†÷&VDæöFT‡FÖÂ‡f–FVòÇ·&VGV6VDÖ÷F–öã§G'VWÒ“°¢76W'BæÖF6‚‡&VGV6VBÂóÇf–FVõµãåÒ¢6öçG&öÇ5µãåÒ¢×WFVBòÂw&VGV6VBÖÖ÷F–öâÖöFR&WfVÇ2æF—fRÆ’÷W6R6öçG&öÂr“°¢76W'BæFöW4æ÷DÖF6‚‡&VGV6VBÂóÇf–FVõµãåÒ¢WF÷Æ’òÂw&VGV6VBÖÖ÷F–öâÖöFRF—6&ÆW2WFöÖF–2Æ–&6²r“°¢76W'BæÖF6‚†WF†÷&VDæöFT‡FÖÂ‡f–FVòÇ¶VF—F÷#§G'VWÒ’ÂóÇf–FVõµãåÒ¢6öçG&öÇ5µãåÒ¢×WFVBòÂwF†RVF—F÷"7W&W76W2WF÷Æ’v—F†÷WB†–F–ærF†RÖçVÂÆ–&6²6öçG&öÂr“°§Ò“° §FW7B‚w&VGV6VBÖÖ÷F–öâ6†ævW2WFFRöæÇ’VÆ–v–&ÆRf–FV÷2æB&W6W'fRF†V—"DôÒ–FVçF—G’rÂ‚“Óç°¢6öç7Bf–FVó×¶FF6WC§·&VGV6VDÖ÷F–öäWF÷Æ“¢wG'VRrÇ&VGV6VDÖ÷F–öä6öçG&öÇ3¢vfÇ6RwÒÆ×WFVC§G'VRÆWF÷Æ“§G'VRÆ6öçG&öÇ3¦fÇ6RÇW6VC¦fÇ6RÇW6R‚—·F†—2çW6VC×G'VW×Ó°¢6öç7B&ö÷C×·VW'•6VÆV7F÷$ÆÃ§6VÆV7F÷#Óç¶76W'BæWVÂ‡6VÆV7F÷"Âwf–FVõ¶FF×&VGV6VBÖÖ÷F–öâÖWF÷Æ“Ò'G'VR%Òr“·&WGW&â·f–FVõ××Ó°¢76W'BæWVÂ†Ç•&VGV6VDÖ÷F–öåf–FVõÆ–&6²‡&ö÷BÇ·&VGV6VDÖ÷F–öã§G'VWÒ’Ã“°¢76W'BæWVÂ‡f–FVòæWF÷Æ’ÆfÇ6R“¶76W'BæWVÂ‡f–FVòæ6öçG&öÇ2ÇG'VR“¶76W'BæWVÂ‡f–FVòçW6VBÇG'VR“°¢76W'BæWVÂ†Ç•&VGV6VDÖ÷F–öåf–FVõÆ–&6²‡&ö÷BÇ·&VGV6VDÖ÷F–öã¦fÇ6WÒ’Ã“°¢76W'BæWVÂ‡f–FVòæWF÷Æ’ÇG'VR“¶76W'BæWVÂ‡f–FVòæ6öçG&öÇ2ÆfÇ6R“¶76W'BæWVÂ‡f–FVòçW6VBÇG'VR“°¢76W'BæWVÂ†Ç•&VGV6VDÖ÷F–öåf–FVõÆ–&6²‡&ö÷BÇ·&VGV6VDÖ÷F–öã¦fÇ6RÆVF—F÷#§G'VWÒ’Ã“°¢76W'BæWVÂ‡f–FVòæWF÷Æ’ÆfÇ6R“¶76W'BæWVÂ‡f–FVòæ6öçG&öÇ2ÇG'VRÂwF†RVF—F÷"Çv—2¶VW26öçG&öÇ2v†–ÆR7W&W76–ærWF†÷&VBWF÷Æ’r“°¢6öç7BVæ×WFVC×¶FF6WC§·&VGV6VDÖ÷F–öäWF÷Æ“¢wG'VRrÇ&VGV6VDÖ÷F–öä6öçG&öÇ3¢vfÇ6RwÒÆ×WFVC¦fÇ6RÆWF÷Æ“¦fÇ6RÆ6öçG&öÇ3¦fÇ6RÇW6R‚—·F‡&÷ræWrW'&÷"‚wVæ×WFVBÖVF–—2æWfW"W6VB÷"WFò×7F'FVB'’&VfW&Væ6R†æFÆ–ærr—×Ó°¢76W'BæWVÂ†Ç•&VGV6VDÖ÷F–öåf–FVõÆ–&6²‡·VW'•6VÆV7F÷$ÆÃ¢‚“Óå·Væ×WFVE×ÒÇ·&VGV6VDÖ÷F–öã¦fÇ6WÒ’Ã“°¢76W'BæWVÂ‡Væ×WFVBæWF÷Æ’ÆfÇ6R“¶76W'BæWVÂ‡Væ×WFVBæ6öçG&öÇ2ÆfÇ6R“°§Ò“° §FW7B‚vWF†÷&VBF&ÆW2&WF–âF†V—"÷vâ×&÷ræBbÖ6öÇVÖâ6öçG&7BF‡&÷Vv‚V&Æ–2&VæFW&–ærrÂ‚“Óç°¢6öç7BWF†÷&VC×¶–C¢vWF†÷&VB×F&ÆRÖ&÷VæF&–W2rÇG—S¢wF&ÆRrÆÖWFFF§¶6öçFVçEfW'6–öã£ÒÇ&÷3§¶†VFW#§G'VW×Ó°¢6öç7B&÷w3Ô'&’æg&öÒ‡¶ÆVæwFƒ£ÒÂ…òÇ&÷r“Óä'&’æg&öÒ‡¶ÆVæwFƒ£gÒÂ…òÆ6öÇVÖâ“Óæ"G·&÷wÒÖ2G¶6öÇVÖçÖ’“°¢6öç7Bæ÷&ÖÆ—¦VCÖæ÷&ÖÆ—¦TVÆVÖVçD6öçFVçB†WF†÷&VBÇ·&÷w7Ò“°¢76W'BæWVÂ†æ÷&ÖÆ—¦VBç&÷w2æÆVæwF‚Ã“°¢76W'BæWVÂ†æ÷&ÖÆ—¦VBç&÷w5³ÒæÆVæwF‚Ãb“°¢76W'BæWVÂ†æ÷&ÖÆ—¦VBç&÷w5³“•Õ³UÒÂw#“’Ö3Rr“°¢fÆ–FFTVÆVÖVçD6öçFVçB‡²ââæWF†÷&VBÇ&÷3¦æ÷&ÖÆ—¦VGÒ“°¢6öç7B‡FÖÃÖWF†÷&VDæöFT‡FÖÂ‡²ââæWF†÷&VBÇ&÷3¦æ÷&ÖÆ—¦VGÒ“°¢76W'BæWVÂ‚†‡FÖÂæÖF6‚‚óÇG#âör—ÇÅµÒ’æÆVæwF‚ÃÂwV&Æ—6†VB&VæFW&W"&WF–ç2WfW'’7W÷'FVB&÷rr“°¢76W'BæWVÂ‚†‡FÖÂæÖF6‚‚óÇFCâör—ÇÅµÒ’æÆVæwF‚Ã“’£bÂwV&Æ—6†VB&VæFW&W"&WF–ç2WfW'’7W÷'FVB&öG’6VÆÂr“°¢76W'BæWVÂ‚†‡FÖÂæÖF6‚‚óÇF‚66÷SÒ&6öÂ#âör—ÇÅµÒ’æÆVæwF‚ÃbÂwV&Æ—6†VB&VæFW&W"&WF–ç2F†RgVÆÂ†VFW"v–GF‚r“°¢76W'BæFöW4æ÷EF‡&÷r‚‚“ÓçfÆ–FFUvTf÷%V&Æ–6F–öâ‡·&ö÷D–C¢w&ö÷BrÆæöFW3§°¢&ö÷C§¶–C¢w&ö÷BrÇG—S¢w&ö÷BrÆ6†–ÆG&Vã¥¶WF†÷&VBæ–E×ÒÀ¢¶WF†÷&VBæ–EÓ§²ââæWF†÷&VBÆ6†–ÆG&Vã¥µÒÇ&÷3¦æ÷&ÖÆ—¦VGĞ¢×Ò’ÂwF†RvRÖÆWfVÂV&Æ—6‚vFR66WG2F†R6ÖRWF†÷&VB×c&÷VæF'’r“°¢76W'BçF‡&÷w2‚‚“Óææ÷&ÖÆ—¦TVÆVÖVçD6öçFVçB†WF†÷&VBÇ·&÷w3¥²ââç&÷w2Ä'&’ƒb’æf–ÆÂ‚vW‡G&r•×Ò’Âó6÷"ò“°¢76W'BçF‡&÷w2‚‚“Óææ÷&ÖÆ—¦TVÆVÖVçD6öçFVçB†WF†÷&VBÇ·&÷w3¥´'&’ƒr’æf–ÆÂ‚vW‡G&r•×Ò’Âó(	3b÷7¦Æ÷ò“°§Ò“° §FW7B‚vWF†÷&VBF&ÆRE5b6öçG&7B6÷fW'2F†RgVÆÂÖöFVÂæB&W6W'fW2V÷FVB6VÆÂFVÆ–Ö—FW'2rÂ‚“Óç°¢76W'BæWVÂ„UD„õ$TEõD$ÄUôÄ”Ô•E2ç&÷w2Ã“°¢76W'BæWVÂ„UD„õ$TEõD$ÄUôÄ”Ô•E2æ6öÇVÖç2Ãb“°¢76W'BæWVÂ„UD„õ$TEõD$ÄUôÄ”Ô•E2æ6VÆÄ6†&7FW'2Ã#“°¢76W'BæWVÂ„Ô…ôUD„õ$TEõD$ÄUô¥4ôåô4„%2Ã#À¢w6W&–Æ—¦VBF&ÆR6öçFVçB&W6W'fW2&ööÒVæFW"F†R6W'fW"ƒÃÖ6†&7FW"vRÖöFVÂ6r“°¢76W'BæWVÂ„Ô…ôUD„õ$TEõD$ÄUõE5eô4„%2ÃƒÀ¢wF†RFW‡F&VFöW2æ÷BG'Væ6FRBF†R6ÖÆÆW"6W&–Æ—¦VB6öçFVçB'VFvWBr“°¢76W'BæWVÂ„4ôåDTåEôd”TÄE2çF&ÆRæf–æB†f–VÆCÓæf–VÆBæ¶W“ÓÓÒw&÷w2r’æÖ‚ÄÔ…ôUD„õ$TEõD$ÄUõE5eô4„%2“°¢6öç7BF&ÆTæöFS×¶–C¢wF&ÆRÖ'VFvWBrÇG—S¢wF&ÆRrÆÖWFFF§¶6öçFVçEfW'6–öã£ÒÇ&÷3§·×Ó°¢6öç7Bv—F†–ä'VFvWCÔ'&’æg&öÒ‡¶ÆVæwFƒ£7ÒÂ‚“Óä'&’ƒb’æf–ÆÂ‚w‚rç&WVBƒ#’’“°¢6öç7B66WFVCÖæ÷&ÖÆ—¦T6öçFVçDf–VÆB„4ôåDTåEôd”TÄE2çF&ÆRæf–æB†f–VÆCÓæf–VÆBæ¶W“ÓÓÒw&÷w2r’Çv—F†–ä'VFvWB“°¢76W'Bæö²„¥4ôâç7G&–æv–g’†66WFVB’æÆVæwFƒÃÔÔ…ôUD„õ$TEõD$ÄUô¥4ôåô4„%2À¢vFVç6RF&ÆRæV"´"¥4ôâ&VÖ–ç2v—F†–âF†RW'6—7F&ÆRF&ÆR'VFvWBr“°¢6öç7B7FFSÖ7&VFTVF—F÷%7FFR†7&VFTFö7VÖVçB‚’’Ç&VçD–CÖ7F—fUvR‡7FFR’ç&ö÷D–C°¢W†V7WFR‡7FFRÇ·G—S¢vVÆVÖVçBæFBrÇ–ÆöC§·G—S¢wF&ÆRrÇ&VçD–G×Ò“°¢6öç7BæöFT–C×7FFRç6VÆV7F–öâç&–Ö'”–C°¢W†V7WFR‡7FFRÇ·G—S¢v6öçFVçBç&÷W'F–W2ç6WBrÇ–ÆöC§¶æöFT–BÇF6ƒ§·&÷w3¦66WFVG××Ò“°¢76W'Bæö²„¥4ôâç7G&–æv–g’‡7FFRæFö7VÖVçB’æÆVæwFƒÃƒÀ¢vFVç6RF&ÆR–ç6–FR—G2'VFvWBf—G2Ö–æ–ÖÂ6fVBvRÖöFVÂVæFW"F†R&÷WFRÆ–Ö—Br“°¢6öç7B÷fW$'VFvWCÕ²ââçv—F†–ä'VFvWBÄ'&’ƒb’æf–ÆÂ‚w‚rç&WVBƒ#’•Ó°¢76W'BçF‡&÷w2‚‚“Óææ÷&ÖÆ—¦TVÆVÖVçD6öçFVçB‡F&ÆTæöFRÇ·&÷w3¦÷fW$'VFvWGÒ’Âó#*¶&·FW"òÀ¢wF†R–ç7V7F÷"&V¦V7G2fÆ–B6VÆÂ÷&÷r6†RF†B6÷VÆBæ÷Bf—B–âF†RFö7VÖVçFVB6fRÆ–Ö—Br“°¢6öç7BV÷FT†Vg“Ô'&’æg&öÒ‡¶ÆVæwFƒ£7ÒÂ‚“Óä'&’ƒb’æf–ÆÂ‚r"rç&WVBƒ3’’“°¢76W'Bæö²‡6W&–Æ—¦UF&ÆUG7b‡V÷FT†Vg’’æÆVæwFƒÄÔ…ôUD„õ$TEõD$ÄUõE5eô4„%2À¢vW66VBV÷FW2&VÖ–â&VÆ÷rF†RvVæW&÷W2FW‡F&V6V–Æ–ærr“°¢76W'BçF‡&÷w2‚‚“Óææ÷&ÖÆ—¦TVÆVÖVçD6öçFVçB‡F&ÆTæöFRÇ·&÷w3§V÷FT†Vg—Ò’Âó#*¶&·FW"òÀ¢wF†RW'6—7FVB¥4ôâ'VFvWB66÷VçG2f÷"V÷FRW66–ær&F†W"F†â&rE5bÆVæwF‚ÆöæRr“°¢6öç7B&Vf÷&S×7G'V7GW&VD6ÆöæR‡7FFRæFö7VÖVçB“°¢76W'BçF‡&÷w2‚‚“ÓæW†V7WFR‡7FFRÇ·G—S¢v6öçFVçBç&÷W'F–W2ç6WBrÇ–ÆöC§¶æöFT–BÇF6ƒ§·&÷w3¦÷fW$'VFvWG××Ò’Âó#*¶&·FW"òÀ¢wF†R6öÖÖæB&V¦V7G2F†R÷fW"Ö'VFvWBF&ÆR&Vf÷&RG&gB×WFF–öâr“°¢76W'BæFVWWVÂ‡7FFRæFö7VÖVçBÆ&Vf÷&RÂvâ–çfÆ–BÆ&vRF&ÆR6ææ÷B×WFFRF†R6fVBVF—F÷"ÖöFVÂr“°¢6öç7B&÷w3Õµ²tfV¦Ì:–2rÂtÜ:6öF–²uÒÅ²uF'VÌ:F÷%ÇB6VÆÌ:&ârÂt¼:—B6÷%ÆæföÇ—FL:2uÒÅ²t–L:—¦WC¢&–vVâ"rÂt5$ÄeÇ%ÆæÖVvÖ&BuÕÓ°¢6öç7BFW‡C×6W&–Æ—¦UF&ÆUG7b‡&÷w2“°¢76W'BæFVWWVÂ‡'6UF&ÆUG7b‡FW‡B’Ç&÷w2ÂwV÷FW2ÂVÖ&VFFVBF'2ÂÄbæB5$Äb7W'f—fRâ–ç7V7F÷"VF—B&÷VæBG&—r“°¢f÷"†6öç7BfÇVRöb²w‚rç&WVBƒ#’Âr"rç&WVBƒ#’ÂuÅÂrç&WVBƒ#’ÂuÇBrç&WVBƒ#’ÂuÆârç&WVBƒ#’ÂuÇ"rç&WVBƒ#’ÂuÇ%Æârç&WVBƒ’ÂuÇSrç&WVBƒ#•Ò—°¢6öç7BVæ6öFVC×6W&–Æ—¦UF&ÆUG7b…µ·fÇVUÕÒ’ÆFV6öFVC×'6UF&ÆUG7b†Væ6öFVB“°¢76W'Bæö²†Væ6öFVBæÆVæwFƒÃÔ¥4ôâç7G&–æv–g’†FV6öFVB’æÆVæwF‚À¢wF†RƒÃÖ6†&7FW"FW‡F&V66ææ÷BG'Væ6FRF&ÆRv†÷6R6W&–Æ—¦VB&÷w2f—BF†R#ÃÖ6†&7FW"W'6—7FVB'VFvWBr“°¢Ğ¢76W'BæFVWWVÂ‡'6UF&ÆUG7b‚tÇD%Ç%Æä5ÇDBr’Åµ²trÂt"uÒÅ²t2rÂtBuÕÒÀ¢v÷&F–æ'’W†6VÂ×7G–ÆR5$ÄbE5b&VÖ–ç27W÷'FVBr“°¢76W'BæFVWWVÂ‡'6UF&ÆUG7b‚tÇD%Ç%Æä5ÇDEÇ%Æâr’Åµ²trÂt"uÒÅ²t2rÂtBuÕÒÀ¢vFW&Ö–æÂW†6VÂÆ–æRVæF–ærFöW2æ÷B7&VFR†çFöÒöæRÖ6VÆÂ&÷rr“°¢76W'BæFVWWVÂ‡'6UF&ÆUG7b‚tÇD%Æâr’Åµ²trÂt"uÕÒÀ¢vFW&Ö–æÂÄb†2F†R6ÖRæò×†çFöÒ×&÷r&V†f–÷"2W†6VÂ5$Äbr“°¢76W'BæFVWWVÂ‡'6UF&ÆUG7b‚tÇD%Ç$5ÇDEÇ"r’Åµ²trÂt"uÒÅ²t2rÂtBuÕÒÀ¢vÆVv7’5"ÖöæÇ’&V6÷&G2æBöæRFW&Ö–æÂ5"Fòæ÷B7&VFR†çFöÒ&÷rr“°¢76W'BæFVWWVÂ‡'6UF&ÆUG7b‚tÇD%ÆåÆâr’Åµ²trÂt"uÒÅ²ruÕÒÀ¢vâFF—F–öæÂ&Ææ²&V6÷&B&VÖ–ç2F—7F–æwV—6†&ÆRg&öÒöæRFW&Ö–æÂÆ–æRVæF–ærr“°¢76W'BæFVWWVÂ‡'6UF&ÆUG7b‚tÇD%Ç%Ç"r’Åµ²trÂt"uÒÅ²ruÕÒÀ¢vâW‡Æ–6—B&Ææ²5"ÖöæÇ’&V6÷&B&VÖ–ç2F—7F–æwV—6†&ÆRg&öÒöæRFW&Ö–æÂ5"r“°¢76W'BçF‡&÷w2‚‚“Óç'6UF&ÆUG7b‚r&ÆW¬:&FÆåÇF6VÆÂr’Âöæ–æ72ÆW¬:'fò“°¢76W'BçF‡&÷w2‚‚“Óç'6UF&ÆUG7b‚r&–L:—¦WGB'WL;7FuÇD"r’Â÷¬:,;2–L:—¬Y¦VÂò“°§Ò“° §FW7B‚vWF†÷&VBV&Æ–2ÖVF–æWfW"6öW&6W2ÖÆf÷&ÖVBW'6—7FVB6÷W&6W2–çFòU$Ç2rÂ‚“Óç°¢6öç7B7&3ÒröÖVF–óÓÓCÓƒÓ#2s°¢6öç7BæöFSÒ‡G—RÇ&÷2“Óâ‡¶–C¢vÖÆf÷&ÖVB×6÷W&6RrÇG—RÆÖWFFF§¶6öçFVçEfW'6–öã£ÒÇ&÷7Ò“°¢f÷"†6öç7BÖÆf÷&ÖVBöbµ·7&5ÒÇ·Fõ7G&–æs¢‚“Óç7&7ÕÒ—°¢f÷"†6öç7BG—Röb²v–ÖvRrÂwf–FVòrÂvVF–òuÒ—°¢76W'BæFöW4æ÷DÖF6‚†WF†÷&VDæöFT‡FÖÂ†æöFR‡G—RÇ·7&3¦ÖÆf÷&ÖVBÆÇC¢t¼:—wÒ’’ÂõÂöÖVF–Âóò“°¢Ğ¢f÷"†6öç7BG—Röb²vvÆÆW'’rÂv6&÷W6VÂuÒ—°¢76W'BæFöW4æ÷DÖF6‚†WF†÷&VDæöFT‡FÖÂ†æöFR‡G—RÇ¶—FV×3¥··7&3¦ÖÆf÷&ÖVBÆÇC¢t¼:—rÆÆ&VÃ¢tF–rÆ6öçFVçC¢uF'FÆöÒwÕ×Ò’’ÂõÂöÖVF–Âóò“°¢Ğ¢Ğ¢76W'BæÖF6‚†WF†÷&VDæöFT‡FÖÂ†æöFR‚v–ÖvRrÇ·7&2ÆÇC¢t¼:—wÒ’’ÂõÂöÖVF–Âóò“°§Ò“° §FW7B‚vWF†÷&VBÖ&·WW66W2FW‡BÂ&W6W'fW2Æ–æ²6V7W&—G’æBW6W2æF—fR66W76–&ÆR7G'V7GW&W2rÂ‚“Óç°¢6öç7BæöFS×¶–C¢væöFRÓrÇG—S¢v'WGFöârÆÖWFFF§¶6öçFVçEfW'6–öã£ÒÇ&÷3§·FW‡C¢sÆ–Ör7&3×‚öæW'&÷#ÖÆW'Bƒ“ârÆ‡&Vc¢r÷ö†öÖRrÇF&vWC¢uö&Ææ²rÆ&–Æ&VÃ¢t¶W¦LYÆw×Ó°¢76W'BæWVÂ†6öçFVçEFr†æöFR’Âvr“¶76W'BæFVWWVÂ†6öçFVçDGG&–'WFW2†æöFR’Ç¶‡&Vc¢r÷ö†öÖRrÇF&vWC¢uö&Ææ²rÇ&VÃ¢væö÷VæW"æ÷&VfW'&W"rÂv&–ÖÆ&VÂs¢t¶W¦LYÆwÒ“°¢76W'BæÖF6‚†WF†÷&VDæöFT‡FÖÂ†æöFR’ÂòfÇC¶–Örò“¶76W'BæFöW4æ÷DÖF6‚†WF†÷&VDæöFT‡FÖÂ†æöFR’ÂóÆ–Örò“°¢·ëËh‘éì¶»§q«^uÁÅÕ…°¡±•…åA±…å‰…­M•ÑÑ¥¹Ì¡í½¹ÑÉ½±Ìé™…±Í”±±½½ÀéÑÉÕ”±µÕÑ•éÑÉÕ”±…ÕÑ½Á±…äéÑÉÕ”±Á½ÍÑ•Èèœ½Á½ÍÑ•È¹ÍÙœô¤±ì(€½¹ÑÉ½±Ìé™…±Í”±±½½ÀéÑÉÕ”±µÕÑ•é™…±Í”±…ÕÑ½Á±…äé™…±Í”±Á½ÍÑ•Èèœœ(ô¤ì(…ÍÍ•ÉĞ¹•ÅÕ…°¡±•…åA±…å‰…­M•ÑÑ¥¹Ì¡íÁ½ÍÑ•Èè¡ÑÑÁÌè¼½Ù…±¥¹•á…µÁ±”½Á…Ñ ¹Á¹œœ±Á½ÍÑ•ÉÍÍ•Ñ%è¥¹Ù…±¥ô±íÙ¥‘•¼éÑÉÕ•ô¤¹Á½ÍÑ•È°¡ÑÑÁÌè¼½Ù…±¥¹•á…µÁ±”½Á…Ñ ¹Á¹œœ¤ì(…ÍÍ•ÉĞ¹•ÅÕ…°¡±•…åA±…å‰…­M•ÑÑ¥¹Ì¡íÁ½ÍÑ•Èè©…Ù…ÍÉ¥ÁĞé…±•ÉĞ Ä¤ô±íÙ¥‘•¼éÑÉÕ•ô¤¹Á½ÍÑ•È°œœ¤ì)ô¤ì()Ñ•ÍĞ ±•…ä¥µ…”É½À°É…Ñ¥¼…¹±½…Í•ÑÑ¥¹ÌÍ¡…É”…±±½İ±¥ÍÑ•‘•™…Õ±ÑÌ…¹Í…™”‰½Õ¹‘Ìœ° ¤ôùì(½¹ÍĞ‘•™…Õ±ÑÌõ±•…å%µ…•AÉ•Í•¹Ñ…Ñ¥½¸¡íô¤ì(…ÍÍ•ÉĞ¹‘••ÁÅÕ…°¡‘•™…Õ±ÑÌ±í™¥Ğè½Ù•Èœ±É…Ñ¥¼è…ÕÑ¼œ±™½…±`èÔÀ±™½…±dèÔÀ±½‰©•ÑA½Í¥Ñ¥½¸èœÔÀ”€ÔÀ”œ±±½…‘¥¹œè±…éäœ±…±Ğèœœ±‘•½É…Ñ¥Ù”é™…±Í•ô¤ì(…ÍÍ•ÉĞ¹‘••ÁÅÕ…°¡±•…å%µ…•AÉ•Í•¹Ñ…Ñ¥½¸¡í½‰©•Ñ¥Ğè½¹Ñ…¥¸œ±É…Ñ¥¼èœÄØ€¼€äœ±™½…±`èÄÜ±™½…±dèàÈ±±½…‘¥¹œè•…•Èœ±…±Ğè9…Á³Ì¯¥Àô¤±ì(€™¥Ğè½¹Ñ…¥¸œ±É…Ñ¥¼èœÄØ€¼€äœ±™½…±`èÄÜ±™½…±dèàÈ±½‰©•ÑA½Í¥Ñ¥½¸èœÄÜ”€àÈ”œ±±½…‘¥¹œè•…•Èœ±…±Ğè9…Á³Ì¯¥Àœ±‘•½É…Ñ¥Ù”é™…±Í”(ô¤ì(½¹ÍĞ‘•½É…Ñ¥Ù”õ±•…å%µ…•AÉ•Í•¹Ñ…Ñ¥½¸¡í½‰©•Ñ¥ĞèÍ…±”µ‘½İ¸œ±É…Ñ¥¼èœÌ€¼€Ğœ±™½…±`èœÄÈÔœ±™½…±dè´ÈÀ±‘•½É…Ñ¥Ù”éÑÉÕ”±…±Ğè5•ŸEÉé•¹“DÍëÙÙ•œô¤ì(…ÍÍ•ÉĞ¹•ÅÕ…°¡‘•½É…Ñ¥Ù”¹½‰©•ÑA½Í¥Ñ¥½¸°œÄÀÀ”€À”œ¤ì(…ÍÍ•ÉĞ¹•ÅÕ…°¡‘•½É…Ñ¥Ù”¹…±Ğ°œœ¤í…ÍÍ•ÉĞ¹•ÅÕ…°¡‘•½É…Ñ¥Ù”¹‘•½É…Ñ¥Ù”±ÑÉÕ”¤ì(…ÍÍ•ÉĞ¹•ÅÕ…°¡±•…å%µ…•AÉ•Í•¹Ñ…Ñ¥½¸¡í™½…±A½¥¹ĞèÑ½Àô¤¹½‰©•ÑA½Í¥Ñ¥½¸°œÔÀ”€À”œ¤ì(…ÍÍ•ÉĞ¹‘••ÁÅÕ…°¡±•…å%µ…•AÉ•Í•¹Ñ…Ñ¥½¸¡í™¥ĞèÕÉ°¡©…Ù…ÍÉ¥ÁĞé‰…¤œ±½‰©•Ñ¥ĞèÕ¹­¹½İ¸œ±É…Ñ¥¼èœØØØ€¼€Àœ±™½…±`è9…8œ±™½…±dè%¹™¥¹¥Ñäœ±±½…‘¥¹œèÍÉ¥ÁĞô¤±‘•™…Õ±ÑÌ¤ì(…ÍÍ•ÉĞ¹•ÅÕ…°¡±•…å%µ…•AÉ•Í•¹Ñ…Ñ¥½¸¡í™¥Ğè™¥±°œ±É…Ñ¥¼èœÄ€¼€Äô¤¹™¥Ğ°™¥±°œ¤ì(…ÍÍ•ÉĞ¹•ÅÕ…°¡±•…å%µ…•AÉ•Í•¹Ñ…Ñ¥½¸¡í™¥Ğè™¥±°œ±½‰©•Ñ¥Ğè½¹Ñ…¥¸ô¤¹™¥Ğ°½¹Ñ…¥¸œ°Ñ¡”±•…ä%¹ÍÁ•Ñ½ÈµÕÍĞ½Ù•ÉÉ¥‘”…¸½±‘•È™¥Ğ…±¥…Ìœ¤ì)ô¤ì(()Ñ•ÍĞ ±•…äµ•‘¥„%¹ÍÁ•Ñ½ÈÉ•©•ÑÌÍÑÉÕÑÕÉ•)M=8İ¥Ñ¡½ÕĞ½•É¥½¸½ÈµÕÑ…Ñ¥¹œÁ•ÉÍ¥ÍÑ•Ù…±Õ•Ìœ° ¤ôùì(½¹ÍĞ‰…õíÑ½MÑÉ¥¹œè¹½Ğ…±±…‰±”œ±Ù…±Õ•=˜è¹½Ğ…±±…‰±”ôì(™½È¡½¹ÍĞÙ…±Õ”½˜m‰…±íô±mt±lœ½¥µ…”¹Á¹œt±ÑÉÕ”±™…±Í”°Ää±%¹™¥¹¥Ñåt¥ì(€½¹ÍĞÁÉ½ÁÌõ=‰©•Ğ¹™É••é”¡íÍÉŒéÙ…±Õ”±Á½ÍÑ•ÈéÙ…±Õ”±…ÍÍ•Ñ%éÙ…±Õ”±Á½ÍÑ•ÉÍÍ•Ñ%éÙ…±Õ”±…±ĞéÙ…±Õ•ô¤ì(€½¹ÍĞ‰•™½É”õÍÑÉÕÑÕÉ•‘±½¹”¡ÁÉ½ÁÌ¤ì(€½¹ÍĞÙ¥•Üõ±•…å5•‘¥…%¹ÍÁ•Ñ½ÉY…±Õ•Ì¡ÁÉ½ÁÌ¤ì(€…ÍÍ•ÉĞ¹•ÅÕ…°¡Ù¥•Ü¹ÍÉŒ°œœ¤í…ÍÍ•ÉĞ¹•ÅÕ…°¡Ù¥•Ü¹Á½ÍÑ•È°œœ¤í…ÍÍ•ÉĞ¹•ÅÕ…°¡Ù¥•Ü¹…ÍÍ•Ñ%°œœ¤í…ÍÍ•ÉĞ¹•ÅÕ…°¡Ù¥•Ü¹Á½ÍÑ•ÉÍÍ•Ñ%°œœ¤ì(€…ÍÍ•ÉĞ¹•ÅÕ…°¡Ù¥•Ü¹…±Ğ±ÑåÁ•½˜Ù…±Õ”ôôô¹Õµ‰•Èœ˜™9Õµ‰•È¹¥Í¥¹¥Ñ”¡Ù…±Õ”¤ıMÑÉ¥¹œ¡Ù…±Õ”¤èœœ¤ì(€…ÍÍ•ÉĞ¹½¬¡Ù¥•Ü¹¥¹Ù…±¥‘¥•±‘Ì¹¥¹±Õ‘•Ì ÍÉŒœ¤¤í…ÍÍ•ÉĞ¹½¬¡Ù¥•Ü¹¥¹Ù…±¥‘¥•±‘Ì¹¥¹±Õ‘•Ì Á½ÍÑ•ÉÍÍ•Ñ%œ¤¤ì(€…ÍÍ•ÉĞ¹‘••ÁÅÕ…°¡ÁÉ½ÁÌ±‰•™½É”¤ì(ô(½¹ÍĞ¥ôœÀÀÀÀÀÀÀÀ´ÀÀÀÀ´ĞÀÀÀ´àÀÀÀ´ÀÀÀÀÀÀÀÀÀÄÈÌœì(…ÍÍ•ÉĞ¹‘••ÁÅÕ…°¡±•…å5•‘¥…%¹ÍÁ•Ñ½ÉY…±Õ•Ì¡íÍÉŒèœ½¥µ…”¹Á¹œœ±Á½ÍÑ•Èèœ½Á½ÍÑ•È¹Á¹œœ±…±ĞèÀ±…ÍÍ•Ñ%é¥±Á½ÍÑ•ÉÍÍ•Ñ%é¥‘ô¤±ì(€ÍÉŒèœ½¥µ…”¹Á¹œœ±Á½ÍÑ•Èèœ½Á½ÍÑ•È¹Á¹œœ±…±ĞèœÀœ±…ÍÍ•Ñ%é¥±Á½ÍÑ•ÉÍÍ•Ñ%é¥±¥¹Ù…±¥‘¥•±‘Ìémt(ô¤ì(…ÍÍ•ÉĞ¹‘••ÁÅÕ…°¡±•…å5•‘¥…%¹ÍÁ•Ñ½ÉY…±Õ•Ì¡¹Õ±°¤±íÍÉŒèœœ±Á½ÍÑ•Èèœœ±…±Ğèœœ±…ÍÍ•Ñ%èœœ±Á½ÍÑ•ÉÍÍ•Ñ%èœœ±¥¹Ù…±¥‘¥•±‘Ìémuô¤ì(½¹ÍĞ‘•½É…Ñ¥Ù”õ±•…å5•‘¥…%¹ÍÁ•Ñ½ÉY…±Õ•Ì¡í…±Ğè5•ŸEÉëÙÑĞ¯¥Á±—µË…Ìœ±‘•½É…Ñ¥Ù”éÑÉÕ”±…ÍÍ•Ñ%è¥¹Ù…±¥ô¤ì(…ÍÍ•ÉĞ¹•ÅÕ…°¡‘•½É…Ñ¥Ù”¹…±Ğ°5•ŸEÉëÙÑĞ¯¥Á±—µË…Ìœ¤í…ÍÍ•ÉĞ¹‘••ÁÅÕ…°¡‘•½É…Ñ¥Ù”¹¥¹Ù…±¥‘¥•±‘Ì±l…ÍÍ•Ñ%t¤ì)ô¤ì()Ñ•ÍĞ ½Õ¹Ñ‘½İ¸±½…°Ñ¥µ”É•©•ÑÌ¹½¹•á¥ÍÑ•¹Ğİ…±°Ñ¥µ•Ì¥¸µÕ±Ñ¥Á±”Ñ¥µ”é½¹•Ìœ° ¤ôùì(½¹ÍĞÁÉ•Ù¥½ÕÍQ¥µ•é½¹”õÁÉ½•ÍÌ¹•¹Ø¹Qhì(ÑÉåì(€™½È¡½¹ÍĞmé½¹”±…À±Ù…±¥±¥Í½t½˜l(€€lÕÉ½Á”½	Õ‘…Á•ÍĞœ°œÈÀÌÀ´ÀÌ´ÌÅPÀÈèÌÀœ°œÈÀÌÀ´ÀÌ´ÌÅPÀÌèÌÀœ°œÈÀÌÀ´ÀÌ´ÌÅPÀÄèÌÀèÀÀ¸ÀÀÁht°(€€lµ•É¥„½9•İ}e½É¬œ°œÈÀÌÀ´ÀÌ´ÄÁPÀÈèÌÀœ°œÈÀÌÀ´ÀÌ´ÄÁPÀÌèÌÀœ°œÈÀÌÀ´ÀÌ´ÄÁPÀÜèÌÀèÀÀ¸ÀÀÁhut¥ì(€€ÁÉ½•ÍÌ¹•¹Ø¹Qhõé½¹”í…ÍÍ•ÉĞ¹Ñ¡É½İÌ  ¤ôù½Õ¹Ñ‘½İ¹1½…±Q½%M<¡…À¤°½¹•´³¥Ñ•é¥¬¼¤í…ÍÍ•ÉĞ¹•ÅÕ…°¡½Õ¹Ñ‘½İ¹1½…±Q½%M<¡Ù…±¥¤±¥Í¼¤ì(€ô(€ÁÉ½•ÍÌ¹•¹Ø¹QhôUQœì(€™½È¡½¹ÍĞ¥¹Ù…±¥½˜lœÈÀÌÀ´ÀÈ´ÌÁPÄÈèÀÀœ°œÈÀÌÀ´ÄÈ´ÌÅPÈĞèÀÀœ°œÈÀÌÀ´ÄÌ´ÀÅPÄÈèÀÀœ°œÈÀÌÀ´ÀÄ´ÀÅPÄÈèØÀœ°¹½Ğ„‘…Ñ”œ°œÈÀÌÀ´ÀÄ´ÀÅPÄÈèÀÁht¥…ÍÍ•ÉĞ¹Ñ¡É½İÌ  ¤ôù½Õ¹Ñ‘½İ¹1½…±Q½%M<¡¥¹Ù…±¥¤¤ì(€™½È¡½¹ÍĞ½ÕÑÍ¥‘”½˜lœÄäää´ÄÈ´ÌÅPÈÌèÔäœ°œÈÄÀÄ´ÀÄ´ÀÅPÀÀèÀÀt¥…ÍÍ•ÉĞ¹Ñ¡É½İÌ  ¤ôù½Õ¹Ñ‘½İ¹1½…±Q½%M<¡½ÕÑÍ¥‘”¤°¼ÈÀÀÀƒ¥Ì€ÈÄÀÀ¼¤ì(€…ÍÍ•ÉĞ¹•ÅÕ…°¡½Õ¹Ñ‘½İ¹1½…±Q½%M< œœ¤°œœ¤ì(õ™¥¹…±±åí¥˜¡ÁÉ•Ù¥½ÕÍQ¥µ•é½¹”ôôõÕ¹‘•™¥¹•¥‘•±•Ñ”ÁÉ½•ÍÌ¹•¹Ø¹Qhí•±Í”ÁÉ½•ÍÌ¹•¹Ø¹QhõÁÉ•Ù¥½ÕÍQ¥µ•é½¹”íô)ô¤ì)Ñ•ÍĞ ½Õ¹Ñ‘½İ¸±½…°Ù¥•ÜÁÉ•Í•ÉÙ•ÌÍÕˆµµ¥¹ÕÑ”ÁÉ•¥Í¥½¸…¹…¹½¹¥…°¥¹ÍÑ…¹ÑÌœ° ¤ôùì(½¹ÍĞÁÉ•Ù¥½ÕÍQ¥µ•é½¹”õÁÉ½•ÍÌ¹•¹Ø¹Qhì(ÑÉåì(€™½È¡½¹ÍĞé½¹”½˜lÕÉ½Á”½	Õ‘…Á•ÍĞœ°µ•É¥„½9•İ}e½É¬œ°UQt¥ì(€€ÁÉ½•ÍÌ¹•¹Ø¹Qhõé½¹”ì(€€™½È¡½¹ÍĞ¥Í¼½˜lœÈÀÌÀ´ÄÈ´ÌÅPÈÀèÌÀèÀÀ¸ÀÀÁhœ°œÈÀÌÀ´ÄÈ´ÌÅPÈÀèÌÀèĞÈ¸ÀÀÁhœ°œÈÀÌÀ´ÄÈ´ÌÅPÈÀèÌÀèĞÈ¸ÄÈÍhœ°œÈÀÌÀ´ÄÈ´ÌÅPÈÀèÌÀèÀÀ¸ÀÀİht¥…ÍÍ•ÉĞ¹•ÅÕ…°¡½Õ¹Ñ‘½İ¹1½…±Q½%M<¡½Õ¹Ñ‘½İ¹%M=Q½1½…°¡¥Í¼¤¤±¥Í¼¤ì(€ô(€™½È¡½¹ÍĞ¥¹Ù…±¥½˜lœœ±¹Õ±°±Õ¹‘•™¥¹•°¥¹Ù…±¥t¥…ÍÍ•ÉĞ¹•ÅÕ…°¡½Õ¹Ñ‘½İ¹%M=Q½1½…°¡¥¹Ù…±¥¤°œœ¤ì(õ™¥¹…±±åí¥˜¡ÁÉ•Ù¥½ÕÍQ¥µ•é½¹”ôôõÕ¹‘•™¥¹•¥‘•±•Ñ”ÁÉ½•ÍÌ¹•¹Ø¹Qhí•±Í”ÁÉ½•ÍÌ¹•¹Ø¹QhõÁÉ•Ù¥½ÕÍQ¥µ•é½¹”íô)ô¤ì(()Ñ•ÍĞ •áÁ±¥¥Ğ…•ÍÍ¥‰¥±¥Ñä•‘¥ÑÌÉ•Á±…”Ñ¡•¥È½İ¸±•…ä…±¥…Ì…¹U¹‘¼É•ÍÑ½É•ÌÑ¡”™Õ±°Í¹…ÁÍ¡½Ğœ° ¤ôùì(½¹ÍĞÍÑ…Ñ”õÉ•…Ñ•‘¥Ñ½ÉMÑ…Ñ”¡É•…Ñ•½Õµ•¹Ğ ¤¤í•á•ÕÑ”¡ÍÑ…Ñ”±íÑåÁ”è•±•µ•¹Ğ¹…‘œ±Á…å±½…éíÑåÁ”èÍ•Ñ¥½¸õô¤í½¹ÍĞ¥õÍÑ…Ñ”¹Í•±•Ñ¥½¸¹ÁÉ¥µ…Éå%ì(½¹ÍĞ±•…äõí±…‰•°è=±…¹½¹¥…°œ±¥è½±µ…¹½¹¥…°œ±…É¥…1…‰•°è1•…ä±…‰•°œ±…¹¡½É%è±•…äµ…¹¡½Èœ±±…¹œè¡Ôôì(•á•ÕÑ”¡ÍÑ…Ñ”±íÑåÁ”è•±•µ•¹Ğ¹ÕÁ‘…Ñ”œ±Á…å±½…éí¹½‘•%é¥±Á…Ñ éí…•ÍÍ¥‰¥±¥Ñäé±•…åõõô¤í½¹ÍĞ‰•™½É”õÍÑÉÕÑÕÉ•‘±½¹”¡…Ñ¥Ù•A…”¡ÍÑ…Ñ”¤¹¹½‘•Ím¥‘t¤ì(•á•ÕÑ”¡ÍÑ…Ñ”±íÑåÁ”è…•ÍÍ¥‰¥±¥Ñä¹Í•Ğœ±Á…å±½…éí¹½‘•%é¥±Á…Ñ éí±…‰•°è9•Ü±…‰•°õõô¤í±•Ğ¹½‘”õ…Ñ¥Ù•A…”¡ÍÑ…Ñ”¤¹¹½‘•Ím¥‘tì(…ÍÍ•ÉĞ¹•ÅÕ…°¡=‰©•Ğ¹¡…Í=İ¸¡¹½‘”¹…•ÍÍ¥‰¥±¥Ñä°…É¥…1…‰•°œ¤±™…±Í”¤í…ÍÍ•ÉĞ¹•ÅÕ…°¡¹½‘”¹…•ÍÍ¥‰¥±¥Ñä¹…¹¡½É%°±•…äµ…¹¡½Èœ¤í…ÍÍ•ÉĞ¹•ÅÕ…°¡½¹Ñ•¹ÑÑÑÉ¥‰ÕÑ•Ì¡¹½‘”¥l…É¥„µ±…‰•°t°9•Ü±…‰•°œ¤ì(•á•ÕÑ”¡ÍÑ…Ñ”±íÑåÁ”è¡¥ÍÑ½Éä¹Õ¹‘¼ô¤í…ÍÍ•ÉĞ¹‘••ÁÅÕ…°¡…Ñ¥Ù•A…”¡ÍÑ…Ñ”¤¹¹½‘•Ím¥‘t±‰•™½É”¤ì(•á•ÕÑ”¡ÍÑ…Ñ”±íÑåÁ”è…•ÍÍ¥‰¥±¥Ñä¹Í•Ğœ±Á…å±½…éí¹½‘•%é¥±Á…Ñ éí¥è¹•Üµ…¹¡½Èõõô¤í¹½‘”õ…Ñ¥Ù•A…”¡ÍÑ…Ñ”¤¹¹½‘•Ím¥‘tì(…ÍÍ•ÉĞ¹•ÅÕ…°¡=‰©•Ğ¹¡…Í=İ¸¡¹½‘”¹…•ÍÍ¥‰¥±¥Ñä°…¹¡½É%œ¤±™…±Í”¤í…ÍÍ•ÉĞ¹•ÅÕ…°¡¹½‘”¹…•ÍÍ¥‰¥±¥Ñä¹…É¥…1…‰•°°1•…ä±…‰•°œ¤í…ÍÍ•ÉĞ¹•ÅÕ…°¡½¹Ñ•¹ÑÑÑÉ¥‰ÕÑ•Ì¡¹½‘”¤¹¥°¹•Üµ…¹¡½Èœ¤ì(•á•ÕÑ”¡ÍÑ…Ñ”±íÑåÁ”è¡¥ÍÑ½Éä¹Õ¹‘¼ô¤í…ÍÍ•ÉĞ¹‘••ÁÅÕ…°¡…Ñ¥Ù•A…”¡ÍÑ…Ñ”¤¹¹½‘•Ím¥‘t±‰•™½É”¤ì)ô¤ì)Ñ•ÍĞ …•ÍÍ¥‰¥±¥ÑäÙ…±¥‘…Ñ¥½¸É•µ…¥¹ÌÁÕÉ”…¹ÁÉ•Í•ÉÙ•ÌÕ¹É•±…Ñ•…±¥…Í•Ì…¹É½½Ğ¥‘•¹Ñ¥ÑäÉÕ±•Ìœ° ¤ôùì(½¹ÍĞ¹½‘”õí¥è¹½‘”œ±ÑåÁ”èÍ•Ñ¥½¸œ±…•ÍÍ¥‰¥±¥Ñäéí…É¥…1…‰•°è1•…ä±…‰•°œ±…¹¡½É%è±•…äµ…¹¡½Èœ±±…¹œè¡Ôõô±‰•™½É”õÍÑÉÕÑÕÉ•‘±½¹”¡¹½‘”¤ì(½¹ÍĞ¡…¹•õ¹½Éµ…±¥é••ÍÍ¥‰¥±¥Ñä¡¹½‘”±í±…¹œè‘”ô±í¹½‘•ô¤í…ÍÍ•ÉĞ¹•ÅÕ…°¡¡…¹•¹…É¥…1…‰•°°1•…ä±…‰•°œ¤í…ÍÍ•ÉĞ¹•ÅÕ…°¡¡…¹•¹…¹¡½É%°±•…äµ…¹¡½Èœ¤í…ÍÍ•ÉĞ¹‘••ÁÅÕ…°¡¹½‘”±‰•™½É”¤ì(…ÍÍ•ÉĞ¹Ñ¡É½İÌ  ¤ôù¹½Éµ…±¥é••ÍÍ¥‰¥±¥Ñä¡¹½‘”±í¥èÑ…­•¸ô±í¹½‘”±½Ñ¡•Èéí¥è½Ñ¡•Èœ±…•ÍÍ¥‰¥±¥Ñäéí¥èÑ…­•¸õõô¤°½™½±…±Ğ¼¤ì(…ÍÍ•ÉĞ¹Ñ¡É½İÌ  ¤ôù¹½Éµ…±¥é••ÍÍ¥‰¥±¥Ñä¡¹½‘”±í±…¹œè ô¤°½¹å•±Ø¼¤í…ÍÍ•ÉĞ¹Ñ¡É½İÌ  ¤ôù¹½Éµ…±¥é••ÍÍ¥‰¥±¥Ñä¡ì¸¸¹¹½‘”±ÑåÁ”èÉ½½Ğô±í¥è¹•ÜµÉ½½Ğô¤°½Û¥‘•ÑĞ¼¤í…ÍÍ•ÉĞ¹‘••ÁÅÕ…°¡¹½‘”±‰•™½É”¤ì)ô¤ì(()¥µÁ½ÉĞíÍ…™•5•‘¥…UÉ°…ÌÍ…™•MÑÉÕÑÕÉ•‘5•‘¥…UÉ°±É•¹‘•É±•µ•¹Ñ½¹Ñ•¹Ğ…ÌÉ•¹‘•ÉMÑÉÕÑÕÉ•‘½¹Ñ•¹Ğ±Ù…±¥‘…Ñ•±•µ•¹Ñ½¹Ñ•¹Ğ…ÌÙ…±¥‘…Ñ•MÑÉÕÑÕÉ•‘½¹Ñ•¹Ñô™É½´€œ¸¸½½É”½•±•µ•¹Ğµ½¹Ñ•¹Ğ¹©Ìœì()Ñ•ÍĞ ±•…äÍÑÉÕÑÕÉ•½¹Ñ•¹Ğ¥¹½É•Ìµ…±™½Éµ•)M=8½‰©•ĞÙ…±Õ•Ìİ¥Ñ¡½ÕĞ±½Í¥¹œÍ…™”¹•¥¡‰½É¥¹œ¥Ñ•µÌœ° ¤ôùì(€½¹ÍĞµ…±™½Éµ•õíÑ½MÑÉ¥¹œé¹Õ±±ôì(€½¹ÍĞ½‰©•Ñ]¥Ñ¡UÉ°õíÑ½MÑÉ¥¹œè ¤ôøœ½µ•‘¥„¼ÀÀÀÀÀÀÀÀ´ÀÀÀÀ´ĞÀÀÀ´àÀÀÀ´ÀÀÀÀÀÀÀÀÀÄÈÌôì(€…ÍÍ•ÉĞ¹•ÅÕ…°¡Í…™•MÑÉÕÑÕÉ•‘5•‘¥…UÉ°¡µ…±™½Éµ•¤°œœ°µ…±™½Éµ•½‰©•ĞµÕÍĞ¹½Ğ‰”MÑÉ¥¹œµ½•É•œ¤ì(€…ÍÍ•ÉĞ¹•ÅÕ…°¡Í…™•MÑÉÕÑÕÉ•‘5•‘¥…UÉ°¡½‰©•Ñ]¥Ñ¡UÉ°¤°œœ°ÕÍÑ½´Ñ½MÑÉ¥¹œ…¹¹½Ğ™…‰É¥…Ñ”„µ•‘¥„UI0œ¤ì(€…ÍÍ•ÉĞ¹•ÅÕ…°¡Í…™•MÑÉÕÑÕÉ•‘5•‘¥…UÉ°¡lœ½µ•‘¥„¼ÀÀÀÀÀÀÀÀ´ÀÀÀÀ´ĞÀÀÀ´àÀÀÀ´ÀÀÀÀÀÀÀÀÀÄÈÌt¤°œœ°…ÉÉ…ä…¹¹½Ğ™…‰É¥…Ñ”„UI0œ¤ì(€…ÍÍ•ÉĞ¹•ÅÕ…°¡Í…™•MÑÉÕÑÕÉ•‘5•‘¥…UÉ° œ½¥µ…”¹Á¹œœ¤°œ½¥µ…”¹Á¹œœ°Ù…±¥É•±…Ñ¥Ù”UI0ÁÉ•Í•ÉÙ•œ¤ì(€½¹ÍĞ±¥ÍĞõÉ•¹‘•ÉMÑÉÕÑÕÉ•‘½¹Ñ•¹Ğ ±¥ÍĞœ±íÙ•ÉÍ¥½¸èÄ±½É‘•É•é™…±Í”±¥Ñ•µÌémµ…±™½Éµ•°Ÿ%À±¥ÍÑ…•±•´uô°±¥ÍĞµ±•…äœ¤ì(€…ÍÍ•ÉĞ¹µ…Ñ ¡±¥ÍĞ°¿%À±¥ÍÑ…•±•´¼¤ì(€…ÍÍ•ÉĞ¹‘½•Í9½Ñ5…Ñ ¡±¥ÍĞ°½qm½‰©•Ğ=‰©•ÑquñÙ¥ÍÕ…°µÍÑÉÕÑÕÉ•µ•ÉÉ½È¼¤ì(€½¹ÍĞÑ…‰±”õÉ•¹‘•ÉMÑÉÕÑÕÉ•‘½¹Ñ•¹Ğ Ñ…‰±”œ±íÙ•ÉÍ¥½¸èÄ±É½İÌémlµ´t±mµ…±™½Éµ•‘t±lŸ%ÀÍ½Èuuô°Ñ…‰±”µ±•…äœ¤ì(€…ÍÍ•ÉĞ¹µ…Ñ ¡Ñ…‰±”°¼ñÑû%ÀÍ½Èñp½Ñø¼¤ì(€…ÍÍ•ÉĞ¹‘½•Í9½Ñ5…Ñ ¡Ñ…‰±”°½qm½‰©•Ğ=‰©•ÑquñÙ¥ÍÕ…°µÍÑÉÕÑÕÉ•µ•ÉÉ½È¼¤ì(€½¹ÍĞ…±±•ÉäõíÙ•ÉÍ¥½¸èÄ±¥Ñ•µÌémíÍÉŒé½‰©•Ñ]¥Ñ¡UÉ°±…±ĞèK¥¤¯¥Àô±íÍÉŒèœ½¥µ…”¹©Áœœ±…±ĞèŸ%À¯¥Àõuôì(€…ÍÍ•ÉĞ¹•ÅÕ…°¡Ù…±¥‘…Ñ•MÑÉÕÑÕÉ•‘½¹Ñ•¹Ğ …±±•Éäœ±…±±•Éä¤°%9Y1%}11Ie}%5œ°¥¹Ù…±¥¥Ñ•´É•µ…¥¹ÌÕ¹ÁÕ‰±¥Í¡…‰±”œ¤ì(€½¹ÍĞ…±±•Éå!Ñµ°õÉ•¹‘•ÉMÑÉÕÑÕÉ•‘½¹Ñ•¹Ğ …±±•Éäœ±…±±•Éä°…±±•Éäµ±•…äœ¤ì(€…ÍÍ•ÉĞ¹µ…Ñ ¡…±±•Éå!Ñµ°°¼ñ¥µœÍÉŒô‰p½¥µ…”¹©Áœˆ¼¤ì(€…ÍÍ•ÉĞ¹‘½•Í9½Ñ5…Ñ ¡…±±•Éå!Ñµ°°½p½µ•‘¥…p¼ÀÀÀÀÀÀÀÀ´ÀÀÀÀ´ĞÀÀÀ´àÀÀÀ´ÀÀÀÀÀÀÀÀÀÄÈÍñqm½‰©•Ğ=‰©•Ñqt¼¤ì(€½¹ÍĞÙ…±¥‘Í…Á•õÉ•¹‘•ÉMÑÉÕÑÕÉ•‘½¹Ñ•¹Ğ ±¥ÍĞœ±íÙ•ÉÍ¥½¸èÄ±¥Ñ•µÌélœñÍÉ¥ÁĞù…±•ÉĞ ‰àˆ¤ñp½ÍÉ¥ÁĞøuô°±¥ÍĞµ•Í…Á•œ¤ì(€…ÍÍ•ÉĞ¹µ…Ñ ¡Ù…±¥‘Í…Á•°¼™±ĞíÍÉ¥ÁĞ™Ğì¼¤ì(€…ÍÍ•ÉĞ¹‘½•Í9½Ñ5…Ñ ¡Ù…±¥‘Í…Á•°¼ñÍÉ¥ÁĞø¼¤ì)ô¤ì()Ñ•ÍĞ ÍÑÉÕÑÕÉ•Ñ…‰±•Ì°Ñ…‰Ì°…±±•Éä…¹…É½ÕÍ•°É•¹‘•È•Í…Á•°‰½Õ¹‘•…•ÍÍ¥‰±”¹…µ•Ìœ° ¤ôùì(½¹ÍĞ…±±•ÉäõíÙ•ÉÍ¥½¸èÄ±¥Ñ•µÌémíÍÉŒèœ½¥µ…”¹©Áœœ±…±Ğèä¯¥Àœ±…ÁÑ¥½¸èœõuôì(½¹ÍĞ…É½ÕÍ•°õíÙ•ÉÍ¥½¸èÄ±¥Ñ•µÌémí±…‰•°è¥„œ±½¹Ñ•¹ĞèMëÙÙ•œœ±ÍÉŒèœœ±…±Ğèœõuôì(½¹ÍĞÑ…‰±”õíÙ•ÉÍ¥½¸èÄ±É½İÌéml•©³¥Œt±l‘…Ğuuôì(½¹ÍĞÑ…‰ÌõíÙ•ÉÍ¥½¸èÄ±¥Ñ•µÌémí±…‰•°èñ°œ±½¹Ñ•¹ĞèQ…ÉÑ…±½´õuôì(½¹ÍĞ¹…µ•‘…±±•ÉäõÉ•¹‘•ÉMÑÉÕÑÕÉ•‘½¹Ñ•¹Ğ …±±•Éäœ±…±±•Éä°…±±•Éäœ±í…É¥…1…‰•°èœ7Å¡•±ä€˜€ñ¯¥Á•¬ø€ô¤ì(½¹ÍĞ¹…µ•‘…É½ÕÍ•°õÉ•¹‘•ÉMÑÉÕÑÕÉ•‘½¹Ñ•¹Ğ …É½ÕÍ•°œ±…É½ÕÍ•°°…É½ÕÍ•°œ±í…É¥…1…‰•°è-¥•µ•±Ğ€ñÍÑÉ•…´øô¤ì(½¹ÍĞ¹…µ•‘Q…‰±”õÉ•¹‘•ÉMÑÉÕÑÕÉ•‘½¹Ñ•¹Ğ Ñ…‰±”œ±Ñ…‰±”°Ñ…‰±”œ±í…É¥…1…‰•°èS…‰³…é…Ğ€˜€ñ…‘…Ğøô¤ì(½¹ÍĞ¹…µ•‘Q…‰ÌõÉ•¹‘•ÉMÑÉÕÑÕÉ•‘½¹Ñ•¹Ğ Ñ…‰Ìœ±Ñ…‰Ì°Ñ…‰Ìœ±í…É¥…1…‰•°èñ±•¬€˜€ñÓ¥·…¬øô¤ì(…ÍÍ•ÉĞ¹µ…Ñ ¡¹…µ•‘…±±•Éä°¼ñ‘¥Ø±…ÍÌô‰Ù¥ÍÕ…°µÍÑÉÕÑÕÉ•µ…±±•Éä‰mxùt©É½±”ô‰É•¥½¸‰mxùt©…É¥„µ±…‰•°ô‰7Å¡•±ä€™…µÀì€™±Ğí¯¥Á•¬™Ğìˆ¼°(€€Ñ¡”…±±•Éä¡…Ì„¹…µ•É•¥½¸…¹Ñ¡”±…‰•°¥Ì!Q50µ•Í…Á•œ¤ì(…ÍÍ•ÉĞ¹µ…Ñ ¡¹…µ•‘…É½ÕÍ•°°¼ñÍ•Ñ¥½¸±…ÍÌô‰Ù¥ÍÕ…°µÍÑÉÕÑÕÉ•µ…É½ÕÍ•°‰mxùt©…É¥„µ±…‰•°ô‰-¥•µ•±Ğ€™±ĞíÍÑÉ•…´™Ğìˆ¼°(€€Ñ¡”…É½ÕÍ•°É•¥½¸¥Ì¹…µ•…¹Ñ¡”±…‰•°¥Ì!Q50µ•Í…Á•œ¤ì(…ÍÍ•ÉĞ¹µ…Ñ ¡¹…µ•‘Q…‰±”°¼ñ‘¥Ø±…ÍÌô‰Ù¥ÍÕ…°µÍÑÉÕÑÕÉ•µÑ…‰±”µÍÉ½±°‰mxùt©É½±”ô‰É•¥½¸‰mxùt©…É¥„µ±…‰•°ô‰S…‰³…é…Ğ€™…µÀì€™±Ğí…‘…Ğ™Ğìˆ¼°(€€Ñ¡”ÍÉ½±±…‰±”Ñ…‰±”É•¥½¸ÕÍ•Ì¥ÑÌ…ÕÑ¡½É••Í…Á•…•ÍÍ¥‰±”¹…µ”œ¤ì(…ÍÍ•ÉĞ¹µ…Ñ ¡¹…µ•‘Q…‰Ì°¼ñ‘¥ØÉ½±”ô‰Ñ…‰±¥ÍĞˆ…É¥„µ±…‰•°ô‰ñ±•¬€™…µÀì€™±ĞíÓ¥·…¬™Ğìˆ¼°(€€Ñ¡”Ñ…‰±¥ÍĞÕÍ•Ì¥ÑÌ…ÕÑ¡½É••Í…Á•…•ÍÍ¥‰±”¹…µ”œ¤ì(…ÍÍ•ÉĞ¹µ…Ñ ¡É•¹‘•ÉMÑÉÕÑÕÉ•‘½¹Ñ•¹Ğ …±±•Éäœ±…±±•Éä°…±±•Éäœ¤°½É½±”ô‰É•¥½¸‰mxùt©…É¥„µ±…‰•°ô‰/¥Á…³¥É¥„ˆ¼°(€€½±‘•ÈÍÑÉÕÑÕÉ•‘½Õµ•¹ÑÌÉ•Ñ…¥¸…¸…•ÍÍ¥‰±”!Õ¹…É¥…¸™…±±‰…¬¹…µ”œ¤ì(…ÍÍ•ÉĞ¹µ…Ñ ¡É•¹‘•ÉMÑÉÕÑÕÉ•‘½¹Ñ•¹Ğ …É½ÕÍ•°œ±…É½ÕÍ•°°…É½ÕÍ•°œ±í…É¥…1…‰•°éíÑ½MÑÉ¥¹œ ¥íÑ¡É½ÜÉÉ½È µÕÍĞ¹½Ğ½•É”½‰©•ÑÌœ¥õõô¤°½…É¥„µ±…‰•°ô‰/¥Á¯ÙÉ¡¥¹Ñ„ˆ¼°(€€¥¹Ù…±¥½‰©•ĞµÙ…±Õ•±…‰•±Ì…É”¹½Ğ½•É•¥¹Ñ¼ÁÕ‰±¥Œµ…É­ÕÀœ¤ì(…ÍÍ•ÉĞ¹µ…Ñ ¡É•¹‘•ÉMÑÉÕÑÕÉ•‘½¹Ñ•¹Ğ …±±•Éäœ±…±±•Éä°…±±•Éäœ±í…É¥…1…‰•°èàœ¹É•Á•…Ğ ÈÀÀ¥ô¤±¹•ÜI•áÀ¡…É¥„µ±…‰•°ôˆ‘ìàœ¹É•Á•…Ğ ÄØÀ¥ô‰€¤°(€€ÁÕ‰±¥ŒÉ•¥½¸¹…µ•ÌÍÑ…äİ¥Ñ¡¥¸Ñ¡”…ÕÑ¡½É•™¥•±±¥µ¥Ğœ¤ì(…ÍÍ•ÉĞ¹µ…Ñ ¡É•¹‘•ÉMÑÉÕÑÕÉ•‘½¹Ñ•¹Ğ Ñ…‰±”œ±Ñ…‰±”°Ñ…‰±”œ¤°½É½±”ô‰É•¥½¸‰mxùt©…É¥„µ±…‰•°ô‰S…‰³…é…Ğˆ¼°(€€½±‘•ÈÑ…‰±•ÌÉ•Ñ…¥¸Ñ¡•¥È•á¥ÍÑ¥¹œ™…±±‰…¬¹…µ”œ¤ì(…ÍÍ•ÉĞ¹µ…Ñ ¡É•¹‘•ÉMÑÉÕÑÕÉ•‘½¹Ñ•¹Ğ Ñ…‰Ìœ±Ñ…‰Ì°Ñ…‰Ìœ±í…É¥…1…‰•°éíÑ½MÑÉ¥¹œ ¥íÑ¡É½ÜÉÉ½È µÕÍĞ¹½Ğ½•É”½‰©•ÑÌœ¥õõô¤°½É½±”ô‰Ñ…‰±¥ÍĞˆ…É¥„µ±…‰•°ô‰Q…ÉÑ…±½µ›ñ±•¬ˆ¼°(€€µ…±™½Éµ•Á•ÉÍ¥ÍÑ•±…‰•±ÌÉ•Ñ…¥¸Ñ¡”Í…™”Ñ…‰±¥ÍĞ™…±±‰…¬İ¥Ñ¡½ÕĞ½‰©•Ğ½•É¥½¸œ¤ì(…ÍÍ•ÉĞ¹µ…Ñ ¡É•¹‘•ÉMÑÉÕÑÕÉ•‘½¹Ñ•¹Ğ Ñ…‰Ìœ±Ñ…‰Ì°Ñ…‰Ìœ±í…É¥…1…‰•°èàœ¹É•Á•…Ğ ÈÀÀ¥ô¤±¹•ÜI•áÀ¡…É¥„µ±…‰•°ôˆ‘ìàœ¹É•Á•…Ğ ÄØÀ¥ô‰€¤°(€€Ñ…‰±¥ÍĞ±…‰•±ÌÍÑ…äİ¥Ñ¡¥¸Ñ¡”…ÕÑ¡½É•™¥•±±¥µ¥Ğœ¤ì)ô¤ì()Ñ•ÍĞ ÍÑÉÕÑÕÉ•…½É‘¥½¹Ì•áÁ½Í”Ñ¡•¥È%¹ÍÁ•Ñ½È¹…µ”…Ì…¸•Í…Á•…•ÍÍ¥‰±”É½ÕÀœ° ¤ôùì(½¹ÍĞ…½É‘¥½¸õíÙ•ÉÍ¥½¸èÄ±¥Ñ•µÌémí±…‰•°èe%,œ±½¹Ñ•¹Ğè[…±…Íèõuôì(½¹ÍĞ¹…µ•õÉ•¹‘•ÉMÑÉÕÑÕÉ•‘½¹Ñ•¹Ğ …½É‘¥½¸œ±…½É‘¥½¸°™…Äœ±í…É¥…1…‰•°èœ€/ÙëÙÍÏ¥¤€˜€ñe%,ø€€ô¤ì(…ÍÍ•ÉĞ¹µ…Ñ ¡¹…µ•°¼ñ‘¥Ø±…ÍÌô‰Ù¥ÍÕ…°µÍÑÉÕÑÕÉ•µ…½É‘¥½¸ˆÉ½±”ô‰É½ÕÀˆ…É¥„µ±…‰•°ô‰/ÙëÙÍÏ¥¤€™…µÀì€™±Ğíe%,™Ğìˆø¼°(€€Ñ¡”½É‘¥½¸¹…µ”Í•Ğ¥¸Ñ¡”%¹ÍÁ•Ñ½È¥Ì•áÁ½Í•Í…™•±ä¥¸Ñ¡”ÁÕ‰±¥Œ=4œ¤ì(…ÍÍ•ÉĞ¹µ…Ñ ¡É•¹‘•ÉMÑÉÕÑÕÉ•‘½¹Ñ•¹Ğ …½É‘¥½¸œ±…½É‘¥½¸°™…Äœ¤°½É½±”ô‰É½ÕÀˆ…É¥„µ±…‰•°ô‰K¥Íé±•Ñ•¬ˆ¼°(€€½±‘•ÈÍÑÉÕÑÕÉ•½É‘¥½¹Ì­••À„ÕÍ•™Õ°…•ÍÍ¥‰±”™…±±‰…¬¹…µ”œ¤ì(…ÍÍ•ÉĞ¹µ…Ñ ¡É•¹‘•ÉMÑÉÕÑÕÉ•‘½¹Ñ•¹Ğ …½É‘¥½¸œ±…½É‘¥½¸°™…Äœ±í…É¥…1…‰•°éíÑ½MÑÉ¥¹œ ¥íÑ¡É½ÜÉÉ½È µÕÍĞ¹½Ğ½•É”½‰©•ÑÌœ¥õõô¤°½É½±”ô‰É½ÕÀˆ…É¥„µ±…‰•°ô‰K¥Íé±•Ñ•¬ˆ¼°(€€µ…±™½Éµ•±•…ä¹…µ•Ì™…±°‰…¬İ¥Ñ¡½ÕĞ½‰©•Ğ½•É¥½¸œ¤ì(…ÍÍ•ÉĞ¹µ…Ñ ¡É•¹‘•ÉMÑÉÕÑÕÉ•‘½¹Ñ•¹Ğ …½É‘¥½¸œ±…½É‘¥½¸°™…Äœ±í…É¥…1…‰•°èàœ¹É•Á•…Ğ ÈÀÀ¥ô¤±¹•ÜI•áÀ¡…É¥„µ±…‰•°ôˆ‘ìàœ¹É•Á•…Ğ ÄØÀ¥ô‰€¤°(€€ÁÕ‰±¥Œ½É‘¥½¸¹…µ•ÌÍÑ…äİ¥Ñ¡¥¸Ñ¡”•á¥ÍÑ¥¹œ€ÄØÀµ¡…É…Ñ•È™¥•±½¹ÑÉ…Ğœ¤ì)ô¤ì()Ñ•ÍĞ „Í¥¹±”µÍ±¥‘”…É½ÕÍ•°‘½•Ì¹½ĞÉ•¹‘•È…Ñ¥Ù”¹¼µ½À¹…Ù¥…Ñ¥½¸½¹ÑÉ½±Ìœ° ¤ôùì(½¹ÍĞ¡Ñµ°õÉ•¹‘•ÉMÑÉÕÑÕÉ•‘½¹Ñ•¹Ğ …É½ÕÍ•°œ±íÙ•ÉÍ¥½¸èÄ±¥Ñ•µÌémí±…‰•°èä‘¥„œ±½¹Ñ•¹Ğèå•Ñ±•¸Ñ…ÉÑ…±½´œ±ÍÉŒèœœ±…±Ğèœõuô°½¹”µÍ±¥‘”œ¤ì(…ÍÍ•ÉĞ¹µ…Ñ ¡¡Ñµ°°¼ñ‰ÕÑÑ½¸ÑåÁ”ô‰‰ÕÑÑ½¸ˆ±…ÍÌô‰Ù¥ÍÕ…°µ…É½ÕÍ•°µÁÉ•Øˆ…É¥„µ±…‰•°ô‰³EëD‘¥„ˆ‘¥Í…‰±•ø¼°(€€ÁÉ•Ù¥½ÕÌ¹…Ù¥…Ñ¥½¸¥Ì¹…Ñ¥Ù•±ä‘¥Í…‰±•İ¡•¸Ñ¡•É”¥Ì¹¼½Ñ¡•ÈÍ±¥‘”œ¤ì(…ÍÍ•ÉĞ¹µ…Ñ ¡¡Ñµ°°¼ñÍÁ…¸±…ÍÌô‰Ù¥ÍÕ…°µ…É½ÕÍ•°µ½Õ¹Ğˆ…É¥„µ±¥Ù”ô‰Á½±¥Ñ”ˆøÄp¼€Äñp½ÍÁ…¸ø¼°(€€Ñ¡”±¥Ù”½Õ¹Ñ•ÈÉ•µ…¥¹ÌÙ¥Í¥‰±”™½È„½¹”µÍ±¥‘”…É½ÕÍ•°œ¤ì(…ÍÍ•ÉĞ¹µ…Ñ ¡¡Ñµ°°¼ñ‰ÕÑÑ½¸ÑåÁ”ô‰‰ÕÑÑ½¸ˆ±…ÍÌô‰Ù¥ÍÕ…°µ…É½ÕÍ•°µ¹•áĞˆ…É¥„µ±…‰•°ô‰/ÙÙ•Ñ­•ëD‘¥„ˆ‘¥Í…‰±•ø¼°(€€¹•áĞ¹…Ù¥…Ñ¥½¸¥Ì¹…Ñ¥Ù•±ä‘¥Í…‰±•İ¡•¸Ñ¡•É”¥Ì¹¼½Ñ¡•ÈÍ±¥‘”œ¤ì)ô¤ì
+import {countdownISOToLocal,countdownLocalToISO} from '../core/countdown-local-time.js';
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {createDocument} from '../core/schema.js';
+import {createEditorState,activePage} from '../core/state.js';
+import {execute} from '../core/commands.js';
+import {AUTHORED_TABLE_LIMITS,MAX_AUTHORED_TABLE_JSON_CHARS,MAX_AUTHORED_TABLE_TSV_CHARS,authoredNodeHtml,contentAttributes,contentTag,normalizeElementContent,normalizeContentField,CONTENT_FIELDS,validateElementContent,validatePageForPublication,contentProperties,imageFocalPosition} from '../core/authored-content.js';
+import {parseTableTsv,serializeTableTsv} from '../core/table-tsv.js';
+import {normalizeAccessibility,opaqueContrast} from '../core/accessibility.js';
+import {legacyImageSource,legacyPlayableSource,legacyPlaybackSettings,legacyImagePresentation,legacyImageCaption,legacyMediaInspectorValues,applyReducedMotionVideoPlayback} from '../core/legacy-media-source.js';
+import {safePublishedMediaUrl as safeStructuredPublishedMediaUrl} from '../core/element-content.js';
+
+test('typed content edits preserve unknown legacy data and undo restores the complete node',()=>{
+  const state=createEditorState(createDocument());execute(state,{type:'element.add',payload:{type:'heading',props:{text:'Eredeti cÃ­m',legacy:{kept:true}},style:{width:'240px'}}});
+  const id=state.selection.primaryId,before=structuredClone(activePage(state).nodes[id]);
+  execute(state,{type:'content.properties.set',payload:{nodeId:id,patch:{level:'1'}}});
+  let node=activePage(state).nodes[id];assert.equal(contentTag(node),'h1');assert.equal(node.props.text,'Eredeti cÃ­m');assert.deepEqual(node.props.legacy,{kept:true});assert.deepEqual(node.style,before.style);
+  execute(state,{type:'history.undo'});assert.deepEqual(activePage(state).nodes[id],before);
+  execute(state,{type:'history.redo'});assert.equal(contentTag(activePage(state).nodes[id]),'h1');
+  assert.throws(()=>execute(state,{type:'content.properties.set',payload:{nodeId:id,patch:{level:'7'}}}),/vÃ¡lasztÃ¡s/);
+  assert.equal(contentTag(activePage(state).nodes[id]),'h1');
+  execute(state,{type:'element.lock.set',payload:{nodeId:id,locked:true}});
+  assert.throws(()=>execute(state,{type:'content.properties.set',payload:{nodeId:id,patch:{level:'2'}}}),/locked/);
+});
+
+test('links, media, repeaters and table contents reject unsafe or invalid values',()=>{
+  const node=type=>({id:'safe',type,metadata:{contentVersion:1},props:{}});
+  for(const href of ['javascript:alert(1)','data:text/html,hi','//evil.test','https://user:pass@evil.test','/p/o\nk'])assert.throws(()=>normalizeElementContent(node('link'),{href}),undefined,href);
+  for(const src of ['http://example.com/a.png','data:image/svg+xml,hi','javascript:alert(1)','mailto:x@example.com'])assert.throws(()=>normalizeElementContent(node('image'),{src}));
+  assert.equal(normalizeElementContent(node('image'),{src:'/assets/a.png'}).src,'/assets/a.png');
+  assert.throws(()=>normalizeElementContent(node('video'),{autoplay:true,muted:false}),/nÃ©mÃ­tva/);
+  assert.throws(()=>normalizeElementContent(node('list'),{items:[{text:'Hello',href:'javascript:evil()'}]}));
+  assert.throws(()=>normalizeElementContent(node('table'),{rows:[new Array(17).fill('x')]}));
+  assert.throws(()=>normalizeElementContent(node('table'),{rows:[['FejlÃ©c','Ã‰rtÃ©k'],['Csak egy cella']]}),/oszlop/);
+  assert.throws(()=>normalizeElementContent(node('table'),{rows:[[]]}),/oszlop/);
+  assert.throws(()=>validateElementContent({...node('table'),props:{rows:[['FejlÃ©c','Ã‰rtÃ©k'],['HiÃ¡nyos']]} }),/oszlop/);
+  assert.throws(()=>normalizeElementContent(node('gallery'),{items:new Array(41).fill({src:'/a.png'})}));
+  assert.equal(contentProperties(node('video')).controls,true);
+  assert.equal(contentProperties(node('heading')).level,'2');
+  assert.throws(()=>validateElementContent({...node('heading'),props:{level:'8'}}));
+});
+
+test('authored muted autoplay becomes manually controllable for reduced-motion visitors',()=>{
+ const video={id:'motion-aware-video',type:'video',metadata:{contentVersion:1},props:{src:'/video.webm',controls:false,muted:true,autoplay:true,loop:true}};
+ const standard=authoredNodeHtml(video);
+ assert.match(standard,/<video[^>]* muted autoplay[^>]*>/,'standard motion preference retains the explicitly authored muted background mode');
+ assert.match(standard,/data-reduced-motion-autoplay="true" data-reduced-motion-controls="false"/,'the renderer records only the safe playback preference needed for an in-place update');
+ assert.doesNotMatch(standard,/<video[^>]* controls/);
+ const reduced=authoredNodeHtml(video,{reducedMotion:true});
+ assert.match(reduced,/<video[^>]* controls[^>]* muted/,'reduced-motion mode reveals a native play/pause control');
+ assert.doesNotMatch(reduced,/<video[^>]* autoplay/,'reduced-motion mode disables automatic playback');
+ assert.match(authoredNodeHtml(video,{editor:true}),/<video[^>]* controls[^>]* muted/,'the Editor suppresses autoplay without hiding the manual playback control');
+});
+
+test('reduced-motion changes update only eligible videos and preserve their DOM identity',()=>{
+ const video={dataset:{reducedMotionAutoplay:'true',reducedMotionControls:'false'},muted:true,autoplay:true,controls:false,paused:false,pause(){this.paused=true}};
+ const root={querySelectorAll:selector=>{assert.equal(selector,'video[data-reduced-motion-autoplay="true"]');return [video]}};
+ assert.equal(applyReducedMotionVideoPlayback(root,{reducedMotion:true}),1);
+ assert.equal(video.autoplay,false);assert.equal(video.controls,true);assert.equal(video.paused,true);
+ assert.equal(applyReducedMotionVideoPlayback(root,{reducedMotion:false}),1);
+ assert.equal(video.autoplay,true);assert.equal(video.controls,false);assert.equal(video.paused,true);
+ assert.equal(applyReducedMotionVideoPlayback(root,{reducedMotion:false,editor:true}),1);
+ assert.equal(video.autoplay,false);assert.equal(video.controls,true,'the Editor always keeps controls while suppressing authored autoplay');
+ const unmuted={dataset:{reducedMotionAutoplay:'true',reducedMotionControls:'false'},muted:false,autoplay:false,controls:false,pause(){throw new Error('unmuted media is never paused or auto-started by preference handling')}};
+ assert.equal(applyReducedMotionVideoPlayback({querySelectorAll:()=>[unmuted]},{reducedMotion:false}),1);
+ assert.equal(unmuted.autoplay,false);assert.equal(unmuted.controls,false);
+});
+
+test('authored tables retain their own 100-row and 16-column contract through public rendering',()=>{
+  const authored={id:'authored-table-boundaries',type:'table',metadata:{contentVersion:1},props:{header:true}};
+  const rows=Array.from({length:100},(_,row)=>Array.from({length:16},(_,column)=>`r${row}-c${column}`));
+  const normalized=normalizeElementContent(authored,{rows});
+  assert.equal(normalized.rows.length,100);
+  assert.equal(normalized.rows[0].length,16);
+  assert.equal(normalized.rows[99][15],'r99-c15');
+  validateElementContent({...authored,props:normalized});
+  const html=authoredNodeHtml({...authored,props:normalized});
+  assert.equal((html.match(/<tr>/g)||[]).length,100,'published renderer retains every supported row');
+  assert.equal((html.match(/<td>/g)||[]).length,99*16,'published renderer retains every supported body cell');
+  assert.equal((html.match(/<th scope="col">/g)||[]).length,16,'published renderer retains the full header width');
+  assert.doesNotThrow(()=>validatePageForPublication({rootId:'root',nodes:{
+    root:{id:'root',type:'root',children:[authored.id]},
+    [authored.id]:{...authored,children:[],props:normalized}
+  }}),'the page-level Publish gate accepts the same authored-v1 boundary');
+  assert.throws(()=>normalizeElementContent(authored,{rows:[...rows,Array(16).fill('extra')]}),/100 sor/);
+  assert.throws(()=>normalizeElementContent(authored,{rows:[Array(17).fill('extra')]}),/1â€“16 oszlop/);
+});
+
+test('authored table TSV contract covers the full model and preserves quoted cell delimiters',()=>{
+  assert.equal(AUTHORED_TABLE_LIMITS.rows,100);
+  assert.equal(AUTHORED_TABLE_LIMITS.columns,16);
+  assert.equal(AUTHORED_TABLE_LIMITS.cellCharacters,2000);
+  assert.equal(MAX_AUTHORED_TABLE_JSON_CHARS,120000,
+    'serialized table content reserves room under the server 180,000-character Page Model cap');
+  assert.equal(MAX_AUTHORED_TABLE_TSV_CHARS,180000,
+    'the textarea does not truncate at the smaller serialized content budget');
+  assert.equal(CONTENT_FIELDS.table.find(field=>field.key==='rows').max,MAX_AUTHORED_TABLE_TSV_CHARS);
+  const tableNode={id:'table-budget',type:'table',metadata:{contentVersion:1},props:{}};
+  const withinBudget=Array.from({length:3},()=>Array(16).fill('x'.repeat(2000)));
+  const accepted=normalizeContentField(CONTENT_FIELDS.table.find(field=>field.key==='rows'),withinBudget);
+  assert.ok(JSON.stringify(accepted).length<=MAX_AUTHORED_TABLE_JSON_CHARS,
+    'a dense table near 100 KB JSON remains within the persistable table budget');
+  const state=createEditorState(createDocument()),parentId=activePage(state).rootId;
+  execute(state,{type:'element.add',payload:{type:'table',parentId}});
+  const nodeId=state.selection.primaryId;
+  execute(state,{type:'content.properties.set',payload:{nodeId,patch:{rows:accepted}}});
+  assert.ok(JSON.stringify(state.document).length<180000,
+    'a dense table inside its budget fits a minimal saved Page Model under the route limit');
+  const overBudget=[...withinBudget,Array(16).fill('x'.repeat(2000))];
+  assert.throws(()=>normalizeElementContent(tableNode,{rows:overBudget}),/120Â 000 karakter/,
+    'the Inspector rejects a valid cell/row shape that could not fit in the documented Save limit');
+  const quoteHeavy=Array.from({length:3},()=>Array(16).fill('"'.repeat(1300)));
+  assert.ok(serializeTableTsv(quoteHeavy).length<MAX_AUTHORED_TABLE_TSV_CHARS,
+    'escaped quotes remain below the generous textarea ceiling');
+  assert.throws(()=>normalizeElementContent(tableNode,{rows:quoteHeavy}),/120Â 000 karakter/,
+    'the persisted JSON budget accounts for quote escaping rather than raw TSV length alone');
+  const before=structuredClone(state.document);
+  assert.throws(()=>execute(state,{type:'content.properties.set',payload:{nodeId,patch:{rows:overBudget}}}),/120Â 000 karakter/,
+    'the command rejects the over-budget table before a draft mutation');
+  assert.deepEqual(state.document,before,'an invalid large table cannot mutate the saved editor model');
+  const rows=[['FejlÃ©c','MÃ¡sodik'],['TabulÃ¡tor\t a cellÃ¡ban','KÃ©t sor\nfolytatÃ¡s'],['IdÃ©zet: "igen"','CRLF\r\nmegmarad']];
+  const text=serializeTableTsv(rows);
+  assert.deepEqual(parseTableTsv(text),rows,'quotes, embedded tabs, LF and CRLF survive an Inspector edit round trip');
+  for(const value of ['x'.repeat(2000),'"'.repeat(2000),'\\'.repeat(2000),'\t'.repeat(2000),'\n'.repeat(2000),'\r'.repeat(2000),'\r\n'.repeat(1000),'\u0000'.repeat(2000)]){
+    const encoded=serializeTableTsv([[value]]),decoded=parseTableTsv(encoded);
+    assert.ok(encoded.length<=JSON.stringify(decoded).length,
+      'the 180,000-character textarea cap cannot truncate a table whose serialized rows fit the 120,000-character persisted budget');
+  }
+  assert.deepEqual(parseTableTsv('A\tB\r\nC\tD'),[['A','B'],['C','D']],
+    'ordinary Excel-style CRLF TSV remains supported');
+  assert.deepEqual(parseTableTsv('A\tB\r\nC\tD\r\n'),[['A','B'],['C','D']],
+    'a terminal Excel line ending does not create a phantom one-cell row');
+  assert.deepEqual(parseTableTsv('A\tB\n'),[['A','B']],
+    'a terminal LF has the same no-phantom-row behavior as Excel CRLF');
+  assert.deepEqual(parseTableTsv('A\tB\rC\tD\r'),[['A','B'],['C','D']],
+    'legacy CR-only records and one terminal CR do not create a phantom row');
+  assert.deepEqual(parseTableTsv('A\tB\n\n'),[['A','B'],['']],
+    'an additional blank record remains distinguishable from one terminal line ending');
+  assert.deepEqual(parseTableTsv('A\tB\r\r'),[['A','B'],['']],
+    'an explicit blank CR-only record remains distinguishable from one terminal CR');
+  assert.throws(()=>parseTableTsv('"lezÃ¡ratlan\tcell'),/nincs lezÃ¡rva/);
+  assert.throws(()=>parseTableTsv('"idÃ©zett"utÃ³tag\tB'),/zÃ¡rÃ³ idÃ©zÅ‘jel/);
+});
+
+test('authored public media never coerces malformed persisted sources into URLs',()=>{
+ const src='/media/00000000-0000-4000-8000-000000000123';
+ const node=(type,props)=>({id:'malformed-source',type,metadata:{contentVersion:1},props});
+ for(const malformed of [[src],{toString:()=>src}]){
+  for(const type of ['image','video','audio']){
+   assert.doesNotMatch(authoredNodeHtml(node(type,{src:malformed,alt:'KÃ©p'})),/\/media\/00000000/);
+  }
+  for(const type of ['gallery','carousel']){
+   assert.doesNotMatch(authoredNodeHtml(node(type,{items:[{src:malformed,alt:'KÃ©p',label:'Dia',content:'Tartalom'}]})),/\/media\/00000000/);
+  }
+ }
+ assert.match(authoredNodeHtml(node('image',{src,alt:'KÃ©p'})),/\/media\/00000000/);
+});
+
+test('authored markup escapes text, preserves link security and uses native accessible structures',()=>{
+  const node={id:'node-1',type:'button',metadata:{contentVersion:1},props:{text:'<img src=x onerror=alert(1)>',href:'/p/home',target:'_blank',ariaLabel:'KezdÅ‘lap'}};
+  assert.equal(contentTag(node),'a');assert.deepEqual(contentAttributes(node),{href:'/p/home',target:'_blank',rel:'noopener noreferrer','aria-label':'KezdÅ‘lap'});
+  assert.match(authoredNodeHtml(node),/&lt;img/);assert.doesNotMatch(authoredNodeHtml(node),/<img/);
+  assert.match(authoredNodeHtml({...node,type:'tabs',props:{items:[{title:'ElsÅ‘',text:'<script>test</script>'},{title:'MÃ¡sodik',text:'MÃ¡sodik tartalom'}]}}),/role="tabpanel"/);
+  assert.match(authoredNodeHtml({...node,type:'accordion',props:{items:[{title:'KÃ©rdÃ©s',text:'VÃ¡lasz'}]}}),/<details><summary>KÃ©rdÃ©s/);
+  const authoredTable=authoredNodeHtml({...node,type:'table',props:{caption:'EredmÃ©nyek',header:true,rows:[['NÃ©v','Ã‰rtÃ©k'],['Teszt','42']]}});
+  assert.match(authoredTable,/<div class="creator-table-scroll" role="region" aria-label="EredmÃ©nyek" tabindex="0"><table aria-label="EredmÃ©nyek"><caption>EredmÃ©nyek<\/caption>/);
+  assert.match(authoredTable,/<th scope="col">/);
+  const unnamedTable=authoredNodeHtml({...node,type:'table',props:{header:false,rows:[['NÃ©v'],['Teszt']]}});
+  assert.match(unnamedTable,/<table aria-label="TÃ¡blÃ¡zat">/,'the native public table role has a name even when the optional caption is blank');
+  const escapedTable=authoredNodeHtml({...node,type:'table',props:{caption:'Ã‰ves <eredmÃ©nyek>',rows:[['NÃ©v'],['Teszt']]}});
+  assert.match(escapedTable,/<table aria-label="Ã‰ves &lt;eredmÃ©nyek&gt;"><caption>Ã‰ves &lt;eredmÃ©nyek&gt;<\/caption>/,'caption text is escaped in both visible and accessible names');
+  assert.match(authoredNodeHtml({...node,type:'image',props:{src:'/image.svg',alt:'IllusztrÃ¡ciÃ³',ratio:'1 / 1',fit:'contain'}}),/alt="IllusztrÃ¡ciÃ³"/);
+});
+
+test('legacy accessibility attributes have one canonical Canvas/Public interpretation',()=>{
+  const base={type:'icon',props:{ariaLabel:'TulajdonsÃ¡g neve'},accessibility:{
+    id:'current-anchor',anchorId:'legacy-anchor',label:'Inspector nÃ©v',ariaLabel:'RÃ©gi elnevezÃ©s'
+  }};
+  assert.deepEqual(contentAttributes(base),{
+    'aria-label':'RÃ©gi elnevezÃ©s',role:'img',id:'legacy-anchor'
+  },'legacy label/anchor have the same precedence as the original published renderer');
+  assert.deepEqual(contentAttributes({...base,accessibility:{id:'current-anchor',label:'Inspector nÃ©v'}}),{
+    'aria-label':'TulajdonsÃ¡g neve',role:'img',id:'current-anchor'
+  },'new editor properties remain functional');
+  assert.equal(contentAttributes({...base,accessibility:{id:'current-anchor',anchorId:'not valid',label:'Inspector nÃ©v'}}).id,'current-anchor');
+  assert.equal(contentAttributes({...base,type:'image',props:{},accessibility:{ariaLabel:'Legacy media label'}})['aria-label'],undefined,
+    'old public renderer deliberately excluded legacy media labels');
+});
+
+test('gallery crop views preserve legacy presets and partial axes without materializing saved defaults',()=>{
+ const presets={center:[50,50],top:[50,0],bottom:[50,100],left:[0,50],right:[100,50]};
+ for(const [focalPoint,[focalX,focalY]] of Object.entries(presets)){
+  const item=Object.freeze({src:'/image.jpg',alt:'RÃ©gi kÃ©p',focalPoint});
+  const before=structuredClone(item);
+  assert.deepEqual(imageFocalPosition(item),{focalX,focalY});
+  for(const type of ['gallery','carousel']){
+   const node={id:'legacy-crop',type,metadata:{contentVersion:1},props:{items:Object.freeze([item])}};
+   assert.match(authoredNodeHtml(node),new RegExp(`object-position:${focalX}% ${focalY}%`));
+   const changed=normalizeElementContent(node,{items:[{...item,caption:'Ãšj felirat'}]});
+   assert.equal(Object.hasOwn(changed.items[0],'focalX'),false);
+   assert.equal(Object.hasOwn(changed.items[0],'focalY'),false);
+  }
+  assert.deepEqual(item,before);
+ }
+ assert.deepEqual(imageFocalPosition({focalPoint:'top',focalX:24}),{focalX:24,focalY:0});
+ assert.deepEqual(imageFocalPosition({focalPoint:'right',focalY:68}),{focalX:100,focalY:68});
+ assert.deepEqual(imageFocalPosition({focalPoint:'top',focalX:-5,focalY:120}),{focalX:0,focalY:100});
+ assert.deepEqual(imageFocalPosition({focalPoint:'right',focalX:'invalid'}),{focalX:100,focalY:50});
+ for(const focalPoint of ['constructor','__proto__','unknown',null])assert.deepEqual(imageFocalPosition({focalPoint}),{focalX:50,focalY:50});
+});
+
+test('image focal position supports precise two-axis crops while preserving legacy presets',()=>{
+  const image={id:'crop',type:'image',metadata:{contentVersion:1},props:{src:'/image.jpg',alt:'Teszt'}};
+  assert.match(authoredNodeHtml({...image,props:{...image.props,focalX:18,focalY:82}}),/object-position:18% 82%/);
+  assert.match(authoredNodeHtml({...image,props:{...image.props,focalPoint:'top'}}),/object-position:50% 0%/);
+  assert.deepEqual([contentProperties({...image,props:{...image.props,focalPoint:'left'}}).focalX,contentProperties({...image,props:{...image.props,focalPoint:'left'}}).focalY],[0,50]);
+  assert.equal(normalizeElementContent(image,{focalX:0,focalY:100}).focalY,100);
+  assert.throws(()=>normalizeElementContent(image,{focalX:-1}),/kÃ¶zÃ©/);
+  assert.throws(()=>normalizeElementContent(image,{focalY:101}),/kÃ¶zÃ©/);
+  assert.match(authoredNodeHtml({...image,type:'gallery',props:{items:[{src:'/image.jpg',alt:'KÃ©p',focalX:20,focalY:70}]}}),/object-position:20% 70%/);
+});
+
+test('MÃ©diatÃ¡r asset ID renders as a private canvas preview and a public route only in published output',()=>{
+  const assetId='6b1c2e65-e46e-4764-b234-123456789abc';
+  const node={id:'media',type:'image',metadata:{contentVersion:1},props:{assetId,alt:'MÃ¡rkajel'}};
+  assert.equal(normalizeElementContent(node,{assetId}).assetId,assetId);
+  assert.match(authoredNodeHtml(node,{editor:true}),new RegExp(`/api/admin/media\\?id=${assetId}`));
+  assert.match(authoredNodeHtml(node),new RegExp(`/media/${assetId}`));
+  for(const type of ['gallery','carousel']){
+    const collection={...node,type,props:{items:[{assetId,src:'/old-image.jpg',alt:'MÃ¡rkajel'}]}};
+    assert.match(authoredNodeHtml(collection,{editor:true}),new RegExp(`data-lightbox-src="/api/admin/media\\?id=${assetId}"`));
+    assert.match(authoredNodeHtml(collection),new RegExp(`data-lightbox-src="/media/${assetId}"`));
+  }
+  assert.throws(()=>normalizeElementContent(node,{assetId:'../private'}),/azonosÃ­tÃ³/);
+});
+
+test('authored audio and video expose only their playable Media Library formats',()=>{
+  const assetId='6b1c2e65-e46e-4764-b234-123456789abc';
+  for(const {type,kind,label,mimes} of [
+    {type:'audio',kind:'audio',label:'Hang a MÃ©diatÃ¡rbÃ³l',mimes:['audio/mpeg','audio/ogg','audio/wav']},
+    {type:'video',kind:'video',label:'VideÃ³ a MÃ©diatÃ¡rbÃ³l',mimes:['video/webm']}
+  ]){
+    const definition=CONTENT_FIELDS[type].find(field=>field.key==='assetId');
+    assert.ok(definition,`${type} has a typed Media Library source field`);
+    assert.equal(definition.label,label);
+    assert.equal(definition.type,'asset');
+    assert.equal(definition.selectedKind,kind);
+    assert.deepEqual(definition.mimes,mimes);
+    const props={src:'',assetId,controls:true,loop:false,muted:true,autoplay:false,poster:'',posterAssetId:''};
+    const node={id:'authored-'+type,type,metadata:{contentVersion:1},props};
+    assert.equal(normalizeElementContent(node,{assetId}).assetId,assetId);
+    validateElementContent(node);
+    assert.match(authoredNodeHtml(node,{editor:true}),new RegExp(`/api/admin/media\\?id=${assetId}`));
+    assert.match(authoredNodeHtml(node),new RegExp(`/media/${assetId}`));
+    assert.throws(()=>normalizeElementContent(node,{assetId:'../untrusted'}),/azonosÃ­tÃ³/);
+  }
+});
+
+test('structured public media rejects multiply encoded private Editor preview routes',()=>{
+  const privateUrls=[
+    '/api/admin/media?id=asset',
+    '/api/%61dmin/media?id=asset',
+    '/%2fapi%2fadmin%2fmedia?id=asset',
+    '/%252fapi%252fadmin%252fmedia?id=asset',
+    '/%255capi%255cadmin%255cmedia?id=asset',
+    '/%2561pi%252fadmin%252fmedia?id=asset',
+    '/%25252561pi%2525252fadmin%2525252fmedia?id=asset',
+    '/public/%252e%252e/%2561pi/%61dmin/media?id=asset'
+  ];
+  for(const src of privateUrls){
+    assert.equal(safeStructuredPublishedMediaUrl(src),'',src);
+    for(const type of ['gallery','carousel']){
+      const content=type==='gallery'
+        ? {version:1,items:[{src,alt:'PrivÃ¡t kÃ©p',caption:''}]}
+        : {version:1,items:[{src,label:'Dia',content:'LeÃ­rÃ¡s',alt:'PrivÃ¡t kÃ©p'}]};
+      const html=renderStructuredContent(type,content,'private-'+type);
+      assert.doesNotMatch(html,/<img[^>]*src=/,`${type} cannot render private media URL: ${src}`);
+      assert.doesNotMatch(html,/data-lightbox-src=/,`${type} cannot create a private lightbox URL: ${src}`);
+    }
+  }
+  assert.equal(safeStructuredPublishedMediaUrl('/media/00000000-0000-4000-8000-000000000123'),'/media/00000000-0000-4000-8000-000000000123');
+  assert.equal(safeStructuredPublishedMediaUrl('https://cdn.example.test/image.webp'),'https://cdn.example.test/image.webp');
+});
+
+test('accessibility IDs are unique within a page and invalid mutations roll back',()=>{
+  const state=createEditorState(createDocument());const ids=[];
+  for(let i=0;i<2;i++){execute(state,{type:'element.add',payload:{type:'text',parentId:activePage(state).rootId}});ids.push(state.selection.primaryId)}
+  execute(state,{type:'accessibility.set',payload:{nodeId:ids[0],patch:{id:'bemutato',label:'BemutatkozÃ¡s',lang:'hu'}}});
+  assert.throws(()=>execute(state,{type:'accessibility.set',payload:{nodeId:ids[1],patch:{id:'bemutato'}}}),/foglalt/);
+  assert.throws(()=>execute(state,{type:'accessibility.set',payload:{nodeId:ids[1],patch:{id:'x" onclick="bad'}}}));
+  assert.throws(()=>execute(state,{type:'accessibility.set',payload:{nodeId:ids[1],patch:{role:'admin'}}}));
+  assert.equal(activePage(state).nodes[ids[1]].accessibility.id,undefined);
+});
+
+test('adding an authored element is one Undo and subtree copies preserve their internal anchor relationships',()=>{
+  const state=createEditorState(createDocument()),rootId=activePage(state).rootId;
+  execute(state,{type:'element.add',payload:{type:'heading',parentId:rootId,authored:true}});const heading=state.selection.primaryId;
+  assert.equal(activePage(state).nodes[heading].metadata.contentVersion,1);assert.equal(state.history.past.length,1);
+  execute(state,{type:'history.undo'});assert.equal(activePage(state).nodes[heading],undefined);
+  execute(state,{type:'element.add',payload:{type:'container',parentId:rootId,authored:true}});const group=state.selection.primaryId;
+  execute(state,{type:'element.add',payload:{type:'text',parentId:group,authored:true}});const text=state.selection.primaryId;
+  execute(state,{type:'accessibility.set',payload:{nodeId:text,patch:{id:'belso-cel'}}});
+  execute(state,{type:'element.add',payload:{type:'button',parentId:group,authored:true,props:{text:'UgrÃ¡s',href:'#belso-cel'}}});const button=state.selection.primaryId;
+  execute(state,{type:'element.duplicate',payload:{nodeId:group}});const copy=activePage(state).nodes[state.selection.primaryId],children=copy.children.map(id=>activePage(state).nodes[id]);
+  assert.notEqual(children[0].accessibility.id,'belso-cel');assert.equal(children[1].props.href,'#'+children[0].accessibility.id);
+  assert.equal(activePage(state).nodes[button].props.href,'#belso-cel');assert.equal(activePage(state).nodes[text].accessibility.id,'belso-cel');
+});
+
+test('contrast feedback only claims a ratio for opaque known colors',()=>{
+  assert.equal(opaqueContrast('rgb(0, 0, 0)','rgb(255, 255, 255)'),21);
+  assert.equal(opaqueContrast('rgb(10, 20, 30)','rgb(10, 20, 30)'),1);
+  assert.equal(opaqueContrast('rgba(10, 20, 30, 0.5)','rgb(255, 255, 255)'),null);
+});
+
+test('incomplete authored content may remain a draft but cannot publish visibly; hidden subtrees and legacy data are preserved',()=>{
+  const state=createEditorState(createDocument()),rootId=activePage(state).rootId;
+  execute(state,{type:'element.add',payload:{type:'container',parentId:rootId,authored:true}});const container=state.selection.primaryId;
+  execute(state,{type:'element.add',payload:{type:'image',parentId:container,authored:true}});const image=state.selection.primaryId;
+  validateElementContent(activePage(state).nodes[image]);assert.throws(()=>validatePageForPublication(activePage(state)),/mÃ©diaforrÃ¡st/);
+  execute(state,{type:'content.properties.set',payload:{nodeId:image,patch:{src:'/fixture.svg'}}});assert.throws(()=>validatePageForPublication(activePage(state)),/kÃ©pleÃ­rÃ¡st/);
+  execute(state,{type:'content.properties.set',payload:{nodeId:image,patch:{decorative:true}}});validatePageForPublication(activePage(state));
+  execute(state,{type:'content.properties.set',payload:{nodeId:image,patch:{src:''}}});
+  for(const device of ['desktop','tablet','mobile'])execute(state,{type:'element.visibility.set',payload:{nodeId:container,device,visible:false}});
+  validatePageForPublication(activePage(state));assert.equal(activePage(state).nodes[image].props.src,'');
+});
+
+test('legacy image media library source separates draft and published paths and rejects invalid asset IDs',()=>{
+ const assetId='00000000-0000-4000-8000-000000000123';
+ const image={assetId,src:'https://example.com/previous.png'};
+ assert.equal(legacyImageSource(image,{editor:true}),'/api/admin/media?id='+assetId);
+ assert.equal(legacyImageSource(image,{editor:false}),'/media/'+assetId);
+ assert.equal(legacyImageSource({assetId:'../../../secret',src:'/fallback.png'}),'/fallback.png');
+ assert.equal(legacyImageSource({assetId:'not-an-asset',src:'//untrusted.invalid/image.png'}),'');
+ assert.equal(legacyImageSource({assetId:'',src:'https://example.com/photo.png'}),'https://example.com/photo.png');
+ assert.equal(legacyImageSource({assetId:'',src:'javascript:alert(1)'}),'');
+});
+
+test('legacy image focal points reject malformed persisted values without shifting the crop',()=>{
+ const top={focalPoint:'top',focalX:' ',focalY:true};
+ assert.deepEqual([legacyImagePresentation(top).focalX,legacyImagePresentation(top).focalY],[50,0]);
+ const right={focalPoint:'right',focalX:[],focalY:{value:90}};
+ assert.deepEqual([legacyImagePresentation(right).focalX,legacyImagePresentation(right).focalY],[100,50]);
+ assert.equal(legacyImagePresentation({focalX:' 75 ',focalY:22.6}).objectPosition,'75% 23%');
+ assert.equal(legacyImagePresentation({focalPoint:'right',focalX:'0x10',focalY:'0b11'}).objectPosition,'100% 50%');
+ assert.equal(legacyImagePresentation({focalPoint:'top',focalX:'0o12',focalY:'12px'}).objectPosition,'50% 0%');
+ assert.equal(legacyImagePresentation({focalX:-8,focalY:111}).objectPosition,'0% 100%');
+});
+
+test('legacy image presets ignore inherited object properties in old saved pages',()=>{
+ for(const focalPoint of ['constructor','toString','valueOf','__proto__','hasOwnProperty']){
+  const appearance=legacyImagePresentation({focalPoint,focalX:null,focalY:'invalid'});
+  assert.equal(appearance.objectPosition,'50% 50%',focalPoint);
+ }
+ for(const focalPoint of [null,42,true,[],{toString:null},{valueOf:null,toString:null}]){
+  assert.equal(legacyImagePresentation({focalPoint}).objectPosition,'50% 50%');
+ }
+ assert.equal(legacyImagePresentation({focalPoint:'right'}).objectPosition,'100% 50%');
+ assert.equal(legacyImagePresentation({focalPoint:'top',focalX:'80'}).objectPosition,'80% 0%');
+});
+
+test('legacy image alt safely handles malformed persisted structured values',()=>{
+ for(const alt of [{toString:null},{valueOf:null,toString:null},['not','an','alt'],true,{}]){
+  assert.equal(legacyImagePresentation({alt}).alt,'');
+ }
+ assert.equal(legacyImagePresentation({alt:'SajÃ¡t fotÃ³'}).alt,'SajÃ¡t fotÃ³');
+ assert.equal(legacyImagePresentation({alt:12}).alt,'12');
+ assert.equal(legacyImagePresentation({alt:'MegÅ‘rzÃ¶tt leÃ­rÃ¡s',decorative:true}).alt,'');
+});
+
+test('legacy image captions keep only supported visible text',()=>{
+ assert.equal(legacyImageCaption({caption:'  SajÃ¡t kÃ©palÃ¡Ã­rÃ¡s  '}),'SajÃ¡t kÃ©palÃ¡Ã­rÃ¡s');
+ assert.equal(legacyImageCaption({caption:{toString:null}}),'');
+ assert.equal(legacyImageCaption({caption:12}),'');
+ assert.equal(legacyImageCaption({caption:'x'.repeat(1200)}).length,1000);
+});
+
+test('legacy media source ignores malformed structured URLs without throwing',()=>{
+ for(const src of [{toString:null},{valueOf:null,toString:null},['/unsafe.svg'],true,123]){
+  assert.equal(legacyImageSource({src}), '');
+  assert.equal(legacyPlaybackSettings({poster:src},{video:true}).poster,'');
+ }
+ assert.equal(legacyImageSource({src:'/valid.svg'}),'/valid.svg');
+ assert.equal(legacyImageSource({src:'https://example.com/media.png'}),'https://example.com/media.png');
+});
+
+test('legacy public media sources never expose private editor previews',()=>{
+ const preview='/api/admin/media?id=00000000-0000-4000-8000-000000000123';
+ for(const source of [legacyImageSource,legacyPlayableSource]){
+  for(const src of [preview,'/api/%61dmin/media?id=x','/foo/../api/admin/media?id=x'])assert.equal(source({src}), '');
+  assert.equal(source({src:preview},{editor:true}),preview);
+  assert.equal(source({src:'/media/00000000-0000-4000-8000-000000000123'}),'/media/00000000-0000-4000-8000-000000000123');
+ }
+ assert.equal(legacyPlaybackSettings({poster:preview},{video:true}).poster,'');
+ assert.equal(legacyPlaybackSettings({poster:preview},{video:true,editor:true}).poster,preview);
+});
+
+test('legacy video and audio reject corrupt nonstring source without coercion',()=>{
+ const assetId='00000000-0000-4000-8000-000000000123';
+ for(const src of [null,42,true,['/fixture.webm'],{toString:null},{valueOf:null,toString:null}]){
+  assert.equal(legacyPlayableSource({src}), '',String(typeof src));
+ }
+ assert.equal(legacyPlayableSource({src:'/fixture.webm'}),'/fixture.webm');
+ assert.equal(legacyPlayableSource({src:'https://example.com/audio.mp3'}),'https://example.com/audio.mp3');
+ assert.equal(legacyPlayableSource({src:'javascript:alert(1)'}),'');
+ assert.equal(legacyPlayableSource({assetId,src:'https://example.com/old.webm'},{editor:true}),'/api/admin/media?id='+assetId);
+ assert.equal(legacyPlayableSource({assetId,src:'https://example.com/old.webm'}),'/media/'+assetId);
+ assert.equal(legacyPlayableSource({assetId:'not-an-asset',src:'/fixture.webm'}),'/fixture.webm');
+});
+
+test('legacy playback settings preserve prior controls defaults and prohibit unmuted autoplay',()=>{
+ const posterId='00000000-0000-4000-8000-000000000123';
+ assert.deepEqual(legacyPlaybackSettings({}, {video:true,editor:false}),{controls:true,loop:false,muted:false,autoplay:false,poster:''});
+ assert.deepEqual(legacyPlaybackSettings({controls:false,loop:true,muted:false,autoplay:true,poster:'/poster.svg'},{video:true}),{
+  controls:false,loop:true,muted:false,autoplay:false,poster:'/poster.svg'
+ });
+ const movie={controls:false,loop:true,muted:true,autoplay:true,posterAssetId:posterId,poster:'//blocked.invalid/p.png'};
+ assert.deepEqual(legacyPlaybackSettings(movie,{video:true,editor:true}),{
+  controls:true,loop:true,muted:true,autoplay:false,poster:'/api/admin/media?id='+posterId
+ });
+ assert.deepEqual(legacyPlaybackSettings(movie,{video:true,editor:false}),{
+  controls:false,loop:true,muted:true,autoplay:true,poster:'/media/'+posterId
+ });
+ assert.deepEqual(legacyPlaybackSettings(movie,{video:true,editor:false,reducedMotion:true}),{
+  controls:true,loop:true,muted:true,autoplay:false,poster:'/media/'+posterId
+ },'reduced-motion visitors receive manual controls instead of a controls-free autoplay video');
+ assert.deepEqual(legacyPlaybackSettings({controls:false,loop:true,muted:true,autoplay:true,poster:'/poster.svg'}),{
+  controls:false,loop:true,muted:false,autoplay:false,poster:''
+ });
+ assert.equal(legacyPlaybackSettings({poster:'https://valid.example/path.png',posterAssetId:'invalid'},{video:true}).poster,'https://valid.example/path.png');
+ assert.equal(legacyPlaybackSettings({poster:'javascript:alert(1)'},{video:true}).poster,'');
+});
+
+test('legacy image crop, ratio and load settings share allowlisted defaults and safe bounds',()=>{
+ const defaults=legacyImagePresentation({});
+ assert.deepEqual(defaults,{fit:'cover',ratio:'auto',focalX:50,focalY:50,objectPosition:'50% 50%',loading:'lazy',alt:'',decorative:false});
+ assert.deepEqual(legacyImagePresentation({objectFit:'contain',ratio:'16 / 9',focalX:17,focalY:82,loading:'eager',alt:'NaplÃ³ kÃ©p'}),{
+  fit:'contain',ratio:'16 / 9',focalX:17,focalY:82,objectPosition:'17% 82%',loading:'eager',alt:'NaplÃ³ kÃ©p',decorative:false
+ });
+ const decorative=legacyImagePresentation({objectFit:'scale-down',ratio:'3 / 4',focalX:'125',focalY:-20,decorative:true,alt:'MegÅ‘rzendÅ‘ szÃ¶veg'});
+ assert.equal(decorative.objectPosition,'100% 0%');
+ assert.equal(decorative.alt,'');assert.equal(decorative.decorative,true);
+ assert.equal(legacyImagePresentation({focalPoint:'top'}).objectPosition,'50% 0%');
+ assert.deepEqual(legacyImagePresentation({fit:'url(javascript:bad)',objectFit:'unknown',ratio:'666 / 0',focalX:'NaN',focalY:'Infinity',loading:'script'}),defaults);
+ assert.equal(legacyImagePresentation({fit:'fill',ratio:'1 / 1'}).fit,'fill');
+ assert.equal(legacyImagePresentation({fit:'fill',objectFit:'contain'}).fit,'contain','the legacy Inspector must override an older fit alias');
+});
+
+
+test('legacy media Inspector rejects structured JSON without coercion or mutating persisted values',()=>{
+ const bad={toString:'not callable',valueOf:'not callable'};
+ for(const value of [bad,{},[],['/image.png'],true,false,19,Infinity]){
+  const props=Object.freeze({src:value,poster:value,assetId:value,posterAssetId:value,alt:value});
+  const before=structuredClone(props);
+  const view=legacyMediaInspectorValues(props);
+  assert.equal(view.src,'');assert.equal(view.poster,'');assert.equal(view.assetId,'');assert.equal(view.posterAssetId,'');
+  assert.equal(view.alt,typeof value==='number'&&Number.isFinite(value)?String(value):'');
+  assert.ok(view.invalidFields.includes('src'));assert.ok(view.invalidFields.includes('posterAssetId'));
+  assert.deepEqual(props,before);
+ }
+ const id='00000000-0000-4000-8000-000000000123';
+ assert.deepEqual(legacyMediaInspectorValues({src:'/image.png',poster:'/poster.png',alt:0,assetId:id,posterAssetId:id}),{
+  src:'/image.png',poster:'/poster.png',alt:'0',assetId:id,posterAssetId:id,invalidFields:[]
+ });
+ assert.deepEqual(legacyMediaInspectorValues(null),{src:'',poster:'',alt:'',assetId:'',posterAssetId:'',invalidFields:[]});
+ const decorative=legacyMediaInspectorValues({alt:'MegÅ‘rzÃ¶tt kÃ©pleÃ­rÃ¡s',decorative:true,assetId:'invalid'});
+ assert.equal(decorative.alt,'MegÅ‘rzÃ¶tt kÃ©pleÃ­rÃ¡s');assert.deepEqual(decorative.invalidFields,['assetId']);
+});
+
+test('Countdown local time rejects nonexistent wall times in multiple time zones',()=>{
+ const previousTimezone=process.env.TZ;
+ try{
+  for(const [zone,gap,valid,iso] of [
+   ['Europe/Budapest','2030-03-31T02:30','2030-03-31T03:30','2030-03-31T01:30:00.000Z'],
+   ['America/New_York','2030-03-10T02:30','2030-03-10T03:30','2030-03-10T07:30:00.000Z']]){
+   process.env.TZ=zone;assert.throws(()=>countdownLocalToISO(gap),/nem lÃ©tezik/);assert.equal(countdownLocalToISO(valid),iso);
+  }
+  process.env.TZ='UTC';
+  for(const invalid of ['2030-02-30T12:00','2030-12-31T24:00','2030-13-01T12:00','2030-01-01T12:60','not a date','2030-01-01T12:00Z'])assert.throws(()=>countdownLocalToISO(invalid));
+  for(const outside of ['1999-12-31T23:59','2101-01-01T00:00'])assert.throws(()=>countdownLocalToISO(outside),/2000 Ã©s 2100/);
+  assert.equal(countdownLocalToISO(''),'');
+ }finally{if(previousTimezone===undefined)delete process.env.TZ;else process.env.TZ=previousTimezone;}
+});
+test('Countdown local view preserves sub-minute precision and canonical instants',()=>{
+ const previousTimezone=process.env.TZ;
+ try{
+  for(const zone of ['Europe/Budapest','America/New_York','UTC']){
+   process.env.TZ=zone;
+   for(const iso of ['2030-12-31T20:30:00.000Z','2030-12-31T20:30:42.000Z','2030-12-31T20:30:42.123Z','2030-12-31T20:30:00.007Z'])assert.equal(countdownLocalToISO(countdownISOToLocal(iso)),iso);
+  }
+  for(const invalid of ['',null,undefined,'invalid'])assert.equal(countdownISOToLocal(invalid),'');
+ }finally{if(previousTimezone===undefined)delete process.env.TZ;else process.env.TZ=previousTimezone;}
+});
+
+
+test('explicit accessibility edits replace their own legacy alias and Undo restores the full snapshot',()=>{
+ const state=createEditorState(createDocument());execute(state,{type:'element.add',payload:{type:'section'}});const id=state.selection.primaryId;
+ const legacy={label:'Old canonical',id:'old-canonical',ariaLabel:'Legacy label',anchorId:'legacy-anchor',lang:'hu'};
+ execute(state,{type:'element.update',payload:{nodeId:id,patch:{accessibility:legacy}}});const before=structuredClone(activePage(state).nodes[id]);
+ execute(state,{type:'accessibility.set',payload:{nodeId:id,patch:{label:'New label'}}});let node=activePage(state).nodes[id];
+ assert.equal(Object.hasOwn(node.accessibility,'ariaLabel'),false);assert.equal(node.accessibility.anchorId,'legacy-anchor');assert.equal(contentAttributes(node)['aria-label'],'New label');
+ execute(state,{type:'history.undo'});assert.deepEqual(activePage(state).nodes[id],before);
+ execute(state,{type:'accessibility.set',payload:{nodeId:id,patch:{id:'new-anchor'}}});node=activePage(state).nodes[id];
+ assert.equal(Object.hasOwn(node.accessibility,'anchorId'),false);assert.equal(node.accessibility.ariaLabel,'Legacy label');assert.equal(contentAttributes(node).id,'new-anchor');
+ execute(state,{type:'history.undo'});assert.deepEqual(activePage(state).nodes[id],before);
+});
+test('accessibility validation remains pure and preserves unrelated aliases and root identity rules',()=>{
+ const node={id:'node',type:'section',accessibility:{ariaLabel:'Legacy label',anchorId:'legacy-anchor',lang:'hu'}},before=structuredClone(node);
+ const changed=normalizeAccessibility(node,{lang:'de'},{node});assert.equal(changed.ariaLabel,'Legacy label');assert.equal(changed.anchorId,'legacy-anchor');assert.deepEqual(node,before);
+ assert.throws(()=>normalizeAccessibility(node,{id:'taken'},{node,other:{id:'other',accessibility:{id:'taken'}}}),/foglalt/);
+ assert.throws(()=>normalizeAccessibility(node,{lang:'h'}),/nyelv/);assert.throws(()=>normalizeAccessibility({...node,type:'root'},{id:'new-root'}),/vÃ©dett/);assert.deepEqual(node,before);
+});
+
+
+import {safeMediaUrl as safeStructuredMediaUrl,renderElementContent as renderStructuredContent,validateElementContent as validateStructuredContent} from '../core/element-content.js';
+
+test('legacy structured content ignores malformed JSON object values without losing safe neighboring items',()=>{
+  const malformed={toString:null};
+  const objectWithUrl={toString:()=>'/media/00000000-0000-4000-8000-000000000123'};
+  assert.equal(safeStructuredMediaUrl(malformed),'','malformed object must not be String-coerced');
+  assert.equal(safeStructuredMediaUrl(objectWithUrl),'','custom toString cannot fabricate a media URL');
+  assert.equal(safeStructuredMediaUrl(['/media/00000000-0000-4000-8000-000000000123']),'','array cannot fabricate a URL');
+  assert.equal(safeStructuredMediaUrl('/image.png'),'/image.png','valid relative URL preserved');
+  const list=renderStructuredContent('list',{version:1,ordered:false,items:[malformed,'Ã‰p listaelem']},'list-legacy');
+  assert.match(list,/Ã‰p listaelem/);
+  assert.doesNotMatch(list,/\[object Object\]|visual-structured-error/);
+  const table=renderStructuredContent('table',{version:1,rows:[['CÃ­m'],[malformed],['Ã‰p sor']]},'table-legacy');
+  assert.match(table,/<td>Ã‰p sor<\/td>/);
+  assert.doesNotMatch(table,/\[object Object\]|visual-structured-error/);
+  const gallery={version:1,items:[{src:objectWithUrl,alt:'RÃ©gi kÃ©p'},{src:'/image.jpg',alt:'Ã‰p kÃ©p'}]};
+  assert.equal(validateStructuredContent('gallery',gallery),'INVALID_GALLERY_IMAGE','invalid item remains unpublishable');
+  const galleryHtml=renderStructuredContent('gallery',gallery,'gallery-legacy');
+  assert.match(galleryHtml,/<img src="\/image.jpg"/);
+  assert.doesNotMatch(galleryHtml,/\/media\/00000000-0000-4000-8000-000000000123|\[object Object\]/);
+  const validEscaped=renderStructuredContent('list',{version:1,items:['<script>alert("x")<\/script>']},'list-escaped');
+  assert.match(validEscaped,/&lt;script&gt;/);
+  assert.doesNotMatch(validEscaped,/<script>/);
+});
+
+test('structured tables, tabs, gallery and carousel render escaped, bounded accessible names',()=>{
+ const gallery={version:1,items:[{src:'/image.jpg',alt:'Egy kÃ©p',caption:''}]};
+ const carousel={version:1,items:[{label:'Dia',content:'SzÃ¶veg',src:'',alt:''}]};
+ const table={version:1,rows:[['FejlÃ©c'],['Adat']]};
+ const tabs={version:1,items:[{label:'FÃ¼l',content:'Tartalom'}]};
+ const namedGallery=renderStructuredContent('gallery',gallery,'gallery',{ariaLabel:' MÅ±hely & <kÃ©pek> '});
+ const namedCarousel=renderStructuredContent('carousel',carousel,'carousel',{ariaLabel:'Kiemelt <stream>'});
+ const namedTable=renderStructuredContent('table',table,'table',{ariaLabel:'TÃ¡blÃ¡zat & <adat>'});
+ const namedTabs=renderStructuredContent('tabs',tabs,'tabs',{ariaLabel:'FÃ¼lek & <tÃ©mÃ¡k>'});
+ assert.match(namedGallery,/<div class="visual-structured-gallery"[^>]*role="region"[^>]*aria-label="MÅ±hely &amp; &lt;kÃ©pek&gt;"/,
+  'the gallery has a named region and the label is HTML-escaped');
+ assert.match(namedCarousel,/<section class="visual-structured-carousel"[^>]*aria-label="Kiemelt &lt;stream&gt;"/,
+  'the carousel region is named and the label is HTML-escaped');
+ assert.match(namedTable,/<div class="visual-structured-table-scroll"[^>]*role="region"[^>]*aria-label="TÃ¡blÃ¡zat &amp; &lt;adat&gt;"/,
+  'the scrollable table region uses its authored escaped accessible name');
+ assert.match(namedTabs,/<div role="tablist" aria-label="FÃ¼lek &amp; &lt;tÃ©mÃ¡k&gt;"/,
+  'the tablist uses its authored escaped accessible name');
+ assert.match(renderStructuredContent('gallery',gallery,'gallery'),/role="region"[^>]*aria-label="KÃ©pgalÃ©ria"/,
+  'older structured documents retain an accessible Hungarian fallback name');
+ assert.match(renderStructuredContent('carousel',carousel,'carousel',{ariaLabel:{toString(){throw Error('must not coerce objects')}}}),/aria-label="KÃ©pkÃ¶rhinta"/,
+  'invalid object-valued labels are not coerced into public markup');
+ assert.match(renderStructuredContent('gallery',gallery,'gallery',{ariaLabel:'x'.repeat(200)}),new RegExp(`aria-label="${'x'.repeat(160)}"`),
+  'public region names stay within the authored field limit');
+ assert.match(renderStructuredContent('table',table,'table'),/role="region"[^>]*aria-label="TÃ¡blÃ¡zat"/,
+  'older tables retain their existing fallback name');
+ assert.match(renderStructuredContent('tabs',tabs,'tabs',{ariaLabel:{toString(){throw Error('must not coerce objects')}}}),/role="tablist" aria-label="TartalomfÃ¼lek"/,
+  'malformed persisted labels retain the safe tablist fallback without object coercion');
+ assert.match(renderStructuredContent('tabs',tabs,'tabs',{ariaLabel:'x'.repeat(200)}),new RegExp(`aria-label="${'x'.repeat(160)}"`),
+  'tablist labels stay within the authored field limit');
+});
+
+test('structured accordions expose their Inspector name as an escaped accessible group',()=>{
+ const accordion={version:1,items:[{label:'GYIK',content:'VÃ¡lasz'}]};
+ const named=renderStructuredContent('accordion',accordion,'faq',{ariaLabel:'  KÃ¶zÃ¶ssÃ©gi & <GYIK>  '});
+ assert.match(named,/<div class="visual-structured-accordion" role="group" aria-label="KÃ¶zÃ¶ssÃ©gi &amp; &lt;GYIK&gt;">/,
+  'the Accordion name set in the Inspector is exposed safely in the public DOM');
+ assert.match(renderStructuredContent('accordion',accordion,'faq'),/role="group" aria-label="RÃ©szletek"/,
+  'older structured Accordions keep a useful accessible fallback name');
+ assert.match(renderStructuredContent('accordion',accordion,'faq',{ariaLabel:{toString(){throw Error('must not coerce objects')}}}),/role="group" aria-label="RÃ©szletek"/,
+  'malformed legacy names fall back without object coercion');
+ assert.match(renderStructuredContent('accordion',accordion,'faq',{ariaLabel:'x'.repeat(200)}),new RegExp(`aria-label="${'x'.repeat(160)}"`),
+  'public Accordion names stay within the existing 160-character field contract');
+});
+
+test('a single-slide carousel does not render active no-op navigation controls',()=>{
+ const html=renderStructuredContent('carousel',{version:1,items:[{label:'Egy dia',content:'Egyetlen tartalom',src:'',alt:''}]},'one-slide');
+ assert.match(html,/<button type="button" class="visual-carousel-prev" aria-label="ElÅ‘zÅ‘ dia" disabled>/,
+  'previous navigation is natively disabled when there is no other slide');
+ assert.match(html,/<span class="visual-carousel-count" aria-live="polite">1 \/ 1<\/span>/,
+  'the live counter remains visible for a one-slide carousel');
+ assert.match(html,/<button type="button" class="visual-carousel-next" aria-label="KÃ¶vetkezÅ‘ dia" disabled>/,
+  'next navigation is natively disabled when there is no other slide');
+});

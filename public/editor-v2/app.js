@@ -1,5 +1,2202 @@
-YªçŠx-®éÜj×¢ëiºÚ+Š§j[h‘éÜ¢éíï¯;á:-jZ.¶›­–)Ş³V–×÷'B¶†46öçFVçE&öf–ÆWÒg&öÒrâö6÷&Rö6öçFVçB×&öf–ÆW2æ§3÷cÓ##c#RÖ–ç7V7F÷"ÖÆ–fV7–6ÆRÖ6öçG&7Bs°¦–×÷'B¶vWDæöFRÆvWD6†–ÆG&VâÄäôDUõE•U2Æ6ä6öçF–âÆæ÷&ÖÆ—¦U&–6…FW‡GÒg&öÒrâö6÷&R÷66†VÖæ§3÷cÓ##cRÖCr×6fRÖ6†–ÆB×&VæFW"s°¦–×÷'B¶–ç7FçF–FTVF—F÷%FV×ÆFRÆÆ—7DVF—F÷%FV×ÆFW7Òg&öÒrâö6÷&RöVF—F÷"×FV×ÆFW2æ§3÷cÓ##c’ÖVGCC×7G&VÒ×66†VGVÆR×cs°¦–×÷'B¶7&VFTVF—F÷%7FFRÆ7F—fUvRÇ6VÆV7FVDæöFW2Ç6WE6VÆV7F–öâÆÖ&µ6fVGÒg&öÒrâö6÷&R÷7FFRæ§3÷cÓ##c‚ÖVGC3’Ö–çfÆ–B×&V6÷fW'’×cs°¦–×÷'B¶W†V7WFRÆW†V7WFT6öÆW66VBÆW†V7WFT&F6‡Òg&öÒrâö6÷&Rö6öÖÖæG2æ§3÷cÓ##c‚ÖVGC3’×vRÖ7F–öâÖFVÆWFR×F&vWBÖ6ÆVçW×cs°¦–×÷'B¶Ç”æöFU7G–ÆRÆvWDæöFTvVöÖWG'’Ç&W6öÇfTæöFU7G–ÆWÒg&öÒrâö6÷&Rö6çf2ÖVæv–æRæ§3÷cÓ##c#2ÖVGCCÖ–â×f–WrÖÖ÷F–öâ×cs°¦–×÷'B¶Ö÷F–öåG&–vvW$f÷%7G–ÆWÒg&öÒrâö6÷&RöÖ÷F–öâ×7G–ÆRæ§3÷cÓ##c#2ÖVGCCÖ–â×f–WrÖÖ÷F–öâ×cs°¦–×÷'B¶6ö×WFT6çf4Ö–ä†V–v‡GÒg&öÒrâö6÷&Rö6çf2ÖW‡FVçBæ§2s°¦–×÷'B¶ÖV7W&T6çf5v÷&·76WÒg&öÒrâö6÷&Rö6çf2×v÷&·76Ræ§2s°¦–×÷'B¶†5&W7öç6—fT÷fW'&–FRÇ&W6öÇfU&W7öç6—fUfÇVWÒg&öÒrâö6÷&R÷&W7öç6—fRæ§3÷cÓ##c#"ÖVGC#B×&W7öç6—fR×&÷F÷G—R×6fWG’×cs°¦–×÷'B¶vWDæöFUf—6–&–Æ—G•7FFRÆ—5f—6–&ÆTöäFWf–6WÒg&öÒrâö6÷&R÷f—6–&–Æ—G’æ§2s°¦–×÷'B¶F–væ÷7F–77Òg&öÒrâöF–væ÷7F–72æ§3÷cÓ##c’ÖVGCC"×6fRÖW‡÷'B×c"s°¦–×÷'B·Æ–åFW‡EFõ&–6…FW‡BÇ&VæFW%&–6…FW‡DVF—F÷"Ç&–6…FW‡DVF—F÷%FôFö7VÖVçBÇ&W7F÷&U6VÆV7F–öäöfg6WG2ÆvWE6VÆV7F–öäöfg6WG2ÇG&ç6f÷&Õ&–6…FW‡D&Æö6µG—W7Òg&öÒrâö6÷&R÷&–6‡FW‡BÖVæv–æRæ§3÷cÓ##crÖC2Ö–çfÆ–BÖÖVF–Ö–BÖwV–Fæ6R×cs°¦–×÷'B·&VæFW%66†VGVÆU&Wf–WwÒg&öÒrâö6÷&R÷66†VGVÆR×&Wf–Wræ§2s°¦–×÷'B¶æ÷&ÖÆ—¦U66†VGVÆT6öæf–rÅ44„TETÄUôÔôDU2Å44„TETÄUôõ$DU%2Å44„TETÄUõ5DEU4U2Å44„TETÄUôTÕE•õDU…EôÔ‚Å44„TETÄUôÄ”Ô•EôÔ‡Òg&öÒrâö6÷&R÷66†VGVÆR×66†VÖæ§2s°¦–×÷'B¶Æ—7E&÷W'G”w&÷W2ÆÆ—7E&÷W'F–W2ÆvWE&÷W'G—Òg&öÒrâö6÷&R÷&÷W'G’×&Vv—7G'’æ§3÷cÓ##c#2ÖVGCCÖ–â×f–WrÖÖ÷F–öâ×cs°¦–×÷'B·&VæFW%&÷W'G”–çWGÒg&öÒrâ÷V’÷&÷W'G’Ö6öçG&öÇ2æ§3÷cÓ##c×&–6‡FW‡BÖ×VÇF–&Æö6²ÖÆ–æ·2s°¦–×÷'B¶vWD–ç7V7F÷%fÇVT6öçG&7BÆæ÷&ÖÆ—¦T–ç7V7F÷%fÇVWÒg&öÒrâö6÷&R÷&÷W'G’×fÇVW2æ§2s°¦–×÷'B¶FW67&–&U&W7öç6—fT÷&–v–çÒg&öÒrâ÷V’÷&W7öç6—fRÖ÷&–v–âæ§2s°¦–×÷'B·&W7öç6—fTw&÷W&W6WD7F–öç7Òg&öÒrâ÷V’÷&W7öç6—fRÖw&÷W×&W6WBæ§2s°¦–×÷'B¶æ÷&ÖÆ—¦UÆWGFTff÷&—FUG—W2Ç&VEÆWGFTff÷&—FUG—W2ÇFövvÆUÆWGFTff÷&—FUG—RÇw&—FUÆWGFTff÷&—FUG—W7Òg&öÒrâ÷V’÷ÆWGFR×&VfW&Væ6W2æ§3÷cÓ##c#ÖVGCCBÖ66÷VçB×&VfW&Væ6W2×cs°¦–×÷'B¶vWE&–6…FW‡D&Æö6µ6VÆV7F–öâÆvWE&–6…FW‡Df÷&ÖGF–æu6VÆV7F–öâÆvWE&–6…FW‡D&Æö6µG&ç6f÷&Õ6VÆV7F–öâÆvWE&–6…FW‡D7F—fT&Æö6´–æFW‚Ç&W7F÷&U&–6…FW‡D&Æö6µ6VÆV7F–öâÇ&W7F÷&U&–6…FW‡Df÷&ÖGF–æu6VÆV7F–öâÇWFFU&–6…FW‡D–æÆ–æTÆ–æ²ÇWFFU&–6…FW‡D–æÆ–æTÖ&²ÇWFFU&–6…FW‡D–æÆ–æU7G–ÆRÇWFFU&–6…FW‡D&Æö6´Æ–væÖVçGÒg&öÒrâö6÷&R÷&–6‡FW‡BÖÆ–æ·2æ§3÷cÓ##crÖC2Ö–çfÆ–BÖÖVF–Ö–BÖwV–Fæ6R×cs°¦–×÷'B¶–æ—F–ÅvT–BÇ&VÖVÖ&W%vT–BÇ&WVW7FVEvT–GÒg&öÒrâö6÷&R÷vR×W&Âæ§2s°¦–×÷'B¶vWDVÆVÖVçD6&–Æ—G—Òg&öÒrâö6÷&Rö6&–Æ—G’ÖÖG&—‚æ§3÷cÓ##c#2ÖVGCCÖ–â×f–WrÖÖ÷F–öâ×cs°¦–×÷'B¶f—'7EVç7W÷'FVEV&Æ–6F–öäæöFRÇVç7W÷'FVEV&Æ–6F–öäÖW76vWÒg&öÒrâö6÷&R÷V&Æ–6F–öâ×&V6÷fW'’æ§3÷cÓ##c#BÖVGCC"×V&Æ—6‚×&V6÷fW'’×6fRÖÆ&VÂ×cs°¦–×÷'B·&VæFW$vVöÖWG'•&W6WG7Òg&öÒrâ÷V’övVöÖWG'’×&W6WG2æ§2s°¦–×÷'B¶–×÷'E&–6…FW‡D6Æ—&ö&GÒg&öÒrâö6÷&R÷&–6‡FW‡BÖ–×÷'Bæ§3÷cÓ##c#BÖVGCCBÖ–×÷'B×G&VRÖ'VFvWB×c"s°¦–×÷'B·7FU&–6…FW‡DFö7VÖVçGÒg&öÒrâö6÷&R÷&–6‡FW‡B×7FRæ§3÷cÓ##crÖC2Ö–çfÆ–BÖÖVF–Ö–BÖwV–Fæ6R×cs°¦–×÷'B¶7&VFTæöFT6Æ—&ö&BÆ—4æöFT6Æ—&ö&Df÷%vWÒg&öÒrâö6÷&RöæöFRÖ6Æ—&ö&Bæ§3÷cÓ##c‚ÖVGC3‚ÖæöFRÖ6Æ—&ö&B×cs°¦–×÷'B¶6GW&U7G–ÆU6æ6†÷BÅ5E”ÄUõ4ä4„õEõ$õU%D”U7Òg&öÒrâö6÷&R÷7G–ÆR×6æ6†÷Bæ§2s°¦–×÷'B´Ä”õUEõ$U4UE2ÄÄ”õUEõE•U2ÆÆ–÷WDÖöFRÆ—4ÖævVDÆ–÷WBÆ—4Æ–÷WE&÷W'G•&VÆWfçBÆW‡Æ–6—Dw&–D6öÇVÖä6÷VçGÒg&öÒrâö6÷&RöÆ–÷WB×&W6WG2æ§2s°¦–×÷'B·&W6öÇfTVÆVÖVçD–ç6W'F–öçÒg&öÒrâö6÷&RöVÆVÖVçBÖ–ç6W'F–öâæ§2s°¦–×÷'BµE•ôu$…•õ$U4UE2ÇG—öw&‡•&W6WEF6‡Òg&öÒrâö6÷&R÷G—öw&‡’×&W6WG2æ§2s°¦–×÷'B¶—57G'V7GW&VEG—RÆ7&VFTVÆVÖVçD6öçFVçBÆæ÷&ÖÆ—¦TVÆVÖVçD6öçFVçBÇ&VæFW$VÆVÖVçD6öçFVçBÆ7F—fFU7G'V7GW&VD6öçFVçGÒg&öÒrâö6÷&RöVÆVÖVçBÖ6öçFVçBæ§3÷cÓ##c#BÖCbÖ66÷&F–öâÖ66W76–&ÆRÖw&÷W×cs°¦–×÷'B¶ÆVv7”–ÖvU6÷W&6RÆÆVv7•Æ–&ÆU6÷W&6RÆÆVv7•Æ–&6µ6WGF–æw2ÆÆVv7”–ÖvU&W6VçFF–öâÆÆVv7”–ÖvT6F–öâÆÇ•&VGV6VDÖ÷F–öåf–FVõÆ–&6·Òg&öÒrâö6÷&RöÆVv7’ÖÖVF–×6÷W&6Ræ§3÷cÓ##c#RÖCbÖÖVF–×&VGV6VBÖÖ÷F–öâ×c"s°¦–×÷'B·&VæFW%7G'V7GW&VD–ç7V7F÷'Òg&öÒrâ÷V’÷7G'V7GW&VBÖ–ç7V7F÷"æ§3÷cÓ##c#2ÖCb×6–ævÆR×6Æ–FRÖ6&÷W6VÂ×cs°¦–×÷'B´”4ôåô4„ô”4U2Æ–6öä'”–GÒg&öÒrâö6÷&Rö–6öâÖ÷F–öç2æ§2s°¦–×÷'B´D•d”DU%ôÄ”äUõ5E”ÄU2Ææ÷&ÖÆ—¦TF—f–FW%7G–ÆWÒg&öÒrâö6÷&RöFV6÷&F—fRÖVÆVÖVçG2æ§2s°¦–×÷'B¶FVfVÇD6&D6öçFVçBÆ6&D–ÖvU7&7Òg&öÒrâö6÷&Rö6&BÖ6öçFVçBæ§3÷cÓ##c‚ÖC"Ö6&BÖ7F×&V6÷fW'’×cs°¦–×÷'B¶FVfVÇD6÷VçFF÷vä6öçFVçBÇ&VæFW$6÷VçFF÷vä6öçFVçBÆ7F—fFT6÷VçFF÷vç7Òg&öÒrâö6÷&Rö6÷VçFF÷vâÖ6öçFVçBæ§3÷cÓ##cBÖæW‡B×7G&VÒÖ6Æö6²×cs°¦–×÷'B·&VæFW$6÷VçFF÷vä–ç7V7F÷'Òg&öÒrâ÷V’ö6÷VçFF÷vâÖ–ç7V7F÷"æ§3÷cÓ##c#b×&÷WFRÖ6öçG&7Bs°¦–×÷'B¶FVfVÇE6ö6–ÄÆ–æ·2Ç&VæFW%6ö6–ÄÆ–æ·4‡FÖÇÒg&öÒrâö6÷&R÷6ö6–ÂÖÆ–æ·2æ§2s°¦–×÷'B·&VæFW%6ö6–ÄÆ–æ·4–ç7V7F÷'Òg&öÒrâ÷V’÷6ö6–ÂÖÆ–æ·2Ö–ç7V7F÷"æ§3÷cÓ##c#b×&öf–ÆR×&÷WFRÖ6öçG&7Bs°¦–×÷'B¶FVfVÇDVÖ&VD6öçFVçBÇ&VæFW$VÖ&VD‡FÖÇÒg&öÒrâö6÷&Rö7&VF÷"ÖVÖ&VBæ§2s°¦–×÷'B·&VæFW$&6–46öçFVçD–ç7V7F÷'Òg&öÒrâ÷V’ö&6–2Ö6öçFVçBÖ–ç7V7F÷"æ§3÷cÓ##c#ÖCbÖ6æöæ–6ÂÖ–6öâ×&Vv—7G'’×cs°¦–×÷'B·&VæFW$ÆVv7”ÖVF––ç7V7F÷'Òg&öÒrâ÷V’öÆVv7’ÖÖVF–Ö–ç7V7F÷"æ§3÷cÓ##c#RÖÖVF–×Æ–&6²ÖwV&B×fW'6–öâ×66÷R×cs°¦–×÷'B·&VæFW$6&D–ç7V7F÷'Òg&öÒrâ÷V’ö6&BÖ6öçFVçBÖ–ç7V7F÷"æ§3÷cÓ##c‚ÖC"Ö6&BÖ7F×&V6÷fW'’×cs°¦–×÷'B·&VæFW$VÖ&VD–ç7V7F÷'Òg&öÒrâ÷V’ö7&VF÷"ÖVÖ&VBÖ–ç7V7F÷"æ§3÷cÓ##c#b×&öf–ÆR×&÷WFRÖ6öçG&7Bs°¦–×÷'B¶FVfVÇD6öFU6æ—WBÇ&VæFW$6öFU6æ—WBÆ7F—fFT6öFT&Æö6·7Òg&öÒrâö6÷&Rö6öFR×6æ—WBæ§2s°¦–×÷'B·&VæFW$6öFU6æ—WD–ç7V7F÷'Òg&öÒrâ÷V’ö6öFR×6æ—WBÖ–ç7V7F÷"æ§3÷cÓ##c#b×&öf–ÆR×&÷WFRÖ6öçG&7Bs°¦–×÷'B·&VE&–6…FW‡E6VÆV7F–öäf÷&ÖGF–ærÇ&VE&–6…FW‡DÆ–æµF&vWBÇ&VE&–6…FW‡DÆ–æ´‡&VbÆ6ÆV%&–6…FW‡D–æÆ–æTf÷&ÖGF–æwÒg&öÒrâö6÷&R÷&–6‡FW‡BÖÆ–æ·2æ§3÷cÓ##crÖC2Ö–çfÆ–BÖÖVF–Ö–BÖwV–Fæ6R×cs°¦–×÷'B·&VæFW$66W76–&–Æ—G”f–VÆG7Òg&öÒrâ÷V’ö66W76–&–Æ—G’Öf–VÆG2æ§3÷cÓ##c#bÖ66W76–&–Æ—G’×&÷WFRÖ6öçG&7Bs°¦–×÷'B¶7&VFT6ö×÷6—F–öä–çWG7Òg&öÒrâ÷V’ö6ö×÷6—F–öâÖ–çWG2æ§2s°¦–×÷'B¶÷VT6öçG&7GÒg&öÒrâö6÷&Rö66W76–&–Æ—G’æ§2s°¦–×÷'Bµ5DDUõ$õU%E•ô”E2ÆÇ•7FFU7G–ÆW7Òg&öÒrâö6÷&R÷7FFR×7G–ÆW2æ§2s°¦–×÷'B¶FVfVÇEFö¶Vç2ÆÇ•Fö¶Våf&–&ÆW7Òg&öÒrâö6÷&RöFW6–vâ×Fö¶Vç2æ§2s°¦–×÷'B´4ôåDTåEõE•U2Å5E%T5EU$ÅõE•U2ÇfÆ–FFUvTf÷%V&Æ–6F–öâÆ—4WF†÷&VD6öçFVçBÆWF†÷&VDæöFT‡FÖÂÆ6öçFVçDGG&–'WFW2Æ–æ—D6öçFVçD–çFW&7F–öç2Æ6öçFVçEFwÒg&öÒrâö6÷&RöWF†÷&VBÖ6öçFVçBæ§3÷cÓ##c#RÖCbÖÖVF–×&VGV6VBÖÖ÷F–öâ×c"s°¦–×÷'B¶6GW&T6çf4–çFW&7F–öå7FFRÇ&W7F÷&T6çf4–çFW&7F–öå7FFWÒg&öÒrâö6÷&Rö6çf2Ö–çFW&7F–öâ×7FFRæ§2s°¦–×÷'B·&VæFW$VÆVÖVçD6öçFVçD6öçG&öÇ2ÇvTÆ–æµ–6¶W'Òg&öÒrâ÷V’öVÆVÖVçBÖ6öçFVçBÖ6öçG&öÇ2æ§3÷cÓ##c#ÖCbÖWF†÷&VB×Æ–&ÆRÖ76WB×–6¶W"×cs°¦–×÷'B·&VæFW%vT–çFW&7F–öä6öçG&öÇ7Òg&öÒrâ÷V’÷vRÖ–çFW&7F–öâÖ6öçG&öÇ2æ§3÷cÓ##c’ÖVGC3’×vRÖ7F–öâ×6fRÖÆ&VÇ2×cs° ¦6öç7B&VGV6VDÖ÷F–öåVW'“×G—Vöbv–æF÷ræÖF6„ÖVF–ÓÓÒvgVæ7F–öâs÷v–æF÷ræÖF6„ÖVF–‚r‡&VfW'2×&VGV6VBÖÖ÷F–öã¢&VGV6R’r“¦çVÆÃ°¦6öç7B&VfW'5&VGV6VDÖ÷F–öãÒ‚“Óç&VGV6VDÖ÷F–öåVW'“òæÖF6†W3ÓÓ×G'VS°¦ÆWBVF—F÷%Fö¶Vç3ÖFVfVÇEFö¶Vç2‚“°¦gVæ7F–öâ&÷W'G”–çWB‡&÷W'G’ÆÆ&VÂÆ7W'&VçBÆöä6†ævRÆ÷F–öç3×·Ò—°¢&WGW&â&VæFW%&÷W'G”–çWB‡&÷W'G’ÆÆ&VÂÆ7W'&VçBÆöä6†ævRÇ·Fö¶Vç3¦VF—F÷%Fö¶Vç2Âââæ÷F–öç7Ò“°§Ğ¦7–æ2gVæ7F–öâÆöDVF—F÷%Fö¶Vç2‚—·G'—¶6öç7B&W7öç6SÖv—BfWF6‚‚rö’÷V&Æ–2÷&W6VçFF–öã÷&Wf–WsÓrÇ¶66†S¢væò×7F÷&RrÆ7&VFVçF–Ç3¢w6ÖRÖ÷&–v–âwÒ“¶6öç7B&W7VÇCÖv—B&W7öç6Ræ§6öâ‚“¶–b‡&W7öç6Ræö²bg&W7VÇCòæFFòçFö¶Vç2—¶VF—F÷%Fö¶Vç3×&W7VÇBæFFçFö¶Vç3¶6öç7BF&vWCÖ6çf2çVW'•6VÆV7F÷"‚rçvRÖ6çf2r“¶–b‡F&vWB–Ç•Fö¶Våf&–&ÆW2‡F&vWBÆVF—F÷%Fö¶Vç2—×Ö6F6‡·ÒĞ¦ÆWB7FFU&Wf–WsÒvæöæRs°¦ÆWBVæF–ætÆ–W%&VæÖSÖçVÆÃ°¦gVæ7F–öâfÇW6„Æ–W%&VæÖR‚—·&WGW&âVæF–ætÆ–W%&VæÖSòâ‚’ÓÖfÇ6WĞ¦ÆWB–ç7V7F÷$6FVv÷'“ÒvÆÂs¶ÆWB&–6…FW‡E6VÆV7F–öä6ÆVçWÖçVÆÃ¶ÆWB&–6…FW‡EFööÅF#Òv6†&7FW"s° ¦ÆWB7FFSÖçVÆÃ¶ÆWBvW3ÕµÓ¶ÆWB&6†—fVEvW3ÕµÓ¶ÆWB&Wf—6–öä†—7F÷'“ÕµÓ¶ÆWB¦ööÓÓ¶ÆWB–ç7V7F÷%F#ÒvFW6–vâs¶ÆWB–ç7V7F÷%VW'“Òrs¶ÆWBfÇW6…&–6…FW‡DG&gCÖçVÆÃ¶ÆWB–æÆ–æTVF—F–æt–CÖçVÆÃ¶ÆWB&–6…FW‡D&öö¶Ö&³ÖçVÆÃ¶ÆWB6÷–VE7G–ÆU6æ6†÷CÖçVÆÃ¶ÆWBæöFT6Æ—&ö&CÖçVÆÃ¶ÆWB6çf4G&sÖçVÆÃ¶ÆWB6çf5&W6—¦SÖçVÆÃ¶ÆWBvU7F'EFV×ÆFSÒv&Ææ²×vRs¶ÆWBvT7&VFT'W7“ÖfÇ6S¶ÆWBÖö&–ÆUF÷V6ƒ×¶7F—fS¦fÇ6RÇF–ÖW#¦çVÆÂÆF÷vä–C¦çVÆÂÇ7F'Eƒ£Ç7F'E“£Ç6æ6†÷C¥µÒÇ6æ6†÷E&–Ö'“¦çVÆÂÇ7W&W746Æ–6³¦fÇ6RÆÆöæu&W75G&–vvW&VC¦fÇ6WÓ¶ÆWB†–W&&6‡”G&s×¶æöFT–C¦çVÆÂÆ÷fW$–C¦çVÆÇÓ¶ÆWBÖö&–ÆT†–W&&6‡”G&s×¶7F—fS¦fÇ6RÇF–ÖW#¦çVÆÂÆæöFT–C¦çVÆÂÆ÷fW$–C¦çVÆÂÇ7F'Eƒ£Ç7F'E“£Ç7W&W746Æ–6³¦fÇ6WÓ°¦ÆWBÆWGFTff÷&—FW5W6W$–CÖçVÆÃ¶ÆWBÆWGFTff÷&—FUG—W3ÕµÓ¶ÆWBÆWGFTff÷&—FW5&VG“ÖfÇ6S¶ÆWB66÷VçEv÷&·76U&VG“ÖfÇ6S¶ÆWB66÷VçEv÷&·76T66†U&W6VçCÖfÇ6S¶ÆWB66÷VçEv÷&·76UF–ÖW#ÖçVÆÃ¶ÆWB66÷VçE&VfW&Væ6Uw&—FSÕ&öÖ—6Rç&W6öÇfR‚“¶ÆWBVæF–æt66÷VçEf–Ww÷'CÖçVÆÃ¶ÆWB66÷VçE&VfW&Væ6U&Wf—6–öç3×·ÆWGFTff÷&—FUG—W3£Çv÷&·76S£Ó¶ÆWB66÷VçE&VfW&Væ6T6öæfÆ–7G3ÖæWr6WB‚“°¦6öç7BC×3ÓæFö7VÖVçBçVW'•6VÆV7F÷"‡2“¶6öç7B6çf3ÒB‚r66çf2r“¶6öç7B–ç7V7F÷#ÒB‚r6–ç7V7F÷$&öG’r“°¦6öç7B6—¦W3×¶FW6·F÷£CCÇF&ÆWC£sc‚ÆÖö&–ÆS£3“Ó°¦6öç7BfÆ–D†W„6öÆ÷#×fÇVSÓçG—VöbfÇVSÓÓÒw7G&–ærrbbõâ2ƒó¥¶ÖcÓ•×³7×Å¶ÖcÓ•×³gÒ’Bö’çFW7B‡fÇVR“°¦6öç7BTÄTÔTåEôDU45$•D”ôå3×µ6V7F–öã¢töÆFÇ7¦¶7¢fw’æw–ö&"F'FÆÖ’&Æö¶²ârÄ6öçF–æW#¢u&VæFW¦WGBF'FÆÖ²&VfövÆÌ;6¦ârÅ7F6³¢tVw–Ü:6&&VæFW¦WGBVÆVÖV²76÷÷'F¦ârÄw&÷W¢uL;f&"VÆVÒ¼;g¬;g276÷÷'F¦ârÅ&÷s¢tVÆVÖV²Vw’6÷&&âL;g'L:–ìYVÇ&VæFW¬:—6RârÄ6öÇVÖç3¢uL;f&"÷7¦Æ÷÷2VÇ&VæFW¬:—2ârÄfÆWƒ¢u'VvÆÖ2fÆW†&÷‚VÇ&VæFW¬:—2ârÄw&–C¢u,:72Æ;¢VÇ&VæFW¬:—2ârÅ6Æ÷C¢tfVæçF'F÷GBF'FÆöÖ†VÇ’ârÅ76W#¢|9Ç&W2L:—"Ì:—G&V†÷¬:6ârÄF—f–FW#¢uf—§\:Æ—2VÇl:Æ7§L;2föæÂârÄ†VF–æs¢t<:Ö×6÷"ƒ(	4ƒb7¦–çGFVÂârÅ7¬;gfVs¢tVw—7¦W,[7¬;gfVvW2F'FÆöÒârÂ%&–6‚FW‡B#¢tf÷&Ü:¦÷GB7¬;gfVrÂÆ—7FÂ–L:—¦WB:—2Æ–æ²ârÄÆ–æ³¢t¶GF–çF†L;2†—fF¶÷¬:2ârÄvöÖ#¢t¶GF–çF†L;2Ü[fVÆWF’vöÖ"ârÄ'&VF7'VÖ#¢tæf–|:6œ;72;§GföæÂârÄ¼:—¢t¼:—ÖVv¦VÆVì:×L:—6RârÄvÌ:—&–¢uL;f&"¼:—ÖVv¦VÆVì:×L:—6RârÅf–F\;3¢uf–F\;7F'FÆöÒârÄVF–ó¢t†ævÆV¬:G7¬:2ârÄ–¶öã¢tw&f–·W2–¶öâârÄ6&÷W6VÃ¢tÆ÷¦†L;2F'FÆöÒârÄVÖ&VC¢t&\:w–¦÷GBF'FÆöÒârÄ–g&ÖS¢t¼;ÆÇ<YöÆFÂ&\:w–¬:6ârÄ6öFS¢t¼;6BÖVv¦VÆVì:×L:—6RârÄ6&C¢|9fì:ÆÌ;2F'FÆÖ’¼:'G–ârÄÆ—7F¢tfVÇ6÷&öÌ:2fw’Æ—7FârÅL:&Ì:¦C¢uL:&Ì:¦F÷2FFÖVv¦VÆVì:×L:—2ârÅF'3¢tl;ÆÆV²¼;g¬;gGBl:ÇF†L;2F'FÆöÒârÄ66÷&F–öã¢tç–—F†L;2Ö77V¶†L;2&Æö¶¶ö²ârÄG&÷F÷vã¢tÆVçœ:ÖÌ;2ÖVì;Âfw’l:Æ7§L;2ârÅv–æF–öã¢tÆ÷¬:2ârÅ6V&6ƒ¢t¶W&W<:—6’gVæ¶6œ;2ârÄÖöFÃ¢tfVÇVw,;2&Æ²ârÄæf&#¢tlYæf–|:6œ;2ârÄÖVçS¢tæf–|:6œ;72ÖVì;ÂârÅ6–FV&#¢töÆFÇ<;2<:bârÄfö÷FW#¢töÆFÂÇ<;2,:—7¦RârÄf÷&Ó¢|[&Æ&VfövÆÌ;2ârÄ–çWC¢tVw—6÷&÷2&Wf—FVÆ’ÖW¬YârÅFW‡F&V¢uL;f&'6÷&÷2&Wf—FVÆ’ÖW¬YârÄ6†V6¶&÷ƒ¢t¦VÌ;fÌYì:–w—¦WBârÅ&F–ó¢tVw—7¦W&W2l:Æ7§L:2ârÅ6VÆV7C¢tÆVçœ:ÖÌ;2l:Æ7§L;2ârÅ6Æ–FW#¢t7<;§7¦¼:2:—'L:–·l:Æ7§L;2ârÄf–ÆS¢tl:¦ÆfVÇL;fÇLYÖW¬YârÅ7V&Ö—C¢|[&Æ&V¼;ÆÆL:—6RârÂ%6ö6–ÂÆ–æ·2#¢t¼;g¬;g7<:–v’†—fF¶÷¬:6ö²ârÄF—66÷&C¢tF—66÷&BF'FÆöÒfw’†—fF¶÷¬:2ârÅGv—F6ƒ¢uGv—F6‚F'FÆöÒârÅ–÷UGV&S¢u–÷UGV&RF'FÆöÒârÅF–µFö³¢uF–µFö²F'FÆöÒârÂ,8–ÌY:ÆÆ÷B#¢|8–ÌYfw’öffÆ–æR:ÆÆ÷BârÄ6÷VçFF÷vã¢uf—77¦7¬:ÖÌ:Ì;2ârÄL:7&VæC¢uFW'fW¦WGBL:6ö²Æ—7L:¦ârÂ%7G&VÒ7¬:ÖÌ:Ì;2#¢u7G&VÖ†W¢¶76öÌ;6L;27¬:ÖÌ:Ì;2ârÂ$¼;gfWLY²#¢t¼;gfWLY7¬:ÒârÂ$fVÆ—&F¶÷¬;6²#¢tfVÆ—&F¶÷¬;77¬:ÒârÅdôC¢t¶÷,:&&’7G&VÒfw’f–F\;2ârÅL:ÖövL:3¢uL:ÖövL:6’ÆV†WLY<:–vV²ârÄ¼;g¬;g7<:–s¢t¼;g¬;g7<:–v’F'FÆöÒârÂ$¬:L:–¶¼:'G–#¢t¬:L:–²¶–VÖVÇB¼:'Gœ:¦ârÂ$¬:L:–¶Æ—7F#¢t¬:L:–¶ö²Æ—7L:¦ârÄ¶ö×öæVç3¢|9¦§&fVÆ†7¦ì:Æ†L;2¶ö×öæVç2ârÂ$Vw–VF’VÆVÒ#¢tVw–VF’FW7G&W7¦&†L;2VÆVÒârÂ$&FvRõFr#¢t<:ÖÖ¶Rfw’:ÆÆ÷F¦VÇ¬YârÅV÷FS¢t–L:—¦WBârÅæVÃ¢uF'FÆÖ’æVÂârÄ÷fW&Æ“¢tÜ:2F'FÆöÒl;fÌ;gGF’,:—FVrârÄ'6öÇWFS¢t'7¦öÌ;§B÷¦–6–öì:ÇBVÆVÒârÅ7F–6·“¢t|;g&vWL:—2¼;g¦&Vâ,;fw¬:×FWGBVÆVÒârÅFööÇF—¢u,;gf–BÖw–,:¬;2fVÆ—&BârÅ6†÷'G3¢u6†÷'G2F'FÆÖ’&Æö¶²ârÅ7öç6÷#¢u7§öç¦÷,:6œ;72F'FÆöÒârÂ$'W6–æW726öçF7B#¢|9Ç¦ÆWF’¶76öÆFfVÇl:—FVÂârÂ$&÷WBÖR#¢t&V×WFF¶÷¬;2F'FÆöÒârÂ%6æ6’'WGFöâ#¢u6æ6““SrVw–VF’vöÖ"âwÓ°¦6öç7Bw&÷W3Õ°¢²tÆ–÷WBrÅµ²u6V7F–öârÄäôDUõE•U2å4T5D”ôåÒÅ²t6öçF–æW"rÄäôDUõE•U2ä4ôåD”äU%ÒÅ²u7F6²rÄäôDUõE•U2å5D4µÒÅ²tw&÷WrÄäôDUõE•U2äu$õUÒÅ²u&÷rrÄäôDUõE•U2å$õuÒÅ²t6öÇVÖç2rÄäôDUõE•U2ä4ôÅTÔå5ÒÅ²tfÆW‚rÄäôDUõE•U2ädÄU…ÒÅ²tw&–BrÄäôDUõE•U2äu$”EÒÅ²u6Æ÷BrÄäôDUõE•U2å4ÄõEÒÅ²u76W"rÄäôDUõE•U2å54U%ÒÅ²tF—f–FW"rÄäôDUõE•U2äD•d”DU%ÒÅ²uæVÂrÄäôDUõE•U2åäTÅÒÅ²t÷fW&Æ’rÄäôDUõE•U2äõdU$Ä•ÒÅ²t'6öÇWFRrÄäôDUõE•U2ä%4ôÅUDUÒÅ²u7F–6·’rÄäôDUõE•U2å5D”4µ•ÕÕÒÀ¢²u7¬;gfVrrÅµ²t†VF–ærrÄäôDUõE•U2ä„TD”äuÒÅ²u7¬;gfVrrÄäôDUõE•U2åDU…EÒÅ²u&–6‚FW‡BrÄäôDUõE•U2å$”4…DU…EÒÅ²tÆ–æ²rÄäôDUõE•U2äÄ”äµÒÅ²tvöÖ"rÄäôDUõE•U2ä%UEDôåÒÅ²t'&VF7'VÖ"rÄäôDUõE•U2ä%$TD5%TÔ%ÒÅ²t&FvRõFrrÄäôDUõE•U2ä$DtUÒÅ²uV÷FRrÄäôDUõE•U2åTõDUÒÅ²uFööÇF—rÄäôDUõE•U2åDôôÅD•ÕÕÒÀ¢²tÜ:–F–rÅµ²t¼:—rÄäôDUõE•U2ä”ÔtUÒÅ²tvÌ:—&–rÄäôDUõE•U2ätÄÄU%•ÒÅ²uf–F\;2rÄäôDUõE•U2åd”DTõÒÅ²tVF–òrÄäôDUõE•U2äTD”õÒÅ²t–¶öârÄäôDUõE•U2ä”4ôåÒÅ²t6&÷W6VÂrÄäôDUõE•U2ä4$õU4TÅÒÅ²tVÖ&VBrÄäôDUõE•U2äTÔ$TEÒÅ²t–g&ÖRrÄäôDUõE•U2ä”e$ÔUÒÅ²t6öFRrÄäôDUõE•U2ä4ôDUÕÕÒÀ¢²uF'FÆöÒrÅµ²t6&BrÄäôDUõE•U2ä4$EÒÅ²tÆ—7FrÄäôDUõE•U2äÄ•5EÒÅ²uL:&Ì:¦BrÄäôDUõE•U2åD$ÄUÒÅ²uF'2rÄäôDUõE•U2åD%5ÒÅ²t66÷&F–öârÄäôDUõE•U2ä44õ$D”ôåÒÅ²tG&÷F÷vârÄäôDUõE•U2äE$õDõtåÒÅ²uv–æF–öârÄäôDUõE•U2åt”äD”ôåÒÅ²u6V&6‚rÄäôDUõE•U2å4T$4…ÒÅ²tÖöFÂrÄäôDUõE•U2äÔôDÅÕÕÒÀ¢²tæf–|:6œ;2rÅµ²tæf&"rÄäôDUõE•U2ääd$%ÒÅ²tÖVçRrÄäôDUõE•^»ó¾-¢G§²ÚîÆ­yÖârb`¢VÆVÖVçBçFW‡D6öçFVçBçG&–Ò‚’bb‚f—6–&ÆTöæÇ—ÇÆVÆVÖVçBævWD6Æ–VçE&V7G2‚’æÆVæwFƒã’“°§Ğ¦gVæ7F–öâ&WfVÄ–ç7V7F÷%fÆ–FF–öäW'&÷"†W'&÷"—°¢–b‚W'&÷'ÇÂ–ç7V7F÷"æ6öçF–ç2†W'&÷"’—&WGW&ã°¢òò6V&6‚æB6FVv÷'’f–ÇFW'2×W7Bæ÷B†–FRF†Rf–VÆBW‡Æ–æ–ærv‡’¢òò6fRõV&Æ—6‚GFV×Bv2&V¦V7FVBâ¶VWF†RWF†÷&VB–çWB–çF7Bà¢–ç7V7F÷%VW'“Òrs°¢–ç7V7F÷$6FVv÷'“ÒvÆÂs°¢6öç7B6V&6ƒÖ–ç7V7F÷"çVW'•6VÆV7F÷"‚ræ–ç7V7F÷"×6V&6‚–çWE·G—SÒ'6V&6‚%Òr“°¢–b‡6V&6‚—6V&6‚çfÇVSÒrs°¢–ç7V7F÷"çVW'•6VÆV7F÷$ÆÂ‚ræ–ç7V7F÷"Ö6FVv÷'’Öæb'WGFöâr’æf÷$V6‚†'WGFöãÓç°¢'WGFöâç6WDGG&–'WFR‚v&–×&W76VBrÅ7G&–ær†'WGFöâæFF6WBæ–ç7V7F÷$6FVv÷'“ÓÓÒvÆÂr’“°¢Ò“°¢f–ÇFW$–ç7V7F÷"‚“°¢6öç7Bw&÷WÖW'&÷"æ6Æ÷6W7B‚ræ–ç7V7F÷"Öw&÷Wr“°¢–b†w&÷W—°¢w&÷Wæ†–FFVãÖfÇ6S°¢6öç7BF—FÆSÖw&÷WçVW'•6VÆV7F÷"‚s§66÷Râæ–ç7V7F÷"Öw&÷W×F—FÆRr“°¢–b‚w&÷Wæ6Æ74Æ—7Bæ6öçF–ç2‚v—2Ö÷Vâr’—°¢òòW†—7F–ær66÷&F–öâ6Æ–6²Ç6òWFFW2—G2W'6—7FVB÷Väw&÷W2Öà¢–b‡F—FÆSòævWDGG&–'WFR‚w&öÆRr“ÓÓÒv'WGFöâr—F—FÆRæ6Æ–6²‚“°¢VÇ6W°¢w&÷Wæ6Æ74Æ—7BæFB‚v—2Ö÷Vâr“°¢F—FÆSòç6WDGG&–'WFR‚v&–ÖW‡æFVBrÂwG'VRr“°¢Ğ¢Ğ¢Ğ¢v–æF÷rç6æ6”VF—F÷#òæ÷VåæVÃòâ‚w&–v‡Br“°¢&WVW7Dæ–ÖF–öäg&ÖR‚‚“Óç°¢–b‚W'&÷"æ—46öææV7FVB—&WGW&ã°¢6öç7Bf–VÆCÖW'&÷"æ6Æ÷6W7B‚rçG—VBÖ–ç7V7F÷"Öf–VÆBÂæf–VÆBÂæ×VÇF’Ö–ç7V7F÷"Öf–VÆBr“°¢6öç7B–çWCÖf–VÆCòçVW'•6VÆV7F÷"‚v–çWC¦æ÷Bƒ¦F—6&ÆVB’ÇFW‡F&V¦æ÷Bƒ¦F—6&ÆVB’Ç6VÆV7C¦æ÷Bƒ¦F—6&ÆVB’r“°¢–b†–çWCòævWD6Æ–VçE&V7G2‚’æÆVæwF‚––çWBæfö7W2‡·&WfVçE67&öÆÃ§G'VWÒ“°¢W'&÷"ç67&öÆÄ–çFõf–Wr‡¶&Æö6³¢væV&W7BrÆ&V†f–÷#¢w6Öö÷F‚wÒ“°¢Ò“°§Ğ ¦–ç7V7F÷"æFDWfVçDÆ—7FVæW"‚vfö7W6–ârÆWfVçCÓç¶6öç7B–çWCÖWfVçBçF&vWC¶–b†–çWBæÖF6†W2‚v–çWBÇFW‡F&VÇ6VÆV7Br’––çWBæFF6WBæfö7W5fÇVSÕ7G&–ær†–çWBçG—SÓÓÒv6†V6¶&÷‚sö–çWBæ6†V6¶VC¦–çWBçfÇVR—Ò“°¦–ç7V7F÷"æFDWfVçDÆ—7FVæW"‚v6†ævRrÆWfVçCÓç¶6öç7B–çWCÖWfVçBçF&vWC¶–b†–çWBæÖF6†W2‚v–çWBÇFW‡F&VÇ6VÆV7Br’––çWBæFF6WBæfö7W5fÇVSÕ7G&–ær†–çWBçG—SÓÓÒv6†V6¶&÷‚sö–çWBæ6†V6¶VC¦–çWBçfÇVR—Ò“°¦7–æ2gVæ7F–öâ6fR‡V&Æ—6ƒÖfÇ6R—°¢–b‚fÇW6„Æ–W%&VæÖR‚’—&WGW&ã°¢–b‚6öÖÖ—D7F—fT–ç7V7F÷$6öçG&öÂ‚—ÇÆ–ç7V7F÷%fÆ–FF–öäW'&÷"‚’—°¢òòfÆ–FF–öâ6â÷WFÆ—fRfö7W3¢FööÆ&"6Æ–6²Ö÷fW2fö7W2v’g&öĞ¢òòF†R–çfÆ–Bf–VÆBâæWfW"6–ÆVçFÇ’6fR÷V&Æ—6‚âöÆFW"vRÖöFVÂà¢6WE7FGW2‚t¦l:×G6B¦VÇ¦WGBÖW¬YBÖVçL:—2fw’V&Æ–¼:Ì:2VÌYGBâr“°¢&WfVÄ–ç7V7F÷%fÆ–FF–öäW'&÷"†–ç7V7F÷%fÆ–FF–öäW'&÷"‚’“°¢&WGW&ã°¢Ğ¢–b‡7FFSòçW'6—7FVæ6Sòç6f–ær—·6WE7FGW2‚tÖVçL:—2föÇ–ÖF&î(
-br“·&WGW&ã·Ö–b†fÇW6…&–6…FW‡DG&gCòâ‚“ÓÓÖfÇ6R—·6WE7FGW2‚t¦l:×G6B¦VÇ¦WGBF'FÆöÖÖW¬YBÖVçL:—2VÌYGBâr“·&WGW&ã·Ö6öç7B7W'&VçC×vR‚“¶–b‚7W'&VçB—&WGW&ã¶–b‡V&Æ—6‚—·G'—·fÆ–FFUvTf÷%V&Æ–6F–öâ†7W'&VçB—Ö6F6‚†W'&÷"—¶–b†W'&÷"ææöFT–B—·6WE6VÆV7F–öâ‡7FFRÅ¶W'&÷"ææöFT–EÒÆW'&÷"ææöFT–B“¶–ç7V7F÷%F#Òv6öçFVçBs·v–æF÷rç6æ6”VF—F÷#òç6WD–ç7V7F÷%F#òâ†–ç7V7F÷%F"Ç¶æ÷F–g“¦fÇ6WÒ“·&VæFW"‚“·v–æF÷rç6æ6”VF—F÷#òæ÷VåæVÃòâ‚w&–v‡Br“¶6öç7Bæ÷FSÖFö7VÖVçBæ7&VFTVÆVÖVçB‚wr“¶æ÷FRæ6Æ74æÖSÒw&÷W'G’×fÆ–FF–öâs¶æ÷FRæFF6WBçfÆ–FF–öä¶–æCÒwV&Æ–6F–öâs¶æ÷FRç6WDGG&–'WFR‚w&öÆRrÂvÆW'Br“¶æ÷FRçFW‡D6öçFVçCÖW'&÷"æÖW76vS¶–ç7V7F÷"ç&WVæB†æ÷FR—×6WE7FGW2†W'&÷"æÖW76vR“·&WGW&ç×Ö6öç7BÖWF×vW2æf–æB‡ƒÓç‚æ–CÓÓÖ7W'&VçBæ–B“¶–b‚ÖWF—&WGW&ã¶6öç7B7FFTE7F'C×7FFS¶6öç7BvT–CÖ7W'&VçBæ–C¶6öç7B7V&Ö—GFVDFö7VÖVçC×7G'V7GW&VD6ÆöæR‡7FFTE7F'BæFö7VÖVçB“¶6öç7B7V&Ö—GFVD§6öãÔ¥4ôâç7G&–æv–g’‡7V&Ö—GFVDFö7VÖVçB“¶6öç7BW‡V7FVEfW'6–öãÔçVÖ&W"†ÖWFç&Wf—6–öãó÷7FFTE7F'BæFö7VÖVçBç&Wf—6–öãóó“·6WE7FGW2‡V&Æ—6ƒòuV&Æ–¼:Ì:>(
-bs¢tÖVçL:—>(
-br“·7FFTE7F'BçW'6—7FVæ6Rç6f–æs×G'VS·G'—¶6öç7B&W7VÇCÖv—B’†ö’öFÖ–âöVF—F÷#÷vT–CÒG¶Væ6öFUU$”6ö×öæVçB‡vT–B—ÖÇ¶ÖWF†öC¢uõ5BrÆ&öG“¤¥4ôâç7G&–æv–g’‡·vT–BÆFö7VÖVçC§7V&Ö—GFVDFö7VÖVçBÇV&Æ—6‚ÆW‡V7FVEfW'6–öâÆW‡V7FVE&VçEvT–C¦ÖWFç&VçEvT–CóöçVÆÂÆæ÷FS§V&Æ—6ƒòtVF—F÷"c"V&Æ–¼:Ì:2s¢tVF—F÷"c"ÖVçL:—2wÒ—Ò“¶6öç7BfW'6–öãÔçVÖ&W"‡&W7VÇCòæFFòçfW'6–öâ“¶–b‡&W7VÇCòæFFòçvT–BÓ×vT–GÇÂçVÖ&W"æ—4–çFVvW"‡fW'6–öâ—ÇÇfW'6–öãÃ—F‡&÷ræWrW'&÷"‚tÖVçL:—2l:Æ7¦†œ:ç–÷2fw’†–,:2&Wf—6–öâÖFF÷BF'FÆÖ£²†VÇ–’Ü;6F÷<:×L:6ö¶BæVÒ¦VÌ;fÇL;Æ²ÖVçFWGFæV²âr“¶6öç7B&VæÖU&VG“×7FFRÓ×7FFTE7F'GÇÆfÇW6„Æ–W%&VæÖR‚“¶6öç7BVæ6†ævVC×7FFSÓÓ×7FFTE7F'Bbg&VæÖU&VG’bd¥4ôâç7G&–æv–g’‡7FFTE7F'BæFö7VÖVçB“ÓÓ×7V&Ö—GFVD§6öã·7FFTE7F'BæFö7VÖVçBç&Wf—6–öã×fW'6–öã¶–b‡7FFTE7F'BæFö7VÖVçBçvW3òå·vT–EÒ—7FFTE7F'BæFö7VÖVçBçvW5·vT–EÒç&Wf—6–öã×fW'6–öã¶ÖWFç&Wf—6–öã×fW'6–öã¶–b‡Væ6†ævVB—¶Ö&µ6fVB‡7FFTE7F'BÇfW'6–öâ—ÖVÇ6W·7FFTE7F'BçW'6—7FVæ6Rç6f–æsÖfÇ6S·7FFTE7F'BçW'6—7FVæ6RæF—'G“×G'VS·7FFTE7F'BçW'6—7FVæ6RæW'&÷#ÖçVÆÃ·7FFTE7F'BçW'6—7FVæ6RæÆ7E6fVE&Wf—6–öã×fW'6–öç×7FFTE7F'BçW'6—7FVæ6Ræ6öæfÆ–7CÖçVÆÃ¶6öç7BæVÃÒB‚r7&Wf—6–öä6öæfÆ–7Br“¶–b‡æVÂbg7FFSÓÓ×7FFTE7F'B—·æVÂæ†–FFVã×G'VS¶Fö7VÖVçBçVW'•6VÆV7F÷"‚ræVF—F÷"Ör“òæ6Æ74Æ—7Bç&VÖ÷fR‚w&Wf—6–öâÖ6öæfÆ–7BÖ÷Vâr—Ö6öç7B“×vW2æf–æD–æFW‚‡ƒÓç‚æ–CÓÓ×vT–B“¶–b†“ãÓ—¶6öç7B&Wf–÷W3×vW5¶•Ó·vW5¶•Ó×²ââç&Wf–÷W2Æ6öçFVçC§7V&Ö—GFVDFö7VÖVçBÆ—5V&Æ—6†VC§V&Æ—6‡ÇÄ&ööÆVâ‡&Wf–÷W2æ—5V&Æ—6†VB’Æ†5VçV&Æ—6†VD6†ævW3¢V&Æ—6‚bd&ööÆVâ‡&Wf–÷W2æ—5V&Æ—6†VB’ÇV&Æ—6†VE&Wf—6–öä–C§V&Æ—6ƒ÷&W7VÇBæFFç&Wf—6–öä–C§&Wf–÷W2çV&Æ—6†VE&Wf—6–öä–BÇV&Æ—6†VE&VçEvT–C§V&Æ—6ƒ÷&Wf–÷W2ç&VçEvT–C§&Wf–÷W2çV&Æ—6†VE&VçEvT–BÇV&Æ—6†VE6ÇVs§V&Æ—6ƒ÷&Wf–÷W2ç6ÇVs§&Wf–÷W2çV&Æ—6†VE6ÇVrÇV&Æ—6†VE&Wf—6–öåfW'6–öã§V&Æ—6ƒ÷fW'6–öã¤çVÖ&W"‡&Wf–÷W2çV&Æ—6†VE&Wf—6–öåfW'6–öãóó’Ç&Wf—6–öã§fW'6–öçÓ·×&VæFW%vTÆ—7B‚“¶–b‡7FFSÓÓ×7FFTE7F'B—·&VæFW"‚“·6WE7FGW2‡Væ6†ævVCò‡V&Æ—6ƒòuV&Æ–¼:Çfs¢‡vW2æf–æB‡ƒÓç‚æ–CÓÓ×vT–B“òæ—5V&Æ—6†VCòtÖVçGfR(	Bç––Çl:æ÷2öÆFÂl:ÇF÷¦FÆâs¢tÖVçGfRr’“¢tÖVçFWGBfW'¦œ;2VÆ¼:—7¬;ÆÇC²F÷l:&&’†VÇ–’Ü;6F÷<:×L:6ö²Ü:–ræ–æ76VæV²ÖVçGfRr—×&WGW&â&W7VÇGÖ6F6‚†R—·7FFTE7F'BçW'6—7FVæ6Rç6f–æsÖfÇ6S·7FFTE7F'BçW'6—7FVæ6RæW'&÷#ÖR–ç7Fæ6VöbW'&÷#öRæÖW76vS¥7G&–ær†R“¶–b‡7FFSÓÓ×7FFTE7F'BbgV&Æ—6‚bfSòç7FGW3ÓÓÓC’bfSòæ6öFSÓÓÒuTå5Uõ%DTEôTD•Dõ%ôäôDUõE•Rr—¶–b„¥4ôâç7G&–æv–g’‡7FFTE7F'BæFö7VÖVçB“ÓÓ×7V&Ö—GFVD§6öâ—6†÷uVç7W÷'FVEV&Æ—6…&V6÷fW'’‚“¶VÇ6R6†÷u7FÆUVç7W÷'FVEV&Æ—6…&W7öç6R‚“·7–æ5V&Æ—6„6öçG&öÇ2‚“·&WGW&ç×7FFTE7F'BçW'6—7FVæ6RæF—'G“×G'VS¶–b‡7FFSÓÓ×7FFTE7F'BbfSòç7FGW3ÓÓÓC’bfSòæ6öFSÓÓÒu$Ud•4”ôåô4ôädÄ”5Br—·6†÷u&Wf—6–öä6öæfÆ–7B†RÇvT–B“·&WGW&çÖ–b‡7FFSÓÓ×7FFTE7F'B—·6WE7FGW2‚tÖVçL:—6’†–&r“¶ÆW'B‡7FFTE7F'BçW'6—7FVæ6RæW'&÷"—×&WGW&ç×Ğ¦7–æ2gVæ7F–öâVçV&Æ—6…vR‚—¶–b‚fÇW6„Æ–W%&VæÖR‚—ÇÆfÇW6…&–6…FW‡DG&gCòâ‚“ÓÓÖfÇ6R—&WGW&ã¶6öç7B7W'&VçC×vR‚“¶6öç7BÖWFÖ7W'&VçBbgvW2æf–æB‡ƒÓç‚æ–CÓÓÖ7W'&VçBæ–B“¶–b‚7W'&VçGÇÂÖWFòæ—5V&Æ—6†VB—&WGW&ã¶–b‚6öæf—&Ò‚t&—§F÷6âf—77¦föæöBVææV²¢öÆFÆæ²V&Æ–¼:Ì:<:Còr’—&WGW&ã·6WE7FGW2‚uV&Æ–¼:Ì:2f—77¦föì:6(
-br“·G'—¶6öç7B&W7VÇCÖv—B’‚rö’öFÖ–âöVF—F÷#÷vT–CÒr¶Væ6öFUU$”6ö×öæVçB†7W'&VçBæ–B’Ç¶ÖWF†öC¢uõ5BrÆ&öG“¤¥4ôâç7G&–æv–g’‡·vT–C¦7W'&VçBæ–BÆ7F–öã¢wVçV&Æ—6‚wÒ—Ò“¶6öç7B“×vW2æf–æD–æFW‚‡ƒÓç‚æ–CÓÓÖ7W'&VçBæ–B“¶–b†“ãÓ—vW5¶•Ó×²ââçvW5¶•ÒÆ—5V&Æ—6†VC¤&ööÆVâ‡&W7VÇBæFFòçV&Æ—6†VB’ÇV&Æ—6†VE6ÇVs¦çVÆÂÆ†5VçV&Æ—6†VD6†ævW3¦fÇ6WÓ·&VæFW%vTÆ—7B‚“·&VæFW"‚“·6WE7FGW2‚uV&Æ–¼:Ì:2f—77¦föçfr—Ö6F6‚†R—·6†÷tW'&÷"†R—×Ğ¦gVæ7F–öâ6WDFWf–6R†FWf–6R—°¢–b‚7FFWÇÂö&¦V7Bæ†4÷vâ‡6—¦W2ÆFWf–6R’—&WGW&âfÇ6S°¢–b‡7FFRçf–Ww÷'BæFWf–6SÓÓÖFWf–6R—&WGW&âG'VS°¢–b‚fÇW6„Æ–W%&VæÖR‚—ÇÂ6öÖÖ—D7F—fT–ç7V7F÷$6öçG&öÂ‚—ÇÀ¢–ç7V7F÷%fÆ–FF–öäW'&÷"‡·f—6–&ÆTöæÇ“§G'VWÒ—ÇÀ¢fÇW6…&–6…FW‡DG&gCòâ‚“ÓÓÖfÇ6R—°¢6WE7FGW2‚t¦l:×G6B†–,:2ÖW¬YBì:—¦WGl:ÇL:2VÌYGBâr“°¢&WGW&âfÇ6S°¢Ğ¢6öç7B&Wf–÷W4FWf–6S×7FFRçf–Ww÷'BæFWf–6RÇ&Wf–÷W5¦ööÓ×¦ööÓ°¢7FFRçf–Ww÷'BæFWf–6SÖFWf–6S°¢¦ööÓÖFWf–6SÓÓÒvFW6·F÷só¤ÖF‚æÖ‚‚ã3RÄÖF‚æÖ–âƒÂ†6çf2æ6Æ–VçEv–GF‚ÓC‚’÷6—¦W5¶FWf–6UÒ’“°¢–b‡&VæFW"‚“ÓÓÖfÇ6R—°¢7FFRçf–Ww÷'BæFWf–6S×&Wf–÷W4FWf–6S·¦ööÓ×&Wf–÷W5¦ööÓ°¢6WE7FGW2‚tì:—¦WGl:ÇL:2æVÒ6–¶W,;ÆÇBâÜ;6F÷<:×L:6ö²ÖVvÖ&GF²âr“°¢&WGW&âfÇ6S°¢Ğ¢v–æF÷rç6æ6”VF—F÷#òç6WEf–Ww÷'E&VfW&Væ6Sòâ‡¶FWf–6RÇ¦öö×Ò“°¢6çf2ç67&öÆÅFò‡¶ÆVgC£ÇF÷£Æ&V†f–÷#¢v–ç7FçBwÒ“°¢&WGW&âG'VS°§Ğ¦Fö7VÖVçBæFDWfVçDÆ—7FVæW"‚tDôÔ6öçFVçDÆöFVBrÂ‚“Óç°¢F–væ÷7F–72æ–æ—B‚“°¢v–æF÷råõ÷6æ6”VF—F÷$F–væ÷7F–73ÖF–væ÷7F–73°¢v–æF÷råõ÷6æ6”VF—F÷$&ö÷Còç7F'FVB‚“°¢B‚r6VÆVÖVçE6V&6‚r’æöæ–çWCÖSÓç&VæFW%ÆWGFR†RçF&vWBçfÇVR“°¢B‚r766†VGVÆU6VÆV7DæöFRr’æöæ6Æ–6³Ò‚“Óæfö7W566†VGVÆTæöFR‚“°¢–æ—F–Æ—¦UvU7F'DF–Æör‚“²B‚r6æWuvRr’æöæ6Æ–6³Ò‚“Óæ7&VFTæWr‚’æ6F6‚‡6†÷tW'&÷"“²B‚r6æWuvUæVÂr’æöæ6Æ–6³Ò‚“Óæ7&VFTæWr‚’æ6F6‚‡6†÷tW'&÷"“°¢B‚r7vU6VÆV7Br’æöæ6†ævSÖSÓæÆöEvR†RçF&vWBçfÇVR’æ6F6‚‡6†÷tW'&÷"“°¢B‚r6W‡÷'D6öæfÆ–7DG&gBr’æöæ6Æ–6³Ò‚“ÓæW‡÷'D6öæfÆ–7DG&gB‚“²B‚r7&VÆöD6öæfÆ–7EvRr’æöæ6Æ–6³Ò‚“Óç&VÆöDÆFW7DgFW$6öæfÆ–7B‚“°¢B‚r76fRr’æöæ6Æ–6³Ò‚“Óç6fR†fÇ6R“²B‚r7V&Æ—6‚r’æöæ6Æ–6³Ò‚“Óç6fR‡G'VR“²B‚r7VçV&Æ—6‚r’æöæ6Æ–6³Ò‚“ÓçVçV&Æ—6…vR‚’æ6F6‚‡6†÷tW'&÷"“²B‚r6Öö&–ÆUV&Æ—6‚r’æöæ6Æ–6³Ò‚“Óç6fR‡G'VR“²B‚r6Öö&–ÆUVçV&Æ—6‚r’æöæ6Æ–6³Ò‚“ÓçVçV&Æ—6…vR‚’æ6F6‚‡6†÷tW'&÷"“°¢B‚r7&Wf–Wrr’æöæ6Æ–6³Ò‚“Óç¶6öç7B×vR‚“¶–b‡—v–æF÷ræ÷Vâ†÷òG¶Væ6öFUU$”6ö×öæVçB‡ç6ÇVr—Ó÷&Wf–WsÓÂuö&Ææ²rÂvæö÷VæW"Ææ÷&VfW'&W"r—Ó°¢B‚r7VæFòr’æöæ6Æ–6³Ò‚“Óç¶–b‡7FFRbffÇW6„Æ–W%&VæÖR‚’bf6öÖÖ—D7F—fT–ç7V7F÷$6öçG&öÂ‚’bffÇW6…&–6…FW‡DG&gCòâ‚’ÓÖfÇ6R—·G'—¶W†V7WFR‡7FFRÇ·G—S¢v†—7F÷'’çVæFòwÒ“·&VæFW"‚—Ö6F6‚†R—·6†÷tW'&÷"†R—××Ó²B‚r7&VFòr’æöæ6Æ–6³Ò‚“Óç¶–b‡7FFRbffÇW6„Æ–W%&VæÖR‚’bf6öÖÖ—D7F—fT–ç7V7F÷$6öçG&öÂ‚’bffÇW6…&–6…FW‡DG&gCòâ‚’ÓÖfÇ6R—·G'—¶W†V7WFR‡7FFRÇ·G—S¢v†—7F÷'’ç&VFòwÒ“·&VæFW"‚—Ö6F6‚†R—·6†÷tW'&÷"†R—××Ó°¢B‚r66÷”æöFW2r’æöæ6Æ–6³Ö6÷•6VÆV7FVDæöFW3²B‚r77FTæöFW2r’æöæ6Æ–6³×7FU6VÆV7FVDæöFW3²B‚r6Öö&–ÆT6÷”æöFW2r’æöæ6Æ–6³Ö6÷•6VÆV7FVDæöFW3²B‚r6Öö&–ÆU7FTæöFW2r’æöæ6Æ–6³×7FU6VÆV7FVDæöFW3°¢B‚r7¦ööÔ–âr’æöæ6Æ–6³Ò‚“Óæ6†ævT6çf5¦ööÒ„ÖF‚æÖ–âƒãRÇ¦ööÒ²ã’“²B‚r7¦ööÔ÷WBr’æöæ6Æ–6³Ò‚“Óæ6†ævT6çf5¦ööÒ„ÖF‚æÖ‚‚ã3RÇ¦ööÒÒã’“²B‚r6f—D6çf2r’æöæ6Æ–6³Öf—D6çf5Fõf–Ww÷'C°¢B‚r76VÆV7EFööÂr’æöæ6Æ–6³Ò‚“Óç·7–æ46çf5FööÄ'WGFöç2‚w6VÆV7Br“¶6çf2ç7G–ÆRæ7W'6÷#ÒvFVfVÇBwÓ²B‚r6w&÷W6VÆV7F–öâr’æöæ6Æ–6³Ò‚“Óç¶–b‚B‚r6w&÷W6VÆV7F–öâr’æF—6&ÆVB–6öÖÖæB‚v†–W&&6‡’æw&÷Wr—Ó²B‚r7Væw&÷W6VÆV7F–öâr’æöæ6Æ–6³Ò‚“Óç¶–b‚B‚r7Væw&÷W6VÆV7F–öâr’æF—6&ÆVB–6öÖÖæB‚v†–W&&6‡’çVæw&÷Wr—Ó²B‚r6Ö÷fTÆ–W%Wr’æöæ6Æ–6³Ò‚“Óç¶–b‚B‚r6Ö÷fTÆ–W%Wr’æF—6&ÆVB–Ö÷fU6VÆV7FVDÆ–W"‚wWr—Ó²B‚r6Ö÷fTÆ–W$F÷vâr’æöæ6Æ–6³Ò‚“Óç¶–b‚B‚r6Ö÷fTÆ–W$F÷vâr’æF—6&ÆVB–Ö÷fU6VÆV7FVDÆ–W"‚vF÷vâr—Ó²B‚r6–æFVçDÆ–W"r’æöæ6Æ–6³Ò‚“Óç¶–b‚B‚r6–æFVçDÆ–W"r’æF—6&ÆVB–Ö÷fU6VÆV7FVDÆ–W"‚v–æFVçBr—Ó²B‚r6÷WFFVçDÆ–W"r’æöæ6Æ–6³Ò‚“Óç¶–b‚B‚r6÷WFFVçDÆ–W"r’æF—6&ÆVB–Ö÷fU6VÆV7FVDÆ–W"‚v÷WFFVçBr—Ó²B‚r6Öö&–ÆTw&÷Wr’æöæ6Æ–6³Ò‚“Óç¶–b‚B‚r6Öö&–ÆTw&÷Wr’æF—6&ÆVB–6öÖÖæB‚v†–W&&6‡’æw&÷Wr—Ó²B‚r6Öö&–ÆUVæw&÷Wr’æöæ6Æ–6³Ò‚“Óç¶–b‚B‚r6Öö&–ÆUVæw&÷Wr’æF—6&ÆVB–6öÖÖæB‚v†–W&&6‡’çVæw&÷Wr—Ó²B‚r6Öö&–ÆT×VÇF”FöæRr’æöæ6Æ–6³Ò‚“Óæf–æ—6„Öö&–ÆT×VÇF•6VÆV7B‚“²B‚r6Öö&–ÆT×VÇF”6æ6VÂr’æöæ6Æ–6³Ò‚“Óæ6æ6VÄÖö&–ÆT×VÇF•6VÆV7B‚“²B‚r7åFööÂr’æöæ6Æ–6³Ò‚“Óç·7–æ46çf5FööÄ'WGFöç2‚wâr“¶6çf2ç7G–ÆRæ7W'6÷#Òvw&"wÓ°¢Fö7VÖVçBçVW'•6VÆV7F÷$ÆÂ‚u¶FFÖFWf–6UÒr’æf÷$V6‚†#Óæ"æöæ6Æ–6³Ò‚“Óç6WDFWf–6R†"æFF6WBæFWf–6R’“°¢6çf2æFDWfVçDÆ—7FVæW"‚v6Æ–6²rÆWfVçCÓç°¢–b†WfVçBçF&vWBæ6Æ÷6W7B‚rææöFRr’’&WGW&ã°¢–b‡7FFR’²6öÖÖæB‚w6VÆV7F–öâæ6ÆV"r“²Ğ¢Ò“°¢6öç7B–ç7V7F÷%F&Æ—7CÒB‚ræ–ç7V7F÷"×F'2r“°¢v–æF÷rç6æ6”VF—F÷#òæöãòâ‚wv÷&·76S§&VfW&Væ6W2Ö6†ævRrÇVWVT66÷VçEv÷&·76Uw&—FR“°¢–b‡&VGV6VDÖ÷F–öåVW'’—¶6öç7BWFFT6çf5f–FVõÆ–&6³Ò‚“ÓæÇ•&VGV6VDÖ÷F–öåf–FVõÆ–&6²†6çf2Ç·&VGV6VDÖ÷F–öã§&VfW'5&VGV6VDÖ÷F–öâ‚’ÆVF—F÷#§G'VWÒ“¶–b‡G—Vöb&VGV6VDÖ÷F–öåVW'’æFDWfVçDÆ—7FVæW#ÓÓÒvgVæ7F–öâr—&VGV6VDÖ÷F–öåVW'’æFDWfVçDÆ—7FVæW"‚v6†ævRrÇWFFT6çf5f–FVõÆ–&6²“¶VÇ6R&VGV6VDÖ÷F–öåVW'’æFDÆ—7FVæW#òâ‡WFFT6çf5f–FVõÆ–&6²—Ğ¢v–æF÷rç6æ6”VF—F÷#òæöãòâ‚wæVÃ¦–ç7V7F÷"×F"rÂ‡·F'Ó×·Ò“Óæ7F—fFT–ç7V7F÷%F"‡F"Ç·W'6—7C¦fÇ6WÒ’“°¢–ç7V7F÷%F&Æ—7CòæFDWfVçDÆ—7FVæW"‚v6Æ–6²rÆWfVçCÓç°¢6öç7B'WGFöãÖWfVçBçF&vWBæ6Æ÷6W7B‚u·&öÆSÒ'F"%Òr“°¢–b‚'WGFöçÇÂ–ç7V7F÷%F&Æ—7Bæ6öçF–ç2†'WGFöâ’—&WGW&ã°¢6öç7B–æFWƒÕ²ââæ–ç7V7F÷%F&Æ—7BçVW'•6VÆV7F÷$ÆÂ‚u·&öÆSÒ'F"%Òr•Òæ–æFW„öb†'WGFöâ“°¢7F—fFT–ç7V7F÷%F"„”å5T5Dõ%õD%5¶–æFW…Ò“°¢Ò“°¢–ç7V7F÷%F&Æ—7CòæFDWfVçDÆ—7FVæW"‚v¶W–F÷vârÆWfVçCÓç°¢–b‚²t'&÷tÆVgBrÂt'&÷u&–v‡BrÂt†öÖRrÂtVæBuÒæ–æ6ÇVFW2†WfVçBæ¶W’’—&WGW&ã°¢6öç7BF'3Õ²ââæ–ç7V7F÷%F&Æ—7BçVW'•6VÆV7F÷$ÆÂ‚u·&öÆSÒ'F"%Òr•Ó°¢6öç7B7W'&VçD–æFWƒ×F'2æ–æFW„öb†Fö7VÖVçBæ7F—fTVÆVÖVçB“°¢–b†7W'&VçD–æFWƒÃÇÂF'2æÆVæwF‚—&WGW&ã°¢6öç7BF—&V7F–öãÖFö7VÖVçBæFö7VÖVçDVÆVÖVçBæF—#ÓÓÒw'FÂsòÓ£°¢6öç7BæW‡D–æFWƒÖWfVçBæ¶W“ÓÓÒt†öÖRsó¦WfVçBæ¶W“ÓÓÒtVæBs÷F'2æÆVæwF‚Ó ¢†7W'&VçD–æFW‚²†WfVçBæ¶W“ÓÓÒt'&÷u&–v‡BsöF—&V7F–öã¢ÖF—&V7F–öâ’·F'2æÆVæwF‚’WF'2æÆVæwFƒ°¢WfVçBç&WfVçDFVfVÇB‚“°¢7F—fFT–ç7V7F÷%F"„”å5T5Dõ%õD%5¶æW‡D–æFW…ÒÇ¶fö7W3§G'VWÒ“°¢Ò“°¢Fö7VÖVçBæFDWfVçDÆ—7FVæW"‚v¶W–F÷vârÆSÓç¶–b†Ræ¶W“ÓÓÒtW66RrbfÖö&–ÆUF÷V6‚æ7F—fR—¶Rç&WfVçDFVfVÇB‚“¶6æ6VÄÖö&–ÆT×VÇF•6VÆV7B‚“·&WGW&çÖ–b‚†Ræ7G&Ä¶W—ÇÆRæÖWF¶W’’be²v2rÂwbuÒæ–æ6ÇVFW2†Ræ¶W’çFôÆ÷vW$66R‚’’bf—46çf46Æ—&ö&E6†÷'F7WB†R’—¶Rç&WfVçDFVfVÇB‚“¶–b†Ræ¶W’çFôÆ÷vW$66R‚“ÓÓÒv2r–6÷•6VÆV7FVDæöFW2‚“¶VÇ6R7FU6VÆV7FVDæöFW2‚“·&WGW&çÖ–b‚†Ræ7G&Ä¶W—ÇÆRæÖWF¶W’’bfRæ¶W’çFôÆ÷vW$66R‚“ÓÓÒw2r—¶Rç&WfVçDFVfVÇB‚“·6fR†fÇ6R—Ö–b‚†Ræ7G&Ä¶W—ÇÆRæÖWF¶W’’bfRæ¶W’çFôÆ÷vW$66R‚“ÓÓÒw¢r—¶Rç&WfVçDFVfVÇB‚“¶–b‡7FFRbffÇW6„Æ–W%&VæÖR‚’bf6öÖÖ—D7F—fT–ç7V7F÷$6öçG&öÂ‚’bffÇW6…&–6…FW‡DG&gCòâ‚’ÓÖfÇ6R—¶W†V7WFR‡7FFRÇ·G—S¦Rç6†–gD¶W“òv†—7F÷'’ç&VFòs¢v†—7F÷'’çVæFòwÒ“·&VæFW"‚—××Ò“°¢&VæFW%ÆWGFR‚“¶ÆöEGv—F6„6öææV7F–öâ‚“µ&öÖ—6RæÆÂ…¶ÆöEvW2‚’ÆÆöEÆWGFTff÷&—FW2‚•Ò’çF†Vâ‚‚“Óç¶–b‡VæF–æt66÷VçEf–Ww÷'B–Ç”66÷VçEf–Ww÷'B‡VæF–æt66÷VçEf–Ww÷'B“·&WGW&â66÷VçE&VfW&Væ6Uw&—FWÒ’çF†Vâ‚‚“Óçv–æF÷råõ÷6æ6”VF—F÷$&ö÷Còç&VG’‚’’æ6F6‚‡6†÷tW'&÷"“°§Ò“° ¦ÆöDVF—F÷%Fö¶Vç2‚“·v–æF÷ræFDWfVçDÆ—7FVæW"‚vfö7W2rÂ‚“ÓæÆöDVF—F÷%Fö¶Vç2‚’“°
+import {hasContentProfile} from './core/content-profiles.js?v=20261025-inspector-lifecycle-contract';
+import {getNode,getChildren,NODE_TYPES,canContain,normalizeRichText} from './core/schema.js?v=20261115-d07-safe-child-render';
+import {instantiateEditorTemplate,listEditorTemplates} from './core/editor-templates.js?v=20261119-edt041-stream-schedule-v1';
+import {createEditorState,activePage,selectedNodes,setSelection,markSaved} from './core/state.js?v=20261118-edt039-invalid-recovery-v1';
+import {execute,executeCoalesced,executeBatch} from './core/commands.js?v=20261118-edt039-page-action-delete-target-cleanup-v1';
+import {applyNodeStyle,getNodeGeometry,resolveNodeStyle} from './core/canvas-engine.js?v=20261123-edt040-in-view-motion-v1';
+import {motionTriggerForStyle} from './core/motion-style.js?v=20261123-edt040-in-view-motion-v1';
+import {computeCanvasMinHeight} from './core/canvas-extent.js';
+import {measureCanvasWorkspace} from './core/canvas-workspace.js';
+import {hasResponsiveOverride,resolveResponsiveValue} from './core/responsive.js?v=20261122-edt024-responsive-prototype-safety-v1';
+import {getNodeVisibilityState,isVisibleOnDevice} from './core/visibility.js';
+import {diagnostics} from './diagnostics.js?v=20261119-edt042-safe-export-v2';
+import {plainTextToRichText,renderRichTextEditor,richTextEditorToDocument,restoreSelectionOffsets,getSelectionOffsets,transformRichTextBlockTypes} from './core/richtext-engine.js?v=20261117-d03-invalid-media-id-guidance-v1';
+import {renderSchedulePreview} from './core/schedule-preview.js';
+import {normalizeScheduleConfig,SCHEDULE_MODES,SCHEDULE_ORDERS,SCHEDULE_STATUSES,SCHEDULE_EMPTY_TEXT_MAX,SCHEDULE_LIMIT_MAX} from './core/schedule-schema.js';
+import {listPropertyGroups,listProperties,getProperty} from './core/property-registry.js?v=20261123-edt040-in-view-motion-v1';
+import {renderPropertyInput} from './ui/property-controls.js?v=20261101-richtext-multiblock-links';
+import {getInspectorValueContract,normalizeInspectorValue} from './core/property-values.js';
+import {describeResponsiveOrigin} from './ui/responsive-origin.js';
+import {responsiveGroupResetActions} from './ui/responsive-group-reset.js';
+import {normalizePaletteFavoriteTypes,readPaletteFavoriteTypes,togglePaletteFavoriteType,writePaletteFavoriteTypes} from './ui/palette-preferences.js?v=20261121-edt044-account-preferences-v1';
+import {getRichTextBlockSelection,getRichTextFormattingSelection,getRichTextBlockTransformSelection,getRichTextActiveBlockIndex,restoreRichTextBlockSelection,restoreRichTextFormattingSelection,updateRichTextInlineLink,updateRichTextInlineMark,updateRichTextInlineStyle,updateRichTextBlockAlignment} from './core/richtext-links.js?v=20261117-d03-invalid-media-id-guidance-v1';
+import {initialPageId,rememberPageId,requestedPageId} from './core/page-url.js';
+import {getElementCapability} from './core/capability-matrix.js?v=20261123-edt040-in-view-motion-v1';
+import {firstUnsupportedPublicationNode,unsupportedPublicationMessage} from './core/publication-recovery.js?v=20261124-edt042-publish-recovery-safe-label-v1';
+import {renderGeometryPresets} from './ui/geometry-presets.js';
+import {importRichTextClipboard} from './core/richtext-import.js?v=20261124-edt044-import-tree-budget-v2';
+import {pasteRichTextDocument} from './core/richtext-paste.js?v=20261117-d03-invalid-media-id-guidance-v1';
+import {createNodeClipboard,isNodeClipboardForPage} from './core/node-clipboard.js?v=20261118-edt038-node-clipboard-v1';
+import {captureStyleSnapshot,STYLE_SNAPSHOT_PROPERTIES} from './core/style-snapshot.js';
+import {LAYOUT_PRESETS,LAYOUT_TYPES,layoutMode,isManagedLayout,isLayoutPropertyRelevant,explicitGridColumnCount} from './core/layout-presets.js';
+import {resolveElementInsertion} from './core/element-insertion.js';
+import {TYPOGRAPHY_PRESETS,typographyPresetPatch} from './core/typography-presets.js';
+import {isStructuredType,createElementContent,normalizeElementContent,renderElementContent,activateStructuredContent} from './core/element-content.js?v=20261124-d06-accordion-accessible-group-v1';
+import {legacyImageSource,legacyPlayableSource,legacyPlaybackSettings,legacyImagePresentation,legacyImageCaption,applyReducedMotionVideoPlayback} from './core/legacy-media-source.js?v=20261125-d06-media-reduced-motion-v2';
+import {renderStructuredInspector} from './ui/structured-inspector.js?v=20261123-d06-single-slide-carousel-v1';
+import {ICON_CHOICES,iconById} from './core/icon-options.js';
+import {DIVIDER_LINE_STYLES,normalizeDividerStyle} from './core/decorative-elements.js';
+import {defaultCardContent,cardImageSrc} from './core/card-content.js?v=20261118-d02-card-cta-recovery-v1';
+import {defaultCountdownContent,renderCountdownContent,activateCountdowns} from './core/countdown-content.js?v=20261114-next-stream-clock-v1';
+import {renderCountdownInspector} from './ui/countdown-inspector.js?v=20261026-route-contract';
+import {defaultSocialLinks,renderSocialLinksHtml} from './core/social-links.js';
+import {renderSocialLinksInspector} from './ui/social-links-inspector.js?v=20261026-profile-route-contract';
+import {defaultEmbedContent,renderEmbedHtml} from './core/creator-embed.js';
+import {renderBasicContentInspector} from './ui/basic-content-inspector.js?v=20261121-d06-canonical-icon-registry-v1';
+import {renderLegacyMediaInspector} from './ui/legacy-media-inspector.js?v=20261125-media-playback-guard-version-scope-v1';
+import {renderCardInspector} from './ui/card-content-inspector.js?v=20261118-d02-card-cta-recovery-v1';
+import {renderEmbedInspector} from './ui/creator-embed-inspector.js?v=20261026-profile-route-contract';
+import {defaultCodeSnippet,renderCodeSnippet,activateCodeBlocks} from './core/code-snippet.js';
+import {renderCodeSnippetInspector} from './ui/code-snippet-inspector.js?v=20261026-profile-route-contract';
+import {readRichTextSelectionFormatting,readRichTextLinkTarget,readRichTextLinkHref,clearRichTextInlineFormatting} from './core/richtext-links.js?v=20261117-d03-invalid-media-id-guidance-v1';
+import {renderAccessibilityFields} from './ui/accessibility-fields.js?v=20261026-accessibility-route-contract';
+import {createCompositionInputs} from './ui/composition-inputs.js';
+import {opaqueContrast} from './core/accessibility.js';
+import {STATE_PROPERTY_IDS,applyStateStyles} from './core/state-styles.js';
+import {defaultTokens,applyTokenVariables} from './core/design-tokens.js';
+import {CONTENT_TYPES,STRUCTURAL_TYPES,validatePageForPublication,isAuthoredContent,authoredNodeHtml,contentAttributes,initContentInteractions,contentTag} from './core/authored-content.js?v=20261125-d06-media-reduced-motion-v2';
+import {captureCanvasInteractionState,restoreCanvasInteractionState} from './core/canvas-interaction-state.js';
+import {renderElementContentControls,pageLinkPicker} from './ui/element-content-controls.js?v=20261120-d06-authored-playable-asset-picker-v1';
+import {renderPageInteractionControls} from './ui/page-interaction-controls.js?v=20261119-edt039-page-action-safe-labels-v1';
+
+const reducedMotionQuery=typeof window.matchMedia==='function'?window.matchMedia('(prefers-reduced-motion: reduce)'):null;
+const prefersReducedMotion=()=>reducedMotionQuery?.matches===true;
+let editorTokens=defaultTokens();
+function propertyInput(property,label,current,onChange,options={}){
+  return renderPropertyInput(property,label,current,onChange,{tokens:editorTokens,...options});
+}
+async function loadEditorTokens(){try{const response=await fetch('/api/public/presentation?preview=1',{cache:'no-store',credentials:'same-origin'});const result=await response.json();if(response.ok&&result?.data?.tokens){editorTokens=result.data.tokens;const target=canvas.querySelector('.page-canvas');if(target)applyTokenVariables(target,editorTokens)}}catch{} }
+let statePreview='none';
+let pendingLayerRename=null;
+function flushLayerRename(){return pendingLayerRename?.()!==false}
+let inspectorCategory='all';let richTextSelectionCleanup=null;let richTextToolTab='character';
+
+let state=null;let pages=[];let archivedPages=[];let revisionHistory=[];let zoom=1;let inspectorTab='design';let inspectorQuery='';let flushRichTextDraft=null;let inlineEditingId=null;let richTextBookmark=null;let copiedStyleSnapshot=null;let nodeClipboard=null;let canvasDrag=null;let canvasResize=null;let pageStartTemplate='blank-page';let pageCreateBusy=false;let mobileTouch={active:false,timer:null,downId:null,startX:0,startY:0,snapshot:[],snapshotPrimary:null,suppressClick:false,longPressTriggered:false};let hierarchyDrag={nodeId:null,overId:null};let mobileHierarchyDrag={active:false,timer:null,nodeId:null,overId:null,startX:0,startY:0,suppressClick:false};
+let paletteFavoritesUserId=null;let paletteFavoriteTypes=[];let paletteFavoritesReady=false;let accountWorkspaceReady=false;let accountWorkspaceCachePresent=false;let accountWorkspaceTimer=null;let accountPreferenceWrite=Promise.resolve();let pendingAccountViewport=null;let accountPreferenceRevisions={paletteFavoriteTypes:0,workspace:0};let accountPreferenceConflicts=new Set();
+const $=s=>document.querySelector(s);const canvas=$('#canvas');const inspector=$('#inspectorBody');
+const sizes={desktop:1440,tablet:768,mobile:390};
+const validHexColor=value=>typeof value==='string'&&/^#(?:[a-f0-9]{3}|[a-f0-9]{6})$/i.test(value);
+const ELEMENT_DESCRIPTIONS={Section:'Oldalszakasz vagy nagyobb tartalmi blokk.',Container:'Rendezett tartalmak befoglalÃ³ja.',Stack:'EgymÃ¡sba rendezett elemek csoportja.',Group:'TÃ¶bb elem kÃ¶zÃ¶s csoportja.',Row:'Elemek egy sorban tÃ¶rtÃ©nÅ‘ elrendezÃ©se.',Columns:'TÃ¶bb oszlopos elrendezÃ©s.',Flex:'Rugalmas Flexbox elrendezÃ©s.',Grid:'RÃ¡cs alapÃº elrendezÃ©s.',Slot:'Fenntartott tartalomhely.',Spacer:'Ãœres tÃ©r lÃ©trehozÃ¡sa.',Divider:'VizuÃ¡lis elvÃ¡lasztÃ³ vonal.',Heading:'CÃ­msor H1â€“H6 szinttel.',SzÃ¶veg:'EgyszerÅ± szÃ¶veges tartalom.',"Rich Text":'FormÃ¡zott szÃ¶veg, lista, idÃ©zet Ã©s link.',Link:'KattinthatÃ³ hivatkozÃ¡s.',Gomb:'KattinthatÃ³ mÅ±veleti gomb.',Breadcrumb:'NavigÃ¡ciÃ³s Ãºtvonal.',KÃ©p:'KÃ©p megjelenÃ­tÃ©se.',GalÃ©ria:'TÃ¶bb kÃ©p megjelenÃ­tÃ©se.',VideÃ³:'VideÃ³tartalom.',Audio:'HanglejÃ¡tszÃ¡s.',Ikon:'Grafikus ikon.',Carousel:'LapozhatÃ³ tartalom.',Embed:'BeÃ¡gyazott tartalom.',Iframe:'KÃ¼lsÅ‘ oldal beÃ¡gyazÃ¡sa.',Code:'KÃ³d megjelenÃ­tÃ©se.',Card:'Ã–nÃ¡llÃ³ tartalmi kÃ¡rtya.',Lista:'FelsorolÃ¡s vagy lista.',TÃ¡blÃ¡zat:'TÃ¡blÃ¡zatos adatmegjelenÃ­tÃ©s.',Tabs:'FÃ¼lek kÃ¶zÃ¶tt vÃ¡lthatÃ³ tartalom.',Accordion:'NyithatÃ³-csukhatÃ³ blokkok.',Dropdown:'LenyÃ­lÃ³ menÃ¼ vagy vÃ¡lasztÃ³.',Pagination:'LapozÃ¡s.',Search:'KeresÃ©si funkciÃ³.',Modal:'FelugrÃ³ ablak.',Navbar:'FÅ‘ navigÃ¡ciÃ³.',Menu:'NavigÃ¡ciÃ³s menÃ¼.',Sidebar:'OldalsÃ³ sÃ¡v.',Footer:'Oldal alsÃ³ rÃ©sze.',Form:'Å°rlap befoglalÃ³.',Input:'Egysoros beviteli mezÅ‘.',Textarea:'TÃ¶bbsoros beviteli mezÅ‘.',Checkbox:'JelÃ¶lÅ‘nÃ©gyzet.',Radio:'Egyszeres vÃ¡lasztÃ¡s.',Select:'LenyÃ­lÃ³ vÃ¡lasztÃ³.',Slider:'CsÃºszkÃ¡s Ã©rtÃ©kvÃ¡lasztÃ³.',File:'FÃ¡jlfeltÃ¶ltÅ‘ mezÅ‘.',Submit:'Å°rlap bekÃ¼ldÃ©se.',"Social Links":'KÃ¶zÃ¶ssÃ©gi hivatkozÃ¡sok.',Discord:'Discord tartalom vagy hivatkozÃ¡s.',Twitch:'Twitch tartalom.',YouTube:'YouTube tartalom.',TikTok:'TikTok tartalom.',"Ã‰lÅ‘ Ã¡llapot":'Ã‰lÅ‘ vagy offline Ã¡llapot.',Countdown:'VisszaszÃ¡mlÃ¡lÃ³.',AdÃ¡srend:'Tervezett adÃ¡sok listÃ¡ja.',"Stream szÃ¡mlÃ¡lÃ³":'Streamhez kapcsolÃ³dÃ³ szÃ¡mlÃ¡lÃ³.',"KÃ¶vetÅ‘k":'KÃ¶vetÅ‘szÃ¡m.',"FeliratkozÃ³k":'FeliratkozÃ³szÃ¡m.',VOD:'KorÃ¡bbi stream vagy videÃ³.',TÃ¡mogatÃ¡s:'TÃ¡mogatÃ¡si lehetÅ‘sÃ©gek.',KÃ¶zÃ¶ssÃ©g:'KÃ¶zÃ¶ssÃ©gi tartalom.',"JÃ¡tÃ©kkÃ¡rtya":'JÃ¡tÃ©k kiemelt kÃ¡rtyÃ¡ja.',"JÃ¡tÃ©klista":'JÃ¡tÃ©kok listÃ¡ja.',Komponens:'ÃšjrafelhasznÃ¡lhatÃ³ komponens.',"Egyedi elem":'Egyedi testreszabhatÃ³ elem.',"Badge/Tag":'CÃ­mke vagy Ã¡llapotjelzÅ‘.',Quote:'IdÃ©zet.',Panel:'Tartalmi panel.',Overlay:'MÃ¡s tartalom fÃ¶lÃ¶tti rÃ©teg.',Absolute:'AbszolÃºt pozicionÃ¡lt elem.',Sticky:'GÃ¶rgetÃ©s kÃ¶zben rÃ¶gzÃ­tett elem.',Tooltip:'RÃ¶vid magyarÃ¡zÃ³ felirat.',Shorts:'Shorts tartalmi blokk.',Sponsor:'SzponzorÃ¡ciÃ³s tartalom.',"Business Contact":'Ãœzleti kapcsolatfelvÃ©tel.',"About Me":'BemutatkozÃ³ tartalom.',"Sanci Button":'Sanci9517 egyedi gomb.'};
+const groups=[
+ ['Layout',[['Section',NODE_TYPES.SECTION],['Container',NODE_TYPES.CONTAINER],['Stack',NODE_TYPES.STACK],['Group',NODE_TYPES.GROUP],['Row',NODE_TYPES.ROW],['Columns',NODE_TYPES.COLUMNS],['Flex',NODE_TYPES.FLEX],['Grid',NODE_TYPES.GRID],['Slot',NODE_TYPES.SLOT],['Spacer',NODE_TYPES.SPACER],['Divider',NODE_TYPES.DIVIDER],['Panel',NODE_TYPES.PANEL],['Overlay',NODE_TYPES.OVERLAY],['Absolute',NODE_TYPES.ABSOLUTE],['Sticky',NODE_TYPES.STICKY]]],
+ ['SzÃ¶veg',[['Heading',NODE_TYPES.HEADING],['SzÃ¶veg',NODE_TYPES.TEXT],['Rich Text',NODE_TYPES.RICHTEXT],['Link',NODE_TYPES.LINK],['Gomb',NODE_TYPES.BUTTON],['Breadcrumb',NODE_TYPES.BREADCRUMB],['Badge/Tag',NODE_TYPES.BADGE],['Quote',NODE_TYPES.QUOTE],['Tooltip',NODE_TYPES.TOOLTIP]]],
+ ['MÃ©dia',[['KÃ©p',NODE_TYPES.IMAGE],['GalÃ©ria',NODE_TYPES.GALLERY],['VideÃ³',NODE_TYPES.VIDEO],['Audio',NODE_TYPES.AUDIO],['Ikon',NODE_TYPES.ICON],['Carousel',NODE_TYPES.CAROUSEL],['Embed',NODE_TYPES.EMBED],['Iframe',NODE_TYPES.IFRAME],['Code',NODE_TYPES.CODE]]],
+ ['Tartalom',[['Card',NODE_TYPES.CARD],['Lista',NODE_TYPES.LIST],['TÃ¡blÃ¡zat',NODE_TYPES.TABLE],['Tabs',NODE_TYPES.TABS],['Accordion',NODE_TYPES.ACCORDION],['Dropdown',NODE_TYPES.DROPDOWN],['Pagination',NODE_TYPES.PAGINATION],['Search',NODE_TYPES.SEARCH],['Modal',NODE_TYPES.MODAL]]],
+ ['NavigÃ¡ciÃ³',[['Navbar',NODE_TYPES.NAVBAR],['Menu',NODE_TYPES.MENU],['Sidebar',NODE_TYPES.SIDEBAR],['Footer',NODE_TYPES.FOOTER]]],
+ ['Å°rlapok',[['Form',NODE_TYPES.FORM],['Input',NODE_TYPES.INPUT],['Textarea',NODE_TYPES.TEXTAREA],['Checkbox',NODE_TYPES.CHECKBOX],['Radio',NODE_TYPES.RADIO],['Select',NODE_TYPES.SELECT],['Slider',NODE_TYPES.SLIDER],['File',NODE_TYPES.FILE],['Submit',NODE_TYPES.SUBMIT]]],
+ ['Social / Web',[['Social Links',NODE_TYPES.SOCIAL],['Discord',NODE_TYPES.DISCORD],['Twitch',NODE_TYPES.TWITCH],['YouTube',NODE_TYPES.YOUTUBE],['TikTok',NODE_TYPES.TIKTOK]]],
+ ['Sanci9517',[['Ã‰lÅ‘ Ã¡llapot',NODE_TYPES.LIVE],['Countdown',NODE_TYPES.COUNTDOWN],['AdÃ¡srend',NODE_TYPES.SCHEDULE],['Stream szÃ¡mlÃ¡lÃ³',NODE_TYPES.STREAM_COUNT],['KÃ¶vetÅ‘k',NODE_TYPES.FOLLOWERS],['FeliratkozÃ³k',NODE_TYPES.SUBS],['VOD',NODE_TYPES.VOD],['TÃ¡mogatÃ¡s',NODE_TYPES.SUPPORT],['KÃ¶zÃ¶ssÃ©g',NODE_TYPES.COMMUNITY],['JÃ¡tÃ©kkÃ¡rtya',NODE_TYPES.GAME_CARD],['JÃ¡tÃ©klista',NODE_TYPES.GAME_LIST],['Komponens',NODE_TYPES.COMPONENT],['Egyedi elem',NODE_TYPES.CUSTOM]]]
+];
+const escapeHtml=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));const api=async(url,options={})=>{try{const response=await fetch(url,{credentials:'same-origin',headers:{'Content-Type':'application/json',...(options.headers||{})},...options});const data=await response.json().catch(()=>({}));if(!response.ok){const error=new Error(data?.error?.message||data?.message||`API hiba (${response.status})`);error.status=response.status;error.code=data?.error?.code||data?.code||null;error.apiUrl=url;error.isApiError=true;diagnostics.add({source:'api',code:'SANCI-API-E001',message:error.message,context:url,error});throw error}return data}catch(e){if(!e?.isApiError)diagnostics.add({source:'api',code:'SANCI-API-E002',message:e instanceof Error?e.message:String(e),context:url,error:e});throw e}};
+const page=()=>state&&activePage(state);
+async function loadTwitchConnection(){
+  const button=$('#twitchConnection');
+  if(!button)return;
+  button.disabled=true;
+  try{
+    const result=await api('/api/integrations/twitch/connection');
+    const connection=result?.data||result||{};
+    if(connection.connected){
+      const login=connection.broadcaster?.login||'csatorna';
+      button.textContent=`Twitch: ${login} âœ“`;
+      button.title='Twitch csatlakoztatva â€” kattints a levÃ¡lasztÃ¡shoz';
+      button.dataset.connected='true';
+      button.onclick=async()=>{
+        if(!confirm(`LevÃ¡lasztod a Twitch csatornÃ¡t: ${login}?`))return;
+        button.disabled=true;
+        try{
+          await api('/api/integrations/twitch/disconnect',{method:'POST',body:'{}'});
+          await loadTwitchConnection();
+        }catch(e){showError(e)}
+      };
+    }else{
+      button.textContent='Twitch: csatlakoztatÃ¡s';
+      button.title='Twitch csatorna csatlakoztatÃ¡sa';
+      button.dataset.connected='false';
+      button.onclick=()=>{window.location.href='/api/integrations/twitch/connect'};
+    }
+  }catch(e){
+    button.textContent='Twitch: hiba';
+    button.title='A Twitch kapcsolat Ã¡llapota nem ellenÅ‘rizhetÅ‘';
+    button.dataset.connected='error';
+    button.onclick=()=>loadTwitchConnection();
+  }finally{button.disabled=false}
+}
+const setStatus=t=>$('#saveStatus').textContent=t;
+function showRevisionConflict(error,pageId){const panel=$('#revisionConflict');const message=$('#revisionConflictMessage');if(!panel||!message){alert(error instanceof Error?error.message:String(error));return}state.persistence.conflict={code:'REVISION_CONFLICT',pageId,message:error instanceof Error?error.message:String(error),localRevision:state.document.revision??0};message.textContent=`${state.persistence.conflict.message} A helyi mÃ³dosÃ­tÃ¡said megmaradtak ebben a munkamenetben. ExportÃ¡ld Å‘ket, mielÅ‘tt a frissebb szerververziÃ³t betÃ¶ltÃ¶d.`;panel.hidden=false;document.querySelector('.editor-app')?.classList.add('revision-conflict-open');setStatus('VerziÃ³Ã¼tkÃ¶zÃ©s â€” helyi vÃ¡ltozat megÅ‘rizve')}
+function exportConflictDraft(){if(!state||!page())return;const meta=pages.find(x=>x.id===page().id);const payload={format:'sanci9517-editor-conflict-draft',exportedAt:new Date().toISOString(),pageId:page().id,title:meta?.title||page().name||page().slug,slug:page().slug,localRevision:state.document.revision??0,document:state.document};const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});const objectUrl=URL.createObjectURL(blob);const link=document.createElement('a');link.href=objectUrl;link.download=`sanci9517-${String(page().slug||page().id).replace(/[^a-z0-9-]/gi,'-')}-draft-conflict-${new Date().toISOString().replace(/[:.]/g,'-')}.json`;document.body.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(objectUrl),1000);setStatus('Helyi vÃ¡ltozat exportÃ¡lÃ¡sa elindult')}
+async function reloadLatestAfterConflict(){const conflict=state?.persistence?.conflict;if(!conflict)return;if(!confirm('A helyi szerkesztÃ©s felÃ¼lÃ­rÃ³dik a szerver legfrissebb vÃ¡ltozatÃ¡val. ElÅ‘bb exportÃ¡ltad a helyi JSON-vÃ¡zlatot? Csak akkor folytasd, ha a helyi vÃ¡ltozatot megÅ‘rizted.'))return;try{await loadPage(conflict.pageId,{discardConfirmed:true});state.persistence.conflict=null;$('#revisionConflict').hidden=true;document.querySelector('.editor-app')?.classList.remove('revision-conflict-open');setStatus('Legfrissebb szerververziÃ³ betÃ¶ltve')}catch(error){showError(error)}}
+const canonical=(doc,id)=>{const page=doc?.pages?.[id];return Boolean(doc?.type==='sanci-page-document'&&doc?.schemaVersion===1&&doc?.activePageId===id&&page&&typeof page==='object'&&!Array.isArray(page))};
+function verifyCommandResult(type,payload){if(type!=='element.add')return;const current=page();const nodeId=state?.selection?.primaryId;const node=nodeId&&current?getNode(current,nodeId):null;const parentId=payload?.parentId||current?.rootId;const parent=parentId&&current?getNode(current,parentId):null;const exists=Boolean(node&&node.id!==current?.rootId&&node.type===payload?.type&&node.parentId===parent?.id&&parent?.children?.includes(node.id)&&(!Number.isInteger(payload?.index)||parent.children[payload.index]===node.id));const canvasNode=nodeId?canvas.querySelector('[data-node-id="'+CSS.escape(nodeId)+'"]'):null;diagnostics.verify(exists,{code:'SANCI-VERIFY-E001',message:'Az elem hozzÃ¡adÃ¡sa lefutott, de az Ãºj node nem jÃ¶tt lÃ©tre a vÃ¡rt Page Model helyen.',context:'element.add â†’ Page Model'});diagnostics.verify(Boolean(canvasNode),{code:'SANCI-VERIFY-E002',message:'Az elem lÃ©trejÃ¶tt a Page Modelben, de nem jelent meg a Canvason.',context:'element.add â†’ Canvas'});}
+function command(type,payload,{render:shouldRender=true,typingGroup=null}={}){try{
+  // A DOM-backed editor is an unsaved draft until its content reaches the Page Model.
+  // Commit it before another command changes selection, history, or responsive state.
+  if(!flushLayerRename())return false;
+  if(!['richtext.content.set','element.content.set'].includes(type)&&flushRichTextDraft?.()===false)return false;
+  if(typingGroup)executeCoalesced(state,{type,payload},typingGroup);else execute(state,{type,payload});if(shouldRender)render();if(shouldRender)verifyCommandResult(type,payload);if(type==='element.add'&&payload?.type===NODE_TYPES.RICHTEXT)beginRichTextEditing(state.selection.primaryId);return true
+}catch(e){diagnostics.add({source:'command',code:'SANCI-CMD-E001',message:e instanceof Error?e.message:String(e),context:type,error:e});if(state?.persistence)state.persistence.error=e instanceof Error?e.message:String(e);setStatus('SzerkesztÃ©si hiba');alert(state.persistence.error);return false}}
+function selectedClipboardRoots(current,ids){
+ const selected=new Set(ids||[]),roots=[];
+ for(const id of selected){let parent=current?.nodes?.[id]?.parentId,hasSelectedAncestor=false;while(parent){if(selected.has(parent)){hasSelectedAncestor=true;break}parent=current.nodes[parent]?.parentId??null}if(!hasSelectedAncestor)roots.push(id)}
+ return roots;
+}
+function clipboardPasteTarget(){
+ const current=page();if(!current||!isNodeClipboardForPage(nodeClipboard,current.id))return null;
+ const types=nodeClipboard.rootIds.map(id=>nodeClipboard.nodes[id]?.type).filter(Boolean);
+ const primary=state.selection.primaryId?getNode(current,state.selection.primaryId):null;
+ const preferred=primary?.parentId?getNode(current,primary.parentId):null;
+ const parent=preferred&&types.every(type=>canContain(preferred,type))?preferred:current.nodes[current.rootId];
+ if(!parent||parent.locked||isNodeEffectivelyLocked(current,parent)||!types.every(type=>canContain(parent,type)))return null;
+ const selectedRoots=selectedClipboardRoots(current,state.selection.ids).filter(id=>current.nodes[id]?.parentId===parent.id);
+ const selectedIndexes=selectedRoots.map(id=>parent.children.indexOf(id)).filter(index=>index>=0);
+ return {parent,index:selectedIndexes.length?Math.max(...selectedIndexes)+1:undefined};
+}
+function syncNodeClipboardActions(){
+ const current=page(),ids=state?.selection?.ids||[];
+ const canCopy=Boolean(current&&ids.length&&ids.every(id=>id!==current.rootId&&current.nodes[id]&&!isNodeEffectivelyLocked(current,current.nodes[id])));
+ const canPaste=Boolean(clipboardPasteTarget());
+ for(const id of ['copyNodes','mobileCopyNodes']){const button=$('#'+id);if(button)button.disabled=!canCopy}
+ for(const id of ['pasteNodes','mobilePasteNodes']){const button=$('#'+id);if(button)button.disabled=!canPaste}
+}
+function copySelectedNodes(){
+ if(!state||!flushLayerRename()||!commitActiveInspectorControl()||flushRichTextDraft?.()===false)return false;
+ try{nodeClipboard=createNodeClipboard(page(),state.selection.ids);setStatus(`${nodeClipboard.rootIds.length} elem mÃ¡solva ezen az oldalon`);syncNodeClipboardActions();return true}
+ catch(error){setStatus(error instanceof Error?error.message:'A kijelÃ¶lÃ©s nem mÃ¡solhatÃ³.');return false}
+}
+function pasteSelectedNodes(){
+ if(!state||!flushLayerRename()||!commitActiveInspectorControl()||flushRichTextDraft?.()===false)return false;
+ const target=clipboardPasteTarget();if(!target){setStatus('Ezen az oldalon nincs Ã©rvÃ©nyes beillesztÃ©si hely.');return false}
+ const pasted=command('element.paste',{clipboard:nodeClipboard,parentId:target.parent.id,index:target.index});
+ if(pasted)setStatus(`${nodeClipboard.rootIds.length} elem beillesztve a piszkozatba`);
+ return pasted;
+}
+function isCanvasClipboardShortcut(event){
+ const target=event.target instanceof Element?event.target:null;
+ const active=document.activeElement instanceof Element?document.activeElement:null;
+ const editing='input,textarea,select,[contenteditable="true"],[role="textbox"],.rich-text-editor,.plain-text-editor';
+ if(target?.closest(editing)||active?.closest(editing))return false;
+ return Boolean(document.activeElement===document.body&&state?.selection?.ids?.length)||Boolean(document.activeElement?.closest?.('#canvas,#layersTree'));
+}
+function typeForElement(name){const map={'Badge/Tag':'badge','Quote':'quote','Panel':'panel','Overlay':'overlay','Absolute':'absolute','Sticky':'sticky','Tooltip':'tooltip','Shorts':'shorts','Sponsor':'sponsor','Business Contact':'business','About Me':'about','Sanci Button':'sanci-button'};if(map[name])return map[name];for(const items of groups)for(const [label,type] of items)if(label===name&&type)return type;return null}
+function addAuthoredElement(type,name,insertion){const authored=CONTENT_TYPES.includes(type)&&!['code','divider','spacer','heading','text','richtext','button','link'].includes(type);command('element.add',{type,name,...insertion,authored,props:type===NODE_TYPES.RICHTEXT?{}:{text:name}})}
+function normalizePaletteSearch(value){return String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim().toLowerCase()}
+function paletteEntries(){return groups.flatMap(([group,items])=>items.map(([name,type])=>({group,name,type:type||typeForElement(name)})).filter(entry=>entry.type))}
+function insertPaletteEntry(name,type){const current=page();if(!current)return;const insertion=resolveElementInsertion(current,state.selection.primaryId,type);if(insertion)addAuthoredElement(type,name,insertion)}
+function updatePaletteFavorite(type,name,filter){
+ const userId=paletteFavoritesUserId;
+ const result=togglePaletteFavoriteType(paletteFavoritesUserId,type,paletteFavoriteTypes);
+ paletteFavoriteTypes=result.types;
+ const status=$('#elementPaletteStatus');
+ if(status)status.textContent=result.saved?'Kedvencek mentÃ©se a fiÃ³kodhozâ€¦':'Kedvenc mÃ³dosÃ­tva; fiÃ³kszinkronizÃ¡lÃ¡s folyamatbanâ€¦';
+ renderPalette(filter);
+ const focusTarget=$(`#elementList .element-favorite-toggle[data-element-type="${type}"]`);
+ focusTarget?.focus();
+ const types=[...paletteFavoriteTypes];
+ if(accountPreferenceConflicts.has('paletteFavoriteTypes')){
+  announceAccountPreferenceConflict('Egy mÃ¡sik munkamenet mÃ³dosÃ­totta a fiÃ³kkedvenceket. A mostani lista ezen az eszkÃ¶zÃ¶n megmaradt; frissÃ­tsd az oldalt a fiÃ³k legÃºjabb Ã¡llapotÃ¡hoz.');
+  return Promise.resolve();
+ }
+ accountPreferenceWrite=accountPreferenceWrite.catch(()=>{}).then(async()=>{
+  if(accountPreferenceConflicts.has('paletteFavoriteTypes'))return;
+  const saved=await api('/api/admin/editor/preferences',{method:'PUT',body:JSON.stringify({ownerUserId:userId,paletteFavoriteTypes:types,baseRevisions:{paletteFavoriteTypes:accountPreferenceRevisions.paletteFavoriteTypes}})});
+  if(Number.isSafeInteger(saved?.data?.revisions?.paletteFavoriteTypes))accountPreferenceRevisions.paletteFavoriteTypes=saved.data.revisions.paletteFavoriteTypes;
+  if(paletteFavoritesUserId===userId&&paletteFavoriteTypes.join('\0')===types.join('\0')){
+   writePaletteFavoriteTypes(userId,types);
+   if(status)status.textContent=saved?.data?.paletteFavoriteTypes?'Kedvencek elmentve a fiÃ³kodhoz; mÃ¡s eszkÃ¶zÃ¶n is visszatÃ¶ltÅ‘dnek.':'A kedvencek frissÃ¼ltek.';
+  }
+ }).catch(error=>{
+  if(error?.code==='PREFERENCES_OWNER_CHANGED'){
+   accountPreferenceConflicts.add('paletteFavoriteTypes');
+   if(paletteFavoritesUserId===userId)announceAccountPreferenceConflict('A bejelentkezett fiÃ³k megvÃ¡ltozott. A helyi kedvencek megmaradtak, de nem kerÃ¼ltek Ã¡t mÃ¡sik fiÃ³kba; tÃ¶ltsd Ãºjra a szerkesztÅ‘t.');
+   return;
+  }
+  if(error?.code==='PREFERENCES_CONFLICT'){
+   accountPreferenceConflicts.add('paletteFavoriteTypes');
+   if(paletteFavoritesUserId===userId)announceAccountPreferenceConflict('Egy mÃ¡sik munkamenet mÃ³dosÃ­totta a fiÃ³kkedvenceket. A mostani lista ezen az eszkÃ¶zÃ¶n megmaradt; frissÃ­tsd az oldalt a fiÃ³k legÃºjabb Ã¡llapotÃ¡hoz.');
+   return;
+  }
+  if(paletteFavoritesUserId===userId&&status)status.textContent=result.saved?'A kedvencek most csak ebben a bÃ¶ngÃ©szÅ‘ben mentÅ‘dtek; a fiÃ³kszinkron kÃ©sÅ‘bb ÃºjraprÃ³bÃ¡lhatÃ³.':'A kedvencek csak ebben a munkamenetben Ã©rhetÅ‘k el; a mentÃ©s nem sikerÃ¼lt.';
+ });
+ return accountPreferenceWrite;
+}
+function createPaletteFavoriteToggle(type,name,filter){
+ const button=document.createElement('button');button.type='button';button.className='element-favorite-toggle';button.dataset.elementType=type;
+ const selected=paletteFavoriteTypes.includes(type);button.setAttribute('aria-pressed',String(selected));button.setAttribute('aria-label',`${selected?'EltÃ¡volÃ­tÃ¡s a kedvencekbÅ‘l':'HozzÃ¡adÃ¡s a kedvencekhez'}: ${name}`);button.title=selected?'EltÃ¡volÃ­tÃ¡s a kedvencekbÅ‘l':'HozzÃ¡adÃ¡s a kedvencekhez';button.textContent=selected?'â˜…':'â˜†';
+ const capability=getElementCapability(type);button.disabled=!paletteFavoritesReady||!paletteFavoritesUserId||capability.status==='PLANNED';if(capability.status==='PLANNED')button.title='A mÃ©g nem elÃ©rhetÅ‘ elem nem vehetÅ‘ fel a kedvencek kÃ¶zÃ©.';button.onclick=()=>updatePaletteFavorite(type,name,filter);
+ return button;
+}
+function createPaletteElementButton(name,type,{shortcut=false,filter=''}={}){
+ const button=document.createElement('button');button.type='button';button.className=shortcut?'element-favorite-shortcut':'element';
+ if(shortcut){button.textContent=name;button.setAttribute('aria-label',`VÃ¡szonra helyezÃ©s: ${name}`)}
+ else{const icon=document.createElement('i');icon.textContent='â—‡';const label=document.createElement('span');label.textContent=name;button.append(icon,label)}
+ const capability=getElementCapability(type);const badge=document.createElement('small');badge.className='element-capability';badge.textContent=capability.status==='PARTIAL'?'RÃ©szleges':'Tervezett';button.append(badge);
+ button.disabled=capability.status==='PLANNED';if(button.disabled)button.title='KÃ©sÅ‘bb: ez az elem mÃ©g nem hasznÃ¡lhatÃ³.';else button.onclick=()=>insertPaletteEntry(name,type);
+ return button;
+}
+function accountWorkspaceSnapshot(){
+ const snapshot=window.sanciEditor?.workspacePreferenceSnapshot?.();
+ if(!snapshot?.appearance||!snapshot?.dock||!snapshot?.viewport)return null;
+ return {version:1,appearance:snapshot.appearance,dock:snapshot.dock,viewport:{device:state?.viewport?.device||snapshot.viewport.device,zoom:Number.isFinite(zoom)?zoom:snapshot.viewport.zoom}};
+}
+function announceAccountPreferenceConflict(message){
+ for(const selector of ['#elementPaletteStatus','#workspaceAppearanceStatus','#workspaceDockStatus']){
+  const status=$(selector);if(status)status.textContent=message;
+ }
+}
+function applyAccountViewport(viewport){
+ if(!viewport||typeof viewport!=='object')return false;
+ const next={device:['desktop','tablet','mobile'].includes(viewport.device)?viewport.device:'desktop',zoom:Number.isFinite(Number(viewport.zoom))?Math.max(.35,Math.min(1.5,Number(viewport.zoom))):1};
+ pendingAccountViewport=next;
+ if(!state)return true;
+ const previous={device:state.viewport.device,zoom};state.viewport.device=next.device;zoom=next.zoom;
+ if(render()===false){state.viewport.device=previous.device;zoom=previous.zoom;return false}
+ pendingAccountViewport=null;window.sanciEditor?.setViewportPreference?.(next,{notify:false});return true;
+}
+function applyAccountWorkspace(workspace){
+ if(!workspace||typeof workspace!=='object')return false;
+ const applied=window.sanciEditor?.applyAccountWorkspacePreferences?.(workspace)===true;
+ const nextInspectorTab=workspace?.dock?.inspectorTab;
+ if(applied&&['design','content','advanced'].includes(nextInspectorTab))inspectorTab=nextInspectorTab;
+ return applied&&applyAccountViewport(workspace.viewport);
+}
+function queueAccountWorkspaceWrite(){
+ if(!accountWorkspaceReady||!paletteFavoritesUserId||accountPreferenceConflicts.has('workspace'))return;
+ clearTimeout(accountWorkspaceTimer);
+ accountWorkspaceTimer=setTimeout(()=>{
+  const workspace=accountWorkspaceSnapshot(),ownerUserId=paletteFavoritesUserId;if(!workspace||!ownerUserId)return;
+  accountPreferenceWrite=accountPreferenceWrite.catch(()=>{}).then(async()=>{
+   if(accountPreferenceConflicts.has('workspace'))return;
+   const saved=await api('/api/admin/editor/preferences',{method:'PUT',body:JSON.stringify({ownerUserId,workspace,baseRevisions:{workspace:accountPreferenceRevisions.workspace}})});
+   if(Number.isSafeInteger(saved?.data?.revisions?.workspace))accountPreferenceRevisions.workspace=saved.data.revisions.workspace;
+   const status=$('#elementPaletteStatus');if(status)status.textContent='A munkaterÃ¼let beÃ¡llÃ­tÃ¡sai a fiÃ³kodhoz szinkronizÃ¡lva.';
+  }).catch(error=>{
+   if(error?.code==='PREFERENCES_OWNER_CHANGED'){
+    accountPreferenceConflicts.add('workspace');
+    announceAccountPreferenceConflict('A bejelentkezett fiÃ³k megvÃ¡ltozott. A munkaterÃ¼let helyi nÃ©zete megmaradt, de nem kerÃ¼lt Ã¡t mÃ¡sik fiÃ³kba; tÃ¶ltsd Ãºjra a szerkesztÅ‘t.');
+    return;
+   }
+   if(error?.code==='PREFERENCES_CONFLICT'){
+    accountPreferenceConflicts.add('workspace');
+    announceAccountPreferenceConflict('Egy mÃ¡sik munkamenet kÃ¶zben mÃ³dosÃ­totta a munkaterÃ¼letet. A helyi nÃ©zet ezen az eszkÃ¶zÃ¶n megmaradt; frissÃ­tsd az oldalt a fiÃ³k legÃºjabb Ã¡llapotÃ¡hoz.');
+    return;
+   }
+   const status=$('#elementPaletteStatus');if(status)status.textContent='A munkaterÃ¼let helyben elmentve; a fiÃ³kszinkron most nem Ã©rhetÅ‘ el.';
+  });
+ },250);
+}
+function renderPalette(filter=''){
+ const root=$('#elementList');if(!root){diagnostics.add({source:'ui',code:'SANCI-UI-E002',message:'Az Elemek lista kontÃ©nere nem talÃ¡lhatÃ³.'});return}
+ root.replaceChildren();const q=normalizePaletteSearch(filter),searching=Boolean(q);let groupIndex=0,descriptionIndex=0;
+ const entries=paletteEntries(),entryByType=new Map(entries.map(entry=>[entry.type,entry]));
+ if(!searching&&paletteFavoriteTypes.length){
+  const favorites=paletteFavoriteTypes.map(type=>entryByType.get(type)).filter(entry=>entry&&getElementCapability(entry.type).status!=='PLANNED');
+  if(favorites.length){
+   const section=document.createElement('section');section.className='element-group element-favorites';section.setAttribute('aria-label','SzemÃ©lyes kedvencek');
+   const heading=document.createElement('div');heading.className='element-favorites-heading';const label=document.createElement('strong');label.textContent='Kedvencek';const count=document.createElement('span');count.textContent=String(favorites.length);heading.append(label,count);section.append(heading);
+   for(const entry of favorites){const row=document.createElement('div');row.className='element-favorite-row';row.append(createPaletteElementButton(entry.name,entry.type,{shortcut:true,filter}),createPaletteFavoriteToggle(entry.type,entry.name,filter));section.append(row)}
+   root.append(section);
+  }
+ }
+ for(const[group,items]of groups){
+  const matches=items.filter(([name,type])=>{const resolvedType=type||typeForElement(name);return normalizePaletteSearch(name).includes(q)&&Boolean(resolvedType)});if(!matches.length)continue;
+  const section=document.createElement('section');section.className='element-group'+(searching?'':' collapsed');const title=document.createElement('button');title.type='button';title.className='element-group-title';const groupLabel=document.createElement('span');groupLabel.textContent=group;const groupCount=document.createElement('b');groupCount.textContent=String(matches.length);title.append(groupLabel,groupCount);title.setAttribute('aria-expanded',String(searching));
+  const body=document.createElement('div');body.id='element-group-'+groupIndex++;title.setAttribute('aria-controls',body.id);
+  for(const[name,type]of matches){
+   const resolvedType=type||typeForElement(name),row=document.createElement('div');row.className='element-row';const element=createPaletteElementButton(name,resolvedType,{filter});const capability=getElementCapability(resolvedType);const favorite=createPaletteFavoriteToggle(resolvedType,name,filter);const info=document.createElement('button');info.type='button';info.className='element-info';info.textContent='i';info.title='Mi ez? '+name;info.setAttribute('aria-label','Mi ez? '+name);info.setAttribute('aria-expanded','false');
+   const help=document.createElement('div');help.className='element-description';help.id='element-description-'+descriptionIndex++;help.textContent=(ELEMENT_DESCRIPTIONS[name]||name+' elem hozzÃ¡adÃ¡sÃ¡ra szolgÃ¡l.')+' Inspector: '+capability.inspector+', publikus kimenet: '+capability.public+'.';help.hidden=true;info.setAttribute('aria-controls',help.id);info.onclick=e=>{e.stopPropagation();help.hidden=!help.hidden;info.setAttribute('aria-expanded',String(!help.hidden))};row.append(element,favorite,info,help);body.append(row);
+  }
+  title.onclick=()=>{const collapsed=section.classList.toggle('collapsed');title.setAttribute('aria-expanded',String(!collapsed))};section.append(title,body);root.append(section);
+ }
+ if(!root.children.length&&searching){const empty=document.createElement('p');empty.className='element-search-empty';empty.setAttribute('role','status');empty.textContent='Nincs talÃ¡lat a megadott keresÃ©sre.';root.append(empty)}else if(!root.children.length)diagnostics.add({source:'ui',code:'SANCI-UI-E003',message:'Az Elemek lista Ã¼res: egyetlen Ã©rvÃ©nyes elem tÃ­pus sem kerÃ¼lt a palettÃ¡ba.'});
+}
+async function loadPaletteFavorites(){
+ const status=$('#elementPaletteStatus');
+ try{
+  const result=await api('/api/auth/session'),user=result?.data?.user;
+  if(result?.data?.authenticated===true){
+   if(typeof user?.id!=='string')throw new Error('A bejelentkezett fiÃ³k azonosÃ­tÃ³ja Ã©rvÃ©nytelen.');
+   if(window.sanciEditor?.setWorkspacePreferenceOwner?.(user.id)===false)throw new Error('A fiÃ³khoz tartozÃ³ munkaterÃ¼let-tÃ¡rhely nem Ã¡llÃ­thatÃ³ be.');
+   const ownedDock=window.sanciEditor?.workspacePreferenceSnapshot?.()?.dock;
+   if(['design','content','advanced'].includes(ownedDock?.inspectorTab)){inspectorTab=ownedDock.inspectorTab;if(state)renderInspector()}
+   accountWorkspaceCachePresent=window.sanciEditor?.hasWorkspacePreferenceCache?.()===true;
+   paletteFavoritesUserId=user.id;
+   paletteFavoriteTypes=readPaletteFavoriteTypes(user.id);
+   try{
+    const preferences=await api('/api/admin/editor/preferences');
+    const revisions=preferences?.data?.revisions;
+    accountPreferenceRevisions={
+     paletteFavoriteTypes:Number.isSafeInteger(revisions?.paletteFavoriteTypes)&&revisions.paletteFavoriteTypes>=0?revisions.paletteFavoriteTypes:0,
+     workspace:Number.isSafeInteger(revisions?.workspace)&&revisions.workspace>=0?revisions.workspace:0
+    };
+    if(Array.isArray(preferences?.data?.paletteFavoriteTypes)){
+     paletteFavoriteTypes=normalizePaletteFavoriteTypes(preferences.data.paletteFavoriteTypes);
+     writePaletteFavoriteTypes(user.id,paletteFavoriteTypes);
+     if(status)status.textContent='SzemÃ©lyes kedvencek fiÃ³kodhoz mentve, ezen az eszkÃ¶zÃ¶n is visszatÃ¶ltve.';
+    }else if(status)status.textContent='A fiÃ³kbeÃ¡llÃ­tÃ¡s vÃ¡lasza nem Ã©rvÃ©nyes; csak a helyi gyorsÃ­tÃ³tÃ¡r lÃ¡thatÃ³.';
+    const hasWorkspace=Boolean(preferences?.data?.workspace);
+    if(hasWorkspace){
+     if(!applyAccountWorkspace(preferences.data.workspace)&&status)status.textContent='A fiÃ³k munkaterÃ¼let-beÃ¡llÃ­tÃ¡sa nem Ã©rvÃ©nyes; a jelenlegi helyi nÃ©zet maradt aktÃ­v.';
+    }
+    accountWorkspaceReady=true;
+    if(!hasWorkspace&&accountWorkspaceCachePresent)queueAccountWorkspaceWrite();
+   }catch{if(status)status.textContent='A fiÃ³kbeÃ¡llÃ­tÃ¡s nem Ã©rhetÅ‘ el; a helyi kedvencek lÃ¡thatÃ³k, a mÃ³dosÃ­tÃ¡sok nem szinkronizÃ¡lhatÃ³k.'}
+  }else if(result?.data?.authenticated===false){
+   if(window.sanciEditor?.setWorkspacePreferenceOwner?.(null)===false)throw new Error('A helyi munkaterÃ¼let-tÃ¡rhely nem Ã¡llÃ­thatÃ³ be.');
+   const localDock=window.sanciEditor?.workspacePreferenceSnapshot?.()?.dock;
+   if(['design','content','advanced'].includes(localDock?.inspectorTab)){inspectorTab=localDock.inspectorTab;if(state)renderInspector()}
+   if(status)status.textContent='A kedvencek hasznÃ¡latÃ¡hoz jelentkezz be.'
+  }else if(status)status.textContent='A munkaterÃ¼let Ã©s a kedvencek betÃ¶ltÃ©se most nem Ã©rhetÅ‘ el.'
+ }catch{paletteFavoritesUserId=null;paletteFavoriteTypes=[];if(status)status.textContent='A kedvencek betÃ¶ltÃ©se most nem Ã©rhetÅ‘ el.'}
+ paletteFavoritesReady=true;renderPalette($('#elementSearch')?.value||'');
+}
+function syncHierarchyActions(){const current=page();const ids=state?.selection?.ids||[];const nodes=current?ids.map(id=>getNode(current,id)).filter(Boolean):[];const sameParent=nodes.length>=2&&nodes.every(node=>node.parentId===nodes[0].parentId);const groupLocked=nodes.some(node=>node.locked||isLockedParent(current,node));const groupButton=$('#groupSelection');if(groupButton){groupButton.disabled=!sameParent||groupLocked||nodes.some(node=>node.id===current?.rootId)}const primary=current&&state?.selection?.primaryId?getNode(current,state.selection.primaryId):null;const ungroupButton=$('#ungroupSelection');if(ungroupButton)ungroupButton.disabled=!(primary?.type===NODE_TYPES.GROUP&&!primary.locked&&!isLockedParent(current,primary));const mobileGroup=$('#mobileGroup');if(mobileGroup)mobileGroup.disabled=!sameParent||groupLocked||nodes.some(node=>node.id===current?.rootId);const mobileUngroup=$('#mobileUngroup');if(mobileUngroup)mobileUngroup.disabled=!(primary?.type===NODE_TYPES.GROUP&&!primary.locked&&!isLockedParent(current,primary));for(const [id,kind] of [['moveLayerUp','up'],['moveLayerDown','down'],['indentLayer','indent'],['outdentLayer','outdent']]){const button=$('#'+id);if(button)button.disabled=ids.length!==1||!primary||!getLayerMoveAction(current,primary.id,kind)}}
+function syncMobileMultiSelectUI(){const bar=$('#mobileMultiSelectBar');if(!bar)return;bar.hidden=!mobileTouch.active;const count=$('#mobileSelectionCount');if(count)count.textContent=`${state?.selection?.ids?.length||0} elem kijelÃ¶lve`;syncHierarchyActions()}
+function enterMobileMultiSelect(id){if(!state||!flushLayerRename())return;const current=page();const target=current?getNode(current,id):null;if(!target||target.id===current?.rootId)return;mobileTouch.active=true;mobileTouch.snapshot=[...(state.selection.ids||[])];mobileTouch.snapshotPrimary=state.selection.primaryId;setSelection(state,[id],id);render()}
+function toggleMobileSelection(id){if(!mobileTouch.active||!flushLayerRename())return;const current=page();const target=current?getNode(current,id):null;if(!target||target.id===current?.rootId)return;const ids=state.selection.ids.includes(id)?state.selection.ids.filter(x=>x!==id):[...state.selection.ids,id];setSelection(state,ids,id);render()}
+function finishMobileMultiSelect(){if(!flushLayerRename())return;mobileTouch.active=false;mobileTouch.snapshot=[];mobileTouch.snapshotPrimary=null;mobileTouch.suppressClick=true;render();setTimeout(()=>{mobileTouch.suppressClick=false},300)}
+function cancelMobileMultiSelect(){if(!flushLayerRename())return;const snapshot=[...mobileTouch.snapshot];const primary=mobileTouch.snapshotPrimary;mobileTouch.active=false;mobileTouch.snapshot=[];mobileTouch.snapshotPrimary=null;clearTimeout(mobileTouch.timer);mobileTouch.timer=null;setSelection(state,snapshot,primary);mobileTouch.suppressClick=true;render();setTimeout(()=>{mobileTouch.suppressClick=false},300)}
+function handleMobilePointerDown(id,event){if(event.pointerType!=='touch')return;clearTimeout(mobileTouch.timer);mobileTouch.downId=id;mobileTouch.startX=event.clientX;mobileTouch.startY=event.clientY;mobileTouch.longPressTriggered=false;mobileTouch.timer=setTimeout(()=>{mobileTouch.timer=null;mobileTouch.longPressTriggered=true;enterMobileMultiSelect(id);mobileTouch.suppressClick=true},450)}
+function handleMobilePointerMove(event){if(event.pointerType!=='touch'||!mobileTouch.timer)return;const dx=Math.abs(event.clientX-mobileTouch.startX);const dy=Math.abs(event.clientY-mobileTouch.startY);if(dx>10||dy>10){clearTimeout(mobileTouch.timer);mobileTouch.timer=null}}
+function handleMobilePointerUp(id,event){if(event.pointerType!=='touch')return;clearTimeout(mobileTouch.timer);mobileTouch.timer=null;if(mobileTouch.active&&mobileTouch.downId===id){event.preventDefault();if(!mobileTouch.longPressTriggered)toggleMobileSelection(id);mobileTouch.longPressTriggered=false;mobileTouch.suppressClick=true;setTimeout(()=>{mobileTouch.suppressClick=false},300)}}
+function handleMobilePointerCancel(){clearTimeout(mobileTouch.timer);mobileTouch.timer=null}
+function selectNodeInteraction(id,event){if(!flushLayerRename())return;if(mobileTouch.suppressClick&&event?.pointerType!=='touch'){mobileTouch.suppressClick=false;return}const current=page();const target=current?getNode(current,id):null;if(!current||!target)return;const rootId=current.rootId;if(id===rootId){setSelection(state,[id]);render();return}const modifier=Boolean(event?.ctrlKey||event?.metaKey);const shift=Boolean(event?.shiftKey);if(shift){const primaryId=state.selection.primaryId;const anchor=primaryId?getNode(current,primaryId):null;if(anchor&&anchor.id!==rootId&&anchor.parentId===target.parentId){const siblings=getChildren(current,target.parentId).map(node=>node.id);const from=siblings.indexOf(anchor.id);const to=siblings.indexOf(target.id);if(from>=0&&to>=0){const start=Math.min(from,to);const end=Math.max(from,to);setSelection(state,siblings.slice(start,end+1),target.id);render();return}}setSelection(state,[id]);render();return}if(modifier){const ids=state.selection.ids.includes(id)?state.selection.ids.filter(x=>x!==id):[...state.selection.ids,id];setSelection(state,ids,id);render();return}setSelection(state,[id]);render()}
+function beginCanvasDrag(id,event,element){
+  const current=page();
+  const node=current?getNode(current,id):null;
+  if(!current||!node||id===current.rootId||isNodeEffectivelyLocked(current,node)||event.button!==0||!$('#selectTool')?.classList.contains('active'))return;
+  if(event.target.closest('input,textarea,select,button,[contenteditable="true"],[role="textbox"]')){event.stopPropagation();return}
+  if(event.ctrlKey||event.metaKey||event.shiftKey||!flushLayerRename())return;
+  setSelection(state,[id],id);
+  element.classList.add('selected');
+  const computed=getComputedStyle(element);
+  const left=Number.parseFloat(computed.left);
+  const top=Number.parseFloat(computed.top);
+  canvasDrag={nodeId:id,pointerId:event.pointerId,startX:event.clientX,startY:event.clientY,startLeft:Number.isFinite(left)?left:0,startTop:Number.isFinite(top)?top:0,x:Number.isFinite(left)?left:0,y:Number.isFinite(top)?top:0,moved:false,element,device:state.viewport.device};
+  try{element.setPointerCapture(event.pointerId)}catch{}
+  element.style.cursor='grabbing';
+  event.preventDefault();
+  event.stopPropagation();
+}
+function moveCanvasDrag(id,event){
+  const drag=canvasDrag;
+  if(!drag||drag.nodeId!==id||drag.pointerId!==event.pointerId)return;
+  const dx=(event.clientX-drag.startX)/(zoom||1);
+  const dy=(event.clientY-drag.startY)/(zoom||1);
+  if(Math.abs(dx)>3||Math.abs(dy)>3)drag.moved=true;
+  if(!drag.moved)return;
+  const snap=8;
+  drag.x=Math.round((drag.startLeft+dx)/snap)*snap;
+  drag.y=Math.round((drag.startTop+dy)/snap)*snap;
+  drag.element.style.position='relative';
+  drag.element.style.left=`${drag.x}px`;
+  drag.element.style.top=`${drag.y}px`;
+  drag.element.style.cursor='grabbing';
+  updateCanvasExtent();
+  event.preventDefault();
+  event.stopPropagation();
+}
+function finishCanvasDrag(id,event,cancelled=false){
+  const drag=canvasDrag;
+  if(!drag||drag.nodeId!==id||drag.pointerId!==event.pointerId)return;
+  canvasDrag=null;
+  try{drag.element.releasePointerCapture(event.pointerId)}catch{}
+  if(!cancelled&&drag.moved){
+    try{command('responsive.set',{nodeId:id,device:drag.device,patch:{x:`${drag.x}px`,y:`${drag.y}px`}},{render:false})}catch(error){showError(error);return}
+  }
+  render();
+}
+function beginCanvasResize(id,event,element){const current=page();const node=current?getNode(current,id):null;if(!current||!node||id===current.rootId||isNodeEffectivelyLocked(current,node)||event.button!==0)return;const box=element.getBoundingClientRect();canvasResize={nodeId:id,pointerId:event.pointerId,startX:event.clientX,startY:event.clientY,startWidth:box.width/(zoom||1),startHeight:box.height/(zoom||1),width:box.width/(zoom||1),height:box.height/(zoom||1),element,device:state.viewport.device,moved:false,handle:event.currentTarget};try{event.currentTarget.setPointerCapture(event.pointerId)}catch{}event.preventDefault();event.stopPropagation()}
+function moveCanvasResize(id,event){const r=canvasResize;if(!r||r.nodeId!==id||r.pointerId!==event.pointerId)return;const dx=(event.clientX-r.startX)/(zoom||1),dy=(event.clientY-r.startY)/(zoom||1);if(Math.abs(dx)>2||Math.abs(dy)>2)r.moved=true;if(!r.moved)return;r.width=Math.max(24,Math.round(r.startWidth+dx));r.height=Math.max(24,Math.round(r.startHeight+dy));r.element.style.width=r.width+'px';r.element.style.height=r.height+'px';updateCanvasExtent();event.preventDefault();event.stopPropagation()}
+function finishCanvasResize(id,event,cancelled=false){const r=canvasResize;if(!r||r.nodeId!==id||r.pointerId!==event.pointerId)return;canvasResize=null;try{r.handle.releasePointerCapture(event.pointerId)}catch{}if(!cancelled&&r.moved){try{command('responsive.set',{nodeId:id,device:r.device,patch:{width:r.width+'px',height:r.height+'px'}},{render:false})}catch(error){showError(error);return}}render()}
+function syncTextSurfaces(nodeId,value,source=null){
+  const node=page()?.nodes?.[nodeId];if(!node)return;
+  const canvasSurface=canvas.querySelector(`.node[data-node-id="${CSS.escape(nodeId)}"] > .node-content`);
+  const inspectorSurface=inspector.querySelector(`[data-text-node-id="${CSS.escape(nodeId)}"]`);
+  for(const surface of [canvasSurface,inspectorSurface]){
+    if(!surface||surface===source)continue;
+    if(node.type===NODE_TYPES.RICHTEXT)renderRichTextEditor(surface,value);
+    else if(surface instanceof HTMLTextAreaElement)surface.value=value;
+    else surface.textContent=value;
+  }
+  canvasSurface?.parentElement.classList.toggle('richtext-empty',node.type===NODE_TYPES.RICHTEXT&&!canvasSurface.textContent.trim());
+  updateCanvasExtent();
+}
+function commitTextSurface(nodeId,surface,typingGroup){
+  const node=page()?.nodes?.[nodeId];if(!node)return false;
+  try{
+    const value=node.type===NODE_TYPES.RICHTEXT?richTextEditorToDocument(surface):surface instanceof HTMLTextAreaElement?surface.value:surface.innerText;
+    const textProperty=getProperty('content.text');
+    const saved=command(node.type===NODE_TYPES.RICHTEXT?'richtext.content.set':textProperty.command,
+      node.type===NODE_TYPES.RICHTEXT?{nodeId,document:value}:{nodeId,content:value},{render:false,typingGroup});
+    if(saved){
+      syncTextSurfaces(nodeId,value,surface);
+      // A Content fÃ¼l kÃ¼lÃ¶n szerkesztett szÃ¶vege is ugyanazt a szerveroldali
+      // kÃ¶telezÅ‘tartalom-ÃºtmutatÃ¡st frissÃ­ti; nincs Inspector Ãºjrarender/IME-fÃ³kuszvesztÃ©s.
+      if(node.type!==NODE_TYPES.RICHTEXT)inspector.querySelector('.element-content-controls')?.dispatchEvent(
+        new CustomEvent('editor:external-content-updated',{detail:{nodeId,key:'text',value}})
+      );
+      setStatus('Nem mentett mÃ³dosÃ­tÃ¡s');syncPublishControls();
+    }
+    return saved;
+  }catch(error){setStatus('A szÃ¶veg mÃ©g nem menthetÅ‘: '+(error instanceof Error?error.message:String(error)));return false}
+}
+function applyTextSurfaceStyle(surface,node){
+  const canvasNode=canvas.querySelector(`.node[data-node-id="${CSS.escape(node.id)}"]`);
+  const computed=canvasNode?getComputedStyle(canvasNode):null;
+  for(const key of ['color','fontFamily','fontSize','fontWeight','fontStyle','lineHeight','letterSpacing','textAlign','textTransform','textDecoration','textWrap','overflowWrap','wordSpacing','textIndent','textShadow']){
+    if(computed?.[key])surface.style[key]=computed[key];
+  }
+  const background=resolveNodeStyle(node,state.viewport.device).backgroundColor;
+  surface.style.backgroundColor=background&&background!=='transparent'?background:'#ffffff';
+}
+function renderPlainTextEditor(node){
+  const property=getProperty('content.text');
+  const section=document.createElement('section');section.className='field plain-text-content';
+  section.dataset.propertyId=property.id;section.dataset.propertyCommand=property.command;section.dataset.propertyKey=property.key;
+  const label=document.createElement('label');label.textContent='SzÃ¶veg';label.htmlFor='plain-text-content';
+  const editor=document.createElement('textarea');editor.id='plain-text-content';editor.className='plain-text-editor';editor.dataset.textNodeId=node.id;editor.setAttribute('aria-label','SzÃ¶veg tartalma');editor.value=node.props?.text??node.props?.content??node.name??'';editor.disabled=isNodeEffectivelyLocked(page(),node);applyTextSurfaceStyle(editor,node);
+  const typingGroup=crypto.randomUUID();let composing=false,dirty=false,compositionRevision=0;
+  const flush=()=>{if(composing)return false;if(!dirty)return true;const saved=commitTextSurface(node.id,editor,typingGroup);if(saved)dirty=false;return saved};
+  editor.onfocus=()=>{flushRichTextDraft=flush};editor.oninput=event=>{
+    dirty=true;flushRichTextDraft=flush;
+    if(event.isComposing){composing=true;return}
+    // A confirmed non-composing input can be the final replacement after
+    // compositionend, or the only final signal on some mobile keyboards.
+    composing=false;flush();
+  };
+  editor.oncompositionstart=()=>{compositionRevision++;composing=true};
+  editor.oncompositionend=()=>{
+    dirty=true;const revision=compositionRevision;
+    // A mobile IME may deliver the final input *after* compositionend.
+    // Do not mirror or commit an intermediate character before that event.
+    requestAnimationFrame(()=>{
+      if(revision!==compositionRevision)return;
+      composing=false;
+      if(editor.isConnected)flush();
+    });
+  };
+  editor.onblur=flush;
+  const help=document.createElement('small');help.className='text-sync-hint';help.textContent='Ã‰lÅ‘ kapcsolat a vÃ¡szonnal. GÃ©pelÃ©skor a piszkozat frissÃ¼l; a lÃ¡togatÃ³k csak a kÃ¼lÃ¶n PublikÃ¡lÃ¡s utÃ¡n lÃ¡tjÃ¡k.';
+  section.append(label,editor,help);return section;
+}
+function beginRichTextEditing(id){
+  const node=page()&&getNode(page(),id);
+  if(!['richtext','heading','text','button','link'].includes(node?.type)||isNodeEffectivelyLocked(page(),node))return;
+  if(window.innerWidth<=850){
+    inlineEditingId=null;
+    inspectorTab='content';window.sanciEditor?.setInspectorTab?.(inspectorTab,{notify:false});
+    document.querySelectorAll('.inspector-tabs button').forEach((button,index)=>button.classList.toggle('active',index===1));
+    renderInspector();
+    window.sanciEditor?.openPanel?.('right');
+    requestAnimationFrame(()=>inspector.querySelector('.richtext-editor-surface,.plain-text-editor')?.focus());
+    return;
+  }
+  if(!flushLayerRename()||flushRichTextDraft?.()===false)return;
+  inlineEditingId=id;
+  inspectorTab='design';window.sanciEditor?.setInspectorTab?.(inspectorTab,{notify:false});
+  document.querySelectorAll('.inspector-tabs button').forEach((button,index)=>button.classList.toggle('active',index===0));
+  render();
+  requestAnimationFrame(()=>{const editor=canvas.querySelector('.node[data-node-id="'+CSS.escape(id)+'"] .richtext-inline-surface,.node[data-node-id="'+CSS.escape(id)+'"] .plain-text-inline-surface');if(!editor)return;editor.focus();const block=editor.querySelector('[data-rich-block]');if(block&&!editor.textContent.trim()){const range=document.createRange();range.selectNodeContents(block);range.collapse(false);const selection=window.getSelection();selection.removeAllRanges();selection.addRange(range)}});
+}
+function captureRichTextBookmark(id,surface){
+  const offsets=getSelectionOffsets(surface);if(!offsets)return false;
+  richTextBookmark={nodeId:id,range:getRichTextBlockSelection(surface),formatRange:getRichTextFormattingSelection(surface),
+    blockIndex:getRichTextActiveBlockIndex(surface),transformSelection:getRichTextBlockTransformSelection(surface),selectionOffsets:{...offsets},
+    source:surface.classList.contains('richtext-inline-surface')?'canvas':'inspector'};
+  return true;
+}
+function openRichTextFormatting(id,{focusLink=false}={}){
+  if(!flushLayerRename()||flushRichTextDraft?.()===false)return;
+  const canvasEditor=canvas.querySelector(`.node[data-node-id="${CSS.escape(id)}"] .richtext-inline-surface`);
+  if(canvasEditor)captureRichTextBookmark(id,canvasEditor);
+  inlineEditingId=window.innerWidth>850?id:null;flushRichTextDraft=null;
+  setSelection(state,[id],id);
+  inspectorTab='content';window.sanciEditor?.setInspectorTab?.(inspectorTab,{notify:false});
+  document.querySelectorAll('.inspector-tabs button').forEach((button,index)=>button.classList.toggle('active',index===1));
+  render();window.sanciEditor?.openPanel?.('right');
+  // A toolbar action can be followed immediately by the next keystroke. When
+  // it started on the Canvas, restore that selection synchronously after the
+  // render instead of waiting for the Inspector's next animation frame. Link
+  // mode intentionally focuses its URL input below.
+  if(!focusLink&&richTextBookmark?.nodeId===id&&richTextBookmark.source==='canvas'&&richTextBookmark.selectionOffsets){
+    const restoredCanvas=canvas.querySelector(`.node[data-node-id="${CSS.escape(id)}"] .richtext-inline-surface`);
+    if(restoredCanvas){
+      restoredCanvas.focus({preventScroll:true});
+      restoreSelectionOffsets(restoredCanvas,richTextBookmark.selectionOffsets);
+    }
+  }
+  requestAnimationFrame(()=>{
+    const editor=inspector.querySelector('.richtext-editor-surface');if(!editor)return;
+    if(focusLink)editor.closest('.richtext-editor')?.querySelector('.richtext-link-controls input')?.focus({preventScroll:true});
+  });
+}
+function renderNode(currentPage,id,managed=false){const node=getNode(currentPage,id);if(!node)return null;managed=managed||isManagedLayout(node)||isAuthoredContent(node);const el=document.createElement('div');el.className=`node ${state.selection.ids.includes(id)?'selected':''}`;el.classList.toggle('managed-layout',managed);el.dataset.nodeId=id;el.dataset.device=state.viewport.device;const visibility=getNodeVisibilityState(currentPage,id,state.viewport.device);if(node.type!=='root'&&!visibility.effectiveVisible){el.classList.add(visibility.ownVisible?'visibility-hidden-parent':'visibility-hidden-own');el.dataset.visibility='hidden';}if(isAuthoredContent(node)){el.classList.add('creator-node');el.dataset.contentType=node.type;if(['accordion','dropdown'].includes(node.type)){const props=node.props||{};el.dataset.detailsBehavior=`${props.singleOpen===true?'exclusive':'multiple'}:${props.openFirst===true?'open':'closed'}`}}if(node.metadata?.stateVersion===1){el.classList.add('creator-state-enabled');if(state.selection.primaryId===id&&statePreview!=='none')el.dataset.editorState=statePreview;el.tabIndex=0}for(const [key,value] of Object.entries(contentAttributes(node)))if(!['href','target','rel','type'].includes(key))el.setAttribute(key,value);const resolvedStyle=applyNodeStyle(el,node,state.viewport.device);const motionTrigger=motionTriggerForStyle(resolvedStyle);if(motionTrigger)el.dataset.motionTrigger=motionTrigger;
+ const validHex=value=>typeof value==='string'&&/^#(?:[a-f0-9]{3}|[a-f0-9]{6})$/i.test(value)?value:'';
+ for(const [value,klass,variable] of [
+  [node.states?.hover?.backgroundColor,'visual-hover-bg','--sanci-hover-bg'],
+  [node.states?.hover?.color,'visual-hover-text','--sanci-hover-color'],
+  [node.states?.focus?.outlineColor,'visual-focus-outline','--sanci-focus-outline']
+ ]){const color=validHex(value);if(color){el.classList.add(klass);el.style.setProperty(variable,color)}}
+ const head=document.createElement('div');head.className='node-head';const headName=document.createElement('span');headName.textContent=node.name||node.type;const headType=document.createElement('small');headType.textContent=node.type;head.append(headName,headType);if(node.type!=='root'&&!visibility.effectiveVisible){const note=document.createElement('span');note.className='node-visibility-indicator';note.textContent=visibility.ownVisible?'SzÃ¼lÅ‘ miatt rejtve':'Rejtve';note.title='Ez az elem ebben a nÃ©zetben nem jelenik meg a publikus oldalon.';head.append(note)}el.append(head);
+  if(node.type===NODE_TYPES.CODE&&node.metadata?.codeSnippetVersion===1){
+    const host=document.createElement('div');host.className='node-content code-preview';
+    host.innerHTML=renderCodeSnippet(node.props?.codeSnippet??defaultCodeSnippet());
+    host.inert=true; // Preview cannot manipulate clipboard or steal Editor focus.
+    el.append(host);
+  }else if(node.type===NODE_TYPES.EMBED&&node.metadata?.embedContentVersion===1){
+    const host=document.createElement('div');host.className='node-content embed-preview';
+    host.innerHTML=renderEmbedHtml(node.props?.embedContent??defaultEmbedContent());
+    host.inert=true; // No third-party requests or keyboard traps inside Editor canvas.
+    el.append(host);
+  }else if(node.type===NODE_TYPES.SOCIAL&&node.metadata?.socialLinksVersion===1){
+    const host=document.createElement('div');host.className='node-content social-preview';
+    host.innerHTML=renderSocialLinksHtml(node.props?.socialLinks??defaultSocialLinks());
+    host.inert=true; // Links on the Editor canvas never navigate away or steal focus.
+    el.append(host);
+  }else if(node.type===NODE_TYPES.COUNTDOWN&&node.metadata?.countdownVersion===1){
+    const host=document.createElement('div');host.className='node-content countdown-preview';
+    host.innerHTML=renderCountdownContent(node.props?.countdown??defaultCountdownContent());
+    el.append(host);
+  }else if(node.type===NODE_TYPES.CARD&&node.metadata?.cardContentVersion===1){
+    const model={...defaultCardContent(),...(node.props?.cardContent||{})};
+    const body=document.createElement('div');body.className='node-content card-preview';
+    body.style.cssText='box-sizing:border-box;max-width:100%;min-width:0;padding:16px;border-radius:12px;border:1px solid #64748b;background:rgba(127,127,127,.09)';
+    if(model.variant==='outline')body.style.background='transparent';
+    if(model.variant==='glass')body.style.background='rgba(255,255,255,.15)';
+    const url=cardImageSrc(model,{editor:true});
+    if(url){
+      const image=document.createElement('img');image.src=url;image.alt=String(model.imageAlt||'');
+      image.style.cssText='display:block;width:100%;max-height:250px;object-fit:cover;margin-bottom:12px;border-radius:8px';
+      body.append(image);
+    }
+    const title=document.createElement('strong');title.className='card-preview-title';title.textContent=String(model.title||'KÃ¡rtya cÃ­me');body.append(title);
+    if(model.description){const description=document.createElement('p');description.textContent=String(model.description);description.style.whiteSpace='pre-wrap';body.append(description)}
+    if(model.actionLabel){const button=document.createElement('span');button.textContent=String(model.actionLabel);button.className='card-preview-action';button.style.cssText='display:inline-flex;margin-top:8px;padding:8px 12px;border-radius:6px;background:#e2e8f0;color:#111827';body.append(button)}
+    el.append(body);
+  }else if(node.type===NODE_TYPES.DIVIDER&&node.metadata?.decorativeVersion===1){
+    const config=normalizeDividerStyle(node.props?.decoration);
+    const line=document.createElement('div');line.className='node-content divider-preview';
+    line.style.cssText='box-sizing:border-box;width:100%;min-height:0;border:0;';
+    line.style.borderTop=`${config.thickness}px ${config.lineStyle} ${config.color}`;
+    line.style.pointerEvents='none';el.append(line);
+  }else if(node.type===NODE_TYPES.SPACER&&node.metadata?.spacerVersion===1){
+    const label=document.createElement('small');label.className='node-content spacer-preview';
+    label.textContent='Ãœres tÃ©r Â· a MÃ©ret panelen vagy itt mÃ³dosÃ­thatÃ³';
+    label.style.cssText='pointer-events:none;position:absolute;left:8px;top:6px;opacity:.5;font-size:11px;';
+    el.append(label);
+  }else if(node.type===NODE_TYPES.RICHTEXT){
+    const c=document.createElement('div');c.className='node-content richtext-content';
+    renderRichTextEditor(c,node.props?.richText);
+    const empty=!c.textContent.trim();
+    el.classList.toggle('richtext-empty',empty);
+    if(inlineEditingId===id&&!isNodeEffectivelyLocked(currentPage,node)){
+      c.classList.add('richtext-inline-surface');c.contentEditable='true';c.spellcheck=true;
+      c.setAttribute('role','textbox');c.setAttribute('aria-label','Rich Text kÃ¶zvetlen szerkesztÃ©se');
+      let dirty=false,composing=false,compositionRevision=0;
+      const typingGroup=crypto.randomUUID();
+      const save=()=>{
+        if(composing){setStatus('Fejezd be az aktuÃ¡lis szÃ¶vegbevitelt.');return false}
+        if(!dirty)return true;
+        const saved=commitTextSurface(id,c,typingGroup);if(saved)dirty=false;return saved;
+      };
+      flushRichTextDraft=save;
+      c.onfocus=()=>{flushRichTextDraft=save};
+      c.oninput=()=>{dirty=true;flushRichTextDraft=save;richTextBookmark=null;if(!composing)save();el.classList.toggle('richtext-empty',!c.textContent.trim())};
+      c.oncompositionstart=()=>{compositionRevision++;composing=true};
+      c.oncompositionend=()=>{
+        dirty=true;const revision=compositionRevision;
+        // Some mobile IMEs dispatch their final input AFTER compositionend.
+        // Keep the composition guard until the next paint so that neither
+        // intermediate text nor a stale earlier composition is committed.
+        requestAnimationFrame(()=>{
+          if(revision!==compositionRevision)return;
+          composing=false;
+          if(c.isConnected&&inlineEditingId===id)save();
+        });
+      };
+      c.onkeydown=event=>{
+        if(!(event.ctrlKey||event.metaKey)||event.altKey)return;
+        const key=event.key.toLowerCase();
+        if(key==='k'){
+          event.preventDefault();openRichTextFormatting(id,{focusLink:true});return;
+        }
+        const mark={b:'bold',i:'italic',u:'underline'}[key];
+        if(!mark)return;
+        event.preventDefault();
+        if(composing){setStatus('Fejezd be a szÃ¶vegbevitelt a formÃ¡zÃ¡s elÅ‘tt.');return}
+        // Canvas and Inspector use the same structured Rich Text commands;
+        // never rely on execCommand or a second, browser-only formatting state.
+        const range=getRichTextFormattingSelection(c),offsets=getSelectionOffsets(c);
+        if(!range||!offsets||offsets.collapsed){
+          setStatus('ElÅ‘bb jelÃ¶lj ki egy szÃ¶vegrÃ©szt a formÃ¡zÃ¡shoz.');return;
+        }
+        try{
+          const next=updateRichTextInlineMark(richTextEditorToDocument(c),range,mark);
+          if(!command('richtext.content.set',{nodeId:id,document:next},{render:false}))return;
+          dirty=false;richTextBookmark=null;
+          renderRichTextEditor(c,next);
+          syncTextSurfaces(id,next,c);
+          c.focus({preventScroll:true});
+          if(!restoreSelectionOffsets(c,offsets))restoreRichTextFormattingSelection(c,range);
+          setStatus('Nem mentett mÃ³dosÃ­tÃ¡s');syncPublishControls();
+        }catch(error){setStatus(error instanceof Error?error.message:String(error))}
+      };
+      c.onpaste=event=>{event.preventDefault();try{const imported=normalizeRichText(importRichTextClipboard({html:event.clipboardData?.getData('text/html')||'',text:event.clipboardData?.getData('text/plain')||''}));if(pasteRichTextDocument(c,imported))c.dispatchEvent(new InputEvent('input',{bubbles:true,inputType:'insertFromPaste'}))}catch(error){setStatus(error.message)}};
+      c.onblur=()=>{if(inlineEditingId===id)save()};
+      c.onpointerdown=e=>e.stopPropagation();c.onclick=e=>e.stopPropagation();
+      c.ondblclick=e=>e.stopPropagation();
+    }
+    el.append(c);
+    if(inlineEditingId!==id&&!isNodeEffectivelyLocked(currentPage,node)){
+      const edit=document.createElement('button');edit.type='button';edit.className='canvas-edit-richtext';
+      edit.textContent=empty?'Ãrj ideâ€¦ Â· Tartalom szerkesztÃ©se':'Tartalom szerkesztÃ©se';
+      edit.setAttribute('aria-label','Tartalom szerkesztÃ©se');
+      edit.onpointerdown=e=>e.stopPropagation();edit.onclick=e=>{e.stopPropagation();if(!flushLayerRename())return;setSelection(state,[id],id);beginRichTextEditing(id)};
+      el.append(edit);
+    }else if(!isNodeEffectivelyLocked(currentPage,node)){
+      const format=document.createElement('button');format.type='button';format.className='canvas-edit-richtext canvas-format-richtext';
+      format.textContent='FormÃ¡zÃ¡s Ã©s linkek';
+      format.onpointerdown=e=>{e.preventDefault();e.stopPropagation()};format.onclick=e=>{e.stopPropagation();openRichTextFormatting(id)};
+      el.append(format);
+    }
+    el.ondblclick=e=>{e.stopPropagation();if(!flushLayerRename())return;setSelection(state,[id],id);beginRichTextEditing(id)};
+  }else if([NODE_TYPES.BADGE,NODE_TYPES.QUOTE,NODE_TYPES.ICON].includes(node.type)&&!isAuthoredContent(node)){
+   const c=document.createElement('div');c.className='node-content basic-element-preview';
+   if(node.type===NODE_TYPES.ICON){const icon=iconById(node.props?.icon);c.textContent=icon.glyph;c.setAttribute('role','img');c.setAttribute('aria-label',node.props?.label||icon.label);c.classList.add('visual-icon');}
+   else if(node.type===NODE_TYPES.BADGE){c.textContent=node.props?.text||'CÃ­mke';c.classList.add('visual-badge');}
+   else{const q=document.createElement('blockquote');q.className='visual-quote';const p=document.createElement('p');p.textContent=node.props?.text||'';q.append(p);if(node.props?.attribution){const cite=document.createElement('cite');cite.textContent=node.props.attribution;q.append(cite)}c.append(q)}
+   el.append(c);
+ }else if(node.type===NODE_TYPES.SCHEDULE){const c=document.createElement('div');c.className='node-content schedule-preview-host';renderSchedulePreview(c,node.props?.schedule);el.append(c)}else if([NODE_TYPES.IMAGE,NODE_TYPES.VIDEO,NODE_TYPES.AUDIO].includes(node.type)&&!isAuthoredContent(node)){
+    const src=node.type===NODE_TYPES.IMAGE?legacyImageSource(node.props,{editor:true}):legacyPlayableSource(node.props,{editor:true});const c=document.createElement('div');c.className='node-content media-preview';
+    if(src){
+      const media=document.createElement(node.type===NODE_TYPES.IMAGE?'img':node.type===NODE_TYPES.VIDEO?'video':'audio');
+      media.src=src;media.style.maxWidth='100%';media.style.width='100%';
+      if(node.type===NODE_TYPES.IMAGE){
+        const cfg=legacyImagePresentation(node.props);
+        media.alt=cfg.alt;media.style.objectFit=cfg.fit;media.style.objectPosition=cfg.objectPosition;
+        media.style.aspectRatio=cfg.ratio;media.loading=cfg.loading;
+        if(cfg.decorative)media.setAttribute('role','presentation');
+        const caption=legacyImageCaption(node.props);
+        if(caption){
+          const figure=document.createElement('figure');figure.className='legacy-image-figure';
+          const text=document.createElement('figcaption');text.textContent=caption;
+          figure.append(media,text);c.append(figure);
+        }else c.append(media);
+      }
+      else{
+        const cfg=legacyPlaybackSettings(node.props,{video:node.type===NODE_TYPES.VIDEO,editor:true,reducedMotion:prefersReducedMotion()});
+        media.controls=cfg.controls;media.loop=cfg.loop;media.muted=cfg.muted;
+        if(node.type===NODE_TYPES.VIDEO&&node.props?.autoplay===true&&node.props?.muted===true){media.dataset.reducedMotionAutoplay='true';media.dataset.reducedMotionControls=node.props.controls!==false?'true':'false'}
+        media.autoplay=false;media.preload=node.type===NODE_TYPES.VIDEO?'metadata':'none';
+        if(node.type===NODE_TYPES.VIDEO){media.playsInline=true;if(cfg.poster)media.poster=cfg.poster}
+        media.addEventListener('pointerdown',event=>event.stopPropagation());
+      }
+      if(node.type!==NODE_TYPES.IMAGE)c.append(media);
+    }else{const placeholder=document.createElement('small');placeholder.textContent='Adj meg egy mÃ©dia URL-t a Tartalom panelen.';c.append(placeholder);}
+    el.append(c);
+   }else if(isStructuredType(node.type)&&!isAuthoredContent(node)){
+    const c=document.createElement('div');c.className='node-content structured-preview';
+    c.innerHTML=renderElementContent(node.type,node.props?.contentModel??createElementContent(node.type),node.id,{ariaLabel:node.props?.ariaLabel});
+    for(const eventName of ['pointerdown','click','dblclick'])c.addEventListener(eventName,event=>{if(event.target.closest('button,summary,dialog'))event.stopPropagation()});
+    el.append(c);activateStructuredContent(c);
+  }else if([NODE_TYPES.HEADING,NODE_TYPES.TEXT,NODE_TYPES.BUTTON,NODE_TYPES.LINK].includes(node.type)){
+    const c=document.createElement('div');c.className='node-content plain-text-content-surface';c.textContent=node.props?.text??node.props?.content??node.name;
+    if(inlineEditingId===id&&!isNodeEffectivelyLocked(currentPage,node)){
+      c.classList.add('plain-text-inline-surface');c.contentEditable='plaintext-only';c.setAttribute('role','textbox');c.setAttribute('aria-label','SzÃ¶veg kÃ¶zvetlen szerkesztÃ©se');
+      const typingGroup=crypto.randomUUID();let composing=false,dirty=false,compositionRevision=0;
+      const flush=()=>{if(composing)return false;if(!dirty)return true;const saved=commitTextSurface(id,c,typingGroup);if(saved)dirty=false;return saved};
+      c.onfocus=()=>{flushRichTextDraft=flush};c.oninput=event=>{
+        dirty=true;flushRichTextDraft=flush;
+        if(event.isComposing){composing=true;return}
+        composing=false;flush();
+      };c.onblur=flush;
+      c.oncompositionstart=()=>{compositionRevision++;composing=true};
+      c.oncompositionend=()=>{
+        dirty=true;const revision=compositionRevision;
+        requestAnimationFrame(()=>{
+          if(revision!==compositionRevision)return;
+          composing=false;
+          if(c.isConnected&&inlineEditingId===id)flush();
+        });
+      };
+      for(const type of ['pointerdown','click','dblclick'])c.addEventListener(type,event=>event.stopPropagation());
+    }else if(!isNodeEffectivelyLocked(currentPage,node)){
+      const edit=document.createElement('button');edit.type='button';edit.className='canvas-edit-text';edit.textContent='SzÃ¶veg szerkesztÃ©se';edit.setAttribute('aria-label','SzÃ¶veg szerkesztÃ©se');edit.onpointerdown=event=>event.stopPropagation();edit.onclick=event=>{event.stopPropagation();if(!flushLayerRename())return;setSelection(state,[id],id);beginRichTextEditing(id)};el.append(edit);
+    }
+    el.ondblclick=event=>{event.stopPropagation();if(!flushLayerRename())return;setSelection(state,[id],id);beginRichTextEditing(id)};el.append(c);
+  }
+  if(isAuthoredContent(node)&&!['code','embed','social','countdown','card','divider','spacer','richtext','heading','text','button','link'].includes(node.type)){
+    // Structural authored containers (stack, grid, section, â€¦) render their
+    // children directly below. Their authored markup is empty in Canvas, so
+    // adding a blank host would become an extra Flex/Grid item and create a
+    // phantom gap that does not exist on the published page.
+    const markup=authoredNodeHtml(node,{device:state.viewport.device,editor:true,reducedMotion:prefersReducedMotion()});
+    if(markup){
+      const host=document.createElement('div');host.className='node-content creator-content-host';host.innerHTML=markup;initContentInteractions(host);
+      host.addEventListener('click',event=>{if(event.target.closest('a'))event.preventDefault()});
+      host.addEventListener('pointerdown',event=>{if(event.target.closest('button,summary,video,audio'))event.stopPropagation()});el.append(host);
+    }
+  }
+  for(const child of getChildren(currentPage,id)){const x=renderNode(currentPage,child.id,managed);if(x)el.append(x)}if(state.selection.primaryId===id&&id!==currentPage.rootId&&!isNodeEffectivelyLocked(currentPage,node)){const handle=document.createElement('button');handle.type='button';handle.className='canvas-resize-handle';handle.setAttribute('aria-label','Elem Ã¡tmÃ©retezÃ©se');handle.title='ÃtmÃ©retezÃ©s';handle.onpointerdown=e=>beginCanvasResize(id,e,el);handle.onpointermove=e=>moveCanvasResize(id,e);handle.onpointerup=e=>finishCanvasResize(id,e);handle.onpointercancel=e=>finishCanvasResize(id,e,true);el.append(handle)}el.onpointerdown=e=>{if(inlineEditingId===id)return;if(e.pointerType==='touch'){e.stopPropagation();handleMobilePointerDown(id,e);return}beginCanvasDrag(id,e,el)};el.onpointermove=e=>{if(canvasResize?.nodeId===id){moveCanvasResize(id,e);return}if(e.pointerType==='touch')handleMobilePointerMove(e);else moveCanvasDrag(id,e)};el.onpointerup=e=>{if(canvasResize?.nodeId===id){finishCanvasResize(id,e);return}if(e.pointerType==='touch'){e.stopPropagation();handleMobilePointerUp(id,e);return}finishCanvasDrag(id,e)};el.onpointercancel=e=>{if(canvasResize?.nodeId===id){finishCanvasResize(id,e,true);return}if(e.pointerType==='touch')handleMobilePointerCancel(e);else finishCanvasDrag(id,e,true)};el.onclick=e=>{e.stopPropagation();if(isAuthoredContent(node)&&e.target.closest('.creator-content-host')&&e.target.closest('button,summary,video,audio'))return;if(inlineEditingId===id)return;if(mobileTouch.active&&mobileTouch.suppressClick){mobileTouch.suppressClick=false;return}selectNodeInteraction(id,e)};return el}
+function updateCanvasExtent(target=canvas.querySelector('.page-canvas')){if(!target)return;let pageRect=target.getBoundingClientRect();const bottoms=[...target.querySelectorAll('.node')].map(node=>node.getBoundingClientRect().bottom-pageRect.top);target.style.minHeight=`${computeCanvasMinHeight(bottoms,zoom,844,80)}px`;pageRect=target.getBoundingClientRect();const nodes=[...target.querySelectorAll('.node')];const extents=measureCanvasWorkspace(nodes.map(node=>{const rect=node.getBoundingClientRect();return {left:rect.left-pageRect.left,right:rect.right-pageRect.left,top:rect.top-pageRect.top,bottom:rect.bottom-pageRect.top}}),target.offsetWidth,target.offsetHeight,zoom);target.style.left=`${extents.left}px`;target.style.top=`${extents.top}px`;pageRect=target.getBoundingClientRect();for(const node of nodes){const rect=node.getBoundingClientRect();node.classList.toggle('outside-artboard',rect.left<pageRect.left-1||rect.right>pageRect.right+1||rect.top<pageRect.top-1||rect.bottom>pageRect.bottom+1)}const frame=target.parentElement;if(frame?.classList.contains('page-canvas-frame')){frame.style.width=`${(target.offsetWidth+extents.left+extents.right)*zoom}px`;frame.style.height=`${(target.offsetHeight+extents.top+extents.bottom)*zoom}px`}}
+function renderCanvas(){const current=page();const previous=canvas.querySelector('.page-canvas');const preserved=previous?.dataset.pageId===current?.id?captureCanvasInteractionState(previous):null;canvas.querySelectorAll('.page-canvas-frame').forEach(x=>x.remove());const device=state?.viewport?.device||'desktop';const deviceLabel={desktop:'Asztali',tablet:'Tablet',mobile:'Telefon'}[device]||'Asztali';const width=sizes[device];const frame=document.createElement('div');frame.className='page-canvas-frame';const pc=document.createElement('div');pc.className='page-canvas';pc.dataset.device=device;pc.dataset.pageId=current?.id||'';pc.style.width=`${width}px`;applyTokenVariables(pc,editorTokens);pc.style.transform=`scale(${zoom})`;if(current){pc.append(renderNode(current,current.rootId));applyStateStyles(pc,current,device);activateCodeBlocks(pc)}frame.append(pc);canvas.append(frame);updateCanvasExtent(pc);restoreCanvasInteractionState(pc,preserved);$('#canvasEmpty').hidden=Boolean(current);$('#canvasMode').textContent=`${deviceLabel} Â· ${width}px`;$('#zoom').textContent=`${Math.round(zoom*100)}%`;syncDeviceButtons(device)}
+function fitCanvasToViewport(){const device=state?.viewport?.device||'desktop';zoom=Math.max(.35,Math.min(1.2,(canvas.clientWidth-48)/sizes[device]));render();window.sanciEditor?.setViewportPreference?.({device,zoom});canvas.scrollTo({left:0,top:0,behavior:'instant'})}
+function changeCanvasZoom(next){const frame=canvas.querySelector('.page-canvas-frame');const centerX=canvas.scrollLeft+canvas.clientWidth/2,centerY=canvas.scrollTop+canvas.clientHeight/2;const pointX=frame?(centerX-frame.offsetLeft)/zoom:0,pointY=frame?(centerY-frame.offsetTop)/zoom:0;zoom=next;render();window.sanciEditor?.setViewportPreference?.({device:state?.viewport?.device||'desktop',zoom});requestAnimationFrame(()=>{const updated=canvas.querySelector('.page-canvas-frame');if(!updated)return;canvas.scrollTo({left:Math.max(0,updated.offsetLeft+pointX*zoom-canvas.clientWidth/2),top:Math.max(0,updated.offsetTop+pointY*zoom-canvas.clientHeight/2),behavior:'instant'})})}
+function syncDeviceButtons(device){document.querySelectorAll('[data-device]').forEach(b=>{const selected=b.dataset.device===device;b.classList.toggle('active',selected);b.setAttribute('aria-pressed',String(selected))})}
+function syncCanvasToolButtons(tool){for(const [id,value] of [['selectTool','select'],['panTool','pan']]){const button=$('#'+id);const selected=value===tool;button?.classList.toggle('active',selected);button?.setAttribute('aria-pressed',String(selected))}}
+function field(label,value,onChange,readOnly=false,multiline=false,composition=null,property=null){
+ const wrap=document.createElement('label');wrap.className='field';
+ const title=document.createElement('span');title.textContent=label;
+ const input=document.createElement(multiline?'textarea':'input');input.value=value??'';input.readOnly=readOnly;if(composition)input.setAttribute('aria-label',label);wrap.append(title,input);
+ if(property){
+  const contract=getInspectorValueContract(property);
+  input.setAttribute('aria-required',String(contract.required===true));
+  input.setAttribute('aria-invalid','false');
+ }
+ if(!readOnly){
+  if(composition)wrap.append(composition.attach(input,onChange));
+  else{input.onchange=()=>onChange(input.value);if(!multiline)input.onkeydown=event=>{if(event.key==='Enter'){event.preventDefault();input.blur()}};}
+ }
+ return wrap;
+}
+function commitInspectorText(type,payload,options){
+ const saved=command(type,payload,options);
+ if(saved&&options?.render===false){renderCanvas();renderLayers();setStatus('Nem mentett mÃ³dosÃ­tÃ¡s');syncPublishControls();}
+ return saved;
+}
+function normalizeDimension(value,{allowAuto=false}={}){const raw=String(value??'').trim().toLowerCase();if(allowAuto&&raw==='auto')return 'auto';if(!raw)return undefined;if(/^-?(?:\d+(?:\.\d+)?|\.\d+)(?:px|%|vw|vh|rem|em)$/.test(raw))return raw;if(/^-?(?:\d+(?:\.\d+)?|\.\d+)$/.test(raw))return `${raw}px`;return raw}
+function resolvedGeometry(node,device){return getNodeGeometry(node,device)}
+function responsiveDisplay(node,property,device,fallback){const result=resolveResponsiveValue(node?.responsive,property,device);return result.value??fallback}
+function setGeometry(node,device,property,value){const normalized=normalizeDimension(value,{allowAuto:property==='width'||property==='height'});if(normalized===undefined)return;command('responsive.set',{nodeId:node.id,device,patch:{[property]:normalized}})}
+function markResponsiveActionRoute(control,keys){
+  const list=[...new Set((Array.isArray(keys)?keys:[keys]).filter(Boolean))];
+  control.dataset.propertyCommand='responsive.set';
+  if(list.length===1)control.dataset.propertyKey=list[0];
+  else control.dataset.propertyKeys=JSON.stringify(list);
+  return control;
+}
+function renderGeometryInspector(node){
+  const device=state.viewport.device, geometry=resolvedGeometry(node,device);
+  const values={x:geometry.x,y:geometry.y,width:geometry.width,height:geometry.height,
+    position:responsiveDisplay(node,'position',device,node.style?.position||'relative')};
+  const section=document.createElement('section');section.className='inspector-group';
+  section.dataset.inspectorCategory='layout';
+  const title=document.createElement('div');title.className='inspector-group-title';
+  title.innerHTML=`<strong>Geometria</strong><small>${device}</small>`;
+  section.append(title);
+  for(const [id,key] of [['position.x','x'],['position.y','y'],['size.width','width'],['size.height','height'],['position.position','position']]){
+    const prop=getProperty(id);
+    const apply=value=>command('responsive.set',{nodeId:node.id,device,patch:{[key]:value}});
+    const control=propertyInput({...prop,disabled:isNodeEffectivelyLocked(page(),node)},prop.label,values[key],apply);
+    const origin=describeResponsiveOrigin(node.responsive,key,device,{
+      hasBaseStyle:node.style?.[key]!==undefined&&node.style?.[key]!==null
+    });
+    const status=document.createElement('small');
+    status.className='responsive-origin';
+    status.dataset.kind=origin.kind;
+    if(origin.source)status.dataset.source=origin.source;
+    status.textContent=origin.label;
+    status.setAttribute('aria-label',prop.label+': '+origin.label);
+    control.append(status);
+    section.append(control);
+    if(id==='size.width'||id==='size.height')section.append(renderGeometryPresets(id,values[key],apply));
+    if(hasResponsiveOverride(node.responsive,key,device)){
+      const reset=document.createElement('button');reset.type='button';reset.className='property-reset';
+      markResponsiveActionRoute(reset,key);
+      reset.textContent='VisszaÃ¡llÃ­tÃ¡s az Ã¶rÃ¶kÃ¶lt Ã©rtÃ©kre';
+      reset.disabled=isNodeEffectivelyLocked(page(),node);
+      reset.onclick=()=>{if(!isNodeEffectivelyLocked(page(),node))command('responsive.set',{nodeId:node.id,device,patch:{[key]:undefined}})};
+      section.append(reset);
+    }
+  }
+  // Geometry lives in its own Inspector section, outside the property
+  // registry groups. Reuse the same canonical atomic reset planner.
+  const geometryProperties=['position.x','position.y','size.width','size.height','position.position']
+    .map(getProperty).filter(Boolean);
+  const geometryResets=responsiveGroupResetActions(node,geometryProperties,device);
+  if(geometryResets.length){
+    const resetAll=document.createElement('button');
+    resetAll.type='button';
+    resetAll.className='group-responsive-reset';
+    resetAll.textContent='Geometria sajÃ¡t Ã©rtÃ©keinek visszaÃ¡llÃ­tÃ¡sa ('+geometryResets.length+')';
+    markResponsiveActionRoute(resetAll,geometryResets.map(action=>Object.keys(action.payload.patch)[0]));
+    resetAll.title='Csak az aktuÃ¡lis nÃ©zet X/Y pozÃ­ciÃ³ja, szÃ©lessÃ©ge, magassÃ¡ga Ã©s pozicionÃ¡lÃ¡si mÃ³dja tÃ©r vissza az Ã¶rÃ¶kÃ¶lt Ã©rtÃ©khez. Egyetlen Undo lÃ©pÃ©s.';
+    resetAll.setAttribute('aria-label',resetAll.textContent);
+    resetAll.disabled=isNodeEffectivelyLocked(page(),node);
+    resetAll.onclick=()=>{
+      if(isNodeEffectivelyLocked(page(),node)||!commitActiveInspectorControl()||flushRichTextDraft?.()===false)return;
+      try{
+        executeBatch(state,geometryResets,{label:'Geometria reszponzÃ­v visszaÃ¡llÃ­tÃ¡sa',atomic:true});
+        render();
+      }catch(error){showError(error)}
+    };
+    section.append(resetAll);
+  }
+  return section;
+}
+function renderScheduleInspector(node,composition){
+  const config=normalizeScheduleConfig(node.props?.schedule||{});
+  const section=document.createElement('section');
+  section.className='inspector-group schedule-inspector';
+  const title=document.createElement('div');
+  title.className='inspector-group-title';
+  title.innerHTML='<strong>AdÃ¡srend</strong><small>Schedule konfigurÃ¡ciÃ³</small>';
+  section.append(title);
+
+  const route=(control,key)=>{
+    control.dataset.inspectorCommand='schedule.config.set';
+    control.dataset.inspectorKey=key;
+    return control;
+  };
+  const selectField=(label,key,value,options)=>{
+    const wrap=route(document.createElement('label'),key);wrap.className='field';
+    const text=document.createElement('span');text.textContent=label;
+    const select=document.createElement('select');
+    for(const optionValue of options){const option=document.createElement('option');option.value=optionValue;option.textContent=key==='mode'?({upcoming:'KÃ¶vetkezÅ‘ adÃ¡sok',all:'Ã–sszes adÃ¡s',next:'Egy kÃ¶vetkezÅ‘ adÃ¡s',week:'Heti naptÃ¡r'}[optionValue]||optionValue):optionValue;option.selected=optionValue===value;select.append(option)}
+    select.onchange=()=>{
+      const patch=key==='mode'&&select.value==='week'
+        ?{mode:'week',limit:50,showStatus:true,showEndTime:true,showNotes:true}
+        :{[key]:select.value};
+      command('schedule.config.set',{nodeId:node.id,patch});
+    };
+    wrap.append(text,select);return wrap;
+  };
+
+  const mode=selectField('MÃ³d','mode',config.mode,SCHEDULE_MODES);
+  const order=selectField('Sorrend','order',config.order,SCHEDULE_ORDERS);
+  section.append(mode,order);
+
+  const limitField=route(field('ElemszÃ¡m',String(config.limit),v=>{
+    const limit=Math.max(1,Math.min(50,Number.parseInt(v,10)||1));
+    command('schedule.config.set',{nodeId:node.id,patch:{limit}});
+  }),'limit');
+  const limitInput=limitField.querySelector('input');
+  limitInput.type='number';limitInput.inputMode='numeric';limitInput.min='1';limitInput.max=String(SCHEDULE_LIMIT_MAX);limitInput.step='1';limitInput.required=true;
+  section.append(limitField);
+
+  const statusWrap=route(document.createElement('div'),'statuses');statusWrap.className='field';
+  const statusLabel=document.createElement('span');statusLabel.id=`schedule-statuses-${node.id}`;statusLabel.textContent='StÃ¡tuszok';
+  const statusHint=document.createElement('p');statusHint.id=`schedule-statuses-hint-${node.id}`;statusHint.className='property-help';statusHint.textContent='VÃ¡lassz ki legalÃ¡bb egy stÃ¡tuszt.';
+  const statusGrid=document.createElement('div');statusGrid.className='schedule-check-grid';statusGrid.setAttribute('role','group');statusGrid.setAttribute('aria-labelledby',statusLabel.id);statusGrid.setAttribute('aria-describedby',statusHint.id);
+  for(const status of SCHEDULE_STATUSES){
+    const label=document.createElement('label');label.className='inspector-toggle';
+    const input=document.createElement('input');input.type='checkbox';input.checked=config.statuses.includes(status);
+    input.onchange=()=>{
+      const next=statusGrid.querySelectorAll('input:checked');
+      const values=[...next].map(x=>x.dataset.status);
+      if(!values.length){input.checked=true;return}
+      command('schedule.config.set',{nodeId:node.id,patch:{statuses:values}});
+    };
+    input.dataset.status=status;
+    const span=document.createElement('span');span.textContent=status;
+    label.append(input,span);statusGrid.append(label);
+  }
+  statusWrap.append(statusLabel,statusHint,statusGrid);section.append(statusWrap);
+
+  const toggles=[
+    ['showTitle','CÃ­m megjelenÃ­tÃ©se'],['showPlatform','Platform megjelenÃ­tÃ©se'],
+    ['showTime','KezdÃ©s megjelenÃ­tÃ©se'],['showEndTime','BefejezÃ©s megjelenÃ­tÃ©se'],
+    ['showStatus','StÃ¡tusz megjelenÃ­tÃ©se'],['showNotes','MegjegyzÃ©s megjelenÃ­tÃ©se'],
+    ['showArtwork','BorÃ­tÃ³kÃ©pek megjelenÃ­tÃ©se'],
+    ['showLink','Link megjelenÃ­tÃ©se']
+  ];
+  for(const [key,labelText] of toggles){
+    const row=route(document.createElement('label'),key);row.className='inspector-toggle';
+    const input=document.createElement('input');input.type='checkbox';input.checked=Boolean(config[key]);
+    input.onchange=()=>command('schedule.config.set',{nodeId:node.id,patch:{[key]:input.checked}});
+    const span=document.createElement('span');span.textContent=labelText;row.append(input,span);section.append(row);
+  }
+  section.append(route(field('Ãœres Ã¡llapot szÃ¶vege',config.emptyText,(value,options)=>{
+    // Validate before command() so an incomplete draft stays in this field,
+    // without diagnostics alerts or an update to the canonical Schedule model.
+    if(!value.trim())throw new Error('Adj meg szÃ¶veget az Ã¼res adÃ¡srendhez.');
+    if(value.trim().length>SCHEDULE_EMPTY_TEXT_MAX)throw new Error(`Legfeljebb ${SCHEDULE_EMPTY_TEXT_MAX} karakter adhatÃ³ meg.`);
+    const current=page()?.nodes?.[node.id]?.props?.schedule||{};
+    const normalized=normalizeScheduleConfig({...current,emptyText:value});
+    return commitInspectorText('schedule.config.set',{nodeId:node.id,patch:{emptyText:normalized.emptyText}},options);
+  },isNodeEffectivelyLocked(page(),node),true,composition),'emptyText'));
+  const link=document.createElement('a');link.href='/admin/schedule';link.target='_blank';link.rel='noopener noreferrer';
+  link.textContent='AdÃ¡sok, idÅ‘pontok Ã©s mÃ©diatÃ¡ri kÃ©pek kezelÃ©se â†—';
+  link.className='property-help';
+  link.style.cssText='display:inline-flex;align-items:center;min-height:44px;margin-top:10px;text-decoration:underline';
+  section.append(link);
+  return section;
+}
+
+function renderRegistryInspector(node,mode='primary'){
+  const device=state.viewport.device,root=document.createDocumentFragment();
+  const rendered=canvas.querySelector(`.node[data-node-id="${CSS.escape(node.id)}"]`);
+  if(mode==='primary'&&rendered?.classList.contains('outside-artboard')){
+    const warning=document.createElement('section');warning.className='inspector-group layout-warning';
+    warning.setAttribute('role','status');
+    const text=document.createElement('p');text.className='content-field-help';
+    text.textContent='Az elem rÃ©szben a fehÃ©r vÃ¡sznon kÃ­vÃ¼l van. A munkaterÃ¼let ezt szÃ¡ndÃ©kosan megengedi, de a publikÃ¡lt oldalon tÃºlcsordulÃ¡st vagy levÃ¡gÃ¡st okozhat.';
+    const reset=document.createElement('button');reset.type='button';reset.className='property-reset';reset.textContent='EltolÃ¡s visszaÃ¡llÃ­tÃ¡sa ebben a nÃ©zetben';
+    markResponsiveActionRoute(reset,['x','y']);
+    reset.title='Az aktuÃ¡lis nÃ©zet X Ã©s Y eltolÃ¡sÃ¡t 0-ra Ã¡llÃ­tja; mÃ¡s nÃ©zetek beÃ¡llÃ­tÃ¡sai megmaradnak.';
+    reset.disabled=isNodeEffectivelyLocked(page(),node);reset.onclick=()=>command('responsive.set',{nodeId:node.id,device,patch:{x:'0px',y:'0px'}});
+    warning.append(text,reset);root.append(warning);
+  }
+  const primaryGroups=new Set(['layout','size','spacing','flex','grid','position','typography','background','border','radius','shadow','opacity','transform','filter','animation']);
+  const duplicates=new Set(['content.text','content.href','advanced.nodeName',
+    'position.x','position.y','size.width','size.height','position.position']);
+  for(const group of listPropertyGroups()){
+    if((mode==='primary')!==primaryGroups.has(group.id))continue;
+    const parent=page()?.nodes?.[node.parentId];
+    const properties=listProperties({group:group.id,nodeType:node.type})
+      .filter(property=>!duplicates.has(property.id)&&isLayoutPropertyRelevant(property,node,parent,device));
+    if(!properties.length)continue;
+    const section=document.createElement('section');section.className='inspector-group';
+    section.dataset.inspectorCategory=group.id==='typography'?'text':['background','border','radius','shadow','opacity'].includes(group.id)?'surface':'layout';
+    const title=document.createElement('div');title.className='inspector-group-title';
+    title.innerHTML='<strong></strong><small></small>';
+    title.querySelector('strong').textContent=group.id==='flex'&&layoutMode(node,device)!=='flex'?(layoutMode(parent,device)==='grid'?'Gyermek igazÃ­tÃ¡sa':'Flex-gyermek'):group.id==='grid'&&layoutMode(node,device)!=='grid'?'Grid-gyermek':group.label;
+    title.querySelector('small').textContent=String(properties.length);
+    section.append(title);
+    for(const property of properties){
+      const key=property.key||property.id.split('.')[1];
+      const resolved=property.responsive?resolveResponsiveValue(node.responsive,key,device):null;
+      const effectiveStyle=property.responsive?resolveNodeStyle(node,device):null;
+      const current=resolved?.value??effectiveStyle?.[key]??property.defaultValue??(['flex','grid','layout'].includes(property.group)&&rendered?getComputedStyle(rendered)[key]:'')??'';
+      const label=property.label;
+      const apply=value=>{
+        const typingGroup=`inspector:${node.id}:${device}:${key}`;
+        if(property.responsive)return command(property.command,{nodeId:node.id,device,patch:{[key]:value}},{typingGroup});
+        return command(property.command,{nodeId:node.id,patch:{[key]:value}},{typingGroup});
+      };
+      const control=propertyInput({...property,disabled:isNodeEffectivelyLocked(page(),node)},label,current,apply);
+      if(property.responsive){
+        const origin=describeResponsiveOrigin(node.responsive,key,device,{
+          hasBaseStyle:node.style?.[key]!==undefined&&node.style?.[key]!==null
+        });
+        const status=document.createElement('small');
+        status.className='responsive-origin';
+        status.dataset.kind=origin.kind;
+        if(origin.source)status.dataset.source=origin.source;
+        status.textContent=origin.label;
+        status.setAttribute('aria-label',property.label+': '+origin.label);
+        control.append(status);
+      }
+      section.append(control);
+      if(property.responsive&&hasResponsiveOverride(node.responsive,key,device)){
+        const reset=document.createElement('button');reset.type='button';reset.className='property-reset';
+        markResponsiveActionRoute(reset,key);
+        reset.textContent='Ã–rÃ¶klÃ©s visszaÃ¡llÃ­tÃ¡sa';
+        reset.title=device+' nÃ©zet sajÃ¡t Ã©rtÃ©kÃ©nek tÃ¶rlÃ©se, a szÃ©lesebb nÃ©zet Ã©rtÃ©kÃ©nek Ã¶rÃ¶klÃ©se';
+        reset.onclick=()=>command('responsive.set',{nodeId:node.id,device,patch:{[key]:undefined}});
+        section.append(reset);
+      }
+    }
+    const groupResets=responsiveGroupResetActions(node,properties,device);
+    if(groupResets.length){
+      const resetAll=document.createElement('button');
+      resetAll.type='button';
+      resetAll.className='group-responsive-reset';
+      resetAll.textContent='SajÃ¡t Ã©rtÃ©kek visszaÃ¡llÃ­tÃ¡sa ('+groupResets.length+')';
+      markResponsiveActionRoute(resetAll,groupResets.map(action=>Object.keys(action.payload.patch)[0]));
+      resetAll.title='Csak a(z) '+device+' nÃ©zet aktuÃ¡lis csoportjÃ¡nak sajÃ¡t Ã©rtÃ©keit tÃ¶rli. Az Ã¶rÃ¶kÃ¶lt Ã©s mÃ¡sik nÃ©zet Ã©rtÃ©kei vÃ¡ltozatlanok. A mÅ±velet egy lÃ©pÃ©sben visszavonhatÃ³.';
+      resetAll.setAttribute('aria-label',group.label+': '+resetAll.textContent);
+      resetAll.disabled=isNodeEffectivelyLocked(page(),node);
+      resetAll.onclick=()=>{
+        if(isNodeEffectivelyLocked(page(),node)||flushRichTextDraft?.()===false)return;
+        try{
+          executeBatch(state,groupResets,{label:'ReszponzÃ­v '+group.label+' visszaÃ¡llÃ­tÃ¡sa',atomic:true});
+          render();
+        }catch(error){showError(error)}
+      };
+      section.append(resetAll);
+    }
+    root.append(section);
+  }
+  return root;
+}
+function renderStatesInspector(node){
+  const section=document.createElement('section');section.className='inspector-group';const title=document.createElement('div');title.className='inspector-group-title';title.innerHTML='<strong>RÃ¡mutatÃ¡s Ã©s fÃ³kusz</strong>';section.append(title);
+  if(node.type==='root'&&node.metadata?.editorRootVersion!==1){const note=document.createElement('p');note.className='content-field-help';note.textContent='Az oldalgyÃ¶kÃ©r Ã¡llapotaihoz elÅ‘bb engedÃ©lyezd a vÃ¡szon megjelenÃ©sÃ©t a StÃ­lus fÃ¼l ElrendezÃ©si csoportjÃ¡ban.';section.append(note);return section}
+  const label=document.createElement('label');label.className='field';label.textContent='Ãllapot elÅ‘nÃ©zete';const choose=document.createElement('select');choose.setAttribute('aria-label','Ãllapot elÅ‘nÃ©zete');
+  for(const [value,text] of [['none','Alaphelyzet'],['hover','RÃ¡mutatÃ¡s'],['focus-visible','BillentyÅ±zetes fÃ³kusz']]){const option=document.createElement('option');option.value=value;option.textContent=text;choose.append(option)}
+  choose.value=statePreview;choose.onchange=()=>{statePreview=choose.value;renderCanvas();renderInspector()};label.append(choose);section.append(label);
+  const note=document.createElement('p');note.className='content-field-help';note.textContent='Az elÅ‘nÃ©zeti Ã¡llapot nem kerÃ¼l mentÃ©sre. A beÃ¡llÃ­tott szÃ­nek Ã©s hatÃ¡sok az aktuÃ¡lis eszkÃ¶znÃ©zethez tartoznak, Ã©s a valÃ³di rÃ¡mutatÃ¡skor vagy billentyÅ±zetes fÃ³kusznÃ¡l lÃ©pnek Ã©letbe.';section.append(note);
+  if(statePreview==='none')return section;
+  for(const id of STATE_PROPERTY_IDS){const property=getProperty(id);const value=resolveResponsiveValue(node.states?.[statePreview],property.key,state.viewport.device).value;
+    const control=propertyInput(property,property.label,value??'',value=>command('states.set',{nodeId:node.id,state:statePreview,device:state.viewport.device,patch:{[property.key]:value}}),{command:'states.set'});control.dataset.stateProperty=property.key;
+    if(isNodeEffectivelyLocked(page(),node))for(const input of control.querySelectorAll('input,select,button'))input.disabled=true;
+    section.append(control);
+    if(hasResponsiveOverride(node.states?.[statePreview],property.key,state.viewport.device)){const reset=document.createElement('button');reset.type='button';reset.className='property-reset';reset.dataset.propertyCommand='states.set';reset.dataset.propertyKey=property.key;reset.textContent='ÃllapotÃ©rtÃ©k Ã¶rÃ¶klÃ©sÃ©nek visszaÃ¡llÃ­tÃ¡sa';reset.disabled=isNodeEffectivelyLocked(page(),node);reset.onclick=()=>command('states.set',{nodeId:node.id,state:statePreview,device:state.viewport.device,patch:{[property.key]:undefined}});section.append(reset)}
+  }
+  return section;
+}
+function renderAccessibilityInspector(node){
+  const section=document.createElement('section');section.className='inspector-group';
+  const title=document.createElement('div');title.className='inspector-group-title';title.innerHTML='<strong>AkadÃ¡lymentessÃ©g Ã©s lÃ¡thatÃ³sÃ¡g</strong>';section.append(title);
+  section.append(renderAccessibilityFields(node,(patch,{render:fullRender=true,typingGroup}={})=>{
+    const saved=command('accessibility.set',{nodeId:node.id,patch},{render:fullRender,typingGroup});
+    if(saved&&!fullRender){renderCanvas();setStatus('Nem mentett mÃ³dosÃ­tÃ¡s');syncPublishControls();}
+    return saved;
+  },{nodes:()=>page()?.nodes||{},pending:flush=>{flushRichTextDraft=flush}}));
+  for(const device of ['desktop','tablet','mobile']){
+    const label=document.createElement('label');label.className='inspector-toggle';label.dataset.inspectorCommand='element.visibility.set';label.dataset.inspectorKey='visibility.'+device;const input=document.createElement('input');input.type='checkbox';input.checked=isVisibleOnDevice(node,device);input.disabled=isNodeEffectivelyLocked(page(),node)||node.type==='root';input.onchange=()=>{if(command('element.visibility.set',{nodeId:node.id,device,visible:input.checked})===false)input.checked=isVisibleOnDevice(node,device);};label.append(input,document.createTextNode('LÃ¡thatÃ³: '+device));section.append(label);
+  }
+  if(node.type!=='root'){
+    const visibility=getNodeVisibilityState(page(),node.id,state.viewport.device);
+    if(!visibility.effectiveVisible){
+      const note=document.createElement('p');note.className='visibility-inspector-note';note.setAttribute('role','status');
+      const parent=visibility.hiddenByAncestorId?page()?.nodes?.[visibility.hiddenByAncestorId]:null;
+      note.textContent=parent
+        ?'Ebben a(z) '+state.viewport.device+' nÃ©zetben a(z) â€'+(parent.name||parent.type)+'â€ szÃ¼lÅ‘elem rejtett. A sajÃ¡t lÃ¡thatÃ³sÃ¡gi kapcsolÃ³ bekapcsolva maradhat; a megjelenÃ©shez a szÃ¼lÅ‘t is engedÃ©lyezd.'
+        :'Ez az elem a(z) '+state.viewport.device+' nÃ©zet publikus oldalÃ¡n rejtett. A vÃ¡sznon tovÃ¡bbra is kijelÃ¶lhetÅ‘ Ã©s szerkeszthetÅ‘.';
+      section.append(note);
+    }
+  }
+  if(['heading','text','richtext','button','link','quote','badge'].includes(node.type)){
+    const target=canvas.querySelector(`.node[data-node-id="${CSS.escape(node.id)}"]`);let background='rgb(255, 255, 255)',unknown=false,foundBackground=false;
+    for(let el=target;el&&el!==canvas;el=el.parentElement){const style=getComputedStyle(el);if((!foundBackground&&style.backgroundImage!=='none')||style.filter!=='none'||Number(style.opacity)<1)unknown=true;if(!foundBackground&&style.backgroundColor!=='rgba(0, 0, 0, 0)'&&style.backgroundColor!=='transparent'){background=style.backgroundColor;foundBackground=true}}
+    const css=target?getComputedStyle(target):null,ratio=css&&!unknown?opaqueContrast(css.color,background):null,threshold=css&&(parseFloat(css.fontSize)>=24||(parseFloat(css.fontSize)>=18.66&&Number(css.fontWeight)>=700))?3:4.5;
+    const note=document.createElement('p');note.className='content-field-help contrast-feedback';note.textContent=ratio===null?'ÃttetszÅ‘, kÃ©pes vagy Ã¡tmenetes hÃ¡ttÃ©rnÃ©l a kontrasztot kÃ©zzel is ellenÅ‘rizd.':`AlapstÃ­lus kontrasztja: ${ratio.toFixed(2)}:1 Â· ${ratio>=threshold?'megfelelÅ‘':'alacsony'} (cÃ©l: ${threshold}:1). A kÃ¼lÃ¶n formÃ¡zott szavakat Ã©s az interaktÃ­v Ã¡llapotokat kÃ¼lÃ¶n is ellenÅ‘rizd.`;if(ratio!==null&&ratio<threshold)note.classList.add('layout-warning');section.append(note);
+  }
+  return section;
+}
+function renderLayoutInspector(node){
+  const section=document.createElement('section');section.className='inspector-group layout-recipes';section.dataset.inspectorCategory='layout';
+  const title=document.createElement('div');title.className='inspector-group-title';
+  const name=document.createElement('strong');name.textContent=LAYOUT_TYPES.includes(node.type)?'ElrendezÃ©si mintÃ¡k':'SzÃ¼lÅ‘ Ã©s elhelyezÃ©s';title.append(name);section.append(title);
+  const device=state.viewport.device,parent=page()?.nodes?.[node.parentId];
+  const modeName=mode=>({flex:'Flex',grid:'Grid',block:'NormÃ¡l folyÃ¡s'}[mode]);
+  const context=document.createElement('p');context.className='layout-context';context.textContent=`Ez az elem: ${modeName(layoutMode(node,device))} Â· ${device}.`;
+  section.append(context);
+  if(node.type==='root'&&node.metadata?.editorRootVersion!==1){const enable=document.createElement('button');enable.type='button';enable.className='layout-parent';enable.dataset.inspectorCommand='root.appearance.enable';enable.dataset.inspectorKey='metadata.editorRootVersion';enable.textContent='OldalgyÃ¶kÃ©r stÃ­lusainak hasznÃ¡lata az elÅ‘nÃ©zetben';enable.onclick=()=>command('root.appearance.enable',{nodeId:node.id});section.append(enable)}
+  if(parent){
+    const parentButton=document.createElement('button');parentButton.type='button';parentButton.className='layout-parent';parentButton.textContent=`SzÃ¼lÅ‘: ${parent.name||parent.type} Â· ${modeName(layoutMode(parent,device))}`;
+    parentButton.title='A szÃ¼lÅ‘ tÃ¡rolÃ³ kijelÃ¶lÃ©se. Az oszlopok, irÃ¡ny Ã©s a gyermekek kÃ¶zÃ¶tti tÃ¡volsÃ¡g ott Ã¡llÃ­thatÃ³.';
+    parentButton.onclick=()=>command('selection.set',{ids:[parent.id],primaryId:parent.id});section.append(parentButton);
+  }
+  const help=document.createElement('p');help.className='layout-help';help.textContent='A tÃ¡rolÃ³ rendezi el a gyermekeit. FlexnÃ©l az irÃ¡ny hatÃ¡rozza meg az elosztÃ¡s tengelyÃ©t; GridnÃ©l az oszlopok Ã©s sorok adjÃ¡k a rÃ¡csot. A gyermek sajÃ¡t nÃ¶vekedÃ©se vagy rÃ¡cshelye csak a megfelelÅ‘ szÃ¼lÅ‘ben hat. A rÃ©szletes mezÅ‘k ezt a kapcsolatot kÃ¶vetik.';section.append(help);
+  if(LAYOUT_TYPES.includes(node.type)){
+    const rendered=canvas.querySelector(`.node[data-node-id="${CSS.escape(node.id)}"]`);
+    if(!rendered?.classList.contains('managed-layout')){
+      const legacy=document.createElement('p');legacy.className='layout-help';legacy.textContent='Ez mÃ©g a korÃ¡bbi publikus megjelenÃ©st hasznÃ¡lja, annak automatikus kÃ¡rtyakeretÃ©vel Ã©s mobilos tÃ¶rdelÃ©sÃ©vel. Az alÃ¡bbi mintÃ¡k valamelyikÃ©vel bekapcsolhatÃ³ az Ãºj, vÃ¡szonnal egyezÅ‘ elrendezÃ©s. PublikÃ¡lÃ¡s elÅ‘tt ellenÅ‘rizd az elÅ‘nÃ©zetet.';section.append(legacy);
+    }
+    const note=document.createElement('p');note.className='layout-help';note.textContent='Egy minta mindhÃ¡rom nÃ©zet elrendezÃ©sÃ©t beÃ¡llÃ­tja, egyetlen visszavonhatÃ³ lÃ©pÃ©sben. Tartalmat nem cserÃ©l Ã©s nem publikÃ¡l. Az elemek sajÃ¡t mÃ©rete, pozÃ­ciÃ³ja Ã©s rÃ¡cshelye megmarad; szÃ¼ksÃ©g esetÃ©n lent automatikus elhelyezÃ©s kÃ©rhetÅ‘.';section.append(note);
+    const grid=document.createElement('div');grid.className='layout-preset-grid';
+    for(const preset of LAYOUT_PRESETS){
+      const button=document.createElement('button');button.type='button';button.className='layout-preset';button.dataset.layoutPreset=preset.id;button.dataset.inspectorCommand='layout.preset.apply';button.dataset.inspectorKeys=JSON.stringify([...['display','flexDirection','flexWrap','justifyContent','alignItems','gridTemplateColumns','gridTemplateRows','gap','rowGap','columnGap'].map(key=>`style.${key}`),...['desktop','tablet','mobile'].flatMap(view=>['display','flexDirection','flexWrap','justifyContent','alignItems','gridTemplateColumns','gridTemplateRows','gap','rowGap','columnGap'].map(key=>`responsive.${view}.${key}`)),'metadata.layoutVersion','metadata.layoutPresetId']);button.dataset.inspectorPresetId=preset.id;button.disabled=isNodeEffectivelyLocked(page(),node);button.title=preset.help;button.setAttribute('aria-label',preset.label+' elrendezÃ©sminta');
+      const preview=document.createElement('span');preview.className='layout-preset-preview';preview.setAttribute('aria-hidden','true');Object.assign(preview.style,preset.layouts[0]);
+      const previewCount=explicitGridColumnCount(preset.layouts[0].gridTemplateColumns)||3;
+      for(let index=0;index<previewCount;index++)preview.append(document.createElement('span'));
+      const label=document.createElement('strong');label.textContent=preset.label;const hint=document.createElement('small');hint.textContent=preset.help;button.append(preview,label,hint);
+      button.onclick=()=>{if(command('layout.preset.apply',{nodeId:node.id,presetId:preset.id}))setStatus('ReszponzÃ­v elrendezÃ©s beÃ¡llÃ­tva. MentÃ©s Ã©s PublikÃ¡lÃ¡s kÃ¼lÃ¶n mÅ±velet.')};grid.append(button);
+    }
+    section.append(grid);
+  }
+  const children=getChildren(page(),node.id);
+  if(['grid','flex'].includes(layoutMode(node,device))&&children.length){
+    const auto=document.createElement('button');auto.type='button';auto.className='layout-auto';auto.dataset.inspectorCommand='layout.children.auto';auto.dataset.inspectorKeys=JSON.stringify(['children.responsive.flexGrow','children.responsive.flexShrink','children.responsive.flexBasis','children.responsive.alignSelf','children.responsive.gridColumn','children.responsive.gridRow']);auto.textContent='Gyermekek automatikus elhelyezÃ©se';auto.disabled=isNodeEffectivelyLocked(page(),node)||children.some(child=>isNodeEffectivelyLocked(page(),child));
+    auto.title=auto.disabled?'ZÃ¡rolt gyermek miatt az egÃ©sz mÅ±velet nem vÃ©gezhetÅ‘ el.':'Csak az aktuÃ¡lis nÃ©zetben Ã¡llÃ­tja automatikusra a kÃ¶zvetlen gyermekek Flex/Grid elhelyezÃ©sÃ©t. A mÃ©ret, pozÃ­ciÃ³, tartalom Ã©s mÃ¡s nÃ©zetek megmaradnak.';
+    auto.onclick=()=>command('layout.children.auto',{nodeId:node.id,device});section.append(auto);
+  }
+  if(parent&&layoutMode(parent,device)==='grid'){
+    const values=resolveNodeStyle(node,device);
+    const columns=explicitGridColumnCount(resolveNodeStyle(parent,device).gridTemplateColumns);
+    const start=parseInt(values.gridColumn,10);
+    if(columns&&start>columns){const warning=document.createElement('p');warning.className='layout-warning';warning.setAttribute('role','status');warning.textContent='A sajÃ¡t oszlophely Ãºj, nem tervezett oszlopot nyithat ebben a nÃ©zetben. JelÃ¶ld ki a szÃ¼lÅ‘t, Ã©s vÃ¡laszd a Gyermekek automatikus elhelyezÃ©se mÅ±veletet, vagy mÃ³dosÃ­tsd az Oszlophely mezÅ‘t.';section.append(warning)}
+  }
+  return section;
+}
+function filterInspector(){
+  const normalizedSearchText=value=>String(value??'').replace(/\s+/g,' ').trim().toLocaleLowerCase('hu');
+  const query=normalizedSearchText(inspectorQuery);
+  const fields=[...inspector.querySelectorAll('.field,.typed-inspector-field,.richtext-editor,.typography-role,.layout-preset')];
+  let matches=0;
+  for(const item of new Set(fields)){
+    const text=(item.dataset.propertyId||'')+' '+item.textContent+' '+(item.title||'');
+    const visible=!query||normalizedSearchText(text).includes(query);
+    item.hidden=!visible;
+    if(visible)matches++;
+  }
+  for(const group of inspector.querySelectorAll('.inspector-group')){
+    const title=group.querySelector(':scope > .inspector-group-title')?.textContent||'';
+    const groupFields=[...group.querySelectorAll('.field,.typed-inspector-field,.richtext-editor,.typography-role,.layout-preset')];
+    const inheritedTitleMatches=Boolean(query)&&(()=>{
+      let parent=group.parentElement?.closest('.inspector-group');
+      while(parent){
+        const parentTitle=parent.querySelector(':scope > .inspector-group-title')?.textContent||'';
+        if(normalizedSearchText(parentTitle).includes(query))return true;
+        parent=parent.parentElement?.closest('.inspector-group');
+      }
+      return false;
+    })();
+    const titleMatches=Boolean(query)&&normalizedSearchText(title).includes(query);
+    const revealGroup=titleMatches||inheritedTitleMatches;
+    // A group-title match must reveal its controls, not an empty accordion.
+    if(revealGroup)for(const field of groupFields){
+      if(field.hidden){field.hidden=false;matches++}
+    }
+    const visible=query?revealGroup||groupFields.some(item=>!item.hidden):inspectorCategory==='all'||!group.dataset.inspectorCategory||group.dataset.inspectorCategory===inspectorCategory;
+    group.hidden=!visible;
+  }
+  document.dispatchEvent(new CustomEvent('editor-inspector-search-change',{detail:{active:Boolean(query)}}));
+  const status=inspector.querySelector('.inspector-search-status');
+  if(status)status.textContent=query?`${matches} talÃ¡lat`:'';
+}
+function renderInspectorSearch(){
+  const wrap=document.createElement('label');wrap.className='inspector-search';
+  const title=document.createElement('span');title.textContent='BeÃ¡llÃ­tÃ¡s keresÃ©se';
+  const input=document.createElement('input');input.type='search';input.value=inspectorQuery;input.placeholder='Pl. szÃ­n, tÃ©rkÃ¶z, betÅ±mÃ©ret';input.setAttribute('aria-label','BeÃ¡llÃ­tÃ¡s keresÃ©se');
+  input.oninput=()=>{inspectorQuery=input.value;filterInspector()};
+  input.onkeydown=event=>{
+    if(event.key!=='Escape'||!input.value)return;
+    event.preventDefault();event.stopPropagation();
+    input.value='';inspectorQuery='';filterInspector();
+    input.focus({preventScroll:true});
+  };
+  const status=document.createElement('small');status.className='inspector-search-status';status.setAttribute('aria-live','polite');
+  wrap.append(title,input,status);inspector.append(wrap);
+}
+function renderInspectorCategories(){
+  const nav=document.createElement('nav');nav.className='inspector-category-nav';nav.setAttribute('aria-label','StÃ­lusbeÃ¡llÃ­tÃ¡sok szÅ±rÃ©se');
+  for(const [id,label] of [['all','Ã–sszes'],['layout','ElrendezÃ©s'],['text','SzÃ¶veg'],['surface','FelÃ¼let']]){
+    const button=document.createElement('button');button.type='button';button.textContent=label;button.dataset.inspectorCategory=id;button.setAttribute('aria-pressed',String(inspectorCategory===id));
+    button.onclick=()=>{inspectorCategory=id;nav.querySelectorAll('button').forEach(item=>item.setAttribute('aria-pressed',String(item===button)));filterInspector()};nav.append(button);
+  }
+  return nav;
+}
+function renderTypographyPresets(node){
+  const section=document.createElement('section');section.className='inspector-group typography-roles';section.dataset.inspectorCategory='text';
+  const title=document.createElement('div');title.className='inspector-group-title';title.innerHTML='<strong>SzÃ¶vegstÃ­lusok</strong><small>8 szerep</small>';section.append(title);
+  const hint=document.createElement('p');hint.className='typography-role-hint';hint.textContent='Az egÃ©sz elem alapstÃ­lusa az aktuÃ¡lis nÃ©zetben. A kÃ¼lÃ¶n formÃ¡zott szavak felÃ¼lÃ­rhatjÃ¡k; ezek a Tartalom fÃ¼lÃ¶n visszaÃ¡llÃ­thatÃ³k.';section.append(hint);
+  const grid=document.createElement('div');grid.className='typography-role-grid';
+  for(const preset of TYPOGRAPHY_PRESETS){
+    const button=document.createElement('button');button.type='button';button.className='typography-role';button.dataset.typographyPreset=preset.id;button.title=preset.help;button.setAttribute('aria-label',preset.label+' szÃ¶vegstÃ­lus');
+    const patch=typographyPresetPatch(preset.id,state.viewport.device);button.dataset.propertyCommand='responsive.set';button.dataset.propertyKeys=JSON.stringify(Object.keys(patch));
+    const sample=document.createElement('span');sample.textContent=preset.sample;sample.className='typography-role-sample';sample.style.fontFamily=preset.patch.fontFamily||'system-ui';sample.style.fontWeight=preset.patch.fontWeight;sample.style.fontStyle=preset.patch.fontStyle||'normal';
+    const label=document.createElement('strong');label.textContent=preset.label;button.append(sample,label);button.disabled=isNodeEffectivelyLocked(page(),node);button.onclick=()=>command('responsive.set',{nodeId:node.id,device:state.viewport.device,patch});grid.append(button);
+  }
+  section.append(grid);return section;
+}
+function editorSiteScope(){return String(state?.document?.siteId||location.origin)}
+function copySelectedAppearance(node){
+  const snapshot=captureStyleSnapshot(node);
+  const hasAppearance=Object.values(snapshot.style).length>0||['desktop','tablet','mobile'].some(device=>Object.keys(snapshot.responsive[device]||{}).length>0);
+  if(!hasAppearance){setStatus('Ezen az elemen mÃ©g nincs mÃ¡solhatÃ³ megjelenÃ©si stÃ­lus.');return}
+  copiedStyleSnapshot={...snapshot,siteId:editorSiteScope(),sourcePageId:page()?.id};
+  setStatus(`MegjelenÃ©s mÃ¡solva innen: ${node.name||node.type}. A tartalom, mÃ©ret Ã©s pozÃ­ciÃ³ kimarad.`);
+  renderInspector();
+}
+function pasteSelectedAppearance(node){
+  if(!copiedStyleSnapshot)return;
+  if(editorSiteScope()!==copiedStyleSnapshot.siteId){setStatus('A mÃ¡solt stÃ­lus mÃ¡sik webhelyrÅ‘l szÃ¡rmazik, ezÃ©rt nem alkalmazhatÃ³.');return}
+  if(page()?.id===copiedStyleSnapshot.sourcePageId&&node.id===copiedStyleSnapshot.sourceNodeId){setStatus('A forrÃ¡s elemen mÃ¡r ugyanaz a stÃ­lus van.');return}
+  if(command('style.snapshot.apply',{nodeId:node.id,snapshot:copiedStyleSnapshot}))setStatus(`A mÃ¡solt megjelenÃ©s alkalmazva: ${node.name||node.type}. MentÃ©shez hasznÃ¡ld a MentÃ©s gombot.`);
+}
+function renderMultiInspector(nodes){
+ const panel=document.createElement('section');panel.className='multi-inspector';
+ const title=document.createElement('h3');title.textContent=`${nodes.length} elem kÃ¶zÃ¶s beÃ¡llÃ­tÃ¡sai`;panel.append(title);
+ const locked=nodes.some(node=>isNodeEffectivelyLocked(page(),node));
+ const note=document.createElement('small');note.textContent=locked?'ZÃ¡rolt elem is van kijelÃ¶lve: a kÃ¶zÃ¶s mÃ³dosÃ­tÃ¡s ezÃ©rt tiltva van.':'A vÃ¡ltozÃ¡s az Ã¶sszes kijelÃ¶lt elemre egyszerre Ã©rvÃ©nyes. Egyetlen VisszavonÃ¡s visszaÃ¡llÃ­tja az elÅ‘zÅ‘ Ã¡llapotot.';panel.append(note);
+ const device=state.viewport.device;
+ const apply=patch=>{if(locked)return;try{
+  executeBatch(state,nodes.map(node=>({type:'responsive.set',payload:{nodeId:node.id,device,patch}})),{label:'TÃ¶bb elem kÃ¶zÃ¶s formÃ¡zÃ¡sa'});
+  render();setStatus(`${nodes.length} elem kÃ¶zÃ¶s megjelenÃ©se mÃ³dosult. MentÃ©s szÃ¼ksÃ©ges.`);
+ }catch(error){setStatus(error.message||'A kÃ¶zÃ¶s formÃ¡zÃ¡s nem sikerÃ¼lt.')}};
+ const make=(label,key,kind,defaultValue,unit='')=>{
+  const row=document.createElement('label');row.className='multi-inspector-field';row.dataset.propertyId=key;row.dataset.propertyCommand='responsive.set';row.dataset.propertyKey=key;
+  const text=document.createElement('span');text.textContent=label;row.append(text);
+  const values=nodes.map(node=>resolveResponsiveValue(node.responsive,key,device)?.value);
+  const same=values.every(value=>value===values[0]);
+  const mixed=!same;
+  row.title=mixed?'EltÃ©rÅ‘ Ã©rtÃ©kek a kijelÃ¶lt elemek kÃ¶zÃ¶tt':'';
+  const input=document.createElement('input');input.type=kind;
+  input.disabled=locked;
+  const value=same?values[0]:undefined;
+  if(kind==='color'){input.value=validHexColor(value)?value:defaultValue;input.title=same?'':'EltÃ©rÅ‘ Ã©rtÃ©kek';input.onchange=()=>apply({[key]:input.value});}
+  else{
+   input.value=value===undefined?'':String(value).replace(unit,'');input.placeholder=same?'AlapÃ©rtÃ©k':'EltÃ©rÅ‘ Ã©rtÃ©kek';
+   input.setAttribute('aria-description',mixed?'A kijelÃ¶lt elemek Ã©rtÃ©kei eltÃ©rnek. Ãšj Ã©rtÃ©k megadÃ¡sÃ¡val mindegyiket mÃ³dosÃ­tod.':'');
+   input.min='0';input.max=key==='opacity'?'1':'2000';input.step=key==='opacity'?'0.05':'1';
+   input.setAttribute('aria-label',label);
+   input.inputMode='decimal';
+   const validation=document.createElement('small');validation.className='property-validation';validation.id='multi-validation-'+key;validation.setAttribute('role','alert');input.setAttribute('aria-describedby',validation.id);
+   const validate=()=>{const v=Number(input.value),max=key==='opacity'?1:2000;const valid=Boolean(input.value.trim())&&Number.isFinite(v)&&v>=0&&v<=max;validation.textContent=valid?'':`${label}: 0 Ã©s ${max} kÃ¶zÃ¶tti szÃ¡mot adj meg.`;input.setAttribute('aria-invalid',String(!valid));return valid};
+   input.oninput=validate;
+   input.onchange=()=>{if(!validate())return;const v=Number(input.value);apply({[key]:unit?`${v}${unit}`:v})};
+   row.append(validation);
+  }
+  row.append(input);if(unit){const u=document.createElement('small');u.textContent=unit;row.append(u)}
+  panel.append(row);
+ };
+ make('HÃ¡ttÃ©rszÃ­n','backgroundColor','color','#334155');
+ make('SzÃ¶vegszÃ­n','color','color','#ffffff');
+ make('BetÅ±mÃ©ret','fontSize','number','16','px');
+ make('BelsÅ‘ tÃ©rkÃ¶z','padding','number','16','px');
+ make('SaroklekerekÃ­tÃ©s','borderRadius','number','8','px');
+ make('ÃtlÃ¡tszÃ³sÃ¡g','opacity','number','1');
+ // Shared geometry edits use the same responsive command and single undo step.
+ make('SzÃ©lessÃ©g','width','number','320','px');
+ make('MagassÃ¡g','height','number','180','px');
+ make('KÃ¼lsÅ‘ tÃ©rkÃ¶z','margin','number','0','px');
+ make('Elemek kÃ¶zÃ¶tti tÃ¡volsÃ¡g','gap','number','0','px');
+ make('MinimÃ¡lis szÃ©lessÃ©g','minWidth','number','0','px');
+ make('MaximÃ¡lis szÃ©lessÃ©g','maxWidth','number','1200','px');
+ make('MinimÃ¡lis magassÃ¡g','minHeight','number','0','px');
+ make('MaximÃ¡lis magassÃ¡g','maxHeight','number','1200','px');
+ return panel;
+}
+function renderExistingContentInspector(node){
+  const updateProps=(props,{render:fullRender=true,typingGroup}={})=>{
+    const saved=command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),...props}}},{render:fullRender,typingGroup});
+    if(saved&&!fullRender){renderCanvas();setStatus('Nem mentett mÃ³dosÃ­tÃ¡s');syncPublishControls();}
+    return saved;
+  };
+  const updateModel=(key,value,options)=>updateProps({[key]:value},options);
+  if(!isAuthoredContent(node)&&['image','video','audio'].includes(node.type)){
+    inspector.append(renderLegacyMediaInspector(node,updateProps,{pending:flush=>{flushRichTextDraft=flush}}));return true;
+  }
+  if(!isAuthoredContent(node)&&hasContentProfile(node,'basic-v1')){inspector.append(renderBasicContentInspector(node,updateProps,{pending:flush=>{flushRichTextDraft=flush}}));return true}
+  if(hasContentProfile(node,'embed-v1')){inspector.append(renderEmbedInspector(node,(value,options)=>updateModel('embedContent',value,options),{pending:flush=>{flushRichTextDraft=flush}}));return true}
+  if(hasContentProfile(node,'social-v1')){inspector.append(renderSocialLinksInspector(node,(value,options)=>updateModel('socialLinks',value,options),{pending:flush=>{flushRichTextDraft=flush}}));return true}
+  if(hasContentProfile(node,'card-v1')){inspector.append(renderCardInspector(node,(value,options)=>updateModel('cardContent',value,options),{pending:flush=>{flushRichTextDraft=flush}}));return true}
+  if(hasContentProfile(node,'countdown-v1')){inspector.append(renderCountdownInspector(node,(value,options)=>updateModel('countdown',value,options),{pending:flush=>{flushRichTextDraft=flush}}));return true}
+  if(hasContentProfile(node,'divider-v1')){
+    const cfg=normalizeDividerStyle(node.props?.decoration),section=document.createElement('section');
+    section.className='decorative-inspector';
+    section.append(Object.assign(document.createElement('h3'),{textContent:'ElvÃ¡lasztÃ³vonal'}));
+    const set=patch=>{
+      const decoration=normalizeDividerStyle({...cfg,...patch});
+      command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),decoration}}});
+    };
+    const route=(control,key)=>{
+      control.dataset.inspectorCommand='element.update';
+      control.dataset.inspectorKey='props.decoration.'+key;
+      return control;
+    };
+    const thickness=route(document.createElement('input'),'thickness');
+    thickness.type='number';thickness.min='1';thickness.max='24';thickness.value=String(cfg.thickness);
+    thickness.setAttribute('aria-label','ElvÃ¡lasztÃ³vonal vastagsÃ¡ga');
+    thickness.onchange=()=>set({thickness:Number(thickness.value)});
+    const color=route(document.createElement('input'),'color');
+    color.type='color';color.value=cfg.color;color.setAttribute('aria-label','ElvÃ¡lasztÃ³vonal szÃ­ne');
+    color.onchange=()=>set({color:color.value});
+    const style=route(document.createElement('select'),'lineStyle');
+    style.setAttribute('aria-label','ElvÃ¡lasztÃ³vonal mintÃ¡zata');
+    for(const value of DIVIDER_LINE_STYLES){const option=document.createElement('option');option.value=value;option.textContent=value;style.append(option)}
+    style.value=cfg.lineStyle;style.onchange=()=>set({lineStyle:style.value});
+    section.append(thickness,color,style);inspector.append(section);return true;
+  }
+  if(hasContentProfile(node,'spacer-v1')){const section=document.createElement('section');section.className='decorative-inspector';section.append(Object.assign(document.createElement('h3'),{textContent:'Ãœres tÃ©rkÃ¶z'}));const device=state.viewport.device,current=resolveResponsiveValue(node.responsive,'height',device).value??node.style?.height??'64px';section.append(renderPropertyInput(getProperty('size.height'),'TÃ©rkÃ¶z magassÃ¡ga',current,value=>command('responsive.set',{nodeId:node.id,device,patch:{height:value}})));inspector.append(section);return true}
+  if(!isAuthoredContent(node)&&hasContentProfile(node,'structured-v1')){inspector.append(renderStructuredInspector(node,(model,options)=>updateModel('contentModel',model,options),{pending:flush=>{flushRichTextDraft=flush},updateProperties:(props,options)=>updateProps(props,options)}));return true}
+  return false;
+}
+const INSPECTOR_TABS=Object.freeze(['design','content','advanced']);
+function syncInspectorTabSemantics(){
+  const buttons=[...document.querySelectorAll('.inspector-tabs [role="tab"]')];
+  const activeIndex=Math.max(0,INSPECTOR_TABS.indexOf(inspectorTab));
+  const activeButton=buttons[activeIndex];
+  for(const[index,button]of buttons.entries()){
+    const selected=index===activeIndex;
+    button.setAttribute('aria-selected',String(selected));
+    button.tabIndex=selected?0:-1;
+    button.classList.toggle('active',selected);
+  }
+  const panel=$('#inspectorBody');
+  if(panel&&activeButton)panel.setAttribute('aria-labelledby',activeButton.id);
+}
+function activateInspectorTab(name,{focus=false,persist=true}={}){
+  if(!INSPECTOR_TABS.includes(name)||!flushLayerRename()||flushRichTextDraft?.()===false)return false;
+  inspectorTab=name;
+  if(persist)window.sanciEditor?.setInspectorTab?.(name,{notify:false});
+  syncInspectorTabSemantics();
+  renderInspector();
+  if(focus)document.querySelector(`#inspectorTab${name[0].toUpperCase()}${name.slice(1)}`)?.focus();
+  return true;
+}
+function renderInspector(){
+  syncInspectorTabSemantics();
+  const previousScrollTop=inspector.scrollTop;
+  const focused=document.activeElement;
+  const searchFocused=inspector.contains(focused)&&focused?.matches?.('.inspector-search input[type=search]');
+  const searchSelection=searchFocused?[focused.selectionStart,focused.selectionEnd]:null;
+  const multiFocused=inspector.contains(focused)?focused?.closest?.('.multi-inspector-field[data-property-id]'):null;
+  const multiFocusId=multiFocused&&focused?.matches?.('input')?multiFocused.dataset.propertyId:null;
+  const focusedProperty=inspector.contains(focused)
+    ? focused?.closest?.('.typed-inspector-field[data-property-id]') : null;
+  // The Inspector is reconstructed on every Page Model edit. Remember only
+  // typed field focus: rich text uses its own selection/bookmark lifecycle.
+  const fieldInputs=focusedProperty?.querySelectorAll('input,select,textarea');
+  const focusBookmark=focusedProperty && focused?.matches?.('input,select,textarea')
+    ? {propertyId:focusedProperty.dataset.propertyId,
+       ariaLabel:focused.getAttribute('aria-label'),
+       index:[...fieldInputs].indexOf(focused),
+       start:typeof focused.selectionStart==='number'?focused.selectionStart:null,
+       end:typeof focused.selectionEnd==='number'?focused.selectionEnd:null}
+    : null;
+  const restoreScroll=()=>requestAnimationFrame(()=>{
+    inspector.scrollTop=previousScrollTop;
+    // Never steal focus from a next field reached by Tab, a toolbar action,
+    // or a newly opened dialog. Only repair focus lost to DOM replacement.
+    if(document.activeElement!==document.body)return;
+    if(searchFocused){
+      const search=inspector.querySelector('.inspector-search input[type=search]');
+      if(search){search.focus({preventScroll:true});try{search.setSelectionRange(...searchSelection)}catch{}}
+      return;
+    }
+    if(multiFocusId){
+      const target=[...inspector.querySelectorAll('.multi-inspector-field[data-property-id]')]
+        .find(row=>row.dataset.propertyId===multiFocusId)?.querySelector('input');
+      if(target&&!target.disabled&&target.getClientRects().length)target.focus({preventScroll:true});
+      return;
+    }
+    if(!focusBookmark)return;
+    const replacement=[...inspector.querySelectorAll('.typed-inspector-field[data-property-id]')]
+      .find(field=>field.dataset.propertyId===focusBookmark.propertyId);
+    if(!replacement)return;
+    const inputs=[...replacement.querySelectorAll('input,select,textarea')];
+    const target=inputs.find(el=>el.getAttribute('aria-label')===focusBookmark.ariaLabel)||
+      inputs[focusBookmark.index];
+    if(!target||target.disabled||!target.getClientRects().length)return;
+    target.focus({preventScroll:true});
+    if(focusBookmark.start!==null&&focusBookmark.end!==null&&
+       typeof target.setSelectionRange==='function'){
+      try{target.setSelectionRange(focusBookmark.start,focusBookmark.end)}catch{}
+    }
+  });
+  // Tab switches and direct selection changes do not pass through command().
+  // Flush before removing the live contenteditable element from the DOM.
+  if(!inlineEditingId){if(!flushLayerRename()||flushRichTextDraft?.()===false)return false;flushRichTextDraft=null;}
+  richTextSelectionCleanup?.();richTextSelectionCleanup=null;
+  inspector.replaceChildren();
+  renderInspectorSearch();
+  const nodes=state?selectedNodes(state):[];
+  if(!nodes.length){inspector.insertAdjacentHTML('beforeend','<div class="inspector-empty"><b>Inspector</b><span>VÃ¡lassz ki egy elemet a vÃ¡sznon vagy a RÃ©tegek panelen.</span></div>');filterInspector();restoreScroll();return}
+  if(nodes.length>1){inspector.append(renderMultiInspector(nodes));filterInspector();restoreScroll();return}
+  const node=nodes[0];
+  const composition=createCompositionInputs(flush=>{flushRichTextDraft=flush});
+  const header=document.createElement('div');header.className='inspector-selection';
+  const headerName=document.createElement('b');headerName.textContent=node.name||node.type;
+  const headerType=document.createElement('small');headerType.textContent=node.type;
+  header.append(headerName,headerType);
+  const styleActions=document.createElement('div');styleActions.className='style-copy-actions';
+  const copyStyle=document.createElement('button');copyStyle.type='button';copyStyle.className='style-copy-button';copyStyle.textContent='MegjelenÃ©s mÃ¡solÃ¡sa';copyStyle.setAttribute('aria-label','MegjelenÃ©s mÃ¡solÃ¡sa');copyStyle.title='SzÃ­n, tipogrÃ¡fia, tÃ©rkÃ¶z, keret, Ã¡rnyÃ©k Ã©s Ã¡ttetszÅ‘sÃ©g mÃ¡solÃ¡sa. A tartalom, mÃ©ret Ã©s pozÃ­ciÃ³ megmarad.';copyStyle.onclick=()=>copySelectedAppearance(node);
+  const pasteStyle=document.createElement('button');pasteStyle.type='button';pasteStyle.className='style-paste-button';pasteStyle.dataset.inspectorCommand='style.snapshot.apply';pasteStyle.dataset.inspectorKeys=JSON.stringify([...STYLE_SNAPSHOT_PROPERTIES.map(key=>`style.${key}`),...['desktop','tablet','mobile'].flatMap(view=>STYLE_SNAPSHOT_PROPERTIES.map(key=>`responsive.${view}.${key}`)),...(node.type==='root'?['metadata.rootStyleVersion']:[])]);pasteStyle.textContent='MÃ¡solt stÃ­lus alkalmazÃ¡sa';pasteStyle.setAttribute('aria-label','MÃ¡solt stÃ­lus alkalmazÃ¡sa');pasteStyle.disabled=!copiedStyleSnapshot||editorSiteScope()!==copiedStyleSnapshot.siteId||(page()?.id===copiedStyleSnapshot.sourcePageId&&node.id===copiedStyleSnapshot.sourceNodeId)||isNodeEffectivelyLocked(page(),node);pasteStyle.title='A mÃ¡solt kÃ¼lsÅ‘ megjelenÃ©st alkalmazza erre az elemre; a tartalom, mÃ©ret Ã©s pozÃ­ciÃ³ vÃ¡ltozatlan marad.';pasteStyle.onclick=()=>pasteSelectedAppearance(node);
+  styleActions.append(copyStyle,pasteStyle);
+  const styleHelp=document.createElement('small');styleHelp.className='style-copy-help';styleHelp.textContent='MÃ¡sik szÃ¶vegnÃ©l ugyanazt a megjelenÃ©st hasznÃ¡lhatod. A mÃ©retet, pozÃ­ciÃ³t Ã©s tartalmat kÃ¼lÃ¶n kezeli.';
+  const brand=document.createElement('a');brand.className='inspector-brand-link';brand.href='/admin/design';brand.target='_blank';brand.rel='noopener';brand.textContent='KÃ¶zÃ¶s webhelystÃ­lusok Â· Brand Kit';header.append(styleActions,styleHelp,brand);inspector.append(header);
+  const lockedAncestor=isLockedParent(page(),node),effectivelyLocked=isNodeEffectivelyLocked(page(),node);
+  if(effectivelyLocked){const note=document.createElement('p');note.className='content-field-help inspector-locked-note';note.setAttribute('role','status');note.textContent=lockedAncestor?'Ez az elem egy zÃ¡rolt tÃ¡rolÃ³ rÃ©sze, ezÃ©rt a beÃ¡llÃ­tÃ¡sai csak olvashatÃ³k. A szÃ¼lÅ‘ zÃ¡rolÃ¡sÃ¡nak feloldÃ¡sa utÃ¡n szerkeszthetÅ‘.':'Ez az elem zÃ¡rolt, ezÃ©rt a beÃ¡llÃ­tÃ¡sai csak olvashatÃ³k. A StÃ­lus fÃ¼lÃ¶n a â€ZÃ¡rolt elemâ€ jelÃ¶lÃ©st kikapcsolva Ãºjra szerkesztheted.';inspector.append(note)}
+
+  if(inspectorTab==='design'){
+    inspector.append(renderInspectorCategories());
+    inspector.append(renderLayoutInspector(node));
+    const nameProperty=getProperty('advanced.nodeName');
+    const nameField=field(nameProperty.label,node.name,(value,options)=>{
+      if(!String(value??'').trim())throw new Error('Az elem neve nem lehet Ã¼res.');
+      const normalized=normalizeInspectorValue(nameProperty,value);
+      const saved=commitInspectorText(nameProperty.command,{nodeId:node.id,patch:{[nameProperty.key]:normalized}},options);
+      if(!saved)throw new Error('Az elem neve nem mÃ³dosÃ­thatÃ³.');
+      headerName.textContent=normalized;
+      return saved;
+    },isNodeEffectivelyLocked(page(),node),false,composition,nameProperty);
+    nameField.dataset.propertyId=nameProperty.id;
+    nameField.dataset.propertyCommand=nameProperty.command;
+    nameField.dataset.propertyKey=nameProperty.key;
+    inspector.append(nameField,renderGeometryInspector(node));
+    if(['heading','text','richtext','button','link'].includes(node.type))inspector.append(renderTypographyPresets(node));
+    if(node.type==='schedule'){
+      inspector.append(renderScheduleInspector(node,composition));
+      // Schedule configuration is type-specific content; it still shares the
+      // same responsive design properties as every other partial node type.
+      inspector.append(renderRegistryInspector(node,'primary'));
+    }
+    else inspector.append(renderRegistryInspector(node,'primary'));
+    const lockRow=document.createElement('label');lockRow.className='inspector-toggle';
+    const lockInput=document.createElement('input');lockInput.type='checkbox';lockInput.className='inspector-lock-toggle';lockInput.dataset.inspectorCommand='element.lock.set';lockInput.dataset.inspectorKey='locked';lockInput.checked=Boolean(node.locked);lockInput.disabled=node.id===page()?.rootId||lockedAncestor;
+    lockInput.onchange=()=>command('element.lock.set',{nodeId:node.id,locked:lockInput.checked});
+    const lockText=document.createElement('span');lockText.textContent='ZÃ¡rolt elem';lockRow.append(lockInput,lockText);inspector.append(lockRow);
+  }else if(inspectorTab==='content'){
+    if(node.type==='schedule')inspector.append(renderScheduleInspector(node,composition));
+    else {
+      const textTypes=new Set(['heading','text','richtext','button','link']);
+      if(node.type==='richtext'){
+        const currentRichText=node.props?.richText||plainTextToRichText('');
+        const section=document.createElement('section');section.className='richtext-editor';
+        const toolbar=document.createElement('div');toolbar.className='richtext-toolbar';
+        const blockSelect=document.createElement('select');blockSelect.title='AktuÃ¡lis blokk tÃ­pusa';
+        [['paragraph','BekezdÃ©s'],['heading-1','H1'],['heading-2','H2'],['heading-3','H3'],
+          ['heading-4','H4'],['heading-5','H5'],['heading-6','H6'],['bulleted-list','FelsorolÃ¡s'],
+          ['numbered-list','SzÃ¡mozott lista'],['quote','IdÃ©zet'],['code','KÃ³dblokk']]
+          .forEach(([value,label])=>{const option=document.createElement('option');option.value=value;option.textContent=label;blockSelect.append(option)});
+        const alignmentSelect=document.createElement('select');alignmentSelect.className='richtext-align-select';alignmentSelect.title='A kurzor alatti bekezdÃ©s igazÃ­tÃ¡sa';alignmentSelect.setAttribute('aria-label','BekezdÃ©s igazÃ­tÃ¡sa');
+        [['left','Balra igazÃ­tÃ¡s'],['center','KÃ¶zÃ©pre igazÃ­tÃ¡s'],['right','Jobbra igazÃ­tÃ¡s'],['justify','SorkizÃ¡rt']]
+          .forEach(([value,label])=>{const option=document.createElement('option');option.value=value;option.textContent=label;alignmentSelect.append(option)});
+        const paragraphTools=document.createElement('div');paragraphTools.className='richtext-tool-group';paragraphTools.setAttribute('aria-label','BekezdÃ©s beÃ¡llÃ­tÃ¡sai');
+        const paragraphLabel=document.createElement('span');paragraphLabel.textContent='BekezdÃ©s';paragraphLabel.className='richtext-tool-label';paragraphTools.append(paragraphLabel,blockSelect,alignmentSelect);toolbar.append(paragraphTools);
+        const characterTools=document.createElement('div');characterTools.className='richtext-tool-group';characterTools.setAttribute('aria-label','KarakterformÃ¡zÃ¡s');
+        const characterLabel=document.createElement('span');characterLabel.textContent='Karakter';characterLabel.className='richtext-tool-label';characterTools.append(characterLabel);toolbar.append(characterTools);
+        const colorTools=document.createElement('div');colorTools.className='richtext-tool-group richtext-color-tools';colorTools.setAttribute('aria-label','SzÃ¶vegszÃ­nek');
+        const colorLabel=document.createElement('span');colorLabel.textContent='SzÃ­nek';colorLabel.className='richtext-tool-label';colorTools.append(colorLabel);toolbar.append(colorTools);
+        const toolTabs=document.createElement('div');toolTabs.className='richtext-tool-tabs';toolTabs.setAttribute('role','tablist');toolTabs.setAttribute('aria-label','SzÃ¶vegformÃ¡zÃ¡si eszkÃ¶zÃ¶k');
+        for(const [id,label] of [['character','Karakter'],['paragraph','BekezdÃ©s'],['color','SzÃ­nek']]){
+          const button=document.createElement('button');button.type='button';button.textContent=label;button.setAttribute('role','tab');button.tabIndex=richTextToolTab===id?0:-1;button.setAttribute('aria-selected',String(richTextToolTab===id));
+          button.onclick=()=>{richTextToolTab=id;toolTabs.querySelectorAll('button').forEach(item=>{item.setAttribute('aria-selected',String(item===button));item.tabIndex=item===button?0:-1});characterTools.hidden=id!=='character';paragraphTools.hidden=id!=='paragraph';colorTools.hidden=id!=='color'};toolTabs.append(button);
+        }
+        characterTools.hidden=richTextToolTab!=='character';paragraphTools.hidden=richTextToolTab!=='paragraph';colorTools.hidden=richTextToolTab!=='color';toolbar.prepend(toolTabs);toolTabs.onkeydown=event=>{if(!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;const buttons=[...toolTabs.querySelectorAll('button')],index=buttons.indexOf(document.activeElement),next=event.key==='Home'?0:event.key==='End'?buttons.length-1:(index+(event.key==='ArrowRight'?1:-1)+buttons.length)%buttons.length;event.preventDefault();buttons[next].click();buttons[next].focus()};
+        const fontFamilyLabel=document.createElement('label');fontFamilyLabel.className='richtext-typography-control';fontFamilyLabel.title='KijelÃ¶lt szÃ¶vegrÃ©sz betÅ±csalÃ¡dja';fontFamilyLabel.append(document.createTextNode('BetÅ±csalÃ¡d'));
+        const fontFamilySelect=document.createElement('select');fontFamilySelect.setAttribute('aria-label','BetÅ±csalÃ¡d');fontFamilySelect.title='BetÅ±csalÃ¡d alkalmazÃ¡sa a kijelÃ¶lt szÃ¶vegre';
+        [['','AlapÃ©rtelmezett'],['Arial','Arial'],['Aptos','Aptos'],['Calibri','Calibri'],['Cambria','Cambria'],['Georgia','Georgia'],['Tahoma','Tahoma'],['Trebuchet MS','Trebuchet MS'],['Verdana','Verdana'],['Times New Roman','Times New Roman'],['Courier New','Courier New'],['system-ui','Rendszer'],['serif','Talpas'],['sans-serif','Talpatlan'],['monospace','RÃ¶gzÃ­tett szÃ©lessÃ©g']]
+          .forEach(([value,label])=>{const option=document.createElement('option');option.value=value;option.textContent=label;fontFamilySelect.append(option)});
+        fontFamilyLabel.append(fontFamilySelect);characterTools.append(fontFamilyLabel);
+        const fontSizeLabel=document.createElement('label');fontSizeLabel.className='richtext-typography-control richtext-size-control';fontSizeLabel.title='KijelÃ¶lt szÃ¶veg mÃ©rete 8 Ã©s 96 kÃ©ppont kÃ¶zÃ¶tt';fontSizeLabel.append(document.createTextNode('MÃ©ret'));
+        const fontSizeInput=document.createElement('input');fontSizeInput.type='number';fontSizeInput.min='8';fontSizeInput.max='96';fontSizeInput.step='1';fontSizeInput.value='16';fontSizeInput.setAttribute('aria-label','BetÅ±mÃ©ret kÃ©ppontban');fontSizeLabel.append(fontSizeInput);characterTools.append(fontSizeLabel);
+        const editor=document.createElement('div');editor.className='richtext-content richtext-editor-surface';
+        editor.dataset.textNodeId=node.id;editor.contentEditable=isNodeEffectivelyLocked(page(),node)?'false':'true';applyTextSurfaceStyle(editor,node);editor.spellcheck=true;editor.setAttribute('role','textbox');
+        editor.setAttribute('aria-label','Rich Text szerkesztÅ‘');
+        renderRichTextEditor(editor,currentRichText);
+        let linkTargetSelect;
+        let richTextDirty=false, savedLinkSelection=richTextBookmark?.nodeId===node.id?richTextBookmark.range:null,
+          savedFormatSelection=richTextBookmark?.nodeId===node.id?richTextBookmark.formatRange:null,
+          savedBlockIndex=richTextBookmark?.nodeId===node.id?richTextBookmark.blockIndex:null,
+          savedBlockTransformSelection=richTextBookmark?.nodeId===node.id?richTextBookmark.transformSelection:null,composing=false,compositionRevision=0,
+          savedSelectionOffsets=richTextBookmark?.nodeId===node.id?richTextBookmark.selectionOffsets??null:null;
+        const typingGroup=crypto.randomUUID();
+        const bookmarkedCanvas=richTextBookmark?.nodeId===node.id&&richTextBookmark.source==='canvas'
+          ?canvas.querySelector(`.node[data-node-id="${CSS.escape(node.id)}"] .richtext-inline-surface`):null;
+        let formattingSurface=bookmarkedCanvas||editor;
+        function refreshFormattingControls(range,surface){
+          const model=richTextEditorToDocument(surface),format=readRichTextSelectionFormatting(model,range);
+          const native=window.getSelection(),anchor=native?.anchorNode;
+          const element=anchor&&surface.contains(anchor)?anchor.nodeType===Node.ELEMENT_NODE?anchor:anchor.parentElement:surface;
+          const css=getComputedStyle(element);
+          fontFamilySelect.value=format.mixed.includes('fontFamily')?'':format.styles.fontFamily||'';
+          fontFamilySelect.title=format.mixed.includes('fontFamily')?'Vegyes betÅ±csalÃ¡d':format.styles.fontFamily||css.fontFamily;
+          if(fontSizeInput.dataset.pending!=='true')fontSizeInput.value=format.mixed.includes('fontSize')?'':String(parseFloat(format.styles.fontSize||css.fontSize)||16);
+          fontSizeInput.placeholder=format.mixed.includes('fontSize')?'Vegyes':'';
+          for(const button of characterTools.querySelectorAll('[data-mark]')){
+            const tag={bold:'strong,b',italic:'em,i',underline:'u',strikethrough:'s,strike',subscript:'sub',superscript:'sup',code:'code'}[button.dataset.mark];
+            const value=range?format.marks[button.dataset.mark]:Boolean(element.closest(tag)&&surface.contains(element.closest(tag)));
+            button.setAttribute('aria-pressed',String(value));
+          }
+          for(const input of colorTools.querySelectorAll('input[data-style-key]')){
+            const key=input.dataset.styleKey,value=format.styles[key]||css[key];
+            const rgb=String(value).match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+            const hex=/^#[\da-f]{6}$/i.test(value)?value:/^#[\da-f]{3}$/i.test(value)?'#'+value.slice(1).split('').map(x=>x+x).join(''):rgb?'#'+rgb.slice(1,4).map(x=>Number(x).toString(16).padStart(2,'0')).join(''):null;
+            if(hex)input.value=hex;
+            input.dataset.mixed=String(format.mixed.includes(key));
+          }
+          scope.textContent=range?'KijelÃ¶lt szÃ¶vegrÃ©sz Â· a vÃ¡sznon Ã©s az Inspectorban ugyanaz':'Ã‰lÅ‘ szÃ¶veg Â· jelÃ¶lj ki szavakat a helyi formÃ¡zÃ¡shoz';
+        }
+        const rememberSelection=(syncLinkFields=true)=>{
+          const canvasEditor=canvas.querySelector(`.node[data-node-id="${CSS.escape(node.id)}"] .richtext-inline-surface`);
+          const native=window.getSelection();
+          const surface=canvasEditor&&native?.anchorNode&&canvasEditor.contains(native.anchorNode)?canvasEditor:editor;
+          const offsets=getSelectionOffsets(surface);if(!offsets)return;
+          // Keep the native anchor/focus direction too. Toolbar focus moves
+          // commonly remove the DOM Range on touch devices; reducing this to
+          // from/to here would discard a backward selection before the shared
+          // Rich Text restore path can reattach it.
+          formattingSurface=surface;savedSelectionOffsets={...offsets};
+          const format=getRichTextFormattingSelection(surface);savedFormatSelection=format;
+          savedBlockTransformSelection=getRichTextBlockTransformSelection(surface);
+          // Same-block selections retain caret-in-link expansion; when a
+          // native selection spans paragraphs/lists/cells, use canonical
+          // per-block segments instead of dropping the link selection.
+          const next=getRichTextBlockSelection(surface)||getRichTextFormattingSelection(surface);savedLinkSelection=next;
+          const currentRichText=richTextEditorToDocument(surface);
+          if(linkTargetSelect)linkTargetSelect.value=readRichTextLinkTarget(currentRichText,next);
+          if(syncLinkFields&&url){
+            const href=readRichTextLinkHref(currentRichText,next);
+            url.value=href==='mixed'?'':href;
+            url.placeholder=href==='mixed'?'Vegyes hivatkozÃ¡sok':'/p/home vagy https://...';
+            url.dispatchEvent(new Event('input',{bubbles:true}));
+          }
+          const index=getRichTextActiveBlockIndex(surface);
+          if(index!==null){
+            savedBlockIndex=index;const active=richTextEditorToDocument(surface).blocks[index];
+            if(active){blockSelect.value=active.type==='heading'?`heading-${active.level||1}`:active.type;blockSelect.disabled=active.type==='table';alignmentSelect.value=active.align||'left';alignmentSelect.disabled=!['paragraph','heading','quote'].includes(active.type)}
+          }
+          richTextBookmark={nodeId:node.id,range:savedLinkSelection,formatRange:savedFormatSelection,blockIndex:savedBlockIndex,transformSelection:savedBlockTransformSelection,selectionOffsets:savedSelectionOffsets,source:surface===canvasEditor?'canvas':'inspector'};
+          refreshFormattingControls(format,surface);
+        };
+        // Preserve a word selection when toolbar focus or DOM re-render removes the native Range.
+        // Reattach to the Inspector copy if the original canvas surface is no longer mounted.
+        const restoreFormattingSelection=()=>{
+          if(!savedFormatSelection&&!savedSelectionOffsets)return false;
+          const target=formattingSurface?.isConnected?formattingSurface:editor;
+          if(!target.isConnected)return false;
+          target.focus({preventScroll:true});
+          // A per-block bookmark is authoritative for paragraph/list/table spans.
+          // Flattened offsets do not include exactly the same block separators.
+          const restored=(savedFormatSelection&&restoreRichTextFormattingSelection(target,savedFormatSelection))||
+            (savedSelectionOffsets&&restoreSelectionOffsets(target,savedSelectionOffsets));
+          if(!restored)return false;
+          rememberSelection();return true;
+        };
+        const selectionObserver=()=>{if(!editor.isConnected){document.removeEventListener('selectionchange',selectionObserver);return}if(!toolbar.contains(document.activeElement)&&!linkControls.contains(document.activeElement))rememberSelection()};
+        const refreshCanvasRichText=doc=>syncTextSurfaces(node.id,doc,editor);
+        const commitWithoutRender=(doc,group=null)=>{const saved=command('richtext.content.set',{nodeId:node.id,document:doc},{render:false,typingGroup:group});if(saved){richTextDirty=false;refreshCanvasRichText(doc);setStatus('Nem mentett mÃ³dosÃ­tÃ¡s');syncPublishControls()}return saved};
+        const formatStatus=document.createElement('small');formatStatus.className='richtext-format-feedback';formatStatus.setAttribute('role','status');
+        const saveRich=()=>{
+          if(composing){setStatus('Fejezd be az aktuÃ¡lis szÃ¶vegbevitelt.');return false}if(!richTextDirty)return true;
+          const saved=commitTextSurface(node.id,editor,typingGroup);
+          if(saved)richTextDirty=false;
+          return saved;
+        };
+        flushRichTextDraft=saveRich;
+        toolbar.onpointerdown=()=>rememberSelection(false);
+        blockSelect.onpointerdown=()=>rememberSelection(false);
+        blockSelect.setAttribute('aria-label','SzÃ¶vegblokkok tÃ­pusa');
+        blockSelect.onchange=()=>{
+          if(composing){formatStatus.textContent='Fejezd be a szÃ¶vegbevitelt a blokk Ã¡talakÃ­tÃ¡sa elÅ‘tt.';return}
+          const doc=richTextEditorToDocument(editor);
+          const targets=savedBlockTransformSelection||getRichTextBlockTransformSelection(editor)||
+            savedFormatSelection?.segments;
+          const indices=targets?.map(item=>item.blockIndex)??
+            [savedBlockIndex??getRichTextActiveBlockIndex(editor)].filter(index=>index!==null);
+          if(!indices.length){formatStatus.textContent='ElÅ‘bb helyezd a kurzort egy szÃ¶vegblokkba.';return}
+          const type=blockSelect.value.startsWith('heading-')?'heading':blockSelect.value;
+          const level=type==='heading'?Number(blockSelect.value.split('-')[1]):1;
+          try{
+            const next=transformRichTextBlockTypes(doc,indices,type,level,targets);
+            // Block conversion changes top-level indices. Save the model-aligned
+            // text offset rather than trying to restore obsolete block indices.
+            const selectionOffsets=getSelectionOffsets(formattingSurface)||savedSelectionOffsets;
+            if(command('richtext.content.set',{nodeId:node.id,document:next},{render:false})){
+              richTextDirty=false;renderRichTextEditor(editor,next);refreshCanvasRichText(next);
+              savedFormatSelection=null;savedLinkSelection=null;savedBlockIndex=null;
+              savedBlockTransformSelection=null;richTextBookmark=null;formattingSurface=editor;
+              savedSelectionOffsets=selectionOffsets;
+              if(selectionOffsets&&restoreSelectionOffsets(editor,selectionOffsets))rememberSelection();
+              setStatus('Nem mentett mÃ³dosÃ­tÃ¡s');syncPublishControls();
+              formatStatus.textContent='BlokktÃ­pus mÃ³dosÃ­tva. A kÃ¼lÃ¶n MentÃ©s nem publikÃ¡lja az oldalt.';
+            }
+          }catch(error){
+            formatStatus.textContent=error instanceof Error?error.message:String(error);
+            const block=doc.blocks[indices[0]];
+            if(block)blockSelect.value=block.type==='heading'?'heading-'+(block.level||1):block.type;
+          }
+        };
+        alignmentSelect.onpointerdown=()=>rememberSelection(false);
+        alignmentSelect.onchange=()=>{
+          const doc=richTextEditorToDocument(editor),index=savedBlockIndex??getRichTextActiveBlockIndex(editor);if(index===null){formatStatus.textContent='ElÅ‘bb kattints abba a bekezdÃ©sbe, amelyet igazÃ­tani szeretnÃ©l.';return}
+          try{const selection=savedFormatSelection||getRichTextFormattingSelection(editor),indices=selection?.segments?.map(segment=>segment.blockIndex)??[index],next=updateRichTextBlockAlignment(doc,indices,alignmentSelect.value);if(command('richtext.content.set',{nodeId:node.id,document:next},{render:false})){richTextDirty=false;renderRichTextEditor(editor,next);refreshCanvasRichText(next);restoreFormattingSelection();setStatus('Nem mentett mÃ³dosÃ­tÃ¡s');syncPublishControls()}}catch(error){formatStatus.textContent=error instanceof Error?error.message:String(error)}
+        };
+        const applyMarkActions=new Map();
+        for(const [mark,label,glyph] of [['bold','FÃ©lkÃ¶vÃ©r','B'],['italic','DÅ‘lt','I'],['underline','AlÃ¡hÃºzott','U'],['strikethrough','ÃthÃºzott','S'],['subscript','AlsÃ³ index','xâ‚‚'],['superscript','FelsÅ‘ index','xÂ²'],['code','KÃ³dformÃ¡zÃ¡s','</>']]){
+          const button=document.createElement('button');button.type='button';button.textContent=glyph;button.dataset.mark=mark;button.title=label;
+          button.setAttribute('aria-label',label);button.onpointerdown=event=>{rememberSelection(false);event.preventDefault()};
+          const applyMark=()=>{
+            const nativeSelection=window.getSelection();
+            const hasNativeSelection=Boolean(nativeSelection?.rangeCount&&!nativeSelection.isCollapsed&&formattingSurface.contains(nativeSelection.anchorNode)&&formattingSurface.contains(nativeSelection.focusNode));
+            // The canvas and Inspector are two views of one document. Prefer a
+            // live canvas selection when it exists, so all marks (including
+            // multi-block code) use the structured Page Model operation rather
+            // than the browser's legacy execCommand fallback.
+            const nativeRange=hasNativeSelection?getRichTextFormattingSelection(formattingSurface):null;
+            const range=nativeRange||savedFormatSelection||getRichTextFormattingSelection(editor);
+            if(!range&&!hasNativeSelection&&!savedSelectionOffsets){button.title='ElÅ‘bb jelÃ¶lj ki egy szÃ¶vegrÃ©szt.';return}
+            if(composing){button.title='VÃ¡rd meg a mobilos szÃ¶vegbevitel befejezÃ©sÃ©t.';return}
+            try{
+              if(!range){
+                const commands={bold:'bold',italic:'italic',underline:'underline',strikethrough:'strikeThrough',subscript:'subscript',superscript:'superscript'};
+                if(!commands[mark])throw new Error('A tÃ¶bb blokkra kiterjedÅ‘ kÃ³dformÃ¡zÃ¡s mÃ©g nem tÃ¡mogatott.');
+                formattingSurface.focus();if(!hasNativeSelection&&savedSelectionOffsets)restoreSelectionOffsets(formattingSurface,savedSelectionOffsets);
+                if(!document.execCommand(commands[mark],false,null))throw new Error('A bÃ¶ngÃ©szÅ‘ nem tudta vÃ©grehajtani a formÃ¡zÃ¡st.');
+                const doc=richTextEditorToDocument(formattingSurface);if(commitWithoutRender(doc)){renderRichTextEditor(editor,doc);restoreFormattingSelection();button.title=label+' alkalmazva';}return;
+              }
+              const source=nativeRange?formattingSurface:editor;
+              const doc=richTextEditorToDocument(source),next=updateRichTextInlineMark(doc,range,mark);
+              if(command('richtext.content.set',{nodeId:node.id,document:next},{render:false})){
+                richTextDirty=false;renderRichTextEditor(editor,next);refreshCanvasRichText(next);if(!restoreFormattingSelection()&&range.blockIndex!==undefined){restoreRichTextBlockSelection(editor,range);rememberSelection()}setStatus('Nem mentett mÃ³dosÃ­tÃ¡s');syncPublishControls();button.title=label+' alkalmazva';
+              }
+            }catch(e){button.title=e instanceof Error?e.message:String(e)}
+          };
+          button.onclick=applyMark;applyMarkActions.set(mark,applyMark);
+          characterTools.append(button);
+        }
+        const applyInlineStyle=(key,value)=>{
+          const range=savedFormatSelection||getRichTextFormattingSelection(editor);if(!range){formatStatus.textContent='ElÅ‘bb jelÃ¶lj ki egy szÃ¶vegrÃ©szt.';return false}
+          try{const doc=richTextEditorToDocument(editor),next=updateRichTextInlineStyle(doc,range,key,value);if(command('richtext.content.set',{nodeId:node.id,document:next},{render:false})){richTextDirty=false;renderRichTextEditor(editor,next);refreshCanvasRichText(next);if(!restoreFormattingSelection()&&range.blockIndex!==undefined){restoreRichTextBlockSelection(editor,range);rememberSelection()}setStatus('Nem mentett mÃ³dosÃ­tÃ¡s');syncPublishControls();return true}}catch(error){formatStatus.textContent=error instanceof Error?error.message:String(error)}return false
+        };
+        fontFamilySelect.onpointerdown=()=>rememberSelection(false);fontFamilySelect.onchange=()=>applyInlineStyle('fontFamily',fontFamilySelect.value);
+        fontSizeInput.onpointerdown=()=>rememberSelection(false);fontSizeInput.oninput=()=>{fontSizeInput.dataset.pending='true'};fontSizeInput.onchange=()=>{const size=Number(fontSizeInput.value);delete fontSizeInput.dataset.pending;if(!Number.isInteger(size)||size<8||size>96){formatStatus.textContent='A betÅ±mÃ©ret 8 Ã©s 96 kÃ©ppont kÃ¶zÃ¶tt lehet.';return}applyInlineStyle('fontSize',`${size}px`)};
+        fontSizeInput.onblur=()=>{if(fontSizeInput.dataset.pending==='true')fontSizeInput.onchange()};fontSizeInput.onkeydown=event=>{if(['Tab','Enter'].includes(event.key)&&fontSizeInput.dataset.pending==='true'){fontSizeInput.onchange();if(event.key==='Enter'){event.preventDefault();fontSizeInput.blur()}}};
+        for(const [key,label] of [['color','BetÅ±szÃ­n'],['backgroundColor','KiemelÃ©s szÃ­ne']]){
+          const wrapper=document.createElement('label');wrapper.className='richtext-color-control';wrapper.title=label;
+          const text=document.createElement('span');text.textContent=label;
+          const input=document.createElement('input');input.type='color';input.value=key==='color'?'#243247':'#fff29a';input.setAttribute('aria-label',label);
+          input.dataset.styleKey=key;input.onpointerdown=()=>rememberSelection(false);input.onchange=()=>applyInlineStyle(key,input.value);
+          wrapper.append(text,input);colorTools.append(wrapper);
+        }
+        formatStatus.textContent='JelÃ¶lj ki szavakat a vÃ¡sznon vagy itt, majd formÃ¡zd Å‘ket. Az alapstÃ­lus a StÃ­lus fÃ¼lÃ¶n Ã¡llÃ­thatÃ³.';
+        formatStatus.classList.add('richtext-tool-help');toolbar.append(formatStatus);
+        const helpDetails=document.createElement('details');helpDetails.className='richtext-editor-help';
+        const helpSummary=document.createElement('summary');helpSummary.textContent='â“˜ Mit lehet itt szerkeszteni?';
+        const helpContent=document.createElement('div');helpContent.innerHTML='<p><b>BekezdÃ©s:</b> cÃ­msor, bekezdÃ©s, lista, idÃ©zet vagy kÃ³dblokk; a szÃ¶veg igazÃ­tÃ¡sa kÃ¼lÃ¶n Ã¡llÃ­thatÃ³.</p><p><b>KijelÃ¶lt szÃ¶veg:</b> fÃ©lkÃ¶vÃ©r, dÅ‘lt, alÃ¡hÃºzott/Ã¡thÃºzott, felsÅ‘/alsÃ³ index, kÃ³d, betÅ±csalÃ¡d Ã©s mÃ©ret, szÃ­n, kiemelÃ©s Ã©s biztonsÃ¡gos hivatkozÃ¡s.</p><p><b>Word Ã©s Excel:</b> a beillesztett szÃ¶veg, alapformÃ¡zÃ¡s, link, lista, egyszerÅ± tÃ¡blÃ¡zat Ã©s cellaigazÃ­tÃ¡s megmarad. A kÃ©pek, megjegyzÃ©sek, diagramok, egyesÃ­tett cellÃ¡k Ã©s a kÃ©pletek mÅ±kÃ¶dÃ©se nem rÃ©sze a szÃ¶veges importnak; a kÃ©plet nem fut le, legfeljebb a vÃ¡gÃ³lapon lÃ¡thatÃ³ Ã©rtÃ©ke kerÃ¼l be.</p><p>A beillesztÃ©s Ã©s a MentÃ©s piszkozatot mÃ³dosÃ­t. A webhely lÃ¡togatÃ³i csak a kÃ¼lÃ¶n <b>PublikÃ¡lÃ¡s</b> utÃ¡n lÃ¡tjÃ¡k.</p>';
+        helpDetails.append(helpSummary,helpContent);toolbar.append(helpDetails);
+        const linkControls=document.createElement('div');linkControls.className='richtext-link-controls';
+        const url=document.createElement('input');url.type='url';url.placeholder='/p/home vagy https://...';
+        url.setAttribute('aria-label','HivatkozÃ¡s cÃ­me');
+        url.onpointerdown=()=>rememberSelection(false);
+        linkTargetSelect=document.createElement('select');linkTargetSelect.setAttribute('aria-label','Link megnyitÃ¡sa');
+        [['auto','Automatikus Â· kÃ¼lsÅ‘ link Ãºj lapon'],['_self','Ugyanebben a lapon'],['_blank','Ãšj lapon'],['mixed','Vegyes Â· cÃ©lok megÅ‘rzÃ©se']]
+          .forEach(([value,label])=>{const option=document.createElement('option');option.value=value;option.textContent=label;if(value==='mixed')option.disabled=true;linkTargetSelect.append(option)});
+        linkTargetSelect.onpointerdown=()=>rememberSelection(false);
+        const addLink=document.createElement('button');addLink.type='button';addLink.textContent='Link beÃ¡llÃ­tÃ¡sa';
+        const removeLink=document.createElement('button');removeLink.type='button';removeLink.textContent='Link eltÃ¡volÃ­tÃ¡sa';
+        const linkFeedback=document.createElement('small');linkFeedback.setAttribute('role','status');
+        const changeLink=href=>{
+          const range=savedLinkSelection||getRichTextBlockSelection(editor)||getRichTextFormattingSelection(editor);
+          if(!range){linkFeedback.textContent='JelÃ¶lj ki egy szÃ¶vegrÃ©szt elÅ‘bb.';return;}
+          try{
+            const target=linkTargetSelect.value==='mixed'?'preserve':linkTargetSelect.value;
+            const doc=updateRichTextInlineLink(richTextEditorToDocument(editor),range,href,target);
+            linkFeedback.textContent='';
+            const offsets=getSelectionOffsets(formattingSurface)||savedSelectionOffsets;
+            if(command('richtext.content.set',{nodeId:node.id,document:doc},{render:false})){
+              richTextDirty=false;const temporary=document.createElement('div');renderRichTextEditor(temporary,doc);editor.replaceChildren(...temporary.childNodes);
+              refreshCanvasRichText(doc);savedSelectionOffsets=offsets;restoreFormattingSelection();setStatus('Nem mentett mÃ³dosÃ­tÃ¡s');syncPublishControls();
+            }
+          }catch(e){linkFeedback.textContent=e instanceof Error?e.message:String(e)}
+        };
+        addLink.onclick=()=>changeLink(url.value);
+        removeLink.onclick=()=>changeLink(null);
+        editor.addEventListener('paste',event=>{
+          event.preventDefault();
+          try{
+            const imported=normalizeRichText(importRichTextClipboard({html:event.clipboardData?.getData('text/html')||'',text:event.clipboardData?.getData('text/plain')||''}));
+            if(!pasteRichTextDocument(editor,imported))throw new Error('A beillesztÃ©s helyÃ©t nem sikerÃ¼lt meghatÃ¡rozni.');
+            editor.dispatchEvent(new InputEvent('input',{bubbles:true,inputType:'insertFromPaste'}));
+            const tables=imported.blocks.filter(block=>block.type==='table').length;
+            formatStatus.textContent=tables?'TÃ¡blÃ¡zat beillesztve. Az Excel-kÃ©pletek Ã©s makrÃ³k nem kerÃ¼lnek Ã¡t, csak a cellÃ¡k megjelenÃ­tett Ã©rtÃ©kei.':'BiztonsÃ¡gos szÃ¶vegformÃ¡zÃ¡s beillesztve. KÃ©pek, makrÃ³k Ã©s futtathatÃ³ tartalom nem kerÃ¼l Ã¡t.';
+            setStatus('Nem mentett mÃ³dosÃ­tÃ¡s');
+          }catch(error){formatStatus.textContent=error instanceof Error?error.message:String(error)}
+        });
+        editor.addEventListener('input',()=>{
+          richTextDirty=true;flushRichTextDraft=saveRich;
+          // The DOM has changed, so block/link ranges must be recalculated.
+          // Keep a fresh text-offset bookmark after the browser has placed
+          // the caret, otherwise Undo/Redo or an Inspector rebuild loses it.
+          savedLinkSelection=null;savedFormatSelection=null;savedSelectionOffsets=null;richTextBookmark=null;
+          requestAnimationFrame(()=>{if(editor.isConnected)rememberSelection()});
+          if(!composing)saveRich();
+        });
+        editor.addEventListener('focus',()=>{flushRichTextDraft=saveRich});
+        editor.addEventListener('keydown',event=>{
+          if(!(event.ctrlKey||event.metaKey)||event.altKey)return;
+          if(event.key.toLowerCase()==='k'){
+            event.preventDefault();rememberSelection();
+            url.focus({preventScroll:true});
+            return;
+          }
+          const mark={b:'bold',i:'italic',u:'underline'}[event.key.toLowerCase()];
+          if(!mark)return;
+          event.preventDefault();rememberSelection();applyMarkActions.get(mark)?.();
+        });
+        editor.addEventListener('beforeinput',()=>{richTextDirty=true});
+        editor.addEventListener('compositionstart',()=>{compositionRevision++;composing=true});
+        editor.addEventListener('compositionupdate',()=>{composing=true});
+        editor.addEventListener('compositionend',()=>{
+          richTextDirty=true;const revision=compositionRevision;
+          // Wait until the mobile keyboard has delivered its final input event
+          // before reconciling the document or updating the canvas surface.
+          requestAnimationFrame(()=>{
+            if(revision!==compositionRevision)return;
+            composing=false;
+            if(editor.isConnected){saveRich();rememberSelection()}
+          });
+        });
+        document.addEventListener('selectionchange',selectionObserver);richTextSelectionCleanup=()=>document.removeEventListener('selectionchange',selectionObserver);
+        editor.addEventListener('paste',()=>requestAnimationFrame(rememberSelection));
+        editor.addEventListener('mouseup',rememberSelection);
+        editor.addEventListener('keyup',rememberSelection);
+        editor.addEventListener('touchend',()=>requestAnimationFrame(rememberSelection));
+        editor.addEventListener('blur',event=>{
+          if(richTextDirty&&!section.contains(event.relatedTarget))saveRich();
+        });
+        url.onfocus=()=>rememberSelection();
+        url.onkeydown=event=>{
+          if(event.key==='Escape'){
+            event.preventDefault();
+            // The mobile shell also uses Escape to close its panels. This
+            // field owns Escape while a Rich Text link edit is in progress:
+            // keep the Inspector mounted so the exact selection can return.
+            event.stopPropagation();
+            // Returning from a URL input is a caret operation. Prefer the
+            // exact text-offset bookmark over a structural formatting range,
+            // which may no longer match after an Inspector rerender.
+            const target=formattingSurface?.isConnected?formattingSurface:editor;
+            target.focus({preventScroll:true});
+            if(!savedSelectionOffsets||!restoreSelectionOffsets(target,savedSelectionOffsets))restoreFormattingSelection();
+          }else if(event.key==='Enter'){
+            event.preventDefault();
+            changeLink(url.value);
+          }
+        };
+        const pagePicker=pageLinkPicker(pages,url);pagePicker.onpointerdown=()=>rememberSelection(false);pagePicker.style.gridColumn='1 / -1';linkControls.append(url,pagePicker,linkTargetSelect,addLink,removeLink,linkFeedback);
+        const clearFormat=document.createElement('button');clearFormat.type='button';clearFormat.textContent='AlapformÃ¡zÃ¡s';clearFormat.setAttribute('aria-label','KijelÃ¶lt szÃ¶veg formÃ¡zÃ¡sÃ¡nak tÃ¶rlÃ©se');clearFormat.title='Az elem alapstÃ­lusÃ¡nak visszaÃ¡llÃ­tÃ¡sa a kijelÃ¶lt szavakon. A szÃ¶veg Ã©s a linkek megmaradnak.';
+        clearFormat.onpointerdown=event=>{rememberSelection(false);event.preventDefault()};
+        clearFormat.onclick=()=>{const range=savedFormatSelection;if(!range){formatStatus.textContent='ElÅ‘bb jelÃ¶lj ki egy szÃ¶vegrÃ©szt.';return}const doc=clearRichTextInlineFormatting(richTextEditorToDocument(editor),range);if(commitWithoutRender(doc)){renderRichTextEditor(editor,doc);restoreFormattingSelection()}};
+        characterTools.append(clearFormat);
+        const scope=document.createElement('div');scope.className='richtext-scope-banner';scope.setAttribute('role','status');scope.textContent='Ã‰lÅ‘ szÃ¶veg Â· kijelÃ¶lt rÃ©sz formÃ¡zÃ¡sa';
+        section.append(scope,editor,toolbar,linkControls);
+        if(isNodeEffectivelyLocked(page(),node)){toolbar.inert=true;linkControls.inert=true}
+        requestAnimationFrame(()=>{
+          if(!editor.isConnected)return;
+          if(richTextBookmark?.nodeId===node.id&&savedSelectionOffsets){
+            const target=formattingSurface?.isConnected?formattingSurface:editor;
+            target.focus({preventScroll:true});
+            restoreSelectionOffsets(target,savedSelectionOffsets);
+          }
+          refreshFormattingControls(null,formattingSurface?.isConnected?formattingSurface:editor);
+        });
+        inspector.append(section);
+      }else if(textTypes.has(node.type))inspector.append(renderPlainTextEditor(node));
+      if(hasContentProfile(node,'code-v1'))inspector.append(renderCodeSnippetInspector(node,(model,{render:fullRender=true,typingGroup}={})=>{
+        const saved=command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),codeSnippet:model}}},{render:fullRender,typingGroup});
+        if(saved&&!fullRender){renderCanvas();setStatus('Nem mentett mÃ³dosÃ­tÃ¡s');syncPublishControls();}
+        return saved;
+      },{pending:flush=>{flushRichTextDraft=flush}}));
+      else if(renderExistingContentInspector(node)){}
+      else if(CONTENT_TYPES.includes(node.type))inspector.append(renderElementContentControls(node,{
+        exclude:textTypes.has(node.type)?['text']:[],
+        resolveExternalField:key=>key==='text'?inspector.querySelector(`.plain-text-editor[data-text-node-id="${CSS.escape(node.id)}"]`):null,
+        pages,pageNodes:page()?.nodes,pending:flush=>{flushRichTextDraft=flush},
+        apply:(patch,{typingGroup,render:fullRender=false}={})=>{const property=Object.hasOwn(patch,'href')?getProperty('content.href'):null;const saved=command(property?.command||'content.properties.set',{nodeId:node.id,patch},{render:fullRender,typingGroup});if(saved&&!fullRender){renderCanvas();setStatus('Nem mentett mÃ³dosÃ­tÃ¡s');syncPublishControls()}return saved}
+      }));
+      else if(STRUCTURAL_TYPES.includes(node.type))inspector.append(Object.assign(document.createElement('p'),{className:'content-field-help',textContent:'Ez a tÃ¡rolÃ³ a gyermekeit jelenÃ­ti meg. Tartalomhoz adj hozzÃ¡ szÃ¶veget, kÃ©pet vagy mÃ¡s elemet.'}));
+      else if(!textTypes.has(node.type))inspector.append(Object.assign(document.createElement('p'),{className:'content-field-help',textContent:'Ehhez az elemhez a kÃ¶zÃ¶s szolgÃ¡ltatÃ¡s Ã©s a rÃ©szletes szerkesztÅ‘ mÃ©g hiÃ¡nyzik. A meglÃ©vÅ‘ adatok megmaradnak.'}));
+      if(isAuthoredContent(node)&&node.type==='button')inspector.append(renderPageInteractionControls(node,page(),interactions=>command('element.update',{nodeId:node.id,patch:{interactions}}),effectivelyLocked));
+    }
+  }else{
+    inspector.append(renderRegistryInspector(node,'advanced'));
+    inspector.append(renderAccessibilityInspector(node),renderStatesInspector(node));
+    inspector.append(field('Node ID',node.id,()=>{},true),field('TÃ­pus',node.type,()=>{},true),field('SzÃ¼lÅ‘ ID',node.parentId||'',()=>{},true));
+  }
+  const actions=document.createElement('div');actions.className='inspector-actions';const del=document.createElement('button');del.type='button';del.className='danger-action';del.dataset.inspectorCommand='element.delete';del.dataset.inspectorNodeId=node.id;const deleteIds=[node.id],pageNodes=page()?.nodes??{};for(let index=0;index<deleteIds.length;index++)deleteIds.push(...(pageNodes[deleteIds[index]]?.children??[]));del.dataset.inspectorKeys=JSON.stringify([...deleteIds.map(id=>`nodes.${id}`),...(node.parentId?[`nodes.${node.parentId}.children`]:[])]);del.textContent='TÃ¶rlÃ©s';const lockedParent=isLockedParent(page(),node);del.disabled=node.id===page()?.rootId||isNodeEffectivelyLocked(page(),node)||lockedParent;del.title=lockedParent?'A zÃ¡rolt szÃ¼lÅ‘ gyerekei nem tÃ¶rÃ¶lhetÅ‘k':del.disabled?'A gyÃ¶kÃ©r- vagy zÃ¡rolt elem nem tÃ¶rÃ¶lhetÅ‘':'KijelÃ¶lt elem tÃ¶rlÃ©se';del.onclick=()=>{if(!del.disabled)command('element.delete',{nodeId:node.id})};actions.append(del);inspector.append(actions);
+  if(effectivelyLocked){
+    // Content and legacy inspectors share this boundary with typed Style fields.
+    // Disable every mutation at the DOM boundary, but preserve search, category
+    // navigation, state preview, explanations and the way back out of the lock.
+    for(const control of inspector.querySelectorAll('input,select,textarea,button')){
+      if((control.matches('.inspector-lock-toggle')&&!lockedAncestor)||control.matches('.property-info-toggle,.style-copy-button,[aria-label="Ãllapot elÅ‘nÃ©zete"]')||control.closest('.inspector-search,.inspector-category-nav,.richtext-tool-tabs'))continue;
+      control.disabled=true;
+    }
+    for(const editor of inspector.querySelectorAll('[contenteditable]'))editor.contentEditable='false';
+  }
+  filterInspector();restoreScroll()
+}
+function clearHierarchyDrag(){hierarchyDrag.nodeId=null;hierarchyDrag.overId=null;document.querySelectorAll('.layer-row.drag-over,.layer-row.dragging').forEach(el=>el.classList.remove('drag-over','dragging'))}
+function clearMobileHierarchyDrag(){clearTimeout(mobileHierarchyDrag.timer);mobileHierarchyDrag.active=false;mobileHierarchyDrag.timer=null;mobileHierarchyDrag.nodeId=null;mobileHierarchyDrag.overId=null;mobileHierarchyDrag.suppressClick=false;document.querySelectorAll('.layer-row.mobile-dragging,.layer-row.mobile-drag-over,.layer-drag-handle.armed').forEach(el=>el.classList.remove('mobile-dragging','mobile-drag-over','armed'))}
+function isDescendant(current,nodeId,targetId){let cursor=getNode(current,targetId);while(cursor){if(cursor.id===nodeId)return true;cursor=cursor.parentId?getNode(current,cursor.parentId):null}return false}
+function isLockedParent(current,node){let ancestorId=node?.parentId;while(ancestorId){const ancestor=getNode(current,ancestorId);if(!ancestor)return false;if(ancestor.locked)return true;ancestorId=ancestor.parentId}return false}
+function isNodeEffectivelyLocked(current,node){return Boolean(node?.locked||isLockedParent(current,node))}
+function getLayerMoveAction(current,nodeId,kind){const node=current&&getNode(current,nodeId);if(!node||node.id===current.rootId||isNodeEffectivelyLocked(current,node)||!node.parentId)return null;const parent=getNode(current,node.parentId);if(!parent||isNodeEffectivelyLocked(current,parent))return null;const siblings=getChildren(current,parent.id).map(child=>child.id);const index=siblings.indexOf(node.id);if(index<0)return null;if(kind==='up'&&index>0)return{type:'hierarchy.reorder',payload:{nodeId,index:index-1}};if(kind==='down'&&index<siblings.length-1)return{type:'hierarchy.reorder',payload:{nodeId,index:index+1}};if(kind==='indent'&&index>0){const previous=getNode(current,siblings[index-1]);if(previous&&!isNodeEffectivelyLocked(current,previous)&&canContain(previous,node.type))return{type:'hierarchy.reparent',payload:{nodeId,parentId:previous.id,index:getChildren(current,previous.id).length}}}if(kind==='outdent'&&parent.parentId){const grandparent=getNode(current,parent.parentId);const grandparentChildren=grandparent?getChildren(current,grandparent.id).map(child=>child.id):[];const parentIndex=grandparentChildren.indexOf(parent.id);if(grandparent&&!isNodeEffectivelyLocked(current,grandparent)&&canContain(grandparent,node.type)&&parentIndex>=0)return{type:'hierarchy.reparent',payload:{nodeId,parentId:grandparent.id,index:parentIndex+1}}}return null}
+function moveSelectedLayer(kind){const current=page(),nodeId=state?.selection?.ids?.length===1?state.selection.primaryId:null,action=nodeId&&current?getLayerMoveAction(current,nodeId,kind):null;if(!action)return false;const moved=command(action.type,action.payload);if(moved)setStatus('RÃ©tegsorrend frissÃ­tve â€” mentÃ©s szÃ¼ksÃ©ges');return moved}
+function resolveLayerDrop(current,sourceId,targetId){const source=getNode(current,sourceId);const target=getNode(current,targetId);if(!source||!target||source.id===current.rootId||isNodeEffectivelyLocked(current,source)||isNodeEffectivelyLocked(current,target)||source.id===target.id)return null;if(isDescendant(current,sourceId,targetId))return null;if(canContain(target,source.type))return {type:'hierarchy.reparent',payload:{nodeId:sourceId,parentId:target.id,index:getChildren(current,target.id).length}};if(source.parentId!==target.parentId)return null;const parent=getNode(current,source.parentId);if(!parent||isNodeEffectivelyLocked(current,parent))return null;const siblings=getChildren(current,parent.id).map(child=>child.id);let index=siblings.indexOf(target.id);const sourceIndex=siblings.indexOf(source.id);if(index<0||sourceIndex<0)return null;if(sourceIndex<index)index-=1;return {type:'hierarchy.reorder',payload:{nodeId:sourceId,index}}}
+function handleLayerDragStart(id,event,row){const current=page();const node=current?getNode(current,id):null;if(!node||node.id===current?.rootId||isNodeEffectivelyLocked(current,node)){event.preventDefault();return}hierarchyDrag.nodeId=id;hierarchyDrag.overId=null;row.classList.add('dragging');if(event.dataTransfer){event.dataTransfer.effectAllowed='move';event.dataTransfer.setData('text/plain',id)}}
+function handleLayerDragOver(id,event,row){const current=page();if(!hierarchyDrag.nodeId||!current){return}event.preventDefault();const action=resolveLayerDrop(current,hierarchyDrag.nodeId,id);if(!action){if(event.dataTransfer)event.dataTransfer.dropEffect='none';row.classList.remove('drag-over');hierarchyDrag.overId=null;return}hierarchyDrag.overId=id;if(event.dataTransfer)event.dataTransfer.dropEffect='move';document.querySelectorAll('.layer-row.drag-over').forEach(el=>el.classList.remove('drag-over'));row.classList.add('drag-over')}
+function handleLayerDrop(id,event,row){event.preventDefault();const current=page();const sourceId=hierarchyDrag.nodeId;const action=sourceId&&current?resolveLayerDrop(current,sourceId,id):null;clearHierarchyDrag();if(action)command(action.type,action.payload)}
+function handleMobileLayerDragStart(id,event,handle){if(event.pointerType!=='touch')return;event.preventDefault();event.stopPropagation();const current=page();const node=current?getNode(current,id):null;if(!node||node.id===current?.rootId||isNodeEffectivelyLocked(current,node))return;clearMobileHierarchyDrag();mobileHierarchyDrag.nodeId=id;mobileHierarchyDrag.startX=event.clientX;mobileHierarchyDrag.startY=event.clientY;mobileHierarchyDrag.suppressClick=true;handle.classList.add('armed');mobileHierarchyDrag.timer=setTimeout(()=>{mobileHierarchyDrag.timer=null;mobileHierarchyDrag.active=true;const row=handle.closest('.layer-row');row?.classList.add('mobile-dragging')},450)}
+function handleMobileLayerDragMove(event){if(event.pointerType!=='touch'||!mobileHierarchyDrag.nodeId)return;event.preventDefault();event.stopPropagation();const dx=Math.abs(event.clientX-mobileHierarchyDrag.startX);const dy=Math.abs(event.clientY-mobileHierarchyDrag.startY);if(!mobileHierarchyDrag.active){if(dx>10||dy>10){clearMobileHierarchyDrag();return}return}const row=document.elementFromPoint(event.clientX,event.clientY)?.closest('.layer-row');const targetId=row?.dataset.nodeId;const current=page();const action=current&&targetId?resolveLayerDrop(current,mobileHierarchyDrag.nodeId,targetId):null;document.querySelectorAll('.layer-row.mobile-drag-over').forEach(el=>el.classList.remove('mobile-drag-over'));if(action){mobileHierarchyDrag.overId=targetId;row.classList.add('mobile-drag-over')}else mobileHierarchyDrag.overId=null}
+function handleMobileLayerDragEnd(event){if(event.pointerType!=='touch')return;event.preventDefault();event.stopPropagation();const current=page();const sourceId=mobileHierarchyDrag.nodeId;const targetId=mobileHierarchyDrag.overId;const action=current&&sourceId&&targetId?resolveLayerDrop(current,sourceId,targetId):null;const wasActive=mobileHierarchyDrag.active;clearMobileHierarchyDrag();if(wasActive&&action){event.preventDefault();command(action.type,action.payload)}}
+function beginLayerRename(id){
+  if(!flushLayerRename())return false;
+  const current=page();
+  const node=current?getNode(current,id):null;
+  if(!node||node.id===current.rootId||isNodeEffectivelyLocked(current,node))return false;
+  const entry=document.querySelector(`#layersTree .layer-entry[data-node-id="${CSS.escape(id)}"]`);
+  if(!entry)return false;
+  entry.querySelector('.layer-rename-editor')?.remove();
+  const form=document.createElement('form');
+  form.className='layer-rename-editor';
+  form.noValidate=true;
+  form.setAttribute('aria-label',`RÃ©teg Ã¡tnevezÃ©se: ${node.name||node.type}`);
+  const input=document.createElement('input');
+  input.type='text';
+  input.value=node.name||'';
+  input.required=true;
+  input.setAttribute('aria-required','true');
+  input.setAttribute('aria-invalid','false');
+  input.setAttribute('aria-label','RÃ©teg neve');
+  const status=document.createElement('small');
+  status.className='layer-rename-status';
+  status.id=`layer-rename-status-${crypto.randomUUID()}`;
+  status.setAttribute('role','status');
+  status.setAttribute('aria-live','polite');
+  input.setAttribute('aria-describedby',status.id);
+  let composing=false,compositionRevision=0;
+  const save=document.createElement('button');
+  save.type='submit';
+  save.textContent='MentÃ©s';
+  const cancel=document.createElement('button');
+  cancel.type='button';
+  cancel.textContent='MÃ©gse';
+  cancel.setAttribute('aria-label','RÃ©teg Ã¡tnevezÃ©sÃ©nek megszakÃ­tÃ¡sa');
+  const renameState=state,renamePageId=current.id;
+  const close=(focus=true)=>{if(pendingLayerRename===commit)pendingLayerRename=null;form.remove();syncPublishControls();if(focus)entry.querySelector('.layer-row')?.focus()};
+  form.append(input,save,cancel,status);
+  const commit=()=>{
+    if(composing){setStatus('Fejezd be a szÃ¶vegbevitelt a folytatÃ¡s elÅ‘tt.');input.focus();return false}
+    const name=input.value.trim();
+    if(!name){input.setAttribute('aria-invalid','true');status.textContent='A rÃ©teg neve nem lehet Ã¼res.';input.focus();return false}
+    if(state!==renameState||page()?.id!==renamePageId||!getNode(page(),id)){setStatus('A rÃ©teg mÃ¡r nem Ã©rhetÅ‘ el.');input.focus();return false}
+    const latest=getNode(page(),id);
+    if(name===(latest.name||'')){close(false);return true}
+    pendingLayerRename=null;
+    if(!command('element.update',{nodeId:id,patch:{name}},{render:false})){pendingLayerRename=commit;input.focus();return false}
+    close(false);setStatus('Nem mentett mÃ³dosÃ­tÃ¡s');syncPublishControls();return true;
+  };
+  commit.dirty=()=>input.value.trim()!==(getNode(page(),id)?.name||'');
+  pendingLayerRename=commit;
+  form.addEventListener('submit',event=>{
+    event.preventDefault();event.stopPropagation();
+    if(commit()){render();document.querySelector(`#layersTree .layer-row[data-node-id="${CSS.escape(id)}"]`)?.focus()}
+  });
+  input.addEventListener('input',()=>{input.setAttribute('aria-invalid','false');status.textContent='';syncPublishControls()});
+  input.addEventListener('compositionstart',()=>{compositionRevision++;composing=true});
+  input.addEventListener('compositionend',()=>{
+    composing=true;
+    const revision=++compositionRevision;
+    // Some mobile IMEs deliver the confirmed replacement after compositionend.
+    // Keep Enter/Escape inert until that final input can update this field.
+    requestAnimationFrame(()=>{if(revision===compositionRevision&&form.isConnected)composing=false});
+  });
+  input.addEventListener('keydown',event=>{
+    if(composing||event.isComposing||event.keyCode===229){
+      if(event.key==='Enter'||event.key==='Escape')event.preventDefault();
+      event.stopPropagation();
+      return;
+    }
+    if(event.key==='Escape'){event.preventDefault();event.stopPropagation();close()}
+  });
+  cancel.addEventListener('click',close);
+  entry.append(form);
+  input.focus();
+  input.select();
+  return true;
+}
+function renderLayers(){
+  if(!flushLayerRename())return;
+  $('#leftPanelLayers')?.querySelector('[data-validation-kind="publication"][data-recovery-kind="unsupported-node"]')?.remove();
+  const root=$('#layersTree');
+  const current=page();
+  if(!root||!current)return;
+  root.replaceChildren();
+  const walk=(id,depth=0)=>{
+    const node=getNode(current,id);
+    if(!node)return;
+    const locked=isNodeEffectivelyLocked(current,node);
+    const inheritedLock=isLockedParent(current,node);
+    const entry=document.createElement('div');
+    entry.className='layer-entry';
+    entry.dataset.nodeId=id;
+    const row=document.createElement('button');
+    row.type='button';
+    row.dataset.nodeId=id;
+    row.draggable=node.id!==current.rootId&&!locked;
+    row.className=`layer-row ${state.selection.primaryId===id?'active':''} ${locked?'locked':''} ${inheritedLock?'locked-ancestor':''}`;
+    row.style.paddingLeft=`${8+depth*14}px`;
+    const children=getChildren(current,id);
+    row.innerHTML=`<span class="layer-caret">${children.length?'â–¸':'Â·'}</span><strong>${escapeHtml(node.name||node.type)}</strong><small>${escapeHtml(node.type)}</small><span class="layer-drag-handle" role="button" tabindex="-1" aria-label="Elem mozgatÃ¡sa">â ¿</span>${locked?`<span class="layer-lock" title="${node.locked?'ZÃ¡rolt elem':'ZÃ¡rolt tÃ¡rolÃ³ rÃ©sze'}" aria-label="${node.locked?'ZÃ¡rolt elem':'ZÃ¡rolt tÃ¡rolÃ³ rÃ©sze'}">ğŸ”</span>`:''}`;
+    row.addEventListener('keydown',event=>{
+      if(event.key==='F2'&&node.id!==current.rootId&&!locked){event.preventDefault();event.stopPropagation();beginLayerRename(id)}
+    });
+    const handle=row.querySelector('.layer-drag-handle');
+    row.ondragstart=event=>handleLayerDragStart(id,event,row);
+    row.ondragover=event=>handleLayerDragOver(id,event,row);
+    row.ondrop=event=>handleLayerDrop(id,event,row);
+    row.ondragend=()=>clearHierarchyDrag();
+    handle?.addEventListener('pointerdown',event=>handleMobileLayerDragStart(id,event,handle));
+    handle?.addEventListener('pointermove',event=>handleMobileLayerDragMove(event));
+    handle?.addEventListener('pointerup',event=>handleMobileLayerDragEnd(event));
+    handle?.addEventListener('pointercancel',()=>clearMobileHierarchyDrag());
+    row.onpointerdown=event=>{if(event.pointerType==='touch'){event.stopPropagation();handleMobilePointerDown(id,event)}};
+    row.onpointermove=event=>{if(event.pointerType==='touch')handleMobilePointerMove(event)};
+    row.onpointerup=event=>{if(event.pointerType==='touch'){event.stopPropagation();handleMobilePointerUp(id,event)}};
+    row.onpointercancel=event=>{if(event.pointerType==='touch')handleMobilePointerCancel(event)};
+    row.onclick=event=>{event.stopPropagation();if(mobileTouch.active&&mobileTouch.suppressClick){mobileTouch.suppressClick=false;return}selectNodeInteraction(id,event)};
+    entry.append(row);
+    if(node.id!==current.rootId){
+      const rename=document.createElement('button');
+      rename.type='button';
+      rename.className='layer-rename';
+      rename.dataset.nodeId=id;
+      rename.textContent='âœ';
+      rename.setAttribute('aria-label',`RÃ©teg Ã¡tnevezÃ©se: ${node.name||node.type}`);
+      rename.title=locked?(inheritedLock?'A zÃ¡rolt tÃ¡rolÃ³ rÃ©sze; a szÃ¼lÅ‘ feloldÃ¡sa utÃ¡n nevezhetÅ‘ Ã¡t':'A zÃ¡rolt elem nem nevezhetÅ‘ Ã¡t'):'RÃ©teg Ã¡tnevezÃ©se';
+      rename.disabled=locked;
+      rename.onclick=event=>{event.preventDefault();event.stopPropagation();beginLayerRename(id)};
+      entry.append(rename);
+      const visible=isVisibleOnDevice(node,state.viewport.device);
+      const toggle=document.createElement('button');
+      toggle.type='button';
+      toggle.className='layer-visibility-toggle';
+      toggle.dataset.nodeId=id;
+      toggle.dataset.device=state.viewport.device;
+      toggle.setAttribute('aria-pressed',String(visible));
+      toggle.setAttribute('aria-label',`${visible?'ElrejtÃ©s':'MegjelenÃ­tÃ©s'}: ${node.name||node.type} (${state.viewport.device})`);
+      toggle.title=`${visible?'ElrejtÃ©s':'MegjelenÃ­tÃ©s'} ezen az eszkÃ¶zÃ¶n: ${state.viewport.device}`;
+      toggle.textContent=visible?'â—‰':'â—‹';
+      toggle.disabled=locked;
+      toggle.onclick=event=>{
+        event.preventDefault();event.stopPropagation();
+        if(command('element.visibility.set',{nodeId:id,device:state.viewport.device,visible:!visible})){renderCanvas();renderLayers();setStatus('Nem mentett mÃ³dosÃ­tÃ¡s');syncPublishControls()}
+      };
+      entry.append(toggle);
+    }
+    root.append(entry);
+    for(const child of children)walk(child.id,depth+1);
+  };
+  walk(current.rootId);
+}
+function syncPublishControls(){const current=page();const meta=current&&pages.find(x=>x.id===current.id);const published=Boolean(meta?.isPublished);const dirty=Boolean(state?.persistence?.dirty||pendingLayerRename?.dirty?.());const draftAhead=published&&(Boolean(meta?.hasUnpublishedChanges)||Number(meta?.publishedRevisionVersion??0)<Number(meta?.revision??0));const publishLabel=published?(dirty||draftAhead?'ÃšjrapublikÃ¡lÃ¡s':'PublikÃ¡lva'):'PublikÃ¡lÃ¡s';const publishDisabled=!current||(!dirty&&!draftAhead&&published);const publish=$('#publish'),unpublish=$('#unpublish'),mobilePublish=$('#mobilePublish'),mobileUnpublish=$('#mobileUnpublish');if(publish){publish.textContent=publishLabel;publish.disabled=publishDisabled}if(unpublish)unpublish.hidden=!published;if(mobilePublish){mobilePublish.textContent=publishLabel;mobilePublish.disabled=publishDisabled}if(mobileUnpublish)mobileUnpublish.hidden=!published}
+function showUnsupportedPublishRecovery(){
+  const current=page();
+  const unsupported=firstUnsupportedPublicationNode(current);
+  const message=unsupportedPublicationMessage(unsupported);
+  if(current){
+    if(unsupported)setSelection(state,[unsupported.id],unsupported.id);
+    window.sanciEditor?.showLeftTab?.('layers',{save:false});
+    render();
+    const layers=$('#leftPanelLayers'),tree=$('#layersTree');
+    if(layers&&tree){
+      // A retry can encounter another unsupported node. Keep one current
+      // recovery announcement instead of accumulating stale aria-alerts.
+      layers.querySelectorAll('[data-recovery-kind="unsupported-node"]').forEach(note=>note.remove());
+      const note=document.createElement('p');note.className='property-validation';note.dataset.validationKind='publication';note.dataset.recoveryKind='unsupported-node';note.setAttribute('role','alert');note.textContent=message;layers.insertBefore(note,tree);
+      if(unsupported){const row=tree.querySelector(`.layer-row[data-node-id="${CSS.escape(unsupported.id)}"]`);requestAnimationFrame(()=>{if(row?.isConnected){row.focus({preventScroll:true});row.scrollIntoView({block:'nearest',behavior:'smooth'})}})}
+    }
+  }
+  setStatus(message);
+}
+function showStaleUnsupportedPublishResponse(){
+  // The server validated the immutable snapshot sent with the request. If the
+  // user changed the Page Model while that request was in flight, that error
+  // cannot identify a blocker in the current draft. Never focus or announce a
+  // node from the stale snapshot as though it still existed.
+  $('#leftPanelLayers')?.querySelectorAll('[data-recovery-kind="unsupported-node"]').forEach(note=>note.remove());
+  setStatus('A piszkozat a publikÃ¡lÃ¡si kÃ©rÃ©s Ã³ta mÃ³dosult. A szerver az elkÃ¼ldÃ¶tt korÃ¡bbi vÃ¡ltozatot utasÃ­totta el; ellenÅ‘rizd a mostani piszkozatot, majd kÃ¼lÃ¶n prÃ³bÃ¡ld Ãºjra a publikÃ¡lÃ¡st.');
+}
+function renderRevisionPanel(){const root=$('#revisionList');if(!root)return;root.replaceChildren();if(!revisionHistory.length){const empty=document.createElement('div');empty.className='revision-empty';empty.textContent='Nincs korÃ¡bbi revision.';root.append(empty);return}for(const rev of revisionHistory){const row=document.createElement('div');row.className='revision-row';const info=document.createElement('div');info.className='revision-info';const title=document.createElement('strong');title.textContent=`v${rev.version}`;const note=document.createElement('span');note.textContent=rev.note||'Editor mentÃ©s';const date=document.createElement('small');date.textContent=rev.created_at?new Date(rev.created_at).toLocaleString('hu-HU'):'â€”';info.append(title,note,date);const button=document.createElement('button');button.type='button';button.className='revision-restore';button.textContent='VisszaÃ¡llÃ­tÃ¡s';button.disabled=Number(rev.version)===Number(page()?.revision||0);button.title=button.disabled?'Ez az aktuÃ¡lis revision':'Ezt a revisiont Ã¡llÃ­tja vissza Ãºj revisionkÃ©nt';button.onclick=()=>rollbackToRevision(Number(rev.version));row.append(info,button);root.append(row)}}
+function renderPageList(){const select=$('#pageSelect'),list=$('#pageList');select.replaceChildren();list.replaceChildren();const ordered=[...pages].sort((a,b)=>(a.sortOrder??0)-(b.sortOrder??0));pages=ordered;for(const item of pages){const option=document.createElement('option');option.value=item.id;option.textContent=(item.parentPageId?'â†³ ':'')+(item.title||item.slug);option.selected=item.id===page()?.id;select.append(option);const row=document.createElement('div');row.className='page-row '+(item.id===page()?.id?'active':'');const selectButton=document.createElement('button');selectButton.type='button';selectButton.className='page-row-select';selectButton.innerHTML='<span class="page-icon">â–§</span><strong>'+escapeHtml(item.title||item.slug)+'</strong><small class="page-meta">'+(item.isPublished?(item.hasUnpublishedChanges?'Ã‰LÅ Â· MÃ“DOSÃTOTT PISZKOZAT':'Ã‰LÅ'):'PISZKOZAT')+(item.parentPageId?' Â· SzÃ¼lÅ‘: '+escapeHtml(pages.find(p=>p.id===item.parentPageId)?.title||'ismeretlen'):'')+'</small>';const paths=document.createElement('small');paths.className='page-meta page-paths';paths.textContent='Piszkozat: /p/'+item.slug+(item.isPublished&&item.publishedSlug?' Â· Ã‰lÅ‘: /p/'+item.publishedSlug:' Â· Nincs Ã©lÅ‘ URL');selectButton.append(paths);selectButton.onclick=()=>loadPage(item.id).catch(showError);const upButton=document.createElement('button');upButton.type='button';upButton.className='page-order';upButton.textContent='â†‘';upButton.title='Oldal feljebb';upButton.setAttribute('aria-label','Oldal feljebb');upButton.disabled=(item.sortOrder??0)<=0;upButton.onclick=e=>{e.stopPropagation();movePage(item.id,-1).catch(showError)};const downButton=document.createElement('button');downButton.type='button';downButton.className='page-order';downButton.textContent='â†“';downButton.title='Oldal lejjebb';downButton.setAttribute('aria-label','Oldal lejjebb');downButton.disabled=item===pages[pages.length-1];downButton.onclick=e=>{e.stopPropagation();movePage(item.id,1).catch(showError)};const editButton=document.createElement('button');editButton.type='button';editButton.className='page-edit';editButton.textContent='âœ';editButton.title='Oldal beÃ¡llÃ­tÃ¡sai: '+(item.title||item.slug);editButton.setAttribute('aria-label','Oldal beÃ¡llÃ­tÃ¡sai: '+(item.title||item.slug));editButton.onclick=e=>{e.stopPropagation();editPageMeta(item.id).catch(showError)};const duplicateButton=document.createElement('button');duplicateButton.type='button';duplicateButton.className='page-duplicate';duplicateButton.textContent='â§‰';duplicateButton.title='Oldal mÃ¡solÃ¡sa: '+(item.title||item.slug);duplicateButton.setAttribute('aria-label','Oldal mÃ¡solÃ¡sa: '+(item.title||item.slug));duplicateButton.onclick=e=>{e.stopPropagation();duplicatePage(item.id)};const deleteButton=document.createElement('button');deleteButton.type='button';deleteButton.className='page-delete';deleteButton.textContent='Ã—';deleteButton.title='Oldal tÃ¶rlÃ©se: '+(item.title||item.slug);deleteButton.setAttribute('aria-label','Oldal tÃ¶rlÃ©se: '+(item.title||item.slug));deleteButton.onclick=e=>{e.stopPropagation();deletePage(item.id)};const actions=document.createElement('div');actions.className='page-row-actions';actions.setAttribute('aria-label','Oldal mÅ±veletei');const archiveButton=document.createElement('button');archiveButton.type='button';archiveButton.textContent='ArchivÃ¡lÃ¡s';archiveButton.setAttribute('aria-label','Oldal archivÃ¡lÃ¡sa: '+(item.title||item.slug));archiveButton.onclick=e=>{e.stopPropagation();changePageArchive(item.id,true).catch(showError)};const parentButton=document.createElement('button');parentButton.type='button';parentButton.textContent='SzÃ¼lÅ‘';parentButton.title='SzÃ¼lÅ‘oldal beÃ¡llÃ­tÃ¡sa: '+(item.title||item.slug);parentButton.setAttribute('aria-label',parentButton.title);parentButton.onclick=e=>{e.stopPropagation();editPageParent(item.id).catch(showError)};actions.append(upButton,downButton,editButton,parentButton,duplicateButton,archiveButton,deleteButton);row.append(selectButton,actions);list.append(row)}if(archivedPages.length){const heading=document.createElement('h3');heading.textContent='ArchivÃ¡lt oldalak';list.append(heading);for(const item of archivedPages){const row=document.createElement('div');row.className='page-row';const title=document.createElement('strong');title.textContent=item.title||item.slug;const restore=document.createElement('button');restore.type='button';restore.textContent='VisszaÃ¡llÃ­tÃ¡s piszkozatkÃ©nt';restore.setAttribute('aria-label','Oldal visszaÃ¡llÃ­tÃ¡sa piszkozatkÃ©nt: '+(item.title||item.slug));restore.onclick=()=>changePageArchive(item.id,false).catch(showError);row.append(title,restore);list.append(row)}}}
+function focusScheduleNode(){
+  if(!flushLayerRename())return false;
+  const current=page();
+  if(!current)return false;
+  const node=Object.values(current.nodes||{}).find(item=>item.type===NODE_TYPES.SCHEDULE);
+  if(!node){setStatus('Nincs AdÃ¡srend elem az oldalon');return false}
+  execute(state,{type:'selection.set',payload:{ids:[node.id],primaryId:node.id}});
+  inspectorTab='design';window.sanciEditor?.setInspectorTab?.(inspectorTab,{notify:false});
+  document.querySelectorAll('.inspector-tabs button').forEach((button,index)=>button.classList.toggle('active',index===0));
+  render();
+  document.querySelector('#schedulePanelStatus')?.replaceChildren(document.createTextNode(`KijelÃ¶lve: ${node.name||'AdÃ¡srend'}`));
+  window.sanciEditor?.openPanel?.('right');
+  return true;
+}
+function render(){
+  if(!flushLayerRename()||flushRichTextDraft?.()===false)return false;
+  if(inlineEditingId&&state?.selection?.primaryId!==inlineEditingId)inlineEditingId=null;
+  syncMobileMultiSelectUI();syncNodeClipboardActions();syncPublishControls();renderCanvas();renderInspector();renderLayers();renderRevisionPanel();
+  if(state){$('#selection').textContent=`KijelÃ¶lÃ©s: ${state.selection.primaryId||'â€”'}`;$('#revision').textContent=`MentÃ©s verziÃ³ja: ${page()?.revision??0}`;setStatus(state.persistence.dirty?'Nem mentett mÃ³dosÃ­tÃ¡s':'Mentve')}
+  const schedule=state?Object.values(page()?.nodes||{}).find(node=>node.type===NODE_TYPES.SCHEDULE):null;
+  const scheduleStatus=$('#schedulePanelStatus');
+  if(scheduleStatus)scheduleStatus.textContent=schedule?(state?.selection?.primaryId===schedule.id?`KijelÃ¶lve: ${schedule.name||'AdÃ¡srend'}`:'AdÃ¡srend elem elÃ©rhetÅ‘ â€” kattints a kivÃ¡lasztÃ¡shoz.'):'Nincs AdÃ¡srend elem ezen az oldalon.';
+}
+function showError(e){const message=e instanceof Error?e.message:String(e);diagnostics.add({source:'ui',code:'SANCI-UI-E001',message,error:e});setStatus('Hiba');window.__sanciEditorBoot?.fail(message,e);alert(message)}
+async function movePage(id,delta){const item=pages.find(x=>x.id===id);if(!item)return;const target=(item.sortOrder??0)+delta;if(target<0||target>=pages.length)return;setStatus('Oldalsorrend frissÃ­tÃ©seâ€¦');try{const result=await api('/api/admin/pages',{method:'PATCH',body:JSON.stringify({id,sortOrder:target})});const updated=result.data;if(updated){const index=pages.findIndex(x=>x.id===id);if(index>=0)pages[index]={...pages[index],...updated};}await loadPages();setStatus('Mentve')}catch(e){showError(e)}}
+async function editPageMeta(id){if(!flushLayerRename()||flushRichTextDraft?.()===false)return;if(state?.persistence?.saving){alert('VÃ¡rd meg a folyamatban lÃ©vÅ‘ mentÃ©st.');return}if(page()?.id===id&&state?.persistence?.dirty){alert('ElÅ‘szÃ¶r mentsd az aktuÃ¡lis mÃ³dosÃ­tÃ¡sokat, majd mÃ³dosÃ­tsd az oldal beÃ¡llÃ­tÃ¡sait.');return}const meta=pages.find(x=>x.id===id);if(!meta)return;const title=prompt('Oldal neve',meta.title||'');if(title===null)return;const trimmedTitle=title.trim();if(!trimmedTitle)return alert('Az oldal neve nem lehet Ã¼res.');const suggested=String(trimmedTitle).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');const slug=prompt('Slug (az Ãºj URL csak kÃ¼lÃ¶n publikÃ¡lÃ¡s utÃ¡n lesz Ã©lÅ‘)',meta.slug||suggested);if(slug===null)return;const trimmedSlug=slug.trim().toLowerCase();if(!trimmedSlug)return alert('A slug nem lehet Ã¼res.');setStatus('Oldal frissÃ­tÃ©seâ€¦');try{const result=await api('/api/admin/pages',{method:'PATCH',body:JSON.stringify({id,title:trimmedTitle,slug:trimmedSlug,expectedVersion:Number(meta.revision||0)})});const updated=result.data;if(updated){const i=pages.findIndex(x=>x.id===id);if(i>=0)pages[i]={...pages[i],...updated,content:updated.content||pages[i].content};}renderPageList();if(page()?.id===id&&updated?.content){state=createEditorState(updated.content,{allowInvalidAuthoredContent:true,allowInvalidPageInteractions:true});state.document.revision=Number(updated.revision||0);markSaved(state,state.document.revision);render();}setStatus('Mentve')}catch(e){showError(e)}}
+async function duplicatePage(id){if(!flushLayerRename()||flushRichTextDraft?.()===false)return;const meta=pages.find(x=>x.id===id);if(!meta)return;if(page()?.id===id&&state?.persistence?.dirty){alert('ElÅ‘szÃ¶r mentsd az aktuÃ¡lis mÃ³dosÃ­tÃ¡sokat, majd kÃ©szÃ­ts mÃ¡solatot.');return}const title=prompt('MÃ¡solat neve',`${meta.title||meta.slug} mÃ¡solata`);if(title===null)return;const trimmedTitle=title.trim();if(!trimmedTitle)return alert('Az oldal neve nem lehet Ã¼res.');const suggested=trimmedTitle.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');const slug=prompt('A mÃ¡solat piszkozatÃ¡nak slugja',suggested);if(slug===null)return;const trimmedSlug=slug.trim().toLowerCase();if(!trimmedSlug)return alert('A slug nem lehet Ã¼res.');setStatus('Oldal mÃ¡solÃ¡saâ€¦');try{const result=await api('/api/admin/pages',{method:'POST',body:JSON.stringify({sourcePageId:id,title:trimmedTitle,slug:trimmedSlug})});const copy=result.data;if(!copy?.id)throw new Error('A mÃ¡solat vÃ¡lasza hiÃ¡nyos.');await loadPages();await loadPage(copy.id);setStatus('MÃ¡solat piszkozatkÃ©nt lÃ©trehozva')}catch(e){showError(e)}}
+async function editPageParent(id){
+  const item=pages.find(p=>p.id===id);if(!item)return;
+  const descendants=new Set([id]);let changed=true;while(changed){changed=false;for(const candidate of pages)if(!descendants.has(candidate.id)&&descendants.has(candidate.parentPageId)){descendants.add(candidate.id);changed=true}}const options=[{id:null,title:'GyÃ¶kÃ©roldal'},...pages.filter(p=>!descendants.has(p.id)).map(p=>({id:p.id,title:p.title||p.slug}))];
+  const lines=options.map((p,index)=>`${index}. ${p.title}${p.id===item.parentPageId?' (jelenlegi)':''}`).join('\n');
+  const answer=prompt(`SzÃ¼lÅ‘oldal: ${item.title||item.slug}\nVÃ¡lassz szÃ¡mot. A mÃ³dosÃ­tÃ¡s piszkozat; az Ã©lÅ‘ kapcsolat csak kÃ¼lÃ¶n publikÃ¡lÃ¡skor vÃ¡ltozik.\n${lines}`,String(options.findIndex(p=>p.id===item.parentPageId)));
+  if(answer===null)return;const index=answer.trim()===''?NaN:Number(answer.trim());if(!Number.isInteger(index)||index<0||index>=options.length){alert('Ã‰rvÃ©nytelen szÃ¼lÅ‘oldal.');return}
+  const parentPageId=options[index].id;if(parentPageId===item.parentPageId)return;
+  const result=await api('/api/admin/pages',{method:'PATCH',body:JSON.stringify({action:'setParent',id,parentPageId,expectedParentPageId:item.parentPageId??null})});
+  await loadPages();setStatus('SzÃ¼lÅ‘oldal piszkozat mentve');
+}
+async function changePageArchive(id,archive){if(!flushLayerRename()||flushRichTextDraft?.()===false)return;
+ if(state?.persistence?.saving){alert('VÃ¡rd meg a folyamatban lÃ©vÅ‘ mentÃ©st.');return}
+ if(state?.persistence?.dirty){alert('ElÅ‘szÃ¶r mentsd az aktuÃ¡lis mÃ³dosÃ­tÃ¡sokat.');return}
+ const item=(archive?pages:archivedPages).find(x=>x.id===id);if(!item)return;
+ if(!confirm(archive?`ArchivÃ¡lod a(z) â€${item.title||item.slug}â€ oldalt? A nyilvÃ¡nos oldal nem lesz elÃ©rhetÅ‘; kÃ©sÅ‘bb piszkozatkÃ©nt visszaÃ¡llÃ­thatÃ³.`:'VisszaÃ¡llÃ­tod az oldalt piszkozatkÃ©nt? Nem kerÃ¼l automatikusan publikÃ¡lÃ¡sra.'))return;
+ await api('/api/admin/pages',{method:'PATCH',body:JSON.stringify({id,action:archive?'archive':'restore'})});
+ if(archive&&page()?.id===id){state=null;revisionHistory=[];rememberPageId(null)}
+ await loadPages();setStatus(archive?'Oldal archivÃ¡lva':'Oldal visszaÃ¡llÃ­tva â€” piszkozat');
+}
+async function deletePage(id){if(!flushLayerRename()||flushRichTextDraft?.()===false)return;if(page()?.id===id&&state?.persistence?.dirty){alert('ElÅ‘szÃ¶r mentsd az aktuÃ¡lis mÃ³dosÃ­tÃ¡sokat, majd tÃ¶rÃ¶ld az oldalt.');return}const meta=pages.find(x=>x.id===id);if(!meta)return;if(!confirm(`Biztosan tÃ¶rlÃ¶d ezt az oldalt?\\n\\n${meta.title||meta.slug}\\n\\nEz a mÅ±velet az oldal szerveroldali tartalmÃ¡t is tÃ¶rli.`))return;const wasCurrent=page()?.id===id;setStatus('Oldal tÃ¶rlÃ©seâ€¦');try{await api('/api/admin/pages',{method:'DELETE',body:JSON.stringify({id})});if(wasCurrent)state=null;await loadPages();if(!state&&pages.length===0)setStatus('Nincs oldal');else setStatus('Mentve')}catch(e){showError(e)}}
+async function loadPages(){setStatus('Oldalak betÃ¶ltÃ©seâ€¦');const data=await api('/api/admin/pages');if(!Array.isArray(data.data))throw new Error('HibÃ¡s oldallistÃ¡zÃ³ vÃ¡lasz');const archiveData=await api('/api/admin/pages?archived=1&meta=1');if(!Array.isArray(archiveData.data))throw new Error('HibÃ¡s archÃ­vum-vÃ¡lasz');pages=data.data;archivedPages=archiveData.data;renderPageList();const initialId=initialPageId(requestedPageId(),pages);if(!state&&initialId)await loadPage(initialId);else if(state){renderPageList();render();setStatus(state.persistence.dirty?'Nem mentett mÃ³dosÃ­tÃ¡s':'Mentve')}else{rememberPageId(null);setStatus('Nincs oldal')}}
+async function loadPage(id,{discardConfirmed=false}={}){
+  if(!flushLayerRename()||flushRichTextDraft?.()===false)return;
+  if(state?.persistence?.dirty&&!discardConfirmed&&!confirm('Nem mentett mÃ³dosÃ­tÃ¡sok vannak. Elveted Å‘ket az oldal betÃ¶ltÃ©sÃ©vel?')){renderPageList();return;}
+  const loadingState=state,loadingSnapshot=JSON.stringify(state?.document??null);
+  setStatus('Oldal betÃ¶ltÃ©seâ€¦');const meta=pages.find(x=>x.id===id);if(!meta)throw new Error('Az oldal nem talÃ¡lhatÃ³.');const data=await api('/api/admin/editor?pageId='+encodeURIComponent(id));if(state!==loadingState||!flushLayerRename()||flushRichTextDraft?.()===false||JSON.stringify(state?.document??null)!==loadingSnapshot){renderPageList();render();setStatus('Az oldal betÃ¶ltÃ©se megszakadt: kÃ¶zben helyi mÃ³dosÃ­tÃ¡s tÃ¶rtÃ©nt.');return}const document=data?.data?.page?.document||meta.content;const revisions=Array.isArray(data?.data?.revisions)?data.data.revisions:[];if(!canonical(document,id))throw new Error(`Az oldal (${meta.title||meta.slug}) nem canonical Editor v2 dokumentum.`);const rawRevision=revisions.length?Number(revisions[0]?.version):0;if(!Number.isInteger(rawRevision)||rawRevision<0)throw new Error('HibÃ¡s revision-vÃ¡lasz: a szerver revision-szÃ¡ma nem Ã©rvÃ©nyes.');revisionHistory=revisions;const latestRevision=rawRevision;meta.revision=latestRevision;meta.publishedRevisionId=data?.data?.page?.publishedRevisionId??meta.publishedRevisionId??null;meta.publishedRevisionVersion=meta.publishedRevisionId?Number(revisions.find(rev=>rev.id===meta.publishedRevisionId)?.version||0):0;state=createEditorState(document,{allowInvalidAuthoredContent:true,allowInvalidPageInteractions:true});state.document.revision=latestRevision;state.document.pages[id].revision=latestRevision;markSaved(state,latestRevision);rememberPageId(id);renderPageList();render();setStatus('Mentve')}
+async function rollbackToRevision(version){const hadPendingRename=Boolean(pendingLayerRename?.dirty?.());if(!flushLayerRename()||flushRichTextDraft?.()===false)return;if(hadPendingRename){setStatus('ElÅ‘bb mentsd a rÃ©tegnÃ©v mÃ³dosÃ­tÃ¡sÃ¡t a visszaÃ¡llÃ­tÃ¡shoz.');return}const current=page();const meta=current&&pages.find(x=>x.id===current.id);const latest=Number(revisionHistory[0]?.version||meta?.revision||0);if(!current||!meta||!Number.isInteger(version)||version<1)return;if(version===latest){return}if(!confirm(`Biztosan visszaÃ¡llÃ­tod a(z) v${version} revisiont?\n\nA jelenlegi draft nem vÃ©sz el vÃ©glegesen: a visszaÃ¡llÃ­tÃ¡s Ãºj revisionkÃ©nt jÃ¶n lÃ©tre.`))return;const rollbackState=state,rollbackSnapshot=JSON.stringify(state.document);setStatus(`v${version} visszaÃ¡llÃ­tÃ¡saâ€¦`);try{await api('/api/admin/editor?pageId='+encodeURIComponent(current.id),{method:'PUT',body:JSON.stringify({pageId:current.id,version,expectedVersion:latest})});if(state!==rollbackState||!flushLayerRename()||flushRichTextDraft?.()===false||JSON.stringify(state.document)!==rollbackSnapshot){if(state===rollbackState){render();showRevisionConflict(new Error('A visszaÃ¡llÃ­tÃ¡s elkÃ©szÃ¼lt, de kÃ¶zben helyi mÃ³dosÃ­tÃ¡s keletkezett; a helyi vÃ¡ltozatot megÅ‘riztÃ¼k.'),current.id)}return}await loadPage(current.id,{discardConfirmed:true});setStatus(`v${version} visszaÃ¡llÃ­tva`)}catch(e){showError(e)}}
+function pageSlugFromTitle(value){return String(value||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,80).replace(/-+$/g,'')}
+function renderPageStartTemplate(templateId=pageStartTemplate){
+  const template=listEditorTemplates().find(item=>item.id===templateId);if(!template)return false;
+  pageStartTemplate=template.id;
+  const cards=$('#newPageTemplates'),preview=$('#newPagePreviewContent'),title=$('#newPagePreviewTitle');if(!cards||!preview||!title)return false;
+  for(const card of cards.querySelectorAll('[data-template-id]')){const selected=card.dataset.templateId===template.id;card.setAttribute('aria-checked',String(selected));card.tabIndex=selected?0:-1}
+  title.textContent=template.label;preview.replaceChildren();for(const line of template.preview){const item=document.createElement('li');item.textContent=line;preview.append(item)}
+  $('#newPageTemplateStatus').textContent=`KivÃ¡lasztva: ${template.label}. A sablon ${template.version}. verziÃ³ja kompatibilis az Editor ${template.schemaVersion}. sÃ©mÃ¡jÃ¡val.`;
+  return true;
+}
+function initializePageStartDialog(){
+  const cards=$('#newPageTemplates');if(!cards)return;
+  cards.replaceChildren();for(const template of listEditorTemplates()){
+    const card=document.createElement('button');card.type='button';card.className='new-page-template';card.dataset.templateId=template.id;card.setAttribute('role','radio');card.setAttribute('aria-checked','false');card.tabIndex=-1;
+    const name=document.createElement('strong');name.textContent=template.label;const description=document.createElement('span');description.textContent=template.description;const version=document.createElement('small');version.textContent=`Sablon ${template.version} Â· Editor sÃ©ma ${template.schemaVersion}`;card.append(name,description,version);card.onclick=()=>renderPageStartTemplate(template.id);cards.append(card);
+  }
+  cards.onkeydown=event=>{if(!['ArrowRight','ArrowDown','ArrowLeft','ArrowUp'].includes(event.key))return;const items=[...cards.querySelectorAll('[role="radio"]')];if(!items.length)return;event.preventDefault();const current=Math.max(0,items.indexOf(document.activeElement)),step=['ArrowRight','ArrowDown'].includes(event.key)?1:-1,next=(current+step+items.length)%items.length;items[next].focus();items[next].click()};
+  renderPageStartTemplate('blank-page');
+  const title=$('#newPageName'),slug=$('#newPageSlug'),dialog=$('#newPageDialog'),form=$('#newPageForm');
+  title.oninput=()=>{if(slug.dataset.touched!=='true')slug.value=pageSlugFromTitle(title.value)};slug.oninput=()=>{slug.dataset.touched='true';slug.value=slug.value.toLowerCase()};
+  const close=()=>dialog?.close();$('#cancelNewPage')?.addEventListener('click',close);$('#cancelNewPageClose')?.addEventListener('click',close);
+  form?.addEventListener('submit',async event=>{
+    event.preventDefault();if(pageCreateBusy)return;
+    const cleanTitle=title.value.trim(),cleanSlug=slug.value.trim().toLowerCase(),error=$('#newPageError'),button=$('#createNewPage');error.hidden=true;error.textContent='';
+    if(!cleanTitle||cleanTitle.length>160){error.textContent='Az oldal neve 1â€“160 karakter legyen.';error.hidden=false;title.focus();return}
+    if(!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(cleanSlug)||cleanSlug.length>80){error.textContent='A slug kisbetÅ±t, szÃ¡mot Ã©s egyes kÃ¶tÅ‘jeleket tartalmazhat.';error.hidden=false;slug.focus();return}
+    if(!flushLayerRename()||flushRichTextDraft?.()===false){error.textContent='ElÅ‘bb fejezd be a mezÅ‘ szerkesztÃ©sÃ©t.';error.hidden=false;return}
+    if(state?.persistence?.saving){error.textContent='VÃ¡rd meg az aktuÃ¡lis mentÃ©s vÃ©gÃ©t.';error.hidden=false;return}
+    if(state?.persistence?.dirty){error.textContent='ElÅ‘bb mentsd az aktuÃ¡lis mÃ³dosÃ­tÃ¡sokat. A helyi vÃ¡ltoztatÃ¡sok megmaradnak.';error.hidden=false;return}
+    let createdId=null;pageCreateBusy=true;button.disabled=true;title.disabled=true;slug.disabled=true;cards.setAttribute('aria-busy','true');$('#newPageTemplateStatus').textContent='A sablon elÅ‘kÃ©szÃ­tÃ©seâ€¦';
+    try{
+      const document=instantiateEditorTemplate(pageStartTemplate,{title:cleanTitle,slug:cleanSlug});const id=document.activePageId;
+      const result=await api('/api/admin/pages',{method:'POST',body:JSON.stringify({id,title:cleanTitle,slug:cleanSlug,description:'',document})});
+      if(result?.data?.id!==id||result?.data?.isPublished===true)throw new Error('A szerver nem igazolta vissza az Ãºj piszkozatot. EllenÅ‘rizd az oldallistÃ¡t, mielÅ‘tt Ãºjra prÃ³bÃ¡lkozol.');
+      createdId=id;dialog.close();setStatus('Ãšj oldal piszkozatkÃ©nt lÃ©trehozva');await loadPages();await loadPage(id);setStatus('Ãšj piszkozat megnyitva â€” mentÃ©s Ã©s publikÃ¡lÃ¡s kÃ¼lÃ¶n tÃ¶rtÃ©nik.');
+    }catch(e){if(createdId){setStatus('A piszkozat lÃ©trejÃ¶tt, de nem sikerÃ¼lt automatikusan megnyitni. FrissÃ­tsd az oldallistÃ¡t.');try{await loadPages()}catch{}}else{error.textContent=e instanceof Error?e.message:String(e);error.hidden=false;$('#newPageTemplateStatus').textContent='A lÃ©trehozÃ¡s nem sikerÃ¼lt. A kivÃ¡lasztott sablon Ã©s az Å±rlap adatai megmaradtak.';}}
+    finally{pageCreateBusy=false;button.disabled=false;title.disabled=false;slug.disabled=false;cards.removeAttribute('aria-busy')}
+  });
+}
+async function createNew(){if(!flushLayerRename()||flushRichTextDraft?.()===false)return;if(state?.persistence?.saving){setStatus('VÃ¡rd meg az aktuÃ¡lis mentÃ©s vÃ©gÃ©t az Ãºj oldalhoz.');return}if(state?.persistence?.dirty){setStatus('ElÅ‘bb mentsd az aktuÃ¡lis mÃ³dosÃ­tÃ¡sokat; a helyi munka megmarad.');return}const dialog=$('#newPageDialog');if(!dialog)return;pageStartTemplate='blank-page';$('#newPageName').value='Ãšj oldal';$('#newPageSlug').value='uj-oldal';$('#newPageSlug').dataset.touched='false';$('#newPageError').hidden=true;renderPageStartTemplate('blank-page');if(!dialog.open)dialog.showModal();$('#newPageName').focus()}
+function commitActiveInspectorControl(){
+  const input=document.activeElement;if(!input||!inspector.contains(input)||!input.matches('input,textarea,select'))return true;
+  if(typeof input.onchange==='function'&&input.dataset.focusValue!==String(input.type==='checkbox'?input.checked:input.value)){
+    input.dispatchEvent(new Event('change',{bubbles:true}));if(state?.persistence?.error)return false;
+  }
+  return !input.closest('.field')?.querySelector('.property-validation')?.textContent&&!input.matches('[aria-invalid="true"]');
+}
+function inspectorValidationError({visibleOnly=false}={}){
+  // Publication-only requirements do not invalidate a draft save. They are
+  // independently checked again by validatePageForPublication on Publish.
+  return [...inspector.querySelectorAll('.property-validation')]
+    .find(element=>element.dataset.validationKind!=='publication'&&
+      element.textContent.trim()&&(!visibleOnly||element.getClientRects().length>0));
+}
+function revealInspectorValidationError(error){
+  if(!error||!inspector.contains(error))return;
+  // Search and category filters must not hide the field explaining why a
+  // Save/Publish attempt was rejected. Keep the authored input intact.
+  inspectorQuery='';
+  inspectorCategory='all';
+  const search=inspector.querySelector('.inspector-search input[type="search"]');
+  if(search)search.value='';
+  inspector.querySelectorAll('.inspector-category-nav button').forEach(button=>{
+    button.setAttribute('aria-pressed',String(button.dataset.inspectorCategory==='all'));
+  });
+  filterInspector();
+  const group=error.closest('.inspector-group');
+  if(group){
+    group.hidden=false;
+    const title=group.querySelector(':scope > .inspector-group-title');
+    if(!group.classList.contains('is-open')){
+      // Existing accordion click also updates its persisted openGroups map.
+      if(title?.getAttribute('role')==='button')title.click();
+      else{
+        group.classList.add('is-open');
+        title?.setAttribute('aria-expanded','true');
+      }
+    }
+  }
+  window.sanciEditor?.openPanel?.('right');
+  requestAnimationFrame(()=>{
+    if(!error.isConnected)return;
+    const field=error.closest('.typed-inspector-field,.field,.multi-inspector-field');
+    const input=field?.querySelector('input:not(:disabled),textarea:not(:disabled),select:not(:disabled)');
+    if(input?.getClientRects().length)input.focus({preventScroll:true});
+    error.scrollIntoView({block:'nearest',behavior:'smooth'});
+  });
+}
+
+inspector.addEventListener('focusin',event=>{const input=event.target;if(input.matches('input,textarea,select'))input.dataset.focusValue=String(input.type==='checkbox'?input.checked:input.value)});
+inspector.addEventListener('change',event=>{const input=event.target;if(input.matches('input,textarea,select'))input.dataset.focusValue=String(input.type==='checkbox'?input.checked:input.value)});
+async function save(publish=false){
+  if(!flushLayerRename())return;
+  if(!commitActiveInspectorControl()||inspectorValidationError()){
+    // Validation can outlive focus: a toolbar click moves focus away from
+    // the invalid field. Never silently save/publish an older Page Model.
+    setStatus('JavÃ­tsd a jelzett mezÅ‘t mentÃ©s vagy publikÃ¡lÃ¡s elÅ‘tt.');
+    revealInspectorValidationError(inspectorValidationError());
+    return;
+  }
+  if(state?.persistence?.saving){setStatus('MentÃ©s folyamatbanâ€¦');return;}if(flushRichTextDraft?.()===false){setStatus('JavÃ­tsd a jelzett tartalommezÅ‘t mentÃ©s elÅ‘tt.');return;}const current=page();if(!current)return;if(publish){try{validatePageForPublication(current)}catch(error){if(error.nodeId){setSelection(state,[error.nodeId],error.nodeId);inspectorTab='content';window.sanciEditor?.setInspectorTab?.(inspectorTab,{notify:false});render();window.sanciEditor?.openPanel?.('right');const note=document.createElement('p');note.className='property-validation';note.dataset.validationKind='publication';note.setAttribute('role','alert');note.textContent=error.message;inspector.prepend(note)}setStatus(error.message);return}}const meta=pages.find(x=>x.id===current.id);if(!meta)return;const stateAtStart=state;const pageId=current.id;const submittedDocument=structuredClone(stateAtStart.document);const submittedJson=JSON.stringify(submittedDocument);const expectedVersion=Number(meta.revision??stateAtStart.document.revision??0);setStatus(publish?'PublikÃ¡lÃ¡sâ€¦':'MentÃ©sâ€¦');stateAtStart.persistence.saving=true;try{const result=await api(`/api/admin/editor?pageId=${encodeURIComponent(pageId)}`,{method:'POST',body:JSON.stringify({pageId,document:submittedDocument,publish,expectedVersion,expectedParentPageId:meta.parentPageId??null,note:publish?'Editor v2 publikÃ¡lÃ¡s':'Editor v2 mentÃ©s'})});const version=Number(result?.data?.version);if(result?.data?.pageId!==pageId||!Number.isInteger(version)||version<1)throw new Error('A mentÃ©s vÃ¡lasza hiÃ¡nyos vagy hibÃ¡s revision-adatot tartalmaz; a helyi mÃ³dosÃ­tÃ¡sokat nem jelÃ¶ltÃ¼k mentettnek.');const renameReady=state!==stateAtStart||flushLayerRename();const unchanged=state===stateAtStart&&renameReady&&JSON.stringify(stateAtStart.document)===submittedJson;stateAtStart.document.revision=version;if(stateAtStart.document.pages?.[pageId])stateAtStart.document.pages[pageId].revision=version;meta.revision=version;if(unchanged){markSaved(stateAtStart,version)}else{stateAtStart.persistence.saving=false;stateAtStart.persistence.dirty=true;stateAtStart.persistence.error=null;stateAtStart.persistence.lastSavedRevision=version}stateAtStart.persistence.conflict=null;const panel=$('#revisionConflict');if(panel&&state===stateAtStart){panel.hidden=true;document.querySelector('.editor-app')?.classList.remove('revision-conflict-open')}const i=pages.findIndex(x=>x.id===pageId);if(i>=0){const previous=pages[i];pages[i]={...previous,content:submittedDocument,isPublished:publish||Boolean(previous.isPublished),hasUnpublishedChanges:!publish&&Boolean(previous.isPublished),publishedRevisionId:publish?result.data.revisionId:previous.publishedRevisionId,publishedParentPageId:publish?previous.parentPageId:previous.publishedParentPageId,publishedSlug:publish?previous.slug:previous.publishedSlug,publishedRevisionVersion:publish?version:Number(previous.publishedRevisionVersion??0),revision:version};}renderPageList();if(state===stateAtStart){render();setStatus(unchanged?(publish?'PublikÃ¡lva':(pages.find(x=>x.id===pageId)?.isPublished?'Mentve â€” a nyilvÃ¡nos oldal vÃ¡ltozatlan':'Mentve')):'A mentett verziÃ³ elkÃ©szÃ¼lt; tovÃ¡bbi helyi mÃ³dosÃ­tÃ¡sok mÃ©g nincsenek mentve')}return result}catch(e){stateAtStart.persistence.saving=false;stateAtStart.persistence.error=e instanceof Error?e.message:String(e);if(state===stateAtStart&&publish&&e?.status===409&&e?.code==='UNSUPPORTED_EDITOR_NODE_TYPE'){if(JSON.stringify(stateAtStart.document)===submittedJson)showUnsupportedPublishRecovery();else showStaleUnsupportedPublishResponse();syncPublishControls();return}stateAtStart.persistence.dirty=true;if(state===stateAtStart&&e?.status===409&&e?.code==='REVISION_CONFLICT'){showRevisionConflict(e,pageId);return}if(state===stateAtStart){setStatus('MentÃ©si hiba');alert(stateAtStart.persistence.error)}return}}
+async function unpublishPage(){if(!flushLayerRename()||flushRichTextDraft?.()===false)return;const current=page();const meta=current&&pages.find(x=>x.id===current.id);if(!current||!meta?.isPublished)return;if(!confirm('Biztosan visszavonod ennek az oldalnak a publikÃ¡lÃ¡sÃ¡t?'))return;setStatus('PublikÃ¡lÃ¡s visszavonÃ¡saâ€¦');try{const result=await api('/api/admin/editor?pageId='+encodeURIComponent(current.id),{method:'POST',body:JSON.stringify({pageId:current.id,action:'unpublish'})});const i=pages.findIndex(x=>x.id===current.id);if(i>=0)pages[i]={...pages[i],isPublished:Boolean(result.data?.published),publishedSlug:null,hasUnpublishedChanges:false};renderPageList();render();setStatus('PublikÃ¡lÃ¡s visszavonva')}catch(e){showError(e)}}
+function setDevice(device){
+ if(!state||!Object.hasOwn(sizes,device))return false;
+ if(state.viewport.device===device)return true;
+ if(!flushLayerRename()||!commitActiveInspectorControl()||
+    inspectorValidationError({visibleOnly:true})||
+    flushRichTextDraft?.()===false){
+   setStatus('JavÃ­tsd a hibÃ¡s mezÅ‘t a nÃ©zetvÃ¡ltÃ¡s elÅ‘tt.');
+   return false;
+ }
+ const previousDevice=state.viewport.device,previousZoom=zoom;
+ state.viewport.device=device;
+ zoom=device==='desktop'?1:Math.max(.35,Math.min(1,(canvas.clientWidth-48)/sizes[device]));
+ if(render()===false){
+   state.viewport.device=previousDevice;zoom=previousZoom;
+   setStatus('A nÃ©zetvÃ¡ltÃ¡s nem sikerÃ¼lt. A mÃ³dosÃ­tÃ¡sok megmaradtak.');
+   return false;
+ }
+ window.sanciEditor?.setViewportPreference?.({device,zoom});
+ canvas.scrollTo({left:0,top:0,behavior:'instant'});
+ return true;
+}
+document.addEventListener('DOMContentLoaded',()=>{
+ diagnostics.init();
+ window.__sanciEditorDiagnostics=diagnostics;
+ window.__sanciEditorBoot?.started();
+ $('#elementSearch').oninput=e=>renderPalette(e.target.value);
+ $('#scheduleSelectNode').onclick=()=>focusScheduleNode();
+ initializePageStartDialog();$('#newPage').onclick=()=>createNew().catch(showError);$('#newPagePanel').onclick=()=>createNew().catch(showError);
+ $('#pageSelect').onchange=e=>loadPage(e.target.value).catch(showError);
+ $('#exportConflictDraft').onclick=()=>exportConflictDraft();$('#reloadConflictPage').onclick=()=>reloadLatestAfterConflict();
+ $('#save').onclick=()=>save(false);$('#publish').onclick=()=>save(true);$('#unpublish').onclick=()=>unpublishPage().catch(showError);$('#mobilePublish').onclick=()=>save(true);$('#mobileUnpublish').onclick=()=>unpublishPage().catch(showError);
+ $('#preview').onclick=()=>{const p=page();if(p)window.open(`/p/${encodeURIComponent(p.slug)}?preview=1`,'_blank','noopener,noreferrer')};
+ $('#undo').onclick=()=>{if(state&&flushLayerRename()&&commitActiveInspectorControl()&&flushRichTextDraft?.()!==false){try{execute(state,{type:'history.undo'});render()}catch(e){showError(e)}}};$('#redo').onclick=()=>{if(state&&flushLayerRename()&&commitActiveInspectorControl()&&flushRichTextDraft?.()!==false){try{execute(state,{type:'history.redo'});render()}catch(e){showError(e)}}};
+ $('#copyNodes').onclick=copySelectedNodes;$('#pasteNodes').onclick=pasteSelectedNodes;$('#mobileCopyNodes').onclick=copySelectedNodes;$('#mobilePasteNodes').onclick=pasteSelectedNodes;
+ $('#zoomIn').onclick=()=>changeCanvasZoom(Math.min(1.5,zoom+.1));$('#zoomOut').onclick=()=>changeCanvasZoom(Math.max(.35,zoom-.1));$('#fitCanvas').onclick=fitCanvasToViewport;
+ $('#selectTool').onclick=()=>{syncCanvasToolButtons('select');canvas.style.cursor='default'};$('#groupSelection').onclick=()=>{if(!$('#groupSelection').disabled)command('hierarchy.group')};$('#ungroupSelection').onclick=()=>{if(!$('#ungroupSelection').disabled)command('hierarchy.ungroup')};$('#moveLayerUp').onclick=()=>{if(!$('#moveLayerUp').disabled)moveSelectedLayer('up')};$('#moveLayerDown').onclick=()=>{if(!$('#moveLayerDown').disabled)moveSelectedLayer('down')};$('#indentLayer').onclick=()=>{if(!$('#indentLayer').disabled)moveSelectedLayer('indent')};$('#outdentLayer').onclick=()=>{if(!$('#outdentLayer').disabled)moveSelectedLayer('outdent')};$('#mobileGroup').onclick=()=>{if(!$('#mobileGroup').disabled)command('hierarchy.group')};$('#mobileUngroup').onclick=()=>{if(!$('#mobileUngroup').disabled)command('hierarchy.ungroup')};$('#mobileMultiDone').onclick=()=>finishMobileMultiSelect();$('#mobileMultiCancel').onclick=()=>cancelMobileMultiSelect();$('#panTool').onclick=()=>{syncCanvasToolButtons('pan');canvas.style.cursor='grab'};
+ document.querySelectorAll('[data-device]').forEach(b=>b.onclick=()=>setDevice(b.dataset.device));
+ canvas.addEventListener('click',event=>{
+   if(event.target.closest('.node')) return;
+   if(state) { command('selection.clear'); }
+ });
+ const inspectorTablist=$('.inspector-tabs');
+ window.sanciEditor?.on?.('workspace:preferences-change',queueAccountWorkspaceWrite);
+ if(reducedMotionQuery){const updateCanvasVideoPlayback=()=>applyReducedMotionVideoPlayback(canvas,{reducedMotion:prefersReducedMotion(),editor:true});if(typeof reducedMotionQuery.addEventListener==='function')reducedMotionQuery.addEventListener('change',updateCanvasVideoPlayback);else reducedMotionQuery.addListener?.(updateCanvasVideoPlayback)}
+ window.sanciEditor?.on?.('panel:inspector-tab',({tab}={})=>activateInspectorTab(tab,{persist:false}));
+ inspectorTablist?.addEventListener('click',event=>{
+   const button=event.target.closest('[role="tab"]');
+   if(!button||!inspectorTablist.contains(button))return;
+   const index=[...inspectorTablist.querySelectorAll('[role="tab"]')].indexOf(button);
+   activateInspectorTab(INSPECTOR_TABS[index]);
+ });
+ inspectorTablist?.addEventListener('keydown',event=>{
+   if(!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;
+   const tabs=[...inspectorTablist.querySelectorAll('[role="tab"]')];
+   const currentIndex=tabs.indexOf(document.activeElement);
+   if(currentIndex<0||!tabs.length)return;
+   const direction=document.documentElement.dir==='rtl'?-1:1;
+   const nextIndex=event.key==='Home'?0:event.key==='End'?tabs.length-1:
+     (currentIndex+(event.key==='ArrowRight'?direction:-direction)+tabs.length)%tabs.length;
+   event.preventDefault();
+   activateInspectorTab(INSPECTOR_TABS[nextIndex],{focus:true});
+ });
+ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&mobileTouch.active){e.preventDefault();cancelMobileMultiSelect();return}if((e.ctrlKey||e.metaKey)&&['c','v'].includes(e.key.toLowerCase())&&isCanvasClipboardShortcut(e)){e.preventDefault();if(e.key.toLowerCase()==='c')copySelectedNodes();else pasteSelectedNodes();return}if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='s'){e.preventDefault();save(false)}if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();if(state&&flushLayerRename()&&commitActiveInspectorControl()&&flushRichTextDraft?.()!==false){execute(state,{type:e.shiftKey?'history.redo':'history.undo'});render()}}});
+ renderPalette();loadTwitchConnection();Promise.all([loadPages(),loadPaletteFavorites()]).then(()=>{if(pendingAccountViewport)applyAccountViewport(pendingAccountViewport);return accountPreferenceWrite}).then(()=>window.__sanciEditorBoot?.ready()).catch(showError);
+});
+
+loadEditorTokens();window.addEventListener('focus',()=>loadEditorTokens());

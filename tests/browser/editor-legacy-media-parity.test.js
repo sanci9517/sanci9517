@@ -1,1 +1,630 @@
-Y™Áäx-ÆÈ‹j◊ù¢Îi∫⁄+äßj[hëÈ‹¢ÈÌ◊›ªÒ:-jZ.∂õ≠ñ)ﬁ≥Vñ◊˜'B∂WÜW&6ó6T6ˆ◊˜6óFñˆÁ“g&ˆ“r‚ˆÜV«W'2ˆ6ˆ◊˜6óFñˆ‚Êß2s∞¶ñ◊˜'B76W'Bg&ˆ“vÊˆFS¶76W'B˜7G&ñ7Bs∞¶ñ◊˜'BFW7Bg&ˆ“vÊˆFSßFW7Bs∞¶ñ◊˜'B∂7&VFU6W'fW'“g&ˆ“vÊˆFS¶áGGs∞¶ñ◊˜'B∑&VDfñ∆W“g&ˆ“vÊˆFS¶g2˜&ˆ÷ó6W2s∞¶ñ◊˜'B∂WÜó7G57ñÊ7“g&ˆ“vÊˆFS¶g2s∞¶ñ◊˜'B∑&W6ˆ«fR∆WáFÊ÷W“g&ˆ“vÊˆFSßFÇs∞¶ñ◊˜'B∂6á&ˆ÷óV◊“g&ˆ“w∆ów&ñváBs∞¶ñ◊˜'B∂7&VFTFˆ7V÷VÁG“g&ˆ“r‚‚Ú‚‚˜V&∆ñ2ˆVFóF˜"◊c"ˆ6˜&R˜66ÜV÷Êß2s∞¶ñ◊˜'B∂7&VFTVFóF˜%7FFR∆7FófUvW“g&ˆ“r‚‚Ú‚‚˜V&∆ñ2ˆVFóF˜"◊c"ˆ6˜&R˜7FFRÊß2s∞¶ñ◊˜'B∂WÜV7WFW“g&ˆ“r‚‚Ú‚‚˜V&∆ñ2ˆVFóF˜"◊c"ˆ6˜&Rˆ6ˆ÷÷ÊG2Êß2s∞¶ñ◊˜'B∑6fT÷VFñW&«“g&ˆ“r‚‚Ú‚‚˜V&∆ñ2ˆVFóF˜"◊c"ˆ6˜&RˆV∆V÷VÁB÷6ˆÁFVÁBÊß2s∞¶ñ◊˜'Br‚ˆCb÷÷VFñ÷&6ÜófR◊6fR◊V&∆ó6ÇÁFW7BÊß2s∞†ßFW7BÇv∆Vv7íñ÷vRfñFVÚVFñÚ6Ü&RwV&FVB÷VFñU$«2ñ‚ñÁ7V7F˜"6Áf2ÊBV&∆ñ26fRıV&∆ó6Çr∆7ñÊ2C”Á∞¢6ˆÁ7B÷ˆFV√÷7&VFTVFóF˜%7FFRÜ7&VFTFˆ7V÷VÁBÇíì∞¢6ˆÁ7BvTñC÷÷ˆFV¬ÊFˆ7V÷VÁBÊ7FófUvTñB«&ˆ˜DñC÷7FófUvRÜ÷ˆFV¬íÁ&ˆ˜DñB∆ñG3◊∑”∞¢6ˆÁ7B6˜''WC◊∑Fı7G&ñÊs¢vÊ˜B6∆∆&∆Rr«f«VTˆc¢vÊ˜B6∆∆&∆Rw”∞¢6ˆÁ7B˜&ñvñÊƒ6˜''WC◊∑”∞¢6ˆÁ7BVÁG&ñW3’∞¢≤v&Dñ÷vRr¬vñ÷vRr¬rÚ˜VÁG'W7FVBÊñÁf∆ñB˜G&6≤ÁÊru“¿¢≤v&EfñFVÚr¬wfñFVÚr¬váGG3¢Ú˜W6W#ß74VÁG'W7FVBÊñÁf∆ñB˜&ófFRÊ◊Bu“¿¢≤v&DVFñÚr¬vVFñÚr¬w&V∆FófR˜6˜VÊBÊ◊2u“¿¢≤vvˆˆDñ÷vRr¬vñ÷vRr¬rˆfóáGW&RÁ7fru“¿¢≤vvˆˆEfñFVÚr¬wfñFVÚr¬rˆfóáGW&RÁvV&“u“¿¢≤vvˆˆDVFñÚr¬vVFñÚr¬rˆfóáGW&RÁvV&“u“¿¢≤v6˜''WDñ÷vRr¬vñ÷vRr∆6˜''WE“≈≤v6˜''WEfñFVÚr¬wfñFVÚr∆6˜''WE“≈≤v6˜''WDVFñÚr¬vVFñÚr∆6˜''WE–¢”∞¢f˜"Ü6ˆÁ7B∂∂Wí«GóR«7&5“ˆbVÁG&ñW2ó∞¢6ˆÁ7B&˜3◊∑7&2∆«C¢uFW7ßFº:ór¬‚‚‚Ü∂WíÁ7F'G5vóFÇÇv6˜''WBrì˜∂76WDñC¶6˜''WB¬‚‚‚áGóS””“vñ÷vRs˜∂«C¶6˜''WG”ßGóS””“wfñFVÚs˜∑˜7FW#¶6˜''WB«˜7FW$76WDñC¶6˜''WG”ß∑“ó”ß∑“ó”∞¢WÜV7WFRÜ÷ˆFV¬«∑GóS¢vV∆V÷VÁBÊFBr«ñ∆ˆCß∑GóR«&VÁDñCß&ˆ˜DñB«&˜7◊“ì∞¢ñG5∂∂Wï”÷÷ˆFV¬Á6V∆V7Fñˆ‚Á&ñ÷'îñC∞¢ñbÜ∂WíÁ7F'G5vóFÇÇv6˜''WBríñ˜&ñvñÊƒ6˜''WE∂∂Wï”◊7G'V7GW&VD6∆ˆÊRÜ7FófUvRÜ÷ˆFV¬íÊÊˆFW5∂ñG5∂∂Wï’“Á&˜2ì∞¢–¢WÜV7WFRÜ÷ˆFV¬«∑GóS¢vV∆V÷VÁBÊFBr«ñ∆ˆCß∑GóS¢wfñFVÚr«&VÁDñCß&ˆ˜DñB«&˜3ß∑7&3¢rˆfóáGW&RÁvV&“r«˜7FW#¢v¶f67&óC¶∆W'BÉíw◊◊“ì∞¢ñG2Ê&E˜7FW#÷÷ˆFV¬Á6V∆V7Fñˆ‚Á&ñ÷'îñC∞¢WÜV7WFRÜ÷ˆFV¬«∑GóS¢vV∆V÷VÁBÊFBr«ñ∆ˆCß∑GóS¢vñ÷vRr«&VÁDñCß&ˆ˜DñB«&˜3ß∑7&3¢rr∆«C¢rw◊◊“ì∞¢ñG2Ê∆ñ'&'îñ÷vS÷÷ˆFV¬Á6V∆V7Fñˆ‚Á&ñ÷'îñC∞¢6ˆÁ7B÷VFññC“s””C”É”#2r«fñFVÙ÷VFññC“s””C”É”#Bs∞¢6ˆÁ7BVFñÙ÷VFññC“s””C”É”#Rr«VÊfñ∆&∆U˜7FW$ñC“s””C”É”#bs∞¢WÜV7WFRÜ÷ˆFV¬«∑GóS¢vV∆V÷VÁBÊFBr«ñ∆ˆCß∑GóS¢wfñFVÚr«&VÁDñCß&ˆ˜DñB«&˜3ß∑7&3¢rr∆76WDñCßfñFVÙ÷VFññG◊◊“ì∞¢ñG2Ê∆ñ'&'ïfñFVÛ÷÷ˆFV¬Á6V∆V7Fñˆ‚Á&ñ÷'îñC∞¢WÜV7WFRÜ÷ˆFV¬«∑GóS¢vV∆V÷VÁBÊFBr«ñ∆ˆCß∑GóS¢wfñFVÚr«&VÁDñCß&ˆ˜DñB«&˜3ß∑7&3¢rˆfóáGW&RÁvV&“r«˜7FW#¢rˆfóáGW&RÁ7frr«˜7FW$76WDñCßVÊfñ∆&∆U˜7FW$ñB∆6ˆÁG&ˆ«3ßG'VR∆◊WFVC¶f«6R∆WF˜∆ì¶f«6R∆∆ˆ˜¶f«6W◊◊“ì∞¢ñG2ÁVÊfñ∆&∆U˜7FW#÷÷ˆFV¬Á6V∆V7Fñˆ‚Á&ñ÷'îñC∞¢WÜV7WFRÜ÷ˆFV¬«∑GóS¢vV∆V÷VÁBÊFBr«ñ∆ˆCß∑GóS¢vVFñÚr«&VÁDñCß&ˆ˜DñB«&˜3ß∑7&3¢rr∆76WDñC¶VFñÙ÷VFññG◊◊“ì∞¢ñG2Ê∆ñ'&'îVFñÛ÷÷ˆFV¬Á6V∆V7Fñˆ‚Á&ñ÷'îñC∞¢76W'BÊWV¬á6fT÷VFñW&¬ÇrÚ˜VÁG'W7FVBÊñÁf∆ñB˜G&6≤ÁÊrrí¬rrì∞¢76W'BÊWV¬á6fT÷VFñW&¬ÇváGG3¢Ú˜W6W#ß74VÁG'W7FVBÊñÁf∆ñB˜&ófFRÊ◊Brí¬rrì∞¢76W'BÊWV¬á6fT÷VFñW&¬Çw&V∆FófR˜6˜VÊBÊ◊2rí¬rrì∞¢76W'BÊWV¬á6fT÷VFñW&¬ÇrˆfóáGW&RÁ7frrí¬rˆfóáGW&RÁ7frrì∞†¢∆WBG&gC◊7G'V7GW&VD6∆ˆÊRÜ÷ˆFV¬ÊFˆ7V÷VÁBí«V&∆ó6ÜVC◊7G'V7GW&VD6∆ˆÊRÜG&gBí«&Wfó6ñˆ„”∞¢6ˆÁ7B˜7G3’µ“∆W'&˜'3’µ“∆WáFW&Ê≈&WVW7G3’µ”∞¢6ˆÁ7BV&∆ñ4Fó#◊&W6ˆ«fRÜñ◊˜'BÊ÷WFÊFó&Ê÷R¬r‚‚Ú‚‚˜V&∆ñ2rì∞¢6ˆÁ7B6W'fW#÷7&VFU6W'fW"Ü7ñÊ2á&W«&W2ì”Á∞¢6ˆÁ7BW&√÷ÊWrU$¬á&WÁW&¬¬váGG¢Úˆ∆ˆ6∆Ü˜7Brì∞¢6ˆÁ7Bß6ˆ„÷FF”Á∑&W2Á6WDÜVFW"Çv6ˆÁFVÁB◊GóRr¬v∆ñ6Fñˆ‚ˆß6ˆ‚rì∑&W2ÊVÊBÑ•4Ù‚Á7G&ñÊvñgíÜFFíó”∞¢ñbáW&¬ÁFÜÊ÷S””“rˆíˆF÷ñ‚˜vW2ró&WGW&‚ß6ˆ‚á∂ˆ≥ßG'VR∆FF•∑∂ñCßvTñB«6«Vs¢wFW7Br«FóF∆S¢uFW7Br∆6ˆÁFVÁC¶G&gB«&Wfó6ñˆ‚∆ó5V&∆ó6ÜVCßG'VW’◊“ì∞¢ñbáW&¬ÁFÜÊ÷S””“rˆíˆF÷ñ‚ˆVFóF˜"ró∞¢ñbá&WÊ÷WFÜˆC””“ttUBró&WGW&‚ß6ˆ‚á∂ˆ≥ßG'VR∆FFß∑vSß∂ñCßvTñB∆Fˆ7V÷VÁC¶G&gB«V&∆ó6ÜVE&Wfó6ñˆ‰ñC¢wV&∆ó6ÜVBw“«&Wfó6ñˆÁ3•∑∂ñC¢w&Wfó6ñˆ‚“r∑&Wfó6ñˆ‚«fW'6ñˆ„ß&Wfó6ñˆÁ’◊◊“ì∞¢∆WB&ˆGì“rs∂f˜"vóBÜ6ˆÁ7B6áVÊ≤ˆb&Wñ&ˆGí≥÷6áVÊ≥∞¢6ˆÁ7B&WVW7C‘•4Ù‚Á'6RÜ&ˆGíì∑˜7G2ÁW6Çá&WVW7Bì∞¢G&gC◊7G'V7GW&VD6∆ˆÊRá&WVW7BÊFˆ7V÷VÁBì∑&Wfó6ñˆ‚≤≥∞¢ñbá&WVW7BÁV&∆ó6ÇóV&∆ó6ÜVC◊7G'V7GW&VD6∆ˆÊRÜG&gBì∞¢&WGW&‚ß6ˆ‚á∂ˆ≥ßG'VR∆FFß∑vTñB«fW'6ñˆ„ß&Wfó6ñˆ‚«&Wfó6ñˆ‰ñC¢w&Wfó6ñˆ‚“r∑&Wfó6ñˆ‚«V&∆ó6ÜVC§&ˆˆ∆V‚á&WVW7BÁV&∆ó6Çó◊“ì∞¢–¢ñbáW&¬ÁFÜÊ÷S””“rˆíˆF÷ñ‚ˆ÷VFñrbbW&¬Á6V&6Ö&◊2ÊÜ2ÇvñBríó∞¢6ˆÁ7B∆ñ&∆S◊W&¬Á6V&6Ö&◊2ÊvWBÇv÷ñ÷Rrì∞¢6ˆÁ7B76WC◊∆ñ&∆S””“wfñFVÚs˜∂ñCßfñFVÙ÷VFññB∆Ê÷S¢v&V◊WFF∂˜¶2ÁvV&“r∆÷ñ÷UGóS¢wfñFVÚ˜vV&“r∆«EFWáC¢t&V◊WFF∂˜¨;2fñF\;2r«&WfñWuW&√¢rˆíˆF÷ñ‚ˆ÷VFñˆñC“r∑fñFVÙ÷VFññG”ß∆ñ&∆S””“vVFñÚs˜∂ñC¶VFñÙ÷VFññB∆Ê÷S¢vÜÊv÷ñÁFÁvbr∆÷ñ÷UGóS¢vVFñÚ˜vbr∆«EFWáC¢rr«&WfñWuW&√¢rˆíˆF÷ñ‚ˆ÷VFñˆñC“r∂VFñÙ÷VFññG”ß∂ñC¶÷VFññB∆Ê÷S¢w6¨:B÷º:óÁÊrr∆÷ñ÷UGóS¢vñ÷vR˜Êrr∆«EFWáC¢t‹:ñFñL:&,;6¬l:∆7ßF˜GBº:ór«&WfñWuW&√¢rˆíˆF÷ñ‚ˆ÷VFñˆñC“r∂÷VFññG”∞¢&WGW&‚ß6ˆ‚á∂ˆ≥ßG'VR∆FFß∂76WG3•∂76WE“∆ÊWáD7W'6˜#¶ÁV∆«◊“ì∞¢–¢ñbáW&¬ÁFÜÊ÷S””“rˆíˆF÷ñ‚ˆ÷VFñrbgW&¬Á6V&6Ö&◊2ÊvWBÇvñBrì””◊VÊfñ∆&∆U˜7FW$ñBó∑&W2Á7FGW46ˆFS”CC∑&WGW&‚ß6ˆ‚á∂ˆ≥¶f«6R∆W'&˜#ß∂÷W76vS¢t÷VFñ76WBó2VÊfñ∆&∆Rw◊“ó–¢ñbÇáW&¬ÁFÜÊ÷S””“rˆíˆF÷ñ‚ˆ÷VFñrbbáW&¬Á6V&6Ö&◊2ÊvWBÇvñBrì””÷÷VFññG««W&¬Á6V&6Ö&◊2ÊvWBÇvñBrì””◊fñFVÙ÷VFññG««W&¬Á6V&6Ö&◊2ÊvWBÇvñBrì””÷VFñÙ÷VFññBíó««W&¬ÁFÜÊ÷S””“rˆ÷VFñÚr∂÷VFññG««W&¬ÁFÜÊ÷S””“rˆ÷VFñÚr∑fñFVÙ÷VFññG««W&¬ÁFÜÊ÷S””“rˆ÷VFñÚr∂VFñÙ÷VFññBó∞¢6ˆÁ7Bó4VFñÛ◊W&¬Á6V&6Ö&◊2ÊvWBÇvñBrì””÷VFñÙ÷VFññG««W&¬ÁFÜÊ÷S””“rˆ÷VFñÚr∂VFñÙ÷VFññC∞¢&W2Á6WDÜVFW"Çv6ˆÁFVÁB◊GóRr∆ó4VFñÛÚvVFñÚ˜vbs¢vñ÷vR˜7fr∑Ü÷¬rì∞¢&WGW&‚&W2ÊVÊBÜó4VFñÛÙ'VffW"Ê∆∆ˆ2Ébì¢s«7frÜ÷∆Á3“&áGG¢Ú˜wwrÁs2Ê˜&rÛ#˜7fr"vñGFÉ“##"ÜVñváC“###„«&V7BvñGFÉ“##"ÜVñváC“##"fñ∆√“"3Sfb"Û„¬˜7fs‚rì∞¢–¢ñbáW&¬ÁFÜÊ÷S””“rˆíˆWFÇ˜6W76ñˆ‚ró&WGW&‚ß6ˆ‚á∂ˆ≥ßG'VR∆FFß∂WFÜVÁFñ6FVC¶f«6R«W6W#¶ÁV∆«◊“ì∞¢ñbáW&¬ÁFÜÊ÷S””“rˆí˜V&∆ñ2˜vW2ró&WGW&‚ß6ˆ‚á∂ˆ≥ßG'VR∆FFß∂ñCßvTñB«6«Vs¢wFW7Br«FóF∆S¢uFW7Br∆FW67&óFñˆ„¢rr∆6ˆÁFVÁCßV&∆ó6ÜVBÁvW5∑vTñE◊◊“ì∞¢ñbáW&¬ÁFÜÊ÷S””“rˆí˜V&∆ñ2ˆÊfñvFñˆ‚ró&WGW&‚ß6ˆ‚á∂ˆ≥ßG'VR∆FFß∂óFV◊3•µ◊◊“ì∞¢ñbáW&¬ÁFÜÊ÷S””“rˆíˆñÁFVw&FñˆÁ2˜GvóF6Çˆ6ˆÊÊV7Fñˆ‚ró&WGW&‚ß6ˆ‚á∂ˆ≥ßG'VR∆FFß∂6ˆÊÊV7FVC¶f«6W◊“ì∞¢ñbáW&¬ÁFÜÊ÷RÁ7F'G5vóFÇÇrˆíÚríó&WGW&‚ß6ˆ‚á∂ˆ≥ßG'VR∆FFß∑6óFTÊ÷S¢uFW7Bw◊“ì∞¢6ˆÁ7BF&vWC◊&W6ˆ«fRáV&∆ñ4Fó"¬r‚r≤áW&¬ÁFÜÊ÷S””“r˜˜FW7BsÚr˜fó7V¬◊vRÊáF÷¬sßW&¬ÁFÜÊ÷Ríì∞¢ñbÇF&vWBÁ7F'G5vóFÇáV&∆ñ4Fó"≤rÚríó&WGW&‚&W2Áw&óFTÜVBÉC2íÊVÊBÇì∞¢G'ó∑&W2Á6WDÜVFW"Çv6ˆÁFVÁB◊GóRr«≤rÊß2s¢wFWáBˆ¶f67&óBr¬rÊáF÷¬s¢wFWáBˆáF÷¬r¬rÊ772s¢wFWáBˆ772r¬rÁ7frs¢vñ÷vR˜7fr∑Ü÷¬w’∂WáFÊ÷RáF&vWBï◊«¬v∆ñ6Fñˆ‚ˆˆ7FWB◊7G&V“rì∑&W2ÊVÊBÜvóB&VDfñ∆RáF&vWBíó–¢6F6á∑&W2Áw&óFTÜVBÉCBíÊVÊBÇó–¢“ì∞¢vóBÊWr&ˆ÷ó6RÜFˆÊS”Á6W'fW"Ê∆ó7FV‚É¬s#r„„„r∆FˆÊRíì∞¢6ˆÁ7B'&˜w6W#÷vóB6á&ˆ÷óV“Ê∆VÊ6Çá∂ÜVF∆W73ßG'VR∆WÜV7WF&∆UFÉß&ˆ6W72ÊVÁb‰4Ö$Ù‘ïT’ıDá«¬ÜWÜó7G57ñÊ2Çr˜W7"ˆ&ñ‚ˆ6á&ˆ÷óV“rìÚr˜W7"ˆ&ñ‚ˆ6á&ˆ÷óV“sßVÊFVfñÊVBí∆&w3•≤r“÷ÊÚ◊6ÊF&˜Çu◊“ì∞¢BÊgFW"Ü7ñÊ2Çì”Á∂vóB'&˜w6W"Ê6∆˜6RÇì∂vóBÊWr&ˆ÷ó6RÜFˆÊS”Á6W'fW"Ê6∆˜6RÜFˆÊRíó“ì∞¢6ˆÁ7B&6S“váGG¢ÚÛ#r„„„¢r∑6W'fW"ÊFG&W72ÇíÁ˜'C∞¢6ˆÁ7BVFóF˜#÷vóB'&˜w6W"ÊÊWuvRá∑fñWw˜'Cß∑vñGFÉ£3cb∆ÜVñváC£ì◊“ì∞¢6ˆÁ7BfñWvW#÷vóB'&˜w6W"ÊÊWuvRá∑fñWw˜'Cß∑vñGFÉ£CC∆ÜVñváC£ì◊“ì∞¢f˜"Ü6ˆÁ7B∂Ê÷R«vU“ˆbµ≤vVFóF˜"r∆VFóF˜%“≈≤wV&∆ñ2r«fñWvW%’“ó∞¢ÚÚ∂VWFÜR'&˜w6W"76W'FñˆÁ27G&ñ7BvÜñ∆R∆∆˜vñÊrFÜR6W&ñ¬gV∆¬◊7VóFP¢ÚÚ'V‚VÊ˜VvÇFñ÷RFÚ66ÜVGV∆R∆ˆ6F˜"v˜&≤gFW"∆ˆÊr&V6VFñÊr66W2‡¢vRÁ6WDFVfV«EFñ÷V˜WBÉSì∞¢vRÁ6WDFVfV«DÊfñvFñˆÂFñ÷V˜WBÉ3ì∞¢vRÊˆ‚ÇwvVW'&˜"r∆W'&˜#”ÊW'&˜'2ÁW6ÇÜÊ÷R≤s¢r∂W'&˜"Ê÷W76vRíì∞¢vRÊˆ‚Çw&WVW7Br«&WVW7C”Á∂ñbá&WVW7BÁW&¬ÇíÊñÊ6«VFW2ÇwVÁG'W7FVBÊñÁf∆ñBríñWáFW&Ê≈&WVW7G2ÁW6Çá&WVW7BÁW&¬Çíó“ì∞¢–¢6ˆÁ7B6Áf4ÊˆFS÷ñC”ÊVFóF˜"Ê∆ˆ6F˜"ÜÊÊˆFU∂FF÷ÊˆFR÷ñC“"G∂ñG“%÷ì∞¢6ˆÁ7BV&∆ó6ÜVDÊˆFS÷ñC”ÁfñWvW"Ê∆ˆ6F˜"Ü∂FF÷ÊˆFR÷ñC“"G∂ñG“%÷ì∞†¢vóBVFóF˜"Êv˜FÚÜ&6R≤rˆVFóF˜"◊c"ˆñÊFWÇÊáF÷¬rì∞¢vóBfñWvW"Êv˜FÚÜ&6R≤r˜˜FW7Brì∞¢vóB6Áf4ÊˆFRÜñG2ÊvˆˆDñ÷vRíÁvóDf˜"Çì∞¢vóBV&∆ó6ÜVDÊˆFRÜñG2ÊvˆˆDñ÷vRíÁvóDf˜"Çì∞¢ñbÜvóBVFóF˜"Ê∆ˆ6F˜"Çr7&ñváDFˆ6≤ríÊWf«VFRÜV√”ÊV¬Ê6∆74∆ó7BÊ6ˆÁFñÁ2Çv6∆˜6VBrííñvóBVFóF˜"Ê∆ˆ6F˜"Çr6˜V‰ñÁ7V7F˜"ríÊ6∆ñ6≤Çì∞¢f˜"Ü6ˆÁ7B∂∂Wí∆∆&V≈“ˆbµ≤v∆ñ'&'ïfñFVÚr¬ufñF\;2u“≈≤v∆ñ'&'îVFñÚr¬tÜÊru’“ó∞¢vóB6Áf4ÊˆFRÜñG5∂∂Wï“íÊWf«VFRÜV√”ÊV¬Ê6∆ñ6≤Çíì∞¢vóBVFóF˜"ÊvWD'ï&ˆ∆RÇwF"r«∂Ê÷S¢uF'F∆ˆ“:ó27¨;gfVrw“íÊ6∆ñ6≤Çì∞¢6ˆÁ7Bñ6∂W#÷VFóF˜"Ê∆ˆ6F˜"ÇrÊ∆Vv7í÷÷VFñ÷ñÁ7V7F˜"ÊVFóF˜"÷÷VFñ◊ñ6∂W"ríÊfó'7BÇì∞¢6ˆÁ7B6V∆V7FVC◊ñ6∂W"Ê∆ˆ6F˜"ÇrÊVFóF˜"÷÷VFñ◊6V∆V7FVBrì∞¢76W'BÊWV¬ÜvóB6V∆V7FVBÊWf«VFRÜV√”ÊV¬ÁFtÊ÷Rí¬u5‚r∆G∂∆&V«”¢‚WÜó7FñÊr÷VFñîB◊W7BÊ˜B&R&WfñWvVB2'&ˆ∂V‚ñ÷vVì∞¢76W'BÊWV¬ÜvóB6V∆V7FVBÊvWDGG&ñ'WFRÇv&ñ÷∆&V¬rí∆∂ól:∆7ßF˜GBG∂∆&V¬ÁFÙ∆˜vW$66RÇó÷∆G∂∆&V«”¢WÜó7FñÊr6V∆V7Fñˆ‚◊W7B&WFñ‚óG2÷VFñ∂ñÊFì∞¢76W'BÊWV¬ÜvóBñ6∂W"Ê∆ˆ6F˜"ÇrÊVFóF˜"÷÷VFñ◊6V∆V7Fñˆ‚'WGFˆ‚ríÁFWáD6ˆÁFVÁBÇí∆G∂∆&V«“V«L:fˆÃ:◊L:6∆G∂∆&V«”¢&V÷˜f¬7Fñˆ‚◊W7BÊ÷RóG27GV¬÷VFñ∂ñÊFì∞¢–¢f˜"Ü6ˆÁ7B∂∂Wí∆÷VFñGóU“ˆbµ≤v&Dñ÷vRr¬vñ÷ru“≈≤v&EfñFVÚr¬wfñFVÚu“≈≤v&DVFñÚr¬vVFñÚu’“ó∞¢76W'BÊWV¬ÜvóB6Áf4ÊˆFRÜñG5∂∂Wï“íÊ∆ˆ6F˜"ÇrÊ÷VFñ◊&WfñWrr∂÷VFñGóRíÊ6˜VÁBÇí√∆∂Wí≤r&V¶V7FVBˆ‚VFóF˜"6Áf2rì∞¢76W'BÊWV¬ÜvóBV&∆ó6ÜVDÊˆFRÜñG5∂∂Wï“íÊ∆ˆ6F˜"Ü÷VFñGóRíÊ6˜VÁBÇí√∆∂Wí≤r&V¶V7FVBñ‚V&∆ñ2DÙ“rì∞¢76W'BÊWV¬ÜvóBV&∆ó6ÜVDÊˆFRÜñG5∂∂Wï“íÊ6˜VÁBÇí√¬v∆Vv7í∆6VÜˆ∆FW"7W'fófW2f˜"r∂∂Wíì∞¢–¢f˜"Ü6ˆÁ7B∂∂Wí∆÷VFñGóU“ˆbµ≤vvˆˆDñ÷vRr¬vñ÷ru“≈≤vvˆˆEfñFVÚr¬wfñFVÚu“≈≤vvˆˆDVFñÚr¬vVFñÚu’“ó∞¢76W'BÊWV¬ÜvóB6Áf4ÊˆFRÜñG5∂∂Wï“íÊ∆ˆ6F˜"ÇrÊ÷VFñ◊&WfñWrr∂÷VFñGóRíÊ6˜VÁBÇí√∆∂Wí≤r&VÊFW&VBˆ‚6Áf2rì∞¢76W'BÊWV¬ÜvóBV&∆ó6ÜVDÊˆFRÜñG5∂∂Wï“íÊWf«VFRÜV√”ÊV¬ÁFtÊ÷RÁFÙ∆˜vW$66RÇíí∆÷VFñGóR∆∂Wí≤r&VÊFW&VBV&∆ñ6«í2FÜR÷VFñV∆V÷VÁBóG6V∆brì∞¢–¢76W'BÊFVWWV¬ÜWáFW&Ê≈&WVW7G2≈µ“¬vñÁf∆ñBWáFW&Ê¬÷VFñÊWfW"÷∂W2ÊWGv˜&≤&WVW7Brì∞†¢ÚÚñÁ7V7F˜'2f˜"∆Vv7í÷VFñ◊W7B∆∆˜r&Wó"&FÜW"FÜ‚Fó7∆ññÊr¢ÚÚvVÊW&ñ2&÷ó76ñÊrFWFñ∆VBVFóF˜""÷W76vR‡¢vóB6Áf4ÊˆFRÜñG2Ê&Dñ÷vRíÊWf«VFRÜV√”ÊV¬Ê6∆ñ6≤Çíì∞¢ñbÜvóBVFóF˜"Ê∆ˆ6F˜"Çr7&ñváDFˆ6≤ríÊWf«VFRÜV√”ÊV¬Ê6∆74∆ó7BÊ6ˆÁFñÁ2Çv6∆˜6VBrííñvóBVFóF˜"Ê∆ˆ6F˜"Çr6˜V‰ñÁ7V7F˜"ríÊ6∆ñ6≤Çì∞¢vóBVFóF˜"ÊvWD'ï&ˆ∆RÇwF"r«∂Ê÷S¢uF'F∆ˆ“:ó27¨;gfVrw“íÊ6∆ñ6≤Çì∞¢6ˆÁ7BñÁ7V7F˜#÷VFóF˜"Ê∆ˆ6F˜"ÇrÊ∆Vv7í÷÷VFñ÷ñÁ7V7F˜"rì∞¢vóBñÁ7V7F˜"ÁvóDf˜"Çì∞¢6ˆÁ7B76W'DFW67&ñ&W3÷7ñÊ2Ü6ˆÁG&ˆ¬∆÷W76vR∆Ê÷Rì”Á∞¢6ˆÁ7BñG3“ÜvóB6ˆÁG&ˆ¬ÊvWDGG&ñ'WFRÇv&ñ÷FW67&ñ&VF'író«¬rríÁ7∆óBÇı«2≤ÚíÊfñ«FW"Ñ&ˆˆ∆V‚ì∞¢6ˆÁ7BñC÷vóB÷W76vRÊvWDGG&ñ'WFRÇvñBrì∞¢76W'BÊˆ≤ÜñBbfñG2ÊñÊ6«VFW2ÜñBí∆G∂Ê÷W“ˆñÁG2FÚóG2f∆ñFFñˆ‚÷W76vVì∞¢76W'BÊWV¬ÜñG2Êfñ«FW"áf«VS”Áf«VS””÷ñBíÊ∆VÊwFÇ√∆G∂Ê÷W“&VfW&VÊ6W2FÜRf∆ñFFñˆ‚÷W76vRWÜ7F«íˆÊ6Vì∞¢76W'BÊWV¬ÜvóB6ˆÁG&ˆ¬ÊWf«VFRÇÜV∆V÷VÁB∆ñBì”ÊFˆ7V÷VÁBÊvWDV∆V÷VÁD'îñBÜñBìÚÊvWDGG&ñ'WFRÇw&ˆ∆Rrì””“w7FGW2r∆ñBí«G'VR∆G∂Ê÷W“&W6ˆ«fW2FÚ∆ófR7FGW2÷W76vVì∞¢”∞¢f˜"Ü6ˆÁ7BvñGFÇˆb≥3ì√3ce“ó∞¢vóBVFóF˜"Á6WEfñWw˜'E6ó¶Rá∑vñGFÇ∆ÜVñváC£ì“ì∞¢f˜"Ü6ˆÁ7B∂∂Wí«GóR∆∆&V≈“ˆbµ≤v6˜''WDñ÷vRr¬vñ÷vRr¬tº:óU$¬u“≈≤v6˜''WEfñFVÚr¬wfñFVÚr¬ufñF\;2U$¬u“≈≤v6˜''WDVFñÚr¬vVFñÚr¬tÜÊrU$¬u’“ó∞¢vóB6Áf4ÊˆFRÜñG5∂∂Wï“íÊWf«VFRÜV√”ÊV¬Ê6∆ñ6≤Çíì∞¢ñbÜvóBVFóF˜"Ê∆ˆ6F˜"Çr7&ñváDFˆ6≤ríÊWf«VFRÜV√”ÊV¬Ê6∆74∆ó7BÊ6ˆÁFñÁ2Çv6∆˜6VBrííñvóBVFóF˜"Ê∆ˆ6F˜"Çr6˜V‰ñÁ7V7F˜"ríÊ6∆ñ6≤Çì∞¢vóBVFóF˜"ÊvWD'ï&ˆ∆RÇwF"r«∂Ê÷S¢uF'F∆ˆ“:ó27¨;gfVrw“íÊ6∆ñ6≤Çì∞¢6ˆÁ7B7F˜&VEv&ÊñÊs÷ñÁ7V7F˜"Ê∆ˆ6F˜"ÇrÊ∆Vv7í÷÷VFñ◊GóR◊v&ÊñÊrrì∂vóB7F˜&VEv&ÊñÊrÁvóDf˜"Çì∞¢6ˆÁ7B÷VFññ6∂W$66W76ñ&ñ∆óGì÷vóBñÁ7V7F˜"Ê∆ˆ6F˜"ÇrÊVFóF˜"÷÷VFñ◊ñ6∂W"ríÊWf«VFT∆¬áñ6∂W'3”Áñ6∂W'2Ê÷áñ6∂W#”‚á∑&ˆ∆Sßñ6∂W"ÊvWDGG&ñ'WFRÇw&ˆ∆Rrí∆∆&V∆∆VD'ìßñ6∂W"ÊvWDGG&ñ'WFRÇv&ñ÷∆&V∆∆VF'írí∆∆&V≈FWáC¶Fˆ7V÷VÁBÊvWDV∆V÷VÁD'îñBáñ6∂W"ÊvWDGG&ñ'WFRÇv&ñ÷∆&V∆∆VF'íríìÚÁFWáD6ˆÁFVÁBÁG&ñ“Çó“ííì∞¢6ˆÁ7BWáV7FVEñ6∂W$∆&V«3◊GóS””“vñ÷vRsı≤tº:ó‹:ñFñL:&,;6¬u”ßGóS””“wfñFVÚsı≤ufñF\;2‹:ñFñL:&,;6¬r¬ufñF\;2&˜,:◊L;6º:óR‹:ñFñL:&,;6¬u”•≤tÜÊr‹:ñFñL:&,;6¬u”∞¢76W'BÊFVWWV¬Ü÷VFññ6∂W$66W76ñ&ñ∆óGíÊ÷ÜóFV””ÊóFV“Ê∆&V≈FWáBí∆WáV7FVEñ6∂W$∆&V«2∆G∑GóW”¢V6Ç÷VFññ6∂W"ó2Ê÷VB'ífó6ñ&∆RfñV∆B∆&V∆ì∞¢76W'BÊˆ≤Ü÷VFññ6∂W$66W76ñ&ñ∆óGíÊWfW'íÜóFV””ÊóFV“Á&ˆ∆S””“vw&˜WrbfóFV“Ê∆&V∆∆VD'íí∆G∑GóW”¢V6Ç÷VFññ6∂W"Wá˜6W2óG2Ê÷VBw&˜W6V÷ÁFñ76ì∞¢vóB76W'DFW67&ñ&W2ÜñÁ7V7F˜"ÊvWD'ï&ˆ∆RÇwFWáF&˜Çr«∂Ê÷S¶∆&V¬∆WÜ7CßG'VW“í«7F˜&VEv&ÊñÊr∆G∑GóW“6˜W&6Vì∞¢vóB76W'DFW67&ñ&W2ÜñÁ7V7F˜"Ê∆ˆ6F˜"ÇrÊVFóF˜"÷÷VFñ◊ñ6∂W"ríÊfó'7BÇíÊvWD'ï&ˆ∆RÇv'WGFˆ‚r«∂Ê÷S¢t‹:ñFñL:"÷VvÁñóL:6w“í«7F˜&VEv&ÊñÊr∆G∑GóW“÷VFññ6∂W&ì∞¢ñbáGóS””“vñ÷vRrñvóB76W'DFW67&ñ&W2ÜñÁ7V7F˜"ÊvWD'ï&ˆ∆RÇwFWáF&˜Çr«∂Ê÷S¢tº:ó∆\:◊,:6Ü«Bíw“í«7F˜&VEv&ÊñÊr¬vñ÷vR«Brì∞¢ñbáGóS””“wfñFVÚrñvóB76W'DFW67&ñ&W2ÜñÁ7V7F˜"ÊvWD'ï&ˆ∆RÇwFWáF&˜Çr«∂Ê÷S¢ufñF\;2&˜,:◊L;6º:óU$¬w“í«7F˜&VEv&ÊñÊr¬wfñFVÚ˜7FW"rì∞¢6ˆÁ7BWáV7FVE&˜WFW3“áGóS””“vñ÷vRp¢ı≤w7&2r¬v76WDñBr¬v«Br¬v6Fñˆ‚r¬vˆ&¶V7DfóBr¬w&FñÚr¬vfˆ6≈Çr¬vfˆ6≈ír¬v∆ˆFñÊrr¬vFV6˜&FófRu–¢ßGóS””“wfñFVÚp¢ı≤w7&2r¬v76WDñBr¬v6ˆÁG&ˆ«2r¬v∆ˆ˜r¬v◊WFVBr¬vWF˜∆ír¬w˜7FW"r¬w˜7FW$76WDñBu–¢•≤w7&2r¬v76WDñBr¬v6ˆÁG&ˆ«2r¬v∆ˆ˜u“íÊ÷Ü∂Wì”‚w&˜2‚r∂∂Wíì∞¢6ˆÁ7B&VÊFW&VE&˜WFW3÷vóBùt€ø-¢Gß≤⁄Óù∆≠y“ÊvWDGG&ñ'WFRÇw˜7FW"rí¬ı¬ˆ÷VFñ¬Û””C”É”#2BÚì∞¢76W'BÊWV¬ÜvóBV&∆ó6ÜVE6˜VÊBÊvWDGG&ñ'WFRÇv6ˆÁG&ˆ«2rí¬rr¬wV&∆ó6ÜVBVFñÚ∂VW2W6&∆RÊFófR∆ñ&6≤6ˆÁG&ˆ«2rì∞¢76W'BÊWV¬ÜvóBV&∆ó6ÜVE6˜VÊBÊvWDGG&ñ'WFRÇv∆ˆ˜rí¬rrì∞¢76W'BÊWV¬ÜvóBV&∆ó6ÜVE6˜VÊBÊWf«VFRÜV√”ÊÊWrU$¬ÜV¬ÊvWDGG&ñ'WFRÇw7&2rí∆∆ˆ6Fñˆ‚Êá&VbíÁFÜÊ÷Rí¬rˆ÷VFñÚr∂VFñÙ÷VFññB¬vˆÊ«íFÜR6W&FRV&∆ó6ÇWá˜6W2FÜR6V∆V7FVBVFñÚ76WBˆ‚FÜRV&∆ñ2vRrì∞¢76W'BÊWV¬ÜvóBfñWvW"ÊWf«VFRÜ7ñÊ2ñC”‚ÜvóBfWF6ÇÇrˆ÷VFñÚr∂ñBííÊÜVFW'2ÊvWBÇv6ˆÁFVÁB◊GóRrí∆VFñÙ÷VFññBí¬vVFñÚ˜vbr¬wFÜRV&∆ñ2÷VFñ&˜WFR6W'fW2FÜR6V∆V7FVBVFñÚ76WBvóFÇóG2VFñÚ‘î‘RGóRrì∞¢vóBVFóF˜"ÊWf«VFRÜñC”Á∑vñÊF˜rÂı˜&VGV6VD÷˜FñˆÂfñFVÙÊˆFS÷Fˆ7V÷VÁBÁVW'ï6V∆V7F˜"Çu∂FF÷ÊˆFR÷ñC“"r∂ñB≤r%“fñFVÚró“∆ñG2ÊvˆˆEfñFVÚì∞¢vóBVFóF˜"ÊV◊V∆FT÷VFñá∑&VGV6VD÷˜Fñˆ„¢w&VGV6Rw“ì∞¢vóBVFóF˜"ÁvóDf˜$gVÊ7Fñˆ‚ÜñC”Á∂6ˆÁ7BfñFVÛ÷Fˆ7V÷VÁBÁVW'ï6V∆V7F˜"Çu∂FF÷ÊˆFR÷ñC“"r∂ñB≤r%“fñFVÚrì∑&WGW&‚fñFVÚñÁ7FÊ6VˆbÖD‘≈fñFVÙV∆V÷VÁBbgfñFVÚÊ6ˆÁG&ˆ«2bbfñFVÚÊWF˜∆ó“∆ñG2ÊvˆˆEfñFVÚì∞¢76W'BÊWV¬ÜvóBVFóF˜"ÊWf«VFRÜñC”ÊFˆ7V÷VÁBÁVW'ï6V∆V7F˜"Çu∂FF÷ÊˆFR÷ñC“"r∂ñB≤r%“fñFVÚrì””◊vñÊF˜rÂı˜&VGV6VD÷˜FñˆÂfñFVÙÊˆFR∆ñG2ÊvˆˆEfñFVÚí«G'VR¬v6ÜÊvñÊrFÜRVFóF˜"÷˜Fñˆ‚&VfW&VÊ6RWFFW2∆ñ&6≤vóFÜ˜WB&W∆6ñÊróG26Áf2ÊˆFRrì∞¢vóBVFóF˜"ÊV◊V∆FT÷VFñá∑&VGV6VD÷˜Fñˆ„¢vÊÚ◊&VfW&VÊ6Rw“ì∞¢vóBVFóF˜"ÁvóDf˜$gVÊ7Fñˆ‚ÜñC”Á∂6ˆÁ7BfñFVÛ÷Fˆ7V÷VÁBÁVW'ï6V∆V7F˜"Çu∂FF÷ÊˆFR÷ñC“"r∂ñB≤r%“fñFVÚrì∑&WGW&‚fñFVÚñÁ7FÊ6VˆbÖD‘≈fñFVÙV∆V÷VÁBbgfñFVÚÊ6ˆÁG&ˆ«2bbfñFVÚÊWF˜∆ó“∆ñG2ÊvˆˆEfñFVÚì∞¢vóBfñWvW"ÊWf«VFRÜñC”Á∑vñÊF˜rÂı˜&VGV6VD÷˜FñˆÂfñFVÙÊˆFS÷Fˆ7V÷VÁBÁVW'ï6V∆V7F˜"Çu∂FF÷ÊˆFR÷ñC“"r∂ñB≤r%“ró“∆ñG2ÊvˆˆEfñFVÚì∞¢vóBfñWvW"ÊV◊V∆FT÷VFñá∑&VGV6VD÷˜Fñˆ„¢w&VGV6Rw“ì∞¢vóBfñWvW"ÁvóDf˜$gVÊ7Fñˆ‚ÜñC”Á∂6ˆÁ7BfñFVÛ÷Fˆ7V÷VÁBÁVW'ï6V∆V7F˜"Çu∂FF÷ÊˆFR÷ñC“"r∂ñB≤r%“rì∑&WGW&‚fñFVÚñÁ7FÊ6VˆbÖD‘≈fñFVÙV∆V÷VÁBbgfñFVÚÊ6ˆÁG&ˆ«2bbfñFVÚÊWF˜∆ó“∆ñG2ÊvˆˆEfñFVÚì∞¢76W'BÊWV¬ÜvóBV&∆ó6ÜVDÊˆFRÜñG2ÊvˆˆEfñFVÚíÊWf«VFRÜV√”ÊV¬Ê6ˆÁG&ˆ«2í«G'VR¬v6ÜÊvñÊrFÚ&VGV6VB÷˜Fñˆ‚vÜñ∆RFÜRvRó2˜V‚&W7F˜&W2ÊFófR∆ñ&6≤6ˆÁG&ˆ«2rì∞¢76W'BÊWV¬ÜvóBV&∆ó6ÜVDÊˆFRÜñG2ÊvˆˆEfñFVÚíÊWf«VFRÜV√”ÊV¬ÊWF˜∆íí∆f«6R¬w&VGV6VB÷˜Fñˆ‚7F˜2WFˆ÷Fñ2fñFVÚ∆ñ&6≤rì∞¢76W'BÊWV¬ÜvóBfñWvW"ÊWf«VFRÜñC”ÊFˆ7V÷VÁBÁVW'ï6V∆V7F˜"Çu∂FF÷ÊˆFR÷ñC“"r∂ñB≤r%“rì””◊vñÊF˜rÂı˜&VGV6VD÷˜FñˆÂfñFVÙÊˆFR∆ñG2ÊvˆˆEfñFVÚí«G'VR¬v6ÜÊvñÊrV&∆ñ2÷˜Fñˆ‚&VfW&VÊ6R∆VfW2FÜR&VÊFW&VBvRÊBóG2ñÁFW&7FñˆÁ2ñÁF7Brì∞¢vóBfñWvW"ÊV◊V∆FT÷VFñá∑&VGV6VD÷˜Fñˆ„¢vÊÚ◊&VfW&VÊ6Rw“ì∞¢vóBfñWvW"ÁvóDf˜$gVÊ7Fñˆ‚ÜñC”Á∂6ˆÁ7BfñFVÛ÷Fˆ7V÷VÁBÁVW'ï6V∆V7F˜"Çu∂FF÷ÊˆFR÷ñC“"r∂ñB≤r%“rì∑&WGW&‚fñFVÚñÁ7FÊ6VˆbÖD‘≈fñFVÙV∆V÷VÁBbbfñFVÚÊ6ˆÁG&ˆ«2bgfñFVÚÊWF˜∆ó“∆ñG2ÊvˆˆEfñFVÚì∞¢vóB6Áf4ÊˆFRÜñG2ÊvˆˆDVFñÚíÊWf«VFRÜV√”ÊV¬Ê6∆ñ6≤Çíì∞¢6ˆÁ7B6fVDVFñÙñÁ7V7F˜#÷VFóF˜"Ê∆ˆ6F˜"ÇrÊ∆Vv7í÷÷VFñ÷ñÁ7V7F˜"rí∆VFñıW&√◊6fVDVFñÙñÁ7V7F˜"ÊvWD'ï&ˆ∆RÇwFWáF&˜Çr«∂Ê÷S¢tÜÊrU$¬w“ì∞¢vóBVFñıW&¬Êfñ∆¬ÇrˆfóáGW&RÁvV&”ˆ÷ÁV√”rì∂vóBVFñıW&¬Á&W72ÇuF"rì∞¢76W'BÊWV¬ÜvóBVFñıW&¬ÊñÁWEf«VRÇí¬rˆfóáGW&RÁvV&”ˆ÷ÁV√”r¬v÷ÁV¬VFñÚU$¬&W∆6W2FÜR6V∆V7FVB∆ñ'&'í6˜W&6Rrì∞¢76W'BÊWV¬ÜvóB6fVDVFñÙñÁ7V7F˜"Ê∆ˆ6F˜"ÇrÊVFóF˜"÷÷VFñ◊6V∆V7FVBríÊ6˜VÁBÇí√¬v÷ÁV¬VFñÚU$¬6∆V'2FÜR7F∆R÷VFññ6∂W"6V∆V7Fñˆ‚rì∞¢76W'BÊWV¬ÜvóB6˜VÊE&WfñWrÊvWDGG&ñ'WFRÇw7&2rí¬rˆfóáGW&RÁvV&”ˆ÷ÁV√”r¬v÷ÁV¬VFñÚ6˜W&6R&V6ÜW2FÜRVFóF˜"6Áf2rì∞¢76W'BÊWV¬ÜvóBG&gBÁvW5∑vTñE“ÊÊˆFW5∂ñG2ÊvˆˆDVFñı“Á&˜2Ê76WDñB∆VFñÙ÷VFññB¬wVÁ6fVB÷ÁV¬˜fW'&ñFRFˆW2Ê˜B◊WFFRFÜRW'6ó7FVBG&gBrì∞¢76W'BÊWV¬ÜvóBV&∆ó6ÜVE6˜VÊBÊWf«VFRÜV√”ÊÊWrU$¬ÜV¬ÊvWDGG&ñ'WFRÇw7&2rí∆∆ˆ6Fñˆ‚Êá&VbíÁFÜÊ÷Rí¬rˆ÷VFñÚr∂VFñÙ÷VFññB¬v÷ÁV¬6˜W&6R&V÷ñÁ2&ófFRFÚFÜRVÁ6fVBVFóF˜"G&gBrì∞¢vóBVFóF˜"Ê∆ˆ6F˜"Çr76fRríÊ6∆ñ6≤Çì∞¢vóBVFóF˜"ÁvóDf˜$gVÊ7Fñˆ‚ÇÇì”ÊFˆ7V÷VÁBÁVW'ï6V∆V7F˜"Çr76fU7FGW2ríÁFWáD6ˆÁFVÁBÁ7F'G5vóFÇÇt÷VÁGfRríì∞¢76W'BÊWV¬á˜7G2ÊBÇ”íÁV&∆ó6Ç∆f«6R¬v÷ÁV¬÷VFñ◊6˜W&6R&W∆6V÷VÁBó26fVBvóFÜ˜WBV&∆ó6ÜñÊrrì∞¢76W'BÊWV¬ÜG&gBÁvW5∑vTñE“ÊÊˆFW5∂ñG2ÊvˆˆDVFñı“Á&˜2Ê76WDñB¬rr¬u6fR6∆V'2FÜRˆ'6ˆ∆WFR∆ñ'&'í76WBîBrì∞¢76W'BÊWV¬ÜG&gBÁvW5∑vTñE“ÊÊˆFW5∂ñG2ÊvˆˆDVFñı“Á&˜2Á7&2¬rˆfóáGW&RÁvV&”ˆ÷ÁV√”rì∞¢76W'BÊWV¬ÜvóBV&∆ó6ÜVE6˜VÊBÊWf«VFRÜV√”ÊÊWrU$¬ÜV¬ÊvWDGG&ñ'WFRÇw7&2rí∆∆ˆ6Fñˆ‚Êá&VbíÁFÜÊ÷Rí¬rˆ÷VFñÚr∂VFñÙ÷VFññB¬u6fR∆VfW2FÜR&ñ˜"V&∆ó6ÜVBVFñÚVÊ6ÜÊvVBrì∞¢vóBVFóF˜"Á&V∆ˆBÇì∞¢vóB6Áf4ÊˆFRÜñG2ÊvˆˆDVFñÚíÊWf«VFRÜV√”ÊV¬Ê6∆ñ6≤Çíì∞¢6ˆÁ7B&V∆ˆFVDVFñÙñÁ7V7F˜#÷VFóF˜"Ê∆ˆ6F˜"ÇrÊ∆Vv7í÷÷VFñ÷ñÁ7V7F˜"rì∞¢76W'BÊWV¬ÜvóB&V∆ˆFVDVFñÙñÁ7V7F˜"ÊvWD'ï&ˆ∆RÇwFWáF&˜Çr«∂Ê÷S¢tÜÊrU$¬w“íÊñÁWEf«VRÇí¬rˆfóáGW&RÁvV&”ˆ÷ÁV√”r¬wFÜR÷ÁV¬VFñÚU$¬7W'fófW2VFóF˜"&V∆ˆBrì∞¢76W'BÊWV¬ÜvóB&V∆ˆFVDVFñÙñÁ7V7F˜"Ê∆ˆ6F˜"ÇrÊVFóF˜"÷÷VFñ◊6V∆V7FVBríÊ6˜VÁBÇí√¬w&V∆ˆBFˆW2Ê˜B&W7F˜&RFÜR7WW'6VFVBVFñÚ76WBîBrì∞¢vóBVFóF˜"Ê∆ˆ6F˜"Çr7V&∆ó6ÇríÊ6∆ñ6≤Çì∞¢vóBVFóF˜"ÁvóDf˜$gVÊ7Fñˆ‚ÇÇì”ÊFˆ7V÷VÁBÁVW'ï6V∆V7F˜"Çr76fU7FGW2ríÁFWáD6ˆÁFVÁBÁ7F'G5vóFÇÇuV&∆ñº:«fríì∞¢76W'BÊWV¬á˜7G2ÊBÇ”íÁV&∆ó6Ç«G'VR¬wFÜR÷ÁV¬VFñÚ6˜W&6R&V6ÜW2V&∆ñ2˜WGWBˆÊ«íFá&˜VvÇ6W&FRV&∆ó6Çrì∞¢vóBfñWvW"Á&V∆ˆBÇì∞¢76W'BÊWV¬ÜvóBV&∆ó6ÜVDÊˆFRÜñG2ÊvˆˆDVFñÚíÊWf«VFRÜV√”ÊÊWrU$¬ÜV¬ÊvWDGG&ñ'WFRÇw7&2rí∆∆ˆ6Fñˆ‚Êá&VbíÁFÜÊ÷Rí¬rˆfóáGW&RÁvV&“r¬vWá∆ñ6óBV&∆ó6ÇWá˜6W2FÜR÷ÁV¬VFñÚU$¬rì∞¢vóBfñWvW"Á6WEfñWw˜'E6ó¶Rá∑vñGFÉ£3ì∆ÜVñváC£É#“ì∞¢76W'BÊWV¬ÜvóBV&∆ó6ÜVD÷˜fñRÊvWDGG&ñ'WFRÇw˜7FW"rí”÷ÁV∆¬«G'VR¬v÷ˆ&ñ∆RV&∆ñ2˜7FW"ó2&W6W'fVBrì∞¢76W'BÊWV¬ÜvóBV&∆ó6ÜVE6˜VÊBÊvWDGG&ñ'WFRÇv∆ˆ˜rí¬rr¬v÷ˆ&ñ∆RVFñÚ7Fñ∆¬∆ˆ˜2rì∞†¢ÚÚFÜR∆Vv7íñ÷vRÊVVG2FÜR6÷R7&˜ˆfˆ6¬ˆ∆ˆFñÊrˆFV6˜&FófR6ˆÁG&ˆ«0¢ÚÚˆ‚VFóF˜"6Áf2ÊBFÜRV&∆ó6ÜVBvR¬B÷ˆ&ñ∆RÊBFW6∑F˜vñGFá2‡¢vóB6Áf4ÊˆFRÜñG2Ê&Dñ÷vRíÊWf«VFRÜV√”ÊV¬Ê6∆ñ6≤Çíì∞¢6ˆÁ7Bñ÷vTñÁ7V7F˜#÷VFóF˜"Ê∆ˆ6F˜"ÇrÊ∆Vv7í÷÷VFñ÷ñÁ7V7F˜"rì∞¢vóBñ÷vTñÁ7V7F˜"ÊvWD'ï&ˆ∆RÇv6ˆ÷&ˆ&˜Çr«∂Ê÷S¢tº:óñ∆∆W7ßL:ó6Rw“íÁ6V∆V7D˜Fñˆ‚Çv6˜fW"rì∞¢vóBñ÷vTñÁ7V7F˜"ÊvWD'ï&ˆ∆RÇv6ˆ÷&ˆ&˜Çr«∂Ê÷S¢tº:ó,:Áíw“íÁ6V∆V7D˜Fñˆ‚ÇsÚrì∞¢f˜"Ü6ˆÁ7B∂Ê÷R«f«VU“ˆbµ≤t∂ól:|:2l:◊ß7¶ñÁFW6V‚r¬s#Ru“≈≤t∂ól:|:2l;∆v|Y∆VvW6V‚r¬sÉu’“ó∞¢vóBñ÷vTñÁ7V7F˜"ÊvWD'ï&ˆ∆RÇw6∆ñFW"r«∂Ê÷W“íÊWf«VFRÇÜV¬∆ÊWáBì”Á∞¢V¬Áf«VS÷ÊWáC∞¢V¬ÊFó7F6ÑWfVÁBÜÊWrWfVÁBÇvñÁWBr«∂'V&&∆W3ßG'VW“íì∞¢V¬ÊFó7F6ÑWfVÁBÜÊWrWfVÁBÇv6ÜÊvRr«∂'V&&∆W3ßG'VW“íì∞¢“«f«VRì∞¢–¢vóBñ÷vTñÁ7V7F˜"ÊvWD'ï&ˆ∆RÇv6ˆ÷&ˆ&˜Çr«∂Ê÷S¢tº:ó&WL;f«L:ó6Rw“íÁ6V∆V7D˜Fñˆ‚ÇvVvW"rì∞¢vóBñ÷vTñÁ7V7F˜"ÊvWD'ï&ˆ∆RÇv6ÜV6∂&˜Çr«∂Ê÷S¢t76≤L:◊7¨:◊LYº:ów“íÊ6ÜV6≤Çì∞¢6ˆÁ7B7&˜VD6Áf3÷6Áf4ÊˆFRÜñG2Ê&Dñ÷vRíÊ∆ˆ6F˜"Çvñ÷rrì∞¢76W'BÊWV¬ÜvóB7&˜VD6Áf2ÊWf«VFRÜV√”ÊvWD6ˆ◊WFVE7Gñ∆RÜV¬íÊˆ&¶V7DfóBí¬v6˜fW"rì∞¢76W'BÊWV¬ÜvóB7&˜VD6Áf2ÊWf«VFRÜV√”ÊvWD6ˆ◊WFVE7Gñ∆RÜV¬íÊˆ&¶V7E˜6óFñˆ‚í¬s#RRÉRrì∞¢76W'BÊWV¬ÜvóB7&˜VD6Áf2ÊWf«VFRÜV√”ÊvWD6ˆ◊WFVE7Gñ∆RÜV¬íÊ7V7E&FñÚí¬sÚrì∞¢76W'BÊWV¬ÜvóB7&˜VD6Áf2ÊvWDGG&ñ'WFRÇv∆ˆFñÊrrí¬vVvW"rì∞¢76W'BÊWV¬ÜvóB7&˜VD6Áf2ÊvWDGG&ñ'WFRÇv«Brí¬rr¬vFV6˜&FófRñ÷vRÜ2ÊÚ66W76ñ&∆R«Brì∞¢76W'BÊWV¬ÜvóB7&˜VD6Áf2ÊvWDGG&ñ'WFRÇw&ˆ∆Rrí¬w&W6VÁFFñˆ‚rì∞¢76W'BÊWV¬ÜvóBV&∆ó6ÜVDÊˆFRÜñG2Ê&Dñ÷vRíÊ∆ˆ6F˜"Çvñ÷rríÊWf«VFRÜV√”ÊvWD6ˆ◊WFVE7Gñ∆RÜV¬íÊˆ&¶V7DfóBí¬v6ˆÁFñ‚r¬wV&∆ñ27&˜&V÷ñÁ2VÊ6ÜÊvVB&Vf˜&R6fRrì∞†¢vóBVFóF˜"Ê∆ˆ6F˜"Çr76fRríÊ6∆ñ6≤Çì∞¢vóBVFóF˜"ÁvóDf˜$gVÊ7Fñˆ‚ÇÇì”ÊFˆ7V÷VÁBÁVW'ï6V∆V7F˜"Çr76fU7FGW2ríÁFWáD6ˆÁFVÁBÁ7F'G5vóFÇÇt÷VÁGfRríì∞¢76W'BÊWV¬á˜7G2ÊBÇ”íÁV&∆ó6Ç∆f«6Rì∞¢76W'BÊWV¬ÜG&gBÁvW5∑vTñE“ÊÊˆFW5∂ñG2Ê&Dñ÷vU“Á&˜2Ê«B¬t¶l:◊F˜GBº:ó∆\:◊,:2r¬vFV6˜&FófR÷ˆFRFˆW2Ê˜BFV∆WFRFÜRWFÜ˜&VB«BFWáBrì∞¢vóBfñWvW"Á&V∆ˆBÇì∞¢76W'BÊWV¬ÜvóBV&∆ó6ÜVDÊˆFRÜñG2Ê&Dñ÷vRíÊ∆ˆ6F˜"Çvñ÷rríÊvWDGG&ñ'WFRÇw&ˆ∆Rrí∆ÁV∆¬¬u6fRFˆW2Ê˜BV&∆ó6ÇFV6˜&FófR÷ˆFRrì∞¢76W'BÊWV¬ÜvóBV&∆ó6ÜVDÊˆFRÜñG2Ê&Dñ÷vRíÊ∆ˆ6F˜"Çvñ÷rríÊvWDGG&ñ'WFRÇv∆ˆFñÊrrí¬v∆ßírì∞¢vóBVFóF˜"Ê∆ˆ6F˜"Çr7V&∆ó6ÇríÊ6∆ñ6≤Çì∞¢vóBVFóF˜"ÁvóDf˜$gVÊ7Fñˆ‚ÇÇì”ÊFˆ7V÷VÁBÁVW'ï6V∆V7F˜"Çr76fU7FGW2ríÁFWáD6ˆÁFVÁBÁ7F'G5vóFÇÇuV&∆ñº:«fríì∞¢76W'BÊWV¬á˜7G2ÊBÇ”íÁV&∆ó6Ç«G'VRì∞¢vóBfñWvW"Á&V∆ˆBÇì∞¢f˜"Ü6ˆÁ7BvñGFÇˆb≥3ì√CC“ó∞¢vóBfñWvW"Á6WEfñWw˜'E6ó¶Rá∑vñGFÇ∆ÜVñváC£É#“ì∞¢ÚÚfñWw˜'B6ÜÊvR7F'G2g&W6Ç7ñÊ2vR÷ˆFV¬&VÊFW"‚vóBf˜"óG0¢ÚÚGF6ÜVB¬&W7Gñ∆VBñ÷vR&FÜW"FÜ‚6◊∆ñÊrÊˆFR&VñÊr&W∆6VB‡¢vóBfñWvW"ÁvóDf˜$gVÊ7Fñˆ‚ÜñC”Á∞¢6ˆÁ7Bñ÷s÷Fˆ7V÷VÁBÁVW'ï6V∆V7F˜"Çu∂FF÷ÊˆFR÷ñC“"r∂ñB≤r%“ñ÷rrì∞¢ñbÇÜñ÷rñÁ7FÊ6VˆbÖD‘ƒñ÷vTV∆V÷VÁBó«¬ñ÷rÊó46ˆÊÊV7FVBó&WGW&‚f«6S∞¢6ˆÁ7B773÷vWD6ˆ◊WFVE7Gñ∆RÜñ÷rì∞¢&WGW&‚772Êˆ&¶V7DfóC””“v6˜fW"rbf772Êˆ&¶V7E˜6óFñˆ„””“s#RRÉRrbf772Ê7V7E&FñÛ””“sÚs∞¢“∆ñG2Ê&Dñ÷vRì∞¢6ˆÁ7Bñ÷vS◊V&∆ó6ÜVDÊˆFRÜñG2Ê&Dñ÷vRíÊ∆ˆ6F˜"Çvñ÷rrì∞¢76W'BÊWV¬ÜvóBñ÷vRÊWf«VFRÜV√”ÊV¬Á7Gñ∆RÊˆ&¶V7DfóBí¬v6˜fW"rì∞¢76W'BÊWV¬ÜvóBñ÷vRÊWf«VFRÜV√”ÊV¬Á7Gñ∆RÊˆ&¶V7E˜6óFñˆ‚í¬s#RRÉRrì∞¢76W'BÊWV¬ÜvóBñ÷vRÊWf«VFRÜV√”ÊV¬Á7Gñ∆RÊ7V7E&FñÚí¬sÚrì∞¢76W'BÊWV¬ÜvóBñ÷vRÊvWDGG&ñ'WFRÇv∆ˆFñÊrrí¬vVvW"rì∞¢76W'BÊWV¬ÜvóBñ÷vRÊvWDGG&ñ'WFRÇv«Brí¬rrì∞¢76W'BÊWV¬ÜvóBñ÷vRÊvWDGG&ñ'WFRÇw&ˆ∆Rrí¬w&W6VÁFFñˆ‚rì∞¢–¢ÚÚGW&ÊñÊrFV6˜&FófR÷ˆFRˆfb&W7F˜&W2FÜR7F˜&VB«BvóFÜ˜WB&WGóñÊr‡¢vóBñ÷vTñÁ7V7F˜"ÊvWD'ï&ˆ∆RÇv6ÜV6∂&˜Çr«∂Ê÷S¢t76≤L:◊7¨:◊LYº:ów“íÁVÊ6ÜV6≤Çì∞¢76W'BÊWV¬ÜvóB6Áf4ÊˆFRÜñG2Ê&Dñ÷vRíÊ∆ˆ6F˜"Çvñ÷rríÊvWDGG&ñ'WFRÇv«Brí¬t¶l:◊F˜GBº:ó∆\:◊,:2rì∞†¢76W'BÊFVWWV¬ÜWáFW&Ê≈&WVW7G2≈µ“¬vñÁf∆ñB÷VFñ&R&∆ˆ6∂VBB∆¬fñWw˜'B6ó¶W2rì∞¢6ˆÁ7B&V6˜fW'ì÷vóBVFóF˜"ÊWf«VFRÜ7ñÊ2Çì”Á∞¢6ˆÁ7B∑&VÊFW$∆Vv7î÷VFññÁ7V7F˜'”÷vóBñ◊˜'BÇrˆVFóF˜"◊c"˜Víˆ∆Vv7í÷÷VFñ÷ñÁ7V7F˜"Êß2rì∂6ˆÁ7B&W7V«G3’µ”∞¢6ˆÁ7B∆ñ&6¥ÊˆFW3’∞¢∂ñC¢vÜó7F˜&ñ2◊∆ñ&6≤r«GóS¢vVFñÚr«&˜3ß∑7&3¢rˆÜó7F˜&ñ2Ê◊2r∆6ˆÁG&ˆ«3¶f«6W◊“¿¢∂ñC¢wfW'6ñˆÊVB◊∆ñ&6≤r«GóS¢vVFñÚr∆÷WFFFß∂VFóF˜$6ˆÁFVÁEfW'6ñˆ„£“«&˜3ß∑7&3¢rˆÊWrÊ◊2r∆6ˆÁG&ˆ«3¶f«6W◊–¢”∞¢6ˆÁ7B∆ñ&6µv&ÊñÊw3◊∆ñ&6¥ÊˆFW2Ê÷ÜÊˆFS”Á∞¢6ˆÁ7B&ˆ˜C◊&VÊFW$∆Vv7î÷VFññÁ7V7F˜"ÜÊˆFR¬Çì”ÁG'VRì∂Fˆ7V÷VÁBÁVW'ï6V∆V7F˜"Çr6ñÁ7V7F˜$&ˆGíríÊVÊBá&ˆ˜Bì∞¢6ˆÁ7Bv&ÊñÊw3◊&ˆ˜BÁVW'ï6V∆V7F˜$∆¬Çu∂FF◊f∆ñFFñˆ‚÷∂ñÊC“'V&∆ñ6Fñˆ‚%“rì∞¢6ˆÁ7B6˜VÁC◊v&ÊñÊw2Ê∆VÊwFÉ∑&ˆ˜BÁ&V÷˜fRÇì∑&WGW&‚6˜VÁC∞¢“ì∞¢f˜"Ü6ˆÁ7BGóRˆb≤vñ÷vRr¬wfñFVÚr¬vVFñÚu“ñf˜"Ü6ˆÁ7B÷ˆFRˆb≤vf«6Rr¬wFá&˜ru“ó∞¢6ˆÁ7B76WDñC“s””C”É”#2s∞¢6ˆÁ7B˜&ñvñÊ√◊∑7&3¢rˆfóáGW&RÁvV&“r∆76WDñB∆«C¢u6¨:B«Br∆6Fñˆ„¢u6¨:BfV∆ó&Br«˜7FW#¢rˆfóáGW&RÁ7frr«˜7FW$76WDñC¶76WDñB∆6ˆÁG&ˆ«3ßG'VR«VÊ∂Ê˜v„ß∑&W6W'fS¢wVÊ6ÜÊvVBw◊”∞¢6ˆÁ7BÊˆFS◊∂ñC¢v∆Vv7í◊&V6˜fW'ír«GóR«&˜3ß7G'V7GW&VD6∆ˆÊRÜ˜&ñvñÊ¬ó”∂∆WB∆∆˜s÷f«6R∆66WFVB∆wV&C∞¢6ˆÁ7B&ˆ˜C◊&VÊFW$∆Vv7î÷VFññÁ7V7F˜"ÜÊˆFR∆ÊWáC”Á∂ñbÇ∆∆˜ró∂ñbÜ÷ˆFS””“wFá&˜rróFá&˜rW'&˜"ÇtfóáGW&R&V¶V7Fñˆ‚rì∑&WGW&‚f«6S∑÷66WFVC◊7G'V7GW&VD6∆ˆÊRÜÊWáBì∑&WGW&‚G'VS∑“«∑VÊFñÊs¶f„”Á∂wV&C÷f„∑◊“ì∞¢Fˆ7V÷VÁBÁVW'ï6V∆V7F˜"Çr6ñÁ7V7F˜$&ˆGíríÊVÊBá&ˆ˜Bì∞¢6ˆÁ7B6˜W&6S◊&ˆ˜BÁVW'ï6V∆V7F˜"ÇvñÁWE∂&ñ÷∆&V√“"r≤á∂ñ÷vS¢tº:óU$¬r«fñFVÛ¢ufñF\;2U$¬r∆VFñÛ¢tÜÊrU$¬w’∑GóU“í≤r%“rì∞¢6˜W&6RÊfˆ7W2Çì∑6˜W&6RÁf«VS“rˆfóáGW&R÷ÊWáBÁvV&“s∑6˜W&6RÊFó7F6ÑWfVÁBÜÊWrñÁWDWfVÁBÇvñÁWBr«∂'V&&∆W3ßG'VW“íì∞¢6ˆÁ7B&V¶V7FVC◊6˜W&6RÊÜ4GG&ñ'WFRÇv&ñ÷ñÁf∆ñBríbbwV&BÇíbb66WFVBbb&ˆ˜BÁVW'ï6V∆V7F˜"ÇrÊVFóF˜"÷÷VFñ◊6V∆V7FVBrì∞¢6˜W&6RÊFó7F6ÑWfVÁBÜÊWr∂Wñ&ˆ&DWfVÁBÇv∂WñF˜v‚r«∂∂Wì¢tW66Rr∆'V&&∆W3ßG'VW“íì∂6ˆÁ7BW66VC◊6˜W&6RÁf«VS””÷˜&ñvñÊ¬Á7&2bfwV&BÇì∞¢∆∆˜s◊G'VS∑6˜W&6RÁf«VS“rˆfóáGW&R÷ÊWáBÁvV&“s∑6˜W&6RÊFó7F6ÑWfVÁBÜÊWrWfVÁBÇv6ÜÊvRr«∂'V&&∆W3ßG'VW“íì∞¢6ˆÁ7B6˜W&6Uñ6∂W$6∆V#“&ˆ˜BÁVW'ï6V∆V7F˜"ÇrÊVFóF˜"÷÷VFñ◊ñ6∂W"ríÁVW'ï6V∆V7F˜"ÇrÊVFóF˜"÷÷VFñ◊6V∆V7FVBrì∞¢∆WBg&W6É÷66WFVBÁ7&3””“rˆfóáGW&R÷ÊWáBÁvV&“rbf66WFVBÊ76WDñC””“rrbd•4Ù‚Á7G&ñÊvñgíÜ66WFVBÁVÊ∂Ê˜v‚ì””‘•4Ù‚Á7G&ñÊvñgíÜ˜&ñvñÊ¬ÁVÊ∂Ê˜v‚íbfwV&BÇì∞¢ñbáGóS””“vñ÷vRró∞¢6ˆÁ7B«C◊&ˆ˜BÁVW'ï6V∆V7F˜"Çu∂&ñ÷∆&V√“$º:ó∆\:◊,:6Ü«Bí%“rì∂«BÊfˆ7W2Çì∂«BÁf«VS“|9¶¢«Bs∂«BÊFó7F6ÑWfVÁBÜÊWrñÁWDWfVÁBÇvñÁWBr«∂'V&&∆W3ßG'VW“íì∞¢g&W6É÷g&W6Çbf66WFVBÊ«C””“|9¶¢«Brbf66WFVBÁ7&3””“rˆfóáGW&R÷ÊWáBÁvV&“rbf66WFVBÊ6Fñˆ„””÷˜&ñvñÊ¬Ê6Fñˆ„∞¢÷V«6RñbáGóS””“wfñFVÚró∞¢6ˆÁ7B˜7FW#◊&ˆ˜BÁVW'ï6V∆V7F˜"Çu∂&ñ÷∆&V√“%fñF\;2&˜,:◊L;6º:óU$¬%“rì∑˜7FW"Êfˆ7W2Çì∑˜7FW"Áf«VS“rˆfóáGW&R÷ÊWáBÁ7frs∑˜7FW"ÊFó7F6ÑWfVÁBÜÊWrñÁWDWfVÁBÇvñÁWBr«∂'V&&∆W3ßG'VW“íì∞¢g&W6É÷g&W6Çbf66WFVBÁ˜7FW#””“rˆfóáGW&R÷ÊWáBÁ7frrbf66WFVBÁ˜7FW$76WDñC””“rrbf66WFVBÁ7&3””“rˆfóáGW&R÷ÊWáBÁvV&“rbb&ˆ˜BÁVW'ï6V∆V7F˜"ÇrÊVFóF˜"÷÷VFñ◊6V∆V7FVBrì∞¢–¢6ˆÁ7BVÊ6ÜÊvVC‘•4Ù‚Á7G&ñÊvñgíÜÊˆFRÁ&˜2ì””‘•4Ù‚Á7G&ñÊvñgíÜ˜&ñvñÊ¬ì∑&ˆ˜BÁ&V÷˜fRÇì∞¢6ˆÁ7B∆ˆ6∂VC◊&VÊFW$∆Vv7î÷VFññÁ7V7F˜"á≤‚‚ÊÊˆFR∆∆ˆ6∂VCßG'VW“¬Çì”Á∑Fá&˜rW'&˜"Çt∆ˆ6∂VB∆Vv7í÷VFñ6ÜÊvVBrì∑“ì∂Fˆ7V÷VÁBÁVW'ï6V∆V7F˜"Çr6ñÁ7V7F˜$&ˆGíríÊVÊBÜ∆ˆ6∂VBì∞¢6ˆÁ7B∆ˆ6∂VE6fS’≤‚‚Ê∆ˆ6∂VBÁVW'ï6V∆V7F˜$∆¬ÇvñÁWB«6V∆V7B∆'WGFˆ‚rï“ÊWfW'íÜV√”ÊV¬ÊFó6&∆VBì∂∆ˆ6∂VBÁ&V÷˜fRÇì∞¢&W7V«G2ÁW6Çá∑GóR∆÷ˆFR«&V¶V7FVB∆W66VB«6˜W&6Uñ6∂W$6∆V"∆g&W6Ç«VÊ6ÜÊvVB∆∆ˆ6∂VE6fW“ì∞¢◊&WGW&‚∑&W7V«G2«∆ñ&6µv&ÊñÊw7”∞¢“ì∞¢76W'BÊFVWWV¬á&V6˜fW'íÁ∆ñ&6µv&ÊñÊw2≈≥√“¬vÊWr∆ñ&6≤'V∆W2÷F6ÇFÜR6W'fW"&ˆfñ∆RvFRvóFÜ˜WB÷ó6∆&V∆ñÊrÜó7F˜&ñ6¬VÁfW'6ñˆÊVB÷VFñrì∞¢f˜"Ü6ˆÁ7B&W7V«Bˆb&V6˜fW'íÁ&W7V«G2ñf˜"Ü6ˆÁ7B∂Wíˆb≤w&V¶V7FVBr¬vW66VBr¬w6˜W&6Uñ6∂W$6∆V"r¬vg&W6Çr¬wVÊ6ÜÊvVBr¬v∆ˆ6∂VE6fRu“ñ76W'BÊWV¬á&W7V«E∂∂Wï“«G'VRƒ•4Ù‚Á7G&ñÊvñgíá&W7V«Bíì∞¢76W'BÊFVWWV¬ÜW'&˜'2≈µ“ì∞ß“ì∞
+import {exerciseComposition} from './helpers/composition.js';
+import assert from 'node:assert/strict';
+import test from 'node:test';
+import {createServer} from 'node:http';
+import {readFile} from 'node:fs/promises';
+import {existsSync} from 'node:fs';
+import {resolve,extname} from 'node:path';
+import {chromium} from 'playwright';
+import {createDocument} from '../../public/editor-v2/core/schema.js';
+import {createEditorState,activePage} from '../../public/editor-v2/core/state.js';
+import {execute} from '../../public/editor-v2/core/commands.js';
+import {safeMediaUrl} from '../../public/editor-v2/core/element-content.js';
+import './d06-media-archive-save-publish.test.js';
+
+test('legacy image video audio share guarded media URLs in Inspector Canvas and public Save/Publish',async t=>{
+  const model=createEditorState(createDocument());
+  const pageId=model.document.activePageId,rootId=activePage(model).rootId,ids={};
+  const corrupt={toString:'not callable',valueOf:'not callable'};
+  const originalCorrupt={};
+  const entries=[
+    ['badImage','image','//untrusted.invalid/track.png'],
+    ['badVideo','video','https://user:pass@untrusted.invalid/private.mp4'],
+    ['badAudio','audio','relative/sound.mp3'],
+    ['goodImage','image','/fixture.svg'],
+    ['goodVideo','video','/fixture.webm'],
+    ['goodAudio','audio','/fixture.webm'],
+    ['corruptImage','image',corrupt],['corruptVideo','video',corrupt],['corruptAudio','audio',corrupt]
+  ];
+  for(const [key,type,src] of entries){
+    const props={src,alt:'Tesztk√©p',...(key.startsWith('corrupt')?{assetId:corrupt,...(type==='image'?{alt:corrupt}:type==='video'?{poster:corrupt,posterAssetId:corrupt}:{})}:{})};
+    execute(model,{type:'element.add',payload:{type,parentId:rootId,props}});
+    ids[key]=model.selection.primaryId;
+    if(key.startsWith('corrupt'))originalCorrupt[key]=structuredClone(activePage(model).nodes[ids[key]].props);
+  }
+  execute(model,{type:'element.add',payload:{type:'video',parentId:rootId,props:{src:'/fixture.webm',poster:'javascript:alert(1)'}}});
+  ids.badPoster=model.selection.primaryId;
+  execute(model,{type:'element.add',payload:{type:'image',parentId:rootId,props:{src:'',alt:''}}});
+  ids.libraryImage=model.selection.primaryId;
+  const mediaId='00000000-0000-4000-8000-000000000123',videoMediaId='00000000-0000-4000-8000-000000000124';
+  const audioMediaId='00000000-0000-4000-8000-000000000125',unavailablePosterId='00000000-0000-4000-8000-000000000126';
+  execute(model,{type:'element.add',payload:{type:'video',parentId:rootId,props:{src:'',assetId:videoMediaId}}});
+  ids.libraryVideo=model.selection.primaryId;
+  execute(model,{type:'element.add',payload:{type:'video',parentId:rootId,props:{src:'/fixture.webm',poster:'/fixture.svg',posterAssetId:unavailablePosterId,controls:true,muted:false,autoplay:false,loop:false}}});
+  ids.unavailablePoster=model.selection.primaryId;
+  execute(model,{type:'element.add',payload:{type:'audio',parentId:rootId,props:{src:'',assetId:audioMediaId}}});
+  ids.libraryAudio=model.selection.primaryId;
+  assert.equal(safeMediaUrl('//untrusted.invalid/track.png'),'');
+  assert.equal(safeMediaUrl('https://user:pass@untrusted.invalid/private.mp4'),'');
+  assert.equal(safeMediaUrl('relative/sound.mp3'),'');
+  assert.equal(safeMediaUrl('/fixture.svg'),'/fixture.svg');
+
+  let draft=structuredClone(model.document),published=structuredClone(draft),revision=1;
+  const posts=[],errors=[],externalRequests=[];
+  const publicDir=resolve(import.meta.dirname,'../../public');
+  const server=createServer(async(req,res)=>{
+    const url=new URL(req.url,'http://localhost');
+    const json=data=>{res.setHeader('content-type','application/json');res.end(JSON.stringify(data))};
+    if(url.pathname==='/api/admin/pages')return json({ok:true,data:[{id:pageId,slug:'test',title:'Test',content:draft,revision,isPublished:true}]});
+    if(url.pathname==='/api/admin/editor'){
+      if(req.method==='GET')return json({ok:true,data:{page:{id:pageId,document:draft,publishedRevisionId:'published'},revisions:[{id:'revision-'+revision,version:revision}]}});
+      let body='';for await(const chunk of req)body+=chunk;
+      const request=JSON.parse(body);posts.push(request);
+      draft=structuredClone(request.document);revision++;
+      if(request.publish)published=structuredClone(draft);
+      return json({ok:true,data:{pageId,version:revision,revisionId:'revision-'+revision,published:Boolean(request.publish)}});
+    }
+    if(url.pathname==='/api/admin/media'&&!url.searchParams.has('id')){
+      const playable=url.searchParams.get('mime');
+      const asset=playable==='video'?{id:videoMediaId,name:'bemutatkozas.webm',mimeType:'video/webm',altText:'Bemutatkoz√≥ vide√≥',previewUrl:'/api/admin/media?id='+videoMediaId}:playable==='audio'?{id:audioMediaId,name:'hangminta.wav',mimeType:'audio/wav',altText:'',previewUrl:'/api/admin/media?id='+audioMediaId}:{id:mediaId,name:'saj√°t-k√©p.png',mimeType:'image/png',altText:'M√©diat√°rb√≥l v√°lasztott k√©p',previewUrl:'/api/admin/media?id='+mediaId};
+      return json({ok:true,data:{assets:[asset],nextCursor:null}});
+    }
+    if(url.pathname==='/api/admin/media'&&url.searchParams.get('id')===unavailablePosterId){res.statusCode=404;return json({ok:false,error:{message:'Media asset is unavailable'}})}
+    if((url.pathname==='/api/admin/media'&&(url.searchParams.get('id')===mediaId||url.searchParams.get('id')===videoMediaId||url.searchParams.get('id')===audioMediaId))||url.pathname==='/media/'+mediaId||url.pathname==='/media/'+videoMediaId||url.pathname==='/media/'+audioMediaId){
+      const isAudio=url.searchParams.get('id')===audioMediaId||url.pathname==='/media/'+audioMediaId;
+      res.setHeader('content-type',isAudio?'audio/wav':'image/svg+xml');
+      return res.end(isAudio?Buffer.alloc(16):'<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"><rect width="20" height="20" fill="#56f"/></svg>');
+    }
+    if(url.pathname==='/api/auth/session')return json({ok:true,data:{authenticated:false,user:null}});
+    if(url.pathname==='/api/public/pages')return json({ok:true,data:{id:pageId,slug:'test',title:'Test',description:'',content:published.pages[pageId]}});
+    if(url.pathname==='/api/public/navigation')return json({ok:true,data:{items:[]}});
+    if(url.pathname==='/api/integrations/twitch/connection')return json({ok:true,data:{connected:false}});
+    if(url.pathname.startsWith('/api/'))return json({ok:true,data:{siteName:'Test'}});
+    const target=resolve(publicDir,'.'+(url.pathname==='/p/test'?'/visual-page.html':url.pathname));
+    if(!target.startsWith(publicDir+'/'))return res.writeHead(403).end();
+    try{res.setHeader('content-type',{'.js':'text/javascript','.html':'text/html','.css':'text/css','.svg':'image/svg+xml'}[extname(target)]||'application/octet-stream');res.end(await readFile(target))}
+    catch{res.writeHead(404).end()}
+  });
+  await new Promise(done=>server.listen(0,'127.0.0.1',done));
+  const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||(existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined),args:['--no-sandbox']});
+  t.after(async()=>{await browser.close();await new Promise(done=>server.close(done))});
+  const base='http://127.0.0.1:'+server.address().port;
+  const editor=await browser.newPage({viewport:{width:1366,height:900}});
+  const viewer=await browser.newPage({viewport:{width:1440,height:900}});
+  for(const [name,page] of [['editor',editor],['public',viewer]]){
+    // Keep the browser assertions strict while allowing the serial full-suite
+    // run enough time to schedule locator work after long preceding cases.
+    page.setDefaultTimeout(15000);
+    page.setDefaultNavigationTimeout(30000);
+    page.on('pageerror',error=>errors.push(name+': '+error.message));
+    page.on('request',request=>{if(request.url().includes('untrusted.invalid'))externalRequests.push(request.url())});
+  }
+  const canvasNode=id=>editor.locator(`.node[data-node-id="${id}"]`);
+  const publishedNode=id=>viewer.locator(`[data-node-id="${id}"]`);
+
+  await editor.goto(base+'/editor-v2/index.html');
+  await viewer.goto(base+'/p/test');
+  await canvasNode(ids.goodImage).waitFor();
+  await publishedNode(ids.goodImage).waitFor();
+  if(await editor.locator('#rightDock').evaluate(el=>el.classList.contains('closed')))await editor.locator('#openInspector').click();
+  for(const [key,label] of [['libraryVideo','Vide√≥'],['libraryAudio','Hang']]){
+    await canvasNode(ids[key]).evaluate(el=>el.click());
+    await editor.getByRole('tab',{name:'Tartalom √©s sz√∂veg'}).click();
+    const picker=editor.locator('.legacy-media-inspector .editor-media-picker').first();
+    const selected=picker.locator('.editor-media-selected');
+    assert.equal(await selected.evaluate(el=>el.tagName),'SPAN',`${label}: an existing media ID must not be previewed as a broken image`);
+    assert.equal(await selected.getAttribute('aria-label'),`Kiv√°lasztott ${label.toLowerCase()}`,`${label}: existing selection must retain its media kind`);
+    assert.equal(await picker.locator('.editor-media-selection button').textContent(),`${label} elt√°vol√≠t√°sa`,`${label}: removal action must name its actual media kind`);
+  }
+  for(const [key,mediaType] of [['badImage','img'],['badVideo','video'],['badAudio','audio']]){
+    assert.equal(await canvasNode(ids[key]).locator('.media-preview '+mediaType).count(),0,key+' rejected on Editor Canvas');
+    assert.equal(await publishedNode(ids[key]).locator(mediaType).count(),0,key+' rejected in public DOM');
+    assert.equal(await publishedNode(ids[key]).count(),1,'legacy placeholder survives for '+key);
+  }
+  for(const [key,mediaType] of [['goodImage','img'],['goodVideo','video'],['goodAudio','audio']]){
+    assert.equal(await canvasNode(ids[key]).locator('.media-preview '+mediaType).count(),1,key+' rendered on Canvas');
+    assert.equal(await publishedNode(ids[key]).evaluate(el=>el.tagName.toLowerCase()),mediaType,key+' rendered publicly as the media element itself');
+  }
+  assert.deepEqual(externalRequests,[],'invalid external media never makes a network request');
+
+  // Inspectors for legacy media must allow repair rather than displaying a
+  // generic "missing detailed editor" message.
+  await canvasNode(ids.badImage).evaluate(el=>el.click());
+  if(await editor.locator('#rightDock').evaluate(el=>el.classList.contains('closed')))await editor.locator('#openInspector').click();
+  await editor.getByRole('tab',{name:'Tartalom √©s sz√∂veg'}).click();
+  const inspector=editor.locator('.legacy-media-inspector');
+  await inspector.waitFor();
+  const assertDescribes=async(control,message,name)=>{
+    const ids=(await control.getAttribute('aria-describedby')||'').split(/\s+/).filter(Boolean);
+    const id=await message.getAttribute('id');
+    assert.ok(id&&ids.includes(id),`${name} points to its validation message`);
+    assert.equal(ids.filter(value=>value===id).length,1,`${name} references the validation message exactly once`);
+    assert.equal(await control.evaluate((element,id)=>document.getElementById(id)?.getAttribute('role')==='status',id),true,`${name} resolves to a live status message`);
+  };
+  for(const width of [390,1366]){
+    await editor.setViewportSize({width,height:900});
+    for(const [key,type,label] of [['corruptImage','image','K√©p URL'],['corruptVideo','video','Vide√≥ URL'],['corruptAudio','audio','Hang URL']]){
+      await canvasNode(ids[key]).evaluate(el=>el.click());
+      if(await editor.locator('#rightDock').evaluate(el=>el.classList.contains('closed')))await editor.locator('#openInspector').click();
+      await editor.getByRole('tab',{name:'Tartalom √©s sz√∂veg'}).click();
+      const storedWarning=inspector.locator('.legacy-media-type-warning');await storedWarning.waitFor();
+      const mediaPickerAccessibility=await inspector.locator('.editor-media-picker').evaluateAll(pickers=>pickers.map(picker=>({role:picker.getAttribute('role'),labelledBy:picker.getAttribute('aria-labelledby'),labelText:document.getElementById(picker.getAttribute('aria-labelledby'))?.textContent.trim()})));
+      const expectedPickerLabels=type==='image'?['K√©p a M√©diat√°rb√≥l']:type==='video'?['Vide√≥ a M√©diat√°rb√≥l','Vide√≥ bor√≠t√≥k√©pe a M√©diat√°rb√≥l']:['Hang a M√©diat√°rb√≥l'];
+      assert.deepEqual(mediaPickerAccessibility.map(item=>item.labelText),expectedPickerLabels,`${type}: each media picker is named by a visible field label`);
+      assert.ok(mediaPickerAccessibility.every(item=>item.role==='group'&&item.labelledBy),`${type}: each media picker exposes its named group semantics`);
+      await assertDescribes(inspector.getByRole('textbox',{name:label,exact:true}),storedWarning,`${type} source`);
+      await assertDescribes(inspector.locator('.editor-media-picker').first().getByRole('button',{name:'M√©diat√°r megnyit√°sa'}),storedWarning,`${type} media picker`);
+      if(type==='image')await assertDescribes(inspector.getByRole('textbox',{name:'K√©p le√≠r√°sa (alt)'}),storedWarning,'image alt');
+      if(type==='video')await assertDescribes(inspector.getByRole('textbox',{name:'Vide√≥ bor√≠t√≥k√©p URL'}),storedWarning,'video poster');
+      const expectedRoutes=(type==='image'
+        ?['src','assetId','alt','caption','objectFit','ratio','focalX','focalY','loading','decorative']
+        :type==='video'
+          ?['src','assetId','controls','loop','muted','autoplay','poster','posterAssetId']
+          :['src','assetId','controls','loop']).map(key=>'props.'+key);
+      const renderedRoutes=await inspector.locator('[data-inspector-command="element.update"]').evaluateAll(controls=>controls.map(control=>control.dataset.inspectorKey));
+      assert.deepEqual(renderedRoutes,expectedRoutes,type+' Inspector fields expose their exact Page Model routes');
+      const source=inspector.getByRole('textbox',{name:label,exact:true});
+      assert.equal(await source.inputValue(),'','malformed source must not be coerced into an input');
+      if(type==='image')assert.equal(await inspector.getByRole('textbox',{name:'K√©p le√≠r√°sa (alt)'}).inputValue(),'');
+      if(type==='video')assert.equal(await inspector.getByRole('textbox',{name:'Vide√≥ bor√≠t√≥k√©p URL'}).inputValue(),'');
+      assert.equal(await canvasNode(ids[key]).locator('.media-preview '+(type==='image'?'img':type)).count(),0);
+      await source.fill(type==='image'?'/fixture.svg':'/fixture.webm');await source.press('Tab');
+      await canvasNode(ids[key]).locator('.media-preview '+(type==='image'?'img':type)).waitFor({state:'attached'});
+      await editor.keyboard.press('Control+z');
+      assert.equal(await source.inputValue(),'','Undo restores malformed stored data safely');
+      await editor.keyboard.press('Control+Shift+z');assert.match(await source.inputValue(),/^\/fixture\./);
+      await editor.keyboard.press('Control+z');assert.equal(await source.inputValue(),'');
+      assert.equal(posts.length,0,'inspection and command edits never auto-save/publish');
+    }
+  }
+  await canvasNode(ids.badImage).evaluate(el=>el.click());
+  assert.deepEqual(errors,[],'all malformed legacy media Inspectors must remain usable');
+  const invalidSource=inspector.getByRole('textbox',{name:'K√©p URL'});
+  const invalidSourceWarning=inspector.locator('.property-validation[role="status"]:not(:empty)');
+  assert.equal(await invalidSourceWarning.count(),1,'invalid URL is explained to the editor user');
+  const invalidSourceWarningId=await invalidSourceWarning.getAttribute('id');
+  await assertDescribes(invalidSource,invalidSourceWarning,'invalid image URL');
+  assert.equal(posts.length,0,'selecting and inspecting the node cannot persist or publish');
+  await inspector.getByRole('textbox',{name:'K√©p URL'}).fill('/fixture.svg');
+  await inspector.getByRole('textbox',{name:'K√©p URL'}).press('Tab');
+  await canvasNode(ids.badImage).locator('.media-preview img').waitFor();
+  assert.equal(await inspector.locator('.property-validation[role="status"]:not(:empty)').count(),0,'warning disappears once URL is repaired');
+  assert.ok(!(await invalidSource.getAttribute('aria-describedby')||'').split(/\s+/).includes(invalidSourceWarningId),'resolved warnings are removed from the field description relationship');
+  await canvasNode(ids.badPoster).evaluate(el=>el.click());
+  await editor.getByRole('tab',{name:'Tartalom √©s sz√∂veg'}).click();
+  const posterField=inspector.getByRole('textbox',{name:'Vide√≥ bor√≠t√≥k√©p URL'});
+  const posterWarning=inspector.locator('.property-validation[role="status"]:not(:empty)');
+  assert.equal(await posterWarning.count(),1,'unsafe video poster URL receives a warning');
+  const posterWarningId=await posterWarning.getAttribute('id');
+  await assertDescribes(posterField,posterWarning,'unsafe video poster URL');
+  const posterPicker=inspector.locator('.editor-media-picker').nth(1).getByRole('button',{name:'M√©diat√°r megnyit√°sa'});
+  await assertDescribes(posterPicker,posterWarning,'unsafe video poster media picker');
+  await posterField.fill('/fixture.svg');await posterField.press('Tab');
+  await canvasNode(ids.badPoster).locator('.media-preview video').waitFor();
+  assert.equal(await inspector.locator('.property-validation[role="status"]:not(:empty)').count(),0,'poster warning clears after a valid repair');
+  assert.ok(!(await posterField.getAttribute('aria-describedby')||'').split(/\s+/).includes(posterWarningId),'repaired poster field no longer references stale warning');
+  await canvasNode(ids.goodVideo).evaluate(el=>el.click());
+  await editor.getByRole('tab',{name:'Tartalom √©s sz√∂veg'}).click();
+  const controlsField=inspector.getByRole('checkbox',{name:'Lej√°tsz√≥vez√©rl≈ëk megjelen√≠t√©se'});
+  const mutedField=inspector.getByRole('checkbox',{name:'Vide√≥ n√©m√≠t√°sa'});
+  const autoplayField=inspector.getByRole('checkbox',{name:'Automatikus vide√≥ind√≠t√°s (csak n√©m√≠tva)'});
+  await controlsField.uncheck();
+  const controlsWarning=inspector.getByText(/vide√≥ vez√©rl≈ëi csak n√©m√≠tva indul√≥ h√°tt√©rvide√≥n√°l rejthet≈ëk el/i);
+  await controlsWarning.waitFor();
+  assert.match(await controlsWarning.textContent(),/vez√©rl≈ëi csak n√©m√≠tva indul√≥ h√°tt√©rvide√≥n√°l rejthet≈ëk el/i);
+  assert.equal(await controlsWarning.getAttribute('data-validation-kind'),'publication','draft Save can preserve a recoverable playback choice');
+  const controlsWarningId=await controlsWarning.getAttribute('id');
+  assert.ok((await controlsField.getAttribute('aria-describedby')||'').split(/\s+/).includes(controlsWarningId),'hidden foreground controls warning is associated with its checkbox');
+  await autoplayField.check();
+  const autoplayWarning=inspector.getByText(/automatikus vide√≥ind√≠t√°s csak n√©m√≠tva publik√°lhat√≥/i);
+  assert.match(await autoplayWarning.textContent(),/automatikus vide√≥ind√≠t√°s csak n√©m√≠tva publik√°lhat√≥/i,'unmuted autoplay has an explicit warning');
+  await mutedField.check();
+  assert.equal(await inspector.locator('.property-validation[role="status"]:not(:empty)').count(),0,'muted autoplay is a valid controls-free background-video mode');
+  await controlsField.check();
+  await autoplayField.uncheck();
+  await mutedField.uncheck();
+  assert.equal(await inspector.locator('.property-validation[role="status"]:not(:empty)').count(),0,'restoring visible controls clears playback warnings');
+  const editablePoster=inspector.getByRole('textbox',{name:'Vide√≥ bor√≠t√≥k√©p URL'});
+  await editablePoster.fill('javascript:alert(1)');await editablePoster.press('Tab');
+  assert.equal(await editablePoster.getAttribute('aria-invalid'),'true','new unsafe poster URL is rejected by the Inspector');
+  assert.equal(posts.length,0,'rejected unsafe poster remains a local invalid draft and cannot reach the Save API');
+  assert.equal(await canvasNode(ids.goodVideo).locator('.media-preview video').getAttribute('poster'),null,'rejected unsafe URL never reaches the Canvas');
+  await editablePoster.fill('/fixture.svg');await editablePoster.press('Tab');
+  assert.equal(await editablePoster.getAttribute('aria-invalid'),null,'safe poster repair clears the invalid draft state');
+  assert.equal(await canvasNode(ids.goodVideo).locator('.media-preview video').getAttribute('poster'),'/fixture.svg','safe poster repair reaches the Canvas');
+  await editablePoster.fill('');await editablePoster.press('Tab');
+  await canvasNode(ids.goodAudio).evaluate(el=>el.click());
+  await editor.getByRole('tab',{name:'Tartalom √©s sz√∂veg'}).click();
+  const editableSource=inspector.getByRole('textbox',{name:'Hang URL'});
+  await editableSource.fill('javascript:alert(1)');await editableSource.press('Tab');
+  assert.equal(await editableSource.getAttribute('aria-invalid'),'true','new unsafe media source URL is rejected by the Inspector');
+  assert.equal(await canvasNode(ids.goodAudio).locator('.media-preview audio').getAttribute('src'),'/fixture.webm','rejected source URL never reaches the Canvas');
+  assert.equal(posts.length,0,'rejected unsafe media URLs cannot reach the Save API');
+  await editableSource.fill('/fixture.webm?repaired=1');await editableSource.press('Tab');
+  assert.equal(await editableSource.getAttribute('aria-invalid'),null,'safe source repair clears the invalid draft state');
+  assert.equal(await canvasNode(ids.goodAudio).locator('.media-preview audio').getAttribute('src'),'/fixture.webm?repaired=1','safe source repair reaches the Canvas');
+  await editableSource.fill('/fixture.webm');await editableSource.press('Tab');
+  await canvasNode(ids.badImage).evaluate(el=>el.click());
+  await editor.getByRole('tab',{name:'Tartalom √©s sz√∂veg'}).click();
+  await inspector.getByRole('textbox',{name:'K√©p le√≠r√°sa (alt)'}).fill('Jav√≠tott k√©ple√≠r√°s');
+  await inspector.getByRole('textbox',{name:'K√©p le√≠r√°sa (alt)'}).press('Tab');
+  await inspector.getByRole('textbox',{name:'K√©pal√°√≠r√°s (opcion√°lis)'}).fill('A jav√≠tott k√©p k√©pal√°√≠r√°sa');
+  await inspector.getByRole('textbox',{name:'K√©pal√°√≠r√°s (opcion√°lis)'}).press('Tab');
+  await inspector.getByRole('combobox',{name:'K√©p illeszt√©se'}).selectOption('contain');
+  assert.equal(await canvasNode(ids.badImage).locator('img').getAttribute('alt'),'Jav√≠tott k√©ple√≠r√°s');
+  assert.equal(await canvasNode(ids.badImage).locator('figcaption').textContent(),'A jav√≠tott k√©p k√©pal√°√≠r√°sa');
+  assert.equal(await canvasNode(ids.badImage).locator('img').evaluate(el=>getComputedStyle(el).objectFit),'contain');
+  assert.equal(await publishedNode(ids.badImage).locator('img').count(),0,'public site unchanged before Save and Publish');
+
+  for(const width of [390,1366]){
+    await editor.setViewportSize({width,height:900});
+    for(const [key,label,tag,attribute,before,final] of [
+      ['badImage','K√©p URL','img','src','/fixture.svg','/fixture.svg?ime=1'],
+      ['badImage','K√©p le√≠r√°sa (alt)','img','alt','Jav√≠tott k√©ple√≠r√°s','V√©gleges k√©ple√≠r√°s'],
+      ['badImage','K√©pal√°√≠r√°s (opcion√°lis)','figcaption',undefined,'A jav√≠tott k√©p k√©pal√°√≠r√°sa','V√©gleges k√©pal√°√≠r√°s'],
+      ['goodVideo','Vide√≥ URL','video','src','/fixture.webm','/fixture.webm?ime=1'],
+      ['goodVideo','Vide√≥ bor√≠t√≥k√©p URL','video','poster','/fixture.svg','/fixture.svg?ime=2'],
+      ['goodAudio','Hang URL','audio','src','/fixture.webm','/fixture.webm?ime=1']
+    ]){
+      await canvasNode(ids[key]).evaluate(el=>el.click());
+      if(await editor.locator('#rightDock').evaluate(el=>el.classList.contains('closed')))await editor.locator('#openInspector').click();
+      const input=inspector.getByRole('textbox',{name:label,exact:true});
+      if(attribute==='poster'){await input.fill(before);await input.press('Tab');}
+      await exerciseComposition({page:editor,input,selector:`.node[data-node-id="${ids[key]}"] .media-preview ${tag}`,attribute,before,final,posts,restart:true,attemptBlocked:async()=>{
+        if(key==='badImage'){
+          const fit=inspector.getByRole('combobox',{name:'K√©p illeszt√©se'});await fit.selectOption('fill');assert.equal(await fit.inputValue(),'contain');
+          const decorative=inspector.getByRole('checkbox',{name:'Csak d√≠sz√≠t≈ë k√©p'});await decorative.click();assert.equal(await decorative.isChecked(),false);
+          const range=inspector.getByRole('slider',{name:'Kiv√°g√°s v√≠zszintesen'}),oldValue=await range.inputValue();
+          await range.evaluate(el=>{el.value='13';el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}));});
+          assert.equal(await range.inputValue(),oldValue);assert.equal(await range.locator('..').locator('output').textContent(),oldValue+'%');
+        }else{
+          const controls=inspector.getByRole('checkbox',{name:'Lej√°tsz√≥vez√©rl≈ëk megjelen√≠t√©se'});await controls.click();assert.equal(await controls.isChecked(),true);
+        }
+        if(key!=='goodAudio'){
+          await inspector.getByRole('button',{name:'M√©diat√°r megnyit√°sa'}).first().click();
+          await inspector.getByRole('button',{name:key==='goodVideo'?'bemutatkozas.webm kiv√°laszt√°sa':'saj√°t-k√©p.png kiv√°laszt√°sa'}).click();
+          assert.equal(await inspector.locator('.editor-media-selected').count(),0,'a pending composition blocks media-library selection');
+          await inspector.getByRole('button',{name:'M√©diat√°r bez√°r√°sa'}).first().click();
+        }
+      },otherInput:key==='badImage'?inspector.getByRole('textbox',{name:label==='K√©p URL'?'K√©p le√≠r√°sa (alt)':'K√©p URL',exact:true}):key==='goodVideo'?inspector.getByRole('textbox',{name:label==='Vide√≥ URL'?'Vide√≥ bor√≠t√≥k√©p URL':'Vide√≥ URL',exact:true}):undefined}).catch(error=>{assert.equal(posts.length,0,'unfinished legacy media composition cannot reach the Editor API');error.message=`${width}px ${key}.${label}: ${error.message}`;throw error;});
+      await input.fill(attribute==='poster'?'':before);await input.press('Tab');
+    }
+  }
+  await canvasNode(ids.badImage).evaluate(el=>el.click());
+  await editor.locator('#save').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+  assert.equal(posts.at(-1).publish,false,'Save only persists the draft');
+  for(const [key,props] of Object.entries(originalCorrupt))assert.deepEqual(posts.at(-1).document.pages[pageId].nodes[ids[key]].props,props,'opening the Inspector must not silently normalize persisted '+key);
+  await viewer.reload();
+  assert.equal(await publishedNode(ids.badImage).locator('img').count(),0,'Save never updates the published invalid media');
+
+  await editor.locator('#publish').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publik√°lva'));
+  assert.equal(posts.at(-1).publish,true);
+  await viewer.reload();
+  const repaired=publishedNode(ids.badImage);
+  await repaired.waitFor();
+  assert.equal(await repaired.evaluate(el=>el.tagName.toLowerCase()),'figure');
+  assert.match(await repaired.locator('img').getAttribute('src'),/\/fixture\.svg$/);
+  assert.equal(await repaired.locator('img').getAttribute('alt'),'Jav√≠tott k√©ple√≠r√°s');
+  assert.equal(await repaired.locator('figcaption').textContent(),'A jav√≠tott k√©p k√©pal√°√≠r√°sa');
+  assert.equal(await repaired.locator('img').evaluate(el=>getComputedStyle(el).objectFit),'contain');
+  const publishedPoster=publishedNode(ids.badPoster);
+  assert.equal(await publishedPoster.evaluate(el=>el.tagName.toLowerCase()),'video');
+  assert.equal(await publishedPoster.evaluate(el=>new URL(el.getAttribute('poster'),location.href).pathname),'/fixture.svg','the repaired legacy poster is published only with the explicit Publish action');
+
+  // A draft may keep a poster asset reference after that image has been
+  // archived or removed. Recovery must clear only poster fields, preserve the
+  // playable video settings, and still honor the separate Save/Publish edge.
+  const stalePosterNode=canvasNode(ids.unavailablePoster),publishedStalePoster=publishedNode(ids.unavailablePoster);
+  const publicBeforePosterRecovery=await publishedStalePoster.evaluate(el=>({tag:el.tagName.toLowerCase(),src:el.matches('video')?el.getAttribute('src'):el.querySelector('video')?.getAttribute('src')??null,poster:el.matches('video')?el.getAttribute('poster'):el.querySelector('video')?.getAttribute('poster')??null}));
+  await stalePosterNode.evaluate(el=>el.click());
+  await editor.getByRole('tab',{name:'Tartalom √©s sz√∂veg'}).click();
+  const stalePosterPicker=inspector.locator('.editor-media-picker').nth(1);
+  await stalePosterPicker.locator('.editor-media-selection.is-unavailable').waitFor();
+  assert.match(await stalePosterPicker.locator('[role="status"]').textContent(),/nem √©rhet≈ë el/,
+    'an archived or deleted video poster is announced as unavailable');
+  const beforePosterRecovery=posts.length;
+  await stalePosterPicker.getByRole('button',{name:'K√©p elt√°vol√≠t√°sa'}).click();
+  assert.equal(posts.length,beforePosterRecovery,'clearing an unavailable poster never auto-saves or publishes');
+  const recoveredCanvasVideo=stalePosterNode.locator('.media-preview video');
+  assert.equal(await recoveredCanvasVideo.getAttribute('poster'),null,'explicit poster clear removes the stale private preview');
+  assert.equal(await recoveredCanvasVideo.getAttribute('src'),'/fixture.webm','poster repair preserves the independent playable video source');
+  await editor.locator('#save').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+  assert.equal(posts.at(-1).publish,false,'poster recovery persists as a draft before the separate Publish');
+  const savedPosterVideo=posts.at(-1).document.pages[pageId].nodes[ids.unavailablePoster].props;
+  assert.deepEqual({poster:savedPosterVideo.poster,posterAssetId:savedPosterVideo.posterAssetId,src:savedPosterVideo.src,assetId:savedPosterVideo.assetId??'',controls:savedPosterVideo.controls},
+    {poster:'',posterAssetId:'',src:'/fixture.webm',assetId:'',controls:true},'Save clears only the unavailable poster fields and preserves video source/control settings');
+  await viewer.reload();
+  assert.deepEqual(await publishedStalePoster.evaluate(el=>({tag:el.tagName.toLowerCase(),src:el.matches('video')?el.getAttribute('src'):el.querySelector('video')?.getAttribute('src')??null,poster:el.matches('video')?el.getAttribute('poster'):el.querySelector('video')?.getAttribute('poster')??null})),
+    publicBeforePosterRecovery,'draft Save leaves the previous published poster state unchanged');
+  await editor.reload();
+  await stalePosterNode.evaluate(el=>el.click());
+  await editor.getByRole('tab',{name:'Tartalom √©s sz√∂veg'}).click();
+  const restoredPosterInspector=editor.locator('.legacy-media-inspector'),restoredPosterPicker=restoredPosterInspector.locator('.editor-media-picker').nth(1);
+  assert.equal(await restoredPosterPicker.locator('.editor-media-selected').count(),0,'Editor reload restores the cleared poster asset reference');
+  assert.equal(await restoredPosterInspector.getByRole('textbox',{name:'Vide√≥ URL'}).inputValue(),'/fixture.webm','poster recovery reload retains the independent video source');
+  assert.equal(await restoredPosterInspector.getByRole('checkbox',{name:'Lej√°tsz√≥vez√©rl≈ëk megjelen√≠t√©se'}).isChecked(),true,'poster recovery reload retains native controls');
+  assert.equal(await posts.length,beforePosterRecovery+1,'only explicit Save has run before poster Publish');
+  await editor.locator('#publish').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publik√°lva'));
+  assert.equal(posts.at(-1).publish,true,'only the separate Publish removes the archived poster from public output');
+  await viewer.reload();
+  const recoveredPublicMarkup=await publishedStalePoster.evaluate(el=>el.outerHTML);
+  assert.equal(await publishedStalePoster.evaluate(el=>el.matches('video')||el.querySelector('video')!==null),true,`poster recovery keeps a playable public video: ${recoveredPublicMarkup}`);
+  assert.equal(await publishedStalePoster.getAttribute('poster'),null,'the explicitly published poster recovery removes the unavailable public poster');
+  assert.equal(await publishedStalePoster.evaluate(el=>new URL(el.getAttribute('src'),location.href).pathname),'/fixture.webm','published poster recovery preserves the playable public video');
+
+  // The existing R2 image picker must also work for legacy image nodes.
+  // Library selection updates only the draft and uses the private Admin route
+  // while editing; public output becomes available only after Publish.
+  await canvasNode(ids.libraryImage).evaluate(el=>el.click());
+  await inspector.getByRole('button',{name:'M√©diat√°r megnyit√°sa'}).click();
+  await inspector.getByRole('button',{name:'saj√°t-k√©p.png kiv√°laszt√°sa'}).click();
+  const draftAsset=canvasNode(ids.libraryImage).locator('.media-preview img');
+  await draftAsset.waitFor();
+  assert.match(await draftAsset.getAttribute('src'),/\/api\/admin\/media\?id=00000000-0000-4000-8000-000000000123$/);
+  assert.equal(await draftAsset.getAttribute('alt'),'M√©diat√°rb√≥l v√°lasztott k√©p','picker transfers asset alt text to empty legacy alt');
+  assert.equal(await publishedNode(ids.libraryImage).evaluate(el=>el.tagName.toLowerCase()),'div','asset selection never auto-publishes');
+  await exerciseComposition({page:editor,input:inspector.getByRole('textbox',{name:'K√©p URL',exact:true}),selector:`.node[data-node-id="${ids.libraryImage}"] .media-preview img`,attribute:'src',before:'/api/admin/media?id='+mediaId,final:'/fixture.svg?asset-ime',posts});
+  assert.equal(await inspector.locator('.editor-media-selected').count(),0,'IME source finalization clears the obsolete picker selection');
+  await inspector.getByRole('button',{name:'M√©diat√°r megnyit√°sa'}).click();await inspector.getByRole('button',{name:'saj√°t-k√©p.png kiv√°laszt√°sa'}).click();
+
+  await editor.locator('#save').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+  assert.equal(posts.at(-1).publish,false);
+  assert.equal(draft.pages[pageId].nodes[ids.libraryImage].props.assetId,mediaId);
+  await viewer.reload();
+  assert.equal(await publishedNode(ids.libraryImage).evaluate(el=>el.tagName.toLowerCase()),'div','saved image remains private until Publish');
+
+  await editor.locator('#publish').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publik√°lva'));
+  assert.equal(posts.at(-1).publish,true);
+  await viewer.reload();
+  const publishedAsset=publishedNode(ids.libraryImage);
+  await publishedAsset.waitFor();
+  assert.equal(await publishedAsset.evaluate(el=>el.tagName.toLowerCase()),'img');
+  assert.match(await publishedAsset.getAttribute('src'),/\/media\/00000000-0000-4000-8000-000000000123$/);
+  assert.equal(await publishedAsset.getAttribute('alt'),'M√©diat√°rb√≥l v√°lasztott k√©p');
+
+  await viewer.setViewportSize({width:390,height:820});
+  await editor.locator('.canvas-device-btn[data-device="mobile"]').click();
+  for(const [key,mediaType] of [['badVideo','video'],['badAudio','audio']]){
+    assert.equal(await canvasNode(ids[key]).locator('.media-preview '+mediaType).count(),0,'invalid '+key+' still hidden in mobile Editor');
+    assert.equal(await publishedNode(ids[key]).locator(mediaType).count(),0,'invalid '+key+' still hidden on mobile public');
+  }
+  assert.equal(await publishedNode(ids.badImage).evaluate(el=>el.tagName.toLowerCase()),'figure','captioned repaired image visible in mobile public');
+  assert.equal(await canvasNode(ids.badImage).locator('img').count(),1,'repaired image visible in mobile Canvas');
+  assert.equal(await publishedNode(ids.libraryImage).evaluate(el=>el.tagName.toLowerCase()),'img','R2 library image visible publicly on mobile');
+  assert.match(await canvasNode(ids.libraryImage).locator('img').getAttribute('src'),/\/api\/admin\/media\?id=/);
+
+  // A manual source URL can replace a previously selected media-library asset;
+  // the obsolete asset ID must not silently override the Inspector input.
+  await canvasNode(ids.libraryImage).evaluate(el=>el.click());
+  await inspector.getByRole('textbox',{name:'K√©p URL'}).fill('/fixture.svg');
+  await inspector.getByRole('textbox',{name:'K√©p URL'}).press('Tab');
+  assert.equal((await canvasNode(ids.libraryImage).locator('img').getAttribute('src')).endsWith('/fixture.svg'),true);
+  assert.equal(draft.pages[pageId].nodes[ids.libraryImage].props.assetId,mediaId,'unsaved manual source cannot mutate the saved revision');
+  assert.equal(await inspector.locator('.editor-media-selected').count(),0,'a live source edit synchronizes the Picker view');
+  // Both legacy playback blocks have functional Inspector controls. Their
+  // Canvas preview and public markup must honor exactly the same flags, except
+  // that autoplay is always suppressed on the Editor Canvas.
+  await viewer.setViewportSize({width:1440,height:900});
+  await canvasNode(ids.goodVideo).evaluate(el=>el.click());
+  const videoInspector=editor.locator('.legacy-media-inspector');
+  await videoInspector.getByRole('checkbox',{name:'Lej√°tsz√≥vez√©rl≈ëk megjelen√≠t√©se'}).uncheck();
+  await videoInspector.getByRole('checkbox',{name:'Folyamatos ism√©tl√©s'}).check();
+  await videoInspector.getByRole('checkbox',{name:'Vide√≥ n√©m√≠t√°sa'}).check();
+  await videoInspector.getByRole('checkbox',{name:'Automatikus vide√≥ind√≠t√°s (csak n√©m√≠tva)'}).check();
+  await videoInspector.getByRole('button',{name:'M√©diat√°r megnyit√°sa'}).first().click();
+  await videoInspector.getByRole('button',{name:'bemutatkozas.webm kiv√°laszt√°sa'}).click();
+  assert.match(await canvasNode(ids.goodVideo).locator('video').getAttribute('src'),/\/api\/admin\/media\?id=00000000-0000-4000-8000-000000000124$/,'video picker uses its private editor source');
+  await videoInspector.getByRole('button',{name:'M√©diat√°r megnyit√°sa'}).nth(1).click();
+  await videoInspector.getByRole('button',{name:'saj√°t-k√©p.png kiv√°laszt√°sa'}).click();
+  const moviePreview=canvasNode(ids.goodVideo).locator('video');
+  assert.equal(await moviePreview.evaluate(el=>el.controls),true,'the Editor keeps muted autoplay media manually controllable while suppressing automatic playback');
+  assert.equal(await moviePreview.evaluate(el=>el.loop),true);
+  assert.equal(await moviePreview.evaluate(el=>el.muted),true);
+  assert.equal(await moviePreview.evaluate(el=>el.autoplay),false,'Canvas never autoplays while editing');
+  assert.match(await moviePreview.getAttribute('poster'),/\/api\/admin\/media\?id=00000000-0000-4000-8000-000000000123$/);
+  assert.equal(await publishedNode(ids.goodVideo).getAttribute('poster'),null,'unsaved new poster never appears publicly');
+  assert.equal(await publishedNode(ids.goodVideo).evaluate(el=>el.controls),true,'published controls unchanged before Save');
+
+  await canvasNode(ids.goodAudio).evaluate(el=>el.click());
+  const audioInspector=editor.locator('.legacy-media-inspector');
+  await audioInspector.getByRole('checkbox',{name:'Lej√°tsz√≥vez√©rl≈ëk megjelen√≠t√©se'}).uncheck();
+  await audioInspector.getByRole('checkbox',{name:'Folyamatos ism√©tl√©s'}).check();
+  const soundPreview=canvasNode(ids.goodAudio).locator('audio');
+  assert.equal(await soundPreview.evaluate(el=>el.controls),false);
+  assert.equal(await soundPreview.evaluate(el=>el.loop),true);
+  const audioPicker=audioInspector.getByRole('button',{name:'M√©diat√°r megnyit√°sa'});
+  await audioPicker.click();
+  await audioInspector.getByRole('button',{name:'hangminta.wav kiv√°laszt√°sa'}).click();
+  const audioControlsWarning=audioInspector.getByText(/hanglej√°tsz√≥ vez√©rl≈ëit nem rejtheted el/i);
+  assert.equal(await audioControlsWarning.getAttribute('data-validation-kind'),'publication','audio playback constraint is enforced by Publish, not destructive draft Save');
+  assert.equal(await audioInspector.getByRole('textbox',{name:'Hang URL'}).inputValue(),'','selecting an audio asset clears the previous URL source');
+  assert.equal(await soundPreview.getAttribute('src'),'/api/admin/media?id='+audioMediaId,'audio selection previews through the authenticated media route');
+  assert.equal(await publishedNode(ids.goodAudio).evaluate(el=>new URL(el.getAttribute('src'),location.href).pathname),'/fixture.webm','audio media selection remains draft-only before Save');
+
+  await editor.locator('#save').click();
+  try{await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'),undefined,{timeout:5000})}
+  catch(error){throw new Error(`audio Save did not complete: status=${await editor.locator('#saveStatus').textContent()}; requests=${posts.length}; pageErrors=${errors.join(' | ')}`,{cause:error})}
+  assert.equal(posts.at(-1).publish,false,'playback controls do not auto-publish');
+  assert.equal(draft.pages[pageId].nodes[ids.goodAudio].props.assetId,audioMediaId,'Save persists the selected audio asset ID');
+  assert.equal(draft.pages[pageId].nodes[ids.goodAudio].props.src,'','Save clears the superseded audio URL');
+  assert.equal(draft.pages[pageId].nodes[ids.goodAudio].props.controls,false,'Save preserves an incomplete-but-recoverable audio playback draft');
+  await viewer.reload();
+  assert.equal(await publishedNode(ids.goodVideo).getAttribute('poster'),null,'Save keeps old public video');
+  assert.equal(await publishedNode(ids.goodAudio).evaluate(el=>new URL(el.getAttribute('src'),location.href).pathname),'/fixture.webm','Save does not expose a private audio asset');
+  assert.equal(await publishedNode(ids.goodAudio).evaluate(el=>el.controls),true,'Save keeps old public audio');
+  await editor.reload();
+  await canvasNode(ids.goodVideo).evaluate(el=>el.click());
+  const reloadedVideoInspector=editor.locator('.legacy-media-inspector'),videoPosterPicker=reloadedVideoInspector.locator('.editor-media-picker').nth(1);
+  assert.equal(await reloadedVideoInspector.getByRole('textbox',{name:'Vide√≥ bor√≠t√≥k√©p URL'}).inputValue(),'','the selected video poster keeps its companion URL empty after Editor reload');
+  assert.equal(await videoPosterPicker.locator('img.editor-media-selected').getAttribute('src'),'/api/admin/media?id='+mediaId,'the image-kind video-poster selection is restored after Editor reload');
+  assert.equal(await videoPosterPicker.getByRole('button',{name:'K√©p elt√°vol√≠t√°sa'}).count(),1,'the restored video poster has its accessible image removal action');
+  assert.equal(await canvasNode(ids.goodVideo).locator('video').evaluate(el=>new URL(el.getAttribute('poster'),location.href).pathname),'/api/admin/media','the reloaded Canvas uses the authenticated poster route');
+  assert.equal(await publishedNode(ids.goodVideo).getAttribute('poster'),null,'the saved video poster remains private until Publish');
+  await canvasNode(ids.goodAudio).evaluate(el=>el.click());
+  assert.equal(await editor.locator('.legacy-media-inspector').getByRole('textbox',{name:'Hang URL'}).inputValue(),'','the audio asset ID and empty companion URL survive Editor reload');
+  assert.equal(await editor.locator('.legacy-media-inspector').locator('.editor-media-selected').getAttribute('aria-label'),'Kiv√°lasztott hang','the audio picker restores its selected media kind after reload');
+  const publishControls=editor.locator('.legacy-media-inspector').getByRole('checkbox',{name:'Lej√°tsz√≥vez√©rl≈ëk megjelen√≠t√©se'});
+  assert.equal(await publishControls.isChecked(),false,'the saved draft retains its unsupported playback choice until the user repairs it');
+  await publishControls.check();
+  assert.equal(await editor.locator('.property-validation[data-validation-kind="publication"]').count(),0,'restoring native audio controls clears the Publish-only warning');
+  await editor.locator('#publish').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publik√°lva'));
+  assert.equal(posts.at(-1).publish,true);
+  await viewer.reload();
+  const publishedMovie=publishedNode(ids.goodVideo),publishedSound=publishedNode(ids.goodAudio);
+  assert.equal(await publishedMovie.getAttribute('controls'),null);
+  assert.equal(await publishedMovie.getAttribute('loop'),'');
+  assert.equal(await publishedMovie.getAttribute('muted'),'');
+  assert.equal(await publishedMovie.getAttribute('autoplay'),'','public autoplay only on muted video');
+  assert.match(await publishedMovie.getAttribute('poster'),/\/media\/00000000-0000-4000-8000-000000000123$/);
+  assert.equal(await publishedSound.getAttribute('controls'),'','published audio keeps usable native playback controls');
+  assert.equal(await publishedSound.getAttribute('loop'),'');
+  assert.equal(await publishedSound.evaluate(el=>new URL(el.getAttribute('src'),location.href).pathname),'/media/'+audioMediaId,'only the separate Publish exposes the selected audio asset on the public page');
+  assert.equal(await viewer.evaluate(async id=>(await fetch('/media/'+id)).headers.get('content-type'),audioMediaId),'audio/wav','the public media route serves the selected audio asset with its audio MIME type');
+  await editor.evaluate(id=>{window.__reducedMotionVideoNode=document.querySelector('[data-node-id="'+id+'"] video')},ids.goodVideo);
+  await editor.emulateMedia({reducedMotion:'reduce'});
+  await editor.waitForFunction(id=>{const video=document.querySelector('[data-node-id="'+id+'"] video');return video instanceof HTMLVideoElement&&video.controls&&!video.autoplay},ids.goodVideo);
+  assert.equal(await editor.evaluate(id=>document.querySelector('[data-node-id="'+id+'"] video')===window.__reducedMotionVideoNode,ids.goodVideo),true,'changing the Editor motion preference updates playback without replacing its Canvas node');
+  await editor.emulateMedia({reducedMotion:'no-preference'});
+  await editor.waitForFunction(id=>{const video=document.querySelector('[data-node-id="'+id+'"] video');return video instanceof HTMLVideoElement&&video.controls&&!video.autoplay},ids.goodVideo);
+  await viewer.evaluate(id=>{window.__reducedMotionVideoNode=document.querySelector('[data-node-id="'+id+'"]')},ids.goodVideo);
+  await viewer.emulateMedia({reducedMotion:'reduce'});
+  await viewer.waitForFunction(id=>{const video=document.querySelector('[data-node-id="'+id+'"]');return video instanceof HTMLVideoElement&&video.controls&&!video.autoplay},ids.goodVideo);
+  assert.equal(await publishedNode(ids.goodVideo).evaluate(el=>el.controls),true,'changing to reduced motion while the page is open restores native playback controls');
+  assert.equal(await publishedNode(ids.goodVideo).evaluate(el=>el.autoplay),false,'reduced motion stops automatic video playback');
+  assert.equal(await viewer.evaluate(id=>document.querySelector('[data-node-id="'+id+'"]')===window.__reducedMotionVideoNode,ids.goodVideo),true,'changing public motion preference leaves the rendered page and its interactions intact');
+  await viewer.emulateMedia({reducedMotion:'no-preference'});
+  await viewer.waitForFunction(id=>{const video=document.querySelector('[data-node-id="'+id+'"]');return video instanceof HTMLVideoElement&&!video.controls&&video.autoplay},ids.goodVideo);
+  await canvasNode(ids.goodAudio).evaluate(el=>el.click());
+  const savedAudioInspector=editor.locator('.legacy-media-inspector'),audioUrl=savedAudioInspector.getByRole('textbox',{name:'Hang URL'});
+  await audioUrl.fill('/fixture.webm?manual=1');await audioUrl.press('Tab');
+  assert.equal(await audioUrl.inputValue(),'/fixture.webm?manual=1','manual audio URL replaces the selected library source');
+  assert.equal(await savedAudioInspector.locator('.editor-media-selected').count(),0,'manual audio URL clears the stale media picker selection');
+  assert.equal(await soundPreview.getAttribute('src'),'/fixture.webm?manual=1','manual audio source reaches the Editor Canvas');
+  assert.equal(await draft.pages[pageId].nodes[ids.goodAudio].props.assetId,audioMediaId,'unsaved manual override does not mutate the persisted draft');
+  assert.equal(await publishedSound.evaluate(el=>new URL(el.getAttribute('src'),location.href).pathname),'/media/'+audioMediaId,'manual source remains private to the unsaved Editor draft');
+  await editor.locator('#save').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+  assert.equal(posts.at(-1).publish,false,'manual media-source replacement is saved without publishing');
+  assert.equal(draft.pages[pageId].nodes[ids.goodAudio].props.assetId,'','Save clears the obsolete library asset ID');
+  assert.equal(draft.pages[pageId].nodes[ids.goodAudio].props.src,'/fixture.webm?manual=1');
+  assert.equal(await publishedSound.evaluate(el=>new URL(el.getAttribute('src'),location.href).pathname),'/media/'+audioMediaId,'Save leaves the prior published audio unchanged');
+  await editor.reload();
+  await canvasNode(ids.goodAudio).evaluate(el=>el.click());
+  const reloadedAudioInspector=editor.locator('.legacy-media-inspector');
+  assert.equal(await reloadedAudioInspector.getByRole('textbox',{name:'Hang URL'}).inputValue(),'/fixture.webm?manual=1','the manual audio URL survives Editor reload');
+  assert.equal(await reloadedAudioInspector.locator('.editor-media-selected').count(),0,'reload does not restore the superseded audio asset ID');
+  await editor.locator('#publish').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publik√°lva'));
+  assert.equal(posts.at(-1).publish,true,'the manual audio source reaches public output only through separate Publish');
+  await viewer.reload();
+  assert.equal(await publishedNode(ids.goodAudio).evaluate(el=>new URL(el.getAttribute('src'),location.href).pathname),'/fixture.webm','explicit Publish exposes the manual audio URL');
+  await viewer.setViewportSize({width:390,height:820});
+  assert.equal(await publishedMovie.getAttribute('poster')!==null,true,'mobile public poster is preserved');
+  assert.equal(await publishedSound.getAttribute('loop'),'','mobile audio still loops');
+
+  // The legacy image needs the same crop/focal/loading/decorative controls
+  // on Editor Canvas and the published page, at mobile and desktop widths.
+  await canvasNode(ids.badImage).evaluate(el=>el.click());
+  const imageInspector=editor.locator('.legacy-media-inspector');
+  await imageInspector.getByRole('combobox',{name:'K√©p illeszt√©se'}).selectOption('cover');
+  await imageInspector.getByRole('combobox',{name:'K√©par√°ny'}).selectOption('1 / 1');
+  for(const [name,value] of [['Kiv√°g√°s v√≠zszintesen','25'],['Kiv√°g√°s f√ºgg≈ëlegesen','80']]){
+    await imageInspector.getByRole('slider',{name}).evaluate((el,next)=>{
+      el.value=next;
+      el.dispatchEvent(new Event('input',{bubbles:true}));
+      el.dispatchEvent(new Event('change',{bubbles:true}));
+    },value);
+  }
+  await imageInspector.getByRole('combobox',{name:'K√©p bet√∂lt√©se'}).selectOption('eager');
+  await imageInspector.getByRole('checkbox',{name:'Csak d√≠sz√≠t≈ë k√©p'}).check();
+  const croppedCanvas=canvasNode(ids.badImage).locator('img');
+  assert.equal(await croppedCanvas.evaluate(el=>getComputedStyle(el).objectFit),'cover');
+  assert.equal(await croppedCanvas.evaluate(el=>getComputedStyle(el).objectPosition),'25% 80%');
+  assert.equal(await croppedCanvas.evaluate(el=>getComputedStyle(el).aspectRatio),'1 / 1');
+  assert.equal(await croppedCanvas.getAttribute('loading'),'eager');
+  assert.equal(await croppedCanvas.getAttribute('alt'),'','decorative image has no accessible alt');
+  assert.equal(await croppedCanvas.getAttribute('role'),'presentation');
+  assert.equal(await publishedNode(ids.badImage).locator('img').evaluate(el=>getComputedStyle(el).objectFit),'contain','public crop remains unchanged before Save');
+
+  await editor.locator('#save').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+  assert.equal(posts.at(-1).publish,false);
+  assert.equal(draft.pages[pageId].nodes[ids.badImage].props.alt,'Jav√≠tott k√©ple√≠r√°s','decorative mode does not delete the authored alt text');
+  await viewer.reload();
+  assert.equal(await publishedNode(ids.badImage).locator('img').getAttribute('role'),null,'Save does not publish decorative mode');
+  assert.equal(await publishedNode(ids.badImage).locator('img').getAttribute('loading'),'lazy');
+  await editor.locator('#publish').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publik√°lva'));
+  assert.equal(posts.at(-1).publish,true);
+  await viewer.reload();
+  for(const width of [390,1440]){
+    await viewer.setViewportSize({width,height:820});
+    // A viewport change starts a fresh async Page Model render. Wait for its
+    // attached, restyled image rather than sampling a node being replaced.
+    await viewer.waitForFunction(id=>{
+      const img=document.querySelector('[data-node-id="'+id+'"] img');
+      if(!(img instanceof HTMLImageElement)||!img.isConnected)return false;
+      const css=getComputedStyle(img);
+      return css.objectFit==='cover'&&css.objectPosition==='25% 80%'&&css.aspectRatio==='1 / 1';
+    },ids.badImage);
+    const image=publishedNode(ids.badImage).locator('img');
+    assert.equal(await image.evaluate(el=>el.style.objectFit),'cover');
+    assert.equal(await image.evaluate(el=>el.style.objectPosition),'25% 80%');
+    assert.equal(await image.evaluate(el=>el.style.aspectRatio),'1 / 1');
+    assert.equal(await image.getAttribute('loading'),'eager');
+    assert.equal(await image.getAttribute('alt'),'');
+    assert.equal(await image.getAttribute('role'),'presentation');
+  }
+  // Turning decorative mode off restores the stored alt without retyping.
+  await imageInspector.getByRole('checkbox',{name:'Csak d√≠sz√≠t≈ë k√©p'}).uncheck();
+  assert.equal(await canvasNode(ids.badImage).locator('img').getAttribute('alt'),'Jav√≠tott k√©ple√≠r√°s');
+
+  assert.deepEqual(externalRequests,[],'invalid media are blocked at all viewport sizes');
+  const recovery=await editor.evaluate(async()=>{
+    const {renderLegacyMediaInspector}=await import('/editor-v2/ui/legacy-media-inspector.js');const results=[];
+    const playbackNodes=[
+      {id:'historic-playback',type:'audio',props:{src:'/historic.mp3',controls:false}},
+      {id:'versioned-playback',type:'audio',metadata:{editorContentVersion:1},props:{src:'/new.mp3',controls:false}}
+    ];
+    const playbackWarnings=playbackNodes.map(node=>{
+      const root=renderLegacyMediaInspector(node,()=>true);document.querySelector('#inspectorBody').append(root);
+      const warnings=root.querySelectorAll('[data-validation-kind="publication"]');
+      const count=warnings.length;root.remove();return count;
+    });
+    for(const type of ['image','video','audio'])for(const mode of ['false','throw']){
+      const assetId='00000000-0000-4000-8000-000000000123';
+      const original={src:'/fixture.webm',assetId,alt:'Saj√°t alt',caption:'Saj√°t felirat',poster:'/fixture.svg',posterAssetId:assetId,controls:true,unknown:{preserve:'unchanged'}};
+      const node={id:'legacy-recovery',type,props:structuredClone(original)};let allow=false,accepted,guard;
+      const root=renderLegacyMediaInspector(node,next=>{if(!allow){if(mode==='throw')throw Error('Fixture rejection');return false;}accepted=structuredClone(next);return true;},{pending:fn=>{guard=fn;}});
+      document.querySelector('#inspectorBody').append(root);
+      const source=root.querySelector('input[aria-label="'+({image:'K√©p URL',video:'Vide√≥ URL',audio:'Hang URL'}[type])+'"]');
+      source.focus();source.value='/fixture-next.webm';source.dispatchEvent(new InputEvent('input',{bubbles:true}));
+      const rejected=source.hasAttribute('aria-invalid')&&!guard()&&!accepted&&!!root.querySelector('.editor-media-selected');
+      source.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true}));const escaped=source.value===original.src&&guard();
+      allow=true;source.value='/fixture-next.webm';source.dispatchEvent(new Event('change',{bubbles:true}));
+      const sourcePickerClear=!root.querySelector('.editor-media-picker').querySelector('.editor-media-selected');
+      let fresh=accepted.src==='/fixture-next.webm'&&accepted.assetId===''&&JSON.stringify(accepted.unknown)===JSON.stringify(original.unknown)&&guard();
+      if(type==='image'){
+        const alt=root.querySelector('[aria-label="K√©p le√≠r√°sa (alt)"]');alt.focus();alt.value='√öj alt';alt.dispatchEvent(new InputEvent('input',{bubbles:true}));
+        fresh=fresh&&accepted.alt==='√öj alt'&&accepted.src==='/fixture-next.webm'&&accepted.caption===original.caption;
+      }else if(type==='video'){
+        const poster=root.querySelector('[aria-label="Vide√≥ bor√≠t√≥k√©p URL"]');poster.focus();poster.value='/fixture-next.svg';poster.dispatchEvent(new InputEvent('input',{bubbles:true}));
+        fresh=fresh&&accepted.poster==='/fixture-next.svg'&&accepted.posterAssetId===''&&accepted.src==='/fixture-next.webm'&&!root.querySelector('.editor-media-selected');
+      }
+      const unchanged=JSON.stringify(node.props)===JSON.stringify(original);root.remove();
+      const locked=renderLegacyMediaInspector({...node,locked:true},()=>{throw Error('Locked legacy media changed');});document.querySelector('#inspectorBody').append(locked);
+      const lockedSafe=[...locked.querySelectorAll('input,select,button')].every(el=>el.disabled);locked.remove();
+      results.push({type,mode,rejected,escaped,sourcePickerClear,fresh,unchanged,lockedSafe});
+    }return {results,playbackWarnings};
+  });
+  assert.deepEqual(recovery.playbackWarnings,[0,1],'new playback rules match the server profile gate without mislabeling historical unversioned media');
+  for(const result of recovery.results)for(const key of ['rejected','escaped','sourcePickerClear','fresh','unchanged','lockedSafe'])assert.equal(result[key],true,JSON.stringify(result));
+  assert.deepEqual(errors,[]);
+});
