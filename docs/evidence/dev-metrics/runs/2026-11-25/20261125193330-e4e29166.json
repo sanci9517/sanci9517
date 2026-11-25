@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261125193330-e4e29166",
+  "task": "77.44.7.D-D-07-child-reference-limit",
+  "trigger": "manual",
+  "started_at": "2026-11-25T19:33:30.202Z",
+  "finished_at": "2026-11-25T19:54:54.910Z",
+  "wall_seconds": 1285,
+  "paused_seconds": 0,
+  "measured_seconds": 1285,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "Released the bounded Page Model child-reference slice; D and full Editor remain open while exact-SHA browser CI runs.",
+  "evidence": [
+    "docs/evidence/editor-d07-child-reference-budget-2026-11-25.json"
+  ],
+  "checks": "Editor 24/24; route 25/25; typecheck; plan/crosswalk; D1 SELECT-only; Wrangler dry-run; deploy:safe; health and 13 public asset hashes",
+  "started_revision": "f85ea0a904b1af8fc748f2bba9417aee16efe4e5",
+  "finished_revision": "b36c4d94ada5d689bcc1fcbf66f538012da5747a",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
