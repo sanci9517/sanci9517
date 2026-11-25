@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261125181421-13c784ee",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-25T18:14:21.376Z",
+  "finished_at": "2026-11-25T18:17:13.203Z",
+  "wall_seconds": 172,
+  "paused_seconds": 0,
+  "measured_seconds": 172,
+  "status": "pass",
+  "kind": "docs",
+  "summary": "Recorded the exact-SHA Editor Core CI completion and successful production health follow-up in the canonical plan and release evidence; pushed documentation-only changes to v2/foundation without Worker redeployment.",
+  "evidence": [
+    "50f9b7b041c5e44754a7f42559517a67d0580468; run 45667665134; docs/evidence/editor-d06-html-table-no-silent-truncation-2026-11-25.json"
+  ],
+  "checks": "16/16 plan-contract; canonical master: one 13-part plan/one cursor; 396/396 feature traceability; active point 77.44 -> 77.44.7.D; evidence JSON assertions; git diff --check; exact-SHA Editor Core workflow 45667665134 SUCCESS; production health GET 200; normal fast-forward docs-only push 50f9b7b0 verified; GitHub combined status empty for [skip ci] docs commit (no CI claimed).",
+  "started_revision": "0cdf15a9930644da991c23e1b5ff756c6c1aa0fe",
+  "finished_revision": "50f9b7b041c5e44754a7f42559517a67d0580468",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
