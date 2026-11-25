@@ -1,0 +1,79 @@
+{
+  "evidence_schema": 1,
+  "task": "77.44.7.D",
+  "plan_status": "D-06 slice PASS; overall D-06 OPEN / NOT_CERTIFIED",
+  "title": "Carousel controls reference their region",
+  "source_commit": "b9c22d3e3efa9b601984750128875ba139746794",
+  "branch": "v2/foundation",
+  "implementation": "Authored and structured carousel previous/next controls now expose aria-controls pointing at the carousel region; stable IDs are rendered and browser/unit regressions cover the relationship.",
+  "local_checks": [
+    {
+      "command": "node --experimental-vm-modules public/editor-v2/tests/element-content.test.js",
+      "result": "PASS 38/38"
+    },
+    {
+      "command": "node tests/editor-public-asset-cache-bust.test.js",
+      "result": "PASS 3/3"
+    },
+    {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test tests/browser/editor-structured-content.test.js tests/browser/editor-content-system.test.js",
+      "result": "PASS (structured 6/6; content-system 1/1); sandbox retry required due listen EPERM"
+    },
+    {
+      "command": "npm run typecheck",
+      "result": "PASS"
+    },
+    {
+      "command": "npm run test:editor",
+      "result": "PASS 24/24 files; relevant preference and Linux subreaper suites passed"
+    },
+    {
+      "command": "plan contract / canonical source checks / web013 migration gate",
+      "result": "PASS (16 plan-contract; 13 plan sections, 396 mappings; safety gate)"
+    },
+    {
+      "command": "npx wrangler deploy --dry-run",
+      "result": "PASS, 202 public assets; non-blocking Wrangler log-path EROFS warning in sandbox"
+    }
+  ],
+  "read_only_production_d1_preflight": {
+    "result": "PASS",
+    "query": "SELECT name FROM d1_migrations ORDER BY name",
+    "rows": 36,
+    "latest": "0030_media_library_organization.sql",
+    "rows_written": 0,
+    "changes": 0,
+    "changed_db": false
+  },
+  "github_actions": [
+    {
+      "name": "F0 baseline checks",
+      "run_id": 45654075421,
+      "result": "success",
+      "url": "https://github.com/sanci9517/sanci9517/actions/runs/45654075421"
+    },
+    {
+      "name": "Canonical Creator Platform Plan",
+      "run_id": 45654075127,
+      "result": "success",
+      "url": "https://github.com/sanci9517/sanci9517/actions/runs/45654075127"
+    },
+    {
+      "name": "Production Worker source smoke",
+      "run_id": 45654075472,
+      "result": "success",
+      "details": "HTTP 200 /api/health and all exact changed-public-source SHA-256 readbacks matched",
+      "url": "https://github.com/sanci9517/sanci9517/actions/runs/45654075472"
+    }
+  ],
+  "production_worker": {
+    "script": "sanci9517-streamer-brand",
+    "version_id": "7ed479cd-861d-4f8d-b240-f69683e4982f",
+    "deployment_id": "aca36f2d-482a-42f7-9b8e-a364a4cfebbc",
+    "traffic_percent": 100,
+    "verified_by": "Cloudflare deployments API GET; build check linked to source commit"
+  },
+  "cost": "0 Ft additional spending; only push-triggered free-tier checks used; no paid service or quota expansion enabled.",
+  "acceptance_boundary": "This change closes this carousel relation slice only. Full D-06 and overall editor acceptance remain open. Full manual/mobile acceptance stays deferred until the complete Visual Editor is implemented. Save and Publish remain separate.",
+  "metrics_run": "docs/evidence/dev-metrics/runs/2026-11-25/20261125160849-e78edd0f.json"
+}

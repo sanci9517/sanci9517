@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "id": "20261125160849-e78edd0f",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-25T16:08:49.836Z",
+  "finished_at": "2026-11-25T16:30:08.160Z",
+  "wall_seconds": 1278,
+  "paused_seconds": 0,
+  "measured_seconds": 1278,
+  "status": "pass",
+  "kind": "mixed",
+  "summary": "D-06 carousel controls now reference their carousel region; local unit/browser/typecheck/deploy dry-run, GitHub F0 and canonical-plan checks, production health and changed asset readback verified. D-06 remains open pending full planned acceptance.",
+  "evidence": [
+    "https://github.com/sanci9517/sanci9517/commit/b9c22d3e3efa9b601984750128875ba139746794",
+    "https://github.com/sanci9517/sanci9517/actions/runs/45654075127",
+    "https://github.com/sanci9517/sanci9517/actions/runs/45654075421",
+    "https://github.com/sanci9517/sanci9517/actions/runs/45654075472"
+  ],
+  "checks": "PASS: element-content.test.js 38/38; editor-public-asset-cache-bust.test.js 3/3; editor structured Chromium 6/6 and content-system Chromium 1/1; npm run typecheck; npm run test:editor 24/24 files; plan-contract 16/16; canonical 13 sections/396 mappings; web013 migration safety; wrangler deploy --dry-run. Production-source-smoke workflow PASS: HTTP 200 health and all listed public source SHA-256 matches. Worker deployment verified at 100% traffic.",
+  "started_revision": "3c46bc1176e10de9edbb27da4a50f48ae477319e",
+  "finished_revision": "3c46bc1176e10de9edbb27da4a50f48ae477319e",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "automated workflow outcomes and deployment metadata directly checked; references identify corresponding evidence"
+}
