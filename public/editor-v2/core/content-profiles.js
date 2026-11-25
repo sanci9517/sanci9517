@@ -1,5 +1,5 @@
-import {isAuthoredContent,CONTENT_FIELDS,CONTENT_TYPES,STRUCTURAL_TYPES} from './authored-content.js?v=20261125-d06-carousel-control-relationship-v1';
-import {isStructuredType} from './element-content.js?v=20261125-d06-carousel-control-relationship-v1';
+import {isAuthoredContent,CONTENT_FIELDS,CONTENT_TYPES,STRUCTURAL_TYPES} from './authored-content.js?v=20261125-d06-authored-carousel-slide-semantics-v1';
+import {isStructuredType} from './element-content.js?v=20261125-d06-authored-carousel-slide-semantics-v1';
 
 // These describe existing version gates, not a new content schema or validator.
 // More than one gate may apply: publication must not skip a legacy gate merely

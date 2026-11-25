@@ -60,6 +60,10 @@ test('authored carousel controls reference their own navigable region',()=>{
  assert.equal(regionId,'creator-safe-featured-images-carousel','the carousel region has a stable, node-scoped ID');
  const controlIds=[...html.matchAll(/data-carousel-step="-?1" aria-controls="([^"]+)"/g)].map(match=>match[1]);
  assert.deepEqual(controlIds,[regionId,regionId],'both external navigation buttons identify the carousel they move');
+ const slides=[...html.matchAll(/<figure role="group" aria-roledescription="dia" aria-label="([^"]+)">/g)].map(match=>match[1]);
+ assert.deepEqual(slides,['1. / 2. dia','2. / 2. dia'],'each slide exposes its position within the named carousel');
+ assert.match(html,/<span class="creator-carousel-status" data-carousel-status role="status" aria-live="polite" aria-atomic="true">1 \/ 2<\/span>/,
+  'the carousel starts with an atomic, polite live position for assistive technology');
 });
 
 test('reduced-motion changes update only eligible videos and preserve their DOM identity',()=>{

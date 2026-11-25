@@ -1,0 +1,147 @@
+{
+  "schema_version": 1,
+  "evidence_id": "editor-d06-authored-carousel-slide-semantics-2026-11-25",
+  "plan_point": "77.44.7.D / D-06 — authored carousel slide semantics and position announcements",
+  "scope": "Runtime accessibility parity slice only; not full D-06 or complete Editor acceptance.",
+  "base": {
+    "branch": "v2/foundation",
+    "verified_head": "b71ab19da7aef0ab9c91a1e1fea2a9ba3a20e5fd",
+    "canonical_plan_sha256": "3c21e538486f94f3ce557a9944b969eb162fb3b9cb3f126a07d87ad107f45ce5"
+  },
+  "change": {
+    "summary": "The authored image carousel now exposes each figure as an accessible slide group with a position label, and exposes a polite atomic status counter that updates from actual scroll position. This brings its screen-reader contract in line with the existing structured carousel renderer. Scroll, arrow-key, Home/End and visible-button movement share one scroll event update path. Save and Publish are unchanged.",
+    "reuse": "Adapted the existing project-owned role=group/aria-roledescription=dia slide-label and aria-live position-count pattern from public/editor-v2/core/element-content.js. No third-party code or dependency added.",
+    "files": [
+      "AGENTS.md",
+      "docs/evidence/feature-traceability.json",
+      "public/assets/page-renderer.js",
+      "public/editor-v2/app.js",
+      "public/editor-v2/core/authored-content.js",
+      "public/editor-v2/core/canvas-engine.js",
+      "public/editor-v2/core/capability-matrix.js",
+      "public/editor-v2/core/commands.js",
+      "public/editor-v2/core/content-profiles.js",
+      "public/editor-v2/core/legacy-media-source.js",
+      "public/editor-v2/core/validation.js",
+      "public/editor-v2/index.html",
+      "public/editor-v2/ui/accessibility-fields.js",
+      "public/editor-v2/ui/element-content-controls.js",
+      "public/editor-v2/ui/legacy-media-inspector.js",
+      "public/editor-v2/ui/structured-inspector.js",
+      "public/visual-page.html",
+      "public/editor-v2/tests/element-content.test.js",
+      "tests/browser/editor-structured-content.test.js",
+      "tests/editor-public-asset-cache-bust.test.js"
+    ],
+    "production_data_mutation": false,
+    "new_dependencies": 0
+  },
+  "checks": [
+    {
+      "command": "node --experimental-vm-modules --test public/editor-v2/tests/element-content.test.js",
+      "result": "PASS"
+    },
+    {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-structured-content.test.js",
+      "result": "PASS",
+      "summary": "6/6 real Chromium cases; one-/two-slide controls, slide accessible group names, and live counter after keyboard and button navigation; Save/Publish/public lifecycle."
+    },
+    {
+      "command": "npm run test:editor",
+      "result": "PASS",
+      "summary": "24/24 Editor unit files, 12/12 preference route, 4/4 runner checks."
+    },
+    {
+      "command": "node --experimental-loader ./tests/ts-extension-loader.mjs --test tests/editor-d-content-contract.test.js",
+      "result": "PASS"
+    },
+    {
+      "command": "node --experimental-loader ./tests/ts-extension-loader.mjs --test tests/editor-public-asset-cache-bust.test.js",
+      "result": "PASS"
+    },
+    {
+      "command": "npm run typecheck -- --pretty false",
+      "result": "PASS"
+    },
+    {
+      "command": "python3 tests/plan-contract.test.py",
+      "result": "PASS",
+      "summary": "16/16 after rebuilding source traceability for changed files."
+    },
+    {
+      "command": "python3 scripts/build-feature-traceability.py --check",
+      "result": "PASS",
+      "summary": "396/396 mappings; acceptance remains NOT_CERTIFIED."
+    },
+    {
+      "command": "python3 scripts/check-canonical-plan.py",
+      "result": "PASS",
+      "summary": "single complete 13-file master and single cursor."
+    },
+    {
+      "command": "python3 scripts/audit-active-plan-point.py",
+      "result": "PASS",
+      "summary": "bookkeeping only; 77.44.7.D remains OPEN/NOT_CERTIFIED."
+    },
+    {
+      "command": "node scripts/web013-migration-safety-gate.mjs",
+      "result": "PASS"
+    },
+    {
+      "command": "npx wrangler deploy --dry-run",
+      "result": "PASS",
+      "summary": "Wrangler 4.130.0, 202 public assets, exit 0; read-only dry run."
+    },
+    {
+      "command": "git diff --check; node --check changed JavaScript",
+      "result": "PASS"
+    }
+  ],
+  "pre_release": {
+    "production_d1": "SELECT name FROM d1_migrations ORDER BY name DESC LIMIT 3; latest 0030_media_library_organization.sql; rows_written=0; changes=0; changed_db=false.",
+    "cloudflare_build_minutes": "has_reached_build_minutes_limit=false; refresh 2026-11-30T23:59:59.999Z.",
+    "worker_deployment": "aca36f2d-482a-42f7-9b8e-a364a4cfebbc; version 7ed479cd-861d-4f8d-b240-f69683e4982f at 100% traffic.",
+    "github_actions_cost": "Repository visibility public; workflows use standard Ubuntu runners. GitHub docs state standard GitHub-hosted runners are free and unlimited for public repositories."
+  },
+  "release": {
+    "status": "LOCAL_CHECKS_PASS; fast-forward release pending",
+    "source_commit": "PENDING",
+    "deployment_id": "PENDING",
+    "worker_version_id": "PENDING",
+    "traffic_percent": "PENDING",
+    "health": "PENDING",
+    "changed_public_asset_hashes": "PENDING"
+  },
+  "acceptance": {
+    "D_06": "OPEN / NOT_CERTIFIED",
+    "D_01_D_07": "OPEN / NOT_CERTIFIED",
+    "full_visual_editor": "OPEN / NOT_CERTIFIED",
+    "manual_physical": "DEFERRED until complete Editor scope",
+    "save_publish": "SEPARATE"
+  },
+  "cost": {
+    "new_cost_huf": 0,
+    "production_d1_writes": 0,
+    "r2_operations": 0,
+    "new_dependencies": 0,
+    "github_actions": "Free standard runners confirmed by public repository visibility and official GitHub docs; no extra dispatch/rerun."
+  },
+  "source_sha256": {
+    "public/assets/page-renderer.js": "49969520c31180a02e2142e73761fe5666e2befca45e6f1bb9a0494d6dcc047d",
+    "public/editor-v2/app.js": "277494f23f17416bdc7bc25236550883a4743d8963d8379cda12ee818f9942cb",
+    "public/editor-v2/core/authored-content.js": "97b0ecfc6f44033eb7d0a4753ad34b7f9aef81054b17d74a160d506f9b2cbec1",
+    "public/editor-v2/core/canvas-engine.js": "bd2e8f5c1745837fb56e296b030e87d212d30fc32afe8312e273671b8b97bdd9",
+    "public/editor-v2/core/capability-matrix.js": "e8acad4e0104fe6bb8e002abeb193aeb7c2fdd77b5a075e95865bca442727db1",
+    "public/editor-v2/core/commands.js": "a0f77d0cea6a1c012f2e2cc6cd406648c534d9fb85af108c44ac14cc6c7e3e3a",
+    "public/editor-v2/core/content-profiles.js": "7c816eb3b7818479c6a986b218317a0a16d39c1a27eac1144e62d4f14bc9a896",
+    "public/editor-v2/core/legacy-media-source.js": "274b9ae8250e1f82b1b45eda87c8a5e21bdd26bb5fac7ad877c5a87f3425b410",
+    "public/editor-v2/core/validation.js": "33490756302b6fa7a1538da7c288b2b2100bbef694256ffa5d604f035eccb3dd",
+    "public/editor-v2/index.html": "183ef4da8122c7da892d69c8e43e901e76489503f0e69e280131ca0dc350f9aa",
+    "public/editor-v2/ui/accessibility-fields.js": "76cdcd61435a1c6a9a03cd619555a5e93ebf3f5671a2ba4863dd802c787f7601",
+    "public/editor-v2/ui/element-content-controls.js": "a695fe72d53045aa26ea2127771158d1f46ae66606414b6aec6b0331788cf166",
+    "public/editor-v2/ui/legacy-media-inspector.js": "80fe11bf831b3b538871752b34bc13515ba4aad268c6d21d72b2dddb65e3f0a0",
+    "public/editor-v2/ui/structured-inspector.js": "37113a457c43d867cf47fee8fe38830b4fc1d123ab930412e532cb1325f8e8f9",
+    "public/visual-page.html": "3bc4ee17dbf3677d2e82ff4fe096685d8743f5ca5b357a0e1dfeb5115e264b0d",
+    "public/editor-v2/tests/element-content.test.js": "1f3842d8056eaaf2eaf7fab8248172383206168d18d4413a35b7aebba2c7cb8a"
+  }
+}

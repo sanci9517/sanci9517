@@ -1,6 +1,6 @@
 import { validatedLinkHref } from './richtext-links.js?v=20261117-d03-invalid-media-id-guidance-v1';
 import { PAGE_ACTION_TIMER_DELAYS_MS, pageInteractionAttributes, safePageInteraction } from './page-interactions.js?v=20261121-edt039-single-auto-action-v1';
-import { safeContentDomId } from './element-content.js?v=20261125-d06-carousel-control-relationship-v1';
+import { safeContentDomId } from './element-content.js?v=20261125-d06-authored-carousel-slide-semantics-v1';
 
 export const CONTENT_VERSION=1;
 // Shared by the editor picker and the server-side media upload/list contract.
@@ -278,9 +278,9 @@ export function authoredNodeHtml(node,{childrenHtml='',device='desktop',editor=f
     const layout=node.type==='gallery'
       ?` role="region" aria-label="${esc(galleryName)}" style="grid-template-columns:repeat(${device==='mobile'?1:device==='tablet'?2:[2,3,4].includes(columns)?columns:3},minmax(0,1fr))"`
       :` id="${id}-carousel" tabindex="0" role="region" aria-roledescription="képgaléria" aria-label="${esc(carouselName)}"`;
-    const figures=items.map(item=>{const alt=imageAlt(item),caption=imageCaption(item),accessibleName=caption||alt||'kép';return `<figure><button type="button" class="creator-image-zoom" data-lightbox-src="${esc(imageSource(item))}" data-lightbox-alt="${esc(alt||caption)}" data-lightbox-caption="${esc(caption)}" aria-haspopup="dialog" aria-label="${esc('Kép nagyítása: '+accessibleName)}">${image(item)}</button>${caption?`<figcaption>${esc(caption)}</figcaption>`:''}</figure>`}).join('');
+    const figures=items.map((item,index)=>{const alt=imageAlt(item),caption=imageCaption(item),accessibleName=caption||alt||'kép';return `<figure role="group" aria-roledescription="dia" aria-label="${index+1}. / ${items.length}. dia"><button type="button" class="creator-image-zoom" data-lightbox-src="${esc(imageSource(item))}" data-lightbox-alt="${esc(alt||caption)}" data-lightbox-caption="${esc(caption)}" aria-haspopup="dialog" aria-label="${esc('Kép nagyítása: '+accessibleName)}">${image(item)}</button>${caption?`<figcaption>${esc(caption)}</figcaption>`:''}</figure>`}).join('');
     const singleSlide=items.length<=1;
-    const controls=node.type==='carousel'?`<div class="creator-carousel-controls"><button type="button" data-carousel-step="-1" aria-controls="${id}-carousel" aria-label="Előző kép"${singleSlide?' disabled':''}>←</button><button type="button" data-carousel-step="1" aria-controls="${id}-carousel" aria-label="Következő kép"${singleSlide?' disabled':''}>→</button></div>`:'';
+    const controls=node.type==='carousel'?`<div class="creator-carousel-controls"><button type="button" data-carousel-step="-1" aria-controls="${id}-carousel" aria-label="Előző kép"${singleSlide?' disabled':''}>←</button><span class="creator-carousel-status" data-carousel-status role="status" aria-live="polite" aria-atomic="true">1 / ${items.length}</span><button type="button" data-carousel-step="1" aria-controls="${id}-carousel" aria-label="Következő kép"${singleSlide?' disabled':''}>→</button></div>`:'';
     return `<div class="creator-${node.type}"${layout}>${figures}</div>${controls}`;
   }
   if(node.type==='code')return `<pre${p.wrap?' class="creator-code-wrap"':''}><code>${esc(p.code)}</code></pre>`;
@@ -412,6 +412,23 @@ export function initContentInteractions(root){
       track.scrollBy({left:(key==='ArrowRight'?1:-1)*track.clientWidth,behavior});
     }
   };
+  const updateCarouselStatus=track=>{
+    if(!track?.matches?.('.creator-carousel[role="region"]'))return;
+    const figures=[...track.querySelectorAll('figure')];
+    if(!figures.length)return;
+    const trackLeft=track.getBoundingClientRect().left;
+    let activeIndex=0,closestDistance=Infinity;
+    figures.forEach((figure,index)=>{
+      const distance=Math.abs(figure.getBoundingClientRect().left-trackLeft);
+      if(distance<closestDistance){closestDistance=distance;activeIndex=index}
+    });
+    const status=track.nextElementSibling?.querySelector?.('[data-carousel-status]');
+    if(status)status.textContent=`${activeIndex+1} / ${figures.length}`;
+  };
+  root.addEventListener('scroll',event=>{
+    const track=event.target?.matches?.('.creator-carousel[role="region"]')?event.target:event.target?.closest?.('.creator-carousel[role="region"]');
+    if(track&&root.contains(track))updateCarouselStatus(track);
+  },true);
   root.addEventListener('focusin',event=>{
     scheduleTooltipPosition(event.target?.closest?.('.creator-tooltip'));
     cancelTimerForEvent(event);const actionSource=event.target?.closest?.('[data-page-action]');

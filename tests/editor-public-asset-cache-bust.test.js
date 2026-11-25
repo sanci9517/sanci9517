@@ -29,8 +29,8 @@ test('the Editor and public renderer release tokens bust the structured accessib
   assert.match(css,/\.element-favorite-toggle\s*\{/,
     'the stylesheet referenced by the versioned link must include the palette-favorites UI');
   const recoveryVersion='20261124-edt042-publish-recovery-safe-label-v1';
-  const editorEntryVersion='20261125-d06-carousel-control-relationship-v1';
-  const mediaPlaybackVersion='20261125-d06-carousel-control-relationship-v1';
+  const editorEntryVersion='20261125-d06-authored-carousel-slide-semantics-v1';
+  const mediaPlaybackVersion='20261125-d06-authored-carousel-slide-semantics-v1';
   assert.match(html,new RegExp(`src="/editor-v2/app\\.js\\?v=${editorEntryVersion}"`),
     'the deployed entry page must request the unsupported-Publish recovery handler');
   assert.match(html,/src="\/editor-v2\/ui\/shell\.js\?v=20261123-edt044-account-scoped-preferences-v2"/,
@@ -62,7 +62,7 @@ test('the Editor and public renderer release tokens bust the structured accessib
     'a changed operating-system preference updates only public video controls without replacing interactive page content');
   assert.match(app,/applyReducedMotionVideoPlayback\(canvas,\{reducedMotion:prefersReducedMotion\(\),editor:true\}\)/,
     'a changed operating-system preference updates only Editor Canvas video controls without rerendering the active workspace');
-  assert.match(publicRenderer,/element-content\.js\?v=20261125-d06-carousel-control-relationship-v1/,
+  assert.match(publicRenderer,/element-content\.js\?v=20261125-d06-authored-carousel-slide-semantics-v1/,
     'the public renderer must request the shared collision-resistant content DOM ID helper');
 });
 
@@ -77,9 +77,9 @@ test('the EDT-040 in-view trigger refreshes both renderers and the shared motion
     readFile(resolve(root,'editor-motion.css'),'utf8')
   ]);
   const motionVersion='20261123-edt040-in-view-motion-v1';
-  const domIdVersion='20261125-d06-carousel-control-relationship-v1';
-  const editorEntryVersion='20261125-d06-carousel-control-relationship-v1';
-  const mediaPlaybackVersion='20261125-d06-carousel-control-relationship-v1';
+  const domIdVersion='20261125-d06-authored-carousel-slide-semantics-v1';
+  const editorEntryVersion='20261125-d06-authored-carousel-slide-semantics-v1';
+  const mediaPlaybackVersion='20261125-d06-authored-carousel-slide-semantics-v1';
   assert.match(editorHtml,new RegExp(`editor-motion\\.css\\?v=${motionVersion}`));
   assert.match(editorHtml,new RegExp(`app\\.js\\?v=${editorEntryVersion}`));
   assert.match(editor,new RegExp(`core/property-registry\\.js\\?v=${motionVersion}`));
