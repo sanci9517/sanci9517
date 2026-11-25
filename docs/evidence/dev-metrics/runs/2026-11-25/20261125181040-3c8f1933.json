@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261125181040-3c8f1933",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-25T18:10:40.529Z",
+  "finished_at": "2026-11-25T18:11:32.011Z",
+  "wall_seconds": 51,
+  "paused_seconds": 0,
+  "measured_seconds": 51,
+  "status": "partial",
+  "kind": "none",
+  "summary": "Re-checked the exact-SHA Editor Core workflow and live Worker deployment. The hosted browser-layout step remains in progress; log download is unavailable while the job is active. Local git fetch and direct health GET remain blocked by the unavailable proxy; GitHub API confirms the remote branch is one documentation-evidence commit ahead. No source change, duplicate CI, or deployment.",
+  "evidence": [
+    "GitHub workflow 45667665134; Cloudflare deployment 03a8d284-8c16-46a1-a153-70f772b8602a; remote docs commit 1f40b78bbc07fb61a99fbd386b0a68dd28eff47b"
+  ],
+  "checks": "Exact-SHA Editor Core workflow 45667665134: steps 1–13 success; browser layout step 14 in progress, subsequent steps pending. Job logs endpoint returned HTTP 404 BlobNotFound while active. Live Cloudflare deployment API: deployment 03a8d284-8c16-46a1-a153-70f772b8602a, version 9b07c2a1-d089-48e4-b4ac-e1c483a47a2c, 100% traffic. Direct worker health GET blocked by proxy port 8080; git fetch likewise blocked. GitHub compare: local ef84d86899f73ce67e76df342f48788f3011f510 is one docs-only commit behind remote v2/foundation.",
+  "started_revision": "ef84d86899f73ce67e76df342f48788f3011f510",
+  "finished_revision": "ef84d86899f73ce67e76df342f48788f3011f510",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
