@@ -1,6 +1,6 @@
 import {createCompositionInputs} from './composition-inputs.js';
 import {normalizeAccessibility} from '../core/accessibility.js';
-import {contentAttributes} from '../core/authored-content.js?v=20261125-d06-media-reduced-motion-v2';
+import {contentAttributes} from '../core/authored-content.js?v=20261125-d06-carousel-control-relationship-v1';
 
 export function renderAccessibilityFields(node,apply,{nodes=()=>({}),pending=()=>{}}={}){
  const root=document.createElement('div');root.className='accessibility-fields';

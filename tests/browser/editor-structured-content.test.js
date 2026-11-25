@@ -46,8 +46,12 @@ test('a one-slide authored carousel exposes no-op-free controls and leaves arrow
  const region=page.locator('.creator-carousel[role="region"]');
  await region.waitFor();
  assert.equal(await region.getAttribute('aria-label'),'Bevezető kép','the single-slide region retains the Inspector-authored name');
+ const regionId=await region.getAttribute('id');
+ assert.ok(regionId,'the navigable region has a DOM ID');
  const previous=page.locator('.creator-carousel-controls [data-carousel-step="-1"]');
  const next=page.locator('.creator-carousel-controls [data-carousel-step="1"]');
+ assert.equal(await previous.getAttribute('aria-controls'),regionId,'the previous control identifies its carousel region');
+ assert.equal(await next.getAttribute('aria-controls'),regionId,'the next control identifies its carousel region');
  assert.equal(await previous.isDisabled(),true,'a one-slide Carousel has no active previous action');
  assert.equal(await next.isDisabled(),true,'a one-slide Carousel has no active next action');
  await page.evaluate(()=>document.addEventListener('keydown',event=>{
@@ -92,9 +96,13 @@ test('a multi-slide authored carousel keeps button and keyboard navigation activ
  const region=page.locator('.creator-carousel[role="region"]');
  await region.waitFor();
  assert.equal(await region.getAttribute('aria-label'),'Kiemelt képek');
+ const regionId=await region.getAttribute('id');
+ assert.ok(regionId,'the navigable region has a DOM ID');
  assert.equal(await region.locator('figure').count(),2);
  const previous=page.locator('.creator-carousel-controls [data-carousel-step="-1"]');
  const next=page.locator('.creator-carousel-controls [data-carousel-step="1"]');
+ assert.equal(await previous.getAttribute('aria-controls'),regionId,'the previous control identifies its carousel region');
+ assert.equal(await next.getAttribute('aria-controls'),regionId,'the next control identifies its carousel region');
  assert.equal(await previous.isDisabled(),false,'a multi-slide Carousel keeps previous available');
  assert.equal(await next.isDisabled(),false,'a multi-slide Carousel keeps next available');
  const readLeft=()=>region.evaluate(track=>track.scrollLeft);
@@ -662,7 +670,7 @@ test('structured Inspector editing survives Save, Publish and public interaction
  const singleGalleryMarkup=renderElementContent('gallery',{version:1,items:[{src:'/media/only.jpg',alt:'Egyetlen kép',caption:'Egyetlen képaláírás'}]},'single-gallery-public-probe');
  await viewer.evaluate(markup=>{const wrapper=document.createElement('div');wrapper.id='single-gallery-public-probe';wrapper.innerHTML=markup;document.body.append(wrapper)},singleGalleryMarkup);
  await viewer.evaluate(async()=>{
-  const {activateStructuredContent}=await import('/editor-v2/core/element-content.js?v=20261124-d06-accordion-accessible-group-v1');
+  const {activateStructuredContent}=await import('/editor-v2/core/element-content.js?v=20261125-d06-carousel-control-relationship-v1');
   activateStructuredContent(document.querySelector('#single-gallery-public-probe'));
  });
  const singleGallery=viewer.locator('#single-gallery-public-probe'),singleThumb=singleGallery.locator('.visual-gallery-thumb');
@@ -685,13 +693,19 @@ test('structured Inspector editing survives Save, Publish and public interaction
  assert.equal(await singleThumb.evaluate(el=>document.activeElement===el),true,'closing the dialog restores focus to its thumbnail');
  const carousel=viewer.locator('.visual-editor-node[data-node-id="'+ids.carousel+'"]');
  assert.equal(await carousel.locator('.visual-carousel-slide:visible').count(),1);
+ const structuredCarouselId=await carousel.locator('[data-structured-carousel]').getAttribute('id');
+ assert.ok(structuredCarouselId,'the published carousel has a stable region ID');
+ assert.equal(await carousel.locator('.visual-carousel-prev').getAttribute('aria-controls'),structuredCarouselId,
+  'the previous control is programmatically associated with the carousel region');
+ assert.equal(await carousel.locator('.visual-carousel-next').getAttribute('aria-controls'),structuredCarouselId,
+  'the next control is programmatically associated with the carousel region');
  await carousel.locator('.visual-carousel-next').click();
  assert.equal(await carousel.locator('.visual-carousel-count').textContent(),'2 / 2');
  assert.equal(await carousel.locator('.visual-carousel-slide:visible h3').textContent(),'Második dia');
  const singleSlideMarkup=renderElementContent('carousel',{version:1,items:[{label:'Egy dia',content:'Egyetlen tartalom',src:'',alt:''}]},'one-slide-public-probe');
  await viewer.evaluate(markup=>{const wrapper=document.createElement('div');wrapper.id='one-slide-public-probe';wrapper.innerHTML=markup;document.body.append(wrapper)},singleSlideMarkup);
  await viewer.evaluate(async()=>{
-  const {activateStructuredContent}=await import('/editor-v2/core/element-content.js?v=20261124-d06-accordion-accessible-group-v1');
+  const {activateStructuredContent}=await import('/editor-v2/core/element-content.js?v=20261125-d06-carousel-control-relationship-v1');
   activateStructuredContent(document.querySelector('#one-slide-public-probe'));
  });
  const singleSlide=viewer.locator('#one-slide-public-probe [data-structured-carousel]');

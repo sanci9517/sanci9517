@@ -52,6 +52,16 @@ test('authored muted autoplay becomes manually controllable for reduced-motion v
  assert.match(authoredNodeHtml(video,{editor:true}),/<video[^>]* controls[^>]* muted/,'the Editor suppresses autoplay without hiding the manual playback control');
 });
 
+test('authored carousel controls reference their own navigable region',()=>{
+ const html=authoredNodeHtml({id:'featured-images',type:'carousel',metadata:{contentVersion:1},props:{items:[
+  {src:'/first.jpg',alt:'Első kép'},{src:'/second.jpg',alt:'Második kép'}
+ ]}});
+ const regionId=html.match(/<div class="creator-carousel" id="([^"]+)"/)?.[1];
+ assert.equal(regionId,'creator-safe-featured-images-carousel','the carousel region has a stable, node-scoped ID');
+ const controlIds=[...html.matchAll(/data-carousel-step="-?1" aria-controls="([^"]+)"/g)].map(match=>match[1]);
+ assert.deepEqual(controlIds,[regionId,regionId],'both external navigation buttons identify the carousel they move');
+});
+
 test('reduced-motion changes update only eligible videos and preserve their DOM identity',()=>{
  const video={dataset:{reducedMotionAutoplay:'true',reducedMotionControls:'false'},muted:true,autoplay:true,controls:false,paused:false,pause(){this.paused=true}};
  const root={querySelectorAll:selector=>{assert.equal(selector,'video[data-reduced-motion-autoplay="true"]');return [video]}};
@@ -582,10 +592,10 @@ test('structured accordions expose their Inspector name as an escaped accessible
 
 test('a single-slide carousel does not render active no-op navigation controls',()=>{
  const html=renderStructuredContent('carousel',{version:1,items:[{label:'Egy dia',content:'Egyetlen tartalom',src:'',alt:''}]},'one-slide');
- assert.match(html,/<button type="button" class="visual-carousel-prev" aria-label="Előző dia" disabled>/,
+ assert.match(html,/<button type="button" class="visual-carousel-prev" aria-controls="carousel-safe-one-slide" aria-label="Előző dia" disabled>/,
   'previous navigation is natively disabled when there is no other slide');
  assert.match(html,/<span class="visual-carousel-count" aria-live="polite">1 \/ 1<\/span>/,
   'the live counter remains visible for a one-slide carousel');
- assert.match(html,/<button type="button" class="visual-carousel-next" aria-label="Következő dia" disabled>/,
+ assert.match(html,/<button type="button" class="visual-carousel-next" aria-controls="carousel-safe-one-slide" aria-label="Következő dia" disabled>/,
   'next navigation is natively disabled when there is no other slide');
 });

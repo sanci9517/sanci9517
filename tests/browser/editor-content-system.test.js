@@ -934,8 +934,15 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   assert.deepEqual(await node(live,'dropdown').locator('details').evaluateAll(items=>items.map(el=>el.open)),[false,false],
     'draft Save keeps the previous public Dropdown state unchanged');
   assert.equal(await node(live,'button').getAttribute('href'),'/p/home','Save keeps the prior published link live');
-  assert.equal(await node(live,'carousel').locator('.creator-carousel').getAttribute('aria-label'),'Alkotói galéria',
+  const legacyCarouselRegion=node(live,'carousel').locator('.creator-carousel[role="region"]');
+  assert.equal(await legacyCarouselRegion.getAttribute('aria-label'),'Alkotói galéria',
     'a newly named carousel is still draft-only after Save');
+  const legacyCarouselId=await legacyCarouselRegion.getAttribute('id');
+  assert.ok(legacyCarouselId,'the legacy carousel region has a stable, node-scoped ID');
+  assert.equal(await node(live,'carousel').locator('.creator-carousel-controls [data-carousel-step="-1"]').getAttribute('aria-controls'),legacyCarouselId,
+    'the legacy previous button programmatically identifies its controlled carousel');
+  assert.equal(await node(live,'carousel').locator('.creator-carousel-controls [data-carousel-step="1"]').getAttribute('aria-controls'),legacyCarouselId,
+    'the legacy next button programmatically identifies its controlled carousel');
   assert.equal(await node(live,'button').evaluate(el=>getComputedStyle(el).backgroundImage),'none','draft background stays private before Publish');
   assert.equal(await node(live,'image').locator('img').evaluate(el=>getComputedStyle(el).objectPosition),'50% 50%','Save does not publish image crop');
   assert.equal(await node(live,'image').locator('.creator-image-frame').evaluate(el=>getComputedStyle(el).aspectRatio),'1 / 1','draft Save keeps the original published image ratio');
