@@ -129,13 +129,54 @@
     }
   },
   "release": {
-    "runtime_commit": null,
-    "github_ci": "PENDING",
-    "cloudflare_build": "PENDING",
-    "post_release_worker_version": null,
-    "post_release_traffic_percentage": null,
-    "post_release_health": "PENDING",
-    "post_release_changed_asset_hashes": "PENDING"
+    "runtime_commit": "5613514095ee63d61922514c4ccab4344899d84a",
+    "runtime_commit_url": "https://github.com/sanci9517/sanci9517/commit/5613514095ee63d61922514c4ccab4344899d84a",
+    "github_ci": {
+      "status": "PARTIAL — 5/6 required checks passed; Editor Core still in progress at the last exact-SHA readback.",
+      "exact_sha": "5613514095ee63d61922514c4ccab4344899d84a",
+      "passed_runs": {
+        "production_source_smoke": "45667665098",
+        "canonical_active_point_audit": "45667665105",
+        "twitch_integration": "45667665024",
+        "canonical_plan": "45667665168",
+        "f0_baseline": "45667665066"
+      },
+      "in_progress_runs": {
+        "editor_core": "45667665134"
+      }
+    },
+    "cloudflare_build": {
+      "build_uuid": "f8a5617b-d0b6-43ee-b998-130765d56dc7",
+      "outcome": "success",
+      "commit_hash": "5613514095ee63d61922514c4ccab4344899d84a",
+      "branch": "v2/foundation",
+      "build_command": "npm run typecheck",
+      "deploy_command": "npm run deploy:safe",
+      "start": "2026-11-25T17:43:43.935Z",
+      "completed": "2026-11-25T17:44:31.478Z"
+    },
+    "deployment_id": "03a8d284-8c16-46a1-a153-70f772b8602a",
+    "post_release_worker_version": "9b07c2a1-d089-48e4-b4ac-e1c483a47a2c",
+    "post_release_traffic_percentage": 100,
+    "post_release_health": {
+      "status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      },
+      "checked_at": "2026-11-25T17:46:05Z"
+    },
+    "post_release_changed_asset_hashes": {
+      "checked_at": "2026-11-25T17:46:05Z",
+      "method": "Direct read-only GET from the production workers.dev origin; exact local/remote SHA-256 match.",
+      "assets": {
+        "public/editor-v2/core/richtext-import.js": "b0ee431e2dbb8124ac56bf3d43f28835ef7a8753c2fad269c28e9497d7e6dd59",
+        "public/editor-v2/app.js": "435a99a411b0dec0416a2c0d7409e9bea8887021d76ff83755e5a3d737deb6bd",
+        "public/editor-v2/index.html": "205602b0954d4fe337789761a2597fd83f950c6ce7deec071d79dbb122af1e0a"
+      }
+    }
   },
   "acceptance": {
     "feature_acceptance": "NOT_RECERTIFIED",
