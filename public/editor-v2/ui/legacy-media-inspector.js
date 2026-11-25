@@ -1,4 +1,4 @@
-import {legacyMediaInspectorValues,legacyImagePresentation,legacyImageCaption} from '../core/legacy-media-source.js?v=20261125-d06-media-reduced-motion-v1';
+import {legacyMediaInspectorValues,legacyImagePresentation,legacyImageCaption} from '../core/legacy-media-source.js?v=20261125-d06-media-reduced-motion-v2';
 import {safeMediaUrl} from '../core/element-content.js?v=20261124-d06-accordion-accessible-group-v1';
 import {createCompositionInputs} from './composition-inputs.js';
 import {IMAGE_MIMES,mediaAssetPicker,setMediaAssetPickerSelection} from './element-content-controls.js?v=20261120-d06-authored-playable-asset-picker-v1';

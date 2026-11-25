@@ -1,0 +1,137 @@
+{
+  "schema_version": 1,
+  "evidence_id": "editor-d06-reduced-motion-live-update-2026-11-25",
+  "date": "2026-11-25",
+  "canonical_plan": {
+    "path": "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+    "pre_change_sha256": "52ee4b99bd64162ab80e2d1e75153e443b931271bdd30a5f24314f451f8d8407",
+    "active_point": "77.44.7.D",
+    "status": "D-06 partial implementation; full D-06/D-01–D-07/Visual Editor OPEN / NOT_CERTIFIED"
+  },
+  "change": {
+    "summary": "Reduced-motion preference changes now update eligible muted autoplay video elements in place in the public renderer and Editor Canvas. This avoids a full page/canvas rerender that could replace active interaction nodes and event handlers. Editor keeps manual controls while it suppresses automatic playback. The normal public preference restores the configured public autoplay/controls. Saved document data and Save/Publish paths are unchanged.",
+    "files": [
+      "public/assets/page-renderer.js",
+      "public/editor-v2/app.js",
+      "public/editor-v2/core/authored-content.js",
+      "public/editor-v2/core/legacy-media-source.js",
+      "public/editor-v2/index.html",
+      "public/editor-v2/tests/element-content.test.js",
+      "public/editor-v2/ui/accessibility-fields.js",
+      "public/editor-v2/ui/element-content-controls.js",
+      "public/editor-v2/core/canvas-engine.js",
+      "public/editor-v2/core/capability-matrix.js",
+      "public/editor-v2/core/commands.js",
+      "public/editor-v2/core/content-profiles.js",
+      "public/editor-v2/core/validation.js",
+      "public/editor-v2/ui/legacy-media-inspector.js",
+      "public/visual-page.html",
+      "tests/browser/editor-content-system.test.js",
+      "tests/browser/editor-legacy-media-parity.test.js",
+      "tests/editor-public-asset-cache-bust.test.js",
+      "docs/evidence/feature-traceability.json"
+    ],
+    "no_new_dependencies": true,
+    "production_data_mutation": false
+  },
+  "source_sha256": {
+    "public/assets/page-renderer.js": "3c129b1cf3a11f9bfd1d6a884beb861283915d0e6285ed2100427d58b427a2f7",
+    "public/editor-v2/app.js": "16f524c4148983338d3cf0c0daef386d42a584db94deb1a97035e95cf43162ca",
+    "public/editor-v2/core/authored-content.js": "7e2b55e22631f199320259f184a99838ee4f8558a63e2942943274999ec9eeaf",
+    "public/editor-v2/core/legacy-media-source.js": "fe2f8811dc83f6764780f5f3f5c93033eaac72d4ab258d255e38d1950aaa54e3",
+    "public/editor-v2/index.html": "6ce25f4d03d2da0e82dbae0262dd7c479c1464a0f1319cbb66dea95e33f6c1b2",
+    "public/editor-v2/tests/element-content.test.js": "68ea9c2983580502779e964eca67aa86650dec1f71d99e1e62a6d96126dc61fa",
+    "public/editor-v2/ui/accessibility-fields.js": "6d9ae913a00cd6dfbcd3a6f415a096fda9b9b37faf433c0bc92010257e8533ef",
+    "public/editor-v2/ui/element-content-controls.js": "69412eaae8db096a9be8531ce9af0483ea66a24ba137ed684981c6e76bab6243",
+    "public/editor-v2/core/canvas-engine.js": "e8a199b915c4aedb7b55bba7471bccd8c2b71b85e564762b47914a101a4211de",
+    "public/editor-v2/core/capability-matrix.js": "67f4f3d582293f811da219612bda18ca437e8ab38198ee638178a53cf206ade5",
+    "public/editor-v2/core/commands.js": "fff6a73d86d9087a80199e5f00f2f0e3ab0a0e90293af331e65c9c305a296e53",
+    "public/editor-v2/core/content-profiles.js": "114febe6497de466960570ac47c07a2df9cf31ec652c8aab8a2227013dd94040",
+    "public/editor-v2/core/validation.js": "3bdef93b04f998577a19e4b504e96e13ece138d0baefff92991f6c39515fc89f",
+    "public/editor-v2/ui/legacy-media-inspector.js": "6f8a9bf0cce838d32854d1c5be01a0f9683d542f1fdc938c3a6b8ed9a19e0cf2",
+    "public/visual-page.html": "e97fcc4a4079c1310bb72b71f273357b51869c69ede3190a605b460b600834a2",
+    "tests/browser/editor-content-system.test.js": "5c8e46a8c73fc1c0d6b57a36beef938d0034d13597489dee34c4f5aa491b3938",
+    "tests/browser/editor-legacy-media-parity.test.js": "5c18bea8a369b73bcf1f11a7993a8847021c72f8b51ed542f21942593176ecb0",
+    "tests/editor-public-asset-cache-bust.test.js": "2df0668ec827ef14785cea2b36fc2a52966a35012ed65bacd35e9cb6cd419b22",
+    "docs/evidence/feature-traceability.json": "35a7175a44706243e9850b9175732b12e598b8ef76f962007870f962d154b6ae"
+  },
+  "checks": [
+    {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium python3 scripts/run-with-linux-subreaper.py --test-files node --test --test-concurrency=1 tests/browser/editor-content-system.test.js tests/browser/editor-page-interactions.test.js tests/browser/editor-legacy-media-parity.test.js",
+      "result": "PASS",
+      "summary": "3 real-Chromium files passed; tests covered authored Editor content lifecycle, preserving page interaction DOM during reduced-motion change, and Editor/public legacy media parity. Per-file summaries: 1/1, 1/1, 2/2."
+    },
+    {
+      "command": "npm run test:editor",
+      "result": "PASS",
+      "summary": "24/24 Editor test files; preference-route 12/12; Linux subreaper runner 4/4."
+    },
+    {
+      "command": "node --experimental-vm-modules --test public/editor-v2/tests/element-content.test.js",
+      "result": "PASS",
+      "summary": "Unit test module passed, including reduced-motion helper/markup cases."
+    },
+    {
+      "command": "node --experimental-loader ./tests/ts-extension-loader.mjs --test tests/editor-public-asset-cache-bust.test.js",
+      "result": "PASS",
+      "summary": "Cache-bust and no-full-rerender contracts passed."
+    },
+    {
+      "command": "npm run typecheck",
+      "result": "PASS"
+    },
+    {
+      "command": "python3 tests/plan-contract.test.py",
+      "result": "PASS",
+      "summary": "16/16 after refreshing source traceability fingerprints."
+    },
+    {
+      "command": "python3 scripts/build-feature-traceability.py --check",
+      "result": "PASS",
+      "summary": "396 source mappings match; acceptance remains NOT_CERTIFIED."
+    },
+    {
+      "command": "python3 scripts/check-canonical-plan.py",
+      "result": "PASS",
+      "summary": "One full 13-part canonical plan, one cursor; acceptance NOT_CERTIFIED."
+    },
+    {
+      "command": "python3 scripts/audit-active-plan-point.py",
+      "result": "PASS",
+      "summary": "Current cursor 77.44.7.D; 396 features, 148 PARTIAL_SOURCE, 248 UNVERIFIED; no functional acceptance claimed."
+    },
+    {
+      "command": "npx wrangler deploy --dry-run",
+      "result": "PASS",
+      "summary": "Wrangler 4.130.0; 202 public assets, 435.10 KiB (110.25 KiB gzip); exit 0. Read-only dry run; expected shared-config EROFS log warning occurred."
+    },
+    {
+      "command": "Cloudflare D1 query API SELECT name FROM d1_migrations ORDER BY name",
+      "result": "PASS",
+      "summary": "36 migrations; latest 0030_media_library_organization.sql; changed_db=false, changes=0, rows_written=0."
+    },
+    {
+      "command": "git diff --check and node --check changed JavaScript",
+      "result": "PASS"
+    }
+  ],
+  "release": {
+    "status": "NOT_YET_RELEASED",
+    "branch": "v2/foundation",
+    "verified_pre_change_head": "3c46bc1176e10de9edbb27da4a50f48ae477319e",
+    "required_next": "Fast-forward verified source commit; wait for exact-SHA checks and Cloudflare build/deployment; verify 100% Worker traffic, health and public asset hashes before post-release evidence update."
+  },
+  "cost": {
+    "new_cost_huf": 0,
+    "production_d1_writes": 0,
+    "r2_operations": 0,
+    "new_dependencies": 0
+  },
+  "acceptance": {
+    "D_06": "OPEN / NOT_CERTIFIED",
+    "full_D_block": "OPEN / NOT_CERTIFIED",
+    "full_visual_editor": "OPEN / NOT_CERTIFIED",
+    "manual_physical": "DEFERRED until full Editor scope",
+    "save_publish": "SEPARATE"
+  }
+}

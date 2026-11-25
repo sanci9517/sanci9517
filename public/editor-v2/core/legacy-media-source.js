@@ -52,12 +52,26 @@ export function legacyPlaybackSettings(props,{video=false,editor=false,reducedMo
   return {
     // A controls-free autoplay background must stay manually operable when
     // autoplay is suppressed for editing or reduced-motion preferences.
-    controls:p.controls!==false||(requestedAutoplay&&reducedMotion===true),
+    controls:p.controls!==false||(requestedAutoplay&&suppressAutoplay),
     loop:p.loop===true,
     muted,
     autoplay:requestedAutoplay&&!suppressAutoplay,
     poster:video?legacyImageSource({assetId:p.posterAssetId,src:p.poster},{editor}):''
   };
+}
+
+/** Update only eligible muted autoplay videos when the system preference changes. */
+export function applyReducedMotionVideoPlayback(root,{reducedMotion=false,editor=false}={}){
+  if(!root?.querySelectorAll)return 0;
+  const suppressAutoplay=reducedMotion===true||editor===true;
+  const videos=root.querySelectorAll('video[data-reduced-motion-autoplay="true"]');
+  for(const video of videos){
+    const requestedAutoplay=video.dataset.reducedMotionAutoplay==='true'&&video.muted===true;
+    video.autoplay=requestedAutoplay&&!suppressAutoplay;
+    video.controls=video.dataset.reducedMotionControls==='true'||(requestedAutoplay&&suppressAutoplay);
+    if(suppressAutoplay&&requestedAutoplay)video.pause();
+  }
+  return videos.length;
 }
 
 /**

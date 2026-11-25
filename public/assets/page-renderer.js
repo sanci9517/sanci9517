@@ -5,7 +5,7 @@ import { RICH_TEXT_FONT_FAMILIES } from "../editor-v2/core/schema.js?v=20261101-
 import { resolveRichTextLinkTarget } from "../editor-v2/core/richtext-links.js?v=20261101-richtext-link-target";
 import { LAYOUT_TYPES, isManagedLayout } from "../editor-v2/core/layout-presets.js";
 import {isStructuredType,renderElementContent,activateStructuredContent,safeMediaUrl} from "../editor-v2/core/element-content.js?v=20261124-d06-accordion-accessible-group-v1";
-import {legacyImageSource,legacyPlayableSource,legacyPlaybackSettings,legacyImagePresentation,legacyImageCaption} from "../editor-v2/core/legacy-media-source.js?v=20261125-d06-media-reduced-motion-v1";
+import {legacyImageSource,legacyPlayableSource,legacyPlaybackSettings,legacyImagePresentation,legacyImageCaption,applyReducedMotionVideoPlayback} from "../editor-v2/core/legacy-media-source.js?v=20261125-d06-media-reduced-motion-v2";
 import {iconById} from "../editor-v2/core/icon-options.js";
 import {normalizeDividerStyle} from "../editor-v2/core/decorative-elements.js";
 import {normalizeCardContent,cardImageSrc} from "../editor-v2/core/card-content.js?v=20261118-d02-card-cta-recovery-v1";
@@ -13,7 +13,7 @@ import {renderCountdownContent,activateCountdowns} from "../editor-v2/core/count
 import {renderSocialLinksHtml} from "../editor-v2/core/social-links.js";
 import {renderEmbedHtml,activateEmbeds} from "../editor-v2/core/creator-embed.js";
 import {renderCodeSnippet,activateCodeBlocks} from "../editor-v2/core/code-snippet.js";
-import {isAuthoredContent,CONTENT_TYPES,contentTag,contentAttributes,authoredNodeHtml,initContentInteractions} from "../editor-v2/core/authored-content.js?v=20261125-d06-media-reduced-motion-v1";
+import {isAuthoredContent,CONTENT_TYPES,contentTag,contentAttributes,authoredNodeHtml,initContentInteractions} from "../editor-v2/core/authored-content.js?v=20261125-d06-media-reduced-motion-v2";
 import {defaultTokens,applyTokenVariables} from "../editor-v2/core/design-tokens.js";
 import {isVisibleOnDevice,collectVisibleDescendants,safeNodeChildIds} from "../editor-v2/core/visibility.js?v=20261112-safe-node-children";
 import {applyStateStyles,hasStateStyles} from "../editor-v2/core/state-styles.js";
@@ -134,7 +134,8 @@ if(n.type==='card'&&n.metadata?.cardContentVersion===1){
   return caption?`<figure class="visual-editor-node visual-image-figure" style="margin:0;max-width:100%;${st}"><span style="display:block;max-width:100%;">${image}</span><figcaption style="display:block;padding-top:.5em;font-size:.85em;opacity:.8;white-space:pre-wrap;overflow-wrap:anywhere;">${esc(caption)}</figcaption></figure>`:`<img class="visual-editor-node visual-image" style="object-fit:${cfg.fit};object-position:${cfg.objectPosition};aspect-ratio:${cfg.ratio};${st}" src="${esc(u)}" alt="${esc(cfg.alt)}"${cfg.decorative?' role="presentation"':''} loading="${cfg.loading}">`;
 }if(n.type==='video'){
   const u=safeUrl(legacyPlayableSource(p)),cfg=legacyPlaybackSettings(p,{video:true,reducedMotion:prefersReducedMotion()}),poster=safeUrl(cfg.poster);
-  return u?`<video class="visual-editor-node visual-video" style="${st}" src="${esc(u)}"${cfg.controls?' controls':''}${cfg.loop?' loop':''}${cfg.muted?' muted':''}${cfg.autoplay?' autoplay':''}${poster?` poster="${esc(poster)}"`:''} playsinline preload="metadata"></video>`:`<div class="visual-editor-node visual-card" style="${st}">Videó még nincs beállítva</div>`;
+  const motionAttrs=p.autoplay===true&&p.muted===true?` data-reduced-motion-autoplay="true" data-reduced-motion-controls="${p.controls!==false?'true':'false'}"`:'';
+  return u?`<video class="visual-editor-node visual-video" style="${st}" src="${esc(u)}"${motionAttrs}${cfg.controls?' controls':''}${cfg.loop?' loop':''}${cfg.muted?' muted':''}${cfg.autoplay?' autoplay':''}${poster?` poster="${esc(poster)}"`:''} playsinline preload="metadata"></video>`:`<div class="visual-editor-node visual-card" style="${st}">Videó még nincs beállítva</div>`;
 }if(n.type==='audio'){
   const u=safeUrl(legacyPlayableSource(p)),cfg=legacyPlaybackSettings(p);
   return u?`<audio class="visual-editor-node visual-audio" style="${st}" src="${esc(u)}"${cfg.controls?' controls':''}${cfg.loop?' loop':''} preload="none"></audio>`:`<div class="visual-editor-node visual-card" style="${st}">Hang még nincs beállítva</div>`;
@@ -309,6 +310,6 @@ for(const key of ['aria-label','lang']){const value=root.metadata?.a11yVersion==
 if(root.metadata?.rootStyleVersion===1||root.metadata?.editorRootVersion===1){canvas.classList.add('visual-root-authored');if(root.metadata?.stateVersion===1)canvas.classList.add('creator-state-enabled');canvas.style.cssText=style(root);canvas.dataset.nodeId=root.id;const frame=canvas.closest('.preview-frame');if(frame){frame.style.maxWidth='none';frame.style.flex='0 0 auto';frame.style.margin='0 auto';frame.parentElement.style.overflowX='auto';frame.parentElement.style.justifyContent='flex-start'}}
 const rendered=new Set([page.rootId]);canvas.innerHTML=safeNodeChildIds(root).map(id=>nodeHtml(page,id,false,rendered)).join('')||'<div class="builder-text">Az oldalnak még nincs tartalma.</div>';applyStateStyles(canvas,page,currentDevice);let tokens=defaultTokens();try{const tokenUrl='/api/public/presentation'+(preview?'?preview=1':'');const tokenResponse=await fetch(tokenUrl,{cache:'no-store',credentials:'same-origin'});const tokenPayload=await tokenResponse.json();if(loadToken!==pageLoadToken)return;if(tokenResponse.ok&&tokenPayload?.data?.tokens)tokens=tokenPayload.data.tokens}catch{}applyTokenVariables(canvas,tokens);initContentInteractions(canvas);activateStructuredContent(canvas);activateCountdowns(canvas);activateEmbeds(canvas);activateCodeBlocks(canvas);decorateSanciShowcase(canvas,page,{slug,enabled:isSanciShowcase});}catch(e){if(loadToken!==pageLoadToken)return;title.textContent='Az oldal nem található';desc.textContent='';canvas.innerHTML='<div class="content-error"><h1>404</h1><p>Ez az oldal nem létezik, vagy nincs publikálva.</p></div>'}}
  if(new URL(location.href).searchParams.get('preview')!=='1')window.addEventListener('resize',()=>{const next=window.innerWidth<=700?'mobile':window.innerWidth<=900?'tablet':'desktop';if(next!==currentDevice){currentDevice=next;loadPage()}});
- if(reducedMotionQuery){const reloadForMotionPreference=()=>loadPage();if(typeof reducedMotionQuery.addEventListener==='function')reducedMotionQuery.addEventListener('change',reloadForMotionPreference);else reducedMotionQuery.addListener?.(reloadForMotionPreference)}
+if(reducedMotionQuery){const updateVideoPlayback=()=>applyReducedMotionVideoPlayback(document.getElementById('content-canvas'),{reducedMotion:prefersReducedMotion()});if(typeof reducedMotionQuery.addEventListener==='function')reducedMotionQuery.addEventListener('change',updateVideoPlayback);else reducedMotionQuery.addListener?.(updateVideoPlayback)}
  ensureStyle();if(!setupPreview())loadPage();
 })();

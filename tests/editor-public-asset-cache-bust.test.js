@@ -29,8 +29,8 @@ test('the Editor and public renderer release tokens bust the structured accessib
   assert.match(css,/\.element-favorite-toggle\s*\{/,
     'the stylesheet referenced by the versioned link must include the palette-favorites UI');
   const recoveryVersion='20261124-edt042-publish-recovery-safe-label-v1';
-  const editorEntryVersion='20261125-d06-media-reduced-motion-v1';
-  const mediaPlaybackVersion='20261125-d06-media-reduced-motion-v1';
+  const editorEntryVersion='20261125-d06-media-reduced-motion-v2';
+  const mediaPlaybackVersion='20261125-d06-media-reduced-motion-v2';
   assert.match(html,new RegExp(`src="/editor-v2/app\\.js\\?v=${editorEntryVersion}"`),
     'the deployed entry page must request the unsupported-Publish recovery handler');
   assert.match(html,/src="\/editor-v2\/ui\/shell\.js\?v=20261123-edt044-account-scoped-preferences-v2"/,
@@ -58,8 +58,10 @@ test('the Editor and public renderer release tokens bust the structured accessib
     'public playback must read the visitor reduced-motion preference');
   assert.match(publicRenderer,/reducedMotion:prefersReducedMotion\(\)/,
     'public renderers must pass the preference into authored and legacy media helpers');
-  assert.match(publicRenderer,/addEventListener\('change',reloadForMotionPreference\)/,
-    'a changed operating-system motion preference must rerender an open public page');
+  assert.match(publicRenderer,/applyReducedMotionVideoPlayback\(document\.getElementById\('content-canvas'\),\{reducedMotion:prefersReducedMotion\(\)\}\)/,
+    'a changed operating-system preference updates only public video controls without replacing interactive page content');
+  assert.match(app,/applyReducedMotionVideoPlayback\(canvas,\{reducedMotion:prefersReducedMotion\(\),editor:true\}\)/,
+    'a changed operating-system preference updates only Editor Canvas video controls without rerendering the active workspace');
   assert.match(publicRenderer,/element-content\.js\?v=20261124-d06-accordion-accessible-group-v1/,
     'the public renderer must request the shared collision-resistant content DOM ID helper');
 });
@@ -76,8 +78,8 @@ test('the EDT-040 in-view trigger refreshes both renderers and the shared motion
   ]);
   const motionVersion='20261123-edt040-in-view-motion-v1';
   const domIdVersion='20261124-d06-accordion-accessible-group-v1';
-  const editorEntryVersion='20261125-d06-media-reduced-motion-v1';
-  const mediaPlaybackVersion='20261125-d06-media-reduced-motion-v1';
+  const editorEntryVersion='20261125-d06-media-reduced-motion-v2';
+  const mediaPlaybackVersion='20261125-d06-media-reduced-motion-v2';
   assert.match(editorHtml,new RegExp(`editor-motion\\.css\\?v=${motionVersion}`));
   assert.match(editorHtml,new RegExp(`app\\.js\\?v=${editorEntryVersion}`));
   assert.match(editor,new RegExp(`core/property-registry\\.js\\?v=${motionVersion}`));
