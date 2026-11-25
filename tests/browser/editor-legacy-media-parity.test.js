@@ -575,6 +575,15 @@ test('legacy image video audio share guarded media URLs in Inspector Canvas and 
   assert.deepEqual(externalRequests,[],'invalid media are blocked at all viewport sizes');
   const recovery=await editor.evaluate(async()=>{
     const {renderLegacyMediaInspector}=await import('/editor-v2/ui/legacy-media-inspector.js');const results=[];
+    const playbackNodes=[
+      {id:'historic-playback',type:'audio',props:{src:'/historic.mp3',controls:false}},
+      {id:'versioned-playback',type:'audio',metadata:{editorContentVersion:1},props:{src:'/new.mp3',controls:false}}
+    ];
+    const playbackWarnings=playbackNodes.map(node=>{
+      const root=renderLegacyMediaInspector(node,()=>true);document.querySelector('#inspectorBody').append(root);
+      const warnings=root.querySelectorAll('[data-validation-kind="publication"]');
+      const count=warnings.length;root.remove();return count;
+    });
     for(const type of ['image','video','audio'])for(const mode of ['false','throw']){
       const assetId='00000000-0000-4000-8000-000000000123';
       const original={src:'/fixture.webm',assetId,alt:'Saját alt',caption:'Saját felirat',poster:'/fixture.svg',posterAssetId:assetId,controls:true,unknown:{preserve:'unchanged'}};
@@ -599,8 +608,9 @@ test('legacy image video audio share guarded media URLs in Inspector Canvas and 
       const locked=renderLegacyMediaInspector({...node,locked:true},()=>{throw Error('Locked legacy media changed');});document.querySelector('#inspectorBody').append(locked);
       const lockedSafe=[...locked.querySelectorAll('input,select,button')].every(el=>el.disabled);locked.remove();
       results.push({type,mode,rejected,escaped,sourcePickerClear,fresh,unchanged,lockedSafe});
-    }return results;
+    }return {results,playbackWarnings};
   });
-  for(const result of recovery)for(const key of ['rejected','escaped','sourcePickerClear','fresh','unchanged','lockedSafe'])assert.equal(result[key],true,JSON.stringify(result));
+  assert.deepEqual(recovery.playbackWarnings,[0,1],'new playback rules match the server profile gate without mislabeling historical unversioned media');
+  for(const result of recovery.results)for(const key of ['rejected','escaped','sourcePickerClear','fresh','unchanged','lockedSafe'])assert.equal(result[key],true,JSON.stringify(result));
   assert.deepEqual(errors,[]);
 });

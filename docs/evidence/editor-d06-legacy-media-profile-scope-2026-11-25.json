@@ -1,0 +1,106 @@
+{
+  "schema_version": 1,
+  "evidence_id": "editor-d06-legacy-media-profile-scope-2026-11-25",
+  "date": "2026-11-25",
+  "canonical_plan": {
+    "path": "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+    "sha256": "2935915cdcc23ccba621e0c2d302c4811909f8e5e395869fd075ec926b4b45c5",
+    "active_point": "77.44.7.D",
+    "status": "OPEN / NOT_CERTIFIED",
+    "audit": {
+      "features": 396,
+      "partial_source": 148,
+      "unverified": 248,
+      "functional_acceptance": "NOT_CERTIFIED"
+    }
+  },
+  "change": {
+    "summary": "Legacy media playback warnings are now emitted only for the same media-v1 profile that the server publication validator enforces. This keeps the Inspector from promising a Publish rejection on historical unversioned documents, whose existing behavior remains compatible.",
+    "files": [
+      "public/editor-v2/ui/legacy-media-inspector.js",
+      "public/editor-v2/app.js",
+      "tests/browser/editor-legacy-media-parity.test.js"
+    ],
+    "rules": [
+      "media-v1 audio with controls=false is rejected at Publish, but can still be saved as a repairable draft",
+      "media-v1 video autoplay requires muted=true",
+      "media-v1 video controls=false is allowed only for muted autoplay background video",
+      "unversioned historical media keeps its existing server behavior and receives no media-v1-only warning",
+      "Save remains separate from Publish"
+    ],
+    "dependencies_added": 0
+  },
+  "source_sha256": {
+    "src/core/editor-validation.ts": "0fe74f7ffa0a3985cb480e3dcebd26edadc9b6a5a5c857d43d3ad335394909c2",
+    "public/editor-v2/ui/legacy-media-inspector.js": "134fdf6f12653a174c5902b900cff53d2e8c385f122c39733a01daa7620c91f4",
+    "public/editor-v2/app.js": "9037296575cce6afdd0eeb4ecdd6a8df2970925cc9b8cf7f79c2e286df34c748"
+  },
+  "checks": [
+    {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test tests/browser/editor-legacy-media-parity.test.js",
+      "result": "PASS",
+      "summary": "2/2 real Chromium tests pass; Save/Publish lifecycle, media playback warning repair, profile-scoped warning, and historical unversioned compatibility verified against local fixtures."
+    },
+    {
+      "command": "node --experimental-loader ./tests/ts-extension-loader.mjs --test tests/editor-content-profiles.test.js tests/editor-content-initial-publication-contract.test.js tests/f0-3-route-integration.test.js",
+      "result": "PASS",
+      "summary": "3 test files pass; legacy audio/video draft Save and Publish rejection/repair routes covered."
+    },
+    {
+      "command": "node --test tests/editor-public-asset-cache-bust.test.js",
+      "result": "PASS"
+    },
+    {
+      "command": "npm run typecheck",
+      "result": "PASS"
+    },
+    {
+      "command": "python3 scripts/build-feature-traceability.py --check",
+      "result": "PASS",
+      "summary": "396 source mappings match catalog, contracts and current source paths."
+    },
+    {
+      "command": "python3 tests/plan-contract.test.py",
+      "result": "PASS",
+      "summary": "16/16 plan contract tests."
+    },
+    {
+      "command": "python3 scripts/audit-active-plan-point.py",
+      "result": "PASS",
+      "summary": "77.44 / WEB-011 -> 77.44.7.D; full Editor acceptance NOT_CERTIFIED."
+    },
+    {
+      "command": "node --check public/editor-v2/app.js; node --check public/editor-v2/ui/legacy-media-inspector.js; git diff --check",
+      "result": "PASS"
+    }
+  ],
+  "git_release": {
+    "repository": "sanci9517/sanci9517",
+    "target_branch": "v2/foundation",
+    "remote_head": "926c92b4f032d1475fe760baae21ee891e0e2252",
+    "local_parent": "2b40bc6fa238c49169ff60f8bf47e2120434425a",
+    "ci": "NOT_TRIGGERED",
+    "push": "BLOCKED_TO_PRESERVE_ZERO_COST: repository guidance records exhausted GitHub Actions compute quota; a fresh free-quota confirmation is unavailable, and a runtime push must not bypass required checks.",
+    "deployment": "NOT_DEPLOYED"
+  },
+  "production_observation": {
+    "deployment_id": "7847048f-5bc2-4acc-af74-d99ab8d43b15",
+    "worker_version_id": "f93e26d1-c5fb-41a9-ad04-f89807060f87",
+    "traffic_percentage": 100,
+    "health_http": 200,
+    "health_body": {
+      "ok": true,
+      "service": "sanci9517-streamer-brand",
+      "version": "2.0.0",
+      "server": "cloudflare-worker"
+    },
+    "changed_asset_hashes_deployed": false
+  },
+  "safety": {
+    "production_d1_write_or_migration": false,
+    "r2_deletion": false,
+    "paid_services_or_overage": false,
+    "save_publish_separation_preserved": true
+  },
+  "next_step": "After free Actions quota is verified, fast-forward the prepared runtime commits to v2/foundation and verify exact-SHA workflows, Worker deployment, 100% traffic, health and changed public asset SHA-256. Keep D-06 and the complete Editor OPEN until their remaining planned scope and acceptance gates are satisfied."
+}

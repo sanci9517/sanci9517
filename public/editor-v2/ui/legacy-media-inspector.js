@@ -5,6 +5,7 @@ import {IMAGE_MIMES,mediaAssetPicker,setMediaAssetPickerSelection} from './eleme
 
 export function renderLegacyMediaInspector(node,apply,{pending=()=>{}}={}){
  const model={...(node.props||{})},composition=createCompositionInputs(pending);
+ const enforcePlaybackSafety=node.metadata?.editorContentVersion===1;
  const route=(control,key)=>{control.dataset.inspectorCommand='element.update';control.dataset.inspectorKey='props.'+key;return control;};
  let sourcePicker,posterPicker;
  const save=(patch,options)=>{
@@ -147,13 +148,13 @@ export function renderLegacyMediaInspector(node,apply,{pending=()=>{}}={}){
         if(poster&&!safeMediaUrl(poster)&&!model?.posterAssetId){
           nextWarnings.append(warning('Érvénytelen borítókép URL. Használj biztonságos HTTPS vagy belső képútvonalat.',['poster','posterAssetId']));
         }
-        if(model?.autoplay===true&&model?.muted!==true){
+        if(enforcePlaybackSafety&&model?.autoplay===true&&model?.muted!==true){
           nextWarnings.append(warning('Az automatikus videóindítás csak némítva publikálható.',['autoplay','muted'],{publicationOnly:true}));
         }
-        if(model?.controls===false&&!(model?.autoplay===true&&model?.muted===true)){
+        if(enforcePlaybackSafety&&model?.controls===false&&!(model?.autoplay===true&&model?.muted===true)){
           nextWarnings.append(warning('A videó vezérlői csak némítva induló háttérvideónál rejthetők el.',['controls','autoplay','muted'],{publicationOnly:true}));
         }
-    }else if(node.type==='audio'&&model?.controls===false){
+    }else if(enforcePlaybackSafety&&node.type==='audio'&&model?.controls===false){
         nextWarnings.append(warning('A hanglejátszó vezérlőit nem rejtheted el.',['controls'],{publicationOnly:true}));
     }
     const source=values.src.trim();
