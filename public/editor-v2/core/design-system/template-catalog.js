@@ -1,4 +1,4 @@
-import { SCHEMA_VERSION, NODE_TYPES } from '../schema.js?v=20261125-edt016-node-count-limit-v1';
+import { SCHEMA_VERSION, NODE_TYPES } from '../schema.js?v=20261125-edt016-child-reference-limit-v1';
 
 const frozen = value => {
   if (value && typeof value === 'object' && !Object.isFrozen(value)) {

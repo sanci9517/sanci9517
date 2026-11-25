@@ -25,7 +25,22 @@ import { needsRelativeOffsetPosition,legacyBackgroundColor,applyNodeStyle } from
 import {legacyBackgroundGradient,legacyBackgroundCompound} from '../core/background-asset.js';
 import {tokenReference} from '../core/design-tokens.js';
 import { validatePublishDocument } from '../../../src/core/editor-validation.ts';
-import { MAX_PAGE_NODE_COUNT } from '../core/hierarchy-limits.js?v=20261125-edt016-node-count-limit-v1';
+import { MAX_PAGE_NODE_COUNT, MAX_PAGE_CHILD_REFERENCE_COUNT, hasExcessPageChildReferences } from '../core/hierarchy-limits.js?v=20261125-edt016-child-reference-limit-v1';
+
+test('page child-reference budget accepts its exact aggregate boundary and rejects overflow before traversal',()=>{
+  const document=createDocument(),page=document.pages[document.activePageId],root=page.nodes[page.rootId];
+  const child=createNode(NODE_TYPES.SECTION,{parentId:root.id});
+  page.nodes[child.id]=child;
+  root.children=Array(MAX_PAGE_CHILD_REFERENCE_COUNT).fill(child.id);
+  assert.equal(hasExcessPageChildReferences(page.nodes),false,'the aggregate tree-edge budget accepts its exact boundary');
+  root.children.push(child.id);
+  const before=JSON.stringify(document);
+  assert.equal(hasExcessPageChildReferences(page.nodes),true);
+  assert.deepEqual(validateHierarchy(page),[`maximum page child reference count exceeded (${MAX_PAGE_CHILD_REFERENCE_COUNT})`]);
+  assert.match(validateEditorDocument(document).join('; '),/maximum page child reference count exceeded \(999\)/);
+  assert.throws(()=>assertValidEditorDocument(document),/maximum page child reference count exceeded \(999\)/);
+  assert.equal(JSON.stringify(document),before,'rejecting malformed persisted edges does not rewrite them');
+});
 
 test('page node-count limit accepts its exact boundary and rejects overflow before tree/content traversal',()=>{
   const document=createDocument();
@@ -44,6 +59,7 @@ test('page node-count limit accepts its exact boundary and rejects overflow befo
   const overflow=structuredClone(document);
   const overflowPage=overflow.pages[overflow.activePageId];
   overflowPage.nodes['overflow-orphan']={id:'overflow-orphan'};
+  overflowPage.nodes[overflowPage.rootId].children=Array.from({length:100_000},()=> 'overflow-orphan');
   const before=JSON.stringify(overflow);
   assert.deepEqual(validateHierarchy(overflowPage),[`maximum page node count exceeded (${MAX_PAGE_NODE_COUNT})`]);
   assert.match(validateEditorDocument(overflow).join('; '),/maximum page node count exceeded \(1000\)/);

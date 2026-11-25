@@ -73,6 +73,15 @@ test('server publication rejects planned and unknown node types even when a clie
     'a currently supported node still reaches the existing content-specific publication gates');
 });
 
+test('server publication bounds child references before authored-content traversal and preserves the draft',()=>{
+  const {document,publish}=probe('text',{metadata:{contentVersion:1},props:{text:'Kész szöveg'}});
+  const page=document.pages[document.activePageId],root=page.nodes[page.rootId];
+  root.children=Array.from({length:100_000},()=> 'content_probe');
+  const before=JSON.stringify(document);
+  assert.equal(publish(),'EDITOR_CHILD_REFERENCE_LIMIT_EXCEEDED');
+  assert.equal(JSON.stringify(document),before,'oversized imported child arrays stay unchanged and are never publishable');
+});
+
 test('unsupported Publish recovery points to the first planned/unknown child without looping on malformed cycles',()=>{
   const {document}=probe('text',{metadata:{contentVersion:1},props:{text:'Kész szöveg'}});
   const page=document.pages[document.activePageId],supported=page.nodes[page.rootId].children[0];

@@ -1,5 +1,5 @@
 import { resolveRichTextLinkTarget, validatedLinkHref } from './richtext-links.js?v=20261117-d03-invalid-media-id-guidance-v1';
-import { RICH_TEXT_FONT_FAMILIES } from './schema.js?v=20261125-edt016-node-count-limit-v1';
+import { RICH_TEXT_FONT_FAMILIES } from './schema.js?v=20261125-edt016-child-reference-limit-v1';
 import { parseTableTsv } from './table-tsv.js';
 
 const MAX_CLIPBOARD_CHARS = 250_000;

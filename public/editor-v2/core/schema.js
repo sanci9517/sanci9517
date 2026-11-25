@@ -1,6 +1,6 @@
 import { createDefaultScheduleConfig, normalizeScheduleConfig } from './schedule-schema.js';
 import { normalizePageInteractions } from './page-interactions.js?v=20261121-edt039-single-auto-action-v1';
-import { MAX_PAGE_NODE_COUNT, hasExcessPageNodes } from './hierarchy-limits.js?v=20261125-edt016-node-count-limit-v1';
+import { MAX_PAGE_NODE_COUNT, MAX_PAGE_CHILD_REFERENCE_COUNT, hasExcessPageNodes, hasExcessPageChildReferences } from './hierarchy-limits.js?v=20261125-edt016-child-reference-limit-v1';
 
 /*
  * Sanci9517 Visual Editor v2 — Page Model schema
@@ -390,10 +390,12 @@ export function validatePage(page) {
   if (!nodes) errors.push('page.nodes must be an object');
   const nodeLimitExceeded = Boolean(nodes && hasExcessPageNodes(nodes));
   if (nodeLimitExceeded) errors.push(`maximum page node count exceeded (${MAX_PAGE_NODE_COUNT})`);
+  const childReferenceLimitExceeded = Boolean(nodes && !nodeLimitExceeded && hasExcessPageChildReferences(nodes));
+  if (childReferenceLimitExceeded) errors.push(`maximum page child reference count exceeded (${MAX_PAGE_CHILD_REFERENCE_COUNT})`);
 
   // Do not perform type-specific work on oversized input. The node-count guard
   // is an admission check, not a best-effort diagnostic pass.
-  if (nodeLimitExceeded) return errors;
+  if (nodeLimitExceeded || childReferenceLimitExceeded) return errors;
 
   for (const [id, node] of Object.entries(nodes ?? {})) {
     if (seen.has(id)) errors.push(`duplicate node id: ${id}`);

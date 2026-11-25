@@ -10,7 +10,7 @@ import { getNode, validateDocument, normalizeRichText } from './schema.js';
 import { validateElementContent as validateStructuredContent,isStructuredType } from './element-content.js?v=20261125-d06-authored-carousel-slide-semantics-v1';
 import { validateElementContent as validateAuthoredContent } from './authored-content.js?v=20261125-d06-authored-carousel-slide-semantics-v1';
 import {validateStateStyles} from './state-styles.js';
-import {MAX_PAGE_HIERARCHY_DEPTH,MAX_PAGE_NODE_COUNT,hasExcessPageNodes} from './hierarchy-limits.js?v=20261125-edt016-node-count-limit-v1';
+import {MAX_PAGE_HIERARCHY_DEPTH,MAX_PAGE_NODE_COUNT,MAX_PAGE_CHILD_REFERENCE_COUNT,hasExcessPageNodes,hasExcessPageChildReferences} from './hierarchy-limits.js?v=20261125-edt016-child-reference-limit-v1';
 
 export function findReachableNodeIds(page) {
   const reachable = new Set();
@@ -38,6 +38,7 @@ export function validateHierarchy(page) {
   const errors = [];
   if (!page) return ['page is required'];
   if (hasExcessPageNodes(page.nodes)) return [`maximum page node count exceeded (${MAX_PAGE_NODE_COUNT})`];
+  if (hasExcessPageChildReferences(page.nodes)) return [`maximum page child reference count exceeded (${MAX_PAGE_CHILD_REFERENCE_COUNT})`];
 
   const visiting = new Set();
   const visited = new Set();

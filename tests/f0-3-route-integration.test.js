@@ -159,6 +159,46 @@ test('oversized Editor pages are rejected before saves, publishes, rollback, or 
  assert.deepEqual(f.state(),duplicateBefore,'oversized source duplication must stop before allocating a cloned node map or writing rows');
 });
 
+test('oversized persisted child-reference lists fail closed across Editor read, save, publish and page metadata without writes',async t=>{
+ const f=await fixture(t),document=f.document('bounded'),root=document.pages.p.nodes.root;
+ root.children=Array.from({length:100_000},()=> 'root');
+ f.db.prepare("UPDATE pages SET content_json=? WHERE id='p'").run(JSON.stringify(document));
+ f.db.prepare("UPDATE editor_revisions SET document_json=? WHERE page_id='p' AND version=1").run(JSON.stringify(document));
+ const readBefore=f.state();
+ const editorRead=await adminEditorRoute(new Request('https://example.test/api/admin/editor?pageId=p',{method:'GET',headers:{Cookie:'sanci9517_session=editor'}}),f.env);
+ assert.equal(editorRead.status,413);
+ assert.equal((await editorRead.json()).error.code,'EDITOR_CHILD_REFERENCE_LIMIT_EXCEEDED');
+ assert.deepEqual(f.state(),readBefore,'Editor boot refuses pathological child arrays before normalization or writes');
+ const pageList=await adminPagesRoute(new Request('https://example.test/api/admin/pages',{method:'GET',headers:{Cookie:'sanci9517_session=editor'}}),f.env);
+ const malformed=(await pageList.json()).data.find(row=>row.id==='p');
+ assert.equal(malformed.editorChildReferenceLimitExceeded,true);
+ assert.equal(Object.hasOwn(malformed,'content'),false,'page lists do not return pathological Page Models');
+ assert.deepEqual(f.state(),readBefore,'list redaction is read-only');
+ const metadata=await adminPagesRoute(new Request('https://example.test/api/admin/pages',{method:'PATCH',headers:{Cookie:'sanci9517_session=editor'},body:JSON.stringify({id:'p',title:'Changed title',expectedVersion:1})}),f.env);
+ assert.equal(metadata.status,413);
+ assert.equal((await metadata.json()).error.code,'EDITOR_CHILD_REFERENCE_LIMIT_EXCEEDED');
+ assert.deepEqual(f.state(),readBefore,'metadata writes cannot reserialize oversized child arrays');
+ for(const publish of [false,true]){
+  const response=await f.edit({pageId:'p',expectedVersion:1,document,publish});
+  assert.equal(response.status,413);
+  assert.equal((await response.json()).error.code,'EDITOR_CHILD_REFERENCE_LIMIT_EXCEEDED');
+  assert.deepEqual(f.state(),readBefore,'save and publish reject before page, revision, publication or audit writes');
+ }
+ const restore=await adminEditorRoute(new Request('https://example.test/api/admin/editor',{method:'PUT',headers:{Cookie:'sanci9517_session=editor'},body:JSON.stringify({pageId:'p',version:1,expectedVersion:1})}),f.env);
+ assert.equal(restore.status,413);
+ assert.equal((await restore.json()).error.code,'EDITOR_CHILD_REFERENCE_LIMIT_EXCEEDED');
+ assert.deepEqual(f.state(),readBefore,'rollback cannot normalize and rewrite an oversized revision');
+ const duplicate=await adminPagesRoute(new Request('https://example.test/api/admin/pages',{method:'POST',headers:{Cookie:'sanci9517_session=editor'},body:JSON.stringify({sourcePageId:'p',title:'Copy',slug:'copy'})}),f.env);
+ assert.equal(duplicate.status,413);
+ assert.equal((await duplicate.json()).error.code,'EDITOR_CHILD_REFERENCE_LIMIT_EXCEEDED');
+ assert.deepEqual(f.state(),readBefore,'duplicate cannot copy malformed child arrays into a new page');
+ const create=f.document('new','new-page');create.pages['new-page'].nodes.root.children=Array.from({length:100_000},()=> 'root');
+ const createRejected=await adminPagesRoute(new Request('https://example.test/api/admin/pages',{method:'POST',headers:{Cookie:'sanci9517_session=editor'},body:JSON.stringify({id:'new-page',title:'New page',slug:'new-page',description:'',document:create})}),f.env);
+ assert.equal(createRejected.status,413);
+ assert.equal((await createRejected.json()).error.code,'EDITOR_CHILD_REFERENCE_LIMIT_EXCEEDED');
+ assert.deepEqual(f.state(),readBefore,'page creation cannot insert oversized child arrays or an initial revision');
+});
+
 test('direct Publish rejects planned and unknown block types without changing the saved or published revision', async t => {
   const f = await fixture(t);
   for (const type of ['form', 'unknown-block']) {

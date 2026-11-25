@@ -6,7 +6,7 @@ import { normalizeEditorDocument } from "../../core/page-model";
 import type { Env } from "../../types/env";
 import { auditStatement } from "../../core/audit";
 import { DEFAULT_SITE_ID } from "../../core/site-context";
-import { hasExcessPageNodes, MAX_PAGE_NODE_COUNT } from "../../../public/editor-v2/core/hierarchy-limits.js";
+import { hasExcessPageNodes, MAX_PAGE_NODE_COUNT, hasExcessPageChildReferences, MAX_PAGE_CHILD_REFERENCE_COUNT } from "../../../public/editor-v2/core/hierarchy-limits.js";
 import { validatePublishDocument } from "../../core/editor-validation";
 import { canonicalizePublicationMediaReferences, hasAbsoluteMediaLibraryUrl, validatePublicationAssets } from "../../core/editor-publication";
 import { mediaUrlOrigins } from "./media";
@@ -15,15 +15,15 @@ type PageRow={archived_at?:string|null;parent_page_id?:string|null;published_par
 type PageBody={action?:unknown;id?:unknown;parentPageId?:unknown;expectedParentPageId?:unknown;sourcePageId?:unknown;slug?:unknown;title?:unknown;description?:unknown;document?:unknown;isPublished?:unknown;sortOrder?:unknown;expectedVersion?:unknown};
 function parse(value:string):any{try{return JSON.parse(value)}catch{return {}}}
 function canonical(value:unknown,id:string):boolean{const d:any=value;const p=d?.pages?.[id];return Boolean(d&&d.type==='sanci-page-document'&&d.schemaVersion===1&&d.activePageId===id&&p&&p.id===id&&p.rootId&&p.nodes&&typeof p.nodes==='object'&&!Array.isArray(p.nodes))}
-function serialize(row:PageRow,includeContent=true){const raw=includeContent?parse(row.content_json):null;const nodeLimitExceeded=Boolean(includeContent&&hasExcessPageNodes(raw?.pages?.[row.id]?.nodes));const document=includeContent&&!nodeLimitExceeded?normalizeEditorDocument(raw,row.id,row.title,row.slug,row.description):null;const revision=Number(row.revision??document?.revision??document?.pages?.[row.id]?.revision??0);return{id:row.id,slug:row.slug,title:row.title,description:row.description,sortOrder:row.sort_order,revision,...(includeContent?nodeLimitExceeded?{editorNodeLimitExceeded:true}:{content:document||raw}:{}),isPublished:Boolean(row.is_published),hasUnpublishedChanges:Boolean(row.is_published)&&(row.content_json!==row.published_content_json||row.parent_page_id!==row.published_parent_page_id),parentPageId:row.parent_page_id??null,publishedParentPageId:row.published_parent_page_id??null,publishedSlug:row.published_slug??null,archivedAt:row.archived_at??null,publishedRevisionId:row.published_revision_id??null,createdAt:row.created_at,updatedAt:row.updated_at}}
+function serialize(row:PageRow,includeContent=true){const raw=includeContent?parse(row.content_json):null;const nodes=raw?.pages?.[row.id]?.nodes;const nodeLimitExceeded=Boolean(includeContent&&hasExcessPageNodes(nodes));const childReferenceLimitExceeded=Boolean(includeContent&&!nodeLimitExceeded&&hasExcessPageChildReferences(nodes));const document=includeContent&&!nodeLimitExceeded&&!childReferenceLimitExceeded?normalizeEditorDocument(raw,row.id,row.title,row.slug,row.description):null;const revision=Number(row.revision??document?.revision??document?.pages?.[row.id]?.revision??0);return{id:row.id,slug:row.slug,title:row.title,description:row.description,sortOrder:row.sort_order,revision,...(includeContent?nodeLimitExceeded?{editorNodeLimitExceeded:true}:childReferenceLimitExceeded?{editorChildReferenceLimitExceeded:true}:{content:document||raw}:{}),isPublished:Boolean(row.is_published),hasUnpublishedChanges:Boolean(row.is_published)&&(row.content_json!==row.published_content_json||row.parent_page_id!==row.published_parent_page_id),parentPageId:row.parent_page_id??null,publishedParentPageId:row.published_parent_page_id??null,publishedSlug:row.published_slug??null,archivedAt:row.archived_at??null,publishedRevisionId:row.published_revision_id??null,createdAt:row.created_at,updatedAt:row.updated_at}}
 function validSlug(value:string){return /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value)}
 function duplicateDocument(source:PageRow,id:string,title:string,slug:string,description:string){
  const raw=parse(source.content_json);
- if(hasExcessPageNodes(raw?.pages?.[source.id]?.nodes))return null;
+ if(hasExcessPageNodes(raw?.pages?.[source.id]?.nodes)||hasExcessPageChildReferences(raw?.pages?.[source.id]?.nodes))return null;
  const document=normalizeEditorDocument(raw,source.id,source.title,source.slug,source.description);
  if(!document||!canonical(document,source.id))return null;
  const page=document.pages[source.id];
- if(hasExcessPageNodes(page.nodes))return null;
+ if(hasExcessPageNodes(page.nodes)||hasExcessPageChildReferences(page.nodes))return null;
  const nodeIds=new Map<string,string>(Object.keys(page.nodes).map((nodeId:string)=>[nodeId,nodeId===page.rootId?`root-${id}`:`node-${crypto.randomUUID()}`] as [string,string]));
  const nodes:Record<string,any>={};
  for(const [oldId,node] of Object.entries<any>(page.nodes)){
@@ -85,7 +85,7 @@ async function adminPagesRouteImpl(request:Request,env:Env,siteId:string):Promis
   const id=typeof body.id==='string'?body.id:'';const requestedOrder=typeof body.sortOrder==='number'?Math.floor(body.sortOrder):null;const title=typeof body.title==='string'?body.title.trim():'';const requestedSlug=typeof body.slug==='string'?body.slug.trim().toLowerCase():'';const requestedDescription=typeof body.description==='string'?body.description.trim():null;
   if(!id)return error('INVALID_PAGE_ID',400);if(requestedOrder!==null&&requestedOrder<0)return error('INVALID_PAGE_ORDER',400);if(title&&title.length>160)return error('INVALID_PAGE_TITLE',400);if(requestedSlug&&(!validSlug(requestedSlug)||requestedSlug.length>80))return error('INVALID_PAGE_SLUG',400,'A slug csak kisbetűs betűket, számokat és kötőjeleket tartalmazhat.');if(requestedDescription!==null&&requestedDescription.length>500)return error('INVALID_PAGE_DESCRIPTION',400);if(!title&&!requestedSlug&&requestedDescription===null&&requestedOrder===null)return error('INVALID_PAGE_UPDATE',400);
   const existing=await env.DB.prepare('SELECT id,slug,title,description,content_json,published_content_json,parent_page_id,published_parent_page_id,published_slug,is_published,published_revision_id,sort_order,created_at,updated_at FROM pages WHERE id=? AND site_id=? AND archived_at IS NULL LIMIT 1').bind(id,siteId).first<PageRow>();if(!existing)return error('PAGE_NOT_FOUND',404);
-  if(hasExcessPageNodes(parse(existing.content_json)?.pages?.[id]?.nodes))return error('EDITOR_NODE_LIMIT_EXCEEDED',413,`Egy oldalon legfeljebb ${MAX_PAGE_NODE_COUNT} szerkeszthető elem lehet.`);
+  if(hasExcessPageNodes(parse(existing.content_json)?.pages?.[id]?.nodes))return error('EDITOR_NODE_LIMIT_EXCEEDED',413,`Egy oldalon legfeljebb ${MAX_PAGE_NODE_COUNT} szerkeszthető elem lehet.`);if(hasExcessPageChildReferences(parse(existing.content_json)?.pages?.[id]?.nodes))return error('EDITOR_CHILD_REFERENCE_LIMIT_EXCEEDED',413,`Egy oldalon legfeljebb ${MAX_PAGE_CHILD_REFERENCE_COUNT} gyermekhivatkozás lehet.`);
   const orderedPages=requestedOrder===null?null:(await env.DB.prepare('SELECT id,sort_order FROM pages WHERE site_id=? AND archived_at IS NULL ORDER BY sort_order ASC,id ASC').bind(siteId).all<{id:string;sort_order:number}>()).results;
   if(requestedOrder!==null&&requestedOrder>=orderedPages!.length)return error('INVALID_PAGE_ORDER',400);
   const nextTitle=title||existing.title;const nextSlug=requestedSlug||existing.slug;const nextDescription=requestedDescription===null?existing.description:requestedDescription;const nextOrder=requestedOrder===null?existing.sort_order:requestedOrder;
@@ -115,7 +115,7 @@ async function adminPagesRouteImpl(request:Request,env:Env,siteId:string):Promis
   if(!title||title.length>160||!validSlug(slug)||slug.length>80)return error('INVALID_PAGE',400);
   const source=await env.DB.prepare('SELECT id,slug,title,description,content_json,published_content_json,parent_page_id,published_parent_page_id,published_slug,is_published,published_revision_id,sort_order,created_at,updated_at FROM pages WHERE id=? AND site_id=? AND archived_at IS NULL LIMIT 1').bind(sourcePageId,siteId).first<PageRow>();
   if(!source)return error('PAGE_NOT_FOUND',404);
-  if(hasExcessPageNodes(parse(source.content_json)?.pages?.[source.id]?.nodes))return error('EDITOR_NODE_LIMIT_EXCEEDED',413,`Egy oldalon legfeljebb ${MAX_PAGE_NODE_COUNT} szerkeszthető elem lehet.`);
+  if(hasExcessPageNodes(parse(source.content_json)?.pages?.[source.id]?.nodes))return error('EDITOR_NODE_LIMIT_EXCEEDED',413,`Egy oldalon legfeljebb ${MAX_PAGE_NODE_COUNT} szerkeszthető elem lehet.`);if(hasExcessPageChildReferences(parse(source.content_json)?.pages?.[source.id]?.nodes))return error('EDITOR_CHILD_REFERENCE_LIMIT_EXCEEDED',413,`Egy oldalon legfeljebb ${MAX_PAGE_CHILD_REFERENCE_COUNT} gyermekhivatkozás lehet.`);
   const id=crypto.randomUUID();
   const description=typeof body.description==='string'?body.description.trim():source.description;
   if(description.length>500)return error('INVALID_PAGE_DESCRIPTION',400);
@@ -140,7 +140,7 @@ async function adminPagesRouteImpl(request:Request,env:Env,siteId:string):Promis
  const id=typeof body.id==='string'?body.id.trim():crypto.randomUUID();
  const document=body.document;
  if(!title||title.length>160||!validSlug(slug)||slug.length>80||description.length>500)return error('INVALID_PAGE',400);
- if(!canonical(document,id))return error('INVALID_EDITOR_DOCUMENT',400,'Az új oldalnak Editor v2 Page Model dokumentumot kell tartalmaznia.');if(hasExcessPageNodes((document as any).pages[id].nodes))return error('EDITOR_NODE_LIMIT_EXCEEDED',413,`Egy oldalon legfeljebb ${MAX_PAGE_NODE_COUNT} szerkeszthető elem lehet.`);
+ if(!canonical(document,id))return error('INVALID_EDITOR_DOCUMENT',400,'Az új oldalnak Editor v2 Page Model dokumentumot kell tartalmaznia.');if(hasExcessPageNodes((document as any).pages[id].nodes))return error('EDITOR_NODE_LIMIT_EXCEEDED',413,`Egy oldalon legfeljebb ${MAX_PAGE_NODE_COUNT} szerkeszthető elem lehet.`);if(hasExcessPageChildReferences((document as any).pages[id].nodes))return error('EDITOR_CHILD_REFERENCE_LIMIT_EXCEEDED',413,`Egy oldalon legfeljebb ${MAX_PAGE_CHILD_REFERENCE_COUNT} gyermekhivatkozás lehet.`);
  const initialDocument={...(document as Record<string,unknown>),revision:1,pages:{...(document as Record<string,any>).pages,[id]:{...((document as Record<string,any>).pages?.[id]||{}),revision:1}}};
  const initialJson=JSON.stringify(initialDocument);
  if(initialJson.length>180000)return error('PAGE_TOO_LARGE',400);

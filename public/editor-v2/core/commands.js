@@ -6,7 +6,7 @@
  */
 
 import { canContain, cloneDocument, createEmptyRichText, createNode, getNode, normalizeRichText } from './schema.js';
-import { assertValidEditorDocument } from './validation.js?v=20261125-edt016-node-count-limit-v1';
+import { assertValidEditorDocument } from './validation.js?v=20261125-edt016-child-reference-limit-v1';
 import { activePage, clearSelection, setSelection } from './state.js';
 import { createDefaultScheduleConfig, normalizeScheduleConfig } from './schedule-schema.js';
 import {isStructuredType,createElementContent,normalizeElementContent} from './element-content.js?v=20261125-d06-authored-carousel-slide-semantics-v1';
