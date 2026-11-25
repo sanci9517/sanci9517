@@ -113,9 +113,11 @@ for(const width of [390,1366])test(`Creator Embed keeps IME drafts, activation f
  assert.equal(await publicNode.locator('.visual-embed-load script').count(),0,'title cannot execute HTML');
  assert.match(await publicNode.locator('.visual-embed-load').textContent(),/Végleges bemutatkozás <script>alert/);
  await publicNode.locator('.visual-embed-load').focus();
+ const youtubeResponse=viewer.waitForResponse(response=>response.url()==='https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?rel=0');
  await publicNode.locator('.visual-embed-load').press('Enter');
  const frame=publicNode.locator('iframe.visual-embed-frame');
  await frame.waitFor();
+ assert.equal((await youtubeResponse).status(),200,'explicit activation completes the intercepted player request');
  assert.equal(await frame.evaluate(el=>el===document.activeElement),true,'keyboard activation transfers focus into the loaded player');
  assert.equal(await frame.getAttribute('src'),'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?rel=0');
  assert.equal(await frame.getAttribute('title'),finalTitle);
