@@ -32,7 +32,7 @@ import {LAYOUT_PRESETS,LAYOUT_TYPES,layoutMode,isManagedLayout,isLayoutPropertyR
 import {resolveElementInsertion} from './core/element-insertion.js';
 import {TYPOGRAPHY_PRESETS,typographyPresetPatch} from './core/typography-presets.js';
 import {isStructuredType,createElementContent,normalizeElementContent,renderElementContent,activateStructuredContent} from './core/element-content.js?v=20261124-d06-accordion-accessible-group-v1';
-import {legacyImageSource,legacyPlayableSource,legacyPlaybackSettings,legacyImagePresentation,legacyImageCaption} from './core/legacy-media-source.js';
+import {legacyImageSource,legacyPlayableSource,legacyPlaybackSettings,legacyImagePresentation,legacyImageCaption} from './core/legacy-media-source.js?v=20261125-d06-media-reduced-motion-v1';
 import {renderStructuredInspector} from './ui/structured-inspector.js?v=20261123-d06-single-slide-carousel-v1';
 import {ICON_CHOICES,iconById} from './core/icon-options.js';
 import {DIVIDER_LINE_STYLES,normalizeDividerStyle} from './core/decorative-elements.js';
@@ -54,11 +54,13 @@ import {createCompositionInputs} from './ui/composition-inputs.js';
 import {opaqueContrast} from './core/accessibility.js';
 import {STATE_PROPERTY_IDS,applyStateStyles} from './core/state-styles.js';
 import {defaultTokens,applyTokenVariables} from './core/design-tokens.js';
-import {CONTENT_TYPES,STRUCTURAL_TYPES,validatePageForPublication,isAuthoredContent,authoredNodeHtml,contentAttributes,initContentInteractions,contentTag} from './core/authored-content.js?v=20261125-d06-authored-carousel-one-slide-v1';
+import {CONTENT_TYPES,STRUCTURAL_TYPES,validatePageForPublication,isAuthoredContent,authoredNodeHtml,contentAttributes,initContentInteractions,contentTag} from './core/authored-content.js?v=20261125-d06-media-reduced-motion-v1';
 import {captureCanvasInteractionState,restoreCanvasInteractionState} from './core/canvas-interaction-state.js';
 import {renderElementContentControls,pageLinkPicker} from './ui/element-content-controls.js?v=20261120-d06-authored-playable-asset-picker-v1';
 import {renderPageInteractionControls} from './ui/page-interaction-controls.js?v=20261119-edt039-page-action-safe-labels-v1';
 
+const reducedMotionQuery=typeof window.matchMedia==='function'?window.matchMedia('(prefers-reduced-motion: reduce)'):null;
+const prefersReducedMotion=()=>reducedMotionQuery?.matches===true;
 let editorTokens=defaultTokens();
 function propertyInput(property,label,current,onChange,options={}){
   return renderPropertyInput(property,label,current,onChange,{tokens:editorTokens,...options});
@@ -682,7 +684,7 @@ function renderNode(currentPage,id,managed=false){const node=getNode(currentPage
         }else c.append(media);
       }
       else{
-        const cfg=legacyPlaybackSettings(node.props,{video:node.type===NODE_TYPES.VIDEO,editor:true});
+        const cfg=legacyPlaybackSettings(node.props,{video:node.type===NODE_TYPES.VIDEO,editor:true,reducedMotion:prefersReducedMotion()});
         media.controls=cfg.controls;media.loop=cfg.loop;media.muted=cfg.muted;
         media.autoplay=false;media.preload=node.type===NODE_TYPES.VIDEO?'metadata':'none';
         if(node.type===NODE_TYPES.VIDEO){media.playsInline=true;if(cfg.poster)media.poster=cfg.poster}
@@ -727,7 +729,7 @@ function renderNode(currentPage,id,managed=false){const node=getNode(currentPage
     // children directly below. Their authored markup is empty in Canvas, so
     // adding a blank host would become an extra Flex/Grid item and create a
     // phantom gap that does not exist on the published page.
-    const markup=authoredNodeHtml(node,{device:state.viewport.device,editor:true});
+    const markup=authoredNodeHtml(node,{device:state.viewport.device,editor:true,reducedMotion:prefersReducedMotion()});
     if(markup){
       const host=document.createElement('div');host.className='node-content creator-content-host';host.innerHTML=markup;initContentInteractions(host);
       host.addEventListener('click',event=>{if(event.target.closest('a'))event.preventDefault()});
@@ -2173,6 +2175,7 @@ document.addEventListener('DOMContentLoaded',()=>{
  });
  const inspectorTablist=$('.inspector-tabs');
  window.sanciEditor?.on?.('workspace:preferences-change',queueAccountWorkspaceWrite);
+ if(reducedMotionQuery){const refreshCanvasForMotionPreference=()=>renderCanvas();if(typeof reducedMotionQuery.addEventListener==='function')reducedMotionQuery.addEventListener('change',refreshCanvasForMotionPreference);else reducedMotionQuery.addListener?.(refreshCanvasForMotionPreference)}
  window.sanciEditor?.on?.('panel:inspector-tab',({tab}={})=>activateInspectorTab(tab,{persist:false}));
  inspectorTablist?.addEventListener('click',event=>{
    const button=event.target.closest('[role="tab"]');

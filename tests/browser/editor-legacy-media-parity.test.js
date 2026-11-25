@@ -487,6 +487,16 @@ test('legacy image video audio share guarded media URLs in Inspector Canvas and 
   assert.equal(await publishedSound.getAttribute('loop'),'');
   assert.equal(await publishedSound.evaluate(el=>new URL(el.getAttribute('src'),location.href).pathname),'/media/'+audioMediaId,'only the separate Publish exposes the selected audio asset on the public page');
   assert.equal(await viewer.evaluate(async id=>(await fetch('/media/'+id)).headers.get('content-type'),audioMediaId),'audio/wav','the public media route serves the selected audio asset with its audio MIME type');
+  await editor.emulateMedia({reducedMotion:'reduce'});
+  await editor.waitForFunction(id=>{const video=document.querySelector('[data-node-id="'+id+'"] video');return video instanceof HTMLVideoElement&&video.controls&&!video.autoplay},ids.goodVideo);
+  await editor.emulateMedia({reducedMotion:'no-preference'});
+  await editor.waitForFunction(id=>{const video=document.querySelector('[data-node-id="'+id+'"] video');return video instanceof HTMLVideoElement&&!video.controls&&!video.autoplay},ids.goodVideo);
+  await viewer.emulateMedia({reducedMotion:'reduce'});
+  await viewer.waitForFunction(id=>{const video=document.querySelector('[data-node-id="'+id+'"]');return video instanceof HTMLVideoElement&&video.controls&&!video.autoplay},ids.goodVideo);
+  assert.equal(await publishedNode(ids.goodVideo).evaluate(el=>el.controls),true,'changing to reduced motion while the page is open restores native playback controls');
+  assert.equal(await publishedNode(ids.goodVideo).evaluate(el=>el.autoplay),false,'reduced motion stops automatic video playback');
+  await viewer.emulateMedia({reducedMotion:'no-preference'});
+  await viewer.waitForFunction(id=>{const video=document.querySelector('[data-node-id="'+id+'"]');return video instanceof HTMLVideoElement&&!video.controls&&video.autoplay},ids.goodVideo);
   await canvasNode(ids.goodAudio).evaluate(el=>el.click());
   const savedAudioInspector=editor.locator('.legacy-media-inspector'),audioUrl=savedAudioInspector.getByRole('textbox',{name:'Hang URL'});
   await audioUrl.fill('/fixture.webm?manual=1');await audioUrl.press('Tab');

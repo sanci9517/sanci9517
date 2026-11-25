@@ -5,7 +5,7 @@ import { RICH_TEXT_FONT_FAMILIES } from "../editor-v2/core/schema.js?v=20261101-
 import { resolveRichTextLinkTarget } from "../editor-v2/core/richtext-links.js?v=20261101-richtext-link-target";
 import { LAYOUT_TYPES, isManagedLayout } from "../editor-v2/core/layout-presets.js";
 import {isStructuredType,renderElementContent,activateStructuredContent,safeMediaUrl} from "../editor-v2/core/element-content.js?v=20261124-d06-accordion-accessible-group-v1";
-import {legacyImageSource,legacyPlayableSource,legacyPlaybackSettings,legacyImagePresentation,legacyImageCaption} from "../editor-v2/core/legacy-media-source.js";
+import {legacyImageSource,legacyPlayableSource,legacyPlaybackSettings,legacyImagePresentation,legacyImageCaption} from "../editor-v2/core/legacy-media-source.js?v=20261125-d06-media-reduced-motion-v1";
 import {iconById} from "../editor-v2/core/icon-options.js";
 import {normalizeDividerStyle} from "../editor-v2/core/decorative-elements.js";
 import {normalizeCardContent,cardImageSrc} from "../editor-v2/core/card-content.js?v=20261118-d02-card-cta-recovery-v1";
@@ -13,7 +13,7 @@ import {renderCountdownContent,activateCountdowns} from "../editor-v2/core/count
 import {renderSocialLinksHtml} from "../editor-v2/core/social-links.js";
 import {renderEmbedHtml,activateEmbeds} from "../editor-v2/core/creator-embed.js";
 import {renderCodeSnippet,activateCodeBlocks} from "../editor-v2/core/code-snippet.js";
-import {isAuthoredContent,CONTENT_TYPES,contentTag,contentAttributes,authoredNodeHtml,initContentInteractions} from "../editor-v2/core/authored-content.js?v=20261125-d06-authored-carousel-one-slide-v1";
+import {isAuthoredContent,CONTENT_TYPES,contentTag,contentAttributes,authoredNodeHtml,initContentInteractions} from "../editor-v2/core/authored-content.js?v=20261125-d06-media-reduced-motion-v1";
 import {defaultTokens,applyTokenVariables} from "../editor-v2/core/design-tokens.js";
 import {isVisibleOnDevice,collectVisibleDescendants,safeNodeChildIds} from "../editor-v2/core/visibility.js?v=20261112-safe-node-children";
 import {applyStateStyles,hasStateStyles} from "../editor-v2/core/state-styles.js";
@@ -21,6 +21,8 @@ import {currentBudapestMonday,shiftScheduleWeek,renderScheduleWeek} from "../edi
 import {backgroundImageValue,legacyBackgroundCompound,MEDIA_ASSET_ID} from "../editor-v2/core/background-asset.js?v=20261117-edt040-motion-style-route";
 import {decorateSanciShowcase} from "./sanci-showcase.js?v=20261116-home-live-artwork-v1";
 (()=>{
+ const reducedMotionQuery=typeof matchMedia==='function'?matchMedia('(prefers-reduced-motion: reduce)'):null;
+ const prefersReducedMotion=()=>reducedMotionQuery?.matches===true;
  // Draft preview may show authenticated assets without granting public access
  // to media that has not yet passed the separate Publish gate.
  const previewMedia = new URL(location.href).searchParams.get('preview') === '1';
@@ -107,7 +109,7 @@ import {decorateSanciShowcase} from "./sanci-showcase.js?v=20261116-home-live-ar
  }
  function renderNodeHtml(page,id,managed,seen){const n=page.nodes?.[id];if(!n||!isVisibleOnDevice(n,currentDevice))return'';const t=esc(n.props?.text??n.name??'');const p=n.props||{};// Leaf nodes must not consume descendants from other valid branches.
   // Resolve children only for templates that actually output them.
-  let childCache;const children=()=>childCache??=(safeNodeChildIds(n).map(child=>nodeHtml(page,child,managed,seen)).join(''));const st=style(n);if(n.metadata?.contentVersion===1&&isAuthoredContent(n)){const tag=contentTag(n),attrs=Object.entries({...contentAttributes(n,{pageNodes:page.nodes}),'data-page-node-id':n.id}).map(([key,value])=>' '+key+'="'+esc(value)+'"').join('');return '<'+tag+' class="visual-editor-node creator-node" data-content-type="'+esc(n.type)+'"'+attrs+' style="'+st+'">'+authoredNodeHtml(n,{childrenHtml:CONTENT_TYPES.includes(n.type)?'':children(),device:currentDevice})+'</'+tag+'>'}if(n.type==='schedule')return scheduleHtml(n);if(sanci[n.type])return `<section class="visual-editor-node visual-sanci-block" style="${st}">${sanciBlock(n)}${children()}</section>`;if(isStructuredType(n.type)&&p.contentModel)return `<section class="visual-editor-node visual-structured" style="${st}">${renderElementContent(n.type,p.contentModel,n.id,{ariaLabel:p.ariaLabel})}</section>`;if(n.type==='code'&&n.metadata?.codeSnippetVersion===1)
+  let childCache;const children=()=>childCache??=(safeNodeChildIds(n).map(child=>nodeHtml(page,child,managed,seen)).join(''));const st=style(n);if(n.metadata?.contentVersion===1&&isAuthoredContent(n)){const tag=contentTag(n),attrs=Object.entries({...contentAttributes(n,{pageNodes:page.nodes}),'data-page-node-id':n.id}).map(([key,value])=>' '+key+'="'+esc(value)+'"').join('');return '<'+tag+' class="visual-editor-node creator-node" data-content-type="'+esc(n.type)+'"'+attrs+' style="'+st+'">'+authoredNodeHtml(n,{childrenHtml:CONTENT_TYPES.includes(n.type)?'':children(),device:currentDevice,reducedMotion:prefersReducedMotion()})+'</'+tag+'>'}if(n.type==='schedule')return scheduleHtml(n);if(sanci[n.type])return `<section class="visual-editor-node visual-sanci-block" style="${st}">${sanciBlock(n)}${children()}</section>`;if(isStructuredType(n.type)&&p.contentModel)return `<section class="visual-editor-node visual-structured" style="${st}">${renderElementContent(n.type,p.contentModel,n.id,{ariaLabel:p.ariaLabel})}</section>`;if(n.type==='code'&&n.metadata?.codeSnippetVersion===1)
  return `<section class="visual-editor-node visual-code-container" style="${st}">${renderCodeSnippet(p.codeSnippet)}${children()}</section>`;
 if(n.type==='embed'&&n.metadata?.embedContentVersion===1)
  return `<section class="visual-editor-node visual-creator-embed" style="${st}">${renderEmbedHtml(p.embedContent)}${children()}</section>`;
@@ -131,7 +133,7 @@ if(n.type==='card'&&n.metadata?.cardContentVersion===1){
   const image=`<img class="visual-image" style="object-fit:${cfg.fit};object-position:${cfg.objectPosition};aspect-ratio:${cfg.ratio};" src="${esc(u)}" alt="${esc(cfg.alt)}"${cfg.decorative?' role="presentation"':''} loading="${cfg.loading}">`;
   return caption?`<figure class="visual-editor-node visual-image-figure" style="margin:0;max-width:100%;${st}"><span style="display:block;max-width:100%;">${image}</span><figcaption style="display:block;padding-top:.5em;font-size:.85em;opacity:.8;white-space:pre-wrap;overflow-wrap:anywhere;">${esc(caption)}</figcaption></figure>`:`<img class="visual-editor-node visual-image" style="object-fit:${cfg.fit};object-position:${cfg.objectPosition};aspect-ratio:${cfg.ratio};${st}" src="${esc(u)}" alt="${esc(cfg.alt)}"${cfg.decorative?' role="presentation"':''} loading="${cfg.loading}">`;
 }if(n.type==='video'){
-  const u=safeUrl(legacyPlayableSource(p)),cfg=legacyPlaybackSettings(p,{video:true}),poster=safeUrl(cfg.poster);
+  const u=safeUrl(legacyPlayableSource(p)),cfg=legacyPlaybackSettings(p,{video:true,reducedMotion:prefersReducedMotion()}),poster=safeUrl(cfg.poster);
   return u?`<video class="visual-editor-node visual-video" style="${st}" src="${esc(u)}"${cfg.controls?' controls':''}${cfg.loop?' loop':''}${cfg.muted?' muted':''}${cfg.autoplay?' autoplay':''}${poster?` poster="${esc(poster)}"`:''} playsinline preload="metadata"></video>`:`<div class="visual-editor-node visual-card" style="${st}">Videó még nincs beállítva</div>`;
 }if(n.type==='audio'){
   const u=safeUrl(legacyPlayableSource(p)),cfg=legacyPlaybackSettings(p);
@@ -307,5 +309,6 @@ for(const key of ['aria-label','lang']){const value=root.metadata?.a11yVersion==
 if(root.metadata?.rootStyleVersion===1||root.metadata?.editorRootVersion===1){canvas.classList.add('visual-root-authored');if(root.metadata?.stateVersion===1)canvas.classList.add('creator-state-enabled');canvas.style.cssText=style(root);canvas.dataset.nodeId=root.id;const frame=canvas.closest('.preview-frame');if(frame){frame.style.maxWidth='none';frame.style.flex='0 0 auto';frame.style.margin='0 auto';frame.parentElement.style.overflowX='auto';frame.parentElement.style.justifyContent='flex-start'}}
 const rendered=new Set([page.rootId]);canvas.innerHTML=safeNodeChildIds(root).map(id=>nodeHtml(page,id,false,rendered)).join('')||'<div class="builder-text">Az oldalnak még nincs tartalma.</div>';applyStateStyles(canvas,page,currentDevice);let tokens=defaultTokens();try{const tokenUrl='/api/public/presentation'+(preview?'?preview=1':'');const tokenResponse=await fetch(tokenUrl,{cache:'no-store',credentials:'same-origin'});const tokenPayload=await tokenResponse.json();if(loadToken!==pageLoadToken)return;if(tokenResponse.ok&&tokenPayload?.data?.tokens)tokens=tokenPayload.data.tokens}catch{}applyTokenVariables(canvas,tokens);initContentInteractions(canvas);activateStructuredContent(canvas);activateCountdowns(canvas);activateEmbeds(canvas);activateCodeBlocks(canvas);decorateSanciShowcase(canvas,page,{slug,enabled:isSanciShowcase});}catch(e){if(loadToken!==pageLoadToken)return;title.textContent='Az oldal nem található';desc.textContent='';canvas.innerHTML='<div class="content-error"><h1>404</h1><p>Ez az oldal nem létezik, vagy nincs publikálva.</p></div>'}}
  if(new URL(location.href).searchParams.get('preview')!=='1')window.addEventListener('resize',()=>{const next=window.innerWidth<=700?'mobile':window.innerWidth<=900?'tablet':'desktop';if(next!==currentDevice){currentDevice=next;loadPage()}});
+ if(reducedMotionQuery){const reloadForMotionPreference=()=>loadPage();if(typeof reducedMotionQuery.addEventListener==='function')reducedMotionQuery.addEventListener('change',reloadForMotionPreference);else reducedMotionQuery.addListener?.(reloadForMotionPreference)}
  ensureStyle();if(!setupPreview())loadPage();
 })();

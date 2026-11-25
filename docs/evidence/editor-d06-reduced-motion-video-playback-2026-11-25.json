@@ -1,0 +1,190 @@
+{
+  "schema_version": 1,
+  "evidence_id": "editor-d06-reduced-motion-video-playback-2026-11-25",
+  "date": "2026-11-25",
+  "canonical_plan": {
+    "path": "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+    "sha256": "2935915cdcc23ccba621e0c2d302c4811909f8e5e395869fd075ec926b4b45c5",
+    "active_point": "77.44.7.D",
+    "status": "OPEN / NOT_CERTIFIED",
+    "audit": {
+      "features": 396,
+      "partial_source": 148,
+      "unverified": 248,
+      "functional_acceptance": "NOT_CERTIFIED"
+    }
+  },
+  "change": {
+    "summary": "Legacy and authored muted autoplay background video now honors prefers-reduced-motion in the public renderer and Editor canvas. Reduced-motion visitors see native playback controls instead of hidden controls; live preference changes refresh the rendering. Standard autoplay behavior remains unchanged. Save and Publish contracts are untouched.",
+    "files": [
+      "public/assets/page-renderer.js",
+      "public/editor-v2/app.js",
+      "public/editor-v2/core/authored-content.js",
+      "public/editor-v2/core/legacy-media-source.js",
+      "public/editor-v2/index.html",
+      "public/editor-v2/tests/element-content.test.js",
+      "public/editor-v2/ui/accessibility-fields.js",
+      "public/editor-v2/ui/element-content-controls.js",
+      "public/editor-v2/core/canvas-engine.js",
+      "public/editor-v2/core/capability-matrix.js",
+      "public/editor-v2/core/commands.js",
+      "public/editor-v2/core/content-profiles.js",
+      "public/editor-v2/core/validation.js",
+      "public/editor-v2/ui/legacy-media-inspector.js",
+      "public/visual-page.html",
+      "tests/browser/editor-legacy-media-parity.test.js",
+      "tests/editor-public-asset-cache-bust.test.js",
+      "scripts/build-feature-traceability.py",
+      "docs/evidence/feature-traceability.json"
+    ],
+    "rules": [
+      "Only muted videos with autoplay requested may autoplay.",
+      "Reduced-motion preference disables that autoplay and restores native controls.",
+      "Public renderer updates when the system preference changes, including preview routes.",
+      "Editor canvas honors the same preference and refreshes without changing saved document data.",
+      "No new dependencies.",
+      "No production D1 write/migration or R2 operation.",
+      "D-06 and full Editor acceptance remain OPEN / NOT_CERTIFIED."
+    ],
+    "dependencies_added": 0
+  },
+  "source_sha256": {
+    "public/assets/page-renderer.js": "db400e857647d0c2a2958620b5238dadce8afacf7bf53941f41f0bc3a074182d",
+    "public/editor-v2/app.js": "5307e317eff764f5ea24cf4365c45815617ca904fc2aeb55a3531bdfb4a3259a",
+    "public/editor-v2/core/authored-content.js": "87b1af2e364564d8402f0d7d153df568d4a091f9430851126e02fb3fefcda5c2",
+    "public/editor-v2/core/legacy-media-source.js": "c952e129a89798160fc14e74f220dd81d043042e176c45ad820dcbf06a74fbae",
+    "public/editor-v2/index.html": "84e8e4d9066c98a27b006fca9f09551bb99c1fc86b42dcafe413be4740c949dd",
+    "public/editor-v2/tests/element-content.test.js": "dd43e3607e5ec0cbe2b6d9b941a441069a0d4947878843505dc2a4f23f1d167c",
+    "public/editor-v2/ui/accessibility-fields.js": "35a20fb19e3e7562c1b83ed778667971c2f573b5767777cf265d0059d790f4b8",
+    "public/editor-v2/ui/element-content-controls.js": "91a5acb90cc5b44cc8c6fb26da46c92b6ad23996b35fdce17faad544a637d21c",
+    "public/editor-v2/core/canvas-engine.js": "a57cb1564715ba2d50aa04dc8082e9fd373ebe25df0341cf9895113d9071cf7c",
+    "public/editor-v2/core/capability-matrix.js": "978719e8215b8bb111a7e4892841564c9117abe9ed19a8a741f25ef65b85e3ad",
+    "public/editor-v2/core/commands.js": "249533b0a0ae9de1d14a545d9351359988c75d1b54b593958de298e542285b44",
+    "public/editor-v2/core/content-profiles.js": "44e43d442ea65d2ac513de6dbe5548e00396b5ba9225c523c9c24386cfb5db82",
+    "public/editor-v2/core/validation.js": "00a6954bbb30e279bf30b3f343fbccd65f078baf5c752c71f187f8d99e1e4731",
+    "public/editor-v2/ui/legacy-media-inspector.js": "6bb6167896aac4052376004b92b631096b8bb1fec035d8112ace9eb21b5c9365",
+    "public/visual-page.html": "a86f0c52d1ce88d0e3ffcf3ee40c072e7a9278acf70d558e820f63bc2212fb45",
+    "tests/browser/editor-legacy-media-parity.test.js": "cafbadeb4cdb8e6adf4e1564129bd01fbbd9a3fd4eac174acde006c50a642289",
+    "tests/editor-public-asset-cache-bust.test.js": "b19162f244abd56b0a0e7c5c99509f1a9a641cf7c0c3a47f98b01bb48be2deb2",
+    "scripts/build-feature-traceability.py": "b968464a07a7ef7d209381a1bc715690f0b024c6d741dacc55f819311f14534d",
+    "docs/evidence/feature-traceability.json": "770a34ab8c88ac1abcb48734130925164d56b9fb5c47b575bf5997d6dbc04622"
+  },
+  "checks": [
+    {
+      "command": "node -e import public/editor-v2/tests/element-content.test.js",
+      "result": "PASS",
+      "summary": "36/36 editor element/content unit assertions passed, including authored and legacy reduced-motion behavior."
+    },
+    {
+      "command": "CHROMIUM_PATH=/usr/bin/chromium node --test tests/browser/editor-legacy-media-parity.test.js",
+      "result": "PASS",
+      "summary": "2/2 Chromium scenarios passed; Editor canvas and published page respond to reduced-motion changes. Save and Publish remain separate."
+    },
+    {
+      "command": "node --experimental-loader ./tests/ts-extension-loader.mjs --test tests/editor-content-profiles.test.js tests/editor-content-initial-publication-contract.test.js tests/f0-3-route-integration.test.js tests/editor-public-asset-cache-bust.test.js",
+      "result": "PASS",
+      "summary": "4/4 focused test files passed."
+    },
+    {
+      "command": "node --experimental-vm-modules --test public/editor-v2/tests/element-content.test.js tests/editor-d-content-contract.test.js",
+      "result": "PASS",
+      "summary": "2/2 focused Editor/D-contract test files passed."
+    },
+    {
+      "command": "npm run typecheck",
+      "result": "PASS"
+    },
+    {
+      "command": "npm run test:web013:migration-gate",
+      "result": "PASS",
+      "summary": "Safe deployment path does not apply D1 migrations."
+    },
+    {
+      "command": "python3 tests/plan-contract.test.py",
+      "result": "PASS",
+      "summary": "16/16 contract checks passed."
+    },
+    {
+      "command": "python3 scripts/audit-active-plan-point.py",
+      "result": "PASS",
+      "summary": "77.44 / WEB-011 -> 77.44.7.D; full Editor acceptance remains NOT_CERTIFIED."
+    },
+    {
+      "command": "python3 scripts/build-feature-traceability.py --check",
+      "result": "PASS",
+      "summary": "396 source mappings match catalog, contracts and paths; acceptance is not certified."
+    },
+    {
+      "command": "python3 scripts/check-canonical-plan.py",
+      "result": "PASS",
+      "summary": "one complete 13-file master, one current cursor, 396 source mappings; functional acceptance NOT_CERTIFIED."
+    },
+    {
+      "command": "node --check changed JavaScript files; git diff --check",
+      "result": "PASS"
+    },
+    {
+      "command": "XDG_CONFIG_HOME=/tmp/sanci-wrangler-config npx wrangler deploy --dry-run",
+      "result": "PASS",
+      "summary": "Wrangler 4.130.0 read 202 public assets; 435.10 KiB / 110.25 KiB gzip. --dry-run exited before deployment."
+    },
+    {
+      "command": "Cloudflare D1 query API: SELECT name FROM d1_migrations ORDER BY name",
+      "result": "PASS",
+      "summary": "36 migration-ledger rows; last 0030_media_library_organization.sql; changed_db=false, changes=0, rows_written=0. No migration or write executed."
+    },
+    {
+      "command": "curl GET https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+      "result": "PASS",
+      "summary": "Pre-release live health GET returned HTTP 200 and expected Worker identity."
+    }
+  ],
+  "git_release": {
+    "repository": "sanci9517/sanci9517",
+    "target_branch": "v2/foundation",
+    "remote_head": "926c92b4f032d1475fe760baae21ee891e0e2252",
+    "remote_head_verified_via": "GitHub API GET refs/heads/v2/foundation",
+    "push_status": "NOT PUSHED",
+    "reason": "The shell could not connect to the configured proxy (port 8080); git ls-remote failed with the same network error. GitHub Actions billing/quota usage could not be verified via the available API. Push was not attempted.",
+    "local_base_commit": "f1212ce1a2bf026e1353e536dff59c71965616c3"
+  },
+  "production": {
+    "latest_deployment_id": "7847048f-5bc2-4acc-af74-d99ab8d43b15",
+    "latest_worker_version_id": "f93e26d1-c5fb-41a9-ad04-f89807060f87",
+    "traffic_percent": 100,
+    "deployment_created_on": "2026-11-25T10:01:26.494035Z",
+    "deployment_changed": false,
+    "live_health": {
+      "status": "PASS before release",
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+      "http_status": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    },
+    "changed_public_asset_hashes": "NOT VERIFIED live because no release was pushed/deployed; local source hashes are recorded above.",
+    "d1_preflight": {
+      "sql": "SELECT name FROM d1_migrations ORDER BY name",
+      "rows": 36,
+      "last_migration": "0030_media_library_organization.sql",
+      "changed_db": false,
+      "changes": 0,
+      "rows_written": 0
+    }
+  },
+  "cost": {
+    "new_cost_huf": 0,
+    "paid_ci_or_deploy": false,
+    "production_d1_writes": 0,
+    "r2_operations": 0
+  },
+  "metrics_run_id": "20261125133828-fda44865",
+  "metrics": {
+    "run_id": "20261125133828-fda44865",
+    "measured_active_seconds": 443,
+    "status": "partial"
+  }
+}

@@ -40,6 +40,16 @@ test('links, media, repeaters and table contents reject unsafe or invalid values
   assert.throws(()=>validateElementContent({...node('heading'),props:{level:'8'}}));
 });
 
+test('authored muted autoplay becomes manually controllable for reduced-motion visitors',()=>{
+ const video={id:'motion-aware-video',type:'video',metadata:{contentVersion:1},props:{src:'/video.webm',controls:false,muted:true,autoplay:true,loop:true}};
+ const standard=authoredNodeHtml(video);
+ assert.match(standard,/<video[^>]* muted autoplay[^>]*>/,'standard motion preference retains the explicitly authored muted background mode');
+ assert.doesNotMatch(standard,/<video[^>]* controls/);
+ const reduced=authoredNodeHtml(video,{reducedMotion:true});
+ assert.match(reduced,/<video[^>]* controls[^>]* muted/,'reduced-motion mode reveals a native play/pause control');
+ assert.doesNotMatch(reduced,/<video[^>]* autoplay/,'reduced-motion mode disables automatic playback');
+});
+
 test('authored tables retain their own 100-row and 16-column contract through public rendering',()=>{
   const authored={id:'authored-table-boundaries',type:'table',metadata:{contentVersion:1},props:{header:true}};
   const rows=Array.from({length:100},(_,row)=>Array.from({length:16},(_,column)=>`r${row}-c${column}`));
@@ -394,6 +404,9 @@ test('legacy playback settings preserve prior controls defaults and prohibit unm
  assert.deepEqual(legacyPlaybackSettings(movie,{video:true,editor:false}),{
   controls:false,loop:true,muted:true,autoplay:true,poster:'/media/'+posterId
  });
+ assert.deepEqual(legacyPlaybackSettings(movie,{video:true,editor:false,reducedMotion:true}),{
+  controls:true,loop:true,muted:true,autoplay:false,poster:'/media/'+posterId
+ },'reduced-motion visitors receive manual controls instead of a controls-free autoplay video');
  assert.deepEqual(legacyPlaybackSettings({controls:false,loop:true,muted:true,autoplay:true,poster:'/poster.svg'}),{
   controls:false,loop:true,muted:false,autoplay:false,poster:''
  });

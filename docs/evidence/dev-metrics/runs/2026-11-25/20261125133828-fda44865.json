@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261125133828-fda44865",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-25T13:38:28.367Z",
+  "finished_at": "2026-11-25T13:45:51.333Z",
+  "wall_seconds": 443,
+  "paused_seconds": 0,
+  "measured_seconds": 443,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "Implemented reduced-motion-safe legacy/authored video playback in the Editor canvas and public renderer; added dynamic preference coverage, source mapping and D-06 evidence. Targeted Chromium, unit, route, contract, typecheck, dry-run and traceability checks passed. GitHub push and live deployment remain blocked by unavailable shell proxy and unverified Actions billing quota; D-06 stays OPEN.",
+  "evidence": [
+    "docs/evidence/editor-d06-reduced-motion-video-playback-2026-11-25.json"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "f1212ce1a2bf026e1353e536dff59c71965616c3",
+  "finished_revision": "f1212ce1a2bf026e1353e536dff59c71965616c3",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

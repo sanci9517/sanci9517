@@ -45,13 +45,17 @@ export function legacyPlayableSource(props,{editor=false}={}){
 }
 
 /** Same playback flags in legacy Editor Canvas and the published page. */
-export function legacyPlaybackSettings(props,{video=false,editor=false}={}){
+export function legacyPlaybackSettings(props,{video=false,editor=false,reducedMotion=false}={}){
   const p=props??{},muted=video&&p.muted===true;
+  const requestedAutoplay=video&&p.autoplay===true&&muted;
+  const suppressAutoplay=editor||reducedMotion===true;
   return {
-    controls:p.controls!==false,
+    // A controls-free autoplay background must stay manually operable when
+    // autoplay is suppressed for editing or reduced-motion preferences.
+    controls:p.controls!==false||(requestedAutoplay&&reducedMotion===true),
     loop:p.loop===true,
     muted,
-    autoplay:video&&!editor&&p.autoplay===true&&muted,
+    autoplay:requestedAutoplay&&!suppressAutoplay,
     poster:video?legacyImageSource({assetId:p.posterAssetId,src:p.poster},{editor}):''
   };
 }

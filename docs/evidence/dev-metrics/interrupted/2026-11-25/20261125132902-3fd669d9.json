@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "id": "20261125132902-3fd669d9",
+  "task": "77.44.7.D",
+  "trigger": "scheduled",
+  "started_at": "2026-11-25T13:29:02.826Z",
+  "abandoned_at": "2026-11-25T13:38:23.496Z",
+  "measured_seconds": null,
+  "status": "interrupted",
+  "reason": "Prior run segment summary was resumed; starting fresh block after measured 18m active work verified below",
+  "started_revision": "f1212ce1a2bf026e1353e536dff59c71965616c3",
+  "measurement": "missing end time; excluded from elapsed time and ETA"
+}

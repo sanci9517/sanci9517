@@ -7,7 +7,7 @@
  */
 
 import { resolveResponsiveValue } from './responsive.js?v=20261122-edt024-responsive-prototype-safety-v1';
-import { contentDefaults } from './authored-content.js?v=20261125-d06-authored-carousel-one-slide-v1';
+import { contentDefaults } from './authored-content.js?v=20261125-d06-media-reduced-motion-v1';
 import { backgroundImageValue, legacyBackgroundColor, legacyBackgroundCompound, MEDIA_ASSET_ID } from './background-asset.js?v=20261117-edt040-motion-style-route';
 import { isAllowlistedMotionStyle } from './motion-style.js';
 export {legacyBackgroundColor} from './background-asset.js?v=20261117-edt040-motion-style-route';
