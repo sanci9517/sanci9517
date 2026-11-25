@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261125204008-d4aa79a2",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-25T20:40:08.833Z",
+  "finished_at": "2026-11-25T21:07:25.932Z",
+  "wall_seconds": 1637,
+  "paused_seconds": 0,
+  "measured_seconds": 1637,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "D-06 Accordion single-open and initial-open controls released and production source verified; exact-SHA hosted Editor Core was still running at close.",
+  "evidence": [
+    "docs/evidence/editor-d06-structured-accordion-behavior-2026-11-25.json"
+  ],
+  "checks": "renderer:39/39; Inspector:4/4; Editor:24/24; Chromium:7/7; typecheck:PASS; production-smoke:PASS; deployment:100%; hosted-editor-core:IN_PROGRESS",
+  "started_revision": "9b0b32ab408037d1ae66fd72199d9b77876ce5e8",
+  "finished_revision": "709cb4d051b464bbd0be9c659c2ce3b447dd299f",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

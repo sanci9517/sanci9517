@@ -1,0 +1,112 @@
+{
+  "schema_version": 1,
+  "evidence_id": "editor-d06-structured-accordion-behavior-2026-11-25",
+  "recorded_at": "2026-11-25T21:02:43Z",
+  "plan_point": "77.44.7.D / D-06 — structured Accordion disclosure behavior",
+  "status": "PARTIAL — runtime released and source verified; exact-SHA hosted Editor Core is still running",
+  "scope": "Adds opt-in native single-open and configurable first-open behavior for structured-v1 Accordion nodes. This is one D-06 slice only; it does not close D-06, D-01–D-07, or complete Editor acceptance.",
+  "repository": {
+    "name": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "base_sha": "9b0b32ab408037d1ae66fd72199d9b77876ce5e8",
+    "runtime_commit": "709cb4d051b464bbd0be9c659c2ce3b447dd299f"
+  },
+  "change": {
+    "files": [
+      "public/editor-v2/core/element-content.js",
+      "public/editor-v2/ui/structured-inspector.js",
+      "public/editor-v2/app.js",
+      "public/editor-v2/index.html",
+      "public/assets/page-renderer.js",
+      "public/visual-page.html",
+      "public/editor-v2/tests/element-content.test.js",
+      "public/editor-v2/tests/structured-inspector-invalid-content.test.js",
+      "tests/browser/editor-structured-content.test.js",
+      "tests/editor-public-asset-cache-bust.test.js"
+    ],
+    "behavior": "Accordion Inspector now exposes singleOpen (strict boolean, default false) and openFirst (strict true or absent legacy default true). The renderer uses native details name groups scoped by safe Page Model node ID, so an exclusive disclosure interaction in one Accordion cannot close another. Save persists Page Model properties; only separate Publish changes public output. Existing content model shape remains unchanged.",
+    "reused_code": "Existing structured-content sanitizer, collision-resistant DOM IDs, element.update command path, and Save/Publish pipeline; no third-party source or new dependency.",
+    "new_dependency": false,
+    "production_d1_mutation": false,
+    "production_r2_operation": false,
+    "public_asset_sha256": {
+      "public/visual-page.html": "94f7c67a31cc9489dd956385d68beaed82664c624c997dd92eb25559ad4554ca",
+      "public/assets/page-renderer.js": "a374ad1a437dfd9afda167dd4c66dd62f033d5d704e48c7c72e63336efafeb53",
+      "public/editor-v2/core/element-content.js": "f554c2250c6414fd13e58abe25f598d07d2b3fe94cbf735cd1866f098efea610",
+      "public/editor-v2/ui/structured-inspector.js": "68b3998fd6f8594002ceecdeac9e29cb7f38a1e3dbd9b698a3ee4a9055559d4b",
+      "public/editor-v2/app.js": "aa49d5c0eb245bbaa0b19141a8e300ff3aff9437c111fc188b3c461ccc80644d",
+      "public/editor-v2/index.html": "d33263d46824471adab7a71af520f0531fe050ae66e78781f6ae5f16a511aa93"
+    }
+  },
+  "checks": {
+    "element_content_unit": "PASS 39/39",
+    "structured_inspector_unit": "PASS 4/4",
+    "public_asset_cache_bust": "PASS 3/3",
+    "editor_unit": "PASS npm run test:editor (24/24 test files, preferences 12/12, Linux subreaper 4/4)",
+    "focused_chromium": "PASS 7/7 tests in tests/browser/editor-structured-content.test.js; native group behavior/isolation, Inspector routing, draft-only before Save, Save ≠ Publish, public interaction after Publish",
+    "typecheck": "PASS npm run typecheck",
+    "migration_safety": "PASS npm run test:web013:migration-gate; deploy:safe never applies D1 migrations",
+    "wrangler_dry_run": "PASS npx wrangler deploy --dry-run; Wrangler 4.130.0, 202 assets, 442.19 KiB / 111.25 KiB gzip; dry-run did not deploy",
+    "canonical_and_traceability_pre_release": "PASS plan-contract 16/16, canonical plan 13 files/396 source mappings, active-point audit 77.44 / WEB-011 -> 77.44.7.D; acceptance remains not certified",
+    "diff_check": "PASS git diff --check before runtime commit",
+    "hosted_exact_sha_editor_core": "IN_PROGRESS at evidence capture; not counted as pass"
+  },
+  "production_d1_preflight": {
+    "method": "Cloudflare D1 API read-only requests only",
+    "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
+    "queries": [
+      "SELECT name FROM d1_migrations ORDER BY name DESC LIMIT 5",
+      "PRAGMA quick_check",
+      "PRAGMA foreign_key_check"
+    ],
+    "latest_migration": "0030_media_library_organization.sql",
+    "quick_check": "ok",
+    "foreign_key_check": "empty",
+    "rows_written": 0,
+    "changes": 0,
+    "changed_db": false,
+    "migration_or_data_write": false
+  },
+  "release": {
+    "push": "PASS normal fast-forward push to origin/v2/foundation; GitHub branch head equals runtime_commit",
+    "cloudflare_build": {
+      "build_uuid": "cdd4af61-c063-4f21-b1fd-4febebdb5863",
+      "status": "stopped",
+      "outcome": "success",
+      "source_sha": "709cb4d051b464bbd0be9c659c2ce3b447dd299f",
+      "branch": "v2/foundation",
+      "build_command": "npm run typecheck",
+      "deploy_command": "npm run deploy:safe"
+    },
+    "deployment": {
+      "deployment_id": "11b28ace-2ee3-47e5-ac38-34555bd04cab",
+      "worker_version_id": "8ec1079f-0008-4637-af99-413eeec5cdba",
+      "worker_version_number": 4201,
+      "traffic_percent": 100,
+      "created_on": "2026-11-25T20:57:44.867706Z"
+    },
+    "production_source_smoke": {
+      "workflow_run_id": "45699750130",
+      "exact_sha": "709cb4d051b464bbd0be9c659c2ce3b447dd299f",
+      "status": "SUCCESS",
+      "health_http_status": 200,
+      "changed_public_asset_hashes": "All six changed public assets are in the production source smoke allowlist and live SHA-256 matched the exact commit after bounded retry. Initial mismatches occurred during global rollout propagation."
+    },
+    "github_checks_at_evidence_capture": {
+      "workers_build": "SUCCESS",
+      "production_source_smoke": "SUCCESS",
+      "f0_baseline_verify": "SUCCESS",
+      "twitch_integration": "SUCCESS",
+      "editor_core": "IN_PROGRESS"
+    }
+  },
+  "acceptance": {
+    "this_accordion_slice": "AUTOMATED_PASS; production runtime release verified",
+    "d06": "OPEN / NOT_CERTIFIED",
+    "d01_d07": "OPEN / NOT_CERTIFIED",
+    "complete_visual_editor": "OPEN / NOT_CERTIFIED",
+    "manual_physical_acceptance": "DEFERRED until the full Editor scope is complete",
+    "save_publish_separation": "PRESERVED"
+  },
+  "cost_huf": 0
+}
