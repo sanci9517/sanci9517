@@ -54,6 +54,14 @@ function validateMediaNode(node:any):string|null{
  if(!hasContentProfile(node,'media-v1'))return null;
  if(node.props?.assetId!==undefined&&typeof node.props.assetId==='string'&&MEDIA_ASSET_ID.test(node.props.assetId)){}else if(!validMediaSource(node.props?.src))return 'INVALID_MEDIA_SOURCE';
  if(node.type==='image'&&!node.accessibility?.decorative&&!hasVisibleContentText(node.props?.alt))return 'IMAGE_ALT_REQUIRED';
+ // Keep the legacy media-v1 publication contract aligned with the Inspector's
+ // supported playback modes. A hidden player must remain usable and autoplay
+ // must never publish without mute consent.
+ if(node.type==='audio'&&node.props?.controls===false)return 'AUDIO_CONTROLS_REQUIRED';
+ if(node.type==='video'){
+  if(node.props?.autoplay===true&&node.props?.muted!==true)return 'VIDEO_AUTOPLAY_REQUIRES_MUTED';
+  if(node.props?.controls===false&&!(node.props?.autoplay===true&&node.props?.muted===true))return 'VIDEO_CONTROLS_REQUIRED';
+ }
  return null;
 }
 function hasPublicRendererContract(node:any):boolean{

@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261125105742-d5e86ed1",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-25T10:57:42.380Z",
+  "finished_at": "2026-11-25T11:19:29.511Z",
+  "wall_seconds": 1307,
+  "paused_seconds": 0,
+  "measured_seconds": 1307,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "D-06 media-v1 playback publication guards, regression coverage and evidence completed locally; runtime release remains blocked because free GitHub Actions quota cannot be verified and repository guidance records quota exhausted.",
+  "evidence": [
+    "docs/evidence/editor-d06-legacy-media-playback-guards-2026-11-25.json"
+  ],
+  "checks": "route/unit 3 files PASS; editor 24/24 PASS; Chromium 2/2 PASS; typecheck PASS; plan contract 16/16 PASS; traceability 396 PASS; Wrangler dry-run PASS; D1 SELECT-only preflight PASS; remote push/deploy BLOCKED",
+  "started_revision": "926c92b4f032d1475fe760baae21ee891e0e2252",
+  "finished_revision": "926c92b4f032d1475fe760baae21ee891e0e2252",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}

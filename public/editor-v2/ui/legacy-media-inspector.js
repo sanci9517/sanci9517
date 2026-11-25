@@ -114,10 +114,10 @@ export function renderLegacyMediaInspector(node,apply,{pending=()=>{}}={}){
  section.append(help);
  const warnings=document.createElement('div');section.append(warnings);
  const warningIds=new Map();
- const warning=(text,keys)=>{
+ const warning=(text,keys,{publicationOnly=false}={})=>{
   const message=document.createElement('p');
   if(!warningIds.has(text))warningIds.set(text,'legacy-media-validation-'+crypto.randomUUID());
-  message.id=warningIds.get(text);message.className='property-validation';message.setAttribute('role','status');message.textContent=text;
+  message.id=warningIds.get(text);message.className='property-validation';message.setAttribute('role','status');if(publicationOnly)message.dataset.validationKind='publication';message.textContent=text;
   for(const key of keys){
    const routeControl=section.querySelector(`[data-inspector-key="props.${key}"]`);
    if(!routeControl)continue;
@@ -147,6 +147,14 @@ export function renderLegacyMediaInspector(node,apply,{pending=()=>{}}={}){
         if(poster&&!safeMediaUrl(poster)&&!model?.posterAssetId){
           nextWarnings.append(warning('Érvénytelen borítókép URL. Használj biztonságos HTTPS vagy belső képútvonalat.',['poster','posterAssetId']));
         }
+        if(model?.autoplay===true&&model?.muted!==true){
+          nextWarnings.append(warning('Az automatikus videóindítás csak némítva publikálható.',['autoplay','muted'],{publicationOnly:true}));
+        }
+        if(model?.controls===false&&!(model?.autoplay===true&&model?.muted===true)){
+          nextWarnings.append(warning('A videó vezérlői csak némítva induló háttérvideónál rejthetők el.',['controls','autoplay','muted'],{publicationOnly:true}));
+        }
+    }else if(node.type==='audio'&&model?.controls===false){
+        nextWarnings.append(warning('A hanglejátszó vezérlőit nem rejtheted el.',['controls'],{publicationOnly:true}));
     }
     const source=values.src.trim();
     if(source&&!safeMediaUrl(source)){

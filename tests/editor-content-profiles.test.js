@@ -75,6 +75,27 @@ test('authored media and versioned legacy media retain their distinct publicatio
  assert.deepEqual(getElementContentContract(mixed).profiles.map(p=>p.id),['authored-v1','media-v1']);
 });
 
+test('versioned legacy playback requires usable controls and muted autoplay while old documents stay compatible',()=>{
+ const audio=documentWith('audio',{editorContentVersion:1},{src:'/sound.ogg',controls:true,loop:false});
+ assert.equal(audio.check(),null);
+ audio.node.props.controls=false;
+ assert.equal(audio.check(),'AUDIO_CONTROLS_REQUIRED');
+
+ const video=documentWith('video',{editorContentVersion:1},{src:'/video.webm',controls:true,muted:false,autoplay:false,loop:false});
+ assert.equal(video.check(),null);
+ video.node.props.autoplay=true;
+ assert.equal(video.check(),'VIDEO_AUTOPLAY_REQUIRES_MUTED');
+ video.node.props.controls=false;
+ assert.equal(video.check(),'VIDEO_AUTOPLAY_REQUIRES_MUTED','unmuted autoplay fails before the hidden-controls check');
+ video.node.props.muted=true;
+ assert.equal(video.check(),null,'muted autoplay is the only valid controls-free video mode');
+ video.node.props.autoplay=false;
+ assert.equal(video.check(),'VIDEO_CONTROLS_REQUIRED');
+
+ const oldAudio=documentWith('audio',{}, {src:'/sound.ogg',controls:false});
+ assert.equal(oldAudio.check(),null,'unversioned historical media is not silently reclassified');
+});
+
 test('published Inspector style values use the registry while untouched legacy styles stay compatible',()=>{
  const state=createEditorState();
  execute(state,{type:'element.add',payload:{type:'text'}});

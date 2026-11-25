@@ -1,0 +1,139 @@
+{
+  "schema_version": 1,
+  "evidence_id": "editor-d06-legacy-media-playback-guards-2026-11-25",
+  "created_at": "2026-11-25",
+  "canonical_plan": {
+    "path": "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+    "sha256": "2935915cdcc23ccba621e0c2d302c4811909f8e5e395869fd075ec926b4b45c5",
+    "active_point": "77.44.7.D",
+    "status": "OPEN",
+    "functional_acceptance": "NOT_CERTIFIED"
+  },
+  "scope": {
+    "feature": "EDT-022 / versioned legacy media playback safety",
+    "implemented": [
+      "Versioned legacy audio cannot publish with native controls hidden.",
+      "Versioned legacy video cannot publish with unmuted autoplay.",
+      "Video controls may be hidden only for explicitly muted autoplay background video.",
+      "Inspector warnings are publication-only so Save can preserve a recoverable draft; Publish remains a separate server-validated action.",
+      "Historical unversioned media documents are not silently reclassified."
+    ],
+    "not_claimed": [
+      "D-06 completion",
+      "full Visual Editor completion or acceptance",
+      "production release of this change"
+    ],
+    "dependencies_added": 0
+  },
+  "source_sha256": {
+    "src/core/editor-validation.ts": "0fe74f7ffa0a3985cb480e3dcebd26edadc9b6a5a5c857d43d3ad335394909c2",
+    "public/editor-v2/ui/legacy-media-inspector.js": "33d26e3b7b83fd450f48b70fed0affef0ebbcca5b404669cb373edad5568e746",
+    "public/editor-v2/app.js": "cb6dd9918c371a65809fbcd97329b723a43a1f9524d4794057c644d0f0ca4541"
+  },
+  "checks": [
+    {
+      "command": "node --experimental-loader ./tests/ts-extension-loader.mjs --test tests/editor-content-profiles.test.js tests/editor-content-initial-publication-contract.test.js tests/f0-3-route-integration.test.js",
+      "result": "PASS",
+      "summary": "3 test files passed, including draft Save / rejected Publish / repaired Publish cases for versioned legacy audio and video."
+    },
+    {
+      "command": "npm run test:editor",
+      "result": "PASS",
+      "summary": "Editor suite passed 24/24 subtests before the final focused route-test addition; focused route/unit tests were rerun afterward."
+    },
+    {
+      "command": "npm run typecheck (tsc --noEmit)",
+      "result": "PASS"
+    },
+    {
+      "command": "node --test tests/editor-public-asset-cache-bust.test.js",
+      "result": "PASS"
+    },
+    {
+      "command": "npm run test:web013:migration-gate",
+      "result": "PASS",
+      "summary": "Confirmed deploy:safe migration safety gate behavior; no production migration was run."
+    },
+    {
+      "command": "python3 scripts/build-feature-traceability.py --check",
+      "result": "PASS",
+      "summary": "396 mappings, regenerated from current sources."
+    },
+    {
+      "command": "python3 tests/plan-contract.test.py",
+      "result": "PASS",
+      "summary": "16/16 plan contract checks."
+    },
+    {
+      "command": "python3 scripts/audit-active-plan-point.py",
+      "result": "PASS",
+      "summary": "77.44.7.D remains the next point; 396 features, 148 PARTIAL_SOURCE, 248 UNVERIFIED; acceptance remains NOT_CERTIFIED."
+    },
+    {
+      "command": "git diff --check; node --check public/editor-v2/app.js; node --check public/editor-v2/ui/legacy-media-inspector.js",
+      "result": "PASS"
+    },
+    {
+      "command": "tests/browser/editor-legacy-media-parity.test.js",
+      "result": "PASS",
+      "summary": "2/2 Chromium tests passed against the local Worker fixture, including Save and Publish separation and media playback warning repair."
+    },
+    {
+      "command": "wrangler deploy --dry-run",
+      "result": "PASS",
+      "summary": "Wrangler 4.130.0, 202 assets, 435.11 KiB / 110.25 KiB gzip; expected D1, MEDIA and ASSETS bindings. Repeated with writable temporary Wrangler home after the default log path reported EROFS."
+    }
+  ],
+  "production_d1_preflight": {
+    "mode": "SELECT-only Cloudflare D1 query API",
+    "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
+    "queries": [
+      "SELECT type, COUNT(*) AS count FROM sqlite_master WHERE name NOT LIKE 'sqlite_%' GROUP BY type ORDER BY type",
+      "SELECT name FROM d1_migrations ORDER BY name",
+      "SELECT name, sql FROM sqlite_master WHERE name IN (...)"
+    ],
+    "observed": "41 indexes, 33 tables, 25 triggers, 36 migration entries through 0030_media_library_organization.sql",
+    "for_each_query": {
+      "meta_changes": 0,
+      "changed_db": false,
+      "rows_written": 0
+    },
+    "production_migration_or_write": false
+  },
+  "git_and_release": {
+    "repository": "sanci9517/sanci9517",
+    "target_branch": "v2/foundation",
+    "observed_remote_head": "926c92b4f032d1475fe760baae21ee891e0e2252",
+    "observed_worktree_head": "926c92b4f032d1475fe760baae21ee891e0e2252",
+    "commit_created": true,
+    "commit_state": "LOCAL_DETACHED_COMMIT_PENDING_SAFE_PUSH",
+    "push": "BLOCKED: repository instructions report GitHub Actions compute quota exhausted and prohibit pushes that may cause paid overage; no renewed free-quota proof is available in this run.",
+    "ci": "NOT_TRIGGERED",
+    "worker_deploy": "NOT_DEPLOYED: runtime changes were not pushed to the configured deployment branch.",
+    "post_change_source_smoke": "NOT_RUN"
+  },
+  "production_worker_observation_before_change": {
+    "deployment_id": "7847048f-5bc2-4acc-af74-d99ab8d43b15",
+    "version_id": "f93e26d1-c5fb-41a9-ad04-f89807060f87",
+    "traffic_percentage": 100,
+    "created_at": "2026-11-25T10:01:26.494035Z",
+    "health": {
+      "url": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/health",
+      "http": 200,
+      "body": {
+        "ok": true,
+        "service": "sanci9517-streamer-brand",
+        "version": "2.0.0",
+        "server": "cloudflare-worker"
+      }
+    }
+  },
+  "safety": {
+    "save_and_publish_remain_distinct": true,
+    "no_paid_services_or_quota_overage": true,
+    "no_production_d1_write_or_migration": true,
+    "no_r2_deletion": true,
+    "no_branch_switch_or_reset": true
+  },
+  "next_step": "When free Actions quota is verified, commit/push this runtime change fast-forward to v2/foundation; verify exact-SHA workflows and Worker deployment, 100% traffic, health, and deployed asset SHA-256 values before claiming release. Continue D-06 implementation and do not certify the full Editor until all planned scope and acceptance gates are complete."
+}

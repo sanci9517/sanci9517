@@ -205,6 +205,25 @@ test('legacy image video audio share guarded media URLs in Inspector Canvas and 
   assert.ok(!(await posterField.getAttribute('aria-describedby')||'').split(/\s+/).includes(posterWarningId),'repaired poster field no longer references stale warning');
   await canvasNode(ids.goodVideo).evaluate(el=>el.click());
   await editor.getByRole('tab',{name:'Tartalom és szöveg'}).click();
+  const controlsField=inspector.getByRole('checkbox',{name:'Lejátszóvezérlők megjelenítése'});
+  const mutedField=inspector.getByRole('checkbox',{name:'Videó némítása'});
+  const autoplayField=inspector.getByRole('checkbox',{name:'Automatikus videóindítás (csak némítva)'});
+  await controlsField.uncheck();
+  const controlsWarning=inspector.getByText(/videó vezérlői csak némítva induló háttérvideónál rejthetők el/i);
+  await controlsWarning.waitFor();
+  assert.match(await controlsWarning.textContent(),/vezérlői csak némítva induló háttérvideónál rejthetők el/i);
+  assert.equal(await controlsWarning.getAttribute('data-validation-kind'),'publication','draft Save can preserve a recoverable playback choice');
+  const controlsWarningId=await controlsWarning.getAttribute('id');
+  assert.ok((await controlsField.getAttribute('aria-describedby')||'').split(/\s+/).includes(controlsWarningId),'hidden foreground controls warning is associated with its checkbox');
+  await autoplayField.check();
+  const autoplayWarning=inspector.getByText(/automatikus videóindítás csak némítva publikálható/i);
+  assert.match(await autoplayWarning.textContent(),/automatikus videóindítás csak némítva publikálható/i,'unmuted autoplay has an explicit warning');
+  await mutedField.check();
+  assert.equal(await inspector.locator('.property-validation[role="status"]:not(:empty)').count(),0,'muted autoplay is a valid controls-free background-video mode');
+  await controlsField.check();
+  await autoplayField.uncheck();
+  await mutedField.uncheck();
+  assert.equal(await inspector.locator('.property-validation[role="status"]:not(:empty)').count(),0,'restoring visible controls clears playback warnings');
   const editablePoster=inspector.getByRole('textbox',{name:'Videó borítókép URL'});
   await editablePoster.fill('javascript:alert(1)');await editablePoster.press('Tab');
   assert.equal(await editablePoster.getAttribute('aria-invalid'),'true','new unsafe poster URL is rejected by the Inspector');
@@ -422,15 +441,19 @@ test('legacy image video audio share guarded media URLs in Inspector Canvas and 
   const audioPicker=audioInspector.getByRole('button',{name:'Médiatár megnyitása'});
   await audioPicker.click();
   await audioInspector.getByRole('button',{name:'hangminta.wav kiválasztása'}).click();
+  const audioControlsWarning=audioInspector.getByText(/hanglejátszó vezérlőit nem rejtheted el/i);
+  assert.equal(await audioControlsWarning.getAttribute('data-validation-kind'),'publication','audio playback constraint is enforced by Publish, not destructive draft Save');
   assert.equal(await audioInspector.getByRole('textbox',{name:'Hang URL'}).inputValue(),'','selecting an audio asset clears the previous URL source');
   assert.equal(await soundPreview.getAttribute('src'),'/api/admin/media?id='+audioMediaId,'audio selection previews through the authenticated media route');
   assert.equal(await publishedNode(ids.goodAudio).evaluate(el=>new URL(el.getAttribute('src'),location.href).pathname),'/fixture.webm','audio media selection remains draft-only before Save');
 
   await editor.locator('#save').click();
-  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+  try{await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'),undefined,{timeout:5000})}
+  catch(error){throw new Error(`audio Save did not complete: status=${await editor.locator('#saveStatus').textContent()}; requests=${posts.length}; pageErrors=${errors.join(' | ')}`,{cause:error})}
   assert.equal(posts.at(-1).publish,false,'playback controls do not auto-publish');
   assert.equal(draft.pages[pageId].nodes[ids.goodAudio].props.assetId,audioMediaId,'Save persists the selected audio asset ID');
   assert.equal(draft.pages[pageId].nodes[ids.goodAudio].props.src,'','Save clears the superseded audio URL');
+  assert.equal(draft.pages[pageId].nodes[ids.goodAudio].props.controls,false,'Save preserves an incomplete-but-recoverable audio playback draft');
   await viewer.reload();
   assert.equal(await publishedNode(ids.goodVideo).getAttribute('poster'),null,'Save keeps old public video');
   assert.equal(await publishedNode(ids.goodAudio).evaluate(el=>new URL(el.getAttribute('src'),location.href).pathname),'/fixture.webm','Save does not expose a private audio asset');
@@ -446,6 +469,10 @@ test('legacy image video audio share guarded media URLs in Inspector Canvas and 
   await canvasNode(ids.goodAudio).evaluate(el=>el.click());
   assert.equal(await editor.locator('.legacy-media-inspector').getByRole('textbox',{name:'Hang URL'}).inputValue(),'','the audio asset ID and empty companion URL survive Editor reload');
   assert.equal(await editor.locator('.legacy-media-inspector').locator('.editor-media-selected').getAttribute('aria-label'),'Kiválasztott hang','the audio picker restores its selected media kind after reload');
+  const publishControls=editor.locator('.legacy-media-inspector').getByRole('checkbox',{name:'Lejátszóvezérlők megjelenítése'});
+  assert.equal(await publishControls.isChecked(),false,'the saved draft retains its unsupported playback choice until the user repairs it');
+  await publishControls.check();
+  assert.equal(await editor.locator('.property-validation[data-validation-kind="publication"]').count(),0,'restoring native audio controls clears the Publish-only warning');
   await editor.locator('#publish').click();
   await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
   assert.equal(posts.at(-1).publish,true);
@@ -456,7 +483,7 @@ test('legacy image video audio share guarded media URLs in Inspector Canvas and 
   assert.equal(await publishedMovie.getAttribute('muted'),'');
   assert.equal(await publishedMovie.getAttribute('autoplay'),'','public autoplay only on muted video');
   assert.match(await publishedMovie.getAttribute('poster'),/\/media\/00000000-0000-4000-8000-000000000123$/);
-  assert.equal(await publishedSound.getAttribute('controls'),null);
+  assert.equal(await publishedSound.getAttribute('controls'),'','published audio keeps usable native playback controls');
   assert.equal(await publishedSound.getAttribute('loop'),'');
   assert.equal(await publishedSound.evaluate(el=>new URL(el.getAttribute('src'),location.href).pathname),'/media/'+audioMediaId,'only the separate Publish exposes the selected audio asset on the public page');
   assert.equal(await viewer.evaluate(async id=>(await fetch('/media/'+id)).headers.get('content-type'),audioMediaId),'audio/wav','the public media route serves the selected audio asset with its audio MIME type');

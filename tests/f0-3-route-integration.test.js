@@ -239,6 +239,84 @@ test('D authored audio without native controls saves only as a draft and server 
   assert.deepEqual(await liveAfter.json(),liveBody,'the valid public audio remains unchanged after rejected Publish');
 });
 
+test('D versioned legacy video playback rejects unmuted autoplay and controls-free foreground media', async t => {
+  const f = await fixture(t), document = f.document('root-content');
+  const page = document.pages.p, root = page.nodes.root;
+  root.children = ['video'];
+  page.nodes.video = {
+    id:'video',type:'video',name:'Videó',parentId:'root',children:[],
+    props:{src:'/video.webm',poster:'',posterAssetId:'',controls:true,muted:false,autoplay:false,loop:false},style:{},
+    responsive:{desktop:{},tablet:{},mobile:{}},states:{},accessibility:{},
+    metadata:{editorContentVersion:1}
+  };
+  assert.equal(page.nodes.video.metadata.contentVersion,undefined,'exercise the independent media-v1 gate, not authored-v1');
+  const initial = await f.edit({...f.publish('unused'),document,publish:true});
+  assert.equal(initial.status,200,'valid controls establish a published baseline');
+  const liveBody = await (await f.read()).json();
+  const publishedSnapshot = f.db.prepare("SELECT published_content_json,published_revision_id FROM pages WHERE id='p'").get();
+
+  const unmutedAutoplay = structuredClone(document);
+  Object.assign(unmutedAutoplay.pages.p.nodes.video.props,{autoplay:true,muted:false});
+  const saved = await f.edit({pageId:'p',document:unmutedAutoplay,publish:false,expectedVersion:2});
+  assert.equal(saved.status,200,'an incomplete playback setup remains recoverable as a draft');
+  const stored = f.db.prepare("SELECT content_json,published_content_json,published_revision_id,is_published FROM pages WHERE id='p'").get();
+  assert.equal(JSON.parse(stored.content_json).pages.p.nodes.video.props.autoplay,true);
+  assert.equal(stored.published_content_json,publishedSnapshot.published_content_json,'Save does not replace the valid public video');
+  assert.equal(stored.published_revision_id,publishedSnapshot.published_revision_id);
+  assert.equal(stored.is_published,1);
+
+  const beforeRejected = f.state();
+  const rejected = await f.edit({pageId:'p',document:unmutedAutoplay,publish:true,expectedVersion:3});
+  assert.equal(rejected.status,409);
+  assert.equal((await rejected.json()).error.code,'VIDEO_AUTOPLAY_REQUIRES_MUTED');
+  assert.deepEqual(f.state(),beforeRejected,'rejected Publish creates no revision or audit mutation');
+  assert.deepEqual(await (await f.read()).json(),liveBody,'the prior valid video remains public');
+
+  const controlsFreeForeground = structuredClone(document);
+  Object.assign(controlsFreeForeground.pages.p.nodes.video.props,{controls:false,autoplay:false,muted:false});
+  const savedForeground = await f.edit({pageId:'p',document:controlsFreeForeground,publish:false,expectedVersion:3});
+  assert.equal(savedForeground.status,200,'the user can repair the saved draft without losing it');
+  const rejectedForeground = await f.edit({pageId:'p',document:controlsFreeForeground,publish:true,expectedVersion:4});
+  assert.equal(rejectedForeground.status,409);
+  assert.equal((await rejectedForeground.json()).error.code,'VIDEO_CONTROLS_REQUIRED');
+
+  const mutedBackground = structuredClone(document);
+  Object.assign(mutedBackground.pages.p.nodes.video.props,{controls:false,autoplay:true,muted:true});
+  const publishedBackground = await f.edit({pageId:'p',document:mutedBackground,publish:true,expectedVersion:4});
+  assert.equal(publishedBackground.status,200,'an explicit muted autoplay background video remains supported');
+});
+
+test('D versioned legacy audio without native controls saves as a repairable draft but cannot publish', async t => {
+  const f = await fixture(t), document = f.document('root-content');
+  const page = document.pages.p, root = page.nodes.root;
+  root.children = ['audio'];
+  page.nodes.audio = {
+    id:'audio',type:'audio',name:'Hang',parentId:'root',children:[],
+    props:{src:'/audio.ogg',controls:false,loop:false},style:{},
+    responsive:{desktop:{},tablet:{},mobile:{}},states:{},accessibility:{},
+    metadata:{editorContentVersion:1}
+  };
+  const valid = structuredClone(document);
+  valid.pages.p.nodes.audio.props.controls = true;
+  assert.equal((await f.edit({...f.publish('unused'),document:valid,publish:true})).status,200,'native controls establish a valid published baseline');
+  const publishedBefore = f.db.prepare("SELECT published_content_json,published_revision_id FROM pages WHERE id='p'").get();
+
+  assert.equal((await f.edit({pageId:'p',document,publish:false,expectedVersion:2})).status,200,'an unsupported playback preference remains recoverable in a saved draft');
+  const draft = JSON.parse(f.db.prepare("SELECT content_json FROM pages WHERE id='p'").get().content_json);
+  assert.equal(draft.pages.p.nodes.audio.props.controls,false);
+  const beforeRejected = f.state();
+  const rejected = await f.edit({pageId:'p',document,publish:true,expectedVersion:3});
+  assert.equal(rejected.status,409);
+  assert.equal((await rejected.json()).error.code,'AUDIO_CONTROLS_REQUIRED');
+  assert.deepEqual(f.state(),beforeRejected,'rejected legacy audio Publish creates no revision or audit mutation');
+  const stillPublished = f.db.prepare("SELECT published_content_json,published_revision_id FROM pages WHERE id='p'").get();
+  assert.deepEqual(stillPublished,publishedBefore,'the existing playable audio remains the public version');
+
+  const repaired = structuredClone(document);
+  repaired.pages.p.nodes.audio.props.controls = true;
+  assert.equal((await f.edit({pageId:'p',document:repaired,publish:true,expectedVersion:3})).status,200,'restoring native controls completes the explicit Publish');
+});
+
 test('two publishers reading the same version yield one winner and one conflict', async t => {
   const f = await fixture(t);
   f.env.DB.beforeBatch = async () => assert.equal((await f.edit(f.publish('winner'))).status, 200);
