@@ -6,6 +6,7 @@ import worker from '../src/index.ts';
 import { hashSessionToken } from '../src/core/auth/session.ts';
 import { resolvePublishedPageRedirect } from '../src/core/page-redirects.ts';
 import { publicPagesRoute } from '../src/routes/public/pages.ts';
+import { normalizeEditorDocument } from '../src/core/page-model.ts';
 import { publicNavigationRoute } from '../src/routes/public/navigation.ts';
 import { sitemapRoute } from '../src/routes/public/seo.ts';
 
@@ -252,6 +253,60 @@ test('public URL services keep explicit site identities separate', async t => {
   ] }));
   const navigation = await publicNavigationRoute(env, 'other-site');
   assert.equal((await navigation.json()).data.items[0].href, '/p/foreign');
+});
+
+test('public Editor page delivery rejects oversized canonical and legacy trees before returning content', async t => {
+  const { db, env } = await fixture(t);
+  const canonical = JSON.parse(document('target'));
+  canonical.pages.target.nodes.root.children = Array(100_000).fill('root');
+  const serialized = JSON.stringify(canonical);
+  db.prepare("UPDATE pages SET content_json=?,published_content_json=? WHERE id='target'").run(serialized, serialized);
+
+  const published = await publicPagesRoute(new Request(origin + '/api/public/pages?slug=new'), env, 'site-default');
+  assert.equal(published.status, 409);
+  assert.equal((await published.json()).error.code, 'PAGE_NOT_CANONICAL');
+  const publishedList = await publicPagesRoute(new Request(origin + '/api/public/pages'), env, 'site-default');
+  assert.equal((await publishedList.json()).data.some(page => page.id === 'target'), false,
+    'public list omits malformed Page Models instead of handing their child arrays to the renderer');
+
+  const preview = await publicPagesRoute(new Request(origin + '/api/public/pages?slug=new&preview=1', {
+    headers: { Cookie: 'sanci9517_session=editor' }
+  }), env, 'site-default');
+  assert.equal(preview.status, 409);
+  assert.equal((await preview.json()).error.code, 'PAGE_NOT_CANONICAL');
+
+  const legacy = { type: 'sanci-document', pages: [{ id: 'target', root: { children: Array(1000).fill({ type: 'text' }) } }] };
+  assert.equal(normalizeEditorDocument(legacy, 'target'), null,
+    'oversized legacy child arrays are rejected before recursive conversion');
+});
+
+test('shared Page Model normalization enforces the public hierarchy depth limit on canonical and legacy content', () => {
+  const canonicalAtLimit = JSON.parse(document('target'));
+  let canonicalParent = canonicalAtLimit.pages.target.nodes.root;
+  for (let index = 1; index <= 128; index++) {
+    const id = `node-${index}`;
+    canonicalParent.children = [id];
+    canonicalAtLimit.pages.target.nodes[id] = { id, type: 'section', children: [], props: {} };
+    canonicalParent = canonicalAtLimit.pages.target.nodes[id];
+  }
+  assert.ok(normalizeEditorDocument(canonicalAtLimit, 'target'), 'depth 128 remains accepted');
+  const canonicalTooDeep = structuredClone(canonicalAtLimit);
+  const finalCanonicalId = 'node-129';
+  canonicalTooDeep.pages.target.nodes['node-128'].children = [finalCanonicalId];
+  canonicalTooDeep.pages.target.nodes[finalCanonicalId] = { id: finalCanonicalId, type: 'section', children: [], props: {} };
+  assert.equal(normalizeEditorDocument(canonicalTooDeep, 'target'), null, 'depth 129 is rejected');
+
+  const legacyAtLimit = { type: 'sanci-document', pages: [{ id: 'target', root: { children: [] } }] };
+  let legacyParent = legacyAtLimit.pages[0].root;
+  for (let index = 1; index <= 128; index++) {
+    const child = { type: 'section', children: [] };
+    legacyParent.children = [child];
+    legacyParent = child;
+  }
+  assert.ok(normalizeEditorDocument(legacyAtLimit, 'target'), 'legacy depth 128 remains accepted');
+  legacyParent.children = [{ type: 'section', children: [] }];
+  assert.equal(normalizeEditorDocument(legacyAtLimit, 'target'), null,
+    'legacy depth 129 is rejected before recursive conversion');
 });
 
 test('Worker serves only verified host/site pairs and isolates overlapping public slugs', async t => {
