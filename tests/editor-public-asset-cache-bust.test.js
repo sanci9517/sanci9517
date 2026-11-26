@@ -30,7 +30,7 @@ test('the Editor and public renderer release tokens bust the structured accessib
     'the stylesheet referenced by the versioned link must include the palette-favorites UI');
   const recoveryVersion='20261124-edt042-publish-recovery-safe-label-v1';
   const editorEntryVersion='20261125-edt016-child-reference-limit-v1';
-  const editorScriptVersion='20261126-edt007-canvas-pointer-pan-v1';
+  const editorScriptVersion='20261126-edt007-keyboard-pan-v1';
   const editorTreeVersion='20261126-edt007-canvas-pan-v1';
   const pageActionTimerVersion='20261126-edt039-detached-action-timer-v1';
   const mediaPlaybackVersion='20261125-forms-service-v1';
@@ -39,8 +39,13 @@ test('the Editor and public renderer release tokens bust the structured accessib
     'the deployed entry page must request the accessible tree-item ownership implementation');
   assert.match(html,new RegExp(`href="/editor-v2/editor\\.css\\?v=${editorTreeVersion}"`),
     'the deployed entry page must request full-width nested tree groups');
-  assert.match(html,/src="\/editor-v2\/ui\/shell\.js\?v=20261123-edt044-account-scoped-preferences-v2"/,
-    'the deployed entry page must request the account-scoped shell module');
+  assert.match(html,/src="\/editor-v2\/ui\/shell\.js\?v=20261126-edt007-keyboard-pan-v1"/,
+    'the deployed entry page must request the shell with keyboard-pan action help');
+  const [shell,actionHelp,actionCatalog]=await Promise.all(['ui/shell.js','ui/action-help.js','ui/action-catalog.js'].map(path=>readFile(resolve(root,path),'utf8')));
+  assert.match(shell,/action-help\.js\?v=20261126-edt007-keyboard-pan-v1/);
+  assert.match(shell,/action-catalog\.js\?v=20261126-edt007-keyboard-pan-v1/);
+  assert.match(actionHelp,/action-catalog\.js\?v=20261126-edt007-keyboard-pan-v1/);
+  assert.match(actionCatalog,/Billentyűzettel fókuszáld a vásznat/u);
   const app=await readFile(resolve(root,'app.js'),'utf8');
   assert.match(app,/core\/richtext-import\.js\?v=20261125-edt016-child-reference-limit-v1/,
     'the cache-keyed Editor entry must request the HTML-table no-silent-truncation guard');
@@ -94,7 +99,7 @@ test('the EDT-040 in-view trigger refreshes both renderers and the shared motion
   const motionVersion='20261123-edt040-in-view-motion-v1';
   const domIdVersion='20261125-d06-authored-carousel-slide-semantics-v1';
   const editorEntryVersion='20261125-edt016-child-reference-limit-v1';
-  const editorScriptVersion='20261126-edt007-canvas-pointer-pan-v1';
+  const editorScriptVersion='20261126-edt007-keyboard-pan-v1';
   const mediaPlaybackVersion='20261125-forms-service-v1';
   const publicRendererVersion='20261126-edt039-detached-action-timer-v1';
   assert.match(editorHtml,new RegExp(`editor-motion\\.css\\?v=${motionVersion}`));

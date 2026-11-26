@@ -115,6 +115,8 @@ test('mobile touch has a visible contextual explanation and a readable selected 
   await page.locator('#editorMenu').tap();
   const pan=page.locator('#panTool');
   await pan.tap();
+  assert.match(EDITOR_ACTIONS.panTool.description,/nyilakat 48.*Shift\+nyíllal 160/u,
+    'the touch-accessible action help also teaches keyboard viewport panning');
   assert.equal(await pan.getAttribute('data-editor-icon'),EDITOR_ACTIONS.panTool.icon);
   const help=page.locator('#mobileActionHelp');
   assert.equal(await help.isVisible(),true,'touch reveals an inline explanation without hover');

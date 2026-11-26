@@ -21,7 +21,7 @@ export const EDITOR_ACTIONS=Object.freeze({
   closeLeftPanel:{icon:'panel-left-close',label:'Oldalpanel bezárása',description:'Csukd össze az oldal- és eszközpanelt; az oldal tartalma és kijelölése változatlan marad.'},
   closeRightPanel:{icon:'panel-right-close',label:'Beállítások bezárása',description:'Csukd össze a jobb oldali beállítások panelt; az oldal tartalma és kijelölése változatlan marad.'},
   selectTool:{icon:'mouse-pointer-2',label:'Kijelölés',description:'Válaszd ki vagy szerkeszd a vásznon látható elemeket.'},
-  panTool:{icon:'hand',label:'Vászon mozgatása',description:'Mozgasd a nagyítva megjelenített vásznat anélkül, hogy elemet jelölnél ki vagy módosítanál.'},
+  panTool:{icon:'hand',label:'Vászon mozgatása',description:'Mozgasd az oldalt a vásznon egérrel vagy érintéssel húzva. Billentyűzettel fókuszáld a vásznat, majd használd a nyilakat 48, Shift+nyíllal 160 képpontos lépésekben, elemkijelölés és módosítás nélkül.'},
   deviceDesktop:{icon:'monitor',label:'Asztali előnézet',description:'Mutasd meg az oldal széles, asztali képernyőre tervezett változatát.'},
   deviceTablet:{icon:'tablet',label:'Tablet előnézet',description:'Mutasd meg, hogyan igazodik az oldal egy tablet méretű képernyőhöz.'},
   deviceMobile:{icon:'smartphone',label:'Telefonos előnézet',description:'Mutasd meg az oldal keskeny, telefonos képernyőre tervezett változatát.'},

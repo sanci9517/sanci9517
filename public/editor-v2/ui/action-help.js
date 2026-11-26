@@ -1,4 +1,4 @@
-import {EDITOR_ACTIONS} from './action-catalog.js?v=20261103-canvas-focus-mode';
+import {EDITOR_ACTIONS} from './action-catalog.js?v=20261126-edt007-keyboard-pan-v1';
 import {createEditorIcon} from './action-icons.js?v=20261103-canvas-focus-mode';
 
 const ACTION_SELECTOR='[data-editor-action]';

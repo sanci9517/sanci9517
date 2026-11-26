@@ -89,6 +89,14 @@ test('empty Rich Text has direct desktop and mobile editing, typed presets, Save
   await tab.mouse.up();
   assert.equal(await canvas.evaluate(el=>({panning:el.classList.contains('is-panning'),cursor:getComputedStyle(el).cursor})).then(value=>value.panning),false,'pointercancel releases the temporary panning state');
   assert.equal(await canvas.evaluate(el=>getComputedStyle(el).cursor),'grab','pointercancel retains the selected Pan tool');
+  const panKeyboard=await canvas.evaluate(el=>({shortcuts:el.getAttribute('aria-keyshortcuts'),description:el.getAttribute('aria-description'),left:el.scrollLeft,top:el.scrollTop}));
+  assert.match(panKeyboard.shortcuts,/Shift\+ArrowRight/);assert.match(panKeyboard.description,/48.*Shift\+nyíllal 160/u);
+  await canvas.focus();await tab.keyboard.press('ArrowRight');await tab.keyboard.press('Shift+ArrowDown');
+  const keyboardPanAfter=await canvas.evaluate(el=>({left:el.scrollLeft,top:el.scrollTop}));
+  assert.equal(keyboardPanAfter.left,panKeyboard.left+48,'Arrow pans the viewport by a deterministic 48px without changing node coordinates');
+  assert.equal(keyboardPanAfter.top,panKeyboard.top+160,'Shift+Arrow uses the documented 160px viewport step');
+  assert.equal(JSON.stringify(draft),modelBeforePan,'keyboard pan leaves the Page Model unchanged');
+  assert.equal(posts.length,postsBeforePan,'keyboard pan never saves or publishes');
   await tab.locator('#selectTool').click();
   await tab.locator('.canvas-device-btn[data-device="mobile"]').click();
   const mobileArtboard=await tab.locator('#canvas').evaluate(el=>({pageWidth:el.querySelector('.page-canvas').getBoundingClientRect().width,frameWidth:el.querySelector('.page-canvas-frame').getBoundingClientRect().width,scrollWidth:el.scrollWidth,clientWidth:el.clientWidth}));
