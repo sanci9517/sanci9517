@@ -30,12 +30,15 @@ test('the Editor and public renderer release tokens bust the structured accessib
     'the stylesheet referenced by the versioned link must include the palette-favorites UI');
   const recoveryVersion='20261124-edt042-publish-recovery-safe-label-v1';
   const editorEntryVersion='20261125-edt016-child-reference-limit-v1';
-  const editorScriptVersion='20261126-edt037-layer-tree-collapse-v1';
+  const editorScriptVersion='20261126-edt037-treeitem-groups-v2';
+  const editorTreeVersion='20261126-edt037-treeitem-groups-v2';
   const pageActionTimerVersion='20261126-edt039-detached-action-timer-v1';
   const mediaPlaybackVersion='20261125-forms-service-v1';
   const publicRendererVersion='20261126-edt039-detached-action-timer-v1';
   assert.match(html,new RegExp(`src="/editor-v2/app\\.js\\?v=${editorScriptVersion}"`),
-    'the deployed entry page must request the unsupported-Publish recovery handler');
+    'the deployed entry page must request the accessible tree-item ownership implementation');
+  assert.match(html,new RegExp(`href="/editor-v2/editor\\.css\\?v=${editorTreeVersion}"`),
+    'the deployed entry page must request full-width nested tree groups');
   assert.match(html,/src="\/editor-v2\/ui\/shell\.js\?v=20261123-edt044-account-scoped-preferences-v2"/,
     'the deployed entry page must request the account-scoped shell module');
   const app=await readFile(resolve(root,'app.js'),'utf8');
@@ -91,7 +94,7 @@ test('the EDT-040 in-view trigger refreshes both renderers and the shared motion
   const motionVersion='20261123-edt040-in-view-motion-v1';
   const domIdVersion='20261125-d06-authored-carousel-slide-semantics-v1';
   const editorEntryVersion='20261125-edt016-child-reference-limit-v1';
-  const editorScriptVersion='20261126-edt037-layer-tree-collapse-v1';
+  const editorScriptVersion='20261126-edt037-treeitem-groups-v2';
   const mediaPlaybackVersion='20261125-forms-service-v1';
   const publicRendererVersion='20261126-edt039-detached-action-timer-v1';
   assert.match(editorHtml,new RegExp(`editor-motion\\.css\\?v=${motionVersion}`));

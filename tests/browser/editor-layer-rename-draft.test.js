@@ -80,7 +80,7 @@ for(const width of [390,1366])test(`layer rename pending draft survives save, pu
   catch(error){const detail=await editor.evaluate(()=>({active:{className:document.activeElement?.className,nodeId:document.activeElement?.dataset?.nodeId},leftDock:document.querySelector('#leftDock')?.className,layersPanel:document.querySelector('#leftPanelLayers')?.className,rows:[...document.querySelectorAll('.layer-row')].map(item=>({id:item.dataset.nodeId,tabIndex:item.tabIndex,pressed:item.getAttribute('aria-selected'),active:item.classList.contains('active'),rects:item.getClientRects().length}))}));throw new Error(`Layer keyboard focus failed for ${nodeId}: ${JSON.stringify(detail)}`,{cause:error})}
  };
  assert.equal(await row.getAttribute('tabindex'),'0','the primary selection is the single layer-tree Tab stop');
- assert.equal(await row.getAttribute('aria-keyshortcuts'),'ArrowLeft ArrowRight Shift+ArrowUp Shift+ArrowDown Control+Space Meta+Space Alt+ArrowUp Alt+ArrowDown Delete Backspace','the layer exposes hierarchy navigation, range-selection, toggle, reorder, and deletion shortcuts to assistive technology');
+ assert.equal(await row.getAttribute('aria-keyshortcuts'),'ArrowLeft ArrowRight Home End Shift+ArrowUp Shift+ArrowDown Control+Space Meta+Space Alt+ArrowUp Alt+ArrowDown Delete Backspace','the layer exposes hierarchy navigation, first/last navigation, range-selection, toggle, reorder, and deletion shortcuts to assistive technology');
  assert.match(await editor.locator('#leftPanelLayers .hierarchy-move-help').first().textContent(),/Shift\+nyíl.*Ctrl\/⌘\+Space/,'the Layers panel explains keyboard multi-selection');
  assert.equal(await secondRow.getAttribute('tabindex'),'-1');
  assert.equal(await secondRow.getAttribute('aria-selected'),'false');

@@ -1,3 +1,6 @@
+Warning: truncated output (original token count: 61104)
+Total output lines: 2348
+
 import {hasContentProfile} from './core/content-profiles.js?v=20261025-inspector-lifecycle-contract';
 import {getNode,getChildren,NODE_TYPES,canContain,normalizeRichText} from './core/schema.js?v=20261125-edt016-child-reference-limit-v1';
 import {instantiateEditorTemplate,listEditorTemplates} from './core/editor-templates.js?v=20261125-edt016-child-reference-limit-v1';
@@ -987,507 +990,7 @@ function renderScheduleInspector(node,composition){
 
 function renderRegistryInspector(node,mode='primary'){
   const device=state.viewport.device,root=document.createDocumentFragment();
-  const rendered=canvas.querySelector(`.node[data-node-id="${CSS.escape(node.id)}"]`);
-  if(mode==='primary'&&rendered?.classList.contains('outside-artboard')){
-    const warning=document.createElement('section');warning.className='inspector-group layout-warning';
-    warning.setAttribute('role','status');
-    const text=document.createElement('p');text.className='content-field-help';
-    text.textContent='Az elem részben a fehér vásznon kívül van. A munkaterület ezt szándékosan megengedi, de a publikált oldalon túlcsordulást vagy levágást okozhat.';
-    const reset=document.createElement('button');reset.type='button';reset.className='property-reset';reset.textContent='Eltolás visszaállítása ebben a nézetben';
-    markResponsiveActionRoute(reset,['x','y']);
-    reset.title='Az aktuális nézet X és Y eltolását 0-ra állítja; más nézetek beállításai megmaradnak.';
-    reset.disabled=isNodeEffectivelyLocked(page(),node);reset.onclick=()=>command('responsive.set',{nodeId:node.id,device,patch:{x:'0px',y:'0px'}});
-    warning.append(text,reset);root.append(warning);
-  }
-  const primaryGroups=new Set(['layout','size','spacing','flex','grid','position','typography','background','border','radius','shadow','opacity','transform','filter','animation']);
-  const duplicates=new Set(['content.text','content.href','advanced.nodeName',
-    'position.x','position.y','size.width','size.height','position.position']);
-  for(const group of listPropertyGroups()){
-    if((mode==='primary')!==primaryGroups.has(group.id))continue;
-    const parent=page()?.nodes?.[node.parentId];
-    const properties=listProperties({group:group.id,nodeType:node.type})
-      .filter(property=>!duplicates.has(property.id)&&isLayoutPropertyRelevant(property,node,parent,device));
-    if(!properties.length)continue;
-    const section=document.createElement('section');section.className='inspector-group';
-    section.dataset.inspectorCategory=group.id==='typography'?'text':['background','border','radius','shadow','opacity'].includes(group.id)?'surface':'layout';
-    const title=document.createElement('div');title.className='inspector-group-title';
-    title.innerHTML='<strong></strong><small></small>';
-    title.querySelector('strong').textContent=group.id==='flex'&&layoutMode(node,device)!=='flex'?(layoutMode(parent,device)==='grid'?'Gyermek igazítása':'Flex-gyermek'):group.id==='grid'&&layoutMode(node,device)!=='grid'?'Grid-gyermek':group.label;
-    title.querySelector('small').textContent=String(properties.length);
-    section.append(title);
-    for(const property of properties){
-      const key=property.key||property.id.split('.')[1];
-      const resolved=property.responsive?resolveResponsiveValue(node.responsive,key,device):null;
-      const effectiveStyle=property.responsive?resolveNodeStyle(node,device):null;
-      const current=resolved?.value??effectiveStyle?.[key]??property.defaultValue??(['flex','grid','layout'].includes(property.group)&&rendered?getComputedStyle(rendered)[key]:'')??'';
-      const label=property.label;
-      const apply=value=>{
-        const typingGroup=`inspector:${node.id}:${device}:${key}`;
-        if(property.responsive)return command(property.command,{nodeId:node.id,device,patch:{[key]:value}},{typingGroup});
-        return command(property.command,{nodeId:node.id,patch:{[key]:value}},{typingGroup});
-      };
-      const control=propertyInput({...property,disabled:isNodeEffectivelyLocked(page(),node)},label,current,apply);
-      if(property.responsive){
-        const origin=describeResponsiveOrigin(node.responsive,key,device,{
-          hasBaseStyle:node.style?.[key]!==undefined&&node.style?.[key]!==null
-        });
-        const status=document.createElement('small');
-        status.className='responsive-origin';
-        status.dataset.kind=origin.kind;
-        if(origin.source)status.dataset.source=origin.source;
-        status.textContent=origin.label;
-        status.setAttribute('aria-label',property.label+': '+origin.label);
-        control.append(status);
-      }
-      section.append(control);
-      if(property.responsive&&hasResponsiveOverride(node.responsive,key,device)){
-        const reset=document.createElement('button');reset.type='button';reset.className='property-reset';
-        markResponsiveActionRoute(reset,key);
-        reset.textContent='Öröklés visszaállítása';
-        reset.title=device+' nézet saját értékének törlése, a szélesebb nézet értékének öröklése';
-        reset.onclick=()=>command('responsive.set',{nodeId:node.id,device,patch:{[key]:undefined}});
-        section.append(reset);
-      }
-    }
-    const groupResets=responsiveGroupResetActions(node,properties,device);
-    if(groupResets.length){
-      const resetAll=document.createElement('button');
-      resetAll.type='button';
-      resetAll.className='group-responsive-reset';
-      resetAll.textContent='Saját értékek visszaállítása ('+groupResets.length+')';
-      markResponsiveActionRoute(resetAll,groupResets.map(action=>Object.keys(action.payload.patch)[0]));
-      resetAll.title='Csak a(z) '+device+' nézet aktuális csoportjának saját értékeit törli. Az örökölt és másik nézet értékei változatlanok. A művelet egy lépésben visszavonható.';
-      resetAll.setAttribute('aria-label',group.label+': '+resetAll.textContent);
-      resetAll.disabled=isNodeEffectivelyLocked(page(),node);
-      resetAll.onclick=()=>{
-        if(isNodeEffectivelyLocked(page(),node)||flushRichTextDraft?.()===false)return;
-        try{
-          executeBatch(state,groupResets,{label:'Reszponzív '+group.label+' visszaállítása',atomic:true});
-          render();
-        }catch(error){showError(error)}
-      };
-      section.append(resetAll);
-    }
-    root.append(section);
-  }
-  return root;
-}
-function renderStatesInspector(node){
-  const section=document.createElement('section');section.className='inspector-group';const title=document.createElement('div');title.className='inspector-group-title';title.innerHTML='<strong>Rámutatás és fókusz</strong>';section.append(title);
-  if(node.type==='root'&&node.metadata?.editorRootVersion!==1){const note=document.createElement('p');note.className='content-field-help';note.textContent='Az oldalgyökér állapotaihoz előbb engedélyezd a vászon megjelenését a Stílus fül Elrendezési csoportjában.';section.append(note);return section}
-  const label=document.createElement('label');label.className='field';label.textContent='Állapot előnézete';const choose=document.createElement('select');choose.setAttribute('aria-label','Állapot előnézete');
-  for(const [value,text] of [['none','Alaphelyzet'],['hover','Rámutatás'],['focus-visible','Billentyűzetes fókusz']]){const option=document.createElement('option');option.value=value;option.textContent=text;choose.append(option)}
-  choose.value=statePreview;choose.onchange=()=>{statePreview=choose.value;renderCanvas();renderInspector()};label.append(choose);section.append(label);
-  const note=document.createElement('p');note.className='content-field-help';note.textContent='Az előnézeti állapot nem kerül mentésre. A beállított színek és hatások az aktuális eszköznézethez tartoznak, és a valódi rámutatáskor vagy billentyűzetes fókusznál lépnek életbe.';section.append(note);
-  if(statePreview==='none')return section;
-  for(const id of STATE_PROPERTY_IDS){const property=getProperty(id);const value=resolveResponsiveValue(node.states?.[statePreview],property.key,state.viewport.device).value;
-    const control=propertyInput(property,property.label,value??'',value=>command('states.set',{nodeId:node.id,state:statePreview,device:state.viewport.device,patch:{[property.key]:value}}),{command:'states.set'});control.dataset.stateProperty=property.key;
-    if(isNodeEffectivelyLocked(page(),node))for(const input of control.querySelectorAll('input,select,button'))input.disabled=true;
-    section.append(control);
-    if(hasResponsiveOverride(node.states?.[statePreview],property.key,state.viewport.device)){const reset=document.createElement('button');reset.type='button';reset.className='property-reset';reset.dataset.propertyCommand='states.set';reset.dataset.propertyKey=property.key;reset.textContent='Állapotérték öröklésének visszaállítása';reset.disabled=isNodeEffectivelyLocked(page(),node);reset.onclick=()=>command('states.set',{nodeId:node.id,state:statePreview,device:state.viewport.device,patch:{[property.key]:undefined}});section.append(reset)}
-  }
-  return section;
-}
-function renderAccessibilityInspector(node){
-  const section=document.createElement('section');section.className='inspector-group';
-  const title=document.createElement('div');title.className='inspector-group-title';title.innerHTML='<strong>Akadálymentesség és láthatóság</strong>';section.append(title);
-  section.append(renderAccessibilityFields(node,(patch,{render:fullRender=true,typingGroup}={})=>{
-    const saved=command('accessibility.set',{nodeId:node.id,patch},{render:fullRender,typingGroup});
-    if(saved&&!fullRender){renderCanvas();setStatus('Nem mentett módosítás');syncPublishControls();}
-    return saved;
-  },{nodes:()=>page()?.nodes||{},pending:flush=>{flushRichTextDraft=flush}}));
-  for(const device of ['desktop','tablet','mobile']){
-    const label=document.createElement('label');label.className='inspector-toggle';label.dataset.inspectorCommand='element.visibility.set';label.dataset.inspectorKey='visibility.'+device;const input=document.createElement('input');input.type='checkbox';input.checked=isVisibleOnDevice(node,device);input.disabled=isNodeEffectivelyLocked(page(),node)||node.type==='root';input.onchange=()=>{if(command('element.visibility.set',{nodeId:node.id,device,visible:input.checked})===false)input.checked=isVisibleOnDevice(node,device);};label.append(input,document.createTextNode('Látható: '+device));section.append(label);
-  }
-  if(node.type!=='root'){
-    const visibility=getNodeVisibilityState(page(),node.id,state.viewport.device);
-    if(!visibility.effectiveVisible){
-      const note=document.createElement('p');note.className='visibility-inspector-note';note.setAttribute('role','status');
-      const parent=visibility.hiddenByAncestorId?page()?.nodes?.[visibility.hiddenByAncestorId]:null;
-      note.textContent=parent
-        ?'Ebben a(z) '+state.viewport.device+' nézetben a(z) „'+(parent.name||parent.type)+'” szülőelem rejtett. A saját láthatósági kapcsoló bekapcsolva maradhat; a megjelenéshez a szülőt is engedélyezd.'
-        :'Ez az elem a(z) '+state.viewport.device+' nézet publikus oldalán rejtett. A vásznon továbbra is kijelölhető és szerkeszthető.';
-      section.append(note);
-    }
-  }
-  if(['heading','text','richtext','button','link','quote','badge'].includes(node.type)){
-    const target=canvas.querySelector(`.node[data-node-id="${CSS.escape(node.id)}"]`);let background='rgb(255, 255, 255)',unknown=false,foundBackground=false;
-    for(let el=target;el&&el!==canvas;el=el.parentElement){const style=getComputedStyle(el);if((!foundBackground&&style.backgroundImage!=='none')||style.filter!=='none'||Number(style.opacity)<1)unknown=true;if(!foundBackground&&style.backgroundColor!=='rgba(0, 0, 0, 0)'&&style.backgroundColor!=='transparent'){background=style.backgroundColor;foundBackground=true}}
-    const css=target?getComputedStyle(target):null,ratio=css&&!unknown?opaqueContrast(css.color,background):null,threshold=css&&(parseFloat(css.fontSize)>=24||(parseFloat(css.fontSize)>=18.66&&Number(css.fontWeight)>=700))?3:4.5;
-    const note=document.createElement('p');note.className='content-field-help contrast-feedback';note.textContent=ratio===null?'Áttetsző, képes vagy átmenetes háttérnél a kontrasztot kézzel is ellenőrizd.':`Alapstílus kontrasztja: ${ratio.toFixed(2)}:1 · ${ratio>=threshold?'megfelelő':'alacsony'} (cél: ${threshold}:1). A külön formázott szavakat és az interaktív állapotokat külön is ellenőrizd.`;if(ratio!==null&&ratio<threshold)note.classList.add('layout-warning');section.append(note);
-  }
-  return section;
-}
-function renderLayoutInspector(node){
-  const section=document.createElement('section');section.className='inspector-group layout-recipes';section.dataset.inspectorCategory='layout';
-  const title=document.createElement('div');title.className='inspector-group-title';
-  const name=document.createElement('strong');name.textContent=LAYOUT_TYPES.includes(node.type)?'Elrendezési minták':'Szülő és elhelyezés';title.append(name);section.append(title);
-  const device=state.viewport.device,parent=page()?.nodes?.[node.parentId];
-  const modeName=mode=>({flex:'Flex',grid:'Grid',block:'Normál folyás'}[mode]);
-  const context=document.createElement('p');context.className='layout-context';context.textContent=`Ez az elem: ${modeName(layoutMode(node,device))} · ${device}.`;
-  section.append(context);
-  if(node.type==='root'&&node.metadata?.editorRootVersion!==1){const enable=document.createElement('button');enable.type='button';enable.className='layout-parent';enable.dataset.inspectorCommand='root.appearance.enable';enable.dataset.inspectorKey='metadata.editorRootVersion';enable.textContent='Oldalgyökér stílusainak használata az előnézetben';enable.onclick=()=>command('root.appearance.enable',{nodeId:node.id});section.append(enable)}
-  if(parent){
-    const parentButton=document.createElement('button');parentButton.type='button';parentButton.className='layout-parent';parentButton.textContent=`Szülő: ${parent.name||parent.type} · ${modeName(layoutMode(parent,device))}`;
-    parentButton.title='A szülő tároló kijelölése. Az oszlopok, irány és a gyermekek közötti távolság ott állítható.';
-    parentButton.onclick=()=>command('selection.set',{ids:[parent.id],primaryId:parent.id});section.append(parentButton);
-  }
-  const help=document.createElement('p');help.className='layout-help';help.textContent='A tároló rendezi el a gyermekeit. Flexnél az irány határozza meg az elosztás tengelyét; Gridnél az oszlopok és sorok adják a rácsot. A gyermek saját növekedése vagy rácshelye csak a megfelelő szülőben hat. A részletes mezők ezt a kapcsolatot követik.';section.append(help);
-  if(LAYOUT_TYPES.includes(node.type)){
-    const rendered=canvas.querySelector(`.node[data-node-id="${CSS.escape(node.id)}"]`);
-    if(!rendered?.classList.contains('managed-layout')){
-      const legacy=document.createElement('p');legacy.className='layout-help';legacy.textContent='Ez még a korábbi publikus megjelenést használja, annak automatikus kártyakeretével és mobilos tördelésével. Az alábbi minták valamelyikével bekapcsolható az új, vászonnal egyező elrendezés. Publikálás előtt ellenőrizd az előnézetet.';section.append(legacy);
-    }
-    const note=document.createElement('p');note.className='layout-help';note.textContent='Egy minta mindhárom nézet elrendezését beállítja, egyetlen visszavonható lépésben. Tartalmat nem cserél és nem publikál. Az elemek saját mérete, pozíciója és rácshelye megmarad; szükség esetén lent automatikus elhelyezés kérhető.';section.append(note);
-    const grid=document.createElement('div');grid.className='layout-preset-grid';
-    for(const preset of LAYOUT_PRESETS){
-      const button=document.createElement('button');button.type='button';button.className='layout-preset';button.dataset.layoutPreset=preset.id;button.dataset.inspectorCommand='layout.preset.apply';button.dataset.inspectorKeys=JSON.stringify([...['display','flexDirection','flexWrap','justifyContent','alignItems','gridTemplateColumns','gridTemplateRows','gap','rowGap','columnGap'].map(key=>`style.${key}`),...['desktop','tablet','mobile'].flatMap(view=>['display','flexDirection','flexWrap','justifyContent','alignItems','gridTemplateColumns','gridTemplateRows','gap','rowGap','columnGap'].map(key=>`responsive.${view}.${key}`)),'metadata.layoutVersion','metadata.layoutPresetId']);button.dataset.inspectorPresetId=preset.id;button.disabled=isNodeEffectivelyLocked(page(),node);button.title=preset.help;button.setAttribute('aria-label',preset.label+' elrendezésminta');
-      const preview=document.createElement('span');preview.className='layout-preset-preview';preview.setAttribute('aria-hidden','true');Object.assign(preview.style,preset.layouts[0]);
-      const previewCount=explicitGridColumnCount(preset.layouts[0].gridTemplateColumns)||3;
-      for(let index=0;index<previewCount;index++)preview.append(document.createElement('span'));
-      const label=document.createElement('strong');label.textContent=preset.label;const hint=document.createElement('small');hint.textContent=preset.help;button.append(preview,label,hint);
-      button.onclick=()=>{if(command('layout.preset.apply',{nodeId:node.id,presetId:preset.id}))setStatus('Reszponzív elrendezés beállítva. Mentés és Publikálás külön művelet.')};grid.append(button);
-    }
-    section.append(grid);
-  }
-  const children=getChildren(page(),node.id);
-  if(['grid','flex'].includes(layoutMode(node,device))&&children.length){
-    const auto=document.createElement('button');auto.type='button';auto.className='layout-auto';auto.dataset.inspectorCommand='layout.children.auto';auto.dataset.inspectorKeys=JSON.stringify(['children.responsive.flexGrow','children.responsive.flexShrink','children.responsive.flexBasis','children.responsive.alignSelf','children.responsive.gridColumn','children.responsive.gridRow']);auto.textContent='Gyermekek automatikus elhelyezése';auto.disabled=isNodeEffectivelyLocked(page(),node)||children.some(child=>isNodeEffectivelyLocked(page(),child));
-    auto.title=auto.disabled?'Zárolt gyermek miatt az egész művelet nem végezhető el.':'Csak az aktuális nézetben állítja automatikusra a közvetlen gyermekek Flex/Grid elhelyezését. A méret, pozíció, tartalom és más nézetek megmaradnak.';
-    auto.onclick=()=>command('layout.children.auto',{nodeId:node.id,device});section.append(auto);
-  }
-  if(parent&&layoutMode(parent,device)==='grid'){
-    const values=resolveNodeStyle(node,device);
-    const columns=explicitGridColumnCount(resolveNodeStyle(parent,device).gridTemplateColumns);
-    const start=parseInt(values.gridColumn,10);
-    if(columns&&start>columns){const warning=document.createElement('p');warning.className='layout-warning';warning.setAttribute('role','status');warning.textContent='A saját oszlophely új, nem tervezett oszlopot nyithat ebben a nézetben. Jelöld ki a szülőt, és válaszd a Gyermekek automatikus elhelyezése műveletet, vagy módosítsd az Oszlophely mezőt.';section.append(warning)}
-  }
-  return section;
-}
-function filterInspector(){
-  const normalizedSearchText=value=>String(value??'').replace(/\s+/g,' ').trim().toLocaleLowerCase('hu');
-  const query=normalizedSearchText(inspectorQuery);
-  const fields=[...inspector.querySelectorAll('.field,.typed-inspector-field,.richtext-editor,.typography-role,.layout-preset')];
-  let matches=0;
-  for(const item of new Set(fields)){
-    const text=(item.dataset.propertyId||'')+' '+item.textContent+' '+(item.title||'');
-    const visible=!query||normalizedSearchText(text).includes(query);
-    item.hidden=!visible;
-    if(visible)matches++;
-  }
-  for(const group of inspector.querySelectorAll('.inspector-group')){
-    const title=group.querySelector(':scope > .inspector-group-title')?.textContent||'';
-    const groupFields=[...group.querySelectorAll('.field,.typed-inspector-field,.richtext-editor,.typography-role,.layout-preset')];
-    const inheritedTitleMatches=Boolean(query)&&(()=>{
-      let parent=group.parentElement?.closest('.inspector-group');
-      while(parent){
-        const parentTitle=parent.querySelector(':scope > .inspector-group-title')?.textContent||'';
-        if(normalizedSearchText(parentTitle).includes(query))return true;
-        parent=parent.parentElement?.closest('.inspector-group');
-      }
-      return false;
-    })();
-    const titleMatches=Boolean(query)&&normalizedSearchText(title).includes(query);
-    const revealGroup=titleMatches||inheritedTitleMatches;
-    // A group-title match must reveal its controls, not an empty accordion.
-    if(revealGroup)for(const field of groupFields){
-      if(field.hidden){field.hidden=false;matches++}
-    }
-    const visible=query?revealGroup||groupFields.some(item=>!item.hidden):inspectorCategory==='all'||!group.dataset.inspectorCategory||group.dataset.inspectorCategory===inspectorCategory;
-    group.hidden=!visible;
-  }
-  document.dispatchEvent(new CustomEvent('editor-inspector-search-change',{detail:{active:Boolean(query)}}));
-  const status=inspector.querySelector('.inspector-search-status');
-  if(status)status.textContent=query?`${matches} találat`:'';
-}
-function renderInspectorSearch(){
-  const wrap=document.createElement('label');wrap.className='inspector-search';
-  const title=document.createElement('span');title.textContent='Beállítás keresése';
-  const input=document.createElement('input');input.type='search';input.value=inspectorQuery;input.placeholder='Pl. szín, térköz, betűméret';input.setAttribute('aria-label','Beállítás keresése');
-  input.oninput=()=>{inspectorQuery=input.value;filterInspector()};
-  input.onkeydown=event=>{
-    if(event.key!=='Escape'||!input.value)return;
-    event.preventDefault();event.stopPropagation();
-    input.value='';inspectorQuery='';filterInspector();
-    input.focus({preventScroll:true});
-  };
-  const status=document.createElement('small');status.className='inspector-search-status';status.setAttribute('aria-live','polite');
-  wrap.append(title,input,status);inspector.append(wrap);
-}
-function renderInspectorCategories(){
-  const nav=document.createElement('nav');nav.className='inspector-category-nav';nav.setAttribute('aria-label','Stílusbeállítások szűrése');
-  for(const [id,label] of [['all','Összes'],['layout','Elrendezés'],['text','Szöveg'],['surface','Felület']]){
-    const button=document.createElement('button');button.type='button';button.textContent=label;button.dataset.inspectorCategory=id;button.setAttribute('aria-pressed',String(inspectorCategory===id));
-    button.onclick=()=>{inspectorCategory=id;nav.querySelectorAll('button').forEach(item=>item.setAttribute('aria-pressed',String(item===button)));filterInspector()};nav.append(button);
-  }
-  return nav;
-}
-function renderTypographyPresets(node){
-  const section=document.createElement('section');section.className='inspector-group typography-roles';section.dataset.inspectorCategory='text';
-  const title=document.createElement('div');title.className='inspector-group-title';title.innerHTML='<strong>Szövegstílusok</strong><small>8 szerep</small>';section.append(title);
-  const hint=document.createElement('p');hint.className='typography-role-hint';hint.textContent='Az egész elem alapstílusa az aktuális nézetben. A külön formázott szavak felülírhatják; ezek a Tartalom fülön visszaállíthatók.';section.append(hint);
-  const grid=document.createElement('div');grid.className='typography-role-grid';
-  for(const preset of TYPOGRAPHY_PRESETS){
-    const button=document.createElement('button');button.type='button';button.className='typography-role';button.dataset.typographyPreset=preset.id;button.title=preset.help;button.setAttribute('aria-label',preset.label+' szövegstílus');
-    const patch=typographyPresetPatch(preset.id,state.viewport.device);button.dataset.propertyCommand='responsive.set';button.dataset.propertyKeys=JSON.stringify(Object.keys(patch));
-    const sample=document.createElement('span');sample.textContent=preset.sample;sample.className='typography-role-sample';sample.style.fontFamily=preset.patch.fontFamily||'system-ui';sample.style.fontWeight=preset.patch.fontWeight;sample.style.fontStyle=preset.patch.fontStyle||'normal';
-    const label=document.createElement('strong');label.textContent=preset.label;button.append(sample,label);button.disabled=isNodeEffectivelyLocked(page(),node);button.onclick=()=>command('responsive.set',{nodeId:node.id,device:state.viewport.device,patch});grid.append(button);
-  }
-  section.append(grid);return section;
-}
-function editorSiteScope(){return String(state?.document?.siteId||location.origin)}
-function copySelectedAppearance(node){
-  const snapshot=captureStyleSnapshot(node);
-  const hasAppearance=Object.values(snapshot.style).length>0||['desktop','tablet','mobile'].some(device=>Object.keys(snapshot.responsive[device]||{}).length>0);
-  if(!hasAppearance){setStatus('Ezen az elemen még nincs másolható megjelenési stílus.');return}
-  copiedStyleSnapshot={...snapshot,siteId:editorSiteScope(),sourcePageId:page()?.id};
-  setStatus(`Megjelenés másolva innen: ${node.name||node.type}. A tartalom, méret és pozíció kimarad.`);
-  renderInspector();
-}
-function pasteSelectedAppearance(node){
-  if(!copiedStyleSnapshot)return;
-  if(editorSiteScope()!==copiedStyleSnapshot.siteId){setStatus('A másolt stílus másik webhelyről származik, ezért nem alkalmazható.');return}
-  if(page()?.id===copiedStyleSnapshot.sourcePageId&&node.id===copiedStyleSnapshot.sourceNodeId){setStatus('A forrás elemen már ugyanaz a stílus van.');return}
-  if(command('style.snapshot.apply',{nodeId:node.id,snapshot:copiedStyleSnapshot}))setStatus(`A másolt megjelenés alkalmazva: ${node.name||node.type}. Mentéshez használd a Mentés gombot.`);
-}
-function renderMultiInspector(nodes){
- const panel=document.createElement('section');panel.className='multi-inspector';
- const title=document.createElement('h3');title.textContent=`${nodes.length} elem közös beállításai`;panel.append(title);
- const locked=nodes.some(node=>isNodeEffectivelyLocked(page(),node));
- const note=document.createElement('small');note.textContent=locked?'Zárolt elem is van kijelölve: a közös módosítás ezért tiltva van.':'A változás az összes kijelölt elemre egyszerre érvényes. Egyetlen Visszavonás visszaállítja az előző állapotot.';panel.append(note);
- const device=state.viewport.device;
- const apply=patch=>{if(locked)return;try{
-  executeBatch(state,nodes.map(node=>({type:'responsive.set',payload:{nodeId:node.id,device,patch}})),{label:'Több elem közös formázása'});
-  render();setStatus(`${nodes.length} elem közös megjelenése módosult. Mentés szükséges.`);
- }catch(error){setStatus(error.message||'A közös formázás nem sikerült.')}};
- const make=(label,key,kind,defaultValue,unit='')=>{
-  const row=document.createElement('label');row.className='multi-inspector-field';row.dataset.propertyId=key;row.dataset.propertyCommand='responsive.set';row.dataset.propertyKey=key;
-  const text=document.createElement('span');text.textContent=label;row.append(text);
-  const values=nodes.map(node=>resolveResponsiveValue(node.responsive,key,device)?.value);
-  const same=values.every(value=>value===values[0]);
-  const mixed=!same;
-  row.title=mixed?'Eltérő értékek a kijelölt elemek között':'';
-  const input=document.createElement('input');input.type=kind;
-  input.disabled=locked;
-  const value=same?values[0]:undefined;
-  if(kind==='color'){input.value=validHexColor(value)?value:defaultValue;input.title=same?'':'Eltérő értékek';input.onchange=()=>apply({[key]:input.value});}
-  else{
-   input.value=value===undefined?'':String(value).replace(unit,'');input.placeholder=same?'Alapérték':'Eltérő értékek';
-   input.setAttribute('aria-description',mixed?'A kijelölt elemek értékei eltérnek. Új érték megadásával mindegyiket módosítod.':'');
-   input.min='0';input.max=key==='opacity'?'1':'2000';input.step=key==='opacity'?'0.05':'1';
-   input.setAttribute('aria-label',label);
-   input.inputMode='decimal';
-   const validation=document.createElement('small');validation.className='property-validation';validation.id='multi-validation-'+key;validation.setAttribute('role','alert');input.setAttribute('aria-describedby',validation.id);
-   const validate=()=>{const v=Number(input.value),max=key==='opacity'?1:2000;const valid=Boolean(input.value.trim())&&Number.isFinite(v)&&v>=0&&v<=max;validation.textContent=valid?'':`${label}: 0 és ${max} közötti számot adj meg.`;input.setAttribute('aria-invalid',String(!valid));return valid};
-   input.oninput=validate;
-   input.onchange=()=>{if(!validate())return;const v=Number(input.value);apply({[key]:unit?`${v}${unit}`:v})};
-   row.append(validation);
-  }
-  row.append(input);if(unit){const u=document.createElement('small');u.textContent=unit;row.append(u)}
-  panel.append(row);
- };
- make('Háttérszín','backgroundColor','color','#334155');
- make('Szövegszín','color','color','#ffffff');
- make('Betűméret','fontSize','number','16','px');
- make('Belső térköz','padding','number','16','px');
- make('Saroklekerekítés','borderRadius','number','8','px');
- make('Átlátszóság','opacity','number','1');
- // Shared geometry edits use the same responsive command and single undo step.
- make('Szélesség','width','number','320','px');
- make('Magasság','height','number','180','px');
- make('Külső térköz','margin','number','0','px');
- make('Elemek közötti távolság','gap','number','0','px');
- make('Minimális szélesség','minWidth','number','0','px');
- make('Maximális szélesség','maxWidth','number','1200','px');
- make('Minimális magasság','minHeight','number','0','px');
- make('Maximális magasság','maxHeight','number','1200','px');
- return panel;
-}
-function renderExistingContentInspector(node){
-  const updateProps=(props,{render:fullRender=true,typingGroup}={})=>{
-    const saved=command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),...props}}},{render:fullRender,typingGroup});
-    if(saved&&!fullRender){renderCanvas();setStatus('Nem mentett módosítás');syncPublishControls();}
-    return saved;
-  };
-  const updateModel=(key,value,options)=>updateProps({[key]:value},options);
-  if(node.type===NODE_TYPES.FORM&&isAuthoredContent(node)){
-    inspector.append(renderFormsInspector(node,{onSelect:id=>{
-      if(node.props?.formId===id&&node.props?.formBindingVersion===1)return;
-      updateProps({formId:id,formBindingVersion:1});
-    }}));return true;
-  }
-  if(!isAuthoredContent(node)&&['image','video','audio'].includes(node.type)){
-    inspector.append(renderLegacyMediaInspector(node,updateProps,{pending:flush=>{flushRichTextDraft=flush}}));return true;
-  }
-  if(!isAuthoredContent(node)&&hasContentProfile(node,'basic-v1')){inspector.append(renderBasicContentInspector(node,updateProps,{pending:flush=>{flushRichTextDraft=flush}}));return true}
-  if(hasContentProfile(node,'embed-v1')){inspector.append(renderEmbedInspector(node,(value,options)=>updateModel('embedContent',value,options),{pending:flush=>{flushRichTextDraft=flush}}));return true}
-  if(hasContentProfile(node,'social-v1')){inspector.append(renderSocialLinksInspector(node,(value,options)=>updateModel('socialLinks',value,options),{pending:flush=>{flushRichTextDraft=flush}}));return true}
-  if(hasContentProfile(node,'card-v1')){inspector.append(renderCardInspector(node,(value,options)=>updateModel('cardContent',value,options),{pending:flush=>{flushRichTextDraft=flush}}));return true}
-  if(hasContentProfile(node,'countdown-v1')){inspector.append(renderCountdownInspector(node,(value,options)=>updateModel('countdown',value,options),{pending:flush=>{flushRichTextDraft=flush}}));return true}
-  if(hasContentProfile(node,'divider-v1')){
-    const cfg=normalizeDividerStyle(node.props?.decoration),section=document.createElement('section');
-    section.className='decorative-inspector';
-    section.append(Object.assign(document.createElement('h3'),{textContent:'Elválasztóvonal'}));
-    const set=patch=>{
-      const decoration=normalizeDividerStyle({...cfg,...patch});
-      command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),decoration}}});
-    };
-    const route=(control,key)=>{
-      control.dataset.inspectorCommand='element.update';
-      control.dataset.inspectorKey='props.decoration.'+key;
-      return control;
-    };
-    const thickness=route(document.createElement('input'),'thickness');
-    thickness.type='number';thickness.min='1';thickness.max='24';thickness.value=String(cfg.thickness);
-    thickness.setAttribute('aria-label','Elválasztóvonal vastagsága');
-    thickness.onchange=()=>set({thickness:Number(thickness.value)});
-    const color=route(document.createElement('input'),'color');
-    color.type='color';color.value=cfg.color;color.setAttribute('aria-label','Elválasztóvonal színe');
-    color.onchange=()=>set({color:color.value});
-    const style=route(document.createElement('select'),'lineStyle');
-    style.setAttribute('aria-label','Elválasztóvonal mintázata');
-    for(const value of DIVIDER_LINE_STYLES){const option=document.createElement('option');option.value=value;option.textContent=value;style.append(option)}
-    style.value=cfg.lineStyle;style.onchange=()=>set({lineStyle:style.value});
-    section.append(thickness,color,style);inspector.append(section);return true;
-  }
-  if(hasContentProfile(node,'spacer-v1')){const section=document.createElement('section');section.className='decorative-inspector';section.append(Object.assign(document.createElement('h3'),{textContent:'Üres térköz'}));const device=state.viewport.device,current=resolveResponsiveValue(node.responsive,'height',device).value??node.style?.height??'64px';section.append(renderPropertyInput(getProperty('size.height'),'Térköz magassága',current,value=>command('responsive.set',{nodeId:node.id,device,patch:{height:value}})));inspector.append(section);return true}
-  if(!isAuthoredContent(node)&&hasContentProfile(node,'structured-v1')){inspector.append(renderStructuredInspector(node,(model,options)=>updateModel('contentModel',model,options),{pending:flush=>{flushRichTextDraft=flush},updateProperties:(props,options)=>updateProps(props,options)}));return true}
-  return false;
-}
-const INSPECTOR_TABS=Object.freeze(['design','content','advanced']);
-function syncInspectorTabSemantics(){
-  const buttons=[...document.querySelectorAll('.inspector-tabs [role="tab"]')];
-  const activeIndex=Math.max(0,INSPECTOR_TABS.indexOf(inspectorTab));
-  const activeButton=buttons[activeIndex];
-  for(const[index,button]of buttons.entries()){
-    const selected=index===activeIndex;
-    button.setAttribute('aria-selected',String(selected));
-    button.tabIndex=selected?0:-1;
-    button.classList.toggle('active',selected);
-  }
-  const panel=$('#inspectorBody');
-  if(panel&&activeButton)panel.setAttribute('aria-labelledby',activeButton.id);
-}
-function activateInspectorTab(name,{focus=false,persist=true}={}){
-  if(!INSPECTOR_TABS.includes(name)||!flushLayerRename()||flushRichTextDraft?.()===false)return false;
-  inspectorTab=name;
-  if(persist)window.sanciEditor?.setInspectorTab?.(name,{notify:false});
-  syncInspectorTabSemantics();
-  renderInspector();
-  if(focus)document.querySelector(`#inspectorTab${name[0].toUpperCase()}${name.slice(1)}`)?.focus();
-  return true;
-}
-function renderInspector(){
-  syncInspectorTabSemantics();
-  const previousScrollTop=inspector.scrollTop;
-  const focused=document.activeElement;
-  const searchFocused=inspector.contains(focused)&&focused?.matches?.('.inspector-search input[type=search]');
-  const searchSelection=searchFocused?[focused.selectionStart,focused.selectionEnd]:null;
-  const multiFocused=inspector.contains(focused)?focused?.closest?.('.multi-inspector-field[data-property-id]'):null;
-  const multiFocusId=multiFocused&&focused?.matches?.('input')?multiFocused.dataset.propertyId:null;
-  const focusedProperty=inspector.contains(focused)
-    ? focused?.closest?.('.typed-inspector-field[data-property-id]') : null;
-  // The Inspector is reconstructed on every Page Model edit. Remember only
-  // typed field focus: rich text uses its own selection/bookmark lifecycle.
-  const fieldInputs=focusedProperty?.querySelectorAll('input,select,textarea');
-  const focusBookmark=focusedProperty && focused?.matches?.('input,select,textarea')
-    ? {propertyId:focusedProperty.dataset.propertyId,
-       ariaLabel:focused.getAttribute('aria-label'),
-       index:[...fieldInputs].indexOf(focused),
-       start:typeof focused.selectionStart==='number'?focused.selectionStart:null,
-       end:typeof focused.selectionEnd==='number'?focused.selectionEnd:null}
-    : null;
-  const restoreScroll=()=>requestAnimationFrame(()=>{
-    inspector.scrollTop=previousScrollTop;
-    // Never steal focus from a next field reached by Tab, a toolbar action,
-    // or a newly opened dialog. Only repair focus lost to DOM replacement.
-    if(document.activeElement!==document.body)return;
-    if(searchFocused){
-      const search=inspector.querySelector('.inspector-search input[type=search]');
-      if(search){search.focus({preventScroll:true});try{search.setSelectionRange(...searchSelection)}catch{}}
-      return;
-    }
-    if(multiFocusId){
-      const target=[...inspector.querySelectorAll('.multi-inspector-field[data-property-id]')]
-        .find(row=>row.dataset.propertyId===multiFocusId)?.querySelector('input');
-      if(target&&!target.disabled&&target.getClientRects().length)target.focus({preventScroll:true});
-      return;
-    }
-    if(!focusBookmark)return;
-    const replacement=[...inspector.querySelectorAll('.typed-inspector-field[data-property-id]')]
-      .find(field=>field.dataset.propertyId===focusBookmark.propertyId);
-    if(!replacement)return;
-    const inputs=[...replacement.querySelectorAll('input,select,textarea')];
-    const target=inputs.find(el=>el.getAttribute('aria-label')===focusBookmark.ariaLabel)||
-      inputs[focusBookmark.index];
-    if(!target||target.disabled||!target.getClientRects().length)return;
-    target.focus({preventScroll:true});
-    if(focusBookmark.start!==null&&focusBookmark.end!==null&&
-       typeof target.setSelectionRange==='function'){
-      try{target.setSelectionRange(focusBookmark.start,focusBookmark.end)}catch{}
-    }
-  });
-  // Tab switches and direct selection changes do not pass through command().
-  // Flush before removing the live contenteditable element from the DOM.
-  if(!inlineEditingId){if(!flushLayerRename()||flushRichTextDraft?.()===false)return false;flushRichTextDraft=null;}
-  richTextSelectionCleanup?.();richTextSelectionCleanup=null;
-  inspector.replaceChildren();
-  renderInspectorSearch();
-  const nodes=state?selectedNodes(state):[];
-  if(!nodes.length){inspector.insertAdjacentHTML('beforeend','<div class="inspector-empty"><b>Inspector</b><span>Válassz ki egy elemet a vásznon vagy a Rétegek panelen.</span></div>');filterInspector();restoreScroll();return}
-  if(nodes.length>1){inspector.append(renderMultiInspector(nodes));filterInspector();restoreScroll();return}
-  const node=nodes[0];
-  const composition=createCompositionInputs(flush=>{flushRichTextDraft=flush});
-  const header=document.createElement('div');header.className='inspector-selection';
-  const headerName=document.createElement('b');headerName.textContent=node.name||node.type;
-  const headerType=document.createElement('small');headerType.textContent=node.type;
-  header.append(headerName,headerType);
-  const styleActions=document.createElement('div');styleActions.className='style-copy-actions';
-  const copyStyle=document.createElement('button');copyStyle.type='button';copyStyle.className='style-copy-button';copyStyle.textContent='Megjelenés másolása';copyStyle.setAttribute('aria-label','Megjelenés másolása');copyStyle.title='Szín, tipográfia, térköz, keret, árnyék és áttetszőség másolása. A tartalom, méret és pozíció megmarad.';copyStyle.onclick=()=>copySelectedAppearance(node);
-  const pasteStyle=document.createElement('button');pasteStyle.type='button';pasteStyle.className='style-paste-button';pasteStyle.dataset.inspectorCommand='style.snapshot.apply';pasteStyle.dataset.inspectorKeys=JSON.stringify([...STYLE_SNAPSHOT_PROPERTIES.map(key=>`style.${key}`),...['desktop','tablet','mobile'].flatMap(view=>STYLE_SNAPSHOT_PROPERTIES.map(key=>`responsive.${view}.${key}`)),...(node.type==='root'?['metadata.rootStyleVersion']:[])]);pasteStyle.textContent='Másolt stílus alkalmazása';pasteStyle.setAttribute('aria-label','Másolt stílus alkalmazása');pasteStyle.disabled=!copiedStyleSnapshot||editorSiteScope()!==copiedStyleSnapshot.siteId||(page()?.id===copiedStyleSnapshot.sourcePageId&&node.id===copiedStyleSnapshot.sourceNodeId)||isNodeEffectivelyLocked(page(),node);pasteStyle.title='A másolt külső megjelenést alkalmazza erre az elemre; a tartalom, méret és pozíció változatlan marad.';pasteStyle.onclick=()=>pasteSelectedAppearance(node);
-  styleActions.append(copyStyle,pasteStyle);
-  const styleHelp=document.createElement('small');styleHelp.className='style-copy-help';styleHelp.textContent='Másik szövegnél ugyanazt a megjelenést használhatod. A méretet, pozíciót és tartalmat külön kezeli.';
-  const brand=document.createElement('a');brand.className='inspector-brand-link';brand.href='/admin/design';brand.target='_blank';brand.rel='noopener';brand.textContent='Közös webhelystílusok · Brand Kit';header.append(styleActions,styleHelp,brand);inspector.append(header);
-  const lockedAncestor=isLockedParent(page(),node),effectivelyLocked=isNodeEffectivelyLocked(page(),node);
-  if(effectivelyLocked){const note=document.createElement('p');note.className='content-field-help inspector-locked-note';note.setAttribute('role','status');note.textContent=lockedAncestor?'Ez az elem egy zárolt tároló része, ezért a beállításai csak olvashatók. A szülő zárolásának feloldása után szerkeszthető.':'Ez az elem zárolt, ezért a beállításai csak olvashatók. A Stílus fülön a „Zárolt elem” jelölést kikapcsolva újra szerkesztheted.';inspector.append(note)}
-
-  if(inspectorTab==='design'){
-    inspector.append(renderInspectorCategories());
-    inspector.append(renderLayoutInspector(node));
-    const nameProperty=getProperty('advanced.nodeName');
-    const nameField=field(nameProperty.label,node.name,(value,options)=>{
-      if(!String(value??'').trim())throw new Error('Az elem neve nem lehet üres.');
-      const normalized=normalizeInspectorValue(nameProperty,value);
-      const saved=commitInspectorText(nameProperty.command,{nodeId:node.id,patch:{[nameProperty.key]:normalized}},options);
-      if(!saved)throw new Error('Az elem neve nem módosítható.');
-      headerName.textContent=normalized;
-      return saved;
-    },isNodeEffectivelyLocked(page(),node),false,composition,nameProperty);
-    nameField.dataset.propertyId=nameProperty.id;
-    nameField.dataset.propertyCommand=nameProperty.command;
-    nameField.dataset.propertyKey=nameProperty.key;
-    inspector.append(nameField,renderGeometryInspector(node));
-    if(['heading','text','richtext','button','link'].includes(node.type))inspector.append(renderTypographyPresets(node));
-    if(node.type==='schedule'){
-      inspector.append(renderScheduleInspector(node,composition));
-      // Schedule configuration is type-specific content; it still shares the
-      // same responsive design properties as every other partial node type.
-      inspector.append(renderRegistryInspector(node,'primary'));
-    }
-    else inspector.append(renderRegistryInspector(node,'primary'));
-    const lockRow=document.createElement('label');lockRow.className='inspector-toggle';
-    const lockInput=document.createElement('input');lockInput.type='checkbox';lockInput.className='inspector-lock-toggle';lockInput.dataset.inspectorCommand='element.lock.set';lockInput.dataset.inspectorKey='locked';lockInput.checked=Boolean(node.locked);lockInput.disabled=node.id===page()?.rootId||lockedAncestor;
-    lockInput.onchange=()=>command('element.lock.set',{nodeId:node.id,locked:lockInput.checked});
-    const lockText=document.createElement('span');lockText.textContent='Zárolt elem';lockRow.append(lockInput,lockText);inspector.append(lockRow);
-  }else if(inspectorTab==='content'){
-    if(node.type==='schedule')inspector.append(renderScheduleInspector(node,composition));
-    else {
-      const textTypes=new Set(['heading','text','richtext','button','link']);
-      if(node.type==='richtext'){
-        const currentRichText=node.props?.richText||plainTextToRichText('');
-        const section=document.createElement('section');section.className='richtext-editor';
-        const toolbar=document.createElement('div');toolbar.className='richtext-toolbar';
-        const blockSelect=document.createElement('select');blockSelect.title='Aktuális blokk típusa';
+  const rendered=canvas.querySelector(`.node[data-n…11104 tokens truncated…t blockSelect=document.createElement('select');blockSelect.title='Aktuális blokk típusa';
         [['paragraph','Bekezdés'],['heading-1','H1'],['heading-2','H2'],['heading-3','H3'],
           ['heading-4','H4'],['heading-5','H5'],['heading-6','H6'],['bulleted-list','Felsorolás'],
           ['numbered-list','Számozott lista'],['quote','Idézet'],['code','Kódblokk']]
@@ -1952,6 +1455,7 @@ function renderLayers({focusId=null}={}){
   root.replaceChildren();
   const collapsedLayerNodes=collapsedLayerNodesByPage.get(current.id)||new Set();
   collapsedLayerNodesByPage.set(current.id,collapsedLayerNodes);
+  let layerGroupSequence=0;
   const walk=(id,depth=0,siblingIndex=0,siblingCount=1)=>{
     const node=getNode(current,id);
     if(!node)return;
@@ -1972,13 +1476,22 @@ function renderLayers({focusId=null}={}){
     row.setAttribute('aria-posinset',String(siblingIndex+1));
     row.setAttribute('aria-setsize',String(siblingCount));
     row.setAttribute('aria-selected',String(state.selection.ids.includes(id)));
-    row.setAttribute('aria-keyshortcuts','ArrowLeft ArrowRight Shift+ArrowUp Shift+ArrowDown Control+Space Meta+Space Alt+ArrowUp Alt+ArrowDown Delete Backspace');
-    row.setAttribute('aria-description','Fel/le: rétegnavigáció; balra: összecsukás vagy szülő; jobbra: kinyitás vagy első gyermek; Shift+fel/le: tartomány kijelölése; Ctrl vagy Command+Space: többes kijelölés; Alt+fel/le: egy kijelölt réteg átrendezése; Delete vagy Backspace: kijelölt elemek törlése; F2: átnevezés. A gyökér és a zárolt elemek nem mozgathatók vagy törölhetők.');
+    row.setAttribute('aria-keyshortcuts','ArrowLeft ArrowRight Home End Shift+ArrowUp Shift+ArrowDown Control+Space Meta+Space Alt+ArrowUp Alt+ArrowDown Delete Backspace');
+    row.setAttribute('aria-description','Fel/le: rétegnavigáció; Home/End: első/utolsó látható réteg; balra: összecsukás vagy szülő; jobbra: kinyitás vagy első gyermek; Shift+fel/le: tartomány kijelölése; Ctrl vagy Command+Space: többes kijelölés; Alt+fel/le: egy kijelölt réteg átrendezése; Delete vagy Backspace: kijelölt elemek törlése; F2: átnevezés. A gyökér és a zárolt elemek nem mozgathatók vagy törölhetők.');
     row.style.paddingLeft=`${8+depth*14}px`;
     const children=getChildren(current,id);
     const collapsed=children.length>0&&collapsedLayerNodes.has(id);
     if(children.length)row.setAttribute('aria-expanded',String(!collapsed));
     row.innerHTML=`<span class="layer-caret" aria-hidden="true">${children.length?(collapsed?'▸':'▾'):'·'}</span><strong>${escapeHtml(node.name||node.type)}</strong><small>${escapeHtml(node.type)}</small><span class="layer-drag-handle" aria-hidden="true">⠿</span>${locked?`<span class="layer-lock" title="${node.locked?'Zárolt elem':'Zárolt tároló része'}" aria-label="${node.locked?'Zárolt elem':'Zárolt tároló része'}">🔐</span>`:''}`;
+    let childGroup=null;
+    if(children.length){
+      childGroup=document.createElement('div');
+      childGroup.className='layer-children';
+      childGroup.id=`layer-children-${++layerGroupSequence}`;
+      childGroup.setAttribute('role','group');
+      childGroup.hidden=collapsed;
+      row.setAttribute('aria-owns',childGroup.id);
+    }
     row.addEventListener('keydown',event=>{
       if(event.key==='F2'&&node.id!==current.rootId&&!locked){event.preventDefault();event.stopPropagation();beginLayerRename(id)}
       if(event.altKey&&!event.ctrlKey&&!event.metaKey&&!event.shiftKey&&['ArrowUp','ArrowDown'].includes(event.key)){
@@ -2010,7 +1523,7 @@ function renderLayers({focusId=null}={}){
         return;
       }
       if(event.altKey||modifier||!['ArrowUp','ArrowDown','Home','End'].includes(event.key))return;
-      const rows=[...root.querySelectorAll('.layer-row')],index=rows.indexOf(row);
+      const rows=[...root.querySelectorAll('.layer-row')].filter(candidate=>!candidate.closest('.layer-children[hidden]')),index=rows.indexOf(row);
       if(index<0||rows.length===0)return;
       const nextIndex=event.key==='Home'?0:event.key==='End'?rows.length-1:index+(event.key==='ArrowDown'?1:-1);
       event.preventDefault();event.stopPropagation();
@@ -2066,8 +1579,12 @@ function renderLayers({focusId=null}={}){
       };
       entry.append(toggle);
     }
+    if(childGroup){
+      entry.append(childGroup);
+      children.forEach((child,index)=>childGroup.append(walk(child.id,depth+1,index,children.length)));
+    }
     root.append(entry);
-    if(!collapsed)children.forEach((child,index)=>walk(child.id,depth+1,index,children.length));
+    return entry;
   };
   walk(current.rootId,0,0,1);
   if(focusId){const focused=root.querySelector(`.layer-row[data-node-id="${CSS.escape(focusId)}"]`);focused?.focus({preventScroll:true});focused?.scrollIntoView({block:'nearest'})}
