@@ -37,8 +37,26 @@
     "browser": "Chromium via Playwright with local loopback permission"
   },
   "remote_verification": {
-    "new_exact_sha_ci": "PENDING",
-    "previous_failure_remains_historical_failure": true
+    "commit_sha": "311e13bf619c3abdc8edd29372ede2e4edad3851",
+    "branch_head_verified": "311e13bf619c3abdc8edd29372ede2e4edad3851",
+    "f0_baseline": {
+      "run_id": 45773712793,
+      "status": "SUCCESS"
+    },
+    "twitch_integration": {
+      "run_id": 45773712816,
+      "status": "SUCCESS"
+    },
+    "canonical_plan": {
+      "run_id": 45773712902,
+      "status": "SUCCESS"
+    },
+    "editor_core": {
+      "run_id": 45773712850,
+      "status": "IN_PROGRESS",
+      "active_step": "Run Editor browser layout regression"
+    },
+    "new_exact_sha_ci": "IN_PROGRESS"
   },
   "release": {
     "worker_deployment": "NOT DONE; test-only change is excluded from Worker builds",
@@ -46,5 +64,5 @@
     "r2": "NOT TOUCHED",
     "new_cost_huf": 0
   },
-  "next_gate": "Push the validated test/evidence follow-up by normal fast-forward, then verify the resulting exact-SHA Editor Core workflow. Do not claim the aggregate Editor Core gate or D-06 as complete until its exact-SHA run succeeds and the remaining acceptance criteria are met."
+  "next_gate": "Poll exact-SHA Editor Core run 45773712850. If it succeeds, record the complete outcome in a docs-only [skip ci] follow-up; if it fails, inspect the failing step and repair before marking any aggregate gate complete."
 }

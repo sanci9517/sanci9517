@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261126070044-cc8aca63",
+  "task": "77.44.7.D",
+  "trigger": "scheduled",
+  "started_at": "2026-11-26T07:00:44.120Z",
+  "finished_at": "2026-11-26T07:20:05.609Z",
+  "wall_seconds": 1161,
+  "paused_seconds": 359,
+  "measured_seconds": 802,
+  "status": "partial",
+  "kind": "test",
+  "summary": "Corrected unsupported-Publish regression fixture; targeted Chromium, typecheck, JSON and diff checks pass. Exact-SHA Editor Core remains in progress.",
+  "evidence": [
+    "docs/evidence/editor-unsupported-publish-recovery-fixture-2026-11-26.json"
+  ],
+  "checks": "Targeted Chromium 1/1; typecheck PASS; exact-SHA CI IN_PROGRESS; production unchanged",
+  "started_revision": "7bbc48c7d6a227eccc4088d17f1a1f40211dd6df",
+  "finished_revision": "311e13bf619c3abdc8edd29372ede2e4edad3851",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
