@@ -1,0 +1,115 @@
+{
+  "schema": 1,
+  "date": "2026-11-26",
+  "plan": {
+    "cursor": "77.44 / WEB-011 -> 77.44.7.D",
+    "status": "OPEN / NOT_CERTIFIED",
+    "scope": "Forms Inspector field-editing focus regression; this is one editor slice, not completion of D-06, D, or the Visual Editor."
+  },
+  "change": {
+    "commit": "5877a6edd3d407c4cd954bcfc2abb8faf5defb41",
+    "branch": "v2/foundation",
+    "message": "feat(editor): preserve forms inspector keyboard focus",
+    "behavior": [
+      "After changing a form-field type, focus returns to the replacement type selector.",
+      "After deleting a field, focus moves to the next field at the same index, or the previous field when deleting the last field.",
+      "Adding a field allocates a unique field-N id and focuses its label control.",
+      "Inspector field edits do not implicitly save or publish, and do not mutate the page draft or published-page snapshot."
+    ],
+    "files": [
+      "public/editor-v2/ui/forms-inspector.js",
+      "public/editor-v2/app.js",
+      "tests/browser/editor-forms-inspector.test.js",
+      "tests/editor-public-asset-cache-bust.test.js",
+      "docs/evidence/feature-traceability.json"
+    ]
+  },
+  "local_checks": {
+    "status": "PASS",
+    "checks": [
+      "node --test tests/browser/editor-forms-inspector.test.js: PASS (1/1; browser launch required the managed environment's elevated permission after sandbox denied Chromium crashpad socket)",
+      "npm run test:forms:browser: PASS (3 files / 4 cases, including Forms Inspector focus and Save/Publish isolation)",
+      "npm run test:forms: PASS (5/5)",
+      "npm run test:editor: PASS (25/25 unit files; preferences 12/12; subreaper 4/4)",
+      "npm run typecheck: PASS",
+      "node tests/editor-public-asset-cache-bust.test.js: PASS (3/3)",
+      "python3 tests/plan-contract.test.py: PASS (16/16)",
+      "python3 scripts/build-feature-traceability.py --check: PASS",
+      "python3 scripts/check-canonical-plan.py: PASS",
+      "python3 scripts/audit-active-plan-point.py: PASS (inventory only; no acceptance claim)",
+      "node scripts/web013-migration-safety-gate.mjs: PASS",
+      "git diff --check: PASS",
+      "npx wrangler deploy --dry-run: PASS; Wrangler packaged 206 assets (476.98 KiB; 118.26 KiB gzip). Wrangler could not write its optional log under /home/agent/.config due to EROFS, but the dry-run completed with exit 0."
+    ]
+  },
+  "production_preflight": {
+    "d1": {
+      "access": "Cloudflare D1 Query API, SELECT-only",
+      "migration_markers": 38,
+      "latest_migration": "0032_forms_service.sql",
+      "schema_objects": 111,
+      "web013_snapshot_tables_present": false,
+      "rows_written": 0,
+      "changes": 0,
+      "changed_db": false,
+      "database_size_bytes": 3883008
+    },
+    "r2_operations": 0,
+    "paid_services_or_new_cost": "none; 0 Ft"
+  },
+  "release": {
+    "cloudflare_build_id": "4884ec3c-28d4-4e43-b04d-9b73fb1b1e8e",
+    "cloudflare_build_outcome": "success",
+    "build_source_commit": "5877a6edd3d407c4cd954bcfc2abb8faf5defb41",
+    "build_command": "npm run typecheck",
+    "deploy_command": "npm run deploy:safe",
+    "deployment_id": "24ef74fa-7d8b-4584-bce5-7296b5d806b0",
+    "worker_version_id": "85868cee-4dbf-421a-bcb2-8d27a71639d9",
+    "traffic_percent": 100,
+    "smoke_workflow_run_id": 45880563327,
+    "smoke_workflow_result": "success",
+    "health": "HTTP 200; exact-SHA production smoke workflow verified /api/health",
+    "public_asset_sha256": {
+      "public/editor-v2/app.js": {
+        "expected": "a197cc78ee35010717bc1312bb89a1221d2df096d605b119ac4ac671cd715464",
+        "live": "a197cc78ee35010717bc1312bb89a1221d2df096d605b119ac4ac671cd715464",
+        "match": true
+      },
+      "public/editor-v2/ui/forms-inspector.js": {
+        "expected": "30c87adbcae946a01f72bcca14010cae3cc8b68b5f5c603171603b0a0d0ea254",
+        "live": "30c87adbcae946a01f72bcca14010cae3cc8b68b5f5c603171603b0a0d0ea254",
+        "match": true
+      }
+    },
+    "verification_note": "The smoke workflow recorded two initial cache-propagation hash mismatches; its bounded retry then returned HTTP 200 and verified all listed source asset hashes."
+  },
+  "github_actions": {
+    "editor_core_run_id": 45880563223,
+    "editor_core_run_url": "https://github.com/sanci9517/sanci9517/actions/runs/45880563223",
+    "source_commit": "5877a6edd3d407c4cd954bcfc2abb8faf5defb41",
+    "status": "IN_PROGRESS",
+    "completed_steps": [
+      "typecheck",
+      "Editor Core unit tests",
+      "Forms schema and route regressions",
+      "Forms Inspector and public-page Chromium regressions",
+      "offline D1 ledger tests",
+      "private R2 media API tests",
+      "public showcase unit and Chromium regressions"
+    ],
+    "currently_running_step": "Test real Worker media upload with isolated D1 and R2",
+    "remaining_steps_include": [
+      "Editor browser layout regression",
+      "WEB-013 Admin mobile browser regression",
+      "canonical schedule and domain contract tests",
+      "Brand Kit storage/access and Admin home contract tests"
+    ],
+    "aggregate_ci_pass": false
+  },
+  "acceptance": {
+    "save_and_publish_separate": true,
+    "full_editor_manual_and_physical_acceptance": "DEFERRED until full Editor scope is implemented",
+    "D06": "OPEN",
+    "full_D_block": "OPEN"
+  }
+}
