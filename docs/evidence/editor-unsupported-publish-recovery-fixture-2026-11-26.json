@@ -32,7 +32,8 @@
       "tests/browser/editor-publish-unsupported-recovery.test.js",
       "tests/browser/editor-workspace-appearance.test.js"
     ],
-    "second_fix": "Wait for the imported profile option label to be rendered before asserting the profile count, and assert the imported profile is selected; this removes dependence on a stale session-only status message."
+    "second_fix": "Wait for the imported profile option label to be rendered before asserting the profile count, and assert the imported profile is selected; this removes dependence on a stale session-only status message.",
+    "third_assertion": "Assert the prior session-only status is already present before file import, documenting why the test must wait for the imported option rather than that generic status text."
   },
   "local_verification": {
     "command": "node --test tests/browser/editor-publish-unsupported-recovery.test.js",
@@ -45,29 +46,39 @@
       "result": "PASS",
       "passed": 1,
       "failed": 0,
-      "browser": "Chromium via Playwright with local loopback permission"
-    }
+      "browser": "Chromium via Playwright with local loopback permission",
+      "repeated_runs": 3
+    },
+    "plan_contract": {
+      "command": "python3 tests/plan-contract.test.py",
+      "passed": 16,
+      "failed": 0
+    },
+    "canonical_plan": "PASS: one complete 13-file master / one current cursor / 396 source mappings; functional acceptance not certified",
+    "traceability": "PASS: 396/396 source mappings match catalog/contracts/current paths"
   },
   "remote_verification": {
-    "tested_commit_sha": "311e13bf619c3abdc8edd29372ede2e4edad3851",
+    "tested_commit_sha": "0aa48b5040e5babbcda2beba446654894a248fcd",
+    "follow_up_commit_ci_policy": "The next commit contains only browser tests, generated traceability and evidence; local checks passed, so it will use the repository [skip ci] convention and will not start a redundant Worker build.",
     "f0_baseline": {
-      "run_id": 45773712793,
+      "run_id": 45783680562,
       "status": "SUCCESS"
     },
     "twitch_integration": {
-      "run_id": 45773712816,
+      "run_id": 45783680462,
       "status": "SUCCESS"
     },
     "canonical_plan": {
-      "run_id": 45773712902,
-      "status": "SUCCESS"
+      "run_id": 45783680536,
+      "status": "FAILURE",
+      "cause": "The newly changed editor-workspace-appearance.js test source fingerprint had not yet been regenerated in docs/evidence/feature-traceability.json; local regeneration and plan-contract tests now pass."
     },
     "editor_core": {
-      "run_id": 45773712850,
-      "status": "FAILURE",
-      "failure": "Independent flaky browser fixture described in ci_follow_up_failures[1]."
+      "run_id": 45783680598,
+      "status": "IN_PROGRESS",
+      "active_step": "Run Editor browser layout regression"
     },
-    "new_follow_up_exact_sha_ci": "PENDING"
+    "latest_editor_core_run_result": "PENDING"
   },
   "release": {
     "worker_deployment": "NOT DONE; test-only change is excluded from Worker builds",
@@ -75,7 +86,7 @@
     "r2": "NOT TOUCHED",
     "new_cost_huf": 0
   },
-  "next_gate": "Validate the explicit imported-option wait locally, push its test/evidence correction, then inspect the next exact-SHA Editor Core CI result. Neither the test run nor D-06 is complete until all required gates pass.",
+  "next_gate": "Observe exact-SHA Editor Core run 45783680598 to completion. Its first unsupported-Publish fixture correction is covered and passed; the second profile-import race correction is locally 3/3. The later [skip ci] commit only adds an explicit stale-status precondition and the generated traceability fingerprint.",
   "ci_follow_up_failures": [
     {
       "workflow": "Editor Core Test",

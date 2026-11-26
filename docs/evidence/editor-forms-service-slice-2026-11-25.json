@@ -169,12 +169,12 @@
       "local_node_check": "17/17 PASS",
       "git_diff_check": "PASS",
       "exact_sha_editor_core_ci": {
-        "run_id": 45773712850,
-        "status": "FAILURE",
-        "failed_step": "Run Editor browser layout regression (16/24)",
-        "head_sha": "311e13bf619c3abdc8edd29372ede2e4edad3851",
-        "failed_test": "tests/browser/editor-workspace-appearance.test.js:3063",
-        "cause": "A stale session-only status from the prior profile save allowed the test to assert before async profile import completed. The earlier unsupported-Publish fixture now passed in CI.",
+        "run_id": 45783680598,
+        "status": "IN_PROGRESS",
+        "head_sha": "0aa48b5040e5babbcda2beba446654894a248fcd",
+        "active_step": "Run Editor browser layout regression (15/24 complete)",
+        "note": "The separate exact-SHA canonical plan workflow 45783680536 failed because the generated traceability fingerprint for tests/browser/editor-workspace-appearance.test.js was stale. The crosswalk was regenerated, and local plan-contract 16/16, canonical-plan, traceability and three repeated targeted Chromium checks now pass.",
+        "previous_test_fixture_failure": "The unsupported-Publish recovery case passed on this run; the remaining browser failure from this run, if any, is being monitored.",
         "follow_up_evidence": "docs/evidence/editor-unsupported-publish-recovery-fixture-2026-11-26.json"
       },
       "exact_sha_f0_baseline": {
@@ -185,7 +185,7 @@
         "run_id": 45725217229,
         "status": "SUCCESS"
       },
-      "next_gate": "Verify the imported-profile option wait correction on a new exact-SHA Editor Core run. The 311e13bf run is a historical failure for a distinct fixture race."
+      "next_gate": "Poll exact-SHA Editor Core run 45783680598. Its outcome is not yet known; the traceability fingerprint follow-up is test/docs-only and will use [skip ci]."
     }
   },
   "production_d1": {

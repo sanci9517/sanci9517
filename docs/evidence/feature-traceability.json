@@ -116,7 +116,7 @@
     "tests/browser/editor-legacy-media-parity.test.js": "5c18bea8a369b73bcf1f11a7993a8847021c72f8b51ed542f21942593176ecb0",
     "tests/browser/editor-structured-content.test.js": "5ab03af4009e9cc697de7ef183a8c8232ef349ace10942b9137e96ac9f4e5c32",
     "tests/browser/editor-template-start.test.js": "4924f607f90163e38053c117a37f30b50ee78b492cf31abe963f2b4669c5ecf0",
-    "tests/browser/editor-workspace-appearance.test.js": "cd1f24b4f93720840f2f6635e4974e9378a81748b24acf1950ae203a219d8a17",
+    "tests/browser/editor-workspace-appearance.test.js": "42c532005ce1391366e399601677251052ffe1c88ded413dc2e504114a2c37ea",
     "tests/editor-content-profiles.test.js": "632eddbe8acb71253a763405bb2eed4776d1540f0407f0aafec0f7b73a2f89c9",
     "tests/editor-palette-preferences.test.js": "0cb5936206853a59ebaaebd681dc28d8c959049eadb89d5c15844250aaedbf4e",
     "tests/editor-preferences-route.test.js": "ba6e9af55bfdace8971b5aa5f9625339aa081427e26994498819157eb5cbc6f0",

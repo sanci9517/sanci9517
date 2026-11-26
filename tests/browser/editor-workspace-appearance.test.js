@@ -3071,6 +3071,7 @@ test('profile import explains when browser storage is unavailable instead of cla
   await page.locator('#saveWorkspaceProfile').tap();
   await page.waitForFunction(()=>document.querySelector('#workspaceAppearanceStatus')?.textContent.includes('csak ebben a munkamenetben'));
   assert.equal(await page.locator('#workspaceProfile option').count(),2,'manual profile creation also remains honest when storage is blocked');
+  assert.match(await page.locator('#workspaceAppearanceStatus').textContent(),/csak ebben a munkamenetben/iu,'the previous save already leaves the status text that must not be mistaken for completed import feedback');
   assert.equal(await page.evaluate(key=>localStorage.getItem(key),WORKSPACE_PREFERENCES_KEY),null);
   const transfer={kind:'sanci-editor-workspace-profile',version:1,profile:{id:'profile-transfer-source',name:'Átmeneti telefonos nézet',createdAt:1,appearance:{layout:'balanced',theme:'aurora',density:'comfortable',accent:'#00a7c8',dockOrder:'right-canvas-left'},dock:{leftOpen:true,rightOpen:false,leftTab:'layers',leftWidth:310,rightWidth:352}}};
   await page.locator('#workspaceProfileFile').setInputFiles({name:'temporary-profile.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(transfer))});

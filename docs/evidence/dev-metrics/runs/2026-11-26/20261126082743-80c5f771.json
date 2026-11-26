@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261126082743-80c5f771",
+  "task": "77.44.7.D",
+  "trigger": "scheduled",
+  "started_at": "2026-11-26T08:27:43.117Z",
+  "finished_at": "2026-11-26T08:40:47.684Z",
+  "wall_seconds": 785,
+  "paused_seconds": 426,
+  "measured_seconds": 359,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "Fixed two stale/racy browser fixtures; targeted Chromium 3/3, plan contract 16/16, canonical master, traceability and syntax checks pass. Hosted Editor Core remains in progress.",
+  "evidence": [
+    "docs/evidence/editor-unsupported-publish-recovery-fixture-2026-11-26.json"
+  ],
+  "checks": "Chromium profile import 3/3; plan contract 16/16; canonical and traceability pass; exact-SHA Editor Core IN_PROGRESS",
+  "started_revision": "2f2a4f38ffab5585b3da12dc6f5c761c724e8639",
+  "finished_revision": "0aa48b5040e5babbcda2beba446654894a248fcd",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
