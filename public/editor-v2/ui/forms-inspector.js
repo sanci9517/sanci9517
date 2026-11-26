@@ -78,11 +78,17 @@ export function renderFormsInspector(node, { onSelect = () => {} } = {}) {
       (selected.publishedVersion ? ` · élő v${selected.publishedVersion}` : " · még nincs publikálva");
     editor.append(stateLine);
     const fieldHeading = document.createElement("h4"); fieldHeading.textContent = "Mezők"; editor.append(fieldHeading);
+    const focusFieldControl = (fieldId, controlName) => {
+      const card = Array.from(editor.querySelectorAll("fieldset[data-form-field-id]"))
+        .find(candidate => candidate.dataset.formFieldId === fieldId);
+      card?.querySelector(`[aria-label="${controlName}"]`)?.focus();
+    };
     definition.fields.forEach((field, index) => {
       const card = document.createElement("fieldset"); card.className = "form-inspector-field-card";
+      card.dataset.formFieldId = field.id;
       const legend = document.createElement("legend"); legend.textContent = `Mező ${index + 1}`; card.append(legend);
       const idInput = control("input", "Belső mezőazonosító", field.id, { maxLength: 40 });
-      idInput.input.onchange = () => { field.id = idInput.input.value.trim().toLowerCase().replace(/[^a-z0-9_-]/g, "-").replace(/^[^a-z]+/, "field-").slice(0, 40); idInput.input.value = field.id; markDirty(); };
+      idInput.input.onchange = () => { field.id = idInput.input.value.trim().toLowerCase().replace(/[^a-z0-9_-]/g, "-").replace(/^[^a-z]+/, "field-").slice(0, 40); idInput.input.value = field.id; card.dataset.formFieldId = field.id; markDirty(); };
       const labelInput = control("input", "Mezőcímke", field.label, { maxLength: 120 });
       labelInput.input.oninput = () => { field.label = labelInput.input.value; markDirty(); };
       const typeLabel = document.createElement("label"); typeLabel.className = "form-inspector-field";
@@ -90,7 +96,13 @@ export function renderFormsInspector(node, { onSelect = () => {} } = {}) {
       const type = document.createElement("select"); type.setAttribute("aria-label", "Mezőtípus");
       for (const [value, title] of FIELD_TYPES) { const option = document.createElement("option"); option.value = value; option.textContent = title; type.append(option); }
       type.value = field.type;
-      type.onchange = () => { field.type = type.value; if (field.type === "select" && !field.options?.length) field.options = ["Első választás"]; if (field.type !== "select") delete field.options; renderEditor(); markDirty(); };
+      type.onchange = () => {
+        const focusFieldId = field.id;
+        field.type = type.value;
+        if (field.type === "select" && !field.options?.length) field.options = ["Első választás"];
+        if (field.type !== "select") delete field.options;
+        renderEditor(); markDirty(); focusFieldControl(focusFieldId, "Mezőtípus");
+      };
       typeLabel.append(typeCaption, type);
       const requiredLabel = document.createElement("label"); requiredLabel.className = "form-inspector-checkbox";
       const required = document.createElement("input"); required.type = "checkbox"; required.checked = field.required; required.setAttribute("aria-label", "Kötelező mező");
@@ -111,12 +123,22 @@ export function renderFormsInspector(node, { onSelect = () => {} } = {}) {
       }
       const remove = document.createElement("button"); remove.type = "button"; remove.textContent = "Mező törlése"; remove.setAttribute("aria-label", `Mező törlése: ${field.label}`);
       remove.disabled = definition.fields.length <= 1;
-      remove.onclick = () => { definition.fields.splice(index, 1); markDirty(); renderEditor(); };
+      remove.onclick = () => {
+        definition.fields.splice(index, 1); markDirty(); renderEditor();
+        const focusTarget = definition.fields[Math.min(index, definition.fields.length - 1)];
+        if (focusTarget) focusFieldControl(focusTarget.id, "Mezőcímke");
+      };
       card.append(remove); editor.append(card);
     });
     const addField = document.createElement("button"); addField.type = "button"; addField.textContent = "Mező hozzáadása";
     addField.disabled = definition.fields.length >= 24;
-    addField.onclick = () => { definition.fields.push({ id: `field-${definition.fields.length + 1}`, type: "text", label: "Új mező", required: false, maxLength: 500 }); markDirty(); renderEditor(); };
+    addField.onclick = () => {
+      const existingIds = new Set(definition.fields.map(field => field.id));
+      let suffix = definition.fields.length + 1;
+      while (existingIds.has(`field-${suffix}`)) suffix += 1;
+      const field = { id: `field-${suffix}`, type: "text", label: "Új mező", required: false, maxLength: 500 };
+      definition.fields.push(field); markDirty(); renderEditor(); focusFieldControl(field.id, "Mezőcímke");
+    };
     editor.append(addField);
     const consent = control("textarea", "Adatkezelési hozzájárulás szövege", definition.consent.text, { maxLength: 2_000 });
     consent.input.rows = 4; consent.input.oninput = () => { definition.consent.text = consent.input.value; markDirty(); };

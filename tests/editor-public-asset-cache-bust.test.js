@@ -64,7 +64,7 @@ test('the Editor and public renderer release tokens bust the structured accessib
     'the versioned entry script must request the responsive resolver cache key');
   assert.match(app,/ui\/structured-inspector\.js\?v=20261125-d06-structured-accordion-behavior-v1/,
     'the versioned entry script must request the structured Inspector accessible-name controls, including Accordion');
-  assert.match(app,/ui\/forms-inspector\.js\?v=20261125-form-inspector-v1/,
+  assert.match(app,/ui\/forms-inspector\.js\?v=20261126-form-inspector-focus-v1/,
     'the versioned entry script must request the first-party form editor and inbox');
   assert.match(app,new RegExp(`core/authored-content\\.js\\?v=${pageActionTimerVersion}`),
     'the Editor must load the page-action timer lifecycle guard');

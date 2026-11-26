@@ -9,12 +9,16 @@ const formId = "11111111-1111-4111-8111-111111111111";
 const definition = {
   schemaVersion: 1,
   name: "Kapcsolat",
-  fields: [{ id: "email", type: "email", label: "E-mail", required: true, maxLength: 254 }],
+  fields: [
+    { id: "email", type: "email", label: "E-mail", required: true, maxLength: 254 },
+    { id: "field-2", type: "text", label: "Név", required: true, maxLength: 120 },
+    { id: "field-3", type: "textarea", label: "Üzenet", required: false, maxLength: 500 }
+  ],
   consent: { text: "Elfogadom.", version: "privacy-v1" },
   successMessage: "Köszönjük.", retentionDays: 30
 };
 
-test("Forms Inspector keeps form Save/Publish independent from the page draft and page Publish", async t => {
+test("Forms Inspector preserves field focus and keeps form Save/Publish independent from the page", async t => {
   let currentVersion = 1;
   let publishedVersion = null;
   let formStatus = "draft";
@@ -87,6 +91,30 @@ test("Forms Inspector keeps form Save/Publish independent from the page draft an
   assert.equal(selected.selectionChanges, 1);
   assert.deepEqual(selected.draft.props, { formId, formBindingVersion: 1 });
   assert.deepEqual(selected.published.props, {});
+
+  const cards = page.locator(".form-inspector-field-card");
+  const firstFieldType = cards.nth(0).getByLabel("Mezőtípus");
+  await firstFieldType.selectOption("select");
+  assert.equal(await cards.nth(0).getByLabel("Mezőtípus").evaluate(element => element === document.activeElement), true,
+    "changing a field type should return focus to its replacement type selector");
+  assert.equal(await cards.nth(0).getByLabel("Választások (soronként egy)").count(), 1,
+    "select fields should retain their type-specific option editor after rerender");
+
+  await cards.nth(1).getByRole("button", { name: "Mező törlése: Név" }).click();
+  assert.equal(await cards.nth(1).getByLabel("Mezőcímke").evaluate(element => element === document.activeElement), true,
+    "removing a row should focus the next field at the same position");
+  await page.getByRole("button", { name: "Mező hozzáadása" }).click();
+  assert.equal(await cards.nth(2).getByLabel("Mezőcímke").evaluate(element => element === document.activeElement), true,
+    "adding a row should focus its new label control");
+  assert.deepEqual(await cards.evaluateAll(elements => elements.map(element => element.dataset.formFieldId)),
+    ["email", "field-3", "field-4"], "new field IDs remain unique after removing a row");
+  await cards.nth(2).getByRole("button", { name: "Mező törlése: Új mező" }).click();
+  assert.equal(await cards.nth(1).getByLabel("Mezőcímke").evaluate(element => element === document.activeElement), true,
+    "removing the last row should focus the preceding field");
+  assert.deepEqual(formActions, [], "editing field structure must not save or publish implicitly");
+  assert.equal(publishedVersion, null);
+  assert.deepEqual(pageDraft.props, { formId, formBindingVersion: 1 }, "Inspector edits do not mutate the page draft");
+  assert.deepEqual(publishedPageSnapshot.props, {}, "Inspector edits do not mutate the published page snapshot");
 
   const publish = page.getByRole("button", { name: "Űrlap publikálása" });
   assert.equal(await publish.isDisabled(), true, "privacy notice is mandatory before publish");
