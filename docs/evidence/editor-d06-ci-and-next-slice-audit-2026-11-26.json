@@ -76,7 +76,7 @@
       "status": "SUCCESS",
       "completed_steps": 22,
       "active_step": null,
-      "live_logs": "GitHub workflow job log URL returned Azure BlobNotFound at 2026-11-26T13:26:10Z; no failure or hang inferred.",
+      "live_logs": "Fetched after completion: 62/62 browser-suite files and all later checks passed; workflow run conclusion is success.",
       "pending_steps": [],
       "conclusion": "success",
       "completed_at": "2026-11-26T13:30:45Z",
@@ -89,6 +89,6 @@
       "traffic_percentage": 100,
       "source_sha": "187b16a8a6f8335b43f70b9692a1c3d8a279db39"
     },
-    "this_follow_up": "Read-only branch/CI/deployment reconciliation; no code, test, D1/R2 data, CI dispatch, or Worker deployment mutation. The existing exact-source CI has not finished, so the D-06/full-D/Editor acceptance remains open."
+    "this_follow_up": "Read-only branch, CI, deployment and plan/evidence reconciliation. Exact-source Editor Core CI completed successfully; no code, D1/R2 data, CI dispatch, or Worker deployment mutation. Full D-06/D/Editor acceptance remains open."
   }
 }
