@@ -1,0 +1,96 @@
+{
+  "date": "2026-11-26",
+  "plan": {
+    "master": "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+    "active_cursor": "77.44 / WEB-011 -> 77.44.7.D",
+    "scope": "D-06 Visual Editor canvas tool interaction; viewport-only pointer pan",
+    "status": "OPEN_PARTIAL_NOT_CERTIFIED",
+    "acceptance": "Full Editor manual and physical acceptance deferred until the complete Editor scope is implemented.",
+    "traceability": {"feature_count": 396, "partial_source": 148, "unverified": 248}
+  },
+  "git": {
+    "repository": "sanci9517/sanci9517",
+    "branch": "v2/foundation",
+    "runtime_commit": "1e8914134274a27882d8a1d8b27fee10c2e79877",
+    "runtime_commit_url": "https://github.com/sanci9517/sanci9517/commit/1e8914134274a27882d8a1d8b27fee10c2e79877",
+    "changed_paths": ["public/editor-v2/app.js", "public/editor-v2/editor.css", "public/editor-v2/index.html", "tests/browser/editor-ux-p0-workflow.test.js", "tests/editor-public-asset-cache-bust.test.js", "docs/evidence/feature-traceability.json"],
+    "source_sha_verified_as_branch_head": true
+  },
+  "implementation": {
+    "feature": "Use the existing Pan tool to move the editor viewport with pointer drag without modifying canvas nodes or the Page Model.",
+    "behavior": [
+      "Pointer capture keeps the drag lifecycle attached to the canvas; pointerup restores the grab cursor and pointercancel/lost capture clear temporary state.",
+      "Interactive descendants are excluded from drag start; Pan-mode canvas clicks do not select or move a node.",
+      "Canvas scroll offsets change while node geometry, selection, draft Page Model, Save requests, and Publish requests remain unchanged.",
+      "Touch gestures on the canvas use touch-action:none in Pan mode; Select mode restores its default cursor and normal interaction."
+    ],
+    "save_publish": "Save remains a draft-only operation; Publish stays a separate explicit action.",
+    "new_dependencies": false,
+    "open_source_reuse": "Existing Editor pointer/lifecycle and browser test harness reused; no third-party runtime code added."
+  },
+  "verification": {
+    "local": {
+      "real_chromium_pointer_pan_and_cancel": "PASS 1/1; initial restricted loopback attempt was blocked before browser launch, rerun with local-loopback permission passed.",
+      "npm run test:editor": "PASS 25/25 files",
+      "npm run typecheck": "PASS",
+      "python3 tests/plan-contract.test.py": "PASS 16/16",
+      "python3 scripts/check-canonical-plan.py": "PASS; 13 master files, one cursor, 396 mappings",
+      "python3 scripts/audit-active-plan-point.py": "PASS; cursor 77.44.7.D, functional acceptance NOT_CERTIFIED",
+      "python3 scripts/build-feature-traceability.py --check": "PASS 396/396",
+      "npm run test:web013:migration-gate": "PASS",
+      "node --check public/editor-v2/app.js && git diff --check": "PASS",
+      "npx wrangler deploy --dry-run": "PASS; Wrangler 4.130.0, 206 assets, 476.98 KiB / 118.26 KiB gzip; no deployment from dry-run"
+    },
+    "production_d1_preflight": {
+      "operation": "SELECT-only query API read of sqlite_master object counts",
+      "schema_objects": {"tables": 38, "indexes": 97, "triggers": 29},
+      "database_size_bytes": 3883008,
+      "rows_written": 0,
+      "changes": 0,
+      "changed_db": false,
+      "migration_or_data_write": false
+    },
+    "cloudflare": {
+      "build_id": "19bd511a-f185-4a53-b3cd-1bc526082bef",
+      "build_outcome": "success",
+      "build_command": "npm run typecheck",
+      "deploy_command": "npm run deploy:safe",
+      "deployment_id": "dda915b8-cf94-4f70-8d0c-e522c3546abd",
+      "worker_version_id": "1eb9ffb8-a48d-4405-aefa-c494a948904e",
+      "worker_version_number": 4216,
+      "traffic_percent": 100,
+      "source_sha": "1e8914134274a27882d8a1d8b27fee10c2e79877"
+    },
+    "production_smoke": {
+      "workflow_run_id": 45873262285,
+      "workflow_run_url": "https://github.com/sanci9517/sanci9517/actions/runs/45873262285",
+      "status": "SUCCESS",
+      "checks": ["/api/health HTTP 200", "changed public asset SHA-256 matches the exact deployed source"],
+      "local_source_sha256": {
+        "public/editor-v2/app.js": "dbee45756100b3e021b8987449d9165d459ba68b27c4799f9785ec8695c22362",
+        "public/editor-v2/editor.css": "d633ca5fc7753af19de1348dad3e692f51373ce75832f3784a3892bee3bad5f8",
+        "public/editor-v2/index.html": "4f39da65b91f2b724e05b635baac7a115770f3594879c7fcad3a7300dc4d4ee0"
+      }
+    },
+    "github_ci": {
+      "exact_sha": "1e8914134274a27882d8a1d8b27fee10c2e79877",
+      "successful_runs": ["Canonical Creator Platform Plan 45873262332", "Canonical Plan Active Point Audit 45873262330", "F0 baseline checks 45873262309", "Production Worker source smoke 45873262285", "Twitch Integration Check 45873262239"],
+      "editor_core_run_id": 45873262355,
+      "editor_core_status_at_evidence_capture": "IN_PROGRESS at step 16, Run Editor browser layout regression; steps 1-15 SUCCESS. Full hosted Editor Core result is not claimed as PASS."
+    }
+  },
+  "cost_and_data_safety": {
+    "new_cost_huf": 0,
+    "new_paid_service": false,
+    "new_dependency": false,
+    "production_d1_mutation": false,
+    "r2_operation": false
+  },
+  "acceptance": {
+    "d06": "OPEN / NOT CERTIFIED",
+    "full_d_block": "OPEN / NOT CERTIFIED",
+    "full_visual_editor": "OPEN / NOT CERTIFIED",
+    "manual_physical_acceptance": "DEFERRED until complete Editor scope",
+    "save_is_distinct_from_publish": true
+  }
+}

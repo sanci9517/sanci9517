@@ -1,0 +1,20 @@
+{
+  "schema": 1,
+  "id": "20261126173238-b5167307",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-26T17:32:38.558Z",
+  "finished_at": "2026-11-26T18:16:55.612Z",
+  "wall_seconds": 2657,
+  "paused_seconds": 0,
+  "measured_seconds": 2657,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "Pointer panning released to exact-source production; local regression and release smoke passed, full Editor Core CI remains in progress, D-06 stays open.",
+  "evidence": ["docs/evidence/editor-d06-canvas-pointer-pan-2026-11-26.json"],
+  "checks": "Chromium 1/1; editor 25/25; typecheck; plan 16/16; canonical/traceability/active audit; migration gate; Wrangler dry-run; SELECT-only D1; exact-SHA health/hash smoke; Editor Core in progress",
+  "started_revision": "0cfe7f41d1f566c998d57fffdfb4a61a927b1116",
+  "finished_revision": "0cfe7f41d1f566c998d57fffdfb4a61a927b1116",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
