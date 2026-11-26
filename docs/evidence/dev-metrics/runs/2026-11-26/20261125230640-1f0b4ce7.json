@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "20261125230640-1f0b4ce7",
+  "task": "77.44.7.D",
+  "trigger": "manual",
+  "started_at": "2026-11-25T23:06:40.339Z",
+  "finished_at": "2026-11-26T00:04:09.311Z",
+  "wall_seconds": 3449,
+  "paused_seconds": 538,
+  "measured_seconds": 2911,
+  "status": "partial",
+  "kind": "mixed",
+  "summary": "A Forms integráció után 17 Inspector PARTIAL-fixture dinamikus darabszámra állítva; négy érintett valós Chromium teszt 5/5 eset PASS. Teszt- és terv/evidence követés a v2/foundation ágra pusholva; exact-SHA Editor Core CI még in progress, teljes D/Editor acceptance nyitott.",
+  "evidence": [
+    "ec52b7b2f87f0f7e8af9623843b008207eead385; docs/evidence/editor-forms-service-slice-2026-11-25.json; https://github.com/sanci9517/sanci9517/actions/runs/45725217234"
+  ],
+  "checks": "NOT_RECORDED",
+  "started_revision": "8ee7a093baf57eea99d7e81c414e4dbd736994b2",
+  "finished_revision": "2356afe503efe4f4fc95ad688ace33f4bc35b944",
+  "measurement": "start-to-finish wall time excluding explicit pauses; not Codex token/compute time",
+  "verification": "agent-reported; references are not independently checked by this script"
+}
