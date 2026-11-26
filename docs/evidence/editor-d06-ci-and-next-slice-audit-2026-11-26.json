@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "evidence_id": "editor-d06-ci-and-next-slice-audit-2026-11-26",
+  "plan_point": "77.44 / WEB-011 -> 77.44.7.D / D-06",
+  "status": "OPEN_NOT_CERTIFIED; EXACT_SOURCE_EDITOR_CORE_CI_IN_PROGRESS",
+  "scope": "Read-only reconciliation of the current published runtime, branch head, exact-SHA Editor Core CI, and the D-06 keyboard-layer follow-up. No code, test, workflow, production data, or deployment mutation was made in this audit.",
+  "branch": "v2/foundation",
+  "canonical_plan_sha256": "4cef6aeed9d7e391a47cc6d8fc24cc707f88136c1f99b7fd9432278b861f7978",
+  "observations": {
+    "local_head": "d838bfdf21e7d3dc06b97a4148fcb51cce0ce831",
+    "github_branch_head": "d838bfdf21e7d3dc06b97a4148fcb51cce0ce831",
+    "runtime_sha_under_test": "187b16a8a6f8335b43f70b9692a1c3d8a279db39",
+    "active_plan_cursor": "77.44 / WEB-011 -> 77.44.7.D",
+    "feature_count": 396,
+    "source_status_counts": {"PARTIAL_SOURCE": 148, "UNVERIFIED": 248},
+    "functional_acceptance": "NOT_CERTIFIED"
+  },
+  "ci": {
+    "workflow": "Editor Core Test",
+    "run_id": 45824175142,
+    "url": "https://github.com/sanci9517/sanci9517/actions/runs/45824175142",
+    "head_sha": "187b16a8a6f8335b43f70b9692a1c3d8a279db39",
+    "state_at_2026_11_26T13_16_UTC": "IN_PROGRESS",
+    "completed_steps": 15,
+    "active_step": "Run Editor browser layout regression",
+    "pending_steps": [
+      "Run WEB-013 Admin mobile browser regression",
+      "Run canonical schedule tests",
+      "Run domain contract tests",
+      "Run Brand Kit storage and access regression",
+      "Run Admin home contract tests",
+      "Upload Editor layout screenshots"
+    ],
+    "live_job_logs": "GitHub job-log endpoint returned Azure BlobNotFound while the job was running; no hang or test failure inferred from unavailable live logs."
+  },
+  "editor_keyboard_review": {
+    "recent_slice_commit": "187b16a8a6f8335b43f70b9692a1c3d8a279db39",
+    "source_and_tests_reviewed": [
+      "public/editor-v2/app.js",
+      "tests/browser/editor-layer-rename-draft.test.js",
+      "tests/browser/editor-node-clipboard.test.js",
+      "tests/browser/editor-canvas-keyboard-move.test.js"
+    ],
+    "confirmed_coverage": [
+      "Shift+Arrow range selection and Ctrl/Meta+Space layer toggling are already implemented and exercised.",
+      "Selected canvas movement and keyboard resize have separate browser coverage; adding duplicate shortcut implementations would be unnecessary.",
+      "The current Clipboard slice's targeted Chromium/unit/typecheck results are recorded in editor-d06-layer-keyboard-range-clipboard-2026-11-26.json."
+    ],
+    "ci_efficiency": "The 62-file Editor layout manifest is intentionally run through one subreaper process with test concurrency 1. Bounded parallelism was not implemented: shared fixed /tmp diagnostic screenshot names and child-process reaping need a dedicated isolation and exact-source benchmark first."
+  },
+  "production": {
+    "latest_deployment_id": "3e4dbe7b-aa54-4662-9910-85869cc87f9c",
+    "worker_version": "e7bffe23-cbd6-41bd-973c-20d785f2de1f",
+    "traffic_percentage": 100,
+    "exact_sha_smoke_run": "45824175085",
+    "health_http": 200,
+    "changed_asset_hashes": "PASS; exact values and smoke details are in editor-d06-layer-keyboard-range-clipboard-2026-11-26.json"
+  },
+  "mutations": {
+    "code_or_test_files_changed": false,
+    "production_d1_mutation": false,
+    "r2_mutation": false,
+    "ci_dispatch_or_rerun": false,
+    "worker_deploy": false,
+    "cost_huf": 0
+  },
+  "next_step": "Read the final exact-SHA Editor Core result. If a test fails, reproduce and repair that exact issue; if it succeeds, continue the next unverified canonical D-06 capability without repeating the covered layer/clipboard behavior. Keep the full D and Visual Editor acceptance OPEN until all planned gates are satisfied."
+}
