@@ -80,8 +80,15 @@
       "status": "IN_PROGRESS",
       "completed_steps": 15,
       "active_step": "Run Editor browser layout regression",
-      "later_steps_pending": 7,
-      "live_logs": "GitHub workflow job log URL returned Azure BlobNotFound at 2026-11-26T13:26:10Z; no failure or hang inferred."
+      "live_logs": "GitHub workflow job log URL returned Azure BlobNotFound at 2026-11-26T13:26:10Z; no failure or hang inferred.",
+      "pending_steps": [
+        "Run WEB-013 Admin mobile browser regression",
+        "Run canonical schedule tests",
+        "Run domain contract tests",
+        "Run Brand Kit storage and access regression",
+        "Run Admin home contract tests",
+        "Upload Editor layout screenshots"
+      ]
     },
     "production_readback": {
       "deployment_id": "3e4dbe7b-aa54-4662-9910-85869cc87f9c",
